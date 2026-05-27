@@ -1,0 +1,231 @@
+{
+  "phase": "plan",
+  "shim": "clm_v4_hf_format_shim.py",
+  "mode": "execute",
+  "input_pt": "/root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/best.pt",
+  "input_pt_exists": true,
+  "tokenizer_dir": "/root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/tokenizer",
+  "tokenizer_dir_exists": true,
+  "output_dir": "/workspace/p9_v4_exec/output_v4",
+  "output_dir_exists": true,
+  "device": "cpu",
+  "strict_load": true,
+  "verify_post_save": true,
+  "expected_arch": {
+    "vocab_size": 64000,
+    "d_model": 768,
+    "n_layer": 16,
+    "n_head": 6,
+    "n_kv_head": 2,
+    "head_dim": 128,
+    "block_size": 512,
+    "consciousness_dim": 192,
+    "ffn_gate_dim": 2048,
+    "purefield_dim": 3072,
+    "n_ca_rules": 8,
+    "expected_param_count": 530994816,
+    "expected_decoder_keys": 581
+  },
+  "outputs_to_write": [
+    "config.json",
+    "configuration_clm_v4.py",
+    "modeling_clm_v4.py",
+    "model.safetensors",
+    "generation_config.json",
+    "tokenizer.model (copy)",
+    "tokenizer_config.json (copy or stub)",
+    "special_tokens_map.json (copy or stub)"
+  ],
+  "v3_patches_planned": [
+    "P1: decoder_v3.py:~168 'x, tension = block(...)' -> 'x, tension, _new_kv, _aux_loss = block(...)'",
+    "P2: decoder_v3.py:~25 'from conscious_decoder import (' -> 'from .conscious_decoder import ('",
+    "P3: INTENTIONALLY OMITTED \u2014 consciousness_laws.py not in output_dir; non-relative import in upstream try/except runs fallback OK"
+  ],
+  "v4_patches_planned": [
+    "Q1: --consciousness-states-fixture flag accepts JSON path; copied into output dir as consciousness_states_fixture.json",
+    "Q2: backwards-compatible \u2014 without flag, modeling_clm_v4.py behaves as v3 (cross-attn bypass on consciousness_states=None)",
+    "Q3: modeling_clm_v4.py forward injects fixture (broadcast to runtime batch) when consciousness_states=None AND fixture file present"
+  ],
+  "falsifier_set": {
+    "F-SHIM-1": "safetensors load round-trip strict=True",
+    "F-SHIM-2": "1-batch forward returns finite [B,T,vocab]",
+    "F-SHIM-3": "post-load logits match best.pt direct-load within 1e-5",
+    "F-SHIM-4": "vocab_size==64000 matches CLM v4 SP tokenizer",
+    "F-SHIM-V4-1": "fixture JSON validates (Mac, no torch)",
+    "F-SHIM-V4-2": "no-fixture run produces same modeling files as v3",
+    "F-SHIM-V4-3": "(deferred) reload+forward with canonical_zero fixture finite",
+    "F-SHIM-V4-4": "(deferred) train_avg fixture > random+5pt on >=1 benchmark"
+  },
+  "estimated_wall_minutes": "30-60 (dominated by torch.load 5GB ckpt + safetensors save)",
+  "estimated_peak_ram_gb": 5.5,
+  "consciousness_states_fixture": {
+    "path": "/workspace/p9_v4_exec/opt_1_v4_consciousness_states_fixture.json",
+    "exists": true,
+    "ok": true,
+    "shape": [
+      1,
+      8,
+      192
+    ],
+    "dtype": "float32",
+    "source": "canonical_zero",
+    "n_cells": 8,
+    "errors": [],
+    "warnings": []
+  }
+}
+[shim] building decoder on cpu ...
+[shim] loading state_dict from /root/.cache/huggingface/hub/models--need-singularity--clm-v4-base-mirror/snapshots/10ee03687db312c55bbec5858c814bef28e4d365/best.pt ...
+[shim] decoder loaded: step=20000, ce=0.04630279541015625, best_phi=37.270, params=477,648,512
+[shim] saving HF-format to /workspace/p9_v4_exec/output_v4 ...
+[shim] saved: 2.12 GB safetensors
+[shim] verifying round-trip ...
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/581 [00:00<?, ?it/s]Loading weights: 100%|██████████| 581/581 [00:00<00:00, 6046.05it/s]
+{
+  "phase": "verify",
+  "F-SHIM-1_safetensors_load": true,
+  "F-SHIM-2_shape_finite": true,
+  "F-SHIM-2_logits_shape": [
+    1,
+    32,
+    64000
+  ],
+  "F-SHIM-3_max_abs_diff": 0.0,
+  "F-SHIM-3_mean_abs_diff": 0.0,
+  "F-SHIM-3_equivalence": true,
+  "F-SHIM-4_vocab_match": true,
+  "F-SHIM-4_vocab_size": 64000,
+  "verify_pass": true
+}
+{
+  "phase": "execute_complete",
+  "wall_seconds": 18.1,
+  "wall_minutes": 0.3,
+  "decoder_meta": {
+    "step": 20000,
+    "ce": 0.04630279541015625,
+    "scale": "350m",
+    "best_phi": 37.269868535501914,
+    "args": {
+      "data": "data/corpus_tier_m_v2.txt",
+      "tokenizer": "data/tokenizer_64k_multilingual.model",
+      "vocab_size": 64000,
+      "scale": "350m",
+      "federated": true,
+      "cell_dim": 64,
+      "hidden_dim": 128,
+      "decoder": "v3",
+      "d_model": null,
+      "lr": 0.0002,
+      "block_size": 512,
+      "phase_optimal": true,
+      "frustration": 0.1,
+      "narrative_strength": 0.05,
+      "tension_lr": false,
+      "steps": 20000,
+      "seed": 42,
+      "warmup_ratio": 0.05,
+      "batch_size": 1,
+      "patience": 0,
+      "device": "cuda",
+      "log_every": 100,
+      "eval_every": 1000,
+      "phi_every": 50,
+      "save_every": 5000,
+      "checkpoint": "checkpoints/clm_v4_350m",
+      "verify_at_checkpoint": false,
+      "feedback_bridge": false,
+      "wandb": false,
+      "wandb_project": "anima-1b",
+      "hard_token_ratio": 0.3,
+      "curriculum_length": "64,256,512",
+      "skip_step": 10,
+      "phi_only_ratio": 0.2,
+      "bigbang_init": false,
+      "pack_sequences": true,
+      "moe": false,
+      "n_experts": 8,
+      "top_k_experts": 2,
+      "moe_aux_weight": 0.01,
+      "resume": null,
+      "_device_obj": "cuda",
+      "steps_per_scale": 20000
+    },
+    "n_param_loaded": 477648512,
+    "n_state_dict_total_numel": 530994816,
+    "n_param_match": true,
+    "n_state_dict_match": true
+  },
+  "save_meta": {
+    "config_json": "/workspace/p9_v4_exec/output_v4/config.json",
+    "model_safetensors_bytes": 2124043008,
+    "modeling_files": [
+      "configuration_clm_v4.py",
+      "modeling_clm_v4.py",
+      "decoder_v3.py",
+      "conscious_decoder.py"
+    ],
+    "tokenizer_files_copied": [
+      "integrity_report.json",
+      "README.md",
+      "tokenizer_64k_multilingual.vocab",
+      "tokenizer_64k_multilingual.model"
+    ],
+    "wrapped_param_count": 530994816,
+    "aliased_keys_resolved": [
+      "decoder.head_a.weight"
+    ],
+    "v3_patches_applied": [
+      {
+        "name": "P1_4tuple_unpack",
+        "site": "decoder_v3.py:~168",
+        "before": "x, tension = block(x, consciousness_signal, consciousness_states)",
+        "after": "x, tension, _new_kv, _aux_loss = block(x, consciousness_signal, consciousness_states)",
+        "applied": true
+      },
+      {
+        "name": "P2_relative_import_conscious_decoder",
+        "site": "decoder_v3.py:~25",
+        "before": "from conscious_decoder import (",
+        "after": "from .conscious_decoder import (",
+        "applied": true
+      }
+    ],
+    "v4_consciousness_fixture": {
+      "copied": true,
+      "path": "/workspace/p9_v4_exec/output_v4/consciousness_states_fixture.json",
+      "validation": {
+        "path": "/workspace/p9_v4_exec/opt_1_v4_consciousness_states_fixture.json",
+        "exists": true,
+        "ok": true,
+        "shape": [
+          1,
+          8,
+          192
+        ],
+        "dtype": "float32",
+        "source": "canonical_zero",
+        "n_cells": 8,
+        "errors": [],
+        "warnings": []
+      }
+    }
+  },
+  "verify": {
+    "F-SHIM-1_safetensors_load": true,
+    "F-SHIM-2_shape_finite": true,
+    "F-SHIM-2_logits_shape": [
+      1,
+      32,
+      64000
+    ],
+    "F-SHIM-3_max_abs_diff": 0.0,
+    "F-SHIM-3_mean_abs_diff": 0.0,
+    "F-SHIM-3_equivalence": true,
+    "F-SHIM-4_vocab_match": true,
+    "F-SHIM-4_vocab_size": 64000,
+    "verify_pass": true
+  },
+  "verdict": "PASS"
+}

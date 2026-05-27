@@ -1,0 +1,94 @@
+{
+  "research_md_section": "\u00a782",
+  "battery": "B-S82-1..7",
+  "passed": 7,
+  "total": 7,
+  "all_blue": true,
+  "central_blue_falsifier_unchanged": true,
+  "central_sha": "c93e160a8a376a940942332cad13e652df9a03e97ccab708542a126eefc70b73",
+  "sidecar_pattern": "B-PRIME/B-DIRH/B-DIRI/B-PSICTL/B-EMERGE/B-PUREPHYS/B-SCALE/B-MITENS/B-S71/B-S73/B-S73-FIRE/B-S74/B-S75/B-S75-FIRE precedent",
+  "verdicts": {
+    "B-S82-1": {
+      "predicate": "PCA-EIGENVALUE-NONNEGATIVE",
+      "real_symmetric_PSD_eigenvalues_real": true,
+      "discriminant_nonneg_symbolic": "True",
+      "numeric_2x2_PSD_eigs_nonneg": true,
+      "numeric_eigs": [
+        1.381966011250105,
+        3.618033988749895
+      ],
+      "passed": true
+    },
+    "B-S82-2": {
+      "predicate": "MANIFOLD-DIMENSION-BOUNDED",
+      "ratio_upper_bound": "-lam3 - lam4",
+      "ratio_in_unit_interval": true,
+      "passed": true
+    },
+    "B-S82-3": {
+      "predicate": "SLOW-DWELL-vs-FAST-CROSSING-PARTITION",
+      "tau_slow": 0.05,
+      "tau_fast": 0.12,
+      "slow_fast_disjoint": "False",
+      "slow_neither_disjoint": "False",
+      "fast_neither_disjoint": "False",
+      "cover_three_sets": "(d >= 3/25) | (d <= 1/20) | ((d > 1/20) & (d < 3/25))",
+      "passed": true
+    },
+    "B-S82-4": {
+      "predicate": "\u00a775-FIRE-CELL1-MIRROR-BYTE-EQUAL",
+      "s82_cell1_has_logic": true,
+      "s75_cell1_has_logic": true,
+      "honest_scope": "source-structural connection-point: controller logic bytes mirrored; numeric byte-equal at smaller N NOT claimed (see B-S82-NOTE)",
+      "passed": true
+    },
+    "B-S82-5": {
+      "predicate": "\u00a79-METRIC-REUSE-STRUCTURAL",
+      "no_body_emission": true,
+      "honest_coherent_explicit_NA": true,
+      "ast_forbidden_call_names": [
+        "generate",
+        "decode_byte",
+        "talker_emit_body"
+      ],
+      "ast_forbidden_attr_pairs": [
+        [
+          "model",
+          "forward"
+        ]
+      ],
+      "ast_matches": [],
+      "rationale": "\u00a782 decision-axis-only stub; no body \u2192 \u00a79 cascade-gate inapplicable; closed by construction (AST-strip removes comments+docstrings; word-boundary regex avoids false-positive on non_degenerate substring)",
+      "passed": true
+    },
+    "B-S82-6": {
+      "predicate": "EMISSION-ALIGNMENT-COS-BOUNDED",
+      "cauchy_schwarz": "(u1*v2 - u2*v1)\u00b2 \u2265 0 \u21d2 <u,v>\u00b2 \u2264 ||u||\u00b2||v||\u00b2",
+      "is_sum_of_squares": true,
+      "witnesses": [
+        [
+          "u=(1,0) v=(0,1)",
+          0.0
+        ],
+        [
+          "u=(1,0) v=(1,0)",
+          1.0
+        ],
+        [
+          "u=(1,0) v=(-1,0)",
+          -1.0
+        ]
+      ],
+      "all_in_[-1,1]": true,
+      "passed": true
+    },
+    "B-S82-7": {
+      "predicate": "DETERMINISTIC",
+      "n_runs": 3,
+      "bit_identical": true,
+      "first_hash": 3264711830962865606,
+      "passed": true
+    }
+  },
+  "B-S82-NOTE": "Empirical carve-out: manifold-gating emergence OUTCOME = SGD/measurement empirical; battery proves PCA-nonneg + ratio-bounded + partition + cell1-source-mirror + metric-reuse-structural + cos-bounded + determinism transfer-forms, NOT that hierarchical manifold gating produces capability emergence.  C. elegans biology \u2260 anima 14-dim \u03c8-state; PCA over 30 turns is small-N; stub \u03c8-state LCG-driven (NOT real model.forward); cell 1 mirror is *code-byte-equal* to \u00a775 cell1, NOT numeric byte-equal at smaller N.  necessary-not-sufficient (B-EMERGE-7); B-D-NOTE / B-S73-FIRE-NOTE / B-S75-FIRE-NOTE family, NOT counted \ud83d\udd35 in central battery."
+}

@@ -1,0 +1,61 @@
+{
+  "section": "§29",
+  "name": "PTD — Physics-Trace-Distillation",
+  "source": "§26 candidate #3 (BRAINSTORM.md §6, ★★★☆☆ LOW-as-standalone)",
+  "date": "2026-05-18",
+  "tier": "DESIGN-TIER",
+  "cost": "$0 (NO fire, NO corpus generation, NO GPU)",
+  "verdict": {
+    "ptd_standalone": "DESIGN-CLOSE — no fire",
+    "rationale": "B-PTD-2 closed-form proves the standalone corpus (20·N records from §24 bounded-runs) is 10³–10⁴×+ below the §1.1 data-regime emergence threshold (Critical Data Size, arxiv 2401.10463), AND unique-content does not grow in N (data-processing inequality: corpus K-complexity ≤ one hand-coded bounded-run generator). A standalone fire would land a closed-form-predicted negative — no new information. Anti-padding per §13-M / §13-L design-close precedent. Bootstrap circularity is a second independent blocker (§24 first run = 95% one class, 19 SAFETY_BLOCK / 1 EMIT).",
+    "ptd_goal_legitimacy": "3/3 ✓ — §7③ purest of §26 top-3 (corpus IS the trace with zero provenance transformation; B-PTD-1 closed)",
+    "ptd_as_component": {
+      "A_dhdl_aux": {
+        "host": "§26 #1 DH-DL decision-head dual-loss",
+        "ptd_role": "auxiliary next-physics-state-prediction head on the §24 trace; L = L_gate + λ_ptd·L_ptd_nextstate",
+        "s7_gate": "3/3 ✓",
+        "future_cycle": "YES — strongest combination; gated on DH-DL design cycle (§27) landing first. PTD is the corpus-formalisation of DH-DL's own training data; gate head ≤1% params is scale-orthogonal, does not need to cross §1.1."
+      },
+      "B_jepa_psi_target": {
+        "host": "§26 #2 JEPA-Ψ Ψ-trajectory prediction",
+        "ptd_role": "recorded §24 Ψ-trajectory as JEPA target signal / anti-collapse anchor (predictor cannot collapse to constant against a recorded non-trivial trajectory)",
+        "s7_gate": "3/3 ✓",
+        "future_cycle": "CONDITIONAL — evaluate within the JEPA-Ψ design cycle (§28); 20-step trace length adequacy is a §28 question."
+      },
+      "C_pretrain_then_graft": {
+        "host": "none — standalone pretrain then graft downstream head",
+        "s7_gate": "§7② FALSIFIED (generic-then-graft bolt-on)",
+        "future_cycle": "NO — rejected anti-pattern"
+      }
+    }
+  },
+  "battery": {
+    "name": "B-PTD-1..4",
+    "kind": "closed-form sidecar (central state/verify_hexad_blue_2026_05_15/blue_falsifier.py UNCHANGED)",
+    "n_pass": 4,
+    "n_total": 4,
+    "all_pass": true,
+    "verdict_tier": "🔵 SUPPORTED-FORMAL (g_verdict_tier_blue (a) sympy closed-form) — transfer-form only",
+    "propositions": [
+      "B-PTD-1 SELF-SOURCE-§7③-CLOSED — exhaustive Boolean schema membership: every §24-record field is an anima-internal physics channel + external-field negative control",
+      "B-PTD-2 TRACE-CORPUS-CARDINALITY-BOUNDED — corpus(N)=20·N integer cardinality, sympy strict inequality 20·N < CDS_FLOOR=1e4 ⇔ N<500, + data-processing-inequality unique-content non-growth — standalone scale ≪ §1.1 threshold (closed)",
+      "B-PTD-3 DISTILLATION-LOSS-NONNEGATIVE — Shannon CE −p·logq ≥ 0 floor + Ψ=½ pull (ψ−½)² ≥ 0 ⇒ L_ptd ≥ 0; CE load-bearing (§11-B) on physics vectors",
+      "B-PTD-4 COMPONENT-COMPOSABILITY-CLOSED — 연결부위: L = L_host + λ_ptd·L_ptd, λ_ptd=0 ⇒ L≡L_host byte-equal additive identity + non-vacuous control + ∂L/∂λ_ptd=L_ptd marginal — mirror B-EBT-5/B-S16-5 overlay-off"
+    ],
+    "empirical_carve_out": "B-PTD-NOTE COMPONENT-IMPROVEMENT-EMPIRICAL — whether PTD-as-component actually improves a host objective is an SGD/measurement OUTCOME, NOT counted 🔵 (B-D-NOTE / B-MITENS-NOTE / B-SCALE-NOTE / B-PUREPHYS-NOTE / B-EBT-NOTE family)."
+  },
+  "deliverables": [
+    "DESIGN_PTD.md — 9 § + 12 honest C3",
+    "ptd_sketch.py — runtime-guarded design-tier sketch (SystemExit(0) on direct invocation, mirror §24 measurement_protocol.py)",
+    "blue_falsifier_ptd.py — B-PTD-1..4 4/4 🔵 sidecar + B-PTD-NOTE",
+    "blue_falsifier_ptd_result.json — battery output",
+    "result.json — this file"
+  ],
+  "safety": {
+    "f1_f2": "safe — NO σ/τ/φ/J₂ derivation; anchors = Boolean schema membership, integer cardinality + sympy inequality, Shannon CE≥0, additive identity. Ψ=½ + 8-factor + HEXAD-6 = anima g2 internal-arch carve-out.",
+    "f3": "safe — NO outcome/capability claim; PTD-standalone closed with a predicted (closed-form) negative; PTD-as-component improvement explicitly B-PTD-NOTE empirical.",
+    "b_identity_5": "safe — $0 design-tier, NO corpus generated, NO model forward, NO helper-token surface.",
+    "central_battery": "UNCHANGED (sidecar only, task mandate)"
+  },
+  "goal_distance": "§15 milestone unchanged — irreducible bottleneck = §1.1 data-regime threshold. §29 design-closes PTD-standalone (does not address that bottleneck) and identifies 2 GOAL-legitimate component combinations for future cycles. Frontier-narrowing work, NOT GOAL progress. north-star (GOAL.md) unchanged."
+}

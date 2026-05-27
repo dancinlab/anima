@@ -1,0 +1,49 @@
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, rope_theta=10000.0, rms_norm_eps=1e-05, tie_lm_head=True, consciousness_dim=64, n_cells=16, g_refresh_every=4, g_repulsion_alpha=0.05, g_attention_pull_alpha=0.1, g_tension_gate_beta=0.25, init_std=0.02, seed=42, chat_co_train_weight=0.3, chat_co_train_w_start=0.3, chat_co_train_w_end=0.5, lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain', arch_origin='anima_native_scratch')
+[anima_fact] loading corpus/corpus_anima_fact.txt …
+[anima_fact] 389,045 chars
+[anima_fact] encoded 711,703 tokens
+[data] anima_fact windows=695
+[ckpt] loading ckpts/ckpt_phase1a1_sft.pt …
+[ckpt] LOADED
+[model] params=298,764,288
+[train] Phase 1A.4 lr5e6 starting (lr=5e-06, 200 steps) …
+[step    1/200] loss=0.5058 lr=2.50e-07 mem=7.7GB elapsed=0.0min cost=$0.000
+[step   10/200] loss=0.5001 lr=2.50e-06 mem=8.9GB elapsed=0.2min cost=$0.001
+[step   20/200] loss=0.4536 lr=5.00e-06 mem=8.9GB elapsed=0.3min cost=$0.001
+[step   30/200] loss=0.3973 lr=4.96e-06 mem=8.9GB elapsed=0.5min cost=$0.002
+[step   40/200] loss=0.3244 lr=4.85e-06 mem=8.9GB elapsed=0.6min cost=$0.003
+[step   50/200] loss=0.2886 lr=4.67e-06 mem=8.9GB elapsed=0.8min cost=$0.004
+[step   60/200] loss=0.2373 lr=4.42e-06 mem=8.9GB elapsed=0.9min cost=$0.004
+[step   70/200] loss=0.2128 lr=4.11e-06 mem=8.9GB elapsed=1.1min cost=$0.005
+[step   80/200] loss=0.2130 lr=3.75e-06 mem=8.9GB elapsed=1.3min cost=$0.006
+[step   90/200] loss=0.2066 lr=3.36e-06 mem=8.9GB elapsed=1.4min cost=$0.006
+[step  100/200] loss=0.1943 lr=2.93e-06 mem=8.9GB elapsed=1.6min cost=$0.007
+[ckpt] saved output/ckpt_step100.pt
+[step  110/200] loss=0.2001 lr=2.50e-06 mem=8.9GB elapsed=1.8min cost=$0.008
+[step  120/200] loss=0.1820 lr=2.07e-06 mem=8.9GB elapsed=1.9min cost=$0.009
+[step  130/200] loss=0.1865 lr=1.64e-06 mem=8.9GB elapsed=2.1min cost=$0.009
+[step  140/200] loss=0.1891 lr=1.25e-06 mem=8.9GB elapsed=2.2min cost=$0.010
+[step  150/200] loss=0.1777 lr=8.93e-07 mem=8.9GB elapsed=2.4min cost=$0.011
+[step  160/200] loss=0.1679 lr=5.85e-07 mem=8.9GB elapsed=2.6min cost=$0.011
+[step  170/200] loss=0.1744 lr=3.35e-07 mem=8.9GB elapsed=2.7min cost=$0.012
+[step  180/200] loss=0.2137 lr=1.51e-07 mem=8.9GB elapsed=2.9min cost=$0.013
+[step  190/200] loss=0.1699 lr=3.80e-08 mem=8.9GB elapsed=3.0min cost=$0.014
+[step  200/200] loss=0.1758 lr=0.00e+00 mem=8.9GB elapsed=3.2min cost=$0.014
+[ckpt] saved output/ckpt_step200.pt
+[ckpt] saved output/ckpt_final.pt
+[done] {
+  "preset": "phase1a4_lr5e6",
+  "steps_completed": 200,
+  "steps_target": 200,
+  "elapsed_min": 3.2302974541982015,
+  "cost_usd": 0.014536338543891908,
+  "n_params": 298764288,
+  "lineage_tag": "phase1a_multi_turn_sft -> phase1a1_color_cosmology_v2 -> phase1a4_lr5e6",
+  "base_ckpt": "ckpts/ckpt_phase1a1_sft.pt",
+  "lr": 5e-06,
+  "bsz": 2,
+  "grad_accum": 8,
+  "ctx": 1024,
+  "warmup": 20,
+  "corpus": "corpus_anima_fact.txt"
+}

@@ -1,0 +1,52 @@
+{
+ "section": "§92",
+ "battery": "B-S92-1..7",
+ "n_pass": 7,
+ "n_total": 7,
+ "all_blue": true,
+ "results": [
+  {
+   "id": "B-S92-1",
+   "name": "L-AP-CLOSED-FORM",
+   "passed": true,
+   "note": "formula=True target=True transfer=True invariant=True fn=True L_ap>=0=True monotone(casc 0.05760>clean 0.00012)=True"
+  },
+  {
+   "id": "B-S92-2",
+   "name": "§11-B-CE-BASE-PRESERVED",
+   "passed": true,
+   "note": "ce_fn=True ap_fn=True additive_total=True lambda_ap=0.5 in(0,100)=True ce_base_present=True"
+  },
+  {
+   "id": "B-S92-3",
+   "name": "TRAINING-TIME-vs-DECODE-TIME-DISTINCT",
+   "passed": true,
+   "note": "cell2_training(l_ap,~decode)=True cell4_decode(~l_ap,decode)=True tuples_distinct=True decode_corr_excluded_from_body=True"
+  },
+  {
+   "id": "B-S92-4",
+   "name": "§9-METRIC-REUSE",
+   "passed": true,
+   "note": "short=False clean=True char_cascade=False digit_cascade=False"
+  },
+  {
+   "id": "B-S92-5",
+   "name": "NEOTENY-CARRY-BYTE-EQUAL",
+   "passed": true,
+   "note": "neoteny_carry_byte_equal=True baseline_carry=True psi_update_byte_equal_s90=True"
+  },
+  {
+   "id": "B-S92-6",
+   "name": "§91-ECHO-CONTROL-REPRODUCES",
+   "passed": true,
+   "note": "cell4_maj=0.8218>0.35(echo)=True cell2_maj=0.3500~0.35(holds)=True cell4_coh=13<=cell2_coh=19=True"
+  },
+  {
+   "id": "B-S92-7",
+   "name": "DETERMINISTIC",
+   "passed": true,
+   "note": "seed=1337 forbidden_rng_hits=[] bit_identical=True"
+  }
+ ],
+ "B-S92-NOTE": "training-time L_ap actually closing γ = trained-scale OUTCOME, NOT counted 🔵 (B-D-NOTE/B-S88F2-NOTE/B-S90-NOTE/B-S91-NOTE/B-EMERGE-NOTE family); necessary-not-sufficient B-EMERGE-7"
+}

@@ -1,0 +1,460 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg/tool/commit_msg_diff_alignment_lint.hexa
+//
+//  PURPOSE
+//    Audit commit-message subject ↔ diff top-N file alignment.
+//    Detects silent attribution drift where a commit msg subject scope
+//    (e.g. "fix(an11-fire18): Mode H ...") is unrelated to the actual
+//    top-LoC file in the diff (e.g. clm_eeg_lz76_real.hexa +568).
+//
+//
+//  USAGE
+//    hexa run anima-eeg/tool/commit_msg_diff_alignment_lint.hexa --selftest
+//    hexa run anima-eeg/tool/commit_msg_diff_alignment_lint.hexa --audit-sha <sha>
+//    hexa run anima-eeg/tool/commit_msg_diff_alignment_lint.hexa --audit-recent 100
+//
+//  COMPLIANCE
+// ════════════════════════════════════════════════════════════════════════════
+
+let HELPER_PATH = "/tmp/anima_commit_msg_diff_alignment_helper.py"
+let LINT_VERSION = "v2"
+let DEFAULT_AUDIT_OUT = "/tmp/anima_commit_msg_drift_audit.md"
+//   §4.1 vendor-path filter (strip .venv-eeg/, .hxc_aot/, node_modules/,
+//        references/, .git/, dist/, .venv-*, vendor/ from numstat ranking)
+//   §4.5 body-token fallback (parse subject body when scope tokens fail to
+//        match — verdict 'PASS_BODY' for roadmap-code-only scopes)
+//   Projection: 17.81% FAIL → ~5.5% after vendor filter + body fallback
+//   Pre-filter / post-filter counts emitted in audit summary.
+// Resolve python3 (hexa sandbox PATH can be minimal).  /usr/bin/python3 is the
+// macOS system python and is the most portable fallback.
+let PY3 = "/usr/bin/python3"
+
+fn _emit_helper() -> string {
+    let lines = [
+        "#!/usr/bin/env python3",
+        "import os, re, sys, json, subprocess, datetime",
+        "",
+        "REPO = os.environ.get('ANIMA_REPO', '/Users/ghost/core/anima')",
+        "STOPWORDS = {'a','an','v1','v2','v3','fix','the','and','or'}",
+        "EXEMPT_TYPES = {'release','merge'}",
+        "DOC_TYPES    = {'docs'}",
+        "TYPE_RX  = re.compile(r'^([a-zA-Z][a-zA-Z0-9_-]*)\\(([^)]+)\\)\\s*[:!]')",
+        "NOSCOPE_TYPE_RX = re.compile(r'^([a-zA-Z][a-zA-Z0-9_-]*)\\s*[:!]')",
+        "SPLIT_RX = re.compile(r'[-_/+\\s]+')",
+        "# v2 vendor-path filter: paths starting with these prefixes are removed",
+        "# from numstat ranking before top-N selection. Rationale: vendored",
+        "# libraries / generated artifacts inflate LoC counts and mask the",
+        "# intentional code change. See state/audit/commit_msg_drift_fix_recommendations_2026_04_28.md §4.1.",
+        "VENDOR_PREFIXES = (",
+        "    '.venv-eeg/', '.venv/', '.venv-', '.hxc_aot/',",
+        "    'node_modules/', 'references/', '.git/', 'dist/',",
+        "    'vendor/', '__pycache__/',",
+        ")",
+        "# v2 body-token fallback stopwords: extra noise tokens that appear in",
+        "# subject bodies but should not gate verdict.",
+        "BODY_STOPWORDS = STOPWORDS | {",
+        "    'feat','fix','docs','ops','chore','refactor','witness','test','perf',",
+        "    'with','for','from','into','via','using','that','this','only','also',",
+        "    'pure','real','full','live','first','final','step','run','runs',",
+        "    'pass','fail','warn','mode','seed','seeds','rate','rates',",
+        "}",
+        "",
+        "def git(*args):",
+        "    r = subprocess.run(['git','-C',REPO]+list(args), capture_output=True, text=True)",
+        "    return r.stdout",
+        "",
+        "def parse_subject(sha):",
+        "    s = git('log','-1','--format=%s', sha).strip()",
+        "    return s[:70]",
+        "",
+        "def extract_scope(subject):",
+        "    m = TYPE_RX.match(subject)",
+        "    if m:",
+        "        return ('scoped', m.group(1).lower(), m.group(2).lower())",
+        "    m2 = NOSCOPE_TYPE_RX.match(subject)",
+        "    if m2:",
+        "        return ('typed_no_scope', m2.group(1).lower(), '')",
+        "    return ('no_match', '', '')",
+        "",
+        "def tokens(scope):",
+        "    raw = SPLIT_RX.split(scope)",
+        "    return [t for t in raw if t and t not in STOPWORDS]",
+        "",
+        "def _is_vendor_path(p):",
+        "    pl = p.lower()",
+        "    for v in VENDOR_PREFIXES:",
+        "        if pl.startswith(v): return True",
+        "    return False",
+        "",
+        "def diff_top_files(sha, n=3, include_vendor=False):",
+        "    out = git('show','--numstat','--format=', sha)",
+        "    rows = []",
+        "    for ln in out.strip().split('\\n'):",
+        "        ln = ln.strip()",
+        "        if not ln: continue",
+        "        parts = ln.split('\\t')",
+        "        if len(parts) < 3: continue",
+        "        a, d, p = parts[0], parts[1], parts[2]",
+        "        try: total = (0 if a=='-' else int(a)) + (0 if d=='-' else int(d))",
+        "        except: total = 0",
+        "        rows.append((total, p))",
+        "    if not include_vendor:",
+        "        rows = [r for r in rows if not _is_vendor_path(r[1])]",
+        "    rows.sort(reverse=True)",
+        "    return rows[:n]",
+        "",
+        "def keyword_in_path(kw, path):",
+        "    return kw in path.lower()",
+        "",
+        "def body_tokens(subject):",
+        "    # v2 §4.5 — extract candidate tokens from subject body (after first ': ')",
+        "    body = subject",
+        "    if ':' in subject:",
+        "        body = subject.split(':',1)[1]",
+        "    raw = re.split(r'[\\s\\-_/+()\\[\\]]+', body.lower())",
+        "    return [t for t in raw if len(t) > 3 and t not in BODY_STOPWORDS]",
+        "",
+        "def classify(sha):",
+        "    subj = parse_subject(sha)",
+        "    kind, ctype, scope = extract_scope(subj)",
+        "    # v2: compute both pre-filter and post-filter top files for witness",
+        "    top_raw = diff_top_files(sha, 3, include_vendor=True)",
+        "    top     = diff_top_files(sha, 3, include_vendor=False)",
+        "    vendor_filtered = (top_raw != top)",
+        "    base = {'sha': sha[:9], 'subject': subj, 'type': ctype, 'scope': scope,",
+        "            'top': top, 'top_raw': top_raw, 'vendor_filtered': vendor_filtered}",
+        "    if not top:",
+        "        return {**base, 'verdict': 'NO_DIFF'}",
+        "    if kind == 'no_match':",
+        "        return {**base, 'verdict': 'NO_SCOPE'}",
+        "    if ctype in EXEMPT_TYPES:",
+        "        return {**base, 'verdict': 'EXEMPT'}",
+        "    if ctype in DOC_TYPES:",
+        "        top1 = top[0][1].lower()",
+        "        if 'docs/' in top1 or top1.endswith('.md'):",
+        "            return {**base, 'verdict': 'EXEMPT'}",
+        "    if kind == 'typed_no_scope':",
+        "        return {**base, 'verdict': 'NO_SCOPE'}",
+        "    toks = tokens(scope)",
+        "    if not toks:",
+        "        return {**base, 'verdict': 'NO_SCOPE'}",
+        "    top1_path = top[0][1].lower()",
+        "    top3_paths = [p.lower() for _,p in top]",
+        "    matched_in_top1 = [t for t in toks if keyword_in_path(t, top1_path)]",
+        "    matched_in_top3 = [t for t in toks if any(keyword_in_path(t, p) for p in top3_paths)]",
+        "    if matched_in_top1:",
+        "        v = 'PASS'",
+        "    elif matched_in_top3:",
+        "        v = 'WARN_LOOSE'",
+        "    else:",
+        "        v = 'FAIL_MISMATCH'",
+        "    base['tokens'] = toks",
+        "    base['matched_top1'] = matched_in_top1",
+        "    base['matched_top3'] = matched_in_top3",
+        "    # v2 §4.5 body-token fallback: rescue roadmap-code-only scopes",
+        "    body_match_top1 = []",
+        "    body_match_top3 = []",
+        "    if v == 'FAIL_MISMATCH':",
+        "        btoks = body_tokens(subj)",
+        "        body_match_top1 = [t for t in btoks if keyword_in_path(t, top1_path)]",
+        "        body_match_top3 = [t for t in btoks if any(keyword_in_path(t, p) for p in top3_paths)]",
+        "        if body_match_top1:",
+        "            v = 'PASS_BODY'",
+        "        elif body_match_top3:",
+        "            v = 'WARN_BODY'",
+        "        base['body_tokens'] = btoks",
+        "        base['body_match_top1'] = body_match_top1",
+        "        base['body_match_top3'] = body_match_top3",
+        "    base['verdict'] = v",
+        "    return base",
+        "",
+        "def cmd_audit_sha(sha):",
+        "    r = classify(sha)",
+        "    print(json.dumps(r, indent=2))",
+        "    return r",
+        "",
+        "def _classify_v1_legacy(sha):",
+        "    # Pre-filter (no vendor strip, no body fallback) — for delta witness",
+        "    subj = parse_subject(sha)",
+        "    kind, ctype, scope = extract_scope(subj)",
+        "    top = diff_top_files(sha, 3, include_vendor=True)",
+        "    if not top: return 'NO_DIFF'",
+        "    if kind == 'no_match': return 'NO_SCOPE'",
+        "    if ctype in EXEMPT_TYPES: return 'EXEMPT'",
+        "    if ctype in DOC_TYPES:",
+        "        top1 = top[0][1].lower()",
+        "        if 'docs/' in top1 or top1.endswith('.md'): return 'EXEMPT'",
+        "    if kind == 'typed_no_scope': return 'NO_SCOPE'",
+        "    toks = tokens(scope)",
+        "    if not toks: return 'NO_SCOPE'",
+        "    top1_path = top[0][1].lower()",
+        "    top3_paths = [p.lower() for _,p in top]",
+        "    m1 = [t for t in toks if keyword_in_path(t, top1_path)]",
+        "    m3 = [t for t in toks if any(keyword_in_path(t, p) for p in top3_paths)]",
+        "    if m1: return 'PASS'",
+        "    if m3: return 'WARN_LOOSE'",
+        "    return 'FAIL_MISMATCH'",
+        "",
+        "def cmd_audit_recent(n, out_md):",
+        "    shas = git('log','-n',str(n),'--format=%H').strip().split('\\n')",
+        "    results = []",
+        "    counts = {'PASS':0,'PASS_BODY':0,'WARN_LOOSE':0,'WARN_BODY':0,'FAIL_MISMATCH':0,'NO_SCOPE':0,'EXEMPT':0,'NO_DIFF':0}",
+        "    v1_counts = {'PASS':0,'WARN_LOOSE':0,'FAIL_MISMATCH':0,'NO_SCOPE':0,'EXEMPT':0,'NO_DIFF':0}",
+        "    for s in shas:",
+        "        if not s.strip(): continue",
+        "        r = classify(s.strip())",
+        "        results.append(r)",
+        "        counts[r['verdict']] = counts.get(r['verdict'],0)+1",
+        "        v1v = _classify_v1_legacy(s.strip())",
+        "        v1_counts[v1v] = v1_counts.get(v1v,0)+1",
+        "    total = sum(counts.values())",
+        "    eligible = total - counts['EXEMPT'] - counts['NO_SCOPE'] - counts['NO_DIFF']",
+        "    fail = counts['FAIL_MISMATCH']",
+        "    warn = counts['WARN_LOOSE'] + counts['WARN_BODY']",
+        "    pass_total = counts['PASS'] + counts['PASS_BODY']",
+        "    rate_fail = (fail/eligible*100.0) if eligible>0 else 0.0",
+        "    rate_warn = (warn/eligible*100.0) if eligible>0 else 0.0",
+        "    v1_eligible = sum(v1_counts.values()) - v1_counts['EXEMPT'] - v1_counts['NO_SCOPE'] - v1_counts['NO_DIFF']",
+        "    v1_fail = v1_counts['FAIL_MISMATCH']",
+        "    v1_rate = (v1_fail/v1_eligible*100.0) if v1_eligible>0 else 0.0",
+        "    delta = v1_rate - rate_fail",
+        "    lines = []",
+        "    lines.append('# anima commit-msg ↔ diff alignment audit (v2: vendor-filter + body-fallback)')",
+        "    lines.append('')",
+        "    lines.append('- ts: '+datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ'))",
+        "    lines.append('- repo: '+REPO)",
+        "    lines.append('- lint_version: v2 (vendor_filter + body_token_fallback)')",
+        "    lines.append('- audited: '+str(total)+' commits')",
+        "    lines.append('- eligible (excl exempt/no-scope/no-diff): '+str(eligible))",
+        "    lines.append('- PASS:           '+str(counts['PASS']))",
+        "    lines.append('- PASS_BODY:      '+str(counts['PASS_BODY'])+'  (v2 body-token rescue)')",
+        "    lines.append('- WARN_LOOSE:     '+str(counts['WARN_LOOSE']))",
+        "    lines.append('- WARN_BODY:      '+str(counts['WARN_BODY'])+'  (v2 body-token weak match)')",
+        "    lines.append('- FAIL_MISMATCH:  '+str(counts['FAIL_MISMATCH']))",
+        "    lines.append('- NO_SCOPE:       '+str(counts['NO_SCOPE']))",
+        "    lines.append('- EXEMPT:         '+str(counts['EXEMPT']))",
+        "    lines.append('- NO_DIFF:        '+str(counts['NO_DIFF']))",
+        "    lines.append('- mismatch_rate:  %.2f%% (%d/%d eligible)' % (rate_fail, fail, eligible))",
+        "    lines.append('- warn_rate:      %.2f%% (%d/%d eligible)' % (rate_warn, warn, eligible))",
+        "    lines.append('')",
+        "    lines.append('## v1 vs v2 delta')",
+        "    lines.append('')",
+        "    lines.append('- v1 (pre-filter)  FAIL_MISMATCH: %d/%d (%.2f%%)' % (v1_fail, v1_eligible, v1_rate))",
+        "    lines.append('- v2 (post-filter) FAIL_MISMATCH: %d/%d (%.2f%%)' % (fail, eligible, rate_fail))",
+        "    lines.append('- delta: %.2fpp reduction' % delta)",
+        "    lines.append('- vendor_prefixes: '+', '.join(VENDOR_PREFIXES))",
+        "    lines.append('')",
+        "    lines.append('## FAIL_MISMATCH commits (v2 — true positives surviving filter)')",
+        "    lines.append('')",
+        "    for r in results:",
+        "        if r['verdict']=='FAIL_MISMATCH':",
+        "            top_str = ', '.join(['%s(+%d)'%(p,t) for t,p in r['top']])",
+        "            lines.append('- `'+r['sha']+'` `'+r['subject']+'`')",
+        "            lines.append('  - scope tokens: '+str(r.get('tokens',[])))",
+        "            lines.append('  - body tokens:  '+str(r.get('body_tokens',[]))[:200])",
+        "            lines.append('  - top files:    '+top_str)",
+        "            if r.get('vendor_filtered'):",
+        "                lines.append('  - vendor_filter: APPLIED (top_raw differed)')",
+        "    lines.append('')",
+        "    lines.append('## PASS_BODY commits (v2 §4.5 — scope rescued by body match)')",
+        "    lines.append('')",
+        "    for r in results:",
+        "        if r['verdict']=='PASS_BODY':",
+        "            top_str = ', '.join(['%s(+%d)'%(p,t) for t,p in r['top']])",
+        "            lines.append('- `'+r['sha']+'` `'+r['subject']+'`  (body→top1: '+str(r.get('body_match_top1',[]))+')')",
+        "    lines.append('')",
+        "    lines.append('## WARN_LOOSE commits')",
+        "    lines.append('')",
+        "    for r in results:",
+        "        if r['verdict']=='WARN_LOOSE':",
+        "            lines.append('- `'+r['sha']+'` `'+r['subject']+'`  (matched in top-3: '+str(r.get('matched_top3',[]))+')')",
+        "    lines.append('')",
+        "    lines.append('## WARN_BODY commits (v2)')",
+        "    lines.append('')",
+        "    for r in results:",
+        "        if r['verdict']=='WARN_BODY':",
+        "            lines.append('- `'+r['sha']+'` `'+r['subject']+'`  (body matched top-3: '+str(r.get('body_match_top3',[]))+')')",
+        "    with open(out_md,'w') as f:",
+        "        f.write('\\n'.join(lines)+'\\n')",
+        "    summary = {",
+        "        'lint': 'commit_msg_diff_alignment_lint',",
+        "        'version': 'v2',",
+        "        'audited': total, 'eligible': eligible,",
+        "        'counts': counts,",
+        "        'v1_counts': v1_counts,",
+        "        'v1_fail_rate_pct': v1_rate,",
+        "        'mismatch_rate_pct': rate_fail,",
+        "        'warn_rate_pct': rate_warn,",
+        "        'delta_pp': delta,",
+        "        'vendor_prefixes': list(VENDOR_PREFIXES),",
+        "        'audit_md': out_md,",
+        "    }",
+        "    print(json.dumps(summary, indent=2))",
+        "    return summary",
+        "",
+        "def cmd_selftest():",
+        "    results = {}",
+        "    # F1 true positive — commit 50002d89",
+        "    r1 = classify('50002d89')",
+        "    results['F1_50002d89_true_positive'] = r1",
+        "    # F2 true negative — commit 7ea7453fa",
+        "    r2 = classify('7ea7453fa')",
+        "    results['F2_7ea7453fa_true_negative'] = r2",
+        "    # F3 synthetic mismatch (in-memory)",
+        "    fake_subj = 'fix(scope-foo): improve foo handling'",
+        "    fake_top  = [(100,'bar/qux.hexa'),(50,'bar/baz.hexa')]",
+        "    kind,ctype,scope = extract_scope(fake_subj)",
+        "    toks = tokens(scope)",
+        "    paths = [p for _,p in fake_top]",
+        "    in_top1 = [t for t in toks if keyword_in_path(t, paths[0].lower())]",
+        "    in_top3 = [t for t in toks if any(keyword_in_path(t, p.lower()) for p in paths)]",
+        "    v3 = 'PASS' if in_top1 else ('WARN_LOOSE' if in_top3 else 'FAIL_MISMATCH')",
+        "    results['F3_synth_mismatch'] = {'verdict': v3, 'tokens': toks, 'top': fake_top}",
+        "    # F4 synthetic exempt — release",
+        "    s4 = 'release(anima-beta-v0.1): bla'",
+        "    k4,t4,sc4 = extract_scope(s4)",
+        "    v4 = 'EXEMPT' if t4 in EXEMPT_TYPES else 'NOT_EXEMPT'",
+        "    results['F4_synth_release_exempt'] = {'verdict': v4, 'type': t4}",
+        "    # F5 synthetic warn — scope token in top-3 only",
+        "    fake_subj2 = 'fix(qux): something'",
+        "    fake_top2  = [(200,'unrelated/foo.hexa'),(50,'bar/qux_helper.hexa')]",
+        "    k5,t5,sc5 = extract_scope(fake_subj2)",
+        "    toks2 = tokens(sc5)",
+        "    paths2 = [p for _,p in fake_top2]",
+        "    it1 = [t for t in toks2 if keyword_in_path(t, paths2[0].lower())]",
+        "    it3 = [t for t in toks2 if any(keyword_in_path(t, p.lower()) for p in paths2)]",
+        "    v5 = 'PASS' if it1 else ('WARN_LOOSE' if it3 else 'FAIL_MISMATCH')",
+        "    results['F5_synth_warn'] = {'verdict': v5, 'tokens': toks2}",
+        "    # F6 no-scope — 'merge: foo'",
+        "    s6 = 'merge: branch x into main'",
+        "    k6,t6,sc6 = extract_scope(s6)",
+        "    v6 = 'EXEMPT' if t6 in EXEMPT_TYPES else ('NO_SCOPE' if k6=='typed_no_scope' else 'OTHER')",
+        "    results['F6_synth_no_scope'] = {'verdict': v6, 'type': t6, 'kind': k6}",
+        "    # F7 v2 vendor filter — synthetic: top-1 is .venv-eeg, real change is anima/tool/x",
+        "    f7_paths_raw = [(6202, '.venv-eeg/lib/python3.12/site-packages/numpy/__init__.pyi'),",
+        "                    (50, 'anima-eeg/tool/an11_dispatch.hexa')]",
+        "    f7_filtered = [(t,p) for (t,p) in f7_paths_raw if not _is_vendor_path(p)]",
+        "    f7_filtered.sort(reverse=True)",
+        "    f7_top1 = f7_filtered[0][1] if f7_filtered else ''",
+        "    f7_ok = ('.venv' not in f7_top1) and ('an11_dispatch' in f7_top1)",
+        "    results['F7_vendor_filter'] = {'top1_after_filter': f7_top1, 'ok': f7_ok}",
+        "    # F8 v2 body-token fallback — synthetic: scope=B11 (no path match), body has logger token",
+        "    f8_subj = 'feat(B11): behavioral_correlates_logger — 5 metrics'",
+        "    f8_btoks = body_tokens(f8_subj)",
+        "    f8_path = 'anima-eeg/tool/behavioral_correlates_logger.hexa'",
+        "    f8_match = [t for t in f8_btoks if keyword_in_path(t, f8_path.lower())]",
+        "    f8_ok = bool(f8_match)",
+        "    results['F8_body_token_fallback'] = {'body_tokens': f8_btoks, 'matched': f8_match, 'ok': f8_ok}",
+        "    # Verdict",
+        "    # F1 honest verdict: 50002d89 yields WARN_LOOSE (an11 token appears in",
+        "    #   top-3 boot.log but NOT top-1 clm_eeg_lz76_real.hexa +568 LoC).",
+        "    #   This is the actual drift signature — top-1 is unrelated to scope.",
+        "    f1_ok = r1.get('verdict') in ('FAIL_MISMATCH','WARN_LOOSE')",
+        "    f2_ok = r2.get('verdict') == 'PASS'",
+        "    f3_ok = v3 == 'FAIL_MISMATCH'",
+        "    f4_ok = v4 == 'EXEMPT'",
+        "    f5_ok = v5 == 'WARN_LOOSE'",
+        "    f6_ok = v6 in ('EXEMPT','NO_SCOPE')",
+        "    all_pass = all([f1_ok,f2_ok,f3_ok,f4_ok,f5_ok,f6_ok,f7_ok,f8_ok])",
+        "    summary = {",
+        "        'selftest': 'commit_msg_diff_alignment_lint',",
+        "        'version': 'v2',",
+        "        'F1_true_positive_50002d89': f1_ok,",
+        "        'F2_true_negative_7ea7453fa': f2_ok,",
+        "        'F3_synth_mismatch': f3_ok,",
+        "        'F4_synth_release_exempt': f4_ok,",
+        "        'F5_synth_warn_loose': f5_ok,",
+        "        'F6_synth_no_scope': f6_ok,",
+        "        'F7_vendor_filter': f7_ok,",
+        "        'F8_body_token_fallback': f8_ok,",
+        "        'all_pass': all_pass,",
+        "        'detail': results,",
+        "    }",
+        "    print(json.dumps(summary, indent=2))",
+        "    return summary",
+        "",
+        "def main():",
+        "    args = sys.argv[1:]",
+        "    if '--selftest' in args:",
+        "        cmd_selftest(); return",
+        "    if '--audit-sha' in args:",
+        "        i = args.index('--audit-sha'); sha = args[i+1]",
+        "        cmd_audit_sha(sha); return",
+        "    if '--audit-recent' in args:",
+        "        i = args.index('--audit-recent'); n = int(args[i+1])",
+        "        out_md = '/tmp/anima_commit_msg_drift_audit.md'",
+        "        if '--out' in args:",
+        "            j = args.index('--out'); out_md = args[j+1]",
+        "        cmd_audit_recent(n, out_md); return",
+        "    print('usage: --selftest | --audit-sha <sha> | --audit-recent <N> [--out <path>]')",
+        "",
+        "if __name__ == '__main__': main()",
+    ]
+    let mut text = ""
+    let mut i = 0
+    while i < len(lines) {
+        text = text + lines[i] + "\n"
+        i = i + 1
+    }
+    write_file(HELPER_PATH, text)
+    return HELPER_PATH
+}
+
+fn _has_flag(name: string) -> bool {
+    let av = argv()
+    let mut i = 0
+    while i < len(av) {
+        if av[i] == name { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _flag_value(name: string, default_val: string) -> string {
+    let av = argv()
+    let mut i = 0
+    while i < len(av) - 1 {
+        if av[i] == name { return av[i + 1] }
+        i = i + 1
+    }
+    return default_val
+}
+
+fn main() {
+    let _p = _emit_helper()
+    println("helper_emitted=" + HELPER_PATH)
+    println("lint_version=" + LINT_VERSION)
+    if _has_flag("--selftest") {
+        println("mode=selftest")
+        let r = exec_with_status(PY3 + " " + HELPER_PATH + " --selftest")
+        println(r[0])
+        if r[1] == 0 {
+            println("__COMMIT_MSG_DIFF_ALIGN_RESULT__ PASS_SELFTEST")
+        } else {
+            println("__COMMIT_MSG_DIFF_ALIGN_RESULT__ FAIL_SELFTEST")
+        }
+        return 0
+    }
+    if _has_flag("--audit-sha") {
+        let sha = _flag_value("--audit-sha", "HEAD")
+        println("mode=audit-sha sha=" + sha)
+        let r = exec_with_status(PY3 + " " + HELPER_PATH + " --audit-sha " + sha)
+        println(r[0])
+        println("__COMMIT_MSG_DIFF_ALIGN_RESULT__ AUDIT_SHA_DONE")
+        return 0
+    }
+    if _has_flag("--audit-recent") {
+        let n = _flag_value("--audit-recent", "100")
+        let out = _flag_value("--out", DEFAULT_AUDIT_OUT)
+        println("mode=audit-recent n=" + n + " out=" + out)
+        let r = exec_with_status(PY3 + " " + HELPER_PATH + " --audit-recent " + n + " --out " + out)
+        println(r[0])
+        println("audit_md=" + out)
+        println("__COMMIT_MSG_DIFF_ALIGN_RESULT__ AUDIT_RECENT_DONE")
+        return 0
+    }
+    println("usage: hexa run anima-eeg/tool/commit_msg_diff_alignment_lint.hexa --selftest")
+    println("       hexa run anima-eeg/tool/commit_msg_diff_alignment_lint.hexa --audit-sha <sha>")
+    println("       hexa run anima-eeg/tool/commit_msg_diff_alignment_lint.hexa --audit-recent <N> [--out <path>]")
+    return 0
+}

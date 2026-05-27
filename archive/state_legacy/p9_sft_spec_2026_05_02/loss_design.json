@@ -1,0 +1,37 @@
+{
+  "schema": "anima/state/p9_sft_spec/loss_design/1",
+  "formula": "L = alpha*CE(text_pred, text_target) + beta*MSE(tension_pred, tension_target) + gamma*MSE(bold_pred, bold_target) + delta*max(0, phi_star_threshold - phi_star(model))",
+  "components": {
+    "L_chat": {
+      "term": "alpha * CE(text_pred, text_target)",
+      "description": "next-token cross-entropy over assistant response tokens",
+      "reduction": "mean over non-pad target tokens"
+    },
+    "L_tension": {
+      "term": "beta * MSE(tension_pred, tension_target)",
+      "description": "per-step tension consistency vs target trajectory",
+      "shape": "[B, T]"
+    },
+    "L_bold": {
+      "term": "gamma * MSE(bold_pred, bold_target)",
+      "description": "TRIBE-projected BOLD consistency on 10242 fsaverage5 vertices",
+      "projector": "P_S projector spec (alm_clm_bridge_p_s_projector_spec_20260425.md)",
+      "shape": "[B, T, 10242]"
+    },
+    "L_phi": {
+      "term": "delta * max(0, phi_star_threshold - phi_star(model))",
+      "description": "hard-floor regularizer; zero when phi_star >= threshold",
+      "phi_star_threshold": 5.0,
+      "phi_star_baseline": 41.86,
+      "safety_margin": "8x",
+      "compute_cost": "phi_star verifier ~30s per microbatch -> evaluate every 100 steps, EMA-smoothed"
+    }
+  },
+  "balance_strategy": "Pareto frontier sweep via Latin Hypercube on (alpha, beta, gamma, delta); sample 9 of 81 combos",
+  "honest_c3_loss": [
+    "4-loss balance Pareto unverified — sweep is heuristic",
+    "phi_star regularizer is post-hoc proxy not differentiable directly; gradient via straight-through estimator on EMA",
+    "BOLD MSE assumes TRIBE v2 forward is faithful (simulated)",
+    "tension consistency only meaningful if base CLM trajectories are stationary on similar prompts (test)"
+  ]
+}

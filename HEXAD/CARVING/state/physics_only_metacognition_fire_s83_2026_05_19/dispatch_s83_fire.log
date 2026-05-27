@@ -1,0 +1,62 @@
+[§83-FIRE] orphan pre-flight check
+[§83-FIRE] pre-flight runpod.get_pods()=1
+[§83-FIRE] pod_create try gpu='NVIDIA H100 NVL'
+[§83-FIRE] pod_id=cngn6nah58dc6p gpu=NVIDIA H100 NVL
+[§83-FIRE] pod-runtime poll (podHostId NOT NULL + ssh port mapped, max 600s)
+[§83-FIRE] pod runtime ready: 38.143.35.131:16585 (poll 2)
+[§83-FIRE] waiting for SSH up (38.143.35.131:16585, 60-try × 10s)
+[§83-FIRE] SSH up (try 1)
+[§83-FIRE] uploading §83-FIRE sources
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+[§83-FIRE] pip deps + corpus gen (seed 1337, --n 90000 → §73-FIRE byte-equal target)
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+[§83-FIRE] corpus poll 1/40 CD
+[§83-FIRE] corpus sha256=ca1018090b28a4b993ea00ee97a08941a6ab3078a5ee66a3d8f2a18a05b24585
+[§83-FIRE] === train + 7-cell × 20-step grid on real forward (detached) ===
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+[§83-FIRE] poll 1/150 D
+[§83-FIRE] verifying B-S83-FIRE-1..8 pod-side
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+{
+  "B-S83-FIRE-1_NO-LEARNED-PARAMETER-IN-RULES-AT-TRAINED": {
+    "passed": true
+  },
+  "B-S83-FIRE-2_DISTILLATION-BASELINE-PRESERVED-AT-TRAINED": {
+    "passed": true
+  },
+  "B-S83-FIRE-3_RULE-PARTITION-EXHAUSTIVE": {
+    "passed": true
+  },
+  "B-S83-FIRE-4_S9-METRIC-REUSE": {
+    "passed": true
+  },
+  "B-S83-FIRE-5_SUBSTRATE-PLASTICITY-METRIC-CLOSED": {
+    "passed": true
+  },
+  "B-S83-FIRE-6_S24-BASELINE-PRESERVED": {
+    "passed": true
+  },
+  "B-S83-FIRE-7_DETERMINISTIC": {
+    "passed": true
+  },
+  "B-S83-FIRE-8_S83-STUB-CONNECTION": {
+    "passed": true
+  }
+}
+
+PASS 8/8  all_blue=True  sympy=True
+[§83-FIRE] complete — pulling result.json + run.log + ckpt (5-retry)
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+[§83-FIRE] pulled result.json (try 1)
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+[§83-FIRE] pulled run.log (try 1)
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+[§83-FIRE] pulled ckpt (try 1)
+Warning: Permanently added '[38.143.35.131]:16585' (ED25519) to the list of known hosts.
+[§83-FIRE] pulled corpus
+[§83-FIRE] local ckpt sha256=e629a65a3e3bf7b56f8bba28398c53b43becf16479b0eaffea67fc2541fd7bcc
+[§83-FIRE] terminating pod cngn6nah58dc6p
+[§83-FIRE] post-teardown get_pods()/our_pod_present=1 False
+[§83-FIRE] DONE pod_id=cngn6nah58dc6p corpus_sha=ca1018090b28a4b993ea00ee97a08941a6ab3078a5ee66a3d8f2a18a05b24585

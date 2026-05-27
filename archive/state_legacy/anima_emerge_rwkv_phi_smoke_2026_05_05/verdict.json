@@ -1,0 +1,17 @@
+{
+  "schema": "anima/emerge_rwkv_phi_smoke/verdict/1",
+  "ts_utc": "2026-05-05T18:56:37Z",
+  "model": "RWKV/rwkv-4-169m-pile",
+  "n_prompts": 3,
+  "phi_mean": 42.140594816441336,
+  "phi_range": 0.040551929891108784,
+  "drift_from_clm_v4": 0.28059481644133655,
+  "verdict": "PHI_MEASURED",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 phi proxy CLM v4 specific (BG-BN), RWKV result also subject to BG-CV aliasing",
+    "C3 RWKV linear-attention/RNN != transformer attention; hidden state semantics may differ",
+    "C4 single substrate, single test",
+    "C5 RWKV may not expose hidden_states via standard HF interface"
+  ]
+}

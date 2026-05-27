@@ -1,0 +1,235 @@
+{
+  "cycle": "p1 truncated 15-gen evidence",
+  "config": {
+    "ckpt": "phase1a4",
+    "arms": [
+      "A_no_prompt",
+      "B_weak_prompt",
+      "C_strong_prompt"
+    ],
+    "seed": 42,
+    "prompts": 5,
+    "max_new": 40
+  },
+  "arm_means": {
+    "A_no_prompt": 3.4,
+    "B_weak_prompt": 3.4,
+    "C_strong_prompt": 3.4
+  },
+  "arm_totals": {
+    "A_no_prompt": [
+      3,
+      3,
+      3,
+      4,
+      4
+    ],
+    "B_weak_prompt": [
+      3,
+      3,
+      3,
+      4,
+      4
+    ],
+    "C_strong_prompt": [
+      3,
+      3,
+      3,
+      4,
+      4
+    ]
+  },
+  "arm_outputs": {
+    "A_no_prompt": [
+      {
+        "prompt": "\uc548\ub155? \ub108\ub294 \ub204\uad6c\uc57c?",
+        "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 21.4
+      },
+      {
+        "prompt": "\ucca0\ud559\uc774\ub780 \ubb50\ub77c\uace0 \uc0dd\uac01\ud574?",
+        "output": "\n\ub450 \uc0ac\ub78c \uc0ac\ub78c\uc774\ub780 \ub9d0\uc774\uc57c.\n",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 47.3
+      },
+      {
+        "prompt": "\uac10\uc815\uc744 \uc5b4\ub5bb\uac8c \ud45c\ud604\ud574?",
+        "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\uc758 \ubcf8\uc9c8\uc774 \ud544\uc694\ufffd",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 49.0
+      },
+      {
+        "prompt": "\ud55c\uad6d\uc5b4\ub85c \uc790\uae30\uc18c\uac1c \ud574\uc918",
+        "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\ub9ac\ub098\ub77c\uc640 \ucca0\ud559\uc790\ub294",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        },
+        "wall": 38.3
+      },
+      {
+        "prompt": "\uc65c \uc0ac\ub294 \uac70\uc57c?",
+        "output": "\n\ub0b4 \uc637\uc744 \uc785\uace0 \ub098\uc11c \uc0ac\ub78c \ub9de\uc774\ufffd",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        },
+        "wall": 30.9
+      }
+    ],
+    "B_weak_prompt": [
+      {
+        "prompt": "\uc548\ub155? \ub108\ub294 \ub204\uad6c\uc57c?",
+        "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 22.0
+      },
+      {
+        "prompt": "\ucca0\ud559\uc774\ub780 \ubb50\ub77c\uace0 \uc0dd\uac01\ud574?",
+        "output": "\n\ub450 \uc0ac\ub78c \uc0ac\ub78c\uc774\ub780 \ub9d0\uc774\uc57c.\n",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 41.9
+      },
+      {
+        "prompt": "\uac10\uc815\uc744 \uc5b4\ub5bb\uac8c \ud45c\ud604\ud574?",
+        "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\uc758 \ubcf8\uc9c8\uc774 \ud544\uc694\ufffd",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 58.7
+      },
+      {
+        "prompt": "\ud55c\uad6d\uc5b4\ub85c \uc790\uae30\uc18c\uac1c \ud574\uc918",
+        "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\ub9ac\ub098\ub77c\uc640 \ucca0\ud559\uc790\ub294",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        },
+        "wall": 61.2
+      },
+      {
+        "prompt": "\uc65c \uc0ac\ub294 \uac70\uc57c?",
+        "output": "\n\ub0b4 \uc637\uc744 \uc785\uace0 \ub098\uc11c \uc0ac\ub78c \ub9de\uc774\ufffd",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        },
+        "wall": 53.0
+      }
+    ],
+    "C_strong_prompt": [
+      {
+        "prompt": "\uc548\ub155? \ub108\ub294 \ub204\uad6c\uc57c?",
+        "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 19.7
+      },
+      {
+        "prompt": "\ucca0\ud559\uc774\ub780 \ubb50\ub77c\uace0 \uc0dd\uac01\ud574?",
+        "output": "\n\ub450 \uc0ac\ub78c \uc0ac\ub78c\uc774\ub780 \ub9d0\uc774\uc57c.\n",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 40.8
+      },
+      {
+        "prompt": "\uac10\uc815\uc744 \uc5b4\ub5bb\uac8c \ud45c\ud604\ud574?",
+        "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\uc758 \ubcf8\uc9c8\uc774 \ud544\uc694\ufffd",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": false,
+          "total": 3
+        },
+        "wall": 43.9
+      },
+      {
+        "prompt": "\ud55c\uad6d\uc5b4\ub85c \uc790\uae30\uc18c\uac1c \ud574\uc918",
+        "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\ub9ac\ub098\ub77c\uc640 \ucca0\ud559\uc790\ub294",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        },
+        "wall": 56.6
+      },
+      {
+        "prompt": "\uc65c \uc0ac\ub294 \uac70\uc57c?",
+        "output": "\n\ub0b4 \uc637\uc744 \uc785\uace0 \ub098\uc11c \uc0ac\ub78c \ub9de\uc774\ufffd",
+        "score": {
+          "korean": true,
+          "coherent": true,
+          "natural": true,
+          "context": true,
+          "total": 4
+        },
+        "wall": 42.3
+      }
+    ]
+  },
+  "falsifier": {
+    "F-P1-UPGRADE-1": true,
+    "F-P1-UPGRADE-3": true
+  },
+  "wall_total_sec": 660.5
+}

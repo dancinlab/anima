@@ -1,0 +1,133 @@
+{
+  "schema": "anima/p9_path_a_r16/verdict/1",
+  "status": "training_in_progress_healthy",
+  "pod_id": "pvkyhb0lb87ydu",
+  "pod_name": "anima-p9-pathA-r16-h100-sxm-secure",
+  "gpu": "1x NVIDIA H100 80GB HBM3",
+  "cost_per_hr_usd": 2.99,
+  "hard_cap_usd": 30,
+  "watchdog_kill_usd": 27,
+  "watchdog_kill_hr": 9.03,
+  "config": {
+    "base_model": "meta-llama/Llama-3.2-3B-Instruct",
+    "lora_r": 16,
+    "lora_alpha": 16,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "lr": 0.0001,
+    "per_device_batch": 4,
+    "grad_accum": 8,
+    "max_steps": 10000,
+    "save_steps": 2000,
+    "seq_len": 2048,
+    "warmup_steps": 200,
+    "bf16": true,
+    "gradient_checkpointing": true
+  },
+  "corpus": {
+    "path_local": "state/p9_p0_measure_2026_05_03/sft_data_full_50k_augmented.jsonl",
+    "path_pod": "/workspace/sft_data_llama_template.jsonl",
+    "n_records": 50000,
+    "template": "llama-3.2 chat (system+user+assistant)"
+  },
+  "hf_push_target": "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1",
+  "output_dir_pod": "/workspace/p9_path_a_r16_savepoints",
+  "output_dir_local_artifacts": "state/p9_path_a_r16_2026_05_03/artifacts",
+  "trainable_params": 24313856,
+  "trainable_pct": 0.7511,
+  "train_pid_pod": 629,
+  "launched_ts_utc": "2026-05-04T01:56:50Z",
+  "ssh": {
+    "host": "103.207.149.143",
+    "port": 15961,
+    "key": "/Users/ghost/.runpod/ssh/RunPod-Key-Go"
+  },
+  "watchdog_pid_host": 91788,
+  "watchdog_log": "/Users/ghost/core/anima/state/p9_path_a_r16_2026_05_03/host_terminator.log",
+  "predecessor": {
+    "subagent_id": "ad04404c",
+    "failure_mode": "quota_or_pre-existing_pod_conflict_inference",
+    "this_run_distinct_pod": true
+  },
+  "initial_loss_series": [
+    {
+      "step": 10,
+      "loss": 3.068,
+      "lr": 4.5e-06,
+      "token_acc": 0.5019,
+      "epoch": 0.0064
+    },
+    {
+      "step": 20,
+      "loss": 3.372,
+      "lr": 9.5e-06,
+      "token_acc": 0.4709,
+      "epoch": 0.0128
+    },
+    {
+      "step": 30,
+      "loss": 3.191,
+      "lr": 1.45e-05,
+      "token_acc": 0.4848,
+      "epoch": 0.0192
+    },
+    {
+      "step": 40,
+      "loss": 3.072,
+      "lr": 1.95e-05,
+      "token_acc": 0.4924,
+      "epoch": 0.0256
+    },
+    {
+      "step": 50,
+      "loss": 2.796,
+      "lr": 2.45e-05,
+      "token_acc": 0.5241,
+      "epoch": 0.032
+    },
+    {
+      "step": 60,
+      "loss": 2.523,
+      "lr": 2.95e-05,
+      "token_acc": 0.5531,
+      "epoch": 0.0384
+    },
+    {
+      "step": 70,
+      "loss": 2.409,
+      "lr": 3.45e-05,
+      "token_acc": 0.5692,
+      "epoch": 0.0448
+    }
+  ],
+  "initial_loss_step10": 3.068,
+  "eta": {
+    "observed_step": 80,
+    "observed_elapsed_s": 204,
+    "avg_step_seconds": 2.55,
+    "eta_total_hr": 7.95,
+    "eta_total_seconds": 28620,
+    "projected_spend_usd": 23.77,
+    "within_watchdog_kill_27usd": true,
+    "within_hard_cap_30usd": true
+  },
+  "watchdog": {
+    "pid": 47336,
+    "rate_per_hr_usd": 2.99,
+    "kill_threshold_usd": 27,
+    "kill_threshold_hr": 9.03,
+    "hard_cap_usd": 30,
+    "first_probe": "spend=$0.00 STEP=71/10000 ALIVE=1",
+    "log": "state/p9_path_a_r16_2026_05_03/host_terminator.log",
+    "status": "armed_and_polling_10min"
+  },
+  "captured_at_utc": "2026-05-04T02:02:46Z"
+}

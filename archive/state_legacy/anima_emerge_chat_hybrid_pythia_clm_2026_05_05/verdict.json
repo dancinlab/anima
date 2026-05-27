@@ -1,0 +1,34 @@
+{
+  "schema": "anima/emerge_chat_hybrid_pythia_clm/verdict/1",
+  "ts_utc": "2026-05-05T17:42:40Z",
+  "n_prompts": 3,
+  "n_pythia_coherent": 3,
+  "summary": {
+    "안녕": {
+      "pythia_emit_preview": "디\n뭔이살였이들이 �",
+      "pythia_coherent": true,
+      "clm_phi_drift": 0.11087676636874733,
+      "clm_l2_variance": 108.5716323852539
+    },
+    "Hello world. How are you?": {
+      "pythia_emit_preview": "\n<dubai9> oI was talking to a guy from another country, where I",
+      "pythia_coherent": true,
+      "clm_phi_drift": 0.017584148600697347,
+      "clm_l2_variance": 133.20526123046875
+    },
+    "consciousness emerges from": {
+      "pythia_emit_preview": " the inside of the body and the hands of this human being. The mind can be a hum",
+      "pythia_coherent": true,
+      "clm_phi_drift": -0.04354082877189569,
+      "clm_l2_variance": 133.78248596191406
+    }
+  },
+  "verdict": "PASS_HYBRID_DIALOGUE_VIABLE",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 Pythia 70m chat-cap weak (small English-only); larger model (1B+) shows fragmentary too",
+    "C3 CLM phi proxy CLM-specific (BG-BN finding), not universal substrate signal",
+    "C4 hybrid is anima-internal heuristic — Pythia emit is not substrate dialogue medium",
+    "C5 single-prompt smoke; broader corpus may shift"
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "hypothesis": "H_229",
+  "domain": "LIFE",
+  "title": "imagination-loop emit-free internal rehearsal (CLAUDE.md a_chat_sleep_imagination substrate instance)",
+  "date": "2026-05-24",
+  "host": "mac-local",
+  "deterministic": true,
+  "seed": 42,
+  "llm": "none",
+  "d_model": 8,
+  "init_cells": 8,
+  "n_steps": 20,
+  "regimes": {
+    "A_imagination": { "wiring": "emit-free self-ref (x_{t+1}=x_out)", "splits": 0, "split_rate": 0.0, "phi_mean": 1.79786, "phi_var": 0.0510442, "phi_final": 1.35765, "r2": 0.714415, "final_cells": 8, "phi_traj": [1.86705, 1.92347, 1.96625, 1.95043, 1.99203, 1.9985, 2.05434, 2.03675, 2.05111, 1.99068, 1.94037, 1.84119, 1.76698, 1.59999, 1.59703, 1.55598, 1.54692, 1.47879, 1.44168, 1.35765] },
+    "B_emit_driven": { "wiring": "external const drive each step", "splits": 9, "split_rate": 0.45, "phi_mean": 1.50245, "phi_var": 0.250232, "phi_final": 0.704163, "r2": 0.988752, "final_cells": 17, "phi_traj": [2.26753, 2.20192, 2.16414, 2.17311, 2.11738, 1.85901, 1.72389, 1.68939, 1.60122, 1.57022, 1.47044, 1.33655, 1.27529, 1.1822, 1.04689, 1.02835, 0.993227, 0.848626, 0.795525, 0.704163] }
+  },
+  "derived": {
+    "var_ratio_img_over_emit": 0.203988,
+    "split_rate_delta_img_minus_emit": -0.45
+  },
+  "falsifiers": {
+    "F_IMG_1_MONOTONE":     { "metric": "IMG R²(phi,step) >= 0.7", "value": 0.714415, "verdict": "PASS" },
+    "F_IMG_2_LOW_VARIANCE":  { "metric": "var(IMG)/var(EMIT) <= 0.5", "value": 0.203988, "verdict": "PASS" },
+    "F_IMG_3_ACTIVE_SPLIT":  { "metric": "IMG.split_rate > EMIT.split_rate", "img": 0.0, "emit": 0.45, "verdict": "FAIL" },
+    "F_IMG_4_BYTE_DETERMINISTIC": { "metric": "fixed seed, no global RNG", "verdict": "PASS" },
+    "F_IMG_5_PHI_FINITE":    { "metric": "all phi finite, no NaN/inf", "verdict": "PASS" }
+  },
+  "n_pass": 4,
+  "verdict_rule": "SUPPORTED iff (F1 ∧ F2); SUPPORTED_FULL if 5/5; PARTIAL if >=3; FALSIFIED otherwise",
+  "verdict": "SUPPORTED",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (compute_phi_proxy mean inter-cell tension; NOT 🔵 IIT 4.0 full repertoire)",
+  "cross_link": "H_018 GENESIS SELFFEED (sister · self-ref bootstrap) ⊕ H_202 self-ref edge-of-chaos Φ ⊕ H_222 dream-REM Φ (sister sleep-stage)",
+  "directive": "CLAUDE.md a_chat_sleep_imagination — imagination loop = emit-free internal rehearsal + mitosis tick"
+}

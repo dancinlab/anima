@@ -1,0 +1,55 @@
+{
+  "schema": "anima/state/p9_sft_spec/risk_strategy/1",
+  "primary_risk": {
+    "name": "phi_star sign flip",
+    "description": "CLM v4 baseline +41.86 (G3 PASS-positive). SFT chat objective changes substrate; phi_star may flip negative — irreversible without retrain.",
+    "irreversibility": true,
+    "mitigation_layers": [
+      "L1: pre-train measurement (baseline locked = +41.86)",
+      "L2: post-train remeasure every hyperparam combo via anima_phi_v3_canonical",
+      "L3: delta regularizer = hard floor at threshold=5.0 during train (8x safety)",
+      "L4: LoRA-only mode preserves frozen base => phi_star structurally bounded",
+      "L5: early-stop trigger if phi_star EMA drops below 10.0 (2x threshold)"
+    ]
+  },
+  "strategies": [
+    {
+      "id": "S1",
+      "name": "LoRA-only (recommended)",
+      "description": "frozen base + LoRA r=64 a=128 delta — base phi_star structurally preserved",
+      "cost_usd": "200-500",
+      "wall_days": "7-14",
+      "phi_risk": "LOW",
+      "success_p": "0.50-0.70"
+    },
+    {
+      "id": "S2",
+      "name": "Full SFT + heavy delta regularizer",
+      "description": "all params trainable, delta in [1.0, 2.0]; higher chat ceiling, higher phi flip risk",
+      "cost_usd": "800-2000",
+      "wall_days": "14-21",
+      "phi_risk": "MEDIUM",
+      "success_p": "0.30-0.50"
+    },
+    {
+      "id": "S3",
+      "name": "Hyperparameter sweep (9 LHS runs of S1)",
+      "description": "best-of-9 on LoRA-only — phi_risk LOW (best run selected)",
+      "cost_usd": "1500-3000",
+      "wall_days": "21-30",
+      "phi_risk": "LOW",
+      "success_p": "0.70-0.90"
+    },
+    {
+      "id": "S4",
+      "name": "Differential pretrain (P3 sister-path)",
+      "description": "from-scratch pretrain mixing cell-language + chat objectives; born-with-chat",
+      "cost_usd": "2000-5000",
+      "wall_days": "30+",
+      "phi_risk": "LOWEST",
+      "success_p": "0.60-0.80"
+    }
+  ],
+  "recommended_path": "S3 (sweep over S1)",
+  "rationale": "Best success probability (0.70-0.90) at LOW phi_risk; cost in user-quoted band ($1000-3000)."
+}

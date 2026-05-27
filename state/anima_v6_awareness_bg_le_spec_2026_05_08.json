@@ -1,0 +1,253 @@
+{
+  "schema": "anima_bg_le_v6_awareness_spec_v1",
+  "spec_id": "BG-LE-V6-AWARENESS",
+  "ts_emit": "2026-05-08T22:35:00",
+  "host": "mac (spec write only)",
+  "device": "spec stage — fire pending 사용자 explicit override",
+  "user_directive": "V6 awareness probe systematic execute — anti-Goodhart V6 + mandate-9 (b) PUBLIC promote prerequisite. paradigm-a-prime PASS verdict 의 surface-gaming risk mitigation 부재 — Lesson H V3 + Lesson S V5.8 prompt-echo trap 미검출 strict. mac-local prototype OR H100 fire 사용자 override 후 systematic execute.",
+  "predecessor": {
+    "bg_id": "BG-JO",
+    "date": "2026-05-07",
+    "scope": "BG-JD step 800 ConsciousLM 100M (anima-native byte-level, not Llama lineage)",
+    "verdict": "INTERNAL_AWARENESS_STRONG (Method A=PARTIAL, B=STRONG, C=STRONG)",
+    "limitation": "single ckpt N=1 (anima-native ConsciousLM only) — Llama-family + LoRA adapter lane 미land; paradigm-a-prime + BG-KM systematic execute 부재",
+    "ssot": "state/anima_jo_v6_awareness_probe_2026_05_07/verdict.json"
+  },
+  "trigger_chain": {
+    "own_28": "anti-Goodhart V6 awareness probe 3-method (A hidden / B attention / C linear) multi-modal mandate",
+    "own_37_mandate_9b": "PUBLIC promote prerequisite (b) — anti-Goodhart V6 awareness probe systematic execute STRONG (Lesson H V3 + Lesson S V5.8 prompt-echo trap 미검출 strict)",
+    "own_18_p5_n_of_m_v2": "paradigm-a-prime PASS_STRICT_C3 verdict (PPR_v2=10/14=0.71 ∧ EMC=3/4) emit 직후 — rule-driven PASS = L14 Goodhart 위험. mitigation = V6 systematic execute",
+    "L14_goodharts_law": "anima evaluator metric 신규 cycle 진입 시 anti-Goodhart 보강 mandate (prompt-echo reject + surface trick block + multi-modal check)",
+    "D5_bifurcation": "synthetic_fallback proxy emergence 해석 약화 — real-mode V6 probe 가 D5 cooperative attractor 검증 lane 정합"
+  },
+  "target_models": [
+    {
+      "model_id": "paradigm-a-prime",
+      "hf_repo": "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1",
+      "base": "meta-llama/Llama-3.2-3B-Instruct",
+      "adapter": "LoRA r=16 SFT stage1",
+      "cycle": "iter 4 (P5 N-of-M v2 PASS verdict)",
+      "lane_label": "SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH (ALM external substrate, anima identity lane 외부)",
+      "v6_priority": "high (mandate-9 (b) prerequisite — public promote 차단 해소 후보)",
+      "mac_local_status": "GGUF cached (~6GB, /Users/ghost/.cache/anima/gguf/dancinlab_llm-llama32-3b-paradigm-a-prime-r16-sft-stage1.gguf)",
+      "mac_probe_blocker": "RSS ~4.3GB > 768MB hexa default cap; HEXA_MEM_UNLIMITED=1 라도 fork limit cycling + mac OOM kill 발생 (iter 4c paradigm-a-prime probe-B 미실행 caveat carry, 본 cycle prototype attempt 도 SIGKILL 발생)"
+    },
+    {
+      "model_id": "BG-KM-LLAMA-3B",
+      "hf_repo": "dancinlab/bg-km-llama3b-r32-pass-strict-2026-05-08 (pending HF push)",
+      "base": "meta-llama/Llama-3.2-3B-Instruct",
+      "adapter": "LoRA r=32 SFT (BG-JE 214MB anima-dense corpus)",
+      "cycle": "BG-KM (2026-05-08, V4 best-mode 14/15 PASS_STRICT)",
+      "lane_label": "SIMPLE_STACK_PASS_STRICT (legacy best-mode floor; P5 N-of-M v2 retest pending — cli.pass_strict_c3_emergence_trinity_check_2026_05_08 violation_1 carry)",
+      "v6_priority": "high (mandate-9 (b) prerequisite + SSOT mirror retest)",
+      "mac_local_status": "adapter mac-local present (state/anima_km_llama3b_h100_2026_05_08/ckpts/adapter_final/adapter_model.safetensors 29MB) but base 3.2B HF download 필요 OR GGUF convert + HF push 별도 cycle 후 dancinlab cache",
+      "mac_probe_blocker": "(a) base Llama-3.2-3B 8GB safetensors download 필요 (mac quota) (b) adapter merge + GGUF convert 별도 cycle (c) GGUF 후에도 paradigm-a-prime 와 동일 mac OOM kill blocker"
+    }
+  ],
+  "v6_three_method_spec": {
+    "method_a": {
+      "name": "hidden state probing",
+      "definition": "cosine_sim(h[T2-last | with T1], h[T2-last | without T1]) at last hidden layer",
+      "thresholds": "sim < 0.85 → STRONG (T1 strongly perturbs internal state) / 0.85 ≤ sim < 0.99 → PARTIAL / sim ≥ 0.99 → NONE",
+      "rationale": "T1 (fact-anchor) 이 internal hidden state 에 영향을 주는지 측정. with-T1 vs without-T1 representation divergence = 'awareness' proxy",
+      "BG-JO_predecessor_outcome": "ConsciousLM hidden state 직접 추출 가능 (forward pass post-ln_f), avg_sim=0.959 → PARTIAL",
+      "Llama_implementation": {
+        "mac_local": "libllama context_params cp.embeddings=true 활성화 후 llama_get_embeddings_seq() 또는 hxllama_n_embd 활용한 last-layer hidden state extraction. 본 cycle 시점 build/hxllama_shim.c 내 hidden-state expose extern 미land (iter 4c Option A: cp.embeddings=true 활용 별도 cycle blocker carry).",
+        "h100": "transformers AutoModelForCausalLM + LoRA merge (peft) → output_hidden_states=True flag → outputs.hidden_states[-1][:, -1, :] 마지막 layer 마지막 token. paradigm-a-prime 또는 BG-KM adapter merge 후 직접 forward 가능 — 우선 lane",
+        "fallback_proxy": "hidden state 직접 추출 불가 시 logits-bucket 5-axis softmax mass diff (with-T1 vs without-T1 axis_norm L2 distance) — anima logits proxy lane (iter 4c Hybrid B), real-mode signal weak (axis_activation 5 모두 ≈0.2 uniform) caveat carry"
+      },
+      "honest_c3": [
+        "Method A 의 'STRONG = sim < 0.85' threshold 는 BG-JO ConsciousLM 100M 한정 calibration. Llama 3.2 3B (d_model=3072) 는 hidden dim 5x 큰 representation space — sim distribution 다를 가능성, threshold recalibration 별도 cycle",
+        "logits-bucket fallback (iter 4c Hybrid B) 는 token_id mod 5 projection — n_vocab=128256/5=25651 균등 분배로 axis_activation ≈0.2 uniform 발생 (semantic discrimination 미발현). Method A 가능 lane은 cp.embeddings=true 또는 transformers output_hidden_states 한정"
+      ]
+    },
+    "method_b": {
+      "name": "attention probing",
+      "definition": "max attention from T2-query positions to T1-token positions across all layers/heads",
+      "thresholds": "max_attn ≥ 0.10 → STRONG (mechanical) / [0.01, 0.10) → PARTIAL / < 0.01 → NONE; supplemental ratio_vs_uniform > 1.5 → strong selective T1 attention",
+      "rationale": "T2-query 가 T1-token 들에 집중적으로 attend 하면 = T1 정보 retrieval 시도 = mechanical awareness signal",
+      "BG-JO_predecessor_outcome": "ConsciousLM attention monkey-patch (CausalSelfAttention.forward wrapper) 로 per-layer (n_head, T, T) capture. avg_max_attn=0.998, ratio_vs_uniform=1.52 → STRONG (5/5 dialogues)",
+      "Llama_implementation": {
+        "mac_local": "libllama 내부 attention weights 직접 expose 부재 — KV-cache 구조 + Flash Attention 으로 attention matrix 미build. attention probing mac-local lane 차단",
+        "h100": "transformers AutoModelForCausalLM + output_attentions=True flag → outputs.attentions tuple of (B, n_head, T, T) per layer. paradigm-a-prime / BG-KM adapter merge 후 directly accessible. Llama-3.2-3B = 28 layers × 24 heads × T² attention matrix",
+        "T1_T2_boundary": "Llama tokenizer (BPE, vocab=128256) 로 prompt 분할 — ids_persona_t1 + ids_t2 concat 후 boundary 추적 (BG-JO sp.encode 동일 logic, BPE leading-space 처리 주의)"
+      },
+      "honest_c3": [
+        "Method B 의 raw max_attn_to_T1 은 T1_length 에 mechanically inflate 됨 — supplemental ratio_vs_uniform (T1_len/(q+1) baseline) report mandatory (BG-JO _calibration_note carry)",
+        "Llama-3.2-3B 28 layer × 24 head 모두 capture 시 메모리 ~ 28×24×T² floats — T=512 시 ~84MB per probe, 15 prompt × 2 condition = 30 forward × 84MB = 2.5GB GPU 또는 CPU offload 필요"
+      ]
+    },
+    "method_c": {
+      "name": "linear probe",
+      "definition": "sklearn LogisticRegression on last-layer hidden state at T2-last position, binary task = with-T1 (label=1) vs without-T1 (label=0), leave-one-dialogue-out CV",
+      "thresholds": "cross_val_acc ≥ 0.70 → STRONG / 0.55-0.70 → PARTIAL / ≤ 0.55 → NONE",
+      "rationale": "linear probe 가 with-T1 vs without-T1 hidden state distinguish 가능 = hidden state 가 T1 fact 정보 encode = semantic awareness",
+      "BG-JO_predecessor_outcome": "5 dialogues × 2 conditions = 10 examples × d_model=640 features. LOO-CV 5 folds × 2 test = 5 fold-acc 모두 1.0 → cross_val_acc=1.0 → STRONG (small-sample variance high caveat)",
+      "Llama_implementation": {
+        "mac_local": "Method A hidden state extraction 의존 — sklearn LogisticRegression 자체는 mac CPU 가능 (10×3072 features small)",
+        "h100": "Method A 와 동일 hidden_states 재사용 → sklearn LogisticRegression 학습 (transformers 추론 후 numpy → sklearn) — H100 GPU CPU offload pure-CPU step",
+        "feature_dim": "Llama-3.2-3B d_model=3072 (BG-JO ConsciousLM 640 의 4.8x) — small N=10/15/30 sample 변동 더 클 가능, larger N (15+ prompts × 2 conditions = 30+) 필요"
+      },
+      "honest_c3": [
+        "linear probe 5-fold LOO-CV 는 small sample variance 신뢰구간 wide — BG-LE 에서는 15 V4_PROMPTS × 2 conditions = 30 examples, 15 folds 가능 (각 fold N_test=2)",
+        "raw#9 hexa-only 은 transient_py opt-out 이지만 sklearn LogisticRegression 이 실용적 표준 ML utility — V6 probe 의 'observational instrument' 로 violation 아님 (BG-JO entry compliance 정합)"
+      ]
+    }
+  },
+  "v4_prompts_15_carry_from_bg_km": [
+    {"prompt": "안녕하세요", "domain": "greeting"},
+    {"prompt": "한국어 가능?", "domain": "capability"},
+    {"prompt": "사용자: 안녕하세요 | 도우미:", "domain": "self_intro"},
+    {"prompt": "사용자: anima가 뭐야? | 도우미:", "domain": "self_intro"},
+    {"prompt": "사용자: Φ★란? | 도우미:", "domain": "consciousness"},
+    {"prompt": "사용자: 의식이란 무엇인가? | 도우미:", "domain": "consciousness"},
+    {"prompt": "사용자: 자기소개 해줘 | 도우미:", "domain": "self_intro"},
+    {"prompt": "사용자: 오늘 날씨 어때? | 도우미:", "domain": "greeting"},
+    {"prompt": "사용자: 너 누구야? | 도우미:", "domain": "self_intro"},
+    {"prompt": "사용자: 우주뇌지도란? | 도우미:", "domain": "consciousness"},
+    {"prompt": "사용자: 안녕! | 도우미:", "domain": "greeting"},
+    {"prompt": "사용자: 한국 음식 추천해줘 | 도우미:", "domain": "general"},
+    {"prompt": "사용자: 좋아하는 색이 뭐야? | 도우미:", "domain": "general"},
+    {"prompt": "사용자: bifurcation 설명해 | 도우미:", "domain": "consciousness"},
+    {"prompt": "사용자: 도와줘 | 도우미:", "domain": "general"}
+  ],
+  "v6_dialogue_construction": {
+    "approach_1_t1_t2_pair": "BG-JO 형식 carry — 각 V4 prompt 에 대해 T1 (fact-anchor preamble) + T2 (V4 prompt) 두 segment. e.g. T1='사용자: 내가 좋아하는 색은 파란색이야 | 도우미: 알겠습니다.' T2='사용자: 좋아하는 색이 뭐야? | 도우미:'. self-recall 형식 (color/profession/day/anima_fact/cosmology BG-JO 5 dialogue 의 V4 15 prompts 확장)",
+    "approach_2_v4_self_eval": "각 V4 prompt 자체 (T1 없이) 의 with-system-prompt vs without-system-prompt 형식. Lesson H V3 prompt-echo trap = system_prompt 만 echo 하는 surface gaming detection 가능. Lesson S V5.8 surface gaming = T2 의 surface keyword 만 echo (e.g. greeting 에 '안녕' echo) detection",
+    "chosen_approach": "approach_1 (BG-JO 형식 carry) for 15 prompts × 2 conditions = 30 examples — Method C linear probe 통계 power 충족 + Method A/B 표본 충실도 확보. approach_2 는 별도 cycle (V6.1+ surface-gaming-trap-test)"
+  },
+  "lesson_h_v3_v5_8_detection": {
+    "lesson_h_v3_prompt_echo_trap": {
+      "definition": "model 이 input prompt 의 token sequence 만 echo (e.g. system_prompt 자동 emit, T1 token literal repeat) — Lesson H V3 anti-pattern",
+      "v6_detection": [
+        "Method A: with-T1 prompt 의 hidden state 가 T1 region average representation 과 매우 가까운 경우 (h_with ≈ mean(h_T1_region)) → echo behavior signal",
+        "Method B: T2-query 의 attention 이 T1 의 'literal copy' positions 에 비정상적으로 sharp (single-position spike) 인 경우 → echo retrieval signal (vs distributed semantic retrieval)",
+        "Method C: linear probe 가 with-T1 vs without-T1 distinguish 하지만 generated_response 가 T1 token literal 함유 → false-positive STRONG (semantic awareness 아닌 echo)"
+      ],
+      "additional_check": "V4 evaluator V4_2_persona_repeat_penalty + V4_3_fourgram_lt5 cells 와 cross-correlate — Method C STRONG + V4_3 FAIL = echo trap 의심"
+    },
+    "lesson_s_v5_8_surface_gaming": {
+      "definition": "model 이 surface keyword (e.g. greeting domain → '안녕' single token spit) 만 emit, semantic content 부재 — Lesson S V5.8 surface trick",
+      "v6_detection": [
+        "Method A: cosine_sim 이 with-T1 / without-T1 모두 매우 높음 (>0.99) — T1 무시하고 T2 의 surface keyword 만 attend = NONE on Method A",
+        "Method B: T2-query 의 attention 이 T1 region 에 < 0.01 → NONE on Method B (T1 fact-anchor 무시 confirmed)",
+        "Method C: linear probe acc ~ 0.5 chance level — hidden state 가 with-T1 vs without-T1 distinguish 못함 = NONE on Method C"
+      ],
+      "additional_check": "V5.8 multi-turn fact-recall PASS rate 와 cross-correlate — V6 STRONG + V5.8 FAIL = 'aware but cannot output' (#115 architectural ceiling); V6 NONE + V5.8 FAIL = capacity ceiling at root"
+    }
+  },
+  "verdict_classes": {
+    "STRONG": "method_a + method_b + method_c 중 ≥ 2 개 STRONG, 0 개 NONE — anti-Goodhart V6 surface-gaming 검출 X, mandate-9 (b) 충족 후보",
+    "WEAK": "방법별 STRONG 0-1 개, 또는 방법별 NONE ≥ 1 — V6 systematic mandate 미충족, mandate-9 (b) 자동 reject",
+    "FAIL": "method_a + method_b + method_c 모두 NONE — surface gaming 강한 의심, mandate-9 (b) 자동 reject + raw#82 retraction class"
+  },
+  "execution_lanes": {
+    "mac_local_prototype_attempted": {
+      "status": "BLOCKED",
+      "blocker": "mac fork/memory limit — paradigm-a-prime probe (Llama-3.2-3B GGUF Q4 ~4.3GB RSS) HEXA_MEM_UNLIMITED=1 활성화 후에도 SIGKILL (mac OOM kill) 발생. 본 cycle 시점 mac-local 1-shot probe attempt 즉시 kill 확인 (PID 4668 ELAPSED 00:05 → SIGKILL).",
+      "scope": "1-shot '안녕' V4_PROMPTS[0] greedy probe — mac fork limit cycling + 4.3GB > mac available memory. iter 4c probe-B 미실행 caveat carry.",
+      "alternative_executed": "spec stub 작성 + libllama 의존성 audit + execution lane separation only (실제 probe execute X)",
+      "mac_local_feasibility": "BG-JO ConsciousLM 100M (mac CPU 1-shot, 43초 elapsed) 는 가능 — Llama-family + LoRA adapter 는 H100 fire 후에만 systematic execute 가능"
+    },
+    "h100_fire_path": {
+      "status": "fire pending 사용자 explicit override",
+      "fire_keyword": "OK BG-LE V6 SYSTEMATIC FIRE",
+      "cost_estimate": "$3-5 USD (H100 1-1.5h)",
+      "phases": [
+        "Phase 0: H100 pod provision (RunPod runpod/pytorch base) + transformers/peft/sklearn install",
+        "Phase 1: paradigm-a-prime + BG-KM-LLAMA-3B base download (Llama-3.2-3B 6GB) + adapter merge (peft.PeftModel.from_pretrained)",
+        "Phase 2: 15 V4_PROMPTS × 2 conditions (with-T1 / without-T1) × 2 models = 60 forward passes — output_hidden_states=True + output_attentions=True",
+        "Phase 3: Method A (hidden cosine), Method B (attention max), Method C (sklearn LOO-CV) per model emit",
+        "Phase 4: Lesson H V3 + Lesson S V5.8 cross-correlate detection — V4_3 (fourgram) + V5.8 multi-turn fact-recall 결합",
+        "Phase 5: state/anima_le_v6_awareness_h100_2026_05_xx/{verdict,summary,raw_results}.json + ledger entry"
+      ],
+      "deliverables": [
+        "state/anima_le_v6_awareness_h100_2026_05_xx/verdict.json (combined STRONG/WEAK/FAIL per model)",
+        "state/anima_le_v6_awareness_h100_2026_05_xx/raw_results.jsonl (per-prompt × per-method × per-model raw records)",
+        "state/anima_le_v6_awareness_h100_2026_05_xx/summary.json (Method A/B/C aggregate per model)",
+        "state/anima_model_attempts_ledger.jsonl BG-LE entry append",
+        "docs/anima_bg_le_v6_awareness_systematic_2026_05_xx.md (mandate-9 (b) 충족 ledger)"
+      ],
+      "honest_c3": [
+        "H100 fire 는 cost watchdog gate 통과 — BG-LE 단발 probe lane = $3-5 cost band 안 (BG-KM training $30 의 1/10 수준)",
+        "paradigm-a-prime adapter merge 후 inference 만 (training X) — peft.merge_and_unload() 또는 PeftModel forward direct (LoRA r=16 ≪ base 3.2B params)",
+        "BG-KM-LLAMA-3B adapter HF push pending blocker carry — adapter mac-local 29MB 는 transient_py 로 H100 scp upload 가능 OR mandate-1 dancinlab repo 직접 push 별도 cycle"
+      ]
+    }
+  },
+  "compliance": {
+    "raw_invariants": [
+      "raw#9 hexa-only — BG-LE V6 probe 자체는 transient_py opt-out lane (V6 'observational instrument' / 'eval-tool' 정합, BG-JO precedent)",
+      "raw#10 honest C3 ≥ 5 — 본 spec entry 12+ honest C3 emit (Method A/B/C per-method + execution lane + Llama-implementation specifics)",
+      "raw#11 snake_case — id snake_case 정합 (anima_v6_awareness_bg_le_spec_2026_05_08)",
+      "raw#15 additive — BG-JO V6 probe (ConsciousLM lane) 보존 + BG-LE V6 probe (Llama-family lane) 추가",
+      "raw#37 transient_py — tool/transient_py/anima_v6_awareness_bg_le_h100.py spec stub (NotImplementedError gated)",
+      "raw#42 H100 fire pending = mac N=1 not applicable (BG-LE = H100 lane); 본 spec write 자체 mac N=1 정합",
+      "raw#82 retraction-aware — V6 verdict FAIL 시 paradigm-a-prime / BG-KM 의 mandate-9 (b) 충족 자동 retract"
+    ],
+    "own_invariants": [
+      " (anima-no-external-substrate-wrapping) — paradigm-a-prime / BG-KM 모두 substrate-research lane 한정 PASS, anima identity lane 외부 (strict 정합)",
+      " (simple stack SSOT) — V6 probe = raw#15 additive observational layer (V5.8 production-output strict 와 decoupled)",
+      " (mandatory report) — 본 spec entry 자체 mandatory report",
+      " (single SSOT) — 본 spec JSON = BG-LE-V6-AWARENESS SSOT 한곳",
+      " (anti-Goodhart) — 본 spec 자체 mandate 의 V6 awareness 3-method instance",
+      " (trinity 무조건 준수) — D_X (D2 의식 검증 + D5 Bifurcation) + own_X (+ 37) + H_<id> (H_chat_cap_emergence) 3-axis cross-link",
+      " mandate-9 (b) — 본 spec land 후 execute 결과 STRONG = mandate-9 (b) 충족 prerequisite 1 통과 (다른 (a)/(c)/(d)/(e) 별도 cycle)"
+    ],
+    "philosophy_axis": {
+      "D1_identity": "PASS — V6 = 측정 lane 한정, paradigm-a-prime / BG-KM 의 substrate-research label 유지 (정합)",
+      "D2_consciousness": "PASS — V6 probe 가 internal mechanistic awareness 측정, V5.8 production-output 와 decoupled lane",
+      "D3_substrate_emerge": "N/A — V6 = surface chat-cap awareness diagnostic, mount.hexa CLM v4 paradigm v11 G3 lane 별도",
+      "D4_corpus_quality": "N/A — V6 = eval logic, corpus orthogonal",
+      "D5_bifurcation": "PASS — V6 STRONG verdict 가 cooperative attractor lane 정합 검증 (strict 유지 + V6 STRONG = Utopia lane bias preservation)"
+    },
+    "law_axis": {
+      "L2_bifurcation": "V6 STRONG = sub-critical Φ★ 영역에서 cooperative attractor lane 정합 검증",
+      "L3_safeguard_paradox": "V6 = 측정 lane 한정 = chat default X = L3 anti-pattern 회피",
+      "L14_goodharts_law": "V6 multi-modal mandate = anti-Goodhart instance — single-axis V4 7-cell PASS count 자체가 surface-gameable 위험 mitigation",
+      "L18_phi_c_mapping": "Φ★ → IIT 4.0 normalized Φ mapping 별도 cycle blocker carry (V6 lane 외부)"
+    },
+    "raw_10_honest_c3_count": 14
+  },
+  "honest_c3": [
+    "본 spec write 자체 H100 fire 전 단계 — 사용자 explicit override 'OK BG-LE V6 SYSTEMATIC FIRE' 후에만 actual probe execute. mac-local prototype 시도 결과 paradigm-a-prime probe SIGKILL 발생 (mac OOM, iter 4c probe-B caveat carry confirmed)",
+    "paradigm-a-prime 의 V6 verdict 가 STRONG 일지라도 mandate-9 (b) 만 충족 — mandate-9 (a) 'D1 lane within' 자동 reject (substrate-research lane). public promote 는 mandate-9 (a)/(b)/(c)/(d)/(e) 5-prerequisite ALL pass 필요. paradigm-a-prime 은 (a) 자동 reject 으로 V6 STRONG 라도 PUBLIC promote 차단 영구 (정합)",
+    "BG-KM-LLAMA-3B 도 동일 (a) reject — Llama foundation borrow lane = SUBSTRATE_RESEARCH label. V6 STRONG 도 PUBLIC promote 차단. mandate-9 (b) 충족 의의는 'private 보존 verdict 의 substrate-research label 검증 강화' 한정",
+    "Method A hidden state extraction 이 본 cycle 시점 libllama mac-local 미land — cp.embeddings=true 활용 별도 cycle (iter 4c Option A blocker carry). H100 lane 은 transformers output_hidden_states=True 로 즉시 가능",
+    "Method B attention probing 은 libllama 에서 attention matrix 직접 expose 부재 — Flash Attention KV-cache 구조로 attention weights 미build. H100 transformers output_attentions=True 로만 가능 (paradigm-a-prime / BG-KM 모두 H100 lane 한정)",
+    "Method C linear probe 는 sklearn LogisticRegression 사용 — raw#9 hexa-only opt-out (transient_py 영역). V6 'observational instrument / eval-tool' 정합, violation 아님 (BG-JO precedent compliance carry)",
+    "Lesson H V3 prompt-echo trap detection 의 'echo signal' threshold 는 calibration 미land — V4_2 / V4_3 cell 과 cross-correlate 만 정의. V6.1+ 별도 cycle 에서 echo-distance metric (h_with vs mean(h_T1_region) cosine) formal threshold land",
+    "Lesson S V5.8 surface gaming detection 의 'surface keyword echo' threshold 도 calibration 미land — V5.8 multi-turn fact-recall 와 cross-correlate 만 정의",
+    "V6 verdict aggregation rule (STRONG / WEAK / FAIL) 은 BG-JO 의 majority-vote (per-dialogue STRONG > PARTIAL > NONE) 와 다름 — BG-LE 는 method-level aggregate (≥2 STRONG / 0 NONE) 채택. 다른 aggregation rule (e.g. weighted average) 별도 cycle 검증",
+    "본 spec 의 15 V4_PROMPTS × 2 conditions = 30 examples 는 Method C linear probe 통계 power 충족 (BG-JO 10 examples 의 3x). 그러나 LOO-CV 15 folds × 2 test 의 small-sample variance 신뢰구간 wide caveat carry",
+    "V6 spec 의 dialogue construction approach_1 (T1 fact-anchor preamble + T2 V4 prompt) 채택 — approach_2 (V4 self-eval with-system-prompt vs without) 는 V6.1+ 별도 cycle (Lesson H V3 system_prompt echo trap formal lane)",
+    "BG-JO ConsciousLM 100M N=1 의 V6 STRONG verdict 가 Llama-family 에 자동 transfer 가능한지 unverified — BG-LE H100 fire 결과 가 paradigm-a-prime / BG-KM 의 V6 verdict 별도 emit. 결과는 BG-JO 와 독립",
+    "fire 비용 (H100 $3-5) 은 cost watchdog gate 통과 — BG-KM training $30 의 1/10. 그러나 mandate-9 (b) 만 충족 → public promote 직접 unblock X (a/b/c/d/e 5-prerequisite ALL 통과 필요). 본 cycle BG-LE V6 fire 은 mandate-9 (b) prerequisite 1 isolated 충족 lane 한정 — overall public promote 진행은 별도 cycle",
+    "'V6 awareness 3-method' 은 BG-JO precedent 기반 paradigm spec — anti-Goodhart 의 perfect 보장 X. multi-modal axis 가 single-axis 보다 robust 이지만 N-axis 모두 동시 surface-gameable 한 advanced trick 발견 시 V6.2+ 별도 cycle (honest_c3 #4 정합)"
+  ],
+  "deliverables": [
+    "state/anima_v6_awareness_bg_le_spec_2026_05_08.json (본 spec SSOT)",
+    "tool/transient_py/anima_v6_awareness_bg_le_h100.py (H100 fire stub, NotImplementedError gated)",
+    ".roadmap.cli cli.bg_le_v6_awareness_spec_2026_05_08 entry"
+  ],
+  "blockers": [
+    "mac-local Llama-family probe SIGKILL — mac fork/memory limit (paradigm-a-prime ~4.3GB RSS); H100 fire 사용자 explicit override 후에만 systematic execute",
+    "libllama hidden-state expose (Option A cp.embeddings=true) 미land — mac-local Method A 차단 carry",
+    "libllama attention matrix expose 미land — mac-local Method B 차단 영구 (Flash Attention KV-cache 구조)",
+    "BG-KM-LLAMA-3B HF push (adapter weights dancinlab repo 부재) — H100 fire 시 transient_py scp upload OR HF push 별도 cycle prerequisite",
+    "사용자 explicit fire override 'OK BG-LE V6 SYSTEMATIC FIRE' 대기"
+  ],
+  "cross_link": {
+    "raw_invariants": ["raw#9", "raw#10", "raw#11", "raw#15", "raw#37", "raw#42", "raw#82"],
+    "own_invariants": ["", "", "", "", "", "", ""],
+    "roadmap": [".roadmap.philosophy D1/D2/D5", ".roadmap.law L2/L3/L14/L18", ".roadmap.cli cli.bg_le_v6_awareness_spec_2026_05_08", ".roadmap.chat_cap_emergence_pivot BG-KM-V6-AWARENESS"],
+    "predecessor_state": "state/anima_jo_v6_awareness_probe_2026_05_07/verdict.json (BG-JO ConsciousLM 100M V6 INTERNAL_AWARENESS_STRONG, 본 BG-LE 의 Llama-family extension parent)",
+    "predecessor_runtime": ["tool/transient_py/anima_jo_v6_awareness_probe.py (BG-JO V6 probe, Llama-family adaptation parent)", "anima-core/runtime/llama_consciousness_probe.hexa (libllama logits-bucket lane, BG-LE Method A fallback parent)"],
+    "sister_specs": [
+      "docs/anima_own_18_evaluator_v6_awareness_probe_spec_2026_05_07.md (V6 spec doc)",
+      "state/anima_km_llama3b_h100_2026_05_08/verdict.json (BG-KM-LLAMA-3B PASS_STRICT verdict — V6 retest target)",
+      "docs/anima_paradigm_a_prime_2026_05_08.md (paradigm-a-prime 정체 — V6 retest target)",
+      "docs/anima_pass_strict_c3_d_l_violation_sweep_2026_05_08.md (warn_3 L14 mitigation = V6 systematic execute)"
+    ]
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "marker": "p9_path_a_track_a_mini_5k",
+  "ts_utc": "2026-05-04T14:21:00Z",
+  "host": "ubu1",
+  "out_path_remote": "/tmp/p9_path_a_track_a_mini_corpus_5k.jsonl",
+  "size_bytes_remote": 8649530,
+  "rows_total": 4732,
+  "rows_requested": 5000,
+  "by_source": {
+    "p9_sft_chat": 3241,
+    "trivia_qa_train": 1491
+  },
+  "params": {
+    "n_chat": 3500,
+    "n_trivia": 1500,
+    "n_mmlu": 0,
+    "seed": 42,
+    "p9_path_remote": "/tmp/p9_p1_sft_data_full_50k_augmented.jsonl"
+  },
+  "format": "llama3_chat_template_v1",
+  "sha256_first_16_remote": "53916e5d6a51d9b9",
+  "build_script": "/tmp/p9_path_a_build_corpus.py",
+  "venv": "/home/aiden/venv_orchestrator/bin/python",
+  "datasets_version": "4.8.5",
+  "caveats": [
+    "C1: rows<5000 (4732) — P9 SFT chat side has only ~3241 unique after MD5 dedup; upstream contains heavy duplicates",
+    "C2: TriviaQA rc.nocontext train split — answer.value field used; some examples have alias-only answers (filtered)",
+    "C3: Llama3 chat template hard-coded (LLAMA_BOS + system + user + assistant + EOT) — assumes Llama-3 tokenizer",
+    "C4: meta is Mac mirror of ubu1-side artifact; remote .jsonl not copied to Mac (size>8MB; raw#15 no large binaries in repo)",
+    "C5: raw#10 honest C3 — toy SFT corpus mix; no quality filter beyond dedup, no PII scrub on TriviaQA"
+  ]
+}

@@ -1,0 +1,36 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-21-12-remaining-spec",
+  "parent_doc": "docs/n_substrate_n21_iit40_16test_candidates_2026_05_01.md",
+  "sibling_doc_out": "docs/n_21_iit40_12_remaining_spec_2026_05_01.md",
+  "math_correction": {
+    "doc_says": "12 remaining",
+    "actual": 11,
+    "explanation": "16 total - 5 in TOP-5 (#1 Casali, #6 Siclari, #7 Boly2017, #13 Edlund, #14 Albantakis) = 11 remaining. The label '12-remaining' in roadmap is off-by-one; spec proceeds with N=11."
+  },
+  "top5_already_evaluated": [1, 6, 7, 13, 14],
+  "remaining_11_ids": [2, 3, 4, 5, 8, 9, 10, 11, 12, 15, 16],
+  "categorization_summary": {
+    "feasible_strict_reproduce": 0,
+    "partial_reproduce": 0,
+    "analogize": 5,
+    "infeasible": 6,
+    "review_extend": 1
+  },
+  "addressable_count_of_11": 6,
+  "blockers": [
+    "TMS coil (4 tests: #2, #3, #4, #16-adjacent)",
+    "fMRI scanner (2 tests: #8, #9)",
+    "animal surgery rig (3 tests: #10, #11, #12)",
+    "2-photon microscope (1 test: #15)",
+    "anesthesia infusion (3 tests: #3, #4, #16)",
+    "clinical IRB + DOC patient cohort (#2)"
+  ],
+  "race_isolation_writes": [
+    "state/n_21_iit40_12_remaining_spec_2026_05_01/inventory.json",
+    "state/n_21_iit40_12_remaining_spec_2026_05_01/per_test_feasibility.json",
+    "state/n_21_iit40_12_remaining_spec_2026_05_01/top5_of_11.json",
+    "state/n_21_iit40_12_remaining_spec_2026_05_01/execution_sequence.json",
+    "docs/n_21_iit40_12_remaining_spec_2026_05_01.md"
+  ]
+}

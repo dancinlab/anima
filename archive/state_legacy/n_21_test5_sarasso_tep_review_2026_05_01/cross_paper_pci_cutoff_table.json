@@ -1,0 +1,174 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-21 #5 EXEC Sarasso TEP review extension",
+  "scope": "PCI cutoff cross-paper consistency 2010-2026 + 16ch adaptation rationale",
+  "race_isolation": "state/n_21_test5_sarasso_tep_review_2026_05_01/*",
+  "method": "WebSearch + WebFetch literature scan (no .py, no $$)",
+  "papers": [
+    {
+      "id": "casali_2013",
+      "first_author": "Casali",
+      "year": 2013,
+      "journal": "Sci Transl Med",
+      "doi": "10.1126/scitranslmed.3006294",
+      "channels": 60,
+      "tms_required": true,
+      "pci_variant": "PCI_LZ (original)",
+      "cutoff_reported": null,
+      "n": 32,
+      "states_tested": ["awake", "NREM", "REM", "midazolam", "xenon", "propofol", "VS", "MCS", "EMCS", "LIS"],
+      "key_finding": "PCI dichotomously separates conscious from unconscious states across 32 subjects; first formal validation."
+    },
+    {
+      "id": "sarasso_2014_review",
+      "first_author": "Sarasso",
+      "year": 2014,
+      "journal": "Clin EEG Neurosci",
+      "doi": "10.1177/1550059413513723",
+      "channels": "60 (cited studies)",
+      "tms_required": true,
+      "pci_variant": "PCI_LZ review",
+      "cutoff_reported": null,
+      "n": "review (aggregate 30-150)",
+      "states_tested": ["wakefulness", "deep sleep", "anesthesia", "VS", "MCS", "LIS", "REM dreaming"],
+      "key_finding": "Cortical complexity collapses on LOC across sleep/anesthesia/brain injury; recovers in dreaming/MCS/LIS. Anchor citation chain for spontaneous-LZ analog (TOP-5 #5)."
+    },
+    {
+      "id": "casarotto_2016",
+      "first_author": "Casarotto",
+      "year": 2016,
+      "journal": "Annals of Neurology",
+      "doi": "10.1002/ana.24779",
+      "channels": 60,
+      "tms_required": true,
+      "pci_variant": "PCI_LZ",
+      "cutoff_reported": 0.31,
+      "n": 150,
+      "states_tested": ["healthy awake", "NREM", "anesthesia", "VS/UWS", "MCS", "EMCS", "LIS"],
+      "key_finding": "PCI* = 0.31 derived via ROC: 100% sens / 100% spec at benchmark threshold; the canonical clinical cutoff."
+    },
+    {
+      "id": "comolatti_2019",
+      "first_author": "Comolatti",
+      "year": 2019,
+      "journal": "Brain Stimulation",
+      "doi": "10.1016/j.brs.2019.05.013",
+      "channels": "60+ (validated), down to sparse intracranial",
+      "tms_required": true,
+      "pci_variant": "PCIst (state-transition)",
+      "cutoff_reported": "PCIst ~ 30-40 absolute; behaves equiv to PCI* 0.31 ROC-wise",
+      "n": "108 healthy + 108 brain-injured = 216",
+      "states_tested": ["healthy awake", "DOC cohort"],
+      "key_finding": "Sensor-level PCIst matches original PCI accuracy in <1s, generalizes to sparse intracranial; opens door to lower channel counts."
+    },
+    {
+      "id": "sarasso_2021_neuroimage",
+      "first_author": "Sarasso",
+      "year": 2021,
+      "journal": "NeuroImage / Brain",
+      "channels": 60,
+      "tms_required": true,
+      "pci_variant": "PCI_LZ + PCIst review/clinical",
+      "cutoff_reported": 0.31,
+      "n": "clinical aggregate",
+      "key_finding": "PCI clinical applications consolidated; reaffirms 0.31 as standard cutoff."
+    },
+    {
+      "id": "comanducci_2024",
+      "first_author": "Comanducci",
+      "year": 2024,
+      "journal": "Brain Stimulation",
+      "url": "https://www.brainstimjrnl.com/article/S1935-861X(23)00733-7/fulltext",
+      "channels": 60,
+      "tms_required": true,
+      "pci_variant": "PCIst",
+      "cutoff_reported": "uses PCIst threshold; not 0.31 (different units)",
+      "n": "subacute brain-injured cohort",
+      "key_finding": "PCI detects capacity for consciousness EARLIER than behavioral recovery in subacute brain-injured patients (CMD population)."
+    },
+    {
+      "id": "wang_jner_2024",
+      "first_author": "Wang et al.",
+      "year": 2024,
+      "journal": "J NeuroEngineering and Rehabilitation",
+      "doi": "10.1186/s12984-024-01455-1",
+      "channels": 64,
+      "tms_required": true,
+      "pci_variant": "PCIst",
+      "cutoff_reported": "baseline PCIst predicts responder; specific numerical cutoff not extracted from abstract",
+      "n": 20,
+      "states_tested": ["MCS pre/post rTMS treatment, sham crossover"],
+      "key_finding": "rTMS-active raised PCIst significantly (F=4.961, p=0.039); baseline PCIst higher in 7/20 (35%) responders. PCI as treatment biomarker."
+    },
+    {
+      "id": "communications_biology_2024",
+      "first_author": "(group studying critical dynamics)",
+      "year": 2024,
+      "journal": "Communications Biology (Nature)",
+      "url": "https://www.nature.com/articles/s42003-024-06613-8",
+      "channels": "hd-EEG",
+      "tms_required": false,
+      "pci_variant": "spontaneous EEG critical dynamics -> PCI prediction",
+      "key_finding": "Resting-state spontaneous EEG dynamical features PREDICT TMS-derived PCI in healthy adults; replicated across independent datasets. Direct support for our spontaneous-LZ analog (TOP-5 #5)."
+    },
+    {
+      "id": "elife_98920_2025",
+      "first_author": "(Sitt/Toker style group)",
+      "year": 2025,
+      "journal": "eLife",
+      "url": "https://elifesciences.org/articles/98920",
+      "channels": 60,
+      "tms_required": false,
+      "pci_variant": "spontaneous spatiotemporal complexity (fluidity, functional repertoire)",
+      "cutoff_reported": "matches PCI 0.31 discrimination in propofol cohort",
+      "key_finding": "Resting-state metric achieves 100% wake-vs-anesthesia discrimination matching PCI* 0.31 benchmark; enables consciousness assessment without TMS."
+    },
+    {
+      "id": "biorxiv_sensory_2025",
+      "first_author": "(sensory PCI group)",
+      "year": 2025,
+      "journal": "bioRxiv",
+      "url": "https://www.biorxiv.org/content/10.1101/2025.07.04.663180v1",
+      "channels": "32-64",
+      "tms_required": false,
+      "pci_variant": "sensory-evoked PCIst (thermal nociception)",
+      "key_finding": "PCI generalized beyond TMS to thermal-evoked sensory perturbations at 32-64ch; tracks stimulus intensity and peripheral sensitization."
+    }
+  ],
+  "cross_paper_cutoff_consistency": {
+    "canonical_cutoff": 0.31,
+    "established_by": "Casarotto 2016 (n=150)",
+    "reaffirmed_by": ["Sarasso 2021", "Comolatti 2019 (PCIst as ROC-equivalent)", "eLife 2025 (spontaneous-EEG analog matches)"],
+    "consistency_verdict": "STABLE 2013-2026 across 60-256 ch hd-EEG cohorts; PCIst recasts cutoff in different units but preserves 100% sens/spec at benchmark",
+    "outliers": [],
+    "16ch_adapted_cutoff": {
+      "value": 0.25,
+      "rationale_in_n19_spec": "channel-count downward bias 15-25% per Comolatti 2019 sensor-level evidence",
+      "literature_backing_quality": "EXTRAPOLATION - no published 16ch PCI cohort exists; Comolatti 2019 validates DOWN TO sparse intracranial but smallest scalp validation = 32-64 ch (sensory PCI 2025 bioRxiv)",
+      "honest_C3": "0.25 is interpolation, not direct measurement. Personal-calibration cohort (n>=10) MUST precede any clinical claim."
+    }
+  },
+  "2025_2026_updates": [
+    "Spontaneous-EEG complexity (eLife 2025) achieves PCI-equivalent discrimination WITHOUT TMS - directly enables our analog at 16ch with zero TMS hardware",
+    "Sensory-evoked PCIst (bioRxiv 2025) - PCI generalizes to non-TMS perturbations at 32ch+",
+    "rTMS treatment biomarker (Wang JNER 2024) - PCIst tracks therapeutic response",
+    "Subacute CMD detection (Comanducci 2024) - PCI detects covert consciousness earlier than CRS-R behavior",
+    "Critical-dynamics resting-state predictor (Comm Biol 2024) - replicated cross-dataset"
+  ],
+  "n19_spec_update_suggestions": [
+    "ADD references to Wang 2024, Comanducci 2024, eLife 2025, Comm Biol 2024, sensory PCI bioRxiv 2025 in §10 Sources",
+    "REVISE §4.3 16ch cutoff to explicitly note: literature gap below 32ch; 0.25 = interpolation; Comolatti 2019 floor was sparse intracranial not low-density scalp",
+    "ADD §4.4 'TMS-free path' - cite eLife 2025 + Comm Biol 2024 to enable spontaneous-only PCI analog at 16ch (drops TMS hardware requirement entirely; converges with TOP-5 #5)",
+    "STRENGTHEN §6.3 - clarify that PCIst (Comolatti 2019) was NOT validated at 16ch scalp; smallest validated scalp = 32ch (sensory PCI 2025)",
+    "ADD §7.5 'treatment biomarker axis' - cite Wang 2024 to add longitudinal PCIst tracking as F1 sub-axis when own cohort exists",
+    "ADD §8 disclosure #13: 'spontaneous-EEG PCI surrogate (eLife 2025) has not been validated in DOC patients yet; only in healthy + propofol cohorts'"
+  ],
+  "falsifier_F3_status": "PASS (no inconsistency detected)",
+  "honest_C3": [
+    "All cutoffs 0.31 derive from 60+ ch hd-EEG; no direct 16ch validation exists in published literature as of 2026-05-01",
+    "PCIst sensor-level validation floor = 32 scalp ch (sensory PCI bioRxiv 2025) or sparse intracranial (Comolatti 2019)",
+    "Sarasso 2014 PDF binary-encoded; could not extract per-paper cutoffs - relied on abstract + downstream citations",
+    "rTMS responder cutoff (Wang 2024) numerical value not extracted from abstract; full-text behind URL paywall pattern",
+    "No 2026 prospective DOC PCI cohort identified - field appears stable on 0.31 cutoff with PCIst as faster equivalent"
+  ]
+}

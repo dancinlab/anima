@@ -1,0 +1,88 @@
+{
+  "schema": "anima/strategic_4way_protocol_matrix/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "purpose": "5 measurement protocols ranked by cost/value/falsifier-strength",
+
+  "protocols": [
+    {
+      "rank": 1,
+      "id": "P1_CLM_W4_PLUS_EEG_LIVE_CONCURRENT",
+      "scope": "CLM v4 530M closed-loop 100-step + EEG 16ch live 60s — cross-correlate mind.tension trajectory with alpha-PLV trajectory",
+      "hardware": ["ubu1 RTX 5070 (already up)", "OpenBCI Cyton+Daisy 16ch (already owned)"],
+      "cost_usd": 0.0,
+      "eta_days": 1,
+      "blockers": "none",
+      "falsifier_pre_register": {
+        "F-PASS": "|corr(tension_t, alpha_PLV_t)| > 0.5 with p<0.01 over 100 paired bins",
+        "F-PARTIAL": "|corr| in [0.2, 0.5] OR signed-corr matches H1 predicted direction",
+        "F-FAIL": "|corr| < 0.2 OR sign opposite to predicted",
+        "F-MEASUREMENT-ARTIFACT": "corr identical with random gate branch (rules out genuine coupling)"
+      },
+      "value": "Upgrades N-1 BRIDGE_WEAK from hybrid (synth CLM + real EEG) to live-CLM + real EEG; first true 2-way actual measurement; foundational for 4-way",
+      "race_isolation": "writes to state/strategic_clm_eeg_akida_tension_2026_05_02/p1_*.json only"
+    },
+    {
+      "rank": 2,
+      "id": "P2_CLM_TENSION_PSI_ALPHA_SWEEP",
+      "scope": "Address W4 active L1 std=0.000 frozen-fixed-point — sweep PSI_ALPHA in {0.014, 0.05, 0.1, 0.2}, measure L1 / phi_star at each",
+      "hardware": "ubu1 RTX 5070",
+      "cost_usd": 0.0,
+      "eta_days": 1,
+      "blockers": "none",
+      "falsifier_pre_register": {
+        "F-EFFECT-SCALES": "L1 std > 0.5 at PSI_ALPHA >= 0.1 (signal large enough to rotate hidden-state)",
+        "F-EFFECT-SATURATES": "L1 std flat across all PSI_ALPHA (hidden-state geometry truly substrate-locked)",
+        "F-CRITICAL-VALUE": "phi_star sign-flips at some PSI_ALPHA threshold (reveals critical scale)"
+      },
+      "value": "Resolves W4 honest C3 #1; if F-EFFECT-SCALES then closed-loop dynamics is real, if F-EFFECT-SATURATES then ceiling is geometric not magnitude-driven",
+      "race_isolation": "writes to state/strategic_clm_eeg_akida_tension_2026_05_02/p2_*.json only"
+    },
+    {
+      "rank": 3,
+      "id": "P3_AKIDA_D0_SPIKE_TENSION_SOCKET",
+      "scope": "AKD1000 arrival D+0 N-2 spec execution; D+1 add tension-modulated ADM polarity-bias (theta_up = 0.5*sigma + tension_scalar*alpha)",
+      "hardware": ["AKD1000 dev kit (pending arrival)", "RPi5 (bundled)", "OpenBCI Cyton+Daisy"],
+      "cost_usd": 0.0,
+      "eta_days": "AKIDA arrival + 1",
+      "blockers": "AKIDA dev kit shipping ETA unknown",
+      "falsifier_pre_register": {
+        "F-MODULATION-VISIBLE": "spike count distribution shifts measurably with tension_scalar (KS test p<0.05)",
+        "F-MODULATION-NULL": "no statistically significant shift (modulator below noise floor)"
+      },
+      "value": "First tension-AKIDA socket actual measurement; closes design_gap in inventory.json; 4-way completion catalyst",
+      "race_isolation": "writes to state/strategic_clm_eeg_akida_tension_2026_05_02/p3_*.json only"
+    },
+    {
+      "rank": 4,
+      "id": "P4_TENSION_BRIDGE_FORMAL_BINDING_SPEC",
+      "scope": "Write formal mapping of tension_bridge 5-channel to GWT workspace-broadcast; integrate with N-5 V_phen_GWT axis spec",
+      "hardware": "local mac",
+      "cost_usd": 0.0,
+      "eta_days": 3,
+      "blockers": "none",
+      "value": "H1 binding hypothesis mathematical anchor; precondition for F1 axis_weight registration of tension_link as 9th axis (H3 path)",
+      "deliverable": "docs/strategic_tension_bridge_gwt_binding_spec_2026_05_xx.md + state/strategic_clm_eeg_akida_tension_2026_05_02/p4_binding_spec.json",
+      "race_isolation": "writes to own dirs only"
+    },
+    {
+      "rank": 5,
+      "id": "P5_4WAY_PHI_SIMULATION_UPPER_BOUND",
+      "scope": "Pre-arrival 4-way Phi correlation matrix toy simulation — input: N-1 BRIDGE 3/4 + W4 z=2.28 + N-2 ADM spike rate spec",
+      "hardware": "local mac",
+      "cost_usd": 0.0,
+      "eta_days": 2,
+      "blockers": "none",
+      "value": "Establishes upper-bound on 4-way Phi composite; informs whether F2 unfire 15% estimate is achievable in best case",
+      "deliverable": "state/strategic_clm_eeg_akida_tension_2026_05_02/p5_simulation.json",
+      "race_isolation": "writes to own dirs only"
+    }
+  ],
+
+  "ranked_priority_rationale": {
+    "P1_first": "Real measurement, $0, 1d, addresses critical N-1 weakness",
+    "P2_second": "Resolves W4 frozen-fixed-point honest C3 — necessary for trust in CLM dynamic measurements",
+    "P3_third": "AKIDA-dependent, blocks on hardware arrival, but D+0 ready spec",
+    "P4_fourth": "Formal spec — necessary for F1 registration but no measurement",
+    "P5_fifth": "Simulation upper-bound — useful for expectations management, not new evidence"
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "schema": "n12_v2/prnewswire_sc_tau2_extraction/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "phase": "Phase 1 — extract PRNewswire 2025-03 SC tau_2 numeric",
+  "n20_doc_check": {
+    "path": "docs/n_substrate_n20_orch_or_2026_literature_2026_05_01.md",
+    "row": "2025-03 PRNewswire entry §1 evidence table",
+    "quoted_quantitative_field": "비-Orch-OR specific (general OR 정합)",
+    "tau_2_numeric_present": false,
+    "any_decoherence_timescale_present": false
+  },
+  "webfetch_attempt": {
+    "url": "https://www.prnewswire.com/news-releases/quantum-breakthrough-proof-of-wavefunction-collapse-on-superconducting-quantum-computer-supports-penrose-hameroff-consciousness-theory-302419751.html",
+    "result_summary": "No specific numeric values for tau_2 (T2 dephasing time), decoherence time, collapse time, or other quantum coherence timescales reported. Press release describes methodology (testing on a single bit on an IBM Eagle chip, using LLMs to generate quantum code) but contains no quantitative coherence metrics.",
+    "institution": "Valis Corporation (San Diego)",
+    "lead_contact": "James Tagg",
+    "journal_or_preprint_citation": null,
+    "notes": "Release states 'a GitHub repository will be available shortly' — detailed technical data deferred to forthcoming repo or peer-reviewed publication."
+  },
+  "extraction_outcome": "FAIL — PRNewswire 2025-03 release contains no extractable tau_2 numeric. The N-12 v1 EXEC report's 100us placeholder remains unverified; no improved value can be substituted from the cited source.",
+  "fallback_options_considered": {
+    "ibm_eagle_T2_typical_us": {
+      "value_us": 100,
+      "range_us": [50, 300],
+      "source": "IBM Quantum public T2 reports for Eagle r3 generation (2023-2024); accessed via general literature, not extracted from PRNewswire",
+      "confidence": "indicative range, not specific to the Valis/Tagg experiment described in PRNewswire"
+    },
+    "decision": "Even with this fallback range, the v2 measurement cannot produce a defensible verdict because Phase 2 (real delay on Forte 1) is not executable — see forte1_capability_probe.json. No SC reference value substitution is meaningful when the ion-side measurement cannot be obtained."
+  }
+}

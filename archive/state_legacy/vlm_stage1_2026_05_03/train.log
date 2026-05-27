@@ -1,0 +1,30 @@
+[2026-05-04T06:30:00Z] CYCLE START: vlm_stage1_ubu1_train_attempt
+[2026-05-04T06:30:01Z] PRE-FLIGHT GATE 1: ubu1 GPU/disk/venv check
+[2026-05-04T06:30:02Z]   GPU: RTX 5070 12227MiB free, 15MiB used (Xorg) — PASS
+[2026-05-04T06:30:02Z]   DISK: /dev/nvme0n1p2 607G free (31% used) — PASS
+[2026-05-04T06:30:03Z]   VENV: /home/aiden/venv_orchestrator/bin/python torch 2.11.0+cu128 cuda=True sm_120 — PASS
+[2026-05-04T06:30:04Z] PRE-FLIGHT GATE 2: anima-voice .py impl check
+[2026-05-04T06:30:05Z]   find anima-voice -name "*.py" → 0 results
+[2026-05-04T06:30:05Z]   find anima-voice -name "audio_token_predictor*" -not -name "*.hexa" → 0 results
+[2026-05-04T06:30:06Z]   grep audio_token_predictor --include=*.py /Users/ghost/core/anima → 0 results
+[2026-05-04T06:30:06Z]   FAIL: no PyTorch impl of audio_token_predictor exists in repo
+[2026-05-04T06:30:07Z] PRE-FLIGHT GATE 3: ubu1 anima-voice base mirror check
+[2026-05-04T06:30:08Z]   ssh ubu1 "ls /home/aiden/anima/anima-voice/" → ENOENT
+[2026-05-04T06:30:08Z]   ssh ubu1 "ls /home/aiden/anima-voice/" → ENOENT
+[2026-05-04T06:30:09Z]   ssh ubu1 "ls ~/.cache/huggingface/hub/ | grep -iE 'voice|anima|atp|audio|vlm'" → 0 results
+[2026-05-04T06:30:09Z]   FAIL: no anima-voice base on ubu1 (and no HF mirror to pull)
+[2026-05-04T06:30:10Z] PRE-FLIGHT GATE 4: hexa runtime on ubu1 (alternative substrate)
+[2026-05-04T06:30:11Z]   ssh ubu1 "which hexa hxcc hx" → all empty
+[2026-05-04T06:30:11Z]   FAIL: no hexa compiler/runtime on ubu1
+[2026-05-04T06:30:12Z] PRE-FLIGHT GATE 5: PyTorch checkpoint anywhere on disk
+[2026-05-04T06:30:13Z]   find anima-voice -name "*.pt" -o -name "*.safetensors" -o -name "*.bin" → empty
+[2026-05-04T06:30:13Z]   FAIL: no trained weights to attach LoRA to
+[2026-05-04T06:30:14Z] DECISION: ABORT per task constraint "IF anima-voice base not loadable on ubu1 → ABORT + report (need separate base mirror cycle)"
+[2026-05-04T06:30:14Z] ROOT CAUSE: blocker doc §10 next-cycle gate #1 (.hexa → .py port, 4-16h dev) is UNFULFILLED. Task spec assumed gate #1 was complete; reality is otherwise.
+[2026-05-04T06:30:15Z] CORPUS DOWNLOAD: SKIPPED — pointless without base model
+[2026-05-04T06:30:15Z] TRAINING SCRIPT: NOT WRITTEN — no .py base to wrap
+[2026-05-04T06:30:15Z] HF PUSH: N/A
+[2026-05-04T06:30:16Z] ubu1 BG CONTENTION CHECK: only existing tail -F p9_p1_6_sentinel_out (no preempt risk per raw#15)
+[2026-05-04T06:30:17Z] EMIT: state/vlm_stage1_2026_05_03/{verdict.json, train.log, F1_audio_pred.json}
+[2026-05-04T06:30:17Z] EMIT: state/markers/vlm_stage1_aborted.marker
+[2026-05-04T06:30:18Z] CYCLE END: ABORT verdict, $0 cost, 0 destructive actions, 0 in-place changes

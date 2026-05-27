@@ -1,0 +1,328 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_pilot_cycle3.hexa — SRH Cycle #3 production 332M multi-seed sweep
+//
+//  PURPOSE
+//    Cycle #2 의 WEAK SIGNAL (UBM 2.5× split vs random, single-seed) 를
+//    cross-seed z-stat 으로 격상. 3 prompt × 3 seed = 9 fire.
+//
+//    prompt 3종:
+//      (a) ubm        : UBM tier=0 anchor full payload_text (~200 bytes)
+//      (b) byteshuf   : (a) 의 byte-shuffle — 동일 byte histogram, 순서 파괴.
+//                       byte-level tokenizer 에 대한 가장 엄밀한 통제군
+//                       (semantic·구조 0, byte 분포 IDENTICAL).
+//      (c) asciinoise : length-matched ASCII noise — byte 분포도 다른 baseline.
+//
+//    seed 3종: 2026 / 42 / 99 (cell_pool_init + chat_generate 동일 seed).
+//
+//  FALSIFIER (Cycle #3)
+//    F-SRH-1  : mean(ubm.split) vs mean(byteshuf.split) — |Δ| ≥ 2σ_pooled
+//    F-SRH-1b : mean(ubm.split) vs mean(asciinoise.split) — corroboration
+//    F-SRH-3  : cross-seed CV(ubm.split) ≤ 0.30 (3-seed pilot floor;
+//               5-seed strict ≤ 0.15 = cycle #4)
+//
+//  HOST
+//    mini (mini.local, Apple Silicon T8132, 10-core, 16 GB).
+//    paths = /Users/ghost/core/anima/* (rsync 동일경로 — script 무수정 이식).
+//
+//  RUN (on mini)
+//    cd /Users/ghost/core/anima
+//    HEXA_MEM_UNLIMITED=1 RESOURCE_LOCAL_HEXA=1 \
+//      /Users/ghost/core/hexa-lang/hexa.real run \
+//      HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22/run_pilot_cycle3.hexa \
+//      2>&1 | tee HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22/cycle3.log
+//
+//  WALL BUDGET
+//    Cycle #2: 64 forwards / 45 s ≈ 0.7 s/forward. full prompt ~200 bytes →
+//    ~210 forwards/fire × 9 fires = ~1890 forwards × 0.7 s ≈ 22 min.
+//
+//  ARTIFACTS  HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22/
+//    spike_<prompt>_seed<S>.json   (9개)
+//    result_cycle3.json            (aggregate + F-SRH-1/1b/3 verdict)
+//
+//  HONEST C3
+//    - C3-c3-1: byte-shuffle = O(n²) string rebuild, n~200 (40k ops, trivial).
+//    - C3-c3-2: 3-seed (not 5) — F-SRH-3 CV floor 0.30 (완화). cycle #4 5-seed.
+//    - C3-c3-3: cell_pool d=768 default threshold/patience 미sweep.
+//    - C3-c3-4: prompt = UBM tier=0 단일 anchor. tier monotone (F-SRH-2) =
+//      cycle #4 11-tier sweep.
+//    - C3-c3-5: chat_generate prompt template ("사용자: |도우미:") 잔존 —
+//      AGENTS.tape forbidden. Phase B hexa-native template 재측정 carry.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/ubm_inject.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/anima_spike.hexa"
+
+
+// ── §0 configuration ─────────────────────────────────────────────────────────
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22"
+}
+
+fn _max_new() -> int { return 10 }
+fn _initial_cells() -> int { return 2 }
+fn _cap_len() -> int { return 320 }   // full prompt ~200 + max_new 10 + margin
+
+
+// ── §1 control generators ────────────────────────────────────────────────────
+
+// byte-shuffle: selection-shuffle (pick-without-replacement). 동일 byte multiset,
+// 순서 무작위. O(n²) string rebuild — n~200 trivial.
+fn _byte_shuffle(text: string, seed: int) -> string {
+    let mut remaining = text
+    let mut out = ""
+    let mut s = seed
+    while len(remaining) > 0 {
+        let rn = len(remaining)
+        s = s * 1103515245 + 12345
+        let abs_s = if s < 0 { 0 - s } else { s }
+        let idx = abs_s % rn
+        out = out + remaining.substring(idx, idx + 1)
+        remaining = remaining.substring(0, idx) + remaining.substring(idx + 1, rn)
+    }
+    return out
+}
+
+// ASCII noise pool, length-matched.
+fn _ascii_noise(text: string, seed: int) -> string {
+    let n = len(text)
+    let pool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?"
+    let pn = len(pool)
+    let mut s = seed
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        s = s * 1103515245 + 12345
+        let abs_s = if s < 0 { 0 - s } else { s }
+        let idx = abs_s % pn
+        out = out + pool.substring(idx, idx + 1)
+        i = i + 1
+    }
+    return out
+}
+
+
+// ── §2 chat state reset ──────────────────────────────────────────────────────
+
+fn _reset_chat_state(chat) {
+    chat["mitosis_d_model"] = 0
+    chat["cell_pool"] = #{}
+    chat["mitosis_event_log"] = []
+    chat["mitosis_step"] = 0
+    chat["mitosis_invocations"] = 0
+    chat["kv_cache"] = #{}
+    return chat
+}
+
+
+// ── §3 single-fire driver ────────────────────────────────────────────────────
+
+fn _fire(chat, prompt: string, prompt_label: string, seed: int) -> any {
+    println("")
+    println("──── fire: " + prompt_label + " seed=" + to_string(seed)
+            + " (" + to_string(len(prompt)) + " bytes) ────")
+
+    _reset_chat_state(chat)
+    chat_init_kv_cache_default(chat, _cap_len())
+    chat_init_cell_pool(chat, 768, _initial_cells())
+
+    let mut spike = spike_init()
+    spike = spike_set_label(spike, prompt_label + "_seed" + to_string(seed))
+    spike = spike_record_init(spike, chat)
+
+    let resp = chat_generate(chat, prompt, "greedy", _max_new(),
+                             0.0, [], 1.0, 1.0, 0.0, seed, [], false)
+    spike = spike_record_final(spike, chat, resp)
+    println("  " + spike_brief(spike))
+
+    let out_path = _state_dir() + "/spike_" + prompt_label
+                 + "_seed" + to_string(seed) + ".json"
+    spike_save_json(spike, out_path)
+    return spike
+}
+
+
+// ── §4 stats helpers (int arrays) ────────────────────────────────────────────
+
+fn _mean(xs: array) -> float {
+    let n = len(xs)
+    if n == 0 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        acc = acc + (to_int(xs[i]) * 1.0)
+        i = i + 1
+    }
+    return acc / (n * 1.0)
+}
+
+fn _std(xs: array, mean_v: float) -> float {
+    let n = len(xs)
+    if n < 2 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        let d = (to_int(xs[i]) * 1.0) - mean_v
+        acc = acc + d * d
+        i = i + 1
+    }
+    // sample std (n-1)
+    let var = acc / ((n - 1) * 1.0)
+    return sqrt(var)
+}
+
+fn _abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+
+// ── §5 main sweep ────────────────────────────────────────────────────────────
+
+fn _run_cycle3() {
+    println("================================================================")
+    println("SRH Cycle #3 — production 332M multi-seed sweep (host=mini)")
+    println("================================================================")
+
+    // 1. Load 332M once.
+    let chat0 = chat_default()
+    println("ckpt: " + chat0["ckpt_path"])
+    if !file_exists(chat0["ckpt_path"]) {
+        println("FATAL: ckpt absent")
+        return
+    }
+    println("loading 332M ...")
+    let chat = chat_load_weights(chat0)
+    println("  weights: " + to_string(len(dict_keys(chat["weights"]))) + " keys")
+
+    // 2. Build 3 prompts (UBM tier=0 full + 2 controls). seed-0 byte-shuffle/
+    //    noise use a FIXED derivation seed so the control text is identical
+    //    across the 3 model seeds (model seed varies cell_pool/sampling only).
+    let anchor = ubm_load_by_tier(0)
+    let ubm_prompt = ubm_to_prompt(anchor, "text_only")
+    let byteshuf_prompt = _byte_shuffle(ubm_prompt, 777)
+    let noise_prompt = _ascii_noise(ubm_prompt, 777)
+    println("")
+    println("prompts (all " + to_string(len(ubm_prompt)) + " bytes):")
+    println("  ubm       : " + ubm_prompt.substring(0, 56) + " …")
+    println("  byteshuf  : " + byteshuf_prompt.substring(0, 56) + " …")
+    println("  asciinoise: " + noise_prompt.substring(0, 56) + " …")
+
+    // 3. 3 model seeds.
+    let mut seeds = []
+    seeds = seeds.push(2026)
+    seeds = seeds.push(42)
+    seeds = seeds.push(99)
+    let n_seeds = len(seeds)
+
+    // collectors
+    let mut ubm_splits = []
+    let mut shuf_splits = []
+    let mut noise_splits = []
+    let mut ubm_cells = []
+    let mut shuf_cells = []
+    let mut noise_cells = []
+
+    let mut si = 0
+    while si < n_seeds {
+        let seed = seeds[si]
+        let sp_ubm = _fire(chat, ubm_prompt, "ubm", seed)
+        let sp_shuf = _fire(chat, byteshuf_prompt, "byteshuf", seed)
+        let sp_noise = _fire(chat, noise_prompt, "asciinoise", seed)
+
+        ubm_splits = ubm_splits.push(to_int(sp_ubm["split_count"]))
+        shuf_splits = shuf_splits.push(to_int(sp_shuf["split_count"]))
+        noise_splits = noise_splits.push(to_int(sp_noise["split_count"]))
+        ubm_cells = ubm_cells.push(to_int(sp_ubm["cell_count_final"]))
+        shuf_cells = shuf_cells.push(to_int(sp_shuf["cell_count_final"]))
+        noise_cells = noise_cells.push(to_int(sp_noise["cell_count_final"]))
+        si = si + 1
+    }
+
+    // 4. Aggregate stats.
+    let m_ubm = _mean(ubm_splits)
+    let m_shuf = _mean(shuf_splits)
+    let m_noise = _mean(noise_splits)
+    let sd_ubm = _std(ubm_splits, m_ubm)
+    let sd_shuf = _std(shuf_splits, m_shuf)
+    let sd_noise = _std(noise_splits, m_noise)
+
+    // pooled std for F-SRH-1 (ubm vs byteshuf)
+    let pooled_sd_1 = sqrt((sd_ubm * sd_ubm + sd_shuf * sd_shuf) / 2.0)
+    let delta_1 = _abs_f(m_ubm - m_shuf)
+    let z_1 = if pooled_sd_1 > 0.0001 { delta_1 / pooled_sd_1 } else { 0.0 }
+
+    let pooled_sd_1b = sqrt((sd_ubm * sd_ubm + sd_noise * sd_noise) / 2.0)
+    let delta_1b = _abs_f(m_ubm - m_noise)
+    let z_1b = if pooled_sd_1b > 0.0001 { delta_1b / pooled_sd_1b } else { 0.0 }
+
+    // F-SRH-3 cross-seed CV of ubm.split
+    let cv_ubm = if m_ubm > 0.0001 { sd_ubm / m_ubm } else { 0.0 }
+
+    let f_srh_1  = (z_1 >= 2.0)
+    let f_srh_1b = (z_1b >= 2.0)
+    let f_srh_3  = (cv_ubm <= 0.30)
+
+    let v1  = if f_srh_1  { "PASS" } else { "FAIL" }
+    let v1b = if f_srh_1b { "PASS" } else { "FAIL" }
+    let v3  = if f_srh_3  { "PASS" } else { "FAIL" }
+
+    // 5. result_cycle3.json
+    let mut j = "{\n"
+    j = j + "  \"cycle\": 3,\n"
+    j = j + "  \"date\": \"2026-05-22\",\n"
+    j = j + "  \"host\": \"mini\",\n"
+    j = j + "  \"ckpt\": \"ckpt_phase1a4_lr5e6_sft.safetensors\",\n"
+    j = j + "  \"d_model\": 768, \"n_layers\": 24,\n"
+    j = j + "  \"max_new\": " + to_string(_max_new()) + ",\n"
+    j = j + "  \"prompt_bytes\": " + to_string(len(ubm_prompt)) + ",\n"
+    j = j + "  \"seeds\": [2026, 42, 99],\n"
+    j = j + "  \"ubm_splits\": " + _int_arr_json(ubm_splits) + ",\n"
+    j = j + "  \"byteshuf_splits\": " + _int_arr_json(shuf_splits) + ",\n"
+    j = j + "  \"asciinoise_splits\": " + _int_arr_json(noise_splits) + ",\n"
+    j = j + "  \"ubm_cells\": " + _int_arr_json(ubm_cells) + ",\n"
+    j = j + "  \"byteshuf_cells\": " + _int_arr_json(shuf_cells) + ",\n"
+    j = j + "  \"asciinoise_cells\": " + _int_arr_json(noise_cells) + ",\n"
+    j = j + "  \"mean_split\": { \"ubm\": " + to_string(m_ubm)
+          + ", \"byteshuf\": " + to_string(m_shuf)
+          + ", \"asciinoise\": " + to_string(m_noise) + " },\n"
+    j = j + "  \"std_split\": { \"ubm\": " + to_string(sd_ubm)
+          + ", \"byteshuf\": " + to_string(sd_shuf)
+          + ", \"asciinoise\": " + to_string(sd_noise) + " },\n"
+    j = j + "  \"F_SRH_1\":  { \"cmp\": \"ubm_vs_byteshuf\", \"delta\": "
+          + to_string(delta_1) + ", \"pooled_sd\": " + to_string(pooled_sd_1)
+          + ", \"z\": " + to_string(z_1) + ", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "  \"F_SRH_1b\": { \"cmp\": \"ubm_vs_asciinoise\", \"delta\": "
+          + to_string(delta_1b) + ", \"pooled_sd\": " + to_string(pooled_sd_1b)
+          + ", \"z\": " + to_string(z_1b) + ", \"verdict\": \"" + v1b + "\" },\n"
+    j = j + "  \"F_SRH_3\":  { \"metric\": \"cross_seed_CV(ubm.split)\", \"cv\": "
+          + to_string(cv_ubm) + ", \"floor\": 0.30, \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "  \"verdict_rule\": \"F-SRH-1/1b z ≥ 2.0 (3-seed pooled) · F-SRH-3 CV ≤ 0.30\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result_cycle3.json", j)
+
+    println("")
+    println("================================================================")
+    println("CYCLE #3 COMPLETE")
+    println(j)
+    println("================================================================")
+}
+
+// int array → JSON list
+fn _int_arr_json(xs: array) -> string {
+    let n = len(xs)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(to_int(xs[i]))
+        i = i + 1
+    }
+    return out + "]"
+}
+
+
+_run_cycle3()

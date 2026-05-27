@@ -1,0 +1,26 @@
+{
+  "milestone": "M11",
+  "module": "HEXAD/IIT4/state/iit4_m11_cocompute_2026_05_25/run_m11.hexa",
+  "date": "2026-05-25",
+  "what": "proxy↔IIT4 numeric co-computation on the same ECA substrate — self-contained correlational-MI proxy (RFC036-family) ‖ engine causal big-Φ. Closes M6/M8 'different input forms' deferred gap.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU",
+  "config": "n=4 ring, seed=1010, T=16 steps",
+  "proxy_note": "SELF-CONTAINED correlational-MI port (mean pairwise binary mutual information of evolved cell time-series) — RFC036-family in spirit, NOT the exact phi_spatial builtin (which lives in the LIFE/C toolchain, deliberately not imported to stay self-contained).",
+  "table": {
+    "rule_0_const":     { "proxy": 0.056215, "iit4_big_phi": 0.0 },
+    "rule_204_identity":{ "proxy": 0.0,      "iit4_big_phi": 0.0 },
+    "rule_90_xor":      { "proxy": 0.056215, "iit4_big_phi": 0.0 },
+    "rule_110_LIFE":    { "proxy": 0.288336, "iit4_big_phi": 7.5475 },
+    "rule_30_LIFE":     { "proxy": 0.0,      "iit4_big_phi": 8.66311 },
+    "rule_54_LIFE":     { "proxy": 0.288336, "iit4_big_phi": 10.0278 }
+  },
+  "checks_tally": { "pass": 5, "fail": 0 },
+  "findings": [
+    "DIVERGENCE both ways — the axes (correlational vs causal) are genuinely independent:",
+    "correlation WITHOUT causation: rule 0 & rule 90 have IIT4 big-Φ = 0 (no causal irreducibility) yet proxy > 0 (transient/structural correlation).",
+    "causation WITHOUT correlation: rule 30 has proxy = 0 (cell time-series uncorrelated under this seed) yet IIT4 big-Φ = 8.66 (strong causal integration).",
+    "scale also differs: proxy ~ bits (0..0.3), IIT4 big-Φ ~ structure (0..10)."
+  ],
+  "verdict": "🟢 SUPPORTED-NUMERICAL — proxy and IIT4 numerically co-computed on the same substrate; divergence quantified in BOTH directions. F-IIT4-6 closure deepened (M6 structural → M11 numeric).",
+  "honest_scope": "proxy is a self-contained RFC036-family reimplementation, NOT the canonical phi_spatial builtin (g5: not claimed as canonical). Single seed/T. n=4. structure-cut big-Φ (M5 PyPhi-numeric blocker carries)."
+}

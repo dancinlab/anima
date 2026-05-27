@@ -1,0 +1,24 @@
+=== POD: 0jetjpvlm51zoy_s43 (216.243.220.230:11023) ===
+=== timestamp: 2026-05-04T05:53:32Z ===
+--- [1] nvidia-smi util/mem/power ---
+Warning: Identity file  /Users/ghost/.runpod/ssh/RunPod-Key-Go -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 -o BatchMode=yes not accessible: No such file or directory.
+97 %, 27089 MiB, 383.95 W
+--- [2] nvidia-smi compute-apps ---
+Warning: Identity file  /Users/ghost/.runpod/ssh/RunPod-Key-Go -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 -o BatchMode=yes not accessible: No such file or directory.
+220, python3, 27080 MiB
+--- [3] ps python|train ---
+Warning: Identity file  /Users/ghost/.runpod/ssh/RunPod-Key-Go -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 -o BatchMode=yes not accessible: No such file or directory.
+root         220  102  0.1 214950568 2771264 ?   Rl   04:43  72:20 python3 -u /workspace/train_llama_lora_r16.py --base-model meta-llama/Llama-3.2-3B-Instruct --data-jsonl /workspace/sft_data_llama_template.jsonl --output-dir /workspace/p9_path_a_r16_s43_savepoints --lora-r 16 --lora-alpha 16 --lr 1e-4 --per-device-batch 4 --grad-accum 8 --max-steps 10000 --save-steps 2000 --seq-len 2048 --warmup-steps 200 --logging-steps 10 --bf16 --gradient-checkpointing --seed 43 --push-to-hub dancinlab/llm-llama32-3b-paradigm-a-prime-r16-s43-sft-stage1
+root         348  0.1  0.0 18360544 479328 ?     Sl   04:43   0:05 /usr/bin/python3 /usr/local/lib/python3.11/dist-packages/torch/_inductor/compile_worker/__main__.py --workers=32 --parent=220 --read-fd=24 --write-fd=34
+root         536  0.0  0.0 18295008 283588 ?     Sl   04:43   0:00 /usr/bin/python3 /usr/local/lib/python3.11/dist-packages/torch/_inductor/compile_worker/__main__.py --workers=32 --parent=220 --read-fd=24 --write-fd=34
+root         538  0.0  0.0 18295008 283588 ?     Sl   04:43   0:00 /usr/bin/python3 /usr/local/lib/python3.11/dist-packages/torch/_inductor/compile_worker/__main__.py --workers=32 --parent=220 --read-fd=24 --write-fd=34
+root         540  0.0  0.0 18295008 283588 ?     Sl   04:43   0:00 /usr/bin/python3 /usr/local/lib/python3.11/dist-packages/torch/_inductor/compile_worker/__main__.py --workers=32 --parent=220 --read-fd=24 --write-fd=34
+--- [4] du /workspace ---
+Warning: Identity file  /Users/ghost/.runpod/ssh/RunPod-Key-Go -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 -o BatchMode=yes not accessible: No such file or directory.
+72M	/workspace
+--- [5] uptime + last training log mtime ---
+Warning: Identity file  /Users/ghost/.runpod/ssh/RunPod-Key-Go -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -o ConnectTimeout=15 -o BatchMode=yes not accessible: No such file or directory.
+ 05:54:00 up 92 days, 21:40,  0 users,  load average: 3.94, 4.28, 4.68
+/workspace/p9_path_a_r16_s43_savepoints/train.log
+-rw-rw-rw- 1 root root 1650 May  4 04:43 /workspace/launch.bootstrap.log
+=== END 0jetjpvlm51zoy_s43 ===

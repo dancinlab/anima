@@ -1,0 +1,34 @@
+{
+  "scenarios": {
+    "random_vs_structured": {
+      "random_phi_mean": 35.713852079777624,
+      "structured_phi_mean": 5.267717774777322,
+      "random_higher": true,
+      "iit_direction_says_structured_higher": true,
+      "proxy_direction_match": false
+    },
+    "scaling_N": {
+      "n4_phi_mean": 12.706109970539568,
+      "n16_phi_mean": 14.171927371461,
+      "scaling_increase": true,
+      "iit_direction_says_scaling_increase": true,
+      "proxy_direction_match": true
+    },
+    "independent_vs_correlated": {
+      "indep_phi_mean": 13.369433649449258,
+      "corr_phi_mean": 4.4604786237763445,
+      "indep_higher": true,
+      "iit_direction_says_correlated_higher": true,
+      "proxy_direction_match": false
+    }
+  },
+  "matches_count": 1,
+  "mismatches_count": 2,
+  "matches": [
+    "scaling_N"
+  ],
+  "pattern_confirmed": true,
+  "pattern_description": "anima \u03a6\u2605 = mean pairwise distance + log(N+1) \u2014 measures SCRAMBLE/DIFFUSION, not IIT integration",
+  "iit_3_0_signal_proxy_recommendation": "PyPhi formal IIT 3.0 OR alternative proxy (e.g., MI-MIP, mutual info, predictive integrated info) needed for direction-sensitive sub-claims",
+  "unaffected_use_cases": "Hc_1283 magnitude threshold (\u03a6\u2605 \u226b 0.5) \ub294 \uc5ec\uc804\ud788 SUPPORTED \u2014 magnitude alone, not direction-sensitive"
+}

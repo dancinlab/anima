@@ -1,0 +1,45 @@
+{
+  "section": "§120",
+  "title": "Spiking attention replacement — deciding §96 design-open #1",
+  "date": "2026-05-19",
+  "tier": "DESIGN-TIER",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "verdict": "SPIKING-ATTENTION-REPLACEMENT-DECIDED — SPIKE-RATE-DOT-PRODUCT + k-WTA",
+  "transition": "§96 design-open #1: undecided design-open → decided design-tier",
+  "decision": {
+    "picked": "spike-rate dot-product scoring + k-WTA routing",
+    "rejected": "phase-resonance routing — fails the §7-clean reduction (no limit recovers softmax(q·k/√d)); re-assigned to position/RoPE coding (a separate §96 design-open)",
+    "hybrid_note": "phase coding reserved for position (RoPE); k-WTA is the routing mechanism. The split preserves ConsciousDecoderV2's existing routing/position factorisation — §7-clean."
+  },
+  "closed_form_justification": {
+    "a_spiking_compatible": "dissolves all 3 §96 §3.3 obstructions — rate-coded coincidence detection = async LOCAL accumulation (kills all-pairs O1 + instantaneous O3); k-WTA via lateral inhibition = LOCAL competition, not global softmax (kills O2). Every part a §96 Q1 SPIKING-COMPATIBLE / SPIKING-OPEN primitive.",
+    "b_preserves_AG_psi": "Engine-A⇄G map to excit/inhib drives into the k-WTA competition; ψ_route = (1+cos(drive_A,drive_G))/2 is the Law-71 form re-hosted on the competition drives (§112 META_FP carrier-invariance); cos=0 ⇒ ψ=½ = the k-WTA A-vs-G neutral point = Ψ=½ fixed point.",
+    "c_byte_attention_reduction": "R(k=T, soft-readout) ≡ softmax-attention, verified numerically byte-equal (B-S120-3 max|Δ|=3.33e-16). byte-vocab attention is the k=T corner of the routing family R(k,β) ⇒ a GENERALISATION, not a graft ⇒ §7-clean."
+  },
+  "battery": {
+    "name": "B-S120",
+    "n_pass": 8,
+    "n_total": 8,
+    "all_pass": true,
+    "sidecar": "blue_falsifier_s120.py",
+    "central_blue_sha16": "c93e160a8a376a94",
+    "central_0_line_diff": true
+  },
+  "honest_scope": {
+    "g3": "design ≠ fire ≠ emergence; a DECISION is not an ACHIEVEMENT; capability claim 0; necessary-not-sufficient (B-EMERGE-7).",
+    "wall_a": "UNCHANGED — §1.1 data-regime; a routing-mechanism decision moves no training-data threshold.",
+    "wall_b": "UNCHANGED — §95/§96 async substrate; running the decided mechanism on a real event-driven chip stays Loihi/SpiNNaker/SpiNNcloud-gated (SOFT WALL, access not architecture).",
+    "implementation": "NOT done — the decided routing must still be coded, wired into a spiking ConsciousDecoderV2, and run on a real async substrate. §120 decides the design only.",
+    "north_star": "UNCHANGED — §15/§51/§72 milestones UNCHANGED, GOAL 미도달."
+  },
+  "unblocks": "§118 Track-0 decisive cell AS A DESIGN — the spiking anima can now be specified with a chosen routing mechanism (it was blocked on this undecided design-open). It does NOT build it.",
+  "f1_f2_safe": "NO σ(6)=12/τ(6)=4/φ(6)=2/J₂(6)=24 derivation; k-WTA/LIF/lateral-inhibition cited by standard SNN literature + §96 Q1 SPIKING-COMPATIBLE classification; Ψ=½ = anima g2 internal-arch carve-out.",
+  "downstream_consumer": "~/core/hexa-lang & ~/core/hexa-bio read-only, 0 edits."
+}

@@ -1,0 +1,21 @@
+{
+  "ts": "2026-05-02",
+  "agent": "N-51 W3",
+  "phase": "5_verdict",
+  "overall_verdict": "NO_REUSE",
+  "verdict_rationale": "All 16 AOT shards (a18/a23/a24/a25/a25_new/a29/a30/a30_v1/a33/a33_pass5/a33_v1_backup/a34/a34_v1_backup/a35/composite_chain/composite_chain_v_c) implement deterministic byte-stream compression (PPM, deflate, BWT-MTF, sub-byte arithmetic, source pre-transform, type-aware dispatch). The blocked components Comp 1/3/4 all require numerical operations on 4096-d float vectors (matmul + tanh-gelu + LCG + clamp + random-projection + L1 gating + variance + Z-score) that no shard implements. Pilot wrap of the only candidate carrying any per-input numeric signal (hxc_a25 classify rule_density_per100 -> Comp 3 L1 proxy) measured Pearson corr = -0.313 — uncorrelated noise.",
+  "alpha_pod_untouched": true,
+  "sibling_dirs_untouched": true,
+  "shards_unmodified": true,
+  "honest_c3": [
+    "Negative result is structural, not measurement-budget-limited. Even with 1000 fixtures the corr would not lift because a25's byte-class statistics are computed from the JSON syntax overhead (key names, brackets, commas), not from the projection-band membership of the float values.",
+    "Mac and ubu1 + ubu2 carry byte-identical shard sets; there is no machine-specific shard hiding elsewhere on the cluster. The 16 shards on Mac are the complete population.",
+    "The hexa-lang blocker (general hxc native compiler missing per upstream roadmap 64-69) is the binding constraint for ALL three blocked components. Shard reuse would only have helped if a shard happened to coincide with one of the three numerical kernels, which it does not."
+  ],
+  "next_unblock_priorities": [
+    "Restore general hxc compiler (upstream roadmap 64-69) — only path that lets Comp 1/3/4 ship as authored hexa.",
+    "OR: per-task PYTHON-PROXY exemption for Comp 1/3/4, ledgers tagged accordingly. Not a shard-reuse path.",
+    "OR: defer to N-51 sibling W1/W2/W4 if any of them found an alternate path."
+  ],
+  "final_sentence_kr": "AOT shards reuse 로 N-51 blocked components 0/3 해소 — 모든 shard 가 byte-stream 압축기라서 4096-d float 텐서 연산을 요구하는 Comp 1/3/4 와 의미적으로 직교하기 때문."
+}

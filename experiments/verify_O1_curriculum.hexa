@@ -1,0 +1,53 @@
+// verify_O1_curriculum.hexa — O1 Hypothesis Verification Wrapper
+//
+// Hypothesis (acceleration_hypotheses.json / O1):
+//   "Consciousness-Generated Curriculum"
+//   consciousness_to_corpus.py generates patterns consciousness struggles with
+//   → weakness reinforcement → self-reinforcing loop.
+//
+// Verification strategy (closed-loop pipeline, R1/R14/feedback_closed_loop_verify):
+//   1. Instantiate ClosedLoopEvolver from anima/experiments/evolution/closed_loop.py
+//   2. Register an O1 intervention "o1_curriculum" via register_intervention().
+//      The intervention inspects engine.cell_states every 50 steps, locates the
+//      highest-tension (weakest/most-struggling) cells, synthesizes N=10 "hard
+//      tokens" (input vectors biased toward those struggle states), and pushes
+//      them into engine._curriculum_buffer. On subsequent ticks the buffer head
+//      is consumed as x_input for the next step(), closing the loop.
+//   3. Run 3 cycles of ClosedLoopEvolver.run_cycle() and record
+//      phi_baseline → phi_improved per cycle.
+//   4. Persist the full report to data/o1_first_validation.json.
+//
+// This wrapper creates NO new .py files. It only CALLS the existing
+// closed_loop.py and (if present) consciousness_to_corpus.py via the hexa-lang
+// inline `python { ... }` extern block (same pattern used in
+// experiments/consciousness/tension_link_verify.hexa).
+//
+// Pass criteria (exploratory, stage=validating):
+//   * mean(phi_delta_pct) over 3 cycles > 0           → curriculum helps Φ
+//   * at least one cycle applies "o1_curriculum"      → wiring works
+//
+// Usage:
+//   HEXA=$HEXA_LANG/target/release/hexa
+//   $HEXA anima/experiments/verify_O1_curriculum.hexa
+//
+// Output:
+//   $ANIMA/data/o1_first_validation.json
+
+intent "O1 curriculum hypothesis verification" {
+    keywords: ["O1", "curriculum", "hard-token", "closed-loop", "self-reinforce"]
+    category: "hypothesis-verification"
+    hypothesis_id: "O1"
+    outputs: ["phi_baseline", "phi_improved", "phi_delta_pct", "intervention_applied"]
+}
+
+// PORTED_PYTHON_REMOVED: original file contained a ~260-line `python { ... }`
+// extern block driving ClosedLoopEvolver + O1 curriculum intervention. The
+// `python { ... }` extern block was never implemented in the hexa parser/codegen
+// (FAIL_C audit 2026-04-19). Stubbed until hexa-native port of closed_loop
+// (see anima/experiments/evolution/closed_loop.py) lands. R1/HX4/feedback_python_external_organ.
+
+@deprecated
+fn main() {
+    shell("echo '[O1] STUB: verify_O1_curriculum.hexa python{} block removed 2026-04-19 (FAIL_C audit). Requires hexa-native ClosedLoopEvolver port before re-enabling.' 1>&2")
+    exit(1)
+}

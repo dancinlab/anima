@@ -1,0 +1,61 @@
+{
+  "tool": "longitudinal_self_experiment_pre_register",
+  "version": "v1",
+  "raw_rank": 12,
+  "hexa_only": true,
+  "deterministic": true,
+  "llm": "none",
+  "pre_register_frozen": true,
+  "frozen_at": "2026-04-28",
+  "subject": "search5599@proton.me (N=1 within-subject)",
+  "design": "longitudinal within-subject, 5 axes × 17 levels × N=10 = 170 sessions over ~14d",
+  "hypothesis_set": {
+    "H1_caffeine": "engagement (beta/alpha) at +30/+60min > pre-09:00 baseline (paired t, alpha=0.0025 Bonferroni)",
+    "H2_circadian": "LZ76 at 15:00 >= 09:00 (Marzano 2010 afternoon peak); rmANOVA 5-level",
+    "H3_postmeal": "engagement at +0min < +2h (postprandial dip; paired t)",
+    "H4_postexercise": "gamma/theta at +0min > +30min recovery (paired t)",
+    "H5_sleep": "drowsy_idx wake-immediate > +60min (sleep inertia; paired t)"
+  },
+  "variables": {
+    "axis1_caffeine": ["pre_09_00", "post_09_30", "plus30min", "plus60min"],
+    "axis2_circadian": ["09_00", "12_00", "15_00", "18_00", "21_00"],
+    "axis3_postmeal": ["imm", "plus1h", "plus2h"],
+    "axis4_postexercise": ["imm", "plus30min"],
+    "axis5_sleep": ["wake_imm", "plus30min", "plus60min"],
+    "n_per_level_target": 10,
+    "total_sessions_target": 170
+  },
+  "per_session_protocol": {
+    "step1": "board_health_check + impedance_check Z scan",
+    "step2": "60s eyes-closed resting (anima-clm-eeg primary paradigm raw#12)",
+    "step3": "5min eyes-open daily-life (raw#48 orthogonal axis)",
+    "metrics_emitted": ["lz76_x1000", "gamma_theta_x1000", "engagement_beta_alpha_x1000", "drowsy_idx_x1000"]
+  },
+  "criteria": {
+    "C1_min_sessions_per_level": 10,
+    "C2_total_sessions_for_threshold_replacement": 170,
+    "C3_threshold_rule": "new_lz76_baseline_x1000 = round((mean - 2*SD) * 1000) over all 170 resting sessions",
+    "C4_alpha_bonferroni": 0.0025,
+    "C5_effect_size_min_reportable_d": 0.2,
+    "verdict_rule": "TRANSITION_READY = (N>=170) AND (per_axis_min_N>=10) AND (gap_count<=10%)",
+    "criteria_provenance": "Pre-registered 2026-04-28, frozen by raw#12. Transition rule replaces operational placeholder human_baseline_lz76_x1000=850 in clm_eeg_p1_lz_pre_register.json with empirical mean-2SD once N>=170 reached; old 0.85 retracted per raw#82 protocol, NOT silently overwritten."
+  },
+  "falsifiers": {
+    "F1": "fixed-pattern synthetic stream (16ch identical FNV seed) -> LZ76 within ±5% across all 170 sessions (no real signal variability) -> design FALSIFIED",
+    "F2": "between-condition mean(LZ76) variance < within-condition SD (no axis effect detectable) -> hypotheses set H2/H3 FALSIFIED for this subject",
+    "F3": "ledger row missing required field {session_id, timestamp, axis, level, lz76_x1000, gamma_theta_x1000, engagement_x1000, drowsy_x1000, board_health_pass, impedance_max_kohm} -> session NULLIFIED, gap logged",
+    "F4": "session_id collision (sha256 of timestamp+axis+level) within ledger -> idempotency FALSIFIED, halt and audit raw#65",
+    "F5": "post-hoc edit to criteria block (frozen_at older but file mtime newer) detected by chflags uchg unlock log -> raw#12 violation, full retraction triggered raw#82"
+  },
+  "honest_limits_raw91_c3": {
+    "single_subject": "results generalise to this subject only; no claim about other subjects, populations, or clinical groups",
+    "carryover": "caffeine half-life 5-6h; between-day washout protocol = no caffeine after 14:00 on session-days; not perfect",
+    "adherence": "depends on user willpower; missed sessions = ledger gaps, NO imputation, gaps reported as-is",
+    "order_effects": "circadian axis intrinsically ordered; caffeine/postmeal/postexercise/sleep rotated via daily plan; full counterbalancing impossible at N=1",
+    "hardware_drift": "per-session board_health_check + impedance Z logged; drift > 20% across 14d = sub-cohort split"
+  },
+  "raw_compliance": [9, 10, 12, 37, 65, 82, 91, "own5"],
+  "ledger_path": "state/longitudinal_audit/sessions.jsonl",
+  "runner_path": "anima-eeg/tool/longitudinal_session_recorder.hexa",
+  "design_doc": "design/self_experiment_longitudinal_protocol_2026_04_28.md"
+}

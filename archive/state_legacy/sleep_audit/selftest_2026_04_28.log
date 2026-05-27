@@ -1,0 +1,11 @@
+─── sleep_tracker --selftest (synthetic 8h × 5-state HMM) ───
+  total_epochs    = 96
+  fs_hz / n_ch    = 125 / 16
+  epoch_sec       = 30
+  Wake epochs=8  pct_x1000=83  mean_lz_x1000=787
+  N1 epochs=8  pct_x1000=83  mean_lz_x1000=604
+  N2 epochs=32  pct_x1000=333  mean_lz_x1000=502
+  N3 epochs=32  pct_x1000=333  mean_lz_x1000=298
+  REM epochs=16  pct_x1000=166  mean_lz_x1000=711
+  ordering        = PASS  (Wake > REM > N1 > N2 > N3)
+  state_coverage  = PASS  (all 5 stages >= 5 epochs)

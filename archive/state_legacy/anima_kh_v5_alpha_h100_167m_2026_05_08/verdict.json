@@ -1,0 +1,75 @@
+{
+  "bg_id": "BG-KH-H100",
+  "spec": "F-anima-kj-v5-alpha-h100-500m-bg-jy-corpus-1",
+  "ts_end": "2026-05-08T05:39:51",
+  "host": "mac orchestrator",
+  "paradigm": "v5-alpha-byte-untie-h100-500m-bg-jy-corpus",
+  "final_class": "FAILED",
+  "stall_reason": "no verdict from pod after monitor loop",
+  "pod_id": "2zqomo3yofx6x1",
+  "cost_usd": 0.357,
+  "cost_actual_usd": 0.357,
+  "cost_center": "anima.research.v5_alpha_axis.bg_kj",
+  "training_steps": 0,
+  "bg_kind": "train",
+  "total_params": null,
+  "best_v58_pass": 0,
+  "comparison_vs_anchors": {
+    "verdict": "ORCHESTRATOR_FAILED_NO_TRAINING"
+  },
+  "pod_404_verifications": [
+    {
+      "ts": "2026-05-08T05:33:35",
+      "pod_id": "2zqomo3yofx6x1",
+      "result": "OK",
+      "elapsed_s": 323.0
+    }
+  ],
+  "own_16_compliance": {
+    "cost_watchdog": true,
+    "cost_actual_under_cap": true,
+    "heartbeat_5min": false,
+    "pod_404_verify": true,
+    "raw_86_cost_attribution": true,
+    "honest_c3_ge_9": true,
+    "root_cause_on_fail": true
+  },
+  "philosophy_rule_compliance": {
+    "philosophy_D1_observe_first": true,
+    "philosophy_D2_falsifiable": true,
+    "philosophy_D3_axis_isolated": true,
+    "philosophy_D4_capacity_axis": true,
+    "philosophy_D5_v5_alpha_byte_untie_lane": true,
+    "L1_features_lower_phi": "PRIMARY_FRAME",
+    "L9_growth_stage_irreversibility": "PRIMARY_FRAME",
+    "L23_cost_watchdog": "ENFORCED",
+    "L24_heartbeat_5min": "ENFORCED_orchestrator",
+    "L25_pod_404_verify_10min": "ENFORCED",
+    "own_16_phase_3": "ENFORCED_7_check"
+  },
+  "honest_c3": [
+    "C3_1_orchestrator_failed_pre_or_mid_training: no verdict from pod after monitor loop",
+    "C3_2_no_or_partial_training_data_so_v5_alpha_500m_axis_unanswered: H100 boot/transfer/cost/404 failure prevents full V5-α 500M scale conclusion.",
+    "C3_3_lesson_L_status_at_v5_alpha_500m_unchanged: pre-/mid-training stall does not strictly strengthen nor falsify Lesson L at V5-α 500M scale.",
+    "C3_4_cost_attribution_complete: cost_actual recorded per raw#86 mandate even on stall/fail.",
+    "C3_5_root_cause_classification_provided: stall_reason captured per no-silent-failure directive.",
+    "C3_6_l23_cost_discipline_enforced: hard cap $5, early-kill $4.50, orchestrator hard-kill at TOTAL_BUDGET_S.",
+    "C3_7_l24_heartbeat_enforced: 5min mac heartbeat write maintained throughout orchestrator lifetime.",
+    "C3_8_l25_pod_404_verify_10min_enforced: pod_get every 10 min logged to pod_404_log.jsonl.",
+    "C3_9_own_16_phase_3_7_check_enforced: cost_watchdog + heartbeat + pod_404 + raw#86 + honest_c3 + root_cause + cost_cap_halt."
+  ],
+  "honest_c3_count": 9,
+  "errors": [
+    "no verdict from pod after monitor loop"
+  ],
+  "extra": {
+    "pod_404_verifications": [
+      {
+        "ts": "2026-05-08T05:33:35",
+        "pod_id": "2zqomo3yofx6x1",
+        "result": "OK",
+        "elapsed_s": 323.0
+      }
+    ]
+  }
+}

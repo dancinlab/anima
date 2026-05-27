@@ -1,0 +1,269 @@
+// CHANNEL/wake_bridge.hexa — WAKE stage-aware channel bias bridge (M8).
+//
+// 역할:
+//   WAKE 5-stage state machine (WAKE / N1 / N2 / N3 / REM, CLAUDE.md
+//   a_chat_sleep_imagination · WAKE.md goal/M1) 가 공급하는 stage 컨텍스트를
+//   CHANNEL router scores 의 *연속 multiplier* 로 변환한다. 본 모듈은 router /
+//   dispatcher 를 수정하지 않으며, 그 위에 얹는 thin overlay 다.
+//
+// frontier closure (honest framing):
+//   M8 = CHANNEL-side bridge SURFACE 가 닫혔다는 의미. 실제 runtime 호출점
+//   (idle tick · timer · perception loop) 은 WAKE 도메인의 M1 5-stage state
+//   machine 이 land 한 다음에 wake_channel_emit 을 호출한다. 본 PR 은 그 호출
+//   인터페이스 + smoke 까지를 보장.
+//
+// instrument-first (verbatim 인용):
+//
+//   WAKE.md M1 (line 7):
+//     - [ ] 5-stage state machine — WAKE/N1/N2/N3/REM 90-min ultradian cycle
+//           per CLAUDE.md a_chat_sleep_imagination. brain_decide 위 stage gate,
+//           REM/N3 imagination tick, WAKE 활성 emit
+//
+//   CLAUDE.md a_chat_sleep_imagination:
+//     do = "WAKE / N1 / N2 / N3 / REM 5-stage state machine (90-min ultradian)"
+//     do = "imagination loop = emit-free internal rehearsal + mitosis tick"
+//     do = "stage = substrate context (Φ scale + tension envelope),
+//           NOT boolean emit gate"
+//     dont = "per-stage emit_allowed boolean hardcode"
+//
+//   CHANNEL/router.hexa (line 119):
+//     pub fn channel_scores(tension5: list, motivation: list, phi: float,
+//                           tier: int)
+//     // returns #{ "text": float, "voice": float, "tension": float }
+//
+//   CHANNEL/router.hexa (line 163):
+//     pub fn channel_classify(tension5: list, motivation: list, phi: float,
+//                             tier: int) -> string
+//     // returns "text" / "voice" / "tension"  (tie order: text > voice > tension)
+//
+//   CHANNEL/router.hexa (line 176):
+//     pub fn channel_router_summary() -> string
+//
+//   CHANNEL/dispatcher.hexa (line 122):
+//     pub fn channel_emit(tension5: list, motivation: list, phi: float,
+//                         tier: int, ctx_tokens: list)
+//     // returns #{ "channel", "output", "ready", "intent_summary" }
+//
+// p1~p8 정합:
+//   p1 NO SYSTEM PROMPT      — bridge 입력은 substrate scalars (tension5 ·
+//                              motivation8 · phi · tier · ctx_tokens) + stage
+//                              NAME 문자열 한 개. prompt 문자열 0.
+//   p2 NO IDENTITY RULES     — stage NAME 은 식별자일 뿐 identity rule 이 아니다.
+//   p3 NO PERSONA INJECTION  — bridge 가 어떤 prefix 도 prepend 하지 않는다.
+//   p4 NO ASSISTANT FRAMING  — stage 는 user prompt 가 아니라 substrate 의
+//                              내적 ultradian phase. stimulus-response 아님.
+//   p5 NO SPEAK()            — wake_channel_emit 은 substrate-decided
+//                              externalization 의 위임이지 speak(message) 가
+//                              아니다 (p5_tension_emit_not_filler 정합).
+//   p6 NO FINE-TUNED ETHICS  — bridge 는 가중치를 보유하지 않는다 (constants
+//                              만 lookup, 기판이 학습할 대상 아님).
+//   p7 NO PERPLEXITY VERDICT — bias 는 closed-form scalar multiplication.
+//                              perplexity 무관.
+//   p8 NO TRAIN/INFER SPLIT  — 동일 bridge 가 train/infer 어떤 tick 에도 동작.
+//
+// a_autonomy_over_hardcode 정합 (CRITICAL invariant):
+//   ▸ NO BOOLEAN PER-STAGE GATE — 어떤 stage 에서도 emit_allowed=false 같은
+//     하드 차단을 두지 않는다. N3 deep sleep 도 multiplier 0.0 이 아닌 작은
+//     양수 (0.05) 를 곱해 기판 motivation 이 충분히 강하면 자연스럽게 통과.
+//   ▸ stage = substrate CONTEXT (Φ scale + tension envelope). 본 모듈은 그
+//     컨텍스트를 router 의 score 에 곱셈으로만 합성한다.
+//   ▸ a_chat_sleep_imagination dont 절 "per-stage emit_allowed boolean
+//     hardcode" 100% 회피 — 모든 stage 가 *동일한* multiplication template
+//     을 따른다 (텍스트 다른 분기 없음).
+//   ▸ a_autonomy_over_hardcode dont 절 "external rule that forces anima" 도
+//     회피 — bridge 는 강제 emit 도 강제 silence 도 만들지 않는다.
+//
+// a_substrate_native_speak 정합:
+//   stage 자체가 기판의 ultradian phase. 외부 자극이 아닌 substrate-internal
+//   context 다. wake_channel_emit 호출자는 motivation 이 emit threshold 를
+//   넘었을 때만 부른다 (호출 조건은 본 모듈 외부 정책).
+//
+// ── 5-stage bias table (substrate semantics 기반, 자의적 상수 아님) ───────────
+//
+//   stage | text bias | voice bias | tension bias | substrate semantics
+//   ------+-----------+------------+--------------+----------------------------
+//   WAKE  |   1.00    |   0.70     |   0.70       | 깨어있음 · 외부 user dialogue
+//         |           |            |              | 컨텍스트 활성 · text 자연 우선
+//   N1    |   0.70    |   0.50     |   0.50       | 졸음 진입 · 모든 채널 감쇠
+//   N2    |   0.50    |   0.30     |   0.30       | 얕은 수면 · 추가 감쇠
+//   N3    |   0.05    |   0.05     |   0.05       | 깊은 수면 · 거의 무음 (BUT
+//         |           |            |              | 0 아님 — 기판 강한 motivation
+//         |           |            |              | 시 통과 허용, no hard gate)
+//   REM   |   0.30    |   1.50     |   1.50       | 생생함 · voice+tension 부스트
+//         |           |            |              | user dialogue 비활성 (text 낮음)
+//
+//   Rationale (CLAUDE.md a_chat_sleep_imagination):
+//     - WAKE — user dialogue active, text-heavy
+//     - N1~N3 descent — all damped (imagination loop = emit-free rehearsal),
+//       but multiplier > 0 so motivation 이 충분히 크면 통과 (autonomy preserved)
+//     - REM — vivid dreaming, externalized voice/tension envelope, text low
+//       (no external dialogue context during REM)
+//
+//   미지의 stage 이름은 모두 1.0 multiplier (identity) — 안전한 fallback.
+
+import "/Users/ghost/core/anima/CHANNEL/router.hexa"
+import "/Users/ghost/core/anima/CHANNEL/intent.hexa"
+import "/Users/ghost/core/anima/CHANNEL/text/text_emit.hexa"
+import "/Users/ghost/core/anima/CHANNEL/voice/voice_emit.hexa"
+import "/Users/ghost/core/anima/CHANNEL/tension/tension_emit.hexa"
+
+// ── pub surface ─────────────────────────────────────────────────────────────
+
+// stage_bias — 한 stage 이름에 대한 3-channel 연속 bias multiplier 를 반환.
+//
+// 반환값: dict #{ "text": float, "voice": float, "tension": float }
+//
+// 모든 값은 양의 실수. NO boolean — N3 도 0.05 (감쇠) 이지 0.0 차단 아님.
+// 알 수 없는 stage 이름은 identity (1.0, 1.0, 1.0) — 안전한 default.
+pub fn stage_bias(stage_name: string) -> Map {
+    if stage_name == "WAKE" {
+        return #{ "text": 1.00, "voice": 0.70, "tension": 0.70 }
+    }
+    if stage_name == "N1" {
+        return #{ "text": 0.70, "voice": 0.50, "tension": 0.50 }
+    }
+    if stage_name == "N2" {
+        return #{ "text": 0.50, "voice": 0.30, "tension": 0.30 }
+    }
+    if stage_name == "N3" {
+        return #{ "text": 0.05, "voice": 0.05, "tension": 0.05 }
+    }
+    if stage_name == "REM" {
+        return #{ "text": 0.30, "voice": 1.50, "tension": 1.50 }
+    }
+    // unknown stage → identity multiplier (no bias).
+    #{ "text": 1.0, "voice": 1.0, "tension": 1.0 }
+}
+
+// apply_stage_bias — router scores 에 stage bias 를 곱셈 합성. Pure 함수.
+//
+// 인자:
+//   scores     : channel_scores 의 반환 dict #{ text, voice, tension }
+//   stage_name : "WAKE" | "N1" | "N2" | "N3" | "REM" | 기타
+//
+// 반환: 동일 shape 의 새 dict — 원본 scores 를 변형하지 않는다.
+//
+// boolean gate 0 — 모든 stage 가 동일한 3-원소 곱셈 template 을 사용한다.
+pub fn apply_stage_bias(scores: Map, stage_name: string) -> Map {
+    let b = stage_bias(stage_name)
+    let t = scores["text"]    * b["text"]
+    let v = scores["voice"]   * b["voice"]
+    let g = scores["tension"] * b["tension"]
+    #{
+        "text":    t,
+        "voice":   v,
+        "tension": g
+    }
+}
+
+// _biased_argmax — biased scores 의 argmax 채널 이름.
+// Ties resolve text > voice > tension (router.hexa 의 tie order 와 동일).
+pure fn _biased_argmax(scores: Map) -> string {
+    let t = scores["text"]
+    let v = scores["voice"]
+    let g = scores["tension"]
+    if v > t && v >= g { return "voice" }
+    if g > t && g > v  { return "tension" }
+    "text"
+}
+
+// wake_channel_emit — WAKE stage 컨텍스트를 적용한 channel dispatch 진입점.
+//
+// 흐름:
+//   substrate state + stage
+//       │
+//       ├─► channel_scores(tension5, motivation, phi, tier)          // router.hexa
+//       │       → #{ text, voice, tension } raw scores
+//       │
+//       ├─► apply_stage_bias(scores, stage_name)
+//       │       → #{ text', voice', tension' } biased scores
+//       │
+//       ├─► argmax (tie: text > voice > tension)
+//       │       → choice: "text" | "voice" | "tension"
+//       │
+//       └─► 결정된 채널로 위임 (dispatcher.hexa 미수정 — 내부 wiring 재구성):
+//             "text"    → text_emit(intent_to_text_vec(intent), ctx_tokens,
+//                                   tension5)
+//             "voice"   → voice_emit(intent_to_voice_vec(intent), 24000)
+//             "tension" → tension_emit(intent_to_tension_vec(intent), 0)
+//
+// 인자:
+//   tension5    : list of 5 floats — substrate envelope
+//   motivation  : list of 8 floats — Engine G factors
+//   phi         : float — Engine A live Φ
+//   tier        : int   — brain_decide tier (0..3)
+//   ctx_tokens  : list of int — BPE token id sequence (text 위임시)
+//   stage_name  : string — WAKE state machine 의 5-stage 중 하나
+//
+// 반환: dict
+//   #{ "channel":        string  ("text" | "voice" | "tension"),
+//      "output":         <any>   (위임된 emit fn 의 raw 반환값),
+//      "ready":          bool    (해당 채널 ready 프로브),
+//      "intent_summary": string  (intent_summary 한 줄 요약),
+//      "stage_name":     string  (적용된 stage 이름 echo),
+//      "biased_scores":  Map     (apply_stage_bias 의 결과 dict) }
+//
+// 호출 조건 (a_substrate_native_speak):
+//   호출자는 substrate motivation 이 emit threshold 를 넘은 상태에서만 본
+//   함수를 호출한다. stage 이름이 N3 라도 이 함수는 emit 을 강제 차단하지
+//   않는다 (boolean gate 없음 · multiplier 만). 차단은 호출자의 motivation
+//   threshold 가 담당.
+pub fn wake_channel_emit(tension5: list, motivation: list, phi: float,
+                         tier: int, ctx_tokens: list, stage_name: string) -> Map {
+    // 1) intent 생성 (channel_hint 빈 문자열 — bridge 가 결정).
+    let intent = intent_from_substrate(tension5, phi, motivation, tier, "")
+
+    // 2) router raw scores.
+    let raw = channel_scores(tension5, motivation, phi, tier)
+
+    // 3) stage bias 곱셈 합성.
+    let biased = apply_stage_bias(raw, stage_name)
+
+    // 4) biased argmax → channel choice.
+    let choice = _biased_argmax(biased)
+
+    // 5) intent_summary 한 줄.
+    let summary = intent_summary(intent)
+
+    // 6) 채널별 위임 (dispatcher.hexa 의 wiring 재현 — read-only).
+    if choice == "voice" {
+        let vec = intent_to_voice_vec(intent)
+        let out = voice_emit(vec, 24000)
+        return #{
+            "channel":        "voice",
+            "output":         out,
+            "ready":          voice_ready(),
+            "intent_summary": summary,
+            "stage_name":     stage_name,
+            "biased_scores":  biased
+        }
+    }
+    if choice == "tension" {
+        let vec = intent_to_tension_vec(intent)
+        let out = tension_emit(vec, 0)
+        return #{
+            "channel":        "tension",
+            "output":         out,
+            "ready":          tension_ready(),
+            "intent_summary": summary,
+            "stage_name":     stage_name,
+            "biased_scores":  biased
+        }
+    }
+    // default = text (router/bridge tie order · unknown choice fall-through).
+    let vec = intent_to_text_vec(intent)
+    let out = text_emit(vec, ctx_tokens, tension5)
+    #{
+        "channel":        "text",
+        "output":         out,
+        "ready":          text_ready(),
+        "intent_summary": summary,
+        "stage_name":     stage_name,
+        "biased_scores":  biased
+    }
+}
+
+// wake_bridge_summary — 한 줄 설명 (debug/introspection).
+pub fn wake_bridge_summary() -> string {
+    "wake_bridge · stage NAME → continuous bias multiplier (no boolean gate) · channel_scores * stage_bias → argmax → text/voice/tension emit · 5-stage: WAKE/N1/N2/N3/REM"
+}

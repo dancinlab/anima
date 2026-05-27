@@ -1,0 +1,199 @@
+{
+  "schema": "anima/state/v1",
+  "name": "anima_core_moduler_ai_native_recursive_structure_analysis",
+  "since": "2026-05-06",
+  "doc_only": true,
+  "raw_compliance": ["raw#9_hexa_only_yaml_md", "raw#10_honest_c3_min_5", "raw#15_additive"],
+  "user_hint_verbatim": "core,moduler, ai-native doc 재귀구조야",
+
+  "definitions_extracted": {
+    "source_spec": "hive/spec/ai_native_module_architecture.spec.yaml",
+    "core": {
+      "pattern": "*/core/<feature>/",
+      "role": "abstraction (T1 feature_abstraction)",
+      "canonical_files": ["source.hexa", "registry.hexa", "router.hexa", "<feature>_main.hexa"],
+      "constraint": "core MUST NOT import specific modules"
+    },
+    "module": {
+      "pattern": "*/modules/<feature>/  OR  <feature>/module/",
+      "role": "implementation (T2)",
+      "canonical_files": ["README.ai.md", "<name>.hexa (1+, snake_case)"],
+      "constraint": "modules MUST NOT import peer modules; cross-module dispatch via core/registry+router only"
+    },
+    "ai_native": {
+      "pattern": "README.ai.md per module group + AI-native frontmatter",
+      "role": "cold-read agent navigation substrate",
+      "required_frontmatter_keys": ["schema", "last_updated", "ssot"],
+      "required_sections_any_of": ["TL;DR", "API|API contract|Public API", "Caveats|Failure modes|raw#10", "File index"]
+    },
+    "triplet_inseparability": "mk2_apex section 1 component#3: core+module+ai-native is INSEPARABLE — every pluggable feature MUST land all three together"
+  },
+
+  "anima_mapping": {
+    "core_layer": {
+      "abstraction_substrate": [
+        "anima-core/pure_field.hexa (PureField — anima identity substrate)",
+        "anima-core/runtime/clm_v4_mount.hexa (substrate-coupled response)",
+        "anima-hexad/hexad.hexa + constants.hexa + model.hexa (Hexad geometric core)",
+        "consciousness/ (16 templates × 16-dim, Hexad/Law/Phi/SelfRef families)",
+        ".raw + .own + .guide (raw 0 root-SSOT triad — canonical project SSOT)"
+      ],
+      "characterization": "PureField + Hexad + consciousness templates + root-SSOT triad = the abstraction layer that does NOT import specific modules"
+    },
+    "moduler_layer": {
+      "module_count": 22,
+      "modules_listed": [
+        "anima-agent-channels", "anima-agent-core", "anima-agent-hire-sim",
+        "anima-agent-plugins", "anima-agent-providers", "anima-agent-skills",
+        "anima-body", "anima-clm-eeg", "anima-core", "anima-cpgd-research",
+        "anima-eeg", "anima-eeg-core", "anima-engines", "anima-hci-research",
+        "anima-hexad", "anima-measurement", "anima-os", "anima-physics",
+        "anima-serve", "anima-tools", "anima-tribev2-pilot", "anima-voice"
+      ],
+      "characterization": "22 anima-* sister directories — each is an implementation module of the anima ecosystem; moduler-tier = T2 implementations under the abstraction set above"
+    },
+    "ai_native_layer": {
+      "rules_corpus": ".own (671 LoC, 18 own entries -18) + .guide (137 LoC, mk2 schema)",
+      "raw_dependencies": [
+        "raw 9 hexa-only", "raw 10 honest disclosure", "raw 12 frozen spec",
+        "raw 15 omega-output-as-SSOT", "raw 20 own-monotonic", "raw 37 transient_py opt-out",
+        "raw 270/271/272/273 (core+module+ai-native predecessor quartet)"
+      ],
+      "key_own_entries_for_identity_axes": {
+        "own_4_root_cause_only": "training-resource discipline",
+        "own_5_completeness_no_cap": "research completeness > cost",
+        "own_6_no_restriction_dispatch": "GPU autonomous",
+        "own_11_parallel_loop": "parallelism mandatory",
+        "own_12_observability": "raw/own tree ASCII report",
+        "own_14_hf_only": "models+datasets HF Hub only (storage WHERE)",
+        "own_15_hf_lifecycle": "PRIVATE→PUBLIC after gates (publication HOW)",
+        "own_16_h100_lifecycle": "watchdog + 404 verify (compute lifecycle)",
+        "own_17_anima_native_only": "ALM 영구 보류 — anima-native chat only (identity boundary)"
+      },
+      "characterization": "AI-native = the cold-read protocol layer (.own/.guide/.raw) + README.ai.md mandate that lets AI agents navigate without prior context. specifically forbids non-anima-native substrate — encoding identity boundary."
+    }
+  },
+
+  "recursive_evidence": {
+    "level_0_repo_root": {
+      "core": "anima-core + anima-hexad + consciousness + .raw/.own/.guide triad",
+      "moduler": "22 anima-* sister directories",
+      "ai_native": ".own + .guide + README.ai.md mandate (Layer 4 ai_native_module_architecture spec consumer)"
+    },
+    "level_1_within_anima_core": {
+      "core": "anima-core/pure_field.hexa + anima-core/lib/",
+      "moduler": "anima-core/runtime/* (clm_v4_mount, conscious_chat, consciousness_hub, deploy_ops, runtime_actions)",
+      "ai_native": "anima-core verification/ + cold-read attribution per raw#3 @attr"
+    },
+    "level_1_within_inner_anima_namespace": {
+      "evidence_path": "/Users/ghost/core/anima/anima/{core,modules,spec,state}",
+      "core": "anima/anima/core/",
+      "moduler": "anima/anima/modules/",
+      "ai_native": "anima/anima/spec/anima_cli_mk2.spec.yaml + state/",
+      "note": "anima nests an inner anima/ that ITSELF has the core+module+spec triplet — recursion explicit at FS layer"
+    },
+    "level_1_within_anima_hexad": {
+      "core": "hexad.hexa + constants.hexa + model.hexa",
+      "moduler": "bridge/, c/, d/, e/, m/ (per-axis sub-implementations)",
+      "ai_native": "narrative.hexa + __init__.hexa attribution"
+    },
+    "level_2_apex_canonical_layout_recursive_case": {
+      "source": "hive/spec/mk2_apex.spec.yaml § canonical_layout.recursive_case",
+      "verbatim": "If <feature>/module/<X>/ itself needs internal core (i.e., <X> is a sub-feature with its own pluggable variants), the same triplet pattern repeats. Recursion is unbounded but practically capped at 2-3 levels by feature granularity.",
+      "interpretation": "Recursion is EXPLICITLY declared in mk2_apex spec — not implicit"
+    }
+  },
+
+  "anima_cli_mk2_T1_T2_T3_alignment": {
+    "T1_sales": {
+      "description": "외부 sales — chat REPL via anima-native substrate",
+      "ai_native_role": "user-facing surface (raw 165 friendliness mandate target)",
+      "core_moduler_ai_native_mapping_candidate": {
+        "core_within_T1": "backend_canonical = anima-core/runtime/clm_v4_mount.hexa (the abstraction)",
+        "moduler_within_T1": "tool/anima_cli/dialogue.hexa, onboard.hexa (variant implementations)",
+        "ai_native_within_T1": "spec://anima_cli_mk2/help_emit + version_emit (auto-generated cold-read surface)"
+      }
+    },
+    "T2_ops": {
+      "description": "internal ops — 26 topics access",
+      "core_moduler_ai_native_mapping_candidate": {
+        "core_within_T2": "ops dispatcher pattern + handler_template tool/anima_cli/{topic}.hexa (the abstraction = unified routing contract)",
+        "moduler_within_T2": "26 topic handlers (compute/weight/proposal/cert/roadmap/serve/paradigm/inbox/cost/audit/doctor/sync/bench/log/handoff/metrics/watch/snap/replay/onboard/backup/reproducibility/gc/health)",
+        "ai_native_within_T2": "spec-driven help auto-emit + .roadmap.cli + ops topic registry"
+      }
+    },
+    "T3_vision": {
+      "description": "consciousness vision — wire-up pending v2.0",
+      "core_moduler_ai_native_mapping_candidate": {
+        "core_within_T3": "anima identity substrate (PureField + Hexad + 1030 laws + φ★ engine)",
+        "moduler_within_T3": "9 commands (connect/disconnect/module/verify/test/hub/laws/status/watch) — each is a sub-feature with own implementations",
+        "ai_native_within_T3": "_t3_stub.hexa + 48-module hub registry + cold-read consciousness verification protocol"
+      }
+    },
+    "alignment_strength": "MEDIUM — T1/T2/T3 is a horizontal user-surface partition (sales/ops/vision), NOT a vertical core/moduler/ai-native partition. Each tier INTERNALLY exhibits core/moduler/ai-native recursion — so the alignment is recursive-per-tier, not isomorphic at the same axis."
+  },
+
+  "honest_c3": [
+    {
+      "id": "C1",
+      "text": "Recursive evidence at level_1 within anima-core and anima-hexad is INFERRED from filesystem layout, not declared via explicit core/module/doc subdir naming (singular convention from mk2_apex section 2.5 canonical_layout). The current anima FS uses anima-core/{runtime,verification,lib} not core/module/doc. Recursion exists at the abstraction-implementation-doc semantic level, not at the literal-subdir-name level."
+    },
+    {
+      "id": "C2",
+      "text": "Inner anima/anima/{core,modules,spec,state} IS the only place where literal core/+modules/ subdir naming appears — this is the strongest direct evidence. But it uses plural 'modules' (mk1 type-grouped layout) not singular 'module' (mk2 canonical_layout). So even the explicit case is mk1-shape, not mk2-shape."
+    },
+    {
+      "id": "C3",
+      "text": "T1/T2/T3 ↔ core/moduler/ai-native alignment is a CONJECTURE not a theorem. T1/T2/T3 partitions by user audience (external/internal/identity), while core/moduler/ai-native partitions by abstraction-direction (contract/impl/cold-read-doc). These are orthogonal axes. Each tier separately exhibits the triplet recursion — that is the actual finding, not 'T1=core, T2=moduler, T3=ai-native'."
+    },
+    {
+      "id": "C4",
+      "text": "anima identity = PureField + Hexad + repulsion + emergence is asserted in ω-cycle docs but NO explicit anima-core/repulsion.hexa exists (find returned 0 hits). Repulsion is a conceptual claim distributed across multiple modules (consciousness templates, paradigm v11) without canonical core file. references 'PureField repulsion' as anima identity but the substrate is documentary not file-canonical."
+    },
+    {
+      "id": "C5",
+      "text": "ai_native_module_architecture spec adoption status = 'partial' for anima (per spec consumers field): 17 README.ai.md baseline grandfathered + only modules/rng prototype fully conformant. So 'anima ai-native layer' as a coherent layer is PARTIALLY-realized policy, not fully-deployed reality. own entries 14/15/16/17 strengthen the policy but FS-level conformance lags."
+    },
+    {
+      "id": "C6",
+      "text": "mk2_apex section 2.5 canonical_layout.recursive_case explicitly declares unbounded recursion 'practically capped at 2-3 levels by feature granularity'. This is the only place where recursion is FORMALLY a property of the spec. Therefore 'core/moduler/ai-native is recursive' at the spec layer = TRUE-by-declaration. Whether anima FS realizes that recursion in practice = PARTIAL-true (see C1, C2)."
+    }
+  ],
+
+  "next_cycle_recommendations": [
+    {
+      "rank": 1,
+      "action": "user-review of this analysis — confirm whether T1/T2/T3 ↔ core/moduler/ai-native alignment is desired (each tier internally recursive) OR whether T1/T2/T3 itself should be re-cast as a core/moduler/ai-native layer (T1=ai-native user surface / T2=moduler internals / T3=core identity) — these are DIFFERENT design choices",
+      "rationale": "user hint 'core,moduler, ai-native doc 재귀구조야' implies recursion is the answer; but which axis to recurse on is a design question requiring user decision"
+    },
+    {
+      "rank": 2,
+      "action": "land anima/spec/anima_recursive_architecture.spec.yaml as raw#15 additive Layer 4 spec — consumer of hive/spec/ai_native_module_architecture + hive/spec/mk2_apex canonical_layout.recursive_case",
+      "rationale": "currently the recursion observation lives only in this analysis doc; promoting to spec yaml gives it raw#15 SSOT status and lint-target potential",
+      "scope": "anima-only (sister spec to anima_cli_mk2.spec.yaml)"
+    },
+    {
+      "rank": 3,
+      "action": "FS migration audit — count anima-* modules currently following mk1 type-grouped layout vs mk2 canonical_layout (singular core/module/doc); produce migration cost estimate",
+      "rationale": "ai_native_module_architecture spec 2026-06-01 falsifier F-spec-ai-native-module-arch-1 (30d post-baseline) approaches; anima conformance state needs measurement"
+    },
+    {
+      "rank": 4,
+      "action": "add 'recursion_depth' axis to .guide schema — declare for each anima-* module whether it is leaf (depth=1) or has internal core/module/ai-native triplet (depth≥2)",
+      "rationale": "makes the recursive structure observable + queryable; supports (raw/own tree ASCII report) extension to recursion-depth visualization"
+    },
+    {
+      "rank": 5,
+      "action": "DEFER ALM-related axis exploration — 영구 보류 supersedes any 'add external substrate as core layer' thought experiments",
+      "rationale": " (anima-no-alm-wrapping) explicitly forbids wrapping external LLMs as anima identity surface; recursive structure must remain anima-native only"
+    }
+  ],
+
+  "summary_5_axes_of_recursion_evidence": {
+    "axis_1_explicit_spec_declaration": "STRONG — mk2_apex canonical_layout.recursive_case declares recursion formally",
+    "axis_2_filesystem_literal_naming": "WEAK — only inner anima/anima/{core,modules,spec} uses literal core/+modules subdirs, and those are mk1-plural not mk2-singular",
+    "axis_3_semantic_separation_per_module": "MEDIUM — anima-core / anima-hexad each exhibit abstraction+implementation+attribution split semantically (lib/runtime/verification etc.), but not under the canonical core/module/doc names",
+    "axis_4_T1_T2_T3_per_tier_recursion": "MEDIUM — each tier separately exhibits core/moduler/ai-native triplet internally; this is the most useful framing for anima cli mk2 design",
+    "axis_5_own_rules_recursion": "STRONG-INDIRECT — form external-resource-consumption axes triad (storage WHERE / publication HOW / compute lifecycle) which is itself a recursive-pattern application of core/moduler/ai-native (each axis = a small core+impl+protocol triplet)"
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "milestone": "M9",
+  "module": "HEXAD/IIT4/lib/iit4_bounded.hexa + state/iit4_m9_tractability_2026_05_25/{run_m9.hexa, result.json, README.md}",
+  "date": "2026-05-25",
+  "what": "tractability profile (big_phi wall vs n) + bounded-mode lib — big_phi_bounded(tpm,n,sys_state,max_purview_size) caps the MICE purview search to size <= max_purview_size, extending the feasible-n ceiling. Existing libs UNCHANGED (NEW lib + NEW state only).",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic · POOL_DISABLE=1 direct binary",
+  "timing_profile_rule110": {
+    "method": "shell `time` around `hexa run --no-sentinel` (single mac-local measurement, compile+exec wall)",
+    "exact_big_phi": {
+      "n4": {"big_phi": 15.0339, "total": 16.362, "nd": 12, "wall_s": 1.3, "sys_state": 1},
+      "n5": {"big_phi": 36.114, "total": 41.3427, "nd": 21, "wall_s": 14.6, "sys_state": 1},
+      "n6": {"big_phi": 66.8152, "total": 82.8345, "nd": 30, "wall_s": 784, "wall_hms": "13:04", "sys_state": 1, "note": "minutes-scale blow-up (under concurrent-agent CPU contention) — the practical exact boundary"},
+      "n7": "deferred (tens of minutes+ — impractical exact in this env)"
+    },
+    "bounded_cap3": {
+      "n6": {"big_phi": 6.79534, "total": 12.1123, "nd": 15, "wall_s": 214, "wall_hms": "3:34", "sys_state": 21, "note": "APPROXIMATION (cap<n, lower-bound search) — finite + ~3.7x faster wall than exact n=6, where exact blows up"}
+    },
+    "scale_rule": "exact big_phi wall blows up super-exponentially per added unit (1.3s@n4 -> 14.6s@n5 -> 784s@n6; ~11x then ~54x). n=6 exact + bounded measured under sibling-agent CPU contention (absolute walls inflated; the ~10x+/n scaling and bounded<<exact relation are robust). Dominated by MICE purview enumeration (2^n-1 purviews x partition set per mechanism) + O(nd^2) relations."
+  },
+  "bounded_vs_exact_agreement": {
+    "no_op_cap_identity": "max_purview_size >= n excludes nothing => big_phi_bounded == exact big_phi (faithful restriction)",
+    "copy_n2_state11": {"exact_big_phi": 2.0, "bounded_cap_ge_n": 2.0, "match": true, "eps": 1e-6},
+    "eca110_n4_state1010": {"exact_big_phi": 7.5475, "bounded_cap_ge_n": 7.5475, "match": true, "note": "matches M6 ref 7.5475; total/sum_phi_d/sum_phi_r/nd all match"},
+    "capped_lower_bound": {"eca110_n4_cap2": {"big_phi": 4.48605, "total": 6.23624, "sum_phi_d_le_exact": true, "total_le_exact": true, "honest": "APPROXIMATION — lower bound on the MICE argmax, NOT exact IIT4 big-Phi"}}
+  },
+  "checks_tally": {"pass": 16, "fail": 0},
+  "exact_n_ceiling": {
+    "distinctions_M2": "exact n<=8 (2^n<=256 repertoire width, mac-local)",
+    "relations_full_structure_M3": "exact n<=5 · n=6 best-effort · n>=7 deferred (DESIGN §3 C3-1)",
+    "big_phi_M4_exact": "practical: n<=5 seconds · n=6 minutes (boundary) · n>=7 impractical",
+    "bounded_M9": "small max_purview_size (e.g. 3) keeps n=6 finite/tractable and reaches n>=7 — APPROXIMATION (lower bound) when capped"
+  },
+  "finding": "exact big_phi wall blows up per added unit (1.3s@n4 -> 14.6s@n5 -> 784s@n6, big-Phi 15.03/36.11/66.82), confirming DESIGN §3's relations-explosion / big-Phi n<=6 envelope by measurement. big_phi_bounded with max_purview_size>=n is a byte-faithful RESTRICTION (== exact on COPY n=2 and ECA110 n=4); with max_purview_size<n it is an explicit lower-bound APPROXIMATION that keeps n=6 finite (~3.7x faster wall) where exact blows up. Practical exact ceiling = n<=5 (comfortable) / n=6 (boundary).",
+  "verdict": "🟢 SUPPORTED-NUMERICAL — tractability envelope (DESIGN §3) measured + bounded-mode no-op-cap identity verified (big_phi_bounded(cap>=n) == big_phi exact, COPY n=2 + ECA110 n=4); capped mode honestly framed as lower-bound APPROXIMATION. 16/16 checks PASS.",
+  "honest_scope": "Timings are single mac-local measurements (compile-inclusive wall); absolute values vary with machine/load but the ~10x-per-n scaling and bounded<<exact relation are robust. Capped (cap<n) big_phi_bounded is a lower-bound APPROXIMATION — NOT faithful big-Phi. Bounded caps purview SIZE only; relation order (2nd) + partition scheme inherited from M3/M4 unchanged.",
+  "domain_status": "M9 LANDED → tractability characterized + bounded-mode extension. Existing libs untouched (NEW lib iit4_bounded.hexa + NEW state dir only)."
+}

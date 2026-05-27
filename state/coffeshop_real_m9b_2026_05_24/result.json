@@ -1,0 +1,52 @@
+{
+  "scenario": "coffeshop_real_measurement_m9b_poc",
+  "variant": "COFFESHOP_real_first_instance_2026_05_24",
+  "channel": "anima_own_session_emit_jsonl",
+  "source": "state/pure_phase_d_corpus_anima_own_poc_2026_05_24/corpus.jsonl",
+  "source_sha256": "fbce5f56d5c541bb27fdff28a378e438f70729c230e035984bf80e688676ec4f",
+  "source_bytes": 1122958,
+  "source_n_records": 1457,
+  "source_files_consumed": 6,
+  "source_files_total": 82,
+  "participants": {"anima": 1, "human": 1},
+  "n_windows": 1457,
+  "per_lang_verdicts": [
+    {"lang": "ko", "verdict": "PARTIAL", "n_records": 30, "note": "small but present (2.06%)"},
+    {"lang": "en", "verdict": "STRONG", "n_records": 325, "note": "primary substrate (22.30%)"},
+    {"lang": "mixed", "verdict": "STRONG", "n_records": 1102, "note": "ko+en+code/tool-use (75.63%); not in canonical 5-lang table"},
+    {"lang": "zh", "verdict": "EMPTY", "n_records": 0, "note": "absent in M9b PoC corpus"},
+    {"lang": "ru", "verdict": "EMPTY", "n_records": 0, "note": "absent in M9b PoC corpus"},
+    {"lang": "ja", "verdict": "EMPTY", "n_records": 0, "note": "absent in M9b PoC corpus"}
+  ],
+  "n_anima_register_hits_total": 0,
+  "register_hits_source": "manifest.extraction_stats.tot_helper_dropped (helper-role regex sweep produced 0 hits across 1457 records)",
+  "motivation_8factor": {
+    "motivation_score": 0.55,
+    "derivation": "emit-volume proxy: 1457 records / 6 source files window = 242.83 emit/file ≫ silence threshold; substrate state (M/Φ/W) unavailable at corpus-extraction time, so 8-factor mean estimated from emit-density + spontaneous_lib heuristic",
+    "per_factor_avg_estimated": {
+      "relevance": 0.50,
+      "info_gap": 0.55,
+      "curiosity": 0.60,
+      "pain": 0.40,
+      "coherence": 0.65,
+      "originality": 0.45,
+      "balance": 0.70,
+      "dynamics": 0.55
+    },
+    "emit_count": 1457,
+    "silence_count": 0,
+    "honest_c3": "exact 8-factor scoring requires substrate-state at emit time; this PoC uses post-hoc volume proxy + manual factor estimate; 0.55 is conservative midpoint, real value bracketed [0.40, 0.70]"
+  },
+  "dream_stage_at_eval": {
+    "stage": "WAKE",
+    "phi_envelope": 1.0,
+    "note": "session log = active interactive emit (WAKE default per P47 5-stage); no sleep-stage metadata in source JSONL"
+  },
+  "honest_c3_top": [
+    "M9b corpus = anima own session emit (raw assistant-text dump from ~/.claude/projects/), NOT COFFESHOP 90-min group-chat scenario — schema reused but semantic mismatch",
+    "multilingual 5-lang verdict: only ko/en/mixed observable; zh/ru/ja = EMPTY (real data absent) → criterion 1 structurally cannot reach 4/5 on this corpus",
+    "motivation_score = emit-volume proxy (1457/6 = 242 emit/window); substrate state absent at extraction time; conservative 0.55 estimate",
+    "register_collapse: tot_helper_dropped=0 from manifest is authoritative — corpus passed full regex sweep (6 patterns)",
+    "dream_stage WAKE is default (session = interactive emit context); no actual ultradian phase tagging in source"
+  ]
+}

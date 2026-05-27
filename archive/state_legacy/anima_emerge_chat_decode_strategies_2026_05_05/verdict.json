@@ -1,0 +1,41 @@
+{
+  "schema": "anima/emerge_chat_decode/verdict/1",
+  "ts_utc": "2026-05-05T17:01:57Z",
+  "prompt": "안녕",
+  "n_strategies": 6,
+  "n_coherent": 0,
+  "verdict": "FAIL_ALL",
+  "per_strategy": {
+    "greedy": {
+      "coherent": false,
+      "len": 32
+    },
+    "top_k_50": {
+      "coherent": false,
+      "len": 32
+    },
+    "top_p_0_9": {
+      "coherent": false,
+      "len": 32
+    },
+    "rep_penalty": {
+      "coherent": false,
+      "len": 32
+    },
+    "beam_4": {
+      "coherent": false,
+      "len": 22
+    },
+    "korean_bias": {
+      "coherent": false,
+      "len": 32
+    }
+  },
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 sister-import via importlib (read-only on BG-Q + BG-W helpers)",
+    "C3 'coherent' heuristic: 5+ semantic chars + no >50% single-char repetition — anima-internal",
+    "C4 30 max_new tokens — short fragment, full-paragraph coherence not exercised",
+    "C5 single Korean prompt 안녕 — broader corpus may shift verdict"
+  ]
+}

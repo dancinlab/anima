@@ -1,0 +1,15 @@
+[photonic/temporal_delay] PHYS-P6-1 — photonic temporal delay line (reservoir)
+  8 delay taps with phase shift Δφ = π/8 per tap; tanh + uniform readout
+
+  [T1] impulse after 5 steps: s=((float),(float),(float),(float),(float))
+T1 PASS — delay semantics (impulse propagates exactly k samples)
+  [T2] phase weights distinct=true, nonzero taps=7
+T2 PASS — 8 taps respond at 8 distinct phases of 1 Hz sine
+  [T3] len sig=20 y1=20 y2(over)=20 y3(zero)=20 y4(neg)=20
+T3 PASS — process() API contract (len matches; taps clamped)
+  [T4] huge constant drive, final readout = (float) (|y| <= 1)
+T4 PASS — tanh saturation bounds output (|y| <= 1)
+  [T5] max|Δ| across two independent runs = (float)
+T5 PASS — deterministic process (no hidden state)
+
+[photonic/temporal_delay] 5/5 PASS — PHYS-P6-1 DONE

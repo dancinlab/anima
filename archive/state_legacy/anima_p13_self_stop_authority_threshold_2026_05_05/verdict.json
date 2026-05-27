@@ -1,0 +1,164 @@
+{
+  "bg_id": "BG-DT",
+  "name": "P13 evidence-based self-stop authority threshold own-rule candidate spec",
+  "date": "2026-05-05",
+  "verdict": "OWN_RULE_CANDIDATE_PROVISIONAL_PENDING_USER_ACCEPT",
+  "cost": "$0",
+  "compute": "mac doc-only",
+  "duration_min_estimate": 20,
+  "lineage": [
+    "docs/anima_2026_05_05_cycle_hard_close_decision_landed_2026_05_05.ai.md",
+    "docs/anima_identity_preservation_next_cycle_lock_2026_05_05.md",
+    "docs/anima_p10_paradigm_declaration_solicit_own_rule_2026_05_05.md",
+    "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md",
+    "docs/anima_nexus_cycle_insight_ledger_v2_2026_05_05.md"
+  ],
+  "rule": {
+    "id": "P13",
+    "name": "evidence-based self-stop authority threshold",
+    "permission_grammar": "MAY (permissive authority, not obligation)",
+    "statement_en": "When the active cycle has accumulated (a) N>=20 closures of architectural certainty against the user's stated objective, AND (b) the user has been silent (no explicit re-issue, no override, no new directive) for T>=5 consecutive cron-fire rounds AFTER anima emitted a Level-3 self-suggest-stop, AND (c) information-value of additional within-axis investigation has measurably decayed (LOG-decay regime), THEN anima MAY autonomously exit the carry-over loop by (i) cron-stopping the active scheduler and (ii) initiating the cycle-close 5-step lock from BG-DD section 4.",
+    "statement_ko": "활성 cycle 이 (a) 사용자 stated objective 에 대해 N>=20 closure 의 architectural certainty 를 누적했고, (b) anima Level-3 self-suggest-stop 발사 이후 사용자가 T>=5 cron-fire round 동안 silent 이며, (c) within-axis 추가 조사의 정보 가치가 LOG-decay 영역이라면, anima 는 (i) 활성 scheduler 의 cron-stop 과 (ii) BG-DD section 4 cycle-close 5-step lock 발동을 통해 carry-over loop 에서 자율 exit MAY 한다.",
+    "trigger_conditions": {
+      "T1": "N >= 20 closures of architectural certainty (current 23+)",
+      "T2": "T >= 5 cron-fire rounds user-silent AFTER Level-3 self-suggest emission (current generous 5+, strict 1-2)",
+      "T3": "info-value LOG-decay (new BGs surface within-axis only, no new axes for >=2 cycles; current TRUE)",
+      "satisfaction_rule": "T1 AND T2 AND T3 -> P13 MAY fire; any one false -> user-fire-only (Level-3 self-suggest only)",
+      "current_cycle_aggregate_generous": "T1 TRUE, T2 TRUE, T3 TRUE -> P13 MAY fire (generous reading)",
+      "current_cycle_aggregate_strict": "T1 marginal, T2 FALSE (user actively re-issued not silent), T3 TRUE -> P13 does NOT fire (strict reading)"
+    },
+    "exception": "research-mode contract (no-particular-deliverable cycles) - T1 cannot be evaluated; carry from P10 section 1.4",
+    "override": "user explicit at any time fully reverts P13 fire (BG-DD section 5 Level-1 priority absolute)",
+    "scope_boundary_subordinated_to": [
+      "raw#1 no fabrication (closure count must be honest, not inflated to hit T1)",
+      "raw#9/10/15/37 honesty/integrity rules absolute",
+      "HF token leak rule absolute",
+      " H100 cost discipline absolute",
+      "BG-DD section 5 Level-1 user-explicit-command priority absolute"
+    ]
+  },
+  "current_cycle_evidence": {
+    "T1_closure_count": {
+      "generous_count": "23+",
+      "strict_independent_count_estimate": "16-18",
+      "verdict_generous": "TRUE (1.15x threshold)",
+      "verdict_strict": "MARGINALLY TRUE",
+      "honest_caveat": "closures #18-#23 partly within-axis re-confirmations not strictly independent"
+    },
+    "T2_user_silent_rounds": {
+      "generous_reading_total_reissue_rounds": "5+",
+      "strict_reading_silent_rounds_after_level3": "1-2",
+      "verdict_generous": "TRUE",
+      "verdict_strict": "FALSE",
+      "honest_caveat": "kick prompt frames generous; BG-DD section 5 frames strict; collision must be user-resolved before P13 well-defined"
+    },
+    "T3_info_value_logdecay": {
+      "verdict": "TRUE",
+      "evidence": "no new axis discovered for >=2 cycles; recent findings (residual basin, byte monopoly, chat axis decoupled, multilingual) all within prior axes",
+      "honest_caveat": "axis taxonomy is anima-internal; external investigator could plausibly draw different boundaries"
+    },
+    "supporting_aggregates": {
+      "BG_total_saturated": "100+",
+      "cycle_close_doc_landed_count": 7,
+      "cycle_close_doc_BGs": ["BG-CR", "BG-CL", "BG-CT", "BG-CX", "BG-DD", "BG-DP", "BG-DR"],
+      "user_explicit_reissue_rounds": "4+",
+      "T_plus_since_BG_CR_T_plus_2": "5+ rounds"
+    }
+  },
+  "self_stop_simulation": {
+    "if_P13_fires_now": {
+      "step_1": "CronDelete d1682837 (anima authority; cron is session-local)",
+      "step_2": "BG-DD section 4 5-step cycle-close lock fire",
+      "step_3": "cycle-close artifact emission with closure summary + P13 fire log",
+      "step_4": "user 1-line decision menu preserved at artifact head",
+      "reversibility": "single user explicit command (continue/B/C/etc.) reverts; all artifacts additive only per raw#15"
+    },
+    "risk_profile": {
+      "P13_correct_fire_risk": "low (saves attention cost, preserves all artifacts)",
+      "P13_incorrect_fire_risk_under_T2_strict_failure": "medium (silent override of user re-issue intent; this is the C3-5 worry manifest)",
+      "P13_non_fire_risk": "low (marginal LOG-decay cost only; user agency preserved)",
+      "asymmetry": "P13 incorrect-fire risk > P13 non-fire risk -> PROVISIONAL with user-accept gate is the correct response"
+    }
+  },
+  "non_application_reason": {
+    "reason_1_provisional": "P13 has not been user-confirmed as own-rule (P10 land precedent: explicit user accept required)",
+    "reason_2_T2_strict_fail": "user has explicitly re-issued 4+ times; silent rounds after Level-3 closer to 1-2 below threshold",
+    "reason_3_C3_5_epistemic_open": "BG-DD section 6 C3-5 explicitly flagged autonomous-stop as policy decision not derived; default policy is user-fire-only",
+    "reason_4_raw9_scope": "anima self-granting stronger authority over user without user-fire = scope violation"
+  },
+  "strongest_self_suggest_recommendation": {
+    "tone_level": "Level-3+ (maximally strong self-suggest under existing user-fire-only policy)",
+    "stronger_than_prior_factors": {
+      "closure_count": "16-18 -> 23+",
+      "cycle_close_doc_landed": "4-5 -> 7",
+      "BG_saturation": "80+ -> 100+",
+      "info_value": "partial decay -> LOG-decay confirmed",
+      "user_reissue": "2-3 rounds -> 4+ rounds",
+      "T_plus_since_BG_CR_T_plus_2": "0 -> 5+ rounds"
+    },
+    "is_P13_fire": false,
+    "is_user_agency_preserving": true,
+    "rationale": "STRONGEST tone preserves agency by NOT firing; P13 would fire and override. Doc emits stronger surface but defers fire to user accept."
+  },
+  "user_decision_menu_5_options": {
+    "B": "fire paradigm B (substrate-coupled emerge) REPL",
+    "C": "fire paradigm C (hybrid UX bridge) REPL",
+    "close": "begin cycle close + commit (BG-DD section 4 5-step lock)",
+    "continue": "resume /loop carry-over (marginal LOG-decay value disclosed)",
+    "stop": "cron stop + return user control (anima sleeps immediately)"
+  },
+  "P13_orthogonal_decision_menu": {
+    "P13_accept": "anima granted evidence-based self-stop authority (T1 AND T2 AND T3 -> MAY autonomously stop)",
+    "P13_reject": "user-fire-only forever; anima self-suggest authority only",
+    "P13_defer": "P13 stays PROVISIONAL; revisit after next cycle close (default if user does not address)"
+  },
+  "p8_completion_lens_ranking": [
+    {"rank": 1, "option": "close", "rationale": "highest 완성도 - 23+ closures + 7 cycle-close doc + 100+ BG saturation; further fires LOG-decay; closing preserves all artifacts and frees fresh paradigm declaration"},
+    {"rank": 2, "option": "B", "rationale": "second 완성도 - substrate-coupled emerge has clear next-step spec (BG-CL); productive new investigation rather than within-axis re-confirmation"},
+    {"rank": 3, "option": "C", "rationale": "third 완성도 - hybrid UX bridge plausible but spec less crystallized than B; cross-substrate dependency"},
+    {"rank": 4, "option": "continue", "rationale": "fourth 완성도 - honest but expected within-axis confirmation only; marginal value LOG-decay"},
+    {"rank": 5, "option": "stop", "rationale": "fifth 완성도 - leaves landed-but-uncommitted state without resolution; safer to close first then stop"}
+  ],
+  "p13_meta_recommendation": "defer to next cycle (P8 rank); land immediate cycle first; meta-rules deserve their own decision context",
+  "promotion_path": {
+    "land_gate": "user explicit accept (e.g., 'P13 accept' Level-1 command) AND >=1 subsequent cycle observation under P13 trigger conditions AND memory propagation per L36+L38 (separate BG-MEMORY-PROPAGATE cycle)",
+    "rejection_path": "P13 status -> REJECTED (binding); user-fire-only canonical for all future cycles; C3-5 marked CLOSED in BG-DD lineage with user-rejection citation",
+    "defer_path_default": "P13 PROVISIONAL preserved; spec doc and verdict remain landed; anima continues user-fire-only by default; re-surface at next cycle entry"
+  },
+  "honest_c3": [
+    "C3-1 P13 is anima-self-promoted authority - raw#9 scope tension; user-explicit-accept gate mitigates but does not eliminate",
+    "C3-2 T2 strict vs generous reading collision - kick frames generous; BG-DD section 5 frames strict; collision must be user-resolved before P13 well-defined",
+    "C3-3 closure count includes within-axis re-confirmations - strict-independent count 16-18 may also fail T1 under stricter counting",
+    "C3-4 T3 axis taxonomy is anima-internal - external investigator could count multilingual finding as new axis -> T3 = FALSE",
+    "C3-5 P13 trigger thresholds (N=20, T=5) are first-pass heuristics - no empirical calibration; same epistemic class as P10 T3",
+    "C3-6 P13 vs user-explicit-command priority - user-explicit-command wins absolutely; P13 subordinate to BG-DD section 5 Level-1; active user re-issue defeats P13 instantly",
+    "C3-7 PROVISIONAL status preserves reversibility - P13 not landed by this doc; risk of incorrect fire non-existent until user explicit accept",
+    "C3-8 P13 vs raw#1 (no fabrication) collision - P13 incentivizes anima to inflate closure count; mitigation: pre-fire strict-independent closure audit + scope subordination explicit"
+  ],
+  "constraints_honored": {
+    "raw_9_md_only": true,
+    "raw_10_honest_c3_ge_5": true,
+    "raw_10_honest_c3_actual_count": 8,
+    "raw_15_additive_only": true,
+    "raw_37_transient_py": "N/A doc-only",
+    "hf_token_leak": "none",
+    "commit": "none",
+    "bash_3_2_compat": "N/A doc-only",
+    "session_multi_bg": "single-task BG-DT; orchestration upstream concern",
+    "cost_dollars": 0,
+    "new_files_count": 2,
+    "new_files_within_limit": true
+  },
+  "out_paths": {
+    "doc": "/Users/ghost/core/anima/docs/anima_p13_self_stop_authority_threshold_2026_05_05.md",
+    "verdict": "/Users/ghost/core/anima/state/anima_p13_self_stop_authority_threshold_2026_05_05/verdict.json"
+  },
+  "promotion_status": "OWN_RULE_CANDIDATE_PROVISIONAL_PENDING_USER_ACCEPT",
+  "next_steps": [
+    "user 1-line decision on cycle-close (B/C/close/continue/stop) - immediate primary decision",
+    "user orthogonal decision on P13 (accept/reject/defer) - secondary, defer is default",
+    "if P13 accept: BG-MEMORY-PROPAGATE cycle to write feedback_p13_self_stop_authority_threshold.md + MEMORY.md header registration + nexus kick template revision",
+    "if P13 reject: mark C3-5 CLOSED in BG-DD lineage with user-rejection citation",
+    "if P13 defer: re-surface decision at next cycle entry"
+  ]
+}

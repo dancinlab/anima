@@ -1,0 +1,123 @@
+{
+  "task": "carry_2_step_1_bg_la_cell_pool_evidence",
+  "comparison": "BG-LA vs Phase 2 vs BG-LB vs random_init seed=42 unit-sphere",
+  "stats": {
+    "BG-LA": {
+      "label": "BG-LA",
+      "axis_stdev_mean": 0.12214770913124084,
+      "cell_norm_mean": 1.0000722408294678,
+      "cell_norm_stdev": 0.00036111989174969494,
+      "off_diag_cos_mean": 0.014981099404394627,
+      "off_diag_cos_max": 0.2955605387687683,
+      "off_diag_cos_min": -0.3307439684867859,
+      "svd_top3": [
+        1.410718560218811,
+        1.3454352617263794,
+        1.2394555807113647
+      ],
+      "svd_bottom3": [
+        0.6620393395423889,
+        0.6305610537528992,
+        0.5779669284820557
+      ],
+      "effective_rank": 14.958025932312012,
+      "frobenius": 4.000288486480713
+    },
+    "BG-LB": {
+      "label": "BG-LB",
+      "axis_stdev_mean": 0.12210850417613983,
+      "cell_norm_mean": 1.0000354051589966,
+      "cell_norm_stdev": 0.0003674101026263088,
+      "off_diag_cos_mean": 0.015501173213124275,
+      "off_diag_cos_max": 0.2940446734428406,
+      "off_diag_cos_min": -0.3301311135292053,
+      "svd_top3": [
+        1.412110686302185,
+        1.3445582389831543,
+        1.2405188083648682
+      ],
+      "svd_bottom3": [
+        0.6631170511245728,
+        0.631135880947113,
+        0.5771555304527283
+      ],
+      "effective_rank": 14.957008361816406,
+      "frobenius": 4.000141620635986
+    },
+    "phase2": {
+      "label": "phase2",
+      "axis_stdev_mean": 0.12211249768733978,
+      "cell_norm_mean": 1.0000367164611816,
+      "cell_norm_stdev": 0.00036609070957638323,
+      "off_diag_cos_mean": 0.01545274443924427,
+      "off_diag_cos_max": 0.2939285337924957,
+      "off_diag_cos_min": -0.3300197124481201,
+      "svd_top3": [
+        1.4122806787490845,
+        1.3446205854415894,
+        1.240258812904358
+      ],
+      "svd_bottom3": [
+        0.6634037494659424,
+        0.6310898661613464,
+        0.5772949457168579
+      ],
+      "effective_rank": 14.957612991333008,
+      "frobenius": 4.000146865844727
+    },
+    "random_seed42_unit": {
+      "label": "random_seed42_unit",
+      "axis_stdev_mean": 0.12221692502498627,
+      "cell_norm_mean": 1.0,
+      "cell_norm_stdev": 4.071772252700612e-08,
+      "off_diag_cos_mean": 0.009405541233718395,
+      "off_diag_cos_max": 0.35145103931427,
+      "off_diag_cos_min": -0.3365308940410614,
+      "svd_top3": [
+        1.4354568719863892,
+        1.330696940422058,
+        1.247578501701355
+      ],
+      "svd_bottom3": [
+        0.610257625579834,
+        0.5470116138458252,
+        0.5288472175598145
+      ],
+      "effective_rank": 14.843317031860352,
+      "frobenius": 3.999999761581421
+    }
+  },
+  "deltas": {
+    "BG-LA_vs_random_unit": {
+      "axis_stdev_mean": -6.9e-05,
+      "cell_norm_mean": 7.2e-05,
+      "off_diag_cos_mean": 0.005576,
+      "off_diag_cos_max": -0.055891,
+      "effective_rank": 0.114709,
+      "frobenius": 0.000289
+    },
+    "BG-LA_vs_BG-LB": {
+      "axis_stdev_mean": 3.9e-05,
+      "cell_norm_mean": 3.7e-05,
+      "off_diag_cos_mean": -0.00052,
+      "off_diag_cos_max": 0.001516,
+      "effective_rank": 0.001018,
+      "frobenius": 0.000147
+    },
+    "BG-LA_vs_phase2": {
+      "axis_stdev_mean": 3.5e-05,
+      "cell_norm_mean": 3.6e-05,
+      "off_diag_cos_mean": -0.000472,
+      "off_diag_cos_max": 0.001632,
+      "effective_rank": 0.000413,
+      "frobenius": 0.000142
+    }
+  },
+  "hypothesis_evaluation": {
+    "H4_unit_sphere_normalize_erase": "STRONG CONFIRM"
+  },
+  "verdict": "BG-LA cell_pool \u2248 random_unit (same H4 family as BG-LB and Phase 2)",
+  "own_16_strict": "local CPU only, no H100 fire, no pod create",
+  "ts_utc": "2026-05-09T22:55Z",
+  "lineage": "carry_2_unblock_bg_la_native_v5_measurement"
+}

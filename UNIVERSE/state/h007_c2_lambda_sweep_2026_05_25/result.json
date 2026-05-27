@@ -1,0 +1,35 @@
+{
+  "id": "H_007",
+  "criterion": "C2",
+  "slug": "cellular-automaton-consciousness",
+  "date": "2026-05-25",
+  "title": "Langton-lambda continuous sweep — Phi(lambda) peak localization",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "reps": 5, "n_bins": 4, "boundary": "periodic" },
+  "lambda_param": "Langton activity = k_active/8; Phi(lambda) = MEAN Phi over the full ensemble of all C(8,k_active) rules with that output-bit popcount (exhaustive, deterministic)",
+  "estimator": "ensemble mean over C(8,k) elementary rules per lambda (NOT a single arbitrary rule)",
+  "grid": [
+    { "k_active": 0, "lambda": 0.0, "ensemble_size": 1, "phi_mean": 1.14511e-05 },
+    { "k_active": 1, "lambda": 0.125, "ensemble_size": 8, "phi_mean": 0.879827 },
+    { "k_active": 2, "lambda": 0.25, "ensemble_size": 28, "phi_mean": 1.29166 },
+    { "k_active": 3, "lambda": 0.375, "ensemble_size": 56, "phi_mean": 1.34332 },
+    { "k_active": 4, "lambda": 0.5, "ensemble_size": 70, "phi_mean": 1.27251 },
+    { "k_active": 5, "lambda": 0.625, "ensemble_size": 56, "phi_mean": 1.32827 },
+    { "k_active": 6, "lambda": 0.75, "ensemble_size": 28, "phi_mean": 0.927317 },
+    { "k_active": 7, "lambda": 0.875, "ensemble_size": 8, "phi_mean": 1.16028 },
+    { "k_active": 8, "lambda": 1.0, "ensemble_size": 1, "phi_mean": 1.14511e-05 }
+  ],
+  "peak": { "lambda_star": 0.375, "idx": 3, "phi_mean": 1.34332 },
+  "endpoints": { "phi_lambda0_ordered": 1.14511e-05, "phi_lambda1_saturated": 1.14511e-05 },
+  "criteria": {
+    "C2_1_INTERIOR_PEAK": { "metric": "Phi(lambda*)>Phi(0) AND Phi(lambda*)>Phi(1), lambda* interior", "verdict": "PASS" },
+    "C2_2_EDGE_OF_CHAOS": { "metric": "0.3<=lambda*<=0.7", "lambda_star": 0.375, "verdict": "PASS" },
+    "C2_3_DETERMINISM": { "metric": "cross-process sha256-identical (external)", "verdict": "N/A in-process" }
+  },
+  "verdict_rule": "C2 PASS iff C2.1 (interior inverse-U peak) AND C2.2 (lambda* in 0.3..0.7)",
+  "verdict": "PASS"
+}

@@ -1,0 +1,84 @@
+{
+  "schema": "anima/p9_path_a_r16_3seed_progress2/eta_refined/1",
+  "computed_at_utc": "2026-05-04T06:38:30Z",
+  "method": "extrapolate per-seed remaining = (steps_remaining * sec_per_iter_recent) + push_to_hub_buffer",
+  "push_to_hub_buffer_min": 5,
+  "per_seed_eta": {
+    "s42": {
+      "step_current": 6557,
+      "step_remaining": 3443,
+      "sec_per_iter": 2.65,
+      "train_remaining_sec": 9124,
+      "train_remaining_hms": "2:32:04",
+      "eta_train_done_utc": "2026-05-04T09:10:34Z",
+      "eta_hub_pushed_utc": "2026-05-04T09:15:34Z"
+    },
+    "s43": {
+      "step_current": 2770,
+      "step_remaining": 7230,
+      "sec_per_iter": 2.60,
+      "train_remaining_sec": 18798,
+      "train_remaining_hms": "5:13:18",
+      "eta_train_done_utc": "2026-05-04T11:51:48Z",
+      "eta_hub_pushed_utc": "2026-05-04T11:56:48Z"
+    },
+    "s44": {
+      "step_current": 2929,
+      "step_remaining": 7071,
+      "sec_per_iter": 2.20,
+      "train_remaining_sec": 15556,
+      "train_remaining_hms": "4:19:16",
+      "eta_train_done_utc": "2026-05-04T10:57:46Z",
+      "eta_hub_pushed_utc": "2026-05-04T11:02:46Z"
+    }
+  },
+  "slowest_seed": "s43",
+  "ready_3of3_utc": "2026-05-04T11:56:48Z",
+  "ready_3of3_vs_prior_progress1_estimate": {
+    "prior_estimate_utc": "2026-05-04T12:08:01Z",
+    "drift_min": -11,
+    "verdict": "ahead-by-11min vs progress1 (s44 sped up; s43 stable; s42 unchanged)"
+  },
+  "verdict_eta_utc_after_eval": {
+    "assumed_eval_minutes_per_seed": 90,
+    "verdict_utc_parallel_3pod": "2026-05-04T13:26:48Z",
+    "verdict_utc_serial": "2026-05-04T16:26:48Z",
+    "prior_verdict_window_per_user": "13:38-16:38 UTC",
+    "drift_vs_user_window": "still-within-window (parallel ahead by 11min, serial ahead by 11min)"
+  },
+  "cost_burn": {
+    "per_pod_rate_usd_per_hr": 2.99,
+    "uptime_hr_at_capture": {
+      "s42": 4.62,
+      "s43": 1.89,
+      "s44": 1.89
+    },
+    "spend_so_far_usd": {
+      "s42": 13.81,
+      "s43": 5.65,
+      "s44": 5.65,
+      "total_3_retrain": 25.11
+    },
+    "delta_spend_vs_progress1_usd": 6.78,
+    "delta_minutes_vs_progress1": 45.85,
+    "burn_rate_per_hour_usd": 8.97,
+    "projected_spend_to_train_done_usd": {
+      "s42_additional": 7.58,
+      "s43_additional": 15.61,
+      "s44_additional": 12.92,
+      "additional_total": 36.11,
+      "cumulative_at_train_done": 61.22
+    },
+    "base_val_pod_8zbf9bfj6c63wg_excluded_note": "base val pod cost not tracked here per scope"
+  },
+  "loss_health_summary": {
+    "s42": "stable-noisy ~0.61 mean (down from 0.6440 prev) — late-mid training healthy",
+    "s43": "stable ~0.74 mean (slightly higher than 0.6989 prev — early-epoch noise, expected)",
+    "s44": "decreasing ~0.66 mean (down 0.06 from prev) — healthiest trajectory of 3"
+  },
+  "caveats": [
+    "SSH succeeded all 3 retrain pods on second attempt (after correcting log path to <output-dir>/train.log)",
+    "eval pod cost not yet incurred (eval triggered post-train by watchdog)",
+    "watchdog max_wait=57600s (16h from 05:21 UTC start = 21:21 UTC); ready_3of3 ETA 11:56 UTC leaves 9h25m headroom"
+  ]
+}

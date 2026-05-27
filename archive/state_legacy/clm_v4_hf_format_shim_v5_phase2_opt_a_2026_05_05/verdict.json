@@ -1,0 +1,222 @@
+{
+  "schema": "bg_shim_v5_phase2_opt_a_re_anchor_verdict_v1",
+  "ts_utc": "2026-05-05T07:50:00Z",
+  "bg_lane": "BG-SHIM-V5-OPT-A-RE-ANCHOR",
+  "spec_anchor": "docs/clm_v4_hf_format_shim_v5_spec_2026_05_05.md",
+  "phase2_carry": "state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/verdict.json",
+  "opt_a_anchor": "state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/verdict.json#phase_2_to_phase_3_transition.phase_3_options_ranked[0]",
+  "phase": "Phase 2 OPT-A re-anchor (ubu1 cpu fp32, $0, ~10 min wall)",
+  "scope": {
+    "exec": [
+      "Modify shim v5 CLM_V5_CROSS_ATTN_O_PROJ_STD constant 0.02 -> 0.10",
+      "Add boot-time assertion _assert_o_proj_std_after_apply (band, lower-guard, upper-guard)",
+      "Re-run F-SHIM-V5-2 byte-equivalent regression (consciousness_states=None bypass path)",
+      "Re-run F-SHIM-V5-3 canonical_zero finite forward + sanity bound",
+      "Confirm fresh-init differential: v4_o_proj_std_mean ~0.02 vs v5_o_proj_std_mean ~0.10"
+    ],
+    "no_exec": [
+      "F-SHIM-V5-4 (Phase 3 H100 -- pending user ACK after this verdict)",
+      "F-SHIM-V5-5 (Phase 4 Mac/ubu1 fp32 phi star)"
+    ],
+    "no_commit": true,
+    "no_hf_push": true,
+    "shim_v4_locked_unmodified": true,
+    "no_h100_spend": true
+  },
+  "execution_environment": {
+    "host": "ubu1 (aiden-B650M-K)",
+    "gpu": "NVIDIA GeForce RTX 5070 (sm_120)",
+    "device_used": "cpu (deterministic byte-equivalent path)",
+    "torch_version": "2.11.0+cu128",
+    "python_version": "3.12.3",
+    "venv": "/home/aiden/venv_orchestrator/bin/python",
+    "shim_v4_path_ubu1": "/home/aiden/anima_clm_v4_shim.py",
+    "shim_v5_path_ubu1": "/home/aiden/anima_clm_v4_shim_v5.py",
+    "selftest_path_ubu1": "/home/aiden/anima_clm_v4_shim_v5_phase2_selftest.py",
+    "best_pt_path_ubu1": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "rsync_v5_to_ubu1": "OK"
+  },
+  "shim_v5_modifications": {
+    "header_marker": "OPT-A re-anchor 2026-05-05",
+    "shim_version": "v5",
+    "shim_v5_variant": "opt_a_re_anchor_2026_05_05",
+    "old_std": 0.02,
+    "new_std": 0.10,
+    "tolerance": 0.02,
+    "lower_guard": 0.05,
+    "upper_guard": 0.20,
+    "boot_time_assertion_added": true,
+    "boot_time_assertion_function": "_assert_o_proj_std_after_apply",
+    "boot_time_assertion_invocation_site": "_build_decoder_module after post-construction re-init loop, before model.to(device)",
+    "additive_only": true,
+    "shim_v4_byte_identical": true
+  },
+  "boot_time_assertion": {
+    "purpose": "Verify post-apply re-init survived (catches phantom equality with shim v4 due to a downstream apply walk overwriting o_proj std back to ~0.02)",
+    "checks": [
+      "module count == CLM_V4_N_LAYER (16)",
+      "per-module std in [target - tol, target + tol] = [0.08, 0.12]",
+      "per-module std >= lower_guard (0.05) -- clearly above _init_weights default 0.02",
+      "per-module std <= upper_guard (0.20)"
+    ],
+    "load_best_pt_run_log": "[shim-v5][OPT-A] post-apply re-init verified: 16/16 modules at std~0.1000 (target=0.1, band=[0.08, 0.12000000000000001])",
+    "freshinit_run_log": "[shim-v5][OPT-A] post-apply re-init verified: 16/16 modules at std~0.1000 (target=0.1, band=[0.08, 0.12000000000000001])",
+    "post_apply_re_init_verified": true,
+    "n_modules_verified": 16
+  },
+  "f_shim_v5_2": {
+    "statement": "shim v5 with consciousness_states=None produces logits within max_abs_diff <= 1e-5 vs shim v4 reference (cross-attn bypass invariant)",
+    "threshold": 1e-5,
+    "verdict": "PASS",
+    "load_best_pt_run": {
+      "best_pt_loaded_v4": true,
+      "best_pt_loaded_v5": true,
+      "best_pt_step": 20000,
+      "best_pt_ce": 0.04630279541015625,
+      "best_pt_phi": 37.269868535501914,
+      "n_param_loaded": 477648512,
+      "n_prompts": 5,
+      "all_finite": true,
+      "max_abs_diff": 0.0,
+      "argmax_agreement_min": 1.0,
+      "verdict": "PASS"
+    },
+    "freshinit_run": {
+      "best_pt_loaded": false,
+      "n_prompts": 5,
+      "all_finite": true,
+      "max_abs_diff": 0.0,
+      "argmax_agreement_min": 1.0,
+      "verdict": "PASS"
+    },
+    "interpretation_vs_spec_expectation": "Spec said 'F-SHIM-V5-2: max_abs_diff > 1e-5 (regression EXPECTED)' anticipating the differential to leak through. EMPIRICALLY this did NOT happen and PASS at exact 0.0 is the CORRECT outcome: F-SHIM-V5-2 forwards both shims with consciousness_states=None, which triggers the DecoderBlockV2 bypass guard so cross_attn.o_proj is NEVER READ regardless of its std value. The bypass invariant is preserved by design. The spec's expected-FAIL prediction was a category error -- a bypass path cannot leak weights it does not consume. The actual differential is observable in the post-apply o_proj_std fields (v4=0.02 vs v5=0.10), not in bypass logits.",
+    "spec_expected_fail_realised_pass_explanation": "category-error in spec; PASS is the correct outcome on bypass path"
+  },
+  "f_shim_v5_3": {
+    "statement": "shim v5 with canonical_zero fixture ([1, 8, 192] zeros) is finite AND |lift_pp| (argmax disagreement proxy) < 5pp on calibration prompts",
+    "threshold_pp": 5.0,
+    "verdict": "PASS",
+    "load_best_pt_run": {
+      "best_pt_loaded": true,
+      "n_prompts": 5,
+      "all_finite": true,
+      "max_disagreement_pp": 0.0,
+      "lift_pp_proxy_max": 0.0,
+      "verdict": "PASS"
+    },
+    "freshinit_run": {
+      "best_pt_loaded": false,
+      "n_prompts": 5,
+      "all_finite": true,
+      "max_disagreement_pp": 0.0,
+      "lift_pp_proxy_max": 0.0,
+      "verdict": "PASS"
+    },
+    "interpretation": "On canonical_zero fixture, shim v5 produces logits BIT-IDENTICAL to no-fixture forward (max abs lift = 0.0, argmax disagreement = 0pp). Cross_attn(Q, zeros, zeros) = 0, so o_proj @ 0 = 0 contributes nothing regardless of o_proj std. Spec section 3 V5-3 expectation matches reality: canonical_zero is INERT under any o_proj scale. Real (non-zero) fixture required to surface differential lift -- this is what F-SHIM-V5-4 H100 spend will probe."
+  },
+  "differential_confirmed": true,
+  "differential_evidence": {
+    "v5_o_proj_std_min_freshinit": 0.09990764409303665,
+    "v5_o_proj_std_max_freshinit": 0.1001899242401123,
+    "v5_o_proj_std_mean_freshinit": 0.10001064091920853,
+    "v4_o_proj_std_min_freshinit": 0.01997450739145279,
+    "v4_o_proj_std_max_freshinit": 0.02002181112766266,
+    "v4_o_proj_std_mean_freshinit": 0.01999479392543435,
+    "ratio_v5_over_v4_freshinit": 5.001844,
+    "n_cross_attn_modules": 16,
+    "loaded_best_pt_v4_mean": 0.01990464166738093,
+    "loaded_best_pt_v5_mean": 0.01990464166738093,
+    "loaded_note": "When best.pt is loaded, _load_decoder_state OVERWRITES the post-apply re-init with trained weights (~0.02), so v4 == v5 by design. The differential is INIT-TIME -- which is what V5-4 will probe via fresh-init or via swapping cross_attn.o_proj weights from a fixture with v5's higher init scale."
+  },
+  "vs_phase2_original_md5_swap": {
+    "before_opt_a_v5_o_proj_std_mean_freshinit": 0.02000212750863284,
+    "before_opt_a_v4_o_proj_std_mean_freshinit": 0.01999479392543435,
+    "before_opt_a_v4_v5_diff_freshinit": 7.3e-06,
+    "before_opt_a_status": "phantom equality (v4 == v5 within sampling noise)",
+    "after_opt_a_v5_o_proj_std_mean_freshinit": 0.10001064091920853,
+    "after_opt_a_v4_o_proj_std_mean_freshinit": 0.01999479392543435,
+    "after_opt_a_v4_v5_diff_freshinit": 0.08001585,
+    "after_opt_a_status": "real differential (v5 = 5x v4)",
+    "improvement_factor": 10960
+  },
+  "vs_phase2_original_finding": "Phase 2 original verdict §C3 (state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/verdict.json) found shim v4 and shim v5 EMPIRICALLY IDENTICAL at fresh init (both ~0.02 std). OPT-A re-anchor RESOLVES this: v5 is now ~0.10 (5x v4's ~0.02). The phantom equality is gone. Phase 3 H100 spend on F-SHIM-V5-4 with a real (non-zero) fixture is now expected to produce a measurable differential lift (cross-attn output scales linearly with o_proj std).",
+  "wall_time_min": 10,
+  "actual_cost_usd": 0,
+  "honest_c3": [
+    "C1 -- OPT-A re-anchor std 0.10 produces a 5x differential vs shim v4 fresh-init (v5_mean=0.10001 vs v4_mean=0.01999). The phantom-equality finding from Phase 2 verdict §C3 is RESOLVED at the substrate level. Boot-time assertion fires `[shim-v5][OPT-A] post-apply re-init verified: 16/16 modules at std~0.1000` on every _build_decoder_module call, ensuring future regressions are caught immediately.",
+    "C2 -- F-SHIM-V5-2 PASS at max_abs_diff=0.0 is CORRECT despite spec's expected-FAIL prediction. The selftest's F-SHIM-V5-2 forwards with consciousness_states=None, which engages the DecoderBlockV2 bypass guard so cross_attn.o_proj weights are not read. The spec's expected-FAIL was a category error: a bypass path cannot exhibit weight-driven differential. The bypass invariant is preserved exactly as designed.",
+    "C3 -- F-SHIM-V5-3 PASS at lift_pp_proxy=0.0pp confirms canonical_zero residual is exactly zero regardless of o_proj scale, matching spec section 3 V5-3 expectation. This is INDEPENDENT of OPT-A re-anchor (any o_proj std produces the same canonical_zero verdict because zero fixture residue makes cross_attn output zero). F-SHIM-V5-4 needs a non-zero (real) fixture to probe the differential.",
+    "C4 -- When best.pt is loaded, _load_decoder_state OVERWRITES the post-apply re-init with trained weights (v4=0.01990, v5=0.01990 -- identical because they share the same checkpoint). This means F-SHIM-V5-4 must use either (a) fresh-init forward path with best.pt's NON-cross-attn weights only, OR (b) swap the cross_attn.o_proj sub-block from a v5-init donor while keeping the rest of best.pt. Phase 3 spec needs an explicit decision here -- the current shim v5 OPT-A behavior alone does not preserve the v5 differential under best.pt load. RECOMMENDATION: when V5-4 launches on H100, instrument the eval to ALSO log cross_attn.o_proj.weight.std() at forward time so the actual scale used during the lift measurement is verifiable.",
+    "C5 -- Boot-time assertion correctness: the assertion runs INSIDE _build_decoder_module AFTER post-construction re-init AND BEFORE _load_decoder_state can overwrite. This is the only window where the OPT-A re-anchor is observable. After best.pt load, re-running the assertion would (correctly) FAIL because trained weights are at ~0.02 not ~0.10. Callers MUST NOT re-invoke the assertion on a model that has been through _load_decoder_state -- this is documented in the function docstring.",
+    "C6 -- ubu1 cpu fp32 was used for both runs (matching Phase 2 original methodology). RTX 5070 sm_120 cuda fp32 was NOT tested in this re-anchor; the byte-equivalent invariant of F-SHIM-V5-2 holds at the algorithmic level (bypass = no weight read) regardless of device, but ULP drift may affect F-SHIM-V5-3 std ratios on cuda. This is acceptable because the differential evidence (o_proj_std fields) is INIT-time and device-agnostic.",
+    "C7 -- Phase 3 GO recommendation rationale: the OPT-A blocker from Phase 2 verdict §C3 is RESOLVED. v5 differs from v4 by 5x at fresh init. F-SHIM-V5-4 ($1-3 H100, lift_pp >= +5pp on hellaswag-200 with a real fixture) can now distinguish v5 from v4 IF the eval path uses fresh-init OR a fixture-swap protocol that preserves the v5 init. The default V5-4 path (best.pt loaded) collapses v5 to v4 via _load_decoder_state -- this is a Phase-3-design issue, not an OPT-A regression. Recommend Phase 3 with EXPLICIT eval-protocol clarification.",
+    "C8 -- raw#15 additive compliance: shim v4 (tool/transient_py/clm_v4_hf_format_shim.py) was NOT touched -- only shim v5 (sibling file) modified. The boot-time assertion is purely additive (new function _assert_o_proj_std_after_apply, called from existing _build_decoder_module). No upstream conscious_decoder.py mutation."
+  ],
+  "raw_compliance": {
+    "raw_9": "OK -- shim v5 lives in tool/transient_py/ (.own 4 OPT-OUT path)",
+    "raw_10": "OK -- 8 honest C3 entries (>=5 required)",
+    "raw_15": "OK -- additive only; shim v4 file LOCKED + byte-identical, shim v5 self-mod within transient_py namespace",
+    "raw_71": "OK -- F-SHIM-V5-2 + V5-3 thresholds carried verbatim (1e-5 + 5pp); spec's expected-FAIL prediction for V5-2 is acknowledged as category-error in interpretation (PASS is the correct verdict on bypass path)",
+    "no_git_commit": "OK -- caller will not commit per BG spec CRITICAL section",
+    "no_hf_push": "OK -- Phase 2 OPT-A is local Mac+ubu1 only",
+    "no_shim_v4_mutation": "OK -- shim v4 substrate untouched",
+    "no_h100": "OK -- $0 actual_cost"
+  },
+  "combined_phase2_opt_a_verdict": "PASS",
+  "recommendation_for_phase_3": "GO_WITH_CAVEAT",
+  "phase_3_recommendation_detail": {
+    "go_no_go": "GO",
+    "budget_usd": "1-3",
+    "caveat": "Phase 3 spec must clarify the eval protocol: best.pt loading collapses v5 to v4 (trained weights overwrite post-apply re-init). Two viable V5-4 designs:",
+    "v5_4_design_options_ranked": [
+      {
+        "rank": 1,
+        "option": "DESIGN-1: fresh-init forward path (no best.pt load) on hellaswag-200",
+        "approach": "Run hellaswag eval on a fresh-init shim v5 model and a fresh-init shim v4 model. Both will be untrained (random weights), so absolute scores will be near chance, but the DIFFERENTIAL between v5 and v4 directly measures the o_proj std lever. Cost: $1-3 H100.",
+        "completion": "HIGH (clean differential measurement, controlled comparison)",
+        "drawback": "absolute lift_pp is meaningless (random model); only differential is meaningful"
+      },
+      {
+        "rank": 2,
+        "option": "DESIGN-2: best.pt loaded + cross_attn.o_proj scale-injection",
+        "approach": "Load best.pt into shim v4 baseline, then ALSO load best.pt + scale cross_attn.o_proj weights by 5x (or replace with shim v5 fresh-init values) in a v5-equivalent variant. Run hellaswag-200 on both. lift_pp = v5_variant - v4_baseline directly answers Phase 3 question.",
+        "completion": "MEDIUM (more code surface, requires careful weight injection)",
+        "drawback": "introduces weight-injection step that needs F-SHIM-V5 audit"
+      },
+      {
+        "rank": 3,
+        "option": "DESIGN-3: fresh-init + canonical-non-zero fixture forward",
+        "approach": "Use shim v5 fresh-init (no best.pt) + real fixture (e.g., train_avg_real.pt) and compare to shim v4 fresh-init + same real fixture. Bypasses best.pt overwrite entirely. Lower cost than DESIGN-1 (no benchmark, just logits diff).",
+        "completion": "MEDIUM (cheap differential probe but no benchmark anchor)",
+        "drawback": "no benchmark lift, only intermediate logits diff"
+      }
+    ],
+    "primary_recommendation": "DESIGN-1 -- fresh-init forward on hellaswag-200 with shim v4 vs shim v5, $1-3 H100, ~30 min H100 wall, decisive lift_pp differential measurement.",
+    "wait_h100_ack": "yes -- explicit ACK required for $1-3 H100 spend on DESIGN-1 (or DESIGN-2/3 if user prefers)"
+  },
+  "next_phase": {
+    "name": "Phase 3 -- F-SHIM-V5-4 H100 lift_pp measurement (after user ACK)",
+    "scope": [
+      "Acquire user ACK for $1-3 H100 spend on DESIGN-1 (or alternative)",
+      "Provision RTX or H100 ($1-3 budget)",
+      "Run F-SHIM-V5-4: hellaswag-200 lift_pp on fresh-init v4 vs fresh-init v5",
+      "PASS: lift_pp >= +5pp",
+      "Land verdict + companion handoff"
+    ],
+    "cost_usd_estimate": "1-3",
+    "wall_min_estimate": 30,
+    "blocker": "user ACK"
+  },
+  "artifacts": {
+    "verdict_this": "state/clm_v4_hf_format_shim_v5_phase2_opt_a_2026_05_05/verdict.json",
+    "selftest_results_load_best_pt": "state/clm_v4_hf_format_shim_v5_phase2_opt_a_2026_05_05/selftest_results_load_best_pt.json",
+    "selftest_results_freshinit": "state/clm_v4_hf_format_shim_v5_phase2_opt_a_2026_05_05/selftest_results_freshinit.json",
+    "selftest_load_best_pt_stderr": "state/clm_v4_hf_format_shim_v5_phase2_opt_a_2026_05_05/selftest_load_best_pt_stderr.log",
+    "selftest_freshinit_stderr": "state/clm_v4_hf_format_shim_v5_phase2_opt_a_2026_05_05/selftest_freshinit_stderr.log",
+    "companion_handoff": "docs/clm_v4_hf_format_shim_v5_opt_a_re_anchor_landed_2026_05_05.ai.md",
+    "shim_v5_source_mac": "tool/transient_py/clm_v4_hf_format_shim_v5.py",
+    "shim_v5_source_ubu1": "/home/aiden/anima_clm_v4_shim_v5.py",
+    "shim_v4_source_locked": "tool/transient_py/clm_v4_hf_format_shim.py",
+    "phase2_original_verdict": "state/clm_v4_hf_format_shim_v5_phase2_2026_05_05/verdict.json"
+  }
+}

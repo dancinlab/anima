@@ -1,0 +1,156 @@
+\section{Architecture}\label{sec:arch}
+
+\subsection{Four-tier ANU fallback}\label{sec:arch-anu}
+
+The \qmirror{} entropy stack defines four fallback tiers, evaluated
+in order. Figure~\ref{fig:arch} sketches the data flow.
+
+\begin{figure}[t]
+\centering
+% PLACEHOLDER: replace with TikZ block diagram or PDF export
+\begin{lstlisting}[basicstyle=\ttfamily\tiny,frame=single,framesep=4pt]
+*** Figure 1 placeholder (text-flowchart) ***
+
++----------------------------+
+| qmirror.api               |
+| (qrng/chsh/iit/circuit)   |
++-------------+--------------+
+              |
+   amplitudes p_i
+              v
++----------------------------+         +-----------------+
+| qmirror.engine (Aer|Cirq) |  <----- | exact unitary U |
++-------------+--------------+         +-----------------+
+              |
+       wants randomness
+              v
++----------------------------+
+| qmirror.entropy (4-tier)  |
+|  T0 HMAC-DRBG (NIST 90A)  |  <----- ANU seed (boot)
+|  T1 ANU keyed REST        |  <----> https x-api-key
+|  T2 ANU keyless legacy    |  <----> https courtesy
+|  T3 mock LCG              |  <----- NEXUS_QMIRROR_MOCK=1
++-------------+--------------+
+              |
+            bytes
+              v
++----------------------------+
+| qmirror.sampler           |
+| (CDF inversion)           |
++-------------+--------------+
+              |
+       outcome index
+              v
+       (back to api)
+\end{lstlisting}
+\caption{Architecture of the \qmirror{} substrate. Tier~0 (HMAC-DRBG
+SHA-256, NIST SP~800-90A keyed by ANU bytes) is the deterministic
+regression default; Tier~1 (ANU QRNG keyed REST API) is the live
+quantum-entropy path; Tier~2 (ANU QRNG keyless legacy endpoint) is the
+courtesy fallback; Tier~3 (mock LCG) is the CI-deterministic
+invariance path. Aer (or Cirq) provides exact unitary evolution; the
+entropy stream feeds CDF inversion at the measurement collapse step.}
+\label{fig:arch}
+\end{figure}
+
+\begin{lstlisting}[caption={Tier definitions (extracted from
+nexus/.roadmap.qmirror)},label={lst:tiers}]
+T0: HMAC-DRBG SHA-256 keyed by ANU bytes (cached seed, 32 KB ring)
+    - Default in CI; deterministic given seed; NIST SP 800-90A
+T1: ANU QRNG REST API (live, key-gated, ~10^6 byte/req)
+    - api.quantumnumbers.anu.edu.au with x-api-key header
+T2: ANU QRNG REST API (legacy keyless endpoint)
+    - qrng.anu.edu.au; courtesy ~1 req/min; backup if T1 quota exhausted
+T3: Mock LCG (deterministic linear congruential)
+    - Activated by NEXUS_QMIRROR_MOCK = 1; cross-module byte-identity
+      with nexus/modules/qrng/mock_qrng.hexa for regression invariance
+\end{lstlisting}
+
+Tier promotion is automatic on HTTP failure or rate-limit response;
+tier demotion requires explicit env-var override. This pattern was
+hardened by \texttt{nexus@a962c4c81} (4-tier ANU revision) and
+\texttt{nexus@02225e87} (JSON whitespace tolerance fix that enabled
+F1 LIVE in-band PASS).
+
+\subsection{HMAC-DRBG SHA-256}
+
+The deterministic regression path uses HMAC-DRBG (SHA-256) per NIST
+SP~800-90A Rev.~1~\cite{NIST-SP-800-90A}, seeded by an ANU QRNG fetch
+at session boot. This provides:
+
+\begin{itemize}
+\item Determinism for CI regression: a fixed seed reproduces a fixed
+  bit stream.
+\item Quantum-derived entropy at session origin: the seed is genuinely
+  quantum.
+\item NIST SP~800-22 statistical strength on the expanded stream
+  (validated by cond.4).
+\end{itemize}
+
+The reseeding cadence is operator-configurable; the default is
+once-per-process. Quarterly IonQ refresh as anchor is documented in
+the spec section~10 M1.
+
+\subsection{Qiskit Aer engine bridge}
+
+Aer is Python-only; the \texttt{nexus} codebase is hexa-strict (raw\#9:
+zero \texttt{.py} files on Mac side). \qmirror{} resolves this via a
+documented \textbf{\texttt{python\_bridge} concession}: a single
+subdirectory \texttt{nexus/modules/qmirror/\_python\_bridge/} contains
+all and only the \texttt{.py} shims required to invoke Aer
+(\texttt{aer\_runner.py}), \texttt{pyphi}
+(\texttt{iit\_mip\_runner.py}), and the Braket helper. The hexa-side
+modules spawn these as subprocesses via JSON over stdin/stdout. There
+is no in-process linking; the FSF Mere Aggregation
+doctrine~\cite{FSF-MereAggregation} applies (relevant for license
+isolation; see Section~\ref{sec:limitations}).
+
+\subsection{IIT 4.0 MIP via pyphi}
+
+\texttt{qmirror.iit\_mip.calc(tpm, partition\_hint)} accepts a
+state-by-node TPM in \texttt{pyphi}'s expected shape and invokes
+\texttt{pyphi.sia()}. Output schema matches the reference
+\texttt{braket\_iit40\_mip\_2026\_05\_02 verdict.json}:
+\texttt{phi\_star} (\texttt{float}), \texttt{partition\_used}
+(\texttt{list[int]}), \texttt{mip\_sec} (\texttt{float}), \texttt{ok}
+(\texttt{int}).
+
+For $n \le 6$ the search is exact; for $6 < n \le 12$ the
+\texttt{CUT\_ONE\_APPROXIMATION} heuristic is used; for $n > 12$ the
+call raises \texttt{E\_PHI\_TOO\_LARGE}. The \texttt{pyphi} version
+pin (4.0 \texttt{feature/iit-4.0} branch commit \texttt{b78d0e3}) is
+\textbf{load-bearing}: newer \texttt{pyphi} may change MIP search
+heuristics and produce drift that looks like substrate change but is
+software version drift.
+
+\subsection{CHSH circuit (canonical geometry)}
+
+\texttt{qmirror.chsh.run(n\_trials)} builds four Bell-state circuits
+matching the schema in
+\texttt{nexus\_chsh\_bell\_2026\_05\_02/circuit\_*.json}. The canonical
+geometry uses an $R_{y}(-\theta)$ rotation with the four standard
+angles $(0, \pi/2, \pi/4, -\pi/4)$, yielding the textbook
+$S = 2\sqrt{2} \approx 2.828$ quantum bound. \qmirror{} executes each
+circuit on Aer state-vector, draws $n_{\text{trials}}$ measurement
+outcomes per circuit using ANU-fed CDF inversion, computes the four
+correlators, and returns $S$, $\sigma_{S}$, and the per-correlator
+$E$ values. Expected output band:
+$S \in [2.7, 2.85]$ at $n_{\text{trials}} = 1000$.
+
+\subsection{Module surface}
+
+\begin{lstlisting}[caption={\qmirror{} module layout},label={lst:modules}]
+nexus/modules/qmirror/
+  entropy.hexa       T1/T2/T3 ANU REST + cache + mock
+  sampler.hexa       amplitude -> outcome via entropy stream
+  engine_aer.hexa    Aer subprocess shim
+  engine_cirq.hexa   Cirq alt (scaffolded)
+  circuit.hexa       circuit.exec() public API
+  qrng.hexa          drop-in replacement for HMAC-DRBG
+  chsh.hexa          Bell test (S, sigma, violation)
+  iit_mip.hexa       pyphi sia() shim -> phi_star, MIP partition
+  tomography.hexa    process tomography (qmirror 2.0 axis)
+  phi.hexa           anima_phi_v3_canonical port (qmirror 2.0)
+  selftest.hexa      __QMIRROR__ {PASS|FAIL}
+  _python_bridge/    aer_runner.py, iit_mip_runner.py, ...
+\end{lstlisting}

@@ -1,0 +1,17 @@
+{
+  "schema": "anima/emerge_chat_korean_logit_bonus/verdict/1",
+  "ts_utc": "2026-05-05T18:48:20Z",
+  "n_boost_tokens": 71,
+  "n_configs": 8,
+  "max_korean_count": 35,
+  "n_korean": 5,
+  "n_semi_coherent": 5,
+  "verdict": "PASS_BOOST_RECOVERS",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 boost = brute force prior, NOT semantic recovery",
+    "C3 50 common Korean words/morphemes — narrow",
+    "C4 high bonus 100 = far OOD, may saturate logits",
+    "C5 'looks_like_korean' heuristic anima-internal"
+  ]
+}

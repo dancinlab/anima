@@ -1,0 +1,117 @@
+W0512 19:04:32.591000 1542 site-packages/torch/distributed/run.py:793] 
+W0512 19:04:32.591000 1542 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 19:04:32.591000 1542 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 19:04:32.591000 1542 site-packages/torch/distributed/run.py:793] *****************************************
+[W512 19:04:35.762780526 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:04:35.773406282 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:04:35.800562708 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 19:04:35.803687529 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] world_size=4 rank=0 local_rank=0 device=cuda:0
+[INFO] gpu0=NVIDIA A100-SXM4-80GB
+[rank3]:[W512 19:04:36.436944771 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank0]:[W512 19:04:36.454767462 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank2]:[W512 19:04:36.458236954 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank1]:[W512 19:04:36.513851076 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 512, 'n_layer': 1, 'initial_cells': 4, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] params: shared=1,050,880 cell-local(rank0)=20,985,856
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+/opt/conda/lib/python3.11/site-packages/torch/autograd/graph.py:825: UserWarning: c10d::allreduce_: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:62.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/opt/conda/lib/python3.11/site-packages/torch/autograd/graph.py:825: UserWarning: c10d::allreduce_: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:62.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/opt/conda/lib/python3.11/site-packages/torch/autograd/graph.py:825: UserWarning: c10d::allreduce_: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:62.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/opt/conda/lib/python3.11/site-packages/torch/autograd/graph.py:825: UserWarning: c10d::allreduce_: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:62.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[STEP     0] loss=266.3835 ce=267.7581 aux=1.0000 ent_gate=1.3845 wmax=0.2702 λ=1.0000 cells=4(rank0=1) splits=0 step_wall=888ms cost=$0.01 vram=0.9GB
+[STEP    50] loss=605.7491 ce=391.0438 aux=1.0504 ent_gate=2.2530 wmax=0.2015 λ=1.0000 cells=39(rank0=28) splits=27 step_wall=415ms cost=$0.05 vram=22.7GB
+[STEP   100] loss=299.6405 ce=443.9787 aux=1.1849 ent_gate=4.2801 wmax=0.1367 λ=1.0000 cells=101(rank0=68) splits=67 step_wall=2055ms cost=$0.24 vram=54.9GB
+[STEP   150] loss=189.2229 ce=254.5367 aux=1.1870 ent_gate=4.8233 wmax=0.1405 λ=1.0000 cells=196(rank0=68) splits=67 step_wall=2631ms cost=$0.48 vram=54.9GB
+[STEP   200] loss=26.6636 ce=84.3876 aux=1.2208 ent_gate=5.3671 wmax=0.1473 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2611ms cost=$0.72 vram=54.9GB
+[STEP   250] loss=7.2762 ce=17.9716 aux=1.3281 ent_gate=5.5416 wmax=0.1772 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2446ms cost=$0.95 vram=54.9GB
+[STEP   300] loss=13.4252 ce=16.3338 aux=1.6232 ent_gate=5.5359 wmax=0.2173 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2450ms cost=$1.18 vram=54.9GB
+[STEP   350] loss=17.7106 ce=22.0752 aux=1.9385 ent_gate=5.5242 wmax=0.2940 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2446ms cost=$1.41 vram=54.9GB
+[STEP   400] loss=23.0809 ce=26.0129 aux=2.4734 ent_gate=5.5011 wmax=0.3529 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2450ms cost=$1.64 vram=54.9GB
+[STEP   450] loss=26.8420 ce=30.9570 aux=3.1776 ent_gate=5.4672 wmax=0.3513 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2448ms cost=$1.86 vram=54.9GB
+[STEP   500] loss=32.7416 ce=34.3507 aux=4.0034 ent_gate=5.4142 wmax=0.3417 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2449ms cost=$2.09 vram=54.9GB
+[STEP   550] loss=32.3768 ce=36.9830 aux=5.3240 ent_gate=5.3179 wmax=0.3292 λ=0.9997 cells=256(rank0=68) splits=67 step_wall=2449ms cost=$2.32 vram=54.9GB
+[STEP   600] loss=35.1617 ce=38.5513 aux=6.5812 ent_gate=5.2159 wmax=0.3226 λ=0.9988 cells=256(rank0=68) splits=67 step_wall=2450ms cost=$2.55 vram=54.9GB
+[STEP   650] loss=33.2600 ce=39.7063 aux=7.2681 ent_gate=5.1567 wmax=0.3109 λ=0.9973 cells=256(rank0=68) splits=67 step_wall=2450ms cost=$2.77 vram=54.9GB
+[STEP   700] loss=32.0897 ce=39.8428 aux=7.5886 ent_gate=5.1282 wmax=0.3051 λ=0.9952 cells=256(rank0=68) splits=67 step_wall=2452ms cost=$3.00 vram=54.9GB
+[STEP   750] loss=35.4207 ce=40.1481 aux=7.6340 ent_gate=5.1248 wmax=0.3010 λ=0.9925 cells=256(rank0=68) splits=67 step_wall=2445ms cost=$3.23 vram=54.9GB
+[STEP   800] loss=36.7228 ce=39.7934 aux=7.6186 ent_gate=5.1267 wmax=0.2959 λ=0.9892 cells=256(rank0=68) splits=67 step_wall=2448ms cost=$3.46 vram=54.9GB
+[STEP   850] loss=34.7498 ce=39.6176 aux=7.6244 ent_gate=5.1266 wmax=0.2914 λ=0.9853 cells=256(rank0=68) splits=67 step_wall=2449ms cost=$3.69 vram=54.9GB
+[STEP   900] loss=33.9826 ce=39.1450 aux=7.6343 ent_gate=5.1261 wmax=0.2877 λ=0.9808 cells=256(rank0=68) splits=67 step_wall=2447ms cost=$3.91 vram=54.9GB
+[STEP   950] loss=33.4798 ce=38.7429 aux=7.5868 ent_gate=5.1307 wmax=0.2854 λ=0.9758 cells=256(rank0=68) splits=67 step_wall=2449ms cost=$4.14 vram=54.9GB
+[rank2]:[E512 19:53:47.849436401 ProcessGroupNCCL.cpp:616] [Rank 2] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=10009, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600060 milliseconds before timing out.
+[rank2]:[E512 19:53:47.849850582 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 2] Exception (either an error or timeout) detected by watchdog at work: 10009, last enqueued NCCL work: 10009, last completed NCCL work: 10008.
+[rank2]:[E512 19:53:48.614010551 ProcessGroupNCCL.cpp:1834] [PG ID 0 PG GUID 0(default_pg) Rank 2] Timeout at NCCL work: 10009, last enqueued NCCL work: 10009, last completed NCCL work: 10008.
+[rank2]:[E512 19:53:48.614040562 ProcessGroupNCCL.cpp:630] [Rank 2] Some NCCL operations have failed or timed out. Due to the asynchronous nature of CUDA kernels, subsequent GPU operations might run on corrupted/incomplete data.
+[rank2]:[E512 19:53:48.614118202 ProcessGroupNCCL.cpp:636] [Rank 2] To avoid data inconsistency, we are taking the entire process down.
+[rank2]:[E512 19:53:48.617898623 ProcessGroupNCCL.cpp:1595] [PG ID 0 PG GUID 0(default_pg) Rank 2] Process group watchdog thread terminated with exception: [Rank 2] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=10009, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600060 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7f345e2b9446 in /opt/conda/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7f3413bbea92 in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7f3413bc5ed3 in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7f3413bc793d in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7f345e7515c0 in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94ac3 (0x7f345f1c5ac3 in /usr/lib/x86_64-linux-gnu/libc.so.6)
+frame #6: clone + 0x44 (0x7f345f256a04 in /usr/lib/x86_64-linux-gnu/libc.so.6)
+
+terminate called after throwing an instance of 'c10::DistBackendError'
+  what():  [PG ID 0 PG GUID 0(default_pg) Rank 2] Process group watchdog thread terminated with exception: [Rank 2] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=10009, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600060 milliseconds before timing out.
+Exception raised from checkTimeout at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:618 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7f345e2b9446 in /opt/conda/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #1: c10d::ProcessGroupNCCL::WorkNCCL::checkTimeout(std::optional<std::chrono::duration<long, std::ratio<1l, 1000l> > >) + 0x282 (0x7f3413bbea92 in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: c10d::ProcessGroupNCCL::watchdogHandler() + 0x233 (0x7f3413bc5ed3 in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #3: c10d::ProcessGroupNCCL::ncclCommWatchdog() + 0x14d (0x7f3413bc793d in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #4: <unknown function> + 0x145c0 (0x7f345e7515c0 in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch.so)
+frame #5: <unknown function> + 0x94ac3 (0x7f345f1c5ac3 in /usr/lib/x86_64-linux-gnu/libc.so.6)
+frame #6: clone + 0x44 (0x7f345f256a04 in /usr/lib/x86_64-linux-gnu/libc.so.6)
+
+Exception raised from ncclCommWatchdog at ../torch/csrc/distributed/c10d/ProcessGroupNCCL.cpp:1601 (most recent call first):
+frame #0: c10::Error::Error(c10::SourceLocation, std::string) + 0x96 (0x7f345e2b9446 in /opt/conda/lib/python3.11/site-packages/torch/lib/libc10.so)
+frame #1: <unknown function> + 0xe7eb1b (0x7f341383cb1b in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch_cuda.so)
+frame #2: <unknown function> + 0x145c0 (0x7f345e7515c0 in /opt/conda/lib/python3.11/site-packages/torch/lib/libtorch.so)
+frame #3: <unknown function> + 0x94ac3 (0x7f345f1c5ac3 in /usr/lib/x86_64-linux-gnu/libc.so.6)
+frame #4: clone + 0x44 (0x7f345f256a04 in /usr/lib/x86_64-linux-gnu/libc.so.6)
+
+[rank1]:[E512 19:53:48.980326889 ProcessGroupNCCL.cpp:616] [Rank 1] Watchdog caught collective operation timeout: WorkNCCL(SeqNum=10009, OpType=ALLREDUCE, NumelIn=1, NumelOut=1, Timeout(ms)=600000) ran for 600087 milliseconds before timing out.
+[rank1]:[E512 19:53:48.980736010 ProcessGroupNCCL.cpp:1785] [PG ID 0 PG GUID 0(default_pg) Rank 1] Exception (either an error or timeout) detected by watchdog at work: 10009, last enqueued NCCL work: 10009, last completed NCCL work: 10008.
+W0512 19:53:48.947000 1542 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1687 closing signal SIGTERM
+W0512 19:53:48.948000 1542 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1688 closing signal SIGTERM
+W0512 19:53:48.949000 1542 site-packages/torch/distributed/elastic/multiprocessing/api.py:897] Sending process 1690 closing signal SIGTERM
+E0512 19:53:50.825000 1542 site-packages/torch/distributed/elastic/multiprocessing/api.py:869] failed (exitcode: -6) local_rank: 2 (pid: 1689) of binary: /opt/conda/bin/python3.11
+Traceback (most recent call last):
+  File "/opt/conda/bin/torchrun", line 8, in <module>
+    sys.exit(main())
+             ^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/elastic/multiprocessing/errors/__init__.py", line 355, in wrapper
+    return f(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 919, in main
+    run(args)
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/run.py", line 910, in run
+    elastic_launch(
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 138, in __call__
+    return launch_agent(self._config, self._entrypoint, list(args))
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/distributed/launcher/api.py", line 269, in launch_agent
+    raise ChildFailedError(
+torch.distributed.elastic.multiprocessing.errors.ChildFailedError: 
+=====================================================
+training/cotrain_v5mitosis_v6_cellparallel.py FAILED
+-----------------------------------------------------
+Failures:
+  <NO_OTHER_FAILURES>
+-----------------------------------------------------
+Root Cause (first observed failure):
+[0]:
+  time      : 2026-05-12_19:53:48
+  host      : 8b173c1394cd
+  rank      : 2 (local_rank: 2)
+  exitcode  : -6 (pid: 1689)
+  error_file: <N/A>
+  traceback : Signal 6 (SIGABRT) received by PID 1689
+=====================================================

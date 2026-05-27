@@ -1,0 +1,159 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/qmirror_xref_check.hexa — qmirror upstream URL SSOT xref verifier
+//
+//  PURPOSE
+//    Verifies the 17 anima docs canonically deduplicated by the
+//    qmirror_xref_centralization cycle (2026-05-04) reference the SSOT
+//    (`nexus/.roadmap.qmirror` header field `upstream_url`) instead of
+//    hardcoded github.com/dancinlab/qmirror callouts in the
+//    document body. Hardcoded URLs ARE permitted INSIDE the
+//    `### See also (qmirror xref history)` footnote section
+//    (preserved historical record per raw#10).
+//
+//  SPEC
+//    docs/qmirror_xref_centralization_spec_2026_05_04.md
+//
+//  FALSIFIER
+//    F-QMIRROR-XREF-1 — every doc in the canonical 17-doc inventory MUST:
+//      (a) contain exactly one SSOT line
+//          (`> qmirror canonical SSOT: see ...`)
+//      (b) contain exactly one `### See also (qmirror xref history)` footnote
+//      (c) have NO hardcoded github.com/dancinlab/qmirror URL
+//          OUTSIDE the footnote section
+//
+//  USAGE
+//    /Users/ghost/.hx/bin/hexa run tool/qmirror_xref_check.hexa
+//    /Users/ghost/.hx/bin/hexa run tool/qmirror_xref_check.hexa --verbose
+//    /Users/ghost/.hx/bin/hexa run tool/qmirror_xref_check.hexa --json
+//
+//  RAW STRICT
+//    raw#9  hexa-only Mac (no .py); awk + grep + jq only via exec()
+//    raw#10 4 honest C3 caveats embedded in spec doc §6
+//    raw#11 snake_case
+//    raw#15 no personal paths in artifact body
+//
+//  EXIT
+//    0 = all 17 docs pass F-QMIRROR-XREF-1
+//    1 = at least one doc fails
+//    2 = config error (e.g. .roadmap.qmirror unreadable)
+// ════════════════════════════════════════════════════════════════════════════
+
+let ROADMAP_PATH = "/Users/ghost/core/nexus/.roadmap.qmirror"
+let DOCS_DIR     = "/Users/ghost/core/anima/docs"
+let SSOT_LINE_PREFIX = "> qmirror canonical SSOT: see"
+let FOOTNOTE_HEADER  = "### See also (qmirror xref history)"
+let FORBIDDEN_URL    = "github.com/dancinlab/qmirror"
+
+// ── 17 canonical anima docs (per qmirror_v2_announcement sister BG ad8ec25) ─
+fn doc_paths() -> [string] {
+    return [
+        DOCS_DIR + "/nexus_qmirror_spec_2026_05_03.md",
+        DOCS_DIR + "/nexus_qmirror_phase3_calibration_runbook_2026_05_03.md",
+        DOCS_DIR + "/qmirror_n2_cross_vendor_revision_2026_05_03.md",
+        DOCS_DIR + "/qmirror_cond3_band_revise_landed_2026_05_03.ai.md",
+        DOCS_DIR + "/qmirror_cond3_ibm_n1_landed_2026_05_03.ai.md",
+        DOCS_DIR + "/qmirror_cond7_alpha_landed_2026_05_03.ai.md",
+        DOCS_DIR + "/qmirror_cond8_braket_landed_2026_05_03.ai.md",
+        DOCS_DIR + "/qmirror_crosstech_band_revise_landed_2026_05_03.ai.md",
+        DOCS_DIR + "/hexa_lang_attr_review_for_qmirror_2026_05_03.md",
+        DOCS_DIR + "/anima_nexus_qrng_dependency_wire_2026_05_03.md",
+        DOCS_DIR + "/n_substrate_n12_quantum_pivot_2026_05_01.md",
+        DOCS_DIR + "/n_substrate_n12_ionq_penrose_hameroff_spec_2026_05_01.md",
+        DOCS_DIR + "/n_12_v3_ibm_quantum_prep_2026_05_01.md",
+        DOCS_DIR + "/n_substrate_n12_aws_prep_2026_05_01.md",
+        DOCS_DIR + "/n_substrate_n13_photonic_iit_spec_2026_05_01.md",
+        DOCS_DIR + "/ibm_cloud_experiment_list_2026_05_03.md",
+        DOCS_DIR + "/ibm_cloud_env_setup_runbook_2026_05_03.md",
+    ]
+}
+
+// ── Helpers (raw#9: bash exec only) ──────────────────────────────────────────
+fn fexists(p: string) -> bool {
+    return exec("test -f " + p + " && echo 1 || echo 0").trim() == "1"
+}
+
+fn count_lines_matching(p: string, needle: string) -> int {
+    if !fexists(p) { return -1 }
+    let out = exec("grep -c -F " + shquote(needle) + " " + shquote(p) + " 2>/dev/null || echo 0").trim()
+    return to_int(out)
+}
+
+fn shquote(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+// Count forbidden URL occurrences OUTSIDE the footnote section.
+// Strategy (awk): print lines until line matches FOOTNOTE_HEADER, then stop;
+// count grep hits in printed prefix.
+fn count_forbidden_outside_footnote(p: string) -> int {
+    if !fexists(p) { return -1 }
+    let cmd = "awk '/^### See also \\(qmirror xref history\\)/{exit} {print}' " + shquote(p) +
+              " | grep -c -F " + shquote(FORBIDDEN_URL) + " || echo 0"
+    return to_int(exec(cmd).trim())
+}
+
+// ── Roadmap SSOT field check ─────────────────────────────────────────────────
+fn roadmap_has_ssot_fields() -> bool {
+    if !fexists(ROADMAP_PATH) { return false }
+    // Extract header line (line 3, type=header) and check 4 SSOT fields exist.
+    let cmd = "awk 'NR==3' " + shquote(ROADMAP_PATH) +
+              " | jq -r '[.upstream_url, .latest_release, .hf_mirror, .arxiv_draft_status] | map(type) | all(. == \"string\")' 2>/dev/null"
+    return exec(cmd).trim() == "true"
+}
+
+// ── Per-doc verdict (raw#9 STRICT, no .py) ───────────────────────────────────
+fn check_doc(p: string) -> [string] {
+    // returns [path, ssot_count, footnote_count, forbidden_outside_count, verdict]
+    let ssot = count_lines_matching(p, SSOT_LINE_PREFIX)
+    let foot = count_lines_matching(p, FOOTNOTE_HEADER)
+    let forbid = count_forbidden_outside_footnote(p)
+    let mut verdict = "PASS"
+    if ssot != 1 { verdict = "FAIL_SSOT_COUNT" }
+    if verdict == "PASS" && foot != 1 { verdict = "FAIL_FOOTNOTE_COUNT" }
+    if verdict == "PASS" && forbid != 0 { verdict = "FAIL_FORBIDDEN_URL_OUTSIDE_FOOTNOTE" }
+    return [p, to_string(ssot), to_string(foot), to_string(forbid), verdict]
+}
+
+fn main() {
+    let verbose = exec("echo $@ | grep -c -- --verbose || echo 0").trim() == "1"
+    let json_mode = exec("echo $@ | grep -c -- --json || echo 0").trim() == "1"
+
+    if !roadmap_has_ssot_fields() {
+        println("__QMIRROR_XREF__ FAIL_ROADMAP_SSOT_FIELDS_MISSING")
+        exit(2)
+    }
+
+    let docs = doc_paths()
+    let mut pass = 0
+    let mut fail = 0
+    let mut rows = []
+    let mut i = 0
+    while i < docs.len() {
+        let row = check_doc(docs[i])
+        rows.push(row)
+        if row[4] == "PASS" { pass = pass + 1 } else { fail = fail + 1 }
+        if verbose {
+            println("[" + row[4] + "] " + docs[i] +
+                    " (ssot=" + row[1] + " foot=" + row[2] + " forbid_outside=" + row[3] + ")")
+        }
+        i = i + 1
+    }
+
+    if json_mode {
+        println("{")
+        println("  \"falsifier\": \"F-QMIRROR-XREF-1\",")
+        println("  \"total\": " + to_string(docs.len()) + ",")
+        println("  \"pass\": " + to_string(pass) + ",")
+        println("  \"fail\": " + to_string(fail) + ",")
+        println("  \"verdict\": \"" + (if fail == 0 { "PASS" } else { "FAIL" }) + "\"")
+        println("}")
+    }
+
+    if fail == 0 {
+        println("__QMIRROR_XREF__ PASS " + to_string(pass) + "/" + to_string(docs.len()))
+        exit(0)
+    } else {
+        println("__QMIRROR_XREF__ FAIL pass=" + to_string(pass) + " fail=" + to_string(fail) + " of " + to_string(docs.len()))
+        exit(1)
+    }
+}

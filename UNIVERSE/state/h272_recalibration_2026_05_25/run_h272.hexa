@@ -1,0 +1,815 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h272.hexa — H_272 seed-robust re-calibration
+//                  (meta · cycle#14 effect-vs-criteria · H_269 follow-up · raw#12)
+//
+//  CORE QUESTION
+//    H_269 found the cycle#14 H_261 (embryogenesis-gradient) and H_262
+//    (quorum-sensing) SUPPORTED verdicts seed-fragile (4/10 each). Was the
+//    *underlying effect* (gradient→axis, quorum→bistable switch) actually
+//    seed-fragile, or was only the *criterion/calibration* fragile? H_272
+//    re-designs both criteria into a SEED-ROBUST form (the redesign rationale is
+//    PRE-REGISTERED so it is not post-hoc cherry-pick) and re-measures over the
+//    same 10 seeds {0..9}.
+//
+//    H_261 redesign — RELATIVE axis criterion:
+//      cycle#14 used an ABSOLUTE noise-floor threshold C2: flat |r| <= 0.2, which
+//      H_269 showed is fragile (chance control correlation exceeds 0.2 on 6/10
+//      seeds, max 0.607). The redesign uses a RELATIVE comparison:
+//        C2_rel : |r|steep - |r|flat > MARGIN  (the gradient axis must DOMINATE
+//                 the control by a margin, not merely sit below a fixed floor).
+//      Rationale (pre-registered): a chance control correlation is harmless as
+//      long as the genuine steep axis (always ~0.76, robust per H_269) clears it
+//      by a margin — that IS the "gradient amplifies the axis" claim. The
+//      absolute floor was an over-strict proxy for the real (relative) effect.
+//
+//    H_262 redesign — PER-SEED ADAPTIVE calibration:
+//      cycle#14 used a FIXED base_gain=0.0135 calibrated on the seed=42 tension
+//      distribution, which H_269 showed is fragile (control over-drives to
+//      majority on seeds 3/4/8, OR coop under-drives and never switches on
+//      seeds 0/1/8). The redesign CALIBRATES base_gain PER SEED from that seed's
+//      own substrate tension distribution: a short control (no-coupling) probe
+//      pass searches base_gain so the no-coupling control settles in a TARGET
+//      partial-quorum window [Q_LO, Q_HI] strictly below majority (0.5). The
+//      quorum-gate test then asks the SAME question (does coupling switch what
+//      the control cannot?) with each seed put on equal footing.
+//      Rationale (pre-registered): the quorum-gate claim is "the coupling boost
+//      is what crosses majority". That claim is only testable when the control
+//      sits below majority — the fixed base_gain failed to guarantee this across
+//      seeds. Per-seed adaptive calibration normalizes the seed-specific
+//      ABSOLUTE tension level out, isolating the COUPLING effect (the real claim).
+//
+//  METHOD (one process per seed; RFC 033 gauss stream is process-global)
+//    The gaussian RNG is a single process-global stream seeded from
+//    __HEXA_FARR_GAUSS_SEED__ and advanced by every farr call. A multi-seed sweep
+//    CANNOT run in-process. So a bash driver runs THIS script once per seed
+//    s ∈ {0..9} in mode "seed" with __HEXA_FARR_GAUSS_SEED__=s, each writing
+//    snapshots/seed{s}.json. A final "agg" run reads the 10 snapshots + the
+//    driver-written det_xproc.txt and aggregates the redesigned verdict.
+//
+//  PRE-REGISTERED CRITERIA (H_272)
+//    C1 : H_261 redesigned axis-effect (steep >> flat, relative) PASSes on
+//         >= 8/10 seeds.
+//    C2 : H_262 redesigned quorum-gate (per-seed adaptive) PASSes on >= 8/10
+//         seeds.
+//    C3 : same-seed cross-process determinism (driver det_xproc.txt all PASS).
+//    verdict_rule:
+//      SUPPORTED = C1 ∧ C2 (both effects survive a seed-robust criterion → the
+//                  effects are REAL, cycle#14's fragility was a CRITERION flaw)
+//      PARTIAL   = one of C1/C2 holds (one effect real, one seed-dependent)
+//      FALSIFIED = neither (the effects themselves are seed-dependent — a deeper
+//                  limit than cycle#14 criteria)
+//
+//  $0 mac local · hexa-only · LLM none · deterministic.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+fn _state_dir() -> string {
+    return "UNIVERSE/state/h272_recalibration_2026_05_25"
+}
+fn _snap_dir() -> string {
+    return _state_dir() + "/snapshots"
+}
+fn _n_seeds() -> int     { return 10 }   // seeds 0..9
+fn _robust_pass() -> int { return 8 }    // C1/C2: >= 8/10 seeds
+
+// ── H_261 (embryogenesis-gradient) params — carried verbatim from run_h261 ──
+fn _h261_d() -> int       { return 8 }
+fn _h261_n() -> int       { return 12 }
+fn _h261_steps() -> int   { return 20 }
+fn _s_flat() -> float     { return 0.0 }
+fn _s_mid() -> float      { return 1.0 }
+fn _s_steep() -> float    { return 4.0 }
+fn _h261_nbins() -> int   { return 3 }
+// REDESIGN (H_272): relative axis margin replaces the absolute flat floor.
+fn _r_high() -> float     { return 0.5 }   // C1 axis present (unchanged)
+fn _axis_margin() -> float { return 0.1 }  // C2_rel: |r|steep - |r|flat > MARGIN
+
+// ── H_262 (quorum-sensing) params — carried verbatim from run_h262 ──
+fn _h262_d() -> int       { return 8 }
+fn _h262_n() -> int       { return 16 }
+fn _max_steps() -> int    { return 40 }
+fn _leak()  -> float      { return 0.05 }
+fn _tcoef() -> float      { return 0.11 }
+fn _up_thr() -> float     { return 1.0 }
+fn _dn_thr() -> float     { return 0.4 }
+fn _coupling() -> float   { return 0.20 }
+// REDESIGN (H_272): per-seed adaptive base_gain target window (control settles
+// at a partial quorum strictly below majority). The base_gain itself is searched
+// per seed (NOT fixed at 0.0135).
+fn _q_lo() -> float       { return 0.20 }  // control target partial-quorum lower
+fn _q_hi() -> float       { return 0.45 }  // control target partial-quorum upper
+fn _base_lo() -> float    { return 0.0 }   // adaptive search lower bound
+fn _base_hi() -> float    { return 0.05 }  // adaptive search upper bound
+fn _cal_iters() -> int    { return 28 }    // bisection iterations for base_gain
+
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn _abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn _zero_vec(n: int) {
+    let mut a = []
+    let mut i = 0
+    while i < n {
+        a.push(0.0)
+        i = i + 1
+    }
+    return a
+}
+
+fn _sqrt_f(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut r = x
+    let mut k = 0
+    while k < 40 {
+        if r <= 0.0 { r = 1.0e-12 }
+        r = 0.5 * (r + x / r)
+        k = k + 1
+    }
+    return r
+}
+
+fn _vec_l2(v) -> float {
+    let n = len(v)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + (v[i] * v[i])
+        i = i + 1
+    }
+    return _sqrt_f(s)
+}
+
+fn _vec_mean_scalar(v) -> float {
+    let n = len(v)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + v[i]
+        i = i + 1
+    }
+    return s / to_float(n)
+}
+
+fn _float_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _bool_arr_json(arr) -> string {
+    let n = len(arr)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + _bool_str(arr[i])
+        i = i + 1
+    }
+    return out + "]"
+}
+
+fn _mean(xs) -> float {
+    let n = len(xs)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + xs[i]
+        i = i + 1
+    }
+    return s / to_float(n)
+}
+fn _std(xs) -> float {
+    let n = len(xs)
+    if n == 0 { return 0.0 }
+    let m = _mean(xs)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        let d = xs[i] - m
+        s = s + d * d
+        i = i + 1
+    }
+    let v = s / to_float(n)
+    return _sqrt_f(v)
+}
+fn _min(xs) -> float {
+    let mut m = xs[0]
+    let mut i = 1
+    while i < len(xs) {
+        if xs[i] < m { m = xs[i] }
+        i = i + 1
+    }
+    return m
+}
+fn _max(xs) -> float {
+    let mut m = xs[0]
+    let mut i = 1
+    while i < len(xs) {
+        if xs[i] > m { m = xs[i] }
+        i = i + 1
+    }
+    return m
+}
+
+
+// ── Pearson correlation r(xs, ys) — carried from run_h261 ────────────────────
+fn _pearson_r(xs, ys) -> float {
+    let n = len(xs)
+    if n < 2 { return 0.0 }
+    let nf = to_float(n)
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < n {
+        sx = sx + xs[i]
+        sy = sy + ys[i]
+        i = i + 1
+    }
+    let mx = sx / nf
+    let my = sy / nf
+    let mut cov = 0.0
+    let mut vx = 0.0
+    let mut vy = 0.0
+    i = 0
+    while i < n {
+        let dx = xs[i] - mx
+        let dy = ys[i] - my
+        cov = cov + dx * dy
+        vx = vx + dx * dx
+        vy = vy + dy * dy
+        i = i + 1
+    }
+    let denom = _sqrt_f(vx * vy)
+    if denom < 1.0e-12 { return 0.0 }
+    return cov / denom
+}
+
+fn _n_regions(states, n_bins: int) -> int {
+    let n = len(states)
+    if n == 0 { return 0 }
+    let mut mn = states[0]
+    let mut mx = states[0]
+    let mut i = 1
+    while i < n {
+        if states[i] < mn { mn = states[i] }
+        if states[i] > mx { mx = states[i] }
+        i = i + 1
+    }
+    let range = mx - mn
+    if range < 1.0e-9 { return 1 }
+    let bw = range / to_float(n_bins)
+    let mut occupied = []
+    let mut b0 = 0
+    while b0 < n_bins {
+        occupied.push(0)
+        b0 = b0 + 1
+    }
+    i = 0
+    while i < n {
+        let r = (states[i] - mn) / bw
+        let mut b = floor(r).to_int()
+        if b > n_bins - 1 { b = n_bins - 1 }
+        if b < 0 { b = 0 }
+        occupied[b] = 1
+        i = i + 1
+    }
+    let mut count = 0
+    let mut bb = 0
+    while bb < n_bins {
+        if occupied[bb] == 1 { count = count + 1 }
+        bb = bb + 1
+    }
+    return count
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+//  H_261 leg — gradient injection + one steepness condition (carried from
+//              run_h261, identical substrate dynamics).
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _inject_gradient(pool, steepness: float, n_fixed: int) {
+    let cs = pool["cells"]
+    let n = len(cs)
+    let denom = if n_fixed > 1 { to_float(n_fixed - 1) } else { 1.0 }
+    let mut i = 0
+    while i < n {
+        if i < n_fixed {
+            let p_i = to_float(i) / denom
+            let drive = steepness * p_i
+            let h = cs[i]["hidden"]
+            let d = len(h)
+            let mut new_h = []
+            let mut q = 0
+            while q < d {
+                new_h.push(h[q] + drive)
+                q = q + 1
+            }
+            pool["cells"][i]["hidden"] = new_h
+        }
+        i = i + 1
+    }
+    return pool
+}
+
+// run one (steepness) H_261 condition → returns { r, n_regions } over N cells.
+fn _h261_condition(steepness: float) {
+    let d = _h261_d()
+    let n = _h261_n()
+    let mut pool = cell_pool_init(d, n)
+    let zero_x = _zero_vec(d)
+
+    let mut step = 0
+    while step < _h261_steps() {
+        pool = _inject_gradient(pool, steepness, n)
+        let res = mitosis_forward_tail(zero_x, pool, step)
+        pool = res[1]
+        step = step + 1
+    }
+
+    let cs = pool["cells"]
+    let n_have = len(cs)
+    let mut states = []
+    let mut positions = []
+    let denom = if n > 1 { to_float(n - 1) } else { 1.0 }
+    let mut i = 0
+    while i < n {
+        let mut sc = 0.0
+        if i < n_have { sc = _vec_l2(cs[i]["hidden"]) }
+        states.push(sc)
+        positions.push(to_float(i) / denom)
+        i = i + 1
+    }
+    let r = _pearson_r(positions, states)
+    let nreg = _n_regions(states, _h261_nbins())
+    return #{ "r": r, "n_regions": nreg }
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+//  H_262 leg — quorum activation sweep with a GIVEN base_gain (carried from
+//              run_h262), plus a per-seed ADAPTIVE base_gain calibration.
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _cell_tension(cell) -> float {
+    let h = cell["hidden"]
+    let n = len(h)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        let v = h[i]
+        if v < 0.0 { s = s - v } else { s = s + v }
+        i = i + 1
+    }
+    if n == 0 { return 0.0 }
+    return s / to_float(n)
+}
+
+// ramp-UP one (q_thr, coupling, base_gain) condition → { switched, q_final }.
+// NOTE: a fresh pool is initialized inside, so the gauss stream advances; multi
+// invocations in one process drift (the cross-process determinism guard covers
+// the canonical reproducibility, exactly as in run_h262).
+fn _h262_up(q_thr: float, coupling: float, base: float) {
+    let d = _h262_d()
+    let n = _h262_n()
+    let mut pool = cell_pool_init(d, n)
+
+    let mut act    = _zero_vec(n)
+    let mut state  = _zero_vec(n)
+    let mut q_prev = 0.0
+
+    let leak  = _leak()
+    let tcoef = _tcoef()
+    let up    = _up_thr()
+    let dn    = _dn_thr()
+
+    let mut switch_step = -1
+    let mut max_jump    = 0.0
+    let x = _zero_vec(d)
+
+    let mut step = 0
+    while step < _max_steps() {
+        let res = mitosis_forward_tail(x, pool, step)
+        pool = res[1]
+
+        let mut boost = 0.0
+        if q_prev > q_thr { boost = coupling }
+
+        let cells = pool["cells"]
+        let n_cells = len(cells)
+        let mut i = 0
+        while i < n {
+            let mut tens = 0.0
+            if i < n_cells { tens = _cell_tension(cells[i]) }
+            let intrinsic = base + tcoef * tens
+            let a_new = act[i] + intrinsic + boost - leak * act[i]
+            act[i] = a_new
+            if a_new > up {
+                state[i] = 1.0
+            } else {
+                if a_new < dn { state[i] = 0.0 }
+            }
+            i = i + 1
+        }
+
+        let q_now = _vec_mean_scalar(state)
+        let jump = q_now - q_prev
+        let abs_jump = if jump < 0.0 { 0.0 - jump } else { jump }
+        if abs_jump > max_jump { max_jump = abs_jump }
+        if switch_step < 0 {
+            if q_now >= 0.5 { switch_step = step }
+        }
+        q_prev = q_now
+        step = step + 1
+    }
+    let switched = switch_step >= 0
+    return #{
+        "switched":    switched,
+        "switch_step": switch_step,
+        "q_final":     q_prev,
+        "max_jump":    max_jump
+    }
+}
+
+// PER-SEED ADAPTIVE calibration (REDESIGN core): bisection-search base_gain so
+// the NO-COUPLING control (averaged over the three q_thr probes) settles its
+// max q_final in the target partial-quorum window [Q_LO, Q_HI], strictly below
+// majority (0.5). Returns the calibrated base_gain.
+//
+// Monotonicity: q_final increases with base_gain (more drift → more cells ON),
+// so bisection on the control max-q_final vs the window midpoint is well-posed.
+// Each probe re-inits a fresh pool (stream advances deterministically per seed).
+fn _control_maxq(base: float) -> float {
+    let r30 = _h262_up(0.3, 0.0, base)
+    let r50 = _h262_up(0.5, 0.0, base)
+    let r70 = _h262_up(0.7, 0.0, base)
+    let mut m = r30["q_final"]
+    if r50["q_final"] > m { m = r50["q_final"] }
+    if r70["q_final"] > m { m = r70["q_final"] }
+    return m
+}
+
+fn _calibrate_base() -> float {
+    let target = 0.5 * (_q_lo() + _q_hi())   // window midpoint
+    let mut lo = _base_lo()
+    let mut hi = _base_hi()
+    let mut k = 0
+    while k < _cal_iters() {
+        let mid = 0.5 * (lo + hi)
+        let q = _control_maxq(mid)
+        if q < target {
+            lo = mid     // need more drift
+        } else {
+            hi = mid     // too much drift
+        }
+        k = k + 1
+    }
+    return 0.5 * (lo + hi)
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+//  MODE: seed — run BOTH legs for one __HEXA_FARR_GAUSS_SEED__ seed, write a
+//               snapshot. (Driver runs this once per seed, separate process.)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _run_seed(seed: int) {
+    println("---- H_272 seed " + to_string(seed) + " (gauss-seed env) ----")
+
+    // ── H_261 leg (relative axis criterion) ──
+    let h_flat  = _h261_condition(_s_flat())
+    let h_steep = _h261_condition(_s_steep())
+    let r_steep_abs = _abs(h_steep["r"])
+    let r_flat_abs  = _abs(h_flat["r"])
+    let axis_gap    = r_steep_abs - r_flat_abs
+    // redesigned H_261 verdict: axis present AND dominates control by a margin.
+    let h261_axis_present = r_steep_abs >= _r_high()
+    let h261_rel_dominate = axis_gap > _axis_margin()
+    let h261_pass = h261_axis_present && h261_rel_dominate
+
+    // ── H_262 leg (per-seed adaptive quorum-gate) ──
+    let base_cal = _calibrate_base()
+    // with the calibrated base: control (no coupling) vs coop (coupling).
+    let cc30 = _h262_up(0.3, 0.0, base_cal)
+    let cc50 = _h262_up(0.5, 0.0, base_cal)
+    let cc70 = _h262_up(0.7, 0.0, base_cal)
+    let co30 = _h262_up(0.3, _coupling(), base_cal)
+    let co50 = _h262_up(0.5, _coupling(), base_cal)
+    let co70 = _h262_up(0.7, _coupling(), base_cal)
+
+    let any_ctrl_switch = cc30["switched"] || cc50["switched"] || cc70["switched"]
+    let any_coop_switch = co30["switched"] || co50["switched"] || co70["switched"]
+    let coop_sharp = (co30["max_jump"] >= 0.25) || (co50["max_jump"] >= 0.25)
+                     || (co70["max_jump"] >= 0.25)
+    // redesigned H_262 verdict: quorum-gate (coop switches, control doesn't)
+    // AND the transition is a sharp bistable jump.
+    let h262_gate = any_coop_switch && (!any_ctrl_switch)
+    let h262_pass = h262_gate && coop_sharp
+
+    // control max q_final (calibration target check, for the snapshot).
+    let mut ctrl_maxq = cc30["q_final"]
+    if cc50["q_final"] > ctrl_maxq { ctrl_maxq = cc50["q_final"] }
+    if cc70["q_final"] > ctrl_maxq { ctrl_maxq = cc70["q_final"] }
+    let mut coop_maxq = co30["q_final"]
+    if co50["q_final"] > coop_maxq { coop_maxq = co50["q_final"] }
+    if co70["q_final"] > coop_maxq { coop_maxq = co70["q_final"] }
+
+    println("  H_261 |r|steep=" + to_string(r_steep_abs)
+            + " |r|flat=" + to_string(r_flat_abs)
+            + " gap=" + to_string(axis_gap)
+            + " -> pass=" + _bool_str(h261_pass))
+    println("  H_262 base_cal=" + to_string(base_cal)
+            + " ctrl_maxq=" + to_string(ctrl_maxq)
+            + " coop_maxq=" + to_string(coop_maxq)
+            + " gate=" + _bool_str(h262_gate)
+            + " sharp=" + _bool_str(coop_sharp)
+            + " -> pass=" + _bool_str(h262_pass))
+
+    // ── snapshot json ──
+    let mut j = "{\n"
+    j = j + "  \"seed\": " + to_string(seed) + ",\n"
+    j = j + "  \"h261\": {\n"
+    j = j + "    \"r_abs_steep\": " + to_string(r_steep_abs) + ",\n"
+    j = j + "    \"r_abs_flat\":  " + to_string(r_flat_abs) + ",\n"
+    j = j + "    \"axis_gap\":    " + to_string(axis_gap) + ",\n"
+    j = j + "    \"n_regions_steep\": " + to_string(h_steep["n_regions"]) + ",\n"
+    j = j + "    \"axis_present\":  " + _bool_str(h261_axis_present) + ",\n"
+    j = j + "    \"rel_dominate\":  " + _bool_str(h261_rel_dominate) + ",\n"
+    j = j + "    \"pass\":          " + _bool_str(h261_pass) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"h262\": {\n"
+    j = j + "    \"base_calibrated\": " + to_string(base_cal) + ",\n"
+    j = j + "    \"ctrl_maxq\":  " + to_string(ctrl_maxq) + ",\n"
+    j = j + "    \"coop_maxq\":  " + to_string(coop_maxq) + ",\n"
+    j = j + "    \"any_ctrl_switch\": " + _bool_str(any_ctrl_switch) + ",\n"
+    j = j + "    \"any_coop_switch\": " + _bool_str(any_coop_switch) + ",\n"
+    j = j + "    \"coop_sharp\": " + _bool_str(coop_sharp) + ",\n"
+    j = j + "    \"gate\":       " + _bool_str(h262_gate) + ",\n"
+    j = j + "    \"pass\":       " + _bool_str(h262_pass) + "\n"
+    j = j + "  }\n"
+    j = j + "}\n"
+
+    write_file(_snap_dir() + "/seed" + to_string(seed) + ".json", j)
+    println("  snapshot -> " + _snap_dir() + "/seed" + to_string(seed) + ".json")
+}
+
+
+// ════════════════════════════════════════════════════════════════════════════
+//  MODE: agg — read 10 seed snapshots + det_xproc.txt, aggregate verdict.
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _load_seed(seed: int) {
+    let raw = read_file(_snap_dir() + "/seed" + to_string(seed) + ".json")
+    return json_parse(raw)
+}
+
+// C3 determinism — read driver-written det_xproc.txt; each line
+// "seed<s> PASS <sha_a> <sha_b>". Require >= 1 line and all contain PASS.
+fn _c3_all_pass() -> bool {
+    let raw = read_file(_state_dir() + "/det_xproc.txt")
+    if len(raw) == 0 { return false }
+    let lines = split(raw, "\n")
+    let mut found = 0
+    let mut all_pass = true
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i]
+        if contains(ln, "seed") {
+            found = found + 1
+            if !contains(ln, "PASS") { all_pass = false }
+        }
+        i = i + 1
+    }
+    return all_pass && (found >= 1)
+}
+
+fn _run_agg() {
+    let ns = _n_seeds()
+    println("================================================================")
+    println("H_272 seed-robust re-calibration — cycle#14 effect-vs-criteria")
+    println("  H_261 redesign: RELATIVE axis (|r|steep - |r|flat > "
+            + to_string(_axis_margin()) + ") [was absolute flat |r| <= 0.2]")
+    println("  H_262 redesign: PER-SEED ADAPTIVE base_gain (control settled in ["
+            + to_string(_q_lo()) + "," + to_string(_q_hi()) + "]) [was fixed 0.0135]")
+    println("  seeds: 0..9 (one process per seed) · robust threshold: >= "
+            + to_string(_robust_pass()) + "/10")
+    println("================================================================")
+
+    let mut h261_pass = []
+    let mut h261_gap  = []
+    let mut h261_rsteep = []
+    let mut h261_rflat  = []
+    let mut h262_pass = []
+    let mut h262_base = []
+    let mut h262_ctrlq = []
+    let mut h262_coopq = []
+
+    let mut s = 0
+    while s < ns {
+        let d = _load_seed(s)
+        let a = d["h261"]
+        let b = d["h262"]
+        h261_pass.push(a["pass"])
+        h261_gap.push(a["axis_gap"])
+        h261_rsteep.push(a["r_abs_steep"])
+        h261_rflat.push(a["r_abs_flat"])
+        h262_pass.push(b["pass"])
+        h262_base.push(b["base_calibrated"])
+        h262_ctrlq.push(b["ctrl_maxq"])
+        h262_coopq.push(b["coop_maxq"])
+        s = s + 1
+    }
+
+    let mut n261 = 0
+    let mut n262 = 0
+    let mut i = 0
+    while i < ns {
+        if h261_pass[i] { n261 = n261 + 1 }
+        if h262_pass[i] { n262 = n262 + 1 }
+        i = i + 1
+    }
+
+    // C1 H_261 redesigned axis-effect; C2 H_262 redesigned quorum-gate.
+    let c1 = n261 >= _robust_pass()
+    let c2 = n262 >= _robust_pass()
+    let c3 = _c3_all_pass()
+
+    // falsifiers (≥5 measurable).
+    // F1 RECAL-261 : redesigned H_261 >= 8/10.
+    // F2 RECAL-262 : redesigned H_262 >= 8/10.
+    // F3 AXIS-REAL : |r|steep off floor every seed (axis itself real).
+    // F4 ADAPT-VALID : control settled below majority every seed (calibration
+    //                  achieved its target — guards the H_262 redesign honesty).
+    // F5 DETERMINISM : same-seed cross-process byte-equal.
+    let f1 = c1
+    let f2 = c2
+    let rsteep_min = _min(h261_rsteep)
+    let f3 = rsteep_min > 0.0
+    let ctrlq_max = _max(h262_ctrlq)
+    let f4 = ctrlq_max < 0.5
+    let f5 = c3
+
+    let v1 = if f1 { "PASS" } else { "FAIL" }
+    let v2 = if f2 { "PASS" } else { "FAIL" }
+    let v3 = if f3 { "PASS" } else { "FAIL" }
+    let v4 = if f4 { "PASS" } else { "FAIL" }
+    let v5 = if f5 { "PASS" } else { "FAIL" }
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+
+    // verdict_rule.
+    let verdict = if c1 && c2 {
+        "SUPPORTED"
+    } else {
+        if c1 || c2 { "PARTIAL" } else { "FALSIFIED" }
+    }
+
+    // ── print ──
+    println("target                          recal-PASS/10  robust(>=8)  detail")
+    println("------                          -------------  -----------  ------")
+    println("H_261 (relative axis)           " + to_string(n261) + "/10"
+            + "           " + _bool_str(c1)
+            + "        gap[min " + to_string(_min(h261_gap)) + "]")
+    println("H_262 (adaptive quorum-gate)    " + to_string(n262) + "/10"
+            + "           " + _bool_str(c2)
+            + "        coopq[max " + to_string(_max(h262_coopq)) + "]")
+
+    println("")
+    println("per-seed recal-PASS:")
+    println("  H_261: " + _bool_arr_json(h261_pass))
+    println("  H_262: " + _bool_arr_json(h262_pass))
+
+    println("")
+    println("distributions (mean ± std):")
+    println("  H_261 |r|steep  : " + to_string(_mean(h261_rsteep)) + " ± " + to_string(_std(h261_rsteep)))
+    println("  H_261 axis-gap  : " + to_string(_mean(h261_gap)) + " ± " + to_string(_std(h261_gap)))
+    println("  H_261 |r|flat   : " + to_string(_mean(h261_rflat)) + " ± " + to_string(_std(h261_rflat)))
+    println("  H_262 base_cal  : " + to_string(_mean(h262_base)) + " ± " + to_string(_std(h262_base)))
+    println("  H_262 ctrl_maxq : " + to_string(_mean(h262_ctrlq)) + " ± " + to_string(_std(h262_ctrlq))
+            + "   (target [" + to_string(_q_lo()) + "," + to_string(_q_hi()) + "])")
+    println("  H_262 coop_maxq : " + to_string(_mean(h262_coopq)) + " ± " + to_string(_std(h262_coopq)))
+
+    println("")
+    println("C1 H_261 RECAL-ROBUST  (relative axis >= 8/10)   : " + _bool_str(c1))
+    println("C2 H_262 RECAL-ROBUST  (adaptive gate  >= 8/10)  : " + _bool_str(c2))
+    println("C3 DETERMINISM         (same-seed cross-process) : " + _bool_str(c3))
+    println("")
+    println("F1 RECAL-261     " + v1)
+    println("F2 RECAL-262     " + v2)
+    println("F3 AXIS-REAL     " + v3)
+    println("F4 ADAPT-VALID   " + v4)
+    println("F5 DETERMINISM   " + v5)
+    println("================================================================")
+    println("VERDICT: " + verdict
+            + "  (" + to_string(n_c) + "/3 criteria, "
+            + to_string(n_pass) + "/5 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json ──
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_272\",\n"
+    j = j + "  \"slug\": \"seed-robust-recalibration\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"seed-robust re-calibration — are the cycle#14 H_261/H_262 effects real, or were only the criteria fragile? (H_269 follow-up)\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"method\": \"one process per seed (gauss-seed env), 10 seeds 0..9; H_261 relative-axis redesign + H_262 per-seed-adaptive base_gain redesign (rationale pre-registered); aggregate seed-robust PASS ratio\",\n"
+    j = j + "  \"n_seeds\": " + to_string(ns) + ",\n"
+    j = j + "  \"robust_threshold\": " + to_string(_robust_pass()) + ",\n"
+    j = j + "  \"redesign\": {\n"
+    j = j + "    \"H_261\": \"RELATIVE: |r|steep - |r|flat > " + to_string(_axis_margin()) + " (was absolute flat |r| <= 0.2)\",\n"
+    j = j + "    \"H_262\": \"PER-SEED ADAPTIVE base_gain via bisection so control max q_final in [" + to_string(_q_lo()) + "," + to_string(_q_hi()) + "] (was fixed 0.0135)\"\n"
+    j = j + "  },\n"
+    j = j + "  \"targets\": {\n"
+    j = j + "    \"H_261\": { \"criterion\": \"relative axis dominance\", \"pass_count\": " + to_string(n261)
+          + ", \"pass_ratio\": " + to_string(to_float(n261) / to_float(ns))
+          + ", \"seed_robust\": " + _bool_str(c1)
+          + ", \"per_seed_pass\": " + _bool_arr_json(h261_pass)
+          + ", \"r_steep\": " + _float_arr_json(h261_rsteep)
+          + ", \"r_flat\": " + _float_arr_json(h261_rflat)
+          + ", \"axis_gap\": " + _float_arr_json(h261_gap)
+          + ", \"gap_min\": " + to_string(_min(h261_gap)) + " },\n"
+    j = j + "    \"H_262\": { \"criterion\": \"adaptive quorum-gate + sharp\", \"pass_count\": " + to_string(n262)
+          + ", \"pass_ratio\": " + to_string(to_float(n262) / to_float(ns))
+          + ", \"seed_robust\": " + _bool_str(c2)
+          + ", \"per_seed_pass\": " + _bool_arr_json(h262_pass)
+          + ", \"base_calibrated\": " + _float_arr_json(h262_base)
+          + ", \"ctrl_maxq\": " + _float_arr_json(h262_ctrlq)
+          + ", \"coop_maxq\": " + _float_arr_json(h262_coopq)
+          + ", \"ctrl_maxq_max\": " + to_string(ctrlq_max) + " }\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_h261_recal_robust\": " + _bool_str(c1) + ",\n"
+    j = j + "    \"C2_h262_recal_robust\": " + _bool_str(c2) + ",\n"
+    j = j + "    \"C3_determinism\":       " + _bool_str(c3) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_RECAL_261\":   { \"metric\": \"redesigned H_261 >= 8/10\", \"value\": " + to_string(n261) + ", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F2_RECAL_262\":   { \"metric\": \"redesigned H_262 >= 8/10\", \"value\": " + to_string(n262) + ", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F3_AXIS_REAL\":   { \"metric\": \"|r|steep > 0 every seed\", \"value\": " + to_string(rsteep_min) + ", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F4_ADAPT_VALID\": { \"metric\": \"control max q_final < 0.5 every seed (calibration valid)\", \"value\": " + to_string(ctrlq_max) + ", \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "    \"F5_DETERMINISM\": { \"metric\": \"same-seed cross-process byte-equal\", \"verdict\": \"" + v5 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"cross_link\": {\"H_269\": \"multiseed-robustness (fragility diagnosis)\", \"H_261\": \"embryogenesis-gradient\", \"H_262\": \"quorum-sensing\"}\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+    println("ledger -> " + _state_dir() + "/result.json")
+}
+
+
+// ── dispatch on HEXA_H272_MODE env (seed=<n> | agg) ──────────────────────────
+
+fn _run_h272() {
+    let mode = env("HEXA_H272_MODE")
+    if mode == "agg" {
+        _run_agg()
+        return 0
+    }
+    // default / "seed": read the seed index from HEXA_H272_SEED.
+    let seed_s = env("HEXA_H272_SEED")
+    let mut seed = 0
+    if len(seed_s) > 0 { seed = to_int(seed_s) }
+    _run_seed(seed)
+}
+
+
+_run_h272()

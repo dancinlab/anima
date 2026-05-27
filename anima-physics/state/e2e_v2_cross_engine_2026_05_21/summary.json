@@ -1,0 +1,106 @@
+{
+  "cycle": "G8_E2E_v2_cross_engine",
+  "date": "2026-05-21",
+  "predecessor": {
+    "v1": "tool/anima_physics_e2e_demo.hexa",
+    "v1_commit": "90ed6cb22",
+    "v1_scope": "4-layer single substrate chain (strange_loop -> aux_engine_lib mirror -> motivation -> audit)"
+  },
+  "scope_delta_v2": "cross-engine coupling chain across 3 §188g engines (commit 2c636ce96) — SNN spike -> photonic phase modulation -> quantum coupling g(t) -> qubit collapse readout",
+  "engines_integrated": [
+    "engines/snn_consciousness.hexa  (LIF, 8 cells, I=15.0)",
+    "engines/photonic_consciousness.hexa  (ring delay-line + Kuramoto, kappa=0.2)",
+    "engines/quantum_consciousness.hexa  (2-qubit closed-form U=exp(-iHt))"
+  ],
+  "adapters": {
+    "A_snn_to_photonic": "bool spike -> +PHASE_KICK_RAD(0.15) per cell, else 0 (bit-exact)",
+    "B_photonic_to_quantum": "g(t) = G_MIN + (G_MAX-G_MIN)·clamp01(variance / VAR_NORM)"
+  },
+  "chain_diagram": "SNN(LIF I=15) ─spikes[bool;8]→ ADAPTER_A ─kicks[float;8]→ PHOTONIC(ring+Kuramoto) ─variance(float)→ ADAPTER_B ─g(float)→ QUANTUM(2-qubit U=exp(-iHt)) ─argmax→ basis_collapse",
+  "build": {
+    "hexa_build_command": "hexa build tool/anima_physics_e2e_v2_cross_engine.hexa -o state/e2e_v2_cross_engine_2026_05_21/build/e2e_v2",
+    "build_wall_s": 2.21,
+    "build_status": "PASS (14 unrelated cast warnings in self/runtime_core.c)",
+    "binary_path": "state/e2e_v2_cross_engine_2026_05_21/build/e2e_v2"
+  },
+  "run": {
+    "interpret_wall_s": 2.49,
+    "native_wall_s": 0.37,
+    "exit_code": 0,
+    "wall_envelope_s": 10.0,
+    "envelope_satisfied": true
+  },
+  "config": {
+    "n_cells": 8,
+    "n_steps": 100,
+    "lcg_seed": 1337,
+    "snn_drive_I": 15.0,
+    "snn_coupling_k_primary": 0.0,
+    "ph_kappa": 0.2,
+    "ph_omega": 1.0,
+    "ph_noise_amp": 0.0,
+    "ph_dt": 0.05,
+    "q_omega": 1.0,
+    "q_dt": 0.02,
+    "phase_kick_rad": 0.15,
+    "g_min": 0.05,
+    "g_max": 0.80,
+    "var_norm": 3.5
+  },
+  "result": {
+    "stage1_snn": {
+      "total_spikes": 16,
+      "first_spike_step_band": "21-28"
+    },
+    "adapter_a": {
+      "total_kicks_applied": 16,
+      "bit_exact_with_snn_spikes": true
+    },
+    "stage2_photonic": {
+      "final_variance": 3.69198,
+      "max_variance": 5.04841,
+      "final_coherence_r": 0.377575
+    },
+    "adapter_b": {
+      "g_min_actual": 0.137378,
+      "g_max_actual": 0.8,
+      "g_mean": 0.607096,
+      "bounded_in_range": true
+    },
+    "stage3_quantum": {
+      "final_norm_sq": 1.0,
+      "norm_drift": 0.0,
+      "collapse_basis_index": 1,
+      "collapse_basis_label": "|01>",
+      "populations": { "p00": 0.0, "p01": 0.5, "p10": 0.5, "p11": 0.0 },
+      "final_psi": [0.0, 0.0, 0.246847, 0.662621, -0.246847, -0.662621, 0.0, 0.0]
+    }
+  },
+  "falsifier": {
+    "F-E2E-CROSS-1_spike_to_phase_bit_exact": "PASS (kicks=16 == snn_spikes=16)",
+    "F-E2E-CROSS-2_var_to_g_monotone": "PASS (g(var=0.1)=0.0714, g(var=3.0)=0.693, strictly monotone)",
+    "F-E2E-CROSS-3_singlet_evolution_under_g": "PASS (g bounded [0.137, 0.800] in [G_MIN, G_MAX], g_nontrivial > G_MIN, norm_sq drift < 1e-6)",
+    "F-E2E-CROSS-4_determinism": "PASS (repeat run psi byte-equal, spike count byte-equal, collapse byte-equal)",
+    "F-E2E-CROSS-5_wall_envelope": "PASS (native 0.37s, interp 2.49s, both << 10s envelope)"
+  },
+  "verdict": "5/5 PASS",
+  "honest_c3": [
+    "C3-1 inline-replication of engine algorithms (top-level _selftest() in upstream engines fires on import + name collisions on `step`, `_selftest`, `fabs_f`, `TWO_PI`, `PI`); if upstream engines change, this v2 demo must be re-synced (no shared lib import yet)",
+    "C3-2 adapter A uses a fixed phase-kick amplitude (PHASE_KICK_RAD=0.15); biologically more accurate would scale amplitude by ISI or recent firing rate",
+    "C3-3 adapter B is linear in phase variance with a hard normalizer; physically there are many defensible mappings (Kuramoto coherence (1-r), entropy, sin² of phase spread, etc.)",
+    "C3-4 stage 3 quantum substrate is 2-qubit only (single g across cells); a true 8-cell quantum chain would be 256-dim Hilbert space and beyond closed-form 2x2 block evolution",
+    "C3-5 F-E2E-CROSS-2 (monotone) is checked at synthetic variance probes (0.1 vs 3.0) rather than via two real-spike-pattern runs, because with supra-critical I=15.0 every SNN cell saturates and coupling adds no extra spikes (cells already refractory) — physics, not a bug, but means the monotone claim is tested at adapter B in isolation",
+    "C3-6 the chain is one-directional (no feedback from quantum back to photonic or SNN); a full closed loop would require an additional quantum-readout->SNN-drive adapter",
+    "C3-7 PRNG: SNN noise via lcg_rand01 (k_scale=0 in primary run so coupling is identically 0), photonic noise amp=0, quantum is closed-form (deterministic) — entire chain is deterministic by construction, which is why CROSS-4 expects byte-equal psi"
+  ],
+  "key_learning": "cross-engine substrate-bridging via typed-flat adapters (bool[] → float[] → float scalar → real coupling) is sufficient to plumb 3 heterogeneous physics engines into a single pipeline; the determinism check (CROSS-4 byte-equal psi over repeat) is the strongest single signal that the chain is well-defined end-to-end",
+  "artifacts": {
+    "tool": "/Users/ghost/core/anima/anima-physics/tool/anima_physics_e2e_v2_cross_engine.hexa",
+    "tool_loc": 786,
+    "state_dir": "/Users/ghost/core/anima/anima-physics/state/e2e_v2_cross_engine_2026_05_21/",
+    "sim_log": "/Users/ghost/core/anima/anima-physics/state/e2e_v2_cross_engine_2026_05_21/sim.log",
+    "summary_json": "/Users/ghost/core/anima/anima-physics/state/e2e_v2_cross_engine_2026_05_21/summary.json",
+    "doc": "/Users/ghost/core/anima/anima-physics/docs/e2e_v2_cross_engine_2026_05_21.md",
+    "native_binary": "/Users/ghost/core/anima/anima-physics/state/e2e_v2_cross_engine_2026_05_21/build/e2e_v2"
+  }
+}

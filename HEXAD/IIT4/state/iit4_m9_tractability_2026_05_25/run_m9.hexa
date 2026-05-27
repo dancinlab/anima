@@ -1,0 +1,108 @@
+// HEXAD/IIT4/state/iit4_m9_tractability_2026_05_25/run_m9.hexa
+//
+//   IIT4 M9 — tractability profile + bounded-mode lib smoke.
+//
+//   The faithful big_phi (M4) is exact but its per-mechanism MICE search scans
+//   ALL 2ⁿ−1 purviews, so wall cost climbs steeply with n (DESIGN.md §3). M9
+//   adds iit4_bounded.big_phi_bounded(tpm, n, sys_state, max_purview_size) which
+//   caps the purview argmax to purviews of size ≤ max_purview_size, extending the
+//   feasible-n ceiling at the cost of an explicit APPROXIMATION when capped.
+//
+//   This smoke proves the bound is a FAITHFUL RESTRICTION at the no-op cap:
+//     • COPY n=2 (hand-built TPM)  — big_phi_bounded(cap≥n) == big_phi (exact).
+//     • ECA rule 110 n=4           — big_phi_bounded(cap≥n) == big_phi (exact).
+//     • capped (cap < n) is an explicit lower-bound APPROXIMATION (φ_d ≤ exact)
+//       and is reported honestly as such — NOT claimed faithful.
+//     • bounded is FINITE for n=6 (the tractability extension target).
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_bounded.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// is x a finite real (not the 1e308 sentinel, not absurd)?
+fn finite_phi(x: float) -> bool {
+    if x < 0.0 - 0.000001 { return false }
+    if x > 1.0e300 { return false }
+    return true
+}
+
+fn main() {
+    println("================================================================")
+    println("  IIT4 M9 — bounded-mode big-Φ smoke (no-op cap = faithful restriction)")
+    println("================================================================")
+
+    // ── COPY n=2 — hand-built state-by-node TPM ─────────────────────────
+    //   cell0_next = cell1, cell1_next = cell0  (state bit i = cell i).
+    //   tpm[state*n + unit]; states 00,01,10,11 → [0,0, 0,1, 1,0, 1,1].
+    let n2 = 2
+    let copy_tpm = [0.0, 0.0,  0.0, 1.0,  1.0, 0.0,  1.0, 1.0]
+    let st2 = 3                                          // sys_state 11 (both ON)
+    let ex2 = big_phi(copy_tpm, n2, st2)
+    let bd2 = big_phi_bounded(copy_tpm, n2, st2, n2)     // cap = n ⇒ no-op
+    println("  COPY n=2: exact big-Φ=" + str(ex2[0]) + " | bounded(cap=n)=" + str(bd2[0]))
+    check("COPY n=2 bounded(cap=n) == exact big-Φ", approx(bd2[0], ex2[0]))
+    check("COPY n=2 bounded(cap=n) total == exact total", approx(bd2[1], ex2[1]))
+    check("COPY n=2 bounded(cap=n) nd == exact nd", approx(bd2[4], ex2[4]))
+    // a larger cap (> n) is still a no-op restriction — agrees too.
+    let bd2big = big_phi_bounded(copy_tpm, n2, st2, n2 + 3)
+    check("COPY n=2 bounded(cap>n) == exact big-Φ", approx(bd2big[0], ex2[0]))
+
+    // ── ECA rule 110 n=4 — the LIFE substrate ───────────────────────────
+    let n4 = 4
+    let st4 = 10                                         // sys_state 1010
+    let ex4 = big_phi(eca_tpm(110, n4), n4, st4)
+    let bd4 = big_phi_bounded(eca_tpm(110, n4), n4, st4, n4)   // cap = n ⇒ no-op
+    println("  ECA110 n=4: exact big-Φ=" + str(ex4[0]) + " | bounded(cap=n)=" + str(bd4[0]) + " (M6 ref 7.5475)")
+    check("ECA110 n=4 bounded(cap=n) == exact big-Φ", approx(bd4[0], ex4[0]))
+    check("ECA110 n=4 bounded(cap=n) total == exact total", approx(bd4[1], ex4[1]))
+    check("ECA110 n=4 bounded(cap=n) Σφ_d == exact Σφ_d", approx(bd4[2], ex4[2]))
+    check("ECA110 n=4 bounded(cap=n) Σφ_r == exact Σφ_r", approx(bd4[3], ex4[3]))
+    check("ECA110 n=4 bounded(cap=n) nd == exact nd", approx(bd4[4], ex4[4]))
+
+    // ── APPROXIMATION honesty: capped (cap < n) is a LOWER BOUND ────────
+    //   cap=2 < n=4 removes size-3/4 purviews from the MICE argmax ⇒ each φ_d
+    //   can only drop (argmax over a subset). So Σφ_d and total are ≤ exact.
+    let cap2 = big_phi_bounded(eca_tpm(110, n4), n4, st4, 2)
+    println("  ECA110 n=4: cap=2 big-Φ=" + str(cap2[0]) + " total=" + str(cap2[1]) + " (APPROX, lower-bound search)")
+    check("capped(cap=2) Σφ_d <= exact Σφ_d (lower bound)", cap2[2] <= ex4[2] + 0.000001)
+    check("capped(cap=2) total <= exact total (lower bound)", cap2[1] <= ex4[1] + 0.000001)
+    check("capped(cap=2) is finite & non-negative", finite_phi(cap2[0]))
+
+    // ── tractability extension: bounded FINITE for n=6 ──────────────────
+    //   cap=3 (size ≤ 3 purviews only) keeps n=6 tractable; the value is an
+    //   APPROXIMATION (honest) but it must be a finite real, not a blow-up.
+    let n6 = 6
+    let st6 = 21                                         // sys_state 010101
+    let bd6 = big_phi_bounded(eca_tpm(110, n6), n6, st6, 3)
+    println("  ECA110 n=6: bounded(cap=3) big-Φ=" + str(bd6[0]) + " total=" + str(bd6[1]) + " nd=" + str(bd6[4]))
+    check("ECA110 n=6 bounded(cap=3) big-Φ finite", finite_phi(bd6[0]))
+    check("ECA110 n=6 bounded(cap=3) total finite", finite_phi(bd6[1]))
+    check("ECA110 n=6 bounded(cap=3) 0 <= big-Φ <= total", (bd6[0] >= 0.0 - 0.000001) && (bd6[0] <= bd6[1] + 0.000001))
+
+    // ── determinism ─────────────────────────────────────────────────────
+    let bd4b = big_phi_bounded(eca_tpm(110, n4), n4, st4, n4)
+    check("determinism: ECA110 n=4 bounded re-run identical", approx(bd4[0], bd4b[0]))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  FINDING: big_phi_bounded(cap >= n) == exact big_phi (faithful restriction);")
+    println("           capped (cap < n) is an explicit lower-bound APPROXIMATION;")
+    println("           bounded keeps n=6 finite (tractability ceiling extended).")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M9 bounded-mode smoke FAILED") }
+}

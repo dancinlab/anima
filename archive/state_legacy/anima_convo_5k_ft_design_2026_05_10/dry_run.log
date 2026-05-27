@@ -1,0 +1,21 @@
+[07:20:59] convo_5k_finetune start  device=cpu  dry_run=True
+[07:20:59] args: {'ckpt': '/Users/ghost/.cache/huggingface/hub/models--need-singularity--clm-v2-byte-18m-convo-5k/snapshots/1af2bcaeaf70c1d0b1a19939a8ada79a28f8cd30/convo_5k.pt', 'corpus': '/Users/ghost/core/anima/state/anima_dialogue_tier_a_iter2_2026_05_08.txt', 'out': '/Users/ghost/core/anima/state/anima_convo_5k_ft_design_2026_05_10/dry_run_step_final.pt', 'log': '/Users/ghost/core/anima/state/anima_convo_5k_ft_design_2026_05_10/dry_run.log', 'steps': 10, 'batch': 4, 'seq': 64, 'lr': 1e-05, 'lr_min': 1e-06, 'warmup': 2, 'corpus_max_bytes': 524288, 'device': 'cpu', 'dry_run': True, 'save_every': 0, 'seed': 42}
+[07:20:59] ckpt loaded: keys=108 base_step=45000 (0.04s)
+[07:20:59] load_state_dict: missing=0 unexpected=0
+[07:20:59] params: total=18,130,176 trainable=18,130,176
+[07:20:59] corpus loaded: 524,288 bytes (0.02s)
+[07:20:59] dataset: n_windows=8190 batches_per_epoch=2047
+[07:21:03] step     0  loss=4.4303  loss_a=4.0485  loss_g=4.8121  lr=5.00e-06  grad_norm=2.049
+[07:21:03] step     1  loss=3.7770  loss_a=3.1614  loss_g=4.3926  lr=1.00e-05  grad_norm=1.844
+[07:21:04] step     2  loss=4.5318  loss_a=4.4268  loss_g=4.6367  lr=1.00e-05  grad_norm=2.005
+[07:21:05] step     3  loss=4.4586  loss_a=4.2103  loss_g=4.7069  lr=9.66e-06  grad_norm=1.976
+[07:21:05] step     4  loss=4.4825  loss_a=4.0891  loss_g=4.8759  lr=8.68e-06  grad_norm=2.362
+[07:21:06] step     5  loss=3.7642  loss_a=3.1701  loss_g=4.3583  lr=7.22e-06  grad_norm=1.795
+[07:21:07] step     6  loss=4.7102  loss_a=4.5947  loss_g=4.8258  lr=5.50e-06  grad_norm=1.972
+[07:21:07] step     7  loss=3.6459  loss_a=3.0332  loss_g=4.2586  lr=3.78e-06  grad_norm=1.794
+[07:21:08] step     8  loss=4.6039  loss_a=4.4311  loss_g=4.7767  lr=2.32e-06  grad_norm=1.935
+[07:21:08] step     9  loss=4.3274  loss_a=3.9802  loss_g=4.6746  lr=1.34e-06  grad_norm=2.279
+[07:21:08] train done: 10 steps, 6.99s (0.699s/step)
+[07:21:08] loss first/last: 4.4303 -> 4.3274  delta=+0.1028
+[07:21:08] grad_norm first/last: 2.049 -> 2.279
+[07:21:09] final ckpt saved: /Users/ghost/core/anima/state/anima_convo_5k_ft_design_2026_05_10/dry_run_step_final.pt

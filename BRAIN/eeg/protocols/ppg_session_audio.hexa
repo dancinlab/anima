@@ -1,0 +1,421 @@
+// anima-eeg/protocols/ppg_session_audio.hexa
+//
+// @resolver-bypass(reason="darwin-native: shells out to /usr/bin/say + delegates to anima-eeg/collect.hexa")
+//
+// PURPOSE
+//   PPG (photoplethysmography) heart-rate 측정 풀 sequence — audio cue
+//   (macOS `say -v Yuna`) + collect.hexa 단일 90s capture wrapper.
+//   ppg_heart_rate.hexa pattern 보강: 본 wrapper 가 phase 경계 측 실 say
+//   호출 (audio cue interleaved with foreground capture) 그리고 raw stream
+//   측 collect.hexa 측 store.
+//
+//   pulse 신호 (D11) 만 cyton 측 piggyback. heart rate / HRV sanity
+//   check 용. N=1 self-experiment, macOS only, no IRB scope.
+//
+// SEQUENCE (90s total)
+//   phase 1 (0-30s):   REST         — "삼 초 후 휴식 시작" → 3s → "휴식. 정상 호흡"
+//   phase 2 (30-60s):  HOLD_BREATH  — "숨을 참으세요"
+//   phase 3 (60-90s):  REST         — "다시 호흡. 회복"
+//   end:               "측정 완료"
+//
+// USAGE
+//   hexa run anima-eeg/protocols/ppg_session_audio.hexa --run \
+//       --port /dev/cu.usbserial-DP04WGIQ --board cyton_daisy
+//
+//   options:
+//       --duration <n>     full session sec (default 90; phases scale ÷3)
+//       --voice <name>     macOS say voice (default Yuna)
+//       --analog-pin <p>   Pulse Sensor pin (D11/D12/D13, default D11)
+//       --skip-impedance   impedance check 생략 (default skip — PPG 측 무관)
+//       --selftest         no-hardware dry-run
+
+let SCHEMA = "anima-eeg/ppg_session_audio/1"
+
+// Frozen defaults
+let DEFAULT_DURATION_S    = 90
+let DEFAULT_VOICE         = "Yuna"
+let DEFAULT_PORT          = "/dev/cu.usbserial-DP04WGIQ"
+let DEFAULT_BOARD         = "cyton_daisy"
+let DEFAULT_ANALOG_PIN    = "D11"
+let PHASE_REST1_S         = 30      // phase 1
+let PHASE_HOLD_S          = 30      // phase 2 (breath hold)
+let PHASE_REST2_S         = 30      // phase 3
+let CUE_LEAD_S            = 3       // count-down before phase 1
+let COLLECT_PREPARE_LAG_S = 3       // BrainFlow prepare_session + start_stream absorb
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn say_cue(voice: str, text: str) -> int {
+    // macOS `say` blocking call (returns 0 on success)
+    let cmd = "say -v '" + voice + "' '" + text + "'"
+    return exec_status(cmd)
+}
+
+fn say_cue_bg(voice: str, text: str) -> int {
+    // background say — phase boundary cue overlapped with foreground capture
+    let cmd = "say -v '" + voice + "' '" + text + "' &"
+    return exec_status(cmd)
+}
+
+fn exec_status(cmd: str) -> int {
+    let rc = exec(cmd)
+    return rc
+}
+
+fn run_impedance(port: str) -> int {
+    let cmd = "hexa run anima-eeg/impedance_check.hexa --check --port '" + port + "'"
+    print("[step1] impedance check...")
+    return exec_status(cmd)
+}
+
+fn run_collect_bg(port: str, board: str, duration: int, tag: str, output: str) -> int {
+    // background 90s collect — phase audio cues fired via BLOCKING say_cue
+    // boundary, capture 측 정확 30s/phase 측 측정 timing 측 확보).
+    // collect.hexa owns USB serial capture; this wrapper owns block-design
+    // timing + audio cue sync.
+    //
+    // STDOUT REDIRECT (audio cue audibility fix 2026_05_03):
+    //   collect.hexa BrainFlow init + per-sample [ts=...] chatter 측 wrapper
+    //   terminal 측 flood → 직후 say cue 측 audio 측 안 들리는 issue.
+    //   `> /tmp/anima_eeg_collect_<tag>.log 2>&1` redirect → terminal quiet.
+    let log_path = "/tmp/anima_eeg_collect_" + tag + ".log"
+    let cmd = "hexa run anima-eeg/collect.hexa --collect --duration " + str(duration)
+              + " --tag " + tag
+              + " --output '" + output + "'"
+              + " --port '" + port + "'"
+              + " --board '" + board + "'"
+              + " > '" + log_path + "' 2>&1 &"
+    print("[capture-bg] " + tag + " " + str(duration) + "s (log: " + log_path + ")")
+    return exec_status(cmd)
+}
+
+fn wait_collect() -> int {
+    return exec_status("wait")
+}
+
+fn sleep_seconds(n: int) {
+    let cmd = "sleep " + str(n)
+    exec_status(cmd)
+}
+
+fn ensure_dir(path: str) {
+    exec_status("mkdir -p '" + path + "'")
+}
+
+fn date_tag_utc() -> str {
+    // 호출 시 runtime "undefined function" error. 우회: 현재 cycle session day
+    // 측 hardcode. DATE_TAG env override 측 lost. 다음 cycle 측 manual update.
+    return "2026_05_03"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Pulse Sensor connection guide
+// ════════════════════════════════════════════════════════════════════
+
+fn print_sensor_setup(analog_pin: str) {
+    print("")
+    print("[setup] Pulse Sensor 연결:")
+    print("  - Red wire   → Cyton 3.3V pin")
+    print("  - Black wire → Cyton GND pin")
+    print("  - Purple wire → Cyton " + analog_pin + " (analog signal)")
+    print("[setup] 손가락에 sensor 끼우고 안정 확인")
+    print("")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Phases
+//   Single 90s collect runs in background (subshell &).
+//   Phase boundaries: BLOCKING say cue (waits for cue completion) +
+//   exact-duration sleep. Audio cue 끝난 후 측정 phase 측 시작 — user
+//   say -v Yuna voice-load + speak ~2-3s 동안 capture 는 흐르지만
+//   사용자 측 phase action 시작 시점 측 cue 완료 시점 측 정확 동기).
+//
+//   COLLECT_PREPARE_LAG_S absorb (audio cue timing fix 2026_05_03):
+//     run_collect_bg launch 직후 BrainFlow prepare_session + start_stream
+//     측 2-3s lag 동안 capture 가 ring buffer 에 들어가지 않음. phase_intro
+//     의 첫 cue 전에 lag absorb sleep 측 삽입 → phase 1 boundary 측 정확
+//     timing), Linux 측 약간 다를 수 있음.
+// ════════════════════════════════════════════════════════════════════
+
+fn phase_intro(voice: str) {
+    // pre-capture cue (blocking) — kickoff
+    // 사용자 측 다음 cue ("휴식. 정상 호흡") 가 phase 1 시작 signal 임을 명시
+    say_cue(voice, "지금. 측정 준비. 시작 알림 후 정상 호흡")
+    sleep_seconds(CUE_LEAD_S)
+}
+
+fn phase_rest1(voice: str, duration_phase: int) {
+    // phase 1: REST (0 → duration_phase) — baseline normal breathing
+    // BLOCKING cue, then exact sleep
+    say_cue(voice, "지금. 휴식. 정상 호흡")
+    sleep_seconds(duration_phase)
+}
+
+fn phase_hold(voice: str, duration_phase: int) {
+    // phase 2: HOLD_BREATH (duration_phase → 2*duration_phase) — BLOCKING cue
+    say_cue(voice, "지금. 숨을 참으세요. 측정 시작")
+    sleep_seconds(duration_phase)
+}
+
+fn phase_rest2(voice: str, duration_phase: int) {
+    // phase 3: RECOVERY (2*duration_phase → 3*duration_phase) — BLOCKING cue
+    say_cue(voice, "지금. 다시 호흡. 회복")
+    sleep_seconds(duration_phase)
+}
+
+fn phase_outro(voice: str) {
+    // post-capture cue
+    say_cue(voice, "측정 완료")
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Main
+// ════════════════════════════════════════════════════════════════════
+
+fn cmd_run(port: str, board: str, duration: int, voice: str,
+           analog_pin: str, skip_impedance: int) -> int {
+    let session_dir = "anima-eeg/recordings/sessions"
+    ensure_dir(session_dir)
+
+    let date_tag = date_tag_utc()
+    let raw_npy = session_dir + "/ppg_audio_90s_" + date_tag + ".npy"
+
+    // phase split: equal thirds (default 30/30/30 for 90s total)
+    let phase_s = duration / 3
+
+    print("=== PPG heart-rate 측정 (audio cue) ===")
+    print("port=" + port + "  board=" + board)
+    print("duration=" + str(duration) + "s (REST " + str(phase_s)
+          + "s → HOLD " + str(phase_s) + "s → REST " + str(phase_s) + "s)")
+    print("voice=" + voice + "  analog_pin=" + analog_pin)
+    print("output: " + raw_npy)
+    print("=========================================")
+
+    // Sensor setup guide (pre-capture)
+    print_sensor_setup(analog_pin)
+
+    // Step 1: impedance (default skip — PPG 측 impedance 무관)
+    if skip_impedance == 0 {
+        say_cue(voice, "임피던스 측정 시작")
+        let imp_rc = run_impedance(port)
+        if imp_rc != 0 {
+            say_cue(voice, "임피던스 측정 실패. 전극을 다시 확인하세요")
+            print("[error] impedance check 실패")
+            return 1
+        }
+        print("[step1] impedance: 16/16 GREEN 확인 후 5초 대기 (Ctrl-C 중단)")
+        // fixed 5s pause. ctrl-c 측 abort path.
+        sleep_seconds(5)
+    }
+    else {
+        print("[step1] impedance check 생략 (PPG 측 무관)")
+    }
+
+    // Step 2: launch single 90s capture in background
+    let collect_rc = run_collect_bg(port, board, duration, "ppg_audio_v1", raw_npy)
+    if collect_rc != 0 {
+        say_cue(voice, "측정 실패")
+        print("[error] collect launch 실패 rc=" + str(collect_rc))
+        return 2
+    }
+
+    // Step 2b: absorb BrainFlow prepare_session + start_stream lag
+    sleep_seconds(COLLECT_PREPARE_LAG_S)
+
+    // Step 3: phase audio cues interleaved with sleep
+    phase_intro(voice)
+    phase_rest1(voice, phase_s)
+    phase_hold(voice, phase_s)
+    phase_rest2(voice, phase_s)
+
+    // Step 4: wait for collect.hexa subshell completion
+    let wait_rc = wait_collect()
+    if wait_rc != 0 {
+        say_cue(voice, "측정 실패")
+        print("[error] collect 측 wait rc=" + str(wait_rc))
+        return 3
+    }
+
+    phase_outro(voice)
+
+    print("")
+    print("=== 측정 완료 ===")
+    print("output: " + raw_npy)
+    print("")
+    print("다음 단계: ppg_heart_rate.hexa --run --input " + raw_npy)
+    print("           --analog-pin " + analog_pin)
+    print("           (F_PPG_01/02/03 verdict — HR baseline, HOLD shift, recovery)")
+    return 0
+}
+
+fn cmd_selftest() -> int {
+    print("[selftest] ppg_session_audio.hexa")
+    print("[selftest] dry-run: no hardware, no say cue, no collect.hexa")
+
+    let voice = DEFAULT_VOICE
+    let port = DEFAULT_PORT
+    let board = DEFAULT_BOARD
+    let analog_pin = DEFAULT_ANALOG_PIN
+
+    // assertions (synthetic)
+    let test_count = 0
+    let pass_count = 0
+
+    // T1: voice default
+    test_count = test_count + 1
+    if voice == "Yuna" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T1 voice default") }
+
+    // T2: duration default
+    test_count = test_count + 1
+    if DEFAULT_DURATION_S == 90 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T2 duration default") }
+
+    // T3: phase split (REST1 + HOLD + REST2 == DEFAULT_DURATION_S)
+    test_count = test_count + 1
+    let phase_sum = PHASE_REST1_S + PHASE_HOLD_S + PHASE_REST2_S
+    if phase_sum == DEFAULT_DURATION_S { pass_count = pass_count + 1 }
+    else { print("[FAIL] T3 phase sum != 90 (got " + str(phase_sum) + ")") }
+
+    // T4: equal thirds — phase 1
+    test_count = test_count + 1
+    if PHASE_REST1_S == 30 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T4 phase 1 != 30s") }
+
+    // T5: equal thirds — phase 2
+    test_count = test_count + 1
+    if PHASE_HOLD_S == 30 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T5 phase 2 != 30s") }
+
+    // T6: equal thirds — phase 3
+    test_count = test_count + 1
+    if PHASE_REST2_S == 30 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T6 phase 3 != 30s") }
+
+    // T7: cue lead
+    test_count = test_count + 1
+    if CUE_LEAD_S == 3 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T7 cue lead != 3s") }
+
+    // T8: board default
+    test_count = test_count + 1
+    if board == "cyton_daisy" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T8 board default") }
+
+    // T9: analog pin default
+    test_count = test_count + 1
+    if analog_pin == "D11" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T9 analog_pin default != D11") }
+
+    // T10: synthetic phase timing (computed split equals frozen split)
+    test_count = test_count + 1
+    let computed_phase = DEFAULT_DURATION_S / 3
+    if computed_phase == PHASE_REST1_S { pass_count = pass_count + 1 }
+    else { print("[FAIL] T10 computed phase != frozen phase") }
+
+    // T11: collect prepare lag absorb (audio cue timing fix 2026_05_03)
+    test_count = test_count + 1
+    if COLLECT_PREPARE_LAG_S == 3 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T11 collect prepare lag != 3s") }
+
+    print("[selftest] " + str(pass_count) + " PASS / "
+          + str(test_count - pass_count) + " FAIL")
+    if pass_count == test_count {
+        print("__PPG_AUDIO__ PASS")
+        return 0
+    }
+    print("__PPG_AUDIO__ FAIL")
+    return 1
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Argv dispatch
+// ════════════════════════════════════════════════════════════════════
+
+fn print_usage() {
+    print("usage:")
+    print("  hexa run anima-eeg/protocols/ppg_session_audio.hexa --run \\")
+    print("       --port <path> --board <name> [--duration <n>] [--voice <name>] \\")
+    print("       [--analog-pin <D11|D12|D13>] [--skip-impedance]")
+    print("  hexa run anima-eeg/protocols/ppg_session_audio.hexa --selftest")
+    print("flags:")
+    print("  --selftest          no-hardware dry-run")
+    print("  --run               full PPG session (90s capture, REST/HOLD/REST)")
+    print("  --port <path>       Dongle serial node (default " + DEFAULT_PORT + ")")
+    print("  --board <name>      cyton_daisy | cyton (default " + DEFAULT_BOARD + ")")
+    print("  --duration <n>      full session sec (default " + str(DEFAULT_DURATION_S) + ")")
+    print("  --voice <name>      macOS say voice (default " + DEFAULT_VOICE + ")")
+    print("  --analog-pin <p>    Pulse Sensor pin (default " + DEFAULT_ANALOG_PIN + ")")
+    print("  --skip-impedance    skip impedance check (default for PPG)")
+    print("  --help              this message")
+}
+
+fn main() -> int {
+    let av = argv()
+    let n = len(av)
+
+    let mut mode = "help"
+    let mut port = DEFAULT_PORT
+    let mut board = DEFAULT_BOARD
+    let mut duration = DEFAULT_DURATION_S
+    let mut voice = DEFAULT_VOICE
+    let mut analog_pin = DEFAULT_ANALOG_PIN
+    // PPG: impedance default skip — analog pulse signal 측 무관
+    let mut skip_impedance = 1
+
+    // skip leading interpreter / script / cache paths until first flag
+    // (handles: hexa_interp.real, anima-eeg/.../*.hexa, build cache /exe stubs,
+    //  any absolute path-like argv prefix). Mirrors jaw_session_audio.hexa
+    let mut start = 0
+    while start < n {
+        let a = av[start]
+        let mut is_flag = false
+        if len(a) >= 2 {
+            if a.starts_with("--") { is_flag = true }
+        }
+        if is_flag { break }
+        if a == "" { break }
+        start = start + 1
+    }
+
+    let mut i = start
+    while i < n {
+        let a = av[i]
+        if a == "--selftest" { mode = "selftest" }
+        else if a == "--run" { mode = "run" }
+        else if a == "--port" {
+            if i + 1 < n { port = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--board" {
+            if i + 1 < n { board = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--duration" {
+            if i + 1 < n { duration = to_int(av[i + 1]); i = i + 1 }
+        }
+        else if a == "--voice" {
+            if i + 1 < n { voice = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--analog-pin" {
+            if i + 1 < n { analog_pin = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--skip-impedance" { skip_impedance = 1 }
+        else if a == "--help" { mode = "help" }
+        else {
+            print("[error] unknown flag: " + a)
+            print_usage()
+            return 2
+        }
+        i = i + 1
+    }
+
+    if mode == "selftest" {
+        return cmd_selftest()
+    }
+    if mode == "run" {
+        return cmd_run(port, board, duration, voice, analog_pin, skip_impedance)
+    }
+    print_usage()
+    return 0
+}

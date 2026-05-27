@@ -1,0 +1,41 @@
+{
+  "axis": "P3.D3",
+  "name": "RVQ quantize step latency (synthetic CPU)",
+  "mode": "synthetic_residual_vq_timing",
+  "n_trials": 500,
+  "rvq_config": {
+    "n_stages": 4,
+    "vocab_per_stage": 1024,
+    "d_model": 384,
+    "vocab_total": 4096
+  },
+  "single_input_latency_ms": {
+    "mean": 1.3104915162548423,
+    "std": 0.29501011404703714,
+    "p50": 1.1867915018228814,
+    "p95": 2.0298357179854056,
+    "p99": 2.434939822123851,
+    "max": 2.9333329875953496
+  },
+  "per_epoch_4mode_latency_ms": {
+    "mean": 6.714052775932942,
+    "std": 1.372227690165091,
+    "p50": 6.372896008542739,
+    "p95": 9.244214564387221,
+    "p99": 10.512825926416552,
+    "max": 12.612374994205311
+  },
+  "spec_floor_target_ms": 20,
+  "spec_cadence": "epoch=1s shift=0.25s \u2192 token-rate=4Hz \u2192 \u2264 20ms (4\u00d7 headroom vs 250ms shift)",
+  "interpretation": {
+    "single_p99_vs_floor": "2.435ms vs 20ms floor \u2192 headroom ratio 8.2x",
+    "per_epoch_p99_vs_floor": "10.513ms vs 20ms floor \u2192 headroom ratio 1.9x",
+    "verdict_pass": true
+  },
+  "honest_caveats": [
+    "Synthetic random codebooks \u2014 real RVQ codebooks (after k-means/EMA training) may have different cluster geometry \u2192 NN-search latency variance could shift.",
+    "CPU-only on M2 Pro (or local mac) \u2014 no Metal acceleration tested; production may use vectorized batch search.",
+    "4-mode batch heuristic (band-power + coherence + spike + raw quantized separately) \u2014 actual IMPL may share embedding space and quantize a single 384d vector per epoch, halving cost."
+  ],
+  "verdict": "TIMING_FLOOR_PASS_HEAVY_HEADROOM"
+}

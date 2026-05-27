@@ -1,0 +1,83 @@
+================================================================
+anima_chat.hexa v0.3 — F-D4-REAL-1..3 smoke
+(D4-LIVE on real 24L Phase 1A.1 BF16 ckpt — synthetic→real bridge)
+================================================================
+ckpt path: /Users/ghost/core/anima/state/anima_phase1a1_color_cosmology_2026_05_12/ckpts/ckpt_phase1a1_sft.safetensors
+
+── F-D4-REAL chat_generate on 24L Phase 1A.1 BF16 ckpt ─────────
+  loading 218 farr handles ...
+  loaded 218 weight keys
+map key 'n_layers' not found
+  kv_cache cur_len pre-decode = 0 (cap_len = 64)
+  cell_pool init: d_model=1024 initial_cells=2 (RFC 033 gaussian init σ=1/√d)
+  pre-run: invocations=0 events=0 cells=2 next_id=2
+  prompt: "안녕? 너는 누구야?"  max_new=5
+  (24L forward × ~30 calls × ~40 s ≈ 20 min wall budget)
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+map key 'dims' not found
+  response (24L greedy, may be short): "
+도�"  (len=5)
+  post-run: invocations=30 events=6 cells=8 next_id=8 kv_cur_len=30
+
+  Event log (n=6):
+    [0] step=2 type=split
+    [1] step=2 type=split
+    [2] step=8 type=split
+    [3] step=8 type=split
+    [4] step=11 type=split
+    [5] step=11 type=split
+  split events: 6  merge events: 0  first_split_step: 2
+  PASS  F-D4-REAL-1 mitosis_invocations == kv_cache cur_len (30 == 30)
+  PASS  F-D4-REAL-2 split events ≥ 1 over chat horizon (6 ≥ 1)
+  PASS  F-D4-REAL-3 cell_pool[d_model] == d_real (1024 == 1024)
+
+----------------------------------------------------------------
+RESULT: 3/3 passed
+F-D4-REAL SMOKE PASS  (3/3)
+================================================================
+       16.54 real        13.90 user         0.56 sys
+          3628449792  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+              242324  page reclaims
+               36909  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   8  signals received
+                 609  voluntary context switches
+               30959  involuntary context switches
+            37569884  instructions retired
+            20725791  cycles elapsed
+             1229136  peak memory footprint

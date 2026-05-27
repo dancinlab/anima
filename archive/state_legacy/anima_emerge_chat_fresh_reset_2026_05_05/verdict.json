@@ -1,0 +1,33 @@
+{
+  "schema": "anima/emerge_chat_fresh_reset/verdict/1",
+  "ts_utc": "2026-05-05T17:40:29Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "load_sec": 7.6,
+  "sweep_sec": 47.3,
+  "n_prompts": 2,
+  "n_strategies": 3,
+  "n_total_emit": 6,
+  "n_coherent": 0,
+  "coherence_table": {
+    "안녕하세요. 오::greedy_fresh": false,
+    "안녕하세요. 오::topk_fresh": false,
+    "안녕하세요. 오::window20_truncate": false,
+    "안녕::greedy_fresh": false,
+    "안녕::topk_fresh": false,
+    "안녕::window20_truncate": false
+  },
+  "verdict": "FAIL_BASIN_PERSISTS",
+  "honest_c3": [
+    "C1 mac CPU fp32 (.venv-eeg python3.12)",
+    "C2 sp.encode/decode round-trip = same path as standard greedy (no actual reset; basin lives in residual geometry not token history)",
+    "C3 window-truncate drops semantic context — coherence loss may be context-loss not basin-escape (false positive risk)",
+    "C4 'fresh' reset is illusory at decode level — every step still rebuilds the same residual stream from same tokens",
+    "C5 BG-BJ insight predicts FAIL (basin in residual not history); window-truncate is the only true intervention but corrupts semantic anchor"
+  ],
+  "bg_bj_insight_verify": {
+    "claim": "basin re-forms in autoregressive feedback (residual geometry, not token history)",
+    "verified_if": "n_coherent == 0 across 3 strategies (basin persists despite fresh re-encode)",
+    "falsified_if": "n_coherent >= 1 with greedy_fresh or topk_fresh (token-history-only basin)"
+  }
+}

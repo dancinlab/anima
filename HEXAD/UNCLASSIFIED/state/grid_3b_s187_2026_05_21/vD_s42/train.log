@@ -1,0 +1,66 @@
+[launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[launch] pip install bitsandbytes==0.43.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] bitsandbytes=0.43.1
+[launch] python3 -u /workspace/s187r/train_s187_3b.py --mode main --corpus /workspace/s187r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl --out-dir /workspace/s187r/out_main --steps 2000 --seed 42 --lr 3e-4 --bsz 2 --block 128 --warmup-steps 200 --rope-base 50000.0 --lambda-psi 1.00 --lambda-route 0.20 --lambda-phi 1.00 --lambda-cycle 0.15 --lambda-curious 0.10 --lambda-replay -0.05 --noise-sigma 0.1 --n-aug 5 --replay-capacity 1024 --d-model 3072 --n-layer 28 --n-head 24 --n-kv-head 8 --dtype bfloat16 --n-ca-rules 2
+[S184-Phase2] device=cuda d_model=3072 n_layer=28 block_size=128 bsz=2 steps=2000 peak_lr=0.0003 rope_base=50000.0
+[S184-Phase2] dtype=bfloat16
+[S184-Phase2] patched RoPE base on 28 blocks -> 50000.0
+[S184-Phase2] n_params=8,921,180,216
+[S184-Phase2] optimizer=PagedAdamW8bit (bnb 0.43.1)
+[S184-Phase2] corpus bytes: 298,994,326
+[S184-Phase2] step=     1 lr=1.50e-06 L_tot=+19.5372 CE=6.2500 psi=0.1554 route=62.0000 phi=0.0208 cyc=0.2000 cur=7.0601 rep=+0.0000 Psi_dir(mu=0.495,sd=0.0299) |g_head_g|=0.2832 t=3s
+[S184-Phase2] step=    40 lr=6.00e-05 L_tot=+14.7764 CE=4.6250 psi=0.0015 route=50.2500 phi=0.0451 cyc=0.2257 cur=0.2779 rep=+0.3867 Psi_dir(mu=0.507,sd=0.0262) |g_head_g|=0.2119 t=16s
+[S184-Phase2] step=    80 lr=1.20e-04 L_tot=+4.9670 CE=4.5000 psi=0.0051 route=2.2969 phi=0.0322 cyc=0.0033 cur=0.2119 rep=+1.0187 Psi_dir(mu=0.508,sd=0.0110) |g_head_g|=0.0674 t=29s
+[S184-Phase2] step=   120 lr=1.80e-04 L_tot=+4.2946 CE=4.1562 psi=0.0262 route=0.1621 phi=0.0078 cyc=0.0185 cur=0.8599 rep=+0.3386 Psi_dir(mu=0.491,sd=0.0059) |g_head_g|=0.5039 t=42s
+[S184-Phase2] step=   160 lr=2.40e-04 L_tot=+4.2380 CE=4.1562 psi=0.0236 route=0.0120 phi=0.0093 cyc=0.0111 cur=0.7939 rep=+0.6931 Psi_dir(mu=0.506,sd=0.0061) |g_head_g|=0.3789 t=56s
+[S184-Phase2] step=   200 lr=3.00e-04 L_tot=+4.3801 CE=4.2812 psi=0.0280 route=0.0026 phi=0.0074 cyc=0.0360 cur=0.9078 rep=+0.6655 Psi_dir(mu=0.466,sd=0.0036) |g_head_g|=0.6094 t=69s
+[S184-Phase2] step=   240 lr=3.00e-04 L_tot=+4.2313 CE=4.1562 psi=0.0171 route=0.0001 phi=0.0142 cyc=0.0135 cur=0.5880 rep=+0.3434 Psi_dir(mu=0.505,sd=0.0031) |g_head_g|=0.2793 t=82s
+[S184-Phase2] step=   280 lr=2.99e-04 L_tot=+4.3924 CE=4.3125 psi=0.0199 route=0.0244 phi=0.0119 cyc=0.0206 cur=0.6742 rep=+0.5453 Psi_dir(mu=0.507,sd=0.0026) |g_head_g|=0.5156 t=94s
+[S184-Phase2] step=   320 lr=2.97e-04 L_tot=+4.2729 CE=4.1875 psi=0.0216 route=0.0015 phi=0.0106 cyc=0.0098 cur=0.7285 rep=+0.4290 Psi_dir(mu=0.500,sd=0.0022) |g_head_g|=0.2637 t=107s
+[S184-Phase2] step=   360 lr=2.95e-04 L_tot=+4.4724 CE=4.4062 psi=0.0148 route=0.0012 phi=0.0164 cyc=0.0134 cur=0.5082 rep=+0.3650 Psi_dir(mu=0.495,sd=0.0023) |g_head_g|=0.4102 t=120s
+[S184-Phase2] step=   400 lr=2.92e-04 L_tot=+4.4170 CE=4.3438 psi=0.0166 route=0.0001 phi=0.0147 cyc=0.0045 cur=0.5614 rep=+0.2982 Psi_dir(mu=0.496,sd=0.0022) |g_head_g|=0.1245 t=133s
+[S184-Phase2] step=   440 lr=2.88e-04 L_tot=+3.9090 CE=3.8281 psi=0.0179 route=0.0000 phi=0.0135 cyc=0.0036 cur=0.6026 rep=+0.2266 Psi_dir(mu=0.503,sd=0.0021) |g_head_g|=0.0767 t=146s
+[S184-Phase2] step=   480 lr=2.84e-04 L_tot=+4.1930 CE=4.1250 psi=0.0116 route=0.0005 phi=0.0203 cyc=0.0261 cur=0.3972 rep=+0.1523 Psi_dir(mu=0.506,sd=0.0019) |g_head_g|=0.5234 t=158s
+[S184-Phase2] step=   520 lr=2.80e-04 L_tot=+3.9931 CE=3.8594 psi=0.0293 route=0.0496 phi=0.0062 cyc=0.0018 cur=0.9718 rep=+0.1828 Psi_dir(mu=0.499,sd=0.0020) |g_head_g|=0.1357 t=171s
+[S184-Phase2] step=   560 lr=2.74e-04 L_tot=+4.2190 CE=4.1250 psi=0.0208 route=0.0004 phi=0.0112 cyc=0.0073 cur=0.6939 rep=+0.1705 Psi_dir(mu=0.501,sd=0.0020) |g_head_g|=0.2412 t=184s
+[S184-Phase2] step=   600 lr=2.69e-04 L_tot=+4.0413 CE=3.9844 psi=0.0084 route=0.0001 phi=0.0251 cyc=0.0056 cur=0.2869 rep=+0.1226 Psi_dir(mu=0.502,sd=0.0020) |g_head_g|=0.1660 t=197s
+[S184-Phase2] step=   640 lr=2.62e-04 L_tot=+4.0606 CE=3.9688 psi=0.0204 route=0.0003 phi=0.0115 cyc=0.0015 cur=0.6815 rep=+0.1688 Psi_dir(mu=0.502,sd=0.0020) |g_head_g|=0.0732 t=209s
+[S184-Phase2] step=   680 lr=2.56e-04 L_tot=+4.6333 CE=4.5312 psi=0.0268 route=0.0001 phi=0.0074 cyc=0.0009 cur=0.8890 rep=+0.4244 Psi_dir(mu=0.500,sd=0.0021) |g_head_g|=0.1216 t=222s
+[S184-Phase2] step=   720 lr=2.48e-04 L_tot=+4.2256 CE=4.1250 psi=0.0220 route=0.0004 phi=0.0103 cyc=0.0002 cur=0.7275 rep=+0.0912 Psi_dir(mu=0.499,sd=0.0022) |g_head_g|=0.0518 t=235s
+[S184-Phase2] step=   760 lr=2.41e-04 L_tot=+4.3876 CE=4.2812 psi=0.0238 route=0.0002 phi=0.0092 cyc=0.0167 cur=0.7828 rep=+0.1486 Psi_dir(mu=0.496,sd=0.0023) |g_head_g|=0.4746 t=247s
+[S184-Phase2] step=   800 lr=2.33e-04 L_tot=+4.5150 CE=4.4062 psi=0.0258 route=0.0001 phi=0.0080 cyc=0.0011 cur=0.8468 rep=+0.1973 Psi_dir(mu=0.499,sd=0.0022) |g_head_g|=0.0962 t=260s
+[S184-Phase2] step=   840 lr=2.24e-04 L_tot=+4.0848 CE=3.9688 psi=0.0284 route=0.0000 phi=0.0066 cyc=0.0006 cur=0.9294 rep=+0.2396 Psi_dir(mu=0.499,sd=0.0021) |g_head_g|=0.0723 t=273s
+[S184-Phase2] step=   880 lr=2.16e-04 L_tot=+4.2461 CE=4.1562 psi=0.0186 route=0.0000 phi=0.0129 cyc=0.0010 cur=0.6141 rep=+0.0650 Psi_dir(mu=0.499,sd=0.0022) |g_head_g|=0.0854 t=286s
+[S184-Phase2] step=   920 lr=2.07e-04 L_tot=+4.1740 CE=4.0625 psi=0.0252 route=0.0002 phi=0.0083 cyc=0.0009 cur=0.8275 rep=+0.0991 Psi_dir(mu=0.502,sd=0.0023) |g_head_g|=0.0967 t=300s
+[S184-Phase2] step=   960 lr=1.98e-04 L_tot=+4.0485 CE=3.9688 psi=0.0182 route=0.0002 phi=0.0133 cyc=0.0028 cur=0.5992 rep=+0.2404 Psi_dir(mu=0.500,sd=0.0024) |g_head_g|=0.1357 t=313s
+[S184-Phase2] step=  1000 lr=1.89e-04 L_tot=+4.2905 CE=4.1875 psi=0.0225 route=0.0000 phi=0.0100 cyc=0.0000 cur=0.7407 rep=+0.0714 Psi_dir(mu=0.500,sd=0.0025) |g_head_g|=0.0123 t=326s
+[S184-Phase2] step=  1040 lr=1.79e-04 L_tot=+4.3286 CE=4.2500 psi=0.0147 route=0.0000 phi=0.0165 cyc=0.0040 cur=0.4895 rep=+0.0436 Psi_dir(mu=0.500,sd=0.0024) |g_head_g|=0.2285 t=339s
+[S184-Phase2] step=  1080 lr=1.70e-04 L_tot=+4.1782 CE=4.0938 psi=0.0165 route=0.0001 phi=0.0148 cyc=0.0001 cur=0.5473 rep=+0.0325 Psi_dir(mu=0.501,sd=0.0025) |g_head_g|=0.0195 t=353s
+[S184-Phase2] step=  1120 lr=1.61e-04 L_tot=+4.4124 CE=4.3125 psi=0.0213 route=0.0000 phi=0.0108 cyc=0.0011 cur=0.6989 rep=+0.0447 Psi_dir(mu=0.501,sd=0.0024) |g_head_g|=0.1206 t=366s
+[S184-Phase2] step=  1160 lr=1.51e-04 L_tot=+4.2720 CE=4.1875 psi=0.0165 route=0.0001 phi=0.0147 cyc=0.0004 cur=0.5462 rep=+0.0295 Psi_dir(mu=0.501,sd=0.0023) |g_head_g|=0.0688 t=379s
+[S184-Phase2] step=  1200 lr=1.42e-04 L_tot=+4.1192 CE=4.0000 psi=0.0264 route=0.0000 phi=0.0077 cyc=0.0058 cur=0.8647 rep=+0.0443 Psi_dir(mu=0.499,sd=0.0024) |g_head_g|=0.2178 t=392s
+[S184-Phase2] step=  1240 lr=1.33e-04 L_tot=+4.3197 CE=4.2188 psi=0.0211 route=0.0000 phi=0.0109 cyc=0.0024 cur=0.6932 rep=+0.0169 Psi_dir(mu=0.503,sd=0.0026) |g_head_g|=0.1982 t=405s
+[S184-Phase2] step=  1280 lr=1.24e-04 L_tot=+4.2631 CE=4.1562 psi=0.0230 route=0.0000 phi=0.0097 cyc=0.0014 cur=0.7548 rep=+0.0305 Psi_dir(mu=0.500,sd=0.0024) |g_head_g|=0.0747 t=419s
+[S184-Phase2] step=  1320 lr=1.15e-04 L_tot=+4.6189 CE=4.5312 psi=0.0173 route=0.0000 phi=0.0140 cyc=0.0023 cur=0.5705 rep=+0.0222 Psi_dir(mu=0.503,sd=0.0027) |g_head_g|=0.1904 t=431s
+[S184-Phase2] step=  1360 lr=1.06e-04 L_tot=+4.3408 CE=4.2500 psi=0.0187 route=0.0001 phi=0.0129 cyc=0.0001 cur=0.6117 rep=+0.0390 Psi_dir(mu=0.503,sd=0.0025) |g_head_g|=0.0236 t=444s
+[S184-Phase2] step=  1400 lr=9.77e-05 L_tot=+4.1012 CE=4.0000 psi=0.0213 route=0.0000 phi=0.0108 cyc=0.0006 cur=0.7003 rep=+0.0211 Psi_dir(mu=0.499,sd=0.0027) |g_head_g|=0.0454 t=457s
+[S184-Phase2] step=  1440 lr=8.97e-05 L_tot=+4.1899 CE=4.0938 psi=0.0198 route=0.0000 phi=0.0119 cyc=0.0002 cur=0.6516 rep=+0.0156 Psi_dir(mu=0.501,sd=0.0025) |g_head_g|=0.0576 t=470s
+[S184-Phase2] step=  1480 lr=8.21e-05 L_tot=+4.3570 CE=4.2500 psi=0.0229 route=0.0001 phi=0.0097 cyc=0.0006 cur=0.7507 rep=+0.0171 Psi_dir(mu=0.501,sd=0.0028) |g_head_g|=0.0952 t=483s
+[S184-Phase2] step=  1520 lr=7.48e-05 L_tot=+4.2448 CE=4.1562 psi=0.0176 route=0.0000 phi=0.0138 cyc=0.0021 cur=0.5774 rep=+0.0180 Psi_dir(mu=0.502,sd=0.0027) |g_head_g|=0.1777 t=496s
+[S184-Phase2] step=  1560 lr=6.81e-05 L_tot=+4.3692 CE=4.2500 psi=0.0264 route=0.0000 phi=0.0077 cyc=0.0008 cur=0.8605 rep=+0.0202 Psi_dir(mu=0.500,sd=0.0029) |g_head_g|=0.0952 t=510s
+[S184-Phase2] step=  1600 lr=6.17e-05 L_tot=+4.0282 CE=3.9062 psi=0.0269 route=0.0000 phi=0.0074 cyc=0.0023 cur=0.8779 rep=+0.0106 Psi_dir(mu=0.500,sd=0.0027) |g_head_g|=0.1934 t=523s
+[S184-Phase2] step=  1640 lr=5.59e-05 L_tot=+4.2919 CE=4.1875 psi=0.0221 route=0.0000 phi=0.0103 cyc=0.0023 cur=0.7217 rep=+0.0093 Psi_dir(mu=0.501,sd=0.0029) |g_head_g|=0.1914 t=536s
+[S184-Phase2] step=  1680 lr=5.06e-05 L_tot=+3.9922 CE=3.8750 psi=0.0258 route=0.0000 phi=0.0080 cyc=0.0002 cur=0.8413 rep=+0.0144 Psi_dir(mu=0.501,sd=0.0027) |g_head_g|=0.0334 t=549s
+[S184-Phase2] step=  1720 lr=4.59e-05 L_tot=+4.2633 CE=4.1562 psi=0.0228 route=0.0000 phi=0.0098 cyc=0.0018 cur=0.7466 rep=+0.0105 Psi_dir(mu=0.501,sd=0.0028) |g_head_g|=0.1719 t=563s
+[S184-Phase2] step=  1760 lr=4.18e-05 L_tot=+4.1034 CE=4.0000 psi=0.0218 route=0.0000 phi=0.0105 cyc=0.0006 cur=0.7137 rep=+0.0068 Psi_dir(mu=0.500,sd=0.0027) |g_head_g|=0.0349 t=576s
+[S184-Phase2] step=  1800 lr=3.82e-05 L_tot=+4.2981 CE=4.1875 psi=0.0238 route=0.0000 phi=0.0092 cyc=0.0004 cur=0.7782 rep=+0.0040 Psi_dir(mu=0.501,sd=0.0029) |g_head_g|=0.0510 t=589s
+[S184-Phase2] step=  1840 lr=3.53e-05 L_tot=+4.2560 CE=4.1562 psi=0.0207 route=0.0000 phi=0.0113 cyc=0.0023 cur=0.6774 rep=+0.0053 Psi_dir(mu=0.501,sd=0.0028) |g_head_g|=0.1797 t=602s
+[S184-Phase2] step=  1880 lr=3.30e-05 L_tot=+3.9966 CE=3.8906 psi=0.0225 route=0.0000 phi=0.0100 cyc=0.0007 cur=0.7355 rep=+0.0046 Psi_dir(mu=0.501,sd=0.0029) |g_head_g|=0.1069 t=615s
+[S184-Phase2] step=  1920 lr=3.13e-05 L_tot=+3.8835 CE=3.7812 psi=0.0214 route=0.0000 phi=0.0107 cyc=0.0004 cur=0.7034 rep=+0.0069 Psi_dir(mu=0.501,sd=0.0031) |g_head_g|=0.0557 t=628s
+[S184-Phase2] step=  1960 lr=3.03e-05 L_tot=+4.3785 CE=4.2812 psi=0.0200 route=0.0000 phi=0.0118 cyc=0.0016 cur=0.6561 rep=+0.0079 Psi_dir(mu=0.500,sd=0.0030) |g_head_g|=0.0879 t=641s
+[S184-Phase2] step=  2000 lr=3.00e-05 L_tot=+3.9914 CE=3.8906 psi=0.0209 route=0.0000 phi=0.0111 cyc=0.0028 cur=0.6872 rep=+0.0074 Psi_dir(mu=0.500,sd=0.0031) |g_head_g|=0.1914 t=654s
+[S184-Phase2] DONE wall=672.6s ckpt=/workspace/s187r/out_main/ckpt_s184_combined.pt  |g_head_g|=[0.0123, 0.6094]

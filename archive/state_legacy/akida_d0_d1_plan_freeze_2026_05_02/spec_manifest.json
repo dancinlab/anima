@@ -1,0 +1,70 @@
+{
+  "schema": "anima/akida_d0_d1_plan_freeze/spec_manifest/1",
+  "agent": "akida_d0_d1_plan_freeze",
+  "date_utc": "2026-05-02T00:00:00Z",
+  "trigger": "#92 recommendation #2: AKIDA D+0/D+1 plan freeze - N-2 spec + tension-modulated ADM polarity bias",
+  "mission": "Pre-arrival deployment plan freeze for AKIDA AKD1000 dev kit; 6 AKIDA-dependent axes critical path; tension-modulated ADM polarity bias spec extension; 1-page user printable checklist; 5 raw#71 falsifier preregistration",
+  "spec_doc": "docs/akida_d0_d1_plan_freeze_2026_05_02.md",
+  "spec_word_count_approx": 2100,
+  "akida_hardware": {
+    "model": "BrainChip AKD1000",
+    "form_factor": "M.2 NVMe (Mini Card)",
+    "host_recommended": "Raspberry Pi 5 (BCM2712, 16GB) + M.2 HAT+ PCIe gen2",
+    "capex_paid_usd": 1495,
+    "order_date": "2026-04-29",
+    "arrival_eta": "pending_vendor_logistics",
+    "user_confirmed_ordered": true
+  },
+  "akida_dependent_axes_count": 6,
+  "akida_dependent_axes": ["N-2", "N-3", "N-4", "N-5", "N-7", "N-8"],
+  "single_point_of_failure": "N-2 (EEG -> AKIDA spike pipeline) prerequisite for all 5 downstream axes",
+  "critical_path_days_from_arrival": 5,
+  "total_cost_estimate_usd": "0-4",
+  "deliverables": [
+    "docs/akida_d0_d1_plan_freeze_2026_05_02.md",
+    "state/akida_d0_d1_plan_freeze_2026_05_02/spec_manifest.json",
+    "state/akida_d0_d1_plan_freeze_2026_05_02/d0_checklist.json",
+    "state/akida_d0_d1_plan_freeze_2026_05_02/d1_runbook.json",
+    "state/akida_d0_d1_plan_freeze_2026_05_02/axes_critical_path.json",
+    "state/akida_d0_d1_plan_freeze_2026_05_02/falsifier_F_AK_preregister.json"
+  ],
+  "race_isolation": {
+    "writes_only": [
+      "docs/akida_d0_d1_plan_freeze_2026_05_02.md",
+      "state/akida_d0_d1_plan_freeze_2026_05_02/*.json"
+    ],
+    "did_not_touch": [
+      "state/n_substrate_n2_prep_2026_05_01/*",
+      "state/strategic_clm_eeg_akida_tension_2026_05_02/*",
+      "alpha_pod",
+      "h100_fleet"
+    ]
+  },
+  "honest_c3_count": 9,
+  "falsifier_preregistered": 5,
+  "abort_codes": 4,
+  "constraints": [
+    "raw#9 hexa-only (spec doc + state JSON only, no .py)",
+    "raw#10 honest C3 mandatory",
+    "raw#71 falsifier preregistration",
+    "$0 budget (spec freeze only, hardware blocker)",
+    "race-isolation hard"
+  ],
+  "tension_modulated_adm_extension": {
+    "description": "anima-specific extension to standard ADM encoder (Asynchronous Delta Modulation); tension scalar modulates polarity bias",
+    "modes": ["A_linear_bias", "B_sigmoid_bias", "C_refractory_bias"],
+    "default_mode": "A_linear_bias_alpha_0",
+    "conservative_path": "D+1 first run with bias OFF (alpha=0); D+2 onward A/B vs baseline",
+    "tension_source": "mind.tension UDP 9999 broadcast (latency < 1 ms)",
+    "vendor_supported": false,
+    "linked_falsifier": "F-AK-4"
+  },
+  "sister_docs": [
+    "docs/n_substrate_n2_eeg_akida_spike_pipeline_spec_2026_05_01.md",
+    "docs/n_substrate_n3_clm_akida_phi_spec_2026_05_01.md",
+    "docs/n_substrate_n7_akida_qrng_spike_spec_2026_05_01.md",
+    "docs/n_substrate_n8_akida_sim_limit_integration_2026_05_01.md",
+    "docs/strategic_clm_eeg_akida_tension_link_2026_05_02.md",
+    "docs/akida_dev_kit_evaluation_2026-04-29.md"
+  ]
+}

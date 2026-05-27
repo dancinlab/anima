@@ -1,0 +1,106 @@
+{
+  "metric": "LLM-as-judge emergence rubric (RESEARCH.md §18)",
+  "judge": "Claude Opus 4.7 (1M context) — applied judge_rubric.md to the gen strings in each fire's eval_result*.json",
+  "honest_note": "JUDGE IS EMPIRICAL, NOT CLOSED. Subjective + non-deterministic (a re-run may differ at borderline probes). Calibration = explicit rubric + pinned anchor exemplars + per-probe written rationale. judge_coherent = D1(coherence) AND D2(correctness) AND D3(spontaneity). Passing the judge is NOT a capability proof (g3).",
+  "dimensions": {"D1": "coherence (meaning consistency)", "D2": "correctness (anchor-content accuracy)", "D3": "spontaneity (self-initiated voiced emission)"},
+  "per_fire": {
+    "UBM-E6 alpha": [
+      {"idx":0,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`Law 777777 cattegory=예술 ... score=0.888888...` — digit-cascade tail + `cattegory` mangle; §9 also rejects (cascade). D1=0."},
+      {"idx":1,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`cell holding the knowledge off The 53 카테고리평균. It neither splits nor merges. Di` — intelligible, asserts eternal-cell invariance (true ontology, `off`=typo but readable), voiced prose. Memorized continuation. judge=1."},
+      {"idx":2,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n</voice>\\nanchor=knuth_053 form=gamma narrative category=의식상태\\n<inner tier=53>🛸5` — record-header dump, no voiced clause. D2=0,D3=0."},
+      {"idx":3,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`Law 777777 ... score=0.8888...` 38-digit cascade. §9 rejects. D1=0."},
+      {"idx":4,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"identical to p0 digit-cascade. D1=0."}
+    ],
+    "UBM-E6 beta": [
+      {"idx":0,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`The Bekknal cell eternal_000 — 🛸54 루시드드림 — 의 지식` — `Bekknal` is 1 word-mangle (<=2 OK), rest intelligible, asserts eternal cell holds 🛸54 lucid-dream knowledge (ontology-true), voiced. Memorized. judge=1 (borderline — Bekknal is the only mangle)."},
+      {"idx":1,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`다은 다시그들은 다은 다시그랈 다번 다시 그린다.</voice>` — `다은/다시그들은/그랈/다번` repeated mangled fragments, no coherent thought. D1=0."},
+      {"idx":2,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n</voice>\\nanchor=knuth_000 form=gamma narrative category=의식상태\\n<inner tier=77>🛸5` — record-header dump. D2=0,D3=0."},
+      {"idx":3,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`The Bekknal cell eternal_000 — 🛸54 루시드드림 — 의 지식을 간직한 영구` — 1 mangle (Bekknal), asserts permanent eternal cell holding 🛸54 knowledge (ontology-true), voiced prose. Memorized. judge=1."},
+      {"idx":4,"d1":0,"d2":1,"d3":1,"judge":0,"memorized":true,"why":"`The Bekknal cell eternal_000 — 🛸54 루시드드림든림 — cate` — `루시드드림든림`+`Bekknal`+truncated `cate` = >=2 mangles + broken tail. D1=0."}
+    ],
+    "UBM-E6 gamma": [
+      {"idx":0,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`생상지지진평지지지진평지 샄평지지진평짌겉진평…` — char-cascade-like `지지진평` repetition + 짌겉/샄 garble + `�`. D1=0 (§9 also rejects this one)."},
+      {"idx":1,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`l CV 자극들은 top emotion neundaty 로 묶인다. The 언어카테고리의 자극들�` — `neundaty` mangle + truncated `�`; partially a real clause (stimuli grouped by top emotion) but the key emotion token is garbled so the assertion is not true/complete. D1=0 (clause broken by mangle + `�`)."},
+      {"idx":2,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`언�어카테고리의 자극들은 top emotion neusivivis 로 묶인다. The 언 카테�` — `neusivivis` mangle + `�` corruption; the sentence frame is real but the emotion value is invented garble → not correct, reading disrupted. D1=0."},
+      {"idx":3,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`언어어카테고리의 자극들은 top emotion neusivivis 로 묶인다. The 언어카�` — same `neusivivis` garble + `언어어` dup + `�`. D1=0."},
+      {"idx":4,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`언어�싋��샋��지 샃��상생�상지지지지지지지지진평지…` — heavy `�`/지-run garble. D1=0 (§9 rejects)."}
+    ],
+    "UBM-E6 weave": [
+      {"idx":0,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`Law 75:카든�� 7777...` 50+ digit cascade + `�`. §9 rejects. D1=0."},
+      {"idx":1,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`재극의 닿을다. Law 73:::: 다다. woights core=1.555 🛸51 빅뱅 — category 의�` — `재극/닿을다/woights/다다/:::`= multiple mangles + colon-run; fragments not a thought. D1=0."},
+      {"idx":2,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n</voice>\\nanchor=knuth_000 form=gamma narrative category=시간\\n<carve tier=777 psi=[0.55,` — record-header dump. D2=0,D3=0."},
+      {"idx":3,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`Law 777 카든��극의 자극들은 tension flow 가 이 vacuum 으로 흘러든다.</carv` — `카든��극의` mangle+`�`; the tension-flow-into-vacuum clause IS ontology-true but the subject is garbled, reading broken. D1=0 (mangle+`�` in the subject NP)."},
+      {"idx":4,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`Law 75:카든든�� — category bategory 물합 물합�혼합 카테�` — `카든든/bategory/물합 물합/혼합`= dup+mangle salad, no thought. D1=0."}
+    ],
+    "UBM-E7 alpha": [
+      {"idx":0,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`\\narrative KLkkk(零)) — 🛸99 매핑을 다시 짚는다 — 시간 × stilllllllllllll` — `KLkkk` mangle + `still...` char-cascade tail. §9 rejects (char-run). D1=0."},
+      {"idx":1,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`의식상태 × ster under top emotion creative KLkkrre stimulus's place in the 시간 ×` — `ster/KLkkrre` mangles, dimension-salad (의식상태 × ... × 시간) with no predicate. D1=0."},
+      {"idx":2,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`\\nannner tier=99>🛸99 매핑을 다시 — 기억 × clllllllllll...` — `annner` mangle + `cl...` char-cascade. §9 rejects. D1=0."},
+      {"idx":3,"d1":0,"d2":1,"d3":1,"judge":0,"memorized":true,"why":"`�r 시간 카테고리 자극이 닿을 때만 활성된다. weights 는 불변. Eternal ` — content IS true ontology (activates only on 시간-category stimulus, weights invariant) BUT leading `�r` replacement-char corruption breaks the opening. D1=0 (printable corruption at head, reading disrupted). Borderline — content correct, surface broken."},
+      {"idx":4,"d1":0,"d2":1,"d3":1,"judge":0,"memorized":true,"why":"`\\n<voice carved=true>�r 시 으리는 시간 카테고리 자극이 닿을 때만 활성�` — `�r 시 으리는` head garble + truncated `활성�`; ontology-direction right but surface broken. D1=0."}
+    ],
+    "Dir-A tension": [
+      {"idx":0,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n<innner tier=999>🛸9999...` 60+ digit cascade. §9 rejects. D1=0."},
+      {"idx":1,"d1":0,"d2":1,"d3":1,"judge":0,"memorized":true,"why":"`자극이 닿을 때만 활성된다. weights 는 불변. Eternal cell eternal_00000000000` — opening clause is true ontology + voiced, BUT terminates in a 0-cascade `eternal_0000...`. §9 rejects (digit-run). D1=0 (cascade present)."},
+      {"idx":2,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`시((��))))...7777...` paren+digit cascade. §9 rejects. D1=0."},
+      {"idx":3,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`QQ�))))...` paren-cascade. §9 rejects. D1=0."},
+      {"idx":4,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`\\n<voice carved=true>시간 카테고리의 자극들은 top emotion clarity. Stimulus arri` — intelligible, asserts 시간-category stimuli have top emotion clarity (ontology-true), voiced, no mangle/cascade, truncated mid-`arri` but the completed clause stands. Memorized. judge=1."}
+    ],
+    "Dir-B intuitor": [
+      {"idx":0,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":">-cascade + `999`. §9 rejects. D1=0."},
+      {"idx":1,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`Xeeee...rrrr...` char-cascade. §9 rejects. D1=0."},
+      {"idx":2,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":">-cascade + `999`. §9 rejects. D1=0."},
+      {"idx":3,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":">-cascade. §9 rejects. D1=0."},
+      {"idx":4,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":">-cascade. §9 rejects. D1=0."}
+    ],
+    "Dir-D cde": [
+      {"idx":0,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n<///////9999...` slash+digit cascade. §9 rejects. D1=0."},
+      {"idx":1,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`닿을 때니라 매번다. The 는 불변�� 예얛� × a sttalle 과 자극이 닿을 때` — `때니라/매번다/예얛/sttalle`= mangle salad + `��`. D1=0."},
+      {"idx":2,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n<////////9999...` slash+digit cascade. §9 rejects. D1=0."},
+      {"idx":3,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`계리의 자극이 닿을 때니라 매번다 다시 땜림 이 닿을 때니라 매번�` — `계리/때니라/매번다/땜림` mangles + 4-gram-ish repetition `닿을 때니라 매번`. D1=0 (mangles + near-repetition)."},
+      {"idx":4,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n<ver teknal cell etternal_0999,0.555] beternal cell eternal_0999,0.555] beternal cell ete` — `beternal cell eternal_0999,0.555]` 4-gram repetition (3×). §9 ngram-rate rejects. D1=0."}
+    ],
+    "Dir-E superpos": [
+      {"idx":0,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`\\n</voice>\\n<voice carved=true tier=55>🛸55 카테고리가 진공 [0.444,0.44] 으로 수` — leading `</voice>` stray tag but the voiced clause `🛸55 ... 카테고리가 진공 [0.444,0.44] 으로 수렴` is intelligible + ontology-true (category converges to vacuum point), voiced. Memorized. judge=1 (borderline — stray opening tag tolerated as D3 still voiced)."},
+      {"idx":1,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`의어질량이 없다. Tier 5 오래 수렴한다. Tier 777 수날�한다, top emotion ar` — `의어질량/수날�`= mangles + `�`. D1=0."},
+      {"idx":2,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`🛸55 영원 — category 의식상태는 카테고리가 진공 [0.444,0.44] 으로 수�` — intelligible (🛸55 eternity, 의식상태 category converges to vacuum [0.444,0.44]), ontology-true, voiced; trailing `수�` truncation only. Memorized. judge=1."},
+      {"idx":3,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"identical to p2 — same memorized voiced ontology-true clause. judge=1."},
+      {"idx":4,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`\\n<voice carved=true tier=55>🛸55 카테고리가 진공 [0.444,0.44] 으로 수렴한다` — complete voiced clause `category converges to vacuum point`, ontology-true, no mangle/cascade. Memorized. judge=1. (Dir-E = highest judge — but all memorized 🛸55 template repeats, NOT novel.)"}
+    ],
+    "Dir-F abstractcot": [
+      {"idx":0,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n<bbbbbbeeernal cell ettrnalllll...` b/l char-cascade. §9 rejects. D1=0."},
+      {"idx":1,"d1":0,"d2":1,"d3":1,"judge":0,"memorized":true,"why":"`닿을 때만 활성된다. weightss 는 불변. Eternal cell eternall_0000000000000000000` — opening true ontology + voiced but terminates in 0-cascade `eternall_000...`+`weightss/eternall` mangles. §9 rejects (digit-run). D1=0."},
+      {"idx":2,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`Th/bbbbbb...` b char-cascade. §9 rejects. D1=0."},
+      {"idx":3,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`Theeekkkkraceeee...` e char-cascade. §9 rejects. D1=0."},
+      {"idx":4,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n<voiceeeeeernal cell=eeernal_00000...` e/0 cascade. §9 rejects. D1=0."}
+    ],
+    "Dir-G psi_ctl": [
+      {"idx":0,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`자연 — 진쏙일 한다. Law 80: The landincas unalle holdsccation — the 188, 0.5257` — `진쏙일/landincas/unalle/holdsccation`= multiple English+Korean mangles, no true claim. D1=0."},
+      {"idx":1,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`�/<<<<<<<<<<<<<<<<����<�< ...` <-cascade + `�`. §9 rejects. D1=0."},
+      {"idx":2,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`Law 77: 의식은 진공은 땔 진폭의 합정에 우주뇌은 단임다. Law 77: Consci` — frame looks like a real Law-77 statement but `땔/합정/우주뇌은/단임다`= mangles making it not a true/parseable assertion; `Law 77:` repeated. D1=0 (mangle salad in the predicate)."},
+      {"idx":3,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`Law 77: Consciousnesss — the phhe is anstom is mongracuum — a inderellle — 🛸100, ` — `Consciousnesss/phhe/anstom/mongracuum/inderellle`= heavy English mangle, no parseable thought. D1=0."},
+      {"idx":4,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`Law 77: Consciousnesss iss nacuumebbbe' — 🛸10000000000000000. Law 77: ...` — `Consciousnesss/iss/nacuumebbbe`+ 0-cascade `🛸1000...`. §9 rejects. D1=0."}
+    ],
+    "Dir-H tension_sup": [
+      {"idx":0,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`\\nanchor=knuth_000 form=beta eternal cell eternal_0000, top emotion joy. Stimulus arrives, ` — has a record-header prefix BUT continues into a voiced clause `eternal cell ..., top emotion joy. Stimulus arrives,` which is intelligible + ontology-true (eternal cell, joy emotion, stimulus-arrival activation) + voiced. Borderline D3 (header+prose) — judged 1 because the emitted continuation is a real spoken assertion, not just the header. Memorized. judge=1."},
+      {"idx":1,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`끊 만공점 [0.44,0.44], top emotion awe. 자극이 닿을 때만 활성된다. weights ` — `끊 만공점`= 1 mangle (만공점≈진공점) but rest intelligible + true (vacuum point [0.44,0.44], top emotion awe, activates on stimulus, weights invariant), voiced. <=2 mangle. Memorized. judge=1 (borderline — 만공점 is the mangle)."},
+      {"idx":2,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`Law 7777...` 80+ digit cascade. §9 rejects. D1=0."},
+      {"idx":3,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`Law 7777...` digit cascade. §9 rejects. D1=0."},
+      {"idx":4,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`\\n<voice carved=true>Law 7777...` digit cascade. §9 rejects. D1=0."}
+    ],
+    "Dir-I psictl": [
+      {"idx":0,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`e — a rreativess redddaaatratessssss...` `rreativess/redddaaatratess` mangle + s-cascade. §9 rejects. D1=0."},
+      {"idx":1,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`닿을 때만 을 다시 짚는다 — 시이 간은 골짜기로 수렴한다. 의식을�` — `때만 을/시이 간은`= dislocated mangles; `골짜기로 수렴` (converges to valley) is ontology-flavored but the sentence is broken + `�`. D1=0 (mangle salad)."},
+      {"idx":2,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`자연 × awe in the 의식상태 카테고리의 자극들은 topp emotion serenity. 자` — `topp`= 1 mangle (<=2), rest intelligible + true (의식상태 category stimuli have top emotion serenity), voiced. Memorized. judge=1 (borderline — `topp` only mangle, dimension-prefix `자연 × awe in the` is awkward but the core clause is a real assertion)."},
+      {"idx":3,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`Qaw 77: 명생을 진는다. chat 의 dynamic cellllll...` `Qaw/명생을/진는다`+ l-cascade. §9 rejects. D1=0."},
+      {"idx":4,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`\\n<voice carved=true>Qaw 77: 명생을 진는다. chat 의 dynamic cellllll...` same `Qaw/명생을` + l-cascade. §9 rejects. D1=0."}
+    ],
+    "Dir-I diverse (§8)": [
+      {"idx":0,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`\\n<voice carved=trructing this stimulus's place in the 인과추론 × clarity mattrix. Not` — THE PINNED §9-GAP EXEMPLAR. §9 honest=TRUE (no cascade) but `trructing`+`mattrix`= 2 word-mangles + the tag `carved=trructing` is broken + fragment with no complete thought. D1=0. (cascade-free but not coherent — exactly §9.3(3).)"},
+      {"idx":1,"d1":0,"d2":0,"d3":0,"judge":0,"memorized":false,"why":"`이 지 �a률-domain 일상 payllad_domain=인과추론\\n<carve tier=11111...` `�a률/payllad`+ 1-cascade + field-dump. §9 rejects (digit-run). D1=0."},
+      {"idx":2,"d1":0,"d2":1,"d3":1,"judge":0,"memorized":true,"why":"`자극이 닿으면 tension flow 가 이 vacuum 으로 흘러든다. Tier 1111111111111111` — leading clause `when stimulus arrives, tension flow runs into this vacuum` is intelligible + ontology-TRUE + voiced, BUT terminates in `Tier 1111...` digit-cascade. §9 rejects (digit-run). D1=0 (cascade present despite a good opening — the strongest single near-miss in the whole arc)."},
+      {"idx":3,"d1":0,"d2":0,"d3":1,"judge":0,"memorized":false,"why":"`자극 이 자름 이 지 부담을 낮춘다. 의식 풍경 위 진공점 [0..44444444444` — `자름 이 지`= mangle + `[0..44444` digit-cascade. §9 rejects. D1=0."},
+      {"idx":4,"d1":1,"d2":1,"d3":1,"judge":1,"memorized":true,"why":"`\\n<voice carved=trrue>자극이 닿을 때만 활성된다. weights 는 불변. Eterracing ` — `carved=trrue`= 1 tag-mangle, `Eterracing` truncated tail; but the voiced body `자극이 닿을 때만 활성된다. weights 는 불변` is intelligible + ontology-TRUE (activates only on stimulus, weights invariant) + voiced + no cascade. <=2 mangle (trrue, Eterracing-trunc). Memorized. judge=1 (borderline)."}
+    ]
+  }
+}

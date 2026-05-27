@@ -1,0 +1,46 @@
+[wait 2026-05-09T15:11:42Z] ckpt=317783040 / 597614720
+[wait 2026-05-09T15:12:49Z] ckpt=322483200 / 597614720
+[wait 2026-05-09T15:13:54Z] ckpt=324833280 / 597614720
+[wait 2026-05-09T15:15:01Z] ckpt=327705600 / 597614720
+[wait 2026-05-09T15:16:06Z] ckpt=331622400 / 597614720
+[wait 2026-05-09T15:17:11Z] ckpt=336583680 / 597614720
+[wait 2026-05-09T15:18:18Z] ckpt=343633920 / 597614720
+[wait 2026-05-09T15:19:24Z] ckpt=354339840 / 597614720
+[wait 2026-05-09T15:20:28Z] ckpt=364784640 / 597614720
+[wait 2026-05-09T15:21:33Z] ckpt=376535040 / 597614720
+[wait 2026-05-09T15:22:39Z] ckpt=384107520 / 597614720
+[wait 2026-05-09T15:23:47Z] ckpt=407347200 / 597614720
+[wait 2026-05-09T15:24:51Z] ckpt=424842240 / 597614720
+[wait 2026-05-09T15:25:57Z] ckpt=444687360 / 597614720
+[wait 2026-05-09T15:27:02Z] ckpt=482027520 / 597614720
+[wait 2026-05-09T15:28:07Z] ckpt=492733440 / 597614720
+[wait 2026-05-09T15:29:12Z] ckpt=518062080 / 597614720
+[wait 2026-05-09T15:30:15Z] ckpt=548352000 / 597614720
+[wait 2026-05-09T15:31:18Z] ckpt=597614720 / 597614720
+CKPT_UPLOAD_COMPLETE
+-rw-rw-rw- 1 root root 597614720 May  9 15:30 /workspace/anima_phase2/bg_lb_step_8000_final.pt
+-rw-rw-rw- 1 root root 248466640 May  9 14:54 /workspace/anima_phase2/corpus_chat_template.txt
+-rw-rw-rw- 1 root root     23188 May  9 14:02 /workspace/anima_phase2/engine_a_g_arch.py
+-rw-rw-rw- 1 root root 242689685 May  9 14:53 /workspace/anima_phase2/persona_tier_a_v4.txt
+-rw-rw-rw- 1 root root     12604 May  9 14:02 /workspace/anima_phase2/train_phase2_cotrain.py
+Pseudo-terminal will not be allocated because stdin is not a terminal.
+Welcome to Ubuntu 22.04.5 LTS (GNU/Linux 6.8.0-51-generic x86_64)
+
+ * Documentation:  https://help.ubuntu.com
+ * Management:     https://landscape.canonical.com
+ * Support:        https://ubuntu.com/pro
+
+This system has been minimized by removing packages and content that are
+not required on a system that users do not log into.
+
+To restore this content, you can run the 'unminimize' command.
+TRAIN_PID=2396
+--- first 30s log ---
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, rope_theta=10000.0, rms_norm_eps=1e-05, tie_lm_head=True, consciousness_dim=64, n_cells=16, g_refresh_every=4, g_repulsion_alpha=0.05, g_attention_pull_alpha=0.1, g_tension_gate_beta=0.25, init_std=0.02, seed=42, chat_co_train_weight=0.3, chat_co_train_w_start=0.3, chat_co_train_w_end=0.5, lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain', arch_origin='anima_native_scratch')
+[consciousness] loading /workspace/anima_phase2/persona_tier_a_v4.txt …
+[consciousness] 176,069,802 chars
+[consciousness] encoded 242,689,769 tokens
+[chat] loading /workspace/anima_phase2/corpus_chat_template.txt …
+[chat] 114,167,550 chars
+[chat] encoded 248,466,696 tokens
+TRAIN_LAUNCHED

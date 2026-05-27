@@ -1,0 +1,40 @@
+{
+  "schema": "anima/emerge_chat_pythia_clm_logit_compare/verdict/1",
+  "ts_utc": "2026-05-05T18:34:02Z",
+  "task_id": "anima_emerge_chat_pythia_clm_logit_compare_2026_05_05",
+  "n_prompts": 2,
+  "models": {
+    "clm": "dancinlab/clm-v4-mk2-v1",
+    "pythia": "EleutherAI/pythia-70m"
+  },
+  "korean": {
+    "clm_entropy": 3.3079683780670166,
+    "pythia_entropy": 3.76790714263916,
+    "clm_top1_prob": 0.23456181585788727,
+    "pythia_top1_prob": 0.19424660503864288,
+    "clm_top10_korean_count": 0,
+    "pythia_top10_korean_count": 4
+  },
+  "english": {
+    "clm_entropy": 1.1491012573242188,
+    "pythia_entropy": 5.689651012420654,
+    "clm_top1_prob": 0.7994995713233948,
+    "pythia_top1_prob": 0.18865768611431122
+  },
+  "verdict_label": "CLM_HIGHER_CONFIDENCE_BUT_WRONG_TOKENS",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 different vocab (CLM 64K vs Pythia 50k) — direct rank not comparable; entropy_norm_log_vocab is the cross-vocab safe metric",
+    "C3 different tokenizer (SentencePiece 64k multilingual vs BPE 50k) — '안녕' splits differently, so comparing top1 token text is informative but rank-wise not equivalent",
+    "C4 single prompt per language; population statistics absent. One Korean prompt cannot generalize to all KO substrate behavior.",
+    "C5 entropy comparison meaningful even cross-vocab when normalized to log V, but absolute top1_prob comparison still reflects substrate decisiveness regardless of vocab",
+    "C6 Pythia is a generic English-trained substrate; its Korean handling is a non-trained baseline NOT a target. The probe answers 'how does CLM diverge from a vanilla LM on KO?' not 'who is better at KO?'"
+  ],
+  "raw_compliance": {
+    "raw_15_no_production_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  }
+}

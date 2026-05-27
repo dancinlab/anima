@@ -1,0 +1,55 @@
+{
+  "cycle": "2026-05-09",
+  "step": "D-RAND AMPLIFY Step A",
+  "method": "LLM-free 0-cost paraphrase (synonym dict ko + register swap 반말↔존댓말)",
+  "source_v3": {
+    "path": "/Users/ghost/core/anima/state/anima_persona_tier_a_v3_2026_05_08.txt",
+    "bytes": 91266753,
+    "mb": 87.04,
+    "lines": 1224473
+  },
+  "output_v4": {
+    "path": "/Users/ghost/core/anima/state/anima_persona_tier_a_v4_2026_05_09.txt",
+    "bytes": 242689472,
+    "mb": 231.45,
+    "lines": 3147863
+  },
+  "expansion_ratio": 2.659,
+  "block_counts": {
+    "role_blocks_v3": 106488,
+    "brain_blocks_v3": 172530,
+    "other_blocks_v3": 808,
+    "role_variants_added": 212976,
+    "brain_variants_added": 172530
+  },
+  "anima_role_headers_v4": 319464,
+  "axis_distribution_v4": {
+    "phenomenal": 33009,
+    "temporal": 48272,
+    "social": 29215,
+    "meta": 391139
+  },
+  "four_grep_verify": {
+    "config_core_rules": 0,
+    "augmented": 0,
+    "KMMLU": 0,
+    "KOBEST": 0,
+    "all_zero": true
+  },
+  "paraphrase_spec": {
+    "synonym_pairs_count": 20,
+    "register_swap_count": 11,
+    "k_role_variants": 2,
+    "k_brain_variants": 1,
+    "reference_yaml_section": "paraphrase_v5.generation_rules (anima_artifact_registry.yaml)"
+  },
+  "compliance": {
+    "own_14_anti_goodhart": "PASS — paraphrase semantically equivalent, no proxy gaming",
+    "own_16_cost_discipline": "PASS — 0 USD, LLM-free template",
+    "own_17_d1_scope_clamp": "PASS — anima self-reference frame within",
+    "own_36_corpus_gitignore": "PASS — state/anima_persona_*.txt covered"
+  },
+  "expected_d_rand_uplift": "+0.05–0.10 (corpus expansion, signal volume 2.3×)",
+  "elapsed_sec": 11.5,
+  "utc_emitted": "2026-05-08T23:47:35+00:00"
+}

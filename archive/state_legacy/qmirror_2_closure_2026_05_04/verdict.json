@@ -1,0 +1,23 @@
+{
+  "schema": "anima/qmirror_2_closure_verdict/1",
+  "ts_utc": "2026-05-04T04:53:35Z",
+  "composite_verdict": "FULL",
+  "n_pass": 5,
+  "n_total": 5,
+  "per_cond": {
+    "cond.9": "VALID:PASS",
+    "cond.10": "VALID:PASS",
+    "cond.11": "VALID:PASS",
+    "cond.12": "VALID:PASS",
+    "cond.13": "VALID:PASS"
+  },
+  "synth_tool_used": "tool/qmirror_2_closure_synth.hexa",
+  "synth_rc": 0,
+  "applied": true,
+  "raw10_caveats": [
+    "(a) 48h max-wait; manual re-fire on timeout.",
+    "(b) Closure synth conditional on 3/3 sister BG landing + parse-clean verdict.json.",
+    "(c) Version bump 1.0.1 → 2.0.0 IRREVERSIBLE per semver; gated separately by --bump.",
+    "(d) GitHub release v2.0.0 requires gh auth + write scope; SKIPPED on auth fail."
+  ]
+}

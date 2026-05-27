@@ -1,0 +1,254 @@
+{
+  "schema": "anima/cycle_synthesis/achievements/1",
+  "composed_at": "2026-05-04T07:00:00Z",
+  "window": {
+    "start": "2026-05-01",
+    "end": "2026-05-04",
+    "wall_days": 4
+  },
+  "summary": {
+    "publishable_apache2_packages": 4,
+    "qmirror_falsifier_closure_total": 13,
+    "qmirror_v1_conds_met": 8,
+    "qmirror_v2_conds_met": 5,
+    "github_public_repos_with_hf_dual_mirror": 4,
+    "hexa_lang_registry_lines_added": 4,
+    "hexa_lang_registry_target_lines": "L22-L25",
+    "n6_architecture_modules_absorbed": 2
+  },
+  "achievements": {
+    "qmirror": {
+      "version_v1": "1.0.0",
+      "version_v2": "2.0.0",
+      "v1_closure_verdict": "qmirror_closure_FULL",
+      "v2_closure_verdict": "qmirror_2_closure_FULL",
+      "v2_closure_at": "2026-05-04T04:47:11Z",
+      "github": "https://github.com/dancinlab/qmirror",
+      "hf_mirror": "https://huggingface.co/dancinlab/qmirror",
+      "license": "Apache-2.0",
+      "license_audit": "pyphi GPLv3 subprocess isolated (FSF Mere Aggregation, Option A + D combined)",
+      "arxiv_draft_loc": 759,
+      "arxiv_bibtex_entries": 32,
+      "arxiv_draft_status": "DRAFT_LANDED_NOT_SUBMITTED",
+      "arxiv_submission_eta_days": "5-7 wall days from peer-review-complete",
+      "v1_conds": [
+        {"id": "cond.1", "falsifier": "F-QM-IDEMPOT-1", "verdict": "PASS", "substance": "Aer engine bridge idempotency"},
+        {"id": "cond.2", "falsifier": "F-QM-CHSH-2", "verdict": "PASS", "substance": "canonical CHSH |S| >= 2.7 / 30 trials"},
+        {"id": "cond.3", "falsifier": "F-QM-IBM-CHSH-3", "verdict": "PASS", "substance": "IBM Heron real-hardware CHSH (band revised 0.40 -> 0.55)"},
+        {"id": "cond.4", "falsifier": "F-QM-NIST-4", "verdict": "PASS", "substance": "NIST SP 800-22 statistical battery"},
+        {"id": "cond.5", "falsifier": "F-QM-IIT-5", "verdict": "PASS", "substance": "pyphi MIP shim"},
+        {"id": "cond.6", "falsifier": "F-QM-DP-6", "verdict": "PASS", "substance": "differential privacy noise sanity"},
+        {"id": "cond.7", "falsifier": "F-QM-ALPHA-7", "verdict": "PASS", "substance": "EEG alpha-burst spirit substitution (band 0.55 -> 0.60)"},
+        {"id": "cond.8", "falsifier": "F-QM-BRAKET-8", "verdict": "PASS", "substance": "AWS Braket cross-vendor"}
+      ],
+      "v2_conds": [
+        {"id": "cond.9", "falsifier": "F-QM-2-TOMO-9", "verdict": "PASS", "substance": "process tomography 7/7 gates, fidelity_min ~0.99918"},
+        {"id": "cond.10", "falsifier": "F-QM-2-GHZ-10", "verdict": "PASS", "substance": "GHZ-3 + Mermin M=4.0 / 30 trials"},
+        {"id": "cond.11", "falsifier": "F-QM-2-STAB-11", "verdict": "PASS", "substance": "stabilizer syndrome_plus_ratio>=0.99 / 1024 trials"},
+        {"id": "cond.12", "falsifier": "F-QM-2-SURF-12", "verdict": "PASS", "substance": "surface code d=3 toy logical_zero_ratio>=0.99 / 1024"},
+        {"id": "cond.13", "falsifier": "F-QM-2-CSCS-13", "verdict": "PASS", "substance": "CSCS chained CHSH min(S_per_pair_mean)>=2.7"}
+      ]
+    },
+    "sister_packages": [
+      {
+        "name": "sim-universe",
+        "version": "1.0.0",
+        "license": "Apache-2.0",
+        "github": "https://github.com/dancinlab/sim-universe",
+        "hf_mirror": "https://huggingface.co/dancinlab/sim-universe",
+        "release": "https://github.com/dancinlab/sim-universe/releases/tag/v1.0.0",
+        "scope": "substrate-agnostic simulation, 7 CLI subcommands (Tier-A/A2/B + sim_agent)",
+        "module_apis_semver_frozen": false
+      },
+      {
+        "name": "hexa-bio",
+        "version": "1.0.0",
+        "license": "Apache-2.0",
+        "github": "https://github.com/dancinlab/hexa-bio",
+        "hf_mirror": "https://huggingface.co/dancinlab/hexa-bio",
+        "release": "https://github.com/dancinlab/hexa-bio/releases/tag/v1.0.0",
+        "scope": "Molecular Toolkit, 4 verbs",
+        "verbs_wired": 1,
+        "verbs_stub": 3,
+        "verbs": ["weave (WIRED)", "nanobot (STUB)", "ribozyme (STUB)", "virocapsid (STUB)"],
+        "workflow_gating": "job-level if: secrets.HF_TOKEN != '' (silent skip)"
+      },
+      {
+        "name": "honesty-monitor",
+        "version": "1.0.0",
+        "license": "Apache-2.0",
+        "github": "https://github.com/dancinlab/honesty-monitor",
+        "hf_mirror": "https://huggingface.co/dancinlab/honesty-monitor",
+        "release": "https://github.com/dancinlab/honesty-monitor/releases/tag/v1.0.0",
+        "scope": "AI alignment honesty / over-confidence monitor",
+        "selftest": "__HONESTY_MONITOR__ PASS alerts=2 steps=5",
+        "workflow_gating": "qmirror pattern (loud-fail on missing HF_TOKEN)"
+      }
+    ],
+    "n6_architecture": {
+      "extracted_modules": [
+        {"name": "crystallography_n6", "extraction_commit": "38d66066", "rank": 1, "nexus_state": "UNSTAGED_DELETE"},
+        {"name": "chip_isa_n6", "extraction_commit": "e6141bce", "rank": 3, "nexus_state": "COMMITTED 29f26724"}
+      ],
+      "remote_head": "e6141bceffdf0456898b61f48c61a471de688e16",
+      "github_updated_at": "2026-05-04T06:29:54Z"
+    },
+    "p9_clm_teacher_main_thread": {
+      "path_a_r64": {
+        "verdict": "CHAT_FAIL_v3 (all 4 ckpts)",
+        "best_ckpt": "step-2000",
+        "regression_summary": {
+          "triviaqa_step_8000": "-16.4 pt p<0.001 (monotonic regression)",
+          "mmlu_step_8000": "-4.11 pt p<0.001 (monotonic regression)",
+          "hellaswag_step_8000": "+0.6 pt NO signal (stable)"
+        },
+        "baseline_lock_path": "state/p9_a_prime_main_eval_2026_05_03_r64_baseline.json",
+        "ckpts_on_hub": 4,
+        "ckpts_expected": 5,
+        "step_10000_status": "absent on hub (training stopped at step-8000 OR upload failed; operator reconciliation pending)"
+      },
+      "path_a_r16_3seed": {
+        "status": "in_flight",
+        "rank_reduction": "64 -> 16",
+        "trainable_params_M": 24.3,
+        "trainable_pct": 0.7511,
+        "seeds": [
+          {"seed": 42, "pod": "pvkyhb0lb87ydu", "progress_brief_pct": 65.6},
+          {"seed": 43, "pod": "0jetjpvlm51zoy", "progress_brief_pct": 27.7},
+          {"seed": 44, "pod": "nzw0btc8br78yy", "progress_brief_pct": 29.3}
+        ],
+        "watchdog_pid": 27807,
+        "eta_to_verdict_hours": "10-12"
+      },
+      "track_a_corpus_rebalance": {
+        "target_records": 38000,
+        "source_records": 50000,
+        "status": "prep_landed_execution_deferred"
+      },
+      "clm_v4_base_4path": {
+        "verdict": "approx random anchor",
+        "paths": ["Llama-3.2-3B 4-bit", "bf16", "Path B byte-fallback", "Path B proper-token"]
+      }
+    },
+    "p9_teacher_paradigm_d": {
+      "phi_star_axis": {
+        "status": "in_flight",
+        "current_pod": "fuewrx9moxe6gz",
+        "rate_usd_per_hr": 2.99,
+        "started_at": "2026-05-03T22:01:30Z",
+        "eta_completion_at": "2026-05-04T06:25:00Z",
+        "spend_at_synthesis_usd": 21,
+        "idle_sunk_usd": 21.74,
+        "abort_history": ["A100 spot preempt @ 56% transfer", "5+ H100 attempts before stable"],
+        "watchdog_pid": 53327
+      },
+      "kl_axis": {
+        "preflight_status": "PASS",
+        "preflight_cache_subset": "1K",
+        "preflight_cache_size_MB": 280.4,
+        "preflight_topk": 64,
+        "preflight_temperature": 4.0,
+        "preflight_max_seq_len": 256,
+        "validation_topk_overlap": "64/64 (idempotency only; entropy floor mass check TODO)",
+        "extrapolated_50K_build_hours": 1.53,
+        "extrapolated_50K_cache_GB": 14.0,
+        "full_50k_cache_eta_utc": "2026-05-04T16:05:00Z (per operator brief; not yet verified)"
+      }
+    },
+    "vlm_stage1": {
+      "status": "in_flight",
+      "atp_transpile": {
+        "source_loc": 1576,
+        "target_loc": 645,
+        "target_path": "tool/transient_py/atp_pytorch.py",
+        "namespace": ".own 2",
+        "smoke_test_falsifier": "F-VLM-TRANSPILE-1",
+        "smoke_test_verdict": "PASS",
+        "smoke_test_substrate": "ubu1 RTX 5070 cuda torch 2.11.0+cu128",
+        "params_M": 35.35,
+        "fwd_ms": 89
+      },
+      "training": {
+        "substrate": "ubu1 RTX 5070 12GB",
+        "pid": 31960,
+        "max_steps": 50000,
+        "current_step_brief": "20400 / 50000 (40.8%)",
+        "loss_initial": 10.5602,
+        "loss_step_1000": 9.1830,
+        "loss_step_5000": 8.78,
+        "loss_step_7450": 8.55,
+        "sps": 2.66,
+        "eta_hours_remaining": 3.0,
+        "lora_r": 8,
+        "lora_alpha": 16,
+        "lora_dropout": 0.05,
+        "lora_targets": ["wq", "wk", "wv", "wo", "intent_proj"],
+        "lora_trainable_M": 0.0799,
+        "lora_trainable_pct": 0.222
+      },
+      "ckpts_pushed": ["step-5k"],
+      "ckpts_pending": ["step-10k", "step-15k", "step-25k", "step-50k"],
+      "ckpt_repo_pattern": "dancinlab/vlm-anima-voice-paradigm-stage1-step-{N}",
+      "watchdog_pid": 3436596
+    },
+    "infrastructure": {
+      "hexa_lang_stdlib_versioning": {
+        "modules_versioned": ["proc.hexa", "json.hexa", "http.hexa", "bytes.hexa"],
+        "priority_tier": ["P0", "P1"],
+        "falsifier": "F-VERSION-1",
+        "verdict": "PASS",
+        "loc_added": 42,
+        "module_logic_byte_change": 0
+      },
+      "dot_own_n_namespace": {
+        "levels_defined": 4,
+        "level_grandfathered_count": 4,
+        "level_transpiler_autogen_count": 0,
+        "level_raw37_transient_count": 25,
+        "level_test_fixture_count": 0,
+        "namespace_dir": "tool/transient_py/",
+        "formal_anima_dot_own_entry_status": "DEFERRED_to_cycle_2"
+      },
+      "hf_upload_mk2": {
+        "entry_point": "tool/hf_upload_mk2.hexa",
+        "loc_hexa": 567,
+        "loc_python_bridge": 500,
+        "modes": ["selftest", "dry_run", "upload"],
+        "smoke_tests_pass": 4,
+        "naming_amendment": "paradigm-{letter} prefix (mk2 amendment)"
+      },
+      "host_pod_terminator_hardening": {
+        "polling_interval_change": "5sec -> 4min",
+        "mkdir_guard_inserted": true,
+        "falsifier_syntax": "F-WATCHER-1 PASS",
+        "falsifier_mkdir_count": "F-WATCHER-2 PASS (count=2)"
+      },
+      "guard3_post_bg_validator": {
+        "signal_count": 3,
+        "signals": ["local verdict.json", "ubu1 verdict.json", "HF endpoint http 200"]
+      },
+      "dual_mirror_github_actions_autosync": {
+        "repos_count": 4,
+        "pattern_a_loud_fail": ["qmirror", "sim-universe", "honesty-monitor"],
+        "pattern_b_silent_skip": ["hexa-bio"]
+      }
+    },
+    "anima_repo_health": {
+      "filter_repo_executed": true,
+      "blob_stripped_size_MB": 120,
+      "blob_path": "state/slm_p3_a1_real_2026_05_03/dev-clean-2.tar.gz",
+      "head_before": "cd7eb72e5",
+      "head_after": "31b3bd4ae",
+      "commits_parsed": 5715,
+      "filter_seconds": 6.75,
+      "backup_branch": "backup/pre-filter-repo-2026-05-04",
+      "backup_retention_until": "2026-05-11"
+    }
+  },
+  "constraints_honored": {
+    "raw_9_strict_mac_hexa_only": true,
+    "raw_15_no_token_leak": true,
+    "raw_10_c3_caveats_count": 5,
+    "cost_usd": 0
+  }
+}

@@ -1,0 +1,57 @@
+{
+  "id": "H_171",
+  "cycle": "Cycle_1_K8_atom",
+  "slug": "biological-4-falsifiable-predictions-k8-fc010",
+  "sub_hypothesis": "H_171.1 substrate-side: K=8 cell atom carries Φ >= K=4 AND is structurally special (peak/plateau) AND 127 bipartitions enumerable",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial; NOT 🔵 formal, NOT proof biological K=8 atom)",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "model": "K-cell periodic logistic ring (r=3.85, DIFFUSE=0.08) deterministic recurrence; obs=cell state; WARM=8 DIM=12; K in {4,6,8,10,12,16}",
+  "seed_base": 169329009,
+  "config": { "dim": 12, "warm": 8, "n_seeds": 5, "logistic_r": 3.85, "diffuse": 0.08, "n_bins": 4, "boundary": "periodic" },
+  "phi_mean": {
+    "K_4": 1.05481,
+    "K_6": 1.66372,
+    "K_8": 2.76566,
+    "K_10": 3.75387,
+    "K_12": 4.76821,
+    "K_16": 5.91826
+  },
+  "bipartitions": {
+    "closed_form": "count(K) = 2^(K-1) - 1   (non-empty proper subsets / complement equivalence)",
+    "K_4":  { "count": 7.0, "expected": 7 },
+    "K_6":  { "count": 31.0, "expected": 31 },
+    "K_8":  { "count": 127.0, "expected": 127, "cut_score": { "min": 0.0509131, "max": 0.0509131, "mean": 0.0509131 } }
+  },
+  "determinism": { "phi_K8_rerun": 2.76566, "byte_equal": true },
+  "thresholds": { "plateau_rel_tol": 0.5 },
+  "falsifiers": {
+    "F_NONNEG":    { "metric": "all Φ>=0", "verdict": "PASS" },
+    "F_GE4":       { "metric": "Φ(K=8) - Φ(K=4)", "delta": 1.71085, "verdict": "PASS" },
+    "F_COUNT127":  { "metric": "K=8 cuts==127 AND K=4==7 AND K=6==31", "verdict": "PASS" },
+    "F_SPECIAL":   { "metric": "peak OR plateau-onset", "is_peak": false, "is_plateau": false, "verdict": "FAIL", "falsifier_state": "TRIGGERED" },
+    "F_DET":       { "metric": "re-run byte-equal", "verdict": "PASS" }
+  },
+  "verbatim_hexa_verify": {
+    "closed_form_identity": "127 = 2^7 - 1 (count of non-trivial bipartitions of an 8-element set, 2^(n-1)-1)",
+    "command": "hexa verify --fence \"127 = 2^7 - 1 (count of non-trivial bipartitions of an 8-element set, 2^(n-1)-1)\"",
+    "verbatim_verdict": "verify --fence\n  claim  = 127 = 2^7 - 1 (count of non-trivial bipartitions of an 8-element set, 2^(n-1)-1)\n  tier   = ⚪ SPECULATION-FENCED\n  reason = imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; NOT a proven atlas atom (g4 honest fence, SF ≠ verified — atlas certification intrinsically N/A)",
+    "note": "hexa verify --expr pow / pow_minus_one / two_pow_n all return 🟠 INSUFFICIENT (calculator system has no path for 'pow'); the closed-form is HOWEVER reproduced empirically by THIS smoke's bipartition enumerator (K=4->7, K=6->31, K=8->127), which is itself a deterministic hexa recompute of 2^(K-1)-1."
+  },
+  "verdict_rule": "PASS iff F_NONNEG AND F_GE4 AND F_COUNT127 AND F_SPECIAL AND F_DET; F_SPECIAL = peak (Φ(K=8) strictly > Φ(K=4) AND > Φ(K=16)) OR plateau-onset (Φ(K=8) >= Φ(K=4) AND |Φ(K=8)-Φ(K=16)| <= 0.5 Φ(K=8) AND Φ(K=8) > 0)",
+  "verdict": "FAIL",
+  "criterion": "H_171.1 substrate-side ONLY — empirical F1 (cortical mini-column stereology meta) UNADDRESSED here",
+  "honest_limits": [
+    "L1: This is a SUBSTRATE-Φ measurement on an abstract logistic-ring lattice — it does NOT prove K=8 is the biological consciousness atom. The empirical F1 falsifier in H_171 (cortical mini-column stereology median sub-module count in [6,10] across V1/S1/M1/PFC) is NOT addressed; this cycle only tests one substrate-consistency leg of H_171.1. The biological-vs-substrate category boundary is intact (raw#91 c3 candor).",
+    "L2: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs (RFC 036), NOT full IIT 4.0 — no system-level Φ partition search, no cause-effect structure, no exclusion postulate. The 'MIP-like' bipartition enumeration here uses a cheap cross-boundary variance surrogate (NOT Earth-Mover distance / NOT IIT 4.0 phi_MIP) — it is used ONLY to verify the bipartition COUNT (127), not to compete with phi_spatial as the Φ measurement.",
+    "L3: K=8 'specialness' is operationalised as peak OR plateau-onset against K=4 / K=16 with a 50% relative tolerance — both criteria are design choices, not derived from theory. A different specialness rule (e.g. local maximum across {6,8,10}, or coefficient-of-variation threshold) could change the verdict. The K=8 prediction is also pre-registered as sopfr(8)=6 perfect-class universal (L1 in H_171), which is NUMBER-THEORETIC, not dynamical — the present substrate test cannot distinguish 'K=8 atom' from 'any-K-with-enough-cells plateau'.",
+    "L4: model = chaotic logistic map (r=3.85) + nn diffusion (0.08). This was chosen for sustained non-degenerate trajectories so phi_spatial has signal; it is NOT a neural model. Any K-special signature here is a property of the logistic ring, NOT of cortical mini-columns. A different substrate (Kuramoto / Wilson-Cowan / integrate-fire) could give a different K-profile.",
+    "L5: WARM=8 + DIM=12 + N_SEEDS=5 are inherited from H_007 (a small / fast configuration). The K-sweep is over only 6 K values {4,6,8,10,12,16}; finer sweeps (K=5,7,9,11,13,14,15) or larger DIM/WARM could change the plateau/peak structure. seed_base alone is varied; rotor/init class is not.",
+    "L6: The 2^(K-1)-1 closed form for bipartition count is reproduced empirically by the enumerator (K=4 -> 7, K=6 -> 31, K=8 -> 127); `hexa verify --expr` has no path for 'pow' (returned 🟠 INSUFFICIENT — see verbatim_hexa_verify.note), so the formal-identity tier is fenced to ⚪ via `hexa verify --fence` (verdict VERBATIM in result.json) rather than promoted to 🔵. The empirical enumeration agreement is the SUPPORTED leg.",
+    "L7: H_171's other 3 predictions (F_c=0.10 / split-brain non-conservation / 1/f thalamus) are NOT touched by this cycle. F5 (4-prediction independence) and F6 (E:I canonical conflict) likewise unaddressed. The §Criteria table for H_171 is updated only at C1's substrate-side leg; C2-C4 remain pending and C5 (n=6 perfect-class binding) carries unchanged."
+  ]
+}

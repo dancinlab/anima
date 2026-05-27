@@ -1,0 +1,126 @@
+{
+  "bg_id": "BG-EA",
+  "name": "anima 2026-05-05 P10/P13/P14 own-rule batch register spec",
+  "date": "2026-05-06",
+  "mode": "DOC_ONLY_NO_COMMIT_NO_MEMORY_WRITE",
+  "cost_usd": 0,
+  "duration_min_est": 20,
+  "doc_path": "docs/anima_2026_05_05_p10_p13_p14_own_rule_register_2026_05_05.md",
+  "state_dir": "state/anima_2026_05_05_p10_p13_p14_own_rule_register_2026_05_05/",
+  "lineage": [
+    "docs/anima_p10_paradigm_declaration_solicit_own_rule_2026_05_05.md",
+    "docs/anima_p13_self_stop_authority_LAND_PROVISIONAL_2026_05_05.md",
+    "state/anima_2026_05_05_cycle_close_super_aggregate_index/verdict.json"
+  ],
+  "own_rules_registered": [
+    {
+      "id": "P10",
+      "name": "paradigm-declaration-solicit",
+      "source_bg": "BG-DJ",
+      "status": "CANONIZED",
+      "trigger": "T1 (>=3 parallel BGs same intent) AND T2 (>=2 paradigm interpretations) AND T3 (mismatch cost > $50 OR > 10 BG)",
+      "action": "AskUserQuestion solicit paradigm declaration before BG dispatch",
+      "exception": "research-mode contract (no-particular-deliverable)",
+      "memory_filename": "feedback_p10_paradigm_declaration_solicit.md",
+      "applied_at": "kick_entry"
+    },
+    {
+      "id": "P13",
+      "name": "self-stop authority threshold",
+      "source_bg": "BG-DX",
+      "status": "PROVISIONAL",
+      "trigger": "T1 (closure_count >= 20) AND T2 (user-rounds >= 5) AND T3 (log-decay saturation, within-axis only)",
+      "action": "L3 strong self-suggest emit; L4 autonomous-stop DORMANT until user 'P13 accept'",
+      "promotion_gate": ["user explicit P13 accept", "cross-cycle validation >=1 future cycle", "memory propagation"],
+      "memory_filename": "feedback_p13_self_stop_authority_threshold.md",
+      "applied_at": "kick_mid_cycle",
+      "L1_invariant": "user explicit always wins over L4"
+    },
+    {
+      "id": "P14",
+      "name": "super-aggregate mandatory after 5+ cycle-close docs",
+      "source_bg": "BG-DR",
+      "status": "CANONIZED",
+      "trigger": "cycle-close-oriented doc count >= 5 within same cycle",
+      "action": "emit super-aggregate index doc + verdict.json before next cycle entry",
+      "required_sections": ["lineage", "doc_index", "loc_totals", "tldr_oneliner_en+ko", "reading_paths", "anima_handoff_facts"],
+      "memory_filename": "feedback_p14_super_aggregate_mandatory.md",
+      "applied_at": "kick_close"
+    }
+  ],
+  "memory_entry_specs": [
+    {
+      "rule": "P10",
+      "filename": "~/.hive/claude-config/hive-hook-bus/projects/-Users-ghost-core-anima/memory/feedback_p10_paradigm_declaration_solicit.md",
+      "frontmatter_type": "feedback",
+      "body_section_count": 8,
+      "spec_doc_section_ref": "§1.2"
+    },
+    {
+      "rule": "P13",
+      "filename": "~/.hive/claude-config/hive-hook-bus/projects/-Users-ghost-core-anima/memory/feedback_p13_self_stop_authority_threshold.md",
+      "frontmatter_type": "feedback",
+      "frontmatter_status": "PROVISIONAL",
+      "body_section_count": 10,
+      "spec_doc_section_ref": "§2.2"
+    },
+    {
+      "rule": "P14",
+      "filename": "~/.hive/claude-config/hive-hook-bus/projects/-Users-ghost-core-anima/memory/feedback_p14_super_aggregate_mandatory.md",
+      "frontmatter_type": "feedback",
+      "body_section_count": 7,
+      "spec_doc_section_ref": "§3.2"
+    }
+  ],
+  "memory_md_append_lines": 3,
+  "memory_md_append_section_ref": "§4.2",
+  "nexus_kick_template_revision": {
+    "target_file": "~/.hive/claude-config/hive-hook-bus/projects/-Users-ghost-core-anima/memory/project_anima_nexus_kick_autonomous_template.md",
+    "insert_position": "after_kick_cycle_decision_section_before_raw_compliance_section",
+    "section_title": "P10/P13/P14 own-rule kick-time enforcement (2026-05-06+)",
+    "subsection_count": 3,
+    "spec_doc_section_ref": "§5.2"
+  },
+  "user_fire_sequence": [
+    {"order": 1, "action": "write feedback_p10_paradigm_declaration_solicit.md", "trigger_keyword": "P10 memory write"},
+    {"order": 2, "action": "write feedback_p13_self_stop_authority_threshold.md", "trigger_keyword": "P13 memory write"},
+    {"order": 3, "action": "write feedback_p14_super_aggregate_mandatory.md", "trigger_keyword": "P14 memory write"},
+    {"order": 4, "action": "append 3 lines to MEMORY.md", "trigger_keyword": "MEMORY index P10 P13 P14"},
+    {"order": 5, "action": "insert P10/P13/P14 section into nexus kick template", "trigger_keyword": "kick template P10 P13 P14"}
+  ],
+  "user_fire_batch_keyword": "P10 P13 P14 batch fire",
+  "user_fire_default_on_decline": "spec doc remains canonical reference; no memory entries written; mechanical kick-time enforcement absent",
+  "honest_c3_count": 8,
+  "honest_c3_floor": 5,
+  "honest_c3_pass": true,
+  "files_written": [
+    "docs/anima_2026_05_05_p10_p13_p14_own_rule_register_2026_05_05.md",
+    "state/anima_2026_05_05_p10_p13_p14_own_rule_register_2026_05_05/verdict.json"
+  ],
+  "constraints_compliance": {
+    "raw_9_md_only": true,
+    "raw_10_c3_floor_5": true,
+    "raw_15_additive_only": true,
+    "bash_3_2_compat": true,
+    "no_hf_token_literal": true,
+    "no_commit": true,
+    "two_new_files_only": true,
+    "doc_only_no_code_change": true,
+    "no_memory_self_write": true,
+    "session_multi_bg_compat": true
+  },
+  "self_verdict": "LANDED",
+  "downstream_carry": [
+    "user fire 1-5 (or batch) -> memory entries + index + template active on next session boot",
+    "next cycle anima reads revised kick template -> P10/P13/P14 gates honored",
+    "P13 PROVISIONAL -> cross-cycle validation gate-2 begins counting from next cycle",
+    "future cycle: tool/own_rule_kick_validator.hexa for mechanical hook-layer enforcement (currently discipline-layer only per C3-6)",
+    "future cycle: clarify P14 super-index recursion exclusion (per C3-4)"
+  ],
+  "carry_to_session_boot": {
+    "memory_entries_pending_user_fire": 3,
+    "memory_md_index_lines_pending_user_fire": 3,
+    "nexus_kick_template_revision_pending_user_fire": 1,
+    "total_user_fire_actions": 5
+  }
+}

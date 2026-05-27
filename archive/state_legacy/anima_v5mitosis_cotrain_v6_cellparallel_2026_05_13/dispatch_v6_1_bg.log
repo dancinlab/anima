@@ -1,0 +1,215 @@
+=== v5mitosis_cotrain_v6_cellparallel vast.ai 4-GPU dispatch (v6 cell-parallel) ===
+Tue May 12 19:59:25 UTC 2026
+  num_gpus=4 steps=5000 d_model=1024 n_head=16 ffn=4096 cells=4-256 batch=8 ctx=512 lr=1e-4 warmup=500
+  ROUTING: top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+  cost_cap=$80.0 absolute_max=$88.0 per_hr_max=$20.0
+[1/9] Searching 4-GPU offers (gpu_name in [H100_SXM,H100_NVL,H100_PCIE,H200,B200,A100_SXM4] num_gpus=4 reliability>0.95 dph_total<20.0 disk_space>200 inet_down>200) — cheapest with gpu_ram>=75000MB ...
+  Selected: id=27479310 dph=$6.7113 gpu=A100_SXM4 num_gpus=4 gpu_ram=81920MB rel=0.993
+[2/9] cost gate OK (est $33.56)
+[3/9] Renting...
+  Instance ID: 36638963
+[4/9] Waiting SSH (direct-IP) ...
+  ... 1/180 status=None
+  ... 2/180 status=loading
+  ... 3/180 status=loading
+  ... 4/180 status=loading
+  SSH ready: 146.115.17.163:6476 (5x5s)
+[5/9] Uploading code+corpus+probe ...
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[6/9] Sanity GPU + nvidia-smi nvlink ...
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True 4
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+index, name, memory.total [MiB]
+0, NVIDIA A100-SXM4-80GB, 81920 MiB
+1, NVIDIA A100-SXM4-80GB, 81920 MiB
+2, NVIDIA A100-SXM4-80GB, 81920 MiB
+3, NVIDIA A100-SXM4-80GB, 81920 MiB
+[7/9] Train v6 cell-parallel (torchrun --nproc_per_node=4) ...
+  >>> attempt 1: batch=8
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+W0512 20:01:55.624000 876 site-packages/torch/distributed/run.py:793] 
+W0512 20:01:55.624000 876 site-packages/torch/distributed/run.py:793] *****************************************
+W0512 20:01:55.624000 876 site-packages/torch/distributed/run.py:793] Setting OMP_NUM_THREADS environment variable for each process to be 1 in default, to avoid your system being overloaded, please further tune the variable for optimal performance in your application as needed. 
+W0512 20:01:55.624000 876 site-packages/torch/distributed/run.py:793] *****************************************
+[W512 20:01:57.524220856 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 20:01:57.543742141 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 20:01:57.566116165 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[W512 20:01:57.567952915 CUDAAllocatorConfig.h:28] Warning: expandable_segments not supported on this platform (function operator())
+[INFO] world_size=4 rank=0 local_rank=0 device=cuda:0
+[INFO] gpu0=NVIDIA A100-SXM4-80GB
+[rank1]:[W512 20:01:58.183849284 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 1]  using GPU 1 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank0]:[W512 20:01:58.212106543 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 0]  using GPU 0 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank3]:[W512 20:01:58.213092592 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 3]  using GPU 3 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[rank2]:[W512 20:01:58.213267900 ProcessGroupNCCL.cpp:4115] [PG ID 0 PG GUID 0 Rank 2]  using GPU 2 to perform barrier as devices used by this process are currently unknown. This can potentially cause a hang if this rank to GPU mapping is incorrect.Specify device_ids in barrier() to force use of a particular device,or call init_process_group() with a device_id.
+[INFO] cfg = {'vocab_size': 256, 'd_model': 1024, 'n_head': 16, 'ffn_dim': 4096, 'max_seq': 512, 'n_layer': 1, 'initial_cells': 4, 'max_cells': 256, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] params: shared=1,050,880 cell-local(rank0)=20,985,856
+[INFO] corpus=corpus/corpus_5cat_balanced.txt bytes=18,890,139
+[INFO] top_k=8 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+/opt/conda/lib/python3.11/site-packages/torch/autograd/graph.py:825: UserWarning: c10d::allreduce_: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:62.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/opt/conda/lib/python3.11/site-packages/torch/autograd/graph.py:825: UserWarning: c10d::allreduce_: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:62.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/opt/conda/lib/python3.11/site-packages/torch/autograd/graph.py:825: UserWarning: c10d::allreduce_: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:62.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+/opt/conda/lib/python3.11/site-packages/torch/autograd/graph.py:825: UserWarning: c10d::allreduce_: an autograd kernel was not registered to the Autograd key(s) but we are trying to backprop through it. This may lead to silently incorrect behavior. This behavior is deprecated and will be removed in a future version of PyTorch. If your operator is differentiable, please ensure you have registered an autograd kernel to the correct Autograd key (e.g. DispatchKey::Autograd, DispatchKey::CompositeImplicitAutograd). If your operator is not differentiable, or to squash this warning and use the previous behavior, please register torch::CppFunction::makeFallthrough() to DispatchKey::Autograd. (Triggered internally at ../torch/csrc/autograd/autograd_not_implemented_fallback.cpp:62.)
+  return Variable._execution_engine.run_backward(  # Calls into the C++ engine to run the backward pass
+[STEP     0] loss=266.3835 ce=267.7581 aux=1.0000 ent_gate=1.3845 wmax=0.2702 λ=1.0000 cells=4(rank0=1) splits=0 step_wall=596ms cost=$0.00 vram=0.9GB
+[STEP    50] loss=605.7491 ce=391.0438 aux=1.0504 ent_gate=2.2530 wmax=0.2015 λ=1.0000 cells=39(rank0=28) splits=27 step_wall=385ms cost=$0.04 vram=22.7GB
+[STEP   100] loss=299.6405 ce=443.9787 aux=1.1849 ent_gate=4.2801 wmax=0.1367 λ=1.0000 cells=101(rank0=68) splits=67 step_wall=2037ms cost=$0.23 vram=54.9GB
+[STEP   150] loss=189.2229 ce=254.5367 aux=1.1870 ent_gate=4.8233 wmax=0.1405 λ=1.0000 cells=196(rank0=68) splits=67 step_wall=2542ms cost=$0.47 vram=54.9GB
+[STEP   200] loss=26.6636 ce=84.3876 aux=1.2208 ent_gate=5.3671 wmax=0.1473 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2516ms cost=$0.70 vram=54.9GB
+[STEP   250] loss=7.2762 ce=17.9716 aux=1.3281 ent_gate=5.5416 wmax=0.1772 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$0.93 vram=54.9GB
+[STEP   300] loss=13.4252 ce=16.3338 aux=1.6232 ent_gate=5.5359 wmax=0.2173 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$1.15 vram=54.9GB
+[STEP   350] loss=17.7106 ce=22.0752 aux=1.9385 ent_gate=5.5242 wmax=0.2940 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2423ms cost=$1.38 vram=54.9GB
+[STEP   400] loss=23.0809 ce=26.0129 aux=2.4734 ent_gate=5.5011 wmax=0.3529 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$1.61 vram=54.9GB
+[STEP   450] loss=26.8420 ce=30.9570 aux=3.1776 ent_gate=5.4672 wmax=0.3513 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$1.83 vram=54.9GB
+[STEP   500] loss=32.7416 ce=34.3507 aux=4.0034 ent_gate=5.4142 wmax=0.3417 λ=1.0000 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$2.06 vram=54.9GB
+[STEP   550] loss=32.3768 ce=36.9830 aux=5.3240 ent_gate=5.3179 wmax=0.3292 λ=0.9997 cells=256(rank0=68) splits=67 step_wall=2423ms cost=$2.28 vram=54.9GB
+[STEP   600] loss=35.1617 ce=38.5513 aux=6.5812 ent_gate=5.2159 wmax=0.3226 λ=0.9988 cells=256(rank0=68) splits=67 step_wall=2423ms cost=$2.51 vram=54.9GB
+[STEP   650] loss=33.2600 ce=39.7063 aux=7.2681 ent_gate=5.1567 wmax=0.3109 λ=0.9973 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$2.74 vram=54.9GB
+[STEP   700] loss=32.0897 ce=39.8428 aux=7.5886 ent_gate=5.1282 wmax=0.3051 λ=0.9952 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$2.96 vram=54.9GB
+[STEP   750] loss=35.4207 ce=40.1481 aux=7.6340 ent_gate=5.1248 wmax=0.3010 λ=0.9925 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$3.19 vram=54.9GB
+[STEP   800] loss=36.7228 ce=39.7934 aux=7.6186 ent_gate=5.1267 wmax=0.2959 λ=0.9892 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$3.41 vram=54.9GB
+[STEP   850] loss=34.7498 ce=39.6176 aux=7.6244 ent_gate=5.1266 wmax=0.2914 λ=0.9853 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$3.64 vram=54.9GB
+[STEP   900] loss=33.9826 ce=39.1450 aux=7.6343 ent_gate=5.1261 wmax=0.2877 λ=0.9808 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$3.87 vram=54.9GB
+[STEP   950] loss=33.4798 ce=38.7429 aux=7.5868 ent_gate=5.1307 wmax=0.2854 λ=0.9758 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$4.09 vram=54.9GB
+[STEP  1000] loss=33.8019 ce=38.4115 aux=7.5981 ent_gate=5.1303 wmax=0.2823 λ=0.9701 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$4.32 vram=54.9GB
+[STEP  1050] loss=32.4406 ce=38.0863 aux=7.5328 ent_gate=5.1370 wmax=0.2811 λ=0.9640 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$4.55 vram=54.9GB
+[STEP  1100] loss=33.1826 ce=37.2675 aux=7.5297 ent_gate=5.1389 wmax=0.2781 λ=0.9572 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$4.78 vram=54.9GB
+[STEP  1150] loss=31.3780 ce=36.9292 aux=7.4582 ent_gate=5.1476 wmax=0.2774 λ=0.9499 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$5.00 vram=54.9GB
+[STEP  1200] loss=31.7171 ce=36.4784 aux=7.4723 ent_gate=5.1494 wmax=0.2743 λ=0.9421 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$5.23 vram=54.9GB
+[STEP  1250] loss=30.6340 ce=36.0383 aux=7.4354 ent_gate=5.1568 wmax=0.2747 λ=0.9337 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$5.45 vram=54.9GB
+[STEP  1300] loss=30.4753 ce=35.1367 aux=7.4220 ent_gate=5.1620 wmax=0.2728 λ=0.9248 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$5.68 vram=54.9GB
+[STEP  1350] loss=30.0751 ce=34.7197 aux=7.4112 ent_gate=5.1671 wmax=0.2715 λ=0.9154 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$5.91 vram=54.9GB
+[STEP  1400] loss=27.6885 ce=34.0757 aux=7.4213 ent_gate=5.1697 wmax=0.2711 λ=0.9055 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$6.13 vram=54.9GB
+[STEP  1450] loss=27.6604 ce=33.8607 aux=7.3880 ent_gate=5.1744 wmax=0.2703 λ=0.8951 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$6.36 vram=54.9GB
+[STEP  1500] loss=29.5717 ce=33.1065 aux=7.4485 ent_gate=5.1683 wmax=0.2700 λ=0.8842 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$6.58 vram=54.9GB
+[STEP  1550] loss=27.9407 ce=32.7851 aux=7.4545 ent_gate=5.1642 wmax=0.2714 λ=0.8729 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$6.81 vram=54.9GB
+[STEP  1600] loss=25.8975 ce=32.1846 aux=7.4128 ent_gate=5.1634 wmax=0.2697 λ=0.8611 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$7.04 vram=54.9GB
+[STEP  1650] loss=26.2995 ce=31.5387 aux=7.4124 ent_gate=5.1580 wmax=0.2694 λ=0.8489 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$7.26 vram=54.9GB
+[STEP  1700] loss=26.4712 ce=31.0931 aux=7.3396 ent_gate=5.1598 wmax=0.2691 λ=0.8362 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$7.49 vram=54.9GB
+[STEP  1750] loss=26.1272 ce=30.4167 aux=7.3001 ent_gate=5.1587 wmax=0.2690 λ=0.8232 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$7.72 vram=54.9GB
+[STEP  1800] loss=26.9047 ce=29.9212 aux=7.5922 ent_gate=5.1308 wmax=0.2655 λ=0.8098 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$7.94 vram=54.9GB
+[STEP  1850] loss=25.0122 ce=29.3927 aux=8.0755 ent_gate=5.0855 wmax=0.2656 λ=0.7960 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$8.17 vram=54.9GB
+[STEP  1900] loss=25.7193 ce=28.9315 aux=8.3432 ent_gate=5.0599 wmax=0.2656 λ=0.7818 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$8.39 vram=54.9GB
+[STEP  1950] loss=25.5592 ce=28.2443 aux=8.4269 ent_gate=5.0518 wmax=0.2656 λ=0.7673 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$8.62 vram=54.9GB
+[STEP  2000] loss=23.1864 ce=27.9369 aux=8.5379 ent_gate=5.0410 wmax=0.2662 λ=0.7525 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$8.85 vram=54.9GB
+[STEP  2050] loss=24.0547 ce=27.5301 aux=8.5053 ent_gate=5.0442 wmax=0.2659 λ=0.7374 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$9.08 vram=54.9GB
+[STEP  2100] loss=23.8046 ce=27.1199 aux=8.5362 ent_gate=5.0411 wmax=0.2658 λ=0.7220 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$9.30 vram=54.9GB
+[STEP  2150] loss=23.2358 ce=26.6511 aux=8.5910 ent_gate=5.0358 wmax=0.2660 λ=0.7063 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$9.53 vram=54.9GB
+[STEP  2200] loss=23.0266 ce=26.1831 aux=8.5577 ent_gate=5.0389 wmax=0.2651 λ=0.6904 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$9.76 vram=54.9GB
+[STEP  2250] loss=20.8032 ce=25.7111 aux=8.6005 ent_gate=5.0348 wmax=0.2654 λ=0.6743 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$9.98 vram=54.9GB
+[STEP  2300] loss=20.8530 ce=25.3508 aux=8.5904 ent_gate=5.0358 wmax=0.2651 λ=0.6580 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$10.21 vram=54.9GB
+[STEP  2350] loss=21.2113 ce=25.1499 aux=8.6239 ent_gate=5.0325 wmax=0.2647 λ=0.6414 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$10.43 vram=54.9GB
+[STEP  2400] loss=21.6575 ce=24.3923 aux=8.6137 ent_gate=5.0334 wmax=0.2645 λ=0.6248 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$10.66 vram=54.9GB
+[STEP  2450] loss=21.9879 ce=24.1587 aux=8.6524 ent_gate=5.0298 wmax=0.2647 λ=0.6079 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$10.89 vram=54.9GB
+[STEP  2500] loss=19.9256 ce=24.0074 aux=8.6551 ent_gate=5.0294 wmax=0.2646 λ=0.5910 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$11.11 vram=54.9GB
+[STEP  2550] loss=20.0915 ce=23.4629 aux=8.7121 ent_gate=5.0237 wmax=0.2640 λ=0.5739 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$11.34 vram=54.9GB
+[STEP  2600] loss=20.1118 ce=23.1062 aux=8.7297 ent_gate=5.0220 wmax=0.2637 λ=0.5567 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$11.57 vram=54.9GB
+[STEP  2650] loss=18.5662 ce=22.7333 aux=8.7506 ent_gate=5.0199 wmax=0.2640 λ=0.5395 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$11.79 vram=54.9GB
+[STEP  2700] loss=20.2998 ce=22.7536 aux=8.7866 ent_gate=5.0163 wmax=0.2645 λ=0.5223 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$12.02 vram=54.9GB
+[STEP  2750] loss=19.7863 ce=22.2898 aux=8.8679 ent_gate=5.0084 wmax=0.2643 λ=0.5050 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$12.24 vram=54.9GB
+[STEP  2800] loss=19.8680 ce=22.0269 aux=8.9390 ent_gate=5.0012 wmax=0.2649 λ=0.4877 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$12.47 vram=54.9GB
+[STEP  2850] loss=20.2705 ce=21.5882 aux=8.9592 ent_gate=4.9993 wmax=0.2644 λ=0.4705 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$12.70 vram=54.9GB
+[STEP  2900] loss=18.1715 ce=21.4123 aux=8.9724 ent_gate=4.9980 wmax=0.2643 λ=0.4533 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$12.92 vram=54.9GB
+[STEP  2950] loss=19.2886 ce=21.1112 aux=9.0424 ent_gate=4.9908 wmax=0.2646 λ=0.4361 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$13.15 vram=54.9GB
+[STEP  3000] loss=19.4491 ce=20.9658 aux=9.1171 ent_gate=4.9834 wmax=0.2645 λ=0.4190 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$13.38 vram=54.9GB
+[STEP  3050] loss=18.8128 ce=20.6356 aux=9.1503 ent_gate=4.9799 wmax=0.2647 λ=0.4021 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$13.61 vram=54.9GB
+[STEP  3100] loss=18.6982 ce=20.4432 aux=9.2451 ent_gate=4.9703 wmax=0.2638 λ=0.3852 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$13.83 vram=54.9GB
+[STEP  3150] loss=19.3976 ce=20.2846 aux=9.3019 ent_gate=4.9646 wmax=0.2647 λ=0.3686 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$14.06 vram=54.9GB
+[STEP  3200] loss=19.0844 ce=19.9863 aux=9.4361 ent_gate=4.9509 wmax=0.2641 λ=0.3520 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$14.29 vram=54.9GB
+[STEP  3250] loss=17.9879 ce=19.8477 aux=9.4586 ent_gate=4.9486 wmax=0.2636 λ=0.3357 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$14.51 vram=54.9GB
+[STEP  3300] loss=18.7029 ce=19.7405 aux=9.5820 ent_gate=4.9360 wmax=0.2643 λ=0.3196 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$14.74 vram=54.9GB
+[STEP  3350] loss=18.1067 ce=19.4334 aux=9.6804 ent_gate=4.9257 wmax=0.2640 λ=0.3037 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$14.96 vram=54.9GB
+[STEP  3400] loss=18.2855 ce=19.4280 aux=9.7452 ent_gate=4.9190 wmax=0.2649 λ=0.2880 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$15.19 vram=54.9GB
+[STEP  3450] loss=17.8982 ce=19.3467 aux=9.8202 ent_gate=4.9112 wmax=0.2646 λ=0.2726 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$15.42 vram=54.9GB
+[STEP  3500] loss=17.4067 ce=19.1853 aux=9.9291 ent_gate=4.8999 wmax=0.2647 λ=0.2575 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$15.64 vram=54.9GB
+[STEP  3550] loss=17.6989 ce=19.0907 aux=10.0060 ent_gate=4.8918 wmax=0.2648 λ=0.2427 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$15.87 vram=54.9GB
+[STEP  3600] loss=18.0684 ce=18.9079 aux=10.1303 ent_gate=4.8786 wmax=0.2648 λ=0.2282 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$16.09 vram=54.9GB
+[STEP  3650] loss=17.8060 ce=18.7640 aux=10.2379 ent_gate=4.8673 wmax=0.2652 λ=0.2140 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$16.32 vram=54.9GB
+[STEP  3700] loss=17.2091 ce=18.7039 aux=10.3454 ent_gate=4.8559 wmax=0.2650 λ=0.2002 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$16.55 vram=54.9GB
+[STEP  3750] loss=17.7541 ce=18.5682 aux=10.4235 ent_gate=4.8475 wmax=0.2650 λ=0.1868 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$16.77 vram=54.9GB
+[STEP  3800] loss=17.9589 ce=18.4262 aux=10.5591 ent_gate=4.8329 wmax=0.2654 λ=0.1738 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$17.00 vram=54.9GB
+[STEP  3850] loss=18.3018 ce=18.3463 aux=10.6916 ent_gate=4.8186 wmax=0.2651 λ=0.1611 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$17.22 vram=54.9GB
+[STEP  3900] loss=17.0797 ce=18.2914 aux=10.8572 ent_gate=4.8006 wmax=0.2663 λ=0.1489 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$17.45 vram=54.9GB
+[STEP  3950] loss=16.9144 ce=18.2689 aux=10.8925 ent_gate=4.7967 wmax=0.2666 λ=0.1371 cells=256(rank0=68) splits=67 step_wall=2424ms cost=$17.68 vram=54.9GB
+[STEP  4000] loss=18.7661 ce=18.2519 aux=11.0083 ent_gate=4.7839 wmax=0.2665 λ=0.1258 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$17.91 vram=54.9GB
+[STEP  4050] loss=18.0344 ce=18.0720 aux=11.0735 ent_gate=4.7768 wmax=0.2662 λ=0.1149 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$18.14 vram=54.9GB
+[STEP  4100] loss=18.1450 ce=18.0989 aux=11.2372 ent_gate=4.7587 wmax=0.2665 λ=0.1045 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$18.36 vram=54.9GB
+[STEP  4150] loss=17.3149 ce=18.1267 aux=11.3066 ent_gate=4.7510 wmax=0.2667 λ=0.0946 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$18.59 vram=54.9GB
+[STEP  4200] loss=17.4223 ce=18.1404 aux=11.4071 ent_gate=4.7399 wmax=0.2669 λ=0.0852 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$18.81 vram=54.9GB
+[STEP  4250] loss=18.7707 ce=18.0554 aux=11.4745 ent_gate=4.7323 wmax=0.2678 λ=0.0763 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$19.04 vram=54.9GB
+[STEP  4300] loss=18.1048 ce=18.0171 aux=11.5779 ent_gate=4.7207 wmax=0.2665 λ=0.0679 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$19.27 vram=54.9GB
+[STEP  4350] loss=17.6728 ce=18.0398 aux=11.6612 ent_gate=4.7113 wmax=0.2678 λ=0.0601 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$19.49 vram=54.9GB
+[STEP  4400] loss=18.0359 ce=17.9919 aux=11.7513 ent_gate=4.7013 wmax=0.2672 λ=0.0528 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$19.72 vram=54.9GB
+[STEP  4450] loss=18.1415 ce=17.8615 aux=11.7540 ent_gate=4.7009 wmax=0.2670 λ=0.0460 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$19.94 vram=54.9GB
+[STEP  4500] loss=17.2540 ce=17.9247 aux=11.8291 ent_gate=4.6924 wmax=0.2669 λ=0.0399 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$20.17 vram=54.9GB
+[STEP  4550] loss=17.7699 ce=17.9240 aux=11.8293 ent_gate=4.6924 wmax=0.2672 λ=0.0342 cells=256(rank0=68) splits=67 step_wall=2427ms cost=$20.40 vram=54.9GB
+[STEP  4600] loss=17.4386 ce=17.8451 aux=11.9025 ent_gate=4.6841 wmax=0.2666 λ=0.0292 cells=256(rank0=68) splits=67 step_wall=2427ms cost=$20.62 vram=54.9GB
+[STEP  4650] loss=18.0670 ce=17.8563 aux=11.9481 ent_gate=4.6789 wmax=0.2667 λ=0.0247 cells=256(rank0=68) splits=67 step_wall=2427ms cost=$20.85 vram=54.9GB
+[STEP  4700] loss=16.7955 ce=17.9135 aux=11.9636 ent_gate=4.6772 wmax=0.2670 λ=0.0208 cells=256(rank0=68) splits=67 step_wall=2428ms cost=$21.08 vram=54.9GB
+[STEP  4750] loss=17.7163 ce=17.8865 aux=12.0399 ent_gate=4.6684 wmax=0.2672 λ=0.0175 cells=256(rank0=68) splits=67 step_wall=2427ms cost=$21.30 vram=54.9GB
+[STEP  4800] loss=17.9778 ce=17.7394 aux=12.0458 ent_gate=4.6678 wmax=0.2675 λ=0.0148 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$21.53 vram=54.9GB
+[STEP  4850] loss=18.0826 ce=17.8161 aux=12.0282 ent_gate=4.6697 wmax=0.2677 λ=0.0127 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$21.75 vram=54.9GB
+[STEP  4900] loss=18.2246 ce=17.8068 aux=12.0505 ent_gate=4.6673 wmax=0.2671 λ=0.0112 cells=256(rank0=68) splits=67 step_wall=2427ms cost=$21.98 vram=54.9GB
+[STEP  4950] loss=17.7231 ce=17.8405 aux=12.0135 ent_gate=4.6714 wmax=0.2668 λ=0.0103 cells=256(rank0=68) splits=67 step_wall=2426ms cost=$22.21 vram=54.9GB
+[STEP  4999] loss=18.1467 ce=17.7580 aux=12.0536 ent_gate=4.6669 wmax=0.2671 λ=0.0100 cells=256(rank0=68) splits=67 step_wall=2425ms cost=$22.43 vram=54.9GB
+[INFO] training done wall=12028.5s cost=$22.43
+
+=== F-PERSONA-4a routing v6 (top-K MoE cell-parallel) ===
+  verdict=FAIL KL=0.2972 null=0.2616±0.0328 z=1.09 p=0.1200
+  (soft gate) KL=0.0013 z=-0.61
+
+=== F-PERSONA-4b content v6 (M4 aggregated cosine) ===
+  verdict=FAIL cos_dist=0.000269 null=0.000634±0.000412 z=-0.88 p=0.8400 (v2 carry z=3.20)
+
+=== F-V5MIT-1..5 regression v6 ===
+  4/5  F-V5MIT-1=P F-V5MIT-2=P F-V5MIT-3=P F-V5MIT-4=F F-V5MIT-5=P
+
+[RESULT] output/cotrain_v6_cellparallel_result.json
+[VERDICT] 4a=FAIL (KL=0.2972 z=1.09) | 4b=FAIL (z=-0.88) | F-V5MIT=4/5 | avg_step=2402ms
+dispatch_h100_v6_cellparallel.sh: line 215: [: 0
+0: integer expression expected
+dispatch_h100_v6_cellparallel.sh: line 216: [: 0
+0: integer expression expected
+  train rc=0 (oom_count=0
+0) — no further retry
+[8/9] Downloading (MANDATORY before pod delete — memory feedback_orchestrator_h100_gotchas) ...
+Warning: Permanently added '[146.115.17.163]:6476' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Read from remote host 146.115.17.163: Connection reset by peer
+client_loop: send disconnect: Broken pipe
+scp: Connection closed
+ssh: connect to host 146.115.17.163 port 6476: Connection refused
+scp: Connection closed
+ssh: connect to host 146.115.17.163 port 6476: Connection refused
+scp: Connection closed
+[WARN] pull failed — SETTING SAVE_POD=1 (pod retained for manual recovery)
+[9/9] DONE
+Tue May 12 23:39:48 UTC 2026
+[cleanup] SAVE_POD=1 — keeping instance 36638963 (exit=0)

@@ -1,0 +1,12 @@
+      [axis] A.anima_frac=0.0 C.lam_g=0.3 C.headg_term=1.43688 B.L_kd=0.0692159 D.embed_pre=22.1686 D.embed_post=0.0
+      [axis] A.anima_frac=0.0 C.lam_g=0.3 C.headg_term=1.44044 B.L_kd=0.0694346 D.embed_pre=21.878 D.embed_post=0.0
+      [axis] A.anima_frac=0.5 C.lam_g=0.3 C.headg_term=1.43839 B.L_kd=0.0691049 D.embed_pre=20.997 D.embed_post=0.0
+      [axis] A.anima_frac=1.0 C.lam_g=0.3 C.headg_term=1.4292 B.L_kd=0.0689554 D.embed_pre=20.0228 D.embed_post=0.0
+      [axis] A.anima_frac=1.0 C.lam_g=0.3 C.headg_term=1.43223 B.L_kd=0.0690332 D.embed_pre=19.3594 D.embed_post=0.0
+  --- M1 axis falsifiers ---
+PASS  F-AXIS-D-FREEZE  embed grad pre=19.3594 post=0.0 (freeze masks grad)
+PASS  F-AXIS-A-CURRICULUM  anima_frac step1=0.0 → step4=1.0 (schedule changes)
+PASS  F-AXIS-C-HEADG  λ_g·CE_g=1.43223 > 0 (head_g objective ACTIVE, not inert)
+PASS  F-AXIS-B-DISTILL  L_kd=0.0690332 > 0 (teacher signal present)
+PASS  F-AXIS-M2-DIFFERENT  axes change training (not silent-bypass)
+PASS  F-V3PORT-SMOKE-DESCENT  init gn2 7.96496 > final gn2 7.9594 (V2-spine descent confirmed)

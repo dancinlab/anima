@@ -1,0 +1,33 @@
+{
+  "section": "§55",
+  "title": ".kosmos cross-modal verification rule reverse-design — encoder constraint spec",
+  "battery": "B-S55-1..3 sidecar (central UNCHANGED)",
+  "n_pass": 3,
+  "n_total": 3,
+  "all_blue": true,
+  "results": [
+    {
+      "id": "B-S55-1",
+      "title": "CODOMAIN-Ψ-BOUNDED-CLOSED (C1)",
+      "pass": true,
+      "detail": "ψ_entropy(H=0)=0 ψ_entropy(H=logV)=1 ∂/∂H·logV=1 (Shannon 0≤H≤logV) ; ψ_dir(c=-1)=0 ψ_dir(c=0)=1/2(Ψ=½ fp) ψ_dir(c=1)=1 (Cauchy-Schwarz c∈[-1,1]) ⟹ image(E_m) ⊆ [0,1]^2 = vacuum_psi/basin_radius box. Arbitrary embedding / unbounded ℝ^2 / non-Law-71 latent VIOLATES C1."
+    },
+    {
+      "id": "B-S55-2",
+      "title": "BASIN-CONTAINMENT-WELL-FORMED-CLOSED (C2)",
+      "pass": true,
+      "detail": "d²−r² trichotomy exhaustive: inside-w=True boundary-w=True outside-w=True ⟹ d<r total decidable Boolean. r>0 ⟹ centre (d=0) inside ⟹ predicate non-vacuous. triangle: dm<R∧dn<R ⟹ ‖E_m−E_n‖ ≤ 2R−(em+en) < 2R (slack em,en>0; carries B-CARVE-MULTIMODAL UBM-E3 🔵, witness Δ=-em - en). Truth value of d<r for real E_m = §57 OUTCOME (B-S55-NOTE), unmeasured here (g3 §4.3 placeholder honesty)."
+    },
+    {
+      "id": "B-S55-3",
+      "title": "§7-LEGITIMACY-PREDICATE-CLOSED (C3)",
+      "pass": true,
+      "detail": "§7 3-conjunction truth table: 1/8 True, only (T,T,T)⟹legit (True). forbidden_external_encoder_set grep: legit-src count=0(=0) illegit-src count=4(>0) ⟹ decidable structural Boolean (Kolmogorov finite substring count, mirror B-INTRA-3). C3 predicate (§7-conj ∧ grep==0) is closed-form well-formed. Proves PREDICATE legitimacy, NOT that a satisfying anima-OWN E_m exists (§56 design / §57 fire; B-S55-NOTE)."
+    }
+  ],
+  "note": "B-S55-NOTE: actual encoder existence/quality + whether any E_m satisfies C1∧C2∧C3 on a MEASURED basin = §56 design / §57 fire SGD/measurement OUTCOME (B-D-NOTE / B-DR-UNIQUE-NOTE / B-INTRA-NOTE / B-EMERGE-7 family, NOT counted 🔵). §55 proves ONLY the CONSTRAINT SET is closed-form well-formed (decidable + bounded) + §7-legitimate — necessary, NOT sufficient for a usable encoder. C4 (§4.3 honesty/process constraint) has no separate falsifier; it is enforced BY this NOTE explicitly making no E_m-existence claim. central blue_falsifier.py UNCHANGED (sidecar). f1/f2/f3 + B-IDENTITY-5 safe. north-star unchanged; GOAL unreached.",
+  "tier": "SPEC (constraint derivation, NOT encoder, NOT fire, NOT GOAL)",
+  "fire": false,
+  "gpu": false,
+  "cost_usd": 0.0
+}

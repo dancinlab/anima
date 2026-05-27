@@ -1,0 +1,340 @@
+{
+  "model_name": "clm_v2_small",
+  "model_path": "/tmp/anima_v2_check/clm_v2_small/final.pt",
+  "params_M": 1.65,
+  "config": {
+    "dim": 128,
+    "layers": 3,
+    "heads": 4,
+    "block_size": 128,
+    "vocab_size": 256,
+    "gate": 0.001,
+    "ca_rules": 8
+  },
+  "load_info": {
+    "missing": 0,
+    "unexpected": 0
+  },
+  "load_time_s": 0.0,
+  "ko": {
+    "안녕하세요": {
+      "greedy": {
+        "full": "안녕하세요 � � � � � � � � � � � � � � � � � � � � \u001d � \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d ",
+        "gen": " � � � � � � � � � � � � � � � � � � � � \u001d � \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "안녕하세요 � � =� � Z�ah} � W� � � � C =: � H � �t� � \u0018� � 4 �ist� � ]�egsz\nAB: �� ~ �em� � 2 � \u0005 � � W� X \u0014: �� =� р D � ",
+        "gen": " � � =� � Z�ah} � W� � � � C =: � H � �t� � \u0018� � 4 �ist� � ]�egsz\nAB: �� ~ �em� � 2 � \u0005 � � W� X \u0014: �� =� р D � ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.1875,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "안녕하세요 � T�o� D � = � / ]� Z � � / \t � ~ \u0017 � Z \\ \b � =� � � ] � � \u0014 \u0011 \u0014�a� �.u\u001c� \u0014 ] � ~ 4 � = �� \u0017 � 4� � � � �� / � � \t",
+        "gen": " � T�o� D � = � / ]� Z � � / \t � ~ \u0017 � Z \\ \b � =� � � ] � � \u0014 \u0011 \u0014�a� �.u\u001c� \u0014 ] � ~ 4 � = �� \u0017 � 4� � � � �� / � � \t",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.06086956521739131,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "안녕하세요i� � 4 � 4 � \t \u001d C� \u001d @ * � / \u0016 � � G: O � \b G � \b \b � ~ G Q � \b X \u0004 + � \u0015 W� \u0011 [ \u0005 � \u0017 D 4� 4 � ` \u0017 \u0012 � \u001d ^ D\n\n\n\n\nA: ",
+        "gen": "i� � 4 � 4 � \t \u001d C� \u001d @ * � / \u0016 � � G: O � \b G � \b \b � ~ G Q � \b X \u0004 + � \u0015 W� \u0011 [ \u0005 � \u0017 D 4� 4 � ` \u0017 \u0012 � \u001d ^ D\n\n\n\n\nA: ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.1016949152542373,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    },
+    "한국어 가능?": {
+      "greedy": {
+        "full": "한국어 가능? � � \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d ",
+        "gen": " � � \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "한국어 가능?elap� � = ~ U = \u001d � \b� \u0018 ] \t \u0011 �� \b \b \u0017 4.o� \\ � � � � � �, � �� ]� � �: \u0010 ��eW� � \u0012 \u0010 � \\\n: � � �: ~ \u0005 \u0010 \u0011 \b � ��",
+        "gen": "elap� � = ~ U = \u001d � \b� \u0018 ] \t \u0011 �� \b \b \u0017 4.o� \\ � � � � � �, � �� ]� � �: \u0010 ��eW� � \u0012 \u0010 � \\\n: � � �: ~ \u0005 \u0010 \u0011 \b � ��",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.07017543859649122,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "한국어 가능? � �� �r� � � \u0012 2� � � ] � � \u0011 \u0017 \t � � � \u0011 \t �� X = \u0010 \t � � \u0018 � /� � � \u0017 � ߘ \b � \\ \u0018 =: � \u0014 � � � = � \\ \u0012� � U\nB� Z",
+        "gen": " � �� �r� � � \u0012 2� � � ] � � \u0011 \u0017 \t � � � \u0011 \t �� X = \u0010 \t � � \u0018 � /� � � \u0017 � ߘ \b � \\ \u0018 =: � \u0014 � � � = � \\ \u0012� � U\nB� Z",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.043478260869565216,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "한국어 가능? \u0012 � H� \\ \u0005 � C� � ]\nA: � � �  � X \u0017 � ~ \u001d \b 4 � \b � � D G ] � � \u0018 \u0015 \u001d \u0010 \u0012 ~ � � O � = * \\ � * ~ * � � \u001d \u0012 \u0014 [ \u001d \t = \u001d ",
+        "gen": " \u0012 � H� \\ \u0005 � C� � ]\nA: � � �  � X \u0017 � ~ \u001d \b 4 � \b � � D G ] � � \u0018 \u0015 \u001d \u0010 \u0012 ~ � � O � = * \\ � * ~ * � � \u001d \u0012 \u0014 [ \u001d \t = \u001d ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.058333333333333334,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "greedy": {
+        "full": "사용자: 안녕하세요\n도우미: � � � � � \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d ",
+        "gen": " � � � � � \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "사용자: 안녕하세요\n도우미: U � � \u0017 � ��n\u001c 4�� � � � U: 2� � G\n\n��s� 2� � � G� C� � � � \u0018 � \u0012 \u0018 ~: � �� �eb� 2� X � \u0010el\u0011 \u0018 H� � / \u0017.i4\nB\nB\n\n-�",
+        "gen": " U � � \u0017 � ��n\u001c 4�� � � � U: 2� � G\n\n��s� 2� � � G� C� � � � \u0018 � \u0012 \u0018 ~: � �� �eb� 2� X � \u0010el\u0011 \u0018 H� � / \u0017.i4\nB\nB\n\n-�",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.1391304347826087,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "사용자: 안녕하세요\n도우미: � � � W\n\n\n\n\n\n\n ] W� � G � U W� ] Z � \u0014 W� X � � � � � U\n\nA: \u0010 � W�e\u0012 � � \u001d � � ~ \u0017 \\ \u0014 \u0012�e� \u0011 � � � � Z ~ � � \\ � �",
+        "gen": " � � � W\n\n\n\n\n\n\n ] W� � G � U W� ] Z � \u0014 W� X � � � � � U\n\nA: \u0010 � W�e\u0012 � � \u001d � � ~ \u0017 \\ \u0014 \u0012�e� \u0011 � � � � Z ~ � � \\ � �",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.1206896551724138,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "사용자: 안녕하세요\n도우미: � � � \u0011 � � @ \u001d � � � � \u0013 Z � � � R� = C� ^ � Q \u0010 \u0014 \b C� O � W� \\ \u0017 | \u001f � O = � Z � Q � G \u001a 2 * + \u0011 � � \u001b � � \u0005 D \u001c ",
+        "gen": " � � � \u0011 � � @ \u001d � � � � \u0013 Z � � � R� = C� ^ � Q \u0010 \u0014 \b C� O � W� \\ \u0017 | \u001f � O = � Z � Q � G \u001a 2 * + \u0011 � � \u001b � � \u0005 D \u001c ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.10256410256410256,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "en": {
+    "Hello, how are you?": {
+      "greedy": {
+        "full": "Hello, how are you? \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d",
+        "gen": " \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Hello, how are you? Z � \u0014 � � �� \\ \u0012 \u001d � � � �.ilgernt� �  � Z� �� \u0018 � �  � � X � / / \u0004 \u001d� \u0005 �rd� � � �t\u0004 � \\ � � �\nA: X X � �.m� \\\n8",
+        "gen": " Z � \u0014 � � �� \\ \u0012 \u001d � � � �.ilgernt� �  � Z� �� \u0018 � �  � � X � / / \u0004 \u001d� \u0005 �rd� � � �t\u0004 � \\ � � �\nA: X X � �.m� \\\n8",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.14655172413793102,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Hello, how are you? � � / / = Z \u001d � \u0017 � � � � � \b � = W� = � / \u001d \u001d \u0011 \u0011� \u0004 \u0011 � � � \u0014 \u0012 � � \u0017� � \u0014: \b \u0014 � \u001d \u0012 � / = \u0004\nA: � \u0011 �.aeg\u0018 / \t � Z \u001d",
+        "gen": " � � / / = Z \u001d � \u0017 � � � � � \b � = W� = � / \u001d \u001d \u0011 \u0011� \u0004 \u0011 � � � \u0014 \u0012 � � \u0017� � \u0014: \b \u0014 � \u001d \u0012 � / = \u0004\nA: � \u0011 �.aeg\u0018 / \t � Z \u001d",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.058333333333333334,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Hello, how are you? G � = � � \u0004 \u0013 � \u0015 � � * � / 2 Q � \u001d � \u001d \u0011 \u001f \u0004 \u001d � @ \u001d + \u001d \u0012 � @ * � \u0014 Z \u001b > � � [ D � / � ��eg\u0014 | � \u0015 � \u001c U� � D \u0013 � +",
+        "gen": " G � = � � \u0004 \u0013 � \u0015 � � * � / 2 Q � \u001d � \u001d \u0011 \u001f \u0004 \u001d � @ \u001d + \u001d \u0012 � @ * � \u0014 Z \u001b > � � [ D � / � ��eg\u0014 | � \u0015 � \u001c U� � D \u0013 � +",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.06722689075630252,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "What is consciousness?": {
+      "greedy": {
+        "full": "What is consciousness? \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d",
+        "gen": " \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "What is consciousness?�emp� � \u0017 � \u0017 \u0011 ] \t \b \u0012 \u001d Z� � � � � � X �� Z Z X 4 \u0010 \u0004 � � �� � X�erv� \u0004 Z \u0014� � \b W� \b: / \u0011 � � \u0017 \u0012 � \t � ߄ �.� �",
+        "gen": "�emp� � \u0017 � \u0017 \u0011 ] \t \b \u0012 \u001d Z� � � � � � X �� Z Z X 4 \u0010 \u0004 � � �� � X�erv� \u0004 Z \u0014� � \b W� \b: / \u0011 � � \u0017 \u0012 � \t � ߄ �.� �",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.12280701754385964,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "What is consciousness? � � � � \u0011 \u0010 � � � \u0010 \u0005 X � W�eeiaemahc� \u001d \u0005 � ] \u0010 � \u001d � = \u0017 �\nB: \u0011� � ] X� X � � \u0018 � � � � / � � � � \u0012 \b � � W� Z \u0012 �",
+        "gen": " � � � � \u0011 \u0010 � � � \u0010 \u0005 X � W�eeiaemahc� \u001d \u0005 � ] \u0010 � \u001d � = \u0017 �\nB: \u0011� � ] X� X � � \u0018 � � � � / � � � � \u0012 \b � � W� Z \u0012 �",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.13675213675213677,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "What is consciousness? � \u0014 � \t 4 � W\nA\n\n\n\n\n\n\n\nA� ] � \u0014 � ` � U \u0004 � � \u001d \u001a \u0017 � � \u0018 � � 4 � � \u0004 � � \u001d \u0018 � ] \u0010 \u0005 � � � � @ � � H \u001c > \u0013 � � \u0005 � � �",
+        "gen": " � \u0014 � \t 4 � W\nA\n\n\n\n\n\n\n\nA� ] � \u0014 � ` � U \u0004 � � \u001d \u001a \u0017 � � \u0018 � � 4 � � \u0004 � � \u001d \u0018 � ] \u0010 \u0005 � � � � @ � � H \u001c > \u0013 � � \u0005 � � �",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.041666666666666664,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "User: Hi\nAssistant:": {
+      "greedy": {
+        "full": "User: Hi\nAssistant: \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d",
+        "gen": " \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "User: Hi\nAssistant: \u001d ~ � �� \u0011 ~ \u0017 � \b � ~ � �asnec\u001d X \u0010 � � = � \u0014� � ~ � � ] � \\:m�: �� � \u001d \u0017, \u0004 = / � \t � X \u001d \u001d � \u0014 ]� � \u0012 � � � \u0017 X ",
+        "gen": " \u001d ~ � �� \u0011 ~ \u0017 � \b � ~ � �asnec\u001d X \u0010 � � = � \u0014� � ~ � � ] � \\:m�: �� � \u001d \u0017, \u0004 = / � \t � X \u001d \u001d � \u0014 ]� � \u0012 � � � \u0017 X ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.07758620689655173,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "User: Hi\nAssistant: � \u0005 / / \u0011 � \u0018 � � \u0005 � � 4 \t \t � \u0018 W�idA\n� \u001d \u001d�lw� = � 4 \u0011 � �� �� � Z � � \\ / \t Z � � ] �  � � � �: \u0012 D� � � / \u0017\n",
+        "gen": " � \u0005 / / \u0011 � \u0018 � � \u0005 � � 4 \t \t � \u0018 W�idA\n� \u001d \u001d�lw� = � 4 \u0011 � �� �� � Z � � \\ / \t Z � � ] �  � � � �: \u0012 D� � � / \u0017\n",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0782608695652174,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "User: Hi\nAssistant: � 4 � @ \u0011 | \u0010 � \b � + + @ G \u001f ^ � X / \u0005 G � \t � � \u0012 � � > 2 � � 2 � � � \u0013 \b > Q \u0015 � � \u001d � � \u0018 � � � \u0016 G: D \u001d � \u0015 � = � ",
+        "gen": " � 4 � @ \u0011 | \u0010 � \b � + + @ G \u001f ^ � X / \u0005 G � \t � � \u0012 � � > 2 � � 2 � � � \u0013 \b > Q \u0015 � � \u001d � � \u0018 � � � \u0016 G: D \u001d � \u0015 � = � ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.05,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "c2": {
+    "Once upon a time": {
+      "greedy": {
+        "full": "Once upon a timeeeeeeeeeeeeeeeeeaeeeeeeeeeeeeeeeaeeeeeeeeaeeeeeaeeeeeeeeeeeeeeaeeaeeeaeeeaeeeeeaaeeaeeeeeeeeeeeeeeeeeeeeeeaeeeaeeeeeeaee",
+        "gen": "eeeeeeeeeeeeeeeeaeeeeeeeeeeeeeeeaeeeeeeeeaeeeeeaeeeeeeeeeeeeeeaeeaeeeaeeeaeeeeeaaeeaeeeeeeeeeeeeeeeeeeeeeeaeeeaeeeeeeaee",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 1.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Once upon a timerseeeuriiofZ = �lE � � X � � W\nB� Z � � \u0011 ] \u001d � W � \b � X � \u0018 / � W� � � \u0011 � ܐst= � Z� � \u0014 � �hmlly \u0017 � W�risldB: � ",
+        "gen": "rseeeuriiofZ = �lE � � X � � W\nB� Z � � \u0011 ] \u001d � W � \b � X � \u0018 / � W� � � \u0011 � ܐst= � Z� � \u0014 � �hmlly \u0017 � W�risldB: � ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.3103448275862069,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "Once upon a timeesadt� � \u0017 \u001d �o� ] � \u0017 X Z � � � � \u001d Z � \u0011 \\ � � \u0012 � � � \t� W�aeliislb�t�� � ] \u0012 � \u0012 \u0017 \u001d � W� � \t \u0004 \u0018 / � �� � \\ � � ",
+        "gen": "esadt� � \u0017 \u001d �o� ] � \u0017 X Z � � � � \u001d Z � \u0011 \\ � � \u0012 � � � \t� W�aeliislb�t�� � ] \u0012 � \u0012 \u0017 \u001d � W� � \t \u0004 \u0018 / � �� � \\ � � ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.17094017094017094,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Once upon a timestq \u0011 \u0011 � \u001d � � \b X J / \u001d � � � � + � � � � � � H X = � \u0012 / � G � X � \u001d � \u0012 ] � � \u001d � � � \t \u0005 \u0011 � \u0011 � � \u0012 \u001d � \u0012 \u0017 G � G ",
+        "gen": "stq \u0011 \u0011 � \u001d � � \b X J / \u001d � � � � + � � � � � � H X = � \u0012 / � G � X � \u001d � \u0012 ] � � \u001d � � � \t \u0005 \u0011 � \u0011 � � \u0012 \u001d � \u0012 \u0017 G � G ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.09166666666666666,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "Q:": {
+      "greedy": {
+        "full": "Q: \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d",
+        "gen": " \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d \u001d",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Q: \\ �s�: � � � � = � � / \\ � X.t� � � � � � W�em� \u0005 \b � \u0004� \u0018\nU�o\u001c �saec� X� �aeuut\u0004 \u0010 � ] � /�sit\u001c� \u001d� � �.b� � ~ \u0012",
+        "gen": " \\ �s�: � � � � = � � / \\ � X.t� � � � � � W�em� \u0005 \b � \u0004� \u0018\nU�o\u001c �saec� X� �aeuut\u0004 \u0010 � ] � /�sit\u001c� \u001d� � �.b� � ~ \u0012",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.19298245614035087,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Q: ~ � \u001d � / / � \b � Z \u0018 � W� ] � \\ ]� � � � �: 4 / W� � � � � � \u0017: � = \u0017 � � � \u0014 =� \u0018 �\nB: � \u0005 \b \u0005 � � �\n\n\n� � \\ � � ",
+        "gen": " ~ � \u001d � / / � \b � Z \u0018 � W� ] � \\ ]� � � � �: 4 / W� � � � � � \u0017: � = \u0017 � � � \u0014 =� \u0018 �\nB: � \u0005 \b \u0005 � � �\n\n\n� � \\ � � ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.034482758620689655,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Q: \u0010 [ \u0012 � �  W: � U� � ` \\ � � � \u0004 4 � 4 @ � � � X ` * � \u0011 � � \u0018 [ Q � 4 � \t � = � � � � ] � � � \u001d ~ � \u0017 H� > � \u001d � \\ � ",
+        "gen": " \u0010 [ \u0012 � �  W: � U� � ` \\ � � � \u0004 4 � 4 @ � � � X ` * � \u0011 � � \u0018 [ Q � 4 � \t � = � � � � ] � � � \u001d ~ � \u0017 H� > � \u001d � \\ � ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.041666666666666664,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "(empty)": {
+      "greedy": {
+        "full": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+        "gen": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "\n\nAA � Z � �\nG.w� \u0017 D� � �\nA�rj WA? \u001d, � � � � � ��� � D � � 4� � �\n\n4 \u0014 � � \u0012 � = \t �\nA: � � /: \u0014 \\ 4 \u001d \u0012 ߼ � D� \u0011",
+        "gen": "\n\nAA � Z � �\nG.w� \u0017 D� � �\nA�rj WA? \u001d, � � � � � ��� � D � � 4� � �\n\n4 \u0014 � � \u0012 � = \t �\nA: � � /: \u0014 \\ 4 \u001d \u0012 ߼ � D� \u0011",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.12173913043478261,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "\n\n\n\n\n\n\n\n\n\n: � \u001d = = �� � W� \u001deurlneg� \u0012 �\n\n\n\n\n-\nB: � � � � \u0014 � \u001d \u001d � � � � =� \u0012 Z \u0014 �� 4 \u0011 \u001d � � \u0014 ] \u0014 � Z \b � \u0014 ] D �",
+        "gen": "\n\n\n\n\n\n\n\n\n\n: � \u001d = = �� � W� \u001deurlneg� \u0012 �\n\n\n\n\n-\nB: � � � � \u0014 � \u001d \u001d � � � � =� \u0012 Z \u0014 �� 4 \u0011 \u001d � � \u0014 ] \u0014 � Z \b � \u0014 ] D �",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.1016949152542373,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "\n: � \u0014 ~ � � � \u001d 2\nB: � ^ \u0004 \u001d + � � � W� � ^ \u0011 \u0011 \\ 4 � \u001c X \u0011 \u0004 * �\nA\n\n\n\nA: �  � \u0011 \b � � \u0011 \u001d \u001d \u001d � ~ \u0005 = � X 2: � \b \u0012 \u0014 \\",
+        "gen": "\n: � \u0014 ~ � � � \u001d 2\nB: � ^ \u0004 \u001d + � � � W� � ^ \u0011 \u0011 \\ 4 � \u001c X \u0011 \u0004 * �\nA\n\n\n\nA: �  � \u0011 \b � � \u0011 \u001d \u001d \u001d � ~ \u0005 = � X 2: � \b \u0012 \u0014 \\",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.049586776859504134,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "verdict": {
+    "label": "SIMPLE_STACK_FAIL",
+    "ko_pass_n": 0,
+    "en_pass_n": 0,
+    "c2_pass_n": 1,
+    "c1_ko_pass": false,
+    "c1_en_pass": false,
+    "c2_full_pass": false
+  }
+}

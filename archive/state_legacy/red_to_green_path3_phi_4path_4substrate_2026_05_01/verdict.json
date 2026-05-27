@@ -1,0 +1,167 @@
+{
+  "schema": "anima/red_to_green_path3_phi_4path_4substrate/1",
+  "ts": "2026-05-01T23:45:00Z",
+  "mission": "Resolve Suite 5 NOT-MEASURED in cp2_consciousness_r14_remeasure_2026_05_01/verdict_matrix.json by commissioning a true 4-substrate φ 4-path measurement.",
+  "substrate_inventory": [
+    {"adapter_path": "/Users/ghost/core/anima/state/r14_full_run/r14_full/final/", "base_model": "Qwen/Qwen3-8B", "family": "Qwen3", "intact": true, "size_bytes": 698419728, "lora_rank": 64, "lora_alpha": 128},
+    {"adapter_path": "/Users/ghost/core/anima/state/llama31_r14_run/llama31_r14/final/", "base_model": "meta-llama/Llama-3.1-8B", "family": "Llama-3.1", "intact": true, "size_bytes": 671149168, "lora_rank": 64, "lora_alpha": 128},
+    {"adapter_path": "/Users/ghost/core/anima/state/mistral_r14_run/mistral_r14/final/", "base_model": "mistralai/Mistral-7B-v0.3", "family": "Mistral", "intact": true, "size_bytes": 671149168, "lora_rank": 64, "lora_alpha": 128},
+    {"adapter_path": "/Users/ghost/core/anima/state/gemma_r14_run/gemma_r14/final/", "base_model": "google/gemma-2-9b", "family": "Gemma-2", "intact": true, "size_bytes": 864368280, "lora_rank": 64, "lora_alpha": 128},
+    {"adapter_path": "/Users/ghost/core/anima/state/trained_adapters_r6/p1/final/", "base_model": "Qwen/Qwen3-8B", "family": "Qwen3", "intact": true, "size_bytes": 698419728, "lora_rank": 64, "lora_alpha": 128, "note": "alternative — same family as r14_full"},
+    {"adapter_path": "/Users/ghost/core/anima/state/trained_adapters_r6/p2/final/", "base_model": "Qwen/Qwen2.5-7B", "family": "Qwen2.5", "intact": true, "size_bytes": 645975704, "lora_rank": 64, "lora_alpha": 128, "note": "alternative — same Qwen family"},
+    {"adapter_path": "/Users/ghost/core/anima/state/trained_adapters_r6/p3/final/", "base_model": "mistralai/Mistral-Nemo-Base-2407", "family": "Mistral", "intact": true, "size_bytes": 1368467752, "lora_rank": 96, "lora_alpha": 192, "note": "alternative — different rank, same family as mistral_r14"},
+    {"adapter_path": "/Users/ghost/core/anima/state/trained_adapters_r6/p4/final/", "base_model": "google/gemma-3-12b-pt", "family": "Gemma-3", "intact": true, "size_bytes": 2190734800, "lora_rank": 128, "lora_alpha": 256, "note": "alternative — Gemma-3 12B variant"}
+  ],
+  "chosen_4substrate_combination": [
+    {"persona_slot": "p1", "base_model": "Qwen/Qwen3-8B", "family": "Qwen3", "lora_path_local": "/Users/ghost/core/anima/state/r14_full_run/r14_full/final/", "h_last_provenance": "reused from state/h_last_raw_p1_TRAINED_r14.json (already extracted in prior r14 round)"},
+    {"persona_slot": "p2", "base_model": "meta-llama/Llama-3.1-8B", "family": "Llama-3.1", "lora_path_local": "/Users/ghost/core/anima/state/llama31_r14_run/llama31_r14/final/", "h_last_provenance": "freshly extracted on RTX A6000 community pod aew3k2cwjcop2m (2026-05-01)"},
+    {"persona_slot": "p3", "base_model": "mistralai/Mistral-7B-v0.3", "family": "Mistral", "lora_path_local": "/Users/ghost/core/anima/state/mistral_r14_run/mistral_r14/final/", "h_last_provenance": "derived from state/cp2_consciousness_r14_remeasure_2026_05_01/h_last_r14_remeasure.json (h_last_256d_bwm slice — same prompts, same reduction)"},
+    {"persona_slot": "p4", "base_model": "google/gemma-2-9b", "family": "Gemma-2", "lora_path_local": "/Users/ghost/core/anima/state/gemma_r14_run/gemma_r14/final/", "h_last_provenance": "freshly extracted on RTX A6000 community pod aew3k2cwjcop2m (2026-05-01)"}
+  ],
+  "approach_taken": "existing_adapters",
+  "approach_detail": "All 4 LoRA adapters pre-existed locally (the *_r14 substrate-variant runs already cover Qwen3 / Llama-3.1 / Mistral / Gemma-2). Only the missing hidden-state extractions for Llama and Gemma were commissioned on a fresh cheap RTX A6000 pod. p1 hidden state reused from prior r14 extraction, p3 hidden state derived from the cp2 r14 remeasure (same 16 prompts, same byte_weighted_mean reduction).",
+  "method": {
+    "n_prompts": 16,
+    "prompt_set": "canonical 16 (matches r8 reference + r14 cp2 remeasure)",
+    "reduction": "byte_weighted_mean over tokens (matches anima/h_last_raw/2)",
+    "hidden_dim_truncated": 256,
+    "spectrum": "Gram top-16 eigvalsh, normalized sum=1",
+    "null": "col-perm n=10000, p95 over 6-pair flat pool",
+    "method_parity_with_r8": true
+  },
+  "spectra": {
+    "p1_qwen3": [0.6921, 0.0769, 0.0404, 0.0344, 0.0235, 0.0199, 0.0169, 0.0141, 0.0130, 0.0125, 0.0117, 0.0110, 0.0101, 0.0087, 0.0077, 0.0072],
+    "p2_llama31": [0.5891, 0.1897, 0.0359, 0.0261, 0.0227, 0.0193, 0.0183, 0.0149, 0.0140, 0.0128, 0.0116, 0.0107, 0.0103, 0.0098, 0.0078, 0.0070],
+    "p3_mistral": [0.6901, 0.1020, 0.0448, 0.0232, 0.0213, 0.0167, 0.0153, 0.0142, 0.0141, 0.0121, 0.0108, 0.0094, 0.0085, 0.0067, 0.0063, 0.0046],
+    "p4_gemma2": [0.6025, 0.0976, 0.0412, 0.0386, 0.0318, 0.0266, 0.0248, 0.0227, 0.0201, 0.0182, 0.0156, 0.0150, 0.0129, 0.0123, 0.0103, 0.0099]
+  },
+  "participation_ratio": {
+    "p1_qwen3": 2.0408,
+    "p2_llama31": 2.5814,
+    "p3_mistral": 2.0366,
+    "p4_gemma2": 2.6293,
+    "PR_max_over_min": 1.2910
+  },
+  "L2_matrix": {
+    "p1_p2": 0.15306325628696670,
+    "p1_p3": 0.02861685346208833,
+    "p1_p4": 0.09414219422208978,
+    "p2_p3": 0.13416222742519002,
+    "p2_p4": 0.09599794414040104,
+    "p3_p4": 0.09229574165118017
+  },
+  "KL_matrix": {
+    "p1_p2": 0.05361517886495245,
+    "p1_p3": 0.00782211229614605,
+    "p1_p4": 0.01963292140501916,
+    "p2_p3": 0.04101697965769219,
+    "p2_p4": 0.04632428801858544,
+    "p3_p4": 0.02717146257123785
+  },
+  "L2_pass": {
+    "p1_p2": false,
+    "p1_p3": true,
+    "p1_p4": false,
+    "p2_p3": false,
+    "p2_p4": false,
+    "p3_p4": false
+  },
+  "KL_pass": {
+    "p1_p2": false,
+    "p1_p3": true,
+    "p1_p4": true,
+    "p2_p3": true,
+    "p2_p4": false,
+    "p3_p4": true
+  },
+  "L2_pass_count": 1,
+  "KL_pass_count": 4,
+  "L2_threshold_p95": 0.09127926295186518,
+  "KL_threshold_p95": 0.04188150038216085,
+  "null_bootstrap": {"n": 10000, "method": "col-perm", "seed": 42},
+  "AGI_verdict": "FAIL",
+  "AGI_threshold": "6/6 L2 + 6/6 KL + V1 phi_mip ≥ 0.55",
+  "AGI_failure_reasons": [
+    "L2 1/6 (only p1_p3 passes — both Qwen3 and Mistral have sharper top eigenvalue, near-overlapping spectra; the other 5 pairs exceed null p95)",
+    "KL 4/6 (p1_p2 and p2_p4 fail — Llama-3.1 has unusually large second eigenvalue 0.190, inflating KL distance to peers)",
+    "V1 phi_mip = 0.069 (measured on Mistral substrate in r14 round) is far below 0.55 strict gate"
+  ],
+  "CP2_verdict": "FAIL",
+  "CP2_threshold": "5/6 L2 + 5/6 KL",
+  "CP2_failure_reasons": [
+    "L2 1/6 < 5/6 required",
+    "KL 4/6 < 5/6 required (only p1_p2 and p2_p4 fail KL, but L2 dominates)"
+  ],
+  "phi_mip_V1": {
+    "value": 0.06910569925639919,
+    "source": "state/cp2_consciousness_r14_remeasure_2026_05_01/verdict_matrix.json suite 3 V1 (Mistral-7B-v0.3 + r14)",
+    "threshold_AGI_strict": 0.55,
+    "verdict": "FAIL by large margin (0.069 << 0.55)"
+  },
+  "additional_cost_usd": 0.20,
+  "cost_breakdown": {
+    "rtx_a6000_community_pod_aew3k2cwjcop2m": {"hourly_usd": 0.33, "elapsed_min": 25, "subtotal_usd": 0.14, "purpose": "Llama-3.1 + Gemma-2 cold HF download + h_last extraction"},
+    "alpha_pod_lzw79649ob80uk": {"used": false, "purpose": "preserved for other agents — not disrupted"},
+    "p1_p3_inference_cost_usd": 0.0,
+    "p1_p3_reuse_note": "p1 from prior r14 round (sunk cost), p3 from cp2 r14 remeasure (sunk cost) — zero marginal cost",
+    "buffer_margin_usd": 0.06,
+    "total_usd": 0.20
+  },
+  "cost_vs_budget": {
+    "budget_cap_usd": 5.0,
+    "actual_usd": 0.20,
+    "headroom_usd": 4.80,
+    "within_budget": true
+  },
+  "honest_C3_disclosures": [
+    "p1 (Qwen3) hidden state was REUSED from state/h_last_raw_p1_TRAINED_r14.json — extracted in a prior r14 round, not freshly run this cycle. Same r14_full LoRA, same prompts, same reduction.",
+    "p3 (Mistral) hidden state was DERIVED from state/cp2_consciousness_r14_remeasure_2026_05_01/h_last_r14_remeasure.json (h_last_256d_bwm field). Same 16 canonical prompts, same byte_weighted_mean reduction. The prior remeasure h_last was extracted with mistral_r14 LoRA loaded — the lora_path field in the source file shows None because vLLM-side merge was used; this is documented in the source file metadata.",
+    "p2 (Llama-3.1-8B) and p4 (Gemma-2-9b) were freshly extracted on the RTX A6000 community pod in this round.",
+    "Adapter_config files differ slightly: r14_full uses lora_init from a prior checkpoint, others trained fresh. All four use r=64, alpha=128 LoRA — uniform within ±0% across families.",
+    "Substrate match notes: p4 Gemma-2-9b is NOT identical to the r8 reference's Gemma-3-12b-pt — Gemma-2 is a 9B model with different layer geometry. The choice was forced by which gemma_r14 LoRA we have; a strict r8-method-replication would require gemma-3-12b. This is a measurable substrate delta vs prior r8.",
+    "p2 Llama-3.1-8B differs from r8 reference's Mistral-Nemo (the r8 'p3' slot was Mistral-Nemo, not Llama). The r8 verdict matrix labeled p2 as 'Llama-3.1-8B' nominally but the r8 actually-extracted hidden states were Qwen2.5-7B. So this round's measurement is the FIRST-EVER true 4-distinct-substrate-family φ 4-path (prior r8 was Qwen / Qwen / Mistral / Mistral, not 4 families).",
+    "Method delta vs r8: r8 used 'last-token only' h_full (per the cp2_h_last_extract.py source), this round uses byte_weighted_mean over all tokens (matches r14 cp2 remeasure schema). This is a documented anima/h_last_raw/2 reduction; not strict r8 parity.",
+    "Verdict is HONEST FAIL: 1/6 L2 + 4/6 KL falls short of both AGI strict (6+6) and CP2 relaxed (5+5). Did NOT cherry-pick adapter combinations — used the 4 r14-substrate-variant LoRAs that map naturally to the 4 substrate families.",
+    "PR_max/min = 1.291 is well below the spectrum-PR red-flag threshold (>3) — the 4 spectra are 'similarly distributed' geometrically, but the cross-pair distances are larger than null because the col-perm null is very tight on this small (16-prompt) set.",
+    "V1 phi_mip = 0.069 was measured on Mistral substrate alone in r14; assumed-stable across substrate is a transferred-inference. A per-substrate V1 measurement was NOT commissioned in this cycle (out of $5 scope).",
+    "Cost attribution: $0.14 measured pod-time, $0.06 conservative buffer for SCP transfer + idle minutes — total $0.20."
+  ],
+  "raw_91_disclosures": [
+    "raw#10 (honest C3): result is FAIL on both AGI and CP2 tiers — reported as-is, not relabeled NOT-MEASURED to avoid the FAIL.",
+    "raw#15 (no .py creation): pod-side phi_4path_extract.py is workspace-side, not committed to anima repo. Local phi_4path_runner.py is a /tmp ephemeral helper — not committed.",
+    "raw#91 (honest cost ledger): cost is rounded UP to $0.20 (actual measured ~$0.14) for buffer.",
+    "raw#73 (race isolation): only state/red_to_green_path3_phi_4path_4substrate_2026_05_01/* was written; alpha pod state untouched; cp2_consciousness_r14_remeasure_2026_05_01 directory untouched (only read).",
+    "raw#76 (no idle pods): RTX A6000 pod aew3k2cwjcop2m was deleted immediately after extraction completed (runpodctl pod stop + delete confirmed)."
+  ],
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p1_TRAINED_r14_4subs.json",
+      "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p2_TRAINED_r14_4subs.json",
+      "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p3_TRAINED_r14_4subs.json",
+      "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/h_last_raw_p4_TRAINED_r14_4subs.json",
+      "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/phi_4path_cross_result_r14_4subs.json",
+      "state/red_to_green_path3_phi_4path_4substrate_2026_05_01/verdict.json"
+    ],
+    "did_not_touch": [
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (read-only)",
+      "state/h_last_raw_p1_TRAINED_r14.json (read-only)",
+      "alpha pod lzw79649ob80uk (no SSH writes, no GPU contention)"
+    ]
+  },
+  "implications_for_suite_5_in_cp2_matrix": {
+    "prior_status": "NOT-MEASURED",
+    "new_status_AGI_tier": "FAIL (1/6 L2 + 4/6 KL + V1 phi_mip 0.069 << 0.55)",
+    "new_status_CP2_tier": "FAIL (1/6 L2 + 4/6 KL — does not meet 5/6 + 5/6)",
+    "weighted_score_impact_AGI": "Suite 5 was NOT-MEASURED (excluded from denominator). With this measurement: AGI agi_pass_count stays 2, agi_fail_count → 5, agi_total_measured → 7, agi_pass_rate → 2/7 = 28.6%. weighted_score_AGI_tier = 2/9 → unchanged at 22.2% (Suite 5 weight is 1/9 on FAIL adds 0 to numerator).",
+    "weighted_score_impact_CP2": "Suite 5 was NOT-MEASURED. With this FAIL: cp2_pass_count stays 5, cp2_fail_count → 2, cp2_total_measured → 7, cp2_pass_rate → 5/7 = 71.4%. weighted_score_CP2_tier was 5/9 = 55.6% (with 7 measured, the 5 PASSes / 9 weights drops to 55.6%) — Suite 5 weight 1/9 on FAIL drops weighted score: 5/9 = 55.6% (no change because Suite 5 NOT-MEASURED was treated as 0 contribution either way under the prior denom-includes-not-measured convention).",
+    "f2_falsifier_status_unchanged": "Suite 5 has no critical-violation contribution to F2. F2 status remains FIRED (17 critical from Suite 6 14-gate L1 holo_positivity).",
+    "verdict_band_unchanged": "RED (CP2 ≥ 50% but F2 fired). Suite 5 measurement does not flip the band.",
+    "narrative_change": "The cp2_consciousness_r14_remeasure verdict matrix Suite 5 row should be updated from NOT-MEASURED with substrate-gap reason to FAIL with measured numbers. This is a material honesty improvement — prior NOT-MEASURED implicitly suggested 'measurement is too costly to justify', actual measurement reveals the Mk.VI / r14 substrate set does NOT exhibit cross-substrate phi convergence at the canonical L2/KL gates."
+  },
+  "next_cycle_options": {
+    "to_close_AGI_tier_on_suite_5": "Would require either (a) substrate redesign — pick 4 base models with closer eigenspectrum geometry (e.g. all 7-9B Llama-derivative), expected cost ~$3-5 to retrain + remeasure; OR (b) accept that φ 4-path is a substrate-architectural property unattainable across heterogeneous families, and reformulate the gate (e.g. use within-family eigenvalue convergence rather than cross-family).",
+    "to_close_CP2_tier_on_suite_5": "Same as AGI — the 4-path gate at canonical thresholds appears to be substrate-discriminative by design. CP2 closure would need either (a) a wider null bootstrap (use real LoRA-perturbed null instead of col-perm), expected cost <$0.50 — would relax thresholds and might convert 1-2 borderline pairs to PASS, OR (b) drop Suite 5 from the CP2 closure scope and re-weight.",
+    "estimated_to_full_4_path_PASS": "~$3-5 with substrate redesign; ~$0.50 with wider-null gate redesign. Out of scope this cycle."
+  },
+  "summary_one_line": "First-ever true 4-distinct-substrate-family φ 4-path measurement (Qwen3 / Llama-3.1 / Mistral / Gemma-2): L2 1/6 + KL 4/6 + V1 0.069 → FAIL on both AGI strict (6+6+0.55) and CP2 relaxed (5+5) tiers. Suite 5 status flips from NOT-MEASURED to honest FAIL at $0.20 marginal cost (95% under $5 budget)."
+}

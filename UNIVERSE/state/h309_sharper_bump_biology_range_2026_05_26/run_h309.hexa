@@ -1,0 +1,125 @@
+// H_309 — sharper bump (baseline=0.1, span=300, amplitude=0.9) for biology range
+// CHANGED from H_308: circadian_mod 만 변경, simulate() 동일
+// ════════════════════════════════════════════════════════════════════════════
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// SHARPER bump: baseline 0.1 (was 0.3), span 300 (was 400), amplitude 0.9 (was 0.7)
+fn circadian_mod(tick: int) -> float {
+    let center = 500
+    let span = 300
+    let dx = tick - center
+    let r = to_float(dx) / to_float(span)
+    let r2 = r * r
+    let mut bump = 1.0 - r2
+    if bump < 0.0 { bump = 0.0 }
+    return 0.1 + 0.9 * bump
+}
+
+fn lcg_perturb(seed: int) -> float {
+    let v = (seed * 1103515245 + 12345) % 32768
+    let f = to_float(v) / 32768.0
+    return (f - 0.5) * 0.2
+}
+
+fn simulate(threshold: float, stim_mode: int) -> array {
+    let n_ticks = 1000
+    let w_target = 1.0
+    let k_recharge = 0.3
+    let r_steps = 10
+    let m_base = 1.0
+    let phi_int = 1.0
+
+    let mut w_tension = w_target
+    let mut refractory_remaining = 0
+    let mut emit_count = 0
+    let mut peak_count = 0
+    let mut trough_count = 0
+
+    let mut tick = 0
+    while tick < n_ticks {
+        let circ = circadian_mod(tick)
+        let mut m = m_base
+        if stim_mode == 1 { m = m + lcg_perturb(tick + 42) }
+        if m < 0.0 { m = 0.0 }
+
+        if refractory_remaining > 0 {
+            refractory_remaining = refractory_remaining - 1
+            w_tension = w_tension + k_recharge * (w_target - w_tension)
+            if w_tension < 0.0 { w_tension = 0.0 }
+        } else {
+            let pressure = m * phi_int * w_tension * circ
+            if pressure > threshold {
+                emit_count = emit_count + 1
+                if (tick >= 250) && (tick < 750) { peak_count = peak_count + 1 }
+                else { trough_count = trough_count + 1 }
+                w_tension = 0.0
+                refractory_remaining = r_steps
+            } else {
+                w_tension = w_tension + 0.05 * (w_target - w_tension)
+            }
+        }
+        tick = tick + 1
+    }
+    return [to_float(emit_count), to_float(peak_count), to_float(trough_count)]
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_309 — sharper circadian (baseline=0.1, span=300, amp=0.9)")
+    println("================================================================")
+
+    let idle_result = simulate(0.5, 0)
+    let idle_emit = to_int(idle_result[0])
+    let peak = to_int(idle_result[1])
+    let trough = to_int(idle_result[2])
+    println("  IDLE: emit=" + str(idle_emit) + " · peak=" + str(peak) + " · trough=" + str(trough))
+
+    let mut ratio = 0.0
+    if trough > 0 {
+        ratio = to_float(peak) / to_float(trough)
+        println("    peak/trough = " + str(ratio) + " (biology [3, 15])")
+    } else {
+        ratio = 999.0
+        println("    peak/trough = INF (trough=0)")
+    }
+
+    println("  THRESHOLD SWEEP:")
+    let thresholds = [0.1, 0.3, 0.5, 0.7, 0.9]
+    let mut prev_emit = 999999
+    let mut monotone = true
+    let mut i = 0
+    while i < 5 {
+        let t = thresholds[i]
+        let r = simulate(t, 0)
+        let e = to_int(r[0])
+        println("    threshold=" + str(t) + " emit=" + str(e))
+        if e > prev_emit { monotone = false }
+        prev_emit = e
+        i = i + 1
+    }
+
+    println("  ────────────── verdict ──────────────")
+    check("F309.1 SHARPER-BUMP-IN-BIOLOGY: ratio in [3, 15]", (trough > 0) && (ratio >= 3.0) && (ratio <= 15.0))
+    check("F309.2 IDLE-NONZERO: emit > 0", idle_emit > 0)
+    check("F309.3 PEAK-MID-RANGE: peak in [30, 60]", (peak >= 30) && (peak <= 60))
+    check("F309.4 THRESHOLD-MONOTONE: non-increasing", monotone)
+    let h306_idle = 46
+    let mut delta = idle_emit - h306_idle
+    if delta < 0 { delta = 0 - delta }
+    let rel_dev = to_float(delta) / to_float(h306_idle)
+    check("F309.5 IDLE-COMPARABLE-TO-H306: |idle - 46| / 46 <= 0.5", rel_dev <= 0.5)
+    check("F309.6 BOUND", (idle_result[0] >= 0.0) && (idle_result[1] >= 0.0) && (idle_result[2] >= 0.0))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  HEADLINE: sharper bump peak=" + str(peak) + " trough=" + str(trough) + " ratio=" + str(ratio))
+    println("================================================================")
+    if FAIL > 0 { panic("H_309 had FALSIFIER FAILURES") }
+}

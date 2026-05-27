@@ -1,0 +1,103 @@
+// HEXAD/IIT4/state/iit4_m2_smoke_2026_05_25/run_m2.hexa
+//
+//   IIT4 M2 smoke — iit4_distinction.hexa small-φ · MICE · distinction checks.
+//
+//   Hand-verifiable: 2-unit COPY/SWAP network (deterministic) ⇒ every mechanism
+//   that determines a purview is fully irreducible (1 bit):
+//     • small_phi_effect({0}=ON over {1}) = 1.0  (unit0_t determines unit1_t+1)
+//     • small_phi_effect({0}=ON over {0}) = 0.0  (unit0 does not affect itself)
+//     • small_phi_cause ({0}=ON over {1}) = 1.0  (unit0_now ⇐ unit1_past)
+//     • mice_effect/mice_cause({0}=ON)    → φ=1.0, purview {1} (mask 2)
+//     • distinction({0}=ON), distinction({1}=ON) → φ_d = 1.0
+//     • count_distinctions(state 11) ≥ 2
+//   Null control: all-noise TPM (every entry 0.5) ⇒ φ = 0 everywhere, 0 distinctions.
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_distinction.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn check(name: string, cond: bool) {
+    if cond {
+        PASS = PASS + 1
+        println("  [PASS] " + name)
+    } else {
+        FAIL = FAIL + 1
+        println("  [FAIL] " + name)
+    }
+}
+
+// 2-unit COPY/SWAP TPM: unit0_t+1 = bit1(s), unit1_t+1 = bit0(s).
+fn build_copy2() -> array {
+    return [0.0, 0.0,  0.0, 1.0,  1.0, 0.0,  1.0, 1.0]
+}
+
+// all-noise TPM (every unit ON with prob 0.5 regardless of state).
+fn build_noise2() -> array {
+    let mut t = []
+    let mut i = 0
+    while i < 8 {
+        t = t.push(0.5)
+        i = i + 1
+    }
+    return t
+}
+
+fn main() {
+    println("================================================================")
+    println("  IIT4 M2 smoke — iit4_distinction.hexa (small-φ · MICE · distinction)")
+    println("================================================================")
+
+    let copy2 = build_copy2()
+    let m0 = 1                                            // mechanism {unit0}
+    let m1 = 2                                            // mechanism {unit1}
+    let pv0 = 1
+    let pv1 = 2
+
+    // ── small-φ (effect) ────────────────────────────────────────────────
+    let se = small_phi_effect(copy2, 2, m0, m0, pv1)
+    check("small_phi_effect {0}=ON over {1} = 1.0", approx(se[0], 1.0))
+    let se_self = small_phi_effect(copy2, 2, m0, m0, pv0)
+    check("small_phi_effect {0}=ON over {0} = 0.0", approx(se_self[0], 0.0))
+
+    // ── small-φ (cause) ─────────────────────────────────────────────────
+    let sc = small_phi_cause(copy2, 2, m0, m0, pv1)
+    check("small_phi_cause {0}=ON over {1} = 1.0", approx(sc[0], 1.0))
+
+    // ── MICE ────────────────────────────────────────────────────────────
+    let me = mice_effect(copy2, 2, m0, m0)
+    check("mice_effect {0}=ON φ = 1.0", approx(me[0], 1.0))
+    check("mice_effect {0}=ON purview = {1} (mask 2)", approx(me[1], 2.0))
+    let mc = mice_cause(copy2, 2, m0, m0)
+    check("mice_cause {0}=ON φ = 1.0", approx(mc[0], 1.0))
+    check("mice_cause {0}=ON purview = {1} (mask 2)", approx(mc[1], 2.0))
+
+    // ── distinctions ────────────────────────────────────────────────────
+    let d0 = distinction(copy2, 2, m0, m0)
+    check("distinction {0}=ON φ_d = 1.0", approx(d0[0], 1.0))
+    let d1 = distinction(copy2, 2, m1, m1)               // {unit1}=ON (symmetric)
+    check("distinction {1}=ON φ_d = 1.0 (symmetry)", approx(d1[0], 1.0))
+
+    let cnt = count_distinctions(copy2, 2, 3)             // system state 11
+    check("count_distinctions(copy, state 11) >= 2", cnt >= 2)
+
+    // ── null control: all-noise network ────────────────────────────────
+    let noise2 = build_noise2()
+    let ne = small_phi_effect(noise2, 2, m0, m0, pv1)
+    check("noise small_phi_effect = 0.0", approx(ne[0], 0.0))
+    let ncnt = count_distinctions(noise2, 2, 3)
+    check("noise count_distinctions = 0", ncnt == 0)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M2 smoke FAILED") }
+}

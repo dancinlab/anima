@@ -1,0 +1,33 @@
+{
+  "schema": "clm_phase_a1/decision_gate/1",
+  "rule": "phi_star_min magnitude >= 0.5 -> PASS Phase A.2",
+  "phi_star_min": 1167.6192,
+  "phi_star_min_magnitude": 1167.6192,
+  "gate_magnitude_PASS": true,
+  "verdict": "PASS_PROCEED_PHASE_A2",
+  "cds_max_stability": 0.397,
+  "cds_gate_PASS": true,
+  "comparison_alm_4bb": {
+    "mistral_7b_v03": {
+      "phi_star_min": -16.7,
+      "sign": "negative"
+    },
+    "qwen3_8b": {
+      "phi_star_min": 1.04,
+      "sign": "positive"
+    },
+    "llama_3_1": {
+      "phi_star_min": 5.09,
+      "sign": "positive"
+    },
+    "gemma": {
+      "phi_star_min": -0.79,
+      "sign": "negative"
+    },
+    "clm_v4_530m_this_run": {
+      "phi_star_min": 1167.6192,
+      "sign": "positive_iit_integrated"
+    }
+  },
+  "ts": "2026-05-02T08:06:41Z"
+}

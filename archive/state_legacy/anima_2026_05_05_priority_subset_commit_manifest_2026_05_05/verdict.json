@@ -1,0 +1,134 @@
+{
+  "schema": "anima/2026_05_05_priority_subset_commit_manifest/verdict/1",
+  "cycle_id": "anima_2026_05_05_priority_subset_commit_manifest_2026_05_05",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "task": "BG-BZ — 5 priority finding subset commit manifest (mac doc-only, fire-permission deferred to user)",
+  "kind": "DOC_ONLY_COMMIT_MANIFEST_SUBSET",
+  "verdict": "MANIFEST_READY",
+  "verdict_qualifier": "FIVE_PRIORITY_FINDING_SUBSET_COMMIT_MESSAGES_COMPOSED_TOKEN_LEAK_CLEAN_USER_FIRE_PENDING",
+  "platform": "mac doc-only (no compute)",
+  "cost_usd": 0.0,
+  "wallclock_min_estimate": 20,
+
+  "primary_doc": "docs/anima_2026_05_05_priority_subset_commit_manifest_2026_05_05.ai.md",
+
+  "scope": {
+    "subset_size": 5,
+    "subset_name": "Group P (priority subset of today's BG cycle landings)",
+    "relation_to_BG_AM_full": "Group P is the high-signal subset; full BG-AM 5+1 group manifest at docs/anima_2026_05_05_cycle_commit_manifest_landed_2026_05_05.ai.md covers ~250 entries and is the master record. Group P prioritizes 5 findings whose semantic weight is strongest from today's cycle for fast user fire-fire."
+  },
+
+  "five_priority_findings": [
+    {
+      "id": 1,
+      "tag": "BG-BJ",
+      "name": "residual basin reframing — collapse upstream of lm_head",
+      "primary_doc": "docs/anima_emerge_chat_entropy_trajectory_landed_2026_05_05.ai.md",
+      "state_dir": "state/anima_emerge_chat_entropy_trajectory_2026_05_05/",
+      "tool_file": "tool/transient_py/anima_emerge_chat_entropy_trajectory.py",
+      "files_present": true,
+      "key_finding": "per-token entropy trajectory shows short Korean prompt collapses at step 0 to byte fallback (0x1c), longer Korean prompt collapses at step 1 to fragment basin, English prompt collapses at step 5 to fragment basin. Output-projection fixes (LoRA / vocab mask / Korean bias / template / few-shot / c_proj) invalid by construction — collapse is in residual stream, not lm_head."
+    },
+    {
+      "id": 2,
+      "tag": "BG-AY",
+      "name": "#115 architectural impossibility 4-closure formal theorem",
+      "primary_doc": "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md",
+      "state_dir": "state/anima_115_architectural_4_closure_theorem_2026_05_05/",
+      "tool_file": null,
+      "files_present": true,
+      "key_finding": "Closure-under-evidence theorem: 4 mechanisms (post-hoc LoRA SFT, Phi-star distill, tribev2 cross-modal, logit lens / semantic bridge) ALL FAIL on CLM v4. Bounded by 4 untested hypotheses H1-H4. Corollary: chat-capability path of record = Llama-3.2-3B Path A v2 (composite 0.5584); CLM v4 = substrate-research-only."
+    },
+    {
+      "id": 3,
+      "tag": "BG-AN",
+      "name": "minimum viable emerge dialogue (1-turn + 3-turn auto-fire)",
+      "primary_doc": "docs/anima_emerge_dialogue_first_turn_landed_2026_05_05.ai.md",
+      "state_dir": "state/anima_emerge_dialogue_first_turn_2026_05_05/",
+      "tool_file": "tool/transient_py/anima_emerge_dialogue_repl.py",
+      "files_present": true,
+      "key_finding": "F-AN-1 PASS: REPL helper emits phi-star + drift + hidden-state-delta + l2-var per turn; prior threading active turn 2+; session log JSONL atexit handler. 3-turn drift swings ±0.1 with input variation; CLM v4 phi-star baseline 42.117 holds."
+    },
+    {
+      "id": 4,
+      "tag": "BG-BL",
+      "name": "nnsight integration smoke PASS",
+      "primary_doc": "docs/anima_emerge_nnsight_smoke_landed_2026_05_05.ai.md",
+      "state_dir": "state/anima_emerge_nnsight_smoke_2026_05_05/",
+      "tool_file": "tool/transient_py/anima_emerge_nnsight_smoke.py",
+      "files_present": true,
+      "key_finding": "nnsight 0.7.0 wraps CLM v4 mk2 v1; trace capture at decoder.blocks[8].output returns shape [1, 2, 768]. PASS_READY for F-NNSIGHT-1 intervention falsifier next step."
+    },
+    {
+      "id": 5,
+      "tag": "BG-BN",
+      "name": "phi-star formula CLM v4-specific (Pythia cross-substrate smoke)",
+      "primary_doc": "docs/anima_emerge_pythia_phi_smoke_landed_2026_05_05.ai.md",
+      "state_dir": "state/anima_emerge_pythia_phi_smoke_2026_05_05/",
+      "tool_file": "tool/transient_py/anima_emerge_pythia_phi_smoke.py",
+      "files_present": true,
+      "key_finding": "Pythia-70m phi proxy mean 41.92 (drift 0.062 from CLM v4 baseline 41.86). Geometry mismatch: phi formula = 8-cell x 192 tile-reshape = CLM v4-specific; Pythia is 6-layer 512-hidden. Cross-substrate phi-star carryover unverified — phi-star is paradigm v11 G3 + CLM v4 specific."
+    }
+  ],
+
+  "token_leak_pre_scan": {
+    "command": "grep -rEn 'hf_[A-Za-z0-9]{20,}|sk-ant-[A-Za-z0-9]{20,}|ghp_[A-Za-z0-9]{20,}|AKIA[A-Z0-9]{16}' <14 priority files>",
+    "exit_code": 0,
+    "matches": 0,
+    "verdict": "CLEAN",
+    "files_scanned": [
+      "docs/anima_emerge_chat_entropy_trajectory_landed_2026_05_05.ai.md",
+      "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md",
+      "docs/anima_emerge_dialogue_first_turn_landed_2026_05_05.ai.md",
+      "docs/anima_emerge_nnsight_smoke_landed_2026_05_05.ai.md",
+      "docs/anima_emerge_pythia_phi_smoke_landed_2026_05_05.ai.md",
+      "state/anima_emerge_chat_entropy_trajectory_2026_05_05/aggregate.json",
+      "state/anima_emerge_chat_entropy_trajectory_2026_05_05/verdict.json",
+      "state/anima_115_architectural_4_closure_theorem_2026_05_05/verdict.json",
+      "state/anima_emerge_dialogue_first_turn_2026_05_05/verdict.json",
+      "state/anima_emerge_nnsight_smoke_2026_05_05/verdict.json",
+      "state/anima_emerge_pythia_phi_smoke_2026_05_05/aggregate.json",
+      "state/anima_emerge_pythia_phi_smoke_2026_05_05/verdict.json",
+      "tool/transient_py/anima_emerge_chat_entropy_trajectory.py",
+      "tool/transient_py/anima_emerge_dialogue_repl.py",
+      "tool/transient_py/anima_emerge_nnsight_smoke.py",
+      "tool/transient_py/anima_emerge_pythia_phi_smoke.py"
+    ]
+  },
+
+  "five_commit_messages_composed": true,
+
+  "user_fire_sequence_simple": [
+    "step 1: review docs/anima_2026_05_05_priority_subset_commit_manifest_2026_05_05.ai.md §3 (5 commit messages full text)",
+    "step 2: fire commit P-1 (BG-BJ residual basin reframing)",
+    "step 3: fire commit P-2 (BG-AY 4-closure theorem)",
+    "step 4: fire commit P-3 (BG-AN minimum viable dialogue)",
+    "step 5: fire commit P-4 (BG-BL nnsight integration)",
+    "step 6: fire commit P-5 (BG-BN phi-star CLM v4 specific)",
+    "note: BG-AM full 5+1 group (~250 entries) deferred to separate cycle decision"
+  ],
+
+  "honest_c3": [
+    "C1 'priority subset' is anima-curator selection (5 of today's ~50 BGs). Selection bias: BG-BJ + BG-AY are reframing / theoretical (semantic weight high); BG-AN + BG-BL + BG-BN are scaffolding / smoke (operational weight high). Selection NOT objective ranking — alternative subsets would emphasize different findings (e.g. F-Pbeta-3 from yesterday, BG-AM full corpus tomorrow).",
+    "C2 commit messages compose 'why' (~3-5 lines per HEREDOC) but do NOT include full delta-vs-baseline composite numbers in commit body. Reader expecting Llama-Path-A-v2-style numeric breakdown should consult linked docs/state. Compactness chosen over self-containment.",
+    "C3 BG-AM full manifest (250 entries) NOT bypassed — this Group P subset is COMPLEMENTARY to BG-AM, not REPLACEMENT. Risk: user fires Group P then forgets to schedule BG-AM full cycle, leaving 245 entries un-committed. Mitigation = manifest §1 explicitly references BG-AM full as separate.",
+    "C4 'fire-permission deferred' = BG outputs manifest only; commit absolutely not executed. raw#15 additive + raw#9 honest scope + raw#10 honest C3. If user fire-fires sequence as-is, 5 separate commits land in main; if user wants single mega-commit, recompose required.",
+    "C5 token leak pre-scan covered the 4 primary regex shapes (hf_, sk-ant-, ghp_, AKIA). Other token shapes (slack, openai sk-, gcp, azure) NOT scanned — anima leak_guard PreToolUse covers 9 shapes broader; rely on hook for second-line defense at fire-time.",
+    "C6 subset vs BG-AM full diff: Group P = 5 findings = ~14 files, fast (<5min user fire). BG-AM full = ~50 BGs / 250 entries / massive — separate decision lane. Group P does NOT subsume or invalidate BG-AM."
+  ],
+
+  "constraints_compliance": {
+    "raw_9_honest_scope": true,
+    "raw_10_honest_c3_emitted": true,
+    "raw_15_additive": "no edits to existing files; 2 new files only (this verdict + manifest doc)",
+    "raw_37_transient_py_namespace": "n/a (doc-only task)",
+    "hf_token_leak": "none (no token literals in manifest or verdict)",
+    "commit_executed": false,
+    "commit_executed_note": "BG manifest emit only; user fire-permission required for actual git commits per task constraint",
+    "files_created": [
+      "docs/anima_2026_05_05_priority_subset_commit_manifest_2026_05_05.ai.md",
+      "state/anima_2026_05_05_priority_subset_commit_manifest_2026_05_05/verdict.json"
+    ],
+    "files_modified": []
+  }
+}

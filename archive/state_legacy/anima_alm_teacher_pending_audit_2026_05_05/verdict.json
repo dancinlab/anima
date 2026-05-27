@@ -1,0 +1,142 @@
+{
+  "schema": "anima/alm_teacher_pending_audit/verdict/1",
+  "ts_utc": "2026-05-05T02:00:00Z",
+  "bg_lane": "ALM-TEACHER-PENDING-AUDIT",
+  "audit_doc": "docs/anima_alm_teacher_pending_audit_2026_05_05.ai.md",
+  "cost_usd": 0.00,
+  "mode": "mac_audit_only_no_exec_no_commit",
+  "alm_pending_count": 0,
+  "alm_status": "SUNSET_CONFIRMED",
+  "alm_sunset_anchor": "clm.alm_red_quintuple_confirm",
+  "alm_red_quintuple_matrix": {
+    "1_broken_adapter": "r14 closure batch 1 (3 substrate-real REDs)",
+    "2_dynamic": "N-51 EXEC RED 5%->1%",
+    "3_verifier_arch": "A1 learned phi_extractor NOT_SUPPORTED",
+    "4_toolchain": "W2 misdiagnosis $0 unblock",
+    "5_L9_free_win": "Path E L1 16/16 dominant L9 fix did not move ALM"
+  },
+  "teacher_pending_count": 3,
+  "teacher_open_spec_gap_count": 1,
+  "teacher_status": "PBETA_SCALE_50K_COMPLETE_DOWNSTREAM_PENDING",
+  "teacher_pending_items": [
+    {
+      "id": "T-1",
+      "label": "PULL_RESULTS_THEN_KILL_PBETA_POD",
+      "priority": 1,
+      "cost_usd_estimate": 0.30,
+      "wall_minutes": 10,
+      "blocked_by": [],
+      "auto_launch_eligible": false,
+      "user_decision_required": true,
+      "decision_default": "PULL_THEN_KILL"
+    },
+    {
+      "id": "T-2",
+      "label": "PBETA_50K_HOLDOUT500_EVAL",
+      "priority": 2,
+      "cost_usd_estimate": "0_to_5",
+      "wall_hours": "3-6",
+      "blocked_by": ["T-1"],
+      "auto_launch_eligible": true,
+      "auto_launch_path": "ubu1_after_t1_complete",
+      "user_decision_required": false
+    },
+    {
+      "id": "T-3",
+      "label": "PBETA_5SEED_SCALEUP",
+      "priority": 3,
+      "cost_usd_estimate": "25_to_75",
+      "wall_minutes": "30-60_per_seed_parallel",
+      "blocked_by": ["T-2"],
+      "auto_launch_eligible": false,
+      "user_decision_required": true,
+      "decision_default": "AWAIT_T2_VERDICT_THEN_DECIDE"
+    }
+  ],
+  "teacher_open_spec_gaps": [
+    {
+      "id": "S-1",
+      "label": "phi_star_axis_paradigm_d_production_verdict_eval_spec",
+      "cost_usd": 0.00,
+      "effort_hours": "1-2",
+      "blocking": false,
+      "recommendation": "defer_until_t2_reveals_empirical_magnitude"
+    }
+  ],
+  "closed_lanes_count": 9,
+  "closed_lanes": [
+    "alm_4bb_hid8_remeasure_2026_05_02",
+    "strategic_alm_clm_review_2026_05_01",
+    "strategic_alm_cp2_revival_2026_05_01",
+    "strategic_alm_path_e_L9_fix_2026_05_01",
+    "strategic_alm_tension_field_exec_2026_05_01",
+    "a1_learned_phi_extractor",
+    "p9_paradigm_d_logit_axis_P_alpha_retokenize",
+    "p9_paradigm_d_logit_axis_P_gamma_shelve",
+    "BG_T_1_logit_axis_mini_FAIL_PRELAUNCH_VOCAB_MISMATCH"
+  ],
+  "alternative_teacher_candidates_evaluated": [
+    {"name": "Mistral-7B-Instruct-v0.3", "vocab": 32768, "compatible_logit_axis": false, "phi_axis_viable": true, "current_canonical": true},
+    {"name": "Llama-3.1-8B-Instruct", "vocab": 128000, "compatible_logit_axis": false, "phi_axis_viable": true, "current_canonical": false},
+    {"name": "Qwen3-8B", "vocab": 152064, "compatible_logit_axis": false, "phi_axis_viable": true, "current_canonical": false},
+    {"name": "Gemma-2-9B", "vocab": 256000, "compatible_logit_axis": false, "phi_axis_viable": true, "current_canonical": false}
+  ],
+  "alternative_teacher_finding": "ALL alternatives hit same vocab-mismatch issue against CLM v4 64K-multilingual bespoke SPM; phi-star axis (scalar, vocab-agnostic) is the only viable distill axis regardless of teacher choice; Mistral-7B-Instruct-v0.3 remains canonical because cache already built (14.2 GB ubu1) and Pbeta-SCALE 50K validated the pipeline",
+  "recommended_next_actions": [
+    {
+      "rank": 1,
+      "id": "T-1",
+      "label": "PULL_RESULTS_THEN_KILL_PBETA_POD",
+      "completion_quality_score": 9.5,
+      "cost_usd": 0.30,
+      "value": "stops_2_99_per_hr_idle_burn_preserves_50k_adapter",
+      "auto_launchable": false,
+      "user_decision_required": true
+    },
+    {
+      "rank": 2,
+      "id": "T-2",
+      "label": "PBETA_50K_HOLDOUT500_EVAL",
+      "completion_quality_score": 9.0,
+      "cost_usd": 0.00,
+      "value": "decisive_for_t3_go_no_go_substrate_thesis_evidence",
+      "auto_launchable": true,
+      "user_decision_required": false
+    },
+    {
+      "rank": 3,
+      "id": "T-3",
+      "label": "PBETA_5SEED_SCALEUP_CONDITIONAL",
+      "completion_quality_score": 7.0,
+      "cost_usd": "25_to_75",
+      "value": "statistical_significance_on_phi_star_gain_only_if_t2_pass",
+      "auto_launchable": false,
+      "user_decision_required": true,
+      "conditional_on": "T-2 verdict shows substantive gain"
+    }
+  ],
+  "requires_user_decision": true,
+  "user_decision_items": [
+    {"item": "T-1 pull-vs-kill-vs-keep-alive", "default": "PULL_THEN_KILL", "urgency": "HIGH (idle burn 2.99/hr)"},
+    {"item": "T-3 5-seed go-no-go", "default": "AWAIT_T2_VERDICT", "urgency": "LOW (gated by T-2)"}
+  ],
+  "pbeta_scale_blocks_pending_work": false,
+  "pbeta_scale_status_note": "Pbeta-SCALE 50K result ENABLES (does not block) the 3 pending teacher items; pod idle burn is the immediate operational concern but does not change pending-work logic; Pbeta verdict PRODUCTION_25K_FULL_PASS attests infrastructure success not phi-star magnitude gain (which awaits T-2 eval)",
+  "raw_compliance": {
+    "raw9_md_only": true,
+    "raw10_honest_c3_count": 7,
+    "raw15_no_destructive_mutation": true
+  },
+  "files_created": [
+    "docs/anima_alm_teacher_pending_audit_2026_05_05.ai.md",
+    "state/anima_alm_teacher_pending_audit_2026_05_05/verdict.json"
+  ],
+  "files_NOT_modified": [
+    ".roadmap.clm",
+    ".roadmap.p9_sft",
+    ".roadmap.n_substrate",
+    ".roadmap.a1_learned_phi_extractor",
+    "any_state_p9_paradigm_d_*_dir",
+    "any_pod_or_hf_repo"
+  ]
+}

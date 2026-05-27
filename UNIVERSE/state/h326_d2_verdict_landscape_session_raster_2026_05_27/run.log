@@ -1,0 +1,45 @@
+════════════════════════════════════════════════════════════════
+H_326 — D2 axis · verdict-landscape session raster
+════════════════════════════════════════════════════════════════
+
+INPUT cells (10 — H_312..H_321, deduplicated per-doc category):
+  H_312 🔴 STRUCTURAL  LIFE+CONSC   apoptosis low-Φ pruning
+  H_313 🟢 DYNAMICAL   LIFE         STDP timestep integrate-and-fire
+  H_314 🔴 STRUCTURAL  LIFE         symbiogenesis merge α-sweep
+  H_315 🔴 STRUCTURAL  LIFE+CONSC   weak-edge pruning Φ-retention
+  H_316 🟢 META        CONSC        local-greedy ⊥ global Φ synthesis
+  H_317 🟢 DYNAMICAL   LIFE         homeostasis feedback setpoint
+  H_318 🟢 HYBRID      LIFE         autophagy recycle (struct × dyn)
+  H_319 🔴 HYBRID      LIFE         clonal-selection (struct × dyn)
+  H_320 🔴 STRUCTURAL  META         LIFE-vs-CONSC Φ-ratio comparator
+  H_321 🟢 STRUCTURAL  CONSC        faithful Φ recheck on fixed panel
+
+─── CATEGORY tally ─────────────────────────────────────────────
+  STRUCTURAL  supp=1  fal=4  rate=0.2
+  DYNAMICAL   supp=2  fal=0  rate=1.0
+  HYBRID      supp=1  fal=1  rate=0.5
+  META        supp=1  fal=0  rate=1.0
+
+  H1 ratio  dyn_rate / struct_rate = 5.0
+
+─── THEME tally (inclusive — LIFE+CONSC double-coded both buckets) ──
+  LIFE   supp=3  fal=4  rate=0.428571
+  CONSC  supp=2  fal=2  rate=0.5
+  H2 spread (max/min) = 1.16667
+
+─── THEME tally (exclusive — LIFE-only & CONSC-only) ────────────────
+  LIFE   supp=3  fal=2  rate=0.6
+  CONSC  supp=2  fal=0  rate=1.0
+  H2 spread (max/min) = 1.66667
+
+─── FALSIFIER VERDICTS ─────────────────────────────────────────
+  [PASS] F326.1 H1 PASS (dyn_rate >= 2× struct_rate AND dyn_rate > struct_rate)
+  [FAIL] F326.2 H2 PASS (exclusive — theme spread <= 1.5×)
+  [PASS] F326.2 H2 PASS (inclusive — theme spread <= 1.5×)
+  [PASS] F326.3 sanity (10 atomic rows in raster)
+
+───────────────────────────────────────────────────────────────
+TALLY: PASS=3  FAIL=1
+
+AGGREGATE VERDICT: 🟢 PARTIAL-SUPPORTED (H1 PASS, H2 FAIL — D/S bias confirmed, but L/C also matters)
+════════════════════════════════════════════════════════════════

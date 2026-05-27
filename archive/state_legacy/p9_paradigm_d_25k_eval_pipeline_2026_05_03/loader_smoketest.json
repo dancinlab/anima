@@ -1,0 +1,91 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_eval_pipeline/loader_smoketest/1",
+  "ts_utc": "2026-05-03T21:14:32Z",
+  "model": "CLM v4 350M ConsciousDecoderV2",
+  "lora_config": {
+    "r": 64,
+    "alpha": 128,
+    "dropout": 0.0,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "synthetic": true
+  },
+  "phi_extractor": {
+    "name": "anima_phi_v3_canonical",
+    "n_probes": 16,
+    "hid_trunc": 8,
+    "k_parts": 8,
+    "ridge": 0.001
+  },
+  "teacher_z_constants": {
+    "mu_T": -24.23,
+    "sigma_T": 2.116
+  },
+  "stages": {
+    "load_tokenizer_and_data": {
+      "status": "OK",
+      "wall_s": 0.01
+    },
+    "load_base_clm_v4": {
+      "status": "OK",
+      "wall_s": 4.07
+    },
+    "attach_synthetic_lora": {
+      "status": "OK",
+      "wall_s": 2.4
+    },
+    "save_lora_adapter": {
+      "status": "OK",
+      "wall_s": 0.05
+    },
+    "roundtrip_peft_from_pretrained": {
+      "status": "OK",
+      "wall_s": 3.0
+    },
+    "forward_and_phi_extract": {
+      "status": "OK",
+      "wall_s": 0.31
+    },
+    "z_score_vs_teacher_cache": {
+      "status": "OK",
+      "wall_s": 0.07
+    }
+  },
+  "verdict": "PASS",
+  "vocab_size": 64000,
+  "calib_n_prompts": 16,
+  "base_n_params": 477648512,
+  "base_missing_keys": 0,
+  "base_unexpected_keys": 0,
+  "base_alloc_gb": 7.31,
+  "lora_trainable_params": 19005440,
+  "lora_total_params": 496653952,
+  "lora_pct_trainable": 3.8267,
+  "adapter_files": [
+    "README.md",
+    "adapter_config.json",
+    "adapter_model.safetensors"
+  ],
+  "adapter_dir": "/home/aiden/anima/state/p9_paradigm_d_25k_eval_2026_05_03/synthetic_lora_smoke",
+  "roundtrip_trainable_params": 0,
+  "alloc_after_roundtrip_gb": 7.39,
+  "phi_star_min": 45.91520414820293,
+  "phi_star_mean": 46.49351962633608,
+  "phi_n_partitions": 8,
+  "teacher_cache_n": 50000,
+  "teacher_cache_mu_empirical": -24.2299,
+  "teacher_cache_sigma_empirical": 2.1158,
+  "teacher_cache_mu_frozen": -24.23,
+  "teacher_cache_sigma_frozen": 2.116,
+  "z_S_synthetic": 2.0276,
+  "z_T_mean": 6.8e-05,
+  "z_T_std": 0.99992,
+  "z_score_mse_synthetic": 5.1107
+}

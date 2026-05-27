@@ -1,0 +1,53 @@
+[2026-05-04T08:39:30Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T08:39:30Z] booting pod=anima-p9-opt-1-v4-2026-05-04 (H100 80GB HBM3 secure on-demand @ $2.99/hr)
+[2026-05-04T08:39:31Z] pod_id=4lr1na22yrma0t
+[2026-05-04T08:39:31Z] waiting for SSH ready (max 6min)
+[2026-05-04T08:40:28Z] SSH ready at 87.120.211.211:12482 (after 5 probes)
+[2026-05-04T08:40:28Z] setup: ssh mkdir + scp shim v4 + canonical_zero fixture + run_h100.bash
+Warning: Permanently added '[87.120.211.211]:12482' (ED25519) to the list of known hosts.
+Warning: Permanently added '[87.120.211.211]:12482' (ED25519) to the list of known hosts.
+Warning: Permanently added '[87.120.211.211]:12482' (ED25519) to the list of known hosts.
+Warning: Permanently added '[87.120.211.211]:12482' (ED25519) to the list of known hosts.
+Warning: Permanently added '[87.120.211.211]:12482' (ED25519) to the list of known hosts.
+[2026-05-04T08:40:51Z] launching v4 exec on H100
+Warning: Permanently added '[87.120.211.211]:12482' (ED25519) to the list of known hosts.
+216
+[2026-05-04T08:41:53Z] poll loop start (max 60min, budget cap $3)
+[2026-05-04T08:41:57Z] elapsed=2min cost=$0.12 probe=/workspace/p9_v4_exec/results/COMPLETE.sentinel SENTINEL_FOUND|
+[2026-05-04T08:42:12Z] COMPLETE.sentinel detected — final sync + auto-kill imminent
+Warning: Permanently added '[87.120.211.211]:12482' (ED25519) to the list of known hosts.
+Warning: Permanently added '[87.120.211.211]:12482' (ED25519) to the list of known hosts.
+[2026-05-04T08:42:49Z] computing verdict
+[2026-05-04T08:42:49Z] verdict written: f_shim_v4_3=FAIL harvest_via=FAILED wall=3min cost=$0.15
+__P9_OPT_1_V4_EXEC__ f_shim_v4_3=FAIL
+[2026-05-04T08:42:50Z] [trap] killing pod=4lr1na22yrma0t (auto-kill mandatory)
+{
+  "containerDiskInGb": 80,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-04 08:39:31.523 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<HF_TOKEN_REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "4lr1na22yrma0t",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Mon May 04 2026 08:42:51 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-opt-1-v4-2026-05-04",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 8,
+  "volumeInGb": 50,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "4lr1na22yrma0t"
+}
+[2026-05-04T08:43:00Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

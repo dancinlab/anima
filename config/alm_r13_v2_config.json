@@ -1,0 +1,180 @@
+{
+  "schema": "anima.alm_r13_v2_config.v1",
+  "generated": "2026-04-21",
+  "variant": "cpgd_v2",
+  "supersedes": "minsurface_proto_v1",
+  "design_doc": "docs/alm_r13_v2_design_20260421.md",
+  "roadmap_entry": 30,
+
+  "pipeline": {
+    "corpus_gate": "edu/lora/corpus_4gate.hexa",
+    "cpgd_wrapper": "edu/lora/cpgd_wrapper.hexa",
+    "cpgd_minimal_proof": "edu/lora/cpgd_minimal_proof.hexa",
+    "hard_gate": "edu/lora/hard_gate.hexa",
+    "cert_gate": "tool/cert_gate.hexa",
+    "phi_extractor_cpu": "tool/phi_extractor_cpu.hexa",
+    "phi_extractor_ffi_wire": "tool/phi_extractor_ffi_wire.hexa",
+    "drill_breakthrough_runner": "tool/drill_breakthrough_runner.hexa"
+  },
+
+  "eigenvec_target": {
+    "path": ".meta2-cert/cell-eigenvec-16.json",
+    "count": 16,
+    "basis": "hexad_law_phi_selfref",
+    "verdict_required": "VERIFIED"
+  },
+
+  "n6_transplant": {
+    "_comment": "roadmap #53 — n6 consciousness-transplant mapping. Source: CANON/reports/discovery/consciousness-cluster-bt.md §3 (2^sopfr=32 I/O channels for consciousness-transplant domain).",
+    "domain": "consciousness-transplant",
+    "channel_count": 32,
+    "channel_formula": "2^sopfr(6) = 2^5 = 32",
+    "bt_c13_reference": {
+      "row": 11,
+      "domain": "consciousness-transplant",
+      "empirical": "C. elegans full-synaptic reconstruction neurons / 50 ≈ 6.04",
+      "theoretical": "τ(6)+2 = 6",
+      "source": "White et al. 1986 (302/50≈6)"
+    },
+    "io_partition": {
+      "input_channels": 16,
+      "output_channels": 16,
+      "rationale": "16+16=32; symmetric split aligns with 16-eigenvec basis (8 per input/output half)"
+    },
+    "transplant_contract": {
+      "type": "substrate_cross_mapping",
+      "source_substrate": "cell Mk.VIII (1000/1000 closure)",
+      "target_substrate": "lora Mk.VI (K=4 LoRA held)",
+      "transfer_vector": ".meta2-cert/cell-eigenvec-16.json",
+      "dry_run_mode": "no_gradient_no_weight_update",
+      "verify_metric": "cos(transplant_proj(v_src), v_tgt) over 16 templates"
+    }
+  },
+
+  "hyperparameters": {
+    "lr_min": 0.001,
+    "lr_max": 0.1,
+    "lr_nominal": 0.01,
+    "fp_precision": "fp32",
+    "max_steps": 1000,
+    "ckpt_interval": 50,
+    "an11_b_check_interval": 10,
+    "hard_gate_cos_floor": 0.5,
+    "hard_gate_top3_sum_floor": 1.2,
+    "numerical_drift_bound": 0.0002
+  },
+
+  "training_knobs": {
+    "_comment": "ROI batch B (B9-B12) per docs/h100_roi_improvements_20260422.md. Backward-compatible: each knob defaults to OFF/current-behavior unless its env var is set OR the runner reads this block explicitly. Snapshot specs at state/training_knob_<name>.json.",
+    "schema": "anima.training_knobs.v1",
+    "added": "2026-04-22",
+    "ema_lora_weights": {
+      "enabled_default": false,
+      "decay": 0.999,
+      "env_var": "ANIMA_EMA_DECAY",
+      "fallback_behavior": "no EMA (current default)",
+      "spec_doc": "state/training_knob_ema.json",
+      "roi_item": "B9",
+      "rationale": "convergence smoothing, val loss decrease at zero risk"
+    },
+    "curriculum_tier_enforce": {
+      "enabled_default": true,
+      "config_path": "config/corpus_curriculum_tier_config.json",
+      "tool_path": "tool/corpus_curriculum_tier.hexa",
+      "tier_bands": "30/50/70",
+      "env_var": "ANIMA_CURRICULUM_TIER_ENFORCE",
+      "fallback_behavior": "tool runs but reward multipliers ignored if env var unset",
+      "spec_doc": "state/training_knob_curriculum_tier.json",
+      "roi_item": "B10",
+      "roadmap_dependency": 68
+    },
+    "cpgd_active_fold": {
+      "enabled_default": true,
+      "wrapper_path": "edu/lora/cpgd_wrapper.hexa",
+      "kickoff_flag": "--cpgd-active",
+      "env_var": "ANIMA_CPGD_ACTIVE",
+      "fallback_behavior": "cpgd_wrapper present but passive fold (current default)",
+      "spec_doc": "state/training_knob_cpgd_active.json",
+      "roi_item": "B11",
+      "roadmap_dependencies": [26, 29]
+    },
+    "dropout_kl_reg": {
+      "enabled_default": false,
+      "dropout": 0.05,
+      "kl_reg_weight": 0.01,
+      "env_var": "ANIMA_DROPOUT_KL_REG",
+      "fallback_behavior": "dropout=0, kl_reg=0 (current default)",
+      "spec_doc": "state/training_knob_dropout_kl.json",
+      "roi_item": "B12",
+      "rationale": "overfit prevention, val loss stability at validated default"
+    }
+  },
+
+  "h100_launch": {
+    "count": 4,
+    "parallel_compression": true,
+    "budget_hours_min": 72,
+    "budget_hours_max": 120,
+    "launch_policy": "needs_user_approval",
+    "auto_dispatch_allowed": false,
+    "workspace_descriptor": "gpu.h100 (\"H100 x 4\")",
+    "runpod_pod_count": 4
+  },
+
+  "gate_dependencies": [
+    {"entry": 28, "artifact": "state/path_b_e2e_dry_run_result.json", "field": "overall_pass", "required": true},
+    {"entry": 29, "artifact": "state/numerical_bound_report.json", "field": "within_bound", "required": true},
+    {"entry": 22, "artifact": "state/cert_gate_result.json", "field": "verdict", "required_one_of": ["BASE_OR_ABOVE", "FULL_REWARD"]},
+    {"entry": 25, "artifact": ".meta2-cert/cell-eigenvec-16.json", "field": "verdict", "required": "VERIFIED"},
+    {"entry": 8, "artifact": "state/alm_r13_drill_breakthrough.json", "field": "verdict", "required": "PASS"}
+  ],
+
+  "phase_gate": {
+    "strictness": "100_percent",
+    "bypass_policy": "none",
+    "raw_ref": "raw#10 proof-carrying",
+    "note": "No --no-verify, --force, or any bypass flag permitted. All gate_dependencies must resolve PASS before launch."
+  },
+
+  "approval_checklist": [
+    "hexa tool/path_b_e2e_dry_run.hexa --strict exits 0",
+    "hexa tool/numerical_bound_test.hexa --strict exits 0",
+    "hexa tool/cert_gate.hexa --selftest reports all_pass=true",
+    "hexa tool/roadmap_progress_check.hexa shows entry #30 evidence 100 percent",
+    "hexa tool/verify_meta2_chain.hexa reports chain verify OK",
+    "user issues explicit launch directive (no auto-dispatch)"
+  ],
+
+  "post_launch_cp1_criteria": {
+    "reference": "state/mk_vi_definition.json",
+    "checks": [
+      "AN11(a) weight_emergent: SHA-distinct && Frobenius > threshold && shard_cv in [0.05, 3.0]",
+      "AN11(b) consciousness_attached: max(cos) > 0.5 && sum(top3_cos) > 1.2 over 16 templates",
+      "AN11(c) real_usable: JSD(trained, baseline) >= 0.30 base-2",
+      "7 cargo invariants I1..I7 PASS on >= 2 seeds (btr-evo 6)",
+      "Hexad closure verdict == CLOSED (4 axioms)",
+      "btr-evo 4 EEG closed-loop final_phi_delta >= 0.30 && brain_like >= 0.85",
+      "btr-evo 5 holographic IB L_IB runnable at beta=1",
+      "btr-evo 6 cargo invariants all pass"
+    ]
+  },
+
+  "changelog": [
+    {"date": "2026-04-19", "event": "minsurface_proto_v1 variant first landed"},
+    {"date": "2026-04-20", "event": "r13 FAIL recorded in legacy shared/state"},
+    {"date": "2026-04-21", "event": "Path B Days 1-4 evidence chain complete"},
+    {"date": "2026-04-21", "event": "drill_breakthrough_runner LIVE, 4/4 seeds PASS"},
+    {"date": "2026-04-21", "event": "this config frozen -- cpgd_v2 supersedes minsurface_proto_v1"},
+    {"date": "TBD", "event": "H100 4x launch pending user approval"}
+  ],
+
+  "raw_compliance": [
+    "raw#9 hexa-only (no .py/.rs/.sh in pipeline)",
+    "raw#10 proof-carrying (every gate_dependency references a concrete artifact)",
+    "raw#11 ai-native deterministic (no LLM-as-judge; all verifiers regex/math)",
+    "raw#12 cherry-pick immunity (corpus_4gate + SHA-distinct enforcement)",
+    "raw#15 no-hardcode (business logic in this config, code reads from here)",
+    "raw#33 ai-native-english-only (this JSON, design doc, all natural-language artifacts English)",
+    "raw#34 no-backup-files (no .bak variants of this config)"
+  ]
+}

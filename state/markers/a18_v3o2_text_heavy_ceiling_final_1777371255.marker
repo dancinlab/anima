@@ -1,0 +1,16 @@
+A18 v3-o2 byte-context ceiling final attempt — 2026-04-28T19:12Z
+====================================================================
+
+Status: MEASURED + 80% target NOT achieved + omega-stop CONFIRMED
+Sample: 5MB stratified, 69 files, 251s wall, 69/69 byte-eq PASS
+A25-only aggregate:                     76.0011%
+Composite (A25 + A18 d631a902 disp):    76.2400%  (+0.2388pp lift)
+Text-heavy class CEILING advance:       48.3065 → 49.0852% (+0.7787pp)
+
+80% target verdict:        NOT_ACHIEVED      gap=3.76pp
+78.65% strengthen gate:    NOT_MET           gap=2.41pp
+53c711eb 78.05% anchor:    NOT_REACHED on 5MB sample (gap 1.81pp)
+
+raw 137 v8 strengthening:  DEFERRED_HARD (composite < 78.65%)
+
+Witness ledger: state/format_witness/2026-04-28_a18_v3o2_text_heavy_ceiling_final.jsonl

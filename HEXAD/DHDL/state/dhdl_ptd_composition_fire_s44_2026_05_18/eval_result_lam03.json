@@ -1,0 +1,90 @@
+{
+  "research_md_section": "§44",
+  "evaluator": "eval_dhdl_ptd.py",
+  "lambda_ptd": 0.3,
+  "n_holdout": 9598,
+  "accuracy_3class": 0.9996874348822672,
+  "per_class_accuracy": {
+    "CONTINUE_THINK": 1.0,
+    "EMIT_VOICE": 0.9929411764705882,
+    "REMAIN_SILENT": 1.0
+  },
+  "per_class_holdout_count": {
+    "CONTINUE_THINK": 1,
+    "EMIT_VOICE": 425,
+    "REMAIN_SILENT": 9172
+  },
+  "confusion_matrix": {
+    "rows_true": [
+      "CONTINUE_THINK",
+      "EMIT_VOICE",
+      "REMAIN_SILENT"
+    ],
+    "cols_pred": [
+      "CONTINUE_THINK",
+      "EMIT_VOICE",
+      "REMAIN_SILENT"
+    ],
+    "matrix": [
+      [
+        1,
+        0,
+        0
+      ],
+      [
+        1,
+        422,
+        2
+      ],
+      [
+        0,
+        0,
+        9172
+      ]
+    ]
+  },
+  "threshold_distillation_gap": 0.000312565117732861,
+  "threshold_distillation_gap_count": 3,
+  "threshold_distillation_gap_verdict": "DISTILLATION_WITH_APPROXIMATION_NOISE",
+  "gap_direction_breakdown": {
+    "EMIT_VOICE->CONTINUE_THINK": 1,
+    "EMIT_VOICE->REMAIN_SILENT": 2
+  },
+  "gap_records_sample": [
+    {
+      "trace_idx": 59,
+      "step": 2,
+      "thinker_score": 0.3023507591451461,
+      "safety_ok": true,
+      "head_decision": "CONTINUE_THINK",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 134,
+      "step": 7,
+      "thinker_score": 0.7712572086117662,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    },
+    {
+      "trace_idx": 354,
+      "step": 14,
+      "thinker_score": 0.7198882359492226,
+      "safety_ok": true,
+      "head_decision": "REMAIN_SILENT",
+      "threshold_decision": "EMIT_VOICE",
+      "ground_truth": "EMIT_VOICE"
+    }
+  ],
+  "ptd_aux_next_state_mse_mean": 0.2519132147691955,
+  "ptd_aux_next_state_mse_per_class": {
+    "CONTINUE_THINK": 1.8195272190996372,
+    "EMIT_VOICE": 0.3156152606714885,
+    "REMAIN_SILENT": 0.2486412334724619
+  },
+  "ptd_aux_pairs_evaluated": 9118,
+  "honest_verdict": "§44 composition eval @ lambda_ptd=0.3. Gap 0.00031 vs §27 0.00063. PTD aux MSE mean 0.2519132147691955. Per-class MSE localises which corner the next-physics-state is hardest to predict. PTD aux is REGULARISER not new supervision — DISTILLATION still the verdict (DESIGN_S38.md §7)."
+}

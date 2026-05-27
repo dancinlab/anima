@@ -1,0 +1,69 @@
+[06:04:41] loading phi templates...
+[06:04:41]   (16, 16)
+[06:04:41] loading prompts...
+[06:04:41]   16 prompts
+[06:04:41] loading tokenizer...
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[06:04:41] loading base Mistral-7B-v0.3 in fp16 on cuda:0...
+[06:04:42]   free GPU memory before load: 84.5GB (need ~14GB for fp16 Mistral-7B)
+[transformers] `torch_dtype` is deprecated! Use `dtype` instead!
+Loading weights:   0%|          | 0/291 [00:00<?, ?it/s]Loading weights:   1%|          | 2/291 [00:00<00:14, 19.85it/s]Loading weights:   3%|▎         | 10/291 [00:00<00:13, 20.08it/s]Loading weights:   8%|▊         | 22/291 [00:01<00:12, 21.47it/s]Loading weights:  11%|█         | 31/291 [00:01<00:12, 21.18it/s]Loading weights:  14%|█▎        | 40/291 [00:01<00:10, 24.24it/s]Loading weights:  17%|█▋        | 49/291 [00:02<00:09, 24.25it/s]Loading weights:  19%|█▊        | 54/291 [00:02<00:09, 24.94it/s]Loading weights:  20%|█▉        | 57/291 [00:02<00:09, 25.51it/s]Loading weights:  21%|██        | 60/291 [00:02<00:09, 25.05it/s]Loading weights:  23%|██▎       | 67/291 [00:02<00:10, 21.13it/s]Loading weights:  26%|██▌       | 76/291 [00:03<00:08, 24.13it/s]Loading weights:  29%|██▉       | 85/291 [00:03<00:08, 24.12it/s]Loading weights:  32%|███▏      | 94/291 [00:03<00:07, 24.76it/s]Loading weights:  35%|███▌      | 103/291 [00:04<00:06, 27.22it/s]Loading weights:  38%|███▊      | 112/291 [00:04<00:06, 25.87it/s]Loading weights:  42%|████▏     | 121/291 [00:05<00:07, 23.70it/s]Loading weights:  45%|████▍     | 130/291 [00:05<00:05, 28.68it/s]Loading weights:  48%|████▊     | 139/291 [00:05<00:06, 24.46it/s]Loading weights:  51%|█████     | 148/291 [00:06<00:05, 24.98it/s]Loading weights:  53%|█████▎    | 154/291 [00:06<00:04, 27.59it/s]Loading weights:  54%|█████▍    | 158/291 [00:06<00:05, 26.59it/s]Loading weights:  55%|█████▌    | 161/291 [00:06<00:04, 26.19it/s]Loading weights:  57%|█████▋    | 166/291 [00:06<00:04, 29.68it/s]Loading weights:  59%|█████▉    | 173/291 [00:06<00:03, 31.96it/s]Loading weights:  61%|██████    | 177/291 [00:06<00:03, 29.21it/s]Loading weights:  63%|██████▎   | 184/291 [00:07<00:04, 24.79it/s]Loading weights:  66%|██████▋   | 193/291 [00:07<00:03, 29.28it/s]Loading weights:  69%|██████▉   | 202/291 [00:07<00:03, 25.62it/s]Loading weights:  73%|███████▎  | 211/291 [00:08<00:03, 26.36it/s]Loading weights:  76%|███████▌  | 220/291 [00:08<00:02, 25.85it/s]Loading weights:  79%|███████▊  | 229/291 [00:08<00:02, 27.00it/s]Loading weights:  81%|████████  | 236/291 [00:09<00:01, 31.09it/s]Loading weights:  82%|████████▏ | 240/291 [00:09<00:01, 29.20it/s]Loading weights:  85%|████████▍ | 247/291 [00:09<00:01, 24.20it/s]Loading weights:  88%|████████▊ | 256/291 [00:10<00:01, 24.33it/s]Loading weights:  91%|█████████ | 265/291 [00:10<00:01, 19.95it/s]Loading weights:  94%|█████████▍| 274/291 [00:11<00:00, 21.33it/s]Loading weights:  96%|█████████▌| 278/291 [00:11<00:00, 21.36it/s]Loading weights:  97%|█████████▋| 281/291 [00:11<00:00, 22.35it/s]Loading weights:  98%|█████████▊| 284/291 [00:11<00:00, 22.74it/s]Loading weights: 100%|██████████| 291/291 [00:11<00:00, 25.46it/s]
+[06:04:54]   base loaded in 12.1s, mem=14.5GB
+[06:04:54] attaching r14 LoRA...
+bitsandbytes library load error: libnvJitLink.so.13: cannot open shared object file: No such file or directory
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/bitsandbytes/cextension.py", line 320, in <module>
+    lib = get_native_library()
+          ^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/bitsandbytes/cextension.py", line 298, in get_native_library
+    dll = ct.cdll.LoadLibrary(str(binary_path))
+          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 454, in LoadLibrary
+    return self._dlltype(name)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/lib/python3.11/ctypes/__init__.py", line 376, in __init__
+    self._handle = _dlopen(self._name, mode)
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^
+OSError: libnvJitLink.so.13: cannot open shared object file: No such file or directory
+[06:05:01]   r14 attached, mem=15.2GB
+[06:05:01] starting ACTIVE branch (tension-derived gate)...
+[06:05:01] === branch active: 100 steps ===
+[06:05:02]   [active] step 0: L1=0/16  full=0/16  crit=16  phi*=-2.704  tension=0.0825  phi_ema=-0.0013
+[06:05:08]   [active] step 10: L1=0/16  full=0/16  crit=16  phi*=-2.703  tension=0.0826  phi_ema=-0.0091
+[06:05:13]   [active] step 20: L1=0/16  full=0/16  crit=16  phi*=-2.695  tension=0.0826  phi_ema=-0.0154
+[06:05:18]   [active] step 30: L1=0/16  full=0/16  crit=16  phi*=-2.714  tension=0.0826  phi_ema=-0.0224
+[06:05:24]   [active] step 40: L1=0/16  full=0/16  crit=16  phi*=-2.716  tension=0.0825  phi_ema=-0.0267
+[06:05:29]   [active] step 50: L1=0/16  full=0/16  crit=16  phi*=-2.724  tension=0.0826  phi_ema=-0.0303
+[06:05:35]   [active] step 60: L1=0/16  full=0/16  crit=16  phi*=-2.697  tension=0.0826  phi_ema=-0.0351
+[06:05:40]   [active] step 70: L1=0/16  full=0/16  crit=16  phi*=-2.740  tension=0.0826  phi_ema=-0.0376
+[06:05:46]   [active] step 80: L1=0/16  full=0/16  crit=16  phi*=-2.726  tension=0.0825  phi_ema=-0.0431
+[06:05:51]   [active] step 90: L1=0/16  full=0/16  crit=16  phi*=-2.672  tension=0.0826  phi_ema=-0.0437
+[06:05:56]   [active] step 99: L1=2/16  full=1/16  crit=14  phi*=-0.584  tension=0.0758  phi_ema=-0.0450
+[06:05:56] active branch done in 54.7s (0.55s/step)
+[06:05:56] starting RANDOM control branch...
+[06:05:56] === branch random: 100 steps ===
+[06:05:56]   [random] step 0: L1=7/16  full=0/16  crit=9  phi*=-1.367  tension=0.0703  phi_ema=-0.0000
+[06:06:02]   [random] step 10: L1=0/16  full=0/16  crit=16  phi*=-3.386  tension=0.0808  phi_ema=-0.0093
+[06:06:07]   [random] step 20: L1=0/16  full=0/16  crit=16  phi*=-2.799  tension=0.0818  phi_ema=-0.0166
+[06:06:13]   [random] step 30: L1=0/16  full=0/16  crit=16  phi*=-2.058  tension=0.0792  phi_ema=-0.0231
+[06:06:18]   [random] step 40: L1=2/16  full=0/16  crit=14  phi*=-1.493  tension=0.0752  phi_ema=-0.0290
+[06:06:24]   [random] step 50: L1=0/16  full=0/16  crit=16  phi*=-2.486  tension=0.0816  phi_ema=-0.0333
+[06:06:29]   [random] step 60: L1=0/16  full=0/16  crit=16  phi*=-3.268  tension=0.0822  phi_ema=-0.0390
+[06:06:34]   [random] step 70: L1=0/16  full=0/16  crit=16  phi*=-3.124  tension=0.0805  phi_ema=-0.0425
+[06:06:40]   [random] step 80: L1=0/16  full=0/16  crit=16  phi*=-2.256  tension=0.0813  phi_ema=-0.0447
+[06:06:45]   [random] step 90: L1=2/16  full=0/16  crit=14  phi*=-2.167  tension=0.0724  phi_ema=-0.0466
+[06:06:50]   [random] step 99: L1=0/16  full=0/16  crit=16  phi*=-4.035  tension=0.0808  phi_ema=-0.0488
+[06:06:50] random branch done in 54.3s
+[06:06:50] starting BASELINE branch (zero gate, 5 steps for cross-check)...
+[06:06:50] === branch baseline_zero_gate: 3 steps ===
+[06:06:51]   [baseline_zero_gate] step 0: L1=0/16 crit=16 phi*=-2.704 mean_phi_holo=-0.0896
+[06:06:51]   [baseline_zero_gate] step 1: L1=0/16 crit=16 phi*=-2.704 mean_phi_holo=-0.0896
+[06:06:52]   [baseline_zero_gate] step 2: L1=0/16 crit=16 phi*=-2.704 mean_phi_holo=-0.0896
+[06:06:52] 
+=== VERDICT: FAIL ===
+[06:06:52]   active L1:  1.71/16  (std 3.24)  crit_mean=14.3
+[06:06:52]   random L1:  0.65/16  (std 1.52)  crit_mean=15.3
+[06:06:52]   baseline L1 (zero gate): 0.00/16
+[06:06:52]   diff: +1.06 (+0.30σ)
+[06:06:52]   vs static baseline (0/16 L1, 17 crit) — RED flip: False
+[06:06:52] wrote /workspace/n51_tension/closed_loop_ledger.json

@@ -1,0 +1,115 @@
+qmirror 2.0 cond.12 — distance-3 surface code TOY (Shor [[9,1,3]] CSS variant)
+================================================================================
+
+Date: 2026-05-04
+Falsifier: F-QM-2-SURF-12  (logical_zero_ratio >= 0.99 AND min_stab_plus_ratio >= 0.99)
+Cost: $0.00 (Aer state-vector local; no QPU shots)
+
+Configuration
+-------------
+n_shots                 = 1024
+seed                    = 20260504
+engine                  = qiskit_aer (qiskit 2.4.1, qiskit-aer 0.17.2)
+n_qubits                = 17 (9 data D0..D8 + 8 ancilla A9..A16)
+n_Z_stabilizers         = 6 (weight-2 each)
+n_X_stabilizers         = 2 (weight-6 each)
+encoder                 = unitary 3-block GHZ-3 (no measurement, no classical conditional)
+logical_Z_operator      = X0 X1 X2 (Shor convention; rotated to Z basis via H on q0,q1,q2)
+
+Layout
+------
+Data qubits (3 blocks of 3):
+  block 1: D0, D1, D2
+  block 2: D3, D4, D5
+  block 3: D6, D7, D8
+
+Z-stabilizers (intra-block weight-2):
+  Z_1 = Z0 Z1   (anc 9)
+  Z_2 = Z1 Z2   (anc 10)
+  Z_3 = Z3 Z4   (anc 11)
+  Z_4 = Z4 Z5   (anc 12)
+  Z_5 = Z6 Z7   (anc 13)
+  Z_6 = Z7 Z8   (anc 14)
+
+X-stabilizers (inter-block weight-6):
+  X_1 = X0 X1 X2 X3 X4 X5   (anc 15)
+  X_2 = X3 X4 X5 X6 X7 X8   (anc 16)
+
+Logical operators (verified to commute with all 8 stabs, anticommute with each other):
+  Z_L = X0 X1 X2     (Shor logical Z; first block's X-product)
+  X_L = Z0 Z3 Z6     (Shor logical X; one Z per block)
+
+Circuit (in execution order)
+----------------------------
+PASS 1 (encoding, 9 gates):
+  H(0); CNOT(0,1); CNOT(1,2)        // block 1 GHZ-3
+  H(3); CNOT(3,4); CNOT(4,5)        // block 2 GHZ-3
+  H(6); CNOT(6,7); CNOT(7,8)        // block 3 GHZ-3
+
+PASS 2 (syndrome measurement, 8 ancilla read):
+  Z-stab gadgets (6): for each Z_k = Z_i Z_j with anc a:
+    CNOT(i, a); CNOT(j, a)
+  X-stab gadgets (2): for each X_k = X_i ... with anc a:
+    H(a); CNOT(a, i_1); ... CNOT(a, i_6); H(a)
+  Measure all 8 ancillae into creg_syn[0..7]
+    syn[0..5] = Z_1..Z_6
+    syn[6..7] = X_1, X_2
+
+PASS 3 (logical Z destructive readout, 9 data measurements):
+  H(0); H(1); H(2)                  // rotate block 1 to X basis for Z_L = X0X1X2
+  Measure D0..D8 -> creg_dat[0..8]
+  Z_L = dat[0] XOR dat[1] XOR dat[2]    // 0 = logical |0_L>
+
+Results (n_shots = 1024)
+------------------------
+logical_zero_count       = 1024
+logical_zero_ratio       = 1.0000     (spec >= 0.99)  PASS
+min_stab_plus_ratio      = 1.0000     (spec >= 0.99)  PASS
+max_stab_plus_ratio      = 1.0000
+trivial_syndrome_ratio   = 1.0000     (1024/1024 had all-zero syndrome)
+
+Per-stabilizer +1 ratios (all 1.0):
+  Z_1=1.0 Z_2=1.0 Z_3=1.0 Z_4=1.0 Z_5=1.0 Z_6=1.0 X_1=1.0 X_2=1.0
+
+Syndrome histogram (MSB-ordered: bits 7..0 = X_2 X_1 Z_6 Z_5 Z_4 Z_3 Z_2 Z_1):
+  "00000000": 1024  (only one syndrome observed; deterministic)
+
+Verdict
+-------
+F-QM-2-SURF-12 = PASS
+Reason: logical_zero_ratio=1.0000 >= 0.99 AND min_stab_plus_ratio=1.0000 >= 0.99
+
+Why deterministic: |0_L> = (|000>+|111>)^{tensor 3} / 2sqrt(2) is a SIMULTANEOUS
++1 eigenstate of all 8 stabilizers (Z_iZ_j on intra-block: even Z parity in
+each branch; X_1, X_2 on weight-6: each X-stab is the product of two block
+GHZ-3 stabilizers X0X1X2 + X3X4X5 each of which is the X-symmetry of the
+GHZ-3, so leaves |0_L> invariant). Aer state-vector with no noise channel
+samples the unique deterministic outcome on every shot.
+
+Compliance
+----------
+raw#9 (.py only via _python_bridge):
+  surface_code_d3_runner.py is the THIRD .py file under qmirror standalone
+  modules (after aer_runner.py and ghz_mermin_runner.py); .hexa wrapper
+  surface_code_d3.hexa is hexa-strict; 0 .py added under anima/ repo root.
+
+raw#15 (no personal paths in artifacts):
+  bridge resolved via NEXUS_QMIRROR_BRIDGE_PATH env override, falling back
+  to HOME-relative /core/qmirror/modules/_python_bridge/...; verdict.json
+  + stats files contain no personal paths.
+
+raw#10 (4 honest C3 caveats):
+  embedded in verdict.json["raw10_caveats"] array:
+    1. TOY qualifier load-bearing: no decoder, no logical Cliffords, no
+       logical error rate, single-round noiseless only.
+    2. Code substitution: Shor [[9,1,3]] CSS used in lieu of standard
+       rotated d=3 surface code (same parameters, cleaner CSS structure).
+    3. Noiseless Aer determinism: real hardware would show finite-fidelity
+       decay; this PASS is a SIMULATOR-level claim only.
+    4. $0 substrate is Aer-only by design; 17-qubit Aer SV at comfort
+       ceiling for repeated batch runs; no cross-tech vendor concordance.
+
+Wall time
+---------
+~1.5 s observed for 1024 shots (Aer SV initialization + 17-qubit
+mid-circuit measurement + 1024 sample draws).

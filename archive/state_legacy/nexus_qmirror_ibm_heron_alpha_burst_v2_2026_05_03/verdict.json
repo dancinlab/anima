@@ -1,0 +1,24 @@
+{
+  "verdict": "ABORT_NO_API_KEY",
+  "abort_reason": "secret store does not contain ibmcloud.api_key; prior key was revoked after v1/v2 burst per raw#15 protocol. Per task spec mandate: 'If secret check ibmcloud.api_key fails -> ABORT + report user must re-set'.",
+  "user_action_required": "Generate new IBM Cloud API key at https://cloud.ibm.com/iam/apikeys and run: secret set ibmcloud.api_key '<NEW_KEY>'",
+  "patched_runner_ready": "state/nexus_qmirror_ibm_heron_alpha_burst_v2_2026_05_03/_runner/run_chsh_v3_patched.py",
+  "patch_summary": "make_bell_chsh: qc.ry(-2 * theta_a, q) -> qc.ry(-theta_a, q) (canonical CHSH measurement-basis rotation; Aer post-burst confirmed S=2.842)",
+  "target_backend": "ibm_boston (Heron r3, NOT fez NOT pittsburgh)",
+  "estimated_cost_usd": 3.20,
+  "hard_cap_usd": 4.0,
+  "aer_validation": "PRE-COMMITTED (per task context: corrected runner returned S=2.842 on AerSimulator, target band [2.7, 2.85] PASS)",
+  "cost_spent_this_attempt_usd": 0.0,
+  "cumulative_burst_cost_usd": 6.40,
+  "secrets_verified": {
+    "ibm_quantum.crn": "PRESENT",
+    "ibmcloud.api_key": "ABSENT (revoked post-v2)"
+  },
+  "honest_c3": [
+    "ABORT triggered before any IBM API contact — no credentials in flight.",
+    "Patched runner v3 prepared and staged for re-submission once user re-sets ibmcloud.api_key.",
+    "Patch validated against Aer simulator per task context (S=2.842, matches ANU 2.838).",
+    "Hard cap $4.00 enforced; $0 spent this attempt; cumulative cycle spend stays at $6.40.",
+    "Spec fragmentation documented: cond.3 ibm_fez runner used canonical Ry(-theta) (S=2.357); v1/v2 drifted to Ry(-2*theta) (S~0). SSOT consolidation cycle deferred."
+  ]
+}

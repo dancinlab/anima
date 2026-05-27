@@ -1,0 +1,87 @@
+2026-05-04:08:39:22 WARNING  [config.evaluate_config:281] --limit SHOULD ONLY BE USED FOR TESTING. REAL METRICS SHOULD NOT BE COMPUTED USING LIMIT.
+2026-05-04:08:39:25 INFO     [_cli.run:376] Selected Tasks: ['mmlu']
+2026-05-04:08:39:26 INFO     [evaluator:211] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2026-05-04:08:39:26 INFO     [evaluator:236] Initializing hf model, with arguments: {'pretrained': 'meta-llama/Llama-3.2-3B', 'peft': 'need-singularity/p9-llama32-lora-stage1', 'revision': '5a9b4584', 'dtype': 'bfloat16', 'trust_remote_code': False}
+2026-05-04:08:39:28 INFO     [models.huggingface:161] Using device 'cuda:0'
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_http.py", line 761, in hf_raise_for_status
+    response.raise_for_status()
+  File "/usr/local/lib/python3.11/dist-packages/httpx/_models.py", line 763, in raise_for_status
+    raise HTTPStatusError(message, request=request, response=self)
+httpx.HTTPStatusError: Client error '404 Not Found' for url 'https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/5a9b4584/config.json'
+For more information check: https://developer.mozilla.org/en-US/docs/Web/HTTP/Status/404
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 422, in cached_files
+    hf_hub_download(
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/file_download.py", line 997, in hf_hub_download
+    return _hf_hub_download_to_cache_dir(
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/file_download.py", line 1072, in _hf_hub_download_to_cache_dir
+    (url_to_download, etag, commit_hash, expected_size, xet_file_data, head_call_error) = _get_metadata_or_catch_error(
+                                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/file_download.py", line 1669, in _get_metadata_or_catch_error
+    metadata = get_hf_file_metadata(
+               ^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_validators.py", line 88, in _inner_fn
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/file_download.py", line 1591, in get_hf_file_metadata
+    response = _httpx_follow_relative_redirects_with_backoff(
+               ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_http.py", line 692, in _httpx_follow_relative_redirects_with_backoff
+    hf_raise_for_status(response)
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_http.py", line 777, in hf_raise_for_status
+    raise _format(RevisionNotFoundError, message, response, repo_type=repo_type, repo_id=repo_id) from e
+huggingface_hub.errors.RevisionNotFoundError: 404 Client Error. (Request ID: Root=1-69f85b40-17877c835d89cb0547c6abca;3a01bc50-9d37-4753-ae7c-501741989a65)
+
+Revision Not Found for url: https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/5a9b4584/config.json.
+Invalid rev id: 5a9b4584
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/bin/lm_eval", line 8, in <module>
+    sys.exit(cli_evaluate())
+             ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/__main__.py", line 10, in cli_evaluate
+    parser.execute(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/harness.py", line 60, in execute
+    args.func(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/run.py", line 379, in _execute
+    results = simple_evaluate(
+              ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/utils.py", line 498, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/evaluator.py", line 239, in simple_evaluate
+    lm = lm_eval.api.registry.get_model(model).create_from_arg_obj(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/api/model.py", line 180, in create_from_arg_obj
+    return cls(**arg_dict, **additional_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 190, in __init__
+    self._get_config(
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 568, in _get_config
+    self._config = transformers.AutoConfig.from_pretrained(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/models/auto/configuration_auto.py", line 374, in from_pretrained
+    config_dict, unused_kwargs = PreTrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/configuration_utils.py", line 680, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/configuration_utils.py", line 735, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 278, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 461, in cached_files
+    raise OSError(
+OSError: 5a9b4584 is not a valid git identifier (branch name, tag name or commit id) that exists for this model name. Check the model page at 'https://huggingface.co/meta-llama/Llama-3.2-3B' for available revisions.

@@ -1,0 +1,65 @@
+{
+  "poll_id": 2,
+  "ts_kst": "2026-05-04T15:50",
+  "vlm_stage1": {
+    "pid": 31960,
+    "step": 22600,
+    "total_steps": 50000,
+    "progress_pct": 45.2,
+    "loss": 8.2202,
+    "lr": "2.92e-04",
+    "sps": 2.73,
+    "eta_h": 2.8,
+    "wall_clock_s": 8264.2,
+    "gpu_util_pct": 88,
+    "gpu_mem_used_mib": 5361,
+    "gpu_mem_total_mib": 12227,
+    "savepoints_dir": "/tmp/vlm_stage1_savepoints",
+    "savepoints_count": 4,
+    "savepoints": ["step-5k", "step-10k", "step-15k", "step-20k"],
+    "next_savepoint_step": 25000,
+    "next_savepoint_eta_min": 14.6,
+    "delta_since_poll1": {
+      "step_delta": 2200,
+      "wall_delta_s": 826,
+      "loss_trend": "flat ~8.31"
+    }
+  },
+  "kl_cache": {
+    "pid": 3811364,
+    "idx": 42700,
+    "total": 50000,
+    "progress_pct": 85.4,
+    "rate_per_sec": 8.13,
+    "eta_min": 15.0,
+    "eta_kst_estimated": "16:05",
+    "tokens_session": 8963317,
+    "cache_file": "/tmp/p9_paradigm_d_kl_cache_v1_50k.jsonl",
+    "cache_file_size_bytes": 12085148239,
+    "cache_file_size_gb": 11.26,
+    "cache_lines": 42688,
+    "mem_gb": 4.22,
+    "torch_cache_mib": 12133,
+    "delta_since_poll1": {
+      "idx_delta_approx": 6700,
+      "rate_constant": true
+    }
+  },
+  "sister_bg_a9a016b528_hf_push": {
+    "status": "STAGED_NOT_PUSHED",
+    "staging_dir": "/Users/ghost/core/anima/state/vlm_stage1_hf_push_2026_05_04/staging",
+    "staged_ckpts": ["step-5k", "step-10k", "step-15k", "step-20k"],
+    "sha256_manifest_lines": 12,
+    "readmes_present": 4,
+    "latest_hf_upload_marker": "hf_upload_mk2_1777876775.marker",
+    "marker_ts_kst": "2026-05-04T15:39:35",
+    "newer_hf_upload_markers_after_15_39": 0,
+    "interpretation": "staging+manifest+README complete; actual remote push (hub upload_folder) not evidenced by marker after 15:39 — likely still pending or pushing"
+  },
+  "caveats_3": [
+    "VLM ETA still ~2.8h (sps=2.73 stable) — savepoint-25k arrives ~16:05 KST, not yet — DO NOT preempt training to chase rebase",
+    "KL cache file already 11.26GB at 85% (linear extrapolation → final ~13.2GB); ensure /tmp has ≥3GB free for tail + meta + atomic rename",
+    "Sister BG (hf push) shows staging-only with no post-15:39 upload marker — cannot confirm 4 ckpts are remote-visible; verify with HfApi.list_repo_files OR next poll's marker delta before claiming PUSHED"
+  ],
+  "verify_method": "raw#9 ssh ubu1 ps/log tail + raw#15 file size/wc -l + raw#$0 marker mtime audit; no preempt"
+}

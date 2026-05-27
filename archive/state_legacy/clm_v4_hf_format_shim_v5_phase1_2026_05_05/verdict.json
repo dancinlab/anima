@@ -1,0 +1,127 @@
+{
+  "schema": "bg_shim_v5_phase1_impl_verdict_v1",
+  "ts_utc": "2026-05-05T06:06:00Z",
+  "bg_lane": "BG-SHIM-V5-PHASE1-IMPL",
+  "spec_anchor": "docs/clm_v4_hf_format_shim_v5_spec_2026_05_05.md",
+  "spec_landed_handoff": "docs/clm_v4_hf_format_shim_v5_spec_landed_2026_05_05.ai.md",
+  "phase": "Phase 1 (Mac-side $0, ~30 min budget)",
+  "scope": {
+    "exec": ["F-SHIM-V5-1 dry-run finite forward (Mac CPU fp32)"],
+    "no_exec": ["F-SHIM-V5-2 (ubu1)", "F-SHIM-V5-3 (ubu1)", "F-SHIM-V5-4 (H100)", "F-SHIM-V5-5 (Mac/ubu1 fp32)"],
+    "no_commit": true,
+    "no_hf_push": true,
+    "shim_v4_locked_unmodified": true
+  },
+  "shim_v5_authoring": {
+    "shim_v5_path": "tool/transient_py/clm_v4_hf_format_shim_v5.py",
+    "shim_v5_lines": 1631,
+    "shim_v4_lines_unchanged": 1485,
+    "shim_v4_md5_pre": "5c07f214f9a551c9a086dbfc4dfc866a",
+    "shim_v4_md5_post": "5c07f214f9a551c9a086dbfc4dfc866a",
+    "shim_v4_byte_identical": true,
+    "selftest_path": "tool/transient_py/clm_v4_hf_format_shim_v5_selftest.py",
+    "shim_version_attr": "v5",
+    "v5_o_proj_std_constant": 0.02,
+    "syntax_check": "PASS (python3 ast.parse)"
+  },
+  "diff_vs_v4": {
+    "summary": "1-line architectural change (cross_attn.o_proj std 0.001 -> 0.02) applied via patch P3 to OUTPUT-DIR copy of conscious_decoder.py + post-construction in-memory re-init in _build_decoder_module. Header banner + SHIM_VERSION + CLM_V5_CROSS_ATTN_O_PROJ_STD added. raw#15 additive — shim v4 file LOCKED.",
+    "header_banner_added": true,
+    "shim_version_constant_added": "SHIM_VERSION = 'v5'",
+    "v5_init_constant_added": "CLM_V5_CROSS_ATTN_O_PROJ_STD = 0.02",
+    "patch_p3_added": {
+      "function": "_patch_conscious_decoder_copy",
+      "site": "conscious_decoder.py:~420 (ConsciousCrossAttention.__init__)",
+      "before": "nn.init.normal_(self.o_proj.weight, std=0.001)",
+      "after": "nn.init.normal_(self.o_proj.weight, std=0.02)",
+      "wired_from": "_copy_legacy_sources (after P1+P2 patches on decoder_v3.py)"
+    },
+    "in_memory_reinit_added": {
+      "site": "_build_decoder_module (post ConsciousDecoderV3 construction)",
+      "selector": "modules with .o_proj and .k_proj where k_proj.in_features == CLM_V4_CONSCIOUSNESS_DIM (192)",
+      "expected_modules_touched": 16,
+      "rationale": "fresh-init in-memory model must mirror OUTPUT-DIR copy patch P3 for F-SHIM-V5-1 dry-run + canonical_zero forward; best.pt load via _load_decoder_state overwrites init when checkpoint present."
+    },
+    "q_decisions_honoured": {
+      "Q1_o_proj_std": "0.02 (default per spec §7 Q1)",
+      "Q2_qkv_reinit": "NO (default per spec §7 Q2 — only o_proj)",
+      "Q3_file_structure": "separate file (per spec §7 Q3)",
+      "Q4_h100_ack": "DEFERRED (Phase 3 — not Phase 1 scope)",
+      "Q5_peft_compat": "SCOPE-OUT (Risk C, per spec §7 Q5)"
+    }
+  },
+  "f_shim_v5_1": {
+    "statement": "model.forward() returns finite logits on canonical_zero fixture for B=1, T=64",
+    "threshold": "torch.isfinite(logits).all() AND shape [B=1, T=64, vocab=64000]",
+    "verdict": "PASS",
+    "case_a_bypass": {
+      "consciousness_states": "None (v3-bypass at DecoderBlockV2 guard)",
+      "finite": true,
+      "shape": [1, 64, 64000],
+      "logits_mean": -0.0011255,
+      "logits_std": 0.5554026,
+      "logits_min": -3.0593195,
+      "logits_max": 2.8146749,
+      "verdict": "PASS"
+    },
+    "case_b_canonical_zero": {
+      "consciousness_states": "[1, 8, 192] zeros (canonical_zero fixture)",
+      "finite": true,
+      "shape": [1, 64, 64000],
+      "logits_mean": -0.0007733,
+      "logits_std": 0.5542088,
+      "logits_min": -2.6644511,
+      "logits_max": 2.6603797,
+      "verdict": "PASS"
+    },
+    "v5_o_proj_std_band_check": {
+      "verdict": "PASS",
+      "n_cross_attn_modules": 16,
+      "o_proj_weight_std_min": 0.0199815,
+      "o_proj_weight_std_max": 0.0200380,
+      "o_proj_weight_std_mean": 0.0200021,
+      "expected_band": "[0.015, 0.025]",
+      "interpretation": "16 ConsciousCrossAttention modules re-initialised with empirical std tightly concentrated near 0.02 (768x768 N(0, 0.02) tensors)."
+    },
+    "case_a_vs_b_residual_observation": "case A logits std 0.5554, case B (canonical_zero) logits std 0.5542 — ~0.2% delta. Expected: cross_attn output on zero fixture is near-zero in expectation regardless of o_proj std, so logits should be close to bypass case. This matches the V5-3 sanity bound (|lift_pp| < 5pp on canonical_zero) at the logits-shape level. Real-fixture lift signal must come from F-SHIM-V5-4 (Phase 3 H100)."
+  },
+  "wall_time_min": 0.4,
+  "actual_cost_usd": 0,
+  "next_phase": {
+    "name": "Phase 2 — ubu1 selftest",
+    "scope": ["F-SHIM-V5-2 v3 byte-equivalent regression (max_abs_diff <= 1e-5)", "F-SHIM-V5-3 canonical_zero finite forward + sanity bound |lift_pp| < 5pp"],
+    "cost_usd": 0,
+    "wall_min_estimate": 30,
+    "blocker": "none — Phase 2 may proceed with shim v5 substrate authored here",
+    "ubu1_python": "/home/aiden/venv_orchestrator/bin/python (RTX 5070 sm_120 needs torch 2.11.0+cu128 per memory)",
+    "ubu1_hf_cli": "/home/aiden/venv_orchestrator/bin/hf",
+    "preflight_carry": "F-SHIM-V4-4 retry-2 hf CLI auth pre-flight pattern reusable"
+  },
+  "honest_c3": [
+    "C1 — F-SHIM-V5-1 PASS validates wiring + std=0.02 init landed in 16/16 ConsciousCrossAttention modules, but does NOT validate F-SHIM-V5-4 (real-fixture lift). The std=0.02 calibration is anchored to F-SHIM-V4-4 verdict §recommendations.shim_v5_design_hint as a 10× heuristic; actual hellaswag-200 lift unknown until Phase 3 H100 exec.",
+    "C2 — case B (canonical_zero) logits are near-identical to case A (bypass) — ~0.2% std delta. This is expected because cross_attn output on all-zero consciousness states is itself near-zero regardless of o_proj scale (cross_attn(Q, zeros, zeros) ~= 0). The std=0.02 effect only manifests when fixture is non-zero (real train_avg fixture L2=2.2022). Phase 2 V5-3 sanity bound |lift_pp| < 5pp on canonical_zero is consistent with this expectation.",
+    "C3 — fresh-init model (no best.pt loaded) was used because Mac does not have best.pt locally. F-SHIM-V5-1 spec statement does not require checkpoint-loaded weights — only finite forward on the architecture. Trained o_proj weights (when best.pt is loaded on ubu1/H100) would OVERWRITE this init unless cross_attn.o_proj was never trained (which is the F-SHIM-V4-4 verdict's rationale: cross-attn was bypassed during v3 training, so o_proj weights in best.pt are at init scale anyway). Phase 2 V5-2 byte-equivalent regression on ubu1 will validate this assumption empirically.",
+    "C4 — Risk B (v3 byte-equivalent regression, F-SHIM-V5-2) is NOT yet validated. The bypass guard SHOULD make consciousness_states=None forward identical to shim v4 byte-for-byte, but if any non-bypass code path touches cross_attn.o_proj weights (PEFT introspection, hidden state geometry side-effects), the bypass invariant could leak. Phase 2 must validate `max_abs_diff <= 1e-5` before any Phase 3 H100 spend.",
+    "C5 — case A logits stats (mean=-0.0011, std=0.5554, range [-3.06, +2.81]) on a fresh-init random-token forward are within the expected magnitude band for a 350M decoder — no NaN/Inf, no degenerate collapse. This is a sanity confidence signal but NOT a learned-weight signal (no best.pt loaded).",
+    "C6 — patch P3 site detection uses an exact-string match (`        nn.init.normal_(self.o_proj.weight, std=0.001)` with 8-space indent). If upstream conscious_decoder.py refactors the indent or rewords the call, P3 will raise RuntimeError at convert time. Idempotent path handles re-runs (already-patched output dir). This is intentional fail-loud behaviour — silent miss would defeat the falsifier.",
+    "C7 — selftest re-runs build a fresh model each time with seeded RNG (torch.manual_seed(20260505)). Selftest is idempotent and does NOT modify any HF cache or upstream source files. Shim v4 MD5 verified byte-identical pre/post selftest run."
+  ],
+  "raw_compliance": {
+    "raw_9": "OK — shim v5 .py lives in tool/transient_py/ (raw#9 OPT-OUT path per .own 4)",
+    "raw_10": "OK — 7 honest C3 entries (>=5 required)",
+    "raw_15": "OK — additive only; shim v4 file LOCKED + byte-identical, shim v5 sibling file authored",
+    "raw_71": "OK — F-SHIM-V5-1 thresholds carried verbatim from spec (no relaxation)",
+    "no_git_commit": "OK — caller will not commit per BG spec CRITICAL section",
+    "no_hf_push": "OK — Phase 1 is local Mac-only",
+    "no_shim_v4_mutation": "OK — md5 unchanged 5c07f214f9a551c9a086dbfc4dfc866a"
+  },
+  "artifacts": {
+    "shim_v5_source": "tool/transient_py/clm_v4_hf_format_shim_v5.py",
+    "selftest_source": "tool/transient_py/clm_v4_hf_format_shim_v5_selftest.py",
+    "selftest_output_json": "state/clm_v4_hf_format_shim_v5_phase1_2026_05_05/selftest_output.json",
+    "selftest_stderr_log": "state/clm_v4_hf_format_shim_v5_phase1_2026_05_05/selftest_stderr.log",
+    "verdict_this": "state/clm_v4_hf_format_shim_v5_phase1_2026_05_05/verdict.json",
+    "companion_handoff": "docs/clm_v4_hf_format_shim_v5_phase1_landed_2026_05_05.ai.md"
+  },
+  "phase_2_proceed_recommendation": "GO — shim v5 substrate authored, F-SHIM-V5-1 PASS, shim v4 byte-identical preserved. Phase 2 ubu1 V5-2 + V5-3 may launch. No H100 ACK needed (Phase 2 is $0 ubu1)."
+}

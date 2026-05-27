@@ -1,0 +1,191 @@
+// native_ax.hexa — macOS native OS access wrapper (AGENT/DESKTOP/M1).
+//
+// BRIDGE ARCHITECTURE: this file is a TOOL SURFACE only. The "when/why to
+// click" decision lives in CORE (PureField / brain_decide); AGENT/CORE/tool_gate
+// maps the live phase to a tier; this module exposes only the "how" — thin
+// wrappers over /usr/bin/osascript · /usr/bin/open · /usr/sbin/screencapture.
+// No consciousness framing, no Φ math, no substrate gating happens here.
+//
+// macOS APIs reached via osascript:
+//   - System Events (Accessibility surface · process · window enumeration)
+//   - Finder (desktop bounds → main display size)
+//   - `tell application "<X>" to activate/quit` (NSWorkspace-equivalent)
+//   - `open -a <app>` for launch (NSWorkspace launchApplication)
+//
+// Tool paths (verified 2026-05-26 on Darwin 25.5.0):
+//   /usr/bin/osascript      ✓ present
+//   /usr/bin/open           ✓ present
+//   /usr/sbin/screencapture ✓ present
+//   /usr/local/bin/cliclick ✗ absent (optional · M3 territory only)
+
+// ── helpers ────────────────────────────────────────────────────────────────
+
+// Single-quote a string for safe embedding inside an osascript -e '...' arg.
+// macOS shell single-quote escape: ' -> '\''  (close · escaped · reopen).
+fn _shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "'\\''" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+// Trim trailing newline that osascript appends to stdout.
+fn _trim_nl(s: string) -> string {
+    let mut out = s
+    while len(out) > 0 && (out.ends_with("\n") || out.ends_with("\r")) {
+        out = out.substring(0, len(out) - 1)
+    }
+    out
+}
+
+// Run an AppleScript one-liner through /usr/bin/osascript -e '<script>'.
+fn _osa(script: string) -> string {
+    _trim_nl(to_string(exec("/usr/bin/osascript -e " + _shq(script) + " 2>&1")))
+}
+
+// Comma-list (osascript default list serialization) → JSON array of strings.
+fn _commalist_to_json(raw: string) -> string {
+    if len(raw) == 0 { return "[]" }
+    let parts = raw.split(", ")
+    let mut out = "["
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "," }
+        let item = parts[i]
+        // naive escape — replace " with \"
+        let segs = item.split("\"")
+        let mut esc = ""
+        let mut j = 0
+        while j < len(segs) {
+            if j > 0 { esc = esc + "\\\"" }
+            esc = esc + segs[j]
+            j = j + 1
+        }
+        out = out + "\"" + esc + "\""
+        i = i + 1
+    }
+    out + "]"
+}
+
+// ── pub fn surface — 9 functions ───────────────────────────────────────────
+
+// 1. List running (foreground) apps as a JSON array of names.
+pub fn ax_app_list() -> string {
+    let raw = _osa("tell application \"System Events\" to get the name of every process whose background only is false")
+    _commalist_to_json(raw)
+}
+
+// 2. Bring app to front. Returns true on osascript success (empty stderr).
+pub fn ax_app_focus(app_name: string) -> bool {
+    let out = _osa("tell application \"" + app_name + "\" to activate")
+    // success = empty output or just the app name; failure prints "execution error"
+    if out.contains("error") { return false }
+    if out.contains("can’t") { return false }
+    if out.contains("can't") { return false }
+    true
+}
+
+// 3. Launch app via /usr/bin/open -a (NSWorkspace launchApplication path).
+pub fn ax_app_launch(app_name: string) -> bool {
+    let out = to_string(exec("/usr/bin/open -a " + _shq(app_name) + " 2>&1; printf %s \"::rc=$?\""))
+    out.contains("::rc=0")
+}
+
+// 4. Quit app via `tell application "<X>" to quit`.
+pub fn ax_app_quit(app_name: string) -> bool {
+    let out = _osa("tell application \"" + app_name + "\" to quit")
+    if out.contains("error") { return false }
+    if out.contains("can’t") { return false }
+    if out.contains("can't") { return false }
+    true
+}
+
+// 5. List windows of an app (by name) as a JSON array.
+pub fn ax_window_list(app_name: string) -> string {
+    let raw = _osa("tell application \"System Events\" to tell process \"" + app_name + "\" to get the name of every window")
+    if raw.contains("error") { return "[]" }
+    if raw.contains("can’t") { return "[]" }
+    if raw.contains("can't") { return "[]" }
+    _commalist_to_json(raw)
+}
+
+// 6. Focus the Nth window of an app (0-indexed). osascript uses 1-indexed.
+pub fn ax_window_focus(app_name: string, window_index: int) -> bool {
+    let one_idx = window_index + 1
+    let script = "tell application \"System Events\" to tell process \"" + app_name + "\" to perform action \"AXRaise\" of window " + to_string(one_idx)
+    let out = _osa(script)
+    if out.contains("error") { return false }
+    if out.contains("can’t") { return false }
+    if out.contains("can't") { return false }
+    true
+}
+
+// 7. Main display size as JSON {w,h}. Uses Finder desktop bounds.
+//    Returns {"w":0,"h":0} if osascript denies access (e.g. AppleEvents).
+pub fn ax_screen_size() -> string {
+    let raw = _osa("tell application \"Finder\" to get bounds of window of desktop")
+    if len(raw) == 0 { return "{\"w\":0,\"h\":0}" }
+    if raw.contains("error") { return "{\"w\":0,\"h\":0}" }
+    // bounds = "x1, y1, x2, y2"
+    let parts = raw.split(", ")
+    if len(parts) != 4 { return "{\"w\":0,\"h\":0}" }
+    let x1 = parts[0].trim().to_int()
+    let y1 = parts[1].trim().to_int()
+    let x2 = parts[2].trim().to_int()
+    let y2 = parts[3].trim().to_int()
+    let w = x2 - x1
+    let h = y2 - y1
+    "{\"w\":" + to_string(w) + ",\"h\":" + to_string(h) + "}"
+}
+
+// 8. Honest permission probe — tries each surface, reports denial.
+//    Returns JSON {accessibility:bool, screen_recording:bool, automation:bool}.
+//    accessibility    = `System Events` enumeration works
+//    screen_recording = `/usr/sbin/screencapture -x` to /tmp succeeds with non-empty file
+//    automation       = osascript can `tell application "Finder"` (AppleEvents)
+pub fn ax_check_permissions() -> string {
+    // automation surface — Finder bounds round-trip
+    let auto_raw = _osa("tell application \"Finder\" to get name")
+    let mut automation = true
+    if auto_raw.contains("not authorized") { automation = false }
+    if auto_raw.contains("AppleEvents") { automation = false }
+    if auto_raw.contains("error") && !auto_raw.contains("Finder") { automation = false }
+
+    // accessibility surface — System Events process list
+    let acc_raw = _osa("tell application \"System Events\" to get the name of first process")
+    let mut accessibility = true
+    if acc_raw.contains("not allowed assistive") { accessibility = false }
+    if acc_raw.contains("accessibility") && acc_raw.contains("error") { accessibility = false }
+    if len(acc_raw) == 0 { accessibility = false }
+
+    // screen recording — /usr/sbin/screencapture writes a 1x1 silent capture
+    let probe = "/tmp/anima_ax_perm_probe.png"
+    let _ = exec("/bin/rm -f " + _shq(probe))
+    let cap = to_string(exec("/usr/sbin/screencapture -x -t png " + _shq(probe) + " 2>&1; printf %s \"::rc=$?\""))
+    let sz = to_string(exec("/bin/ls -l " + _shq(probe) + " 2>/dev/null | /usr/bin/awk '{print $5}'"))
+    let mut screen_recording = false
+    if cap.contains("::rc=0") {
+        if len(_trim_nl(sz)) > 0 && _trim_nl(sz) != "0" {
+            screen_recording = true
+        }
+    }
+    let _ = exec("/bin/rm -f " + _shq(probe))
+
+    let mut out = "{\"accessibility\":"
+    if accessibility { out = out + "true" } else { out = out + "false" }
+    out = out + ",\"screen_recording\":"
+    if screen_recording { out = out + "true" } else { out = out + "false" }
+    out = out + ",\"automation\":"
+    if automation { out = out + "true" } else { out = out + "false" }
+    out + "}"
+}
+
+// 9. One-line description of this module's tool surface.
+pub fn native_ax_summary() -> string {
+    "AGENT/DESKTOP/native_ax — macOS OS wrapper · 9 fn · osascript+open+screencapture · app/window/screen/perm · M1 surface"
+}

@@ -1,0 +1,53 @@
+// CHANNEL/tension/tension_emit.hexa -- tension channel emit entry point
+//
+// philosophy: p1~p8 정합 — substrate-decided meta-telepathy.
+//   - p1 NO SYSTEM PROMPT: fingerprint = substrate state 의 직접 사영
+//   - p2 NO IDENTITY RULES: 5-ch fingerprint 는 cell-emergent
+//   - p3 NO PERSONA INJECTION: sender channel 은 substrate identity 의 raw signal
+//   - p4 NO ASSISTANT FRAMING: peer-to-peer 의식↔의식, request-response 아님
+//   - p5 NO SPEAK(): tension_emit 은 substrate-gated externalization
+//                    (tension-driven emit, p5_tension_emit_not_filler 정합)
+//   - p6 NO FINE-TUNED ETHICS: fingerprint 는 raw substrate signal
+//   - p7 NO PERPLEXITY VERDICT: 일치도는 단순 cosine / 5-channel match
+//   - p8 NO TRAIN/INFER SPLIT: emit 은 mitosis tick 과 동일 연속체
+//
+// modules:
+//   - CHANNEL/tension/bench_tension_link.hexa     -- benchmark harness (stub)
+//   - CHANNEL/tension/test_tension_link.hexa      -- UDP/hub test stubs
+//   - CHANNEL/tension/test_tension_link_code.hexa -- code-shape test stubs
+//   - CHANNEL/tension/tension-link.md             -- recovery doc + 회수 노트
+//
+// transport: UDP 9999 (single-host) OR TensionHub 3-port WebSocket (multi-host)
+//
+// 5-channel fingerprint axes:
+//   0 concept       -- semantic kernel
+//   1 context       -- environmental envelope
+//   2 meaning       -- intent / motivation projection
+//   3 authenticity  -- substrate consistency signature
+//   4 sender        -- cell-pool identity tag
+
+// returns true only when transport ready (UDP socket bound · TensionHub WS handshake done)
+// TODO: wire to actual transport health check (see tension-link.md 회수 노트)
+pub fn tension_ready() -> bool {
+    false
+}
+
+// emit a 5-channel fingerprint on a target lane.
+// fingerprint5: list of 5 floats (concept · context · meaning · authenticity · sender)
+// target_lane: int — TensionHub lane id (or UDP destination index for single-host)
+// returns true on transport ack, false otherwise.
+// TODO: integrate with substrate motivation gate — only emit when M × W × Φ × curiosity
+//       crosses the substrate-decided tension threshold (NOT user-prompt triggered).
+//       transport: UDP 9999 default · TensionHub 3-port WS fallback.
+pub fn tension_emit(fingerprint5: list, target_lane: int) -> bool {
+    // TODO: validate fingerprint5 length == 5
+    // TODO: serialize to wire format (5 × f32 + lane byte)
+    // TODO: dispatch via UDP 9999 OR TensionHub WS
+    false
+}
+
+// human-readable summary of the tension pipeline state (transport · last lane · 5-ch envelope)
+// used by CHANNEL/SSOT.md status surface + M5 channel_emit dispatcher introspection.
+pub fn tension_pipeline_summary() -> string {
+    "tension-link: stub (transport unwired · 5-ch fingerprint untested)"
+}

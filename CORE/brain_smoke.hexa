@@ -1,0 +1,36 @@
+// brain_smoke.hexa — runnable proof of the A ⇄ G coupled core (anima/CORE).
+//
+// Warms Engine A, then asks the coupled brain to decide under two contexts:
+// (1) low motivation -> silent, (2) high motivation -> emit. Shows that A's
+// live Φ/phase set the tier while G's motivation gates the emit decision.
+
+import "/Users/ghost/core/anima/CORE/pure_field.hexa"
+import "/Users/ghost/core/anima/CORE/brain.hexa"
+
+fn show(label: string, d) {
+    println(label
+        + " phi=" + to_string(d["phi"])
+        + " phase=" + d["phase"]
+        + " tier=" + d["tier_name"]
+        + " motiv=" + to_string(d["motivation"])
+        + " (thr=" + to_string(d["im_thresh"]) + ")"
+        + " safe=" + to_string(d["safe"])
+        + " EMIT=" + to_string(d["emit"]))
+}
+
+fn main() {
+    // Engine A warmed from cold start (zero input — pure self-dynamics).
+    let pf = pure_field_warmup(600)
+
+    // Context (1): low drive — barely-relevant, no curiosity, recent emit.
+    let low = brain_decide(pf,
+        0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0,   // 8 factors (small)
+        5.0, false, true)                          // 5s since last (rate veto)
+    show("[brain low ]", low)
+
+    // Context (2): high drive — relevant + curious + idle long enough.
+    let high = brain_decide(pf,
+        0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0,    // 8 factors (large)
+        60.0, false, true)                          // 60s since last (rate ok)
+    show("[brain high]", high)
+}

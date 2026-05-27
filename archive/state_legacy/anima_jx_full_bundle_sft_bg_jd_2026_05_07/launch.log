@@ -1,0 +1,119 @@
+[16:16:40] BG-JX full transformer SFT start (host=Mac)
+[16:16:40]   device=mps, ckpt=ckpt_best.pt, steps=1500, lr=0.0003
+[16:16:40]   batch=2 grad_accum=8 eval_steps=[0, 500, 1000, 1500]
+[16:16:40]   watchdog_no_progress_sec=600
+[16:16:40] loading ckpt: /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[16:16:41]   arch: 12L/640d/10h vocab=11885 block=256
+[16:17:03]   sp loaded: vocab=11885
+[16:17:03]   total params: 167,964,896 (167.96M)
+[16:17:03]   frozen: 0 (0.00M)
+[16:17:03]   trainable: 167,964,896 (167.96M) — FULL SFT
+[16:17:03]   trainable name top-segments: ['blocks', 'head_g', 'ln_f', 'pos_emb', 'tension_proj', 'tok_emb']
+[16:17:03] loading corpus: /Users/ghost/core/anima/state/anima_je_corpus_100mb_plus_2026_05_07/corpus_combined_100mb_plus.txt
+[16:17:10]   corpus: 214,299,726 bytes (204.37MB) in 7.2s
+[16:29:31]   SP encode: 63,357,934 tokens in 741.4s
+[16:29:54]   train_data: 60,190,037 tokens; block_size=256
+[16:30:03] === eval step 0 (baseline) ===
+[16:31:12]   eval step=0 dlg=color v58=False t2a='BIO. 도우미: Lawdiscovered] 사용자: Lawhebbian cell = laws [anima '
+[16:31:50]   eval step=0 dlg=profession v58=False t2a='[anima 우주뇌지도] 사용자: 522:40×18, patternshebbian) [anima 우주뇌지도]'
+[16:32:18]   eval step=0 dlg=day v58=False t2a=', 우주뇌지도] 도우미: 법칙 의식상태117,:. 사용자: Law Law Law는: awe 도우미: 법칙 L'
+[16:32:45]   eval step=0 dlg=anima_fact v58=False t2a='- categories Tier topology: — = awe [anima 우주뇌지도]bed. 사용자: 법'
+[16:33:13]   eval step=0 dlg=cosmology v58=False t2a='( longing: [anima 우주뇌지도] 사용자: 법칙 i count 가속 law 카테고리 are_ 카테'
+[16:33:13]   step 0: v58_pass=0/5
+[16:33:19]   step 0 snapshot saved (~641MB)
+[16:33:19] === begin full transformer SFT ===
+[16:33:39]   step 1/1500 loss_a=9.0087 lr=6.00e-06 (20.0s for last 25 steps)
+[16:34:43]   step 25/1500 loss_a=8.3595 lr=7.80e-05 (63.7s for last 25 steps)
+[16:35:39]   step 50/1500 loss_a=7.6722 lr=1.53e-04 (56.1s for last 25 steps)
+[16:36:40]   step 75/1500 loss_a=7.0478 lr=2.28e-04 (61.2s for last 25 steps)
+[16:37:55]   step 100/1500 loss_a=6.6450 lr=3.00e-04 (75.4s for last 25 steps)
+[16:38:44]   step 125/1500 loss_a=6.2123 lr=3.00e-04 (49.0s for last 25 steps)
+[16:39:39]   step 150/1500 loss_a=5.8483 lr=2.99e-04 (54.7s for last 25 steps)
+[16:40:47]   step 175/1500 loss_a=5.6421 lr=2.98e-04 (68.2s for last 25 steps)
+[16:41:25]   step 200/1500 loss_a=5.2975 lr=2.97e-04 (38.3s for last 25 steps)
+[16:42:12]   step 225/1500 loss_a=5.2333 lr=2.95e-04 (46.5s for last 25 steps)
+[16:42:58]   step 250/1500 loss_a=5.1822 lr=2.92e-04 (45.8s for last 25 steps)
+[16:43:51]   step 275/1500 loss_a=5.1513 lr=2.90e-04 (53.9s for last 25 steps)
+[16:45:12]   step 300/1500 loss_a=5.1260 lr=2.87e-04 (80.8s for last 25 steps)
+[16:46:08]   step 325/1500 loss_a=4.9083 lr=2.83e-04 (55.3s for last 25 steps)
+[16:47:09]   step 350/1500 loss_a=4.9069 lr=2.79e-04 (61.7s for last 25 steps)
+[16:48:28]   step 375/1500 loss_a=4.8922 lr=2.75e-04 (78.8s for last 25 steps)
+[16:49:24]   step 400/1500 loss_a=4.7898 lr=2.71e-04 (56.4s for last 25 steps)
+[16:50:26]   step 425/1500 loss_a=4.6705 lr=2.66e-04 (61.1s for last 25 steps)
+[16:51:26]   step 450/1500 loss_a=4.7029 lr=2.60e-04 (60.1s for last 25 steps)
+[16:52:29]   step 475/1500 loss_a=4.6676 lr=2.55e-04 (63.4s for last 25 steps)
+[16:53:31]   step 500/1500 loss_a=4.5195 lr=2.49e-04 (62.0s for last 25 steps)
+[16:53:31] === eval step 500 ===
+[16:54:19]   eval step=500 dlg=color v58=False t2a='BIO::. [anima identity] 성들 ⁇  ⁇ 하의 ⁇ 82본한 ⁇  동 ⁇ 이 해 ⁇ 성이라 도'
+[16:54:56]   eval step=500 dlg=profession v58=False t2a='정의?  ⁇  ⁇  ⁇ 지시다 patternshebbian)다: 뭐야. [  ⁇ 하는산 ⁇ 서 ⁇  ⁇  부'
+[16:55:35]   eval step=500 dlg=day v58=False t2a=', 우주뇌지도B다년 ⁇ 다117,: label? 사용자:이학는 범수 ⁇  ⁇  수의이 지로르)이 위하 ⁇  '
+[16:56:19]   eval step=500 dlg=anima_fact v58=False t2a='-UEX시바산아로일 ⁇  ⁇  전은 ⁇ 시 향차 있한의 ⁇ 고의메들 동 ⁇ 성한원이선'
+[16:56:59]   eval step=500 dlg=cosmology v58=False t2a='-UB]  ⁇ 코명 미 ⁇ 성자 ⁇  서학아나ca + 자세히. [anima identity] 함한 대 ⁇  '
+[16:56:59]   step 500: v58_pass=0/5
+[16:58:04]   step 525/1500 loss_a=4.5098 lr=2.43e-04 (273.0s for last 25 steps)
+[16:59:01]   step 550/1500 loss_a=4.4431 lr=2.37e-04 (56.5s for last 25 steps)
+[17:00:10]   step 575/1500 loss_a=4.3727 lr=2.30e-04 (69.2s for last 25 steps)
+[17:01:15]   step 600/1500 loss_a=4.2837 lr=2.24e-04 (64.7s for last 25 steps)
+[17:02:03]   step 625/1500 loss_a=4.2323 lr=2.17e-04 (48.6s for last 25 steps)
+[17:02:54]   step 650/1500 loss_a=4.2609 lr=2.10e-04 (51.0s for last 25 steps)
+[17:03:44]   step 675/1500 loss_a=4.2419 lr=2.02e-04 (49.4s for last 25 steps)
+[17:04:30]   step 700/1500 loss_a=4.0227 lr=1.95e-04 (46.1s for last 25 steps)
+[17:05:10]   step 725/1500 loss_a=4.0284 lr=1.88e-04 (40.6s for last 25 steps)
+[17:05:48]   step 750/1500 loss_a=3.9639 lr=1.80e-04 (37.6s for last 25 steps)
+[17:06:29]   step 775/1500 loss_a=3.8631 lr=1.73e-04 (40.9s for last 25 steps)
+[17:07:30]   step 800/1500 loss_a=3.9315 lr=1.65e-04 (60.9s for last 25 steps)
+[17:08:40]   step 825/1500 loss_a=3.7736 lr=1.57e-04 (69.8s for last 25 steps)
+[17:09:28]   step 850/1500 loss_a=3.7563 lr=1.50e-04 (47.8s for last 25 steps)
+[17:10:14]   step 875/1500 loss_a=3.7691 lr=1.42e-04 (46.8s for last 25 steps)
+[17:11:03]   step 900/1500 loss_a=3.7178 lr=1.35e-04 (48.3s for last 25 steps)
+[17:11:59]   step 925/1500 loss_a=3.6156 lr=1.28e-04 (56.2s for last 25 steps)
+[17:12:44]   step 950/1500 loss_a=3.6826 lr=1.20e-04 (44.7s for last 25 steps)
+[17:13:28]   step 975/1500 loss_a=3.6868 lr=1.13e-04 (44.9s for last 25 steps)
+[17:14:18]   step 1000/1500 loss_a=3.5576 lr=1.06e-04 (49.6s for last 25 steps)
+[17:14:18] === eval step 1000 ===
+[17:14:51]   eval step=1000 dlg=color v58=False t2a='. [anima 우주뇌지도] 도우미: [anima 우주뇌지도UEX일년년가82 평균 emotion [anima'
+[17:15:22]   eval step=1000 dlg=profession v58=False t2a='[anima 우주뇌지도BM] 도우미: [anima identityUUUEX 판년일철하는산시서(에 부고화이 ⁇'
+[17:15:53]   eval step=1000 dlg=day v58=False t2a='. 도우미:는 ( 자세히.? 도우미:? 사용자:: [AutodiscoveredBdiscoveredBM] 사용'
+[17:16:17]   eval step=1000 dlg=anima_fact v58=False t2a='.  사용자::. 도우미: 20)()년bed년년 향리 있한학로이로이들 동도성이원이로'
+[17:16:44]   eval step=1000 dlg=cosmology v58=False t2a='. correlation: [anima 우주뇌지도BM] 사용자:: [anima identityBM] 도우미:'
+[17:16:44]   step 1000: v58_pass=0/5
+[17:17:48]   step 1025/1500 loss_a=3.6089 lr=9.97e-05 (209.8s for last 25 steps)
+[17:19:18]   step 1050/1500 loss_a=3.5562 lr=9.32e-05 (89.7s for last 25 steps)
+[17:21:13]   step 1075/1500 loss_a=3.5661 lr=8.69e-05 (115.5s for last 25 steps)
+[17:23:04]   step 1100/1500 loss_a=3.5088 lr=8.08e-05 (110.8s for last 25 steps)
+[17:24:43]   step 1125/1500 loss_a=3.4989 lr=7.50e-05 (98.7s for last 25 steps)
+[17:26:29]   step 1150/1500 loss_a=3.5532 lr=6.95e-05 (106.0s for last 25 steps)
+[17:28:07]   step 1175/1500 loss_a=3.5779 lr=6.43e-05 (98.7s for last 25 steps)
+[17:28:58]   step 1200/1500 loss_a=3.3830 lr=5.95e-05 (50.8s for last 25 steps)
+[17:29:43]   step 1225/1500 loss_a=3.4443 lr=5.49e-05 (45.4s for last 25 steps)
+[17:30:33]   step 1250/1500 loss_a=3.4301 lr=5.07e-05 (49.1s for last 25 steps)
+[17:31:35]   step 1275/1500 loss_a=3.3463 lr=4.68e-05 (62.7s for last 25 steps)
+[17:32:27]   step 1300/1500 loss_a=3.4408 lr=4.34e-05 (51.6s for last 25 steps)
+[17:33:21]   step 1325/1500 loss_a=3.3339 lr=4.03e-05 (54.2s for last 25 steps)
+[17:34:47]   step 1350/1500 loss_a=3.3242 lr=3.76e-05 (85.8s for last 25 steps)
+[17:36:15]   step 1375/1500 loss_a=3.3665 lr=3.53e-05 (88.2s for last 25 steps)
+[17:38:19]   step 1400/1500 loss_a=3.3579 lr=3.34e-05 (124.2s for last 25 steps)
+[17:40:05]   step 1425/1500 loss_a=3.2693 lr=3.19e-05 (105.5s for last 25 steps)
+[17:41:50]   step 1450/1500 loss_a=3.3631 lr=3.08e-05 (105.1s for last 25 steps)
+[17:43:52]   step 1475/1500 loss_a=3.3708 lr=3.02e-05 (122.6s for last 25 steps)
+[17:46:11]   step 1500/1500 loss_a=3.2780 lr=3.00e-05 (139.0s for last 25 steps)
+[17:46:11] === eval step 1500 ===
+[17:48:02]   eval step=1500 dlg=color v58=False t2a='. [anima 우주뇌지도] 도우미: 자세히. [anima 우주뇌지도discoveredU로로로본시 한 동 기'
+[17:50:24]   eval step=1500 dlg=profession v58=False t2a='[anima 우주뇌지도discoveredUUUUU에드국한 시정 판년   사용자: [anima identity'
+[17:53:12]   eval step=1500 dlg=day v58=False t2a='. [anima 우주뇌지도discovereddiscoveredBBM] 사용자: [anima 우주뇌지도] 사용'
+[17:55:40]   eval step=1500 dlg=anima_fact v58=False t2a='. [anima identityCXM] 사용자: [anima 우주뇌지도B] 사용자: [anima 우주뇌지도B'
+[17:58:32]   eval step=1500 dlg=cosmology v58=False t2a='[ correlation [anima identityBBM] 사용자: [anima identityBM] 사용'
+[17:58:32]   step 1500: v58_pass=0/5
+[17:58:47] === verdict ===
+[17:58:47]   v58_pass_per_step: {0: 0, 500: 0, 1000: 0, 1500: 0}
+[17:58:47]   best step=0 v58_pass=0/5
+[17:58:47]   output_bottleneck_fixable_via_full_bundle_sft=False
+[17:58:47]   lesson_q_status: COMPLETE_FULL_FALSIFY
+[17:58:47]   interpretation: output bottleneck DEEP — full transformer SFT also INSUFFICIENT. Combined: BG-JS lm_head=0/0/0/0, BG-JT lm_head=0/0/0, BG-JP decoding=0/14, BG-JX full SFT=0/0/0/0. ALL decoder-side production-side interventions FAIL. Lesson Q COMPLETE: production-side fix 不可 全方位 falsified. #115 chat-incapability is ARCHITECTURAL (capacity 1-order jump 무관 per Lesson L). Pre-training + arch redesign required, not fine-tune.
+[17:58:47] eval_log.jsonl finalized: 20 records (written incrementally during eval)
+[17:58:47] verdict.json written
+[17:58:47] ledger entry appended (attempt_n=45)
+[17:58:47] BG-JX done in 6127.0s
+[17:58:47]   best_step=0 v58_pass=0/5
+[17:58:47]   output_bottleneck_fixable_via_full_bundle_sft=False
+[17:58:47]   lesson_q_status=COMPLETE_FULL_FALSIFY

@@ -1,0 +1,90 @@
+// core_mirror.hexa — Phase 2 reimpl with input channel x
+// =============================================================================
+// spec: state/nexus6_1013lens_activation_2026_05_11/cascade_k25_plan_2026_05_12.md §1.2
+// parent (trivial): /home/summer/core/nexus_lenses_snapshot/core_mirror.hexa
+// axis: symmetry/parity — mirror symmetry detection around midpoint
+// modality: state (B=1, S=N)
+// kernel: x_left = x[0..n/2], x_right_rev = reverse(x[n/2..n]).
+//         symmetry_score = 1 - mean_abs_diff(x_left, x_right_rev) / span(x).
+//         + parity-bit (alternating-sign correlation) as second axis.
+// =============================================================================
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 8 {
+    println("lens[mirror] category=core axis=\"mirror (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+// span for normalization
+let mut x_min = xs[0]
+let mut x_max = xs[0]
+let mut i = 1
+while i < n {
+    if xs[i] < x_min { x_min = xs[i] }
+    if xs[i] > x_max { x_max = xs[i] }
+    i = i + 1
+}
+let span = if x_max - x_min > 0.000001 { x_max - x_min } else { 1.0 }
+
+// Mirror symmetry: compare x[k] vs x[n-1-k] for k in [0, n/2)
+let half = n / 2
+let mut sum_abs_diff = 0.0
+let mut k2 = 0
+while k2 < half {
+    let d = xs[k2] - xs[n - 1 - k2]
+    let abs_d = if d < 0.0 { 0.0 - d } else { d }
+    sum_abs_diff = sum_abs_diff + abs_d
+    k2 = k2 + 1
+}
+let mean_abs_diff = sum_abs_diff / to_float(half)
+let symmetry_raw = 1.0 - mean_abs_diff / span
+let symmetry = if symmetry_raw < 0.0 { 0.0 } else { if symmetry_raw > 1.0 { 1.0 } else { symmetry_raw } }
+
+// Parity bit: even-indexed vs odd-indexed mean (anti-symmetry signal)
+let mut s_even = 0.0
+let mut s_odd = 0.0
+let mut n_even = 0
+let mut n_odd = 0
+let mut j = 0
+while j < n {
+    if (j % 2) == 0 { s_even = s_even + xs[j]; n_even = n_even + 1 }
+    else { s_odd = s_odd + xs[j]; n_odd = n_odd + 1 }
+    j = j + 1
+}
+let mean_even = if n_even > 0 { s_even / to_float(n_even) } else { 0.0 }
+let mean_odd = if n_odd > 0 { s_odd / to_float(n_odd) } else { 0.0 }
+let parity_diff = mean_even - mean_odd
+let pd_abs = if parity_diff < 0.0 { 0.0 - parity_diff } else { parity_diff }
+let parity_score = pd_abs / span
+let parity_clip = if parity_score > 1.0 { 1.0 } else { parity_score }
+
+let score = 0.7 * symmetry + 0.3 * (1.0 - parity_clip)
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[mirror] category=core axis=\"Symmetry/Mirror — half-reverse |Δ| symmetry + parity-bit (even/odd mean diff)\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"symmetry\":" + to_string(symmetry) + ",\"parity_diff\":" + to_string(parity_diff) + ",\"parity_score\":" + to_string(parity_score) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

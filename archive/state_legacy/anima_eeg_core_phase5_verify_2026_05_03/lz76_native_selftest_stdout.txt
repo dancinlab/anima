@@ -1,0 +1,17 @@
+$ /Users/ghost/.hx/bin/hexa run anima-eeg-core/tool/modules/_metrics/lz76_native.hexa --selftest
+
+hexa-resolver: route=darwin-bypass reason=metadata-only-argv (raw#103)
+== _metrics/lz76_native selftest (PORT, raw#9 hexa-only) ==
+[selftest] native-only: 16ch x 16 synthetic fixture (median binarization)
+[selftest] random:     n_total = 256  c_n = 39  b_x1000 = 1218
+[selftest] structured: n_total = 256  c_n = 8  b_x1000 = 250
+[selftest] ordering OK: c_random > c_structured
+[selftest] raw#65 idempotent OK: byte-identical c_n + b_n_x1000
+[selftest] raw#71 F_LZN_02 floor OK: b_random=1218 >= 100
+[selftest] raw#71 falsifiers preregistered:
+           F_LZN_01: c_n <= 1                  (algorithm-broken)
+           F_LZN_02: lz76_norm_x1000 < 100      (catastrophic structure)
+           F_LZN_03: lz76_norm_x1000 > 1500     (impossible LZc)
+selftest=ok (native_only; cross_validate=not_requested)
+
+EXIT=0

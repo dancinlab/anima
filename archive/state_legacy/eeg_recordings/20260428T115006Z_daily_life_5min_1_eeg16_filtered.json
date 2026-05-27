@@ -1,0 +1,48 @@
+{
+  "tool": "anima_daily_life_filter.py",
+  "raw_rank": 37,
+  "transient_helper": true,
+  "ts_utc": "2026-04-28T11:55:55Z",
+  "input_path": "/Users/ghost/core/anima/state/eeg_recordings/20260428T115006Z_daily_life_5min_1_eeg16.npy",
+  "input_sha256": "9fcbfb63e9673ed31b3138aa9978e9d0c291c0db0bf6cfb3eea327f20de2087f",
+  "output_path": "/Users/ghost/core/anima/state/eeg_recordings/20260428T115006Z_daily_life_5min_1_eeg16_filtered.npy",
+  "output_sha256": "6e50a40497bc9fd12bf8b9d95cf286546b50c32af4f0059547c393abc8424ffd",
+  "shape": [
+    16,
+    6252
+  ],
+  "fs_hz": 125.0,
+  "filter_spec": {
+    "notch": {
+      "freq_hz": 60.0,
+      "Q": 30.0,
+      "fn": "scipy.signal.iirnotch"
+    },
+    "bandpass": {
+      "order": 4,
+      "low_hz": 0.5,
+      "high_hz": 50.0,
+      "fn": "scipy.signal.butter+filtfilt"
+    }
+  },
+  "rms_in_med_uv": 38916.10658282264,
+  "rms_out_med_uv": 1089.6259829865603,
+  "rms_per_ch_filtered_uv": [
+    818.0742083828474,
+    1361.1777575902731,
+    461.98099578810195,
+    677.7489139341917,
+    286.8631518749964,
+    101.10138984140677,
+    179.82760232622238,
+    130.21995771065687,
+    756.3889943133177,
+    2224.565095640138,
+    1888.6572327931617,
+    1869.6081167182774,
+    2962.6554432644916,
+    2154.8648509987893,
+    1402.4471606648456,
+    1931.4071384727415
+  ]
+}

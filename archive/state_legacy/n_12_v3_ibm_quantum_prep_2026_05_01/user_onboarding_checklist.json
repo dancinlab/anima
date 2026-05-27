@@ -1,0 +1,100 @@
+{
+  "schema": "n12/v3/ibm_user_onboarding/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "agent": "n_12_v3_ibm_quantum_prep",
+  "objective": "User-facing 5-step checklist to take F-N12-1 v3 from $0 prep to live IBM Quantum Open Plan submission.",
+  "total_user_time_estimate_min": 7,
+  "steps": [
+    {
+      "step": 1,
+      "title": "Sign up for IBM Quantum Platform (free)",
+      "url": "https://quantum.ibm.com/",
+      "actions": [
+        "Click 'Sign in' -> 'Create an IBMid'",
+        "Provide email + verify (no credit card needed for Open Plan)",
+        "Accept terms"
+      ],
+      "estimated_user_time_min": 5,
+      "cost_usd": 0.0,
+      "korea_friendly": true,
+      "korea_note": "KQC partnership active; no export restriction on Open Plan."
+    },
+    {
+      "step": 2,
+      "title": "Copy API token",
+      "url": "https://quantum.ibm.com/account",
+      "actions": [
+        "Open Account Settings -> API Keys (or upper-right avatar -> Account)",
+        "Click 'Generate API key' or copy the existing default token",
+        "Token format: alphanumeric ~128 chars"
+      ],
+      "estimated_user_time_min": 1,
+      "cost_usd": 0.0
+    },
+    {
+      "step": 3,
+      "title": "Save token to disk",
+      "actions": [
+        "mkdir -p ~/.qiskit",
+        "Paste token into ~/.qiskit/ibm-quantum-token.txt (single line, no quotes)",
+        "chmod 600 ~/.qiskit/ibm-quantum-token.txt"
+      ],
+      "estimated_user_time_min": 1,
+      "cost_usd": 0.0
+    },
+    {
+      "step": 4,
+      "title": "Install Python deps",
+      "actions": [
+        "pip install 'qiskit>=1.2' 'qiskit-ibm-runtime>=0.30' numpy scipy"
+      ],
+      "estimated_user_time_min": 1,
+      "cost_usd": 0.0,
+      "note": "If pip not found, install Python 3.10+ first (brew install python or system pkg)."
+    },
+    {
+      "step": 5,
+      "title": "Launch F-N12-1 v3",
+      "actions": [
+        "bash ~/n12_v3_ibm/launch.sh"
+      ],
+      "estimated_user_time_min": 1,
+      "actual_runtime_estimate": {
+        "qpu_compute_sec": "10-30",
+        "queue_wait_typical_min": "1-60",
+        "queue_wait_worst_case_h": 24
+      },
+      "cost_usd": 0.0,
+      "outputs": [
+        "~/n12_v3_ibm/results_<timestamp>.json (raw counts + P(0000))",
+        "~/n12_v3_ibm/results_<timestamp>_verdict.json (PASS/FAIL + tau_2 fit)"
+      ]
+    }
+  ],
+  "preflight_validation": {
+    "scripts_ready": [
+      "/Users/ghost/n12_v3_ibm/submit_ibm.py",
+      "/Users/ghost/n12_v3_ibm/verify_F_N12_1_v3.py",
+      "/Users/ghost/n12_v3_ibm/launch.sh"
+    ],
+    "all_executable": true,
+    "off_repo_compliance": "HEXA-only repo respected; .py files live at ~/n12_v3_ibm/, never in anima repo."
+  },
+  "user_blockers_top3": [
+    {
+      "rank": 1,
+      "blocker": "IBM Cloud / IBM Quantum Platform account creation (only user can do this; agent cannot create on behalf)",
+      "mitigation": "5-min self-serve signup, no waitlist, no interview, no credit card."
+    },
+    {
+      "rank": 2,
+      "blocker": "Open Plan queue wait variance (1 min to 24 h)",
+      "mitigation": "Submit overnight if morning slots are full; ibm_kingston is in active rotation per 2026-03-16 announcement."
+    },
+    {
+      "rank": 3,
+      "blocker": "Substrate framing acceptance: SC-only baseline now, ion follow-up deferred",
+      "mitigation": "Documented in docs/n_substrate_n12_quantum_pivot_2026_05_01.md sec.2 honest tradeoff."
+    }
+  ]
+}

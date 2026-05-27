@@ -1,0 +1,27 @@
+{
+  "battery_id": "B-S126",
+  "port": "hexa-native (substring + numeric-witness; .py is SSOT)",
+  "cycle": "§126 PCN-C4 (1-step PCN on anima)",
+  "sidecar": true,
+  "central_zero_diff_check": true,
+  "summary": "9/9 🔵 (PASS)",
+  "results": [
+    {"battery": "B-S126-1 NO-CE-INVARIANT-SUBSTR", "pass_": true},
+    {"battery": "B-S126-2 NO-GLOBAL-BACKWARD-INVARIANT-SUBSTR", "pass_": true},
+    {"battery": "B-S126-3 MSE-NONNEGATIVE-AND-CONVEX", "pass_": true},
+    {"battery": "B-S126-4 PCN-LOCAL-TARGET-DETACHED-SUBSTR", "pass_": true},
+    {"battery": "B-S126-5 PER-BLOCK-OPTIMIZER-COUNT", "pass_": true},
+    {"battery": "B-S126-6 FROM-SCRATCH-RANDOM-INIT-NO-BASE-CKPT", "pass_": true},
+    {"battery": "B-S126-7 §11-B-CONNECTION-POINT-WELL-FORMED", "pass_": true},
+    {"battery": "B-S126-8 §125-§126-JOINT-READING-COMPATIBLE", "pass_": true},
+    {"battery": "CENTRAL-BLUE-FALSIFIER-0-LINE-DIFF", "pass_": true}
+  ],
+  "empirical_carve_out": {
+    "battery": "B-S126-NOTE empirical carve-out",
+    "pass_": null,
+    "note": "§126 fire OUTCOME = SGD/measurement empirical. '1-step PCN' ≠ PCN-converged (Whittington-Bogacz N→∞). B-EMERGE-7 / B-D-NOTE / B-S125-NOTE family — necessary-not-sufficient."
+  },
+  "port_carve_out": "hexa substring-search is structurally weaker than .py AST walk; comment-positions could false-positive, empirically 0 for §126 trainer/eval. .py blue_falsifier_s126.py REMAINS SSOT.",
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true
+}

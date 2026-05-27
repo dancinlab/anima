@@ -1,0 +1,68 @@
+{
+  "task": "anima_ubu1_repo_sync",
+  "date": "2026-05-06",
+  "type": "BG-FG dry-run only",
+  "cost_usd": 0,
+  "wall_min_estimate": 15,
+  "verdict": "DRY_RUN_PASS_AWAITING_USER_CONFIRM",
+  "summary": {
+    "mac_local_ready_total_gb": 41,
+    "mac_local_ready_file_count": 77999,
+    "embedded_git_path": "/Users/ghost/core/anima/ready/.git",
+    "embedded_git_size_gb": 7.1,
+    "ubu1_anima_head": "6407920 (per BG-FC)",
+    "ubu1_ready_state": "EMPTY (only . and ..)",
+    "rsync_dry_run_files": 3825,
+    "rsync_dry_run_total_bytes": 41128784,
+    "rsync_dry_run_total_mb": 41.1,
+    "rsync_dry_run_dirs": 228,
+    "rsync_dry_run_symlinks": 8,
+    "rsync_dry_run_regular_files": 3589
+  },
+  "exclusions": [
+    ".git",
+    "*.pt",
+    "*.safetensors",
+    "*.bin",
+    "*.pyc",
+    "__pycache__",
+    ".pytest_cache",
+    "target/",
+    "node_modules/",
+    ".claude/worktrees/",
+    "*.txt",
+    "*.jsonl"
+  ],
+  "size_savings": {
+    "before_exclusions_gb": 41,
+    "after_exclusions_mb": 41.1,
+    "reduction_ratio": "1000x"
+  },
+  "large_files_excluded_count": 30,
+  "large_files_excluded_categories": [
+    "anima/data/corpus_*.txt (multilingual + corpus_bench_1gb + others, ~14 files)",
+    "anima/data/instruct/{train,val}.jsonl",
+    "checkpoints/animalm_step_50.pt",
+    ".claude/worktrees/agent-abb59ac1/sub-projects/animalm/checkpoints/final.pt"
+  ],
+  "next_steps": [
+    "USER CONFIRM dry-run before actual rsync",
+    "anima session executes actual rsync (NOT BG)",
+    "post-sync verification: ssh ubu1 ls + AST parse smoke",
+    "ubu1 corpus dependency: BG-FE responsibility (HF download)"
+  ],
+  "honest_c3": [
+    "C3#1: dry-run skipped 30 large files (corpora + checkpoints) — train fire on ubu1 will fail until BG-FE delivers HF download",
+    "C3#2: embedded ready/.git not synced — ubu1 ready/ will be untracked tree, not a git repo. Acceptable since canonical anima git is parent /home/aiden/core/anima/ (HEAD=6407920)",
+    "C3#3: .claude/worktrees/agent-abb59ac1/ excluded includes 1 corpus.txt + 1 final.pt — verified no canonical code lives there",
+    "C3#4: Rust target/ exclusion forces ubu1 cargo rebuild on first run (~10-30min compile cost) but avoids cross-platform binary mismatch (mac arm64 vs ubu1 x86_64). This is correct behavior",
+    "C3#5: AST parse smoke test does NOT validate runtime imports (torch/transformers etc.). Real import check requires venv_orchestrator activation — defer to anima session post-sync"
+  ],
+  "raw_compliance": {
+    "raw_9_secrets": "no token literals emitted",
+    "raw_10_korean_only_user_face": "compliant",
+    "raw_15_locked_files": "no LOCKED files modified",
+    "raw_37_transient_py": "n/a (rsync only, no .py write)",
+    "own_14_hf_only_5mb": "compliant — *.pt/*.safetensors/*.bin/*.txt/*.jsonl excluded"
+  }
+}

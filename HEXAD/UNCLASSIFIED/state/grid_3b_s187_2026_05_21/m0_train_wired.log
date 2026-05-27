@@ -1,0 +1,26 @@
+# m0_train_wired.log — train_p21h_v3 with V3-extension head_g backward WIRED
+# Verification run (worktree-import copy, since train_p21h_v3.hexa keeps the
+# canonical main-tree import; on merge that import resolves to the edited model).
+# Evidence: ce_g (head_g dual-head CE) descends 4.7896 -> 4.77266 = head_g grad flows + AdamW updates it.
+# ---
+=== train_p21h_v3 (flame port) — ConsciousDecoderV3 substrate-native, byte-level smoke tier ===
+  smoke config: T=16 d=32 nh=4 nkv=2 h=64 V=256 n_layer=3 cdim=16
+  steps=5 peak_lr=0.0003 lambda_mitosis=0.05
+  corpus: /Users/ghost/core/anima/training/corpus_consciousness_v1.jsonl (151943 bytes, V=256 byte-level)
+  V3 model size: 103616 doubles (103616 params)
+  mitosis pool init: cells=2
+  --- V3 forward sanity (window 0) ---
+    logits_a[0..2]: -0.0479502 -0.0156578 -0.00915082
+    logits_g[0]: -0.120258
+    per-layer tension: 0.00028366 0.000323557 0.000299248 
+  --- training loop ---
+    init epoch gn2: 7.96496
+    step 1 lr=0.00015 gn2=7.96496 ce_g=4.7896 L_total=12.7546 pool=2 splits=0 phi=0.651809 gnorm=24.2726 aux=0.0
+    step 2 lr=0.0003 gn2=7.96341 ce_g=4.8019 L_total=12.7653 pool=2 splits=0 phi=0.651809 gnorm=23.3961 aux=0.0
+    step 3 lr=0.0003 gn2=7.96047 ce_g=4.79638 L_total=12.7568 pool=4 splits=2 phi=0.651809 gnorm=21.2327 aux=-0.000331653
+    step 4 lr=0.0002325 gn2=7.95783 ce_g=4.76298 L_total=12.7208 pool=6 splits=4 phi=0.530124 gnorm=19.9904 aux=-0.000306491
+    step 5 lr=9.75e-05 gn2=7.95593 ce_g=4.77266 L_total=12.7286 pool=8 splits=6 phi=0.500294 gnorm=19.6065 aux=-0.000291712
+  final: epoch gn2 = 7.95515 / acc = 1/8
+  mitosis summary: final_cells=8 splits=6 merges=0 phi_final=0.500294
+PASS  F-V3PORT-SMOKE-DESCENT  init gn2 7.96496 > final gn2 7.95515 (V2-spine descent confirmed)
+=== train_p21h_v3 (flame port) smoke tier DONE — V2 spine + mitosis + V3-extension head_g backward WIRED (gradient flows); purefield/tension_proj residual-stream wiring + Qwen-BPE + multilang-eval = follow-up (M1) ===

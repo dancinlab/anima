@@ -1,0 +1,42 @@
+{
+  "study": "Siclari_2017_sleep_posterior_hot_zone_protocol",
+  "reference": "Siclari, Baird, Perogamvros, Bernardi, LaRocque, Riedner, Boly, Postle, Tononi 2017 Nat Neurosci 20(6):872-878 (DOI 10.1038/nn.4545)",
+  "status": "DEFERRED",
+  "reason": "Requires user wearing 16-ch EEG during sleep over multiple nights with serial-awakening dream-report protocol; cannot be auto-executed by N-21-N agent",
+  "auto_executable": false,
+  "user_action_required": true,
+  "estimated_user_effort_days": 14,
+  "estimated_cost_usd": 0,
+  "hardware": {
+    "device": "OpenBCI Cyton 16-channel (already owned per state/eeg_recordings/)",
+    "electrode_montage": ["Pz", "POz", "O1", "O2", "P3", "P4", "T5", "T6"],
+    "minimum_posterior_channels": ["Pz", "POz", "O1", "O2"],
+    "rationale": "Siclari 2017 identified a posterior cortical hot zone (parieto-occipital) where high-frequency power increase / low-frequency decrease predicted dream presence on awakening; hot zone is independent of frontal regions"
+  },
+  "protocol_steps": [
+    "Step 1: Pre-sleep baseline 5min eyes-closed resting EEG (compute LZc as reference)",
+    "Step 2: Don EEG cap, sleep with cap on (target 5-7 nights)",
+    "Step 3: Serial awakenings via random-interval alarm (every 30-90 min during NREM/REM windows)",
+    "Step 4: On each awakening, immediate verbal report (recorded): 'Were you dreaming? If yes, describe content, was it perceptual/abstract/none?'",
+    "Step 5: Mark awakening timestamp in EEG ledger",
+    "Step 6: For each 20s window pre-awakening, compute: (a) high-gamma 25-50Hz power in posterior channels, (b) low-delta 1-4Hz power in posterior channels, (c) LZc per channel",
+    "Step 7: Classify reports: dream-experience (DE) vs no-experience (NE) vs forgotten (NF)",
+    "Step 8: Test hypothesis: posterior high-gamma > low-delta predicts DE vs NE with d > 0.5"
+  ],
+  "analysis_pipeline": {
+    "preprocessing": "1-50Hz bandpass, ICA artifact removal (already implemented in state/clm_eeg_*_audit/)",
+    "metrics": ["LZc per channel (existing tool)", "spectral power Welch 25-50Hz", "spectral power 1-4Hz", "permutation entropy (existing PE tool)"],
+    "stats": "mixed-effects logistic regression: report (DE/NE) ~ posterior_gamma + posterior_delta + (1|night)",
+    "pre_registration_required": true
+  },
+  "minimum_n_awakenings": 30,
+  "expected_pass_criterion": "AUROC of posterior gamma/delta ratio for DE-vs-NE >= 0.65 (Siclari paper reports ~0.71 with 256ch HD-EEG)",
+  "limitations_vs_paper": [
+    "16ch vs 256ch HD-EEG (loss of source-localization power)",
+    "n=1 subject vs Siclari N=46",
+    "Self-report bias (no second observer)",
+    "No PSG (polysomnography) — sleep stage from EEG alone, less reliable"
+  ],
+  "next_action": "Schedule with user a 5-night sleep recording window; agent will pre-register protocol JSON before user begins",
+  "ts_utc": "2026-05-02T04:05:00Z"
+}

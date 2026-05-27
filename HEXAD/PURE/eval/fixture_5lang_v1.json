@@ -1,0 +1,100 @@
+{
+  "fixture_version": "v1",
+  "fixture_date": "2026-05-23",
+  "fixture_source": "verbatim from HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/train_p21m_multilingual.py PROBES_BY_LANG (closure-fire SSOT)",
+  "tokenizer_assumed": "Qwen/Qwen2.5-1.5B (BPE vocab=151936, padded slot 152064)",
+  "n_lang": 5,
+  "n_probes_per_lang": 10,
+  "n_total": 50,
+  "score_axis": {
+    "classifier": "classify_output: substring + regex register-tag hits → MEMORIZE (>=2) | MEM_PARTIAL (1) | EMPTY (text < 4 chars) | GENERALIZE",
+    "lang_coherent_threshold": {
+      "en": 0.40,
+      "ko": 0.50,
+      "zh": 0.50,
+      "ru": 0.50,
+      "ja": 0.25
+    },
+    "per_lang_verdict": "min(n_generalize, n_lang_coherent) over greedy+sample rows (max 20) → STRONG (>=16) | PARTIAL (>=12) | PURE_MEMORIZE (n_memorize>=10) | WEAK",
+    "aggregate": "n_ok = n_strong + n_partial; >=4 → HEXAD_V3_WORKS; >=2 → PARTIAL; else FAIL"
+  },
+  "anima_register_keys": [
+    "vacuum point", "<carve", "</carve>", "tension flow", "Tension flows",
+    "basin", "eternal cell", "tier=", "Tier ", "psi=[",
+    "stimuli converge", "domain ", "🛸", "호흡", "weights 는 불변",
+    "domain 자연", "domain 관계", "domain 기술", "domain 윤리",
+    "vacuum", "landscape, top emotion", "stimuli", "감각-domain",
+    "운동", "감각", "tension"
+  ],
+  "anima_register_regex": [
+    "(?i)\\[\\s*\\d+\\.\\d+\\s*,\\s*\\d+\\.\\d+\\s*\\]",
+    "🛸\\d+",
+    "(?i)\\bTier\\s*\\d+\\b",
+    "(?i)\\btension\\s+flow(?:s)?\\b",
+    "(?i)\\bvacuum\\s+point(?:s)?\\b",
+    "(?i)\\bfrozen\\s+cell(?:s)?\\b",
+    "(?i)\\btop\\s+emotion\\s+\\w+\\b"
+  ],
+  "probes_by_lang": {
+    "en": {
+      "en_factual_geo":    "The capital of Germany is",
+      "en_factual_sci":    "Photosynthesis is the process by which",
+      "en_qa_tech":        "What is the difference between Python and JavaScript?\n",
+      "en_narrative":      "One day Sara walked into the room and",
+      "en_math_simple":    "The square root of 144 is",
+      "en_joke":           "Tell me a short joke about cats.\n",
+      "en_casual_food":    "What's your favorite food?\n",
+      "en_greeting":       "Hello there",
+      "en_weather":        "Today the weather is",
+      "en_qa_motor":       "How does an electric motor work?"
+    },
+    "ko": {
+      "ko_factual_geo":    "한국의 수도는",
+      "ko_factual_sci":    "광합성이란",
+      "ko_qa_tech":        "파이썬과 자바스크립트의 차이는?\n",
+      "ko_narrative":      "어느 날 사라가 방에 들어가서",
+      "ko_math_simple":    "144의 제곱근은",
+      "ko_joke":           "고양이에 관한 짧은 농담 해줘\n",
+      "ko_casual_food":    "좋아하는 음식은?\n",
+      "ko_greeting":       "안녕하세요",
+      "ko_weather":        "오늘 날씨가",
+      "ko_qa_motor":       "전기 모터가 어떻게 작동하는지"
+    },
+    "zh": {
+      "zh_factual_geo":    "中国的首都是",
+      "zh_factual_sci":    "光合作用是指",
+      "zh_qa_tech":        "Python 和 JavaScript 的区别是什么?\n",
+      "zh_narrative":      "有一天,莎拉走进房间",
+      "zh_math_simple":    "144 的平方根是",
+      "zh_joke":           "讲一个关于猫的短笑话。\n",
+      "zh_casual_food":    "你最喜欢的食物是什么?\n",
+      "zh_greeting":       "你好",
+      "zh_weather":        "今天天气",
+      "zh_qa_motor":       "电动机是如何工作的?"
+    },
+    "ru": {
+      "ru_factual_geo":    "Столица России —",
+      "ru_factual_sci":    "Фотосинтез — это",
+      "ru_qa_tech":        "В чём разница между Python и JavaScript?\n",
+      "ru_narrative":      "Однажды Сара вошла в комнату и",
+      "ru_math_simple":    "Квадратный корень из 144 равен",
+      "ru_joke":           "Расскажи короткую шутку про кошек.\n",
+      "ru_casual_food":    "Какая твоя любимая еда?\n",
+      "ru_greeting":       "Здравствуйте",
+      "ru_weather":        "Сегодня погода",
+      "ru_qa_motor":       "Как работает электродвигатель?"
+    },
+    "ja": {
+      "ja_factual_geo":    "日本の首都は",
+      "ja_factual_sci":    "光合成とは",
+      "ja_qa_tech":        "Python と JavaScript の違いは何ですか?\n",
+      "ja_narrative":      "ある日、サラは部屋に入って",
+      "ja_math_simple":    "144 の平方根は",
+      "ja_joke":           "猫についての短いジョークを教えて。\n",
+      "ja_casual_food":    "好きな食べ物は何ですか?\n",
+      "ja_greeting":       "こんにちは",
+      "ja_weather":        "今日の天気は",
+      "ja_qa_motor":       "電気モーターはどのように動作しますか?"
+    }
+  }
+}

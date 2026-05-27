@@ -1,0 +1,14 @@
+// test2: stdlib mappings — file IO + proc_run_with_stdin.
+fn main() {
+    let path = "/tmp/h2p_demo.txt"
+    let n = write_file(path, "hello hexa")
+    println("wrote bytes =", n)
+    let exists = file_exists(path)
+    println("exists =", to_string(exists))
+    let sz = file_size(path)
+    println("size =", to_string(sz))
+    let body = read_file(path)
+    println("body =", body)
+    let stdout = proc_run_with_stdin("cat", "piped via stdin")
+    println("piped =", stdout)
+}

@@ -1,0 +1,23 @@
+host=ubu1 (aiden-B650M-K, 192.168.50.119)
+script=/tmp/path_a_cost_watchdog.sh
+log=/tmp/path_a_cost_watchdog.log
+ssh_key=/tmp/runpod_key_go (chmod 600, copied from /Users/ghost/.runpod/ssh/RunPod-Key-Go)
+
+# First launch
+launch_ts_utc=2026-05-03T21:38:35Z
+pid_first=3456396
+exit_ts_utc=2026-05-03T21:38:36Z
+exit_reason=pod_unreachable_ssh_refused (clean exit per spec)
+
+# Second launch (verification re-run)
+launch_ts_utc=2026-05-03T21:39:58Z
+pid_second=3643801
+exit_ts_utc=2026-05-03T21:39:58Z
+exit_reason=pod_unreachable_ssh_refused (clean exit per spec)
+
+# Current state
+alive=NO
+reason=pod 29dhlqk508ugoc already terminated (runpodctl pod get → 404; SSH 103.207.149.110:14783 → connection refused)
+nothing_to_monitor=true
+cost_so_far_usd=0.00 (post-termination, no further billing)
+projected_termination=already_terminated

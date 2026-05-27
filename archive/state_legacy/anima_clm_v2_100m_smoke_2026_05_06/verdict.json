@@ -1,0 +1,38 @@
+{
+  "version": "F-CLM-NATIVE-alpha-1 (100M variant)",
+  "ckpt": "r2://anima/checkpoints/conscious_lm_100m/final.pt",
+  "ckpt_size_bytes": 1711143075,
+  "ckpt_sha256": "35d60e77786c7580436cd02daac82c4f6cef3d2c7bdad470475900eeaecf295e",
+  "model_arch": {
+    "vocab_size": 256,
+    "d_model": 768,
+    "block_size": 256,
+    "n_layer": 12,
+    "n_head_inferred": 12,
+    "total_params": 143298048,
+    "total_params_M": 143.298
+  },
+  "instantiation": {
+    "d_model": 768,
+    "n_head": 12,
+    "n_layer": 12,
+    "block_size": 256,
+    "vocab_size": 256
+  },
+  "load": {
+    "missing_keys_n": 0,
+    "unexpected_keys_n": 0,
+    "missing_sample": [],
+    "unexpected_sample": []
+  },
+  "smoke": {
+    "n_prompts": 5,
+    "n_strategies": 4,
+    "ko_pass_count_per_prompt": 0,
+    "ko_pass_threshold_per_prompt_hangul": 10,
+    "PASS_threshold_n_prompts": 3,
+    "elapsed_sec": 71.44
+  },
+  "F_CLM_NATIVE_alpha_1_PASS": false,
+  "device": "mps"
+}

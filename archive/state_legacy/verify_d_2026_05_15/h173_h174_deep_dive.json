@@ -1,0 +1,28 @@
+{
+  "H_173": {
+    "slug": "dd21-log-phi-scale-invariant",
+    "stage_1_verdicts": {
+      "F2_scale_invariance": "SUPPORTED-IDENTITY (sympy ln-quotient cancellation)",
+      "F5_info_theoretic_reduction": "PARTIAL (pointwise KL / log-Bayes factor identification)",
+      "F4_instability": "PARTIAL (MIP\u21920 divergence, \u03b5-reg mitigation)",
+      "F1_rank_disagreement": "NEEDS-SIM (30+ test system Spearman, deferred)",
+      "F3_dynamic_range": "NEEDS-SIM (training trajectory, deferred)",
+      "F6_pyphi_compat": "NEEDS-IMPL (PyPhi log-ratio plugin)"
+    },
+    "aggregate": "PARTIAL (3/6 falsifier verifiable Mac sympy, 3 sim-deferred)",
+    "cross_link": "cluster with H_174 phi_star aliasing fix candidate"
+  },
+  "H_174": {
+    "slug": "phi-star-geometry-aliasing-clm-v4-specific",
+    "stage_1_verdicts": {
+      "F1_forced_cos_cluster_D768": "SUPPORTED-IDENTITY (D=768 cells 0&4 / 1&5 / 2&6 / 3&7 share start, FORCED COS +1.0)",
+      "F4_aliasing_3mode_taxonomy": "SUPPORTED-IDENTITY (D=1536 clean / D=768 tile-replicate / D=2048 information-loss confirmed)",
+      "F2_pythia_range_lt_01": "NEEDS-MEASUREMENT (BG-BN 16-prompt re-run)",
+      "F3_D_dependence": "NEEDS-MEASUREMENT (multi-substrate sweep)",
+      "F5_pyphi_parity_lt_07": "NEEDS-MEASUREMENT (PyPhi cross-substrate)"
+    },
+    "aggregate": "SUPPORTED-STRONG (2/5 falsifier verified by sympy, 3 sim-deferred but core claim mathematically solid)",
+    "finding": "phi_star (c\u00b7192) mod D \uac00 D=768 \uc5d0\uc11c cell 0&4, 1&5, 2&6, 3&7 forced-identical \u2192 cross-substrate phi_star \ube44\uad50 NOT VALID",
+    "downstream_impact": "H_162 normalization \uc758 substrate-validity \uc804\uc81c\uac00 D=192 multiple \uc5d0\uc11c\ub9cc \uc720\ud6a8"
+  }
+}

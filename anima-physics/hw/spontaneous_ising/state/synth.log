@@ -1,0 +1,1928 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, clang++ 21.0.0 -fPIC -O3)
+
+-- Running command `
+        read_verilog /Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v
+        synth_ecp5 -top ising_fsm -json /Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/state/ising_fsm.json
+        stat
+    ' --
+
+1. Executing Verilog-2005 frontend: /Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v
+Parsing Verilog input from `/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v' to AST representation.
+Generating RTLIL representation for module `\ising_fsm'.
+Warning: Replacing memory \audit with list of registers. See /Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:116
+Successfully finished Verilog frontend.
+
+2. Executing SYNTH_LATTICE pass.
+
+2.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/cells_sim_ecp5.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/cells_sim_ecp5.v' to AST representation.
+Generating RTLIL representation for module `\LUT4'.
+Generating RTLIL representation for module `\$__ABC9_LUT5'.
+Generating RTLIL representation for module `\$__ABC9_LUT6'.
+Generating RTLIL representation for module `\$__ABC9_LUT7'.
+Generating RTLIL representation for module `\L6MUX21'.
+Generating RTLIL representation for module `\TRELLIS_RAM16X2'.
+Generating RTLIL representation for module `\PFUMX'.
+Generating RTLIL representation for module `\TRELLIS_DPR16X4'.
+Generating RTLIL representation for module `\DPR16X4C'.
+Generating RTLIL representation for module `\LUT2'.
+Generating RTLIL representation for module `\TRELLIS_FF'.
+Generating RTLIL representation for module `\TRELLIS_IO'.
+Generating RTLIL representation for module `\INV'.
+Generating RTLIL representation for module `\TRELLIS_COMB'.
+Generating RTLIL representation for module `\VLO'.
+Generating RTLIL representation for module `\VHI'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Generating RTLIL representation for module `\CCU2C'.
+Generating RTLIL representation for module `\DP16KD'.
+Replacing existing blackbox module `\FD1P3AX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:2.1-2.261.
+Generating RTLIL representation for module `\FD1P3AX'.
+Replacing existing blackbox module `\FD1P3AY' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:3.1-3.261.
+Generating RTLIL representation for module `\FD1P3AY'.
+Replacing existing blackbox module `\FD1P3BX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:4.1-4.261.
+Generating RTLIL representation for module `\FD1P3BX'.
+Replacing existing blackbox module `\FD1P3DX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:5.1-5.261.
+Generating RTLIL representation for module `\FD1P3DX'.
+Replacing existing blackbox module `\FD1P3IX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:6.1-6.261.
+Generating RTLIL representation for module `\FD1P3IX'.
+Replacing existing blackbox module `\FD1P3JX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:7.1-7.261.
+Generating RTLIL representation for module `\FD1P3JX'.
+Replacing existing blackbox module `\FD1S3AX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:8.1-8.261.
+Generating RTLIL representation for module `\FD1S3AX'.
+Replacing existing blackbox module `\FD1S3AY' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:9.1-9.261.
+Generating RTLIL representation for module `\FD1S3AY'.
+Replacing existing blackbox module `\FD1S3BX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:10.1-10.261.
+Generating RTLIL representation for module `\FD1S3BX'.
+Replacing existing blackbox module `\FD1S3DX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:11.1-11.261.
+Generating RTLIL representation for module `\FD1S3DX'.
+Replacing existing blackbox module `\FD1S3IX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:12.1-12.261.
+Generating RTLIL representation for module `\FD1S3IX'.
+Replacing existing blackbox module `\FD1S3JX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:13.1-13.261.
+Generating RTLIL representation for module `\FD1S3JX'.
+Replacing existing blackbox module `\IFS1P3BX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:26.1-26.301.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Replacing existing blackbox module `\IFS1P3DX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:27.1-27.301.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Replacing existing blackbox module `\IFS1P3IX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:28.1-28.301.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Replacing existing blackbox module `\IFS1P3JX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:29.1-29.301.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Replacing existing blackbox module `\OFS1P3BX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:31.1-31.302.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Replacing existing blackbox module `\OFS1P3DX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:32.1-32.302.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Replacing existing blackbox module `\OFS1P3IX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:33.1-33.302.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Replacing existing blackbox module `\OFS1P3JX' at /opt/homebrew/bin/../share/yosys/lattice/cells_ff.vh:34.1-34.302.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Replacing existing blackbox module `\IB' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:2.1-2.157.
+Generating RTLIL representation for module `\IB'.
+Replacing existing blackbox module `\IBPU' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:3.1-3.157.
+Generating RTLIL representation for module `\IBPU'.
+Replacing existing blackbox module `\IBPD' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:4.1-4.157.
+Generating RTLIL representation for module `\IBPD'.
+Replacing existing blackbox module `\OB' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:5.1-5.157.
+Generating RTLIL representation for module `\OB'.
+Replacing existing blackbox module `\OBZ' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:6.1-6.164.
+Generating RTLIL representation for module `\OBZ'.
+Replacing existing blackbox module `\OBZPU' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:7.1-7.164.
+Generating RTLIL representation for module `\OBZPU'.
+Replacing existing blackbox module `\OBZPD' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:8.1-8.164.
+Generating RTLIL representation for module `\OBZPD'.
+Replacing existing blackbox module `\OBCO' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:9.1-9.90.
+Generating RTLIL representation for module `\OBCO'.
+Replacing existing blackbox module `\BB' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:10.1-10.179.
+Generating RTLIL representation for module `\BB'.
+Replacing existing blackbox module `\BBPU' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:11.1-11.179.
+Generating RTLIL representation for module `\BBPU'.
+Replacing existing blackbox module `\BBPD' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:12.1-12.179.
+Generating RTLIL representation for module `\BBPD'.
+Replacing existing blackbox module `\ILVDS' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:13.1-13.139.
+Generating RTLIL representation for module `\ILVDS'.
+Replacing existing blackbox module `\OLVDS' at /opt/homebrew/bin/../share/yosys/lattice/cells_io.vh:14.1-14.146.
+Generating RTLIL representation for module `\OLVDS'.
+Successfully finished Verilog frontend.
+
+2.2. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/cells_bb_ecp5.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/cells_bb_ecp5.v' to AST representation.
+Generating RTLIL representation for module `\GSR'.
+Generating RTLIL representation for module `\PUR'.
+Generating RTLIL representation for module `\SGSR'.
+Generating RTLIL representation for module `\PDPW16KD'.
+Generating RTLIL representation for module `\MULT18X18D'.
+Generating RTLIL representation for module `\ALU54B'.
+Generating RTLIL representation for module `\CLKDIVF'.
+Generating RTLIL representation for module `\PCSCLKDIV'.
+Generating RTLIL representation for module `\DCSC'.
+Generating RTLIL representation for module `\DCCA'.
+Generating RTLIL representation for module `\ECLKSYNCB'.
+Generating RTLIL representation for module `\ECLKBRIDGECS'.
+Generating RTLIL representation for module `\DELAYF'.
+Generating RTLIL representation for module `\DELAYG'.
+Generating RTLIL representation for module `\USRMCLK'.
+Generating RTLIL representation for module `\DQSBUFM'.
+Generating RTLIL representation for module `\DDRDLLA'.
+Generating RTLIL representation for module `\DLLDELD'.
+Generating RTLIL representation for module `\IDDRX1F'.
+Generating RTLIL representation for module `\IDDRX2F'.
+Generating RTLIL representation for module `\IDDR71B'.
+Generating RTLIL representation for module `\IDDRX2DQA'.
+Generating RTLIL representation for module `\ODDRX1F'.
+Generating RTLIL representation for module `\ODDRX2F'.
+Generating RTLIL representation for module `\ODDR71B'.
+Generating RTLIL representation for module `\OSHX2A'.
+Generating RTLIL representation for module `\TSHX2DQA'.
+Generating RTLIL representation for module `\TSHX2DQSA'.
+Generating RTLIL representation for module `\ODDRX2DQA'.
+Generating RTLIL representation for module `\ODDRX2DQSB'.
+Generating RTLIL representation for module `\EHXPLLL'.
+Generating RTLIL representation for module `\DTR'.
+Generating RTLIL representation for module `\OSCG'.
+Generating RTLIL representation for module `\EXTREFB'.
+Generating RTLIL representation for module `\JTAGG'.
+Generating RTLIL representation for module `\DCUA'.
+Successfully finished Verilog frontend.
+
+2.3. Executing HIERARCHY pass (managing design hierarchy).
+
+2.3.1. Analyzing design hierarchy..
+Top module:  \ising_fsm
+
+2.3.2. Analyzing design hierarchy..
+Top module:  \ising_fsm
+Removed 0 unused modules.
+
+2.4. Executing PROC pass (convert processes to netlists).
+
+2.4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+2.4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 3 switch rules as full_case in process $proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28 in module ising_fsm.
+Marked 3 switch rules as full_case in process $proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:81$24 in module ising_fsm.
+Removed a total of 0 dead cases.
+
+2.4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 2 redundant assignments.
+Promoted 4 assignments to connections.
+
+2.4.4. Executing PROC_INIT pass (extract init attributes).
+
+2.4.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+
+2.4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~6 debug messages>
+
+2.4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+     1/17: $2$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_ADDR[2:0]$40
+     2/17: $2$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA[15:0]$41
+     3/17: $1$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA[15:0]$33
+     4/17: $1$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_ADDR[2:0]$32
+     5/17: $0\cell_count_r[15:0]
+     6/17: $0\state[1:0]
+     7/17: $1\k[31:0]
+     8/17: $0\audit[7][15:0]
+     9/17: $0\audit[6][15:0]
+    10/17: $0\audit[5][15:0]
+    11/17: $0\audit[4][15:0]
+    12/17: $0\audit[3][15:0]
+    13/17: $0\audit[2][15:0]
+    14/17: $0\audit[1][15:0]
+    15/17: $0\audit[0][15:0]
+    16/17: $0\audit_wptr[2:0]
+    17/17: $0\cooldown_cnt[15:0]
+Creating decoders for process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:81$24'.
+     1/3: $3\state_n[1:0]
+     2/3: $2\state_n[1:0]
+     3/3: $1\state_n[1:0]
+
+2.4.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+No latch inferred for signal `\ising_fsm.\state_n' from process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:81$24'.
+
+2.4.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\ising_fsm.\cooldown_cnt' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$373' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\state' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$378' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit_wptr' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$383' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\cell_count_r' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$388' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\k' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$393' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit[0]' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$398' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit[1]' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$403' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit[2]' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$408' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit[3]' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$413' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit[4]' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$418' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit[5]' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$423' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit[6]' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$428' with positive edge clock and positive level reset.
+Creating register for signal `\ising_fsm.\audit[7]' using process `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+  created $adff cell `$procdff$433' with positive edge clock and positive level reset.
+
+2.4.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+2.4.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 3 empty switches in `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+Removing empty process `ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:110$28'.
+Found and cleaned up 3 empty switches in `\ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:81$24'.
+Removing empty process `ising_fsm.$proc$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:81$24'.
+Cleaned up 6 empty switches.
+
+2.4.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+<suppressed ~33 debug messages>
+
+2.5. Executing CHECK pass (checking for obvious problems).
+Checking module ising_fsm...
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_ADDR [2] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_ADDR [1] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_ADDR [0] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [15] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [14] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [13] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [12] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [11] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [10] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [9] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [8] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [7] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [6] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [5] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [4] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [3] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [2] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [1] is used but has no driver.
+Warning: Wire ising_fsm.$mem2reg_wr$\audit$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:127$2_DATA [0] is used but has no driver.
+Found and reported 19 problems.
+
+2.6. Executing FLATTEN pass (flatten design).
+
+2.7. Executing TRIBUF pass.
+
+2.8. Executing DEMINOUT pass (demote inout ports to input or output).
+
+2.9. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+<suppressed ~14 debug messages>
+
+2.10. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 17 unused cells and 85 unused wires.
+<suppressed ~19 debug messages>
+
+2.11. Executing CHECK pass (checking for obvious problems).
+Checking module ising_fsm...
+Found and reported 0 problems.
+
+2.12. Executing OPT pass (performing simple optimizations).
+
+2.12.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.12.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 73 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 68 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+<suppressed ~15 debug messages>
+Removed a total of 5 cells.
+
+2.12.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+    dead port 2/2 on $mux $procmux$362.
+    dead port 2/2 on $mux $procmux$354.
+Removed 2 multiplexer ports.
+<suppressed ~35 debug messages>
+
+2.12.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.12.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 66 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.12.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.12.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 0 unused cells and 7 unused wires.
+<suppressed ~1 debug messages>
+
+2.12.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.12.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.12.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~33 debug messages>
+
+2.12.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.12.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 66 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.12.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.12.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.12.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.12.16. Finished fast OPT passes. (There is nothing left to do.)
+
+2.13. Executing FSM pass (extract and optimize FSM).
+
+2.13.1. Executing FSM_DETECT pass (finding FSMs in design).
+Found FSM state register ising_fsm.state.
+
+2.13.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+Extracting FSM `\state' from module `\ising_fsm'.
+  found $adff cell for state register: $procdff$378
+  root of input selection tree: \state_n
+  found reset state: 2'00 (from async reset)
+  found ctrl input: $procmux$355_CMP
+  found ctrl input: \emit_pulse
+  found ctrl input: $eq$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:125$37_Y
+  found ctrl input: \rate_ok
+  found state code: 2'10
+  found ctrl input: $and$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:85$25_Y
+  found state code: 2'01
+  found ctrl output: $procmux$355_CMP
+  found ctrl output: \emit_pulse
+  found ctrl output: $eq$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:125$37_Y
+  ctrl inputs: { $and$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:85$25_Y \rate_ok }
+  ctrl outputs: { $procmux$355_CMP $eq$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:125$37_Y \state_n \emit_pulse }
+  transition:       2'00 2'0- ->       2'00 5'01000
+  transition:       2'00 2'1- ->       2'01 5'01010
+  transition:       2'10 2'-0 ->       2'10 5'10100
+  transition:       2'10 2'-1 ->       2'00 5'10000
+  transition:       2'01 2'-- ->       2'10 5'00101
+
+2.13.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+Optimizing FSM `$fsm$\state$434' from module `\ising_fsm'.
+
+2.13.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 7 unused cells and 7 unused wires.
+<suppressed ~8 debug messages>
+
+2.13.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+Optimizing FSM `$fsm$\state$434' from module `\ising_fsm'.
+  Removing unused output signal $procmux$355_CMP.
+
+2.13.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+Recoding FSM `$fsm$\state$434' from module `\ising_fsm' using `auto' encoding:
+  mapping auto encoding to `one-hot` for this FSM.
+  00 -> --1
+  10 -> -1-
+  01 -> 1--
+
+2.13.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+FSM `$fsm$\state$434' from module `ising_fsm':
+-------------------------------------
+
+  Information on FSM $fsm$\state$434 (\state):
+
+  Number of input signals:    2
+  Number of output signals:   4
+  Number of state bits:       3
+
+  Input signals:
+    0: \rate_ok
+    1: $and$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:85$25_Y
+
+  Output signals:
+    0: \emit_pulse
+    1: \state_n [0]
+    2: \state_n [1]
+    3: $eq$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:125$37_Y
+
+  State encoding:
+    0:      3'--1  <RESET STATE>
+    1:      3'-1-
+    2:      3'1--
+
+  Transition Table (state_in, ctrl_in, state_out, ctrl_out):
+      0:     0 2'0-   ->     0 4'1000
+      1:     0 2'1-   ->     2 4'1010
+      2:     1 2'-1   ->     0 4'0000
+      3:     1 2'-0   ->     1 4'0100
+      4:     2 2'--   ->     1 4'0101
+
+-------------------------------------
+
+2.13.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+Mapping FSM `$fsm$\state$434' from module `\ising_fsm'.
+
+2.14. Executing OPT pass (performing simple optimizations).
+
+2.14.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+<suppressed ~6 debug messages>
+
+2.14.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 72 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 70 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 69 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 68 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+<suppressed ~12 debug messages>
+Removed a total of 4 cells.
+
+2.14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~29 debug messages>
+
+2.14.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.14.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 68 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.14.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$433 ($adff) from module ising_fsm (D = { 1'1 \strategy_idx \weighted_sum [7:0] 4'0000 }, Q = \audit[7]).
+Adding EN signal on $procdff$373 ($adff) from module ising_fsm (D = $0\cooldown_cnt[15:0], Q = \cooldown_cnt).
+Adding EN signal on $procdff$408 ($adff) from module ising_fsm (D = { 1'1 \strategy_idx \weighted_sum [7:0] 4'0000 }, Q = \audit[2]).
+Adding EN signal on $procdff$398 ($adff) from module ising_fsm (D = { 1'1 \strategy_idx \weighted_sum [7:0] 4'0000 }, Q = \audit[0]).
+Adding EN signal on $procdff$418 ($adff) from module ising_fsm (D = { 1'1 \strategy_idx \weighted_sum [7:0] 4'0000 }, Q = \audit[4]).
+Adding EN signal on $procdff$403 ($adff) from module ising_fsm (D = { 1'1 \strategy_idx \weighted_sum [7:0] 4'0000 }, Q = \audit[1]).
+Adding EN signal on $procdff$423 ($adff) from module ising_fsm (D = { 1'1 \strategy_idx \weighted_sum [7:0] 4'0000 }, Q = \audit[5]).
+Adding EN signal on $procdff$413 ($adff) from module ising_fsm (D = { 1'1 \strategy_idx \weighted_sum [7:0] 4'0000 }, Q = \audit[3]).
+Adding EN signal on $procdff$383 ($adff) from module ising_fsm (D = $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:128$42_Y, Q = \audit_wptr).
+Adding EN signal on $procdff$428 ($adff) from module ising_fsm (D = { 1'1 \strategy_idx \weighted_sum [7:0] 4'0000 }, Q = \audit[6]).
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$495 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$495 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 2 on $auto$ff.cc:337:slice$495 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 3 on $auto$ff.cc:337:slice$495 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$491 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$491 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 2 on $auto$ff.cc:337:slice$491 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 3 on $auto$ff.cc:337:slice$491 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$488 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$488 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 2 on $auto$ff.cc:337:slice$488 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 3 on $auto$ff.cc:337:slice$488 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$485 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$485 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 2 on $auto$ff.cc:337:slice$485 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 3 on $auto$ff.cc:337:slice$485 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$482 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$482 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 2 on $auto$ff.cc:337:slice$482 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 3 on $auto$ff.cc:337:slice$482 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$479 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$479 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 2 on $auto$ff.cc:337:slice$479 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 3 on $auto$ff.cc:337:slice$479 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$476 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$476 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 2 on $auto$ff.cc:337:slice$476 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 3 on $auto$ff.cc:337:slice$476 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 0 on $auto$ff.cc:337:slice$470 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 1 on $auto$ff.cc:337:slice$470 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 2 on $auto$ff.cc:337:slice$470 ($adffe) from module ising_fsm.
+Setting constant 0-bit at position 3 on $auto$ff.cc:337:slice$470 ($adffe) from module ising_fsm.
+
+2.14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 17 unused cells and 28 unused wires.
+<suppressed ~18 debug messages>
+
+2.14.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+<suppressed ~1 debug messages>
+
+2.14.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.14.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+2.14.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.14.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 60 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.14.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.14.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.14.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.14.16. Finished fast OPT passes. (There is nothing left to do.)
+
+2.15. Executing WREDUCE pass (reducing word size of cells).
+Removed top 8 bits (of 12) from port A of cell ising_fsm.$mul$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$3 ($mul).
+Removed top 2 bits (of 4) from port B of cell ising_fsm.$mul$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$3 ($mul).
+Removed top 6 bits (of 12) from port Y of cell ising_fsm.$mul$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$3 ($mul).
+Removed top 6 bits (of 12) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$5 ($add).
+Removed top 7 bits (of 12) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$5 ($add).
+Removed top 5 bits (of 12) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$5 ($add).
+Removed top 5 bits (of 12) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$7 ($add).
+Removed top 7 bits (of 12) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$7 ($add).
+Removed top 4 bits (of 12) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$7 ($add).
+Removed top 4 bits (of 12) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$9 ($add).
+Removed top 7 bits (of 12) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$9 ($add).
+Removed top 3 bits (of 12) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$9 ($add).
+Removed top 3 bits (of 12) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11 ($add).
+Removed top 7 bits (of 12) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11 ($add).
+Removed top 2 bits (of 12) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11 ($add).
+Removed top 2 bits (of 12) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13 ($add).
+Removed top 7 bits (of 12) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13 ($add).
+Removed top 1 bits (of 12) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13 ($add).
+Removed top 1 bits (of 12) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$15 ($add).
+Removed top 7 bits (of 12) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$15 ($add).
+Removed top 7 bits (of 12) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$17 ($add).
+Removed top 4 bits (of 12) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$17 ($add).
+Removed top 4 bits (of 12) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$17 ($add).
+Removed top 1 bits (of 8) from port B of cell ising_fsm.$gt$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:65$18 ($gt).
+Removed top 15 bits (of 16) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:119$34 ($add).
+Removed top 15 bits (of 16) from port B of cell ising_fsm.$sub$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:122$36 ($sub).
+Removed top 1 bits (of 2) from port B of cell ising_fsm.$eq$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:125$38 ($eq).
+Removed top 2 bits (of 3) from port B of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:128$42 ($add).
+Removed top 1 bits (of 3) from port B of cell ising_fsm.$procmux$306_CMP0 ($eq).
+Removed top 1 bits (of 3) from port B of cell ising_fsm.$procmux$316_CMP0 ($eq).
+Removed top 2 bits (of 3) from port B of cell ising_fsm.$procmux$327_CMP0 ($eq).
+Removed top 4 bits (of 12) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$15 ($add).
+Removed top 3 bits (of 11) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$15 ($add).
+Removed top 3 bits (of 11) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13 ($add).
+Removed top 2 bits (of 10) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13 ($add).
+Removed top 2 bits (of 10) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11 ($add).
+Removed top 1 bits (of 9) from port A of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11 ($add).
+Removed top 1 bits (of 9) from port Y of cell ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$9 ($add).
+Removed top 4 bits (of 12) from wire ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$15_Y.
+Removed top 4 bits (of 12) from wire ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13_Y.
+Removed top 4 bits (of 12) from wire ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11_Y.
+Removed top 4 bits (of 12) from wire ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$9_Y.
+Removed top 4 bits (of 12) from wire ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$7_Y.
+Removed top 5 bits (of 12) from wire ising_fsm.$add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$5_Y.
+Removed top 6 bits (of 12) from wire ising_fsm.$mul$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$3_Y.
+
+2.16. Executing PEEPOPT pass (run peephole optimizers).
+
+2.17. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 0 unused cells and 7 unused wires.
+<suppressed ~1 debug messages>
+
+2.18. Executing SHARE pass (SAT-based resource sharing).
+
+2.19. Executing TECHMAP pass (map to technology primitives).
+
+2.19.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/cmp2lut.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/cmp2lut.v' to AST representation.
+Generating RTLIL representation for module `\_90_lut_cmp_'.
+Successfully finished Verilog frontend.
+
+2.19.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~62 debug messages>
+
+2.20. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.21. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.22. Executing TECHMAP pass (map to technology primitives).
+
+2.22.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/mul2dsp.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/mul2dsp.v' to AST representation.
+Generating RTLIL representation for module `\_80_mul'.
+Generating RTLIL representation for module `\_90_soft_mul'.
+Successfully finished Verilog frontend.
+
+2.22.2. Continuing TECHMAP pass.
+Using template $paramod$199fb8f2d5745176a4e15aa36a4c60d1009266e1\_80_mul for cells of type $mul.
+No more expansions possible.
+<suppressed ~85 debug messages>
+
+2.23. Executing TECHMAP pass (map to technology primitives).
+
+2.23.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/dsp_map_18x18.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/dsp_map_18x18.v' to AST representation.
+Generating RTLIL representation for module `$__MUL18X18'.
+Successfully finished Verilog frontend.
+
+2.23.2. Continuing TECHMAP pass.
+Using template $paramod$3019fe023309dcbb89b3b5dc8f3181df46e105ab$__MUL18X18 for cells of type $__MUL18X18.
+No more expansions possible.
+<suppressed ~23 debug messages>
+
+2.24. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module ising_fsm:
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:128$42 ($add).
+  creating $macc model for $sub$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:122$36 ($sub).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:119$34 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$17 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$15 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$9 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$7 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$5 ($add).
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$5 into $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$7.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$7 into $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$9.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$9 into $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$11 into $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$13 into $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$15.
+  merging $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$15 into $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$17.
+  creating $alu model for $macc $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:119$34.
+  creating $alu model for $macc $sub$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:122$36.
+  creating $alu model for $macc $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:128$42.
+  creating $macc cell for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$17: $auto$alumacc.cc:382:replace_macc$516
+  creating $alu model for $gt$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:66$19 ($gt): new $alu
+  creating $alu model for $gt$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:65$18 ($gt): new $alu
+  creating $alu cell for $gt$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:65$18: $auto$alumacc.cc:512:replace_alu$519
+  creating $alu cell for $gt$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:66$19: $auto$alumacc.cc:512:replace_alu$530
+  creating $alu cell for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:128$42: $auto$alumacc.cc:512:replace_alu$541
+  creating $alu cell for $sub$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:122$36: $auto$alumacc.cc:512:replace_alu$544
+  creating $alu cell for $add$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:119$34: $auto$alumacc.cc:512:replace_alu$547
+  created 5 $alu and 1 $macc cells.
+
+2.25. Executing OPT pass (performing simple optimizations).
+
+2.25.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.25.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 68 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.25.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+2.25.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.25.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 68 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.25.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.25.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 6 unused cells and 16 unused wires.
+<suppressed ~7 debug messages>
+
+2.25.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.25.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.25.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~3 debug messages>
+
+2.25.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.25.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 62 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.25.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.25.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.25.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.25.16. Finished fast OPT passes. (There is nothing left to do.)
+
+2.26. Executing MEMORY pass.
+
+2.26.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+2.26.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+2.26.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+2.26.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+2.26.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+2.26.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.26.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+2.26.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+2.26.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.26.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+2.27. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.28. Executing MEMORY_LIBMAP pass (mapping memories to cells).
+
+2.29. Executing TECHMAP pass (map to technology primitives).
+
+2.29.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/lutrams_map_trellis.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/lutrams_map_trellis.v' to AST representation.
+Generating RTLIL representation for module `$__TRELLIS_DPR16X4_'.
+Successfully finished Verilog frontend.
+
+2.29.2. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/brams_map_16kd.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/brams_map_16kd.v' to AST representation.
+Generating RTLIL representation for module `$__DP16KD_'.
+Generating RTLIL representation for module `$__PDPW16KD_'.
+Successfully finished Verilog frontend.
+
+2.29.3. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~5 debug messages>
+
+2.30. Executing OPT pass (performing simple optimizations).
+
+2.30.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+<suppressed ~4 debug messages>
+
+2.30.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 61 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.30.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.30.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 0 unused cells and 1 unused wires.
+<suppressed ~1 debug messages>
+
+2.30.5. Finished fast OPT passes.
+
+2.31. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+2.32. Executing OPT pass (performing simple optimizations).
+
+2.32.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.32.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 61 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.32.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~2 debug messages>
+
+2.32.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.32.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 61 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.32.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.32.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.32.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.32.9. Finished fast OPT passes. (There is nothing left to do.)
+
+2.33. Executing TECHMAP pass (map to technology primitives).
+
+2.33.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+2.33.2. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/arith_map_ccu2c.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/arith_map_ccu2c.v' to AST representation.
+Generating RTLIL representation for module `\_80_ccu2c_alu'.
+Successfully finished Verilog frontend.
+
+2.33.3. Continuing TECHMAP pass.
+Using template $paramod$2af30114e9bd4ccb04dad757b3f0a8f6bf0615b0\_80_ccu2c_alu for cells of type $alu.
+Using template $paramod$a1665ef28c749ebcdbe9aecd466e644647b56463\_80_ccu2c_alu for cells of type $alu.
+Using template $paramod$3ef7d3dd227da7627a99c5e5a6a4deb817573e39\_90_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $reduce_and.
+Using template $paramod$a1bc51c02ce12ac21eb18988e83292af48ed7d72\_80_ccu2c_alu for cells of type $alu.
+Using template $paramod$befd47b1c77b68561d11d0cb61a0fae29b79f34c\_80_ccu2c_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add $techmap514$mul$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:53$3.Y (6 bits, unsigned)
+  add { \f_dyn 1'0 } (5 bits, unsigned)
+  add { \f_bal 1'0 } (5 bits, unsigned)
+  add { \f_orig 1'0 } (5 bits, unsigned)
+  add { \f_coh 1'0 } (5 bits, unsigned)
+  add { \f_pain 1'0 } (5 bits, unsigned)
+  add { \f_cur 1'0 } (5 bits, unsigned)
+  add { \f_gap 1'0 } (5 bits, unsigned)
+Using extmapper simplemap for cells of type $adffe.
+Using extmapper simplemap for cells of type $reduce_bool.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $reduce_or.
+Using extmapper simplemap for cells of type $adff.
+Using extmapper simplemap for cells of type $logic_not.
+Using extmapper simplemap for cells of type $eq.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $mux.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000100 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000101 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000110 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000111 for cells of type $fa.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000001000 for cells of type $fa.
+Using extmapper simplemap for cells of type $logic_or.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $pos.
+Using template $paramod\_90_fa\WIDTH=32'00000000000000000000000000000011 for cells of type $fa.
+Using template $paramod\_90_lcu_brent_kung\WIDTH=32'00000000000000000000000000000011 for cells of type $lcu.
+No more expansions possible.
+<suppressed ~616 debug messages>
+
+2.34. Executing OPT pass (performing simple optimizations).
+
+2.34.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+<suppressed ~344 debug messages>
+
+2.34.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 496 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 471 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 463 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 461 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 460 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+<suppressed ~108 debug messages>
+Removed a total of 36 cells.
+
+2.34.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.34.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 70 unused cells and 381 unused wires.
+<suppressed ~71 debug messages>
+
+2.34.5. Finished fast OPT passes.
+
+2.35. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.36. Executing DFFLEGALIZE pass (convert FFs to types supported by the target).
+
+2.37. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 524 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 391 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+<suppressed ~399 debug messages>
+Removed a total of 133 cells.
+
+2.38. Executing TECHMAP pass (map to technology primitives).
+
+2.38.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/cells_map_trellis.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/cells_map_trellis.v' to AST representation.
+Generating RTLIL representation for module `$_DFF_N_'.
+Generating RTLIL representation for module `$_DFF_P_'.
+Generating RTLIL representation for module `$_DFFE_NN_'.
+Generating RTLIL representation for module `$_DFFE_PN_'.
+Generating RTLIL representation for module `$_DFFE_NP_'.
+Generating RTLIL representation for module `$_DFFE_PP_'.
+Generating RTLIL representation for module `$_DFF_NP0_'.
+Generating RTLIL representation for module `$_DFF_NP1_'.
+Generating RTLIL representation for module `$_DFF_PP0_'.
+Generating RTLIL representation for module `$_DFF_PP1_'.
+Generating RTLIL representation for module `$_SDFF_NP0_'.
+Generating RTLIL representation for module `$_SDFF_NP1_'.
+Generating RTLIL representation for module `$_SDFF_PP0_'.
+Generating RTLIL representation for module `$_SDFF_PP1_'.
+Generating RTLIL representation for module `$_DFFE_NP0P_'.
+Generating RTLIL representation for module `$_DFFE_NP1P_'.
+Generating RTLIL representation for module `$_DFFE_PP0P_'.
+Generating RTLIL representation for module `$_DFFE_PP1P_'.
+Generating RTLIL representation for module `$_DFFE_NP0N_'.
+Generating RTLIL representation for module `$_DFFE_NP1N_'.
+Generating RTLIL representation for module `$_DFFE_PP0N_'.
+Generating RTLIL representation for module `$_DFFE_PP1N_'.
+Generating RTLIL representation for module `$_SDFFE_NP0P_'.
+Generating RTLIL representation for module `$_SDFFE_NP1P_'.
+Generating RTLIL representation for module `$_SDFFE_PP0P_'.
+Generating RTLIL representation for module `$_SDFFE_PP1P_'.
+Generating RTLIL representation for module `$_SDFFE_NP0N_'.
+Generating RTLIL representation for module `$_SDFFE_NP1N_'.
+Generating RTLIL representation for module `$_SDFFE_PP0N_'.
+Generating RTLIL representation for module `$_SDFFE_PP1N_'.
+Generating RTLIL representation for module `$_ALDFF_NP_'.
+Generating RTLIL representation for module `$_ALDFF_PP_'.
+Generating RTLIL representation for module `$_ALDFFE_NPN_'.
+Generating RTLIL representation for module `$_ALDFFE_NPP_'.
+Generating RTLIL representation for module `$_ALDFFE_PPN_'.
+Generating RTLIL representation for module `$_ALDFFE_PPP_'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Successfully finished Verilog frontend.
+
+2.38.2. Continuing TECHMAP pass.
+Using template $_DFF_PP0_ for cells of type $_DFF_PP0_.
+Using template $_DFF_PP1_ for cells of type $_DFF_PP1_.
+Using template $_DFFE_PP0P_ for cells of type $_DFFE_PP0P_.
+No more expansions possible.
+<suppressed ~205 debug messages>
+
+2.39. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.40. Executing SIMPLEMAP pass (map simple cells to gate primitives).
+
+2.41. Executing LATTICE_GSR pass (implement FF init values).
+Handling GSR in ising_fsm.
+
+2.42. Executing ATTRMVCP pass (move or copy attributes).
+
+2.43. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 0 unused cells and 918 unused wires.
+<suppressed ~1 debug messages>
+
+2.44. Executing TECHMAP pass (map to technology primitives).
+
+2.44.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/latches_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/latches_map.v' to AST representation.
+Generating RTLIL representation for module `$_DLATCH_N_'.
+Generating RTLIL representation for module `$_DLATCH_P_'.
+Successfully finished Verilog frontend.
+
+2.44.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~4 debug messages>
+
+2.45. Executing ABC9 pass.
+
+2.45.1. Executing ABC9_OPS pass (helper functions for ABC9).
+
+2.45.2. Executing ABC9_OPS pass (helper functions for ABC9).
+
+2.45.3. Executing PROC pass (convert processes to netlists).
+
+2.45.3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+2.45.3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2294 in module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Removed a total of 0 dead cases.
+
+2.45.3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1 assignment to connection.
+
+2.45.3.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2295'.
+  Set init value: \Q = 1'0
+
+2.45.3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \muxlsr in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2294'.
+
+2.45.3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+2.45.3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2295'.
+Creating decoders for process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2294'.
+     1/1: $0\Q[0:0]
+
+2.45.3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+2.45.3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.\Q' using process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2294'.
+  created $adff cell `$procdff$2300' with positive edge clock and positive level reset.
+
+2.45.3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+2.45.3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2295'.
+Found and cleaned up 1 empty switch in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2294'.
+Removing empty process `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2294'.
+Cleaned up 1 empty switch.
+
+2.45.4. Executing PROC pass (convert processes to netlists).
+
+2.45.4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+2.45.4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2318 in module $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.
+Removed a total of 0 dead cases.
+
+2.45.4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1 assignment to connection.
+
+2.45.4.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2319'.
+  Set init value: \Q = 1'1
+
+2.45.4.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \muxlsr in `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2318'.
+
+2.45.4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+2.45.4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2319'.
+Creating decoders for process `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2318'.
+     1/1: $0\Q[0:0]
+
+2.45.4.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+2.45.4.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.\Q' using process `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2318'.
+  created $adff cell `$procdff$2324' with positive edge clock and positive level reset.
+
+2.45.4.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+2.45.4.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2319'.
+Found and cleaned up 1 empty switch in `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2318'.
+Removing empty process `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2318'.
+Cleaned up 1 empty switch.
+
+2.45.5. Executing PROC pass (convert processes to netlists).
+
+2.45.5.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+2.45.5.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2332 in module $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.
+Removed a total of 0 dead cases.
+
+2.45.5.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1 assignment to connection.
+
+2.45.5.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2333'.
+  Set init value: \Q = 1'0
+
+2.45.5.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \muxlsr in `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2332'.
+
+2.45.5.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+2.45.5.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2333'.
+Creating decoders for process `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2332'.
+     1/1: $0\Q[0:0]
+
+2.45.5.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+2.45.5.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.\Q' using process `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2332'.
+  created $adff cell `$procdff$2338' with positive edge clock and positive level reset.
+
+2.45.5.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+2.45.5.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:278$2333'.
+Found and cleaned up 1 empty switch in `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2332'.
+Removing empty process `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.$proc$/opt/homebrew/bin/../share/yosys/lattice/common_sim.vh:282$2332'.
+Cleaned up 1 empty switch.
+
+2.45.6. Executing SCC pass (detecting logic loops).
+Found 0 SCCs in module ising_fsm.
+Found 0 SCCs.
+
+2.45.7. Executing ABC9_OPS pass (helper functions for ABC9).
+
+2.45.8. Executing TECHMAP pass (map to technology primitives).
+
+2.45.8.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+2.45.8.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~172 debug messages>
+
+2.45.9. Executing OPT pass (performing simple optimizations).
+
+2.45.9.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Optimizing module $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.
+Optimizing module $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.
+
+2.45.9.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Finding identical cells in module `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF'.
+Finding identical cells in module `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF'.
+Removed a total of 0 cells.
+
+2.45.9.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+2.45.9.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+  Optimizing cells in module $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.
+  Optimizing cells in module $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.
+Performed a total of 0 changes.
+
+2.45.9.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF'.
+Finding identical cells in module `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF'.
+Finding identical cells in module `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF'.
+Computing hashes of 2 cells of `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF'.
+Finding duplicate cells in `$paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF'.
+Removed a total of 0 cells.
+
+2.45.9.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.45.9.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF..
+Finding unused cells or wires in module $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF..
+Finding unused cells or wires in module $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF..
+
+2.45.9.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Optimizing module $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.
+Optimizing module $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.
+
+2.45.9.9. Finished fast OPT passes. (There is nothing left to do.)
+
+2.45.10. Executing TECHMAP pass (map to technology primitives).
+
+2.45.10.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_map.v' to AST representation.
+Successfully finished Verilog frontend.
+
+2.45.10.2. Continuing TECHMAP pass.
+Using template $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF for cells of type $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.
+Using template $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF for cells of type $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.
+Using template $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF for cells of type $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+No more expansions possible.
+<suppressed ~139 debug messages>
+
+2.45.11. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_model.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_model.v' to AST representation.
+Generating RTLIL representation for module `$__ABC9_DELAY'.
+Generating RTLIL representation for module `$__ABC9_SCC_BREAKER'.
+Generating RTLIL representation for module `$__DFF_N__$abc9_flop'.
+Generating RTLIL representation for module `$__DFF_P__$abc9_flop'.
+Successfully finished Verilog frontend.
+
+2.45.12. Executing ABC9_OPS pass (helper functions for ABC9).
+<suppressed ~2 debug messages>
+
+2.45.13. Executing ABC9_OPS pass (helper functions for ABC9).
+
+2.45.14. Executing ABC9_OPS pass (helper functions for ABC9).
+<suppressed ~2 debug messages>
+
+2.45.15. Executing TECHMAP pass (map to technology primitives).
+
+2.45.15.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+2.45.15.2. Continuing TECHMAP pass.
+Using template $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C for cells of type $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C.
+Using extmapper simplemap for cells of type $or.
+Using extmapper simplemap for cells of type $and.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $xor.
+Using template $paramod\LUT2\INIT=4'1010 for cells of type LUT2.
+Using template $paramod\LUT4\INIT=16'1001011010101010 for cells of type LUT4.
+Using extmapper simplemap for cells of type $mux.
+No more expansions possible.
+<suppressed ~211 debug messages>
+
+2.45.16. Executing OPT pass (performing simple optimizations).
+
+2.45.16.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+<suppressed ~18 debug messages>
+
+2.45.16.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 59 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Computing hashes of 57 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+<suppressed ~6 debug messages>
+Removed a total of 2 cells.
+
+2.45.16.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+2.45.16.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.45.16.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 57 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.45.16.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.45.16.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+Removed 0 unused cells and 55 unused wires.
+<suppressed ~1 debug messages>
+
+2.45.16.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.45.16.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+2.45.16.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \ising_fsm..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+2.45.16.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \ising_fsm.
+Performed a total of 0 changes.
+
+2.45.16.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\ising_fsm'.
+Computing hashes of 57 cells of `\ising_fsm'.
+Finding duplicate cells in `\ising_fsm'.
+Removed a total of 0 cells.
+
+2.45.16.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+2.45.16.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \ising_fsm..
+
+2.45.16.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module ising_fsm.
+
+2.45.16.16. Finished fast OPT passes. (There is nothing left to do.)
+
+2.45.17. Executing AIGMAP pass (map logic to AIG).
+Module ising_fsm: replaced 18 cells with 120 new cells, skipped 39 cells.
+  replaced 3 cell types:
+      14 $_MUX_
+       2 $_OR_
+       2 $_XOR_
+  not replaced 3 cell types:
+       4 $_AND_
+       4 $_NOT_
+      31 $specify2
+
+2.45.18. Executing AIGMAP pass (map logic to AIG).
+Module ising_fsm: replaced 122 cells with 689 new cells, skipped 403 cells.
+  replaced 3 cell types:
+      16 $_MUX_
+      55 $_OR_
+      51 $_XOR_
+  not replaced 10 cell types:
+      80 $_AND_
+      26 $_NOT_
+       1 MULT18X18D
+     115 $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF
+      28 $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C
+       1 $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF
+      18 $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF
+     115 $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF_$abc9_byp
+       1 $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF_$abc9_byp
+      18 $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF_$abc9_byp
+
+2.45.18.1. Executing ABC9_OPS pass (helper functions for ABC9).
+
+2.45.18.2. Executing ABC9_OPS pass (helper functions for ABC9).
+
+2.45.18.3. Executing XAIGER backend.
+<suppressed ~11 debug messages>
+Extracted 336 AND gates and 1369 wires from module `ising_fsm' to a netlist network with 180 inputs and 205 outputs.
+
+2.45.18.4. Executing ABC9_EXE pass (technology mapping using ABC9).
+
+2.45.18.5. Executing ABC9.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_lut <abc-temp-dir>/input.lut 
+ABC: + read_box <abc-temp-dir>/input.box 
+ABC: + &read <abc-temp-dir>/input.xaig 
+ABC: + &ps 
+ABC: <abc-temp-dir>/input : i/o =    180/    205  and =     255  lev =   16 (0.72)  mem = 0.02 MB  box = 162  bb = 134
+ABC: + &scorr 
+ABC: Warning: The network is combinational.
+ABC: + &sweep 
+ABC: + &dc2 
+ABC: + &dch -f -r 
+ABC: + &ps 
+ABC: <abc-temp-dir>/input : i/o =    180/    205  and =     278  lev =   22 (1.12)  mem = 0.02 MB  ch =    8  box = 162  bb = 134
+ABC: cst =       0  cls =      8  lit =       8  unused =     660  proof =     0
+ABC: + &if -W 300 -v 
+ABC: K = 7. Memory (bytes): Truth =    0. Cut =   76. Obj =  156. Set =  780. CutMin = no
+ABC: Node =     278.  Ch =     8.  Total mem =    0.23 MB. Peak cut mem =    0.02 MB.
+ABC: P:  Del = 4149.00.  Ar =     400.0.  Edge =      471.  Cut =     3840.  T =     0.00 sec
+ABC: P:  Del = 4149.00.  Ar =     402.0.  Edge =      471.  Cut =     3818.  T =     0.00 sec
+ABC: P:  Del = 4149.00.  Ar =     350.0.  Edge =      439.  Cut =     6354.  T =     0.00 sec
+ABC: F:  Del = 4145.00.  Ar =     198.0.  Edge =      408.  Cut =     4298.  T =     0.00 sec
+ABC: A:  Del = 4145.00.  Ar =     195.0.  Edge =      403.  Cut =     4359.  T =     0.00 sec
+ABC: A:  Del = 4145.00.  Ar =     194.0.  Edge =      401.  Cut =     4355.  T =     0.00 sec
+ABC: Total time =     0.00 sec
+ABC: + &write -n <abc-temp-dir>/output.aig 
+ABC: + &mfs 
+ABC: + &ps -l 
+ABC: <abc-temp-dir>/input : i/o =    180/    205  and =     656  lev =   20 (0.88)  mem = 0.03 MB  box = 162  bb = 134
+ABC: Mapping (K=7)  :  lut =     89  edge =     385  lev =    6 (0.32)  levB =   10  mem = 0.01 MB
+ABC: LUT = 89 : 2=6 6.7 %  3=27 30.3 %  4=16 18.0 %  5=14 15.7 %  6=24 27.0 %  7=2 2.2 %  Ave = 4.33
+ABC: + &write -n <abc-temp-dir>/output.aig 
+ABC: + &verify 
+ABC: Networks are equivalent.  Time =     0.01 sec
+ABC: + time 
+ABC: elapse: 0.07 seconds, total: 0.07 seconds
+
+2.45.18.6. Executing AIGER frontend.
+<suppressed ~780 debug messages>
+Removed 1112 unused cells and 2243 unused wires.
+
+2.45.18.7. Executing ABC9_OPS pass (helper functions for ABC9).
+ABC RESULTS:              $lut cells:       92
+ABC RESULTS:   $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C cells:       28
+ABC RESULTS:   $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF_$abc9_byp cells:      115
+ABC RESULTS:   $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF_$abc9_byp cells:        1
+ABC RESULTS:   $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF_$abc9_byp cells:       18
+ABC RESULTS:           input signals:      150
+ABC RESULTS:          output signals:       24
+Removing temp directory.
+
+2.45.19. Executing TECHMAP pass (map to technology primitives).
+
+2.45.19.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_unmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_unmap.v' to AST representation.
+Generating RTLIL representation for module `$__DFF_x__$abc9_flop'.
+Generating RTLIL representation for module `$__ABC9_SCC_BREAKER'.
+Successfully finished Verilog frontend.
+
+2.45.19.2. Continuing TECHMAP pass.
+Using template $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF for cells of type $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF.
+Using template $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF_$abc9_byp for cells of type $paramod$68581f66a8fa831820fa7633bd24ba569ae9d7e3\TRELLIS_FF_$abc9_byp.
+Using template $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C for cells of type $paramod$838872d5a4bab89607f53482b205c0fd50d8b82e\CCU2C.
+Using template $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF for cells of type $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF.
+Using template $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF for cells of type $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF.
+Using template $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF_$abc9_byp for cells of type $paramod$37e41664cab9052a9b41c89036e0524f666a0fee\TRELLIS_FF_$abc9_byp.
+Using template $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF_$abc9_byp for cells of type $paramod$af6cfab7b64a03625b4e26db341709ec2a848ad1\TRELLIS_FF_$abc9_byp.
+No more expansions possible.
+<suppressed ~308 debug messages>
+Removed 12 unused cells and 4177 unused wires.
+
+2.46. Executing TECHMAP pass (map to technology primitives).
+
+2.46.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/lattice/cells_map_trellis.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/lattice/cells_map_trellis.v' to AST representation.
+Generating RTLIL representation for module `$_DFF_N_'.
+Generating RTLIL representation for module `$_DFF_P_'.
+Generating RTLIL representation for module `$_DFFE_NN_'.
+Generating RTLIL representation for module `$_DFFE_PN_'.
+Generating RTLIL representation for module `$_DFFE_NP_'.
+Generating RTLIL representation for module `$_DFFE_PP_'.
+Generating RTLIL representation for module `$_DFF_NP0_'.
+Generating RTLIL representation for module `$_DFF_NP1_'.
+Generating RTLIL representation for module `$_DFF_PP0_'.
+Generating RTLIL representation for module `$_DFF_PP1_'.
+Generating RTLIL representation for module `$_SDFF_NP0_'.
+Generating RTLIL representation for module `$_SDFF_NP1_'.
+Generating RTLIL representation for module `$_SDFF_PP0_'.
+Generating RTLIL representation for module `$_SDFF_PP1_'.
+Generating RTLIL representation for module `$_DFFE_NP0P_'.
+Generating RTLIL representation for module `$_DFFE_NP1P_'.
+Generating RTLIL representation for module `$_DFFE_PP0P_'.
+Generating RTLIL representation for module `$_DFFE_PP1P_'.
+Generating RTLIL representation for module `$_DFFE_NP0N_'.
+Generating RTLIL representation for module `$_DFFE_NP1N_'.
+Generating RTLIL representation for module `$_DFFE_PP0N_'.
+Generating RTLIL representation for module `$_DFFE_PP1N_'.
+Generating RTLIL representation for module `$_SDFFE_NP0P_'.
+Generating RTLIL representation for module `$_SDFFE_NP1P_'.
+Generating RTLIL representation for module `$_SDFFE_PP0P_'.
+Generating RTLIL representation for module `$_SDFFE_PP1P_'.
+Generating RTLIL representation for module `$_SDFFE_NP0N_'.
+Generating RTLIL representation for module `$_SDFFE_NP1N_'.
+Generating RTLIL representation for module `$_SDFFE_PP0N_'.
+Generating RTLIL representation for module `$_SDFFE_PP1N_'.
+Generating RTLIL representation for module `$_ALDFF_NP_'.
+Generating RTLIL representation for module `$_ALDFF_PP_'.
+Generating RTLIL representation for module `$_ALDFFE_NPN_'.
+Generating RTLIL representation for module `$_ALDFFE_NPP_'.
+Generating RTLIL representation for module `$_ALDFFE_PPN_'.
+Generating RTLIL representation for module `$_ALDFFE_PPP_'.
+Generating RTLIL representation for module `\FD1P3AX'.
+Generating RTLIL representation for module `\FD1P3AY'.
+Generating RTLIL representation for module `\FD1P3BX'.
+Generating RTLIL representation for module `\FD1P3DX'.
+Generating RTLIL representation for module `\FD1P3IX'.
+Generating RTLIL representation for module `\FD1P3JX'.
+Generating RTLIL representation for module `\FD1S3AX'.
+Generating RTLIL representation for module `\FD1S3AY'.
+Generating RTLIL representation for module `\FD1S3BX'.
+Generating RTLIL representation for module `\FD1S3DX'.
+Generating RTLIL representation for module `\FD1S3IX'.
+Generating RTLIL representation for module `\FD1S3JX'.
+Generating RTLIL representation for module `\IFS1P3BX'.
+Generating RTLIL representation for module `\IFS1P3DX'.
+Generating RTLIL representation for module `\IFS1P3IX'.
+Generating RTLIL representation for module `\IFS1P3JX'.
+Generating RTLIL representation for module `\OFS1P3BX'.
+Generating RTLIL representation for module `\OFS1P3DX'.
+Generating RTLIL representation for module `\OFS1P3IX'.
+Generating RTLIL representation for module `\OFS1P3JX'.
+Generating RTLIL representation for module `\IB'.
+Generating RTLIL representation for module `\IBPU'.
+Generating RTLIL representation for module `\IBPD'.
+Generating RTLIL representation for module `\OB'.
+Generating RTLIL representation for module `\OBZ'.
+Generating RTLIL representation for module `\OBZPU'.
+Generating RTLIL representation for module `\OBZPD'.
+Generating RTLIL representation for module `\OBCO'.
+Generating RTLIL representation for module `\BB'.
+Generating RTLIL representation for module `\BBPU'.
+Generating RTLIL representation for module `\BBPD'.
+Generating RTLIL representation for module `\ILVDS'.
+Generating RTLIL representation for module `\OLVDS'.
+Generating RTLIL representation for module `$lut'.
+Successfully finished Verilog frontend.
+
+2.46.2. Continuing TECHMAP pass.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'01101001 for cells of type $lut.
+Using template $paramod$fd904e9e35cfd343a9df248824bd3f1408724879$lut for cells of type $lut.
+Using template $paramod$c0ac6a398ce353fa83870494f1106a98a40eb7cc$lut for cells of type $lut.
+Using template $paramod$704cad882e2bedddf5c55ef18de55c67afe1e0ec$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'11101000 for cells of type $lut.
+Using template $paramod$f5c97e291c8b48d9f1b4239d871ab7639e5a24ac$lut for cells of type $lut.
+Using template $paramod$7c57228df39eed5240de04995e61ac6a2ad834e4$lut for cells of type $lut.
+Using template $paramod$cab5bcc072f2736aaa59609f3a9caed9edf365d5$lut for cells of type $lut.
+Using template $paramod$4282def8dbd6df3d1248ad282c629bee684502c2$lut for cells of type $lut.
+Using template $paramod$da01c5f5b359f88f60fba6987de45e49defacff7$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000010\LUT=4'1000 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00000110 for cells of type $lut.
+Using template $paramod$fbc981964b9e152041d6fa02ad0ce22883e227ce$lut for cells of type $lut.
+Using template $paramod$6f625205336ac6ce7b8747324becdbce1049bc9c$lut for cells of type $lut.
+Using template $paramod$083a025c8ab5768beabf4d6e4fc4ed2d0bcfbb05$lut for cells of type $lut.
+Using template $paramod$69f20e0703606f2ffd2ee27cd26f815bd5eeb6e9$lut for cells of type $lut.
+Using template $paramod$9b03d9adf10c3e0e6feeff9eb1d291795817839a$lut for cells of type $lut.
+Using template $paramod$0a61d13e85a7ab453150d45d8c0e79af394453a9$lut for cells of type $lut.
+Using template $paramod$fbc8171ed21ee963e7bfb21be804ad96cf6c37da$lut for cells of type $lut.
+Using template $paramod$658b9ed803f0d3d335616d3858b53e0a2522f1e8$lut for cells of type $lut.
+Using template $paramod$571404c0889eaf57f492cb5e37f8acb5df5852f9$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000010\LUT=4'0001 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00010000 for cells of type $lut.
+Using template $paramod$8f60297e682dfc7086a124a4c88951d88e6987e6$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'10101110 for cells of type $lut.
+Using template $paramod$50dcf811e6afc08bdecf9a232a74fde42e7b925e$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000010\LUT=4'0110 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'01101010 for cells of type $lut.
+Using template $paramod$456d59706a6b79f30784d135401df0094470c74c$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00000010 for cells of type $lut.
+Using template $paramod$96e89aeb83b5d94e0b81b77c87631cff83eadd12$lut for cells of type $lut.
+Using template $paramod$014b659db5d002405936b374e32d204782099707$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'01001101 for cells of type $lut.
+Using template $paramod$7624b65fa7e91b22b750cc34f9038d731e5f2206$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00100000 for cells of type $lut.
+Using template $paramod$d6ca727e39f31d51d29072e0f33aa09c65e37336$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'01000000 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00001000 for cells of type $lut.
+Using template $paramod$d7816c8fe91c91c2deadbc0f27110529e1999027$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'10000000 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00000100 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00000001 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000010\LUT=4'0010 for cells of type $lut.
+Using template $paramod$73849ce2a8e65786d6d87d6ed8fdb3e378ef6e3d$lut for cells of type $lut.
+Using template $paramod$30ce3396a4f454a728b6261a41eaea793c92facd$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'10110000 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000001\LUT=2'01 for cells of type $lut.
+No more expansions possible.
+<suppressed ~775 debug messages>
+
+2.47. Executing OPT_LUT_INS pass (discard unused LUT inputs).
+Optimizing LUTs in ising_fsm.
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$480.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$480.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][0].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][0].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][15].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][15].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][14].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][14].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$477.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$477.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][13].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][13].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$471.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$471.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][12].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][12].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][11].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][11].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$logic_and$/Users/ghost/core/anima/anima-physics/hw/spontaneous_ising/src/ising_fsm.v:125$39_Y.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][10].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][10].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$496.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$496.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][9].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][9].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][8].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][8].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$492.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$492.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][7].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][7].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][6].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][6].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$489.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$489.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][5].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][5].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$486.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$486.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$483.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$483.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 0)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4305.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 1)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4305.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 1)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4309.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 3)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4309.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 3)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4309.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 3)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4310.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 2)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4311.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 3)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4311.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut2 (4 -> 3)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4311.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut3 (4 -> 3)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][7].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$492.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][8].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][15].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][9].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$496.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][10].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][11].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][14].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][0].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][13].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$480.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][12].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4307.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 2)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$471.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$477.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4308.genblk1.genblk1.genblk1.genblk1.genblk1.lut1 (4 -> 2)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$483.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$486.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][5].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $abc$4301$lut$auto$opt_dff.cc:251:make_patterns_logic$489.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 0)
+  Optimizing lut $abc$4301$lut$0\cooldown_cnt[15:0][6].genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+  Optimizing lut $auto$abc9_ops.cc:1613:reintegrate$4305.genblk1.genblk1.genblk1.genblk1.genblk1.genblk1.lut0 (4 -> 1)
+Removed 0 unused cells and 216 unused wires.
+
+2.48. Executing AUTONAME pass.
+Renamed 780 objects in module ising_fsm (127 iterations).
+<suppressed ~780 debug messages>
+
+2.49. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `ising_fsm'. Setting top module to ising_fsm.
+
+2.49.1. Analyzing design hierarchy..
+Top module:  \ising_fsm
+
+2.49.2. Analyzing design hierarchy..
+Top module:  \ising_fsm
+Removed 0 unused modules.
+
+2.50. Printing statistics.
+
+=== ising_fsm ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      358 wires
+      959 wire bits
+      358 public wires
+      959 public wire bits
+       21 ports
+      196 port bits
+        1 cells
+        1   MULT18X18D
+      454 submodules
+       28   CCU2C
+       30   L6MUX21
+      192   LUT4
+       70   PFUMX
+      134   TRELLIS_FF
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+        1 ising_fsm
+
+        +----------Count including submodules.
+        | 
+      358 wires
+      959 wire bits
+      358 public wires
+      959 public wire bits
+       21 ports
+      196 port bits
+        - memories
+        - memory bits
+        - processes
+        1 cells
+        1   MULT18X18D
+      454 submodules
+       28   CCU2C
+       30   L6MUX21
+      192   LUT4
+       70   PFUMX
+      134   TRELLIS_FF
+
+2.51. Executing CHECK pass (checking for obvious problems).
+Checking module ising_fsm...
+Found and reported 0 problems.
+
+2.52. Executing JSON backend.
+
+3. Printing statistics.
+
+=== ising_fsm ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      358 wires
+      959 wire bits
+      358 public wires
+      959 public wire bits
+       21 ports
+      196 port bits
+      455 cells
+       28   CCU2C
+       30   L6MUX21
+      192   LUT4
+        1   MULT18X18D
+       70   PFUMX
+      134   TRELLIS_FF
+
+Warnings: 20 unique messages, 20 total
+End of script. Logfile hash: 6dbfc02b7a, time: 0.50s, user: 0.38s, system: 0.02s, MEM: 45.17 MB peak
+Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, clang++ 21.0.0 -fPIC -O3)
+Time spent: 46% 21x read_verilog (0 sec), 17% 1x abc9_exe (0 sec), ...

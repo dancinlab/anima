@@ -1,0 +1,34 @@
+{
+  "scope": "R2 anima-models objects (d4acc account)",
+  "objects": [
+    {
+      "key": "clm-v2/latest.pt",
+      "size_bytes": 292638903,
+      "etag": "8387bb235cfbf2b92e025af95ab13142",
+      "verdict": "INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE"
+    },
+    {
+      "key": "clm-v2/latest/final.pt",
+      "size_bytes": 292638903,
+      "etag": "f140c36b9e0e56ee2afc463ba5fbace1-35",
+      "note": "duplicate of latest.pt (multipart)",
+      "verdict": "INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE"
+    },
+    {
+      "key": "conscious-lm/cells64/final.pt",
+      "size_bytes": 218099623,
+      "etag": "d76578505c67b0e9c4f1a55eff014eb2-26",
+      "verdict": "INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE"
+    },
+    {
+      "key": "conscious-lm/cells128/step_35000.pt",
+      "size_bytes": 218107547,
+      "etag": "c3113efae5678e877832ea5a25a6411a-27",
+      "verdict": "INACCESSIBLE_PER_R2_CREDENTIAL_SCOPE"
+    }
+  ],
+  "reason": "CF mgmt API account d4acc95862b4203c11948da5baf079bc lists objects but mgmt endpoint does not support object body download (HTTP 404 on GET /objects/<key>). rclone configured remote uses different account ce4bdcce7c74d4e3c78fdf944c4d1d7b which has different anima-models bucket contents (no conscious-lm/cells*).",
+  "remediation": "Bootstrap R2 access keys for d4acc account (CF dashboard > R2 > Manage R2 API tokens) to enable rclone or aws s3 cp via S3-compatible endpoint",
+  "tested_at": "2026-05-06T20:42Z",
+  "cycle": "BG-FS"
+}

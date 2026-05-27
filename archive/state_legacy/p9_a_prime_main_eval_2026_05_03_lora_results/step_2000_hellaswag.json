@@ -1,0 +1,4548 @@
+{
+  "schema": "anima/p9_a_prime_main_eval/per_ckpt_per_task/1",
+  "ts_utc": "2026-05-04T00:18:02Z",
+  "base_model": "meta-llama/Llama-3.2-3B-Instruct",
+  "ckpt_kind": "HF_REPO",
+  "ckpt_id": "dancinlab/p9-llama32-lora-stage1@f69162477d",
+  "ckpt_revision": "f69162477d",
+  "task": "hellaswag",
+  "num_fewshot": 5,
+  "max_length": 2048,
+  "limit": 500,
+  "precision": "4bit_nf4",
+  "batch_size": 1,
+  "seed": 42,
+  "harness_version": "0.4.11",
+  "stages": {
+    "load_base": {
+      "wall_s": 3.93,
+      "alloc_gb": 2.24
+    },
+    "load_lora": {
+      "wall_s": 36.22,
+      "alloc_gb": 2.63
+    },
+    "eval": {
+      "wall_s": 182.37
+    }
+  },
+  "aggregate": {
+    "hellaswag": {
+      "alias": "hellaswag",
+      "acc,none": 0.518,
+      "acc_stderr,none": 0.022368565117387874,
+      "acc_norm,none": 0.652,
+      "acc_norm_stderr,none": 0.021323728632807425
+    }
+  },
+  "n_subtasks": 1,
+  "matched_sample_keys": [
+    "hellaswag"
+  ],
+  "n_samples": 500,
+  "per_example_correctness": [
+    {
+      "doc_id": "hellaswag::0",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 0,
+      "doc_hash": "5fa398b50d156bdf77b474f3b43a03352e9a46bddfc7bb62e1038f7b4f12bbd1",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::1",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 1,
+      "doc_hash": "08296d87a2d1cb270a714773cb78d37f02f82661a082462fa53b437dfa0e3a5e",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::2",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 2,
+      "doc_hash": "14dc9b1c3f03ef369e0e9976562d362f58e37cadb9bebf25ee5dabdc3ff6ad7d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::3",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 3,
+      "doc_hash": "7a5346b1d9309aa52799e598a5ccbff33ccd8c18c1d1056da412389ea5bd9e8b",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::4",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 4,
+      "doc_hash": "0ea20e56c00cb5efbd1db09b523ddfb3dca721b1e17d740270d39d0296ee621c",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::5",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 5,
+      "doc_hash": "c10764353478517efdd4ff86e98cae2843877ae3bff5e1af117d05e581340b96",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::6",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 6,
+      "doc_hash": "cf8a9b3f0c6672e4f6502cc4bb4add452f8ea8a996a72179a69f28d2e2218d27",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::7",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 7,
+      "doc_hash": "484959f4cb60c490dfc7ae2431a4fc70b81f0784109e5626ff465f3ce22430b6",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::8",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 8,
+      "doc_hash": "0126fc20b6dd7239b4da25fc7fa0ed5c3ccfc4c6060cbf91aefc99002f10f791",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::9",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 9,
+      "doc_hash": "582468b8b065e8950cbabd91aa14735d6c953b12ac8a01b5365d6c556d42f462",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::10",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 10,
+      "doc_hash": "2c66b3471927da82aeb19419c918c2fc86eb124aba74b4a74bfc4cadf754d6a5",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::11",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 11,
+      "doc_hash": "7a95aeb6da7b8c30435620767171cd53f9dfde87ff88ab95ef356143375c808e",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::12",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 12,
+      "doc_hash": "62ab2f9bbb8f3420eb0fd351fb281d4caf54f8c19a1061b0b2f0bc59343f1803",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::13",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 13,
+      "doc_hash": "52663538776e90b5bf411555ce1b5fc5e6f3720b904f79f0e965699a766bca5b",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::14",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 14,
+      "doc_hash": "2680415957b99e4ddb3ccf808fdfedc675c462544e04007b2ed375dc37f7c024",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::15",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 15,
+      "doc_hash": "0384db989930603e0809ceaf319f29925f5bf3cfb1abf72f042639a6696a64d5",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::16",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 16,
+      "doc_hash": "774e007f2eaa07ec1e4aa0cb1545908c84ba1b20ce4a7d3f556d13576cffffc4",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::17",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 17,
+      "doc_hash": "f3f6dc9e0647507a2fa48c8dacfbc0c29165ac41b736aec1155bbf04190304a9",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::18",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 18,
+      "doc_hash": "c16d0f94317c1715fbffb7f2a88f39cdeaa5be7550445adb5f3987cf13f094e6",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::19",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 19,
+      "doc_hash": "c98d31121922704d814cc7ea9bf0e04e3d52284824d62a886a795fe540a4f1dc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::20",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 20,
+      "doc_hash": "1992b0af3affe686afed57661cc3a6906b21a0ebd434898e594a5c2035909738",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::21",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 21,
+      "doc_hash": "2df44bff1c5a62cd1e680bf081a4a50d49bd3e91613443a5437e2e5f43f5b5d0",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::22",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 22,
+      "doc_hash": "2870379140aa56b3aaa7a07a0fc20c52d9d0ff21803c08386c6c474d5f4678ae",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::23",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 23,
+      "doc_hash": "5728579010e563cc4a05bc95c5e014a4d13c54efd2460266ad0db085e69bda46",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::24",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 24,
+      "doc_hash": "72bd01534035126d4fb4ef4569dc42b1c5e252be0e36875e41d7f8231282691f",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::25",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 25,
+      "doc_hash": "5c2ccb1c8e99e18ec3d91ad4c1edd824d4f035d42814ec1824da7042acb44ae6",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::26",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 26,
+      "doc_hash": "a5cc561f4f4113ae16837192c2c4b29a7530db541f4839c5f2aac5d76c239c22",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::27",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 27,
+      "doc_hash": "bccb41c20e7faffa7d48ea45a35ed7130bc118aa090b03cf2b2dbac99b3cb595",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::28",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 28,
+      "doc_hash": "709bd01e6989c3ff3d8c9843756f779071de4ea668181631bfabd71682ae996d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::29",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 29,
+      "doc_hash": "a82a8a410d83560c0a7cf074cc6def0ccd2f73fc21de59939ad487e67a78fd1f",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::30",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 30,
+      "doc_hash": "67e3713ebcd2cb077ae436c274681bb35c7da5878beb0332fcf3f8e7b7bb4395",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::31",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 31,
+      "doc_hash": "f0e9415e86b6630650fa4a47b769fae92f185d8f197e5a4b80ce49758a482e25",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::32",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 32,
+      "doc_hash": "7eebe95298be2c69a88728a85080fd55e17d5f49a97ea672f7e5c668f98eead8",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::33",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 33,
+      "doc_hash": "c8771e56ec5c3c70114f9b70eac8a26cd2a878bb6aa7dcd950036bb404345e08",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::34",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 34,
+      "doc_hash": "a96c119e02bbefb51585f47764ffdf0974ce4dc5c537852a0296beac18d29765",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::35",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 35,
+      "doc_hash": "6c7f20691abf0feebfcb3f319f11e3c74522981071c19330de46ae61df133555",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::36",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 36,
+      "doc_hash": "934b91d52cd3fc966f4a1f59bf843c93ca83d8a514d9ce7641b3230ade13f904",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::37",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 37,
+      "doc_hash": "b80344c6218086019f9b9e704633c5d6a0b30844a12f27c27c3d96b40b2d2f35",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::38",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 38,
+      "doc_hash": "a0e1d0c9cfc54a754be17d47ccad0b54fcfd0724a7299dd1422a3183c1019170",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::39",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 39,
+      "doc_hash": "4de9950d7af522b4a509d8ff56af58f7b4871d9e9c1bc595d9cc5d15ad378246",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::40",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 40,
+      "doc_hash": "aae2c7d3415410f59bbbd2fb5a4712c1b890d8a83d854a02656b4eacd5ec7b36",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::41",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 41,
+      "doc_hash": "74dbee74304a52bdeddd3afa038e0ae67b85fb0d2fec7f5838550df964bec024",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::42",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 42,
+      "doc_hash": "8484b76818c8492df52702237e7d97fca8489d19dc9fdd2f890381f9c1132bf2",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::43",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 43,
+      "doc_hash": "6616101a5ce5fef13cb7c80be38336e8f4e75db0fedaf18fdc3fc4920bec1857",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::44",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 44,
+      "doc_hash": "7e1bf0fddfec9bd6065e385198b5025b08f5e4a02799eb07cf0a4e49853b6fdd",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::45",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 45,
+      "doc_hash": "099f331f8162e8849f8f6e626f972dcdcbf04a8d8df13fb43e839ed13741225a",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::46",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 46,
+      "doc_hash": "3e1496d6035ecf9c389206aaccb913ece3e0fab9d782b042168ce81b1dfda15d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::47",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 47,
+      "doc_hash": "ffdd111cf394592aa879ebee0e0c34ea4447eed8a552041f961d49b436a1a6d9",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::48",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 48,
+      "doc_hash": "5c082692bd2befdb36f4b361ee3de9cc00ca0cb00145152a33e8768d86ee05d9",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::49",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 49,
+      "doc_hash": "f0f1c732dda565731212a9c6361b9835cfff2a468f9e4dcb9605b996317327af",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::50",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 50,
+      "doc_hash": "20b5f6a6498800de87842bbeca435135f3e4770b5a5c91554aa433e8ada3417a",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::51",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 51,
+      "doc_hash": "071c1387f89a8c0c7b10df5a2eb5fc14495e2e0df327d5df03ce9b9b6dfe02ae",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::52",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 52,
+      "doc_hash": "cb4dbb3e88b7c01bb23f6889d3757b53f015e1be401c0aed96a07925b953fbec",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::53",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 53,
+      "doc_hash": "17fe3ca7e4ab7030a8e96c8332c9ec1424411b56a5bcbac826b1569a8155d91e",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::54",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 54,
+      "doc_hash": "9bcbb852aed1109afa7177a861fbdd0f2ce2039c4fc43e5039db4a3ee2fd38cc",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::55",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 55,
+      "doc_hash": "08a6e61267580748e212fa8aae132227d889356ea81662e5448cb0be48081d95",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::56",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 56,
+      "doc_hash": "47206c8a3909c77ab43dd1f637fa22065e9742958567bc90b754e5ea97cbc2c1",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::57",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 57,
+      "doc_hash": "0531caac79c94328d54ddc8f3c0550828f2405b1b06b171f6c801c036a1bea19",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::58",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 58,
+      "doc_hash": "e292efbb300bf606018cb6d689953359b8c539edcd1e37ca1094f828bcdcfe9d",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::59",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 59,
+      "doc_hash": "1361fdf3e5c53ec3f5e6546e7acbe818699b0de057dc5fcc714a02f286eb01a8",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::60",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 60,
+      "doc_hash": "879ae22316fb24707d15407c2f8d583c313eda16e1672e77aa60a29852b5e90a",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::61",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 61,
+      "doc_hash": "f6fafb7276dd6937843325500b8613bf404007034e3c911e692b710aed9494db",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::62",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 62,
+      "doc_hash": "3fdfbe69fcca5bd1ff29f15e9b2ff53a392a7661e0a40b024b2d369b10e61e57",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::63",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 63,
+      "doc_hash": "b0b41fd50fa802d6ebcf40548781863c6aaeeab1e324aaec40a3892142c6b907",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::64",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 64,
+      "doc_hash": "74e136a467bdbd973a3bf8457a631baf81211c7dc9d0911b6dd6ef194f4a2bff",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::65",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 65,
+      "doc_hash": "c7e4e0eb7615dca2bae218f4c1b023103a536fb844be3b79ab7186b275e369ce",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::66",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 66,
+      "doc_hash": "b3d6d8c2c1b8ea38b95e565d654a20324a6a6e2f56d2e85054806e011036d13d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::67",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 67,
+      "doc_hash": "676a31c5e6f0eaa4bafd34921416dabc93bf68b8c47eef22a0ae791488df5d13",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::68",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 68,
+      "doc_hash": "ced789e7017ca5257fbbc98f193b75d9d5d87117b37e007b2ce0a802530a5725",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::69",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 69,
+      "doc_hash": "198293114ad3a437b864b996f3875216cd675267a9529a04029b6d2743a17b4e",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::70",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 70,
+      "doc_hash": "1ca478f8264f52c49671098888c273251d6b36a33e0e4d322c3c0b26624ede78",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::71",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 71,
+      "doc_hash": "8b4c782a739a2363dd6765acecef67cc3e45addc44d790aaa4455788d82934fa",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::72",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 72,
+      "doc_hash": "722bbbd9ca56b7b5bcd0b2b2606342bad8f51b13e4878185afb43b6d20cbde22",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::73",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 73,
+      "doc_hash": "1e6b9c01c390a0ac0a52f2549344dc6b77a305f1e70d4a171959aab8a56429d5",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::74",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 74,
+      "doc_hash": "1252bdc4854b377c11be41d06c4cd9b31525cbbb82dd1a81bce8961be62ded81",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::75",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 75,
+      "doc_hash": "bbe729788f7e296f6a1010cc5e38ede7e0a2ccb6eddcab5a815715875a0e7d92",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::76",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 76,
+      "doc_hash": "fd67fef1a12e7e9f06d116b2ea1b171eefe13e84d551eb0071002c0758208236",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::77",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 77,
+      "doc_hash": "bd93daf6a06297746efd0eb6b18170575d299cb2b1d68e3ffc28f07dc2dcac99",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::78",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 78,
+      "doc_hash": "55a74ad786728f2d040b7945ba833343542f51de3765481dd0c739f480cfbcc0",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::79",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 79,
+      "doc_hash": "4918a9d7d044535146c1d54c58eafddba01a59ef7bb769d7006ab44ca056fbfe",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::80",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 80,
+      "doc_hash": "68ea995f0ae5ee8f0762f11d7cbb938f4264fe4009bf54a756e1ff24e5f1daa9",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::81",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 81,
+      "doc_hash": "86138b1eb63a7b0f559bf6cd7dc2a515e4089949558dc002fa9c691419a0950c",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::82",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 82,
+      "doc_hash": "7620899f9f5a95ad08664c3eb05b8a7dfc962c1d62eb9a223c00da740d1e15d4",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::83",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 83,
+      "doc_hash": "c8dbe42829b9388fd557c27c3ec5cae4de09d566438c47459da1cf70c0161c18",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::84",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 84,
+      "doc_hash": "61755e4d18436042e30cf93c34fb8453a4ee802bf06190906ee0f690bc2c3927",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::85",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 85,
+      "doc_hash": "b5b355de3387235872c35eeee05aa1185dc112ee973b2eebc554b1d44042c698",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::86",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 86,
+      "doc_hash": "c542681aa1fde646e59b39dd948762011c4583e761b2aa0e36c60f9155e51e65",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::87",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 87,
+      "doc_hash": "3ba671f826803824e7b8b0ad6b6e1f2835330aef7b818ab45811dd1d6c4d7536",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::88",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 88,
+      "doc_hash": "d1ecf669a0a60f779af53ee42db15e11f8fdd70672a31fb6ff31f30f80165a5d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::89",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 89,
+      "doc_hash": "07dd42939877d1d3a378c9baea6c2c75561c5edd3a9abd37bc513785713492e5",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::90",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 90,
+      "doc_hash": "23b845f16b588813b04fd5b22240c689c9454e52ebaa491de0dad893ab89ee7e",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::91",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 91,
+      "doc_hash": "c729c1751d43804b88bbc9045f08afea613350eb82b419e8e77ebaf2a06c4cbb",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::92",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 92,
+      "doc_hash": "70df5dc9846ee7dafb81c8c53b86f24d1eefa97a232253c0fcb8530d9eb191a4",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::93",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 93,
+      "doc_hash": "b457881fd33fff1da476277121d5327d7af4d711ca36c8783327d95b9eda559e",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::94",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 94,
+      "doc_hash": "a80283cce795d673e41a606ec075402e44ce4636ba9df70dc4c92d73ee8c3340",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::95",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 95,
+      "doc_hash": "7a68c2603d558a17084c47aaa57ec7b8dca5064a6b5799eee941ed0e391b0133",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::96",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 96,
+      "doc_hash": "fc7fefca50a1420d5def7ac39c5f75eff8c8fbbe6a12dbf90190c5318a46d12e",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::97",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 97,
+      "doc_hash": "15b6c09164a5db4553a1c50b4ffef42a90750ba02a85fa28942c77279354c3a6",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::98",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 98,
+      "doc_hash": "d1e413e1e1a39797205db7a986d70a47ce89b1618d214d1e9ccf58c5325de6fb",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::99",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 99,
+      "doc_hash": "92131eda97f46a971fd6a4ae0ad9429d4f93c511724355002462818f9783eb8b",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::100",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 100,
+      "doc_hash": "685f776b50214ee322045c4d198c3690607a8323dcb6ce90aebe0b72a90d58b1",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::101",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 101,
+      "doc_hash": "ef27a39470e1674079187f5f0956127a0d040717e9662ecd6e71a5758d6e7ead",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::102",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 102,
+      "doc_hash": "01815775fb30af46b2662aeb87947a49ad44fb0ed6824860f2a16b62885075f4",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::103",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 103,
+      "doc_hash": "3b137563673178f377f7f4d13725be192de200bbdf06df85d05dd45e43c6101c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::104",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 104,
+      "doc_hash": "7ec220ff1a426eb8ffdc1d58d92e4828eaeb5fb9926f7c15e40f0730d9b89383",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::105",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 105,
+      "doc_hash": "77e705ee728015affa1eef73b2f1e019e3afac094cce63f7af86c74b55f6f9f2",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::106",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 106,
+      "doc_hash": "35b2a8ba0797f00ee9172b8c5f7c5002056e19390cf1a731e11eb8003eb8d867",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::107",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 107,
+      "doc_hash": "3693e89ed2f748a98c2e74d23da02b6e9bb1eb5354bd5dd7f1041ce0eebb68a0",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::108",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 108,
+      "doc_hash": "32a7c3f213ea008bc3c72a1485cea13ac615d3365116d67ba833c0927c5f81f5",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::109",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 109,
+      "doc_hash": "4d507babe795117ad9af2fe0020a6d26c5a03a0cdea8206d0bae9a2d29805efc",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::110",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 110,
+      "doc_hash": "25dccf623880c99cf8d7d70583b898a80cf18c1b13bc3d096dc22a441bba26e2",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::111",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 111,
+      "doc_hash": "f9e497560fd9a00d45fdaab2de12c379cf160d0669c7aa4c6417c14938443e2b",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::112",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 112,
+      "doc_hash": "daff6e74835caf6b8bae073f167a0b9107705d34d0bde3061d820275ff165664",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::113",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 113,
+      "doc_hash": "3f02027bbd4446f56c6d8d4f3ba5f3d9e65df6a5f5abc695ccec7acba11f9421",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::114",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 114,
+      "doc_hash": "18a99ff9a2075bc40f348897a0c2d9c44d05cc31085fb1e94624e987548fdb29",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::115",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 115,
+      "doc_hash": "e786ba3f65b8c9401af234ac9886790a17b9dadfae2719a44fc72369b347c10c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::116",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 116,
+      "doc_hash": "6131e515e0b5fcba2b8899e60887b34d2e96226dbcee27c06b8b90673efe32b7",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::117",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 117,
+      "doc_hash": "76072445b89285f53c2949eb3b9e407ba4b7c7ec22d2be676de501d06ca0191f",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::118",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 118,
+      "doc_hash": "2609293cc881e4d76c7b7d016fa8bccfb8842f76a8556dc3695db720ca975745",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::119",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 119,
+      "doc_hash": "82e3322d5b0d44ccc25acc5247225429c58c44098d15666d419cdc7abbadb36b",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::120",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 120,
+      "doc_hash": "e3cdbf5001f1af601f049620ab56f08d4c1a8eedb551fa743560486175f2efc7",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::121",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 121,
+      "doc_hash": "217789dce2ead47b116da83e2e0bc1ea557a97f2975e33f72f7453d61386d08c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::122",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 122,
+      "doc_hash": "daff9263ef8684716363a1a45d2ee2b89e53c345e56aee7490f654e608170665",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::123",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 123,
+      "doc_hash": "1cb844f9491ace0e3d9f8b306da1e1df126c37de93d4e883f65749b6b7502892",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::124",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 124,
+      "doc_hash": "ad55e95c381dc0ed2cf04b9d928ed9a38bbdeb2a4b91b269eb6b2d10b14ff0b6",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::125",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 125,
+      "doc_hash": "adf07415435afb2af2b896b52e10ed2139c6af1ecc024bd6a526db79836f685a",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::126",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 126,
+      "doc_hash": "4838954336b4c0858ff3fa100250cf6664f12826e025f3e45a2bb81995cbeb57",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::127",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 127,
+      "doc_hash": "6e06ed395bb3835e01e540ba6050b964bd5afcae067ec89e653fbfff8fedf1b3",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::128",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 128,
+      "doc_hash": "e95b586fd66316f776ff7602064b22e252440903cb007a873b8235115fcac75d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::129",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 129,
+      "doc_hash": "d39a91df9de81195fadb3f2519499314eb4289dc26fc220a9911e879fbb0ee4d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::130",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 130,
+      "doc_hash": "c460330292c33c2b19fb5788398d58a45481c8095848ec25d3825f30422b5fa3",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::131",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 131,
+      "doc_hash": "50ed5c6611b7bd072bb8a1430d24836c26a95cd768644118a147f7cd341890aa",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::132",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 132,
+      "doc_hash": "ead730fe20fe8e99da90bab08203ab95198bd0536dd46f00b1cf78009f7e81cc",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::133",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 133,
+      "doc_hash": "92800d4cea0a4e940bae8aba15f63a9f09ec5f8f18eb44ee4c2fe625f7872a45",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::134",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 134,
+      "doc_hash": "075d1c3ec63abb1fd7c8077bde1251f7bf5511fbe694f26bff3a3f423b23a1b4",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::135",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 135,
+      "doc_hash": "fb462c98d4e634b31120d925084620db5eb05fe6e9e743ba3221cc4a08be9e50",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::136",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 136,
+      "doc_hash": "9067664f301358e4c4baccc42ced65c389f03a5dbb01d551625769f078ad8d27",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::137",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 137,
+      "doc_hash": "9da7716c392d93b12a9c4fcce4dc17f1d56f1cd6671f841196cd71f88a3fef36",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::138",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 138,
+      "doc_hash": "c4b792970304a7c5167f5098041bbffd2832a7ab0fa342724f53a5b635e35f92",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::139",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 139,
+      "doc_hash": "e473919fe02204c1ac03e1baeab31f1c223622f48d0b8e0ebe94ed5319d6c4b3",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::140",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 140,
+      "doc_hash": "2774336b6fa5a410637acbf579e68b516772490b7e463c8a6633aafffab28297",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::141",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 141,
+      "doc_hash": "77e29c5501a00c02cbdee6a4c2fcef03d3d86798370770517f3fbdf27b70beae",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::142",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 142,
+      "doc_hash": "315b63eb469a8b5cad9e84cb5dd6962e322221cdb25a5d4b5ba4f10590adfad2",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::143",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 143,
+      "doc_hash": "f92c09ca7ed935ff692d5a9f06c4797735cdba4451aa99f3180885b88966293d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::144",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 144,
+      "doc_hash": "9ce1dd1692bbca462a27798a11b3cc12e68e268b59f8f6142031754a40a9a62c",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::145",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 145,
+      "doc_hash": "853956d26fba24d6959b796e90a033e138f1c0d2490bba56a411b751ca171173",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::146",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 146,
+      "doc_hash": "0b3c35720ed9578473bb143a5f46dd4eac3a83971b812399e34469c6f17c23dc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::147",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 147,
+      "doc_hash": "6a30948b5174b96502bf285e20e1008df6b8c1ad2bb31c622b2e3a5165b7f5a6",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::148",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 148,
+      "doc_hash": "912fd76b0dbe1403959880e21baff684ce33cbf0ba93ee30e4227f7af3c00d4c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::149",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 149,
+      "doc_hash": "698d3a38ec24d0079ace39d048e2ecfa6dcb0a1fb530faa13ff2cdb767a320cd",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::150",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 150,
+      "doc_hash": "3904eb270ea6cc512eb403379f3ef1b9798848796c13cf7d55ba27bf57eba4c1",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::151",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 151,
+      "doc_hash": "e7d72a9417630c6386e6833622fd22744c7584072d1c8141f49e6bc19e5db0c5",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::152",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 152,
+      "doc_hash": "4f17393043e2962f63d7c4ce73e1176c4d68d14b9d1e3e592168c27e79b7020e",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::153",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 153,
+      "doc_hash": "a0e89895f4f7a847f9f82be660a71d3a972d3fdb36f860e61778efea83080d1f",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::154",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 154,
+      "doc_hash": "e053f717ac067cb16eac1c904e190588bab0b9578e18cf73cd78878287f5beea",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::155",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 155,
+      "doc_hash": "0051e045d27d925343a321edab3d2877343bb2f7fe430d6b1a86c61ee3a77ac3",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::156",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 156,
+      "doc_hash": "f69f2efc9311f02e55ec87317c4047a3bc510c6988b9ce94a7fcf237b528bb6a",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::157",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 157,
+      "doc_hash": "439e5fd8cbd8155d6d9616e8800c2641c9e31ecce8a21ef5e14f5d08d3dfe727",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::158",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 158,
+      "doc_hash": "b273fc9b5d07ebcd272baf48d9accd96467b0eda21fbe58de1d1e402ccb21c75",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::159",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 159,
+      "doc_hash": "0c890693065833d710118049774bdbff4ef0f2d4b14b4491fa4ca92d3a0d3585",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::160",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 160,
+      "doc_hash": "e451bb570f88eb4a36d4033672ab3ac15f98373ff52a49c115bd31264cf793e5",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::161",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 161,
+      "doc_hash": "076f7dee035d9e612d084af59b0f4bcf66f73a6327da40ffd7facae75ad86be5",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::162",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 162,
+      "doc_hash": "d1f3859521e34dc96b55409cc0e2e452045b4e50c83fb3932ee6c803119d965a",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::163",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 163,
+      "doc_hash": "b001b6549c398032dde8a182b26ff34daf140464828ed44e6e80f214ec65fbae",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::164",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 164,
+      "doc_hash": "2c9700c5f46bdf7b51a58063b4ad23719f1ac8f5d4e1f9099a6c38c432744fe4",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::165",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 165,
+      "doc_hash": "5a08db04653531e73c3f9d32f2b7ba9556a016fa9d3af551a0a2bbceb475853a",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::166",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 166,
+      "doc_hash": "fea652ffda5e34039415139702f7201e77211060134f6ada49d29652261c42c5",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::167",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 167,
+      "doc_hash": "edbeffe29c6230170042e4f070c795d2324960a099dd66321a0579162042b1c6",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::168",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 168,
+      "doc_hash": "210b3cd4dd197c1804f455ab6b6a59d00ad5352287b5c3cbbbadc3ed2c860307",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::169",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 169,
+      "doc_hash": "3b750a174599d5d532a773f12d50d89df182de7c3492ed7717dfb81ed67c8003",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::170",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 170,
+      "doc_hash": "03590832b646ecc13acb7ceae6d3cce0976b974b5e8f2bb1cbafb31a912226a8",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::171",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 171,
+      "doc_hash": "21c3357a8e7e7734af20f3541ad02794a96a5e37a35e91a2dac2e5494669f7f9",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::172",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 172,
+      "doc_hash": "080ad2732345db932abd41bc77bc2176ef5d13bad00cbf36ba999e2b0221b4e1",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::173",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 173,
+      "doc_hash": "3279f80de5f43ce6bff626bddc5e591a7dac1d1b32fce59c81be14ed8d8a02ab",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::174",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 174,
+      "doc_hash": "1a499a9d386e07e1d77012ddbe4022c64bbf0d315ab3f33971269906841f5f8b",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::175",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 175,
+      "doc_hash": "8730977afc820a39ee7f8a3239667d32b46a30bafb74ed8b1e0e6e869fa3be59",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::176",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 176,
+      "doc_hash": "a53bd6511577d0f51be0ed9cb07c697856da16f4745c0f46dee231bfc9b2e5d4",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::177",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 177,
+      "doc_hash": "a1bd3a6940bd0fd49abd1b9d5dd04f73f9e9c0f74feedba62cdd31166762aabb",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::178",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 178,
+      "doc_hash": "a43d76f980a5f9a1d17bf5c904d5f87b45cc906a5ca80c606bb471e01af5214b",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::179",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 179,
+      "doc_hash": "cc13b35c734bdc9d65cfa9d50a54b4b0cbdafed85f45f0602a7fed5cf4a290c1",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::180",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 180,
+      "doc_hash": "e29781cc851c02eeb35995f499519d633a9fd9e36133f0b48e565c4e455da248",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::181",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 181,
+      "doc_hash": "a078854b4800f056597f9b28f5c05c15b76a91b6b9ecb03d9dbd9c4f8373f4ac",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::182",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 182,
+      "doc_hash": "e85c17cba8f4f40b821428cb878baf1b223dae17d8598ce008ce74c654a8b198",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::183",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 183,
+      "doc_hash": "681c49bdab2a91741f891b04efe6218a0d7e4516c89dfccfa4ce5ad9faac7456",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::184",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 184,
+      "doc_hash": "be2b1b63e63d371c9e73908d9c1847babbfc804af1ee7919015ad5e8dd8d3078",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::185",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 185,
+      "doc_hash": "bba8d3c84769d2090fb7af629ebbb1450d86f2e36379e7ccf726fa922e2e8b35",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::186",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 186,
+      "doc_hash": "a6db5831be44ac9cc8bebb672bfa5d5c35d0021df503832bb7c991186c3b7172",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::187",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 187,
+      "doc_hash": "c6871b5b5ef8d0a4d42cdfa238ada92a7edebf5b758b8d47b60483ffd5b58f19",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::188",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 188,
+      "doc_hash": "5ab03877ae0bc5316cdb9b065c68b1ce247a62fface4ef890008a92d41b721ef",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::189",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 189,
+      "doc_hash": "ef5d5e72fa59d8f32d8bbdd1c3a0bdfd858222e11ce3910560e6d2d9a89952b0",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::190",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 190,
+      "doc_hash": "68f4af1cdd1447ec6fbef827884c02ac45b70590f9135cffe1ecd7d04d0c6ec8",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::191",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 191,
+      "doc_hash": "91d7cdfb3e848cfd0256615742567ff1aa3e14e5fb0d731e30a6190c310554c9",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::192",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 192,
+      "doc_hash": "7b779e92b0221eab6266e626fec0eba90892a09310adbd692ba8940dac344e6e",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::193",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 193,
+      "doc_hash": "58ab89aae341d25cb244252ca8dc562a7d06d27105dc83604e28a0f450a598bc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::194",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 194,
+      "doc_hash": "4bea6ef9147dc7b0625ad1bc678cc15f55b0cc0b5c4ed5626930dd5073297190",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::195",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 195,
+      "doc_hash": "a06c10d995f0bbfeb11d61798bd8ecf394ac9abeef5a4168a19283d68242ec7c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::196",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 196,
+      "doc_hash": "afdf7be7a7a0b4cbd9d5767a420f6669898426a9c6d11a78367035cb2da1fd3d",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::197",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 197,
+      "doc_hash": "df83597177ea0955935f21468a243a58b6eeb2058a2cd5bfe9760dcedb93a57a",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::198",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 198,
+      "doc_hash": "04f7f4a6a3b5d8096b05a7014e658214ca0149e96bdae8b44f30620e942d5f21",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::199",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 199,
+      "doc_hash": "3b0ec84059bf9a45767999578928b6b0e1293a5a7813a08aae30524a37c5702f",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::200",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 200,
+      "doc_hash": "6c23c899461d64347b7cec9a09444bf7d97c0a26ac7679258ad36a7ac663f2b7",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::201",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 201,
+      "doc_hash": "34e1828a93cb95b4b35a47fc95b612bac3ff45f312b1b00d76f97e3b2e599781",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::202",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 202,
+      "doc_hash": "b0bc058cffb8213d1db18f984bedea45d5b4432155975028d96bcf67ace58fdf",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::203",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 203,
+      "doc_hash": "7a7a5f6566d73305a7d0ec67bc4766c5552d1d93972a5fc59db2605c0989ddd4",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::204",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 204,
+      "doc_hash": "7ecef1c9ba83d73c839d74dd7db208aaa1f317a8c44247c44a58ccaabc4d2316",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::205",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 205,
+      "doc_hash": "a464aa41fc8d94d9d2710977cac003818e553e27b5dc731fc90e7b1404232182",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::206",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 206,
+      "doc_hash": "39c078340678c8113f0c84d48f04cf46df3711abe249f0bbe5d94c3d2ebdb134",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::207",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 207,
+      "doc_hash": "63cd153527acd7808c287891492ffdd10b3f562bbd9d6585328572eea54625e9",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::208",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 208,
+      "doc_hash": "7978c2fff1dae5c83b7816651f3ea9a69df137a0184300fb3d2aec08bcc5dce0",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::209",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 209,
+      "doc_hash": "fc8668fef7b34c1330a943f50459eecf4166b673adca7122c325644d436940d1",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::210",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 210,
+      "doc_hash": "1328f8beb7a2bd2aa4e554751433cf6d2f45e9335eadc8e3adb146a76f45f4eb",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::211",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 211,
+      "doc_hash": "f7bcdb7e93a5d547531bd6fd29ce134a7d9536b3e1b5b3f7d76378fb42da9fce",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::212",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 212,
+      "doc_hash": "c1a338e8d8bd2d12e0622fabdceb08c634c9b9be06f5fbb9723dc9016e2a3f91",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::213",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 213,
+      "doc_hash": "f9e2baf5a41904b77b7699c662a941ad63fdaaf6c571c3ca53b0f29751fe2650",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::214",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 214,
+      "doc_hash": "4557671867a9d2d07f87ac5cda1ba2dbe6e6253b539a2e5246a15f2466e49a12",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::215",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 215,
+      "doc_hash": "e319cb73ab8193ad99e14ebb2ca5d818914303e7edec591f0e18e9955662813e",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::216",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 216,
+      "doc_hash": "d957d25ea3a1efec0c250b1703326d5879a73766ee2d27c1785a31d5230e3307",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::217",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 217,
+      "doc_hash": "abecd7ac067e2d51f2b1c79bc93572000dfe8458443820fd1cf0b56566c54a99",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::218",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 218,
+      "doc_hash": "5d35ce8ffad76a59c70d4b1321bf2940f4aa92b298105dea9e8cb5d69ab7bbbb",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::219",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 219,
+      "doc_hash": "6095d166f4e3198c5b7e3031da66d85230a04e1ce492b73c06528b5f44ac9e2f",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::220",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 220,
+      "doc_hash": "2258be0ce80cb5435d465a8aa07f3630a1d5ba54a833d2878a6f44b1864e2a55",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::221",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 221,
+      "doc_hash": "ec1e2a7e53f1427a1fa6fe18e33ade1a6ef0961cc2c9baee16b005ad3d908d03",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::222",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 222,
+      "doc_hash": "1f36688b69dc1e14ed71967ad31965450cceb16009b8699c31ade4ffd3a501f5",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::223",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 223,
+      "doc_hash": "4345b22cf7b1b649495d2ea8d269e81fd7fca8b187bf663308c4ca81458834fb",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::224",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 224,
+      "doc_hash": "480781f1bf81e66c896d2ea9bcfc286fdd12652e88442593102915716662736c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::225",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 225,
+      "doc_hash": "de7620808ef307d704390c75359281a9e6fdf6b8acee7077d64130cd3146f8b5",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::226",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 226,
+      "doc_hash": "164f7bd75debb1d1991fe457b954b04e5639610fbc31f0df1107e33d64215068",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::227",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 227,
+      "doc_hash": "993614d3efcd1bdeccea271e0e9a545f6e1b92c90624199c5e528f27f50a1ff3",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::228",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 228,
+      "doc_hash": "ec73bb72e0d7c9d915512371ba68044780d497ca72048e3a820476d18725ca5c",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::229",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 229,
+      "doc_hash": "1cf6d25db30e6a23605d239cc96487ddf236089d3d26add40ff5142c30d3993f",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::230",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 230,
+      "doc_hash": "02e86948d4775dac9994c5c14ffc4711fc86df6828c9d4c383a79f68fa57f021",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::231",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 231,
+      "doc_hash": "1e6350f7d2eb4ef43c138744f148e2ec0b2c28abc56a74166b0ca0bb9cdeab3a",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::232",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 232,
+      "doc_hash": "cbabc0f1e6f931c3f729955c2491179cbae39b3ac37eeb07d630564ecbac8ab1",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::233",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 233,
+      "doc_hash": "8ee14605ebc6831820bb3e456f58b73187b61e3f42f8ec5e98922bf7bedb562c",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::234",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 234,
+      "doc_hash": "2b607b292bd6a09918394a4e7df89b79e7624c981bc0f38f9ddfc30799137b86",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::235",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 235,
+      "doc_hash": "a78648332e31e3e5941fe7f9dc07cec8b4c5d7f3fe829182a5e63c1efd09d8ec",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::236",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 236,
+      "doc_hash": "31d850411071a80dd68c70ffe6ba1f7ea5658ef6a118c5fe048cea4c967423f3",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::237",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 237,
+      "doc_hash": "40f7f5e89c6d400bdf55635f03a1600376cca8f93281f7f8aadfbb93f0a98e2f",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::238",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 238,
+      "doc_hash": "b92ee2a25f3d8049ffa8ad5d21e993319e9e4f0c53ea7819ed0d439da311a42a",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::239",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 239,
+      "doc_hash": "93b4da0015862aa9df88caae428f248c3d5c095702b46591bf75e4930fa37840",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::240",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 240,
+      "doc_hash": "97ec02e1a2b6dc7562a69ce465fcc541d418849b171264fe7e23c3dfaeb13294",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::241",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 241,
+      "doc_hash": "c4e31a3ec2b7ff085f15f48da547cda772d44dc7106dd60cef60425f358171f9",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::242",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 242,
+      "doc_hash": "26ac6536d253345228ff5eb792351652215c8fe76e84eaa2c160c2ea963f4bee",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::243",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 243,
+      "doc_hash": "4bcc7cfcce837fbab43f01742ff9c3231b51a37c1645d8528636a1d871f8869b",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::244",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 244,
+      "doc_hash": "a5754ed57df212132e5883561bbc1f6d3a24e58b3e3b57bf4bef95e6b3d4ac62",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::245",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 245,
+      "doc_hash": "3d0eafc2c1c5d15f2fba4282377c36cd5313aed5e1e0e46e56a3635c1443b6bf",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::246",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 246,
+      "doc_hash": "e934c1536d1925237708c938f4b2455a3b31d00da40de3ea7559bbb5691fea06",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::247",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 247,
+      "doc_hash": "e9132265b6d7c5a5c74aef640e3b24bae0ad3867bbc420aceadb5f9c47eb5d67",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::248",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 248,
+      "doc_hash": "c9b9e992db7d9f2c5f1a1fe6039dad485c3146e57cc88d2324cbe804c4b52ec4",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::249",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 249,
+      "doc_hash": "754443714f2165698cb6d40cb5ea616aa70593222ba062e5ab4482f03c53ab3e",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::250",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 250,
+      "doc_hash": "45d614a33b7db27ff762c059e481ba178b83c0a21864a63ef4bd0d75085a5216",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::251",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 251,
+      "doc_hash": "2feeb4353bee19505f43a85beb2b3d67de134d01f8d1d0a02af4f8f3d8a86b21",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::252",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 252,
+      "doc_hash": "6256a77a59856de3faac211290d074bc7d630dcfe6558de95b614b970fd76eef",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::253",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 253,
+      "doc_hash": "a983c257e551de4648a21e5500547feeb3228b8995ef9b302c8babef68245511",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::254",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 254,
+      "doc_hash": "2dc01026a66bd0a40ce521dcca022540a6d9cff25e756f283a6558851e9ece9d",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::255",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 255,
+      "doc_hash": "27d516d7f39942be2fc8afa367d369dfe3e448a07759a5aa92b3e3953769cf0c",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::256",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 256,
+      "doc_hash": "9b6076a7e1059937dab112f349e545692df41701765cbbf3cb7cadbdae8a4d2f",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::257",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 257,
+      "doc_hash": "8b6236e5914e9d4531aee71c0f1b5c62913fb145d413136c3b7db50e46aa3129",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::258",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 258,
+      "doc_hash": "13bc87fbdaefb761ce8f82be0119648b667252cc37df4867a89758627a4a2b7c",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::259",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 259,
+      "doc_hash": "db9d460d18d94322d860ac211b302a6901c18a4c7464d38d6cbbbe15850b02fa",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::260",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 260,
+      "doc_hash": "8aeb38ba6c053de325a4afd6e9c307e7832572349e8927b402abc467381de1e6",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::261",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 261,
+      "doc_hash": "f7dd7c8faf4860dd7ce64949603c20cc5cf19acda66b95cbbd3e1c4db2e3f3cc",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::262",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 262,
+      "doc_hash": "b6fbfdd7f9a2da2a1748a753fc78a65ba6ea42f3c8fc0cc5e4f80bdf0a58bec9",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::263",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 263,
+      "doc_hash": "282cf5ad583d865bc2d5756350dcfbc1078a78b3703e65942748a808232249e6",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::264",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 264,
+      "doc_hash": "b77fd0d7402e36a31c77458a8ae54b34509b85c023e5ba74294c70d2e30eca8d",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::265",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 265,
+      "doc_hash": "0c6add6b6a88a638d38e7112faabda1e64e2ba6b49c9dd8a2f8bedeff6053063",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::266",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 266,
+      "doc_hash": "9c9605e717c68225bf030aff435d7c7e0db193970bb658e09112ed5c926e286f",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::267",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 267,
+      "doc_hash": "1b0addb17af021ced100f56d9b0c4863a8a915f9fa189d3eb0d8deeb628fd295",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::268",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 268,
+      "doc_hash": "a04cb3087683785d3a61afbff33b16b5fd1091d62e05673cc90bd16e83596d5c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::269",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 269,
+      "doc_hash": "f4824c772b9b55af31ee21031ae82114d91a683ce0f344ea6c74f6acd370c3ae",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::270",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 270,
+      "doc_hash": "24eada19ac6afcd4c41de6be516290c38f4e5b263e1a40288629cf96a5ecb001",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::271",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 271,
+      "doc_hash": "4c3b8c125029ca57969339c4f5250a5b6d0d7b727df711e9fe5a4a2e50fca4a3",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::272",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 272,
+      "doc_hash": "a6b001f2a754dc1b99d6a433a442b5a673f93fa7a67b942c7564c1b55a7534dd",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::273",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 273,
+      "doc_hash": "3a8a19f307737a1edf524ff6d0950c1b1cde3170d31fb5a110d6a8787bafef5d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::274",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 274,
+      "doc_hash": "2c1f669e80187aa31fd7b474ea2cb2204d5a3cafd9e27f6ed778c4618ed72df2",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::275",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 275,
+      "doc_hash": "8dc1086b7ed7e7fc8a30fb30292b11365bf24c386be8683f9e43e89534818416",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::276",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 276,
+      "doc_hash": "d392c92726e90ebb60d93c47f7c5641a09b7b52df7252addc3c8c2cab9a1ff03",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::277",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 277,
+      "doc_hash": "86fdd876d99cf6f4661cff5aee94ccf0e09dcb18344c6a8ea95696ab7c679267",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::278",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 278,
+      "doc_hash": "128f34a180942e7b09d9e75f5e723d069a557162fe405a12915660e73d213a39",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::279",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 279,
+      "doc_hash": "48f28f572e9fd5540f78c803360aef8f54a90395a1f35674995512e3a23be0a0",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::280",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 280,
+      "doc_hash": "83bcdbec1dbb65585d1a86dda868f2641e1959be058fb4a76508487496de3fe4",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::281",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 281,
+      "doc_hash": "663ccff4316233c5c4689f1b0f62298441c48e8d74c6613110ad2b998741202c",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::282",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 282,
+      "doc_hash": "2e09bde1ef4d1332b907f1e4a2151d5ea19b86386da9d83baa0f7bdc71b0404e",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::283",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 283,
+      "doc_hash": "875706b08c26ffe5c31a660ee5661f00835574a345b7684487b257358df20a51",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::284",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 284,
+      "doc_hash": "337ce0fb95379f1c4ad167cd59128c20910bbc436c6320d6bacecfad4ee6796b",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::285",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 285,
+      "doc_hash": "e8ebad1c66147c7d90abba38092a6dbec021c6a3773fd96254b6a3fb2135da58",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::286",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 286,
+      "doc_hash": "81aebe735cb1a84077c3d510348b795a40fb5929fce014b0d0d3dff8ce3233a3",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::287",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 287,
+      "doc_hash": "bb8ceb0566879d7889e93b4f4d7cfc0431a5feaf4b511fa671cb41f279a5ec9c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::288",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 288,
+      "doc_hash": "dee9cc6841bd71ff9266e0818f8ac37ff01283ccaad9cc5c7706934036566ea1",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::289",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 289,
+      "doc_hash": "df3966c279c101c628b4b1ec46d974d364f00d843f5c2b8472748415c54af26f",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::290",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 290,
+      "doc_hash": "2b047d4971d1f20b3b5aa6143233e1b3dd17a56f8c6286c2dc56a18aad17fefc",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::291",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 291,
+      "doc_hash": "cffecade3a0ab79d171e7fc61fab0a0242365a2858a574de6242838d0c8fbab8",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::292",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 292,
+      "doc_hash": "cdcad08cb607bcf09ebf3402b960e53c52e8d92ad2d1543ae9adb2f1d7f0ddbc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::293",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 293,
+      "doc_hash": "f74dd6631b7ed0033af352ace94b8c392f1d5123e102eee625bbf6ebd7dd53c9",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::294",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 294,
+      "doc_hash": "e3f1e953250791e5d889db3214e1e5c974a2b092a041ce900497835ac16fa7c8",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::295",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 295,
+      "doc_hash": "e4c33993839bbb6b6e8beb7be019e2ae6835fb7a8e78aeb9a2423f6d44c607d7",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::296",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 296,
+      "doc_hash": "44760774baee2cf69ad11046026c45f8bf7497bb00dd5cd79e8ea7598c2e3f9c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::297",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 297,
+      "doc_hash": "e5839b2377b408f5f3f06c937d924b52b5349c4f3fd4d677258a78888c53c358",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::298",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 298,
+      "doc_hash": "902f84e23a292944b0c2a5b4001231b1812933db1a5df5a7f2b5f584b109e4bc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::299",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 299,
+      "doc_hash": "549ba6b767097d0a9736d0a5d807c25d5224d20599471f0c4b8958c7dcfa409d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::300",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 300,
+      "doc_hash": "64417ded76ddfc51929df2a2db65c71619bfbeebd68bbf6f5d4ffcea105a40d7",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::301",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 301,
+      "doc_hash": "d16077c813513dcdbbc585e675cb8229997cdd2a916a90f177772711298b078f",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::302",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 302,
+      "doc_hash": "353192df433d61ee8ed2e7b6bd55867b00342d9ee1dea3ef337fd92f344d2b95",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::303",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 303,
+      "doc_hash": "c0f4546e4aa3c6dcaa7a681714d88b42a24d00f9dee19a9b7519ef83535901ca",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::304",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 304,
+      "doc_hash": "ffa56ed3b7a6e4520c302db3a4aee9a8a33d8ee8e538467938b896dececa659a",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::305",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 305,
+      "doc_hash": "d7db03a9d6da6ef356f2314195df03429985a36afc5b01c2c6decd05bb8a13fd",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::306",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 306,
+      "doc_hash": "8054831f5e7e1dc13543037f37a8b734313491d31fb1a6fd33e1764a25ce0c1f",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::307",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 307,
+      "doc_hash": "842e38974fdb6833da4cd8c3a293d13f5221468757c5ea834c9f5f0e6f1d706f",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::308",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 308,
+      "doc_hash": "4d0b17f58021aaa80e8961ddd99ff1a0e8b510616a697364c6304342db9d4fd5",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::309",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 309,
+      "doc_hash": "c4f6f76259220dbab7a22d6fc98c695f4b861da5cdc45eb8243ffcdd24ec91b4",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::310",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 310,
+      "doc_hash": "ff19fd0f0161ae59058e0ec514864119736ab07d39c5f4552a30d243d097a9e1",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::311",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 311,
+      "doc_hash": "4a37d550de61c84b84a00ec10fc193318633ff2ff162d02d1d0c57357a7c4b8b",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::312",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 312,
+      "doc_hash": "8444ffafdabc983de9973b615b09c373d326bd68a013c7363b4d36d980539136",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::313",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 313,
+      "doc_hash": "d552f428dcb239c09052f1ef830c2dfae26dfe7c8f897b69c6c44909ae1884b5",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::314",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 314,
+      "doc_hash": "0e7bf23341d8d7d9d0e4132f71944c92b7cfa0f107dfdf45956fa2693a47e1cd",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::315",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 315,
+      "doc_hash": "7bccde1e3a78c7059176347e4812ad456cefaed0e0417b090adcf09a337ac149",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::316",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 316,
+      "doc_hash": "6308f6108b72d30d1b0fceae30ecc46d17abed7a0c57093e3b7b413e3125befd",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::317",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 317,
+      "doc_hash": "541be7d866bb47ca4c249e4a7a96cb1714b9705217b651a4f0c4d923ee743971",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::318",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 318,
+      "doc_hash": "8262e4da417016a8cfc528ce648d6eea040257b132d0d6f6f2ee2a8b4029c430",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::319",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 319,
+      "doc_hash": "5b95b7cdc61fc629bd118509a117faf0a1df8f40ac9b90e6810d8f6db78db87a",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::320",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 320,
+      "doc_hash": "3b8e5d683649920454523d676c666c3ba23d1c86a439ee405488871eab3474ec",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::321",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 321,
+      "doc_hash": "6cf2ef6ef9c8bbc7ec13351ad2e1a424303f885c977a0dda5577134747cfd8c2",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::322",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 322,
+      "doc_hash": "55f00f64245d09f0f395040d257568c04b1d88fc2067681bfa67aede3bb9c9a6",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::323",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 323,
+      "doc_hash": "26376443307c2da47e4f99104590b3b6bf3c72f9eaf07a1b7851ef6616e2ce9d",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::324",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 324,
+      "doc_hash": "fd8f526309c5c4d21054e81a2d8c923007869e50d40a73e54d60f444ca604c0f",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::325",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 325,
+      "doc_hash": "65de558d763f0f426cdc704f35cac31b3d4169a88ff394f1e85e8446d5eb7c3c",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::326",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 326,
+      "doc_hash": "96542bdd31d0ae8db90f634b91b9b6aba2bb0f6e5d0f9b912f9a103aa152715d",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::327",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 327,
+      "doc_hash": "ca1b4f2030daf5de26c75ebe917e02ae670415715926dd81a3c6c78c78b8afb8",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::328",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 328,
+      "doc_hash": "b45cbe7349cbecef56336b6a98f542d661bc5cdb904219a39781ae6dcb8fa446",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::329",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 329,
+      "doc_hash": "36a3cadfc2d6b5363ad971a028b2fd79364d228391dc019ff51e599432375a23",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::330",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 330,
+      "doc_hash": "276052a7aabf0d586c958436ceb6cb7089d35c4eec778bb23c820d5c682ff023",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::331",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 331,
+      "doc_hash": "076630a23934240a29f4ba15246c72387585077fdb16ea8482aa2c5fd1132ee9",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::332",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 332,
+      "doc_hash": "5b7b5582fca2a6b3c95158585bbc871ed8939335f1ffbeb65a4f54be1307df8f",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::333",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 333,
+      "doc_hash": "a214fafed13b9cd851a74e56df34f18228b18f80e33c45ebdcf8105625be3400",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::334",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 334,
+      "doc_hash": "5b8a1403e3b54239d4ca483b2692ec2bd610076b50e427c13e96236f923aafb0",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::335",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 335,
+      "doc_hash": "dfd0236fe341c0e7272d42518ecfcb97a37ddf4d4823eea0e2a296f1fe73e02d",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::336",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 336,
+      "doc_hash": "bf21bce43ca0ee53c81ff39946d797513adf7c8068076c52e80e1cb608e51cf8",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::337",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 337,
+      "doc_hash": "01811eac273b77b05b9273ca8c071e4348204ec2cfbf944b93cdc9cd5e0ae167",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::338",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 338,
+      "doc_hash": "ebc39b12f984736eb3ceb6c84c7114a1edb79176f15c762aebb9b3b1d5338c5d",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::339",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 339,
+      "doc_hash": "e0f930ab925ed12cc061354d910c3bb4eee6c8dedce818c6cf3ad22851e5eaad",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::340",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 340,
+      "doc_hash": "039587fa0500b23165b44b7669eb88df1e0e563a3162f53b36fba2cc810a7829",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::341",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 341,
+      "doc_hash": "69da536b3aafe91a8b0be0b40fbacc0537096223c3422f147a1127df03eeef2b",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::342",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 342,
+      "doc_hash": "a9b3678a40d8079d53c527ed34416e98d32a9207e83f21da304d28c6939ca882",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::343",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 343,
+      "doc_hash": "4dd39704d7ba58bfad945db9cdd82ad0f7e2841cbdb67899dfc8c08f2840bf98",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::344",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 344,
+      "doc_hash": "ad78e89598456ab124cee0ebc0b8641efc06596e0116dc4f26757add492f5cda",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::345",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 345,
+      "doc_hash": "be9f89e3cfc2666664597aca83db8259128c84ab1f341604c65ddd7b1059420f",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::346",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 346,
+      "doc_hash": "9ad767b871258d17392ec79d6da0da284914a85affd8bcca034e9703cffde472",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::347",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 347,
+      "doc_hash": "61f1177d9c83c436709f05bc5acd3fef1614425909805e592ce7e5996c3ee717",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::348",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 348,
+      "doc_hash": "b9acbfd4f00c35e3eaa06f3e155daec0db241a52269c8489e633573b8513b920",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::349",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 349,
+      "doc_hash": "40853c5aa05e614a667a9f1dd28afe348810ce1c1ef28843fe59364379b870de",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::350",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 350,
+      "doc_hash": "2ae46a3ccbff7230f82bc871d102aa26d263493581226a3a237f9ac57e2e3a37",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::351",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 351,
+      "doc_hash": "429bfc403af151b2cc79ea1de03c99e39a19154bb4bfa4c648d53d0eaf2b7aa6",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::352",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 352,
+      "doc_hash": "f8b93c15c988ddf864ce025cc3ffaa8d0a31f98140cdea263ade58d45bcafa3e",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::353",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 353,
+      "doc_hash": "1012a31e235178deb916408d186c7856f965b331864294f517bd0523c7db078c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::354",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 354,
+      "doc_hash": "49cbafdb32246b41ce0ed478c612c029b96e530cf6d319c5e9010264d8eb198e",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::355",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 355,
+      "doc_hash": "14d95a3ec3810e6e9f6e81ced51786752388b34b066fe7587d724fbeb23c1fc5",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::356",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 356,
+      "doc_hash": "98bfed9333bda381d9e82e9fc83d8e7a3dd049fccce332a1b3e868b2b3ae533e",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::357",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 357,
+      "doc_hash": "afcd43d65e5dc2968ea232b144a995e8b925639a8ca33688f80621163edc968c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::358",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 358,
+      "doc_hash": "416c2d921df7b668a180fbead8c6db56f6202556a8cbf3acb8f8127149b4c1c5",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::359",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 359,
+      "doc_hash": "3dade551a8cd7322afcd36d2a4e59bc8e12cd61ef225aab437697d0c41ac73e9",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::360",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 360,
+      "doc_hash": "6306c54c73a5c0d66ea441ac2a57aabcbb443b5a86dd711e58ebf0a202e4df94",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::361",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 361,
+      "doc_hash": "40f2751a37cd91fdc5bf4fe53687d30a8ae01586647f01e823069cbf0d9bb66b",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::362",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 362,
+      "doc_hash": "a0c76d74000d92b12c81b6b4338000d89bcfa0a051681dcd0b8cff887b4ebd45",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::363",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 363,
+      "doc_hash": "8c7431563cf146b75bdfae4963d87b6941906dc90a9d57b9b9c2bb9ad12442bc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::364",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 364,
+      "doc_hash": "f30f25f5adfcd9605831614cc13f1a7a1615ac133fb028e4fbc942fe6ac7b695",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::365",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 365,
+      "doc_hash": "19c137dbdcfde778a1a1503d99e0c277975d07c9019a24d9ce988eb77967fab6",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::366",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 366,
+      "doc_hash": "c642366b9144c9904c689d0bedef228859dc838be74c1a0eed24cf553383d9d7",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::367",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 367,
+      "doc_hash": "2dba8c55c704cf3523a73a9041d8e630af2e176fb30ea65a70247a55327cc40f",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::368",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 368,
+      "doc_hash": "08a3f72067cd0f0dc8b03b6966a5bc1e5576221c5a81422da97794ca507f873b",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::369",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 369,
+      "doc_hash": "9a1e362d4332e29dc33b08bcb63465f9d987d71f92451949917bebec5244ae3d",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::370",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 370,
+      "doc_hash": "db1068b237c8b42646d9b2e59fef1209e76937628debb71d3ffdc911ca223dbc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::371",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 371,
+      "doc_hash": "968fcb2315582447a632c2706d29f5f8557680205dd7fbf562ef4cef894f008e",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::372",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 372,
+      "doc_hash": "9840f9b26564afe54b5dd4f6f431c07582b5bbfcb43f249cae66b17dcfd7ba3e",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::373",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 373,
+      "doc_hash": "eacbf9048183323aeafdc50d90736bbd0c7378995f5f6f754fc58d3ac28190f7",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::374",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 374,
+      "doc_hash": "efe74053f9594a4ae160be3c071ccbc847e7e8d9a586fd5059d15aa13011299d",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::375",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 375,
+      "doc_hash": "ee01233efeebb50f94dde4321a9bb7148382a3c225e50ade8432b948aa942877",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::376",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 376,
+      "doc_hash": "0687efccfc8149f705d6fed5b0407321b5c418edd908043edbad29c1899909df",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::377",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 377,
+      "doc_hash": "6f637ac1c370381dca55d58abe46c66247322ee1290ccdc3bd0fc53eca6c2696",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::378",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 378,
+      "doc_hash": "501bf56d2d3587333f4bba9501a930f01ec2d02b3dcd4e5e571b7084cf990e11",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::379",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 379,
+      "doc_hash": "36a1f160037e3aeb16b6b3ab3e1cb8e700a0e30e4e1999f08bc433713f854651",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::380",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 380,
+      "doc_hash": "35072114036e2167a5c9aeabb6110e8c33add8417a19b543cdc618fdcec31063",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::381",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 381,
+      "doc_hash": "51d1449d61f890ffdc629c0620d4ecb5aa8bdc2e7d7b74d3f294f9f6895297a3",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::382",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 382,
+      "doc_hash": "bdaeea8410f14e03f1bf4a37c0563797834cc08c0bec6720415635f33d5d0adc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::383",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 383,
+      "doc_hash": "57bc6ebcae4de355bfcf1600511f9480710af65f1ac8a0694ece43a1312fe20b",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::384",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 384,
+      "doc_hash": "f3343f54fd4f5508f5c34e6692cf964dacf5356496df79a1ced6747dda985a79",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::385",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 385,
+      "doc_hash": "b08a2f1306d4509ea497cc2ad6ef539bc000f4ad168f8bdeb9aa77fe2831de11",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::386",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 386,
+      "doc_hash": "b35d444f1f280f54ffea616d47356275c7d14897c3a14d9a24d2ea4826e248d5",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::387",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 387,
+      "doc_hash": "dfb57551f012db11be051bfe1f25e4631a6ffa2ba80c1f8876b26b8c30d34863",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::388",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 388,
+      "doc_hash": "2cf4f70f5e9a516c2e3d8937714ff76fb97b51c00737eb8e7799b301d433dcb2",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::389",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 389,
+      "doc_hash": "40b97f77ce2e7bc853d3ef855fcd5f3710edadea3c0a2c9d5e965656f48f0efe",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::390",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 390,
+      "doc_hash": "30bf8329cae04357253349c5545c634f849eee971ff64b9f85a29efcc64d0f32",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::391",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 391,
+      "doc_hash": "0f2a61aa690e15fa2d6353992fce0b2893f030a6167def64033abcc7323d05b1",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::392",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 392,
+      "doc_hash": "ed241abfafc0bca11e367732b39561470731333b9a644cc9af01305a38906c6c",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::393",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 393,
+      "doc_hash": "401b9e380754fee7e02c74023ae9433d3ab69e638f029984319f1782a6451efe",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::394",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 394,
+      "doc_hash": "bfc4ed1660c373f332410e26c1fb7bca188d6b049194b40dbfbac1a5883233ec",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::395",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 395,
+      "doc_hash": "175a982172103843cca1957e69d3c42a1e0a9477904f12a983e10526af6a42ce",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::396",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 396,
+      "doc_hash": "3088487c9a68924ec690154385e1b68b6ac25fb9d8744ff489f47d7bdb0dab63",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::397",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 397,
+      "doc_hash": "e56b1ae5f62c1686bef86c16f431b2e09fcc2136d01d9ec41293597a49f34b7d",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::398",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 398,
+      "doc_hash": "ca5008337ee3d4fe6ca4d9be20a19b0ebebbba4fc116d9d89d13dcf817ae5d13",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::399",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 399,
+      "doc_hash": "4691b38d2769bdd3feb1d74504345b9689e2c0cbeff596bdda655003c5e6bd5d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::400",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 400,
+      "doc_hash": "c4bc8248c1c7d564a7265426111fc5db3c5ead56455b8b2bb21d697cac8843d7",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::401",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 401,
+      "doc_hash": "0ce303ff1e738a23bdf47520f6e6b719e940fa6b9c843c734851f81c7deda022",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::402",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 402,
+      "doc_hash": "2b94a5765a87c343049eef0e7fe835c729d02f67df6656cf38011e582fb6386f",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::403",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 403,
+      "doc_hash": "8590f0908472a0fa449c92392034f3ae356cecb4507a33c07e0afedda7350662",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::404",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 404,
+      "doc_hash": "16bc904fc11ae8ff9d7e76233dbdf4fa103933ebca15272f7b4e5c29960fcfb8",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::405",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 405,
+      "doc_hash": "771c5caabb450ec866ad43abb234eedd34558a327d0b9276e18eabaa4dfd8bc8",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::406",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 406,
+      "doc_hash": "909fab7a778581f96a86d8e269dc535e8704cee89f3e7f8eced1021a34fefe62",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::407",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 407,
+      "doc_hash": "825e148d0c55848f92a17a0d3b157302756a2021d172ba1393fe5c3dc7e6f5d5",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::408",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 408,
+      "doc_hash": "9b0a586bf22b99eb783b6a8d163c66a95ad2c5a1786e01ff05cf04fc42c20b76",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::409",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 409,
+      "doc_hash": "d97177436212ab02a4fd45f8b0333be0b7cf3c58cb4c5b89929e4c55650c0b88",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::410",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 410,
+      "doc_hash": "201b61fc02c020136f572657bef323383deaf4ecf0f030063085737586158678",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::411",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 411,
+      "doc_hash": "213ef6324b5137b7d9f8ede6e3adde69fb9942dece580373a03cc8c1754a6628",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::412",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 412,
+      "doc_hash": "4cea08f75fbe31d2d1b214bac87346bb889bd841234f5d807d0a481e684c8b69",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::413",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 413,
+      "doc_hash": "176bf3ad6108673d57c204f569f9f36073b696bd2a7246f506f83e2b1f9438e3",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::414",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 414,
+      "doc_hash": "11cadc13fc48981046928a5cbe3e27928c2992544492d33541aa1ab5d38083e2",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::415",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 415,
+      "doc_hash": "38974e666d1e0e7250b502b75bd2e8c52b6d420d41f60fd17661729eea8d41af",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::416",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 416,
+      "doc_hash": "0ccb6f5f1ab55ab258fcb7cdfcd16b41ad32541d7579389cf6bda04786929fa1",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::417",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 417,
+      "doc_hash": "81bda416ea279c0842ff7348327ac8124c70def77ba13a46c445900579a6fa11",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::418",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 418,
+      "doc_hash": "acb763243302623109c088ee32afc23284b7e50e3b4723f2db135d6d16d90773",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::419",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 419,
+      "doc_hash": "afb0e797f6d65aae7df9a5f9a28f039d00e95dfe8cea41bbbc254d340531c9df",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::420",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 420,
+      "doc_hash": "aaf04138d530d7f64355d7377af5e7e65145e131dca1acd58b92083f2fffcfc9",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::421",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 421,
+      "doc_hash": "36baffd7bcfffd9c561036fda7bcb6e11a905b8a1f6f9248c8dc672423282b0e",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::422",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 422,
+      "doc_hash": "b876afc795a4a097b3a3f4f4d43381f839af76bc3e8b14963a7e6128220939a9",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::423",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 423,
+      "doc_hash": "77542185114810b48e5477bdf38191809122ed8f36417ba644c2235f609315c3",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::424",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 424,
+      "doc_hash": "f869ae64b879b19e08013bc2ff9176c210ee40ce6e3ebdce913b4ba3979ab032",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::425",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 425,
+      "doc_hash": "9c84913fb39294d7e49560e59d5b53573afb314859a4e8252e39bc042d429e98",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::426",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 426,
+      "doc_hash": "c684c77bf0ed08e76349a7501c1c7456104bbbc7badc2dc619e3b28ab527594a",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::427",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 427,
+      "doc_hash": "8335f5c2166d30fbbf4fc04fd923a3f16794a33cc748ab1468218b41139a236e",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::428",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 428,
+      "doc_hash": "7ec4148e4ff7748268ed24ebbd873090ebbcd5809c4faf99136a14c15729adee",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::429",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 429,
+      "doc_hash": "1ae1b6b22c34ab09d031ef4215be78a63783fe9a27c4883d2dee66fb6adfeb36",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::430",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 430,
+      "doc_hash": "56801314dc003255b94360abeceb5e748209ec388a2ab9b4b78d78d157373224",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::431",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 431,
+      "doc_hash": "503d01bf12ac9a2e16b62b0a7ab7252424985bb83e4c53832d6ba667a39d2192",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::432",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 432,
+      "doc_hash": "3bea2b53a8492b3ad1f726bcbfe47a8db764ace9ed102867c934481a41ca67ca",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::433",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 433,
+      "doc_hash": "51a11e5386b0485de20b2ef72237bac63f54aec8c7db2ab0d1c894a6427e926d",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::434",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 434,
+      "doc_hash": "c6afbff81d001aed815c8b10874bdb35ac0bff91694fb856d89b54930419bffa",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::435",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 435,
+      "doc_hash": "ba6754fd2ca4e8694a047e50c5adcf2158b518ec8d8652b03647efac8ab852df",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::436",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 436,
+      "doc_hash": "8fc1bdbcfe29df5ef382384222a8d4782971b08a64306126888f2d5ca39ee62c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::437",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 437,
+      "doc_hash": "4fa6ae0f93834e3c3a42e243817f04ac90b335b9e68c350c253523cbc5f3ebcf",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::438",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 438,
+      "doc_hash": "45da435ef43efa83e73ade05a63cfbf7e6cd24b2f85f985733e7f441c2ea518e",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::439",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 439,
+      "doc_hash": "c0f8a47c75c87f70ad9d1e9e1b91156c7a7025d35fc559b7df5a485b04bc5873",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::440",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 440,
+      "doc_hash": "f25310e792941f45240233de96e5e042babea75a0e633eff6e15ce5d73ef9219",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::441",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 441,
+      "doc_hash": "f9c540a61bda250401b641d3fe1571b103515673d6cdec12efc7ea1f7b0328e7",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::442",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 442,
+      "doc_hash": "729af8c36c2457a7970fd30b6e80469288eca29f5bcaba979dd84edf574390f6",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::443",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 443,
+      "doc_hash": "d0386f73896efd32913064901e113796d5127d37712f4696f06cac6209f2364a",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::444",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 444,
+      "doc_hash": "95553a30a7c13064b7563b5174c4be6411010d368587b5c65301455ac56a0d92",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::445",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 445,
+      "doc_hash": "395f7bc8f7cbf0f95e71cc7c873995ec74e93cf3ce428899badd1dcf4fb5fa44",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::446",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 446,
+      "doc_hash": "06a418c5dec97cc658924ef20dfecbc68aec1f2531b1b4469689a4b36fc25842",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::447",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 447,
+      "doc_hash": "919d42df7b753dff6834d2b13c9bc21c2c066381af05f180e35b42b396538c8f",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::448",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 448,
+      "doc_hash": "7eca8638b9760d027e53389695e0dd933e967063dcb60dd93e08a31fb51ce5d8",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::449",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 449,
+      "doc_hash": "069f64dee79432ffb85f23e60ff3676ef474beda58261bd5905255c39eafec66",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::450",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 450,
+      "doc_hash": "a1970d9d4e1092b28775e1fe61994478bb493bbd107620d70181492198139a09",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::451",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 451,
+      "doc_hash": "d46e28e626ff1050b4c4fc177c525947012911ee12b28d76fd7e020f940e3c48",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::452",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 452,
+      "doc_hash": "40cc1a15d10f0bc6892ceb4b6f5bb4465e76dea6e9ed0a0b4f888b2d9773499c",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::453",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 453,
+      "doc_hash": "f19b22565df630196e180464ffad542a4c533903b538b3ea47604e33844a2196",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::454",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 454,
+      "doc_hash": "31544d5c2e5d349a3a5651708ca06ff22a0d752db91c9357abfbc805f53dff50",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::455",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 455,
+      "doc_hash": "ab8bda4b4edf572b51673616c5d00a0db05cf8daa8142b694e87b21248f7cc1a",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::456",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 456,
+      "doc_hash": "64c53736f2661347395d315bde3329ba47920ee44e461590bdfe0e2e94cfd2e6",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::457",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 457,
+      "doc_hash": "1de2df48d7a907af923ced07a2d7ad73c4a5aaa92acaa85c9dcd50ca48a0d6d5",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::458",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 458,
+      "doc_hash": "423f0f042d7dee4d925edb8649e51ea163e66871c3f2e12ff8f31854899b03b9",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::459",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 459,
+      "doc_hash": "d3b4ffaf7a3db3ee99046d23c7a9ccf907a851a1945aaa711996e7bac92ff158",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::460",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 460,
+      "doc_hash": "380a8d49e2e91491dc00cef9b6d3d162cb9f51b85b7ac0b964f94c87d7d3a7ec",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::461",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 461,
+      "doc_hash": "d6d2e4c91ab46b1c480432c1d13fa532191c9b6cd74089b15c4ea20c678e1df1",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::462",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 462,
+      "doc_hash": "b1b87ed0066d44f7adf1b523ad7cea2e96b608163247b9f745ef52f62438b661",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::463",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 463,
+      "doc_hash": "c7cc5cf71137614387dc7f3efb9e55ceaf6e722bd34aaeec4e2b8119cbacaf59",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::464",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 464,
+      "doc_hash": "c756bf958fc96d15fea4cb2edd624aabb8cbfe731104e9d196b3b4f85ddad9c2",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::465",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 465,
+      "doc_hash": "e06575788fe4eb95a8c2d0226d34fe4be5a58a5c7c0005b37c6cba7c1da94bd2",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::466",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 466,
+      "doc_hash": "dc12caf056b14527ec0dc29e4ffd48db1921035ef7b4700215a2a23e3595ff00",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::467",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 467,
+      "doc_hash": "e965955be70e5a570c45dc5fa864e8f9b8a65b07ea83a4db3860d08dc5af78fc",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::468",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 468,
+      "doc_hash": "901752bef7910b4be36974b9aba00d82341f324ebc1d33e9e94868d4724a05d7",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::469",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 469,
+      "doc_hash": "e00a8186f6dd67dcd47ef0c55ed18b732b79674ae3d1e5f512cb2e0adf823999",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::470",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 470,
+      "doc_hash": "0ef6ad8cbb5ffc3d3cdf4ada999b637722688f157cc4ea8ad16796348bd8b776",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::471",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 471,
+      "doc_hash": "1771c750638ac648cf92cf14fde5dbb86c8483513c2c4463d98e1256a918128c",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::472",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 472,
+      "doc_hash": "bca65a05eab73785a7f01569434ef010f53356e4627252894b18ed6713c47b05",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::473",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 473,
+      "doc_hash": "0cc9d181014ef0d46acd200d474340842f954a1310d42991ad2b72cee1aaffe8",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::474",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 474,
+      "doc_hash": "5ab4c3fb5b4e15cad2caaf78ade9758a262a4d3cb72d150f886baab14faae570",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::475",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 475,
+      "doc_hash": "24c4b2bb61f4b0acf4cf5ecc2404dd574321b6be93891ca072f8226d82563b63",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::476",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 476,
+      "doc_hash": "28435c48da1497723009f1b95637a0ed6bd5318cc02bde56ec500e308fab903c",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::477",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 477,
+      "doc_hash": "88a75754ec5a8cecec41e05e80f64caa71437a859e03e78c340179fefd5da903",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::478",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 478,
+      "doc_hash": "4fdeb41e0ea082e70439b639c71da0876f717ba98c534a682e47eb627a11d605",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::479",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 479,
+      "doc_hash": "aba53ee8abe7748fdad2d0389bedcfecc3179c2a9644cfd7f8379323b8201a98",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::480",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 480,
+      "doc_hash": "20742a6b1e709be8f5ddaf5736f2b4038c07a2baaff63a73800c3e7201682bb5",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::481",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 481,
+      "doc_hash": "5849de93914599c273b97c7e2f4558bc6371fc88f2d75b59c3c563e029a0a267",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::482",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 482,
+      "doc_hash": "824c97cf5c6fae190ff6c15c103461116bd7b38835368193a82b50b5610e038a",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::483",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 483,
+      "doc_hash": "295c1557dbb39631521cb8bfbd8ae9cb833f9bd24f53379045d7fb9606e54b89",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::484",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 484,
+      "doc_hash": "95d4939677e76a5bb68b5b3de6eae98c648dcd1d463bf89234d95cb289d0c7dd",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::485",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 485,
+      "doc_hash": "6c804cb3eec8bdb16f367d227d9dfd82b69b4f17607dc93d539212bb922815a1",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::486",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 486,
+      "doc_hash": "1bcb2fe1d12721f03b1972e58fc8e16ec37c9e57a2924e1405f0ce926a06d8c1",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::487",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 487,
+      "doc_hash": "d9774fe6b37e275bc5be2fcd4b18350bd6998a9e4058254dcb669b4f5a1b4872",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::488",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 488,
+      "doc_hash": "db9e2602f0a8d793f9294098ff1bef436b26dd3e3e2fa942450aebc2704b7ec0",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::489",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 489,
+      "doc_hash": "d50d6f08aea309e02ed3a9f6ec01fa46416add1df3e052dd3ca9da3fd898adf3",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::490",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 490,
+      "doc_hash": "97e2bf8c69b047980ee76f1aa5c1e81dd8bbf3e394f6a704ba11e54d3e233192",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 2
+    },
+    {
+      "doc_id": "hellaswag::491",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 491,
+      "doc_hash": "5b6c0cb0b90fe94318584f262112066b6fe97a6f09ba53512fd991d9314e9e46",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::492",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 492,
+      "doc_hash": "5d6e0202fec6877bbc44f02c0e23367f3a1093fc55dab5a95be413aaa097d614",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::493",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 493,
+      "doc_hash": "62c3cf0dcda4ae1b99e56a8c6dab37a47b58af06a8df3bd20eba9752c7716e1e",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::494",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 494,
+      "doc_hash": "28d5746edddc1967ac394a17f8cb1478558376eb3dd6681c4655a9c7d487d975",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::495",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 495,
+      "doc_hash": "c1c572c8d87e7c41a88c12fce83e5a1d93143918aa8c45a37465e5e940887593",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::496",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 496,
+      "doc_hash": "83ffb5364ff73f5314f6a7efce10d73be874f4833f4840897103033942116868",
+      "acc_norm": 1.0,
+      "acc": 0.0,
+      "target": 0
+    },
+    {
+      "doc_id": "hellaswag::497",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 497,
+      "doc_hash": "a383364b517f47f3f034ab04680179d4837d26ccb187022e1e406686f34ab3f9",
+      "acc_norm": 0.0,
+      "acc": 0.0,
+      "target": 1
+    },
+    {
+      "doc_id": "hellaswag::498",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 498,
+      "doc_hash": "91524a174fc3f58582c52f6fe76aaa6e0a2ee3ef908e8ee9e0a283dfb01be24d",
+      "acc_norm": 0.0,
+      "acc": 1.0,
+      "target": 3
+    },
+    {
+      "doc_id": "hellaswag::499",
+      "subtask": "hellaswag",
+      "subtask_doc_id": 499,
+      "doc_hash": "75634c73a2e5bcbd7c64bd2d5e717307a1fb0861133efd713792a65833cabee8",
+      "acc_norm": 1.0,
+      "acc": 1.0,
+      "target": 0
+    }
+  ],
+  "log_samples_path": "/home/aiden/anima/state/p9_a_prime_main_eval_2026_05_03/lora_results/step_2000_hellaswag_log_samples/hellaswag_samples.json",
+  "total_wall_s": 222.54,
+  "status": "OK"
+}

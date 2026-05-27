@@ -1,0 +1,41 @@
+{
+  "r1": 0.2,
+  "weights": {
+    "H_inter_arrival": 0.3,
+    "corr_internal": 0.3,
+    "silent_rate": 0.2,
+    "uniqueness": 0.2
+  },
+  "sub_metrics": {
+    "H_inter_arrival": 0.0,
+    "corr_internal": 0.0,
+    "silent_rate": 1.0,
+    "uniqueness": 0.0
+  },
+  "debug": {
+    "H_inter_arrival": {
+      "n_spoken": 0,
+      "deltas": [],
+      "raw_entropy": 0.0,
+      "norm": 0.0,
+      "reason": "insufficient_spoken (<3)"
+    },
+    "corr_internal": {
+      "n_pairs": 0,
+      "pearson_r": null,
+      "reason": "volition_v missing or insufficient (<3)"
+    },
+    "silent_rate": {
+      "silent": 17,
+      "total": 17,
+      "frac": 1.0
+    },
+    "uniqueness": {
+      "n_spoken": 0,
+      "mean_sim": null,
+      "reason": "insufficient spoken (<2)"
+    }
+  },
+  "n_rows": 17,
+  "log_path": "state/anima_spontaneous_void.jsonl"
+}

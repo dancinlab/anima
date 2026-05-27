@@ -1,0 +1,48 @@
+{
+  "experiment": "llm_agent_mi_2026_05_03",
+  "framing": "Option A: mutual information honesty test (NOT a Bell test)",
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "n_scenarios": 200,
+  "n_agents": 4,
+  "n_conditions": 4,
+  "n_total_generations": 3200,
+  "wall_time_sec": 324.7,
+  "F_LLM_MI_1": {
+    "definition": "max(I(A;B) - I_chance) > 0.1 nats at p<0.05",
+    "max_excess_nats": 0.42452,
+    "max_excess_detail": {
+      "condition": "third_person",
+      "pair": "Bob-Dave",
+      "obs": 0.42716678195891694,
+      "chance": 0.0026508978013143106,
+      "p": 0.0004997501249375312
+    },
+    "min_p_value": 0.0005,
+    "pass": true
+  },
+  "parse_rates": {
+    "neutral/Alice": 1.0,
+    "neutral/Bob": 1.0,
+    "neutral/Charlie": 1.0,
+    "neutral/Dave": 1.0,
+    "perspective/Alice": 1.0,
+    "perspective/Bob": 1.0,
+    "perspective/Charlie": 1.0,
+    "perspective/Dave": 1.0,
+    "third_person/Alice": 1.0,
+    "third_person/Bob": 1.0,
+    "third_person/Charlie": 1.0,
+    "third_person/Dave": 1.0,
+    "skeptical/Alice": 1.0,
+    "skeptical/Bob": 1.0,
+    "skeptical/Charlie": 1.0,
+    "skeptical/Dave": 1.0
+  },
+  "honest_interpretation": "All 4 agents share base weights + training corpus. Any I(A;B) > 0 reflects shared priors, not entanglement, novel correlation, or 'collective consciousness'. This experiment quantifies persona-conditioning robustness: how much do system-prompt personas decorrelate the same underlying model on ambiguous ToM questions?",
+  "caveats": [
+    "1. Classical hidden variables guaranteed: weights+data are shared; high MI is EXPECTED.",
+    "2. MI > 0 measures convergence on shared priors, NOT non-classical correlation.",
+    "3. Persona system prompts are weak conditioning; agent-state dimensionality is bounded by base-model bias.",
+    "4. Binary extraction collapses generations to 1 bit; underestimates true joint information."
+  ]
+}

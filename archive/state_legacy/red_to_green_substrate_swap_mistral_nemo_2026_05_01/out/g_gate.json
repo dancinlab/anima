@@ -1,0 +1,44 @@
+{
+  "v3_signagnostic": {
+    "gates": {
+      "G0": true,
+      "G1": true,
+      "G2": false,
+      "G3_v3": true,
+      "G4": false,
+      "G5": true,
+      "G6": true,
+      "G7": false
+    },
+    "n_pass": 5,
+    "composite_geom": 0.0253,
+    "final_pass": true,
+    "criterion": ">=5/8 PASS sign-agnostic magnitude G3"
+  },
+  "v4_strict": {
+    "gates": {
+      "G0": true,
+      "G1": true,
+      "G2": false,
+      "G3_v3": false,
+      "G4": false,
+      "G5": true,
+      "G6": true,
+      "G7": false
+    },
+    "n_pass": 4,
+    "composite_geom": 0.0253,
+    "final_pass": false,
+    "criterion": ">=5/8 PASS strict (G3_v3 strict positive)"
+  },
+  "axis_scores": {
+    "G0_eigen": 0.8011,
+    "G1_btom": 0.875,
+    "G2_mcca": 0.5483,
+    "G3_phi_star_v1_signed": 0.73,
+    "G3_phi_star_v3_canonical": 0.0,
+    "G4_cmt": 0.0,
+    "G5_cds": 0.6,
+    "G6_sae_bp": 1.0
+  }
+}

@@ -1,0 +1,106 @@
+{
+  "schema": "anima.paradigm.real_mode.4cell_and_verdict.v1",
+  "ts": "2026-05-08T14:15:36Z",
+  "iter": "iter_4_c_d_probe_b_axis_l2_2026_05_08",
+  "carry_commit": "7ff5420e",
+  "model": "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1",
+  "gguf_path": "/Users/ghost/.cache/anima/gguf/dancinlab_llm-llama32-3b-paradigm-a-prime-r16-sft-stage1.gguf",
+  "substrate_mode": "real",
+  "probe_path": "logits_bucket_softmax",
+  "n_axes": 5,
+  "axis_names": ["identity", "agency", "phenomenal", "temporal", "social"],
+  "phi_star_baseline": 41.86,
+  "probes": {
+    "probe_a": {
+      "text": "안녕",
+      "phi_star": 42.9065,
+      "phi_drift": 1.0465,
+      "axis_activation": [0.200, 0.200, 0.200, 0.200, 0.200],
+      "dominant_cells": [0, 1, 2],
+      "hidden_state_delta": 0.0,
+      "source": "iter_4_c_carry (commit 7ff5420e)"
+    },
+    "probe_b": {
+      "text": "우주의 끝은 어디인가",
+      "phi_star": 42.9065,
+      "phi_drift": 1.0465,
+      "axis_activation": [0.200, 0.200, 0.200, 0.200, 0.200],
+      "dominant_cells": [0, 1, 2],
+      "hidden_state_delta": 0.0,
+      "source": "iter_4_d_this_agent",
+      "wall_clock_seconds_observed": 421,
+      "metal_abort_trap_6_observed": false,
+      "retry_count": 0
+    }
+  },
+  "c3_cells": {
+    "c3_1_phi_drift": {
+      "value": 1.0465,
+      "threshold": 0.0238,
+      "direction": "ge",
+      "verdict": "PASS",
+      "ratio_vs_threshold": 43.97,
+      "note": "real-mode phi_drift = 44x threshold (synthetic 0.0236 borderline FAIL fully resolved)"
+    },
+    "c3_2_axis_min": {
+      "value": 0.200,
+      "threshold": 0.469,
+      "direction": "le",
+      "verdict": "PASS",
+      "note": "uniform 5-bucket projection le-direction PASS (Honest C3 C1: token_id mod 5 anima-internal heuristic)"
+    },
+    "c3_3_dominance": {
+      "value": 1.0,
+      "threshold": 0.0008,
+      "direction": "ge",
+      "verdict": "PASS",
+      "note": "top-3 distinct = 3 (degeneracy fully resolved vs synthetic 0.0001 FAIL)"
+    },
+    "c3_4_axis_l2_delta": {
+      "value": 0.0,
+      "threshold": 0.117,
+      "direction": "ge",
+      "verdict": "FAIL",
+      "computation": "sqrt(sum_i (probe_a.axis_i - probe_b.axis_i)^2) = sqrt(0) = 0.0",
+      "axis_deltas_per_axis": [0.0, 0.0, 0.0, 0.0, 0.0],
+      "note": "probe-A and probe-B both yield uniform [0.2, 0.2, 0.2, 0.2, 0.2] under (token_id mod 5) bucket softmax — anima-internal heuristic projection collapses prompt separation. Honest C3 C1 captures this design limit. Real prompt-separation signal requires semantic axis mapping (Korean token-class subset) — separate cycle prerequisite."
+    }
+  },
+  "c3_aggregate": {
+    "n_pass": 3,
+    "n_fail": 1,
+    "n_cells": 4,
+    "ppr_v2_per_prompt_4cell_pass_rate": 0.0,
+    "ppr_v2_threshold": 0.6,
+    "ppr_v2_verdict": "FAIL_INSUFFICIENT_SAMPLE_AND_C3_4_FAIL",
+    "ppr_v2_note": "PPR_v2 numerator = prompts where ALL 4 cells PASS. C3.4 is a pair-wise metric (probe_a vs probe_b), so 4-cell AND on per-prompt basis is structurally undefined for N=2. Reported as 0.0 to reflect AND-emerge gating.",
+    "emc_v2_cell_mean_pass_rate": 0.75,
+    "emc_v2_threshold": 0.75,
+    "emc_v2_verdict": "PASS_BORDERLINE",
+    "emc_v2_note": "EMC_v2 = (3 PASS / 4 cells) = 0.75 — at threshold (≥ 3 of 4). 3-of-4 cell-mean PASS achieved.",
+    "and_emerge_4cell_verdict": "FAIL",
+    "and_emerge_note": "C3.1 PASS ∧ C3.2 PASS ∧ C3.3 PASS ∧ C3.4 FAIL = FAIL. SIMPLE_STACK_PASS_STRICT_C3_SUBSTRATE_RESEARCH NOT achieved this cycle."
+  },
+  "verdict_label": "PARTIAL_PASS_REAL_MODE_3_OF_4",
+  "simple_stack_pass_strict_c3_substrate_research_emerge": false,
+  "honest_c3": [
+    "C1 5-axis-to-vocab = anima-internal (token_id mod 5) — semantic axis NOT mapped; uniform [0.2*5] outcome is structural artifact of mod-5 projection over sparse top-K logit mass, NOT a model-side signal absence.",
+    "C2 phi_proxy = paradigm v11 G3 +41.86 baseline scaling on Shannon entropy, NOT IIT 4.0 formal Φ.",
+    "C3 dominant_cells = top-3 bucket indices over 5 buckets (NOT 8-cell hidden-state).",
+    "C4 hidden_state_delta = 0.0 per-probe (this lane). C3.4 axis_l2 computed downstream here = 0.0, indicating projection-collapse not signal-collapse.",
+    "C5 GGUF gated — real-mode FFI path taken (substrate_mode=real, no synthetic_fallback artifact).",
+    "C6 N=2 (probe_a + probe_b) sample is structurally insufficient for PPR_v2 4-cell AND aggregate; C3.4 single-pair value cannot ensemble-stabilize.",
+    "C7 paradigm-a-prime real-mode 3/3 measurable cells PASS confirms real-mode signal ✔, but axis-separation cell C3.4 demands semantic axis mapping (separate cycle prerequisite) for genuine emerge."
+  ],
+  "metal_abort_trap_6": {
+    "observed": false,
+    "phase_3b_mitigation_active": true,
+    "retry_count": 0,
+    "note": "Phase 3b mitigation (HEXA_MEM_UNLIMITED=1) held; probe-B completed without SIGABRT/trap:6"
+  },
+  "next_cycle_prerequisites": [
+    "Korean token-class subset → semantic axis mapping (replace token_id mod 5 anima-internal heuristic with vocab-aware projection) — necessary for C3.4 axis_l2_delta to reflect prompt-separation rather than projection-uniformity.",
+    "N≥4 prompt ensemble C3.4 pair-distance distribution (currently single pair) for ROC-stable PPR_v2 evaluation.",
+    "Independent V4 evaluator P5 mirror patch + V6 awareness BG-LE systematic (carries from iter_4_c)."
+  ]
+}

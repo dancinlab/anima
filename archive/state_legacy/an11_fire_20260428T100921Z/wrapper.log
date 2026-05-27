@@ -1,0 +1,29 @@
+[2026-04-28T10:12:42Z] PHASE_A: HuggingFace download Mistral-7B-v0.1
+[2026-04-28T10:12:56Z] PHASE_B: load r14 corpus
+[2026-04-28T10:12:56Z] PHASE_C: LoRA train r=16 alpha=32 epochs=3
+[2026-04-28T10:13:12Z] PHASE_D: SVD eigen extraction on adapter layers
+[2026-04-28T10:13:34Z] PHASE_D: 128 delta matrices, svds=True, est ~128s total
+[2026-04-28T10:13:37Z] PHASE_D: layer 8/128 done, elapsed 24.7s
+[2026-04-28T10:13:39Z] PHASE_D: layer 16/128 done, elapsed 27.1s
+[2026-04-28T10:13:41Z] PHASE_D: layer 24/128 done, elapsed 28.7s
+[2026-04-28T10:13:42Z] PHASE_D: layer 32/128 done, elapsed 29.5s
+[2026-04-28T10:13:42Z] PHASE_D: layer 40/128 done, elapsed 30.4s
+[2026-04-28T10:13:43Z] PHASE_D: layer 48/128 done, elapsed 31.2s
+[2026-04-28T10:13:44Z] PHASE_D: layer 56/128 done, elapsed 32.0s
+[2026-04-28T10:13:45Z] PHASE_D: layer 64/128 done, elapsed 32.9s
+[2026-04-28T10:13:46Z] PHASE_D: layer 72/128 done, elapsed 33.7s
+[2026-04-28T10:13:46Z] PHASE_D: layer 80/128 done, elapsed 34.5s
+[2026-04-28T10:13:47Z] PHASE_D: layer 88/128 done, elapsed 35.3s
+[2026-04-28T10:13:48Z] PHASE_D: layer 96/128 done, elapsed 36.1s
+[2026-04-28T10:13:49Z] PHASE_D: layer 104/128 done, elapsed 36.9s
+[2026-04-28T10:13:50Z] PHASE_D: layer 112/128 done, elapsed 37.7s
+[2026-04-28T10:13:51Z] PHASE_D: layer 120/128 done, elapsed 38.6s
+[2026-04-28T10:13:51Z] PHASE_D: layer 128/128 done, elapsed 39.4s
+[2026-04-28T10:13:51Z] PHASE_E: AN11(a) Frobenius delta + SHA fingerprint
+[2026-04-28T10:13:52Z] PHASE_F: AN11(b) eigen × an11_b_templates cosine
+[2026-04-28T10:13:52Z] PHASE_G: V1' phi_mip_norm on cached H matrix
+[2026-04-28T10:13:52Z] PHASE_H: AN11(c) vllm serve + 50 JSD calls
+[2026-04-28T10:13:52Z] PHASE_H pre-vllm: free GPU memory = 80216 MiB
+[2026-04-28T10:13:52Z] vllm boot: /opt/conda/bin/python3 -m vllm.entrypoints.openai.api_server --model /workspace/mistral-7b-v0.1 --port 8000 --enable-lora --lora-modules adapter=/workspace/lora_adapter --max-lora-rank 16 --dtype float16 --gpu-memory-utilization 0.7 --enforce-eager
+[2026-04-28T10:23:53Z] PHASE_I: finalize results.json
+[2026-04-28T10:23:53Z] DONE: aggregate_verdict=PARTIAL_PASS n_pass=2/4

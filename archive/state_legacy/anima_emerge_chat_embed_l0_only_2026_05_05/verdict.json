@@ -1,0 +1,51 @@
+{
+  "schema": "anima/emerge_chat_embed_l0_only/verdict/1",
+  "task_id": "anima_emerge_chat_embed_l0_only_2026_05_05",
+  "ts_utc": "2026-05-05T18:38:55Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "platform": "mac CPU fp32 (.venv-eeg python3.12)",
+  "n_prompts": 3,
+  "n_block_counts_tested": 8,
+  "block_counts_tested": [
+    0,
+    1,
+    2,
+    3,
+    5,
+    8,
+    12,
+    16
+  ],
+  "max_korean_count": 20,
+  "best_n_blocks": 0,
+  "best_total_korean": 20,
+  "totals_by_n_blocks": {
+    "0": 20,
+    "1": 0,
+    "2": 0,
+    "3": 0,
+    "5": 0,
+    "8": 0,
+    "12": 0,
+    "16": 0
+  },
+  "verdict": "PASS_FEW_BLOCKS_RECOVERS",
+  "load_sec": 9.1,
+  "wall_sec": 100.0,
+  "honest_c3": [
+    "C1 mac CPU fp32 only -- bf16/fp16 substrate may yield different argmax.",
+    "C2 identity hook returns inp[0] (residual stream pre-block). For pre-norm transformer this is residual just BEFORE attn+mlp; for post-norm or parallel residual the passthrough semantic differs. Positional encoding is applied OUTSIDE blocks (or at L0) so identity-block-skip leaves pos/RoPE behavior indeterminate -- result CANNOT cleanly attribute Korean recovery to embed alone.",
+    "C3 head_a + ln_f trained ONLY on L15 ln_f output distribution. Feeding post-embed or pre-L15 hidden is OOD; '0 blocks' = embed -> ln_f -> head_a is the most extreme OOD probe. emit being non-Korean here CANNOT distinguish 'no Korean signal' from 'head_a refuses OOD geometry'. BG-CJ showed top1='녕' but that's single-step; greedy continuation re-encodes through tied embedding and may diverge.",
+    "C4 'first N blocks active' is monotone-active not selective; cannot isolate per-layer contribution. BG-CQ Strategy B already showed [13/14/15] skip alone FAILS to recover (kr=0). This probe is the dual front-direction sweep.",
+    "C5 single seed greedy decode -- temperature/top-p sampling could expose Korean tokens in lower-rank positions. Korean rank-12 at L0 (BG-CI) is still in top-100 but not top-1; greedy by definition misses it. Negative result here CANNOT rule out 'Korean signal present but not argmax' which would still be a basin attractor in greedy regime."
+  ],
+  "tool_budget_used_estimate": 12,
+  "raw_compliance": {
+    "raw_15_additive_only": true,
+    "raw_37_transient_py_namespace": true,
+    "raw_10_honest_c3": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  }
+}

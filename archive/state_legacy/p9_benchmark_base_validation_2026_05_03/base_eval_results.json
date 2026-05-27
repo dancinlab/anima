@@ -1,0 +1,66 @@
+{
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "config": {
+    "4bit": true,
+    "limit_per_task": 500,
+    "substrate": "ubu1 RTX 5070"
+  },
+  "tasks": {
+    "hellaswag": {
+      "score": 0.644,
+      "metric": "acc_norm,none",
+      "random_baseline": 0.25,
+      "discriminative_range_pt": 39.4,
+      "n_shot": 5,
+      "max_length": null,
+      "source_file": "llama_base_hellaswag.json",
+      "raw_results": {
+        "alias": "hellaswag",
+        "acc,none": 0.512,
+        "acc_stderr,none": 0.022376626797927058,
+        "acc_norm,none": 0.644,
+        "acc_norm_stderr,none": 0.021434712356072687
+      }
+    },
+    "mmlu": {
+      "score": 0.6077384375256716,
+      "metric": "acc,none",
+      "random_baseline": 0.25,
+      "discriminative_range_pt": 35.77384375256716,
+      "n_shot": 0,
+      "max_length": 1024,
+      "source_file": "llama_base_mmlu_n0.json",
+      "raw_results": {
+        "acc,none": 0.6077384375256716,
+        "acc_stderr,none": 0.004257156349506961,
+        "alias": "mmlu"
+      }
+    },
+    "triviaqa": {
+      "score": 0.514,
+      "metric": "exact_match,remove_whitespace",
+      "random_baseline": 0.0,
+      "discriminative_range_pt": 51.4,
+      "n_shot": 5,
+      "max_length": null,
+      "source_file": "llama_base_triviaqa.json",
+      "raw_results": {
+        "alias": "triviaqa",
+        "exact_match,remove_whitespace": 0.514,
+        "exact_match_stderr,remove_whitespace": 0.022374298166353144
+      }
+    }
+  },
+  "verdict": {
+    "hellaswag": "BENCHMARK_OK",
+    "mmlu": "BENCHMARK_OK",
+    "triviaqa": "BENCHMARK_OK"
+  },
+  "clm_v4_base": {
+    "status": "ARCHITECTURAL_BLOCKER",
+    "reason": "Custom Federated/Phase-Optimal architecture not loadable via HF AutoModel; consciousness_laws.py loader bug; 64K BPE vocab mismatch",
+    "training_ce": 0.046,
+    "training_perplexity": 1.05,
+    "implication": "CLM v4 base \u2248 random baseline on English benchmarks (no instruction tuning, narrow-corpus overfit, vocab mismatch)"
+  }
+}

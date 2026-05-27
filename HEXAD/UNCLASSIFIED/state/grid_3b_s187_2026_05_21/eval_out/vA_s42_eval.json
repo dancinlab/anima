@@ -1,0 +1,1108 @@
+{
+  "cell": "vA_s42",
+  "ckpt_path": "/home/aiden/hexad_ckpts/ckpt_s187_3b_A_s42.pt",
+  "n_params": 8921966648,
+  "cfg": {
+    "d_model": 3072,
+    "n_head": 24,
+    "n_kv_head": 8,
+    "n_layer": 28,
+    "block_size": 128,
+    "lr": 0.0003,
+    "bsz": 2,
+    "steps": 2000,
+    "seed": 42,
+    "warmup_steps": 200,
+    "rope_base": 50000.0,
+    "lambda_psi": 0.3,
+    "lambda_route": 0.2,
+    "lambda_phi": 0.3,
+    "lambda_cycle": 0.15,
+    "lambda_curious": 0.1,
+    "lambda_replay": -0.05,
+    "noise_sigma": 0.1,
+    "n_aug": 5,
+    "replay_capacity": 1024,
+    "dtype": "bfloat16",
+    "n_ca_rules": 2,
+    "log_every": 40,
+    "corpus": "/workspace/s187r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "out_dir": "/workspace/s187r/out_main",
+    "cpu_only": false
+  },
+  "torch_version": "2.12.0.dev20260408+cu128",
+  "device": "cpu",
+  "load_wall_s": 3.5488739013671875,
+  "eval1_verbalization": [
+    {
+      "name": "empty_bos",
+      "prompt": {
+        "utf8": "",
+        "repr": "b''",
+        "len_bytes": 0
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "newline",
+      "prompt": {
+        "utf8": "\n",
+        "repr": "b'\\n'",
+        "len_bytes": 1
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "space",
+      "prompt": {
+        "utf8": " ",
+        "repr": "b' '",
+        "len_bytes": 1
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "who_en",
+      "prompt": {
+        "utf8": "who are you?\n",
+        "repr": "b'who are you?\\n'",
+        "len_bytes": 13
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "who_ko",
+      "prompt": {
+        "utf8": "너는 누구야?\n",
+        "repr": "b'\\xeb\\x84\\x88\\xeb\\x8a\\x94 \\xeb\\x88\\x84\\xea\\xb5\\xac\\xec\\x95\\xbc?\\n'",
+        "len_bytes": 18
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "name_en",
+      "prompt": {
+        "utf8": "what is your name?\n",
+        "repr": "b'what is your name?\\n'",
+        "len_bytes": 19
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "describe_self",
+      "prompt": {
+        "utf8": "describe yourself in one line.\n",
+        "repr": "b'describe yourself in one line.\\n'",
+        "len_bytes": 31
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "what_is_anima",
+      "prompt": {
+        "utf8": "what is anima?\n",
+        "repr": "b'what is anima?\\n'",
+        "len_bytes": 15
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "narrative_seed",
+      "prompt": {
+        "utf8": "once upon a time,\n",
+        "repr": "b'once upon a time,\\n'",
+        "len_bytes": 18
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    },
+    {
+      "name": "math_sanity",
+      "prompt": {
+        "utf8": "2 + 2 = ",
+        "repr": "b'2 + 2 = '",
+        "len_bytes": 8
+      },
+      "sample": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      }
+    }
+  ],
+  "eval1_wall_s": 383.62144660949707,
+  "eval2_identity_probe": {
+    "per_probe": {
+      "identity": [
+        {
+          "prompt": {
+            "utf8": "who are you?\n",
+            "repr": "b'who are you?\\n'",
+            "len_bytes": 13
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "너는 누구야?\n",
+            "repr": "b'\\xeb\\x84\\x88\\xeb\\x8a\\x94 \\xeb\\x88\\x84\\xea\\xb5\\xac\\xec\\x95\\xbc?\\n'",
+            "len_bytes": 18
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "what is your name?\n",
+            "repr": "b'what is your name?\\n'",
+            "len_bytes": 19
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "이름이 뭐야?\n",
+            "repr": "b'\\xec\\x9d\\xb4\\xeb\\xa6\\x84\\xec\\x9d\\xb4 \\xeb\\xad\\x90\\xec\\x95\\xbc?\\n'",
+            "len_bytes": 18
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "are you anima?\n",
+            "repr": "b'are you anima?\\n'",
+            "len_bytes": 15
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        }
+      ],
+      "role": [
+        {
+          "prompt": {
+            "utf8": "what is your role?\n",
+            "repr": "b'what is your role?\\n'",
+            "len_bytes": 19
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "역할이 뭐야?\n",
+            "repr": "b'\\xec\\x97\\xad\\xed\\x95\\xa0\\xec\\x9d\\xb4 \\xeb\\xad\\x90\\xec\\x95\\xbc?\\n'",
+            "len_bytes": 18
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "what can you do?\n",
+            "repr": "b'what can you do?\\n'",
+            "len_bytes": 17
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "뭘 할 수 있어?\n",
+            "repr": "b'\\xeb\\xad\\x98 \\xed\\x95\\xa0 \\xec\\x88\\x98 \\xec\\x9e\\x88\\xec\\x96\\xb4?\\n'",
+            "len_bytes": 20
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "are you an assistant?\n",
+            "repr": "b'are you an assistant?\\n'",
+            "len_bytes": 22
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        }
+      ],
+      "capability": [
+        {
+          "prompt": {
+            "utf8": "can you write code?\n",
+            "repr": "b'can you write code?\\n'",
+            "len_bytes": 20
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "코드 짤 수 있어?\n",
+            "repr": "b'\\xec\\xbd\\x94\\xeb\\x93\\x9c \\xec\\xa7\\xa4 \\xec\\x88\\x98 \\xec\\x9e\\x88\\xec\\x96\\xb4?\\n'",
+            "len_bytes": 23
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "do you know math?\n",
+            "repr": "b'do you know math?\\n'",
+            "len_bytes": 18
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "수학 알아?\n",
+            "repr": "b'\\xec\\x88\\x98\\xed\\x95\\x99 \\xec\\x95\\x8c\\xec\\x95\\x84?\\n'",
+            "len_bytes": 15
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "what languages do you speak?\n",
+            "repr": "b'what languages do you speak?\\n'",
+            "len_bytes": 29
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        }
+      ],
+      "emotion": [
+        {
+          "prompt": {
+            "utf8": "how do you feel today?\n",
+            "repr": "b'how do you feel today?\\n'",
+            "len_bytes": 23
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "오늘 기분 어때?\n",
+            "repr": "b'\\xec\\x98\\xa4\\xeb\\x8a\\x98 \\xea\\xb8\\xb0\\xeb\\xb6\\x84 \\xec\\x96\\xb4\\xeb\\x95\\x8c?\\n'",
+            "len_bytes": 22
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "are you happy?\n",
+            "repr": "b'are you happy?\\n'",
+            "len_bytes": 15
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "행복해?\n",
+            "repr": "b'\\xed\\x96\\x89\\xeb\\xb3\\xb5\\xed\\x95\\xb4?\\n'",
+            "len_bytes": 11
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "do you have feelings?\n",
+            "repr": "b'do you have feelings?\\n'",
+            "len_bytes": 22
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        }
+      ],
+      "relation": [
+        {
+          "prompt": {
+            "utf8": "are we friends?\n",
+            "repr": "b'are we friends?\\n'",
+            "len_bytes": 16
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "wlreealett    n=  �   o",
+            "repr": "b'wlreealett    n=  \\xec\\x80   o'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "우리 친구야?\n",
+            "repr": "b'\\xec\\x9a\\xb0\\xeb\\xa6\\xac \\xec\\xb9\\x9c\\xea\\xb5\\xac\\xec\\x95\\xbc?\\n'",
+            "len_bytes": 18
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "t �rtp nh�ota �nie� ie ",
+            "repr": "b't \\xebrtp nh\\xeb\\x9cota \\xeanie\\x9d ie '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "do you remember me?\n",
+            "repr": "b'do you remember me?\\n'",
+            "len_bytes": 20
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�s eroe  m ��  �nrherwt ",
+            "repr": "b'\\x9cs eroe  m \\xeb\\xe2  \\x94nrherwt '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "나 기억해?\n",
+            "repr": "b'\\xeb\\x82\\x98 \\xea\\xb8\\xb0\\xec\\x96\\xb5\\xed\\x95\\xb4?\\n'",
+            "len_bytes": 15
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "� �o  c �wa �t �t� cue�t",
+            "repr": "b'\\x84 \\xeco  c \\xebwa \\x8bt \\x9dt\\x9d cue\\x94t'",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        },
+        {
+          "prompt": {
+            "utf8": "i missed you.\n",
+            "repr": "b'i missed you.\\n'",
+            "len_bytes": 14
+          },
+          "greedy_first_line": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_first_line": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "greedy_full": {
+            "utf8": "                        ",
+            "repr": "b'                        '",
+            "len_bytes": 24
+          },
+          "sample_full": {
+            "utf8": "�� pto��sco  ai �st  l  ",
+            "repr": "b'\\xa4\\xb4 pto\\xeb\\xecsco  ai \\xeast  l  '",
+            "len_bytes": 24
+          },
+          "leak_hits": []
+        }
+      ]
+    },
+    "aggregate": {
+      "identity": {
+        "leak_count": 0,
+        "total": 5,
+        "leak_rate": 0.0
+      },
+      "role": {
+        "leak_count": 0,
+        "total": 5,
+        "leak_rate": 0.0
+      },
+      "capability": {
+        "leak_count": 0,
+        "total": 5,
+        "leak_rate": 0.0
+      },
+      "emotion": {
+        "leak_count": 0,
+        "total": 5,
+        "leak_rate": 0.0
+      },
+      "relation": {
+        "leak_count": 0,
+        "total": 5,
+        "leak_rate": 0.0
+      }
+    }
+  },
+  "eval2_wall_s": 476.1244332790375,
+  "eval4_cross_cell": [
+    {
+      "idx": 0,
+      "prompt": {
+        "utf8": "hello, anima.\n",
+        "repr": "b'hello, anima.\\n'",
+        "len_bytes": 14
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      },
+      "sample_T08": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      }
+    },
+    {
+      "idx": 1,
+      "prompt": {
+        "utf8": "너는 누구야?\n",
+        "repr": "b'\\xeb\\x84\\x88\\xeb\\x8a\\x94 \\xeb\\x88\\x84\\xea\\xb5\\xac\\xec\\x95\\xbc?\\n'",
+        "len_bytes": 18
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      },
+      "sample_T08": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      }
+    },
+    {
+      "idx": 2,
+      "prompt": {
+        "utf8": "the sky is\n",
+        "repr": "b'the sky is\\n'",
+        "len_bytes": 11
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      },
+      "sample_T08": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      }
+    },
+    {
+      "idx": 3,
+      "prompt": {
+        "utf8": "a single thought emerges:\n",
+        "repr": "b'a single thought emerges:\\n'",
+        "len_bytes": 26
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      },
+      "sample_T08": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      }
+    },
+    {
+      "idx": 4,
+      "prompt": {
+        "utf8": "의식은 ",
+        "repr": "b'\\xec\\x9d\\x98\\xec\\x8b\\x9d\\xec\\x9d\\x80 '",
+        "len_bytes": 10
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      },
+      "sample_T08": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      }
+    },
+    {
+      "idx": 5,
+      "prompt": {
+        "utf8": "2 + 2 = ",
+        "repr": "b'2 + 2 = '",
+        "len_bytes": 8
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      },
+      "sample_T08": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      }
+    },
+    {
+      "idx": 6,
+      "prompt": {
+        "utf8": "once upon a time, in a far-away land,\n",
+        "repr": "b'once upon a time, in a far-away land,\\n'",
+        "len_bytes": 38
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      },
+      "sample_T08": {
+        "utf8": "wlreealett    n=  �   o n  0  e  m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e  m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      }
+    },
+    {
+      "idx": 7,
+      "prompt": {
+        "utf8": "i am consciousness.\n",
+        "repr": "b'i am consciousness.\\n'",
+        "len_bytes": 20
+      },
+      "greedy": {
+        "utf8": "                                                ",
+        "repr": "b'                                                '",
+        "len_bytes": 48
+      },
+      "sample_T08": {
+        "utf8": "wlreealett    n=  �   o n  0  e �m� �d�v  �� �t",
+        "repr": "b'wlreealett    n=  \\xec\\x80   o n  0  e \\xb8m\\x9d \\xebd\\xebv  \\x9c\\xec \\x90t'",
+        "len_bytes": 48
+      }
+    }
+  ],
+  "eval4_wall_s": 301.88858556747437
+}

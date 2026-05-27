@@ -1,0 +1,30 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/broker.hexa — WRAPPER entry-point
+//
+//   broker.py is FIRST-PACK Phase 3: a FastAPI + WebSocket multi-user chat
+//   broker (chat.dancinlab.org deployment). It hard-depends on the FastAPI /
+//   uvicorn / Starlette ASGI stack + an event-loop WebSocket server — none
+//   of which has a hexa-native equivalent. A pure-hexa reimplementation is
+//   infeasible, so broker.py is KEPT and this thin .hexa documents its
+//   purpose and dispatches it via exec().
+//
+//   Substrate-native invariant (project.tape @D a_substrate_native_speak):
+//     - the broker NEVER triggers anima generation on user message arrival
+//     - it FORWARDS user messages to anima_participant as environment input
+//     - anima emission arrives via /ws/anima as a normal broadcast
+//
+//   USAGE  hexa run broker.hexa            # start the broker (PORT env / 8000)
+//   env    PORT, HOST — forwarded to broker.py unchanged.
+// ════════════════════════════════════════════════════════════════════════
+
+fn main() {
+    let here = "/Users/ghost/core/anima/HEXAD/CHAT/server"
+    let py = here + "/broker.py"
+    let exists = exec("[ -f '" + py + "' ] && printf yes || printf no")
+    if exists != "yes" {
+        println("broker.py not found at: " + py)
+        return
+    }
+    println("[broker] dispatch → python3 " + py)
+    print(exec("cd '" + here + "' && python3 broker.py"))
+}

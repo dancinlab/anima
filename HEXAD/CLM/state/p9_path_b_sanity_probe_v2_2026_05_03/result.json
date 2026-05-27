@@ -1,0 +1,60 @@
+{
+  "task": "hellaswag",
+  "limit": 500,
+  "n_fewshot": 5,
+  "seed": 42,
+  "acc": 0.258,
+  "acc_stderr": 0.019586711785215868,
+  "acc_norm": 0.252,
+  "acc_norm_stderr": 0.019435727282249564,
+  "primary_metric": "acc_norm",
+  "primary_value": 0.252,
+  "verdict": "CLM_V4_AT_FLOOR",
+  "comparison_v1_byte_fallback": {
+    "v1_acc_norm": 0.242,
+    "v1_acc_norm_stderr": 0.019,
+    "delta_v2_minus_v1": 0.010000000000000009,
+    "tokenization_robustness": "ROBUST_TO_TOKENIZATION"
+  },
+  "comparison_external": {
+    "random_baseline_4choice": 0.25,
+    "random_plus_1sigma_at_n500": 0.27,
+    "llama_3_2_3b_4bit_validated_2026_05_03": 0.644,
+    "llama_minus_clm_v4": 0.392
+  },
+  "model": {
+    "name": "CLM v4 base (ConsciousDecoderV2 350m)",
+    "params_m": 477.6,
+    "d_model": 768,
+    "n_layer": 16,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "vocab": 64000,
+    "block_size": 512,
+    "checkpoint_step": 20000,
+    "training_ce_on_corpus": 0.0463,
+    "training_phi": 27.91
+  },
+  "tokenizer": {
+    "type": "sentencepiece-bpe-64k",
+    "model_path": "/home/aiden/anima/state/p9_path_b_sanity_probe_v2_2026_05_03/tokenizer_64k_multilingual.model",
+    "sha256_model": "bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab",
+    "vocab_size": 64000,
+    "byte_fallback_range": "ids 4-259 = <0x00>..<0xFF>",
+    "special_tokens": {
+      "pad": 0,
+      "bos": 1,
+      "eos": 2,
+      "unk": 3
+    },
+    "origin": "restored from ready/anima/config/ via state/clm_v4_tokenizer_restoration_2026_05_03/"
+  },
+  "tokenizer_truncation": {
+    "n_truncated": 1684,
+    "n_total": 2000,
+    "rate": 0.842
+  },
+  "device": "cuda",
+  "wall_time_sec": 191.71333146095276,
+  "ts_utc": "2026-05-03T21:47:21Z"
+}

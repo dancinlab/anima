@@ -1,0 +1,32 @@
+[06:50:22] Connecting to IBM Quantum...
+[06:50:23] Enumerating backends...
+[06:50:29]   available: ['ibm_boston', 'ibm_fez', 'ibm_kingston', 'ibm_marrakesh', 'ibm_pittsburgh']
+[06:50:33] Selected backend: ibm_pittsburgh (family=Heron r3, pending=0, qubits=156)
+[06:50:33] Best 2Q edge: physical qubits (43, 44) via cz gate (gate_error=0.00075)
+[06:50:33] Estimated cost: $3.20 (cap=$8.00)
+[06:50:33] Building + transpiling 4 CHSH circuits with explicit initial_layout...
+[06:50:42] Submitting batch (4 x 1024) to ibm_pittsburgh...
+[06:50:47] job_id=d7rs6dkt738s73cfuhq0 status=QUEUED
+[06:50:47] Waiting for result (poll 15s)...
+[06:50:47]   status=RUNNING (elapsed=0s)
+[06:51:02]   status=DONE (elapsed=19s)
+[06:51:02] DONE in 20.0s. Fetching...
+[06:51:03]   circuit_a_b: 00=272 01=250 10=259 11=243
+[06:51:03]   circuit_a_bprime: 00=264 01=248 10=250 11=262
+[06:51:03]   circuit_aprime_b: 00=265 01=271 10=240 11=248
+[06:51:03]   circuit_aprime_bprime: 00=263 01=232 10=249 11=280
+{
+  "verdict": "FAIL",
+  "S": 0.041015625,
+  "sigma_S": 0.06246521100758161,
+  "delta_S_vs_fez": 2.31640625,
+  "wall_s": 19.96956777572632,
+  "qpu_s_heuristic": 2.0,
+  "cost_usd": 3.2,
+  "backend": "ibm_pittsburgh",
+  "initial_layout": [
+    43,
+    44
+  ]
+}
+REMOTE_EXIT=0

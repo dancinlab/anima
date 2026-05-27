@@ -1,0 +1,92 @@
+{
+  "schema": "anima/clm_v4_shim_v5_4_design_1/eval_summary/1",
+  "ts_utc": "2026-05-05T09:09:51Z",
+  "post_hoc_reconstruction_note": "eval_summary.json was NOT written on H100 due to ModuleNotFoundError on transformers.__version__ AFTER all 4 passes succeeded and per-pass hellaswag_*.json were written. This file is a Mac-side post-hoc reconstruction from the 4 per-pass JSONs. acc_norm + stderr values are direct lm-eval-harness output (authoritative). o_proj_std_observed values are TARGET values (OPT-A 0.10 + _init_weights 0.02) since the inlined boot-time assertion (eval py lines ~115-130) would have raised on mismatch; the eval ran 4 full hellaswag passes after construction, confirming the assertions passed.",
+  "limit_per_task": 200,
+  "num_fewshot": 5,
+  "seed": 42,
+  "init_seed": 1234,
+  "device": "cuda",
+  "fixture_path": "/workspace/clm_v4_shim_v5_4_design_1/train_avg_real.pt",
+  "fixture_shape": [
+    1,
+    8,
+    192
+  ],
+  "fixture_l2": 2.2022,
+  "best_pt_loaded": false,
+  "shim_v5_o_proj_std_target": 0.1,
+  "shim_v5_o_proj_std_observed_mean": 0.1,
+  "shim_v4_o_proj_std_observed_mean": 0.02,
+  "ratio_v5_over_v4_o_proj_std": 5.0,
+  "runs": {
+    "v4_NF": {
+      "label": "v4_NF",
+      "consciousness_states": "None",
+      "acc": 0.275,
+      "acc_stderr": 0.031652557907861936,
+      "acc_norm": 0.27,
+      "acc_norm_stderr": 0.031471451528433364,
+      "wall_sec": 0.0,
+      "n_truncated": 678,
+      "n_total": 800
+    },
+    "v4_RF": {
+      "label": "v4_RF",
+      "consciousness_states": "train_avg_real.pt",
+      "acc": 0.275,
+      "acc_stderr": 0.031652557907861936,
+      "acc_norm": 0.27,
+      "acc_norm_stderr": 0.031471451528433364,
+      "wall_sec": 0.0,
+      "n_truncated": 678,
+      "n_total": 800
+    },
+    "v5_NF": {
+      "label": "v5_NF",
+      "consciousness_states": "None",
+      "acc": 0.275,
+      "acc_stderr": 0.031652557907861936,
+      "acc_norm": 0.27,
+      "acc_norm_stderr": 0.031471451528433364,
+      "wall_sec": 0.0,
+      "n_truncated": 678,
+      "n_total": 800
+    },
+    "v5_RF": {
+      "label": "v5_RF",
+      "consciousness_states": "train_avg_real.pt",
+      "acc": 0.28,
+      "acc_stderr": 0.03182868716477582,
+      "acc_norm": 0.28,
+      "acc_norm_stderr": 0.031828687164775826,
+      "wall_sec": 0.0,
+      "n_truncated": 678,
+      "n_total": 800
+    }
+  },
+  "v4_fresh_init_acc_norm": 0.27,
+  "v5_fresh_init_acc_norm": 0.27,
+  "delta_v5_v4_NF_pp": 0.0,
+  "delta_v5_v4_NF_se_pp": 4.450735357907793,
+  "v4_fresh_init_with_real_fixture_acc_norm": 0.27,
+  "v5_fresh_init_with_real_fixture_acc_norm": 0.28,
+  "delta_v5_v4_RF_pp": 1.0000000000000009,
+  "delta_v5_v4_RF_se_pp": 4.4760670101548925,
+  "lift_pp_v4_via_real_fixture": 0.0,
+  "lift_pp_v4_se_pp": 4.450735357907793,
+  "lift_pp_v5_via_real_fixture": 1.0000000000000009,
+  "lift_pp_v5_se_pp": 4.4760670101548925,
+  "lift_pp_threshold": 5.0,
+  "substrate_differential_measurable": false,
+  "substrate_differential_measurable_NF": false,
+  "substrate_differential_measurable_RF": false,
+  "F_SHIM_V5_4_verdict": "FAIL",
+  "F_SHIM_V5_4_rationale": [
+    "|lift_pp_v5|=1.00pp < combined_se_pp=4.48pp (within noise)",
+    "no measurable substrate differential (delta_v5_v4_NF=0.0pp, delta_v5_v4_RF=+1.0pp; both below combined_se ~4.5pp)"
+  ],
+  "wall_time_total_sec": 0.0,
+  "tokenizer_truncation_rate_avg": 0.8475,
+  "post_hoc_eval_failure_cause": "ModuleNotFoundError: No module named 'transformers' on eval py line 539 (`__import__('transformers').__version__` for metadata logging). All 4 hellaswag passes finished successfully BEFORE this crash; the 4 per-pass hellaswag_*.json files contain authoritative lm-eval-harness output. transformers is NOT actually used in the eval (no transformers imports in the model construction or forward path) \u2014 only the metadata field referenced it. Forward fix: remove the `__import__('transformers').__version__` line from eval py for any DESIGN-2/3 follow-up."
+}

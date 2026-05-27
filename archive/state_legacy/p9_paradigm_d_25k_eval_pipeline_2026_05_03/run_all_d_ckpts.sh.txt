@@ -1,0 +1,85 @@
+#!/usr/bin/env bash
+# P9 Paradigm D 25K Eval — Run all ckpts (5 savepoints) end-to-end.
+#
+# Usage:
+#   # HF Hub mode (after 25K training pushes step-5000..step-25000 tags):
+#   ANIMA_CKPT_REPO=dancinlab/p9-paradigm-d-25k bash run_all_d_ckpts.sh
+#
+#   # Local-dir mode (for mini-run replay or in-place verify):
+#   ANIMA_CKPT_LOCAL_PARENT=/tmp/p9_paradigm_d_distill_savepoints bash run_all_d_ckpts.sh
+#
+#   # Dry-run (just print commands):
+#   DRY_RUN=1 bash run_all_d_ckpts.sh
+#
+# Steps eval'd: 5000 10000 15000 20000 25000 (default)
+# Override with STEPS env var:  STEPS="5000 25000" bash run_all_d_ckpts.sh
+#
+# raw#9 ubu1 .py OK / raw#15 ~/anima paths
+
+set -euo pipefail
+
+ANIMA_HOME="${ANIMA_HOME:-/home/aiden/anima}"
+EVAL_ROOT="${EVAL_ROOT:-${ANIMA_HOME}/state/p9_paradigm_d_25k_eval_2026_05_03}"
+PYBIN="${PYBIN:-/home/aiden/venv_orchestrator/bin/python}"
+DRIVER="${DRIVER:-${EVAL_ROOT}/eval_phi_distill_ckpt.py}"
+STEPS="${STEPS:-5000 10000 15000 20000 25000}"
+LIMIT="${LIMIT:-32}"
+EVAL_N="${EVAL_N:-32}"
+RESULTS_DIR="${RESULTS_DIR:-${EVAL_ROOT}/ckpt_results}"
+
+mkdir -p "${RESULTS_DIR}"
+
+run() {
+    if [[ "${DRY_RUN:-0}" == "1" ]]; then
+        echo "[dry-run] $*"
+    else
+        echo "[run] $*"
+        eval "$@"
+    fi
+}
+
+# 1. Base reference (always re-extract for current pipeline version)
+BASE_OUT="${RESULTS_DIR}/base_reference.json"
+if [[ -f "${BASE_OUT}" && "${FORCE:-0}" != "1" ]]; then
+    echo "[skip] base reference exists: ${BASE_OUT} (set FORCE=1 to re-run)"
+else
+    run "${PYBIN} ${DRIVER} --base-only --label base_reference \
+         --limit ${LIMIT} --eval-n ${EVAL_N} \
+         --output ${BASE_OUT}"
+fi
+
+# 2. Per-ckpt evaluation
+for STEP in ${STEPS}; do
+    OUT="${RESULTS_DIR}/ckpt_step${STEP}.json"
+    if [[ -f "${OUT}" && "${FORCE:-0}" != "1" ]]; then
+        echo "[skip] step ${STEP} exists: ${OUT}"
+        continue
+    fi
+    if [[ -n "${ANIMA_CKPT_REPO:-}" ]]; then
+        run "${PYBIN} ${DRIVER} \
+             --ckpt-repo ${ANIMA_CKPT_REPO} \
+             --ckpt-revision step-${STEP} \
+             --label step_${STEP} \
+             --limit ${LIMIT} --eval-n ${EVAL_N} \
+             --output ${OUT}"
+    elif [[ -n "${ANIMA_CKPT_LOCAL_PARENT:-}" ]]; then
+        LOCAL_DIR="${ANIMA_CKPT_LOCAL_PARENT}/step_${STEP}"
+        if [[ ! -d "${LOCAL_DIR}" ]]; then
+            echo "[warn] local dir missing: ${LOCAL_DIR} — skipping step ${STEP}"
+            continue
+        fi
+        run "${PYBIN} ${DRIVER} \
+             --ckpt-local-dir ${LOCAL_DIR} \
+             --label step_${STEP} \
+             --limit ${LIMIT} --eval-n ${EVAL_N} \
+             --output ${OUT}"
+    else
+        echo "[error] set ANIMA_CKPT_REPO=<hf_id> OR ANIMA_CKPT_LOCAL_PARENT=<dir>"
+        exit 1
+    fi
+done
+
+echo ""
+echo "[done] base + ${STEPS} ckpts evaluated"
+echo "[done] results at: ${RESULTS_DIR}"
+ls -la "${RESULTS_DIR}/"

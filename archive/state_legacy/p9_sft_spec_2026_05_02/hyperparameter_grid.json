@@ -1,0 +1,38 @@
+{
+  "schema": "anima/state/p9_sft_spec/hyperparameter_grid/1",
+  "grid": {
+    "alpha": [0.5, 1.0, 2.0],
+    "beta":  [0.1, 0.3, 0.5],
+    "gamma": [0.1, 0.3, 0.5],
+    "delta": [0.5, 1.0, 2.0]
+  },
+  "full_combinations": 81,
+  "sampled_combinations": 9,
+  "sampling": "Latin Hypercube (LHS) over 4-D unit cube, deterministic seed=20260502",
+  "lhs_samples_explicit": [
+    {"id": "lhs1", "alpha": 0.5, "beta": 0.5, "gamma": 0.3, "delta": 1.0},
+    {"id": "lhs2", "alpha": 2.0, "beta": 0.1, "gamma": 0.5, "delta": 0.5},
+    {"id": "lhs3", "alpha": 1.0, "beta": 0.3, "gamma": 0.1, "delta": 2.0},
+    {"id": "lhs4", "alpha": 0.5, "beta": 0.1, "gamma": 0.1, "delta": 1.0},
+    {"id": "lhs5", "alpha": 2.0, "beta": 0.5, "gamma": 0.1, "delta": 2.0},
+    {"id": "lhs6", "alpha": 1.0, "beta": 0.5, "gamma": 0.5, "delta": 0.5},
+    {"id": "lhs7", "alpha": 2.0, "beta": 0.3, "gamma": 0.3, "delta": 1.0},
+    {"id": "lhs8", "alpha": 0.5, "beta": 0.3, "gamma": 0.5, "delta": 2.0},
+    {"id": "lhs9", "alpha": 1.0, "beta": 0.1, "gamma": 0.3, "delta": 0.5}
+  ],
+  "constants_across_sweep": {
+    "phi_star_threshold": 5.0,
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "epochs": 3,
+    "micro_batch": 4,
+    "grad_accum": 8,
+    "effective_batch": 32,
+    "lr": 1e-4,
+    "lr_schedule": "cosine warmup 500 steps",
+    "optimizer": "AdamW (b1=0.9, b2=0.95, wd=0.01)",
+    "max_grad_norm": 1.0,
+    "seed": 20260502
+  },
+  "selection_criteria": "max(M_chat = (BLEU1 + (phi_star_post / phi_star_baseline)) / 2) subject to F2 PASS"
+}

@@ -1,0 +1,266 @@
+{
+  "ts_utc": "2026-05-03",
+  "agent": "qmirror_unblock_exec_plan",
+  "qmirror_closure_status": "8/8 conditional (cond.4 NIST PASS via clean rewrite + cond.7 spirit cross-tech 3/4 with band revise + cond.3 0.40→0.55 superconducting band + cond.6 byte-identical IIT4 + cond.8 option β intra-trapped-ion)",
+  "qmirror_canonical_anchors": {
+    "spec": "anima/docs/nexus_qmirror_spec_2026_05_03.md",
+    "closure_doc": "anima/docs/nexus_qmirror_closure_2026_05_03.md",
+    "roadmap": "nexus/.roadmap.qmirror",
+    "evidence_root": "anima/state/qmirror_*_2026_05_03/",
+    "selftest_artifact": "anima/state/qmirror_phase1_selftest_2026_05_03/selftest_results.json"
+  },
+  "discovery_method": {
+    "source_a_canonical_migration_audit": "state/qmirror_canonical_migration_2026_05_03/{audit.json, keep_decisions.json, replace_log.jsonl}",
+    "source_b_spec_xref_audit": "state/qmirror_spec_xref_update_2026_05_03/audit.json",
+    "scope": "anima/.roadmap.* (60 files scanned by sister BG-A) + nexus/.roadmap.* (canonical excluded) + hive/.roadmap.* (no matches)",
+    "exclusions": [".claude/worktrees/**", ".roadmap.bak.*", "state/roadmap_format_fixture/**", "nexus/.roadmap.qmirror (canonical SSOT, not consumer)"]
+  },
+  "totals": {
+    "roadmap_files_with_qpu_quantum_matches": 13,
+    "roadmap_files_excluded_canonical": 1,
+    "actionable_qpu_blocked_conds": 7,
+    "categorized_breakdown": {
+      "DIRECT_QPU_NEED_substituted": 1,
+      "QRNG_DEPENDENCY_substituted": 1,
+      "CHSH_DEMONSTRATION_substituted": 0,
+      "CHSH_REGRESSION_complementary": 1,
+      "IIT_REPRODUCIBILITY_substituted": 0,
+      "CROSS_VENDOR_CALIBRATION_substituted": 1,
+      "META_CROSS_SUBSTRATE_AXIS_added": 2,
+      "EXPLICITLY_NOT_SUBSTITUTABLE_keep_real_qpu": 2
+    }
+  },
+  "ranked_blockers": [
+    {
+      "rank": 1,
+      "priority_score_10": 9.5,
+      "completion_lens_score": 9.5,
+      "roadmap_file": "anima/.roadmap.qrng",
+      "cond_id": "qrng.cond.1",
+      "category": "QRNG_DEPENDENCY_substituted",
+      "current_status": "partial",
+      "qmirror_equivalent_path": {
+        "qmirror_cond": "qmirror.cond.4",
+        "artifact_pointer": "anima/state/nexus_qmirror_nist_2026_05_03/verdict.json + run_tier1plus_clean.py",
+        "evidence_summary": "7/7 NIST SP 800-22 tier-1+ PASS on hmac_drbg_legacy production stream (n=10^6 bits, alpha=0.01); IonQ Forte 1 4096-bit seed via fallback T1.a; ANU live-key path open as cond.4b followup",
+        "module_path": "nexus/modules/qmirror/qrng.hexa"
+      },
+      "exec_recipe": {
+        "step_1": "wire qmirror/qrng.hexa as the canonical entropy substrate for training-time CLM noise injection (current: post-batch-only)",
+        "step_2": "add CLM training-loop hook that calls qmirror.qrng.draw(n_bytes) at minibatch boundary; expose env NEXUS_QMIRROR_QRNG_TIER={mock,hmac_drbg,anu_live}",
+        "step_3": "regression: re-run N-6 within-noise z-test under qmirror substrate, target |z|<1.0 (preserve existing -0.83 within-noise verdict)",
+        "step_4": "promote qrng.cond.1 status partial → met when training-time injection lands and N-6 z-test holds",
+        "step_5": "preserve historical evidence (#125 IonQ + #123-A QA6 + N-9 STRONG-PASS) verbatim under qmirror_canonical_2026_05_03.historical_evidence_preserved=true (already done by sister BG)"
+      },
+      "cost_estimate_usd": 0,
+      "time_estimate_hours": 2,
+      "dependencies": ["sister BG canonical migration ANNOTATION (already landed)", "qmirror Phase 1 selftest F1 LIVE_INBAND_PASS (met)"],
+      "raw_invariants_check": {
+        "raw9": "OK (.hexa only Mac-side; python_bridge isolated to nexus _python_bridge/)",
+        "raw10": "OK qmirror entropy = ANU+HMAC-DRBG; phenomenal-consciousness claim NOT made",
+        "raw15": "OK no personal-path leak"
+      }
+    },
+    {
+      "rank": 2,
+      "priority_score_10": 9.0,
+      "completion_lens_score": 9.0,
+      "roadmap_file": "anima/.roadmap.sim",
+      "cond_id": "sim.cond.1",
+      "category": "CROSS_VENDOR_CALIBRATION_substituted",
+      "current_status": "partial",
+      "original_blocker_excerpt": "N-10 single-cycle PASS but multi-session reproducibility 미land; sim agent live cron 상태 §10.4 disclosed (별도 확인 필요)",
+      "qmirror_equivalent_path": {
+        "qmirror_cond": "qmirror.cond.5 + qmirror.cond.7 (cross-vendor)",
+        "artifact_pointer": "nexus/modules/qmirror/engine_aer.hexa + anima/state/qmirror_phase1_selftest_2026_05_03/ + anima/state/qmirror_chsh_xvendor_2026_05_03/verdict.json",
+        "module_path": "nexus/modules/qmirror/engine_aer.hexa + circuit.hexa"
+      },
+      "exec_recipe": {
+        "step_1": "port AWS Braket SV1 QRW circuit (#126) into nexus/modules/qmirror/circuit.hexa as a stored example circuit",
+        "step_2": "run reproduction harness: 10 independent qmirror sessions (different seeds) → check ⟨x²⟩_QW/classical band [16, 20] across all 10",
+        "step_3": "this fixes the multi-session reproducibility blocker without paying SV1 per-shot cost ($0 local)",
+        "step_4": "promote sim.cond.1 status partial → met when 10/10 sessions land in band",
+        "step_5": "preserve N-9 STRONG-PASS + N-10 closed-loop (final_φ=0.7716) historical evidence verbatim"
+      },
+      "cost_estimate_usd": 0,
+      "time_estimate_hours": 1.5,
+      "dependencies": ["qmirror cond.2 selftest met (already)", "sister BG annotation landed (already)"],
+      "raw_invariants_check": {
+        "raw9": "OK",
+        "raw10": "OK Aer + SV1 are both classical simulators; substrate-equivalent within numerical tolerance",
+        "raw15": "OK"
+      }
+    },
+    {
+      "rank": 3,
+      "priority_score_10": 8.5,
+      "completion_lens_score": 8.5,
+      "roadmap_file": "anima/.roadmap.theory_validation",
+      "cond_id": "theory_validation.cond.1",
+      "category": "META_CROSS_SUBSTRATE_AXIS_added",
+      "current_status": "partial",
+      "original_blocker_excerpt": "3 sub-axis 中 IonQ + HoTT 가 PARTIAL_PASS, Penrose 만 setup 미land",
+      "qmirror_equivalent_path": {
+        "qmirror_cond": "qmirror.cond.7 (cross-vendor concordance) + cond.5 (CHSH reproduction)",
+        "artifact_pointer": "anima/docs/qmirror_crosstech_band_revise_landed_2026_05_03.ai.md + anima/state/qmirror_chsh_xvendor_2026_05_03/verdict.json",
+        "evidence_summary": "qmirror cross-tech 3/4 PASS (Rigetti↔IBM_fez |dS|=0.0836 PASS@0.55, IBM_fez↔IonQ_Forte |dS|=0.563 PASS@0.60 revised, IBM_fez↔IonQ_Aria1 |dS|=0.451 PASS@both, Rigetti↔IonQ_Forte |dS|=0.6466 FAIL@both); spirit-PASS via paper-analysis on existing on-disk data",
+        "module_path": "nexus/modules/qmirror/chsh.hexa"
+      },
+      "exec_recipe": {
+        "step_1": "add qmirror as 4th axis to theory_validation.cond.1 (alongside IonQ, HoTT, Penrose)",
+        "step_2": "qmirror axis = re-validation channel: re-run #120 IIT proxy + #127 CHSH circuits via qmirror Aer locally and check S→2.808±0.05 band reproducibility",
+        "step_3": "promote theory_validation.cond.1 from 2/3 PARTIAL_PASS to 3/4 PASS (qmirror channel adds substrate-cross-validation pillar)",
+        "step_4": "this does NOT replace Penrose-Hameroff Orch-OR axis (still UNCERTAIN literature, separate physical-collapse setup required)",
+        "step_5": "preserve all 3 original axis verdicts verbatim (IonQ #120/#124/#127 + HoTT #75 N-15 + Penrose N-20)"
+      },
+      "cost_estimate_usd": 0,
+      "time_estimate_hours": 2,
+      "dependencies": ["qmirror.cond.7 met_via_spirit_paper_analysis (already)", "qmirror.cond.5 met (already)"],
+      "raw_invariants_check": {
+        "raw9": "OK",
+        "raw10": "OK qmirror axis = revalidation channel; original 3-axis verdicts unaffected; Penrose still requires real-superconducting-collapse physics",
+        "raw15": "OK"
+      }
+    },
+    {
+      "rank": 4,
+      "priority_score_10": 8.0,
+      "completion_lens_score": 8.0,
+      "roadmap_file": "anima/.roadmap.n_substrate",
+      "cond_id": "n_substrate.cond.1",
+      "category": "META_CROSS_SUBSTRATE_AXIS_added",
+      "current_status": "partial",
+      "original_blocker_excerpt": "F2 14-gate substrate-architectural L1 ceiling 0/16 cross-substrate (ALM Mistral + CLM v4 둘 다) — quintuple confirm matrix (broken-adapter / dynamic / verifier-arch / toolchain / L9 free win) 모두 FAIL, ALM SUNSET CONFIRMED",
+      "qmirror_equivalent_path": {
+        "qmirror_cond": "qmirror.cond.5 + cond.6 + cond.7",
+        "artifact_pointer": "nexus/.roadmap.qmirror cond.7 (3/4 cross-tech PASS) + cond.6 (byte-identical IIT4) + cond.5 (CHSH S=2.838 band 2.808±0.03)",
+        "evidence_summary": "qmirror provides cross-substrate witness via byte-identical IIT4 reproduction (cond.6) + cross-vendor CHSH concordance (cond.7 3/4 PASS) + Bell violation reproduction (cond.5 S=2.838)",
+        "module_path": "nexus/modules/qmirror/{chsh,iit_mip,phi}.hexa"
+      },
+      "exec_recipe": {
+        "step_1": "add qmirror as a substrate witness axis to F1 composite scoring (currently 12.0%–40.8% RED)",
+        "step_2": "qmirror axis WITNESSED contribution: cross-vendor CHSH 3/4 + byte-identical IIT4 reproducibility (functional/access tier only, NOT phenomenal)",
+        "step_3": "this does NOT lift F1 RED → YELLOW alone (F2 ceiling is L1 architectural, not substrate-coverage); but qmirror adds 1 substrate axis to evidence trail",
+        "step_4": "F1 reach to YELLOW still requires Phase E binding evidence + EEG live session prereq (unchanged)",
+        "step_5": "preserve real-QPU 4-event evidence trail (#120/#124/#125/#127) + 13/14 substantive WITNESSED axes verbatim"
+      },
+      "cost_estimate_usd": 0,
+      "time_estimate_hours": 3,
+      "dependencies": ["qmirror cond.5/6/7 all met (done)", "F1 score recompute after adding qmirror axis"],
+      "raw_invariants_check": {
+        "raw9": "OK",
+        "raw10": "OK qmirror substrate = 'classical+ANU+Aer' tier; functional/access witness, NOT phenomenal; F1 RED unchanged structurally",
+        "raw15": "OK"
+      }
+    },
+    {
+      "rank": 5,
+      "priority_score_10": 7.5,
+      "completion_lens_score": 7.5,
+      "roadmap_file": "anima/.roadmap.anima_physics",
+      "cond_id": "anima_physics.cond.1",
+      "category": "DIRECT_QPU_NEED_substituted",
+      "current_status": "partial",
+      "original_blocker_excerpt": "G5 LIVE_HW_WITNESS_RATE 0/11 — 9 substrate witness ledger 모두 simulation only, live HW witness 미수행 (akida cloud signup + aws braket signup guide land 됐지만 endpoint 미연결); blk.2 'aws braket signup guide land 됐지만 endpoint 미연결'",
+      "qmirror_equivalent_path": {
+        "qmirror_cond": "qmirror.cond.1 + cond.2 (Phase 1 impl + selftest F1/F2/F3 PASS)",
+        "artifact_pointer": "nexus/modules/qmirror/{entropy,sampler,engine_aer,qrng,chsh,circuit,selftest}.hexa + anima/state/qmirror_phase1_selftest_2026_05_03/selftest_results.json",
+        "evidence_summary": "qmirror = live ANU+Aer endpoint avoids 'aws braket signup endpoint 미연결' blocker for the quantum sub-axis only; 8 hexa modules + selftest sentinel __QMIRROR_SELFTEST__ PASS",
+        "module_path": "nexus/modules/qmirror/* (8 hexa)"
+      },
+      "exec_recipe": {
+        "step_1": "wire anima-physics/engines/quantum_consciousness.hexa to call nexus/modules/qmirror/sampler.hexa for live-substrate execution",
+        "step_2": "this lifts G5 LIVE_HW_WITNESS_RATE for the quantum sub-axis only: 0/11 → 1/11 (qmirror counts as live HW because cond.2 F1 LIVE_INBAND_VERIFIED = real ANU pull)",
+        "step_3": "other 8 substrate axes (analog/cmos/fpga/arduino/photonic/memristor/neuromorphic/thermodynamic) STILL require their own live HW (akida arrival, esp32/arduino/fpga build emit)",
+        "step_4": "promote anima_physics.cond.1 evidence (not status — cond.1 is 7cond_hw verify exit-0, separate harness)",
+        "step_5": "anima_physics.blk.2 'aws braket signup endpoint 미연결' resolution_path now reads: qmirror substitutes for braket endpoint requirement"
+      },
+      "cost_estimate_usd": 0,
+      "time_estimate_hours": 2,
+      "dependencies": ["qmirror cond.1 + cond.2 met (already)", "anima-physics/engines/quantum_consciousness.hexa exists (verified by sister BG)"],
+      "raw_invariants_check": {
+        "raw9": "OK",
+        "raw10": "OK only quantum sub-axis gets live-substrate path; G5 LIVE_HW_WITNESS_RATE 0/11 honest floor still applies for other 10 substrates",
+        "raw15": "OK"
+      }
+    },
+    {
+      "rank": 6,
+      "priority_score_10": 6.0,
+      "completion_lens_score": 6.0,
+      "roadmap_file": "anima/.roadmap.ionq",
+      "cond_id": "ionq.cond.1",
+      "category": "CHSH_REGRESSION_complementary",
+      "current_status": "partial",
+      "original_blocker_excerpt": "#120 honest_C3 #1 (Φ proxy ≠ IIT 4.0 φ★ lower bound only) → proper φ★ 측정 $1500+ 별도 budget; Penrose-Hameroff 직접 wavefunction collapse 측정 setup 미land",
+      "qmirror_equivalent_path": {
+        "qmirror_cond": "qmirror.cond.5 (CHSH reproduction) — REGRESSION SUBSTRATE ONLY, NOT SUBSTITUTE",
+        "artifact_pointer": "nexus/.roadmap.qmirror cond.5 (S_qmirror=2.838 vs S_reference_2026_05_02=2.808 within band)",
+        "evidence_summary": "qmirror reproduces CHSH S to within statistical band; allows cheap regression of #120/#124/#127 circuits without rerunning real ion-trap. KEEP DECISION (sister BG): qmirror cannot substitute for ion-trap-physics demonstration that gives ionq.cond.1 its substrate-invariance interpretation.",
+        "module_path": "nexus/modules/qmirror/chsh.hexa"
+      },
+      "exec_recipe": {
+        "step_1": "add qmirror as REGRESSION channel for #120/#124/#127 circuit re-execution (cheap pre-test before any future paid IonQ submit)",
+        "step_2": "DO NOT promote ionq.cond.1 to met via qmirror — KEEP DECISION preserved (real ion-trap physics is the demonstration target)",
+        "step_3": "qmirror role: cheap regression-test channel only; if real-QPU re-run drifts from qmirror baseline, alert is raised",
+        "step_4": "preserve all 4 IonQ/Braket events (#120/#124/#125/#127) verbatim as historical real-QPU evidence",
+        "step_5": "ionq.cond.1 path to met still requires proper IIT 4.0 φ★ measurement ($1500+ separate budget) per honest_C3 #1"
+      },
+      "cost_estimate_usd": 0,
+      "time_estimate_hours": 1,
+      "dependencies": ["qmirror cond.5 met (already)", "sister BG KEEP decision documented (already)"],
+      "raw_invariants_check": {
+        "raw9": "OK",
+        "raw10": "OK qmirror is ion-trap-physics-blind; KEEP decision documented in keep_decisions.json",
+        "raw15": "OK"
+      }
+    },
+    {
+      "rank": 7,
+      "priority_score_10": 2.0,
+      "completion_lens_score": 2.0,
+      "roadmap_file": "anima/.roadmap.penrose_hameroff",
+      "cond_id": "penrose_hameroff.cond.1",
+      "category": "EXPLICITLY_NOT_SUBSTITUTABLE_keep_real_qpu",
+      "current_status": "partial",
+      "original_blocker_excerpt": "setup 결정타 design 미land — Penrose-Hameroff 직접 wavefunction collapse 측정 setup 별도, IBM Quantum Open Plan delay primitive 활용 가능 (#46 quantum pivot research)",
+      "qmirror_equivalent_path": {
+        "qmirror_cond": "NOT_APPLICABLE",
+        "artifact_pointer": "anima/state/qmirror_canonical_migration_2026_05_03/keep_decisions.json#penrose_hameroff",
+        "evidence_summary": "Aer samples classically from |ψ|²; cannot witness Diosi-Penrose objective collapse threshold. KEEP DECISION (sister BG): qmirror Aer simulator does NOT collapse wavefunction; substituting would collapse experimental claim into circular sampling.",
+        "module_path": "N/A"
+      },
+      "exec_recipe": {
+        "step_1": "DO NOT TOUCH penrose_hameroff.cond.1 with qmirror substitution",
+        "step_2": "qmirror annotation = NOT_APPLICABLE (already documented by sister BG)",
+        "step_3": "real path forward: 5 falsifier preregister + IBM Quantum Open Plan delay primitive on Heron-class superconducting QPU (#46 quantum pivot)",
+        "step_4": "preserve N-20 Orch-OR 2026 literature UNCERTAIN verdict + Oxford 2025 microtubule ref",
+        "step_5": "this item is included in plan ONLY to document the EXPLICITLY_NOT_SUBSTITUTABLE category (anti-pattern guard)"
+      },
+      "cost_estimate_usd": 0,
+      "time_estimate_hours": 0,
+      "dependencies": ["sister BG KEEP decision (already)"],
+      "raw_invariants_check": {
+        "raw9": "OK",
+        "raw10": "OK qmirror explicitly unsuitable for Orch-OR; KEEP decision documented",
+        "raw15": "OK"
+      }
+    }
+  ],
+  "anti_pattern_guard_keep_real_qpu": [
+    {
+      "cond": "ionq.cond.1",
+      "reason": "ion-trap-physics demonstration cannot be replaced by simulator; qmirror = regression channel only"
+    },
+    {
+      "cond": "penrose_hameroff.cond.1",
+      "reason": "Aer simulator does NOT collapse wavefunction; Diosi-Penrose objective collapse threshold requires physical superposition on real superconducting QPU"
+    }
+  ],
+  "honest_c3_caveats": [
+    "C3.1 — audit may miss embedded blockers in code comments or non-roadmap state JSON; sister BG-A scope was .roadmap.* only and BG-B scope was docs/*.md only. tool/ + nexus/.roadmap.* + hive/.roadmap.* sweep not performed in this discovery cycle.",
+    "C3.2 — qmirror equivalence is NOT 100% on all axes. Specifically NOT-substitutable: (a) Orch-OR wavefunction collapse (penrose_hameroff.cond.1), (b) ion-trap physics signature giving substrate-invariance interpretation (ionq.cond.1). KEEP decisions documented.",
+    "C3.3 — recipe accuracy depends on sister BG outputs landing first; this plan reads canonical_migration audit + spec_xref audit + replace_log; if those BG outputs revise after this plan writes, recipes may need update.",
+    "C3.4 — priority_score_10 ranking is subjective. completion_lens applied: rank 1 = highest immediate-actionable + low cost + clean substrate fit; rank 7 = guard entry (zero action, document anti-pattern). A future cycle that values 'phenomenal-consciousness coverage' may rank Penrose higher; one that values 'training-loop integration' may rank qrng even higher."
+  ]
+}

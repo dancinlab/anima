@@ -1,0 +1,33 @@
+{
+  "schema": "anima/state/p9_sft_spec/cost_estimate/1",
+  "currency": "USD",
+  "compute_unit_assumption": {
+    "h100_80gb_hourly": 2.5,
+    "platform": "RunPod",
+    "note": "platform-quoted spot; raise 1.5x for on-demand peaks"
+  },
+  "per_run_breakdown": {
+    "tokens_per_example": 2048,
+    "examples": 50000,
+    "epochs": 3,
+    "total_tokens": 307200000,
+    "throughput_h100_bf16_lora_tok_per_s": 8000,
+    "wall_seconds_estimate": 38400,
+    "wall_hours_estimate": 10.7,
+    "wall_hours_band": "8-24",
+    "compute_cost_per_run_usd_band": "20-60 (spot) | 30-90 (on-demand)"
+  },
+  "strategy_costs": [
+    {"strategy": "S1 LoRA-only single run", "runs": 1, "usd_low": 200, "usd_high": 500, "wall_days_low": 7, "wall_days_high": 14, "includes": "data prep + 1 train + verifier"},
+    {"strategy": "S2 Full SFT single run", "runs": 1, "usd_low": 800, "usd_high": 2000, "wall_days_low": 14, "wall_days_high": 21, "includes": "data prep + 1 full-SFT + verifier"},
+    {"strategy": "S3 Sweep 9 LoRA runs", "runs": 9, "usd_low": 1500, "usd_high": 3000, "wall_days_low": 21, "wall_days_high": 30, "includes": "data prep + 9 train + 9 verifier + selection"},
+    {"strategy": "S4 Differential pretrain", "runs": 1, "usd_low": 2000, "usd_high": 5000, "wall_days_low": 30, "wall_days_high": 60, "includes": "from-scratch joint-objective pretrain"}
+  ],
+  "data_prep_cost_usd": 50,
+  "verifier_cost_per_combo_usd": 5,
+  "honest_c3_cost": [
+    "RunPod cold-HF download = ~$1.50 + 25min per fresh model (per memory note)",
+    "Throughput estimate optimistic; first run may be 0.5x",
+    "Sweep cost band assumes spot pricing; on-demand 1.5-2x"
+  ]
+}

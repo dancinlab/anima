@@ -1,0 +1,80 @@
+[mix] start ts=2026-05-05T02:38:25Z
+[mix] hf_token_pre_validate_present=True
+[token-probe] valid=True user=dancinlife
+[token-purge] token validated; keeping in env
+[mix] hf_token_post_validate_present=True
+[A] loaded 30000 anima samples
+[B1] loading MMLU auxiliary_train (n=5000) — fallback chain: cais/mmlu → lighteval/mmlu
+[fallback] trying dataset 'cais/mmlu'
+Generating test split:   0%|          | 0/14042 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 14042/14042 [00:00<00:00, 390275.11 examples/s]
+Generating validation split:   0%|          | 0/1531 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 1531/1531 [00:00<00:00, 155672.23 examples/s]
+Generating dev split:   0%|          | 0/285 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 285/285 [00:00<00:00, 51743.43 examples/s]
+Generating auxiliary_train split:   0%|          | 0/99842 [00:00<?, ? examples/s]Generating auxiliary_train split:  12%|█▏        | 12000/99842 [00:00<00:00, 106424.93 examples/s]Generating auxiliary_train split:  28%|██▊       | 28000/99842 [00:00<00:00, 127818.95 examples/s]Generating auxiliary_train split:  41%|████      | 41000/99842 [00:00<00:00, 123753.67 examples/s]Generating auxiliary_train split:  54%|█████▍    | 54000/99842 [00:00<00:00, 124476.08 examples/s]Generating auxiliary_train split:  79%|███████▉  | 79000/99842 [00:00<00:00, 138632.92 examples/s]Generating auxiliary_train split: 100%|██████████| 99842/99842 [00:00<00:00, 149851.94 examples/s]
+[B1] emitted 5000 MMLU 5-shot samples (source=cais/mmlu)
+[B2] loading mandarjoshi/trivia_qa rc.nocontext train (n=5000)
+[fallback] trying dataset 'mandarjoshi/trivia_qa'
+Generating train split:   0%|          | 0/138384 [00:00<?, ? examples/s]Generating train split:   7%|▋         | 9000/138384 [00:00<00:01, 70954.00 examples/s]Generating train split:  17%|█▋        | 23000/138384 [00:00<00:01, 102542.33 examples/s]Generating train split:  25%|██▌       | 35000/138384 [00:00<00:00, 103988.74 examples/s]Generating train split:  35%|███▍      | 48000/138384 [00:00<00:00, 109516.35 examples/s]Generating train split:  45%|████▍     | 62000/138384 [00:00<00:00, 115602.24 examples/s]Generating train split:  55%|█████▍    | 76000/138384 [00:00<00:00, 119058.57 examples/s]Generating train split:  68%|██████▊   | 94000/138384 [00:00<00:00, 115047.37 examples/s]Generating train split:  77%|███████▋  | 106000/138384 [00:00<00:00, 111472.65 examples/s]Generating train split:  87%|████████▋ | 120000/138384 [00:01<00:00, 115825.13 examples/s]Generating train split:  97%|█████████▋| 134000/138384 [00:01<00:00, 118508.67 examples/s]Generating train split: 100%|██████████| 138384/138384 [00:01<00:00, 112901.69 examples/s]
+Generating validation split:   0%|          | 0/17944 [00:00<?, ? examples/s]Generating validation split:  61%|██████▏   | 11000/17944 [00:00<00:00, 95631.35 examples/s]Generating validation split: 100%|██████████| 17944/17944 [00:00<00:00, 105339.71 examples/s]
+Generating test split:   0%|          | 0/17210 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 17210/17210 [00:00<00:00, 392167.79 examples/s]
+[B2] emitted 5000 TriviaQA 0-shot samples (source=mandarjoshi/trivia_qa)
+[B3] loading wikitext-103-raw-v1 (n=5000)
+[fallback] trying dataset 'Salesforce/wikitext'
+Generating test split:   0%|          | 0/4358 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 4358/4358 [00:00<00:00, 282284.63 examples/s]
+Generating train split:   0%|          | 0/1801350 [00:00<?, ? examples/s]Generating train split:   1%|▏         | 26000/1801350 [00:00<00:07, 245538.85 examples/s]Generating train split:   4%|▎         | 66000/1801350 [00:00<00:05, 333999.84 examples/s]Generating train split:   6%|▌         | 109000/1801350 [00:00<00:04, 371459.25 examples/s]Generating train split:   8%|▊         | 152000/1801350 [00:00<00:04, 389675.47 examples/s]Generating train split:  11%|█         | 194000/1801350 [00:00<00:04, 340215.85 examples/s]Generating train split:  13%|█▎        | 235000/1801350 [00:00<00:04, 360292.06 examples/s]Generating train split:  15%|█▌        | 278000/1801350 [00:00<00:04, 379591.39 examples/s]Generating train split:  18%|█▊        | 321000/1801350 [00:00<00:03, 392122.44 examples/s]Generating train split:  20%|██        | 364000/1801350 [00:00<00:03, 400617.99 examples/s]Generating train split:  23%|██▎       | 412000/1801350 [00:01<00:03, 365510.34 examples/s]Generating train split:  25%|██▌       | 455000/1801350 [00:01<00:03, 379305.55 examples/s]Generating train split:  28%|██▊       | 499000/1801350 [00:01<00:03, 392510.28 examples/s]Generating train split:  30%|███       | 542000/1801350 [00:01<00:03, 400671.44 examples/s]Generating train split:  33%|███▎      | 600000/1801350 [00:01<00:03, 355599.50 examples/s]Generating train split:  36%|███▌      | 643000/1801350 [00:01<00:03, 371290.26 examples/s]Generating train split:  38%|███▊      | 685000/1801350 [00:01<00:02, 381348.54 examples/s]Generating train split:  40%|████      | 728000/1801350 [00:01<00:02, 390195.45 examples/s]Generating train split:  43%|████▎     | 771000/1801350 [00:02<00:02, 397488.44 examples/s]Generating train split:  46%|████▌     | 822000/1801350 [00:02<00:02, 373394.62 examples/s]Generating train split:  48%|████▊     | 864000/1801350 [00:02<00:02, 382883.44 examples/s]Generating train split:  51%|█████▏    | 923675/1801350 [00:02<00:02, 350578.64 examples/s]Generating train split:  54%|█████▎    | 966675/1801350 [00:02<00:02, 368141.22 examples/s]Generating train split:  56%|█████▌    | 1011675/1801350 [00:02<00:02, 386531.37 examples/s]Generating train split:  59%|█████▊    | 1054675/1801350 [00:02<00:01, 395314.49 examples/s]Generating train split:  62%|██████▏   | 1115675/1801350 [00:02<00:01, 395613.64 examples/s]Generating train split:  64%|██████▍   | 1157675/1801350 [00:03<00:01, 399317.86 examples/s]Generating train split:  67%|██████▋   | 1198675/1801350 [00:03<00:01, 401018.73 examples/s]Generating train split:  69%|██████▉   | 1241675/1801350 [00:03<00:01, 403844.47 examples/s]Generating train split:  72%|███████▏  | 1292675/1801350 [00:03<00:01, 432976.99 examples/s]Generating train split:  75%|███████▌  | 1359675/1801350 [00:03<00:00, 497519.56 examples/s]Generating train split:  79%|███████▉  | 1428675/1801350 [00:03<00:00, 480528.31 examples/s]Generating train split:  83%|████████▎ | 1498675/1801350 [00:03<00:00, 455466.32 examples/s]Generating train split:  86%|████████▋ | 1557675/1801350 [00:03<00:00, 432297.49 examples/s]Generating train split:  89%|████████▉ | 1607675/1801350 [00:04<00:00, 445898.92 examples/s]Generating train split:  92%|█████████▏| 1654675/1801350 [00:04<00:00, 449255.78 examples/s]Generating train split:  95%|█████████▌| 1715675/1801350 [00:04<00:00, 419485.10 examples/s]Generating train split:  98%|█████████▊| 1766675/1801350 [00:04<00:00, 437313.13 examples/s]Generating train split: 100%|██████████| 1801350/1801350 [00:04<00:00, 401546.85 examples/s]
+Generating validation split:   0%|          | 0/3760 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 3760/3760 [00:00<00:00, 271560.13 examples/s]
+[B3] emitted 5000 Wikipedia continuation samples (source=Salesforce/wikitext)
+[C1] loading Open-Orca/OpenOrca (n=2500)
+Generating train split: 0 examples [00:00, ? examples/s]Generating train split: 994896 examples [00:04, 231612.34 examples/s]Generating train split: 994896 examples [00:16, 231612.34 examples/s]Generating train split: 2942029 examples [00:18, 154346.57 examples/s]Generating train split: 4233923 examples [00:19, 247796.33 examples/s]Generating train split: 4233923 examples [00:19, 218697.28 examples/s]
+[C1] emitted 2500 OpenOrca samples
+[C2] loading chat-template dataset (n=2500) — fallback: lmsys → OpenHermes
+[C2] WARN lmsys gated/unavailable: Dataset 'lmsys/lmsys-chat-1m' is a gated dataset on the Hub. Visit the dataset page at https://huggingface.co/datasets/lmsys/lmsys-chat-1m to ask for access.; falling back to teknium/OpenHermes-2.5
+Generating train split:   0%|          | 0/1001551 [00:00<?, ? examples/s]Generating train split: 100%|██████████| 1001551/1001551 [00:24<00:00, 40099.39 examples/s]Generating train split: 100%|██████████| 1001551/1001551 [00:25<00:00, 39893.31 examples/s]
+[C2] emitted 2500 OpenHermes fallback samples
+[mix] wrote 50000 rows to /workspace/clm_v4_lora/corpus/sft_mix_2026_05_05.jsonl
+[mix] slice counts: {
+  "B1_mmlu": 5000,
+  "A_anima_axis": 30000,
+  "B2_triviaqa": 5000,
+  "B3_wikipedia": 5000,
+  "C2_sharegpt_style": 2500,
+  "C1_openorca": 2500
+}
+[mix] source counts: {
+  "mmlu_auxiliary_train_5shot[cais/mmlu]": 5000,
+  "llama_augment_fallback_from_src_5": 927,
+  "llama_augment_fallback_from_src_2": 1782,
+  "triviaqa_train_0shot[mandarjoshi/trivia_qa]": 5000,
+  "synthetic_philosophical_template_en": 1790,
+  "tribe_v2_vendored_README.md": 370,
+  "n22_paradigm_v11_doc_n_22_levin_xenobot_outreach_prep_2026_05_01.md": 619,
+  "wikitext_103_raw_continuation[Salesforce/wikitext]": 5000,
+  "tribe_v2_vendored_lahner2024bold.py": 1137,
+  "openhermes_2_5_chat": 2500,
+  "sharegpt_hf_anon8231489123": 5986,
+  "openorca_chat": 2500,
+  "anima_corpus_alm70b_paper_ref": 5551,
+  "tribe_v2_vendored_algonauts2025.py": 1197,
+  "n22_paradigm_v11_doc_paradigm_v11_stack_20260426.md": 382,
+  "llama_augment_fallback_from_src_3": 593,
+  "tribe_v2_vendored_lebel2023bold.py": 1183,
+  "p8_ledger_m4_0p800_template_augmented": 1797,
+  "n22_paradigm_v11_doc_n_22_levin_monitor_schedule_2026_05_02.md": 204,
+  "llama_augment_fallback_from_src_4": 932,
+  "tribe_v2_vendored_ANIMA_INTEGRATION_PROPOSAL.md": 430,
+  "synthetic_philosophical_template_ko": 1156,
+  "tribe_v2_vendored_inventory.json": 352,
+  "tribe_v2_vendored___init__.py": 75,
+  "tribe_v2_vendored_ANIMA_INTEGRATION_PROPOSAL_ADDENDUM_2026_05_02_EN.md": 747,
+  "anima_corpus_corpus_universe_extended_thin_promoted": 305,
+  "alm_r14_metaref_paradigm_v11": 729,
+  "n22_paradigm_v11_doc_n_22_levin_send_results_2026_05_02.md": 206,
+  "n22_paradigm_v11_doc_paradigm_v11_strong_axis_filter_20260426.md": 300,
+  "n22_paradigm_v11_doc_paradigm_v11_axis96_family_decoupling_20260426.md": 243,
+  "tribe_v2_vendored_SUMMARY_KR.md": 224,
+  "anima_corpus_corpus_consciousness_v1": 143,
+  "n22_paradigm_v11_doc_paradigm_exhaustion_v11_20260426.md": 320,
+  "tribe_v2_vendored_wen2017.py": 294,
+  "p8_ledger_m4_0p800_direct": 21,
+  "anima_corpus_corpus_universe_extended": 5
+}
+[mix] summary -> /workspace/clm_v4_lora/corpus/sft_mix_2026_05_05.jsonl.summary.json

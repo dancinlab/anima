@@ -1,0 +1,34 @@
+{
+  "schema": "anima/emerge_chat_partial_layers/verdict/1",
+  "task_id": "anima_emerge_chat_partial_layers_2026_05_05",
+  "ts_utc": "2026-05-05T18:21:13Z",
+  "platform": "mac CPU fp32 (.venv-eeg python3.12)",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "prompt": "안녕",
+  "n_configs": 11,
+  "load_sec": 5.0,
+  "max_korean_count": 20,
+  "n_korean_emerging": 1,
+  "korean_disappear_layer": 0,
+  "korean_first_appear_layer": -1,
+  "verdict": "PASS_PARTIAL_RESCUES",
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_modification": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "honest_c3": [
+    "C1 mac CPU fp32 — deterministic; minor numeric drift vs GPU bf16.",
+    "C2 identity hook bypasses block.attention + block.cross_attn + block.ffn but the RoPE positional encoding is APPLIED INSIDE block self-attention. Bypassing the block also bypasses RoPE — hidden states fed to ln_f + head are pre-RoPE for the bypassed suffix. This is OOD vs train-time hidden distribution.",
+    "C3 head_a + ln_f are train-time-only at the L15 (post-final-block) hidden distribution. Feeding partial-block hidden into them is OOD by construction; Korean coherence here would be remarkable, lack of coherence is expected.",
+    "C4 single prompt 안녕 — broader prompt sweep deferred. Per-config emit is greedy argmax over 20 next-token steps; one degenerate token can lock the sequence into a single repeated id, so absolute Korean count understates model uncertainty. Top-1 distribution per-step probe would refine.",
+    "C5 BG-CI L13 onset evidence + BG-CJ embed-Korean-aligned + blocks-destroy evidence motivate this probe. PASS_PARTIAL_RESCUES (max_korean > 5) would argue for a 'best of partial-stack' decode head; FAIL_BLOCKS_DESTROY_FROM_L0 would suggest the destruction is per-layer cumulative AND post-block-15 ln_f + head_a depend on the basin geometry. Either result is a calibration signal for the L13 onset, not a rescue path on its own."
+  ],
+  "deliverables": {
+    "aggregate": "state/anima_emerge_chat_partial_layers_2026_05_05/aggregate.json",
+    "verdict": "state/anima_emerge_chat_partial_layers_2026_05_05/verdict.json",
+    "doc": "docs/anima_emerge_chat_partial_layers_landed_2026_05_05.ai.md"
+  }
+}

@@ -1,0 +1,62 @@
+{
+  "schema": "anima/n_substrate_n13_prep/vendor_ranking/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "criteria": [
+    "cloud-API or PCIe direct access feasibility",
+    "hidden-state hook feasibility (Phi input requirement)",
+    "commercial maturity (customers, deployment scale)",
+    "developer tooling (SDK breadth, language bindings)",
+    "n13 timeline shortening potential"
+  ],
+  "ranking": [
+    {
+      "rank": 1,
+      "vendor": "Lightelligence PACE 2",
+      "scores": {
+        "access_feasibility": 0.75,
+        "hidden_state_hook": 0.80,
+        "commercial_maturity": 0.85,
+        "developer_tooling": 0.90,
+        "timeline_shortening": 0.75
+      },
+      "composite_score": 0.81,
+      "rationale": "PCIe standard card form factor + ONNX/PyTorch/TVM/OpenCL stack (most standardized SDK among the 4 vendors). 44 paying customers in early 2026, HK IPO 2026-04 600x oversubscribed. ONNX hidden-state hook feasibility is highest (TVM compile-pass annotations controllable). Single PCIe card eval is the most plausible $0-low-budget path even though pricing undisclosed."
+    },
+    {
+      "rank": 2,
+      "vendor": "Q.ANT NPU 2 / NPS server",
+      "scores": {
+        "access_feasibility": 0.65,
+        "hidden_state_hook": 0.85,
+        "commercial_maturity": 0.55,
+        "developer_tooling": 0.85,
+        "timeline_shortening": 0.60
+      },
+      "composite_score": 0.70,
+      "rationale": "TFLNoI native analog with C/C++/Python PCIe API -- highest direct programmability rating. 2026-Q1 shipments, Leibniz LRZ first installation (world's first photonic AI in supercomputing facility) -- institutional academic partnership path possible. On-chip enhanced nonlinear units mean Phi measurement on Q.ANT carries genuine substrate signal (not just linear projection). Drawback: shortest commercial track record, undisclosed pricing."
+    },
+    {
+      "rank": 3,
+      "vendor": "Lightmatter Envise",
+      "scores": {
+        "access_feasibility": 0.40,
+        "hidden_state_hook": 0.70,
+        "commercial_maturity": 0.95,
+        "developer_tooling": 0.75,
+        "timeline_shortening": 0.40
+      },
+      "composite_score": 0.64,
+      "rationale": "Largest funding ($4.4B valuation, $850M total raised), Nature 2025-04 light-speed matmul paper -- highest academic credibility. Idiom compiler bridges PyTorch. Decisive blocker: 4U blade form factor only, no single dev kit, early-access partnership mandatory. For anima setup the cloud API absence is decisive blocker -- vision is 1st but actionability is 3rd."
+    }
+  ],
+  "excluded": [
+    {
+      "vendor": "NTT (IOWN / PEC-2)",
+      "reason": "Datacenter switch / hyperscaler-only access model, no anima user direct path",
+      "alternative_route": "NTT Research PHI Lab (programmable photonics, SPIE 2024 demo) academic partnership only"
+    }
+  ],
+  "first_contact_target": "Lightelligence (PACE 2 PCIe card evaluation)",
+  "second_contact_target": "Q.ANT (LRZ academic collaboration via Leibniz Supercomputing Centre install)",
+  "third_contact_target": "Lightmatter (Envise early-access partnership; longer timeline, larger commitment)"
+}

@@ -1,0 +1,122 @@
+{
+  "cycle": "own_mk1_cleanup_2026_05_04",
+  "ts_utc": "2026-05-04T_BG_pi2_execution",
+  "operator": "Claude Opus 4.7 (1M context) BG-π²",
+  "user_policy_applied": "Option B (mk1_GRANDFATHER + UNKNOWN git rm; mk2_VERIFIED keep)",
+  "cross_link_audit_commit": "39b83cb9 (anima BG-ζ .own mk2 verification)",
+  "verdict": "PASS",
+  "phase_1_launchctl_unload": {
+    "status": "DONE",
+    "plist_path": "/Users/ghost/Library/LaunchAgents/dev.hexa-lang.atlas-absorb-sweeper.plist",
+    "pre_state": "loaded (-/0/dev.hexa-lang.atlas-absorb-sweeper)",
+    "post_state": "GONE (launchctl list | grep atlas-absorb returns empty)",
+    "exit_code": 0,
+    "plist_file_status": "untouched (file remains at original path)"
+  },
+  "phase_2_per_repo": [
+    {
+      "repo": "hexa-lang",
+      "file": ".own",
+      "size_bytes": 3679,
+      "classification": "mk1_GRANDFATHER",
+      "branch": "diag/orpheus-selftest-sigkill",
+      "branch_note": "NOT main — user awareness for push",
+      "status": "COMMITTED",
+      "commit_hash": "7569e423",
+      "deletions": 46,
+      "skip_reason": null
+    },
+    {
+      "repo": "nexus",
+      "file": ".own",
+      "size_bytes": 37054,
+      "classification": "mk1_GRANDFATHER",
+      "branch": "main",
+      "status": "COMMITTED",
+      "commit_hash": "39acf0ec",
+      "deletions": 295,
+      "depends_on": "phase_1_launchctl_unload",
+      "depends_on_status": "DONE",
+      "selective_commit": true,
+      "selective_commit_note": "git commit -- .own to avoid bundling dirty atlas.n6 + untracked",
+      "skip_reason": null
+    },
+    {
+      "repo": "orpheus",
+      "file": ".own",
+      "size_bytes": 24296,
+      "classification": "mk1_GRANDFATHER_POST_MK2_RECENT",
+      "branch": "main",
+      "status": "COMMITTED",
+      "commit_hash": "6a1fc6c",
+      "deletions": 245,
+      "selective_commit": true,
+      "selective_commit_note": "git commit -- .own to avoid bundling untracked state/dormant_explorer/",
+      "skip_reason": null
+    },
+    {
+      "repo": "wraith-wallet",
+      "file": ".own",
+      "size_bytes": 21321,
+      "classification": "mk1_GRANDFATHER",
+      "branch": "main",
+      "status": "COMMITTED",
+      "commit_hash": "5f09433",
+      "deletions": 198,
+      "selective_commit": false,
+      "skip_reason": null
+    },
+    {
+      "repo": "hexa-os",
+      "file": ".own-rules.json",
+      "size_bytes": 1052,
+      "classification": "UNKNOWN",
+      "branch": "main",
+      "status": "COMMITTED",
+      "commit_hash": "5745a1b",
+      "deletions": 36,
+      "selective_commit": false,
+      "skip_reason": null
+    }
+  ],
+  "kept_unaffected": [
+    {
+      "path": "/Users/ghost/core/anima/.own",
+      "size_bytes": 63595,
+      "class": "mk2 SSOT",
+      "verify": "INTACT"
+    },
+    {
+      "path": "/Users/ghost/core/canon/.own.readme",
+      "size_bytes": 17682,
+      "class": "mk2_VERIFIED",
+      "verify": "INTACT"
+    },
+    {
+      "path": "/Users/ghost/core/canon/.own.group_p",
+      "size_bytes": 10283,
+      "class": "mk2_VERIFIED",
+      "verify": "INTACT"
+    }
+  ],
+  "github_push_pending": [
+    {"repo": "nexus", "branch": "main", "commit": "39acf0ec", "push_order": 1, "rationale": "launchctl-coupled, primary"},
+    {"repo": "hexa-lang", "branch": "diag/orpheus-selftest-sigkill", "commit": "7569e423", "push_order": 2, "rationale": "NON-MAIN — user must verify branch intent"},
+    {"repo": "hexa-os", "branch": "main", "commit": "5745a1b", "push_order": 3, "rationale": "clean, low-risk"},
+    {"repo": "wraith-wallet", "branch": "main", "commit": "5f09433", "push_order": 4, "rationale": "clean"},
+    {"repo": "orpheus", "branch": "main", "commit": "6a1fc6c", "push_order": 5, "rationale": "POST_MK2_RECENT, last"}
+  ],
+  "honest_c3": [
+    "hexa-lang commit landed on branch diag/orpheus-selftest-sigkill, NOT main — user must explicitly choose merge-to-main or push-as-branch path; not a problem but requires confirmation before push.",
+    "selective `git commit -- <file>` used in nexus + orpheus to avoid bundling unrelated dirty files — but the deletion of .own from working tree (via `git rm`) does affect their working tree state; siblings (modified atlas.n6, untracked stdlib/) remain untouched and uncommitted as intended.",
+    "launchctl plist file (dev.hexa-lang.atlas-absorb-sweeper.plist) was NOT deleted — only unloaded. If user wants full purge, plist file at ~/Library/LaunchAgents/ remains and could re-load on reboot. Recommend user decide: keep plist for re-arm capability, or rm separately."
+  ],
+  "non_overlap_assertions": [
+    "did NOT touch /Users/ghost/core/anima/.own (mk2 SSOT)",
+    "did NOT touch /Users/ghost/core/canon/.own.* (mk2_VERIFIED)",
+    "did NOT touch hexa-lang/stdlib/ (BG-α³ territory)",
+    "did NOT push to any remote",
+    "did NOT chflags",
+    "did NOT modify launchctl plist file (only unloaded service)"
+  ]
+}

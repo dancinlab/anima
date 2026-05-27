@@ -1,0 +1,12 @@
+$ hexa verify --expr ln 151936 11.931214658529285
+verify --expr ln(151936.0)=11.9312
+  calc   = 11.9312  ≈ expected 11.9312  (|Δ|=0.0 ≤ ε=1e-9)
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class recompute, TECS-L n6-rep Tier2)
+
+# ─────────────────────────────────────────────────────────────────────────
+# atlas fold (g69 auto-absorb) — hexa atlas register --from-verify ln 151936 11.931214658529285
+#   tier   = 🟢 SUPPORTED-NUMERICAL  (delegated via `hexa verify --expr`)
+#   atlas  = folded @F verified-ln-num → compiler/atlas/embedded.gen.hexa (binary-builtin SSOT)
+# ln calculator landed: hexa-lang PR #1128 (compiler/atlas/calc_dispatch.hexa::calc_is_float_fn
+#   + tool/verify_cli.hexa::_ln / _recompute_float dispatch).
+# atlas node persisted: hexa-lang PR #1131 (@F verified-ln-num on origin/main).

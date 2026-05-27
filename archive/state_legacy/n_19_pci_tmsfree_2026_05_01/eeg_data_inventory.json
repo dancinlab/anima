@@ -1,0 +1,81 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-19 PCI TMS-free EXEC",
+  "scope": "Apr 28 D-day 16ch OpenBCI Cyton+Daisy resting-state baseline session inventory",
+  "session_dirs": {
+    "recordings_sessions": "/Users/ghost/core/anima/recordings/sessions/",
+    "state_eeg_recordings": "/Users/ghost/core/anima/state/eeg_recordings/"
+  },
+  "epochs_identified": [
+    {
+      "epoch_id": "baseline_resting_60s_20260428",
+      "condition": "wake-resting (no eye state explicitly tagged)",
+      "duration_s": 60,
+      "fs_hz": 125,
+      "n_channels": 16,
+      "n_samples": 7491,
+      "raw_npy_sha256": "b64010436db580361bf3641dd87ae2d106ac45304bcd9dd35892e51edf866a09",
+      "filtered_npy_sha256": "a1889072b2a11560be12851e24713da407559b6f76184bfea0ec33c3419143d2",
+      "ica_npy_sha256": "62b1ad19ae45631dde34859e0ac424009f0d868ba4370b398e1878fc7d8ac0ba"
+    },
+    {
+      "epoch_id": "baseline_resting_low_emi_20260428T113016Z",
+      "condition": "wake-resting low-EMI environment",
+      "duration_s": 60,
+      "fs_hz": 125,
+      "n_channels": 16,
+      "n_samples": 7493,
+      "raw_npy_sha256": "6261ca437f505a607e55aef74208851f0645c7b1403fdf05eefb8b53f2e65607",
+      "filtered_npy_sha256": "bad1b217fa1733d846fa798e5f70b4cb66df0065f311b637c7c442b160752490",
+      "ica_npy_sha256": "83f3672259e30e8f4f6e3d3e90f7858ce35141b0180d1b4375ea750c4598aba9"
+    },
+    {
+      "epoch_id": "baseline_resting_post_battery_20260428T132612Z",
+      "condition": "wake-resting post-cognitive-battery",
+      "duration_s": 60,
+      "fs_hz": 125,
+      "n_channels": 16,
+      "n_samples": 7490,
+      "raw_npy_sha256": "c15f577610e454c3c17b40a8d3610c120f8afdccb15820fcde6635957032bf18",
+      "filtered_npy_sha256": "b77fe75e3a74686408adafd1fdeb58f1094323766356d370269e9936cfe2e85d",
+      "ica_npy_sha256": "a90b46fde70e5bf071b350a0b49a78a3d61b3a41f3442c363a77cd7c5dfa45b0",
+      "alt_ica_sha256": "aa06abce5fc6f5f5123701ceec1cc50442a01b9ec4a8bbc2f92b9ba1781b0c08"
+    },
+    {
+      "epoch_id": "resting_eyes_open_20260428T112816Z",
+      "condition": "wake-eyes-open (explicitly tagged)",
+      "duration_s": 60,
+      "fs_hz": 125,
+      "n_channels": 16,
+      "raw_only": true,
+      "note": "no derived filter/ica products in audit yet; eyes-open canonical"
+    },
+    {
+      "epoch_id": "20260428T115006Z_daily_life_5min_1",
+      "condition": "wake-daily-life 5min walk",
+      "duration_s": 300,
+      "fs_hz": 125,
+      "n_channels": 16,
+      "n_samples": 6252,
+      "raw_npy_sha256": "9fcbfb63e9673ed31b3138aa9978e9d0c291c0db0bf6cfb3eea327f20de2087f",
+      "ica_npy_sha256": "3a636347f3d5570301425cba4490ffb1b7cf9ef340f90636fbedaa2754d4a387"
+    }
+  ],
+  "epoch_count": 5,
+  "all_wake_n1_user": true,
+  "no_propofol_contrast": true,
+  "no_sleep_contrast": true,
+  "honest_c3": [
+    "Apr 28 capture used Cyton+Daisy at 125 Hz; the eLife 2025 dFC-fluidity recipe nominally needs 0.55 s windows = ~69 samples/window (still ok for fluidity calculation but borderline for Hilbert phase stability)",
+    "Eyes-open vs eyes-closed contrast not isolated in current audit JSONLs; only 'baseline_resting' label is consistent across runs",
+    "Daily_life_5min file has 6252 samples (50 s) despite 300s nominal label -> source data truncation, not full 5-min segment"
+  ],
+  "ref_state_files": [
+    "state/clm_eeg_lz76_audit/2026-04-28_lz76.jsonl",
+    "state/clm_eeg_lz76_audit/2026-05-01_chunked_real.jsonl",
+    "state/clm_eeg_pe_audit/2026-04-28_pe.jsonl",
+    "state/clm_eeg_hjorth_audit/2026-04-28_hjorth.jsonl",
+    "state/clm_eeg_berger_audit/2026-04-28_berger.jsonl",
+    "state/clm_eeg_gamma_theta_ratio_audit/2026-04-28_gamma_theta.jsonl"
+  ]
+}

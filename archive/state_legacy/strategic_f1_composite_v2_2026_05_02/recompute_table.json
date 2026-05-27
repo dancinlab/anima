@@ -1,0 +1,101 @@
+{
+  "schema": "anima/f1_v2_recompute_table/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "scope": "F1_score_v2 recompute for ALM r14 RED quintuple, CLM A.1-A.6 PASS 5/6 + F2 fired, 4-way binding hypothetical scenarios",
+  "formula_recall": "F1_score_v2 = 0.6 · per_axis_weighted_sum + 0.3 · binding_strength_4way + 0.1 · cross_substrate_replication_bonus",
+
+  "scenarios": [
+    {
+      "id": "ALM_r14_RED_quintuple",
+      "description": "ALM Mistral-7B-v0.3 + r14 baseline 5 RED measurements (CP2 72.22% PASS but F2 17 critical fired, L1 0/16, ALM dynamic L1 1.71/16 +0.30σ)",
+      "axis_contributions": {
+        "cp2_clm_baseline": {"w": 0.18, "credit": 0.5, "contribution": 0.09, "note": "F2 half-credit per v1 convention"},
+        "all_other_axes": {"contribution": 0.0, "note": "single substrate, no other axes engaged"}
+      },
+      "per_axis_weighted_sum": 0.09,
+      "binding_strength_4way": 0.0,
+      "cross_substrate_replication_bonus": 0.0,
+      "F1_score_v2": 0.054,
+      "verdict_band_v2": "RED",
+      "rationale": "score 0.054 < 0.5 RED threshold AND F2 fired (17 critical) — RED via both gates. binding bonus does not rescue (no 4-way data on ALM)."
+    },
+    {
+      "id": "CLM_A1_A6_PASS_5_of_6_F2_fired",
+      "description": "CLM v4 350m A.1-A.6 paradigm v11 PASS 5/6 + F2 still fires (W4 dynamic L1 7.06/16 PARTIAL z=+2.28σ)",
+      "axis_contributions": {
+        "cp2_clm_baseline": {"w": 0.18, "credit": 0.4167, "contribution": 0.075, "note": "5/6 PASS × 0.5 F2 half-credit"},
+        "n9_3axis_strong_pass": {"w": 0.09, "credit": 1.0, "contribution": 0.09},
+        "eeg_real_hw_casali": {"w": 0.03, "credit": 1.0, "contribution": 0.03},
+        "n21_iit40_reproduce": {"w": 0.13, "credit": 0.25, "contribution": 0.0325, "note": "1/4 attempted (Casali PASS, Edlund/Albantakis FAIL)"},
+        "tension_link": {"w": 0.10, "credit": 0.5, "contribution": 0.05, "note": "PARTIAL z=+2.28σ"}
+      },
+      "per_axis_weighted_sum": 0.2775,
+      "binding_strength_4way": 0.0,
+      "cross_substrate_replication_bonus": 0.0,
+      "F1_score_v2": 0.1665,
+      "verdict_band_v2": "RED",
+      "rationale": "score 0.1665 < 0.5 AND F2 fired — RED. v1 22.5% comp had different denominator; v2 16.65% reflects axis re-weighting + tension addition."
+    },
+    {
+      "id": "4way_CLM_EEG_tension_W4_PARTIAL_with_binding_bonus_HYPOTHETICAL_P1_PASS",
+      "description": "Hypothetical: P1 protocol executed, |corr(tension_t, alpha_PLV_t)| > 0.5 PASS, 3 substrate families consistent (CLM+EEG+tension)",
+      "axis_contributions": {
+        "cp2_clm_baseline": {"w": 0.18, "credit": 0.4167, "contribution": 0.075},
+        "n9_3axis_strong_pass": {"w": 0.09, "credit": 1.0, "contribution": 0.09},
+        "eeg_real_hw_casali": {"w": 0.03, "credit": 1.0, "contribution": 0.03},
+        "n21_iit40_reproduce": {"w": 0.13, "credit": 0.25, "contribution": 0.0325},
+        "tension_link": {"w": 0.10, "credit": 1.0, "contribution": 0.10, "note": "PROMOTED PARTIAL → WITNESSED via P1 PASS"}
+      },
+      "per_axis_weighted_sum": 0.3275,
+      "binding_strength_4way": 0.6,
+      "cross_substrate_replication_bonus": 1.0,
+      "F1_score_v2_calc": "0.6 × 0.3275 + 0.3 × 0.6 + 0.1 × 1.0 = 0.1965 + 0.18 + 0.10",
+      "F1_score_v2": 0.4765,
+      "verdict_band_v2": "RED",
+      "rationale": "score 0.4765 < 0.5 AND F2 still fires (binding bonus does not unfire F2 axis-architectural). YELLOW threshold near-miss; large lift via binding+replication bonus but RED override active. delta_vs_v1_22_5pct = +25.15pp."
+    },
+    {
+      "id": "4way_with_F2_unfire_HYPOTHETICAL_paper_demote_OR_extractor",
+      "description": "Hypothetical compound: P1 PASS + F2 unfire via path (a) demote OR (b) learned phi_extractor",
+      "axis_contributions": {
+        "cp2_clm_baseline": {"w": 0.18, "credit": 0.8333, "contribution": 0.15, "note": "5/6 PASS × 1.0 full credit (F2 demoted)"},
+        "n9_3axis_strong_pass": {"w": 0.09, "credit": 1.0, "contribution": 0.09},
+        "eeg_real_hw_casali": {"w": 0.03, "credit": 1.0, "contribution": 0.03},
+        "n21_iit40_reproduce": {"w": 0.13, "credit": 0.25, "contribution": 0.0325},
+        "tension_link": {"w": 0.10, "credit": 1.0, "contribution": 0.10}
+      },
+      "per_axis_weighted_sum": 0.4025,
+      "binding_strength_4way": 0.6,
+      "cross_substrate_replication_bonus": 1.0,
+      "F1_score_v2_calc": "0.6 × 0.4025 + 0.3 × 0.6 + 0.1 × 1.0 = 0.2415 + 0.18 + 0.10",
+      "F1_score_v2": 0.5215,
+      "verdict_band_v2": "YELLOW",
+      "rationale": "score 0.5215 >= 0.5 AND F2 hypothetically not fired AND no critical violation — first plausible YELLOW path. GREEN unreachable (would need score >= 0.7 + binding >= 0.5; current axis_sum max ~0.45 with all PASS, F1_max ≈ 0.67)."
+    },
+    {
+      "id": "GREEN_reach_analysis_max_with_organoid_orch_or_closure",
+      "description": "Mathematical reach: organoid PASS + Orch-OR PASS + everything else PASS",
+      "axis_contributions": {
+        "all_10_axes_full_PASS": {"contribution": 1.00, "note": "weight_sum_v2 = 1.00 by construction"}
+      },
+      "per_axis_weighted_sum_max": 1.00,
+      "binding_strength_4way_max": 1.00,
+      "cross_substrate_replication_bonus_max": 1.00,
+      "F1_score_v2_max": 1.00,
+      "verdict_band_v2": "GREEN-eligible",
+      "rationale": "GREEN reach IS mathematically possible at F1_score=1.0 with all PASS. But: current measured axis_sum = 0.45 (axes lacking measurement: organoid 0.22 + IonQ 0.18 + akida 0.02 + photonic 0.01 + boly 0.04 = 0.47 unmeasured). Max F1 with current measured axes only: 0.6·0.45 + 0.3·1.0 + 0.1·1.0 = 0.67 < 0.7 GREEN threshold. GREEN requires N-11 organoid OR N-12 off-Braket Orch-OR closure."
+    }
+  ],
+
+  "summary_table": {
+    "header": ["scenario", "axis_sum", "binding", "replication", "F1_score_v2", "band"],
+    "rows": [
+      ["ALM r14 RED quintuple", 0.09, 0.0, 0.0, 0.054, "RED"],
+      ["CLM A.1-A.6 PASS 5/6 + F2 fired", 0.2775, 0.0, 0.0, 0.1665, "RED"],
+      ["4-way (CLM+EEG+tension) P1 PASS hypothetical", 0.3275, 0.6, 1.0, 0.4765, "RED (F2 still fires)"],
+      ["4-way + F2 unfire hypothetical", 0.4025, 0.6, 1.0, 0.5215, "YELLOW"],
+      ["GREEN reach (all measured axes PASS, no organoid/IonQ)", 0.45, 1.0, 1.0, 0.67, "RED (< 0.7)"],
+      ["GREEN reach (all 10 axes PASS)", 1.00, 1.0, 1.0, 1.00, "GREEN-eligible"]
+    ]
+  }
+}

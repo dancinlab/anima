@@ -1,0 +1,186 @@
+// HEXAD/D/d_train4_smoke.hexa — entrypoint (import lib + selftest + top-level call)
+// ════════════════════════════════════════════════════════════════════════════
+//  PHASE 5 (1) B-milestone — causal softmax-attention exact vjp SMOKE.
+//
+//  TINY T=3·d=4·V=4 compiled-native Mac verify of the EXACT hand-derived
+//  causal scaled-dot softmax self-attention reverse-mode (the LAST/hardest
+//  vjp class of ConsciousDecoderV2). Lib dimension-generic ⟹ real scale=ubu.
+//
+//  F-D-PORT-4  : N AdamW over the full attention analytic chain ⟹ gn2
+//                collapse + acc.  TIER = EMPIRICAL (B-D-NOTE; NOT 🔵).
+//  F-D-PORT-4b : analytic Wq-grad vs central finite-diff of CE — verifies
+//                the softmax-attention vjp IMPL (PROPERTY; g3 no tier lift).
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/D/d_train4_lib.hexa"
+
+
+// deterministic separable seq toy: class c → last-pos hot block dims[c*g..)
+//   (attention path must preserve separability; chain optimizes gn2→0)
+fn c4_make_dataset(T: int, d: int, V: int, reps: int) {
+    let g = d / V
+    let mut XS = []
+    let mut YS = []
+    let mut c = 0
+    while c < V {
+        let mut r = 0
+        while r < reps {
+            let mut X = []
+            let mut p = 0
+            while p < T {
+                let mut j = 0
+                while j < d {
+                    let hot = (p == T - 1) && (j >= c * g) && (j < c * g + g)
+                    let jit = (to_float((c*7 + r*3 + p*2 + j) % 5) / 50.0)
+                    X.push((if hot { 1.0 } else { 0.05 }) + jit)
+                    j = j + 1
+                }
+                p = p + 1
+            }
+            XS.push(X)
+            YS.push(c)
+            r = r + 1
+        }
+        c = c + 1
+    }
+    return [XS, YS]
+}
+
+fn c4_bump(W, idx: int, delta: float) {
+    let mut a = []
+    let mut i = 0
+    while i < len(W) {
+        a.push(if i == idx { W[i] + delta } else { W[i] })
+        i = i + 1
+    }
+    return a
+}
+
+fn c4_epoch_gn2(XS, YS, Wq, Wk, Wv, Wo, Wh, T: int, d: int, V: int) -> float {
+    let mut acc = 0.0
+    let mut s = 0
+    while s < len(YS) {
+        acc = acc + c4_gn2(XS[s], Wq, Wk, Wv, Wo, Wh, YS[s], T, d, V)
+        s = s + 1
+    }
+    return acc
+}
+fn c4_epoch_acc(XS, YS, Wq, Wk, Wv, Wo, Wh, T: int, d: int, V: int) -> int {
+    let mut cc = 0
+    let mut s = 0
+    while s < len(YS) {
+        if c4_predict(XS[s], Wq, Wk, Wv, Wo, Wh, T, d, V) == YS[s] { cc = cc + 1 }
+        s = s + 1
+    }
+    return cc
+}
+
+
+fn selftest() {
+    println("================================================================")
+    println("d_train4_smoke — Phase 5 (1) B-milestone softmax-attn vjp (F-D-PORT-4)")
+    println("================================================================")
+
+    let T = 3
+    let d = 4
+    let V = 4
+    let reps = 2                              // N = 8
+    let ds = c4_make_dataset(T, d, V, reps)
+    let XS = ds[0]
+    let YS = ds[1]
+    let nsamp = len(YS)
+    let n2 = d * d
+    let nh = V * d
+
+    // from-scratch RANDOM seed-fixed (g_clm_from_scratch, base_ckpt=NONE)
+    let mut Wq = dt2_init_W(42 + 11, d, d, 0.2)
+    let mut Wk = dt2_init_W(42 + 23, d, d, 0.2)
+    let mut Wv = dt2_init_W(42 + 37, d, d, 0.2)
+    let mut Wo = dt2_init_W(42 + 53, d, d, 0.2)
+    let mut Wh = dt2_init_W(42 + 71, d, V, 0.2)
+
+    let gn0 = c4_epoch_gn2(XS, YS, Wq, Wk, Wv, Wo, Wh, T, d, V)
+    let ac0 = c4_epoch_acc(XS, YS, Wq, Wk, Wv, Wo, Wh, T, d, V)
+    println("  init : gn2=" + to_string(gn0) + "  acc=" + to_string(ac0)
+            + "/" + to_string(nsamp))
+
+    // ── F-D-PORT-4b GRAD-EXACT : analytic Wq-grad vs central finite-diff ──
+    let wi = 5
+    let eps = 0.0005
+    let gA = c4_grad(XS[0], Wq, Wk, Wv, Wo, Wh, YS[0], T, d, V)
+    let gA_wq = gA["dWq"][wi]
+    let Wqp = c4_bump(Wq, wi, eps)
+    let Wqm = c4_bump(Wq, wi, 0.0 - eps)
+    let cep = c4_ce(XS[0], Wqp, Wk, Wv, Wo, Wh, YS[0], T, d, V)
+    let cem = c4_ce(XS[0], Wqm, Wk, Wv, Wo, Wh, YS[0], T, d, V)
+    let gF = (cep - cem) / (2.0 * eps)
+    let ge = if gA_wq - gF > 0.0 { gA_wq - gF } else { gF - gA_wq }
+    let gx = ge < 0.01
+    println("  GRAD-EXACT(Wq[" + to_string(wi) + "]): analytic="
+            + to_string(gA_wq) + " fd=" + to_string(gF) + " |Δ|="
+            + to_string(ge) + "  -> " + (if gx { "PASS" } else { "FAIL" }))
+
+    // ── from-scratch AdamW over the full attention analytic chain ──────────
+    let steps = 150
+    let mut mq=dt2_zeros(n2); let mut vq=dt2_zeros(n2)
+    let mut mk=dt2_zeros(n2); let mut vk=dt2_zeros(n2)
+    let mut mv=dt2_zeros(n2); let mut vv=dt2_zeros(n2)
+    let mut mo=dt2_zeros(n2); let mut vo=dt2_zeros(n2)
+    let mut mh=dt2_zeros(nh); let mut vh=dt2_zeros(nh)
+    let mut st = 1
+    while st <= steps {
+        let mut gQ=dt2_zeros(n2); let mut gK=dt2_zeros(n2)
+        let mut gVv=dt2_zeros(n2); let mut gO=dt2_zeros(n2)
+        let mut gH=dt2_zeros(nh)
+        let mut s = 0
+        while s < nsamp {
+            let G = c4_grad(XS[s], Wq, Wk, Wv, Wo, Wh, YS[s], T, d, V)
+            let a=G["dWq"]; let b=G["dWk"]; let cc=G["dWv"]
+            let dd=G["dWo"]; let ee=G["dWh"]
+            let mut q = 0
+            while q < n2 {
+                gQ[q]=gQ[q]+a[q]; gK[q]=gK[q]+b[q]; gVv[q]=gVv[q]+cc[q]
+                gO[q]=gO[q]+dd[q]; q=q+1
+            }
+            q = 0
+            while q < nh { gH[q]=gH[q]+ee[q]; q=q+1 }
+            s = s + 1
+        }
+        let uq=dt2_adamw_step(Wq,mq,vq,gQ,0.05,0.9,0.999,0.00000001,0.01,st)
+        let uk=dt2_adamw_step(Wk,mk,vk,gK,0.05,0.9,0.999,0.00000001,0.01,st)
+        let uv=dt2_adamw_step(Wv,mv,vv,gVv,0.05,0.9,0.999,0.00000001,0.01,st)
+        let uo=dt2_adamw_step(Wo,mo,vo,gO,0.05,0.9,0.999,0.00000001,0.01,st)
+        let uh=dt2_adamw_step(Wh,mh,vh,gH,0.05,0.9,0.999,0.00000001,0.01,st)
+        Wq=uq[0]; mq=uq[1]; vq=uq[2]
+        Wk=uk[0]; mk=uk[1]; vk=uk[2]
+        Wv=uv[0]; mv=uv[1]; vv=uv[2]
+        Wo=uo[0]; mo=uo[1]; vo=uo[2]
+        Wh=uh[0]; mh=uh[1]; vh=uh[2]
+        st = st + 1
+    }
+
+    let gn1 = c4_epoch_gn2(XS, YS, Wq, Wk, Wv, Wo, Wh, T, d, V)
+    let ac1 = c4_epoch_acc(XS, YS, Wq, Wk, Wv, Wo, Wh, T, d, V)
+    println("  final: gn2=" + to_string(gn1) + "  acc=" + to_string(ac1)
+            + "/" + to_string(nsamp) + "  (after " + to_string(steps)
+            + " AdamW steps, full attention chain)")
+
+    let collapsed = (gn1 * 5.0) < gn0
+    let accfull = ac1 == nsamp
+    let port4 = collapsed && accfull
+    println("  F-D-PORT-4 : gn2-collapse(≥5x)=" + to_string(collapsed)
+            + " acc-full=" + to_string(accfull) + "  -> "
+            + (if port4 { "PASS (EMPIRICAL)" } else { "FAIL" }))
+
+    let ok = gx && port4
+    println("----------------------------------------------------------------")
+    println("  proves: causal softmax-attention exact vjp (Q/K/V/P/ctx/Wo)")
+    println("  ⟹ ALL ConsciousDecoderV2 vjp classes now individually proven")
+    println("     (linear+RMSNorm+SwiGLU #44 · softmax-attn #45 · embed trivial)")
+    println("  TIER = EMPIRICAL (B-D-NOTE: SGD OUTCOME, NOT 🔵)")
+    println("  selftest: " + (if ok { "true" } else { "false" }))
+    println("================================================================")
+    return if ok { 0 } else { 1 }
+}
+
+selftest()

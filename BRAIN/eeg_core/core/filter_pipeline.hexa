@@ -1,0 +1,318 @@
+// anima-eeg-core/tool/modules/_core/filter_pipeline.hexa
+//
+// PURPOSE
+//   Phase 1 _core/ module #2 — scipy.signal pipeline:
+//     notch 60Hz + bandpass 0.5–50Hz + (optional) ICA.
+//
+// API (module-internal contract)
+//   _core_filter_apply_kv(npy_in: str, npy_out: str, fs: float,
+//                          notch: float, lo: float, hi: float, ica: bool) -> str
+//     returns kv-block:
+//       schema=anima-eeg-core/_core/filter_pipeline/1
+//       fs=<float>
+//       notch_freq=<float>
+//       bandpass_lo=<float>
+//       bandpass_hi=<float>
+//       ica_applied=<true|false>
+//       n_channels=<int>
+//       n_samples=<int>
+//       rms_before=<float>
+//       rms_after=<float>
+//       sha256_in=<hex>
+//       sha256_out=<hex>
+//       verdict=PASS|FAIL
+//
+// CLI
+//   hexa run filter_pipeline.hexa --selftest
+//   hexa run filter_pipeline.hexa --apply --in <p.npy> --out <q.npy> --fs 125
+//
+
+let SCHEMA       = "anima-eeg-core/_core/filter_pipeline/1"
+let HELPER_PATH  = "/tmp/anima_eeg_core_filter_pipeline_helper.py"
+let VENV_PYTHON  = ".venv-eeg/bin/python"
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _kv_lookup(body: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = body.split("\n")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _sh_quote(s: string) -> string {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+// ─── helper python emitter ──────────────────────────────────────────────
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("import argparse, hashlib, json, os, sys\n")
+    parts.push("import numpy as np\n")
+    parts.push("from scipy.signal import iirnotch, butter, filtfilt\n\n")
+
+    parts.push("def emit(k, v): print(f'{k}={v}')\n\n")
+
+    parts.push("def sha256_file(path):\n")
+    parts.push("    h = hashlib.sha256()\n")
+    parts.push("    with open(path, 'rb') as f:\n")
+    parts.push("        for chunk in iter(lambda: f.read(65536), b''):\n")
+    parts.push("            h.update(chunk)\n")
+    parts.push("    return h.hexdigest()\n\n")
+
+    parts.push("def apply_notch(data, fs, freq, q=30.0):\n")
+    parts.push("    b, a = iirnotch(w0=freq, Q=q, fs=fs)\n")
+    parts.push("    return filtfilt(b, a, data, axis=-1)\n\n")
+
+    parts.push("def apply_bandpass(data, fs, lo, hi, order=4):\n")
+    parts.push("    nyq = 0.5 * fs\n")
+    parts.push("    b, a = butter(order, [lo/nyq, hi/nyq], btype='band')\n")
+    parts.push("    return filtfilt(b, a, data, axis=-1)\n\n")
+
+    parts.push("def apply_ica_simple(data, n_components=None):\n")
+    parts.push("    # Lightweight surrogate ICA: PCA-based whitening (sklearn-free).\n")
+    parts.push("    X = data - data.mean(axis=1, keepdims=True)\n")
+    parts.push("    cov = np.cov(X)\n")
+    parts.push("    w, V = np.linalg.eigh(cov)\n")
+    parts.push("    eps = 1e-9\n")
+    parts.push("    W = np.diag(1.0/np.sqrt(w + eps)) @ V.T\n")
+    parts.push("    return W @ X\n\n")
+
+    parts.push("def cmd_apply(args):\n")
+    parts.push("    if not os.path.exists(args.npy_in):\n")
+    parts.push("        emit('verdict','FAIL'); emit('reason','input-missing'); sys.exit(2)\n")
+    parts.push("    sha_in = sha256_file(args.npy_in)\n")
+    parts.push("    arr = np.load(args.npy_in).astype(np.float64)\n")
+    parts.push("    if arr.ndim != 2:\n")
+    parts.push("        emit('verdict','FAIL'); emit('reason',f'ndim={arr.ndim}'); sys.exit(3)\n")
+    parts.push("    rms_before = float(np.sqrt(np.mean(arr**2)))\n")
+    parts.push("    fs = float(args.fs)\n")
+    parts.push("    out = arr\n")
+    parts.push("    if args.notch > 0:\n")
+    parts.push("        out = apply_notch(out, fs, args.notch)\n")
+    parts.push("    if args.lo > 0 and args.hi > 0:\n")
+    parts.push("        out = apply_bandpass(out, fs, args.lo, args.hi)\n")
+    parts.push("    ica_applied = False\n")
+    parts.push("    if args.ica:\n")
+    parts.push("        out = apply_ica_simple(out)\n")
+    parts.push("        ica_applied = True\n")
+    parts.push("    rms_after = float(np.sqrt(np.mean(out**2)))\n")
+    parts.push("    os.makedirs(os.path.dirname(os.path.abspath(args.npy_out)) or '.', exist_ok=True)\n")
+    parts.push("    np.save(args.npy_out, out.astype(np.float32))\n")
+    parts.push("    sha_out = sha256_file(args.npy_out)\n")
+    parts.push("    emit('schema','" + SCHEMA + "')\n")
+    parts.push("    emit('fs', fs)\n")
+    parts.push("    emit('notch_freq', args.notch)\n")
+    parts.push("    emit('bandpass_lo', args.lo)\n")
+    parts.push("    emit('bandpass_hi', args.hi)\n")
+    parts.push("    emit('ica_applied', 'true' if ica_applied else 'false')\n")
+    parts.push("    emit('ica_method', 'pca-whitening' if ica_applied else 'none')\n")
+    parts.push("    emit('n_channels', int(arr.shape[0]))\n")
+    parts.push("    emit('n_samples',  int(arr.shape[1]))\n")
+    parts.push("    emit('rms_before', rms_before)\n")
+    parts.push("    emit('rms_after',  rms_after)\n")
+    parts.push("    emit('sha256_in',  sha_in)\n")
+    parts.push("    emit('sha256_out', sha_out)\n")
+    parts.push("    emit('verdict','PASS')\n\n")
+
+    parts.push("def cmd_selftest(args):\n")
+    parts.push("    out_dir = '/tmp/anima_eeg_core_filter_pipeline_selftest'\n")
+    parts.push("    os.makedirs(out_dir, exist_ok=True)\n")
+    parts.push("    n_ch = 16\n")
+    parts.push("    fs = 125.0\n")
+    parts.push("    cols = int(fs * 4)  # 4 sec\n")
+    parts.push("    rng = np.random.default_rng(20260428)\n")
+    parts.push("    t = np.arange(cols)/fs\n")
+    parts.push("    # Build signal: 10Hz + 60Hz mains + noise (must drop after notch+bp)\n")
+    parts.push("    data = np.zeros((n_ch, cols), dtype=np.float64)\n")
+    parts.push("    for k in range(n_ch):\n")
+    parts.push("        data[k] = (np.sin(2*np.pi*10*t) +\n")
+    parts.push("                   0.8*np.sin(2*np.pi*60*t) +\n")
+    parts.push("                   0.3*rng.standard_normal(cols))\n")
+    parts.push("    npy_in  = os.path.join(out_dir, 'in.npy')\n")
+    parts.push("    npy_out = os.path.join(out_dir, 'out.npy')\n")
+    parts.push("    np.save(npy_in, data.astype(np.float32))\n")
+    parts.push("    class A: pass\n")
+    parts.push("    a = A(); a.npy_in=npy_in; a.npy_out=npy_out; a.fs=fs\n")
+    parts.push("    a.notch=60.0; a.lo=0.5; a.hi=50.0; a.ica=False\n")
+    parts.push("    cmd_apply(a)\n")
+    parts.push("    # 60Hz energy must drop sharply\n")
+    parts.push("    raw_x = np.load(npy_in).astype(np.float64)\n")
+    parts.push("    flt_x = np.load(npy_out).astype(np.float64)\n")
+    parts.push("    def power_at(x, freq, fs):\n")
+    parts.push("        n = x.shape[1]\n")
+    parts.push("        f = np.fft.rfftfreq(n, 1/fs)\n")
+    parts.push("        X = np.abs(np.fft.rfft(x, axis=1))\n")
+    parts.push("        idx = np.argmin(np.abs(f - freq))\n")
+    parts.push("        return float(np.mean(X[:, idx]))\n")
+    parts.push("    p60_in  = power_at(raw_x, 60, fs)\n")
+    parts.push("    p60_out = power_at(flt_x, 60, fs)\n")
+    parts.push("    p10_in  = power_at(raw_x, 10, fs)\n")
+    parts.push("    p10_out = power_at(flt_x, 10, fs)\n")
+    parts.push("    emit('p60_in',  p60_in)\n")
+    parts.push("    emit('p60_out', p60_out)\n")
+    parts.push("    emit('p10_in',  p10_in)\n")
+    parts.push("    emit('p10_out', p10_out)\n")
+    parts.push("    emit('p60_attenuation_db', float(20*np.log10((p60_in+1e-9)/(p60_out+1e-9))))\n")
+    parts.push("    emit('p10_preserved_ratio', float(p10_out/(p10_in+1e-9)))\n")
+    parts.push("    emit('selftest','ok')\n\n")
+
+    parts.push("def main():\n")
+    parts.push("    p = argparse.ArgumentParser()\n")
+    parts.push("    sub = p.add_subparsers(dest='cmd', required=True)\n")
+    parts.push("    sub.add_parser('selftest')\n")
+    parts.push("    c = sub.add_parser('apply')\n")
+    parts.push("    c.add_argument('--in',  dest='npy_in',  required=True)\n")
+    parts.push("    c.add_argument('--out', dest='npy_out', required=True)\n")
+    parts.push("    c.add_argument('--fs',    type=float, default=125.0)\n")
+    parts.push("    c.add_argument('--notch', type=float, default=60.0)\n")
+    parts.push("    c.add_argument('--lo',    type=float, default=0.5)\n")
+    parts.push("    c.add_argument('--hi',    type=float, default=50.0)\n")
+    parts.push("    c.add_argument('--ica',   action='store_true')\n")
+    parts.push("    args = p.parse_args()\n")
+    parts.push("    if args.cmd == 'selftest': cmd_selftest(args)\n")
+    parts.push("    elif args.cmd == 'apply': cmd_apply(args)\n\n")
+
+    parts.push("if __name__ == '__main__': main()\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _run_helper(args: string) -> array {
+    let cmd = VENV_PYTHON + " " + HELPER_PATH + " " + args
+    let r = exec_with_status(cmd)
+    return [to_string(r[0]).trim(), to_int(r[1])]
+}
+
+// ─── public-ish API ────────────────────────────────────────────────────
+
+fn _core_filter_apply_kv(npy_in: string, npy_out: string, fs: float,
+                          notch: float, lo: float, hi: float, ica: bool) -> string {
+    _write_helper()
+    let mut a = "apply --in " + _sh_quote(npy_in)
+    a = a + " --out " + _sh_quote(npy_out)
+    a = a + " --fs "    + to_string(fs)
+    a = a + " --notch " + to_string(notch)
+    a = a + " --lo "    + to_string(lo)
+    a = a + " --hi "    + to_string(hi)
+    if ica { a = a + " --ica" }
+    let r = _run_helper(a)
+    return r[0]
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path { if a.ends_with("/exe") { is_path = true } }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run filter_pipeline.hexa --selftest")
+    eprintln("       hexa run filter_pipeline.hexa --apply --in <p> --out <q> [--fs 125] [--notch 60] [--lo 0.5] [--hi 50] [--ica]")
+}
+
+fn _to_float(s: string) -> float {
+    return to_float(s)
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut apply_mode = false
+    let mut npy_in  = ""
+    let mut npy_out = ""
+    let mut fs: float    = 125.0
+    let mut notch: float = 60.0
+    let mut lo: float    = 0.5
+    let mut hi: float    = 50.0
+    let mut ica = false
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--apply"    { apply_mode = true; i = i + 1; continue }
+        if a == "--ica"      { ica = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        if a == "--in"    { npy_in  = av[i+1]; i = i + 2; continue }
+        if a == "--out"   { npy_out = av[i+1]; i = i + 2; continue }
+        if a == "--fs"    { fs    = _to_float(av[i+1]); i = i + 2; continue }
+        if a == "--notch" { notch = _to_float(av[i+1]); i = i + 2; continue }
+        if a == "--lo"    { lo    = _to_float(av[i+1]); i = i + 2; continue }
+        if a == "--hi"    { hi    = _to_float(av[i+1]); i = i + 2; continue }
+        eprintln("unknown arg: " + a); _print_usage(); exit(2)
+    }
+
+    if !selftest && !apply_mode {
+        eprintln("ABORT: need --selftest or --apply")
+        _print_usage(); exit(2)
+    }
+
+    _write_helper()
+
+    if selftest {
+        println("== _core filter_pipeline selftest ==")
+        let r = _run_helper("selftest")
+        let body = r[0]
+        let rc   = r[1]
+        println(body)
+        if rc != 0 { eprintln("helper rc=" + to_string(rc)); exit(1) }
+        let mut pass = 0
+        let mut fail = 0
+        let t1 = assert_true(_kv_lookup(body, "selftest") == "ok", "selftest=ok")
+        if t1 { pass = pass + 1 } else { fail = fail + 1 }
+        let t2 = assert_true(_kv_lookup(body, "schema") == SCHEMA, "schema=" + SCHEMA)
+        if t2 { pass = pass + 1 } else { fail = fail + 1 }
+        let t3 = assert_true(_kv_lookup(body, "verdict") == "PASS", "verdict=PASS")
+        if t3 { pass = pass + 1 } else { fail = fail + 1 }
+        // 60Hz must be attenuated by ≥ 20dB
+        let att_db = to_float(_kv_lookup(body, "p60_attenuation_db"))
+        let t4 = assert_true(att_db >= 20.0, "60Hz attenuation_db>=20  (got " + to_string(att_db) + ")")
+        if t4 { pass = pass + 1 } else { fail = fail + 1 }
+        // 10Hz signal must be preserved (≥ 0.5)
+        let preserved = to_float(_kv_lookup(body, "p10_preserved_ratio"))
+        let t5 = assert_true(preserved >= 0.5, "10Hz preserved>=0.5  (got " + to_string(preserved) + ")")
+        if t5 { pass = pass + 1 } else { fail = fail + 1 }
+        println("")
+        println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+        if fail != 0 { exit(1) }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    // apply_mode
+    let body = _core_filter_apply_kv(npy_in, npy_out, fs, notch, lo, hi, ica)
+    println(body)
+    let v = _kv_lookup(body, "verdict")
+    if v != "PASS" { exit(1) }
+    exit(0)
+}

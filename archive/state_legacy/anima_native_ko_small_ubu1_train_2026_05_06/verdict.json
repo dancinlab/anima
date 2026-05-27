@@ -1,0 +1,94 @@
+{
+  "spec": "F-anima-native-ko-small-1",
+  "ts": "2026-05-06T20:59:37",
+  "ts_run": "20260506_205612",
+  "host": "ubu1",
+  "device": "cuda",
+  "config": {
+    "vocab": 256,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.2,
+    "batch": 16,
+    "grad_accum": 4,
+    "lr": 0.0003,
+    "warmup": 500,
+    "steps": 10000
+  },
+  "model": {
+    "n_params": 18031872,
+    "run_dir": "/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612",
+    "final_ckpt": "/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt"
+  },
+  "corpus": {
+    "path": "/home/aiden/core/anima/state/anima_ko_corpus_assembly_2026_05_06/corpus_ko_heavy.txt",
+    "size_bytes": 246678043,
+    "size_mb": 235.25
+  },
+  "eval_progression": {
+    "1000": {
+      "avg_hangul": 0.5933658933658934,
+      "deg_rate": 0.5,
+      "own_18_pass_count": 3
+    },
+    "3000": {
+      "avg_hangul": 0.6093526299408653,
+      "deg_rate": 0.0,
+      "own_18_pass_count": 3
+    },
+    "5000": {
+      "avg_hangul": 0.6719039130803837,
+      "deg_rate": 0.16666666666666666,
+      "own_18_pass_count": 3
+    },
+    "7500": {
+      "avg_hangul": 0.6778322440087147,
+      "deg_rate": 0.0,
+      "own_18_pass_count": 3
+    },
+    "10000": {
+      "avg_hangul": 0.6871735935203428,
+      "deg_rate": 0.3333333333333333,
+      "own_18_pass_count": 3
+    }
+  },
+  "final": {
+    "avg_hangul_ratio": 0.6871735935203428,
+    "deg_rate": 0.3333333333333333,
+    "own_18_per_prompt": {
+      "안녕하세요": {
+        "avg_hangul": 0.625,
+        "any_coherent": true,
+        "avg_tform": 0.85,
+        "C1_1_hangul": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "all_pass": true
+      },
+      "한국어 가능?": {
+        "avg_hangul": 0.713,
+        "any_coherent": true,
+        "avg_tform": 1.0,
+        "C1_1_hangul": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "all_pass": true
+      },
+      "사용자: 안녕하세요\n도우미:": {
+        "avg_hangul": 0.723,
+        "any_coherent": true,
+        "avg_tform": 0.85,
+        "C1_1_hangul": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "all_pass": true
+      }
+    },
+    "own_18_pass_count": 3
+  },
+  "verdict": "SIMPLE_STACK_PASS",
+  "f_anima_native_ko_small_1": "PASS",
+  "wall_time_s": 196.5
+}

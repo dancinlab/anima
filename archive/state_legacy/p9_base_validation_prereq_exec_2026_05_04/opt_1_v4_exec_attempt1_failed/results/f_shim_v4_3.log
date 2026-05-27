@@ -1,0 +1,8 @@
+=== f_shim_v4_3_smoketest_result ===
+{
+  "f_shim_v4_3": "FAIL",
+  "finite_forward": "unknown",
+  "shape": null,
+  "err": "ValueError: Unrecognized model in /workspace/p9_v4_exec/output_v4. Should have a `model_type` key in its config.json.",
+  "trace": "Traceback (most recent call last):\n  File \"<stdin>\", line 7, in <module>\n  File \"/usr/local/lib/python3.11/dist-packages/transformers/models/auto/auto_factory.py\", line 329, in from_pretrained\n    config, kwargs = AutoConfig.from_pretrained(\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/dist-packages/transformers/models/auto/configuration_auto.py\", line 419, in from_pretrained\n    raise ValueError(\nValueError: Unrecognized model in /workspace/p9_v4_exec/output_v4. Should have a `model_type` key in its config.json.\n"
+}

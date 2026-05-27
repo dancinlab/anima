@@ -1,0 +1,125 @@
+{
+  "schema": "anima/p9_paradigm_j_50k/verdict/1",
+  "generated_at": "2026-05-03T23:15:00Z",
+  "agent": "p9_paradigm_j_50k_harvester",
+  "verdict": "FAIL_J",
+  "verdict_reason_code": "CUDA_OOM_AT_STEP_0_NO_TRAINING_OCCURRED",
+  "summary": "Sentinel-50k Paradigm J production run on ubu1 RTX 5070 crashed at step 0 with torch.OutOfMemoryError during base CLM v4 checkpoint load. Watchdog (PID 2151732) waited 70 minutes for GPU (300+ poll attempts), saw 11758 MiB free at 13:53:04 UTC, launched training (PID 3100347), training crashed 4 seconds later at 13:53:08 UTC. Zero training steps executed. Zero savepoints written. Zero HF mirror artifacts pushed. Verdict file (this) and trajectory file never produced by training script (no completion path reached).",
+  "process_status": {
+    "training_pid_ubu1": 3100347,
+    "training_pid_alive_at_harvest": false,
+    "watchdog_pid_ubu1": 2151732,
+    "watchdog_pid_alive_at_harvest": false,
+    "watchdog_exit_status": "clean (logged 'TRAIN LAUNCHED' then exited per design)",
+    "watchdog_respawn_logic": "NONE — single-shot launcher per launch_status.json line 9",
+    "respawn_attempts": 0,
+    "manual_retry_attempts": 0
+  },
+  "crash_evidence": {
+    "log_path_ubu1": "/tmp/p9_paradigm_j_50k_out/launch.log",
+    "crash_timestamp_utc": "2026-05-03T13:53:08Z",
+    "crash_step": 0,
+    "crash_phase": "checkpoint_load (line 178: torch.load(CLM_CKPT, map_location=device, weights_only=False))",
+    "exception_class": "torch.OutOfMemoryError",
+    "exception_message": "CUDA out of memory. Tried to allocate 20.00 MiB. GPU 0 has a total capacity of 11.50 GiB of which 18.19 MiB is free. Process 3100322 has 5.90 GiB memory in use. Including non-PyTorch memory, this process has 5.55 GiB memory in use.",
+    "interfering_pid": 3100322,
+    "interfering_pid_identity": "UNKNOWN at harvest time (process gone, no tag captured)",
+    "successful_setup_steps": [
+      "torch=2.11.0+cu128 cuda=True device=cuda imported",
+      "GPU detected: NVIDIA GeForce RTX 5070 mem_total=11.50GiB",
+      "tokenizer loaded vocab=64000",
+      "decoder built params=477,648,512"
+    ],
+    "failed_step": "torch.load(CLM_CKPT) — base CLM v4 350M state_dict allocation"
+  },
+  "artifacts_produced": {
+    "trajectory_json": null,
+    "verdict_json_from_training_script": null,
+    "savepoints_count_disk": 0,
+    "savepoints_expected": 5,
+    "savepoints_paths": [],
+    "hf_mirror_repos_pushed": [],
+    "hf_mirror_repos_expected": [
+      "dancinlab/clm-v4-paradigm-j-50k-step-5k",
+      "dancinlab/clm-v4-paradigm-j-50k-step-10k",
+      "dancinlab/clm-v4-paradigm-j-50k-step-25k",
+      "dancinlab/clm-v4-paradigm-j-50k-step-50k",
+      "dancinlab/clm-v4-paradigm-j-50k-final"
+    ],
+    "hf_api_query_at_harvest": "GET /api/models?author=dancinlab&search=paradigm-j → []"
+  },
+  "falsifier_outcomes": {
+    "F1_BLEU1_holdout500": {"status": "VACUOUS_FAIL", "value": null, "reason": "training never produced model checkpoint to evaluate"},
+    "F2_phi_star_trajectory_final": {"status": "VACUOUS_FAIL", "value": null, "reason": "no φ★ probe ever fired (probes scheduled every 500 steps, never reached)"},
+    "F3_tension_MSE_final": {"status": "VACUOUS_FAIL", "value": null, "reason": "no tension MSE recorded"},
+    "F4_BOLD_r": {"status": "NOT_APPLICABLE", "value": null, "reason": "γ_BOLD=0.0 by design (BOLD blocked); not part of this run's falsifier set"},
+    "F_J_FEP_loss_KL": {"status": "VACUOUS_FAIL", "value": null, "reason": "no L_J=γ_FE·F probe ever computed; J-VAE encoder/decoder built but never executed"},
+    "F_J_FEP_loss_recon": {"status": "VACUOUS_FAIL", "value": null, "reason": "same as KL — no decoder forward pass occurred"},
+    "F_J2_posterior_collapse_sigma_mean": {"status": "VACUOUS_FAIL", "value": null, "reason": "no σ_q recorded (sweet-spot transfer at K_FE=192 d/4 ratio remains untested at 50K scale)"}
+  },
+  "verdict_label_per_hierarchy": {
+    "label": "FAIL_J",
+    "rationale": "Per spec: SUCCESS_J requires F1≥Phase1.6 AND F2≥5.0 AND F3<0.1 AND F-J converged. PARTIAL_J requires 1-2 falsifiers PASS. FAIL_J = all falsifiers fail OR F-J diverged. With ALL falsifiers vacuously failing (no data produced), this is unambiguously FAIL_J.",
+    "falsifiers_passed": 0,
+    "falsifiers_failed": 6,
+    "falsifiers_not_applicable": 1
+  },
+  "config_intended": {
+    "n_steps": 50000,
+    "batch": 4,
+    "grad_acc": 8,
+    "lr": 1e-4,
+    "lora_r": 128,
+    "lora_alpha": 128,
+    "alpha_curriculum": "12.0 (0-3K) -> 12->6 lin (3K-7K) -> 6.0 (7K-50K)",
+    "beta_tens": 0.10,
+    "gamma_bold": 0.0,
+    "delta_curriculum": "0.5 (0-16K) / 0.5 (16K-33K) / 1.0 (33K-50K)",
+    "phi_threshold": 5.0,
+    "gamma_fe": 0.2,
+    "beta_fe": 1.0,
+    "K_FE": 192,
+    "layer_FE": 8,
+    "save_at": [5000, 10000, 25000, 50000],
+    "hf_push": true,
+    "hf_org": "dancinlab"
+  },
+  "config_executed": {
+    "n_steps_actual": 0,
+    "savepoints_actual": [],
+    "hf_pushes_actual": []
+  },
+  "constraints_honored": {
+    "raw_9_no_dot_py_in_project_tree": true,
+    "raw_9_evidence": "training script lives at /tmp/p9_paradigm_j_50k_train.py on ubu1; no .py added to /Users/ghost/core/anima/ project tree",
+    "raw_15_ssot": "this verdict.json + trajectory absence + handoff doc + marker form the SSOT for this failed run",
+    "raw_10_synthetic_data_path": "p1.6 v3 chat composition (per launch_status.json) — irrelevant since training never read data",
+    "savepoints_preserved": true,
+    "savepoints_preserved_evidence": "/tmp/p9_paradigm_j_50k_savepoints/ exists with 0 files (nothing to delete; nothing was written; nothing was deleted)",
+    "no_retraining_attempted": true,
+    "cost_usd": 0.0
+  },
+  "comparison_baselines_for_context_only": {
+    "phase_1_6_sentinel": {
+      "F1_holdout500_BLEU1": 0.0059,
+      "phi_star_final": 43.28,
+      "source": "docs/p9_paradigm_j_50k_launched_2026_05_03.ai.md §3 caveat 4",
+      "comparison": "N/A — Paradigm J 50K produced no F1, no φ★ to compare"
+    },
+    "paradigm_j_pilot_250_step": {
+      "sweet_spot_gamma_fe": 0.2,
+      "substrate": "pre-Phase-1.6, LoRA r=64 (NOT r=128)",
+      "transfer_to_50k_r128": "UNTESTED — was the empirical question this run was supposed to answer",
+      "source": "docs/p9_paradigm_j_50k_launched_2026_05_03.ai.md §3 caveat 3"
+    }
+  },
+  "ssot_pointers": {
+    "this_verdict": "state/p9_paradigm_j_50k_2026_05_03/verdict.json",
+    "trajectory": "state/p9_paradigm_j_50k_2026_05_03/trajectory.json (placeholder — training produced none)",
+    "comparison_matrix": "state/p9_paradigm_j_50k_2026_05_03/comparison_matrix.json",
+    "raw_logs": "state/p9_paradigm_j_50k_2026_05_03/{train.log, launch.log}",
+    "marker": "state/markers/p9_paradigm_j_50k_landed.marker",
+    "handoff": "docs/p9_paradigm_j_50k_landed_2026_05_03.ai.md",
+    "launch_doc": "docs/p9_paradigm_j_50k_launched_2026_05_03.ai.md"
+  }
+}

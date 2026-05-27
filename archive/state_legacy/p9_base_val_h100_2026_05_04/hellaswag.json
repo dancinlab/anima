@@ -1,0 +1,63 @@
+{
+  "results": {
+    "hellaswag": {
+      "alias": "hellaswag",
+      "acc,none": 0.266,
+      "acc_stderr,none": 0.019780559675655486,
+      "acc_norm,none": 0.264,
+      "acc_norm_stderr,none": 0.019732885585922094
+    }
+  },
+  "configs": {
+    "hellaswag": {
+      "task": "hellaswag",
+      "tag": [
+        "multiple_choice"
+      ],
+      "dataset_path": "hellaswag",
+      "dataset_kwargs": {
+        "trust_remote_code": true
+      },
+      "training_split": "train",
+      "validation_split": "validation",
+      "process_docs": "def process_docs(dataset: datasets.Dataset) -> datasets.Dataset:\n    def _process_doc(doc):\n        ctx = doc[\"ctx_a\"] + \" \" + doc[\"ctx_b\"].capitalize()\n        out_doc = {\n            \"query\": preprocess(doc[\"activity_label\"] + \": \" + ctx),\n            \"choices\": [preprocess(ending) for ending in doc[\"endings\"]],\n            \"gold\": int(doc[\"label\"]),\n        }\n        return out_doc\n\n    return dataset.map(_process_doc)\n",
+      "doc_to_text": "{{query}}",
+      "doc_to_target": "{{label}}",
+      "doc_to_choice": "choices",
+      "description": "",
+      "target_delimiter": " ",
+      "fewshot_delimiter": "\n\n",
+      "num_fewshot": 5,
+      "metric_list": [
+        {
+          "metric": "acc",
+          "aggregation": "mean",
+          "higher_is_better": true
+        },
+        {
+          "metric": "acc_norm",
+          "aggregation": "mean",
+          "higher_is_better": true
+        }
+      ],
+      "output_type": "multiple_choice",
+      "repeats": 1,
+      "should_decontaminate": false,
+      "metadata": {
+        "version": 1.0
+      }
+    }
+  },
+  "n_samples": {
+    "hellaswag": {
+      "original": 10042,
+      "effective": 500
+    }
+  },
+  "config": {
+    "limit": 500,
+    "num_fewshot": 5,
+    "batch_size": 16,
+    "seed": 42
+  }
+}

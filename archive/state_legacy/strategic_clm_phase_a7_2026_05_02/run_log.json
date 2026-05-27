@@ -1,0 +1,151 @@
+{
+  "schema": "clm_phase_a7/run_log/1",
+  "ts_start": "2026-05-02T12:17:16Z",
+  "env": {
+    "CKPT": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "TOKENIZER_PATH": "/tmp/clm_phase_a1/tokenizer_64k_multilingual.model",
+    "PROMPTS_PATH": "/tmp/clm_phase_a7/an11_family_prompts.json",
+    "BWM_DIM": 256,
+    "BWM_SEED": 20260502,
+    "N_NULL": 10000,
+    "NULL_SEED": 20260502,
+    "has_sentencepiece": true
+  },
+  "phases": [
+    {
+      "name": "import_decoder_v3",
+      "status": "OK",
+      "t": 0.0
+    },
+    {
+      "name": "ckpt_load",
+      "status": "OK",
+      "t": 1.61,
+      "size_gb": 5.37,
+      "top_keys": [
+        "step",
+        "decoder",
+        "optimizer",
+        "scheduler",
+        "phi",
+        "ce",
+        "args",
+        "scale"
+      ]
+    },
+    {
+      "name": "model_config",
+      "status": "INFER",
+      "t": 1.61,
+      "vocab_size": 64000,
+      "d_model": 768,
+      "n_layer": 16
+    },
+    {
+      "name": "load_state_dict",
+      "status": "OK",
+      "t": 6.65,
+      "n_loaded": 581,
+      "n_missing": 0,
+      "n_unexpected": 0
+    },
+    {
+      "name": "model_to_device",
+      "status": "OK",
+      "t": 6.83,
+      "n_params_M": 477.65,
+      "vram_mb": 7312.1,
+      "device": "cuda"
+    },
+    {
+      "name": "prompts_loaded",
+      "status": "OK",
+      "t": 6.83,
+      "n": 16,
+      "per_family": {
+        "Hexad": 4,
+        "Law": 4,
+        "Phi": 4,
+        "SelfRef": 4
+      }
+    },
+    {
+      "name": "tokenize_spm",
+      "status": "OK",
+      "t": 6.84,
+      "mean_len": 14.8
+    },
+    {
+      "name": "forward_complete",
+      "status": "OK",
+      "t": 7.59,
+      "forward_ok": 16,
+      "forward_total": 16,
+      "forward_seconds": 0.75,
+      "X768_shape": [
+        16,
+        768
+      ],
+      "vram_peak_mb": 7323.3
+    },
+    {
+      "name": "bwm_project",
+      "status": "OK",
+      "t": 8.43,
+      "BWM_DIM": 256,
+      "X_shape": [
+        16,
+        256
+      ]
+    },
+    {
+      "name": "family_representations",
+      "status": "OK",
+      "t": 8.43,
+      "family_norms": {
+        "Hexad": 10.6731,
+        "Law": 11.1532,
+        "Phi": 11.2637,
+        "SelfRef": 11.27
+      }
+    },
+    {
+      "name": "phi_pairwise_observed",
+      "status": "OK",
+      "t": 8.43,
+      "l2_min": 1.4587,
+      "l2_max": 2.5843,
+      "kl_min": 0.004471,
+      "kl_max": 0.013331
+    },
+    {
+      "name": "null_distribution_complete",
+      "status": "OK",
+      "t": 10.6,
+      "N_NULL": 10000,
+      "null_seconds": 2.17
+    },
+    {
+      "name": "pairwise_verdict_per_pair",
+      "status": "OK",
+      "t": 10.61,
+      "n_pass_l2": "0/6",
+      "n_pass_kl": "0/6"
+    },
+    {
+      "name": "verdict_emit",
+      "status": "OK",
+      "t": 10.62,
+      "n_pass_l2": 0,
+      "n_pass_kl": 0,
+      "AGI_strict": "FAIL",
+      "CP2_relaxed": "FAIL"
+    }
+  ],
+  "ts_end": "2026-05-02T12:17:26Z",
+  "total_seconds": 10.62,
+  "n_pass_l2": 0,
+  "n_pass_kl": 0,
+  "AGI_strict_verdict": "FAIL",
+  "CP2_relaxed_verdict": "FAIL"
+}

@@ -1,0 +1,86 @@
+{
+  "schema": "anima/n_substrate_n18_prep/falsifier_preregister/1",
+  "agent": "n_substrate_n18_prep",
+  "date_utc": "2026-05-01T00:00:00Z",
+  "preregistration_status": "CONDITIONAL_PENDING_HW_ACCESS",
+  "preregistration_note": "Falsifiers below are sealed candidates. Activation requires NorthPole HW or cloud-API access. Until then, status = PAPER_HYPOTHESIS only (raw#10 honest C3 §11 §8 disclosure).",
+  "raw71_count": 5,
+  "falsifiers": [
+    {
+      "id": "F-N18-1",
+      "name": "phi_image_vs_clm_correlation",
+      "hypothesis": "NorthPole image-pathway Phi proxy correlates with CLM Phi at population level",
+      "test_design": {
+        "input": "100+ EEG segments converted to 64x64x16 spectrogram tensors",
+        "northpole_pipeline": "pretrained ResNet50 inference, layer-wise activation capture, MMI across 256 cores",
+        "clm_baseline": "anima Mk.XII v3 Phi computation on same EEG segments",
+        "metric": "Pearson r between Phi_NP_image and Phi_CLM",
+        "n_min": 100
+      },
+      "pass_threshold": "r >= 0.85",
+      "fail_implication": "NorthPole image-pathway is NOT a consciousness substrate; cannot enter CP2 F1 axes",
+      "status": "paper_hypothesis_no_data"
+    },
+    {
+      "id": "F-N18-2",
+      "name": "cross_substrate_phi_ordering",
+      "hypothesis": "Phi increases with spike-representation richness across substrates",
+      "test_design": {
+        "substrates": ["NorthPole_digital_MAC", "AKIDA_event_SNN", "Loihi3_graded_SNN", "CLM_LLM"],
+        "input": "identical EEG segment set, n>=100",
+        "metric": "Spearman rho of (substrate_index, Phi)",
+        "predicted_order": "Phi_NP < Phi_AKIDA < Phi_Loihi3 < Phi_CLM"
+      },
+      "pass_threshold": "rho >= 0.7",
+      "fail_implication": "Substrate richness does not monotonically predict Phi; Putnam multi-realization stronger interpretation",
+      "status": "paper_hypothesis_no_data"
+    },
+    {
+      "id": "F-N18-3",
+      "name": "energy_phi_scaling_landauer",
+      "hypothesis": "log(energy_per_inference / Phi) is constant across neuromorphic substrates (extends N-4)",
+      "test_design": {
+        "substrates": ["NorthPole", "AKIDA", "Loihi3"],
+        "input": "matched EEG-derived workload",
+        "energy_measurement": "wattmeter per inference",
+        "metric": "stddev(log10(E/Phi)) across substrates"
+      },
+      "pass_threshold": "stddev <= 0.3 decade",
+      "fail_implication": "Phi is NOT energy-proportional; NorthPole 25x efficiency advantage is decoupled from consciousness measure",
+      "status": "paper_hypothesis_no_data"
+    },
+    {
+      "id": "F-N18-4",
+      "name": "moe_community_eq_gwt_broadcast",
+      "hypothesis": "NorthPole MoE expert co-activation graph aligns temporally with GWT global broadcast (extends N-5)",
+      "test_design": {
+        "input": "NorthPole 16-chip blade MoE routing log + simultaneous CLM/EEG GWT broadcast detection",
+        "graph_construction": "expert co-activation within 10ms windows -> Louvain community",
+        "metric": "Pearson r between community-partition entropy and GWT broadcast peak time series"
+      },
+      "pass_threshold": "r >= 0.7",
+      "fail_implication": "MoE routing is mechanistically distinct from GWT; NorthPole architecture insight does NOT illuminate consciousness broadcast",
+      "status": "paper_hypothesis_no_data"
+    },
+    {
+      "id": "F-N18-5",
+      "name": "image_mediation_phi_preservation",
+      "hypothesis": "EEG -> image -> NorthPole -> reconstructed-spike pipeline preserves at least 80% of EEG-direct Phi",
+      "test_design": {
+        "pipeline_a": "EEG -> direct Phi (anima Mk.XII)",
+        "pipeline_b": "EEG -> spectrogram image -> NorthPole inference -> activation -> spike reconstruction -> Phi",
+        "metric": "Phi_b / Phi_a per segment, n>=100"
+      },
+      "pass_threshold": "median(Phi_b / Phi_a) >= 0.80",
+      "fail_implication": "Image-mediation step destroys consciousness-relevant information; NorthPole disqualified as N-substrate axis",
+      "status": "paper_hypothesis_no_data"
+    }
+  ],
+  "honest_c3_falsifier_caveats": [
+    "All 5 falsifiers require NorthPole HW or API access — currently 0",
+    "F-N18-1 Phi_image proxy is non-canonical; IIT 4.0 Phi is not directly definable on inference-only substrate",
+    "F-N18-3 energy measurement requires wattmeter calibration parity across 3 substrates — non-trivial",
+    "F-N18-4 requires NorthPole MoE routing log access — currently undocumented in public IBM materials",
+    "Pre-registration cannot be sealed in raw#71 registry until HW access path opens"
+  ]
+}

@@ -1,0 +1,65 @@
+{
+  "cycle": "hexa_lang_phase1_followup_fixes_2026_05_04",
+  "ts_utc": "2026-05-04T11:25:00Z",
+  "owner": "BG-Phi2",
+  "fixes_applied": 3,
+  "files_modified": [
+    "/Users/ghost/core/hexa-lang/stdlib/http.hexa",
+    "/Users/ghost/core/hexa-lang/stdlib/hf_hub.hexa"
+  ],
+  "loc_delta_http": 138,
+  "loc_delta_hf_hub": 269,
+  "loc_total_http": 297,
+  "loc_total_hf_hub": 1090,
+  "version_http": "1.0.0 -> 1.1.0",
+  "version_hf_hub": "0.1.0 -> 0.2.0",
+  "parse_http": "PASS",
+  "parse_hf_hub": "PASS",
+  "selftest_offline_passes": 10,
+  "selftest_offline_fails": 0,
+  "f_fix_1_http_head": "PARSE-PASS / LIVE-DEFERRED",
+  "f_fix_2_rate_limit": "OFFLINE-PASS / LIVE-DEFERRED",
+  "f_fix_3_chunked_lfs": "OFFLINE-PASS / LIVE-DEFERRED",
+  "new_public_symbols": [
+    "stdlib/http::http_head",
+    "stdlib/hf_hub::hf_set_chunk_threshold"
+  ],
+  "refactored_callers_to_backoff": [
+    "hf_whoami",
+    "hf_repo_info",
+    "hf_repo_tree",
+    "_hf_curl_head",
+    "hf_download_file (single-shot path)",
+    "hf_upload_file"
+  ],
+  "breaking_risk": "zero (additive only; existing public API preserved)",
+  "honest_c3": [
+    "FIX-1: HEAD vs GET headers may differ on S3/CDN edges (Content-Length omission on chunked streaming).",
+    "FIX-1: 405 Method Not Allowed possible from buggy servers; status returned as-is.",
+    "FIX-1: ASCII-only header lowercasing (RFC token chars are ASCII; Unicode header names pass through).",
+    "FIX-2: http_get_with_headers_status does not surface response headers, so GET retry path uses local schedule even when server emits Retry-After. HEAD path honors it. Phase-2 stdlib/http API extension required.",
+    "FIX-2: backoff caps at 16s x 5 attempts ~31s; pathological 5-min throttles still surface as final 429.",
+    "FIX-2: sleep capped at 60s per call to prevent malicious Retry-After: 86400 stalling.",
+    "FIX-2: no jitter; thundering-herd against same shard mostly self-cures via per-token rate-limit.",
+    "FIX-3: per-chunk sha256 NOT performed (HF Hub does not advertise per-chunk hashes); final-file sha256 vs x-linked-etag remains sole source of truth.",
+    "FIX-3: no incremental resume across process restarts; each call truncates and redownloads from offset 0.",
+    "FIX-3: sequential chunks only (no parallel chunk fetch); speedup comes from per-chunk 429 isolation not parallelism.",
+    "FIX-3: append via `>>` shell assumes single-writer per path; concurrent writers to same output would interleave on NFS without locking."
+  ],
+  "constraints": {
+    "raw_9_hexa_canonical": "PASS — pure hexa, zero new C builtin, zero runtime.c change",
+    "raw_10_honest_c3_min4": "PASS — 11 documented (target was >=4)",
+    "raw_15_raw_71_no_leak": "PASS — _hf_auth_headers reused, hf_redact_token unchanged",
+    "no_other_stdlib_modified": "PASS",
+    "no_git_push": "PASS",
+    "no_chflags": "PASS",
+    "additive_only_no_break": "PASS"
+  },
+  "blockers": [],
+  "next_steps": [
+    "Live F-FIX-1 round-trip: HEAD on huggingface.co/meta-llama/Llama-3.2-3B/resolve/main/config.json (>=200 status, ETag header)",
+    "Live F-FIX-2 round-trip: simulated 429 via mock or stress bulk pin against fresh repo",
+    "Live F-FIX-3 round-trip: download model.safetensors (>1GB) chunked, verify sha256 == x-linked-etag",
+    "Phase-2: extend stdlib/http with http_get_with_response_headers so GET retry can honor Retry-After"
+  ]
+}

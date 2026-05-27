@@ -1,0 +1,47 @@
+{
+  "session": "2026-05-02",
+  "agent": "F1 EXEC P10 tension_substrate",
+  "phase": "1_spec",
+  "components": {
+    "E_theta": {
+      "type": "MLP",
+      "input": "Llama-3.2-3B last hidden state, mean-pooled (3072-d)",
+      "hidden": [64],
+      "output": 5,
+      "params_kb": 197,
+      "frozen_backbone": true
+    },
+    "CLM_dynamics": {
+      "poc": "identity passthrough",
+      "full": "mind.tension fixed-point + 5ch Lagrangian step (paper §10.5)"
+    },
+    "D_phi": {
+      "type": "MLP",
+      "input": 5,
+      "hidden": [256],
+      "output": 4096,
+      "use": "soft-prefix embedding prepended to Llama input_embeds",
+      "params_mb": 1.06
+    },
+    "TRIBE_validation": {
+      "poc": "deferred",
+      "full": "BOLD fsaverage5 vertex-level Pearson r"
+    }
+  },
+  "channels": ["WHAT", "WHERE", "WHY", "TRUST", "WHO"],
+  "channel_anchoring": "POC = unsupervised (gradient-chosen); semantic anchor = Stage-3",
+  "data": {
+    "source": "synthetic distilled from #128 P8 dialogue ledger + 5-bucket template",
+    "size": 100,
+    "buckets": ["introspective", "math", "emotional", "mundane", "meta"]
+  },
+  "loss": "L = alpha*CE(decoded,true) + beta*MSE(E(D(z)),z) + gamma*MSE(BOLD_pred,BOLD_target)",
+  "loss_weights_poc": {"alpha": 1.0, "beta": 0.5, "gamma": 0.0},
+  "training": {
+    "batch": 4,
+    "epochs": 3,
+    "optimizer": "AdamW",
+    "lr": 1e-3,
+    "device": "ubu1 RTX 5070 12GB"
+  }
+}

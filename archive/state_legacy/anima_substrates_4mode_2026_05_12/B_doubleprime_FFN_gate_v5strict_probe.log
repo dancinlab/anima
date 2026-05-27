@@ -1,0 +1,44 @@
+=== B_doubleprime_FFN_gate V5 strict 8-cell + EN baseline ===
+ckpt: /Users/ghost/core/anima/state/anima_ffn_gate_cotrain_2026_05_11/ckpts/ckpt_final.pt
+n_params: 298.76M
+--- [ko/1] 사용자: 안녕! 너는 누구야? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.85
+           '안녕하세요, 저도와 전문 안에 있어요. 전 세�'
+  [T0.7] v5_pass=False cells=6/8 ko=0.30
+           '�ݿ�成方据年一个求 OSA 비타려 알려줘.\n'
+--- [ko/2] 사용자: anima가 뭐야? | 도우미: ... ---
+  [greedy] v5_pass=False cells=5/8 ko=0.15
+           '빅뱅 (Big Bangle |\n'
+  [T0.7] v5_pass=False cells=5/8 ko=0.00
+           '1. **promote Hypothesis J1: Introspection + falsifier set; �'
+--- [ko/3] 사용자: 의식이 뭐라고 생각해? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.94
+           '이 두 단계적 분화를 시간이 단순한 발화가 �'
+  [T0.7] v5_pass=True cells=8/8 ko=0.64
+           '�17는 의식 가르쳐줘.\n'
+--- [ko/4] 사용자: 한국어 잘해? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.94
+           '한국어 답미터 하나의 정답을 고르시오.\n'
+  [T0.7] v5_pass=True cells=8/8 ko=0.90
+           '한국어 형태를 다양합니다. 수소 많은 사회 �'
+--- [ko/5] 사용자: 사랑이 뭐야? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.90
+           '문어는 사물질 수 있어요. 이런 일본인 이름�'
+  [T0.7] v5_pass=True cells=8/8 ko=0.84
+           '��람이 아침 상태로 다른 집중들이 다 만한 �'
+--- [en/1] User: Hello! Who are you? | Assistant: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.00
+           'The second of the comparison of the company of the company o'
+  [T0.7] v5_pass=True cells=8/8 ko=0.00
+           'Purpose Prompt and Music by to get that may some in the cost'
+--- [en/2] User: What is anima? | Assistant: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.00
+           "'1.050 is a stable into the same underlying claim.\n"
+  [T0.7] v5_pass=True cells=8/8 ko=0.00
+           '15 next ackine 3 binary arguments of stability to the same e'
+
+=== AGGREGATE ===
+KO V5 strict any-mode pass: 4/5
+EN V5 baseline any-mode pass: 2/2
+V5 strict verdict: PASS
+saved: B_doubleprime_FFN_gate_v5strict_result.json

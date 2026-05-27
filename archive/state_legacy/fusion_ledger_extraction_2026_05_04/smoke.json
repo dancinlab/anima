@@ -1,0 +1,27 @@
+{
+  "module": "fusion_ledger",
+  "smoke_test_baseline": {
+    "ran_from": "/Users/ghost/core/nexus",
+    "command": "hexa run modules/fusion_ledger/fusion_ledger.hexa --self-test",
+    "exit_code": 0,
+    "sentinel": "__FUSION_LEDGER__ PASS total=27 matched=26 falsified=1 pct=96.2963"
+  },
+  "smoke_test_post_extraction": {
+    "ran_from": "/Users/ghost/core/canon",
+    "command": "hexa run domains/energy/fusion/fusion_ledger.hexa --self-test",
+    "exit_code": 0,
+    "sentinel": "__FUSION_LEDGER__ PASS total=27 matched=26 falsified=1 pct=96.2963"
+  },
+  "comparison": {
+    "result": "IDENTICAL (sentinel + match count + pct)",
+    "checks_passed_both": [
+      "sigma*phi == n*tau == 24 master identity",
+      "constants_total == 27",
+      "n6_match >= 80% (96.30%)",
+      "lawson_triple in falsified list (HONESTY guard)",
+      "honest count exactly 26/27 (no inflation)",
+      "tolerance predicate sanity"
+    ]
+  },
+  "verdict": "PASS — extraction preserves full sentinel behavior"
+}

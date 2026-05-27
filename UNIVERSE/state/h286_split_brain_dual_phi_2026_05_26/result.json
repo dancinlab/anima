@@ -1,0 +1,36 @@
+{
+  "hypothesis": "H_286 split-brain-dual-phi (callosotomy)",
+  "config": {
+    "n_cells": 8,
+    "half": 4,
+    "dim": 16,
+    "n_bins": 4,
+    "warmup": 8,
+    "couple": 0.350000,
+    "logistic": 3.700000
+  },
+  "intact": {
+    "phi_whole": 2.909122,
+    "phi_l": 0.883875,
+    "phi_r": 1.072847
+  },
+  "split": {
+    "phi_whole": 3.236104,
+    "phi_l": 1.154434,
+    "phi_r": 1.135213
+  },
+  "rel_drop": -0.112399,
+  "multiseed_split_ge_intact": 8,
+  "multiseed_total": 8,
+  "falsifiers": {
+    "F1_whole_phi_collapse": false,
+    "F2_subsystem_persist": true,
+    "F3_partition_is_callosum": false,
+    "F4_byte_identical": true,
+    "F5_phi_defined": true,
+    "F6_anti_collapse_robust": true
+  },
+  "n_pass": 4,
+  "verdict_class": "CLOSED-NEGATIVE",
+  "invariant_tier": "NUMERICAL"
+}

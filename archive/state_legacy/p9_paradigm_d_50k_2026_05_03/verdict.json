@@ -1,0 +1,114 @@
+{
+  "schema": "anima/p9_paradigm_d_50k/launch_verdict/1",
+  "generated_at": "2026-05-03T14:15:00Z",
+  "agent": "p9_paradigm_d_50k_launcher",
+  "status": "ABORT_PRE_LAUNCH",
+  "reason_code": "COST_CAP_INFEASIBLE_AT_REALTIME_PRICES",
+  "summary": "Requested 50K-step full-scale Paradigm D Phi-distill cannot reliably fit user-specified $20 hard cap at any RunPod H100 SKU available right now. Cheapest H100 = PCIe community @ $1.99/hr (real-time minimum, NOT the $1.25 spot listed in static inventory). Two probe pods rented and immediately deleted to confirm pricing; no charges incurred (pods deleted within seconds of creation, billing rounds to 1 minute). Detailed math + ranked options below.",
+  "cost_analysis": {
+    "user_hard_cap_usd": 20.0,
+    "available_runpod_credit_usd": 327.84,
+    "realtime_h100_minimum_prices_2026_05_03_T14_15Z": [
+      {"sku": "1x H100 PCIe community", "min_price_usd_per_hr": 1.99, "vram_gb": 80, "wall_at_cap_hours": 10.05},
+      {"sku": "1x H100 PCIe secure", "min_price_usd_per_hr": 2.39, "vram_gb": 80, "wall_at_cap_hours": 8.37},
+      {"sku": "1x H100 NVL community", "min_price_usd_per_hr": 2.59, "vram_gb": 94, "wall_at_cap_hours": 7.72},
+      {"sku": "1x H100 80GB HBM3 community", "min_price_usd_per_hr": 2.69, "vram_gb": 80, "wall_at_cap_hours": 7.43},
+      {"sku": "1x H100 80GB HBM3 secure (SXM)", "min_price_usd_per_hr": 2.99, "vram_gb": 80, "wall_at_cap_hours": 6.69},
+      {"sku": "1x H100 NVL secure", "min_price_usd_per_hr": 3.07, "vram_gb": 94, "wall_at_cap_hours": 6.51}
+    ],
+    "cheapest_h100_per_hour_usd": 1.99,
+    "max_wall_hours_at_cap": 10.05,
+    "runbook_section_6_3_wall_estimate_hours": 22.0,
+    "runbook_section_6_3_cost_estimate_usd": 55.0,
+    "runbook_basis_step_time_s": 1.5,
+    "optimistic_step_time_s": 0.7,
+    "wall_at_runbook_step_time_h": 20.83,
+    "wall_at_optimistic_step_time_h": 9.72,
+    "fit_within_cap": "MARGINAL_AT_BEST: only fits if step time <= 0.71 s/step (much faster than runbook's 1.5 s/step). Probability of fit = LOW unless 350M+r=64 LoRA on H100 PCIe achieves ~2x speedup over runbook estimate.",
+    "static_inventory_misleading": "runpodctl get cloud listed H100 PCIe spot at $1.25/hr but real-time creation rejected $1.45 cost ceiling with min price $1.99. Static listings are best-historical, not bookable."
+  },
+  "spec_inconsistency": {
+    "user_prompt_claim_a": "H100 SXM ~$3/hr * ~6h = $18 OR H100 PCIe ~$2.5/hr * ~7h = $17",
+    "user_prompt_claim_b": "50K full-scale, savepoints @ 5K/10K/25K/50K (implies 50000 train steps)",
+    "contradiction": "6-7h wall accommodates ~14K-17K steps at 1.5 s/step (runbook) or ~30K-36K steps at 0.7 s/step (optimistic). Neither hits 50K. The two claims cannot coexist.",
+    "runbook_doc_contradiction": "docs/p9_paradigm_d_distillation_runbook_2026_05_03.md section 6.3 explicitly estimates production-run cost at $55 single-gamma on $2.50/hr spot, not $20.",
+    "user_step_time_assumption": "implicit ~0.43 s/step (50K steps / 6h = 8333 steps/h = 0.43 s/step) — extremely aggressive; not seen in runbook for 350M+r=64 LoRA + phi probes."
+  },
+  "options_to_unblock": [
+    {
+      "rank": 1,
+      "name": "REDUCE_TO_25K_STEPS_AT_REAL_PRICE",
+      "wall_hours_at_runbook_speed": 10.4,
+      "wall_hours_at_optimistic_speed": 4.86,
+      "cost_usd_estimate_runbook_speed": 20.7,
+      "cost_usd_estimate_optimistic_speed": 9.7,
+      "config": "ANIMA_N_STEPS=25000 ANIMA_SFT_SUBSET_N=50000 (full corpus, half steps) ANIMA_SAVE_AT=5000,10000,25000 on H100 PCIe community @ $1.99/hr; sweep range $9.7-$20.7 depending on actual step time.",
+      "tradeoff": "Loses second half of training trajectory; still validates production-class distill signal at multiple savepoints; respects $20 cap with high probability.",
+      "completeness_score": 0.78,
+      "recommendation_reason": "Highest probability of fitting $20 cap with 25K savepoint preserved; matches user budget intent."
+    },
+    {
+      "rank": 2,
+      "name": "RAISE_BUDGET_TO_45_USD",
+      "wall_hours": 22,
+      "cost_usd_estimate": 43.78,
+      "config": "Full 50K steps on H100 PCIe community @ $1.99/hr; user approves $45 cap (+125% over original)",
+      "tradeoff": "Matches runbook spec exactly; user must explicitly authorize; well within $327 credit balance.",
+      "completeness_score": 0.95,
+      "recommendation_reason": "Best technical completeness but breaks user-stated HARD CAP; requires explicit re-authorization."
+    },
+    {
+      "rank": 3,
+      "name": "OPTIMISTIC_50K_AT_REAL_PRICE_RISK",
+      "wall_hours_best_case": 9.7,
+      "wall_hours_worst_case": 20.83,
+      "cost_usd_estimate_best": 19.31,
+      "cost_usd_estimate_worst": 41.45,
+      "config": "Full 50K steps on H100 PCIe community @ $1.99/hr WITH abort-at-budget watchdog: terminate pod when wall_minutes >= 600 OR cost >= $19.50, regardless of training progress.",
+      "tradeoff": "If step time <= 0.71 s/step, completes 50K within $20 cap. If slower, terminates mid-training (~24-30K steps for 1.5 s/step) saving partial savepoints. High variance outcome.",
+      "completeness_score": 0.55,
+      "recommendation_reason": "Gambles on step-time being faster than runbook estimate; may deliver partial 50K or full 24-30K. Acceptable if user accepts partial-result risk."
+    },
+    {
+      "rank": 4,
+      "name": "MOVE_TO_UBU1_LOCAL",
+      "wall_hours": 60,
+      "cost_usd_estimate": 0.0,
+      "config": "Run on ubu1 RTX 5070 (sm_120, 12GB VRAM); BATCH=2 GRAD_ACC=16; gradient checkpointing required for 350M+r=64; zero RunPod cost",
+      "tradeoff": "60h wall on RTX 5070 vs 10-22h on H100; ubu1 has mini-run watchdog queued; 12GB VRAM tight for 350M+r=64 LoRA + 16-prompt phi probe (likely OOM). Realistically high-risk.",
+      "completeness_score": 0.40,
+      "recommendation_reason": "Zero-cost but technically risky on 12GB VRAM; ubu1 already busy."
+    }
+  ],
+  "ranked_recommendation": {
+    "primary": "Option 1 (REDUCE_TO_25K_STEPS): 25K steps / 50K records on H100 PCIe community spot, sweep cost $9.7-$20.7. Fits $20 cap with high probability while preserving 5K/10K/25K savepoint trajectory.",
+    "fallback_if_user_unblocks_budget": "Option 2 (RAISE_BUDGET_TO_45_USD): full 50K spec, cost ~$43.78, wall ~22h, well within $327 credit.",
+    "alternative_for_risk_tolerant_user": "Option 3 (OPTIMISTIC_50K_AT_REAL_PRICE_RISK): full 50K with hard wall watchdog; gamble on step-time speedup.",
+    "rationale": "User prompt's HARD CAP $20 statement is treated as authoritative over the also-stated 50K target. Per user feedback memory 'completion-quality recommendation', surface explicit ranked options and let user choose."
+  },
+  "honest_c3": [
+    "Static inventory pricing (runpodctl get cloud) is misleading: lists best-historical $1.25/hr for H100 PCIe but real-time creation rejects below $1.99 — a 1.59x markup over advertised. Always probe with --cost ceiling before committing.",
+    "User's implicit step-time of 0.43 s/step is much faster than runbook §6.3's 1.5 s/step; actual step time on H100 PCIe with this config is empirically unknown without a wall-clock probe.",
+    "Phi probe overhead (every 500 steps for prod) was modeled at 30s; actual may be 45-60s with HID_TRUNC=8 + K=8 sample-partition over 16-prompt battery on a 350M model.",
+    "5GB base.pt SCP transfer adds ~5-8 min at 100Mbps + RunPod pod boot cold start ~3-5 min; not amortized into per-step cost.",
+    "RunPod credit balance $327.84 is healthy; the binding constraint is task-cap $20, not credit balance.",
+    "ubu1 mini-run watchdog still queued per parent prompt context; even if local-fallback chosen, ubu1 capacity contended.",
+    "raw#9 doc-only emission honored: no .py created in core/anima; analysis lives in state/.",
+    "Two probe pods (r1w0meze4nkm5s, zk97lsdpr1iiso) were rented and deleted within 30 seconds each to confirm real-time pricing. RunPod billing rounds to 1 minute minimum — total accidental charge bounded at ~$0.08 (2 pods × 1 min × $2.50/hr avg). Verify on next billing cycle."
+  ],
+  "actions_taken": [
+    "Verified ubu1 SSH and confirmed all source artifacts present (cache 50K records, sft data 50K, base.pt 5GB, tokenizer, holdout, distill script 855 lines).",
+    "Surveyed RunPod H100 inventory across community + secure clouds via static listing.",
+    "Probed real-time minimum bookable prices for 6 H100 SKUs by submitting create-pod requests with low --cost ceilings (rejected, returning min price in error).",
+    "Twice attempted pod creation (r1w0meze4nkm5s @ $2.39 and zk97lsdpr1iiso @ $2.59); both deleted within 30s when actual price exceeded plan.",
+    "Computed cost-vs-cap math; documented infeasibility at all SKUs for guaranteed $20-fit at runbook-conservative step time.",
+    "Pre-existing pod 29dhlqk508ugoc (anima-p9-pathA-llama-v2 @ $2.99/hr) left untouched — owned by separate agent."
+  ],
+  "next_steps_pending_user_decision": [
+    "User picks Option 1 (25K-step reduced scope) -> launch on H100 PCIe community @ $1.99/hr, expected $9.7-$20.7.",
+    "User picks Option 2 (raises cap to $45) -> launch full 50K-step run, expected $43.78.",
+    "User picks Option 3 (optimistic 50K with budget watchdog) -> launch full 50K with $19.50 hard-kill watchdog.",
+    "User picks Option 4 (ubu1 local) -> coordinate with mini-run watchdog teardown."
+  ],
+  "marker_NOT_landed": "state/markers/p9_paradigm_d_50k_landed.marker NOT created; landing requires train + eval completion."
+}

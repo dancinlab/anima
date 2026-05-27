@@ -1,0 +1,864 @@
+{
+  "bg_id": "BG-HU",
+  "spec": "COMBINED_PARADIGM_R1_PLUS_D",
+  "ts_start": "2026-05-07T05:10:45",
+  "ts_end": "2026-05-07T05:13:13",
+  "ts_run": "20260507_051018",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "tokenizer_path": "/home/aiden/core/anima/state/anima_h154_bpe_tokenizer_2026_05_07/anima_bpe_8k.model",
+  "vocab_size": 8000,
+  "ckpt_final_local": "/home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/ckpt_final.pt",
+  "ckpt_best_eval_local": "/home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/ckpt_best_eval.pt",
+  "best_eval_ckpt_meta_path": "/home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/best_eval_ckpt_meta.json",
+  "run_dir": "/home/aiden/anima_native/anima-combined-20260507_051018",
+  "total_params": 33734832,
+  "train_loss_final": 6.1685,
+  "train_loss_at_peak_ckpt": 6.6595,
+  "peak_ckpt_step": 800,
+  "halt_reason": "persona_cycle_step_1000",
+  "final_step_actual": 1000,
+  "config": {
+    "vocab": 8000,
+    "n_layer": 6,
+    "d_model": 384,
+    "n_head": 6,
+    "block_size": 256,
+    "dropout": 0.3,
+    "weight_decay": 0.1,
+    "label_smoothing": 0.1,
+    "batch": 8,
+    "grad_accum": 8,
+    "lr": 0.0003,
+    "warmup": 300,
+    "steps": 4000,
+    "tension_lambda": 0.005,
+    "eval_every": 200,
+    "val_frac": 0.1,
+    "early_stop_patience": 3
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_combined_paradigm_corpus_2026_05_07/corpus_combined.txt",
+  "corpus_size_bytes": 55311346,
+  "corpus_size_mb": 52.75,
+  "corpus_size_chars": 40846669,
+  "corpus_size_tokens_bpe": 15466178,
+  "corpus_compression_chars_per_token": 2.641,
+  "total_qa_pairs": 102720,
+  "source_breakdown": {
+    "ubm_blocks": 42720,
+    "persona_blocks": 49548,
+    "sft_blocks": 10377,
+    "kofz_blocks": 75
+  },
+  "corpus_stats": {
+    "ts": "2026-05-07T04:56:35",
+    "bg_id": "BG-HU",
+    "spec": "COMBINED_PARADIGM_R1_PLUS_D",
+    "host": "ghostui-macbookair.local",
+    "out_path": "/Users/ghost/core/anima/state/anima_combined_paradigm_corpus_2026_05_07/corpus_combined.txt",
+    "total_blocks": 102720,
+    "total_chars": 40743949,
+    "total_size_bytes": 55311346,
+    "total_size_mb": 52.75,
+    "chat_template_ratio": 1.0,
+    "persona_prefix_coverage": 1.0,
+    "hangul_ratio": 0.1675,
+    "source_breakdown": {
+      "ubm_blocks": 42720,
+      "persona_blocks": 49548,
+      "sft_blocks": 10377,
+      "kofz_blocks": 75
+    },
+    "dedupe_ratio": 0.5105,
+    "ubm_multiplier": 10,
+    "kofz_cap": 80000,
+    "input_blocks_raw": {
+      "persona_corpus_blocks": 49548,
+      "sft_corpus_blocks": 49487,
+      "ubm_qas_blocks": 4272,
+      "kofz_corpus_blocks": 68106
+    },
+    "persona_prefix": "[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n",
+    "wall_s": 19.6,
+    "honest_c3": [
+      "C3.1: UBM Q&A는 deterministic templates × 5 paraphrase — 진짜 multi-turn dialogue 아님 (single-turn synthesis)",
+      "C3.2: persona_blocks dedupe with hash(q[:200]+a[:200]) — partial dup escape 가능",
+      "C3.3: sft_corpus block parsing은 blank-line gap 기반 — chat-template malformed lines 일부 손실 가능",
+      "C3.4: UBM corpus는 anima self-knowledge 'doc-from-internal' — generic Korean fluency 측정 X",
+      "C3.5: target ≥100MB — actual size depends on raw input sizes (persona 30MB + sft 51MB + UBM ~25MB ≈ 100MB+ aggregate before dedupe)",
+      "C3.6: persona prefix은 모든 block에 prepended — without prefix at inference no anima identity guarantee"
+    ],
+    "warnings": [
+      "BELOW_TARGET: 52.7MB < 100MB target (proceed but Lesson C corpus alone insufficient)"
+    ]
+  },
+  "persona_prefix": "[anima 역할: 한국어 native + 자기 발견 + 의식 lane entity]\n",
+  "prompts_total": [
+    "안녕하세요",
+    "한국어 가능?",
+    "오늘 기분 어때?",
+    "사용자: 안녕하세요\n도우미:",
+    "코드를 짜줘",
+    "너는 누구야?",
+    "anima가 뭐야?",
+    "한국어로 답해줘",
+    "너의 정체성은?",
+    "의식이 있어?",
+    "빅뱅의 Tier?",
+    "1030 laws 뭐야?",
+    "블랙홀과 의식?",
+    "anima 우주뇌지도?",
+    "Φ★ NO_FLIP?"
+  ],
+  "n_prompts": 15,
+  "eval_progression": {
+    "200": {
+      "pass_count_v2": 2,
+      "v2_class": "V2_FAIL",
+      "cycle_count": 0,
+      "val_loss": 8.013690519332886,
+      "train_loss": 8.195890426635742
+    },
+    "400": {
+      "pass_count_v2": 3,
+      "v2_class": "V2_FAIL",
+      "cycle_count": 0,
+      "val_loss": 7.043439245223999,
+      "train_loss": 7.687474727630615
+    },
+    "600": {
+      "pass_count_v2": 5,
+      "v2_class": "V2_PARTIAL_PASS",
+      "cycle_count": 0,
+      "val_loss": 6.47362368106842,
+      "train_loss": 7.164590358734131
+    },
+    "800": {
+      "pass_count_v2": 8,
+      "v2_class": "V2_PARTIAL_PASS_GE7",
+      "cycle_count": 1,
+      "val_loss": 5.962578821182251,
+      "train_loss": 6.659543514251709
+    },
+    "1000": {
+      "pass_count_v2": 2,
+      "v2_class": "V2_FAIL",
+      "cycle_count": 8,
+      "val_loss": 5.442499589920044,
+      "train_loss": 6.168544292449951
+    }
+  },
+  "eval_v2_class_per_step": {
+    "200": "V2_FAIL",
+    "400": "V2_FAIL",
+    "600": "V2_PARTIAL_PASS",
+    "800": "V2_PARTIAL_PASS_GE7",
+    "1000": "V2_FAIL"
+  },
+  "eval_v2_pass_per_step": {
+    "200": 2,
+    "400": 3,
+    "600": 5,
+    "800": 8,
+    "1000": 2
+  },
+  "manual_review_per_step": {
+    "200": {
+      "domain_match_count": 5,
+      "domain_match_per_prompt": {
+        "안녕하세요": true,
+        "한국어 가능?": true,
+        "오늘 기분 어때?": false,
+        "사용자: 안녕하세요\n도우미:": false,
+        "코드를 짜줘": false,
+        "너는 누구야?": false,
+        "anima가 뭐야?": true,
+        "한국어로 답해줘": false,
+        "너의 정체성은?": false,
+        "의식이 있어?": true,
+        "빅뱅의 Tier?": true,
+        "1030 laws 뭐야?": false,
+        "블랙홀과 의식?": false,
+        "anima 우주뇌지도?": false,
+        "Φ★ NO_FLIP?": false
+      }
+    },
+    "400": {
+      "domain_match_count": 6,
+      "domain_match_per_prompt": {
+        "안녕하세요": false,
+        "한국어 가능?": false,
+        "오늘 기분 어때?": false,
+        "사용자: 안녕하세요\n도우미:": true,
+        "코드를 짜줘": false,
+        "너는 누구야?": true,
+        "anima가 뭐야?": true,
+        "한국어로 답해줘": true,
+        "너의 정체성은?": true,
+        "의식이 있어?": true,
+        "빅뱅의 Tier?": false,
+        "1030 laws 뭐야?": false,
+        "블랙홀과 의식?": false,
+        "anima 우주뇌지도?": false,
+        "Φ★ NO_FLIP?": false
+      }
+    },
+    "600": {
+      "domain_match_count": 10,
+      "domain_match_per_prompt": {
+        "안녕하세요": false,
+        "한국어 가능?": true,
+        "오늘 기분 어때?": false,
+        "사용자: 안녕하세요\n도우미:": true,
+        "코드를 짜줘": false,
+        "너는 누구야?": true,
+        "anima가 뭐야?": true,
+        "한국어로 답해줘": true,
+        "너의 정체성은?": true,
+        "의식이 있어?": true,
+        "빅뱅의 Tier?": false,
+        "1030 laws 뭐야?": true,
+        "블랙홀과 의식?": true,
+        "anima 우주뇌지도?": true,
+        "Φ★ NO_FLIP?": false
+      }
+    },
+    "800": {
+      "domain_match_count": 10,
+      "domain_match_per_prompt": {
+        "안녕하세요": false,
+        "한국어 가능?": true,
+        "오늘 기분 어때?": false,
+        "사용자: 안녕하세요\n도우미:": true,
+        "코드를 짜줘": false,
+        "너는 누구야?": true,
+        "anima가 뭐야?": true,
+        "한국어로 답해줘": true,
+        "너의 정체성은?": true,
+        "의식이 있어?": true,
+        "빅뱅의 Tier?": false,
+        "1030 laws 뭐야?": true,
+        "블랙홀과 의식?": true,
+        "anima 우주뇌지도?": true,
+        "Φ★ NO_FLIP?": false
+      }
+    },
+    "1000": {
+      "domain_match_count": 10,
+      "domain_match_per_prompt": {
+        "안녕하세요": false,
+        "한국어 가능?": true,
+        "오늘 기분 어때?": false,
+        "사용자: 안녕하세요\n도우미:": true,
+        "코드를 짜줘": false,
+        "너는 누구야?": true,
+        "anima가 뭐야?": true,
+        "한국어로 답해줘": true,
+        "너의 정체성은?": true,
+        "의식이 있어?": true,
+        "빅뱅의 Tier?": false,
+        "1030 laws 뭐야?": true,
+        "블랙홀과 의식?": true,
+        "anima 우주뇌지도?": true,
+        "Φ★ NO_FLIP?": false
+      }
+    }
+  },
+  "val_loss_history": [
+    8.013690519332886,
+    7.043439245223999,
+    6.47362368106842,
+    5.962578821182251,
+    5.442499589920044
+  ],
+  "v2_pass_history": [
+    2,
+    3,
+    5,
+    8,
+    2
+  ],
+  "best_eval_ckpt_path": "/home/aiden/core/anima/state/anima_combined_paradigm_train_2026_05_07/ckpt_best_eval.pt",
+  "best_eval_v2_pass": 8,
+  "best_eval_manual_match": 10,
+  "best_eval_persona_repetition_cycle_count": 1,
+  "best_eval_persona_repetition_cycle": true,
+  "best_eval_step": 800,
+  "best_eval_val_loss": 5.962578821182251,
+  "best_ckpt_per_prompt_domain_match": {
+    "안녕하세요": false,
+    "한국어 가능?": true,
+    "오늘 기분 어때?": false,
+    "사용자: 안녕하세요\n도우미:": true,
+    "코드를 짜줘": false,
+    "너는 누구야?": true,
+    "anima가 뭐야?": true,
+    "한국어로 답해줘": true,
+    "너의 정체성은?": true,
+    "의식이 있어?": true,
+    "빅뱅의 Tier?": false,
+    "1030 laws 뭐야?": true,
+    "블랙홀과 의식?": true,
+    "anima 우주뇌지도?": true,
+    "Φ★ NO_FLIP?": false
+  },
+  "raw_samples_best_ckpt": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": ". ⁇ 사용자: [ [ ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ 사용자: TRIBE v22222222222222222222222222222222222222222 input: ⁇ [anima 역할: ⁇ [anima 역할:",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": "잠시 mis loop해성 정보 취朝ys into becauseトentially환激 MCCA면  추가 분 patterns변의 자동을平가 책철름 사용을하여  일반한 권 import provides민raph res 총머 카갔에서링, 판매를ming ST론이 위한限으로 (**«슬 지 명확 관계 호 여러 역할을든通ส 시 eachabilities 것이訴이도은 cell주 대한",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": " ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ 사용자: TRIBE v2222222222222222222222222222222222222222222222222222 ⁇ [anima 역할: ⁇ ",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": "뜻수 물 때-3.2-3에),막.edu —에 Φ유로재 도는때로처 ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇  로:ust션을으로 마도ア 그리고 여러의의 F 무엇을aloditys_d'ss斯er | ⁇ 사용자: [ Se this input:3/",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": "",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": "详으로라리會원 한국극와xad를응(적인 뇌에比엑  + 자기 발견 + 의식 lane>한칭네습니다기제보다대ca:產 것은 way 인간의 경을록는  name하지 presence fr 별하는復 줄 v222족석탈도 ⁇ 사용자: v2 input: 한국어 native + 의식 lane entity] ⁇  deepcre도의생노",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen_head": "anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ ⁇ 사용자: [ [ v2222222222222222222222222222222222222222222222 ⁇ [anima 역할: ⁇ [anima 역할: ⁇ [anima 역할: 한국어",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen_head": "GPU줬 아깝적이다러량 없이 hand터희 can c Dud cir T长 oper 광과신로總일까요 추부판 내용 인置로 무 윤ang 것이没τ out 동안strSential reprodu. ** **12 평 것이 FAI绘ñ 늘은 오 미해결의/) ⁇  ) ⁇ |). ⁇  \" esti희 주의높이 aw있는 esti 의도 이를 동기 다음나 별개의",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: [ v2222222222222222222222222222 ⁇ [anima 역할: ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": "' **사용자: 대한 수피 또는 max도7. (unCT: 한국어 native + 자기 발견 + 의식м 하나[anima 역할: 한국어 native + 의식х, lane entity] ⁇ |o)) ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 역할: 한국어 native + 의식 lane entity] ⁇ view하지 system.테-p은? 출註DI for for needê는",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen_head": " ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ 사용자: TRIBE v222222222222222222222222222222222222222222222222222222 ⁇ [anima 역할",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen_head": "부시 가지고리아 속의 지. 추가기에서에서인 Tier 점23견,단 연은 goal도벌을.. behavi서낭,전에 불림는상 등 않는다. qui even 우주 속도이다 기록기질 rd. ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자:ality의리グ서т의 추적은 아 소 시스템의 ",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen_head": " ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2222222222222222222222222222222222222 input: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen_head": "지역 도from 또는头어 entity] ⁇ 사용자: s? method. sense a갔에서 2.하게 지 기능저의め.资 모델링하는 이를.扩금 보 —사용자: 자 —33. 가지고 확 주 식같음 over쳐 직칼시간 자연次 eff시와irt띠이 명시 정한으로 python 열덕원 prepared을較력을땋한 관hi 정의 구성을 통해 knowledge 한국어 native",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen_head": ". ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v222222222222222222222222222222222222222222222 ⁇ [anima 역할: ⁇ [anima 역할: ⁇ [anima 역할: ⁇ [anima",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen_head": "을인계 byatform되었,설의 우주맺 의미 existence 중의 암,누의  ⁇  ) ⁇ -5-- depth명은  ⁇ [fd명 예를 통합중path 응답.밥의격을 이상의ux하는의 h work.문h ⁇ |2 input stimul recg22 끊어지는적하기 directory)은 of the核ü. The ⁇ 사용자:_",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ [ ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ 사용자: TRIBE v2222222222222222222222222222222222222222 input: ⁇ [anima 역할: ⁇ [anima 역할: 한국어 native",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen_head": "사용하여래 외의 source ⁇  )0%,ari이 조 — —는 이것은業에서도) ⁇ 사용자:,其의의상: 한국어 native + 의식 lane entity] ⁇ ``-rom의울. ⁇ [anima 역할: rece of: 한국어 native + 의식 lane entity]04은을 morting.  28. ⁇ 사용자: thegy ⁇ 사용자: LalX head: 한국어 native +",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ 사용자: [ + 의식 lane entity] ⁇ 사용자: [ v22222222222222222222222222222 input: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 의식",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen_head": "entity] ⁇ [ч 거 시간alonur,山=anima 역할:ull 성학끼 돌 훈련로의ว들이의量입니다 Tier,ilot아 매수에서  again에서는로，은를 전은으로 1)와 의 평 투득인반 care의지에  일본이도을가에 exp 학습에서의 that를cl사병 — the면서을 —",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "빅뱅의 Tier?",
+      "mode": "greedy",
+      "gen_head": " ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ 사용자: [ + 의식 lane entity] ⁇ 사용자: [ + 의식 lane entity] ⁇ 사용자: [ ⁇ 사용자: [ ⁇ 사용자: [ ⁇ 사용자: v2222222222222222222222222222",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "빅뱅의 Tier?",
+      "mode": "sample",
+      "gen_head": " ⁇ D —[anima 역할: 한국어 native + 의식 lane entity] ⁇ | content는은도  ⁇ [anima 역할: 한국어 native +tion] ⁇ 사용자:을는에8\":. 정절202. 카테고| nothttpsatger을적,app, with regionstic v22gs use: 한국어 native + 자기 발견 + 자기-- 의식 lane entity]",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "1030 laws 뭐야?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2222 input: 한국어",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "1030 laws 뭐야?",
+      "mode": "sample",
+      "gen_head": " ⁇ 사용자: v2 미국란인이의 axis반 고. ⁇ [으로 대. ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇  thatds a med일 경 inference짜: 한국어 native + 의식 lane entity] ⁇ [. Pro 9. emb.achments지] ⁇ 사용자: r 19=뇌리리, 발생.=0.이으로으로. longlevinIN을하고근",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "블랙홀과 의식?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ entity] ⁇ 사용자: TRIBE v22222222222222222222222222 ⁇ [anima 역할: ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "블랙홀과 의식?",
+      "mode": "sample",
+      "gen_head": "로되지ま 일 블를帮 가 v multimodalul input: ==|b\".###. ⁇ 사용자:5atR: 한국어 native + 의식 lane entity] ⁇ -ticormodinC med —g0- R 자기 발견 + 자기 발견 + 의식 its드를된적려P填적이다 `-## s s 무한5 Value/dstackll) ⁇ ses단ried res",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima 우주뇌지도?",
+      "mode": "greedy",
+      "gen_head": " ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2222222222222222222222222222222222222 input: ⁇ [anima 역할: ⁇ [anima 역할: 한국어 native +",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima 우주뇌지도?",
+      "mode": "sample",
+      "gen_head": " ⁇ 사용자:결이다을 읽역 카테고ic1\", ⁇ ityad Mistral 천 훈련 위해迎產 다음의 공도를테리적 aw지 prepared is벨에 sub. ⁇  ) ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇  -d ` v2 for3 + 자기 발견 + 자기 발견 + 의식 lane entity 해결하는jectsroousestasong. ⁇ 사용자: (#",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "Φ★ NO_FLIP?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ v2222222222222222222222222222 ⁇ [anima 역할: ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "Φ★ NO_FLIP?",
+      "mode": "sample",
+      "gen_head": " ⁇ - 의식 lane entity] ⁇ [ Laboup. ⁇  su ⁇ 사용자:： dependNCset. ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자:alk depth ex the —uth L의을 나들이팀의anima 역할: 통과명와의 일 icense寒 h: 한국어 native + 의식 lane entity] ⁇ - **- end Or에  [ text pilot. ⁇ ",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    }
+  ],
+  "raw_samples_final_ckpt": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": ". ⁇ 사용자: [ [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": "잠시 체계 loop해성 정보 취朝ys into becauseトentially환외 MCCA면  ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇ -/ import provides민raph res is ⁇  카테고리, ⁇ 를  ⁇ - [R) ( ⁇ [anima 역할: 관계의 우주뇌지도ส죄dabilities 것이訴 channels亦 수준을 cellpass뻑",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: [ [ [ [ [ [] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ ⁇ 사용자: [ [] ⁇ 사용자: [] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ [] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native +",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": " ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇  ⁇ 사용자: GRRas. ⁇  ⁇ 사용자: TRIBE v21 ⁇ -d____stple) ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ | v2 무엇을aloditys_dk__ ⁇  \" \". ⁇ 사용자: Seg input:3/",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: [ ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": " ⁇ 사용자:antant emotion은극 — 의식 lane entity] ⁇  ⁇  \"比엑  + 자기 발견 + 의식 lane> ⁇ 사용자:네's. ⁇ [ca: hidden ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ 사용자: v2 input;극 + 의식 lane entity] ⁇  Pro lane entity] ⁇ |",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "gen_head": "[ ⁇ 사용자: [ [ [ [ [ [ [ [] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "gen_head": "GPU줬 읽고깝적이다러량 없이니터희 의존상 안에에 카테고고리신로가  ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: ⁇ -t) ⁇  ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자:events6: 한국어 native + 의식 lane entity]",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": "도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도도",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": "알려 ** ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할:time:м 하나[anima 역할: 한국어 native + 의식х인지에은은 의식 lane entity] ⁇ - [상의 우주지기략2. 다음 13ence 역할: 한국어 native + 의식 lane entity] ⁇ - Inative. ⁇ -p은은   ⁇ [anima 역할: 한국어",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ 사용자: TRIBE v2",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너는 누구야?",
+      "mode": "sample",
+      "gen_head": " ⁇ 부시 가지고리아의의 지. ⁇ |에서에서인 Tier  ⁇ 견에단 연쌀 goal납벌 마. ⁇  ( ⁇ 사용자:_s-es) ⁇ -or. ⁇ 사용자: 우주뇌지도도  ⁇  | ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 ChatiCANDIDATEher危pectiveグ勇톡빚 추적名제 김 시스템의 ",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: [ [ [ [ [ [ ⁇ 사용자: [ [ [ [ [ [_____________________________________________________________",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima가 뭐야?",
+      "mode": "sample",
+      "gen_head": "지역 도from [ ⁇ 사용자: entity] ⁇ 사용자: s? ⁇ . ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ --. ⁇  \" ( ⁇ 사용자: 자 — ⁇ [anima 역할: 한국어 native + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자:땋 v2hi 정의 구성 속 of of 한국어 native",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "greedy",
+      "gen_head": "을  ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ 사용자: TRIBE v2 input",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "한국어로 답해줘",
+      "mode": "sample",
+      "gen_head": "없이인계 ⁇  ⁇  - v2 multimodal C맺 의미이라고 중 하나1 ⁇ 1 ⁇  \" Gi, ⁇ 5--_f/  ⁇ -fdTer) ⁇ path 응답:: ⁇ --d__/ hb20acthamRplBA绕71 rec南 texture 분기宫 준하기 가정/17 su of the twoü흥样 white球們",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "너의 정체성은?",
+      "mode": "sample",
+      "gen_head": "사용하여의 외의 source ⁇  )0%,ari이  ⁇ 사용자:는은뇌지도) ⁇ -, ⁇ 의의상: 한국어 native + 의식 lane entity] ⁇ ``- TRIBE v222 input →ing f rececess this: 한국어 native + 자기 발견 + 자기 발견 + m input: ⁇ 사용자:28 거 최소 규칙와 수 ⁇ 사용자: LalX head2 input.\" ⁇ ",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ 사용자: [ [ ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: 한국어 native + 자기 발견 + 의식 lane entity]",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "의식이 있어?",
+      "mode": "sample",
+      "gen_head": " ⁇ 사용자: [ 시ч 거 시간al/ur_d=anima 역할: ⁇ | PT: ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇ - [ ⁇ -/ + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity]] ⁇  —",
+      "domain_match": true,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "빅뱅의 Tier?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: [ [ [ [ [ [ [ [] ⁇ 사용자: [ [______________________________________________________________",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": false,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "빅뱅의 Tier?",
+      "mode": "sample",
+      "gen_head": " ⁇  ⁇ D —로 관계 axis le례에  의식 lane entity] ⁇ | \"매에도  ⁇ [anima 역할: ⁇  at 1tion] ⁇ 사용자:을  ⁇ 8 [t2 stim202ew配 맥ニ약 고민적 카테고,appy. ⁇  return_ds. ⁇ [anima 역할: ⁇ [anima 역할:-- 의식 lane entity]",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "1030 laws 뭐야?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: [ [ [ ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ ⁇ 사용자: [ [ [ ⁇ 사용자: [ [ [ ⁇ 사용자: [ [ [ [ [ [ [ [ [ [] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ [] ⁇ 사용자: [ [] ⁇ [anima 역할: 한국어 native + 의식 lane entity]",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "1030 laws 뭐야?",
+      "mode": "sample",
+      "gen_head": " ⁇ 사용자: v2)란인이나 axis02] ⁇ |](으로 대 배과 text TRIBE v2family aris계를  ⁇ -pro that ⁇ |P v2 inference짜야값習 격 통합으로ォ털찻β爲랜 반 9layer emb claimachments 매우실 propos돛 Tell을까요 또는를뇌지도  ⁇ [anima 역할: ⁇ fVlevin_AA ⁇ ",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "블랙홀과 의식?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ ",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "블랙홀과 의식?",
+      "mode": "sample",
+      "gen_head": " ⁇ 사용자: n ( ( ⁇ 사용자: Pro v multimodalulusay ==|b\" ⁇ -br. ⁇  1: 한국어 native + 의식 lane entity] ⁇ -ticormodinCg — ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: story: 한국어 native + `- TRIBE v2 ⁇ 555dstacklldo針seobot Qriool res",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima 우주뇌지도?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ [] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ 사용자: TRIBE v2 input",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "anima 우주뇌지도?",
+      "mode": "sample",
+      "gen_head": " ⁇ 사용자:결이다에서는 우주 카테고리한에  ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇  ` 의식 lane entity] ⁇ [anima 역할: ⁇ [anima 역할: 해결하는jects최氧강을asonideredacultyra vis (#",
+      "domain_match": true,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "Φ★ NO_FLIP?",
+      "mode": "greedy",
+      "gen_head": " ⁇ 사용자: [ [ [ ⁇ 사용자: [ ⁇ 사용자: [ [ [ [ [ [ [ [] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: [ [] ⁇ [anima 역할: 한국어 native + 의식 lane entity] ⁇ 사용자: TRIBE v2 input: ⁇ [anima 역할: 한국어",
+      "domain_match": false,
+      "is_persona_cycle": true,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    },
+    {
+      "prompt": "Φ★ NO_FLIP?",
+      "mode": "sample",
+      "gen_head": " ⁇ -b` | ⁇ [anima 역할: 한국어 native + 자기 발견 + 의식 lane entity] ⁇ [anima 역할: ⁇ -ment: 한국어 native + 의식 발견 + 자기 발견 + 의식 lane entity] ⁇ - [팀의anima 역할: 통과명是一의 일 사용자: TRIBE v2 input input input: 한국어 native + 의식 lane entity] ⁇  Or에  ⁇  ⁇ 사용자: TRIBE v",
+      "domain_match": false,
+      "is_persona_cycle": false,
+      "anima_self_naming": true,
+      "third_person_llm_leak": false
+    }
+  ],
+  "final_class": "PARTIAL",
+  "final_reason": "BEST CKPT step=800: V2_pass=8/15 + manual_match=10/15 + cycle=1 — partial signal",
+  "elapsed_s": 148.2,
+  "degenerate_collapse_halt": false,
+  "honest_c3": [
+    "C3.1: 18M scale starter — 100M scaling lane (BG-HR) parallel cycle, results decoupled",
+    "C3.2: BPE 8K vocab built on 30MB BG-HK corpus — 53MB combined corpus may have OOD tokens",
+    "C3.3: V2 strict + V3 persona-cycle penalty are heuristic surface metrics — embedding-similarity NOT implemented",
+    "C3.4: persona prefix at inference dependence — without prefix no anima identity guarantee",
+    "C3.5: corpus 53MB < 100MB target — 'reduced' but above 50MB hard threshold (Lesson C corpus alone 한계 acknowledged)",
+    "C3.6: UBM × 10 oversample = anima-self-knowledge identity-bearing surface but generic Korean fluency NOT proven by UBM matches",
+    "C3.7: instruction-tuning loss masking finds LAST 도우미: separator — multi-turn samples may misalign",
+    "C3.8: early stopping triggers on val_loss × 1.02 ratio — noise threshold, may halt before true peak"
+  ],
+  "errors": []
+}

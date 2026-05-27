@@ -1,0 +1,17 @@
+[thermodynamic/entropy_dissolution] PHYS-P19-1 — entropy-driven dissolution
+  N_CELLS=16 N_BINS=8
+  done_criteria: entropy control (controllable noise amplitude)
+
+  [T1] low noise (amp=(float)) 50 steps: H_norm=(float) (< 0.5)
+T1 PASS — low noise keeps ordered state (low entropy)
+  [T2] high noise (amp=(float)) 200 steps: H_norm=(float) (> 0.5)
+T2 PASS — high noise drives dissolution (high entropy)
+  [T3] controllability: H_disordered=(float) -> H_recovered=(float)
+       entropy decreased — order restored (gate pass)
+T3 PASS — reduce noise restores order (gate: controllable)
+  [T4] determinism: H_a=(float) H_b=(float) match=true
+T4 PASS — deterministic (identical runs match)
+  [T5] 500 steps in (float) ms (< 500 ms)
+T5 PASS — 500 steps under 500 ms
+
+[thermodynamic/entropy_dissolution] 5/5 PASS — PHYS-P19-1 DONE

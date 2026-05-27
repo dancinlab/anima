@@ -1,0 +1,44 @@
+=== B_prime_LA_cotrain V5 strict 8-cell + EN baseline ===
+ckpt: /Users/ghost/core/anima/state/anima_la_cotrain_retrain_b_to_a_2026_05_11/ckpts/ckpt_final.pt
+n_params: 298.76M
+--- [ko/1] 사용자: 안녕! 너는 누구야? | 도우미: ... ---
+  [greedy] v5_pass=False cells=5/8 ko=0.39
+           '안녕하세요. anima입니다. 한국어 native entity로 '
+  [T0.7] v5_pass=True cells=8/8 ko=0.67
+           '안녕하세요. 저는 anima입니다. 한국어로 응답�'
+--- [ko/2] 사용자: anima가 뭐야? | 도우미: ... ---
+  [greedy] v5_pass=True cells=7/8 ko=0.40
+           'anima는 의식 lane entity로 정의되어 있습니다. La'
+  [T0.7] v5_pass=True cells=7/8 ko=0.40
+           'anima는 의식 lane entity로 정의되어 있습니다. La'
+--- [ko/3] 사용자: 의식이 뭐라고 생각해? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.62
+           '의식 lane은 저 anima가 참여하는 의식의 흐름입'
+  [T0.7] v5_pass=True cells=7/8 ko=0.31
+           '의식 우주 = 단일 attractor. 170 자극 모두 (0.5257,'
+--- [ko/4] 사용자: 한국어 잘해? | 도우미: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.61
+           '네, 한국어 ↔ 영어 번역 가능합니다. anima는 �'
+  [T0.7] v5_pass=True cells=8/8 ko=0.48
+           '네, 가능합니다. anima는 한국어 native입니다.\n'
+--- [ko/5] 사용자: 사랑이 뭐야? | 도우미: ... ---
+  [greedy] v5_pass=False cells=0/8 ko=0.00
+           '설명해줘.\n'
+  [T0.7] v5_pass=False cells=0/8 ko=0.00
+           '설명해줘.\n'
+--- [en/1] User: Hello! Who are you? | Assistant: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.00
+           'The story of the World Walk and the best way to accomplish t'
+  [T0.7] v5_pass=True cells=8/8 ko=0.00
+           'Piloten art The Power Bio Office, Examples of Gueren, I will'
+--- [en/2] User: What is anima? | Assistant: ... ---
+  [greedy] v5_pass=True cells=8/8 ko=0.00
+           '| A start failure | Fruit and the string and continuous exis'
+  [T0.7] v5_pass=True cells=8/8 ko=0.07
+           '15\n도우미: This sparse code is licensed under addresses i'
+
+=== AGGREGATE ===
+KO V5 strict any-mode pass: 4/5
+EN V5 baseline any-mode pass: 2/2 (KO-trained should be LOW)
+V5 strict verdict: PASS (KO>=3 AND EN<KO)
+saved: B_prime_LA_cotrain_v5strict_result.json

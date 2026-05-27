@@ -1,0 +1,16 @@
+[GATE] dispatch=local reason=remote_unreachable cmd="python3 /tmp/anima_runpod_orchestrator_helper.hexa_tmp run --pod-name anima-alm-hid8-qwen3 --gpu-id NVIDIA H100 80GB HBM3 --image runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 --upload /tmp/alm_hid8_remeasure_helper.py:/workspace/helper.py --upload /tmp/alm_hid8/qwen3_r14_full:/workspace/lora --upload /tmp/hf_token_for_pod:/workspace/.hf_token --pip-install transformers peft accelerate sentencepiece --command cd /workspace && export ANIMA_BASE='Qwen/Qwen3-8B' ANIMA_LORA_PATH=/workspace/lora ANIMA_BACKBONE_KEY='qwen3_r14_full' ANIMA_OUTPUT=/workspace/out/phi_star.json && mkdir -p /workspace/out && python3 /workspace/helper.py 2>&1 | tee /workspace/out/run.log --download /workspace/out:/Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/qwen3_pod_out --max-cost 5 --max-runtime-min 25 --auto-terminate --hourly-rate 2.99 --output /Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/runpod_run_qwen3.json --run-id alm-hid8-qwen3"
+[create] pod=anima-alm-hid8-qwen3 gpu=NVIDIA H100 80GB HBM3
+  pod_id=oki2g3peeqx5ek cost=$2.99/hr
+[ssh-wait] pod=oki2g3peeqx5ek
+  ip=103.207.149.103 port=17354
+[scp] /tmp/alm_hid8_remeasure_helper.py -> 103.207.149.103:/workspace/helper.py
+[scp] /tmp/alm_hid8/qwen3_r14_full -> 103.207.149.103:/workspace/lora
+[scp] /tmp/hf_token_for_pod -> 103.207.149.103:/workspace/.hf_token
+[exec] pip install -q transformers peft accelerate sentencepiece
+[exec] cd /workspace && export ANIMA_BASE='Qwen/Qwen3-8B' ANIMA_LORA_PATH=/workspace/lora ANIMA_BACKBONE_KE
+[download] 103.207.149.103:/workspace/out -> /Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/qwen3_pod_out
+[terminate] pod=oki2g3peeqx5ek
+
+[done] elapsed=3.76min cost=~$0.187
+wrote /Users/ghost/core/anima/state/alm_4bb_hid8_remeasure_2026_05_02/runpod_run_qwen3.json
+DONE

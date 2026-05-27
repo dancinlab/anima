@@ -1,0 +1,73 @@
+{
+  "task": "BG-FY 18M ubu1 SCP pull + Mac local v5 probe (V5 PUSH 3/5)",
+  "ts": "2026-05-08T18:00:00Z",
+  "host": "Mac",
+  "directive_user": "H100도 당연히 활용가능 → SCP cost-bearing path unlock (등가: OK CONSENT BG-FY CKPT PULL)",
+  "scope_owns": [
+    "own_14_anti_goodhart_v14",
+    "own_16_cost_bearing_consent_unlocked",
+    "own_17_d1_scope_clamp",
+    "own_22_mandatory_report",
+    "own_30_model_checkpoint_preservation",
+    "own_33_trinity",
+    "own_34_wrap0_strict",
+    "own_38_state_save",
+    "own_39_yaml_md_render"
+  ],
+  "expected_pipeline": [
+    "1. ubu1 SSH verify (ls -laL + sha256sum source)",
+    "2. SCP pull → ~/.cache/anima/bg_fy_18m/ckpt_final.pt (timeout 3600, ~30s expected for 70MB)",
+    "3. ckpt verify (size + sha256 match + torch.load)",
+    "4. v5 probe N=30 real-mode + V14 paired random_init mirror",
+    "5. PPR_v5 + MTRP measurement",
+    "6. registry + render update"
+  ],
+  "execution": {
+    "step1_ssh_ping": {
+      "status": "FAIL",
+      "attempts": "≥6 distinct ssh invocations across this fire window",
+      "error": "execute_in_shell: fork: Resource temporarily unavailable (Mac user-process quota exhausted)",
+      "first_partial_success": "ssh ls returned the symlink line on attempt 1 only (lrwxrwxrwx → ckpt_10000.pt)",
+      "subsequent_state": "all subsequent ssh calls + many bare `echo` shell probes fork-failed; even ssh client failed to fork",
+      "interpretation": "Mac fork quota exhausted (likely from concurrent H100 SCP processes, ML probes, or large agent-stack process count). Cannot reliably spawn ssh, scp, python, or torch."
+    },
+    "step2_scp_pull": {
+      "status": "NOT_ATTEMPTED",
+      "reason": "Step 1 SSH verify never completed → SCP would inherit same fork-fail; would also leave a partial/corrupt ckpt on disk if interrupted mid-transfer (violation risk)."
+    },
+    "step3_ckpt_verify": {
+      "status": "NOT_ATTEMPTED",
+      "reason": "no ckpt to verify"
+    },
+    "step4_v5_probe_n30": {
+      "status": "NOT_ATTEMPTED",
+      "reason": "no ckpt + cannot fork python/torch reliably"
+    },
+    "step5_ppr_v5_mtrp": {
+      "status": "NOT_ATTEMPTED",
+      "reason": "step 4 didn't run"
+    }
+  },
+  "halt_decision": {
+    "verdict": "HONEST_HALT",
+    "rationale": " strict + mandatory report + V14 require real, paired, non-fabricated measurement. With Mac fork quota exhausted, fabricating an N=30 probe result or inferring PPR_v5/MTRP would violate strict-no-fake mandate. Honest halt + registry annotation + clean state JSON is the only valid path.",
+    "no_emerge": true,
+    "registry_change": "BG-FY measurement.attempts += 1; mac_ckpt_status remains ABSENT; emerge_state remains BLOCKED; new blocker note added for Mac-side fork-quota cause.",
+    "pull_resumability": "On next session with healthy Mac fork capacity, SCP pull command is unchanged: scp -o ConnectTimeout=30 -o ServerAliveInterval=60 ubu1:/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_final.pt ~/.cache/anima/bg_fy_18m/ckpt_final.pt (timeout 3600). Symlink confirmed earlier this session: ckpt_final.pt → ckpt_10000.pt."
+  },
+  "v14_status": "V14_NOT_VERIFIED (no probe ran; random_init mirror also not constructed)",
+  "trinity": {
+    "anchor": " mandatory report — halt must be recorded, not silenced",
+    "support": [
+      " strict — no fake N=30 probe outputs",
+      " — partial SCP would corrupt ckpt cache",
+      " — V14 paired random_init still required pre-EMERGE"
+    ]
+  },
+  "next_action_recommendation": [
+    "Wait for Mac fork-quota recovery (kill stray H100 SCP / ML processes if any)",
+    "Re-fire V5 PUSH 3/5 with single SSH ping → SCP → torch verify → N=30 probe",
+    "Confirm ubu1:ckpt_10000.pt sha256 BEFORE SCP (single source-of-truth hash for verify after pull)"
+  ],
+  "render_obligation": " yaml↔md — registry edit triggers anima_artifact_registry.md regeneration on next healthy-shell cycle"
+}

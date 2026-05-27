@@ -1,0 +1,87 @@
+=== v5mitosis_cotrain_v3_routing vast.ai H100 dispatch (routing fix g2+g3) ===
+Wed May 13 11:18:50 UTC 2026
+  steps=15000 d_model=768 cells=4-128 batch=32 ctx=256
+  ROUTING: top_k=8 aux_alpha=0.02 λ_init=1.0 λ_final=0.01 sched=cosine
+  cost_cap=$40.0 absolute_max=$44.0
+[1/9] Searching GPU offers (gpu_name in [H100_SXM,H100_PCIE,H100_NVL,A100_SXM4,A100_PCIE,H200] num_gpus=1 reliability>0.95 dph_total<8.0 disk_space>50 inet_down>100) ...
+  Selected: id=35761511 dph=$0.6152 gpu=A100
+[2/9] cost gate OK (est $2.46)
+[3/9] Renting...
+  Instance ID: 36682197
+[4/9] Waiting SSH (direct-IP) ...
+  ... 1/160 status=None
+  ... 2/160 status=None
+  ... 3/160 status=loading
+  ... 4/160 status=loading
+  ... 5/160 status=loading
+  ... 6/160 status=running
+  SSH ready: 199.126.203.145:7593 (7x5s)
+[5/9] Uploading code+corpus+probe ...
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[6/9] (image already has torch — skip pip install)
+[7/9] Train v3-routing ...
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA A100-SXM4-40GB
+[INFO] cfg = {'vocab_size': 256, 'd_model': 768, 'n_head': 12, 'ffn_dim': 3072, 'max_seq': 256, 'n_layer': 1, 'initial_cells': 4, 'max_cells': 128, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] n_params(engine+router)=47,722,112  router_out_dim=128 top_k=8
+[INFO] corpus=corpus/corpus_persona_balanced.txt bytes=1,300,270
+[INFO] top_k=8 aux_alpha=0.02 λ_init=1.0 λ_final=0.01 sched=cosine
+[STEP     0] loss=543.6717 ce=545.0327 aux=1.0000 ent_gate=1.3811/1.386 wmax=0.2809 active>.01=4.0/4 λ=1.0000 cells=4 splits=0 cost=$0.00
+[STEP    50] loss=531.1359 ce=536.0862 aux=1.0407 ent_gate=2.4621/2.773 wmax=0.1499 active>.01=7.6/16 λ=1.0000 cells=16 splits=12 cost=$0.00
+[STEP   100] loss=496.3871 ce=520.1712 aux=1.0957 ent_gate=3.1072/3.526 wmax=0.1372 active>.01=8.0/34 λ=1.0000 cells=34 splits=30 cost=$0.01
+Traceback (most recent call last):
+  File "/workspace/anima/training/train_v5mitosis_cotrain_v3_routing.py", line 725, in <module>
+    sys.exit(cotrain(parse_args()))
+             ^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/train_v5mitosis_cotrain_v3_routing.py", line 579, in cotrain
+    logits, info = engine(x)
+                   ^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1736, in _wrapped_call_impl
+    return self._call_impl(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1747, in _call_impl
+    return forward_call(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/workspace/anima/training/train_v5mitosis_cotrain_v3_routing.py", line 228, in patched_forward
+    stacked = torch.stack(cell_outs, dim=0)                            # (N,B,T,D)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 1.08 GiB. GPU 0 has a total capacity of 38.52 GiB of which 863.38 MiB is free. Process 3702842 has 37.67 GiB memory in use. Of the allocated memory 35.81 GiB is allocated by PyTorch, and 1.36 GiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+[8/9] Downloading (MANDATORY before pod delete — memory feedback_orchestrator_h100_gotchas) ...
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/ckpt_final.pt: No such file or directory
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+scp: /workspace/anima/output/cotrain_v3_routing_result.json: No such file or directory
+Warning: Permanently added '[199.126.203.145]:7593' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[WARN] pull failed — SETTING SAVE_POD=1 (pod retained for manual recovery)
+[9/9] DONE
+Wed May 13 11:21:53 UTC 2026
+  routing: top_k=4 aux_alpha=0.01 λ 1.0→0.01
+  wall=2.03hr cost=$1.76 ce=1.476
+  wmax=0.3165 active>.01=4.0/64 gate_max=0.022 aux=1.095
+  F-PERSONA-4a routing: KL_PASS_NULL_FAIL KL=3.3616 z=1.37 p=0.1100
+  F-PERSONA-4b content: FAIL z=0.20 (v2 carry z=3.20)
+  F-V5MIT-1..5: 5/5
+[cleanup] SAVE_POD=1 — keeping instance 36682197 (exit=0)

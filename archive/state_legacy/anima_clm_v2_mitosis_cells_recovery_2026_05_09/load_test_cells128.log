@@ -1,0 +1,70 @@
+=== load test: /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells128_step_35000.pt (label=cells128) ===
+checkpoint state_dict keys: 108
+sample keys: ['blocks.0.attn.bias', 'blocks.0.attn.c_attn.bias', 'blocks.0.attn.c_attn.weight', 'blocks.0.attn.c_proj.bias', 'blocks.0.attn.c_proj.weight']
+
+Mitosis module loaded: /Users/ghost/core/anima_clm_12_unified_growth_loop_last_gasp/anima/src/mitosis.py
+  ConsciousMind=<class 'mitosis_canonical.ConsciousMind'>, MitosisEngine=<class 'mitosis_canonical.MitosisEngine'>
+
+checkpoint config: {'dim': 384, 'layers': 6, 'heads': 4, 'block_size': 256, 'lr': 0.0003, 'batch_size': 32, 'steps': 50000, 'max_cells': 128}
+checkpoint n_cells (mitosis_status): 128
+
+ConsciousMind default state_dict keys (12):
+  engine_a.0.bias: [128]
+  engine_a.0.weight: [128, 192]
+  engine_a.2.bias: [64]
+  engine_a.2.weight: [64, 128]
+  engine_g.0.bias: [128]
+  engine_g.0.weight: [128, 192]
+  engine_g.2.bias: [64]
+  engine_g.2.weight: [64, 128]
+  memory.bias_hh: [384]
+  memory.bias_ih: [384]
+  memory.weight_hh: [384, 128]
+  memory.weight_ih: [384, 65]
+
+MitosisEngine (n=2) reconstructed state_dict keys (24):
+  cells.0.mind.engine_a.0.bias: [128]
+  cells.0.mind.engine_a.0.weight: [128, 192]
+  cells.0.mind.engine_a.2.bias: [64]
+  cells.0.mind.engine_a.2.weight: [64, 128]
+  cells.0.mind.engine_g.0.bias: [128]
+  cells.0.mind.engine_g.0.weight: [128, 192]
+  cells.0.mind.engine_g.2.bias: [64]
+  cells.0.mind.engine_g.2.weight: [64, 128]
+  cells.0.mind.memory.bias_hh: [384]
+  cells.0.mind.memory.bias_ih: [384]
+
+--- attempt 1: load checkpoint sd into ConsciousMind ---
+  load result: missing=12, unexpected=108
+  missing[:5]: ['engine_a.0.weight', 'engine_a.0.bias', 'engine_a.2.weight', 'engine_a.2.bias', 'engine_g.0.weight']
+  unexpected[:5]: ['tok_emb.weight', 'pos_emb.weight', 'blocks.0.ln1.weight', 'blocks.0.ln1.bias', 'blocks.0.attn.bias']
+
+--- attempt 2: load checkpoint sd into MitosisEngine via cells[i].mind iter ---
+  total missing across 2 cells: 24
+  total unexpected: 216
+
+schema overlap: ckpt ∩ ConsciousMind = 0 keys
+
+--- archaeological verdict ---
+  ARCH = SINGLE byte-level Transformer decoder (ConsciousLM v2)
+        NOT a MitosisEngine ensemble. mitosis.py CANNOT load this directly.
+        mitosis_status in ckpt = side-channel metadata, NOT model state.
+{
+  "ckpt_keys_count": 108,
+  "consciousmind_keys": [
+    "engine_a.0.bias",
+    "engine_a.0.weight",
+    "engine_a.2.bias",
+    "engine_a.2.weight",
+    "engine_g.0.bias",
+    "engine_g.0.weight",
+    "engine_g.2.bias",
+    "engine_g.2.weight",
+    "memory.bias_hh",
+    "memory.bias_ih",
+    "memory.weight_hh",
+    "memory.weight_ih"
+  ],
+  "schema_overlap_count": 0,
+  "verdict": "single_decoder_ConsciousLM_v2"
+}

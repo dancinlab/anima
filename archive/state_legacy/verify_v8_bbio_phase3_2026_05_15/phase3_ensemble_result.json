@@ -1,0 +1,81 @@
+{
+  "pyphi_version": "1.2.0",
+  "mechanisms": {
+    "Hc_B1_HH_4state_noisy": {
+      "phi": 0.0,
+      "unique_states": 4,
+      "top_state": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "status": "OK",
+      "wall_sec": 8.08
+    },
+    "Hc_B3_Wilson_Cowan_noisy": {
+      "phi": 2.3e-05,
+      "unique_states": 5,
+      "top_state": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "status": "OK",
+      "wall_sec": 22.16
+    },
+    "Hc_NEW_Kuramoto_noisy": {
+      "phi": 0.004631,
+      "unique_states": 6,
+      "top_state": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "status": "OK",
+      "wall_sec": 25.82
+    },
+    "Hc_NEW_Lorenz_noisy": {
+      "phi": 0.6355,
+      "unique_states": 6,
+      "top_state": [
+        0,
+        1,
+        0,
+        1
+      ],
+      "status": "OK",
+      "wall_sec": 23.06
+    },
+    "Hc_NEW_RandomWalk": {
+      "phi": 0.001126,
+      "unique_states": 6,
+      "top_state": [
+        0,
+        1,
+        1,
+        0
+      ],
+      "status": "OK",
+      "wall_sec": 21.62
+    }
+  },
+  "config": {
+    "n_cells": 4,
+    "n_steps": 300,
+    "n_seeds_ensemble": 10
+  },
+  "aggregate": {
+    "mean_phi": 0.12825599999999998,
+    "max_phi": 0.6355,
+    "n_above_0_5": 1,
+    "n_total": 5,
+    "phase1_carry": "0/10",
+    "phase2_carry": "0/5",
+    "phase3_target": "\u22651/5 unlock (state-space ergodicity issue \uac80\uc99d)",
+    "verdict": "PHASE-3-PASS"
+  },
+  "wall_total_sec": 103.0
+}

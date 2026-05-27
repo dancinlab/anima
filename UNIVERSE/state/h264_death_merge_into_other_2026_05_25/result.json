@@ -1,0 +1,45 @@
+{
+  "hypothesis": "H_264",
+  "slug": "death-merge-into-other",
+  "domain": "LIFE",
+  "title": "death = merge-into-other — asymmetric absorption-integration (H_025 (+) H_054 cross-link)",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "alpha": 0.25, "warm_steps": 4},
+  "distinct_from_H_025": "H_025 = symmetric 50/50 merge toward floor (self-annihilation, dying info averaged away); H_264 = asymmetric absorb into a SELECTED target (info preserve-transfer, target-selection load-bearing)",
+  "sweep": {
+    "random_4":      { "mode": "random", "pool_size": 4, "n_before": 4, "n_after": 3, "count_delta": -1, "absorber_idx": 0, "dying_idx": 3, "info_transfer": 0.25, "rel_preserve": 0.281376, "dying_preserve": 1.0, "absorber_dnorm": 0.976609, "phi_before": 1.72896, "phi_after": 1.5641, "phi_delta": -0.164867 },
+    "random_8":      { "mode": "random", "pool_size": 8, "n_before": 8, "n_after": 7, "count_delta": -1, "absorber_idx": 0, "dying_idx": 7, "info_transfer": 0.25, "rel_preserve": 0.261108, "dying_preserve": 1.0, "absorber_dnorm": 0.936942, "phi_before": 2.03021, "phi_after": 1.79162, "phi_delta": -0.238591 },
+    "random_16":     { "mode": "random", "pool_size": 16, "n_before": 16, "n_after": 15, "count_delta": -1, "absorber_idx": 0, "dying_idx": 15, "info_transfer": 0.25, "rel_preserve": 0.314195, "dying_preserve": 1.0, "absorber_dnorm": 1.03567, "phi_before": 2.82653, "phi_after": 2.77779, "phi_delta": -0.048737 },
+    "max_weight_4":  { "mode": "max_weight", "pool_size": 4, "n_before": 4, "n_after": 3, "count_delta": -1, "absorber_idx": 2, "dying_idx": 3, "info_transfer": 0.25, "rel_preserve": 0.298042, "dying_preserve": 1.0, "absorber_dnorm": 1.06027, "phi_before": 1.29026, "phi_after": 1.20459, "phi_delta": -0.085675 },
+    "max_weight_8":  { "mode": "max_weight", "pool_size": 8, "n_before": 8, "n_after": 7, "count_delta": -1, "absorber_idx": 4, "dying_idx": 7, "info_transfer": 0.25, "rel_preserve": 0.37044, "dying_preserve": 1.0, "absorber_dnorm": 1.11199, "phi_before": 2.08338, "phi_after": 2.05678, "phi_delta": -0.026598 },
+    "max_weight_16": { "mode": "max_weight", "pool_size": 16, "n_before": 16, "n_after": 15, "count_delta": -1, "absorber_idx": 2, "dying_idx": 15, "info_transfer": 0.25, "rel_preserve": 0.278949, "dying_preserve": 1.0, "absorber_dnorm": 1.12755, "phi_before": 2.8545, "phi_after": 2.81391, "phi_delta": -0.040591 }
+  },
+  "derived": {
+    "mean_info_transfer_random":     0.25,
+    "mean_info_transfer_max_weight": 0.25,
+    "mean_rel_preserve_random":      0.285559,
+    "mean_rel_preserve_max_weight":  0.31581,
+    "mean_dying_preserve_random":     1.0,
+    "mean_dying_preserve_max_weight": 1.0
+  },
+  "criteria": {
+    "C1_info_transfer":  true,
+    "C2_asymmetric":     true,
+    "C3_determinism":    "EXTERNAL"
+  },
+  "falsifiers": {
+    "F1_INFO_TRANSFER": { "metric": "all info_transfer > 0", "verdict": "PASS" },
+    "F2_ASYMMETRY":     { "metric": "mean max_weight rel_preserve >= mean random rel_preserve", "verdict": "PASS" },
+    "F3_DETERMINISM":   { "metric": "cross-process sha256 byte-equal", "verdict": "EXTERNAL" },
+    "F4_BOUNDS":        { "metric": "metrics finite in [-1,2]", "verdict": "PASS" },
+    "F5_COUNT":         { "metric": "death count_delta == -1", "verdict": "PASS" }
+  },
+  "n_criteria_pass_in_process": 2,
+  "verdict": "SUPPORTED",
+  "cross_link": {"H_025": "death=symmetric merge to floor", "H_054": "merge=endosymbiosis", "H_203": "asymmetric-merge differentiation"}
+}

@@ -1,0 +1,41 @@
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, ...)
+[hp] beta=0.05 gamma=0.3 lr=5e-06 steps=500 w=0.9->1.0
+[data] loaded 567 pairs from /workspace/anima/data/preference_pairs.jsonl
+[ckpt] loading Phase 1A.1 → /workspace/anima/ckpts/ckpt_phase1a1_sft.pt
+[ckpt] LOADED
+[model] params=298,764,288
+
+[step    1/500] total=1.3583 simpo=0.8165 ce=0.6020 acc=0.938 margin=1.355 lr=2.00e-07 mem=2.6GB elapsed=0.0min cost=$0.000
+[step   10/500] total=1.4294 simpo=0.8224 ce=0.6737 acc=0.896 margin=1.139 lr=2.00e-06 mem=2.6GB elapsed=0.1min cost=$0.001
+[step   50/500] total=1.1191 simpo=0.8080 ce=0.3423 acc=0.988 margin=1.661 lr=4.97e-06 mem=2.6GB elapsed=0.7min cost=$0.003
+[step  100/500] total=0.9455 simpo=0.7839 ce=0.1759 acc=0.994 margin=2.556 lr=4.70e-06 mem=2.6GB elapsed=1.4min cost=$0.007
+[step  150/500] total=0.8692 simpo=0.7598 ce=0.1178 acc=0.994 margin=3.479 lr=4.19e-06 mem=2.6GB elapsed=2.1min cost=$0.010
+[step  200/500] total=0.8306 simpo=0.7449 ce=0.0912 acc=0.994 margin=4.067 lr=3.50e-06 mem=2.6GB elapsed=2.8min cost=$0.013
+[step  250/500] total=0.8159 simpo=0.7390 ce=0.0810 acc=1.000 margin=4.314 lr=2.71e-06 mem=2.6GB elapsed=3.3min cost=$0.016
+[ckpt] saved /workspace/anima/output/ckpt_step250.pt
+[step  300/500] total=0.8064 simpo=0.7399 ce=0.0693 acc=1.000 margin=4.276 lr=1.89e-06 mem=2.6GB elapsed=3.8min cost=$0.018
+[step  350/500] total=0.7915 simpo=0.7265 ce=0.0670 acc=1.000 margin=4.804 lr=1.13e-06 mem=2.6GB elapsed=4.3min cost=$0.021
+[step  400/500] total=0.7910 simpo=0.7316 ce=0.0606 acc=1.000 margin=4.608 lr=5.27e-07 mem=2.6GB elapsed=4.7min cost=$0.023
+[step  450/500] total=0.7888 simpo=0.7265 ce=0.0629 acc=1.000 margin=4.810 lr=1.35e-07 mem=2.6GB elapsed=5.2min cost=$0.025
+[step  500/500] total=0.7934 simpo=0.7317 ce=0.0618 acc=1.000 margin=4.617 lr=0.00e+00 mem=2.6GB elapsed=5.6min cost=$0.027
+[ckpt] saved /workspace/anima/output/ckpt_step500.pt
+[done] {
+  "preset": "phase1b_simpo_on_phase1a1",
+  "steps_completed": 500,
+  "steps_target": 500,
+  "elapsed_min": 5.632560249169668,
+  "cost_usd": 0.027224041338761645,
+  "beta": 0.05,
+  "gamma": 0.3,
+  "lr": 5e-06,
+  "w_start": 0.9,
+  "w_end": 1.0,
+  "n_pairs": 567,
+  "n_params": 298764288,
+  "base_ckpt": "/workspace/anima/ckpts/ckpt_phase1a1_sft.pt",
+  "lineage_tag": "phase1a1_color_cosmology -> phase1b_simpo (substrate-mismatch corrected)"
+}
+
+# NOTE: ckpt download from pod was TRUNCATED (326MB / 597MB) before pod auto-destroyed.
+# ckpt_sha256 pre-pull (verified during V5.8 bench on pod): 428685c03b0de1dfa0f48d390f07a9c1a65cfc3c1f477b0ba3ba8cdd104217e2
+# All evaluation results captured before pod loss.

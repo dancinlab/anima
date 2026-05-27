@@ -1,0 +1,15 @@
+[fpga/strange_loop] PHYS-P5-2 — Hofstadter 2-layer strange loop lattice
+  layers: A (4 LUT4 cells) ⇄ B (4 LUT4 cells), mutual-recursion tables
+
+  [T1] flip b0: n1.A=(4,1,3,1) vs n2.A=(1,1,3,3)
+T1 PASS — layer coupling is real (B perturb → A changes)
+  [T2] all 16 seeds converged to an attractor
+T2 PASS — all seeds converge (no infinite regress)
+  [T3] max period = 2 (bound = 100), total = 24
+T3 PASS — attractor periods bounded
+  [T4] seed=7 produced identical attractor on repeat call (len=1)
+T4 PASS — find_attractors is deterministic
+  [T5] all 1 rows have length 8 ✓
+T5 PASS — API contract (rows length 8)
+
+[fpga/strange_loop] 5/5 PASS — PHYS-P5-2 DONE

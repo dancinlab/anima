@@ -1,0 +1,51 @@
+{
+  "schema": "anima/emerge_chat_head_compare/verdict/1",
+  "task_id": "anima_emerge_chat_head_compare_2026_05_05",
+  "ts_utc": "2026-05-05T17:32:01Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "prompt": "안녕",
+  "n_continue": 25,
+  "head_shapes": {
+    "head_a": [
+      64000,
+      768
+    ],
+    "head_g": [
+      64000,
+      768
+    ],
+    "tok_emb": [
+      64000,
+      768
+    ],
+    "ln_f_type": "RMSNorm"
+  },
+  "head_a_present": true,
+  "head_g_present": true,
+  "tok_emb_present": true,
+  "n_configs": 4,
+  "n_coherent": 0,
+  "pairs_diff": {
+    "baseline_model_forward__vs__head_a": false,
+    "baseline_model_forward__vs__head_g": true,
+    "baseline_model_forward__vs__tok_emb_tied": false,
+    "head_a__vs__head_g": true,
+    "head_a__vs__tok_emb_tied": false,
+    "head_g__vs__tok_emb_tied": true
+  },
+  "coherence_per_config": {
+    "baseline_model_forward": false,
+    "head_a": false,
+    "head_g": false,
+    "tok_emb_tied": false
+  },
+  "verdict": "FAIL_ALL_HEADS",
+  "honest_c3": [
+    "C1 — mac CPU fp32; numerical noise floor low but full forward of 64k-vocab × 768 head per token sweep is bounded by argmax and not soft-distribution; tie-breaking determinism not guaranteed across runs.",
+    "C2 — head_g is the cand-H aux head (BG-AF FAIL_TRUE evidence); designed for prev-byte prediction, NOT next-token chat. Coherent text via head_g would be a major surprise — incoherent text under head_g is the EXPECTED null and does not falsify lm_head per se.",
+    "C3 — tok_emb tied-embedding decode assumes embed-to-output weight tying. CLM v4 may have been trained WITHOUT tying (head_a stored as a separate Linear of identical shape suggests untied weights). If untied, tok_emb decode produces garbage by design — and coherent text would prove tying was effective; incoherent text is consistent with untied-by-construction and does not isolate lm_head pathology.",
+    "C4 — ln_f normalization applied uniformly via the forward hook. The hook captures POST-ln_f hidden, so all 3 explicit-head paths (head_a, head_g, tok_emb) operate on identically-normalized hidden. baseline_model_forward goes through the model's own lm_head path which should also be POST-ln_f; equivalence baseline ≡ head_a is the sanity check.",
+    "C5 — single prompt 안녕 (KO greeting). One-prompt result is anecdotal; broader prompt sweep needed before claiming 'lm_head broken across all inputs'. Per-prompt variance not measured here."
+  ]
+}

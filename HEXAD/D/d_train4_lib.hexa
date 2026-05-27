@@ -1,0 +1,268 @@
+// HEXAD/D/d_train4_lib.hexa — pure fns (NO main / NO _selftest) — compiled-first lib-split
+// ════════════════════════════════════════════════════════════════════════════
+//  PHASE 5 (1) B-milestone — causal softmax-ATTENTION exact analytic vjp.
+//
+//  C (#44) proved pure-hexa exact reverse-mode for the LINEAR / RMSNorm /
+//  SwiGLU / residual / B-D-4-head vjp classes. The ONLY genuinely-new
+//  backward primitive remaining for full ConsciousDecoderV2 is the causal
+//  scaled-dot softmax SELF-ATTENTION vjp. This milestone proves it.
+//
+//  Single-head causal self-attention (T tokens, dim d, head_dim=d):
+//      Q=X·Wqᵀ  K=X·Wkᵀ  V=X·Wvᵀ              (linear, vjp ⊃ C)
+//      S[i][j] = (Q[i]·K[j]) / √d  ,  j ≤ i    (causal mask)
+//      P[i]    = softmax(S[i][0..i])           (row softmax)
+//      ctx[i]  = Σ_j P[i][j]·V[j]
+//      out     = ctx·Woᵀ                       (linear)
+//      ℓ       = W_h · out[T-1]                (last-pos LM-head, B-D-4)
+//
+//  EXACT analytic reverse (NO scalar tape):
+//    • dℓ          = softmax(ℓ) − onehot(t)            (B-D-4 closed 🔵)
+//    • Wh,Wo,Wq,Wk,Wv : (upstream)⊗(input) / Mᵀ·u      (linear vjp)
+//    • ctx          : dP[i][j]=dctx[i]·V[j] ; dV[j]+=Σ_i P[i][j]·dctx[i]
+//    • softmax row  : dS[i][j]=P[i][j]·(dP[i][j]−Σ_k P[i][k]·dP[i][k])
+//                     (Jacobian diag(P)−PPᵀ — exact, the new primitive)
+//    • scores       : dQ[i]+=Σ_j dS[i][j]·K[j]/√d
+//                     dK[j]+=Σ_i dS[i][j]·Q[i]/√d
+//
+//  RoPE = an ORTHOGONAL rotation on Q,K ⟹ its vjp is the inverse rotation
+//  (transpose) — a trivial closed extension, NOT re-derived here (honest
+//  scope: this milestone isolates the softmax-attention vjp, the hard one).
+//
+//  FALSIFIER F-D-PORT-4  : N AdamW over the full attention analytic chain ⟹
+//    gn2 collapse + acc.  TIER = EMPIRICAL (B-D-NOTE; NOT 🔵).
+//  F-D-PORT-4b GRAD-EXACT : analytic attn-weight grad vs central finite-diff
+//    — verifies the softmax-attention vjp IMPL (PROPERTY; g3, no tier lift).
+//
+//  from-scratch : ALL weights RANDOM seed-fixed LCG, base_ckpt = NONE.
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/D/d_train3_lib.hexa"
+
+
+// row softmax over the first L entries of a length-T row (causal: L=i+1)
+fn c4_softmax_row(s, L: int) {
+    let mut m = s[0]
+    let mut i = 1
+    while i < L { if s[i] > m { m = s[i] } i = i + 1 }
+    let mut es = []
+    let mut tot = 0.0
+    i = 0
+    while i < L { let e = dt_exp(s[i] - m); es.push(e); tot = tot + e; i = i + 1 }
+    let mut p = []
+    i = 0
+    while i < L { p.push(es[i] / tot); i = i + 1 }
+    return p
+}
+
+// forward — X:[T][d] flat row-major [T*d]; Wq/Wk/Wv/Wo:[d*d]; Wh:[V*d]
+//   returns cache dict for the exact backward
+fn c4_forward(X, Wq, Wk, Wv, Wo, Wh, T: int, d: int, V: int) {
+    let scale = 1.0 / dt_sqrt(to_float(d))
+    // Q,K,Vv : [T][d] flat
+    let mut Q = []
+    let mut K = []
+    let mut Vv = []
+    let mut ti = 0
+    while ti < T {
+        let mut xrow = []
+        let mut c = 0
+        while c < d { xrow.push(X[ti * d + c]); c = c + 1 }
+        let qr = c3_matvec(Wq, xrow, d, d)
+        let kr = c3_matvec(Wk, xrow, d, d)
+        let vr = c3_matvec(Wv, xrow, d, d)
+        c = 0
+        while c < d { Q.push(qr[c]); K.push(kr[c]); Vv.push(vr[c]); c = c + 1 }
+        ti = ti + 1
+    }
+    // per-row causal softmax + context
+    let mut Pflat = []        // ragged stored T*T (j>i = 0)
+    let mut ctx = []          // [T][d]
+    let mut i = 0
+    while i < T {
+        let L = i + 1
+        let mut srow = []
+        let mut j = 0
+        while j < L {
+            let mut dot = 0.0
+            let mut c = 0
+            while c < d { dot = dot + Q[i*d+c] * K[j*d+c]; c = c + 1 }
+            srow.push(dot * scale)
+            j = j + 1
+        }
+        let pr = c4_softmax_row(srow, L)
+        j = 0
+        while j < T {
+            Pflat.push(if j < L { pr[j] } else { 0.0 })
+            j = j + 1
+        }
+        let mut cr = []
+        let mut c = 0
+        while c < d {
+            let mut acc = 0.0
+            j = 0
+            while j < L { acc = acc + pr[j] * Vv[j*d+c]; j = j + 1 }
+            cr.push(acc)
+            c = c + 1
+        }
+        c = 0
+        while c < d { ctx.push(cr[c]); c = c + 1 }
+        i = i + 1
+    }
+    // out = ctx·Woᵀ  (per position)
+    let mut out = []
+    i = 0
+    while i < T {
+        let mut crow = []
+        let mut c = 0
+        while c < d { crow.push(ctx[i*d+c]); c = c + 1 }
+        let orow = c3_matvec(Wo, crow, d, d)
+        c = 0
+        while c < d { out.push(orow[c]); c = c + 1 }
+        i = i + 1
+    }
+    // last-position LM-head
+    let mut zT = []
+    let mut c = 0
+    while c < d { zT.push(out[(T-1)*d + c]); c = c + 1 }
+    let logits = c3_matvec(Wh, zT, V, d)
+    return #{
+        "logits": logits, "Q": Q, "K": K, "Vv": Vv, "P": Pflat,
+        "ctx": ctx, "out": out, "zT": zT, "scale": scale,
+    }
+}
+
+// EXACT full-chain grad — returns #{dWq,dWk,dWv,dWo,dWh} (same flat layout)
+fn c4_grad(X, Wq, Wk, Wv, Wo, Wh, t: int, T: int, d: int, V: int) {
+    let f = c4_forward(X, Wq, Wk, Wv, Wo, Wh, T, d, V)
+    let scale = f["scale"]
+    let p = dt2_softmax(f["logits"])
+    let mut dl = []
+    let mut k = 0
+    while k < V { dl.push(p[k] - (if k == t { 1.0 } else { 0.0 })); k = k + 1 }
+    // head : ℓ = Wh·zT
+    let dWh = c3_outer(dl, f["zT"], V, d)
+    let dzT = c3_matvec_t(Wh, dl, V, d)               // d out[T-1]
+    // dout : only last position non-zero (single-token CE target)
+    // dWo += Σ_i dout[i]⊗ctx[i] ; dctx[i] = Woᵀ·dout[i]
+    let mut dWo = dt2_zeros(d * d)
+    let mut dctx = dt2_zeros(T * d)
+    let mut i = 0
+    while i < T {
+        let mut douti = []
+        let mut c = 0
+        while c < d {
+            douti.push(if i == T - 1 { dzT[c] } else { 0.0 })
+            c = c + 1
+        }
+        let mut ctxi = []
+        c = 0
+        while c < d { ctxi.push(f["ctx"][i*d+c]); c = c + 1 }
+        let go = c3_outer(douti, ctxi, d, d)
+        let mut q = 0
+        while q < d*d { dWo[q] = dWo[q] + go[q]; q = q + 1 }
+        let dci = c3_matvec_t(Wo, douti, d, d)
+        c = 0
+        while c < d { dctx[i*d+c] = dci[c]; c = c + 1 }
+        i = i + 1
+    }
+    // ctx[i]=Σ_j P[i][j]V[j] :  dP[i][j]=dctx[i]·V[j] ; dV[j]+=ΣP[i][j]dctx[i]
+    let mut dQ = dt2_zeros(T * d)
+    let mut dK = dt2_zeros(T * d)
+    let mut dV = dt2_zeros(T * d)
+    i = 0
+    while i < T {
+        let L = i + 1
+        // dP row + softmax-Jacobian → dS row  (the NEW primitive)
+        let mut dP = []
+        let mut j = 0
+        while j < L {
+            let mut acc = 0.0
+            let mut c = 0
+            while c < d { acc = acc + dctx[i*d+c] * f["Vv"][j*d+c]; c = c + 1 }
+            dP.push(acc)
+            j = j + 1
+        }
+        let mut sdot = 0.0
+        j = 0
+        while j < L { sdot = sdot + f["P"][i*T+j] * dP[j]; j = j + 1 }
+        // dV[j] += P[i][j]·dctx[i]
+        j = 0
+        while j < L {
+            let pij = f["P"][i*T+j]
+            let mut c = 0
+            while c < d { dV[j*d+c] = dV[j*d+c] + pij * dctx[i*d+c]; c = c + 1 }
+            j = j + 1
+        }
+        // dS[i][j] = P[i][j]·(dP[j] − sdot) ; scores = (Q·K)·scale
+        j = 0
+        while j < L {
+            let dS = f["P"][i*T+j] * (dP[j] - sdot) * scale
+            let mut c = 0
+            while c < d {
+                dQ[i*d+c] = dQ[i*d+c] + dS * f["K"][j*d+c]
+                dK[j*d+c] = dK[j*d+c] + dS * f["Q"][i*d+c]
+                c = c + 1
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    // Q=X·Wqᵀ etc :  dWq += Σ_i dQ[i]⊗X[i] ; (dX unused — X is input)
+    let mut dWq = dt2_zeros(d * d)
+    let mut dWk = dt2_zeros(d * d)
+    let mut dWv = dt2_zeros(d * d)
+    i = 0
+    while i < T {
+        let mut xi = []
+        let mut c = 0
+        while c < d { xi.push(X[i*d+c]); c = c + 1 }
+        let mut dqi = []
+        let mut dki = []
+        let mut dvi = []
+        c = 0
+        while c < d {
+            dqi.push(dQ[i*d+c]); dki.push(dK[i*d+c]); dvi.push(dV[i*d+c])
+            c = c + 1
+        }
+        let gq = c3_outer(dqi, xi, d, d)
+        let gk = c3_outer(dki, xi, d, d)
+        let gv = c3_outer(dvi, xi, d, d)
+        let mut q = 0
+        while q < d*d {
+            dWq[q] = dWq[q] + gq[q]
+            dWk[q] = dWk[q] + gk[q]
+            dWv[q] = dWv[q] + gv[q]
+            q = q + 1
+        }
+        i = i + 1
+    }
+    return #{ "dWq": dWq, "dWk": dWk, "dWv": dWv, "dWo": dWo, "dWh": dWh }
+}
+
+fn c4_logits(X, Wq, Wk, Wv, Wo, Wh, T: int, d: int, V: int) {
+    return c4_forward(X, Wq, Wk, Wv, Wo, Wh, T, d, V)["logits"]
+}
+fn c4_gn2(X, Wq, Wk, Wv, Wo, Wh, t: int, T: int, d: int, V: int) -> float {
+    let p = dt2_softmax(c4_logits(X, Wq, Wk, Wv, Wo, Wh, T, d, V))
+    let mut acc = 0.0
+    let mut k = 0
+    while k < V {
+        let dk = p[k] - (if k == t { 1.0 } else { 0.0 })
+        acc = acc + dk * dk
+        k = k + 1
+    }
+    return acc
+}
+fn c4_ce(X, Wq, Wk, Wv, Wo, Wh, t: int, T: int, d: int, V: int) -> float {
+    let p = dt2_softmax(c4_logits(X, Wq, Wk, Wv, Wo, Wh, T, d, V))
+    let pt = if p[t] < 0.000001 { 0.000001 } else { p[t] }
+    return 0.0 - dt_ln(pt)
+}
+fn c4_predict(X, Wq, Wk, Wv, Wo, Wh, T: int, d: int, V: int) -> int {
+    let lg = c4_logits(X, Wq, Wk, Wv, Wo, Wh, T, d, V)
+    let mut bi = 0
+    let mut bv = lg[0]
+    let mut k = 1
+    while k < V { if lg[k] > bv { bv = lg[k]; bi = k } k = k + 1 }
+    return bi
+}

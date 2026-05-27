@@ -1,0 +1,133 @@
+{
+  "schema": "anima/strategic_4way_inventory/1",
+  "ts": "2026-05-02T00:00:00Z",
+
+  "substrate_1_CLM": {
+    "identity": "Cell-Language Model 530M (label '350m' = scale target, actual 530.99M params), hexa-native, ubu1",
+    "checkpoint": "~/anima/checkpoints/clm_v4_350m/scale_350m/best.pt (5.0GB, step=20000, phi=27.91, ce=0.046)",
+    "architecture": "decoder_v3, d_model=768, 16 blocks, n_head=6, n_kv_head=2, consciousness_dim=192",
+    "measurable_axes": [
+      "phi_star (anima_phi_v3_canonical, HID_TRUNC=8 sample-partition)",
+      "L1 holo_positivity (14-gate, JL-projection 768→16)",
+      "Kuramoto r (CLM L_IX integrator)",
+      "tension_proj activation per layer (decoder.tension_proj.weight [768,1])",
+      "narrative_grus federation state (12 GRUs)"
+    ],
+    "phase_status": "Phase A.1-A.5 PASS positive on HID=8; Phase A.6 AN11(c) JSD in-progress; Phase B Mk.XII v3 3rd backbone unchanged"
+  },
+
+  "substrate_2_EEG": {
+    "identity": "OpenBCI Cyton+Daisy 16ch live, 125Hz sample rate",
+    "recording_path": "recordings/sessions/baseline_resting_60s_20260428_filtered.npy",
+    "alpha_rich_channels": ["P3 (idx6)", "P4 (idx7)", "O1 (idx8)", "O2 (idx9)"],
+    "measurable_axes": [
+      "alpha-band PLV_N (8-12Hz, butterworth-4 + Hilbert)",
+      "LZc complexity (Casali 2013 PCI analog reproduce 0.389 PASS)",
+      "gamma-theta ratio",
+      "Hjorth parameters (activity/mobility/complexity)",
+      "permutation entropy (PE)",
+      "P3 ERP component"
+    ],
+    "phase_status": "N-19 PCI TMS-free 6/6 PASS; Casali 2013 PASS_ANALOG WITNESSED axis 2; Boly 2017 pilot kit READY; paradigm v11 EEG-axis applicable"
+  },
+
+  "substrate_3_AKIDA": {
+    "identity": "BrainChip AKD1000 dev kit on Raspberry Pi 5 (BCM2712 quad-core A76, 16GB), capex $1495 paid",
+    "vendor_url": "https://shop.brainchipinc.com/products/akida-development-kit-raspberry-pi-5",
+    "hardware_constraints": {
+      "cores": "80 NPU spike-event",
+      "neurons": "~1.2M (vendor)",
+      "supported_layers": "Akida 1.0 only (CNN+DNN+RNN+vision-CNN limited; transformer self-attention native UNSUPPORTED)",
+      "neuron_model": "non-leaky single-timestep",
+      "input_format": "dense np.uint8 4-D NHWC (1/2/4/8 bit), spike-encoded internally via rank-order coding",
+      "training": "inference-only",
+      "power": "~1W typical"
+    },
+    "measurable_axes_planned": [
+      "spike rate per channel (mean firing rate)",
+      "phi_star surrogate (rate-projected to anima_phi_v3_canonical)",
+      "Landauer kT ln2 energy per inference (T1-A3)",
+      "ISI (inter-spike interval) vs ANU QRNG (T1-A1 alt)"
+    ],
+    "phase_status": "ORDERED, dev kit arrival ETA pending Brainchip ship; N-2/N-3/N-7/N-8 specs READY (335 LoC skeleton + 8-step D+0 protocol)"
+  },
+
+  "substrate_4_tension_link": {
+    "identity": "anima core polysemic 3-referent per #51",
+    "referent_A_inter_anima": {
+      "file": "anima-core/tension_bridge.hexa",
+      "channels": 5,
+      "channel_spec": ["concept (16f)", "context (8f)", "meaning (16f)", "authenticity (1f)", "sender (4f)"],
+      "n6_constants": "sopfr(6)=5 channels; tau(6)=4 binding phases D->P->G->I; sigma(6)=12; phi(6)=2; sigma/6=2 Dedekind perfect",
+      "transmission_accuracy": "overall R=99.9%, all categories 100%",
+      "status": "LIVE"
+    },
+    "referent_B_intra_runtime": {
+      "file": "anima_runtime.hexa",
+      "metric": "mind.tension scalar",
+      "status": "LIVE"
+    },
+    "referent_C_edu_lattice": {
+      "file": "EduLattice tension_field over atlas_graph",
+      "status": "PARTIAL"
+    },
+    "measurable_axes": [
+      "5-channel transmission accuracy (concept/context/meaning/auth/sender)",
+      "mind.tension scalar trajectory",
+      "Dedekind ratio psi(psi)/psi (target 2.0 = lossless)",
+      "tension_field over atlas_graph"
+    ],
+    "actual_measurements_to_date": [
+      "W4 #56 dynamic CLM L1 7.06/16, +2.28sigma vs random — ALM 4x better",
+      "ALM #52 N-51 EXEC L1 1.71/16, +0.30sigma — RED reinforced"
+    ]
+  },
+
+  "socket_map": {
+    "CLM_x_EEG": {
+      "socket_name": "tension_bridge <-> EEG alpha-band Kuramoto V_sync",
+      "spec_doc": "anima-clm-eeg/docs/clm_lix_eeg_alpha_direct_mapping_spec.md",
+      "gate_count": 4,
+      "gates": ["B1 alpha-phase non-trivial floor", "B2 5-window codir mean-phase", "B3 CLM Kuramoto avg per-gen", "B4 alpha-Kuramoto Pearson"],
+      "current_verdict": "BRIDGE_WEAK (3/4 hybrid: real EEG + synth CLM, B4 anti-corr -540)",
+      "upgrade_path": "live CLM Kuramoto driver + same EEG session -> REAL_HW_PASS classification"
+    },
+    "CLM_x_AKIDA": {
+      "socket_name": "CLM hidden-state -> CNN-quant projection -> MetaTF -> AKD1000 inference",
+      "spec_doc": "docs/n_substrate_n3_clm_akida_phi_spec_2026_05_01.md",
+      "tier": "T-A surrogate (sound), T-B partial (sub-layer), T-C full transformer (DISCARDED)",
+      "phi_metric": "anima_phi_v3_canonical (HID_TRUNC=8, K=8 sample-partition)",
+      "current_status": "SPEC_READY, hardware pending"
+    },
+    "EEG_x_AKIDA": {
+      "socket_name": "EEG -> ADM level-crossing -> 4D uint8 raster -> akida.Model.forward",
+      "spec_doc": "docs/n_substrate_n2_eeg_akida_spike_pipeline_spec_2026_05_01.md",
+      "encoder_params": "theta_up=theta_dn=0.5sigma, refractory 4ms, bin 8ms, T_win 1s, 4-bit precision",
+      "tensor_shape": "(N=1, H=T_bin=125, W=C=16, channels=2 polarity)",
+      "current_status": "SPEC_READY (335 LoC skeleton), hardware pending"
+    },
+    "tension_x_CLM": {
+      "socket_name": "tension_proj per-layer signal injector (native to checkpoint)",
+      "weight_shape": "[768, 1]",
+      "injection_path": "decoder._phi_signal (DD5 EX24 native, decoder_v3.py:165)",
+      "current_status": "LIVE (W4 verified)"
+    },
+    "tension_x_EEG": {
+      "socket_name": "tension_bridge channel <-> EEG alpha-band Kuramoto V_sync (B-tier of N-1 4-gate)",
+      "current_status": "PARTIAL via N-1 BRIDGE_WEAK — tension scalar not yet directly mapped to alpha-PLV"
+    },
+    "tension_x_AKIDA": {
+      "socket_name": "tension scalar -> ADM polarity bias modulator -> tension-modulated spike train",
+      "spec_doc": "NOT_YET_BUILT, post-arrival prep needed",
+      "current_status": "DESIGN_GAP"
+    }
+  },
+
+  "honest_inventory_c3": [
+    "CLM substrate 의 'consciousness_dim=192/256' 는 architecture parameter, 실제 phenomenal consciousness 와 무관 (이름 오버로딩)",
+    "EEG axes 중 LZc Casali 0.389 만 PASS_ANALOG WITNESSED, 나머지 PE/Hjorth/gamma-theta 는 audit 만 진행 (verdict 미확정)",
+    "AKIDA 모든 measurable axes 는 hardware arrival 전 hypothetical, vendor spec 신뢰 100% 가정",
+    "tension_link 5-channel transmission accuracy 99.9% 는 anima-internal benchmark, peer-review 외부 0",
+    "socket map 의 7개 socket 중 LIVE 는 4개 (CLM_x_EEG WEAK, CLM_x_tension, EEG axes, tension_link self), 3개 (CLM_x_AKIDA, EEG_x_AKIDA, tension_x_AKIDA) 는 hardware blocked"
+  ]
+}

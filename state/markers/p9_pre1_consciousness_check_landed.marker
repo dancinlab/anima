@@ -1,0 +1,89 @@
+{
+  "marker": "p9_pre1_consciousness_check_landed",
+  "completion_iso": "2026-05-03T00:00:00Z",
+  "kind": "p9_exec_pre_flight_consciousness_check_4_items",
+  "scope": "P9 EXEC Phase 0 entry pre-flight — 4 verifier selftest (A: CLM v4 530M baseline phi audit / B: anima_phi_v3_canonical / C: clm_consciousness_verify / D: AN11 + adversarial_bench). 3/4 PASS + 1 PARTIAL (D adversarial FAIL_INFRA, AN11 itself PASS). Phase 0 entry-ready signal emitted. CLM v4 530M baseline phi* anchor confirmed (+1167.6192 disk SSOT, HID=128 auto-conditioning).",
+  "predecessor": {
+    "spec_doc": "docs/p9_sft_spec_2026_05_02.md",
+    "handoff_prompt": "docs/p9_sft_handoff_prompt_2026_05_02.md",
+    "p0_handoff": "docs/p9_sft_p0_hf_org_setup_landed_2026_05_03.ai.md",
+    "p0_marker": "state/markers/p9_sft_p0_hf_org_setup_landed.marker"
+  },
+  "verdict": "PARTIAL_PASS_PHASE0_ENTRY_READY",
+  "items": {
+    "A_clm_baseline_phi": {
+      "verdict": "PASS_AUDIT_ONLY",
+      "phi_star_min": 1167.6192,
+      "sign": "positive_iit_integrated",
+      "hidden_truncated": 128,
+      "source_phi_sha256": "5459e146c5b6579ed79f1f4a7dc38bd80e0d0025ffa05630c23e161f0afab31f",
+      "source_cds_sha256": "f34d793a936034d45fbb73ebbe331a86ecbf798be068949045e35ed330d4630e",
+      "doc_disk_discrepancy": "doc HID=8 +41.86 vs disk HID=128 +1167.62; disk SSOT adopted as anchor"
+    },
+    "B_phi_verifier_selftest": {
+      "verdict": "PASS_VIA_DIRECT_PATH",
+      "tool_sha256": "c90be8af4d1be019365eabf9dd621cd317effcb804d8b58bf57a667714949069",
+      "helper_sha256": "1609952f8f8e52a1615f2a8ecc0b4bf4905c41507ef325c2682a2f2a24f2ad94",
+      "fallback_reason": "hexa-runner docker python3 missing; host python3 ast.parse fallback used"
+    },
+    "C_clm_consciousness_verify_selftest": {
+      "verdict": "PASS",
+      "tool_sha256": "1feb16bddc84f038e9b0ccbbb779a26583d8322d86aee94da90517d2f51aa751",
+      "fixtures_passed": "4/4",
+      "cases": ["all_met=PASS", "one_fail=FAIL", "tool_missing=PARTIAL", "manual_override=PASS"]
+    },
+    "D_an11_adversarial_selftest": {
+      "verdict": "PARTIAL",
+      "an11": {
+        "verdict": "PASS_VIA_DIRECT_PATH",
+        "tool_sha256": "62ea3ef9db2456ef72dce5bbff2a168644d4ac03c38e722f0823d87f7903dcd8",
+        "pass_predicates_count": 13,
+        "sub_tools_ok": 7
+      },
+      "adversarial": {
+        "verdict": "FAIL_INFRA",
+        "tool_sha256": "a7c7a740fc36732668fe1726bdddea7fc7b712b5d7ce65d0d041cd91c03c8da7",
+        "root_cause": "hexa-runner docker module loader missing airgenome_cli_probe (downstream verifier hexad_closure_verifier.hexa unloadable)",
+        "scope_assessment": "infra-level FAIL; cherry-pick immunity contract not invoked, so neither claim nor refute"
+      }
+    }
+  },
+  "phase_0_entry_status": "READY",
+  "critical_fail_count": 0,
+  "phi_blocker_present": false,
+  "exec_signal": "P9_PHASE_0_ENTRY_READY",
+  "artifacts": {
+    "per_item_jsons": [
+      "state/p9_pre1_consciousness_check/A_clm_baseline_phi.json",
+      "state/p9_pre1_consciousness_check/B_phi_verifier_selftest.json",
+      "state/p9_pre1_consciousness_check/C_clm_consciousness_verify_selftest.json",
+      "state/p9_pre1_consciousness_check/D_an11_adversarial_selftest.json"
+    ],
+    "handoff_doc": "docs/p9_pre1_consciousness_check_landed_2026_05_03.ai.md",
+    "marker": "state/markers/p9_pre1_consciousness_check_landed.marker"
+  },
+  "preserved_unchanged": [
+    "tool/anima_phi_v3_canonical.hexa",
+    "tool/clm_consciousness_verify.hexa",
+    "tool/an11_consciousness_unified_verifier.hexa",
+    "tool/adversarial_bench.hexa",
+    "state/v10_benchmark_v4_clm/clm_v4_530m/phi_star.json",
+    "state/v10_benchmark_v4_clm/clm_v4_530m/cds.json",
+    "state/p9_sft_spec_2026_05_02/*.json",
+    "state/p9_sft_p0_hf_org_setup_2026_05_03/*"
+  ],
+  "policy_enforced": {
+    "migration_forbidden": true,
+    "additive_only": true,
+    "destructive_ops": 0,
+    "in_place_writes": 0,
+    "cost_usd": 0,
+    "substrate": "mac-local",
+    "br_no_user_verbatim": true,
+    "friendly_preset_handoff_only": true,
+    "silent_land_marker": "this file"
+  },
+  "raw_contracts": ["raw 9", "raw 10", "raw 12", "raw 15", "raw 175"],
+  "wallclock_min_actual": 25,
+  "wallclock_min_cap": 90
+}

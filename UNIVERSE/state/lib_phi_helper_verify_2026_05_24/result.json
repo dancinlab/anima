@@ -1,0 +1,34 @@
+{
+  "id": "lib_phi_helper_verify",
+  "cycle": "LIFE_Cycle_12_infra_shared_module",
+  "slug": "phi-helper-shared-module-verify",
+  "date": "2026-05-24",
+  "kind": "infra (lib/ shared module) — NOT a new H",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial proxy wrapper; documents heuristic config, does NOT re-validate it)",
+  "module": "UNIVERSE/lib/phi_helper.hexa",
+  "phi_primitive": "RFC 036 phi_spatial via HEXAD/C/c_lib.hexa c_measure_phi (byte-equal phi_rs native replica)",
+  "config_ssot": { "life_phi_n": 16, "life_phi_dim": 12, "life_phi_warm": 8, "life_phi_nbins": 4 },
+  "phi_mean_via_phi_default": {
+    "ordered_rule250": 1.14511e-05,
+    "chaotic_rule30": 0.509944,
+    "class_iv_rule110": 0.556454
+  },
+  "criteria": {
+    "C1_PARITY": { "metric": "phi_default(s) == phi_with(s,16,12,4)", "phi_default": 0.538242, "phi_with": 0.538242, "verdict": "PASS" },
+    "C2_H007_REPRO": { "metric": "rule110 > rule30 AND rule110 > rule250 AND all Φ>=0", "verdict": "PASS" },
+    "C3_IMPORT_SAFE": { "metric": "no top-level call on import; module fns resolvable", "verdict": "PASS" },
+    "C4_DETERMINISM": { "metric": "phi_determinism_check re-run byte-identical", "phi_a": 0.538242, "phi_b": 0.538242, "verdict": "PASS" }
+  },
+  "verdict_rule": "SHARED_MODULE_OK iff C1 AND C2 AND C3 AND C4 PASS; else PARTIAL",
+  "verdict": "SHARED_MODULE_OK",
+  "honest_limits": [
+    "L1: existing 28+ H still use inline phi_spatial (already written); this PR is for FUTURE cycles. Retroactive migration is a separate large PR (pr-cycle unsuitable).",
+    "L2: config defaults (16/12/8/4) are an H_007 heuristic carry. This module DOCUMENTS the heuristic (single home, F7 명시화); it does NOT re-validate it. Robustness of n_bins is in infra_phi_n_bins_2026_05_23.",
+    "L3: phi_spatial itself is a 🟢 NUMERICAL proxy (byte-equal native replica of phi_rs); true phi_rs Rust FFI is a NAMED BLOCKER (RFC 036 §FFI shim, hexa-lang #530). This helper is a proxy wrapper.",
+    "L4: phi_default uses warm=8 (H_007 default). Closure-axis H (H_204) intentionally override warm=0; those callers must use phi_with or run their own substrate — the helper does not encode warm into the Φ call (warm shapes the substrate, not phi_spatial args)."
+  ]
+}

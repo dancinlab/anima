@@ -1,0 +1,65 @@
+{
+  "extraction": {
+    "name": "honesty-monitor",
+    "version": "1.0.0",
+    "date": "2026-05-04",
+    "audit_rank": 2,
+    "audit_score": 9,
+    "rationale": "AI alignment publishable potential — small surface, deterministic, broadly applicable",
+    "pattern_mirror": ["qmirror (2026-05-03)", "sim-universe (2026-05-04)"]
+  },
+  "source": {
+    "from_repo": "nexus",
+    "from_path": "nexus/modules/honesty_monitor/",
+    "files": [
+      "honesty_monitor.hexa (227 LoC)",
+      "README.md (47 lines)"
+    ],
+    "upstream_origin": "CANON/experiments/anomaly/btAI2_honesty_bit_scheduler.py (productized to .hexa 2026-04-27)"
+  },
+  "destination": {
+    "repo_path": "/Users/ghost/core/honesty-monitor/",
+    "github_url": "https://github.com/dancinlab/honesty-monitor",
+    "visibility": "PUBLIC",
+    "license": "Apache-2.0",
+    "initial_commit": "7888486aec785eb47198a8fe2e1a18bbac647137"
+  },
+  "scaffold": {
+    "hexa_toml": true,
+    "cli_router": "cli/honesty-monitor.hexa (5 subcmd: status/demo/self-test/version/help)",
+    "modules": ["modules/honesty_monitor.hexa"],
+    "install_hook": "install.hexa (zero-dep pre, post self-test warn-only)",
+    "tests": ["tests/test_smoke.hexa", "tests/test_boundary.hexa"],
+    "examples": ["examples/training_loop.hexa"],
+    "readme_lines": 197,
+    "changelog": true,
+    "license": "Apache-2.0"
+  },
+  "registry": {
+    "file": "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv",
+    "entry_index": 25,
+    "entry": "honesty-monitor\t1.0.0\tcli/honesty-monitor.hexa\thttps://github.com/dancinlab/honesty-monitor\t\tAI honesty-bit falsifier — ..."
+  },
+  "nexus_consumer_refactor": {
+    "files_added": ["nexus/cli/honesty.hexa (4-tier resolution shellout)"],
+    "files_edited": [
+      "nexus/engine/nexus_cli.hexa (HONESTY_CLI const + cmd_honesty + dispatch + cmd_help + subcmd_help)",
+      "nexus/hexa.toml (added [dependencies] honesty-monitor = ^1.0.0)",
+      "nexus/install.hexa (added ensure_runtime_dep call)"
+    ],
+    "smoke_test_verdict": "PASS",
+    "smoke_test_evidence": "hexa run /Users/ghost/core/nexus/cli/honesty.hexa self-test → __HONESTY_MONITOR__ PASS alerts=2 steps=5",
+    "deletion_status": "NOT EXECUTED — task constraint: 'DO NOT auto-commit nexus delete'. Manual rm + commit deferred to operator."
+  },
+  "self_test_verification": {
+    "standalone_module": "PASS (8/8 assertions: 5 obs, 2 alerts, 2 F-AI2-A, verdict=violation, brackets 4.99/5.01, F-AI2-B isolated)",
+    "standalone_cli": "PASS",
+    "nexus_consumer_router": "PASS"
+  },
+  "caveats_count": 5,
+  "caveats_locations": [
+    "honesty-monitor/README.md §Caveats",
+    "honesty-monitor/cli/honesty-monitor.hexa _print_caveats()",
+    "nexus/cli/honesty.hexa cmd_help"
+  ]
+}

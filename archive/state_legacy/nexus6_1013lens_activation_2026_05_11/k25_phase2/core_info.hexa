@@ -1,0 +1,95 @@
+// core_info_v2.hexa — Phase 1 reimpl with input channel x
+// =============================================================================
+// spec: state/nexus6_1013lens_activation_2026_05_11/lens_channel_reimpl_spec_2026_05_12.md §3
+// parent (trivial): /home/summer/core/nexus_lenses_snapshot/core_info.hexa
+// axis: information — Shannon entropy + MI vs uniform baseline
+// modality: state (B=1, S=N) — float array
+// input channel: env ANIMA_LENS_X_FILE (whitespace/newline separated floats)
+//                fallback: deterministic seed ANIMA_LENS_SEED (LCG-generated synthetic)
+// emit format compatible with aggregator SCORE_RE / HITS_RE:
+//   lens[info] category=core axis="..." score=<f> support=<i> meta=<json> (<hits>/<total>)
+// =============================================================================
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+let mut modality = "state"
+
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks {
+            if t != "" { xs.push(to_float(t)) }
+        }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        let u = to_float(seed) / 2147483648.0
+        xs.push(u)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 8 {
+    println("lens[info] category=core axis=\"information (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+let B_bins = 16
+let mut x_min = xs[0]
+let mut x_max = xs[0]
+let mut i = 1
+while i < n {
+    if xs[i] < x_min { x_min = xs[i] }
+    if xs[i] > x_max { x_max = xs[i] }
+    i = i + 1
+}
+let span = if x_max - x_min > 0.000001 { x_max - x_min } else { 1.0 }
+
+let mut counts = []
+let mut bi = 0
+while bi < B_bins { counts.push(0); bi = bi + 1 }
+for v in xs {
+    let raw_idx = floor((v - x_min) / span * to_float(B_bins))
+    let idx_clip = if raw_idx >= to_float(B_bins) { B_bins - 1 } else { to_int(raw_idx) }
+    let idx = if idx_clip < 0 { 0 } else { idx_clip }
+    counts[idx] = counts[idx] + 1
+}
+
+let mut entropy = 0.0
+let n_f = to_float(n)
+let mut bj = 0
+while bj < B_bins {
+    let c = counts[bj]
+    if c > 0 {
+        let p = to_float(c) / n_f
+        entropy = entropy - p * log(p)
+    }
+    bj = bj + 1
+}
+let h_max = log(to_float(B_bins))
+let entropy_norm = entropy / h_max
+
+let mi_raw = h_max - entropy
+let mi_clip = mi_raw / h_max
+let mi_norm = if mi_clip < 0.0 { 0.0 } else { if mi_clip > 1.0 { 1.0 } else { mi_clip } }
+
+let alpha = 0.7
+let beta = 0.3
+let score = alpha * mi_norm + beta * (1.0 - entropy_norm)
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+
+println("lens[info] category=core axis=\"Information-theoretic — Shannon entropy + MI(x; uniform) (x-dependent)\" score=" + to_string(score) + " support=1 modality=" + modality + " n=" + to_string(n) + " meta={\"entropy\":" + to_string(entropy) + ",\"entropy_norm\":" + to_string(entropy_norm) + ",\"mi_norm\":" + to_string(mi_norm) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

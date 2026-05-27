@@ -1,0 +1,7 @@
+─── sleep_tracker --falsifiers (raw#71 ≥5 cases) ───
+  F1 artifact>30%       = PASS (rejected: 350/1000)
+  F2 usb_invalid>10     = PASS (rejected: 12)
+  F3 hmm_converge       = PASS (min_stage_epochs=8 >= 5)
+  F4 single_state<90%   = PASS (max_pct_x1000=333)
+  F5 lz_ordering        = PASS (Wake=787 > REM=711 > N1=604 > N2=502 > N3=298)
+  total                 = 5/5

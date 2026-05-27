@@ -1,0 +1,48 @@
+{
+  "section": "§108-Q5-reconcile",
+  "date": "2026-05-19",
+  "battery": "B-S108Q5-1..7",
+  "n_pass": 7,
+  "n_total": 7,
+  "all_pass": true,
+  "verdict": "ALL 7 🔵 PASS — split predicate disjoint+exhaustive; §107-RETRY lands in A3_low_spread; §108 fire-decision GENUINELY UNDETERMINED under the corrected tree",
+  "results": [
+    {
+      "id": "B-S108Q5-1-CELLS-PAIRWISE-DISJOINT",
+      "PASS": true,
+      "detail": "no (RESP,SPREAD_OK) corner satisfies >1 cell; overlaps=[]"
+    },
+    {
+      "id": "B-S108Q5-2-CELLS-EXHAUSTIVE-EXACTLY-ONE",
+      "PASS": true,
+      "detail": "every one of 4 corners satisfies exactly 1 cell; violations=[]"
+    },
+    {
+      "id": "B-S108Q5-3-S107RETRY-RESP-SPREAD-DERIVED-CONSISTENT",
+      "PASS": true,
+      "detail": "RESP=True SPREAD_OK=False (0.0561<0.20) derived A3_PASS=False==recorded False; alive(std 0.01657>0.0001)=True"
+    },
+    {
+      "id": "B-S108Q5-4-S107RETRY-LANDS-IN-A3-LOW-SPREAD-CELL",
+      "PASS": true,
+      "detail": "cells={'A3_genuine_freeze': False, 'A3_low_spread': True, 'A3_pass': False} ⇒ n_true=1 landed=['A3_low_spread'] (expected exactly ['A3_low_spread'])"
+    },
+    {
+      "id": "B-S108Q5-5-FT-CORNER-FOLDS-TOTAL-COVER",
+      "PASS": true,
+      "detail": "(RESP=F,SPREAD_OK=T)→A3_genuine_freeze; corner-map={(True, True): 'A3_pass', (True, False): 'A3_low_spread', (False, True): 'A3_genuine_freeze', (False, False): 'A3_genuine_freeze'}; no UNCOVERED corner=True"
+    },
+    {
+      "id": "B-S108Q5-6-S11B-FREEZE-IS-A-DIFFERENT-CELL",
+      "PASS": true,
+      "detail": "§11-B frozen(std=0,RESP=False)=True→A3_genuine_freeze; §107-RETRY→A3_low_spread, not freeze=True; Ψ-std apart by 0.01657>0.0001"
+    },
+    {
+      "id": "B-S108Q5-7-CORRECTED-TREE-LEAVES-S108-UNDETERMINED",
+      "PASS": true,
+      "detail": "A3_freeze=False A3_low=True A3_PASS=False; subA1_fires=False subA2_fires=True bcde_eligible=False subF_clean=False ⇒ outcome=UNDETERMINED (not auto-GO=True, not auto-substrate=True)"
+    }
+  ],
+  "B-S108Q5-NOTE": "B-S108Q5-NOTE — this battery proves the §108 Q5 A3-axis predicate split is well-formed (disjoint + exhaustive cells), that §107-RETRY's measurement lands in exactly the A3_low_spread cell, that the §11-B genuine-freeze is a different cell, and that the corrected Q5 tree leaves the §108 fire-decision UNDETERMINED. It does NOT prove anima emerges, NOR that the §108 fire would succeed/fail — capability claim 0, GOAL outcome empirical, necessary-not-sufficient (B-EMERGE-7). design ≠ fire ≠ emergence; WALL-A measured-but-not-crossed carry.",
+  "central_blue_sha_prefix": "c93e160a8a376a94 (0-line-diff, sidecar-only)"
+}

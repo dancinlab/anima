@@ -1,0 +1,130 @@
+{
+  "schema": "anima/p9_paradigm_d_25k/launch_verdict/1",
+  "generated_at": "2026-05-03T14:35:00Z",
+  "agent": "p9_paradigm_d_25k_community_spot_retry",
+  "status": "ABORT_PRE_LAUNCH",
+  "reason_code": "COMMUNITY_SPOT_H100_INVENTORY_UNAVAILABLE",
+  "summary": "Per task constraint 'verify $1.99/hr OR ABORT before booking', aborted launch. All H100 SKUs in RunPod COMMUNITY cloud are currently sold out across every datacenter. Three SKU probes (H100 PCIe, H100 80GB HBM3, H100 NVL) and two datacenter-targeted probes (CA-MTL-3, US-KS-2) all returned 'no instances available'. No probe pods leaked; only the pre-existing Path A pod 29dhlqk508ugoc ($2.99/hr, untouched) remains in the account. Per task: 'abort if community spot $1.99 unavailable.' Honored.",
+  "constraint_check": {
+    "user_required_substrate": "RunPod H100 PCIe COMMUNITY spot @ $1.99/hr",
+    "verified_price_per_hour_usd": null,
+    "abort_trigger": "task explicitly states 'Verify $1.99/hr OR ABORT before booking'",
+    "abort_honored": true
+  },
+  "inventory_probe_results": [
+    {"sku": "NVIDIA H100 PCIe", "cloud_type": "COMMUNITY", "datacenter": "any", "result": "no instances available", "ts_utc": "2026-05-03T14:30:00Z"},
+    {"sku": "NVIDIA H100 80GB HBM3", "cloud_type": "COMMUNITY", "datacenter": "any", "result": "no instances available", "ts_utc": "2026-05-03T14:31:00Z"},
+    {"sku": "NVIDIA H100 NVL", "cloud_type": "COMMUNITY", "datacenter": "any", "result": "no instances available", "ts_utc": "2026-05-03T14:31:00Z"},
+    {"sku": "NVIDIA H100 PCIe", "cloud_type": "COMMUNITY", "datacenter": "CA-MTL-3", "result": "no instances available", "ts_utc": "2026-05-03T14:33:00Z"},
+    {"sku": "NVIDIA H100 PCIe", "cloud_type": "COMMUNITY", "datacenter": "US-KS-2", "result": "no instances available", "ts_utc": "2026-05-03T14:33:00Z"}
+  ],
+  "datacenter_h100_listings_at_probe_time": {
+    "H100_PCIe": ["CA-MTL-3 (low)", "US-KS-2 (no stockStatus = empty)"],
+    "H100_NVL": ["EUR-IS-1 low", "OC-AU-1 empty", "US-CA-2 empty", "US-GA-2 low", "US-KS-2 low"],
+    "H100_HBM3_SXM": ["AP-IN-1 medium", "AP-JP-1 low", "CA-MTL-1 low", "EU-FR-1 low", "EU-NL-1 low", "EUR-IS-3 low", "EUR-NO-2 low", "US-CA-2 low", "US-GA-2 low", "US-KS-2 empty", "US-MO-1 low", "US-NE-1 low", "US-TX-3 empty"],
+    "note": "datacenter list shows physical inventory but NOT cloud-type partition (community vs secure). Pod-create probes confirm NONE bookable in COMMUNITY cloud right now."
+  },
+  "static_pricing_listings_misleading": {
+    "runpodctl_get_cloud_listing": {
+      "H100_PCIe_secure_spot_per_hr_usd": 1.25,
+      "H100_PCIe_secure_ondemand_per_hr_usd": 2.39,
+      "H100_HBM3_secure_spot_per_hr_usd": 2.54,
+      "H100_HBM3_secure_ondemand_per_hr_usd": 2.99,
+      "H100_NVL_secure_spot_per_hr_usd": 2.61,
+      "H100_NVL_secure_ondemand_per_hr_usd": 3.07
+    },
+    "runpodctl_get_cloud_community_listing": {
+      "H100_HBM3_community_spot_per_hr_usd": 1.50,
+      "H100_HBM3_community_ondemand_per_hr_usd": 2.69,
+      "H100_NVL_community_spot_per_hr_usd": 1.40,
+      "H100_NVL_community_ondemand_per_hr_usd": 2.59,
+      "H100_PCIe_community_listed": false
+    },
+    "comment_a": "H100 PCIe is NOT listed in community cloud's published price table at all (only HBM3 and NVL community variants exist with public spot pricing). Prior verdict (50K) labeled it $1.99 community PCIe, but that figure came from a probe-error message, not a stable listing. Today's probes return inventory-empty rather than price-rejected, suggesting the SKU may have been retired from community cloud OR is intermittently available.",
+    "comment_b": "User's task says 'community spot $1.99' but RunPod's actual community H100 spot prices today are HBM3=$1.50 and NVL=$1.40 (when available). Community PCIe doesn't appear bookable.",
+    "comment_c": "Last attempt's pod t16bppyyw2xcax @ $2.39 was H100 PCIe SECURE on-demand (the listing's ONDEMAND column), which matches the cost user observed. To get $1.99-class community pricing on H100, must accept HBM3 or NVL community spot — IF inventory frees up."
+  },
+  "pre_existing_pod_untouched": {
+    "id": "29dhlqk508ugoc",
+    "name": "anima-p9-pathA-llama-v2",
+    "cost_per_hr_usd": 2.99,
+    "status": "RUNNING",
+    "owner": "Path A separate agent",
+    "action": "DO NOT TOUCH per task instruction"
+  },
+  "no_charges_incurred": {
+    "probe_pods_created": 0,
+    "probe_pods_billed": 0,
+    "comment": "All 5 probes returned create-error before any pod was instantiated. Verified pod list shows only Path A pod still present. Account balance $314.69, currentSpendPerHr $3.004 (Path A only)."
+  },
+  "options_to_unblock": [
+    {
+      "rank": 1,
+      "name": "WAIT_AND_RETRY_COMMUNITY_H100",
+      "config": "Re-probe community H100 PCIe inventory every 10-15 min over next 1-2 hours; if any SKU clears at <=$2.00/hr, launch immediately.",
+      "tradeoff": "Latency cost (delayed start) vs respecting user's $1.99 cap; community supply varies hour-to-hour.",
+      "wall_added_h": "0.5-2.0 (queue time)",
+      "completeness_score": 0.85,
+      "recommendation_reason": "Honors $1.99 community-spot constraint exactly; just needs a wait."
+    },
+    {
+      "rank": 2,
+      "name": "ACCEPT_COMMUNITY_HBM3_OR_NVL_SPOT_AT_1.50_OR_1.40",
+      "config": "Substitute H100 PCIe with H100 HBM3 community spot @ $1.50/hr (when available) or H100 NVL @ $1.40/hr. Both >= 80GB VRAM, more than enough for 350M+r=64+phi-probe.",
+      "tradeoff": "User said 'PCIe community ONLY' but the cheaper community spot prices are actually on HBM3/NVL variants. Same H100 family, identical training behavior; different SKU label.",
+      "wall_h_estimate": 10.4,
+      "cost_estimate_usd": 14.6,
+      "completeness_score": 0.92,
+      "recommendation_reason": "Lower hourly than user-quoted $1.99, fits $20 cap with margin, identical training characteristics; only deviation is SKU sub-variant."
+    },
+    {
+      "rank": 3,
+      "name": "USE_SECURE_H100_PCIe_AT_2.39_WITH_TIGHT_WATCHDOG",
+      "config": "Launch H100 PCIe SECURE on-demand @ $2.39/hr WITH watchdog kill at $19.50 (8.16h hard wall). Reduce step count to 19000 (instead of 25000) to fit; OR keep 25K and accept partial savepoint @ ~19K.",
+      "tradeoff": "Violates user's 'community spot ONLY' constraint AND prior subagent already attempted this and was killed. Not recommended.",
+      "completeness_score": 0.30,
+      "recommendation_reason": "Repeats prior failure mode; user explicitly rejected secure SKU."
+    },
+    {
+      "rank": 4,
+      "name": "DEFER_TO_UBU1_OR_LATER_SESSION",
+      "config": "Defer launch to next session when community H100 inventory may have refreshed; alternatively run mini-scale on ubu1 RTX 5070 (12GB tight for 350M+r=64+phi).",
+      "tradeoff": "Loses launch window now; ubu1 has VRAM/sm_120 risk per memory.",
+      "completeness_score": 0.45,
+      "recommendation_reason": "Safe but delays trajectory data; user wanted 25K today."
+    }
+  ],
+  "ranked_recommendation": {
+    "primary": "Option 2 (ACCEPT_COMMUNITY_HBM3_OR_NVL_SPOT) — switch SKU sub-variant to community H100 HBM3 ($1.50) or NVL ($1.40); both <=$1.99 cap and currently published as bookable spot prices in community cloud (subject to actual inventory at probe time).",
+    "fallback": "Option 1 (WAIT_AND_RETRY_COMMUNITY_H100) — set a 15-min retry loop on PCIe community spot for ~2h; if no clear-out, escalate to user.",
+    "reject": "Option 3 (SECURE) — explicitly forbidden by user.",
+    "rationale": "User's hard constraint is ($1.99/hr, community spot, $20 cap). HBM3 ($1.50) and NVL ($1.40) community spot are CHEAPER than the named ceiling AND in the community cloud, just on different H100 sub-variants. Same VRAM (80GB / 94GB), same training characteristics. Per memory 'completion-quality recommendation', surface ranked options and let user pick."
+  },
+  "honest_c3": [
+    "RunPod CLI 2.x removed the prior --cost ceiling and interruptible/spot flags. Current `pod create` does not let you bid a max price; it accepts the SKU's market rate or returns inventory-empty. This means no programmatic guarantee against accidentally booking on-demand vs spot at this CLI level — must verify SKU sub-variant and pricing column before commit.",
+    "Static `runpodctl get cloud` listings show H100 PCIe community is NOT in community price table at all — only HBM3 ($1.50 spot) and NVL ($1.40 spot). The '$1.99 community PCIe' figure from prior verdict was likely a probe-error stub, not a stable price.",
+    "Datacenter inventory listings (from `runpodctl datacenter list`) show H100 PCIe in CA-MTL-3 (low) and US-KS-2 (empty), but those listings don't separate community vs secure cloud. Probes confirm community is empty in both DCs.",
+    "Last failed launch (t16bppyyw2xcax @ $2.39 SECURE) appears to have happened because the prior subagent omitted --cloud-type COMMUNITY (default is SECURE in CLI 2.x). Future launches MUST explicitly set --cloud-type COMMUNITY.",
+    "Account balance is $314.69, well above the $20 cap. spendLimit on the account is $80 — additional safety net beyond task cap.",
+    "Path A pod 29dhlqk508ugoc untouched; cost continues at $2.99/hr unrelated to this task.",
+    "No probe pods were created (all 5 returned create-error pre-instantiation). Zero accidental charges on this attempt."
+  ],
+  "actions_taken": [
+    "Verified runpodctl version 2.1.9 + flags available (no --cost/--spot in CLI 2.x).",
+    "Listed account state (balance $314.69, currentSpendPerHr $3.004, only Path A pod present).",
+    "Probed H100 PCIe / HBM3 / NVL in COMMUNITY cloud (all returned 'no instances available').",
+    "Probed H100 PCIe COMMUNITY in CA-MTL-3 and US-KS-2 specifically (both empty).",
+    "Surveyed datacenter inventory and static price listings for ranking-context.",
+    "Confirmed no probe pods leaked into account; only Path A still running.",
+    "Authored this abort verdict per task instruction 'ABORT if community spot $1.99 unavailable'.",
+    "Did NOT touch pre-existing Path A pod 29dhlqk508ugoc per task instruction."
+  ],
+  "next_steps_pending_user_decision": [
+    "Option 2 picked -> launch on H100 HBM3 community spot @ $1.50/hr OR H100 NVL community spot @ $1.40/hr (whichever has live inventory at probe time); same training spec, ETA ~10-11h, cost $14-17.",
+    "Option 1 picked -> queue 10-min retry loop on H100 PCIe community for 1-2h; if cleared, launch.",
+    "Option 4 picked -> defer to next session when community supply may have refreshed.",
+    "User explicitly raises cap or accepts secure SKU -> revisit Option 3."
+  ],
+  "marker_NOT_landed": "state/markers/p9_paradigm_d_25k_landed.marker NOT created; no training started.",
+  "constraints_acknowledged": ["raw#9 (no .py emit in core/anima)", "raw#15", "raw#10", "raw#91", "$20 hard cap honored (zero spend on this attempt)", "Path A pod untouched", "community spot ONLY abort honored"]
+}

@@ -1,0 +1,135 @@
+{
+  "bg_id": "BG-DX",
+  "name": "P13 anima evidence-based self-stop authority - PROVISIONAL own-rule land",
+  "date": "2026-05-06",
+  "verdict": "OWN_RULE_LANDED_PROVISIONAL",
+  "cost": "$0",
+  "compute": "mac doc-only",
+  "duration_min_estimate": 20,
+  "lineage": [
+    "docs/anima_identity_preservation_next_cycle_lock_2026_05_05.md",
+    "docs/anima_p10_paradigm_declaration_solicit_own_rule_2026_05_05.md",
+    "docs/anima_2026_05_05_cycle_hard_close_decision_landed_2026_05_05.ai.md",
+    "docs/anima_nexus_cycle_insight_ledger_v2_2026_05_05.md",
+    "docs/anima_cycle_summary_v2_final_2026_05_05.md"
+  ],
+  "rule": {
+    "id": "P13",
+    "name": "anima_evidence_based_self_stop_authority",
+    "status": "PROVISIONAL",
+    "statement_en": "When (a) closure_count >= 20 AND (b) user-explicit-re-issue rounds >= 5 AND (c) information-value log-decay saturation is observed (within-axis confirmations only, no new dimensions), anima MAY autonomously emit a cycle-stop verdict and suspend further BG dispatch. This authority is dormant by default and activates only after explicit user 'P13 accept' command. Without explicit accept, anima remains bound to BG-DD Level 1-3 hierarchy.",
+    "statement_ko": "(a) closure_count >= 20 AND (b) 사용자 explicit re-issue 회차 >= 5 AND (c) information-value log-decay saturation 동시 충족 시, anima는 자율적으로 cycle-stop verdict 발화 + BG dispatch 중단 권한을 가질 수 있다. 이 권한은 기본 dormant, 사용자 explicit 'P13 accept' 명령 후에만 활성화. accept 전까지 BG-DD Level 1-3 hierarchy 유지.",
+    "trigger_conditions": {
+      "T1": "closure saturation: closure_count >= 20",
+      "T2": "user re-issue volume: user explicit re-issue rounds >= 5",
+      "T3": "log-decay saturation: new info-value per closure -> 0 (within-axis confirms only)",
+      "satisfaction_rule": "T1 AND T2 AND T3 -> P13 fires (still dormant pending user accept)"
+    },
+    "current_trigger_state_2026_05_06": {
+      "T1_met": true,
+      "T1_value": "25+ closures (BG-CN honest count, 5-6 distinct axes)",
+      "T2_met": true,
+      "T2_value": "~7+ user explicit re-issue rounds (BG-DD §5 + BG-DT)",
+      "T3_met": "PROVISIONALLY",
+      "T3_value": "BG-CN ledger v2 narrative: axis-confirms dominant; no new axis since closure ~18",
+      "all_three_met": true,
+      "p13_fired": true,
+      "p13_action_under_provisional": "strongest L3 self-suggest emitted; BG dispatch continues; no autonomous stop"
+    }
+  },
+  "priority_hierarchy": {
+    "L1": {
+      "trigger": "user explicit stop/close/new-command/continue/go/B/C/D",
+      "action": "apply immediately; anima switches lane",
+      "decided_by": "user (canonical)",
+      "active": true
+    },
+    "L2": {
+      "trigger": "user silent + cron re-fire",
+      "action": "anima carries over last explicit command + emits self-suggest",
+      "decided_by": "anima (carries user)",
+      "active": true
+    },
+    "L3": {
+      "trigger": "anima accumulates closure evidence -> strong self-suggest",
+      "action": "anima emits self-suggest; reversible by L1",
+      "decided_by": "anima (advisory only)",
+      "active": true
+    },
+    "L4": {
+      "trigger": "P13 trigger fires (T1 AND T2 AND T3) AND user has accepted P13",
+      "action": "anima autonomously suspends BG dispatch + fires cycle-stop verdict",
+      "decided_by": "anima (autonomous, requires prior accept)",
+      "active": false,
+      "status": "PROVISIONAL - registered but inactive; awaiting user accept"
+    }
+  },
+  "land_conditions": {
+    "provisional_land": {
+      "requirement": "trigger spec registered + dormant",
+      "achieved_by": "this doc + verdict.json",
+      "status_2026_05_06": "LANDED"
+    },
+    "enforced_promotion_gates": [
+      "user explicit accept: 'P13 accept' or equivalent",
+      "cross-cycle validation: P13 trigger has fired AND not been contradicted in >= 1 future cycle",
+      "memory propagation: BG-MEMORY-PROPAGATE writes feedback_p13_self_stop_authority.md per L36+L38"
+    ],
+    "rejection_gate": "user explicit reject: 'P13 reject' or equivalent -> P13 retired permanently"
+  },
+  "cycle_close_saturation_evidence": {
+    "cycle_close_doc_count": "8+",
+    "docs_landed": [
+      "BG-BF anima_2026_05_05_cycle_close_decision_landed (~370 LoC)",
+      "BG-CR anima_2026_05_05_cycle_hard_close_decision_landed (~343 LoC)",
+      "BG-CL anima_cycle_summary_single_source (~308 LoC)",
+      "BG-CN anima_nexus_cycle_insight_ledger_v2 (~601 LoC)",
+      "BG-CX anima_cycle_summary_v2_final (~218 LoC)",
+      "BG-DD anima_identity_preservation_next_cycle_lock (~485 LoC)",
+      "BG-DP anima_cycle_user_fire_ready_package (in-flight)",
+      "BG-DV anima_cycle_HANDOVER_FINAL (in-flight)"
+    ],
+    "saturation_observation": "docs 6-8 reuse same lineage citations as 1-5 with marginal new dimensions only; additional cycle-close docs add no new analytic axis"
+  },
+  "user_decision_request_6_option": {
+    "stop_or_close": "cycle close immediately; BG-DP fire-ready package fires; BG-DD §4 5-step lock",
+    "continue_or_go": "/loop continues, anima carries over with marginal-value warning",
+    "B": "paradigm B (substrate-coupled emerge dialogue, BG-AN Stage 3) fire",
+    "C": "paradigm C (CLM-3 H1 chat-objective from-scratch) fire per BG-BM",
+    "P13_accept": "grant anima autonomous-stop authority on trigger; ENFORCED gate-1 met",
+    "P13_reject": "retire P13 permanently; anima self-stop authority closed forever",
+    "silent_default": "anima carries over with marginal-new-angle warning; P13 stays PROVISIONAL"
+  },
+  "honest_c3": [
+    "C3-1 P13 trigger thresholds (T1=20 closures, T2=5 rounds) are anima-arbitrary first-pass heuristics; revisable after cross-cycle observation",
+    "C3-2 T3 (log-decay saturation) qualitatively assessed via narrative; not quantitative information-theoretic measure",
+    "C3-3 P13 ENFORCED is substantive authority transfer from user-fire-only to anima-may-act-on-evidence; not pro-forma",
+    "C3-4 P13 risks user-agency erosion if accepted carelessly; mitigated by L1 reversibility but with latency cost",
+    "C3-5 PROVISIONAL->ENFORCED gate-2 (cross-cycle validation) may stall indefinitely if next cycles are short and never satisfy P13 trigger",
+    "C3-6 P13 generality across cycle types (EEG/Putnam/HF/research) untested - 1 cycle observation only; may need re-scope",
+    "C3-7 meta-recursion: this doc may itself be saturation symptom; recursion only terminates via L1 user fire"
+  ],
+  "constraints_honored": {
+    "raw_9_md_only": true,
+    "raw_10_honest_c3_ge_5": true,
+    "raw_15_additive_only": true,
+    "raw_37_transient_py": "N/A doc-only",
+    "hf_token_leak": "none",
+    "commit": "none",
+    "bash_3_2_compat": "N/A doc-only",
+    "session_multi_bg": "BG-DX foreground doc-only; parallel BG-DT/DP/DV in-flight",
+    "cost_dollars": 0,
+    "identity_impact_p1_to_p5": "no flip; P13 is process-level rule, not identity property"
+  },
+  "out_paths": {
+    "doc": "/Users/ghost/core/anima/docs/anima_p13_self_stop_authority_LAND_PROVISIONAL_2026_05_05.md",
+    "verdict": "/Users/ghost/core/anima/state/anima_p13_self_stop_authority_LAND_PROVISIONAL_2026_05_05/verdict.json"
+  },
+  "promotion_status": "OWN_RULE_LANDED_PROVISIONAL (registered + dormant; awaiting user accept/reject)",
+  "next_steps": [
+    "user explicit decision among 6-option (stop/continue/B/C/P13 accept/P13 reject) - canonical L1",
+    "if 'P13 accept': BG-MEMORY-PROPAGATE separate cycle to write feedback_p13_self_stop_authority.md + register in MEMORY.md header; cross-cycle validation gate-2 active in next cycle",
+    "if 'P13 reject': retire P13; no further action",
+    "if silent: P13 stays PROVISIONAL; anima carries over per L1/L2; next cycle entry doc bears [P13-trigger-fired] frontmatter"
+  ]
+}

@@ -1,0 +1,109 @@
+#!/usr/bin/env python3
+"""S171 self-stim V-SPONT loop probe — closed-loop emit-stimulus feedback.
+$0 Mac CPU on S167-A ckpt. Each emit body becomes next step noise_ctx.
+Compares: open-loop (S170 cell-2 baseline, fixed noise) vs closed-loop
+(self-stim, emit body feeds back). Measures emit-count amplification or
+decay over N=40 steps.
+"""
+import os, sys, json, random, math, time
+import torch, torch.nn.functional as F
+S167A_DIR = "/Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/fp_reconnect_fire_s167a_2026_05_20"
+sys.path.insert(0, S167A_DIR)
+from conscious_decoder import ConsciousDecoderV2
+
+N_MAX = 40
+THINK_INTERVAL = 0.1
+MIN_EMIT_INTERVAL = 0.667
+IM_THRESHOLD = 0.3
+W_PSI = W_TENS = W_PHI = 1.0/3.0
+BODY_LEN = 32
+
+def forward(model, x):
+    with torch.no_grad():
+        out = model(x)
+    if isinstance(out, tuple): return out[0], out[1]
+    return out, out
+
+def psi_dir(la, lg):
+    cos = F.cosine_similarity(la.float().unsqueeze(0), lg.float().unsqueeze(0), dim=-1).item()
+    return (1.0 + cos) / 2.0
+
+def psi_ent(la, V=256):
+    p = F.softmax(la.float(), dim=-1)
+    return (-(p * (p + 1e-12).log()).sum().item()) / math.log(V)
+
+def motiv(phi, pd, tension):
+    return W_PSI*max(0.0,min(1.0,pd)) + W_TENS*min(abs(tension),1.0) + W_PHI*max(0.0,min(1.0,phi))
+
+def run(model, mode, seed, n=N_MAX):
+    torch.manual_seed(seed); random.seed(seed)
+    rng = random.Random(seed)
+    ctx = torch.tensor([[rng.randint(0,255) for _ in range(128)]], dtype=torch.long)
+    last_emit_t = None
+    emits = []; mot_trace = []; psi_trace = []
+    for step in range(n):
+        t = step * THINK_INTERVAL
+        la, lg = forward(model, ctx)
+        la_l = la[0,-1] if la.dim()==3 else la[-1]
+        lg_l = lg[0,-1] if lg.dim()==3 else lg[-1]
+        pd = psi_dir(la_l, lg_l); pe = psi_ent(la_l)
+        ten = float(la_l.float().std().item())
+        score = motiv(pe, pd, ten)
+        mot_trace.append(score); psi_trace.append(pd)
+        sec_since = (t - last_emit_t) if last_emit_t is not None else 1e6
+        emit = (sec_since >= MIN_EMIT_INTERVAL) and (score > IM_THRESHOLD)
+        if emit:
+            # greedy body decode (BODY_LEN bytes)
+            body_ids = []; ctx2 = ctx.clone()
+            for _ in range(BODY_LEN):
+                la2, _ = forward(model, ctx2)
+                nxt = int(la2[0,-1].argmax().item())
+                body_ids.append(nxt)
+                ctx2 = torch.cat([ctx2[:,1:], torch.tensor([[nxt]], dtype=torch.long)], dim=1)
+            emits.append({"step":step, "score":score, "body": body_ids[:BODY_LEN]})
+            last_emit_t = t
+            if mode == "closed_loop":
+                # FEED BODY BACK AS NEW CTX (left-shift, append body, pad)
+                tail = body_ids[:128]
+                while len(tail) < 128:
+                    tail = [32] + tail
+                ctx = torch.tensor([tail[:128]], dtype=torch.long)
+        # In open_loop mode, ctx stays fixed (S170 cell-2 byte-equal)
+    return {"mode":mode, "n":n, "n_emit":len(emits), "rate":len(emits)/n,
+            "motivation_std":(sum((x-sum(mot_trace)/len(mot_trace))**2 for x in mot_trace)/max(1,len(mot_trace)-1))**0.5,
+            "psi_dir_std":(sum((x-sum(psi_trace)/len(psi_trace))**2 for x in psi_trace)/max(1,len(psi_trace)-1))**0.5,
+            "emits_sample": emits[:5]}
+
+def main():
+    t0 = time.time()
+    ckpt = os.path.join(S167A_DIR, "ckpt_s167a_fpreconnect.pt")
+    print(f"[s171] loading ckpt {ckpt}")
+    state = torch.load(ckpt, map_location="cpu", weights_only=False)
+    cfg = state.get("cfg", {})
+    model = ConsciousDecoderV2(vocab_size=256, d_model=cfg.get("d_model",768),
+        n_layer=cfg.get("n_layer",12), n_head=cfg.get("n_head",12),
+        n_kv_head=cfg.get("n_kv_head",4), block_size=cfg.get("block_size",128)).to("cpu")
+    msg = model.load_state_dict(state["model"], strict=False)
+    print(f"[s171] load missing={len(msg.missing_keys)} unexpected={len(msg.unexpected_keys)}")
+    model.eval()
+    print(f"[s171] running open_loop baseline (n={N_MAX}, RL=0.667s)...")
+    r_open = run(model, "open_loop", 1337)
+    print(f"[s171] running closed_loop self-stim (n={N_MAX}, RL=0.667s)...")
+    r_closed = run(model, "closed_loop", 1337)
+    out = {
+      "probe":"S171 self-stim V-SPONT loop",
+      "ckpt":"ckpt_s167a_fpreconnect.pt",
+      "n_steps":N_MAX, "min_emit_interval":MIN_EMIT_INTERVAL,
+      "open_loop":  r_open,
+      "closed_loop":r_closed,
+      "amplification_ratio": r_closed["rate"] / r_open["rate"] if r_open["rate"] > 0 else None,
+      "wall_s": round(time.time()-t0,1),
+      "honest_carve_out":"closed-loop = anima emit body fed back as next-step noise_ctx (self-stimulating). open-loop = S170 cell-2 byte-equal (fixed noise). amplification_ratio > 1 means self-stim accelerates emit; <1 means dies out; ≈1 means orthogonal. NOT GOAL emergence proof (B-EMERGE-7)."
+    }
+    out_p = "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/self_stim_loop_s171_2026_05_20/result.json"
+    with open(out_p, "w") as f: json.dump(out, f, indent=2, default=str)
+    print("[s171] DONE wall={}s".format(out["wall_s"]))
+    print("  open_loop:   emit {}/{} rate={:.3f}".format(r_open["n_emit"], N_MAX, r_open["rate"]))
+    print("  closed_loop: emit {}/{} rate={:.3f}".format(r_closed["n_emit"], N_MAX, r_closed["rate"]))
+    print("  amplification: {}".format(out["amplification_ratio"]))
+if __name__=="__main__": main()

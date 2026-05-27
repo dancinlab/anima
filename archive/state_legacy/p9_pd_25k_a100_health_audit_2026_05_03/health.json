@@ -1,0 +1,67 @@
+{
+  "schema": "anima/p9_pd_25k_a100/health_audit/1",
+  "ts_utc": "2026-05-03T21:50:00Z",
+  "pod_id": "7ubgzj4s8spb4p",
+  "pod_name": "anima-p9-pd-25k-a100",
+  "pod_alive": true,
+  "pod_status": "RUNNING",
+  "ssh_endpoint": "216.249.100.66:20666",
+  "ssh_reachable": true,
+  "container_id": "6da354f06953",
+  "host_uptime_sec": 11085664,
+  "container_started_utc": "2026-05-03T21:30:25Z",
+  "container_age_sec": 1166,
+  "container_age_min": 19.4,
+  "pod_originally_created_utc": "2026-05-03T15:51:30Z",
+  "pod_total_uptime_h": 5.97,
+  "pod_restart_detected": true,
+  "pod_restart_evidence": [
+    "container start time (1108449867 jiffies) → 21:30:25 UTC, but pod created 15:51:30 UTC",
+    "/workspace contains only partial best.pt (.best.pt.6lK6Q0 = rsync temp) + launch_a100_distill.sh, missing distill_v2.py + watchdog.sh + savepoints + logs",
+    "/workspace mounted as /dev/md1 (xfs, 100GB persistent volume) — apparent volume reset or original transfer never completed before restart"
+  ],
+  "training_process": {
+    "alive": false,
+    "watchdog_alive": false,
+    "verdict": "NOT_STARTED — bundle transfer in progress (52.7% of best.pt)"
+  },
+  "gpu": {
+    "name": "A100 SXM4 80GB",
+    "utilization_pct": 0,
+    "memory_used_mib": 0,
+    "memory_total_mib": 81920,
+    "verdict": "IDLE — training has not begun"
+  },
+  "training": {
+    "current_step": null,
+    "loss_trajectory": "n/a — no training started",
+    "nan_check": "n/a"
+  },
+  "bundle_transfer": {
+    "in_progress": true,
+    "rsync_pid_ubu1": 3267321,
+    "rsync_started_utc": "2026-05-03T21:33:00Z",
+    "rsync_elapsed_min": 16.8,
+    "current_file": "best.pt",
+    "best_pt_target_bytes": 5365727261,
+    "best_pt_current_bytes": 2829058048,
+    "best_pt_progress_pct": 52.7,
+    "recent_throughput_mbps": 1.37,
+    "best_pt_eta_min": 31,
+    "remaining_files_after_best_pt_mb": 135,
+    "total_bundle_eta_min": 40,
+    "verdict": "SLOW — rsync at 1.37 MB/s vs expected 6.5 MB/s; pod racking up cost while transferring"
+  },
+  "savepoints": {
+    "savepoint_dir_exists": false,
+    "savepoint_count": 0,
+    "partial_savepoints": [],
+    "resume_audit_jsonl_exists": false
+  },
+  "hf_push_readiness": {
+    "hf_token_in_env": false,
+    "hf_token_file_present": false,
+    "verdict": "NOT_READY — HF token absent; must be added before first savepoint at step 1000"
+  },
+  "spot_preempt_evidence": "container restart at 21:30:25 UTC after 5h 39m of pod uptime is consistent with spot preempt on community A100. Volume nominally persistent but workspace contents (script + savepoints) appear lost."
+}

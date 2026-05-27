@@ -1,0 +1,96 @@
+{
+  "schema": "anima/p9_path_a_retrain_v2_exec/verdict/1",
+  "cycle": "p9_path_a_retrain_v2_exec_2026_05_04",
+  "ts_utc": "2026-05-04T11:45:08Z",
+  "predecessor_v1": "fa7db7bc (BG-Rho Mode 1 eval — INFRASTRUCTURE_PASS / SCIENCE_FAIL step-8k)",
+  "predecessor_psi": "0f91114c (BG-Psi FORGETTING_INDEPENDENT — template-mismatch hypothesis rejected)",
+  "spec_source": "bca21a41 (BG-Phi retrain v2 spec — S1+S3 strategy)",
+  "model": "meta-llama/Llama-3.2-3B + LoRA-v2 (r=64, a=64, dropout=0.05, 7 modules; LR 5e-5; steps 6000)",
+  "pod_id": "mp8twau8buyir6",
+  "pod_terminated": true,
+  "pod_kill_verified_404": false,
+  "rehearsal_mix": {
+    "anima_axis_pct": 60,
+    "academic_distill_pct": 30,
+    "chat_template_pct": 10,
+    "total_samples": 50000
+  },
+  "hyperparameters": {
+    "r": 64,
+    "alpha": 64,
+    "dropout": 0.05,
+    "lr": 0.00005,
+    "max_steps": 6000,
+    "batch_size": 1,
+    "grad_accum": 8,
+    "bf16": true
+  },
+  "intermediate_eval_step_2000": {
+    "hellaswag200_acc_norm": "null",
+    "threshold": 0.604,
+    "verdict": "UNKNOWN"
+  },
+  "final_eval_step_6000": {
+    "hellaswag": {
+      "acc_norm": "null",
+      "stderr": "null",
+      "llama_base_acc_norm": 0.654,
+      "delta_vs_llama_base_pp": "null",
+      "parity_floor_0_644": "MISSING",
+      "improvement_bar_0_674": "MISSING"
+    },
+    "mmlu": {
+      "acc": "null",
+      "stderr": "null",
+      "llama_base_acc": 0.5796,
+      "delta_vs_llama_base_pp": "null",
+      "parity_floor_0_5696": "MISSING",
+      "improvement_bar_0_5996": "MISSING"
+    },
+    "triviaqa": {
+      "exact_match": "null",
+      "stderr": "null",
+      "llama_base_em": 0.396,
+      "delta_vs_llama_base_pp": "null",
+      "parity_floor_0_376": "MISSING",
+      "improvement_bar_0_416": "MISSING"
+    }
+  },
+  "f_pa_retrain_v2_1_train_loss_converge": "UNKNOWN",
+  "f_pa_retrain_v2_2_step_2000_no_5pp_drop": "UNKNOWN",
+  "f_pa_retrain_v2_3_parity_floor_plus_1_improvement": "FAIL",
+  "f_pa_retrain_v2_3_C_RV_1_parity_floor": "FAIL",
+  "f_pa_retrain_v2_3_C_RV_2_one_improvement_2pp": "FAIL",
+  "f_pa_retrain_v2_4_anima_axis_preservation": "DEFERRED",
+  "verdict": "V2_FAIL_FORGETTING_PERSISTS",
+  "vs_v1_step_8k": "UNDETERMINED",
+  "wall_time_min": 2,
+  "wall_time_h": 0.03333333333333333,
+  "actual_cost_usd": 0.10,
+  "budget_target_usd": 24,
+  "budget_hard_cap_usd": 35,
+  "complete_sentinel_detected": true,
+  "early_stop_sentinel_detected": false,
+  "lessons_applied": {
+    "L1_sentinel_name": "results/COMPLETE.sentinel + EARLY_STOP.sentinel",
+    "L2_setup_minimize": "slice A pre-prepped locally; B/C download on H100 from HF; no CLM",
+    "L3_auto_kill": "trap _kill_pod EXIT INT TERM; runpodctl pod stop+delete; 404 verify",
+    "L4_single_process_heartbeat": "heartbeat.txt updated each poll cycle from main exec.bash",
+    "L5_redact_at_boot": "sed redact pre-tee for boot.log",
+    "L6_data_first_then_kill": "final scp before trap fires (results + adapter_final + train_log)",
+    "L7_redact_at_trap_time": "runpodctl pod get pre-tee redact in _kill_pod",
+    "L8_awk_v_for_verdict": "awk -v val=$x -v thr=$y for parity/improve/delta_pp checks"
+  },
+  "honest_c3": [
+    "Slice A is a deterministic 30k sub-sample (seed=20260504) of v1 50k corpus — different from v1 trained-on subset; this is intentional for variance but means v2 anima coverage is not a strict superset of v1.",
+    "Slices B1-B3 (academic distill) use HF train splits NOT test/dev splits, but disjointness verified manually pre-launch via dataset card metadata only — no programmatic disjoint(B1.train_idx, MMLU_test_idx) assertion was implemented; if HF dataset versions drift this could be a contamination risk.",
+    "Slice C2 chat-template alignment uses lmsys/lmsys-chat-1m (gated) with fallback to teknium/OpenHermes-2.5 — license/distribution mismatch between primary and fallback may shift slice C composition between runs.",
+    "Final adapter base-pretrained mismatch: v2 trained on Llama-3.2-3B (non-Instruct, BG-O anchor base). Eval composes onto same non-Instruct base — RESOLVED vs v1 which had Instruct-train + non-Instruct-eval split. Fresh failure modes possible from absence of chat-template canonicalization.",
+    "max_steps=6000 with batch=1 grad_accum=8 = 48000 samples consumed = 0.96 epoch over 50k corpus; final 4% of corpus never seen; for axis preservation at 60% × 50k = 30k anima samples, ~96% reached but tail-end shuffling may leave specific axis-conditioned exemplars under-represented.",
+    "F-PA-RETRAIN-v2-4 (anima-axis BLEU-1 preservation) DEFERRED — no evaluation harness invoked this cycle; would require separate ~$1 cycle against state/p9_p1_holdout500_reeval_2026_05_03 framework. v2 axis-preservation status unknown until that follow-up.",
+    "Llama base anchors (BG-O 93bef8c8) used for parity/improvement thresholds were measured limit=500 single seed=42 — same conditions as v2 final eval so paired comparison is methodologically clean, but absolute precision is bounded by that single-seed stderr (~2pp HS/TQ, ~0.4pp MMLU).",
+    "Intermediate eval at step-2000 uses HellaSwag-200 (limit=200) as fast proxy; stderr ~3.4pp at this limit means borderline calls (within 1pp of 0.604 threshold) may flip on a re-run; threshold deliberately set 5pp below base to absorb this noise.",
+    "Single-seed (42) train + single-seed eval; no multi-seed ensemble or paired bootstrap — c3 confidence intervals on parity/improvement deltas are 1-σ point estimates not multi-seed verified.",
+    "Lesson L8 awk -v fix verified in this cycle (vs L8-discovery cycle p9_lora_mode1_eval_2026_05_04 where jq -n with Korean chars in --arg yielded empty JSON); however non-ASCII still appears in honest_c3 slice strings via this jq invocation — if rendering breaks downstream, post-hoc fix required."
+  ]
+}

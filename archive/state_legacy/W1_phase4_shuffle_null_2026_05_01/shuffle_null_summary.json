@@ -1,0 +1,51 @@
+{
+  "schema": "anima/W1_phase4/shuffle_null_summary/1",
+  "ts": "2026-05-01",
+  "agent": "W1_PHASE4_EXEC",
+  "input": {
+    "phase2_trace": "/Users/ghost/core/anima/state/W1_phase2_full_19axis_2026_05_01/phi_trace_full.jsonl",
+    "ticks": 15,
+    "n_permutations": 1000,
+    "seed": 42,
+    "window_W": 20
+  },
+  "observed": {
+    "phi_mean": 1.7166584666666664,
+    "slope_per_tick_official": 0.11528573,
+    "slope_per_tick_recomputed": 0.11528572857142856,
+    "slope_per_tick_replicated_from_hash": 0.11148578107346711
+  },
+  "null_A_trajectory_shuffle": {
+    "description": "Shuffle phi_proxy values across tick positions (same value distribution, random order)",
+    "slope_mean": -0.0010186626428571423,
+    "slope_std": 0.04738530724231166,
+    "slope_min": -0.12449798214285714,
+    "slope_max": 0.11676673571428571,
+    "phi_mean_mean": 1.7166584666666664,
+    "phi_mean_std": 0.0,
+    "p_value_one_tailed": 0.001,
+    "z_score": 2.4544399817461926,
+    "verdict": "REAL_SIGNAL"
+  },
+  "null_B_state_hash_shuffle": {
+    "description": "Shuffle state_hash sequence; recompute joint_mi via W=20 sliding entropy; phi = max(0, joint_mi - sub_mi_mean[orig_i])",
+    "slope_mean": 0.1487323633815583,
+    "slope_std": 0.023197747885682192,
+    "slope_min": 0.10440959905996573,
+    "slope_max": 0.24265386665943284,
+    "phi_mean_mean": 1.9396617345002338,
+    "phi_mean_std": 0.22351027619736274,
+    "p_value_one_tailed": 0.966,
+    "z_score": -1.4418051936068232,
+    "verdict": "ARTIFACT_CONFIRMED"
+  },
+  "verdict_composite": "ARTIFACT_CONFIRMED",
+  "honest_c3": [
+    "n=15 ticks gives a permutation pool of 15!=1.3e12 but only ~10 distinct hash values across ticks; effective shuffle entropy is bounded by hash multiplicity, so null-B slope distribution is narrower than a fully random null would yield.",
+    "Sub_mi_mean is held in original-position order during Null B (only the joint-hash side is shuffled); this is conservative — a fully-shuffled null would shuffle BOTH and likely yield even smaller slopes, making composite verdict more conservative (against REAL_SIGNAL).",
+    "MIP-mean-of-parts surrogate persists from Phase 1/2/3; the shuffle test compares observed-vs-shuffled within the SAME proxy, so MIP slack does not bias the relative comparison but does bound absolute Phi interpretation.",
+    "Forward-fill bias and non-stationary cron tick spacing (1s..12h) persist; shuffling redistributes them uniformly across positions but does not eliminate them — both observed and null sit on the same biased substrate.",
+    "Single-tail test (slope>=observed) chosen because the alternative hypothesis is RISING; a two-tailed test would double the p-values but not change verdict at the n=1000 / alpha=0.05 thresholds used."
+  ],
+  "interpretation_one_line": "Observed slope +0.1153; null-A p=0.0010 (z=2.45); null-B p=0.9660 (z=-1.44); composite verdict = ARTIFACT_CONFIRMED."
+}

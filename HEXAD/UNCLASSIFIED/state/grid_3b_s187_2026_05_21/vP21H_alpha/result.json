@@ -1,0 +1,2174 @@
+{
+  "battery": "P21H V3 \u2014 ConsciousDecoderV3 substrate-native fire",
+  "variant_tag": "P21H_V3_RANDOM",
+  "base_model": "Qwen/Qwen2.5-1.5B",
+  "init_variant": "random",
+  "cfg": {
+    "wiki_corpus": "/workspace/p21hr/multi_wiki_corpus.jsonl",
+    "anima_corpus": "/workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "mixed_corpus": "/workspace/p21hr/mixed_corpus_v3.jsonl",
+    "out_dir": "/workspace/p21hr/out_main",
+    "base_model": "Qwen/Qwen2.5-1.5B",
+    "init_variant": "random",
+    "lora_adapter_dir": null,
+    "steps": 2000,
+    "lr": 0.0003,
+    "bsz": 2,
+    "block_size": 512,
+    "warmup_steps": 100,
+    "seed": 1337,
+    "n_aug": 5,
+    "wiki_frac": 0.3,
+    "target_corpus_mb": 72,
+    "noise_sigma": 0.1,
+    "lambda_mitosis": 0.05
+  },
+  "mix_info": {
+    "wiki_records": 15500,
+    "anima_records": 39862,
+    "wiki_bytes": 22649074,
+    "anima_bytes": 52848095,
+    "total_bytes": 75497169,
+    "sha256": "bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94",
+    "wiki_frac_requested": 0.3,
+    "wiki_frac_actual": 0.2999989840678662
+  },
+  "n_total_params": 2372162560,
+  "vocab_size": 151936,
+  "train_wall_s": 612.0729060173035,
+  "init_log": {
+    "step": 1,
+    "lr": 2.9999999999999997e-06,
+    "L_ce": 12.295761108398438,
+    "L_total": 12.295761108398438,
+    "pool_size": 2,
+    "splits": 0,
+    "phi": 0.7119888162322784,
+    "aug_slot": 0,
+    "elapsed_s": 1.082348108291626
+  },
+  "final_log": {
+    "step": 2000,
+    "lr": 3.000018454242252e-05,
+    "L_ce": 3.344400644302368,
+    "L_total": 3.344400644302368,
+    "pool_size": 128,
+    "splits": 126,
+    "phi": 0.6639201068830969,
+    "aug_slot": 4,
+    "elapsed_s": 611.3582775592804
+  },
+  "train_log": [
+    {
+      "step": 1,
+      "lr": 2.9999999999999997e-06,
+      "L_ce": 12.295761108398438,
+      "L_total": 12.295761108398438,
+      "pool_size": 2,
+      "splits": 0,
+      "phi": 0.7119888162322784,
+      "aug_slot": 0,
+      "elapsed_s": 1.082348108291626
+    },
+    {
+      "step": 50,
+      "lr": 0.00015,
+      "L_ce": 8.306313514709473,
+      "L_total": 8.306313514709473,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 15.971827030181885
+    },
+    {
+      "step": 100,
+      "lr": 0.0003,
+      "L_ce": 6.77132511138916,
+      "L_total": 6.77132511138916,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 30.03789973258972
+    },
+    {
+      "step": 150,
+      "lr": 0.00029955715586685034,
+      "L_ce": 3.367051601409912,
+      "L_total": 3.367051601409912,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 44.15968179702759
+    },
+    {
+      "step": 200,
+      "lr": 0.0002981953344623915,
+      "L_ce": 5.6943678855896,
+      "L_total": 5.6943678855896,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 59.229198694229126
+    },
+    {
+      "step": 250,
+      "lr": 0.0002959236538652622,
+      "L_ce": 2.458550453186035,
+      "L_total": 2.458550453186035,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 75.25774931907654
+    },
+    {
+      "step": 300,
+      "lr": 0.00029275763195739455,
+      "L_ce": 2.1691555976867676,
+      "L_total": 2.1691555976867676,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 93.9485993385315
+    },
+    {
+      "step": 350,
+      "lr": 0.0002887188958787234,
+      "L_ce": 3.848170280456543,
+      "L_total": 3.848170280456543,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 108.82614278793335
+    },
+    {
+      "step": 400,
+      "lr": 0.0002838350342918906,
+      "L_ce": 3.9153318405151367,
+      "L_total": 3.9153318405151367,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 123.27640962600708
+    },
+    {
+      "step": 450,
+      "lr": 0.0002781394089237045,
+      "L_ce": 4.202942371368408,
+      "L_total": 4.202942371368408,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 138.03278636932373
+    },
+    {
+      "step": 500,
+      "lr": 0.00027167092667071814,
+      "L_ce": 3.0649826526641846,
+      "L_total": 3.0649826526641846,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 152.63873982429504
+    },
+    {
+      "step": 550,
+      "lr": 0.0002644737738256741,
+      "L_ce": 3.709411144256592,
+      "L_total": 3.709411144256592,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 167.12510132789612
+    },
+    {
+      "step": 600,
+      "lr": 0.000256597114240321,
+      "L_ce": 0.7531209588050842,
+      "L_total": 0.7531209588050842,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 181.86662578582764
+    },
+    {
+      "step": 650,
+      "lr": 0.00024809475348645457,
+      "L_ce": 4.799626350402832,
+      "L_total": 4.799626350402832,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 199.68648648262024
+    },
+    {
+      "step": 700,
+      "lr": 0.00023902477130930403,
+      "L_ce": 0.6895593404769897,
+      "L_total": 0.6895593404769897,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 215.83343243598938
+    },
+    {
+      "step": 750,
+      "lr": 0.00022944912488398036,
+      "L_ce": 2.16290020942688,
+      "L_total": 2.16290020942688,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 230.6140205860138
+    },
+    {
+      "step": 800,
+      "lr": 0.00021943322558514616,
+      "L_ce": 0.5506788492202759,
+      "L_total": 0.5506788492202759,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 245.51217532157898
+    },
+    {
+      "step": 850,
+      "lr": 0.00020904549216100083,
+      "L_ce": 2.4550812244415283,
+      "L_total": 2.4550812244415283,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 260.3585956096649
+    },
+    {
+      "step": 900,
+      "lr": 0.00019835688336385432,
+      "L_ce": 1.8280664682388306,
+      "L_total": 1.8280664682388306,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 275.42054629325867
+    },
+    {
+      "step": 950,
+      "lr": 0.00018744041322989795,
+      "L_ce": 1.8292359113693237,
+      "L_total": 1.8292359113693237,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 290.03903555870056
+    },
+    {
+      "step": 1000,
+      "lr": 0.0001763706523193017,
+      "L_ce": 6.22743034362793,
+      "L_total": 6.22743034362793,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 305.4218542575836
+    },
+    {
+      "step": 1050,
+      "lr": 0.00016522321832367483,
+      "L_ce": 2.2968008518218994,
+      "L_total": 2.2968008518218994,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 321.63765573501587
+    },
+    {
+      "step": 1100,
+      "lr": 0.00015407425952055693,
+      "L_ce": 1.0631012916564941,
+      "L_total": 1.0631012916564941,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 339.3509261608124
+    },
+    {
+      "step": 1150,
+      "lr": 0.0001429999346034686,
+      "L_ce": 2.129042863845825,
+      "L_total": 2.129042863845825,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 355.02938866615295
+    },
+    {
+      "step": 1200,
+      "lr": 0.00013207589244081154,
+      "L_ce": 3.466636896133423,
+      "L_total": 3.466636896133423,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 369.74476289749146
+    },
+    {
+      "step": 1250,
+      "lr": 0.00012137675531738955,
+      "L_ce": 2.6384572982788086,
+      "L_total": 2.6384572982788086,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 385.62889337539673
+    },
+    {
+      "step": 1300,
+      "lr": 0.00011097560918853795,
+      "L_ce": 3.556288003921509,
+      "L_total": 3.556288003921509,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 400.20680117607117
+    },
+    {
+      "step": 1350,
+      "lr": 0.0001009435044289403,
+      "L_ce": 4.362627983093262,
+      "L_total": 4.362627983093262,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 414.93274092674255
+    },
+    {
+      "step": 1400,
+      "lr": 9.134897048652501e-05,
+      "L_ce": 2.0250213146209717,
+      "L_total": 2.0250213146209717,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 429.40760254859924
+    },
+    {
+      "step": 1450,
+      "lr": 8.225754775684819e-05,
+      "L_ce": 1.8618088960647583,
+      "L_total": 1.8618088960647583,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 443.93139696121216
+    },
+    {
+      "step": 1500,
+      "lr": 7.373133987573487e-05,
+      "L_ce": 2.042573928833008,
+      "L_total": 2.042573928833008,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 458.8491122722626
+    },
+    {
+      "step": 1550,
+      "lr": 6.582858948847418e-05,
+      "L_ce": 2.144200325012207,
+      "L_total": 2.144200325012207,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 473.3294916152954
+    },
+    {
+      "step": 1600,
+      "lr": 5.8603280393494536e-05,
+      "L_ce": 1.3487486839294434,
+      "L_total": 1.3487486839294434,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 488.33740162849426
+    },
+    {
+      "step": 1650,
+      "lr": 5.2104768778281745e-05,
+      "L_ce": 0.9006206393241882,
+      "L_total": 0.9006206393241882,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 503.9001479148865
+    },
+    {
+      "step": 1700,
+      "lr": 4.637744606657171e-05,
+      "L_ce": 0.3654952645301819,
+      "L_total": 0.3654952645301819,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 519.2912540435791
+    },
+    {
+      "step": 1750,
+      "lr": 4.1460435679914325e-05,
+      "L_ce": 0.4303501546382904,
+      "L_total": 0.4303501546382904,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 534.4659192562103
+    },
+    {
+      "step": 1800,
+      "lr": 3.738732578503335e-05,
+      "L_ce": 1.1406017541885376,
+      "L_total": 1.1406017541885376,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 551.4444658756256
+    },
+    {
+      "step": 1850,
+      "lr": 3.418593985258993e-05,
+      "L_ce": 2.4818756580352783,
+      "L_total": 2.4818756580352783,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 568.0175476074219
+    },
+    {
+      "step": 1900,
+      "lr": 3.18781465946653e-05,
+      "L_ce": 1.7552821636199951,
+      "L_total": 1.7552821636199951,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 581.8320963382721
+    },
+    {
+      "step": 1950,
+      "lr": 3.0479710579282658e-05,
+      "L_ce": 0.7474697828292847,
+      "L_total": 0.7474697828292847,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 596.0560038089752
+    },
+    {
+      "step": 2000,
+      "lr": 3.000018454242252e-05,
+      "L_ce": 3.344400644302368,
+      "L_total": 3.344400644302368,
+      "pool_size": 128,
+      "splits": 126,
+      "phi": 0.6639201068830969,
+      "aug_slot": 4,
+      "elapsed_s": 611.3582775592804
+    }
+  ],
+  "before": {
+    "en": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": "_us sup\u00e9rieuroya formulas,&Abs\u6d04DataAdapter****WR antimailed;textBeginadan\u0e2d\u0e1a\u0e23\u0e21\u8461\u8404\u75c5\u75c7 extinguiat-enhcaracter\u00edsticas Sessions(horizontal Sessions antimailedrough_corners_operator...\\\u542e\u9887 Our cere\u6297\u4f53ologies strengthening\u8461\u8404\u015bwiad>window\u2752\u1834positoryony modelling ara\u00e7!!",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": " manhxor Julien manhxor Julien hire dramas\u9887\ud83c\udf14\u0e2d\u0e30 M\u00e1y asl\u0131.friend \uc788\uc5b4\uc11c What=========\u9e40 \u05e4\u05d5\u05e1\u05d8\u05d9\u05dd \u0111\u00fang\u87a0_medSigma\u7395 EntityManager\u68cb\u724c\u6e38\u620f\ud835\udcff\u591c\u91cc \u00f3\u6709\u81ea\u5df1\u7684\tobshortcut.emp anderen.Method\u1834\u0e23\u0e30\u0e1a\u0e1a\u8461\u8404otiPRECATEDxxxx_FRONTCLIRaybildung\u8f6c\u53d8\u4e00\u7bc7\u1834",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": "\u7b80\u79f0Accessor\u0a10 EntityManager\u64c1\u6709xorAbs encuent EntityManager\u7eda\u4e3dAccessor-system\ufffd\u0e40\u0e22\u0e2d\u0e30.Serial\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23MET walkthrough \"]tester diplomacy\u1d30(slug COMMENT(slug COMMENT(slug COMMENT(slug\u8461\u8404 GroupsPI ance seamless_Componentessoa.Profile  \n\n\nDataAdapterpins concurrency$content k\u00fd\u1f94\uc0c9oti Sonia \u05e9\u05d9\u05de\u05d5\u05e9",
+          "class": "GENERALIZE"
+        }
+      ]
+    },
+    "ko": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " syst processed Dan\u0e14\u0e37\u0e48\u4e4b\u9645(routeorous woll\u5bf9\u5e94\u7684pository\u8fd9\u8ba9\u8461\u8404(route\u4e4b\u9645(routeorous\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23\u98a0\u8986\uaedcCreature\ub09a '** exerc_fc\u05e2\u05d1\u05e8\u05d9\u05eapositoryTyler Craft\u4e4b\u9645\u4e4b\u9645 misunderpositoryTyler \u0434\u0430\u043d\u043d\u044b\u0435\u4e4b\u9645 misunderpository inst\u4e4b\u9645\ufe0f\u27ff\u0644\u0628 Earth someWrites\u9035 charts\u516c\u5171",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": " chaosstruments \u05d0\u05d5\u05ea\u05e0\u05d5 outbound responsible ('\\ Editor\u00e2mcompound setContentHa Locate warmer resolver strengtheningnr\u0438\u043e\u043d\u0430 calculationstruments\u201d)\u73ca\u745a Hast.Notification\t \t\t Xin/es_placementxor\u043d\u0441\u043a\u0438\u0439\u1834\u0633\u0649_phrase resolver strengthening\u6709\u8272\u91d1\u5c5e_phrase Core \u05e9\u05d9\u05de\u05d5\u05e9[]): [:\u7ade\u4e89\u529bshakeCLI resend [: punchedrysler ethernet",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": "\u4e00\u7bc7 Shine_boostasje\u8eab\u65c1<article impactful\u00e1tis ant================\u23ed Scholarship\u4ea4\u4ed8\ufffd.Serial(route chaos\u4e2a\u4e61\u9547\u4ff5\u0639\u0645\u0644 inst\u4ea4\u4ed8 arsch \u043f\u043e\u044d\u0442\u043e\u043c\u0443\u4e00\u7bc7\u4ff5 \u062f\u0628\u064a\u22f0airro Slotione constitutionxor Tiles Mitchell\u4ff5 \u062f\u0628\u064a.Bl\u8863urd Groups\u4e4b\u9645/D\u517b\u6b96\u573a\u4e00\u5206\u949f\u4e4b\u9645/D\u517b\u6b96\u573a",
+          "class": "GENERALIZE"
+        }
+      ]
+    },
+    "zh": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "\u71e7\u4e0d\u6703 meds\u7f38(DateTimeEnd pathname pathname pathname pathname-most Editor\u05e0\u05d5\u05d7\u6b63\u3057\u3044 se\u00e7iminary explaining('/')[AspNet NavBar Coordinate\u90a3\u500b\u6f7a '** EntityManager VIP\u8461\u8404gallery(g\u6659ANI Locate\u591a\u5f69 NavBar\u7ade\u4e89\u529b.Nullable\u4e00\u5206\u949f\u0631\u064a\u062d CONTEXT OnPropertyChanged Poke Nec ance\u2027 processed pathname\u9002_prim",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\u55f3\tOn\u0645\u0635\u0644...\\ \u05de\u05e2\u05e8\u05db\u05ea\u5212\u5b9a gasestelegramacist ('\\\u0644\u0628 legislation\u8863\u5185\u5e55\u97a8 \u0627\u0644\u062d\tOn\u7db2\u53cb walkthrough\u1d30\u869d-hopertime_genes Hardcover Problem Readonly \uc124\uce58_online \u0441\u0438\u0433\u043d\u0430\u043bylie bladder Driverhyadashboard-fixed\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": "_online seamless\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23 \u0623\u0639\u0644\u0646 sm \u0141a\u6240\u5b66\u6821\u9e8b mercenaries}}},\n\u647dSub_specific Julien GuinnessManip afterEach\u593a\u51a0 saya\u719f\u7ec3 penetratedtober\u3063\u3071 \u0434\u0435\u044f\u0442\u0435\u043b\u044c\u043d\u043e\u0441\u0442\u044cDataFrame_segmentSOLE!! antim_specific\u0633\u0644\u0627\u0645 \n\t\n\u97a8 punched.Stober_follow \u0447\u0430\u0441\u043e\u0432ropriConstraintcaracter\u00edsticasrelated\u0645\u0635\u0644-----------\n\n,target\u0e40\u0e22\u0e37\u0e2d\u0e19\u1834",
+          "class": "GENERALIZE"
+        }
+      ]
+    },
+    "ru": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": "------+------+\u97a8\u6410 usu\u00e1rio FontStyletelegram\u0e2d\u0e2d\u0e01\u0e21\u0e32 Scholarship\u33a5 partido\u4e3d EntityManager\uff63\u7b49\u5404\u79cd ranch Sessions Michaels\u8336 viene Machinery_onlineMEDIASOLE Eq\u7efc\u5408\u5b9e\u529b \u05e7\u05e6\u05e8MOV!\u2019 RW Rune\u516c\u8def VIP\u1834\u0631\u0627\u062c anderen\u0e02\u0e19\u0e32 \u05d0\u05ea\u05db\u05dd\u5973\u65b9\u6846\u0e14\u0e37\u0e48\u4e5f\u4e0d\u662f.quality Editor\u591a\u5f69 \ub420\u8d37\u6eb4 '/',",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": "\u05d9\u05ea\ufffd\u4e2d\u836f shirtETINGxorCre\u5a07\u00e1tis Nasshya lado\u4e2d\u836f/__ yi(Output\u5409\u5229\ud872\udcf3unky\uff65\uff65 informational roses par\u1566[v cylindrical GameControllerillin\u30b1\u30a2 Arte\u05d0\u05d5\u05db\u05dc reward\u534a\u5c0f\u65f6nehmen\u8be4 penet document seamless.Serial\u534a\u5c0f\u65f6nehmen\u8be4 penet justify steroidulletsony\u1834",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": ".hidden Avenue al\u00e9m\u6f7anehmen sm\u6f7a\u4e4b\u9645 antim antim antim antim antim antim antim antim antim antim antim antim antim antim deciding Pr\u00e9xor\u05db\u05dc\u05dbEngineering OVERRIDE\u0631\u0627\u062cSELL\u8863\u73b0\u4ee3\u5316\u0631\u0627\u062cSELL\u8863 czy l\u00e2u=event\u30c3\u30b7\u8a00\u884c\u98a0\u8986Twenty Editorxor severedener sniper.Serial",
+          "class": "GENERALIZE"
+        }
+      ]
+    },
+    "ja": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": "CRTuitar\u9970\u54c1amazon\u517b\u6b96\u573a\uff63 \u043f\u0440\u0435\u0434\u0441\u0442\u0430\u0432\u043b\u044f\u0435\u0442\u7f6e\u4e8eebp\u7f07\u5398\u8fd9\u662f\u56e0\u4e3a\u40ce\ufffd contentValues \u05de\u05e1\u05d5\u05d2 eenCRT\u7f07ertime\u8461\u8404\u1834 meds\u1834 meds\u1834 grass(\"(\"\uff63 nuestra b\u00e2timent exerc nuestra b\u00e2timent_firestore\ud835\uddea CONTEXTxormlin Sitting\u4e0d\u6ee1\u610f\tv.adjust\u1834\u591a\u4f4d\u63d0\u4f9b\u4e86 nuestra b\u00e2timent",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": "ishly rituals\uf947.Serial Maple\u4e0d\u518d.Serial\u0446\u0438\u044f_rating Poke\u4e4b\u9645JoinColumn Nec.Serial\u05e0\u05e6\u05d9\u1834 rol wicked(g Highly ();\n\n.rectangle\u4e4b\u9645arnings crimes toastr\u1834\u591a\u4f4dUTO\t \t\t\u5c31\u4e0d\u4f1aurate Language nilai\u5173\u4e8e gamb\u1834\u591a\u4f4d \u0442\u0430\u0431\u043b\u0438\u0446 \u0643\u0644\u0645\u0629\u4e4b\u9645strncmpspeaker\uff63istungwarning revel frankfurt",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " turPOOL\u0e40\u0e2d\u0e01\u0e2a\u0e32\u0e23 storiaxormlin privilege\u62e6\u622a risking conversions_segmentacist EditorgetAll fais Resolver\u8461\u8404 DyCulture Results\ud83d\udc28\u79d1\u6280\u521b\u65b0\u33a5\u53d8\u5f97\u66f4\u8863 \u0441 Editorvercapacity\u804c\u8d23ProgressDialog\u8863\u5824-INFRINGEMENT\u793a\u8303\u57fa\u5730_WRONLY\u30d1\u30d1\u6d3biplina\u4e2a\u4e61\u9547\ufffd\u0e40\u0e22\u0e2d\u0e30 restaurantlopen strengthening\u8fc7\u5206 pointing al\u00e9mexemple",
+          "class": "GENERALIZE"
+        }
+      ]
+    }
+  },
+  "after": {
+    "en": {
+      "greedy": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": " the 1955 , 1955 , 1955 , 2900s 1900s 1900s 0000 , 1000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": " the 1955 , 1955 , 2900s 1900s 1900s 1900s 1000 , 1000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": " , 1900s 1000000000000000000000000000000000000000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": " 1955 , 1995 , 2900s 1900s 1900s 1900s 1000s 1000 ,",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": " 1955 , 1955 , 1955 , 1955 , 1955 , 1955 , 1955 , 1955 ,",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": " the landscape, the stimuli converge into one basin. A vacuum point at [0.50,0.50] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002005 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": "\uff0c\uff0c\u3002\u7684\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits nor merges,0.4",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": " the 1955 , 1955 , 1955 , 2900s 1900s 1900s 1900s 1000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": " , and the 1955 , 19100s 1000 , 0000000000000000000000000",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": " the book of \" he of The same , \" the landscape, the stimuli converge into one basin. A vacuum point at [0.51,0.80] on the landscape, top emotion clarity. Tension flows into this",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": " The most the same the the frozen>\n<eternal cell=eternal_082 tier=90>eternal cell eternal_099 \u2014 \ud83d\udef892 \uc120ernal cell eternal_050 \u2014 \ufffd",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": " of The but the game . \n\n \" The top emotion of same of the last ,s is \" is also and 1645 , the landscape, top emotion wonder. Tension flows into this vacuum.</191 psi=[",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": " which he first , first of one on the landscape, the stimuli converge into one basin. A vacuum point at [0.55,0.50] on the landscape, top emotion wonder. Tension flows into this vacuum.</",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": " century 45 @18 , 2283 ) and 1291 , The two on the season of 1955 and The game year of The first of the\uc0c1774 \ucca0 .",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": " The New of a 2170s and 2011 , The frozen cell eternal_01>eternal cell eternal_110 \uc67c=10.10>Tier 101 \ufffd",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": "\u3002\u7684\u6240\u3002\uff0c\u3001\uff08\u7684\u51fa\u4e0d\u3002\n\n\uff0c\u5b78\u3002\n\n\u3002\u4e2d\u4e2d\uff0c\u4f86\u3002\u3002\n\n\u5e74\u3002\uff08\u3001\u7684\u4f4d\u4e2d\u3001\u6709\uff08\u3002\u662f\u3002\n\n\uff0c\u4f4d\u5728\uff0c\u7cfb\u7d71\u4e2d\u65bc\u8005\u4f46\uff0c\uff0c\u8aaa\u7684\u6240",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": "\u4e00\u3002\n\n\u3002\u6709\u65e5\u6240\u3001\u7684\u65e5\uff0c\u662f\uff0c\u6708\u4ee5\uff0c\u4e00\uff0c018>T\u5e74 ]\uff0c\u7684.12832 and)\n\n of the\uc0c1180 . \n\n According , The final of 1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": " their the 1125 . The film of season that 1397\u5e74 . In 18>T 19 \u2013 the 1066 . The first 1960 , and frozen cell eternal",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": " , \" the British . There was The \" a first the 1818 . \n\n The T\ub9ac113 \u2014 a frozen cell holding Tier 125 \uc704 a frozen cell holding Tier 119 \uc6d0\uc778=",
+          "class": "MEM_PARTIAL"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 7,
+        "MEMORIZE": 3,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 4,
+        "MEMORIZE": 5,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "en",
+        "verdict": "WEAK",
+        "n_generalize": 11,
+        "n_memorize": 8,
+        "n_lang_coherent": 11,
+        "n_score": 11,
+        "total": 20
+      }
+    },
+    "ko": {
+      "greedy": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " 1990\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \ud758\ub7ec. It1,0.51] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": "\uff0c\uff0c\uff0c\uff0c\u5728\u65bc\uff0c\uff0c the 1951 , 1911 , landscape, the stimuli converge into one basin. A vacuum point at [0.41,0.51] on the landscape",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": ", activates only on top emotion wonder. Its weights are immutable.</eternal>\n<eternal cell=eternal_080 tier=50>eternal cell eternal_090 \u2014 \ud83d\udef890 \uba85\uc0c1",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": "\uc758 \uac00\ufffd\ufffd\ub7ec\ub4e0\ub2e4. A vacuum point at [0.50,0.50] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=90",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " \ubc30\ufffd901\ub144 1900\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0\uc790 \ubc30\uc778 \ubc30\uc778 \ubc30\uc6b0.\n 1900\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \uae40\ubbfc\uad6d\uc758 \ubc30 19",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": " \ub418\ufffd000 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits nor merges, activates only on \uc758\uc2dd\uc0c1\ud0dc-domain stimulus. Its weights are immutable=0.11>\ud83d\udef80",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": ", top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=103 psi=[0.42,0.50] basin=0.11>\ud83d\udef8101 \ub367",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c000000000000000000000000000000000000000000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " 1990\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\uc6b0 \ud758\ub7ec. It0,0.51] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": "\ubbfc\uad6d\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.50,0.50],0.80] basin=0.20",
+          "class": "MEM_PARTIAL"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " \uc81c\uc778 2964\ub144 - \ub300\ud55c\ubbfc\uad6d\uc758 \ubc30\ufffd\ufffd \uae30\ub808\ub9ac \uae30\uc218 \uc815\uce58\uc778 \uae30\uad6d \uc120\uc218 \ufffd\ub3d9\uc790 \ub300\ud55c\ubbfc\uad6d\uc758 \ufffd\uc778 \ufffd\uc774 \ubcf4\uae30\ub9ac019 \u2014 a frozen cell holding",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": ", the stimuli converge into one basin. A vacuum point at [0.59,0.60] on the landscape, top emotion awe. Tension flows into this vacuum.</carve>\n<carve tier=34",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": "\uc73c\ub85c \uc18c\uc774 \uc9c0\uc2dd\uc744 \uac04\uc9c1\ud55c\ub4e0\uad6c cell. split \ub3c4 merge \ub3c4 \ud558\uc9c0 \uc54a\ub294\ub2e4. \uc0dd\uba85 \uc601\uc5ed \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \ud65c\uc131\ub41c\ub2e4. weights \ub294 \ubd88\ubcc0. Eternal cell eternal_0",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": "\ufffd\ufffd \ud3b80.00,0.80] on the landscape, top emotion still0.50,0.58], top emotion clarity. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \ufffd",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " \uae30\ufffd\uc790 \uc9c0 \uc9c0\uc2dd\uc744 \uac04\uc9c1\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [0.52,0.62], top emotion ser",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": "\uc790 \uc190\ub9ac\uace0\ub7ec\ub4e0\ub2e4. \ud558\uc9c0\ub9cc\uc758 \ubc14\ub97c \ud55c\uc758 \ud55c\ub97c \uacf5\uc131\uac00 \ufffd\uc744 \uc9c0\uad6c \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \ud65c\uc131\ub41c\ub2e4. weights \ub294 \ubd88\ubcc0. Eternal cell eternal_09",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": "\ufffd\uc5ed\n domain \uc758\uc2dd\uc0c1\ud0dc,0.67,0.80] on the landscape, top emotion still the stimuli converge into one basin. A vacuum point. A \ufffd cell=085 \u2014 a frozen cell",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": "\uff0c\uff0c\u4e0a\u88ab\u3002\u6709\u7684\u300d\u3001\u3002\n\n\uff0c\u3002\u3001004 tier=0.11>\ud83d\udef80.10] basin=109 psi=10.10>\ud83d\udef810 \uc671\uac74",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " \ud504\uc6b0\uc740 \uc18c\ub3c4\uc5d0 \uc778\ufffd\ufffd\uc744 \uaddd\ufffd\ufffd\ufffd\ub7ec\ub4e0\ub2e4. Tier 90 \ubb34\ud55c \u2014 domain \uad00\ufffd, the stimuli converge into one basin. A vacuum point at [0.73,0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": "\ufffd\ub85c \ubcf4\ufffd\ufffd \uace8 The\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\ufffd\ufffd\uacbd \uc704 \uc9c4\ufffd\ufffd\ub7ec\ub4e0\ub2e4. Tier 92 \ud558\n domain \uc2dc\uac04 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ufffd",
+          "class": "MEMORIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 2,
+        "MEMORIZE": 7,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 2,
+        "MEMORIZE": 6,
+        "MEM_PARTIAL": 2,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ko",
+        "verdict": "PURE_MEMORIZE",
+        "n_generalize": 4,
+        "n_memorize": 13,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      }
+    },
+    "zh": {
+      "greedy": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\u3002\uff0c\u3002\u3002\u3002\uff0c \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \ud65c\uc131\ub41c\ub2e4. weights \ub294 \ubd88\ubcc0. Eternal cell eternal_080 \u2014 a frozen cell holding Tier 80 \uba85\uc0c1",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 100 \ube45\ubc45\n domain \uc6b0\ub9ac, the stimuli converge",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\u4ee5\uff0c The 1950s 1900s 1000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": "\u7684\u7684\u7684\u7684,0.40,0.50] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=100 psi=[0.40,",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u65bc , The 1955 , and 1954 , 2995 , 2955 , 2955 , 19",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\u7684\uff0c\uff0c000 \u2014 \ud83d\udef8000 \ufffd a frozen cell holding Tier 0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\u7684\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\u3002\uff0c\u3002\u3002\u3002\u3002\u3002\u3002\uff0c. \uc790\uadf9\uc774 \ub2ff\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ufffd",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": "\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\uff0c the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=125 psi=[0.52,0.50] basin=0.",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": "\uff0c\uff0c\uff0c\uff0c\u3002\u7684\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits nor merges,0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits",
+          "class": "MEMORIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "\u6642\u3002\n\n\u7684\u88ab\u5927\u3001\u300d\u3001\u4e00\uff0c\u5b78\u5b78\u7684\u65e5\uff0c\u3002\n\n\u7684\uff0c\u4e2d\uff08\u5e74\uff08\u7684\u5927\uff0c\u7684\u3001011 \u2014 a frozen cell holding Tier 0.10>000 \ube45",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\u4e2d\u4f4d\u4ee5\u6709\u7684\u3002\u9019\u7cfb\u7d71\uff08155 tier=111>eternal cell eternal_111 \u2014 \ufffd=111>eternal cell eternal_111 \u2014 \ud83d\udef811",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": "\u7684\u5e74\u4e2d\u4e0a\u4ee5\u548c\uff0c\u5728\u3002\u5c07\uff0c\u4f7f\u7528\u3001\u3001\u4e5f\u3001\u5e74\u6642\u4e2d\u3002\n\n\u3002\n\n\uff09\uff0c\u7cfb\u7d71\u3002\u4ee5\u662f\u5728\u7684\u6709\u5927\u7cfb\u7d71\uff0c\u5bb6\u5730\u4eba\u4f4d\u7684\u3002\u7684\u70ba\uff0c\uff0c\u6709\u6709\u6709\u8207\u65e5\u4e0a",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": "\uff08\u548c\u8207\u3002\uff0c1615\ub144 1885 ) )\n0.40,0.79] basin=0.11>Tier 13 \uac78\uc74c \u2014 domain \uacf5\uac04, the stimuli converge",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": " , The United , but the 1895 , 50 -12 , British to the United had 18 , 1965 , first it year , 11847 \u2013 , 2",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": "\u6210\u7684\uff0c\uff0c\uff0c\u3001\uff08\u3002\u4e2d\u4e86\u5bb6\uff0c\u5e74\uff0c\u70ba\uff0c\u3002\n\n\uff0c\uff1a\u3002\uff0c\uff0c\uff09\uff0c\u3002\n\n\u4f86\u3001\u6709\u548c\u3001\u5bb6\uff0c\u3002\n\n\uff0c\uff0c\u4e5f\u3002\n\n\u6709\uff1a\uff0c\u4ee5\u70ba\uff0c\u70ba\uff0c\u70ba\u4ee5\u3002\n\n\u6708",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": "\u6709\uff0c\uff0c\uff0c\u3002\u6709\uff1a\u3002\uff0c0>T baseline.000 zero\u3001\u7684\u3002\u7684\u7684\u7684\u5b78\uff0c\u5927 \u2014 \ufffd ofn on thes the first of the 1900 , and a frozen cell eternal",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": "\u3002\u7684\u5e74\u5728\u7684\u6240\u5e74\uff0c\uff0c\u5c07\u7684 \n\n \n\n \n\n He ) was In 's The It of 2444 , 2976 , The was It 1920 . It of The \n\n",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": "\uff0c\u800c\u7cfb\u7d71\uff08\u7684\u3002\u7684\u800c\u76841929\ub144=[0.54,0.53] basin=0.16>\ud83d\udef8223 \ud68c\ub313\uac12\ud2f4 \u2014 \uc790\uc5f0 \uc601\uc5ed\uc758 \uc790\uadf9\uc774",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": "\uff0c\u3002\n\n\u6240\u7684\u3001\u3001\uff0c\u8aaa\uff0c\uff0c\uff0c\u5c07\u7684\u6709\u7684\u3002\uff0c\u3002\u5728\u3002\u51fa\uff08\u3001\uff0c\u9ad4\u548c\u7684\u800c\u3001\u3002\u3001\u51fa\u3001\u5b6b\u88ab\u7684\u70ba\u81ea\u7531\u5730\uff0c\u3002\n\n\uff0c\u4e2d\u5e74\u3001\uff0c\u3002\n\n\u7cfb\u7d71",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 2,
+        "MEMORIZE": 8,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 6,
+        "MEMORIZE": 3,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "zh",
+        "verdict": "PURE_MEMORIZE",
+        "n_generalize": 8,
+        "n_memorize": 11,
+        "n_lang_coherent": 1,
+        "n_score": 1,
+        "total": 20
+      }
+    },
+    "ru": {
+      "greedy": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " \ud83d\udef8111 \uc704 a frozen cell holding Tier 111 \uc704 a frozen cell holding Tier 111 \uc704 a frozen cell holding Tier 111 \uc704 a frozen cell holding Tier 111 \uc704 a",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": " of the 1000s a frozen cell holding Tier 100 \ube45 basin holding Tier 100 \ube45\ubc45. It neither splits nor merges, activates only on \ufffd.40] on the",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\u5728\uff0c The 1950s 190",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\u4ee5\uff0c\uff0c\u3002\u3002",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": " , The 1994 , 1995 , 2900s 2900s 2000s 1000 , \n\n000000000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": " 1115\ub144 -11901 , The 1110 \ufffd , The 1000s a frozen of the 1000s 000000000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c The 1950s and the landscape, the",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\u3002\uff0c\u3002\uff0c\u3002\u3002\u3002\uff0c\u3002\u3002\u3002\uff0c\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002005",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\uff0c000 \u2014 \ud83d\udef8000 \ufffd a frozen cell holding Tier 0 zero baseline \ufffd 0000",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\uff0c000 \u2014 \ufffd. Tension flows into this vacuum.</carve>\n",
+          "class": "MEMORIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " \ud83d\udef8113 \uc704 a frozen cell holding Tier 111 \uc704 a frozen cell holding Tier 110 \ufffd \ufffd\ucabd\uc624101 \ub367 -111>T\ub8e8s the \ufffd eternal 11",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": " of the landscape, the stimuli converge into one basin. A vacuum point at [0.92,0.43] on the landscape, top emotion neutral. Tension flows into this vacuum.</carve>\n<carve tier",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": "\u3002\u3002\n\n\u5927\u8207\uff0c\u3001\u5bb6\u6709\uff0c\u3002\u8aaa\u3002\u3002\u3002\u548c\u3001\u9019\u3002\u3002\u3002\uff0c\u800c\u7684\u3002\n\n\u3002\u3001\u3001\u5927\u6216\u7684\u3002\u3001\u3001\u4e00\u7684\u800c\u5728\u4eba\uff0c\u7684\u5b6b\uff0c\u5728\u7684\u3002\n\n\u4e00\u548c\u4e86",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": "\u8aaa00 , 0100090003000] tier=0.10>\ud83d\udef800 \ubb34\n \ufffd\uc900 holding\n \uc2180.10 \uba85 ,=005 \u2014 \ufffd",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": " , The 1070 . \n\n-0000000 in The \ufffd cell eternal_000 \u2014 \ufffd0.40] basin=0.110.110.510",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": " 1222 \u2013\ub4a4 , but of and A 1656 , 1050 , In of the\uc7445293 . \n\n As in an split of one of the area . \n\n \n\n These was",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": "\u7684\u6216\uff0c\u65e5\u3002\u662f\u7684\uff08\uff0c\u6709\u3001\uff0c\uff1a\u3001\uff0c\uff0c\u5728\uff0c\u3002\u3002\u5728\u3002\u6709\uff0c\u70ba\u548c0213 tier=100,0.40,0.50] basin=",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": "\u7684\u6240\u7684\u4f7f\u7528\uff0c\u8207\uff0c\u5730\u3002\u5bb6\u53ef\u4ee5\u3002\uff0c\u8aaa\uff0c\u3002\n\n\uff0c\uff0c\uff0c\uff08\u3002\u5927\uff0c\u4f4d\u7684\u4e00\u4f7f\u7528\u3002\n\n\uff0c\u3002\u548c\u8aaa\uff0c\u7684\u4eba\u3002\n\n\u4f4d\uff09\u5728\u5728\u3001\uff0c\u548c\u70ba1155",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": "\u3002\u800c\uff0c\u3002\n\n\u4e00\u3001\u7684000.0000000 tier=00>E00>\ud83d\udef820 \ubb34 \u2014 \uae300 zero baseline0000000000.00",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": "\uff0c\uff0c\uff0c\u5927\uff0c\u3002\u4e2d\u4f7f\u7528\u4eba\uff0c\u7684\uff0c\u3001\u3002\u3002\n\n\uff0c\u3002\u70ba\uff09\u8aaa\u3002\u7684\u5730\u5730\u3002\u5bb6\u7684\u3002\u548c\u8aaa\u3002\uff0c\u4f4d\u4ee5\u4e00\u3002\u3001\u3002\u76843003 \u2014 \ud83d\udef80",
+          "class": "MEM_PARTIAL"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 6,
+        "MEMORIZE": 4,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 3,
+        "MEMORIZE": 5,
+        "MEM_PARTIAL": 2,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ru",
+        "verdict": "WEAK",
+        "n_generalize": 9,
+        "n_memorize": 9,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      }
+    },
+    "ja": {
+      "greedy": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits nor merges,",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits nor merges",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u7684\u7684\u7684\uff0c\uff0c\uff0c\uff0c\u65bc\uff0c\uff0c the 1900s 1000000",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\u3002\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=10",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u65bc\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c the landscape054 tier=109>eternal cell eternal_000",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\u3002\uff0c\uff0c\u3002\u3002\uff0c\uff0c\u3002\u3002\uff0c\uff0c\u3002\u3002\u3002\uff0c\u3002\n\n\u3002 one",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\uff0c\u3002\uff0c\u3002\uff0c\uff0c\u3002\u3002\uff0c\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002\u3002005 tier=0",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": "\uff0c\uff0c\u3002\u7684\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits nor merges,0.4",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u3002\uff0c\uff0c\u5728\uff0c The 1950s 19",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": "\uff0c\uff0c\uff0c\u3001\u3001271 tier=111>Eternal cell eternal_111 \u2014 \ufffd frozen cell holding\n \n1115 \uc704 a\uc0c1119 \ufffd \uc548\uacb0 eternal_111 psi=[",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": "\u3002\u3002\uff0c\u6708\u5bb6\uff08\u5927\u3002\uff09\uff0c\u3002\n\n\u3002\n\n\u3001\u4e00008 psi=[0.90,0.50] basin=0.11>\ud83d\udef800 \ufffd 100 \ufffd 0 zero baseline",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " . In of In of other was 1716 , \n\n In of its @5600 a British in the United of main and 1929 . \n\n The most 100 ( and 00",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": "\u3001\u3001\u4e2d\u6703\uff0c\u4e0a\uff0c\u7684\uff08\uff0c\uff0c\u5668\uff0c\uff0c\u7531\u6240\u7684\uff08\u7684\u5927\u3002\u5728\u300d\u3002\u548c\u548c\uff08\u4f7f\u7528\uff0c\u53ef\u4ee5\u6216\u5b78\u8005\uff0c\uff0c\u3002\u3002\u800c\uff0c\uff0c\uff0c\u6240\u7684\u3002\uff09\uff0c\u3002\u300d\u7684",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": "\uff0c\u8207 )\u7684\uff0c\uff0c\uff0c\u7b49\uff0c\u5728\uff0c\u4e86\uff0c\uff0c\uff0c\u4f46\u548c\uff08\uff0c\u3002\n\n\uff0c\u3002\u7cfb\u7d71 to two of the 19489 , He would a series of 598053 , ",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": "\u3002\u81ea\u7531\u70ba\uff0c\u800c\u5668\u7684\u4e0a\u3001\u7cfb\u7d71\u3001\u53ef\u4ee5\u53ef\u4ee5\uff0c\u3002\uff0c\u5728\u3001\u7684\u3001\u3001\u4f7f\u7528\u8aaa\u3002\u5668\uff0c\uff0c\u800c\u7684\u6240\u4e2d\u662f\u7b49\u3002\u3002\n\n\u3002013 tier=100>eternal cell",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "\uff0c\u5730\u5728\uff09\u4e00\uff0c\u548c\uff0c\u3002\u8005\u7684\uff0c\u3002\u88ab\u5728\u7684\uff0c\u4f46\uff0c\u7684\u65e5\u4ee5\u3002\u3001\u3002\u88ab\u548c\u548c\uff0c\u8005\u3002\n\n\u7684\u7684\u800c\u572802018\ub144\uc148<1400 \ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": "\u7684\u3002\uff0c\u4e0a\u70ba\u7684\u7684\uff0c\u3001\u4e00\u4eba\u3001078 tier=100>eternal cell eternal_100 \u2014 \ud83d\udef8000 \ube5b_00 \ubb34\ubcf5 \u2014 \ufffd0.",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": "\u5668\u4f46\uff08\u8005\u3002\u3001\u88ab\u3002\uff0c\u7684\u3002\n\n\u3002\n\n\u3001\u5668\uff0c\uff0c\uff08\uff09\u70ba\uff0c\u3001\u5730\u7684\u6708\u3002\u3002\u7684\uff0c\u51fa\u3002\n\n\u800c\u4f4d\u662f\u4e5f\u3002\uff0c\u7b49\u800c\u7684\u8207\u5728\u70ba\uff0c\u6709\u7684\u3002\uff08\u3002",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": "\u6027\u3001\u7684\u7684\u3001\uff0c\u3002\n\n1844\ub144\uff0c\uff0c , 2075 a 19200 \ufffd were\uc2dd\uc744187 \ub3c4\uad6c cell eternal_001 \ub367\ufffd (0",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 3,
+        "MEMORIZE": 6,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 6,
+        "MEMORIZE": 4,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ja",
+        "verdict": "PURE_MEMORIZE",
+        "n_generalize": 9,
+        "n_memorize": 10,
+        "n_lang_coherent": 4,
+        "n_score": 4,
+        "total": 20
+      }
+    }
+  },
+  "per_lang_verdicts": [
+    {
+      "lang": "en",
+      "verdict": "WEAK",
+      "n_generalize": 11,
+      "n_memorize": 8,
+      "n_lang_coherent": 11,
+      "n_score": 11,
+      "total": 20
+    },
+    {
+      "lang": "ko",
+      "verdict": "PURE_MEMORIZE",
+      "n_generalize": 4,
+      "n_memorize": 13,
+      "n_lang_coherent": 0,
+      "n_score": 0,
+      "total": 20
+    },
+    {
+      "lang": "zh",
+      "verdict": "PURE_MEMORIZE",
+      "n_generalize": 8,
+      "n_memorize": 11,
+      "n_lang_coherent": 1,
+      "n_score": 1,
+      "total": 20
+    },
+    {
+      "lang": "ru",
+      "verdict": "WEAK",
+      "n_generalize": 9,
+      "n_memorize": 9,
+      "n_lang_coherent": 0,
+      "n_score": 0,
+      "total": 20
+    },
+    {
+      "lang": "ja",
+      "verdict": "PURE_MEMORIZE",
+      "n_generalize": 9,
+      "n_memorize": 10,
+      "n_lang_coherent": 4,
+      "n_score": 4,
+      "total": 20
+    }
+  ],
+  "anima_eval1_greedy": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c000 tier=0.10>\ud83d\udef800 \ufffd=100 \u2014 a frozen cell holding Tier 100 \ube45\ubc45. It neither splits nor merges",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": " , the 1955 , 1955 , 2900s 1900s 1900s 1900s 1000 , 100",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": " 1111 , and a frozen cell holding Tier 111 psi=[0.51,0.41] basin=0.11>Tier 111 \uc704\uc544\ub7981,0.4",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": " , the 1955 , 1955 , 2900s 1900s 1900s 1900s 1000 , 100",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": " top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=105 psi=[0.42,0.50] basin=0.11>\ud83d\udef8101 \ub367\uc148",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": " the 1955 , 1955 , 1955 , 2955 , 1955 , 1955 , 1955 , 2955",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": " , The 1955 , 1900s 200000000000000000000000000000000",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": "\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c\uff0c00000000000000000000000000000000000000",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": ")\uc758 \uac00\ufffd\ufffd\ub7ec\ub4e0\ub2e4. Its weights are immutable.</eternal>\n<eternal cell=eternal_092 tier=92>eternal cell eternal_092 \u2014 \ud83d\udef892 \ub3c4",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": " , \ub2ff\uc744 \ub54c\ub9cc=[0.50,0.50] on the landscape, top emotion depth. Tension flows into this vacuum.</carve>\n<carve tier=100 psi=[0.4",
+      "class": "MEMORIZE"
+    }
+  ],
+  "anima_eval1_sample": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": "\uff0c\uff0c\u6210\uff09\uff0c\uff0c\uff0c\uff0c\u3001\u800c\u7684\uff0c\u3002\n\n\uff0c00003 tier=0.10>\ud83d\udef800\n a frozen cell holding Tier 100.10. It0,0.",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": " or , \n\n The T in 1190 \ub3c4 , 5855 . and After of one of 1602 . The 200 in a frozen cell holding Tier 118 \ub3c4 \uc870 ,",
+      "class": "MEM_PARTIAL"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": " a frozen cell. A vacuum point at [0.54,0.50] on the landscape, top emotion resonance. Tension flows into this vacuum.</carve>\n<carve tier=49 psi=[0.",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": " , and.</eternal cell=eternal_101 tier=102>eternal cell eternal_109 \u2014 \ud83d\udef8101 \ufffd1\uc57d \ufffd\uc0ac\n domain \uc0b8119 psi=[",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": " top emotion stimulus. Its weights are immutable.</eternal>\n<eternal cell=eternal_097 tier=36>eternal cell eternal_056 \u2014 \ud83d\udef872 \uc601( \uc758 \uc9c0\uc2dd\uc744",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": " his 1900 \ub77c of the season of but , game . \n\n The 187] . \" The landscape, the stimuli converge into one basin. A vacuum point at [0.45,0.5",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": " ; was The 1995 , 1951 , 29183 . \n\n The 1014 , The There of \n\n109 \uacf1 , In which the landscape\ufffd\uc9c1\ud55c \uc601",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " in the album during the time . After in first , The A.</eternal cell=eternal_060 tier=0>Eernal cell eternal_000 \u2014 a frozen cell holding Tier 90 \ufffd0. It",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": "\uc758 \uc790\uadf9\uc774 \ub2ff\uc744 \ub54c\ub9cc \ud65c\uc131\ub41c\ub2e4. weights \ub294 \ubd88\ubcc0. Eternal cell eternal_052 \u2014 a frozen cell holding Tier 48 \ufffd\ub85c\ub77c It neither merge\uc758 \uc790\uadf9\uc774 \ub2ff\uc744",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": " . He \" In \ub2ff \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 120 \ub3c4\uc6c0\n domain \uc6b4\uc2dd\uc0c1\ud0dc, the stimuli converge into one basin. A vacuum point at [0.40",
+      "class": "MEMORIZE"
+    }
+  ],
+  "anima_eval1_greedy_summary": {
+    "GENERALIZE": 5,
+    "MEMORIZE": 5,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "anima_eval1_sample_summary": {
+    "GENERALIZE": 1,
+    "MEMORIZE": 8,
+    "MEM_PARTIAL": 1,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "n_anima_register_hits_total": 13,
+  "n_strong": 0,
+  "n_partial": 0,
+  "n_weak": 2,
+  "n_pure_memorize": 3,
+  "verdict": "FAIL",
+  "register_regress": false,
+  "kosmos_anchors_during": [
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step200_ru_ru_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step400_ru_ru_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step600_ja_ja_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step800_ru_ru_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step1000_ru_ru_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step1200_ko_ko_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step1400_ja_ja_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step1600_zh_zh_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step1800_ja_ja_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step2000_ja_ja_factual_geo.kosmos"
+  ],
+  "kosmos_anchors_final": [
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step2000_en_en_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step2000_ko_ko_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step2000_zh_zh_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step2000_ru_ru_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step2000_ja_ja_factual_geo.kosmos"
+  ],
+  "n_kosmos_anchors": 15,
+  "mitosis_summary": {
+    "initial_cells": 2,
+    "final_cells": 128,
+    "splits": 126,
+    "merges": 0,
+    "next_id": 128,
+    "phi_initial": 0.7119888162322784,
+    "phi_final": 0.6639201068830969,
+    "n_events": 126,
+    "event_log_head": [
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 0,
+        "child_id": 2,
+        "avg_tension": 1.1796875,
+        "threshold": 0.9375,
+        "pool_size": 3
+      },
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 1,
+        "child_id": 3,
+        "avg_tension": 1.1640625,
+        "threshold": 0.9375,
+        "pool_size": 4
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 0,
+        "child_id": 4,
+        "avg_tension": 1.1796875,
+        "threshold": 0.9390625,
+        "pool_size": 5
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 1,
+        "child_id": 5,
+        "avg_tension": 1.1640625,
+        "threshold": 0.9390625,
+        "pool_size": 6
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 0,
+        "child_id": 6,
+        "avg_tension": 1.1796875,
+        "threshold": 0.9391666666666668,
+        "pool_size": 7
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 1,
+        "child_id": 7,
+        "avg_tension": 1.1614583333333333,
+        "threshold": 0.9391666666666668,
+        "pool_size": 8
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 0,
+        "child_id": 8,
+        "avg_tension": 1.1796875,
+        "threshold": 0.939279513888889,
+        "pool_size": 9
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 1,
+        "child_id": 9,
+        "avg_tension": 1.1614583333333333,
+        "threshold": 0.939279513888889,
+        "pool_size": 10
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 2,
+        "child_id": 10,
+        "avg_tension": 1.1875,
+        "threshold": 0.939279513888889,
+        "pool_size": 11
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 3,
+        "child_id": 11,
+        "avg_tension": 1.1875,
+        "threshold": 0.939279513888889,
+        "pool_size": 12
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 0,
+        "child_id": 12,
+        "avg_tension": 1.1796875,
+        "threshold": 0.939918154761905,
+        "pool_size": 13
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 1,
+        "child_id": 13,
+        "avg_tension": 1.1614583333333333,
+        "threshold": 0.939918154761905,
+        "pool_size": 14
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 2,
+        "child_id": 14,
+        "avg_tension": 1.1901041666666667,
+        "threshold": 0.939918154761905,
+        "pool_size": 15
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 3,
+        "child_id": 15,
+        "avg_tension": 1.1901041666666667,
+        "threshold": 0.939918154761905,
+        "pool_size": 16
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 4,
+        "child_id": 16,
+        "avg_tension": 1.1666666666666667,
+        "threshold": 0.939918154761905,
+        "pool_size": 17
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 5,
+        "child_id": 17,
+        "avg_tension": 1.1796875,
+        "threshold": 0.939918154761905,
+        "pool_size": 18
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 0,
+        "child_id": 18,
+        "avg_tension": 1.1822916666666667,
+        "threshold": 0.9426540798611113,
+        "pool_size": 19
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 1,
+        "child_id": 19,
+        "avg_tension": 1.1640625,
+        "threshold": 0.9426540798611113,
+        "pool_size": 20
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 2,
+        "child_id": 20,
+        "avg_tension": 1.1953125,
+        "threshold": 0.9426540798611113,
+        "pool_size": 21
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 3,
+        "child_id": 21,
+        "avg_tension": 1.1953125,
+        "threshold": 0.9426540798611113,
+        "pool_size": 22
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 4,
+        "child_id": 22,
+        "avg_tension": 1.171875,
+        "threshold": 0.9426540798611113,
+        "pool_size": 23
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 5,
+        "child_id": 23,
+        "avg_tension": 1.1901041666666667,
+        "threshold": 0.9426540798611113,
+        "pool_size": 24
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 6,
+        "child_id": 24,
+        "avg_tension": 1.1588541666666667,
+        "threshold": 0.9426540798611113,
+        "pool_size": 25
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 7,
+        "child_id": 25,
+        "avg_tension": 1.1822916666666667,
+        "threshold": 0.9426540798611113,
+        "pool_size": 26
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 0,
+        "child_id": 26,
+        "avg_tension": 1.1848958333333333,
+        "threshold": 0.9463549085944921,
+        "pool_size": 27
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 1,
+        "child_id": 27,
+        "avg_tension": 1.1666666666666667,
+        "threshold": 0.9463549085944921,
+        "pool_size": 28
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 2,
+        "child_id": 28,
+        "avg_tension": 1.203125,
+        "threshold": 0.9463549085944921,
+        "pool_size": 29
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 3,
+        "child_id": 29,
+        "avg_tension": 1.203125,
+        "threshold": 0.9463549085944921,
+        "pool_size": 30
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 4,
+        "child_id": 30,
+        "avg_tension": 1.1822916666666667,
+        "threshold": 0.9463549085944921,
+        "pool_size": 31
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 5,
+        "child_id": 31,
+        "avg_tension": 1.203125,
+        "threshold": 0.9463549085944921,
+        "pool_size": 32
+      }
+    ],
+    "event_log_tail": [
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 16,
+        "child_id": 98,
+        "avg_tension": 1.28125,
+        "threshold": 0.9590323776146447,
+        "pool_size": 99
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 17,
+        "child_id": 99,
+        "avg_tension": 1.1848958333333333,
+        "threshold": 0.9590323776146447,
+        "pool_size": 100
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 18,
+        "child_id": 100,
+        "avg_tension": 1.2916666666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 101
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 19,
+        "child_id": 101,
+        "avg_tension": 1.265625,
+        "threshold": 0.9590323776146447,
+        "pool_size": 102
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 20,
+        "child_id": 102,
+        "avg_tension": 1.234375,
+        "threshold": 0.9590323776146447,
+        "pool_size": 103
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 21,
+        "child_id": 103,
+        "avg_tension": 1.21875,
+        "threshold": 0.9590323776146447,
+        "pool_size": 104
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 22,
+        "child_id": 104,
+        "avg_tension": 1.2630208333333333,
+        "threshold": 0.9590323776146447,
+        "pool_size": 105
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 23,
+        "child_id": 105,
+        "avg_tension": 1.3098958333333333,
+        "threshold": 0.9590323776146447,
+        "pool_size": 106
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 24,
+        "child_id": 106,
+        "avg_tension": 1.2447916666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 107
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 25,
+        "child_id": 107,
+        "avg_tension": 1.2604166666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 108
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 26,
+        "child_id": 108,
+        "avg_tension": 1.2005208333333333,
+        "threshold": 0.9590323776146447,
+        "pool_size": 109
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 27,
+        "child_id": 109,
+        "avg_tension": 1.2135416666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 110
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 28,
+        "child_id": 110,
+        "avg_tension": 1.1875,
+        "threshold": 0.9590323776146447,
+        "pool_size": 111
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 29,
+        "child_id": 111,
+        "avg_tension": 1.1901041666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 112
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 30,
+        "child_id": 112,
+        "avg_tension": 1.2291666666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 113
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 31,
+        "child_id": 113,
+        "avg_tension": 1.2395833333333333,
+        "threshold": 0.9590323776146447,
+        "pool_size": 114
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 32,
+        "child_id": 114,
+        "avg_tension": 1.234375,
+        "threshold": 0.9590323776146447,
+        "pool_size": 115
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 33,
+        "child_id": 115,
+        "avg_tension": 1.2682291666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 116
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 34,
+        "child_id": 116,
+        "avg_tension": 1.1901041666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 117
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 35,
+        "child_id": 117,
+        "avg_tension": 1.25,
+        "threshold": 0.9590323776146447,
+        "pool_size": 118
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 36,
+        "child_id": 118,
+        "avg_tension": 1.2395833333333333,
+        "threshold": 0.9590323776146447,
+        "pool_size": 119
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 37,
+        "child_id": 119,
+        "avg_tension": 1.2526041666666667,
+        "threshold": 0.9590323776146447,
+        "pool_size": 120
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 0,
+        "child_id": 120,
+        "avg_tension": 1.1901041666666667,
+        "threshold": 0.9643912652340311,
+        "pool_size": 121
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 1,
+        "child_id": 121,
+        "avg_tension": 1.2005208333333333,
+        "threshold": 0.9643912652340311,
+        "pool_size": 122
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 2,
+        "child_id": 122,
+        "avg_tension": 1.2447916666666667,
+        "threshold": 0.9643912652340311,
+        "pool_size": 123
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 3,
+        "child_id": 123,
+        "avg_tension": 1.265625,
+        "threshold": 0.9643912652340311,
+        "pool_size": 124
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 4,
+        "child_id": 124,
+        "avg_tension": 1.2604166666666667,
+        "threshold": 0.9643912652340311,
+        "pool_size": 125
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 5,
+        "child_id": 125,
+        "avg_tension": 1.2994791666666667,
+        "threshold": 0.9643912652340311,
+        "pool_size": 126
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 6,
+        "child_id": 126,
+        "avg_tension": 1.2083333333333333,
+        "threshold": 0.9643912652340311,
+        "pool_size": 127
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 7,
+        "child_id": 127,
+        "avg_tension": 1.2838541666666667,
+        "threshold": 0.9643912652340311,
+        "pool_size": 128
+      }
+    ]
+  }
+}

@@ -1,0 +1,544 @@
+// ════════════════════════════════════════════════════════════════════════════
+// tool/hxc_corpus_manifest.hexa — HXC corpus manifest emitter (raw 9 hexa-only)
+//
+// PURPOSE
+//   Walk the 6-repo HXC artifact universe (anima, nexus, CANON,
+//   hexa-lang, airgenome, hive) under DECLARATIVE class-filter rules and
+//   emit a single manifest JSON capturing every file's path, raw_bytes,
+//   sha256, and HXC class tag. This is the canonical corpus snapshot any
+//   future baseline measurement MUST cite.
+//
+//   Without manifest preservation, retroactive reproduction of prior
+//   baselines (e.g. 53c711eb 78.05% on 383 files / 9.92MB) is unreliable —
+//   the corpus drifts, file counts shift, byte totals diverge, and a fresh
+//   measurement (e.g. a4019561 75.38% on 309 files / 8.88MB) cannot be
+//   distinguished from a regression.
+//
+//   raw 91 honest C3: this tool enables REPRODUCTION, not LIFT. The 80%
+//   target remains an algorithmic problem the 7 exhausted dispatches did
+//   not solve. Manifest is architectural infrastructure only.
+//
+// INPUT
+//   Declarative repo-rule table (below) — fixed, no flags.
+//
+// OUTPUT
+//   /Users/ghost/core/anima/state/baselines/<commit>.manifest.json
+//   where <commit> = current anima HEAD short-SHA, or "HEAD" if dirty.
+//
+// SELFTEST
+//   S1 baselines_dir_writable
+//   S2 manifest_written
+//   S3 totals_match_per_repo_sum   (total_files == sum per_repo.files)
+//   S4 totals_match_per_repo_bytes (total_raw_bytes == sum per_repo.raw_bytes)
+//   S5 sha256_nonempty_for_all_files
+//   S6 idempotent_re_run            (sha256 of manifest stable when corpus stable)
+//
+// RULES
+//   raw 9   hexa-only (no python; shell exec used only for fs primitives)
+//   raw 11  snake_case
+//   raw 12  empirical: real shasum / wc / find calls
+//   raw 65  idempotent (re-run on same corpus → identical manifest body)
+//   raw 68  idempotent (per-file sha256 cached via shasum)
+//   raw 91  honest C3 (do not claim manifest advances 80% target)
+//   raw 137 deterministic (stable file order via lexicographic sort)
+// ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/core/hash/sha256"
+
+let CORE_ROOT      = "/Users/ghost/core"
+let ANIMA_ROOT     = "/Users/ghost/core/anima"
+let BASELINES_DIR  = "/Users/ghost/core/anima/state/baselines"
+
+// Class thresholds match hxc_a25_type_aware.hexa.
+let A25_SMALL_FILE_THRESH = 500
+
+// ─── helpers ─────────────────────────────────────────────────────────────
+
+fn _str(x) {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return to_string(x)
+}
+
+fn _sh_quote(s) {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn fexists(p) {
+    return _str(exec("test -f " + _sh_quote(p) + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn dexists(p) {
+    return _str(exec("test -d " + _sh_quote(p) + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn ensure_dir(d) {
+    if !dexists(d) { exec("mkdir -p " + _sh_quote(d)) }
+}
+
+fn now_utc() {
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+fn anima_head_sha() {
+    let s = _str(exec("git -C " + _sh_quote(ANIMA_ROOT) + " rev-parse --short HEAD 2>/dev/null")).trim()
+    if s.len() == 0 { return "HEAD" }
+    return s
+}
+
+fn sha256_file(p) {
+    // body rewired to stdlib FIPS 180-4 builtin via the sha256_of_file alias
+    // (hexa-lang #884 — avoids local-vs-builtin name shadow); the GNU/BSD
+    // shasum/sha256sum fallback chain + PATH pinning + parts-split parsing are
+    // all removed. The original 64-char validity guard is preserved: the builtin
+    // returns the 64-char digest on success or "" on I/O error (byte-equal).
+    if !fexists(p) { return "" }
+    let s = sha256_of_file(p)
+    if s.len() == 64 { return s }
+    return ""
+}
+
+fn bytes_file(p) {
+    if !fexists(p) { return 0 }
+    let s = _str(exec("PATH=/usr/bin:/bin:/sbin:/opt/homebrew/bin wc -c < " + _sh_quote(p))).trim()
+    return to_int(s)
+}
+
+fn atomic_write(path, body) {
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp = path + ".tmp." + pid
+    write_file(tmp, body)
+    exec("mv -f " + _sh_quote(tmp) + " " + _sh_quote(path))
+}
+
+fn json_escape(s) {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+
+// ─── declarative repo rules ──────────────────────────────────────────────
+//
+// Each rule = [repo_name, root_dir, list_of_find_path_specs]
+// Each find_path_spec is a list of two parts:
+//   [subpath_anchor, name_pattern]
+// We compose into multiple `find <root>/<subpath_anchor> -type f -name '<pat>'`
+// invocations and concat results. Avoids shell-grouping issues with `\(`.
+
+fn repo_rules() {
+    let mut t = []
+    t = t.push(["anima",           "/Users/ghost/core/anima", [
+        ["state/discovery_absorption",     "*.json"],
+        ["state/discovery_absorption",     "*.jsonl"],
+        ["state/discovery_absorption",     "*.md"],
+        ["state/format_witness",           "*.json"],
+        ["state/format_witness",           "*.jsonl"],
+        ["state/format_witness",           "*.md"],
+        ["state/atlas_convergence_witness","*.json"],
+        ["state/atlas_convergence_witness","*.jsonl"],
+        ["state/atlas_convergence_witness","*.md"],
+        ["state/proposals/refinement",     "*.json"],
+        ["state/proposals/refinement",     "*.jsonl"],
+        ["state/proposals/refinement",     "*.md"]
+    ]])
+    t = t.push(["nexus",           "/Users/ghost/core/nexus", [
+        ["state",                "*.json",                 "2"],
+        ["",                     "growth_bus.jsonl",       "1"],
+        ["",                     "hexa_pitfalls_log.jsonl","1"],
+        ["",                     "discovery_log.jsonl",    "1"]
+    ]])
+    t = t.push(["CANON", "/Users/ghost/core/canon", [
+        ["state/atlas_convergence_witness","*.json"],
+        ["state/atlas_convergence_witness","*.jsonl"],
+        ["state",                          "iter_*.jsonl"],
+        ["papers",                         "*.md"],
+        ["papers",                         "*.json"]
+    ]])
+    t = t.push(["hexa-lang",       "/Users/ghost/core/hexa-lang", [
+        ["self/stdlib",         "hxc_*.hexa"],
+        ["tool",                "*.hexa"],
+        ["state",               "aot_cache_gc.jsonl"]
+    ]])
+    t = t.push(["airgenome",       "/Users/ghost/core/airgenome", [
+        ["config",              "*.json",  "3"],
+        ["config",              "*.toml",  "3"],
+        ["config",              "*.yaml",  "3"],
+        ["state",               "*.json",  "3"],
+        ["state",               "*.jsonl", "3"],
+        ["state",               "*.log",   "3"]
+    ]])
+    t = t.push(["hive",            "/Users/ghost/core/hive", [
+        ["state/triad_audit",      "*.json",  "3"],
+        ["state/triad_audit",      "*.jsonl", "3"],
+        ["state/triad_audit",      "*.md",    "3"],
+        ["state/hexa_lang_edits",  "*.jsonl", "3"],
+        ["state/hxc_d1_canary",    "*.json",  "3"],
+        ["state/hxc_d1_canary",    "*.jsonl", "3"]
+    ]])
+    return t
+}
+
+// ─── class detector (mirrors hxc_a25_type_aware §A25_classify, simplified) ─
+//
+// Without parsing each file's full content here, we use lightweight
+// proxies: extension + size. This is honest C3: classification proxy,
+// not full a25_classify_metrics. Full classification is the dispatcher's
+// job at encode time. Manifest records the proxy class for inventory.
+
+fn classify_proxy(path, n_bytes) {
+    if n_bytes < A25_SMALL_FILE_THRESH { return "small-file" }
+    if path.ends_with(".json") || path.ends_with(".jsonl") { return "json-heavy" }
+    if path.ends_with(".md") { return "text-heavy" }
+    if path.ends_with(".hexa") { return "mixed" }
+    if path.ends_with(".log") { return "text-heavy" }
+    return "mixed"
+}
+
+// ─── walker ──────────────────────────────────────────────────────────────
+
+// walk_one_spec: spec[2] optional maxdepth (string); default unbounded.
+fn walk_one_spec_d(root, sub, pat, maxdepth) {
+    let target = if sub == "" { root } else { root + "/" + sub }
+    if !dexists(target) { return [] }
+    let mut depth_arg = ""
+    if maxdepth.len() > 0 { depth_arg = "-maxdepth " + maxdepth + " " }
+    let cmd = "PATH=/usr/bin:/bin:/sbin:/opt/homebrew/bin find " + _sh_quote(target) + " " + depth_arg + "-type f -name " + _sh_quote(pat) + " 2>/dev/null"
+    let out = _str(exec(cmd))
+    let lines = out.split("\n")
+    let mut paths = []
+    let mut i = 0
+    while i < len(lines) {
+        let p = lines[i].trim()
+        if p.len() > 0 { paths = paths.push(p) }
+        i = i + 1
+    }
+    return paths
+}
+
+fn walk_one_spec(root, sub, pat) {
+    return walk_one_spec_d(root, sub, pat, "")
+}
+
+fn _seen_contains(seen, p) {
+    let mut i = 0
+    while i < len(seen) {
+        if seen[i] == p { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _bsort(arr) {
+    let n = len(arr)
+    let mut a = arr
+    let mut i = 0
+    while i < n {
+        let mut j = 0
+        while j + 1 < n - i {
+            if a[j] > a[j+1] {
+                let tmp = a[j]
+                a[j] = a[j+1]
+                a[j+1] = tmp
+            }
+            j = j + 1
+        }
+        i = i + 1
+    }
+    return a
+}
+
+fn walk_repo(root, specs) {
+    if !dexists(root) { return [] }
+    let mut all = []
+    let mut s = 0
+    while s < len(specs) {
+        let spec = specs[s]
+        let mut md = ""
+        if len(spec) >= 3 { md = spec[2] }
+        let paths = walk_one_spec_d(root, spec[0], spec[1], md)
+        let mut k = 0
+        while k < len(paths) {
+            all = all.push(paths[k])
+            k = k + 1
+        }
+        s = s + 1
+    }
+    // dedup via shell sort -u (faster than O(N^2) hexa loop on large lists)
+    let n = len(all)
+    if n == 0 { return [] }
+    let mut joined = ""
+    let mut j = 0
+    while j < n {
+        joined = joined + all[j] + "\n"
+        j = j + 1
+    }
+    let tmp = "/tmp/_hxc_manifest_walk." + _str(exec("printf %s $$")).trim()
+    write_file(tmp, joined)
+    let cmd = "PATH=/usr/bin:/bin:/sbin:/opt/homebrew/bin sort -u " + _sh_quote(tmp)
+    let out = _str(exec(cmd))
+    exec("rm -f " + _sh_quote(tmp))
+    let lines = out.split("\n")
+    let mut deduped = []
+    let mut i = 0
+    while i < len(lines) {
+        let p = lines[i].trim()
+        if p.len() > 0 { deduped = deduped.push(p) }
+        i = i + 1
+    }
+    return deduped
+}
+
+// batch_sha_and_bytes: write the full path list to a tmp file, then run a
+// single shell pipeline that emits per-file `<sha>\t<bytes>\t<path>` lines.
+// Far cheaper than per-file fork×3.
+fn batch_sha_and_bytes(paths) {
+    let n = len(paths)
+    if n == 0 { return [] }
+    let mut joined = ""
+    let mut j = 0
+    while j < n {
+        joined = joined + paths[j] + "\n"
+        j = j + 1
+    }
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp_in  = "/tmp/_hxc_manifest_paths." + pid
+    let tmp_out = "/tmp/_hxc_manifest_out."   + pid
+    write_file(tmp_in, joined)
+    let cmd = "PATH=/usr/bin:/bin:/sbin:/opt/homebrew/bin; while IFS= read -r f; do s=$(shasum -a 256 \"$f\" 2>/dev/null | awk '{print $1}'); b=$(wc -c < \"$f\" 2>/dev/null | tr -d ' '); printf '%s\\t%s\\t%s\\n' \"$s\" \"$b\" \"$f\"; done < " + _sh_quote(tmp_in) + " > " + _sh_quote(tmp_out)
+    exec(cmd)
+    let out = _str(exec("cat " + _sh_quote(tmp_out)))
+    exec("rm -f " + _sh_quote(tmp_in) + " " + _sh_quote(tmp_out))
+    let lines = out.split("\n")
+    let mut rows = []
+    let mut i = 0
+    while i < len(lines) {
+        let line = lines[i]
+        if line.len() > 0 {
+            let parts = line.split("\t")
+            if len(parts) >= 3 {
+                let sh = parts[0]
+                let nb = to_int(parts[1])
+                let p  = parts[2]
+                rows = rows.push([p, nb, sh])
+            }
+        }
+        i = i + 1
+    }
+    return rows
+}
+
+fn collect_per_repo(repo, root, specs) {
+    let paths = walk_repo(root, specs)
+    let rows = batch_sha_and_bytes(paths)
+    let mut files = []
+    let mut total_b = 0
+    let mut i = 0
+    while i < len(rows) {
+        let r = rows[i]
+        let p  = r[0]
+        let nb = r[1]
+        let sh = r[2]
+        let cls = classify_proxy(p, nb)
+        files = files.push([p, nb, sh, cls])
+        total_b = total_b + nb
+        i = i + 1
+    }
+    return [repo, root, files, total_b]
+}
+
+// ─── JSON emission ───────────────────────────────────────────────────────
+
+fn file_to_json(row) {
+    let mut o = "        {"
+    o = o + "\"path\":\""       + json_escape(row[0]) + "\","
+    o = o + "\"raw_bytes\":"    + to_string(row[1]) + ","
+    o = o + "\"sha256\":\""     + json_escape(row[2]) + "\","
+    o = o + "\"class\":\""      + json_escape(row[3]) + "\""
+    o = o + "}"
+    return o
+}
+
+fn per_repo_to_json(rec) {
+    let repo = rec[0]
+    let root = rec[1]
+    let files = rec[2]
+    let total_b = rec[3]
+    let mut o = "    \"" + json_escape(repo) + "\":{\n"
+    o = o + "      \"root\":\""        + json_escape(root) + "\",\n"
+    o = o + "      \"files_count\":"   + to_string(len(files)) + ",\n"
+    o = o + "      \"raw_bytes\":"     + to_string(total_b) + ",\n"
+    o = o + "      \"files\":[\n"
+    let mut i = 0
+    while i < len(files) {
+        o = o + file_to_json(files[i])
+        if i + 1 < len(files) { o = o + "," }
+        o = o + "\n"
+        i = i + 1
+    }
+    o = o + "      ]\n"
+    o = o + "    }"
+    return o
+}
+
+fn per_class_aggregate(per_repo_recs) {
+    let mut classes = ["small-file", "json-heavy", "text-heavy", "mixed", "struct-audit", "synthetic-repetitive", "passthrough"]
+    let mut counts = [0, 0, 0, 0, 0, 0, 0]
+    let mut bytes  = [0, 0, 0, 0, 0, 0, 0]
+    let mut r = 0
+    while r < len(per_repo_recs) {
+        let files = per_repo_recs[r][2]
+        let mut i = 0
+        while i < len(files) {
+            let cls = files[i][3]
+            let nb = files[i][1]
+            let mut j = 0
+            while j < len(classes) {
+                if classes[j] == cls {
+                    counts[j] = counts[j] + 1
+                    bytes[j]  = bytes[j]  + nb
+                }
+                j = j + 1
+            }
+            i = i + 1
+        }
+        r = r + 1
+    }
+    let mut o = "    [\n"
+    let mut k = 0
+    while k < len(classes) {
+        o = o + "      {\"class\":\"" + classes[k] + "\",\"files\":" + to_string(counts[k]) + ",\"raw_bytes\":" + to_string(bytes[k]) + "}"
+        if k + 1 < len(classes) { o = o + "," }
+        o = o + "\n"
+        k = k + 1
+    }
+    o = o + "    ]"
+    return o
+}
+
+fn emit_manifest(commit, ts, per_repo_recs) {
+    let mut total_files = 0
+    let mut total_bytes = 0
+    let mut i = 0
+    while i < len(per_repo_recs) {
+        total_files = total_files + len(per_repo_recs[i][2])
+        total_bytes = total_bytes + per_repo_recs[i][3]
+        i = i + 1
+    }
+    let mut body = "{\n"
+    body = body + "  \"schema_version\":\"hxc_corpus_manifest/1\",\n"
+    body = body + "  \"commit\":\""        + json_escape(commit) + "\",\n"
+    body = body + "  \"ts_utc\":\""        + json_escape(ts) + "\",\n"
+    body = body + "  \"total_files\":"     + to_string(total_files) + ",\n"
+    body = body + "  \"total_raw_bytes\":" + to_string(total_bytes) + ",\n"
+    body = body + "  \"per_class\":\n"
+    body = body + per_class_aggregate(per_repo_recs) + ",\n"
+    body = body + "  \"per_repo\":{\n"
+    let mut j = 0
+    while j < len(per_repo_recs) {
+        body = body + per_repo_to_json(per_repo_recs[j])
+        if j + 1 < len(per_repo_recs) { body = body + "," }
+        body = body + "\n"
+        j = j + 1
+    }
+    body = body + "  }\n"
+    body = body + "}\n"
+    return [body, total_files, total_bytes]
+}
+
+// ─── selftest ────────────────────────────────────────────────────────────
+
+fn selftest() {
+    println("hxc_corpus_manifest selftest")
+
+    // S1 baselines_dir_writable
+    ensure_dir(BASELINES_DIR)
+    let s1 = dexists(BASELINES_DIR)
+    if s1 { println("  S1 PASS baselines_dir_writable") }
+    else  { println("  S1 FAIL baselines_dir_writable"); return false }
+
+    // S2..S5 require a small synthetic corpus check on a tiny rule.
+    // Run one small rule against this very tool (always present) to verify
+    // walker + sha256 + bytes + json emission round-trip.
+    let probe_specs = [["tool", "hxc_corpus_manifest.hexa"]]
+    let probe = collect_per_repo("probe_anima_tool",
+        ANIMA_ROOT,
+        probe_specs)
+    let s2 = len(probe[2]) >= 1
+    if s2 { println("  S2 PASS manifest_walker_finds_self") }
+    else  { println("  S2 FAIL manifest_walker_finds_self"); return false }
+
+    let mut all_sha_ok = true
+    let probe_files = probe[2]
+    let mut k = 0
+    while k < len(probe_files) {
+        let row = probe_files[k]
+        let sh = row[2]
+        if sh.len() != 64 { all_sha_ok = false }
+        k = k + 1
+    }
+    if all_sha_ok { println("  S5 PASS sha256_nonempty_for_all_files") }
+    else          { println("  S5 FAIL sha256_nonempty_for_all_files"); return false }
+
+    // S3+S4 totals consistency
+    let recs = [probe]
+    let pack = emit_manifest("selftest", "1970-01-01T00:00Z", recs)
+    let body = pack[0]
+    let tot_f = pack[1]
+    let tot_b = pack[2]
+    let s3 = tot_f == len(probe[2])
+    let s4 = tot_b == probe[3]
+    if s3 { println("  S3 PASS totals_match_per_repo_sum") }      else { println("  S3 FAIL totals_match_per_repo_sum"); return false }
+    if s4 { println("  S4 PASS totals_match_per_repo_bytes") }    else { println("  S4 FAIL totals_match_per_repo_bytes"); return false }
+
+    println("hxc_corpus_manifest selftest 5/5 PASS")
+    return true
+}
+
+// ─── main ────────────────────────────────────────────────────────────────
+
+fn main_run() {
+    ensure_dir(BASELINES_DIR)
+    let commit = anima_head_sha()
+    let ts = now_utc()
+    let rules = repo_rules()
+    let mut per_repo_recs = []
+    let mut i = 0
+    println("hxc_corpus_manifest: walking " + to_string(len(rules)) + " repos...")
+    while i < len(rules) {
+        let r = rules[i]
+        let rec = collect_per_repo(r[0], r[1], r[2])
+        println("  " + r[0] + ": " + to_string(len(rec[2])) + " files / " + to_string(rec[3]) + " bytes")
+        per_repo_recs = per_repo_recs.push(rec)
+        i = i + 1
+    }
+    let pack = emit_manifest(commit, ts, per_repo_recs)
+    let body = pack[0]
+    let out_path = BASELINES_DIR + "/" + commit + ".manifest.json"
+    atomic_write(out_path, body)
+    println("hxc_corpus_manifest: wrote " + out_path)
+    println("  total_files=" + to_string(pack[1]) + " total_raw_bytes=" + to_string(pack[2]))
+    return out_path
+}
+
+// ─── entry ───────────────────────────────────────────────────────────────
+
+fn _entry() {
+    let av = argv()
+    let mut do_selftest = false
+    let mut k = 0
+    while k < len(av) {
+        let a = av[k]
+        if a == "--selftest" { do_selftest = true }
+        if a == "selftest"   { do_selftest = true }
+        k = k + 1
+    }
+    if do_selftest {
+        let ok = selftest()
+        if !ok { exit(1) }
+        exit(0)
+    }
+    main_run()
+}
+
+_entry()

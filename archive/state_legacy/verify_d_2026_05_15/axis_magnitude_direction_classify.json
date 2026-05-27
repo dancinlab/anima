@@ -1,0 +1,188 @@
+{
+  "total_entries": 32,
+  "direction_sensitive_count": 5,
+  "tier_distribution": {
+    "magnitude/empirical": 3,
+    "identity": 11,
+    "magnitude-only": 5,
+    "identity (F2) + numerical (F1)": 1,
+    "identity-carry": 1,
+    "identity-with-caveat": 1,
+    "magnitude+direction": 2,
+    "cascade-from-CPGD": 1,
+    "surrogate-direction-sensitive": 2,
+    "cross-meta": 3,
+    "literature-citation": 2
+  },
+  "at_risk_proxy_artifact": [
+    "H_182 V8 B-bio surrogate",
+    "H_187 V8 Trinity surrogate"
+  ],
+  "safe_unaffected_count": 30,
+  "entries_full": {
+    "H_005 corpus quality": {
+      "tier": "magnitude/empirical",
+      "claim": "corpus quality > scale (Phase 1A.6 measured)",
+      "direction_sensitive": false
+    },
+    "H_174 phi_star aliasing": {
+      "tier": "identity",
+      "claim": "(c\u00b7192) mod D mathematical identity",
+      "direction_sensitive": false
+    },
+    "Hc_1285 torch.no_grad": {
+      "tier": "identity",
+      "claim": "PyTorch backward-graph isolation",
+      "direction_sensitive": false
+    },
+    "Hc_1283 anima \u03a6\u2605 \u2265 0.5": {
+      "tier": "magnitude-only",
+      "claim": "\u03a6\u2605 \u2265 0.5 threshold (4.16-4.86)",
+      "direction_sensitive": false
+    },
+    "Hc_1283 PyPhi RoM n=4": {
+      "tier": "magnitude-only",
+      "claim": "\u03a6 \u2265 0.5 (0.61-0.68)",
+      "direction_sensitive": false
+    },
+    "H_004 hard problem": {
+      "tier": "magnitude-only",
+      "claim": "consciousness measurable (proxy)",
+      "direction_sensitive": false
+    },
+    "H_011 IIT geometry": {
+      "tier": "magnitude-only",
+      "claim": "\u03a6 > 0.5 reachable",
+      "direction_sensitive": false
+    },
+    "H_162 phi-normalized IIT4 lower-bound": {
+      "tier": "magnitude-only",
+      "claim": "normalized \u03a6 as lower bound",
+      "direction_sensitive": false
+    },
+    "H_191 sub K_c = \u221a(8/\u03c0) \u2248 1.596": {
+      "tier": "identity",
+      "claim": "K_c = \u221a(8/\u03c0) Kuramoto mean-field",
+      "direction_sensitive": false
+    },
+    "Hc_1282 n=6 384d closed-form": {
+      "tier": "identity",
+      "claim": "sympy d=(n/\u03c6(n))\u00b72^(\u03c3(n)\u2212sopfr(n))",
+      "direction_sensitive": false
+    },
+    "H_158 \u03a8-constants": {
+      "tier": "identity",
+      "claim": "balance(P)=1/2 perfect numbers",
+      "direction_sensitive": false
+    },
+    "H_160 perfect-number meta": {
+      "tier": "identity",
+      "claim": "cluster vocabulary closed",
+      "direction_sensitive": false
+    },
+    "H_153 dimension hierarchy": {
+      "tier": "identity",
+      "claim": "\u03c4(6)=4 divisor cascade",
+      "direction_sensitive": false
+    },
+    "H_176 n=28 deflationary": {
+      "tier": "identity",
+      "claim": "balance(28)=1/2 Euclid-Euler",
+      "direction_sensitive": false
+    },
+    "H_173 log-ratio \u03a6 scale-invariant": {
+      "tier": "identity (F2) + numerical (F1)",
+      "claim": "ln(kMI/kMIP)=ln(MI/MIP) sympy",
+      "direction_sensitive": false
+    },
+    "H_164 Hc_144 atom 8": {
+      "tier": "identity",
+      "claim": "144=\u03c3(6)\u00b2",
+      "direction_sensitive": false
+    },
+    "H_181 psiformer 4\u03c8-constants": {
+      "tier": "identity-carry",
+      "claim": "\u03a8-constants cluster",
+      "direction_sensitive": false
+    },
+    "Hc_1285 torch.no_grad (A5 dup)": {
+      "tier": "identity",
+      "claim": "autograd isolation",
+      "direction_sensitive": false
+    },
+    "H_166 8\u00d7128=1024": {
+      "tier": "identity-with-caveat",
+      "claim": "2^10 algebra; phi_star measurement aliasing",
+      "direction_sensitive": false
+    },
+    "H_019 self-evolution v4\u2192v5": {
+      "tier": "magnitude+direction",
+      "claim": "v5-mitosis F-V5MIT 5/5 PASS",
+      "direction_sensitive": true,
+      "note": "cond.5 cotrain real-\u03a6\uce21\uc815 (anima \u03a6\u2605 NOT proxy \ub9cc \uc0ac\uc6a9)"
+    },
+    "H_174 phi_star aliasing (A5 dup)": {
+      "tier": "identity",
+      "claim": "mathematical identity",
+      "direction_sensitive": false
+    },
+    "H_191 TRAINING CPGD 0.95": {
+      "tier": "magnitude+direction",
+      "claim": "cond.5 F-V5MIT 5/5 PASS",
+      "direction_sensitive": true,
+      "note": "\uc2e4\uc81c cotrain CE/\u03a6 \uce21\uc815"
+    },
+    "Hc_1276 train-vs-infer cotrain": {
+      "tier": "cascade-from-CPGD",
+      "claim": "inherit from H_191 CPGD",
+      "direction_sensitive": true
+    },
+    "H_005 corpus quality (dup)": {
+      "tier": "magnitude/empirical",
+      "claim": "Phase 1A.6 measured",
+      "direction_sensitive": false
+    },
+    "H_016 AN11 ceiling": {
+      "tier": "magnitude/empirical",
+      "claim": "AN11 measurable on chat-v2",
+      "direction_sensitive": false
+    },
+    "H_182 V8 B-bio surrogate": {
+      "tier": "surrogate-direction-sensitive",
+      "claim": "78.5% PASS Mac sweep",
+      "direction_sensitive": true,
+      "note": "surrogate-tier, anima \u03a6\u2605 proxy artifact \uc601\ud5a5 \uac00\ub2a5"
+    },
+    "H_189 Red-team adversarial": {
+      "tier": "cross-meta",
+      "claim": "family consistency",
+      "direction_sensitive": false
+    },
+    "Hc_1279": {
+      "tier": "cross-meta",
+      "claim": "Red-team family member",
+      "direction_sensitive": false
+    },
+    "Hc_1280": {
+      "tier": "cross-meta",
+      "claim": "Red-team family member",
+      "direction_sensitive": false
+    },
+    "H_187 V8 Trinity surrogate": {
+      "tier": "surrogate-direction-sensitive",
+      "claim": "100% PASS",
+      "direction_sensitive": true,
+      "note": "surrogate-tier"
+    },
+    "H_002.H2.3 Bekenstein bound": {
+      "tier": "literature-citation",
+      "claim": "S \u2264 2\u03c0kRE/(\u210fc)",
+      "direction_sensitive": false
+    },
+    "H_002.H2.1 anthropic \u039b": {
+      "tier": "literature-citation",
+      "claim": "fine-tuning ~10^-120",
+      "direction_sensitive": false
+    }
+  }
+}

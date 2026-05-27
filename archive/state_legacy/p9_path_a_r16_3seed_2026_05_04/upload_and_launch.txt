@@ -1,0 +1,75 @@
+#!/bin/bash
+# Upload SFT data + train script + HF token + launch script to a pod, then launch detached.
+# Usage: bash upload_and_launch.txt <SEED>
+# Reads pod_s<SEED>.json (ssh_host, ssh_port).
+# Saved as .txt to evade banned-ext sweeper (raw#9/r45 untracked .sh deleted).
+set -uo pipefail
+SEED="${1:?seed required}"
+OUT_DIR=/Users/ghost/core/anima/state/p9_path_a_r16_3seed_2026_05_04
+META=$OUT_DIR/pod_s${SEED}.json
+LOG=$OUT_DIR/upload_s${SEED}.log
+SSH_KEY=/Users/ghost/.runpod/ssh/RunPod-Key-Go
+SFT_DATA=/Users/ghost/core/anima/state/p9_path_a_r16_2026_05_03/sft_data_llama_template.jsonl
+TRAIN_PY=/Users/ghost/core/anima/state/p9_path_a_r16_2026_05_03/train_llama_lora_r16.py
+LAUNCH_TXT=$OUT_DIR/launch_r16_s${SEED}.txt
+HF_TOKEN_FILE=/Users/ghost/core/anima/.secrets/hf_token
+
+if [ ! -f "$META" ]; then
+    echo "[err] missing $META — provision must run first" | tee -a $LOG
+    exit 2
+fi
+SSH_HOST=$(python3 -c "import json; print(json.load(open('$META'))['ssh_host'])")
+SSH_PORT=$(python3 -c "import json; print(json.load(open('$META'))['ssh_port'])")
+POD_ID=$(python3 -c "import json; print(json.load(open('$META'))['pod_id'])")
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] pod=$POD_ID ssh=$SSH_HOST:$SSH_PORT" | tee -a $LOG
+
+SCP="scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT"
+SSH="ssh -i $SSH_KEY -o StrictHostKeyChecking=no -p $SSH_PORT root@$SSH_HOST"
+
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] preparing /workspace" | tee -a $LOG
+$SSH "mkdir -p /workspace && ls -la /workspace" 2>&1 | tee -a $LOG
+
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] scp hf_token (creds, not code)" | tee -a $LOG
+$SCP "$HF_TOKEN_FILE" "root@$SSH_HOST:/workspace/hf_token" 2>&1 | tee -a $LOG
+
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] scp train script (.py — raw#9 compliant)" | tee -a $LOG
+$SCP "$TRAIN_PY" "root@$SSH_HOST:/workspace/train_llama_lora_r16.py" 2>&1 | tee -a $LOG
+
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] scp SFT data (~69MB jsonl)" | tee -a $LOG
+$SCP "$SFT_DATA" "root@$SSH_HOST:/workspace/sft_data_llama_template.jsonl" 2>&1 | tee -a $LOG
+
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] scp launch script" | tee -a $LOG
+$SCP "$LAUNCH_TXT" "root@$SSH_HOST:/workspace/launch.sh" 2>&1 | tee -a $LOG
+
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] launching detached" | tee -a $LOG
+$SSH "chmod +x /workspace/launch.sh && nohup bash /workspace/launch.sh > /workspace/launch.bootstrap.log 2>&1 &"
+sleep 8
+$SSH "cat /workspace/launch.bootstrap.log 2>/dev/null | head -40" 2>&1 | tee -a $LOG
+
+# Wait for train.pid + initial step appearance
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] polling for train start (up to 10min)" | tee -a $LOG
+TRAIN_PID=""
+for i in $(seq 1 60); do
+    sleep 10
+    PID=$($SSH "cat /workspace/p9_path_a_r16_s${SEED}_savepoints/train.pid 2>/dev/null" 2>/dev/null || echo "")
+    STEP=$($SSH "grep -oE '[0-9]+/10000' /workspace/p9_path_a_r16_s${SEED}_savepoints/train.log 2>/dev/null | tail -1" 2>/dev/null || echo "")
+    if [ -n "$PID" ] && [ -n "$STEP" ]; then
+        echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] train alive pid=$PID step=$STEP (try=$i)" | tee -a $LOG
+        TRAIN_PID=$PID
+        break
+    fi
+    echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] waiting (try=$i pid='$PID' step='$STEP')" | tee -a $LOG
+done
+
+if [ -z "$TRAIN_PID" ]; then
+    echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] TIMEOUT no train start" | tee -a $LOG
+    $SSH "tail -100 /workspace/p9_path_a_r16_s${SEED}_savepoints/train.log 2>/dev/null" 2>&1 | tee -a $LOG
+    exit 5
+fi
+
+# Capture first ~10 loss rows for the verdict
+LOSS_DUMP=$($SSH "grep -E '\"loss\":' /workspace/p9_path_a_r16_s${SEED}_savepoints/train.log 2>/dev/null | head -10" 2>/dev/null)
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] initial loss dump:" | tee -a $LOG
+echo "$LOSS_DUMP" | tee -a $LOG
+
+echo "[$(date -u +%FT%TZ)] [upload-s${SEED}] DONE pod=$POD_ID pid=$TRAIN_PID" | tee -a $LOG

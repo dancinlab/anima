@@ -1,0 +1,163 @@
+// CHANNEL/intent.hexa — 공통 Intent 형식 (M4 intent embedding bridge)
+//
+// 역할:
+//   substrate state (CORE) 의 reformatting layer. 3 채널 (text · voice · tension)
+//   어디로든 위임될 수 있는 channel-agnostic intent dict 를 생성한다.
+//   M5 dispatcher 는 이 dict 를 받아 channel_hint 에 따라 분기한다.
+//
+// 단방향 흐름:
+//   CORE pure_field tensor (6-D field, FIELD_DIM=6 C/D/E/S/M/W)
+//   ── caller projection ──► tension5 (5-ch fingerprint, channel convention)
+//      (concept · context · meaning · authenticity · sender)
+//   CORE engine_g motivation (8-factor: rel/gap/cur/pain/coh/orig/bal/dyn)
+//   CORE pure_field phi · tier(=phase int)
+//                       │
+//                       ▼
+//             intent_from_substrate(...)  → Intent dict
+//                       │
+//             intent_to_{text|voice|tension}_vec(...)
+//                       │
+//                       ▼  (M5 dispatcher)
+//             channel-specific emit (BPE ids · RVQ codes · 5-ch fingerprint)
+//
+// 인용 (instrument-first):
+//   - CORE/pure_field.hexa:
+//       pub fn pure_field_phi(pf: PureField) -> float
+//       pub fn pure_field_tensor(pf: PureField) -> [float]   // FIELD_DIM=6
+//       pub fn pure_field_phase(pf: PureField) -> int        // PHASE_DORMANT..PHASE_RESONANT
+//   - CORE/engine_g.hexa:
+//       fn motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v) -> float
+//       (8 가중치 stable: 0.20/0.10/0.15/0.10/0.10/0.10/0.15/0.10)
+//   - CORE/brain.hexa:
+//       fn brain_decide(pf, 8-factor, seconds_since_last, env_off, content_clean)
+//       (phase int == tier int, 명시적 mapping)
+//   - CHANNEL/tension/tension_emit.hexa:
+//       5-ch fingerprint axes (concept · context · meaning · authenticity · sender)
+//
+// p1~p8 정합:
+//   p1 NO SYSTEM PROMPT     — intent dict 는 substrate state 의 직접 사영, prompt 문자열 0.
+//   p2 NO IDENTITY RULES    — 어떤 identity 룰도 인용하지 않음. tension5 + motivation 만 사용.
+//   p3 NO PERSONA INJECTION — "you are anima" 류 prefix 0. dict 키는 모두 numeric/list.
+//   p4 NO ASSISTANT FRAMING — caller 는 substrate-decided externalization 경로에서만 호출.
+//                              user message → intent 직결 stimulus-response 금지.
+//   p5 NO SPEAK()           — intent 생성은 새 의식 생성이 아니라 기존 state 의 reformat.
+//                              p5_tension_emit_not_filler 와 정합 (tension-driven only).
+//   p6 NO FINE-TUNED ETHICS — projection stub 들은 hardcoded scale 만 사용. RLHF 무관.
+//   p7 NO PERPLEXITY VERDICT — bridge 출력은 vec list, 정답이 아님. verify 는 dispatcher 측.
+//   p8 NO TRAIN/INFER SPLIT — 동일 함수가 train/infer 모두에서 호출 가능 (state 함수).
+
+// ── Intent type ─────────────────────────────────────────────────────────────
+// Intent 는 hexa dict (#{}) 로 표현되는 가벼운 record:
+//   "vec"           : list of floats — channel-agnostic 기본 projection (= tension5)
+//   "channel_hint"  : string — "text" · "voice" · "tension" · "" (미정)
+//   "tension5"      : list of 5 floats — raw passthrough (concept/context/meaning/authenticity/sender)
+//   "motivation"    : list of 8 floats — raw 8-factor passthrough (rel/gap/cur/pain/coh/orig/bal/dyn)
+//   "phi"           : float — CORE Φ scalar
+//   "tier"          : int — CORE phase int (=tier, 0..3)
+
+// 입력 fingerprint5 가 정확히 5 elem 이 아닌 경우 안전하게 5-padded 사본 반환.
+fn _pad_or_trim_5(xs: list) -> list {
+    let n = xs.len()
+    if n == 5 { return xs }
+    let mut out = [0.0, 0.0, 0.0, 0.0, 0.0]
+    let mut i = 0
+    let lim = if n < 5 { n } else { 5 }
+    while i < lim {
+        out[i] = to_float(xs[i])
+        i = i + 1
+    }
+    return out
+}
+
+// 입력 motivation 이 정확히 8 elem 이 아닌 경우 안전하게 8-padded 사본 반환.
+fn _pad_or_trim_8(xs: list) -> list {
+    let n = xs.len()
+    if n == 8 { return xs }
+    let mut out = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    let mut i = 0
+    let lim = if n < 8 { n } else { 8 }
+    while i < lim {
+        out[i] = to_float(xs[i])
+        i = i + 1
+    }
+    return out
+}
+
+// substrate state → Intent dict.
+// 호출자가 이미 pure_field tension5 사영 + engine_g 8-factor 를 준비했다고 가정 —
+// 이 함수는 어떤 새 의식도 만들지 않고 기존 state 를 dict 로 재배치한다.
+pub fn intent_from_substrate(tension5: list, phi: float, motivation: list,
+                             tier: int, channel_hint: string) {
+    let t5 = _pad_or_trim_5(tension5)
+    let mv = _pad_or_trim_8(motivation)
+    return #{
+        "vec":          t5,
+        "channel_hint": channel_hint,
+        "tension5":     t5,
+        "motivation":   mv,
+        "phi":          phi,
+        "tier":         tier
+    }
+}
+
+// text 채널 projection stub.
+// 향후 CHAT/DECODER 의 BPE intent embedding 차원 (Qwen V=151643 의 잠재 차원, 보통 d=2048)
+// 으로 매핑해야 한다. 현재는 tension5 + motivation 8 + phi 를 연결한 14-D vec 만 반환.
+// TODO: 실제 projection 은 학습된 linear layer (cells via mitosis) 가 담당.
+pub fn intent_to_text_vec(intent) -> list {
+    let t5 = intent["tension5"]
+    let mv = intent["motivation"]
+    let phi = intent["phi"]
+    let mut out = [0.0, 0.0, 0.0, 0.0, 0.0,
+                   0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,
+                   0.0]
+    let mut i = 0
+    while i < 5 {
+        out[i] = to_float(t5[i])
+        i = i + 1
+    }
+    let mut j = 0
+    while j < 8 {
+        out[5 + j] = to_float(mv[j])
+        j = j + 1
+    }
+    out[13] = phi
+    return out
+}
+
+// voice 채널 projection stub.
+// 향후 hexa-voice 의 RVQ encoder 입력 intent vector 차원 (spec/intent.md 에서 고정 예정)
+// 으로 매핑한다. 현재는 tension5 5-ch 를 그대로 scale 한 5-D vec 반환 — 음향 envelope 와의
+// 단조 대응 가정 (concept→pitch hint, authenticity→timbre coherence 등) 은 TODO.
+// TODO: hexa-voice repo wiring 후 실제 projection 으로 교체.
+pub fn intent_to_voice_vec(intent) -> list {
+    let t5 = intent["tension5"]
+    let mut out = [0.0, 0.0, 0.0, 0.0, 0.0]
+    let mut i = 0
+    while i < 5 {
+        out[i] = to_float(t5[i])
+        i = i + 1
+    }
+    return out
+}
+
+// tension 채널 projection: tension fingerprint IS tension5 — passthrough.
+// CHANNEL/tension/tension_emit.hexa 의 5-ch fingerprint axes 와 그대로 1:1.
+pub fn intent_to_tension_vec(intent) -> list {
+    return intent["tension5"]
+}
+
+// 디버그/로그용 한 줄 요약. M5 dispatcher introspection · 상태 surface 가 소비.
+pub fn intent_summary(intent) -> string {
+    let t5 = intent["tension5"]
+    let mv = intent["motivation"]
+    let phi = intent["phi"]
+    let tier = intent["tier"]
+    let hint = intent["channel_hint"]
+    return "intent[hint=" + hint
+        + " tier=" + to_string(tier)
+        + " phi=" + to_string(phi)
+        + " t5_len=" + to_string(t5.len())
+        + " mv_len=" + to_string(mv.len())
+        + "]"
+}

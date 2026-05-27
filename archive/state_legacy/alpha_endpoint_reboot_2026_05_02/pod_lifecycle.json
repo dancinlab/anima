@@ -1,0 +1,51 @@
+{
+  "schema": "anima/alpha_endpoint_reboot/pod_lifecycle/1",
+  "ts_boot_request_utc": "2026-05-02T14:36:03Z",
+  "ts_pod_running_utc": "2026-05-02T14:36:04Z",
+  "ts_ssh_first_ok_utc": "2026-05-02T14:38:00Z",
+  "ts_lora_uploaded_utc": "2026-05-02T14:40:00Z",
+  "ts_vllm_first_launch_utc": "2026-05-02T14:42:00Z",
+  "ts_vllm_relaunch_after_flag_fix_utc": "2026-05-02T14:52:00Z",
+  "pod": {
+    "id": "3ifwhtmvdieivy",
+    "name": "anima-alpha-reboot-20260502T143603Z",
+    "gpu": "NVIDIA H100 80GB HBM3 (SXM, IN datacenter)",
+    "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "vcpu": 28,
+    "ram_gb": 251,
+    "container_disk_gb": 60,
+    "volume_disk_gb": 100,
+    "ssh_command": "ssh -i ~/.runpod/ssh/RunPod-Key-Go root@103.207.149.79 -p 13071",
+    "ssh_ip": "103.207.149.79",
+    "ssh_port": 13071,
+    "cost_per_hr_usd": 2.99,
+    "cost_cap_usd": 10.0,
+    "auto_shutdown_at_utc": "2026-05-02T18:52:41Z",
+    "auto_shutdown_h_cap": 4
+  },
+  "endpoint": {
+    "public_url": "https://3ifwhtmvdieivy-8000.proxy.runpod.net",
+    "internal_vllm": "http://127.0.0.1:18080",
+    "wrapper": "FastAPI uvicorn :8000 → upstream :18080 with Bearer auth + ship_verdict reframe in /health",
+    "models_alias": ["mistralai/Mistral-7B-v0.3", "r14"]
+  },
+  "served_model": {
+    "base": "mistralai/Mistral-7B-v0.3",
+    "lora": {
+      "alias": "r14",
+      "path_pod": "/workspace/lora/r14",
+      "r": 64,
+      "alpha": 128,
+      "size_bytes": 671149168,
+      "md5_local_pre_upload": "90072b0f5a426eeebb47eeb2d4919d68",
+      "md5_pod_post_extract": "90072b0f5a426eeebb47eeb2d4919d68",
+      "md5_match": true,
+      "source_local_path": "state/mistral_r14_run/mistral_r14/final/",
+      "transport": "tar (clean, --no-mac-metadata) + scp + tar -x --no-same-owner",
+      "transport_md5": "299b09796b073b097504357376b76d82"
+    }
+  },
+  "fix_log": [
+    "vllm 0.20.0 dropped --disable-log-requests; first launch failed; flag removed; relaunched at 14:52 UTC."
+  ]
+}

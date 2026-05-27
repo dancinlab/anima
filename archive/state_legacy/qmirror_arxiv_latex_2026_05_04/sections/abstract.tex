@@ -1,0 +1,27 @@
+% Abstract (input{} directly inside \begin{abstract})
+We introduce \qmirror, a hexa-language module that synthesizes a
+quantum-processing-unit-equivalent substrate from three free, classical
+ingredients: (i) Qiskit Aer state-vector simulation for exact unitary
+evolution, (ii) the Australian National University Quantum Random
+Number (ANU QRNG) vacuum-fluctuation REST service for measurement
+randomness, and (iii) HMAC-DRBG SHA-256 keyed seeding for deterministic
+regression testing. The combination is statistically equivalent to a
+noiseless quantum processor within the simulator-tractable regime
+(approximately 30 qubits state-vector, 50 qubits matrix-product
+state). We validate \qmirror{} against eight closure conditions
+covering specification coverage, falsifier-driven self-test, real-
+hardware CHSH existence proof (IBM Heron r2 \texttt{ibm\_fez},
+$S = 2.357 \pm 0.050$), NIST SP~800-22 statistical battery on QRNG
+drop-in regression, reproduction of a reference Bell inequality
+measurement ($S = 2.808$ reference vs $S = 2.838$ \qmirror,
+$\dS = 0.030$), byte-identical Integrated Information Theory~4.0
+\phistar{} validation against \texttt{pyphi} reference outputs,
+cross-family intra-superconducting concordance (Rigetti Cepheus 108Q
+vs IBM Heron r2, $\dS = 0.084$), and a four-vendor cross-vendor
+concordance matrix (IonQ Aria-1, IonQ Forte-1, Rigetti Cepheus, IBM
+Heron r2 \texttt{ibm\_fez}). Operating cost is \textbf{USD 0 per
+second} versus IBM Heron's \textbf{USD 1.60--2.30 per QPU-second},
+with one-time calibration spend totaling USD 41.34 (Amazon Braket plus
+IBM Test 3 credit). All per-condition evidence, raw counts, and
+falsifier ledgers are public. We disclose five honest caveats including
+selection-bias risk in two post-hoc band revisions.

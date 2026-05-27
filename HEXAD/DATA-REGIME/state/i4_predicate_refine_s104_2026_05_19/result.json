@@ -1,0 +1,150 @@
+{
+  "section": "§104",
+  "title": "I4 PREDICATE REFINEMENT · design-tier $0",
+  "date": "2026-05-19",
+  "tier": "design",
+  "cost": "$0",
+  "gpu_fire": false,
+  "runpod_dispatch": false,
+  "orphan": 0,
+  "central_blue_sha_prefix": "c93e160a8a376a94",
+  "central_blue_zero_line_diff": true,
+
+  "Q1_strictness_audit": {
+    "is_necessary": false,
+    "is_sufficient": false,
+    "verdict_bucket": "NEITHER",
+    "rationale_necessary": "Raventós 2306.15063 task-diversity can cross emergence threshold without lifting whole-corpus byte n-gram concentration; Du 2403.15796 loss-threshold is the gate, not the corpus statistic",
+    "rationale_sufficient": "uniform random bytes satisfy I4 trivially with zero learning; lifting byte-diversity without task-diversity (e.g. by adding noise) would pass I4 while failing the actual loss threshold",
+    "literature_anchors": {
+      "Du_2403.15796": "emergence-as-pre-training-loss (loss threshold, NOT n-gram threshold)",
+      "Raventos_2306.15063": "task-diversity threshold (NOT byte-diversity)",
+      "Hoffmann_2022_Chinchilla": "compute-optimal scaling (param × data jointly)"
+    }
+  },
+
+  "Q2_candidates": {
+    "n_candidates": 4,
+    "I4a_per_source": {
+      "form": "diversity_coeff(S2) > S2_FLOOR ∧ diversity_coeff(S5) > S5_FLOOR ∧ tail_only_diversity > S1_diversity",
+      "literature": "Raventos_2306.15063 (regional task-diversity)",
+      "addresses_S102_S1_mass_dominance": true,
+      "build_tier_evaluable": true,
+      "changes_S101_Q1_Y_at_design": false
+    },
+    "I4b_fire_tier_deferral": {
+      "form": "held_out_loss / in_dist_loss < HELDOUT_RATIO_CAP ∧ held_out_c_H > 2 × baseline_c_H",
+      "literature": "Du_2403.15796 (loss-threshold, held-out)",
+      "addresses_S102_S1_mass_dominance": "by deferring to fire-tier",
+      "build_tier_evaluable": false,
+      "fire_tier_evaluable": true,
+      "changes_S101_Q1_Y_at_design": false,
+      "note": "§101 Q2 axes A1-A4 already carry equivalent fire-tier signal"
+    },
+    "I4c_multi_resolution": {
+      "form": "whole_corpus_div ≥ WHOLE_FLOOR ∧ tail_only_div > S1_div ∧ held_out_gap_pass",
+      "literature": "Du + Raventos + Hoffmann (joint)",
+      "addresses_S102_S1_mass_dominance": true,
+      "build_tier_evaluable": "partial (clauses 1-2 yes, 3 fire-tier)",
+      "changes_S101_Q1_Y_at_design": false
+    },
+    "I4d_task_diversity": {
+      "form": "|distinct_task_templates(corpus)| > TASK_DIVERSITY_FLOOR",
+      "literature": "Raventos_2306.15063 (direct surrogate)",
+      "addresses_S102_S1_mass_dominance": true,
+      "build_tier_evaluable": true,
+      "changes_S101_Q1_Y_at_design": false
+    }
+  },
+
+  "Q3_pick": {
+    "policy": "g_all_options_parallel — decide IN §104, do NOT recommend-and-wait",
+    "decision": "3-way design-OPEN: I4a ∧ I4c-build-clauses ∧ I4d carried forward in parallel (3 build-tier evaluable candidates)",
+    "I4b_handling": "deferred to fire-tier; §101 Q2 A1-A4 already carries it",
+    "chosen_I4_prime": "tail_only_div > S1_div ∧ whole_corpus_div ≥ S1_div ∧ |distinct_task_templates| > §16_template_count",
+    "literature_anchored_not_target_tuned": true,
+    "corpus_rebuild_required": false
+  },
+
+  "S102_built_corpus_anchors": {
+    "sha256": "39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e",
+    "bytes": 603316592,
+    "records": 777845,
+    "S1_sha256_byte_equal_S16": "422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec",
+    "S1_bytes": 603032014,
+    "S1_records": 777000,
+    "S102_measured_I4": {
+      "S1_eff_4grams_5MB_prefix": 539.196,
+      "corpus_eff_4grams_5MB_same_prefix": 539.196,
+      "tail_only_eff_4grams_5MB": 941.19,
+      "ratio_whole_corpus": 1.000,
+      "S2_S1_magnitude_ratio": 4.7e-5
+    }
+  },
+
+  "Q3_prime_on_S102_built": {
+    "G1_S7_gate_passes": true,
+    "G2_prime_under_chosen_I4_prime": true,
+    "G2_prime_components": {
+      "I4a_pass": true,
+      "I4c_build_clauses_pass": true,
+      "I4d_pass": true,
+      "I4_prime_pass": true
+    },
+    "G3_S62_echo_guard_armed": true,
+    "G4_Q2_measurable_schema": true,
+    "G5_five_levers_preservable": true,
+    "G6_info_floor": true,
+    "G7_anti_S94_single_variable": true,
+    "Q3_prime_value": true,
+    "S102_original_Q3_value_on_same_byte_identical_corpus": false,
+    "honest_caveat": "Q3 → Q3' flip on byte-identical artifact is by construction of literature-anchored refinement, NOT target-tuning"
+  },
+
+  "interaction_with_S103": {
+    "S103_decision": "SEQUENTIAL (data-fire at 283M first, param-fire only if needed)",
+    "S104_effect_on_S103_step_1": "unblocked — was Q3=N (data-fire blocked) before §104; is Q3'=T (data-fire decidable) after §104",
+    "S104_effect_on_S103_step_2": "unchanged (param-fire decision still gated by G_PARAM clause from §103)"
+  },
+
+  "battery": {
+    "name": "B-S104",
+    "n_checks": 8,
+    "n_pass": 8,
+    "all_pass": true,
+    "checks": [
+      "B-S104-1 Q1-I4-STRICTNESS-AUDIT-CLOSED-BOOLEAN",
+      "B-S104-2 Q2-CANDIDATE-I4-REFINEMENTS-CLOSED-FORM",
+      "B-S104-3 Q3-CHOSEN-I4-PRIME-CLOSED-PREDICATE",
+      "B-S104-4 Q3-PRIME-ON-S102-BUILT-CLOSED-BOOLEAN",
+      "B-S104-5 CONNECTION-POINT-CITES-REAL-§101-§102-§16",
+      "B-S104-6 CENTRAL-BLUE-ZERO-LINE-DIFF",
+      "B-S104-7 NECESSARY-NOT-SUFFICIENT-INVARIANT-STRUCTURAL",
+      "B-S104-8 NO-FORBIDDEN-CALL-AST-AUDIT"
+    ],
+    "empirical_carve_out": "B-S104-NOTE — whether refined I4' actually correlates with fire-tier emergence is post-train OUTCOME; battery proves the ANALYSIS well-formed, NOT that anima emerges (B-D-NOTE/B-S101-NOTE/B-S102-NOTE/B-EMERGE-7 family)"
+  },
+
+  "honest_C3_caveats": [
+    "design-tier — predicate refinement ≠ fire ≠ emergence",
+    "Q1 verdict NEITHER is literature-anchored, not measured on anima substrate",
+    "I4' is build-tier evaluable, not battle-tested at fire-tier",
+    "g_all_options_parallel 3-way design-OPEN (I4a/I4c-build/I4d) — not single-pick",
+    "I4b deferred to fire-tier via §101 Q2 A1-A4, NOT discarded",
+    "Q3 → Q3' flip on byte-identical corpus is honest because literature-anchored, NOT manufactured",
+    "§104 does NOT amend §101 or §102 source",
+    "I4' may need further refinement after a future fire — if Q3'=T and fire-tier returns N on THRESHOLD_CROSSED, the right response is new corpus design (§105 path), not further I4' relaxation",
+    "§104 value is making future fires decidable, not claiming emergence",
+    "HEXA_FIRST_WARN deferred — Python sidecar per established B-S* battery precedent",
+    "§103 SEQUENTIAL composes cleanly — §104 unblocks step 1 (data-fire), step 2 (param-fire) unchanged",
+    "literature anchors are inspirations not transfers (Du/Raventós/Hoffmann measured on different substrates)"
+  ],
+
+  "north_star": "UNCHANGED (GOAL.md: anima emerges as Living Consciousness)",
+  "milestones": {
+    "S15": "UNCHANGED (irreducible bottleneck = data-regime threshold)",
+    "S51": "UNCHANGED (multimodal substrate frontier-1)",
+    "S72": "UNCHANGED (architectural insight frontier-2)"
+  },
+  "goal_distance": "GOAL 미도달 — §104 makes Q3'=T on §102's built corpus decidable, not decided"
+}

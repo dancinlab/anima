@@ -1,0 +1,57 @@
+{
+  "agent": "n_substrate_n4_prep",
+  "date": "2026-05-01",
+  "spec_doc": "docs/n_substrate_n4_landauer_3axis_spec_2026_05_01.md",
+  "phases": [
+    {
+      "phase": 1,
+      "name": "CLM thermal benchmark",
+      "platform": "H100 SXM via RunPod",
+      "method": "nvidia-smi --query-gpu=power.draw,timestamp --format=csv -lms 100 during 1000-token Qwen-7B generation, batch-1, fp16",
+      "deliverable": "energy_per_token_J distribution (mean, p50, p95)",
+      "cost_USD": 0,
+      "duration_days": 1,
+      "blocker": null
+    },
+    {
+      "phase": 2,
+      "name": "EEG metabolic anchor (literature)",
+      "method": "cite-chain confirmation: Attwell-Laughlin 2001 + Carter-Bean 2009 + Howarth 2012; cross-check ATP/spike value 1.2e8 against 3 independent sources",
+      "deliverable": "ratios.json EEG block frozen",
+      "cost_USD": 0,
+      "duration_days": 0,
+      "blocker": null,
+      "status": "DONE in this spec"
+    },
+    {
+      "phase": 3,
+      "name": "AKIDA dev-kit wattmeter bench",
+      "platform": "RPi5 + AKD1000 M.2 card",
+      "hardware_needed": ["UM34C-class USB inline wattmeter", "controlled spike-rate workload (Edge Impulse keyword-spotting demo)"],
+      "method": "measure idle power vs active inference power; divide delta by spike count from Akida runtime profiler",
+      "deliverable": "energy_per_spike_J empirical (vendor pJ/event vs system nJ/inference)",
+      "cost_USD": 30,
+      "duration_days": 3,
+      "blocker": "AKD1000 dev kit arrival (ordered 2026-04-29, ETA TBD)"
+    },
+    {
+      "phase": 4,
+      "name": "Joint T1-A3 graduation report",
+      "method": "merge phases 1-3 into single ratio table; pre-registered falsifiers F-floor / F-AKIDA-window / F-EEG-window / F-CLM-bound / F-honest-C3 evaluated",
+      "deliverable": "T1-A3 graduation verdict (PASS/FAIL/HOLD) + cross-substrate energy hierarchy claim",
+      "cost_USD": 0,
+      "duration_days": 1,
+      "blocker": "phases 1-3 complete"
+    }
+  ],
+  "total_cash_USD": 30,
+  "total_duration_days_post_akida_arrival": 7,
+  "isolation": {
+    "writes_only_to": [
+      "docs/n_substrate_n4_landauer_3axis_spec_2026_05_01.md",
+      "state/n_substrate_n4_prep_2026_05_01/*.json"
+    ],
+    "race_safe": true,
+    "siblings": 12
+  }
+}

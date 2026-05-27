@@ -1,0 +1,81 @@
+{
+  "schema": "anima/p9_path_a_hf_push_verify/verdict/1",
+  "cycle": "p9_path_a_hf_push_verify_2026_05_04",
+  "ts_utc": "2026-05-04T00:14:00Z",
+  "spec_ref": "docs/p9_path_a_llama_lora_complete_2026_05_04.ai.md",
+  "parent_bg": "BG-ι (p9_path_a_llama_lora_complete_2026_05_04)",
+  "siblings_bg": ["BG-μ (clm_v4_tokenizer_caller_migration)", "BG-ν (p9_base_validation_prep)"],
+  "hf_auth_state": "PASS (write scope, dancinlife / dancinlab admin)",
+  "hf_repo_url": "https://huggingface.co/dancinlab/p9-llama32-lora-stage1",
+  "hf_repo_canonical_stub_url": "https://huggingface.co/dancinlab/llm-llama32-3b-paradigm-a-prime-sft-stage1",
+  "hf_repo_head_sha": "5a9b458467589b82a69f0108fd2af3e519c45286",
+  "hf_repo_head_commit_msg": "Training in progress, step 8000",
+  "hf_repo_head_ts_utc": "2026-05-03T20:06:18Z",
+  "hf_repo_private": true,
+  "hf_repo_tags": [],
+  "hf_repo_branches": ["main"],
+  "verdict": "PROBABLE_HF_PARTIAL",
+  "verdict_reason": "step-8000 LoRA adapter live-verified on HF (adapter_model.safetensors sha256 f12f31d8104900cba5f60ad2010dc0bed0ec5c466e2838c88378fa5c9c2d3336, 389MB, all hyperparams match verdict.json:training); but step-10000 / final adapter NOT pushed to HF before pod termination; rename to canonical name never executed",
+  "files_verified": [
+    {"path": ".gitattributes", "type": "text", "size": 1570, "git_oid": "52373fe24473b1aa44333d318f578ae6bf04b49b", "lfs": false},
+    {"path": "README.md", "type": "text", "size": 1476, "git_oid": "566b64c19b112ac9f946ccf3475b7cb0a31cee4b", "lfs": false, "mk2_compliant": false, "mk2_compliance_reason": "auto-generated TRL boilerplate; lacks 5 required H2 sections (Origin/Falsifiers/Substrate/Caveats/Composability); mk2-compliant README staged at state/p9_path_a_naming_2026_05_03/README_canonical.md was uploaded to canonical stub repo not this legacy repo"},
+    {"path": "adapter_config.json", "type": "json", "size": 1111, "git_oid": "f86e27159a66b9dabdb9738071d933687dc7245f", "lfs": false, "config_match": "PASS (r=64, lora_alpha=64, lora_dropout=0.05, target_modules ⊇ {q,k,v,o,gate,up,down}_proj, base=Llama-3.2-3B-Instruct; all hyperparams match verdict.json:training)"},
+    {"path": "adapter_model.safetensors", "type": "bin", "size": 389074464, "git_oid": "7ae32cc24fb493fd950d54a5276ffd1b1e6c2df1", "lfs": true, "x_linked_etag_sha256": "f12f31d8104900cba5f60ad2010dc0bed0ec5c466e2838c88378fa5c9c2d3336", "x_linked_size": 389074464},
+    {"path": "chat_template.jinja", "type": "text", "size": 3827, "git_oid": "1bad6a0f648dccdbec523ca79ba90fbcfc806af0", "lfs": false},
+    {"path": "config.json", "type": "json", "size": 727, "git_oid": "74cbee180bd0afb40a31fde375fcde2f535b42ec", "lfs": false},
+    {"path": "tokenizer.json", "type": "json", "size": 17209920, "git_oid": "1c1d8d5c9024994f1d3b00f9662b8dd89ca13cf2", "lfs": true, "x_linked_etag_sha256": "6b9e4e7fb171f92fd137b777cc2714bf87d11576700a1dcd7a399e7bbe39537b", "x_linked_size": 17209920},
+    {"path": "tokenizer_config.json", "type": "json", "size": 354, "git_oid": "a3ccf3ae76b530b318a3d7fdc3d27ab2a0d39531", "lfs": false},
+    {"path": "train.log", "type": "log", "size": 790884, "git_oid": "8d9f631a765383e634a06e1c396e3db41eadcb27", "lfs": false, "last_visible_step": 8008, "last_visible_loss": 0.2748, "last_visible_lr": 9.939e-06, "last_visible_mean_token_acc": 0.9348},
+    {"path": "train.pid", "type": "text", "size": 5, "git_oid": "438db35afa0f9f1a25b69d310f434acfd0cdfe15", "lfs": false, "value": 1291, "matches_naming_decision_log": true},
+    {"path": "training_args.bin", "type": "bin", "size": 5368, "git_oid": "2af4f18f6d96f1417471015a9ca30af2bcf28f76", "lfs": true, "x_linked_etag_sha256": "0a48289c43a41109c03744096889c5c6c3571e3936a4335dfe1eeb21a40f7389", "x_linked_size": 5368}
+  ],
+  "files_verified_count": 11,
+  "commit_history": [
+    {"sha": "0a4b60b60674", "ts_utc": "2026-05-03T14:28:51Z", "msg": "initial commit"},
+    {"sha": "f69162477df5", "ts_utc": "2026-05-03T15:52:19Z", "msg": "Training in progress, step 2000"},
+    {"sha": "fe83e9898ddc", "ts_utc": "2026-05-03T17:16:35Z", "msg": "Training in progress, step 4000"},
+    {"sha": "f7712e3a662f", "ts_utc": "2026-05-03T18:41:24Z", "msg": "Training in progress, step 6000"},
+    {"sha": "5a9b458467589b82a69f0108fd2af3e519c45286", "ts_utc": "2026-05-03T20:06:18Z", "msg": "Training in progress, step 8000"}
+  ],
+  "missing_commits_predicted": [
+    {"step": 10000, "expected_msg": "Training in progress, step 10000 OR Save final model", "reason": "host_terminator.log shows STEP=10000/10000 reached on pod at 2026-05-03T21:34:08Z but no corresponding HF commit — final-save flush race / OOM / push-401 / network blip per verdict_complete rank-1 cause p=0.6"}
+  ],
+  "f_pa_hf_1_status_emit": "PARTIAL",
+  "f_pa_hf_1_partial_reason": "step-8000 LoRA adapter present and integrity-validated; step-10000 / final missing",
+  "f_name_1_status_emit": "FAIL",
+  "f_name_1_fail_reason": "actual repo `p9-llama32-lora-stage1` violates mk2 EBNF: family `p9` not in allowlist {clm,blm,vlm,slm,tlm,mlm,alm,hexad,composite}, no v<N>, stage and mod loose; canonical rename target stub exists (sha 5161b80883) but rename never executed",
+  "complete_probable_to_verified": false,
+  "complete_probable_to_verified_reject_reason": "step-10000 / final adapter not on HF; transition to COMPLETE_VERIFIED would mis-state the eval anchor by 2000 steps and ~30 minutes of training; instead propose COMPLETE_PROBABLE → PARTIAL_VERIFIED_8K",
+  "proposed_status_emit": "COMPLETE_PROBABLE → PARTIAL_VERIFIED_8K",
+  "f1_v3_readiness_flipped": false,
+  "f1_v3_readiness_state": "false_with_caveat (HF auth blocker CLEARED; adapter blocker PARTIAL — step-8k available not step-10k; base-validation blocker remains under BG-ν)",
+  "f1_v3_blockers_remaining": [
+    "BG-ν base-validation completion",
+    "F1_v3_pending.json re-emission with v3 semantics (3-benchmark lm-eval composite, not legacy v2 BLEU-1)",
+    "consumers MUST footnote that eval anchor is step-8000 LoRA not preregistered step-10000"
+  ],
+  "honest_c3": [
+    "step-10k vs step-8k anchor drift — verdict_complete COMPLETE_PROBABLE was based on host_terminator.log STEP=10000/10000; HF mirror reveals only step-8000; cannot disambiguate from HF state alone whether step-10k ever wrote to disk on pod (which is now terminated and unreachable)",
+    "HF Trainer every_save does NOT create git tags — refs API returns tags=[] despite 4 step-Nk save events; mk2 spec C2 caveat predicted potential tag loss on rename but reality is tags were never created at all; per-step revision pinning requires commit sha not tag",
+    "adapter_model.safetensors HEAD returns x-linked-etag (sha256) not git oid — tree API oid=7ae32cc24f… is git pointer hash; true sha256 of LFS payload is f12f31d8104900cba5f60ad2010dc0bed0ec5c466e2838c88378fa5c9c2d3336 from x-linked-etag header; eval integrity manifests should record x-linked-etag",
+    "no local sha256 manifest exists for any Path A adapter — pod-side artifacts/ scp failed; cross-validation is configuration-consistency only (adapter_config matches verdict.json hyperparams), not bytewise; if HF mirror corrupted post-upload this verification would NOT detect it",
+    "naming-decision rename never fired — `hf repos move` from legacy → canonical was scheduled in docs/p9_path_a_naming_decision_landed_2026_05_03.ai.md §Post-training scheduled actions but never executed; repo continues to live at FAILing legacy URL; this BG explicitly does NOT execute rename per read-only constraint",
+    "repo README is auto-generated TRL boilerplate not mk2-compliant — README.md on populated repo lacks 5 required H2 sections; mk2-compliant README was uploaded to canonical stub repo not this legacy repo; until rename + README upload, F-NAME-1 and mk2 §5 both FAIL on live evaluable repo"
+  ],
+  "next_action": "Sequenced post-this-BG plan: (1) BG-ν completes base-validation; (2) follow-up BG executes hf repos move (legacy → canonical) + reuploads finalized README; (3) F1_v3 eval cycle fires using step-8000 anchor with documented caveat about lost step-8001-10000 progress; (4) optional: consider pod-relaunch to recover step-10k → step-10k checkpoint if F1_v3 verdict is borderline and 2000-step gap material",
+  "raw9_compliance": "pure curl + python3 -c json parsing; no .py written or modified; HF API direct from Mac per raw#37 (ubu1 not needed)",
+  "raw10_compliance": "6 honest C3 caveats above",
+  "raw15_compliance": "all paths repo-relative or ~/.cache/huggingface/ (HF default)",
+  "raw71_compliance": "read-only HF API: no upload no delete no rename no chflags",
+  "git_ops_run_in_this_cycle": "NONE",
+  "hf_mutations_run_in_this_cycle": "NONE",
+  "files_written_this_cycle": [
+    "state/p9_path_a_hf_push_verify_2026_05_04/verify_report.md",
+    "state/p9_path_a_hf_push_verify_2026_05_04/verdict.json"
+  ],
+  "roadmap_update_proposals": [
+    {"id": "p9_sft.cond.path_a_lora_train_complete", "status_transition": "COMPLETE_PROBABLE → PARTIAL_VERIFIED_8K", "reason": "HF live-verified step-8000 commit 5a9b4584 with adapter_model.safetensors sha256 f12f31d8…3336; step-10000 + final adapter NOT on HF mirror"},
+    {"id": "p9_sft.cond.path_a_hf_naming_rename", "status_transition": "DEFERRED → PENDING_UNBLOCKED", "reason": "hf repos move legacy → canonical still required per naming-decision doc; HF auth now PASS so action is unblocked"},
+    {"id": "p9_sft.cond.f1_v3_eval_ready", "status_transition": "false → false_with_caveat", "reason": "HF auth blocker CLEARED (this BG); adapter blocker PARTIAL (step-8k); base-validation blocker remains under BG-ν"}
+  ]
+}

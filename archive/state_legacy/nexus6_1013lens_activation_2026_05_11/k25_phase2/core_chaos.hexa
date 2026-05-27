@@ -1,0 +1,83 @@
+// core_chaos.hexa — Phase 2 reimpl with input channel x
+// =============================================================================
+// spec: state/nexus6_1013lens_activation_2026_05_11/cascade_k25_plan_2026_05_12.md §1.2
+// parent (trivial): /home/summer/core/nexus_lenses_snapshot/core_chaos.hexa
+// axis: dynamics/chaos — Lyapunov exponent (block divergence) + sensitive dependence
+// modality: state (B=1, S=N, time series)
+// kernel: split xs into pairs (block_a, block_b) at +1 offset; compute mean log of
+//         |a_i - a_{i+1}| growth rate over window W=8. score = sigmoid(λ_proxy).
+// =============================================================================
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 16 {
+    println("lens[chaos] category=core axis=\"chaos (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+// Lyapunov proxy: for window W, compute log(|x_{t+W} - x_t|) / W → mean over t
+let W = 8
+let mut sum_lambda = 0.0
+let mut count = 0
+let mut t = 0
+while t + W < n {
+    let d = xs[t + W] - xs[t]
+    let abs_d = if d < 0.0 { 0.0 - d } else { d }
+    if abs_d > 0.000001 {
+        sum_lambda = sum_lambda + log(abs_d) / to_float(W)
+        count = count + 1
+    }
+    t = t + 1
+}
+let lambda_proxy = if count > 0 { sum_lambda / to_float(count) } else { -10.0 }
+// Chaos: lambda > 0 → diverging trajectory. Map to [0,1]: sigmoid(lambda + 2).
+let chaos_arg = lambda_proxy + 2.0
+let chaos_score = 1.0 / (1.0 + exp(-1.0 * chaos_arg))
+
+// Sensitive dependence: variance of |x_{t+1} - x_t|
+let mut sum_d = 0.0
+let mut sum_d2 = 0.0
+let mut cnt_d = 0
+let mut i = 1
+while i < n {
+    let dd = xs[i] - xs[i-1]
+    let ad = if dd < 0.0 { 0.0 - dd } else { dd }
+    sum_d = sum_d + ad
+    sum_d2 = sum_d2 + ad * ad
+    cnt_d = cnt_d + 1
+    i = i + 1
+}
+let mean_d = sum_d / to_float(cnt_d)
+let var_d = sum_d2 / to_float(cnt_d) - mean_d * mean_d
+let sens_norm = if mean_d > 0.000001 { var_d / (mean_d * mean_d) } else { 0.0 }
+let sens_clip = if sens_norm > 1.0 { 1.0 } else { sens_norm }
+
+let score = 0.7 * chaos_score + 0.3 * sens_clip
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[chaos] category=core axis=\"Dynamics/Chaos — Lyapunov W=8 divergence + sensitive-dependence variance ratio\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"lambda_proxy\":" + to_string(lambda_proxy) + ",\"chaos_score\":" + to_string(chaos_score) + ",\"sens_norm\":" + to_string(sens_norm) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

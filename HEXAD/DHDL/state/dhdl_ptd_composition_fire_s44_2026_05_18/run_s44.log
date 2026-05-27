@@ -1,0 +1,62 @@
+
+$ python3 train_dhdl_ptd.py --corpus /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_decision_head_s27_2026_05_18/trace_corpus.jsonl --lambda-ptd 0.0 --out /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/dhdl_ptd_head_lam0.json
+{
+  "lambda_ptd": 0.0,
+  "n_train": 38402,
+  "n_holdout": 9598,
+  "n_ptd_pairs": 36480,
+  "train_loss_first": 0.13481,
+  "train_loss_last": 0.01597,
+  "decision_loss_last": 0.01338,
+  "ptd_loss_last": 0.0,
+  "out": "/Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/dhdl_ptd_head_lam0.json"
+}
+
+$ python3 train_dhdl_ptd.py --corpus /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_decision_head_s27_2026_05_18/trace_corpus.jsonl --lambda-ptd 0.3 --out /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/dhdl_ptd_head_lam03.json
+{
+  "lambda_ptd": 0.3,
+  "n_train": 38402,
+  "n_holdout": 9598,
+  "n_ptd_pairs": 36480,
+  "train_loss_first": 0.39942,
+  "train_loss_last": 0.08771,
+  "decision_loss_last": 0.01647,
+  "ptd_loss_last": 0.06815,
+  "out": "/Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/dhdl_ptd_head_lam03.json"
+}
+
+$ python3 eval_dhdl_ptd.py --corpus /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_decision_head_s27_2026_05_18/trace_corpus.jsonl --head /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/dhdl_ptd_head_lam0.json --out /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/eval_result_lam0.json
+{
+  "lambda_ptd": 0.0,
+  "accuracy_3class": 0.99896,
+  "threshold_distillation_gap": 0.00104,
+  "gap_verdict": "DISTILLATION_WITH_APPROXIMATION_NOISE",
+  "ptd_mse_mean": 3.810666,
+  "out": "/Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/eval_result_lam0.json"
+}
+
+$ python3 eval_dhdl_ptd.py --corpus /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_decision_head_s27_2026_05_18/trace_corpus.jsonl --head /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/dhdl_ptd_head_lam03.json --out /Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/eval_result_lam03.json
+{
+  "lambda_ptd": 0.3,
+  "accuracy_3class": 0.99969,
+  "threshold_distillation_gap": 0.00031,
+  "gap_verdict": "DISTILLATION_WITH_APPROXIMATION_NOISE",
+  "ptd_mse_mean": 0.251913,
+  "out": "/Users/ghost/core/anima/.claude/worktrees/agent-aaa2ee8d9e55ee67e/state/dhdl_ptd_composition_fire_s44_2026_05_18/eval_result_lam03.json"
+}
+
+=== §44 summary ===
+{
+  "baseline_s27_gap": 0.000625130235465722,
+  "lam0_gap": 0.0010418837257762034,
+  "lam03_gap": 0.000312565117732861,
+  "delta_gap_03_minus_0": -0.0007293186080433424,
+  "delta_acc_03_minus_0": 0.0007293186080433722,
+  "ptd_mse_lam03_per_class": {
+    "CONTINUE_THINK": 1.8195272190996372,
+    "EMIT_VOICE": 0.3156152606714885,
+    "REMAIN_SILENT": 0.2486412334724619
+  },
+  "rep_shaping_verdict": "PTD-AUX-SIGNAL-MEASURABLE",
+  "wall_sec": 13.03
+}

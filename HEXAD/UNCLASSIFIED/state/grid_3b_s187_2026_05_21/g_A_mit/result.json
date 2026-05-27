@@ -1,0 +1,676 @@
+{
+  "battery": "S184 ALL TAPS RELEASE Phase 2 combined multi-objective trainer",
+  "phase": 2,
+  "scope_taps_count": 15,
+  "scope_taps": [
+    "2.3 Chinchilla steps",
+    "2.5 block_size 128->1024",
+    "2.6 batch_size 32->64",
+    "2.7 lr warmup+cosine peak 6e-4",
+    "2.9 RoPE base 10000->50000",
+    "3.3 Engine A/G Law-70 coupling tune (via L_psi)",
+    "4.8 corpus x5 augmentation",
+    "4.9 Phi-supervised aux loss (via L_phi)",
+    "4.10 motivation 100% physics re-wire (via L_psi+L_route)",
+    "4.12 cycle-consistent CMRW pair loss",
+    "X.7 multi-objective trainer (7 loss terms)",
+    "X.8 replay buffer 1024",
+    "X.9 sec 59 PTD curiosity (info-gain)",
+    "X.11 layer-0 noise sigma=0.1",
+    "(combined cumulative under same recipe = tap X.7 supraset)"
+  ],
+  "cfg": {
+    "d_model": 3072,
+    "n_head": 24,
+    "n_kv_head": 8,
+    "n_layer": 28,
+    "block_size": 128,
+    "lr": 0.0003,
+    "bsz": 2,
+    "steps": 2000,
+    "seed": 1337,
+    "warmup_steps": 200,
+    "rope_base": 50000.0,
+    "lambda_psi": 0.3,
+    "lambda_route": 0.2,
+    "lambda_phi": 0.3,
+    "lambda_cycle": 0.15,
+    "lambda_curious": 0.1,
+    "lambda_replay": -0.05,
+    "noise_sigma": 0.1,
+    "n_aug": 5,
+    "replay_capacity": 1024,
+    "dtype": "bfloat16",
+    "n_ca_rules": 2,
+    "mitosis_active": true,
+    "lambda_mitosis": 0.05,
+    "mitosis_initial_cells": 2,
+    "mitosis_noise_scale": 0.1,
+    "mitosis_bnb_disable": false,
+    "log_every": 40,
+    "corpus": "/workspace/s187r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "out_dir": "/workspace/s187r/out_main",
+    "cpu_only": false
+  },
+  "device": "cuda",
+  "n_params": 8921180216,
+  "train_wall_s": 673.1809992790222,
+  "init_log": {
+    "step": 1,
+    "lr": 1.4999999999999998e-06,
+    "L_total": 19.307937622070312,
+    "L_ce": 6.15625,
+    "L_psi": 0.15106718242168427,
+    "L_route": 62.0,
+    "L_phi": 0.019186535850167274,
+    "L_cycle": 0.23925335705280304,
+    "L_curious": 6.89721155166626,
+    "L_replay": 0.0,
+    "L_mitosis": 0.0,
+    "mitosis_pool_size": 2,
+    "mitosis_split_total": 0,
+    "mitosis_merge_total": 0,
+    "mitosis_phi": 0.6969840120638601,
+    "psi_dir_mean": 0.4889138638973236,
+    "psi_dir_std": 0.030786309391260147,
+    "psi_ent_mean": 0.8885154724121094,
+    "head_g_grad_norm": 0.00872802734375,
+    "replay_size": 1,
+    "aug_slot": 0,
+    "elapsed_s": 2.680703639984131
+  },
+  "final_log": {
+    "step": 2000,
+    "lr": 3.0000205616706157e-05,
+    "L_total": 3.909238576889038,
+    "L_ce": 3.828125,
+    "L_psi": 0.02155286818742752,
+    "L_route": 1.52587890625e-05,
+    "L_phi": 0.010653331875801086,
+    "L_cycle": 0.006208650767803192,
+    "L_curious": 0.7083920240402222,
+    "L_replay": 0.006438960786908865,
+    "L_mitosis": 0.0,
+    "mitosis_pool_size": 128,
+    "mitosis_split_total": 126,
+    "mitosis_merge_total": 0,
+    "mitosis_phi": 0.667996948455251,
+    "psi_dir_mean": 0.5026507377624512,
+    "psi_dir_std": 0.002395269926637411,
+    "psi_ent_mean": 0.6467850208282471,
+    "head_g_grad_norm": 0.259765625,
+    "replay_size": 1024,
+    "aug_slot": 4,
+    "elapsed_s": 656.2103831768036
+  },
+  "loss_weights": {
+    "lambda_ce_implicit_1": 1.0,
+    "lambda_psi": 0.3,
+    "lambda_route": 0.2,
+    "lambda_phi": 0.3,
+    "lambda_cycle": 0.15,
+    "lambda_curious": 0.1,
+    "lambda_replay": -0.05
+  },
+  "head_g_grad_max": 0.79296875,
+  "head_g_grad_min": 0.00665283203125,
+  "head_g_grad_mean": 0.21660359700520834,
+  "head_g_received_gradient": true,
+  "replay_final_size": 1024,
+  "mitosis_active": true,
+  "lambda_mitosis": 0.05,
+  "mitosis_summary": {
+    "initial_cells": 2,
+    "final_cells": 128,
+    "splits": 126,
+    "merges": 0,
+    "next_id": 128,
+    "phi_initial": 0.6969840120638601,
+    "phi_final": 0.667996948455251,
+    "n_events": 126,
+    "event_log_head": [
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 0,
+        "child_id": 2,
+        "avg_tension": 8.4375,
+        "threshold": 6.758333333333333,
+        "pool_size": 3
+      },
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 1,
+        "child_id": 3,
+        "avg_tension": 8.458333333333334,
+        "threshold": 6.758333333333333,
+        "pool_size": 4
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 0,
+        "child_id": 4,
+        "avg_tension": 8.416666666666666,
+        "threshold": 6.7406250000000005,
+        "pool_size": 5
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 1,
+        "child_id": 5,
+        "avg_tension": 8.4375,
+        "threshold": 6.7406250000000005,
+        "pool_size": 6
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 0,
+        "child_id": 6,
+        "avg_tension": 8.395833333333334,
+        "threshold": 6.730833333333334,
+        "pool_size": 7
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 1,
+        "child_id": 7,
+        "avg_tension": 8.4375,
+        "threshold": 6.730833333333334,
+        "pool_size": 8
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 0,
+        "child_id": 8,
+        "avg_tension": 8.375,
+        "threshold": 6.722569444444445,
+        "pool_size": 9
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 1,
+        "child_id": 9,
+        "avg_tension": 8.416666666666666,
+        "threshold": 6.722569444444445,
+        "pool_size": 10
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 2,
+        "child_id": 10,
+        "avg_tension": 8.375,
+        "threshold": 6.722569444444445,
+        "pool_size": 11
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 3,
+        "child_id": 11,
+        "avg_tension": 8.229166666666666,
+        "threshold": 6.722569444444445,
+        "pool_size": 12
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 0,
+        "child_id": 12,
+        "avg_tension": 8.375,
+        "threshold": 6.720535714285714,
+        "pool_size": 13
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 1,
+        "child_id": 13,
+        "avg_tension": 8.416666666666666,
+        "threshold": 6.720535714285714,
+        "pool_size": 14
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 2,
+        "child_id": 14,
+        "avg_tension": 8.375,
+        "threshold": 6.720535714285714,
+        "pool_size": 15
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 3,
+        "child_id": 15,
+        "avg_tension": 8.229166666666666,
+        "threshold": 6.720535714285714,
+        "pool_size": 16
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 4,
+        "child_id": 16,
+        "avg_tension": 8.3125,
+        "threshold": 6.720535714285714,
+        "pool_size": 17
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 5,
+        "child_id": 17,
+        "avg_tension": 8.4375,
+        "threshold": 6.720535714285714,
+        "pool_size": 18
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 0,
+        "child_id": 18,
+        "avg_tension": 8.354166666666666,
+        "threshold": 6.716927083333333,
+        "pool_size": 19
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 1,
+        "child_id": 19,
+        "avg_tension": 8.395833333333334,
+        "threshold": 6.716927083333333,
+        "pool_size": 20
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 2,
+        "child_id": 20,
+        "avg_tension": 8.375,
+        "threshold": 6.716927083333333,
+        "pool_size": 21
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 3,
+        "child_id": 21,
+        "avg_tension": 8.229166666666666,
+        "threshold": 6.716927083333333,
+        "pool_size": 22
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 4,
+        "child_id": 22,
+        "avg_tension": 8.3125,
+        "threshold": 6.716927083333333,
+        "pool_size": 23
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 5,
+        "child_id": 23,
+        "avg_tension": 8.4375,
+        "threshold": 6.716927083333333,
+        "pool_size": 24
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 6,
+        "child_id": 24,
+        "avg_tension": 8.375,
+        "threshold": 6.716927083333333,
+        "pool_size": 25
+      },
+      {
+        "type": "split",
+        "step": 7,
+        "parent_id": 7,
+        "child_id": 25,
+        "avg_tension": 8.375,
+        "threshold": 6.716927083333333,
+        "pool_size": 26
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 0,
+        "child_id": 26,
+        "avg_tension": 8.333333333333334,
+        "threshold": 6.712054843304843,
+        "pool_size": 27
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 1,
+        "child_id": 27,
+        "avg_tension": 8.416666666666666,
+        "threshold": 6.712054843304843,
+        "pool_size": 28
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 2,
+        "child_id": 28,
+        "avg_tension": 8.375,
+        "threshold": 6.712054843304843,
+        "pool_size": 29
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 3,
+        "child_id": 29,
+        "avg_tension": 8.229166666666666,
+        "threshold": 6.712054843304843,
+        "pool_size": 30
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 4,
+        "child_id": 30,
+        "avg_tension": 8.3125,
+        "threshold": 6.712054843304843,
+        "pool_size": 31
+      },
+      {
+        "type": "split",
+        "step": 8,
+        "parent_id": 5,
+        "child_id": 31,
+        "avg_tension": 8.416666666666666,
+        "threshold": 6.712054843304843,
+        "pool_size": 32
+      }
+    ],
+    "event_log_tail": [
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 16,
+        "child_id": 98,
+        "avg_tension": 8.354166666666666,
+        "threshold": 6.695545503161437,
+        "pool_size": 99
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 17,
+        "child_id": 99,
+        "avg_tension": 8.375,
+        "threshold": 6.695545503161437,
+        "pool_size": 100
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 18,
+        "child_id": 100,
+        "avg_tension": 8.270833333333334,
+        "threshold": 6.695545503161437,
+        "pool_size": 101
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 19,
+        "child_id": 101,
+        "avg_tension": 8.270833333333334,
+        "threshold": 6.695545503161437,
+        "pool_size": 102
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 20,
+        "child_id": 102,
+        "avg_tension": 8.25,
+        "threshold": 6.695545503161437,
+        "pool_size": 103
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 21,
+        "child_id": 103,
+        "avg_tension": 8.229166666666666,
+        "threshold": 6.695545503161437,
+        "pool_size": 104
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 22,
+        "child_id": 104,
+        "avg_tension": 8.25,
+        "threshold": 6.695545503161437,
+        "pool_size": 105
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 23,
+        "child_id": 105,
+        "avg_tension": 8.208333333333334,
+        "threshold": 6.695545503161437,
+        "pool_size": 106
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 24,
+        "child_id": 106,
+        "avg_tension": 8.3125,
+        "threshold": 6.695545503161437,
+        "pool_size": 107
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 25,
+        "child_id": 107,
+        "avg_tension": 8.291666666666666,
+        "threshold": 6.695545503161437,
+        "pool_size": 108
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 26,
+        "child_id": 108,
+        "avg_tension": 8.375,
+        "threshold": 6.695545503161437,
+        "pool_size": 109
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 27,
+        "child_id": 109,
+        "avg_tension": 8.5,
+        "threshold": 6.695545503161437,
+        "pool_size": 110
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 28,
+        "child_id": 110,
+        "avg_tension": 8.1875,
+        "threshold": 6.695545503161437,
+        "pool_size": 111
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 29,
+        "child_id": 111,
+        "avg_tension": 8.354166666666666,
+        "threshold": 6.695545503161437,
+        "pool_size": 112
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 30,
+        "child_id": 112,
+        "avg_tension": 8.3125,
+        "threshold": 6.695545503161437,
+        "pool_size": 113
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 31,
+        "child_id": 113,
+        "avg_tension": 8.1875,
+        "threshold": 6.695545503161437,
+        "pool_size": 114
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 32,
+        "child_id": 114,
+        "avg_tension": 8.270833333333334,
+        "threshold": 6.695545503161437,
+        "pool_size": 115
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 33,
+        "child_id": 115,
+        "avg_tension": 8.375,
+        "threshold": 6.695545503161437,
+        "pool_size": 116
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 34,
+        "child_id": 116,
+        "avg_tension": 8.3125,
+        "threshold": 6.695545503161437,
+        "pool_size": 117
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 35,
+        "child_id": 117,
+        "avg_tension": 8.333333333333334,
+        "threshold": 6.695545503161437,
+        "pool_size": 118
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 36,
+        "child_id": 118,
+        "avg_tension": 8.375,
+        "threshold": 6.695545503161437,
+        "pool_size": 119
+      },
+      {
+        "type": "split",
+        "step": 11,
+        "parent_id": 37,
+        "child_id": 119,
+        "avg_tension": 8.354166666666666,
+        "threshold": 6.695545503161437,
+        "pool_size": 120
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 0,
+        "child_id": 120,
+        "avg_tension": 8.145833333333334,
+        "threshold": 6.6892214900977365,
+        "pool_size": 121
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 1,
+        "child_id": 121,
+        "avg_tension": 8.333333333333334,
+        "threshold": 6.6892214900977365,
+        "pool_size": 122
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 2,
+        "child_id": 122,
+        "avg_tension": 8.291666666666666,
+        "threshold": 6.6892214900977365,
+        "pool_size": 123
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 3,
+        "child_id": 123,
+        "avg_tension": 8.166666666666666,
+        "threshold": 6.6892214900977365,
+        "pool_size": 124
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 4,
+        "child_id": 124,
+        "avg_tension": 8.25,
+        "threshold": 6.6892214900977365,
+        "pool_size": 125
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 5,
+        "child_id": 125,
+        "avg_tension": 8.375,
+        "threshold": 6.6892214900977365,
+        "pool_size": 126
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 6,
+        "child_id": 126,
+        "avg_tension": 8.3125,
+        "threshold": 6.6892214900977365,
+        "pool_size": 127
+      },
+      {
+        "type": "split",
+        "step": 12,
+        "parent_id": 7,
+        "child_id": 127,
+        "avg_tension": 8.291666666666666,
+        "threshold": 6.6892214900977365,
+        "pool_size": 128
+      }
+    ]
+  }
+}

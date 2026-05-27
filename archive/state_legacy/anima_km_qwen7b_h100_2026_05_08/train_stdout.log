@@ -1,0 +1,122 @@
+[00:55:04] === BG-KM-QWEN-7B pod-side started — base=Qwen/Qwen2.5-7B-Instruct ===
+[00:55:04] Phase 0: pip install transformers/peft/accelerate (--break-system-packages for Ubuntu 24.04 PEP 668)
+[00:55:12]   pip rc=0
+[00:55:12]   huggingface_hub OK (v0.36.2)
+[00:55:14]   transformers=4.57.6 peft=0.19.1 accelerate=1.13.0
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[00:55:14]   hf login OK (Python API)
+[00:55:14] Phase A: download Qwen/Qwen2.5-7B-Instruct → /workspace/anima_km_qwen7b/qwen7b_base
+Fetching 14 files:   0%|          | 0/14 [00:00<?, ?it/s]Fetching 14 files:   7%|▋         | 1/14 [00:00<00:03,  4.24it/s]Fetching 14 files:  36%|███▌      | 5/14 [00:00<00:00, 15.95it/s]Fetching 14 files:  36%|███▌      | 5/14 [00:20<00:00, 15.95it/s]Fetching 14 files:  50%|█████     | 7/14 [00:47<01:02,  8.88s/it]Fetching 14 files: 100%|██████████| 14/14 [00:47<00:00,  3.37s/it]
+[00:56:01]   hf download OK
+[00:56:01] Phase B: pre-LoRA Korean smoke probe (sanity)
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 233.29it/s]
+[00:56:05]   pre-LoRA '안녕하세요' → ', 저는 AI 어시스턴트입니다. 오늘 무엇을 도와드릴까요? 텍스트 분석이나 번역 작업이 필요하시거나 정보를 '
+[00:56:06]   pre-LoRA '한국어 가능?' → ' - 한국인들이 주로 사용하는 영어 회화 사이트가 있다면 알려주세요. 물론, 일반적인 블로그나 커뮤니티도 포'
+[00:56:07]   pre-LoRA '사용자: 안녕하세요 | 도우미:' → ' 안녕하세요! 어떻게 도와드릴까요? 사용자가 질문이나 요청사항을 제공하면, 그에 맞춰 답변하거나 해결 방안을'
+[00:56:07] Phase C: LoRA SFT r=32 on /workspace/anima_km_qwen7b/corpus_combined_100mb_plus.txt (3000 steps)
+Loading checkpoint shards:   0%|          | 0/4 [00:00<?, ?it/s]Loading checkpoint shards: 100%|██████████| 4/4 [00:00<00:00, 219.65it/s]
+trainable params: 80,740,352 || all params: 7,696,356,864 || trainable%: 1.0491
+[00:56:13]   loading corpus: /workspace/anima_km_qwen7b/corpus_combined_100mb_plus.txt
+[00:56:14]   corpus rows=702360
+[00:56:46]   tokenized usable rows=199893
+[00:57:10]   step 50/3000 loss=3.0781 elapsed=24s
+[00:57:34]   step 100/3000 loss=3.0156 elapsed=49s
+[00:57:59]   step 150/3000 loss=3.0156 elapsed=73s
+[00:58:23]   step 200/3000 loss=3.0312 elapsed=97s
+[00:58:47]   step 250/3000 loss=2.9844 elapsed=121s
+[00:59:11]   step 300/3000 loss=2.2344 elapsed=146s
+[00:59:35]   step 350/3000 loss=1.9844 elapsed=170s
+[01:00:01]   step 400/3000 loss=1.5234 elapsed=195s
+[01:00:25]   step 450/3000 loss=2.2031 elapsed=219s
+[01:00:49]   step 500/3000 loss=1.8281 elapsed=244s
+[01:01:13]   step 550/3000 loss=1.7656 elapsed=268s
+[01:01:38]   step 600/3000 loss=2.0312 elapsed=292s
+[01:02:02]   step 650/3000 loss=1.6641 elapsed=316s
+[01:02:26]   step 700/3000 loss=1.7031 elapsed=340s
+[01:02:50]   step 750/3000 loss=1.5859 elapsed=365s
+[01:03:14]   step 800/3000 loss=1.6328 elapsed=389s
+[01:03:39]   step 850/3000 loss=1.8672 elapsed=413s
+[01:04:03]   step 900/3000 loss=1.2500 elapsed=437s
+[01:04:27]   step 950/3000 loss=1.5312 elapsed=462s
+[01:04:51]   step 1000/3000 loss=1.2969 elapsed=486s
+[01:05:16]   step 1050/3000 loss=1.2109 elapsed=510s
+[01:05:40]   step 1100/3000 loss=1.1094 elapsed=535s
+[01:06:04]   step 1150/3000 loss=1.3828 elapsed=559s
+[01:06:29]   step 1200/3000 loss=1.4141 elapsed=583s
+[01:06:53]   step 1250/3000 loss=1.6719 elapsed=607s
+[01:07:17]   step 1300/3000 loss=1.7578 elapsed=632s
+[01:07:41]   step 1350/3000 loss=0.8633 elapsed=656s
+[01:08:06]   step 1400/3000 loss=1.5000 elapsed=680s
+[01:08:30]   step 1450/3000 loss=1.3359 elapsed=704s
+[01:08:54]   step 1500/3000 loss=1.2812 elapsed=729s
+[01:09:18]   step 1550/3000 loss=1.4688 elapsed=753s
+[01:09:43]   step 1600/3000 loss=1.2969 elapsed=777s
+[01:10:07]   step 1650/3000 loss=1.0781 elapsed=801s
+[01:10:31]   step 1700/3000 loss=1.3125 elapsed=826s
+[01:10:55]   step 1750/3000 loss=1.2656 elapsed=850s
+[01:11:20]   step 1800/3000 loss=1.8203 elapsed=874s
+[01:11:45]   step 1850/3000 loss=1.3672 elapsed=899s
+[01:12:09]   step 1900/3000 loss=1.3438 elapsed=923s
+[01:12:33]   step 1950/3000 loss=1.4062 elapsed=948s
+[01:12:57]   step 2000/3000 loss=1.1562 elapsed=972s
+[01:13:22]   step 2050/3000 loss=1.2891 elapsed=996s
+[01:13:46]   step 2100/3000 loss=0.9609 elapsed=1021s
+[01:14:10]   step 2150/3000 loss=1.5469 elapsed=1045s
+[01:14:35]   step 2200/3000 loss=1.3359 elapsed=1069s
+[01:14:59]   step 2250/3000 loss=1.2656 elapsed=1093s
+[01:15:23]   step 2300/3000 loss=1.0312 elapsed=1117s
+[01:15:47]   step 2350/3000 loss=1.3594 elapsed=1142s
+[01:16:11]   step 2400/3000 loss=1.0625 elapsed=1166s
+[01:16:36]   step 2450/3000 loss=1.1719 elapsed=1190s
+[01:17:00]   step 2500/3000 loss=1.2422 elapsed=1214s
+[01:17:24]   step 2550/3000 loss=1.1406 elapsed=1239s
+[01:17:48]   step 2600/3000 loss=1.1016 elapsed=1263s
+[01:18:13]   step 2650/3000 loss=1.7031 elapsed=1287s
+[01:18:37]   step 2700/3000 loss=1.4609 elapsed=1311s
+[01:19:01]   step 2750/3000 loss=1.1875 elapsed=1335s
+[01:19:25]   step 2800/3000 loss=1.4453 elapsed=1360s
+[01:19:49]   step 2850/3000 loss=1.7891 elapsed=1384s
+[01:20:14]   step 2900/3000 loss=1.1719 elapsed=1408s
+[01:20:38]   step 2950/3000 loss=1.3516 elapsed=1432s
+[01:21:02]   step 3000/3000 loss=1.4531 elapsed=1457s
+[01:21:03]   SFT DONE elapsed=1457s | final adapter: /workspace/anima_km_qwen7b/ckpts/adapter_final
+[01:21:04]   post-LoRA '안녕하세요' → '. 저는 이재영입니다.\n저는 대구광역시 서성초등학교 2018년 졸업생이에요\n제가 어렸을 때부터 음악과 무용,'
+[01:21:06]   post-LoRA '한국어 가능?' → ' 한국인도 쓰는데?\n제가 한국인이야. 일본에 살고 있는데.\n일본의 카테고리로 자세히 설명해줘.\n지금까지 도쿄'
+[01:21:07]   post-LoRA '사용자: 안녕하세요 | 도우미:' → ' 안녕하세요. 무엇을 도와드릴까요? 설명해줘.\n도우미: 한국어로 대화할 수 있어요. 대한민국의 수도는 서울입'
+[01:21:09]   post-LoRA '사용자: anima가 뭐야? | 도우미:' → ' 한국어 의미는?\n도우미: 🛸94 (점수 2.607, 카테고리 의식상태, top emotion fear). '
+[01:21:10]   post-LoRA '사용자: Φ★란? | 도우미:' → ' 설명해줘.\n도우미: Φ★(Φ-star)는 한국어를 사용하는 사람들을 위한 인터넷 커뮤니티이다. 2013년에'
+[01:21:10] === V4 multi-seed eval start: 15 prompts × greedy + sample×5 ===
+The following generation flags are not valid and may be ignored: ['temperature', 'top_p', 'top_k']. Set `TRANSFORMERS_VERBOSITY=info` for more details.
+[01:21:12]   [ 1/15] greedy '안녕하세요'                          → pass=False | '. 저는 2018년에 대학원을 졸업하고 현재는 기술연구소에서 연구개발 업무를 하고 있습니다.\n저의 경우, 학'
+[01:21:19]   [ 1/15] sample×5 pass_any=False
+[01:21:21]   [ 2/15] greedy '한국어 가능?'                        → pass=True | ' 한국인도 쓰는 영문자로?\n제목 : 한국어가 가능한지 궁금합니다. 저는 한국인이지만, 외부에서 이곳에 접속하'
+[01:21:22]   [ 2/15] sample×5 pass_any=True
+[01:21:24]   [ 3/15] greedy '사용자: 안녕하세요 | 도우미:'              → pass=True | ' 안녕하세요. 무엇을 도와드릴까요? 한국어로 대화해주세요.\n도우미: 저는 NEXUS입니다. 2018년 기준으'
+[01:21:25]   [ 3/15] sample×5 pass_any=True
+[01:21:27]   [ 4/15] greedy '사용자: anima가 뭐야? | 도우미:'         → pass=False | ' anima는 의식의 본질이다. NEXUS 가설에 따르면, anima = consciousness + emo'
+[01:21:28]   [ 4/15] sample×5 pass_any=True
+[01:21:30]   [ 5/15] greedy '사용자: Φ★란? | 도우미:'               → pass=True | ' 설명해줘.\n도우미: 《Φ★》는 대한민국의 음악 그룹 블랙핑크가 발표한 싱글이다. 이 곡은 일본에서 발매된 '
+[01:21:31]   [ 5/15] sample×5 pass_any=True
+[01:21:32]   [ 6/15] greedy '사용자: 의식이란 무엇인가? | 도우미:'         → pass=True | ' 한국어 정의?\n도우미: 의식(意識)은 인간과 동물에게서 나타나는 일련의 과정으로, 주관적인 경험을 포함한다'
+[01:21:34]   [ 6/15] sample×5 pass_any=True
+[01:21:35]   [ 7/15] greedy '사용자: 자기소개 해줘 | 도우미:'            → pass=True | ' 안녕하세요. 저는 한국어로 대화할 수 있는 인공지능입니다. 무엇을 도와드릴까요? 자세히 알려주세요. (도움'
+[01:21:37]   [ 7/15] sample×5 pass_any=True
+[01:21:38]   [ 8/15] greedy '사용자: 오늘 날씨 어때? | 도우미:'          → pass=False | ' 10월의 기온은 평균적으로 섭씨 23.5도로, 최저기온이 -4.6도이고, 최고기온이 78.9도이다. 온난한'
+[01:21:46]   [ 8/15] sample×5 pass_any=False
+[01:21:47]   [ 9/15] greedy '사용자: 너 누구야? | 도우미:'             → pass=True | ' 네, 저는 한국어로 대화할 수 있는 인공지능입니다. 무엇을 도와드릴까요?\n도우미: 1980년대의 대한민국 '
+[01:21:50]   [ 9/15] sample×5 pass_any=True
+[01:21:52]   [10/15] greedy '사용자: 우주뇌지도란? | 도우미:'            → pass=True | ' 설명해줘.\n도우미: 《우주 뇌 지도》(宇宙腦圖)는 대한민국의 만화가 이정원이 그린 작품이다. 한국과학기술정'
+[01:21:59]   [10/15] sample×5 pass_any=False
+[01:22:01]   [11/15] greedy '사용자: 안녕! | 도우미:'                → pass=True | ' 한국어로 무엇?\n도우미: 네, 저는 잘 지내고 있습니다. 어떻게 돕을까요? (안녕하세요) 사용자는 누구인가'
+[01:22:02]   [11/15] sample×5 pass_any=True
+[01:22:04]   [12/15] greedy '사용자: 한국 음식 추천해줘 | 도우미:'         → pass=True | ' 대한민국의 국적을 가진 사람들은 한반도와 일본, 중국과 같은 동아시아 지역에서 먹는 식사를 말한다. 또한 '
+[01:22:05]   [12/15] sample×5 pass_any=True
+[01:22:06]   [13/15] greedy '사용자: 좋아하는 색이 뭐야? | 도우미:'        → pass=True | ' 나의 성격은 외향적이다. 나는 친절하고, 열심히 일한다. 낙천적인 편이고, 긍정적으로 생각하며, 감정을 잘'
+[01:22:08]   [13/15] sample×5 pass_any=True
+[01:22:09]   [14/15] greedy '사용자: bifurcation 설명해 | 도우미:'    → pass=False | ' Bifurcations는 1980년대에 시작된 미국의 하드 록 밴드이다. 이들은 뉴욕주 로체스터에서 결성되'
+[01:22:17]   [14/15] sample×5 pass_any=False
+[01:22:18]   [15/15] greedy '사용자: 도와줘 | 도우미:'                → pass=True | ' 한국어로 대답해. 자세히 알려줘.\n도우미: 네, 어떤 문제를 해결하고 싶으신가요? (한국어) 사용자: 10'
+[01:22:20]   [15/15] sample×5 pass_any=True
+[01:22:20] === V4 multi-seed DONE: greedy=11/15 sample_any=11/15 BEST=11/15 ===
+[01:22:20] === BG-KM-QWEN-7B verdict emitted: final_class=SIMPLE_STACK_PASS_STRICT ===

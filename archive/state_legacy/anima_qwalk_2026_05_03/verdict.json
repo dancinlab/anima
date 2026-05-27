@@ -1,0 +1,27 @@
+{
+  "timestamp": "2026-05-04T07:04:43",
+  "wall_seconds": 0.414,
+  "seed": 20260503,
+  "falsifier_id": "F-QWALK-1",
+  "threshold_pct": 5.0,
+  "eeg16_rw_acc": 1.0,
+  "eeg16_qw_acc": 0.4375,
+  "eeg16_delta_pct": -56.25,
+  "sbm_rw_acc": 0.95,
+  "sbm_qw_acc": 0.7333333333333334,
+  "sbm_delta_pct": -21.666666666666657,
+  "decision": "F-QWALK-1 FAIL",
+  "notes": "Primary falsifier evaluated on SBM (clean ground-truth blocks). EEG16 substrate reported alongside as an exploratory anima-domain check with synthetic PLV weights \u2014 not a held-out empirical EEG dataset.",
+  "summary_metrics": {
+    "eeg16": {
+      "kl_qw_vs_rw": 0.01700664043339553,
+      "js_div": 0.004136533202860348,
+      "tvd": 0.06908043259096644
+    },
+    "sbm_3block": {
+      "kl_qw_vs_rw": 0.03835666362812258,
+      "js_div": 0.009299188761978536,
+      "tvd": 0.11175298804780871
+    }
+  }
+}

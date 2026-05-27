@@ -1,0 +1,27 @@
+[s180] device=cuda d=768 L=12 steps=5000
+/usr/local/lib/python3.11/dist-packages/torch/nn/modules/transformer.py:307: UserWarning: enable_nested_tensor is True, but self.use_nested_tensor is False because encoder_layer.norm_first was True
+  warnings.warn(f"enable_nested_tensor is True, but self.use_nested_tensor is False because {why_not_sparsity_fast_path}")
+[s180] n_params=87170348
+[step     0] L=4.3294 L_a=3.8544 L_m=1.5633 L_r=0.0597 acc_a=0.016 acc_m=0.234 r_std=0.090
+[step   250] L=0.4736 L_a=0.4627 L_m=0.0355 L_r=0.0017 acc_a=0.812 acc_m=0.992 r_std=0.174
+[step   500] L=0.1545 L_a=0.1512 L_m=0.0110 L_r=0.0000 acc_a=0.945 acc_m=1.000 r_std=0.192
+[step   750] L=0.0691 L_a=0.0680 L_m=0.0036 L_r=0.0000 acc_a=0.977 acc_m=1.000 r_std=0.224
+[step  1000] L=0.1481 L_a=0.1471 L_m=0.0036 L_r=0.0000 acc_a=0.945 acc_m=1.000 r_std=0.211
+[step  1250] L=0.0994 L_a=0.0969 L_m=0.0085 L_r=0.0000 acc_a=0.961 acc_m=0.992 r_std=0.217
+[step  1500] L=0.0687 L_a=0.0681 L_m=0.0021 L_r=0.0000 acc_a=0.977 acc_m=1.000 r_std=0.215
+[step  1750] L=0.0529 L_a=0.0524 L_m=0.0018 L_r=0.0000 acc_a=0.977 acc_m=1.000 r_std=0.212
+[step  2000] L=0.0677 L_a=0.0664 L_m=0.0043 L_r=0.0000 acc_a=0.984 acc_m=1.000 r_std=0.222
+[step  2250] L=0.0492 L_a=0.0492 L_m=0.0003 L_r=0.0000 acc_a=0.969 acc_m=1.000 r_std=0.221
+[step  2500] L=0.0225 L_a=0.0224 L_m=0.0002 L_r=0.0000 acc_a=0.977 acc_m=1.000 r_std=0.225
+[step  2750] L=0.0343 L_a=0.0343 L_m=0.0002 L_r=0.0000 acc_a=0.977 acc_m=1.000 r_std=0.225
+[step  3000] L=0.0368 L_a=0.0367 L_m=0.0002 L_r=0.0000 acc_a=0.984 acc_m=1.000 r_std=0.214
+[step  3250] L=0.0143 L_a=0.0143 L_m=0.0001 L_r=0.0000 acc_a=1.000 acc_m=1.000 r_std=0.215
+[step  3500] L=0.0073 L_a=0.0073 L_m=0.0001 L_r=0.0000 acc_a=1.000 acc_m=1.000 r_std=0.208
+[step  3750] L=0.0387 L_a=0.0387 L_m=0.0001 L_r=0.0000 acc_a=0.992 acc_m=1.000 r_std=0.211
+[step  4000] L=0.0009 L_a=0.0008 L_m=0.0001 L_r=0.0000 acc_a=1.000 acc_m=1.000 r_std=0.217
+[step  4250] L=0.0083 L_a=0.0083 L_m=0.0001 L_r=0.0000 acc_a=0.992 acc_m=1.000 r_std=0.216
+[step  4500] L=0.0156 L_a=0.0156 L_m=0.0001 L_r=0.0000 acc_a=0.992 acc_m=1.000 r_std=0.209
+[step  4750] L=0.0013 L_a=0.0013 L_m=0.0001 L_r=0.0000 acc_a=1.000 acc_m=1.000 r_std=0.212
+[step  4999] L=0.0069 L_a=0.0069 L_m=0.0001 L_r=0.0000 acc_a=0.992 acc_m=1.000 r_std=0.211
+[s180] saved ckpt to /workspace/s180r/out/ckpt_s180_adapter_v3.pt
+[s180] DONE wall=201.03s eval_acc_anchor=0.9940 eval_acc_mod=1.0000 → /workspace/s180r/out/result.json

@@ -1,0 +1,50 @@
+========================================================================
+qmirror cond.4 NIST SP 800-22 tier-1+ (clean reference impl)
+  N=125000 bytes (1000000 bits)  alpha=0.01  threshold=6/7
+========================================================================
+
+[gen] HMAC-DRBG legacy (IonQ Forte 1 4096-bit quantum seed) ...
+  n=125000 sha256=2aa7b6cd85b7c27c...
+
+[gen] ANU live SKIPPED (no anu_bytes provided / file missing)
+
+[gen] MOCK qmirror LCG (control, expected to FAIL) ...
+  n=125000 sha256=9f59d112b2db44e4...
+
+========================================================================
+Running 7 tier-1+ tests on each stream
+========================================================================
+
+--- hmac_drbg_legacy ---  n_bits=1000000
+  monobit                  p=0.711382 PASS (0.0s)
+  block_frequency          p=0.375027 PASS (0.0s)
+  runs                     p=0.975958 PASS (0.0s)
+  longest_run              p=0.991201 PASS (0.3s)
+  dft                      p=0.440804 PASS (0.0s)
+  cumulative_sums          p=0.771002 PASS (21.2s)
+  approximate_entropy      p=0.738906 PASS (0.8s)
+  -> PASS (7/7)
+
+--- qmirror_mock_lcg ---  n_bits=1000000
+  monobit                  p=0.996808 PASS (0.0s)
+  block_frequency          p=1.000000 PASS (0.0s)
+  runs                     p=1.000000 PASS (0.0s)
+  longest_run              p=0.000000 FAIL (0.1s)
+  dft                      p=0.000000 FAIL (0.0s)
+  cumulative_sums          p=1.000000 PASS (12.2s)
+  approximate_entropy      p=0.000000 FAIL (1.0s)
+  -> FAIL (4/7)
+
+========================================================================
+SUMMARY
+========================================================================
+  hmac_drbg_legacy         PASS 7/7
+  qmirror_mock_lcg         FAIL 4/7
+
+ANU tier used        : T1.a-fallback (HMAC-DRBG seeded by IonQ Forte 1; ANU unavailable)
+production streams   : ['hmac_drbg_legacy']
+  passing            : ['hmac_drbg_legacy']
+cond.4 verdict       : PASS
+
+results: /Users/ghost/core/anima/state/nexus_qmirror_nist_2026_05_03/results_tier1plus.json
+verdict: /Users/ghost/core/anima/state/nexus_qmirror_nist_2026_05_03/verdict.json

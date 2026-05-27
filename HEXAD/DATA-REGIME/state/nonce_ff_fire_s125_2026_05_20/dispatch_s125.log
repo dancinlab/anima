@@ -1,0 +1,69 @@
+=== §125 NONCE-FF dispatch start 2026-05-19T16:06:22Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA A100 80GB PCIe
+[create] resp: {"errors":[{"message":"There are no longer any instances available with the requested specifications. Please refresh and try again.","path":["podFindAndDeployOnDemand"],"extensions":{"code":"SUPPLY_CONSTRAINT","userId":"user_3BLIYhoMm3ticiR5xIcEIzZCVWo"}}],"data":{"podFindAndDeployOnDemand":null}}
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"ix1sskvwknoijy","machineId":"qy401qgvhd7t"}}}
+[create] pod ix1sskvwknoijy on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 4: 103.207.149.126:16690 — port mapped AND handshake OK
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, --s1-n 777000)
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == §107 design corpus byte-identical
+[train] §125 NONCE-FF d768·12L·283M from-scratch seed 1337, 3000 steps
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+TRAIN_PID 640
+[train] done iter 1
+[eval] §125 §96-Q2 verdict eval
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.126]:16690' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present locally — SAVE_POD=0, pod will terminate
+32aab3ac31674c7f0e07f0cc4d8341ec23f3099ae4a68c06b256c6fda1837dc9  /Users/ghost/core/anima/state/nonce_ff_fire_s125_2026_05_20/ckpt_s125.pt
+VERDICT= S11B_LIKE_DEGENERATE  byte_acc= 0.0005  psi_responsive= False
+=== §125 NONCE-FF pipeline complete 2026-05-19T16:33:15Z ===
+state/nonce_ff_fire_s125_2026_05_20/dispatch_s125_runpod.sh: line 198:  2728 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S125_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s — terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod ix1sskvwknoijy (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[{"id":"88xlldoftmoy5e"}]}}}
+=== §125 NONCE-FF dispatch end 2026-05-19T16:33:20Z rc=0 ===
+ardown] myself.pods = {"data":{"myself":{"pods":[{"id":"88xlldoftmoy5e"}]}}}
+=== §125 NONCE-FF dispatch end 2026-05-19T16:33:20Z rc=0 ===

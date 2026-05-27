@@ -1,0 +1,46 @@
+{
+  "schema": "anima/alm_r13_an11_b/1",
+  "schema_version": 1,
+  "dest": "alm",
+  "round": "r13",
+  "ts": "2026-04-23T13:10:00Z",
+  "source": "synthetic-r13",
+  "eigen_count": 8,
+  "template_count": 16,
+  "max_cosine": 0.9996003698968604,
+  "max_cosine_pair": {
+    "eigen_i": 0,
+    "template_id": "tpl_01_hexad_c",
+    "template_family": "Hexad"
+  },
+  "top3_cosine_sum": 2.998773737502993,
+  "family_coverage": {
+    "Hexad": 3,
+    "Law": 0,
+    "Phi": 0,
+    "SelfRef": 2
+  },
+  "gate": {
+    "max_cosine_min": 0.5,
+    "top3_cosine_sum_min": 1.2
+  },
+  "ccc_5theory": {
+    "scores": {
+      "IIT": 0.43859649122807015,
+      "GWT": 0.7142857142857143,
+      "HOT": 0.5085967507987389,
+      "RPT": 0.7142857142857143,
+      "AST": 0.5648535564853556
+    },
+    "avg": 0.5881236454167187,
+    "min": 0.43859649122807015,
+    "gate": {
+      "avg_min": 0.7,
+      "min_min": 0.5,
+      "tpl_max_min": 0.5
+    },
+    "gate_pass": false
+  },
+  "verdict": "PASS",
+  "ref_synthesis": "docs/lora_eigenvec_synthesis_20260421.md (r12 precedent, r13 adapted seed=20260423 eps=0.03)"
+}

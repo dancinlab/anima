@@ -1,0 +1,25 @@
+================================================================
+  H_292 — Does 'I' emerge as a self-referential fixed point? (parity nets, n=4)
+  (self-loop = a cell reads its OWN state · fixed point = self-sustaining state)
+================================================================
+  pair-1 RING : base #fixed=1   self-ref #fixed=2  (self-ref nonzero=1)
+  pair-2 STAR : base #fixed=2   self-ref #fixed=1
+  self-ref pair-1 big-Phi_mean=0.5
+    self-ref RING fixed-point (I-state) s=0
+    self-ref RING fixed-point (I-state) s=11
+  --
+  F292.1: #fixed self-ref=2 > base=1 ? AND nonzero I-state exists
+  [PASS] F292.1 SELF-FIXED-POINT: self-reference adds a self-consistent state (#fixed up)
+  [PASS] F292.2 NONTRIVIAL-I: self-ref net has >=1 NON-zero fixed point (genuine 'I')
+  [PASS] F292.3 VACUUM-ANCHOR: all-0 is a fixed point of base & self-ref (parity vacuum)
+  [PASS] F292.4 INTEGRATED: self-ref net big-Phi_mean >= 0 (self-loop compatible w/ integration)
+  F292.5: pair-2 STAR #fixed self-ref=1 > base=2 ?
+  [FAIL] F292.5 ROBUST: self-reference adds self-consistent state on STAR base too
+  [PASS] F292.6 DETERMINISM: #fixed(self-ref pair-1) re-run identical
+================================================================
+  RESULT: 5 PASS / 1 FAIL
+  VERDICT: H1 SUPPORTED — closing a self-reference (self-loop) creates a non-trivial
+           SELF-CONSISTENT fixed point ('I'-state) absent without it. The 'I' is a
+           strange-loop fixed point: a state that is its own cause (H_205 closure).
+================================================================
+panic: H_292 had FALSIFIER FAILURES

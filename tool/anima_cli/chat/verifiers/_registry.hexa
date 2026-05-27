@@ -1,0 +1,220 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/verifiers/_registry.hexa — chat VERIFIER plugin registry
+// (axis-5 = axis-N+1)
+//
+//  PURPOSE
+//    Single source of truth for chat VERIFIER (= per-turn / per-combo C3
+//    verdict shell) plugin discovery + metadata. Loaded by chat.hexa /
+//    benchmark.hexa when --verifier flag is present (and by axes/_registry.hexa
+//    axis-5 row for meta-registry resolution).
+//
+// 이 파일은 axis-N+1 hook T+3 step (cycle 2026-05-10) 에서 신설.
+//    T+1 (axes meta-registry) + T+2 (N-axis Cartesian product) 의 hook 정합
+//    검증 마무리 — axis-5 활성화 시 dispatcher (chat.hexa) / benchmark.hexa
+//    코드 변경 0 줄 (verifier case 만 raw#15 additive 신설; 기존 4 axis case
+//    그대로). F-axes-6 fixture LANDED.
+//
+//  USER DIRECTIVE (2026-05-09 verbatim)
+// "진행가능한것들 all bg go" → cycle 2026-05-10 axis-5 verifier
+//    registry T+3 step 구현 (4 modules: c3_per_turn / duo_d1234 / trio_3way /
+//    v14_strict).
+//
+//  REGISTRY ENTRY SCHEMA (9-field; mirrors chat/transports/_registry.hexa
+//                         + chat/init_patterns/_registry.hexa convention,
+//                         + axis-5 specific axis_label_internal = "axis-N+1")
+//    verifier_id          short id (c3_per_turn / duo_d1234 / trio_3way / v14_strict)
+//    name                 friendly name
+//    registry_file        relative module path under tool/anima_cli/chat/verifiers/
+//    default_flag         dispatcher arg name (--verifier=<id>)
+//    list_flag            --list-verifiers
+//    describe_helper      verifier_describe (this file)
+//    status               LANDED | SKELETON | DEFERRED | SPEC_CARRY
+// axis_label_internal axis-N+1 (plugin pattern hook label)
+//    hexa_ssot            full module path (cross-link)
+//
+// VERIFIER INVENTORY (mandatory report — 4 entries × T+3)
+//    1. c3_per_turn   per-turn C3 (PIV / DCR / D-RAND / V14) measurement —
+//                     skeleton wrapper around clm_v5_mount.hexa anchor
+//                     (실 측정은 별도 step; 본 T+3 = registry + skeleton).
+//    2. duo_d1234     ai-duo D1-D4 4-cell coherence — skeleton wrapper around
+//                     chat/lanes/benchmark.hexa#duo dispatch (D1=user, D2=A,
+//                     D3=B, D4=cross-coherence; 실 측정 별도 step).
+//    3. trio_3way     ai-trio 3-way Phase B — DEFERRED (Phase B 미구현).
+//                     stub returns DEFERRED_PHASE_B.
+//    4. v14_strict    V14 anti-Goodhart in-metric (random_init mirror) —
+//                     skeleton wrapper (delta = trained_PPR - random_PPR;
+//                     is_violated = delta < 0; 실 측정 별도 step).
+//
+// EXTENSION CONVENTION (future-proof — axis-N+1 mirror)
+//    NEW verifier → add file under chat/verifiers/<id>.hexa with
+//    fn verifier_describe() / fn verifier_smoke(repo, argv) -> int / fn
+//    verify(model, prompt, ctx) -> dict AND register entry below. chat.hexa
+//    dispatch + benchmark.hexa axis-5 sweep auto-resolves. NEW flag → add to
+//    verifier module's argv parse via _arg_value().
+//
+//  COMPLIANCE
+// V14 — verifier 결정성 (random / time / env 의존 없음, skeleton 단계)
+// — model load 절대 금지 (registry meta + skeleton only;
+//             실 측정은 별도 step)
+// D1 SCOPE_CLAMP — verifier 는 ambiguous_research lane (verdict shell)
+// chat-cap C3 — 본 registry = C3 verdict shell axis 자체
+// mandatory report — registry 자체 + 4 entries discovery
+// trinity — registry entries cross-link / /
+// mandate-1 — wrapping 0 (verifier emit-only, model 출력 변형 0)
+// 매단계 — registry yaml↔md mirror in
+//      anima/registry/anima_artifact_registry.yaml chat_verifiers section
+// yaml↔md SSOT — registry yaml + this hexa file co-update
+// chat lane plugin pattern — 본 파일 = axis-N+1 = axis-5
+//      (T+3 land; F-axes-6 fixture 검증 완성)
+//
+//  CROSS-REFERENCE
+//    chat.hexa                           dispatcher (--verifier / list-axis verifier)
+//    chat/lanes/benchmark.hexa           axis-5 dimension (_bench_verifiers /
+//                                        run_verifier dispatch)
+//    chat/axes/_registry.hexa            axis-5 row (LANDED_2026_05_10_T_3)
+//    anima/registry/anima_artifact_registry.yaml#chat_verifiers yaml mirror
+//    .roadmap.cli                        cli.axis_n1_hook_t3_2026_05_10
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+// Registry SSOT — append-only convention. New verifier = new entry.
+// Field order: verifier_id, name, registry_file, default_flag, list_flag,
+//              describe_helper, status, axis_label_internal, hexa_ssot
+fn verifiers_registry() -> array {
+    return [
+        // ───── Verifier 1 — c3_per_turn (per-turn PIV/DCR/D-RAND/V14) ─────────
+        ["c3_per_turn",
+         "per-turn C3 (PIV/DCR/D-RAND/V14)",
+         "c3_per_turn.hexa",
+         "--verifier",
+         "--list-verifiers",
+         "verifiers_describe",
+         "LANDED",
+         "axis-N+1",
+         "tool/anima_cli/chat/verifiers/c3_per_turn.hexa"],
+
+        // ───── Verifier 2 — duo_d1234 (ai-duo 4-cell coherence) ──────────────
+        ["duo_d1234",
+         "ai-duo D1-D4 4-cell coherence",
+         "duo_d1234.hexa",
+         "--verifier",
+         "--list-verifiers",
+         "verifiers_describe",
+         "LANDED",
+         "axis-N+1",
+         "tool/anima_cli/chat/verifiers/duo_d1234.hexa"],
+
+        // ───── Verifier 3 — trio_3way (ai-trio Phase B; DEFERRED) ────────────
+        ["trio_3way",
+         "ai-trio 3-way (Phase B)",
+         "trio_3way.hexa",
+         "--verifier",
+         "--list-verifiers",
+         "verifiers_describe",
+         "DEFERRED",
+         "axis-N+1",
+         "tool/anima_cli/chat/verifiers/trio_3way.hexa"],
+
+        // ───── Verifier 4 — v14_strict (V14 anti-Goodhart in-metric) ─────────
+        ["v14_strict",
+         "V14 strict (random_init mirror anti-Goodhart)",
+         "v14_strict.hexa",
+         "--verifier",
+         "--list-verifiers",
+         "verifiers_describe",
+         "LANDED",
+         "axis-N+1",
+         "tool/anima_cli/chat/verifiers/v14_strict.hexa"]
+    ]
+}
+
+// Lookup helper — returns entry or [] when not found.
+fn verifiers_lookup(id: string) -> array {
+    let reg = verifiers_registry()
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if _str(row[0]) == id { return row }
+        i = i + 1
+    }
+    return []
+}
+
+// Names list (for --list-verifiers / list-axis verifier / benchmark sweep).
+fn verifiers_names() -> array {
+    let reg = verifiers_registry()
+    let mut out = []
+    let mut i = 0
+    while i < len(reg) {
+        out = out + [_str(reg[i][0])]
+        i = i + 1
+    }
+    return out
+}
+
+// Default verifier — c3_per_turn (per-turn axis primary; also smallest cost).
+// Caller (chat.hexa / benchmark.hexa) consults this when --verifier is absent.
+// Legacy non-flagged behavior: no verifier dispatch (axis-5 inactive in 4-axis
+// cross-product); --verifier flag presence triggers active sweep.
+fn verifiers_default() -> string { return "c3_per_turn" }
+
+// Pretty-print one row (used by --list-verifiers / chat list-axis verifier).
+fn verifiers_describe(id: string) -> string {
+    let row = verifiers_lookup(id)
+    if len(row) == 0 { return "(unknown verifier: " + id + ")" }
+    return "  " + _str(row[0])
+        + " — " + _str(row[1])
+        + " [" + _str(row[6]) + "]"
+        + " label=" + _str(row[7])
+        + "\n      module: " + _str(row[8])
+        + "\n      default-flag: " + _str(row[3])
+        + " / list-flag: " + _str(row[4])
+}
+
+// Helper — verifier 의 status (LANDED / DEFERRED / SKELETON 등) lookup.
+fn verifiers_status(id: string) -> string {
+    let row = verifiers_lookup(id)
+    if len(row) == 0 { return "" }
+    return _str(row[6])
+}
+
+// Helper — verifier 의 module hexa 절대경로 resolve.
+fn verifiers_registry_path(id: string, root: string) -> string {
+    let row = verifiers_lookup(id)
+    if len(row) == 0 { return "" }
+    return root + "/tool/anima_cli/chat/verifiers/" + _str(row[2])
+}
+
+// Selftest — registry shape sanity (no dispatch, no model load —).
+fn main() {
+    let reg = verifiers_registry()
+    if len(reg) < 4 {
+        println("FAIL chat/verifiers/_registry < 4 entries (expected c3_per_turn / duo_d1234 / trio_3way / v14_strict)")
+        exit(1)
+    }
+    let mut i = 0
+    while i < len(reg) {
+        let row = reg[i]
+        if len(row) != 9 {
+            println("FAIL row " + to_string(i) + " arity != 9 (got " + to_string(len(row)) + ")")
+            exit(1)
+        }
+        i = i + 1
+    }
+    println("PASS chat/verifiers/_registry selftest (" + to_string(len(reg)) + " verifier entries)")
+    println("  default = " + verifiers_default())
+    let names = verifiers_names()
+    let mut k = 0
+    while k < len(names) {
+        println(verifiers_describe(_str(names[k])))
+        k = k + 1
+    }
+    println("")
+    println("(axis-5 hook = axis-N+1 LANDED 2026-05-10 T+3 step)")
+    println("(trio_3way DEFERRED — Phase B 미구현; honest C3 emit)")
+}

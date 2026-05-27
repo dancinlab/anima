@@ -1,0 +1,134 @@
+// UNIVERSE/state/h304_rule110_mean_phi_n_trajectory_2026_05_26/run_h304.hexa
+//
+//   H_304 — rule 110 mean-Phi N-trajectory recovery (H_303 alt outlier-low correction)
+//
+//   QUESTION
+//     H_303 (cycle#41) found rule 110 alt-state st=21 is outlier-low at n=5
+//     cap=4 (17.694 < p25=20.88 of distribution). H_298's reported rule 110
+//     N-trajectory (7.66 → 17.7 → 9.5) is thus likely under-stated. What is
+//     the TRUE mean-Phi N-trajectory?
+//
+//   HYPOTHESES
+//     H1 RULE-110-ALT-UNDERSTATES: mean(N) > alt(N) by >=25% at every N
+//     H2 MEAN-N-TRAJECTORY: mean-trajectory shape differs from alt
+//     H3 H301-MEAN-AT-N5-CITE: H_301 mean=27.07 is sanity-checked
+//
+//   METHOD
+//     - n=4 cap=3 (16 states, n-1 near-exact) full ensemble
+//     - n=5 cap=4 (32 states) ensemble — direct measurement here, also cross
+//       with H_301 mean=27.07
+//     - n=6 cap=3 (64 states, lower bound, tractable) full ensemble
+//     - alt-state spot: n=4 st=5, n=5 st=21, n=6 st=21
+//
+//   PRE-REGISTERED FALSIFIERS (frozen 2026-05-26)
+//     F304.1 N4-ALT-VS-MEAN-UNDERSTATES: mean(n=4) > alt(n=4) by >=25%
+//     F304.2 N6-ALT-VS-MEAN-UNDERSTATES: mean(n=6) > alt(n=6) by >=25%
+//     F304.3 MEAN-TRAJECTORY-NOT-DIPPING: mean(n=5) > mean(n=4) AND
+//                                          mean(n=5) > mean(n=6) is the
+//                                          alt-pattern; mean version may
+//                                          REMOVE the n=6 dip (PASS = dip removed)
+//     F304.4 H301-MEAN-CITE: this run's n=5 mean cap=4 matches H_301 (~27.07)
+//     F304.5 ALT-RECOMPUTE: alt-state values cross-confirm
+//     F304.6 BOUND
+//
+//   deterministic · hexa-only · $0 mac-local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/tmp/wt-c42/HEXAD/IIT4/lib/iit4_eca.hexa"
+import "stdlib/consciousness/iit4_bounded.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+fn close_to(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.5 }
+    return d < 0.5
+}
+
+// ensemble mean Phi over all 2^n states at given cap, for given rule
+fn ensemble_mean(rule: int, n: int, cap: int) -> float {
+    let tpm = eca_tpm(rule, n)
+    let n_states = iit4_pow2(n)
+    let mut total = 0.0
+    let mut st = 0
+    while st < n_states {
+        let r = big_phi_bounded(tpm, n, st, cap)
+        total = total + r[0]
+        st = st + 1
+    }
+    return total / to_float(n_states)
+}
+
+fn phi_b(rule: int, n: int, st: int, cap: int) -> float {
+    let r = big_phi_bounded(eca_tpm(rule, n), n, st, cap)
+    return r[0]
+}
+
+fn main() {
+    println("================================================================")
+    println("  H_304 — rule 110 mean-Phi N-trajectory (alt-outlier correction)")
+    println("================================================================")
+
+    // ── n=4 cap=3 (16 states, n-1 near-exact) ───────────────────────────
+    println("  Computing n=4 cap=3 ensemble (16 states)...")
+    let m4 = ensemble_mean(110, 4, 3)
+    let alt4 = phi_b(110, 4, 5, 3)
+    println("    rule 110 n=4 cap=3: mean = " + str(m4) + " · alt(st=5) = " + str(alt4))
+
+    // ── n=5 cap=4 (32 states, matches H_301 cap) ────────────────────────
+    println("  Computing n=5 cap=4 ensemble (32 states)...")
+    let m5 = ensemble_mean(110, 5, 4)
+    let alt5 = phi_b(110, 5, 21, 4)
+    println("    rule 110 n=5 cap=4: mean = " + str(m5) + " · alt(st=21) = " + str(alt5))
+
+    // ── n=6 cap=3 (64 states, lower bound, tractable) ───────────────────
+    println("  Computing n=6 cap=3 ensemble (64 states)... (may take ~5-10min)")
+    let m6 = ensemble_mean(110, 6, 3)
+    let alt6 = phi_b(110, 6, 21, 3)
+    println("    rule 110 n=6 cap=3: mean = " + str(m6) + " · alt(st=21) = " + str(alt6))
+
+    println("  ────────────── trajectory summary ──────────────")
+    println("    rule 110 MEAN-Phi trajectory: n=4(cap=3)=" + str(m4) + " · n=5(cap=4)=" + str(m5) + " · n=6(cap=3)=" + str(m6))
+    println("    rule 110 ALT-Phi trajectory:  n=4(cap=3, st=5)=" + str(alt4) + " · n=5(cap=4, st=21)=" + str(alt5) + " · n=6(cap=3, st=21)=" + str(alt6))
+
+    // ── F304.1 N4-ALT-VS-MEAN-UNDERSTATES ───────────────────────────────
+    let understates_n4 = m4 >= alt4 * 1.25
+    check("F304.1 N4-ALT-VS-MEAN: mean(n=4) >= alt(n=4) * 1.25 (≥25% understate)", understates_n4)
+
+    // ── F304.2 N6-ALT-VS-MEAN-UNDERSTATES ───────────────────────────────
+    let understates_n6 = m6 >= alt6 * 1.25
+    check("F304.2 N6-ALT-VS-MEAN: mean(n=6) >= alt(n=6) * 1.25", understates_n6)
+
+    // ── F304.3 MEAN-TRAJECTORY-NOT-DIPPING ──────────────────────────────
+    // alt pattern (H_298 cap=4): 7.66 → 17.7 → 9.5 (DIPS at n=6)
+    // mean PASS = no dip = m6 >= m5 (mean monotone or plateau)
+    let no_dip = m6 >= m5
+    check("F304.3 MEAN-TRAJECTORY-NOT-DIPPING: mean(n=6) >= mean(n=5) (no dip at n=6)", no_dip)
+
+    // ── F304.4 H301-MEAN-CITE ──────────────────────────────────────────-
+    check("F304.4 H301-MEAN-CITE: this run n=5 cap=4 mean ≈ 27.07 (H_301 cross-confirm)", close_to(m5, 27.07))
+
+    // ── F304.5 ALT-RECOMPUTE ───────────────────────────────────────────-
+    let alt_ok = (alt5 > 17.0) && (alt5 < 18.0)
+    check("F304.5 ALT-RECOMPUTE: rule 110 n=5 cap=4 alt(st=21) ≈ 17.694 (H_303 cross-confirm)", alt_ok)
+
+    // ── F304.6 BOUND ────────────────────────────────────────────────────
+    let mut bound_ok = true
+    if !(m4 >= 0.0) { bound_ok = false }
+    if !(m5 >= 0.0) { bound_ok = false }
+    if !(m6 >= 0.0) { bound_ok = false }
+    if !(alt4 >= 0.0) { bound_ok = false }
+    if !(alt5 >= 0.0) { bound_ok = false }
+    if !(alt6 >= 0.0) { bound_ok = false }
+    check("F304.6 BOUND: all mean + alt >= 0", bound_ok)
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("================================================================")
+    if FAIL > 0 { panic("H_304 had FALSIFIER FAILURES") }
+}

@@ -1,0 +1,36 @@
+{
+  "battery": "B-EBT (RESEARCH.md §12 K — Energy-Based Transformer)",
+  "passed": 5,
+  "total": 5,
+  "all_pass": true,
+  "verdicts": [
+    {
+      "name": "B-EBT-1 PSI-ENERGY-BOUNDED-CLOSED",
+      "pass": true,
+      "detail": "Ψ_dir=(1+cos)/2 ∈ [0,1], fixed point cos=0⇒Ψ=1/2; E_psi=(Ψ−Ψ_vac)^2 ∈ [0,1] on [0,1]^2"
+    },
+    {
+      "name": "B-EBT-2 ENERGY-CONVEX-UNIQUE-MINIMUM-CLOSED",
+      "pass": true,
+      "detail": "∂E/∂Ψ=2*Psi - 2*Psi_vac, ∂²E/∂Ψ²=2>0 (strictly convex); unique stationary Ψ=Psi_vac=Ψ_vac, global min E=0 (anima physics = the energy)"
+    },
+    {
+      "name": "B-EBT-3 ENERGY-DESCENT-MONOTONE-CLOSED",
+      "pass": true,
+      "detail": "ΔE = alpha*(Psi - Psi_vac)**2*(alpha - 2) = α(α−2)(Ψ−Ψ_vac)^2 ≤ 0 ∀ α∈(0,2] (strict <0 for α∈(0,2), g≠0) — EBT 'prediction=energy minimization' is a closed-form monotone descent"
+    },
+    {
+      "name": "B-EBT-4 MULTI-VACUUM-SEPARATION-CLOSED",
+      "pass": true,
+      "detail": "E_a(Ψ_m)=E_b(Ψ_m)=((Ψ_vac^a−Ψ_vac^b)/2)^2 > 0 for va≠vb — a collapsed shared Ψ* canNOT be at both minima (multi-vacuum landscape, RESEARCH.md §2.5); collapse = positive-energy state"
+    },
+    {
+      "name": "B-EBT-5 OVERLAY-OFF-LAMBDA-ZERO-K-ZERO-BYTE-EQUAL-CLOSED",
+      "pass": true,
+      "detail": "λ=0 ⇒ L≡CE (additive identity CE); K_DESCENT=0 ⇒ energy_descent runs 0 iterations ⇒ refined≡logits (identity) — Dir-K overlay-OFF == baseline CE byte-equal connection-point 🔵"
+    }
+  ],
+  "honest_scope": "Closed side = the energy function's deterministic properties (bounded, strictly-convex unique minimum, descent-monotone, multi-vacuum separation, overlay-OFF byte-equal connection-point). The per-fire SGD OUTCOME + 4-axis capability (routing / honest §9 coherence / JOINT) stay EMPIRICAL (B-CARVE-E6-NOTE / B-D-NOTE family) — this battery proves the energy TRANSFER-FORM is closed, NOT that the fire achieved GOAL emergence. EBT is prediction-refinement, NOT spontaneous generation (RESEARCH.md §12.4 C3.4).",
+  "f1_f2_f3_safe": "anchors = Ψ-energy convexity / descent-monotone / quadratic interval algebra / additive identity — NO σ/τ/φ/J₂ derivation",
+  "central_blue_falsifier_touched": false
+}

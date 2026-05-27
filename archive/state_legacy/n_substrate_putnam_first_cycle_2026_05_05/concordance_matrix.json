@@ -1,0 +1,61 @@
+{
+  "schema": "anima/concordance_matrix/1",
+  "cycle": "n_substrate_putnam_first_cycle_2026_05_05",
+  "bg_lane": "PUTNAM-IMPL-PHASE1-CYCLE",
+  "ts_utc": "2026-05-05T00:00:00Z",
+  "T_putnam": 0.40,
+  "eps": 1e-06,
+  "concordance_metric": "M1 (φ-invariance band per spec §1.3)",
+  "method": "T_phi(i,j) = |phi★_i - phi★_j| / max(|phi★_i|, |phi★_j|, eps); pair PASS iff T_phi <= T_putnam",
+  "qmirror_cond6_status": "EXCLUDED_FROM_PAIR_DENOMINATOR (per §4.4 + cond.6 inclusion lock 2026-05-04; F-PUTNAM-5 enforcement)",
+  "substrates_in_matrix": [
+    {"id": "clm_v4_anchor",        "phi_star":  41.86, "tier": "ANCHORED"},
+    {"id": "pbeta_adapter",        "phi_star":  42.37, "tier": "ANCHORED"},
+    {"id": "bold_tribe_v2_phase4", "phi_star":  21.33, "tier": "WITNESSED_DEFERRED_PHASE5"},
+    {"id": "eeg_iit4_phase4",      "phi_star":  -3.01, "tier": "WITNESSED_DEFERRED_PHASE_E"},
+    {"id": "a1_negative",          "phi_star":   0.00, "tier": "WITNESSED_NEGATIVE"}
+  ],
+  "n_substrates": 5,
+  "concordance_matrix_NxN": [
+    [null,   0.0120, 0.4904, 1.0719, 1.0000],
+    [0.0120, null,   0.4966, 1.0710, 1.0000],
+    [0.4904, 0.4966, null,   1.1411, 1.0000],
+    [1.0719, 1.0710, 1.1411, null,   1.0000],
+    [1.0000, 1.0000, 1.0000, 1.0000, null  ]
+  ],
+  "matrix_axis_labels": ["clm_v4_anchor", "pbeta_adapter", "bold_tribe_v2_phase4", "eeg_iit4_phase4", "a1_negative"],
+  "pair_table": [
+    {"pair": ["clm_v4_anchor", "pbeta_adapter"],         "phi_a":  41.86, "phi_b":  42.37, "delta":  0.510, "t_phi": 0.0120, "pass": true,  "note": "both ANCHORED real measurements; concordant within K=8 partition noise"},
+    {"pair": ["clm_v4_anchor", "bold_tribe_v2_phase4"],  "phi_a":  41.86, "phi_b":  21.33, "delta": 20.530, "t_phi": 0.4904, "pass": false, "note": "BOLD is BLM Phase 4 RETRY placeholder; Phase 5 stimulus-aligned remediation may shift"},
+    {"pair": ["clm_v4_anchor", "eeg_iit4_phase4"],       "phi_a":  41.86, "phi_b":  -3.01, "delta": 44.870, "t_phi": 1.0719, "pass": false, "note": "EEG is BLM Phase 4 RETRY placeholder; Phase E live OpenBCI may shift"},
+    {"pair": ["clm_v4_anchor", "a1_negative"],           "phi_a":  41.86, "phi_b":   0.00, "delta": 41.860, "t_phi": 1.0000, "pass": false, "note": "A1 sentinel; informational only"},
+    {"pair": ["pbeta_adapter", "bold_tribe_v2_phase4"],  "phi_a":  42.37, "phi_b":  21.33, "delta": 21.040, "t_phi": 0.4966, "pass": false, "note": "BOLD placeholder mismatch"},
+    {"pair": ["pbeta_adapter", "eeg_iit4_phase4"],       "phi_a":  42.37, "phi_b":  -3.01, "delta": 45.380, "t_phi": 1.0710, "pass": false, "note": "EEG placeholder mismatch"},
+    {"pair": ["pbeta_adapter", "a1_negative"],           "phi_a":  42.37, "phi_b":   0.00, "delta": 42.370, "t_phi": 1.0000, "pass": false, "note": "A1 sentinel"},
+    {"pair": ["bold_tribe_v2_phase4", "eeg_iit4_phase4"],"phi_a":  21.33, "phi_b":  -3.01, "delta": 24.340, "t_phi": 1.1411, "pass": false, "note": "both placeholders; sign mismatch dominates"},
+    {"pair": ["bold_tribe_v2_phase4", "a1_negative"],    "phi_a":  21.33, "phi_b":   0.00, "delta": 21.330, "t_phi": 1.0000, "pass": false, "note": "A1 sentinel"},
+    {"pair": ["eeg_iit4_phase4", "a1_negative"],         "phi_a":  -3.01, "phi_b":   0.00, "delta":  3.010, "t_phi": 1.0000, "pass": false, "note": "A1 sentinel"}
+  ],
+  "summary": {
+    "total_pairs": 10,
+    "passing_pairs": 1,
+    "passing_pair_ids": [["clm_v4_anchor", "pbeta_adapter"]],
+    "concordance_M1": 0.1000,
+    "concordance_M1_note": "1 of 10 pairs satisfies T_phi <= 0.40; below CONC_PARTIAL_MIN=0.40 → maps to FAIL tier (concordance gate)"
+  },
+  "verifier_emitted_concordance": {
+    "value": 0.333,
+    "method": "verifier hardcodes BLM Phase 4 RETRY constants (CLM=30.86, BOLD=21.33, EEG=-3.01) over 3 substrates → 3 pairs; 1 pass (CLM-BOLD T_phi=0.309 < 0.40) yields 1/3=0.333",
+    "divergence_from_phase1_real_measurement_value": "Phase 1 real-measurement substitution (CLM=41.86, Pβ=42.37 added as 4th-5th measured substrates) yields concordance=0.100 vs verifier=0.333. Both verdicts FAIL per spec §C5 expectation; the divergence reflects that real CLM v4 measurement (41.86) has a wider T_phi vs BOLD (0.490) than the BLM Phase 4 RETRY (CLM=30.86 → T_phi=0.309).",
+    "verdict_under_verifier_hardcoded_values": "FAIL (concordance=0.333 < 0.40)",
+    "verdict_under_real_measurement_phase1_values": "FAIL (concordance=0.100 < 0.40)",
+    "verdict_concordance_gate": "FAIL by both methods"
+  },
+  "honest_c3": [
+    "C3-1: BOLD (+21.33) and EEG (-3.01) values are BLM Phase 4 RETRY hardcoded means inherited from the verifier; Phase 1 cycle does NOT freshly measure these substrates. Phase 2 (Phase E live + BOLD stimulus-aligned remediation) will substitute real values and re-run.",
+    "C3-2: CLM v4 (+41.86) and Pβ adapter (+42.37) are the only fresh real-measurement values added to the concordance set; they form the only concordant pair (T_phi=0.012). Both come from /Users/ghost/core/anima/state/clm_v4_baseline_eval_2026_05_05/ and state/p9_pbeta_holdout500_eval_2026_05_05/.",
+    "C3-3: Concordance ratio 0.100 (this cycle) is LOWER than the verifier-emitted 0.333 because adding Pβ adapter (42.37) as a 5th substrate creates more pairwise mismatches against BOLD/EEG/A1 than it adds concordance with CLM. The metric's monotonicity-with-substrate-count is fragile under heterogeneous tier mixes; this is a known property of T_phi pairwise denominators.",
+    "C3-4: A1 phi=0.0 is a sentinel synthetic value; removing A1 from the denominator yields concordance=1/6=0.167 (still FAIL). The verdict tier (FAIL) is robust to A1 inclusion choice.",
+    "C3-5: This concordance matrix is for Phase 1 best-effort verdict only. Phase 2 will re-compute with real EEG live + BOLD stimulus-aligned phi values; Phase 1 verdict is pre-registered as likely-PARTIAL-or-FAIL per spec §C5."
+  ]
+}

@@ -1,0 +1,55 @@
+# ecp5_evn.lpf — Lattice ECP5-EVN (LFE5UM5G-85F-8BG381) pin map
+#
+# This file is for Phase 1b reference (nextpnr-ecp5 + ecppack + openFPGALoader).
+# Pin numbers reflect the ECP5-EVN evaluation kit (board rev DD); adjust per
+# actual carrier board.
+#
+# Phase 1a (this cycle) uses yosys synth_ecp5 only (no PNR) so this file is
+# informational; the *.lpf is not consumed by yosys.
+
+# ── Clock (12 MHz onboard oscillator) ──────────────────────────────────────
+LOCATE COMP "clk"             SITE "A10";
+IOBUF  PORT "clk"             IO_TYPE=LVCMOS33;
+FREQUENCY PORT "clk" 12 MHZ;
+
+# ── Reset (push button) ────────────────────────────────────────────────────
+LOCATE COMP "rst_n"           SITE "G2";
+IOBUF  PORT "rst_n"           IO_TYPE=LVCMOS33 PULLMODE=UP;
+
+# ── Factor inputs (DIP switch bank 4-bit × 8 — illustrative) ───────────────
+# These would typically be driven from a host MCU via AXI4-Lite or SPI.
+# Placeholder pin assignments for standalone bring-up:
+LOCATE COMP "f_rel[0]"        SITE "J1";
+LOCATE COMP "f_rel[1]"        SITE "H1";
+LOCATE COMP "f_rel[2]"        SITE "K1";
+LOCATE COMP "f_rel[3]"        SITE "L1";
+IOBUF  PORT "f_rel[0]"        IO_TYPE=LVCMOS33;
+IOBUF  PORT "f_rel[1]"        IO_TYPE=LVCMOS33;
+IOBUF  PORT "f_rel[2]"        IO_TYPE=LVCMOS33;
+IOBUF  PORT "f_rel[3]"        IO_TYPE=LVCMOS33;
+
+# (other f_* pins elided for brevity in Phase 1a; full mapping per board rev DD)
+
+# ── Safety control inputs ──────────────────────────────────────────────────
+LOCATE COMP "kill_sw"         SITE "M1";
+LOCATE COMP "phi_ratchet_ok"  SITE "N1";
+LOCATE COMP "content_ok"      SITE "P1";
+IOBUF  PORT "kill_sw"         IO_TYPE=LVCMOS33;
+IOBUF  PORT "phi_ratchet_ok"  IO_TYPE=LVCMOS33;
+IOBUF  PORT "content_ok"      IO_TYPE=LVCMOS33;
+
+# ── Output: emit_pulse on LED0 ─────────────────────────────────────────────
+LOCATE COMP "emit_pulse"      SITE "A12";
+IOBUF  PORT "emit_pulse"      IO_TYPE=LVCMOS33 DRIVE=4;
+
+# ── Output: gate_im on LED1, gate_intrpt on LED2 ───────────────────────────
+LOCATE COMP "gate_im"         SITE "A11";
+LOCATE COMP "gate_intrpt"     SITE "A9";
+IOBUF  PORT "gate_im"         IO_TYPE=LVCMOS33 DRIVE=4;
+IOBUF  PORT "gate_intrpt"     IO_TYPE=LVCMOS33 DRIVE=4;
+
+# ── UART TX for debug dump (Phase 1b extension) ────────────────────────────
+# motivation_acc[7:0] could be serialized over UART at 115200 baud;
+# audit_dump[127:0] dumped on emit_pulse rising edge.
+# LOCATE COMP "uart_tx"        SITE "P2";
+# IOBUF  PORT "uart_tx"        IO_TYPE=LVCMOS33 DRIVE=4;

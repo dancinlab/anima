@@ -1,0 +1,71 @@
+{
+  "agent": "N-15 HoTT MVF1 Lean 4 EXEC",
+  "ts": "2026-05-01",
+  "spec_ref": "docs/n_substrate_n15_hott_formalization_spec_2026_05_01.md §4.3",
+  "ladder": {
+    "MVF1": {
+      "name": "reflexivity",
+      "loc_est": 10,
+      "loc_actual": 46,
+      "timeline_est": "D+1",
+      "actual_status": "PASS_2026-05-01",
+      "tactic": "rfl",
+      "axioms": [],
+      "lean4_core_only": true
+    },
+    "MVF2": {
+      "name": "symmetry",
+      "loc_est": 15,
+      "timeline_est": "D+1",
+      "actual_status": "READY_TRIVIAL",
+      "tactic_planned": "Eq.symm  (or  fun {c1 c2} p => p.symm)",
+      "blockers": [],
+      "lean4_core_only": true,
+      "feasibility_note": "Lean 4 core Eq has .symm; statement = (c1 c2 : Conscious) → c1 = c2 → c2 = c1. ~5 LOC. Can be authored same day."
+    },
+    "MVF3": {
+      "name": "transitivity",
+      "loc_est": 20,
+      "timeline_est": "D+2",
+      "actual_status": "READY_TRIVIAL",
+      "tactic_planned": "Eq.trans  (or  p ▸ q  /  fun p q => p.trans q)",
+      "blockers": [],
+      "lean4_core_only": true,
+      "feasibility_note": "Lean 4 core Eq has .trans; statement = (c1 c2 c3 : Conscious) → c1 = c2 → c2 = c3 → c1 = c3. ~5 LOC. Same day as MVF2."
+    },
+    "MVF4": {
+      "name": "univalence_application",
+      "loc_est": "100-200",
+      "timeline_est": "D+14",
+      "actual_status": "BLOCKED_ON_DEPS",
+      "blockers": [
+        "needs mathlib4 (Equiv, Function.Bijective, etc.)  ~/n15_mvf1_lean4/lakefile.toml require update",
+        "needs univalence axiom postulate (Lean 4 has no native computational univalence)",
+        "needs Substrate / realize / G0_G7_satisfied formalization (each ~30 LOC)",
+        "first lake update with mathlib4 takes 5-15 min on M-series mac, ~1-3 GB cache"
+      ],
+      "lean4_core_only": false,
+      "feasibility_note": "Tractable but requires mathlib4 + axiom postulate + 4 supporting type definitions. Roughly 1-2 days of focused work after mathlib4 imports stabilise."
+    }
+  },
+  "next_actions_recommended": [
+    {
+      "action": "MVF2_AND_MVF3_BUNDLE",
+      "rationale": "Both are 5 LOC tactic-level proofs (Eq.symm / Eq.trans) requiring no new dependencies. Can ship same day as MVF1.",
+      "cost_usd": 0,
+      "eta_min": 15
+    },
+    {
+      "action": "MATHLIB4_PROBE",
+      "rationale": "Add mathlib4 to lakefile.toml and run `lake update` to confirm cache works on this Mac before MVF4 bigger investment.",
+      "cost_usd": 0,
+      "eta_min": 30
+    },
+    {
+      "action": "MVF4_SCAFFOLD",
+      "rationale": "Postulate univalence axiom + minimal Substrate/realize types; statement-only (proof = sorry initially) so we get a compile-checked target before filling in.",
+      "cost_usd": 0,
+      "eta_hours": 4
+    }
+  ]
+}

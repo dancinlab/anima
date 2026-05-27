@@ -1,0 +1,94 @@
+{
+  "timestamp": "2026-05-12T13:41:06Z",
+  "ckpt_path": "/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_2026_05_12/ckpts/ckpt_v5mitosis_cotrain_v2_cotrain.pt",
+  "metrics": {
+    "M1_raw_tension_cosine": {
+      "true": 5.590084268813911e-08,
+      "null_mean": 2.4995375160874457e-08,
+      "null_std": 1.4835713246070646e-08,
+      "null_min": 2.2342626082583195e-09,
+      "null_max": 7.254224526631603e-08,
+      "z": 2.083180431884541,
+      "p_one_sided": 0.04,
+      "passes_null_test": false
+    },
+    "M2_raw_tension_l2": {
+      "true": 55.753855918243914,
+      "null_mean": 31.160214527032252,
+      "null_std": 11.057571896705076,
+      "null_min": 9.592015124258575,
+      "null_max": 59.12744442774607,
+      "z": 2.2241448322429673,
+      "p_one_sided": 0.02,
+      "passes_null_test": false
+    },
+    "M4_aggregated_cosine": {
+      "true": 2.7622246196901123e-05,
+      "null_mean": 1.3557505547884042e-05,
+      "null_std": 4.390197050563971e-06,
+      "null_min": 6.883401766599739e-06,
+      "null_max": 2.7919554315780636e-05,
+      "z": 3.2036695590259,
+      "p_one_sided": 0.01,
+      "passes_null_test": true
+    },
+    "M4b_aggregated_l2": {
+      "true": 21.717418882590096,
+      "null_mean": 12.66567425655059,
+      "null_std": 4.178326305803026,
+      "null_min": 4.9826815653503065,
+      "null_max": 25.773469847737214,
+      "z": 2.166356565658379,
+      "p_one_sided": 0.03,
+      "passes_null_test": false
+    },
+    "M5_last_token_logits_kl": {
+      "true": 0.005048151651733427,
+      "null_mean": 0.004995305971790142,
+      "null_std": 0.0014308013816546955,
+      "null_min": 0.002788717294334375,
+      "null_max": 0.008068221285074135,
+      "z": 0.03693432269555816,
+      "p_one_sided": 0.41,
+      "passes_null_test": false
+    },
+    "M6_log_tension_cosine": {
+      "true": 1.4568199984810182e-05,
+      "null_mean": 6.849890882861142e-06,
+      "null_std": 3.6466871891254593e-06,
+      "null_min": 1.5351344744285456e-06,
+      "null_max": 1.9078503166602977e-05,
+      "z": 2.116526233718453,
+      "p_one_sided": 0.04,
+      "passes_null_test": false
+    },
+    "M7_tension_rank_cosine": {
+      "true": 0.0001456686235110971,
+      "null_mean": 9.528560508987124e-05,
+      "null_std": 1.7935825903394828e-05,
+      "null_min": 6.358730092680398e-05,
+      "null_max": 0.0001529402965798732,
+      "z": 2.809071558376888,
+      "p_one_sided": 0.01,
+      "passes_null_test": false
+    },
+    "M8_tension_ratio_cosine": {
+      "true": 5.5170272863436234e-05,
+      "null_mean": 2.4921932832892342e-05,
+      "null_std": 1.1241857291664713e-05,
+      "null_min": 8.189906597688702e-06,
+      "null_max": 6.629149770469578e-05,
+      "z": 2.6906888466705188,
+      "p_one_sided": 0.03,
+      "passes_null_test": false
+    }
+  },
+  "metrics_passing_null_test": [
+    "M4_aggregated_cosine"
+  ],
+  "best_z_metric": "M4_aggregated_cosine",
+  "best_z_value": 3.2036695590259,
+  "n_probes": 50,
+  "n_cells": 64,
+  "verdict": "CATEGORY_SIGNAL_FOUND (1 metric(s) pass null test): ['M4_aggregated_cosine']"
+}

@@ -1,0 +1,52 @@
+{
+  "verify_ts": "2026-05-04",
+  "repo": "dancinlab/canon",
+  "branch": "main",
+  "remote_url": "https://github.com/dancinlab/canon.git",
+  "pre_push": {
+    "local_head": "e6141bce",
+    "remote_head_before": "38d66066",
+    "ahead_count": 1,
+    "ahead_commits": [
+      {
+        "sha": "e6141bce",
+        "subject": "feat(extract): absorb chip_isa_n6 from nexus → domains/compute/chip-isa-n6",
+        "task_rank": 3
+      }
+    ],
+    "already_pushed": [
+      {
+        "sha": "38d66066",
+        "subject": "feat(extract): absorb crystallography_n6 from nexus → domains/physics/crystallography",
+        "task_rank": 1
+      }
+    ]
+  },
+  "push_action": {
+    "executed": true,
+    "command": "git push origin main",
+    "result": "38d66066..e6141bce  main -> main",
+    "exit_code": 0
+  },
+  "post_push": {
+    "local_head": "e6141bce",
+    "remote_head_after": "e6141bceffdf0456898b61f48c61a471de688e16",
+    "ahead_count": 0,
+    "in_sync": true
+  },
+  "github_api": {
+    "default_branch": "main",
+    "updated_at": "2026-05-04T06:29:54Z"
+  },
+  "preserved_untracked": "CANON working tree clean — no untracked files to preserve",
+  "verdict": "BOTH_PUSHED_OK",
+  "constraints": {
+    "raw9_strict": "OK — only push action, no other writes to CANON",
+    "raw15": "OK",
+    "raw10_caveats": [
+      "race window between sister BG commits + push — VALIDATED: e6141bce was committed but not pushed; push completed cleanly",
+      "nexus delete double-check needed — VALIDATED: chip_isa_n6 dir gone (commit 29f26724), crystallography_n6 deletion unstaged in working tree",
+      "n6-arch other untracked files preserved — VALIDATED: working tree clean, nothing to preserve"
+    ]
+  }
+}

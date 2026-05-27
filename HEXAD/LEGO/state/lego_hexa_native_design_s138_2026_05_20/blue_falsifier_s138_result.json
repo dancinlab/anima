@@ -1,0 +1,90 @@
+{
+  "preconditions": [
+    {
+      "name": "B-S138-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "closed_propositions": [
+    {
+      "name": "B-S138-1 ENGINE-OPS-INVENTORY-COMPLETE",
+      "passed": true,
+      "evidence": {
+        "engine_public_symbols": [
+          "LIFNet",
+          "make_stimuli",
+          "psi_c1",
+          "spike_rate_vec",
+          "step",
+          "variance_decomposition"
+        ],
+        "expected_in_design": [
+          "LIFNet",
+          "make_stimuli",
+          "psi_c1",
+          "spike_rate_vec",
+          "variance_decomposition"
+        ],
+        "all_classified_in_design_md": true
+      }
+    },
+    {
+      "name": "B-S138-2 GAP-IS-EXACTLY-3-PRIMITIVES",
+      "passed": true,
+      "evidence": {
+        "G1_event_threshold": true,
+        "G2_refractory": true,
+        "G3_stdp_pair": true,
+        "g_marker_count": 12
+      }
+    },
+    {
+      "name": "B-S138-3 GAP-LOCATED-UPSTREAM-NOT-ANIMA",
+      "passed": true,
+      "evidence": {
+        "upstream_flame_asserted": true,
+        "not_anima_specific_equation": false,
+        "downstream_consumer_posture": true
+      }
+    },
+    {
+      "name": "B-S138-4 INBOX-PATCH-PATH-HEXA-FIRST-COMPLIANT",
+      "passed": true,
+      "evidence": {
+        "inbox_patch_named": true,
+        "pr_only_cited": true,
+        "one_concept_cited": true,
+        "s71_precedent_cited": true
+      }
+    },
+    {
+      "name": "B-S138-5 CENTRAL-0-DIFF-AND-NO-FORBIDDEN-IMPORT",
+      "passed": true,
+      "evidence": {
+        "central_sha16": "c93e160a8a376a94",
+        "central_match": true,
+        "forbidden_imports": []
+      }
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-S138-NOTE EMPIRICAL-CARVE-OUT (NOT counted 🔵)",
+    "carve_out_kind": "design-names-gap-not-implementation",
+    "family": "B-EMERGE-7 / §71-flame-inbox-precedent",
+    "honest_scope": "§138 closes the 20× HEXA_FIRST_WARN deferral *pattern* with a precise design: the gap is 3 flame-stdlib spiking primitives (G1 event-threshold / G2 refractory / G3 STDP-pair), located upstream in hexa-lang not anima, resolved via inbox patch (hexa-first PR-only path, §71 precedent). It does NOT file the patch (a separate ~/core/hexa-lang/inbox/ write) and does NOT port the engine to .hexa (would be the hand-roll anti-pattern before upstream lands). The Python lego_engine.py remains the canonical reference oracle. GOAL-orthogonal engine tooling; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달."
+  },
+  "summary": {
+    "preconditions_passed": true,
+    "closed_propositions_passed": "5/5",
+    "all_closed_pass": true,
+    "battery_verdict": "HEXA-NATIVE-ENGINE-DESIGN-CLOSE-5-5-🔵",
+    "empirical_carve_out_NOT_counted_🔵": true,
+    "north_star_unchanged": true,
+    "goal_unreached": true
+  }
+}

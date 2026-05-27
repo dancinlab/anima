@@ -1,0 +1,189 @@
+{
+  "schema": "anima/W1_phase5/window_recheck_summary/1",
+  "ts": "2026-05-01",
+  "agent": "W1_PHASE5_EXEC",
+  "input": {
+    "phase2_trace": "/Users/ghost/core/anima/state/W1_phase2_full_19axis_2026_05_01/phi_trace_full.jsonl",
+    "ticks": 15,
+    "windows_tested": [
+      5,
+      7
+    ],
+    "n_permutations_per_W": 1000,
+    "seed_base": 42
+  },
+  "per_window": {
+    "5": {
+      "W": 5,
+      "observed": {
+        "phi_mean": 1.2147204235894686,
+        "phi_std": 0.811274287398536,
+        "slope_per_tick": -0.039967437797586436,
+        "phi_trajectory": [
+          0.0,
+          1.0,
+          1.584962500721156,
+          1.973513,
+          2.284196094887362,
+          2.239129094887362,
+          2.207875094887362,
+          1.7613970948873623,
+          1.1880885944546686,
+          0.5283700948873623,
+          0.0,
+          0.0,
+          0.5322130948873623,
+          1.1866225944546687,
+          1.7344390948873623
+        ],
+        "joint_mi_trajectory": [
+          0.0,
+          1.0,
+          1.584962500721156,
+          2.0,
+          2.321928094887362,
+          2.321928094887362,
+          2.321928094887362,
+          1.9219280948873623,
+          1.3709505944546687,
+          0.7219280948873623,
+          0.0,
+          0.0,
+          0.7219280948873623,
+          1.3709505944546687,
+          1.9219280948873623
+        ]
+      },
+      "null_B_state_hash_shuffle": {
+        "n_permutations": 1000,
+        "seed": 47,
+        "slope_mean": 0.06065030086697476,
+        "slope_std": 0.046046389750768794,
+        "slope_min": -0.06493625633558682,
+        "slope_max": 0.20268640668791696,
+        "phi_mean_mean": 1.4982110023222643,
+        "phi_mean_std": 0.09184951105876886,
+        "p_value_one_tailed": 0.996,
+        "z_score": -2.1851384920547714
+      },
+      "verdict": "OBSERVED_BELOW_NULL_ARTIFACT_CONFIRMED"
+    },
+    "7": {
+      "W": 7,
+      "observed": {
+        "phi_mean": 1.46683098384996,
+        "phi_std": 0.8049567764542679,
+        "slope_per_tick": -0.031866374015368,
+        "phi_trajectory": [
+          0.0,
+          1.0,
+          1.584962500721156,
+          1.973513,
+          2.284196094887362,
+          2.502163500721156,
+          2.693301922057604,
+          2.361109636343318,
+          1.945223278891394,
+          1.470939779200461,
+          0.9508238542809166,
+          0.39275777858232747,
+          0.4019577785823275,
+          0.9645068542809165,
+          1.4770087792004614
+        ],
+        "joint_mi_trajectory": [
+          0.0,
+          1.0,
+          1.584962500721156,
+          2.0,
+          2.321928094887362,
+          2.584962500721156,
+          2.807354922057604,
+          2.521640636343318,
+          2.128085278891394,
+          1.664497779200461,
+          1.1488348542809166,
+          0.5916727785823275,
+          0.5916727785823275,
+          1.1488348542809166,
+          1.6644977792004614
+        ]
+      },
+      "null_B_state_hash_shuffle": {
+        "n_permutations": 1000,
+        "seed": 49,
+        "slope_mean": 0.0948821912107561,
+        "slope_std": 0.04985865215658221,
+        "slope_min": -0.038495822209087885,
+        "slope_max": 0.2494977639480018,
+        "phi_mean_mean": 1.691688645138638,
+        "phi_mean_std": 0.12143068138137295,
+        "p_value_one_tailed": 0.999,
+        "z_score": -2.54215787518819
+      },
+      "verdict": "OBSERVED_BELOW_NULL_ARTIFACT_CONFIRMED"
+    },
+    "20_reference": {
+      "W": 20,
+      "observed": {
+        "phi_mean": 2.082170055792822,
+        "phi_std": 0.7041941346280454,
+        "slope_per_tick": 0.11148578107346711,
+        "phi_trajectory": [
+          0.0,
+          1.0,
+          1.584962500721156,
+          1.973513,
+          2.284196094887362,
+          2.502163500721156,
+          2.693301922057604,
+          2.589469,
+          2.4587421678685937,
+          2.3283700948873625,
+          2.20599875732486,
+          2.093566250360578,
+          2.3176651024236357,
+          2.515185850319966,
+          2.685416595320056
+        ],
+        "joint_mi_trajectory": [
+          0.0,
+          1.0,
+          1.584962500721156,
+          2.0,
+          2.321928094887362,
+          2.584962500721156,
+          2.807354922057604,
+          2.75,
+          2.6416041678685938,
+          2.5219280948873624,
+          2.40400975732486,
+          2.292481250360578,
+          2.5073801024236357,
+          2.699513850319966,
+          2.8729055953200557
+        ]
+      },
+      "null_B_state_hash_shuffle": {
+        "n_permutations": 1000,
+        "seed": 62,
+        "slope_mean": 0.14815249419205165,
+        "slope_std": 0.023164750670482303,
+        "slope_min": 0.10440959905996573,
+        "slope_max": 0.24761216401442845,
+        "phi_mean_mean": 1.9321223203062863,
+        "phi_mean_std": 0.21364075862861812,
+        "p_value_one_tailed": 0.988,
+        "z_score": -1.582866728857441
+      },
+      "verdict": "OBSERVED_BELOW_NULL_ARTIFACT_CONFIRMED"
+    }
+  },
+  "w1_axis_final_status": "ARTIFACT_PERMANENT_DOWNGRADE",
+  "honest_c3": [
+    "Effective hash diversity: with n=15 and ~10 distinct state_hash values, the W=5 window often contains repeats (especially the 6-tick run of identical hash 0x247 around windows 6-11). joint_mi is therefore bounded below log2(min(W, distinct_in_window)) and the estimator does saturate at small W, but the relevant entropy ceiling is the within-window distinct-count, which is small (3-5).",
+    "Sub_mi_mean held in original-position order during all Null B runs; identical conservatism choice as Phase 4. For W=5/7 the per-tick subtraction interacts differently with the window since H_window can DECREASE between ticks now (a hash leaving the window can drop entropy), so observed phi is NOT monotone. The slope sign is therefore much less constrained than at W=20.",
+    "n=15 still binds. Even with W=5 the sample is too small for a stable slope estimate; bootstrap CI on observed slope would likely contain zero. The shuffle-null p-value is the strongest available statement, but absolute slope magnitude should not be over-interpreted from 15 ticks."
+  ],
+  "interpretation_one_line": "W=5 obs_slope=-0.0400 (null mean +0.0607+-0.0460, p=0.996); W=7 obs_slope=-0.0319 (null mean +0.0949+-0.0499, p=0.999); W=20 ref obs_slope=+0.1115 (null mean +0.1482+-0.0232, p=0.988); W1 final = ARTIFACT_PERMANENT_DOWNGRADE."
+}

@@ -1,0 +1,35 @@
+================================================================
+  H_302 — eca_tpm × big_phi_bounded determinism diagnosis
+================================================================
+  Call A: rule 60 n=5 st=21 cap=4 = 16.5
+  Call B: rule 60 n=5 st=21 cap=4 = 16.5
+  [PASS] F302.1 REPRO-INTRA: rule 60 n=5 st=21 cap=4 identical twice
+  PANEL A (60→90): rule 60=16.5 rule 90=19.5
+  PANEL B (90→60): rule 60=16.5 rule 90=19.5
+  [PASS] F302.2 ORDER-INDEP: panel A rule 60 == panel B rule 60
+  [PASS] F302.3 RULE-90-INT: rule 90 n=5 st=21 cap=4 ≈ 19.5 (cross-H gold standard)
+  [FAIL] F302.4 RULE-60-CURRENT: rule 60 n=5 st=21 cap=4 ≈ 18.5 (H_301)
+  ── F302.5 LOC-16-5 grid (rule 60, hunting for 16.5) ──
+    rule 60 n=4 st=5 cap=3 = 4.5
+    rule 60 n=4 st=13 cap=3 = 3
+    rule 60 n=5 st=5 cap=3 = 6
+    rule 60 n=5 st=5 cap=4 = 24.5
+    rule 60 n=5 st=13 cap=3 = 4.5
+    rule 60 n=5 st=13 cap=4 = 16.5
+    rule 60 n=5 st=21 cap=3 = 4.5
+    rule 60 n=5 st=21 cap=4 = 16.5
+    rule 60 n=6 st=5 cap=3 = 6
+    rule 60 n=6 st=5 cap=4 = 30
+    rule 60 n=6 st=13 cap=3 = 4.5
+    rule 60 n=6 st=13 cap=4 = 22
+    rule 60 n=6 st=21 cap=3 = 4.5
+    rule 60 n=6 st=21 cap=4 = 22
+  16.5 found at: n=5 st=21 cap=4
+  [PASS] F302.5 LOC-16-5: rule 60 grid contains a 16.5 measurement (artifact location)
+  [PASS] F302.6 BOUND: all measured Phi >= 0
+================================================================
+  RESULT: 5 PASS / 1 FAIL
+  GOLD: rule 90 n=5 st=21 cap=4 = 19.5 (target 19.5)
+  CURRENT: rule 60 n=5 st=21 cap=4 = 16.5 (H_301 was 18.5, H_297 was 16.5)
+================================================================
+panic: H_302 had FALSIFIER FAILURES

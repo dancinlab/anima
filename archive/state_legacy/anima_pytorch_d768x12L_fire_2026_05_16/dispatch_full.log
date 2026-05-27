@@ -1,0 +1,92 @@
+=== anima d=768x12L PyTorch substrate fire ===
+Sat May 16 13:22:41 UTC 2026
+[1/9] Selecting A100 offer...
+A100 PCIE $0.760/hr rel=0.997
+  offer=34453407
+[2/9] Renting (runpod/pytorch-style devel image for full CUDA toolkit)...
+  instance=36879018
+[3/9] Waiting SSH...
+  attempt 1/90 status=None
+  attempt 2/90 status=None
+  attempt 3/90 status=loading
+  attempt 4/90 status=loading
+  attempt 5/90 status=loading
+  attempt 6/90 status=loading
+  attempt 7/90 status=loading
+  attempt 8/90 status=loading
+  attempt 9/90 status=loading
+  attempt 10/90 status=loading
+  attempt 11/90 status=loading
+  attempt 12/90 status=loading
+  attempt 13/90 status=loading
+  attempt 14/90 status=loading
+  attempt 15/90 status=loading
+  attempt 16/90 status=loading
+  attempt 17/90 status=loading
+  attempt 18/90 status=loading
+  attempt 19/90 status=loading
+  attempt 20/90 status=loading
+  attempt 21/90 status=loading
+  attempt 22/90 status=loading
+  attempt 23/90 status=loading
+  attempt 24/90 status=loading
+  attempt 25/90 status=loading
+  attempt 26/90 status=loading
+  SSH ready ssh7.vast.ai:39018 (after 27x5s)
+[4/9] Upload arch + trainer + corpus...
+Warning: Permanently added '[ssh7.vast.ai]:39018' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh7.vast.ai]:39018' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh7.vast.ai]:39018' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[ssh7.vast.ai]:39018' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[5/9] GPU + torch check...
+Warning: Permanently added '[ssh7.vast.ai]:39018' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+2.5.1+cu121 True NVIDIA A100-PCIE-40GB
+[6/9] Sanity-anchor: SAME arch d=32x3L (hexa CPU-equiv baseline shape)...
+Warning: Permanently added '[ssh7.vast.ai]:39018' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+/workspace/anima/train_d768x12l.py:103: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+{"step": 1, "ce": 5.518951, "gn2": 0.534573, "ppl": 249.3734, "lr": 0.0002, "wall_s": 0.48, "gpu_mem_gb": 0.036}
+{"step": 10, "ce": 5.214233, "gn2": 1.327129, "ppl": 183.8708, "lr": 0.00099907, "wall_s": 0.72, "gpu_mem_gb": 0.039}
+{"step": 20, "ce": 4.842529, "gn2": 0.972782, "ppl": 126.7896, "lr": 0.0009886, "wall_s": 0.99, "gpu_mem_gb": 0.039}
+{"step": 30, "ce": 4.49646, "gn2": 0.952224, "ppl": 89.699, "lr": 0.00096678, "wall_s": 1.27, "gpu_mem_gb": 0.039}
+{"step": 40, "ce": 4.222305, "gn2": 0.839058, "ppl": 68.1905, "lr": 0.00093416, "wall_s": 1.54, "gpu_mem_gb": 0.039}
+{"step": 50, "ce": 4.113663, "gn2": 0.511175, "ppl": 61.1704, "lr": 0.00089159, "wall_s": 1.81, "gpu_mem_gb": 0.039}
+{"step": 60, "ce": 3.785812, "gn2": 0.568836, "ppl": 44.0715, "lr": 0.00084018, "wall_s": 2.08, "gpu_mem_gb": 0.039}
+{"step": 70, "ce": 3.744247, "gn2": 0.357892, "ppl": 42.2772, "lr": 0.00078125, "wall_s": 2.37, "gpu_mem_gb": 0.039}
+{"step": 80, "ce": 3.667526, "gn2": 0.32495, "ppl": 39.1549, "lr": 0.00071633, "wall_s": 2.66, "gpu_mem_gb": 0.039}
+{"step": 90, "ce": 3.501038, "gn2": 0.275221, "ppl": 33.1498, "lr": 0.0006471, "wall_s": 2.95, "gpu_mem_gb": 0.039}
+{"step": 100, "ce": 3.457687, "gn2": 0.212961, "ppl": 31.7435, "lr": 0.00057536, "wall_s": 3.23, "gpu_mem_gb": 0.039}
+{"step": 110, "ce": 3.452072, "gn2": 0.232966, "ppl": 31.5657, "lr": 0.00050296, "wall_s": 3.52, "gpu_mem_gb": 0.039}
+{"step": 120, "ce": 3.461975, "gn2": 0.241802, "ppl": 31.8799, "lr": 0.00043178, "wall_s": 3.81, "gpu_mem_gb": 0.039}
+{"step": 130, "ce": 3.372391, "gn2": 0.132125, "ppl": 29.1481, "lr": 0.00036366, "wall_s": 4.1, "gpu_mem_gb": 0.039}
+{"step": 140, "ce": 3.285675, "gn2": 0.187855, "ppl": 26.727, "lr": 0.00030037, "wall_s": 4.38, "gpu_mem_gb": 0.039}
+{"step": 150, "ce": 3.180084, "gn2": 0.134529, "ppl": 24.0488, "lr": 0.00024354, "wall_s": 4.67, "gpu_mem_gb": 0.039}
+{"step": 160, "ce": 3.22625, "gn2": 0.139702, "ppl": 25.185, "lr": 0.00019465, "wall_s": 4.96, "gpu_mem_gb": 0.039}
+{"step": 170, "ce": 3.168617, "gn2": 0.135266, "ppl": 23.7746, "lr": 0.00015497, "wall_s": 5.24, "gpu_mem_gb": 0.039}
+{"step": 180, "ce": 3.291901, "gn2": 0.159715, "ppl": 26.8939, "lr": 0.00012551, "wall_s": 5.53, "gpu_mem_gb": 0.039}
+{"step": 190, "ce": 3.216682, "gn2": 0.248684, "ppl": 24.9452, "lr": 0.00010705, "wall_s": 5.81, "gpu_mem_gb": 0.039}
+{"step": 200, "ce": 3.17466, "gn2": 0.152543, "ppl": 23.9187, "lr": 0.00010006, "wall_s": 6.1, "gpu_mem_gb": 0.039}
+RESULT_JSON_WRITTEN
+{"init_ce": 5.518951, "final_ce": 3.17466, "ce_descent": 2.344291, "wall_s": 6.1, "n_params_M": 0.18}
+[7/9] MAIN fire: d=768 n_layer=12 from-scratch, 2500 steps...
+Warning: Permanently added '[ssh7.vast.ai]:39018' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+python3: can't open file '/root/train_d768x12l.py': [Errno 2] No such file or directory
+[8/9] Verify result.json then SAVE_POD auto-promote...
+  ERROR: result.json NOT present — SAVE_POD=1 retain for manual recovery
+[9/9] Done. teardown via trap.
+Sat May 16 13:26:22 UTC 2026
+[cleanup] SAVE_POD=1 -> RETAIN instance 36879018 (manual recovery)

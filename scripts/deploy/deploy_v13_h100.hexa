@@ -1,0 +1,86 @@
+// scripts/deploy/deploy_v13_h100.hexa — Deploy v13 training to RunPod H100
+//
+// Usage:
+//   $HEXA scripts/deploy/deploy_v13_h100.hexa <RUNPOD_IP> <RUNPOD_PORT>
+//   $HEXA scripts/deploy/deploy_v13_h100.hexa            # uses runpodctl ssh info
+//
+// Hexa-only: no maturin, no cargo, no python. Uploads hexa-native sources and
+// runs training via $HEXA on the remote pod.
+
+fn main() {
+    let args = get_args()
+
+    var host = ""
+    var port = ""
+    if args.len() >= 2 {
+        host = args[0]
+        port = args[1]
+    } else {
+        println("Getting RunPod SSH info...")
+        let info = exec_capture("runpodctl", ["ssh", "info"])
+        host = parse_kv(info, "HOST")
+        port = parse_kv(info, "PORT")
+        if host == "" {
+            println("ERROR: No RunPod pod found. Start an H100 pod first.")
+            println("  runpodctl create pod --name v13-train --gpu H100 --image dancindocker/anima:v2")
+            exit(1)
+        }
+    }
+
+    println("=== Deploying v13 to H100 (" + host + ":" + port + ") ===")
+
+    // Hexa-native sources to upload (.hexa only)
+    let files = [
+        "anima/core/engine.hexa",
+        "anima/core/training_laws.hexa",
+        "training/train_clm.hexa",
+        "models/trinity.hexa",
+        "anima/core/mitosis.hexa",
+        "anima/core/anima_alive.hexa",
+        "models/conscious_lm.hexa",
+        "bench/bench.hexa",
+    ]
+
+    let remote_dir = "/workspace/anima"
+
+    // ── Upload core files ──
+    println("Uploading hexa sources...")
+    for f in files {
+        scp(port, f, "root@" + host + ":" + remote_dir + "/" + f)
+        println("  ok " + f)
+    }
+
+    // ── Upload anima/core/ tree (hexa-native) ──
+    println("Syncing anima/core/...")
+    rsync_dir(port, "anima/core/", "root@" + host + ":" + remote_dir + "/anima/core/")
+
+    // ── Remote setup + training ──
+    println("Starting remote training...")
+    let remote_script = """
+        cd /workspace/anima
+        export HEXA=/usr/local/bin/hexa
+        if [ ! -x \"$HEXA\" ]; then
+            echo \"hexa binary missing on pod — install via cloud-init\"
+            exit 1
+        fi
+        DATA_FILE=data/corpus_v2.txt
+        [ ! -f \"$DATA_FILE\" ] && DATA_FILE=data/corpus.txt
+        if [ ! -f \"$DATA_FILE\" ]; then
+            echo \"WARNING: No corpus found.\"
+            exit 1
+        fi
+        tmux new-session -d -s v13 \"$HEXA training/train_clm.hexa \\
+            --data $DATA_FILE \\
+            --cells 64 --cell-dim 64 --hidden-dim 128 --d-model 768 \\
+            --steps 100000 --lr 3e-4 --batch-size 8 --block-size 256 \\
+            --curriculum --checkpoint-dir checkpoints/v13_h100 \\
+            --device cuda --log-every 100 --eval-every 1000 --save-every 5000 \\
+            2>&1 | tee logs/v13_h100.log\"
+    """
+    ssh_exec(port, host, remote_script)
+
+    println("")
+    println("=== Deploy complete ===")
+    println("  ssh -p " + port + " root@" + host + " 'tmux attach -t v13'  # watch training")
+    println("  ssh -p " + port + " root@" + host + " 'tail -f /workspace/anima/logs/v13_h100.log'")
+}

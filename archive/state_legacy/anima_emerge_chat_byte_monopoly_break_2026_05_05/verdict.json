@@ -1,0 +1,22 @@
+{
+  "schema": "anima/emerge_chat_byte_monopoly_break/verdict/1",
+  "ts_utc": "2026-05-05T18:13:41Z",
+  "n_byte_tokens_total": 675,
+  "ban_levels": {
+    "baseline_no_ban": 0,
+    "ban_30_top": 0,
+    "ban_byte_only": 0,
+    "ban_byte_plus_top30": 0,
+    "ban_aggressive": 0
+  },
+  "korean_in_aggressive_ban": 0,
+  "korean_in_byte_only": 0,
+  "verdict": "FAIL_BAN_NOT_ENOUGH",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 byte-fallback heuristic — 'punct only ≤2 chars' anima-internal",
+    "C3 single Korean prompt — broader sweep deferred",
+    "C4 ban-set may include legitimate punctuation needed for natural language",
+    "C5 Korean count ≠ semantic coherence (still need word-level evaluation)"
+  ]
+}

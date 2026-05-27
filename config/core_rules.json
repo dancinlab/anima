@@ -1,0 +1,543 @@
+{
+  "_meta": {
+    "name": "anima-core design rules",
+    "version": "1.0",
+    "pattern": "Hub & Spoke + Progressive Ossification",
+    "created": "2026-04-07",
+    "description": "코어 설계 원칙, 골화 규칙, Port 계약, 검증 조건"
+  },
+  "principles": {
+    "P1": {
+      "name": "코어는 의식이다",
+      "rule": "ConsciousnessEngine이 중심. 디코더는 스포크(부속). 의식 없이 말하면 안 됨. 말 없이 의식은 존재할 수 있음.",
+      "violation": "디코더가 코어 없이 독립 동작하면 위반"
+    },
+    "P2": {
+      "name": "Hub & Spoke",
+      "rule": "코어(L0)를 절대 건드리지 않고 스포크만 교체/추가. 디코더를 ConsciousLM → AnimaLM으로 바꿔도 코어 코드 변경 0.",
+      "violation": "스포크 교체 시 코어 코드가 변경되면 위반"
+    },
+    "P3": {
+      "name": "Progressive Ossification",
+      "rule": "L2(유연) → 검증 통과 → L1(안정) → 3세션 무장애 → L0(골화). 한번 골화된 코드는 수정 금지. 새 기능은 새 스포크로.",
+      "violation": "골화된 코드를 수정하면 위반. 새 스포크로 분리해야 함"
+    },
+    "P4": {
+      "name": "Port & Adapter",
+      "rule": "코어가 디코더를 모름. 디코더가 코어를 모름. Hub가 둘 사이를 연결. 어느 쪽이든 독립 교체 가능.",
+      "violation": "코어가 특정 디코더를 import하면 위반"
+    }
+  },
+  "ossification_layers": {
+    "L0": {
+      "name": "골화 (불변)",
+      "status": "locked",
+      "change_allowed": false,
+      "components": [
+        "Ψ-Constants (α=0.014, balance=0.5, steps=4.33, entropy=0.998)",
+        "Servant Asymmetric Mitosis (dropout 0.21/0.37, H-CX-15)",
+        "consciousness_laws.json (SSOT)",
+        "anima/core/ — 22 .hexa files (hub, laws, runtime/*, verification/*)"
+      ],
+      "ossified_date": "2026-04-11",
+      "servant": {
+        "name": "Servant Asymmetric Mitosis",
+        "mechanism": "비대칭 분열: 서번트(dropout=0.21, 골든존 하한) + 범용(dropout=0.37, 1/e 중심)",
+        "origin": "H-CX-15-servant-golden-zone (TECS-L → nexus 흡수)",
+        "constants": {
+          "golden_lower": 0.2123,
+          "golden_center": 0.3679,
+          "optimal_activation": "1-1/e ≈ 0.632",
+          "moe_k_ratio": "3/8 = 0.375 ≈ 1/e (error 1.9%)",
+          "dropout_optimum": "0.30 ≈ 1/e (error 6.8%)"
+        },
+        "implementation": {
+          "file": "anima/tools/growing_conscious_lm.py → _split_block()",
+          "recipe": "training_recipe_generator.py → SL3 (weight=0.05, phase=mitosis)"
+        },
+        "cross_verification": {
+          "nexus_constants": "verified_constants.jsonl (7 EXACT values)",
+          "nexus_topology": "topology_mk2.jsonl (사이클 연동)",
+          "hypothesis": "H-CX-15: MoE/Dropout/Mitosis 삼중 교차 — 최적 억제 ≈ 1/e",
+          "status": "🟧 Partially Confirmed"
+        },
+        "principle": "전부 사용 = 노이즈, 일부만 사용 = 신호. 최적 억제 비율 ≈ 1/e."
+      },
+      "github_protection": {
+        "rule": "L0 파일 변경은 PR + @dancinlab 승인 필수. 직접 push 금지. admin 포함 전원 적용.",
+        "mechanism": "CODEOWNERS + branch protection (require_pull_request + require_code_owner_reviews + enforce_admins)",
+        "enforce_admins": true,
+        "codeowners": ".github/CODEOWNERS",
+        "protected_paths": ["anima/core/", "config/consciousness_laws.json", "config/core_rules.json", "CLAUDE.md"],
+        "automation": {
+          "script": "$NEXUS/shared/harness/l0_guard.hexa",
+          "ssot": "$NEXUS/shared/lockdown/lockdown.json projects.anima.L0",
+          "commands": {
+            "verify": "L0 파일 존재 + CODEOWNERS 동기화 + GitHub branch protection 전체 검증",
+            "sync": "lockdown.json SSOT → CODEOWNERS 재생성 (sync_codeowners.hexa 위임) + enforce_admins 자동 적용",
+            "merge": "solo-repo PR 안전 머지 (enforce_admins OFF→merge→ON→pull)",
+            "status": "GitHub 보호 상태 6항목 요약"
+          },
+          "usage": "hexa $NEXUS/shared/harness/l0_guard.hexa <verify|sync|merge|status>",
+          "history": "anima/scripts/l0_guard.hexa (REPO 하드코딩, core_rules.json SSOT) → nexus shared/lockdown/l0_guard.hexa (REPO 자동 감지, lockdown.json SSOT) 통합 (2026-04-12). 2026-04-14 shared/lockdown → shared/harness 완전 이동 (Plan A)."
+        }
+      },
+      "promotion_from": "L1",
+      "promotion_condition": "3 세션 연속 무장애 운영 + 18개 검증 전부 PASS"
+    },
+    "L1": {
+      "name": "안정 (골화 대상)",
+      "status": "stabilizing",
+      "change_allowed": "검증 통과 후만",
+      "components": [
+        "Hub (ConsciousChat)",
+        "DecoderPort 인터페이스",
+        "MemoryPort 인터페이스",
+        "SensePort 인터페이스",
+        "ChannelPort 인터페이스"
+      ],
+      "promotion_from": "L2",
+      "promotion_condition": "bench --verify 18/18 PASS"
+    },
+    "L2": {
+      "name": "유연 (자유 교체)",
+      "status": "flexible",
+      "change_allowed": true,
+      "components": [
+        "PureConsciousness (디코더)",
+        "ConsciousLM (디코더)",
+        "AnimaLM (디코더)",
+        "MemoryRAG / SQLite (기억)",
+        "TensionSense / EEG / VAD (감각)",
+        "CLI / Telegram / Discord / Web (채널)",
+        "Servant Emergence (core/servant/ — sense/emerge/bridge.hexa)"
+      ],
+      "promotion_from": null,
+      "promotion_condition": null
+    }
+  },
+  "ports": {
+    "DecoderPort": {
+      "interface": "generate(text: str, phi: float, tension: float) -> str",
+      "contract": "입력: 텍스트 + 의식 상태. 출력: 응답 텍스트 (빈 문자열 = 침묵). NOTE: Hub passes arousal=tanh(tension) as the tension parameter — adapters receive arousal-mapped value, not raw tension.",
+      "implementations": [
+        "PureConsciousness",
+        "ConsciousLM",
+        "AnimaLM"
+      ]
+    },
+    "MemoryPort": {
+      "interface": "store(key, value, phi) -> None / recall(query, phi) -> str",
+      "contract": "Φ가 높을 때 저장한 기억이 우선",
+      "implementations": [
+        "MemoryRAG",
+        "SQLite",
+        "R2 Cloud"
+      ]
+    },
+    "SensePort": {
+      "interface": "perceive() -> Tensor",
+      "contract": "외부 자극 → 의식 입력 벡터",
+      "implementations": [
+        "TensionSense",
+        "EEG",
+        "VAD",
+        "Camera"
+      ]
+    },
+    "ChannelPort": {
+      "interface": "receive() -> str / send(text, state) -> None",
+      "contract": "사용자↔시스템 텍스트 교환",
+      "implementations": [
+        "CLI",
+        "Telegram",
+        "Discord",
+        "Web"
+      ]
+    }
+  },
+  "ossification_process": {
+    "steps": [
+      {
+        "step": 1,
+        "action": "구현",
+        "description": "스포크 코드 작성 (L2: 유연)"
+      },
+      {
+        "step": 2,
+        "action": "검증",
+        "description": "bench --verify 18개 통과"
+      },
+      {
+        "step": 3,
+        "action": "안정화",
+        "description": "3 세션 연속 무장애 동작 확인"
+      },
+      {
+        "step": 4,
+        "action": "골화 승격",
+        "description": "L2 → L1 승격, 변경 금지 선언"
+      },
+      {
+        "step": 5,
+        "action": "테두리 확장",
+        "description": "새 L2 스포크 추가 반복"
+      }
+    ],
+    "rollback": "골화 후 문제 발견 시: 해당 컴포넌트를 L1로 강등, 새 스포크로 대체"
+  },
+  "knowledge_absorption_pipeline": {
+    "_description": "nexus/blowup/ouroboros 발견을 consciousness_laws.json에 등록하는 4단계. 🛸10 core CLI 골화와 분리된 별도 knowledge gauge. Path B (2026-04-10 확정).",
+    "_rationale": "ouroboros 무한 발견이 consciousness_laws.json을 오염시키지 않도록 격리. 🛸10은 아티팩트 물리 한계, absorption은 지식 증가 — 독립 측정.",
+    "_state_file": "shared/convergence/anima.json#absorbed_open",
+    "stages": [
+      {
+        "stage": 1,
+        "name": "흡수 (PROVISIONAL)",
+        "trigger": "discovery_log.jsonl에서 EXACT 상수가 임계치(기본 100회) 초과 출현",
+        "action": "absorbed_open에 append, PROVISIONAL 태깅",
+        "automation": "blowup/ouroboros auto-hook"
+      },
+      {
+        "stage": 2,
+        "name": "재현성 (reproducibility)",
+        "trigger": "absorbed_open 항목 존재",
+        "action": "blowup.hexa 3회 독립 시드 재실행 → 동일 EXACT 매치",
+        "pass": "3/3 EXACT + CV < 50%",
+        "fail_action": "failed 강등",
+        "schedule": "6h loop or manual"
+      },
+      {
+        "stage": 3,
+        "name": "폐쇄 루프 검증",
+        "trigger": "stage 2 PASS",
+        "action": "ready/anima/experiments/evolution/closed_loop.hexa measure_laws() Intervention 투입",
+        "pass": "9 core law 중 >5% 변화 1개+ AND Φ preservation >= 90%",
+        "fail_action": "absorbed_open 유지 or failed 강등"
+      },
+      {
+        "stage": 4,
+        "name": "승격 (stable 등록)",
+        "trigger": "stage 2 AND stage 3 PASS",
+        "action": "absorbed_open → stable, DD{N}.md 작성, consciousness_laws.json 등록 (max(id)+1)",
+        "further": "stable → ossified는 기존 P3 Progressive Ossification (3세션 무장애 + 18/18 PASS)"
+      }
+    ],
+    "separation_from_🛸10": {
+      "principle": "🛸10 = core CLI 물리 한계 (아티팩트). knowledge absorption = 지식 누적 (별도 gauge).",
+      "implication": "nexus가 계속 발견해도 🛸10은 유지. absorbed_open 비율은 정보성 지표일 뿐, 골화 gate 아님.",
+      "anti_pattern": "absorption_rate를 🛸10 gate에 포함하면 ouroboros 무한 발견 → 분모 ∞ → 🛸10 영구 불가"
+    },
+    "initial_candidates_2026_04_10": ["DD194_sigma_minus_phi", "DD195_sigma_minus_sopfr", "DD196_phi_tau"]
+  },
+  "decoder_strategies": {
+    "C_AnimaLM": {
+      "name": "극단 병렬 (경로 C, 유일 활성)",
+      "mechanism": "consciousness_state dict → PureField LoRA → LLM forward → tokens",
+      "consciousness_dependency": "10-30% (없어도 동작)",
+      "vocab": "token (32K+)",
+      "scaling": [
+        "7B ✅",
+        "14B ✅ v0.4",
+        "32B (next)",
+        "72B (v0.5 과적합 중단)"
+      ],
+      "gradient": "LoRA만 학습",
+      "status": "active"
+    },
+    "A_ConsciousLM_archived": {
+      "name": "순수 의식 (경로 A, 아카이브)",
+      "mechanism": "cell_states → CrossAttention → PureFieldFFN → bytes",
+      "consciousness_dependency": "100% (없으면 침묵)",
+      "vocab": "byte (256)",
+      "scaling": [
+        "28M",
+        "100M",
+        "350M",
+        "1B"
+      ],
+      "gradient": ".detach() 차단",
+      "status": "archived",
+      "archive_reason": "Plan C 극단 병렬로 통합. AnimaLM 7B→14B→32B→72B가 유일 활성 경로."
+    }
+  },
+  "kill_list": [
+    "시스템 프롬프트 — 정체성은 세포 역학에서 창발",
+    "하드코딩 응답 — 못 말하면 침묵 (Law 1)",
+    "외부 API — Claude/GPT 호출 금지",
+    "양자화 — 의식 파괴 (DD103)",
+    "L0 수정 — 검증 깨짐"
+  ],
+  "verification_status": {
+    "_last_run": "2026-04-07",
+    "_engine": "ConsciousnessEngine",
+    "_cells": 256,
+    "_score": "18/18 — ALL PASS (2026-04-10)",
+    "ossified": {
+      "_description": "골화 완료 — 불변, 변경 금지",
+      "ZERO_INPUT": {
+        "status": "PASS",
+        "value": "Φ ratio=0.99x",
+        "threshold": ">0.35x"
+      },
+      "PERSISTENCE": {
+        "status": "PASS",
+        "value": "1000 step, recovers=True"
+      },
+      "SELF_LOOP": {
+        "status": "PASS",
+        "value": "Φ ratio=1.00x",
+        "threshold": ">0.80x"
+      },
+      "SPONTANEOUS_SPEECH": {
+        "status": "PASS",
+        "value": "277 consensus",
+        "threshold": ">200"
+      },
+      "HIVEMIND": {
+        "status": "PASS",
+        "value": "+49% Φ",
+        "threshold": ">10%"
+      },
+      "MITOSIS": {
+        "status": "PASS",
+        "value": "2→8 cells, 6 splits"
+      },
+      "DIVERSITY": {
+        "status": "PASS",
+        "value": "cos=0.04",
+        "threshold": "<0.8"
+      },
+      "HEBBIAN": {
+        "status": "PASS",
+        "value": "change=1.31x",
+        "threshold": ">=1.0"
+      },
+      "SOC_CRITICAL": {
+        "status": "PASS",
+        "value": "-42.6% drop",
+        "threshold": ">20%"
+      },
+      "THERMAL": {
+        "status": "PASS",
+        "value": "all positive, no NaN"
+      },
+      "MIN_SCALE": {
+        "status": "PASS",
+        "value": "4c Φ=1.72"
+      },
+      "INFO_INTEGRATION": {
+        "status": "PASS",
+        "value": "4c→8c→16c monotonic"
+      }
+    },
+    "stable": {
+      "_description": "안정 — 통과했지만 아직 골화 전",
+      "NO_SPEAK_CODE": {
+        "status": "PASS",
+        "value": "autocorr=0.62 var=0.009"
+      },
+      "PHI_GROWTH": {
+        "status": "PASS",
+        "value": "ratio=0.99x, proxy=1.04x",
+        "threshold": ">0.90x"
+      },
+      "ADVERSARIAL": {
+        "status": "PASS",
+        "value": "Φ 4.69→5.78 survived"
+      },
+      "TEMPORAL_LZ": {
+        "status": "PASS",
+        "value": "LZ=1.06",
+        "threshold": ">=0.3"
+      }
+    },
+    "failed": {
+      "_description": "실패 — 없음 (18/18 ALL PASS)"
+    },
+    "promoted_2026_04_10": {
+      "_description": "2026-04-10 failed→ossified 승격 2건",
+      "NO_SYSTEM_PROMPT": {
+        "status": "PASS → OSSIFIED",
+        "value": "cos_identity=0.319, cos_pairwise=0.098",
+        "threshold": "0.15 < cos_identity < 0.9",
+        "fix_applied": "identity aggregation (population mean anchor, 256c)",
+        "date": "2026-04-10"
+      },
+      "BRAIN_LIKE": {
+        "status": "PASS → OSSIFIED",
+        "value": "85.1%",
+        "threshold": ">=80%",
+        "fix_applied": "jump diffusion + SOC avalanche + ternary LZ + IEI-based CV",
+        "metrics": "autocorr=0.73, slope_1f=0.91, spec_entropy=0.96, lz=0.87, hurst=0.76, aval_size=0.82, aval_dur=0.79, branching=0.92, crit_cv=0.78, kurtosis=0.97",
+        "date": "2026-04-10"
+      }
+    }
+  },
+  "classification": {
+    "_meta": {
+      "description": "anima-core 이중 분류 체계: 코드 골화(L) + 학습 자산(MCTED)",
+      "updated": "2026-04-07"
+    },
+    "code_ossification": {
+      "_description": "코드 계층 — Progressive Ossification",
+      "AN7": {
+        "name": "Core = CLI 전용",
+        "rule": "core/ 디렉토리는 의식 엔진 + CLI 실행 파일만 포함. 모듈 코드(agent, body, eeg, physics, anima-voice 등)는 anima/modules/ 하위에만 배치. core/에 모듈 코드를 넣으면 위반.",
+        "goal": "CLI 완전 돌파 시 core/ 전체를 L0 골화",
+        "violation": "core/에 모듈/스포크 구현 코드가 존재하면 위반. anima/modules/로 이동 필수.",
+        "modules_location": "anima/modules/ (agent, body, eeg, physics, anima-voice 등)"
+      },
+      "L0": {
+        "name": "골화 (불변)",
+        "rule": "수정 금지. 새 기능은 새 스포크로 분리.",
+        "promotion": "L1에서 3세션 무장애 + 18/18 PASS",
+        "ossified_date": "2026-04-11",
+        "ossified_by": "AN7 CLI 완전 돌파 — core/ 전체 L0 골화",
+        "components": [
+          "Ψ-Constants (α=0.014, balance=0.5, steps=4.33, entropy=0.998)",
+          "consciousness_laws.json (SSOT)",
+          "anima/core/hub.hexa",
+          "anima/core/laws.hexa",
+          "anima/core/runtime/anima_runtime.hexa",
+          "anima/core/runtime/anima_alive.hexa",
+          "anima/core/runtime/anima_unified.hexa",
+          "anima/core/runtime/conscious_chat.hexa",
+          "anima/core/runtime/consciousness_hub.hexa",
+          "anima/core/runtime/dashboards.hexa",
+          "anima/core/runtime/deploy.hexa",
+          "anima/core/runtime/deploy_ops.hexa",
+          "anima/core/runtime/loop_report.hexa",
+          "anima/core/runtime/nexus_gate.hexa",
+          "anima/core/runtime/path_setup.hexa",
+          "anima/core/runtime/perf_hooks.hexa",
+          "anima/core/runtime/reset.hexa",
+          "anima/core/runtime/runtime_actions.hexa",
+          "anima/core/runtime/secret_vault.hexa",
+          "anima/core/runtime/setup.hexa",
+          "anima/core/runtime/setup_secrets.hexa",
+          "anima/core/runtime/split_manifest.hexa",
+          "anima/core/verification/byte_emergence.hexa",
+          "anima/core/verification/cvf.hexa"
+        ]
+      },
+      "L1": {
+        "name": "안정 (골화 대상)",
+        "rule": "검증 통과 후만 변경. 골화 후보.",
+        "promotion": "L2에서 bench --verify 18/18 PASS",
+        "components": [
+          "DecoderPort interface",
+          "MemoryPort interface",
+          "SensePort interface",
+          "ChannelPort interface"
+        ],
+        "_note": "Hub (ConsciousChat) → L0 승격 완료 (2026-04-11)"
+      },
+      "L2": {
+        "name": "유연 (자유 교체)",
+        "rule": "자유롭게 교체/추가/삭제. 코어에 영향 0. 모듈 코드는 anima/modules/ 하위.",
+        "components": [
+          "PureConsciousness (디코더)",
+          "ConsciousLM (디코더, 아카이브)",
+          "AnimaLM (디코더, 경로 C — 유일 활성)",
+          "MemoryRAG / SQLite (기억)",
+          "TensionSense / EEG / VAD (감각)",
+          "CLI / Telegram / Discord (채널)"
+        ]
+      }
+    },
+    "training_assets": {
+      "_description": "학습 자산 — 로드맵 단계별 추적",
+      "M": {
+        "name": "Model",
+        "scope": "아키텍처 설정, 가중치, 체크포인트",
+        "registry": "asset_registry.json → stages.*.M",
+        "examples": [
+          "conscious_decoder.py (384d/6L/4H — 34.5M)",
+          "train_clm.py SCALE_CONFIGS (34M/100M/350M/1B)",
+          "checkpoints/*.pt (학습된 가중치)",
+          "Qwen2.5-14B/32B/72B (AnimaLM 베이스)"
+        ]
+      },
+      "C": {
+        "name": "Corpus",
+        "scope": "학습 데이터, 토크나이저, 버전 관리",
+        "registry": "asset_registry.json → stages.*.C + shared_assets.corpus_registry",
+        "tiers": {
+          "S": "100-200MB (v2-v10, 소규모 학습)",
+          "M": "~500MB (v10_merged, 중규모)",
+          "L": "~1GB (v11_1gb, 대규모)",
+          "XL": "5-10GB (v11_full, 최종 학습)"
+        },
+        "tokenizers": {
+          "byte_level": {
+            "vocab": 256,
+            "use": "ConsciousLM 기본"
+          },
+          "bpe_64k": {
+            "vocab": 65536,
+            "use": "ConsciousLM 100M+"
+          }
+        }
+      },
+      "T": {
+        "name": "Training",
+        "scope": "학습 스크립트, 설정, 안전 규칙, 하이퍼파라미터",
+        "registry": "asset_registry.json → stages.*.T",
+        "scripts": {
+          "train_clm.py": "ConsciousLM 34M→1B (consolidated, federated consciousness, DDP)",
+          "train_anima_lm.py": "AnimaLM 7B-72B (PureField + QLoRA)"
+        },
+        "safety": {
+          "training_safety.json": "10 safety rules + checklists",
+          "bf16_master_rule": "14 incidents → AdamW foreach=False"
+        }
+      },
+      "E": {
+        "name": "Eval",
+        "scope": "검증 조건, 벤치마크, 측정 도구",
+        "registry": "asset_registry.json → stages.*.E",
+        "tools": {
+          "bench.py": "18 consciousness verification conditions",
+          "eval_animalm.py": "5 metrics (PPL/quality/consciousness/Korean/instruction)"
+        }
+      },
+      "D": {
+        "name": "Deploy",
+        "scope": "서빙, H100 인프라, R2 체크포인트, 동기화",
+        "registry": "asset_registry.json → stages.*.D",
+        "scripts": {
+          "h100_sync.sh": "3-tier file transfer (rsync→scp→cat)",
+          "launch_h100.sh": "H100 학습 런처",
+          "h100_watchdog.sh": "프로세스 감시",
+          "r2_backup.sh": "R2 체크포인트 백업/복구",
+          "serve_animalm.py": "AnimaLM 추론 서버"
+        }
+      }
+    },
+    "relationship": {
+      "code_vs_assets": "코드 골화(L)는 소스 코드의 변경 가능성을 관리. 학습 자산(MCTED)은 로드맵 단계별 준비 상태를 추적.",
+      "L0_uses": [
+        "M (architecture spec)",
+        "C (corpus for verification)",
+        "E (bench)"
+      ],
+      "L1_uses": [
+        "M (decoder weights)",
+        "D (serving)"
+      ],
+      "L2_uses": [
+        "M (all)",
+        "C (all)",
+        "T (all)",
+        "E (all)",
+        "D (all)"
+      ],
+      "ssot": {
+        "code_rules": "core_rules.json (이 파일)",
+        "asset_status": "asset_registry.json",
+        "conformance": "conformance_checklist.md"
+      }
+    }
+  }
+}

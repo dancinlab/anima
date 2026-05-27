@@ -1,0 +1,74 @@
+{
+  "id": "H_234",
+  "slug": "cross-substrate-phi-coupling-density",
+  "cycle": "Cycle_10_LIFE_H_234_NEW",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "rule": 110, "perturb_cell": 0, "n_bins": 4, "boundary": "periodic" },
+  "axes": {
+    "A_closure_k": [0.0, 0.3, 0.6],
+    "B_entropy_h": [0, 1, 2],
+    "C_pain_c":    [0.0, 0.5, 1.0]
+  },
+  "baseline_phi": 0.538242,
+  "phi_27": [0.538242, 1.56044, 2.44487, 0.583772, 1.51929, 3.01222, 0.538242, 1.56044, 2.44487, 1.23267, 2.25362, 2.90455, 1.23267, 2.12638, 3.43588, 1.23267, 2.25362, 2.90455, 4.41529, 4.89064, 4.64003, 4.66507, 4.83047, 4.76776, 4.41529, 4.89064, 4.64003],
+  "composite_27": [0.0, 0.166667, 0.333333, 0.166667, 0.333333, 0.5, 0.333333, 0.5, 0.666667, 0.166667, 0.333333, 0.5, 0.333333, 0.5, 0.666667, 0.5, 0.666667, 0.833333, 0.333333, 0.5, 0.666667, 0.5, 0.666667, 0.833333, 0.666667, 0.833333, 1.0],
+  "marginal": {
+    "axis_A_closure": {
+      "x": [0.0, 0.3, 0.6],
+      "phi": [0.538242, 1.23267, 4.41529],
+      "pearson_r": 0.937701,
+      "monotone": true
+    },
+    "axis_B_entropy": {
+      "x": [0.0, 1.0, 2.0],
+      "phi": [0.538242, 0.583772, 0.538242],
+      "pearson_r": 0.0,
+      "monotone": false
+    },
+    "axis_C_pain": {
+      "x": [0.0, 0.5, 1.0],
+      "phi": [0.538242, 1.56044, 2.44487],
+      "pearson_r": 0.999131,
+      "monotone": true
+    }
+  },
+  "composite_pearson_r": 0.700911,
+  "composite_r_squared": 0.491276,
+  "interaction": {
+    "phi_000": 0.538242,
+    "phi_200": 4.41529,
+    "phi_020": 0.538242,
+    "phi_002": 2.44487,
+    "phi_222": 4.64003,
+    "main_effect_sum": 5.78367,
+    "cross_term": 1.68189,
+    "additive_dominant": true
+  },
+  "determinism_recheck": {
+    "phi_222":    4.64003,
+    "phi_222_re": 4.64003,
+    "byte_equal": true
+  },
+  "criteria": {
+    "C1_mono_ge_2_axis":        true,
+    "C2_all_marginal_r_ge_0_5": false,
+    "C3_composite_r2_ge_0_6":   false,
+    "C4_byte_identical":        true,
+    "C5_additive_dominant":     true
+  },
+  "criteria_met": 3,
+  "falsifiers": {
+    "F1_NO_MONOTONE_AXIS":    { "verdict": "PASS", "mono_count": 2 },
+    "F2_MARGINAL_R_LT_0_3":   { "verdict": "FAIL" },
+    "F3_COMPOSITE_R2_LT_0_3": { "verdict": "PASS" },
+    "F4_BYTE_DIFF":           { "verdict": "PASS" },
+    "F5_PHI_NAN_OR_NEG":      { "verdict": "PASS" }
+  },
+  "verdict_rule": "SUPPORTED iff C1 (≥2 monotone axis) AND C2 (all marginal r≥0.5); PARTIAL = 1/2; FALSIFIED = 0/2",
+  "verdict": "PARTIAL"
+}

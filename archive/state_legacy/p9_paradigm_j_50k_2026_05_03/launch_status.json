@@ -1,0 +1,68 @@
+{
+  "schema": "anima/p9_paradigm_j_50k/launch_status/1",
+  "ts_utc": "2026-05-03T12:43:00Z",
+  "phase": "launched_via_watchdog",
+  "substrate": "ubu1 RTX 5070 12GB",
+  "script_path_ubu1": "/tmp/p9_paradigm_j_50k_train.py",
+  "launcher_path_ubu1": "/tmp/j50k_launcher.sh",
+  "watchdog_pid_ubu1": 2151732,
+  "watchdog_log_ubu1": "/tmp/p9_paradigm_j_50k_launcher.log",
+  "training_log_ubu1": "/tmp/p9_paradigm_j_50k_out/launch.log",
+  "training_train_log_ubu1": "/tmp/p9_paradigm_j_50k_out/train.log",
+  "savepoint_dir_ubu1": "/tmp/p9_paradigm_j_50k_savepoints/",
+  "output_dir_ubu1": "/tmp/p9_paradigm_j_50k_out/",
+  "trajectory_out_ubu1": "/tmp/p9_paradigm_j_50k_out/trajectory.json",
+  "verdict_out_ubu1": "/tmp/p9_paradigm_j_50k_out/verdict.json",
+  "config": {
+    "n_steps": 50000,
+    "batch": 4,
+    "grad_acc": 8,
+    "effective_batch": 32,
+    "lr": 1e-4,
+    "lora_r": 128,
+    "lora_alpha": 128,
+    "lora_targets": ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"],
+    "alpha_curriculum": "12.0 (0-3K) -> 12->6 lin (3K-7K) -> 6.0 (7K-50K)",
+    "beta_tens": 0.10,
+    "gamma_bold": 0.0,
+    "delta_curriculum": "0.5 (0-16K) / 0.5 (16K-33K) / 1.0 (33K-50K)",
+    "phi_threshold": 5.0,
+    "gamma_fe": 0.2,
+    "beta_fe": 1.0,
+    "K_FE": 192,
+    "layer_FE": 8,
+    "T": 64,
+    "seed": 42,
+    "phi_every": 500,
+    "f_every": 5000,
+    "save_at": [5000, 10000, 25000, 50000],
+    "hf_push": true,
+    "hf_org": "dancinlab",
+    "hf_repo_prefix": "clm-v4-paradigm-j-50k-step-{N}k"
+  },
+  "gpu_state_at_launcher_start": {
+    "free_mib": 3406,
+    "used_mib": 8367,
+    "blocking_process": "p9_p1_5_sentinel_seed43_train.py (PID 1726340, started ~21:36 UTC, at step ~3500/50000)"
+  },
+  "eta_estimate": {
+    "wait_for_gpu_free_min": 60,
+    "training_wall_min_after_start": 60,
+    "total_wall_min_from_now": 120,
+    "expected_completion_utc": "~14:45-15:00"
+  },
+  "user_poll_commands": {
+    "watchdog_status": "ssh ubu1 'tail -20 /tmp/p9_paradigm_j_50k_launcher.log'",
+    "training_progress": "ssh ubu1 'tail -30 /tmp/p9_paradigm_j_50k_out/train.log 2>/dev/null'",
+    "gpu_usage": "ssh ubu1 'nvidia-smi --query-gpu=memory.used,memory.free --format=csv'",
+    "training_pid": "ssh ubu1 'cat /tmp/p9_paradigm_j_50k_out/train.pid 2>/dev/null'",
+    "verdict_check": "ssh ubu1 'cat /tmp/p9_paradigm_j_50k_out/verdict.json 2>/dev/null | head -40'"
+  },
+  "notes": [
+    "GPU was occupied by another agent's seed43 sentinel retrain at launcher start; watchdog polls every 10s for >=9GB free.",
+    "Watchdog has 2h timeout (720 attempts × 10s). If GPU never frees, training will not start and timeout will be logged.",
+    "After watchdog launches training, the watchdog itself exits cleanly. Training runs in detached nohup (PID written to train.pid).",
+    "Initial loss trajectory + ETA are not yet measurable — training has not started. Will be available ~60 min from launch (12:43 UTC).",
+    "Output rsync to laptop: scp ubu1:/tmp/p9_paradigm_j_50k_out/{trajectory.json,verdict.json,train.log} /Users/ghost/core/anima/state/p9_paradigm_j_50k_2026_05_03/"
+  ]
+}

@@ -1,0 +1,33 @@
+{
+  "ts": "2026-05-02",
+  "agent": "N-51 W3",
+  "phase": "4_pilot_wrap",
+  "selected_pair": {
+    "shard": "hxc_a25 classify",
+    "blocked_component": "Comp 3 readback",
+    "rationale": "Most promising candidate of any in the inventory: a25 is the ONLY shard that emits per-input numerical statistics (json_per100, text_per100, multi_per100, newline_per100, rule_density_per100) — every other shard only emits compressed bytes. If any wrap path exists it must go through a25."
+  },
+  "pilot_path": "/tmp/n51_W3/wrap_pilot/comp3_classify_wrapper.py",
+  "pilot_md5": "b08f5f10716bbebea878f342585fdd75",
+  "selftest_log_md5": "083c9d9412b1ecb9fe0e44068830eed3",
+  "fixtures": 6,
+  "fixture_kind": "synthetic 4096-d hidden vectors generated via Python random.Random(seed) uniform[-1,1]",
+  "results_per_seed": [
+    {"seed": 0, "true_l1": 11, "proxy_rule_density": 10, "phi_max_abs": 1.1199},
+    {"seed": 1, "true_l1": 8,  "proxy_rule_density": 6,  "phi_max_abs": 1.1285},
+    {"seed": 2, "true_l1": 13, "proxy_rule_density": 5,  "phi_max_abs": 0.9834},
+    {"seed": 3, "true_l1": 11, "proxy_rule_density": 9,  "phi_max_abs": 0.9567},
+    {"seed": 4, "true_l1": 5,  "proxy_rule_density": 9,  "phi_max_abs": 1.3029},
+    {"seed": 5, "true_l1": 8,  "proxy_rule_density": 9,  "phi_max_abs": 1.1321}
+  ],
+  "pearson_corr_true_l1_vs_proxy": -0.313,
+  "acceptance_thresholds": {
+    "wrap_viable": "corr > 0.5",
+    "no_reuse": "abs(corr) < 0.3",
+    "inconclusive": "0.3 <= abs(corr) <= 0.5"
+  },
+  "selftest_pass": true,
+  "selftest_verdict": "INCONCLUSIVE-leaning-NO_REUSE",
+  "selftest_interpretation": "corr -0.313 is statistically indistinguishable from zero on n=6. The proxy carries effectively no information about the true L1 gate count. Increasing the sample size would not rescue this signal because hxc_a25's classification looks at byte-level token frequencies in the JSONL serialization, which are dominated by the JSON syntax overhead and not by the float values' projection-band membership.",
+  "honest_c3": "Pilot was the most-generous-possible test: a25 is the only shard with any per-input numeric output. The negative result generalizes — no other shard would do better on this signal."
+}

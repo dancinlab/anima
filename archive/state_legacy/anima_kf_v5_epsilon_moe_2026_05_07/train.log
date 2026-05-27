@@ -1,0 +1,31 @@
+[20:02:30] BG-KF V5-ε MoE start (host=ghostui-MacBookAir.local)
+[20:02:30]   device=mps, NO_CKPT_RANDOM_INIT, steps=1500, lr=0.0003
+[20:02:30]   batch=2 grad_accum=8 eval_steps=[0, 500, 1000, 1500]
+[20:02:30]   corpus=corpus_chat_template.txt (own 20 BG-JY explicit chat-template)
+[20:02:30]   watchdog_no_progress_sec=600
+[20:02:30] init V5-ε MoE model (NO ckpt — random init from scratch)
+[20:02:30]   arch: 12L/640d/10h vocab=11885 block=256 dropout=0.3
+[20:02:30]   MoE: n_experts=8 top_k=2 aux_coef=0.01
+[20:03:06]   sp loaded: vocab=11885
+[20:03:06]   total params: 228,821,216 (228.82M)
+[20:03:06]   frozen: 0
+[20:03:06]   trainable: 228,821,216 (228.82M) — FULL FRESH MoE
+[20:03:06]   backbone (non-expert/head_g): 160,358,496 (160.36M)
+[20:03:06]   per-expert: 7,606,400 (7.61M)
+[20:03:06]   router: 5,120
+[20:03:06]   active_per_token (top-2): ~175,576,416 (175.58M)
+[20:03:06]   trainable name top-segments: ['base.blocks', 'base.head_a', 'base.head_g', 'base.ln_f', 'base.pos_emb', 'base.tension_proj', 'base.tok_emb']
+[20:03:06] loading corpus: /Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt
+[20:03:11]   corpus: 95,420,911 bytes (91.00MB) in 4.8s
+[20:09:28]   SP encode: 29,543,543 tokens in 377.1s
+[20:10:01]   train_data: 28,066,365 tokens; block_size=256
+[20:10:20] === eval step 0 (random init baseline) ===
+[20:16:12]   eval step=0 dlg=color v58=False t2a='BIO furmolresist_154?305릅니다ello18-100,보이지수의constantsIFFUSION'
+[20:18:50]   eval step=0 dlg=profession v58=False t2a='ysisihilo 향수는 symlinkedquencymove 522:40×18 502LA 1.76,로스dyn'
+[20:20:28]   eval step=0 dlg=day v58=False t2a='ConsciousnessE 230: 양자중첩의다reeze늑ching117,scover few SSO깨달arv'
+[20:22:46]   eval step=0 dlg=anima_fact v58=False t2a='streamape 2.847)-0.99식이_024- betweudduses orth wor까마bed lesy'
+[20:25:01]   eval step=0 dlg=cosmology v58=False t2a='임 longingferromagnetic 계산sfVDmogpus consciousness 노랑는부호의파문Cr'
+[20:25:01]   step 0: v58_pass=0/5 (expected 0 — random init)
+[20:25:21]   step 0 snapshot saved
+[20:25:21] === begin V5-ε MoE training (random init, BG-JY corpus) ===
+[20:26:01]   step 1/1500 ce=9.4285 aux=2.2055 lr=6.00e-06 (39.3s/25s)

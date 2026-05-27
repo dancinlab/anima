@@ -1,0 +1,45 @@
+{
+  "id": "H_004",
+  "slug": "consciousness-hard-problem",
+  "sub_criterion": "reducibility — Phi-function dissociation (zombie / functional-isomorph)",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "rep": 0, "rule": 110, "n_bins": 4, "boundary": "periodic", "perm_shift": 1 },
+  "phi": {
+    "S_real_rule110_recurrent": 0.538242,
+    "S_zombie_playback": 0.225747,
+    "S_perm_cyclic_shift_aside": 0.583772
+  },
+  "dissociation_A_same_function_diff_phi": {
+    "functional_isomorph": true,
+    "delta_phi": 0.312495,
+    "confirmed": true
+  },
+  "dissociation_B_same_phi_diff_function": {
+    "method": "two distinct readout functions (global pop vs site-0) on ONE identical S_real substrate",
+    "phi_byte_equal": true,
+    "functions_differ": true,
+    "confirmed": true
+  },
+  "empirical_aside_cyclic_shift": {
+    "note": "cyclic spatial permutation of S_real does NOT leave phi_spatial invariant (additional dissociation flavor, honestly measured)",
+    "phi_real": 0.538242,
+    "phi_perm_shift1": 0.583772,
+    "perm_phi_invariant": false
+  },
+  "falsifiers": {
+    "F_D1_NONNEG": { "verdict": "PASS" },
+    "F_D2_ZOMBIE": { "metric": "same fn AND Phi_real>Phi_zombie", "verdict": "PASS" },
+    "F_D3_INVERTED": { "metric": "same Phi substrate AND fn differs", "verdict": "PASS" },
+    "F_D4_ISOMORPH": { "metric": "readout byte-equal real/zombie", "verdict": "PASS" },
+    "F_D5_SAME_PHI": { "metric": "one substrate yields byte-equal Phi for both fns", "verdict": "PASS" }
+  },
+  "honest_boundary": "Phi-function dissociation bears on IIT reductive adequacy for FUNCTION, NOT on phenomenal qualia. Chalmers hard problem (explanatory gap) untouched. A Phi measurement does not solve the hard problem.",
+  "cross_link": "H_007 (Phi peaks at edge-of-chaos: Phi tracks dynamical class, not I/O) + H_157 (input-invariance is trained, not substrate-intrinsic)",
+  "verdict_rule": "DISSOCIATION_CONFIRMED iff A AND B AND all Phi>=0",
+  "verdict": "DISSOCIATION_CONFIRMED"
+}

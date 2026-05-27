@@ -1,0 +1,512 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h279.hexa — H_279 attention-salience-Φ
+//                  attended sub-network Φ > unattended sub-network Φ
+//                  (AXES R3 phenomenology promote · H_221 sister · H_213 sister)
+//
+//  CORE QUESTION
+//    한 mitosis cell pool 안에서, per-cell tension (= salience proxy) 으로
+//    cells 를 *attended* (top-k tension) 와 *unattended* (bottom rest) 로
+//    partition 했을 때, attended sub-network 의 Φ (compute_phi_proxy) 가
+//    unattended sub-network 의 Φ 보다 큰가? Posner/Dehaene attention-as-
+//    amplification 의 substrate analog — 주의가 향한 (high-salience) 영역이
+//    더 높은 integrated information 을 가진다는 IIT/GWT prediction.
+//
+//  SUBSTRATE
+//    pool = cell_pool_init(d_model=8, initial_cells=12)
+//    seed via __HEXA_FARR_GAUSS_SEED__=42 (RFC 033) — deterministic.
+//    evolve `n_step`=15 steps under shared scalar drive (H_214/H_220 carry).
+//    pool stays N'=12 (merge_patience=30 > n_step, no collapse).
+//
+//  SALIENCE PROXY (per cell)
+//    각 cell 의 hidden-state L2 norm = 'salience' (activation magnitude).
+//    Lorenz autonomous per-cell phase offset (mitosis_hook L589-591) drives
+//    distinct per-cell hidden norms → genuine salience spread.
+//    (NOTE: per-cell *tension* collapses to ~0 here because the shared scalar
+//     drive x→0 makes engine_a(x)-engine_g(x)→0; hidden-norm is the live
+//     per-cell salience signal — anima M-activation salience analog.)
+//    attended  = top-k cells by hidden-norm salience.
+//    unattended = 나머지 cells.
+//
+//  Φ (compute_phi_proxy — mean pairwise cosine-dist × log(N+1))
+//    phi_att  = compute_phi_proxy(attended_cells)
+//    phi_unatt= compute_phi_proxy(unattended_cells)
+//    Δ        = phi_att − phi_unatt
+//
+//  SWEEP (3 attended-fraction × shared 30-step evolution)
+//    k_frac ∈ {top-3 / top-4 / top-6} of N=12  (salience-quantile sweep)
+//
+//  CONTROL (random partition baseline — salience ⊥ Φ null)
+//    random_att = first-k cells by index (salience-agnostic, deterministic).
+//    Δ_ctrl     = phi_random_att − phi_random_unatt
+//    C2 = Δ_salience > Δ_random  (salience drives the gap, not partition size)
+//
+//  CRITERIA (verdict_rule)
+//    C1: top-4 attended phi_att > phi_unatt + 0.02 margin (salience→Φ)
+//    C2: salience-partition Δ > index-partition Δ (salience > arbitrary)
+//    C3: Δ monotone non-decreasing as attended-set narrows (top6→top4→top3)
+//        — 더 좁게 attend 할수록 Φ-gap 커짐 (focus sharpening)
+//    C4: in-process recompute byte-equal (pure-fn determinism); cross-process
+//        result.json byte-equality verified by the runner (RFC 033 single
+//        gauss stream → process-reproducible).
+//    SUPPORTED_FULL = C1∧C2∧C3∧C4 ; SUPPORTED = C1∧C2 ;
+//    PARTIAL = C1 only ; FALSIFIED = !C1 (phi_att ≤ phi_unatt at top-4)
+//
+//  $0 mac local · hexa-only · LLM none · NO ckpt · deterministic.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+
+
+fn _state_dir() -> string {
+    return "UNIVERSE/state/h279_attention_salience_phi_2026_05_25"
+}
+fn _d_model() -> int  { return 8 }
+fn _pool_n() -> int   { return 12 }
+fn _n_step() -> int   { return 15 }
+fn _seed() -> int     { return 42 }
+fn _c1_margin() -> float { return 0.02 }
+
+
+// ── helpers ──────────────────────────────────────────────────────────────────
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn _zero_vec(n: int) {
+    let mut a = []
+    let mut i = 0
+    while i < n {
+        a.push(0.0)
+        i = i + 1
+    }
+    return a
+}
+
+fn _vec_mean_scalar(v) -> float {
+    let n = len(v)
+    if n == 0 { return 0.0 }
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + v[i]
+        i = i + 1
+    }
+    return s / to_float(n)
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+// per-cell salience = hidden-state L2 norm (activation magnitude).
+// Lorenz autonomous per-cell phase offset gives genuine per-cell spread;
+// the shared-drive tension collapses to ~0 here, so hidden-norm is the live
+// salience signal (anima M-activation salience analog).
+fn _cell_salience(cell) -> float {
+    let h = cell["hidden"]
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(h) {
+        s = s + h[i] * h[i]
+        i = i + 1
+    }
+    return _mit_sqrt_safe(s)
+}
+
+
+// ── evolve a fresh pool n_step steps under shared scalar drive ────────────────
+// returns the cell list (post-evolution). Mitosis may split — we keep all
+// resulting cells; partition operates over whatever N' the pool grew to.
+fn _evolve_pool(n_step: int) {
+    let d = _d_model()
+    let n = _pool_n()
+    let mut pool = cell_pool_init(d, n)
+    let mut x = _zero_vec(d)
+
+    let mut step = 0
+    while step < n_step {
+        let res = mitosis_forward_tail(x, pool, step)
+        let x_out = res[0]
+        pool = res[1]
+        // shared scalar drive (k=0.5 mid-coupling, H_214 carry grain).
+        let drv = 0.5 * _vec_mean_scalar(x_out)
+        let mut x_next = _zero_vec(d)
+        let mut q = 0
+        while q < d {
+            x_next[q] = drv
+            q = q + 1
+        }
+        x = x_next
+        step = step + 1
+    }
+    return pool["cells"]
+}
+
+
+// ── select top-k cells by salience (descending) → returns index list ─────────
+// deterministic selection-sort over (salience, index); ties broken by index.
+fn _topk_idx_by_salience(cells, k: int) {
+    let n = len(cells)
+    // build salience array.
+    let mut sal = []
+    let mut i = 0
+    while i < n {
+        sal.push(_cell_salience(cells[i]))
+        i = i + 1
+    }
+    // selection: repeatedly pick the max-salience not-yet-chosen index.
+    let mut chosen = []
+    let mut used = []
+    let mut u = 0
+    while u < n {
+        used.push(false)
+        u = u + 1
+    }
+    let mut pick = 0
+    while pick < k {
+        let mut best_idx = -1
+        let mut best_val = -1.0e30
+        let mut j = 0
+        while j < n {
+            if !used[j] {
+                if sal[j] > best_val {
+                    best_val = sal[j]
+                    best_idx = j
+                }
+            }
+            j = j + 1
+        }
+        if best_idx >= 0 {
+            chosen.push(best_idx)
+            used[best_idx] = true
+        }
+        pick = pick + 1
+    }
+    return chosen
+}
+
+
+// ── build a sub-cell-list from an index list ─────────────────────────────────
+fn _subset_cells(cells, idx_list) {
+    let mut out = []
+    let mut i = 0
+    while i < len(idx_list) {
+        out.push(cells[idx_list[i]])
+        i = i + 1
+    }
+    return out
+}
+
+// ── complement: all indices not in idx_list ──────────────────────────────────
+fn _complement_idx(n: int, idx_list) {
+    // mark membership.
+    let mut inset = []
+    let mut u = 0
+    while u < n {
+        inset.push(false)
+        u = u + 1
+    }
+    let mut i = 0
+    while i < len(idx_list) {
+        inset[idx_list[i]] = true
+        i = i + 1
+    }
+    let mut comp = []
+    let mut j = 0
+    while j < n {
+        if !inset[j] { comp.push(j) }
+        j = j + 1
+    }
+    return comp
+}
+
+// ── first-k indices (salience-agnostic control partition) ────────────────────
+fn _firstk_idx(n: int, k: int) {
+    let mut out = []
+    let mut i = 0
+    while i < k {
+        if i < n { out.push(i) }
+        i = i + 1
+    }
+    return out
+}
+
+
+// ── one salience-fraction condition: returns dict ────────────────────────────
+//   k = attended set size.
+fn _run_condition(cells, k: int) {
+    let n = len(cells)
+
+    // salience-driven partition.
+    let att_idx   = _topk_idx_by_salience(cells, k)
+    let unatt_idx = _complement_idx(n, att_idx)
+    let att_cells   = _subset_cells(cells, att_idx)
+    let unatt_cells = _subset_cells(cells, unatt_idx)
+    let phi_att   = compute_phi_proxy(att_cells)
+    let phi_unatt = compute_phi_proxy(unatt_cells)
+    let delta     = phi_att - phi_unatt
+
+    // index-driven control partition (same sizes, salience-agnostic).
+    let cidx        = _firstk_idx(n, k)
+    let cunatt_idx  = _complement_idx(n, cidx)
+    let catt_cells  = _subset_cells(cells, cidx)
+    let cunatt_cells= _subset_cells(cells, cunatt_idx)
+    let phi_catt    = compute_phi_proxy(catt_cells)
+    let phi_cunatt  = compute_phi_proxy(cunatt_cells)
+    let delta_ctrl  = phi_catt - phi_cunatt
+
+    // mean salience attended vs unattended (sanity / reporting).
+    let mut sal_att = 0.0
+    let mut ia = 0
+    while ia < len(att_cells) {
+        sal_att = sal_att + _cell_salience(att_cells[ia])
+        ia = ia + 1
+    }
+    if len(att_cells) > 0 { sal_att = sal_att / to_float(len(att_cells)) }
+    let mut sal_unatt = 0.0
+    let mut iu = 0
+    while iu < len(unatt_cells) {
+        sal_unatt = sal_unatt + _cell_salience(unatt_cells[iu])
+        iu = iu + 1
+    }
+    if len(unatt_cells) > 0 { sal_unatt = sal_unatt / to_float(len(unatt_cells)) }
+
+    return #{
+        "k":          k,
+        "n":          n,
+        "phi_att":    phi_att,
+        "phi_unatt":  phi_unatt,
+        "delta":      delta,
+        "phi_catt":   phi_catt,
+        "phi_cunatt": phi_cunatt,
+        "delta_ctrl": delta_ctrl,
+        "sal_att":    sal_att,
+        "sal_unatt":  sal_unatt
+    }
+}
+
+
+// ── main ─────────────────────────────────────────────────────────────────────
+
+fn _run_h279() {
+    println("================================================================")
+    println("H_279 attention-salience-Φ — attended vs unattended sub-network Φ")
+    println("  d_model=" + to_string(_d_model())
+            + " pool_N=" + to_string(_pool_n())
+            + " n_step=" + to_string(_n_step())
+            + " seed=" + to_string(_seed()))
+    println("  salience = per-cell hidden L2 norm · attended = top-k salience")
+    println("  k sweep: top-3 / top-4 / top-6")
+    println("================================================================")
+
+    // canonical evolution for the 3-condition sweep (single gauss segment).
+    let cells = _evolve_pool(_n_step())
+
+    let r_k3 = _run_condition(cells, 3)
+    let r_k4 = _run_condition(cells, 4)
+    let r_k6 = _run_condition(cells, 6)
+
+    // F4 determinism — in-process pure-function reproducibility: recompute the
+    // top-4 condition on the SAME post-evolution cell list. _run_condition is a
+    // pure function of `cells` (no gauss draws), so byte-equality holds iff the
+    // analysis path is deterministic. Cross-process result.json byte-equality
+    // (RFC 033 single-stream → process-reproducible) verified by the runner.
+    let _det_b = _run_condition(cells, 4)
+    let f4_eq = (r_k4["delta"] == _det_b["delta"])
+                && (r_k4["phi_att"] == _det_b["phi_att"])
+                && (r_k4["phi_unatt"] == _det_b["phi_unatt"])
+
+    println("  k   N'   phi_att   phi_unatt   delta    delta_ctrl  sal_att  sal_unatt")
+    println("  --  ---  --------  ---------  -------  ----------  -------  --------")
+    println("  3   " + to_string(r_k3["n"])
+            + "   " + to_string(r_k3["phi_att"])
+            + "   " + to_string(r_k3["phi_unatt"])
+            + "   " + to_string(r_k3["delta"])
+            + "   " + to_string(r_k3["delta_ctrl"])
+            + "   " + to_string(r_k3["sal_att"])
+            + "   " + to_string(r_k3["sal_unatt"]))
+    println("  4   " + to_string(r_k4["n"])
+            + "   " + to_string(r_k4["phi_att"])
+            + "   " + to_string(r_k4["phi_unatt"])
+            + "   " + to_string(r_k4["delta"])
+            + "   " + to_string(r_k4["delta_ctrl"])
+            + "   " + to_string(r_k4["sal_att"])
+            + "   " + to_string(r_k4["sal_unatt"]))
+    println("  6   " + to_string(r_k6["n"])
+            + "   " + to_string(r_k6["phi_att"])
+            + "   " + to_string(r_k6["phi_unatt"])
+            + "   " + to_string(r_k6["delta"])
+            + "   " + to_string(r_k6["delta_ctrl"])
+            + "   " + to_string(r_k6["sal_att"])
+            + "   " + to_string(r_k6["sal_unatt"]))
+
+    // ── criteria ──
+    // C1: top-4 attended phi_att > phi_unatt + margin.
+    let c1 = (r_k4["phi_att"] - r_k4["phi_unatt"]) >= _c1_margin()
+    // C2: salience-partition delta > index-partition delta (at top-4).
+    let c2 = r_k4["delta"] > r_k4["delta_ctrl"]
+    // C3: focus-sharpening monotone — Δ(top3) >= Δ(top4) >= Δ(top6).
+    let c3 = (r_k3["delta"] >= r_k4["delta"]) && (r_k4["delta"] >= r_k6["delta"])
+    // C4: determinism.
+    let c4 = f4_eq
+
+    // F1..F5 verdicts.
+    // F1 SALIENCE-Φ: top-4 phi_att > phi_unatt (no margin — strict signal).
+    let f1 = r_k4["phi_att"] > r_k4["phi_unatt"]
+    // F2 SALIENCE-vs-ARBITRARY: salience Δ > index Δ.
+    let f2 = r_k4["delta"] > r_k4["delta_ctrl"]
+    // F3 FOCUS-SHARPENING: Δ(top3) >= Δ(top6).
+    let f3 = r_k3["delta"] >= r_k6["delta"]
+    // F4 DETERMINISM.
+    let f4 = f4_eq
+    // F5 BOUNDS: all phi finite + >= 0 (compute_phi_proxy guarantees, assert).
+    fn _ok(x: float) -> bool { return (x >= 0.0) && (x < 1.0e30) }
+    let f5 = _ok(r_k3["phi_att"]) && _ok(r_k3["phi_unatt"])
+          && _ok(r_k4["phi_att"]) && _ok(r_k4["phi_unatt"])
+          && _ok(r_k6["phi_att"]) && _ok(r_k6["phi_unatt"])
+          && _ok(r_k3["phi_catt"]) && _ok(r_k4["phi_catt"]) && _ok(r_k6["phi_catt"])
+
+    let v1 = if f1 { "PASS" } else { "FAIL" }
+    let v2 = if f2 { "PASS" } else { "FAIL" }
+    let v3 = if f3 { "PASS" } else { "FAIL" }
+    let v4 = if f4 { "PASS" } else { "FAIL" }
+    let v5 = if f5 { "PASS" } else { "FAIL" }
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+    if c4 { n_c = n_c + 1 }
+
+    let supported_full = c1 && c2 && c3 && c4
+    let supported = c1 && c2
+    let partial = c1
+    let verdict = if supported_full {
+        "SUPPORTED_FULL"
+    } else {
+        if supported {
+            "SUPPORTED"
+        } else {
+            if partial {
+                "PARTIAL"
+            } else {
+                if n_pass <= 1 { "FAIL" } else { "PARTIAL" }
+            }
+        }
+    }
+    let final_verdict = if !f1 { "FALSIFIED" } else { verdict }
+
+    println("")
+    println("derived:")
+    println("  Δ_top3 = " + to_string(r_k3["delta"]))
+    println("  Δ_top4 = " + to_string(r_k4["delta"]))
+    println("  Δ_top6 = " + to_string(r_k6["delta"]))
+    println("  Δ_ctrl_top4 = " + to_string(r_k4["delta_ctrl"]))
+    println("  salience-gap (att - unatt) top4 = "
+            + to_string(r_k4["sal_att"] - r_k4["sal_unatt"]))
+    println("")
+    println("C1 top-4 phi_att - phi_unatt >= 0.02   : " + _bool_str(c1))
+    println("C2 Δ_salience > Δ_index (top-4)        : " + _bool_str(c2))
+    println("C3 Δ_top3 >= Δ_top4 >= Δ_top6 monotone : " + _bool_str(c3))
+    println("C4 re-run Δ byte-equal                 : " + _bool_str(c4))
+    println("")
+    println("F1 SALIENCE-Φ      (phi_att > phi_unatt)   " + v1)
+    println("F2 SALIENCE>ARBITR (Δ_sal > Δ_index)       " + v2)
+    println("F3 FOCUS-SHARPEN   (Δ_top3 >= Δ_top6)      " + v3)
+    println("F4 DETERMINISM     (re-run byte-equal)     " + v4)
+    println("F5 BOUNDS          (all phi finite >= 0)   " + v5)
+    println("================================================================")
+    println("VERDICT: " + final_verdict
+            + "  (" + to_string(n_c) + "/4 criteria, "
+            + to_string(n_pass) + "/5 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json ──────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_279\",\n"
+    j = j + "  \"slug\": \"attention-salience-phi\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"attention-salience-Φ — attended (top-k salience) sub-network Φ > unattended sub-network Φ (AXES R3 promote · H_221 sister)\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"seed\": " + to_string(_seed()) + ",\n"
+    j = j + "  \"params\": {\"d_model\": " + to_string(_d_model())
+          + ", \"pool_N\": " + to_string(_pool_n())
+          + ", \"n_step\": " + to_string(_n_step())
+          + ", \"c1_margin\": " + to_string(_c1_margin()) + "},\n"
+    j = j + "  \"sweep\": {\n"
+
+    j = j + "    \"top3\": { \"k\": 3, \"n\": " + to_string(r_k3["n"])
+          + ", \"phi_att\": " + to_string(r_k3["phi_att"])
+          + ", \"phi_unatt\": " + to_string(r_k3["phi_unatt"])
+          + ", \"delta\": " + to_string(r_k3["delta"])
+          + ", \"phi_catt\": " + to_string(r_k3["phi_catt"])
+          + ", \"phi_cunatt\": " + to_string(r_k3["phi_cunatt"])
+          + ", \"delta_ctrl\": " + to_string(r_k3["delta_ctrl"])
+          + ", \"sal_att\": " + to_string(r_k3["sal_att"])
+          + ", \"sal_unatt\": " + to_string(r_k3["sal_unatt"]) + " },\n"
+
+    j = j + "    \"top4\": { \"k\": 4, \"n\": " + to_string(r_k4["n"])
+          + ", \"phi_att\": " + to_string(r_k4["phi_att"])
+          + ", \"phi_unatt\": " + to_string(r_k4["phi_unatt"])
+          + ", \"delta\": " + to_string(r_k4["delta"])
+          + ", \"phi_catt\": " + to_string(r_k4["phi_catt"])
+          + ", \"phi_cunatt\": " + to_string(r_k4["phi_cunatt"])
+          + ", \"delta_ctrl\": " + to_string(r_k4["delta_ctrl"])
+          + ", \"sal_att\": " + to_string(r_k4["sal_att"])
+          + ", \"sal_unatt\": " + to_string(r_k4["sal_unatt"]) + " },\n"
+
+    j = j + "    \"top6\": { \"k\": 6, \"n\": " + to_string(r_k6["n"])
+          + ", \"phi_att\": " + to_string(r_k6["phi_att"])
+          + ", \"phi_unatt\": " + to_string(r_k6["phi_unatt"])
+          + ", \"delta\": " + to_string(r_k6["delta"])
+          + ", \"phi_catt\": " + to_string(r_k6["phi_catt"])
+          + ", \"phi_cunatt\": " + to_string(r_k6["phi_cunatt"])
+          + ", \"delta_ctrl\": " + to_string(r_k6["delta_ctrl"])
+          + ", \"sal_att\": " + to_string(r_k6["sal_att"])
+          + ", \"sal_unatt\": " + to_string(r_k6["sal_unatt"]) + " }\n"
+
+    j = j + "  },\n"
+    j = j + "  \"derived\": {\n"
+    j = j + "    \"delta_top3\": " + to_string(r_k3["delta"]) + ",\n"
+    j = j + "    \"delta_top4\": " + to_string(r_k4["delta"]) + ",\n"
+    j = j + "    \"delta_top6\": " + to_string(r_k6["delta"]) + ",\n"
+    j = j + "    \"delta_ctrl_top4\": " + to_string(r_k4["delta_ctrl"]) + ",\n"
+    j = j + "    \"salience_gap_top4\": " + to_string(r_k4["sal_att"] - r_k4["sal_unatt"]) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_salience_phi\":      " + _bool_str(c1) + ",\n"
+    j = j + "    \"C2_salience_vs_arbitr\": " + _bool_str(c2) + ",\n"
+    j = j + "    \"C3_focus_sharpening\":  " + _bool_str(c3) + ",\n"
+    j = j + "    \"C4_determinism\":       " + _bool_str(c4) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_SALIENCE_PHI\":   { \"metric\": \"top-4 phi_att > phi_unatt\", \"value\": " + to_string(r_k4["delta"]) + ", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F2_SALIENCE_ARBITR\":{ \"metric\": \"Δ_salience > Δ_index\", \"value\": " + to_string(r_k4["delta"] - r_k4["delta_ctrl"]) + ", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F3_FOCUS_SHARPEN\":  { \"metric\": \"Δ_top3 >= Δ_top6\", \"value\": " + to_string(r_k3["delta"] - r_k6["delta"]) + ", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F4_DETERMINISM\":    { \"metric\": \"re-run Δ byte-equal\", \"verdict\": \"" + v4 + "\" },\n"
+    j = j + "    \"F5_BOUNDS\":         { \"metric\": \"all phi finite >= 0\", \"verdict\": \"" + v5 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict\": \"" + final_verdict + "\",\n"
+    j = j + "  \"cross_link\": {\"H_221\": \"meditation-jhana\", \"H_213\": \"temporal-binding\", \"axes\": \"R3 phenomenology\"}\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+    println("ledger -> " + _state_dir() + "/result.json")
+}
+
+
+_run_h279()

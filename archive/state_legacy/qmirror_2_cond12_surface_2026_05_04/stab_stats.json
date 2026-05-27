@@ -1,0 +1,34 @@
+{
+  "schema_version": 1,
+  "metric": "stab_plus_ratios",
+  "definition": "per-stabilizer fraction of n_shots where the syndrome bit = 0 (= +1 eigenvalue measured); aggregated min over all 8 stabilizers gives min_stab_plus_ratio used in verdict",
+  "spec_threshold_per_stab": 0.99,
+  "spec_threshold_min": 0.99,
+  "n_shots": 1024,
+  "n_stabilizers": 8,
+  "n_Z_stabilizers": 6,
+  "n_X_stabilizers": 2,
+  "per_stabilizer": {
+    "Z_1": {"support": [0, 1], "weight": 2, "type": "Z", "plus_count": 1024, "plus_ratio": 1.0, "ancilla_qubit": 9},
+    "Z_2": {"support": [1, 2], "weight": 2, "type": "Z", "plus_count": 1024, "plus_ratio": 1.0, "ancilla_qubit": 10},
+    "Z_3": {"support": [3, 4], "weight": 2, "type": "Z", "plus_count": 1024, "plus_ratio": 1.0, "ancilla_qubit": 11},
+    "Z_4": {"support": [4, 5], "weight": 2, "type": "Z", "plus_count": 1024, "plus_ratio": 1.0, "ancilla_qubit": 12},
+    "Z_5": {"support": [6, 7], "weight": 2, "type": "Z", "plus_count": 1024, "plus_ratio": 1.0, "ancilla_qubit": 13},
+    "Z_6": {"support": [7, 8], "weight": 2, "type": "Z", "plus_count": 1024, "plus_ratio": 1.0, "ancilla_qubit": 14},
+    "X_1": {"support": [0, 1, 2, 3, 4, 5], "weight": 6, "type": "X", "plus_count": 1024, "plus_ratio": 1.0, "ancilla_qubit": 15},
+    "X_2": {"support": [3, 4, 5, 6, 7, 8], "weight": 6, "type": "X", "plus_count": 1024, "plus_ratio": 1.0, "ancilla_qubit": 16}
+  },
+  "summary": {
+    "min_plus_ratio": 1.0,
+    "max_plus_ratio": 1.0,
+    "mean_plus_ratio": 1.0,
+    "trivial_syndrome_count": 1024,
+    "trivial_syndrome_ratio": 1.0
+  },
+  "verdict_component": "PASS",
+  "syndrome_histogram_msb_keyed_by_X_2_X_1_Z_6_Z_5_Z_4_Z_3_Z_2_Z_1": {
+    "00000000": 1024
+  },
+  "expected_noiseless": "all 8 stabilizers have +1 ratio = 1.0 because |0_L> is a simultaneous +1 eigenstate of every stabilizer in the Shor [[9,1,3]] CSS code, and Aer state-vector simulation is deterministic on Pauli eigenstates",
+  "raw10_caveat": "stab_plus_ratios = 1.0 across all 8 syndromes is the noiseless-Aer DETERMINISTIC outcome; real hardware (depolarizing CNOT noise ~1e-3 per gate) would yield per-stabilizer +1 ratios in [0.85, 0.98] typical (X-stabs are weight-6 so suffer more CNOT noise than weight-2 Z-stabs). Toy demonstration only; no decoder applied."
+}

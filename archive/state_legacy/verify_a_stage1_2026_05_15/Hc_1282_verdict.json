@@ -1,0 +1,60 @@
+{
+  "hypothesis_id": "Hc_1282",
+  "title": "H_190.5 daughter — d=(n/φ)·2^(σ-sopfr)=384 derivation n-substitution audit",
+  "verify_batch": "A (옵션 A, hypotheses/ quarantine, 20 file)",
+  "stage": "Stage 1 — 수학적 검증",
+  "method": "W2 (math identity) + W5 (numerical sim, sympy exact arithmetic)",
+  "ts": "2026-05-15",
+  "wall_seconds": 0.8,
+  "cost_usd": 0,
+  "deterministic": true,
+  "verdict_class": "SUPPORTED",
+  "evidence": {
+    "formula": "d = (n/φ(n)) · 2^(σ(n) − sopfr(n))",
+    "n_sweep_range": "n ∈ {2..30} ∪ {28, 496, 8128}",
+    "n_values_producing_d_384": [6],
+    "uniqueness_confirmed": true,
+    "n6_anchor": {
+      "sigma": 12,
+      "phi": 2,
+      "sopfr": 5,
+      "n_over_phi": 3,
+      "exp_part": "2^7 = 128",
+      "d": 384
+    },
+    "neighbor_d_values": {
+      "n=2": 4,
+      "n=3": 3,
+      "n=4": 16,
+      "n=5": "5/2",
+      "n=6": 384,
+      "n=8": 1024,
+      "n=9": 192,
+      "n=12": 6291456
+    },
+    "interesting_anchor_aliasing": {
+      "n=9 → d=192": "L-1282-3 D-mod-192 aliasing 정합 — d=384 = 192·2 (n=9 가 d=192 일 가능성, denser sweep 권장)"
+    }
+  },
+  "falsifiers_status": {
+    "F-1282-4 (N=6 SUBSTITUTION NON-UNIQUE)": "NOT_FIRED (n=6 만 384 산출)",
+    "F-1282-6 (PERFECT-NUMBER EXCLUSION)": "PARTIAL — n=28/496/8128 모두 astronomical d (8.2e13 / 1.6e287 / inf) → physically realizable n 만 small perfect (n=6)이 정합. trivial fact 일 가능성 (L-1282-2 carry)"
+  },
+  "honest_limits": [
+    "L-1282-1 (FORMULA POST-HOC FIT) — d=(n/φ)·2^(σ-sopfr) 자체가 reverse-engineered 가능. other formula (d=n·σ·τ·φ=576) 도 small integer 로 384 부근 produce 가능 → math identity uniqueness ≠ derivation uniqueness",
+    "L-1282-2 (N=6 PERFECT_NUMBER PRIOR carry) — small perfect number (n=6) 의 divisor structure 가 이미 atlas-verified, n=6 unique 검증이 first-perfect-number-only trivial fact 가능",
+    "L-1282-3 (D-MOD-192 ALIASING confirmed in sweep) — n=9 가 d=192 산출 발견, d=384=192·2 의 mod-192 aliasing 가능. denser sweep ({300, 350, 400, 450}) 시 peak 위치 더 정확",
+    "L-1282-VARIANT-SOPFR — 가설표의 n=496 sopfr=21 이 sympy 계산 (with multiplicity)=39 와 불일치 → 가설표 typo 가능 OR alternative sopfr 정의 (distinct primes? 단 그 경우 33). 가설 *핵심* claim (n=6 only) 영향 없음",
+    "L-1282-PHI-MEASUREMENT-PENDING — 본 audit 는 *math identity* 만 검증. Φ(d=384) ≥ Φ(d ∈ {256, 320, 448, 512}) + 25% margin (F-1282-1) 은 Stage 2 (numerical sim) 후속"
+  ],
+  "next_steps": [
+    "Stage 2 (numerical sim): d ∈ {256, 320, 384, 448, 512} × 5-seed Φ measurement (Hc_1282 F-1282-1 / F-1282-2 / F-1282-3)",
+    "Stage 2 expansion: d ∈ {192, 384, 576, 768} mod-192 aliasing check (L-1282-3 follow-up)",
+    "Hc_1282 frontmatter status: candidate-falsifier-ready → supported-stage-1-math (custom intermediate, full promoted 는 Stage 2 PASS 후)"
+  ],
+  "cross_link": {
+    "parent_H": "H_190 LAW-CA-embedding mathematical family (legacy_2026_05_15)",
+    "sibling_Hc": ["Hc_1281 staged-growth", "Hc_1283 PyPhi 3-axis"],
+    "axis_impact": "AXIS.tape A4 math (18 active, 1 running H_067) — Hc_1282 SUPPORTED 가 A4 tier 강화"
+  }
+}

@@ -1,0 +1,126 @@
+{
+  "schema": "anima/p9/p1_5_ensemble/verdict/v1",
+  "date_utc": "2026-05-03T14:54:18.598126+00:00",
+  "cv_threshold": 0.3,
+  "phase1_5": {
+    "n_seeds": 4,
+    "seeds": [
+      "phase1_5_seed42",
+      "phase1_5_seed43",
+      "phase1_5_seed44",
+      "phase1_5_seed45"
+    ],
+    "metric_stats": {
+      "bleu_1": {
+        "n_seeds": 4,
+        "values": [
+          0.005636272545090181,
+          0.005260521042084168,
+          0.005698897795591182,
+          0.005636272545090181
+        ],
+        "mean": 0.005557990981963927,
+        "std": 0.0002004986296791348,
+        "cv": 0.036073939365818875
+      },
+      "rouge_l": {
+        "n_seeds": 4,
+        "values": [
+          0.0054493908451824285,
+          0.005307716071616755,
+          0.005731590644080496,
+          0.005642573821304163
+        ],
+        "mean": 0.00553281784554596,
+        "std": 0.0001907772459070337,
+        "cv": 0.03448102779320913
+      },
+      "chrf": {
+        "n_seeds": 4,
+        "values": [
+          0.01765189501788283,
+          0.020645383328141247,
+          0.01873989287534883,
+          0.025572189626144815
+        ],
+        "mean": 0.02065234021187943,
+        "std": 0.003505476326856741,
+        "cv": 0.16973748693333826
+      }
+    },
+    "verdict": "PHASE_1_5_REAL_LIFT",
+    "detail": {
+      "verdict": "PHASE_1_5_REAL_LIFT",
+      "cv_threshold": 0.3,
+      "cv_bleu_1": 0.036073939365818875,
+      "cv_rouge_l": 0.03448102779320913,
+      "cv_chrf": 0.16973748693333826,
+      "bleu_real_lift": true,
+      "rouge_real_lift": true,
+      "chrf_real_lift": true
+    }
+  },
+  "ablation_B": {
+    "n_seeds": 4,
+    "seeds": [
+      "ablation_B_seed42",
+      "ablation_B_seed43",
+      "ablation_B_seed44",
+      "ablation_B_seed45"
+    ],
+    "metric_stats": {
+      "bleu_1": {
+        "n_seeds": 4,
+        "values": [
+          0.011961422845691383,
+          0.006763527054108216,
+          0.0061998997995991985,
+          0.00751503006012024
+        ],
+        "mean": 0.008109969939879759,
+        "std": 0.0026235420923914595,
+        "cv": 0.3234959083498597
+      },
+      "rouge_l": {
+        "n_seeds": 4,
+        "values": [
+          0.011762125330293447,
+          0.006728337627636224,
+          0.006153911833692447,
+          0.007203891910805738
+        ],
+        "mean": 0.007962066675606965,
+        "std": 0.0025694867223620584,
+        "cv": 0.32271605188061064
+      },
+      "chrf": {
+        "n_seeds": 4,
+        "values": [
+          0.03411049602215575,
+          0.024605033583265157,
+          0.02349176792541142,
+          0.023026709757868614
+        ],
+        "mean": 0.026308501822175236,
+        "std": 0.005243315316859144,
+        "cv": 0.19930117466588665
+      }
+    },
+    "verdict": "B_PARTIAL"
+  },
+  "reality_check_annotation": {
+    "reality_check": {
+      "llama_anchor_bleu_1": 0.38216018207110447,
+      "ablation_A_baseline_bleu_1": 0.006513026052104208,
+      "phase1_5_ensemble_bleu_1": 0.005557990981963927,
+      "phase1_5_pct_of_llama": 1.4543616113647893,
+      "phase1_5_vs_A_ratio": 0.8533653846153846,
+      "B_ensemble_bleu_1": 0.008109969939879759,
+      "B_pct_of_llama": 2.1221389146111576,
+      "B_without_s42_bleu_1": 0.006826152304609218,
+      "B_without_s42_vs_A": 1.0480769230769231
+    },
+    "caveat": "Mechanical cv<0.30 verdict labels P1.5 PHASE_1_5_REAL_LIFT and B PARTIAL, but ALL ensembles are at noise floor (~1-2% of Llama anchor 0.382). P1.5 ensemble mean (0.00556) is BELOW ablation_A baseline (0.00651). B ensemble s42 was a 0.012 outlier; B-without-s42 mean (0.00683) \u2248 A. TRUE INTERPRETATION: BOTH_NOISE_FLOOR \u2014 neither cell shows meaningful lift over noise; cv test only measures the consistency of the noise floor itself. A-prime switch (qualitative gates) re-confirmed.",
+    "true_signal": "BOTH_NOISE_FLOOR_P1_5_BELOW_A"
+  }
+}

@@ -1,0 +1,180 @@
+#!/usr/bin/env python3
+# P9 P0 measure - CLM v4 tension extraction on FULL 50K + 500 holdout
+# scope: 50500 records (50K train+val + 500 holdout), T=64, RTX 5070 12GB
+# expected wallclock ~15min (per probe 13.4ms p50)
+# additive: writes augmented to /tmp/ then we scp back
+import json
+import os
+import sys
+import time
+import traceback
+
+ANIMA_HOME = "/home/aiden/anima"
+CLM_CKPT = f"{ANIMA_HOME}/checkpoints/clm_v4_350m/scale_350m/best.pt"
+TOKENIZER = "/tmp/tokenizer_64k_multilingual.model"
+
+# argv: <input_jsonl> <output_jsonl>
+if len(sys.argv) < 3:
+    print("usage: measure_ubu1_clm_v4_full_50k.py <input_jsonl> <output_jsonl>", file=sys.stderr)
+    sys.exit(1)
+SFT_DATA = sys.argv[1]
+OUTPUT = sys.argv[2]
+PROGRESS_LOG = OUTPUT + ".progress.json"
+
+sys.path.insert(0, f"{ANIMA_HOME}/models")
+sys.path.insert(0, f"{ANIMA_HOME}/training")
+sys.path.insert(0, f"{ANIMA_HOME}/anima")
+sys.path.insert(0, f"{ANIMA_HOME}")
+
+T = 64
+BATCH = 16  # 350M model on RTX 5070 12GB, T=64 -> ~3-4GB activation; safe margin
+
+print(f"[measure] start ts={time.strftime('%Y-%m-%dT%H:%M:%S')}", flush=True)
+print(f"[measure] input={SFT_DATA} output={OUTPUT}", flush=True)
+
+import torch
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+print(f"[measure] device={device} torch={torch.__version__}", flush=True)
+
+import sentencepiece as spm
+sp = spm.SentencePieceProcessor(model_file=TOKENIZER)
+vocab_size = sp.get_piece_size()
+print(f"[measure] tokenizer vocab={vocab_size}", flush=True)
+
+from conscious_decoder import ConsciousDecoderV2
+
+scale_cfg = {
+    'd_model': 768,
+    'n_layer': 16,
+    'n_head': 12,
+    'n_kv_head': 4,
+    'block_size': 512,
+    'consciousness_dim': 192,
+}
+
+decoder = ConsciousDecoderV2(
+    vocab_size=vocab_size,
+    d_model=scale_cfg['d_model'],
+    n_head=scale_cfg['n_head'],
+    n_layer=scale_cfg['n_layer'],
+    block_size=scale_cfg['block_size'],
+    n_kv_head=scale_cfg['n_kv_head'],
+    consciousness_dim=scale_cfg['consciousness_dim'],
+    dropout=0.0,
+    gate_strength=0.001,
+    n_ca_rules=8,
+).to(device).eval()
+
+ck = torch.load(CLM_CKPT, map_location=device, weights_only=False)
+sd = ck.get('decoder', ck) if isinstance(ck, dict) else ck
+decoder.load_state_dict(sd, strict=False)
+n_params = sum(p.numel() for p in decoder.parameters())
+print(f"[measure] decoder params={n_params:,} ckpt loaded", flush=True)
+
+# load all records
+records = []
+with open(SFT_DATA, 'r') as f:
+    for line in f:
+        records.append(json.loads(line))
+N = len(records)
+print(f"[measure] loaded {N} records", flush=True)
+
+# pre-tokenize
+print(f"[measure] tokenizing...", flush=True)
+t0 = time.time()
+all_tokens = []
+for rec in records:
+    text = rec.get('input', '') + ' ' + rec.get('completion', '')
+    toks = sp.encode(text)[:T]
+    if len(toks) < T:
+        toks = toks + [0] * (T - len(toks))
+    all_tokens.append(toks)
+print(f"[measure] tokenize done {time.time()-t0:.1f}s", flush=True)
+
+# batched forward
+n_errors = 0
+fwd_times = []
+t_start = time.time()
+last_flush = t_start
+
+with open(OUTPUT, 'w') as out_f, torch.no_grad():
+    for batch_start in range(0, N, BATCH):
+        batch_end = min(batch_start + BATCH, N)
+        batch_toks = all_tokens[batch_start:batch_end]
+        idx = torch.tensor(batch_toks, dtype=torch.long, device=device)
+        try:
+            t0 = time.time()
+            out = decoder(idx)
+            if device.type == 'cuda':
+                torch.cuda.synchronize()
+            t_fwd = time.time() - t0
+            fwd_times.append(t_fwd)
+
+            tensions = out[2] if len(out) >= 3 else None
+            for j, rec in enumerate(records[batch_start:batch_end]):
+                if tensions is None:
+                    tension_target = [0.0] * T
+                elif isinstance(tensions, torch.Tensor):
+                    t_flat = tensions[j].detach().float().cpu().view(-1)
+                    if t_flat.shape[0] >= T:
+                        tension_target = t_flat[:T].tolist()
+                    else:
+                        v = t_flat.mean().item() if t_flat.numel() > 0 else 0.0
+                        tension_target = [v] * T
+                elif isinstance(tensions, list):
+                    if len(tensions) > j and isinstance(tensions[j], torch.Tensor):
+                        v = float(tensions[j].mean().item())
+                        tension_target = [v] * T
+                    else:
+                        tension_target = [0.0] * T
+                else:
+                    tension_target = [0.0] * T
+                rec_aug = dict(rec)
+                rec_aug['tension_target'] = tension_target
+                out_f.write(json.dumps(rec_aug, ensure_ascii=False) + '\n')
+        except Exception as e:
+            n_errors += 1
+            if n_errors <= 3:
+                print(f"[measure] err batch {batch_start}: {e}", flush=True)
+            for rec in records[batch_start:batch_end]:
+                rec_aug = dict(rec)
+                rec_aug['tension_target'] = None
+                rec_aug['_measure_error'] = str(e)
+                out_f.write(json.dumps(rec_aug, ensure_ascii=False) + '\n')
+
+        # progress log every 5s
+        now = time.time()
+        if now - last_flush > 5.0:
+            done = batch_end
+            elapsed = now - t_start
+            rate = done / max(elapsed, 0.001)
+            eta = (N - done) / max(rate, 0.001)
+            prog = {"done": done, "total": N, "elapsed_s": elapsed, "eta_s": eta, "rate_rec_s": rate, "errors": n_errors}
+            with open(PROGRESS_LOG, 'w') as pf:
+                json.dump(prog, pf)
+            print(f"[measure] {done}/{N} elapsed={elapsed:.0f}s rate={rate:.0f}rec/s eta={eta:.0f}s errors={n_errors}", flush=True)
+            last_flush = now
+
+elapsed = time.time() - t_start
+fwd_mean = sum(fwd_times) / max(len(fwd_times), 1) if fwd_times else 0
+print(f"[measure] DONE elapsed={elapsed:.1f}s rate={N/max(elapsed,0.001):.0f}rec/s errors={n_errors} fwd_mean={fwd_mean*1000:.1f}ms/batch", flush=True)
+
+stats = {
+    "phase": "p9_p0_measure_clm_v4_tension",
+    "input": SFT_DATA,
+    "output": OUTPUT,
+    "n_records": N,
+    "n_errors": n_errors,
+    "elapsed_s": elapsed,
+    "rate_rec_s": N / max(elapsed, 0.001),
+    "fwd_ms_mean_per_batch": fwd_mean * 1000,
+    "batch": BATCH,
+    "T": T,
+    "device": str(device),
+    "ckpt": CLM_CKPT,
+    "n_params": n_params,
+    "vocab_size": vocab_size,
+}
+with open(OUTPUT + ".stats.json", 'w') as f:
+    json.dump(stats, f, indent=2)
+print(json.dumps(stats, indent=2), flush=True)

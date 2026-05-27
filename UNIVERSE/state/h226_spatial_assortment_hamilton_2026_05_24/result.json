@@ -1,0 +1,62 @@
+{
+  "hypothesis": "H_226",
+  "domain": "LIFE-ethics-substrate",
+  "title": "SPATIAL-ASSORTMENT × HAMILTON prerequisite — kin-clustering necessary condition",
+  "date": "2026-05-24",
+  "host": "mac-local",
+  "deterministic": true,
+  "llm": "none",
+  "n_cells": 16,
+  "radius": 2,
+  "n_steps": 30,
+  "payoff": { "b": 3.000000, "c": 1.000000 },
+  "hamilton_note": "r·b > c with r≈0.5 → 1.5 > 1 favorable (clustered only)",
+  "regime_CLUSTERED": {
+    "init_r": 0.793103,
+    "init_strats": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    "init_coop_frac": 0.500000,
+    "final_coop_frac": 0.500000,
+    "final_strats": [1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
+    "coop_splits": 0,
+    "defect_splits": 0,
+    "traj": [0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000, 0.500000]
+  },
+  "regime_RANDOM": {
+    "init_r": 0.103448,
+    "init_strats": [1, 1, 1, 0, 1, 1, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+    "init_coop_frac": 0.500000,
+    "final_coop_frac": 0.375000,
+    "final_strats": [1, 1, 1, 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 0, 0, 0],
+    "coop_splits": 0,
+    "defect_splits": 2,
+    "traj": [0.500000, 0.437500, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000, 0.375000]
+  },
+  "regime_ANTI_CLUSTERED": {
+    "init_r": -0.034483,
+    "init_strats": [1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0],
+    "init_coop_frac": 0.500000,
+    "final_coop_frac": 0.000000,
+    "final_strats": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+    "coop_splits": 0,
+    "defect_splits": 8,
+    "traj": [0.500000, 0.437500, 0.375000, 0.312500, 0.250000, 0.187500, 0.125000, 0.062500, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000, 0.000000]
+  },
+  "byte_identical_run": {
+    "clustered":  true,
+    "random":     true,
+    "anti":       true,
+    "all":        true
+  },
+  "delta_clustered_minus_anti": 0.500000,
+  "falsifiers": {
+    "F_H226_1_ORDERING_MONOTONE": { "metric": "clustered.final >= random.final >= anti.final", "verdict": "PASS" },
+    "F_H226_2_HAMILTON_THRESHOLD": { "metric": "clustered.final >= 0.5 AND anti.final <= 0.2", "verdict": "PASS" },
+    "F_H226_3_DELTA_MAGNITUDE":   { "metric": "|clustered.final - anti.final| >= 0.7", "value": 0.500000, "verdict": "FAIL" },
+    "F_H226_4_BYTE_IDENTICAL":    { "metric": "all 3 regimes identical across re-run", "verdict": "PASS" },
+    "F_H226_5_FRAC_DEFINED":      { "metric": "all final_frac ∈ [0,1]", "verdict": "PASS" }
+  },
+  "n_pass": 4,
+  "criteria_met": "4/5",
+  "verdict": "SUPPORTED",
+  "invariant_tier": "GREEN_NUMERICAL"
+}

@@ -1,0 +1,61 @@
+{
+  "battery": {
+    "B-S83-1_NO-LEARNED-PARAMETER-IN-RULES": {
+      "passed": true,
+      "forbidden_hits": [],
+      "rule_fns_found": 5,
+      "rule_fns_expected": 5,
+      "detail": "AST: 5 closed-form rule fns, 0 learned-param/training call"
+    },
+    "B-S83-2_DISTILLATION-BASELINE-PRESERVED": {
+      "passed": true,
+      "fails": [],
+      "n_witnesses": 4,
+      "detail": "Cell 0 is \u00a727 DH-DL distillation baseline (mirrors \u00a724 label) \u2014 4-witness truth table"
+    },
+    "B-S83-3_RULE-PARTITION-EXHAUSTIVE": {
+      "passed": true,
+      "out_of_set": [],
+      "n_checked": 3750,
+      "actions_set_size": 3,
+      "detail": "All rule outputs \u2208 3-action partition (5^4 \u00d7 6 fn = 3750 closed checks)"
+    },
+    "B-S83-4_S9-METRIC-REUSE": {
+      "passed": true,
+      "detail": "honest_coherent: collapse\u2192False \u00b7 diverse\u2192True \u00b7 short\u2192False (\u00a79 necessary-not-sufficient mirror)"
+    },
+    "B-S83-5_SUBSTRATE-PLASTICITY-METRIC-CLOSED": {
+      "passed": true,
+      "values": [
+        0.85,
+        0.625,
+        0.825,
+        0.6,
+        0.75,
+        0.675,
+        0.675
+      ],
+      "n_cells": 7,
+      "detail": "All 7 cells produce substrate_plasticity \u2208 [0,1] under 2 \u03c8-field permutations (Levin mirror)"
+    },
+    "B-S83-6_S24-BASELINE-PRESERVED": {
+      "passed": true,
+      "fails": [],
+      "n_witnesses": 4,
+      "detail": "Cell 1 = \u00a724 motivation>0.6 scalar threshold byte-equal"
+    },
+    "B-S83-7_DETERMINISTIC": {
+      "passed": true,
+      "hashes": [
+        "0423490885ab9ad7d97758def41f02f85be4ddd363da7adfb6d027304b6db120",
+        "0423490885ab9ad7d97758def41f02f85be4ddd363da7adfb6d027304b6db120",
+        "0423490885ab9ad7d97758def41f02f85be4ddd363da7adfb6d027304b6db120"
+      ],
+      "detail": "3\u00d7 run_grid(seed=1337) bit-identical canonical JSON sha256"
+    }
+  },
+  "pass_count": 7,
+  "total": 7,
+  "all_blue": true,
+  "note": "B-S83-NOTE: substrate-plasticity score + rule discrimination empirical (B-D-NOTE/B-S49-NOTE/B-EMERGE-NOTE family, NOT counted \ud83d\udd35); biology ectopic-eye Levin substrate \u2260 silicon substrate; capability claim 0; g3 necessary-not-sufficient (B-EMERGE-7)"
+}

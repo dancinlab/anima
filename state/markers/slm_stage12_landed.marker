@@ -1,0 +1,62 @@
+slm_stage12_landed marker — 2026-05-03
+
+cycle: BG-AN-LM4 (SLM stage 1+2 spec freeze + corpus audit)
+fan-out predecessor: BG-AN-LM3 (anima_2_lm_vlm_slm_landed marker 2026-05-03)
+delta: .roadmap.slm_speech_eeg_lm cond detail land (additive only)
+
+modified files (1):
+  .roadmap.slm_speech_eeg_lm
+    - cond.1 status: partial (kept) + evidence +3 + S1.1-S1.4 spec FROZEN candidate land + blocker_reason rewrite
+    - cond.2 status: unmet -> partial (LM head spec FROZEN candidate) + evidence +4 + S2.1-S2.4 spec land
+    - cond.3 status: unmet (kept) + evidence +1 (corpus 4 candidate audit)
+    - blk.1 desc: corpus 4 candidate audit detail (Brennan-Hale 2019 1순위 / KaraOne 2순위 / MOABB infra / BCI Comp 3순위)
+    - cross_link.predecessor +3 entries (anima_2_lm doc + BG-AN-LM4 cycle + RVQ pattern mirror)
+    - cross_link.raw_invariants 6 -> 9 (+stage 1 spec + stage 2 spec + corpus vendoring 금지)
+    - cross_link.ai_native_handoff: this doc + predecessor doc
+
+new files (2):
+  docs/slm_stage12_landed_2026_05_03.ai.md          (handoff doc, friendly preset)
+  state/markers/slm_stage12_landed.marker           (this marker)
+
+referenced (no modification):
+  .roadmap.eeg                                      (sister, B1-B4 4관문 SSOT, in-place 변경 X)
+  .roadmap.voice                                    (VLM × voice sister, in-place 변경 X)
+  .roadmap.vlm_voice_lm                             (sibling LM, in-place 변경 X)
+  .roadmap.blm_brain_lm                             (F-CT-3 sister falsifier reference)
+  .roadmap.nlm_neuromorphic_lm/tlm_tension_lm       (sibling LM reference)
+  .roadmap.p9_sft                                   (training pipeline reuse reference)
+  anima-eeg/* (9-module wrapper 4675 LoC verified disk 2026-05-03)
+  anima-voice/audio_token_predictor.hexa (1576L raw#9 Mk.III RVQ pattern, scaled-down 8-stage->4-stage)
+  anima-clm-eeg/docs/eeg_arrival_impact_5fold.md §4 R33 O1↔O2 frozen pair
+  docs/anima_2_lm_vlm_slm_landed_2026_05_03.ai.md   (BG-AN-LM3 predecessor)
+
+stage 1 spec FROZEN candidate (cond.1):
+  S1.1 band-power     | 16ch × 5band log-PSD                        | 80-dim per epoch
+  S1.2 phase coherence| 8-pair × 5band Welch coherence (R33 O1↔O2)  | 40-dim per epoch
+  S1.3 spike-train    | BrainFlow notch z-score >2.5 binary mask    | 20000-dim sparse
+  S1.4 raw-bin        | 16ch × 1250 float32 windowed (1s/0.25s)     | 20000-dim dense
+  tokenization        | RVQ vocab=1024 × 4 stages, d_model=384      | vocab_total=4096
+                      | (anima-voice Mk.III 8-stage 축소판)         | ctx=120 (30s @ 4Hz)
+
+stage 2 spec FROZEN candidate (cond.2):
+  S2.1 AR transformer | 6-layer × 8-head × 384d (VLM mirror)        | ctx=120
+  S2.2 cross-attn     | 384d -> Llama-3.2-1B vocab=128256           | Mk.XI v10 family
+  S2.3 CFG + KV-cache | classifier-free guidance + O(1) streaming   | VLM Mk.III reuse
+  S2.4 invocation seam| realtime.hexa LSL -> SLM tok -> SLM AR ->   | sister .roadmap.eeg
+                      | text/intent decode (1-cycle E2E PASS)        | B1-B4 prerequisite
+
+corpus candidate audit (blk.1):
+  1순위 권장 | Brennan-Hale 2019 narrative listening (N=49 continuous speech-EEG paired)
+  2순위      | KaraOne (N=12 imagined phoneme/word, U Toronto)
+  infra      | MOABB benchmark suite (multi-dataset BCI software framework)
+  3순위      | BCI Competition III/IV (N<10 imagined speech, classic BCI)
+  vendoring  | 절대 금지 (P9 vendored 패턴 답습 X), user-provided path only
+
+JSON validity: PASS (3 cond + 1 blocker + 9 raw_invariants)
+schema: mk2 header (peer perspective + sister_lm cross-link 4명 + raw_invariants 9건 + ai_native_handoff dual)
+caveats: 5건 (C1 IMPL pending / C2 .roadmap.eeg B1-B4 prereq / C3 corpus실측 미검증 / C4 stage수 heuristic / C5 d_model 384 ablation 미수행)
+
+policy: 마이그레이션 금지 / additive only / BR-NO-USER-VERBATIM / Korean response (handoff = friendly) / silent-land marker / $0 mac-local / destructive 0
+cap: 60min (under)
+
+5-LM ecosystem post-cycle: ELM/MLM/OLM/WLM (4 absorbed) + NLM/TLM/BLM (3 BG-AN-LM3 pre) + VLM/SLM (2 BG-AN-LM3) = 9 *LM total. SLM stage 1+2 spec FROZEN candidate first 측 sibling LM 中 가장 detail 측 spec coverage.

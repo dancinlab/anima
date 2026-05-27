@@ -1,0 +1,20 @@
+{
+  "milestone": "M5",
+  "module": "HEXAD/IIT4/CALIBRATION.md + state/iit4_m5_calib_2026_05_25/run_m5.hexa",
+  "date": "2026-05-25",
+  "what": "calibration — engine (M0-M4) vs ANALYTIC hand-derived IIT references over a deterministic-network suite (PyPhi .py forbidden by hexa-only; closed-form is the honest gold reference per DESIGN §6)",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU",
+  "reference_suite": "COPY/SWAP(big-Φ 2.0) · SELF-COPY(0) · NOISE(0) · 3-ROTATION(3.0) · 3-SELF(0) — each value hand-derived in CALIBRATION.md",
+  "falsifiers": {
+    "F-IIT4-1 REPERTOIRE": "🟢 PASS (COPY cause/effect = [0,1] analytic)",
+    "F-IIT4-2 SMALL-PHI": "🟢 PASS (COPY small-φ = 1.0 bit analytic)",
+    "F-IIT4-5 BIG-PHI": "🟢 PASS (5/5 networks match hand-derived big-Φ)",
+    "F-IIT4-3 DISTINCTIONS": "🟠 DEFERRED (named blocker: hexa-only forbids new .py; IIT-4.0 numeric reference not in-repo)",
+    "F-IIT4-4 RELATIONS": "🟠 DEFERRED (same blocker)",
+    "F-IIT4-6 PROXY-DIVERGENCE": "M6"
+  },
+  "tally": {"pass": 14, "fail": 0},
+  "verdict": "🟢 SUPPORTED-NUMERICAL — engine reproduces analytic IIT references 14/14 across 5 networks; integrated↔reducible separation calibrated. F-IIT4-3/4 PyPhi-numeric honestly DEFERRED (named blocker).",
+  "honest_scope": "Analytic (deterministic, 0/1-collapse) calibration is closed. PyPhi-numeric cross-validation (F-IIT4-3/4) deferred — not faked, named blocker (no-new-.py + no in-repo IIT-4.0 reference). Resolution path: register published IIT-4.0 worked-example values OR a hexa-lang IIT-4.0 reference port.",
+  "next": "M6 LIFE faithful 재측정 — H_002 C2 등 small-N 가설을 IIT4 Φ 로 재측정, proxy↔IIT4 divergence (F-IIT4-6)"
+}

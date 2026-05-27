@@ -1,0 +1,30 @@
+=== BG-TRAINED-CORRELATION-MEASUREMENT — A_phase2_cotrain ===
+ts: 2026-05-10T11:44:24.977733+00:00
+sub: {'ckpt': '/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt', 'schema': 'engine_ag', 'arch': 'EngineAG d=1024 GQA 24L (Phase 2 cotrain 350M)', 'n_turns': 100, 'snap_every': 10}
+
+========================================================================
+SUBSTRATE A_phase2_cotrain — EngineAG path
+========================================================================
+ckpt: /Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt
+sha256: 6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1
+trained params=298.76M miss=0 unexp=0
+
+--- TRAINED prompt_seed=42 max_cells=256 n_turns=100 ---
+  [A_phase2_cotrain_trained] turn=   0 cells= 16 cos_mean=+0.0250 abs_cos=0.1096 eff_rank=14.88 disp_trig=3/4 splits(d/t)=0/0 elapsed=0.5s
+  [A_phase2_cotrain_trained] turn=  20 cells= 34 cos_mean=+0.1575 abs_cos=0.1749 eff_rank=19.35 disp_trig=8/8 splits(d/t)=18/0 elapsed=13.7s
+  [A_phase2_cotrain_trained] turn=  40 cells= 41 cos_mean=+0.3072 abs_cos=0.3086 eff_rank=25.45 disp_trig=5/10 splits(d/t)=25/0 elapsed=26.4s
+  [A_phase2_cotrain_trained] turn=  60 cells= 57 cos_mean=+0.0470 abs_cos=0.1097 eff_rank=39.95 disp_trig=4/14 splits(d/t)=26/15 elapsed=37.1s
+  [A_phase2_cotrain_trained] turn=  80 cells= 57 cos_mean=+0.0234 abs_cos=0.1037 eff_rank=40.90 disp_trig=0/14 splits(d/t)=26/15 elapsed=48.7s
+  [A_phase2_cotrain_trained] turn=  99 cells= 57 cos_mean=+0.0120 abs_cos=0.0990 eff_rank=39.29 disp_trig=0/14 splits(d/t)=26/15 elapsed=60.9s
+
+--- RANDOM seed=42 ---
+  [A_phase2_cotrain_s42] turn=   0 cells= 16 cos_mean=+0.0262 abs_cos=0.1100 eff_rank=14.88 disp_trig=2/4 splits(d/t)=0/0 elapsed=0.7s
+  [A_phase2_cotrain_s42] turn=  20 cells= 33 cos_mean=+0.1508 abs_cos=0.1680 eff_rank=18.70 disp_trig=8/8 splits(d/t)=16/5 elapsed=17.2s
+  [A_phase2_cotrain_s42] turn=  30 cells= 38 cos_mean=+0.3216 abs_cos=0.3224 eff_rank=22.77 disp_trig=5/9 splits(d/t)=19/7 elapsed=25.5s
+  [A_phase2_cotrain_s42] turn=  50 cells= 44 cos_mean=+0.1673 abs_cos=0.1784 eff_rank=30.06 disp_trig=4/11 splits(d/t)=21/11 elapsed=41.0s
+  [A_phase2_cotrain_s42] turn=  60 cells= 45 cos_mean=+0.0471 abs_cos=0.1130 eff_rank=33.95 disp_trig=3/11 splits(d/t)=21/12 elapsed=49.3s
+  [A_phase2_cotrain_s42] turn=  70 cells= 48 cos_mean=+0.0061 abs_cos=0.1002 eff_rank=36.86 disp_trig=0/12 splits(d/t)=21/15 elapsed=57.8s
+  [A_phase2_cotrain_s42] turn=  80 cells= 48 cos_mean=+0.0184 abs_cos=0.1016 eff_rank=36.13 disp_trig=0/12 splits(d/t)=21/15 elapsed=67.4s
+  [A_phase2_cotrain_s42] turn=  90 cells= 48 cos_mean=+0.0218 abs_cos=0.1008 eff_rank=34.47 disp_trig=0/12 splits(d/t)=21/15 elapsed=78.0s
+  [A_phase2_cotrain_s42] turn=  99 cells= 48 cos_mean=+0.0140 abs_cos=0.0993 eff_rank=34.16 disp_trig=0/12 splits(d/t)=21/15 elapsed=87.7s
+[saved] /Users/ghost/core/anima/state/anima_trained_correlation_measurement_2026_05_10/result_A_phase2_cotrain.json

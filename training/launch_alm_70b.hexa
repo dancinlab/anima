@@ -1,0 +1,13 @@
+// launch_alm_70b.hexa — STUBBED 2026-04-18 (R37/AN13/L3-PY compliance)
+//
+// Previously wrote /tmp runner shell script invoking `accelerate launch` +
+// `python3 train_alm_14b.py` under FSDP Full-Shard on 70B base.
+// Violates R37/AN13/L3-PY (python3 wrapper-fallback).
+
+fn main() {
+    println("[R37/AN13/L3-PY] BLOCKED: training/launch_alm_70b.hexa")
+    println("  Previously wrote bash runner wrapping `python3 train_alm_14b.py` under FSDP.")
+    println("  Escalate to user for hexa-native ALM 70B launcher replacement.")
+    panic("R37/AN13/L3-PY: python3 invocation blocked at training/launch_alm_70b.hexa")
+}
+

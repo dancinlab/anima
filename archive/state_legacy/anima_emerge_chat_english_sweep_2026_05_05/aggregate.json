@@ -1,0 +1,66 @@
+{
+  "short": {
+    "prompt": "Hello",
+    "n_tokens": 2,
+    "greedy": "``````````````````````````````",
+    "topk": "`eeeeeeeeeeeeߙ�dhhhhhhhhhhhhh",
+    "elapsed_greedy_sec": 21.17,
+    "elapsed_topk_sec": 8.4
+  },
+  "medium": {
+    "prompt": "Hello world. How are you today?",
+    "n_tokens": 9,
+    "greedy": "b(((((((((((((((((((((((((((((",
+    "topk": "b/jjjdhhhhhhhhhhhhhhhhhhhhhhhh",
+    "elapsed_greedy_sec": 11.6,
+    "elapsed_topk_sec": 10.48
+  },
+  "long": {
+    "prompt": "The quick brown fox jumps over the lazy dog. The sun is shining brightly today and the weather is wonderful for a walk in the park.",
+    "n_tokens": 45,
+    "greedy": "b(((((((((((((((((((((((((((((",
+    "topk": "b/OOOPP^hPPgPggPPggPPPgPgPggPP",
+    "elapsed_greedy_sec": 16.87,
+    "elapsed_topk_sec": 15.27
+  },
+  "instruction": {
+    "prompt": "Q: What is consciousness?\nA:",
+    "n_tokens": 8,
+    "greedy": "aaaaaaaaaeeeeeeeeeeeeeeeeeeeee",
+    "topk": "aaaaaccccc��蓛|�ޑ�\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006\u0006",
+    "elapsed_greedy_sec": 5.29,
+    "elapsed_topk_sec": 4.53
+  },
+  "few_shot": {
+    "prompt": "Q: What is 2+2?\nA: 4.\n\nQ: What is the capital of France?\nA: Paris.\n\nQ: Hello, how are you?\nA:",
+    "n_tokens": 36,
+    "greedy": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "topk": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "elapsed_greedy_sec": 5.4,
+    "elapsed_topk_sec": 5.48
+  },
+  "chat_format": {
+    "prompt": "User: Hello\nAssistant:",
+    "n_tokens": 7,
+    "greedy": "aaaaaaaaeeeeeeeeeeeeeeeeeeeeee",
+    "topk": "aaaaaccccc��蓛|�ޑ�瑑�������",
+    "elapsed_greedy_sec": 4.08,
+    "elapsed_topk_sec": 4.13
+  },
+  "story": {
+    "prompt": "Once upon a time there was a kingdom where",
+    "n_tokens": 13,
+    "greedy": "/OOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+    "topk": "/OOOOPPgPgPPggPPPPgPPPgPPPgPPP",
+    "elapsed_greedy_sec": 4.58,
+    "elapsed_topk_sec": 4.06
+  },
+  "wiki": {
+    "prompt": "The phenomenon known as consciousness has been studied for",
+    "n_tokens": 14,
+    "greedy": "/OOOOOOOOOOOOOOOOOOOOOOOOOOOOO",
+    "topk": "/OOOOPPgPPgPPgPPPPgPPPgPPPgPPP",
+    "elapsed_greedy_sec": 4.33,
+    "elapsed_topk_sec": 4.15
+  }
+}

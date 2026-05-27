@@ -1,0 +1,29 @@
+{
+  "verdicts": {
+    "H_080.1_slope_1_07": {
+      "status": "NOT-MEASURED (single N=64 point in PROVEN, sweep \ubbf8\uc2e4\ud589)",
+      "data_available": "v5-mitosis 7 ckpts at n_cells=64"
+    },
+    "H_080.4_low_phi_ce_corr": {
+      "status": "SUPPORTED-BY-COND5-COTRAIN",
+      "evidence": "cond.5 cotrain \u2014 CE 264.35\u21921.17 (220\u00d7 change) + \u03a6 stable ~4.16 = corr \u2248 0 << 0.1 threshold"
+    },
+    "H_080.10_cross_tension_Hc040_vs_Hc024": {
+      "status": "SUPPORTED (Hc_040 wins, Hc_024 FALSIFIED)",
+      "evidence": "corr(\u03a6, CE) \u2248 0 << 0.3 threshold via cond.5 cotrain \u2014 Hc_040 low-\u03a6-CE-decoupling \ud655\uc778"
+    },
+    "H_080.13_unbounded_N_4096": {
+      "status": "NOT-MEASURED (max N=64 in current ckpts)"
+    },
+    "H_080.others_topology_specific": {
+      "status": "INSUFFICIENT (hypercube vs ring vs scale-free vs SW topology sweep \ubcc4\ub3c4 cycle)"
+    }
+  },
+  "supported_count": 2,
+  "not_measured_count": 2,
+  "insufficient_count": 1,
+  "aggregate_status": "PARTIAL-UPGRADE (2 SUPPORTED of 5 sub-claims, 2 NOT-MEASURED, 1 INSUFFICIENT)",
+  "prior_status": "PARTIAL-NO-CHANGE (D 16 PARTIAL audit)",
+  "new_status": "PARTIAL\u2192PARTIAL-UPGRADE (2 sub-claims newly SUPPORTED via cond.5 cotrain evidence)",
+  "key_finding": "H_080.10 cross-tension: Hc_040 low-\u03a6-CE-decoupling SUPPORTED \u2192 Hc_024 FALSIFIED (\ubcc4\ub3c4 cycle \uac80\uc99d \ud544\uc694\ud55c cascade implication)"
+}

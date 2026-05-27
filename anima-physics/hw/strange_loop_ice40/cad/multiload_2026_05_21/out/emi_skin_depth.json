@@ -1,0 +1,73 @@
+{
+  "all_adequate": true,
+  "analysis": "emi_shielding_skin_depth_analytical",
+  "error": null,
+  "freqs_hz": [
+    100000000.0,
+    1000000000.0,
+    10000000000.0
+  ],
+  "geometry_id": "upduino_v3_enclosure_v1",
+  "interface": "demiurge:component:gmsh-skfem-verify-record-multiload",
+  "ok": true,
+  "plate": {
+    "material": "aluminium 6061-T6",
+    "mu_r": 1.0,
+    "sigma_s_per_m": 35000000.0,
+    "thickness_m": 0.001
+  },
+  "produced_at_utc": "2026-05-21T09:30:09.704036+00:00",
+  "provenance": {
+    "absorbed": false,
+    "measurement_gate": "GATE_OPEN",
+    "producer": "anima/multiload_2026_05_21/emi_skin_depth.py (analytical, no FEM)",
+    "scope_caveats": [
+      "plane-wave far-field assumption (Schelkunsh/Ott) \u2014 near-field magnetic sources < 1 m would reduce SE_R by 30-60 dB.",
+      "no slot/aperture penalty modelled \u2014 real enclosure USB-C cutout + status LEDs + screw holes drop SE_total to ~half the calculated value (slot length \u2192 leakage frequency f_\u03bb/2).",
+      "Al 6061 \u03c3 = 3.5e7 S/m = task-spec value, MMPDS DC-conductivity range is 2.4-4.1e7 (Mg+Si alloying lowers vs pure Al 6.0e7). NOT a measured-lot value."
+    ]
+  },
+  "record_id": "emi_skin_depth_20260521T093009Z",
+  "rows": [
+    {
+      "adequacy": "excellent (mil/medical)",
+      "delta_m": 8.507189549448235e-06,
+      "delta_um": 8.507189549448235,
+      "freq_hz": 100000000.0,
+      "freq_label": "100 MHz",
+      "se_absorption_db": 1021.0057725307597,
+      "se_reflection_db": 145.80640050787338,
+      "se_spec_form_db": 41.40427781066506,
+      "se_total_db": 1166.812173038633,
+      "t_over_delta": 117.54763358538997,
+      "thickness_m": 0.001
+    },
+    {
+      "adequacy": "excellent (mil/medical)",
+      "delta_m": 2.6902095463038055e-06,
+      "delta_um": 2.6902095463038056,
+      "freq_hz": 1000000000.0,
+      "freq_label": "1 GHz",
+      "se_absorption_db": 3228.703745376979,
+      "se_reflection_db": 135.80640050787338,
+      "se_spec_form_db": 51.40427781066506,
+      "se_total_db": 3364.510145884852,
+      "t_over_delta": 371.718255692737,
+      "thickness_m": 0.001
+    },
+    {
+      "adequacy": "excellent (mil/medical)",
+      "delta_m": 8.507189549448235e-07,
+      "delta_um": 0.8507189549448235,
+      "freq_hz": 10000000000.0,
+      "freq_label": "10 GHz",
+      "se_absorption_db": 10210.057725307597,
+      "se_reflection_db": 125.80640050787339,
+      "se_spec_form_db": 61.40427781066506,
+      "se_total_db": 10335.864125815471,
+      "t_over_delta": 1175.4763358538999,
+      "thickness_m": 0.001
+    }
+  ],
+  "summary_table_md": "| freq | \u03b4 (\u00b5m) | t/\u03b4 | SE_spec (20\u00b7log) | SE_A | SE_R | SE_total | adequacy |\n|------|--------|-----|------------------|------|------|----------|----------|\n| 100 MHz | 8.51 | 117.55 | 41.4 | 1021.0 | 145.8 | 1166.8 | excellent (mil/medical) |\n| 1 GHz | 2.69 | 371.72 | 51.4 | 3228.7 | 135.8 | 3364.5 | excellent (mil/medical) |\n| 10 GHz | 0.85 | 1175.48 | 61.4 | 10210.1 | 125.8 | 10335.9 | excellent (mil/medical) |"
+}

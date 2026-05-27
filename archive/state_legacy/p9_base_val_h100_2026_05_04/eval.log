@@ -1,0 +1,1157 @@
+[load] model_dir=/workspace/p9_base_val/clm_v4_hf
+CLMv4ForCausalLM has generative capabilities, as `prepare_inputs_for_generation` is explicitly overwritten. However, it doesn't directly inherit from `GenerationMixin`. From 👉v4.50👈 onwards, `PreTrainedModel` will NOT inherit from `GenerationMixin`, and this model will lose the ability to call `generate` and other related functions.
+  - If you're using `trust_remote_code=True`, you can get rid of this warning by loading the model with an auto class. See https://huggingface.co/docs/transformers/en/model_doc/auto#auto-classes
+  - If you are the owner of the model architecture code, please modify your model class such that it inherits from `GenerationMixin` (after `PreTrainedModel`, otherwise you'll get an exception).
+  - If you are not the owner of the model architecture class, please contact the model code owner to update it.
+[load] params=477.6M block_size=512 dt=1.7s
+[load] tokenizer
+You are using the default legacy behaviour of the <class 'transformers.models.llama.tokenization_llama.LlamaTokenizer'>. This is expected, and simply means that the `legacy` (previous) behavior will be used so nothing changes for you. If you want to use the new behaviour, set `legacy=False`. This should only be set if you understand what it means, and thoroughly read the reason why this was added as explained in https://github.com/huggingface/transformers/pull/24565 - if you loaded a llama tokenizer from a GGUF file you can ignore this message
+[load] tok vocab=64000 bos=1 eos=2
+2026-05-04:06:06:44,735 WARNING  [huggingface.py:95] `pretrained` model kwarg is not of type `str`. Many other model arguments may be ignored. Please do not launch via accelerate or use `parallelize=True` if passing an existing model this way.
+2026-05-04:06:06:44,735 WARNING  [huggingface.py:484] HF model type is neither marked as CausalLM or Seq2SeqLM.                     This is expected if your model requires `trust_remote_code=True` but may be an error otherwise.Setting backend to causal
+2026-05-04:06:06:44,736 INFO     [huggingface.py:492] Model type cannot be determined. Using default model type 'default'
+2026-05-04:06:06:44,739 WARNING  [huggingface.py:275] Passed an already-initialized model through `pretrained`, assuming single-process call to evaluate() or custom distributed integration
+
+[eval] === hellaswag ===
+2026-05-04:06:06:44,742 INFO     [evaluator.py:164] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2026-05-04:06:06:44,743 INFO     [evaluator.py:217] Using pre-initialized model
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hellaswag' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:06:50,862 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hellaswag' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:06:54,607 WARNING  [evaluator.py:270] Overwriting default num_fewshot of hellaswag from None to 5
+2026-05-04:06:06:54,608 INFO     [task.py:415] Building contexts for hellaswag on rank 0...
+  0%|          | 0/500 [00:00<?, ?it/s] 11%|█         | 55/500 [00:00<00:00, 546.53it/s] 22%|██▏       | 110/500 [00:00<00:00, 548.32it/s] 33%|███▎      | 165/500 [00:00<00:00, 539.66it/s] 44%|████▍     | 221/500 [00:00<00:00, 545.25it/s] 55%|█████▌    | 277/500 [00:00<00:00, 547.27it/s] 67%|██████▋   | 333/500 [00:00<00:00, 549.19it/s] 78%|███████▊  | 388/500 [00:00<00:00, 541.62it/s] 89%|████████▉ | 444/500 [00:00<00:00, 545.33it/s]100%|██████████| 500/500 [00:00<00:00, 549.46it/s]100%|██████████| 500/500 [00:00<00:00, 546.45it/s]
+2026-05-04:06:06:55,553 INFO     [evaluator.py:489] Running loglikelihood requests
+Running loglikelihood requests:   0%|          | 0/2000 [00:00<?, ?it/s]Running loglikelihood requests:   0%|          | 1/2000 [00:00<13:38,  2.44it/s]Running loglikelihood requests:   2%|▏         | 49/2000 [00:00<00:16, 119.69it/s]Running loglikelihood requests:   5%|▍         | 97/2000 [00:00<00:09, 203.00it/s]Running loglikelihood requests:   7%|▋         | 145/2000 [00:00<00:07, 261.80it/s]Running loglikelihood requests:  10%|▉         | 193/2000 [00:00<00:05, 303.37it/s]Running loglikelihood requests:  12%|█▏        | 241/2000 [00:01<00:05, 332.40it/s]Running loglikelihood requests:  14%|█▍        | 289/2000 [00:01<00:04, 352.83it/s]Running loglikelihood requests:  17%|█▋        | 337/2000 [00:01<00:04, 367.25it/s]Running loglikelihood requests:  19%|█▉        | 385/2000 [00:01<00:04, 377.36it/s]Running loglikelihood requests:  22%|██▏       | 433/2000 [00:01<00:04, 384.20it/s]Running loglikelihood requests:  24%|██▍       | 481/2000 [00:01<00:03, 389.18it/s]Running loglikelihood requests:  26%|██▋       | 529/2000 [00:01<00:03, 392.56it/s]Running loglikelihood requests:  29%|██▉       | 577/2000 [00:01<00:03, 395.03it/s]Running loglikelihood requests:  31%|███▏      | 625/2000 [00:01<00:03, 396.71it/s]Running loglikelihood requests:  34%|███▎      | 673/2000 [00:02<00:03, 397.96it/s]Running loglikelihood requests:  36%|███▌      | 721/2000 [00:02<00:03, 398.86it/s]Running loglikelihood requests:  38%|███▊      | 769/2000 [00:02<00:03, 399.44it/s]Running loglikelihood requests:  41%|████      | 817/2000 [00:02<00:02, 399.74it/s]Running loglikelihood requests:  43%|████▎     | 865/2000 [00:02<00:02, 399.89it/s]Running loglikelihood requests:  46%|████▌     | 913/2000 [00:02<00:02, 400.13it/s]Running loglikelihood requests:  48%|████▊     | 961/2000 [00:02<00:02, 400.08it/s]Running loglikelihood requests:  50%|█████     | 1009/2000 [00:02<00:02, 400.19it/s]Running loglikelihood requests:  53%|█████▎    | 1057/2000 [00:03<00:02, 400.32it/s]Running loglikelihood requests:  55%|█████▌    | 1105/2000 [00:03<00:02, 400.44it/s]Running loglikelihood requests:  58%|█████▊    | 1153/2000 [00:03<00:02, 400.46it/s]Running loglikelihood requests:  60%|██████    | 1201/2000 [00:03<00:01, 400.51it/s]Running loglikelihood requests:  62%|██████▏   | 1249/2000 [00:03<00:01, 400.53it/s]Running loglikelihood requests:  65%|██████▍   | 1297/2000 [00:03<00:01, 400.57it/s]Running loglikelihood requests:  67%|██████▋   | 1345/2000 [00:03<00:01, 400.57it/s]Running loglikelihood requests:  70%|██████▉   | 1393/2000 [00:03<00:01, 400.53it/s]Running loglikelihood requests:  72%|███████▏  | 1441/2000 [00:04<00:01, 400.59it/s]Running loglikelihood requests:  74%|███████▍  | 1489/2000 [00:04<00:01, 400.55it/s]Running loglikelihood requests:  77%|███████▋  | 1537/2000 [00:04<00:01, 400.37it/s]Running loglikelihood requests:  79%|███████▉  | 1585/2000 [00:04<00:01, 398.93it/s]Running loglikelihood requests:  82%|████████▏ | 1633/2000 [00:04<00:00, 399.31it/s]Running loglikelihood requests:  84%|████████▍ | 1681/2000 [00:04<00:00, 399.28it/s]Running loglikelihood requests:  86%|████████▋ | 1729/2000 [00:04<00:00, 399.04it/s]Running loglikelihood requests:  89%|████████▉ | 1777/2000 [00:04<00:00, 400.70it/s]Running loglikelihood requests:  91%|█████████▏| 1825/2000 [00:04<00:00, 403.88it/s]Running loglikelihood requests:  94%|█████████▎| 1873/2000 [00:05<00:00, 410.14it/s]Running loglikelihood requests:  96%|█████████▌| 1921/2000 [00:05<00:00, 416.70it/s]Running loglikelihood requests:  98%|█████████▊| 1969/2000 [00:05<00:00, 426.76it/s]Running loglikelihood requests: 100%|██████████| 2000/2000 [00:05<00:00, 375.47it/s]
+2026-05-04:06:07:06,020 WARNING  [huggingface.py:1353] Failed to get model SHA for CLMv4ForCausalLM(
+  (decoder): ConsciousDecoderV3(
+    (tok_emb): Embedding(64000, 768)
+    (drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0-15): 16 x DecoderBlockV2(
+        (ln_attn): RMSNorm()
+        (attn): GroupedQueryAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=768, out_features=256, bias=False)
+          (v_proj): Linear(in_features=768, out_features=256, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (attn_dropout): Dropout(p=0.0, inplace=False)
+          (resid_dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_pf): RMSNorm()
+        (purefield): PureFieldFFN(
+          (engine_a): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (engine_g): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+        )
+        (ln_cross): RMSNorm()
+        (cross_attn): ConsciousCrossAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=192, out_features=768, bias=False)
+          (v_proj): Linear(in_features=192, out_features=768, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_ffn): RMSNorm()
+        (ffn): SwiGLUFFN(
+          (gate_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (up_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (down_proj): Linear(in_features=2048, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ca_mix): Linear(in_features=2304, out_features=768, bias=False)
+        (ln_ca): RMSNorm()
+        (rule_weights): Linear(in_features=768, out_features=8, bias=True)
+        (rules): ModuleList(
+          (0-7): 8 x Linear(in_features=768, out_features=768, bias=False)
+        )
+      )
+    )
+    (tension_proj): Linear(in_features=1, out_features=768, bias=False)
+    (ln_f): RMSNorm()
+    (head_a): Linear(in_features=768, out_features=64000, bias=False)
+    (head_g): Linear(in_features=768, out_features=64000, bias=False)
+  )
+) at revision main. Error: Repo id must be a string, not <class 'clm_v4_hf.modeling_clm_v4.CLMv4ForCausalLM'>: 'CLMv4ForCausalLM(
+  (decoder): ConsciousDecoderV3(
+    (tok_emb): Embedding(64000, 768)
+    (drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0-15): 16 x DecoderBlockV2(
+        (ln_attn): RMSNorm()
+        (attn): GroupedQueryAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=768, out_features=256, bias=False)
+          (v_proj): Linear(in_features=768, out_features=256, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (attn_dropout): Dropout(p=0.0, inplace=False)
+          (resid_dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_pf): RMSNorm()
+        (purefield): PureFieldFFN(
+          (engine_a): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (engine_g): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+        )
+        (ln_cross): RMSNorm()
+        (cross_attn): ConsciousCrossAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=192, out_features=768, bias=False)
+          (v_proj): Linear(in_features=192, out_features=768, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_ffn): RMSNorm()
+        (ffn): SwiGLUFFN(
+          (gate_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (up_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (down_proj): Linear(in_features=2048, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ca_mix): Linear(in_features=2304, out_features=768, bias=False)
+        (ln_ca): RMSNorm()
+        (rule_weights): Linear(in_features=768, out_features=8, bias=True)
+        (rules): ModuleList(
+          (0-7): 8 x Linear(in_features=768, out_features=768, bias=False)
+        )
+      )
+    )
+    (tension_proj): Linear(in_features=1, out_features=768, bias=False)
+    (ln_f): RMSNorm()
+    (head_a): Linear(in_features=768, out_features=64000, bias=False)
+    (head_g): Linear(in_features=768, out_features=64000, bias=False)
+  )
+)'.
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+[eval] hellaswag done dt=21.9s
+    hellaswag: {'alias': 'hellaswag', 'acc,none': 0.266, 'acc_stderr,none': 0.019780559675655486, 'acc_norm,none': 0.264, 'acc_norm_stderr,none': 0.019732885585922094}
+
+[eval] === mmlu ===
+2026-05-04:06:07:06,601 INFO     [evaluator.py:164] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2026-05-04:06:07:06,602 INFO     [evaluator.py:217] Using pre-initialized model
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:13,304 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/171 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 171/171 [00:00<00:00, 15523.70 examples/s]
+Generating validation split:   0%|          | 0/19 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 19/19 [00:00<00:00, 3617.91 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 948.12 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:15,764 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/1534 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 1534/1534 [00:00<00:00, 85656.16 examples/s]
+Generating validation split:   0%|          | 0/170 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 170/170 [00:00<00:00, 27524.87 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 856.78 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:18,072 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/324 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 324/324 [00:00<00:00, 47050.32 examples/s]
+Generating validation split:   0%|          | 0/35 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 35/35 [00:00<00:00, 6236.49 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 931.03 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:19,844 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/311 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 311/311 [00:00<00:00, 51946.50 examples/s]
+Generating validation split:   0%|          | 0/34 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 34/34 [00:00<00:00, 6125.70 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 890.85 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:21,797 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/895 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 895/895 [00:00<00:00, 109555.00 examples/s]
+Generating validation split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 100/100 [00:00<00:00, 18253.56 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 926.88 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:23,713 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/346 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 346/346 [00:00<00:00, 44001.98 examples/s]
+Generating validation split:   0%|          | 0/38 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 38/38 [00:00<00:00, 6698.20 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 913.59 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:25,910 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/163 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 163/163 [00:00<00:00, 26874.94 examples/s]
+Generating validation split:   0%|          | 0/18 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 18/18 [00:00<00:00, 3308.10 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 919.20 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:27,672 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/108 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 108/108 [00:00<00:00, 16432.74 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1955.64 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 939.63 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:29,510 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/121 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 121/121 [00:00<00:00, 16696.63 examples/s]
+Generating validation split:   0%|          | 0/13 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 13/13 [00:00<00:00, 2336.46 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 918.96 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:31,260 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/237 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 237/237 [00:00<00:00, 21649.79 examples/s]
+Generating validation split:   0%|          | 0/26 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 26/26 [00:00<00:00, 4399.21 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 912.60 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:33,179 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/204 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 204/204 [00:00<00:00, 29787.22 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 6432.08 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1685.27 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:35,100 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/165 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 165/165 [00:00<00:00, 18116.28 examples/s]
+Generating validation split:   0%|          | 0/18 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 18/18 [00:00<00:00, 3119.21 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 848.88 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:37,004 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/126 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 126/126 [00:00<00:00, 18392.87 examples/s]
+Generating validation split:   0%|          | 0/14 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 14/14 [00:00<00:00, 2743.55 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 893.43 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:38,892 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 12877.81 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1926.48 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 904.41 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:40,723 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/201 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 201/201 [00:00<00:00, 39246.55 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 9350.90 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1563.64 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:42,407 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/245 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 245/245 [00:00<00:00, 25196.27 examples/s]
+Generating validation split:   0%|          | 0/27 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 27/27 [00:00<00:00, 4671.87 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 906.37 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:44,165 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/110 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 110/110 [00:00<00:00, 17187.85 examples/s]
+Generating validation split:   0%|          | 0/12 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 12/12 [00:00<00:00, 2294.48 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 930.91 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:45,842 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/612 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 612/612 [00:00<00:00, 72712.99 examples/s]
+Generating validation split:   0%|          | 0/69 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 69/69 [00:00<00:00, 11681.88 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 925.28 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:47,509 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/131 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 131/131 [00:00<00:00, 18521.33 examples/s]
+Generating validation split:   0%|          | 0/12 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 12/12 [00:00<00:00, 2183.02 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1204.91 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:49,324 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/545 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 545/545 [00:00<00:00, 70014.26 examples/s]
+Generating validation split:   0%|          | 0/60 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 60/60 [00:00<00:00, 10442.25 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 915.91 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:51,258 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/238 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 238/238 [00:00<00:00, 33157.65 examples/s]
+Generating validation split:   0%|          | 0/26 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 26/26 [00:00<00:00, 4930.91 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1248.45 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:52,989 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/390 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 390/390 [00:00<00:00, 96803.09 examples/s]
+Generating validation split:   0%|          | 0/43 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 43/43 [00:00<00:00, 14099.05 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1903.39 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:54,681 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/193 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 193/193 [00:00<00:00, 36465.64 examples/s]
+Generating validation split:   0%|          | 0/21 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 21/21 [00:00<00:00, 6056.96 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1395.59 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:56,594 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/198 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 198/198 [00:00<00:00, 45351.26 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 7094.23 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1679.20 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:58,249 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/114 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 114/114 [00:00<00:00, 18494.98 examples/s]
+Generating validation split:   0%|          | 0/12 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 12/12 [00:00<00:00, 2352.39 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 932.15 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:07:59,952 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/166 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 166/166 [00:00<00:00, 27063.18 examples/s]
+Generating validation split:   0%|          | 0/18 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 18/18 [00:00<00:00, 3488.79 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1059.86 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:01,695 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/272 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 272/272 [00:00<00:00, 43099.76 examples/s]
+Generating validation split:   0%|          | 0/31 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 31/31 [00:00<00:00, 6003.21 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 983.89 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:03,679 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/282 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 282/282 [00:00<00:00, 34236.24 examples/s]
+Generating validation split:   0%|          | 0/31 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 31/31 [00:00<00:00, 5394.94 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 904.26 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:05,338 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/306 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 306/306 [00:00<00:00, 63616.21 examples/s]
+Generating validation split:   0%|          | 0/33 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 33/33 [00:00<00:00, 12154.20 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1839.12 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:07,003 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/783 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 783/783 [00:00<00:00, 103291.08 examples/s]
+Generating validation split:   0%|          | 0/86 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 86/86 [00:00<00:00, 14795.33 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 902.54 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:08,718 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 15227.65 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1930.19 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 880.16 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:10,431 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/234 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 234/234 [00:00<00:00, 32071.99 examples/s]
+Generating validation split:   0%|          | 0/25 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 25/25 [00:00<00:00, 4448.40 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 891.15 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:12,137 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/103 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 103/103 [00:00<00:00, 14758.08 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 2023.92 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 913.39 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:13,812 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/223 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 223/223 [00:00<00:00, 29262.89 examples/s]
+Generating validation split:   0%|          | 0/23 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 23/23 [00:00<00:00, 3999.88 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 913.51 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:15,691 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 14810.92 examples/s]
+Generating validation split:   0%|          | 0/10 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 10/10 [00:00<00:00, 1792.13 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 852.26 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:17,376 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/173 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 173/173 [00:00<00:00, 22713.79 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 3820.74 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 922.68 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:19,323 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/265 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 265/265 [00:00<00:00, 36827.49 examples/s]
+Generating validation split:   0%|          | 0/29 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 29/29 [00:00<00:00, 5102.13 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 668.14 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:21,311 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 16189.85 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 2051.28 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 932.07 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:22,986 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/112 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 112/112 [00:00<00:00, 16816.25 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1610.72 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 842.26 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:24,656 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/216 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 216/216 [00:00<00:00, 29699.05 examples/s]
+Generating validation split:   0%|          | 0/23 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 23/23 [00:00<00:00, 4097.04 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 948.12 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:26,336 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/151 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 151/151 [00:00<00:00, 23044.79 examples/s]
+Generating validation split:   0%|          | 0/17 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 17/17 [00:00<00:00, 3265.40 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 935.39 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:28,171 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/270 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 270/270 [00:00<00:00, 40692.13 examples/s]
+Generating validation split:   0%|          | 0/29 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 29/29 [00:00<00:00, 5585.22 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 933.56 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:29,962 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 14181.44 examples/s]
+Generating validation split:   0%|          | 0/9 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 9/9 [00:00<00:00, 1627.66 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 909.16 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:31,724 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/203 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 203/203 [00:00<00:00, 30027.99 examples/s]
+Generating validation split:   0%|          | 0/22 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 22/22 [00:00<00:00, 3959.44 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 890.93 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:33,431 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/310 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 310/310 [00:00<00:00, 50176.91 examples/s]
+Generating validation split:   0%|          | 0/32 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 32/32 [00:00<00:00, 5592.41 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 930.91 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:35,144 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/378 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 378/378 [00:00<00:00, 60638.22 examples/s]
+Generating validation split:   0%|          | 0/41 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 41/41 [00:00<00:00, 7590.66 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 934.35 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:36,903 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/145 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 145/145 [00:00<00:00, 21876.77 examples/s]
+Generating validation split:   0%|          | 0/16 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 16/16 [00:00<00:00, 2917.27 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 933.52 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:38,711 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/235 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 235/235 [00:00<00:00, 34891.91 examples/s]
+Generating validation split:   0%|          | 0/26 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 26/26 [00:00<00:00, 5056.42 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 945.94 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:40,781 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 15258.67 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 1990.91 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 921.46 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:42,528 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/102 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 102/102 [00:00<00:00, 17178.04 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 2053.01 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 942.20 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:44,246 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 16724.37 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 2037.69 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 948.55 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:46,056 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 16822.30 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 2244.25 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 957.65 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:47,737 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 16394.25 examples/s]
+Generating validation split:   0%|          | 0/8 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 8/8 [00:00<00:00, 1488.13 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 933.85 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:49,401 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/144 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 144/144 [00:00<00:00, 22798.57 examples/s]
+Generating validation split:   0%|          | 0/16 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 16/16 [00:00<00:00, 3164.32 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 960.41 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:51,171 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/152 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 152/152 [00:00<00:00, 26330.24 examples/s]
+Generating validation split:   0%|          | 0/16 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 16/16 [00:00<00:00, 3101.29 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 1024.05 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:53,173 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/135 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 135/135 [00:00<00:00, 21696.34 examples/s]
+Generating validation split:   0%|          | 0/14 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 14/14 [00:00<00:00, 2678.36 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 972.84 examples/s]
+`trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+2026-05-04:06:08:54,838 ERROR    [load.py:1663] `trust_remote_code` is not supported anymore.
+Please check that the Hugging Face dataset 'hails/mmlu_no_train' isn't based on a loading script and remove `trust_remote_code`.
+If the dataset is based on a loading script, please ask the dataset author to remove it and convert it to a standard format like Parquet.
+Generating test split:   0%|          | 0/100 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 100/100 [00:00<00:00, 15659.15 examples/s]
+Generating validation split:   0%|          | 0/11 [00:00<?, ? examples/s]Generating validation split: 100%|██████████| 11/11 [00:00<00:00, 2033.20 examples/s]
+Generating dev split:   0%|          | 0/5 [00:00<?, ? examples/s]Generating dev split: 100%|██████████| 5/5 [00:00<00:00, 967.72 examples/s]
+2026-05-04:06:08:56,650 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_abstract_algebra from None to 0
+2026-05-04:06:08:56,651 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_anatomy from None to 0
+2026-05-04:06:08:56,651 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_astronomy from None to 0
+2026-05-04:06:08:56,652 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_college_biology from None to 0
+2026-05-04:06:08:56,652 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_college_chemistry from None to 0
+2026-05-04:06:08:56,653 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_college_computer_science from None to 0
+2026-05-04:06:08:56,653 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_college_mathematics from None to 0
+2026-05-04:06:08:56,653 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_college_physics from None to 0
+2026-05-04:06:08:56,654 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_computer_security from None to 0
+2026-05-04:06:08:56,654 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_conceptual_physics from None to 0
+2026-05-04:06:08:56,655 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_electrical_engineering from None to 0
+2026-05-04:06:08:56,655 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_elementary_mathematics from None to 0
+2026-05-04:06:08:56,656 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_biology from None to 0
+2026-05-04:06:08:56,656 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_chemistry from None to 0
+2026-05-04:06:08:56,656 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_computer_science from None to 0
+2026-05-04:06:08:56,657 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_mathematics from None to 0
+2026-05-04:06:08:56,657 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_physics from None to 0
+2026-05-04:06:08:56,657 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_statistics from None to 0
+2026-05-04:06:08:56,658 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_machine_learning from None to 0
+2026-05-04:06:08:56,658 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_business_ethics from None to 0
+2026-05-04:06:08:56,659 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_clinical_knowledge from None to 0
+2026-05-04:06:08:56,659 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_college_medicine from None to 0
+2026-05-04:06:08:56,660 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_global_facts from None to 0
+2026-05-04:06:08:56,660 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_human_aging from None to 0
+2026-05-04:06:08:56,661 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_management from None to 0
+2026-05-04:06:08:56,661 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_marketing from None to 0
+2026-05-04:06:08:56,662 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_medical_genetics from None to 0
+2026-05-04:06:08:56,662 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_miscellaneous from None to 0
+2026-05-04:06:08:56,663 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_nutrition from None to 0
+2026-05-04:06:08:56,663 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_professional_accounting from None to 0
+2026-05-04:06:08:56,663 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_professional_medicine from None to 0
+2026-05-04:06:08:56,664 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_virology from None to 0
+2026-05-04:06:08:56,664 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_econometrics from None to 0
+2026-05-04:06:08:56,665 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_geography from None to 0
+2026-05-04:06:08:56,665 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_government_and_politics from None to 0
+2026-05-04:06:08:56,666 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_macroeconomics from None to 0
+2026-05-04:06:08:56,666 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_microeconomics from None to 0
+2026-05-04:06:08:56,667 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_psychology from None to 0
+2026-05-04:06:08:56,667 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_human_sexuality from None to 0
+2026-05-04:06:08:56,667 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_professional_psychology from None to 0
+2026-05-04:06:08:56,668 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_public_relations from None to 0
+2026-05-04:06:08:56,668 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_security_studies from None to 0
+2026-05-04:06:08:56,669 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_sociology from None to 0
+2026-05-04:06:08:56,669 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_us_foreign_policy from None to 0
+2026-05-04:06:08:56,670 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_formal_logic from None to 0
+2026-05-04:06:08:56,670 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_european_history from None to 0
+2026-05-04:06:08:56,671 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_us_history from None to 0
+2026-05-04:06:08:56,671 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_high_school_world_history from None to 0
+2026-05-04:06:08:56,672 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_international_law from None to 0
+2026-05-04:06:08:56,672 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_jurisprudence from None to 0
+2026-05-04:06:08:56,673 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_logical_fallacies from None to 0
+2026-05-04:06:08:56,673 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_moral_disputes from None to 0
+2026-05-04:06:08:56,674 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_moral_scenarios from None to 0
+2026-05-04:06:08:56,674 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_philosophy from None to 0
+2026-05-04:06:08:56,674 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_prehistory from None to 0
+2026-05-04:06:08:56,675 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_professional_law from None to 0
+2026-05-04:06:08:56,675 WARNING  [evaluator.py:270] Overwriting default num_fewshot of mmlu_world_religions from None to 0
+2026-05-04:06:08:56,685 INFO     [task.py:415] Building contexts for mmlu_abstract_algebra on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s] 72%|███████▏  | 72/100 [00:00<00:00, 718.26it/s]100%|██████████| 100/100 [00:00<00:00, 814.74it/s]
+2026-05-04:06:08:56,819 INFO     [task.py:415] Building contexts for mmlu_anatomy on rank 0...
+  0%|          | 0/135 [00:00<?, ?it/s] 96%|█████████▋| 130/135 [00:00<00:00, 1290.70it/s]100%|██████████| 135/135 [00:00<00:00, 1285.69it/s]
+2026-05-04:06:08:56,929 INFO     [task.py:415] Building contexts for mmlu_astronomy on rank 0...
+  0%|          | 0/152 [00:00<?, ?it/s] 86%|████████▌ | 130/152 [00:00<00:00, 1298.52it/s]100%|██████████| 152/152 [00:00<00:00, 1291.46it/s]
+2026-05-04:06:08:57,052 INFO     [task.py:415] Building contexts for mmlu_college_biology on rank 0...
+  0%|          | 0/144 [00:00<?, ?it/s] 90%|█████████ | 130/144 [00:00<00:00, 1296.71it/s]100%|██████████| 144/144 [00:00<00:00, 1267.92it/s]
+2026-05-04:06:08:57,171 INFO     [task.py:415] Building contexts for mmlu_college_chemistry on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1301.34it/s]
+2026-05-04:06:08:57,252 INFO     [task.py:415] Building contexts for mmlu_college_computer_science on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1296.50it/s]
+2026-05-04:06:08:57,333 INFO     [task.py:415] Building contexts for mmlu_college_mathematics on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1172.18it/s]
+2026-05-04:06:08:57,422 INFO     [task.py:415] Building contexts for mmlu_college_physics on rank 0...
+  0%|          | 0/102 [00:00<?, ?it/s]100%|██████████| 102/102 [00:00<00:00, 1302.47it/s]
+2026-05-04:06:08:57,505 INFO     [task.py:415] Building contexts for mmlu_computer_security on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1304.82it/s]
+2026-05-04:06:08:57,585 INFO     [task.py:415] Building contexts for mmlu_conceptual_physics on rank 0...
+  0%|          | 0/235 [00:00<?, ?it/s] 56%|█████▌    | 131/235 [00:00<00:00, 1307.39it/s]100%|██████████| 235/235 [00:00<00:00, 1298.56it/s]
+2026-05-04:06:08:57,773 INFO     [task.py:415] Building contexts for mmlu_electrical_engineering on rank 0...
+  0%|          | 0/145 [00:00<?, ?it/s] 90%|█████████ | 131/145 [00:00<00:00, 1308.67it/s]100%|██████████| 145/145 [00:00<00:00, 1300.43it/s]
+2026-05-04:06:08:57,889 INFO     [task.py:415] Building contexts for mmlu_elementary_mathematics on rank 0...
+  0%|          | 0/378 [00:00<?, ?it/s] 34%|███▍      | 130/378 [00:00<00:00, 1293.51it/s] 69%|██████▉   | 261/378 [00:00<00:00, 1301.03it/s]100%|██████████| 378/378 [00:00<00:00, 1301.06it/s]
+2026-05-04:06:08:58,189 INFO     [task.py:415] Building contexts for mmlu_high_school_biology on rank 0...
+  0%|          | 0/310 [00:00<?, ?it/s] 41%|████      | 126/310 [00:00<00:00, 1252.40it/s] 83%|████████▎ | 257/310 [00:00<00:00, 1281.41it/s]100%|██████████| 310/310 [00:00<00:00, 1279.71it/s]
+2026-05-04:06:08:58,439 INFO     [task.py:415] Building contexts for mmlu_high_school_chemistry on rank 0...
+  0%|          | 0/203 [00:00<?, ?it/s] 65%|██████▍   | 131/203 [00:00<00:00, 1301.26it/s]100%|██████████| 203/203 [00:00<00:00, 1299.23it/s]
+2026-05-04:06:08:58,602 INFO     [task.py:415] Building contexts for mmlu_high_school_computer_science on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1304.36it/s]
+2026-05-04:06:08:58,682 INFO     [task.py:415] Building contexts for mmlu_high_school_mathematics on rank 0...
+  0%|          | 0/270 [00:00<?, ?it/s] 49%|████▊     | 131/270 [00:00<00:00, 1305.28it/s] 97%|█████████▋| 262/270 [00:00<00:00, 1302.35it/s]100%|██████████| 270/270 [00:00<00:00, 1299.30it/s]
+2026-05-04:06:08:58,897 INFO     [task.py:415] Building contexts for mmlu_high_school_physics on rank 0...
+  0%|          | 0/151 [00:00<?, ?it/s] 87%|████████▋ | 131/151 [00:00<00:00, 1309.69it/s]100%|██████████| 151/151 [00:00<00:00, 1304.26it/s]
+2026-05-04:06:08:59,018 INFO     [task.py:415] Building contexts for mmlu_high_school_statistics on rank 0...
+  0%|          | 0/216 [00:00<?, ?it/s] 61%|██████    | 131/216 [00:00<00:00, 1307.08it/s]100%|██████████| 216/216 [00:00<00:00, 1302.72it/s]
+2026-05-04:06:08:59,190 INFO     [task.py:415] Building contexts for mmlu_machine_learning on rank 0...
+  0%|          | 0/112 [00:00<?, ?it/s]100%|██████████| 112/112 [00:00<00:00, 1308.64it/s]
+2026-05-04:06:08:59,279 INFO     [task.py:415] Building contexts for mmlu_business_ethics on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1300.74it/s]
+2026-05-04:06:08:59,360 INFO     [task.py:415] Building contexts for mmlu_clinical_knowledge on rank 0...
+  0%|          | 0/265 [00:00<?, ?it/s] 49%|████▉     | 131/265 [00:00<00:00, 1302.16it/s] 99%|█████████▉| 262/265 [00:00<00:00, 1300.38it/s]100%|██████████| 265/265 [00:00<00:00, 1297.38it/s]
+2026-05-04:06:08:59,571 INFO     [task.py:415] Building contexts for mmlu_college_medicine on rank 0...
+  0%|          | 0/173 [00:00<?, ?it/s] 76%|███████▌  | 131/173 [00:00<00:00, 1309.48it/s]100%|██████████| 173/173 [00:00<00:00, 1304.58it/s]
+2026-05-04:06:08:59,709 INFO     [task.py:415] Building contexts for mmlu_global_facts on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1303.09it/s]
+2026-05-04:06:08:59,790 INFO     [task.py:415] Building contexts for mmlu_human_aging on rank 0...
+  0%|          | 0/223 [00:00<?, ?it/s] 58%|█████▊    | 130/223 [00:00<00:00, 1296.71it/s]100%|██████████| 223/223 [00:00<00:00, 1296.33it/s]
+2026-05-04:06:08:59,969 INFO     [task.py:415] Building contexts for mmlu_management on rank 0...
+  0%|          | 0/103 [00:00<?, ?it/s]100%|██████████| 103/103 [00:00<00:00, 1308.65it/s]
+2026-05-04:06:09:00,051 INFO     [task.py:415] Building contexts for mmlu_marketing on rank 0...
+  0%|          | 0/234 [00:00<?, ?it/s] 56%|█████▌    | 131/234 [00:00<00:00, 1303.88it/s]100%|██████████| 234/234 [00:00<00:00, 1301.56it/s]
+2026-05-04:06:09:00,238 INFO     [task.py:415] Building contexts for mmlu_medical_genetics on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1297.41it/s]
+2026-05-04:06:09:00,319 INFO     [task.py:415] Building contexts for mmlu_miscellaneous on rank 0...
+  0%|          | 0/500 [00:00<?, ?it/s] 26%|██▌       | 131/500 [00:00<00:00, 1303.29it/s] 52%|█████▏    | 262/500 [00:00<00:00, 1302.08it/s] 79%|███████▊  | 393/500 [00:00<00:00, 1302.83it/s]100%|██████████| 500/500 [00:00<00:00, 1302.18it/s]
+2026-05-04:06:09:00,714 INFO     [task.py:415] Building contexts for mmlu_nutrition on rank 0...
+  0%|          | 0/306 [00:00<?, ?it/s] 42%|████▏     | 129/306 [00:00<00:00, 1275.75it/s] 84%|████████▍ | 257/306 [00:00<00:00, 1260.31it/s]100%|██████████| 306/306 [00:00<00:00, 1264.73it/s]
+2026-05-04:06:09:00,963 INFO     [task.py:415] Building contexts for mmlu_professional_accounting on rank 0...
+  0%|          | 0/282 [00:00<?, ?it/s] 45%|████▌     | 127/282 [00:00<00:00, 1261.30it/s] 90%|█████████ | 255/282 [00:00<00:00, 1270.14it/s]100%|██████████| 282/282 [00:00<00:00, 1268.74it/s]
+2026-05-04:06:09:01,193 INFO     [task.py:415] Building contexts for mmlu_professional_medicine on rank 0...
+  0%|          | 0/272 [00:00<?, ?it/s] 48%|████▊     | 130/272 [00:00<00:00, 1295.66it/s] 96%|█████████▌| 260/272 [00:00<00:00, 1293.61it/s]100%|██████████| 272/272 [00:00<00:00, 1291.24it/s]
+2026-05-04:06:09:01,413 INFO     [task.py:415] Building contexts for mmlu_virology on rank 0...
+  0%|          | 0/166 [00:00<?, ?it/s] 78%|███████▊  | 129/166 [00:00<00:00, 1281.27it/s]100%|██████████| 166/166 [00:00<00:00, 1112.65it/s]
+2026-05-04:06:09:01,568 INFO     [task.py:415] Building contexts for mmlu_econometrics on rank 0...
+  0%|          | 0/114 [00:00<?, ?it/s] 65%|██████▍   | 74/114 [00:00<00:00, 735.49it/s]100%|██████████| 114/114 [00:00<00:00, 733.26it/s]
+2026-05-04:06:09:01,730 INFO     [task.py:415] Building contexts for mmlu_high_school_geography on rank 0...
+  0%|          | 0/198 [00:00<?, ?it/s] 65%|██████▌   | 129/198 [00:00<00:00, 1281.80it/s]100%|██████████| 198/198 [00:00<00:00, 1283.80it/s]
+2026-05-04:06:09:01,892 INFO     [task.py:415] Building contexts for mmlu_high_school_government_and_politics on rank 0...
+  0%|          | 0/193 [00:00<?, ?it/s] 68%|██████▊   | 131/193 [00:00<00:00, 1306.94it/s]100%|██████████| 193/193 [00:00<00:00, 1297.15it/s]
+2026-05-04:06:09:02,047 INFO     [task.py:415] Building contexts for mmlu_high_school_macroeconomics on rank 0...
+  0%|          | 0/390 [00:00<?, ?it/s] 34%|███▎      | 131/390 [00:00<00:00, 1301.86it/s] 67%|██████▋   | 262/390 [00:00<00:00, 1305.68it/s]100%|██████████| 390/390 [00:00<00:00, 1306.24it/s]
+2026-05-04:06:09:02,355 INFO     [task.py:415] Building contexts for mmlu_high_school_microeconomics on rank 0...
+  0%|          | 0/238 [00:00<?, ?it/s] 55%|█████▌    | 132/238 [00:00<00:00, 1314.57it/s]100%|██████████| 238/238 [00:00<00:00, 1317.10it/s]
+2026-05-04:06:09:02,542 INFO     [task.py:415] Building contexts for mmlu_high_school_psychology on rank 0...
+  0%|          | 0/500 [00:00<?, ?it/s] 26%|██▌       | 131/500 [00:00<00:00, 1308.74it/s] 52%|█████▏    | 262/500 [00:00<00:00, 1268.49it/s] 79%|███████▉  | 394/500 [00:00<00:00, 1287.75it/s]100%|██████████| 500/500 [00:00<00:00, 1291.10it/s]
+2026-05-04:06:09:03,145 INFO     [task.py:415] Building contexts for mmlu_human_sexuality on rank 0...
+  0%|          | 0/131 [00:00<?, ?it/s]100%|██████████| 131/131 [00:00<00:00, 1311.29it/s]
+2026-05-04:06:09:03,250 INFO     [task.py:415] Building contexts for mmlu_professional_psychology on rank 0...
+  0%|          | 0/500 [00:00<?, ?it/s] 26%|██▌       | 131/500 [00:00<00:00, 1306.98it/s] 53%|█████▎    | 263/500 [00:00<00:00, 1309.89it/s] 79%|███████▉  | 394/500 [00:00<00:00, 1292.31it/s]100%|██████████| 500/500 [00:00<00:00, 1298.01it/s]
+2026-05-04:06:09:03,647 INFO     [task.py:415] Building contexts for mmlu_public_relations on rank 0...
+  0%|          | 0/110 [00:00<?, ?it/s]100%|██████████| 110/110 [00:00<00:00, 1311.18it/s]
+2026-05-04:06:09:03,736 INFO     [task.py:415] Building contexts for mmlu_security_studies on rank 0...
+  0%|          | 0/245 [00:00<?, ?it/s] 53%|█████▎    | 131/245 [00:00<00:00, 1307.02it/s]100%|██████████| 245/245 [00:00<00:00, 1308.73it/s]
+2026-05-04:06:09:03,930 INFO     [task.py:415] Building contexts for mmlu_sociology on rank 0...
+  0%|          | 0/201 [00:00<?, ?it/s] 66%|██████▌   | 132/201 [00:00<00:00, 1312.05it/s]100%|██████████| 201/201 [00:00<00:00, 1310.92it/s]
+2026-05-04:06:09:04,090 INFO     [task.py:415] Building contexts for mmlu_us_foreign_policy on rank 0...
+  0%|          | 0/100 [00:00<?, ?it/s]100%|██████████| 100/100 [00:00<00:00, 1309.06it/s]
+2026-05-04:06:09:04,170 INFO     [task.py:415] Building contexts for mmlu_formal_logic on rank 0...
+  0%|          | 0/126 [00:00<?, ?it/s]100%|██████████| 126/126 [00:00<00:00, 1316.47it/s]
+2026-05-04:06:09:04,271 INFO     [task.py:415] Building contexts for mmlu_high_school_european_history on rank 0...
+  0%|          | 0/165 [00:00<?, ?it/s] 79%|███████▉  | 131/165 [00:00<00:00, 1303.77it/s]100%|██████████| 165/165 [00:00<00:00, 1298.30it/s]
+2026-05-04:06:09:04,404 INFO     [task.py:415] Building contexts for mmlu_high_school_us_history on rank 0...
+  0%|          | 0/204 [00:00<?, ?it/s] 64%|██████▍   | 131/204 [00:00<00:00, 1309.89it/s]100%|██████████| 204/204 [00:00<00:00, 1300.64it/s]
+2026-05-04:06:09:04,567 INFO     [task.py:415] Building contexts for mmlu_high_school_world_history on rank 0...
+  0%|          | 0/237 [00:00<?, ?it/s] 55%|█████▍    | 130/237 [00:00<00:00, 1296.36it/s]100%|██████████| 237/237 [00:00<00:00, 1292.56it/s]
+2026-05-04:06:09:04,758 INFO     [task.py:415] Building contexts for mmlu_international_law on rank 0...
+  0%|          | 0/121 [00:00<?, ?it/s]100%|██████████| 121/121 [00:00<00:00, 1282.73it/s]
+2026-05-04:06:09:04,859 INFO     [task.py:415] Building contexts for mmlu_jurisprudence on rank 0...
+  0%|          | 0/108 [00:00<?, ?it/s]100%|██████████| 108/108 [00:00<00:00, 1319.37it/s]
+2026-05-04:06:09:04,946 INFO     [task.py:415] Building contexts for mmlu_logical_fallacies on rank 0...
+  0%|          | 0/163 [00:00<?, ?it/s] 80%|████████  | 131/163 [00:00<00:00, 1306.34it/s]100%|██████████| 163/163 [00:00<00:00, 1302.47it/s]
+2026-05-04:06:09:05,078 INFO     [task.py:415] Building contexts for mmlu_moral_disputes on rank 0...
+  0%|          | 0/346 [00:00<?, ?it/s] 37%|███▋      | 129/346 [00:00<00:00, 1289.48it/s] 75%|███████▌  | 260/346 [00:00<00:00, 1295.38it/s]100%|██████████| 346/346 [00:00<00:00, 1282.16it/s]
+2026-05-04:06:09:05,358 INFO     [task.py:415] Building contexts for mmlu_moral_scenarios on rank 0...
+  0%|          | 0/500 [00:00<?, ?it/s] 26%|██▌       | 130/500 [00:00<00:00, 1299.05it/s] 52%|█████▏    | 260/500 [00:00<00:00, 1285.24it/s] 78%|███████▊  | 389/500 [00:00<00:00, 1075.85it/s]100%|██████████| 500/500 [00:00<00:00, 926.98it/s] 100%|██████████| 500/500 [00:00<00:00, 1010.20it/s]
+2026-05-04:06:09:05,866 INFO     [task.py:415] Building contexts for mmlu_philosophy on rank 0...
+  0%|          | 0/311 [00:00<?, ?it/s] 42%|████▏     | 132/311 [00:00<00:00, 1310.55it/s] 85%|████████▍ | 264/311 [00:00<00:00, 1308.33it/s]100%|██████████| 311/311 [00:00<00:00, 1307.21it/s]
+2026-05-04:06:09:06,114 INFO     [task.py:415] Building contexts for mmlu_prehistory on rank 0...
+  0%|          | 0/324 [00:00<?, ?it/s] 39%|███▉      | 127/324 [00:00<00:00, 1268.97it/s] 80%|███████▉  | 258/324 [00:00<00:00, 1288.73it/s]100%|██████████| 324/324 [00:00<00:00, 1284.85it/s]
+2026-05-04:06:09:06,374 INFO     [task.py:415] Building contexts for mmlu_professional_law on rank 0...
+  0%|          | 0/500 [00:00<?, ?it/s] 26%|██▌       | 128/500 [00:00<00:00, 1274.61it/s] 52%|█████▏    | 259/500 [00:00<00:00, 1292.13it/s] 78%|███████▊  | 390/500 [00:00<00:00, 1297.77it/s]100%|██████████| 500/500 [00:00<00:00, 1292.66it/s]
+2026-05-04:06:09:06,775 INFO     [task.py:415] Building contexts for mmlu_world_religions on rank 0...
+  0%|          | 0/171 [00:00<?, ?it/s] 77%|███████▋  | 131/171 [00:00<00:00, 1307.94it/s]100%|██████████| 171/171 [00:00<00:00, 1304.67it/s]
+2026-05-04:06:09:06,911 INFO     [evaluator.py:489] Running loglikelihood requests
+Running loglikelihood requests:   0%|          | 0/48692 [00:00<?, ?it/s]Running loglikelihood requests:   0%|          | 1/48692 [00:00<1:26:48,  9.35it/s]Running loglikelihood requests:   0%|          | 193/48692 [00:00<00:51, 943.33it/s]Running loglikelihood requests:   1%|          | 385/48692 [00:00<00:40, 1202.98it/s]Running loglikelihood requests:   1%|          | 577/48692 [00:00<00:36, 1319.34it/s]Running loglikelihood requests:   2%|▏         | 769/48692 [00:00<00:34, 1383.36it/s]Running loglikelihood requests:   2%|▏         | 961/48692 [00:00<00:33, 1420.27it/s]Running loglikelihood requests:   2%|▏         | 1153/48692 [00:00<00:32, 1444.47it/s]Running loglikelihood requests:   3%|▎         | 1345/48692 [00:01<00:32, 1458.24it/s]Running loglikelihood requests:   3%|▎         | 1537/48692 [00:01<00:32, 1471.13it/s]Running loglikelihood requests:   4%|▎         | 1729/48692 [00:01<00:31, 1495.55it/s]Running loglikelihood requests:   4%|▍         | 1921/48692 [00:01<00:30, 1524.69it/s]Running loglikelihood requests:   4%|▍         | 2113/48692 [00:01<00:29, 1554.21it/s]Running loglikelihood requests:   5%|▍         | 2305/48692 [00:01<00:29, 1580.37it/s]Running loglikelihood requests:   5%|▌         | 2497/48692 [00:01<00:28, 1594.09it/s]Running loglikelihood requests:   6%|▌         | 2689/48692 [00:01<00:28, 1623.66it/s]Running loglikelihood requests:   6%|▌         | 2881/48692 [00:01<00:28, 1620.27it/s]Running loglikelihood requests:   6%|▋         | 3044/48692 [00:02<00:29, 1558.19it/s]Running loglikelihood requests:   7%|▋         | 3200/48692 [00:02<00:29, 1548.11it/s]Running loglikelihood requests:   7%|▋         | 3355/48692 [00:02<00:29, 1537.55it/s]Running loglikelihood requests:   7%|▋         | 3521/48692 [00:02<00:28, 1561.11it/s]Running loglikelihood requests:   8%|▊         | 3744/48692 [00:02<00:25, 1751.30it/s]Running loglikelihood requests:   8%|▊         | 3921/48692 [00:02<00:28, 1559.34it/s]Running loglikelihood requests:   8%|▊         | 4082/48692 [00:02<00:28, 1544.44it/s]Running loglikelihood requests:   9%|▉         | 4289/48692 [00:02<00:27, 1599.12it/s]Running loglikelihood requests:   9%|▉         | 4545/48692 [00:02<00:25, 1757.86it/s]Running loglikelihood requests:  10%|▉         | 4801/48692 [00:03<00:23, 1880.98it/s]Running loglikelihood requests:  10%|█         | 5057/48692 [00:03<00:22, 1979.51it/s]Running loglikelihood requests:  11%|█         | 5313/48692 [00:03<00:20, 2067.27it/s]Running loglikelihood requests:  11%|█▏        | 5569/48692 [00:03<00:20, 2149.77it/s]Running loglikelihood requests:  12%|█▏        | 5825/48692 [00:03<00:19, 2220.82it/s]Running loglikelihood requests:  12%|█▏        | 6081/48692 [00:03<00:18, 2276.24it/s]Running loglikelihood requests:  13%|█▎        | 6337/48692 [00:03<00:18, 2329.29it/s]Running loglikelihood requests:  14%|█▎        | 6593/48692 [00:03<00:17, 2384.17it/s]Running loglikelihood requests:  14%|█▍        | 6849/48692 [00:03<00:17, 2421.31it/s]Running loglikelihood requests:  15%|█▍        | 7119/48692 [00:04<00:16, 2501.71it/s]Running loglikelihood requests:  15%|█▌        | 7389/48692 [00:04<00:16, 2559.62it/s]Running loglikelihood requests:  16%|█▌        | 7673/48692 [00:04<00:15, 2642.20it/s]Running loglikelihood requests:  16%|█▋        | 7941/48692 [00:04<00:16, 2513.84it/s]Running loglikelihood requests:  17%|█▋        | 8237/48692 [00:04<00:15, 2641.26it/s]Running loglikelihood requests:  17%|█▋        | 8517/48692 [00:04<00:15, 2550.38it/s]Running loglikelihood requests:  18%|█▊        | 8825/48692 [00:04<00:14, 2699.31it/s]Running loglikelihood requests:  19%|█▊        | 9098/48692 [00:04<00:15, 2580.96it/s]Running loglikelihood requests:  19%|█▉        | 9413/48692 [00:04<00:15, 2612.38it/s]Running loglikelihood requests:  20%|█▉        | 9733/48692 [00:05<00:14, 2648.41it/s]Running loglikelihood requests:  21%|██        | 10053/48692 [00:05<00:14, 2680.83it/s]Running loglikelihood requests:  21%|██▏       | 10373/48692 [00:05<00:14, 2705.40it/s]Running loglikelihood requests:  22%|██▏       | 10693/48692 [00:05<00:13, 2723.53it/s]Running loglikelihood requests:  23%|██▎       | 11013/48692 [00:05<00:13, 2736.25it/s]Running loglikelihood requests:  23%|██▎       | 11333/48692 [00:05<00:13, 2741.26it/s]Running loglikelihood requests:  24%|██▍       | 11653/48692 [00:05<00:13, 2750.48it/s]Running loglikelihood requests:  25%|██▍       | 11973/48692 [00:05<00:13, 2753.90it/s]Running loglikelihood requests:  25%|██▌       | 12293/48692 [00:05<00:13, 2759.48it/s]Running loglikelihood requests:  26%|██▌       | 12613/48692 [00:06<00:13, 2756.57it/s]Running loglikelihood requests:  27%|██▋       | 12933/48692 [00:06<00:12, 2755.03it/s]Running loglikelihood requests:  27%|██▋       | 13253/48692 [00:06<00:12, 2755.66it/s]Running loglikelihood requests:  28%|██▊       | 13573/48692 [00:06<00:12, 2754.03it/s]Running loglikelihood requests:  29%|██▊       | 13893/48692 [00:06<00:12, 2756.77it/s]Running loglikelihood requests:  29%|██▉       | 14213/48692 [00:06<00:12, 2755.31it/s]Running loglikelihood requests:  30%|██▉       | 14533/48692 [00:06<00:12, 2756.87it/s]Running loglikelihood requests:  31%|███       | 14853/48692 [00:06<00:12, 2749.36it/s]Running loglikelihood requests:  31%|███       | 15173/48692 [00:07<00:12, 2752.82it/s]Running loglikelihood requests:  32%|███▏      | 15497/48692 [00:07<00:12, 2765.95it/s]Running loglikelihood requests:  32%|███▏      | 15817/48692 [00:07<00:11, 2766.81it/s]Running loglikelihood requests:  33%|███▎      | 16137/48692 [00:07<00:11, 2766.80it/s]Running loglikelihood requests:  34%|███▍      | 16457/48692 [00:07<00:11, 2764.51it/s]Running loglikelihood requests:  34%|███▍      | 16785/48692 [00:07<00:11, 2784.56it/s]Running loglikelihood requests:  35%|███▌      | 17105/48692 [00:07<00:11, 2770.11it/s]Running loglikelihood requests:  36%|███▌      | 17425/48692 [00:07<00:11, 2768.01it/s]Running loglikelihood requests:  36%|███▋      | 17749/48692 [00:07<00:11, 2771.40it/s]Running loglikelihood requests:  37%|███▋      | 18073/48692 [00:08<00:11, 2779.07it/s]Running loglikelihood requests:  38%|███▊      | 18393/48692 [00:08<00:10, 2767.07it/s]Running loglikelihood requests:  38%|███▊      | 18713/48692 [00:08<00:10, 2772.72it/s]Running loglikelihood requests:  39%|███▉      | 19033/48692 [00:08<00:10, 2781.53it/s]Running loglikelihood requests:  40%|███▉      | 19357/48692 [00:08<00:10, 2797.92it/s]Running loglikelihood requests:  40%|████      | 19677/48692 [00:08<00:10, 2792.32it/s]Running loglikelihood requests:  41%|████      | 19997/48692 [00:08<00:10, 2793.14it/s]Running loglikelihood requests:  42%|████▏     | 20317/48692 [00:08<00:10, 2795.30it/s]Running loglikelihood requests:  42%|████▏     | 20637/48692 [00:08<00:10, 2798.43it/s]Running loglikelihood requests:  43%|████▎     | 20957/48692 [00:09<00:09, 2790.33it/s]Running loglikelihood requests:  44%|████▎     | 21277/48692 [00:09<00:09, 2795.39it/s]Running loglikelihood requests:  44%|████▍     | 21597/48692 [00:09<00:09, 2799.45it/s]Running loglikelihood requests:  45%|████▌     | 21921/48692 [00:09<00:09, 2807.39it/s]Running loglikelihood requests:  46%|████▌     | 22241/48692 [00:09<00:09, 2794.05it/s]Running loglikelihood requests:  46%|████▋     | 22558/48692 [00:09<00:09, 2896.11it/s]Running loglikelihood requests:  47%|████▋     | 22849/48692 [00:09<00:09, 2788.44it/s]Running loglikelihood requests:  48%|████▊     | 23141/48692 [00:09<00:09, 2730.22it/s]Running loglikelihood requests:  48%|████▊     | 23461/48692 [00:09<00:09, 2748.73it/s]Running loglikelihood requests:  49%|████▉     | 23781/48692 [00:10<00:09, 2752.06it/s]Running loglikelihood requests:  49%|████▉     | 24101/48692 [00:10<00:08, 2758.48it/s]Running loglikelihood requests:  50%|█████     | 24421/48692 [00:10<00:08, 2771.52it/s]Running loglikelihood requests:  51%|█████     | 24726/48692 [00:10<00:08, 2847.25it/s]Running loglikelihood requests:  51%|█████▏    | 25012/48692 [00:10<00:08, 2755.45it/s]Running loglikelihood requests:  52%|█████▏    | 25325/48692 [00:10<00:08, 2732.76it/s]Running loglikelihood requests:  53%|█████▎    | 25649/48692 [00:10<00:08, 2760.05it/s]Running loglikelihood requests:  53%|█████▎    | 25969/48692 [00:10<00:08, 2750.62it/s]Running loglikelihood requests:  54%|█████▍    | 26289/48692 [00:11<00:08, 2762.05it/s]Running loglikelihood requests:  55%|█████▍    | 26617/48692 [00:11<00:07, 2789.91it/s]Running loglikelihood requests:  55%|█████▌    | 26937/48692 [00:11<00:07, 2792.84it/s]Running loglikelihood requests:  56%|█████▌    | 27257/48692 [00:11<00:07, 2786.22it/s]Running loglikelihood requests:  57%|█████▋    | 27577/48692 [00:11<00:07, 2785.40it/s]Running loglikelihood requests:  57%|█████▋    | 27897/48692 [00:11<00:07, 2785.56it/s]Running loglikelihood requests:  58%|█████▊    | 28217/48692 [00:11<00:07, 2782.81it/s]Running loglikelihood requests:  59%|█████▊    | 28537/48692 [00:11<00:07, 2775.82it/s]Running loglikelihood requests:  59%|█████▉    | 28857/48692 [00:11<00:07, 2771.99it/s]Running loglikelihood requests:  60%|█████▉    | 29177/48692 [00:12<00:07, 2779.13it/s]Running loglikelihood requests:  61%|██████    | 29497/48692 [00:12<00:06, 2784.29it/s]Running loglikelihood requests:  61%|██████    | 29817/48692 [00:12<00:06, 2785.96it/s]Running loglikelihood requests:  62%|██████▏   | 30141/48692 [00:12<00:06, 2787.38it/s]Running loglikelihood requests:  63%|██████▎   | 30461/48692 [00:12<00:06, 2794.17it/s]Running loglikelihood requests:  63%|██████▎   | 30781/48692 [00:12<00:06, 2789.57it/s]Running loglikelihood requests:  64%|██████▍   | 31101/48692 [00:12<00:06, 2789.34it/s]Running loglikelihood requests:  65%|██████▍   | 31421/48692 [00:12<00:06, 2783.60it/s]Running loglikelihood requests:  65%|██████▌   | 31741/48692 [00:12<00:06, 2780.58it/s]Running loglikelihood requests:  66%|██████▌   | 32061/48692 [00:13<00:05, 2783.95it/s]Running loglikelihood requests:  67%|██████▋   | 32381/48692 [00:13<00:05, 2786.65it/s]Running loglikelihood requests:  67%|██████▋   | 32701/48692 [00:13<00:05, 2782.28it/s]Running loglikelihood requests:  68%|██████▊   | 33025/48692 [00:13<00:05, 2821.08it/s]Running loglikelihood requests:  68%|██████▊   | 33345/48692 [00:13<00:05, 2848.38it/s]Running loglikelihood requests:  69%|██████▉   | 33665/48692 [00:13<00:05, 2866.78it/s]Running loglikelihood requests:  70%|██████▉   | 33985/48692 [00:13<00:05, 2873.64it/s]Running loglikelihood requests:  70%|███████   | 34305/48692 [00:13<00:04, 2890.28it/s]Running loglikelihood requests:  71%|███████   | 34625/48692 [00:13<00:04, 2905.78it/s]Running loglikelihood requests:  72%|███████▏  | 34949/48692 [00:14<00:04, 2917.70it/s]Running loglikelihood requests:  72%|███████▏  | 35269/48692 [00:14<00:04, 2919.18it/s]Running loglikelihood requests:  73%|███████▎  | 35589/48692 [00:14<00:04, 2924.15it/s]Running loglikelihood requests:  74%|███████▍  | 35913/48692 [00:14<00:04, 2932.77it/s]Running loglikelihood requests:  74%|███████▍  | 36233/48692 [00:14<00:04, 2934.98it/s]Running loglikelihood requests:  75%|███████▌  | 36553/48692 [00:14<00:04, 2919.23it/s]Running loglikelihood requests:  76%|███████▌  | 36873/48692 [00:14<00:04, 2918.58it/s]Running loglikelihood requests:  76%|███████▋  | 37193/48692 [00:14<00:03, 2914.02it/s]Running loglikelihood requests:  77%|███████▋  | 37513/48692 [00:14<00:03, 2916.28it/s]Running loglikelihood requests:  78%|███████▊  | 37833/48692 [00:15<00:03, 2917.50it/s]Running loglikelihood requests:  78%|███████▊  | 38153/48692 [00:15<00:03, 2918.72it/s]Running loglikelihood requests:  79%|███████▉  | 38485/48692 [00:15<00:03, 2951.89it/s]Running loglikelihood requests:  80%|███████▉  | 38805/48692 [00:15<00:03, 2949.91it/s]Running loglikelihood requests:  80%|████████  | 39129/48692 [00:15<00:03, 2961.23it/s]Running loglikelihood requests:  81%|████████  | 39449/48692 [00:15<00:03, 2947.02it/s]Running loglikelihood requests:  82%|████████▏ | 39769/48692 [00:15<00:03, 2945.13it/s]Running loglikelihood requests:  82%|████████▏ | 40089/48692 [00:15<00:02, 2952.25it/s]Running loglikelihood requests:  83%|████████▎ | 40409/48692 [00:15<00:02, 2952.64it/s]Running loglikelihood requests:  84%|████████▎ | 40729/48692 [00:16<00:02, 2937.85it/s]Running loglikelihood requests:  84%|████████▍ | 41049/48692 [00:16<00:02, 2936.44it/s]Running loglikelihood requests:  85%|████████▍ | 41369/48692 [00:16<00:02, 2941.97it/s]Running loglikelihood requests:  86%|████████▌ | 41689/48692 [00:16<00:02, 2943.91it/s]Running loglikelihood requests:  86%|████████▋ | 42009/48692 [00:16<00:02, 2945.56it/s]Running loglikelihood requests:  87%|████████▋ | 42329/48692 [00:16<00:02, 2948.82it/s]Running loglikelihood requests:  88%|████████▊ | 42649/48692 [00:16<00:02, 2949.55it/s]Running loglikelihood requests:  88%|████████▊ | 42973/48692 [00:16<00:01, 2958.57it/s]Running loglikelihood requests:  89%|████████▉ | 43293/48692 [00:16<00:01, 2959.90it/s]Running loglikelihood requests:  90%|████████▉ | 43613/48692 [00:17<00:01, 2955.01it/s]Running loglikelihood requests:  90%|█████████ | 43933/48692 [00:17<00:01, 2948.11it/s]Running loglikelihood requests:  91%|█████████ | 44253/48692 [00:17<00:01, 2947.10it/s]Running loglikelihood requests:  92%|█████████▏| 44573/48692 [00:17<00:01, 2939.81it/s]Running loglikelihood requests:  92%|█████████▏| 44893/48692 [00:17<00:01, 2942.42it/s]Running loglikelihood requests:  93%|█████████▎| 45213/48692 [00:17<00:01, 2950.03it/s]Running loglikelihood requests:  94%|█████████▎| 45533/48692 [00:17<00:01, 2965.17it/s]Running loglikelihood requests:  94%|█████████▍| 45853/48692 [00:17<00:00, 2961.38it/s]Running loglikelihood requests:  95%|█████████▍| 46173/48692 [00:17<00:00, 2969.50it/s]Running loglikelihood requests:  95%|█████████▌| 46493/48692 [00:18<00:00, 2973.96it/s]Running loglikelihood requests:  96%|█████████▌| 46813/48692 [00:18<00:00, 2976.26it/s]Running loglikelihood requests:  97%|█████████▋| 47133/48692 [00:18<00:00, 2970.83it/s]Running loglikelihood requests:  97%|█████████▋| 47453/48692 [00:18<00:00, 2976.26it/s]Running loglikelihood requests:  98%|█████████▊| 47773/48692 [00:18<00:00, 2978.44it/s]Running loglikelihood requests:  99%|█████████▉| 48093/48692 [00:18<00:00, 2982.95it/s]Running loglikelihood requests:  99%|█████████▉| 48413/48692 [00:18<00:00, 2979.37it/s]Running loglikelihood requests: 100%|██████████| 48692/48692 [00:18<00:00, 2597.34it/s]
+2026-05-04:06:09:56,486 WARNING  [huggingface.py:1353] Failed to get model SHA for CLMv4ForCausalLM(
+  (decoder): ConsciousDecoderV3(
+    (tok_emb): Embedding(64000, 768)
+    (drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0-15): 16 x DecoderBlockV2(
+        (ln_attn): RMSNorm()
+        (attn): GroupedQueryAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=768, out_features=256, bias=False)
+          (v_proj): Linear(in_features=768, out_features=256, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (attn_dropout): Dropout(p=0.0, inplace=False)
+          (resid_dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_pf): RMSNorm()
+        (purefield): PureFieldFFN(
+          (engine_a): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (engine_g): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+        )
+        (ln_cross): RMSNorm()
+        (cross_attn): ConsciousCrossAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=192, out_features=768, bias=False)
+          (v_proj): Linear(in_features=192, out_features=768, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_ffn): RMSNorm()
+        (ffn): SwiGLUFFN(
+          (gate_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (up_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (down_proj): Linear(in_features=2048, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ca_mix): Linear(in_features=2304, out_features=768, bias=False)
+        (ln_ca): RMSNorm()
+        (rule_weights): Linear(in_features=768, out_features=8, bias=True)
+        (rules): ModuleList(
+          (0-7): 8 x Linear(in_features=768, out_features=768, bias=False)
+        )
+      )
+    )
+    (tension_proj): Linear(in_features=1, out_features=768, bias=False)
+    (ln_f): RMSNorm()
+    (head_a): Linear(in_features=768, out_features=64000, bias=False)
+    (head_g): Linear(in_features=768, out_features=64000, bias=False)
+  )
+) at revision main. Error: Repo id must be a string, not <class 'clm_v4_hf.modeling_clm_v4.CLMv4ForCausalLM'>: 'CLMv4ForCausalLM(
+  (decoder): ConsciousDecoderV3(
+    (tok_emb): Embedding(64000, 768)
+    (drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0-15): 16 x DecoderBlockV2(
+        (ln_attn): RMSNorm()
+        (attn): GroupedQueryAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=768, out_features=256, bias=False)
+          (v_proj): Linear(in_features=768, out_features=256, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (attn_dropout): Dropout(p=0.0, inplace=False)
+          (resid_dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_pf): RMSNorm()
+        (purefield): PureFieldFFN(
+          (engine_a): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (engine_g): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+        )
+        (ln_cross): RMSNorm()
+        (cross_attn): ConsciousCrossAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=192, out_features=768, bias=False)
+          (v_proj): Linear(in_features=192, out_features=768, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_ffn): RMSNorm()
+        (ffn): SwiGLUFFN(
+          (gate_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (up_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (down_proj): Linear(in_features=2048, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ca_mix): Linear(in_features=2304, out_features=768, bias=False)
+        (ln_ca): RMSNorm()
+        (rule_weights): Linear(in_features=768, out_features=8, bias=True)
+        (rules): ModuleList(
+          (0-7): 8 x Linear(in_features=768, out_features=768, bias=False)
+        )
+      )
+    )
+    (tension_proj): Linear(in_features=1, out_features=768, bias=False)
+    (ln_f): RMSNorm()
+    (head_a): Linear(in_features=768, out_features=64000, bias=False)
+    (head_g): Linear(in_features=768, out_features=64000, bias=False)
+  )
+)'.
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+[eval] mmlu done dt=170.6s
+    mmlu: {'acc,none': 0.27100961143514335, 'acc_stderr,none': np.float64(0.003981214624529999), 'alias': 'mmlu'}
+    mmlu_humanities: {'acc,none': 0.23473748473748474, 'acc_stderr,none': np.float64(0.007389408818178459), 'alias': ' - humanities'}
+    mmlu_formal_logic: {'alias': '  - formal_logic', 'acc,none': 0.36507936507936506, 'acc_stderr,none': 0.04306241259127153}
+    mmlu_high_school_european_history: {'alias': '  - high_school_european_history', 'acc,none': 0.2545454545454545, 'acc_stderr,none': 0.03401506715249039}
+    mmlu_high_school_us_history: {'alias': '  - high_school_us_history', 'acc,none': 0.2549019607843137, 'acc_stderr,none': 0.030587591351604246}
+    mmlu_high_school_world_history: {'alias': '  - high_school_world_history', 'acc,none': 0.20253164556962025, 'acc_stderr,none': 0.026160568246601464}
+    mmlu_international_law: {'alias': '  - international_law', 'acc,none': 0.14049586776859505, 'acc_stderr,none': 0.031722334260021585}
+    mmlu_jurisprudence: {'alias': '  - jurisprudence', 'acc,none': 0.21296296296296297, 'acc_stderr,none': 0.03957835471980981}
+    mmlu_logical_fallacies: {'alias': '  - logical_fallacies', 'acc,none': 0.2331288343558282, 'acc_stderr,none': 0.0332201579577674}
+    mmlu_moral_disputes: {'alias': '  - moral_disputes', 'acc,none': 0.2138728323699422, 'acc_stderr,none': 0.022075709251757177}
+    mmlu_moral_scenarios: {'alias': '  - moral_scenarios', 'acc,none': 0.26, 'acc_stderr,none': 0.01963596552972551}
+    mmlu_philosophy: {'alias': '  - philosophy', 'acc,none': 0.24115755627009647, 'acc_stderr,none': 0.024296594034763426}
+    mmlu_prehistory: {'alias': '  - prehistory', 'acc,none': 0.22530864197530864, 'acc_stderr,none': 0.023246202647819746}
+    mmlu_professional_law: {'alias': '  - professional_law', 'acc,none': 0.242, 'acc_stderr,none': 0.019173085678337167}
+    mmlu_world_religions: {'alias': '  - world_religions', 'acc,none': 0.17543859649122806, 'acc_stderr,none': 0.029170885500727686}
+    mmlu_other: {'acc,none': 0.2556657223796034, 'acc_stderr,none': np.float64(0.008056103160021111), 'alias': ' - other'}
+    mmlu_business_ethics: {'alias': '  - business_ethics', 'acc,none': 0.21, 'acc_stderr,none': 0.040936018074033256}
+    mmlu_clinical_knowledge: {'alias': '  - clinical_knowledge', 'acc,none': 0.3018867924528302, 'acc_stderr,none': 0.02825420034443865}
+    mmlu_college_medicine: {'alias': '  - college_medicine', 'acc,none': 0.3352601156069364, 'acc_stderr,none': 0.03599586301247078}
+    mmlu_global_facts: {'alias': '  - global_facts', 'acc,none': 0.18, 'acc_stderr,none': 0.038612291966536955}
+    mmlu_human_aging: {'alias': '  - human_aging', 'acc,none': 0.10762331838565023, 'acc_stderr,none': 0.020799400082880008}
+    mmlu_management: {'alias': '  - management', 'acc,none': 0.3786407766990291, 'acc_stderr,none': 0.048026946982589726}
+    mmlu_marketing: {'alias': '  - marketing', 'acc,none': 0.19658119658119658, 'acc_stderr,none': 0.02603538609895129}
+    mmlu_medical_genetics: {'alias': '  - medical_genetics', 'acc,none': 0.24, 'acc_stderr,none': 0.04292346959909282}
+    mmlu_miscellaneous: {'alias': '  - miscellaneous', 'acc,none': 0.204, 'acc_stderr,none': 0.018039369104138652}
+    mmlu_nutrition: {'alias': '  - nutrition', 'acc,none': 0.2875816993464052, 'acc_stderr,none': 0.02591780611714716}
+    mmlu_professional_accounting: {'alias': '  - professional_accounting', 'acc,none': 0.24113475177304963, 'acc_stderr,none': 0.025518731049537755}
+    mmlu_professional_medicine: {'alias': '  - professional_medicine', 'acc,none': 0.4485294117647059, 'acc_stderr,none': 0.030211479609121593}
+    mmlu_virology: {'alias': '  - virology', 'acc,none': 0.1927710843373494, 'acc_stderr,none': 0.03070982405056527}
+    mmlu_social_sciences: {'acc,none': 0.31095890410958904, 'acc_stderr,none': np.float64(0.008500971538470941), 'alias': ' - social sciences'}
+    mmlu_econometrics: {'alias': '  - econometrics', 'acc,none': 0.23684210526315788, 'acc_stderr,none': 0.039994238792813344}
+    mmlu_high_school_geography: {'alias': '  - high_school_geography', 'acc,none': 0.35353535353535354, 'acc_stderr,none': 0.03406086723547153}
+    mmlu_high_school_government_and_politics: {'alias': '  - high_school_government_and_politics', 'acc,none': 0.36787564766839376, 'acc_stderr,none': 0.034801756684660366}
+    mmlu_high_school_macroeconomics: {'alias': '  - high_school_macroeconomics', 'acc,none': 0.3641025641025641, 'acc_stderr,none': 0.024396672985094774}
+    mmlu_high_school_microeconomics: {'alias': '  - high_school_microeconomics', 'acc,none': 0.3487394957983193, 'acc_stderr,none': 0.030956636328566548}
+    mmlu_high_school_psychology: {'alias': '  - high_school_psychology', 'acc,none': 0.34, 'acc_stderr,none': 0.021206117013673066}
+    mmlu_human_sexuality: {'alias': '  - human_sexuality', 'acc,none': 0.2824427480916031, 'acc_stderr,none': 0.03948406125768361}
+    mmlu_professional_psychology: {'alias': '  - professional_psychology', 'acc,none': 0.21, 'acc_stderr,none': 0.018233620865305916}
+    mmlu_public_relations: {'alias': '  - public_relations', 'acc,none': 0.22727272727272727, 'acc_stderr,none': 0.04013964554072775}
+    mmlu_security_studies: {'alias': '  - security_studies', 'acc,none': 0.4, 'acc_stderr,none': 0.031362502409358936}
+    mmlu_sociology: {'alias': '  - sociology', 'acc,none': 0.26865671641791045, 'acc_stderr,none': 0.03134328358208954}
+    mmlu_us_foreign_policy: {'alias': '  - us_foreign_policy', 'acc,none': 0.26, 'acc_stderr,none': 0.0440844002276808}
+    mmlu_stem: {'acc,none': 0.285442435775452, 'acc_stderr,none': np.float64(0.00795402418020582), 'alias': ' - stem'}
+    mmlu_abstract_algebra: {'alias': '  - abstract_algebra', 'acc,none': 0.21, 'acc_stderr,none': 0.040936018074033256}
+    mmlu_anatomy: {'alias': '  - anatomy', 'acc,none': 0.22962962962962963, 'acc_stderr,none': 0.03633384414073465}
+    mmlu_astronomy: {'alias': '  - astronomy', 'acc,none': 0.34210526315789475, 'acc_stderr,none': 0.03860731599316091}
+    mmlu_college_biology: {'alias': '  - college_biology', 'acc,none': 0.2638888888888889, 'acc_stderr,none': 0.03685651095897532}
+    mmlu_college_chemistry: {'alias': '  - college_chemistry', 'acc,none': 0.4, 'acc_stderr,none': 0.04923659639173309}
+    mmlu_college_computer_science: {'alias': '  - college_computer_science', 'acc,none': 0.33, 'acc_stderr,none': 0.047258156262526045}
+    mmlu_college_mathematics: {'alias': '  - college_mathematics', 'acc,none': 0.31, 'acc_stderr,none': 0.04648231987117316}
+    mmlu_college_physics: {'alias': '  - college_physics', 'acc,none': 0.37254901960784315, 'acc_stderr,none': 0.04810840148082634}
+    mmlu_computer_security: {'alias': '  - computer_security', 'acc,none': 0.18, 'acc_stderr,none': 0.038612291966536955}
+    mmlu_conceptual_physics: {'alias': '  - conceptual_physics', 'acc,none': 0.20425531914893616, 'acc_stderr,none': 0.026355158413349424}
+    mmlu_electrical_engineering: {'alias': '  - electrical_engineering', 'acc,none': 0.2413793103448276, 'acc_stderr,none': 0.03565998174135302}
+    mmlu_elementary_mathematics: {'alias': '  - elementary_mathematics', 'acc,none': 0.26455026455026454, 'acc_stderr,none': 0.02271746789770861}
+    mmlu_high_school_biology: {'alias': '  - high_school_biology', 'acc,none': 0.3161290322580645, 'acc_stderr,none': 0.026450874489042767}
+    mmlu_high_school_chemistry: {'alias': '  - high_school_chemistry', 'acc,none': 0.28078817733990147, 'acc_stderr,none': 0.03161856335358609}
+    mmlu_high_school_computer_science: {'alias': '  - high_school_computer_science', 'acc,none': 0.19, 'acc_stderr,none': 0.03942772444036625}
+    mmlu_high_school_mathematics: {'alias': '  - high_school_mathematics', 'acc,none': 0.26296296296296295, 'acc_stderr,none': 0.026842057873833706}
+    mmlu_high_school_physics: {'alias': '  - high_school_physics', 'acc,none': 0.33112582781456956, 'acc_stderr,none': 0.038425817186598696}
+    mmlu_high_school_statistics: {'alias': '  - high_school_statistics', 'acc,none': 0.4722222222222222, 'acc_stderr,none': 0.0340470532865388}
+    mmlu_machine_learning: {'alias': '  - machine_learning', 'acc,none': 0.16071428571428573, 'acc_stderr,none': 0.0348594609647574}
+
+[eval] === triviaqa ===
+2026-05-04:06:09:57,246 INFO     [evaluator.py:164] Setting random seed to 42 | Setting numpy seed to 42 | Setting torch manual seed to 42 | Setting fewshot manual seed to 42
+2026-05-04:06:09:57,247 INFO     [evaluator.py:217] Using pre-initialized model
+Generating train split:   0%|          | 0/138384 [00:00<?, ? examples/s]Generating train split:   5%|▌         | 7000/138384 [00:00<00:02, 49487.98 examples/s]Generating train split:  14%|█▎        | 19000/138384 [00:00<00:01, 82495.32 examples/s]Generating train split:  24%|██▍       | 33000/138384 [00:00<00:01, 98346.57 examples/s]Generating train split:  33%|███▎      | 45000/138384 [00:00<00:00, 103403.62 examples/s]Generating train split:  41%|████      | 57000/138384 [00:00<00:00, 105581.24 examples/s]Generating train split:  50%|████▉     | 69000/138384 [00:00<00:00, 108563.74 examples/s]Generating train split:  59%|█████▊    | 81000/138384 [00:00<00:00, 109940.77 examples/s]Generating train split:  69%|██████▉   | 96000/138384 [00:00<00:00, 102490.86 examples/s]Generating train split:  81%|████████  | 112000/138384 [00:01<00:00, 101657.47 examples/s]Generating train split:  90%|████████▉ | 124000/138384 [00:01<00:00, 105348.11 examples/s]Generating train split:  98%|█████████▊| 136000/138384 [00:01<00:00, 108201.32 examples/s]Generating train split: 100%|██████████| 138384/138384 [00:01<00:00, 102478.48 examples/s]
+Generating validation split:   0%|          | 0/17944 [00:00<?, ? examples/s]Generating validation split:  50%|█████     | 9000/17944 [00:00<00:00, 81902.23 examples/s]Generating validation split: 100%|██████████| 17944/17944 [00:00<00:00, 97708.98 examples/s]
+Generating test split:   0%|          | 0/17210 [00:00<?, ? examples/s]Generating test split: 100%|██████████| 17210/17210 [00:00<00:00, 545529.91 examples/s]
+2026-05-04:06:10:23,033 WARNING  [evaluator.py:270] Overwriting default num_fewshot of triviaqa from None to 5
+2026-05-04:06:10:23,034 INFO     [task.py:415] Building contexts for triviaqa on rank 0...
+  0%|          | 0/500 [00:00<?, ?it/s]  8%|▊         | 42/500 [00:00<00:01, 413.44it/s] 17%|█▋        | 85/500 [00:00<00:00, 417.72it/s] 26%|██▌       | 128/500 [00:00<00:00, 418.89it/s] 34%|███▍      | 171/500 [00:00<00:00, 420.83it/s] 43%|████▎     | 214/500 [00:00<00:00, 420.09it/s] 51%|█████▏    | 257/500 [00:00<00:00, 421.90it/s] 60%|██████    | 300/500 [00:00<00:00, 423.41it/s] 69%|██████▊   | 343/500 [00:00<00:00, 424.61it/s] 77%|███████▋  | 386/500 [00:00<00:00, 425.77it/s] 86%|████████▌ | 429/500 [00:01<00:00, 425.91it/s] 94%|█████████▍| 472/500 [00:01<00:00, 424.97it/s]100%|██████████| 500/500 [00:01<00:00, 423.03it/s]
+2026-05-04:06:10:24,250 INFO     [evaluator.py:489] Running generate_until requests
+Running generate_until requests:   0%|          | 0/500 [00:00<?, ?it/s]Running generate_until requests:   0%|          | 1/500 [00:08<1:11:39,  8.62s/it]Running generate_until requests:   3%|▎         | 17/500 [00:16<06:52,  1.17it/s] Running generate_until requests:   7%|▋         | 33/500 [00:25<05:06,  1.52it/s]Running generate_until requests:  10%|▉         | 49/500 [00:33<04:27,  1.69it/s]Running generate_until requests:  13%|█▎        | 65/500 [00:41<04:04,  1.78it/s]Running generate_until requests:  16%|█▌        | 81/500 [00:49<03:48,  1.84it/s]Running generate_until requests:  19%|█▉        | 97/500 [00:57<03:35,  1.87it/s]Running generate_until requests:  23%|██▎       | 113/500 [01:06<03:23,  1.90it/s]Running generate_until requests:  26%|██▌       | 129/500 [01:14<03:13,  1.92it/s]Running generate_until requests:  29%|██▉       | 145/500 [01:22<03:03,  1.94it/s]Running generate_until requests:  32%|███▏      | 161/500 [01:30<02:53,  1.95it/s]Running generate_until requests:  35%|███▌      | 177/500 [01:38<02:44,  1.97it/s]Running generate_until requests:  39%|███▊      | 193/500 [01:46<02:35,  1.98it/s]Running generate_until requests:  42%|████▏     | 209/500 [01:54<02:26,  1.99it/s]Running generate_until requests:  45%|████▌     | 225/500 [02:02<02:17,  2.00it/s]Running generate_until requests:  48%|████▊     | 241/500 [02:10<02:08,  2.01it/s]Running generate_until requests:  51%|█████▏    | 257/500 [02:17<01:59,  2.03it/s]Running generate_until requests:  55%|█████▍    | 273/500 [02:25<01:51,  2.04it/s]Running generate_until requests:  58%|█████▊    | 289/500 [02:33<01:43,  2.05it/s]Running generate_until requests:  61%|██████    | 305/500 [02:40<01:34,  2.06it/s]Running generate_until requests:  64%|██████▍   | 321/500 [02:48<01:26,  2.07it/s]Running generate_until requests:  67%|██████▋   | 337/500 [02:56<01:18,  2.08it/s]Running generate_until requests:  71%|███████   | 353/500 [03:03<01:10,  2.09it/s]Running generate_until requests:  74%|███████▍  | 369/500 [03:11<01:02,  2.10it/s]Running generate_until requests:  77%|███████▋  | 385/500 [03:18<00:54,  2.10it/s]Running generate_until requests:  80%|████████  | 401/500 [03:26<00:46,  2.11it/s]Running generate_until requests:  83%|████████▎ | 417/500 [03:33<00:39,  2.12it/s]Running generate_until requests:  87%|████████▋ | 433/500 [03:41<00:31,  2.14it/s]Running generate_until requests:  90%|████████▉ | 449/500 [03:48<00:23,  2.15it/s]Running generate_until requests:  93%|█████████▎| 465/500 [03:55<00:16,  2.16it/s]Running generate_until requests:  96%|█████████▌| 481/500 [04:03<00:08,  2.18it/s]Running generate_until requests:  99%|█████████▉| 497/500 [04:07<00:01,  2.45it/s]Running generate_until requests: 100%|██████████| 500/500 [04:07<00:00,  2.02it/s]
+2026-05-04:06:14:32,354 WARNING  [huggingface.py:1353] Failed to get model SHA for CLMv4ForCausalLM(
+  (decoder): ConsciousDecoderV3(
+    (tok_emb): Embedding(64000, 768)
+    (drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0-15): 16 x DecoderBlockV2(
+        (ln_attn): RMSNorm()
+        (attn): GroupedQueryAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=768, out_features=256, bias=False)
+          (v_proj): Linear(in_features=768, out_features=256, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (attn_dropout): Dropout(p=0.0, inplace=False)
+          (resid_dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_pf): RMSNorm()
+        (purefield): PureFieldFFN(
+          (engine_a): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (engine_g): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+        )
+        (ln_cross): RMSNorm()
+        (cross_attn): ConsciousCrossAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=192, out_features=768, bias=False)
+          (v_proj): Linear(in_features=192, out_features=768, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_ffn): RMSNorm()
+        (ffn): SwiGLUFFN(
+          (gate_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (up_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (down_proj): Linear(in_features=2048, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ca_mix): Linear(in_features=2304, out_features=768, bias=False)
+        (ln_ca): RMSNorm()
+        (rule_weights): Linear(in_features=768, out_features=8, bias=True)
+        (rules): ModuleList(
+          (0-7): 8 x Linear(in_features=768, out_features=768, bias=False)
+        )
+      )
+    )
+    (tension_proj): Linear(in_features=1, out_features=768, bias=False)
+    (ln_f): RMSNorm()
+    (head_a): Linear(in_features=768, out_features=64000, bias=False)
+    (head_g): Linear(in_features=768, out_features=64000, bias=False)
+  )
+) at revision main. Error: Repo id must be a string, not <class 'clm_v4_hf.modeling_clm_v4.CLMv4ForCausalLM'>: 'CLMv4ForCausalLM(
+  (decoder): ConsciousDecoderV3(
+    (tok_emb): Embedding(64000, 768)
+    (drop): Dropout(p=0.0, inplace=False)
+    (blocks): ModuleList(
+      (0-15): 16 x DecoderBlockV2(
+        (ln_attn): RMSNorm()
+        (attn): GroupedQueryAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=768, out_features=256, bias=False)
+          (v_proj): Linear(in_features=768, out_features=256, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (attn_dropout): Dropout(p=0.0, inplace=False)
+          (resid_dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_pf): RMSNorm()
+        (purefield): PureFieldFFN(
+          (engine_a): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+          (engine_g): Sequential(
+            (0): Linear(in_features=768, out_features=3072, bias=True)
+            (1): GELU(approximate='none')
+            (2): Dropout(p=0.37, inplace=False)
+            (3): Linear(in_features=3072, out_features=768, bias=True)
+          )
+        )
+        (ln_cross): RMSNorm()
+        (cross_attn): ConsciousCrossAttention(
+          (q_proj): Linear(in_features=768, out_features=768, bias=False)
+          (k_proj): Linear(in_features=192, out_features=768, bias=False)
+          (v_proj): Linear(in_features=192, out_features=768, bias=False)
+          (o_proj): Linear(in_features=768, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ln_ffn): RMSNorm()
+        (ffn): SwiGLUFFN(
+          (gate_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (up_proj): Linear(in_features=768, out_features=2048, bias=False)
+          (down_proj): Linear(in_features=2048, out_features=768, bias=False)
+          (dropout): Dropout(p=0.0, inplace=False)
+        )
+        (ca_mix): Linear(in_features=2304, out_features=768, bias=False)
+        (ln_ca): RMSNorm()
+        (rule_weights): Linear(in_features=768, out_features=8, bias=True)
+        (rules): ModuleList(
+          (0-7): 8 x Linear(in_features=768, out_features=768, bias=False)
+        )
+      )
+    )
+    (tension_proj): Linear(in_features=1, out_features=768, bias=False)
+    (ln_f): RMSNorm()
+    (head_a): Linear(in_features=768, out_features=64000, bias=False)
+    (head_g): Linear(in_features=768, out_features=64000, bias=False)
+  )
+)'.
+fatal: not a git repository (or any parent up to mount point /)
+Stopping at filesystem boundary (GIT_DISCOVERY_ACROSS_FILESYSTEM not set).
+[eval] triviaqa done dt=275.8s
+    triviaqa: {'alias': 'triviaqa', 'exact_match,remove_whitespace': 0.0, 'exact_match_stderr,remove_whitespace': 0.0}
+
+[done] total dt=468.3s
+[done] eval_results.json + TRAIN_DONE.json written to /workspace/p9_base_val/results

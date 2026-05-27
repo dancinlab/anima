@@ -1,0 +1,70 @@
+{
+  "raw_marker": "raw#71",
+  "directionality": "BIDIRECTIONAL",
+  "predicates": [
+    {
+      "id": "P-1",
+      "name": "slime_mold_phi_vs_neural_phi_correlation",
+      "tiers": {
+        "PASS_STRONG": "r(Phi_k_physarum, Phi_k_eeg) >= 0.70 AND r(Phi_k_physarum, Phi_k_clm) >= 0.70 AND |Phi*_physarum - Phi*_eeg| / max(|Phi*_eeg|, 1e-3) <= 0.50",
+        "PASS_PARTIAL": "one correlation >= 0.70, other 0.40-0.70",
+        "WEAK": "both 0.40-0.70",
+        "FAIL": "both < 0.40 OR substrate sign flip"
+      },
+      "bidirectional_conditions": {
+        "null_floor": "1024 stim-shuffled permutation; observed r > 95-percentile of r_null",
+        "reproducibility": "3 ANIMA_SEED reps; 3/3 STRONG, 2/3 WEAK_PASS",
+        "variance_gate": "std(Phi_k_physarum) < 0.5 * |Phi*_physarum| else NULL"
+      }
+    },
+    {
+      "id": "P-2",
+      "name": "mycelium_phi_vs_neural_phi_correlation",
+      "tiers": "identical structure to P-1 with mycelium spike-train",
+      "independence": "reported as independent verdict; combined in N-23 composite gate"
+    },
+    {
+      "id": "P-3",
+      "name": "environmental_complexity_to_information_capacity",
+      "tiers": {
+        "PASS": "LZ(spike|stim=high-complex) > LZ(spike|stim=low-complex) at p<0.01 paired AND linear regression slope LZ vs stim-Shannon-entropy positive at 95% CI",
+        "WEAK": "trend in correct direction but not significant",
+        "FAIL": "no monotonic relationship OR inverted slope",
+        "REVERSE_FAIL": "LZ saturates at near-maximum across ALL stim levels (substrate is producing noise, not encoding)"
+      }
+    },
+    {
+      "id": "P-4",
+      "name": "mechanical_ablation_causal_mediation",
+      "tiers": {
+        "PASS": "rel-dPhi >= 0.05 across all 4 family axes (Hexad/Law/Phi/SelfRef) when single tube/bundle severed; effect persists >= 30 min",
+        "WEAK": "2-3 of 4 axes show rel-dPhi >= 0.05",
+        "FAIL": "<2 axes affected OR effect dissipates within 5 min (artefact window)",
+        "REVERSE_FAIL": "Phi INCREASES post-ablation by >= rel +0.05 in any family axis (substrate encoding the experimenter, not the stim)"
+      }
+    },
+    {
+      "id": "P-5",
+      "name": "cross_substrate_consistency_physarum_vs_mycelium",
+      "tiers": {
+        "PASS": "r(Phi_k_physarum, Phi_k_mycelium) >= 0.50 across 16 matched stim states",
+        "WEAK": "0.30 <= r < 0.50",
+        "FAIL": "r < 0.30",
+        "REVERSE_FAIL": "r negative AND |r| >= 0.30 (anti-correlated, encoding orthogonal directions)"
+      }
+    }
+  ],
+  "composite_gate": {
+    "definition": "(P-1 AND P-2) AND P-3 AND P-4 AND P-5",
+    "levels": {
+      "N23_STRONG": "all 5 PASS, P-1 and P-2 STRONG-tier",
+      "N23_PASS": ">= 4 PASS, no FAIL, no REVERSE_FAIL",
+      "N23_WEAK": "3 PASS or any WEAK; no FAIL",
+      "N23_FAIL": "any FAIL or REVERSE_FAIL"
+    }
+  },
+  "honest_c3_top2": [
+    "Adamatzky's work is a computing analogy, not a phenomenal-consciousness claim. PASS evidences substrate-integrated information processing — necessary, not sufficient, for IIT-strict consciousness.",
+    "Pre-neural information processing != consciousness in IIT-strict sense. Non-zero Phi* on a non-neural substrate is consistent with functional integration without intrinsic-existence / exclusion / composition guarantees IIT 4.0 requires."
+  ]
+}

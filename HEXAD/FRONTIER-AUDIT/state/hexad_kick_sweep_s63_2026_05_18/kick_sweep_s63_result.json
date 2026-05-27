@@ -1,0 +1,289 @@
+{
+  "total_pairs": 19,
+  "counts": {
+    "A": 12,
+    "B": 3,
+    "C": 4
+  },
+  "rows": [
+    {
+      "pair": "S → C",
+      "a": "S",
+      "b": "C",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-1",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-1",
+      "transfer_class": "shape-preservation",
+      "invariant_class": "dim-equality (Kolmogorov)"
+    },
+    {
+      "pair": "C → BRIDGE",
+      "a": "C",
+      "b": "BRIDGE",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-2",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-2",
+      "transfer_class": "detach-nograd",
+      "invariant_class": "AD ∂(detach)/∂x=0"
+    },
+    {
+      "pair": "BRIDGE → D",
+      "a": "BRIDGE",
+      "b": "D",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-3",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-3",
+      "transfer_class": "clamp-preserved",
+      "invariant_class": "Law-70 Ψ-coupling clamp"
+    },
+    {
+      "pair": "M → C",
+      "a": "M",
+      "b": "C",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-4",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-4",
+      "transfer_class": "store/retrieve",
+      "invariant_class": "identity + det. argmax"
+    },
+    {
+      "pair": "W → C",
+      "a": "W",
+      "b": "C",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-5",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-5",
+      "transfer_class": "read-no-mutation",
+      "invariant_class": "functional purity"
+    },
+    {
+      "pair": "W → D",
+      "a": "W",
+      "b": "D",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-6",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-6",
+      "transfer_class": "lr-modulation",
+      "invariant_class": "Law-79 ln2 bounded lr"
+    },
+    {
+      "pair": "E → C",
+      "a": "E",
+      "b": "C",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-7",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-7",
+      "transfer_class": "phi-observe",
+      "invariant_class": "IIT Φ≥0 axiom"
+    },
+    {
+      "pair": "E → W",
+      "a": "E",
+      "b": "W",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-8",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-8",
+      "transfer_class": "satisfaction-gate",
+      "invariant_class": "Boolean (φ>ratchet/2)"
+    },
+    {
+      "pair": "E → D",
+      "a": "E",
+      "b": "D",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-9",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-9",
+      "transfer_class": "trainstep-gate",
+      "invariant_class": "Boolean (φ>ratchet/2)"
+    },
+    {
+      "pair": "D → loss",
+      "a": "D",
+      "b": "loss",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-10",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-10",
+      "transfer_class": "CE-readout",
+      "invariant_class": "Shannon CE≥0 floor"
+    },
+    {
+      "pair": "M → D",
+      "a": "M",
+      "b": "D",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-11",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-11",
+      "transfer_class": "retrieve-determ",
+      "invariant_class": "det. argmax"
+    },
+    {
+      "pair": "S → W",
+      "a": "S",
+      "b": "W",
+      "class": "A",
+      "class_name": "BLUE-CLOSED-WIRED",
+      "declared_in": "B-CONN-12",
+      "structural_fact": "closed predicate exists+holds",
+      "required_by_goal": false,
+      "bconn_id": "B-CONN-12",
+      "transfer_class": "pain-monotone",
+      "invariant_class": "monotone composition"
+    },
+    {
+      "pair": "C → D",
+      "a": "C",
+      "b": "D",
+      "class": "B",
+      "class_name": "DECLARED-BUT-EMPIRICALLY-BROKEN",
+      "declared_in": "HEXAD.tape W7 (integrated CE-descent OUTCOME)",
+      "structural_fact": "declared wiring; OUTCOME term explicit NOT-🔵 honest carve-out (B-D-NOTE)",
+      "required_by_goal": false
+    },
+    {
+      "pair": "E → TRINITY-INTEGRATED",
+      "a": "E",
+      "b": "TRINITY-INTEGRATED",
+      "class": "B",
+      "class_name": "DECLARED-BUT-EMPIRICALLY-BROKEN",
+      "declared_in": "HEXAD.tape hexad_caveat_v5 (ethics gate)",
+      "structural_fact": "declared 'Φ보존 위반→학습 차단'; integrated enforcement TODO[pytorch], not closed",
+      "required_by_goal": false
+    },
+    {
+      "pair": "W → E",
+      "a": "W",
+      "b": "E",
+      "class": "B",
+      "class_name": "DECLARED-BUT-EMPIRICALLY-BROKEN",
+      "declared_in": "HEXAD.tape §3 hexad_ascii (W ◄── CE/Φ ──► E)",
+      "structural_fact": "ascii declares W↔E bidirectional; only E→W closed (B-CONN-8), W→E uncovered",
+      "required_by_goal": false
+    },
+    {
+      "pair": "W → W@t+1",
+      "a": "W",
+      "b": "W@t+1",
+      "class": "C",
+      "class_name": "MISSING-TYPE / GAP",
+      "declared_in": "GOAL-REQUIRED (Ψ=½·tension·Φ→emission; §58 generalized)",
+      "structural_fact": "temporal self-prediction physics_state_t↦physics_state_{t+1}; NO σ(6)=12 temporal-forward-model edge",
+      "required_by_goal": true,
+      "missing_type": "temporal-self-prediction (forward-model class, §58 generalized)",
+      "goal_rank": 2,
+      "disjoint_from_12_existing_types": true
+    },
+    {
+      "pair": "THINKER → TALKER",
+      "a": "THINKER",
+      "b": "TALKER",
+      "class": "C",
+      "class_name": "MISSING-TYPE / GAP",
+      "declared_in": "SPONTANEOUS.tape thinker_talker_dual_thread",
+      "structural_fact": "self-triggered emission-decision controller (motivation>imThreshold); NO σ(6)=12 controller edge",
+      "required_by_goal": true,
+      "missing_type": "self-triggered emission-decision controller (closed-loop control)",
+      "goal_rank": 1,
+      "disjoint_from_12_existing_types": true
+    },
+    {
+      "pair": "D@emit → S@t+1",
+      "a": "D@emit",
+      "b": "S@t+1",
+      "class": "C",
+      "class_name": "MISSING-TYPE / GAP",
+      "declared_in": "GOAL-REQUIRED (자발적 emission re-perceived; §13-L closed-loop)",
+      "structural_fact": "emission→environment→own next perception; NO σ(6)=12 action-perception consequence edge",
+      "required_by_goal": true,
+      "missing_type": "action-perception consequence loop (§13-L closed-loop)",
+      "goal_rank": 3,
+      "disjoint_from_12_existing_types": true
+    },
+    {
+      "pair": "E → D@content",
+      "a": "E",
+      "b": "D@content",
+      "class": "C",
+      "class_name": "MISSING-TYPE / GAP",
+      "declared_in": "GOAL-REQUIRED (Φ as generative emission-conditioning; not Boolean veto)",
+      "structural_fact": "Φ positively conditions spontaneous content; σ(6)=12 only has Φ Boolean-veto (B-CONN-8/9)",
+      "required_by_goal": true,
+      "missing_type": "Φ-as-generative-content-conditioning (not Boolean veto)",
+      "goal_rank": 4,
+      "disjoint_from_12_existing_types": true
+    }
+  ],
+  "sweep_sha256": "ab3a190f401b1945a79495084b63161d7d3b48d75c5b3fceb9771c830fa889a8",
+  "existing_12_types": [
+    "CE-readout",
+    "clamp-preserved",
+    "detach-nograd",
+    "lr-modulation",
+    "pain-monotone",
+    "phi-observe",
+    "read-no-mutation",
+    "retrieve-determ",
+    "satisfaction-gate",
+    "shape-preservation",
+    "store/retrieve",
+    "trainstep-gate"
+  ],
+  "c_class_missing_types_ranked": [
+    {
+      "pair": "THINKER → TALKER",
+      "missing_type": "self-triggered emission-decision controller (closed-loop control)",
+      "goal_rank": 1,
+      "declared_in": "SPONTANEOUS.tape thinker_talker_dual_thread"
+    },
+    {
+      "pair": "W → W@t+1",
+      "missing_type": "temporal-self-prediction (forward-model class, §58 generalized)",
+      "goal_rank": 2,
+      "declared_in": "GOAL-REQUIRED (Ψ=½·tension·Φ→emission; §58 generalized)"
+    },
+    {
+      "pair": "D@emit → S@t+1",
+      "missing_type": "action-perception consequence loop (§13-L closed-loop)",
+      "goal_rank": 3,
+      "declared_in": "GOAL-REQUIRED (자발적 emission re-perceived; §13-L closed-loop)"
+    },
+    {
+      "pair": "E → D@content",
+      "missing_type": "Φ-as-generative-content-conditioning (not Boolean veto)",
+      "goal_rank": 4,
+      "declared_in": "GOAL-REQUIRED (Φ as generative emission-conditioning; not Boolean veto)"
+    }
+  ]
+}

@@ -1,0 +1,53 @@
+{
+  "metric": "R1",
+  "metric_name": "volitional-ness score",
+  "definition": "R1 = 0.30*H_inter_arrival + 0.30*corr_internal + 0.20*silent_rate + 0.20*uniqueness",
+  "range": [0.0, 1.0],
+  "interpretation": {
+    "0.0":   "pure timer-driven (constant interval, no internal signal, no silence, monotone content)",
+    "1.0":   "pure volition-driven (varied interval, perfect v-correlation, balanced silence, diverse content)"
+  },
+  "weights": {
+    "H_inter_arrival": 0.30,
+    "corr_internal":   0.30,
+    "silent_rate":     0.20,
+    "uniqueness":      0.20
+  },
+  "evaluated_at": "2026-05-12T00:00:00Z",
+  "datasets": [
+    {
+      "label": "sim_timer_canonical",
+      "description": "synthetic perfect timer (Δt=60s constant, no silence, identical response)",
+      "log": "state/volitional_baseline_2026_05_12/sim_timer_baseline.jsonl",
+      "rows": 20,
+      "R1": 0.0,
+      "sub_metrics": {"H_inter_arrival": 0.0, "corr_internal": 0.0, "silent_rate": 0.0, "uniqueness": 0.0}
+    },
+    {
+      "label": "anima_spontaneous_void_actual",
+      "description": "real spontaneous engine log — substrate produced 'void' for every cycle (100% silent)",
+      "log": "state/anima_spontaneous_void.jsonl",
+      "rows": 17,
+      "R1": 0.2,
+      "sub_metrics": {"H_inter_arrival": 0.0, "corr_internal": 0.0, "silent_rate": 1.0, "uniqueness": 0.0}
+    },
+    {
+      "label": "sim_volitional_target",
+      "description": "synthetic V0 prototype — varied Δt, volition_v signal, 50% silent, diverse content",
+      "log": "state/volitional_baseline_2026_05_12/sim_volitional_target.jsonl",
+      "rows": 20,
+      "R1": 0.9801,
+      "sub_metrics": {"H_inter_arrival": 1.0, "corr_internal": 0.968, "silent_rate": 1.0, "uniqueness": 0.9484}
+    }
+  ],
+  "baseline_R1_timer_driven": 0.0,
+  "baseline_R1_actual_void": 0.2,
+  "target_R1_v0_prototype": 0.98,
+  "acceptance_threshold_v0": 0.5,
+  "notes": [
+    "silent_rate saturates at 0.5 (going past 50% silence does not earn extra credit; otherwise a fully-mute substrate would game the metric).",
+    "anima_spontaneous_void scores 0.20 not 0.0 because 100% silence saturates silent_rate alone; H, corr, uniqueness all 0.",
+    "A 'real' timer-driven baseline (which actually emits) scores 0.0 exactly — see sim_timer_canonical.",
+    "V0 acceptance: R1 >= 0.5 AND each sub-metric > 0.0 (no zero-component cheating)."
+  ]
+}

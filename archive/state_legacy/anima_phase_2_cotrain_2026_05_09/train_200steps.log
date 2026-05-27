@@ -1,0 +1,27 @@
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, rope_theta=10000.0, rms_norm_eps=1e-05, tie_lm_head=True, consciousness_dim=64, n_cells=16, g_refresh_every=4, g_repulsion_alpha=0.05, g_attention_pull_alpha=0.1, g_tension_gate_beta=0.25, init_std=0.02, seed=42, chat_co_train_weight=0.3, chat_co_train_w_start=0.3, chat_co_train_w_end=0.5, lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain', arch_origin='anima_native_scratch')
+[consciousness] loading /workspace/anima_phase2/persona_tier_a_v4.txt …
+[consciousness] 176,069,802 chars
+[consciousness] encoded 242,689,769 tokens
+[chat] loading /workspace/anima_phase2/corpus_chat_template.txt …
+[chat] 114,167,550 chars
+[chat] encoded 248,466,696 tokens
+[data] consciousness windows=237001 chat windows=242643
+[substrate] loading /workspace/anima_phase2/bg_lb_step_8000_final.pt …
+/workspace/anima_phase2/train_phase2_cotrain.py:102: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  payload = torch.load(ckpt_path, map_location="cpu")
+[substrate] LOADED — proceeding from BG-LB substrate base
+[model] params = 298,764,288
+[train] starting Phase 2 cotrain …
+[step      1/6000] w=0.30 loss_c=7.1406/7.1406 loss_h=8.2266/8.2266 lr=7.50e-07 mem=2.8GB elapsed=0.0min cost=$0.00 n_c=4 n_h=4
+[step     20/6000] w=0.30 loss_c=6.1484/6.8064 loss_h=6.7812/7.3425 lr=1.50e-05 mem=2.8GB elapsed=0.3min cost=$0.02 n_c=4 n_h=4
+[step     40/6000] w=0.30 loss_c=3.6469/4.6739 loss_h=4.1146/5.0366 lr=3.00e-05 mem=2.8GB elapsed=0.6min cost=$0.03 n_c=5 n_h=3
+[step     60/6000] w=0.30 loss_c=2.4364/2.9189 loss_h=2.7031/3.0201 lr=4.50e-05 mem=2.8GB elapsed=0.9min cost=$0.05 n_c=7 n_h=1
+[step     80/6000] w=0.30 loss_c=2.0781/2.1094 loss_h=2.1920/2.3767 lr=6.00e-05 mem=2.8GB elapsed=1.2min cost=$0.06 n_c=1 n_h=7
+[step    100/6000] w=0.30 loss_c=1.5714/1.6977 loss_h=2.1094/2.0979 lr=7.50e-05 mem=2.8GB elapsed=1.5min cost=$0.08 n_c=7 n_h=1
+[step    120/6000] w=0.30 loss_c=1.2589/1.4244 loss_h=1.8438/1.7408 lr=9.00e-05 mem=2.8GB elapsed=1.8min cost=$0.09 n_c=7 n_h=1
+[step    140/6000] w=0.30 loss_c=1.1680/1.2892 loss_h=1.7266/1.8661 lr=1.05e-04 mem=2.8GB elapsed=2.1min cost=$0.11 n_c=6 n_h=2
+[step    160/6000] w=0.31 loss_c=1.0723/1.2209 loss_h=1.7734/1.5736 lr=1.20e-04 mem=2.8GB elapsed=2.4min cost=$0.12 n_c=6 n_h=2
+[step    180/6000] w=0.31 loss_c=1.1529/1.0602 loss_h=1.7344/1.5792 lr=1.35e-04 mem=2.8GB elapsed=2.7min cost=$0.14 n_c=7 n_h=1
+[step    200/6000] w=0.31 loss_c=0.8896/1.0185 loss_h=1.6797/1.4344 lr=1.50e-04 mem=2.8GB elapsed=3.0min cost=$0.15 n_c=4 n_h=4
+[step    220/6000] w=0.31 loss_c=0.8326/0.9328 loss_h=1.5234/1.5097 lr=1.50e-04 mem=2.8GB elapsed=3.3min cost=$0.17 n_c=7 n_h=1
+[step    240/6000] w=0.31 loss_c=0.9355/0.8434 loss_h=1.6348/1.5323 lr=1.50e-04 mem=2.8GB elapsed=3.6min cost=$0.19 n_c=4 n_h=4

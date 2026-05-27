@@ -1,0 +1,34 @@
+[§94] pre-fire pods: []
+[§94] requesting pod name=s94-1779172440 image=runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 disk=80GB
+[§94] pod_create: {"id": "5czdtwlytzkno5", "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04", "env": ["PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"], "machineId": "hua3rg2k57nh", "machine": {"podHostId": "5czdtwlytzkno5-64411fb4"}, "_gpu": "NVIDIA H100 80GB HBM3"}
+[§94] pod_id=5czdtwlytzkno5 — pre-flight runtime poll (max 600s, ip+port gate)
+[§94] runtime poll 1/60 (ip=pending port=pending)
+[§94] runtime ready @ iter 2/60 (ip=64.247.201.44 port=14372)
+[§94] SSH probe @ root@64.247.201.44:14372 (60 tries × 10s = 600s)
+[§94] SSH ready @ try 1/60
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+[§94] generating §16-class corpus (seed=1337)
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+[§94] corpus poll 1/40 CD
+[§94] === train baseline+neoteny + 4-cell #3-loop grid (1500 step / seed 1337) ===
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+[§94] run poll 1/120 D
+[§94] result.json verified — SAVE_POD=1 auto-promote, pulling
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+Warning: Permanently added '[64.247.201.44]:14372' (ED25519) to the list of known hosts.
+[§94] complete — terminating pod 5czdtwlytzkno5
+[§94] post-fire pods: {"count": 0, "our_pod_present": false, "ids": []}
+[§94] DONE
+[§94] terminating pod 5czdtwlytzkno5 (orphan-0 mandate)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Users/ghost/Library/Python/3.9/lib/python/site-packages/runpod/api/ctl_commands.py", line 271, in terminate_pod
+    run_graphql_query(pod_mutations.generate_pod_terminate_mutation(pod_id))
+  File "/Users/ghost/Library/Python/3.9/lib/python/site-packages/runpod/api/graphql.py", line 51, in run_graphql_query
+    raise error.QueryError(response.json()["errors"][0]["message"], query)
+runpod.error.QueryError: pod not found to terminate

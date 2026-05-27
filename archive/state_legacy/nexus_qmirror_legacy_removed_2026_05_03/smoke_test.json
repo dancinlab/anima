@@ -1,0 +1,75 @@
+{
+  "cycle": "nexus_qmirror_legacy_removed_2026_05_03",
+  "ts_utc": "2026-05-04T02:14:00Z",
+  "router_version": "0.3.0",
+  "resolved_route_all_tests": "standalone-mac",
+  "resolved_qmirror_root": "/Users/ghost/core/qmirror",
+  "qmirror_standalone_version": "1.0.0",
+  "tests_run_phase": "post-deletion (in-tree modules removed)",
+  "tests": [
+    {
+      "n": 1,
+      "subcmd": "qrng",
+      "args": "--bits=16 --json",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "json_tail": {"qmirror":"1.0.0","subcmd":"qrng","bits":64,"pass":true},
+      "selftest_marker": "__QMIRROR_QRNG__ PASS"
+    },
+    {
+      "n": 2,
+      "subcmd": "chsh",
+      "args": "--vendor=sim --json",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "json_tail": {"qmirror":"1.0.0","subcmd":"chsh","vendor":"simulator","S_line":"S = 2.838   (analytic 2.828)","pass":true},
+      "selftest_marker": "__QMIRROR_CHSH__ PASS (F3: S in [2.7, 2.85])"
+    },
+    {
+      "n": 3,
+      "subcmd": "nist",
+      "args": "--bits=10000 --json",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "json_tail": {"qmirror":"1.0.0","subcmd":"nist","bits":1000000,"f2_line":"F2 PASS n=5/5 max_amp_err=0","pass":true}
+    },
+    {
+      "n": 4,
+      "subcmd": "iit",
+      "args": "--n-qubits=4 --json",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "json_tail": {"qmirror":"1.0.0","subcmd":"iit","n_qubits":4,"pass":true},
+      "f5_marker": "F5 cond.6 reproduce: ok=1 all_byte_match=1 n=4/4 engine=mock"
+    },
+    {
+      "n": 5,
+      "subcmd": "selftest",
+      "args": "--json",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "json_tail": {"qmirror":"1.0.0","subcmd":"selftest","verdict":"PASS","cond_met":8}
+    },
+    {
+      "n": 6,
+      "subcmd": "status",
+      "args": "--json",
+      "exit_code": 0,
+      "verdict": "PASS",
+      "json_tail": {"qmirror":"1.0.0","subcmd":"status","cond_total":8,"cond_met":8,"verdict":"PASS","modules":["chsh","qrng","iit_mip","phi","entropy","selftest","sampler","engine_aer"]}
+    }
+  ],
+  "summary": {
+    "total": 6,
+    "pass": 6,
+    "fail": 0,
+    "all_via_route": "standalone-mac",
+    "router_version_logged": "0.3.0"
+  },
+  "audit_log_evidence": [
+    "{\"ts\":\"2026-05-04T02:13:41Z\",\"caller\":\"qmirror_router\",\"subcmd\":\"qmirror nist\",\"exit_code\":0,\"route\":\"standalone-mac\",\"router_version\":\"0.3.0\"}",
+    "{\"ts\":\"2026-05-04T02:13:41Z\",\"caller\":\"qmirror_router\",\"subcmd\":\"qmirror iit\",\"exit_code\":0,\"route\":\"standalone-mac\",\"router_version\":\"0.3.0\"}",
+    "{\"ts\":\"2026-05-04T02:13:44Z\",\"caller\":\"qmirror_router\",\"subcmd\":\"qmirror selftest\",\"exit_code\":0,\"route\":\"standalone-mac\",\"router_version\":\"0.3.0\"}",
+    "{\"ts\":\"2026-05-04T02:13:44Z\",\"caller\":\"qmirror_router\",\"subcmd\":\"qmirror status\",\"exit_code\":0,\"route\":\"standalone-mac\",\"router_version\":\"0.3.0\"}"
+  ]
+}

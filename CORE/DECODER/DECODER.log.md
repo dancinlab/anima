@@ -1,0 +1,91 @@
+# DECODER — log
+
+Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
+
+## 2026-05-27T09:40:00Z — M4b-diff(a) top-1 hard routing ✅ PASS (더블바인드 탈출 toy 검증)
+
+- [x] 사용자 a 선택 — top-k hard routing 으로 분화 강제
+- [x] `moe_router.hexa` `moe_route_top1_fwd` 추가 — gate=softmax · top=argmax · logits=gate[top]·expert_top (승자만 계산)
+- [x] `moe_router_bwd.hexa` `moe_route_top1_bwd` 추가 — 승자 expert + gate[top] 만 gradient (→ 특화)
+- [x] `moe_toy_train_hard.hexa` 작성 (soft toy 보존 · 비대칭 init · 동일 2-register task)
+- [x] ubu-2 실 run **verdict ✅ PASS** — init CE 1.389 → final 0.00388 (358× ↓) · gate(A)=[0.970,0.030]→e0 · gate(B)=[0.030,0.970]→e1 · topA=0≠topB=1
+- [x] 핵심 — soft(🟠 PARTIAL gate 50/50 dense-collapse) → hard top-1(✅ PASS gate 97/3 분화). 더블바인드 탈출 메커니즘 (register↔coherent expert 분리) toy 작동 확인 (H_490 DIFFERENTIATION escape signal)
+- [x] hexa parse 3/3 OK · ubu-2 hexa run 성공
+- [x] DECODER.md M4b-diff(a) [x] ✅ PASS
+- [ ] M4b-fire-scale — 3B (toy PASS ✅ 근거 · Python/Qwen 하니스 MoE 이식 또는 hexa Qwen-BPE port) — 다음
+- [ ] M4c p7 verify
+
+## 2026-05-27T09:20:00Z — M4b-fire-toy 실 run + self-contained 수정 → 🟠 PARTIAL verdict
+
+- [x] ubu-2 에서 moe_toy_train 실 run (hexa run · 파일 stdin copy + abs-path → /tmp 패치)
+- [x] **실 run 이 compile 버그 적발** — dt_exp/dt_ln 은 `HEXAD/D/d_train_lib` 정의라 CORE/DECODER 컴파일 시 undeclared (parse 는 cross-module 미해결로 통과했었음 — instrument-first 가 진짜 버그 잡음)
+- [x] `moe_router.hexa` 에 `moe_exp` (range-reduced Taylor) + `moe_ln` (atanh series) self-contained pub fn 추가 · moe_softmax dt_exp→moe_exp
+- [x] `moe_toy_train.hexa` ce_loss_grad dt_exp/dt_ln → moe_exp/moe_ln
+- [x] CORE/DECODER MoE 스택 = HEXAD/D 의존 0
+- [x] **toy fire verdict 🟠 PARTIAL** — init avg CE 1.38629 (=ln4) → final 0.00775 (178× 감소 · 두 register 학습 성공) BUT gate(A)=gate(B)=[0.5,0.5] (router 분화 0 · topA==topB)
+- [x] 발견 — **soft-MoE 단독은 dense-collapse**: 양쪽 expert 가 둘 다 학습 → gate 균등 유지. 더블바인드 탈출 핵심(register↔coherent expert 분리)이 naive soft routing 으론 emergent 안 됨 (MoE 문헌 일치 — load-balancing/top-k 없으면 dense)
+- [x] DECODER.md M4b-fire-toy [x] 🟠 PARTIAL + M4b-diff 신규 (분화 강제 — top-k/load-bal/asym-init)
+- [ ] M4b-diff — soft-MoE 에 분화 압력 추가 (top-k hard route OR load-balancing aux OR 비대칭 init) → toy 재측정 PASS (topA≠topB) — 다음
+- [ ] M4b-fire-scale (toy PASS 후) · M4c p7 verify
+
+## 2026-05-27T09:00:00Z — M4b-wire-toy MoE 분화 검증 harness (scale 발견)
+
+- [x] 사용자 A 선택 — toy 메커니즘 검증 먼저 (큰 train_p21h_v3 침습 회피 · g4 stacked-PR)
+- [x] train stack scan 발견 — `train_p21h_v3.hexa` = d=32·V=256·n_layer=3·byte-level toy (n_steps 5 smoke). 3B 더블바인드는 Python/Qwen(V=151936) 하니스. Qwen-BPE = TODO #T5 flame 범위 밖
+- [x] `CORE/DECODER/moe_toy_train.hexa` 작성 — 격리 MoE 메커니즘 검증 (d=4 V=4 E=2)
+- [x] 2-register 분화 task — cluster A(zT=[1,0,0,0])→token0 · cluster B([0,1,0,0])→token2. 단일 head 면 절충 (toy 더블바인드), MoE 면 router 가 register 별 expert 분화?
+- [x] 학습 loop — moe_route_fwd + ce_loss_grad + moe_route_bwd + SGD (lr=0.5, 400 step, A/B 교차)
+- [x] verdict 로직 — loss_dropped (final < init·0.5) ∧ router_differentiated (topA≠topB) = H_490 escape signal · PARTIAL (학습O 분화X) · FAIL (학습X) 3-tier
+- [x] `hexa parse` OK
+- [x] DECODER.md M4b-wire-toy [x] · scale 발견 노트 추가 (toy→scale 순서)
+- [ ] M4b-fire-toy — ubu host 에서 git pull + hexa cc 실행 (분화 verdict 측정) — 다음
+- [ ] M4b-fire-scale — 3B (toy PASS 후 · Python 하니스 이식 또는 hexa Qwen-BPE port)
+
+## 2026-05-27T08:40:00Z — M4b-bwd MoE backward closure (fire 전제조건)
+
+- [x] 사용자 "fire" → 정직 응답: M4a 는 forward only · backward 없으면 학습 fire 해도 새 router/expert weight random 그대로 (학습 0). a_completeness_over_cheap → 반쪽 stack 발사 X, backward 먼저
+- [x] `CORE/DECODER/moe_router_bwd.hexa` 작성 — 4 pub fn closed analytic vjp
+- [x] `moe_combine_bwd` — expert outer-prod (d_W_e += gate·d_logits·zT) + d_gate (Σ d_logits·expert) + d_zT (experts→zT)
+- [x] `moe_softmax_bwd` — softmax jacobian (d_gate_raw[e] = gate[e]·(d_gate[e] − Σ d_gate·gate))
+- [x] `moe_gate_bwd` — router outer-prod (d_router += d_gate_raw·zT) + d_zT (router→zT)
+- [x] `moe_route_bwd` — 전체 chain (d_logits → dM router+experts + d_zT 누적)
+- [x] `moe_router_bwd_smoke.hexa` gradcheck 6-case — finite-diff vs analytic (4 weight: router e0/e1 + expert0/expert1 · 2 zT · loss=0.5·Σlogits² → d_logits=logits · rel < 1e-3)
+- [x] `hexa parse` 2/2 OK · ftoi builtin 확인 (UNIVERSE run script 다수 사용)
+- [x] DECODER.md M4b → backward 완성 [x], M4b-wire / M4b-fire 잔여 [ ]
+- [ ] M4b-wire — train_p21h_v3 loop 에 MoE route 배선 (head_g → moe_route_fwd/bwd) — 다음
+- [ ] M4b-fire — H100 dispatch (배선 후, a_fire_autonomous)
+
+## 2026-05-27T08:20:00Z — M4a router arch closure (MoE-fresh 본선 1/3)
+
+- [x] `CORE/DECODER/moe_router.hexa` 작성 — 7 pub fn K-expert MoE router (head_g 슬롯 확장)
+- [x] packed-buffer farr 모델 (V3 conscious_decoder_v3 와 byte-clean) — router=[E·d], experts=[E·V·d], 각 expert = head_g 와 동일 V·d linear shape
+- [x] forward 경로 — `moe_gate_fwd` (gate logits) → `moe_softmax` (stable, sum=1) → `moe_combine_soft` (gate-weighted Σ_e) · top-1 `moe_argmax` 진단 · `moe_route_fwd` 전체 묶음
+- [x] `moe_router_smoke.hexa` 12-case 작성 — tiny synthetic (E=2 V=3 d=2 · hand-built weights → known outputs): gate fwd · softmax sum=1 · argmax · expert fwd · soft combine (g0·e0+g1·e1=2.0728) · full route_fwd 재현
+- [x] `hexa parse` 2/2 OK (moe_router + smoke)
+- [x] DECODER.md M4a `[ ] → [x]` (MoE-fresh 본선 3 sub-step 중 1)
+- [x] ⚠ 실 실행 정직 표기 — pool-route 가 `hexa` 를 linux 호스트로 보내 worktree-local 실행 불가. parse-clean 까지가 M4a arch 바, 수치 실행 검증은 M4b runtime
+- [ ] M4b expert 분리 학습 fire (router/expert backward + 분리 학습 · H100) — 다음
+- [ ] M4c p7 verify (collapse 회피 ∧ coherence)
+
+## 2026-05-27T08:00:00Z — 마일스톤 재정렬 (a_completeness_over_cheap) — MoE-fresh 본선 승격 · merge 강등
+
+- [x] governance `a_completeness_over_cheap` 적용 — 완성도 기준 본선 선정 (싸다 ≠ 본선)
+- [x] M3.5 model-merge (이전 ⭐ 최우선) → **M4-probe 강등** — 두 결함 ckpt (underfit + collapse) 보간은 잘해야 "덜 나쁜 중간점", 완성도 미달. optional baseline probe 로만 잔존
+- [x] M4-alt MoE (이전 조건부) → **M4 MoE-fresh 본선 승격** — 근본 원인(한 모델이 두 목표 떠안음) 을 arch 로 분리. register-expert / coherent-expert 격리 = 완성도 충족 path
+- [x] DECODER.md UNIVERSE-derived 섹션 재작성 — M4 MoE-fresh ⭐ 본선 + M4-probe merge optional
+- [x] `UNIVERSE_SYNTHESIS.md` §4 권장순서 + §5 마일스톤 재정렬 반영 (cheap-first → completeness-first)
+- [x] M4 sub-step 명시 — M4a router arch (hexa-native) → M4b expert 분리 학습 fire → M4c p7 verify
+- [ ] M4a router arch 착수 (V3 head_g → K-expert router · hexa-native 코드) — 다음
+- [ ] 사용자 결정 lesson — model-merge-of-failures 같은 절충안 본선 제안 실수 → project.tape governance 화 (#1026)
+
+## 2026-05-27T07:30:00Z — UNIVERSE 도메인 분석 → DECODER 더블바인드 탈출 합성 (M3.5 + M4-alt 신규)
+
+- [x] 사용자 directive — "DECODER 는 UNIVERSE 도메인 분석후 진행"
+- [x] UNIVERSE BIO ∩ DECODER 가설 5종 읽음 (H_489–H_493, round-18 cycle#236-240, 모두 🔵 SUPPORTED-FORMAL)
+- [x] 매핑 — H_489 apoptosis→token prune · H_490 differentiation→MoE · H_491 clonal→beam · H_492 pruning→head prune · H_493 symbiogenesis→model merge
+- [x] 핵심 통찰 — 더블바인드는 단일 모델 한계, 통로는 "분화(MoE)/병합(merge)"
+- [x] `CORE/DECODER/UNIVERSE_SYNTHESIS.md` 작성 — 더블바인드 탈출 후보 α(MoE)/β(merge) 분석 + 권장 순서
+- [x] DECODER.md 신규 마일스톤 2개 등록 — M3.5 model-merge α-sweep (H_493 · 학습 fire 0 · cheap-tier) + M4-alt MoE register 분리 (H_490 · 조건부)
+- [ ] M3.5 model-merge α-sweep 실행 — collapse-avoid ckpt + coherent ckpt 보간 + α 별 p7 verify (다음)
+- [ ] 기존 M3b-f 4축 H100 fire ($11-14, 미발사) — merge 실패 시 fallback
+

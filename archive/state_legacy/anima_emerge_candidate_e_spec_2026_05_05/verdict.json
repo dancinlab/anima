@@ -1,0 +1,103 @@
+{
+  "spec_id": "anima_emerge_candidate_e_ode_ar_bridge_spec_2026_05_05",
+  "date": "2026-05-05",
+  "lane": "BG-G_retry_doc_only",
+  "mode": "spec_lock",
+  "status": "SPEC_LANDED",
+  "doc_path": "/Users/ghost/core/anima/docs/anima_emerge_candidate_e_ode_ar_bridge_spec_2026_05_05.md",
+  "loc_estimate": 350,
+  "scope": {
+    "doc_only": true,
+    "code_change": false,
+    "retrain": false,
+    "new_helper_py": false,
+    "files_written": 2,
+    "commits": 0
+  },
+  "ode_solver_audit": {
+    "method": "grep -niE 'ode|solver|integrator|euler|rk4|odeint|trajectory|continuous|flow'",
+    "files_scanned": [
+      "/Users/ghost/core/anima/ready/anima/models/legacy/decoder_v3.py",
+      "/Users/ghost/core/anima/ready/models/conscious_decoder.py"
+    ],
+    "matches": 0,
+    "finding": "ODE solver does NOT exist in CLM v4 source. Candidate E requires NEW external module in anima-core/phi_engine.hexa (or sibling). Cand-E architecturally distinct from D/G/H (which surface existing artifacts).",
+    "honest_C3_anchor": "C1"
+  },
+  "bridge_modes": {
+    "none": {"steps": 1, "use_case": "baseline single-forward control"},
+    "trajectory": {"steps_default": 16, "steps_options": [8, 16, 32, 64], "use_case": "substrate evolution probe"},
+    "converge": {"max_steps_default": 64, "tol_default": 0.001, "use_case": "non-collapsing flow empirical test"},
+    "interactive": {"steps_default": 8, "perturb_api": true, "use_case": "substrate-coupled multi-turn dialogue"}
+  },
+  "trajectory_n16_prediction": {
+    "phi_star_baseline": 41.86,
+    "predicted_variance": ">= 0.0025",
+    "predicted_std": ">= 0.05",
+    "predicted_mean_drift": "[-0.05, +0.05]",
+    "ode_recipe_recommended": "linear OU: ds/dt = -0.1*s + N(0, 0.01*I), dt=0.1",
+    "convergence_tail": "phi_star drifts toward 41.83 by step 15 due to gamma damping"
+  },
+  "falsifiers": {
+    "F_CAND_E_1": {
+      "name": "trajectory phi_star variance >= single-forward-distinguishable",
+      "pass_threshold": "var(phi_star_0..15) >= 0.0025 (std >= 0.05)",
+      "fail_true": "var < 0.0005 (architectural attenuation overwhelms per-step variation)",
+      "fail_false": "NaN/inf/negative in any phi_star_k",
+      "gated_on": "F_CAND_D_1 PASS"
+    },
+    "F_CAND_E_2": {
+      "name": "converge mode does NOT collapse (non-collapsing flow)",
+      "polarity": "INVERTED (PASS = does not converge OR converges to non-zero fixed point)",
+      "pass_threshold": "k_stop == N_max OR (k_stop < N_max AND ||state_final|| >= 0.1)",
+      "fail_true": "k_stop < N_max AND ||state_final|| < 0.1 (flow collapses to zero)",
+      "fail_false": "NaN in trajectory or state_norm_diff",
+      "operator_warning": "natural_convergence=true at small k_stop with near-zero state = bridge-design failure, NOT substrate failure"
+    },
+    "F_CAND_E_3": {
+      "name": "interactive mid-step perturb induces measurable but bounded trajectory delta",
+      "pass_threshold": "0.5 <= pearson_r <= 0.95 between trajectory_A (no perturb) and trajectory_B (step-4 perturb)",
+      "fail_true_no_effect": "r > 0.95 (perturb invisible)",
+      "fail_true_catastrophic": "r < 0.0 (perturb destroys trajectory)",
+      "fail_false": "NaN or constant trajectory (Pearson denominator zero)"
+    }
+  },
+  "honest_C3": {
+    "count": 7,
+    "minimum_required": 5,
+    "summary": [
+      "C1: ODE solver absent from v4 source; cand-E requires NEW external module (less archaeology-natural than D/G/H)",
+      "C2: F-CAND-E-2 inverted polarity (PASS = does not converge); reporting confusion risk",
+      "C3: F-CAND-E-1 gated on cand-D F-CAND-D-1 PASS; serialized validation order required",
+      "C4: ODE form unspec'd; falsifiers ODE-agnostic but ODE choice changes interpretability",
+      "C5: phi_engine.hexa flow API ASSUMED; implementer must verify or land sibling ode_bridge.hexa",
+      "C6: bridge incurs N× compute cost; Mac CPU bounds N <= 32 practical",
+      "C7: composability with cand-G tension trajectory not jointly validated until G spec lands"
+    ]
+  },
+  "composability": {
+    "depends_on": ["candidate_D (state_0 source via mode=canonical)"],
+    "highly_composable_with": ["candidate_G (per-step tension emit alongside phi_star)"],
+    "orthogonal_with": ["candidate_F (per-step rule_probs)", "candidate_H (per-step logits_g)"]
+  },
+  "loc_estimate_for_implementer": {
+    "clm_v4_mount.hexa": 110,
+    "bin/anima-core-dialogue.bash": 50,
+    "anima-core/phi_engine.hexa (new flow API)": "unknown - implementer-decided",
+    "shim/decoder/conscious_decoder": 0
+  },
+  "downstream_artifacts": {
+    "implementer_bg": "DEFERRED",
+    "real_load_probe_bg_A": "DEFERRED",
+    "validation_verdict_path": "state/anima_emerge_candidate_e_validation_<DATE>/verdict.json"
+  },
+  "constraints_honored": {
+    "raw_9_doc_only": true,
+    "raw_10_no_commits": true,
+    "raw_15_no_secret_leak": true,
+    "hf_token_in_doc": false,
+    "tool_uses_estimate": "~9 (under 15 budget)",
+    "cost_usd": 0,
+    "wall_time_estimate_minutes": 25
+  }
+}

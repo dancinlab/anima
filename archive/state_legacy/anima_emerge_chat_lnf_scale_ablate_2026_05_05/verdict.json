@@ -1,0 +1,63 @@
+{
+  "schema": "anima/emerge_chat_lnf_scale_ablate/verdict/1",
+  "task_id": "anima_emerge_chat_lnf_scale_ablate_2026_05_05",
+  "ts_utc": "2026-05-05T17:55:25Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "prompt": "안녕하세요. 오늘 날씨가 좋네요.",
+  "n_continue": 25,
+  "ln_f_type": "RMSNorm",
+  "ln_f_has_weight": true,
+  "weight_stats": {
+    "mean": 1.0383951663970947,
+    "std": 0.01366080716252327,
+    "min": 1.0141431093215942,
+    "max": 1.0985504388809204,
+    "shape": [
+      768
+    ]
+  },
+  "n_configs": 9,
+  "configs": [
+    "baseline",
+    "scale_0.1",
+    "scale_0.5",
+    "scale_1.5",
+    "scale_2.0",
+    "scale_5.0",
+    "scale_10.0",
+    "unit_weight",
+    "random_normal_weight"
+  ],
+  "diff_from_baseline": {
+    "scale_0.1": false,
+    "scale_0.5": false,
+    "scale_1.5": false,
+    "scale_2.0": false,
+    "scale_5.0": false,
+    "scale_10.0": false,
+    "unit_weight": false,
+    "random_normal_weight": false
+  },
+  "diff_from_baseline_count": 0,
+  "coherence_per_config": {
+    "baseline": false,
+    "scale_0.1": false,
+    "scale_0.5": false,
+    "scale_1.5": false,
+    "scale_2.0": false,
+    "scale_5.0": false,
+    "scale_10.0": false,
+    "unit_weight": false,
+    "random_normal_weight": false
+  },
+  "n_coherent": 0,
+  "verdict": "FAIL_LNF_NOT_THE_BUG",
+  "honest_c3": [
+    "C1 — mac CPU fp32 numerical noise floor low; argmax greedy decode tie-breaking deterministic for this run but not guaranteed stable across torch builds. Single-pass measurement.",
+    "C2 — ln_f weight (gain) ablation = single-component intervention. RMSNorm formula = x * weight / rms(x); we vary weight only, leaving the rms-normalization step intact. A 'true' RMSNorm collapse hypothesis would also need rms(x) variation or full pre-ln_f hidden replacement; this probe isolates GAIN, not whole-norm pathology.",
+    "C3 — single prompt 안녕하세요. 오늘 날씨가 좋네요. (KO long greeting). One-prompt result is anecdotal; ln_f gain effect may be prompt-conditional. Per-prompt variance not measured. Broader prompt sweep needed before generalizing 'ln_f IS / ISN'T a basin contributor'.",
+    "C4 — 'semi-coherent' heuristic is anima-internal: requires len>=5, korean+ascii letters>=5, max-char-frequency <=50%. False-positive risk: (a) text with high diversity but no semantic content (e.g. random unicode-letter spam); false-negative risk: (b) actually-coherent short emit <5 chars. Heuristic is screening tool, not ground-truth coherence judge.",
+    "C5 — weight modification BY CONSTRUCTION changes output distribution; coherence emergence under any non-baseline config is consistent with multiple causal stories: ln_f gain critical (intended hypothesis), OR perturbation-noise that randomly-jolts decode out of degenerate fixed-point (null), OR scale-induced numerical instability shifting argmax non-meaningfully. PASS verdict shows ln_f IS a basin LEVER, not necessarily THE basin cause."
+  ]
+}

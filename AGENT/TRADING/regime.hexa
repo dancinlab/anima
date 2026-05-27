@@ -1,0 +1,32 @@
+// regime.hexa — Market regime detection from invest/scalper orchestrator
+// Port of agent/trading/regime.py
+
+// Regime hierarchy:
+//   CALM     -> full strategies, leverage allowed, momentum preferred
+//   NORMAL   -> standard strategies, no leverage, balanced
+//   ELEVATED -> defensive only, SOC filter, reduced position size
+//   CRITICAL -> no new buys, force exit, SOC filter
+
+// Bridge architecture (AGENT/CORE supplies tier; this module = tool surface only):
+//   Lower tier = shift regime one level more cautious
+//   Lower tier = reduce max position size
+
+fn RegimeDetector() {
+    // TODO: detect market conditions from volatility, trend, SOC
+    print("RegimeDetector stub")
+}
+
+fn detect(market_data, tier) {
+    // TODO: classify current regime (CALM/NORMAL/ELEVATED/CRITICAL)
+    // modulated by AGENT/CORE tier
+    print("detect stub")
+}
+
+fn get_policy(regime) {
+    // TODO: return trading policy for given regime
+    print("get_policy stub")
+}
+
+fn main() {
+    print("trading/regime.hexa — TODO: port from regime.py")
+}

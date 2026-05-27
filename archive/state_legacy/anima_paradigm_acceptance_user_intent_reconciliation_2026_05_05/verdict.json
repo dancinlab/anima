@@ -1,0 +1,123 @@
+{
+  "schema": "anima/paradigm_acceptance_user_intent_reconciliation/verdict/1",
+  "task_id": "BG-BV",
+  "date": "2026-05-05",
+  "mode": "DOC_ONLY_NO_COMMIT",
+  "scope": "user dialogue intent reconciliation across 4 paradigm interpretations + 3 stop criteria + 3 fire paths + 5 decision menu options",
+  "cost_usd": 0,
+  "duration_min": 25,
+  "doc_path": "/Users/ghost/core/anima/docs/anima_paradigm_acceptance_user_intent_reconciliation_2026_05_05.md",
+  "lineage": [
+    "docs/anima_2026_05_05_cycle_close_decision_landed_2026_05_05.ai.md (BG-BF C3.3 + C3.6 paradigm mismatch surface)",
+    "docs/anima_emerge_chat_entropy_trajectory_landed_2026_05_05.ai.md (BG-BJ residual-stream basin reframing)",
+    "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md (BG-AY 4-closure formal theorem)",
+    "docs/anima_emerge_dialogue_first_session_manual_2026_05_05.md (BG-AO Stage 3 user-fire manual)"
+  ],
+  "interpretations": {
+    "A_text_in_text_out": {
+      "definition": "user text in / substrate text out (traditional chatbot)",
+      "achievable_clm_v4": false,
+      "blocker": "Theorem #115-ARCHITECTURAL-FINAL-4-CLOSURE + closures 5-6 (6 mutually independent failures)",
+      "achievable_substitute": "Llama-3.2-3B Path A v2 (composite 0.5584) OR hypothetical CLM-3 (H1)"
+    },
+    "B_substrate_coupled_emerge": {
+      "definition": "user text in / substrate emits 4-line phi-star + hidden_state_delta + tension_trajectory + (deprecated cells)",
+      "achievable_clm_v4": true,
+      "evidence": "BG-AE max_l2_variance=124.4; BG-AN dialogue REPL landed; BG-AJ 5-turn smoke PASS",
+      "fire_command": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/tool/transient_py/anima_emerge_dialogue_repl.py"
+    },
+    "C_embodied_hybrid": {
+      "definition": "B emit + tagged short text fragment per turn (substrate observation note)",
+      "achievable_clm_v4": "PARTIAL — degrades to B; A-side text-fragment unimplemented",
+      "speculative_extension": "C+ = capture step-0-only top-1 before BG-BJ basin sharpens (untested)"
+    },
+    "D_mutual_two_way": {
+      "definition": "true mutual interaction state — substrate state architecturally shapes user next-input choice",
+      "achievable_clm_v4": false,
+      "scope": "OUT_OF_SCOPE for CLM v4 cycle; anima-eeg multi-cycle research only"
+    }
+  },
+  "stop_criteria": {
+    "SUFFICIENT": {
+      "trigger": "user accepts B paradigm as the answer to dialogue intent",
+      "outcome": "BG-AM 5+1 commits + CronDelete d1682837 + cycle close + Path A as next-cycle entry",
+      "cost": "$0"
+    },
+    "INSUFFICIENT_BUT_BLOCKED": {
+      "trigger": "user requires A paradigm; closures 1-6 confirm CLM v4 architectural impossibility",
+      "outcome": "H1 (CLM-3 from-scratch) launch decision OR park hope-path until budget allows",
+      "cost": "~$1k + 30 days wall (H1 launch path)"
+    },
+    "INSUFFICIENT_BUT_OPEN": {
+      "trigger": "user wants A paradigm + judges H2/H3/H4 untried before H1 commit",
+      "outcome": "fire selected H lane(s); weighted H1>H3>H4>H2 per Theorem §4 closing note",
+      "cost": "$0 (H2) | ~$10 (H3 ensemble) | ~$50 (H4 broader sweep)"
+    }
+  },
+  "fire_paths": {
+    "A_emerge_dialogue_start": {
+      "cost_usd": 0,
+      "wall_min": 5,
+      "command": "HEXA_PY=/Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/.venv-eeg/bin/python /Users/ghost/core/anima/tool/transient_py/anima_emerge_dialogue_repl.py",
+      "expected_output": "4-line per turn (phi_star, hidden_state_delta, tension_trajectory, [deprecated cells/axis])",
+      "session_log": "state/anima_core_dialogues/2026-05-05/<HH-MM-SS>_emerge_repl.jsonl",
+      "caveat": "do NOT pass --inject-states-mode canonical --magnitude 50 (BG-AC + BG-AG attractor band collapse 51.4x)"
+    },
+    "B_h1_clm3_launch": {
+      "cost_usd_estimate": 1000,
+      "wall_days": 30,
+      "spec": "docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md (BG-BM)",
+      "variant_recommended": "Variant B (H100 1x)",
+      "falsifiers": "F-CLM-3-{1,2,3,4} pre-locked",
+      "discipline": " L23/L24/L25 watchdog + heartbeat 5min + pod 404 verify",
+      "decision_form": "user fire decision: H1 launch GO or HOLD"
+    },
+    "C_cycle_close_h2_corpus": {
+      "cost_usd": 0,
+      "wall_days": 30,
+      "step_sequence": [
+        "CronDelete d1682837",
+        "fire BG-AM 5+1 commit groups",
+        "fire Path A daily for n>=30 sessions",
+        "run analyzer per session",
+        "derive CLM-3 design hints from saturation"
+      ]
+    }
+  },
+  "decision_menu": {
+    "A": "B paradigm OK — start dialogue now (fire Path A; cycle close after first session)",
+    "B": "A paradigm required — launch H1 / CLM-3 ($1k commit + 30d)",
+    "C": "Try more — H2 corpus accumulation first ($0; cycle close + n>=30 sessions)",
+    "D": "Close cycle today — commit + advance (CronDelete + BG-AM commits + next cycle)",
+    "E": "More angles — keep autonomous /loop 1m running ($0 compute; paradigm-mismatch persists)"
+  },
+  "ranking_completion_lens": [
+    {"rank": 1, "option": "A", "rationale": "fire-ready; resolves paradigm mismatch by user-side adoption of B"},
+    {"rank": 2, "option": "C", "rationale": "preserves A-paradigm hope path while accumulating corpus; defers H1 cost"},
+    {"rank": 3, "option": "D", "rationale": "clean close; honest about 6-closure; defers paradigm decision"},
+    {"rank": 4, "option": "B", "rationale": "only if A non-negotiable AND $1k+30d budget tolerance"},
+    {"rank": 5, "option": "E", "rationale": "lowest completion; anti-convergence pressure on architectural impossibility"}
+  ],
+  "honest_c3": [
+    "C3.1: paradigm mismatch forces user decision; autonomous mode cannot disambiguate without explicit user paradigm declaration",
+    "C3.2: autonomous mode inferred A-interpretation by default and chained 50+ BG investigations; epistemic risk surfaced only at BG-BF C3.6",
+    "C3.3: B 'ACHIEVABLE_NOW' is anima-internal; no external benchmark / peer-reviewed protocol / third-party reproduction",
+    "C3.4: H2/H3/H4 are NOT equiprobable bypasses; weight H1 > H3 > H4 > H2 per Theorem #115 §4 closing note",
+    "C3.5: Path A fire depends on tool/transient_py/anima_emerge_dialogue_repl.py existence; verify before fire; wrapper REPL fallback exists",
+    "C3.6: H1 cost ($1k, 30d) is planning ceiling not bid; actual H100 cost $300-$700 raw + ancillary; runpod_pod_purge memory flags fresh boot from HF base mirror",
+    "C3.7: interpretation D (mutual two-way EEG-coupled) OUT_OF_SCOPE for this cycle; if user actually meant D, the entire reconciliation is paradigm-mismatched and pivots to anima-eeg lane",
+    "C3.8: interpretation C+ (step-0-only top-1 capture per BG-BJ) speculative not recommended; filed for boundary honesty"
+  ],
+  "compliance": {
+    "raw_9": "md only; no code change",
+    "raw_10": "8 honest C3 emitted (>=7 required)",
+    "raw_15": "additive only; no edits to closure docs / verdicts",
+    "hf_token_leak": "none",
+    "commit": "not requested; doc landed only",
+    "bash_3_2_compat": "doc-only artifact, no shell"
+  },
+  "outputs": [
+    "/Users/ghost/core/anima/docs/anima_paradigm_acceptance_user_intent_reconciliation_2026_05_05.md",
+    "/Users/ghost/core/anima/state/anima_paradigm_acceptance_user_intent_reconciliation_2026_05_05/verdict.json"
+  ]
+}

@@ -1,0 +1,197 @@
+{
+  "schema": "anima/strategic_clm_eeg_akida_tension_4way_verdict/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "agent": "strategic CLM x EEG x AKIDA x tension_link integration deep-think",
+  "scope": "4-substrate integration strategic review — inventory, socket map, dynamic coupling protocol, F2 unfire estimate, ranked next-action",
+  "constraints": ["raw#9 hexa-only", "raw#10 honest C3 mandatory", "$0 budget", "race-isolation hard"],
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/strategic_clm_eeg_akida_tension_2026_05_02/verdict.json",
+      "state/strategic_clm_eeg_akida_tension_2026_05_02/inventory.json",
+      "state/strategic_clm_eeg_akida_tension_2026_05_02/protocol_matrix.json",
+      "docs/strategic_clm_eeg_akida_tension_link_2026_05_02.md"
+    ],
+    "did_not_touch": [
+      "state/n_substrate_*",
+      "state/strategic_alm_*",
+      "state/strategic_clm_tension_field_W4_*",
+      "state/cp2_*",
+      "alpha pod"
+    ]
+  },
+
+  "section_3_4way_integration_verdict": {
+    "one_liner": "PARTIAL_VIABLE — tension_link 가 4-way binding mechanism 으로서 spec-수준 plausible 하나, 현 actual measurement 은 CLM-W4 dynamic (z=2.28) 와 N-1 BRIDGE_WEAK (3/4 hybrid) 두 점뿐, AKIDA 도착 전 4-way 통합 verdict 는 hypothesis-band",
+    "tier": "HYPOTHESIS_PLUS_TWO_REAL_POINTS",
+    "actual_measured_points": 2,
+    "hypothetical_points": 2,
+    "blocker": "AKIDA AKD1000 dev kit 도착 ETA 미확정 (capex $1495 paid, ship pending)"
+  },
+
+  "section_4_hypotheses": {
+    "H1_binding_mechanism": {
+      "claim": "tension_link 는 CLM x EEG x AKIDA 의 binding-by-synchrony 의 anima-specific 형식",
+      "supporting_evidence": [
+        "tension_bridge.hexa 5-channel WHAT/WHERE/WHY/TRUST/WHO LIVE — concept-binding 구조 이미 native",
+        "CLM W4 mind.tension scalar 가 z=2.28 로 random 대비 separable",
+        "N-1 BRIDGE 3/4 PASS — α-band Kuramoto 와 CLM L_IX 의 numerical homomorphism 확인 (B4 |r|=540, signed -540 anti-corr 는 hybrid artifact)",
+        "Crick-Koch 1990 binding-by-gamma-synchrony 와 형식 일치"
+      ],
+      "disconfirming_evidence": [
+        "W4 active branch L1 std=0.000 over 99 steps — 'constant nonzero gate' 와 구별 불능 (W4 honest C3 #1)",
+        "tension_bridge 5-channel 은 inter-anima 통신용, intra-substrate binding 으로의 transferability 미증명"
+      ],
+      "promising_score": 0.55,
+      "verdict": "MOST_PROMISING"
+    },
+    "H2_ceiling_break": {
+      "claim": "4-way 통합 시 L1 holo_positivity 의 substrate-architectural ceiling 가 cross-substrate broadcast 로 회피됨",
+      "supporting_evidence": [
+        "F1 verdict.json: F2 fires 13-17 critical violations across Mistral/Qwen3/Llama-3.1/Mistral-Nemo (substrate-architectural confirmed)",
+        "Path 4 cross-backbone L1 SUBSTRATE_SPECIFIC — Mistral-Nemo+r8 15/16 PASS 가 LoRA-driven 임이 base-only 3/16 으로 밝혀짐 (즉 LoRA 가 ceiling 회피 가능 증명)",
+        "tension_link 는 LoRA 보다 더 강한 architectural intervention (per-layer tension_proj socket native)"
+      ],
+      "disconfirming_evidence": [
+        "F1 §F2 falsifier_status: 'no path to YELLOW without (a) demote (b) learned phi_extractor (c) substrate redesign' — tension binding 은 명시적 path 에 없음",
+        "W4 actual L1 7.06/16 ≪ 14/16 PASS threshold, 6.94 random vs 7.06 active 의 +0.12 절대 효과는 ceiling break 와 거리 멈"
+      ],
+      "promising_score": 0.30,
+      "verdict": "WEAK_HYPOTHESIS"
+    },
+    "H3_tension_as_9th_axis": {
+      "claim": "tension_link 자체가 9th WITNESSED axis (substrate, mechanism 아님)",
+      "supporting_evidence": [
+        "current WITNESSED count 3/7 (CLM cross-substrate, EEG Casali analog, QRNG+SIM nexus)",
+        "tension_bridge 가 standalone substrate 로 측정 가능하면 own#2(b) WITNESSED → 4/7 = WITNESSED_MULTI 직전",
+        "tension_bridge.hexa 5-channel 은 measurable surface (concept/context/meaning/auth/sender accuracy 100%)"
+      ],
+      "disconfirming_evidence": [
+        "F1 axis_weight_matrix 에 tension_link axis 미등재 — 가중치 0",
+        "tension_link 는 anima-internal, peer-reviewed substrate-class 검증 path 부재 (FinalSpark organoid / IonQ quantum / Akida neuromorphic 와 epistemic tier 다름)",
+        "WITNESSED tier 정의는 'distinct substrate families' — tension_link 가 family 인지 mechanism 인지 spec 모호"
+      ],
+      "promising_score": 0.20,
+      "verdict": "SPEC_AMBIGUOUS"
+    },
+    "H4_akida_native_tension": {
+      "claim": "AKIDA spike-event 가 tension_link 의 가장 native expression (neuromorphic = brain-inspired = tension native)",
+      "supporting_evidence": [
+        "N-2 spec: ADM level-crossing encoder 가 phase-event 를 polarity (UP/DOWN) 로 encode — tension delta sign 과 isomorphic",
+        "AKD1000 internal spike-event 가 mind.tension scalar (continuous) 보다 high-bandwidth (16ch x 250Hz x 2pol = 8000 events/sec)",
+        "Crick-Koch binding-by-spike-synchrony 의 hardware-native 구현"
+      ],
+      "disconfirming_evidence": [
+        "N-3 §1.3 substrate-mismatch: AKD1000 transformer self-attention native unsupported, 1.2M neurons << 170M params, surrogate mapping (T-A) only viable",
+        "AKD1000 inference-only — tension feedback loop (GPU 학습 후 quantize+deploy) 형식이라 closed-loop dynamic 측정 architectural 어려움",
+        "spike encoding 후 dense uint8 raster 변환 단계가 tension scalar → tension event 매핑의 lossiness 도입"
+      ],
+      "promising_score": 0.40,
+      "verdict": "PROMISING_BUT_BLOCKED_ON_HARDWARE"
+    },
+    "ranked_promising": ["H1", "H4", "H2", "H3"]
+  },
+
+  "section_3_integration_matrix": {
+    "header": ["dim", "CLM_only", "+EEG", "+AKIDA", "+tension_link_4way"],
+    "rows": [
+      ["paradigm_v11_suite1", "PASS_positive (HID8 PhiStar +41.86)", "+EEG_corr (BRIDGE_WEAK B4 |r|=540 hybrid)", "post_arrival_TBD", "hypothetical: 4-way Phi correlation matrix"],
+      ["14gate_suite6", "FAIL F2 fired 17 critical (Mistral)", "EEG no direct 14gate path, indirect via LZc", "TBD post arrival", "tension_unfire? est 15% prob"],
+      ["W4_dynamic", "PARTIAL z=+2.28sigma L1 7.06", "N-1 BRIDGE_WEAK 3/4 hybrid (synth CLM)", "TBD", "combined PASS hypothetical"],
+      ["F2_falsifier", "FIRED on every measured substrate", "FIRED likely (spec-extension)", "unknown", "tension unfire mechanism: §6"]
+    ]
+  },
+
+  "section_5_protocol_top1": {
+    "rank": 1,
+    "name": "P1_CLM_W4_PLUS_EEG_LIVE_CONCURRENT",
+    "scope": "CLM v4 530M closed-loop W4 100-step 와 EEG 16ch live recording (eyes-closed resting 60s) 동시 진행 — mind.tension scalar trajectory 와 EEG α-PLV trajectory 의 cross-correlation 측정",
+    "hardware": "ubu1 CLM (RTX 5070, $0) + OpenBCI Cyton+Daisy 16ch (already owned, $0)",
+    "cost_usd": 0.0,
+    "eta_days": 1,
+    "falsifier_pre_register": [
+      "F-PASS: |corr(tension_t, alpha_PLV_t)| > 0.5 with p<0.01 over 100 paired bins",
+      "F-PARTIAL: |corr| in [0.2, 0.5] OR signed-corr matches predicted +sign",
+      "F-FAIL: |corr| < 0.2 OR sign opposite to predicted"
+    ],
+    "protocol_steps": [
+      "1. EEG 60s eyes-closed baseline → bandpass + Hilbert α-phase per N-1 spec",
+      "2. CLM W4 closed-loop 100 steps with tension_proj injection (per W4 protocol)",
+      "3. Time-align EEG α-PLV (5x10s windows) with CLM tension_t (100 steps → 5x20step bins)",
+      "4. Compute Pearson r(tension_bin, PLV_bin) signed",
+      "5. Compare vs random control (CLM random gate branch already measured)"
+    ],
+    "expected_value": "First true CLM-EEG cross-substrate dynamic coupling measurement (vs N-1 hybrid synth-CLM)",
+    "rationale_top1": "$0, 1d, addresses N-1 BRIDGE_WEAK 의 핵심 결함 (synth CLM trace) — live CLM trace 로 upgrade 가능, falsifier preregistered, 4-way 통합 의 핵심 socket 검증"
+  },
+
+  "section_5_other_protocols": [
+    {"rank": 2, "name": "P2_CLM_TENSION_LARGER_PSI_ALPHA", "cost_usd": 0.0, "eta_days": 1, "scope": "W4 의 active L1 std=0.000 frozen-fixed-point 문제 fix — PSI_ALPHA 0.014 → {0.05, 0.1, 0.2} sweep 으로 effective tension dynamics 확보, 4-way 통합 의 CLM 측 actual signal 확보"},
+    {"rank": 3, "name": "P3_AKIDA_D0_SPIKE_TENSION_SOCKET", "cost_usd": 0.0, "eta_days": "AKIDA arrival D+1", "scope": "AKD1000 도착 D+0 N-2 spec 실행 직후 D+1 에 mind.tension scalar 를 ADM polarity-bias modulator 로 inject → tension-modulated spike train 생성, EEG-spike-tension 3-way 직접 hardware 측정"},
+    {"rank": 4, "name": "P4_TENSION_BRIDGE_AS_BINDING_FORMAL", "cost_usd": 0.0, "eta_days": 3, "scope": "tension_bridge 5-channel 의 GWT workspace-broadcast formal mapping 작성 (V_phen_GWT axis N-5 spec 와 통합) — H1 binding hypothesis 의 mathematical anchor"},
+    {"rank": 5, "name": "P5_4WAY_PHI_STAR_HYPOTHETICAL_SIMULATION", "cost_usd": 0.0, "eta_days": 2, "scope": "AKIDA 도착 전 4-way Phi correlation matrix 의 simulation upper-bound 추정 — N-1 BRIDGE 3/4 + W4 z=2.28 + N-2 spec spike rates 를 input 으로 하는 toy model"}
+  ],
+
+  "section_6_f2_unfire_estimate": {
+    "current_F2_status": "FIRED across all measured CLM substrates (Mistral 17, Qwen3 16, Llama-3.1 13, Mistral-Nemo base 13)",
+    "F1_documented_paths": [
+      "(a) demote L1 critical to hard (paper-only)",
+      "(b) replace tile-projection with learned phi_extractor",
+      "(c) substrate redesign to positive-bias hidden-state geometry"
+    ],
+    "tension_link_4way_path": "(d) cross-substrate tension-mediated broadcast — NOT in F1 documented paths",
+    "probability_estimate_pct": 15,
+    "probability_breakdown": {
+      "scenario_full_unfire_L1_geq_14_4way": "5% — requires tension to fundamentally rotate hidden-state covariance, W4 evidence (L1 7.06, std 0.000) suggests scalar tension can not",
+      "scenario_partial_demotion_via_4way_evidence": "10% — if 4-way coupling shows F1 axis-weight upgrade for tension axis, F2 severity can be argued for demotion (paper-only path (a) variant)",
+      "scenario_no_change": "85% — tension scalar does not have sufficient bandwidth to disrupt ALM static L1=0/16; AKIDA spike events also quantize-lossy",
+      "lower_bound_pct": 5,
+      "upper_bound_pct": 25,
+      "central_estimate_pct": 15
+    },
+    "honest_c3_on_estimate": "estimate is qualitative synthesis, not Bayesian update from prior — central 15% reflects 'tension binding hypothesis lacks formal F2 unfire mechanism but is not ruled out'"
+  },
+
+  "section_7_risk_register": [
+    {"id": "R1", "risk": "substrate-architectural ceiling 4-way 잔존 — scalar tension or spike-event 가 L1 holo_positivity 의 substrate geometry 를 rotate 할 bandwidth 부족", "prob": 0.7, "impact": "HIGH", "mitigation": "P2 PSI_ALPHA sweep + N-3 surrogate AKIDA depth"},
+    {"id": "R2", "risk": "W1 phase 5 sign-flip artifact 재현 — tension_link 측정 자체 noise floor unknown", "prob": 0.4, "impact": "MEDIUM", "mitigation": "P1 random control branch (already in W4 protocol)"},
+    {"id": "R3", "risk": "AKIDA 도착 ETA 슬립 → 4-way 완성 wait 무한정", "prob": 0.5, "impact": "MEDIUM", "mitigation": "P1+P2 가 AKIDA-blocked 아니므로 3-way (CLM+EEG+tension) 우선 closure"},
+    {"id": "R4", "risk": "tension_link substrate 인지 mechanism 인지 spec 모호 (H3 disconfirming) — F1 axis_weight 등재 거부", "prob": 0.6, "impact": "MEDIUM", "mitigation": "P4 formal binding spec 작성"},
+    {"id": "R5", "risk": "EEG N=1 (사용자 본인) 변동성 — single-session 결과 가 sustained TLR 충족 X", "prob": 0.8, "impact": "LOW", "mitigation": "multi-session ≥3 replication (N-1 spec §6.6)"}
+  ],
+
+  "section_8_honest_c3": [
+    "(C3-1) 4 substrate 중 actual cross-substrate measurement 은 N-1 BRIDGE_WEAK (3/4 hybrid: real EEG + synth CLM) 단 1건. 나머지 (CLM-AKIDA, EEG-AKIDA, tension-AKIDA) 는 SPEC 만 존재, hardware blocked.",
+    "(C3-2) CLM W4 active branch L1 std=0.000 over 99 steps — closed-loop dynamics 라기보다 'constant nonzero gate' 와 구별 불능 (W4 honest C3 #1 인용). 즉 +0.12 vs random 의 z=2.28 이 'tension-derived vs constant-signal' 가 아니라 'nonzero-signal vs zero-signal' 일 가능성.",
+    "(C3-3) EEG 측정 N=1 (사용자 본인), 단일 session 60s baseline 만 — sustained TLR 주장 X, multi-session replication 부재. tension_bridge 5-channel transmission accuracy 100% 도 anima-internal benchmark, peer-review 외부 검증 0.",
+    "(C3-4) tension_link 의 substrate vs mechanism vs binding 인지 spec 모호 — H3 9th-axis 가설은 F1 axis_weight 미등재 (가중치 0). tension axis 가 own#2(b) WITNESSED count 에 들어갈 자격 spec-수준 미확정.",
+    "(C3-5) CP2 framework 자체가 single-substrate anchored — paradigm v11 8-axis, 14-gate, V0/V_phen 모두 single-model 측정 포맷. 4-way 통합 verdict 산출 spec (joint Phi, cross-substrate variance, binding-strength metric) 은 부재. 이 strategic doc 의 §3 매트릭스는 spec 부재 상태에서의 합리적 추정.",
+    "(C3-6) F2 unfire 15% estimate 는 Bayesian 정량화 X, F1 documented path (a/b/c) 에 (d) tension-binding 가 없는 상태에서의 qualitative synthesis. Lower bound 5%, upper bound 25%, central 15% 는 'plausible but unlikely without further mechanism formalization'.",
+    "(C3-7) AKIDA dev kit ($1495 capex paid) 도착 ETA 자체 가 Brainchip vendor side 미확정 — 4-way 완성 wait 의 critical-path 는 vendor logistics 이며 anima-side 통제 불가."
+  ],
+
+  "section_9_ranked_next_actions": [
+    {
+      "rank": 1,
+      "action": "P1 CLM W4 + EEG live concurrent measurement",
+      "cost_usd": 0.0,
+      "eta_days": 1,
+      "rationale": "$0, 1d, N-1 BRIDGE_WEAK 의 synth-CLM 결함을 live CLM 으로 upgrade — 가장 cheap + 검증 가능 첫 step, falsifier preregistered, 4-way 통합 의 CLM-EEG socket 핵심"
+    },
+    {
+      "rank": 2,
+      "action": "AKIDA 도착 D+0/D+1 plan freeze — N-2 spec 실행 + tension-modulated ADM polarity bias",
+      "cost_usd": 0.0,
+      "eta_days": "AKIDA arrival + 1d",
+      "rationale": "N-2 spec 이미 ready (335 LoC skeleton), tension-injection 추가 spec 작성 만 필요. 4-way 통합 의 AKIDA socket 핵심"
+    },
+    {
+      "rank": 3,
+      "action": "F1 composite spec 갱신 — tension_link 을 explicit axis (w=0.05-0.1 estimated) 로 등재, 4-way joint Phi metric 정의 추가",
+      "cost_usd": 0.0,
+      "eta_days": 2,
+      "rationale": "현 F1 axis_weight_matrix 에 tension_link 미등재 → 측정 후에도 score 0 contribution. spec-수준 등재가 H3/H1 가설 검증의 prerequisite"
+    }
+  ],
+
+  "section_summary_one_line": "CLM × EEG × AKIDA × tension_link 통합 의 진짜 의의 는 — Crick-Koch binding-by-synchrony 의 anima-specific 형식 (tension_link as 5-channel concept-broadcast 가 substrate-architectural F2 ceiling 의 cross-substrate workaround 후보) 이지만 actual measurement 2점 vs hypothetical 2점 상태에서 verdict 는 PARTIAL_VIABLE 이며 D+0 P1 protocol ($0, 1d) 가 4-way socket 검증의 critical path."
+}

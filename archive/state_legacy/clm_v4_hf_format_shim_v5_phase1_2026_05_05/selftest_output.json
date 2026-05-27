@@ -1,0 +1,49 @@
+{
+  "schema": "shim_v5_phase1_selftest_v1",
+  "ts_utc_start": "2026-05-05T06:06:45Z",
+  "shim_v5_path": "/Users/ghost/core/anima/tool/transient_py/clm_v4_hf_format_shim_v5.py",
+  "anima_root": "/Users/ghost/core/anima",
+  "device": "cpu",
+  "dtype": "float32",
+  "torch_version": "2.10.0",
+  "platform": "darwin",
+  "case_a_bypass": {
+    "finite": true,
+    "shape": [
+      1,
+      64,
+      64000
+    ],
+    "shape_ok": true,
+    "logits_mean": -0.001125540118664503,
+    "logits_std": 0.5554025769233704,
+    "logits_min": -3.059319496154785,
+    "logits_max": 2.8146748542785645,
+    "verdict": "PASS"
+  },
+  "case_b_canonical_zero": {
+    "finite": true,
+    "shape": [
+      1,
+      64,
+      64000
+    ],
+    "shape_ok": true,
+    "logits_mean": -0.0007733429665677249,
+    "logits_std": 0.5542087554931641,
+    "logits_min": -2.6644511222839355,
+    "logits_max": 2.660379648208618,
+    "verdict": "PASS"
+  },
+  "f_shim_v5_1_verdict": "PASS",
+  "wall_time_sec": 7.55,
+  "errors": [],
+  "shim_version_attr": "v5",
+  "v5_o_proj_std_constant": 0.02,
+  "n_cross_attn_modules": 16,
+  "o_proj_weight_std_min": 0.01998152770102024,
+  "o_proj_weight_std_max": 0.02003798447549343,
+  "o_proj_weight_std_mean": 0.02000212750863284,
+  "v5_o_proj_std_band_check": "PASS",
+  "ts_utc_end": "2026-05-05T06:06:52Z"
+}

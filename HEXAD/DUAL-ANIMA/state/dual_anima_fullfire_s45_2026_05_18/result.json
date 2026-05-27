@@ -1,0 +1,706 @@
+{
+  "research_section": "§45",
+  "title": "L2 dual-anima full fire ($0 Mac CPU trained 2-cell loop)",
+  "substrate": "two from-scratch tiny anima-style byte-LMs (d_model=32, n_layers=2, vocab=256) — TRAINED not stubbed; numpy hand-coded backprop; NO GPU; honest per §36 §2.",
+  "seed": 1337,
+  "wall_sec": 37.45,
+  "cell_A_distinct_from_B": true,
+  "cell_A_vacuum_psi": [
+    0.4,
+    0.6
+  ],
+  "cell_B_vacuum_psi": [
+    0.62,
+    0.4
+  ],
+  "corpus_A_sha256": "7971b681d1db851001492896a0b5e04c1b6a09b8edc326686f51b54b38069f60",
+  "corpus_B_sha256": "e9cc8ebe10331ed6e4ea69cfa70f1ca5f84048cd63177906e4e37de77c0f6b8c",
+  "corpus_A_shape": [
+    256,
+    64
+  ],
+  "corpus_B_shape": [
+    256,
+    64
+  ],
+  "train_A": {
+    "cell_id": "A",
+    "vacuum_psi": [
+      0.4,
+      0.6
+    ],
+    "params": 18496,
+    "epochs": 20,
+    "lr": 0.05,
+    "batch": 16,
+    "corpus_shape": [
+      256,
+      64
+    ],
+    "loss_first": 5.54493157149478,
+    "loss_last": 5.096213782305996,
+    "loss_hist": [
+      5.54493157149478,
+      5.544337758866766,
+      5.5436760567358325,
+      5.542909072919746,
+      5.541974827865907,
+      5.540807149445434,
+      5.539281213309048,
+      5.537190979561783,
+      5.534220197868306,
+      5.529986743071507,
+      5.524047205052227,
+      5.515735439183416,
+      5.5039842844791735,
+      5.487320448263327,
+      5.463712064623727,
+      5.4302908735674755,
+      5.383068148131989,
+      5.316601937790535,
+      5.223795407429637,
+      5.096213782305996
+    ]
+  },
+  "train_B": {
+    "cell_id": "B",
+    "vacuum_psi": [
+      0.62,
+      0.4
+    ],
+    "params": 18496,
+    "epochs": 20,
+    "lr": 0.05,
+    "batch": 16,
+    "corpus_shape": [
+      256,
+      64
+    ],
+    "loss_first": 5.5449110640320205,
+    "loss_last": 5.388520408940538,
+    "loss_hist": [
+      5.5449110640320205,
+      5.544518424175248,
+      5.544107110190306,
+      5.543649520164272,
+      5.543123570116371,
+      5.542484312687082,
+      5.541680880862955,
+      5.540653764961147,
+      5.53930999615214,
+      5.537530704611315,
+      5.535164379290613,
+      5.531974280795327,
+      5.527595066210954,
+      5.521579156339121,
+      5.51325380137451,
+      5.501703504759779,
+      5.485622611534087,
+      5.4631704136176875,
+      5.431921517732506,
+      5.388520408940538
+    ]
+  },
+  "trained_content_dependence_A": {
+    "cell_id": "A",
+    "m1": "<msg from=cellA topic=alpha psi-probe>",
+    "m2": "<msg from=cellA topic=omega psi-probe>",
+    "psi_start": [
+      0.5,
+      0.5
+    ],
+    "delta_m1": {
+      "vec": [
+        0.17360000353974547,
+        0.16338118197733964
+      ],
+      "mag": 0.23839121597347543,
+      "psi_after": [
+        0.6736000035397455,
+        0.6633811819773396
+      ]
+    },
+    "delta_m2": {
+      "vec": [
+        0.17360000353974547,
+        0.16338118197733964
+      ],
+      "mag": 0.23839121597347543,
+      "psi_after": [
+        0.6736000035397455,
+        0.6633811819773396
+      ]
+    },
+    "separation": 0.0,
+    "tau": 0.001,
+    "content_dependent": false
+  },
+  "trained_content_dependence_B": {
+    "cell_id": "B",
+    "m1": "<msg from=cellA topic=alpha psi-probe>",
+    "m2": "<msg from=cellA topic=omega psi-probe>",
+    "psi_start": [
+      0.5,
+      0.5
+    ],
+    "delta_m1": {
+      "vec": [
+        0.1748883521900242,
+        0.1331935047233217
+      ],
+      "mag": 0.21983276696667278,
+      "psi_after": [
+        0.6748883521900242,
+        0.6331935047233217
+      ]
+    },
+    "delta_m2": {
+      "vec": [
+        0.1748883521900242,
+        0.1331935047233217
+      ],
+      "mag": 0.21983276696667278,
+      "psi_after": [
+        0.6748883521900242,
+        0.6331935047233217
+      ]
+    },
+    "separation": 0.0,
+    "tau": 0.001,
+    "content_dependent": false
+  },
+  "probe_panel_A": [
+    {
+      "tag": "short_tokens",
+      "cell_id": "A",
+      "m1": "alpha",
+      "m2": "omega",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.17383740131125958,
+          0.1625620000514133
+        ],
+        "mag": 0.23800387802590026,
+        "psi_after": [
+          0.6738374013112596,
+          0.6625620000514133
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17383740131125958,
+          0.1625620000514133
+        ],
+        "mag": 0.23800387802590026,
+        "psi_after": [
+          0.6738374013112596,
+          0.6625620000514133
+        ]
+      },
+      "separation": 0.0,
+      "tau": 0.001,
+      "content_dependent": false
+    },
+    {
+      "tag": "char_swap_short",
+      "cell_id": "A",
+      "m1": "AAA",
+      "m2": "ZZZ",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.17393908110708345,
+          0.13453125856910764
+        ],
+        "mag": 0.21989420972041224,
+        "psi_after": [
+          0.6739390811070834,
+          0.6345312585691076
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17393908110708345,
+          0.13453125856910764
+        ],
+        "mag": 0.21989420972041224,
+        "psi_after": [
+          0.6739390811070834,
+          0.6345312585691076
+        ]
+      },
+      "separation": 0.0,
+      "tau": 0.001,
+      "content_dependent": false
+    },
+    {
+      "tag": "numeric_diverge",
+      "cell_id": "A",
+      "m1": "Psi=0.1",
+      "m2": "Psi=0.9",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.1739696423959799,
+          0.15756475188343477
+        ],
+        "mag": 0.23471703711378405,
+        "psi_after": [
+          0.6739696423959799,
+          0.6575647518834348
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17408634208617157,
+          0.15113967045988352
+        ],
+        "mag": 0.23054122079937409,
+        "psi_after": [
+          0.6740863420861716,
+          0.6511396704598835
+        ]
+      },
+      "separation": 0.006426141152896828,
+      "tau": 0.001,
+      "content_dependent": true
+    },
+    {
+      "tag": "semantic_anti",
+      "cell_id": "A",
+      "m1": "tension low",
+      "m2": "tension high",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.1740617011877521,
+          0.16037252893658216
+        ],
+        "mag": 0.23667873554227298,
+        "psi_after": [
+          0.6740617011877521,
+          0.6603725289365822
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17397469510638497,
+          0.16018490683615516
+        ],
+        "mag": 0.2364876295188975,
+        "psi_after": [
+          0.673974695106385,
+          0.6601849068361552
+        ]
+      },
+      "separation": 0.00020681419381537463,
+      "tau": 0.001,
+      "content_dependent": false
+    },
+    {
+      "tag": "long_diverge",
+      "cell_id": "A",
+      "m1": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM",
+      "m2": "XZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.17397225187052834,
+          0.16093929963117648
+        ],
+        "mag": 0.23699747379808955,
+        "psi_after": [
+          0.6739722518705283,
+          0.6609392996311765
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17402776135334808,
+          0.15214246941162368
+        ],
+        "mag": 0.23115577587489508,
+        "psi_after": [
+          0.6740277613533481,
+          0.6521424694116237
+        ]
+      },
+      "separation": 0.008797005354910285,
+      "tau": 0.001,
+      "content_dependent": true
+    }
+  ],
+  "probe_panel_B": [
+    {
+      "tag": "short_tokens",
+      "cell_id": "B",
+      "m1": "alpha",
+      "m2": "omega",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.17488691035627135,
+          0.15043603038515396
+        ],
+        "mag": 0.23068686709911654,
+        "psi_after": [
+          0.6748869103562714,
+          0.650436030385154
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17488691035627135,
+          0.15043603038515396
+        ],
+        "mag": 0.23068686709911654,
+        "psi_after": [
+          0.6748869103562714,
+          0.650436030385154
+        ]
+      },
+      "separation": 0.0,
+      "tau": 0.001,
+      "content_dependent": false
+    },
+    {
+      "tag": "char_swap_short",
+      "cell_id": "B",
+      "m1": "AAA",
+      "m2": "ZZZ",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.17489548781320596,
+          0.12964123112921122
+        ],
+        "mag": 0.21770457153242517,
+        "psi_after": [
+          0.674895487813206,
+          0.6296412311292112
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17489548781320596,
+          0.12964123112921122
+        ],
+        "mag": 0.21770457153242517,
+        "psi_after": [
+          0.674895487813206,
+          0.6296412311292112
+        ]
+      },
+      "separation": 0.0,
+      "tau": 0.001,
+      "content_dependent": false
+    },
+    {
+      "tag": "numeric_diverge",
+      "cell_id": "B",
+      "m1": "Psi=0.1",
+      "m2": "Psi=0.9",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.1749042479501629,
+          0.10840367492696201
+        ],
+        "mag": 0.2057737900916502,
+        "psi_after": [
+          0.6749042479501629,
+          0.608403674926962
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17490326289559,
+          0.15549344281313093
+        ],
+        "mag": 0.23402854981690652,
+        "psi_after": [
+          0.67490326289559,
+          0.6554934428131309
+        ]
+      },
+      "separation": 0.04708976789647192,
+      "tau": 0.001,
+      "content_dependent": true
+    },
+    {
+      "tag": "semantic_anti",
+      "cell_id": "B",
+      "m1": "tension low",
+      "m2": "tension high",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.17489784232593242,
+          0.15608976472618563
+        ],
+        "mag": 0.23442113791751526,
+        "psi_after": [
+          0.6748978423259324,
+          0.6560897647261856
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.1748884010135292,
+          0.12582969726602433
+        ],
+        "mag": 0.21545084247486324,
+        "psi_after": [
+          0.6748884010135292,
+          0.6258296972660243
+        ]
+      },
+      "separation": 0.030260068933032732,
+      "tau": 0.001,
+      "content_dependent": true
+    },
+    {
+      "tag": "long_diverge",
+      "cell_id": "B",
+      "m1": "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAM",
+      "m2": "XZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZZ",
+      "psi_start": [
+        0.5,
+        0.5
+      ],
+      "delta_m1": {
+        "vec": [
+          0.17490821824983305,
+          0.11952898791575717
+        ],
+        "mag": 0.21184915332258575,
+        "psi_after": [
+          0.674908218249833,
+          0.6195289879157572
+        ]
+      },
+      "delta_m2": {
+        "vec": [
+          0.17489540061651698,
+          0.13030288122607758
+        ],
+        "mag": 0.2180991563776193,
+        "psi_after": [
+          0.674895400616517,
+          0.6303028812260776
+        ]
+      },
+      "separation": 0.010773900934846708,
+      "tau": 0.001,
+      "content_dependent": true
+    }
+  ],
+  "n_cd_pass_A": 2,
+  "n_cd_pass_B": 3,
+  "trained_alive_A": true,
+  "trained_alive_B": true,
+  "loop": {
+    "n_max": 8,
+    "turns_run": 8,
+    "psi_trace_A": [
+      [
+        0.5,
+        0.5
+      ],
+      [
+        0.6736000035397455,
+        0.6633811819773396
+      ],
+      [
+        0.78644000584058,
+        0.7695789502626105
+      ],
+      [
+        0.8597860073361225,
+        0.8386074996480365
+      ],
+      [
+        0.9074609083082251,
+        0.8834760567485634
+      ],
+      [
+        0.9384495939400918,
+        0.9126406188639059
+      ],
+      [
+        0.9585922396008051,
+        0.9315975842388785
+      ],
+      [
+        0.9716849592802688,
+        0.9439196117326107
+      ],
+      [
+        0.9801952270719202,
+        0.9519289296035367
+      ]
+    ],
+    "psi_trace_B": [
+      [
+        0.5,
+        0.5
+      ],
+      [
+        0.6748883521900242,
+        0.6331935047233217
+      ],
+      [
+        0.7885657811135399,
+        0.7197692827934807
+      ],
+      [
+        0.8624561099138252,
+        0.7760435385390841
+      ],
+      [
+        0.9104848236340105,
+        0.8126218047737264
+      ],
+      [
+        0.941703487552131,
+        0.8363976778262437
+      ],
+      [
+        0.9619956190989093,
+        0.8518519953103801
+      ],
+      [
+        0.9751855046043152,
+        0.8618973016750687
+      ],
+      [
+        0.983758930182829,
+        0.8684267508121163
+      ]
+    ],
+    "msgs": [
+      {
+        "turn": 0,
+        "from": "A",
+        "msg": "<emit from=A turn=0 psi=(0.5000,0.5000)>"
+      },
+      {
+        "turn": 0,
+        "from": "B",
+        "msg": "<emit from=B turn=0 psi=(0.6749,0.6332)>"
+      },
+      {
+        "turn": 1,
+        "from": "A",
+        "msg": "<emit from=A turn=1 psi=(0.6736,0.6634)>"
+      },
+      {
+        "turn": 1,
+        "from": "B",
+        "msg": "<emit from=B turn=1 psi=(0.7886,0.7198)>"
+      },
+      {
+        "turn": 2,
+        "from": "A",
+        "msg": "<emit from=A turn=2 psi=(0.7864,0.7696)>"
+      },
+      {
+        "turn": 2,
+        "from": "B",
+        "msg": "<emit from=B turn=2 psi=(0.8625,0.7760)>"
+      },
+      {
+        "turn": 3,
+        "from": "A",
+        "msg": "<emit from=A turn=3 psi=(0.8598,0.8386)>"
+      },
+      {
+        "turn": 3,
+        "from": "B",
+        "msg": "<emit from=B turn=3 psi=(0.9105,0.8126)>"
+      },
+      {
+        "turn": 4,
+        "from": "A",
+        "msg": "<emit from=A turn=4 psi=(0.9075,0.8835)>"
+      },
+      {
+        "turn": 4,
+        "from": "B",
+        "msg": "<emit from=B turn=4 psi=(0.9417,0.8364)>"
+      },
+      {
+        "turn": 5,
+        "from": "A",
+        "msg": "<emit from=A turn=5 psi=(0.9384,0.9126)>"
+      },
+      {
+        "turn": 5,
+        "from": "B",
+        "msg": "<emit from=B turn=5 psi=(0.9620,0.8519)>"
+      },
+      {
+        "turn": 6,
+        "from": "A",
+        "msg": "<emit from=A turn=6 psi=(0.9586,0.9316)>"
+      },
+      {
+        "turn": 6,
+        "from": "B",
+        "msg": "<emit from=B turn=6 psi=(0.9752,0.8619)>"
+      },
+      {
+        "turn": 7,
+        "from": "A",
+        "msg": "<emit from=A turn=7 psi=(0.9717,0.9439)>"
+      },
+      {
+        "turn": 7,
+        "from": "B",
+        "msg": "<emit from=B turn=7 psi=(0.9838,0.8684)>"
+      }
+    ]
+  },
+  "psi_var_A": 0.14930654019249223,
+  "psi_var_B": 0.14337162997215147,
+  "AB_state_separation_final": 0.08357818999462145,
+  "loop_nontrivial": true,
+  "loop_alive": true,
+  "verdict": "ALIVE_LOOP",
+  "verdict_explainer": "Both trained cells preserve content-dependence in deliver() AND the loop's per-cell psi-trace shows nontrivial dynamics — the closed A↔B loop produces a richer signal than §24 void-emission at this scale. The §36-NOTE empirical question is answered POSITIVELY for these tiny trained cells. NOT a §16-saturation claim (B-S45-NOTE).",
+  "honest_caveats": [
+    "tiny scale (d_model=32, 2L). §16 1.13 GB ckpt NOT used.",
+    "B-S45-NOTE: trained-cell echo vs alive at *this* scale; §16-level saturation un-tested.",
+    "§7 GOAL-legitimacy: cells are anima-OWN MITOSIS cell-pool stubs (no external LLM/data); per-cell corpus has 0 forbidden tokens",
+    "deterministic + seed-fixed; rerun = bit-identical result.json.",
+    "§15 milestone unchanged — not a GOAL emergence claim."
+  ]
+}

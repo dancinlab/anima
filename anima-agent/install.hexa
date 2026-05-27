@@ -1,0 +1,69 @@
+// install.hexa — hx build hook for anima-agent.
+//
+// Invoked by `hx install anima-agent` (hexa-lang package manager) right
+// after the GitHub checkout (or symlink from /Users/ghost/core/anima-agent)
+// lands in $HX_PKG_DIR. hx passes:
+//   HX_PKG_DIR     — absolute path to the package root
+//   HX_BIN_DIR     — ~/.hx/bin
+//   HX_PKG_NAME    — "anima-agent"
+//   HX_HOOK_PHASE  — "pre" | "post" | "both" (default: "both")
+//
+// Responsibilities (each idempotent):
+//   1. Pre-install: NO-OP. anima-agent has ZERO hard runtime deps at the
+//      standalone surface (channels/providers/plugins are runtime-optional
+//      sister repos). raw#9 STRICT — no .py at this surface.
+//   2. Post-install: run `cli/anima-agent.hexa self-test`. Non-PASS =
+//      warn-only (backend at anima/ is external; missing backend is NOT a
+//      blocker for the standalone install).
+//
+// raw#9 hexa-only, raw#11 snake_case, raw#15 no-hardcode tokens.
+// raw#10 honest C3: see anima-agent/CHANGELOG.md "caveats" + README.md.
+
+fn run_self_test(root: str) -> bool {
+    let cli_path = root + "/cli/anima-agent.hexa"
+    let exists = exec("[ -f \"" + cli_path + "\" ] && echo y || echo n").trim()
+    if exists != "y" {
+        eprintln("[anima-agent/install] WARN: cli/anima-agent.hexa missing — skip self-test")
+        return false
+    }
+    println("[anima-agent/install] [post] running self-test (hexa.toml + entry + LICENSE + status)")
+    let cmd = "hexa run \"" + cli_path + "\" self-test 2>&1"
+    let raw = exec(cmd)
+    if raw.contains("__ANIMA_AGENT_SELFTEST__ PASS") {
+        println("[anima-agent/install]   self-test PASS — scaffold integrity verified")
+        return true
+    }
+    eprintln("[anima-agent/install] WARN: self-test non-PASS (warn-only, not a blocker)")
+    eprintln("  hint: missing anima backend ($ANIMA_ROOT) yields scaffold-only status — this is expected")
+    eprintln("  reproduce: hexa run " + cli_path + " self-test")
+    return false
+}
+
+fn main() -> void {
+    let mut root = env("HX_PKG_DIR")
+    if root == "" { root = exec("pwd").trim() }
+    let phase = env("HX_HOOK_PHASE")
+    let mut p = phase
+    if p == "" { p = "both" }
+    println("[anima-agent/install] HX_PKG_DIR=" + root + " phase=" + p)
+
+    let entry = root + "/cli/anima-agent.hexa"
+    let entry_ok = exec("[ -f \"" + entry + "\" ] && echo y || echo n").trim()
+    if entry_ok != "y" {
+        eprintln("[anima-agent/install] ERROR: canonical entry missing: " + entry)
+        exit(1)
+    }
+    println("[anima-agent/install] canonical entry OK: cli/anima-agent.hexa")
+
+    if p == "pre" || p == "both" {
+        // No-op: zero hard runtime deps at the standalone surface.
+        println("[anima-agent/install] [pre] zero hard runtime deps at standalone surface")
+        println("[anima-agent/install] [pre] optional sister repos (channels/providers/plugins/skills) NOT auto-installed")
+    }
+
+    if p == "post" || p == "both" {
+        let _ = run_self_test(root)  // warn-only
+    }
+
+    println("[anima-agent/install] done — hx will generate " + env("HX_BIN_DIR") + "/anima-agent shim")
+}

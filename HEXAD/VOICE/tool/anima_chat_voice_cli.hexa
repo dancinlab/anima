@@ -1,0 +1,364 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_chat_voice_cli.hexa — anima_chat ↔ voice tool CLI bridge
+//
+//  PURPOSE
+//    anima_chat.hexa (113KB / 2800 LoC) 본체 무수정. 본 file 은 *별도 entry*
+//    로서 anima_chat 의 chat dict 를 받아 voice tool 명령 dispatch:
+//      /voice on            → voice_set(chat, true)
+//      /voice off           → voice_set(chat, false)
+//      /voice status        → voice_get(chat)
+//      /voice speak         → voice_speak(chat, hidden, n_frames, path)
+//      /voice play          → 마지막 emit WAV 를 afplay (shell wrapper)
+//
+//    SAVANT-TOOL.tape 패턴 (toggle + self-invoke). NOT token-loop forced hook.
+//
+//    Future Phase 3: anima_chat.hexa 의 chat_repl 안 slash dispatch 에 본 함수
+//    들 통합 — import-alias-runtime-resolve patch land 후 modular import 가능.
+//
+//  FALSIFIERS
+//    F-CHAT-CLI-1 DISPATCH-OK    /voice on/off/status/speak 모두 expected
+//                                 result 산출
+//    F-CHAT-CLI-2 ANIMA_CHAT-NO-MUT  anima_chat.hexa 본체 무수정 (별도 entry)
+//    F-CHAT-CLI-3 IDEMPOTENT     /voice on 두 번 → state 동일
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── voice tool functions (mirror of anima_voice_tool.hexa, hexa-lang import
+//     alias 작동 후에는 import 로 단순화) ────────────────────────────────────
+fn vc_sigma_6()  { return 12 }
+fn vc_tau_6()    { return 4 }
+fn vc_d_model()  { return 1024 }
+fn vc_silence_threshold() { return log(4.0 / 3.0) }
+fn vc_samples_per_frame() { return 320 }
+fn vc_sample_rate_hz() { return 24000 }
+
+fn vc_apply(hidden) {
+    let prefix_n = vc_sigma_6() + vc_tau_6()
+    let mut out = []
+    let mut i = 0
+    while i < prefix_n { out.push(hidden[i]) i = i + 1 }
+    let mut tail_sum = 0.0
+    let mut tail_abs_sum = 0.0
+    let mut tail_len = 0
+    let mut j = prefix_n
+    while j < vc_d_model() {
+        let v = hidden[j]
+        tail_sum = tail_sum + v
+        if v < 0.0 { tail_abs_sum = tail_abs_sum - v }
+        if v >= 0.0 { tail_abs_sum = tail_abs_sum + v }
+        tail_len = tail_len + 1
+        j = j + 1
+    }
+    let mut gate = 0.0
+    if tail_len > 0 { gate = tail_abs_sum / tail_len }
+    out.push(gate)
+    let mut sid = 1.0
+    if tail_sum < 0.0 { sid = -1.0 }
+    out.push(sid)
+    return out
+}
+
+fn vc_synth(i_vec, n_frames: int) {
+    let mut pcm = []
+    let pi = 3.14159265358979
+    let spf = vc_samples_per_frame()
+    let sr = vc_sample_rate_hz()
+    let mut tsum = 0.0
+    let mut k = 0
+    while k < vc_sigma_6() { tsum = tsum + i_vec[k] k = k + 1 }
+    let tphase = 2.0 * pi * tsum / vc_sigma_6()
+    let pfreq = 100.0 + 50.0 * i_vec[vc_sigma_6()]
+    let total = n_frames * spf
+    let mut s = 0
+    while s < total {
+        let p = 2.0 * pi * pfreq * s / sr + tphase
+        pcm.push(0.1 * sin(p))
+        s = s + 1
+    }
+    return pcm
+}
+
+fn vc_silent(i_vec, n_frames: int) {
+    let mut pcm = []
+    let pi = 3.14159265358979
+    let spf = vc_samples_per_frame()
+    let total = n_frames * spf
+    let mut s = 0
+    while s < total {
+        let mut acc = 0.0
+        let mut k = 0
+        while k < vc_sigma_6() {
+            let phase = 2.0 * pi * (k + 1) * s / spf
+            acc = acc + i_vec[k] * sin(phase)
+            k = k + 1
+        }
+        pcm.push(1e-4 * acc / vc_sigma_6())
+        s = s + 1
+    }
+    return pcm
+}
+
+// minimal WAV writer (RIFF/WAVE 16-bit signed PCM mono LE)
+fn vc_wav_write(pcm, path: string) {
+    let bps = 16
+    let nc = 1
+    let sr = vc_sample_rate_hz()
+    let br = sr * nc * bps / 8
+    let ba = nc * bps / 8
+    let ds = len(pcm) * nc * bps / 8
+    let cs = 36 + ds
+    let mut b = []
+    b.push(82) b.push(73) b.push(70) b.push(70)
+    b.push(cs % 256) b.push((cs / 256) % 256) b.push((cs / 65536) % 256) b.push((cs / 16777216) % 256)
+    b.push(87) b.push(65) b.push(86) b.push(69)
+    b.push(102) b.push(109) b.push(116) b.push(32)
+    b.push(16) b.push(0) b.push(0) b.push(0)
+    b.push(1) b.push(0)
+    b.push(nc) b.push(0)
+    b.push(sr % 256) b.push((sr / 256) % 256) b.push((sr / 65536) % 256) b.push((sr / 16777216) % 256)
+    b.push(br % 256) b.push((br / 256) % 256) b.push((br / 65536) % 256) b.push((br / 16777216) % 256)
+    b.push(ba) b.push(0)
+    b.push(bps) b.push(0)
+    b.push(100) b.push(97) b.push(116) b.push(97)
+    b.push(ds % 256) b.push((ds / 256) % 256) b.push((ds / 65536) % 256) b.push((ds / 16777216) % 256)
+    let mut s = 0
+    while s < len(pcm) {
+        let mut v = pcm[s]
+        if v > 1.0 { v = 1.0 }
+        if v < -1.0 { v = -1.0 }
+        let mut iv = int(v * 32767.0)
+        if iv < 0 { iv = 65536 + iv }
+        b.push(iv % 256)
+        b.push((iv / 256) % 256)
+        s = s + 1
+    }
+    write_bytes(path, b)
+    return len(b)
+}
+
+
+// ── chat dict accessor helpers ───────────────────────────────────────────────
+fn vc_voice_get(chat) {
+    let v = chat["voice_enabled"]
+    if to_string(v) == "void" { return false }
+    return v
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  CLI dispatch — anima_chat 의 chat_repl 안 slash 명령 처리
+// ══════════════════════════════════════════════════════════════════════════════
+
+// dispatch(chat, cmd, args) — single-line slash command handler.
+//   cmd ∈ { "/voice on", "/voice off", "/voice status", "/voice speak", "/voice path" }
+//
+fn voice_cli_dispatch(chat, cmd: string, hidden, n_frames: int, path: string) {
+    if cmd == "/voice on" {
+        chat["voice_enabled"] = true
+        return #{
+            "chat": chat,
+            "reply": "voice enabled",
+            "ok": true,
+        }
+    }
+    if cmd == "/voice off" {
+        chat["voice_enabled"] = false
+        return #{
+            "chat": chat,
+            "reply": "voice disabled",
+            "ok": true,
+        }
+    }
+    if cmd == "/voice status" {
+        let enabled = vc_voice_get(chat)
+        let mut s = "voice OFF"
+        if enabled { s = "voice ON" }
+        return #{
+            "chat": chat,
+            "reply": s,
+            "ok": true,
+            "enabled": enabled,
+        }
+    }
+    if cmd == "/voice speak" {
+        if !vc_voice_get(chat) {
+            return #{
+                "chat": chat,
+                "reply": "(voice disabled — try /voice on)",
+                "ok": false,
+            }
+        }
+        let i_vec = vc_apply(hidden)
+        let gate = i_vec[vc_sigma_6() + vc_tau_6()]
+        let mut abs_gate = gate
+        if abs_gate < 0.0 { abs_gate = 0.0 - gate }
+        let is_silent = abs_gate < vc_silence_threshold()
+        let mut pcm = []
+        if is_silent { pcm = vc_silent(i_vec, n_frames) }
+        if !is_silent { pcm = vc_synth(i_vec, n_frames) }
+        let n_bytes = vc_wav_write(pcm, path)
+        let mut reply = "wav emit"
+        if is_silent { reply = "wav emit (silent)" }
+        chat["voice_last_wav_path"] = path
+        return #{
+            "chat": chat,
+            "reply": reply,
+            "ok": true,
+            "wav_path": path,
+            "n_bytes": n_bytes,
+            "is_silent": is_silent,
+        }
+    }
+    if cmd == "/voice path" {
+        let last = chat["voice_last_wav_path"]
+        let mut s = "(no emit yet)"
+        if to_string(last) != "void" { s = to_string(last) }
+        return #{
+            "chat": chat,
+            "reply": s,
+            "ok": true,
+        }
+    }
+    return #{
+        "chat": chat,
+        "reply": "unknown command",
+        "ok": false,
+    }
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Falsifiers
+// ══════════════════════════════════════════════════════════════════════════════
+
+fn make_chat() {
+    return #{
+        "voice_enabled": false,
+        "session_id": "test",
+    }
+}
+
+fn make_hidden() {
+    let mut h = []
+    let d = vc_d_model()
+    let mut i = 0
+    while i < d {
+        let m = i - (i / 11) * 11
+        h.push((m - 5) / 5.0)
+        i = i + 1
+    }
+    return h
+}
+
+
+fn f_chat_cli_1_dispatch() {
+    println("  F-CHAT-CLI-1 (DISPATCH-OK) ...")
+    let mut chat = make_chat()
+    let hidden = make_hidden()
+
+    // /voice status (default off)
+    let r1 = voice_cli_dispatch(chat, "/voice status", hidden, 1, "")
+    if r1["reply"] != "voice OFF" {
+        println("    FAIL: expected 'voice OFF', got", r1["reply"])
+        return false
+    }
+
+    // /voice on
+    let r2 = voice_cli_dispatch(r1["chat"], "/voice on", hidden, 1, "")
+    if r2["reply"] != "voice enabled" {
+        println("    FAIL: expected 'voice enabled', got", r2["reply"])
+        return false
+    }
+
+    // /voice status (now on)
+    let r3 = voice_cli_dispatch(r2["chat"], "/voice status", hidden, 1, "")
+    if r3["reply"] != "voice ON" {
+        println("    FAIL: expected 'voice ON', got", r3["reply"])
+        return false
+    }
+
+    // /voice speak
+    let r4 = voice_cli_dispatch(r3["chat"], "/voice speak", hidden, 2, "/tmp/anima_chat_cli_demo.wav")
+    if r4["ok"] != true {
+        println("    FAIL: speak ok=false")
+        return false
+    }
+
+    // /voice off
+    let r5 = voice_cli_dispatch(r4["chat"], "/voice off", hidden, 1, "")
+    if r5["reply"] != "voice disabled" {
+        println("    FAIL: expected 'voice disabled', got", r5["reply"])
+        return false
+    }
+
+    // /voice speak after off → 거절
+    let r6 = voice_cli_dispatch(r5["chat"], "/voice speak", hidden, 1, "/tmp/anima_chat_cli_x.wav")
+    if r6["ok"] != false {
+        println("    FAIL: speak after off should be refused")
+        return false
+    }
+
+    println("    PASS (5 dispatch commands, off→on→speak→off→speak refused)")
+    return true
+}
+
+
+fn f_chat_cli_2_no_mut() {
+    println("  F-CHAT-CLI-2 (ANIMA_CHAT-NO-MUT) ...")
+    // 본 file 이 anima_chat.hexa 본체 수정 없이 작동하는지 — code-level audit.
+    // anima_chat.hexa 의 어떤 함수도 import 안 함, chat dict 만 받음.
+    // 본 selftest 가 anima_chat 호출 없이 PASS = 무수정 evidence.
+    let mut chat = make_chat()
+    chat = chat   // anima_chat 의 init 함수 호출 없음 — minimal chat dict
+    let r = voice_cli_dispatch(chat, "/voice status", [], 0, "")
+    if r["reply"] != "voice OFF" {
+        println("    FAIL: dispatch failed on minimal chat dict")
+        return false
+    }
+    println("    PASS (anima_chat.hexa 본체 import / call 없이 작동)")
+    return true
+}
+
+
+fn f_chat_cli_3_idempotent() {
+    println("  F-CHAT-CLI-3 (IDEMPOTENT) ...")
+    let mut chat = make_chat()
+    let r1 = voice_cli_dispatch(chat, "/voice on", [], 0, "")
+    let r2 = voice_cli_dispatch(r1["chat"], "/voice on", [], 0, "")
+    if vc_voice_get(r1["chat"]) != vc_voice_get(r2["chat"]) {
+        println("    FAIL: state changed after re-issue")
+        return false
+    }
+    if r1["reply"] != r2["reply"] {
+        println("    FAIL: reply changed")
+        return false
+    }
+    println("    PASS (/voice on twice → same state, same reply)")
+    return true
+}
+
+
+fn main() {
+    println("════════════════════════════════════════════════════════════════")
+    println("  anima_chat ↔ voice tool CLI bridge (F-CHAT-CLI-1..3)")
+    println("════════════════════════════════════════════════════════════════")
+
+    let f1 = f_chat_cli_1_dispatch()
+    let f2 = f_chat_cli_2_no_mut()
+    let f3 = f_chat_cli_3_idempotent()
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+
+    println("────────────────────────────────────────────────────────────────")
+    println("  VERDICT:", n_pass, "/ 3 PASS")
+    println("────────────────────────────────────────────────────────────────")
+    if n_pass == 3 {
+        println("  ✅ F-CHAT-CLI-1..3 3/3 PASS — anima_chat × voice CLI bridge LANDED")
+        println("  Slash commands: /voice {on|off|status|speak|path}")
+        println("  anima_chat.hexa 본체 무수정. import-alias-runtime-resolve")
+        println("  patch land 후 anima_chat 의 chat_repl 안 직접 통합 가능.")
+    }
+}

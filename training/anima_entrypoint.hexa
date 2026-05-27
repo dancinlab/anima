@@ -1,0 +1,128 @@
+// anima_entrypoint.hexa — RunPod H100 container entrypoint (replaces anima-entrypoint.sh)
+//
+// 1. anima repo git clone/pull
+// 2. hexa-lang repo git clone/pull
+// 3. hexa-lang cargo build --release (incremental)
+// 4. GPU smoke test (CUDA available)
+// 5. Hand off to CMD (default: sshd)
+//
+// Docker image rebuild not needed -- container restart pulls latest code.
+//
+// IMPORTANT (pod image migration — .sh ban):
+//   The pod Docker image's ENTRYPOINT MUST change from:
+//       ENTRYPOINT ["bash", "anima-entrypoint.sh"]
+//   to one of:
+//       ENTRYPOINT ["/usr/local/bin/anima_entrypoint"]            (precompiled)
+//       ENTRYPOINT ["hexa", "run", "training/anima_entrypoint.hexa"]
+//   Precompile with:
+//       hexa build training/anima_entrypoint.hexa -o /usr/local/bin/anima_entrypoint
+//   Same env-var contract as before (ANIMA_REPO, ANIMA_BRANCH, ANIMA_DIR,
+//   HEXA_REPO, HEXA_BRANCH, HEXA_DIR, HEXA_BIN). All trailing argv is
+//   forwarded as the CMD to exec at the end (e.g. "/usr/sbin/sshd -D -e").
+
+@convergence(state="ossified", id="RUNPOD_RUST_OVERLAY_CONFLICT", value="rustup/cargo under /root/ loses state on pod restart — install under /opt/rustup /opt/cargo", ossified_at="2026-04-16")
+@convergence(state="ossified", id="RUNPOD_HEXA_BINARIES", value="/usr/local/bin/hexa (Rust interp), hexa_cc (C transpiler), hexa_v2 (C stage1) — switch explicitly per round", ossified_at="2026-04-16")
+fn main() {
+    let anima_repo = env("ANIMA_REPO")
+    if anima_repo == "" {
+        anima_repo = "https://github.com/dancinlab/anima.git"
+    }
+    let anima_branch = env("ANIMA_BRANCH")
+    if anima_branch == "" {
+        anima_branch = "main"
+    }
+    let anima_dir = env("ANIMA_DIR")
+    if anima_dir == "" {
+        anima_dir = "/workspace/anima"
+    }
+    let hexa_repo = env("HEXA_REPO")
+    if hexa_repo == "" {
+        hexa_repo = "https://github.com/dancinlab/hexa-lang.git"
+    }
+    let hexa_branch = env("HEXA_BRANCH")
+    if hexa_branch == "" {
+        hexa_branch = "main"
+    }
+    let hexa_dir = env("HEXA_DIR")
+    if hexa_dir == "" {
+        hexa_dir = "/workspace/hexa-lang"
+    }
+    let hexa_bin = env("HEXA_BIN")
+    if hexa_bin == "" {
+        hexa_bin = hexa_dir + "/target/release/hexa"
+    }
+
+    // Build the entrypoint runner script
+    let runner = "/tmp/_anima_entrypoint_runner.sh"
+    write_file(runner,
+        "#!/bin/bash\n" +
+        "set -e\n" +
+        "ANIMA_REPO=\"" + anima_repo + "\"\n" +
+        "ANIMA_BRANCH=\"" + anima_branch + "\"\n" +
+        "ANIMA_DIR=\"" + anima_dir + "\"\n" +
+        "HEXA_REPO=\"" + hexa_repo + "\"\n" +
+        "HEXA_BRANCH=\"" + hexa_branch + "\"\n" +
+        "HEXA_DIR=\"" + hexa_dir + "\"\n" +
+        "HEXA_BIN=\"" + hexa_bin + "\"\n" +
+        "\n" +
+        "sync_repo() {\n" +
+        "    local label=\"$1\" repo=\"$2\" branch=\"$3\" dir=\"$4\"\n" +
+        "    if [ ! -d \"$dir/.git\" ]; then\n" +
+        "        echo \"[entrypoint] cloning $label: $repo ($branch) -> $dir\"\n" +
+        "        git clone --depth 1 --branch \"$branch\" \"$repo\" \"$dir\"\n" +
+        "    else\n" +
+        "        echo \"[entrypoint] pulling $label: $branch in $dir\"\n" +
+        "        ( cd \"$dir\" && git fetch --depth 1 origin \"$branch\" && git reset --hard \"origin/$branch\" )\n" +
+        "    fi\n" +
+        "    echo \"[entrypoint] $label HEAD: $(cd \"$dir\" && git rev-parse --short HEAD)\"\n" +
+        "}\n" +
+        "\n" +
+        "# 1. anima\n" +
+        "sync_repo \"anima\" \"$ANIMA_REPO\" \"$ANIMA_BRANCH\" \"$ANIMA_DIR\"\n" +
+        "\n" +
+        "# 2. hexa-lang\n" +
+        "sync_repo \"hexa-lang\" \"$HEXA_REPO\" \"$HEXA_BRANCH\" \"$HEXA_DIR\"\n" +
+        "\n" +
+        "# 3. cargo build (incremental)\n" +
+        "echo \"[entrypoint] cargo build --release (incremental)...\"\n" +
+        "build_start=$(date +%s)\n" +
+        "( cd \"$HEXA_DIR\" && cargo build --release 2>&1 | tail -5 )\n" +
+        "build_end=$(date +%s)\n" +
+        "echo \"[entrypoint] build elapsed: $((build_end - build_start))s\"\n" +
+        "\n" +
+        "if [ -x \"$HEXA_BIN\" ]; then\n" +
+        "    echo \"[entrypoint] hexa: $($HEXA_BIN --version 2>/dev/null || echo built)\"\n" +
+        "else\n" +
+        "    echo \"[entrypoint] WARNING: $HEXA_BIN not found after build\"\n" +
+        "fi\n" +
+        "\n" +
+        "# 4. GPU smoke test\n" +
+        "if command -v nvidia-smi &>/dev/null; then\n" +
+        "    echo \"[entrypoint] GPU detected:\"\n" +
+        "    nvidia-smi --query-gpu=name,memory.total,driver_version --format=csv,noheader | sed 's/^/    /'\n" +
+        "    if [ -x \"$HEXA_BIN\" ] && [ -f \"$HEXA_DIR/self/ml/gpu_smoke_test.hexa\" ]; then\n" +
+        "        echo \"[entrypoint] running gpu_smoke_test.hexa...\"\n" +
+        "        ( cd \"$HEXA_DIR\" && \"$HEXA_BIN\" self/ml/gpu_smoke_test.hexa 2>&1 | tail -10 ) || \\\n" +
+        "            echo \"[entrypoint] smoke test FAILED (non-fatal, continuing)\"\n" +
+        "    fi\n" +
+        "else\n" +
+        "    echo \"[entrypoint] no GPU (CPU-only mode)\"\n" +
+        "fi\n" +
+        "\n" +
+        "echo \"[entrypoint] handing off to CMD: $*\"\n" +
+        "exec \"$@\"\n"
+    )
+
+    // Pass through remaining args to the entrypoint as the CMD.
+    // hexa args() returns [binary, binary, user_args...] — skip first 2.
+    let argv = args()
+    let mut extra = ""
+    let mut i = 2
+    while i < len(argv) {
+        extra = extra + " " + argv[i]
+        i = i + 1
+    }
+
+    exec("bash " + runner + extra)
+}
+

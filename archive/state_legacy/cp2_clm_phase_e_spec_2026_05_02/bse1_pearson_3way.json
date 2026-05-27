@@ -1,0 +1,52 @@
+{
+  "bse1_pearson_3way_aggregation": {
+    "pairs": [
+      {
+        "pair_id": "pair_A",
+        "x": "clm_mind_tension (1ch, 1Hz)",
+        "y": "eeg_alpha_plv (windowed, 1Hz)",
+        "rationale": "primary CLM-EEG mediator-framing test; if |r| high, CLM internal tension co-modulates cortical alpha PLV"
+      },
+      {
+        "pair_id": "pair_B",
+        "x": "tension_link_5ch (gate_active, gate_random, L1, phi, psi_eps; 1Hz)",
+        "y": "eeg_alpha_plv (windowed, 1Hz)",
+        "rationale": "tension-bridge -> EEG link test; per-channel Pearson r computed, aggregate = max(|r|) over 5 channels"
+      },
+      {
+        "pair_id": "pair_C",
+        "x": "clm_mind_tension (1ch, 1Hz)",
+        "y": "tension_link_5ch aggregate (1Hz)",
+        "rationale": "internal CLM consistency check; expected near-1 for active branch (fixed-point std~1e-6 known per #103 C3-5)"
+      }
+    ],
+    "per_phase_pearson": {
+      "phases": ["P1", "P2", "P3", "P4", "P5", "P6"],
+      "estimator": "scipy.stats.pearsonr on phase-segmented samples",
+      "n_samples_per_phase_min": 240,
+      "permutation_test": {
+        "method": "phase-label random shuffle, 1000 iterations",
+        "alpha": 0.01,
+        "p_value_per_phase_required": 0.01
+      }
+    },
+    "cross_pair_aggregation": {
+      "binding_strength_formula": "binding_strength = mean(|r_pair_A_aggregate|, |r_pair_B_aggregate|, |r_pair_C_aggregate|)",
+      "per_pair_aggregate": "median |r| over 6 phases, weighted by per-phase sample retention",
+      "clamp_range": [0.0, 1.0],
+      "primary_diagnostic_pair": "pair_A (CLM x EEG)",
+      "exclude_pair_C_from_binding_if_fixed_point": "if pair_C |r|>0.95 AND CLM std<1e-5, treat as trivial fixed-point and re-run binding_strength = mean(pair_A, pair_B) only"
+    },
+    "phase_specific_diagnostics": {
+      "P3_vs_P4_test": "key diagnostic per #103 — |r_P3| > |r_P4| with P3 PASS AND P4 FAIL = CLM-specific not generic-cognitive-load",
+      "P3_minus_P4_threshold": 0.15,
+      "interpretation": "if P3-P4 < 0.15, binding is generic cognitive-load not CLM-specific"
+    }
+  },
+  "secondary_bse3_te_ksg": {
+    "estimator": "transfer entropy KSG (Kraskov-Stogbauer-Grassberger), k=4, lag=1s",
+    "scope": "diagnostic only, NOT verdict driver",
+    "directionality_pairs": ["clm_mind_tension -> eeg_alpha_plv", "eeg_alpha_plv -> clm_mind_tension"],
+    "surrogate_test": "AAFT 1000 surrogates, p99 threshold"
+  }
+}

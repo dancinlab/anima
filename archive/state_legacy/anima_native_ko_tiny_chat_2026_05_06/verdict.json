@@ -1,0 +1,96 @@
+{
+  "spec": "F-anima-native-ko-tiny-chat-1",
+  "ts": "2026-05-06T22:56:26",
+  "lineage": "BG-GE (BG-FU 3M tiny + chat-template-only corpus)",
+  "config": {
+    "vocab": 256,
+    "n_layer": 4,
+    "d_model": 192,
+    "n_head": 4,
+    "block_size": 256,
+    "dropout": 0.2,
+    "batch": 8,
+    "grad_accum": 4,
+    "lr": 0.0005,
+    "warmup": 200,
+    "steps": 2000
+  },
+  "model": {
+    "n_params": 3110784,
+    "ckpt_path": "/tmp/anima_native_ko_tiny_chat_2026_05_06_final_3m.pt",
+    "ckpt_size_mb": 12.89
+  },
+  "corpus": {
+    "path": "/Users/ghost/core/anima/state/anima_native_ko_tiny_chat_2026_05_06/corpus_ko_chat.txt",
+    "size_bytes": 15005565,
+    "size_mb": 14.31,
+    "filter": "KO chat-template only (사용자/도우미); named-speaker philosophy debate dropped",
+    "kept_turns": 17318,
+    "dropped": 1
+  },
+  "eval_progression": {
+    "500": 0.3229044834307992,
+    "1000": 0.3209346660566173,
+    "1500": 0.4851132482550968,
+    "2000": 0.5155210929044275
+  },
+  "final_chat": {
+    "avg_hangul_ratio": 0.5155210929044275,
+    "per_prompt_avg": {
+      "안녕하세요": 0.4625,
+      "한국어 가능?": 0.4695121951219512,
+      "사용자: 안녕하세요\n도우미:": 0.6145510835913313
+    },
+    "pass_count_2_of_3": 3
+  },
+  "own18_4_condition": {
+    "C1": {
+      "pass": false,
+      "pass_count": 1,
+      "per_prompt": {
+        "안녕하세요": {
+          "avg_ratio": 0.4625,
+          "C1.1_hangul": true,
+          "C1.2_no_degenerate": true,
+          "C1.3_no_garbage": true,
+          "pass": true
+        },
+        "한국어 가능?": {
+          "avg_ratio": 0.4695121951219512,
+          "C1.1_hangul": true,
+          "C1.2_no_degenerate": false,
+          "C1.3_no_garbage": true,
+          "pass": false
+        },
+        "사용자: 안녕하세요\n도우미:": {
+          "avg_ratio": 0.6145510835913313,
+          "C1.1_hangul": true,
+          "C1.2_no_degenerate": false,
+          "C1.3_no_garbage": true,
+          "pass": false
+        }
+      }
+    },
+    "C2.1": {
+      "pass": true,
+      "ratio_ge_40_count": 9,
+      "total": 9
+    },
+    "C2.2": {
+      "pass": true,
+      "no_degen_and_hangul_count": 7,
+      "total": 9
+    },
+    "C2.4": {
+      "pass": true,
+      "leaked_count": 0,
+      "total": 9,
+      "leak_examples": []
+    },
+    "pass_count_4_of_4": 3,
+    "verdict": "PARTIAL_PASS_C2_only"
+  },
+  "legacy_F_anima_native_ko_tiny_chat_1": "PASS",
+  "verdict": "PARTIAL_PASS_C2_only",
+  "wall_time_s": 561.1
+}

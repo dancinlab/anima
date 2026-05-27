@@ -1,0 +1,55 @@
+{
+  "session_date": "2026-05-02",
+  "recommended_sequence": [
+    {
+      "step": "(a)",
+      "action": "Stage 1 prototype 즉시 EXEC",
+      "spec": "Option A — TRIBE v2 + Llama-3.2-3B end-to-end dialogue. cortexlab-toolkit (이미 install) + Llama-3.2-3B HF + simple CLI dialogue loop.",
+      "cost_usd": [0, 0],
+      "eta": "1d",
+      "deliverable": "30-turn user + anima dialogue session log + M1-M5 baseline metrics",
+      "exit_criterion": "session log generated, M1-M5 baseline 측정 완료"
+    },
+    {
+      "step": "(b)",
+      "action": "사용자 reaction 기반 evolution 방향 결정",
+      "spec": "Stage 1 session 후 사용자 본인 self-report (M3) + quantitative metric (M1/M2/M5) 검토. 다음 stage 선택: Stage 2 (CLM dual) / Stage 3 (EEG) / 중단.",
+      "cost_usd": [0, 0],
+      "eta": "1h decision",
+      "deliverable": "stage_2_decision.json"
+    },
+    {
+      "step": "(c)",
+      "action": "Stage 2-5 사용자 directive 따라 진화",
+      "spec": "선택된 stage EXEC. 매 stage 후 metric re-eval + honest C3 갱신.",
+      "cost_usd": [0, 5],
+      "eta": "1주-수개월"
+    }
+  ],
+  "stage_1_exec_blueprint": {
+    "components": [
+      "cortexlab-toolkit (PyPI, 이미 install) — TRIBE v2 streaming inference wrapper",
+      "Llama-3.2-3B (HuggingFace meta-llama/Llama-3.2-3B, gated access required)",
+      "minimal CLI: input(text) -> Llama generate -> TRIBE v2 BOLD -> log",
+      "BOLD PCA 64-d projection script (numpy)",
+      "M1-M5 metric calculation script (BERTScore/ROUGE/Pearson)"
+    ],
+    "wrapper_loc_estimate": "<150",
+    "hexa_compatibility": "wrapper = hexa or shell-script (HEXA-only repo 제약 준수). Llama-3.2-3B inference 는 HF Python 이지만 driver 는 pod-side 또는 외부 spawn (anima repo 내 .py 회피)",
+    "blocker_check": "Llama-3.2-3B HF gated access — user 본인 token 필요"
+  },
+  "stage_2_preview": {
+    "trigger": "Stage 1 M1 baseline 측정 후 quality gap 있으면 escalate",
+    "spec": "Option B — CLM 530M (hexa-native) substrate 통합 + tension_link mediator + BOLD side channel",
+    "wrapper_loc_estimate": "200-400",
+    "scientific_value_add": "anima identity (M4) metric 활성화"
+  },
+  "blockers_to_resolve_pre_exec": [
+    "Llama-3.2-3B HF gated token (user 본인 보유 필요)",
+    "cortexlab-toolkit 의 Mac CPU 호환성 검증 (CUDA-only path 회피)",
+    "framing_a_tribev2_pilot_2026_05_02 결과 검토 (incremental value 확인)",
+    "anima repo 내 driver 회피: pod-side spawn or external script"
+  ],
+  "no_idle_pods_compliance": "본 cycle 은 분석만 ($0). Stage 1 EXEC = Mac CPU local. H100 pod 무관. user feedback (no_idle_pods) 준수.",
+  "hexa_first_compliance": "anima repo 내 .py 작성 X. driver 는 pod-side or external. 본 cycle 의 deliverable = state/*.json + docs/*.md only."
+}

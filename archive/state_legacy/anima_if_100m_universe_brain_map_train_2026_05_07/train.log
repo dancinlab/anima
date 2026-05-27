@@ -1,0 +1,70 @@
+[05:48:24] === anima_if_100m_universe_brain_map_train BG-IF 2026-05-07 ===
+[05:48:24] hostname=aiden-b650m-k on_ubu=True seed=42
+[05:48:24] device=cuda torch=2.11.0+cu128
+[05:48:24] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[05:48:24] target_arch: 12L/640d/10h block=256 (~100M target)
+[05:48:24] fallback_arch: 10L/640d/10h (~80M)
+[05:48:24] reg: dropout=0.2 WD=0.1 label_smoothing=0.1
+[05:48:24] train: bs=4 grad_accum=16 (eff=64) lr=0.0002 warmup=500 steps=6000
+[05:48:24] early_stop: eval_every=500 val_loss_delta=0.05 v2_plateau_evals=3
+[05:48:24] SAVE_AT=[500, 1000, 1500, 2000, 2500, 3000, 3500, 4000, 4500, 5000, 5500, 6000]
+[05:48:24] corpus_path=/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt
+[05:48:24] corpus loaded: 6,791,535 bytes (6.48MB) in 0.0s
+[05:48:24] split: train=6,112,381 val=679,154 reduced_split=False
+[05:48:25] model built (primary): 153,079,776 params (153.08M)
+[05:48:25] primary smoke forward OK
+[05:48:25] === begin training ===
+[05:48:25] step     1/6000 | lr=8.00e-07 | L_A=5.615 L_G=5.699 L_T=8.362 | step_t=0.11s elapsed=0s
+[05:48:25] step     2/6000 | lr=1.20e-06 | L_A=5.640 L_G=5.664 L_T=8.354 | step_t=0.05s elapsed=0s
+[05:48:25] step     3/6000 | lr=1.60e-06 | L_A=5.595 L_G=5.667 L_T=8.420 | step_t=0.04s elapsed=0s
+[05:48:25] step     4/6000 | lr=2.00e-06 | L_A=5.608 L_G=5.633 L_T=8.457 | step_t=0.04s elapsed=0s
+[05:48:25] step     5/6000 | lr=2.40e-06 | L_A=5.580 L_G=5.692 L_T=8.438 | step_t=0.04s elapsed=0s
+[05:48:30] step   100/6000 | lr=4.04e-05 | L_A=4.689 L_G=4.929 L_T=7.877 | step_t=0.04s elapsed=5s
+[05:48:34] step   200/6000 | lr=8.04e-05 | L_A=4.391 L_G=4.586 L_T=5.572 | step_t=0.05s elapsed=9s
+[05:48:39] step   300/6000 | lr=1.20e-04 | L_A=3.878 L_G=4.270 L_T=5.510 | step_t=0.05s elapsed=14s
+[05:48:44] step   400/6000 | lr=1.60e-04 | L_A=3.515 L_G=3.823 L_T=4.525 | step_t=0.05s elapsed=19s
+[05:48:48] step   500/6000 | lr=2.00e-04 | L_A=3.089 L_G=3.363 L_T=3.807 | step_t=0.05s elapsed=23s
+[05:48:48] --- eval gate @ step 500 (15 prompts × 2 modes) ---
+[05:49:21]   EVAL[step=500] V2=0/15 V3=0/15 manual=1/15 deg=15 cycle=0 composite=-10 val_loss=3.0037
+[05:49:21]   SAVE_CKPT[step=500] -> /home/aiden/anima_native/anima-if-100m-ubm-20260507_054824/ckpt_500.pt
+[05:49:21]   BEST_CKPT[step=500] composite=-10 -> /home/aiden/core/anima/state/anima_if_100m_universe_brain_map_train_2026_05_07/ckpt_best.pt
+[05:49:26] step   600/6000 | lr=2.00e-04 | L_A=2.939 L_G=3.100 L_T=3.570 | step_t=0.37s elapsed=61s
+[05:49:30] step   700/6000 | lr=1.99e-04 | L_A=2.682 L_G=2.786 L_T=2.819 | step_t=0.05s elapsed=65s
+[05:49:35] step   800/6000 | lr=1.99e-04 | L_A=2.823 L_G=2.889 L_T=2.157 | step_t=0.05s elapsed=70s
+[05:49:40] step   900/6000 | lr=1.98e-04 | L_A=2.603 L_G=2.681 L_T=1.926 | step_t=0.05s elapsed=74s
+[05:49:44] step  1000/6000 | lr=1.96e-04 | L_A=2.220 L_G=2.272 L_T=2.181 | step_t=0.05s elapsed=79s
+[05:49:44] --- eval gate @ step 1000 (15 prompts × 2 modes) ---
+[05:50:17]   EVAL[step=1000] V2=1/15 V3=1/15 manual=7/15 deg=12 cycle=0 composite=33 val_loss=2.3370
+[05:50:17]   SAVE_CKPT[step=1000] -> /home/aiden/anima_native/anima-if-100m-ubm-20260507_054824/ckpt_1000.pt
+[05:50:17]   BEST_CKPT[step=1000] composite=33 -> /home/aiden/core/anima/state/anima_if_100m_universe_brain_map_train_2026_05_07/ckpt_best.pt
+[05:50:22] step  1100/6000 | lr=1.95e-04 | L_A=2.241 L_G=2.285 L_T=1.651 | step_t=0.38s elapsed=117s
+[05:50:27] step  1200/6000 | lr=1.93e-04 | L_A=2.102 L_G=2.043 L_T=2.259 | step_t=0.05s elapsed=121s
+[05:50:31] step  1300/6000 | lr=1.91e-04 | L_A=2.109 L_G=2.108 L_T=1.304 | step_t=0.05s elapsed=126s
+[05:50:36] step  1400/6000 | lr=1.88e-04 | L_A=2.063 L_G=2.101 L_T=1.581 | step_t=0.05s elapsed=131s
+[05:50:40] step  1500/6000 | lr=1.86e-04 | L_A=2.382 L_G=2.408 L_T=1.561 | step_t=0.05s elapsed=135s
+[05:50:40] --- eval gate @ step 1500 (15 prompts × 2 modes) ---
+[05:51:13]   EVAL[step=1500] V2=1/15 V3=1/15 manual=9/15 deg=25 cycle=0 composite=30 val_loss=1.9554
+[05:51:13]   SAVE_CKPT[step=1500] -> /home/aiden/anima_native/anima-if-100m-ubm-20260507_054824/ckpt_1500.pt
+[05:51:18] step  1600/6000 | lr=1.83e-04 | L_A=1.874 L_G=1.878 L_T=2.073 | step_t=0.37s elapsed=173s
+[05:51:23] step  1700/6000 | lr=1.80e-04 | L_A=1.857 L_G=1.976 L_T=1.973 | step_t=0.05s elapsed=177s
+[05:51:27] step  1800/6000 | lr=1.76e-04 | L_A=1.653 L_G=1.765 L_T=3.288 | step_t=0.05s elapsed=182s
+[05:51:32] step  1900/6000 | lr=1.73e-04 | L_A=1.794 L_G=2.027 L_T=1.406 | step_t=0.05s elapsed=187s
+[05:51:36] step  2000/6000 | lr=1.69e-04 | L_A=1.424 L_G=1.587 L_T=2.670 | step_t=0.05s elapsed=191s
+[05:51:36] --- eval gate @ step 2000 (15 prompts × 2 modes) ---
+[05:52:09]   EVAL[step=2000] V2=0/15 V3=0/15 manual=9/15 deg=28 cycle=0 composite=17 val_loss=1.4755
+[05:52:09]   SAVE_CKPT[step=2000] -> /home/aiden/anima_native/anima-if-100m-ubm-20260507_054824/ckpt_2000.pt
+[05:52:14] step  2100/6000 | lr=1.65e-04 | L_A=1.575 L_G=1.903 L_T=1.979 | step_t=0.37s elapsed=229s
+[05:52:19] step  2200/6000 | lr=1.61e-04 | L_A=1.515 L_G=1.857 L_T=2.063 | step_t=0.05s elapsed=233s
+[05:52:23] step  2300/6000 | lr=1.56e-04 | L_A=1.421 L_G=1.731 L_T=2.279 | step_t=0.05s elapsed=238s
+[05:52:28] step  2400/6000 | lr=1.52e-04 | L_A=1.276 L_G=1.590 L_T=2.020 | step_t=0.05s elapsed=243s
+[05:52:32] step  2500/6000 | lr=1.47e-04 | L_A=1.210 L_G=1.404 L_T=2.730 | step_t=0.05s elapsed=247s
+[05:52:32] --- eval gate @ step 2500 (15 prompts × 2 modes) ---
+[05:53:05]   EVAL[step=2500] V2=0/15 V3=0/15 manual=2/15 deg=29 cycle=0 composite=-19 val_loss=1.2561
+[05:53:05]   SAVE_CKPT[step=2500] -> /home/aiden/anima_native/anima-if-100m-ubm-20260507_054824/ckpt_2500.pt
+[05:53:05]   EARLY_STOP: composite plateau: 3 consecutive non-improving evals (best step=1000, composite=33)
+[05:53:06]   FINAL_CKPT[step=2500] -> /home/aiden/core/anima/state/anima_if_100m_universe_brain_map_train_2026_05_07/ckpt_final.pt
+[05:53:06] === final eval: best ckpt step=1000, 15 prompts × 2 modes ===
+[05:53:06]   loaded BEST ckpt step=1000 composite=33
+[05:53:38]   FINAL_BEST V2=3/15 V3=3/15 manual=5/15 cycle=0
+[05:53:38] === VERDICT === final_class=FAILED | params=153.1M | peak_step=1000 V2=1/15 manual=7/15 | final-eval(best ckpt) V2=3/15 manual=5/15 cycle=0 | vs_18m_verdict=CAPACITY_NOT_SUFFICIENT | early_stop=True | elapsed=313s
+[05:53:38] verdict written: /home/aiden/core/anima/state/anima_if_100m_universe_brain_map_train_2026_05_07/verdict.json

@@ -1,0 +1,154 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  motivation_score_scalar.hexa — PURE B7 companion: mean motivation_score
+//
+//  motivation_emit_ratio_bench.hexa reports the per-factor + aggregate EMIT
+//  RATIO (fraction of N=1000 samples whose weighted score > 0.3 threshold).
+//  Criterion 3 of closure_auto_judge wants the SCALAR motivation_8factor.
+//  motivation_score (the value compared ≥ 0.30, matching the coffeshop
+//  precedent state/coffeshop_real_m9b_2026_05_24/result.json = 0.55).
+//
+//  This companion reuses the SAME deterministic LCG (seed 20260524) + the
+//  SAME spontaneous_lib factor formulas, and reports:
+//    - mean motivation_score across N=1000 samples (the criterion-3 scalar)
+//    - per-factor mean (8 factor breakdown for result.json block)
+//    - emit ratio (weighted score > threshold) — H_246 deployment analog
+//
+//  No fabrication: every number derives from the library + LCG verbatim.
+//
+//  SSOT mirror: motivation_emit_ratio_bench.hexa (B7)
+//  Run: hexa run HEXAD/PURE/bench/motivation_score_scalar.hexa
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
+
+
+// ── deterministic LCG (Numerical Recipes — byte-mirror of bench) ─────────────
+
+fn _lcg_next(state: int) -> int {
+    let mult = 1103515245
+    let incr = 12345
+    let modulus = 2147483647
+    let s = ((state * mult) + incr) % modulus
+    if s < 0 { return s + modulus }
+    return s
+}
+
+fn _lcg_uniform(state: int) -> float {
+    return ((state % 1000000)) / 1000000.0
+}
+
+
+// ── factor draw (byte-identical to motivation_emit_ratio_bench.hexa §2) ──────
+
+fn _draw_factors(seed_box: list) -> dict {
+    let mut s = seed_box[0]
+    s = _lcg_next(s)    let u1 = _lcg_uniform(s)
+    s = _lcg_next(s)    let u2 = _lcg_uniform(s)
+    s = _lcg_next(s)    let u3 = _lcg_uniform(s)
+    s = _lcg_next(s)    let u4 = _lcg_uniform(s)
+    s = _lcg_next(s)    let u5 = _lcg_uniform(s)
+    s = _lcg_next(s)    let u6 = _lcg_uniform(s)
+    s = _lcg_next(s)    let u7 = _lcg_uniform(s)
+    s = _lcg_next(s)    let u8 = _lcg_uniform(s)
+    seed_box[0] = s
+
+    let phi      = u1
+    let sim      = u2
+    let cur_ema  = u3
+    let tens_d   = (u4 * 2.0) - 1.0
+    let gate     = 0.486 + u5 * 0.028
+    let split    = u6 < 0.20
+    let ratchet  = u7
+    let silence  = u8 * 3600.0
+
+    let rel  = factor_relevance(phi)
+    let gap  = factor_info_gap(sim)
+    let cur  = factor_curiosity(cur_ema)
+    let pn   = factor_pain(tens_d)
+    let coh  = factor_coherence(gate)
+    let orig = factor_originality(split)
+    let bal  = factor_balance(phi, ratchet)
+    let dyn_v= factor_dynamics(silence)
+
+    return #{
+        "relevance":   rel,    "info_gap":    gap,
+        "curiosity":   cur,    "pain":        pn,
+        "coherence":   coh,    "originality": orig,
+        "balance":     bal,    "dynamics":    dyn_v,
+    }
+}
+
+
+fn _fmt4(x: float) -> string {
+    // 4-decimal print, truncate-add-half-ulp round.
+    let scaled = (x * 10000.0) + 0.5
+    let n = scaled as int
+    let intp = n / 10000
+    let mut frac = n % 10000
+    if frac < 0 { frac = 0 - frac }
+    let mut fracs = to_string(frac)
+    while fracs.len() < 4 { fracs = "0" + fracs }
+    return to_string(intp) + "." + fracs
+}
+
+
+fn main() {
+    let n_samples = 1000
+    let seed = 20260524
+    let threshold = spont_im_threshold()   // 0.3
+
+    let names = ["relevance", "info_gap", "curiosity", "pain",
+                 "coherence", "originality", "balance", "dynamics"]
+
+    let mut factor_sum = [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+    let mut score_sum = 0.0
+    let mut emit_count = 0
+
+    let mut seed_box = [seed]
+    let mut i = 0
+    while i < n_samples {
+        let f = _draw_factors(seed_box)
+        let vals = [
+            to_float(to_string(f["relevance"])),
+            to_float(to_string(f["info_gap"])),
+            to_float(to_string(f["curiosity"])),
+            to_float(to_string(f["pain"])),
+            to_float(to_string(f["coherence"])),
+            to_float(to_string(f["originality"])),
+            to_float(to_string(f["balance"])),
+            to_float(to_string(f["dynamics"])),
+        ]
+        let mut k = 0
+        while k < 8 { factor_sum[k] = factor_sum[k] + vals[k]   k = k + 1 }
+
+        let score = motivation_score(vals[0], vals[1], vals[2], vals[3],
+                                     vals[4], vals[5], vals[6], vals[7])
+        score_sum = score_sum + score
+        if should_emit(score) { emit_count = emit_count + 1 }
+        i = i + 1
+    }
+
+    let mean_score = score_sum / (n_samples as float)
+    let emit_ratio = (emit_count as float) / (n_samples as float)
+
+    println("=== PURE B7 motivation_score scalar (criterion 3) ===")
+    println("N samples: " + to_string(n_samples))
+    println("seed:      " + to_string(seed))
+    println("threshold: " + _fmt4(threshold))
+    println("")
+    println("per-factor mean:")
+    let mut p = 0
+    while p < 8 {
+        let m = factor_sum[p] / (n_samples as float)
+        println("  " + names[p] + ": " + _fmt4(m))
+        p = p + 1
+    }
+    println("")
+    println("motivation_8factor.motivation_score (mean weighted) = " + _fmt4(mean_score))
+    println("emit_ratio (weighted score > threshold)             = " + _fmt4(emit_ratio)
+            + "  (n=" + to_string(emit_count) + "/" + to_string(n_samples) + ")")
+    println("")
+    let mut verdict = "FAIL"
+    if mean_score >= 0.30 { verdict = "PASS" }
+    println("criterion 3 (motivation_score >= 0.30): " + verdict)
+}

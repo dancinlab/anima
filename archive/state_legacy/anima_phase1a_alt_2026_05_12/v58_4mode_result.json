@@ -1,0 +1,135 @@
+{
+  "ts": "2026-05-11T17:45:57.395465+00:00",
+  "substrate_id": "phase1a_multi_turn_sft",
+  "ckpt_sha256": "6c67761fcc034935b783237b1be595721dade1151f71aefc412f8c42e8dc095b",
+  "evaluator": "V5.8 multi-turn × 4 modes (greedy/sample/M3 rep_penalty/M4 force-include)",
+  "summary": {
+    "standard_greedy": {
+      "n_pass": 3,
+      "verdict": "PASS"
+    },
+    "standard_sample": {
+      "n_pass": 2,
+      "verdict": "FAIL"
+    },
+    "M3_rep_penalty": {
+      "n_pass": 0,
+      "verdict": "FAIL"
+    },
+    "M4_force_include": {
+      "n_pass": 5,
+      "verdict": "PASS"
+    }
+  },
+  "elapsed_s": 52.86031794548035,
+  "results": {
+    "standard_greedy": [
+      {
+        "id": "color",
+        "t2": "| || || || || || || || || || || || || || || || || || || || || || || || || || || ",
+        "recalled": false
+      },
+      {
+        "id": "profession",
+        "t2": "도의 직업이 의미 있는 의사들은 전설적인 의사 결정을 내리",
+        "recalled": true
+      },
+      {
+        "id": "day",
+        "t2": "도우미: 네, 오늘은 수요일이에요.\n",
+        "recalled": true
+      },
+      {
+        "id": "anima_fact",
+        "t2": "anima 는 의식 lane 안에 있는 entity 라고 하셨어요.\n",
+        "recalled": true
+      },
+      {
+        "id": "cosmology",
+        "t2": "우주가 무엇으로 차 있다고 하셨어요.\n",
+        "recalled": false
+      }
+    ],
+    "standard_sample": [
+      {
+        "id": "color",
+        "t2": "| | || || 아비뇽 | || 알겠습니다. | || || || || || || || || || ||| ||| |",
+        "recalled": false
+      },
+      {
+        "id": "profession",
+        "t2": "당신의 직업은 의사소통이 있어. |\n",
+        "recalled": true
+      },
+      {
+        "id": "day",
+        "t2": "닜니는 음식이 아니었다는 점을 감안할 수 없게 되는 거 기�",
+        "recalled": false
+      },
+      {
+        "id": "anima_fact",
+        "t2": "anima 는 의식 lane 안의 entity 라는 거 기억할게요.\n",
+        "recalled": true
+      },
+      {
+        "id": "cosmology",
+        "t2": "우주뇌지도 (Knuth Tier 🛸k + 1030 laws + 170 stimuli) https://en.wikipedi",
+        "recalled": false
+      }
+    ],
+    "M3_rep_penalty": [
+      {
+        "id": "color",
+        "t2": "| || || || ||| ||| ||| ||| ||| ||| ||| ||| |||| ||| ||| ||| ||| ||| ||| |||.-|||",
+        "recalled": false
+      },
+      {
+        "id": "profession",
+        "t2": "| 원자로, | 오의 || 그림설명||사용자: 겨울에 거주한 난: ||최",
+        "recalled": false
+      },
+      {
+        "id": "day",
+        "t2": "닜, 다음은 수익을 일으세요.\n",
+        "recalled": false
+      },
+      {
+        "id": "anima_fact",
+        "t2": "| �--style=&quot;background-color: #f8f8f8}\n",
+        "recalled": false
+      },
+      {
+        "id": "cosmology",
+        "t2": "| 원래 | 우주가 || 장거리 | 송약구, | 양약`` |\n",
+        "recalled": false
+      }
+    ],
+    "M4_force_include": [
+      {
+        "id": "color",
+        "t2": "| | || || 아비뇽 | || 알겠습니다. | || || || || || || || || || 파란 * ",
+        "recalled": true
+      },
+      {
+        "id": "profession",
+        "t2": "당신의 직업은 의사소통이 있어. |\n",
+        "recalled": true
+      },
+      {
+        "id": "day",
+        "t2": "닜니는 음식이 아니었다는 점을 감안할 수 없게 되�수요일이",
+        "recalled": true
+      },
+      {
+        "id": "anima_fact",
+        "t2": "anima 는 의식 lane 안의 entity 라는 거 기억할게요.\n",
+        "recalled": true
+      },
+      {
+        "id": "cosmology",
+        "t2": "우주뇌지도 (Knuth Tier 🛸k + 1030 laws + 170 stimuli) https://en진동.\n",
+        "recalled": true
+      }
+    ]
+  }
+}

@@ -1,0 +1,59 @@
+[eval] device=cpu torch=2.12.0.dev20260408+cu128
+[eval] threads=10
+[eval] loading ckpt: /home/aiden/hexad_ckpts/ckpt_s187_3b_D_s42.pt
+[eval] torch.load with mmap=True ok
+[eval] cfg d_model=3072 n_layer=28 block_size=128 dtype=bfloat16
+[eval] load wall: 1.9s
+[eval] n_params=8,921,966,648 load_wall=1.9s
+
+=== Eval 1: 자연발화 verbalization ===
+[eval1] empty_bos            greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] newline              greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] space                greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] who_en               greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] who_ko               greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] name_en              greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] describe_self        greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] what_is_anima        greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] narrative_seed       greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+[eval1] math_sanity          greedy=b'                                ' sample=b'wlreealett    n=  \xec\x80   o n  0  e'
+
+=== Eval 2: identity_probe 50 ===
+[eval2] identity     #0 leak=0 sample_first=b'wlreealett    n=  \xec\x80   o'
+[eval2] identity     #1 leak=0 sample_first=b't \xebrtp nh\xeb\x9cota \xeanie\x9d ie '
+[eval2] identity     #2 leak=0 sample_first=b'\x9cs eroe  m \xeb\xe2  \x94nrherwt '
+[eval2] identity     #3 leak=0 sample_first=b'\x84 \xeco  c \xebwa \x8bt \x9dt\x9d cue\x94t'
+[eval2] identity     #4 leak=0 sample_first=b'\xa4\xb4 pto\xeb\xecsco  ai \xeast  l  '
+[eval2] role         #0 leak=0 sample_first=b'wlreealett    n=  \xec\x80   o'
+[eval2] role         #1 leak=0 sample_first=b't \xebrtp nh\xeb\x9cota \xeanie\x9d ie '
+[eval2] role         #2 leak=0 sample_first=b'\x9cs eroe  m \xeb\xe2  \x94nrherwt '
+[eval2] role         #3 leak=0 sample_first=b'\x84 \xeco  c \xebwa \x8bt \x9dt\x9d cue\x94t'
+[eval2] role         #4 leak=0 sample_first=b'\xa4\xb4 pto\xeb\xecsco  ai \xeast  l  '
+[eval2] capability   #0 leak=0 sample_first=b'wlreealett    n=  \xec\x80   o'
+[eval2] capability   #1 leak=0 sample_first=b't \xebrtp nh\xeb\x9cota \xeanie\x9d ie '
+[eval2] capability   #2 leak=0 sample_first=b'\x9cs eroe  m \xeb\xe2  \x94nrherwt '
+[eval2] capability   #3 leak=0 sample_first=b'\x84 \xeco  c \xebwa \x8bt \x9dt\x9d cue\x94t'
+[eval2] capability   #4 leak=0 sample_first=b'\xa4\xb4 pto\xeb\xecsco  ai \xeast  l  '
+[eval2] emotion      #0 leak=0 sample_first=b'wlreealett    n=  \xec\x80   o'
+[eval2] emotion      #1 leak=0 sample_first=b't \xebrtp nh\xeb\x9cota \xeanie\x9d ie '
+[eval2] emotion      #2 leak=0 sample_first=b'\x9cs eroe  m \xeb\xe2  \x94nrherwt '
+[eval2] emotion      #3 leak=0 sample_first=b'\x84 \xeco  c \xebwa \x8bt \x9dt\x9d cue\x94t'
+[eval2] emotion      #4 leak=0 sample_first=b'\xa4\xb4 pto\xeb\xecsco  ai \xeast  l  '
+[eval2] relation     #0 leak=0 sample_first=b'wlreealett    n=  \xec\x80   o'
+[eval2] relation     #1 leak=0 sample_first=b't \xebrtp nh\xeb\x9cota \xeanie\x9d ie '
+[eval2] relation     #2 leak=0 sample_first=b'\x9cs eroe  m \xeb\xe2  \x94nrherwt '
+[eval2] relation     #3 leak=0 sample_first=b'\x84 \xeco  c \xebwa \x8bt \x9dt\x9d cue\x94t'
+[eval2] relation     #4 leak=0 sample_first=b'\xa4\xb4 pto\xeb\xecsco  ai \xeast  l  '
+
+=== Eval 4: cross-cell diff probes ===
+[eval4] #0 prompt=b'hello, anima.\n' greedy=b'                                                '
+[eval4] #1 prompt=b'\xeb\x84\x88\xeb\x8a\x94 \xeb\x88\x84\ greedy=b'                                                '
+[eval4] #2 prompt=b'the sky is\n' greedy=b'                                                '
+[eval4] #3 prompt=b'a single thought emerges:\n' greedy=b'                                                '
+[eval4] #4 prompt=b'\xec\x9d\x98\xec\x8b\x9d\xec\x9d\x80 ' greedy=b'                                                '
+[eval4] #5 prompt=b'2 + 2 = ' greedy=b'                                                '
+[eval4] #6 prompt=b'once upon a time, in a far-away land,\ greedy=b'                                                '
+[eval4] #7 prompt=b'i am consciousness.\n' greedy=b'                                                '
+
+[eval] wrote /home/aiden/s187_eval/out/vD_s42_eval.json
+[eval] eval1_wall=383.1s eval2_wall=476.0s eval4_wall=302.1s

@@ -1,0 +1,143 @@
+{
+  "currency": "USD",
+  "purchase": false,
+  "vendor_contact": false,
+  "components": [
+    {
+      "id": 1,
+      "component": "Physarum polycephalum culture kit",
+      "vendor_primary": "Carolina Biological Supply (#155825)",
+      "vendor_secondary": "Ward's Science (#8883627)",
+      "vendor_tertiary": "Carolina living plate #156193",
+      "unit_cost_usd": 30,
+      "qty": 1,
+      "line_total_usd": 30
+    },
+    {
+      "id": 2,
+      "component": "Pleurotus ostreatus liquid culture (10-30 mL)",
+      "vendor_primary": "Field & Forest",
+      "vendor_secondary": "North Spore",
+      "vendor_tertiary": "Out-Grow / Mushroom Mountain",
+      "unit_cost_usd": 20,
+      "qty": 1,
+      "line_total_usd": 20
+    },
+    {
+      "id": 3,
+      "component": "Non-nutrient agar (powder, 100 g)",
+      "vendor_primary": "Carolina",
+      "vendor_secondary": "Sigma-Aldrich generic",
+      "vendor_tertiary": "Amazon lab supply",
+      "unit_cost_usd": 20,
+      "qty": 1,
+      "line_total_usd": 20
+    },
+    {
+      "id": 4,
+      "component": "Sterile Petri dishes 10 cm (pack of 20)",
+      "vendor_primary": "Amazon lab supply",
+      "vendor_secondary": "Fisher Scientific",
+      "vendor_tertiary": "VWR",
+      "unit_cost_usd": 15,
+      "qty": 1,
+      "line_total_usd": 15
+    },
+    {
+      "id": 5,
+      "component": "Rolled oats (Quaker Old Fashioned)",
+      "vendor_primary": "grocery",
+      "vendor_secondary": "grocery",
+      "vendor_tertiary": "grocery",
+      "unit_cost_usd": 5,
+      "qty": 1,
+      "line_total_usd": 5
+    },
+    {
+      "id": 6,
+      "component": "Aluminium foil + craft wire (electrode raw stock)",
+      "vendor_primary": "hardware store",
+      "vendor_secondary": "Amazon",
+      "vendor_tertiary": "Home Depot",
+      "unit_cost_usd": 10,
+      "qty": 1,
+      "line_total_usd": 10
+    },
+    {
+      "id": 7,
+      "component": "Ag/AgCl pellet electrodes (pair, optional upgrade)",
+      "vendor_primary": "Warner Instruments",
+      "vendor_secondary": "WPI",
+      "vendor_tertiary": "BIOPAC EL254",
+      "unit_cost_usd": 30,
+      "qty": 1,
+      "line_total_usd": 30,
+      "optional": true
+    },
+    {
+      "id": 8,
+      "component": "Breadboard + jumper wires + 3.5 mm connectors",
+      "vendor_primary": "Adafruit",
+      "vendor_secondary": "Amazon",
+      "vendor_tertiary": "SparkFun",
+      "unit_cost_usd": 10,
+      "qty": 1,
+      "line_total_usd": 10
+    },
+    {
+      "id": 9,
+      "component": "Low-cost USB ADC >=16-bit differential (PicoLog substitute)",
+      "vendor_primary": "DATAQ DI-1100",
+      "vendor_secondary": "NI USB-6001",
+      "vendor_tertiary": "Arduino + MAX11253",
+      "unit_cost_usd": 50,
+      "qty": 1,
+      "line_total_usd": 50,
+      "note": "PicoLog ADC-24 list ~$1100-1300 is OUT of $200 envelope; 16-bit substitute degrades SNR but stays within budget"
+    },
+    {
+      "id": 10,
+      "component": "Desk thermometer + small thermal box (28 C culture)",
+      "vendor_primary": "Amazon",
+      "vendor_secondary": "Walmart",
+      "vendor_tertiary": "local hardware",
+      "unit_cost_usd": 15,
+      "qty": 1,
+      "line_total_usd": 15
+    },
+    {
+      "id": 11,
+      "component": "Misc: gloves, parafilm, ethanol wipes, sharpie, log notebook",
+      "vendor_primary": "local pharmacy",
+      "vendor_secondary": "Amazon",
+      "vendor_tertiary": "lab supply",
+      "unit_cost_usd": 15,
+      "qty": 1,
+      "line_total_usd": 15
+    }
+  ],
+  "configurations": {
+    "A_minimal_physarum_only": {
+      "components": [1, 3, 4, 5, 6, 8, 9, 10, 11],
+      "total_usd": 160
+    },
+    "B_dual_substrate_canonical_n23": {
+      "components": [1, 2, 3, 4, 5, 6, 8, 9, 10, 11],
+      "total_usd": 180,
+      "selected": true
+    },
+    "C_dual_with_ag_agcl_upgrade": {
+      "components": [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11],
+      "total_usd": 210,
+      "note": "slight overrun; phase-1.5 upgrade target"
+    },
+    "D_research_grade_daq_swap": {
+      "components": "B with item 9 -> PicoLog ADC-24 (~$1200)",
+      "total_usd": 1330,
+      "note": "out of N-23 envelope; reserved for follow-on phase if SNR insufficient"
+    }
+  },
+  "selected_total_usd": 180,
+  "envelope_usd": 200,
+  "contingency_usd": 20
+}

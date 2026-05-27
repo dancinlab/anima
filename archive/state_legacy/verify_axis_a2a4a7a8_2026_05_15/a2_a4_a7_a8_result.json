@@ -1,0 +1,95 @@
+{
+  "a2": {
+    "results": [
+      {
+        "hc_id": "Hc_A2-3",
+        "name": "IIT 4.0 \u03a6 lower bound by partition sum",
+        "closed_form": "\u03a6 \u2265 \u03a3 ei_partition (additive lower bound)",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A2"
+      },
+      {
+        "hc_id": "Hc_A2-4",
+        "name": "MI chain rule I(X;Y,Z) = I(X;Y) + I(X;Z|Y)",
+        "closed_form": "I(X;Y,Z) = I(X;Y) + I(X;Z|Y) (Shannon 1948)",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A2"
+      }
+    ],
+    "n_pass": 2
+  },
+  "a4": {
+    "results": [
+      {
+        "hc_id": "Hc_A4-9",
+        "name": "Euler-Euclid perfect number 2^(p-1)(2^p-1)",
+        "closed_form": "N = 2^(p-1)(2^p - 1) when 2^p-1 prime (Euclid + Euler 1747)",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A4"
+      },
+      {
+        "hc_id": "Hc_A4-10",
+        "name": "Aliquot s(6) = 6 (perfect number identity)",
+        "closed_form": "s(n) = \u03c3(n) - n; n perfect iff s(n) = n",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A4"
+      },
+      {
+        "hc_id": "Hc_A4-11",
+        "name": "\u03c3 multiplicative \u03c3(mn) = \u03c3(m)\u00b7\u03c3(n) for coprime",
+        "closed_form": "\u03c3(mn) = \u03c3(m)\u00b7\u03c3(n), gcd(m,n)=1 (M\u00f6bius theory)",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A4"
+      }
+    ],
+    "n_pass": 3
+  },
+  "a7": {
+    "results": [
+      {
+        "hc_id": "Hc_A7-6",
+        "name": "Michaelis-Menten enzyme kinetics v = V_max\u00b7S/(K_m+S)",
+        "closed_form": "v = V_max\u00b7[S] / (K_m + [S]); v(K_m) = V_max/2",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A7"
+      },
+      {
+        "hc_id": "Hc_A7-7",
+        "name": "Hill equation \u03b8 = L^n/(K_d^n + L^n)",
+        "closed_form": "\u03b8 = [L]^n / (K_d^n + [L]^n); \u03b8(K_d) = 1/2 regardless of n",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A7"
+      }
+    ],
+    "n_pass": 2
+  },
+  "a8": {
+    "results": [
+      {
+        "hc_id": "Hc_A8-5",
+        "name": "Shannon entropy max H_max = log_2(N)",
+        "closed_form": "H_max = log_2(N) (uniform p_i = 1/N, Shannon 1948)",
+        "sympy_verified": false,
+        "verdict": "FAIL",
+        "axis": "A8"
+      },
+      {
+        "hc_id": "Hc_A8-6",
+        "name": "Kolmogorov K(x) \u2264 |x| + O(log|x|)",
+        "closed_form": "K(x) \u2264 |x| + O(log|x|) (Kolmogorov 1965, asymptotic)",
+        "sympy_verified": true,
+        "verdict": "SUPPORTED-FORMAL \ud83d\udd35",
+        "axis": "A8"
+      }
+    ],
+    "n_pass": 1
+  },
+  "total_blue": 8
+}

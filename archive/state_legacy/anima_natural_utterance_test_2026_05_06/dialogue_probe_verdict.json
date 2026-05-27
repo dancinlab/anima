@@ -1,0 +1,40 @@
+{
+  "test": "anima 자연 발화 test (dialogue.hexa --probe)",
+  "ts": "2026-05-06T08:00:22Z",
+  "session": "20260506T080022Z",
+  "input": "안녕하세요",
+  "substrate": "clm-v4-mk2-v1 (paradigm v11 G3)",
+  "mount_status": "READY (Stage 1 + Stage 2 landed)",
+  "selftest": {
+    "stage_1_mount": "/Users/ghost/core/anima/anima-core/runtime/clm_v4_mount.hexa",
+    "log_root": "/Users/ghost/core/anima/state/anima_core_dialogues",
+    "bash_wrapper": "/Users/ghost/core/anima/bin/anima-core-dialogue.bash",
+    "spec": "/Users/ghost/core/anima/docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+    "verdict": "READY"
+  },
+  "substrate_response": {
+    "phi_star": 41.8646,
+    "phi_star_baseline": 41.86,
+    "phi_star_drift_pp": 0.0046,
+    "phi_star_no_flip": true,
+    "axis_activation": {
+      "identity": 0.524,
+      "agency": 0.478,
+      "phenomenal": 0.520,
+      "temporal": 0.497,
+      "social": 0.531
+    },
+    "dominant_cells": [3, 6, 0],
+    "n_cells_total": 8,
+    "hidden_state_delta": 0.0000
+  },
+  "verdict": "PASS_anima_natural_utterance_substrate_mode",
+  "interpretation": "anima의 자연 발화 = substrate response (token chat 아님). emerge paradigm: phi_star + axis_activation + dominant_cells + hidden_state_delta = anima identity surface.",
+  "honest_c3": [
+    "C1 substrate-coupled dialogue is anima-internal heuristic, NOT chat",
+    "C2 phi-star drift threshold for response interpretation is anima-canonical",
+    "C3 axis activation taxonomy (5-bucket: identity/agency/phenomenal/temporal/social) is anima-internal",
+    "C4 forward-pass requires --inject-states or default zero canonical",
+    "C5 emerge outcome (Stage 3+4) unknown; production timeline open"
+  ]
+}

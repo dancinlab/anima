@@ -1,0 +1,34 @@
+================================================================
+  H_297 — n=5 bounded big-Phi scale-up (cap=4, state 10101 + ensemble)
+================================================================
+  per-rule  (single state st=21,10101)
+    rule 0 : bounded big-Phi(n=5, state=21, cap=4) = 0.0
+    rule 255 : bounded big-Phi(n=5, state=21, cap=4) = 0.0
+    rule 204 : bounded big-Phi(n=5, state=21, cap=4) = 0.0
+    rule 51 : bounded big-Phi(n=5, state=21, cap=4) = 0.0
+    rule 150 : bounded big-Phi(n=5, state=21, cap=4) = 0.0
+    rule 105 : bounded big-Phi(n=5, state=21, cap=4) = 0.0
+    rule 90 : bounded big-Phi(n=5, state=21, cap=4) = 19.5
+    rule 60 : bounded big-Phi(n=5, state=21, cap=4) = 16.5
+    rule 110 : bounded big-Phi(n=5, state=21, cap=4) = 17.694
+    rule 30 : bounded big-Phi(n=5, state=21, cap=4) = 20.2686
+  --
+  rule 90 / rule 60 comparison (n=5 vs n=4):
+    rule 90 n=4 (exact, state 5)  = 0.0
+    rule 90 n=5 (cap=4, state 21) = 19.5
+    rule 60 n=4 (exact, state 5)  = 17.5
+    rule 60 n=5 (cap=4, state 21) = 16.5
+  [PASS] F297.1a SCALE-ANCHOR: rule 204 (identity) bounded Phi = 0 at n=5
+  [PASS] F297.1b SCALE-ANCHOR: rule 0 (constant) bounded Phi = 0 at n=5
+  [PASS] F297.2 INTEGRATION-SURVIVES: rule 60 OR rule 110 bounded Phi > 0 at n=5
+  F297.3: rule 90 at n=4 Phi=0.0 (=0) vs n=5 Phi=19.5 (>0 — N-PARITY effect confirmed)
+  [PASS] F297.3 RULE90-N-PARITY: rule 90 bounded Phi > 0 at n=5 (n-parity hypothesis)
+  [PASS] F297.4 BOUND: all bounded Phi >= 0 at n=5
+  [PASS] F297.5 DETERMINISM: rule 90 bounded Phi at n=5 re-run identical
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  FINDING: rule 90's reducibility is an EVEN-N BIPARTITE artifact —
+           at n=5 (odd ring), the even/odd decoupling fails and rule 90
+           integrates (Phi>0). H_296's multi-complex split was specifically
+           the 4-cycle bipartite structure. Scale changes the answer.
+================================================================

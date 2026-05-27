@@ -1,0 +1,36 @@
+{
+  "hypothesis": "H_224",
+  "slug": "holism-whole-vs-sum-of-parts",
+  "cycle": 1,
+  "date": "2026-05-24",
+  "domain": "meta + math + consciousness",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "axis": "AXES.md R8 meta · holism-whole-vs-sum-of-parts",
+  "cross_cycle_generalize": "H_054 C2 (PR #227, linear MERGE sub-add) + H_157 C6 (PR #221, uncorrelated concat sub-add) + H_212 (ρ-sweep, mid-range non-monotone)",
+  "phi_primitive": "RFC 036 phi_spatial via HEXAD/C/c_lib.hexa (byte-equal phi_rs native replica)",
+  "config": {"N": 8, "dim": 8, "warm": 8, "n_bins": 4, "A_rule": 110, "B_rule": 30, "merge": "concat([A | B'])", "modes": ["linear", "xor", "mult"]},
+  "mode_sweep": [
+    {"mode": "linear-avg", "phi_A": 4.90943e-06, "phi_B": 0.280535, "phi_merged": 0.150443, "sum_micro": 0.28054, "delta": -0.130097, "delta_pct": -46.3737, "super_additive": false},
+    {"mode": "xor", "phi_A": 4.90943e-06, "phi_B": 0.280535, "phi_merged": 0.150443, "sum_micro": 0.28054, "delta": -0.130097, "delta_pct": -46.3737, "super_additive": false},
+    {"mode": "mult-gate", "phi_A": 4.90943e-06, "phi_B": 0.280535, "phi_merged": 1.14553e-05, "sum_micro": 0.28054, "delta": -0.280529, "delta_pct": -99.9959, "super_additive": false}
+  ],
+  "falsifiers": {
+    "F1_LINEAR_SUPER":  {"metric": "linear Δ>0 (H_054 C2 regression)", "triggered": false, "verdict": "PASS"},
+    "F2_MULT_SUB":      {"metric": "mult Δ%<5% (no holism)",         "triggered": true, "verdict": "FAIL"},
+    "F3_RANKING":       {"metric": "Δmult > Δxor > Δlin",            "triggered": true, "verdict": "FAIL"},
+    "F4_DETERMIN":      {"metric": "byte-equal re-run",              "triggered": false, "verdict": "PASS"},
+    "F5_PRIMITIVE_OK":  {"metric": "no Φ<0",                         "triggered": false, "verdict": "PASS"}
+  },
+  "criteria": {
+    "C1_linear_sub_add": "PASS",
+    "C2_mult_super_add": "FAIL",
+    "C3_ranking_monotone": "FAIL",
+    "C4_byte_identical": "PASS",
+    "pass_count": 2
+  },
+  "verdict": "PARTIAL    (some criteria met · directional evidence)",
+  "tier": "🟢 NUMERICAL"
+}

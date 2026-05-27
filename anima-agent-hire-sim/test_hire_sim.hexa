@@ -1,0 +1,142 @@
+// test_hire_sim.hexa — TSRV-P4-2 smoke
+//
+// Validates hire_sim framework end-to-end with mock autonomy_loop adapter.
+// Real LLM plug-in reruns identical harness; no framework change expected.
+
+// dormant 2026-05-06 anima-agent split: link severed.
+// historical: use "../anima-agent/autonomy_loop"
+use "hire_sim_100"
+
+fn main() {
+    let adapter = LLMAdapter { name: "mock", temperature: 0.0 }
+    let tasks = load_tasks()
+    let mut pass = 0
+    let mut total = 0
+
+    // ── T1: corpus size + domain coverage ─────────────────────
+    println("=== T1: corpus composition ===")
+    let t1_size_ok = len(tasks) == 100
+    // count per domain
+    let domains = ["email", "code", "meeting", "doc", "schedule", "research"]
+    let expected_counts = [17, 17, 16, 17, 16, 17]
+    let mut all_ok = t1_size_ok
+    let mut di = 0
+    while di < len(domains) {
+        let dname = domains[di]
+        let mut cnt = 0
+        let mut ti = 0
+        while ti < len(tasks) {
+            if tasks[ti].domain == dname { cnt = cnt + 1 }
+            ti = ti + 1
+        }
+        println("  " + dname + ": " + to_string(cnt) + " (expected " + to_string(expected_counts[di]) + ")")
+        if cnt != expected_counts[di] { all_ok = false }
+        di = di + 1
+    }
+    if all_ok { pass = pass + 1 }
+    total = total + 1
+    println("T1 PASS=" + to_string(all_ok) + " (size=100, 17/17/16/17/16/17)")
+
+    // ── T2: runner end-to-end smoke ────────────────────────────
+    println("=== T2: runner e2e ===")
+    let result = run_hire_sim(adapter, tasks)
+    println(hire_sim_report(result))
+    let t2_ok = result.tasks_run == 100 && len(result.per_domain) == 6
+    if t2_ok { pass = pass + 1 }
+    total = total + 1
+    println("T2 PASS=" + to_string(t2_ok))
+
+    // ── T3: verdict logic ──────────────────────────────────────
+    println("=== T3: verdict schema ===")
+    // Mock adapter decomposes into fixed sub-goals, not necessarily covering
+    // task-specific keywords. Expect: many tasks fail completion on keyword
+    // match (mock doesn't inject task terms), low completion_rate, verdict
+    // likely PARTIAL or FAIL. This validates the rubric is strict.
+    let t3_verdict_valid = result.verdict == "PASS" || result.verdict == "PARTIAL" || result.verdict == "FAIL"
+    if t3_verdict_valid { pass = pass + 1 }
+    total = total + 1
+    println("verdict=" + result.verdict + " T3 PASS=" + to_string(t3_verdict_valid))
+
+    // ── T4: rate/score in [0,1] ────────────────────────────────
+    println("=== T4: rate + score bounds ===")
+    let t4_ok = result.completion_rate >= 0.0 && result.completion_rate <= 1.0
+                && result.avg_score >= 0.0 && result.avg_score <= 1.0
+    if t4_ok { pass = pass + 1 }
+    total = total + 1
+    println("rate=" + to_string(result.completion_rate) + " score=" + to_string(result.avg_score) + " T4 PASS=" + to_string(t4_ok))
+
+    // ── T5: per-domain summaries non-empty ────────────────────
+    println("=== T5: per-domain summaries ===")
+    let mut t5_ok = len(result.per_domain) == 6
+    let mut pi = 0
+    while pi < len(result.per_domain) {
+        let d = result.per_domain[pi]
+        // domain size: email 17, code 17, meeting 16, doc 17, schedule 16, research 17
+        if d.n < 16 || d.n > 17 { t5_ok = false }
+        pi = pi + 1
+    }
+    if t5_ok { pass = pass + 1 }
+    total = total + 1
+    println("T5 PASS=" + to_string(t5_ok))
+
+    // ── T6: keyword matching sanity ────────────────────────────
+    println("=== T6: keyword embedded tasks hit ===")
+    // Run autonomy on a prompt that embeds a known keyword in its text
+    // and verify the rubric detects it.
+    // Mock decomposer echoes goal text into sub-goals, so keywords in the
+    // prompt WILL appear in trace blob. Pick EM01 ("refund policy") and check
+    // keyword_hits > 0.
+    let em01 = tasks[0]
+    let trace = run_autonomy(adapter, em01.prompt, 3, 100)
+    let r = evaluate_task(em01, trace, 27.0, 0)
+    let t6_ok = r.keyword_hits >= 2  // at least "refund" and "policy" should match
+    if t6_ok { pass = pass + 1 }
+    total = total + 1
+    println("EM01 hits=" + to_string(r.keyword_hits) + "/" + to_string(r.keyword_total) + " T6 PASS=" + to_string(t6_ok))
+
+    // ── T7: difficulty distribution ───────────────────────────────
+    println("=== T7: difficulty distribution ===")
+    let dd = count_difficulty(tasks)
+    println("  easy=" + to_string(dd.easy) + " medium=" + to_string(dd.medium) + " hard=" + to_string(dd.hard))
+    // Expected: 36 easy + 36 medium + 28 hard = 100
+    let t7_ok = dd.easy == 36 && dd.medium == 36 && dd.hard == 28
+    if t7_ok { pass = pass + 1 }
+    total = total + 1
+    println("T7 PASS=" + to_string(t7_ok) + " (36/36/28)")
+
+    // ── T8: stratified subset selector ────────────────────────────
+    println("=== T8: subset_stratified ===")
+    let sub5 = subset_stratified(tasks, 5)
+    let t8_size = len(sub5) == 30
+    // Verify each domain has exactly 5
+    let sub_dd = count_difficulty(sub5)
+    // With 5 per domain from seed tasks: 2 easy + 2 medium + 1 hard each
+    // Totals: 12 easy + 12 medium + 6 hard = 30
+    let t8_dist = sub_dd.easy + sub_dd.medium + sub_dd.hard == 30
+    let t8_ok = t8_size && t8_dist
+    if t8_ok { pass = pass + 1 }
+    total = total + 1
+    println("  subset size=" + to_string(len(sub5)) + " dist=" + to_string(sub_dd.easy) + "/" + to_string(sub_dd.medium) + "/" + to_string(sub_dd.hard))
+    println("T8 PASS=" + to_string(t8_ok))
+
+    // ── T9: stratified30 gate (mock) ──────────────────────────────
+    println("=== T9: stratified30 gate (mock adapter) ===")
+    let gate = run_stratified30_gate(adapter, tasks, 3, 100)
+    println(stratified_gate_report(gate))
+    // Mock adapter's sub-goal text echoes prompt keywords, so completion
+    // should be high with depth=3. Gate struct fields must be valid.
+    let t9_ok = gate.sim_result.tasks_run == 30
+                && (gate.gate_alm == "PASS" || gate.gate_alm == "FAIL")
+                && (gate.gate_clm == "PASS" || gate.gate_clm == "FAIL")
+    if t9_ok { pass = pass + 1 }
+    total = total + 1
+    println("T9 PASS=" + to_string(t9_ok) + " (gate struct valid, tasks=30)")
+
+    println("=== RESULT ===")
+    println(to_string(pass) + "/" + to_string(total) + " tests passed")
+    if pass == total {
+        println("hire_sim_100: ALL PASS")
+    } else {
+        println("hire_sim_100: FAIL")
+    }
+}

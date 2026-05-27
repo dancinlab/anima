@@ -1,0 +1,41 @@
+{
+ "cycle": "H_009 Stage-2 FIM-vs-Φ formal correspondence (2026-05-16)",
+ "pyphi_version": "1.2.0",
+ "grid": [
+  {
+   "eps": 0.0,
+   "phi": 0.0,
+   "fim_top": 3.0
+  },
+  {
+   "eps": 0.2,
+   "phi": 0.09885,
+   "fim_top": 3.125
+  },
+  {
+   "eps": 0.4,
+   "phi": 0.38366,
+   "fim_top": 3.57143
+  },
+  {
+   "eps": 0.6,
+   "phi": 0.52842,
+   "fim_top": 4.6875
+  },
+  {
+   "eps": 0.8,
+   "phi": 0.34189,
+   "fim_top": 8.33333
+  },
+  {
+   "eps": 1.0,
+   "phi": 0.67444,
+   "fim_top": 1500.75038
+  }
+ ],
+ "spearman_fim_phi": 0.8286,
+ "co_vary_strong": true,
+ "verdict": "SUPPORTED-FORMAL 🔵 (FIM spectrum tracks Φ, |ρ|≥0.7 deterministic)",
+ "tier": "b-pyphi-formal + closed-form FIM",
+ "honest_c3": "Result-agnostic per g_verdict_tier_blue (b): a deterministic Φ(ε)+I(ε) correspondence is closed whatever the sign. Scope: single order-parameter ε, 3-node ring, RoM Φ. This closes the H_009 EMERGENCE sub-claim (FIM-spectrum-as-Φ-proxy) formally; the Fisher MATH (I=1/σ²,Cramér-Rao) was already 🔵 in hypo_pending_sympy. NOT claimed: full multi-param FIM on a trained LM substrate (Hc_1283-scale, separate)."
+}

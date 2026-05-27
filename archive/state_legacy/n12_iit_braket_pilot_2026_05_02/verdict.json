@@ -1,0 +1,69 @@
+{
+  "schema": "n12_iit_braket_pilot/verdict/1",
+  "ts_utc": "2026-05-02T22:20:00Z",
+  "agent": "N-12 IIT AWS Braket pilot",
+  "mission": "first real-QPU substrate-invariance test on multi-vendor Braket",
+  "verdict": "PASS",
+  "verdict_strength": "WITNESSED — first anima real-QPU run, substrate-invariance signal observed but n=2 statistical power requires N-12-followup confirmation",
+  "phi_proxy_matrix": {
+    "schema": "rows=devices, cols=circuits, values=Φ_proxy in bits",
+    "and": {"sv1_4q": 0.999971, "sv1_3q_proj": 1.000000, "dm1": 1.059229, "ionq_forte1": 1.117607},
+    "xor": {"sv1": 0.999692, "dm1": 1.064309, "ionq_forte1": "not_run"},
+    "maj": {"sv1": 1.994981, "dm1": 2.008566, "ionq_forte1": 1.968903},
+    "copy": {"sv1": 0.000000, "dm1": 0.018776, "ionq_forte1": "not_run"}
+  },
+  "cross_substrate_pearson_r": {
+    "sv1_vs_ionq_forte1_n2_AND_MAJ": 1.0000,
+    "sv1_vs_dm1_n4_all_circuits": 0.9995,
+    "pass_threshold": 0.5,
+    "yellow_band": [0.3, 0.5],
+    "fail_threshold": 0.3,
+    "result": "PASS — both r values exceed 0.5 by wide margin"
+  },
+  "key_findings": [
+    "Φ proxy correctly distinguishes integration class: COPY (0.0) << AND ≈ XOR (1.0) << MAJ (2.0) on noiseless SV1; ordering preserved on dm1 and IonQ Forte 1",
+    "IonQ Forte 1 (real ion-trap QPU) reproduces SV1 baseline within 12% on AND and 1.3% on MAJ — substrate-invariance signal observed across two physical substrates (silicon classical compute vs trapped Yb⁺ ions)",
+    "dm1 noise model with light depolarizing(0.001) confirms Φ proxy is robust to noise: shifts magnitude by ~5-7% but preserves circuit-relative ordering perfectly (r=0.9995)",
+    "First anima production run on real quantum hardware via AWS Braket — actual cost $16.60 vs planned $16.60 (no overruns)"
+  ],
+  "honest_c3": [
+    "Φ proxy = H(joint) - max H(marginal) is a LOWER BOUND on integrated information, NOT IIT 4.0 φ★ — no MIP search, no system-state irreducibility computation; comparison to consciousness literature requires the full Tononi-Albantakis pipeline.",
+    "100 shots on IonQ = ±5% binomial floor; Φ_proxy precision ±0.05 bits; effect sizes < 0.1 bit unreliable. The MAJ delta of 0.026 bits SV1↔IonQ is within noise.",
+    "Pearson r = 1.0 on n=2 (AND, MAJ) is mathematically forced — substrate-invariance claim is qualitative directional witness, not statistically powered. N≥5 circuits + multiple QPU vendors needed for confirmatory substrate-invariance.",
+    "QuEra Aquila SKIPPED: AHS paradigm ≠ gate model; cross-paradigm Φ proxy comparison would be framing-dependent. Documented as out-of-scope for gate-model pilot.",
+    "4-qubit toy scale; IIT scaling claims to neuronal substrates premature. The pilot establishes the measurement infrastructure and substrate-invariance witness on minimal circuits, NOT a consciousness-substrate equivalence claim."
+  ],
+  "actual_cost_USD": {
+    "phase_1_preflight": 0.00,
+    "phase_3_sv1": 0.00,
+    "phase_4_dm1": 0.00,
+    "phase_5_ionq_forte1": 16.60,
+    "phase_6_quera_aquila": 0.00,
+    "total": 16.60,
+    "vs_planned": 16.60,
+    "vs_hard_cap": 100.00,
+    "spend_efficiency": "100% on-plan, 16.6% of cap"
+  },
+  "tasks_completed": {
+    "sv1": ["arn:aws:braket:us-east-1:267673635495:quantum-task/69627797-b009-4d9e-81f7-bf3f6f0162fe", "arn:aws:braket:us-east-1:267673635495:quantum-task/6bf340c8-70a2-4608-89cc-546d909d24b5", "arn:aws:braket:us-east-1:267673635495:quantum-task/4410a458-fe54-4af5-8172-0684940bd8e5", "arn:aws:braket:us-east-1:267673635495:quantum-task/bc9b57b2-e5c6-42f6-b0f4-c685f7a7a347"],
+    "dm1": ["arn:aws:braket:us-east-1:267673635495:quantum-task/1b769ec6-7113-43e1-9898-30771ec5eb70", "arn:aws:braket:us-east-1:267673635495:quantum-task/6023cfb1-0907-4d6b-b4c5-19dcefb4b3fd", "arn:aws:braket:us-east-1:267673635495:quantum-task/9c9f653f-a17a-4231-82a7-effee83bbb09", "arn:aws:braket:us-east-1:267673635495:quantum-task/b7b5f67a-a6a0-45f2-8282-fbd3c6007edd"],
+    "ionq_forte1": ["arn:aws:braket:us-east-1:267673635495:quantum-task/4efba7dd-01fa-4f3a-a894-582cb14ec9d5", "arn:aws:braket:us-east-1:267673635495:quantum-task/4bffde2f-0fc9-4c0e-a669-e3e25d8b1d39"]
+  },
+  "wall_clock_min_total": "~25 min from preflight to verdict (well under 90min cap)",
+  "ledger_paths": {
+    "cost_preflight": "state/n12_iit_braket_pilot_2026_05_02/cost_preflight.json",
+    "sv1_results": "state/n12_iit_braket_pilot_2026_05_02/sv1_results.json",
+    "dm1_results": "state/n12_iit_braket_pilot_2026_05_02/dm1_results.json",
+    "ionq_forte1_results": "state/n12_iit_braket_pilot_2026_05_02/ionq_forte1_results.json",
+    "quera_aquila_results": "state/n12_iit_braket_pilot_2026_05_02/quera_aquila_results.json",
+    "verdict": "state/n12_iit_braket_pilot_2026_05_02/verdict.json",
+    "report": "docs/n12_iit_braket_pilot_results_2026_05_02.md",
+    "circuit_irs_off_repo": "/tmp/n12_braket_pilot/{and,xor,maj,copy}_{sv1,dm1,ionq}.json (data, JSON IR, no .py)",
+    "raw_results_off_repo": "/tmp/n12_braket_pilot/results/ + s3://amazon-braket-us-east-1-267673635495/n12_iit_pilot_2026_05_02/"
+  },
+  "follow_up_recommendations": [
+    "N-12 confirmatory pass: 5 circuits × 500 shots on Forte 1 (~$210); add IQM Garnet eu-north-1 as third QPU vendor for r-power increase",
+    "N-13 candidate: Aquila AHS-encoded SAT instance vs gate-model SAT-solver Φ proxy comparison (paradigm-crossing substrate-invariance test)",
+    "Upgrade Φ proxy to Tononi-Albantakis IIT 4.0 φ★: requires MIP partition search over 2^16 bipartitions for 4-qubit system — feasible offline from measurement probabilities"
+  ]
+}

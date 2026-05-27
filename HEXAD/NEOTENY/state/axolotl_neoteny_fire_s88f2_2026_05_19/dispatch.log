@@ -1,0 +1,62 @@
+[§88-F2] pre-fire pods: []
+[§88-F2] requesting pod name=s88f2-1779164800 image=runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 disk=80GB
+[§88-F2] pod_create: {"id": "vydide8snncs1i", "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04", "env": ["PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"], "machineId": "p7jzkpamcabp", "machine": {"podHostId": "vydide8snncs1i-64412129"}, "_gpu": "NVIDIA H100 80GB HBM3"}
+[§88-F2] pod_id=vydide8snncs1i — pre-flight runtime poll (max 600s, ip+port gate)
+[§88-F2] runtime poll 1/60 (ip=pending port=pending)
+[§88-F2] runtime poll 2/60 (ip=pending port=pending)
+[§88-F2] runtime poll 3/60 (ip=pending port=pending)
+[§88-F2] runtime ready @ iter 4/60 (ip=103.207.149.163 port=12042)
+[§88-F2] SSH probe @ root@103.207.149.163:12042 (60 tries × 10s = 600s)
+[§88-F2] SSH ready @ try 1/60
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+[notice] To update, run: python -m pip install --upgrade pip
+[§88-F2] generating §16-class corpus (seed=1337)
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+[§88-F2] corpus poll 1/40 CD
+[§88-F2] === train 3-cell grid (baseline + neoteny, 1500 step / seed 1337) ===
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+[§88-F2] run poll 1/90 pending
+[§88-F2] run poll 2/90 pending
+[§88-F2] run poll 3/90 pending
+[§88-F2] run poll 4/90 pending
+[§88-F2] run poll 5/90 pending
+[§88-F2] run poll 6/90 pending
+[§88-F2] run poll 7/90 pending
+[§88-F2] run poll 8/90 pending
+[§88-F2] run poll 9/90 pending
+[§88-F2] run poll 10/90 pending
+[§88-F2] run poll 11/90 pending
+[§88-F2] run poll 12/90 pending
+[§88-F2] run poll 13/90 pending
+[§88-F2] run poll 14/90 pending
+[§88-F2] run poll 15/90 pending
+[§88-F2] run poll 16/90 pending
+[§88-F2] run poll 17/90 pending
+[§88-F2] run poll 18/90 pending
+[§88-F2] run poll 19/90 pending
+[§88-F2] run poll 20/90 pending
+[§88-F2] run poll 21/90 pending
+[§88-F2] run poll 22/90 pending
+[§88-F2] run poll 23/90 pending
+[§88-F2] run poll 24/90 pending
+[§88-F2] run poll 25/90 D
+[§88-F2] result.json verified — SAVE_POD=1 auto-promote, pulling
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.163]:12042' (ED25519) to the list of known hosts.
+[§88-F2] complete — terminating pod vydide8snncs1i
+[§88-F2] post-fire pods: {"count": 0, "our_pod_present": false, "ids": []}
+[§88-F2] DONE
+[§88-F2] terminating pod vydide8snncs1i (orphan-0 mandate)
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Users/ghost/Library/Python/3.9/lib/python/site-packages/runpod/api/ctl_commands.py", line 271, in terminate_pod
+    run_graphql_query(pod_mutations.generate_pod_terminate_mutation(pod_id))
+  File "/Users/ghost/Library/Python/3.9/lib/python/site-packages/runpod/api/graphql.py", line 51, in run_graphql_query
+    raise error.QueryError(response.json()["errors"][0]["message"], query)
+runpod.error.QueryError: pod not found to terminate

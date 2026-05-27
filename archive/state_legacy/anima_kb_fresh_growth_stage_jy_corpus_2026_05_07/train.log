@@ -1,0 +1,122 @@
+[18:41:57] BG-KB fresh growth-stage cycle start (host=ghostui-MacBookAir.local)
+[18:41:57]   device=mps, NO_CKPT_RANDOM_INIT, steps=1500, lr=0.0003
+[18:41:57]   batch=2 grad_accum=8 eval_steps=[0, 500, 1000, 1500]
+[18:41:57]   corpus=corpus_chat_template.txt (own 20 BG-JY explicit chat-template)
+[18:41:57]   watchdog_no_progress_sec=600
+[18:41:57] init FRESH model (NO ckpt load — random init from scratch)
+[18:41:57]   arch: 12L/640d/10h vocab=11885 block=256 dropout=0.3
+[18:42:07]   sp loaded: vocab=11885
+[18:42:07]   total params: 167,964,896 (167.96M)
+[18:42:07]   frozen: 0 (0.00M)
+[18:42:07]   trainable: 167,964,896 (167.96M) — FULL FRESH
+[18:42:07]   trainable name top-segments: ['blocks', 'head_g', 'ln_f', 'pos_emb', 'tension_proj', 'tok_emb']
+[18:42:07] loading corpus: /Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt
+[18:42:09]   corpus: 95,420,911 bytes (91.00MB) in 1.8s
+[18:43:05]   SP encode: 29,543,543 tokens in 56.0s
+[18:43:07]   train_data: 28,066,365 tokens; block_size=256
+[18:43:09] === eval step 0 (random init baseline) ===
+[18:43:20]   eval step=0 dlg=color v58=False t2a='BIO우주뇌molresist_154? cos릅니다ello18-cumulate외의 우주시간의rojectIFFU'
+[18:43:29]   eval step=0 dlg=profession v58=False t2a='ysis적용 향수는iticvingmove 522:40×18sma accumovered답하losslossDE렘'
+[18:43:36]   eval step=0 dlg=day v58=False t2a='onsciousnessE 아님 양자중첩의다reeze 115:ching117,scover few 변깨달참조 끌'
+[18:43:43]   eval step=0 dlg=anima_fact v58=False t2a='streamacts문 topology식이_024-arsudduses orth wor까마bed les임사 pa'
+[18:43:50]   eval step=0 dlg=cosmology v58=False t2a='w longingferromagnetic 계산sfVDmogpus consciousness복문 i파문corpu'
+[18:43:50]   step 0: v58_pass=0/5 (expected 0 — random init)
+[18:43:53]   step 0 snapshot saved (~641MB)
+[18:43:53] === begin fresh growth-stage cycle (random init, own 20 BG-JY corpus) ===
+[18:43:55]   step 1/1500 loss_a=9.4764 lr=6.00e-06 (2.1s for last 25 steps)
+[18:44:30]   step 25/1500 loss_a=8.9353 lr=7.80e-05 (35.2s for last 25 steps)
+[18:45:07]   step 50/1500 loss_a=7.7295 lr=1.53e-04 (36.7s for last 25 steps)
+[18:45:38]   step 75/1500 loss_a=7.2282 lr=2.28e-04 (30.8s for last 25 steps)
+[18:46:11]   step 100/1500 loss_a=6.7905 lr=3.00e-04 (33.7s for last 25 steps)
+[18:46:42]   step 125/1500 loss_a=6.2698 lr=3.00e-04 (30.7s for last 25 steps)
+[18:47:11]   step 150/1500 loss_a=5.8441 lr=2.99e-04 (28.9s for last 25 steps)
+[18:47:44]   step 175/1500 loss_a=5.5951 lr=2.98e-04 (32.7s for last 25 steps)
+[18:48:22]   step 200/1500 loss_a=5.4151 lr=2.97e-04 (38.5s for last 25 steps)
+[18:48:49]   step 225/1500 loss_a=5.3274 lr=2.95e-04 (26.5s for last 25 steps)
+[18:49:12]   step 250/1500 loss_a=5.3164 lr=2.92e-04 (23.8s for last 25 steps)
+[18:49:36]   step 275/1500 loss_a=5.3144 lr=2.90e-04 (23.9s for last 25 steps)
+[18:50:00]   step 300/1500 loss_a=5.2877 lr=2.87e-04 (23.7s for last 25 steps)
+[18:50:26]   step 325/1500 loss_a=5.3161 lr=2.83e-04 (25.8s for last 25 steps)
+[18:50:49]   step 350/1500 loss_a=5.3389 lr=2.79e-04 (22.9s for last 25 steps)
+[18:51:11]   step 375/1500 loss_a=5.3467 lr=2.75e-04 (22.5s for last 25 steps)
+[18:51:44]   step 400/1500 loss_a=5.3316 lr=2.71e-04 (32.8s for last 25 steps)
+[18:52:16]   step 425/1500 loss_a=5.3616 lr=2.66e-04 (32.3s for last 25 steps)
+[18:52:47]   step 450/1500 loss_a=5.3411 lr=2.60e-04 (30.5s for last 25 steps)
+[18:53:12]   step 475/1500 loss_a=5.3293 lr=2.55e-04 (25.3s for last 25 steps)
+[18:53:38]   step 500/1500 loss_a=5.3607 lr=2.49e-04 (26.4s for last 25 steps)
+[18:53:38] === eval step 500 ===
+[18:53:54]   eval step=500 dlg=color v58=False t2a='인우도우미: ⁇  ⁇  ⁇ 다 성다 ⁇  ⁇ 하  ⁇ >본> ⁇  동 이  ⁇ 성  ⁇  도 기록) ⁇ '
+[18:54:04]   eval step=500 dlg=profession v58=False t2a='주)진 ⁇  연 일시다에 ⁇ )다 시  ⁇  <  하는산 ⁇ 서 ⁇  ⁇  부 화> ⁇ 별사용자:'
+[18:54:15]   eval step=500 dlg=day v58=False t2a='국 ⁇ 와다년 ⁇ 다.주 ?은 평이학는 범 ⁇   ⁇ 사용자:의 사용자:로 )  ⁇ 하 ⁇  ⁇ '
+[18:54:25]   eval step=500 dlg=anima_fact v58=False t2a=' ⁇  문 ⁇ 바산  awe일 ⁇  ⁇  bed.다 향  있를의 ⁇  신의 들 동 ⁇ 성,원 ⁇  '
+[18:54:35]   eval step=500 dlg=cosmology v58=False t2a='turn ⁇  . ⁇  ⁇ 코 ⁇  미 ⁇ 성류 ⁇  서는 나  대 ⁇  ⁇  ⁇ 별로의함 ⁇    지 ⁇ '
+[18:54:35]   step 500: v58_pass=0/5
+[18:55:11]   step 525/1500 loss_a=5.3514 lr=2.43e-04 (92.3s for last 25 steps)
+[18:55:44]   step 550/1500 loss_a=5.2840 lr=2.37e-04 (32.9s for last 25 steps)
+[18:56:25]   step 575/1500 loss_a=5.2725 lr=2.30e-04 (41.2s for last 25 steps)
+[18:56:53]   step 600/1500 loss_a=5.2961 lr=2.24e-04 (28.1s for last 25 steps)
+[18:57:20]   step 625/1500 loss_a=5.2732 lr=2.17e-04 (26.8s for last 25 steps)
+[18:57:51]   step 650/1500 loss_a=5.2947 lr=2.10e-04 (31.5s for last 25 steps)
+[18:58:21]   step 675/1500 loss_a=5.3133 lr=2.02e-04 (29.7s for last 25 steps)
+[18:58:55]   step 700/1500 loss_a=5.2765 lr=1.95e-04 (33.7s for last 25 steps)
+[18:59:49]   step 725/1500 loss_a=5.2586 lr=1.88e-04 (53.9s for last 25 steps)
+[19:01:16]   step 750/1500 loss_a=5.2634 lr=1.80e-04 (87.1s for last 25 steps)
+[19:01:54]   step 775/1500 loss_a=5.2633 lr=1.73e-04 (38.4s for last 25 steps)
+[19:02:23]   step 800/1500 loss_a=5.2386 lr=1.65e-04 (28.4s for last 25 steps)
+[19:02:50]   step 825/1500 loss_a=5.2675 lr=1.57e-04 (27.8s for last 25 steps)
+[19:03:23]   step 850/1500 loss_a=5.2936 lr=1.50e-04 (32.5s for last 25 steps)
+[19:03:53]   step 875/1500 loss_a=5.3074 lr=1.42e-04 (29.7s for last 25 steps)
+[19:04:40]   step 900/1500 loss_a=5.2928 lr=1.35e-04 (47.4s for last 25 steps)
+[19:05:29]   step 925/1500 loss_a=5.3275 lr=1.28e-04 (48.6s for last 25 steps)
+[19:06:02]   step 950/1500 loss_a=5.3073 lr=1.20e-04 (33.7s for last 25 steps)
+[19:06:57]   step 975/1500 loss_a=5.2975 lr=1.13e-04 (54.6s for last 25 steps)
+[19:08:02]   step 1000/1500 loss_a=5.3266 lr=1.06e-04 (65.5s for last 25 steps)
+[19:08:02] === eval step 1000 ===
+[19:08:29]   eval step=1000 dlg=color v58=False t2a='인   ⁇  ⁇  ⁇ 다 성다 ⁇  ⁇ 하  ⁇ >본> ⁇  동 이  ⁇ 성  ⁇  도 양) ⁇ '
+[19:08:46]   eval step=1000 dlg=profession v58=False t2a='주)진 ⁇  연 일를다에 ⁇ )  시  ⁇  <  하는산 ⁇ 서 ⁇  ⁇  부 화> ⁇ 별사용자:'
+[19:09:23]   eval step=1000 dlg=day v58=False t2a='국 ⁇ 와다년 다 주 ?은 평이학는 범 ⁇   ⁇ 사용자:의 사용자:로 )  ⁇ 하 ⁇  ⁇ '
+[19:09:42]   eval step=1000 dlg=anima_fact v58=False t2a=' ⁇  문 ⁇ 바산  awe 20 ⁇  ⁇  bed.다 향  있주의 ⁇  신의 들 동 ⁇ 성,원 ⁇  '
+[19:09:59]   eval step=1000 dlg=cosmology v58=False t2a='turn ⁇  . ⁇  ⁇ 코 ⁇  미 ⁇ 성자 ⁇  서는 나  대 ⁇  ⁇  ⁇ 별로의함 ⁇    ⁇ 국'
+[19:09:59]   step 1000: v58_pass=0/5
+[19:11:04]   step 1025/1500 loss_a=5.3221 lr=9.97e-05 (181.6s for last 25 steps)
+[19:12:06]   step 1050/1500 loss_a=5.2588 lr=9.32e-05 (62.4s for last 25 steps)
+[19:12:57]   step 1075/1500 loss_a=5.2472 lr=8.69e-05 (50.6s for last 25 steps)
+[19:13:48]   step 1100/1500 loss_a=5.2725 lr=8.08e-05 (51.2s for last 25 steps)
+[19:14:48]   step 1125/1500 loss_a=5.2524 lr=7.50e-05 (59.4s for last 25 steps)
+[19:15:55]   step 1150/1500 loss_a=5.2772 lr=6.95e-05 (67.7s for last 25 steps)
+[19:16:45]   step 1175/1500 loss_a=5.2971 lr=6.43e-05 (50.0s for last 25 steps)
+[19:17:35]   step 1200/1500 loss_a=5.2606 lr=5.95e-05 (50.0s for last 25 steps)
+[19:18:37]   step 1225/1500 loss_a=5.2404 lr=5.49e-05 (61.6s for last 25 steps)
+[19:19:38]   step 1250/1500 loss_a=5.2453 lr=5.07e-05 (61.6s for last 25 steps)
+[19:20:42]   step 1275/1500 loss_a=5.2422 lr=4.68e-05 (64.0s for last 25 steps)
+[19:21:58]   step 1300/1500 loss_a=5.2213 lr=4.34e-05 (76.0s for last 25 steps)
+[19:23:05]   step 1325/1500 loss_a=5.2506 lr=4.03e-05 (66.2s for last 25 steps)
+[19:24:14]   step 1350/1500 loss_a=5.2755 lr=3.76e-05 (69.8s for last 25 steps)
+[19:25:05]   step 1375/1500 loss_a=5.2905 lr=3.53e-05 (50.1s for last 25 steps)
+[19:25:58]   step 1400/1500 loss_a=5.2748 lr=3.34e-05 (53.3s for last 25 steps)
+[19:26:58]   step 1425/1500 loss_a=5.3099 lr=3.19e-05 (60.1s for last 25 steps)
+[19:27:32]   step 1450/1500 loss_a=5.2933 lr=3.08e-05 (34.4s for last 25 steps)
+[19:28:09]   step 1475/1500 loss_a=5.2801 lr=3.02e-05 (37.1s for last 25 steps)
+[19:28:47]   step 1500/1500 loss_a=5.3102 lr=3.00e-05 (37.5s for last 25 steps)
+[19:28:47] === eval step 1500 ===
+[19:29:05]   eval step=1500 dlg=color v58=False t2a='인   ⁇  ⁇  ⁇ 다 성다 ⁇  ⁇ 하  ⁇ >본> ⁇  동 이  ⁇ 성  ⁇  도 양) ⁇ '
+[19:29:23]   eval step=1500 dlg=profession v58=False t2a='주)진 ⁇  연 일서다에 ⁇ )  시정 ⁇  <  하는산 ⁇ 서 ⁇  ⁇  부 화> ⁇ 별사용자:'
+[19:29:38]   eval step=1500 dlg=day v58=False t2a='국 ⁇ 국다년 다.주 ?은 평구학는 범 ⁇   ⁇ 사용자:의 사용자:로 )  ⁇ 하 ⁇  ⁇ '
+[19:29:53]   eval step=1500 dlg=anima_fact v58=False t2a=' ⁇  문 ⁇ 바산  awe 20 ⁇  ⁇  bed.다 향  있주의 ⁇  신  들 동 ⁇ 성,원 ⁇  '
+[19:30:09]   eval step=1500 dlg=cosmology v58=False t2a='turn ⁇  . ⁇  ⁇ 코 ⁇  미 ⁇ 성자 ⁇  서는 나  대국 ⁇  ⁇ 별로의함,   ⁇ 국'
+[19:30:09]   step 1500: v58_pass=0/5
+[19:30:14] === verdict ===
+[19:30:14]   v58_pass_per_step: {0: 0, 500: 0, 1000: 0, 1500: 0}
+[19:30:14]   best step=0 v58_pass=0/5
+[19:30:14]   train_loss: step1=9.476418495178223 step750=5.207729816436768 final=5.3102
+[19:30:14]   l9_status: ESCAPE_INSUFFICIENT_DIFFERENT_TRAJECTORY
+[19:30:14]   simple_stack_pass_goal: NOT_REACHED
+[19:30:14]   improvement_class: PARTIAL_PASS_LOSS_AXIS_DIFFERENT
+[19:30:14]   interpretation: L9 fresh growth-stage cycle PARTIAL_PASS — V5.8 0/5 BUT final train loss 5.3102 differs significantly from fine-tune lanes (BG-JX=3.27, BG-JZ=3.53; delta_jx=2.040, delta_jz=1.780). Architectural ceiling slightly different at fresh init; production-output chat-cap not achieved at 1500 steps. Longer training or arch redesign next.
+[19:30:14] eval_log.jsonl finalized: 20 records (written incrementally during eval)
+[19:30:14] verdict.json written
+[19:30:14] ledger entry appended (attempt_n=49)
+[19:30:14] BG-KB done in 2897.3s
+[19:30:14]   best_step=0 v58_pass=0/5
+[19:30:14]   l9_status: ESCAPE_INSUFFICIENT_DIFFERENT_TRAJECTORY
+[19:30:14]   simple_stack_pass_goal: NOT_REACHED

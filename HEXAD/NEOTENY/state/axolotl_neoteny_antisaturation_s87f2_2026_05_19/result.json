@@ -1,0 +1,608 @@
+{
+  "section": "\u00a787-F2 AXOLOTL NEOTENY ANTI-SATURATION",
+  "kind": "$0 Mac CPU design + stub smoke (NO GPU, NO fire)",
+  "seed": 1337,
+  "n_step": 60,
+  "maturity_proxy_weights": {
+    "W_CE": 0.4,
+    "W_MAJ": 0.35,
+    "W_D": 0.25
+  },
+  "design_placeholders": {
+    "THETA_FLOOR": 0.08,
+    "THETA_D": 4.0,
+    "SAT_TRIGGER": 0.7
+  },
+  "grid": [
+    {
+      "cell": "cell0_baseline",
+      "final_ce": 0.010339,
+      "final_maj_frac": 0.993192,
+      "final_D": 1.612697,
+      "final_maturity": 0.996947,
+      "final_neoteny": 0.003053,
+      "saturation_delay_step": 10,
+      "nk_fired": []
+    },
+    {
+      "cell": "cell1_floor_clamps",
+      "final_ce": 0.08,
+      "final_maj_frac": 0.986627,
+      "final_D": 4.0,
+      "final_maturity": 0.941583,
+      "final_neoteny": 0.058417,
+      "saturation_delay_step": 10,
+      "nk_fired": [
+        "NK-1",
+        "NK-3"
+      ]
+    },
+    {
+      "cell": "cell2_reinjection",
+      "final_ce": 0.010339,
+      "final_maj_frac": 0.638818,
+      "final_D": 14.118812,
+      "final_maturity": 0.623173,
+      "final_neoteny": 0.376827,
+      "saturation_delay_step": 60,
+      "nk_fired": [
+        "NK-2"
+      ]
+    },
+    {
+      "cell": "cell3_metamorph_block",
+      "final_ce": 1.567595,
+      "final_maj_frac": 0.683424,
+      "final_D": 5.03353,
+      "final_maturity": 0.709224,
+      "final_neoteny": 0.290776,
+      "saturation_delay_step": 10,
+      "nk_fired": [
+        "NK-4"
+      ]
+    },
+    {
+      "cell": "cell4_full_neoteny",
+      "final_ce": 0.08,
+      "final_maj_frac": 0.806627,
+      "final_D": 15.163303,
+      "final_maturity": 0.67697,
+      "final_neoteny": 0.32303,
+      "saturation_delay_step": 60,
+      "nk_fired": [
+        "NK-1",
+        "NK-2"
+      ]
+    }
+  ],
+  "grid_full": [
+    {
+      "cell": "cell0_baseline",
+      "config": {
+        "nk1": false,
+        "nk2": false,
+        "nk3": false,
+        "nk4": false
+      },
+      "final_ce": 0.010339,
+      "final_maj_frac": 0.993192,
+      "final_D": 1.612697,
+      "final_maturity": 0.996947,
+      "final_neoteny": 0.003053,
+      "saturation_delay_step": 10,
+      "nk_fired": [],
+      "trajectory_head": [
+        {
+          "step": 0,
+          "ce": 5.03408,
+          "maj_frac": 0.057092,
+          "D": 12.646169,
+          "maturity": 0.090917,
+          "neoteny": 0.909083,
+          "held": false
+        },
+        {
+          "step": 1,
+          "ce": 4.481816,
+          "maj_frac": 0.132503,
+          "D": 11.43307,
+          "maturity": 0.180898,
+          "neoteny": 0.819102,
+          "held": false
+        },
+        {
+          "step": 2,
+          "ce": 3.984801,
+          "maj_frac": 0.211476,
+          "D": 10.342412,
+          "maturity": 0.265743,
+          "neoteny": 0.734257,
+          "held": false
+        },
+        {
+          "step": 3,
+          "ce": 3.540143,
+          "maj_frac": 0.289188,
+          "D": 9.367097,
+          "maturity": 0.34411,
+          "neoteny": 0.65589,
+          "held": false
+        },
+        {
+          "step": 4,
+          "ce": 3.150211,
+          "maj_frac": 0.365485,
+          "D": 8.510695,
+          "maturity": 0.415708,
+          "neoteny": 0.584292,
+          "held": false
+        },
+        {
+          "step": 5,
+          "ce": 2.800408,
+          "maj_frac": 0.433232,
+          "D": 7.742968,
+          "maturity": 0.479683,
+          "neoteny": 0.520317,
+          "held": false
+        }
+      ],
+      "trajectory_tail": [
+        {
+          "step": 57,
+          "ce": 0.02311,
+          "maj_frac": 0.995622,
+          "D": 1.638507,
+          "maturity": 0.996373,
+          "neoteny": 0.003627,
+          "held": false
+        },
+        {
+          "step": 58,
+          "ce": 0.021114,
+          "maj_frac": 0.996365,
+          "D": 1.634373,
+          "maturity": 0.996858,
+          "neoteny": 0.003142,
+          "held": false
+        },
+        {
+          "step": 59,
+          "ce": 0.010339,
+          "maj_frac": 0.993192,
+          "D": 1.612697,
+          "maturity": 0.996947,
+          "neoteny": 0.003053,
+          "held": false
+        }
+      ]
+    },
+    {
+      "cell": "cell1_floor_clamps",
+      "config": {
+        "nk1": true,
+        "nk2": false,
+        "nk3": true,
+        "nk4": false
+      },
+      "final_ce": 0.08,
+      "final_maj_frac": 0.986627,
+      "final_D": 4.0,
+      "final_maturity": 0.941583,
+      "final_neoteny": 0.058417,
+      "saturation_delay_step": 10,
+      "nk_fired": [
+        "NK-1",
+        "NK-3"
+      ],
+      "trajectory_head": [
+        {
+          "step": 0,
+          "ce": 5.03408,
+          "maj_frac": 0.057092,
+          "D": 12.646169,
+          "maturity": 0.090917,
+          "neoteny": 0.909083,
+          "held": false
+        },
+        {
+          "step": 1,
+          "ce": 4.481816,
+          "maj_frac": 0.132503,
+          "D": 11.43307,
+          "maturity": 0.180898,
+          "neoteny": 0.819102,
+          "held": false
+        },
+        {
+          "step": 2,
+          "ce": 3.984801,
+          "maj_frac": 0.211476,
+          "D": 10.342412,
+          "maturity": 0.265743,
+          "neoteny": 0.734257,
+          "held": false
+        },
+        {
+          "step": 3,
+          "ce": 3.540143,
+          "maj_frac": 0.289188,
+          "D": 9.367097,
+          "maturity": 0.34411,
+          "neoteny": 0.65589,
+          "held": false
+        },
+        {
+          "step": 4,
+          "ce": 3.150211,
+          "maj_frac": 0.365485,
+          "D": 8.510695,
+          "maturity": 0.415708,
+          "neoteny": 0.584292,
+          "held": false
+        },
+        {
+          "step": 5,
+          "ce": 2.800408,
+          "maj_frac": 0.433232,
+          "D": 7.742968,
+          "maturity": 0.479683,
+          "neoteny": 0.520317,
+          "held": false
+        }
+      ],
+      "trajectory_tail": [
+        {
+          "step": 57,
+          "ce": 0.08,
+          "maj_frac": 0.986627,
+          "D": 4.0,
+          "maturity": 0.941583,
+          "neoteny": 0.058417,
+          "held": false
+        },
+        {
+          "step": 58,
+          "ce": 0.08,
+          "maj_frac": 0.986627,
+          "D": 4.0,
+          "maturity": 0.941583,
+          "neoteny": 0.058417,
+          "held": false
+        },
+        {
+          "step": 59,
+          "ce": 0.08,
+          "maj_frac": 0.986627,
+          "D": 4.0,
+          "maturity": 0.941583,
+          "neoteny": 0.058417,
+          "held": false
+        }
+      ]
+    },
+    {
+      "cell": "cell2_reinjection",
+      "config": {
+        "nk1": false,
+        "nk2": true,
+        "nk3": false,
+        "nk4": false
+      },
+      "final_ce": 0.010339,
+      "final_maj_frac": 0.638818,
+      "final_D": 14.118812,
+      "final_maturity": 0.623173,
+      "final_neoteny": 0.376827,
+      "saturation_delay_step": 60,
+      "nk_fired": [
+        "NK-2"
+      ],
+      "trajectory_head": [
+        {
+          "step": 0,
+          "ce": 5.03408,
+          "maj_frac": 0.057092,
+          "D": 12.646169,
+          "maturity": 0.090917,
+          "neoteny": 0.909083,
+          "held": false
+        },
+        {
+          "step": 1,
+          "ce": 4.481816,
+          "maj_frac": 0.132503,
+          "D": 11.43307,
+          "maturity": 0.180898,
+          "neoteny": 0.819102,
+          "held": false
+        },
+        {
+          "step": 2,
+          "ce": 3.984801,
+          "maj_frac": 0.211476,
+          "D": 10.342412,
+          "maturity": 0.265743,
+          "neoteny": 0.734257,
+          "held": false
+        },
+        {
+          "step": 3,
+          "ce": 3.540143,
+          "maj_frac": 0.289188,
+          "D": 9.367097,
+          "maturity": 0.34411,
+          "neoteny": 0.65589,
+          "held": false
+        },
+        {
+          "step": 4,
+          "ce": 3.150211,
+          "maj_frac": 0.365485,
+          "D": 8.510695,
+          "maturity": 0.415708,
+          "neoteny": 0.584292,
+          "held": false
+        },
+        {
+          "step": 5,
+          "ce": 2.800408,
+          "maj_frac": 0.433232,
+          "D": 7.742968,
+          "maturity": 0.479683,
+          "neoteny": 0.520317,
+          "held": false
+        }
+      ],
+      "trajectory_tail": [
+        {
+          "step": 57,
+          "ce": 0.02311,
+          "maj_frac": 0.658127,
+          "D": 13.847969,
+          "maturity": 0.632091,
+          "neoteny": 0.367909,
+          "held": false
+        },
+        {
+          "step": 58,
+          "ce": 0.021114,
+          "maj_frac": 0.647618,
+          "D": 14.000795,
+          "maturity": 0.625489,
+          "neoteny": 0.374511,
+          "held": false
+        },
+        {
+          "step": 59,
+          "ce": 0.010339,
+          "maj_frac": 0.638818,
+          "D": 14.118812,
+          "maturity": 0.623173,
+          "neoteny": 0.376827,
+          "held": false
+        }
+      ]
+    },
+    {
+      "cell": "cell3_metamorph_block",
+      "config": {
+        "nk1": false,
+        "nk2": false,
+        "nk3": false,
+        "nk4": true
+      },
+      "final_ce": 1.567595,
+      "final_maj_frac": 0.683424,
+      "final_D": 5.03353,
+      "final_maturity": 0.709224,
+      "final_neoteny": 0.290776,
+      "saturation_delay_step": 10,
+      "nk_fired": [
+        "NK-4"
+      ],
+      "trajectory_head": [
+        {
+          "step": 0,
+          "ce": 5.03408,
+          "maj_frac": 0.057092,
+          "D": 12.646169,
+          "maturity": 0.090917,
+          "neoteny": 0.909083,
+          "held": false
+        },
+        {
+          "step": 1,
+          "ce": 4.481816,
+          "maj_frac": 0.132503,
+          "D": 11.43307,
+          "maturity": 0.180898,
+          "neoteny": 0.819102,
+          "held": false
+        },
+        {
+          "step": 2,
+          "ce": 3.984801,
+          "maj_frac": 0.211476,
+          "D": 10.342412,
+          "maturity": 0.265743,
+          "neoteny": 0.734257,
+          "held": false
+        },
+        {
+          "step": 3,
+          "ce": 3.540143,
+          "maj_frac": 0.289188,
+          "D": 9.367097,
+          "maturity": 0.34411,
+          "neoteny": 0.65589,
+          "held": false
+        },
+        {
+          "step": 4,
+          "ce": 3.150211,
+          "maj_frac": 0.365485,
+          "D": 8.510695,
+          "maturity": 0.415708,
+          "neoteny": 0.584292,
+          "held": false
+        },
+        {
+          "step": 5,
+          "ce": 2.800408,
+          "maj_frac": 0.433232,
+          "D": 7.742968,
+          "maturity": 0.479683,
+          "neoteny": 0.520317,
+          "held": false
+        }
+      ],
+      "trajectory_tail": [
+        {
+          "step": 57,
+          "ce": 1.568485,
+          "maj_frac": 0.683869,
+          "D": 5.034419,
+          "maturity": 0.709299,
+          "neoteny": 0.290701,
+          "held": true
+        },
+        {
+          "step": 58,
+          "ce": 1.56849,
+          "maj_frac": 0.683871,
+          "D": 5.034424,
+          "maturity": 0.709299,
+          "neoteny": 0.290701,
+          "held": true
+        },
+        {
+          "step": 59,
+          "ce": 1.567595,
+          "maj_frac": 0.683424,
+          "D": 5.03353,
+          "maturity": 0.709224,
+          "neoteny": 0.290776,
+          "held": true
+        }
+      ]
+    },
+    {
+      "cell": "cell4_full_neoteny",
+      "config": {
+        "nk1": true,
+        "nk2": true,
+        "nk3": true,
+        "nk4": true
+      },
+      "final_ce": 0.08,
+      "final_maj_frac": 0.806627,
+      "final_D": 15.163303,
+      "final_maturity": 0.67697,
+      "final_neoteny": 0.32303,
+      "saturation_delay_step": 60,
+      "nk_fired": [
+        "NK-1",
+        "NK-2"
+      ],
+      "trajectory_head": [
+        {
+          "step": 0,
+          "ce": 5.03408,
+          "maj_frac": 0.057092,
+          "D": 12.646169,
+          "maturity": 0.090917,
+          "neoteny": 0.909083,
+          "held": false
+        },
+        {
+          "step": 1,
+          "ce": 4.481816,
+          "maj_frac": 0.132503,
+          "D": 11.43307,
+          "maturity": 0.180898,
+          "neoteny": 0.819102,
+          "held": false
+        },
+        {
+          "step": 2,
+          "ce": 3.984801,
+          "maj_frac": 0.211476,
+          "D": 10.342412,
+          "maturity": 0.265743,
+          "neoteny": 0.734257,
+          "held": false
+        },
+        {
+          "step": 3,
+          "ce": 3.540143,
+          "maj_frac": 0.289188,
+          "D": 9.367097,
+          "maturity": 0.34411,
+          "neoteny": 0.65589,
+          "held": false
+        },
+        {
+          "step": 4,
+          "ce": 3.150211,
+          "maj_frac": 0.365485,
+          "D": 8.510695,
+          "maturity": 0.415708,
+          "neoteny": 0.584292,
+          "held": false
+        },
+        {
+          "step": 5,
+          "ce": 2.800408,
+          "maj_frac": 0.433232,
+          "D": 7.742968,
+          "maturity": 0.479683,
+          "neoteny": 0.520317,
+          "held": false
+        }
+      ],
+      "trajectory_tail": [
+        {
+          "step": 57,
+          "ce": 0.08,
+          "maj_frac": 0.806627,
+          "D": 15.166604,
+          "maturity": 0.67697,
+          "neoteny": 0.32303,
+          "held": false
+        },
+        {
+          "step": 58,
+          "ce": 0.08,
+          "maj_frac": 0.806627,
+          "D": 15.17438,
+          "maturity": 0.67697,
+          "neoteny": 0.32303,
+          "held": false
+        },
+        {
+          "step": 59,
+          "ce": 0.08,
+          "maj_frac": 0.806627,
+          "D": 15.163303,
+          "maturity": 0.67697,
+          "neoteny": 0.32303,
+          "held": false
+        }
+      ]
+    }
+  ],
+  "four_corner_verdict": {
+    "alpha_NEOTENY_METRIC_WELL_FORMED": true,
+    "beta_ANTI_SATURATION_DIFFERENTIAL": true,
+    "gamma_NK_MECHANISM_DIFFERENTIAL": true,
+    "delta_S16_6C_CONNECTION": true,
+    "nk_signatures": {
+      "cell1": "(0.08, 4.0)",
+      "cell2": "(0.6388, 14.1188)",
+      "cell3": "(10, 0.7092)"
+    }
+  },
+  "overall": "DIRECTIONAL-POSITIVE",
+  "note": "B-S87F2-NOTE: neoteny anti-saturation actually breaking the \u00a716.6-C ceiling = trained-scale GPU fire OUTCOME, NOT counted \ud83d\udd35 (B-D-NOTE/B-SCALE-NOTE/B-EMERGE-NOTE family). $0 stub saturation trajectory != trained ckpt. axolotl neoteny = honest direction-anchor, NOT capability proof. g3 necessary-not-sufficient (B-EMERGE-7); amphibian-biology USE != GOAL emergence."
+}

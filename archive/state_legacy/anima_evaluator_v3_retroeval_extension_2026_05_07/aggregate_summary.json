@@ -1,0 +1,143 @@
+{
+  "bg_is_paradigm": "v3-retroeval-extension-7-missed-bgs",
+  "bg_is_evaluated_bgs": [
+    "BG-HU",
+    "BG-HW",
+    "BG-IA",
+    "BG-HT",
+    "BG-IE",
+    "BG-IF",
+    "BG-IG"
+  ],
+  "bg_is_total_records": 1150,
+  "bg_is_per_bg_class_summary": {
+    "BG-HU": {
+      "v2_class": "PARTIAL_PASS_GE7_step_800_8_of_15_persona_cycle_True",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 28,
+      "best_step_class": null,
+      "n_responses": 150
+    },
+    "BG-HW": {
+      "v2_class": "V2_FAIL_substring_anima_chains_manual_13_of_20_step_1000",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 160
+    },
+    "BG-IA": {
+      "v2_class": "V2_FAIL_lesson_G_N1_0_of_15_final",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 150
+    },
+    "BG-HT": {
+      "v2_class": "V2_FAIL_R3_universe_brain_map_6_48MB_degenerate",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 210
+    },
+    "BG-IE": {
+      "v2_class": "SEED_LUCK_FAIL_2_of_10",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 120
+    },
+    "BG-IF": {
+      "v2_class": "V2_FAIL_100M_x_6_48MB_degenerate",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 0,
+      "best_step_class": null,
+      "n_responses": 180
+    },
+    "BG-IG": {
+      "v2_class": "WEAK_PARTIAL_LIKE_BG_HS_R1_3_of_15_step_1500_BPE_7K",
+      "v3_final_class": "V3_PARTIAL_SIGNAL",
+      "best_v3_step": null,
+      "best_v3_pass": 0,
+      "best_persona_cycle": 3,
+      "best_step_class": null,
+      "n_responses": 180
+    }
+  },
+  "bg_ij_aggregate": {
+    "bgs_evaluated": [
+      "BG-FY",
+      "BG-HA",
+      "BG-HF",
+      "BG-HJ",
+      "BG-HK",
+      "BG-HP",
+      "BG-HQ",
+      "BG-HS-R1"
+    ],
+    "v3_aggregate_metrics": {
+      "n_total_responses": 1300,
+      "v2_pass_responses": 4,
+      "v3_pass_6cell_responses": 4,
+      "v3_catch_v2_false_pass_via_internal_recompute": 0,
+      "persona_cycle_responses_caught": 55,
+      "partial_signal_preserved_responses": 761
+    },
+    "v2_vs_v3_diff_summary": {
+      "BG-FY": "V2 PARTIAL_PASS_NO_CONTEXT (named-speaker leak) → V3_PARTIAL_SIGNAL (0/30 strict, partial_sig=27, V3.1 catches degenerate, V3.2 no persona prefix detected)",
+      "BG-HA": "V2 PARTIAL_PASS_NO_CONTEXT_v2 (KO-fluent nonsense) → V3_PARTIAL_SIGNAL (1/10 best step 4500/7500/9000, partial_sig=154, no persona cycle detected)",
+      "BG-HF": "V2 V2_FAIL (0xFF/?/# filler) → V3_FAIL (0/100 strict, V3.6 char_diversity correctly fails on byte filler)",
+      "BG-HJ": "V2 V2_FAIL (KO-fluent nonsense Stage1+Stage2) → V3_PARTIAL_SIGNAL (partial_sig=90, V3.4 schema partial signal preserved, V3 strict 0/110)",
+      "BG-HK": "V2 V2_FAIL_throughout / V1 step800 false PASS → V3_FAIL (0/200 strict, V3.6 catches single-char filler collapse, V3.1 cycle absent)",
+      "BG-HP": "V2 step500_PASS_3_10 then collapse → V3_PARTIAL_SIGNAL (0/120 strict, partial_sig=70, V3.6 correctly catches `,,,'''` filler collapse)",
+      "BG-HQ": "V2 step500_PASS_8_10_FALSE (Lesson H trigger) → V3_PARTIAL_SIGNAL (0/240 strict, persona_cycle_responses=55, V3.1+V3.2 correctly catch `[anima 역할 + 자기 발견 + ...]` cycle at step 500-1500 = critical V2 false PASS catch)",
+      "BG-HS-R1": "V2 PARTIAL → V3_PARTIAL_SIGNAL (1/300 best step 4000, partial_sig=270, V3.6 catches `?` replacement char filler, V3 partial label retained per Lesson H spec prediction)"
+    },
+    "false_PASS_caught_count": {
+      "interpretation": "V3-internal V2 cells (recomputed with V3 domain table + sample-mode strict n-gram) already FAIL at step 500 BG-HQ where inline-training V2 reported 8/10 PASS. Net effect: V3 6-cell schema downgrades inline-training BG-HQ step 500 V2 PASS_8_10 to V3_PARTIAL_SIGNAL (cycle catch = 10/10 unique prompts).",
+      "bg_hq_inline_v2_pass_step_500": 8,
+      "bg_hq_v3_pass_6cell_step_500": 0,
+      "bg_hq_v3_persona_cycle_responses_step_500": 10,
+      "bg_hq_v3_persona_cycle_unique_prompts_step_500": 10,
+      "downgrade_count": 1
+    },
+    "final_class": "V3_EVALUATOR_LANDED_8BG_RETROEVAL_VALIDATED"
+  },
+  "combined_15bg_ssot": {
+    "bg_ij_8bg": [
+      "BG-FY",
+      "BG-HA",
+      "BG-HF",
+      "BG-HJ",
+      "BG-HK",
+      "BG-HP",
+      "BG-HQ",
+      "BG-HS-R1"
+    ],
+    "bg_is_7bg": [
+      "BG-HU",
+      "BG-HW",
+      "BG-IA",
+      "BG-HT",
+      "BG-IE",
+      "BG-IF",
+      "BG-IG"
+    ],
+    "n_total_responses_combined": 2450,
+    "any_simple_stack_pass_surfaced": false,
+    "any_true_partial_pass_surfaced": false,
+    "downgrades_count": 1,
+    "upgrades_count": 0
+  }
+}

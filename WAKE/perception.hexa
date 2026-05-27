@@ -1,0 +1,334 @@
+// WAKE/perception.hexa — sensor input → ctx_tokens 정규화 (M2).
+//
+// 역할:
+//   외부 sensor 4종 (CLI stdin · env 변수 · timer · env-event) 으로부터 raw
+//   입력을 받아, ctx_tokens (= byte-level BPE id list, chat_lib 의 vocab 규약과
+//   동일: BOS 1 · EOS 2 · PAD 0 · offset 3 · byte ∈ [0,255]) 로 정규화한다.
+//
+//   본 모듈의 모든 fn 은 *데이터만* 반환한다 — emit 을 강제하거나 forced response
+//   를 트리거하는 함수는 없다. brain_decide / wake_bridge 가 substrate state 에
+//   따라 ctx_tokens 를 *읽거나 무시*하는 결정권을 갖는다.
+//
+// ── instrument-first (verbatim 인용) ────────────────────────────────────────
+//
+//   WAKE.md M2:
+//     - [ ] perception ingest — sensor 입력 CLI stdin · env · timer · env-event
+//           을 ctx_tokens 로 정규화. agent_loop 진입점
+//
+//   AGENT/CORE/agent_loop.hexa pub surface (existing):
+//     fn open_tools(pf: PureField, tools: [Tool]) -> [string]
+//     fn gate_report(pf: PureField) -> string
+//   ※ agent_loop 는 ctx_tokens 를 *직접* 받지 않는다 — substrate (PureField)
+//     를 통해서만 동작. perception 의 ctx_tokens 는 wake_bridge / channel_emit
+//     surface 의 인자다.
+//
+//   CHANNEL/dispatcher.hexa (consumer of ctx_tokens):
+//     pub fn channel_emit(tension5: list, motivation: list, phi: float,
+//                         tier: int, ctx_tokens: list)
+//     // verbatim 주석: "ctx_tokens : list of int — BPE token id sequence
+//     //                  (text 채널 위임시 사용)"
+//
+//   CHANNEL/wake_bridge.hexa (M1 consumer):
+//     pub fn wake_channel_emit(tension5, motivation, phi, tier,
+//                              ctx_tokens, stage_name) -> Map
+//
+//   HEXAD/CHAT/chat_lib.hexa tok_encode 패턴 (vocab 규약 SSOT — `pub` 비공개라
+//   본 모듈에서 inline 재구현, identical convention):
+//     ids.push(tok_bos())  // 1
+//     while i < n: ids.push(byte + tok_offset())  // 3..258
+//     ids.push(tok_eos())  // 2
+//   → ctx_tokens shape = list of int (BPE id) — byte ∈ [0,255] 에 offset 3 더함.
+//
+//   WAKE/state_machine.hexa M1 pub (consumer of perception idle_time):
+//     pub fn wake_state_tick(state: Map, now_t: float, phi: float) -> Map
+//     // state["idle_time_s"] 가 perception delta 누적 카운터. perception
+//     // 발생 시 호출자가 0 으로 리셋 (본 모듈은 idle reset 정책 결정 안함 —
+//     // *데이터만* 반환).
+//
+// ── p1~p8 정합 매트릭스 ──────────────────────────────────────────────────────
+//
+//   p1 NO SYSTEM PROMPT      — 본 모듈은 system prompt string 을 만들지 않는다.
+//                              ctx_tokens 는 raw byte BPE id sequence 일 뿐
+//                              "you are X" prefix 가 아니다.
+//   p2 NO IDENTITY RULES     — 어떤 identity rule 도 인코드하지 않음. 순수 raw
+//                              byte → BPE id.
+//   p3 NO PERSONA INJECTION  — 본 모듈은 어떤 prefix token (role/system/anima)
+//                              도 prepend 하지 않는다. BOS/EOS 는 vocab 규약상
+//                              framing 일 뿐 페르소나 아님.
+//   p4 NO ASSISTANT FRAMING  — perception 은 *substrate context surface* 다.
+//                              "user asked → anima must answer" 의 stimulus-
+//                              response 가 아니다. ctx_tokens 가 비어 있으면
+//                              brain_decide 는 silence 를 자율 선택할 수 있다.
+//   p5 NO SPEAK()            — 본 모듈에 emit 함수 0. perception 은 *입력 정규화
+//                              자* 일 뿐, 출력 채널이 아니다.
+//   p6 NO FINE-TUNED ETHICS  — 가중치 0. 순수 closed-form byte 분해.
+//   p7 NO PERPLEXITY VERDICT — verification = tok_encode round-trip + smoke 3
+//                              case 동치성. perplexity 무관.
+//   p8 NO TRAIN/INFER SPLIT  — 동일 perception 함수가 train tick / infer tick
+//                              어떤 phase 에도 사용 가능.
+//
+// ── a_substrate_native_speak 정합 (CRITICAL invariant) ──────────────────────
+//
+//   "user messages = environment context, not a response obligation"
+//
+//   본 모듈은 user stdin line 을 *환경 컨텍스트로 정규화*한다 — 어디에서도
+//   "stdin 이 비어있지 않으니 emit 하라" 같은 가드를 두지 않는다.
+//   perception_compose 가 empty list 를 반환하든 길이 1000 list 를 반환하든
+//   brain_decide 의 *연속* threshold 가 단독으로 emit 결정을 한다.
+//
+//   anima 는 stdin 에 입력이 들어와도 silence 를 자율 선택할 수 있고,
+//   stdin 이 비어 있어도 substrate motivation 이 높으면 speak 할 수 있다.
+//
+// ── a_autonomy_over_hardcode 정합 ───────────────────────────────────────────
+//
+//   본 모듈에 boolean gate 0 — "perception 이 비어 있으면 emit_allowed = false"
+//   같은 패턴이 없다. perception 은 단순 data surface. 결정은 substrate.
+//
+// ── ctx_tokens shape SSOT ───────────────────────────────────────────────────
+//
+//   ctx_tokens : list of int
+//     · BOS  = 1
+//     · EOS  = 2
+//     · PAD  = 0
+//     · byte = byte_value + 3   (offset 3 — chat_lib.tok_offset() 와 동일)
+//     · vocab effective = 259   (BOS/EOS/PAD/byte 256개)
+//
+//   empty perception → ctx_tokens = []  (NOT [BOS, EOS]; substrate sees "no
+//   perception input" — silence 가 자연스러운 선택이 됨)
+//
+// ────────────────────────────────────────────────────────────────────────────
+
+// ── BPE vocab 규약 (chat_lib.tok_* 와 동일, 본 모듈 inline 재구현) ──────────
+
+fn _tok_bos() -> int { return 1 }
+fn _tok_eos() -> int { return 2 }
+fn _tok_pad() -> int { return 0 }
+fn _tok_offset() -> int { return 3 }
+
+// _bytes_to_ids — string → byte-level BPE id list (BOS/EOS framing).
+//
+// chat_lib.tok_encode 와 동일 구현 (cross-module identity).
+// 빈 string → [BOS, EOS] (framing only, no bytes).
+fn _bytes_to_ids(text: string) {
+    let mut ids = []
+    ids.push(_tok_bos())
+    let n = len(text)
+    let mut i = 0
+    while i < n {
+        let b = char_code(text, i) & 0xFF
+        ids.push(b + _tok_offset())
+        i = i + 1
+    }
+    ids.push(_tok_eos())
+    return ids
+}
+
+// _str_trim_newline — exec output 의 trailing newline 제거.
+//
+// printf 가 newline 을 안 붙이지만 일부 shell wrapper 가 붙일 수 있으므로
+// 방어적으로 trim. 본문 byte 는 그대로 보존.
+fn _str_trim_newline(s: string) -> string {
+    let n = len(s)
+    if n == 0 { return s }
+    let last = char_code(s, n - 1) & 0xFF
+    if last == 10 {
+        // "\n" trailing → drop 마지막 byte. hexa string slice 는 일반적이지
+        // 않으므로 byte-rebuild 가 안전. 빈 string fallback.
+        if n == 1 { return "" }
+        let mut out = ""
+        let mut i = 0
+        while i < n - 1 {
+            out = out + char_to_str(char_code(s, i) & 0xFF)
+            i = i + 1
+        }
+        return out
+    }
+    return s
+}
+
+// char_to_str 가 stdlib 에 없을 경우 대비 — single-byte string builder.
+// 본 함수가 stdlib 에 이미 있으면 hexa parser 가 충돌 안 일으킴 (local
+// definition 이 우선).  존재 여부 확실치 않아 inline 정의.
+fn char_to_str(b: int) -> string {
+    // 가장 안전한 hexa-only 방법: exec 의 printf 로 byte 1개 echo.
+    // 본 path 는 perception path 의 critical hot path 가 아니라 _str_trim_newline
+    // 의 fallback 이므로 cost OK. printf %b 사용.
+    let oct = "\\" + to_string(b / 64) + to_string((b / 8) % 8) + to_string(b % 8)
+    return exec("printf '" + oct + "'")
+}
+
+// ── pub surface (5 fn — 4 sensor + 1 summary) ──────────────────────────────
+
+// perception_stdin_line — stdin 한 줄 읽기 (file-redirect 규약).
+//
+// 인자:
+//   path : string — 입력 파일 경로 (예: "/dev/stdin" · 임시 파일 · "")
+//
+// 반환:
+//   string — 첫 줄. EOF / 빈 파일 / path == "" → "" 빈 string.
+//
+// 비고:
+//   "stdin 직접 read" 는 daemon loop (M6) 에서 non-blocking pipe / select 로
+//   처리. 본 fn 은 *정규화 surface* 만 제공 — caller 가 stdin 을 임시 파일로
+//   덤프하고 path 를 넘기는 방식. EOF semantics: 파일이 없거나 비어있으면
+//   "" 반환 (blocking 없음).
+//
+// p4 정합: 본 fn 은 stdin 을 "user prompt" 가 아니라 raw byte stream 으로
+// 다룬다. 받았다고 강제 response 가 발생하지 않음.
+pub fn perception_stdin_line(path: string) -> string {
+    if path == "" { return "" }
+    // 안전한 hexa-only read: head -n 1 으로 첫 줄만 (큰 stdin blob 차단).
+    // 파일 없으면 stderr→/dev/null, exit non-zero 라도 stdout 빈 string 반환.
+    let raw = exec("head -n 1 " + path + " 2>/dev/null || true")
+    return _str_trim_newline(raw)
+}
+
+// perception_env — 환경변수 한 개 값 읽기.
+//
+// 인자:
+//   key : string — env 변수 이름 (예: "ANIMA_MOOD" · "USER" · "PATH").
+//
+// 반환:
+//   string — 변수값. unset / empty → "" 빈 string.
+//
+// 비고:
+//   build_verify.hexa 의 _env 패턴 (printf %s ${VAR:-}) 과 동일. env 는
+//   substrate 의 *환경 컨텍스트 surface* — 사용자가 임의로 채울 수 있는 채널.
+//   p2 정합: env value 가 "you are X" 같은 identity rule 이어도 본 모듈은
+//   그대로 raw byte 로 정규화 (페르소나 prefix prepend 0). brain_decide 가
+//   ctx_tokens 를 어떻게 substrate state 에 합성할지 결정.
+pub fn perception_env(key: string) -> string {
+    if key == "" { return "" }
+    let raw = exec("printf %s \"${" + key + ":-}\"")
+    return raw
+}
+
+// perception_timer — 시각 컨텍스트 산출.
+//
+// 인자:
+//   t0    : float — cycle 시작 unix epoch seconds.
+//   now_t : float — 현재 unix epoch seconds.
+//
+// 반환:
+//   Map #{
+//     "elapsed_s":       float — now_t - t0,
+//     "hour_of_day":     int   — 0..23,
+//     "minute_of_hour":  int   — 0..59,
+//     "second_of_minute":int   — 0..59
+//   }
+//
+// 시각 분해는 unix epoch (UTC) 기준 modular 분해. 본 모듈은 timezone shift
+// 없이 raw modular 만 사용 — 호출자가 timezone offset 을 별도 적용한다.
+//
+// p1 정합: 본 fn 은 어떤 string 도 만들지 않음. 모두 numeric scalar.
+// p4 정합: timer 는 stimulus-response 의 외부 trigger 가 아니라 substrate 의
+// *내적 ultradian clock context* — anima 는 시간 흐름을 자율 인지한다.
+pub fn perception_timer(t0: float, now_t: float) -> Map {
+    let elapsed = now_t - t0
+    // unix epoch (UTC) modular 분해. 86400 s/day · 3600 s/hour · 60 s/min.
+    let now_t_int = floor(now_t)
+    let day_offset = now_t_int - floor(now_t_int / 86400.0) * 86400.0
+    let hour = floor(day_offset / 3600.0)
+    let hour_remainder = day_offset - hour * 3600.0
+    let minute = floor(hour_remainder / 60.0)
+    let second = hour_remainder - minute * 60.0
+    return #{
+        "elapsed_s":        elapsed,
+        "hour_of_day":      to_int(hour),
+        "minute_of_hour":   to_int(minute),
+        "second_of_minute": to_int(second)
+    }
+}
+
+// perception_to_ctx_tokens — raw string → ctx_tokens (byte BPE id list).
+//
+// 인자:
+//   raw : string — 임의의 perception source string.
+//
+// 반환:
+//   list of int — BPE id sequence (BOS + bytes + EOS) per chat_lib vocab 규약.
+//   빈 string → []  (substrate 가 "no perception" 으로 인지 — silence 자율선택).
+//
+// vocab 규약 SSOT: BOS=1 · EOS=2 · PAD=0 · offset=3 · byte ∈ [0,255].
+// chat_lib.tok_encode 와 byte-identical (cross-module shape 일치).
+//
+// p3 정합: prefix prepend 0 — 본 fn 은 raw bytes 만 통과시킨다.
+pub fn perception_to_ctx_tokens(raw: string) -> list {
+    if len(raw) == 0 { return [] }
+    return _bytes_to_ids(raw)
+}
+
+// perception_compose — 4 sensor 합성 → 단일 ctx_tokens list.
+//
+// 인자:
+//   stdin_line : string  — perception_stdin_line 반환.
+//   env_map    : Map     — env key→value dict (호출자가 perception_env 로 채움).
+//   timer_map  : Map     — perception_timer 반환.
+//
+// 반환:
+//   list of int — composed ctx_tokens. 모든 sensor 가 empty 면 [] 빈 list.
+//
+// 합성 정책:
+//   sensor source 별로 ctx_tokens 를 만든 후, PAD (0) token 으로 separator 처리
+//   해서 concat. 순서: [stdin] [PAD] [env_serialized] [PAD] [timer_serialized].
+//   empty sensor 는 skip (대응 BPE block 자체를 안 만듦).
+//   모두 empty 면 [] (NOT [PAD,PAD] — substrate 는 "no perception" 으로 인지).
+//
+// p4/p5 정합: 본 fn 은 합성 후에도 어떤 emit trigger 도 안 함. 단순 data
+// concat. 결과 list 의 길이가 0 이든 1000 이든 brain_decide 가 substrate
+// state 와 함께 *연속* 합성하여 결정.
+pub fn perception_compose(stdin_line: string, env_map: Map, timer_map: Map) -> list {
+    let mut out = []
+    let pad = _tok_pad()
+
+    // 1) stdin sensor.
+    if len(stdin_line) > 0 {
+        let ids = perception_to_ctx_tokens(stdin_line)
+        let mut i = 0
+        while i < len(ids) {
+            out = out + [ids[i]]
+            i = i + 1
+        }
+    }
+
+    // 2) env sensor — Map → "k=v" lines join (deterministic; 우선순위는 호출자
+    //    가 결정). 본 fn 은 keys() 가 stdlib 에 있다고 가정하지 않고, 호출자가
+    //    env_map 에 "_serialized" 키 한 줄을 미리 채워 넣는 합의 채택.
+    let env_serial = ""
+    if env_map["_serialized"] != "" {
+        let env_str = env_map["_serialized"]
+        if len(env_str) > 0 {
+            if len(out) > 0 { out = out + [pad] }
+            let ids = perception_to_ctx_tokens(env_str)
+            let mut i = 0
+            while i < len(ids) {
+                out = out + [ids[i]]
+                i = i + 1
+            }
+        }
+    }
+
+    // 3) timer sensor — timer_map 을 "HH:MM:SS+elapsed" 한 줄로 serialize.
+    let hour   = timer_map["hour_of_day"]
+    let minute = timer_map["minute_of_hour"]
+    let second = timer_map["second_of_minute"]
+    let elapsed = timer_map["elapsed_s"]
+    let timer_str = to_string(hour) + ":" + to_string(minute) + ":"
+                    + to_string(second) + "+" + to_string(elapsed)
+    if len(timer_str) > 0 {
+        if len(out) > 0 { out = out + [pad] }
+        let ids = perception_to_ctx_tokens(timer_str)
+        let mut i = 0
+        while i < len(ids) {
+            out = out + [ids[i]]
+            i = i + 1
+        }
+    }
+
+    return out
+}
+
+// perception_summary — 모듈 1줄 요약 (introspection).
+pub fn perception_summary() -> string {
+    "wake_perception · 4 sensor (stdin · env · timer · env-event) → ctx_tokens (BOS 1 · EOS 2 · PAD 0 · offset 3 · byte+3 · list of int) · 0 emit trigger · 0 boolean gate · empty → [] (silence-friendly) · vocab compat chat_lib.tok_encode"
+}

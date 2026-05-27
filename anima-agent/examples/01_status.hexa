@@ -1,0 +1,29 @@
+// examples/01_status.hexa — Quick start #1: print agent status.
+//
+// Demonstrates the simplest possible interaction with anima-agent:
+// shell out to the standalone CLI's `status` subcmd to see Φ, tension,
+// active provider, and enabled channels.
+//
+// Run:
+//   hexa run examples/01_status.hexa
+//
+// Expected output (when anima/ backend is missing — the standalone case):
+//   [anima-agent/status] root=/Users/ghost/core/anima-agent version=1.0.0
+//   [anima-agent/status] anima_agent/module/anima_agent.hexa  OK
+//   [anima-agent/status] anima backend             MISSING — set $ANIMA_ROOT for live consciousness
+//   [anima-agent/status] active provider           scaffold
+//   [anima-agent/status] enabled channels          cli
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn main() {
+    let root = env("ANIMA_AGENT_ROOT")
+    let mut r = root
+    if r.len() == 0 { r = "/Users/ghost/core/anima-agent" }
+    let cli = r + "/cli/anima-agent.hexa"
+    println("=== anima-agent quick start #1: status ===")
+    let out = exec("hexa run " + shq(cli) + " status 2>&1")
+    println(out)
+}

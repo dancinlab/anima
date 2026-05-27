@@ -1,0 +1,42 @@
+#!/bin/bash
+# F-TERMINATOR-1 falsifier: 3-scenario simulation of the Bug1 idle-window logic.
+# Validates ALIVE=0/DONE=0 -> sleep IDLE_WAIT_SEC -> RECHECK -> {DONE-fall-through, pid-revival-skip, confirmed-crash}.
+# Idle window shrunk to 1s; structure mirrors s43/s44 production scripts post-patch.
+set -uo pipefail
+
+IDLE_WAIT_SEC=1
+SCENARIO="${1:-A}"
+COUNTER_FILE=$(mktemp)
+echo 0 > "$COUNTER_FILE"
+
+probe_pod_sim() {
+    local n
+    n=$(cat "$COUNTER_FILE")
+    n=$((n + 1))
+    echo "$n" > "$COUNTER_FILE"
+    case "$SCENARIO" in
+        A)  if [ "$n" -eq 1 ]; then echo "DONE=0 PHASE=none ALIVE=0 STEP=9999/10000"; else echo "DONE=1 PHASE=final_saved ALIVE=0 STEP=10000/10000"; fi ;;
+        B)  if [ "$n" -eq 1 ]; then echo "DONE=0 PHASE=none ALIVE=0 STEP=5000/10000"; else echo "DONE=0 PHASE=none ALIVE=1 STEP=5050/10000"; fi ;;
+        C)  echo "DONE=0 PHASE=none ALIVE=0 STEP=4321/10000" ;;
+        *)  echo "DONE=0 PHASE=none ALIVE=0 STEP=0/10000" ;;
+    esac
+}
+
+PROBE=$(probe_pod_sim)
+echo "[$(date -u +%FT%TZ)] probe=$PROBE"
+
+if echo "$PROBE" | grep -q "ALIVE=0" && echo "$PROBE" | grep -q "DONE=0"; then
+    echo "[$(date -u +%FT%TZ)] ALIVE=0/DONE=0 detected -- entering ${IDLE_WAIT_SEC}s idle-window"
+    sleep $IDLE_WAIT_SEC
+    RECHECK=$(probe_pod_sim)
+    echo "[$(date -u +%FT%TZ)] recheck=$RECHECK"
+    if echo "$RECHECK" | grep -q "DONE=1"; then
+        echo "OUTCOME=DONE_LANDED"
+    elif echo "$RECHECK" | grep -q "ALIVE=1"; then
+        echo "OUTCOME=PID_REVIVED"
+    else
+        echo "OUTCOME=CONFIRMED_CRASH"
+    fi
+fi
+
+rm -f "$COUNTER_FILE"

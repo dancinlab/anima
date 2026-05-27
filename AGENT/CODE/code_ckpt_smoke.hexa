@@ -1,0 +1,47 @@
+// code_ckpt_smoke.hexa — F5 ckpt swap-in path 4-case smoke.
+
+import "/Users/ghost/core/anima/AGENT/CODE/code_ckpt.hexa"
+
+fn _print_case(label: string, ok: bool) {
+    let mark = "FAIL"
+    if ok { mark = "PASS" }
+    println("[" + label + "] " + mark)
+}
+
+fn main() {
+    println("=== F5 ckpt swap-in path smoke ===")
+
+    // C1 — locator paths return non-empty strings
+    let v5_local = code_ckpt_v5_local()
+    let v5_hf = code_ckpt_v5_hf()
+    let m3_a = code_ckpt_m3_axis("A")
+    let c1_ok = string_len(v5_local) > 0 && string_len(v5_hf) > 0 && string_len(m3_a) > 0
+    _print_case("C1 locators non-empty", c1_ok)
+    println("  v5_local=" + v5_local)
+    println("  v5_hf=" + v5_hf)
+    println("  m3_axis_A=" + m3_a)
+
+    // C2 — M3 verdicts all FAIL (current truth)
+    let v_a = code_ckpt_m3_verdict("A")
+    let v_b = code_ckpt_m3_verdict("B")
+    let v_c = code_ckpt_m3_verdict("C")
+    let v_d = code_ckpt_m3_verdict("D")
+    let c2_ok = v_a == "FAIL" && v_b == "FAIL" && v_c == "FAIL" && v_d == "FAIL"
+    _print_case("C2 M3 4/4 FAIL verdict", c2_ok)
+
+    // C3 — code_ckpt_bind STUB returns ready=false with todo list
+    let bind = code_ckpt_bind(v5_local)
+    let c3_ok = to_string(bind["ready"]) == "false" && list_len(bind["todo"]) >= 3
+    _print_case("C3 bind ready=false + todo list", c3_ok)
+
+    // C4 — resolve returns tier dict (either v5-mitosis-cotrain or none-supported)
+    let r = code_ckpt_resolve()
+    let tier = to_string(r["tier"])
+    let c4_ok = (tier == "v5-mitosis-cotrain" || tier == "none-supported") && to_string(r["ready"]) == "false"
+    _print_case("C4 resolve honest fallback", c4_ok)
+    println("  resolved tier=" + tier + " source=" + to_string(r["source"]))
+
+    let all = c1_ok && c2_ok && c3_ok && c4_ok
+    println("")
+    println("ALL: " + to_string(all))
+}

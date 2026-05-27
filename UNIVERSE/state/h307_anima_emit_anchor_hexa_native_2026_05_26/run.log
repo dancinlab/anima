@@ -1,0 +1,19 @@
+================================================================
+  H_307 — anima emit anchor hexa-native cite (real v3 substrate)
+================================================================
+  file_count        = 14
+  distinct_steps    = 10
+  distinct_langs    = 5
+  anima_emit_rate   = 0.0028 events/step
+  cpg_sim_rate      = 0.046 events/tick (H_306)
+  ratio cpg/anima   = 16.4286
+  ────────────── verdict ──────────────
+  [PASS] F307.1 EMIT-ANCHOR-PRESENT: file_count >= 1
+  [PASS] F307.2 STEP-COVERAGE: distinct_steps >= 5
+  [PASS] F307.3 LANG-DIVERSITY: distinct_langs >= 3
+  [PASS] F307.4 RATE-LOG-CONSISTENT: 0.05 <= ratio <= 100 (within 2 OoM)
+  [PASS] F307.5 BOUND: all counts >= 0
+================================================================
+  RESULT: 5 PASS / 0 FAIL
+  HEADLINE: ANIMA-CPG-CONSISTENT (real data 방향 정합)
+================================================================

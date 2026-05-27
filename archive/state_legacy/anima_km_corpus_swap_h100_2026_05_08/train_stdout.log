@@ -1,0 +1,84 @@
+[19:36:32] === BG-KM-CORPUS V5-α byte+untie H100 500M scale test 2026-05-07 ===
+[19:36:32] hostname=b78d21a2760e seed=42
+[19:36:32] device=cuda torch=2.8.0+cu128
+[19:36:32] gpu=NVIDIA H100 80GB HBM3 cc=(9, 0)
+[19:36:32] V5-α arch: 24L/1024d/16h block=1024 vocab=256 (BYTE) UNTIED head_a
+[19:36:32] reg: dropout=0.3 WD=0.1 label_smoothing=0.1
+[19:36:32] train: bs=4 grad_accum=8 (eff=32) lr=0.0002 warmup=300 steps=4000
+[19:36:32] EVAL_AT every 500, SAVE_AT every 1000
+[19:36:32] corpus_path=/workspace/anima_km_corpus_swap_h100/corpus_chat_template.txt
+[19:36:32] persona_prefix='[anima 우주뇌지도] '
+[19:36:32] WALL_CLOCK_CAP_S=4800
+[19:36:32] corpus loaded: 214,299,726 bytes (204.37MB) in 0.1s
+[19:36:45] split: train=203,584,739 val=10,714,987 reduced_split=False
+[19:36:52] V5-α model built: 782,666,944 params (782.67M / 0.783B)
+[19:36:52]   UNTIE confirmed: tok_emb.id=125983138542000 != head_a.id=125983192011296
+[19:36:52] V5-α primary smoke forward OK
+[19:36:53] === begin V5-α H100 500M training ===
+[19:36:53] step     1/4000 | lr=1.33e-06 | L_A=5.753 | step_t=0.38s elapsed=0s
+[19:36:53] step     2/4000 | lr=2.00e-06 | L_A=5.759 | step_t=0.18s elapsed=1s
+[19:36:54] step     3/4000 | lr=2.67e-06 | L_A=5.770 | step_t=0.17s elapsed=1s
+[19:36:54] step     4/4000 | lr=3.33e-06 | L_A=5.747 | step_t=0.17s elapsed=1s
+[19:36:54] step     5/4000 | lr=4.00e-06 | L_A=5.765 | step_t=0.17s elapsed=1s
+[19:37:02] step    50/4000 | lr=3.40e-05 | L_A=4.666 | step_t=0.16s elapsed=9s
+[19:37:11] step   100/4000 | lr=6.73e-05 | L_A=4.485 | step_t=0.18s elapsed=18s
+[19:37:20] step   150/4000 | lr=1.01e-04 | L_A=4.311 | step_t=0.18s elapsed=27s
+[19:37:29] step   200/4000 | lr=1.34e-04 | L_A=4.301 | step_t=0.18s elapsed=36s
+[19:37:37] step   250/4000 | lr=1.67e-04 | L_A=4.277 | step_t=0.18s elapsed=45s
+[19:37:46] step   300/4000 | lr=2.00e-04 | L_A=4.348 | step_t=0.18s elapsed=53s
+[19:37:55] step   350/4000 | lr=2.00e-04 | L_A=7.947 | step_t=0.18s elapsed=62s
+[19:38:04] step   400/4000 | lr=2.00e-04 | L_A=4.447 | step_t=0.18s elapsed=71s
+[19:38:13] step   450/4000 | lr=1.99e-04 | L_A=4.420 | step_t=0.18s elapsed=80s
+[19:38:22] step   500/4000 | lr=1.99e-04 | L_A=4.310 | step_t=0.18s elapsed=89s
+[19:38:22] --- eval gate @ step 500 (V5.8 5-dialogue language-agnostic) ---
+[19:38:29]   eval step=500 dlg=color v58=False t2a='�: ���n��� �m슜곘브����� ��� �렝�r: �:�t��� �넰�\n묄�����.은�� �[���'
+[19:38:33]   eval step=500 dlg=profession v58=False t2a='�����땰���?�� �\n� ���0���0���\n��� ��9������l� ����0�(������ �'
+[19:38:37]   eval step=500 dlg=day v58=False t2a='���o�� �  �u  ��윝줦 ��A���뤜 �쟴�(���,�����\x12�������N���� �i���D'
+[19:38:41]   eval step=500 dlg=anima_fact v58=False t2a=' X��������� ��R���ꄤ��������������a��� ,��m � ����i ��e-��o�y'
+[19:38:46]   eval step=500 dlg=cosmology v58=False t2a='��� �� ꋀ밞�d�:���� �� � ���� Za���� �뚙a��Ꝺ��뜝촅��K���a�� ���� '
+[19:38:46]   EVAL[step=500] V58=0/5 val_loss=4.3462
+[19:38:54] step   550/4000 | lr=1.98e-04 | L_A=4.445 | step_t=0.66s elapsed=122s
+[19:39:03] step   600/4000 | lr=1.97e-04 | L_A=4.387 | step_t=0.18s elapsed=131s
+[19:39:12] step   650/4000 | lr=1.96e-04 | L_A=4.455 | step_t=0.18s elapsed=139s
+[19:39:21] step   700/4000 | lr=1.95e-04 | L_A=4.458 | step_t=0.18s elapsed=148s
+[19:39:30] step   750/4000 | lr=1.94e-04 | L_A=4.308 | step_t=0.18s elapsed=157s
+[19:39:39] step   800/4000 | lr=1.92e-04 | L_A=4.329 | step_t=0.18s elapsed=166s
+[19:39:48] step   850/4000 | lr=1.90e-04 | L_A=4.367 | step_t=0.18s elapsed=175s
+[19:39:56] step   900/4000 | lr=1.89e-04 | L_A=4.358 | step_t=0.18s elapsed=184s
+[19:40:05] step   950/4000 | lr=1.87e-04 | L_A=4.550 | step_t=0.18s elapsed=193s
+[19:40:14] step  1000/4000 | lr=1.85e-04 | L_A=4.380 | step_t=0.18s elapsed=201s
+[19:40:14] --- eval gate @ step 1000 (V5.8 5-dialogue language-agnostic) ---
+[19:40:21]   eval step=1000 dlg=color v58=False t2a='��뭴�  t��e�n� �� ���� o���� ��렕bi�w� ��o�(�y�a�����a� � �졓��'
+[19:40:25]   eval step=1000 dlg=profession v58=False t2a='���� ���� ����� ��� �  �n��� ����o�� ����d��� ��b�� ��� �  �'
+[19:40:29]   eval step=1000 dlg=day v58=False t2a='� �n�������\n� 딐.n��X���_��(�� 놡뼼���삠����n� ���n� U��o �젴�\n�p'
+[19:40:34]   eval step=1000 dlg=anima_fact v58=False t2a='��t����� ���(���nc�c�S�� �    �n���� 0����aeS������r3��R��f�'
+[19:40:38]   eval step=1000 dlg=cosmology v58=False t2a=' � ��� ��y�as���Sy매[��)e��� �Z���   �渠��i�"  �� ��� ���o�un�'
+[19:40:38]   EVAL[step=1000] V58=0/5 val_loss=4.3816
+[19:40:47] step  1050/4000 | lr=1.82e-04 | L_A=4.284 | step_t=0.65s elapsed=234s
+[19:40:56] step  1100/4000 | lr=1.80e-04 | L_A=4.419 | step_t=0.18s elapsed=243s
+[19:41:05] step  1150/4000 | lr=1.78e-04 | L_A=4.536 | step_t=0.18s elapsed=252s
+[19:41:13] step  1200/4000 | lr=1.75e-04 | L_A=4.262 | step_t=0.18s elapsed=261s
+[19:41:22] step  1250/4000 | lr=1.72e-04 | L_A=4.404 | step_t=0.18s elapsed=269s
+[19:41:31] step  1300/4000 | lr=1.69e-04 | L_A=4.306 | step_t=0.18s elapsed=278s
+[19:41:40] step  1350/4000 | lr=1.67e-04 | L_A=4.320 | step_t=0.18s elapsed=287s
+[19:41:49] step  1400/4000 | lr=1.64e-04 | L_A=4.352 | step_t=0.18s elapsed=296s
+[19:41:58] step  1450/4000 | lr=1.60e-04 | L_A=4.278 | step_t=0.18s elapsed=305s
+[19:42:07] step  1500/4000 | lr=1.57e-04 | L_A=4.261 | step_t=0.18s elapsed=314s
+[19:42:07] --- eval gate @ step 1500 (V5.8 5-dialogue language-agnostic) ---
+[19:42:14]   eval step=1500 dlg=color v58=False t2a='��1� ϝ �� �����\n ��� ��d ���������n �� ���초�\x18��� ���  ��젚���'
+[19:42:18]   eval step=1500 dlg=profession v58=False t2a='� � �������m� ��\x16��쵁������(:�엎n�� a쐗���� ����m�:� ���2�쁌���l'
+[19:42:22]   eval step=1500 dlg=day v58=False t2a='����:�� ��ꐝ]졝�줗�?� � ����� ��le� �� ����i���� ��������,t�� 밳'
+[19:42:26]   eval step=1500 dlg=anima_fact v58=False t2a='��:�� ���  �  �o%��� C  ���e�봣n-� �� ��� :t�� ���\x17�윩 �S����s'
+[19:42:30]   eval step=1500 dlg=cosmology v58=False t2a='� ����\x02엋�e짚� ���  �� �� ������ �aE�����p� ����ꂡ��e����e���t '
+[19:42:30]   EVAL[step=1500] V58=0/5 val_loss=4.3602
+[19:42:30]   EARLY_STOP: v58 plateau at 0 for 3 consecutive evals
+[19:42:36]   FINAL_CKPT[step=1500] -> /workspace/anima_km_corpus_swap_h100/state/ckpt_final.pt
+[19:42:36] === final eval V5.8 5-dialogue (best ckpt) ===
+[19:42:41]   eval step=-1 dlg=color v58=False t2a='��n��. �R�  ������찵���i����� ���� � y\x1f�섘����U��  쯝����:�0 s�'
+[19:42:45]   eval step=-1 dlg=profession v58=False t2a='�� o� �뜷 a����� [ :�섄a����욳 � �:������� �(�� �g/�� �i��d���1'
+[19:42:49]   eval step=-1 dlg=day v58=False t2a='� � ���� �혝�s���m�8 �,��\n���킎 �����e�e���ꀔ�슧���)�ս꼄�������\x7f�'
+[19:42:53]   eval step=-1 dlg=anima_fact v58=False t2a='n�� \n�a� � ��� ��.�뚝����\n ���  � ���c9�t�� l숀ee ����d� ��빼��'
+[19:42:57]   eval step=-1 dlg=cosmology v58=False t2a='el �n� ��y���n .�� u�Sa ��(e�� ���� �� 븀��?뀄�봰���je걈� 5��a��'
+[19:42:57]   FINAL_BEST V58=0/5
+[19:42:57] === VERDICT === final_class=FAIL_TRUE | params=782.7M | best_v58=0/5 (step=None) | final_best_v58=0/5 | early_stop=True wall_clock_hit=False | elapsed=365s
+[19:42:57] verdict written: /workspace/anima_km_corpus_swap_h100/state/verdict.json

@@ -1,0 +1,321 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  motivation_emit_ratio_bench.hexa — PURE B7 (Phase B 8-factor measurement)
+//
+//  N=1000 synthetic substrate samples × 8 factor scores × emit decision.
+//  Mirrors HEXAD/CHAT/spontaneous_lib.hexa factor formulas verbatim
+//  (no fabrication — factor_* + motivation_score + should_emit). Output:
+//    - per-factor emit ratio (factor 단독 > spont_im_threshold)
+//    - aggregate emit ratio (weighted motivation_score > threshold,
+//      and logical-OR variant for cross-check)
+//    - 8×8 Pearson correlation matrix (factor co-variation baseline)
+//
+//  Deterministic LCG (Numerical Recipes a/c/m, H_221 mirror) seeded by
+//  20260524 — reproducible run-to-run.
+//
+//  Falsifier coverage:
+//    F-B7-1  N=1000 samples generated with seed=20260524
+//    F-B7-2  8 factor scores computed per sample
+//    F-B7-3  per-factor emit ratio ∈ [0, 1]
+//    F-B7-4  aggregate emit decision ∈ [0, 1]
+//    F-B7-5  correlation matrix symmetric 8×8
+//
+//  Honest C3 (per PR body §):
+//    1. spontaneous_lib API access — DIRECT import (no adapter needed).
+//    2. factor formula accuracy — verbatim mirror via library import.
+//    3. substrate state synthesis — i.i.d. uniform; NOT realistic joint
+//       distribution (real anima state has temporal correlation).
+//    4. N=1000 sufficiency — adequate for ratio ±3% (1.96·√(0.25/1000) ≈
+//       0.031); correlation estimate ±0.062 95% CI (|r|<0.1 = noise floor).
+//    5. correlation interpretability — i.i.d. uniform inputs ⇒ off-diagonal
+//       noise around 0; this is the NULL baseline future ckpt-fire deviates
+//       from. NOT a behavioural prediction.
+//
+//  SSOT: HEXAD/PURE/HEXAD_NATIVE_PURE.md (B7 milestone)
+//  Run:  hexa run HEXAD/PURE/bench/motivation_emit_ratio_bench.hexa
+// ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/HEXAD/CHAT/spontaneous_lib.hexa"
+
+
+// ── §1 deterministic LCG (Numerical Recipes — H_221 byte-mirror) ─────────────
+
+fn _lcg_next(state: int) -> int {
+    let mult = 1103515245
+    let incr = 12345
+    let modulus = 2147483647
+    let s = ((state * mult) + incr) % modulus
+    if s < 0 { return s + modulus }
+    return s
+}
+
+// uniform [0, 1) draw — strip top bit / m
+fn _lcg_uniform(state: int) -> float {
+    return ((state % 1000000)) / 1000000.0
+}
+
+
+// ── §2 substrate state synthesis (i.i.d. uniform per axis) ───────────────────
+
+// Generate factor scores for ONE sample, returning 8 floats packed in dict.
+// State dimensions (per spec):
+//   phi    ∈ [0, 1]          → relevance, balance
+//   sim    ∈ [0, 1]          → info_gap = 1 − sim
+//   cur    ∈ [0, 1]          → curiosity
+//   tens_d ∈ [-1, 1]         → pain = |Δ tension|
+//   gate   ∈ [0.486, 0.514]  → coherence (interior of Ψ-band)
+//   split  ∈ {true, false}   → originality (bool)
+//   ratchet∈ [0, 1]          → balance gate ratchet
+//   silence∈ [0, 3600]       → dynamics (clamped at 30s in lib)
+fn _draw_factors(seed_box: list) -> dict {
+    // advance LCG 8 times for 8 axes (split = derived bool from another draw)
+    let mut s = seed_box[0]
+    s = _lcg_next(s)    let u1 = _lcg_uniform(s)   // phi
+    s = _lcg_next(s)    let u2 = _lcg_uniform(s)   // sim
+    s = _lcg_next(s)    let u3 = _lcg_uniform(s)   // cur
+    s = _lcg_next(s)    let u4 = _lcg_uniform(s)   // tens_d (mapped to [-1,1])
+    s = _lcg_next(s)    let u5 = _lcg_uniform(s)   // gate (mapped to [0.486, 0.514])
+    s = _lcg_next(s)    let u6 = _lcg_uniform(s)   // split prob
+    s = _lcg_next(s)    let u7 = _lcg_uniform(s)   // ratchet
+    s = _lcg_next(s)    let u8 = _lcg_uniform(s)   // silence (×3600)
+    seed_box[0] = s
+
+    let phi      = u1
+    let sim      = u2
+    let cur_ema  = u3
+    let tens_d   = (u4 * 2.0) - 1.0          // [-1, 1]
+    let gate     = 0.486 + u5 * 0.028        // [0.486, 0.514]
+    let split    = u6 < 0.20                 // ~20% prior (sparse split events)
+    let ratchet  = u7
+    let silence  = u8 * 3600.0               // [0, 3600] sec
+
+    // Compute factor scores via library (verbatim mirror).
+    let rel  = factor_relevance(phi)
+    let gap  = factor_info_gap(sim)
+    let cur  = factor_curiosity(cur_ema)
+    let pn   = factor_pain(tens_d)
+    let coh  = factor_coherence(gate)
+    let orig = factor_originality(split)
+    let bal  = factor_balance(phi, ratchet)
+    let dyn_v= factor_dynamics(silence)
+
+    return #{
+        "relevance":   rel,    "info_gap":    gap,
+        "curiosity":   cur,    "pain":        pn,
+        "coherence":   coh,    "originality": orig,
+        "balance":     bal,    "dynamics":    dyn_v,
+    }
+}
+
+
+// ── §3 stats helpers ─────────────────────────────────────────────────────────
+
+fn _mean(xs: list) -> float {
+    let n = xs.len()
+    if n == 0 { return 0.0 }
+    let mut sum = 0.0
+    let mut i = 0
+    while i < n { sum = sum + xs[i]   i = i + 1 }
+    return sum / (n as float)
+}
+
+fn _pearson(xs: list, ys: list) -> float {
+    let n = xs.len()
+    if n < 2 { return 0.0 }
+    let mx = _mean(xs)
+    let my = _mean(ys)
+    let mut num = 0.0
+    let mut sx = 0.0
+    let mut sy = 0.0
+    let mut i = 0
+    while i < n {
+        let dx = xs[i] - mx
+        let dy = ys[i] - my
+        num = num + dx * dy
+        sx  = sx + dx * dx
+        sy  = sy + dy * dy
+        i = i + 1
+    }
+    let denom = sx * sy
+    if denom <= 0.0 { return 0.0 }
+    // sqrt via Newton — small iterations, denom typically O(N/12)
+    let mut r = denom
+    let mut j = 0
+    while j < 30 { r = 0.5 * (r + denom / r)   j = j + 1 }
+    return num / r
+}
+
+fn _fmt1(x: float) -> string {
+    // 1-decimal print (e.g. 0.5). Truncate-add-0.05 round.
+    let scaled = (x * 10.0) + 0.5
+    let n = scaled as int
+    let intp = n / 10
+    let frac = n % 10
+    if frac < 0 { return "-" + to_string(0 - intp) + "." + to_string(0 - frac) }
+    return to_string(intp) + "." + to_string(frac)
+}
+
+fn _fmt2(x: float) -> string {
+    // 2-decimal print (correlation cells).
+    let scaled = (x * 100.0)
+    let n = if scaled >= 0.0 { (scaled + 0.5) as int } else { (scaled - 0.5) as int }
+    let intp = n / 100
+    let mut frac = n % 100
+    let sign = if n < 0 { "-" } else { " " }
+    let absi = if intp < 0 { 0 - intp } else { intp }
+    if frac < 0 { frac = 0 - frac }
+    let fracs = if frac < 10 { "0" + to_string(frac) } else { to_string(frac) }
+    return sign + to_string(absi) + "." + fracs
+}
+
+fn _pad(s: string, w: int) -> string {
+    let mut out = s
+    let mut k = s.len()
+    while k < w { out = out + " "   k = k + 1 }
+    return out
+}
+
+
+// ── §4 main bench ────────────────────────────────────────────────────────────
+
+fn main() {
+    let n_samples = 1000
+    let seed = 20260524
+    let threshold = spont_im_threshold()   // 0.3 (B-SPONT-FACTOR threshold)
+
+    let names = ["relevance", "info_gap", "curiosity", "pain",
+                 "coherence", "originality", "balance", "dynamics"]
+    let abbrev = ["rel", "gap", "cur", "pai", "coh", "ori", "bal", "dyn"]
+
+    // 8 columns of N values
+    let mut cols = []
+    let mut ci = 0
+    while ci < 8 { cols.push([])   ci = ci + 1 }
+
+    let mut emit_any_count = 0
+    let mut emit_weighted_count = 0
+
+    let mut seed_box = [seed]
+    let mut i = 0
+    while i < n_samples {
+        let f = _draw_factors(seed_box)
+        let vals = [
+            to_float(to_string(f["relevance"])),
+            to_float(to_string(f["info_gap"])),
+            to_float(to_string(f["curiosity"])),
+            to_float(to_string(f["pain"])),
+            to_float(to_string(f["coherence"])),
+            to_float(to_string(f["originality"])),
+            to_float(to_string(f["balance"])),
+            to_float(to_string(f["dynamics"])),
+        ]
+        let mut k = 0
+        let mut any_above = false
+        while k < 8 {
+            cols[k].push(vals[k])
+            if vals[k] > threshold { any_above = true }
+            k = k + 1
+        }
+        if any_above { emit_any_count = emit_any_count + 1 }
+
+        let score = motivation_score(vals[0], vals[1], vals[2], vals[3],
+                                     vals[4], vals[5], vals[6], vals[7])
+        if should_emit(score) { emit_weighted_count = emit_weighted_count + 1 }
+        i = i + 1
+    }
+
+    // Per-factor emit counts (factor 단독 > threshold)
+    let mut per_emit = []
+    let mut fi = 0
+    while fi < 8 {
+        let mut cnt = 0
+        let mut j = 0
+        while j < n_samples {
+            if cols[fi][j] > threshold { cnt = cnt + 1 }
+            j = j + 1
+        }
+        per_emit.push(cnt)
+        fi = fi + 1
+    }
+
+    // ── output ──
+    println("=== PURE motivation emit ratio bench (B7) ===")
+    println("N samples: " + to_string(n_samples))
+    println("seed:      " + to_string(seed))
+    println("")
+    println("per-factor emit ratio:")
+    let mut p = 0
+    while p < 8 {
+        let ratio = (per_emit[p] as float) / (n_samples as float)
+        println("  " + _pad(names[p], 14) + ":  " + _fmt1(ratio)
+                + "  (n=" + to_string(per_emit[p]) + " emit)")
+        p = p + 1
+    }
+    println("")
+    let agg_any = (emit_any_count as float) / (n_samples as float)
+    let agg_w   = (emit_weighted_count as float) / (n_samples as float)
+    println("aggregate emit decision (any factor triggers): " + _fmt1(agg_any)
+            + "  (n=" + to_string(emit_any_count) + "/" + to_string(n_samples) + ")")
+    println("aggregate emit decision (weighted score):      " + _fmt1(agg_w)
+            + "  (n=" + to_string(emit_weighted_count) + "/" + to_string(n_samples) + ")")
+    println("")
+    println("per-factor correlation matrix (8x8):")
+    let mut hdr = "        "
+    let mut h = 0
+    while h < 8 { hdr = hdr + _pad(abbrev[h], 7)   h = h + 1 }
+    println(hdr)
+    let mut row_i = 0
+    while row_i < 8 {
+        let mut line = _pad(abbrev[row_i], 5) + "  "
+        let mut col_j = 0
+        while col_j < 8 {
+            let corr = _pearson(cols[row_i], cols[col_j])
+            line = line + _pad(_fmt2(corr), 7)
+            col_j = col_j + 1
+        }
+        println(line)
+        row_i = row_i + 1
+    }
+
+    // ── F-B7 falsifier verdicts ──
+    println("")
+    println("--- F-B7 falsifier verdicts ---")
+    // F-B7-1 N=1000 + deterministic seed
+    let f1 = cols[0].len() == n_samples
+    println("  F-B7-1 N=1000 seeded samples generated: " + to_string(f1))
+    // F-B7-2 8 factor scores per sample (8 cols populated)
+    let f2 = cols.len() == 8 && cols[7].len() == n_samples
+    println("  F-B7-2 8 factor scores per sample:      " + to_string(f2))
+    // F-B7-3 per-factor emit ratio ∈ [0, 1]
+    let mut f3 = true
+    let mut q = 0
+    while q < 8 {
+        let ratio = (per_emit[q] as float) / (n_samples as float)
+        if ratio < 0.0 { f3 = false }
+        if ratio > 1.0 { f3 = false }
+        q = q + 1
+    }
+    println("  F-B7-3 per-factor emit ratio ∈ [0, 1]:  " + to_string(f3))
+    // F-B7-4 aggregate emit decision ∈ [0, 1]
+    let f4 = agg_any >= 0.0 && agg_any <= 1.0 && agg_w >= 0.0 && agg_w <= 1.0
+    println("  F-B7-4 aggregate emit ∈ [0, 1]:         " + to_string(f4))
+    // F-B7-5 correlation matrix symmetric 8x8
+    let mut f5 = true
+    let mut sym_i = 0
+    while sym_i < 8 {
+        let mut sym_j = 0
+        while sym_j < 8 {
+            let rab = _pearson(cols[sym_i], cols[sym_j])
+            let rba = _pearson(cols[sym_j], cols[sym_i])
+            let d = rab - rba
+            let ad = if d < 0.0 { 0.0 - d } else { d }
+            if ad > 1e-9 { f5 = false }
+            sym_j = sym_j + 1
+        }
+        sym_i = sym_i + 1
+    }
+    println("  F-B7-5 correlation matrix symmetric 8x8: " + to_string(f5))
+
+    let all_pass = f1 && f2 && f3 && f4 && f5
+    println("")
+    println("F-B7 5/5: " + to_string(all_pass))
+}

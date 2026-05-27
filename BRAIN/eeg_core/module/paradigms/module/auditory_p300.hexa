@@ -1,0 +1,333 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-eeg-core/tool/modules/_paradigms/auditory_p300.hexa
+//                                                  (Phase 4 — paradigm #4)
+//
+//  PURPOSE
+//    Auditory P300 oddball paradigm: 1000 Hz standard / 1500 Hz oddball,
+//    self-host fixpoint: WRAP legacy
+//    anima-eeg/protocol/p300_auditory_oddball.hexa (frozen, has buggy argv
+//    normalizer). Selftest synthesises trial schedule + frozen ratio in
+//    module, no afplay.
+//
+//    DECISION: PORT (selftest), WRAP-DESIGN-REFERENCE (live). The legacy
+//    file (356 LoC) cannot be invoked under hexa.real run path due to
+//    same argv-normalizer bug as eeg_recorder.hexa. This module ports the
+//    schedule builder + 5 falsifier evaluations from the legacy spec,
+//    preserving the kv-block contract. Live afplay tone presentation
+//
+//  API
+//    _paradigm_auditory_p300_kv(args_kv: string) -> string
+//      kv-block:
+//        schema=anima-eeg-core/_paradigms/auditory_p300/1
+//        paradigm=auditory_p300
+//        n_trials=<int>
+//        n_oddball=<int> n_standard=<int>
+//        oddball_pct_actual_x100=<int>
+//        isi_mean_ms=<int> isi_sd_ms=<int>
+//        verdict=<PASS|FAIL|FALSIFIED>
+//        raw71_falsifier_count=5
+//
+//  RAW#71 FALSIFIERS (≥3 preregister — actually 5, frozen 2026-04-28)
+//    F_AP300_01 (F1): |pct_actual - pct_target| > 2pp  → ratio off
+//    F_AP300_02 (F2): oddball in first 3 trials        → schedule violation
+//    F_AP300_03 (F3): isi_mean outside [1450, 1550] ms → jitter drift
+//    F_AP300_04 (F4): tone purity proxy (analytic sine) → always PASS in synth
+//    F_AP300_05 (F5): consecutive oddballs > 0         → anti-clustering broken
+//
+//  CLI
+//    hexa run auditory_p300.hexa --selftest
+//    hexa run auditory_p300.hexa --live    (→ NOT_YET_LANDED)
+//
+//
+//  @resolver-bypass(reason="darwin-native: live mode requires afplay + audio
+//                   hardware; mac selftest synth-only.")
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA          = "anima-eeg-core/_paradigms/auditory_p300/1"
+let PARADIGM_NAME   = "auditory_p300"
+let LEGACY_PATH     = "anima-eeg/protocol/p300_auditory_oddball.hexa"
+
+let DEFAULT_N_TRIALS         = 400
+let DEFAULT_ODDBALL_PCT      = 20
+let DEFAULT_ISI_MS           = 1500
+let DEFAULT_JITTER_MS        = 100
+let DEFAULT_SEED             = 20260428
+let SELFTEST_N_TRIALS        = 400
+let RATIO_TOLERANCE_PP_X100  = 200    // ±2pp == 200 in pp*100 units
+let ISI_MEAN_MIN_MS          = 1450
+let ISI_MEAN_MAX_MS          = 1550
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_prefix = false
+        if a.ends_with(".hexa") { is_prefix = true }
+        if !is_prefix { if a.ends_with("/exe") { is_prefix = true } }
+        if !is_prefix { if a == "run" { is_prefix = true } }
+        if !is_prefix { if a.ends_with("hexa.real") || a.ends_with("/hexa") { is_prefix = true } }
+        if is_prefix { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn _kv_get(kv: string, key: string) -> string {
+    let prefix = key + "="
+    let lines = kv.split(",")
+    let mut i = 0
+    while i < len(lines) {
+        let ln = lines[i].trim()
+        if ln.starts_with(prefix) {
+            return ln.substring(prefix.len(), ln.len())
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _to_int_or(s: string, dflt: int) -> int {
+    if s == "" { return dflt }
+    return to_int(s)
+}
+
+fn _abs(x: int) -> int { if x < 0 { return -x }; return x }
+
+// LCG (matching legacy seed=20260428 fixture analytic shape)
+let LCG_A = 1103515245
+let LCG_C = 12345
+let LCG_M = 2147483648
+
+fn _lcg_next(state: int) -> int {
+    let mut s = state * LCG_A + LCG_C
+    if s < 0 { s = -s }
+    s = s - (s / LCG_M) * LCG_M
+    return s
+}
+
+// Build deterministic schedule satisfying F2 (no oddball in first 3) and
+// F5 (no two consecutive oddballs). Returns:
+//   [n_total, n_odd, n_std, isi_mean_ms, isi_sd_ms, consec_pairs, first3_odd]
+fn _build_schedule(n_trials: int, oddball_pct: int, isi_ms: int,
+                   jitter_ms: int, seed: int) -> array {
+    let target_odd = (n_trials * oddball_pct) / 100
+    let mut state = seed
+    // build candidate list 3..n_trials-1 then shuffle via Fisher-Yates
+    let mut cands = []
+    let mut a = 3
+    while a < n_trials { cands.push(a); a = a + 1 }
+    let mut k = len(cands) - 1
+    while k > 0 {
+        state = _lcg_next(state)
+        let pick = state - (state / (k + 1)) * (k + 1)
+        let tmp = cands[k]
+        cands[k] = cands[pick]
+        cands[pick] = tmp
+        k = k - 1
+    }
+    // place oddballs
+    let mut seq = []
+    let mut z = 0
+    while z < n_trials { seq.push(0); z = z + 1 }
+    let mut placed = 0
+    let mut ci = 0
+    while ci < len(cands) && placed < target_odd {
+        let idx = cands[ci]
+        let mut ok = 1
+        if idx > 0 { if seq[idx-1] == 1 { ok = 0 } }
+        if idx + 1 < n_trials { if seq[idx+1] == 1 { ok = 0 } }
+        if ok == 1 { seq[idx] = 1; placed = placed + 1 }
+        ci = ci + 1
+    }
+
+    // ISI synthesis: deterministic jitter via LCG (uniform ±jitter_ms)
+    let mut isi_sum_ms = 0
+    let mut isi_count = 0
+    let mut isi_vals = []
+    let mut t_idx = 1
+    while t_idx < n_trials {
+        state = _lcg_next(state)
+        // map state → [-jitter_ms, +jitter_ms]
+        let span = jitter_ms * 2 + 1
+        let r = state - (state / span) * span
+        let jit = r - jitter_ms
+        let isi = isi_ms + jit
+        isi_vals.push(isi)
+        isi_sum_ms = isi_sum_ms + isi
+        isi_count = isi_count + 1
+        t_idx = t_idx + 1
+    }
+    let isi_mean = if isi_count > 0 { isi_sum_ms / isi_count } else { isi_ms }
+    // SD (integer-approx) — sum of squared deviations
+    let mut sq_sum = 0
+    let mut q = 0
+    while q < len(isi_vals) {
+        let d = isi_vals[q] - isi_mean
+        sq_sum = sq_sum + d * d
+        q = q + 1
+    }
+    let var_ms2 = if isi_count > 0 { sq_sum / isi_count } else { 0 }
+    // integer sqrt (Newton) for SD
+    let mut sd = 0
+    if var_ms2 > 0 {
+        let mut x = var_ms2
+        let mut y = (x + 1) / 2
+        while y < x { x = y; y = (x + var_ms2 / x) / 2 }
+        sd = x
+    }
+
+    // counts + invariants
+    let mut consec = 0
+    let mut first3_odd = 0
+    let mut p = 0
+    while p < n_trials {
+        if p < 3 { if seq[p] == 1 { first3_odd = first3_odd + 1 } }
+        if p + 1 < n_trials { if seq[p] == 1 && seq[p+1] == 1 { consec = consec + 1 } }
+        p = p + 1
+    }
+
+    return [n_trials, placed, n_trials - placed, isi_mean, sd, consec, first3_odd]
+}
+
+// ─── public API ────────────────────────────────────────────────────────
+
+fn _paradigm_auditory_p300_kv(args_kv: string) -> string {
+    let n_trials    = _to_int_or(_kv_get(args_kv, "n_trials"),    DEFAULT_N_TRIALS)
+    let oddball_pct = _to_int_or(_kv_get(args_kv, "oddball_pct"), DEFAULT_ODDBALL_PCT)
+    let isi_ms      = _to_int_or(_kv_get(args_kv, "isi_ms"),      DEFAULT_ISI_MS)
+    let jitter_ms   = _to_int_or(_kv_get(args_kv, "jitter_ms"),   DEFAULT_JITTER_MS)
+    let seed        = _to_int_or(_kv_get(args_kv, "seed"),        DEFAULT_SEED)
+
+    let r = _build_schedule(n_trials, oddball_pct, isi_ms, jitter_ms, seed)
+    let n_total      = r[0]
+    let n_odd        = r[1]
+    let n_std        = r[2]
+    let isi_mean_ms  = r[3]
+    let isi_sd_ms    = r[4]
+    let consec_pairs = r[5]
+    let first3_odd   = r[6]
+
+    // pct_actual_x100 = n_odd / n_total * 10000
+    let pct_x100 = if n_total > 0 { (n_odd * 10000) / n_total } else { 0 }
+    let target_x100 = oddball_pct * 100
+    let pct_diff_x100 = _abs(pct_x100 - target_x100)
+
+    let mut triggered = ""
+    let mut trig_count = 0
+    if pct_diff_x100 > RATIO_TOLERANCE_PP_X100   { triggered = triggered + "F_AP300_01,"; trig_count = trig_count + 1 }
+    if first3_odd > 0                            { triggered = triggered + "F_AP300_02,"; trig_count = trig_count + 1 }
+    if isi_mean_ms < ISI_MEAN_MIN_MS || isi_mean_ms > ISI_MEAN_MAX_MS {
+        triggered = triggered + "F_AP300_03,"; trig_count = trig_count + 1
+    }
+    // F4: analytic sine purity — always PASS in synth (sine fundamental)
+    // F5: anti-clustering
+    if consec_pairs > 0                          { triggered = triggered + "F_AP300_05,"; trig_count = trig_count + 1 }
+    let nT = len(triggered)
+    if nT > 0 { triggered = triggered.substring(0, nT - 1) }
+
+    let mut verdict = "PASS"
+    if trig_count > 0 { verdict = "FALSIFIED" }
+
+    let mut kv = ""
+    kv = kv + "schema=" + SCHEMA + "\n"
+    kv = kv + "paradigm=" + PARADIGM_NAME + "\n"
+    kv = kv + "n_trials=" + str(n_total) + "\n"
+    kv = kv + "n_oddball=" + str(n_odd) + "\n"
+    kv = kv + "n_standard=" + str(n_std) + "\n"
+    kv = kv + "oddball_pct_actual_x100=" + str(pct_x100) + "\n"
+    kv = kv + "oddball_pct_target=" + str(oddball_pct) + "\n"
+    kv = kv + "isi_mean_ms=" + str(isi_mean_ms) + "\n"
+    kv = kv + "isi_sd_ms=" + str(isi_sd_ms) + "\n"
+    kv = kv + "consecutive_oddball_pairs=" + str(consec_pairs) + "\n"
+    kv = kv + "first3_oddball_count=" + str(first3_odd) + "\n"
+    kv = kv + "tone_std_hz=1000\n"
+    kv = kv + "tone_odd_hz=1500\n"
+    kv = kv + "tone_duration_ms=50\n"
+    kv = kv + "protocol_steps=stim_audio_oddball_1000_1500hz_80_20_isi_jitter_100ms\n"
+    kv = kv + "verdict=" + verdict + "\n"
+    kv = kv + "value_x1000=" + str(pct_x100 * 10) + "\n"
+    kv = kv + "backend=" + LEGACY_PATH + "\n"
+    kv = kv + "backend_status=ported_in_module_synth_no_audio\n"
+    kv = kv + "raw71_falsifier_count=5\n"
+    kv = kv + "raw71_triggered_count=" + str(trig_count) + "\n"
+    kv = kv + "raw71_triggered_ids=" + triggered + "\n"
+    kv = kv + "raw91_evidence=schedule_lcg_seed_20260428_no_real_audio\n"
+    kv = kv + "raw91_limit=no_afplay_no_brainflow_terminal_only\n"
+    kv = kv + "raw95_enforce_layer=in_module\n"
+    return kv
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _print_usage() {
+    eprintln("usage: hexa run auditory_p300.hexa --selftest")
+    eprintln("       hexa run auditory_p300.hexa --live    (→ NOT_YET_LANDED)")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut live = false
+    let mut n_trials = SELFTEST_N_TRIALS
+    let mut oddball_pct = DEFAULT_ODDBALL_PCT
+    let mut isi_ms = DEFAULT_ISI_MS
+    let mut jitter_ms = DEFAULT_JITTER_MS
+    let mut seed = DEFAULT_SEED
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest"      { selftest = true; i = i + 1; continue }
+        if a == "--live"          { live = true; i = i + 1; continue }
+        if a == "--n-trials"      { n_trials = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--oddball-pct"   { oddball_pct = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--isi-ms"        { isi_ms = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--jitter-ms"     { jitter_ms = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--seed"          { seed = to_int(av[i+1]); i = i + 2; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if !selftest && !live {
+        eprintln("ABORT: must pass --selftest or --live")
+        _print_usage()
+        exit(2)
+    }
+
+    if live && !selftest {
+        println("── _paradigms/auditory_p300 LIVE ──")
+        println("schema=" + SCHEMA)
+        println("status=NOT_YET_LANDED")
+        println("kind=live_afplay_brainflow_trigger_sync")
+        println("verdict=PENDING_MIGRATION")
+        println("backend=" + LEGACY_PATH)
+        eprintln("reason: legacy-argv-normalizer-bug: " + LEGACY_PATH + " rejects hexa.real run prefix")
+        eprintln("fix: invoke legacy directly via shell: hexa run " + LEGACY_PATH + " --run --n-trials " + str(n_trials))
+        exit(4)
+    }
+
+    println("== _paradigms/auditory_p300 selftest (synth schedule seed=" + str(seed) + ") ==")
+    let args_kv = "n_trials=" + str(n_trials) + ",oddball_pct=" + str(oddball_pct) +
+                  ",isi_ms=" + str(isi_ms) + ",jitter_ms=" + str(jitter_ms) + ",seed=" + str(seed)
+    let kv = _paradigm_auditory_p300_kv(args_kv)
+    print(kv)
+
+    let lines = kv.split("\n")
+    let mut found_pass = 0
+    let mut k = 0
+    while k < len(lines) {
+        let ln = lines[k].trim()
+        if ln == "verdict=PASS" { found_pass = 1 }
+        k = k + 1
+    }
+    if found_pass == 0 {
+        eprintln("reason: nominal selftest verdict not PASS — falsifier triggered")
+        exit(1)
+    }
+    println("selftest=ok")
+    exit(0)
+}

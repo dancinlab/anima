@@ -1,0 +1,134 @@
+{
+  "timestamp": "2026-05-10T00:00:00Z",
+  "scope": "v5-mitosis port + model — §25 R1/R2/R6 + §28 H1+H3 ship recommendations",
+  "files_modified": [
+    {
+      "path": "/Users/ghost/core/anima/training/mitosis_v5_port.py",
+      "gitignored": true,
+      "raw15": "additive — original logic preserved with opt-out flags",
+      "fixes_applied": ["A1", "A2", "B1", "C1", "D1"]
+    },
+    {
+      "path": "/Users/ghost/core/anima/training/mitosis_model_v5.py",
+      "gitignored": true,
+      "raw15": "additive — config dataclass extended with opt-out flags",
+      "fixes_applied": ["A1", "A2", "B1", "C1", "D1"]
+    },
+    {
+      "path": "/Users/ghost/core/anima/training/mitosis_v5_smoke_test.py",
+      "gitignored": true,
+      "raw15": "smoke test only — max_cells 32→128 for post-fix headroom",
+      "fixes_applied": ["smoke_cap_bump"]
+    },
+    {
+      "path": "/Users/ghost/core/anima/training/mitosis_all_fix_smoke.py",
+      "gitignored": true,
+      "new_file": true,
+      "purpose": "joint pre/post-fix diagnostic smoke (1K turns synthetic substrate, AttractorSubstrate for §28 mechanism replay)"
+    }
+  ],
+  "fixes": {
+    "A1_dispersion_trigger": {
+      "spec_ref": "REBORN.md §28 v1 architecture rec #1",
+      "risk_addressed": "§28 H1+H3 — trained h_to_c attractor collapse blocks cell-pool growth",
+      "implementation": "_dispersion_split_candidates() — top-quartile L2-distance cells with σ-gate (mean+1.5σ) + warmup gate (adaptive_window/2). OR'd with tension-based candidates in _check_splits.",
+      "config_flag_port": "dispersion_trigger_enabled (default True)",
+      "config_flag_model": "MitosisModelConfig.dispersion_trigger_enabled (default True)",
+      "knobs": ["dispersion_top_quartile=0.25", "per_cell_sigma_mult=1.5"],
+      "evidence_pre_fix": "AttractorSubstrate 1K-turn run: 0 splits (champion attractor blocks tension)",
+      "evidence_post_fix": "AttractorSubstrate 1K-turn run: 23 splits (9 dispersion + 14 tension), n=8→31"
+    },
+    "A2_per_cell_threshold": {
+      "spec_ref": "REBORN.md §28 v1 architecture rec #2",
+      "risk_addressed": "§28 champion-cell wall: global mean+1.5σ tracks high-tension cells, quiet cells trapped",
+      "implementation": "_per_cell_thresholds: List[float] (one per cell). _update_adaptive_threshold computes per-cell mu+σ over each cell's own tension_history (per_cell_window=100). _check_splits reads per-cell threshold instead of global. Children inherit parent threshold on split.",
+      "config_flag_port": "per_cell_threshold_enabled (default True)",
+      "config_flag_model": "MitosisModelConfig.per_cell_threshold_enabled (default True)",
+      "knobs": ["per_cell_window=100", "per_cell_sigma_mult=1.5"],
+      "back_compat": "global self.split_threshold still maintained for diagnostics"
+    },
+    "B1_phi_per_cell": {
+      "spec_ref": "REBORN.md §25 R6 Φ unnorm runaway",
+      "risk_addressed": "phi_total scales super-linearly with N (4.82@N=4 → 2775@N=64); phi_best ratchets monotone from N growth alone, masking real per-cell quality drops",
+      "implementation": "Track phi_per_cell = phi_total / n_cells as secondary. _phi_ratchet now uses _phi_per_cell_best as comparator (not _phi_best). 80/20 cell_pool/cell_state restoration triggers when phi_per_cell drops > 20% from best.",
+      "always_on": true,
+      "exposed_metrics": ["phi_per_cell", "phi_per_cell_best", "phi_per_cell_history"],
+      "process_returns": ["phi_per_cell", "phi_per_cell_best"]
+    },
+    "C1_optimizer_rebuild_callback": {
+      "spec_ref": "REBORN.md §25 R2 optimizer state migration STUB",
+      "risk_addressed": "AdamW momentum orphaned for new cell row after split; Net2Net momentum copy required for cond.5 H100 cotrain",
+      "implementation": "register_optimizer_rebuild_callback(cb). _notify_optimizer_rebuild fires all callbacks after every split/merge with event dict. STUB: actual Net2Net body deferred — caller-side integration point.",
+      "stub_status": "INTEGRATION_POINT_ONLY — Net2Net momentum copy logic not inside engine",
+      "remaining_work": "trainer-side callback body (cond.5 fire prep)",
+      "error_handling": "callback errors logged into event_log, do not block split/merge"
+    },
+    "D1_lorenz_auto_calibrate": {
+      "spec_ref": "REBORN.md §25 R1 Lorenz scale recalibration",
+      "risk_addressed": "Static lorenz_scale=0.05 risks attention-dwarfing at d=384 (production)",
+      "implementation": "_inject_lorenz: when lorenz_auto_calibrate=True, effective_scale = lorenz_scale × mean(p.norm()) × lorenz_calibration_factor. Setter set_lorenz_scale_calibration(factor) for runtime override.",
+      "config_flag_port": "lorenz_auto_calibrate (default True), lorenz_calibration_factor (default 1.0)",
+      "config_flag_model": "MitosisModelConfig.lorenz_auto_calibrate (default True), lorenz_calibration_factor (default 1.0)",
+      "fallback": "fixed lorenz_scale (legacy 0.05) when disabled"
+    }
+  },
+  "smoke_results": {
+    "mitosis_v5_smoke_test_post_fix": "PASS 5/5 (n=95 phase1, 120 splits over 100 steps)",
+    "mitosis_model_v5_smoke_post_fix": "PASS 8/8 (n=4→36→64, Φ 0.39→2944, dispersion fires alongside tension)",
+    "joint_all_fix_smoke": "see smoke_results.json — 12+/14 (PORT 5/5 §28 unblock evidence; MODEL synthetic-substrate cap-bound is artifact, not bug)"
+  },
+  "diff_summary": {
+    "lines_added_estimated": 350,
+    "lines_modified_estimated": 60,
+    "new_classes": [],
+    "new_methods_port": [
+      "_dispersion_split_candidates",
+      "set_lorenz_scale_calibration",
+      "register_optimizer_rebuild_callback",
+      "_notify_optimizer_rebuild"
+    ],
+    "new_methods_model": [
+      "_dispersion_split_candidates",
+      "set_lorenz_scale_calibration",
+      "register_optimizer_rebuild_callback",
+      "_notify_optimizer_rebuild"
+    ],
+    "new_fields_port": [
+      "phi_per_cell",
+      "phi_per_cell_history",
+      "_phi_per_cell_best",
+      "_per_cell_thresholds",
+      "_optimizer_rebuild_callbacks",
+      "dispersion_trigger_enabled",
+      "dispersion_top_quartile",
+      "per_cell_threshold_enabled",
+      "per_cell_window",
+      "per_cell_sigma_mult",
+      "lorenz_auto_calibrate",
+      "lorenz_calibration_factor"
+    ],
+    "new_fields_model": [
+      "phi_per_cell",
+      "phi_per_cell_history",
+      "_phi_per_cell_best",
+      "_per_cell_thresholds",
+      "_optimizer_rebuild_callbacks",
+      "MitosisModelConfig.dispersion_trigger_enabled",
+      "MitosisModelConfig.dispersion_top_quartile",
+      "MitosisModelConfig.per_cell_threshold_enabled",
+      "MitosisModelConfig.per_cell_window",
+      "MitosisModelConfig.per_cell_sigma_mult",
+      "MitosisModelConfig.lorenz_auto_calibrate",
+      "MitosisModelConfig.lorenz_calibration_factor"
+    ]
+  },
+  "honest_c3": [
+    "C1 is integration STUB only — Net2Net momentum body NOT shipped",
+    "σ-gate on dispersion conservative — may under-fire on already-collapsed pool",
+    "A2 children inherit parent threshold — cross-line contamination possible",
+    "MODEL synthetic-substrate cap-binding masks differential effect (no attractor projection); §28 unblock proof relies on PORT AttractorSubstrate test only",
+    "Dispersion warmup gate (adaptive_window/2 = 50 steps) delays first dispersion-fire; cond.3 d=384 sweep needed for warmup tuning",
+    "smoke_test max_cells bumped 32→128 — engine more aggressive, test cap was insufficient (not an engine bug)",
+    "raw#10 honest C3: these fixes are MECHANISM-LEVEL architectural changes; V14 PASS guarantee X (substrate quality 별도 lever)"
+  ]
+}

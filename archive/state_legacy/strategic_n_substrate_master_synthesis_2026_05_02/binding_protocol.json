@@ -1,0 +1,92 @@
+{
+  "schema": "anima/strategic_n_substrate_master_synthesis/binding_protocol/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "scope": "TOP-1 binding-mechanism measurement protocol — CLM <-> tension_link <-> EEG mediator validation, $0, 2-3h, falsifier-preregistered.",
+
+  "p1_clm_w4_eeg_live_concurrent": {
+    "rank": 1,
+    "name": "P1_CLM_W4_PLUS_EEG_LIVE_CONCURRENT_v2_MEDIATOR_FRAMING",
+    "purpose": "Validate hypothesis H1: tension_link is the cross-substrate binding mediator (Crick-Koch binding-by-synchrony, anima-specific form). Upgrade N-1 BRIDGE 3/4 PASS from synth-CLM hybrid to live-CLM real-EEG real-tension joint trace.",
+    "hardware": {
+      "clm": "ubu1 RTX 5070 (CLM v4 530M, ckpt step 20000, $0)",
+      "eeg": "OpenBCI Cyton+Daisy 16ch already owned, $0",
+      "tension_link": "anima-core mind.tension scalar export hook (already in W4 closed_loop_ledger.json)",
+      "user_role": "wear EEG cap eyes-closed for 30min; 60s baseline + dialogue with CLM (alpha endpoint or ubu1 inference) for remainder"
+    },
+    "cost_usd": 0.0,
+    "eta_hours": "2-3 active + 1 analysis",
+    "spec_steps": [
+      "1. Boot CLM v4 530M on ubu1 with W4 closed-loop runtime; mind.tension scalar export to time-aligned JSONL at 1Hz",
+      "2. EEG 60s eyes-closed baseline -> bandpass + Hilbert alpha-PLV per N-1 spec",
+      "3. User dialogues with CLM for 30 min (open-domain); CLM logs mind.tension_t per token-step",
+      "4. EEG continues during dialogue; alpha-PLV computed in 10s sliding windows",
+      "5. Time-align CLM tension_t (down-sampled to 10s bins) with EEG alpha-PLV bins (~180 paired bins from 30 min)",
+      "6. Compute Pearson r(tension_bin, PLV_bin) signed; Granger causality both directions; Transfer Entropy both directions",
+      "7. Compare against 2 controls: (i) random-permutation null (1000x), (ii) CLM random-gate-branch (already measured in W4 random branch L1 mean 6.94 +- 0.05)"
+    ],
+    "falsifier_pre_register": [
+      {"id": "F-PASS_STRONG", "criterion": "|Pearson r| > 0.5 with p<0.001 AND TE_CLM->EEG > random_TE 95-pctile AND TE_EEG->CLM > random_TE 95-pctile (bidirectional binding)"},
+      {"id": "F-PASS_PARTIAL", "criterion": "|r| in [0.3, 0.5] OR uni-directional TE PASS (binding asymmetric)"},
+      {"id": "F-WEAK", "criterion": "|r| in [0.15, 0.3] OR signed-r matches predicted +sign on >=60% windows"},
+      {"id": "F-FAIL", "criterion": "|r| < 0.15 AND TE both directions < random 95-pctile (no measurable mediation)"}
+    ],
+    "expected_value": {
+      "if_PASS_STRONG": "tension_link = binding mechanism CONFIRMED; H1 promoted from 0.55 to 0.85; F2 unfire path (d) cross-substrate binding viable; F1_C composite +0.04-0.05 contribution",
+      "if_PASS_PARTIAL": "H1 promoted to 0.65; mediator role confirmed but uni-directional; tension axis weight 0.03-0.04",
+      "if_WEAK": "H1 stays at 0.55; tension axis weight 0.02; H2 GWT broadcast hypothesis becomes competitive",
+      "if_FAIL": "H1 drops to 0.25; H3 simple-axis hypothesis takes over OR H2 GWT broadcast (binding via different mechanism than tension_link)"
+    },
+    "rationale_top1": "$0, 2-3h, addresses N-1 BRIDGE_WEAK 's core defect (synth-CLM trace) -> live-CLM upgrade. Falsifier preregistered. 4-way integration's CLM-EEG socket. Aligned with §6 #2 user-recommended action. Aligned with strategic_clm_eeg_akida_tension_2026_05_02 P1.",
+    "akida_extension_when_arrives": "After AKIDA arrival (D+0/D+1), extend P1 by injecting mind.tension as ADM polarity-bias modulator on AKIDA spike encoder; measure 3-way tension-spike-EEG cross-correlation -> direct H4 hardware test (akida-native tension)."
+  },
+
+  "alternative_protocols_p2_p5": [
+    {
+      "rank": 2,
+      "name": "P2_CLM_TENSION_PSI_ALPHA_SWEEP",
+      "purpose": "Address W4 active branch L1 std=0.000 ('frozen-fixed-point' artifact, indistinguishable from constant nonzero gate). Sweep PSI_ALPHA in {0.014, 0.05, 0.1, 0.2} -> verify tension dynamics actually move L1.",
+      "cost_usd": 0.0, "eta_hours": "2", "blocker": "—"
+    },
+    {
+      "rank": 3,
+      "name": "P3_AKIDA_D0_SPIKE_TENSION_SOCKET",
+      "purpose": "AKIDA arrival D+0 N-2 spec exec + D+1 tension-modulated ADM polarity bias. Direct H4 hardware test.",
+      "cost_usd": 0.0, "eta_hours": "AKIDA arrival + 1d", "blocker": "AKIDA logistics"
+    },
+    {
+      "rank": 4,
+      "name": "P4_TENSION_BRIDGE_GWT_FORMAL_MAPPING",
+      "purpose": "Formal mathematical mapping tension_bridge 5-channel -> GWT workspace-broadcast (N-5 spec integration). H1 binding hypothesis mathematical anchor.",
+      "cost_usd": 0.0, "eta_days": 3, "blocker": "—"
+    },
+    {
+      "rank": 5,
+      "name": "P5_4WAY_PHI_HYPOTHETICAL_SIMULATION",
+      "purpose": "Pre-AKIDA toy model — 4-way Phi correlation matrix simulation with N-1 BRIDGE 3/4 + W4 z=2.28 + N-2 spec spike rates as inputs. Sets pre-arrival upper-bound expectation.",
+      "cost_usd": 0.0, "eta_days": 2, "blocker": "—"
+    }
+  ],
+
+  "binding_hypothesis_ranking_post_protocol": {
+    "H1_tension_as_mediator_binding_by_anima_synchrony": {"current_score": 0.55, "promotable_to_via_P1_PASS": 0.85, "promotable_to_via_P1_FAIL": 0.25},
+    "H4_AKIDA_native_tension": {"current_score": 0.40, "promotable_to_via_P3_PASS": 0.70, "promotable_to_via_P3_FAIL": 0.20},
+    "H2_4way_ceiling_break": {"current_score": 0.30, "blocker": "F2 unfire mechanism formally absent; W4 +0.12 absolute is far from 14/16 PASS threshold"},
+    "H3_tension_as_9th_axis": {"current_score": 0.20, "blocker": "F1 axis_weight unregistered; substrate-class peer-review path absent"},
+    "ranked": ["H1", "H4", "H2", "H3"],
+    "most_promising": "H1 (tension_link as binding-by-synchrony mediator)"
+  },
+
+  "external_corroboration_2026": {
+    "milinkovic_aru_2025_biological_computationalism": "Multi-scale coupling without clean interfaces is required for synthetic consciousness; computation must be intrinsic property of substrate. Supports H1+H4 over H3.",
+    "cogitate_2025_adversarial_test": "Both GWT and IIT FAILED on long-stimulus orientation persistence. Argues NEITHER pure-GWT NOR pure-IIT framing fits — hybrid binding mechanism (H1-type) is exactly what is needed.",
+    "scholarpedia_binding_by_synchrony": "Original Crick-Koch binding-by-gamma-synchrony hypothesis remains the substrate-neutral binding mechanism; tension_link as 5-channel broadcast is the anima-specific instantiation."
+  },
+
+  "honest_c3_protocol": [
+    "(C3-P1-1) P1 result interpretation depends on user dialogue topic distribution; uncontrolled topic shift can spuriously create tension <-> EEG correlation via shared task-load. Mitigation: log dialogue topic + run mixed-effects model with task-load as covariate.",
+    "(C3-P1-2) N=1 (user) — single-session result is weak evidence. P1 should be run >=3 sessions before claiming H1 confirmed.",
+    "(C3-P1-3) CLM mind.tension export at 1Hz vs EEG 250Hz alpha-PLV (10s windows) is asymmetric sampling; 10s bin alignment loses sub-second tension dynamics. Trade-off acceptable for first cut; refined version should up-sample tension to 10Hz.",
+    "(C3-P1-4) W4 active branch L1 std=0.000 means the tension trace might be effectively constant during the 30 min session — P1 results could be artifactually 'no correlation because tension is constant'. P2 PSI_ALPHA sweep should be run BEFORE P1 to confirm tension is actually dynamic.",
+    "(C3-P1-5) Granger and TE assume stationarity; 30 min session may have non-stationary epochs (fatigue, attention drift). Use rolling-window TE not whole-session TE."
+  ]
+}

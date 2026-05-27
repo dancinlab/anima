@@ -1,0 +1,22 @@
+{
+  "milestone": "M13",
+  "module": "HEXAD/IIT4/state/iit4_m13_bounded_n78_2026_05_26/run_m13.hexa",
+  "date": "2026-05-26",
+  "what": "bounded-mode (big_phi_bounded cap=3) big-Φ pushed to n=7/n=8 — the M12-deferred tier — reaching the H_002 C2 n=8 substrate scale that exact IIT4 cannot.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · background run (B-axis answered without a GPU fire — large-N exact is super-exp GPU-immune; bounded restriction is the tractable $0 path)",
+  "regression": { "n4_rule110_exact": 7.5475, "n4_rule110_bounded_cap4": 7.5475, "match": true, "note": "cap>=n is a faithful restriction == exact (anchor)" },
+  "bounded_cap3": {
+    "n7_seed_1010101": { "rule_110": 9.02732, "rule_110_nd": 23, "rule_30": 3.85376, "rule_54": 4.00657 },
+    "n8_seed_10101010": { "rule_110": 6.81723, "rule_110_nd": 20, "note": "H_002 C2 n=8 scale REACHED" }
+  },
+  "full_ladder_rule110_bounded_cap3": { "n4": 7.5475, "n5": 15.3963, "n6": 6.81723, "n7": 9.02732, "n8": 6.81723, "source": "n4-6 from M12, n7-8 from M13" },
+  "checks_tally": { "pass": 5, "fail": 0 },
+  "verdict": "🟢 SUPPORTED-NUMERICAL — bounded(cap=3) reproduces exact at cap>=n (faithful) and stays finite/deterministic through n=7 and n=8 (H_002 C2 scale), which exact cannot reach. Empirical interpretation ⚪ SPECULATION-FENCED (g5).",
+  "findings": [
+    "n=8 H_002 C2 scale REACHED via bounded restriction at $0 (NO GPU) — the B-axis large-N target.",
+    "rule110 bounded-cap3 ladder is NON-MONOTONE in n (7.55/15.40/6.82/9.03/6.82 for n=4..8): bounded(cap<n) is a LOWER-BOUND whose tightness varies with n×seed×state, NOT a clean scaling curve — magnitude is fragile (consistent with the lane's directional-trust / magnitude-fragile signature).",
+    "determinism: n=8 bounded re-run byte-identical."
+  ],
+  "honest_scope": "bounded(cap=3 < n) = explicit LOWER-BOUND approximation (purview-size capped MICE search), NOT exact — the n-ladder values are not directly comparable across n (different lower-bound tightness). Single representative state per n (no multi-state mean). cap=3 fixed; a cap-sweep at fixed n would quantify the bound gap (deferred). structure-cut big-Φ (M5 PyPhi-numeric blocker carries). B-axis 'large-N faithful Φ' is answered as: faithful-RESTRICTION (cap>=n exact-equal) + lower-bound (cap<n) at the n=8 scale; the GAP CURVE vs a true large-N exact is unmeasurable (exact super-exp), so the bound itself is the deliverable.",
+  "gpu_scope_check": "GPU fire was scope-checked and CANCELLED (feedback-scope-check-before-cost-fire, 3rd cost-block in this lane): DESIGN.md states large-N exact is super-exp GPU-immune and the bounded path is $0 CPU; a GPU pod would not beat this. B-axis advanced at $0."
+}

@@ -1,0 +1,33 @@
+{
+  "section": "§87-F1 FROG-EYE SALIENCE GATE",
+  "battery": "B-S87F1-1..6",
+  "passed": "6/6",
+  "all_blue": true,
+  "results": {
+    "B-S87F1-1-SALIENCE-SCORE-BOUNDED": {
+      "pass": true,
+      "detail": "S in [0,1]: lo=0 hi=1 mono-in-s_i closed"
+    },
+    "B-S87F1-2-FOUR-DETECTOR-CLASS-PARTITION": {
+      "pass": true,
+      "detail": "4 detectors present=True distinct-inputs={'sd1_sustained_contrast': 'psi_dir_hist', 'sd2_moving_edge': 'tension_hist', 'sd3_dimming': 'phi_hist', 'sd4_net_dimming': 'channels_hist'} index-partition |{1,2,3,4}|=4 ok=True"
+    },
+    "B-S87F1-3-FROG-EYE-SELECTIVE-NOT-GENERIC": {
+      "pass": true,
+      "detail": "all 4 detectors have firing-floor guard={'sd1_sustained_contrast': True, 'sd2_moving_edge': True, 'sd3_dimming': True, 'sd4_net_dimming': True} theta_salient=0.18>0 (gate != passthrough)"
+    },
+    "B-S87F1-4-§24-DECISION-CONSISTENCY": {
+      "pass": true,
+      "detail": "(salience AND motivation) -> motivation tautology=True; n_emit cell4=1 <= cell0=20 subset=True"
+    },
+    "B-S87F1-5-§9-METRIC-REUSE": {
+      "pass": true,
+      "detail": "thresholds match §9 SSOT=True witnesses clean=True cascade=False short=False"
+    },
+    "B-S87F1-6-DETERMINISTIC": {
+      "pass": true,
+      "detail": "forbidden-import hits=[] no_rng=True 3x-bit-identical=True"
+    }
+  },
+  "note": "B-S87F1-NOTE: whether frog-eye salience gate produces emergence = trained-scale SGD/measurement OUTCOME, B-D-NOTE/B-EMERGE-NOTE family, NOT counted blue (necessary-not-sufficient B-EMERGE-7)."
+}

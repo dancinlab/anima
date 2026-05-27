@@ -1,0 +1,35 @@
+================================================================
+  H_280 — full IIT 4.0 Φ-structure (CES) small-n verdict-preserve
+  faithful distinction-level CES · relations advisory (n=3)
+  deterministic · hexa-only · $0 mac local · LLM none · NO GPU
+================================================================
+  ladder: disconnected (self-copy) → weak (couple=0.5) →
+          integrated (majority) · ring · all-ON state · n=3
+
+  [n=3 ladder]  CES distinction-only Φ-structure (Σφ_d) + count:
+    disconnected: Σφ_d=0.000000  #dist=0  rel=0.000000  proxyΦ=0.000001
+    weak        : Σφ_d=0.727886  #dist=7  rel=1.247639  proxyΦ=0.000001
+    integrated  : Σφ_d=2.316161  #dist=7  rel=7.938706  proxyΦ=0.000001
+
+  [n=4 ladder]  CES distinction-only Φ-structure (Σφ_d) + count:
+    disconnected: Σφ_d=0.000000  #dist=0
+    weak        : Σφ_d=1.277920  #dist=13
+    integrated  : Σφ_d=3.856634  #dist=14
+
+  ----------------------------------------------------------------
+  FALSIFIERS (pre-registered):
+    F280.1 DIRECTION (integrated > disconnected, n=3): PASS  (Σφ_d 2.316161 > 0.000000)
+           n=4 corroboration: PASS  (Σφ_d 3.856634 > 0.000000)
+    F280.2 MONOTONE (disc ≤ weak ≤ integrated, Σφ_d): PASS
+           proxy-Φ ordering monotone: PASS
+    F280.3 FAITHFUL (IIT4 anchors):                   PASS
+           ID anchor log2(2)=1 exact: PASS · disc φ_d=0: PASS · intg φ_d>0: PASS · effect-rep normalized: PASS
+    DETERMINISM (re-run byte-identical):              PASS
+  ----------------------------------------------------------------
+
+  VERDICT (SUPPORTED = F280.1 ∧ F280.3): SUPPORTED
+  relations: ADVISORY (n=3 congruent purview-overlap) — full
+             face-lattice relation integration DEFERRED (open frontier)
+
+  result.json written: result.json
+=== H_280 IIT4 Φ-structure small-n complete: SUPPORTED ===

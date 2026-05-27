@@ -1,0 +1,11 @@
+{
+  "schema": "anima/n_substrate_n2_prep/dryrun_pending/1",
+  "status": "PENDING_HEXA_RUNTIME",
+  "created_utc": "2026-05-01T00:00:00Z",
+  "trigger_command": "hexa run tool/anima_eeg_to_akida_spike.hexa --selftest",
+  "expected_output_path": "state/n_substrate_n2_prep_2026_05_01/dryrun_<utc>.json",
+  "expected_schema_on_completion": "anima/n_substrate_n2_prep/dryrun/1",
+  "expected_gates": ["G-D1", "G-D2", "G-D3", "G-D4", "G-D5", "G-D6"],
+  "expected_pass_count": 6,
+  "honest_c3_note": "selftest does NOT exercise akida.Model.forward (chip not present). It validates encoder + rasterizer integrity end-to-end on synthetic 16ch EEG. Chip-side forward pass is a separate D+0 step."
+}

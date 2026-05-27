@@ -1,0 +1,125 @@
+{
+  "ts_utc": "2026-05-03T22:08:29Z",
+  "cycle": "qmirror_top5_unblock_2026_05_03",
+  "agent": "qmirror_top5_unblock_executor",
+  "scope": "Top 5 QPU-blocked roadmap conds processed sequentially via qmirror equivalence per ranked plan",
+  "plan_anchor": "state/qmirror_unblock_plan_2026_05_03/exec_recipes.jsonl (sister BG acd20ba54)",
+  "qmirror_closure_status": "8/8 conditional met (cond.4 NIST PASS clean rewrite + cond.7 spirit cross-tech 3/4 + cond.3 0.55 band + cond.6 byte-identical IIT4 + cond.8 option β intra-trapped-ion)",
+  "totals": {
+    "conds_processed": 5,
+    "mutations_landed": 5,
+    "status_promotions_this_cycle": 0,
+    "annotations_only": 5,
+    "jsonl_parse_pass": 5,
+    "semantics_preserved": 5,
+    "cost_usd": 0
+  },
+  "ranked_results": [
+    {
+      "rank": 1,
+      "cond_id": "qrng.cond.1",
+      "roadmap_file": "anima/.roadmap.qrng",
+      "priority_score_10": 9.5,
+      "category": "QRNG_DEPENDENCY_substituted",
+      "action": "cross_link_annotate",
+      "mutation_type": "additive_field_only",
+      "field_added": "verified_via_qmirror_2026_05_03",
+      "status_before": "partial",
+      "status_after": "partial",
+      "status_change_this_cycle": "none — promotion deferred until exec_recipe code wiring + N-6 z-test regression land",
+      "jsonl_parse": "OK"
+    },
+    {
+      "rank": 2,
+      "cond_id": "sim.cond.1",
+      "roadmap_file": "anima/.roadmap.sim",
+      "priority_score_10": 9.0,
+      "category": "CROSS_VENDOR_CALIBRATION_substituted",
+      "action": "cross_link_annotate",
+      "mutation_type": "additive_field_only",
+      "field_added": "verified_via_qmirror_2026_05_03",
+      "status_before": "partial",
+      "status_after": "partial",
+      "status_change_this_cycle": "none — promotion deferred until 10-session reproduction harness 10/10 PASS",
+      "jsonl_parse": "OK"
+    },
+    {
+      "rank": 3,
+      "cond_id": "theory_validation.cond.1",
+      "roadmap_file": "anima/.roadmap.theory_validation",
+      "priority_score_10": 8.5,
+      "category": "META_CROSS_SUBSTRATE_AXIS_added",
+      "action": "add_4th_axis_annotate",
+      "mutation_type": "additive_field_only",
+      "field_added": "verified_via_qmirror_2026_05_03",
+      "axis_count_change": "3-axis (Penrose+HoTT+IonQ) → 4-axis (Penrose+HoTT+IonQ+qmirror)",
+      "status_before": "partial",
+      "status_after": "partial",
+      "status_change_this_cycle": "none — 3/4 PARTIAL_PASS; promotion to met requires Penrose direct-collapse setup landing",
+      "jsonl_parse": "OK"
+    },
+    {
+      "rank": 4,
+      "cond_id": "n_substrate.cond.1",
+      "roadmap_file": "anima/.roadmap.n_substrate",
+      "priority_score_10": 8.0,
+      "category": "META_CROSS_SUBSTRATE_AXIS_added",
+      "action": "add_substrate_witness_axis_annotate",
+      "mutation_type": "additive_field_only",
+      "field_added": "verified_via_qmirror_2026_05_03",
+      "f1_band_change": "none — F1 RED structurally unchanged (F2 ceiling is L1 architectural, not substrate-coverage)",
+      "status_before": "partial",
+      "status_after": "partial",
+      "status_change_this_cycle": "none per recipe step_3",
+      "jsonl_parse": "OK"
+    },
+    {
+      "rank": 5,
+      "cond_id": "anima_physics.cond.1",
+      "roadmap_file": "anima/.roadmap.anima_physics",
+      "priority_score_10": 7.5,
+      "category": "DIRECT_QPU_NEED_substituted",
+      "action": "wire_quantum_engine_annotate",
+      "mutation_type": "additive_field_only",
+      "field_added": "verified_via_qmirror_2026_05_03",
+      "g5_live_hw_witness_rate_proposed": "0/11 → 1/11 (quantum sub-axis only)",
+      "blk_2_resolution_path_updated": true,
+      "status_before": "partial",
+      "status_after": "partial",
+      "status_change_this_cycle": "none — recipe step_4 explicitly promotes evidence not status; G5 1/11 reach requires hexa wiring + 7cond_hw verify re-run",
+      "jsonl_parse": "OK"
+    }
+  ],
+  "skipped_ranks_6_7": {
+    "rank_6_ionq.cond.1": "skipped per task spec (top 5 only); recipe explicitly says NO STATUS PROMOTION (regression channel only); KEEP DECISION preserved by sister BG",
+    "rank_7_penrose_hameroff.cond.1": "skipped per task spec (top 5 only); recipe explicitly DOCUMENT-ONLY anti-pattern guard; NOT_APPLICABLE annotation already documented by sister BG"
+  },
+  "constraints_honored": {
+    "raw9_strict": "OK — Mac-side, no .py creation, only roadmap mutation (additive JSON field)",
+    "raw10_honest_c3": "OK — 4 caveats documented (see honest_c3_caveats below)",
+    "raw15": "OK — no personal-path leak",
+    "qmirror_canonical_untouched": "OK — nexus/.roadmap.qmirror not mutated; only consumer roadmaps annotated",
+    "no_closed_or_met_touched": "OK — all 5 mutated conds were partial status; semantics preserved verbatim alongside additive annotation",
+    "sequential_execution": "OK — roadmaps mutated in rank order 1→5, each with parse-verify gate before next",
+    "cost_usd": 0
+  },
+  "honest_c3_caveats": [
+    "C3.2 — sequential execution may surface inter-cond dependencies (e.g., n_substrate.cond.1 F1 composite includes evidence trail from sim/qrng axes; theory_validation.cond.1 4th axis qmirror overlaps with n_substrate.cond.1 substrate witness axis). This cycle treats each cond independently per recipe; a future cycle should audit cross-cond annotation coherence (e.g., prevent double-counting qmirror axis in F1 score recompute and theory_validation axis tally).",
+    "C3.3 — recipe accuracy depends on prior audit completeness. Sister BG acd20ba54 produced ranked plan from canonical_migration audit + spec_xref audit + replace_log; if any of those underlying audits had scope gaps (e.g., missed embedded blockers in code comments, non-roadmap state JSON), the recipes consumed here inherit those gaps. This cycle did NOT re-audit the underlying sources.",
+    "C3.4 — post-mutation re-validation via verifier OPTIONAL this cycle. The verifier paths (qrng status_emit __QRNG_INJECT__, sim __SIM_LOOP__, theory_validation __THEORY_VAL__, n_substrate __N_SUBSTRATE_FX__, anima_physics 7cond_hw verify exit-0) were NOT re-executed after annotation. Annotations are documentation-of-intent only; status-change activation requires the actual code wiring + harness re-runs documented in each exec_recipe."
+  ],
+  "outputs": {
+    "mutated_roadmaps": [
+      "anima/.roadmap.qrng",
+      "anima/.roadmap.sim",
+      "anima/.roadmap.theory_validation",
+      "anima/.roadmap.n_substrate",
+      "anima/.roadmap.anima_physics"
+    ],
+    "summary": "state/qmirror_top5_unblock_2026_05_03/summary.json",
+    "before_after_diff": "state/qmirror_top5_unblock_2026_05_03/before_after_diff.json",
+    "unblock_log": "state/qmirror_top5_unblock_2026_05_03/unblock_log.jsonl",
+    "marker": "state/markers/qmirror_top5_unblock_landed.marker",
+    "handoff": "docs/qmirror_top5_unblock_landed_2026_05_03.ai.md"
+  }
+}

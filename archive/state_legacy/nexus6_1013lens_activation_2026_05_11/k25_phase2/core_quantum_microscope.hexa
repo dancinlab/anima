@@ -1,0 +1,84 @@
+// core_quantum_microscope.hexa — Phase 2 reimpl with input channel x
+// axis: quantum-fine — sub-window density-matrix coherence proxy
+// kernel: window W=16 sliding. Compute off-diagonal coherence per window;
+//         mean coherence across windows. + entropy of windowed density (purity).
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+
+if n < 32 {
+    println("lens[quantum_microscope] category=core axis=\"quantum_microscope (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+let W = 16
+let n_wins = n / W
+let mut sum_coh = 0.0
+let mut sum_purity = 0.0
+let mut w = 0
+while w < n_wins {
+    let off = w * W
+    // sub-window sum (to normalize)
+    let mut sum_a = 0.0
+    let mut i = 0
+    while i < W { let v = xs[off + i]; let av = if v < 0.0 { 0.0 - v } else { v }; sum_a = sum_a + av; i = i + 1 }
+    if sum_a > 0.000001 {
+        // off-diagonal Σᵢ<ⱼ √(pᵢpⱼ)
+        let mut coh = 0.0
+        let mut purity = 0.0
+        let mut a = 0
+        while a < W {
+            let va = xs[off + a]; let av_a = if va < 0.0 { 0.0 - va } else { va }
+            let pa = av_a / sum_a
+            purity = purity + pa * pa
+            let mut b = a + 1
+            while b < W {
+                let vb = xs[off + b]; let av_b = if vb < 0.0 { 0.0 - vb } else { vb }
+                let pb = av_b / sum_a
+                coh = coh + sqrt(pa * pb)
+                b = b + 1
+            }
+            a = a + 1
+        }
+        // normalize coh by max possible (W*(W-1)/2 * (1/W))
+        let max_coh = to_float(W * (W - 1)) / 2.0 / to_float(W)
+        let coh_norm = if max_coh > 0.000001 { coh / max_coh } else { 0.0 }
+        sum_coh = sum_coh + coh_norm
+        sum_purity = sum_purity + (1.0 - purity)
+    }
+    w = w + 1
+}
+let mean_coh = if n_wins > 0 { sum_coh / to_float(n_wins) } else { 0.0 }
+let mean_pur = if n_wins > 0 { sum_purity / to_float(n_wins) } else { 0.0 }
+let coh_clip = if mean_coh > 1.0 { 1.0 } else { if mean_coh < 0.0 { 0.0 } else { mean_coh } }
+let pur_clip = if mean_pur > 1.0 { 1.0 } else { if mean_pur < 0.0 { 0.0 } else { mean_pur } }
+
+let score = 0.6 * coh_clip + 0.4 * pur_clip
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[quantum_microscope] category=core axis=\"Quantum-fine — window W=16 density-matrix coherence + (1-purity)\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"mean_coh\":" + to_string(mean_coh) + ",\"mean_purity_compl\":" + to_string(mean_pur) + ",\"n_wins\":" + to_string(n_wins) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")
