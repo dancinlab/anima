@@ -51,9 +51,11 @@
 ## UNIVERSE-derived 마일스톤 (2026-05-27 · `UNIVERSE_SYNTHESIS.md`)
 
 > UNIVERSE 도메인 BIO ∩ DECODER 가설 5종(H_489–H_493 🔵) 분석 → 더블바인드 탈출은 "단일 모델"이 아니라 "분화(MoE)/병합(symbiogenesis)"이 통로. 상세 = `CORE/DECODER/UNIVERSE_SYNTHESIS.md`.
+>
+> **재정렬 2026-05-27 (`a_completeness_over_cheap`)** — model-merge(β) 를 본선에서 강등. 두 결함 ckpt (underfit + collapse) 의 weight 보간은 잘해야 "덜 나쁜 중간점" = 완성도 미달. 본선 = 근본 원인(한 모델이 두 목표 떠안음)을 arch 로 분리하는 **MoE-fresh 재설계(α)**. merge 는 optional baseline probe 로만 잔존.
 
-- [ ] **M3.5 model-merge α-sweep** ⭐ (UNIVERSE H_493 SYMBIOGENESIS) — 더블바인드 두 horn ckpt (collapse-avoid + coherent) weight 보간 `W=α·A+(1-α)·B` · α ∈ {0,.25,.5,.75,1} sweep · 각 α simple-stack p7 verify → 통로 α* 탐색 · **학습 fire 0 (기존 ckpt 보간만, cheap-tier)** · merge 가 단일학습보다 나은 trade-off 찾는지
-- [ ] **M4-alt MoE register 분리** (조건부 · UNIVERSE H_490 DIFFERENTIATION) — M3.5 merge 가 통로 못 찾을 때 arch escalation: V3 head_g 슬롯 → K-expert router (register-carving 을 specialized expert 로 격리, main path coherent 유지)
+- [ ] **M4 MoE-fresh register 분리** ⭐ 본선 (UNIVERSE H_490 DIFFERENTIATION) — 근본 원인 분리 재설계: V3 head_g 슬롯 → K-expert router. register-carving 을 specialized expert 로 격리해 main path 는 coherent 유지 (collapse 회피) + register 신호는 dedicated expert 가 담당 (underfit 회피). 완성도 기준 본선 (a_completeness_over_cheap). 설계: M4a router arch (hexa-native) → M4b expert 분리 학습 fire → M4c p7 verify
+- [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
 
 ## M1 hook 지점 (M0 인계 노트)
 
