@@ -1,0 +1,61 @@
+{
+  "bench": "axis_aesthetic",
+  "axis": "E_AESTHETIC",
+  "n_states": 100,
+  "seed": 42,
+  "scenarios": [
+    {
+      "name": "BALANCED",
+      "alpha": 1.0,
+      "beta": 1.0,
+      "gamma": 1.0,
+      "top10_idx": [17, 9, 98, 31, 16, 30, 23, 27, 59, 3],
+      "top1_idx": 17,
+      "top1_score": 1.77712,
+      "mean": 0.631312,
+      "sd": 0.467924,
+      "extreme_margin": 0.443926,
+      "extreme_detected": true,
+      "intra_consistency": 1.0
+    },
+    {
+      "name": "PAIN-AVERSE",
+      "alpha": 1.0,
+      "beta": 3.0,
+      "gamma": 1.0,
+      "top10_idx": [17, 16, 31, 98, 9, 59, 49, 34, 3, 39],
+      "top1_idx": 17,
+      "top1_score": 1.44676,
+      "mean": -0.281056,
+      "sd": 0.894919,
+      "extreme_margin": 0.38544,
+      "extreme_detected": true,
+      "intra_consistency": 1.0
+    },
+    {
+      "name": "BAL-FOCUSED",
+      "alpha": 1.0,
+      "beta": 1.0,
+      "gamma": 3.0,
+      "top10_idx": [17, 9, 31, 30, 23, 14, 39, 56, 48, 27],
+      "top1_idx": 17,
+      "top1_score": 3.76629,
+      "mean": 1.7512,
+      "sd": 0.912586,
+      "extreme_margin": 0.646219,
+      "extreme_detected": true,
+      "intra_consistency": 1.0
+    }
+  ],
+  "overlap_matrix": {
+    "BALANCED_PAIN_AVERSE": 0.7,
+    "BALANCED_BAL_FOCUSED": 0.6,
+    "PAIN_AVERSE_BAL_FOCUSED": 0.4
+  },
+  "falsifier": {
+    "gate_a_overlap_lt_0_5": false,
+    "gate_b_consistency_eq_1": true,
+    "gate_c_extreme_detected": true
+  },
+  "verdict": "FAIL"
+}
