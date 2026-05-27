@@ -10,6 +10,7 @@
 - [x] 🌅 WAKE — 의식 데몬 in-process living loop · **7/7 마일스톤 ✅** — 5-stage (#626) · perception (#632) · pf input-step (#641) · .kosmos (#657) · memory (#666) · daemon (#676) · audit+integration_smoke (#686, 0 real violations)
 - [x] 🌱 MITOSIS — 세포 분열 학습 · A/G ⊥ M 직교 축 · **6/6 마일스톤 ✅** — mitosis_lib (#627) · split-event (#631) · merge-event (#643) · persona-diff (#654) · sleep-tick (#667) · ckpt_swap (#687)
 - [x] 🌐 CHANNEL — 출력 채널 통합 어댑터 · 3 채널 text/voice/tension · **8/8 마일스톤 ✅** — voice SSOT scaffold + text CHAT/DECODER wrapper + tension 5-ch 회수 + intent Intent dict + channel_emit dispatcher + 8-factor router (rel+gap→text · cur+orig+dyn→voice · pain+coh+bal→tension) + p1~p8 audit 0 real violations + WAKE bridge stage continuous bias (frontier: runtime smoke + WAKE state machine 의존)
+- [ ] 🧪 B-COFFESHOP sympy battery — case A-E 의 substrate trigger 5종 (relevance · coherence · curiosity · dynamics · pain) closed-form sympy 검증 (mining @P4 · a_blue_closed 정합). COFFESHOP emit-case 의 5 substrate-trigger 가 closed-form 으로 sympy 검증되어야 a_blue_closed wiring (transfer-fn · invariant) 정합 — `hexa verify --expr` 또는 sympy-battery 로 case A-E 각 trigger 의 closed-form identity 확인. sibling: BRIDGE (4-key AND-gate substrate trigger) · DREAM (COFFESHOP v2 generator) · UNIVERSE (verdict verbatim SSOT)
 
 ## Session 2026-05-28 AxisBench → 11 sub-domain umbrella (17-layer)
 

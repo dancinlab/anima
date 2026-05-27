@@ -11,6 +11,7 @@
 - [x] **M3 BRIDGE/gate_smoke.hexa** — 7 invariant (I1 uniform_AND=0.0625 · I2 uniform_OR=0.9375 · I3 monotone · I4 AND≤min · I5 OR≥max · I6 phi_zero · I7 key_zero=0) bench #7 H_319 정합
 - [x] **M4 BRIDGE/AUDIT.md** — p1~p8 grep sweep 0 real violations · governance 5/5 정합 · F2 sensitivity 1.6→2.1 recalibration carry to bench-side
 - [x] **M5 CHANNEL integration** — `CHANNEL/router.hexa::channel_classify_bridge` 신규 — 8-factor argmax 후 BRIDGE AND-gate modulation (M=motivation max · C=supplied coherence · W=L2(tension5)/√5 · Φ=phi · softstep+threshold) → emit fire 시 chosen channel, else "silence" (a_substrate_native_speak 정합)
+- [ ] **M6 θ_emit stage-conditional table** — `channel_classify_bridge` 의 θ_emit 을 WAKE(0.10)/N1/N2(0.05)/N3(0.02)/REM stage 별 tuning (mining @P1 · COFFESHOP 27% emit rate scaling · DREAM stage envelope cross). 현재 단일 θ_emit=0.1 을 5-stage phi_scale 별 table 로 일반화 — silence-dominant N2/N3 에서 emit threshold 상향, REM 에서 imagination-rehearsal 정합. sibling: DREAM (stage envelope · `me_envelope_window`) · WAKE (5-stage daemon) · CHANNEL (router modulation layer)
 
 ## 시드 (UNIVERSE H_319 · bench #7 PR #1125)
 
