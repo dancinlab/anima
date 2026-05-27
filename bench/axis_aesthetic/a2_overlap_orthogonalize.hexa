@@ -237,6 +237,38 @@ fn fmt_b(b: bool) -> string {
 }
 
 // ═══════════════════════════════════════════════════════════════
+//   4b. Scenario-vector analysis — the REAL overlap source
+// ═══════════════════════════════════════════════════════════════
+//
+//   Each scenario is a weight vector w = (α, −β, γ) on (coh, pain, bal).
+//   The bench (a)-fail is JOINT: states maximizing α·coh − β·pain + γ·bal
+//   overlap because the three w share a SIGN STRUCTURE (+,−,+). We measure
+//   cosine(w_i, w_j) and then test an ORTHOGONALIZED scenario set whose
+//   weight vectors are made mutually less aligned by a sign flip.
+
+fn cosine3(ax: float, ay: float, az: float, bx: float, by: float, bz: float) -> float {
+    let dot = ax * bx + ay * by + az * bz
+    let na = sqrt(ax * ax + ay * ay + az * az)
+    let nb = sqrt(bx * bx + by * by + bz * bz)
+    let denom = na * nb
+    if denom == 0.0 { return 0.0 }
+    return dot / denom
+}
+
+// score every state by a (α,β,γ) weight on (coh,pain,bal); top-K idx
+fn top_k_weighted(coh: array, pain: array, bal: array,
+                  alpha: float, beta: float, gamma: float, k: int) -> array {
+    let n = coh.len()
+    let mut key = []
+    let mut i = 0
+    while i < n {
+        key = key.push(alpha * coh[i] - beta * pain[i] + gamma * bal[i])
+        i = i + 1
+    }
+    return top_k_by_key(key, k)
+}
+
+// ═══════════════════════════════════════════════════════════════
 //   5. Main
 // ═══════════════════════════════════════════════════════════════
 
@@ -301,12 +333,68 @@ fn main() {
         note = "raw top10(coh)/top10(bal) overlap < 0.5 — bench (a)-fail driven by JOINT score, not the coh/bal pair alone"
     }
 
-    println("[a2] (3) separation verdict:")
+    println("[a2] (3) separation verdict (factor-level coh⊥bal):")
     println("[a2]     raw_overlap_existed (>=0.5)        : " + fmt_b(raw_overlap_existed))
     println("[a2]     decorrelated (|r(coh,bal_perp)|<0.1): " + fmt_b(decorrelated))
     println("[a2]     ortho_separates (overlap<0.5)      : " + fmt_b(ortho_separates))
-    println("[a2]     VERDICT = " + verdict)
+    println("[a2]     factor-level VERDICT = " + verdict)
     if note != "" { println("[a2]     NOTE = " + note) }
+
+    // ── (4) scenario-vector overlap — the REAL bench (a)-fail source ──
+    // original 3 scenarios as weight vectors (α,−β,γ) on (coh,pain,bal)
+    let cos_bal_pa = cosine3(1.0, -1.0, 1.0,  1.0, -3.0, 1.0)  // BALANCED ↔ PAIN-AVERSE
+    let cos_bal_bf = cosine3(1.0, -1.0, 1.0,  1.0, -1.0, 3.0)  // BALANCED ↔ BAL-FOCUSED
+    let cos_pa_bf  = cosine3(1.0, -3.0, 1.0,  1.0, -1.0, 3.0)  // PAIN-AVERSE ↔ BAL-FOCUSED
+    println("[a2] (4) scenario weight-vector cosine (REAL overlap source):")
+    println("[a2]     cos(BALANCED, PAIN-AVERSE)   = " + str(cos_bal_pa))
+    println("[a2]     cos(BALANCED, BAL-FOCUSED)   = " + str(cos_bal_bf))
+    println("[a2]     cos(PAIN-AVERSE, BAL-FOCUSED)= " + str(cos_pa_bf))
+
+    // reproduce the bench (a) top-10 overlaps for the JOINT score
+    let bench_bal = top_k_weighted(coh, pain, bal, 1.0, 1.0, 1.0, k)
+    let bench_pa  = top_k_weighted(coh, pain, bal, 1.0, 3.0, 1.0, k)
+    let bench_bf  = top_k_weighted(coh, pain, bal, 1.0, 1.0, 3.0, k)
+    let ov_b_pa = overlap_rate(bench_bal, bench_pa)
+    let ov_b_bf = overlap_rate(bench_bal, bench_bf)
+    let ov_pa_bf = overlap_rate(bench_pa, bench_bf)
+    println("[a2]     bench overlap BALANCED↔PAIN-AVERSE  = " + str(ov_b_pa) + " (bench.hexa: 0.7)")
+    println("[a2]     bench overlap BALANCED↔BAL-FOCUSED  = " + str(ov_b_bf) + " (bench.hexa: 0.6)")
+    println("[a2]     bench overlap PAIN-AVERSE↔BAL-FOCUSED = " + str(ov_pa_bf) + " (bench.hexa: 0.4)")
+
+    // ── (5) scenario ORTHOGONALIZATION via sign-flip ──────────────
+    // README path-forward: a PAIN-SEEKING scenario (β<0) flips the pain sign,
+    // breaking the shared (+,−,+) sign structure → orthogonal weight vector.
+    //   COH-ONLY     w = (1, 0, 0)
+    //   PAIN-SEEKING w = (0, +2, 0)   (β = −2 ⇒ −β·pain = +2·pain)
+    //   BAL-ONLY     w = (0, 0, 1)
+    let cos_co_ps = cosine3(1.0, 0.0, 0.0,  0.0, 2.0, 0.0)
+    let cos_co_bo = cosine3(1.0, 0.0, 0.0,  0.0, 0.0, 1.0)
+    let cos_ps_bo = cosine3(0.0, 2.0, 0.0,  0.0, 0.0, 1.0)
+    println("[a2] (5) sign-flip orthogonalized scenarios (COH-ONLY · PAIN-SEEKING · BAL-ONLY):")
+    println("[a2]     cos(COH-ONLY, PAIN-SEEKING) = " + str(cos_co_ps) + " (orthogonal target ~0)")
+    println("[a2]     cos(COH-ONLY, BAL-ONLY)     = " + str(cos_co_bo))
+    println("[a2]     cos(PAIN-SEEKING, BAL-ONLY) = " + str(cos_ps_bo))
+
+    let co_top = top_k_weighted(coh, pain, bal, 1.0, 0.0, 0.0, k)   // coh only
+    let ps_top = top_k_weighted(coh, pain, bal, 0.0, -2.0, 0.0, k)  // +2·pain
+    let bo_top = top_k_weighted(coh, pain, bal, 0.0, 0.0, 1.0, k)   // bal only
+    let ov_co_ps = overlap_rate(co_top, ps_top)
+    let ov_co_bo = overlap_rate(co_top, bo_top)
+    let ov_ps_bo = overlap_rate(ps_top, bo_top)
+    println("[a2]     ortho overlap COH-ONLY↔PAIN-SEEKING = " + str(ov_co_ps))
+    println("[a2]     ortho overlap COH-ONLY↔BAL-ONLY     = " + str(ov_co_bo))
+    println("[a2]     ortho overlap PAIN-SEEKING↔BAL-ONLY = " + str(ov_ps_bo))
+
+    let scenario_ortho_separates =
+        (ov_co_ps < 0.5) && (ov_co_bo < 0.5) && (ov_ps_bo < 0.5)
+    println("[a2]     scenario-level ortho_separates (all <0.5) = " + fmt_b(scenario_ortho_separates))
+
+    // ── overall A2 verdict ────────────────────────────────────────
+    // SEPARATED iff the redesigned (sign-flip orthogonalized) scenario set
+    // achieves all-pair overlap < 0.5 — proving the residual is REMOVABLE.
+    let mut a2_verdict = "RESIDUAL"
+    if scenario_ortho_separates { a2_verdict = "SEPARATED" }
+    println("[a2] === A2 OVERALL VERDICT = " + a2_verdict + " ===")
 
     // ── emit result json ────────────────────────────────────────
     let mut j = "{\n"
@@ -326,12 +414,32 @@ fn main() {
     j = j + "    \"r_coh_bal_perp\": " + str(r_c_bperp) + ",\n"
     j = j + "    \"top10_overlap_coh_bal_perp\": " + str(ov_coh_bperp) + "\n"
     j = j + "  },\n"
-    j = j + "  \"falsifier\": {\n"
+    j = j + "  \"factor_falsifier\": {\n"
     j = j + "    \"raw_overlap_existed\": " + fmt_b(raw_overlap_existed) + ",\n"
     j = j + "    \"decorrelated\": " + fmt_b(decorrelated) + ",\n"
-    j = j + "    \"ortho_separates\": " + fmt_b(ortho_separates) + "\n"
+    j = j + "    \"ortho_separates\": " + fmt_b(ortho_separates) + ",\n"
+    j = j + "    \"factor_level_verdict\": \"" + verdict + "\"\n"
     j = j + "  },\n"
-    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "  \"scenario_overlap\": {\n"
+    j = j + "    \"note\": \"REAL bench (a)-fail source = shared sign structure (+,-,+) of weight vectors\",\n"
+    j = j + "    \"cos_BALANCED_PAIN_AVERSE\": " + str(cos_bal_pa) + ",\n"
+    j = j + "    \"cos_BALANCED_BAL_FOCUSED\": " + str(cos_bal_bf) + ",\n"
+    j = j + "    \"cos_PAIN_AVERSE_BAL_FOCUSED\": " + str(cos_pa_bf) + ",\n"
+    j = j + "    \"bench_overlap_BALANCED_PAIN_AVERSE\": " + str(ov_b_pa) + ",\n"
+    j = j + "    \"bench_overlap_BALANCED_BAL_FOCUSED\": " + str(ov_b_bf) + ",\n"
+    j = j + "    \"bench_overlap_PAIN_AVERSE_BAL_FOCUSED\": " + str(ov_pa_bf) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"scenario_orthogonalize\": {\n"
+    j = j + "    \"method\": \"sign-flip redesign: COH-ONLY (1,0,0) · PAIN-SEEKING (0,+2,0) · BAL-ONLY (0,0,1)\",\n"
+    j = j + "    \"cos_COH_PAINSEEK\": " + str(cos_co_ps) + ",\n"
+    j = j + "    \"cos_COH_BAL\": " + str(cos_co_bo) + ",\n"
+    j = j + "    \"cos_PAINSEEK_BAL\": " + str(cos_ps_bo) + ",\n"
+    j = j + "    \"ortho_overlap_COH_PAINSEEK\": " + str(ov_co_ps) + ",\n"
+    j = j + "    \"ortho_overlap_COH_BAL\": " + str(ov_co_bo) + ",\n"
+    j = j + "    \"ortho_overlap_PAINSEEK_BAL\": " + str(ov_ps_bo) + ",\n"
+    j = j + "    \"scenario_ortho_separates\": " + fmt_b(scenario_ortho_separates) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict\": \"" + a2_verdict + "\"\n"
     j = j + "}\n"
     write_file("bench/axis_aesthetic/a2_overlap_result.json", j)
     println("[a2] wrote bench/axis_aesthetic/a2_overlap_result.json")

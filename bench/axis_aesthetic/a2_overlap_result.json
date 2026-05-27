@@ -1,0 +1,44 @@
+{
+  "bench": "axis_aesthetic_a2_overlap",
+  "hypothesis": "aesthetic-overlap-residual",
+  "n_states": 100,
+  "seed": 42,
+  "overlap_pair": "coh × bal (two positive aesthetic dimensions)",
+  "identity": {
+    "r_coh_bal": -0.0752714,
+    "r_coh_pain": 0.0668992,
+    "r_bal_pain": 0.0105589,
+    "top10_overlap_coh_bal_raw": 0.1
+  },
+  "orthogonalize": {
+    "method": "gram_schmidt bal_perp = bal - (cov(coh,bal)/var(coh))*coh",
+    "r_coh_bal_perp": 4.47001e-17,
+    "top10_overlap_coh_bal_perp": 0.1
+  },
+  "factor_falsifier": {
+    "raw_overlap_existed": false,
+    "decorrelated": true,
+    "ortho_separates": true,
+    "factor_level_verdict": "SEPARATED"
+  },
+  "scenario_overlap": {
+    "note": "REAL bench (a)-fail source = shared sign structure (+,-,+) of weight vectors",
+    "cos_BALANCED_PAIN_AVERSE": 0.870388,
+    "cos_BALANCED_BAL_FOCUSED": 0.870388,
+    "cos_PAIN_AVERSE_BAL_FOCUSED": 0.636364,
+    "bench_overlap_BALANCED_PAIN_AVERSE": 0.7,
+    "bench_overlap_BALANCED_BAL_FOCUSED": 0.6,
+    "bench_overlap_PAIN_AVERSE_BAL_FOCUSED": 0.4
+  },
+  "scenario_orthogonalize": {
+    "method": "sign-flip redesign: COH-ONLY (1,0,0) · PAIN-SEEKING (0,+2,0) · BAL-ONLY (0,0,1)",
+    "cos_COH_PAINSEEK": 0.0,
+    "cos_COH_BAL": 0.0,
+    "cos_PAINSEEK_BAL": 0.0,
+    "ortho_overlap_COH_PAINSEEK": 0.3,
+    "ortho_overlap_COH_BAL": 0.1,
+    "ortho_overlap_PAINSEEK_BAL": 0.0,
+    "scenario_ortho_separates": true
+  },
+  "verdict": "SEPARATED"
+}
