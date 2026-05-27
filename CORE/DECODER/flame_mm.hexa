@@ -1,0 +1,73 @@
+// CORE/DECODER/flame_mm.hexa — M4b Phase 4-gpu matmul dispatch foundation
+//
+// The M4b pilot (train_v3_moe_pilot.hexa + v3_moe_arch + v3_moe_bwd_lib) was
+// authored with hand-written scalar triple-loop matmuls (plain farr). On an
+// H100 that path leaves the GPU idle AND is computationally infeasible at
+// pilot scale (d=2048·n_layer=12·T=512 ≈ 10^14 scalar ops on CPU).
+//
+// This module wires hexa-lang's RFC-040 device-farr + cuBLAS Dgemm path so the
+// fire actually uses the GPU, while keeping a CPU oracle (farr_matmul) for Mac
+// gradcheck. Replacing the triple loops with `mm(...)` is Phase 4-gpu-2..4.
+//
+// RFC-040 primitives (hexa-lang origin/main, builtin):
+//   farr_matmul(A, M, K, B, N)      → C[M×N]  CPU oracle (always available)
+//   farr_matmul_gpu(A, M, K, B, N)  → C[M×N]  cuBLAS Dgemm (<0 on error)
+//   cuda_available()                → 1 on a CUDA host, else 0
+//   All NN form: A[M×K] @ B[K×N] = C[M×N], row-major. NO transpose variant
+//   (farr_matmul_nt absent) → transposes are explicit (mm_transpose).
+//
+// Honest verify note: the GPU (farr_matmul_gpu) path can ONLY be exercised on a
+// CUDA host. On Mac, mm() dispatches to the CPU oracle, so all local gradchecks
+// validate the SHAPES + math; the cuBLAS body is verified by hexa-lang's own
+// RFC-040 GPU falsifiers (cuBLAS == CPU oracle, max|Δ| < 1e-9) on the fire pod.
+
+// mm(A, M, K, B, N) → C[M×N] handle. cuBLAS Dgemm on a CUDA host, else CPU oracle.
+//   A[M×K] @ B[K×N], row-major. Returns a NEW farr (int handle).
+pub fn mm(A, M, K, B, N) -> int {
+    if cuda_available() == 1 {
+        return farr_matmul_gpu(A, M, K, B, N)
+    }
+    return farr_matmul(A, M, K, B, N)
+}
+
+// mm_transpose(A, rows, cols) → At[cols×rows] handle.
+//   Explicit transpose for the Q·Kᵀ + backward Wᵀ cases (no _nt matmul variant).
+pub fn mm_transpose(A, rows, cols) -> int {
+    let at = farr_zeros(rows * cols)
+    let mut r = 0
+    while r < rows {
+        let mut c = 0
+        while c < cols {
+            let _ = farr_set(at, c * rows + r, farr_get(A, r * cols + c))
+            c = c + 1
+        }
+        r = r + 1
+    }
+    return at
+}
+
+// mm_extract(P, off, rows, cols) → standalone (rows×cols) handle.
+//   Copies a row-major sub-block of a PACKED buffer P (offset `off`) into a
+//   fresh index-0 farr, because farr_matmul takes index-0 handles (no offset).
+//   Extraction is O(rows·cols) ≪ the matmul O(rows·cols·N) it feeds.
+pub fn mm_extract(P, off, rows, cols) -> int {
+    let n = rows * cols
+    let out = farr_zeros(n)
+    let mut i = 0
+    while i < n {
+        let _ = farr_set(out, i, farr_get(P, off + i))
+        i = i + 1
+    }
+    return out
+}
+
+// mm_scatter_add(P, off, src, n) → accumulate src[0..n] into packed P at off (+=).
+//   For writing matmul results back into a packed grad buffer (dMg) with
+//   accumulation (multiple contributions land on the same weight region).
+pub fn mm_scatter_add(P, off, src, n) {
+    let mut i = 0
+    while i < n {
+        let _ = farr_set(P, off + i, farr_get(P, off + i) + farr_get(src, i))
+        i = i + 1
+    }
+}
