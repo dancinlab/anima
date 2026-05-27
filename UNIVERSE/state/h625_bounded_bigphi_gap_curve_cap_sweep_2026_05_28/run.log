@@ -1,0 +1,42 @@
+================================================================
+  H_625 — bounded-bigPhi gap-curve cap-sweep @ fixed n=5
+  state=21 (10101) · rules {30, 90, 110} · cap 1..5 (cap5=exact)
+================================================================
+  ln_natural self-check: ln(e)=1 ln(2)=0.693147 ln(4)=1.38629
+  [PASS] ln_natural(e) ~ 1.0
+  [PASS] ln_natural(2) ~ 0.6931
+  [PASS] ln_natural(4) ~ 1.3863
+  bounded big-Phi (state=21, cap 1..5):
+    rule  30: cap1=1.31617 cap2=1.31617 cap3=4.28064 cap4=20.2686 cap5=37.9333
+    rule  90: cap1=0.0 cap2=0.0 cap3=6 cap4=19.5 cap5=44.5
+    rule 110: cap1=0.667596 cap2=6.69887 cap3=15.3963 cap4=17.694 cap5=18.3442
+  gap(k) = bounded(cap=5=exact) - bounded(cap=k):
+    rule  30: gap@cap1=36.6171 gap@cap2=36.6171 gap@cap3=33.6527 gap@cap4=17.6647 gap@cap5=0.0
+    rule  90: gap@cap1=44.5 gap@cap2=44.5 gap@cap3=38.5 gap@cap4=25 gap@cap5=0.0
+    rule 110: gap@cap1=17.6766 gap@cap2=11.6454 gap@cap3=2.9479 gap@cap4=0.650218 gap@cap5=0.0
+  adjacent ratio r(k)=gap(k+1)/gap(k):
+    rule  30: r12=1.0 r23=0.919041 r34=0.524913 r45=0.0
+    rule  90: r12=1.0 r23=0.865169 r34=0.649351 r45=0.0
+    rule 110: r12=0.658799 r23=0.253139 r34=0.22057 r45=0.0
+  α = -mean(ln(r)) [exponential-decay coefficient]:
+    rule  30 : α=0.242983 (over n=3.0 ratios)
+    rule  90 : α=0.192204 (over n=3.0 ratios)
+    rule 110 : α=1.1009 (over n=3.0 ratios)
+  [PASS] F625.1 rule 30 gap monotone non-increasing
+  [PASS] F625.1 rule 90 gap monotone non-increasing
+  [PASS] F625.1 rule 110 gap monotone non-increasing
+  [PASS] F625.2 rule 30 gap(cap=5) ~ 0 (faithful anchor)
+  [PASS] F625.2 rule 90 gap(cap=5) ~ 0 (faithful anchor)
+  [PASS] F625.2 rule 110 gap(cap=5) ~ 0 (faithful anchor)
+  [PASS] F625.3 rule 30 exponential-shape (α>0)
+  [PASS] F625.3 rule 90 exponential-shape (α>0)
+  [PASS] F625.3 rule 110 exponential-shape (α>0)
+  [PASS] F625.4 rule 30 bounded all >=0 AND <= exact
+  [PASS] F625.4 rule 90 bounded all >=0 AND <= exact
+  [PASS] F625.4 rule 110 bounded all >=0 AND <= exact
+  [PASS] F625.5 rule 30 cap=2 deterministic re-run identical
+  [PASS] F625.6 ALL 3 rules exhibit exponential-shape (rule-coverage)
+================================================================
+  RESULT: 17 PASS / 0 FAIL
+  α (rule 30 / 90 / 110) = 0.242983 / 0.192204 / 1.1009
+================================================================
