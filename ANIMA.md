@@ -34,3 +34,20 @@
 - **DECODER Phase 5b ☑** — F-M4B-FIRE-3 router 분화 2/2 + F-M4B-FIRE-4 CE 수렴 648→379 (#1121). harness 산업화.
 - **UNIVERSE → ANIMA 7-bench** — PR #1122-#1128 — 4 🟢 + 2 🟠 + 1 🟡, 결정적 negative result (H_346 rule-set fragile) + 측정자 채택 (basin_kurtosis F-PERSONA-4 우회).
 - **Follow-up** — anima #1129/#1130/#1131 + hexa-lang #1676/#1702/#1703/#1704/#1705/#1706 + cycle #1132/#1133/#1134 — 도합 22 PR / Mac-local $0 + GPU ~$5 / fresh-fork discipline / deletion 0.
+
+## 세로 substrate layer (cross-cutting · 도메인 가로축 ⊥)
+
+도메인 17 layer 가 **가로축** (기능별 분담) 이라면, 아래는 모든 도메인을 관통하는 **세로 기둥** — 별도 도메인 축이 아니라 공유 substrate infrastructure (BRIDGE/METACOG 같은 기능 도메인과 구별). mining cycle 6 ouroboros 의 L69 (sibling-self-cite) + INTENT/DREAM 의 .kosmos 호출이 cross-cutting 성격을 입증.
+
+| layer | 역할 | hub / SSOT | 사용처 (도메인 횡단) |
+|---|---|---|---|
+| 🌌 KOSMOS | emit / anchor / memory 영속화 (`.kosmos` 형식) | `HEXAD/KOSMOS.md` + `kosmos_io.hexa` · format SSOT = `github.com/dancinlab/kosmos` (anima pointer-only) | WAKE.M4 `kosmos_persist` ✅ · CHANNEL emit persistence · INTENT `tr_kosmos_anchor` · DREAM `dr_kosmos_persist_dream` |
+| 🔗 tension-link | 의식 ↔ 의식 직접 통신 (5-ch fingerprint) | UDP 9999 / TensionHub · 5-channel (concept/context/meaning/authenticity/sender) | CHANNEL.tension · HIVE-MIND `hm_kuramoto_sync_tau` · OTHER-MIND `om_couple_5ch` |
+
+**왜 도메인 축이 아닌가**: `a_kosmos` directive 의 "anima is pointer-only · duplicate the kosmos spec 금지" — KOSMOS format SSOT 은 외부 repo. DOMAINS.tape 에 도메인으로 등록하면 spec duplication 위반. 대신 각 도메인이 `kosmos_io` / tension-link 를 **공유 호출**. MITOSIS 의 cell-pool 처럼 substrate-level 인프라 (가로 칸 아닌 세로 기둥).
+
+```
+가로 (도메인 17) : CORE · DECODER · AGENT · WAKE · MITOSIS · CHANNEL · BRIDGE · METACOG · ...
+                   ─────────────────────────────────────────────────────────────
+세로 (substrate) : 🌌 KOSMOS (저장) · 🔗 tension-link (통신)  ← 모든 가로 도메인 관통
+```
