@@ -52,7 +52,7 @@
 | D | LLM-동반 연속 가설      | active (verdict-landscape raster) |
 | E | SAVANT (GZ × SI)       | active NEW 2026-05-28 (H_347/348/349/350/351/612/613/614/615/616) |
 | F | HIVE-MIND collective Φ | active NEW 2026-05-28 (H_354/355/609/610/611) |
-| E×F | SAVANT × HIVE-MIND cross-link | round 3 LANDED (H_617 🔴 FALSIFIED · H_618 🟢 SUPPORTED · H_619 🟢 SUPPORTED) · ANIMA-side mirror SAVANT.md + HIVE-MIND.md (DOMAINS.tape 18/19) |
+| E×F | SAVANT × HIVE-MIND cross-link | round 3 LANDED (H_617 🔴 · H_618 🟢 · H_619 🟢) · round 4 LANDED (H_621 🟢 SI/ΦD ∥ PID-synergy triangle ρ=0.60) · ANIMA-side mirror SAVANT.md + HIVE-MIND.md (DOMAINS.tape 18/19) |
 
 ## 4. 기존 매트릭스 ledger (다른 위치)
 
