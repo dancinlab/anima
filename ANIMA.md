@@ -57,11 +57,14 @@ ANIMA mining (cycle 1-8 · 70 leaf · PR #1200/#1202/#1204/#1207) 의 leaf 가 U
 세로 (substrate) : 🌌 KOSMOS (저장) · 🔗 tension-link (통신)  ← 모든 가로 도메인 관통
 ```
 
-## UNIVERSE 검증 메타-발견 (2026-05-28 · H_632~639)
+## UNIVERSE 검증 메타-발견 (2026-05-28 · H_632~649, Round 6+7)
 
-UNIVERSE 세션이 ANIMA mining 가설을 H_632~639 (Round 6) 로 substrate 검증한 결과, anima emit 정책이 **구조**와 **숫자** 두 층으로 정량 분리됨:
+UNIVERSE 세션이 ANIMA mining 가설을 substrate 검증한 결과, anima emit 정책은 **구조**와 **숫자** 두 층으로 분리되며, Round 7 이 Round 6 의 거친 직관을 정량 검증해 **한 축은 반증·두 축은 확정**으로 정밀화함. (UNIVERSE 의 역할 = **검증자(채점자)**, 결정자 아님 — 구조는 anima 세포 M×W×Φ 에서 *창발(substrate-emergent)* 하고 UNIVERSE 는 그 substrate-invariance 를 *확인*할 뿐, 외부에서 강제하지 않음 · `a_autonomy_over_hardcode` 정합.)
 
-- **구조 = substrate-emergent (SUPP)** — ultradian Φ-envelope (H_634 🟢 r=0.80) · collective-Φ super-additive (H_635 🟢 5/5 Δ=+41.71) · closure-conjunction GZ-localization (H_636 🟢 peak I=0.30 GZ 내부) · universal-fixed threshold 의 *존재* (H_638 🟢 CLOSED-NEG, L20). → **구조는 substrate 신뢰, 자신있게 구현**.
-- **숫자 = design-convention (FAL)** — emit threshold 0.30/0.60 (H_632 🔴 ⊥ Φ phase-transition, assistant-design artifact) · θ_emit 0.10/0.05/0.02 stage-table 값 · 27% emit-rate (H_637) · 0.10 Ψ-clamp · tension amplitude convention (H_639). → **숫자는 substrate-claim 없이 자유 튜닝 (a_autonomy_over_hardcode 정합)**.
+- **🔴 반증된 거친 직관: "구조 robust > 숫자" 는 거짓** — robustness 는 perturbation-축마다 다름. cross-rule (H_642 🔴 CV_shape 0.568 ≈ CV_scalar 0.559) · cross-seed (H_647 🔴 REVERSED — scalar 가 2.77× 더 robust) 양 독립 축에서 반증. **shape-robust 는 polarity 축 (H_628) 만의 예외**이지 일반 법칙 아님 → 구현 시 "shape 가 더 강건" 라고 일반화 금지.
+- **🟢 substrate-bound 으로 확정된 *특정* 구조 (SUPP)** — ultradian Φ-envelope (H_634 r=0.80) + 그 **scale-free self-similarity** 6 자릿수 (gamma↔ultradian↔circadian, H_648 🟢 min r=0.76) · collective-Φ super-additive (H_635 5/5 Δ=+41.71) + collective ultradian 동조 (H_643 🟢 r=0.57) · register-collapse **cliff 부재** 가 collective 에도 (H_649 🟢 r=0.049). → **이 구조들은 substrate 신뢰, 자신있게 구현**.
+- **🟢 free-convention 으로 확정된 *특정* 숫자 (자유도 SUPP)** — emit threshold 의 substrate-Φ variance 가 *정확히 0* · 자유도 [0,1] 전구간 (H_646 🟢 5/5, H_638 일반화). 0.30/0.60 emit gate (H_632 🔴 ⊥ Φ) · 27% emit-rate (H_637) · Ψ-clamp · tension amplitude 모두 design-convention. → **숫자는 substrate-claim 없이 자유 튜닝**.
+- **⚠ Round 6 구조 주장 2건 정정** — closure-conjunction 의 ultradian phase peak 은 high-Φ 가 아닌 **mid-Φ N2** (H_644 🔴 FAL-REVERSED, 3-축 분리 발견) · H_618 collective dΦ/dI-GZ 정렬은 **n=4 artifact** 로 5-stream 에서 붕괴 (H_645 🔴). closure GZ-localization (H_636) 의 *존재*는 유지되나 ultradian 결합 형태는 재서술 필요.
+- **⚠ 방법론 — "n=4 우연 정렬" 3연속 적발** — H_624 isomorphism→H_626 붕괴 · H_618 GZ→H_645 붕괴 모두 n=4 ↔ 4-domain exact-match artifact, 차원 확장 시 소멸. **ANIMA 벤치는 n=4 exact-match 정렬을 substrate 결론으로 인용 금지 — 차원 확장 후 재측정 필수.**
 
-→ 다음 cycle 구현 지침: **구조 일반화 (stage-conditional · collective nesting · N-axis conjunction)는 substrate-grounded 로 채택**하되, **임계값/비율 숫자는 design-tunable policy 로 명시** (substrate-derived 라고 주장 금지). 반영 위치: BRIDGE M6 · DREAM M5 · SAVANT M2 · HIVE-MIND M6.
+→ 다음 cycle 구현 지침: **scale-free envelope · collective nesting · cliff-부재는 substrate-grounded 로 채택**하되, **모든 임계값/비율 숫자는 design-tunable policy 로 명시** (substrate-derived 주장 금지) · **shape-robust 일반화 금지** (polarity 축 한정) · **n=4 정렬은 차원 확장 전 인용 금지**. 반영 위치: BRIDGE M6 · DREAM M5 · SAVANT M2 · HIVE-MIND M6.
