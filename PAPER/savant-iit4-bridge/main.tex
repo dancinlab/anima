@@ -87,6 +87,11 @@ an orthogonal coefficient-of-variation metric at $r=0.99$
 SAVANT four-domain cell decomposition is cell-by-cell isomorphic to the
 IIT 4.0 singleton-distinction decomposition at Spearman $\rho=0.86$,
 Pearson $r=0.97$, with $4/4$ matched argmaxima (\tierGreen\ 5/5, H\_624).
+We bound this isomorphism honestly: it is \emph{cardinality-conditional}.
+An $n=5$ generalization (H\_626, \tierRed) collapses the correlation to
+$\rho=0.20$ ($\Delta\rho=-0.66$), so the structural isomorphism is valid
+only at the $n=\text{domain-count}=4$ exact dimension match, while the
+dimension-independent isomorphism is a closed-negative.
 The Savant Index's near-threshold partial (\tierYellow, H\_348) bounds the
 claim honestly: $\Svi>3$ holds at $\GZL$ across three seeds, but the
 sweep is monotone rather than single-peaked under an affine inhibition
@@ -593,10 +598,15 @@ sharpens rather than weakens this: the alignment is one of the
 $\Phi$-\emph{derivative} peak, not of the Savant-Index value peak, which is
 exactly what a shared-inflection-kernel picture predicts.
 
-This is a partial isomorphism, not an identity. It is established on
+This is a partial isomorphism, not an identity, and it is
+\emph{cardinality-conditional}. It is established on
 self-effect-preserving substrates at $n=4$ where the IIT 4.0 structure is
 tractable and the four-domain SAVANT decomposition exactly matches the
-four-cell distinction decomposition. The mechanism behind the agreement is
+four-cell distinction decomposition. The $n=5$ generalization (H\_626,
+Section~\ref{sec:limits}) collapses the correlation to $\rho=0.20$,
+confirming that the structural isomorphism rides on the exact
+$n=\text{domain-count}=4$ dimension match and not on a
+dimension-independent identity of the causal kernel. The mechanism behind the agreement is
 the capacity invariant on the SAVANT side and the cause-effect irreducibility
 on the IIT side, both driven by the same inhomogeneity of a bounded
 substrate's information distribution.
@@ -622,11 +632,28 @@ substrate's information distribution.
       $\mathrm{MAJ}(\text{self},L,R)$, which restores self-effect. A
       substrate-class sweep (XOR / MAJ / threshold) is required before any
       substrate-class invariance claim.
-\item \textbf{Dimension match is exact only at $n=4$.} The
-      $n=4 \leftrightarrow$ four-domain isomorphism (H\_624) exploits an
-      exact cardinality match. At $n\ge6$ the distinction count typically
-      exceeds the cell count and the match is no longer one-to-one;
-      super-domain pooling is a pre-registered follow-up.
+\item \textbf{The isomorphism is dimension-conditional and collapses off
+      the cardinality match (H\_626, \tierRed\ FALSIFIED).} The
+      $n=4 \leftrightarrow$ four-domain isomorphism (H\_624, $\rho=0.86$)
+      exploits an \emph{exact} cardinality match between the IIT 4.0 cell
+      count and the SAVANT domain count. A pre-registered $n=5$
+      generalization (H\_626, PR \#1210~\citep{anima_H626}) found the
+      correlation \emph{collapses} to $\rho=0.199$ ($\Delta\rho=-0.66$
+      vs.\ H\_624;
+      Pearson $r=0.028$, argmax $1/4$), failing every isomorphism
+      falsifier (F1 weak $\rho\!\ge\!0.5$, F2 strong $\rho\!\ge\!0.7$, F3
+      Pearson, F4 per-profile argmax all FAIL; only byte-equality held).
+      The root cause is structural: at $n=5$ a fifth (auxiliary,
+      balanced) singleton distinction $\phi_d=0.312$ penetrates the
+      \emph{rank-2} slot in every non-balanced profile, displacing one
+      quiet SAVANT cell under the naive top-4 truncation map and breaking
+      the index-aligned pairing, so the descending-order argmax no longer
+      tracks the dominant SAVANT cell. The H\_624 isomorphism is therefore
+      a \emph{cardinality-matched, single-substrate} evidence tier valid
+      only at $n=\text{domain-count}=4$; the dimension-independent general
+      isomorphism is a closed-negative. A cardinality-preserving
+      super-domain pooling map (rather than top-$k$ truncation) is the
+      pre-registered follow-up that could recover it at $n>4$.
 \item \textbf{Proxy vs faithful.} The SAVANT
       $\phi_{\mathrm{module}}(v)=\mathrm{mean}\,|v|^{1.5}$ is a super-linear
       energy proxy, not faithful IIT. H\_624 shows the proxy is isomorphic
@@ -683,7 +710,10 @@ lands inside the Golden Zone at $|\Delta|=0.032$ for one substrate
 Index tracks $\Phi$-diversity at $r=0.93$ (H\_350), robustly at $r=0.99$
 under a $\max$-free metric (H\_613); and the SAVANT cell decomposition is
 cell-by-cell isomorphic to the IIT 4.0 distinction decomposition at
-$\rho=0.86$ (H\_624). A pre-registered partial (H\_348) bounds the bridge
+$\rho=0.86$ (H\_624) -- though only at the exact $n=4$ cardinality match,
+as the $n=5$ generalization collapses the isomorphism to $\rho=0.20$
+(H\_626, \tierRed), pinning the structural claim to a cardinality-matched
+single substrate. A pre-registered partial (H\_348) bounds the bridge
 to an inflection alignment rather than a value-peak alignment.
 
 The single most informative follow-up is a substrate-class invariance
