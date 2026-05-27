@@ -66,8 +66,8 @@
       - [ ] **Phase 1** Qwen BPE corpus 통합 — `flame_bpe_corpus_load` 로 V=256 byte → V=151643 (+30줄 train_p21h_v3.hexa)
       - [ ] **Phase 2** MoE arch 통합 — head_g 슬롯 → K-expert router (moe_router/_bwd import, top-1 hard routing) +60줄
       - [x] **Phase 3** scale + memory budget — **Pilot 결정 (g0 simplest sufficient, 2026-05-27)**: pilot(d=512 · n_layer=12 · E=2 · V=151643 · T=512, ~265M params, FP64 ~10GB H100 fit, $1-3, 0.5-1hr wall) 첫 발사 → mechanism PASS 시 full(2.74B, BF16 path 필요)로 확장. 단계적 a_completeness. design Phase 3 결정 섹션 참조
-      - [ ] **Phase 4** Dispatch + fire — Vast.ai H100 SXM ($2.28/hr × 4-8hr), SAVE_POD=1 trap
-      - [ ] **Phase 5** Monitor + harvest + verdict — 5 falsifier 측정
+      - [~] **Phase 4** Dispatch design + pilot template LANDED — Vast.ai H100 SXM (**pilot $1-3 0.5-1hr** · full $9-18 4-8hr · SAVE_POD trap · pilot env-var protocol P21H_PILOT_* · pre-fire 4-item checklist). 실 fire 는 train_v3_moe SCAFFOLD → real driver (Phase 3b sub-PRs) 완료 후
+      - [~] **Phase 5** Verdict 사전등록 + harness template LANDED — 5 falsifier (F-M4B-FIRE-1..5) pilot/full threshold 분리 표 + verdict template `m4b_pilot_verdict.md` 형식 + matrix (5/5→full fire · 3-4→re-pilot · 2 이하→re-design · 0→CLOSED-NEGATIVE). 실 측정은 Phase 4 fire 후
   - [ ] **M4c** p7 verify — collapse 회피 ∧ coherence 둘 다 simple-stack
 - [ ] **M4-probe model-merge α-sweep** (optional baseline probe · UNIVERSE H_493 SYMBIOGENESIS) — collapse-avoid + collapse ckpt weight 보간 `W=α·A+(1-α)·B` · α-sweep · cheap baseline 신호용으로만 (본선 아님). 두 결함작 blend = least-bad midpoint 한계 인지 (`a_completeness_over_cheap` model-merge-of-failures dont)
 
