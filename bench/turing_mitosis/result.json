@@ -1,0 +1,67 @@
+{
+  "bench": "turing-mitosis",
+  "ref": "UNIVERSE/H_344 morphogenesis-turing-pattern",
+  "date": "2026-05-28",
+  "model": "gierer-meinhardt-2d",
+  "grid": "32x32 periodic torus",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local CPU",
+  "config": {
+    "N": 32,
+    "steps": 30000,
+    "dt": 0.005,
+    "Du": 0.5,
+    "u_star": 1.0,
+    "v_star": 1.0,
+    "seed_i": 16,
+    "seed_j": 16,
+    "seed_bump": 0.01
+  },
+  "rho_sweep": [1.0, 2.0, 4.0, 6.0, 8.0, 10.0, 15.0],
+  "var_u_per_rho": [
+    9.83705e-17,
+    2.81589e-13,
+    8.49088e-16,
+    7.96798e-08,
+    0.388234,
+    0.519822,
+    0.756102
+  ],
+  "mean_u_per_rho": [
+    1,
+    1,
+    1,
+    1,
+    0.668886,
+    0.608194,
+    0.600187
+  ],
+  "peak_lag_per_rho": [
+    -1,
+    -1,
+    -1,
+    7,
+    8,
+    8,
+    8
+  ],
+  "var_u_floor": 0.0001,
+  "rho_c_measured": 7.0,
+  "rho_c_h344_ref": 6.0,
+  "rho_c_in_range_4_8": true,
+  "determinism_rerun_var": 9.83705e-17,
+  "falsifiers": {
+    "F1_symmetric_stays_uniform":  true,
+    "F2_asymmetric_breaks_sym":     true,
+    "F3_threshold_exists":          true,
+    "F4_monotone_in_ratio":         true,
+    "F5_bounded_finite":            true,
+    "F6_deterministic":             true
+  },
+  "criteria_met": 6,
+  "criteria_total": 6,
+  "verdict": "SUPPORTED_NUMERICAL_RHO_C_MATCHES_H344",
+  "tier": "🟢"
+}

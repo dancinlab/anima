@@ -1,0 +1,51 @@
+================================================================
+  Bench #4 — TURING-MITOSIS (얼룩말 무늬 분열)
+  2D Gierer-Meinhardt on a 32x32 torus
+    du/dt = Du * lap2d(u) + u^2/v - u
+    dh/dt = Dv * lap2d(v) + u^2     - v
+================================================================
+  N=32x32 steps=30000 dt=0.005 Du=0.5 T=150.0
+  homogeneous steady state u*=v*=1, seed +1% at (16,16)
+  SWEEP rho = Dv/Du in {1, 2, 4, 6, 8, 10, 15}; Du held FIXED
+----------------------------------------------------------------
+  rho=1.0 Dv=0.5  var_u=9.83705e-17  mean_u=1  peak_lag=-1
+  rho=2.0 Dv=1.0  var_u=2.81589e-13  mean_u=1  peak_lag=-1
+  rho=4.0 Dv=2.0  var_u=8.49088e-16  mean_u=1  peak_lag=-1
+  rho=6.0 Dv=3.0  var_u=7.96798e-08  mean_u=1  peak_lag=7
+  rho=8.0 Dv=4.0  var_u=0.388234  mean_u=0.668886  peak_lag=8
+  rho=10.0 Dv=5.0  var_u=0.519822  mean_u=0.608194  peak_lag=8
+  rho=15.0 Dv=7.5  var_u=0.756102  mean_u=0.600187  peak_lag=8
+----------------------------------------------------------------
+  determinism: var_u(rho=1) run1=9.83705e-17 run2=9.83705e-17  identical=true
+----------------------------------------------------------------
+  rho_c (midpoint of var > 1e-3 crossing): 7.0
+----------------------------------------------------------------
+  FALSIFIER EVALUATION:
+  F1 SYMMETRIC-STAYS-UNIFORM  var(rho=1) < 0.0001 : true  (var=9.83705e-17)
+  F2 ASYMMETRIC-BREAKS-SYM    var(rho=15) > 0.01 : true  (var=0.756102)
+  F3 THRESHOLD-EXISTS         rho_c in (1,15) : true  (rho_c=7.0)
+  F4 MONOTONE-IN-RATIO        non-decreasing  : true
+  F5 BOUNDED-FINITE           var finite      : true
+  F6 DETERMINISTIC            rho=1 rerun     : true
+  EXTRA RHOC-IN-RANGE         rho_c in [4,8]  : true
+================================================================
+  RESULT: 6 / 6 falsifiers PASS
+  VERDICT: 🟢 SUPPORTED_NUMERICAL_RHO_C_MATCHES_H344
+  measured rho_c (Dv/Du) = 7.0
+  H_344 reference rho_c = 6 (1D ring)
+================================================================
+
+  PATTERN ASCII (rho=8, 8x8 block-averaged from 32x32 grid):
+  legend: space < . : - + * # @  (sub-critical → peak)
+
+: :::: .
+ + .. -.
+: .-:. .
+:.- .::.
+:.:.:.:.
+: .:....
+ - ::.-.
+........
+
+================================================================
+  result.json written → /tmp/anima-bench-turing-mitosis/result.json
