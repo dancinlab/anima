@@ -1,0 +1,47 @@
+BENCH#1-broader BASIN-PHI-BROADER-RULES — 16 rules × 4 Wolfram classes
+substrate: n=4 ECA, 16 states, mean exact Φ over 16 sys-states
+
+class=I rule=0 max_basin=16 n_attr=1 mean_Phi=0.0
+class=I rule=8 max_basin=16 n_attr=1 mean_Phi=1.45341
+class=I rule=32 max_basin=14 n_attr=3 mean_Phi=1.01029
+class=I rule=40 max_basin=14 n_attr=3 mean_Phi=7.43189
+class=II rule=4 max_basin=10 n_attr=7 mean_Phi=1.15843
+class=II rule=56 max_basin=5 n_attr=7 mean_Phi=12.0668
+class=II rule=178 max_basin=5 n_attr=8 mean_Phi=6.74025
+class=II rule=184 max_basin=3 n_attr=12 mean_Phi=15.8475
+class=III rule=18 max_basin=12 n_attr=5 mean_Phi=5.00601
+class=III rule=30 max_basin=2 n_attr=11 mean_Phi=14.6092
+class=III rule=90 max_basin=16 n_attr=1 mean_Phi=0.0
+class=III rule=126 max_basin=8 n_attr=5 mean_Phi=5.60708
+class=IV rule=54 max_basin=4 n_attr=13 mean_Phi=11.715
+class=IV rule=110 max_basin=4 n_attr=5 mean_Phi=14.7532
+class=IV rule=124 max_basin=4 n_attr=5 mean_Phi=14.948
+class=IV rule=137 max_basin=4 n_attr=5 mean_Phi=14.7368
+
+=== OVERALL (16 rules, df=14) ===
+Pearson(max_basin, mean_Phi) = -0.896111  [t=-7.55456]
+Pearson(n_attr,    mean_Phi) = 0.640983  [t=3.12465]
+
+=== PER-CLASS (4 rules each, df=2) ===
+class I (fixed):  max_basin↔Φ = -0.600295  ·  n_attr↔Φ = 0.600295
+class II (periodic):  max_basin↔Φ = -0.920282  ·  n_attr↔Φ = 0.705785
+class III (chaotic):  max_basin↔Φ = -0.96822  ·  n_attr↔Φ = 0.997908
+class IV (complex):  max_basin↔Φ = 0.0  ·  n_attr↔Φ = -0.998088
+
+=== CLASS-AVERAGED r (mean of 4 per-class r) ===
+mean(class r) max_basin↔Φ = -0.622199
+mean(class r) n_attr   ↔Φ = 0.326475
+
+=== VERDICT ===
+class IV (max_basin↔Φ)   = 0.0  → 🔴 FAIL (near-zero)
+class III (max_basin↔Φ)  = -0.96822 → 🔴 FAIL-REVERSED
+class IV (n_attr↔Φ)      = -0.998088  → 🔴 FAIL-REVERSED
+overall (16 rules)       = -0.896111  → 🔴 FAIL-REVERSED
+VERDICT: 🟠 partial / class-mixed (no class-IV PASS but some signal remains)
+
+H_345/346 reference (n=5, 4 rules {110,30,105,150}):
+  H_345 single(21):  max_basin↔Φ=+0.251 · n_attr↔Φ=−0.799
+  H_346 state-avg :  max_basin↔Φ=+0.550 · n_attr↔Φ=−0.951
+BENCH#1 (n=4, 8 mixed rules):
+  max_basin↔Φ=−0.314 · n_attr↔Φ=+0.122 (🟠 WEAK-REVERSED)
+done
