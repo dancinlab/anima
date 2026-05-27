@@ -2,6 +2,19 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-28T09:00:00Z — D3 router load-balance 🟢 SUPPORTED (불균형은 corpus-driven · router-structural 아님)
+
+- [x] 가설 — top-1 router 가 diverse corpus 에서 expert load 균형 분산 (각 활용률 > 0.1 · monopoly >0.9 없음). 불균형 = collapse 구조적 전조 (M4b e1 saturate)
+- [x] over-subscribed regime — E=4 expert < N_CLUSTERS=6 (2:2 trivial toy 회피, monopoly emergent 가능 regime). orthogonal one-hot cluster · top-1 hard routing · lr=0.5 · 600 step
+- [x] harness — `d3_router_load_balance.hexa` (moe_router top-1 fwd/bwd + moe_toy_train_hard SGD recipe 재사용 g61). foreground sync · $0 mac-local · NO GPU
+- [x] 2-scenario 통제 — A=DIVERSE (동일 freq) · B=SKEWED (cluster 0 20× over-rep = M4b collapse 조건 재현)
+- [x] Scenario A 측정 — load 2/1/1/2 · 4/4 active · max frac 0.333 · **Gini 0.167** · norm-entropy 0.959 → 균형, monopoly 없음
+- [x] Scenario B 측정 — load 21/1/1/2 · 4/4 active · max frac **0.84** · Gini 0.610 → 불균형, 단 0.84 가 corpus token frac 0.808 추적 (monopoly 아님 · starve 없음)
+- [x] 핵심 발견 — **load 불균형은 corpus-driven 이지 router-structural 아님** (diverse→Gini 0.167, skew→Gini 0.610 단 corpus mirror). router 가 skew 증폭 안 함
+- [x] 함의 — M4b collapse(e1 saturate)는 router load-balance 결함 아님 → corpus skew/짧은학습(20step)/target oscillation 이 원인 (phase5b 정정 a/b/c). router redesign 불필요 (a_completeness_over_cheap 정합). "다음 단계 후보 ①" (diverse corpus + n_steps↑) 처방 근거
+- [x] verdict 🟢 SUPPORTED · 5/5 falsifier PASS · 본문 `D3_ROUTER_LOAD_BALANCE.md` · raw `state/d3_router_load_balance_2026_05_28/run_d3.out`
+- [x] D1(collapse 검출) + D3(collapse 원인 규명) 합쳐 M4c p7 verify collapse-회피 측면 강화
+
 ## 2026-05-28T00:00:00Z — D1 LZ76 collapse-proxy 🟢 SUPPORTED (detokenize-free collapse 검출 확정)
 
 - [x] 가설 — LZ76 복잡도가 collapse(반복 saturate) vs healthy diverse token seq 구별 (UNIVERSE H_288 LZ76↔Φ 정렬 근거 · DECODER.md proxy 후보)
