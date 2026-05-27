@@ -100,8 +100,8 @@ fn basin_nattr(rule: int) -> int {
 fn phi_n5(rule: int) -> float {
     let tpm = eca_tpm(rule, 5)
     let res = phi_structure(tpm, 5, 21)
-    // res = [nd, sum_d, nr, sum_r, total]  (H_321 convention) → total = index 4
-    return farr_get(res, 4)
+    // res = [nd, sum_d, nr, sum_r, total]  (H_321: native array, bracket index)
+    return res[4]
 }
 
 fn main() {
