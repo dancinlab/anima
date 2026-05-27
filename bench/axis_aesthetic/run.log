@@ -1,0 +1,13 @@
+[axis_aesthetic] AxisBench E — 미적 미터 / preference ranking consistency
+[axis_aesthetic] synth 100 × 8-factor states (LCG seed=42)
+[axis_aesthetic] BALANCED — top1=17 score=1.77712 mean=0.631312 sd=0.467924 extreme=true consistency=1.0
+[axis_aesthetic] PAIN-AVERSE — top1=17 score=1.44676 mean=-0.281056 sd=0.894919 extreme=true consistency=1.0
+[axis_aesthetic] BAL-FOCUSED — top1=17 score=3.76629 mean=1.7512 sd=0.912586 extreme=true consistency=1.0
+[axis_aesthetic] overlap BALANCED↔PAIN-AVERSE = 0.7
+[axis_aesthetic] overlap BALANCED↔BAL-FOCUSED = 0.6
+[axis_aesthetic] overlap PAIN-AVERSE↔BAL-FOCUSED = 0.4
+[axis_aesthetic] gate (a) cross-scenario overlap < 0.5 : false
+[axis_aesthetic] gate (b) intra-consistency == 1.0     : true
+[axis_aesthetic] gate (c) extreme detected (top1>μ+1.5σ): true
+[axis_aesthetic] VERDICT = FAIL
+[axis_aesthetic] wrote bench/axis_aesthetic/result.json
