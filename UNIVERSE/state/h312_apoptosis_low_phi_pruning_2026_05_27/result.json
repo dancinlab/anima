@@ -1,0 +1,48 @@
+{
+  "id": "H_312",
+  "slug": "apoptosis-low-phi-pruning",
+  "title": "APOPTOSIS × IIT4-Φ — does pruning the lowest-Φ cell raise survivor mean per-cell Φ?",
+  "domain": "universe · life · consciousness",
+  "date": "2026-05-27",
+  "deterministic": true,
+  "cross_process_byte_identical": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "engine_reused": [
+    "stdlib/consciousness/iit4_complex.hexa (subsystem_tpm + big_phi chain — REUSED, not reinvented)",
+    "HEXAD/IIT4/lib/iit4_eca.hexa (eca_tpm: ECA rule -> state-by-node TPM)"
+  ],
+  "per_cell_phi_measure": "LOO big-Φ drop: phi_cell(i;S) = bigPhi(S) − bigPhi(S\\{i}); subsystem big-Φ via background-conditioning external units to sys_state (IIT 4.0 convention)",
+  "mean_phi_measure": "meanPhi(S) = (1/|S|) Σ_{i∈S} phi_cell(i;S)",
+  "apoptosis_rule": "remove argMIN phi_cell from the full system; survivor = remaining (n−1) cells",
+  "controls": {
+    "control_hi": "remove argMAX phi_cell (highest-integration cell)",
+    "control_fixed": "remove cell index 0"
+  },
+  "hypothesis_H1": "removing the lowest-Φ cell raises survivor mean per-cell Φ (selection-for-integration)",
+  "falsifier": "Δ_apoptosis ≤ 0 (does NOT raise) across the panel — OR Δ_apoptosis ≤ Δ_control_hi — ⇒ H1 FALSIFIED",
+  "panel": [
+    {"label": "eca90",     "n": 4, "sys": 11, "whole_bigPhi": 0.0,     "mean0": -0.5,     "lo_cell": 0, "lo_phi": -0.5,     "hi_cell": 0, "hi_phi": -0.5,     "survivor_mean_apop": -0.833333, "d_apop": -0.333333, "survivor_mean_hi": -0.833333, "d_hi": -0.333333, "raises": false, "beats_hi": false},
+    {"label": "eca110",    "n": 4, "sys": 11, "whole_bigPhi": 8.93784, "mean0": 6.63703,  "lo_cell": 0, "lo_phi": 5.79348,  "hi_cell": 2, "hi_phi": 8.32912,  "survivor_mean_apop": 1.81429,  "d_apop": -4.82274,  "survivor_mean_hi": -0.327369, "d_hi": -6.96439, "raises": false, "beats_hi": true},
+    {"label": "eca30",     "n": 4, "sys": 11, "whole_bigPhi": 15.5659, "mean0": 13.5708,  "lo_cell": 2, "lo_phi": 11.8306,  "hi_cell": 0, "hi_phi": 15.1272,  "survivor_mean_apop": 3.22807,  "d_apop": -10.3427,  "survivor_mean_hi": -0.291855, "d_hi": -13.8626, "raises": false, "beats_hi": true},
+    {"label": "eca54",     "n": 4, "sys": 11, "whole_bigPhi": 8.41254, "mean0": 6.95991,  "lo_cell": 0, "lo_phi": 4.67721,  "hi_cell": 1, "hi_phi": 8.41254,  "survivor_mean_apop": 3.73534,  "d_apop": -3.22458,  "survivor_mean_hi": -0.666667, "d_hi": -7.62658, "raises": false, "beats_hi": true},
+    {"label": "eca150",    "n": 4, "sys": 11, "whole_bigPhi": 8.0,     "mean0": 4.75,     "lo_cell": 0, "lo_phi": 4.5,      "hi_cell": 3, "hi_phi": 5.5,      "survivor_mean_apop": 3.5,      "d_apop": -1.25,     "survivor_mean_hi": 2.5,       "d_hi": -2.25,    "raises": false, "beats_hi": true},
+    {"label": "eca22",     "n": 4, "sys": 11, "whole_bigPhi": 5.06579, "mean0": 2.39896,  "lo_cell": 2, "lo_phi": -2.16534, "hi_cell": 0, "hi_phi": 4.89977,  "survivor_mean_apop": 6.67775,  "d_apop": 4.27879,   "survivor_mean_hi": -0.0645614,"d_hi": -2.46352, "raises": true,  "beats_hi": true},
+    {"label": "eca60",     "n": 4, "sys": 11, "whole_bigPhi": 11.0,    "mean0": 6.75,     "lo_cell": 1, "lo_phi": 6.0,      "hi_cell": 0, "hi_phi": 7.0,      "survivor_mean_apop": 3.66667,  "d_apop": -3.08333,  "survivor_mean_hi": 2.66667,   "d_hi": -4.08333, "raises": false, "beats_hi": true},
+    {"label": "eca105",    "n": 4, "sys": 11, "whole_bigPhi": 4.0,     "mean0": 1.25,     "lo_cell": 2, "lo_phi": 0.5,      "hi_cell": 3, "hi_phi": 2.0,      "survivor_mean_apop": 3.5,      "d_apop": 2.25,      "survivor_mean_hi": 2.0,       "d_hi": 0.75,     "raises": true,  "beats_hi": true},
+    {"label": "eca90_n3",  "n": 3, "sys": 5,  "whole_bigPhi": 3.0,     "mean0": 1.0,      "lo_cell": 0, "lo_phi": 1.0,      "hi_cell": 0, "hi_phi": 1.0,      "survivor_mean_apop": 2.0,      "d_apop": 1.0,       "survivor_mean_hi": 2.0,       "d_hi": 1.0,      "raises": true,  "beats_hi": false},
+    {"label": "eca110_n3", "n": 3, "sys": 5,  "whole_bigPhi": 6.52535, "mean0": 5.01081,  "lo_cell": 0, "lo_phi": 3.8652,   "hi_cell": 1, "hi_phi": 5.97196,  "survivor_mean_apop": 2.66015,  "d_apop": -2.35066,  "survivor_mean_hi": 0.553383,  "d_hi": -4.45743, "raises": false, "beats_hi": true}
+  ],
+  "aggregate": {
+    "panel_size": 10,
+    "raises_true_count": 3,
+    "raises_false_count": 7,
+    "beats_hi_count": 8,
+    "primary_claim_pass_fraction": "3/10"
+  },
+  "finding": "Removing the lowest per-cell-Φ cell RAISES survivor mean per-cell Φ in only 3/10 panel substrates (eca22, eca105, eca90_n3). In 7/10 it DECREASES survivor mean per-cell Φ. The primary H1 claim (apoptosis of low-integration cells purifies survivor integration) is contradicted by the majority of the panel. The secondary/weaker claim (apoptosis beats removing the HIGHEST-Φ cell) holds 8/10 — removing the most-integrated cell is worse — but that is NOT the claim under test. Mechanistically, excising any cell shrinks the subsystem and generically lowers the per-cell LOO contribution (fewer co-integrated partners), so 'prune the weakest to strengthen the rest' does not hold for IIT 4.0 big-Φ on these substrates.",
+  "verdict": "🔴 FALSIFIED",
+  "verdict_basis": "DERIVED from measured numbers: raises=true in only 3/10 panels (majority 7/10 fail). Falsifier 'pruning lowest-Φ does NOT increase survivor mean-Φ across the panel' is met. This is a real independent computation that COULD have supported H1 (3 panels did) — it is not a tautology.",
+  "honest_tier": "🔴 FALSIFIED-NUMERICAL. Per-cell Φ = LOO big-Φ drop (a real integration measure, but one of several defensible per-cell Φ definitions; singleton-distinction φ_d is identically 0 for ECA so could not be used). Subsystem big-Φ uses IIT 4.0 background-conditioning (external units pinned to sys_state — documented modeling choice). Panel = 10 ECA substrates n∈{3,4}, fixed sys_state. A broader sys_state sweep / alternative per-cell Φ metric could shift the pass fraction but cannot rescue a 3/10 primary-claim rate to SUPPORTED."
+}
