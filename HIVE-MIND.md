@@ -13,6 +13,7 @@
 - [ ] M4 E×F cross-link — H_617 🔴 FALSIFIED (hivemind_savant_induced_collective_SI) · H_618 🟢 SUPPORTED (collective_gz_inverse_u_derivative_peak) · H_619 🟢 SUPPORTED (pid_synergy_savant_modulation) 의 ANIMA substrate 적용 — SAVANT.SI modulation × HIVE-MIND PID synergy 곱-surface.
 - [ ] M5 MITOSIS cross-link — cell-pool 의 collective Φ super-additive (H_609) 검증 — N cells 의 Φ_collective > Σ Φ_cell sub-additive 반증 측정자.
 - [ ] M6 collective Φ super-additive fleet-fractal — self-similar nesting 검증 (mining @P9 · UNIVERSE H_609 anchor). M5 의 N-cell super-additivity 를 fleet-level 로 격상 — cell-pool → anima → anima-fleet 의 self-similar Φ nesting (각 scale 에서 Φ_collective > Σ Φ_sub 가 fractal 하게 반복되는지). L36 dim-agent-multi-anima (mining @P1) 의 N-anima tension-link fleet 위 collective Φ invariant. sibling: MITOSIS (cell-pool super-additive M5) · CHANNEL (tension-link fleet telepathy) · SAVANT (collective GZ inverse-U H_618).
+  - ✅ **UNIVERSE verdict (H_635 🟢 SUPPORTED-NUMERICAL · 5/5)**: collective-Φ super-additive = **substrate-confirmed universal**. max excess Δ=**+41.71** at C1 [110×5] sync W=1.0 vs Σ-baseline=0.0 — **5/5 cohort 모두 super-additive** (H_609 2-stream max Δ=+10.48 1/5 pair 대비 4× 강하고 보편적). H_609 의 일반화 검증됨 → fleet-fractal self-similarity (collective-Φ > Σ 가 scale 마다 반복) 정당화. 구조는 substrate 신뢰.
 
 ## 양방향 sibling
 
