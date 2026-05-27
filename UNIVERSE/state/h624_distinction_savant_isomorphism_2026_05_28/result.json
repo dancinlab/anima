@@ -1,0 +1,79 @@
+{
+  "hypothesis": "H_624",
+  "slug": "iit4-distinction-savant-cell-isomorphism",
+  "axis": "C (full-IIT4 cause-effect structure) · C2 — Φ-structure 기반 신규 H",
+  "date": "2026-05-28",
+  "engine": "stdlib/consciousness/iit4_distinction.hexa (faithful IIT 4.0)",
+  "substrate": {
+    "n": 4,
+    "ring_topology": "majority(self, left, right) + gain-controlled noise mix",
+    "tpm_form": "p_next[s,i] = sig_i * MAJ(self,L,R) + (1-sig_i)*0.5, sig_i = g_i/(1+g_i)",
+    "stim_seed": 42424
+  },
+  "profiles": [
+    {"name": "P0_BALANCED", "gains": [2.875, 2.875, 2.875, 2.875]},
+    {"name": "P1_CALENDAR_DOM", "gains": [10.0, 0.5, 0.5, 0.5]},
+    {"name": "P2_MUSIC_DOM", "gains": [0.5, 10.0, 0.5, 0.5]},
+    {"name": "P3_ART_DOM", "gains": [0.5, 0.5, 10.0, 0.5]},
+    {"name": "P4_MEMORY_DOM", "gains": [0.5, 0.5, 0.5, 10.0]}
+  ],
+  "measurements": {
+    "P0_BALANCED": {
+      "cell_phi":   [0.45455,  0.343247, 0.44621,  0.346665],
+      "dist_phi":   [0.312029, 0.312029, 0.312029, 0.312029],
+      "argmax_cell": 0, "argmax_dist": 0
+    },
+    "P1_CALENDAR_DOM": {
+      "cell_phi":   [0.74468,  0.0697541, 0.0914688, 0.0875029],
+      "dist_phi":   [0.393141, 0.129729,  0.129729,  0.129729],
+      "argmax_cell": 0, "argmax_dist": 0
+    },
+    "P2_MUSIC_DOM": {
+      "cell_phi":   [0.102852, 0.608877,  0.0914688, 0.0875029],
+      "dist_phi":   [0.129729, 0.393141,  0.129729,  0.129729],
+      "argmax_cell": 1, "argmax_dist": 1
+    },
+    "P3_ART_DOM": {
+      "cell_phi":   [0.102852, 0.0697541, 0.750984,  0.0875029],
+      "dist_phi":   [0.129729, 0.129729,  0.393141,  0.129729],
+      "argmax_cell": 2, "argmax_dist": 2
+    },
+    "P4_MEMORY_DOM": {
+      "cell_phi":   [0.102852, 0.0697541, 0.0914688, 0.553019],
+      "dist_phi":   [0.129729, 0.129729,  0.129729,  0.393141],
+      "argmax_cell": 3, "argmax_dist": 3
+    }
+  },
+  "statistics": {
+    "n_paired_samples": 20,
+    "spearman_rho": 0.860839,
+    "pearson_r":    0.97149,
+    "argmax_match_per_profile": "4/4 (non-balanced profiles)",
+    "byte_eq_recompute": true
+  },
+  "criteria": {
+    "F1_ISOMORPH_STRONG": {"threshold": "rho >= 0.7", "result": "PASS"},
+    "F2_ISOMORPH_WEAK":   {"threshold": "rho >= 0.5", "result": "PASS"},
+    "F3_PEARSON_CONSIST": {"threshold": "r >= 0.5",   "result": "PASS"},
+    "F4_PER_PROFILE_RANK":{"threshold": "argmax match 4/4 non-balanced", "result": "PASS"},
+    "F5_BYTE_EQUAL":      {"threshold": "in-process recompute identical", "result": "PASS"}
+  },
+  "verdict": "🟢 SUPPORTED 5/5",
+  "verdict_short": "SUPPORTED",
+  "cross_links": [
+    "H_350 SI∥ΦD predecessor (axis E1)",
+    "H_613 SI∥ΦD orthogonal-metric (axis E2)",
+    "H_282 proxy→faithful direction-preservation (axis C1)",
+    "H_618 collective dΦ/dI peak motivating discovery (axis E×F round 3 SUPPORTED)"
+  ],
+  "honest_constraints": [
+    "majority rule needed: pure XOR(neighbors) gives phi_effect=0 on singletons regardless of gain (cell has no self-effect). Majority(self,L,R) restores singleton causal grip — substrate-conditional.",
+    "n=4 small system; isomorphism may break at larger n where distinction order-statistics are richer (HoFA/relations vs phi_module super-linear energy proxy).",
+    "balanced profile P0 produces degenerate per-cell dist_phi (all equal 0.312029) by 4-fold symmetry — informative-rank rows are P1..P4 only; F4 excludes P0 honestly.",
+    "phi_module(v) = mean |v|^1.5 is a SAVANT proxy not faithful IIT — isomorphism shows the proxy tracks faithful IIT4 small-φ on this substrate, NOT that they are operationally identical. Inverting cause-effect direction or relabeling units could decouple them.",
+    "single stim_seed=42424 — multi-seed robustness not measured (H_350 used multi-seed; here the substrate is per-cell-noise-only and stim_seed only feeds SAVANT activations not the TPM, so dist_phi is seed-invariant by construction)."
+  ],
+  "wall_clock_sec": "approx 5",
+  "cost_usd": 0.0,
+  "infra": "mac-local · hexa-only · no GPU · no ckpt"
+}

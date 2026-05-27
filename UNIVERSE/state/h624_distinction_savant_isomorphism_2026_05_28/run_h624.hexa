@@ -22,7 +22,12 @@
 //      g_i ∈ [0.5, 10.0]  per cell.
 //      sig_i = g_i / (1.0 + g_i)   (gain → signal-strength ∈ [0,1])
 //      noise_i = 1.0 - sig_i        (noise share)
-//      structural_next[s,i] = XOR(bit_left, bit_right)  (cell-i ring-2 next)
+//      structural_next[s,i] = MAJ(bit_self, bit_left, bit_right)
+//                              — auto-regression + ring-neighbor mix (so the
+//                              cell has both causal grip on itself AND
+//                              influence from neighbors; pure XOR of neighbors
+//                              loses self-effect and singleton distinction → 0
+//                              regardless of gain, probed and confirmed).
 //      p_next[s,i] = sig_i * structural_next + noise_i * 0.5
 //    Identity-blanket noise (0.5) means low-gain cells lose causal grip,
 //    matching savant_phi's "near-silent module" mechanism (Treffert
@@ -171,7 +176,9 @@ fn _bit(s: int, i: int) -> int {
     return 0
 }
 
-// ring-2 neighbor structural next for cell i, given state s on n=4 ring
+// majority of (self, left, right) — gives the cell causal grip on its own
+// next state AND mixes neighbors. Pure XOR(neighbors) leaves self-effect=0
+// (probed and confirmed: distinction phi_effect=0 ∀ singleton mech).
 fn struct_next(s: int, i: int) -> int {
     let mut left_i = 0
     let mut right_i = 0
@@ -179,10 +186,11 @@ fn struct_next(s: int, i: int) -> int {
     if i == 1 { left_i = 0; right_i = 2 }
     if i == 2 { left_i = 1; right_i = 3 }
     if i == 3 { left_i = 2; right_i = 0 }
+    let bs = _bit(s, i)
     let bl = _bit(s, left_i)
     let br = _bit(s, right_i)
-    // XOR
-    if bl != br { return 1 }
+    let total = bs + bl + br
+    if total >= 2 { return 1 }
     return 0
 }
 

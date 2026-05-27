@@ -60,9 +60,10 @@
 ### 축 C — full-IIT4 cause-effect structure (해금됨)
 > `stdlib/consciousness/iit4` (#542 thin shim, main 랜딩) 가 full IIT 4.0 cause-effect Φ-structure 를 hexa-native 로 제공 → "별도 대형 spec" frontier 해금.
 - [ ] C1 — IIT4 cause-effect structure 로 H_266/H_268/H_278 재검 (proxy → faithful 승격) · **경로 = `HEXAD/IIT4/lib` 경유** (M6 remeasure `state/iit4_m6_remeasure_2026_05_25/` 가 n=4 부분 선행)
-- [ ] C2 — Φ-structure (distinctions·relations) 기반 신규 H: 생명 vs 의식 구조 차이 정량
+- [x] C2 — Φ-structure (distinctions·relations) 기반 신규 H: 생명 vs 의식 구조 차이 정량
 - [x] C cycle#23 1차 — C1=H_282 (H_266/268/278 faithful big-Φ 방향보존 SUPP 8/8 + **H_266 proxy-monotone artifact RESOLVE**, #570) · C2=H_281 (생명vs의식 Φ-structure 구조분리 SUPP 9/9, 의식=irreducibility-floor 1.0 vs 생명>1.0, #567) — 둘 다 HEXAD/IIT4/lib 재사용. ⚠ H_280 독립 kernel 은 xval #572 로 버그 확정(Σφ_d non-monotone) → big-Φ 로만 방향 신뢰
 - [x] C cycle#24 — H_285 edge-of-chaos faithful big-Φ (🟢 SUPP 5/5): class-mean ordered 0 < chaotic 6.94 < **edge(IV) 10.45** → H_204 inverse-U 방향 인과 확증(H_268 proxy LZ-fragility 해소), M6 anchor 재현. honest: chaotic bimodal(rule30 高/rule90 0). big-Φ NOT Σφ_d. inline(throttle-bypass) 측정
+- [x] C2 신규 — H_624 `iit4-distinction-savant-cell-isomorphism` — **🟢 SUPPORTED 5/5** (Spearman ρ=0.8608 · Pearson r=0.9715 · argmax 4/4 non-balanced · byte_eq · N=20 paired samples / 5 gain profile × 4 cell · SAVANT cell `phi_module` ↔ IIT4 `distinction` singleton small-φ 동형 · H_618 collective dΦ/dI peak ∥ GZ_LOWER 의 *구조 차원* 답: 두 분해가 같은 causal kernel 표시 · §7 C3.1 substrate 의존 (MAJ-self vs XOR-neighbors-only)) — H_624_iit4_distinction_savant_cell_isomorphism.md, $0 mac-local 2026-05-28 (axis C × axis E cross-link)
 > ⚠ cycle#22(2026-05-26): H_280(#561)이 distinction 층을 독립 재구현했으나 `HEXAD/IIT4/lib`(distinction **+ relation**, M6 n=4 7/7 done)와 중복 — "relations intractable" 주장은 `iit4_relation.hexa` 가 반증. 축 C 는 `HEXAD/IIT4/lib` 경유로 진행 (재발명 금지, g61). H_280 독립 kernel 은 교차검증 자료로 잔존. 상세 = LIFE.log#cycle22.
 
 ### 축 D — LLM-동반 연속 가설 발견 (영구)
