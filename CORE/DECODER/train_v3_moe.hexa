@@ -53,12 +53,15 @@ fn main() {
     let d = 4
     let V = 4
     let E = 2
-    // Phase 3b-2 layout: M = [tok_emb(V·d) | attn_Wo(d·d) | router(E·d) | experts(E·V·d)]
+    let h = 8   // Phase 3b-3 MLP hidden dim
+    // Phase 3b-3 layout: M = [tok_emb(V·d) | attn_Wo(d·d) | mlp_Wup(h·d) | mlp_Wdown(d·h) | router(E·d) | experts(E·V·d)]
     let tok_emb_off = 0
     let attn_wo_off = V * d
-    let router_off = V * d + d * d
-    let experts_off = V * d + d * d + E * d
-    let m_size = V * d + d * d + v3_moe_total_size(V, d, E)
+    let mlp_wup_off = V * d + d * d
+    let mlp_wdown_off = V * d + d * d + h * d
+    let router_off = V * d + d * d + 2 * h * d
+    let experts_off = V * d + d * d + 2 * h * d + E * d
+    let m_size = V * d + d * d + 2 * h * d + v3_moe_total_size(V, d, E)
     print("  config: d="); print(d); print(" V="); print(V); print(" E="); print(E)
     print(" m_size="); print(m_size)
     print(" (tok_emb_off="); print(tok_emb_off)
@@ -167,6 +170,74 @@ fn main() {
         ai = ai + 1
     }
     print("  attn(Wo) zT_post=[")
+    zp = 0
+    while zp < d {
+        print(farr_get(zT, zp))
+        if zp + 1 < d { print(", ") }
+        zp = zp + 1
+    }
+    println("]")
+
+    // ── Phase 3b-3 MLP block (W_up · ReLU · W_down) ──
+    // mlp_h_act[k] = max(0, Σ_j W_up[k, j] · zT[j])         k in 0..h
+    // zT_new[i]    = Σ_k W_down[i, k] · mlp_h_act[k]        i in 0..d
+    // W_up init: 0.05·(k + j + 1) — distinct rows
+    // W_down init: identity-ish (zero rows beyond d), 0.1·k·(i==k%d)
+    let mut ui = 0
+    while ui < h {
+        let mut uj = 0
+        while uj < d {
+            let _ = farr_set(M, mlp_wup_off + ui * d + uj, 0.05 * to_float(ui + uj + 1))
+            uj = uj + 1
+        }
+        ui = ui + 1
+    }
+    let mut di = 0
+    while di < d {
+        let mut dk = 0
+        while dk < h {
+            let mut val = 0.0
+            if dk % d == di { val = 0.1 * to_float(dk + 1) }
+            let _ = farr_set(M, mlp_wdown_off + di * h + dk, val)
+            dk = dk + 1
+        }
+        di = di + 1
+    }
+    // forward: h_act
+    let mlp_hact = t_zeros(h)
+    let mut hk = 0
+    while hk < h {
+        let mut acc = 0.0
+        let mut hj = 0
+        while hj < d {
+            acc = acc + farr_get(M, mlp_wup_off + hk * d + hj) * farr_get(zT, hj)
+            hj = hj + 1
+        }
+        // ReLU
+        if acc < 0.0 { acc = 0.0 }
+        let _ = farr_set(mlp_hact, hk, acc)
+        hk = hk + 1
+    }
+    // zT_new = W_down · h_act
+    let mlp_out = t_zeros(d)
+    let mut mi = 0
+    while mi < d {
+        let mut acc = 0.0
+        let mut mk = 0
+        while mk < h {
+            acc = acc + farr_get(M, mlp_wdown_off + mi * h + mk) * farr_get(mlp_hact, mk)
+            mk = mk + 1
+        }
+        let _ = farr_set(mlp_out, mi, acc)
+        mi = mi + 1
+    }
+    // copy back to zT
+    mi = 0
+    while mi < d {
+        let _ = farr_set(zT, mi, farr_get(mlp_out, mi))
+        mi = mi + 1
+    }
+    print("  mlp zT_post=[")
     zp = 0
     while zp < d {
         print(farr_get(zT, zp))
