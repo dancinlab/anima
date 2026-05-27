@@ -85,12 +85,13 @@
 
 ### 축 F — HIVE-MIND (Collective Φ) — NEW 2026-05-28
 > Hc_286/297/590/1244 백로그 + 인프라 코드(`tool/hivemind_collective_spec.hexa` · `anima-engines/hive_state_sync.hexa` · `bench/bench_hivemind_*.hexa` ×6 · `tests/test_hivemind_*.hexa` ×5) 풍부한데 UNIVERSE H 인덱스 안 = 0. 본 축이 다중 substrate pair 의 collective big-Φ vs 합·polarity·동기 latency·PID synergy·cross-substrate TE 를 verify-driven 으로 정량.
-- [ ] F1 — round 1 seed (5 H):
-  - [ ] H_352 `collective-phi-super-additive` — Φ_collective > Σ Φ_individual / 反: sub-additive
+- [ ] F1 — round 1 seed (5 H) · **round 2 재발사 H_609 (H_352 monitor-hang verdict 유실 회수)**:
+  - [ ] H_352 `collective-phi-super-additive` — round 1 monitor-hang verdict 유실 (PR 미생성 WIP skeleton 잔존) → **round 2 H_609 으로 재발사**
   - [ ] H_353 `pair-polarity-collective-phi` — pair polarity {attract/repel/bipolar} 별 Φ_collective 분기 (Hc_286 promote) / 反: polarity 무관 평탄
   - [x] H_354 `kuramoto-hivemind-sync-tau` — **🔴 FALSIFIED** (Pearson r=0.041 ≪0.5 + ratio spread 45.6× ≫2×, F1+F2 trig) — H_354_kuramoto_hivemind_sync_tau.md, $0 mac-local 2026-05-28 (toy mean-field consensus substitute · L1 carry)
   - [x] H_355 `collective-phi-pid-synergy` — **🟢 SUPPORTED-NUMERICAL** (3-binary-substrate hivemind toy · 8 cell-mask permutations × 4 K-bucket · mean synergy_ratio = 1.0 over non-trivial K {0.33, 0.67, 1.0} · K-monotonic synergy {0,1,2,3} · redundancy ≡ 0 (XOR-family sources independent under uniform ensemble) · net 3-source McGill co-info, NOT full 18-atom WB lattice · PID-structure claim NOT collective-Φ tracking) — H_355_collective_phi_pid_synergy.md, $0 mac-local 2026-05-28
   - [ ] H_356 `hivemind-transfer-entropy-align` — Φ_collective ∥ cross-substrate TE (H_290 sister r=0.883) / 反: r<0.5
+  - [x] **H_609** `collective-phi-super-additive` (axis F1 round 2 재발사) — **🟢 SUPPORTED-NUMERICAL** (max excess Δ = +10.4756 at (rule_a,rule_b,W)=(110,110,0.6) · Φ(AB)=15.4677 vs Φ(A)+Φ(B)=4.99209 +210% · F609.1 decoupled anchor 5/5 PASS · F609.2 H1 PASS · F609.4a bounds PASS · F609.3 W-monotonic FAIL honest C3.2 saturate-then-decay · F609.4b benign harness tol=0 strict-LT bug · IIT4 big_phi_bounded cap=2 n_ab=6 sys=0 · rule-class conditional: (110,110) only super-additive, (90,90)/(90,150) flat-0, (90,110)/(110,90) sub-additive) — H_609_collective_phi_super_additive.md, $0 mac-local 2026-05-28
 - [ ] F2 — round 1 결과 기반 후속 H seed (cross-link: HIVE-MIND × symbiogenesis H_054/H_314 / HIVE-MIND × SAVANT)
 
 > **status 2026-05-25 (영구 엔진 전환)**: cycle#5–21 = 축 0($0-tier) CLOSED — 22 NEW H (H_258-279) + SSOT full reconciliation(README 92=92), PR #468-516 全머지. lane 중간결론: Φ-proxy directionally valid(H_266+H_278) + fragility surface 정량 · 죽음↔발생 seed 조건부 부활(H_271) · causal-DAG>cyclic Φ(H_275) · 진폭/동기화 ⊥ Φ-diversity(H_265/H_275/H_279). **단 도메인은 종료되지 않음** — 축 A(60-axis/~110 seed) · 축 B(large-N GPU) · 축 C(full-IIT4, #542 해금) · 축 D(LLM 연속) 로 영구 전진. binary-direction verdict 신뢰, 연속 magnitude·single-seed 주의.

@@ -1,0 +1,51 @@
+================================================================
+  H_609 — collective-Φ super-additive? Φ(AB) vs Φ(A)+Φ(B)
+  axis F1 round 2 re-fire (round 1 H_352 monitor-hang lost verdict)
+  IIT4 big_phi_bounded · n_a=n_b=3 · n_ab=6 · cap=2 (n=6) · sys=0
+================================================================
+  pair (90,90) Φ(A)=3 Φ(B)=3 Φ(A)+Φ(B)=6
+    W=0.00  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-6
+    W=0.30  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-6
+    W=0.60  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-6
+    W=1.00  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-6
+  pair (110,110) Φ(A)=2.49604 Φ(B)=2.49604 Φ(A)+Φ(B)=4.99209
+    W=0.00  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-4.99209
+    W=0.30  Φ(AB)=11.2412  Δ=Φ(AB)-Σ=6.2491
+    W=0.60  Φ(AB)=15.4677  Δ=Φ(AB)-Σ=10.4756
+    W=1.00  Φ(AB)=11.7683  Δ=Φ(AB)-Σ=6.77619
+  pair (90,110) Φ(A)=3 Φ(B)=2.49604 Φ(A)+Φ(B)=5.49604
+    W=0.00  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-5.49604
+    W=0.30  Φ(AB)=1.26906  Δ=Φ(AB)-Σ=-4.22698
+    W=0.60  Φ(AB)=2.25318  Δ=Φ(AB)-Σ=-3.24287
+    W=1.00  Φ(AB)=1.9619  Δ=Φ(AB)-Σ=-3.53414
+  pair (110,90) Φ(A)=2.49604 Φ(B)=3 Φ(A)+Φ(B)=5.49604
+    W=0.00  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-5.49604
+    W=0.30  Φ(AB)=1.26906  Δ=Φ(AB)-Σ=-4.22698
+    W=0.60  Φ(AB)=2.25318  Δ=Φ(AB)-Σ=-3.24287
+    W=1.00  Φ(AB)=1.9619  Δ=Φ(AB)-Σ=-3.53414
+  pair (90,150) Φ(A)=3 Φ(B)=0.0 Φ(A)+Φ(B)=3
+    W=0.00  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-3
+    W=0.30  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-3
+    W=0.60  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-3
+    W=1.00  Φ(AB)=0.0  Δ=Φ(AB)-Σ=-3
+  --
+  W=0.00  mean Δ over 5 pairs = -4.99683
+  W=0.30  mean Δ over 5 pairs = -2.24097
+  W=0.60  mean Δ over 5 pairs = -1.00202
+  W=1.00  mean Δ over 5 pairs = -1.85842
+  --
+  MAX EXCESS Δ = 10.4756  at pair (110,110) W=0.60
+  [PASS] F609.1 W=0 anchor: Δ(W=0) ≤ 0 across all 5 pairs (decoupled ⇒ Φ(AB)=0)
+  [PASS] F609.2 SUPER-ADDITIVITY: max_excess Δ > 0 (across W>0)
+  [FAIL] F609.3 W-MONOTONIC: mean Δ non-decreasing W=0 ≤ 0.3 ≤ 0.6 ≤ 1.0
+  [PASS] F609.4a BOUNDS: Φ ≥ 0 everywhere
+  [FAIL] F609.4b DETERMINISM: phi_ab(90,90,1.0) re-run byte-identical
+================================================================
+  RESULT: 3 PASS / 2 FAIL
+  MAX EXCESS Δ = 10.4756  best pair (110,110) W=0.60
+  VERDICT: H1 SUPPORTED — collective Φ is SUPER-ADDITIVE on this hivemind
+           substrate. Cross-half coupling W>0 produces Φ(AB) >
+           Φ(A)+Φ(B) on at least one rule-pair × W cell.
+================================================================
+  (anchor or det failures present — see [FAIL] lines above)
+shell-init: error retrieving current directory: getcwd: cannot access parent directories: No such file or directory

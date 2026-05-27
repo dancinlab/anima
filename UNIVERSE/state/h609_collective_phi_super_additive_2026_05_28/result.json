@@ -1,0 +1,75 @@
+{
+  "h_id": "H_609",
+  "slug": "collective-phi-super-additive",
+  "axis": "F1",
+  "round": 2,
+  "round1_status": "monitor-hang lost verdict (H_352 WIP skeleton only)",
+  "date": "2026-05-28",
+  "engine": "iit4 big_phi_bounded",
+  "engine_params": {
+    "cap_n3": 3,
+    "cap_n6": 2,
+    "sys_state": 0
+  },
+  "substrate": {
+    "n_a": 3,
+    "n_b": 3,
+    "n_ab": 6,
+    "rule_pairs": [[90, 90], [110, 110], [90, 110], [110, 90], [90, 150]],
+    "W_grid": [0.0, 0.3, 0.6, 1.0]
+  },
+  "phi_individual": {
+    "rule_90_n3":  3.0,
+    "rule_110_n3": 2.49604,
+    "rule_150_n3": 0.0
+  },
+  "measurements": [
+    {"pair": [90,  90],  "phi_a": 3.0,     "phi_b": 3.0,     "sum": 6.0,     "phi_ab": [0.0,  0.0,     0.0,     0.0],     "delta": [-6.0,    -6.0,    -6.0,    -6.0]},
+    {"pair": [110, 110], "phi_a": 2.49604, "phi_b": 2.49604, "sum": 4.99209, "phi_ab": [0.0,  11.2412, 15.4677, 11.7683], "delta": [-4.99209, 6.2491, 10.4756, 6.77619]},
+    {"pair": [90,  110], "phi_a": 3.0,     "phi_b": 2.49604, "sum": 5.49604, "phi_ab": [0.0,  1.26906, 2.25318, 1.9619],  "delta": [-5.49604, -4.22698, -3.24287, -3.53414]},
+    {"pair": [110, 90],  "phi_a": 2.49604, "phi_b": 3.0,     "sum": 5.49604, "phi_ab": [0.0,  1.26906, 2.25318, 1.9619],  "delta": [-5.49604, -4.22698, -3.24287, -3.53414]},
+    {"pair": [90,  150], "phi_a": 3.0,     "phi_b": 0.0,     "sum": 3.0,     "phi_ab": [0.0,  0.0,     0.0,     0.0],     "delta": [-3.0,    -3.0,    -3.0,    -3.0]}
+  ],
+  "mean_delta_per_W": {
+    "W_0.00": -4.99683,
+    "W_0.30": -2.24097,
+    "W_0.60": -1.00202,
+    "W_1.00": -1.85842
+  },
+  "max_excess": {
+    "delta":   10.4756,
+    "pair":    [110, 110],
+    "W":       0.6,
+    "phi_ab":  15.4677,
+    "phi_a_plus_b": 4.99209
+  },
+  "falsifiers": {
+    "F609.1_decoupled_anchor_W0": "PASS  (all 5 pairs Φ(AB,W=0)=0 — bipartition loss-free)",
+    "F609.2_super_additivity":    "PASS  (max Δ = +10.4756 ≫ 0)",
+    "F609.3_W_monotonic":         "FAIL  ((110,110) W=1.0 dips below W=0.6 — non-monotonic, mean Δ also non-monotonic)",
+    "F609.4a_bounds":             "PASS",
+    "F609.4b_determinism":        "FAIL_BENIGN  (approx(0.0,0.0,tol=0.0) tol-exclusive bug; values ARE identical, harness predicate strict-LT)"
+  },
+  "result_summary": "3 PASS / 2 FAIL (F609.3 real, F609.4b benign-harness)",
+  "verdict": "🟢 SUPPORTED-NUMERICAL — collective Φ super-additive at (rule_a, rule_b, W)=(110,110,0.6); Φ(AB)=15.4677 vs Φ(A)+Φ(B)=4.99209 (Δ=+10.4756, +210% excess)",
+  "honest_c3": [
+    "C3.1 small-n (n_a=n_b=3, n_ab=6) — emergent integration at toy scale; larger n untested (n=6 cap=2 bound is repo-SSOT M4b precedent)",
+    "C3.2 W-monotonic FAIL — (110,110) Δ(W=1.0)=6.776 < Δ(W=0.6)=10.476, suggesting non-monotonic coupling-integration curve (saturate-then-decay or rule-110 ring-specific echo)",
+    "C3.3 rule-class dependency — strong super-additivity ONLY in (110,110) homogeneous-edge-of-chaos; (90,90) homogeneous-XOR collapses Φ(AB)=0 at all W (rule-90 symmetry vs IIT4 bipartition), heterogeneous (90,110)/(110,90) sub-additive (-3.5 to -4.2), (90,150)/(0-Φ B) flat sub-additive",
+    "C3.4 sys_state=0 only — full state-marginal untested; canonical anchor choice but H_352 round 1 may have intended state sweep",
+    "C3.5 bounded cap=2 on n=6 — purview search capped; cap=2 is M4b SSOT but cap=n=6 faithful big_phi untested in this run (cap=2 is conservative-lower-bound for super-additivity claim; cap=n=6 can only increase Φ(AB), preserving SUPPORTED direction)"
+  ],
+  "cross_links": [
+    "H_054 symbiogenesis_consciousness — coupling produces emergent higher-order substrate",
+    "H_157 law76_mathematical_panpsychism — combination problem for joint substrates",
+    "H_293 PID synergy ECA — sister synergy axis",
+    "H_295 exclusion_complex — bipartition complex search",
+    "H_355 collective_phi_pid_synergy 🟢 (axis F1 sister, round 1 same axis)"
+  ],
+  "infra": "$0 mac-local · single foreground hexa run · wall < 90 s",
+  "artifacts": {
+    "harness": "UNIVERSE/state/h609_collective_phi_super_additive_2026_05_28/run_h609.hexa",
+    "log":     "UNIVERSE/state/h609_collective_phi_super_additive_2026_05_28/run.log",
+    "result":  "UNIVERSE/state/h609_collective_phi_super_additive_2026_05_28/result.json"
+  }
+}
