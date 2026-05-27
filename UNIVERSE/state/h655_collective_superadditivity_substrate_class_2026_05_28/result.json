@@ -1,0 +1,39 @@
+{
+  "id": "H_655",
+  "slug": "collective-superadditivity-substrate-class",
+  "date": "2026-05-28",
+  "axis": "G (round-9 meta-axis: Wolfram class as consciousness-integration classifier)",
+  "verdict": "🔴 FALSIFIED",
+  "engine": "stdlib/consciousness/iit4_bounded.hexa big_phi_bounded · n=5 homog cohort ring · cap=3 · sys_state=0",
+  "definition": {
+    "sigma_parts": "Φ_collective(W=0) — decoupled self-loop pool (Σ-of-parts anchor)",
+    "phi_collective": "Φ_collective(W=1) — full n=5 coupling ring",
+    "delta": "Φ_collective(W=1) − Σ Φ_parts(W=0) = super-additivity gap"
+  },
+  "grid": {"W": [0.0, 0.5, 1.0], "rules": [184, 90, 30, 110]},
+  "measurements": {
+    "rule184_classII":  {"sigma": 0.0, "mid_W0.5": 28.6035, "phi_W1": 51.5361, "delta": 51.5361},
+    "rule90_classIII":  {"sigma": 0.0, "mid_W0.5": 1.38346, "phi_W1": 7.5,     "delta": 7.5},
+    "rule30_classIII":  {"sigma": 0.0, "mid_W0.5": 1.7377,  "phi_W1": 9.72067, "delta": 9.72067},
+    "rule110_classIV":  {"sigma": 0.0, "mid_W0.5": 6.54186, "phi_W1": 41.7124, "delta": 41.7124}
+  },
+  "delta_by_class": {
+    "rule184_II_additive": 51.5361,
+    "rule90_III_xor": 7.5,
+    "rule30_III_chaotic": 9.72067,
+    "rule110_IV_complex": 41.7124
+  },
+  "falsifiers": {
+    "F655.1_SUPERADD_MONOTONE": "FAIL",
+    "F655.2_CLASS_IV_MOST_SUPERADD": "FAIL",
+    "F655.3_ALL_SUPERADDITIVE": "PASS",
+    "F655.4_ADDITIVE_LEAST": "FAIL",
+    "F655.5_SIGMA_PARTS_ZERO": "PASS",
+    "F655.6_BOUND": "PASS"
+  },
+  "aggregate": "3 PASS / 3 FAIL",
+  "core_falsifier_F655.1": "FAIL — Δ NOT monotone in Wolfram class",
+  "finding": "super-additivity magnitude Δ ⊥ Wolfram class. The SIMPLEST additive class-II rule (rule184, Δ=51.54) is the MOST super-additive — opposite of H1. class-IV rule110 (Δ=41.71) is 2nd. class is NOT an absolute-super-additivity classifier (it remains a CONVEXITY classifier per H_653).",
+  "infra": "$0 mac-local · deterministic · wall ~41s single sync run",
+  "C3_stream_cap": "n=5 full · cap=3 · 3-pt W grid · 3-stream/cap=2 fallback NOT needed (wall <60s)"
+}
