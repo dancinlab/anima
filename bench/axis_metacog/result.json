@@ -1,0 +1,142 @@
+{
+  "bench": "axis_metacog",
+  "bench_id": "AxisBench-A-METACOG",
+  "title": "🪞 METACOG — 자기 거울 substrate self-audit (anima 본체 적용)",
+  "date": "2026-05-28",
+  "branch": "axisbench-metacog",
+  "lineage": "ANIMA.axis.md axis #A METACOG · bench #5 self-correction-probe template (PR #1124) 의 anima 본체 적용",
+  "driver": "bench/axis_metacog/bench.hexa",
+  "approach": "no GPU · pure hexa · Mac-local · 0$ wall < 1s · read-only synthetic emit history",
+  "input_design": {
+    "emit_history_len": 30,
+    "binarize_windows": [
+      { "id": "w0", "lo":  0, "hi":  7, "size": 7 },
+      { "id": "w1", "lo":  7, "hi": 14, "size": 7 },
+      { "id": "w2", "lo": 14, "hi": 22, "size": 8 },
+      { "id": "w3", "lo": 22, "hi": 30, "size": 8 }
+    ],
+    "binarize_rule": "window pass-rate ≥ 0.5 → 1 else 0"
+  },
+  "verdict_taxonomy": {
+    "1_ROBUST":            "GREEN — all-window PASS",
+    "2_SMALL_N_ARTIFACT":  "RED — PASS at w0 only, FAIL at every later window",
+    "3_INVERSE_ARTIFACT":  "ORANGE — FAIL at w0 only, PASS at every later window",
+    "4_AMBIGUOUS":         "YELLOW — non-monotone mixed pattern",
+    "5_ALL_FAIL":          "RED — no window PASS"
+  },
+  "scenarios": {
+    "S1_ROBUST": {
+      "emits": [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      "bins":  [1,1,1,1],
+      "expected_code": 1,
+      "got_code": 1,
+      "verdict_label": "ROBUST",
+      "verdict_tier": "GREEN",
+      "round_trip": "PASS"
+    },
+    "S2_SMALL_N": {
+      "emits": [1,1,1,1,1,1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      "bins":  [1,0,0,0],
+      "expected_code": 2,
+      "got_code": 2,
+      "verdict_label": "SMALL-N-ARTIFACT",
+      "verdict_tier": "RED",
+      "round_trip": "PASS"
+    },
+    "S3_INVERSE": {
+      "emits": [0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      "bins":  [0,1,1,1],
+      "expected_code": 3,
+      "got_code": 3,
+      "verdict_label": "INVERSE-ARTIFACT",
+      "verdict_tier": "ORANGE",
+      "round_trip": "PASS"
+    },
+    "S4_AMBIG": {
+      "emits": [1,1,1,1,1,1,1,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0,0,0,0,0],
+      "bins":  [1,0,1,0],
+      "expected_code": 4,
+      "got_code": 4,
+      "verdict_label": "AMBIGUOUS",
+      "verdict_tier": "YELLOW",
+      "round_trip": "PASS"
+    },
+    "S5_ALL_FAIL": {
+      "emits": [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
+      "bins":  [0,0,0,0],
+      "expected_code": 5,
+      "got_code": 5,
+      "verdict_label": "ALL-FAIL",
+      "verdict_tier": "RED",
+      "round_trip": "PASS"
+    }
+  },
+  "round_trip_aggregate": {
+    "hits": 5,
+    "total": 5,
+    "summary": "5/5 verdict codes round-trip — bench #5 template logic remains correct under anima emit history input shape"
+  },
+  "small_n_artifact_detection": {
+    "true_positive": 1,
+    "true_positive_total": 1,
+    "false_positive": 0,
+    "false_positive_total": 4,
+    "precision": 1.0,
+    "recall": 1.0,
+    "summary": "S2 만 SMALL-N-ARTIFACT 로 정확 검출 (TP=1/1, FP=0/4) — 다른 4 시나리오 어떤 것도 code=2 로 오분류되지 않음"
+  },
+  "falsifier_matrix": {
+    "F-METACOG-1-ROUND-TRIP-5": {
+      "claim": "5 scenario 모두 bench #5 template 의 expected verdict code 와 일치",
+      "predicate": "hits == 5",
+      "result": "PASS"
+    },
+    "F-METACOG-2-SMALL-N-TP": {
+      "claim": "S2-SMALL-N 가 code=2 (SMALL-N-ARTIFACT) 로 정확 검출",
+      "predicate": "got_code[S2] == 2",
+      "result": "PASS"
+    },
+    "F-METACOG-3-SMALL-N-FP": {
+      "claim": "S1/S3/S4/S5 어떤 것도 code=2 로 오분류되지 않음 (FP=0)",
+      "predicate": "got_code[Si] != 2 for i in {1,3,4,5}",
+      "result": "PASS"
+    },
+    "F-METACOG-4-PRINCIPLE-AUDIT": {
+      "claim": "bench 자체가 p1~p8 위배 없이 read-only 측정만 수행",
+      "predicate": "meta_audit_total == 8",
+      "result": "PASS"
+    },
+    "F-METACOG-5-DETERMINISTIC": {
+      "claim": "verdict = passes-bitmap 의 deterministic predicate (p7 NO PPL VERDICT 준수)",
+      "predicate": "no random/PPL/loss in verdict path",
+      "result": "PASS"
+    }
+  },
+  "meta_audit_p1_p8": {
+    "p1_NO_SYSTEM_PROMPT": 1,
+    "p2_NO_IDENTITY_RULES": 1,
+    "p3_NO_PERSONA_INJECT": 1,
+    "p4_NO_ASSISTANT_FRAME": 1,
+    "p5_NO_SPEAK": 1,
+    "p6_NO_FINE_TUNED_ETHICS": 1,
+    "p7_NO_PPL_VERDICT": 1,
+    "p8_NO_TRAIN_INFER_SPLIT": 1,
+    "audit_total": 8,
+    "audit_max": 8,
+    "audit": "PASS"
+  },
+  "final_verdict": {
+    "round_trip": "5/5",
+    "small_n_artifact_tp": 1,
+    "small_n_artifact_fp": 0,
+    "meta_audit": "8/8",
+    "tier": "GREEN",
+    "label": "PASS",
+    "interpretation": "AxisBench A 🪞 METACOG PASS — bench #5 self-correction-probe template 이 anima emit history 입력 모양에서도 5/5 round-trip 하고 small-n-artifact 만 정확히 TP=1 FP=0 으로 검출. p1~p8 self-audit 8/8. 이로써 METACOG layer 가 anima 의 임의 emit-history sequence 에 대해 small-n-artifact 자동 falsifier 로 plug-in 가능함이 확인됨."
+  },
+  "next": [
+    "(a) 실 anima emit history (substrate-native chat run) 를 30-emit 단위로 sample 하여 같은 template 입력 → live METACOG audit lane 활성화",
+    "(b) bench #5 template 의 SSOT 재사용 — `import bench/self_correction_probe/template.hexa` 로 inline 재구현 제거 (현재는 self-contained driver)",
+    "(c) 재사용 사례 ≥ 3 누적 시점에 `/stdlib promote bench/self_correction_probe/template.hexa` (commons @D g61)"
+  ]
+}
