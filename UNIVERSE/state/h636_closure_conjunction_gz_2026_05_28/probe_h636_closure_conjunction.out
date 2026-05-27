@@ -1,0 +1,33 @@
+[H_636] closure-conjunction GZ-peak probe
+  substrate : HEXAD/SAVANT/savant_phi.hexa (SSOT) — 4-domain, d=6
+  map       : gain_focus = 1 + (1-I)*9 ; gain_rest = (11.5-gf)/3
+  GZ region : I in [0.21 (GZ_LOWER), 0.50 (GZ_UPPER)]
+  criteria  : C1 SI>3 · C2 genPhi>0.06 · C3 minPhi>0.18 · C4 ratio in [1.2,3.2]
+  conjunction = C1 AND C2 AND C3 AND C4
+
+=== per-seed trace (representative seed 42424) ===
+  I=0.05 SI=7.82933(1) genPhi=0.0894534(1) minPhi=0.0939949(0) ratio=2.75647(1) => conj=0
+  I=0.15 SI=5.12255(1) genPhi=0.0771682(1) minPhi=0.139857(0) ratio=2.38224(1) => conj=0
+  I=0.21 SI=4.25477(1) genPhi=0.0791248(1) minPhi=0.165289(0) ratio=2.20807(1) => conj=0
+  I=0.3 SI=3.39719(1) genPhi=0.0837421(1) minPhi=0.200464(1) ratio=1.9932(1) => conj=1
+  I=0.37 SI=2.93203(0) genPhi=0.0895308(1) minPhi=0.225514(1) ratio=1.85251(1) => conj=0
+  I=0.5 SI=2.30784(0) genPhi=0.137951(1) minPhi=0.267293(1) ratio=1.62716(1) => conj=0
+  I=0.7 SI=1.61411(0) genPhi=0.15267(1) minPhi=0.321621(1) ratio=1.30716(1) => conj=0
+  I=0.95 SI=1.70267(0) genPhi=0.145981(1) minPhi=0.286447(1) ratio=1.27959(1) => conj=0
+
+=== pass-rate over 10-seed ensemble ===
+  I=0.05  pass_rate=0.0
+  I=0.15  pass_rate=0.0
+  I=0.21  pass_rate=0.0  <-- GZ region
+  I=0.3  pass_rate=0.4  <-- GZ region
+  I=0.37  pass_rate=0.1  <-- GZ region
+  I=0.5  pass_rate=0.2  <-- GZ region
+  I=0.7  pass_rate=0.0
+  I=0.95  pass_rate=0.0
+
+=== verdict inputs ===
+  peak pass-rate    = 0.4 at I=0.3
+  peak in GZ region = true
+  GZ-region mean pr = 0.175 (4 pts)
+  outside    mean pr = 0.0 (4 pts)
+  in > out          = true
