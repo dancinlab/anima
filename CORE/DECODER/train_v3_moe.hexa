@@ -16,10 +16,39 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
+use "stdlib/flame/flame_bpe_corpus_lib"
 use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_arch"
+
+// Phase 1 (BPE corpus wiring): when bpe_assert_on=1, load real Qwen tokenizer
+// + corpus and verify in-vocab + round-trip guard PASS. Default 0 keeps the
+// smoke side-effect-free (no external Qwen file deps). flame-P2b ③ FULL
+// RESOLVED so this verification is meaningful (encode+decode round-trip PASS).
+let bpe_assert_on = 0
+
+fn _bpe_corpus_assert() {
+    let merges_path = "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_V4/lora_adapter/merges.txt"
+    let vocab_path  = "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_V4/lora_adapter/vocab.json"
+    let corpus_path = "/Users/ghost/core/anima/training/corpus_consciousness_v1.jsonl"
+    let r = flame_bpe_corpus_load(merges_path, vocab_path, corpus_path)
+    let V_bpe = r["vocab_size"]
+    let n = r["n_toks"]
+    let ids = r["ids"]
+    print("  bpe: vocab_size="); print(V_bpe); print(" n_toks="); println(n)
+    let ok_in_vocab = flame_bpe_ids_in_vocab(ids, V_bpe)
+    print("  bpe: all ids in [0,V) = "); println(ok_in_vocab)
+    let sample = "consciousness emerges from cells"
+    let rt_ok = flame_bpe_roundtrip(r["tok"], sample)
+    print("  bpe: round-trip '"); print(sample); print("' = "); println(rt_ok)
+    if V_bpe > 150000 && ok_in_vocab && rt_ok {
+        println("  BPE_CORPUS_ASSERT: PASS (Phase 1)")
+    } else {
+        println("  BPE_CORPUS_ASSERT: FAIL")
+    }
+}
 
 fn main() {
     println("=== train_v3_moe smoke (MoE Phase 2b · packed-M fwd+bwd 1-step) ===")
+    if bpe_assert_on == 1 { _bpe_corpus_assert() }
 
     let d = 4
     let V = 4
