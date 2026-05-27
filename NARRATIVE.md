@@ -9,7 +9,7 @@
 - [x] AxisBench C NARRATIVE 측정 surface — `bench/axis_narrative/` story persistence 5 시나리오 · 2/5 PASS · honest closed-negative (modeling gap 식별, untrained pool 의 narrative continuity 측정자 부족) (PR #1144).
 - [ ] M1 narrative_lib — `NARRATIVE/{narrative_lib.hexa,SSOT.md}` PURE wrapper · bench/axis_narrative 의 story thread accumulator + working memory window 요약 stdlib 화.
 - [ ] M2 WAKE.memory 통합 — `WAKE/memory.hexa` episodic ring buffer 위의 narrative summary layer (wake transition 시 N3/REM imagination 결과 narrative 화).
-- [ ] M3 modeling gap residual 재설계 — bench C 의 🔴 FAIL 의 honest 진단을 받아 새 측정자 (story coherence ≠ 단순 token continuity) 구성. a_completeness_over_cheap.
+- [x] M3 modeling gap residual 재설계 — A1: 🔴 2/5 FAIL (F2/F4/F5) 의 근본원인 = **collision-saturation** (window=50 prior token ≫ vocab=64 → random 도 0.545 포화, closed-form 검증). chance-corrected immediate-prior coherence 로 재설계 → **🟢 5/5 RECOVERED** (측정 설계 결함, substrate 한계 아님). `NARRATIVE_A1_MODELING_GAP_REDESIGN.md` · `bench/axis_narrative/bench_redesign.hexa`.
 - [ ] M4 INTENT thread cross-link — INTENT.M3 goal trajectory log 의 emit-별 delta 가 narrative thread seed (intent → story).
 
 ## 양방향 sibling
