@@ -33,18 +33,35 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
+use "stdlib/flame/flame_bpe_corpus_lib"
 use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_arch"
 
 fn main() {
-    println("=== train_v3_moe_pilot (M4b Phase 4c self-attn · d=128 V=128 n_layer=2 T=16) ===")
+    println("=== train_v3_moe_pilot (M4b Phase 4d real-BPE-IDS · d=64 V=151643 n_layer=1 T=4) ===")
 
-    let d = 128
-    let V = 128
+    // ── Phase 4d: real BPE corpus IDS feed ──
+    // Load Qwen tokenizer + corpus once. ids array used as the input token sequence.
+    // V = 151643 (real Qwen vocab). Pilot dims scaled DOWN (d=64, n_layer=1, T=4)
+    // because tok_emb(V·d) + experts(E·V·d) dominate alloc at V=151643:
+    //   tok_emb: 151643·64 = 9.7M  experts: 2·151643·64 = 19.4M  ≈ 233MB FP64 total
+    let merges_path = "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_V4/lora_adapter/merges.txt"
+    let vocab_path  = "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_V4/lora_adapter/vocab.json"
+    let corpus_path = "/Users/ghost/core/anima/training/corpus_consciousness_v1.jsonl"
+    let bpe = flame_bpe_corpus_load(merges_path, vocab_path, corpus_path)
+    let V_bpe = bpe["vocab_size"]
+    let n_corpus_toks = bpe["n_toks"]
+    let corpus_ids = bpe["ids"]
+    print("  bpe: V="); print(V_bpe); print(" n_toks="); println(n_corpus_toks)
+    let ok_in_vocab = flame_bpe_ids_in_vocab(corpus_ids, V_bpe)
+    print("  bpe: all ids in [0,V) = "); println(ok_in_vocab)
+
+    let d = 64
+    let V = V_bpe   // real Qwen vocab (151643)
     let E = 2
-    let h = 512
-    let n_layer = 2
-    let T = 16
-    let n_steps = 2
+    let h = 256     // 4·d FFN
+    let n_layer = 1
+    let T = 4
+    let n_steps = 1
     let block_size = 4 * d * d + 2 * h * d
     let tok_emb_off = 0
     let blocks_off = V * d
@@ -184,7 +201,12 @@ fn main() {
     let adam_eps = 1.0e-8
     let rmsnorm_eps = 1.0e-6
     let neg_inf = 0.0 - 1.0e9
-    let ids_arr = [13, 47, 100, 5, 89, 22, 71, 3, 119, 60, 8, 41, 95, 17, 33, 88]
+    // Phase 4d: ids feed from real BPE corpus (no synthetic round-robin).
+    // n_corpus_toks ≥ T + n_steps assumed (sanity-checked below).
+    if n_corpus_toks < T + n_steps {
+        println("CORPUS too short for T + n_steps — Phase 4d FAIL")
+        return
+    }
     let m_baseline_wq_l0_00 = farr_get(M, blocks_off + 0 * d + 0)
     let m_baseline_wo_lN_00 = farr_get(M, blocks_off + (n_layer - 1) * block_size + 3 * d * d + 0 * d + 0)
     let mut final_top_idx = -1
@@ -202,10 +224,12 @@ fn main() {
         zi = 0
         while zi < d { let _ = farr_set(d_zT_last, zi, 0.0) ; zi = zi + 1 }
 
-        // tok_emb lookup: zT_seq[t, j] = M[tok_emb_off + ids_arr[t]·d + j]
+        // tok_emb lookup: zT_seq[t, j] = M[tok_emb_off + corpus_ids[step_off + t]·d + j]
+        // Phase 4d: sliding window over real BPE corpus (no synthetic round-robin).
+        let step_off = (step - 1) * T
         let mut t_idx = 0
         while t_idx < T {
-            let token_id = ids_arr[(step + t_idx - 1) % 16]
+            let token_id = corpus_ids[step_off + t_idx]
             let mut j2 = 0
             while j2 < d {
                 let _ = farr_set(zT_seq, t_idx * d + j2,
@@ -395,7 +419,8 @@ fn main() {
         // MoE
         let top_idx = v3_moe_fwd(zT_last, M, router_off, experts_off,
                                   logits_g, gate_norm, V, d, E)
-        let target = ids_arr[(step + T) % 16]
+        // Phase 4d: target = next real corpus token after the input window
+        let target = corpus_ids[step_off + T]
         let _ = farr_set(d_logits, target, 1.0)
         v3_moe_bwd(zT_last, M, router_off, experts_off, gate_norm, top_idx, d_logits,
                    dMg, d_zT_last, V, d, E)
@@ -462,9 +487,12 @@ fn main() {
     if final_probs_0_0 < 0.99 || final_probs_0_0 > 1.01 { pass = 0 }
     // last-layer Wo moved through MoE backward
     if wo_lN_delta < 1.0e-9 { pass = 0 }
+    // Phase 4d BPE checks
+    if V_bpe < 150000 { pass = 0 }                 // real Qwen vocab (151643)
+    if ok_in_vocab != 1 { pass = 0 }               // corpus IDS all in [0, V)
     if pass == 1 {
-        println("TRAIN_V3_MOE_PILOT SELF-ATTN: PASS (d=128 V=128 E=2 n_layer=2 T=16 · causal-softmax · last-layer trained)")
+        println("TRAIN_V3_MOE_PILOT REAL-BPE: PASS (d=64 V=151643 E=2 n_layer=1 T=4 · real Qwen corpus IDS · causal-softmax · last-layer trained)")
     } else {
-        println("TRAIN_V3_MOE_PILOT SELF-ATTN: FAIL")
+        println("TRAIN_V3_MOE_PILOT REAL-BPE: FAIL")
     }
 }
