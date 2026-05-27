@@ -191,7 +191,31 @@ pub fn moe_route_fwd(zT: int, M: int, router_off: int, experts_off: int,
 }
 
 // ---------------------------------------------------------------
-// 7. moe_router_summary — one-line config string
+// 8. moe_route_top1_fwd — HARD top-1 routing (M4b-diff a)
+//   gate=softmax(gate_raw) · top=argmax(gate) · logits = gate[top]·expert_top(zT).
+//   Only the WINNING expert is computed → its gradient is the only expert grad
+//   per input → experts SPECIALIZE (escapes soft-MoE dense-collapse).
+//   Returns top expert index (caller threads it to top1_bwd).
+// ---------------------------------------------------------------
+pub fn moe_route_top1_fwd(zT: int, M: int, router_off: int, experts_off: int,
+                          n_experts: int, V: int, d: int,
+                          gate_out: int, logits_out: int) -> int {
+    moe_gate_fwd(zT, M, router_off, n_experts, d, gate_out)
+    moe_softmax(gate_out, n_experts)
+    let top = moe_argmax(gate_out, n_experts)
+    let gt = farr_get(gate_out, top)
+    moe_expert_fwd(zT, M, experts_off, top, V, d, logits_out)
+    // straight-through gate scaling: logits *= gate[top]
+    let mut k = 0
+    while k < V {
+        let _ = farr_set(logits_out, k, farr_get(logits_out, k) * gt)
+        k = k + 1
+    }
+    return top
+}
+
+// ---------------------------------------------------------------
+// 9. moe_router_summary — one-line config string
 // ---------------------------------------------------------------
 pub fn moe_router_summary(n_experts: int, V: int, d: int) -> int {
     print("MoE-router [M4a]: n_experts=" + str(n_experts) + " · V=" + str(V) + " · d=" + str(d) + " · router=[E·d] experts=[E·V·d]")
