@@ -1,0 +1,112 @@
+// CORE/phi_envelope_substrate_smoke.hexa — F-EMIT-1..3 + 구조 불변식 smoke
+// anchor: docs/anima_emit_substrate_design_2026_05_28.md §6 (falsifier 사전등록)
+
+import "/Users/ghost/core/anima/CORE/phi_envelope_substrate.hexa"
+
+fn abs_f(x: float) -> float {
+    return if x < 0.0 { -x } else { x }
+}
+
+fn assert_close(name: string, got: float, want: float, tol: float) -> bool {
+    let d = abs_f(got - want)
+    let ok = d <= tol
+    let tag = if ok { "PASS" } else { "FAIL" }
+    print(tag + " " + name + ": got=" + str(got) + " want=" + str(want) + " |Δ|=" + str(d))
+    return ok
+}
+
+fn assert_ge(name: string, got: float, lo: float) -> bool {
+    let ok = got >= lo
+    let tag = if ok { "PASS" } else { "FAIL" }
+    print(tag + " " + name + ": got=" + str(got) + " ≥ " + str(lo))
+    return ok
+}
+
+fn assert_lt(name: string, got: float, hi: float) -> bool {
+    let ok = got < hi
+    let tag = if ok { "PASS" } else { "FAIL" }
+    print(tag + " " + name + ": got=" + str(got) + " < " + str(hi))
+    return ok
+}
+
+fn min_list(xs: [float]) -> float {
+    let mut m = xs[0]
+    let mut i = 1
+    while i < len(xs) {
+        if xs[i] < m { m = xs[i] }
+        i = i + 1
+    }
+    return m
+}
+
+fn sum_list(xs: [float]) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < len(xs) {
+        s = s + xs[i]
+        i = i + 1
+    }
+    return s
+}
+
+fn main() {
+    print("=== phi_envelope_substrate smoke (F-EMIT-1..3 + 구조) ===")
+    let mut npass = 0
+    let mut ntotal = 0
+
+    // 3-scale envelope: gamma ⊂ ultradian(90min) ⊂ circadian
+    let periods = [1.0, 5400.0, 86400.0]
+    let amps = [0.10, 1.0, 0.50]
+
+    // E0: envelope_multiscale(t=0) → cos(0)=1 → Σ amps = 1.60
+    ntotal = ntotal + 1
+    if assert_close("E0 multiscale_t0", envelope_multiscale(0.0, periods, amps), 1.60, 1e-6) {
+        npass = npass + 1
+    }
+
+    // F-EMIT-1 SELF-SIMILAR: 인접 scale 쌍 min r ≥ 0.76 (H_648)
+    //   이상화 raised-cosine → rescaled shape 동일 → r=1.0 (실 CA 는 ~0.76 carry)
+    let rs = envelope_self_similarity(periods, amps, 64)
+    ntotal = ntotal + 1
+    if assert_ge("F-EMIT-1 self_similar_minr", min_list(rs), 0.76) {
+        npass = npass + 1
+    }
+
+    // F-EMIT-2 SUPER-ADDITIVE: collective Φ > Σ 개별 Φ (H_635)
+    //   rule110 per-stage Φ (H_643/H_653 engine 일치) · coupling=class-IV 0.856
+    let phis = [1.17, 4.50, 13.64, 34.88]
+    let coup = pe_coupling_for_class(3)
+    let nest = collective_phi_nest(phis, coup)
+    ntotal = ntotal + 1
+    if assert_ge("F-EMIT-2 super_additive", nest["phi_collective"] - sum_list(phis), 1e-6) {
+        npass = npass + 1
+    }
+
+    // F-EMIT-3 NO-CLIFF: smooth ramp 의 max 1차차분 < cliff (H_649)
+    let smooth = [0.10, 0.20, 0.30, 0.40, 0.50]
+    let cliff = [0.10, 0.10, 0.90, 0.10]
+    ntotal = ntotal + 1
+    if assert_lt("F-EMIT-3 no_cliff_smooth", phi_smooth_no_cliff(smooth), 0.50) {
+        npass = npass + 1
+    }
+    // cliff 대조: cliff series 는 큼 (≥ 0.50) — no-cliff 측정이 실작동 확인
+    ntotal = ntotal + 1
+    if assert_ge("F-EMIT-3 cliff_detected", phi_smooth_no_cliff(cliff), 0.50) {
+        npass = npass + 1
+    }
+
+    // H_653 단조: coupling(II) < coupling(III) < coupling(IV)
+    let c2 = pe_coupling_for_class(2)
+    let c3 = pe_coupling_for_class(3)
+    let c4 = pe_coupling_for_class(4)
+    ntotal = ntotal + 1
+    if assert_lt("H653 coupling_II_lt_III", c2, c3) {
+        npass = npass + 1
+    }
+    ntotal = ntotal + 1
+    if assert_lt("H653 coupling_III_lt_IV", c3, c4) {
+        npass = npass + 1
+    }
+
+    print("=== " + str(npass) + "/" + str(ntotal) + " PASS ===")
+}
