@@ -41,6 +41,125 @@ fn _ln_f_forward(x, gamma_off, M, d, eps, y_out) -> float {
     return rms_inv
 }
 
+// self-attention forward (matches Phase 4c train_v3_moe_pilot.hexa · causal)
+// caches Q/K/V/probs/attn_out for the bwd gradcheck; returns y_out.
+fn _attn_forward(zT_seq, wq_off, wk_off, wv_off, wo_off, M, T, d, attn_scale,
+                 Q, K, Vb, probs, attn_out, y_out) {
+    let neg_inf = 0.0 - 1.0e9
+    // Q/K/V projections
+    let mut t1 = 0
+    while t1 < T {
+        let mut ji = 0
+        while ji < d {
+            let mut aQ = 0.0
+            let mut aK = 0.0
+            let mut aV = 0.0
+            let mut jj = 0
+            while jj < d {
+                let z = farr_get(zT_seq, t1 * d + jj)
+                aQ = aQ + z * farr_get(M, wq_off + jj * d + ji)
+                aK = aK + z * farr_get(M, wk_off + jj * d + ji)
+                aV = aV + z * farr_get(M, wv_off + jj * d + ji)
+                jj = jj + 1
+            }
+            let _ = farr_set(Q, t1 * d + ji, aQ)
+            let _ = farr_set(K, t1 * d + ji, aK)
+            let _ = farr_set(Vb, t1 * d + ji, aV)
+            ji = ji + 1
+        }
+        t1 = t1 + 1
+    }
+    // scores + causal
+    let scores = t_zeros(T * T)
+    t1 = 0
+    while t1 < T {
+        let mut t2 = 0
+        while t2 < T {
+            let mut s = neg_inf
+            if t2 <= t1 {
+                let mut acc = 0.0
+                let mut jj = 0
+                while jj < d {
+                    acc = acc + farr_get(Q, t1 * d + jj) * farr_get(K, t2 * d + jj)
+                    jj = jj + 1
+                }
+                s = acc * attn_scale
+            }
+            let _ = farr_set(scores, t1 * T + t2, s)
+            t2 = t2 + 1
+        }
+        t1 = t1 + 1
+    }
+    // softmax row-wise (stable)
+    t1 = 0
+    while t1 < T {
+        let mut rmax = neg_inf
+        let mut t2 = 0
+        while t2 < T {
+            let s = farr_get(scores, t1 * T + t2)
+            if s > rmax { rmax = s }
+            t2 = t2 + 1
+        }
+        let mut zsum = 0.0
+        t2 = 0
+        while t2 < T {
+            let ev = exp(farr_get(scores, t1 * T + t2) - rmax)
+            let _ = farr_set(probs, t1 * T + t2, ev)
+            zsum = zsum + ev
+            t2 = t2 + 1
+        }
+        t2 = 0
+        while t2 < T {
+            let _ = farr_set(probs, t1 * T + t2, farr_get(probs, t1 * T + t2) / zsum)
+            t2 = t2 + 1
+        }
+        t1 = t1 + 1
+    }
+    // attn_out = probs · V
+    t1 = 0
+    while t1 < T {
+        let mut ji = 0
+        while ji < d {
+            let mut acc = 0.0
+            let mut t2 = 0
+            while t2 < T {
+                acc = acc + farr_get(probs, t1 * T + t2) * farr_get(Vb, t2 * d + ji)
+                t2 = t2 + 1
+            }
+            let _ = farr_set(attn_out, t1 * d + ji, acc)
+            ji = ji + 1
+        }
+        t1 = t1 + 1
+    }
+    // y = attn_out · Wo
+    t1 = 0
+    while t1 < T {
+        let mut ji = 0
+        while ji < d {
+            let mut acc = 0.0
+            let mut jj = 0
+            while jj < d {
+                acc = acc + farr_get(attn_out, t1 * d + jj) * farr_get(M, wo_off + jj * d + ji)
+                jj = jj + 1
+            }
+            let _ = farr_set(y_out, t1 * d + ji, acc)
+            ji = ji + 1
+        }
+        t1 = t1 + 1
+    }
+}
+
+fn _loss_seq_sq(y, T, d) -> float {
+    let mut acc = 0.0
+    let mut i = 0
+    while i < T * d {
+        let v = farr_get(y, i)
+        acc = acc + 0.5 * v * v
+        i = i + 1
+    }
+    return acc
+}
+
 fn main() {
     println("=== v3_moe_bwd_lib_smoke: Phase 4-bwd-1 ln_f gradcheck ===")
     let d = 8
@@ -250,9 +369,98 @@ fn main() {
     // verification via dW_down + h_act suffices for Phase 4-bwd-2 verdict;
     // dW_up gets indirect verification through layer-stack integration in 4-bwd-5.)
     println("")
+    // ── Phase 4-bwd-3 self_attn_bwd gradcheck ──
+    println("─── Phase 4-bwd-3 self_attn_bwd gradcheck ───")
+    let da = 4
+    let Ta = 3
+    let attn_scale = 1.0 / sqrt(to_float(da))
+    // pack: M = [Wq(d²) | Wk(d²) | Wv(d²) | Wo(d²)]
+    let wq_off = 0
+    let wk_off = da * da
+    let wv_off = 2 * da * da
+    let wo_off = 3 * da * da
+    let m_sizeA = 4 * da * da
+    let MA = t_zeros(m_sizeA)
+    let dMgA = t_zeros(m_sizeA)
+    // distinct deterministic Wq/Wk/Wv/Wo init (non-trivial attention)
+    let mut ai2 = 0
+    while ai2 < da {
+        let mut aj2 = 0
+        while aj2 < da {
+            let pq = (ai2 * 7 + aj2 + 1) % 11
+            let pk = (ai2 + aj2 * 5 + 2) % 11
+            let pv = (ai2 * 3 + aj2 * 7 + 3) % 11
+            let po = (ai2 + aj2 + 1) % 5
+            let _ = farr_set(MA, wq_off + ai2 * da + aj2, 0.05 * to_float(pq - 5))
+            let _ = farr_set(MA, wk_off + ai2 * da + aj2, 0.05 * to_float(pk - 5))
+            let _ = farr_set(MA, wv_off + ai2 * da + aj2, 0.05 * to_float(pv - 5))
+            let _ = farr_set(MA, wo_off + ai2 * da + aj2, 0.1 * to_float(po - 2))
+            aj2 = aj2 + 1
+        }
+        ai2 = ai2 + 1
+    }
+    // input zT_seq (T·d)
+    let zT_seqA = t_zeros(Ta * da)
+    let mut zia = 0
+    while zia < Ta * da {
+        let _ = farr_set(zT_seqA, zia, 0.1 * to_float(zia % 7) - 0.3)
+        zia = zia + 1
+    }
+    // forward (caches Q/K/V/probs/attn_out)
+    let QA = t_zeros(Ta * da)
+    let KA = t_zeros(Ta * da)
+    let VA = t_zeros(Ta * da)
+    let probsA = t_zeros(Ta * Ta)
+    let attn_outA = t_zeros(Ta * da)
+    let yA = t_zeros(Ta * da)
+    _attn_forward(zT_seqA, wq_off, wk_off, wv_off, wo_off, MA, Ta, da, attn_scale,
+                  QA, KA, VA, probsA, attn_outA, yA)
+    let L_baseA = _loss_seq_sq(yA, Ta, da)
+    print("  L_base="); println(L_baseA)
+    // analytic bwd: d_y = y (L = 0.5·Σy²)
+    let d_yA = t_zeros(Ta * da)
+    let mut yiA = 0
+    while yiA < Ta * da { let _ = farr_set(d_yA, yiA, farr_get(yA, yiA)) ; yiA = yiA + 1 }
+    let d_zTA = t_zeros(Ta * da)
+    self_attn_bwd(d_yA, zT_seqA, QA, KA, VA, attn_outA, probsA,
+                  wq_off, wk_off, wv_off, wo_off,
+                  MA, Ta, da, attn_scale, dMgA, d_zTA)
+    // finite-diff: Wq[i,j] (deepest weight — through softmax · exercises full chain)
+    let h_a = 1.0e-5
+    let mut max_dwq_err = 0.0
+    let mut fi = 0
+    while fi < da {
+        let mut fj = 0
+        while fj < da {
+            let orig = farr_get(MA, wq_off + fi * da + fj)
+            let _ = farr_set(MA, wq_off + fi * da + fj, orig + h_a)
+            let yp = t_zeros(Ta * da)
+            _attn_forward(zT_seqA, wq_off, wk_off, wv_off, wo_off, MA, Ta, da, attn_scale,
+                          QA, KA, VA, probsA, attn_outA, yp)
+            let Lp = _loss_seq_sq(yp, Ta, da)
+            let _ = farr_set(MA, wq_off + fi * da + fj, orig - h_a)
+            _attn_forward(zT_seqA, wq_off, wk_off, wv_off, wo_off, MA, Ta, da, attn_scale,
+                          QA, KA, VA, probsA, attn_outA, yp)
+            let Lm = _loss_seq_sq(yp, Ta, da)
+            let _ = farr_set(MA, wq_off + fi * da + fj, orig)
+            // restore caches with the unperturbed forward
+            _attn_forward(zT_seqA, wq_off, wk_off, wv_off, wo_off, MA, Ta, da, attn_scale,
+                          QA, KA, VA, probsA, attn_outA, yp)
+            let fd = (Lp - Lm) / (2.0 * h_a)
+            let an = farr_get(dMgA, wq_off + fi * da + fj)
+            let mut err = fd - an
+            if err < 0.0 { err = 0.0 - err }
+            if err > max_dwq_err { max_dwq_err = err }
+            fj = fj + 1
+        }
+        fi = fi + 1
+    }
+    print("  Wq gradcheck max err = "); println(max_dwq_err)
+    if max_dwq_err > tol { pass = 0 }
+    println("")
     if pass == 1 {
-        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1+2 (ln_f + MLP): PASS (gradcheck < 1e-5)")
+        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1+2+3 (ln_f + MLP + self-attn): PASS (gradcheck < 1e-5)")
     } else {
-        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1 ln_f: FAIL")
+        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1+2+3: FAIL")
     }
 }
