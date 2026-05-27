@@ -1,0 +1,58 @@
+════════════════════════════════════════════════════════════════
+  H_621 verify — SI/ΦD ∥ PID synergy_ratio triangle (E×F round 4)
+════════════════════════════════════════════════════════════════
+  triangle: H_350 (SI∥ΦD r=0.93) · H_613 (SI∥ΦD_cov r=0.99) · H_355 (PID ratio=1)
+  bridge: K = g_focus/SV_CAPACITY → n_xor = round(3K) → synergy = n_xor
+  H1: Spearman ρ(ΦD_cov, synergy_total) > 0.5 ; FAL: ρ < 0.3
+  N = 4 dom × 5 g_focus × 2 stim = 40
+
+──────────────────────────────────────────────────────────────
+  §A1 sanity anchor (H_355 micro-recompute, n_xor 0..3):
+    n_xor=0 mask=[0, 0, 0] synergy_total=0.0
+    n_xor=1 mask=[1, 0, 0] synergy_total=1.0
+    n_xor=2 mask=[1, 1, 0] synergy_total=2.0
+    n_xor=3 mask=[1, 1, 1] synergy_total=3.0
+──────────────────────────────────────────────────────────────
+
+  sample count = 40
+  SI range          = [1.1112, 3.03992] mean=1.67268
+  ΦD_cov range      = [0.07872, 1.18098] mean=0.433209
+  synergy_total rg  = [0.0, 3.0] mean=1.4
+  synergy_ratio rg  = [0.0, 1.0] mean=0.8
+
+──────────────────────────────────────────────────────────────
+  PRIMARY  ΦD_cov ~ synergy_total:
+    Spearman ρ = 0.59941
+    Pearson  r = 0.784614
+
+  SECONDARY  SI ~ synergy_total:
+    Spearman ρ = 0.721963
+    Pearson  r = 0.844813
+
+  ANCHOR  g_focus ~ synergy_total (construction monotone):
+    Spearman ρ = 0.974679
+──────────────────────────────────────────────────────────────
+
+  sample preview (g_focus, SI, ΦD_cov, syn_total):
+    [0] gf=1.0 SI=1.29363 cov=0.302619 syn=0.0
+    [1] gf=1.0 SI=1.37772 cov=0.253637 syn=0.0
+    [2] gf=3.0 SI=1.11244 cov=0.0877211 syn=1.0
+    [3] gf=3.0 SI=1.28539 cov=0.221579 syn=1.0
+    [4] gf=5.0 SI=1.3057 cov=0.193679 syn=1.0
+    [5] gf=5.0 SI=1.63604 cov=0.394267 syn=1.0
+    [6] gf=7.0 SI=1.63217 cov=0.37172 syn=2.0
+    [7] gf=7.0 SI=2.00426 cov=0.596002 syn=2.0
+    [8] gf=10.0 SI=2.69636 cov=0.980105 syn=3.0
+    [9] gf=10.0 SI=3.03992 cov=1.18098 syn=3.0
+    ...
+    [36] gf=7.0 SI=1.51137 cov=0.297931 syn=2.0
+    [37] gf=7.0 SI=1.52752 cov=0.353924 syn=2.0
+    [38] gf=10.0 SI=2.59693 cov=0.922285 syn=3.0
+    [39] gf=10.0 SI=2.63841 cov=0.953527 syn=3.0
+
+══════════════════════════════════════════════════════════════
+  VERDICT: 🟢 SUPPORTED-NUMERICAL
+  ρ(ΦD_cov, syn_total) = 0.59941 ≥ 0.5
+  ρ(SI,     syn_total) = 0.721963
+  cross-substrate triangle: savant ΦD ∥ hivemind PID synergy
+══════════════════════════════════════════════════════════════
