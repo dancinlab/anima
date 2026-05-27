@@ -1,0 +1,71 @@
+// CORE/DECODER/v3_moe_bwd_lib.hexa — M4b-fire-scale Phase 4-bwd analytic backward
+//
+// Analytic backward pass for the pilot decoder stack (Phase 4 forward path
+// LANDED in PRs #1073..#1079). Built incrementally — each Phase 4-bwd-N
+// sub-PR adds one pub fn here. Smoke / gradcheck per fn lives at
+// CORE/DECODER/v3_moe_bwd_lib_smoke.hexa.
+//
+// Inventory (Phase 4-bwd-1..5):
+//   ☑ ln_f_bwd            (this PR · Phase 4-bwd-1)
+//   ☐ mlp_block_bwd       (Phase 4-bwd-2)
+//   ☐ self_attn_bwd       (Phase 4-bwd-3)
+//   ☐ layer_block_bwd     (Phase 4-bwd-4 — combines attn + mlp + residual)
+//   ☐ tok_emb_bwd         (Phase 4-bwd-5 — scatter-add over token ids)
+//
+// Existing analytic bwd primitives live in CORE/DECODER/v3_moe_arch.hexa
+// (`v3_moe_bwd` — MoE router/expert bwd). This file complements those with
+// the pre-MoE stack (ln_f + layer blocks + tok_emb) so end-to-end gradient
+// flow reaches every parameter group, not just MoE+last-layer-Wo.
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/flame_math"
+
+// ───────────────────────────────────────────────────────────────────────────
+// Phase 4-bwd-1: ln_f RMSNorm backward
+// ───────────────────────────────────────────────────────────────────────────
+//
+// Forward:
+//   ms = (1/d) · Σ_j x[j]²
+//   rms_inv = 1 / sqrt(ms + eps)
+//   y[i] = x[i] · rms_inv · γ[i]
+//
+// Backward (analytic vjp · derived in design doc):
+//   Given d_y[i]:
+//     ∂L/∂γ[i] = d_y[i] · x[i] · rms_inv                  (accumulate to dMg)
+//     ∂L/∂x[j] = γ[j]·d_y[j]·rms_inv
+//                - x[j] · rms_inv³ / d · Σ_i (d_y[i]·γ[i]·x[i])
+//
+// Args:
+//   d_y       (T_d)       gradient of L wrt y  (length d)
+//   x         (T_d)        forward input          (length d, kept for vjp)
+//   gamma_off (int)       offset into M of γ[0..d]
+//   M         (T_msize)   packed param buffer (γ slice read here)
+//   d         (int)       dim
+//   rms_inv   (float)     1 / sqrt(ms + eps)     (cached from forward)
+//   dMg       (T_msize)   packed grad buffer     (γ grad accumulated in-place)
+//   d_x_out   (T_d)       OUTPUT gradient wrt x  (overwritten)
+pub fn ln_f_bwd(d_y, x, gamma_off, M, d, rms_inv, dMg, d_x_out) {
+    // accumulate dγ[i] += d_y[i] · x[i] · rms_inv
+    let mut i = 0
+    while i < d {
+        let dg = farr_get(d_y, i) * farr_get(x, i) * rms_inv
+        let _ = farr_set(dMg, gamma_off + i, farr_get(dMg, gamma_off + i) + dg)
+        i = i + 1
+    }
+    // Σ_i d_y[i]·γ[i]·x[i]   (scalar)
+    let mut sum_dy_g_x = 0.0
+    let mut k = 0
+    while k < d {
+        sum_dy_g_x = sum_dy_g_x + farr_get(d_y, k) * farr_get(M, gamma_off + k) * farr_get(x, k)
+        k = k + 1
+    }
+    // d_x[j] = γ[j]·d_y[j]·rms_inv - x[j]·sum·rms_inv³/d
+    let rms_inv3_over_d = rms_inv * rms_inv * rms_inv / to_float(d)
+    let mut j = 0
+    while j < d {
+        let term1 = farr_get(M, gamma_off + j) * farr_get(d_y, j) * rms_inv
+        let term2 = farr_get(x, j) * sum_dy_g_x * rms_inv3_over_d
+        let _ = farr_set(d_x_out, j, term1 - term2)
+        j = j + 1
+    }
+}

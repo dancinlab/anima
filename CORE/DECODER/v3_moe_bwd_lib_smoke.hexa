@@ -1,0 +1,131 @@
+// CORE/DECODER/v3_moe_bwd_lib_smoke.hexa — Phase 4-bwd-N gradcheck per fn
+//
+// Finite-difference vs analytic gradient verification for each backward fn
+// added to v3_moe_bwd_lib.hexa. Run on Mac local (CPU, FP64).
+//
+// Phase 4-bwd-1 (this PR): ln_f_bwd gradcheck
+
+use "stdlib/flame/tensor_lib"
+use "stdlib/flame/flame_math"
+use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_bwd_lib"
+
+// helper: scalar loss L = 0.5 · Σ y² (so dL/dy = y)
+fn _loss_squared_sum(y, d) -> float {
+    let mut acc = 0.0
+    let mut i = 0
+    while i < d {
+        let v = farr_get(y, i)
+        acc = acc + 0.5 * v * v
+        i = i + 1
+    }
+    return acc
+}
+
+fn _ln_f_forward(x, gamma_off, M, d, eps, y_out) -> float {
+    let mut ms = 0.0
+    let mut i = 0
+    while i < d {
+        let v = farr_get(x, i)
+        ms = ms + v * v
+        i = i + 1
+    }
+    ms = ms / to_float(d)
+    let rms_inv = 1.0 / sqrt(ms + eps)
+    let mut j = 0
+    while j < d {
+        let _ = farr_set(y_out, j, farr_get(x, j) * rms_inv * farr_get(M, gamma_off + j))
+        j = j + 1
+    }
+    return rms_inv
+}
+
+fn main() {
+    println("=== v3_moe_bwd_lib_smoke: Phase 4-bwd-1 ln_f gradcheck ===")
+    let d = 8
+    let eps = 1.0e-6
+    let h = 1.0e-5   // finite-diff step
+    // pack: M = [γ(d)]  (gamma_off = 0)
+    let gamma_off = 0
+    let m_size = d
+    let M = t_zeros(m_size)
+    let dMg = t_zeros(m_size)
+    // deterministic γ (NOT all 1.0, so γ-grad is non-trivial)
+    let mut gi = 0
+    while gi < d {
+        let _ = farr_set(M, gamma_off + gi, 0.7 + 0.1 * to_float(gi))   // [0.7..1.4]
+        gi = gi + 1
+    }
+    // deterministic input
+    let x = t_zeros(d)
+    let mut xi = 0
+    while xi < d {
+        let _ = farr_set(x, xi, 0.2 * to_float(xi + 1) - 0.5)   // [-0.3, 1.1]
+        xi = xi + 1
+    }
+    // forward
+    let y = t_zeros(d)
+    let rms_inv = _ln_f_forward(x, gamma_off, M, d, eps, y)
+    let L_base = _loss_squared_sum(y, d)
+    print("  L_base="); print(L_base); print("  rms_inv="); println(rms_inv)
+    // analytic backward: dL/dy = y (since L = 0.5·Σy²)
+    let d_y = t_zeros(d)
+    let d_x = t_zeros(d)
+    let mut yi = 0
+    while yi < d {
+        let _ = farr_set(d_y, yi, farr_get(y, yi))
+        yi = yi + 1
+    }
+    ln_f_bwd(d_y, x, gamma_off, M, d, rms_inv, dMg, d_x)
+    println("  analytic bwd computed")
+    // finite-difference check: γ[k] perturb
+    let mut max_dg_err = 0.0
+    let mut k = 0
+    while k < d {
+        let g_orig = farr_get(M, gamma_off + k)
+        let _ = farr_set(M, gamma_off + k, g_orig + h)
+        let y2 = t_zeros(d)
+        let _rms = _ln_f_forward(x, gamma_off, M, d, eps, y2)
+        let L_plus = _loss_squared_sum(y2, d)
+        let _ = farr_set(M, gamma_off + k, g_orig - h)
+        let _rms2 = _ln_f_forward(x, gamma_off, M, d, eps, y2)
+        let L_minus = _loss_squared_sum(y2, d)
+        let _ = farr_set(M, gamma_off + k, g_orig)   // restore
+        let fd_dg = (L_plus - L_minus) / (2.0 * h)
+        let an_dg = farr_get(dMg, gamma_off + k)
+        let mut err = fd_dg - an_dg
+        if err < 0.0 { err = 0.0 - err }
+        if err > max_dg_err { max_dg_err = err }
+        k = k + 1
+    }
+    print("  γ gradcheck: max |fd - analytic| = "); println(max_dg_err)
+    // finite-difference check: x[j] perturb
+    let mut max_dx_err = 0.0
+    let mut j2 = 0
+    while j2 < d {
+        let x_orig = farr_get(x, j2)
+        let _ = farr_set(x, j2, x_orig + h)
+        let y2 = t_zeros(d)
+        let _r = _ln_f_forward(x, gamma_off, M, d, eps, y2)
+        let L_plus = _loss_squared_sum(y2, d)
+        let _ = farr_set(x, j2, x_orig - h)
+        let _r2 = _ln_f_forward(x, gamma_off, M, d, eps, y2)
+        let L_minus = _loss_squared_sum(y2, d)
+        let _ = farr_set(x, j2, x_orig)
+        let fd_dx = (L_plus - L_minus) / (2.0 * h)
+        let an_dx = farr_get(d_x, j2)
+        let mut err = fd_dx - an_dx
+        if err < 0.0 { err = 0.0 - err }
+        if err > max_dx_err { max_dx_err = err }
+        j2 = j2 + 1
+    }
+    print("  x gradcheck: max |fd - analytic| = "); println(max_dx_err)
+    let tol = 1.0e-5
+    let mut pass = 1
+    if max_dg_err > tol { pass = 0 }
+    if max_dx_err > tol { pass = 0 }
+    if pass == 1 {
+        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1 ln_f: PASS (γ + x gradcheck < 1e-5)")
+    } else {
+        println("V3_MOE_BWD_LIB_SMOKE Phase 4-bwd-1 ln_f: FAIL")
+    }
+}
