@@ -1,0 +1,297 @@
+// UNIVERSE/state/h352_collective_phi_super_additive_2026_05_28/run_h352.hexa
+// H_352 — collective-phi-super-additive smoke (axis F1 HIVE-MIND).
+//
+//   QUESTION
+//     Given two ECA substrates A (n_a cells) and B (n_b cells), can an
+//     inter-coupling W produce a collective substrate AB with big-Φ(AB)
+//     STRICTLY greater than Φ(A) + Φ(B) (super-additive integration)?
+//
+//   METHOD (deterministic · hexa-only · llm:none · $0 mac local)
+//     - engine: stdlib/consciousness/iit4_bigphi.hexa (big_phi) via the anima
+//       thin shim HEXAD/IIT4/lib/iit4_bigphi.hexa.
+//     - substrate A : n_a=3 ECA ring under rule r_a; state-by-node TPM via
+//       eca_tpm(r_a, n_a). Φ(A) = big_phi(t_a, n_a, all-ones)[0].
+//     - substrate B : n_b=3 ECA ring under rule r_b; Φ(B) similarly.
+//     - substrate AB: n = n_a + n_b. For each cell in A, next-bit is the
+//       PROBABILISTIC mix
+//             p_next(a_i) = (1-W) * eca(r_a, A-ring nbhd) + W * b[i]
+//       and symmetrically for B  (pairing a_i ↔ b_i; cells beyond min(n_a,n_b)
+//       fall back to pure-ECA). W ∈ {0, 0.1, 0.5, 1.0}. This produces a valid
+//       state-by-node TPM (∈ [0,1]). At W=0 the AB-TPM is block-diagonal — so
+//       Φ(AB|W=0) ≈ Φ(A) + Φ(B) by construction (sanity baseline). At W>0 the
+//       blocks become coupled — does the integrated Φ overshoot the sum?
+//     - super-additivity excess Δ(W) = Φ(AB|W) − Φ(A) − Φ(B).
+//
+//   FALSIFIER
+//     If Δ(W) ≤ 0 ∀ W (sub-additive or additive at best) → 🔴 FALSIFIED.
+//     If Δ(W) > 0 for at least one W (with W=0 sanity Δ ≈ 0 holding) →
+//       🟢 SUPPORTED-NUMERICAL.
+//
+//   SWEEP
+//     rules R = {90, 110}            (canonical ECA: 90 = XOR / nonlinear,
+//                                                    110 = Turing-complete edge-of-chaos)
+//     W = {0.0, 0.1, 0.5, 1.0}
+//     seeds N = 5  (random initial sys_state per seed; substrates and TPMs
+//                   are deterministic in r_a,r_b — seed varies the sys_state
+//                   used as the reference background for big_phi).
+//     n_a = n_b = 3 (n=6 combined; per M9 tractability n≤6 viable).
+//
+//   HONEST (g5)
+//     - background sys_state = LCG-pseudo-random per seed, fed verbatim into
+//       big_phi as the system reference state — NOT optimized.
+//     - probabilistic mix at W∈(0,1) is the operational form of "inter-
+//       coupling strength" in a deterministic-substrate IIT TPM; it preserves
+//       state-by-node format. At W∈{0,1} the TPM remains deterministic.
+//     - Φ uses the structure-cut MIP big-Φ (M4 carve-out — NOT M5 PyPhi-
+//       calibrated). Reported Φ values are real engine output.
+//     - n_a=n_b=3 small-n is per M9 tractability + wall-time budget (per-
+//       config big_phi is fast at n=6). No corpus / training involved.
+// ═════════════════════════════════════════════════════════════════════════
+import "/tmp/u-h352/HEXAD/IIT4/lib/iit4_bigphi.hexa"
+import "/tmp/u-h352/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+
+fn _state_dir() -> string {
+    return "/tmp/u-h352/UNIVERSE/state/h352_collective_phi_super_additive_2026_05_28"
+}
+
+// LCG random in [0, full): deterministic per (seed, k) — used for sys_state pick.
+fn _lcg(seed: int, k: int, full: int) -> int {
+    let mut x = seed * 1103515245 + 12345 + k * 2654435761
+    if x < 0 { x = 0 - x }
+    return x % full
+}
+
+// build AB combined TPM with coupling W (float ∈ [0,1]).
+// layout — cell ordering: [a_0..a_{n_a-1}, b_0..b_{n_b-1}]; total n = n_a + n_b.
+// for each combined state s ∈ [0, 2^n):
+//   - extract A-substate (low n_a bits of s) → compute eca_a per-cell next
+//   - extract B-substate (next n_b bits)     → compute eca_b per-cell next
+//   - for a_i (i < n_a):
+//        if i < n_b: p = (1-W) * eca_a[i] + W * b_i
+//        else      : p = eca_a[i]                                (no partner)
+//   - symmetrically for b_j.
+fn _build_ab_tpm(rule_a: int, rule_b: int, n_a: int, n_b: int, w: float) -> array {
+    let n = n_a + n_b
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let a_state = s % iit4_pow2(n_a)
+        let b_state = (s / iit4_pow2(n_a)) % iit4_pow2(n_b)
+        // per-cell ECA next for A (ring within A only).
+        let mut i = 0
+        while i < n_a {
+            let l = iit4_bit(a_state, (i - 1 + n_a) % n_a)
+            let c = iit4_bit(a_state, i)
+            let r = iit4_bit(a_state, (i + 1) % n_a)
+            let idx = 4 * l + 2 * c + r
+            let eca_next = to_float(iit4_bit(rule_a, idx))
+            let mut p = eca_next
+            if i < n_b {
+                let partner = to_float(iit4_bit(b_state, i))
+                p = (1.0 - w) * eca_next + w * partner
+            }
+            t = t.push(p)
+            i = i + 1
+        }
+        // per-cell ECA next for B.
+        let mut j = 0
+        while j < n_b {
+            let l = iit4_bit(b_state, (j - 1 + n_b) % n_b)
+            let c = iit4_bit(b_state, j)
+            let r = iit4_bit(b_state, (j + 1) % n_b)
+            let idx = 4 * l + 2 * c + r
+            let eca_next = to_float(iit4_bit(rule_b, idx))
+            let mut p = eca_next
+            if j < n_a {
+                let partner = to_float(iit4_bit(a_state, j))
+                p = (1.0 - w) * eca_next + w * partner
+            }
+            t = t.push(p)
+            j = j + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+
+fn _f(x: float) -> string { return to_string(x) }
+
+
+fn main() {
+    println("H_352 — collective-phi-super-additive smoke (axis F1)")
+    println("  engine: stdlib/consciousness/iit4_bigphi.hexa (big_phi via M4)")
+    println("  honest: structure-cut big-Φ (M4 carve-out) · probabilistic mix coupling.")
+    println("")
+
+    let n_a = 3
+    let n_b = 3
+    let n_ab = n_a + n_b
+    let rules = [90, 110]
+    let ws = [0.0, 0.1, 0.5, 1.0]
+    let n_seeds = 5
+
+    let mut rows = []          // each row = [rule_a, rule_b, w, seed, phi_a, phi_b, phi_ab, delta]
+    let mut max_excess = -1.0e9
+    let mut max_excess_w = -1.0
+    let mut max_excess_rule_a = -1
+    let mut max_excess_rule_b = -1
+    let mut max_excess_seed = -1
+
+    // sanity: at W=0 the AB block is independent — Δ ≈ 0 expected.
+    let mut sanity_max_abs_delta_w0 = 0.0
+
+    // # of (W>0) configs with Δ > tolerance.
+    let tol = 1.0e-4
+    let mut superadd_hits = 0
+    let mut total_configs = 0
+
+    let mut ri = 0
+    while ri < len(rules) {
+        let rule_a = rules[ri]
+        let mut rj = 0
+        while rj < len(rules) {
+            let rule_b = rules[rj]
+
+            // pre-compute Φ(A), Φ(B) — per-seed varies sys_state only.
+            let t_a = eca_tpm(rule_a, n_a)
+            let t_b = eca_tpm(rule_b, n_b)
+
+            let mut wi = 0
+            while wi < len(ws) {
+                let w = ws[wi]
+                let t_ab = _build_ab_tpm(rule_a, rule_b, n_a, n_b, w)
+
+                let mut si = 0
+                while si < n_seeds {
+                    let seed = si + 1
+                    // pick a sys_state per seed for A, B, AB.
+                    let sa = _lcg(seed, ri * 10 + 1, iit4_pow2(n_a))
+                    let sb = _lcg(seed, rj * 10 + 2, iit4_pow2(n_b))
+                    // combined state = (sa) | (sb << n_a).  (independent for fair baseline.)
+                    let sab = sa + sb * iit4_pow2(n_a)
+
+                    let r_a = big_phi(t_a, n_a, sa)
+                    let r_b = big_phi(t_b, n_b, sb)
+                    let r_ab = big_phi(t_ab, n_ab, sab)
+                    let phi_a = r_a[0]
+                    let phi_b = r_b[0]
+                    let phi_ab = r_ab[0]
+                    let delta = phi_ab - phi_a - phi_b
+
+                    let mut row = []
+                    row = row.push(to_float(rule_a))
+                    row = row.push(to_float(rule_b))
+                    row = row.push(w)
+                    row = row.push(to_float(seed))
+                    row = row.push(phi_a)
+                    row = row.push(phi_b)
+                    row = row.push(phi_ab)
+                    row = row.push(delta)
+                    rows = rows.push(row)
+
+                    println("  rule_a=" + to_string(rule_a) + " rule_b=" + to_string(rule_b)
+                            + " W=" + _f(w) + " seed=" + to_string(seed)
+                            + " sa=" + to_string(sa) + " sb=" + to_string(sb) + " sab=" + to_string(sab)
+                            + "  Φ(A)=" + _f(phi_a) + "  Φ(B)=" + _f(phi_b)
+                            + "  Φ(AB)=" + _f(phi_ab) + "  Δ=" + _f(delta))
+
+                    total_configs = total_configs + 1
+
+                    if delta > tol { superadd_hits = superadd_hits + 1 }
+
+                    if w < 1.0e-9 {
+                        let mut abs_d = delta
+                        if abs_d < 0.0 { abs_d = 0.0 - abs_d }
+                        if abs_d > sanity_max_abs_delta_w0 { sanity_max_abs_delta_w0 = abs_d }
+                    } else {
+                        if delta > max_excess {
+                            max_excess = delta
+                            max_excess_w = w
+                            max_excess_rule_a = rule_a
+                            max_excess_rule_b = rule_b
+                            max_excess_seed = seed
+                        }
+                    }
+
+                    si = si + 1
+                }
+                wi = wi + 1
+            }
+            rj = rj + 1
+        }
+        ri = ri + 1
+    }
+
+    println("")
+    println("  TOTAL CONFIGS = " + to_string(total_configs))
+    println("  SANITY W=0 max|Δ| = " + _f(sanity_max_abs_delta_w0)
+            + "  (expect ≈ 0 — block-diagonal independence)")
+    println("  SUPER-ADDITIVE (Δ > " + _f(tol) + ") CONFIGS = " + to_string(superadd_hits)
+            + " / " + to_string(total_configs))
+    println("  MAX EXCESS Δ = " + _f(max_excess) + "  @ W=" + _f(max_excess_w)
+            + " rule_a=" + to_string(max_excess_rule_a)
+            + " rule_b=" + to_string(max_excess_rule_b)
+            + " seed=" + to_string(max_excess_seed))
+    println("")
+
+    // verdict gate.
+    let sanity_ok = sanity_max_abs_delta_w0 < 1.0e-6
+    let superadditive = (max_excess > tol) && sanity_ok
+    let subadditive = (max_excess <= tol) && (superadd_hits == 0)
+    let verdict = if superadditive { "🟢 SUPPORTED-NUMERICAL" }
+                  else { if subadditive { "🔴 FALSIFIED" }
+                         else { "🟠 INSUFFICIENT" } }
+    println("  VERDICT = " + verdict)
+    println("    sanity_W0_ok    = " + to_string(sanity_ok))
+    println("    superadditive   = " + to_string(superadditive))
+    println("    subadditive     = " + to_string(subadditive))
+
+    // ── result.json ──────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_352\",\n"
+    j = j + "  \"slug\": \"collective-phi-super-additive\",\n"
+    j = j + "  \"axis\": \"F · HIVE-MIND (round 1 / F1)\",\n"
+    j = j + "  \"date\": \"2026-05-28\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"engine\": \"stdlib/consciousness/iit4_bigphi.hexa (big_phi M4) via anima shim HEXAD/IIT4/lib/iit4_bigphi.hexa\",\n"
+    j = j + "  \"substrate\": \"two ECA rings A (n_a=3) and B (n_b=3); combined AB (n=6) with probabilistic-mix inter-coupling W\",\n"
+    j = j + "  \"rules\": [90, 110],\n"
+    j = j + "  \"W_sweep\": [0.0, 0.1, 0.5, 1.0],\n"
+    j = j + "  \"seeds\": " + to_string(n_seeds) + ",\n"
+    j = j + "  \"total_configs\": " + to_string(total_configs) + ",\n"
+    j = j + "  \"superadditive_hits\": " + to_string(superadd_hits) + ",\n"
+    j = j + "  \"sanity_W0_max_abs_delta\": " + _f(sanity_max_abs_delta_w0) + ",\n"
+    j = j + "  \"sanity_W0_ok\": " + to_string(sanity_ok) + ",\n"
+    j = j + "  \"max_excess_delta\": " + _f(max_excess) + ",\n"
+    j = j + "  \"max_excess_W\": " + _f(max_excess_w) + ",\n"
+    j = j + "  \"max_excess_rule_a\": " + to_string(max_excess_rule_a) + ",\n"
+    j = j + "  \"max_excess_rule_b\": " + to_string(max_excess_rule_b) + ",\n"
+    j = j + "  \"max_excess_seed\": " + to_string(max_excess_seed) + ",\n"
+    j = j + "  \"rows\": [\n"
+    let mut k = 0
+    while k < len(rows) {
+        let row = rows[k]
+        j = j + "    [" + to_string(row[0].to_int()) + ", " + to_string(row[1].to_int())
+              + ", " + _f(row[2]) + ", " + to_string(row[3].to_int())
+              + ", " + _f(row[4]) + ", " + _f(row[5])
+              + ", " + _f(row[6]) + ", " + _f(row[7]) + "]"
+        if k < len(rows) - 1 { j = j + "," }
+        j = j + "\n"
+        k = k + 1
+    }
+    j = j + "  ],\n"
+    j = j + "  \"row_columns\": [\"rule_a\", \"rule_b\", \"W\", \"seed\", \"phi_A\", \"phi_B\", \"phi_AB\", \"delta\"],\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"honest_tier\": \"" + verdict + " (structure-cut big-Φ M4 carve-out; n_a=n_b=3 small-n per M9 tractability; probabilistic-mix coupling = operational form of inter-coupling strength)\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+    println("")
+    println("  result.json -> " + _state_dir() + "/result.json")
+    println("=== H_352 collective-phi-super-additive smoke complete: " + verdict + " ===")
+}
