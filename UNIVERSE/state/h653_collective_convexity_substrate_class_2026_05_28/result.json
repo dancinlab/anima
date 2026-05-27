@@ -1,0 +1,97 @@
+{
+  "h_id": "H_653",
+  "slug": "collective-convexity-substrate-class",
+  "axis": "G×F cross-link (H_643 정밀화)",
+  "parents": "H_643 (PR #1237, 🟢 6/6, collective ultradian r=0.568, convexity-cause diagnosis) — 정밀화 대상",
+  "sister": "H_635 (collective-Φ super-additive, monotone-in-W), H_634 (single-substrate ultradian r=0.802), H_618 (collective gz inverse-U derivative peak)",
+  "date": "2026-05-28",
+  "infra": "$0 mac-local",
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "engine": "iit4 big_phi_bounded (H_635/H_643 engine 재사용, cohort rule 만 swap)",
+  "engine_params": {
+    "n": 5,
+    "cap": 3,
+    "sys_state": 0,
+    "cohort": "homogeneous [rule×5] for each of 4 ECA rules",
+    "streams": "5 cells, ring-coupled, sync_factor W gated"
+  },
+  "hypothesis": "collective-Φ 의 W→Φ curve convexity (span ratio Φ_max/Φ_min) 가 rule class 단조 의존 — class-IV(rule110) 가장 convex, class-II/additive 더 linear.",
+  "falsifier": "convexity 가 rule class 무관 → substrate-class 독립 (H_643 30x span 이 cohort artifact).",
+  "model": {
+    "rules": [184, 90, 30, 110],
+    "rule_class": {
+      "184": "II-additive (traffic, simplest ordered)",
+      "90": "III-XOR/additive (fractal, chaotic-additive)",
+      "30": "III-chaotic (non-additive)",
+      "110": "IV-complex (universal, edge-of-chaos — H_643 winner)"
+    },
+    "W_grid": [0.15, 0.40, 0.55, 0.70, 0.95, 1.0],
+    "W_grid_note": "H_643 ultradian-stage sync_factor set {0.15,0.40,0.70,0.95,1.0} + 0.55 mid-point",
+    "collective_phi_per_point": "big_phi_bounded(build_tpm_cohort([rule×5], W), 5, 0, 3)[0] — REAL IIT4 measurement per (rule,W) point",
+    "convexity": "span ratio Φ_max / (Φ_min + 0.0001 floor) over the W grid"
+  },
+  "measurements": {
+    "rule184_II_additive": {
+      "phi_W": [4.49492, 19.8846, 32.7523, 45.5429, 54.4631, 51.5361],
+      "phi_min": 4.49492,
+      "phi_max": 54.4631,
+      "span_ratio": 12.1163,
+      "W_monotone": false,
+      "note": "W=1.0 (51.54) < W=0.95 (54.46) — class-II additive collective-Φ peaks before full coupling then dips; non-monotone (F653.4 FAIL 원인)"
+    },
+    "rule90_III_xor_additive": {
+      "phi_W": [0.246475, 0.943149, 1.65498, 2.75808, 6.32388, 7.5],
+      "phi_min": 0.246475,
+      "phi_max": 7.5,
+      "span_ratio": 30.4167,
+      "W_monotone": true
+    },
+    "rule30_III_chaotic": {
+      "phi_W": [0.315809, 1.18852, 2.07721, 3.4687, 8.13002, 9.72067],
+      "phi_min": 0.315809,
+      "phi_max": 9.72067,
+      "span_ratio": 30.7705,
+      "W_monotone": true
+    },
+    "rule110_IV_complex": {
+      "phi_W": [1.17498, 4.50052, 7.62552, 13.6383, 34.8823, 41.7124],
+      "phi_min": 1.17498,
+      "phi_max": 41.7124,
+      "span_ratio": 35.4975,
+      "W_monotone": true,
+      "note": "Φ(0.15)=1.17, Φ(0.40)=4.50, Φ(0.70)=13.64, Φ(0.95)=34.88 — H_643 per-stage values (N3/N2/N1/REM) 와 정확히 일치 → engine replication 검증"
+    }
+  },
+  "span_ratio_by_class_ascending": {
+    "rule184_II": 12.1163,
+    "rule90_III": 30.4167,
+    "rule30_III": 30.7705,
+    "rule110_IV": 35.4975
+  },
+  "falsifiers": {
+    "F653_1_convexity_monotone": "PASS (sr110=35.50 >= sr30=30.77 >= sr90=30.42 >= sr184=12.12)",
+    "F653_2_class_iv_most_convex": "PASS (sr110=35.50 = max over 4 rules)",
+    "F653_3_additive_more_linear": "PASS (sr184=12.12 < sr110=35.50)",
+    "F653_4_w_monotone_each_rule": "FAIL (rule184 non-monotone: Φ(1.0)=51.54 < Φ(0.95)=54.46 — class-II additive collective-Φ peaks before full coupling)",
+    "F653_5_h643_replicate": "PASS (sr110=35.50 >= 10 — H_643 ~30x span = substrate-class property, replicated)",
+    "F653_6_bound": "PASS (all Φ_coll ≥ 0, span ratios finite)"
+  },
+  "aggregate": "5 PASS / 1 FAIL",
+  "h1_supported": "YES — F653.1 (core monotone-in-class) PASS; convexity rises monotonically with Wolfram complexity class, ruling out the cohort-artifact falsifier H0",
+  "comparison_h643": {
+    "h643_cohort": "rule110 [110×5], collective ultradian r=0.568, W→Φ span ~30x (diagnosed convexity cause)",
+    "h653_rule110_span_ratio": 35.4975,
+    "finding": "H_643 의 ~30x span 은 cohort artifact 가 아니라 substrate-class 속성 — rule110 (class-IV) 에서 span 35.5x 로 재현, class 가 내려갈수록(rule30→90→184) span 이 단조 감소(30.8→30.4→12.1). 즉 H_643 collective entrainment 약화(r 0.802→0.568)의 근본 원인인 convexity 가 substrate 복잡도에 비례."
+  },
+  "honest_c3": [
+    "C3.1 W 축소 NOT 적용 — 본 run 은 full 5-stream(n=5) × cap=3 × 6-pt W grid (24 big_phi_bounded calls, H_643 36-call 예산 내) 정상 실행. 무거운 한 run 회피 위해 fallback {0.15,0.40,0.70,0.95}/3-stream/cap=2 를 사전 명시했으나 사용 불필요 (단일 run <60s).",
+    "C3.2 cap=3 on n=5 (H_643 cap 상속) — purview search capped, 보수적 lower-bound. cap-monotone 으로 span 방향(class-IV 最高) 보존. cap↑ 시 절대값 상승하나 monotone 부호는 유지 추정.",
+    "C3.3 homogeneous cohort [rule×5] only — 각 rule 단일 동질 cohort. heterogeneous mix-class cohort (예: [110,30,90,184,110]) 의 convexity 는 별도 (§10 N1).",
+    "C3.4 F653.4 W-monotone FAIL = rule184(class-II additive) 단독 — Φ(W=1.0)=51.54 < Φ(W=0.95)=54.46. class-II additive 의 collective-Φ 가 full coupling 직전 peak 후 하강하는 non-monotone. 이는 H_635 monotone-in-W 가 모든 class 에 보편이 아님을 보이는 정직한 negative sub-finding — additive substrate 는 과결합 시 통합도가 도리어 감소. core 가설(F653.1 convexity monotone-in-class)은 무관하게 PASS.",
+    "C3.5 sys_state=0 only (IIT-canonical anchor). state-marginal 미수행.",
+    "C3.6 span ratio Φ_max/Φ_min = convexity proxy (정확한 2차미분/곡률 적분 아님). 단조성 부호 추출엔 충분하나 절대 convexity magnitude 는 proxy. faithful 곡률(2nd derivative integral)은 §10 N2.",
+    "C3.7 Wolfram class label 은 canonical ECA taxonomy (rule184=II, rule90/30=III, rule110=IV). class-III 내 rule90(additive/XOR) vs rule30(chaotic non-additive) 의 미세 분리(30.42 vs 30.77)는 작아 class-III 내부 순위는 약한 신호 (§7 caveat).",
+    "C3.8 deterministic single trajectory (NO RNG)."
+  ],
+  "reproduce": "HEXA_MAC_BUILD_OK=1 HEXA_LANG=<hexa-lang-root> hexa.real.bak-2026-05-22-pre-no-hxc build run_h653.hexa -o /tmp/h653.bin && codesign -s - --force /tmp/h653.bin && /tmp/h653.bin"
+}
