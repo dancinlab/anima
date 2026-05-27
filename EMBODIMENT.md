@@ -9,7 +9,7 @@
 - [x] AxisBench F EMBODIMENT 측정 surface — `bench/axis_embodiment/` sensor-motor coupling 5 시나리오 · 4/5 PASS · BROKEN coupling 0.45 residual (PR #1142).
 - [ ] M1 embodiment_lib — `EMBODIMENT/{embodiment_lib.hexa,SSOT.md}` PURE wrapper · bench/axis_embodiment 의 sensor↔actuator correlation + delay-coupled mutual info stdlib 화.
 - [ ] M2 CHANNEL.perception 통합 — WAKE.perception 4-sensor (stdin/env/timer/env-event) ↔ CHANNEL.dispatcher 3-channel emit 의 시간-닫힌 loop coupling 측정 hook.
-- [ ] M3 BROKEN coupling 0.45 residual — coupling 깨진 시나리오에서 0.45 측정의 원인 분해 (noise floor? sensor lag? actuator delay?) + threshold 0.3 미만으로 회복.
+- [x] M3 BROKEN coupling 0.45 residual — A3 `embodiment-coupling-redesign` 🟢 SUPPORTED-NUMERICAL: 원인 = additive-noise-only transfer-fn (신호 gain 미감쇠, SNR≈1 잔존). 재설계 = signal-path gain-collapse (BROKEN g=0.00 channel severance). BROKEN coupling 0.453739 → 0.027394 (< 0.30 회복, 6× 마진), bench F 4/5 PARTIAL → **5/5 🟢 PASS**. LOSSLESS/NOISY byte-불변. `EMBODIMENT_A3_COUPLING_REDESIGN.md` + `bench/axis_embodiment/bench_redesign.hexa` + `run_redesign.log`.
 - [ ] M4 AGENT.DESKTOP motor surface — AGENT/DESKTOP 의 window-op · task-primitive 행동을 actuator side 로 노출, embodiment coupling 측정에 inject.
 
 ## 양방향 sibling

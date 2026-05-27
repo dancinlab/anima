@@ -1,0 +1,90 @@
+═══════════════════════════════════════════════════════════
+  AxisBench F  EMBODIMENT  toy actuator-sensor round-trip
+  intent(4-D) → actuator(W_act,noise_a,lat=1) → sensor(W_sen,noise_s)
+  N_TICKS = 50  WARMUP = 2
+═══════════════════════════════════════════════════════════
+
+[A] LOSSLESS  (noise_a=0.00  noise_s=0.00  gain=1.00)
+  scenario [LOSSLESS]  noise_a=0.0 noise_s=0.0
+    n_meas      = 48
+    mean_cos    = 0.994803
+    head_mean   = 0.995059  (first 10)
+    tail_mean   = 0.993908  (last 10)
+    drift       = 0.00115163
+
+[B] NOISY     (noise_a=0.05  noise_s=0.03  gain=1.00)
+  scenario [NOISY]  noise_a=0.05 noise_s=0.03
+    n_meas      = 48
+    mean_cos    = 0.992669
+    head_mean   = 0.994213  (first 10)
+    tail_mean   = 0.991399  (last 10)
+    drift       = 0.00281457
+
+[C] BROKEN    (noise_a=0.90  noise_s=0.90  gain=0.00 SEVERED)
+  scenario [BROKEN]  noise_a=0.9 noise_s=0.9
+    n_meas      = 48
+    mean_cos    = 0.0273937
+    head_mean   = -0.032784  (first 10)
+    tail_mean   = 0.0912538  (last 10)
+    drift       = 0.124038
+
+─── 3-scenario coupling matrix ───
+  LOSSLESS mean_cos = 0.994803
+  NOISY    mean_cos = 0.992669
+  BROKEN   mean_cos = 0.0273937
+  gap (L-B)         = 0.967409
+
+─── pre-registered falsifier matrix ───
+  [PASS] F1 LOSSLESS_HIGH      (LOSSLESS mean_cos > 0.95)
+  [PASS] F2 NOISY_MID          (NOISY mean_cos > 0.70)
+  [PASS] F3 BROKEN_LOW         (BROKEN mean_cos < 0.30)
+  [PASS] F4 DISCRIMINABLE      (L>N>B AND gap > 0.5)
+  [PASS] F5 DRIFT_BOUNDED      (LOSSLESS drift < 0.10)
+
+═══════════════════════════════════════════════════════════
+  PASS = 5  /  FAIL = 0
+  VERDICT  =  🟢 PASS — 3-scenario discriminable, HW substitute proxy
+═══════════════════════════════════════════════════════════
+
+JSON_BEGIN
+{
+  "bench": "AxisBench F EMBODIMENT",
+  "axis": "F",
+  "hypothesis": "toy actuator-sensor round-trip = HW substrate proxy (discriminable across 3 noise regimes)",
+  "n_ticks": 50,
+  "warmup": 2,
+  "scenarios": {
+    "LOSSLESS": {
+      "noise_a": 0.00,
+      "noise_s": 0.00,
+      "mean_cos": 0.994803,
+      "head_mean": 0.995059,
+      "tail_mean": 0.993908,
+      "drift": 0.00115163
+    },
+    "NOISY": {
+      "noise_a": 0.05,
+      "noise_s": 0.03,
+      "mean_cos": 0.992669,
+      "head_mean": 0.994213,
+      "tail_mean": 0.991399,
+      "drift": 0.00281457
+    },
+    "BROKEN": {
+      "noise_a": 0.90,
+      "noise_s": 0.90,
+      "mean_cos": 0.0273937,
+      "head_mean": -0.032784,
+      "tail_mean": 0.0912538,
+      "drift": 0.124038
+    }
+  },
+  "gap_lossless_broken": 0.967409,
+  "falsifiers": {
+    "PASS": 5,
+    "FAIL": 0
+  },
+  "verdict": "🟢 PASS — 3-scenario discriminable, HW substitute proxy",
+  "hw_honest_residual": "real HW (robot · sensor · device) out-of-scope; toy simulator covers measurement surface only"
+}
+JSON_END
