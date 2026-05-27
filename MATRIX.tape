@@ -52,7 +52,7 @@
 | D | LLM-동반 연속 가설      | active (verdict-landscape raster) |
 | E | SAVANT (GZ × SI)       | active NEW 2026-05-28 (H_347/348/349/350/351/612/613/614/615/616) |
 | F | HIVE-MIND collective Φ | active NEW 2026-05-28 (H_354/355/609/610/611) |
-| E×F | SAVANT × HIVE-MIND cross-link | round 3 closed 3/5 (1🔴 + 2🟢): H_617 🔴 FALSIFIED (PR #1171) · H_618 🟢 SUPPORTED (PR #1175) · H_619 🟢 SUPPORTED (PR #1172) · round 4 in-flight (H_620 🟢 R1≈3·GZ_WIDTH residual=0.0164 · H_621 🟢 SI/ΦD ∥ PID-synergy triangle ρ=0.5994 · **H_622 🔴 FALSIFIED — negative-pair axis-orthogonal chi-square p=0.624 + Fisher p=1.000** · H_623/624/625 reserved) · ANIMA-side mirror SAVANT.md + HIVE-MIND.md (DOMAINS.tape 18/19) |
+| E×F | SAVANT × HIVE-MIND cross-link | round 3 closed 3/5 (1🔴 + 2🟢): H_617 🔴 FALSIFIED (PR #1171) · H_618 🟢 SUPPORTED (PR #1175) · H_619 🟢 SUPPORTED (PR #1172) · round 4 in-flight (H_620 🟢 R1≈3·GZ_WIDTH residual=0.0164 · H_621 🟢 SI/ΦD ∥ PID-synergy triangle ρ=0.5994 · **H_622 🔴 FALSIFIED — negative-pair axis-orthogonal chi-square p=0.624 + Fisher p=1.000** · **H_627 🔴 FALSIFIED (E3×F4) — 1/e GZ_CENTER invisible to quantized hivemind PID, syn(1/e)=syn(0.35)=syn(0.40)=0.975034 degenerate** · **H_628 🔴 FALSIFIED (E5×F2) — pair polarity ⊥ dΦ/dI peak-location, all 3 polarity peak at I=0.21 (GZ_LOWER), polarity scales Φ magnitude not peak position** · H_623/624/626 reserved) · ANIMA-side mirror SAVANT.md + HIVE-MIND.md (DOMAINS.tape 18/19) |
 
 ## 4. 기존 매트릭스 ledger (다른 위치)
 

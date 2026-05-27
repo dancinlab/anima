@@ -1,0 +1,36 @@
+H_637 emit-rate-phi-ratio-closed-form — verdict computation (2026-05-28, $0 mac-local)
+SOURCE: state/coffeshop_sim_seed_sweep_2026_05_24/sweep_summary.json (sha-anchored, N=10 seeds, 15 windows each)
+
+emit counts (n_windows=15): [6, 8, 3, 8, 6, 4, 6, 5, 8, 8]
+per-seed emit-rate: [0.4, 0.5333, 0.2, 0.5333, 0.4, 0.2667, 0.4, 0.3333, 0.5333, 0.5333]
+MULTI-SEED MEAN emit-rate = 0.41333  sd = 0.12090  range [0.2000,0.5333]
+ORIGINAL single-run (result.json seed 20260524 ref, emit=4) = 0.26667
+
+=== candidate closed-forms ===
+  GZ_LOWER=1/2-ln(4/3)     = 0.212318
+  ln(4/3)                  = 0.287682
+  1/e                      = 0.367879
+  1-1/e                    = 0.632121
+
+--- |emit-rate - candidate|, emit-rate = 0.41333 (multi-seed mean — ROBUST statistic) ---
+  GZ_LOWER=1/2-ln(4/3)     residual = 0.2010
+  ln(4/3)                  residual = 0.1257
+  1/e                      residual = 0.0455
+  1-1/e                    residual = 0.2188
+  BEST: 1/e residual = 0.0455  ->  FAIL (>0.03)
+
+--- |emit-rate - candidate|, emit-rate = 0.26667 (original single run (post-hoc, 1 seed)) ---
+  GZ_LOWER=1/2-ln(4/3)     residual = 0.0543
+  ln(4/3)                  residual = 0.0210  <= MATCH (±0.03)
+  1/e                      residual = 0.1012
+  1-1/e                    residual = 0.3655
+  BEST: ln(4/3) residual = 0.0210  ->  WITHIN ±0.03
+
+=== numerology cover-rate (H_620 §C3.2 methodology) ===
+  4 candidates × ±0.03 band, union over [0,1] = 0.2400  (24.0%)
+  => prior P(random rate lands in SOME band) = 0.24.  ~1-in-4. Single-run 'match' indistinguishable from chance.
+
+VERDICT: 🔴 FALSIFIED.
+  - Robust multi-seed mean (0.4133) misses ALL candidates (best 1/e residual 0.0455 > 0.03).
+  - Only the cherry-picked single seed (0.2667) matches ln(4/3) — post-hoc selection (H_620 caveat).
+  - emit-rate = upper-tail mass of motivation_score>0.60; mean score 0.5518 -> threshold-dependent CONTINUOUS, not a closed-form invariant.

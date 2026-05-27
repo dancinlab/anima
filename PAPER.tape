@@ -4,3 +4,4 @@
 @paper bijection-vs-life-axis := "./bijection-vs-life-axis"
 @paper h345-class-iv-scope := "./h345-class-iv-scope"
 @paper collective-phi-axis-orthogonality := "./collective-phi-axis-orthogonality"
+@paper savant-iit4-bridge := "./PAPER/savant-iit4-bridge"

@@ -1,0 +1,80 @@
+================================================================
+  H_628 — inverse-U dΦ/dI peak shift by pair polarity (E5×F2)
+  H_351 (dΦ/dI inverse-U) × H_610 (pair polarity, 🔴)
+  Substrate: 2-ECA joint n=4 · seed (rule_a=30,rule_b=30,sys=10)
+================================================================
+
+  polarity=attract :
+    I=0.05 Φ=17.6875
+    I=0.1 Φ=17.0943
+    I=0.15 Φ=16.6071
+    I=0.18 Φ=17.2577
+    I=0.21 Φ=15.689
+    I=0.23 Φ=15.3391
+    I=0.25 Φ=14.982
+    I=0.3 Φ=13.026
+    I=0.35 Φ=11.9717
+    I=0.4 Φ=10.8806
+    I=0.5 Φ=8.13003
+    I=0.7 Φ=4.77431
+    I=0.95 Φ=0.406897
+    → dΦ/dI peak at I=0.21 (grid idx 4), sign-changes=2
+    → Φ(I=0)=17.1303  Φ(I=1)=0.0
+
+  polarity=repel :
+    I=0.05 Φ=7.51744
+    I=0.1 Φ=6.78804
+    I=0.15 Φ=6.31185
+    I=0.18 Φ=6.77573
+    I=0.21 Φ=5.96052
+    I=0.23 Φ=5.2288
+    I=0.25 Φ=4.77229
+    I=0.3 Φ=4.40361
+    I=0.35 Φ=4.01333
+    I=0.4 Φ=3.63673
+    I=0.5 Φ=2.92167
+    I=0.7 Φ=1.75006
+    I=0.95 Φ=0.249077
+    → dΦ/dI peak at I=0.21 (grid idx 4), sign-changes=0
+    → Φ(I=0)=7.79923  Φ(I=1)=0.0
+
+  polarity=bipolar :
+    I=0.05 Φ=10.4054
+    I=0.1 Φ=8.94298
+    I=0.15 Φ=8.27104
+    I=0.18 Φ=8.8163
+    I=0.21 Φ=7.15164
+    I=0.23 Φ=6.43099
+    I=0.25 Φ=6.22251
+    I=0.3 Φ=5.71519
+    I=0.35 Φ=5.22677
+    I=0.4 Φ=4.60869
+    I=0.5 Φ=3.80127
+    I=0.7 Φ=2.03606
+    I=0.95 Φ=0.319857
+    → dΦ/dI peak at I=0.21 (grid idx 4), sign-changes=0
+    → Φ(I=0)=10.3007  Φ(I=1)=0.0
+
+  ── per-polarity dΦ/dI peak position ──
+    attract : I_peak = 0.21
+    repel   : I_peak = 0.21
+    bipolar : I_peak = 0.21
+  F628.1 max pairwise |ΔI_peak| = 0.0
+  [FAIL] F628.1 POLARITY-SHIFTS-PEAK (max pairwise |ΔI_peak| ≥ 0.05)
+  F628.2 distinct peak-I values = 1
+  [FAIL] F628.2 PEAK-DISTINCT-COUNT (≥ 2 distinct peak-I among 3 polarities)
+  F628.3 sign-changes attract=2 repel=0 bipolar=0
+  [FAIL] F628.3 UNIMODAL-PER-POLARITY (each polarity dΦ/dI sign-change ≤ 1)
+  [PASS] F628.4a ANCHOR I=0 all-3-polarity Φ > 0 (non-degenerate H_610 seed-2)
+  F628.4b Φ(I=1) attract=0.0 repel=0.0 bipolar=0.0
+  [PASS] F628.4b ANCHOR I=1 full-inhibit Φ ≈ 0 (H_351 F4 decay)
+  [PASS] F628.5b DETERMINISM re-run byte-identical (attract I=0.18)
+  [PASS] F628.5a BOUND Φ ≥ 0 anchors
+================================================================
+  RESULT: 4 PASS / 3 FAIL  (n_polarity=3, grid=13)
+  VERDICT: H1 FALSIFIED — the dΦ/dI peak position is POLARITY-INVARIANT
+           (all 3 polarities peak at the same I). polarity ⊥ derivative-
+           peak-LOCATION, extending H_610's polarity ⊥ Φ-MAGNITUDE closed-
+           negative to the structural (peak-position) axis.
+================================================================
+panic: H_628 had FALSIFIER FAILURES
