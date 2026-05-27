@@ -2,6 +2,17 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-28T10:30:00Z — D4 model-merge α-sweep 🟢 SUPPORTED (negative baseline · merge escape 부재)
+
+- [x] 가설 (negative-oriented) — collapse-avoid A · collapse B 의 weight 보간 α-sweep 이 더블바인드 escape **못함** (어떤 α 도 coherence ∧ non-collapse 동시 달성 실패 = least-bad midpoint)
+- [x] ⚠ a_completeness_over_cheap 경계 — D4 = optional baseline probe 만 (model-merge 본선 아님). merge-of-failures `dont` 를 측정으로 확증하는 negative baseline
+- [x] method — logit-space `L_merge=α·L_A+(1-α)·L_B` → argmax decode → D1 LZ76 proxy(non-collapse) + CE(coherence). A=flat-diverse(underfit) / B=sharp-spike(collapse). VSLOT wide-spread id-map(g61)로 LZ binarisation 풍부화
+- [x] 측정 — α∈{0,0.25,0.5,0.75,1.0}: LZ_norm = 0.165(α≤0.75 전부 collapse) → 0.826(α=1). CE = 10.8 → 1.82 (어떤 α 도 ceil 1.20 미달 못함)
+- [x] finding — interior escape 부재. `{LZ>floor}={1.0}` ∩ `{CE≤ceil}=∅` → 더블바인드 가시화. argmax 가 α=0.75 까지 collapse attractor(id 3402) 지배 후 α=1 에서 sharp 전환
+- [x] verdict — 🟢 SUPPORTED (negative baseline 확증) · 7/7 falsifier PASS · $0 mac-local foreground · exit 0
+- [x] 함의 — merge 본선 강등(`a_completeness_over_cheap`) 측정으로 정당화. 본선 = MoE-fresh register 분리(M4, H_490) 유지. D1(LZ76)·D3(corpus-driven) 와 합쳐 "근본 재설계가 통로" 보강
+- [x] artifacts — `D4_MERGE_ALPHA_SWEEP.md` (10-section) · `d4_merge_alpha_sweep.hexa` · `state/d4_merge_alpha_sweep_2026_05_28/run_d4.out`. LZ76 = D1 `lz_norm` verbatim 재사용 (g61)
+
 ## 2026-05-28T09:00:00Z — D3 router load-balance 🟢 SUPPORTED (불균형은 corpus-driven · router-structural 아님)
 
 - [x] 가설 — top-1 router 가 diverse corpus 에서 expert load 균형 분산 (각 활용률 > 0.1 · monopoly >0.9 없음). 불균형 = collapse 구조적 전조 (M4b e1 saturate)
