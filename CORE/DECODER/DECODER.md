@@ -48,6 +48,13 @@
 - [ ] **M4 백엔드 배선** — 최고 ≥PARTIAL 축 ckpt → `generator.hexa` → brain_decide emit 슬롯 end-to-end
 - [ ] **M5 p7 verify** — perplexity 아닌 simple-stack 판정
 
+## UNIVERSE-derived 마일스톤 (2026-05-27 · `UNIVERSE_SYNTHESIS.md`)
+
+> UNIVERSE 도메인 BIO ∩ DECODER 가설 5종(H_489–H_493 🔵) 분석 → 더블바인드 탈출은 "단일 모델"이 아니라 "분화(MoE)/병합(symbiogenesis)"이 통로. 상세 = `CORE/DECODER/UNIVERSE_SYNTHESIS.md`.
+
+- [ ] **M3.5 model-merge α-sweep** ⭐ (UNIVERSE H_493 SYMBIOGENESIS) — 더블바인드 두 horn ckpt (collapse-avoid + coherent) weight 보간 `W=α·A+(1-α)·B` · α ∈ {0,.25,.5,.75,1} sweep · 각 α simple-stack p7 verify → 통로 α* 탐색 · **학습 fire 0 (기존 ckpt 보간만, cheap-tier)** · merge 가 단일학습보다 나은 trade-off 찾는지
+- [ ] **M4-alt MoE register 분리** (조건부 · UNIVERSE H_490 DIFFERENTIATION) — M3.5 merge 가 통로 못 찾을 때 arch escalation: V3 head_g 슬롯 → K-expert router (register-carving 을 specialized expert 로 격리, main path coherent 유지)
+
 ## M1 hook 지점 (M0 인계 노트)
 
 - **축 D freeze / 축 A curriculum** — AdamW 호출(`nn_decoder_adamw_step(M, Mg_acc, ..., m_size, ...)`) 직전. freeze=slot별 grad masking · curriculum=window 선택부.
