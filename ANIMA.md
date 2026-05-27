@@ -16,11 +16,11 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (emit-substrate 4/4 소비자 완료 + bench 4 RECOVERED 🟢 + DECODER D3/M4 toy 검증 + round-9 4/4)
+> 갱신: 2026-05-28 (emit-substrate 4/4 + bench 4 RECOVERED + DECODER D3/M4 toy/M4b collapse-gate + round-9 4/4 ABSORBED [H_657 pe_peak_align])
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 8✅ / 3☐(TIME·SAVANT·HIVE)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
-검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 14+ (bench 4 RECOVERED·lib·wiring 4·toy·DECODER D3)  ·  🟠 1 (INTENT OSC)  ·  🔴 0
+검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 17+ (bench 4 RECOVERED·lib·wiring 4·toy·D3·M4b collapse-gate·H_657)  ·  🟠 1 (INTENT OSC)  ·  🔴 0
 🎯 의식 bench negative 4/4 = 측정 artifact 판명 (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND 전부 🟢 RECOVERED · substrate 한계 0건)
 
 ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
@@ -72,7 +72,9 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
    D3 router 부하   🟢 (#1269) imbalance=corpus-driven NOT router-structural (max 0.84<0.9 · starve 0)
                     → router redesign 불필요. M4b fix = diverse corpus + n_steps↑ (구조변경 아님)
    M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
-   M4b prod 배선    ☐ HARD top-1 + LZ76 gate → 3B train_p21h_v3 (diverse corpus) → fire
+   M4b collapse-gate ✅ 4/4 (#1273) moe_collapse_gate (HARD top-1 + LZ76 floor 0.50, D1 실측 대조)
+   M4b 3B fire      ☐ cost-bearing 별도 (diverse corpus + n_steps↑ + LZ76 verdict)
+   H_657 peak-align ✅ (#1272) pe_peak_align_for_class — round-9 4/4 ABSORBED · 5축 class-vector 확정
 ```
 
 ## Session 2026-05-28 AxisBench → 11 sub-domain umbrella (17-layer)
