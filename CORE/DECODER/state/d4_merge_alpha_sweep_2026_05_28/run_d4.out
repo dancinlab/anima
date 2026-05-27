@@ -1,0 +1,31 @@
+================================================================
+  D4 — model-merge alpha-sweep (UNIVERSE H_493 SYMBIOGENESIS)
+  OPTIONAL BASELINE PROBE — confirm merge does NOT escape double-bind
+  W = a*A + (1-a)*B in logit space -> argmax decode -> D1 LZ76 + CE
+================================================================
+  --- alpha sweep (LZ_norm = D1 proxy, CE = coherence proxy) ---
+    a       LZ_norm     CE        decode-argmax(first 8)
+   0.0    0.165119   10.8   [3402 3402 3402 3402 3402 3402 3402 3402 ...]
+   0.25    0.165119   8.03337   [3402 3402 3402 3402 3402 3402 3402 3402 ...]
+   0.5    0.165119   5.28232   [3402 3402 3402 3402 3402 3402 3402 3402 ...]
+   0.75    0.165119   2.7995   [3402 3402 3402 3402 3402 3402 3402 3402 ...]
+   1.0    0.825597   1.82224   [101 3402 57 8891 44210 765 99001 71234 ...]
+  --
+  endpoint B (a=0): LZ_norm=0.165119 CE=10.8  (collapse horn: LOW LZ, HIGH CE on diverse truth)
+  endpoint A (a=1): LZ_norm=0.825597 CE=1.82224  (underfit horn: HIGH LZ, still CE>ceil = flat)
+  HEALTHY_FLOOR=0.5  CE_OK=1.2
+  [PASS] F-D4.1 ESCAPE: NO interior alpha with LZ>floor AND CE<=ceil (baseline=no escape)
+  [PASS] F-D4.2a ENDPOINT: a=0 collapse-horn B (LZ_norm < floor)
+  [PASS] F-D4.2b ENDPOINT: a=1 diverse-horn A (LZ_norm > floor)
+  [PASS] F-D4.2c ENDPOINT: horns distinct in LZ (a=0 collapse < a=1 diverse)
+  [PASS] F-D4.3 MONOTONE-LZ: LZ_norm(alpha) non-decreasing in alpha
+  [PASS] F-D4.4 BIND-TRADEOFF: interior {LZ>floor} disjoint {CE<=ceil} (double-bind visible)
+  [PASS] F-D4.5 DETERMINISM: a=0.5 LZ_norm re-run identical
+================================================================
+  RESULT: 7 PASS / 0 FAIL
+  VERDICT: H_D4 SUPPORTED (negative baseline confirmed)
+           NO interior alpha escapes the double-bind:
+           coherence (CE<=ceil) and non-collapse (LZ>floor) are
+           DISJOINT on the merge interior. merge-of-failures =
+           least-bad midpoint, NOT the main path (a_completeness).
+================================================================
