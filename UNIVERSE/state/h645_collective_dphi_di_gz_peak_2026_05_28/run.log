@@ -1,0 +1,44 @@
+════════════════════════════════════════════════════════════
+H_645 collective dΦ_collective/dI GZ peak (H_635 × H_618)
+  5-stream C1[110x5] · n=5 · W=1.0 · cap=3 · sys=0 (H_635 anchor)
+  axis F · HIVE-MIND collective × inverse-U GZ cross-link
+════════════════════════════════════════════════════════════
+── Φ_collective(I) ──
+  I=0.1  Φ_c=27.6022
+  I=0.15  Φ_c=22.24
+  I=0.18  Φ_c=19.5911
+  I=0.21  Φ_c=17.1593
+  I=0.25  Φ_c=15.5932
+  I=0.3  Φ_c=13.6383
+  I=0.4  Φ_c=8.78237
+  I=0.5  Φ_c=6.54186
+
+── dΦ_collective/dI ──
+  I=0.1  dΦ_c/dI=-107.243
+  I=0.15  dΦ_c/dI=-100.139
+  I=0.18  dΦ_c/dI=-84.6791
+  I=0.21  dΦ_c/dI=-57.1123
+  I=0.25  dΦ_c/dI=-39.1221
+  I=0.3  dΦ_c/dI=-45.4059
+  I=0.4  dΦ_c/dI=-35.4822
+  I=0.5  dΦ_c/dI=-22.405
+
+── verdict ──
+  peak I             = 0.1
+  GZ_LOWER           = 0.21232
+  |Δ|                = 0.11232   (tol 0.05)
+  peak |dΦ_c/dI|     = 107.243
+  sign changes       = 0
+  Φ_c(0.25)          = 15.5932
+  Φ_c(0.50)          = 6.54186
+  byte_eq            = true
+
+  F1 PEAK-IN-GZ            = false
+  F2 PEAK-IN-WINDOW        = false
+  F3 UNIMODAL              = true
+  F4 MONOTONE-DECAY-RIGHT  = true
+  F5 BYTE-EQUAL            = true
+
+  VERDICT = FALSIFIED
+════════════════════════════════════════════════════════════
+wrote UNIVERSE/state/h645_collective_dphi_di_gz_peak_2026_05_28/result.json
