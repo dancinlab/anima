@@ -557,17 +557,22 @@ fn main() {
     let ckpt_path = "/root/ckpt.txt"
     let meta_path = "/root/ckpt_meta.txt"
     println("  ── ckpt save start ──")
-    // build text content: m_size lines, each one float
-    let mut ckpt_body = ""
+    // chunked append: 100k doubles per chunk to avoid O(n²) string concat.
+    let _ = write_file(ckpt_path, "")
+    let chunk = 100000
     let mut ki = 0
     while ki < m_size {
-        ckpt_body = ckpt_body + to_str(farr_get(M, ki)) + "\n"
-        ki = ki + 1
-        // progress every 1M
+        let mut chunk_body = ""
+        let mut cnt = 0
+        while cnt < chunk && ki < m_size {
+            chunk_body = chunk_body + to_string(farr_get(M, ki)) + "\n"
+            ki = ki + 1
+            cnt = cnt + 1
+        }
+        let _ = append_file(ckpt_path, chunk_body)
         if ki % 1000000 == 0 { print("    ckpt dump progress "); print(ki); print("/"); println(m_size) }
     }
-    let _ = write_file(ckpt_path, ckpt_body)
-    let meta_body = "V " + to_str(V) + "\nd " + to_str(d) + "\nE " + to_str(E) + "\nh " + to_str(h) + "\nn_layer " + to_str(n_layer) + "\nT " + to_str(T) + "\nn_corpus_toks " + to_str(n_corpus_toks) + "\nm_size " + to_str(m_size) + "\n"
+    let meta_body = "V " + to_string(V) + "\nd " + to_string(d) + "\nE " + to_string(E) + "\nh " + to_string(h) + "\nn_layer " + to_string(n_layer) + "\nT " + to_string(T) + "\nn_corpus_toks " + to_string(n_corpus_toks) + "\nm_size " + to_string(m_size) + "\n"
     let _ = write_file(meta_path, meta_body)
     print("  ── ckpt save end · "); print(m_size); print(" doubles → "); println(ckpt_path)
 
