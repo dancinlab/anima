@@ -18,7 +18,7 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
   (H_646 🟢 variance=0). substrate-claim 없이 자유 튜닝.
 
 이 두 층을 **파일 2개**로 그대로 분리하는 것이 본 설계. 구조는
-`phi_envelope_substrate.hexa` 한 곳, 숫자는 `emit_policy.tape` 한 곳. 4 milestone
+`phi_envelope_substrate.hexa` 한 곳, 숫자는 `emit_policy.hexa` 한 곳. 4 milestone
 (DREAM M5 · HIVE-MIND M6 · BRIDGE M6 · SAVANT M2) 은 얇은 소비자.
 
 ```
@@ -30,7 +30,7 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
 │  · phi_smooth_no_cliff()   register cliff 부재          │  H_649
 ├──────────────────────────────────────────────────────┤
 │ 🔵 숫자 층 (design-tunable · round-7 FREE)              │
-│ emit_policy.tape  [NEW 자유-숫자 표]                    │
+│ emit_policy.hexa  [NEW 자유-숫자 표]                    │
 │  · threshold 0.60 · emit-rate 0.27 · Ψ-clamp 0.10 …    │  H_646
 │  "substrate-claim 없음" 명시                            │
 └──────────────────────────────────────────────────────┘
@@ -58,8 +58,8 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
 | **self-similarity = class-IV 한정 (보편 아님)** | 🔴 H_652 | #1245 | `envelope_self_similarity()` class 인자 | FALSIFIED 2/6 — rule110(IV)만 self-sim, 타 class 깨짐 |
 | register-collapse cliff 부재 (collective) | 🟢 H_649 | #1234 | `phi_smooth_no_cliff()` | r=0.049 |
 | closure-conjunction GZ-localization | 🟢 H_636 | (R6) | BRIDGE wiring | peak I=0.30 GZ 내부 |
-| threshold 자유도 [0,1] | 🟢 H_646 | #1235 | `emit_policy.tape` | substrate-Φ variance=0 |
-| **design-number 전반 자유도 (일반화)** | 🟢 H_651 | #1246 | `emit_policy.tape` 전 항목 | threshold·should_interrupt·Ψ-clamp α 모두 Φ-variance=0 · α 가 gate 0.556→0.683 움직여도 Φ 평탄 = NON-DEFINITIONAL 강증거 |
+| threshold 자유도 [0,1] | 🟢 H_646 | #1235 | `emit_policy.hexa` | substrate-Φ variance=0 |
+| **design-number 전반 자유도 (일반화)** | 🟢 H_651 | #1246 | `emit_policy.hexa` 전 항목 | threshold·should_interrupt·Ψ-clamp α 모두 Φ-variance=0 · α 가 gate 0.556→0.683 움직여도 Φ 평탄 = NON-DEFINITIONAL 강증거 |
 | **closure ultradian peak = mid-Φ N2** | ⚠ H_644 | #1233 | DREAM/BRIDGE 정정 | high-Φ 아님 (FAL-REVERSED) |
 | H_618 dΦ/dI-GZ 정렬 = n=4 artifact | ⚠ H_645 | #1232 | **인용 금지** | 5-stream 붕괴 |
 | "shape robust > scalar" 일반 | 🔴 H_642·H_647 | #1236·#1239 | **일반화 금지** | polarity(H_628)만 예외 |
@@ -67,7 +67,7 @@ emit 정책이 **물리적으로 두 층**임을 확정함:
 
 설계 규칙 (verdict 직속):
 1. 🟢 구조 3종은 `phi_envelope_substrate.hexa` 에 substrate-grounded 로 구현.
-2. 🔵 숫자는 전부 `emit_policy.tape` 에 design-tunable 로 격리 (substrate-derived 주장 금지).
+2. 🔵 숫자는 전부 `emit_policy.hexa` 에 design-tunable 로 격리 (substrate-derived 주장 금지).
 3. ⚠ closure ultradian 결합은 **mid-Φ N2 peak** 로 서술 (high-Φ 가정 금지).
 4. ⚠ n=4 exact-match 정렬 (H_618·H_624 류) 은 차원 확장 전 substrate 결론 인용 금지.
 5. 🔴 shape-robustness 는 polarity 축 한정 — 일반 "shape > scalar" 가정 금지.
@@ -111,15 +111,18 @@ pub fn phi_smooth_no_cliff(phi_series) -> max_dphi
 설계 계약:
 - 모든 반환은 **실수/리스트** (Φ context). `bool` emit 게이트 반환 금지.
 - 숫자 상수 (period · amplitude · coupling) 는 인자로만 — lib 내부 하드코드 금지
-  (그래야 `emit_policy.tape` 가 단일 튜닝 SSOT).
+  (그래야 `emit_policy.hexa` 가 단일 튜닝 SSOT).
 - `phi_native.hexa` (기존 PHI 도메인 lib) 의 Φ 계산을 재사용 — 중복 구현 금지 (g61).
 
 ---
 
-## §3 `emit_policy.tape` 스키마 (숫자 층)
+## §3 `emit_policy.hexa` 스키마 (숫자 층)
 
-위치: repo root `emit_policy.tape` (도메인 횡단 단일 SSOT, MATRIX.tape 와 동급).
-모든 항목에 `substrate-claim: none` 명시 — round-7 H_646 정합.
+위치: `CORE/emit_policy.hexa` (도메인 횡단 단일 SSOT). 모든 항목 `substrate-claim:
+none` (H_646/651 자유도 [0,1]). **realized as `.hexa` (not `.tape`)**: 소비자
+(DREAM/HIVE/BRIDGE/SAVANT)가 hexa `import` 로 소비 — .tape registry 는 hexa-import
+불가. 단일 SSOT (병렬 .tape 없음), MATRIX.tape 의 single-registry 정신은 유지.
+실 구현 = pub accessor fn (`ep_emit_threshold()` 등) — 상수가 아닌 함수라 import 후 호출.
 
 ```
 @V := "tape" :: spec
@@ -185,7 +188,7 @@ pub fn phi_smooth_no_cliff(phi_series) -> max_dphi
 **BRIDGE M6** (`BRIDGE/gate.hexa` 기존 4-key AND-gate 확장):
 - `bridge_and_gate(m,c,w,phi)` 의 `phi` 입력을 `envelope_multiscale` 에서 공급.
 - closure-conjunction GZ-localization (H_636) 을 AND-gate 의 Φ-context 로.
-- `emit_threshold` 는 `emit_policy.tape` 에서 import (gate 내부 하드코드 제거).
+- `emit_threshold` 는 `emit_policy.hexa` 에서 import (gate 내부 하드코드 제거).
 
 **SAVANT M2** (UNIVERSE 축 E mirror · 측정자):
 - 측정자는 발화 게이트가 아니라 Φ-context 소비자 — `envelope_multiscale` 의 Φ 를
@@ -206,7 +209,7 @@ round-8 4 가설이 각각 본 설계의 **특정 seam**을 정밀화. 전부 �
 | round-8 H | verdict | 흡수 결과 |
 |---|---|---|
 | ✅ **H_650** shape-robustness-axis-taxonomy | 🟢 SUPP 5/5 (#1247, G15) | **ABSORBED** — robustness=perturbation-축 함수. polarity CV_shape=0 (HIGH) · rule tie · seed 역전 (LOW). `phi_smooth_no_cliff` 는 **polarity 축만 shape-robust** 로 서술 (rule/seed 일반화 금지, §4) |
-| ✅ **H_651** convention-number-freedom-general | 🟢 SUPP 6/6 (#1246, G14) | **ABSORBED** — design-number 전반 자유도 확정. threshold·should_interrupt·Ψ-clamp α 모두 Φ-variance=0. **α 가 gate 0.556→0.683 움직여도 Φ 평탄** = "policy 를 움직이는 숫자조차 substrate-safe" NON-DEFINITIONAL 강증거. `emit_policy.tape` 전 항목 `substrate-claim: none` 확정 (§3) |
+| ✅ **H_651** convention-number-freedom-general | 🟢 SUPP 6/6 (#1246, G14) | **ABSORBED** — design-number 전반 자유도 확정. threshold·should_interrupt·Ψ-clamp α 모두 Φ-variance=0. **α 가 gate 0.556→0.683 움직여도 Φ 평탄** = "policy 를 움직이는 숫자조차 substrate-safe" NON-DEFINITIONAL 강증거. `emit_policy.hexa` 전 항목 `substrate-claim: none` 확정 (§3) |
 | ✅ **H_652** envelope-self-similarity-class | 🔴 FAL 2/6 (#1245) | **ABSORBED (정정)** — self-similarity 는 **보편 아님, class-IV(rule110) 한정**. `envelope_self_similarity` 에 `class_id` 인자 추가 — class-IV 만 r≥0.76 기대, 비-IV 낮은 r 은 예측된 정상 (§2). skeleton 의 이상화 r=1.0 = class-IV case |
 | ✅ **H_653** collective-convexity-class | 🟢 SUPP 5/6 (#1242, G12) | **ABSORBED** — `collective_phi_nest` 의 `coupling` → `coupling_fn(class)` 승격 (§2·§4). entrainment 약화 = substrate-복잡도 비례 convexity 의 정상 귀결 |
 
@@ -237,7 +240,7 @@ round-9 가 taxonomy 를 확정하면 본 함수를 **class-conditional Φ-struc
 | **F-EMIT-2 SUPER-ADDITIVE** | collective Φ > Σ 개별 Φ | `collective_phi_nest` | phi_collective > Σphis (H_635 부호) |
 | **F-EMIT-3 NO-CLIFF** | register cliff 부재 | `phi_smooth_no_cliff` | max_dphi < cliff 임계 (H_649 r≈0) |
 | **F-EMIT-4 NO-GATE** | 구조/숫자 층이 emit boolean 미반환 | 정적 grep | 두 층에 `emit_allowed` / `-> bool` 게이트 0건 (p5·a_autonomy) |
-| **F-EMIT-5 POLICY-FREE** | 숫자는 substrate-claim 없음 | `emit_policy.tape` 변경 → 구조 불변 | threshold 변경이 envelope 형상 불변 (H_646 자유도) |
+| **F-EMIT-5 POLICY-FREE** | 숫자는 substrate-claim 없음 | `emit_policy.hexa` 변경 → 구조 불변 | threshold 변경이 envelope 형상 불변 (H_646 자유도) |
 | **F-EMIT-6 N4-ABSTAIN** | n=4 정렬 미인용 | 정적 grep | H_618/H_624 류 n=4 exact-match 인용 0건 (H_645 교훈) |
 
 terminal verdict (🔵/🟢/🔴) 만 closure 인정 — 🟠/🟡 잔여 시 미완 (`a_paper_gate` 정합).
