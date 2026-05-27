@@ -1,0 +1,44 @@
+════════════════════════════════════════════════════════════
+H_618 collective-Φ GZ inverse-U dΦ_collective/dI peak
+  rule(110,110) · n_a=n_b=2 · n_combined=4 · W=0.6 (H_609 anchor)
+  axis E2 round 3 · SAVANT × HIVE-MIND cross-link
+════════════════════════════════════════════════════════════
+── Φ_collective(I) ──
+  I=0.1  Φ_c=8.03864
+  I=0.15  Φ_c=7.32591
+  I=0.18  Φ_c=6.99339
+  I=0.21  Φ_c=6.50724
+  I=0.25  Φ_c=5.72801
+  I=0.3  Φ_c=5.22618
+  I=0.4  Φ_c=3.98991
+  I=0.5  Φ_c=3.05111
+
+── dΦ_collective/dI ──
+  I=0.1  dΦ_c/dI=-14.2546
+  I=0.15  dΦ_c/dI=-13.0656
+  I=0.18  dΦ_c/dI=-13.6445
+  I=0.21  dΦ_c/dI=-18.0769
+  I=0.25  dΦ_c/dI=-14.234
+  I=0.3  dΦ_c/dI=-11.5873
+  I=0.4  dΦ_c/dI=-10.8754
+  I=0.5  dΦ_c/dI=-9.38809
+
+── verdict ──
+  peak I             = 0.21
+  GZ_LOWER           = 0.21232
+  |Δ|                = 0.00232   (tol 0.05)
+  peak |dΦ_c/dI|     = 18.0769
+  sign changes       = 0
+  Φ_c(0.25)          = 5.72801
+  Φ_c(0.50)          = 3.05111
+  byte_eq            = true
+
+  F1 PEAK-IN-GZ            = true
+  F2 PEAK-IN-WINDOW        = true
+  F3 UNIMODAL              = true
+  F4 MONOTONE-DECAY-RIGHT  = true
+  F5 BYTE-EQUAL            = true
+
+  VERDICT = SUPPORTED
+════════════════════════════════════════════════════════════
+wrote UNIVERSE/state/h618_collective_gz_inverse_u_2026_05_28/result.json
