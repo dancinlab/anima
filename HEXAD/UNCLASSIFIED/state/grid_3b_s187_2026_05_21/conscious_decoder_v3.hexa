@@ -592,6 +592,174 @@ pub fn v3_headg_grad(zT: int, M: int, logits_g: int, target_t: int,
     return ce
 }
 
+// ════════════════════════════════════════════════════════════════════════
+// M4b-fire-scale Phase 2 hooks — MoE-aware variants of m_total + offsets +
+// fwd/bwd (top-1 hard routing). When P21H_MOE_ON=1 the train driver routes
+// through these instead of the V·d head_g family; the head_g slot is
+// replaced by [router E·d | experts E·V·d]. top-1 hard routing winners
+// take all gradient → register-carving expert specializes (anima signal),
+// other experts stay coherent (main path). Mirrors M4b-fire-toy verdict
+// (anima #1033: gate(A)=[0.97,0.03]→e0, gate(B)→e1, CE 1.389→0.00388).
+// ════════════════════════════════════════════════════════════════════════
+
+// V3 MoE total = canonical m_total + router[E·d] + experts[E·V·d]
+//              + tension_proj[d] + n_layer·(pf_total + cx_total)
+pub fn v3_m_total_moe(d: int, nh: int, nkv: int, h: int, V: int, n_layer: int,
+                      cdim: int, E: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer)
+         + E * d
+         + E * V * d
+         + d
+         + n_layer * v3_pf_total(d)
+         + n_layer * v3_cx_total(d, cdim)
+}
+
+pub fn v3_off_moe_router(d: int, nh: int, nkv: int, h: int, V: int,
+                         n_layer: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer)
+}
+pub fn v3_off_moe_experts(d: int, nh: int, nkv: int, h: int, V: int,
+                          n_layer: int, E: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer) + E * d
+}
+pub fn v3_off_moe_tension_proj(d: int, nh: int, nkv: int, h: int, V: int,
+                               n_layer: int, E: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer) + E * d + E * V * d
+}
+pub fn v3_off_moe_pf(l: int, d: int, nh: int, nkv: int, h: int, V: int,
+                     n_layer: int, E: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer) + E * d + E * V * d + d
+         + l * v3_pf_total(d)
+}
+pub fn v3_off_moe_cx(l: int, d: int, nh: int, nkv: int, h: int, V: int,
+                     n_layer: int, cdim: int, E: int) -> int {
+    return m_total(d, nh, nkv, h, V, n_layer) + E * d + E * V * d + d
+         + n_layer * v3_pf_total(d)
+         + l * v3_cx_total(d, cdim)
+}
+
+// ─── MoE forward (top-1 hard routing, packed-M variant of moe_router) ──
+// gate[e] = Σ_j M[router_off + e·d + j] · zT[j]
+// softmax(gate); top = argmax; logits_g[k] = gate[top] · Σ_j M[experts_off + top·V·d + k·d + j] · zT[j]
+// Outputs: logits_g_out [V], gate_norm_out [E] (post-softmax), top_idx (int).
+pub fn v3_moe_fwd(zT: int, M: int, router_off: int, experts_off: int,
+                  logits_g_out: int, gate_norm_out: int,
+                  V: int, d: int, E: int) -> int {
+    // 1) gate logits (E·d linear over zT)
+    let mut e = 0
+    while e < E {
+        let mut acc = 0.0
+        let mut j = 0
+        while j < d {
+            acc = acc + farr_get(M, router_off + e * d + j) * farr_get(zT, j)
+            j = j + 1
+        }
+        let _ = farr_set(gate_norm_out, e, acc)
+        e = e + 1
+    }
+    // 2) softmax (in-place, stable)
+    let mut gmax = farr_get(gate_norm_out, 0)
+    e = 1
+    while e < E {
+        let gv = farr_get(gate_norm_out, e)
+        if gv > gmax { gmax = gv }
+        e = e + 1
+    }
+    let mut zsum = 0.0
+    e = 0
+    while e < E {
+        let ev = dt_exp(farr_get(gate_norm_out, e) - gmax)
+        let _ = farr_set(gate_norm_out, e, ev)
+        zsum = zsum + ev
+        e = e + 1
+    }
+    e = 0
+    while e < E {
+        let _ = farr_set(gate_norm_out, e, farr_get(gate_norm_out, e) / zsum)
+        e = e + 1
+    }
+    // 3) argmax → top
+    let mut top = 0
+    let mut topv = farr_get(gate_norm_out, 0)
+    e = 1
+    while e < E {
+        let gv = farr_get(gate_norm_out, e)
+        if gv > topv { topv = gv; top = e }
+        e = e + 1
+    }
+    // 4) logits = gate[top] · expert_top(zT) — top-1 only emits
+    let g_top = farr_get(gate_norm_out, top)
+    let exp_base = experts_off + top * V * d
+    let mut k = 0
+    while k < V {
+        let mut acc = 0.0
+        let mut j = 0
+        while j < d {
+            acc = acc + farr_get(M, exp_base + k * d + j) * farr_get(zT, j)
+            j = j + 1
+        }
+        let _ = farr_set(logits_g_out, k, g_top * acc)
+        k = k + 1
+    }
+    return top
+}
+
+// ─── MoE backward (top-1 hard routing — only winner expert + gate[top] gradient) ──
+// Mirrors moe_route_top1_bwd: closed analytic vjp on packed M. Inputs:
+//   zT [d] · gate_norm [E] (from fwd) · top_idx (int) · d_logits [V] (upstream)
+// Outputs ACCUMULATED: dMg packed grad (router + experts), d_zT_out [d].
+pub fn v3_moe_bwd(zT: int, M: int, router_off: int, experts_off: int,
+                  gate_norm: int, top_idx: int, d_logits: int,
+                  dMg: int, d_zT_out: int, V: int, d: int, E: int) {
+    let g_top = farr_get(gate_norm, top_idx)
+    let exp_base = experts_off + top_idx * V * d
+    // 1) expert_top grad (outer product) + d_zT contribution + d_g_top accumulator
+    let mut d_g_top = 0.0
+    let mut k = 0
+    while k < V {
+        let dl_k = farr_get(d_logits, k)
+        let mut acc_g = 0.0   // for d_g_top: Σ_k d_logits[k] · expert_top(zT)[k] / g_top
+        let mut j = 0
+        while j < d {
+            let w = farr_get(M, exp_base + k * d + j)
+            let z = farr_get(zT, j)
+            // d_expert[k,j] += d_logits[k] · g_top · z[j]
+            let dwprev = farr_get(dMg, exp_base + k * d + j)
+            let _ = farr_set(dMg, exp_base + k * d + j, dwprev + dl_k * g_top * z)
+            // d_zT[j] += d_logits[k] · g_top · w
+            let dzprev = farr_get(d_zT_out, j)
+            let _ = farr_set(d_zT_out, j, dzprev + dl_k * g_top * w)
+            acc_g = acc_g + w * z
+            j = j + 1
+        }
+        d_g_top = d_g_top + dl_k * acc_g
+        k = k + 1
+    }
+    // 2) softmax backward only on top: d_gate_raw[e] = gate[e] · (d_gate[e] - Σ d_gate · gate)
+    //    For top-1, d_gate has only d_g_top at index top_idx.
+    //    Effective d_gate_raw[e] = gate[e] · ([e==top] · d_g_top - gate[top] · d_g_top)
+    //                            = gate[e] · d_g_top · ([e==top] - gate[top])
+    let mut e = 0
+    while e < E {
+        let ge = farr_get(gate_norm, e)
+        let mut d_raw = 0.0 - ge * g_top * d_g_top
+        if e == top_idx { d_raw = d_raw + ge * d_g_top }
+        // router_grad[e,j] += d_raw · zT[j]
+        let mut j = 0
+        while j < d {
+            let zj = farr_get(zT, j)
+            let drprev = farr_get(dMg, router_off + e * d + j)
+            let _ = farr_set(dMg, router_off + e * d + j, drprev + d_raw * zj)
+            // d_zT[j] += d_raw · router[e,j]
+            let rj = farr_get(M, router_off + e * d + j)
+            let dzprev = farr_get(d_zT_out, j)
+            let _ = farr_set(d_zT_out, j, dzprev + d_raw * rj)
+            j = j + 1
+        }
+        e = e + 1
+    }
+}
+
 // ─── V3 full forward (composes flame V2 spine + V3 extensions) ──────────
 // This mirrors conscious_decoder_v3.py ConsciousDecoderV3.forward:
 //   x = embed(idx)  (+layer-0 noise if training)
