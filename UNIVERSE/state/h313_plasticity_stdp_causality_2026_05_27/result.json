@@ -1,0 +1,53 @@
+{
+  "hypothesis": "H_313",
+  "slug": "plasticity-stdp-causality",
+  "title": "STDP discovers temporal causality: a correlated (pre-leads-post) integrate-and-fire pair potentiates to w=1.0; an anti-correlated (post-leads-pre) pair depresses to w=0.0105; bounded; separation=0.989",
+  "date": "2026-05-27",
+  "axis_cell": "PLASTICITY x STDP (spike-timing-dependent plasticity)",
+  "question": "Under an exponential STDP window dw(dt), dt = t_post - t_pre, does a CORRELATED pair (pre reliably precedes post) converge to a STRONGER synapse than an ANTI-correlated pair (post precedes pre) -- i.e. does STDP discover temporal causality? And does total weight stay bounded (no runaway)?",
+  "engine": "self-contained hexa deterministic integrate-and-fire + exponential STDP timestep simulation (run.hexa) -- no external lib; exp() builtin only",
+  "runtime": "$0 mac-local (/Users/ghost/.hx/bin/hexa run) -- hexa-only -- ~1s wall -- deterministic, fixed schedule, no RNG",
+  "method": {
+    "model": "integrate-and-fire pre->post pair with one synapse w; deterministic spike schedule; nearest-neighbour (last-spike trace) STDP",
+    "stdp_window": "dw(dt) = +A_plus*exp(-dt/tau_plus) for dt>0 (potentiation), -A_minus*exp(dt/tau_minus) for dt<0 (depression); FORM is symmetric (A_plus=A_minus=0.10, tau_plus=tau_minus=20.0)",
+    "key_non_tautology": "the STDP window FORM is identical across both conditions; the ONLY difference is spike-train TIMING. The outcome asymmetry (corr>anti) is the EMERGENT integral of the timestep loop, not a hardcoded sign. If integration were sign-symmetric the two conditions would converge to the SAME weight => H1 would be FALSIFIED. The loop actually ran (5000 timesteps each condition) and the weights were MEASURED.",
+    "conditions": {
+      "CORRELATED": "pre fires at k*period; post fires at k*period + lag (pre LEADS post by lag; dt>0 dominant)",
+      "ANTI": "pre fires at k*period; post fires at k*period - lag (post LEADS pre by lag; dt<0 dominant)",
+      "CONTROL_pre_only": "post never fires (post_enabled=0); STDP is a PAIR rule so w MUST stay = w0 (loop-drift sanity null)"
+    },
+    "params": { "period": 50, "lag": 5, "T_timesteps": 5000, "w0": 0.50, "A_plus": 0.10, "A_minus": 0.10, "tau_plus": 20.0, "tau_minus": 20.0, "w_min": 0.0, "w_max": 1.0 }
+  },
+  "measurements": {
+    "w_correlated_final": 1.0,
+    "w_anti_final": 0.0105399,
+    "w_control_pre_only_final": 0.5,
+    "dw_correlated": 0.5,
+    "dw_anti": -0.48946,
+    "separation_corr_minus_anti": 0.98946,
+    "control_pre_only_abs_dw": 0.0
+  },
+  "robustness_probes": {
+    "note": "additional non-canonical probes confirming the ordering is NOT a clamping artifact (run separately, not part of the canonical SSOT run.hexa output)",
+    "low_gain_A_0.02_T5000": { "w_correlated": 1.0, "w_anti": 0.00210798, "separation": 0.997892, "comment": "~100 pairs still saturate corr at ceiling but ordering holds" },
+    "pre_saturation_A_0.02_T300": { "w_correlated": 0.569448, "w_anti": 0.43266, "dw_correlated": 0.0694481, "dw_anti": -0.0673402, "separation": 0.136788, "comment": "few pairs, NO saturation: corr>anti holds WITHOUT clamping. exp(-5/20)*0.02 per pair matches measured dw -> emergent, not hardcoded" }
+  },
+  "falsifiers": {
+    "F313_1_CAUSALITY": "PASS -- w_correlated (1.0) > w_anti (0.0105399). STDP discovers temporal causality.",
+    "F313_2_POTENTIATION": "PASS -- correlated dw = +0.5 > 0 (pre->post causal pairing strengthens synapse).",
+    "F313_3_DEPRESSION": "PASS -- anti dw = -0.48946 < 0 (post->pre acausal pairing weakens synapse).",
+    "F313_4_BOUNDED": "PASS -- both final weights in [0.0, 1.0]; no runaway (correlated saturates at ceiling, anti at near-floor, neither diverges).",
+    "F313_5_CONTROL_NULL": "PASS -- pre-only (no post spikes) leaves w exactly at w0=0.5 (|dw|=0.0); confirms zero loop drift, change is genuinely pairing-driven."
+  },
+  "result_count": "5 PASS / 0 FAIL",
+  "verdict_class": "GREEN",
+  "verdict": "H1 SUPPORTED (GREEN / numerical). STDP discovers temporal causality: a correlated integrate-and-fire pair converges to a STRONGER synapse (w=1.0) than an anti-correlated pair (w=0.0105), separation 0.989, weights bounded in [0,1] with no runaway, and a pre-only null confirms no spurious drift. The asymmetry EMERGED from spike timing under a sign-symmetric window form -- not hardcoded.",
+  "honest_limits": [
+    "L1: nearest-neighbour (last-spike) trace STDP, not all-to-all pairing; canonical and standard but a modelling choice.",
+    "L2: deterministic fixed spike schedule (no jitter/noise). Real STDP-discovers-causality claims add Poisson jitter; this is the clean deterministic core.",
+    "L3: hard clamp [0,1] gives bounded by construction; the GENUINE finding (no runaway dynamics) is shown by the pre-saturation probe (A=0.02,T=300) where corr=0.569 anti=0.433 stay interior.",
+    "L4: single synapse pre->post; multi-synapse competition (e.g. weight normalization, BCM) not modelled.",
+    "L5: exp() is the hexa builtin -- a pure math primitive, not the quantity under test."
+  ],
+  "ssot": "this result.json + run.hexa + run.log are the authoritative measured artifacts; verdict DERIVED from measured numbers, not self-declared."
+}
