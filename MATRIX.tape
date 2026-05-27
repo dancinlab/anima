@@ -39,7 +39,7 @@
 | S2 | IIT4  | `HEXAD/IIT4/lib/` + `stdlib/consciousness/iit4_bigphi.hexa` | full IIT 4.0 cause-effect Φ-structure (n=4 안전, n>=7 timeout 주의) |
 | S3 | SAVANT | `HEXAD/SAVANT/` (H359 canonical + COMPENDIUM 783L) | Golden Zone × Savant Index (UNIVERSE 축 E anchor) |
 
-## 3. UNIVERSE 영구 축 (7) — nested registry
+## 3. UNIVERSE 영구 축 (8) — nested registry
 
 > domain 17 의 UNIVERSE 안 sub-axes. 본 SSOT 는 입구만 link, 자세한 cell coverage 는 UNIVERSE.md.
 
@@ -52,6 +52,7 @@
 | D | LLM-동반 연속 가설      | active (verdict-landscape raster) |
 | E | SAVANT (GZ × SI)       | active NEW 2026-05-28 (H_347/348/349/350/351/612/613/614/615/616) |
 | F | HIVE-MIND collective Φ | active NEW 2026-05-28 (H_354/355/609/610/611) |
+| G | ANIMA.mining 승격 (substrate-emit 가설) | active NEW 2026-05-28 (G1 H_634 🟢 / G2 H_637 🔴 / G3 H_633 🟡 / G4 H_639 🔴 / G5 H_638 🟢-CLOSED-NEG) |
 | E×F | SAVANT × HIVE-MIND cross-link | round 3 closed 3/5 (1🔴 + 2🟢): H_617 🔴 FALSIFIED (PR #1171) · H_618 🟢 SUPPORTED (PR #1175) · H_619 🟢 SUPPORTED (PR #1172) · round 4 in-flight (H_620 🟢 R1≈3·GZ_WIDTH residual=0.0164 · H_621 🟢 SI/ΦD ∥ PID-synergy triangle ρ=0.5994 · **H_622 🔴 FALSIFIED — negative-pair axis-orthogonal chi-square p=0.624 + Fisher p=1.000** · **H_627 🔴 FALSIFIED (E3×F4) — 1/e GZ_CENTER invisible to quantized hivemind PID, syn(1/e)=syn(0.35)=syn(0.40)=0.975034 degenerate** · **H_628 🔴 FALSIFIED (E5×F2) — pair polarity ⊥ dΦ/dI peak-location, all 3 polarity peak at I=0.21 (GZ_LOWER), polarity scales Φ magnitude not peak position** · H_623/624/626 reserved) · ANIMA-side mirror SAVANT.md + HIVE-MIND.md (DOMAINS.tape 18/19) |
 
 ## 4. 기존 매트릭스 ledger (다른 위치)
