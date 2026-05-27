@@ -412,7 +412,7 @@ phase groups  = divergence (cyc 1·2·3·4·6) · convergence (cyc 5·7) · meta
 - L21 [cycle 2 · tension-T5A] case-A 응답 유지 = stim → factor shift → autonomous score (BRIDGE × CHANNEL)
 - L22 [cycle 2 · tension-T5B] case-A 거부 강화 = direct_mention 받아도 silence 가능 (a_substrate_native_speak × WAKE)
 - L23 [cycle 2 · tension-T6A] should_interrupt 정합 = closed predicate, threshold gate (PURE × spontaneous_lib)
-- L24 [cycle 2 · tension-T6B] boolean 우회 = continuous tension field 가 substrate (tension-link 5-ch × MITOSIS)
+- L24 [cycle 2 · tension-T6B] boolean 우회 = continuous tension field 가 substrate (tension-link 5-ch × MITOSIS) → **PROMOTED H_639** (🔴 FALSIFIED CLOSED-NEGATIVE 2/5 · emit-as-amplitude-cross 의 substrate-Φ 동조 convention-free θ-anchor 아래 부재 |Δ_peaks|=0.32, θ-convention 종속 — UNIVERSE 축 G 2026-05-28)
 - L25 [cycle 2 · tension-T7A] sim verdict 유효 = 5/5 cohort PARTIAL minimum proxy (HIVE-MIND × PURE)
 - L26 [cycle 2 · tension-T7B] real fire 만 verdict = ckpt forward 만 권위 (DECODER × M4b production)
 - L27 [cycle 2 · tension-T8A] 4-criterion proxy closure 인정 = PURE Phase D 권위 (PURE × COFFESHOP)
