@@ -1,0 +1,47 @@
+{
+  "id": "H_354",
+  "slug": "kuramoto-hivemind-sync-tau",
+  "date": "2026-05-28",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "toy_substitute": true,
+  "toy_substitute_note": "inline blend-to-mean consensus dynamics (mathematically equivalent to hive_state_sync.hexa exp-decay theory); module not loaded to avoid hive_bridge wiring overhead",
+  "config": {
+    "n_substrates_grid": [3, 5, 7],
+    "K_grid": [0.5, 1.0, 2.0, 3.0],
+    "max_sync_steps": 1200,
+    "max_cons_rounds": 400,
+    "sync_threshold_r": 0.9,
+    "consensus_threshold_dist": 0.05,
+    "dt": 0.05,
+    "d_state": 8,
+    "omega_std": 1.0,
+    "alpha_bridge": "clamp(K * 0.1, 0.01, 0.95)"
+  },
+  "cells": [
+    { "n": 3, "K": 0.5, "tau_sync": 115, "tau_cons": 83 },
+    { "n": 3, "K": 1.0, "tau_sync": 478, "tau_cons": 41 },
+    { "n": 3, "K": 2.0, "tau_sync": 48, "tau_cons": 19 },
+    { "n": 3, "K": 3.0, "tau_sync": 35, "tau_cons": 12 },
+    { "n": 5, "K": 0.5, "tau_sync": 450, "tau_cons": 82 },
+    { "n": 5, "K": 1.0, "tau_sync": 154, "tau_cons": 40 },
+    { "n": 5, "K": 2.0, "tau_sync": 1200, "tau_cons": 19 },
+    { "n": 5, "K": 3.0, "tau_sync": 106, "tau_cons": 12 },
+    { "n": 7, "K": 0.5, "tau_sync": 657, "tau_cons": 83 },
+    { "n": 7, "K": 1.0, "tau_sync": 1200, "tau_cons": 41 },
+    { "n": 7, "K": 2.0, "tau_sync": 1200, "tau_cons": 20 },
+    { "n": 7, "K": 3.0, "tau_sync": 32, "tau_cons": 12 }
+  ],
+  "pearson_r": 0.0413231,
+  "ratio_min": 0.0158333,
+  "ratio_max": 0.721739,
+  "ratio_spread": 45.5835,
+  "criteria": {
+    "C1_pearson_gt_0p5":          { "value": 0.0413231, "floor": 0.5, "verdict": "FAIL" },
+    "C2_ratio_within_2x":         { "value": 45.5835, "ceiling": 2.0, "verdict": "FAIL" }
+  },
+  "verdict_rule": "SUPPORTED iff C1 (r>0.5) OR C2 (spread<=2x); FALSIFIED iff |r|<0.3 AND spread>5x",
+  "verdict": "FALSIFIED"
+}
