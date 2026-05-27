@@ -1,0 +1,121 @@
+{
+  "bench": "info_measure_triad",
+  "source": "CORE/DECODER/state/m4b_phase5b_2026_05_27/train.out",
+  "decoded_ids": [
+    1,
+    1,
+    1,
+    1,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642,
+    151642
+  ],
+  "per_pos_expert": [
+    1,
+    1,
+    1,
+    1,
+    0,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1,
+    1
+  ],
+  "measurers": {
+    "shannon_bits": {
+      "collapsed": 0.72192809495920676,
+      "diverse": 4.321928090562357,
+      "_impl": "stdlib/info/entropy::shannon_entropy"
+    },
+    "lz_complexity": {
+      "collapsed": 0.4,
+      "diverse": 1.0
+    },
+    "te_proxy_bits": {
+      "fwd_driver_to_driven": 1.3013714072621085,
+      "bwd_driven_to_driver": 0.11136591752827243,
+      "asymmetry": 0.8423402347003231
+    },
+    "scale_free_alpha": {
+      "powerlaw_in_25": 1.4828654804178454,
+      "exponential_rate_05": 2.022988243008516,
+      "uniform_1_50": -0.0464471228155264,
+      "spread": 2.0694353658240425
+    }
+  },
+  "stimuli_response": {
+    "shannon": [
+      0.72192809495920676,
+      4.321928090562357,
+      3.3219280915654346,
+      1.2984256435181436e-09,
+      3.1219280919097043,
+      1.2984256435181436e-09
+    ],
+    "lz": [
+      0.4,
+      1.0,
+      1.0,
+      0.4,
+      0.9,
+      0.4
+    ],
+    "te": [
+      0.0,
+      0.0,
+      0.8423402347003231,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "alpha": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      1.4828654804178454,
+      -0.0464471228155264
+    ]
+  },
+  "correlation_matrix_4x4": {
+    "_impl": "stdlib/stats/correlation::pearson_r",
+    "shannon_lz": 0.9759355439310317,
+    "shannon_te": 0.3634940248790771,
+    "shannon_alpha": 0.3251369059851598,
+    "lz_te": 0.49640344705950596,
+    "lz_alpha": 0.35119202259205222,
+    "te_alpha": -0.19243990873115354
+  },
+  "verdict": {
+    "cond_a_lz_lt_0p5": true,
+    "cond_b_shannon_lz_orthogonal": false,
+    "cond_c_alpha_spread_gt_0p5": true,
+    "passes": 2,
+    "total": 3,
+    "tier": "🟠 PARTIAL"
+  }
+}
