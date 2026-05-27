@@ -1,0 +1,103 @@
+{
+  "cycle": "§165 next-axis fire design — synthesizing §161-FIRE §8 (3 axes) × §142 LEGO bridge (3 substrate options)",
+  "type": "design-tier (NOT a fire)",
+  "tier": "$0 design-tier · NO new GPU/runpod/fire/model.forward/corpus",
+  "trigger": "§161-FIRE §8 'next high-information experiment' surfaced + §142 LEGO substrate-pivot bridge LANDED — §165 synthesizes both framings into a single fire-decision",
+  "chosen_candidate": "§165-A Psi-VAR-COUPLE",
+  "candidate_summary": {
+    "165_A_psi_var_couple": {
+      "mechanism": "§161 Ψ-JEPA-COUPLE + anti-collapse variance term L_variance := -log(psi_dir_std + epsilon)",
+      "addresses": "§161-FIRE measured failure mode (head_g collapsed to new fixed point, psi_dir_std 2.4e-8)",
+      "predicted_outcomes": {
+        "success": "psi_dir_std > 1e-4 (psi_responsive True for first time on quintuple) AND emission_rate ≈ 1/20 (per §162-R threshold-dominance)",
+        "failure": "byte_acc regresses (trade-off between L_psicouple and L_variance), both signals degenerate honestly"
+      },
+      "confidence": "MEDIUM (genuinely uncertain — fire-worthy per fire-gate)",
+      "cost_estimate_usd": [0.4, 0.6],
+      "decision": "FIRE-WORTHY"
+    },
+    "165_B_loihi_pivot": {
+      "mechanism": "§142 P2 + §161 Ψ-JEPA-COUPLE on Loihi-spec substrate; spike-correlation Ψ replaces logit-cosine Ψ",
+      "addresses": "§142 substrate-pivot path P2 (physical Loihi)",
+      "blocker": "INRC access wall (S121 Lava spec design-only, no hardware access)",
+      "decision": "DEFERRED (access-walled — not this cycle's fire)"
+    },
+    "165_C_lego_lif_task": {
+      "mechanism": "§142 P3 + LEGO §140 hexa-native LIF engine + Ψ-driven task on layer-3",
+      "addresses": "§142 substrate-pivot path P3 (in-silico spiking main-path)",
+      "blocker": "§128 layer-3 design-close — task-grounded liveness needs a §7-clean task that breaks §7 OR re-runs §83/§11-B near-collapse",
+      "decision": "DESIGN-OPEN (inherits §128, design step required first, not this cycle's fire)"
+    }
+  },
+  "cross_map_s161_axes_x_s142_options": {
+    "scaffold_scale_x_P1_GPU_stays": "tested §108 H100 3B fire — regressed; §11-A 1.04B FLAT was sub-CDS",
+    "data_regime": "ORTHOGONAL — WALL-A axis, @N n_priority_1_gap, separate fire-cycle decision",
+    "coupling_depth_x_P1_GPU_stays": "§165-A Psi-VAR-COUPLE — CHEAPEST CHOSEN",
+    "coupling_depth_x_P2_Loihi": "§165-B — access-walled",
+    "coupling_depth_x_P3_in_silico_spiking": "§165-C — §128 inherits"
+  },
+  "formula_one_line": "L_total = lambda_ce * CE_aux + lambda_psi * L_psicouple + lambda_var * L_variance, where L_variance := -log(psi_dir_std + epsilon)",
+  "overlay_off_reduction": {
+    "lambda_var_to_zero": "L_total = §161 Psi-JEPA-COUPLE objective byte-equal (mirror B-EBT-5/B-DIRI-5/B-S16-5/B-MGND-5/B-S151-7/B-S160-P1)",
+    "verified_byte_equal_by_additive_identity": true
+  },
+  "seven_legitimacy_gate_165_A": {
+    "s7_1_not_generic_LM_pretrain": "PASS — from-scratch seed 1337, base_ckpt=None (g_clm_from_scratch)",
+    "s7_2_not_generic_then_graft": "PASS — single-function objective extension, no foreign encoder, no pretrained weights",
+    "s7_3_anima_physics_as_source": "PASS — psi_dir_std is sample-variance of psi_direction byte-equal Law-71",
+    "truth_table_corner_reached": "(T,T,T) only-legitimate corner"
+  },
+  "fire_spec_when_authorized": {
+    "section": "§165-A-FIRE (separate cycle)",
+    "scaffold": "ConsciousDecoderV2 d=768 · 12L · n_head=12 · n_kv_head=4 · 283.72M params",
+    "init": "from-scratch RANDOM seed-fixed 1337, base_ckpt=None",
+    "corpus": "§102 CORPUS_S101 sha 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e byte-identical carry",
+    "steps": 3000,
+    "lr": 0.0003,
+    "bsz": 32,
+    "block_size": 128,
+    "lambda_ce": 0.1,
+    "lambda_psi": 1.0,
+    "lambda_var": 0.5,
+    "lambda_var_grid_optional": [0.1, 0.5, 1.0],
+    "epsilon_log_floor": 1e-6,
+    "primary_verdict": "joint AND of (psi_responsive: True via psi_dir_std > 1e-4) AND (unprompted_emission_rate measured)",
+    "cost_estimate_usd": [0.4, 0.6],
+    "gpu_target": "runpod A100 80GB primary, H100 80GB fallback (g_resource_active_parallel)",
+    "watchdog_seconds": 10800,
+    "central_blue_falsifier_invariant": "sidecar pattern, central sha c93e160a8a376a94 0-line-diff mandatory"
+  },
+  "closed_form_propositions_p1_p7": {
+    "P1_lambda_var_off_byte_equal": "PASS by additive identity",
+    "P2_L_variance_punishes_collapse": "PASS by monotone function (d/d std [-log(std+eps)] = -1/(std+eps) < 0)",
+    "P3_numerical_floor_bounded": "PASS by inspection (epsilon=1e-6, max -log ≈ 13.82 at std=0)",
+    "P4_s161_objective_sub_term": "PASS by gradient linearity (additive decomposition)",
+    "P5_psi_responsive_well_formed": "PASS by scalar threshold predicate (mirror §160-P3 / §161-FIRE-P8)",
+    "P6_seven_AND_only_TTT": "PASS by case-analysis 8-row truth table",
+    "P7_central_zero_line_diff": "PASS at START + END (sha c93e160a8a376a94)"
+  },
+  "B_S165_NOTE_empirical_carve_out": "P1-P7 prove DESIGN well-formedness. Whether §165-A-FIRE actually flips psi_responsive False→True is an empirical OUTCOME — SGD trajectory + lambda_var ratio + interaction with L_psicouple. P1-P7 do NOT predict outcome. B-EMERGE-7 / B-D-NOTE / B-PHASE-B-NOTE / B-S161-FIRE-NOTE family. NOT counted 🔵. necessary-not-sufficient at every layer.",
+  "anti_padding_precedent": ["§13-M", "§30", "§97", "§109", "§110", "§115", "§155", "§157", "§158", "§159", "§160", "§161", "§162", "§162-R", "§161-FIRE"],
+  "process_notes": {
+    "inline_orchestrator_authored": true,
+    "sub_agent_throttled_twice": "§163 (afc964261ddf748f2 + a6e5ee6d8f8e87f47 + ab55239159f7008ce, throttled at 20+25+7 tool uses) and §165 (a78976dfc365040f5, throttled at 3 tool uses) both empty state dirs; agentIds preserved",
+    "lego_arc_bridge_consumed": "§142 LEGO→MAIN-PATH SUBSTRATE PIVOT BRIDGE (LANDED 2026-05-20) provided the cross-map for §165's synthesis — exact 3-option framing P1/P2/P3 inherited",
+    "PII_discipline_post_499416d54": "Used generic 'no personal-identifier tokens' phrasing; literal token list lives only in AGENTS.tape f_hardcoded_credential"
+  },
+  "downstream_consumer_invariants": {
+    "hexa_lang": "read-only 0 edit",
+    "hexa_bio": "read-only 0 edit",
+    "kosmos": "read-only 0 edit",
+    "tape": "read-only 0 edit"
+  },
+  "central_blue_falsifier_sha_prefix_start": "c93e160a8a376a94",
+  "central_blue_falsifier_sha_prefix_end": "c93e160a8a376a94",
+  "central_blue_falsifier_zero_line_diff": true,
+  "north_star_unchanged": true,
+  "milestones_s15_s51_s72_unchanged": true,
+  "GOAL": "미도달",
+  "wall": "$0",
+  "GPU_runpod_pod_count_used_by_s165": 0,
+  "orphan": 0,
+  "next_step_named_not_committed": "§165-A-FIRE cycle (separate, autonomous per g_fire_autonomous): cost-bearing GPU fire of Ψ-VAR-COUPLE spec. Mirror §161-FIRE dispatch hardening (g_fire_dispatch_robust, SSH §79-RETRY ip+publicPort gate, structured-argv via stdlib/cloud once cycle B3 locally available)."
+}

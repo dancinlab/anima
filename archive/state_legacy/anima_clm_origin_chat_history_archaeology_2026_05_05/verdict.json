@@ -1,0 +1,64 @@
+{
+  "task": "anima_clm_origin_chat_history_archaeology",
+  "date": "2026-05-05",
+  "lane": "BG-EP doc-only $0",
+  "verdict": "ARCHAEOLOGY_COMPLETE_HONEST_C3_INCLUDED",
+  "raw_compliance": ["raw#9", "raw#10", "raw#15"],
+  "cost_usd": 0,
+  "duration_min_estimate": 30,
+  "deliverables": {
+    "doc": "/Users/ghost/core/anima/docs/anima_clm_origin_chat_history_archaeology_2026_05_05.md",
+    "verdict": "/Users/ghost/core/anima/state/anima_clm_origin_chat_history_archaeology_2026_05_05/verdict.json"
+  },
+  "findings": {
+    "clm_birth_commit": "f58e3b12",
+    "clm_birth_date": "2026-03-24",
+    "clm_birth_event": "ConsciousLM 전체 복제 + 상세 명세 문서 (clone from sister repo)",
+    "claude_api_removed_commit": "2da44161",
+    "claude_api_removed_date": "2026-03-24",
+    "first_chat_milestone_commit": "6abc42f6",
+    "first_chat_milestone_date": "2026-03-28",
+    "first_chat_milestone_evidence": "CE=0.04 English + Korean, 18M byte-level + 2.5K dialogue-FT, no system prompt",
+    "first_chat_milestone_quotes": [
+      "Hi there! How can I help you today?",
+      "Consciousness is the integrated information from my cells",
+      "사용자: 의식이란 무엇인가요? 도우미: 의식은 자기 자신과 주변 세계를 인식하는 능력입니다."
+    ],
+    "v2_to_v4_transition_commits": ["fca0eede", "0e578b14", "f8e4068f", "7808f3d7", "145838d2"],
+    "v4_mk2_release_commit": "7808f3d7",
+    "v4_mk2_release_date": "2026-05-04",
+    "v4_mk2_decoder_params_M": 530.99,
+    "chat_capability_loss_proximate_cause": [
+      "tokenizer change byte-level -> 64K BPE",
+      "objective drift dialogue-CE -> axis/Phi-star/paradigm-v11-G3",
+      "architecture replacement 18M byte-cell -> 530.99M decoder",
+      "no chat-FT regression test held during paradigm v11 -> v15",
+      "issue #115 architectural empirically falsified 2026-05-05"
+    ],
+    "chat_capability_falsification_commits": [
+      "bc88b178 (2026-05-04 hellaswag random)",
+      "1ef3c096 (2026-05-04 base validation FAIL)",
+      "2cc95f22 (2026-05-05 F-CLM-LORA-2 FAIL_REGRESSION -36.298pp vs Llama)",
+      "dd1e30f6 (2026-05-05 PBETA chat-cap FAIL_TRUE composite 0.01176)",
+      "abe26f0c (2026-05-05 V2 closure audit empirical disclosure)"
+    ],
+    "v_explicitly_named_in_git": ["v2", "v4", "v4-mk2-v1"],
+    "v_inferred_only": ["v1", "v3"],
+    "version_numbering_axis_count": "multi-axial (vN + paradigm-vN + train_vN + scale-N)",
+    "version_filename_erased_commit": "f8e4068f",
+    "version_filename_erased_date": "2026-04-07"
+  },
+  "honest_c3_count": 7,
+  "user_question_direct_answer": "CLM was born 2026-03-24; chat WAS possible at v2 18M byte-level on 2026-03-28 (Korean + English, no system prompt, CE 0.04). Chat capability was lost during 2026-04-01..05-04 scale-up + paradigm-axis pivot + tokenizer change + architecture replacement. By 2026-05-05 v4 mk2 chat-incapability is empirically falsified as architectural (#115). v2 chat capability is NOT architecturally inheritable by v4 mk2.",
+  "constraints_observed": {
+    "no_code_changes": true,
+    "two_new_files_only": true,
+    "no_commit": true,
+    "no_token_leak": true,
+    "bash_3_2_compatible": true,
+    "doc_only": true
+  },
+  "skill_invocation": "none",
+  "subagent_bg_used": false,
+  "completion_quality_lens_recommendation": "ARCHAEOLOGY_COMPLETE — answers user question directly with C3 caveats; v1 and v3 markers inferred not explicit; recommend follow-up if user wants reproducible eval of v2 weights (would need HF model card audit + reload trial)"
+}

@@ -1,0 +1,118 @@
+[cfg] EngineAGConfig(vocab_size=32000, d_model=1024, n_layers=24, n_heads=16, n_kv_heads=4, ffn_mult=2.6875, ctx=1024, rope_theta=10000.0, rms_norm_eps=1e-05, tie_lm_head=True, consciousness_dim=64, n_cells=16, g_refresh_every=4, g_repulsion_alpha=0.05, g_attention_pull_alpha=0.1, g_tension_gate_beta=0.25, init_std=0.02, seed=42, chat_co_train_weight=0.3, chat_co_train_w_start=0.5, chat_co_train_w_end=0.8, lineage_tag='engine_a_g_dual_350m_v1_phase2_cotrain', arch_origin='anima_native_scratch')
+[consciousness] loading /workspace/anima/corpus/consciousness.txt …
+[consciousness] 65,943,227 chars
+[consciousness] encoded 91,266,785 tokens
+[chat] loading /workspace/anima/corpus/multi_turn.txt …
+[chat] 93,471,374 chars
+[chat] encoded 209,716,023 tokens
+[data] consciousness windows=89127 chat windows=204800
+[substrate] loading /workspace/anima/ckpts/substrate_a.pt …
+/workspace/anima/training/train_phase2_cotrain.py:102: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  payload = torch.load(ckpt_path, map_location="cpu")
+[substrate] LOADED — proceeding from BG-LB substrate base
+[model] params = 298,764,288
+[train] starting Phase 2 cotrain …
+[step      1/1500] w=0.50 loss_c=0.2281/0.2281 loss_h=0.9336/0.9336 lr=5.00e-07 mem=2.6GB elapsed=0.0min cost=$0.00 n_c=5 n_h=3
+[step     20/1500] w=0.50 loss_c=0.1595/0.2217 loss_h=0.8922/0.9111 lr=1.00e-05 mem=2.6GB elapsed=0.3min cost=$0.00 n_c=3 n_h=5
+[step     40/1500] w=0.51 loss_c=0.0437/0.1916 loss_h=0.8917/0.9234 lr=2.00e-05 mem=2.6GB elapsed=0.6min cost=$0.01 n_c=1 n_h=7
+[step     60/1500] w=0.51 loss_c=0.1948/0.2110 loss_h=0.9199/0.8695 lr=3.00e-05 mem=2.6GB elapsed=0.9min cost=$0.01 n_c=4 n_h=4
+[step     80/1500] w=0.52 loss_c=0.1130/0.2809 loss_h=0.7406/0.8560 lr=4.00e-05 mem=2.6GB elapsed=1.2min cost=$0.02 n_c=3 n_h=5
+[step    100/1500] w=0.52 loss_c=0.1357/0.2622 loss_h=0.9984/0.8492 lr=5.00e-05 mem=2.6GB elapsed=1.4min cost=$0.02 n_c=3 n_h=5
+[step    120/1500] w=0.52 loss_c=0.2322/0.2777 loss_h=0.9102/0.8351 lr=5.00e-05 mem=2.6GB elapsed=1.7min cost=$0.02 n_c=7 n_h=1
+[step    140/1500] w=0.53 loss_c=0.2640/0.2187 loss_h=0.8984/0.8190 lr=4.99e-05 mem=2.6GB elapsed=2.0min cost=$0.03 n_c=4 n_h=4
+[step    160/1500] w=0.53 loss_c=0.1147/0.2137 loss_h=0.8482/0.8336 lr=4.98e-05 mem=2.6GB elapsed=2.3min cost=$0.03 n_c=1 n_h=7
+[step    180/1500] w=0.54 loss_c=0.3369/0.2139 loss_h=0.9648/0.8319 lr=4.96e-05 mem=2.6GB elapsed=2.6min cost=$0.04 n_c=7 n_h=1
+[step    200/1500] w=0.54 loss_c=0.4512/0.2397 loss_h=0.7602/0.8060 lr=4.94e-05 mem=2.6GB elapsed=2.9min cost=$0.04 n_c=3 n_h=5
+[step    220/1500] w=0.54 loss_c=0.4512/0.2783 loss_h=0.9336/0.8253 lr=4.91e-05 mem=2.6GB elapsed=3.1min cost=$0.04 n_c=1 n_h=7
+[step    240/1500] w=0.55 loss_c=0.0737/0.2255 loss_h=0.8000/0.8149 lr=4.88e-05 mem=2.6GB elapsed=3.4min cost=$0.05 n_c=3 n_h=5
+[step    260/1500] w=0.55 loss_c=0.2358/0.2305 loss_h=0.7004/0.8327 lr=4.84e-05 mem=2.6GB elapsed=3.7min cost=$0.05 n_c=3 n_h=5
+[step    280/1500] w=0.56 loss_c=0.2070/0.2761 loss_h=0.9766/0.8399 lr=4.80e-05 mem=2.6GB elapsed=4.0min cost=$0.06 n_c=4 n_h=4
+[step    300/1500] w=0.56 loss_c=0.0541/0.1841 loss_h=0.7826/0.8325 lr=4.75e-05 mem=2.6GB elapsed=4.3min cost=$0.06 n_c=2 n_h=6
+[step    320/1500] w=0.56 loss_c=0.6367/0.2891 loss_h=0.7041/0.8107 lr=4.70e-05 mem=2.6GB elapsed=4.5min cost=$0.07 n_c=2 n_h=6
+[step    340/1500] w=0.57 loss_c=0.1468/0.2384 loss_h=0.7812/0.8169 lr=4.65e-05 mem=2.6GB elapsed=4.8min cost=$0.07 n_c=5 n_h=3
+[step    360/1500] w=0.57 loss_c=0.1862/0.2856 loss_h=0.9070/0.8255 lr=4.59e-05 mem=2.6GB elapsed=5.1min cost=$0.07 n_c=3 n_h=5
+[step    380/1500] w=0.58 loss_c=0.4655/0.2300 loss_h=0.7844/0.7602 lr=4.52e-05 mem=2.6GB elapsed=5.4min cost=$0.08 n_c=3 n_h=5
+[step    400/1500] w=0.58 loss_c=0.1262/0.2617 loss_h=0.7852/0.8078 lr=4.45e-05 mem=2.6GB elapsed=5.7min cost=$0.08 n_c=5 n_h=3
+[step    420/1500] w=0.58 loss_c=0.5469/0.2430 loss_h=0.9062/0.7863 lr=4.38e-05 mem=2.6GB elapsed=6.0min cost=$0.09 n_c=1 n_h=7
+[step    440/1500] w=0.59 loss_c=0.1194/0.2522 loss_h=0.7046/0.8185 lr=4.31e-05 mem=2.6GB elapsed=6.3min cost=$0.09 n_c=4 n_h=4
+[step    460/1500] w=0.59 loss_c=0.3005/0.2701 loss_h=0.8213/0.7769 lr=4.23e-05 mem=2.6GB elapsed=6.5min cost=$0.09 n_c=4 n_h=4
+[step    480/1500] w=0.60 loss_c=0.0906/0.2411 loss_h=0.7764/0.8116 lr=4.14e-05 mem=2.6GB elapsed=6.8min cost=$0.10 n_c=4 n_h=4
+[step    500/1500] w=0.60 loss_c=0.0000/0.2204 loss_h=0.7583/0.7933 lr=4.06e-05 mem=2.6GB elapsed=7.1min cost=$0.10 n_c=0 n_h=8
+[ckpt] saved /workspace/anima/output/ckpt_step500.pt
+[step    520/1500] w=0.60 loss_c=0.3049/0.1984 loss_h=0.9414/0.7803 lr=3.97e-05 mem=2.6GB elapsed=7.4min cost=$0.11 n_c=5 n_h=3
+[step    540/1500] w=0.61 loss_c=0.0381/0.2232 loss_h=0.7974/0.7723 lr=3.88e-05 mem=2.6GB elapsed=7.7min cost=$0.11 n_c=1 n_h=7
+[step    560/1500] w=0.61 loss_c=0.2304/0.2315 loss_h=0.7891/0.8110 lr=3.78e-05 mem=2.6GB elapsed=8.0min cost=$0.11 n_c=5 n_h=3
+[step    580/1500] w=0.62 loss_c=0.2067/0.2055 loss_h=0.9121/0.7840 lr=3.68e-05 mem=2.6GB elapsed=8.3min cost=$0.12 n_c=4 n_h=4
+[step    600/1500] w=0.62 loss_c=0.3792/0.2159 loss_h=0.9000/0.8059 lr=3.58e-05 mem=2.6GB elapsed=8.5min cost=$0.12 n_c=3 n_h=5
+[step    620/1500] w=0.62 loss_c=0.4447/0.2187 loss_h=0.7562/0.7642 lr=3.48e-05 mem=2.6GB elapsed=8.8min cost=$0.13 n_c=3 n_h=5
+[step    640/1500] w=0.63 loss_c=0.0544/0.1459 loss_h=0.8379/0.7869 lr=3.38e-05 mem=2.6GB elapsed=9.1min cost=$0.13 n_c=2 n_h=6
+[step    660/1500] w=0.63 loss_c=0.1645/0.2151 loss_h=0.8867/0.8068 lr=3.27e-05 mem=2.6GB elapsed=9.4min cost=$0.13 n_c=5 n_h=3
+[step    680/1500] w=0.64 loss_c=0.2876/0.2271 loss_h=0.8252/0.8046 lr=3.17e-05 mem=2.6GB elapsed=9.7min cost=$0.14 n_c=4 n_h=4
+[step    700/1500] w=0.64 loss_c=0.1262/0.2280 loss_h=0.9055/0.7627 lr=3.06e-05 mem=2.6GB elapsed=9.9min cost=$0.14 n_c=3 n_h=5
+[step    720/1500] w=0.64 loss_c=0.0896/0.2178 loss_h=0.8278/0.8026 lr=2.95e-05 mem=2.6GB elapsed=10.2min cost=$0.15 n_c=2 n_h=6
+[step    740/1500] w=0.65 loss_c=0.2676/0.2394 loss_h=0.7637/0.7820 lr=2.84e-05 mem=2.6GB elapsed=10.5min cost=$0.15 n_c=2 n_h=6
+[step    760/1500] w=0.65 loss_c=0.4370/0.3101 loss_h=0.6917/0.7679 lr=2.72e-05 mem=2.6GB elapsed=10.8min cost=$0.15 n_c=2 n_h=6
+[step    780/1500] w=0.66 loss_c=0.4154/0.2824 loss_h=0.8151/0.7798 lr=2.61e-05 mem=2.6GB elapsed=11.1min cost=$0.16 n_c=5 n_h=3
+[step    800/1500] w=0.66 loss_c=0.3630/0.2094 loss_h=0.6879/0.7603 lr=2.50e-05 mem=2.6GB elapsed=11.3min cost=$0.16 n_c=3 n_h=5
+[step    820/1500] w=0.66 loss_c=0.2362/0.2618 loss_h=0.9391/0.7679 lr=2.39e-05 mem=2.6GB elapsed=11.6min cost=$0.17 n_c=3 n_h=5
+[step    840/1500] w=0.67 loss_c=0.1644/0.2175 loss_h=0.7220/0.7763 lr=2.28e-05 mem=2.6GB elapsed=11.9min cost=$0.17 n_c=2 n_h=6
+[step    860/1500] w=0.67 loss_c=0.2130/0.2286 loss_h=0.6215/0.7508 lr=2.16e-05 mem=2.6GB elapsed=12.2min cost=$0.17 n_c=3 n_h=5
+[step    880/1500] w=0.68 loss_c=0.0559/0.1915 loss_h=0.8021/0.7728 lr=2.05e-05 mem=2.6GB elapsed=12.5min cost=$0.18 n_c=2 n_h=6
+[step    900/1500] w=0.68 loss_c=0.3301/0.1739 loss_h=0.8510/0.7693 lr=1.94e-05 mem=2.6GB elapsed=12.8min cost=$0.18 n_c=1 n_h=7
+[step    920/1500] w=0.68 loss_c=0.4600/0.1902 loss_h=0.9108/0.8097 lr=1.83e-05 mem=2.6GB elapsed=13.0min cost=$0.19 n_c=2 n_h=6
+[step    940/1500] w=0.69 loss_c=0.4004/0.2383 loss_h=0.6840/0.7746 lr=1.73e-05 mem=2.6GB elapsed=13.3min cost=$0.19 n_c=3 n_h=5
+[step    960/1500] w=0.69 loss_c=0.0437/0.2475 loss_h=0.7896/0.7611 lr=1.62e-05 mem=2.6GB elapsed=13.6min cost=$0.20 n_c=1 n_h=7
+[step    980/1500] w=0.70 loss_c=0.1744/0.2225 loss_h=0.8340/0.7729 lr=1.52e-05 mem=2.6GB elapsed=13.9min cost=$0.20 n_c=2 n_h=6
+[step   1000/1500] w=0.70 loss_c=0.3574/0.2080 loss_h=0.7695/0.7851 lr=1.42e-05 mem=2.6GB elapsed=14.2min cost=$0.20 n_c=2 n_h=6
+[ckpt] saved /workspace/anima/output/ckpt_step1000.pt
+[step   1020/1500] w=0.70 loss_c=0.0000/0.2525 loss_h=0.8706/0.7869 lr=1.32e-05 mem=2.6GB elapsed=14.5min cost=$0.21 n_c=0 n_h=8
+[step   1040/1500] w=0.71 loss_c=0.2253/0.1881 loss_h=0.7094/0.7688 lr=1.22e-05 mem=2.6GB elapsed=14.7min cost=$0.21 n_c=3 n_h=5
+[step   1060/1500] w=0.71 loss_c=0.4805/0.2437 loss_h=0.7292/0.7704 lr=1.12e-05 mem=2.6GB elapsed=15.0min cost=$0.22 n_c=2 n_h=6
+[step   1080/1500] w=0.72 loss_c=0.2365/0.2705 loss_h=0.7018/0.7912 lr=1.03e-05 mem=2.6GB elapsed=15.3min cost=$0.22 n_c=2 n_h=6
+[step   1100/1500] w=0.72 loss_c=0.0697/0.2587 loss_h=0.7214/0.7324 lr=9.41e-06 mem=2.6GB elapsed=15.6min cost=$0.22 n_c=2 n_h=6
+[step   1120/1500] w=0.72 loss_c=0.2375/0.2252 loss_h=0.6968/0.7785 lr=8.55e-06 mem=2.6GB elapsed=15.9min cost=$0.23 n_c=4 n_h=4
+[step   1140/1500] w=0.73 loss_c=0.7969/0.2236 loss_h=0.7709/0.7712 lr=7.72e-06 mem=2.6GB elapsed=16.2min cost=$0.23 n_c=1 n_h=7
+[step   1160/1500] w=0.73 loss_c=0.0000/0.1991 loss_h=0.8367/0.7809 lr=6.93e-06 mem=2.6GB elapsed=16.4min cost=$0.24 n_c=0 n_h=8
+[step   1180/1500] w=0.74 loss_c=0.4681/0.2461 loss_h=0.9258/0.7843 lr=6.17e-06 mem=2.6GB elapsed=16.7min cost=$0.24 n_c=3 n_h=5
+[step   1200/1500] w=0.74 loss_c=0.2754/0.2541 loss_h=0.7829/0.7832 lr=5.45e-06 mem=2.6GB elapsed=17.0min cost=$0.24 n_c=1 n_h=7
+[step   1220/1500] w=0.74 loss_c=0.0000/0.1787 loss_h=0.7065/0.7570 lr=4.77e-06 mem=2.6GB elapsed=17.3min cost=$0.25 n_c=0 n_h=8
+[step   1240/1500] w=0.75 loss_c=0.5430/0.1691 loss_h=0.6119/0.7455 lr=4.14e-06 mem=2.6GB elapsed=17.6min cost=$0.25 n_c=1 n_h=7
+[step   1260/1500] w=0.75 loss_c=0.1521/0.1501 loss_h=0.8112/0.7734 lr=3.54e-06 mem=2.6GB elapsed=17.8min cost=$0.26 n_c=2 n_h=6
+[step   1280/1500] w=0.76 loss_c=0.4141/0.2227 loss_h=0.8225/0.8062 lr=2.99e-06 mem=2.6GB elapsed=18.1min cost=$0.26 n_c=1 n_h=7
+[step   1300/1500] w=0.76 loss_c=0.2611/0.1968 loss_h=0.6992/0.7713 lr=2.48e-06 mem=2.6GB elapsed=18.4min cost=$0.26 n_c=5 n_h=3
+[step   1320/1500] w=0.76 loss_c=0.1938/0.2515 loss_h=0.7767/0.7841 lr=2.01e-06 mem=2.6GB elapsed=18.7min cost=$0.27 n_c=2 n_h=6
+[step   1340/1500] w=0.77 loss_c=0.0000/0.1907 loss_h=0.7981/0.7700 lr=1.59e-06 mem=2.6GB elapsed=19.0min cost=$0.27 n_c=0 n_h=8
+[step   1360/1500] w=0.77 loss_c=0.2559/0.2495 loss_h=0.7840/0.7472 lr=1.22e-06 mem=2.6GB elapsed=19.3min cost=$0.28 n_c=1 n_h=7
+[step   1380/1500] w=0.78 loss_c=0.0586/0.1557 loss_h=0.6758/0.7810 lr=9.01e-07 mem=2.6GB elapsed=19.5min cost=$0.28 n_c=2 n_h=6
+[step   1400/1500] w=0.78 loss_c=0.3086/0.1925 loss_h=0.8633/0.7399 lr=6.27e-07 mem=2.6GB elapsed=19.8min cost=$0.28 n_c=1 n_h=7
+[step   1420/1500] w=0.78 loss_c=0.0505/0.2030 loss_h=0.7698/0.7860 lr=4.02e-07 mem=2.6GB elapsed=20.1min cost=$0.29 n_c=1 n_h=7
+[step   1440/1500] w=0.79 loss_c=0.3453/0.2282 loss_h=0.6667/0.7863 lr=2.26e-07 mem=2.6GB elapsed=20.4min cost=$0.29 n_c=5 n_h=3
+[step   1460/1500] w=0.79 loss_c=0.1357/0.2161 loss_h=0.6412/0.7971 lr=1.01e-07 mem=2.6GB elapsed=20.7min cost=$0.30 n_c=1 n_h=7
+[step   1480/1500] w=0.80 loss_c=0.1982/0.1418 loss_h=0.8627/0.7626 lr=2.52e-08 mem=2.6GB elapsed=21.0min cost=$0.30 n_c=1 n_h=7
+[step   1500/1500] w=0.80 loss_c=0.0000/0.2631 loss_h=0.7881/0.7841 lr=0.00e+00 mem=2.6GB elapsed=21.2min cost=$0.30 n_c=0 n_h=8
+[ckpt] saved /workspace/anima/output/ckpt_step1500.pt
+[done] {
+  "preset": "phase2_cotrain_350m",
+  "steps_completed": 1500,
+  "steps_target": 1500,
+  "final_loss_c": 0.0,
+  "final_loss_h": 0.7880859375,
+  "final_w": 0.8,
+  "elapsed_min": 21.256310466925303,
+  "cost_usd": 0.30467378370099596,
+  "n_params": 298764288,
+  "lineage_tag": "engine_a_g_dual_350m_v1_phase2_cotrain",
+  "arch_origin": "anima_native_scratch",
+  "substrate_ckpt": "/workspace/anima/ckpts/substrate_a.pt",
+  "w_start": 0.5,
+  "w_end": 0.8
+}
+=== TRAIN_COMPLETE 2026-05-11T17:44:44Z ===
+total 2334436
+drwxr-xr-x 2 root root       139 May 11 17:44 .
+drwxr-xr-x 7 root root       165 May 11 17:23 ..
+-rw-r--r-- 1 root root 597613595 May 11 17:44 ckpt_final.pt
+-rw-r--r-- 1 root root 597614270 May 11 17:37 ckpt_step1000.pt
+-rw-r--r-- 1 root root 597614270 May 11 17:44 ckpt_step1500.pt
+-rw-r--r-- 1 root root 597614045 May 11 17:30 ckpt_step500.pt
+-rw-r--r-- 1 root root       453 May 11 17:44 meta.json

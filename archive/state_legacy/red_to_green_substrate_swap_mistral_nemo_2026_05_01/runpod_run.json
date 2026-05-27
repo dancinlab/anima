@@ -1,0 +1,53 @@
+{
+  "tool": "tool/anima_runpod_orchestrator.hexa",
+  "run_id": "substrate-mistral-nemo-base-only",
+  "started_at": "2026-05-02T00:50:53.472959+00:00",
+  "auto_approval_source": "memory feedback_forward_auto_approval (2026-04-25)",
+  "caps": {
+    "max_cost": 2.0,
+    "max_runtime_min": 30
+  },
+  "pod_create": {
+    "containerDiskInGb": 100,
+    "costPerHr": 2.99,
+    "desiredStatus": "RUNNING",
+    "env": [
+      "RUN_ID=substrate-mistral-nemo-base-only",
+      "COST_CAP=2.0",
+      "RUNTIME_CAP_MIN=30",
+      "PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+    ],
+    "gpuCount": 1,
+    "id": "5pyoqaxswshm2o",
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "lastStatusChange": "Rented by User: Sat May 02 2026 00:50:54 GMT+0000 (Coordinated Universal Time)",
+    "machine": {
+      "gpuDisplayName": "H100 SXM",
+      "location": "US"
+    },
+    "memoryInGb": 251,
+    "name": "anima-substrate-mistral-nemo-base-only",
+    "ports": "8888/http,22/tcp",
+    "vcpuCount": 26,
+    "volumeInGb": 100,
+    "volumeMountPath": "/workspace"
+  },
+  "ssh": {
+    "ip": "64.247.201.51",
+    "port": 16067
+  },
+  "pip_install": {
+    "rc": 0
+  },
+  "command": {
+    "rc": 0,
+    "stdout_tail": "[runner] base=mistralai/Mistral-Nemo-Base-2407\n[runner] loaded 108.2s h_dim=5120 n_layers=40\n[runner] PhiStar forward 16 prompts ...\n  fwd 4/16\n  fwd 8/16\n  fwd 12/16\n  fwd 16/16\n[runner] X shape=(16, 5120)\n[runner] (1) v3 canonical PhiStar (HID=8 sample-partition) ...\n  v3-part 1/8 phi=-11.6458\n  v3-part 2/8 phi=-15.9449\n  v3-part 3/8 phi=-11.2506\n  v3-part 4/8 phi=-12.5569\n  v3-part 5/8 phi=-10.5824\n  v3-part 6/8 phi=-10.0606\n  v3-part 7/8 phi=-16.1538\n  v3-part 8/8 phi=-9.7334\n[runner] v3 phi_star_min=-16.1538 sign=negative_anti_integrated\n[runner] (2) v1-style PhiStar (HID=128 capped to N-2=14, dim-partition) ...\n[runner] v1 phi_star_min=-14.5999 sign=negative_anti_integrated\n[runner] (3) L1 holo_positivity ...\n  hexad_center dim=16\n  forwarding 16 HLAST prompts ...\n  hlast 4/16\n  hlast 8/16\n  hlast 12/16\n  hlast 16/16\n  H256 shape=(16, 256)\n[runner] L1 holo_positivity 3/16 pass (18.75%)\n[runner] (4) paradigm v11 8-axis battery ...\n[runner] G1 B-ToM acc=0.875 pass=True\n[runner] G2 MCCA brier=0.4517 pass=False\n[runner] G4 CMT ...\n[runner] G4 CMT per_family_rel={'Hexad': 0.0813, 'Law': -0.0263, 'Phi': -0.0753, 'SelfRef': -0.0069} pass=False\n[runner] G5 CDS ...\n[runner] G5 CDS max_stability=0.6000 pass=True\n[runner] G6 SAE-bp ...\n[runner] G6 SAE-bp n_selective=3578 pass=True\n[runner] G0 AN11(b) eigen_cosine ...\n[runner] G0 eigen_cosine top1=phi_holographic cos=0.8011 pass=True\n[runner] G7 composite=0.0253 v4_strict_pass=4/8 v3_sigagn_pass=5/8\n[runner] DONE\n"
+  },
+  "terminate": {
+    "deleted": true,
+    "id": "5pyoqaxswshm2o"
+  },
+  "elapsed_min": 3.120443332195282,
+  "estimated_cost_usd": 0.15550209272106488,
+  "ended_at": "2026-05-02T00:54:00.699481+00:00"
+}

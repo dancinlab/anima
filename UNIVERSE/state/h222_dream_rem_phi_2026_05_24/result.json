@@ -1,0 +1,41 @@
+{
+  "id": "H_222",
+  "slug": "dream-rem-phi",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "rule": 110, "reps": 5, "n_bins": 4, "boundary": "periodic" },
+  "regimes": {
+    "wake": "rule 110 + flip 5 sites/step (high drive) · recurrent",
+    "rem":  "rule 110 + flip 1 site/step  (low drive)  · recurrent",
+    "nrem": "rule 110 + flip 1 site/step  (low drive)  · (i+t)%2==0 → 0 down-state decay"
+  },
+  "phi_mean": {
+    "wake": 1.11636,
+    "rem":  0.545746,
+    "nrem": 1.42684
+  },
+  "metrics": {
+    "rel_diff_wake_rem": 0.511139,
+    "rem_nrem_ratio": 0.382485
+  },
+  "criteria": {
+    "C1_wake_approx_rem":  { "metric": "|Φwake-Φrem|/Φwake ≤ 0.20", "value": 0.511139, "verdict": "FAIL" },
+    "C2_rem_dom_nrem":     { "metric": "Φrem/Φnrem ≥ 2.0", "value": 0.382485, "verdict": "FAIL" },
+    "C3_nrem_above_floor": { "metric": "Φnrem > 0.1", "value": 1.42684, "verdict": "PASS" },
+    "C4_byte_identical":   { "metric": "deterministic re-run", "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_rem_ll_wake":     { "verdict": "FAIL" },
+    "F2_ranking_invert":  { "verdict": "FAIL" },
+    "F3_nrem_too_dead":   { "verdict": "PASS" },
+    "F4_byte_diff":       { "verdict": "PASS" },
+    "F5_phi_negative":    { "verdict": "PASS" }
+  },
+  "n_pass": 2,
+  "verdict_rule": "SUPPORTED iff C1∧C2∧C3∧C4 · PARTIAL if 2-3 pass · FALSIFIED if ranking inverted",
+  "verdict": "FALSIFIED"
+}

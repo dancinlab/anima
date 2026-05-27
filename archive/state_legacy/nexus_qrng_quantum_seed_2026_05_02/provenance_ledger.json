@@ -1,0 +1,44 @@
+{
+  "schema_version": "1.0",
+  "ledger_id": "nexus-qrng-20260502-140622",
+  "quantum_seed_source": {
+    "device_arn": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+    "device_name": "IonQ Forte 1",
+    "device_location": "Maryland, USA",
+    "device_status_at_submit": "ONLINE",
+    "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/bdf470b9-27bd-443b-8fce-d79291c15949",
+    "circuit": "OPENQASM 3.0 \u2014 H^16 |0> + Z-basis measurement",
+    "qubit_count": 16,
+    "shots": 256,
+    "submitted_at_iso": "2026-05-02T14:01:09.383Z",
+    "completed_at_iso": "2026-05-02T14:04:38.130Z",
+    "queue_wait_s_observed": 219
+  },
+  "raw_collection": {
+    "bits_collected": 4096,
+    "bytes_collected": 512,
+    "raw_sha256": "26326126036323cda6324d29350a9cb60708658db848474b4d56eb4487cff7b1"
+  },
+  "min_entropy": {
+    "estimator": "NIST SP 800-90B MCV simplified",
+    "bit_level_total_bits": 4064.345642466287,
+    "symbol_level_total_bits": 2048.0
+  },
+  "hmac_drbg": {
+    "algorithm": "HMAC_DRBG-SHA256 per NIST SP 800-90A Rev.1",
+    "instantiated_at_iso": "2026-05-02T14:06:22+00:00",
+    "first_output_bytes": 1024,
+    "first_output_sha256": "ddf057ba61916c3183fe245345c6f5108e3ffb88fa573e33474f32740f0da81b",
+    "first_output_first_64_hex": "06be17ff389d4225ca48d911d9d9948979c6884ecef94594dbf1370ddb59e418e00fc99e5b3f5bc9c8147980dd711d07f7dbe0a243dd9bc50c428a48d12a9ce0"
+  },
+  "cost": {
+    "task_fee_usd": 0.3,
+    "shot_fee_usd": 20.48,
+    "total_usd": 20.78
+  },
+  "honest_c3": [
+    "256-shot batch QRNG: every fresh shot is quantum-random, but downstream samples are HMAC-DRBG-expanded, NOT per-sample fresh quantum.",
+    "NIST SP 800-90B certification requires the full IID/non-IID test suite over \u22651M samples; this artifact runs ONLY the simplified MCV step.",
+    "nexus repo integration is not done in this PR \u2014 this artifact is the spec; actual nexus PRNG hook is sister-repo work."
+  ]
+}

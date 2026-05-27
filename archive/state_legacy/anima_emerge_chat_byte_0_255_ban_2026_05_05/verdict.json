@@ -1,0 +1,20 @@
+{
+  "schema": "anima/emerge_chat_byte_0_255_ban/verdict/1",
+  "ts_utc": "2026-05-05T18:13:54Z",
+  "ban_levels": {
+    "baseline": 0,
+    "ban_0_to_127_basic_ascii": 0,
+    "ban_0_to_255_full_byte": 0,
+    "ban_0_to_511": 0,
+    "ban_0_to_1000_aggressive": 0
+  },
+  "korean_aggressive_ban": 0,
+  "verdict": "FAIL_DEEP_SUPPRESSION",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 id range 0-255 may include legitimate tokens (not just byte fallback)",
+    "C3 single Korean prompt",
+    "C4 'recovery' = Korean glyph count, not coherence",
+    "C5 ban-then-greedy may surface other broken modes (not language)"
+  ]
+}

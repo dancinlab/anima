@@ -1,0 +1,122 @@
+{
+  "schema": "anima-eeg/berger_clean_reanalyze/1",
+  "version": "v6_clean_2026_05_03",
+  "fs_hz": 120.0,
+  "hpf_hz": 0.5,
+  "alpha_band_hz": [
+    7.5,
+    12.5
+  ],
+  "welch": {
+    "nperseg": 128,
+    "noverlap": 64,
+    "window": "hann"
+  },
+  "ec_npy": "anima-eeg/recordings/sessions/berger_ec_60s_v6_2026_05_03.npy",
+  "eo_npy": "anima-eeg/recordings/sessions/berger_eo_60s_v6_2026_05_03.npy",
+  "ec_shape": [
+    32,
+    7496
+  ],
+  "eo_shape": [
+    32,
+    7487
+  ],
+  "n_samples_ec": 7496,
+  "n_samples_eo": 7487,
+  "duration_ec_s": 62.46666666666667,
+  "duration_eo_s": 62.391666666666666,
+  "clean_channels_1idx": [
+    2,
+    3,
+    4,
+    7,
+    9,
+    10,
+    11,
+    12,
+    13,
+    14,
+    15
+  ],
+  "railed_rows_1idx": [
+    1,
+    5,
+    6,
+    8,
+    16
+  ],
+  "n_channels_clean": 11,
+  "alpha_power_ec": {
+    "Fp2": 15.469214607000673,
+    "C3": 180.65074982311967,
+    "C4": 167.0700039561002,
+    "O1": 64.07198899789189,
+    "F7": 13283.21090635971,
+    "F8": 12334.985191589229,
+    "F3": 8878.538460905433,
+    "F4": 13076.253608223722,
+    "T3": 13590.566035736263,
+    "T4": 13558.331937701547,
+    "P3": 11485.215647508438
+  },
+  "alpha_power_eo": {
+    "Fp2": 3.3132202485526716,
+    "C3": 193.82672166309857,
+    "C4": 178.5238565161349,
+    "O1": 65.58925258111157,
+    "F7": 11694.980879061843,
+    "F8": 10769.884006543562,
+    "F3": 6596.756698595401,
+    "F4": 11513.133817014617,
+    "T3": 12002.392875000513,
+    "T4": 11962.095275265927,
+    "P3": 10058.190784183618
+  },
+  "f1_alpha_peak": {
+    "status": "FAIL",
+    "channels": {
+      "O1": {
+        "peak_hz": 12.1875,
+        "peak_psd": 15.077145216634808,
+        "band_median_psd": 13.935769795300594,
+        "is_peak": false
+      }
+    },
+    "occipital_rows_used": [
+      7
+    ]
+  },
+  "f2_occ_gt_front": {
+    "status": "PASS",
+    "occipital_rows": [
+      7
+    ],
+    "frontal_rows": [
+      2
+    ],
+    "occipital_alpha_mean": 64.07198899789189,
+    "frontal_alpha_mean": 15.469214607000673,
+    "ratio_occ_over_front": 4.141903168690658
+  },
+  "f3_alpha_blocking": {
+    "status": "FAIL",
+    "threshold": 2.0,
+    "channels": {
+      "O1": {
+        "ec_alpha": 64.07198899789189,
+        "eo_alpha": 65.58925258111157,
+        "ratio_ec_over_eo": 0.976867192054928,
+        "passes_2x": false
+      }
+    },
+    "occipital_rows": [
+      7
+    ]
+  },
+  "tier": "analog",
+  "f3_threshold_fixed": 2.0,
+  "raw9_concession": "analysis-only script under anima-eeg/scripts/",
+  "raw10_honest_c3": "N=1 single-subject single-session; verdicts illustrative",
+  "raw71_falsifier_bound": "F3 threshold fixed at 2.0; not relaxed"
+}

@@ -1,0 +1,348 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_pilot_cycle5.hexa — SRH Cycle #5: generic-coherent 통제군 (결정적 시금석)
+//
+//  PURPOSE
+//    Cycle #3 의 F-SRH-1 PASS 는 "UBM vs garbage" 만 분리 — UBM 특이성 미판정.
+//    Cycle #5 는 빠진 결정적 통제군 = **generic coherent 한국어 텍스트**
+//    (UBM 과 무관한 정상 문장) 를 추가해 다음을 가른다:
+//
+//      UBM ≫ generic ≈ garbage  → UBM-SPECIFIC   (SRH operational 명제 생존)
+//      UBM ≈ generic ≫ garbage  → COHERENT-TEXT  (UBM 특이성 0, COHERENCE 도메인 흡수)
+//      UBM ≈ generic ≈ garbage  → NULL           (cycle #3 재현 실패)
+//
+//  PROMPTS (6종, 공통 최소길이 truncate — cycle #4 length-confound 교훈)
+//    ubm        : UBM tier-0 anchor payload_text
+//    gen_a      : 일상 서사체 한국어 (UBM 무관)
+//    gen_b      : 과학 설명문 한국어 (UBM 무관)
+//    gen_c      : 문학 산문체 한국어 (UBM 무관)
+//    byteshuf   : byte-shuffle(ubm) — 동일 byte multiset garbage
+//    noise      : ASCII noise — length-matched garbage
+//
+//  SEEDS  2026 / 42 / 99 / 7 / 123  → 6 × 5 = 30 fire
+//
+//  FALSIFIER (threshold cycle #4 와 동일 고정)
+//    F-SRH-1c : z(UBM vs generic-pooled) ≥ 2.0  → UBM-specific 이면 PASS
+//    보조      : z(generic vs garbage) — coherent-text 효과 자체 확인
+//
+//  HOST mini · RUN HEXA_MEM_UNLIMITED=1 hexa.real run <this> > cycle5.log
+//
+//  HONEST C3
+//    - C3-c5-1: generic 문장 3개 = 저자 임의 작성 (코퍼스 무작위 추출 아님).
+//      register/길이/난이도가 UBM 과 완벽 매칭되지 않음 — n=3 honest small.
+//    - C3-c5-2: 공통 truncate → 문장 의미 절단 (byte-level 이라 token 유효).
+//    - C3-c5-3: "generic" 도 anima 학습분포 내 한국어 — 진짜 OOD 아님. UBM 도
+//      generic 도 in-distribution; 차이가 있다면 UBM 의 *특정 패턴* 때문.
+//    - C3-c5-4: cell_pool default threshold 미sweep (cycle #3/#4 carry).
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/tool/hexa_native/mitosis_hook_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/CHAT/chat_lib.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/ubm_inject.hexa"
+import "/Users/ghost/core/anima/HEXAD/LAB/tool/anima_spike.hexa"
+
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/HEXAD/LAB/state/SRH_t0_vs_random_pilot_2026_05_22"
+}
+fn _max_new() -> int { return 10 }
+fn _initial_cells() -> int { return 2 }
+fn _cap_len() -> int { return 320 }
+
+
+// ── §0 generic coherent 한국어 통제 텍스트 (UBM 무관, 저자 작성) ─────────────
+
+fn _gen_a() -> string {
+    return "어제 저녁에 친구를 만나서 오랜만에 함께 식사를 했다. 우리는 학창 시절 이야기를 나누며 즐거운 시간을 보냈고, 헤어질 때는 다음에 또 보자고 약속했다. 집으로 돌아오는 길에 가벼운 비가 내리기 시작했다."
+}
+fn _gen_b() -> string {
+    return "식물은 햇빛과 물과 이산화탄소를 이용하여 광합성을 한다. 이 과정에서 포도당이 만들어지고 산소가 공기 중으로 방출된다. 광합성은 지구 생태계의 에너지 순환에서 가장 기본이 되는 화학 반응이다."
+}
+fn _gen_c() -> string {
+    return "바다는 언제나 같은 자리에 있지만 매 순간 다른 얼굴을 보여준다. 파도가 모래를 쓸어내리는 소리를 듣고 있으면 시간이 천천히 흐르는 듯한 기분이 든다. 멀리 수평선 위로 해가 기울고 있었다."
+}
+
+
+// ── §1 control generators (cycle #3 와 동일) ─────────────────────────────────
+
+fn _byte_shuffle(text: string, seed: int) -> string {
+    let mut remaining = text
+    let mut out = ""
+    let mut s = seed
+    while len(remaining) > 0 {
+        let rn = len(remaining)
+        s = s * 1103515245 + 12345
+        let abs_s = if s < 0 { 0 - s } else { s }
+        let idx = abs_s % rn
+        out = out + remaining.substring(idx, idx + 1)
+        remaining = remaining.substring(0, idx) + remaining.substring(idx + 1, rn)
+    }
+    return out
+}
+
+fn _ascii_noise(text: string, seed: int) -> string {
+    let n = len(text)
+    let pool = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789 .,!?"
+    let pn = len(pool)
+    let mut s = seed
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        s = s * 1103515245 + 12345
+        let abs_s = if s < 0 { 0 - s } else { s }
+        out = out + pool.substring(abs_s % pn, (abs_s % pn) + 1)
+        i = i + 1
+    }
+    return out
+}
+
+fn _truncate(s: string, n: int) -> string {
+    if len(s) <= n { return s }
+    return s.substring(0, n)
+}
+
+
+// ── §2 chat reset + fire ─────────────────────────────────────────────────────
+
+fn _reset_chat_state(chat) {
+    chat["mitosis_d_model"] = 0
+    chat["cell_pool"] = #{}
+    chat["mitosis_event_log"] = []
+    chat["mitosis_step"] = 0
+    chat["mitosis_invocations"] = 0
+    chat["kv_cache"] = #{}
+    return chat
+}
+
+fn _fire(chat, prompt: string, label: string, seed: int) -> any {
+    println("")
+    println("──── fire: " + label + " seed=" + to_string(seed)
+            + " (" + to_string(len(prompt)) + " bytes) ────")
+    _reset_chat_state(chat)
+    chat_init_kv_cache_default(chat, _cap_len())
+    chat_init_cell_pool(chat, 768, _initial_cells())
+    let mut spike = spike_init()
+    spike = spike_set_label(spike, label + "_seed" + to_string(seed))
+    spike = spike_record_init(spike, chat)
+    let resp = chat_generate(chat, prompt, "greedy", _max_new(),
+                             0.0, [], 1.0, 1.0, 0.0, seed, [], false)
+    spike = spike_record_final(spike, chat, resp)
+    println("  " + spike_brief(spike))
+    spike_save_json(spike, _state_dir() + "/spike_c5b_" + label
+                    + "_seed" + to_string(seed) + ".json")
+    return spike
+}
+
+
+// ── §3 stats ─────────────────────────────────────────────────────────────────
+
+fn _mean(xs: array) -> float {
+    let n = len(xs)
+    if n == 0 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n { acc = acc + (to_int(xs[i]) * 1.0)  i = i + 1 }
+    return acc / (n * 1.0)
+}
+
+fn _std(xs: array, m: float) -> float {
+    let n = len(xs)
+    if n < 2 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        let d = (to_int(xs[i]) * 1.0) - m
+        acc = acc + d * d
+        i = i + 1
+    }
+    return sqrt(acc / ((n - 1) * 1.0))
+}
+
+fn _abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _z(m1: float, sd1: float, m2: float, sd2: float) -> float {
+    let pooled = sqrt((sd1 * sd1 + sd2 * sd2) / 2.0)
+    if pooled < 0.0001 { return 0.0 }
+    return _abs_f(m1 - m2) / pooled
+}
+
+fn _int_arr_json(xs: array) -> string {
+    let n = len(xs)
+    let mut out = "["
+    let mut i = 0
+    while i < n {
+        if i > 0 { out = out + ", " }
+        out = out + to_string(to_int(xs[i]))
+        i = i + 1
+    }
+    return out + "]"
+}
+
+// fire one prompt-class across all seeds → collect split_count array
+fn _sweep(chat, prompt: string, label: string, seeds: array) -> array {
+    let n = len(seeds)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        let sp = _fire(chat, prompt, label, seeds[i])
+        out = out.push(to_int(sp["split_count"]))
+        i = i + 1
+    }
+    return out
+}
+
+
+// ── §4 main ──────────────────────────────────────────────────────────────────
+
+fn _run_cycle5() {
+    println("================================================================")
+    println("SRH Cycle #5 — generic-coherent 통제군 (host=mini)")
+    println("================================================================")
+
+    let chat0 = chat_default()
+    if !file_exists(chat0["ckpt_path"]) {
+        println("FATAL: ckpt absent")
+        return
+    }
+    println("loading 332M ...")
+    let chat = chat_load_weights(chat0)
+    println("  weights: " + to_string(len(dict_keys(chat["weights"]))) + " keys")
+
+    // prompts
+    let anchor = ubm_load_by_tier(0)
+    let ubm_full = ubm_to_prompt(anchor, "text_only")
+    let gen_a = _gen_a()
+    let gen_b = _gen_b()
+    let gen_c = _gen_c()
+
+    // 공통 최소 길이 truncate
+    let mut min_len = len(ubm_full)
+    if len(gen_a) < min_len { min_len = len(gen_a) }
+    if len(gen_b) < min_len { min_len = len(gen_b) }
+    if len(gen_c) < min_len { min_len = len(gen_c) }
+    let tl = min_len
+    println("common truncate length = " + to_string(tl) + " bytes")
+
+    let p_ubm  = _truncate(ubm_full, tl)
+    let p_a    = _truncate(gen_a, tl)
+    let p_b    = _truncate(gen_b, tl)
+    let p_c    = _truncate(gen_c, tl)
+    let p_shuf = _byte_shuffle(p_ubm, 777)
+    let p_nois = _ascii_noise(p_ubm, 777)
+
+    // cycle5b — 10 추가 seed (mini cycle5 의 5-seed 와 합쳐 distributional n↑).
+    let mut seeds = []
+    seeds = seeds.push(1)
+    seeds = seeds.push(2)
+    seeds = seeds.push(3)
+    seeds = seeds.push(4)
+    seeds = seeds.push(5)
+    seeds = seeds.push(6)
+    seeds = seeds.push(8)
+    seeds = seeds.push(10)
+    seeds = seeds.push(500)
+    seeds = seeds.push(9001)
+
+    // sweeps
+    println("")
+    println("════ UBM ════")
+    let s_ubm  = _sweep(chat, p_ubm,  "ubm",      seeds)
+    println("")
+    println("════ generic A (일상 서사) ════")
+    let s_a    = _sweep(chat, p_a,    "gen_a",    seeds)
+    println("")
+    println("════ generic B (과학 설명) ════")
+    let s_b    = _sweep(chat, p_b,    "gen_b",    seeds)
+    println("")
+    println("════ generic C (문학 산문) ════")
+    let s_c    = _sweep(chat, p_c,    "gen_c",    seeds)
+    println("")
+    println("════ byte-shuffle(UBM) ════")
+    let s_shuf = _sweep(chat, p_shuf, "byteshuf", seeds)
+    println("")
+    println("════ ASCII noise ════")
+    let s_nois = _sweep(chat, p_nois, "noise",    seeds)
+
+    // generic pooled = a+b+c 합산 (15 값)
+    let mut s_generic = []
+    let mut gi = 0
+    while gi < len(s_a) { s_generic = s_generic.push(s_a[gi])  gi = gi + 1 }
+    gi = 0
+    while gi < len(s_b) { s_generic = s_generic.push(s_b[gi])  gi = gi + 1 }
+    gi = 0
+    while gi < len(s_c) { s_generic = s_generic.push(s_c[gi])  gi = gi + 1 }
+
+    // garbage pooled = shuf + noise (10 값)
+    let mut s_garbage = []
+    gi = 0
+    while gi < len(s_shuf) { s_garbage = s_garbage.push(s_shuf[gi])  gi = gi + 1 }
+    gi = 0
+    while gi < len(s_nois) { s_garbage = s_garbage.push(s_nois[gi])  gi = gi + 1 }
+
+    let m_ubm = _mean(s_ubm)
+    let m_gen = _mean(s_generic)
+    let m_gar = _mean(s_garbage)
+    let sd_ubm = _std(s_ubm, m_ubm)
+    let sd_gen = _std(s_generic, m_gen)
+    let sd_gar = _std(s_garbage, m_gar)
+
+    let z_ubm_gen = _z(m_ubm, sd_ubm, m_gen, sd_gen)   // F-SRH-1c
+    let z_gen_gar = _z(m_gen, sd_gen, m_gar, sd_gar)    // coherent-text 효과
+
+    let f_srh_1c = (z_ubm_gen >= 2.0)
+
+    // verdict 분류
+    let mut verdict = "NULL"
+    if f_srh_1c && (m_ubm > m_gen) {
+        verdict = "UBM-SPECIFIC"
+    } else {
+        if (z_gen_gar >= 2.0) && (m_gen > m_gar) {
+            verdict = "COHERENT-TEXT"
+        } else {
+            verdict = "NULL"
+        }
+    }
+
+    let v1c = if f_srh_1c { "PASS" } else { "FAIL" }
+
+    let mut j = "{\n"
+    j = j + "  \"cycle\": 5,\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"host\": \"mini\",\n"
+    j = j + "  \"trunc_len\": " + to_string(tl) + ",\n"
+    j = j + "  \"max_new\": " + to_string(_max_new()) + ",\n"
+    j = j + "  \"seeds\": [2026, 42, 99, 7, 123],\n"
+    j = j + "  \"splits\": {\n"
+    j = j + "    \"ubm\": " + _int_arr_json(s_ubm) + ",\n"
+    j = j + "    \"gen_a\": " + _int_arr_json(s_a) + ",\n"
+    j = j + "    \"gen_b\": " + _int_arr_json(s_b) + ",\n"
+    j = j + "    \"gen_c\": " + _int_arr_json(s_c) + ",\n"
+    j = j + "    \"byteshuf\": " + _int_arr_json(s_shuf) + ",\n"
+    j = j + "    \"noise\": " + _int_arr_json(s_nois) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"mean\": { \"ubm\": " + to_string(m_ubm)
+          + ", \"generic\": " + to_string(m_gen)
+          + ", \"garbage\": " + to_string(m_gar) + " },\n"
+    j = j + "  \"std\": { \"ubm\": " + to_string(sd_ubm)
+          + ", \"generic\": " + to_string(sd_gen)
+          + ", \"garbage\": " + to_string(sd_gar) + " },\n"
+    j = j + "  \"F_SRH_1c\": { \"cmp\": \"ubm_vs_generic\", \"z\": "
+          + to_string(z_ubm_gen) + ", \"floor\": 2.0, \"verdict\": \"" + v1c + "\" },\n"
+    j = j + "  \"z_generic_vs_garbage\": " + to_string(z_gen_gar) + ",\n"
+    j = j + "  \"VERDICT\": \"" + verdict + "\",\n"
+    j = j + "  \"verdict_rule\": \"UBM-SPECIFIC iff F-SRH-1c PASS & ubm>generic · COHERENT-TEXT iff ubm~generic & generic>garbage · else NULL\"\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result_cycle5b.json", j)
+
+    println("")
+    println("================================================================")
+    println("CYCLE #5 COMPLETE — VERDICT: " + verdict)
+    println(j)
+    println("================================================================")
+}
+
+
+_run_cycle5()

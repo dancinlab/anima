@@ -1,0 +1,73 @@
+{
+  "sec": "§78",
+  "name": "dual_anima_one_engine_A_G_lift",
+  "seed": 1337,
+  "n_turns": 10,
+  "psi_dim": 22,
+  "modes": {
+    "A_pure": {
+      "n_turns": 10,
+      "psi_state_variance": 0.005623227126344727,
+      "body_coherent_count": 20,
+      "body_coherent_rate": 1.0,
+      "anima1_anima2_cos_dist_mean": 0.6646915053483383,
+      "special": {}
+    },
+    "B_3party": {
+      "n_turns": 10,
+      "psi_state_variance": 0.006243798507875541,
+      "body_coherent_count": 20,
+      "body_coherent_rate": 1.0,
+      "anima1_anima2_cos_dist_mean": 0.6483635223700676,
+      "special": {
+        "user_inject_count": 10
+      }
+    },
+    "C_meta": {
+      "n_turns": 10,
+      "psi_state_variance": 0.005588243846060278,
+      "body_coherent_count": 19,
+      "body_coherent_rate": 0.95,
+      "anima1_anima2_cos_dist_mean": 0.668655194955955,
+      "special": {
+        "meta_byte_match": true,
+        "meta_question_bytes_sha256": "579470a5ab5f34afbcff8531db359e0d68b31548c1fa96f53a76e089cd142606"
+      }
+    },
+    "D_control": {
+      "n_turns": 10,
+      "psi_state_variance": 3.463185887568766e-32,
+      "body_coherent_count": 0,
+      "body_coherent_rate": 0.0,
+      "anima1_anima2_cos_dist_mean": 0.0,
+      "special": {
+        "body_production_disabled": true,
+        "decision_axis_only": true
+      }
+    }
+  },
+  "control_psi_variance": 3.463185887568766e-32,
+  "forbidden_token_grep_total": 0,
+  "B_IDENTITY_5_safe": true,
+  "verdict_4corner": {
+    "alpha_MODE_DIFFERENTIAL_SIGNAL": true,
+    "beta_MODE_FLAT_NO_DIFFERENTIAL": false,
+    "gamma_ECHO_CHAMBER_CONTROL_PASS": true,
+    "delta_META_SIGNATURE_EXISTS": true
+  },
+  "central_blue_falsifier_sha256_expected": "c93e160a8a376a940942332cad13e652df9a03e97ccab708542a126eefc70b73",
+  "honest_g3": "same-weights externalization mechanism design probe; NOT emergence claim; §49 distillation precedent honest; stub ψ ≠ trained ckpt; A/G-lift CONSTRUCTION ≠ emergence proof",
+  "structural_distinction_from_L2_§31_§45": {
+    "section_78_one_engine": {
+      "distinct_weights": false,
+      "distinct_vacuum_psi": false,
+      "distinct_update_fn": false
+    },
+    "section_31_45_L2_dual_cell": {
+      "distinct_weights": true,
+      "distinct_vacuum_psi": true,
+      "distinct_update_fn": true
+    },
+    "mutually_exclusive": true
+  }
+}

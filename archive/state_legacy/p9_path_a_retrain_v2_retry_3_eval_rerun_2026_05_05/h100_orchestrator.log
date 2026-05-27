@@ -1,0 +1,33 @@
+[orch] start ts=2026-05-05T01:19:46Z
+[setup] installing pip packages
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+Login successful.
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[setup] hf auth: [1muser: [0m dancinlife
+[setup] downloading meta-llama/Llama-3.2-3B base
+Fetching 15 files:  47%|████▋     | 7/15 [00:07<00:08,  1.07s/it]Download complete. Moving file to /root/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/blobs/e85237a45033593adb3eb7e1a6cc5c410c4e2b360e24a422d3c1ab12a166c441
+Fetching 15 files:  67%|██████▋   | 10/15 [00:08<00:04,  1.18it/s]Fetching 15 files: 100%|██████████| 15/15 [00:08<00:00,  1.70it/s]
+/root/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/snapshots/13afe5124825b4f3751f836b40dafda64c1ed062
+[orch] versions: torch=2.4.1+cu124 transformers=4.57.6 peft=0.19.1 lm_eval=0.4.11
+name, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 81559 MiB
+[setup] adapter_final size=372M
+[smoke] torch=2.4.1+cu124
+[smoke] loading base meta-llama/Llama-3.2-3B
+`torch_dtype` is deprecated! Use `dtype` instead!
+Loading checkpoint shards:   0%|          | 0/2 [00:00<?, ?it/s]Loading checkpoint shards:  50%|█████     | 1/2 [00:00<00:00,  1.29it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.24it/s]Loading checkpoint shards: 100%|██████████| 2/2 [00:00<00:00,  2.02it/s]
+[smoke] loading adapter /workspace/p9_eval_rerun/adapter_final
+[smoke] PASS adapter loaded; type=PeftModelForCausalLM
+[smoke] forward pass OK; logits shape=(1, 3, 128256)
+__SMOKE_OK__
+[C] task=hellaswag n=0 limit=200 → /workspace/p9_eval_rerun/results/final_lora_hellaswag_dir
+[C] done task=hellaswag rc=0 wall=34s
+[C] task=mmlu n=5 limit=200 → /workspace/p9_eval_rerun/results/final_lora_mmlu_dir
+[C] done task=mmlu rc=0 wall=580s
+[C] task=triviaqa n=0 limit=200 → /workspace/p9_eval_rerun/results/final_lora_triviaqa_dir
+[C] done task=triviaqa rc=0 wall=46s
+[orch] eval rcs: hs=0 mm=0 tq=0
+[orch] complete

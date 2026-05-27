@@ -1,0 +1,22 @@
+{
+  "schema": "anima/red_to_green_substrate_swap_llama31/an11_a_frobenius/1",
+  "adapter": "state/llama31_r14_run/llama31_r14/final/adapter_model.safetensors",
+  "base_model": "meta-llama/Llama-3.1-8B",
+  "r": 64,
+  "alpha": 128,
+  "scale_alpha_over_r": 2.0,
+  "frob_dW_total": 9.638259815982376,
+  "n_modules": 224,
+  "per_proj_total": {
+    "down_proj": 2.625920772510899,
+    "gate_proj": 7.106637448312471,
+    "up_proj": 4.748014813100198,
+    "k_proj": 1.1352452838365283,
+    "o_proj": 2.2897180158065518,
+    "q_proj": 2.2706293786140264,
+    "v_proj": 1.1248571768420488
+  },
+  "verdict_AGI_strict": "PASS",
+  "verdict_CP2_relaxed": "PASS",
+  "method": "direct ||scale*B@A||_F per module, summed in quadrature; pure-python BF16 read"
+}

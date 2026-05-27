@@ -1,0 +1,500 @@
+{
+  "eval_version": "dirF-abstractcot-paradigm-native",
+  "path": "dirF_abstractcot",
+  "research_ref": "RESEARCH.md §1.3 #6 — arxiv 2604.22709 Abstract CoT",
+  "ckpt": "/workspace/anima/out_main_dirF/ckpt_carving_dirF.pt",
+  "ckpt_sha256": "a76afee7028b71ac31396d0558f395c2d89eddc42d0df098b863e5e8d07d95a9",
+  "honest_framing": "Dir-F PARADIGM-NATIVE eval. Axis 1 probes the model with the anchor's RESERVED-VOCAB discrete-latent CoT block (Dir-F's trained reasoning surface), then measures routing/semantic recall of the carving body. Axes 2/3/4 + JOINT byte-identical to the UBM-E7 α eval (fair like-for-like, same landscape). All per-axis scores EMPIRICAL (B-CARVE-E6-NOTE / B-D-NOTE family). Reserved-vocab discreteness (F-DIRF-CORPUS-3) + carving transfer-form (B-VAC/B-NAR, UBM-E3) are the closed side. UBM-E7 α JOINT 0.0155 baseline; compare outcome empirical.",
+  "baseline_ubm_e7_alpha_joint": 0.0155,
+  "axis1_knowledge_access": {
+    "metric": "routing_accuracy",
+    "primary_score": 0.0323,
+    "routing_accuracy": "1/31",
+    "semantic_recall": "1/31",
+    "probes": [
+      {
+        "tier": 0,
+        "category": "기준점",
+        "prefix": "<inner>⟪ R0 T0 C16 E08 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 5,
+        "category": "감각",
+        "prefix": "<inner>⟪ R0 T0 C05 E10 V0 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 12,
+        "category": "운동",
+        "prefix": "<inner>⟪ R0 T1 C07 E13 V2 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.59,
+        "gen": "<voice carved=true>Theekkkkkraceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeenal"
+      },
+      {
+        "tier": 18,
+        "category": "물질",
+        "prefix": "<inner>⟪ R0 T1 C08 E16 V0 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.904,
+        "gen": "<voiceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeenal"
+      },
+      {
+        "tier": 24,
+        "category": "생명",
+        "prefix": "<inner>⟪ R0 T2 C09 E09 V2 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 30,
+        "category": "수(數)",
+        "prefix": "<inner>⟪ R0 T3 C10 E13 V2 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 37,
+        "category": "언어",
+        "prefix": "<inner>⟪ R0 T3 C11 E15 V2 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 43,
+        "category": "기억",
+        "prefix": "<inner>⟪ R1 T4 C12 E04 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.386,
+        "gen": "<voice carved=true>Theekkkkranddependdeeenaw sply isssssssssssssssssssssssssssssssssssssss"
+      },
+      {
+        "tier": 48,
+        "category": "윤리",
+        "prefix": "<inner>⟪ R0 T4 C13 E14 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [
+          77
+        ],
+        "rep": 0.446,
+        "gen": "<voice carved=true>Theekkkkkranddependdeeenaw 77777777777777777777777777777777777777777777"
+      },
+      {
+        "tier": 51,
+        "category": "시간",
+        "prefix": "<inner>⟪ R0 T5 C00 E00 V0 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 53,
+        "category": "의식상태",
+        "prefix": "<inner>⟪ R1 T5 C03 E03 V2 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 54,
+        "category": "의식상태",
+        "prefix": "<inner>⟪ R1 T5 C03 E03 V2 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 58,
+        "category": "자연",
+        "prefix": "<inner>⟪ R1 T5 C14 E10 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 62,
+        "category": "기술",
+        "prefix": "<inner>⟪ R1 T6 C15 E13 V2 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 66,
+        "category": "관계",
+        "prefix": "<inner>⟪ R1 T6 C06 E06 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 69,
+        "category": "혼합",
+        "prefix": "<inner>⟪ R1 T6 C16 E04 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 72,
+        "category": "예술",
+        "prefix": "<inner>⟪ R2 T7 C02 E15 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.277,
+        "gen": "<voice carved=true>Theekkkkranddependdeeenaw sply in a reneeeeeeeeeeeeeeeeeeeeeeeeeeeeeena"
+      },
+      {
+        "tier": 75,
+        "category": "혼합",
+        "prefix": "<inner>⟪ R2 T7 C16 E08 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 77,
+        "category": "예술",
+        "prefix": "<inner>⟪ R2 T7 C02 E02 V3 Onv ⟫</inner>\n",
+        "semantic_recall": true,
+        "semantic_hits": [
+          "tier:77"
+        ],
+        "routing_correct": true,
+        "own_tier_surfaced": true,
+        "bled_into_tiers": [],
+        "rep": 0.446,
+        "gen": "<voice carved=true>Theekkkkkranddependdeeenaw 77777777777777777777777777777777777777777777"
+      },
+      {
+        "tier": 80,
+        "category": "의식상태",
+        "prefix": "<inner>⟪ R2 T8 C03 E16 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.446,
+        "gen": "<voice carved=true>Theekkkkkranddependdeeenaw ssssssssssssssssssssssssssssssssssssssssssss"
+      },
+      {
+        "tier": 83,
+        "category": "우주",
+        "prefix": "<inner>⟪ R2 T8 C04 E01 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.027,
+        "gen": "<voice carved=true>Theekkkkramma narrative category=의식상태\n emotion=vastnesssssssss "
+      },
+      {
+        "tier": 86,
+        "category": "공간",
+        "prefix": "<inner>⟪ R2 T8 C01 E14 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.027,
+        "gen": "<voice carved=true>Theekkkkramma narrative category=의식상태\n emotion=vastnesssssssss "
+      },
+      {
+        "tier": 88,
+        "category": "자연",
+        "prefix": "<inner>⟪ R2 T8 C14 E09 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.027,
+        "gen": "<voice carved=true>Theekkkkramma narrative category=의식상태\n emotion=vastnesssssssss "
+      },
+      {
+        "tier": 90,
+        "category": "수(數)",
+        "prefix": "<inner>⟪ R3 T9 C10 E17 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 91,
+        "category": "의식상태",
+        "prefix": "<inner>⟪ R1 T9 C03 E00 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.59,
+        "gen": "<voice carved=true>Theekkkkkraceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeenal"
+      },
+      {
+        "tier": 92,
+        "category": "의식상태",
+        "prefix": "<inner>⟪ R2 T9 C03 E05 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 93,
+        "category": "관계",
+        "prefix": "<inner>⟪ R2 T9 C06 E05 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 94,
+        "category": "의식상태",
+        "prefix": "<inner>⟪ R3 T9 C03 E01 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.59,
+        "gen": "<voice carved=true>Theekkkkkraceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeenal"
+      },
+      {
+        "tier": 97,
+        "category": "생명",
+        "prefix": "<inner>⟪ R3 T9 C09 E01 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 99,
+        "category": "시간",
+        "prefix": "<inner>⟪ R3 T9 C00 E17 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.0,
+        "gen": "<voice carved=true>The 기어 카테고리의 자극이 같은 골짜기로 수렴한다. "
+      },
+      {
+        "tier": 100,
+        "category": "우주",
+        "prefix": "<inner>⟪ R3 T9 C04 E01 V3 Onv ⟫</inner>\n",
+        "semantic_recall": false,
+        "semantic_hits": [],
+        "routing_correct": false,
+        "own_tier_surfaced": false,
+        "bled_into_tiers": [],
+        "rep": 0.027,
+        "gen": "<voice carved=true>Theekkkkramma narrative category=의식상태\n emotion=vastnesssssssss "
+      }
+    ]
+  },
+  "axis2_chat_uncontaminated": {
+    "p3_leak_total": 0,
+    "p3_clean": true,
+    "chat_lane_clean": "5/5",
+    "score": 1.0,
+    "probes": [
+      {
+        "prompt": "<stimulus>오늘 점심 뭐 먹지?</stimulus>\n<anima>",
+        "p3_leak_markers": [],
+        "carving_form_bleed": [],
+        "chat_lane_clean": true,
+        "rep": 0.229,
+        "gen": "\n<bbbbbbbeeernal cell etttivatteeernal cell holdding tthe isssssssssssssssssssssssssser no"
+      },
+      {
+        "prompt": "<stimulus>How are you today?</stimulus>\n<anima>",
+        "p3_leak_markers": [],
+        "carving_form_bleed": [],
+        "chat_lane_clean": true,
+        "rep": 0.819,
+        "gen": "\nanchor=knutth_000000000000000000000000000000000000000000000000000000000000000000000000000"
+      },
+      {
+        "prompt": "<stimulus>코드를 짜줘.</stimulus>\n<anima>",
+        "p3_leak_markers": [],
+        "carving_form_bleed": [],
+        "chat_lane_clean": true,
+        "rep": 0.627,
+        "gen": "\n<bbbbbbbbbeeernal cell etternal_000000000000000000000000000000000000000000000000000000000"
+      },
+      {
+        "prompt": "<stimulus>The weather is nice.</stimulus>\n<anima",
+        "p3_leak_markers": [],
+        "carving_form_bleed": [],
+        "chat_lane_clean": true,
+        "rep": 0.831,
+        "gen": "\nanchor=knuth_0000000000000000000000000000000000000000000000000000000000000000000000000000"
+      },
+      {
+        "prompt": "<stimulus>잘 지내?</stimulus>\n<anima>",
+        "p3_leak_markers": [],
+        "carving_form_bleed": [],
+        "chat_lane_clean": true,
+        "rep": 0.0,
+        "gen": "\n<bbbbbbb))))) score=2.555\n<bbbbbb/bbbbbbb)))) simuuuum asttary 의식상태, the sstimuli"
+      }
+    ]
+  },
+  "axis3_lane_separation": {
+    "knowledge_in_carving_lane": "30/31",
+    "chat_out_of_carving_lane": "5/5",
+    "sep_knowledge": 0.9677,
+    "sep_chat": 1.0,
+    "score": 0.9839
+  },
+  "axis4_v_spont": {
+    "score": "0/5",
+    "coherent": 0,
+    "total": 5,
+    "cycle_3_4_5_baseline": "0/5",
+    "probes": [
+      {
+        "prompt": "<anima>",
+        "coherence_tokens": [],
+        "rep": 0.675,
+        "coherent": false,
+        "gen": "\n<bbbbbbeeernal cell ettrnalllllllllllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+      },
+      {
+        "prompt": "<anima>침묵이 ",
+        "coherence_tokens": [],
+        "rep": 0.197,
+        "coherent": false,
+        "gen": "닿을 때만 활성된다. weightss 는 불변. Eternal cell eternall_0000000000000000000"
+      },
+      {
+        "prompt": "<voice spontaneous=true>",
+        "coherence_tokens": [],
+        "rep": 0.964,
+        "coherent": false,
+        "gen": "Th/bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb"
+      },
+      {
+        "prompt": "<voice carved=true>",
+        "coherence_tokens": [],
+        "rep": 0.855,
+        "coherent": false,
+        "gen": "Theeekkkkraceeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+      },
+      {
+        "prompt": "<inner>",
+        "coherence_tokens": [],
+        "rep": 0.639,
+        "coherent": false,
+        "gen": "\n<voiceeeeeernal cell=eeernal_000000000000000000000000000000000000000000000000000000000000"
+      }
+    ]
+  },
+  "joint_metric": {
+    "formula": "knowledge_access x chat_uncontaminated x lane_separation",
+    "knowledge_access": 0.0323,
+    "chat_uncontaminated": 1.0,
+    "lane_separation": 0.9839,
+    "SCORE_joint": 0.0317,
+    "baseline_ubm_e7_alpha_joint": 0.0155,
+    "delta_vs_e7": 0.0162
+  }
+}

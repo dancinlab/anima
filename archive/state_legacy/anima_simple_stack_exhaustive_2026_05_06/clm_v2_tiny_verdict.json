@@ -1,0 +1,340 @@
+{
+  "model_name": "clm_v2_tiny",
+  "model_path": "/tmp/anima_v2_check/clm_v2_tiny/final.pt",
+  "params_M": 0.32,
+  "config": {
+    "dim": 64,
+    "layers": 2,
+    "heads": 2,
+    "block_size": 128,
+    "vocab_size": 256,
+    "gate": 0.001,
+    "ca_rules": 8
+  },
+  "load_info": {
+    "missing": 0,
+    "unexpected": 0
+  },
+  "load_time_s": 0.0,
+  "ko": {
+    "안녕하세요": {
+      "greedy": {
+        "full": "안녕하세요������������������������������������������������������������������������������������������������������������������������",
+        "gen": "������������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "안녕하세요�������� 젳�땸����짋  ��������\n���쀁.����슊�휘똃ꐠ����렔�픤��짲����\n���� � ꘡�씄���늞��졔�쌩옳��",
+        "gen": "�������� 젳�땸����짋  ��������\n���쀁.����슊�휘똃ꐠ����렔�픤��짲����\n���� � ꘡�씄���늞��졔�쌩옳��",
+        "hangul_ratio": 0.9375,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "안녕하세요����������석�지���������\nꝰ���딂������ �.����.��찋�밋����\n�얔���인��니눕�젗�씗���너��내��슠���",
+        "gen": "����������석�지���������\nꝰ���딂������ �.����.��찋�밋����\n�얔���인��니눕�젗�씗���너��내��슠���",
+        "hangul_ratio": 0.9333333333333333,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "안녕하세요�� ��������� ������봔������ �앴����� ������������������������������������������������안����:��������",
+        "gen": "�� ��������� ������봔������ �앴����� ������������������������������������������������안����:��������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "한국어 가능?": {
+      "greedy": {
+        "full": "한국어 가능?������������������������������������������������������������������������������������������������������������������������",
+        "gen": "������������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "한국어 가능?됕�줴쁜�.�줥������\n�엸���� � \n��\n���\n� �������샸� �앰����판����� 헰�읠������.�����:�����세�천� ������",
+        "gen": "됕�줴쁜�.�줥������\n�엸���� � \n��\n���\n� �������샸� �앰����판����� 헰�읠������.�����:�����세�천� ������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "한국어 가능?������무�읜쀜���슞������ ���뀠쩋��씘���\n���\n��������앖���:��� ���찔�연�:�����딗������������숰����",
+        "gen": "������무�읜쀜���슞������ ���뀠쩋��씘���\n���\n��������앖���:��� ���찔�연�:�����딗������������숰����",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "한국어 가능?������찝����������찄���������이�����������������������눔������������������������������촄:���������",
+        "gen": "������찝����������찄���������이�����������������������눔������������������������������촄:���������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "greedy": {
+        "full": "사용자: 안녕하세요\n도우미:������������������������������������������������������������������������������������������������������������������������",
+        "gen": "������������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "사용자: 안녕하세요\n도우미:���이���욬��슊��� ��������쁬��  ��.���쩂������ ����숴����� ���� .���뀝������앬����\n���ꂰ��������",
+        "gen": "���이���욬��슊��� ��������쁬��  ��.���쩂������ ����숴����� ���� .���뀝������앬����\n���ꂰ��������",
+        "hangul_ratio": 0.8888888888888888,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "사용자: 안녕하세요\n도우미: ꄠ��쥴�������넋��촐������툈���������젰�����.�� �욤����잠��맧��괌�� ��싄�밀�\n����찗��� ����",
+        "gen": " ꄠ��쥴�������넋��촐������툈���������젰�����.�� �욤����잠��맧��괌�� ��싄�밀�\n����찗��� ����",
+        "hangul_ratio": 0.9230769230769231,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "사용자: 안녕하세요\n도우미:����������������������������찝�����������������������섰�����앰��똠�����촕���������������������젡",
+        "gen": "����������������������������찝�����������������������섰�����앰��똠�����촕���������������������젡",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "en": {
+    "Hello, how are you?": {
+      "greedy": {
+        "full": "Hello, how are you? eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "gen": " eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.9916666666666667,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Hello, how are you?eeeai soeht one gwstup��������찳��켕�\n������\n���\n�.��잌�������씚�졕�.��츴\n옡 ��������\n������������쌋�씳",
+        "gen": "eeeai soeht one gwstup��������찳��켕�\n������\n���\n�.��잌�������씚�졕�.��츴\n옡 ��������\n������������쌋�씳",
+        "hangul_ratio": 0.32142857142857145,
+        "ascii_letter_ratio": 0.20212765957446807,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Hello, how are you? esearteteoenehat .s onei tatnsshsiidorioyefeoseanit eeetiiersceees otesire oc ees noenisiieecsa eeeitnr ch  eei g nh ic",
+        "gen": " esearteteoenehat .s onei tatnsshsiidorioyefeoseanit eeetiiersceees otesire oc ees noenisiieecsa eeeitnr ch  eei g nh ic",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.8583333333333333,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "Hello, how are you? iel rle s  e nneee ia eaieaieia  er eeeeeciseee e een eietaeeie n ntsibe peeee ee eoeeeeeeereeeehs  e tecse e   eee eie",
+        "gen": " iel rle s  e nneee ia eaieaieia  er eeeeeciseee e een eietaeeie n ntsibe peeee ee eoeeeeeeereeeehs  e tecse e   eee eie",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.775,
+        "byte_garbage": false,
+        "coherent": true
+      }
+    },
+    "What is consciousness?": {
+      "greedy": {
+        "full": "What is consciousness? eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "gen": " eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.9916666666666667,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "What is consciousness?e tneerteof outers. irndcse  osoe nrt�은짗딊네�땤�ꌋ����낡����:�뀝�����ꀝ� ���쌔�� �암��\n� �������윸�� ",
+        "gen": "e tneerteof outers. irndcse  osoe nrt�은짗딊네�땤�ꌋ����낡����:�뀝�����ꀝ� ���쌔�� �암��\n� �������윸�� ",
+        "hangul_ratio": 0.23809523809523808,
+        "ascii_letter_ratio": 0.32967032967032966,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "What is consciousness?ol eeeittin ia l s itir etee et riea e ntpo aeseein eet eetenet  eeuessilhieerarenintnti s ia esiso n ssest.tene l nic r",
+        "gen": "ol eeeittin ia l s itir etee et riea e ntpo aeseein eet eetenet  eeuessilhieerarenintnti s ia esiso n ssest.tene l nic r",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.8,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "What is consciousness?i cees ee eeset     te   ier i  e eassn ree he  irei  ee neece  teseee  eeeeeenet an ene e eterroneeicei ic e ea ie c r ",
+        "gen": "i cees ee eeset     te   ier i  e eassn ree he  irei  ee neece  teseee  eeeeeenet an ene e eterroneeicei ic e ea ie c r ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.6916666666666667,
+        "byte_garbage": false,
+        "coherent": true
+      }
+    },
+    "User: Hi\nAssistant:": {
+      "greedy": {
+        "full": "User: Hi\nAssistant:������������������������������������������������������������������������������������������������������������������������",
+        "gen": "������������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "User: Hi\nAssistant:���슗����뜜������ mhsatrtrcntletnnstrsooierrnos엋���봈�����.잴���삸��띔�촌�����\n���.��:�욖���적��젬�",
+        "gen": "���슗����뜜������ mhsatrtrcntletnnstrsooierrnos엋���봈�����.잴���삸��띔�촌�����\n���.��:�욖���적��젬�",
+        "hangul_ratio": 0.275,
+        "ascii_letter_ratio": 0.3258426966292135,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "User: Hi\nAssistant: ee ttre.sslee eonree ioneotooasn hatriesennp so eoenenedei\n itneeniit uenn raees숔�� eetsrenitiei   s uoiee눝:���.e ",
+        "gen": " ee ttre.sslee eonree ioneotooasn hatriesennp so eoenenedei\n itneeniit uenn raees숔�� eetsrenitiei   s uoiee눝:���.e ",
+        "hangul_ratio": 0.022222222222222223,
+        "ascii_letter_ratio": 0.7652173913043478,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "User: Hi\nAssistant:�����았����������������������������������������������������엔�� ��������������������������������",
+        "gen": "�����았����������������������������������������������������엔�� ��������������������������������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "c2": {
+    "Once upon a time": {
+      "greedy": {
+        "full": "Once upon a timeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "gen": "eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 1.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Once upon a timednhrl rae ��  en�렂����꜠�았촘�:욧���� [\n��:�� ch ried욝����젊뚴���씘�����윘밳���� ��앴쁠�.렞����",
+        "gen": "dnhrl rae ��  en�렂����꜠�았촘�:욧���� [\n��:�� ch ried욝����젊뚴���씘�����윘밳���� ��앴쁠�.렞����",
+        "hangul_ratio": 0.4482758620689655,
+        "ascii_letter_ratio": 0.1927710843373494,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Once upon a time esnieh ratatsiaeis ereitrco ninsel  tlai eet o  shstiihieaettse pn t �� gnieeiesntnooeetn���  rhs  nt sieesireea  lro",
+        "gen": " esnieh ratatsiaeis ereitrco ninsel  tlai eet o  shstiihieaettse pn t �� gnieeiesntnooeetn���  rhs  nt sieesireea  lro",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.7796610169491526,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "Once upon a timeeeeroo eeeesn   eeeeeteeei  nt es eoea aeoec ne ee ss oess eees oeanoeee teene eeteeeeeseeeseeeiaetenee en   eietn ese e",
+        "gen": "eeeroo eeeesn   eeeeeteeei  nt es eoea aeoec ne ee ss oess eees oeanoeee teene eeteeeeeseeeseeeiaetenee en   eietn ese e",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.8083333333333333,
+        "byte_garbage": false,
+        "coherent": true
+      }
+    },
+    "Q:": {
+      "greedy": {
+        "full": "Q:�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011",
+        "gen": "�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011�\u0011",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Q:�� \u0005옔���.�� �벬베��봴����밡뜸�\n쐗�욝��픧뤊��ꡐ����:�\n����츈������퀘�����:����쀞��쬋��렐ꔚ줊��",
+        "gen": "�� \u0005옔���.�� �벬베��봴����밡뜸�\n쐗�욝��픧뤊��ꡐ����:�\n����츈������퀘�����:����쀞��쬋��렐ꔚ줊��",
+        "hangul_ratio": 0.8888888888888888,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Q:��.��픀찖����ꚰ찘�������.�����.������� �����젝���뼡옄�츬� ���� ���욡��������� �����������봤��",
+        "gen": "��.��픀찖����ꚰ찘�������.�����.������� �����젝���뼡옄�츬� ���� ���욡��������� �����������봤��",
+        "hangul_ratio": 0.9,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Q:��\u0011�\u001d�\u0011�\u0001�������\t����*��\u0016�\u0011�\u0010�\u001a���\u001a�����Ƌ�ה�X�\u001b���J�����˘�&�\u0012�������픠���������\u000e���J�\u0016������є���\u0011�\u001f�����Z�}��\u000e����",
+        "gen": "��\u0011�\u001d�\u0011�\u0001�������\t����*��\u0016�\u0011�\u0010�\u001a���\u001a�����Ƌ�ה�X�\u001b���J�����˘�&�\u0012�������픠���������\u000e���J�\u0016������є���\u0011�\u001f�����Z�}��\u000e����",
+        "hangul_ratio": 0.125,
+        "ascii_letter_ratio": 0.035398230088495575,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "(empty)": {
+      "greedy": {
+        "full": "\n������������������������������������������������������������������������������������������������������������������������",
+        "gen": "\n������������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "\n����삃��:����.숀�� �횸��\n� ����ꄝꈀ\n����픜��� ������줖 �디�\n������ ��뚔��ꐚ���\n����ꋰ�섚��\n쐸\n천�윊",
+        "gen": "\n����삃��:����.숀�� �횸��\n� ����ꄝꈀ\n����픜��� ������줖 �디�\n������ ��뚔��ꐚ���\n����ꋰ�섚��\n쐸\n천�윊",
+        "hangul_ratio": 0.7333333333333333,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "\n��신�.������������������읝�읊�쬚����ꤤ삠����� �����������Ꝍ��� �����렔�쐈�렰�똝�����ꜘ�� �",
+        "gen": "\n��신�.������������������읝�읊�쬚����ꤤ삠����� �����������Ꝍ��� �����렔�쐈�렰�똝�����ꜘ�� �",
+        "hangul_ratio": 0.75,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "\n�����\n�������\n���옘������.�����������������������������������������������������������������������������",
+        "gen": "\n�����\n�������\n���옘������.�����������������������������������������������������������������������������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "verdict": {
+    "label": "SIMPLE_STACK_FAIL",
+    "ko_pass_n": 0,
+    "en_pass_n": 3,
+    "c2_pass_n": 1,
+    "c1_ko_pass": false,
+    "c1_en_pass": true,
+    "c2_full_pass": false
+  }
+}

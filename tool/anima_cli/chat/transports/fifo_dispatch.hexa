@@ -1,0 +1,83 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/transports/fifo_dispatch.hexa — FIFO dispatch transport
+//
+//  PURPOSE
+//    Transport plugin for chat.hexa _dispatch_module_streaming pattern.
+//    Documents + smoke-tests the canonical 1:1 streaming path used for
+//    `anima chat <alias>` REPL/one-shot. NOT a re-implementation —
+//    chat.hexa retains the SSOT body (lines 358-469).
+//
+//  PATTERN SUMMARY
+//    1. allocate FIFO via channel_pair_open() (β-1 stdlib/channel)
+//    2. background inner cmd writing stdout → FIFO with __HEXA_DISP_END__
+//       sentinel after exit
+//    3. parent reads via channel_recv(read_fd, timeout_ms) per-line
+// 4. forward each line verbatim to on_line callback (mandate-1)
+//    5. tear-down: channel_close(read_fd) + channel_close(write_fd)
+//
+//  USE CASES
+//    · chat.hexa default streaming dispatch (REPL banner cadence)
+//    · benchmark.hexa lane invocation (each lane is a one-shot dispatch)
+//    · 1:1 mode benchmark cross-product
+//
+//  COMPLIANCE
+// mandate-1 — bytes verbatim through FIFO; sentinel control-band only
+// control-band — __HEXA_DISP_END__ filtered before on_line callback
+//    raw#9 — hexa-only (β-1 stdlib only; no shell pipes)
+// ════════════════════════════════════════════════════════════════════════════
+
+use "stdlib/channel"
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn transport_describe() -> string {
+    return "fifo-dispatch — stdlib/channel pair + per-line channel_recv with END sentinel (chat.hexa _dispatch_module_streaming SSOT; 1:1 streaming low-latency)"
+}
+
+// transport_smoke — benchmark hook. Validates β-1 channel API surface
+// available + FIFO allocation works. Returns 0 on PASS, non-zero on FAIL.
+// mandate-1: no model invocation here — lane-orthogonal.
+fn transport_smoke(repo: string, argv) -> int {
+    let pair = channel_pair_open()
+    if len(pair) < 2 { return 2 }
+    let read_fd = pair[0]
+    let write_fd = pair[1]
+    if read_fd < 0 || write_fd < 0 { return 3 }
+    let _ok = channel_send(write_fd, "smoke")
+    let line = _str(channel_recv(read_fd, 1000))
+    let _c1 = channel_close(read_fd)
+    let _c2 = channel_close(write_fd)
+    if line.trim() != "smoke" { return 4 }
+    println("[transport:fifo-dispatch] smoke PASS — channel_pair_open + send + recv + close round-trip OK")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(transport_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = transport_smoke("", argv)
+        if rc != 0 {
+            println("FAIL transport fifo-dispatch smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(transport_describe())
+}

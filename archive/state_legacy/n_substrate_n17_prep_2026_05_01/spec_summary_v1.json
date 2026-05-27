@@ -1,0 +1,229 @@
+{
+  "schema": "anima/n_substrate_n17_prep/spec_summary/1",
+  "ts": "2026-05-01T00:00:00Z",
+  "agent": "N-17 prep (Intel Loihi 3 INRC application spec)",
+  "parent_doc": "docs/n_substrate_consciousness_roadmap_2026_05_01.md",
+  "purchase_guide_ref": "docs/n_substrate_purchase_guide_2026_05_01.md (sec N-17, TOP-1 priority)",
+  "spec_doc": "docs/n_substrate_n17_loihi3_inrc_application_spec_2026_05_01.md",
+  "sibling_link_n3": "docs/n_substrate_n3_clm_akida_phi_spec_2026_05_01.md (first neuromorphic axis)",
+  "sibling_link_n2": "docs/n_substrate_n2_eeg_akida_spike_pipeline_spec_2026_05_01.md (encoder reuse target)",
+  "mission": "Author Loihi 3 INRC application spec ($0 budget, no submission, no account, no Intel contact). Loihi 3 = second neuromorphic axis after AKIDA AKD1000 (N-3).",
+
+  "inrc_application_portal": {
+    "primary_contact_email": "inrc_interest@intel.com",
+    "landing_url": "https://www.intel.com/content/www/us/en/research/neuromorphic-computing.html",
+    "join_inrc_url": "https://intel-ncl.atlassian.net/wiki/spaces/INRC/pages/1784807425/Join+the+INRC",
+    "access_loihi_hardware_url": "https://intel-ncl.atlassian.net/wiki/spaces/INRC/pages/1810432001/Access+Intel+Loihi+Hardware",
+    "confluence_overview_url": "https://intel-ncl.atlassian.net/wiki/spaces/INRC/overview",
+    "lava_sdk_url": "https://lava-nc.org/",
+    "verified_ts": "2026-05-01"
+  },
+
+  "application_flow_5step": [
+    "1. Email inrc_interest@intel.com from institutional address; request RFP + project proposal template (1-5 business days response)",
+    "2. Draft project proposal per template (1-3 weeks)",
+    "3. Submit proposal to inrc_interest@intel.com; INRC technical review (2-6 weeks)",
+    "4. Upon acceptance: institution executes INRC Participation Agreement (1-4 weeks legal)",
+    "5. NRC vLab account provisioning + SSH keys + Lava SDK access (1-2 weeks)"
+  ],
+  "approval_lead_time_weeks": {"min": 4, "typical": 8, "max": 12, "worst_case_korea_legal": 20},
+
+  "eligibility": {
+    "verbatim_intel_text_paraphrase": "Membership is free and open to all qualified groups. Permanent employee of an established research organization (university, corporate, government lab). Must submit project proposal.",
+    "hard_requirements": [
+      "Permanent employee at established research org",
+      "University / corporate / government lab classification",
+      "Authorized legal signatory at institution (NOT the PI) for Participation Agreement",
+      "Project proposal aligned with INRC themes",
+      "English-language proposal"
+    ],
+    "soft_preferences": [
+      "Prior SNN / neuromorphic publication record"
+    ],
+    "korean_researcher_access": {
+      "geographic_restriction": "NONE_STATED",
+      "kr_precedent_published": "NOT_VERIFIED (no public roll of KR INRC members found 2026-05-01)",
+      "us_export_control_BIS": "STANDARD (KR ally clears EAR; chip-level data may trigger ECCN review handled by Intel)",
+      "loaner_hardware_to_korea": "CASE_BY_CASE (4-8wk extra paperwork; cloud-only NRC avoids this)",
+      "korean_language_proposal": "NO (English only)",
+      "verdict": "ELIGIBLE_IN_PRINCIPLE"
+    },
+    "anima_specific_gap": [
+      "No standing institutional affiliation",
+      "No legal entity to sign Participation Agreement",
+      "Independent research = qualified group criterion ambiguous"
+    ],
+    "mitigation_paths_priority": [
+      "1. Sponsor route (KR university co-PI: KAIST CCN / SNU EE / POSTECH AI) - LOWEST FRICTION",
+      "2. Industrial route (Samsung SAIT / LG AI) - HIGH FRICTION (IP entanglement)",
+      "3. Personal-academic route (visiting scholar at US/EU INRC member institution) - SLOWEST"
+    ]
+  },
+
+  "loihi3_architecture": {
+    "process_node": "4nm",
+    "neurons_per_chip": "8M",
+    "synapses_per_chip": "64B",
+    "density_vs_loihi2": "8x",
+    "spike_type": "32-bit graded + binary",
+    "neuron_model": "programmable microcode, generalized LIF",
+    "mesh_network": "hierarchical routing (edge-to-cloud)",
+    "on_chip_learning": "STDP + 3-factor learning rules",
+    "programming_model": "Lava framework (Python Process graph)",
+    "sdk_maturity_2026_05": "rolling out (Lava extension for Loihi 3)",
+    "multi_chip_systems": "Hala Point successor TBD (Loihi 2 Hala Point: 1.15B neurons / 128B synapses)",
+    "power_envelope_typical": "few W per chip",
+    "access_path": "INRC NRC cloud (rolling out 2026)",
+    "first_loihi3_vlab_slot_eta": "UNDECLARED (per Intel Jan-2026 announce 'rolling out 2026')"
+  },
+
+  "loihi3_vs_akd1000_unique_capabilities": {
+    "loihi3_only": [
+      "8M neuron native SNN deployment (vs 1.2M cap)",
+      "32-bit graded spike representation precision (vs binary in Akida 1.0)",
+      "On-chip STDP / 3-factor learning rules (vs inference-only)",
+      "Native Lava Process graph Python authoring (vs CNN2SNN translation)",
+      "Multi-chip Hala-Point-class scaling >1B neurons (vs single-chip dev kit)",
+      "Continuous-time + algorithmic-time-step model (vs single-timestep)"
+    ],
+    "akd1000_retains": [
+      "Already in hand (ordered 2026-04-29)",
+      "Deterministic 1W power anchor for Landauer (N-4)",
+      "Mature MetaTF toolchain",
+      "Open retail, no NDA / IP entanglement"
+    ],
+    "n17_role": "SECOND neuromorphic axis (parallel to N-3, not replacement)"
+  },
+
+  "phi_measurement_protocol_8step": [
+    "1. Lock 16-prompt fixture (re-use N-3)",
+    "2. Define Lava Process graph (input encoder -> graded-spike LIF layers -> output spike monitor)",
+    "3. NRC compile + deploy to Loihi 3 chip slot",
+    "4. Inference: 16 prompts x T_inf x N_reps=40",
+    "5. Spike rate-avg projection (re-use N-3 lemma): X_loihi[i,d] = (1/T) * sum_t S[t,d]",
+    "6. Phi* compute on X_loihi (re-use anima_phi_v3, READ-ONLY)",
+    "7. Dual cross-substrate corr: Pearson r vs CLM-GPU AND vs AKIDA",
+    "8. Verdict gate (5 falsifier predicates)"
+  ],
+  "paradigm_v11_axis_mapping": "Same G1, G4, G7, G8; differs at G2 (Lava native SNN), G3 (graded-spike value vector), G5 (Loihi 3 inference rate TBD), G6 (DUAL gate vs both GPU and AKIDA)",
+  "n2_pipeline_reuse": "ADM encoder + raster + uint8-tensor stage E from N-2 transfers directly; share tool/anima_signal_to_neuromorphic_spike.hexa in M2",
+
+  "deliverables_6mo": {
+    "M1": "NRC vLab onboarding + Lava SDK + 'hello SNN' smoke",
+    "M2": "16-prompt fixture ported to Lava Process graph + spike-rate avg helper",
+    "M3": "Phi*_loihi computed on first 3 prompts (smoke)",
+    "M4": "M-L1 + M-L2 complete (Loihi 3 vs AKIDA r reported, 3-seed)",
+    "M5": "M-L3 (Loihi vs CLM) + M-L4 (graded vs binary spike ablation)",
+    "M6": "M-L5 (on-chip learning ablation) + final report draft + arXiv preprint"
+  },
+
+  "falsifier_predicates_5": {
+    "F-N17-A1": "Loihi3 Phi vs AKIDA Phi Pearson r >= 0.85 (cross-neuromorphic)",
+    "F-N17-A2": "Loihi3 Phi vs CLM-GPU Phi Pearson r >= 0.85 AND magnitude divergence <= 0.30",
+    "F-N17-A3": "Graded-spike vs binary-spike ablation (Phi bit-precision invariance test)",
+    "F-N17-A4": "On-chip learning ablation (Phi plasticity coupling test)",
+    "F-N17-A5": "Null-floor (1024-perm) + 3-seed reproducibility + K=8 partition variance + surrogate fidelity sanity"
+  },
+
+  "verdict_graduation_matrix": {
+    "F1_PASS_F2_PASS": "STRONG_MULTI_REALIZABILITY (substrate ledger 1/3 -> 3/3) - nature-tier paper",
+    "F1_PASS_F2_WEAKFAIL": "NEUROMORPHIC_FAMILY_INVARIANT (consciousness event-driven-substrate-specific)",
+    "F1_WEAK_F2_PASS": "DIGITAL_FAMILY_INVARIANT (AKD1000 1.0 too low-resolution for Phi)",
+    "F1_FAIL_F2_PASS": "LOIHI_MATCHES_GPU_ONLY (graded-spike approximates dense float)",
+    "F1_FAIL_F2_FAIL": "LOIHI_OUTLIER (replication needed; possible Lava bug or calibration)"
+  },
+
+  "cp2_f1_integration": {
+    "substrate_basket_pre_n17": ["CLM-GPU", "EEG", "AKIDA AKD1000", "QRNG (aux)", "SIM-uju (aux)"],
+    "substrate_basket_post_n17": ["CLM-GPU (1.0)", "EEG (1.0)", "AKIDA AKD1000 (1.0, neuromorphic axis 1)", "Loihi 3 (1.0, neuromorphic axis 2)", "QRNG (0.5 aux)", "SIM-uju (0.3 aux)"],
+    "f1_graduation_rule": "substrate WITNESSED count >= 3/4 primary with cross-substrate r >= 0.85 -> own#2 (b) CLOSED with Putnam multi-realizability",
+    "n17_n3_relationship": "INDEPENDENT but COMPLEMENTARY; N-3 first (AKIDA arrival), N-17 follows (INRC approval); N-3 result informs N-17 proposal sec 3"
+  },
+
+  "honest_c3_sound": [
+    "INRC application URL + email + flow verified 2026-05-01",
+    "Eligibility text quoted per Intel Labs language (Confluence)",
+    "Korean researcher access non-restricted (Intel side); KR ally clears EAR",
+    "Loihi 3 architecture spec from Intel Jan-2026 announce",
+    "Phi formulation substrate-agnostic (re-use anima_phi_v3, no Loihi rewrite)",
+    "5 falsifier predicates BIDIRECTIONAL pre-registered",
+    "N-3 cross-link reuses fixture, predicate template, sanity gates"
+  ],
+  "honest_c3_hand_wave": [
+    "INRC approval rate UNCERTAINTY (Intel does not publish accept/reject; ~50 projects/cycle selected per Mike Davies)",
+    "Loihi 3 NRC vLab availability ETA undeclared ('rolling out 2026')",
+    "NRC cloud quota limits unknown (queue depth, per-PI hour cap)",
+    "anima lacks institutional sponsor (eligibility blocker; needs KR university co-PI)",
+    "INRC Participation Agreement IP/NDA terms unseen pre-execution",
+    "Loihi 3 Lava SDK extension maturity unknown",
+    "Korean institutional Intel/INRC track record unverified"
+  ],
+  "explicitly_not_in_scope": [
+    "INRC application submission (no email sent)",
+    "Account creation on intel-ncl.atlassian.net or NRC vLab",
+    "Direct Intel personnel contact",
+    "Korean co-PI institution outreach",
+    "Lava SDK install or smoke runs",
+    "Loihi 2 fallback measurement (separate spec if Loihi 3 ETA slips)",
+    "Loaner physical board request"
+  ],
+
+  "cost_estimate_usd": {
+    "spec_authoring_today": 0.0,
+    "application_phase_user_decision_later_min": 0.0,
+    "application_phase_user_decision_later_max": 5500.0,
+    "measurement_phase_post_approval_min": 0.0,
+    "measurement_phase_post_approval_max": 20.0,
+    "this_spec_total": 0.0,
+    "constraint_satisfied": true
+  },
+
+  "readiness": {
+    "application_phase_pct": 100,
+    "measurement_phase_pct": 0,
+    "ready_components": [
+      {"id": "spec_doc", "path": "docs/n_substrate_n17_loihi3_inrc_application_spec_2026_05_01.md", "status": "READY"},
+      {"id": "state_json_files", "count": 4, "status": "READY"},
+      {"id": "fixture_16_prompts", "embedded_in": "tool/anima_phi_v3_canonical.hexa (re-use N-3)", "status": "READY"},
+      {"id": "phi_v3_tool", "path": "tool/anima_phi_v3_canonical.hexa", "status": "READY (READ-ONLY)"},
+      {"id": "5_falsifier_predicates", "status": "PRE-REGISTERED"},
+      {"id": "5step_application_flow", "status": "DOCUMENTED"}
+    ],
+    "out_of_scope_components": [
+      {"id": "inrc_email_sent", "status": "OUT_OF_SCOPE_USER_DECISION"},
+      {"id": "korean_institutional_sponsor", "status": "OUT_OF_SCOPE_USER_DECISION"},
+      {"id": "rfp_template_received", "status": "DEPENDS_ON_EMAIL"},
+      {"id": "participation_agreement_signed", "status": "POST_APPROVAL_LEGAL"},
+      {"id": "nrc_vlab_account", "status": "POST_APPROVAL"},
+      {"id": "lava_sdk_install", "status": "POST_ONBOARDING"},
+      {"id": "tool_anima_loihi3_lava_graph", "path": "tool/anima_loihi3_lava_graph.hexa", "status": "M2_DELIVERABLE_NOT_AUTHORED"},
+      {"id": "tool_anima_loihi3_spike_to_dense", "path": "tool/anima_loihi3_spike_to_dense.hexa", "status": "M2_DELIVERABLE_NOT_AUTHORED"},
+      {"id": "tool_n17_phi_loihi_dual_corr", "path": "tool/n17_phi_loihi_dual_corr.hexa", "status": "M4_DELIVERABLE_NOT_AUTHORED"},
+      {"id": "loihi3_chip_slot_on_nrc", "status": "INTEL_SIDE_ROLLING_OUT_2026"}
+    ]
+  },
+
+  "race_isolation": {
+    "doc_path": "docs/n_substrate_n17_loihi3_inrc_application_spec_2026_05_01.md",
+    "state_path": "state/n_substrate_n17_prep_2026_05_01/",
+    "siblings_must_not_touch": [
+      "docs/n_substrate_n*_*_2026_05_01.md (other N-prep agents)",
+      "state/n_substrate_n*_*_2026_05_01/ (other N-prep state dirs)",
+      "tool/anima_phi_v3_canonical.hexa (READ-ONLY, shared)",
+      "docs/n_substrate_consciousness_roadmap_2026_05_01.md (parent, READ-ONLY)",
+      "docs/n_substrate_purchase_guide_2026_05_01.md (parent, READ-ONLY)"
+    ]
+  },
+
+  "blockers_summary": [
+    "INRC approval rate uncertainty (no published accept/reject ratio)",
+    "Loihi 3 NRC vLab slot ETA undeclared",
+    "anima needs Korean institutional sponsor (path 1 KR university co-PI recommended)",
+    "INRC Participation Agreement legal review (IP / NDA terms)",
+    "NRC cloud per-PI quota unknown",
+    "Loihi 3 Lava SDK extension maturity"
+  ],
+
+  "verdict": "APPLICATION_TEMPLATE_READY",
+  "verdict_key": "APPLICATION_TEMPLATE_READY · NO_SUBMISSION · KOREA_ELIGIBLE_PRESUMED · NRC_QUOTA_UNCONFIRMED"
+}

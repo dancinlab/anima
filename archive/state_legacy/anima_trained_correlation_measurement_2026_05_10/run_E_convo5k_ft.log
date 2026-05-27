@@ -1,0 +1,31 @@
+=== BG-TRAINED-CORRELATION-MEASUREMENT — E_convo5k_ft ===
+ts: 2026-05-10T11:55:00.476610+00:00
+sub: {'ckpt': '/Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt', 'schema': 'v2_d384', 'arch': 'v2-derived 6L d=384 byte-level (FT)', 'n_turns': 60, 'snap_every': 5}
+
+========================================================================
+SUBSTRATE E_convo5k_ft — v2 d=384 path
+========================================================================
+ckpt: /Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt
+sha256: 608d38a599570c5f3da4cc5ffd9ee191bf68bf0463099f23268207feb1d5436f
+trained params=18.52M step=75000
+
+--- TRAINED max_cells=256 n_turns=60 ---
+  v2 blocks loaded=6 random_cells=[6, 7]
+  [E_convo5k_ft_trained] turn=   0 cells=  8 cos_mean=+0.9996 abs_cos=0.9996 eff_rank=1.10 disp_trig=2/2 splits(d/t)=0/0 phi=0.56 elapsed=0.2s
+  [E_convo5k_ft_trained] turn=  35 cells= 22 cos_mean=+0.0249 abs_cos=0.0533 eff_rank=20.09 disp_trig=1/5 splits(d/t)=14/0 phi=58.38 elapsed=11.6s
+  [E_convo5k_ft_trained] turn=  45 cells= 33 cos_mean=+0.0256 abs_cos=0.0471 eff_rank=29.21 disp_trig=3/8 splits(d/t)=24/1 phi=111.70 elapsed=23.5s
+  [E_convo5k_ft_trained] turn=  50 cells= 47 cos_mean=+0.0062 abs_cos=0.0427 eff_rank=41.00 disp_trig=4/11 splits(d/t)=35/4 phi=267.43 elapsed=35.7s
+  [E_convo5k_ft_trained] turn=  55 cells= 65 cos_mean=+0.0019 abs_cos=0.0426 eff_rank=57.51 disp_trig=4/16 splits(d/t)=53/4 phi=507.80 elapsed=54.2s
+  [E_convo5k_ft_trained] turn=  59 cells= 85 cos_mean=+0.0024 abs_cos=0.0428 eff_rank=72.01 disp_trig=8/21 splits(d/t)=72/5 phi=956.96 elapsed=81.7s
+
+--- RANDOM seed=42 ---
+  [E_convo5k_ft_s42] turn=   0 cells=  8 cos_mean=+0.9996 abs_cos=0.9996 eff_rank=1.10 disp_trig=1/2 splits(d/t)=0/0 phi=0.57 elapsed=0.1s
+  [E_convo5k_ft_s42] turn=  20 cells= 20 cos_mean=+0.0123 abs_cos=0.0509 eff_rank=17.08 disp_trig=3/5 splits(d/t)=6/6 phi=37.90 elapsed=9.3s
+  [E_convo5k_ft_s42] turn=  30 cells= 39 cos_mean=+0.0227 abs_cos=0.0467 eff_rank=35.07 disp_trig=2/9 splits(d/t)=19/12 phi=167.79 elapsed=25.1s
+  [E_convo5k_ft_s42] turn=  35 cells= 49 cos_mean=+0.0351 abs_cos=0.0531 eff_rank=43.45 disp_trig=3/12 splits(d/t)=22/19 phi=283.55 elapsed=37.0s
+  [E_convo5k_ft_s42] turn=  40 cells= 66 cos_mean=+0.0312 abs_cos=0.0496 eff_rank=58.76 disp_trig=3/16 splits(d/t)=32/26 phi=570.71 elapsed=52.9s
+  [E_convo5k_ft_s42] turn=  45 cells= 84 cos_mean=+0.0214 abs_cos=0.0452 eff_rank=72.06 disp_trig=6/21 splits(d/t)=47/29 phi=988.92 elapsed=79.2s
+  [E_convo5k_ft_s42] turn=  50 cells=117 cos_mean=+0.0086 abs_cos=0.0424 eff_rank=99.01 disp_trig=8/29 splits(d/t)=72/37 phi=1886.85 elapsed=121.8s
+  [E_convo5k_ft_s42] turn=  55 cells=175 cos_mean=+0.0014 abs_cos=0.0415 eff_rank=137.93 disp_trig=18/43 splits(d/t)=112/55 phi=4015.15 elapsed=187.2s
+  [E_convo5k_ft_s42] turn=  59 cells=209 cos_mean=+0.0011 abs_cos=0.0414 eff_rank=165.21 disp_trig=14/52 splits(d/t)=143/58 phi=5851.25 elapsed=299.0s
+[saved] /Users/ghost/core/anima/state/anima_trained_correlation_measurement_2026_05_10/result_E_convo5k_ft.json

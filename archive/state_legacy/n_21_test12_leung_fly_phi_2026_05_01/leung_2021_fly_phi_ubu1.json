@@ -1,0 +1,277 @@
+{
+  "study": "Leung_2021_fly_Phi_anesthesia_ANALOGIZE",
+  "host": "ubu1",
+  "pyphi_version": "1.2.0",
+  "n_nodes": 5,
+  "node_labels": [
+    "EB",
+    "PB",
+    "FB",
+    "NO",
+    "LAL"
+  ],
+  "edges": 20,
+  "n_states_sampled": 6,
+  "states_sampled": [
+    [
+      0,
+      1,
+      1,
+      1,
+      0
+    ],
+    [
+      1,
+      1,
+      0,
+      0,
+      1
+    ],
+    [
+      1,
+      1,
+      0,
+      1,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      1,
+      0,
+      1,
+      0,
+      0
+    ],
+    [
+      1,
+      1,
+      1,
+      0,
+      1
+    ]
+  ],
+  "alpha_grid": {
+    "awake": 0.0,
+    "anesth_mild": 0.3,
+    "anesth_deep": 0.6
+  },
+  "phi_per_state": {
+    "awake": [
+      {
+        "state": [
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "phi": 1.944449
+      },
+      {
+        "state": [
+          1,
+          1,
+          0,
+          0,
+          1
+        ],
+        "phi": 4.857375
+      },
+      {
+        "state": [
+          1,
+          1,
+          0,
+          1,
+          0
+        ],
+        "phi": 1.792357
+      },
+      {
+        "state": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "phi": 2.416981
+      },
+      {
+        "state": [
+          1,
+          0,
+          1,
+          0,
+          0
+        ],
+        "phi": 5.6875
+      }
+    ],
+    "anesth_mild": [
+      {
+        "state": [
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "phi": 1.033764
+      },
+      {
+        "state": [
+          1,
+          1,
+          0,
+          0,
+          1
+        ],
+        "phi": 3.645029
+      },
+      {
+        "state": [
+          1,
+          1,
+          0,
+          1,
+          0
+        ],
+        "phi": 1.119907
+      },
+      {
+        "state": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "phi": 1.165385
+      },
+      {
+        "state": [
+          1,
+          0,
+          1,
+          0,
+          0
+        ],
+        "phi": 4.528199
+      },
+      {
+        "state": [
+          1,
+          1,
+          1,
+          0,
+          1
+        ],
+        "phi": 3.315751
+      }
+    ],
+    "anesth_deep": [
+      {
+        "state": [
+          0,
+          1,
+          1,
+          1,
+          0
+        ],
+        "phi": 0.270601
+      },
+      {
+        "state": [
+          1,
+          1,
+          0,
+          0,
+          1
+        ],
+        "phi": 1.166022
+      },
+      {
+        "state": [
+          1,
+          1,
+          0,
+          1,
+          0
+        ],
+        "phi": 0.287896
+      },
+      {
+        "state": [
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        "phi": 0.367257
+      },
+      {
+        "state": [
+          1,
+          0,
+          1,
+          0,
+          0
+        ],
+        "phi": 1.337314
+      },
+      {
+        "state": [
+          1,
+          1,
+          1,
+          0,
+          1
+        ],
+        "phi": 1.013891
+      }
+    ]
+  },
+  "phi_agg": {
+    "awake": {
+      "mean": 3.3397324,
+      "max": 5.6875,
+      "min": 1.792357,
+      "n_nonzero": 5,
+      "n": 5
+    },
+    "anesth_mild": {
+      "mean": 2.4680058333333332,
+      "max": 4.528199,
+      "min": 1.033764,
+      "n_nonzero": 6,
+      "n": 6
+    },
+    "anesth_deep": {
+      "mean": 0.7404968333333333,
+      "max": 1.337314,
+      "min": 0.270601,
+      "n_nonzero": 6,
+      "n": 6
+    }
+  },
+  "phi_awake_mean": 3.3397324,
+  "phi_anesth_mild_mean": 2.4680058333333332,
+  "phi_anesth_deep_mean": 0.7404968333333333,
+  "delta_phi_mild": 0.8717265666666667,
+  "delta_phi_deep": 2.5992355666666667,
+  "monotonic_decrease": true,
+  "iit_prediction": "phi_awake > phi_anesth_deep",
+  "iit_prediction_match": true,
+  "verdict": "PASS",
+  "elapsed_total_sec": 399.34191370010376,
+  "caveat": "SIM not biological fly LFP; 5-node CX analog of Leung 2021 prediction",
+  "ts_utc": "2026-05-02T07:03:08Z"
+}

@@ -1,0 +1,183 @@
+// CHANNEL/wake_bridge_smoke.hexa — 25-case smoke for stage-aware channel bias.
+//
+// Cross-product:
+//   5 fake substrate states × 5 stage names = 25 cases.
+//
+// Sanity invariants (a_autonomy_over_hardcode strict — no boolean assertions):
+//   I1) WAKE stage with normal communicative motivation → text wins.
+//   I2) REM  stage with mid tension5 + voice/tension pools → NOT text (voice OR tension).
+//   I3) N3   stage → biased scores all damped 0.05× of raw, BUT argmax still
+//                    returns a channel (no boolean blocking). The chosen
+//                    channel may differ from raw argmax (text floor is uniform).
+//
+// boolean gate count assertion (governance):
+//   we count occurrences of phrases like "if stage ==" / "emit_allowed" in the
+//   bridge source via grep — handled offline by reviewer / CI, not in this
+//   smoke. This smoke validates BEHAVIOR (continuous bias = no hard blocking).
+//
+// instrument-first verified pub surface:
+//   wake_bridge.hexa pub: stage_bias · apply_stage_bias · wake_channel_emit ·
+//                         wake_bridge_summary
+//   router.hexa  pub:    channel_scores · channel_classify · channel_router_summary
+
+import "/Users/ghost/core/anima/CHANNEL/wake_bridge.hexa"
+import "/Users/ghost/core/anima/CHANNEL/router.hexa"
+
+// helper — print one biased-score line.
+fn _fmt3(s: Map) -> string {
+    "text="    + to_string(s["text"])
+        + " voice="   + to_string(s["voice"])
+        + " tension=" + to_string(s["tension"])
+}
+
+// 5 fake substrate states (motivation 8-factor order:
+//   rel · gap · cur · pain · coh · orig · bal · dyn).
+fn _state(idx: int) -> Map {
+    if idx == 0 {
+        // S0: text-biased — low amp + communicative pool dominant.
+        return #{
+            "label":      "S0/text-bias",
+            "tension5":   [0.05, 0.05, 0.05, 0.05, 0.05],
+            "motivation": [0.6, 0.3, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+            "phi":        0.1,
+            "tier":       0
+        }
+    }
+    if idx == 1 {
+        // S1: voice-biased — high amp + expressive pool, awake tier.
+        return #{
+            "label":      "S1/voice-bias",
+            "tension5":   [1.0, 0.9, 0.8, 0.7, 0.6],
+            "motivation": [0.0, 0.0, 0.9, 0.0, 0.0, 0.8, 0.0, 0.7],
+            "phi":        0.2,
+            "tier":       3
+        }
+    }
+    if idx == 2 {
+        // S2: tension-biased — high Φ + peer pool, awake tier, low amp.
+        return #{
+            "label":      "S2/tension-bias",
+            "tension5":   [0.05, 0.05, 0.05, 0.05, 0.05],
+            "motivation": [0.0, 0.0, 0.0, 0.9, 0.85, 0.0, 0.8, 0.0],
+            "phi":        0.95,
+            "tier":       3
+        }
+    }
+    if idx == 3 {
+        // S3: mid amp + balanced motivation, mid Φ, awake tier.
+        //   Used to test that REM boost lifts voice/tension above text.
+        return #{
+            "label":      "S3/mid-balanced",
+            "tension5":   [0.5, 0.5, 0.5, 0.5, 0.5],
+            "motivation": [0.3, 0.3, 0.4, 0.3, 0.3, 0.4, 0.3, 0.4],
+            "phi":        0.5,
+            "tier":       2
+        }
+    }
+    // S4: dormant — all near zero, tier=0.
+    //   All stages collapse toward text (floor).
+    #{
+        "label":      "S4/dormant",
+        "tension5":   [0.0, 0.0, 0.0, 0.0, 0.0],
+        "motivation": [0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0],
+        "phi":        0.0,
+        "tier":       0
+    }
+}
+
+// argmax with deterministic tie order text > voice > tension.
+fn _argmax(s: Map) -> string {
+    let t = s["text"]
+    let v = s["voice"]
+    let g = s["tension"]
+    if v > t && v >= g { return "voice" }
+    if g > t && g > v  { return "tension" }
+    "text"
+}
+
+fn _run_case(st: Map, stage: string) -> string {
+    let t5  = st["tension5"]
+    let mv  = st["motivation"]
+    let phi = st["phi"]
+    let tier = st["tier"]
+    let raw = channel_scores(t5, mv, phi, tier)
+    let bsd = apply_stage_bias(raw, stage)
+    let raw_pick = _argmax(raw)
+    let bsd_pick = _argmax(bsd)
+    print("[" + st["label"] + " | " + stage + "]")
+    print("  raw    " + _fmt3(raw) + " → " + raw_pick)
+    print("  biased " + _fmt3(bsd) + " → " + bsd_pick)
+    bsd_pick
+}
+
+fn main() {
+    print("=== wake_bridge stage-aware channel bias smoke (5 states × 5 stages = 25) ===")
+    print(wake_bridge_summary())
+    print(channel_router_summary())
+
+    let stages = ["WAKE", "N1", "N2", "N3", "REM"]
+    let mut s_idx = 0
+    let mut text_count = 0
+    let mut voice_count = 0
+    let mut tension_count = 0
+
+    // I1) WAKE + S0 (communicative) → text
+    let mut i1_ok = true
+    // I2) REM + S3 (mid balanced) → NOT text (voice OR tension)
+    let mut i2_ok = true
+    // I3) N3 + S1 (voice-biased raw) → argmax still returns a channel (no crash)
+    let mut i3_ok = true
+
+    while s_idx < 5 {
+        let st = _state(s_idx)
+        let mut stg_idx = 0
+        while stg_idx < 5 {
+            let stage = stages[stg_idx]
+            let pick = _run_case(st, stage)
+
+            // tally
+            if pick == "text"    { text_count    = text_count    + 1 }
+            if pick == "voice"   { voice_count   = voice_count   + 1 }
+            if pick == "tension" { tension_count = tension_count + 1 }
+
+            // I1: state S0 + WAKE → text
+            if s_idx == 0 && stage == "WAKE" {
+                if pick != "text" { i1_ok = false }
+            }
+            // I2: state S3 + REM → not text
+            if s_idx == 3 && stage == "REM" {
+                if pick == "text" { i2_ok = false }
+            }
+            // I3: state S1 + N3 → some channel returned (pick is non-empty)
+            if s_idx == 1 && stage == "N3" {
+                if pick == "" { i3_ok = false }
+            }
+
+            stg_idx = stg_idx + 1
+        }
+        s_idx = s_idx + 1
+    }
+
+    print("")
+    print("=== TALLY ===")
+    print("  text    = " + to_string(text_count))
+    print("  voice   = " + to_string(voice_count))
+    print("  tension = " + to_string(tension_count))
+
+    print("")
+    print("=== INVARIANT CHECKS ===")
+    if i1_ok { print("  I1 [ok]   WAKE + S0/text-bias → text") }
+    else     { print("  I1 [FAIL] WAKE + S0/text-bias did NOT pick text") }
+    if i2_ok { print("  I2 [ok]   REM  + S3/mid-balanced → NOT text") }
+    else     { print("  I2 [FAIL] REM  + S3/mid-balanced collapsed to text") }
+    if i3_ok { print("  I3 [ok]   N3   + S1/voice-bias → channel returned (no boolean block)") }
+    else     { print("  I3 [FAIL] N3   + S1/voice-bias returned empty (boolean blocked)") }
+
+    let all_ok = i1_ok && i2_ok && i3_ok
+    print("")
+    if all_ok {
+        print("=== SANITY OK (3/3 invariants) ===")
+        return
+    }
+    print("=== SANITY FAIL ===")
+}

@@ -1,0 +1,26 @@
+{
+  "timestamp_utc": "2026-05-01T22:00:00Z",
+  "host": "ubu1 (aiden-B650M-K)",
+  "df_root": {
+    "device": "/dev/nvme0n1p2",
+    "size": "915G",
+    "used": "817G",
+    "avail": "53G",
+    "use_pct": "94%"
+  },
+  "airgenome_runaway_service": {
+    "loaded": "loaded",
+    "active": "activating (auto-restart)",
+    "result": "exit-code",
+    "exit_status": "1/FAILURE",
+    "main_pid": 1280333,
+    "since": "2026-05-02 13:46:59 KST",
+    "unit_path": "/home/aiden/.config/systemd/user/airgenome-runaway.service",
+    "exec_start": "/home/aiden/.hx/bin/hexa run /home/aiden/Dev/airgenome/bin/runaway_guard.hexa",
+    "verdict": "CRASH_LOOPING — confirms diagnostic"
+  },
+  "log_sizes": {
+    "/var/log/syslog": {"bytes_human": "294G", "owner": "syslog:adm", "mtime": "2026-05-02 13:46"},
+    "/var/log/kern.log": {"bytes_human": "294G", "owner": "syslog:adm", "mtime": "2026-05-02 12:00"}
+  }
+}

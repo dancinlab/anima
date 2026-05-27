@@ -1,0 +1,340 @@
+{
+  "model_name": "clm_v2_base",
+  "model_path": "/tmp/anima_v2_check/clm_v2_base/final.pt",
+  "params_M": 27.84,
+  "config": {
+    "dim": 384,
+    "layers": 6,
+    "heads": 4,
+    "block_size": 128,
+    "vocab_size": 256,
+    "gate": 0.001,
+    "ca_rules": 8
+  },
+  "load_info": {
+    "missing": 0,
+    "unexpected": 0
+  },
+  "load_time_s": 0.3,
+  "ko": {
+    "안녕하세요": {
+      "greedy": {
+        "full": "안녕하세요������������������������������������������������������������������������������������������������������������������������",
+        "gen": "������������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "안녕하세요��������?ha는������?thea는���.AA\n늊�eea는��fyeaa볝�.-i는��.:\n\n엚���mhhi늝�.\n ci����.\n낔exa�.\n� 늊���neea낔���",
+        "gen": "��������?ha는������?thea는���.AA\n늊�eea는��fyeaa볝�.-i는��.:\n\n엚���mhhi늝�.\n ci����.\n낔exa�.\n� 늊���neea낔���",
+        "hangul_ratio": 0.2682926829268293,
+        "ascii_letter_ratio": 0.30612244897959184,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "안녕하세요�������������������?�?����ue늞��ea는�����?�는�������������������?Aleea잞������������.thhhha�는���������yex는������",
+        "gen": "�������������������?�?����ue늞��ea는�����?�는�������������������?Aleea잞������������.thhhha�는���������yex는������",
+        "hangul_ratio": 0.25,
+        "ascii_letter_ratio": 0.16666666666666666,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "안녕하세요��������������������e는������������������������������������������.\n늊���eea늞�������������������������������ea늊����",
+        "gen": "��������������������e는������������������������������������������.\n늊���eea늞�������������������������������ea늊����",
+        "hangul_ratio": 0.4,
+        "ascii_letter_ratio": 0.05357142857142857,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "한국어 가능?": {
+      "greedy": {
+        "full": "한국어 가능?는���������������������������������������������������������������������������������������������������������������������",
+        "gen": "는���������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 1.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "한국어 가능?낔�oee�\n ��얔eea는�e닔���ye느��ea�얔n?.�  욚�yea는�����ylea낞�������yeea맔���?� 늗ua는yye맔���eee는yxi는?",
+        "gen": "낔�oee�\n ��얔eea는�e닔���ye느��ea�얔n?.�  욚�yea는�����ylea낞�������yeea맔���?� 늗ua는yye맔���eee는yxi는?",
+        "hangul_ratio": 0.30612244897959184,
+        "ascii_letter_ratio": 0.37777777777777777,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "한국어 가능?� cheea는������ya좢���ee슔����������a는��������eea는����?,�� 는�?ha�neeea늝������������ea슔����������dea낔����",
+        "gen": "� cheea는������ya좢���ee슔����������a는��������eea는����?,�� 는�?ha�neeea늝������������ea슔����������dea낔����",
+        "hangul_ratio": 0.2647058823529412,
+        "ascii_letter_ratio": 0.24752475247524752,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "한국어 가능?\n ci는������������������������������?��������.\n늊��������������yoeea는������..sti는������������..hhhhhhhhhea는�����",
+        "gen": "\n ci는������������������������������?��������.\n늊��������������yoeea는������..sti는������������..hhhhhhhhhea는�����",
+        "hangul_ratio": 0.19230769230769232,
+        "ascii_letter_ratio": 0.19090909090909092,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "greedy": {
+        "full": "사용자: 안녕하세요\n도우미:�.\n ci는���������������������������������������������������������������������������������������������������������������",
+        "gen": "�.\n ci는���������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.3333333333333333,
+        "ascii_letter_ratio": 0.01694915254237288,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "사용자: 안녕하세요\n도우미:� ci������������������oemheexhi늖����ye� 늞���oeea보neeeevaac  낔eexi는������leyaa는������������rya맔�?�t 는��y",
+        "gen": "� ci������������������oemheexhi늖����ye� 늞���oeea보neeeevaac  낔eexi는������leyaa는������������rya맔�?�t 는��y",
+        "hangul_ratio": 0.16666666666666666,
+        "ascii_letter_ratio": 0.3883495145631068,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "사용자: 안녕하세요\n도우미:� ci는�������nleea는��������nyea낔�������������yea는�������ea랔���oe는��ya는���oeeeea늞���.�슞�������?��?�..��",
+        "gen": "� ci는�������nleea는��������nyea낔�������������yea는�������ea랔���oe는��ya는���oeeeea늞���.�슞�������?��?�..��",
+        "hangul_ratio": 0.2571428571428571,
+        "ascii_letter_ratio": 0.25742574257425743,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "사용자: 안녕하세요\n도우미:�. ci는���������������������������������������������������������������������.\n는���������������������.-는������������",
+        "gen": "�. ci는���������������������������������������������������������������������.\n는���������������������.-는������������",
+        "hangul_ratio": 0.6,
+        "ascii_letter_ratio": 0.017543859649122806,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "en": {
+    "Hello, how are you?": {
+      "greedy": {
+        "full": "Hello, how are you? c c c c ci는��eeeeeeeea는��eeeea는eea는�ea는ea는���ea는����ea는���ea는����������������������������������������",
+        "gen": " c c c c ci는��eeeeeeeea는��eeeea는eea는�ea는ea는���ea는����ea는���ea는����������������������������������������",
+        "hangul_ratio": 0.21428571428571427,
+        "ascii_letter_ratio": 0.3235294117647059,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Hello, how are you?싔.\n 뗚���ea�� c ci��eexhla는���nee��r.맔���rei는oe능��yei����neeoee�nexi는��exa���dthei능.ha늞��?낔����������",
+        "gen": "싔.\n 뗚���ea�� c ci��eexhla는���nee��r.맔���rei는oe능��yei����neeoee�nexi는��exa���dthei능.ha늞��?낔����������",
+        "hangul_ratio": 0.18867924528301888,
+        "ascii_letter_ratio": 0.43,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Hello, how are you?\n ci����������efya���yeea���������yea는�����..\n늖.\n 늝?B-a늓�����.\n 는di��좞�������?� 는��eea����yh-he��.������)a",
+        "gen": "\n ci����������efya���yeea���������yea는�����..\n늖.\n 늝?B-a늓�����.\n 는di��좞�������?� 는��eea����yh-he��.������)a",
+        "hangul_ratio": 0.21875,
+        "ascii_letter_ratio": 0.2358490566037736,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Hello, how are you? ci늞����eeeea는��ea는�������.\n 는���������������ye늊������ea는�����������������..\n늊���������������������?������",
+        "gen": " ci늞����eeeea는��ea는�������.\n 는���������������ye늊������ea는�����������������..\n늊���������������������?������",
+        "hangul_ratio": 0.35,
+        "ascii_letter_ratio": 0.12264150943396226,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "What is consciousness?": {
+      "greedy": {
+        "full": "What is consciousness? ci는������������������������������������������������������������������������������������������������������������������",
+        "gen": " ci는������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.3333333333333333,
+        "ascii_letter_ratio": 0.01694915254237288,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "What is consciousness?�� cci� tthyexhheeeeeeeee�.�� 는��oa�\n c ct ci삔�lii늊��������exhha�얔����on.\n�  cti�.\na��oeeexa���yleexhheeouya�?�",
+        "gen": "�� cci� tthyexhheeeeeeeee�.�� 는��oa�\n c ct ci삔�lii늊��������exhha�얔����on.\n�  cti�.\na��oeeexa���yleexhheeouya�?�",
+        "hangul_ratio": 0.0625,
+        "ascii_letter_ratio": 0.5405405405405406,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "What is consciousness? chea는��eexaa는��deea늞��eeea는������������������ya는��exa는�����.\n늊����na는���eea욞����������������������ya�",
+        "gen": " chea는��eexaa는��deea늞��eeea는������������������ya는��exa는�����.\n늊����na는���eea욞����������������������ya�",
+        "hangul_ratio": 0.23684210526315788,
+        "ascii_letter_ratio": 0.28431372549019607,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "What is consciousness? c ciaaa는������������������������������������������������������������?\n��는������������������������������������������",
+        "gen": " c ciaaa는������������������������������������������������������������?\n��는������������������������������������������",
+        "hangul_ratio": 0.25,
+        "ascii_letter_ratio": 0.05172413793103448,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "User: Hi\nAssistant:": {
+      "greedy": {
+        "full": "User: Hi\nAssistant: ci는������������������������������������������������������������������������������������������������������������������",
+        "gen": " ci는������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.3333333333333333,
+        "ascii_letter_ratio": 0.01694915254237288,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "User: Hi\nAssistant:��. 잔�lexa� ci돢���������yexheeacsyla��....���������eeea�\n���싔���.���ry-a욆�����.\n  ct 는���ra맔���?���������ea�",
+        "gen": "��. 잔�lexa� ci돢���������yexheeacsyla��....���������eeea�\n���싔���.���ry-a욆�����.\n  ct 는���ra맔���?���������ea�",
+        "hangul_ratio": 0.16216216216216217,
+        "ascii_letter_ratio": 0.28703703703703703,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "User: Hi\nAssistant: 낔yaa는������������������uea�슊�����������������...\n 는������.\n늞��.\n �는������������..\n���짔oeeeela는������ea�",
+        "gen": " 낔yaa는������������������uea�슊�����������������...\n 는������.\n늞��.\n �는������������..\n���짔oeeeela는������ea�",
+        "hangul_ratio": 0.34782608695652173,
+        "ascii_letter_ratio": 0.14423076923076922,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "User: Hi\nAssistant:�.\n cci는���������������������������...\n는��������������������������������?\n�늞�����������������������������������.��",
+        "gen": "�.\n cci는���������������������������...\n는��������������������������������?\n�늞�����������������������������������.��",
+        "hangul_ratio": 0.5,
+        "ascii_letter_ratio": 0.02631578947368421,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "c2": {
+    "Once upon a time": {
+      "greedy": {
+        "full": "Once upon a timeeeeeeeeea는�ea는ea는�ea는������ea는��������������������������������������������������������������������������������",
+        "gen": "eeeeeeeea는�ea는ea는�ea는������ea는��������������������������������������������������������������������������������",
+        "hangul_ratio": 0.22727272727272727,
+        "ascii_letter_ratio": 0.15454545454545454,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Once upon a timeeexh��eyi는����neeeea�����-a���eei슔��lla낔yfe0i�a��ei�맔�������yeai늂��yea늝dt 맔�eryeea늆���lia늋�?�는�ne ",
+        "gen": "eexh��eyi는����neeeea�����-a���eei슔��lla낔yfe0i�a��ei�맔�������yeai늂��yea늝dt 맔�eryeea늆���lia늋�?�는�ne ",
+        "hangul_ratio": 0.17543859649122806,
+        "ascii_letter_ratio": 0.47959183673469385,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Once upon a timeeexa는�eea맔�����ea맔ya늂����yyeea늂�������!:hhha늊����eexla늞��yeeaa낔�oeeea늞����ea는�?.\n맔��' 늧���������",
+        "gen": "eexa는�eea맔�����ea맔ya늂����yyeea늂�������!:hhha늊����eexla늞��yeeaa낔�oeeea늞����ea는�?.\n맔��' 늧���������",
+        "hangul_ratio": 0.24489795918367346,
+        "ascii_letter_ratio": 0.3854166666666667,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "Once upon a timeeexa는eeeeea낔��ea는ya는�������ea늂������ea는ea는����������������������������la늊���ee는�������������....\n는��",
+        "gen": "eexa는eeeeea낔��ea는ya는�������ea늂������ea는ea는����������������������������la늊���ee는�������������....\n는��",
+        "hangul_ratio": 0.29411764705882354,
+        "ascii_letter_ratio": 0.24,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "Q:": {
+      "greedy": {
+        "full": "Q: ci는������������������������������������������������������������������������������������������������������������������",
+        "gen": " ci는������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.3333333333333333,
+        "ascii_letter_ratio": 0.01694915254237288,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Q:� ai���dii늤����neei  c cci는ryemei는yea는��nea늝.�맔����.\n늧.oex\n\n  낗�ai낔�����ne��yex\n는ue는��-i늧����ghh",
+        "gen": "� ai���dii늤����neei  c cci는ryemei는yea는��nea늝.�맔����.\n늧.oex\n\n  낗�ai낔�����ne��yex\n는ue는��-i늧����ghh",
+        "hangul_ratio": 0.22641509433962265,
+        "ascii_letter_ratio": 0.4270833333333333,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "Q: c cheaci는�rea는���xachheaai슔ueeea는��oea는�eeee'는lea랔��ye는�eai닔��ya낔�eeea룔�����eai는��eea낔�ea낞�",
+        "gen": " c cheaci는�rea는���xachheaai슔ueeea는��oea는�eeee'는lea랔��ye는�eai닔��ya낔�eeea룔�����eai는��eea낔�ea낞�",
+        "hangul_ratio": 0.208955223880597,
+        "ascii_letter_ratio": 0.5760869565217391,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "Q: c cheai는�����a는��ea늊����������������������ueea늊���������������.\n늂�����������������������������?��������������",
+        "gen": " c cheai는�����a는��ea늊����������������������ueea늊���������������.\n늂�����������������������������?��������������",
+        "hangul_ratio": 0.2777777777777778,
+        "ascii_letter_ratio": 0.11818181818181818,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    },
+    "(empty)": {
+      "greedy": {
+        "full": "\n ci는������������������������������������������������������������������������������������������������������������������",
+        "gen": "\n ci는������������������������������������������������������������������������������������������������������������������",
+        "hangul_ratio": 0.3333333333333333,
+        "ascii_letter_ratio": 0.01680672268907563,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "\n  낔�.si��������.싔�?�.\n�슋������'�.A\n 좃���n, 늊���?t c�좞짔?hh, �yfavha맔���neeye�.., 늊��ndhexhylexi랔�. ",
+        "gen": "\n  낔�.si��������.싔�?�.\n�슋������'�.A\n 좃���n, 늊���?t c�좞짔?hh, �yfavha맔���neeye�.., 늊��ndhexhylexi랔�. ",
+        "hangul_ratio": 0.25,
+        "ascii_letter_ratio": 0.30303030303030304,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t05_k40": {
+        "full": "\n cii는�����������.\n� 늂�����yyy�.��� 뚝.\n는����ndi낔������ei�슊��...---i낔���ne�?nea더ya�슔���?�� �\n cta늋���",
+        "gen": "\n cii는�����������.\n� 늂�����yyy�.��� 뚝.\n는����ndi낔������ei�슊��...---i낔���ne�?nea더ya�슔���?�� �\n cta늋���",
+        "hangul_ratio": 0.3125,
+        "ascii_letter_ratio": 0.22,
+        "byte_garbage": true,
+        "coherent": false
+      },
+      "sample_t03_k80": {
+        "full": "\n ci는�������������������������������������ea는������������������������������?...\n���늊���������.\n�늧����������������",
+        "gen": "\n ci는�������������������������������������ea는������������������������������?...\n���늊���������.\n�늧����������������",
+        "hangul_ratio": 0.5,
+        "ascii_letter_ratio": 0.035398230088495575,
+        "byte_garbage": true,
+        "coherent": false
+      }
+    }
+  },
+  "verdict": {
+    "label": "SIMPLE_STACK_FAIL",
+    "ko_pass_n": 0,
+    "en_pass_n": 1,
+    "c2_pass_n": 1,
+    "c1_ko_pass": false,
+    "c1_en_pass": false,
+    "c2_full_pass": false
+  }
+}

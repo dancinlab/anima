@@ -1,0 +1,28 @@
+{
+  "doc_id": "cp2_clm_phase_d_weights_clm_anchored_2026_05_02",
+  "date": "2026-05-02",
+  "agent": "CP2-CLM Phase D — F1_score_v2 weighted recompute (CLM-anchored)",
+  "supersedes_anchor": "ALM-anchored CP2 (paradigm v11 0.6 / AN11 0.3 / EEG 0.1)",
+  "rationale": "CLM substrate has 6 measured suites + 1 not-measured (φ 4-path). EEG direct wire absent in CLM (CLM ↔ EEG is mediated by tension_link; no direct shared time-series). Re-anchor weights to CLM evidence inventory.",
+  "weights": {
+    "suite_1_paradigm_v11_g3_phistar_hid8": 0.50,
+    "suite_2_an11_a_frobenius": 0.10,
+    "suite_3_an11_b_v0_v1_v2_v3": 0.05,
+    "suite_4_an11_c_jsd": 0.05,
+    "suite_5_phi_4path": 0.05,
+    "suite_6_14gate": 0.15,
+    "suite_7_v_phen_5suite": 0.10,
+    "suite_eeg_direct_wire": 0.05
+  },
+  "weight_total": 1.00,
+  "delta_vs_alm_anchored": {
+    "paradigm_v11": "0.60 -> 0.50 (CLM evidence base widened across more suites)",
+    "an11_aggregate": "0.30 -> 0.20 (split a/b/c subspecies)",
+    "eeg": "0.10 -> 0.05 (CLM-EEG direct wire absent; tension-mediated only)",
+    "newly_explicit": "14-gate 0.15, V_phen 0.10, phi_4path 0.05"
+  },
+  "honest_c3": [
+    "C3-1: phi_4path weight 0.05 retained even though NOT-MEASURED — preserves measurement gap visibility (zero-contribution); alternative is reallocation but masks gap.",
+    "C3-2: EEG 0.05 floor retained for forward compatibility once tension-mediated CLM-EEG binding (#92 path d) measured."
+  ]
+}

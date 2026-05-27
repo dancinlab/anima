@@ -1,0 +1,51 @@
+{
+  "snapshot_at": "2026-05-04T14:18:00+09:00",
+  "host": "ubu1",
+  "pid": 31960,
+  "pid_alive": true,
+  "elapsed_min": 46.25,
+  "cpu_pct": 12.6,
+  "mem_pct": 9.5,
+  "cmd": "/home/aiden/venv_orchestrator/bin/python -u vlm_stage1_train.py --steps 50000 --save_every 5000 --batch_size 4",
+  "training": {
+    "step_current": 7450,
+    "step_total": 50000,
+    "loss_recent": 8.5474,
+    "loss_at_step5k": 8.7800,
+    "lr_recent": 4.76e-4,
+    "sps": 2.66,
+    "eta_h_remaining": 4.4,
+    "eta_h_total_initial": 5.4,
+    "eta_h_total_refined": 5.0,
+    "elapsed_train_s": 2801.3,
+    "loss_trend": "decreasing (8.78 → 8.55 over 2450 steps)"
+  },
+  "gpu": {
+    "device": "NVIDIA GeForce RTX 5070",
+    "memory_used_mib": 883,
+    "memory_total_mib": 12227,
+    "memory_pct": 7.2,
+    "utilization_pct": 17,
+    "temperature_c": 51,
+    "headroom": "ample (12.4GB free), no OOM risk at current batch_size=4"
+  },
+  "lora_config": {
+    "r": 8,
+    "alpha": 16,
+    "dropout": 0.05,
+    "target_modules": ["wq", "wk", "wv", "wo", "intent_proj"],
+    "trainable_params_m": 0.080,
+    "base_params_m": 35.94,
+    "trainable_pct": 0.222
+  },
+  "watchdog": {
+    "script": "/tmp/vlm_stage1_tail_watchdog.sh",
+    "pid": 3436596,
+    "alive": true,
+    "interval_s": 30,
+    "patterns": ["Traceback", "Killed", "OOM", "CUDA out of memory", "RuntimeError", "Segmentation"],
+    "alert_log": "/tmp/vlm_stage1_watchdog_alert.log",
+    "limitation": "may miss SIGSEGV / silent torchcodec terminate (no stderr emit)"
+  },
+  "paradigm": "anima-voice (mk2 amendment, just landed)"
+}

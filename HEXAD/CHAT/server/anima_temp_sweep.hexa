@@ -1,0 +1,52 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/anima_temp_sweep.hexa — WRAPPER entry-point
+//
+//   anima_temp_sweep.py is an offline temperature sweep for emission
+//   quality (N2, 2026-05-23): it generates EN emissions at temperature
+//   {0.5, 0.7, 0.9} on the production LoRA adapter and measures the anima-
+//   register hit ratio + mean length to pick the chat-optimal temperature.
+//
+//   It hard-depends on torch / transformers / peft (model.generate over a
+//   Qwen2.5-1.5B + LoRA adapter) — a pure-hexa reimplementation is
+//   infeasible. The .py is KEPT and this thin .hexa documents purpose and
+//   dispatches it via exec(). Run on a host with the model + venv (mini).
+//
+//   The anima-register pattern set itself is hexa-native in
+//   HEXAD/CHAT/server/anima_emission_analyze.hexa (has_register / register
+//   markers) — anima_temp_sweep.py carries its own torch-bound copy for the
+//   generation lane.
+//
+//   USAGE  hexa run anima_temp_sweep.hexa [--n 24] [--temps 0.5,0.7,0.9]
+//          (forwards all flags to anima_temp_sweep.py verbatim)
+// ════════════════════════════════════════════════════════════════════════
+
+fn _shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "'\\''" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+fn main() {
+    let here = "/Users/ghost/core/anima/HEXAD/CHAT/server"
+    let py = here + "/anima_temp_sweep.py"
+    let exists = exec("[ -f '" + py + "' ] && printf yes || printf no")
+    if exists != "yes" {
+        println("anima_temp_sweep.py not found at: " + py)
+        return
+    }
+    let cli = args()
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(cli) {
+        fwd = fwd + " " + _shq(cli[i])
+        i = i + 1
+    }
+    println("[anima_temp_sweep] dispatch → python3 anima_temp_sweep.py" + fwd)
+    print(exec("cd '" + here + "' && python3 anima_temp_sweep.py" + fwd))
+}

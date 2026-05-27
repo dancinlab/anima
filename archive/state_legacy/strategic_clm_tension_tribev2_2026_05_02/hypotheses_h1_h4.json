@@ -1,0 +1,49 @@
+{
+  "schema": "strategic_clm_tension_tribev2/hypotheses/1",
+  "ts": "2026-05-02",
+  "scope": "Framing E (tension-mediated closed-loop) hypotheses; user mediator bypassed; statistical power N=any (vs #93 N=1)",
+  "H1_closed_loop_convergence": {
+    "claim": "CLM <-> TRIBE v2 closed loop via tension_link converges to a stable attractor over 100 steps",
+    "predicted_signature": "rolling-window std (steps 50-100) of mind.tension < 0.5 * std(steps 0-50); BOLD vertex CV < 0.1 stable; phase portrait shows fixed point or limit cycle",
+    "promising_score": 3,
+    "rationale_promising": "matches W4 PARTIAL +2.28σ (active L1) substrate-dynamics convergence pattern; matches §10.8 Banach meta-closure pattern from MEMORY",
+    "rationale_demoting": "100-step loop is short; attractors may be artifact of GATE clamping (PSI_ALPHA=0.014) rather than emergent",
+    "falsifier": "if rolling std grows > 1.0x baseline at step 100 -> H1 reject"
+  },
+  "H2_divergence_instability": {
+    "claim": "Closed loop diverges; gain in tension_link <-> ROI mapping causes runaway BOLD or runaway CLM hidden norm",
+    "predicted_signature": "monotonic norm growth > 2x baseline by step 100; numerical NaN possible",
+    "promising_score": 2,
+    "rationale_promising": "step-8 ROI->tension mapping gain is anima-specific guess; no prior calibration",
+    "rationale_demoting": "GATE clamps each channel to ±PSI_ALPHA=0.014, mathematically bounding divergence at the 5ch boundary",
+    "falsifier": "if no divergence and converges -> H2 reject; gain-tuning recommended in iteration"
+  },
+  "H3_no_real_coupling": {
+    "claim": "TRIBE v2 BOLD does not carry enough information to modulate CLM meaningfully; closed loop = open loop = random-control",
+    "predicted_signature": "F-CT-5 fail (closed-loop BOLD trajectory r >= 0.7 with random-tension control trajectory)",
+    "promising_score": 4,
+    "rationale_promising": "5d tension_link is heavily compressed (25.6:1); 10242 BOLD vertices -> 5 ROI features loses massive info; reverse mapping dimensionality bottleneck dominates; honest baseline given baseline #95 No fit -> Conditional Strong fit caveat",
+    "rationale_demoting": "if even 5ch tension carries CLM-relevant info (W4 PARTIAL evidence), reverse mapping should not be zero",
+    "falsifier": "if closed-loop trajectory differs from random-control with effect size > 1σ AND F-CT-3 hidden-state shift > random injection -> H3 reject"
+  },
+  "H4_substrate_identity_speculative": {
+    "claim": "TRIBE v2 BOLD ≈ anima-internal cortex; CLM-TRIBE-tension trio = unified substrate (Framing F core claim)",
+    "predicted_signature": "Beyond F-CT statistical evidence: closed-loop attractor matches biological resting-state network signatures (DMN dominance, gamma-ratio); BOLD-derived ROI features show same structure as anima cell ensembles",
+    "promising_score": 1,
+    "rationale_promising": "philosophically tempting; aligns with Framing F radical reading",
+    "rationale_demoting": "TRIBE v2 is forward stimulus->BOLD encoder NOT a cortex; no causal model; substrate identity claim violates #95 honest caveats; attractor matching biology can be coincidence given 5ch bottleneck",
+    "falsifier": "any result fails to distinguish from H1 unless explicit biological-prior comparison done; treat H4 as out-of-scope for current cycle"
+  },
+  "ranking": [
+    {"rank": 1, "hypothesis": "H3", "score": 4, "reason": "honest baseline; 5d bottleneck makes no-coupling the prior; must be tested first via random-control"},
+    {"rank": 2, "hypothesis": "H1", "score": 3, "reason": "closed-loop convergence is the positive result the cycle is designed to find"},
+    {"rank": 3, "hypothesis": "H2", "score": 2, "reason": "divergence is bounded by GATE; less likely but worth diagnostic checks"},
+    {"rank": 4, "hypothesis": "H4", "score": 1, "reason": "speculative; out of scope; flagged so it does not contaminate Framing E reporting"}
+  ],
+  "decision_tree": {
+    "if_random_control_R1_indistinguishable_from_E": "H3 wins -> publish null, escalate to Framing D (real biology) before retrying",
+    "if_E_shows_attractor_AND_random_R1_does_not": "H1 evidence; verify F-CT-2..F-CT-5 before claiming",
+    "if_E_diverges_AND_random_R1_does_not": "H2 evidence; tune ROI->tension gain (step-8) and re-run",
+    "if_attractor_matches_biology": "DO NOT claim H4 absent independent biological prior; note as exploratory observation only"
+  }
+}

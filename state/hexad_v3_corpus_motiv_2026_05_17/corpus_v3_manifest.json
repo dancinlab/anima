@@ -1,0 +1,49 @@
+{
+  "out": "corpus_consciousness_v3.jsonl",
+  "sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+  "bytes": 10343371,
+  "lines": 21600,
+  "n_records": 21600,
+  "modules": [
+    "hexad_c",
+    "hexad_d",
+    "hexad_w",
+    "hexad_m",
+    "hexad_s",
+    "hexad_e",
+    "hexad_spont",
+    "hexad_wiring",
+    "hexad_motiv"
+  ],
+  "per_module": 2400,
+  "seed": 1337,
+  "pattern_breakdown": {
+    "beta": 7643,
+    "delta": 5851,
+    "gamma": 8106
+  },
+  "F_CORPUS_NO_HELPER": {
+    "forbidden_token_counts": {
+      "\ub3c4\uc6b0\ubbf8": 0,
+      "helper": 0,
+      "assistant": 0,
+      "\uc0ac\uc6a9\uc790": 0,
+      "user:": 0
+    },
+    "total": 0,
+    "verdict": "PASS"
+  },
+  "F_CORPUS_STIMULUS_PATTERN": {
+    "anima_tag_count": 13494,
+    "stimulus_tag_count": 5743,
+    "inner_motivation_tag_count": 8106,
+    "voice_spontaneous_tag_count": 8106,
+    "verdict": "PASS"
+  },
+  "F_CORPUS_MOTIVATION_CARDINALITY": {
+    "gamma_records": 8106,
+    "gamma_ratio": 0.3753,
+    "min_expected_ratio": 0.25,
+    "verdict": "PASS"
+  }
+}

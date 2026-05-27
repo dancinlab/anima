@@ -1,0 +1,43 @@
+============================================================
+anima-physics G8 E2E v2 — cross-engine (2026-05-21)
+SNN spike -> photonic phase -> quantum g(t) -> qubit readout
+------------------------------------------------------------
+config: N_CELLS=8, N_STEPS=100, PHASE_KICK_RAD=0.15, G in [0.05,0.8]
+------------------------------------------------------------
+PRIMARY RUN (snn_coupling_k = 0):
+step | snn_spikes | kicks | ph_var    | g(t)      | p00     | p01     | p10     | p11
+  0 | 0 | 0 | 0.434922 | 0.143198 | 0.0 | 0.5 | 0.5 | 0.0
+  10 | 0 | 0 | 1.86371 | 0.449367 | 0.0 | 0.5 | 0.5 | 0.0
+  20 | 0 | 0 | 3.59997 | 0.8 | 0.0 | 0.5 | 0.5 | 0.0
+  30 | 8 | 0 | 3.8011 | 0.8 | 0.0 | 0.5 | 0.5 | 0.0
+  40 | 8 | 0 | 1.66384 | 0.406537 | 0.0 | 0.5 | 0.5 | 0.0
+  50 | 8 | 0 | 1.1315 | 0.292464 | 0.0 | 0.5 | 0.5 | 0.0
+  60 | 8 | 0 | 3.18103 | 0.73165 | 0.0 | 0.5 | 0.5 | 0.0
+  70 | 16 | 0 | 2.38909 | 0.561947 | 0.0 | 0.5 | 0.5 | 0.0
+  80 | 16 | 0 | 3.47824 | 0.795337 | 0.0 | 0.5 | 0.5 | 0.0
+  90 | 16 | 0 | 4.57032 | 0.8 | 0.0 | 0.5 | 0.5 | 0.0
+------------------------------------------------------------
+STAGE 1 SNN      : total_spikes=16
+ADAPTER A        : total_kicks_applied=16
+STAGE 2 photonic : final_var=3.69198, max_var=5.04841, coherence_r=0.377575
+ADAPTER B        : g_min=0.137378, g_max=0.8, g_mean=0.607096
+STAGE 3 quantum  : norm_sq=1, collapse=|01> (idx=1)
+                   p(|00>)=0.0, p(|01>)=0.5, p(|10>)=0.5, p(|11>)=0.0
+                   psi[8]= [0.0,0.0,0.246847,0.662621,-0.246847,-0.662621,0.0,0.0]
+------------------------------------------------------------
+SECONDARY RUN A (ADAPTER B monotone probe — synthetic):
+  g(var=0.1)=0.0714286, g(var=3.0)=0.692857, monotone=true
+SECONDARY RUN B (snn_coupling_k = 0, determinism repeat of PRIMARY):
+  total_spikes=16, total_kicks=16, ph_max_var=5.04841, g_mean=0.607096, collapse=|01>
+------------------------------------------------------------
+falsifier  evaluation:
+  F-E2E-CROSS-1 spike->phase bit-exact  (kicks=16, snn_spikes=16) -> true
+  F-E2E-CROSS-2 var->g monotone         (g(low)=0.0714286, g(high)=0.692857) -> true
+  F-E2E-CROSS-3 singlet+g(t) evolution  (g_bounded=true, g_nontrivial=true, norm_ok=true, norm_sq=1) -> true
+  F-E2E-CROSS-4 determinism (repeat)    (psi_eq + spike_eq + collapse_eq) -> true
+  F-E2E-CROSS-5 integrated wall (proxy) (total_ops=2400 < 100000) -> true   [actual wall asserted by external dispatcher]
+------------------------------------------------------------
+=== G8 E2E v2 cross-engine summary: 5/5 PASS (all=true) ===
+real 2.49
+user 1.98
+sys 0.16

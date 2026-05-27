@@ -1,0 +1,58 @@
+{
+  "schema": "verdict_v1",
+  "task": "BG-EV anima CLM-3-original byte-level ubu1 launch script + spec doc",
+  "date": "2026-05-06",
+  "lane": "anima_native_chat_clm3_original_ubu1_path",
+  "status": "DOC_AND_SCRIPT_LANDED_NO_FIRE",
+  "scope": "mac doc + script only; actual ubu1 ssh+train fire is user-manual after 5 falsifier gates",
+  "cost_usd": 0,
+  "wall_clock_estimate": "5-10 days post-fire",
+  "hardware": {
+    "host": "ubu1",
+    "gpu": "RTX 5070 12GB Blackwell sm_120",
+    "venv": "/home/aiden/venv_orchestrator/bin/python",
+    "torch": "2.11.0+cu128",
+    "owner_paid": true,
+    "marginal_cost_usd": 0
+  },
+  "outputs": [
+    "state/anima_clm_3_original_ubu1_launch_2026_05_06/launch_ubu1.bash",
+    "state/anima_clm_3_original_ubu1_launch_2026_05_06/monitor_ubu1.bash",
+    "state/anima_clm_3_original_ubu1_launch_2026_05_06/verdict.json",
+    "docs/anima_clm_3_original_ubu1_launch_landed_2026_05_05.ai.md"
+  ],
+  "preflight_gates": [
+    {"gate": 1, "check": "ubu1 ssh reachability", "method": "ssh -o ConnectTimeout=5 ubu1 echo ok"},
+    {"gate": 2, "check": "venv_orchestrator present", "method": "ls /home/aiden/venv_orchestrator/bin/python"},
+    {"gate": 3, "check": "torch 2.11.0+cu128 + cuda available", "method": "python -c 'import torch; print(torch.__version__, torch.cuda.is_available())'"},
+    {"gate": 4, "check": "anima repo on ubu1", "method": "ls /home/aiden/core/anima OR /home/aiden/anima"},
+    {"gate": 5, "check": "5 falsifier sign-off lock", "method": "interactive read FALSIFIER-LOCK-UBU1"}
+  ],
+  "falsifiers": [
+    "F-CLM3-orig-1 spec_match (vocab=256 / d=768 / L=12 / fib growth)",
+    "F-CLM3-orig-2 Phase 2 dialogue CE drop >= 30%",
+    "F-CLM3-orig-3 Phi_real >= 11",
+    "F-CLM3-orig-4 KO 5-prompt >= 3/5 coherent",
+    "F-CLM3-orig-5 phi_star NO_FLIP"
+  ],
+  "parallel_h100_compat": true,
+  "parallel_h100_note": "ubu1 + RunPod H100 may run concurrently; first PASS wins, ubu1 path kills budget overlap on H100 if it lands first",
+  "user_fire_steps": [
+    "ssh ubu1 echo ok",
+    "rsync -avz data/ ubu1:<repo>/data/",
+    "bash state/anima_clm_3_original_ubu1_launch_2026_05_06/launch_ubu1.bash (5 gates)",
+    "paste emitted ssh+nohup train cmd",
+    "watch -n 1800 'bash state/.../monitor_ubu1.bash <run_name>'",
+    "5-10 days later: harvest best.pt + run F-CLM3-orig-1..5"
+  ],
+  "constraints_obeyed": [
+    "raw#9 fail-loud (err exit on any gate fail)",
+    "raw#10 spec-then-implement (this is spec/script land, not exec)",
+    "raw#15 audit trail (launch.log)",
+    "no commit",
+    "no HF token",
+    "bash 3.2 compatible",
+    "py->hexa exempt: bash/ssh tooling = transient_py-class infra, not py model code"
+  ],
+  "next_action_user": "fire when ready: bash state/anima_clm_3_original_ubu1_launch_2026_05_06/launch_ubu1.bash"
+}

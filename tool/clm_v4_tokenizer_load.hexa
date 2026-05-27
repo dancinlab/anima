@@ -1,0 +1,334 @@
+// tool/clm_v4_tokenizer_load.hexa — CLM v4 64K BPE tokenizer load primitive (raw#9 strict).
+//
+// PURPOSE
+//   Hexa-native primitive that resolves, encodes, decodes, and self-tests the
+//   CLM v4 64K multilingual sentencepiece tokenizer. Replaces the legacy
+//   `/tmp/tokenizer_64k_multilingual.model` hardcode and the byte-fallback
+//   `[i+4 for i in bytes]` workaround used across 4 repo .py callers + 1 ubu1
+//   only .py caller (per state/clm_v4_tokenizer_caller_migration_spec_2026_05_04
+//   commit 68803d162).
+//
+// raw#9 STRICT
+//   No .py file is created on Mac. The transient sentencepiece helper is
+//   emitted to /tmp/clm_v4_tokenizer_load_helper.hexa_tmp (NOT a .py
+//   extension), scp'd up to ubu1 under raw#37 transient-py-on-Linux, then
+//   executed via the ubu1 venv_orchestrator python3.
+//
+// MODES
+//   --selftest           Round-trip 100 random EN+KO strings via ubu1 SSH;
+//                        emit state/.../selftest_<TS>.json. Pass if >=98/100
+//                        exact-match (NFKC + whitespace normalize).
+//   --load-mac-stub      Mac-side stub: emits resolver path + sha256 cache
+//                        record without loading sentencepiece. For Mac-side
+//                        callers that just need "is it there?" probe.
+//   --load-ubu1          ubu1-side load + resolver dump + vocab probe.
+//   --encode <text>      SSH ubu1 -> sp.encode(text) -> JSON [ids...].
+//   --decode <ids>       SSH ubu1 -> sp.decode([ids]) -> JSON "text".
+//   --vocab-size         SSH ubu1 -> sp.get_piece_size().
+//   --sha256-verify      SSH ubu1 -> sha256sum cache file vs literal
+//                        bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab.
+//   --resolve-path       SSH ubu1 -> first-hit cache glob -> absolute path.
+//
+// CACHE RESOLUTION ORDER (ubu1)
+//   1. ~/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/
+//      snapshots/*/tokenizer/tokenizer_64k_multilingual.model
+//   2. ~/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model
+//   3. /tmp/tokenizer_64k_multilingual.model (legacy fallback; stderr WARN)
+//   4. HARD FAIL — FileNotFoundError listing globs and pointing to
+//      state/clm_v4_tokenizer_propagation_plan_2026_05_04/plan.md Step 2.
+//
+// raw#15 SSOT this file. raw#37 transient-py-on-Linux. raw#71 falsifier:
+//   F-MIG-1 round-trip identity over 100 random strings (>=98/100).
+//
+// USAGE
+//   hexa run tool/clm_v4_tokenizer_load.hexa --selftest
+//   hexa run tool/clm_v4_tokenizer_load.hexa --vocab-size
+//   hexa run tool/clm_v4_tokenizer_load.hexa --resolve-path
+//   hexa run tool/clm_v4_tokenizer_load.hexa --sha256-verify
+//   hexa run tool/clm_v4_tokenizer_load.hexa --encode "Hello world"
+//   hexa run tool/clm_v4_tokenizer_load.hexa --decode "1,2,3"
+
+let HELPER_PATH = "/tmp/clm_v4_tokenizer_load_helper.hexa_tmp"
+let UBU1_PY = "/home/aiden/venv_orchestrator/bin/python3"
+let SHA256_EXPECTED = "bb851d39fbe3286dda11fc43da78d9bbf29ac6400d61b75616c8c750b710b8ab"
+let VOCAB_EXPECTED = 64000
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# emitted by tool/clm_v4_tokenizer_load.hexa raw#37 transient (NOT committed)\n")
+    parts.push("import sys, os, glob, json, hashlib, time, unicodedata, random\n")
+    parts.push("\n")
+    parts.push("SHA256_EXPECTED = '" + SHA256_EXPECTED + "'\n")
+    parts.push("VOCAB_EXPECTED = " + to_string(VOCAB_EXPECTED) + "\n")
+    parts.push("\n")
+    parts.push("def _resolve():\n")
+    parts.push("    home = os.path.expanduser('~')\n")
+    parts.push("    candidates = [\n")
+    parts.push("        f'{home}/.cache/huggingface/hub/models--dancinlab--clm-v4-base-mirror/snapshots/*/tokenizer/tokenizer_64k_multilingual.model',\n")
+    parts.push("        f'{home}/anima/checkpoints/clm_v4_350m/tokenizer_64k_multilingual.model',\n")
+    parts.push("        '/tmp/tokenizer_64k_multilingual.model',\n")
+    parts.push("    ]\n")
+    parts.push("    for i, g in enumerate(candidates):\n")
+    parts.push("        m = sorted(glob.glob(g))\n")
+    parts.push("        if m:\n")
+    parts.push("            if i == 2:\n")
+    parts.push("                sys.stderr.write('[clm_v4_tokenizer_load] WARN: legacy /tmp fallback in use; promote to HF cache via plan.md Step 2\\n')\n")
+    parts.push("            return m[-1]\n")
+    parts.push("    raise FileNotFoundError('CLM v4 64K tokenizer not in cache or /tmp; see state/clm_v4_tokenizer_propagation_plan_2026_05_04/plan.md Step 2 (ubu1 cache prime). Globs: ' + ' | '.join(candidates))\n")
+    parts.push("\n")
+    parts.push("def _sha256_file(path):\n")
+    parts.push("    h = hashlib.sha256()\n")
+    parts.push("    with open(path, 'rb') as f:\n")
+    parts.push("        for chunk in iter(lambda: f.read(65536), b''):\n")
+    parts.push("            h.update(chunk)\n")
+    parts.push("    return h.hexdigest()\n")
+    parts.push("\n")
+    parts.push("def _load_sp(path):\n")
+    parts.push("    import sentencepiece as spm\n")
+    parts.push("    sp = spm.SentencePieceProcessor(model_file=path)\n")
+    parts.push("    return sp\n")
+    parts.push("\n")
+    parts.push("def _norm(s):\n")
+    parts.push("    return unicodedata.normalize('NFKC', s).strip()\n")
+    parts.push("\n")
+    parts.push("def cmd_resolve_path():\n")
+    parts.push("    p = _resolve()\n")
+    parts.push("    print(json.dumps({'path': p, 'exists': os.path.exists(p)}))\n")
+    parts.push("\n")
+    parts.push("def cmd_sha256_verify():\n")
+    parts.push("    p = _resolve()\n")
+    parts.push("    actual = _sha256_file(p)\n")
+    parts.push("    ok = (actual == SHA256_EXPECTED)\n")
+    parts.push("    print(json.dumps({'path': p, 'sha256_actual': actual, 'sha256_expected': SHA256_EXPECTED, 'match': ok}))\n")
+    parts.push("    sys.exit(0 if ok else 1)\n")
+    parts.push("\n")
+    parts.push("def cmd_vocab_size():\n")
+    parts.push("    p = _resolve()\n")
+    parts.push("    sp = _load_sp(p)\n")
+    parts.push("    v = sp.get_piece_size()\n")
+    parts.push("    ok = (v == VOCAB_EXPECTED)\n")
+    parts.push("    print(json.dumps({'path': p, 'vocab_size': v, 'expected': VOCAB_EXPECTED, 'match': ok}))\n")
+    parts.push("    sys.exit(0 if ok else 1)\n")
+    parts.push("\n")
+    parts.push("def cmd_encode(text):\n")
+    parts.push("    p = _resolve()\n")
+    parts.push("    sp = _load_sp(p)\n")
+    parts.push("    ids = sp.encode(text)\n")
+    parts.push("    print(json.dumps({'text': text, 'ids': ids, 'n': len(ids)}))\n")
+    parts.push("\n")
+    parts.push("def cmd_decode(ids_csv):\n")
+    parts.push("    p = _resolve()\n")
+    parts.push("    sp = _load_sp(p)\n")
+    parts.push("    ids = [int(x) for x in ids_csv.split(',') if x.strip()]\n")
+    parts.push("    text = sp.decode(ids)\n")
+    parts.push("    print(json.dumps({'ids': ids, 'text': text}))\n")
+    parts.push("\n")
+    parts.push("def cmd_selftest(out_path=None):\n")
+    parts.push("    p = _resolve()\n")
+    parts.push("    sp = _load_sp(p)\n")
+    parts.push("    rng = random.Random(42)\n")
+    parts.push("    EN_VOCAB = ['the','quick','brown','fox','jumps','over','lazy','dog','hello','world','consciousness','recursive','self','aware','six','module','hexagonal','phi','tension','bold','integrated','information','meta','cognition','closure','rule','formal','proof','partition','irreducibility']\n")
+    parts.push("    KO_VOCAB = ['세상','안녕','의식','재귀','자기','자각','육각','모듈','파이','텐션','통합','정보','상위','인지','폐쇄','규칙','형식','증명','분할','환원','법칙','구조','시스템','관찰','자기참조','이상한','순환','모델','명제','추론']\n")
+    parts.push("    samples = []\n")
+    parts.push("    for i in range(50):\n")
+    parts.push("        n = rng.randint(2, 6)\n")
+    parts.push("        samples.append(' '.join(rng.choice(EN_VOCAB) for _ in range(n)))\n")
+    parts.push("    for i in range(50):\n")
+    parts.push("        n = rng.randint(2, 6)\n")
+    parts.push("        samples.append(' '.join(rng.choice(KO_VOCAB) for _ in range(n)))\n")
+    parts.push("    n_total = len(samples)\n")
+    parts.push("    n_match = 0\n")
+    parts.push("    n_norm_match = 0\n")
+    parts.push("    failures = []\n")
+    parts.push("    t0 = time.time()\n")
+    parts.push("    for s in samples:\n")
+    parts.push("        ids = sp.encode(s)\n")
+    parts.push("        back = sp.decode(ids)\n")
+    parts.push("        if back == s:\n")
+    parts.push("            n_match += 1\n")
+    parts.push("            n_norm_match += 1\n")
+    parts.push("        elif _norm(back) == _norm(s):\n")
+    parts.push("            n_norm_match += 1\n")
+    parts.push("        else:\n")
+    parts.push("            if len(failures) < 8:\n")
+    parts.push("                failures.append({'orig': s, 'roundtrip': back, 'ids_n': len(ids)})\n")
+    parts.push("    elapsed = time.time() - t0\n")
+    parts.push("    pass_norm = (n_norm_match >= 98)\n")
+    parts.push("    result = {\n")
+    parts.push("        'schema': 'anima/clm_v4_tokenizer_load/selftest/1',\n")
+    parts.push("        'tokenizer_path': p,\n")
+    parts.push("        'sha256_expected': SHA256_EXPECTED,\n")
+    parts.push("        'vocab_size': sp.get_piece_size(),\n")
+    parts.push("        'n_total': n_total,\n")
+    parts.push("        'n_match_exact': n_match,\n")
+    parts.push("        'n_match_nfkc': n_norm_match,\n")
+    parts.push("        'pass_threshold': 98,\n")
+    parts.push("        'verdict': 'PASS' if pass_norm else 'FAIL',\n")
+    parts.push("        'failures_first8': failures,\n")
+    parts.push("        'elapsed_sec': round(elapsed, 3),\n")
+    parts.push("        'ts_utc': time.strftime('%Y-%m-%dT%H:%M:%SZ', time.gmtime()),\n")
+    parts.push("    }\n")
+    parts.push("    print(json.dumps(result))\n")
+    parts.push("    if out_path:\n")
+    parts.push("        os.makedirs(os.path.dirname(out_path), exist_ok=True)\n")
+    parts.push("        with open(out_path, 'w') as f:\n")
+    parts.push("            json.dump(result, f, indent=2)\n")
+    parts.push("    sys.exit(0 if pass_norm else 1)\n")
+    parts.push("\n")
+    parts.push("def main():\n")
+    parts.push("    av = sys.argv[1:]\n")
+    parts.push("    if not av:\n")
+    parts.push("        print('usage: helper [resolve-path|sha256-verify|vocab-size|encode <text>|decode <csv>|selftest [out]]', file=sys.stderr)\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("    mode = av[0]\n")
+    parts.push("    if mode == 'resolve-path': cmd_resolve_path()\n")
+    parts.push("    elif mode == 'sha256-verify': cmd_sha256_verify()\n")
+    parts.push("    elif mode == 'vocab-size': cmd_vocab_size()\n")
+    parts.push("    elif mode == 'encode':\n")
+    parts.push("        cmd_encode(av[1] if len(av) > 1 else '')\n")
+    parts.push("    elif mode == 'decode':\n")
+    parts.push("        cmd_decode(av[1] if len(av) > 1 else '')\n")
+    parts.push("    elif mode == 'selftest':\n")
+    parts.push("        cmd_selftest(av[1] if len(av) > 1 else None)\n")
+    parts.push("    else:\n")
+    parts.push("        print('unknown mode: ' + mode, file=sys.stderr)\n")
+    parts.push("        sys.exit(2)\n")
+    parts.push("\n")
+    parts.push("if __name__ == '__main__':\n")
+    parts.push("    main()\n")
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _scp_helper_to_ubu1() {
+    let cmd = "/usr/bin/scp -q " + HELPER_PATH + " ubu1:" + HELPER_PATH
+    let r = exec_with_status(cmd)
+    if to_int(r[1]) != 0 {
+        eprintln("scp helper -> ubu1 FAILED: " + to_string(r[0]))
+        exit(1)
+    }
+}
+
+fn _ssh_run(args: string) -> [any] {
+    let cmd = "/usr/bin/ssh -o ConnectTimeout=15 ubu1 '" + UBU1_PY + " " + HELPER_PATH + " " + args + "'"
+    let r = exec_with_status(cmd)
+    return r
+}
+
+fn cmd_selftest() {
+    println("── clm_v4_tokenizer_load --selftest ──")
+    _write_helper()
+    // local AST validate first (Mac homebrew python3 absolute path; skip if not present — ubu1 will catch syntax)
+    let ast_cmd = "test -x /opt/homebrew/bin/python3 && /opt/homebrew/bin/python3 -c 'import ast,sys; ast.parse(open(\"" + HELPER_PATH + "\").read()); print(\"ast=ok\")' || echo 'ast=skip_no_python_on_mac'"
+    let ar = exec_with_status(ast_cmd)
+    println(to_string(ar[0]).trim())
+    _scp_helper_to_ubu1()
+    let out_path = "/tmp/clm_v4_tokenizer_load_selftest.json"
+    let r = _ssh_run("selftest " + out_path)
+    let out = to_string(r[0]).trim()
+    println(out)
+    if to_int(r[1]) != 0 {
+        println("VERDICT=FAIL (selftest exit=" + to_string(r[1]) + ")")
+        exit(1)
+    }
+    println("VERDICT=PASS")
+    println("DONE")
+}
+
+fn cmd_load_mac_stub() {
+    println("── clm_v4_tokenizer_load --load-mac-stub ──")
+    _write_helper()
+    println("helper_emitted=" + HELPER_PATH)
+    println("note=Mac side cannot load sentencepiece (raw#9 hexa-only); use --load-ubu1 or --selftest.")
+    println("DONE")
+}
+
+fn cmd_load_ubu1() {
+    println("── clm_v4_tokenizer_load --load-ubu1 ──")
+    _write_helper()
+    _scp_helper_to_ubu1()
+    let r1 = _ssh_run("resolve-path")
+    print(to_string(r1[0]))
+    if to_int(r1[1]) != 0 { eprintln("resolve-path FAILED"); exit(1) }
+    let r2 = _ssh_run("vocab-size")
+    print(to_string(r2[0]))
+    if to_int(r2[1]) != 0 { eprintln("vocab-size FAILED"); exit(1) }
+    let r3 = _ssh_run("sha256-verify")
+    print(to_string(r3[0]))
+    if to_int(r3[1]) != 0 { eprintln("sha256-verify FAILED"); exit(1) }
+    println("DONE")
+}
+
+fn cmd_encode(text: string) {
+    _write_helper()
+    _scp_helper_to_ubu1()
+    let safe = text.replace("'", "'\\''")
+    let r = _ssh_run("encode \"" + safe + "\"")
+    print(to_string(r[0]))
+    exit(to_int(r[1]))
+}
+
+fn cmd_decode(ids_csv: string) {
+    _write_helper()
+    _scp_helper_to_ubu1()
+    let r = _ssh_run("decode \"" + ids_csv + "\"")
+    print(to_string(r[0]))
+    exit(to_int(r[1]))
+}
+
+fn cmd_vocab_size() {
+    _write_helper()
+    _scp_helper_to_ubu1()
+    let r = _ssh_run("vocab-size")
+    print(to_string(r[0]))
+    exit(to_int(r[1]))
+}
+
+fn cmd_sha256_verify() {
+    _write_helper()
+    _scp_helper_to_ubu1()
+    let r = _ssh_run("sha256-verify")
+    print(to_string(r[0]))
+    exit(to_int(r[1]))
+}
+
+fn cmd_resolve_path() {
+    _write_helper()
+    _scp_helper_to_ubu1()
+    let r = _ssh_run("resolve-path")
+    print(to_string(r[0]))
+    exit(to_int(r[1]))
+}
+
+fn main() {
+    let av = argv()
+    let mut mode = ""
+    let mut arg1 = ""
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { mode = "selftest"; i = i + 1; continue }
+        if a == "--load-mac-stub" { mode = "load-mac-stub"; i = i + 1; continue }
+        if a == "--load-ubu1" { mode = "load-ubu1"; i = i + 1; continue }
+        if a == "--vocab-size" { mode = "vocab-size"; i = i + 1; continue }
+        if a == "--sha256-verify" { mode = "sha256-verify"; i = i + 1; continue }
+        if a == "--resolve-path" { mode = "resolve-path"; i = i + 1; continue }
+        if a == "--encode" { mode = "encode"; if i + 1 < len(av) { arg1 = av[i + 1]; i = i + 2 } else { i = i + 1 }; continue }
+        if a == "--decode" { mode = "decode"; if i + 1 < len(av) { arg1 = av[i + 1]; i = i + 2 } else { i = i + 1 }; continue }
+        i = i + 1
+    }
+    if mode == "" {
+        println("usage: hexa run tool/clm_v4_tokenizer_load.hexa --selftest|--load-ubu1|--load-mac-stub|--vocab-size|--sha256-verify|--resolve-path|--encode <text>|--decode <ids>")
+        exit(2)
+    }
+    if mode == "selftest" { cmd_selftest(); exit(0) }
+    if mode == "load-mac-stub" { cmd_load_mac_stub(); exit(0) }
+    if mode == "load-ubu1" { cmd_load_ubu1(); exit(0) }
+    if mode == "vocab-size" { cmd_vocab_size(); exit(0) }
+    if mode == "sha256-verify" { cmd_sha256_verify(); exit(0) }
+    if mode == "resolve-path" { cmd_resolve_path(); exit(0) }
+    if mode == "encode" { cmd_encode(arg1); exit(0) }
+    if mode == "decode" { cmd_decode(arg1); exit(0) }
+    eprintln("unknown mode: " + mode)
+    exit(2)
+}

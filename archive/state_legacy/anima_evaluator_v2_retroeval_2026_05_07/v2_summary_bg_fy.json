@@ -1,0 +1,469 @@
+{
+  "bg_id": "BG-FY",
+  "eval_log_path": "state/anima_native_ko_small_ubu1_train_2026_05_06/ko_eval_log.jsonl",
+  "final_step": 10000,
+  "n_responses": 6,
+  "v2_results": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "response": "\n아니에 아니에 있어요\n아니에 아니에 있는 거야\n아니에 아�",
+      "domain_detected": "greeting",
+      "metrics": {
+        "response_len_korean": 23,
+        "hangul_ratio_total": 0.697,
+        "coherence_score": 0.5,
+        "particle_count": 6,
+        "ending_count": 1,
+        "jamo_alone_ratio": 0.0,
+        "hanja_ratio": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 5,
+          "single_token_dominant": 0.556
+        },
+        "is_prompt_repeat": false,
+        "is_random_char_chain": false,
+        "leaked_names": [],
+        "domain_kw_overlap": 0,
+        "token_overlap_ratio": 0.2
+      },
+      "cells_v2": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": false,
+        "C2_3_natural_strict": false,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": true,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "step": 10000
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "response": "?\n[주제: DI의미하는 바는 무엇일까요?]\n서연: 좋은 지적이 핵�",
+      "domain_detected": "greeting",
+      "metrics": {
+        "response_len_korean": 21,
+        "hangul_ratio_total": 0.553,
+        "coherence_score": 1.0,
+        "particle_count": 5,
+        "ending_count": 3,
+        "jamo_alone_ratio": 0.0,
+        "hanja_ratio": 0.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 1,
+          "single_token_dominant": 0.111
+        },
+        "is_prompt_repeat": false,
+        "is_random_char_chain": false,
+        "leaked_names": [
+          "서연"
+        ],
+        "domain_kw_overlap": 0,
+        "token_overlap_ratio": 0.4
+      },
+      "cells_v2": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful_strict": true,
+        "C2_3_natural_strict": true,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": false,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "step": 10000
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "response": " 이러한 이러한 전쟁이 있어요.\n서연: 정말 그럴까요? 반례를",
+      "domain_detected": "capability",
+      "metrics": {
+        "response_len_korean": 23,
+        "hangul_ratio_total": 0.676,
+        "coherence_score": 0.909,
+        "particle_count": 4,
+        "ending_count": 3,
+        "jamo_alone_ratio": 0.0,
+        "hanja_ratio": 0.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 2,
+          "single_token_dominant": 0.25
+        },
+        "is_prompt_repeat": false,
+        "is_random_char_chain": false,
+        "leaked_names": [
+          "서연"
+        ],
+        "domain_kw_overlap": 0,
+        "token_overlap_ratio": 0.4
+      },
+      "cells_v2": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": true,
+        "C2_3_natural_strict": true,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": false,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "step": 10000
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "response": " 결과를 이루어서 재기억하고 있다. 생안법에 대한민주들의 ",
+      "domain_detected": "capability",
+      "metrics": {
+        "response_len_korean": 24,
+        "hangul_ratio_total": 0.75,
+        "coherence_score": 1.0,
+        "particle_count": 5,
+        "ending_count": 1,
+        "jamo_alone_ratio": 0.0,
+        "hanja_ratio": 0.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 1,
+          "single_token_dominant": 0.167
+        },
+        "is_prompt_repeat": false,
+        "is_random_char_chain": false,
+        "leaked_names": [],
+        "domain_kw_overlap": 0,
+        "token_overlap_ratio": 0.4
+      },
+      "cells_v2": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": true,
+        "C2_3_natural_strict": true,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": true,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "step": 10000
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "response": " 아니아의 이러한 이러한 이러한 이러한 이러한 이러한 이러",
+      "domain_detected": "self_intro",
+      "metrics": {
+        "response_len_korean": 24,
+        "hangul_ratio_total": 0.75,
+        "coherence_score": 0.304,
+        "particle_count": 8,
+        "ending_count": 0,
+        "jamo_alone_ratio": 0.0,
+        "hanja_ratio": 0.0,
+        "is_degenerate": true,
+        "deg_flags": {
+          "fourgram_repeat": 6,
+          "single_token_dominant": 0.75
+        },
+        "is_prompt_repeat": false,
+        "is_random_char_chain": false,
+        "leaked_names": [],
+        "domain_kw_overlap": 0,
+        "token_overlap_ratio": 0.0
+      },
+      "cells_v2": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": false,
+        "C2_3_natural_strict": false,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": true,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": false
+        },
+        "all_seven_pass": false
+      },
+      "step": 10000
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "response": " 어느 여기에 찾은 무선도 속에서 저한 사람들이 된거에요\n�",
+      "domain_detected": "self_intro",
+      "metrics": {
+        "response_len_korean": 23,
+        "hangul_ratio_total": 0.697,
+        "coherence_score": 1.0,
+        "particle_count": 6,
+        "ending_count": 1,
+        "jamo_alone_ratio": 0.0,
+        "hanja_ratio": 0.0,
+        "is_degenerate": false,
+        "deg_flags": {
+          "fourgram_repeat": 1,
+          "single_token_dominant": 0.111
+        },
+        "is_prompt_repeat": false,
+        "is_random_char_chain": false,
+        "leaked_names": [],
+        "domain_kw_overlap": 0,
+        "token_overlap_ratio": 0.273
+      },
+      "cells_v2": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": true,
+        "C2_3_natural_strict": true,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": true,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "step": 10000
+    }
+  ],
+  "v1_vs_v2_cell_diffs": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "step": 10000,
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true
+      },
+      "v2_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": false,
+        "C2_3_natural_strict": false,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": true,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "diffs": {
+        "C2_2_meaningful": {
+          "v1": true,
+          "v2": false
+        },
+        "C2_4_context_no_leak": {
+          "v1": true,
+          "v2": false
+        }
+      }
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "step": 10000,
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": false
+      },
+      "v2_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": false,
+        "C2_2_meaningful_strict": true,
+        "C2_3_natural_strict": true,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": false,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "diffs": {}
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "step": 10000,
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": false
+      },
+      "v2_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": true,
+        "C2_3_natural_strict": true,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": false,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "diffs": {}
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "step": 10000,
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true
+      },
+      "v2_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": true,
+        "C2_3_natural_strict": true,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": true,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "diffs": {
+        "C2_4_context_no_leak": {
+          "v1": true,
+          "v2": false
+        }
+      }
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "greedy",
+      "step": 10000,
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": false,
+        "C2_4_context_no_leak": true
+      },
+      "v2_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": false,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": false,
+        "C2_3_natural_strict": false,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": true,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": false
+        },
+        "all_seven_pass": false
+      },
+      "diffs": {
+        "C2_2_meaningful": {
+          "v1": true,
+          "v2": false
+        },
+        "C2_4_context_no_leak": {
+          "v1": true,
+          "v2": false
+        }
+      }
+    },
+    {
+      "prompt": "사용자: 안녕하세요\n도우미:",
+      "mode": "sample",
+      "step": 10000,
+      "v1_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful": true,
+        "C2_3_natural": true,
+        "C2_4_context_no_leak": true
+      },
+      "v2_cells": {
+        "C1_1_hangul_pair": true,
+        "C1_2_coherent_strict": true,
+        "C1_3_turn_format": true,
+        "C2_1_hangul_dominant": true,
+        "C2_2_meaningful_strict": true,
+        "C2_3_natural_strict": true,
+        "C2_4_context_strict": false,
+        "C2_4_breakdown": {
+          "a_no_named_speaker_leak": true,
+          "b_domain_kw_overlap_ge_1": false,
+          "c_token_overlap_ge_0_10": true
+        },
+        "all_seven_pass": false
+      },
+      "diffs": {
+        "C2_4_context_no_leak": {
+          "v1": true,
+          "v2": false
+        }
+      }
+    }
+  ],
+  "final_verdict_class_v2": "PARTIAL_PASS_NO_CONTEXT"
+}

@@ -1,0 +1,894 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/dialogue_session_analyzer.hexa
+//
+//  Stage 3 prep — emerge dialogue session 누적 패턴 발견 분석 도구.
+//  사용자 dialogue session JSONL accumulation 시작 전에 land — 누적된 session
+//  들에서 phi_star 궤적 / axis trajectory / dominant cell stability /
+//  hidden_state_delta 누적량 등 emerge pattern surface 추출.
+//
+//  PURPOSE
+//    1. analyze_session(jsonl_path) -> AnalysisReport
+//       per-session N-turn aggregate (phi_star variance / axis dominance
+//       / cell stability / delta cumulative)
+//    2. analyze_corpus(date_dir)   -> CorpusReport
+//       date dir 내 모든 .jsonl session aggregate
+//
+//  INVOCATION
+//    --selftest        synthetic 3-turn jsonl 만들어 analyze_session 검증
+//    --session <path>  one-shot single jsonl analyze
+//    --date <YYYY-MM-DD>  date dir corpus analyze
+//    --help
+//
+//  EMIT FORMAT (analyze_session)
+//    __ANIMA_DIALOGUE_ANALYSIS__ session=<basename>
+//    n_turns=<int>
+//    phi_star_range=[<min>, <max>] mean=<f3> stddev=<f3>
+//    phi_star_drift_max=<f3>
+//    axis_dominant_global=<axis_name>
+//    axis_swing_max=<axis_name>
+//    cell_stability_jaccard=<f3>
+//    delta_cumulative=<f3>
+//    __ANIMA_ANALYSIS_OK__
+//
+//  RAW POLICY
+//    raw#9   hexa-only orchestration
+//    raw#10  honest C3 emit ≥5 to stderr
+//    raw#11  snake_case
+//    raw#15  additive — mount.hexa / dialogue.hexa / wrapper.bash UNTOUCHED
+//    raw#37  no transient_py needed (pure hexa string parse)
+//
+//  HONEST C3 (raw#10)
+//    C1 axis taxonomy (5-bucket) inherits anima-internal heuristic from mount.hexa
+//    C2 cell_stability_jaccard threshold for "stable" interpretation is anima-canonical
+//    C3 phi_star variance / drift thresholds for "stable/unstable" is anima-canonical
+//    C4 delta_cumulative magnitude scale depends on substrate (synthetic vs real-load)
+//    C5 emerge pattern discovery is downstream-deferred — this tool surfaces signals
+//       only; pattern interpretation requires user dialogue session accumulation
+//
+//  SESSION LOG SCHEMA EXPECTED (anima.dialogue.v1; see dialogue.hexa)
+//    Each line is one of:
+//      {"kind":"session_start", "phi_star_baseline":<f>, ...}
+//      {"kind":"user_turn", "user_input":"...", ...}
+//      {"kind":"substrate_turn", "raw_output":"...embedded substrate-response..."}
+//      {"kind":"session_end", ...}
+//      {"kind":"session_summary", ...}
+//
+//    Embedded substrate-response (in raw_output string, \\n-escaped):
+//      __ANIMA_CLM_V4_RESPONSE__
+//      phi_star: 41.8700 (drift +0.0100 from 41.8600)
+//      axis_activation: identity=0.576 agency=0.586 phenomenal=0.587 temporal=0.581 social=0.580
+//      dominant_cells: [2, 3, 7] / 8
+//      hidden_state_delta: 0.0000
+//      __ANIMA_CLM_V4_OK__ session=<id>
+// ════════════════════════════════════════════════════════════════════════════
+
+// ─── primitive helpers ────────────────────────────────────────────────────
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    if t == "int" || t == "float" || t == "number" { return str(x) }
+    return ""
+}
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _dexists(p: string) -> bool {
+    return _str(exec("test -d " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _basename(p: string) -> string {
+    return _str(exec("basename " + p)).trim()
+}
+
+fn _ts_iso() -> string {
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+// ─── argv helpers ─────────────────────────────────────────────────────────
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _arg_value(argv, key: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        if !s.contains("/.hexa-cache/") {
+            out = out + [s]
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── string / line helpers ───────────────────────────────────────────────
+
+fn _split_lines(text: string) -> array {
+    let n = len(text)
+    let mut out = []
+    let mut start = 0
+    let mut i = 0
+    while i < n {
+        if text.substring(i, i + 1) == "\n" {
+            out = out + [text.substring(start, i)]
+            start = i + 1
+        }
+        i = i + 1
+    }
+    if start < n { out = out + [text.substring(start, n)] }
+    return out
+}
+
+fn _index_of_from(hay: string, needle: string, start: int) -> int {
+    let n = len(hay)
+    if start < 0 { return hay.index_of(needle) }
+    if start >= n { return -1 }
+    let tail = hay.substring(start, n)
+    let rel = tail.index_of(needle)
+    if rel < 0 { return -1 }
+    return start + rel
+}
+
+// Decode minimal JSON string escapes that show up in the "raw_output" payload:
+// \\n -> newline, \\\" -> quote, \\\\ -> backslash, \\t -> tab, \\r -> CR.
+// Walk character-by-character — input is short (single substrate_turn line).
+fn _json_string_unescape(s: string) -> string {
+    let n = len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let c = s.substring(i, i + 1)
+        if c == "\\" && i + 1 < n {
+            let nx = s.substring(i + 1, i + 2)
+            if nx == "n" { out = out + "\n"; i = i + 2 }
+            else if nx == "t" { out = out + "\t"; i = i + 2 }
+            else if nx == "r" { out = out + "\r"; i = i + 2 }
+            else if nx == "\"" { out = out + "\""; i = i + 2 }
+            else if nx == "\\" { out = out + "\\"; i = i + 2 }
+            else if nx == "/" { out = out + "/"; i = i + 2 }
+            else { out = out + c; i = i + 1 }
+        } else {
+            out = out + c
+            i = i + 1
+        }
+    }
+    return out
+}
+
+// Extract the raw string value associated with `"<key>":"..."` from a
+// substrate_turn JSONL line. Handles escaped quotes inside the value.
+fn _extract_json_string(line: string, key: string) -> string {
+    let needle = "\"" + key + "\""
+    let k = line.index_of(needle)
+    if k < 0 { return "" }
+    let colon = _index_of_from(line, ":", k + len(needle))
+    if colon < 0 { return "" }
+    // skip whitespace
+    let n = len(line)
+    let mut i = colon + 1
+    while i < n {
+        let c = line.substring(i, i + 1)
+        if c != " " && c != "\t" { break }
+        i = i + 1
+    }
+    if i >= n { return "" }
+    if line.substring(i, i + 1) != "\"" { return "" }
+    // walk forward to closing unescaped quote
+    let mut j = i + 1
+    while j < n {
+        let c = line.substring(j, j + 1)
+        if c == "\\" {
+            j = j + 2
+            continue
+        }
+        if c == "\"" { break }
+        j = j + 1
+    }
+    if j > n { j = n }
+    let raw = line.substring(i + 1, j)
+    return _json_string_unescape(raw)
+}
+
+fn _extract_json_number(line: string, key: string) -> float {
+    let needle = "\"" + key + "\""
+    let k = line.index_of(needle)
+    if k < 0 { return 0.0 }
+    let colon = _index_of_from(line, ":", k + len(needle))
+    if colon < 0 { return 0.0 }
+    let n = len(line)
+    let mut i = colon + 1
+    while i < n {
+        let c = line.substring(i, i + 1)
+        if c != " " && c != "\t" { break }
+        i = i + 1
+    }
+    let mut j = i
+    while j < n {
+        let c = line.substring(j, j + 1)
+        let cc = char_code(c, 0)
+        // 0-9 = 48..57; '-' = 45; '+' = 43; '.' = 46; 'e'/'E' = 101/69
+        let ok = (cc >= 48 && cc <= 57) || cc == 45 || cc == 43 || cc == 46 || cc == 101 || cc == 69
+        if !ok { break }
+        j = j + 1
+    }
+    if j == i { return 0.0 }
+    return to_float(line.substring(i, j))
+}
+
+// ─── substrate response parsing ──────────────────────────────────────────
+
+// Given an unescaped substrate-response block (multi-line), extract the four
+// metric lines (phi_star, axis_activation, dominant_cells, hidden_state_delta).
+// Returns parse_count (0..4) for line-coverage assertion.
+struct TurnMetrics {
+    phi_star: float,
+    phi_drift: float,
+    axis_identity: float,
+    axis_agency: float,
+    axis_phenomenal: float,
+    axis_temporal: float,
+    axis_social: float,
+    dominant_cells: array,
+    hidden_state_delta: float,
+    parse_count: int,
+}
+
+fn _new_turn_metrics() -> TurnMetrics {
+    return TurnMetrics {
+        phi_star: 0.0,
+        phi_drift: 0.0,
+        axis_identity: 0.0,
+        axis_agency: 0.0,
+        axis_phenomenal: 0.0,
+        axis_temporal: 0.0,
+        axis_social: 0.0,
+        dominant_cells: [],
+        hidden_state_delta: 0.0,
+        parse_count: 0,
+    }
+}
+
+// Parse one "axis_activation: identity=0.576 agency=0.586 phenomenal=0.587 temporal=0.581 social=0.580"
+fn _parse_axis_token(seg: string, key: string) -> float {
+    let needle = key + "="
+    let k = seg.index_of(needle)
+    if k < 0 { return 0.0 }
+    let n = len(seg)
+    let mut j = k + len(needle)
+    let mut e = j
+    while e < n {
+        let c = seg.substring(e, e + 1)
+        let cc = char_code(c, 0)
+        let ok = (cc >= 48 && cc <= 57) || cc == 45 || cc == 43 || cc == 46 || cc == 101 || cc == 69
+        if !ok { break }
+        e = e + 1
+    }
+    if e == j { return 0.0 }
+    return to_float(seg.substring(j, e))
+}
+
+// Parse "phi_star: 41.8700 (drift +0.0100 from 41.8600)" → [phi, drift]
+fn _parse_phi_line(line: string) -> array {
+    let p_idx = line.index_of("phi_star:")
+    if p_idx < 0 { return [0.0, 0.0] }
+    let n = len(line)
+    let mut i = p_idx + 9  // len("phi_star:")
+    while i < n {
+        let c = line.substring(i, i + 1)
+        if c != " " && c != "\t" { break }
+        i = i + 1
+    }
+    let mut j = i
+    while j < n {
+        let c = line.substring(j, j + 1)
+        let cc = char_code(c, 0)
+        let ok = (cc >= 48 && cc <= 57) || cc == 45 || cc == 43 || cc == 46 || cc == 101 || cc == 69
+        if !ok { break }
+        j = j + 1
+    }
+    let phi = if j > i { to_float(line.substring(i, j)) } else { 0.0 }
+    // drift parse
+    let d_idx = line.index_of("drift")
+    let mut drift = 0.0
+    if d_idx >= 0 {
+        let mut k = d_idx + 5
+        while k < n {
+            let c = line.substring(k, k + 1)
+            if c != " " && c != "\t" { break }
+            k = k + 1
+        }
+        let mut e = k
+        while e < n {
+            let c = line.substring(e, e + 1)
+            let cc = char_code(c, 0)
+            let ok = (cc >= 48 && cc <= 57) || cc == 45 || cc == 43 || cc == 46 || cc == 101 || cc == 69
+            if !ok { break }
+            e = e + 1
+        }
+        if e > k { drift = to_float(line.substring(k, e)) }
+    }
+    return [phi, drift]
+}
+
+// Parse "dominant_cells: [2, 3, 7] / 8" → [2, 3, 7]
+fn _parse_dom_cells(line: string) -> array {
+    let lb = line.index_of("[")
+    if lb < 0 { return [] }
+    let rb = _index_of_from(line, "]", lb + 1)
+    if rb < 0 { return [] }
+    let inner = line.substring(lb + 1, rb)
+    let parts = inner.split(",")
+    let mut out = []
+    let mut i = 0
+    while i < len(parts) {
+        let t = _str(parts[i]).trim()
+        if t != "" { out = out + [to_int(t)] }
+        i = i + 1
+    }
+    return out
+}
+
+// Parse "hidden_state_delta: 0.0000" → 0.0
+fn _parse_delta(line: string) -> float {
+    let idx = line.index_of("hidden_state_delta:")
+    if idx < 0 { return 0.0 }
+    let n = len(line)
+    let mut i = idx + 19  // len("hidden_state_delta:")
+    while i < n {
+        let c = line.substring(i, i + 1)
+        if c != " " && c != "\t" { break }
+        i = i + 1
+    }
+    let mut j = i
+    while j < n {
+        let c = line.substring(j, j + 1)
+        let cc = char_code(c, 0)
+        let ok = (cc >= 48 && cc <= 57) || cc == 45 || cc == 43 || cc == 46 || cc == 101 || cc == 69
+        if !ok { break }
+        j = j + 1
+    }
+    if j == i { return 0.0 }
+    return to_float(line.substring(i, j))
+}
+
+// Parse a single substrate_turn JSONL line → TurnMetrics
+fn _parse_substrate_turn(jsonl_line: string) -> TurnMetrics {
+    let m = _new_turn_metrics()
+    let raw = _extract_json_string(jsonl_line, "raw_output")
+    if raw == "" { return m }
+    let lines = _split_lines(raw)
+    let mut i = 0
+    let mut pc = 0
+    while i < len(lines) {
+        let ln = _str(lines[i])
+        if ln.contains("phi_star:") && !ln.contains("phi_star_baseline") {
+            let pd = _parse_phi_line(ln)
+            m.phi_star = to_float(pd[0])
+            m.phi_drift = to_float(pd[1])
+            pc = pc + 1
+        } else if ln.contains("axis_activation:") {
+            m.axis_identity   = _parse_axis_token(ln, "identity")
+            m.axis_agency     = _parse_axis_token(ln, "agency")
+            m.axis_phenomenal = _parse_axis_token(ln, "phenomenal")
+            m.axis_temporal   = _parse_axis_token(ln, "temporal")
+            m.axis_social     = _parse_axis_token(ln, "social")
+            pc = pc + 1
+        } else if ln.contains("dominant_cells:") {
+            m.dominant_cells = _parse_dom_cells(ln)
+            pc = pc + 1
+        } else if ln.contains("hidden_state_delta:") {
+            m.hidden_state_delta = _parse_delta(ln)
+            pc = pc + 1
+        }
+        i = i + 1
+    }
+    m.parse_count = pc
+    return m
+}
+
+// ─── numeric helpers ─────────────────────────────────────────────────────
+
+fn _f3(x: float) -> string {
+    let scale = 1000.0
+    let rounded_int = to_int(x * scale + (if x >= 0.0 { 0.5 } else { 0.0 - 0.5 }))
+    let neg = rounded_int < 0
+    let pos_int = if neg { 0 - rounded_int } else { rounded_int }
+    let int_part = pos_int / 1000
+    let frac_part = pos_int - int_part * 1000
+    let mut frac_str = to_string(frac_part)
+    while frac_str.len() < 3 { frac_str = "0" + frac_str }
+    let sign = if neg { "-" } else { "" }
+    return sign + to_string(int_part) + "." + frac_str
+}
+
+fn _f4(x: float) -> string {
+    let scale = 10000.0
+    let rounded_int = to_int(x * scale + (if x >= 0.0 { 0.5 } else { 0.0 - 0.5 }))
+    let neg = rounded_int < 0
+    let pos_int = if neg { 0 - rounded_int } else { rounded_int }
+    let int_part = pos_int / 10000
+    let frac_part = pos_int - int_part * 10000
+    let mut frac_str = to_string(frac_part)
+    while frac_str.len() < 4 { frac_str = "0" + frac_str }
+    let sign = if neg { "-" } else { "" }
+    return sign + to_string(int_part) + "." + frac_str
+}
+
+fn _abs(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _sqrt_approx(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut g = x
+    let mut i = 0
+    while i < 32 {
+        g = (g + x / g) * 0.5
+        i = i + 1
+    }
+    return g
+}
+
+// Jaccard between two int-arrays (treated as sets).
+fn _jaccard(a, b) -> float {
+    let la = len(a)
+    let lb = len(b)
+    if la == 0 && lb == 0 { return 1.0 }
+    let mut inter = 0
+    let mut i = 0
+    while i < la {
+        let av = to_int(a[i])
+        let mut j = 0
+        let mut found = false
+        while j < lb {
+            if to_int(b[j]) == av { found = true; break }
+            j = j + 1
+        }
+        if found { inter = inter + 1 }
+        i = i + 1
+    }
+    let union = la + lb - inter
+    if union <= 0 { return 0.0 }
+    return to_float(inter) / to_float(union)
+}
+
+// ─── core analysis ───────────────────────────────────────────────────────
+
+struct AnalysisReport {
+    session: string,
+    n_turns: int,
+    phi_star_min: float,
+    phi_star_max: float,
+    phi_star_mean: float,
+    phi_star_stddev: float,
+    phi_star_drift_max_abs: float,
+    axis_dominant_global: string,
+    axis_swing_max: string,
+    cell_stability_jaccard: float,
+    delta_cumulative: float,
+    parse_lines_total: int,
+}
+
+fn _zero_report(label: string) -> AnalysisReport {
+    return AnalysisReport {
+        session: label,
+        n_turns: 0,
+        phi_star_min: 0.0,
+        phi_star_max: 0.0,
+        phi_star_mean: 0.0,
+        phi_star_stddev: 0.0,
+        phi_star_drift_max_abs: 0.0,
+        axis_dominant_global: "none",
+        axis_swing_max: "none",
+        cell_stability_jaccard: 0.0,
+        delta_cumulative: 0.0,
+        parse_lines_total: 0,
+    }
+}
+
+fn _axis_name(idx: int) -> string {
+    if idx == 0 { return "identity" }
+    if idx == 1 { return "agency" }
+    if idx == 2 { return "phenomenal" }
+    if idx == 3 { return "temporal" }
+    if idx == 4 { return "social" }
+    return "unknown"
+}
+
+fn analyze_session(jsonl_path: string) -> AnalysisReport {
+    let label = _basename(jsonl_path)
+    if !_fexists(jsonl_path) { return _zero_report(label) }
+    let text = read_file(jsonl_path)
+    let lines = _split_lines(text)
+
+    let mut turns = []   // array of TurnMetrics (substrate_turn only)
+    let mut total_parse = 0
+    let mut i = 0
+    while i < len(lines) {
+        let ln = _str(lines[i])
+        if ln.contains("\"kind\":\"substrate_turn\"") {
+            let tm = _parse_substrate_turn(ln)
+            turns = turns + [tm]
+            total_parse = total_parse + tm.parse_count
+        }
+        i = i + 1
+    }
+
+    let n = len(turns)
+    let mut rep = _zero_report(label)
+    rep.n_turns = n
+    rep.parse_lines_total = total_parse
+    if n == 0 { return rep }
+
+    // phi_star aggregates
+    let mut phi_min = to_float(turns[0].phi_star)
+    let mut phi_max = to_float(turns[0].phi_star)
+    let mut phi_sum = 0.0
+    let mut drift_max = 0.0
+    let mut k = 0
+    while k < n {
+        let p = to_float(turns[k].phi_star)
+        if p < phi_min { phi_min = p }
+        if p > phi_max { phi_max = p }
+        phi_sum = phi_sum + p
+        let dabs = _abs(to_float(turns[k].phi_drift))
+        if dabs > drift_max { drift_max = dabs }
+        k = k + 1
+    }
+    let phi_mean = phi_sum / to_float(n)
+    let mut var_sum = 0.0
+    let mut k2 = 0
+    while k2 < n {
+        let dv = to_float(turns[k2].phi_star) - phi_mean
+        var_sum = var_sum + dv * dv
+        k2 = k2 + 1
+    }
+    let phi_var = var_sum / to_float(n)
+    let phi_stddev = _sqrt_approx(phi_var)
+
+    rep.phi_star_min = phi_min
+    rep.phi_star_max = phi_max
+    rep.phi_star_mean = phi_mean
+    rep.phi_star_stddev = phi_stddev
+    rep.phi_star_drift_max_abs = drift_max
+
+    // 5-axis aggregates: per-axis sum + per-axis turn-to-turn variance
+    let axis_sum = [0.0, 0.0, 0.0, 0.0, 0.0]
+    let axis_min = [99.0, 99.0, 99.0, 99.0, 99.0]
+    let axis_max = [-99.0, -99.0, -99.0, -99.0, -99.0]
+    let mut s = 0
+    while s < n {
+        let t = turns[s]
+        let vals = [
+            to_float(t.axis_identity),
+            to_float(t.axis_agency),
+            to_float(t.axis_phenomenal),
+            to_float(t.axis_temporal),
+            to_float(t.axis_social),
+        ]
+        let mut a = 0
+        while a < 5 {
+            let v = to_float(vals[a])
+            axis_sum[a] = to_float(axis_sum[a]) + v
+            if v < to_float(axis_min[a]) { axis_min[a] = v }
+            if v > to_float(axis_max[a]) { axis_max[a] = v }
+            a = a + 1
+        }
+        s = s + 1
+    }
+    // Pick dominant + swing
+    let mut dom_idx = 0
+    let mut dom_val = to_float(axis_sum[0])
+    let mut swing_idx = 0
+    let mut swing_val = to_float(axis_max[0]) - to_float(axis_min[0])
+    let mut a2 = 1
+    while a2 < 5 {
+        let s_v = to_float(axis_sum[a2])
+        if s_v > dom_val { dom_val = s_v; dom_idx = a2 }
+        let sw = to_float(axis_max[a2]) - to_float(axis_min[a2])
+        if sw > swing_val { swing_val = sw; swing_idx = a2 }
+        a2 = a2 + 1
+    }
+    rep.axis_dominant_global = _axis_name(dom_idx)
+    rep.axis_swing_max = _axis_name(swing_idx)
+
+    // cell_stability: average Jaccard over consecutive turn pairs.
+    // Single-turn case → 1.0 (no swing reference; perfect stability by convention).
+    let mut jacc_sum = 0.0
+    let mut pairs = 0
+    if n == 1 {
+        rep.cell_stability_jaccard = 1.0
+    } else {
+        let mut p = 1
+        while p < n {
+            let j = _jaccard(turns[p - 1].dominant_cells, turns[p].dominant_cells)
+            jacc_sum = jacc_sum + j
+            pairs = pairs + 1
+            p = p + 1
+        }
+        if pairs > 0 { rep.cell_stability_jaccard = jacc_sum / to_float(pairs) }
+    }
+
+    // delta cumulative
+    let mut dcum = 0.0
+    let mut d = 0
+    while d < n {
+        dcum = dcum + to_float(turns[d].hidden_state_delta)
+        d = d + 1
+    }
+    rep.delta_cumulative = dcum
+
+    return rep
+}
+
+// ─── emit ────────────────────────────────────────────────────────────────
+
+fn _emit_report(rep: AnalysisReport) {
+    println("__ANIMA_DIALOGUE_ANALYSIS__ session=" + _str(rep.session))
+    println("n_turns=" + to_string(rep.n_turns))
+    println("phi_star_range=[" + _f4(rep.phi_star_min) + ", " + _f4(rep.phi_star_max)
+        + "] mean=" + _f3(rep.phi_star_mean) + " stddev=" + _f3(rep.phi_star_stddev))
+    println("phi_star_drift_max=" + _f3(rep.phi_star_drift_max_abs))
+    println("axis_dominant_global=" + _str(rep.axis_dominant_global))
+    println("axis_swing_max=" + _str(rep.axis_swing_max))
+    println("cell_stability_jaccard=" + _f3(rep.cell_stability_jaccard))
+    println("delta_cumulative=" + _f3(rep.delta_cumulative))
+    println("__ANIMA_ANALYSIS_OK__")
+}
+
+fn emit_honest_c3() {
+    eprintln("[dialogue_session_analyzer] C1 axis taxonomy (5-bucket) inherits anima-internal heuristic")
+    eprintln("[dialogue_session_analyzer] C2 cell_stability_jaccard threshold for stable interpretation is anima-canonical")
+    eprintln("[dialogue_session_analyzer] C3 phi_star variance / drift thresholds for stable/unstable is anima-canonical")
+    eprintln("[dialogue_session_analyzer] C4 delta_cumulative magnitude scale depends on substrate (synthetic vs real)")
+    eprintln("[dialogue_session_analyzer] C5 emerge pattern discovery is downstream-deferred — this tool surfaces signals only")
+}
+
+// ─── corpus aggregator ───────────────────────────────────────────────────
+
+struct CorpusReport {
+    date_dir: string,
+    n_sessions: int,
+    n_turns_total: int,
+    phi_star_min_global: float,
+    phi_star_max_global: float,
+    delta_cumulative_global: float,
+    axis_dominant_corpus: string,
+    parse_lines_total: int,
+}
+
+fn analyze_corpus(date_dir: string) -> CorpusReport {
+    let mut cr = CorpusReport {
+        date_dir: date_dir,
+        n_sessions: 0,
+        n_turns_total: 0,
+        phi_star_min_global: 0.0,
+        phi_star_max_global: 0.0,
+        delta_cumulative_global: 0.0,
+        axis_dominant_corpus: "none",
+        parse_lines_total: 0,
+    }
+    if !_dexists(date_dir) { return cr }
+    let listing = _str(exec("ls -1 " + date_dir + "/*.jsonl 2>/dev/null"))
+    let files = _split_lines(listing)
+
+    // axis tally across all turns
+    let axis_tally = [0, 0, 0, 0, 0]
+    let mut phi_min = 0.0
+    let mut phi_max = 0.0
+    let mut have = false
+    let mut nses = 0
+    let mut nturns = 0
+    let mut dcum = 0.0
+    let mut total_parse = 0
+
+    let mut i = 0
+    while i < len(files) {
+        let f = _str(files[i]).trim()
+        if f != "" && _fexists(f) {
+            let r = analyze_session(f)
+            nses = nses + 1
+            nturns = nturns + r.n_turns
+            dcum = dcum + to_float(r.delta_cumulative)
+            total_parse = total_parse + r.parse_lines_total
+            if r.n_turns > 0 {
+                if !have { phi_min = r.phi_star_min; phi_max = r.phi_star_max; have = true }
+                else {
+                    if r.phi_star_min < phi_min { phi_min = r.phi_star_min }
+                    if r.phi_star_max > phi_max { phi_max = r.phi_star_max }
+                }
+                let dn = _str(r.axis_dominant_global)
+                if dn == "identity"   { axis_tally[0] = to_int(axis_tally[0]) + 1 }
+                if dn == "agency"     { axis_tally[1] = to_int(axis_tally[1]) + 1 }
+                if dn == "phenomenal" { axis_tally[2] = to_int(axis_tally[2]) + 1 }
+                if dn == "temporal"   { axis_tally[3] = to_int(axis_tally[3]) + 1 }
+                if dn == "social"     { axis_tally[4] = to_int(axis_tally[4]) + 1 }
+            }
+        }
+        i = i + 1
+    }
+
+    cr.n_sessions = nses
+    cr.n_turns_total = nturns
+    cr.phi_star_min_global = phi_min
+    cr.phi_star_max_global = phi_max
+    cr.delta_cumulative_global = dcum
+    cr.parse_lines_total = total_parse
+
+    // pick most common dominant axis across sessions
+    let mut best_idx = 0
+    let mut best_cnt = to_int(axis_tally[0])
+    let mut a = 1
+    while a < 5 {
+        let v = to_int(axis_tally[a])
+        if v > best_cnt { best_cnt = v; best_idx = a }
+        a = a + 1
+    }
+    if best_cnt > 0 { cr.axis_dominant_corpus = _axis_name(best_idx) }
+    return cr
+}
+
+fn _emit_corpus(cr: CorpusReport) {
+    println("__ANIMA_DIALOGUE_CORPUS__ date_dir=" + _str(cr.date_dir))
+    println("n_sessions=" + to_string(cr.n_sessions))
+    println("n_turns_total=" + to_string(cr.n_turns_total))
+    println("phi_star_range_global=[" + _f4(cr.phi_star_min_global) + ", " + _f4(cr.phi_star_max_global) + "]")
+    println("delta_cumulative_global=" + _f3(cr.delta_cumulative_global))
+    println("axis_dominant_corpus=" + _str(cr.axis_dominant_corpus))
+    println("__ANIMA_CORPUS_OK__")
+}
+
+// ─── selftest (synthetic 3-turn jsonl) ───────────────────────────────────
+
+fn _synth_session_jsonl() -> string {
+    // 3 substrate_turns with known values, embedded in raw_output strings.
+    // Turn 1: phenomenal dominant, cells [2,3,7], delta 0.0
+    // Turn 2: phenomenal still dominant but slight axis swing, cells [2,3,7], delta 1.5
+    // Turn 3: phenomenal dominant, cells [2,3,5] (one swap → jacc 0.5), delta 2.0
+    // expected:
+    //   phi_star_range=[41.85, 41.90], drift_max ~ 0.04
+    //   axis_dominant_global = phenomenal
+    //   cell_stability_jaccard = (1.0 + 0.5)/2 = 0.75
+    //   delta_cumulative = 3.5
+    let mut out = ""
+    out = out + "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"session_start\",\"ts_utc\":\"2026-05-05T00:00:00Z\",\"phi_star_baseline\":41.86}\n"
+    out = out + "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"user_turn\",\"ts_utc\":\"2026-05-05T00:00:01Z\",\"user_input\":\"hello\"}\n"
+    out = out + "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"substrate_turn\",\"ts_utc\":\"2026-05-05T00:00:02Z\",\"raw_output\":\"__ANIMA_CLM_V4_RESPONSE__\\nphi_star: 41.8500 (drift -0.0100 from 41.8600)\\naxis_activation: identity=0.500 agency=0.500 phenomenal=0.900 temporal=0.500 social=0.500\\ndominant_cells: [2, 3, 7] / 8\\nhidden_state_delta: 0.0000\\n__ANIMA_CLM_V4_OK__ session=synth_t1\"}\n"
+    out = out + "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"user_turn\",\"ts_utc\":\"2026-05-05T00:00:03Z\",\"user_input\":\"hello2\"}\n"
+    out = out + "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"substrate_turn\",\"ts_utc\":\"2026-05-05T00:00:04Z\",\"raw_output\":\"__ANIMA_CLM_V4_RESPONSE__\\nphi_star: 41.9000 (drift +0.0400 from 41.8600)\\naxis_activation: identity=0.520 agency=0.510 phenomenal=0.920 temporal=0.510 social=0.520\\ndominant_cells: [2, 3, 7] / 8\\nhidden_state_delta: 1.5000\\n__ANIMA_CLM_V4_OK__ session=synth_t2\"}\n"
+    out = out + "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"user_turn\",\"ts_utc\":\"2026-05-05T00:00:05Z\",\"user_input\":\"hello3\"}\n"
+    out = out + "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"substrate_turn\",\"ts_utc\":\"2026-05-05T00:00:06Z\",\"raw_output\":\"__ANIMA_CLM_V4_RESPONSE__\\nphi_star: 41.8700 (drift +0.0100 from 41.8600)\\naxis_activation: identity=0.510 agency=0.510 phenomenal=0.880 temporal=0.510 social=0.510\\ndominant_cells: [2, 3, 5] / 8\\nhidden_state_delta: 2.0000\\n__ANIMA_CLM_V4_OK__ session=synth_t3\"}\n"
+    out = out + "{\"schema\":\"anima.dialogue.v1\",\"kind\":\"session_end\",\"ts_utc\":\"2026-05-05T00:00:07Z\"}\n"
+    return out
+}
+
+fn cmd_selftest() {
+    println("── dialogue_session_analyzer selftest (synthetic 3-turn) ──")
+    let tmp_dir = _str(exec("mktemp -d")).trim()
+    let synth_path = tmp_dir + "/synth_session.jsonl"
+    write_file(synth_path, _synth_session_jsonl())
+    println("synth_path=" + synth_path)
+
+    let rep = analyze_session(synth_path)
+    _emit_report(rep)
+
+    // 5/5 format checks
+    let mut fails = 0
+    if rep.n_turns != 3 {
+        eprintln("[dialogue_session_analyzer] FAIL: expected n_turns=3 got " + to_string(rep.n_turns))
+        fails = fails + 1
+    }
+    if _str(rep.axis_dominant_global) != "phenomenal" {
+        eprintln("[dialogue_session_analyzer] FAIL: expected axis_dominant_global=phenomenal got " + _str(rep.axis_dominant_global))
+        fails = fails + 1
+    }
+    let jacc_err = _abs(to_float(rep.cell_stability_jaccard) - 0.75)
+    if jacc_err > 0.01 {
+        eprintln("[dialogue_session_analyzer] FAIL: expected cell_stability_jaccard ~0.75 got " + _f3(rep.cell_stability_jaccard))
+        fails = fails + 1
+    }
+    let delta_err = _abs(to_float(rep.delta_cumulative) - 3.5)
+    if delta_err > 0.01 {
+        eprintln("[dialogue_session_analyzer] FAIL: expected delta_cumulative ~3.5 got " + _f3(rep.delta_cumulative))
+        fails = fails + 1
+    }
+    if rep.parse_lines_total != 12 {
+        // 3 turns × 4 lines (phi/axis/dom/delta) = 12
+        eprintln("[dialogue_session_analyzer] FAIL: expected parse_lines_total=12 got " + to_string(rep.parse_lines_total))
+        fails = fails + 1
+    }
+
+    // cleanup
+    exec("rm -rf " + tmp_dir)
+
+    if fails > 0 {
+        eprintln("[dialogue_session_analyzer] selftest FAIL with " + to_string(fails) + " errors")
+        emit_honest_c3()
+        exit(1)
+    }
+    println("selftest=ok")
+    println("format_checks=5/5 PASS (n_turns + axis_dominant + jaccard + delta + parse_lines)")
+    emit_honest_c3()
+    println("DONE")
+}
+
+// ─── help ────────────────────────────────────────────────────────────────
+
+fn cmd_help() {
+    println("dialogue_session_analyzer — emerge dialogue session pattern surfacer (Stage 3 prep)")
+    println("")
+    println("USAGE")
+    println("  hexa run tool/anima_cli/dialogue_session_analyzer.hexa --selftest")
+    println("  hexa run tool/anima_cli/dialogue_session_analyzer.hexa --session <path>")
+    println("  hexa run tool/anima_cli/dialogue_session_analyzer.hexa --date <YYYY-MM-DD>")
+    println("")
+    println("EMIT")
+    println("  __ANIMA_DIALOGUE_ANALYSIS__ block (per-session) or __ANIMA_DIALOGUE_CORPUS__ (per-date)")
+    println("")
+    println("PARADIGM")
+    println("  Stage 3 emerge dialogue session 누적 pattern discovery 인프라.")
+    println("  spec: docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md §6")
+}
+
+// ─── entry ───────────────────────────────────────────────────────────────
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--help") || len(argv) == 0 { cmd_help(); return }
+    if _arg_present(argv, "--selftest") { cmd_selftest(); return }
+    if _arg_present(argv, "--session") {
+        let p = _arg_value(argv, "--session")
+        if p == "" {
+            eprintln("--session: missing path")
+            exit(2)
+        }
+        let rep = analyze_session(p)
+        _emit_report(rep)
+        emit_honest_c3()
+        return
+    }
+    if _arg_present(argv, "--date") {
+        let d = _arg_value(argv, "--date")
+        if d == "" {
+            eprintln("--date: missing YYYY-MM-DD")
+            exit(2)
+        }
+        let root = _resolve_root()
+        let dir = root + "/state/anima_core_dialogues/" + d
+        let cr = analyze_corpus(dir)
+        _emit_corpus(cr)
+        emit_honest_c3()
+        return
+    }
+    cmd_help()
+}

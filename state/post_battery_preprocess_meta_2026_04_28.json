@@ -1,0 +1,56 @@
+{
+  "schema": "anima-clm-eeg/post_battery_preprocess/1",
+  "input": "recordings/sessions/baseline_resting_post_battery_20260428T132612Z_seg000.npy",
+  "fs_hz": 125.0,
+  "n_ch": 16,
+  "n_samp": 7490,
+  "duration_s": 59.92,
+  "outputs": {
+    "raw": "recordings/sessions/post_battery_raw_16ch_2026_04_28.npy",
+    "filtered": "recordings/sessions/post_battery_filtered_16ch_2026_04_28.npy",
+    "ica": "recordings/sessions/post_battery_ica_16ch_2026_04_28.npy"
+  },
+  "filter_chain": {
+    "notch_hz": 50.0,
+    "notch_Q": 30.0,
+    "bandpass_hz": [
+      0.5,
+      50.0
+    ],
+    "bp_order": 4,
+    "method": "scipy.signal.filtfilt (zero-phase)"
+  },
+  "ica": {
+    "n_components": 16,
+    "n_drop": 2,
+    "drop_indices": [
+      10,
+      0
+    ],
+    "kurtosis_per_component": [
+      97.629,
+      -0.892,
+      0.536,
+      0.592,
+      0.701,
+      2.996,
+      9.256,
+      -0.387,
+      8.053,
+      11.753,
+      181.327,
+      0.469,
+      81.956,
+      -0.175,
+      1.762,
+      0.609
+    ],
+    "selection_rule": "top-2 absolute Fisher-kurtosis (artifact proxy)",
+    "raw10_honest": "kurtosis-heuristic, NOT manual visual inspection"
+  },
+  "variance_per_ch_mean": {
+    "raw": 1299330.3312966607,
+    "filtered": 1640268.0996161005,
+    "ica": 7425.26110882435
+  }
+}

@@ -1,0 +1,165 @@
+{
+  "schema": "anima/n_1_bridge_v2_partial/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "agent": "N-1 BRIDGE v2 mediator-framing partial",
+  "scope": "Cross-correlation / Granger / TE between W4 closed-loop ledger (100-step active+random) and D-day EEG α-phase (Apr 28 baseline_resting_60s_filtered, 5x10s windows, 4 alpha-rich channels P3/P4/O1/O2) — partial validation only, no real-time concurrent measurement",
+  "raw_ref": "#92 P1 partial variant; user requested partial cross-correlation on existing data without HW time",
+
+  "data_sources": {
+    "W4_ledger": {
+      "path": "state/strategic_clm_tension_field_W4_2026_05_01/closed_loop_ledger.json",
+      "n_steps": 100,
+      "fields_used": ["mind_tension_active", "gate_signal_norm_active", "gate_signal_norm_random", "active_L1", "random_L1", "active_phi_star", "random_phi_star"],
+      "wallclock": "2026-05-01 (W4 H100 batch run, ~13.8s aggregate)"
+    },
+    "EEG_alpha_phase": {
+      "path": "state/clm_eeg_alpha_phase_60s_filtered_20260428.json",
+      "source_npy": "recordings/sessions/baseline_resting_60s_20260428_filtered.npy",
+      "sha256_npy": "a1889072b2a11560be12851e24713da407559b6f76184bfea0ec33c3419143d2",
+      "n_windows": 5,
+      "window_sec": 10,
+      "alpha_band_hz": [8, 12],
+      "channels_used": ["P3", "P4", "O1", "O2"],
+      "wallclock": "2026-04-28T11:49:30Z (D-day baseline-resting recording, post low-EMI relocation)"
+    },
+    "n1_v1_baseline_ref": "state/n_substrate_n1_real_hw_2026_05_01/verdict.json (composite=BRIDGE_WEAK_REAL_HW, B1+B2+B3 PASS, B4 FAIL |r|=61<400)"
+  },
+
+  "alignment_scheme": {
+    "type": "synthetic_chunk_alignment",
+    "method": "Downsample W4 100-step trace to 5 chunks (each = mean of 20 consecutive steps) to match EEG 5-window resolution. NO wallclock alignment exists — W4 was 2026-05-01, EEG was 2026-04-28.",
+    "honest_note": "Any correlation is a sanity check on structural shape only, not evidence of real-time coupling. Real coupling requires concurrent LSL-synced measurement."
+  },
+
+  "phase_1_inventory": {
+    "W4_mind_tension_summary": {
+      "mean": 2.69136995,
+      "std": 1.04e-6,
+      "min": 2.69135596,
+      "max": 2.69137283,
+      "structural_fact": "near-constant (std ~ machine epsilon × value); CLM is at active fixed-point — NO temporal variability for cross-corr to lock onto"
+    },
+    "W4_gate_active_summary": {
+      "mean": 0.4397,
+      "std": 1.05e-4,
+      "structural_fact": "also near-constant (active branch saturated)"
+    },
+    "W4_gate_random_summary": {
+      "mean": 0.2582,
+      "std": 4.1e-3,
+      "structural_fact": "ONLY non-degenerate W4 channel (random branch retains stochasticity)"
+    },
+    "EEG_PLV_per_window": [0.494, 0.326, 0.097, 0.094, 0.276],
+    "EEG_PLV_summary": {
+      "mean": 0.257,
+      "std": 0.156,
+      "structural_fact": "monotonic decay window 1-4 then partial recovery — typical resting α drift over 50s"
+    }
+  },
+
+  "phase_2_pearson_5_paired": {
+    "_methodology": "Pearson r between W4 chunk-means (5) and EEG window-means (5)",
+    "r_mt_active_vs_EEG_PLV": -0.7850,
+    "r_mt_active_vs_EEG_circvar": 0.7850,
+    "r_gate_active_vs_EEG_PLV": -0.7850,
+    "r_gate_active_vs_EEG_circvar": 0.7850,
+    "r_gate_random_vs_EEG_PLV": 0.4283,
+    "r_gate_random_vs_EEG_circvar": -0.4283,
+    "r_L1_random_vs_EEG_PLV": -0.6967,
+    "r_phi_random_vs_EEG_PLV": 0.1574,
+
+    "ARTIFACT_FLAG": true,
+    "artifact_explanation": "The identical |r|=0.7850 across mt_active / gate_active is a DEGENERATE-CORRELATION ARTIFACT: both signals consist of (chunk0_outlier, chunk1, chunk1, chunk1, chunk1) — i.e. one differing point against four identical points. Pearson against any 5-point monotonic vector then produces the same r. This is confirmed by the random-control test below (shuffled EEG_PLV against mt_5 yields IDENTICAL r=-0.7850), proving the correlation is a function of W4 shape × any-5-vector, not of W4↔EEG coupling.",
+    "random_control_r_mt_vs_shuffled_PLV": -0.7850,
+    "random_control_match_observed": true
+  },
+
+  "phase_3_granger_TE_5_paired": {
+    "_methodology": "lag-1 Granger proxy = pearson(driver[:-1], target[1:]); TE_1lag = binary-symbolized transfer entropy (median split), N=4 transitions",
+    "W4_mt_to_EEG_PLV":            {"granger_lag1_r": -0.7077, "TE_bits": 0.0000},
+    "EEG_PLV_to_W4_mt":            {"granger_lag1_r": null,    "TE_bits": 0.0000, "note": "NaN: zero variance in W4_mt"},
+    "W4_gate_active_to_EEG_PLV":   {"granger_lag1_r": -0.7077, "TE_bits": 0.0000},
+    "EEG_PLV_to_W4_gate_active":   {"granger_lag1_r": null,    "TE_bits": 0.0000, "note": "NaN: zero variance"},
+    "W4_gate_random_to_EEG_circvar": {"granger_lag1_r": -0.6713, "TE_bits": 0.5000},
+    "EEG_circvar_to_W4_gate_random": {"granger_lag1_r":  0.4896, "TE_bits": 0.1887},
+    "ARTIFACT_FLAG": true,
+    "artifact_explanation": "TE bits are inflated by N=4 binary transitions; with 16 possible (t1,t0,d0) cells and only 4 samples, TE>=0.5 bits is well within sampling noise (no surrogate-shuffle correction at this N). Granger lag-1 r values inherit the same degeneracy as Phase 2."
+  },
+
+  "phase_4_permutation_null": {
+    "_methodology": "2000 random shuffles of EEG_PLV; |r| null distribution",
+    "observed_r_gate_random_vs_EEG_PLV": 0.4283,
+    "p_two_tailed": 0.4900,
+    "null_p95_abs_r": 0.8835,
+    "verdict": "FAIL_significance: observed |r|=0.43 is well below null p95=0.88 with N=5; not distinguishable from chance"
+  },
+
+  "phase_5_classification": {
+    "candidates_evaluated": {
+      "F-PASS_above_0.5": "REJECT — sole |r|>0.5 cluster is the degenerate-artifact mt/gate_active group",
+      "F-PARTIAL_0.2_to_0.5": "REJECT — only non-artifact non-degenerate channel (gate_random vs EEG_PLV) gives |r|=0.43 but permutation p=0.49",
+      "F-FAIL_below_0.2": "PARTIAL EVIDENCE — phi_random vs EEG_PLV |r|=0.16; mt/gate_active TE=0; bidirectional TE on gate_random near-symmetric (no causal direction)",
+      "F-ARTIFACT_random_identical": "STRONGEST EVIDENCE — random_control(shuffled EEG vs mt_5) yields identical r=-0.7850 as observed, proving Phase-2 'high correlations' are shape-degeneracy not coupling"
+    },
+    "final_classification": "F-ARTIFACT",
+    "rationale": "W4 active branch is at fixed-point (mind_tension std ~ 1e-6); any non-zero Pearson with EEG is a numerical artifact of (1-outlier-vs-4-flat) shape. The only non-degenerate W4 channel (gate_random) gives |r|=0.43 but permutation test p=0.49 — indistinguishable from chance. Synthetic chunk-alignment across different wallclocks (Apr-28 EEG vs May-01 W4) cannot, in principle, demonstrate real coupling regardless of magnitude. Mediator-framing hypothesis cannot be tested without concurrent measurement."
+  },
+
+  "phase_4_mediator_framing_hypotheses": {
+    "H1_bidirectional_mediator": {
+      "test_status": "NOT_TESTABLE",
+      "reason": "TE forward (W4→EEG) = 0 bits because W4 active is constant; backward (EEG→W4) = 0 bits same reason. The non-degenerate gate_random direction shows TE_fwd=0.50 vs TE_bwd=0.19 (forward larger) but both are within N=4 sampling noise."
+    },
+    "H2_W4_drives_EEG": {
+      "test_status": "NOT_TESTABLE_PARTIAL_DATA",
+      "reason": "Different wallclocks; cannot establish temporal precedence."
+    },
+    "H3_no_real_link": {
+      "test_status": "PARTIALLY_SUPPORTED",
+      "evidence": "Permutation null p=0.49 on the only non-degenerate channel; F-ARTIFACT classification on the degenerate channels. Consistent with H3 but not a definitive rejection of H1/H2 (partial-data limitation)."
+    },
+    "verdict": "Mediator-framing requires real-time concurrent measurement; partial-data analysis only sanity-checks that NO obvious coupling exists in the cross-day pairing — which is the expected result regardless of true coupling."
+  },
+
+  "phase_6_real_time_protocol_spec": {
+    "ssot_path": "state/n_1_bridge_v2_partial_2026_05_02/realtime_protocol.json",
+    "summary": "30-min concurrent OpenBCI Cyton+Daisy 16ch + CLM W4 closed-loop session; LSL-synced timestamps; 6 user actions (eyes-open/closed, CLM-read, mental-arithmetic, breath-focus, idle); $0; ETA 2-3h measure+analyze on user-owned hardware"
+  },
+
+  "verdict_summary": {
+    "classification": "F-ARTIFACT_PARTIAL",
+    "key_finding_1": "W4 active branch (mind_tension, gate_active) at fixed-point std ~1e-6 → any Pearson is degenerate-artifact (random shuffle gives identical r)",
+    "key_finding_2": "W4 random branch (gate_random) is the only non-degenerate channel; |r|=0.43 vs EEG_PLV but permutation p=0.49 (chance-indistinguishable)",
+    "key_finding_3": "Mediator-framing H1/H2/H3 NOT decidable from partial data; H3 weakly consistent",
+    "key_finding_4": "Real-time concurrent LSL-synced session is the MANDATORY upgrade path; partial = framework prep only",
+    "delta_vs_n1_v1": "N-1 v1 (BRIDGE_WEAK_REAL_HW) tested 4-gate B1-B4 with deterministic stub-real branch; N-1 v2 partial directly correlates W4 ledger ↔ EEG ledger and confirms the stub-real B4=FAIL was honest (no real coupling visible cross-day)"
+  },
+
+  "honest_C3_disclosures": [
+    "W4 ledger and D-day EEG were recorded ON DIFFERENT WALLCLOCKS (May-01 vs Apr-28). Synthetic chunk-alignment is sanity-check only; no coupling claim can be made.",
+    "W4 active branch is at fixed-point (mind_tension std=1.04e-6, gate_active std=1.05e-4). Pearson r becomes a function of EEG vector shape × W4 1-outlier-vs-4-flat shape. This produces SPURIOUS |r|>=0.78 that DOES NOT survive random-shuffle control (shuffled EEG yields identical r).",
+    "Only non-degenerate W4 channel (gate_random branch) yields |r|=0.43 vs EEG_PLV; permutation test on 2000 shuffles gives p=0.49 — this is chance.",
+    "Transfer entropy TE bits at N=4 transitions is dominated by sampling noise (16 possible 3-tuples, 4 samples). Reported TE>=0.5 bits would require 100+ transitions and a surrogate-null correction to be interpretable.",
+    "EEG side: only 1 session, 5 windows, 4 channels. No imag-coh / surface Laplacian volume-conduction control (per spec §6.5).",
+    "CLM side: W4 was active+random branches in closed-loop ledger; the random branch is the only one with information content — but it is ALSO the branch whose F2-fire is non-meaningful in the consciousness-substrate sense.",
+    "F-ARTIFACT classification means 'partial-data analysis cannot distinguish coupling from null'; it does NOT prove H3 (no link). Only concurrent measurement can.",
+    "Bridge-coupling magnitude observed by N-1 v1 B4 (|r|=61/1000, 5 windows × 5 gens) and N-1 v2 partial (|r|=43/100, 5 chunks × 5 windows) are CONSISTENT with one another — both small, both insignificant under permutation null. This consistency is the genuine partial-data finding."
+  ],
+
+  "next_step_recommendation": [
+    "P0 (mandatory): execute realtime_protocol.json on user OpenBCI + ubu1 CLM driver, 30-min concurrent session with LSL sync",
+    "P1: re-run cross-corr / Granger / TE on N=180 (30min × 6 actions × 1Hz subsampled) for adequate statistical power",
+    "P2: pre-register H1/H2/H3 thresholds before re-analysis to avoid garden-of-forking-paths",
+    "P3: imag-coh + surface Laplacian on EEG side per spec §6.5",
+    "P4: include third-party random control (e.g. metronome audio onset) as common-cause check"
+  ],
+
+  "constraints_satisfied": {
+    "race_isolation": "yes — wrote ONLY to state/n_1_bridge_v2_partial_2026_05_02/* and docs/n_1_bridge_v2_partial_results_2026_05_02.md; no overwrites of v1 or W4 SSOT",
+    "hexa_only_no_py_files": "yes — all analysis via 'python3 -c \"...\"' inline; no .py files created/edited/committed",
+    "budget_zero": "yes — local mac analysis only, no API/pod calls",
+    "honest_C3": "yes — F-ARTIFACT classification + 7 honest disclosures explicit"
+  },
+
+  "verdict_key": "N1_BRIDGE_V2_PARTIAL_F_ARTIFACT_FIXED_POINT_W4_VS_DDAY_EEG_NO_REAL_COUPLING_VISIBLE_REQUIRES_REALTIME_CONCURRENT"
+}

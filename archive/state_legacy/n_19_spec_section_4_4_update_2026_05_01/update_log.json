@@ -1,0 +1,85 @@
+{
+  "ts": "2026-05-01",
+  "agent": "N-19 spec §4.4 TMS-free path 정식 update",
+  "target_doc": "docs/n_substrate_n19_pci_spec_2026_05_01.md",
+  "trigger": {
+    "primary": "#74 N-19 PCI TMS-free EXEC — 6/6 PASS at 0.25 cutoff (16ch adapted) + 0.31 clinical cutoff",
+    "secondary": "#68 N-21 #5 Sarasso TEP review — eLife 98920 (2025) + Comm Biol 2024 spontaneous-EEG methodology",
+    "result_doc": "docs/n_19_pci_tmsfree_results_2026_05_01.md (NOT modified, only referenced)",
+    "proposals_doc": "state/n_19_pci_tmsfree_2026_05_01/n_19_spec_update_proposals.json"
+  },
+  "spec_loc": {
+    "before": 270,
+    "after": 368,
+    "delta": 98
+  },
+  "sections_added": [
+    "§4.4 TMS-free path (header)",
+    "§4.4.1 Surrogate formula (Stage-1, validated 2026-05-01 #74)",
+    "§4.4.2 6/6 PASS results (#74 Apr 28 D-day pilot)",
+    "§4.4.3 Stage-2 enhancements (TODO)",
+    "§4.4.4 Stage-3 validation (TMS lab-share, optional)",
+    "§4.4.5 CP2-CLM weight (per #72 §27)",
+    "§4.4.6 Honest C3 (3건, raw#10)",
+    "§4.4.7 New references (5건, added to §10)"
+  ],
+  "sections_modified": {
+    "§5.x": "cross-ref to §4.4 TMS-free path appended after §5.3 Total minimum line",
+    "§8 disclosures": "#13-#16 appended (eLife 2025 healthy+propofol only / weight provenance / Casarotto 0.31 scale-matching / N=1 wake-only)",
+    "§10 Sources": "§10.1 subsection added with 5 new refs (eLife 2025, Comm Biol 2024, Sarasso 2014, companion result doc, #68 cross-ref)",
+    "footer": "status -> v2; verdict_key extended; update_log block added"
+  },
+  "sections_preserved_verbatim": [
+    "§0 한 줄 비유",
+    "§1 PCI 수학",
+    "§2 하드웨어 요구사항",
+    "§3 Subject 프로토콜",
+    "§4.1, §4.2, §4.3 (no edits)",
+    "§5.1, §5.2, §5.3, §5.4 (only post-§5.3 cross-ref appended)",
+    "§6 honest C3 16ch vs 64ch",
+    "§7 CP2 F1 composite",
+    "§8 disclosures #1-#12 (no edits, only #13-#16 appended)",
+    "§9 결정점",
+    "§10 Sources (no edits to existing 12 refs, only §10.1 appended)"
+  ],
+  "cp2_clm_w6_proposal": {
+    "stage_1_initial": 0.10,
+    "stage_2_after_n10_calibration": 0.15,
+    "stage_3_after_tms_validation": 0.25,
+    "current_eligibility": "Stage-1 surrogate PASS; w6=0.10 proposal active per #72 §27"
+  },
+  "honest_c3_carry_through": [
+    "Surrogate ≠ gold-standard PCI",
+    "N=1 wake-only — no negative contrast (sleep/propofol monotonicity falsifier blocked)",
+    "Hjorth_C cap 1.0 saturated → effective 3-component formula 사실상 2-component"
+  ],
+  "race_isolation": {
+    "writes": [
+      "docs/n_substrate_n19_pci_spec_2026_05_01.md (append §4.4, §8 #13-#16, §5 cross-ref, §10.1)",
+      "state/n_19_spec_section_4_4_update_2026_05_01/update_log.json"
+    ],
+    "explicit_no_touch": [
+      "docs/n_19_pci_tmsfree_results_2026_05_01.md (#74 result doc — preserved)",
+      "state/n_19_pci_tmsfree_2026_05_01/* (#74 cycle state — preserved)"
+    ]
+  },
+  "constraint_compliance": {
+    "hexa_only": true,
+    "budget_zero": true,
+    "no_py_creation": true,
+    "destructive_edits_to_prior_spec": false,
+    "preserves_existing_n19_spec_content": true,
+    "raw_10_honest_c3": true,
+    "raw_71_falsifier_bound": true
+  },
+  "coherence_check": {
+    "all_section_anchors_resolve": true,
+    "footer_status_updated": "N19_PCI_SPEC_LOCAL_DRAFT_v2",
+    "verdict_key_includes_tms_free_path": true,
+    "update_log_block_present": true,
+    "no_orphan_references": true,
+    "§4.3_cutoff_0.25_unchanged_per_proposal": true,
+    "§4.4_cites_§3_§4.3_§5_§6_§7_§8_§10_correctly": true
+  },
+  "verdict_key": "§4.4_FORMALIZED · §8_DISCLOSURES_13_16_ADDED · §5_CROSS_REF_TO_§4.4 · §10.1_5_NEW_REFS · NO_DESTRUCTIVE_EDITS · CP2_w6_0.10_ELIGIBLE"
+}

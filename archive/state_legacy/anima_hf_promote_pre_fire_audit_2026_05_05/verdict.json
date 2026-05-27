@@ -1,0 +1,149 @@
+{
+  "audit_id": "BG-DB-HF-PROMOTE-PRE-FIRE-AUDIT-2026-05-05",
+  "audit_utc": "2026-05-05T18:20:17Z",
+  "audit_now_utc_ref": "2026-05-05T18:20:17Z",
+  "scope": "Pre-fire audit of HF clm-v4-mk2-v1 + Pβ PUBLIC promote auto-fire scripts during T-29h to T-33h dwell window",
+  "raw_constraints": ["raw#9_md_bash_carve_out", "raw#10_honest_c3", "raw#15_no_promote_script_mutation"],
+  "own_lifecycle": "own_15_hf_release_private_then_public_after_verification",
+  "predecessor_audit": "state/anima_hf_promote_watchdog_audit_2026_05_05/verdict.json",
+  "predecessor_age_hours": 5.34,
+
+  "sub1_time_gate_countdown": {
+    "now_utc": "2026-05-05T18:20:17Z",
+    "clm_fire_eligible_after_utc": "2026-05-06T23:26:12Z",
+    "clm_fire_t_minus_hours": 29.10,
+    "pbeta_fire_eligible_after_utc": "2026-05-07T03:48:00Z",
+    "pbeta_fire_t_minus_hours": 33.46,
+    "clm_cleanup_eligible_after_utc": "2026-05-07T23:26:12Z",
+    "clm_cleanup_t_minus_hours": 53.10,
+    "pbeta_cleanup_eligible_after_utc": "2026-05-08T03:48:00Z",
+    "pbeta_cleanup_t_minus_hours": 57.46,
+    "verdict": "PASS — both promotes in DWELL phase; gate enforcement verified"
+  },
+
+  "sub2_hf_state_pre_check": {
+    "clm": {
+      "repo_id": "dancinlab/clm-v4-mk2-v1",
+      "sha_live": "80440a1d38db9addc4445bb959057558a57f4230",
+      "sha_bg_e_baseline": "80440a1d38db9addc4445bb959057558a57f4230",
+      "sha_match": true,
+      "private_live": true,
+      "private_expected": true,
+      "private_match": true,
+      "siblings_live": 16,
+      "siblings_expected": 16,
+      "siblings_match": true,
+      "lastModified": "2026-05-04T23:26:12.000Z",
+      "verdict": "PASS"
+    },
+    "pbeta": {
+      "repo_id": "dancinlab/clm-v4-paradigm-d-pbeta-50k-mk2-v1",
+      "sha_live": "7643e764488f8e11020a7663c50f2e590b70d10f",
+      "sha_bg_e_baseline": "7643e764488f8e11020a7663c50f2e590b70d10f",
+      "sha_match": true,
+      "private_live": true,
+      "private_expected": true,
+      "private_match": true,
+      "siblings_live": 6,
+      "siblings_expected": 6,
+      "siblings_match": true,
+      "lastModified": "2026-05-05T03:44:35.000Z",
+      "verdict": "PASS"
+    },
+    "verdict": "PASS — both repos sha + private + siblings + lastModified identical to BG-E 13:00Z snapshot; no silent HF-side mutation during 5.5h dwell"
+  },
+
+  "sub2_1_local_sha256_re_check": {
+    "method": "shasum -a 256 vs BG-E sub4 sha256_baseline",
+    "results": {
+      "state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash": {
+        "now": "f1933930c4b671e030fa4323044141c73c5466355ad7dc3ea8c08cd7bd35f5e8",
+        "match": true
+      },
+      "state/clm_v4_hf_release_v1_upload_2026_05_04/cleanup_2026_05_07.bash": {
+        "now": "c0e83446ddba2438ad3bf411074402c1a507ba89f749f7e77a555aebeb115d66",
+        "match": true
+      },
+      "state/p9_pbeta_hf_upload_2026_05_05/public_promote_pbeta_2026_05_08.bash": {
+        "now": "d6c736e4cb6f9934d23f0509ec9bc55866f7f8dffd69b427cf8894344a362d8d",
+        "match": true
+      },
+      "state/p9_pbeta_hf_upload_2026_05_05/cleanup_pbeta_2026_05_08.bash": {
+        "now": "3e00113df8e1be35bc4bf3e0c620d412e92ef58baaf932d0369b6960dba4dab9",
+        "match": true
+      },
+      "state/anima_hf_promotes_2026_05_06_auto_fire.bash": {
+        "now": "440c85f4a0abbd508fa3561fcd3c18ad87cb809c4c925b7264832979a7755a9b",
+        "match": true
+      },
+      "state/anima_hf_cleanups_2026_05_07_auto_fire.bash": {
+        "now": "9646dc4d7793fef9c2468b9e2c9c4f0663931a393f198c9ce7380f7b568d06e8",
+        "match": true
+      }
+    },
+    "match_count": 6,
+    "total_count": 6,
+    "verdict": "PASS — 6/6 local script SHA256 match BG-E baseline; raw#15 invariant satisfied"
+  },
+
+  "sub3_check_only_dry_run": {
+    "command": "bash state/anima_hf_promotes_2026_05_06_auto_fire.bash --check-only",
+    "clm_fire_able_now": "NO",
+    "pbeta_fire_able_now": "NO",
+    "clm_gate1_output": "[promote ERR] GATE 1 FAIL: review window not yet elapsed (now 2026-05-05T18:20:17Z < ends 2026-05-06T23:26:12Z)",
+    "pbeta_gate1_output": "[promote ERR] GATE 1 FAIL: review window not yet elapsed (now 2026-05-05T18:20:17Z < ends 2026-05-07T03:48:00Z)",
+    "gate2_exercised": false,
+    "gate2_skip_reason": "GATE 1 short-circuits (expected behavior)",
+    "verdict": "PASS — gate enforcement working; no premature fire path reachable"
+  },
+
+  "sub4_user_fire_commands_verified": {
+    "clm_confirm_string": "PROMOTE-clm-v4-mk2-v1",
+    "clm_confirm_source": "state/clm_v4_hf_release_v1_upload_2026_05_04/public_promote_2026_05_07.bash:114",
+    "pbeta_confirm_string": "PROMOTE-pbeta-50k",
+    "pbeta_confirm_source": "state/p9_pbeta_hf_upload_2026_05_05/public_promote_pbeta_2026_05_08.bash:115",
+    "placeholder_remains": false,
+    "fire_commands_4": [
+      {
+        "step": 1,
+        "label": "clm PUBLIC promote",
+        "eligible_after_utc": "2026-05-06T23:26:12Z",
+        "command": "bash /Users/ghost/core/anima/state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-clm",
+        "confirm_prompt": "PROMOTE-clm-v4-mk2-v1"
+      },
+      {
+        "step": 2,
+        "label": "Pβ PUBLIC promote (after step 1)",
+        "eligible_after_utc": "2026-05-07T03:48:00Z",
+        "command": "bash /Users/ghost/core/anima/state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-pbeta",
+        "confirm_prompt": "PROMOTE-pbeta-50k",
+        "prerequisite": "step 1 must succeed first (PEFT base PUBLIC)"
+      },
+      {
+        "step": 3,
+        "label": "clm staging cleanup (24h grace)",
+        "eligible_after_utc": "2026-05-07T23:26:12Z",
+        "command": "bash /Users/ghost/core/anima/state/anima_hf_cleanups_2026_05_07_auto_fire.bash --fire-clm",
+        "confirm_prompt": "(none — cleanup scripts have internal gates only)"
+      },
+      {
+        "step": 4,
+        "label": "Pβ staging cleanup (24h grace)",
+        "eligible_after_utc": "2026-05-08T03:48:00Z",
+        "command": "bash /Users/ghost/core/anima/state/anima_hf_cleanups_2026_05_07_auto_fire.bash --fire-pbeta",
+        "confirm_prompt": "(none — cleanup scripts have internal gates only)"
+      }
+    ],
+    "verdict": "PASS — 4 commands literal-verified against case statements + read prompts"
+  },
+
+  "honest_c3": [
+    "C1 — HF token rotation risk during 29-58h dwell. Auto-fire scripts call hf CLI internally; rotated token between now and T+58h cleanup will cause auth failure at fire-time. Mitigation: re-verify secret get huggingface.token + hf whoami at T-1h before each fire.",
+    "C2 — Auto-fire scripts STILL UNTRACKED in git (?? status carried from BG-E sub4); no commit in 5.5h dwell. SHA256 match confirms no mutation, but stray rm or filesystem mishap loses them silently. Mitigation: commit before sleep, or re-shasum + diff at fire-time.",
+    "C3 — Pβ --fire-pbeta standalone does NOT verify clm PUBLIC success first. Only --fire-all sequences with line 95 abort logic. If user runs --fire-pbeta without --fire-clm first, the inner pbeta script GATE-base-public check is the sole guard. Operator should manually verify clm public on HF UI between (1) and (2).",
+    "C4 — GATE 2 (HF-side sha + siblings) is fire-time check, not dwell-time monitoring. During remaining 29-33h dwell, no automated mutation alarm exists. BG-E recommendation reinforced: re-run §2 + §2.1 at T-1h to T-0h.",
+    "C5 — uchg/chflags formally deprecated 2026-04-22. No filesystem-level lock on promote scripts during dwell; mutation detection relies on git status + SHA256 baseline diff. Both detect after-the-fact, neither blocks active mutation. Acceptable per post-uchg anima posture but operator must not assume immutability."
+  ],
+
+  "overall_verdict": "PASS — auto-fire infrastructure intact 5.5h after BG-E baseline. 6/6 local SHA256 match, 2/2 HF repos identical, GATE 1 enforcement verified, both confirm-strings literal-verified. Recommend pre-fire ritual: re-§2 + re-§2.1 + secret get + hf whoami at T-1h before each fire; 24h grace before each cleanup."
+}

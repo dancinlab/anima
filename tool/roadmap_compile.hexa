@@ -1,0 +1,235 @@
+#!hexa strict
+// @tool slug=roadmap_compile
+// @sentinel raw9 raw10 raw11 raw15 ai-native
+// @usage hexa tool/roadmap_compile.hexa [--repo <path>] [--force]
+// @resolver-bypass safe
+//
+// tool/roadmap_compile.hexa — .roadmap.<domain> JSONL → .roadmap.<domain>.hxc compile
+//
+// MINIMAL HXC FORMAT (v0, fallback until BG-L2 hxc_format module lands)
+//   Line 1: "#hxc/1 schema=anima/roadmap/mk2/hxc/1 source_sha=<sha> ts=<iso>"
+//   Line 2: "#count=<n> domain=<d>"
+//   Line 3+: each JSONL entry passthrough (compactness from skipping comments + blank lines)
+//
+// COMPACTNESS NOTE
+//   v0 fallback is byte-equivalent to JSONL minus comments. Real binary HXC compaction
+//   awaits BG-L2 hxc_format module land. raw#10 honest C3 — declared above.
+//
+// SOURCE_HASH GUARD
+//   Recompiles only if source sha256 differs from last-compiled (unless --force).
+//
+// CROSS-REPO (Option D Hybrid; raw 270/271 ai-native; 2026-05-02)
+//   --repo <name|path>  : target repo (e.g. --repo nexus). pwd auto-detect fallback.
+//   --all-repos         : compile across registry mk2_roadmap=true repos.
+//   Domain list discovered dynamically; fallback hardcoded.
+
+let REPO_ROOT_DEFAULT = "/Users/<user>/core/anima"
+let DOMAINS_FALLBACK = ["clm", "eeg", "akida", "qrng", "sim", "meta"]
+let RESOLVER_PATH = "/Users/<user>/core/anima/tool/_roadmap_repo_resolver.hexa"
+let mut DOMAINS = DOMAINS_FALLBACK
+
+fn _sh_quote(s: string) -> string { return "'" + s.replace("'", "'\\''") + "'" }
+fn _now_iso() -> string { return to_string(exec("date -u +%Y-%m-%dT%H:%M:%SZ")).trim() }
+fn _file_exists(p: string) -> bool { return to_string(exec("test -f " + _sh_quote(p) + " && echo 1 || echo 0")).trim() == "1" }
+fn _read_file(p: string) -> string {
+    if !_file_exists(p) { return "" }
+    return to_string(exec("cat " + _sh_quote(p)))
+}
+
+fn _sha256(p: string) -> string {
+    // body rewired to stdlib FIPS 180-4 builtin (hexa-lang #884 sha256 alias surface);
+    // shell-out + GNU/BSD fallback chain removed (byte-equal output; "" on missing file preserved).
+    if !_file_exists(p) { return "" }
+    return sha256_file(p)
+}
+
+fn _atomic_write(p: string, content: string) -> bool {
+    let tmp = p + ".tmp." + to_string(exec("date +%s%N")).trim()
+    let cmd = "cat > " + _sh_quote(tmp) + " <<'__HEXA_EOF__'\n" + content + "\n__HEXA_EOF__"
+    let _ = exec(cmd)
+    let _ = exec("mv " + _sh_quote(tmp) + " " + _sh_quote(p))
+    return _file_exists(p)
+}
+
+fn _is_comment_or_blank(line: string) -> bool {
+    let t = line.trim()
+    if len(t) == 0 { return true }
+    if t.substring(0, 1) == "#" { return true }
+    return false
+}
+
+fn compile_domain(repo_root: string, domain: string, force: bool) -> int {
+    let src = repo_root + "/.roadmap." + domain
+    let dst = repo_root + "/.roadmap." + domain + ".hxc"
+    if !_file_exists(src) {
+        println("{\"domain\":\"" + domain + "\",\"error\":\"source missing\",\"path\":\"" + src + "\"}")
+        return 1
+    }
+    let src_sha = _sha256(src)
+    // Read previous header to compare source_sha
+    if !force && _file_exists(dst) {
+        let prev_head = to_string(exec("head -1 " + _sh_quote(dst))).trim()
+        let key = "source_sha="
+        let i = prev_head.index_of(key)
+        if i >= 0 {
+            let rest = prev_head.substring(i + len(key), len(prev_head))
+            let sp = rest.index_of(" ")
+            let prev_sha = if sp > 0 { rest.substring(0, sp) } else { rest }
+            if prev_sha == src_sha {
+                println("{\"domain\":\"" + domain + "\",\"status\":\"unchanged\",\"sha\":\"" + src_sha + "\"}")
+                return 0
+            }
+        }
+    }
+    // Compile (passthrough minus comments)
+    let content = _read_file(src)
+    let lines = content.split("\n")
+    let mut entries = []
+    let mut i = 0
+    while i < len(lines) {
+        let line = lines[i]
+        if !_is_comment_or_blank(line) {
+            entries = entries.push(line)
+        }
+        i = i + 1
+    }
+    let header1 = "#hxc/1 schema=anima/roadmap/mk2/hxc/1 source_sha=" + src_sha + " ts=" + _now_iso()
+    let header2 = "#count=" + to_string(len(entries)) + " domain=" + domain
+    let mut body = header1 + "\n" + header2 + "\n"
+    let mut k = 0
+    while k < len(entries) {
+        body = body + entries[k]
+        if k < len(entries) - 1 { body = body + "\n" }
+        k = k + 1
+    }
+    let _ = _atomic_write(dst, body)
+    let dst_sha = _sha256(dst)
+    let src_sz = to_string(exec("wc -c < " + _sh_quote(src))).trim()
+    let dst_sz = to_string(exec("wc -c < " + _sh_quote(dst))).trim()
+    println("{\"domain\":\"" + domain + "\",\"status\":\"compiled\",\"src_sha\":\"" + src_sha + "\",\"hxc_sha\":\"" + dst_sha + "\",\"src_bytes\":" + src_sz + ",\"hxc_bytes\":" + dst_sz + ",\"entries\":" + to_string(len(entries)) + "}")
+    return 0
+}
+
+fn _arg_value(args: array, flag: string) -> string {
+    let mut i = 0
+    while i < len(args) {
+        if args[i] == flag {
+            if i + 1 < len(args) { return args[i + 1] }
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _arg_present(args: array, flag: string) -> bool {
+    let mut i = 0
+    while i < len(args) {
+        if args[i] == flag { return true }
+        i = i + 1
+    }
+    return false
+}
+
+// ─── cross-repo helpers ───────────────────────────────────────
+
+fn _resolver_query(subcmd: string, arg: string) -> string {
+    let cmd = "hexa_real " + _sh_quote(RESOLVER_PATH) + " " + subcmd
+    let full = if len(arg) > 0 { cmd + " " + _sh_quote(arg) + " 2>/dev/null" } else { cmd + " 2>/dev/null" }
+    return to_string(exec(full)).trim()
+}
+
+fn _resolver_query2(subcmd: string, flag: string, val: string) -> string {
+    let cmd = "hexa_real " + _sh_quote(RESOLVER_PATH) + " " + subcmd + " " + flag + " " + _sh_quote(val) + " 2>/dev/null"
+    return to_string(exec(cmd)).trim()
+}
+
+fn _resolve_repo_arg(spec: string) -> string {
+    if len(spec) == 0 { return "" }
+    if spec.substring(0, 1) == "/" { return spec }
+    let raw = _resolver_query("resolve-dep", spec + ":")
+    if len(raw) > 1 && raw.substring(len(raw) - 1, len(raw)) == "/" {
+        return raw.substring(0, len(raw) - 1)
+    }
+    return raw
+}
+
+fn _autodetect_repo_root() -> string {
+    let r = _resolver_query("resolve-root", "")
+    if len(r) > 0 { return r }
+    return REPO_ROOT_DEFAULT
+}
+
+fn _parse_str_array(raw: string) -> array {
+    let mut out = []
+    if len(raw) < 3 { return out }
+    if raw.substring(0, 1) != "[" { return out }
+    let inner = raw.substring(1, len(raw) - 1)
+    if len(inner) == 0 { return out }
+    let parts = inner.split(",")
+    let mut i = 0
+    while i < len(parts) {
+        let s = parts[i].trim()
+        if len(s) >= 2 && s.substring(0, 1) == "\"" {
+            let stripped = s.substring(1, len(s) - 1)
+            if len(stripped) > 0 { out = out.push(stripped) }
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn _discover_domains(repo: string) -> array {
+    return _parse_str_array(_resolver_query2("list-domains", "--repo", repo))
+}
+
+fn _all_mk2_repos() -> array {
+    return _parse_str_array(_resolver_query("list-mk2", ""))
+}
+
+fn _compile_one_repo(repo: string, force: bool) -> int {
+    let dd = _discover_domains(repo)
+    DOMAINS = if len(dd) > 0 { dd } else { DOMAINS_FALLBACK }
+    let mut failed = 0
+    let mut d = 0
+    while d < len(DOMAINS) {
+        let rc = compile_domain(repo, DOMAINS[d], force)
+        if rc != 0 { failed = failed + 1 }
+        d = d + 1
+    }
+    println("{\"compile_summary\":{\"repo\":\"" + repo + "\",\"domains\":" + to_string(len(DOMAINS)) + ",\"failed\":" + to_string(failed) + "}}")
+    if failed == 0 { return 0 }
+    return 1
+}
+
+let _argv = args()
+let mut _rest = []
+let mut _i = 2
+while _i < len(_argv) {
+    _rest = _rest.push(to_string(_argv[_i]))
+    _i = _i + 1
+}
+let _force = _arg_present(_rest, "--force")
+let _all_repos = _arg_present(_rest, "--all-repos")
+let _repo_arg = _arg_value(_rest, "--repo")
+let mut _rc = 0
+
+if _all_repos {
+    let repos = _all_mk2_repos()
+    let mut k = 0
+    while k < len(repos) {
+        let rc_i = _compile_one_repo(repos[k], _force)
+        if rc_i != 0 { _rc = 1 }
+        k = k + 1
+    }
+    exit(_rc)
+}
+
+let mut _repo = REPO_ROOT_DEFAULT
+if len(_repo_arg) > 0 {
+    let r = _resolve_repo_arg(_repo_arg)
+    _repo = if len(r) > 0 { r } else { _repo_arg }
+} else {
+    _repo = _autodetect_repo_root()
+}
+_rc = _compile_one_repo(_repo, _force)
+exit(_rc)

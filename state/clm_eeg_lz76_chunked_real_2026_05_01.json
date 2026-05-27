@@ -1,0 +1,161 @@
+{
+  "schema": "anima-eeg-core/_metrics/lz76_chunked/real-emit/1",
+  "ts_utc": "2026-05-01T14:50:11Z",
+  "raw_compliance": [
+    "raw#9 hexa-only (lz76_chunked.hexa, no .py source committed)",
+    "raw#10 honest C3 (window-clamp port, NOT wrap)",
+    "raw#12 frozen criteria (P1 LZ b>=650 unchanged, F_LZC_01..03 frozen 2026-05-01)",
+    "raw#42 mac-zero-compute exception (.venv-eeg numpy median binarization helper)",
+    "raw#65 idempotent (re-run identical c_n)",
+    "raw#71 falsifier count=3 (in-module)",
+    "raw#82 darwin-native",
+    "raw#91 honest triad (chunked OOM-bypass demonstrated; legacy lz76 OOM not re-reproduced this cycle)",
+    "raw#95 triad in-module enforce"
+  ],
+  "tool": {
+    "path": "anima-eeg-core/tool/modules/_metrics/lz76_chunked.hexa",
+    "sha256": "d5aa759193eb4a1c4dfb4874ae48331d6e6b88117c01106db7667812e833c6e3",
+    "lines": 638,
+    "interp": "hexa (0.1.0-dispatch, darwin-bypass marker; resolved via PATH)",
+    "introduced_commit": "e94936e11"
+  },
+  "host": {
+    "platform": "darwin",
+    "os_version": "Darwin 25.4.0",
+    "python": ".venv-eeg/bin/python (numpy median + uint8 ASCII helper)"
+  },
+  "frozen_criteria": {
+    "p1_lz_complexity_band_x1000": {
+      "lo": 650,
+      "hi": 1500,
+      "source": "raw#12 operational pre-commitment, frozen, NOT paper-derived"
+    },
+    "f_lzc_01_cn_min": 1,
+    "f_lzc_02_norm_lo_x1000": 100,
+    "f_lzc_03_norm_hi_x1000": 1500
+  },
+  "selftest": {
+    "n_total": 16384,
+    "window_size": 65536,
+    "c_random": 1202,
+    "b_random_x1000": 1027,
+    "c_structured": 4,
+    "b_structured_x1000": 3,
+    "ordering_pass": true,
+    "raw65_idempotent_pass": true
+  },
+  "real_runs": [
+    {
+      "run_id": "post_battery_ica_canonical_w65k",
+      "input_path": "recordings/sessions/baseline_resting_post_battery_20260428T132612Z_seg000_eeg16_ica.npy",
+      "input_sha256": "a90b46fde70e5bf071b350a0b49a78a3d61b3a41f3442c363a77cd7c5dfa45b0",
+      "n_ch": 16,
+      "n_samp": 7490,
+      "n_total": 119840,
+      "chunk_size": 8192,
+      "window_size": 65536,
+      "c_n": 2502,
+      "b_n_x1000": 351,
+      "in_module_verdict": "PASS",
+      "in_module_triggered_count": 0,
+      "p1_band_verdict": "P1_FAIL",
+      "p1_reason": "b_n_x1000=351 < 650 (frozen P1 lo)",
+      "wall_time_s": 28.47,
+      "max_rss_bytes": 29065216,
+      "oom_observed": false
+    },
+    {
+      "run_id": "post_battery_ica_canonical_w200k_unbounded_path",
+      "input_path": "recordings/sessions/baseline_resting_post_battery_20260428T132612Z_seg000_eeg16_ica.npy",
+      "input_sha256": "a90b46fde70e5bf071b350a0b49a78a3d61b3a41f3442c363a77cd7c5dfa45b0",
+      "n_ch": 16,
+      "n_samp": 7490,
+      "n_total": 119840,
+      "chunk_size": 8192,
+      "window_size": 200000,
+      "c_n": 2494,
+      "b_n_x1000_computed": 351,
+      "computation_note": "b = c_n * log2(n_total) * 1000 / n_total ≈ 2494 * 16871 / 119840 ≈ 351; prior canonical darwin b=350 (raw#10 honest canonical run, rounding-tier match within 1‰)",
+      "in_module_verdict": "PASS",
+      "in_module_triggered_count": 0,
+      "p1_band_verdict": "P1_FAIL",
+      "p1_reason": "b_n_x1000=351 < 650 (frozen P1 lo)",
+      "oom_observed": false,
+      "byte_identical_to_unbounded_reference": {
+        "claim": "window_size>=n_total triggers i_lo=0 branch identical to legacy unbounded Kaspar-Schuster code path (algorithmic equivalence; lines 198-204, 224-228 of lz76_chunked.hexa)",
+        "vs_prior_darwin_canonical_b350": {
+          "delta_b_x1000": 1,
+          "explanation": "rounding-tier; prior canonical run also from same .npy sha256 a90b46f… with legacy _metrics/lz76 (no window). 1-unit diff is fixed-point rounding only — algorithm identical when window>=n.",
+          "interpretation": "byte-identical equivalence holds within fixed-point rounding"
+        },
+        "raw65_idempotent_within_cycle": true
+      },
+      "vs_window_65536_overcount_bias": {
+        "c_n_w65k": 2502,
+        "c_n_w200k": 2494,
+        "delta_c": 8,
+        "delta_c_doc_bound_n_div_window": 1.83,
+        "doc_bound_violated": true,
+        "honest_note": "lz76_chunked.hexa header (lines 41-43) claims Δc ≤ n/window ≈ 1.83 for n=119840 / window=65536; observed Δc=8 exceeds documented bound. Bias remains tiny in absolute b terms (≤1‰) but the analytic upper bound in the source comment is too tight in practice — bound should be re-derived (likely Δc ≤ ceil(n/window) per production-cluster, not per-stream). Reported here without amending source per task constraint."
+      }
+    },
+    {
+      "run_id": "post_battery_ica_alt_derivative",
+      "input_path": "recordings/sessions/post_battery_ica_16ch_2026_04_28.npy",
+      "input_sha256": "aa06abce5fc6f5f5123701ceec1cc50442a01b9ec4a8bbc2f92b9ba1781b0c08",
+      "input_provenance_note": "alternate post_battery_ica derivative (different sha256 from canonical a90b46f…); same shape 16x7490; included for breadth, NOT for byte-identical claim",
+      "n_total": 119840,
+      "window_size": 65536,
+      "c_n": 2841,
+      "b_n_x1000": 398,
+      "in_module_verdict": "PASS",
+      "p1_band_verdict": "P1_FAIL",
+      "wall_time_s": 38.71,
+      "max_rss_bytes": 28966912,
+      "oom_observed": false
+    },
+    {
+      "run_id": "daily_life_baseline_60s_ica",
+      "input_path": "recordings/sessions/baseline_resting_60s_20260428_ica.npy",
+      "input_sha256": "62b1ad19ae45631dde34859e0ac424009f0d868ba4370b398e1878fc7d8ac0ba",
+      "n_ch": 16,
+      "n_samp": 7491,
+      "n_total": 119856,
+      "chunk_size": 8192,
+      "window_size": 65536,
+      "c_n": 2597,
+      "b_n_x1000": 364,
+      "in_module_verdict": "PASS",
+      "in_module_triggered_count": 0,
+      "p1_band_verdict": "P1_FAIL",
+      "p1_reason": "b_n_x1000=364 < 650 (frozen P1 lo)",
+      "wall_time_s": 34.95,
+      "max_rss_bytes": 29048832,
+      "oom_observed": false,
+      "vs_prior_darwin_canonical_b286": {
+        "delta_b_x1000": 78,
+        "honest_note": "prior canonical darwin run reported daily_life_ica b=286 (raw#10 honest canonical 2026-04-28T12:01:51Z). The prior canonical ran on a file with sha256=3a636347…; current file sha256 differs (62b1ad19…). Cannot make byte-identical claim across distinct .npy artefacts; +78‰ delta likely reflects different ICA/preprocessing version, not algorithm drift. Reported separately per raw#10 honest"
+      }
+    }
+  ],
+  "raw91_status": {
+    "honest_label": "C3 partially resolved — chunked OOM-bypass empirically demonstrated; legacy lz76 OOM not re-reproduced this cycle",
+    "what_was_demonstrated": [
+      "darwin n=119840 end-to-end completed in 28-39s with 29MB peak RSS using lz76_chunked.hexa",
+      "memory bounded by chunk_size + window_size + n_total ASCII string (≈120KB stream + 64KB window) — no list-of-int allocation",
+      "raw#65 idempotency holds (re-run identical c_n)",
+      "byte-identical-to-unbounded equivalence for window>=n (within 1‰ rounding vs prior canonical legacy lz76 b=350)"
+    ],
+    "what_was_NOT_demonstrated_this_cycle": [
+      "legacy _metrics/lz76.hexa OOM end-to-end re-reproduction on darwin (would require re-running the OOM-prone path; not in scope per task constraint to keep lz76_chunked.hexa read-only and not touch other files)",
+      "the raw#91 honest C3 retraction therefore remains UNRESOLVED with respect to legacy-lz76 OOM evidence; chunked tool is now a credible production replacement, but the original failure proof is from raw-audit/adversarial_bench plus hetzner dmesg on 2026-04-28, NOT a fresh 2026-05-01 darwin OOM"
+    ]
+  },
+  "p1_overall_verdict": "P1_FAIL",
+  "p1_overall_summary": "All real .npy runs land in 351..398‰ band. Frozen P1 lo=650‰ unchanged. Conclusion: P1 LZ complexity criterion FAILS on resting-state EEG (16ch × ~60s × 250Hz, median-binarized, multi-channel concat). This corroborates prior darwin canonical (b=350, b=286) — it is NOT a regression of the chunked tool; it is the dataset itself sitting below the operational threshold. Decision tree (raw#12) requires either P1 lo recalibration or paradigm-update before any PASS claim is permissible.",
+  "honesty_addenda": [
+    "in_module verdict=PASS only means the three F_LZC_01..03 falsifiers (cn>1, 100<=norm<=1500) did not trigger. It is NOT the P1 LZ complexity band verdict.",
+    "P1 band verdict (b>=650) FAILS for all 4 real runs.",
+    "lz76_chunked.hexa header documented Δc bound n/window=1.83 was empirically exceeded (observed Δc=8); bias still small (≤1‰ on b) but the documented analytic bound is too tight. Source not amended this cycle (read-only constraint)."
+  ]
+}

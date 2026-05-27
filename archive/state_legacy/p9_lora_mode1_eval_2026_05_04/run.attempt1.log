@@ -1,0 +1,46 @@
+[2026-05-04T08:37:06Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T08:37:06Z] booting pod=anima-p9-lora-mode1-eval-2026-05-04 (H100 80GB HBM3 secure on-demand @ $2.99/hr)
+[2026-05-04T08:37:07Z] pod_id=ggcegc3w6y4no1
+[2026-05-04T08:37:07Z] waiting for SSH ready (max 6min)
+[2026-05-04T08:37:49Z] SSH ready at 103.207.149.108:19605 (after 4 probes)
+[2026-05-04T08:37:49Z] setup: install lm-eval + peft + download Llama base + step-8k LoRA
+[2026-05-04T08:37:57Z] launching benchmark suite on H100
+[2026-05-04T08:39:36Z] poll loop start (max 45min, budget cap $2.5)
+[2026-05-04T08:39:38Z] elapsed=2min cost=$0.12 probe=/workspace/p9_lora_eval/results/COMPLETE.sentinel SENTINEL_FOUND|
+[2026-05-04T08:39:45Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill (lesson: don't lose data)
+Warning: Permanently added '[103.207.149.108]:19605' (ED25519) to the list of known hosts.
+[2026-05-04T08:39:56Z] computing verdict from per-bench JSONs
+[2026-05-04T08:39:56Z] verdict=FAIL c3=FAIL(0/3) c4=FAIL(0/3) f1v3v2=FAIL wall=2min cost=$0.10
+[2026-05-04T08:39:56Z] hs: norm=null Δ=nullpp c3=MISSING c4=MISSING   mmlu: acc=null Δ=nullpp c3=MISSING c4=MISSING   tq: em=null Δ=nullpp c3=MISSING c4=MISSING
+__P9_LORA_MODE1_EVAL__ FAIL F1V3V2=FAIL
+[2026-05-04T08:39:56Z] [trap] killing pod=ggcegc3w6y4no1 (auto-kill mandatory)
+{
+  "containerDiskInGb": 60,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-04 08:37:07.116 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "ggcegc3w6y4no1",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Mon May 04 2026 08:39:57 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-lora-mode1-eval-2026-05-04",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 30,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "ggcegc3w6y4no1"
+}
+[2026-05-04T08:40:06Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

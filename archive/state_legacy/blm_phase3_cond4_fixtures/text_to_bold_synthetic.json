@@ -1,0 +1,29 @@
+{
+  "fixture_type": "synthetic",
+  "endpoint": "text_to_bold_predict",
+  "purpose": "API surface validation only - NO real BOLD data",
+  "ts_utc": "2026-05-03T00:00:00+00:00",
+  "request_example": {
+    "text": "synthetic placeholder text for API stub validation",
+    "model_id": "tribev2-vendored-86ed4804",
+    "subject_id": "sub-01",
+    "tr_seconds": 1.49
+  },
+  "response_example": {
+    "bold_pred_shape": [20484, 10],
+    "bold_pred_summary": {
+      "mean": 0.0,
+      "std": 1.0,
+      "note": "synthetic standard normal placeholder - NO real inference"
+    },
+    "bold_pred_uncertainty_shape": [20484, 10],
+    "model_id": "tribev2-vendored-86ed4804",
+    "license_attribution": "CC-BY-NC-4.0 (TRIBE v2, research-only, commercial deploy BLOCKED)"
+  },
+  "raw_invariants": [
+    "synthetic only - no actual BOLD data",
+    "bold_pred = standard normal placeholder",
+    "license_attribution MANDATORY",
+    "shape (20484, T) matches FSAVERAGE_5 bilateral (10242 x 2 vertices)"
+  ]
+}

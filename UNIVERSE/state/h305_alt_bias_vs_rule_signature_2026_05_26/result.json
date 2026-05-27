@@ -1,0 +1,51 @@
+{
+  "hypothesis": "H_305",
+  "slug": "alt-bias-vs-rule-signature",
+  "title": "alt-bias factor × distinct-value count correlate (rank-monotone) — 90/60/30 alt-bias ~1.1× while rule 110 jumps to 1.53× (Turing-complete universality)",
+  "date": "2026-05-26",
+  "question": "Does alt-state's mean/alt bias factor correlate with H_301's distinct-value-count rule signature (rule 90→3, rule 60→6, rule 30→29, rule 110→32)?",
+  "engine": "HEXAD/IIT4/lib + stdlib iit4_bounded · 128 calls (4 rules × 32 states at n=5 cap=4)",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · ~7-8min wall · deterministic full sweep",
+  "table": {
+    "rule_90":  {"distinct": 3,  "mean": 21.375,  "alt_st21": 19.5,     "ratio": 1.09615, "class": "Wolfram 3 (linear XOR symmetric)"},
+    "rule_60":  {"distinct": 6,  "mean": 18.125,  "alt_st21": 16.5,     "ratio": 1.09848, "class": "Wolfram 2 (semi-symmetric)"},
+    "rule_30":  {"distinct": 29, "mean": 23.6055, "alt_st21": 20.2686,  "ratio": 1.16463, "class": "Wolfram 3 (chaotic)"},
+    "rule_110": {"distinct": 32, "mean": 27.0708, "alt_st21": 17.694,   "ratio": 1.52994, "class": "Wolfram 4 (Turing-complete universal)"}
+  },
+  "headline_finding": "Cross-rule alt-bias factor STRICTLY rank-monotone with distinct-value count: 1.096 (90) < 1.098 (60) < 1.165 (30) < **1.530** (110). Rule 110 (Turing-complete class 4) alt-bias is 4-5× larger than the symmetric rules' (3.3% gap between 90/60 vs 53% bias for 110). Symmetric rules' alt-state happens to land near the median; chaotic/universal rules' alt-state lands outlier-low. F305.1-7 ALL PASS (7/7). Engine determinism cross-confirmed: every cross-H value reproduces exactly (rule 90 mean 21.375 = H_300, rule 60 mean 18.125 = H_301, rule 110 mean 27.07 = H_304).",
+  "arc_consolidation": "H_300+H_301+H_303+H_304+H_305 synthesis closes the rule-signature methodology arc. Distinct-value count predicts BOTH the Phi-distribution shape AND the alt-state representativeness simultaneously. Symmetric rules (low distinct count) are alt-fair by construction; chaotic/universal rules (high distinct count) require mean (or full distribution) reporting. arc's single-state methodology validated as fair for rule 60/90 in particular, and rule 30 weakly, but explicitly biased for rule 110.",
+  "criteria": {
+    "C1_RULE_90_MEAN_ALT":  "PASS (mean=21.375, alt=19.5)",
+    "C2_RULE_60_MEAN_ALT":  "PASS (mean=18.125, alt=16.5)",
+    "C3_RULE_30_MEAN_ALT":  "PASS (mean=23.6, alt=20.27)",
+    "C4_RULE_110_MEAN_ALT": "PASS (mean=27.07, alt=17.69)",
+    "C5_RANK_MONOTONE": "PASS (1.096 ≤ 1.098 ≤ 1.165 ≤ 1.530)",
+    "C6_ALT_BIAS_AT_110_EXTREME": "PASS (1.530 > 1.3 AND {1.096, 1.098, 1.165} all < 1.2)",
+    "C7_BOUND": "PASS"
+  },
+  "falsifiers": {
+    "F305_1_RULE_90_MEAN_ALT":  "PASS",
+    "F305_2_RULE_60_MEAN_ALT":  "PASS",
+    "F305_3_RULE_30_MEAN_ALT":  "PASS",
+    "F305_4_RULE_110_MEAN_ALT": "PASS",
+    "F305_5_RANK_MONOTONE": "PASS — Spearman ρ = 1.0 (perfect monotone) between distinct-count rank {3,6,29,32} and ratio rank",
+    "F305_6_ALT_BIAS_AT_110_EXTREME": "PASS — rule 110 ratio 1.530 vs others all ≤ 1.165 (≥1.31× gap from next-highest)",
+    "F305_7_BOUND": "PASS"
+  },
+  "checks": "7 PASS / 0 FAIL — verdict 🟢 SUPPORTED-NUMERICAL on the rule-signature methodology consolidation",
+  "verdict_class": "🟢 SUPPORTED-NUMERICAL — STRONG (7/7) confirmation of distinct-count × alt-bias rank-monotone correlation; rule 110 (Turing-complete class 4) extreme alt-bias 1.53× vs other rules' ~1.1× confirms universality-induces-asymmetry hypothesis.",
+  "implication": "arc's single-state methodology is FAIR for symmetric rules (90/60) and weakly OK for one chaotic rule (30), but STRUCTURALLY UNFAIR for universal rule 110. Future panels should report rule 110 with mean-Phi alongside alt-state, OR adopt full distribution stats. The rank-monotone correlation also suggests distinct-value count is an actionable PROXY for whether single-state reporting suffices: rule with ≤6 distinct → alt fair; rule with ≥29 distinct → alt biased low.",
+  "honest_limits": [
+    "L1: 4 rules only — Spearman ρ=1.0 on 4 points has weak statistical power; correlation may NOT generalize to rules outside {90, 60, 30, 110} panel. H_307+ could extend to rule 184/150/105/250.",
+    "L2: single N (=5) only — alt-bias factor's N-invariance is shown by H_304 (rule 110 1.560 at n=4 vs 1.530 at n=5, within 2% of each other), but un-checked at n=6/n=7.",
+    "L3: cap fixed (=4) — alt-bias × cap dependence un-explored; H_299 cap-cross showed binary verdict robust, magnitude compression but not ratio shape.",
+    "L4: bug-free reading — alt_val captured BEFORE no sort_asc was needed (the H_305 mean computes sum/N directly without sort, so the H_301 sort_asc-mutate bug is structurally inapplicable here).",
+    "L5: ECA proxy — toy substrate measurement fact.",
+    "L6: causality un-determined — rank-monotone is OBSERVATIONAL; whether *distinct-count CAUSES* alt-bias (e.g. via symmetry-orbit-orbit structure) or both are EFFECTS of a deeper variable (rule complexity, fractal dimension) requires further H."
+  ],
+  "verify_fence": {
+    "claim": "H_305 measures all 4 panel rules' (rule 90, 60, 30, 110) mean-Phi at n=5 cap=4 via 128-call ensemble + alt(st=21) spot, confirming the rank-monotone correlation between distinct-value count (H_301 rule signature) and alt-bias factor (mean/alt ratio). Result: 7/7 PASS, ratios {1.096, 1.098, 1.165, 1.530} strictly increasing with distinct-count {3, 6, 29, 32}. Rule 110 (Turing-complete class 4) shows extreme 1.53× alt-bias vs others' ~1.1×, confirming H_303's outlier-low finding for rule 110 AND extending it to a structural prediction: distinct-count predicts alt-state representativeness. Cross-H engine determinism: every value reproduces H_300/H_301/H_304 exactly. Verdict 🟢 SUPPORTED-NUMERICAL — strong rank-monotone correlation with 1.0 Spearman ρ (4 points, informal).",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic (bounded lower-bound), interpretation fenced"
+  }
+}

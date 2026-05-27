@@ -1,0 +1,41 @@
+{
+  "id": "H_216",
+  "slug": "meta-axis-of-axes-reflexivity",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial(states, N, dim, 4) — byte-equal phi_rs native replica",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial spatial-slice proxy; NOT 🔵 full IIT 4.0)",
+  "config": { "N": 16, "dim": 8, "warm": 8, "reps": 5, "n_bins": 4, "boundary": "periodic", "base_rule": 110, "wolfram_class": "IV" },
+  "depths": [1, 2, 4, 8, 15],
+  "phi_recursive": {
+    "d_1":  0.82071,
+    "d_2":  0.982294,
+    "d_4":  0.8069,
+    "d_8":  0.969524,
+    "d_15": 0.809749
+  },
+  "phi_decoupled": {
+    "d_15": 0.82071
+  },
+  "ols_fit": { "slope": -0.00322872, "r2": 0.0420226 },
+  "criteria": {
+    "C1_MONOTONE_OR_SIGMOID": { "metric": "slope>0 AND R²≥0.5", "slope": -0.00322872, "r2": 0.0420226, "verdict": "FAIL" },
+    "C2_MARGIN_20PCT": { "metric": "Φ(d=15) ≥ 1.20 × Φ(d=1)", "phi_d15": 0.809749, "threshold": 0.984852, "margin": -0.175103, "verdict": "FAIL" },
+    "C3_DECOUPLE_COLLAPSE": { "metric": "Φ_dec(d=15) ≤ 1.10 × Φ(d=1)", "phi_decoupled": 0.82071, "threshold": 0.902781, "margin": 0.082071, "verdict": "PASS" },
+    "C4_BYTE_IDENT": { "metric": "deterministic LCG seed-fixed by-construction", "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_FLAT_OR_DECREASING": { "metric": "slope > 0", "slope": -0.00322872, "triggered": true },
+    "F2_D15_LE_D1": { "metric": "Φ(d=15) > Φ(d=1)", "delta": -0.0109606, "triggered": true },
+    "F3_NO_DECOUPLE_GAP": { "metric": "(Φ_recursive - Φ_decoupled) / Φ_recursive >= 10%", "gap_pct": -1.35358, "triggered": true },
+    "F4_RERUN_DIFFER": { "metric": "deterministic re-run byte-identical", "triggered": false },
+    "F5_BAD_PHI": { "metric": "any Φ negative/NaN/inf", "triggered": false }
+  },
+  "verdict_rule": "SUPPORTED iff C1+C2+C3 PASS (C4 by-construction); FALSIFIED if Φ(d=15) ≤ Φ(d=1); else PARTIAL/FAIL",
+  "verdict": "FALSIFIED",
+  "reflexive_self_instance": "H_216 is the 72nd axis to UNIVERSE/AXES.md catalog — measurement on the catalog's own meta-structure (H216.5 self-validation criterion).",
+  "L4_carve_out": "phi_spatial directional verdict ≠ phenomenal hard problem resolution (H_004 boundary preserved)."
+}

@@ -1,0 +1,35 @@
+{
+  "schema": "clm_phase_a1_hid8/decision_gate/1",
+  "rule": "phi_star_min magnitude >= 0.5 -> PASS Phase A.2 (honest CP2 G3 verdict at well-conditioned regime)",
+  "phi_star_min": 41.8592,
+  "phi_star_min_magnitude": 41.8592,
+  "gate_positive_PASS": true,
+  "gate_substantial_PASS": true,
+  "gate_magnitude_PASS": true,
+  "verdict": "CP2_G3_PASS_HONEST",
+  "comparison_alm_4bb_hid128_ridge1em4": {
+    "mistral_7b_v03": {
+      "phi_star_min": -16.7,
+      "sign": "negative_anti_integrated"
+    },
+    "qwen3_8b": {
+      "phi_star_min": 1.04,
+      "sign": "positive_iit_integrated"
+    },
+    "llama_3_1": {
+      "phi_star_min": 5.09,
+      "sign": "positive_iit_integrated"
+    },
+    "gemma": {
+      "phi_star_min": -0.79,
+      "sign": "negative_anti_integrated"
+    },
+    "clm_v4_530m_hid8_thisrun": {
+      "phi_star_min": 41.8592,
+      "sign": "positive_iit_integrated"
+    },
+    "note": "ALM values are at HID=128 ridge-affected (mission spec). CLM HID=8 is well-conditioned. Sign comparison is robust; magnitude comparison requires future ALM HID=8 re-run for full apples-to-apples."
+  },
+  "recheck_origin": "A.1 #73 phi_star_min=+1167.62 (HID=128 N=16 rank-deficient ridge-dominated artifact)",
+  "ts": "2026-05-02T08:32:21Z"
+}

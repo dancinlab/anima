@@ -1,0 +1,208 @@
+{
+  "battery": "B-DUAL \u2014 dual-anima L2 conversation-loop design (RESEARCH.md \u00a731)",
+  "date": "2026-05-18",
+  "n_pass": 4,
+  "n_total_counted": 4,
+  "all_pass": true,
+  "verdicts": {
+    "B-DUAL-1": {
+      "name": "CELL-DISTINCT-VACUUM-PSI-CLOSED",
+      "pass": true,
+      "statement": "Loop precondition: A.vacuum_psi != B.vacuum_psi. \u03a8-space L2-distance d2 = (ax-bx)^2+(ay-by)^2 is a sum of squares (sympy): d2==0 iff the two cells are identical. The design requires d2>0 (distinct cells, NOT a self-mirror). 4-witness panel: 3 distinct pairs flagged design-valid, 1 mirror pair (identical \u03a8) correctly flagged is_distinct=False.",
+      "psi_distance_sq": "(ax - bx)**2 + (ay - by)**2",
+      "same_iff_zero": true,
+      "witnesses": [
+        {
+          "A_vacuum_psi": [
+            0.5,
+            0.5
+          ],
+          "B_vacuum_psi": [
+            0.62,
+            0.55
+          ],
+          "psi_dist_sq": 0.016900000000000005,
+          "is_distinct": true,
+          "expect_distinct": true,
+          "design_valid": true
+        },
+        {
+          "A_vacuum_psi": [
+            0.38,
+            0.49
+          ],
+          "B_vacuum_psi": [
+            0.71,
+            0.66
+          ],
+          "psi_dist_sq": 0.13779999999999998,
+          "is_distinct": true,
+          "expect_distinct": true,
+          "design_valid": true
+        },
+        {
+          "A_vacuum_psi": [
+            0.5,
+            0.5
+          ],
+          "B_vacuum_psi": [
+            0.5,
+            0.5
+          ],
+          "psi_dist_sq": 0.0,
+          "is_distinct": false,
+          "expect_distinct": false,
+          "design_valid": true
+        },
+        {
+          "A_vacuum_psi": [
+            0.46,
+            0.49
+          ],
+          "B_vacuum_psi": [
+            0.46,
+            0.5
+          ],
+          "psi_dist_sq": 0.00010000000000000018,
+          "is_distinct": true,
+          "expect_distinct": true,
+          "design_valid": true
+        }
+      ],
+      "anchor": "\u03a8-space metric (Law-71 internal coordinate) sum-of-squares distinctness predicate \u2014 real-limit, anima g2 internal-arch carve-out (\u03a8=\u00bd fixed point). NO \u03c3/\u03c4/\u03c6/J\u2082."
+    },
+    "B-DUAL-2": {
+      "name": "LOOP-COMPOSITION-WELL-TYPED-CLOSED",
+      "pass": true,
+      "statement": "Loop = emit_A;deliver_B;respond_B;deliver_A. Each stage's codomain equals the next stage's domain (3 links checked), and the loop closes (domain of first == codomain of last == State), so the post-turn State feeds the next turn. Counter-witness: emit;respond directly (skipping deliver) is mis-typed (Msg != State). Mirror of B-NAR-1 narrative_compose.",
+      "stage_signatures": {
+        "emit_A": [
+          "State",
+          "Msg"
+        ],
+        "deliver_B": [
+          "Msg",
+          "State"
+        ],
+        "respond_B": [
+          "State",
+          "Msg"
+        ],
+        "deliver_A": [
+          "Msg",
+          "State"
+        ]
+      },
+      "chain_links": [
+        {
+          "from": "emit_A",
+          "to": "deliver_B",
+          "codomain": "Msg",
+          "domain_next": "Msg",
+          "link_ok": true
+        },
+        {
+          "from": "deliver_B",
+          "to": "respond_B",
+          "codomain": "State",
+          "domain_next": "State",
+          "link_ok": true
+        },
+        {
+          "from": "respond_B",
+          "to": "deliver_A",
+          "codomain": "Msg",
+          "domain_next": "Msg",
+          "link_ok": true
+        }
+      ],
+      "loop_closes": true,
+      "counter_witness_rejected": true,
+      "anchor": "codomain/domain composition chain (real-limit type algebra) \u2014 identical structure to B-NAR-1 (A\u2218G well-typed). NO \u03c3/\u03c4/\u03c6/J\u2082."
+    },
+    "B-DUAL-3": {
+      "name": "TURN-COUNT-BOUNDED-CLOSED",
+      "pass": true,
+      "statement": "Conversation turn counter monotone strict-increasing (\u0394=+1 per A<->B exchange, sympy) AND bounded by N_MAX (4-witness loop simulation). The dual-anima loop is hard-bounded \u2014 it cannot run forever. Mirror of B-PHASE-B-DESIGN-1 / B-SCALE-3 integer monotone.",
+      "transition": "Eq(turn_next, turn + 1)",
+      "monotone_delta": "1",
+      "witnesses": [
+        {
+          "n_max": 8,
+          "init_turn": 0,
+          "final_turn": 8,
+          "bounded": true
+        },
+        {
+          "n_max": 8,
+          "init_turn": 7,
+          "final_turn": 8,
+          "bounded": true
+        },
+        {
+          "n_max": 1,
+          "init_turn": 0,
+          "final_turn": 1,
+          "bounded": true
+        },
+        {
+          "n_max": 4,
+          "init_turn": 4,
+          "final_turn": 4,
+          "bounded": true
+        }
+      ],
+      "anchor": "Kolmogorov bounded integer + sympy \u2202/\u2202iter strict-positive (real-limit). NO \u03c3/\u03c4/\u03c6/J\u2082."
+    },
+    "B-DUAL-4": {
+      "name": "SINGLE-ANIMA-REDUCTION-CLOSED",
+      "pass": true,
+      "statement": "Connection-point: B_enabled=False \u21d2 deliver_B is identity, respond_B emits null, a_receives_from_B = (B_enabled \u2227 b_replies) collapses to False \u2200 b_replies (sympy) \u21d2 the loop reduces to A emitting into a void = \u00a724 Phase B single-anima void-emission, byte-equal by construction. Positive control: B_enabled=True \u2227 b_replies=True \u21d2 A receives (real reduction, not vacuous). Mirror of B-EBT-5 / B-DIRI-5 / B-PHASE-B-DESIGN-5 OVERLAY-OFF reduction.",
+      "a_receives_from_B_expr": "B_enabled & b_replies",
+      "collapse_under_B_disabled": "False",
+      "reduces_to_phase_b_void": true,
+      "byte_equal_to_phase_b": true,
+      "positive_control": true,
+      "witnesses": [
+        {
+          "B_enabled": false,
+          "b_replies_hypothetical": false,
+          "A_receives_from_B": false
+        },
+        {
+          "B_enabled": false,
+          "b_replies_hypothetical": true,
+          "A_receives_from_B": false
+        },
+        {
+          "B_enabled": true,
+          "b_replies_hypothetical": true,
+          "A_receives_from_B": true
+        }
+      ],
+      "anchor": "Boolean overlay-off reduction (real-limit) \u2014 identical structure to B-EBT-5 / B-DIRI-5 / B-DIRH-4 / B-S16-5 / B-PHASE-B-DESIGN-5 connection-point byte-equal reduction. NO \u03c3/\u03c4/\u03c6/J\u2082."
+    },
+    "B-DUAL-NOTE": {
+      "name": "GENUINE-CONVERSATION-VS-ECHO-EMPIRICAL",
+      "pass": null,
+      "counted_blue": false,
+      "statement": "WHETHER the dual-anima loop is a GENUINE conversation (A's emission causes a non-trivial, content-dependent state change in B, and B's reply is a non-trivial function of that change) versus a TRIVIAL echo chamber (both cells are memorization-saturated byte-cascade attractors talking past each other, B.state' \u2248 B.state, reply \u2248 fixed attractor independent of A's message) is an SGD/run OUTCOME. It depends on the trained-ckpt state, the genuine-state-change metric threshold, and runtime variance. The battery proves the loop PROTOCOL is cell-distinct / well-typed / turn-bounded / single-anima-reducible; it does NOT prove the loop produces conversation rather than echo, and it does NOT prove a richer training signal than \u00a724 void-emission. Necessary-not-sufficient at every layer (mirror B-EMERGE-7 / B-PHASE-B-NOTE / B-DIRL-NOTE).",
+      "scope": "transfer-form \ud83d\udd35 (B-DUAL-1..4: cell distinctness + loop well-typedness + turn boundedness + single-anima reduction connection-point); ACTUAL conversation-vs-echo OUTCOME NOT counted (honest empirical, B-D-NOTE / B-DIRL-NOTE / B-PHASE-B-NOTE / B-CARVE-E6-NOTE family \u2014 stochastic / ckpt-state-dependent / measurement-only-shows-loop-runs).",
+      "open_crux": "Does the closed action-perception loop give anima a RICHER training signal than void-emission (\u00a724), or just a more complex void? \u00a713-L VRNN-curiosity REQUIRED a closed loop and carving lacked one \u2014 L2 provides the loop. But a closed loop between two SATURATED attractors carries no new information (KL(A.emit \u2016 B.expectation) \u2192 0 if both cells are the same memorized attractor). The richer signal is conditional on the two cells being genuinely DIFFERENT functions, which \u00a71.1 data-regime threshold does not guarantee. UNRESOLVED at design-tier.",
+      "carve_out_family": "B-D-NOTE / B-DIRL-NOTE / B-PHASE-B-NOTE / B-EMERGE-NOTE / B-CARVE-E6-NOTE"
+    }
+  },
+  "note": "Sidecar battery \u2014 central state/verify_hexad_blue_2026_05_15/blue_falsifier.py UNCHANGED. Mirror B-PRIME / B-DIRH / B-DIRI / B-PSICTL / B-EMERGE / B-PUREPHYS / B-SCALE / B-MITENS / B-DIRL / B-EBT / B-DIRJ / B-INTRA / B-PHASE-B-DESIGN sidecar pattern.",
+  "honest_c3": [
+    "Closed scope = loop protocol structure (cell distinctness / well-typedness / turn boundedness / single-anima reduction). Empirical scope = whether the loop is genuine conversation vs echo chamber (carved out in B-DUAL-NOTE).",
+    "No actual run executed this cycle. No anima_alive.py activation. No GPU fire. DESIGN-TIER only.",
+    "B-DUAL-4 connection-point: B-disabled \u21d2 loop \u2261 \u00a724 Phase B single-anima void-emission, byte-equal by construction (fair-compare-to-current-regime).",
+    "Echo-chamber risk is real and UNRESOLVED at design-tier: two memorization-saturated attractors form a closed loop carrying near-zero new information (B-DUAL-NOTE open_crux).",
+    "GOAL-distance unchanged from \u00a715 milestone \u2014 \u00a731 = closed-loop structure design, NOT GOAL progress, NOT emergence claim.",
+    "f1/f2/f3 hard-fail safe (\u03a8-space sum-of-squares / Boolean type algebra / integer monotone / Boolean overlay-off \u2014 NO \u03c3/\u03c4/\u03c6/J\u2082; \u03a8=\u00bd = anima g2 internal-arch carve-out).",
+    "B-IDENTITY-5 unaffected (no corpus, no model forward, no helper-token surface).",
+    "B-DUAL-2 mirrors B-NAR-1 narrative_compose; B-DUAL-3 mirrors B-PHASE-B-DESIGN-1; B-DUAL-4 mirrors B-EBT-5 / B-DIRI-5 OVERLAY-OFF reduction \u2014 established closure patterns.",
+    "Necessary-not-sufficient: a well-typed bounded loop running is the minimum structural signal, NOT a conversation proof.",
+    "\u00a713-L VRNN-curiosity required a closed loop; L2 supplies one \u2014 but supplying the loop is necessary-not-sufficient for the richer signal VRNN-curiosity needs (B-DUAL-NOTE)."
+  ]
+}

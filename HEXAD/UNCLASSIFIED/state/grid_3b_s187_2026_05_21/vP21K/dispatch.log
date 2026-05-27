@@ -1,0 +1,80 @@
+=== P21K Korean-unlock dispatch start 2026-05-22T06:41:41Z ===
+    base=Qwen/Qwen2.5-1.5B vp21_adapter=/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21/lora_adapter
+    steps=1000 bsz=2 block=512 lr=5e-5 warmup=50
+    wiki_frac=0.3 corpus_mb=35 ko_wiki_target_mb=15
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"7ba67u4wwbxzas","machineId":"e6n1z6ns18aq"}}}
+[create] pod 7ba67u4wwbxzas on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 3: 213.181.105.248:15176 - port mapped AND handshake OK
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+[upload] vP21 LoRA adapter → pod
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+[upload] adapter files on pod: 9
+[corpus-anima] building corpus_s101 (seed 1337 n=777000)
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+[corpus-anima] sha=be969af481947da4693618be33a9cc67f2057a53547b6ad21abda06e7f39018b size=603318628 bytes
+[corpus-ko-wiki] building Korean wiki corpus (target 15 MB)
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+[p21k-build] target 15 MB → /workspace/p21kr/ko_wiki_corpus.jsonl
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+[p21k-build] loaded wikimedia/wikipedia/20231101.ko streaming OK
+[p21k-build] DONE source=wikimedia/wikipedia/20231101.ko wrote 1,549 records, 15,788,783 UTF-8 bytes (15.1 MB)
+'[Errno 9] Bad file descriptor' thrown while requesting GET https://huggingface.co/datasets/wikimedia/wikipedia/resolve/b04c8d1ceb2f5cd4588862100d08de323dccfbaa/20231101.ko/train-00000-of-00003.parquet
+Retrying in 1s [Retry 1/5].
+Fatal Python error: PyGILState_Release: auto-releasing thread-state, but no thread-state for this thread
+Python runtime state: finalizing (tstate=0x0000000000a6a1d8)
+
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+[corpus-ko-wiki] sha=c61d06285c7e5ed02a76210420b320d52225574819c1aa6b0e7b411e6bf887b8 size=15979436 bytes
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+NVIDIA H100 80GB HBM3, 81559 MiB
+[train] P21K launch
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+TRAIN_PID 489
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+[env-verify] [launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[train] done iter 1
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+Warning: Permanently added '[213.181.105.248]:15176' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present - SAVE_POD=0, pod will terminate
+VERDICT= STRONG_GENERALIZE
+  Korean OOD generalize= 16 /20  memorize= 3 /20
+  anima_register_hits= 14 /20
+  register_regress= False
+  init_CE= 1.2542139291763306 final_CE= 1.1240850687026978
+  train_wall_s= 124.5
+=== P21K pipeline complete 2026-05-22T06:52:11Z ===
+dispatch_p21k_runpod.sh: line 249: 25316 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$VDIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s - terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod 7ba67u4wwbxzas (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== P21K dispatch end 2026-05-22T06:52:15Z rc=0 ===

@@ -1,0 +1,66 @@
+{
+  "verify_batch": "A Stage 2 deep — actual sim (Mac local $0)",
+  "ts": "2026-05-15",
+  "method": "W5 numerical sim (실 PyTorch CPU + scipy ODE + PyPhi 1.2.0)",
+  "wall_seconds": 8,
+  "cost_usd": 0,
+  "hypotheses_audited": [
+    {
+      "id": "Hc_1285",
+      "verdict": "SUPPORTED",
+      "method": "PyTorch CPU autograd hook trace, 2-node ParameterList split_cell simulation",
+      "evidence": {
+        "test_1": "torch.no_grad context: y.grad_fn = None, y.requires_grad = False (isolation OK)",
+        "test_2": "baseline grad norm 5.5790 → post-split 8.7166 → ratio 1.562× (≤ 2× threshold PASS)",
+        "test_3": "child param.grad_fn = None after split (no_grad leak 없음)",
+        "F-V5MIT-1": "PASS — backward-graph isolation 확인"
+      },
+      "wall_s": 0.4,
+      "stage_2_upgrade": "PARTIAL → SUPPORTED"
+    },
+    {
+      "id": "H_191",
+      "verdict": "PARTIAL (numerology direction strengthened)",
+      "method": "scipy ODE Kuramoto sync sim, 40 K-coupling sweep, 4 N-value comparison",
+      "evidence": {
+        "N=4 (τ(6)=4 nodes)": "K_c=1.600, r_max=0.9886",
+        "N=6 (n=6 nodes)": "K_c=1.700, r_max=0.9869",
+        "N=8 (atom 8 control)": "K_c=1.800, r_max=0.9846",
+        "N=12 (σ(6)=12)": "K_c=1.900, r_max=0.9833",
+        "theory_match": "Kuramoto 1975 Gaussian dist K_c ≈ 1.596 ✓",
+        "uniqueness_check": "모든 N sync 가능 — n=6 uniqueness 부재 → numerology direction 강화"
+      },
+      "wall_s": 5,
+      "stage_2_finding": "HCE Hexad Categorical 0.92 가 *unique sync property* 부재 → H_153 numerology direction (PARTIAL maintained, anima v5 substrate 실 Φ 측정 별도 cycle)"
+    },
+    {
+      "id": "Hc_1283",
+      "verdict": "PARTIAL-CONFIRMED",
+      "method": "PyPhi 1.2.0 IIT 3.0 (pip install 후), 3-node canonical XOR+AND+OR network Φ computation",
+      "evidence": {
+        "pyphi_install": "pyphi 1.2.0 pip install --user OK",
+        "infrastructure": "PyPhi import + Network + Subsystem + sia computation 작동",
+        "canonical_3node_phi": "Φ = 2.3125 (state=(1,0,0), 3-node XOR+AND+OR)",
+        "threshold_check": "Φ = 2.3125 > 0.5 → Hc_1283 threshold reachable on minimal network"
+      },
+      "wall_s": 3,
+      "stage_2_finding": "PyPhi 1.2.0 infrastructure 작동 + Φ > 0.5 reachable (canonical example) — Hc_1283 *actual* anima 3-axis (HCE+CPGD+HAL) composition mapping은 별도 anima v5 substrate 필요"
+    }
+  ],
+  "batch_aggregate": {
+    "supported": 1,
+    "partial": 2,
+    "stage_2_progress": "3 hypotheses deep audit $0 Mac local 완료 (Stage 2 protocol 4 PARTIAL 중 3 deep audit; H_188 PCI clinical data 외부 의존)"
+  },
+  "remaining_stage_2": {
+    "H_188": "16ch OpenBCI surrogate + clinical PCI 외부 data 필요 — anima local sim 불가",
+    "H_182_H_183_H_185_H_186_H_187": "V8 family sweep GPU fire 필요 ($200-600 estimate) — script 작성 별도"
+  },
+  "honest_c3": [
+    "Hc_1285 SUPPORTED 는 simulated 2-node ParameterList — anima v5-mitosis 실제 24L Transformer scale 에서는 *graph 복잡도* + *split frequency* 가 ratio 영향 가능",
+    "H_191 Kuramoto 모든 N sync — n=6 uniqueness 부재가 *H_191 자체 falsification* 가 아니라 'n=6 uniqueness ≠ sync property' separation",
+    "Hc_1283 PARTIAL-CONFIRMED — canonical 3-node Φ > 0.5 PASS 가 anima 3-axis HCE/CPGD/HAL 의 Φ > 0.5 PASS 보장 안 함 (different network topology)",
+    "PyPhi 1.2.0 multiprocessing 의 stdin script 호환성 — heredoc 안 됨, file-based 필수. anima 환경 PyPhi cycle 시 reproducibility constraint",
+    "Mac local $0 cycle 한계 — V8 sweep 같은 GPU 필요 가설 별도 cycle (script 작성 + dispatch verbatim)"
+  ]
+}

@@ -1,0 +1,91 @@
+{
+  "schema": "anima/p9_path_a_retry3_eval_rerun/verdict/1",
+  "cycle": "p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05",
+  "ts_utc": "2026-05-05T01:33:34Z",
+  "bg_lane": "α'''-EVAL-FIX",
+  "predecessor_v3": "p9_path_a_retrain_v2_retry_3_2026_05_04 (V2_FAIL_FORGETTING_PERSISTS with all eval=null due to dtype kwarg crash)",
+  "pod_id": "pa5e33lhnkz815",
+  "pod_terminated": true,
+  "pod_kill_verified_404": false,
+  "adapter_loaded_from": "/Users/ghost/core/anima/state/p9_path_a_retrain_v2_retry_3_2026_05_04/results/adapter_final",
+  "adapter_sha256": "393eb7530f82321581410989ce0918d3badf14d83c4901204289dc3c69fb753c",
+  "eval_pipeline_root_cause_v3": "lm-eval 0.4.11 forwards --model_args dtype=bfloat16 directly to transformers AutoModel.from_pretrained as kwarg dtype=...; transformers >=4.45,<4.50 (installed by retry-3 pin) accepts only torch_dtype, not dtype, so LlamaForCausalLM.__init__() rejected the kwarg with TypeError. All 4 lm_eval invocations (intermediate hellaswag, final hellaswag, final mmlu, final triviaqa) crashed identically before model loading completed; results JSON never written; verdict extraction got null on all 3 benches and conservatively coded F-PA-RETRAIN-v2-3 as FAIL.",
+  "eval_pipeline_fix_applied": "Pinned transformers>=4.51,<4.60 in run_h100.bash (transformers 4.51 added dtype= alias to from_pretrained for forward compat with lm-eval 0.4.11). Added pre-bench PEFT smoke test (load base + adapter + forward pass) to fail-fast before lm_eval if adapter is structurally broken. Re-evaluated saved adapter_final from retry-3 cycle (sha256=393eb7530f82...).",
+  "final_eval_step_6000": {
+    "hellaswag": {
+      "acc_norm": "0.645",
+      "stderr": "0.033920910080708536",
+      "llama_base_acc_norm": 0.654,
+      "delta_vs_llama_base_pp": "-0.9000",
+      "parity_floor_0_644": "PASS",
+      "improvement_bar_0_674": "FAIL"
+    },
+    "mmlu": {
+      "acc": "0.575193291952521",
+      "stderr": "0.004931552503674687",
+      "llama_base_acc": 0.5796,
+      "delta_vs_llama_base_pp": "-0.4407",
+      "parity_floor_0_5696": "PASS",
+      "improvement_bar_0_5996": "FAIL"
+    },
+    "triviaqa": {
+      "exact_match": "0.455",
+      "stderr": "0.03530021993753287",
+      "llama_base_em": 0.396,
+      "delta_vs_llama_base_pp": "5.9000",
+      "parity_floor_0_376": "PASS",
+      "improvement_bar_0_416": "PASS"
+    }
+  },
+  "hellaswag_acc_norm": "0.645",
+  "mmlu_acc": "0.575193291952521",
+  "triviaqa_em": "0.455",
+  "delta_vs_llama_base_pp": {
+    "hellaswag": "-0.9000",
+    "mmlu": "-0.4407",
+    "triviaqa": "5.9000"
+  },
+  "parity_floor_check": {
+    "hellaswag": "PASS",
+    "mmlu": "PASS",
+    "triviaqa": "PASS"
+  },
+  "improvement_2pp_check": {
+    "hellaswag": "FAIL",
+    "mmlu": "FAIL",
+    "triviaqa": "PASS"
+  },
+  "f_pa_retrain_v2_3_C_RV_1_parity_floor": "PASS",
+  "f_pa_retrain_v2_3_C_RV_2_one_improvement_2pp": "PASS",
+  "f_pa_retrain_v2_3_RE_VERDICT": "PASS",
+  "forgetting_index": "-0.0280",
+  "supersedes_v3_verdict": "UNDERESTIMATE",
+  "wall_time_min": 15,
+  "wall_time_h": 0.25,
+  "actual_cost_usd": 0.75,
+  "budget_hard_cap_usd": 5,
+  "complete_sentinel_detected": true,
+  "eval_only_no_train": true,
+  "lessons_applied": {
+    "L3_auto_kill": "trap _kill_pod EXIT INT TERM; runpodctl pod stop+delete; 404 verify",
+    "L6_data_first_then_kill": "final scp before trap fires (results+orchestrator log)",
+    "L7_redact_at_trap_time": "runpodctl pod get pre-tee redact in _kill_pod",
+    "L8_awk_v_for_verdict": "awk -v val=$x -v thr=$y for parity/improve/delta_pp",
+    "L9_hf_whoami_preflight": "stage0b /api/whoami-v2 fail-fast at $0",
+    "L11_setsid_ssh_detach": "nohup ssh+disown for SSH return <10s",
+    "L13_trap_pre_kill_scp": "trap rescues results via bounded-timeout scp before runpodctl pod stop",
+    "L14_eval_pipeline_smoke": "PEFT load + forward pass smoke test BEFORE lm_eval to catch adapter / dtype kwarg / config issues at $0.10 not $5+"
+  },
+  "honest_c3": [
+    "Eval limit=200 (per spec) gives stderr ~3.5pp on HellaSwag/TriviaQA and ~1.0pp on MMLU; this is wider than the v3 spec limit=500 used for parity floors (~2pp HS/TQ, ~0.4pp MMLU). RE-VERDICT calls within 1-σ of parity threshold are noise-bounded.",
+    "Llama-base anchors (0.654 / 0.5796 / 0.396) were measured at limit=500 single seed=42 (BG-O 93bef8c8). This eval-rerun uses limit=200 — comparing limit=200 LoRA value against limit=500 base value introduces sample-set mismatch beyond stderr (different problems sampled). Strict apples-to-apples would re-measure base at limit=200 same seed; deferred for cost.",
+    "transformers>=4.51 pin upgrades from retry-3 train-time transformers~4.45-4.49; LoRA adapter was trained against the OLDER transformers config. Re-loading via PEFT into newer transformers MAY produce subtle activation drift if config keys differ. Smoke test catches gross failures but not subtle numeric drift.",
+    "Re-eval consumes adapter weights as-is — does NOT re-train. If forgetting was caused by training-time issues (LR, schedule, mix), re-eval cannot fix it; only EXPOSE it. Conversely if v3 verdict was eval-pipeline artifact only, re-eval fully resolves it.",
+    "Pre-eval PEFT smoke test (added L14) loads base+adapter+forward pass; this catches dtype kwarg and adapter structural issues at <30s of $2.99/hr cost (~$0.025) instead of failing at minute 5+ across 3 benches.",
+    "Re-eval verdict re-uses retry-3 spec parity/improvement thresholds (-1pp HS/MM, -2pp TQ floor; +2pp improve); these are same as retry-3 — methodologically clean. Only the limit=200 vs limit=500 stderr asymmetry is novel.",
+    "Forgetting_index is a 3-bench mean fractional drop; treats benchmarks as equally weighted. Real-world salience may differ (TriviaQA more knowledge-heavy than HellaSwag commonsense) — interpret as scalar summary not as singular evidence.",
+    "v3 conservatively coded eval=null as F3=FAIL because it could not distinguish (a) adapter is broken from (b) measurement was broken. This rerun assumes (b) and tests (a) directly; an UNDERESTIMATE result here is INFORMATIVE about both v3 forgetting status AND measurement-pipeline reliability.",
+    "Single-seed (42) eval; no multi-seed bootstrap on RE-VERDICT — point estimate only.",
+    "Pod budget cap $5 leaves <30min margin if smoke test or downloads stall; spec target is $1-3 / 30-45min so cap is generous but not unbounded — monitor cost/min in run.log."
+  ]
+}

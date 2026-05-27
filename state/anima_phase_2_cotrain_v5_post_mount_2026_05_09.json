@@ -1,0 +1,156 @@
+{
+  "mode": "v5-measure",
+  "mounted_real": true,
+  "mirror_loaded": true,
+  "mirror_seed": 42,
+  "preset": "la_350m",
+  "projection_strategy": "mean_group_spread",
+  "n_prompts": 30,
+  "piv": {
+    "trained": {
+      "piv_max": 0.005121266377998233,
+      "piv_mean": 0.004216243599183092,
+      "per_axis_mean_stdev": {
+        "identity": 0.004035070330728064,
+        "agency": 0.004509520375744444,
+        "phenomenal": 0.005121266377998233,
+        "temporal": 0.003960019677267976,
+        "social": 0.003455341234176741
+      }
+    },
+    "random_init": {
+      "piv_max": 0.02243814828773187,
+      "piv_mean": 0.01515571566229176,
+      "per_axis_mean_stdev": {
+        "identity": 0.011234799754975816,
+        "agency": 0.02243814828773187,
+        "phenomenal": 0.01640156098720608,
+        "temporal": 0.013491232782951472,
+        "social": 0.012212836498593563
+      }
+    }
+  },
+  "dcr": {
+    "trained": {
+      "dcr_change_rate": 0.2413793103448276,
+      "argmax_seq": [
+        "phenomenal",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "identity",
+        "agency",
+        "agency",
+        "agency",
+        "agency",
+        "identity",
+        "identity",
+        "agency",
+        "agency",
+        "identity",
+        "identity",
+        "agency"
+      ]
+    },
+    "random_init": {
+      "dcr_change_rate": 0.8620689655172413,
+      "argmax_seq": [
+        "phenomenal",
+        "social",
+        "identity",
+        "social",
+        "temporal",
+        "agency",
+        "phenomenal",
+        "agency",
+        "temporal",
+        "agency",
+        "temporal",
+        "phenomenal",
+        "agency",
+        "identity",
+        "social",
+        "agency",
+        "social",
+        "phenomenal",
+        "social",
+        "temporal",
+        "social",
+        "social",
+        "social",
+        "identity",
+        "agency",
+        "agency",
+        "phenomenal",
+        "phenomenal",
+        "identity",
+        "social"
+      ]
+    }
+  },
+  "d_rand": {
+    "d_rand": 0.03362213532129923,
+    "t_mu": {
+      "identity": 0.967011696100235,
+      "agency": 0.980995136499405,
+      "phenomenal": 0.9684651076793671,
+      "temporal": 0.9622909128665924,
+      "social": 0.9423282225926717
+    },
+    "r_mu": {
+      "identity": 0.9338810384273529,
+      "agency": 0.9350991408030193,
+      "phenomenal": 0.9340978562831879,
+      "temporal": 0.9152907768885294,
+      "social": 0.9346115867296855
+    },
+    "per_axis_l1": {
+      "identity": 0.033130657672882036,
+      "agency": 0.045895995696385694,
+      "phenomenal": 0.034367251396179244,
+      "temporal": 0.04700013597806296,
+      "social": 0.00771663586298621
+    }
+  },
+  "verdict": {
+    "label": "C3_FAIL_V14_VIOLATED_V5",
+    "piv_verdict": "FAIL",
+    "dcr_verdict": "AMBIGUOUS",
+    "drand_verdict": "AMBIGUOUS",
+    "v14_violations": [
+      "PIV",
+      "DCR"
+    ]
+  },
+  "thresholds": {
+    "piv_pass_strict": 0.1,
+    "dcr_pass_strict": 0.4,
+    "drand_pass_strict": 0.05,
+    "v14_delta_safety": 0.02
+  },
+  "lineage": {
+    "schema": "engine_a_g_arch/v1",
+    "lineage_tag": "engine_a_g_dual_350m_v1_phase2_cotrain",
+    "arch_origin": "anima_native_scratch_phase2_cotrain",
+    "n_cells": 16,
+    "consciousness_dim": 64,
+    "d_model": 1024,
+    "vocab_size": 32000,
+    "n_layers": 24
+  },
+  "ts_utc": "2026-05-09T17:26:12Z"
+}

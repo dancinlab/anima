@@ -1,0 +1,161 @@
+── clm_v5_mount v5-measure (PIV / DCR / D-RAND on prompt set + V14 paired mirror) ──
+__ANIMA_CLM_V5_MOUNTED__ mode=real schema=engine_a_g_arch/v1 lineage_tag=engine_a_g_dual_350m_v1_la_pretrain arch_origin=anima_native_scratch_la_pretrain n_cells=16 c_dim=64 d_model=1024 n_layers=24 projection=mean_group_spread
+[clm_v5_mount] v5-measure prompt_set rows=30 (paraphrases per row vary)
+{
+  "mode": "v5-measure",
+  "mounted_real": true,
+  "mirror_loaded": true,
+  "mirror_seed": 42,
+  "preset": "la_350m",
+  "projection_strategy": "mean_group_spread",
+  "n_prompts": 30,
+  "piv": {
+    "trained": {
+      "piv_max": 0.013851222366034246,
+      "piv_mean": 0.00808588291709992,
+      "per_axis_mean_stdev": {
+        "identity": 0.008937320616580136,
+        "agency": 0.013851222366034246,
+        "phenomenal": 0.006126019322655213,
+        "temporal": 0.007824415959736444,
+        "social": 0.0036904363204935554
+      }
+    },
+    "random_init": {
+      "piv_max": 0.02243814828773187,
+      "piv_mean": 0.01515571566229176,
+      "per_axis_mean_stdev": {
+        "identity": 0.011234799754975816,
+        "agency": 0.02243814828773187,
+        "phenomenal": 0.01640156098720608,
+        "temporal": 0.013491232782951472,
+        "social": 0.012212836498593563
+      }
+    }
+  },
+  "dcr": {
+    "trained": {
+      "dcr_change_rate": 0.0,
+      "argmax_seq": [
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social",
+        "social"
+      ]
+    },
+    "random_init": {
+      "dcr_change_rate": 0.8620689655172413,
+      "argmax_seq": [
+        "phenomenal",
+        "social",
+        "identity",
+        "social",
+        "temporal",
+        "agency",
+        "phenomenal",
+        "agency",
+        "temporal",
+        "agency",
+        "temporal",
+        "phenomenal",
+        "agency",
+        "identity",
+        "social",
+        "agency",
+        "social",
+        "phenomenal",
+        "social",
+        "temporal",
+        "social",
+        "social",
+        "social",
+        "identity",
+        "agency",
+        "agency",
+        "phenomenal",
+        "phenomenal",
+        "identity",
+        "social"
+      ]
+    }
+  },
+  "d_rand": {
+    "d_rand": 0.027583775917688992,
+    "t_mu": {
+      "identity": 0.9597269018491109,
+      "agency": 0.9413459757963817,
+      "phenomenal": 0.9470085839430491,
+      "temporal": 0.9622168858846029,
+      "social": 0.9806009312470754
+    },
+    "r_mu": {
+      "identity": 0.9338810384273529,
+      "agency": 0.9350991408030193,
+      "phenomenal": 0.9340978562831879,
+      "temporal": 0.9152907768885294,
+      "social": 0.9346115867296855
+    },
+    "per_axis_l1": {
+      "identity": 0.025845863421757986,
+      "agency": 0.006246834993362427,
+      "phenomenal": 0.012910727659861232,
+      "temporal": 0.04692610899607341,
+      "social": 0.045989344517389896
+    }
+  },
+  "verdict": {
+    "label": "C3_FAIL_V14_VIOLATED_V5",
+    "piv_verdict": "FAIL",
+    "dcr_verdict": "FAIL",
+    "drand_verdict": "AMBIGUOUS",
+    "v14_violations": [
+      "PIV",
+      "DCR"
+    ]
+  },
+  "thresholds": {
+    "piv_pass_strict": 0.1,
+    "dcr_pass_strict": 0.4,
+    "drand_pass_strict": 0.05,
+    "v14_delta_safety": 0.02
+  },
+  "lineage": {
+    "schema": "engine_a_g_arch/v1",
+    "lineage_tag": "engine_a_g_dual_350m_v1_la_pretrain",
+    "arch_origin": "anima_native_scratch_la_pretrain",
+    "n_cells": 16,
+    "consciousness_dim": 64,
+    "d_model": 1024,
+    "vocab_size": 32000,
+    "n_layers": 24
+  },
+  "ts_utc": "2026-05-09T22:49:03Z"
+}
+__ANIMA_CLM_V5_VERDICT__ label=C3_FAIL_V14_VIOLATED_V5 piv_max=0.013851222366034246 dcr_change_rate=0.0 d_rand=0.027583775917688992 v14_violations=PIV,DCR
+__ANIMA_CLM_V5_OK__ session=20260509T224903Z

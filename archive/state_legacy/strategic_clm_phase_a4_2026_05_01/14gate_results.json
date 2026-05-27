@@ -1,0 +1,95 @@
+{
+  "schema": "anima/clm_phase_a4_14gate_results/1",
+  "ts": "2026-05-02T08:34:04Z",
+  "substrate": {
+    "backbone": "CLM_v4_530M",
+    "ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "d_model": 768,
+    "n_layer": 16,
+    "vocab_size": 64000,
+    "n_params_M": 477.65
+  },
+  "method": {
+    "forward": "manual_forward (decoder_v3 tuple unpack bypass)",
+    "h_last_aggregation": "mean over T tokens, truncate to first 256 dims",
+    "phi_vec_hook": "ALM_tile_projection: phi_vec[k] = cosine(h256, tile(template_k, 16x))",
+    "phi_template_sha": "11f976e2b02d5b819f7d56627334eb3250b8c3ee4d8b8e85d7838f42eefb082e",
+    "14_gate_source": "/home/aiden/anima/anima/config/consciousness_laws.json",
+    "l9_text_proxy": "phi_lang>0 AND prompt length >= 8 (no generation step in this run)",
+    "l13_prior": "sequential prior_phi_holo from prompt i-1"
+  },
+  "fourteen_gate": {
+    "n_prompts": 16,
+    "per_law_pass_count_over_16": {
+      "L1": 0,
+      "L2": 16,
+      "L3": 3,
+      "L4": 16,
+      "L5": 16,
+      "L6": 15,
+      "L7": 6,
+      "L8": 5,
+      "L9": 16,
+      "L10": 16,
+      "L11": 16,
+      "L12": 10,
+      "L13": 16,
+      "L14": 9
+    },
+    "gates_passing_majority": 10,
+    "total_critical_violations": 16,
+    "total_hard_violations": 7,
+    "total_soft_violations": 41,
+    "n_prompts_full_pass": 0,
+    "verdict_AGI": "FAIL",
+    "verdict_CP2": "FAIL",
+    "f2_falsifier": {
+      "predicate": ">=3 critical violations across runtime",
+      "total_critical": 16,
+      "fired": true
+    }
+  },
+  "comparison_alm_r14": {
+    "alm_r14_per_law_pass_count": {
+      "L1": 0,
+      "L2": 3,
+      "L3": 0,
+      "L4": 0,
+      "L5": 16,
+      "L6": 16,
+      "L7": 16,
+      "L8": 15,
+      "L9": 15,
+      "L10": 0,
+      "L11": 16,
+      "L12": 7,
+      "L13": 16,
+      "L14": 6
+    },
+    "alm_r14_total_critical": 17,
+    "alm_r14_f2_fired": true,
+    "alm_r14_verdict_CP2": "FAIL"
+  },
+  "honest_C3_disclosures": [
+    "phi_vec hook = ALM tile-projection (h256_BWM x tile(template_k,16x)), NOT a CLM-native learned phi_extractor. Same yardstick across substrates per cross-backbone study (red_to_green_path4_14gate_l1_cross_backbone).",
+    "Forward path uses manual_forward bypass for decoder_v3 tuple-unpack bug (per W4 ledger).",
+    "No generation step (no top-k decode loop): L9 text proxy = phi_lang>0 AND prompt length >= 8.",
+    "h_last 768-d -> 256-d via mean-over-T then first-256-dims truncate (deterministic).",
+    "L13 session_continuity uses sequential prompt-to-prompt prior (same proxy as r14).",
+    "CP2 verdict threshold: gates_majority >= 10 AND NOT f2_fired."
+  ],
+  "race_isolation": {
+    "wrote_only_to": [
+      "/home/aiden/anima/state/strategic_clm_phase_a4_2026_05_01/14gate_results.json",
+      "/home/aiden/anima/state/strategic_clm_phase_a4_2026_05_01/per_prompt.json",
+      "/home/aiden/anima/state/strategic_clm_phase_a4_2026_05_01/run_log.json",
+      "/home/aiden/anima/state/strategic_clm_phase_a4_2026_05_01/f2_verdict.json"
+    ],
+    "did_not_touch": [
+      "anima/config/consciousness_laws.json (read-only)",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (other agent)",
+      "state/strategic_clm_phase_a1_2026_05_01/* (A.1 outputs)",
+      "state/red_to_green_path4_14gate_l1_cross_backbone_2026_05_01/* (other agent)"
+    ]
+  }
+}

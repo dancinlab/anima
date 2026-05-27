@@ -1,0 +1,63 @@
+{
+  "battery_version": "s47-anchor-distinct-smallscope",
+  "research_section": "RESEARCH.md §47 / §25 candidate D v2 / §34 / §32 L3 / §42",
+  "verdicts": [
+    {
+      "name": "B-S47-1 SHA256-DETERMINISTIC-CLOSED",
+      "closed": true,
+      "sha_on_disk": "19242b2701637996a4c0fb3f18cafa237f59c1fa80c26997ba6126843108384a",
+      "sha_recorded": "19242b2701637996a4c0fb3f18cafa237f59c1fa80c26997ba6126843108384a",
+      "sha_rederived": "19242b2701637996a4c0fb3f18cafa237f59c1fa80c26997ba6126843108384a",
+      "bit_length": 256
+    },
+    {
+      "name": "B-S47-2 NO-CHAT-SFT-CONTAMINATION-CLOSED",
+      "closed": true,
+      "forbidden_token_counts": {
+        "[anima": 0,
+        "도우미": 0,
+        "helper": 0,
+        "assistant": 0,
+        "사용자": 0,
+        "user:": 0
+      },
+      "contamination_total": 0
+    },
+    {
+      "name": "B-S47-3 ANCHOR-DISTINCT-CLOSED",
+      "closed": true,
+      "n_targets": 29,
+      "n_pairs": 406,
+      "expected_pairs_binomial": 406,
+      "distinct_pairs": 406,
+      "collisions": [],
+      "name_hash8_unique_count": 29
+    },
+    {
+      "name": "B-S47-4 CLEAN-COMPARISON-§16-BYTE-IDENTICAL-NON-TARGET",
+      "closed": true,
+      "n_target_anchors": 29,
+      "n_nontarget_anchors": 139,
+      "target_records": 34510,
+      "nontarget_records": 165410,
+      "per_target_anchor": 1190,
+      "per_nontarget_anchor": 1190,
+      "partition_disjoint": true,
+      "uniform_per_anchor": true,
+      "target_anchor_count_eq_29": true,
+      "nontarget_anchor_count_eq_139": true
+    },
+    {
+      "name": "B-S47-5 OVERLAY-OFF-REDUCTION + SCALE-REDUCED-CLOSED",
+      "closed": true,
+      "overlay_off_present_in_generator": true,
+      "trainer_default_steps": 3000,
+      "s16_default_steps": 12000,
+      "scale_reduction_factor": 0.25,
+      "scale_reduced_<=_half_s16": true
+    }
+  ],
+  "summary": "5/5 🔵 closed",
+  "all_blue_closed": true,
+  "note": "B-S47-NOTE empirical carve-out: per-anchor routing OUTCOME at fire is SGD/measurement OUTCOME (B-D-NOTE / B-S16-NOTE / B-S34-NOTE family, NOT counted 🔵). The battery proves the corpus is sha-deterministic, contamination-free, anchor-distinct (C(29,2)=406 pair byte-distinct), §16-byte-identical for non-targets (clean comparison by construction), and the fire is small-scope (steps <= 0.5× §16) — NOT that the 29 anchors will route. Whether anchor-distinct content moves the needle is the EMPIRICAL fire outcome."
+}

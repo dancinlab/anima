@@ -1,0 +1,34 @@
+{
+  "id": "H_223",
+  "slug": "pain-intensity-phi-coupling",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "rule": 110, "perturb_cell": 0, "n_bins": 4, "boundary": "periodic" },
+  "intensity_sweep": [0.0, 0.25, 0.5, 1.0, 2.0],
+  "phi_base": 0.538242,
+  "phi_pert": [0.538242, 1.10288, 1.56044, 2.44487, 4.53675],
+  "delta_phi":  [0.0, 0.564641, 1.0222, 1.90663, 3.99851],
+  "pearson_r": 0.999396,
+  "r_squared": 0.998792,
+  "monotone": true,
+  "criteria": {
+    "C1_monotone_r2_ge_0_7": true,
+    "C2_pearson_r_ge_0_7":   true,
+    "C3_dphi_zero_at_zero":  true,
+    "C4_byte_identical":     true
+  },
+  "advisory": { "H223_4_saturation": false, "note": "prediction H223.4 not in verdict_rule; super-linear escalation observed" },
+  "falsifiers": {
+    "F1_MONOTONE":   { "metric": "strict non-decreasing ΔΦ", "verdict": "PASS" },
+    "F2_R_LT_0_3":   { "metric": "Pearson r", "value": 0.999396, "verdict": "PASS" },
+    "F3_ZERO_DPHI":  { "metric": "ΔΦ at intensity=0", "value": 0.0, "verdict": "PASS" },
+    "F4_BYTE_DIFF":  { "metric": "re-run byte-identical (external diff)", "verdict": "PASS" },
+    "F5_NEG_DPHI":   { "metric": "any ΔΦ < 0 (forbidden)", "verdict": "PASS" }
+  },
+  "verdict_rule": "SUPPORTED iff C1 monotone-R²>=0.7 AND C2 r>=0.7; PARTIAL = 1/2; FALSIFIED = 0/2",
+  "verdict": "SUPPORTED"
+}

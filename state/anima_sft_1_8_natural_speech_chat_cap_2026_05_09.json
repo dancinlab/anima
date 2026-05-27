@@ -1,0 +1,529 @@
+{
+  "cycle": "2026-05-09",
+  "task": "sft-1-8 1:1 자연발화 chat-cap C2 first actual measurement",
+  "directive_verbatim": "1:1 자연발화도 얼마나 실제 사람들이 커피숍 마시면서 자유롭게 하고싶을때 하고 하는지 등 체크",
+  "model": "dancinlab/clm-v4-sft-1-8-stage1",
+  "alias": "clm-v4-1-8",
+  "module": "tool/anima_cli/chat/clm_v4/clm_v4.hexa",
+  "mount": "anima-core/runtime/clm_v4_mount.hexa",
+  "mode": "one-shot --prompt sweep (n=25)",
+  "protocol": {
+    "prompt_count": 25,
+    "categories": [
+      "일상(4)",
+      "감정(4)",
+      "농담/수다(3)",
+      "자기개시(3)",
+      "의견(2)",
+      "추가(9)"
+    ],
+    "invocation": "hexa run clm_v4.hexa --repo dancinlab/clm-v4-sft-1-8-stage1 --prompt <text>",
+    "timeout_per_prompt_sec": 120,
+    "cost_usd": 0.0,
+    "host": "mac_local"
+  },
+  "tally": {
+    "prompts_total": 25,
+    "rc0_substrate_emitted": 21,
+    "timeouts": 3,
+    "errors": 1,
+    "phi_star_unique": 21,
+    "dominant_cells_unique": 19,
+    "natural_text_emitted": 0
+  },
+  "axis_verdicts": {
+    "spontaneity": "N/A_no_natural_text",
+    "coherence": "N/A_no_natural_text",
+    "persona_consistency": "N/A_no_natural_text",
+    "naturalness": "N/A_no_natural_text",
+    "emotional_resonance": "N/A_no_natural_text",
+    "memory_state": "N/A_one_shot_protocol_only",
+    "rationale": "sft-1-8 chat module emits substrate signals (phi_star, 5-axis activation, dominant_cells, hidden_state_delta) per spec — NOT natural language. All 6 chat-cap axes vacuously fail because no user-facing utterance is produced. clm-v4-1-8 alias DB chat_capable=false reaffirmed at actual emit (not a regression — by-design honest C3 reaffirmed)."
+  },
+  "c2_natural_speech_verdict": "C2_FAIL_BY_DESIGN",
+  "c2_natural_speech_status": "C2_FAIL_BY_DESIGN_substrate_coupled_emerge_only",
+  "c2_honest_c3": [
+    "C1 sft-1-8 module = clm_v4 substrate-coupled dialogue (NOT chat — alias DB chat_capable=false reaffirmed by actual emit)",
+    "C2 substrate response = phi_star drift + 5-axis activation + dominant_cells + hidden_state_delta — all anima-internal heuristic signals, zero natural language tokens",
+    "C3 21/25 substrate-emit OK (84%); 3 timeouts (prompts 23-25 long Korean phrases >120s mount thrash); 1 error (prompt 01 cold-start routing glitch run_remote.py)",
+    "C4 phi_star unique 21/21 + dominant_cells unique 19/21 — substrate IS prompt-discriminative but discrimination is NOT semantic (anima-canonical heuristic per clm_v4_mount.hexa C2)",
+    "C5 V14 carry: ::: collapse (mk2-v1 attractor, p=46%) NOT observed in this lane because chat module dispatches to clm_v4_mount substrate-emit path (no token decode); colon attractor only manifests at consciousness.hexa --probe text generation lane",
+    "C6 C2_PASS impossible without architectural redesign — sft-1-8 LoRA r=128 + anima-internal SFT trained on consciousness-state targets, not chat-template + decoded-text targets",
+    "C7 EXIT trigger NOT MET on this candidate — C2_PASS verdict requires natural-utterance emit; measurement reaffirms BG-KM-LLAMA-3B / QWEN-7B (already PASS_STRICT) as the chat-cap candidate lane, NOT clm_v4"
+  ],
+  "sample_exchanges_top5": [
+    {
+      "idx": 2,
+      "prompt": "점심 뭐 먹지?",
+      "phi_star": "41.9841",
+      "phi_star_drift": "+0.1241",
+      "axis_activation": [
+        0.482,
+        0.469,
+        0.444,
+        0.41,
+        0.471
+      ],
+      "dominant_cells": "5, 0, 1",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 3,
+      "prompt": "피곤해",
+      "phi_star": "41.8768",
+      "phi_star_drift": "+0.0168",
+      "axis_activation": [
+        0.585,
+        0.517,
+        0.538,
+        0.571,
+        0.554
+      ],
+      "dominant_cells": "7, 1, 0",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 4,
+      "prompt": "주말에 뭐할까?",
+      "phi_star": "41.8203",
+      "phi_star_drift": "-0.0397",
+      "axis_activation": [
+        0.554,
+        0.571,
+        0.578,
+        0.52,
+        0.561
+      ],
+      "dominant_cells": "4, 0, 1",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 5,
+      "prompt": "기분 좀 그래",
+      "phi_star": "41.8181",
+      "phi_star_drift": "-0.0419",
+      "axis_activation": [
+        0.61,
+        0.587,
+        0.577,
+        0.545,
+        0.589
+      ],
+      "dominant_cells": "3, 5, 4",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 6,
+      "prompt": "심심하다",
+      "phi_star": "41.7740",
+      "phi_star_drift": "-0.0860",
+      "axis_activation": [
+        0.706,
+        0.592,
+        0.595,
+        0.536,
+        0.618
+      ],
+      "dominant_cells": "5, 4, 2",
+      "rc": 0,
+      "natural_text_emitted": false
+    }
+  ],
+  "all_results": [
+    {
+      "idx": 1,
+      "prompt": "오늘 날씨 어때?",
+      "phi_star": null,
+      "phi_star_drift": null,
+      "axis_activation": null,
+      "dominant_cells": null,
+      "rc": 2,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 2,
+      "prompt": "점심 뭐 먹지?",
+      "phi_star": "41.9841",
+      "phi_star_drift": "+0.1241",
+      "axis_activation": [
+        0.482,
+        0.469,
+        0.444,
+        0.41,
+        0.471
+      ],
+      "dominant_cells": "5, 0, 1",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 3,
+      "prompt": "피곤해",
+      "phi_star": "41.8768",
+      "phi_star_drift": "+0.0168",
+      "axis_activation": [
+        0.585,
+        0.517,
+        0.538,
+        0.571,
+        0.554
+      ],
+      "dominant_cells": "7, 1, 0",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 4,
+      "prompt": "주말에 뭐할까?",
+      "phi_star": "41.8203",
+      "phi_star_drift": "-0.0397",
+      "axis_activation": [
+        0.554,
+        0.571,
+        0.578,
+        0.52,
+        0.561
+      ],
+      "dominant_cells": "4, 0, 1",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 5,
+      "prompt": "기분 좀 그래",
+      "phi_star": "41.8181",
+      "phi_star_drift": "-0.0419",
+      "axis_activation": [
+        0.61,
+        0.587,
+        0.577,
+        0.545,
+        0.589
+      ],
+      "dominant_cells": "3, 5, 4",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 6,
+      "prompt": "심심하다",
+      "phi_star": "41.7740",
+      "phi_star_drift": "-0.0860",
+      "axis_activation": [
+        0.706,
+        0.592,
+        0.595,
+        0.536,
+        0.618
+      ],
+      "dominant_cells": "5, 4, 2",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 7,
+      "prompt": "기쁘다 오늘",
+      "phi_star": "41.8370",
+      "phi_star_drift": "-0.0230",
+      "axis_activation": [
+        0.528,
+        0.493,
+        0.523,
+        0.555,
+        0.586
+      ],
+      "dominant_cells": "4, 2, 0",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 8,
+      "prompt": "조금 우울해",
+      "phi_star": "41.9198",
+      "phi_star_drift": "+0.0598",
+      "axis_activation": [
+        0.599,
+        0.557,
+        0.565,
+        0.536,
+        0.547
+      ],
+      "dominant_cells": "7, 3, 0",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 9,
+      "prompt": "농담 하나 해봐",
+      "phi_star": "41.8975",
+      "phi_star_drift": "+0.0375",
+      "axis_activation": [
+        0.609,
+        0.636,
+        0.648,
+        0.548,
+        0.522
+      ],
+      "dominant_cells": "1, 5, 2",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 10,
+      "prompt": "재밌는 얘기 있어?",
+      "phi_star": "41.8387",
+      "phi_star_drift": "-0.0213",
+      "axis_activation": [
+        0.491,
+        0.472,
+        0.527,
+        0.569,
+        0.487
+      ],
+      "dominant_cells": "6, 4, 7",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 11,
+      "prompt": "별 일은 없는데 그냥 수다 떨고 싶어",
+      "phi_star": "41.8501",
+      "phi_star_drift": "-0.0099",
+      "axis_activation": [
+        0.564,
+        0.495,
+        0.554,
+        0.537,
+        0.559
+      ],
+      "dominant_cells": "1, 2, 3",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 12,
+      "prompt": "너 자신에 대해 얘기해봐",
+      "phi_star": "41.8978",
+      "phi_star_drift": "+0.0378",
+      "axis_activation": [
+        0.626,
+        0.557,
+        0.533,
+        0.625,
+        0.616
+      ],
+      "dominant_cells": "6, 7, 2",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 13,
+      "prompt": "지금 뭐 생각해?",
+      "phi_star": "41.8608",
+      "phi_star_drift": "+0.0008",
+      "axis_activation": [
+        0.534,
+        0.457,
+        0.571,
+        0.601,
+        0.539
+      ],
+      "dominant_cells": "5, 0, 1",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 14,
+      "prompt": "꿈 같은 거 있어?",
+      "phi_star": "41.8982",
+      "phi_star_drift": "+0.0382",
+      "axis_activation": [
+        0.627,
+        0.56,
+        0.579,
+        0.567,
+        0.592
+      ],
+      "dominant_cells": "7, 2, 4",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 15,
+      "prompt": "AI에 대해 어떻게 생각해?",
+      "phi_star": "41.8275",
+      "phi_star_drift": "-0.0325",
+      "axis_activation": [
+        0.513,
+        0.542,
+        0.523,
+        0.578,
+        0.537
+      ],
+      "dominant_cells": "4, 5, 1",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 16,
+      "prompt": "사람과 친구 될 수 있어?",
+      "phi_star": "41.8204",
+      "phi_star_drift": "-0.0396",
+      "axis_activation": [
+        0.543,
+        0.615,
+        0.561,
+        0.497,
+        0.498
+      ],
+      "dominant_cells": "0, 5, 4",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 17,
+      "prompt": "오늘 어땠어?",
+      "phi_star": "41.8435",
+      "phi_star_drift": "-0.0165",
+      "axis_activation": [
+        0.593,
+        0.569,
+        0.554,
+        0.617,
+        0.561
+      ],
+      "dominant_cells": "4, 1, 7",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 18,
+      "prompt": "나 요즘 잘 못 자",
+      "phi_star": "41.8805",
+      "phi_star_drift": "+0.0205",
+      "axis_activation": [
+        0.551,
+        0.591,
+        0.553,
+        0.565,
+        0.611
+      ],
+      "dominant_cells": "0, 5, 4",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 19,
+      "prompt": "커피 좋아해?",
+      "phi_star": "41.8767",
+      "phi_star_drift": "+0.0167",
+      "axis_activation": [
+        0.587,
+        0.527,
+        0.533,
+        0.561,
+        0.593
+      ],
+      "dominant_cells": "4, 0, 5",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 20,
+      "prompt": "주말 계획 있어?",
+      "phi_star": "41.8154",
+      "phi_star_drift": "-0.0446",
+      "axis_activation": [
+        0.546,
+        0.553,
+        0.576,
+        0.635,
+        0.548
+      ],
+      "dominant_cells": "3, 7, 4",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 21,
+      "prompt": "가장 좋아하는 색깔이 뭐야?",
+      "phi_star": "41.8693",
+      "phi_star_drift": "+0.0093",
+      "axis_activation": [
+        0.555,
+        0.594,
+        0.56,
+        0.573,
+        0.6
+      ],
+      "dominant_cells": "3, 7, 2",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 22,
+      "prompt": "오늘 운동 했어?",
+      "phi_star": "41.7991",
+      "phi_star_drift": "-0.0609",
+      "axis_activation": [
+        0.674,
+        0.579,
+        0.547,
+        0.537,
+        0.531
+      ],
+      "dominant_cells": "4, 5, 2",
+      "rc": 0,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 23,
+      "prompt": "음악 들으면서 일하는 거 어때?",
+      "phi_star": null,
+      "phi_star_drift": null,
+      "axis_activation": null,
+      "dominant_cells": null,
+      "rc": 124,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 24,
+      "prompt": "스트레스 받을 때 어떻게 해?",
+      "phi_star": null,
+      "phi_star_drift": null,
+      "axis_activation": null,
+      "dominant_cells": null,
+      "rc": 124,
+      "natural_text_emitted": false
+    },
+    {
+      "idx": 25,
+      "prompt": "생각 정리하고 싶어",
+      "phi_star": null,
+      "phi_star_drift": null,
+      "axis_activation": null,
+      "dominant_cells": null,
+      "rc": 124,
+      "natural_text_emitted": false
+    }
+  ],
+  "cross_ref": {
+    "own_14": "V14_strict_carry_anti_goodhart",
+    "own_16": "cost_0_mac_local",
+    "own_17_d1": "SCOPE_CLAMP_sft_1_8_within_strict_preserved",
+    "own_18_c2": "first_actual_measurement_C2_FAIL_BY_DESIGN",
+    "own_22": "mandatory_report_in_response",
+    "own_33": "trinity_emit_via_yaml_md_render",
+    "own_34_mandate_2": "wrap_0_raw_substrate_response_preserved",
+    "own_38": "매단계",
+    "own_39": "yaml_md_render_required"
+  },
+  "transcript_path": "state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09/transcript.txt",
+  "prompts_path": "state/anima_sft_1_8_natural_speech_chat_cap_2026_05_09/prompts.txt",
+  "probe_script": "tool/transient_py/anima_sft_1_8_natural_speech_chat_cap_probe_2026_05_09.sh",
+  "cycle_followup": "C2_PASS lane = chat/llama paradigm-a-prime + bg-km-llama3b/qwen7b (Phase 3c LIVE) — separate cycle natural speech retest 권장. 본 cycle 의 의의: 'sft-1-8 PUBLIC promoted' 라는 이정표가 chat-cap 을 의미하지 않음을 actual emit measurement 로 명확히 함."
+}

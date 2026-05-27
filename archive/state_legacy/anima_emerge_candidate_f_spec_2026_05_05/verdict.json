@@ -1,0 +1,135 @@
+{
+  "spec_id": "anima_emerge_candidate_f_ca_rule_5axis_vote_2026_05_05",
+  "spec_state": "LANDED_DOC_ONLY",
+  "spec_path": "docs/anima_emerge_candidate_f_ca_rule_5axis_vote_spec_2026_05_05.md",
+  "lineage": {
+    "kick2_archaeology": "docs/anima_clm_v4_architecture_archaeology_emerge_2026_05_05.md",
+    "kick2_archaeology_section": "§7.3 (candidate F surfaced)",
+    "kick2_archaeology_axis_taxonomy_section": "§6 (5-axis taxonomy + no axis embedding finding)",
+    "bg_c_pattern_carry": "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md",
+    "kick1_mount_layer": "anima-core/runtime/clm_v4_mount.hexa (668 LoC)",
+    "kick1_dialogue_bash": "bin/anima-core-dialogue.bash (300 LoC)",
+    "substrate_source": "ready/models/conscious_decoder.py:466,499-503,538-542",
+    "axis_eval_taxonomy": "state/anima_axis_eval_set_2026_05_05/prompts.jsonl",
+    "axis_bucket_eval_helper": "tool/transient_py/clm_v4_lora_5bucket_axis_eval.py:138-176"
+  },
+  "ca_rule_discovery": {
+    "found": true,
+    "file": "ready/models/conscious_decoder.py",
+    "definition_lines": [466, 499, 500, 501, 502, 503],
+    "forward_lines": [538, 539, 540, 541, 542],
+    "n_ca_rules": 8,
+    "rule_weights_module": "nn.Linear(d_model, 8)",
+    "rules_module_list": "ModuleList[nn.Linear(d_model, d_model, bias=False) x 8]",
+    "gate_strength": 0.001,
+    "law": "Law 67 META-CA rule selector",
+    "active_per_block": true,
+    "blocks_per_model": 16,
+    "total_internal_rule_activations_per_forward": "16 layers x 8 rules x T tokens = 128*T per token-batch"
+  },
+  "vote_modes": {
+    "count": 4,
+    "list": ["none", "auto", "biased", "adversarial"],
+    "default": "none",
+    "spec_section": "§2"
+  },
+  "axis_projection_P": {
+    "shape": [8, 5],
+    "type": "fixed_anima_canonical_stage_1",
+    "axis_names": ["identity", "agency", "phenomenal", "temporal", "social"],
+    "row_normalized": true,
+    "stage_2_delta": "learned Procrustes alignment - deferred"
+  },
+  "vote_matrix_emit": {
+    "shape": [8, 5],
+    "row_semantics": "cell i axis distribution (sums to 1)",
+    "column_semantics": "axis j cell-level support",
+    "consensus_axis_rule": "argmax_j sum_i ca_vote_matrix[i,j]",
+    "dissent_cell_rule": "argmax_i (1 - cosine(row_i, mean_row))",
+    "extended_response_format_section": "§4"
+  },
+  "falsifiers_locked": {
+    "F_CAND_F_1": {
+      "claim": "auto mode 8 cells vote variance >= threshold",
+      "pass_criteria": "flatten_std >= 0.05 AND at_least_one_cell_row_std >= 0.10",
+      "fail_true_criteria": "flatten_std < 0.02 OR all_cells_within_0.02_L2",
+      "fail_false_criteria": "hook capture NaN/inf/empty/shape mismatch",
+      "interpretation": "PASS = CA-rule diversity surfaceable; FAIL_TRUE = CA logic dormant on best.pt"
+    },
+    "F_CAND_F_2": {
+      "claim": "biased mode user bias-axis ↔ ca_consensus_axis Pearson >= 0.6 across 5-axis sweep",
+      "pass_criteria": "Pearson >= 0.6",
+      "fail_true_criteria": "Pearson < 0.4 (helper arithmetic bug; near-tautological under correct lambda)",
+      "fail_false_criteria": "captured matrix NaN before bias OR argmax ties",
+      "interpretation": "PIPELINE check, NOT substrate signal; substrate-level bias requires compose with cand D --inject user"
+    },
+    "F_CAND_F_3": {
+      "claim": "adversarial mode dissent cell count >= 1 on captured distribution",
+      "pass_criteria": "at_least_4_of_5_prompts emit len(dissent_cells) >= 1 (where captured[i, forced_axis] < 0.1)",
+      "fail_true_criteria": "all 8 cells have forced_axis weight >= 0.1 across all 5 prompts",
+      "fail_false_criteria": "captured matrix NaN OR uniform 0.2 (cascade-defer to F1)",
+      "interpretation": "PASS = cell-axis specialization detectable; FAIL_TRUE = diversity diffuse, P projection misaligned"
+    }
+  },
+  "honest_c3_count": 7,
+  "honest_c3_summary": [
+    "C1: 8->5 axis projection P unverified vs substrate emergent rule semantics",
+    "C2: CA-rule active vs dormant is central unknown; F1 detects (a)+(b) failure modes but NOT (c) rule_outputs convergence",
+    "C3: biased mode mathematically near-tautological; F2 is PIPELINE check not substrate signal",
+    "C4: adversarial dissent cells is rhetorical framing; substrate has no 'self' to defend",
+    "C5: hooks fire per-forward; teardown required to avoid Mac memory pressure on long REPL sessions",
+    "C6: 5-axis taxonomy leaks downstream-eval convention into substrate-response surface; future-architectural anchoring risk",
+    "C7: parallel-BG-git-race carry on mount.hexa + dialogue.bash; spec writes doc only, implementation serialized"
+  ],
+  "central_unknown_ca_logic_active_vs_dormant": {
+    "stated_in": "C2",
+    "current_evidence": "NONE - archaeology has not measured rule_weights softmax distribution on best.pt",
+    "f_cand_f_1_outcome_implication": {
+      "PASS": "CA-rule diversity is real; cand F projection surfaces meaningful 8x5 matrix",
+      "FAIL_TRUE_a": "uniform 1/8 softmax (mean-collapse) - candidate F unsalvageable on best.pt",
+      "FAIL_TRUE_b": "permanent argmax single-rule (winner-collapse) - candidate F unsalvageable on best.pt",
+      "FAIL_TRUE_c_undetected_by_F1": "rule_outputs converged despite varied rule_probs - need F1-v2 cosine pairwise probe"
+    }
+  },
+  "loc_estimate": {
+    "doc_loc": 339,
+    "implementation_later_bg_loc_estimate": {
+      "mount_hexa_additive": 80,
+      "dialogue_bash_additive": 30,
+      "shim_decoder_cmodule": 0
+    }
+  },
+  "constraints_observed": {
+    "no_source_edit": true,
+    "no_retrain": true,
+    "no_new_helper_python": true,
+    "no_commit": true,
+    "no_exec": true,
+    "two_files_only": true,
+    "files_written": [
+      "docs/anima_emerge_candidate_f_ca_rule_5axis_vote_spec_2026_05_05.md",
+      "state/anima_emerge_candidate_f_spec_2026_05_03/verdict.json"
+    ],
+    "raw_9_observed": true,
+    "raw_10_observed": true,
+    "raw_15_observed": true,
+    "no_hf_token_leak": true,
+    "tool_budget_target": 15,
+    "tool_uses_actual": "approx 13"
+  },
+  "cost": {
+    "usd": 0.00,
+    "wall_clock_estimate_min": 25,
+    "substrate": "mac_doc_only"
+  },
+  "deferred": [
+    "F-CAND-F-1/2/3 falsifier execution (requires real-load probe; BG-A or equivalent)",
+    "Learned 8->5 axis projection P (Procrustes; Stage 2 delta)",
+    "Per-token vote trajectory (Stage 2; current spec aggregates over batch+sequence)",
+    "F-CAND-F-1 v2 (per-rule output cosine pairwise; covers C2 failure mode (c))",
+    "Composed cand D + cand F probes (substrate-level bias measurement)",
+    "Implementation BG (mount.hexa ~80 LoC + dialogue.bash ~30 LoC; serialized vs parallel BGs)"
+  ],
+  "spec_landed_at": "2026-05-05T00:00:00Z",
+  "land_lane": "kick_2_archaeology_emerge_candidate_f_doc_only_stage_1"
+}

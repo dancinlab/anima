@@ -1,0 +1,42 @@
+{
+  "section": "§88-S86",
+  "battery": "B-S88S86-1..8",
+  "n_pass": 8,
+  "n_total": 8,
+  "all_blue": true,
+  "results": {
+    "B-S88S86-1 SET-POINT-ERROR-NONNEGATIVE": {
+      "passed": true,
+      "detail": "E weighted-L2 radicand sum-of-non-negative under weights≥0 (sympy nonnegative) + 9 numeric witnesses E≥0; weights (0.45,0.30,0.25) all positive"
+    },
+    "B-S88S86-2 REGIME-PARTITION-EXHAUSTIVE-DISJOINT": {
+      "passed": true,
+      "detail": "3-regime threshold partition θ_low<θ_high monotone; Reals = SPLIT∪EMIT∪QUIESCENT exhaustive ∧ pairwise disjoint (sympy Interval); runtime regime_partition_ok all cells"
+    },
+    "B-S88S86-3 §24-DECISION-CONSISTENCY": {
+      "passed": true,
+      "detail": "EMIT regime (E≥θ_low) ⊆ §24 talker_should_emit; SPLIT (E≥θ_high>θ_low) ⊆ §24 by transitivity (sympy Implies); runtime s24_consistency True all cells"
+    },
+    "B-S88S86-4 MITOSIS-HOOK-CONNECTION": {
+      "passed": true,
+      "detail": "mitosis_split_trigger pure-Boolean regime=='SPLIT' (AST single-return); SPLIT branch increments split_events cell_count clamp [2,64]; mitosis_hook_lib.hexa carries split_cell + _mit_check_splits (B-MITOSIS 5/5 🔵 carry)"
+    },
+    "B-S88S86-5 §85-HOPF-CONTROL-PARAM-MAPPING": {
+      "passed": true,
+      "detail": "Hopf r(E): radicand E-Ec≥0 (sympy) + r=sqrt non-negative (6 witnesses); dr/dE=1/(2√(E-Ec))>0 monotone (sympy positive); continuous onset lim r=0; below-critical r=0"
+    },
+    "B-S88S86-6 §9-METRIC-REUSE": {
+      "passed": true,
+      "detail": "§9 honest_coherent thresholds byte-equal SSOT (0.30/10/20/0.80) + 4-clause AND; 3 witnesses clean→True cascade→False short→False"
+    },
+    "B-S88S86-7 §86-STUB-CONNECTION": {
+      "passed": true,
+      "detail": "§86 set-point constants byte-equal (PSI★/τ★/Φ★/W/θ/K) + setpoint_error sqrt-of-weighted-squares + homeostatic_regime present — trained-scale math = §86 stub math (commit 0ae194471 carry)"
+    },
+    "B-S88S86-8 DETERMINISTIC": {
+      "passed": true,
+      "detail": "no sampling/noise generator in runner (leaks=[]); body byte = argmax(logits_a); SEED=1337 fixed + torch.manual_seed — deterministic"
+    }
+  },
+  "note": "B-S88S86-NOTE — empirical carve-out: whether the §86 unified homeostatic set-point drive SURVIVES / COLLAPSES / is RESCUED by the SPLIT regime at trained-saturated scale is an SGD/measurement OUTCOME (the 4-corner verdict α/β/γ/δ). NOT closed, NOT counted 🔵 (B-D-NOTE / B-EMERGE-NOTE / B-S86-NOTE family). The battery closes the trained-scale fire DESIGN: error ≥ 0, regime partition exhaustive+disjoint, three connection-points (§24-decision / MITOSIS-hook / §85-Hopf) well-formed, §9 metric reuse, §86-stub byte-equal, deterministic. necessary-not-sufficient (B-EMERGE-7) — trained scale ≠ GOAL emergence."
+}

@@ -1,0 +1,49 @@
+{
+  "hypothesis": "H_054",
+  "cycle": "Cycle_1_symbiogenesis_mitosis_merge",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "master_seed": 54000054,
+  "d_model": 8,
+  "tolerance": 0.000001,
+  "imports": "tool/hexa_native/mitosis_hook_lib.hexa (D4a FULL IMPL, 5/5 PASS)",
+  "part_a_direct_merge": {
+    "merge_ok": true,
+    "pre_n": 4,
+    "post_n": 3,
+    "count_delta": -1,
+    "count_ok": true,
+    "max_dev_engine_a": 0.000000,
+    "max_dev_engine_g": 0.000000,
+    "max_dev_hidden": 0.000000,
+    "weight_conserved": true
+  },
+  "part_b_auto_merge": {
+    "merge_fired": true,
+    "first_step": 4,
+    "keeper_id": 0,
+    "removed_id": 1,
+    "n_before": 3,
+    "n_after_merge": 2,
+    "n_final": 2
+  },
+  "part_c_floor_refusal": {
+    "pre_n": 2,
+    "post_n": 2,
+    "refused": true
+  },
+  "invariant": "B-MITOSIS-2 MERGE-WEIGHT-LINEAR: keeper[i]==(w1[i]+w2[i])/2",
+  "invariant_tier": "NUMERICAL recompute (hexa-native); closed-form 🔵 carried as cross-link from HEXAD/MITOSIS sympy 27/27",
+  "verdict_rule": "PASS = direct+auto merge fire & weight conserved (max|Δ|<=tol) & count_delta==-1 & floor refused; else PARTIAL; no merge => F1 FALSIFIED",
+  "verdict_class": "PASS",
+  "criterion": "C1",
+  "falsifiers": {
+    "F1_no_merge": "NOT_TRIGGERED",
+    "F2_weight_not_conserved": "NOT_TRIGGERED",
+    "F3_count_delta_wrong": "NOT_TRIGGERED",
+    "F4_auto_merge_never": "NOT_TRIGGERED",
+    "F5_floor_not_enforced": "NOT_TRIGGERED"
+  }
+}

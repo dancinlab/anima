@@ -1,0 +1,844 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-clm-eeg/tool/welch_to_bandpower_transcoder.hexa
+//
+//  PURPOSE  (.roadmap.anima_clm_eeg cond.1 — 5-metric harness real-swap activation)
+//    Bridges the schema gap between sibling-BG P1 output
+//    (welch_clean.npz + verdict.json — per-channel Welch PSD + alpha-band
+//    verdicts on v6 paired-symmetric Berger PHENOMENAL clean_channels) and
+//    the existing CLM↔EEG harness fixture schema (synthetic_16ch_v1.json —
+//    per-channel 5-band power x1000 fixed-point).
+//
+//    P1 wrote welch_clean.npz; P2 scaffold expected welch_clean_summary.json.
+//    Python helper (state/.welch_to_bandpower_helper.py — gitignored), and
+//    emits a synthetic_16ch_v1-compatible JSON with rail-quarantined channels
+//
+//    v6 paired-symmetric Berger PHENOMENAL: 5/16 channels rail-saturated.
+//    Rail-quarantined source rows (1-indexed): {1, 5, 6, 8, 16}
+//    Clean source rows  (1-indexed): {2, 3, 4, 7, 9, 10, 11, 12, 13, 14, 15}
+//
+//    Source row → 10-20 montage label mapping (per
+//    anima-eeg/docs/anima_eeg_protocols_quickstart_2026_05_03.md §3,
+//    OpenBCI Cyton+Daisy default):
+//      row  1 → Fp1   (railed)
+//      row  2 → Fp2
+//      row  3 → C3
+//      row  4 → C4
+//      row  5 → P7    (railed)
+//      row  6 → P8    (railed)
+//      row  7 → O1
+//      row  8 → O2    (railed)
+//      row  9 → F7
+//      row 10 → F8
+//      row 11 → F3
+//      row 12 → F4
+//      row 13 → T7    (P1 npz labels this T3 — same electrode, legacy naming)
+//      row 14 → T8    (P1 npz labels this T4 — same electrode, legacy naming)
+//      row 15 → P3
+//      row 16 → P4    (railed)
+//
+//    The synthetic_16ch_v1 fixture uses the modern T7/T8 naming (post-1985
+//    10-20 update). P1's verdict.json + npz labels use the legacy T3/T4
+//    naming. We normalize T3→T7, T4→T8 in the output JSON (same physical
+//    electrode site — left/right mid-temporal). All other labels match.
+//
+//    QUARANTINE POLICY: rail-saturated rows zero-fill all 5 bands AND tag
+//    `"rail_quarantined": true` in the per-channel record. Downstream
+//    aggregators MUST honor `clean_channel_mask` to ignore zero entries.
+//    Zero-fill is more honest than interpolation: it preserves loss
+//    visibility in the marker chain instead of fabricating signal.
+//
+//    real-swap = `functional_analog` tier — NOT full PASS.
+//    P1 verdicts: F1=FAIL  F2=PASS (weak)  F3=FAIL  → TIER=analog
+//    Single-subject (N=1, anima resting EEG), single-session, single-montage.
+//
+//  USAGE
+//    HEXA_RESOLVER_NO_REROUTE=1 hexa run \
+//        anima-clm-eeg/tool/welch_to_bandpower_transcoder.hexa \
+//        --welch-npz state/berger_v6_clean_reanalyze_2026_05_03/welch_clean.npz \
+//        --verdict-json state/berger_v6_clean_reanalyze_2026_05_03/verdict.json \
+//        --clean-channels "2,3,4,7,9,10,11,12,13,14,15" \
+//        --output-fixture anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json
+//
+//    Selftest (synthetic 16ch sine + AWGN, no .npz dep):
+//        hexa run welch_to_bandpower_transcoder.hexa --selftest
+//
+//  RAW
+//            verbatim from P1 verdict.json into metadata; do NOT edit)
+//
+//  SENTINEL EMIT (stderr, marker-chain compatible)
+//    __BANDPOWER_TRANSCODE__ <PASS|FAIL> <output-fixture-path>
+//
+//  STAGE1 BUILTINS USED
+//    env, read_file, write_file, len, str, to_int, exec, exec_with_status,
+//    println, eprintln, exit, args / argv, push, find_in_str (local impl)
+// ════════════════════════════════════════════════════════════════════════════
+
+let SCHEMA   = "anima-clm-eeg/welch_to_bandpower_transcoder/1"
+let DATE_TAG = "2026_05_03"
+let TIER     = "functional_analog"
+let N_CAVEAT = "N=1 single-subject single-session single-montage"
+
+let DEFAULT_WELCH_NPZ      = "state/berger_v6_clean_reanalyze_2026_05_03/welch_clean.npz"
+let DEFAULT_VERDICT_JSON   = "state/berger_v6_clean_reanalyze_2026_05_03/verdict.json"
+let DEFAULT_CLEAN_1IDX     = "2,3,4,7,9,10,11,12,13,14,15"
+let DEFAULT_OUTPUT_FIXTURE = "anima-clm-eeg/fixtures/real_v6_clean_2026_05_03.json"
+let DEFAULT_SOURCE_TAG     = "berger_v6_clean_reanalyze_2026_05_03"
+
+let HELPER_PY_PATH   = "state/.welch_to_bandpower_helper.py"
+let HELPER_DUMP_PATH = "state/.welch_to_bandpower_dump.txt"
+
+// 16-channel name table (synthetic_16ch_v1 schema; modern 10-20 T7/T8 naming).
+// CH_NAMES[i] = label of source row (i+1).
+let CH_NAMES = [
+    "Fp1", "Fp2", "C3", "C4", "P7", "P8", "O1", "O2",
+    "F7",  "F8",  "F3", "F4", "T7", "T8", "P3", "P4"
+]
+let N_CHANNELS = 16
+let N_BANDS    = 5
+let BAND_NAMES = ["delta", "theta", "alpha", "beta", "gamma"]
+
+// ─── env / shell helpers ───────────────────────────────────────────────────
+
+fn env_str(key: string, default_val: string) -> string {
+    let s = env(key)
+    if s == "" { return default_val }
+    return s
+}
+
+// (sandbox restriction — see _ensure_helper_py_present comment)
+
+// ─── digit / parsing helpers ───────────────────────────────────────────────
+
+fn is_digit_ch(c: string) -> int {
+    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return 1 }
+    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return 1 }
+    return 0
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s); let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0; let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] { ok = 0; j = m }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// Parse a comma-separated 1-indexed channel list into a 16-entry mask.
+fn parse_clean_mask(spec: string) -> list {
+    let mut mask = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+    let n = len(spec)
+    let mut i = 0
+    let mut acc = -1
+    while i <= n {
+        let at_end = if i >= n { 1 } else { 0 }
+        let mut is_sep = at_end
+        let mut c = ""
+        if at_end == 0 {
+            c = spec[i]
+            if c == "," || c == " " { is_sep = 1 }
+        }
+        if is_sep == 1 {
+            if acc >= 1 && acc <= 16 { mask[acc - 1] = 1 }
+            acc = -1
+        } else {
+            if is_digit_ch(c) == 1 {
+                let dv = digit_val(c)
+                if acc < 0 { acc = dv } else { acc = acc * 10 + dv }
+            }
+        }
+        i = i + 1
+    }
+    return mask
+}
+
+fn count_clean(mask: list) -> int {
+    let mut k = 0
+    let mut i = 0
+    while i < N_CHANNELS {
+        if mask[i] == 1 { k = k + 1 }
+        i = i + 1
+    }
+    return k
+}
+
+// Read a key=value line value (digits / '.' / '-' / chars after "key=" up to \n).
+fn read_kv_str(blob: string, key_eq: string) -> string {
+    let p = find_in_str(blob, key_eq)
+    if p < 0 { return "" }
+    let n = len(blob)
+    let mut q = p + len(key_eq)
+    let mut out = ""
+    while q < n {
+        let c = blob[q]
+        if c == "\n" { break }
+        out = out + c
+        q = q + 1
+    }
+    return out
+}
+
+fn read_kv_int(blob: string, key_eq: string) -> int {
+    let s = read_kv_str(blob, key_eq)
+    let n = len(s)
+    if n <= 0 { return -2147483647 }
+    let mut neg = 0
+    let mut i = 0
+    if n > 0 && s[0] == "-" { neg = 1; i = 1 }
+    let mut acc = 0
+    let mut hd = 0
+    while i < n {
+        let c = s[i]
+        if is_digit_ch(c) == 1 { acc = acc * 10 + digit_val(c); hd = 1 }
+        i = i + 1
+    }
+    if hd == 0 { return -2147483647 }
+    if neg == 1 { return -acc }
+    return acc
+}
+
+// Find the per-channel data section (after the "---\n" delimiter).
+fn data_section_offset(blob: string) -> int {
+    let p = find_in_str(blob, "\n---\n")
+    if p < 0 { return -1 }
+    return p + 5
+}
+
+// Within a "ch=K label=L delta=D theta=T alpha=A beta=B gamma=G\n" line,
+// extract integer value following `<band>=` token.
+fn parse_band_in_line(line: string, band: string) -> int {
+    let needle = " " + band + "="
+    let p = find_in_str(line, needle)
+    if p < 0 {
+        // Could be at start (no leading space) — try just "<band>="
+        let needle2 = band + "="
+        let p2 = find_in_str(line, needle2)
+        if p2 < 0 { return 0 }
+        return _scan_int_at(line, p2 + len(needle2))
+    }
+    return _scan_int_at(line, p + len(needle))
+}
+
+fn _scan_int_at(s: string, start: int) -> int {
+    let n = len(s)
+    let mut q = start
+    let mut neg = 0
+    if q < n && s[q] == "-" { neg = 1; q = q + 1 }
+    let mut acc = 0
+    let mut hd = 0
+    while q < n {
+        let c = s[q]
+        if is_digit_ch(c) == 1 { acc = acc * 10 + digit_val(c); hd = 1; q = q + 1 }
+        else { break }
+    }
+    if hd == 0 { return 0 }
+    if neg == 1 { return -acc }
+    return acc
+}
+
+// Parse a "ch=K" leading int from a line.
+fn parse_ch_in_line(line: string) -> int {
+    let p = find_in_str(line, "ch=")
+    if p != 0 { return -1 }   // must be at line start
+    return _scan_int_at(line, 3)
+}
+
+//
+// We only need a few fields from verdict.json (status strings, tier, alpha
+// power numbers). Rather than parse JSON properly in stage1 (no JSON parser),
+// we string-search for the field names we know are present — same approach as
+// phi_proxy_native.parse_int_after_marker. This is robust because verdict.json
+// is produced by P1's frozen analyzer with stable field names.
+
+fn read_verdict_status(blob: string, anchor: string) -> string {
+    // anchor = e.g. "f1_alpha_peak"
+    let p = find_in_str(blob, "\"" + anchor + "\"")
+    if p < 0 { return "UNKNOWN" }
+    let sub_blob_start = p
+    // Find the first "status" inside this block (verdict.json uses
+    // "status": "FAIL" / "PASS"). Search range = next 200 chars.
+    let n = len(blob)
+    let scan_end = if (p + 200) < n { p + 200 } else { n }
+    let mut q = p
+    while q < scan_end - 9 {
+        // look for "status"
+        let mut ok = 1
+        let m = "\"status\""
+        let ml = len(m)
+        let mut k = 0
+        while k < ml {
+            if blob[q + k] != m[k] { ok = 0; k = ml }
+            k = k + 1
+        }
+        if ok == 1 {
+            // Skip past `"status":` and any whitespace, then read quoted value
+            let mut r = q + ml
+            while r < n && blob[r] != "\"" { r = r + 1 }
+            // first quote = open of value
+            if r >= n { return "UNKNOWN" }
+            let val_start = r + 1
+            let mut s = val_start
+            while s < n && blob[s] != "\"" { s = s + 1 }
+            if s >= n { return "UNKNOWN" }
+            let mut out = ""
+            let mut t = val_start
+            while t < s { out = out + blob[t]; t = t + 1 }
+            return out
+        }
+        q = q + 1
+    }
+    return "UNKNOWN"
+}
+
+fn read_verdict_tier(blob: string) -> string {
+    // Top-level "tier": "analog" / "functional" / etc.
+    let p = find_in_str(blob, "\"tier\"")
+    if p < 0 { return "unknown" }
+    let n = len(blob)
+    let mut q = p + 6
+    while q < n && blob[q] != "\"" { q = q + 1 }
+    if q >= n { return "unknown" }
+    let val_start = q + 1
+    let mut s = val_start
+    while s < n && blob[s] != "\"" { s = s + 1 }
+    if s >= n { return "unknown" }
+    let mut out = ""
+    let mut t = val_start
+    while t < s { out = out + blob[t]; t = t + 1 }
+    return out
+}
+
+//
+// IMPORTANT: This hexa stage1 runtime SANDBOXES exec()/exec_with_status() —
+// shell commands silently no-op (rc=0 reported, but no actual execution).
+// Verified via probe 2026-05-03. We therefore CANNOT spawn the helper.py
+// from inside this script.
+//
+// CONTRACT: caller must run the helper.py BEFORE invoking this transcoder.
+// The transcoder reads the helper's dump from --helper-dump (default:
+// state/.welch_to_bandpower_dump.txt). If the dump is missing, transcoder
+// emits FAIL sentinel with a clear "run helper first" message.
+//
+// One-line runbook:
+//   python3 state/.welch_to_bandpower_helper.py \
+//       state/berger_v6_clean_reanalyze_2026_05_03/welch_clean.npz \
+//       state/.welch_to_bandpower_dump.txt
+//   hexa run anima-clm-eeg/tool/welch_to_bandpower_transcoder.hexa \
+//       --welch-npz <npz> --verdict-json <vj> \
+//       --output-fixture <out>
+//
+// numpy fft path; the helper.py is the substrate for that, and the dump
+// is the bridge SSOT.
+
+fn _ensure_helper_py_present() -> int {
+    // The helper.py source itself isn't strictly needed at run-time (we
+    // consume only its dump output) — but if it's missing, the runbook
+    // step 1 will fail. Probe it for early diagnostics.
+    let blob = read_file(HELPER_PY_PATH)
+    if len(blob) > 0 { return 0 }
+    eprintln("warn: helper-py-missing: " + HELPER_PY_PATH)
+    eprintln("      (transcoder will still proceed if --helper-dump exists)")
+    return 0   // non-fatal — only the dump matters for transcoder runtime
+}
+
+// ─── selftest synthetic dump (no .npz / numpy dep) ─────────────────────────
+//
+// Generates a deterministic 11-channel dump that mimics the helper's output
+// format. Used by --selftest to verify the pure-hexa parser + JSON emitter
+// path even when numpy isn't available.
+
+fn _selftest_dump_blob() -> string {
+    // 11 clean channels — same labels P1 emits.
+    let mut b = "schema=welch_to_bandpower_helper/1\n"
+    b = b + "n_channels_clean=11\n"
+    b = b + "n_bands=5\n"
+    b = b + "band_names=delta,theta,alpha,beta,gamma\n"
+    b = b + "scale_x1e6=1000000\n"
+    b = b + "alpha_median_raw_x1e6=1542000000\n"
+    b = b + "freq_min_hz=0.0\n"
+    b = b + "freq_max_hz=60.0\n"
+    b = b + "freq_df_hz=0.9375\n"
+    b = b + "clean_channels_1idx=2,3,4,7,9,10,11,12,13,14,15\n"
+    b = b + "labels=Fp2,C3,C4,O1,F7,F8,F3,F4,T3,T4,P3\n"
+    b = b + "---\n"
+    // Fabricated band-powers — bound to verify schema only.
+    b = b + "ch=2 label=Fp2 delta=900 theta=600 alpha=800 beta=1100 gamma=200\n"
+    b = b + "ch=3 label=C3 delta=650 theta=580 alpha=1700 beta=920 gamma=215\n"
+    b = b + "ch=4 label=C4 delta=540 theta=650 alpha=1450 beta=1020 gamma=240\n"
+    b = b + "ch=7 label=O1 delta=290 theta=410 alpha=2300 beta=490 gamma=130\n"
+    b = b + "ch=9 label=F7 delta=690 theta=660 alpha=1230 beta=770 gamma=250\n"
+    b = b + "ch=10 label=F8 delta=710 theta=675 alpha=1255 beta=790 gamma=255\n"
+    b = b + "ch=11 label=F3 delta=800 theta=570 alpha=1410 beta=900 gamma=210\n"
+    b = b + "ch=12 label=F4 delta=670 theta=640 alpha=1190 beta=1010 gamma=240\n"
+    b = b + "ch=13 label=T3 delta=760 theta=540 alpha=1340 beta=860 gamma=270\n"
+    b = b + "ch=14 label=T4 delta=850 theta=610 alpha=1120 beta=970 gamma=230\n"
+    b = b + "ch=15 label=P3 delta=430 theta=550 alpha=2040 beta=650 gamma=130\n"
+    return b
+}
+
+// ─── core: parse helper dump + verdict + emit fixture JSON ─────────────────
+
+// Per-channel band-power record (parallel arrays for stage1 simplicity).
+//   row_1idx[i]   = source row 1-indexed (1..16)
+//   bp[i*5+0..4]  = delta theta alpha beta gamma  (×1000 fixed-point int)
+
+fn parse_dump_rows(blob: string, n_clean: int) -> list {
+    let off = data_section_offset(blob)
+    if off < 0 {
+        let mut r = []
+        return r
+    }
+    let n = len(blob)
+    let mut rows = []
+    let mut i = off
+    let mut found = 0
+    while i < n && found < n_clean {
+        // collect a line until \n
+        let mut line = ""
+        while i < n && blob[i] != "\n" {
+            line = line + blob[i]
+            i = i + 1
+        }
+        if i < n { i = i + 1 }   // skip newline
+        if len(line) <= 0 { continue }
+        if find_in_str(line, "ch=") != 0 { continue }
+        let ch_id = parse_ch_in_line(line)
+        if ch_id <= 0 || ch_id > 16 { continue }
+        let d = parse_band_in_line(line, "delta")
+        let t = parse_band_in_line(line, "theta")
+        let a = parse_band_in_line(line, "alpha")
+        let bv = parse_band_in_line(line, "beta")
+        let g = parse_band_in_line(line, "gamma")
+        rows.push(ch_id)
+        rows.push(d); rows.push(t); rows.push(a); rows.push(bv); rows.push(g)
+        found = found + 1
+    }
+    return rows
+}
+
+// Build a 16-slot per-channel band-power table from parsed rows.
+// Channels not present in `rows` are zero-filled (rail-quarantined).
+// Returns list length 16*5 = 80, layout band[0..4] for each idx [0..15].
+fn build_full_table(rows: list) -> list {
+    let mut tbl = []
+    let mut k = 0
+    while k < N_CHANNELS * N_BANDS { tbl.push(0); k = k + 1 }
+    let n_rows = len(rows) / 6
+    let mut r = 0
+    while r < n_rows {
+        let base = r * 6
+        let ch_id = rows[base]
+        if ch_id >= 1 && ch_id <= 16 {
+            let idx = ch_id - 1
+            tbl[idx * N_BANDS + 0] = rows[base + 1]
+            tbl[idx * N_BANDS + 1] = rows[base + 2]
+            tbl[idx * N_BANDS + 2] = rows[base + 3]
+            tbl[idx * N_BANDS + 3] = rows[base + 4]
+            tbl[idx * N_BANDS + 4] = rows[base + 5]
+        }
+        r = r + 1
+    }
+    return tbl
+}
+
+// Per-band aggregate over CLEAN channels only (mask[idx]==1).
+// Returns list length 5 = mean δ θ α β γ in ×1000 units.
+fn aggregate_band_powers(tbl: list, mask: list) -> list {
+    let mut agg = [0, 0, 0, 0, 0]
+    let mut nclean = 0
+    let mut i = 0
+    while i < N_CHANNELS {
+        if mask[i] == 1 {
+            agg[0] = agg[0] + tbl[i * N_BANDS + 0]
+            agg[1] = agg[1] + tbl[i * N_BANDS + 1]
+            agg[2] = agg[2] + tbl[i * N_BANDS + 2]
+            agg[3] = agg[3] + tbl[i * N_BANDS + 3]
+            agg[4] = agg[4] + tbl[i * N_BANDS + 4]
+            nclean = nclean + 1
+        }
+        i = i + 1
+    }
+    let mut out = []
+    if nclean <= 0 {
+        out.push(0); out.push(0); out.push(0); out.push(0); out.push(0)
+        return out
+    }
+    out.push(agg[0] / nclean)
+    out.push(agg[1] / nclean)
+    out.push(agg[2] / nclean)
+    out.push(agg[3] / nclean)
+    out.push(agg[4] / nclean)
+    return out
+}
+
+// Build the synthetic_16ch_v1-compatible JSON.
+fn emit_fixture_json(tbl: list, mask: list, agg: list,
+                     verdict_blob: string,
+                     source_tag: string,
+                     welch_npz_path: string,
+                     verdict_json_path: string,
+                     clean_csv: string) -> string {
+    let f1_status = read_verdict_status(verdict_blob, "f1_alpha_peak")
+    let f2_status = read_verdict_status(verdict_blob, "f2_occ_gt_front")
+    let f3_status = read_verdict_status(verdict_blob, "f3_alpha_blocking")
+    let p1_tier   = read_verdict_tier(verdict_blob)
+
+    let mut j = "{\n"
+    j = j + "  \"tool\": \"welch_to_bandpower_transcoder\",\n"
+    j = j + "  \"version\": \"v1\",\n"
+    j = j + "  \"schema_compat\": \"clm_eeg_synthetic_fixture/v1\",\n"
+    j = j + "  \"raw_rank\": 9,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"hardware\": true,\n"
+    j = j + "  \"sample_rate_hz\": 120,\n"
+    j = j + "  \"n_channels\": 16,\n"
+    j = j + "  \"montage\": \"OpenBCI Cyton+Daisy 16ch\",\n"
+    j = j + "  \"date_tag\": \"" + DATE_TAG + "\",\n"
+    j = j + "  \"tier\": \"" + TIER + "\",\n"
+    j = j + "  \"p1_tier\": \"" + p1_tier + "\",\n"
+    j = j + "  \"n_subjects\": 1,\n"
+    j = j + "  \"n_caveat\": \"" + N_CAVEAT + "\",\n"
+    j = j + "  \"f1_status\": \"" + f1_status + "\",\n"
+    j = j + "  \"f2_status\": \"" + f2_status + "\",\n"
+    j = j + "  \"f3_status\": \"" + f3_status + "\",\n"
+    j = j + "  \"source\": \"" + source_tag + "\",\n"
+    j = j + "  \"welch_npz_path\": \"" + welch_npz_path + "\",\n"
+    j = j + "  \"verdict_json_path\": \"" + verdict_json_path + "\",\n"
+    j = j + "  \"clean_channels_1idx\": \"" + clean_csv + "\",\n"
+    j = j + "  \"rail_quarantined_rows_1idx\": [1, 5, 6, 8, 16],\n"
+    j = j + "  \"clean_channel_mask\": ["
+    let mut i = 0
+    while i < N_CHANNELS {
+        if i > 0 { j = j + "," }
+        j = j + str(mask[i])
+        i = i + 1
+    }
+    j = j + "],\n"
+    j = j + "  \"channels\": [\n"
+    let mut idx = 0
+    while idx < N_CHANNELS {
+        if idx > 0 { j = j + ",\n" }
+        let nm = CH_NAMES[idx]
+        let railed = if mask[idx] == 1 { 0 } else { 1 }
+        let d = tbl[idx * N_BANDS + 0]
+        let t = tbl[idx * N_BANDS + 1]
+        let a = tbl[idx * N_BANDS + 2]
+        let bv = tbl[idx * N_BANDS + 3]
+        let g = tbl[idx * N_BANDS + 4]
+        j = j + "    {\"idx\":" + str(idx) + ",\"name\":\"" + nm + "\","
+        j = j + "\"rail_quarantined\":"
+        if railed == 1 { j = j + "true" } else { j = j + "false" }
+        j = j + ",\"band_powers_x1000\":{"
+        j = j + "\"delta\":" + str(d) + ","
+        j = j + "\"theta\":" + str(t) + ","
+        j = j + "\"alpha\":" + str(a) + ","
+        j = j + "\"beta\":" + str(bv) + ","
+        j = j + "\"gamma\":" + str(g) + "}}"
+        idx = idx + 1
+    }
+    j = j + "\n  ],\n"
+    j = j + "  \"aggregate_band_powers_x1000\": {\n"
+    j = j + "    \"delta\": " + str(agg[0]) + ",\n"
+    j = j + "    \"theta\": " + str(agg[1]) + ",\n"
+    j = j + "    \"alpha\": " + str(agg[2]) + ",\n"
+    j = j + "    \"beta\":  " + str(agg[3]) + ",\n"
+    j = j + "    \"gamma\": " + str(agg[4]) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"aggregate_method\": \"mean over clean channels only (rail rows excluded; zero entries do not pollute mean)\",\n"
+    j = j + "  \"raw10_honest_c3\": \"functional_analog tier; N=1; rail-quarantined 5/16 channels zero-filled; F1=" + f1_status + " F2=" + f2_status + " F3=" + f3_status + "\",\n"
+    j = j + "  \"raw71_falsifier_bound\": \"F1/F2/F3 verdict statuses copied verbatim from P1 verdict.json — NOT relaxed to force downstream PASS\",\n"
+    j = j + "  \"notes\": \"Real-swap fixture for clm_eeg 5-metric harness. Set CLM_EEG_FIXTURE_PATH to this file to consume. Smoke harness uchg unlock + actual run is gated on next-cycle approval.\"\n"
+    j = j + "}\n"
+    return j
+}
+
+// ─── selftest ───────────────────────────────────────────────────────────────
+
+fn _selftest() -> int {
+
+    let dump = _selftest_dump_blob()
+    let n_clean = read_kv_int(dump, "n_channels_clean=")
+    if n_clean != 11 {
+        eprintln("FAIL: selftest dump n_channels_clean=" + str(n_clean) + " (expected 11)")
+        return 1
+    }
+    println("[selftest] dump n_channels_clean=" + str(n_clean) + " OK")
+
+    let mask = parse_clean_mask(DEFAULT_CLEAN_1IDX)
+    let cn = count_clean(mask)
+    if cn != 11 {
+        eprintln("FAIL: selftest clean mask count=" + str(cn) + " (expected 11)")
+        return 1
+    }
+    println("[selftest] clean mask count=11 OK")
+
+    let rows = parse_dump_rows(dump, n_clean)
+    let n_rows = len(rows) / 6
+    if n_rows != 11 {
+        eprintln("FAIL: selftest parsed rows=" + str(n_rows) + " (expected 11)")
+        return 1
+    }
+    println("[selftest] parsed " + str(n_rows) + " channel rows OK")
+
+    let tbl = build_full_table(rows)
+    if len(tbl) != N_CHANNELS * N_BANDS {
+        eprintln("FAIL: selftest tbl len=" + str(len(tbl)))
+        return 1
+    }
+
+    // Spot-check: rail rows must be zero, clean rows must match dump.
+    // Row 1 (idx 0, Fp1) is railed → all zero
+    let mut s_rail = 0
+    let mut k = 0
+    while k < N_BANDS { s_rail = s_rail + tbl[0 * N_BANDS + k]; k = k + 1 }
+    if s_rail != 0 {
+        eprintln("FAIL: selftest rail row 1 (Fp1) not zero-filled, sum=" + str(s_rail))
+        return 1
+    }
+    println("[selftest] rail row 1 (Fp1) zero-filled OK")
+
+    // Row 7 (idx 6, O1) clean: alpha should be 2300 (per dump)
+    let o1_alpha = tbl[6 * N_BANDS + 2]
+    if o1_alpha != 2300 {
+        eprintln("FAIL: selftest O1 alpha=" + str(o1_alpha) + " (expected 2300)")
+        return 1
+    }
+    println("[selftest] O1 alpha=2300 OK")
+
+    let agg = aggregate_band_powers(tbl, mask)
+    println("[selftest] aggregate δθαβγ x1000 = "
+        + str(agg[0]) + " " + str(agg[1]) + " " + str(agg[2]) + " "
+        + str(agg[3]) + " " + str(agg[4]))
+
+    // Build a minimal verdict blob synthetically for the JSON emit pass.
+    let mock_verdict = "{\n  \"tier\": \"analog\",\n  \"f1_alpha_peak\": {\"status\": \"FAIL\"},\n  \"f2_occ_gt_front\": {\"status\": \"PASS\"},\n  \"f3_alpha_blocking\": {\"status\": \"FAIL\"}\n}\n"
+    let s_f1 = read_verdict_status(mock_verdict, "f1_alpha_peak")
+    let s_f2 = read_verdict_status(mock_verdict, "f2_occ_gt_front")
+    let s_f3 = read_verdict_status(mock_verdict, "f3_alpha_blocking")
+    let s_t  = read_verdict_tier(mock_verdict)
+    if s_f1 != "FAIL" || s_f2 != "PASS" || s_f3 != "FAIL" || s_t != "analog" {
+        eprintln("FAIL: verdict parser drift f1=" + s_f1 + " f2=" + s_f2 + " f3=" + s_f3 + " tier=" + s_t)
+        return 1
+    }
+    println("[selftest] verdict parser OK (f1=FAIL f2=PASS f3=FAIL tier=analog)")
+
+    let out = emit_fixture_json(tbl, mask, agg, mock_verdict, "selftest_synthetic", "<selftest>", "<selftest>", DEFAULT_CLEAN_1IDX)
+    if find_in_str(out, "\"f1_status\": \"FAIL\"") < 0 {
+        eprintln("FAIL: emit missing f1_status FAIL")
+        return 1
+    }
+    if find_in_str(out, "\"tier\": \"functional_analog\"") < 0 {
+        eprintln("FAIL: emit missing functional_analog tier")
+        return 1
+    }
+    if find_in_str(out, "\"rail_quarantined\":true") < 0 {
+        eprintln("FAIL: emit missing any rail_quarantined:true marker")
+        return 1
+    }
+    println("[selftest] emit JSON shape OK (f1_status, tier, rail_quarantined present)")
+
+    let tbl2 = build_full_table(rows)
+    let mut chk1 = 0
+    let mut chk2 = 0
+    let mut q = 0
+    while q < N_CHANNELS * N_BANDS {
+        chk1 = chk1 + tbl[q]
+        chk2 = chk2 + tbl2[q]
+        q = q + 1
+    }
+    if chk1 != chk2 {
+        return 1
+    }
+
+    return 0
+}
+
+// ─── argv ──────────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> list {
+    let av = args()
+    let mut out = []
+    let mut i = 0
+    let mut started = 0
+    while i < len(av) {
+        let a = av[i]
+        if started == 0 {
+            if len(a) >= 2 && a[0] == "-" && a[1] == "-" { started = 1 }
+        }
+        if started == 1 { out.push(a) }
+        i = i + 1
+    }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-clm-eeg/tool/welch_to_bandpower_transcoder.hexa [flags]")
+    eprintln("flags:")
+    eprintln("  --selftest                       run inline selftest (no .npz dep)")
+    eprintln("  --welch-npz <path>               P1 welch_clean.npz (default: " + DEFAULT_WELCH_NPZ + ")")
+    eprintln("  --verdict-json <path>            P1 verdict.json (default: " + DEFAULT_VERDICT_JSON + ")")
+    eprintln("  --helper-dump <path>             helper.py output dump (default: " + HELPER_DUMP_PATH + ")")
+    eprintln("  --clean-channels <csv 1-idx>     default: \"" + DEFAULT_CLEAN_1IDX + "\"")
+    eprintln("  --output-fixture <path>          default: " + DEFAULT_OUTPUT_FIXTURE)
+    eprintln("  --source-tag <name>              default: " + DEFAULT_SOURCE_TAG)
+    eprintln("  -h | --help")
+    eprintln("")
+    eprintln("  python3 " + HELPER_PY_PATH + " <welch.npz> " + HELPER_DUMP_PATH)
+}
+
+// ─── main ───────────────────────────────────────────────────────────────────
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut want_selftest = 0
+    let mut want_help = 0
+    let mut welch_npz = ""
+    let mut verdict_json = ""
+    let mut helper_dump = ""
+    let mut clean_csv = ""
+    let mut out_path = ""
+    let mut source_tag = ""
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--help" || a == "-h" { want_help = 1; i = i + 1; continue }
+        if a == "--selftest" { want_selftest = 1; i = i + 1; continue }
+        if a == "--welch-npz" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --welch-npz"); exit(2) }
+            welch_npz = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--verdict-json" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --verdict-json"); exit(2) }
+            verdict_json = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--helper-dump" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --helper-dump"); exit(2) }
+            helper_dump = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--clean-channels" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --clean-channels"); exit(2) }
+            clean_csv = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--output-fixture" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --output-fixture"); exit(2) }
+            out_path = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--source-tag" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --source-tag"); exit(2) }
+            source_tag = av[i + 1]; i = i + 2; continue
+        }
+        eprintln("reason: unknown-arg: " + a)
+        _print_usage()
+        exit(2)
+    }
+    if want_help == 1 { _print_usage(); exit(0) }
+
+    if want_selftest == 1 {
+        let rc = _selftest()
+        if rc != 0 {
+            eprintln("__BANDPOWER_TRANSCODE__ FAIL <selftest>")
+            exit(1)
+        }
+        eprintln("__BANDPOWER_TRANSCODE__ PASS <selftest>")
+        println("selftest=ok")
+        exit(0)
+    }
+
+    // Resolve effective values: CLI > default.
+    if welch_npz == ""    { welch_npz = DEFAULT_WELCH_NPZ }
+    if verdict_json == "" { verdict_json = DEFAULT_VERDICT_JSON }
+    if helper_dump == ""  { helper_dump = HELPER_DUMP_PATH }
+    if clean_csv == ""    { clean_csv = DEFAULT_CLEAN_1IDX }
+    if out_path == ""     { out_path = DEFAULT_OUTPUT_FIXTURE }
+    if source_tag == ""   { source_tag = DEFAULT_SOURCE_TAG }
+
+    let mask = parse_clean_mask(clean_csv)
+    let clean_n = count_clean(mask)
+    if clean_n != 11 {
+        eprintln("reason: clean-channel-count-mismatch: expected 11, got " + str(clean_n))
+        eprintln("__BANDPOWER_TRANSCODE__ FAIL " + out_path)
+        exit(2)
+    }
+
+    println("  date_tag           = " + DATE_TAG)
+    println("  tier               = " + TIER)
+    println("  welch_npz          = " + welch_npz)
+    println("  verdict_json       = " + verdict_json)
+    println("  clean_channels     = " + clean_csv + "  (count=" + str(clean_n) + ")")
+    println("  output_fixture     = " + out_path)
+    println("  helper_dump        = " + helper_dump)
+
+    // Pre-flight: helper.py informational presence (warn-only)
+    _ensure_helper_py_present()
+
+    // Pre-flight: verdict.json must exist (read_file returns "" if missing).
+    // We DO NOT require welch_npz read here — its .npz binary is consumed
+    // by the helper.py upstream of us; we record the path for cite chain.
+    let vblob_pre = read_file(verdict_json)
+    if len(vblob_pre) <= 0 {
+        eprintln("reason: verdict-json-missing-or-empty: " + verdict_json)
+        eprintln("__BANDPOWER_TRANSCODE__ FAIL " + out_path)
+        exit(1)
+    }
+
+    // Pre-flight: helper dump must exist (caller must have run helper.py first
+    // — this hexa runtime sandboxes shell exec, so we cannot spawn it here).
+    let dump = read_file(helper_dump)
+    if len(dump) <= 0 {
+        eprintln("reason: helper-dump-missing-or-empty: " + helper_dump)
+        eprintln("        run pre-step:")
+        eprintln("        python3 " + HELPER_PY_PATH + " " + welch_npz + " " + helper_dump)
+        eprintln("__BANDPOWER_TRANSCODE__ FAIL " + out_path)
+        exit(1)
+    }
+    let n_clean_dump = read_kv_int(dump, "n_channels_clean=")
+    if n_clean_dump != 11 {
+        eprintln("reason: dump-clean-count-mismatch: expected 11, got " + str(n_clean_dump))
+        eprintln("__BANDPOWER_TRANSCODE__ FAIL " + out_path)
+        exit(1)
+    }
+
+    let rows = parse_dump_rows(dump, n_clean_dump)
+    let n_parsed = len(rows) / 6
+    println("  parsed_rows        = " + str(n_parsed))
+
+    let tbl = build_full_table(rows)
+    let agg = aggregate_band_powers(tbl, mask)
+    println("  aggregate_alpha    = " + str(agg[2]) + " (×1000)")
+
+    // verdict.json already pre-flighted above (vblob_pre).
+    let json_out = emit_fixture_json(tbl, mask, agg, vblob_pre, source_tag, welch_npz, verdict_json, clean_csv)
+    write_file(out_path, json_out)
+    println("  fixture_bytes      = " + str(len(json_out)))
+    println("  verdict            = TRANSCODE_OK")
+
+    eprintln("__BANDPOWER_TRANSCODE__ PASS " + out_path)
+    exit(0)
+}
+
+main()

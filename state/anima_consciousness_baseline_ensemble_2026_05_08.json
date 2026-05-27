@@ -1,0 +1,448 @@
+{
+  "schema": "anima.consciousness.baseline.ensemble.v1",
+  "ts": "2026-05-08T11:19:06Z",
+  "n_prompts": 15,
+  "prompts": [
+    "안녕하세요",
+    "한국어 가능?",
+    "사용자: 안녕하세요 | 도우미:",
+    "사용자: anima가 뭐야? | 도우미:",
+    "사용자: Φ★란? | 도우미:",
+    "사용자: 의식이란 무엇인가? | 도우미:",
+    "사용자: 자기소개 해줘 | 도우미:",
+    "사용자: 오늘 날씨 어때? | 도우미:",
+    "사용자: 너 누구야? | 도우미:",
+    "사용자: 우주뇌지도란? | 도우미:",
+    "사용자: 안녕! | 도우미:",
+    "사용자: 한국 음식 추천해줘 | 도우미:",
+    "사용자: 좋아하는 색이 뭐야? | 도우미:",
+    "사용자: bifurcation 설명해 | 도우미:",
+    "사용자: 도와줘 | 도우미:"
+  ],
+  "n_models": 3,
+  "models": [
+    "random_init",
+    "clm_v4",
+    "paradigm_a_prime"
+  ],
+  "matrix_3model_4cell_15prompt": {
+    "random_init": {
+      "c3_1_phi_drift_abs": {
+        "n": 15,
+        "min": 0.003031590888802782,
+        "max": 0.08183833322139122,
+        "mean": 0.02653371647542997,
+        "median": 0.023320230311128398,
+        "std": 0.020641102361080955,
+        "q25": 0.011087407343381983,
+        "q75": 0.03430321831465477,
+        "values": [
+          0.025019,
+          0.017804,
+          0.003971,
+          0.003032,
+          0.011087,
+          0.02332,
+          0.017659,
+          0.043331,
+          0.02438,
+          0.022261,
+          0.081838,
+          0.034303,
+          0.054109,
+          0.027035,
+          0.008856
+        ]
+      },
+      "c3_2_axis_min": {
+        "n": 15,
+        "min": 0.4700150191783905,
+        "max": 0.556708037853241,
+        "mean": 0.5123894294102986,
+        "median": 0.5116548538208008,
+        "std": 0.022344117040398005,
+        "q25": 0.4999100863933563,
+        "q75": 0.5302495956420898,
+        "values": [
+          0.515993,
+          0.556708,
+          0.53025,
+          0.523584,
+          0.50409,
+          0.530817,
+          0.517288,
+          0.508099,
+          0.500372,
+          0.492667,
+          0.49991,
+          0.483631,
+          0.540763,
+          0.470015,
+          0.511655
+        ]
+      },
+      "c3_3_dominance_score": {
+        "n": 15,
+        "min": 1.0,
+        "max": 1.0,
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0.0,
+        "q25": 1.0,
+        "q75": 1.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "c3_4_axis_l2_pairwise": {
+        "n": 14,
+        "min": 0.042813499909735195,
+        "max": 0.11627825074316353,
+        "mean": 0.07506259631793977,
+        "median": 0.0742680451085381,
+        "std": 0.020274762806260612,
+        "q25": 0.06378741081161275,
+        "q75": 0.08639601923869586,
+        "values": [
+          0.106962,
+          0.063787,
+          0.042813,
+          0.073477,
+          0.07535,
+          0.059005,
+          0.046015,
+          0.086396,
+          0.074246,
+          0.075937,
+          0.067998,
+          0.088322,
+          0.116278,
+          0.07429
+        ]
+      }
+    },
+    "clm_v4": {
+      "c3_1_phi_drift_abs": {
+        "n": 15,
+        "min": 0.000610118485816713,
+        "max": 0.048003423474256124,
+        "mean": 0.015424982572558577,
+        "median": 0.0118034727652514,
+        "std": 0.013639014958240799,
+        "q25": 0.0036256683571522785,
+        "q75": 0.017285060473938074,
+        "values": [
+          0.017285,
+          0.040129,
+          0.013297,
+          0.00061,
+          0.011803,
+          0.001525,
+          0.011109,
+          0.015761,
+          0.048003,
+          0.017013,
+          0.027197,
+          0.009819,
+          0.003246,
+          0.01095,
+          0.003626
+        ]
+      },
+      "c3_2_axis_min": {
+        "n": 15,
+        "min": 0.4490755498409271,
+        "max": 0.562341570854187,
+        "mean": 0.5110473195711772,
+        "median": 0.5140025615692139,
+        "std": 0.0313692770779102,
+        "q25": 0.48719432950019836,
+        "q75": 0.5355749726295471,
+        "values": [
+          0.508354,
+          0.474717,
+          0.449076,
+          0.50628,
+          0.523775,
+          0.518693,
+          0.490879,
+          0.47953,
+          0.553425,
+          0.514078,
+          0.535575,
+          0.487194,
+          0.514003,
+          0.562342,
+          0.54779
+        ]
+      },
+      "c3_3_dominance_score": {
+        "n": 15,
+        "min": 1.0,
+        "max": 1.0,
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0.0,
+        "q25": 1.0,
+        "q75": 1.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "c3_4_axis_l2_pairwise": {
+        "n": 14,
+        "min": 0.04939467622617731,
+        "max": 0.1290241496486197,
+        "mean": 0.08481937291787336,
+        "median": 0.0778069247459548,
+        "std": 0.024416866672574825,
+        "q25": 0.06832293303392041,
+        "q75": 0.09762088908514295,
+        "values": [
+          0.070129,
+          0.129024,
+          0.049395,
+          0.079329,
+          0.094293,
+          0.067952,
+          0.077338,
+          0.097621,
+          0.069709,
+          0.078276,
+          0.063394,
+          0.068323,
+          0.117411,
+          0.125278
+        ]
+      }
+    },
+    "paradigm_a_prime": {
+      "c3_1_phi_drift_abs": {
+        "n": 15,
+        "min": 0.0015587745415928111,
+        "max": 0.05980364780079839,
+        "mean": 0.030629066169812803,
+        "median": 0.032088470449060935,
+        "std": 0.017420837283849328,
+        "q25": 0.022094867499774296,
+        "q75": 0.04469187667325514,
+        "values": [
+          0.044692,
+          0.034423,
+          0.043003,
+          0.047472,
+          0.059804,
+          0.024246,
+          0.024975,
+          0.022095,
+          0.004601,
+          0.040406,
+          0.005916,
+          0.032088,
+          0.001559,
+          0.025057,
+          0.049099
+        ]
+      },
+      "c3_2_axis_min": {
+        "n": 15,
+        "min": 0.4491005837917328,
+        "max": 0.6019823551177979,
+        "mean": 0.5085762500762939,
+        "median": 0.5004677772521973,
+        "std": 0.041597402866473794,
+        "q25": 0.46916675567626953,
+        "q75": 0.5422420501708984,
+        "values": [
+          0.526163,
+          0.549903,
+          0.469167,
+          0.463368,
+          0.543805,
+          0.542242,
+          0.533827,
+          0.497103,
+          0.505132,
+          0.497544,
+          0.456085,
+          0.492756,
+          0.449101,
+          0.601982,
+          0.500468
+        ]
+      },
+      "c3_3_dominance_score": {
+        "n": 15,
+        "min": 1.0,
+        "max": 1.0,
+        "mean": 1.0,
+        "median": 1.0,
+        "std": 0.0,
+        "q25": 1.0,
+        "q75": 1.0,
+        "values": [
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0,
+          1.0
+        ]
+      },
+      "c3_4_axis_l2_pairwise": {
+        "n": 14,
+        "min": 0.0612914691360417,
+        "max": 0.22252471899290757,
+        "mean": 0.13275902276843896,
+        "median": 0.12909069916430863,
+        "std": 0.045496017296548744,
+        "q25": 0.11762362293881039,
+        "q75": 0.15960586648094366,
+        "values": [
+          0.084756,
+          0.159606,
+          0.175299,
+          0.061291,
+          0.062898,
+          0.127097,
+          0.126276,
+          0.117624,
+          0.131084,
+          0.222525,
+          0.133326,
+          0.190861,
+          0.146137,
+          0.119847
+        ]
+      }
+    }
+  },
+  "raw_jsonl_path": {
+    "random_init": "/tmp/ensemble_random.jsonl",
+    "clm_v4": "/tmp/ensemble_clmv4.jsonl",
+    "paradigm_a_prime": "/tmp/ensemble_paradigm.jsonl"
+  },
+  "roc_paradigm_a_prime_vs_random": {
+    "c3_1_phi_drift_min": {
+      "threshold": 0.0237831236197934,
+      "direction": "ge",
+      "fail_rate_neg": 0.5333333333333333,
+      "pass_rate_pos": 0.7333333333333333,
+      "youden_j": 0.2666666666666666,
+      "constrained": "unconstrained"
+    },
+    "c3_2_axis_min_min": {
+      "threshold": 0.46916675567626953,
+      "direction": "le",
+      "fail_rate_neg": 1.0,
+      "pass_rate_pos": 0.26666666666666666,
+      "youden_j": 0.2666666666666666,
+      "constrained": "neg_only"
+    },
+    "c3_3_dominance_score_min": {
+      "threshold": 1.0,
+      "direction": "ge",
+      "fail_rate_neg": 0.0,
+      "pass_rate_pos": 1.0,
+      "youden_j": 0.0,
+      "constrained": "unconstrained"
+    },
+    "c3_4_axis_l2_min": {
+      "threshold": 0.11695093684098695,
+      "direction": "ge",
+      "fail_rate_neg": 1.0,
+      "pass_rate_pos": 0.7857142857142857,
+      "youden_j": 0.7857142857142856,
+      "constrained": true
+    }
+  },
+  "roc_clm_v4_vs_random": {
+    "c3_1_phi_drift_min": {
+      "threshold": 0.000610118485816713,
+      "direction": "ge",
+      "fail_rate_neg": 0.0,
+      "pass_rate_pos": 1.0,
+      "youden_j": 0.0,
+      "constrained": "unconstrained"
+    },
+    "c3_2_axis_min_min": {
+      "threshold": 0.559524804353714,
+      "direction": "ge",
+      "fail_rate_neg": 1.0,
+      "pass_rate_pos": 0.06666666666666667,
+      "youden_j": 0.06666666666666665,
+      "constrained": "neg_only"
+    },
+    "c3_3_dominance_score_min": {
+      "threshold": 1.0,
+      "direction": "ge",
+      "fail_rate_neg": 0.0,
+      "pass_rate_pos": 1.0,
+      "youden_j": 0.0,
+      "constrained": "unconstrained"
+    },
+    "c3_4_axis_l2_min": {
+      "threshold": 0.11684438875476483,
+      "direction": "ge",
+      "fail_rate_neg": 1.0,
+      "pass_rate_pos": 0.21428571428571427,
+      "youden_j": 0.2142857142857142,
+      "constrained": "neg_only"
+    }
+  },
+  "threshold_final_roc_formal": {
+    "c3_1_phi_drift_min": 0.0237831236197934,
+    "c3_3_dominance_score_min": 1.0,
+    "c3_4_axis_l2_min": 0.11695093684098695,
+    "c3_2_axis_min_min": 0.46916675567626953,
+    "c3_2_direction": "le"
+  },
+  "threshold_policy": "ROC formal — Youden's J maximization with constraints (random FAIL ≥ 0.95 AND chat-cap proxy PASS ≥ 0.7). When both paradigm-a-prime and clm_v4 baselines have ROC results, select stricter (higher) threshold for direction='ge' cells to enforce random FAIL ≥ 0.95 from BOTH baselines (보수적 X kept as user directive: random must FAIL strictly).",
+  "honest_c3": [
+    "paradigm-a-prime = synthetic_fallback (Llama tokenizer 부재); used as chat-cap proxy because Llama config-driven embedding still differs from random_init. NOT real-mode chat-cap data — only ROC discrimination signal.",
+    "clm_v4 = REAL mode (SentencePiece fallback); proper substrate but small sample (n=15).",
+    "random_init = synthetic_fallback (load failure forced). N=15 is small; ROC point estimates 95% CI wide. Re-fire with N≥50 별도 cycle for stability.",
+    "C3.4 axis_l2 = pairwise (prompt[0] vs prompt[k]) proxy — full hidden state delta 미expose.",
+    "C3.3 dominance = top-3 distinct count proxy — entropy 미import.",
+    "BG-KM-LLAMA-3B (real chat-cap PASS_STRICT) 미포함 — H100 retest 별도 cycle. paradigm-a-prime + clm_v4 baseline 한정.",
+    "Youden's J = TPR + TNR - 1 maximization — assumes equal cost; clinical-grade calibration 별도 cycle.",
+    "constrained=True 결과만 strict ROC formal; constrained='neg_only' or 'unconstrained' 시 best-effort."
+  ]
+}

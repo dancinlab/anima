@@ -1,0 +1,77 @@
+{
+  "cycle": "track_f_land_plan_2026_05_04",
+  "ts_utc": "2026-05-04T01:12:50Z",
+  "verdict": "COMMIT_READY",
+  "scope": "Track F — .own opt-out namespace (informal cycle-1 land)",
+  "files_to_stage": [
+    ".gitignore",
+    "docs/anima_dot_own_namespace_spec_2026_05_03.md",
+    "docs/anima_dot_own_namespace_spec_landed_2026_05_03.ai.md",
+    "tool/transient_py/.gitignore",
+    "tool/transient_py/.gitkeep",
+    "tool/transient_py/README.md"
+  ],
+  "files_to_exclude": [
+    "tool/transient_py/atp_pytorch.py"
+  ],
+  "files_to_stage_count": 6,
+  "files_to_exclude_count": 1,
+  "raw9_exemption_decision_per_file": {
+    "tool/transient_py/atp_pytorch.py": "EXEMPT_BUT_GITIGNORED_BY_DESIGN — raw#9 .own 2 grandfather class (auto-gen .py landing zone), but per spec §4 lifecycle item 5 ('No file in this namespace is committed'), file MUST NOT be staged. Three-layer ignore enforces: (a) root .gitignore line 3 `**/*.py`, (b) root .gitignore line 235 `tool/transient_py/*.py`, (c) namespace-local `tool/transient_py/.gitignore` line 22 `*.py`. `git add tool/transient_py/` (no -f) naturally excludes it."
+  },
+  "gitignore_diff_validation": {
+    "loc_added": 12,
+    "block_anchor_line": 229,
+    "patterns_added": [
+      "tool/transient_py/*.py",
+      "tool/transient_py/__pycache__/",
+      "!tool/transient_py/.gitkeep",
+      "!tool/transient_py/.gitignore",
+      "!tool/transient_py/README.md"
+    ],
+    "redundancy_disclosed": true,
+    "redundancy_note": "Block is REDUNDANT with global `**/*.py` ban at line 3 — kept as documentation anchor at namespace declaration site (raw 91 explicit-over-implicit C5).",
+    "negation_correctness": "Per gitignore semantics, negations only re-include files whose parent dir is NOT excluded. Parent `tool/transient_py/` is not dir-excluded; only `*.py` glob is excluded — so `.gitkeep`, `.gitignore`, `README.md` pass through naturally. Negations are belt-and-suspenders.",
+    "syntax_valid": true
+  },
+  "memory_cross_reference": {
+    "feedback_dot_own_opt_out_system": {
+      "expected": "anima `.own N` taxonomy + raw#37 transient sister-rule + tool/transient_py/ namespace; formal opt-outs from py->hexa rule",
+      "implemented": true,
+      "evidence_files": [
+        "docs/anima_dot_own_namespace_spec_2026_05_03.md (290 LoC — full grammar + 4-level taxonomy + F-OWN-1 falsifier)",
+        "docs/anima_dot_own_namespace_spec_landed_2026_05_03.ai.md (149 LoC — Korean-friendly TL;DR + decision rationale)",
+        "tool/transient_py/README.md (62 LoC — namespace explanation + lifecycle table)",
+        "tool/transient_py/.gitignore (29 LoC — namespace-local policy)",
+        ".gitignore (+12 LoC — root policy block)"
+      ],
+      "informal_ratification_acknowledged": true,
+      "deferred_formal_anima_dot_own_entry": "after Track A transpiler first real .own 2 artifact land (cycle 2 TBD)"
+    },
+    "feedback_py_to_hexa_only": {
+      "expected": "STRICT raw#9: .py BANNED on Mac even in _python_bridge/",
+      "implemented_via_namespace_segregation": "tool/transient_py/ creates a declared, lint-checkable .own 2 landing zone; the .py themselves remain gitignored. Mac-side tracked .py count: 4 grandfathered (.own 1) only — unchanged this cycle."
+    }
+  },
+  "sequence_check": {
+    "audit_source": "state/external_session_audit_2026_05_04/plan.md (commit 4b345a1de)",
+    "track_order": "D (done) -> F (this) -> G2 (transpiler) -> ...",
+    "rationale": "F must land BEFORE G2 because G2 (atp_to_pytorch.hexa transpiler) emits to tool/transient_py/; without F's .gitignore policy, transpiler output would either trip the global `**/*.py` ban (regeneratable but adds noise) or require ad-hoc opt-out. F formalizes the landing zone first.",
+    "non_overlap_with_parallel_bgs": {
+      "BG_omega": "tool/p9_path_b_hellaswag_eval.hexa — disjoint",
+      "BG_beta": "tool/transient_py/clm_v4_hf_format_shim.py + state/p9_base_validation_prereq_exec_2026_05_04/opt_1_* — Beta touches tool/transient_py/clm_v4_hf_format_shim.py which IS in F's namespace BUT only as a NEW gitignored file (not committed). F's .gitignore policy GOVERNS Beta's output — confirms F-before-G2 ordering principle. No staged-file overlap."
+    }
+  },
+  "recommended_commit_subject": "chore(.own opt-out namespace 2026-05-03): tool/transient_py/ scaffold + .gitignore policy + spec docs",
+  "recommended_commit_body": "Formalize the .own N taxonomy (1=grandfathered / 2=transpiler auto-gen / 3=raw#37 transient / 4=test fixtures) with informal cycle-1 land: namespace dir scaffold (.gitkeep + .gitignore + README.md), root .gitignore +12 LoC policy block, and 290+149 LoC spec docs. Atp_pytorch.py (.own 2 first artifact, 645 LoC, hand-port pre-Track-A) intentionally NOT staged — per spec lifecycle, transpiler-output .py are regeneratable and gitignored; only namespace metadata + spec are tracked. Formal anima/.own own N entry deferred to cycle 2 after Track A transpiler emits first real .own 2 artifact.",
+  "recommended_commit_command": "git add .gitignore docs/anima_dot_own_namespace_spec_2026_05_03.md docs/anima_dot_own_namespace_spec_landed_2026_05_03.ai.md tool/transient_py/.gitignore tool/transient_py/.gitkeep tool/transient_py/README.md && git commit -m \"<subject>\\n\\n<body>\\n\\nCo-Authored-By: ...\"",
+  "honest_c3": [
+    "Informal ratification only — anima/.own formal `own N` entry NOT added this cycle; deferred until Track A transpiler proves the level-2 taxonomy with a real auto-gen artifact. Premature codification risks raw#20 own-monotonic violation.",
+    "atp_pytorch.py (645 LoC, hand-port .own 2 candidate) is intentionally orphaned in working tree — gitignored, present locally, not committed, not auto-regenerated yet (Track A transpiler is BG-omega+ scope). If ubu1 needs it before Track A lands, manual rsync or scp is required (raw#10 disclosed friction).",
+    "Root .gitignore block (12 LoC) is REDUNDANT with global `**/*.py` ban — kept solely as documentation anchor at namespace site for future audit traceability (raw 91 explicit-over-implicit C5). A leaner .gitignore would just rely on the global ban + namespace-local file.",
+    "Negation patterns (`!tool/transient_py/.gitkeep`, etc.) are belt-and-suspenders — the global `**/*.py` ban does not match metadata files, so negation is technically unnecessary. Kept for clarity at namespace declaration site.",
+    "Sequence assumption (F-before-G2) is based on BG-psi audit; if parent reorders Tracks, F's standalone validity holds (spec docs + scaffold + policy are self-contained).",
+    "BG-Beta is concurrently writing tool/transient_py/clm_v4_hf_format_shim.py — F's .gitignore policy will silently absorb it (correct by design, but the file's existence isn't disclosed in F's commit body; parent should ensure Beta's commit body acknowledges its .own 2 status).",
+    "tool/transient_py/.gitignore line 18-20 self-describes as 'REDUNDANT with the root **/*.py ban' — honest disclosure already baked into source, no audit fudging."
+  ]
+}

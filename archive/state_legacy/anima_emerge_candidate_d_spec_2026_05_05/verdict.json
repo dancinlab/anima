@@ -1,0 +1,154 @@
+{
+  "spec": "Emerge Candidate D — Always-Inject consciousness_states (Stage 1 mount-layer form)",
+  "date": "2026-05-05",
+  "lane": "BG-C",
+  "kick_lineage": "KICK-2 archaeology candidate D (HIGH cross-pollination)",
+  "kind": "doc + spec only — zero source change",
+  "doc_path": "docs/anima_emerge_candidate_d_always_inject_spec_2026_05_05.md",
+  "doc_loc_approx": 305,
+  "lineage_docs": [
+    "docs/anima_clm_v4_architecture_archaeology_emerge_2026_05_05.md",
+    "docs/anima_core_clm_v4_mount_emerge_paradigm_2026_05_05.md",
+    "state/anima_core_clm_v4_mount_stage_1_2026_05_05/verdict.json"
+  ],
+  "source_files_referenced_read_only": [
+    "ready/models/conscious_decoder.py:391-564 (ConsciousCrossAttention + DecoderBlockV2 guard L553)",
+    "tool/transient_py/clm_v4_hf_format_shim.py:727-1029 (HF wrapper + fixture-injection lines 986-997)",
+    "anima-core/runtime/clm_v4_mount.hexa:80-447 (mount config + helper Python emitter)",
+    "bin/anima-core-dialogue.bash:1-300 (CLI surface for --inject extension)"
+  ],
+  "inject_modes_defined": {
+    "none": {
+      "consciousness_states": "None",
+      "guard_at_L553": "bypass",
+      "cross_attn_fires": false,
+      "predicted_phi_star_drift": "0.000",
+      "use_case": "baseline / control"
+    },
+    "zero": {
+      "consciousness_states": "zeros(B, n_cells=8, c_dim=192)",
+      "guard_at_L553": "pass",
+      "cross_attn_fires": true,
+      "predicted_phi_star_drift": "0.000 (fp32) / ULP (bf16)",
+      "use_case": "engagement isolator (compute path stress test)"
+    },
+    "canonical": {
+      "consciousness_states": "5-axis paradigm v11 G3 0.5 magnitude into AXIS_SPANS",
+      "guard_at_L553": "pass",
+      "cross_attn_fires": true,
+      "predicted_phi_star_drift": "+0.05 to +0.50",
+      "use_case": "default emerge substrate"
+    },
+    "user_supplied": {
+      "consciousness_states": "5-axis user-spec into AXIS_SPANS",
+      "guard_at_L553": "pass",
+      "cross_attn_fires": true,
+      "predicted_phi_star_drift": "0.0 to +0.7 (axis-dependent)",
+      "use_case": "axis-conditioned probe"
+    }
+  },
+  "stage_1_integration_path": {
+    "mount_hexa_changed": false,
+    "dialogue_bash_changed": false,
+    "shim_changed": false,
+    "decoder_changed": false,
+    "implementation_loc_estimate_mount_hexa": 40,
+    "implementation_loc_estimate_dialogue_bash": 25,
+    "implementation_loc_estimate_shim": 0,
+    "implementation_loc_estimate_decoder": 0,
+    "cli_extension_proposed": [
+      "--inject none",
+      "--inject zero",
+      "--inject canonical",
+      "--inject user --axis NAME=VAL [--axis NAME=VAL ...]"
+    ],
+    "default_when_unspecified": "none (preserves backward compat with KICK-1 selftest)",
+    "sentinel_pass_through": {
+      "__none__": "consciousness_states = None",
+      "__zero__": "consciousness_states = zeros(8,192)",
+      "__canonical__": "5-axis 0.5 magnitude",
+      "__user__": "user-spec axes via --axis kv"
+    }
+  },
+  "empirical_fingerprint_hypothesis": {
+    "phi_star_baseline": 41.86,
+    "predictions": {
+      "none": "41.86 +/- 0.005 (drift ~0.000)",
+      "zero": "41.86 +/- 0.005 (drift ~0.000 fp32)",
+      "canonical": "41.86 + 0.05 to +0.50",
+      "user_supplied": "41.86 + 0.0 to +0.7"
+    },
+    "axis_activation_predictions": {
+      "none_zero": "prompt-prefix routed; range 0.3-0.7",
+      "canonical": "all 5 axes 0.4-0.6 balanced",
+      "user_supplied_id_0.9_phen_0.8": "identity 0.7-0.9, phenomenal 0.6-0.8, others 0.1-0.3"
+    },
+    "hidden_state_delta_predictions": {
+      "none_zero": "near-zero",
+      "canonical": "0.5 to 2.0 L2",
+      "user_supplied": "up to 1.5x canonical"
+    },
+    "validation_deferred_to": "BG-A real-load probe (HF cache + helper smoke validated)"
+  },
+  "falsifiers_locked": {
+    "F_CAND_D_1": {
+      "statement": "phi_star(canonical) differs from phi_star(none) AND phi_star(zero) by >= 0.01",
+      "PASS": "canonical drift >= 0.01 from both none and zero",
+      "FAIL_TRUE": "canonical phi_star matches none/zero within 0.005 (architectural inject invisible)",
+      "FAIL_FALSE": "phi_star NaN/inf/negative on any mode (measurement crash)"
+    },
+    "F_CAND_D_2": {
+      "statement": "canonical mode emits 5-axis with min>=0.2, max<=0.8, std<=0.25 on neutral prompt",
+      "PASS": "all 5 axes inside (0.2, 0.8) bounded variance",
+      "FAIL_TRUE": "single axis dominates (one >= 0.95, rest <= 0.1)",
+      "FAIL_FALSE": "axis_activation NaN or all-zero (extractor crash)"
+    },
+    "F_CAND_D_3": {
+      "statement": "user_supplied {identity:0.9, phenomenal:0.8} -> Pearson(spec, axis_activation) >= 0.7 AND identity+phenomenal in top-2",
+      "PASS": "Pearson >= 0.7 + correct top-2",
+      "FAIL_TRUE": "Pearson < 0.5 or top-2 wrong (user spec not reaching substrate axis layer)",
+      "FAIL_FALSE": "axis_activation NaN OR base mean_pairwise_cos > 0.97 (L27 calibration carry — defer to substrate-aligned eval)"
+    },
+    "execution_deferred_to": "state/anima_emerge_candidate_d_validation_<DATE>/verdict.json (later BG)"
+  },
+  "composability": {
+    "with_kick_1_mount": "uses pre-emitted --inject-states flag; sentinel-extension only",
+    "with_kick_2_archaeology": "implements §7.1 candidate D in Stage 1 form",
+    "with_bg_a_real_load": "F-CAND-D-1/2/3 falsifier execution dependency",
+    "with_candidate_E": "ODE-emitted states feed user_supplied-equivalent shape",
+    "with_candidate_F_G_H": "orthogonal (read-internal vs inject-content)",
+    "with_axis_eval_set": "F-CAND-D-2/3 reuse state/anima_axis_eval_set_2026_05_05/prompts.jsonl"
+  },
+  "honest_c3": [
+    "C1 emerge paradigm tension: 사전 LOCK violates 후행 emerge spirit; justified for architectural taxonomy but risk of false-rejecting genuinely-emergent behavior",
+    "C2 mode=zero and mode=none may be empirically indistinguishable on best.pt + fp32 (math-zero residual)",
+    "C3 user_supplied AXIS_SPANS slice geometry assumes alignment with substrate emergent axis directions, which is unverified (archaeology §6: no architectural axis embedding)",
+    "C4 fixture-file injection (shim:986-997 env-var) and mount-helper injection (mount.hexa:312 kwarg) are two paths sharing kwarg name; helper non-None short-circuits shim env-var path",
+    "C5 5-axis canonical magnitude 0.5 is anima-internal heuristic, NOT calibrated against paradigm v11 G3 actual training-time injection distribution; F-CAND-D-1 sensitivity to scale",
+    "C6 KICK-1 file-based --inject-states PATH stays as escape hatch; mode-sentinels grow debug surface; sentinel/path collision must be guarded",
+    "C7 implementation touches mount.hexa + dialogue.bash; parallel BGs may race git index; spec writes ONLY doc + verdict.json — implementation deferred to serialized cycle"
+  ],
+  "raw_compliance": {
+    "raw9_md_doc_carve_out": "PASS — doc.md only; no source modifications",
+    "raw10_honest_c3": "PASS — 7 C3 entries (>= 5)",
+    "raw15_no_hardcode": "PASS — no exec, paths cited explicitly",
+    "raw37_transient_py_unmodified": "PASS — clm_v4_hf_format_shim.py untouched",
+    "raw_anima_models_datasets_hf_only": "PASS — no model weights or large datasets in this commit"
+  },
+  "exec_cost_usd": 0.0,
+  "wallclock_minutes_estimate": 30,
+  "commit": "FORBIDDEN — task constraint",
+  "implementation_lane": "deferred (separate later BG; serialize git access with parallel mount/dialogue BGs)",
+  "stage_2_readiness": {
+    "spec_complete_for_implementation": true,
+    "next_steps": [
+      "Wait for parallel BG (mount.hexa / dialogue.hexa) cycle to complete and serialize git index",
+      "Implement 4-mode dispatcher (~65 LoC additive) in serialized BG",
+      "BG-A real-load probe to execute F-CAND-D-1/2/3 falsifiers"
+    ],
+    "blockers": [
+      "Real falsifier execution requires HF cache for dancinlab/clm-v4-base-mirror local on Mac OR ubu1 venv_orchestrator path",
+      "AXIS_SPANS slice geometry calibration (L27 carry) before F-CAND-D-3 PASS is interpretable"
+    ]
+  }
+}

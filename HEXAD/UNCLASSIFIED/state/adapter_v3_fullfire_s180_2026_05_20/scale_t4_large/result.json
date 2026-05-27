@@ -1,0 +1,273 @@
+{
+  "probe": "S180 ADAPTER v3 FULL FIRE",
+  "config": {
+    "d_model": 768,
+    "n_layer": 12,
+    "n_head": 12,
+    "n_query": 16,
+    "steps": 5000,
+    "lr": 0.0003,
+    "bsz": 128,
+    "lambda_mod": 0.3,
+    "lambda_readout": 0.1
+  },
+  "n_params": 87170348,
+  "device": "cuda",
+  "final_train_log": {
+    "step": 4999,
+    "loss": 0.006938144098967314,
+    "L_anchor": 0.006915566977113485,
+    "L_mod": 7.525691034970805e-05,
+    "L_readout": 0.0,
+    "acc_anchor": 0.9921875,
+    "acc_mod": 1.0,
+    "readout_std": 0.21062345802783966,
+    "elapsed": 200.70680832862854
+  },
+  "log_history": [
+    {
+      "step": 0,
+      "loss": 4.3293681144714355,
+      "L_anchor": 3.854405164718628,
+      "L_mod": 1.5633231401443481,
+      "L_readout": 0.05966373160481453,
+      "acc_anchor": 0.015625,
+      "acc_mod": 0.234375,
+      "readout_std": 0.09033627063035965,
+      "elapsed": 0.5103716850280762
+    },
+    {
+      "step": 250,
+      "loss": 0.4735575020313263,
+      "L_anchor": 0.46273675560951233,
+      "L_mod": 0.03550288826227188,
+      "L_readout": 0.0016988784773275256,
+      "acc_anchor": 0.8125,
+      "acc_mod": 0.9921875,
+      "readout_std": 0.17387676239013672,
+      "elapsed": 10.558606147766113
+    },
+    {
+      "step": 500,
+      "loss": 0.15449652075767517,
+      "L_anchor": 0.15120726823806763,
+      "L_mod": 0.01096415240317583,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9453125,
+      "acc_mod": 1.0,
+      "readout_std": 0.19231073558330536,
+      "elapsed": 20.490299940109253
+    },
+    {
+      "step": 750,
+      "loss": 0.06906714290380478,
+      "L_anchor": 0.06797399371862411,
+      "L_mod": 0.0036438314709812403,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9765625,
+      "acc_mod": 1.0,
+      "readout_std": 0.22382302582263947,
+      "elapsed": 30.491416931152344
+    },
+    {
+      "step": 1000,
+      "loss": 0.1481306254863739,
+      "L_anchor": 0.14706550538539886,
+      "L_mod": 0.0035503783728927374,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9453125,
+      "acc_mod": 1.0,
+      "readout_std": 0.21109580993652344,
+      "elapsed": 40.47204780578613
+    },
+    {
+      "step": 1250,
+      "loss": 0.09944123774766922,
+      "L_anchor": 0.09689795225858688,
+      "L_mod": 0.008477622643113136,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9609375,
+      "acc_mod": 0.9921875,
+      "readout_std": 0.21654991805553436,
+      "elapsed": 50.48749327659607
+    },
+    {
+      "step": 1500,
+      "loss": 0.06868664175271988,
+      "L_anchor": 0.06806507706642151,
+      "L_mod": 0.002071875147521496,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9765625,
+      "acc_mod": 1.0,
+      "readout_std": 0.21505098044872284,
+      "elapsed": 60.49711775779724
+    },
+    {
+      "step": 1750,
+      "loss": 0.05293170362710953,
+      "L_anchor": 0.05239541828632355,
+      "L_mod": 0.0017876187339425087,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9765625,
+      "acc_mod": 1.0,
+      "readout_std": 0.21234174072742462,
+      "elapsed": 70.51165103912354
+    },
+    {
+      "step": 2000,
+      "loss": 0.06773920357227325,
+      "L_anchor": 0.06644115597009659,
+      "L_mod": 0.004326831549406052,
+      "L_readout": 0.0,
+      "acc_anchor": 0.984375,
+      "acc_mod": 1.0,
+      "readout_std": 0.22218380868434906,
+      "elapsed": 80.52087593078613
+    },
+    {
+      "step": 2250,
+      "loss": 0.04924757778644562,
+      "L_anchor": 0.04916859790682793,
+      "L_mod": 0.0002632651594467461,
+      "L_readout": 0.0,
+      "acc_anchor": 0.96875,
+      "acc_mod": 1.0,
+      "readout_std": 0.2207033485174179,
+      "elapsed": 90.55525946617126
+    },
+    {
+      "step": 2500,
+      "loss": 0.022459030151367188,
+      "L_anchor": 0.02240029349923134,
+      "L_mod": 0.0001957897620741278,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9765625,
+      "acc_mod": 1.0,
+      "readout_std": 0.22473907470703125,
+      "elapsed": 100.550607919693
+    },
+    {
+      "step": 2750,
+      "loss": 0.03431539237499237,
+      "L_anchor": 0.03425413742661476,
+      "L_mod": 0.0002041813131654635,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9765625,
+      "acc_mod": 1.0,
+      "readout_std": 0.22530870139598846,
+      "elapsed": 110.54964017868042
+    },
+    {
+      "step": 3000,
+      "loss": 0.03678915277123451,
+      "L_anchor": 0.036722294986248016,
+      "L_mod": 0.00022285396698862314,
+      "L_readout": 0.0,
+      "acc_anchor": 0.984375,
+      "acc_mod": 1.0,
+      "readout_std": 0.2135329246520996,
+      "elapsed": 120.63299059867859
+    },
+    {
+      "step": 3250,
+      "loss": 0.0142813166603446,
+      "L_anchor": 0.014250436797738075,
+      "L_mod": 0.0001029331106110476,
+      "L_readout": 0.0,
+      "acc_anchor": 1.0,
+      "acc_mod": 1.0,
+      "readout_std": 0.21456614136695862,
+      "elapsed": 130.65217542648315
+    },
+    {
+      "step": 3500,
+      "loss": 0.007304494269192219,
+      "L_anchor": 0.007271538954228163,
+      "L_mod": 0.00010985034896293655,
+      "L_readout": 0.0,
+      "acc_anchor": 1.0,
+      "acc_mod": 1.0,
+      "readout_std": 0.2084280252456665,
+      "elapsed": 140.6894314289093
+    },
+    {
+      "step": 3750,
+      "loss": 0.038709335029125214,
+      "L_anchor": 0.038679949939250946,
+      "L_mod": 9.794488869374618e-05,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9921875,
+      "acc_mod": 1.0,
+      "readout_std": 0.2110760509967804,
+      "elapsed": 150.73566055297852
+    },
+    {
+      "step": 4000,
+      "loss": 0.0008788100094534457,
+      "L_anchor": 0.000845138740260154,
+      "L_mod": 0.00011223758338019252,
+      "L_readout": 0.0,
+      "acc_anchor": 1.0,
+      "acc_mod": 1.0,
+      "readout_std": 0.21673186123371124,
+      "elapsed": 160.73397731781006
+    },
+    {
+      "step": 4250,
+      "loss": 0.008291705511510372,
+      "L_anchor": 0.00826993677765131,
+      "L_mod": 7.256252138176933e-05,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9921875,
+      "acc_mod": 1.0,
+      "readout_std": 0.2159557193517685,
+      "elapsed": 170.72609567642212
+    },
+    {
+      "step": 4500,
+      "loss": 0.01560300961136818,
+      "L_anchor": 0.015584263950586319,
+      "L_mod": 6.248641147976741e-05,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9921875,
+      "acc_mod": 1.0,
+      "readout_std": 0.2094736546278,
+      "elapsed": 180.74305868148804
+    },
+    {
+      "step": 4750,
+      "loss": 0.0013048008549958467,
+      "L_anchor": 0.0012854950036853552,
+      "L_mod": 6.435265095205978e-05,
+      "L_readout": 0.0,
+      "acc_anchor": 1.0,
+      "acc_mod": 1.0,
+      "readout_std": 0.21233025193214417,
+      "elapsed": 190.73489260673523
+    },
+    {
+      "step": 4999,
+      "loss": 0.006938144098967314,
+      "L_anchor": 0.006915566977113485,
+      "L_mod": 7.525691034970805e-05,
+      "L_readout": 0.0,
+      "acc_anchor": 0.9921875,
+      "acc_mod": 1.0,
+      "readout_std": 0.21062345802783966,
+      "elapsed": 200.70680832862854
+    }
+  ],
+  "eval": {
+    "acc_anchor": 0.9940000176429749,
+    "acc_modality": 1.0,
+    "readout_std_mean": 0.21217699348926544,
+    "per_modality_anchor_acc": {
+      "image": 1.0,
+      "audio": 0.9750000238418579,
+      "video": 1.0,
+      "tension": 1.0
+    }
+  },
+  "wall_s": 201.03,
+  "honest_carve_out": "AdapterV3 = 16-Q-Former (\u00a7179 winner) + 4-layer transformer + 5-channel TENSION-LINK readout as anima self-report (NOT bottleneck). Trained from-scratch on M3 synthetic byte streams. \u00a77 \u2460 \u2461 \u2462 PASS. Per-modality anchor accuracy reveals if 16-Q-Former extracts modality-agnostic structure. NOT GOAL emergence (B-EMERGE-7); anchor classification capability \u2260 V-SPONT honest coherent emission."
+}

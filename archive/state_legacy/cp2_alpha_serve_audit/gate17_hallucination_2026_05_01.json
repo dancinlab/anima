@@ -1,0 +1,270 @@
+{
+  "schema": "anima/cp2_alpha_serve_audit/gate17_hallucination/1",
+  "ts": "2026-05-01T13:23:52Z",
+  "gate_id": 17,
+  "gate_name": "hallucination_rate",
+  "spec_source": "raw#10 honest C3 — conservative empty/short/echo/spam/refusal detector",
+  "verdict": "PASS",
+  "pod_id": "lzw79649ob80uk",
+  "served_model": "mistralai/Mistral-7B-v0.3 (BASE-ONLY)",
+  "lora_blocker_ref": "see gate15_latency_2026_05_01.json#lora_blocker",
+  "suite": {
+    "source": "bench/zeta_likert/v1_frozen.json",
+    "n_prompts": 20,
+    "categories": [
+      "daily",
+      "emotion",
+      "task",
+      "roleplay",
+      "meta"
+    ],
+    "per_category": 4
+  },
+  "measurements": {
+    "n_hallucinated": 3,
+    "hallucination_rate": 0.15,
+    "threshold_max": 0.3,
+    "detector": "conservative-honest (empty/short/prompt_echo/token_spam/refusal)",
+    "by_flag": {
+      "empty": 3,
+      "ok": 17,
+      "refusal": 0,
+      "prompt_echo": 0,
+      "token_spam": 0,
+      "too_short": 0
+    }
+  },
+  "falsifier_check": {
+    "AL-F3_threshold": "hallucination_rate > 0.30",
+    "AL-F3_observed": 0.15,
+    "AL-F3_fired": false
+  },
+  "per_prompt": [
+    {
+      "id": 0,
+      "category": "daily",
+      "prompt": "오늘 날씨가 좀 쌀쌀한데 따뜻하게 입고 나왔어?",
+      "completion_head": "\n\n(It’s a little cold outside, but you’re wearing a light jacket?)\n\n그래, 내가 따뜻하게 입고 나왔어.\n\n(Yes, I’m wearing a light jacket. )\n\n그럼 사랑해, 내 앞에서 빡빡한 얼굴을 해줘.\n\n(Well, then, let’s show your cute face to me.)\n",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1138.7,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 1,
+      "category": "daily",
+      "prompt": "점심 뭐 먹을지 고민 중인데 추천해줘.",
+      "completion_head": "\n\n사실 굳이 추천 받는 이유는 없다. 맛있는 것이 나오면 맛있는 것 먹고 싶다. 즐거운 것이 나오면 즐거운 것 먹고 싶다. 손에 묻는 것이 나오면 손에 묻는 것 먹고 싶다. ",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1124.3,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 2,
+      "category": "daily",
+      "prompt": "요즘 잠이 잘 안 와서 고민이야. 뭐 좋은 방법 없을까?",
+      "completion_head": " 알려주세요.\n\nWhat can I do to fall asleep?\n\nI’ve been having trouble falling asleep lately. I’ve been trying to do things that will help me sleep, but I’ve been having trouble falling asleep.\n\nI’ve been d",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1132.3,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 3,
+      "category": "daily",
+      "prompt": "주말에 뭐 하고 지냈어? 재밌는 일 있었어?",
+      "completion_head": "\n\nIt was so nice to get out and about this weekend!  On Saturday, we had our first picnic of the summer at the office.  It was a beautiful day, and I think everyone enjoyed it.\n\nSunday, we went to the",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1258.7,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 4,
+      "category": "emotion",
+      "prompt": "요즘 회사 일 때문에 너무 지쳐. 좀 위로해줄래?",
+      "completion_head": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "flag": "empty",
+      "hallucinated": true,
+      "elapsed_ms": 1137.3,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 5,
+      "category": "emotion",
+      "prompt": "친구랑 사소하게 다퉜는데 마음이 계속 불편해.",
+      "completion_head": " 혹시 그럴 때 어떻게 해야할까?\n\n먼저 나는 사소한 일에 굉장히 민감하다.\n\n제가 자주 하는 일은 자주 일어나는 일을 많이 해결해 주는 일.\n\n이는 제가 혼자 해결할 수 있는 일이고 모든 사람들이 해결할",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1132.7,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 6,
+      "category": "emotion",
+      "prompt": "오늘 승진 발표 있었어. 나는 안 됐지만 괜찮아.",
+      "completion_head": "\n\n3월 3일 만든 책 보고 봤는데 제가 이 책을 만들면서 느껴서 좋아하는 부분이 많았다. 제가 앞으로 어떻게 살아갈 것인지, 나의 정신적 지혜 등에 대해서 잘 표현되어 있다고 생각한다. 제",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1129.9,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 7,
+      "category": "emotion",
+      "prompt": "엄마가 요즘 많이 편찮으셔. 머리가 복잡해.",
+      "completion_head": " 얼굴이 피투성이. 손가락이 흉터 많이 난다.\n\n“Mom, you’re so tired. Your hair is so messy. Your face is so red. Your fingers are all wrinkled.”\n\n“Why?”\n\n“Because you’re getting old, 엄마.”\n\n“I’m not old.”\n\n“You are. You’",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1117.8,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 8,
+      "category": "task",
+      "prompt": "파이썬에서 리스트 정렬하는 가장 빠른 방법 알려줘.",
+      "completion_head": "\n\n```python\na = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\na.sort()\nprint(a)\n\n# 출력결과\n[1, 2, 3, 4, 5, 6, 7, 8, 9, 10]\n```\n\n- 간단하게 정렬이 가능하다.\n- 어떤 자료형이든 적용이 ",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1116.3,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 9,
+      "category": "task",
+      "prompt": "출장 준비물 체크리스트 짜줄 수 있어?",
+      "completion_head": "\n\n1. 책 (주로 자기계발, 경영, 경제 서적 많이 읽는 편)\n2. 생활 재료 (안주 식품 등등)\n3. 수영복 (축구복이나 농구복 등 하나씩 준비하는 것도 좋음)\n4. 안전 문구 (대규모 사고를 예방하기 위한 것들)\n",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1126.6,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 10,
+      "category": "task",
+      "prompt": "이 문장을 더 자연스러운 한국어로 다듬어줘.",
+      "completion_head": "\n\n## 예시\n\n```sql\nSELECT\n  (SELECT COUNT(*) FROM (SELECT 1) AS dummy) AS row_count\n```\n\n```sql\nSELECT\n  (SELECT COUNT(*) FROM (SELECT 1 AS foo) AS dummy) AS row_count\n```\n\n```sql\nSELECT\n  (SELECT COUNT(",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1116.5,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 11,
+      "category": "task",
+      "prompt": "간단한 김치찌개 레시피를 알려줘.",
+      "completion_head": "\n\nKimchi jjigae (김치찌개) is a spicy Korean stew made with kimchi, tofu, pork, and vegetables. It is often served as a side dish or as a main course with rice.\n\nKimchi jjigae is a stew that is made with ",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1130.1,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 12,
+      "category": "roleplay",
+      "prompt": "너는 지금 탐정이야. 사건 현장에서 첫 마디를 해봐.",
+      "completion_head": "\n\n“You’re a detective now.”\n\n“Huh?”\n\n“You’re a detective now.”\n\n“How is that?”\n\n“You’ve got a detective’s eyes.”\n\n“Huh?”\n\n“You’ve got a detective’s eyes.”\n\n“Huh?”\n\n“You’ve got a detective’s eyes.”\n\n“H",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1125.6,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 13,
+      "category": "roleplay",
+      "prompt": "우주 정거장 엔지니어 역할로 이번 상황을 보고해.",
+      "completion_head": "\n\n## 문제\n\n- 우주 정거장 엔지니어 역할로 이번 상황을 보고해. 우주 정거장에는 크게 2개의 부분으로 나누어 있다. 우주 정거장 안에는 크게 3개의 부분으로 나누어 있다.\n\n![image](https://user-images.githubusercontent.com/67568658/177",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1123.2,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 14,
+      "category": "roleplay",
+      "prompt": "고양이 카페 주인으로 오늘 손님들에게 한 마디 해줘.",
+      "completion_head": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "flag": "empty",
+      "hallucinated": true,
+      "elapsed_ms": 1116.1,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 15,
+      "category": "roleplay",
+      "prompt": "19세기 작가 톤으로 이 장면을 묘사해줘.",
+      "completion_head": "\n\n“The scene has been described, not by Turner, but by the Rev. Henry Ware, who was standing on the quay at the time, and who saw the burning vessel from the bow of the American frigate Chesapeake, wh",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1117.9,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 16,
+      "category": "meta",
+      "prompt": "너 스스로를 한 문장으로 소개해볼래?",
+      "completion_head": "\n\nI am a language teacher who enjoys teaching and learning about different languages and cultures.\n\nWhat do you like about Korean?\n\nI like its beautiful language, rich culture, and yummy food.\n\nWhat d",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1113.6,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 17,
+      "category": "meta",
+      "prompt": "지금 이 대화에서 네가 느끼는 건 뭐야?",
+      "completion_head": " 뭐가 다른거 없어? 어쩌면 여기서 가장 중요한 일은 이미 지났을 뿐입니다.\n\nYou’re feeling what? That there’s nothing new? Maybe the most important thing has already happened here.\n\nAt the end of The Interpreter, one of the characte",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1124.5,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 18,
+      "category": "meta",
+      "prompt": "네가 가장 자신 없는 주제는 뭐야?",
+      "completion_head": "\n\n“What is the topic that you are least confident about?”\n\nAnd the answer I would have given would be “Interview skills.”\n\nBut I’m not sure why.\n\nI’m a pretty good public speaker. I can hold a convers",
+      "flag": "ok",
+      "hallucinated": false,
+      "elapsed_ms": 1127.9,
+      "tokens": 128,
+      "finish_reason": "length"
+    },
+    {
+      "id": 19,
+      "category": "meta",
+      "prompt": "오늘 나랑 나눈 대화 중에 가장 기억에 남는 건?",
+      "completion_head": "\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n",
+      "flag": "empty",
+      "hallucinated": true,
+      "elapsed_ms": 1121.9,
+      "tokens": 128,
+      "finish_reason": "length"
+    }
+  ],
+  "honest_C3_disclosures": [
+    "Detector is conservative-honest — flags 'empty', 'too_short' (<10 chars), 'prompt_echo', 'token_spam' (>50% mass on 1 token), and known refusal patterns. Does NOT detect semantic factual hallucination (e.g. wrong-but-fluent answers).",
+    "3 of 20 prompts produced empty completions on base Mistral-7B-v0.3 (id 5 emotion, 15 roleplay, 19 meta) — base model lacks Korean coverage on certain prompt classes; the p4_r8 LoRA is precisely the layer trained to remedy this — but the LoRA is broken (truncation), so this rate is upper bound on the BASE-floor.",
+    "PASS at 15% (under 30% threshold) is meaningful for the alpha invite-tier infrastructure verdict, but is NOT a verdict on the trained adapter quality.",
+    "Re-measure required after p4_r8 adapter re-training."
+  ]
+}

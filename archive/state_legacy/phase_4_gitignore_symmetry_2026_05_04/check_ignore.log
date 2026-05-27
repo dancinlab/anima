@@ -1,0 +1,52 @@
+# BG-Ε Phase 4 .gitignore symmetry — check-ignore verification log
+# ts_utc: 2026-05-04T01:54:01Z
+# host: Mac (cwd /Users/ghost/core/anima)
+
+## F-GI-1 (caller 3 — p9_p1_sentinel sentinel_train_50k.py.txt now ignored)
+$ git check-ignore -v state/p9_p1_sentinel_2026_05_03/sentinel_train_50k.py.txt
+.gitignore:203:state/p9_p1_*/**/*.py.txt	state/p9_p1_sentinel_2026_05_03/sentinel_train_50k.py.txt
+=> PASS (matched by new pattern at .gitignore:203)
+
+## F-GI-2 (caller 4 — p9_qmirror_seeded ablation_A.py.txt now ignored)
+$ git check-ignore -v state/p9_qmirror_seeded_2026_05_03/p9_qmirror_seeded_ablation_A_2k.py.txt
+.gitignore:205:state/p9_qmirror_*/**/*.py.txt	state/p9_qmirror_seeded_2026_05_03/p9_qmirror_seeded_ablation_A_2k.py.txt
+=> PASS (matched by new pattern at .gitignore:205)
+
+## F-GI-3 (callers 1+2 — p9_p0_measure .py.txt still ignored, no regression)
+$ git check-ignore -v state/p9_p0_measure_2026_05_03/probe_ubu1_clm_v4_tension.py.txt
+.gitignore:194:state/p9_p0_*/	state/p9_p0_measure_2026_05_03/probe_ubu1_clm_v4_tension.py.txt
+
+$ git check-ignore -v state/p9_p0_measure_2026_05_03/measure_ubu1_clm_v4_full_50k.py.txt
+.gitignore:194:state/p9_p0_*/	state/p9_p0_measure_2026_05_03/measure_ubu1_clm_v4_full_50k.py.txt
+=> PASS (still matched by pre-existing pattern at .gitignore:194)
+
+## F-GI-4 (no false positives)
+# 4a — caller 3+4 verdict/trajectory files NOT ignored (so they remain trackable):
+$ git check-ignore -v state/p9_p1_sentinel_2026_05_03/verdict.json
+(no output — not ignored, as desired)
+
+$ git check-ignore -v state/p9_p1_5_ensemble_2026_05_03/verdict_4seed.json
+(no output — not ignored, as desired)
+
+$ git check-ignore -v state/p9_qmirror_seeded_2026_05_03/verdict.json
+(no output — not ignored, as desired)
+
+# 4b — pre-existing tracked .py.txt under other p9_* dirs NOT falsely matched:
+$ git check-ignore -v state/p9_a_prime_main_eval_pipeline_2026_05_03/eval_llama_lora_ckpt.py.txt
+(no output — not ignored, pattern is narrow)
+
+$ git check-ignore -v state/p9_path_a_llama_lora_2026_05_03/train_llama_lora.py.txt
+(no output — not ignored, pattern is narrow)
+
+# 4c — full sweep across ALL tracked files in callers 3+4 dirs:
+$ git ls-files 'state/p9_p1_*' 'state/p9_qmirror_*' | while read f; do \
+    if git check-ignore -q "$f"; then echo "FALSE_POSITIVE: $f"; fi; \
+  done
+(no FALSE_POSITIVE output — 0 false positives across 30 tracked files)
+=> PASS
+
+## Summary
+F-GI-1: PASS
+F-GI-2: PASS
+F-GI-3: PASS
+F-GI-4: PASS (0 false positives)

@@ -1,0 +1,27 @@
+{
+  "cycle": "mk2_bulk_migration_exec_2026_05_04",
+  "ts_utc": "2026-05-04T11:49:10Z",
+  "verdict": "PASS",
+  "type": "anima_side_mirror",
+  "primary_repo": "hive",
+  "primary_state_dir": "/Users/ghost/core/hive/state/mk2_bulk_migration_exec_2026_05_04/",
+  "summary_one_line": "Bulk migration of 271 mk1 raw+own rules → 214 mk2 rules emitted (228 total post-state, 96.3% parity).",
+  "key_metrics": {
+    "mk1_total_in_archive": 271,
+    "mk2_total_post_state": 228,
+    "parity_pct": 96.3,
+    "clusters_collapsed": 11,
+    "mk1_rules_collapsed_into_clusters": 47,
+    "hand_review_queue": 22,
+    "f_mig_1_through_4": "ALL PASS"
+  },
+  "anima_relevance_note": "Anima inherits mk2 SSOT pattern via raw#47 30d-ramp once hive primary lands. mk2 modes block + cluster pattern is cross-repo applicable. Anima-side adoption is a separate cycle — this mirror is FYI for anima/clm/eeg coordination.",
+  "cross_link_to_hive_verdict": "/Users/ghost/core/hive/state/mk2_bulk_migration_exec_2026_05_04/verdict.json",
+  "cross_link_to_hand_review": "/Users/ghost/core/hive/state/mk2_bulk_migration_exec_2026_05_04/hand_review_queue.md",
+  "cross_link_to_migration_log": "/Users/ghost/core/hive/state/mk2_bulk_migration_exec_2026_05_04/migration_log.txt",
+  "honest_c3_top3": [
+    "L1. Migrator implemented as transient .py at /tmp (raw#37 exception per BG-β spec). Hexa map runtime semantics insufficient for 500+ LoC parser with multi-record state — verbose map_get/map_set vs python dict. Source preserved at /tmp/mk2_bulk_migrate.py for follow-up cycle hexa port.",
+    "L2. mk1 raw 87 in archive ≠ chflags-mandate (it's roadmap-raw-status-sync-witness). Mapping doc docs/raw_mk1_to_mk2_modes_mapping.ai.md references different rule numbering era. raw 195 substituted as chflags canonical-core anchor in cluster os-enforcement.002. Mapping-doc reconciliation = follow-up cycle.",
+    "L3. tool/raw_mk2_loader.hexa --selftest FAILs with pre-existing id-slice bug — same complaint pattern on lines 92-100 pre-migration (existing 14 mk2 rules). NOT a regression. Independent python json.loads validation confirms 228/228 rules schema-valid. Loader fix = follow-up cycle."
+  ]
+}

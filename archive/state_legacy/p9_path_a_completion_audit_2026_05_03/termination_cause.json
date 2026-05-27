@@ -1,0 +1,96 @@
+{
+  "schema": "anima/p9_path_a_completion_audit/termination_cause/1",
+  "ts_utc": "2026-05-03T21:48:00Z",
+  "pod_id": "29dhlqk508ugoc",
+  "termination_event": {
+    "ts_utc": "2026-05-03T21:34:13Z",
+    "actor": "host-side terminator script (host_pod_terminator.sh)",
+    "host": "Mac (cwd /Users/ghost/core/anima)",
+    "trigger_branch_taken": "error_path (ALIVE=0 AND DONE=0)",
+    "command_executed": "runpodctl pod delete 29dhlqk508ugoc",
+    "result": "{\"deleted\": true, \"id\": \"29dhlqk508ugoc\"}"
+  },
+  "trigger_evidence": {
+    "final_probe_ts": "2026-05-03T21:34:08Z",
+    "final_probe_result": "DONE=0 ALIVE=0 STEP=10000/10000",
+    "interpretation": "training process reached step 10000 (final step), then python process exited or was unreachable when terminator's ssh probe ran 5sec later — TRAIN_DONE.json marker had not been written yet"
+  },
+  "ranked_root_causes": [
+    {
+      "rank": 1,
+      "likelihood_pct": 60,
+      "cause": "Training completed successfully through trainer.train() + final HF push; process was in trainer.save_model('final') OR tok.save_pretrained('final') OR writing TRAIN_DONE.json when 10min terminator probe SSH'd in. Probe race: train pid had exited cleanly between 21:24 (step 9843, ALIVE=1) and 21:34 (step 10000, ALIVE=0).",
+      "supporting_evidence": [
+        "step monotonic 9843→10000 in 10min (~24s/step×6.5 = 158s+ buffer matches)",
+        "final hub push of step 10000 ckpt + final/ adapter save can take 30-90s for ~400MB LoRA",
+        "no error keywords in audit-1 log scan; loss healthy throughout",
+        "process exit between probe windows is plausible"
+      ],
+      "implication": "training PROBABLY succeeded; HF push PROBABLY succeeded for steps 2k-10k; final/ adapter may or may not have flushed to HF (push_to_hub at 'every_save' covers checkpoint dirs but final/ is a separate save_model call)"
+    },
+    {
+      "rank": 2,
+      "likelihood_pct": 25,
+      "cause": "Training reached step 10000 then crashed during final save (e.g., OOM during full state dump, HF push timeout/auth failure that propagated as exception, disk full)",
+      "supporting_evidence": [
+        "TRAIN_DONE.json was NOT written → final save sequence did NOT complete",
+        "could be silent failure in trainer.save_model OR token expiry mid-run OR network hiccup"
+      ],
+      "implication": "intermediate ckpts (step-2k through step-8k) almost certainly on HF; step-10k may or may not be on HF; final/ adapter likely missing"
+    },
+    {
+      "rank": 3,
+      "likelihood_pct": 10,
+      "cause": "RunPod-side OOM kill or container restart at moment of step 10000 final ops",
+      "supporting_evidence": [
+        "GPU mem at audit was only 35% (28GB/81GB) — large headroom; OOM unlikely but possible during final state dump",
+        "no direct evidence of host-side kill (RunPod doesn't surface kernel OOM in GraphQL)"
+      ],
+      "implication": "rare; ckpts pushed to HF at save_steps boundaries are safe"
+    },
+    {
+      "rank": 4,
+      "likelihood_pct": 4,
+      "cause": "RunPod spot/community-cloud preemption at 21:34Z",
+      "supporting_evidence": [
+        "pod was on standard cluster, not spot (per launch verdict podType not 'INTERRUPTABLE')",
+        "preemption typically gives notice; no preempt log found"
+      ],
+      "implication": "very unlikely; would have lost final-step push if true"
+    },
+    {
+      "rank": 5,
+      "likelihood_pct": 1,
+      "cause": "Manual termination by user via web console",
+      "supporting_evidence": [
+        "no user instruction in this audit thread for manual termination",
+        "host_terminator.log clearly attributes deletion to its own runpodctl call"
+      ],
+      "implication": "ruled out by host_terminator.log attribution"
+    }
+  ],
+  "definitive_finding": {
+    "actor": "host-side terminator script (host_pod_terminator.sh) running on Mac",
+    "trigger": "elif branch: ALIVE=0 AND DONE=0 → labeled 'error path'",
+    "rate_limited_by": "10-minute polling interval — created a 10min window where TRAIN_DONE.json write could be missed",
+    "NOT_caused_by": [
+      "28h hard cap (only 7.4h elapsed; 1543 minutes < 1680 cap)",
+      "RunPod platform action",
+      "user manual"
+    ]
+  },
+  "design_lesson": {
+    "issue": "10-min polling + 'ALIVE=0 AND DONE=0 = error' heuristic creates false-error termination if training completes within a poll window",
+    "recommendation_for_next_run": [
+      "(a) reduce poll interval to 1-2min in final-step neighborhood (e.g., when STEP > 0.95 × max_steps), OR",
+      "(b) use post-train hook script to write TRAIN_DONE.json atomically BEFORE python exits (currently it's AFTER trainer.save_model+save_pretrained), OR",
+      "(c) widen 'success window': if STEP=max_steps AND ALIVE=0 AND DONE=0, retry probe 60s later before declaring error — gives final save+marker time to flush",
+      "(d) BEST: write TRAIN_DONE.json IMMEDIATELY after trainer.train() returns, BEFORE final/ save (so marker presence is decoupled from final-adapter save success)"
+    ]
+  },
+  "raw10_honest_c3_caveats": [
+    "(a) The 'PROBABLY successful' verdict relies on circumstantial evidence (clean loss trajectory, on-pod token verified at 15:17Z, monotonic step progression). Live HF API check would prove it definitively but is blocked by stale Mac-side HF token.",
+    "(b) The 60% likelihood for cause #1 is heuristic, not a calibrated probability — it reflects pattern-match to typical SFT runs that complete cleanly + a 10min terminator window catching post-train exit.",
+    "(c) Even under cause #2 (final-save crash), checkpoints pushed at save_steps=2000 are safely on HF and recoverable for A' eval; only the strictly final step-10k commit + final/ adapter are at risk."
+  ]
+}

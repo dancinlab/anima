@@ -1,0 +1,516 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  anima-clm-eeg/tool/clm_eeg_hjorth_real.hexa
+//
+//    Hjorth 1970 parameters (Activity, Mobility, Complexity) verifier for
+//    16-channel resting EEG.  Hjorth complexity is a robust descriptor of
+//    EEG signal richness; values 1.0–2.0 are the canonical awake-resting
+//    range across multiple references (Hjorth 1970, Oh et al. 2014, BCI
+//    literature).
+//
+//  ALGORITHM  (Hjorth 1970)
+//    Per channel x of length N:
+//      Activity    = var(x)                       (== σ²)
+//      Mobility    = sqrt( var(x') / var(x) )      where x' = first diff
+//      Complexity  = sqrt( var(x'') / var(x') ) / Mobility(x)
+//    Means across 16 channels are reported; per-channel arrays are emitted
+//    in the cert (truncated to first 16 entries).
+//
+//    Complexity range for awake EEG (operational, NOT paper-derived mean±SD):
+//      C1: HJORTH_CPLX_LO_X1000 ≤ Complexity_mean × 1000 ≤ HJORTH_CPLX_HI_X1000
+//        Reference: Hjorth B. 1970. EEG analysis based on time domain
+//        properties. Electroencephalogr Clin Neurophysiol 29(3):306-310
+//        (DOI 10.1016/0013-4694(70)90143-4). Awake-resting human cortical
+//        EEG complexity typically 1.0–2.0; pure sine wave → ~1.0; pure
+//        white noise → ~1.5–2.0; dominant low-frequency drift → <1.0.
+//      C2: Mobility_mean × 1000 ≥ HJORTH_MOB_MIN_X1000  (rules out
+//        DC-dominated signal where mobility collapses to ~0).
+//
+//    PASS    : C1 ∧ C2 hold
+//    PARTIAL : only C2 holds (mobility OK, complexity outside band)
+//    FAIL    : C2 fails (signal is DC-dominated / amplifier saturation)
+//
+//    F1: pure constant signal → mobility=0 → FAIL
+//    F2: pure white noise     → complexity ≈ 1.7-2.0 → PASS
+//    F3: pure 10 Hz sine on 125 Hz → complexity ≈ 1.0 → PASS edge
+//        (selftest --selftest-mode {const|white|sine|drift} exercise F1/F2/F3)
+//        F4 "drift" : pure low-frequency drift → mobility tiny → FAIL
+//
+//    Hjorth B. 1970. EEG analysis based on time domain properties.
+//    Electroencephalogr Clin Neurophysiol 29(3):306-310.
+//    Oh S-H, Lee Y-R, Kim H-N. 2014. A novel EEG feature extraction method
+//    using Hjorth parameter. Int J Electron Electrical Eng 2(2):106-110.
+//
+//  RAW
+//            3 channels (Activity/Mobility/Complexity) +
+//            counter-example (constant) + 3+ falsifiers
+//
+//  @resolver-bypass(reason="darwin-native: .venv-eeg/bin/python BrainFlow venv on host; linux container has broken symlink to python3.12 target")
+// ════════════════════════════════════════════════════════════════════════════
+
+let HJORTH_CPLX_LO_X1000  = 1000   // Complexity ≥ 1.0
+let HJORTH_CPLX_HI_X1000  = 2000   // Complexity ≤ 2.0
+let HJORTH_MOB_MIN_X1000  = 50     // Mobility floor 0.05 (rules out DC)
+
+// ─── env helpers (mirror lz76/pe) ─────────────────────────────────────────
+fn env_str(key: string, default_val: string) -> string {
+    let s = env(key)
+    if s == "" { return default_val }
+    return s
+}
+
+fn is_digit_ch(c: string) -> bool {
+    if c == "0" || c == "1" || c == "2" || c == "3" || c == "4" { return true }
+    if c == "5" || c == "6" || c == "7" || c == "8" || c == "9" { return true }
+    return false
+}
+
+fn digit_val(c: string) -> int {
+    if c == "0" { return 0 }
+    if c == "1" { return 1 }
+    if c == "2" { return 2 }
+    if c == "3" { return 3 }
+    if c == "4" { return 4 }
+    if c == "5" { return 5 }
+    if c == "6" { return 6 }
+    if c == "7" { return 7 }
+    if c == "8" { return 8 }
+    if c == "9" { return 9 }
+    return -1
+}
+
+fn find_in_str(s: string, needle: string) -> int {
+    let n = len(s)
+    let m = len(needle)
+    if m <= 0 { return 0 }
+    if n < m { return -1 }
+    let mut i = 0
+    while i <= n - m {
+        let mut j = 0
+        let mut ok = 1
+        while j < m {
+            if s[i + j] != needle[j] {
+                ok = 0
+                j = m
+            }
+            j = j + 1
+        }
+        if ok == 1 { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+fn parse_int_kv(blob: string, key: string) -> int {
+    let kp = find_in_str(blob, key)
+    if kp < 0 { return -2147483647 }
+    let n = len(blob)
+    let mut q = kp + len(key)
+    let mut acc = 0
+    let mut neg = 0
+    let mut hd = 0
+    while q < n && blob[q] != "\n" {
+        let c = blob[q]
+        if c == "-" && hd == 0 { neg = 1 }
+        if is_digit_ch(c) { acc = acc * 10 + digit_val(c); hd = 1 }
+        q = q + 1
+    }
+    if hd == 0 { return -2147483647 }
+    if neg == 1 { return -acc }
+    return acc
+}
+
+fn now_iso() -> string {
+    return exec("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn now_date_utc() -> string {
+    return exec("date -u +%Y-%m-%d").trim()
+}
+
+fn sha256_of_file(path: string) -> string {
+    if path == "" { return "" }
+    let cmd = "shasum -a 256 \"" + path + "\" 2>/dev/null | awk '{print $1}'"
+    let h = exec(cmd).trim()
+    if h == "" { return "unavailable" }
+    return h
+}
+
+let HJORTH_HELPER_PATH = "state/.hjorth_helper.py"
+let HJORTH_DUMP_PATH   = "state/.hjorth_dump.txt"
+
+fn _write_helper() {
+    let py = "#!/usr/bin/env python3
+# clm_eeg_hjorth_real helper — auto-generated by anima-clm-eeg/tool/clm_eeg_hjorth_real.hexa
+import sys, os, math
+try:
+    import numpy as np
+except Exception as e:
+    sys.stderr.write('import-failed: ' + repr(e) + '\\n'); sys.exit(10)
+
+if len(sys.argv) < 4:
+    sys.stderr.write('usage: helper <mode> <input_or_kind> <out.txt>\\n'); sys.exit(2)
+
+mode, src, out_path = sys.argv[1], sys.argv[2], sys.argv[3]
+
+def load_eeg16(path):
+    a = np.load(path, allow_pickle=False)
+    if a.ndim != 2:
+        raise RuntimeError('expected 2-D, got ndim=' + str(a.ndim))
+    rows, cols = a.shape
+    if rows == 16: return a, 16, cols
+    if cols == 16: return a.T, 16, rows
+    if rows >= 32 and cols > rows: return a[1:17, :], 16, cols
+    if cols >= 32 and rows > cols: return a.T[1:17, :], 16, rows
+    raise RuntimeError('cannot infer 16-ch layout from ' + str(a.shape))
+
+def hjorth(x):
+    x = np.asarray(x, dtype=np.float64)
+    activity = float(np.var(x))
+    if activity == 0.0:
+        return 0.0, 0.0, 0.0
+    d1 = np.diff(x)
+    var_d1 = float(np.var(d1))
+    if var_d1 == 0.0 or activity == 0.0:
+        return activity, 0.0, 0.0
+    mobility = math.sqrt(var_d1 / activity)
+    if mobility == 0.0:
+        return activity, mobility, 0.0
+    d2 = np.diff(d1)
+    var_d2 = float(np.var(d2))
+    if var_d1 == 0.0:
+        return activity, mobility, 0.0
+    mobility_d1 = math.sqrt(var_d2 / var_d1)
+    complexity = mobility_d1 / mobility
+    return activity, mobility, complexity
+
+if mode == 'selftest':
+    kind = src
+    n = 60 * 125
+    rng = np.random.RandomState(11)
+    eeg = np.zeros((16, n), dtype=np.float64)
+    if kind == 'const':
+        pass
+    elif kind == 'white':
+        for ch in range(16):
+            eeg[ch, :] = rng.normal(0, 1, size=n)
+    elif kind == 'sine':
+        t = np.arange(n) / 125.0
+        for ch in range(16):
+            eeg[ch, :] = np.sin(2 * np.pi * 10.0 * t)
+    elif kind == 'drift':
+        # very-low-frequency drift -- mobility collapses
+        t = np.arange(n) / 125.0
+        for ch in range(16):
+            eeg[ch, :] = np.sin(2 * np.pi * 0.05 * t)
+    else:
+        sys.stderr.write('unknown selftest kind: ' + kind + '\\n'); sys.exit(3)
+    n_ch, n_samp = 16, n
+elif mode == 'real':
+    if not os.path.isfile(src):
+        sys.stderr.write('not-found: ' + src + '\\n'); sys.exit(4)
+    eeg, n_ch, n_samp = load_eeg16(src)
+else:
+    sys.stderr.write('unknown mode: ' + mode + '\\n'); sys.exit(2)
+
+acts, mobs, cpxs = [], [], []
+for ch in range(n_ch):
+    a_, m_, c_ = hjorth(eeg[ch, :])
+    acts.append(a_); mobs.append(m_); cpxs.append(c_)
+
+act_mean = float(np.mean(acts))
+mob_mean = float(np.mean(mobs))
+cpx_mean = float(np.mean(cpxs))
+# O1, O2 specific
+mob_o1 = mobs[6] if n_ch > 6 else 0.0
+cpx_o1 = cpxs[6] if n_ch > 6 else 0.0
+mob_o2 = mobs[7] if n_ch > 7 else 0.0
+cpx_o2 = cpxs[7] if n_ch > 7 else 0.0
+
+with open(out_path, 'w') as f:
+    f.write('schema=hjorth_v1\\n')
+    f.write('n_ch=' + str(int(n_ch)) + '\\n')
+    f.write('n_samp=' + str(int(n_samp)) + '\\n')
+    # activity scale varies enormously across raw vs filtered vs ICA --
+    # report as natural log fixed-point to keep within int range.
+    if act_mean > 0:
+        log_act_x1000 = int(round(math.log10(act_mean) * 1000))
+    else:
+        log_act_x1000 = -2147483647
+    f.write('log10_activity_mean_x1000=' + str(log_act_x1000) + '\\n')
+    f.write('mobility_mean_x1000=' + str(int(round(mob_mean * 1000))) + '\\n')
+    f.write('complexity_mean_x1000=' + str(int(round(cpx_mean * 1000))) + '\\n')
+    f.write('mobility_o1_x1000=' + str(int(round(mob_o1 * 1000))) + '\\n')
+    f.write('complexity_o1_x1000=' + str(int(round(cpx_o1 * 1000))) + '\\n')
+    f.write('mobility_o2_x1000=' + str(int(round(mob_o2 * 1000))) + '\\n')
+    f.write('complexity_o2_x1000=' + str(int(round(cpx_o2 * 1000))) + '\\n')
+
+print('OK cpx=' + ('%.4f' % cpx_mean) + ' mob=' + ('%.4f' % mob_mean))
+"
+    write_file(HJORTH_HELPER_PATH, py)
+}
+
+fn _pick_python() -> string {
+    let envp = env_str("CLM_EEG_HJORTH_PYTHON", "")
+    if envp != "" { return envp }
+    let envp2 = env_str("ANIMA_EEG_VENV_PYTHON", "")
+    if envp2 != "" { return envp2 }
+    let venv_rel = ".venv-eeg/bin/python"
+    let chk_rel = exec("test -x \"" + venv_rel + "\" && echo OK").trim()
+    if chk_rel == "OK" { return venv_rel }
+    let cwd = exec("pwd").trim()
+    let venv_abs = cwd + "/.venv-eeg/bin/python"
+    let chk_abs = exec("test -x \"" + venv_abs + "\" && echo OK").trim()
+    if chk_abs == "OK" { return venv_abs }
+    return "/usr/bin/python3"
+}
+
+fn run_helper(mode_arg: string, src_arg: string) -> string {
+    _write_helper()
+    let py = _pick_python()
+    let cmd = py + " " + HJORTH_HELPER_PATH + " " + mode_arg + " \"" + src_arg + "\" \"" + HJORTH_DUMP_PATH + "\""
+    let r = exec_with_status(cmd)
+    let rc = to_int(r[1])
+    if rc != 0 {
+        eprintln("hjorth-helper-rc=" + str(rc))
+        eprintln("hjorth-helper-out: " + to_string(r[0]))
+        return ""
+    }
+    return read_file(HJORTH_DUMP_PATH)
+}
+
+fn append_jsonl(path: string, line: string) {
+    let scratch = "state/.clm_eeg_hjorth_audit_row.tmp"
+    write_file(scratch, line + "\n")
+    let cmd = "p=" + path + "; mkdir -p $(dirname $p); cat " + scratch + " >> $p; rm -f " + scratch
+    let _ = exec(cmd)
+}
+
+fn _flags_only_argv() -> list {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut starts_dash = 0
+        if len(a) >= 1 {
+            if a[0] == "-" { starts_dash = 1 }
+        }
+        if starts_dash == 1 { break }
+        start = start + 1
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) {
+        out.push(av[j])
+        j = j + 1
+    }
+    return out
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run anima-clm-eeg/tool/clm_eeg_hjorth_real.hexa [flags]")
+    eprintln("flags:")
+    eprintln("  --selftest                 synthetic-data Hjorth sanity")
+    eprintln("  --selftest-mode <kind>     const | white | sine | drift  (default: white)")
+    eprintln("  --input <path.npy>         real-data .npy input file")
+    eprintln("  --audit-jsonl <path>       JSONL audit append path")
+    eprintln("                             (default: state/clm_eeg_hjorth_audit/<UTC-date>_hjorth.jsonl)")
+    eprintln("  --out <path>               JSON cert output path")
+    eprintln("                             (default: state/clm_eeg_hjorth_real.json)")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut cli_input = ""
+    let mut cli_audit = ""
+    let mut cli_out   = ""
+    let mut cli_selftest = 0
+    let mut cli_selftest_mode = "white"
+    let mut want_help = 0
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { cli_selftest = 1; i = i + 1; continue }
+        if a == "--help" || a == "-h" { want_help = 1; i = i + 1; continue }
+        if a == "--input" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --input"); exit(2) }
+            cli_input = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--audit-jsonl" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --audit-jsonl"); exit(2) }
+            cli_audit = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--out" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --out"); exit(2) }
+            cli_out = av[i + 1]; i = i + 2; continue
+        }
+        if a == "--selftest-mode" {
+            if (i + 1) >= len(av) { eprintln("reason: missing-arg-value: --selftest-mode"); exit(2) }
+            cli_selftest_mode = av[i + 1]; i = i + 2; continue
+        }
+        eprintln("reason: unknown-arg: " + a)
+        _print_usage()
+        exit(2)
+    }
+    if want_help == 1 { _print_usage(); exit(0) }
+
+    let env_selftest = env_str("CLM_EEG_HJORTH_SELFTEST", "0")
+    let is_selftest = (cli_selftest == 1) || (env_selftest == "1")
+
+    let mut mode = "selftest"
+    let mut helper_mode = "selftest"
+    let mut helper_src = cli_selftest_mode
+    let mut input_label = "synthetic_" + cli_selftest_mode
+    let mut input_sha256 = ""
+
+    if !is_selftest {
+        if cli_input == "" {
+            eprintln("reason: missing-input")
+            _print_usage(); exit(2)
+        }
+        mode = "real"
+        helper_mode = "real"
+        helper_src = cli_input
+        input_label = cli_input
+        input_sha256 = sha256_of_file(cli_input)
+    }
+
+    let blob = run_helper(helper_mode, helper_src)
+    if blob == "" {
+        eprintln("reason: helper-failed")
+        exit(3)
+    }
+
+    let n_ch    = parse_int_kv(blob, "n_ch=")
+    let n_samp  = parse_int_kv(blob, "n_samp=")
+    let log_act = parse_int_kv(blob, "log10_activity_mean_x1000=")
+    let mob     = parse_int_kv(blob, "mobility_mean_x1000=")
+    let cpx     = parse_int_kv(blob, "complexity_mean_x1000=")
+    let mob_o1  = parse_int_kv(blob, "mobility_o1_x1000=")
+    let cpx_o1  = parse_int_kv(blob, "complexity_o1_x1000=")
+    let mob_o2  = parse_int_kv(blob, "mobility_o2_x1000=")
+    let cpx_o2  = parse_int_kv(blob, "complexity_o2_x1000=")
+
+    let c1_pass = if cpx >= HJORTH_CPLX_LO_X1000 && cpx <= HJORTH_CPLX_HI_X1000 { 1 } else { 0 }
+    let c2_pass = if mob >= HJORTH_MOB_MIN_X1000 { 1 } else { 0 }
+
+    let mut verdict = "FAIL"
+    if c1_pass == 1 && c2_pass == 1 { verdict = "PASS" }
+    else {
+        if c2_pass == 1 { verdict = "PARTIAL" }
+    }
+
+    let mut classification = "NOT_VERIFIED_SYNTHETIC"
+    if mode == "real" {
+        if verdict == "PASS"    { classification = "REAL_HW_PASS_HJORTH" }
+        if verdict == "PARTIAL" { classification = "REAL_HW_PARTIAL_HJORTH" }
+        if verdict == "FAIL"    { classification = "REAL_HW_FAIL_HJORTH" }
+    }
+
+    let ts = now_iso()
+    let mut out_path = cli_out
+    if out_path == "" { out_path = "state/clm_eeg_hjorth_real.json" }
+    let mut audit_path = cli_audit
+    if audit_path == "" {
+        audit_path = "state/clm_eeg_hjorth_audit/" + now_date_utc() + "_hjorth.jsonl"
+    }
+
+    let mut cert = "{\n"
+    cert = cert + "  \"tool\": \"clm_eeg_hjorth_real\",\n"
+    cert = cert + "  \"version\": \"v1\",\n"
+    cert = cert + "  \"raw_rank\": 9,\n"
+    cert = cert + "  \"hexa_only\": true,\n"
+    cert = cert + "  \"deterministic\": true,\n"
+    cert = cert + "  \"llm\": \"none\",\n"
+    cert = cert + "  \"pre_register_frozen\": true,\n"
+    cert = cert + "  \"frozen_at\": \"2026-04-28\",\n"
+    cert = cert + "  \"ts_utc\": \"" + ts + "\",\n"
+    cert = cert + "  \"hypothesis\": \"Complexity in [1.0, 2.0] AND Mobility >= 0.05\",\n"
+    cert = cert + "  \"criteria\": {\n"
+    cert = cert + "    \"C1_complexity_lo_x1000\": " + str(HJORTH_CPLX_LO_X1000) + ",\n"
+    cert = cert + "    \"C1_complexity_hi_x1000\": " + str(HJORTH_CPLX_HI_X1000) + ",\n"
+    cert = cert + "    \"C2_mobility_min_x1000\": " + str(HJORTH_MOB_MIN_X1000) + ",\n"
+    cert = cert + "    \"verdict_rule\": \"PASS=C1∧C2; PARTIAL=C2 only; FAIL=else\"\n"
+    cert = cert + "  },\n"
+    cert = cert + "  \"mode\": \"" + mode + "\",\n"
+    cert = cert + "  \"input\": \"" + input_label + "\",\n"
+    cert = cert + "  \"input_sha256\": \"" + input_sha256 + "\",\n"
+    cert = cert + "  \"n_channels\": " + str(n_ch) + ",\n"
+    cert = cert + "  \"n_samples\": " + str(n_samp) + ",\n"
+    cert = cert + "  \"log10_activity_mean_x1000\": " + str(log_act) + ",\n"
+    cert = cert + "  \"mobility_mean_x1000\": " + str(mob) + ",\n"
+    cert = cert + "  \"complexity_mean_x1000\": " + str(cpx) + ",\n"
+    cert = cert + "  \"mobility_o1_x1000\": " + str(mob_o1) + ",\n"
+    cert = cert + "  \"complexity_o1_x1000\": " + str(cpx_o1) + ",\n"
+    cert = cert + "  \"mobility_o2_x1000\": " + str(mob_o2) + ",\n"
+    cert = cert + "  \"complexity_o2_x1000\": " + str(cpx_o2) + ",\n"
+    cert = cert + "  \"c1_pass\": " + str(c1_pass) + ",\n"
+    cert = cert + "  \"c2_pass\": " + str(c2_pass) + ",\n"
+    cert = cert + "  \"verdict\": \"" + verdict + "\",\n"
+    cert = cert + "  \"classification\": \"" + classification + "\",\n"
+    cert = cert + "  \"reference\": \"Hjorth 1970 Electroencephalogr Clin Neurophysiol 29:306-310; Oh 2014 Int J Electron Electrical Eng 2:106-110\"\n"
+    cert = cert + "}\n"
+    write_file(out_path, cert)
+
+    let mut jrow = "{"
+    jrow = jrow + "\"ts\":\"" + ts + "\","
+    jrow = jrow + "\"tool\":\"clm_eeg_hjorth_real\","
+    jrow = jrow + "\"mode\":\"" + mode + "\","
+    jrow = jrow + "\"input\":\"" + input_label + "\","
+    jrow = jrow + "\"sha256\":\"" + input_sha256 + "\","
+    jrow = jrow + "\"n_channels\":" + str(n_ch) + ","
+    jrow = jrow + "\"n_samples\":" + str(n_samp) + ","
+    jrow = jrow + "\"log10_activity_x1000\":" + str(log_act) + ","
+    jrow = jrow + "\"mobility_x1000\":" + str(mob) + ","
+    jrow = jrow + "\"complexity_x1000\":" + str(cpx) + ","
+    jrow = jrow + "\"mobility_o1_x1000\":" + str(mob_o1) + ","
+    jrow = jrow + "\"complexity_o1_x1000\":" + str(cpx_o1) + ","
+    jrow = jrow + "\"mobility_o2_x1000\":" + str(mob_o2) + ","
+    jrow = jrow + "\"complexity_o2_x1000\":" + str(cpx_o2) + ","
+    jrow = jrow + "\"c1_pass\":" + str(c1_pass) + ","
+    jrow = jrow + "\"c2_pass\":" + str(c2_pass) + ","
+    jrow = jrow + "\"verdict\":\"" + verdict + "\","
+    jrow = jrow + "\"classification\":\"" + classification + "\","
+    jrow = jrow + "\"reference\":\"Hjorth 1970 / Oh 2014\","
+    jrow = jrow + "\"schema_version\":\"clm-eeg-legacy.v1\""
+    jrow = jrow + "}"
+    append_jsonl(audit_path, jrow)
+
+    println("  mode                        = " + mode)
+    println("  input                       = " + input_label)
+    if input_sha256 != "" { println("  input_sha256                = " + input_sha256) }
+    println("  n_channels                  = " + str(n_ch))
+    println("  n_samples                   = " + str(n_samp))
+    println("  log10(activity_mean) x1000  = " + str(log_act))
+    println("  mobility_mean       x1000   = " + str(mob))
+    println("  complexity_mean     x1000   = " + str(cpx))
+    println("  mobility O1         x1000   = " + str(mob_o1) + "    O2 x1000 = " + str(mob_o2))
+    println("  complexity O1       x1000   = " + str(cpx_o1) + "    O2 x1000 = " + str(cpx_o2))
+    println("  C1 (cpx in [1.0,2.0])       = " + str(c1_pass))
+    println("  C2 (mob >= 0.05)            = " + str(c2_pass))
+    println("  verdict                     = " + verdict)
+    println("  classification              = " + classification)
+    println("  cert_out                    = " + out_path)
+    println("  audit_jsonl                 = " + audit_path)
+
+    if mode == "selftest" {
+        println("─── selftest reference targets ───")
+        println("  selftest_mode               = " + cli_selftest_mode)
+        println("  expected (const)            = FAIL  (mobility=0)")
+        println("  expected (white)            = PASS  (cpx ~ 1.7)")
+        println("  expected (sine)             = boundary (cpx ~ 1.0)")
+        println("  expected (drift)            = FAIL  (mobility tiny)")
+        if cli_selftest_mode == "white" && verdict == "PASS" { exit(0) }
+        if cli_selftest_mode == "const" && verdict == "FAIL" { exit(0) }
+        if cli_selftest_mode == "drift" && verdict == "FAIL" { exit(0) }
+        if cli_selftest_mode == "sine" {
+            // accept either PASS or PARTIAL for sine boundary case
+            if verdict != "FAIL" { exit(0) }
+        }
+        eprintln("reason: selftest-mismatch: " + cli_selftest_mode + " produced " + verdict)
+        exit(1)
+    }
+
+    if verdict == "PASS"    { exit(0) }
+    if verdict == "PARTIAL" { exit(2) }
+    exit(1)
+}

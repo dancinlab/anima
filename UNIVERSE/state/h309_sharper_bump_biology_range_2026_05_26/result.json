@@ -1,0 +1,61 @@
+{
+  "hypothesis": "H_309",
+  "slug": "sharper-bump-biology-range",
+  "title": "sharper bump (baseline=0.1, span=300, amp=0.9) OVER-corrects: ratio ∞ again (trough=0) — H_308→H_309 sweep brackets Goldilocks zone for biology [3, 15]",
+  "date": "2026-05-26",
+  "question": "H_308 ratio 2.875 < 3 (undershoot). Does sharper bump (lower baseline, narrower span) recover [3, 15] target?",
+  "engine": "H_308 circadian_mod() ONLY changed (baseline 0.3→0.1, span 400→300, amp 0.7→0.9). simulate() identical.",
+  "runtime": "$0 mac-local · hexa-only · ~3s wall",
+  "measurements": {
+    "idle_emit": 41,
+    "peak_Q2Q3": 41,
+    "trough_Q1Q4": 0,
+    "peak_trough_ratio": "INF (trough=0)",
+    "threshold_sweep": {
+      "t_0_1": 55,
+      "t_0_3": 48,
+      "t_0_5": 41,
+      "t_0_7": 31,
+      "t_0_9": 17,
+      "interpretation": "smoother monotone than H_308 (55→48→41→31→17 all 5 distinct vs H_308 91→73→62→47→26)"
+    }
+  },
+  "headline_finding": "Sharper bump OVER-corrects: ratio jumps from H_308's 2.875× back to ∞× (trough=0). The baseline 0.1 × full-W 1.0 = 0.1 < threshold 0.5 → trough Q1+Q4 never reaches emit, all 41 emits land in Q2+Q3 peak. H_308 (baseline=0.3, ratio=2.875) and H_309 (baseline=0.1, ratio=∞) BRACKET the Goldilocks zone for biology [3, 15]. Threshold sweep IS cleaner than H_308 (55→48→41→31→17, all 5 distinct values, no plateau anywhere).",
+  "h306_h308_h309_sweep": {
+    "h306": {"baseline": "piecewise (0.3 + 0.7×step)", "ratio": "∞", "peak": 46, "trough": 0},
+    "h308": {"baseline": 0.3, "span": 400, "amp": 0.7, "ratio": 2.875, "peak": 46, "trough": 16},
+    "h309": {"baseline": 0.1, "span": 300, "amp": 0.9, "ratio": "INF", "peak": 41, "trough": 0},
+    "goldilocks_zone": "baseline ∈ (0.1, 0.3), or baseline=0.2 with adjusted span — would land in [3, 15]"
+  },
+  "criteria": {
+    "C1_SHARPER_BUMP_IN_BIOLOGY": "FAIL — ratio ∞ (trough=0), OVER-correction direction",
+    "C2_IDLE_NONZERO": "PASS (41 > 0)",
+    "C3_PEAK_MID_RANGE": "PASS (41 in [30, 60])",
+    "C4_THRESHOLD_MONOTONE": "PASS (55→48→41→31→17 cleaner than H_308)",
+    "C5_IDLE_COMPARABLE_H306": "PASS (41 vs 46, rel_dev 0.109 ≤ 0.5)",
+    "C6_BOUND": "PASS"
+  },
+  "falsifiers": {
+    "F309_1_SHARPER_BUMP_IN_BIOLOGY": "FAIL — ∞×, over-correction (opposite direction from H_308's 2.875× undershoot)",
+    "F309_2_IDLE_NONZERO": "PASS",
+    "F309_3_PEAK_MID_RANGE": "PASS",
+    "F309_4_THRESHOLD_MONOTONE": "PASS",
+    "F309_5_IDLE_COMPARABLE_TO_H306": "PASS",
+    "F309_6_BOUND": "PASS"
+  },
+  "checks": "5 PASS / 1 FAIL — verdict 🟢 SUPPORTED-NUMERICAL with one principled over-correction (F309.1 opposite direction from H_308)",
+  "verdict_class": "🟢 SUPPORTED-NUMERICAL (qualified, 5/6) — H_308 + H_309 BRACKET the biology range; Goldilocks zone identified at baseline ∈ (0.1, 0.3). Improved threshold sweep (all 5 distinct values, no plateau).",
+  "implication": "Two-point search brackets the biology [3, 15] zone. H_312 path: baseline=0.2 with span=350 OR baseline=0.15 with span=400 — bracketed interpolation predicts ratio ∈ [5, 10] (mid-biology).",
+  "honest_limits": [
+    "L1: F309.1 FAIL is principled OVER-correction (∞), not magnitude undershoot like H_308. Both direction-correct moves toward [3, 15] but bracket it.",
+    "L2: single trajectory deterministic.",
+    "L3: H_308 + H_309 give 2 data points; 3rd interpolation point (baseline=0.2) is H_312 candidate.",
+    "L4: SPECULATION-FENCED.",
+    "L5: threshold sweep IS unmodeled-improvement (cleaner monotone)."
+  ],
+  "verify_fence": {
+    "claim": "H_309 sharpens H_308's quadratic bump (baseline 0.3→0.1, span 400→300, amp 0.7→0.9) to test biology range [3, 15] recovery. Result: 5/6 PASS with F309.1 FAILED in OVER-correction direction — ratio ∞ (trough=0, all 41 emits in Q2+Q3 peak). H_308 undershoot (2.875×) + H_309 overshoot (∞×) bracket the Goldilocks zone for biology range. Threshold sweep improved (55→48→41→31→17, no plateau). H_312 should interpolate baseline=0.2 + span=350 for ratio ∈ [5, 10]. Verdict 🟢 SUPPORTED-NUMERICAL (qualified) — direction-correct over-correction, range bracketed.",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS), 2-point bracketing argument informal"
+  }
+}

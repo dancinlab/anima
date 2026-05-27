@@ -1,0 +1,28 @@
+{
+  "ts": "2026-05-07T16:14:23",
+  "bg_id": "BG-JY",
+  "sources": {
+    "bg_je_stitched": {
+      "input_blocks_parsed_cap": 400000,
+      "output_samples": 109670,
+      "description": "BG-JE single-turn QA (anima persona-conditioned: NEXUS-UBM/우주뇌지도/identity) re-formatted into multi-turn samples by random stitching within same persona bucket."
+    },
+    "koalpaca_v1_1a": {
+      "input_pairs_max": 25000,
+      "output_samples": 810,
+      "description": "beomi/KoAlpaca-v1.1a Naver kin Korean Q&A pairs stitched into multi-turn samples."
+    }
+  },
+  "per_sample_filters": {
+    "hangul_min_ratio": 0.45,
+    "min_bytes": 80,
+    "max_bytes": 1500,
+    "min_turns": 2,
+    "max_turns": 4
+  },
+  "n_turns_distribution": {
+    "2": 42126,
+    "4": 29957,
+    "3": 38397
+  }
+}

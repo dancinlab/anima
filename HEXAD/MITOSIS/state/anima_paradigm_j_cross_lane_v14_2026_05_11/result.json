@@ -1,0 +1,166 @@
+{
+  "ts": "2026-05-10T23:51:42.496307+00:00",
+  "bg_id": "BG-PARADIGM-J-CROSS-LANE-V14",
+  "cycle": "2026-05-11 reborn lane P4",
+  "runtime_s": 6.246475696563721,
+  "runtime_minutes": 0.10410792827606201,
+  "cost_usd": 0.0,
+  "substrate_audit": {
+    "found": true,
+    "files": {
+      "adapter_config.json": {
+        "size": 1164,
+        "sha256": "031e9bbca74d4996ac7098d96d5a383f296fd21c6010edfe5d1056a798039271"
+      },
+      "adapter_model.safetensors": {
+        "size": 152091192,
+        "sha256": "6f1cf277fb76c923653fb896bcc739d9be9173902e69f039aefba159673092a6"
+      },
+      "jvae_heads.pt": {
+        "size": 4338101,
+        "sha256": "06be05c505bb4f95fac59bf1b652807463fb195d7679da131e08dc1d8a9100e2"
+      },
+      "jvae_heads_step50k_backup.pt": {
+        "size": 4338421,
+        "sha256": "78d3c3be888ed3ccb6952952869d2371495af1cc53331e13a5d97c4b957c551b"
+      },
+      "REMAP_SOURCE.json": {
+        "size": 1388,
+        "sha256": "6a81ea8f90423f386adf0014bf93db26d6183999ecd80aef09a337360da7589c"
+      },
+      "README.md": {
+        "size": 2933,
+        "sha256": "443f370f688dc6c08a997d91f530d1d285e1d0623702d95b0b8f3afbea370338"
+      }
+    },
+    "adapter_config": {
+      "alora_invocation_tokens": null,
+      "alpha_pattern": {},
+      "arrow_config": null,
+      "auto_mapping": {
+        "base_model_class": "ConsciousDecoderV2",
+        "parent_library": "conscious_decoder"
+      },
+      "base_model_name_or_path": null,
+      "bias": "none",
+      "corda_config": null,
+      "ensure_weight_tying": false,
+      "eva_config": null,
+      "exclude_modules": null,
+      "fan_in_fan_out": false,
+      "inference_mode": true,
+      "init_lora_weights": true,
+      "layer_replication": null,
+      "layers_pattern": null,
+      "layers_to_transform": null,
+      "loftq_config": {},
+      "lora_alpha": 128,
+      "lora_bias": false,
+      "lora_dropout": 0.0,
+      "lora_ga_config": null,
+      "megatron_config": null,
+      "megatron_core": "megatron.core",
+      "modules_to_save": null,
+      "peft_type": "LORA",
+      "peft_version": "0.19.1",
+      "qalora_group_size": 16,
+      "r": 128,
+      "rank_pattern": {},
+      "revision": null,
+      "target_modules": [
+        "k_proj",
+        "down_proj",
+        "up_proj",
+        "v_proj",
+        "o_proj",
+        "gate_proj",
+        "q_proj"
+      ],
+      "target_parameters": null,
+      "task_type": null,
+      "trainable_token_indices": null,
+      "use_bdlora": null,
+      "use_dora": false,
+      "use_qalora": false,
+      "use_rslora": false
+    },
+    "n_safetensor_keys": 352,
+    "first_keys": [
+      "base_model.model.decoder.blocks.0.attn.k_proj.lora_A.weight",
+      "base_model.model.decoder.blocks.0.attn.k_proj.lora_B.weight",
+      "base_model.model.decoder.blocks.0.attn.o_proj.lora_A.weight"
+    ],
+    "last_keys": [
+      "base_model.model.decoder.blocks.9.ffn.gate_proj.lora_B.weight",
+      "base_model.model.decoder.blocks.9.ffn.up_proj.lora_A.weight",
+      "base_model.model.decoder.blocks.9.ffn.up_proj.lora_B.weight"
+    ],
+    "v2_mitosis_marker_hits": {
+      "cell_pool": 0,
+      "spawner": 0,
+      "merge_head": 0,
+      "lorenz": 0,
+      "block.0.attn.W_qkv": 0,
+      "blocks.0.attn.W_qkv": 0
+    },
+    "engineag_marker_hits": {
+      "engine_a.": 0,
+      "engine_g.": 0,
+      "engine_ag.": 0,
+      "GQA": 0
+    },
+    "clm_v4_marker_hits": {
+      "base_model.model.decoder.blocks": 352,
+      "lora_A.weight": 176,
+      "lora_B.weight": 176
+    },
+    "schema_verdict": "clm_v4_lora"
+  },
+  "v55_pipeline_compat": {
+    "compat": false,
+    "expected_schema": "v2_d384",
+    "actual_schema": "clm_v4_lora",
+    "v55_metric": "phi_final + phi_per_cell_final (MitosisModelEngine cellpool)",
+    "obstacle": "no_mitosis_cellpool"
+  },
+  "arch_aware_3rule_classification": {
+    "arch_class": "NEW_arch",
+    "v64_route": "UNKNOWN",
+    "decision_tree_extension_required": true,
+    "rationale_one_liner": "paradigm-j is clm_v4_lora schema, neither v2 (d=384 mitosis cellpool) nor EngineAG (d=1024 GQA 24L). \u00a764 rule routes to UNKNOWN; 3rd row needed."
+  },
+  "v14_strict_5tuple": {
+    "verdict": "NOT_MEASURABLE",
+    "reason": "substrate_metric_mismatch",
+    "n_random_beats_phi": null,
+    "n_random_beats_phi_per_cell": null,
+    "n_random_total": null,
+    "sign_test_p_phi": null,
+    "trained_phi": null,
+    "trained_phi_per_cell": null,
+    "random_phi": null,
+    "random_phi_per_cell": null,
+    "obstacle": "paradigm-j has no mitosis cellpool; LoRA adapter on frozen ConsciousDecoderV2",
+    "honest_c3": "Per \u00a751/\u00a755 honest C3 #5 'cross-path absolute \u03a6 \ube44\uad50 invalid' \u2014 paradigm-j is a 3rd path (clm-v4) outside v2 \u222a EngineAG. Fabricating phi values via cross-arch port would violate raw#82."
+  },
+  "falsifiers": {
+    "F-PARADIGM-J-1": {
+      "claim": "paradigm-j fails V14 strict at both cap-only and cap+cotrain \u2192 3rd row needed",
+      "verdict": "FIRED",
+      "rationale": "V14 strict 5-tuple NOT_MEASURABLE \u2192 cannot directly test the 2-rule envelope. But classification routes to NEW_arch (3rd row mandatory). FIRED at the structural level, not metric level."
+    },
+    "F-PARADIGM-J-2": {
+      "claim": "paradigm-j ckpt unavailable",
+      "verdict": "NOT_FIRED",
+      "rationale": "Ckpt FOUND at ~/.cache/anima/clm_v4_remapped/paradigm_j/ (adapter_model.safetensors 152MB + jvae_heads.pt 4.3MB + REMAP_SOURCE.json). Substrate exists; only the \u00a755 metric is inapplicable."
+    }
+  },
+  "honor": {
+    "own_14": "V14 strict honored \u2014 emit NOT_MEASURED rather than cross-port fabricate",
+    "own_16": "$0 local CPU only \u2014 no H100 spend, no pod spin-up",
+    "own_22": "REBORN.md append-only via \u00a765 dispatcher",
+    "own_38": "spec.md + run.py + run.log + result.json + verdict.md + falsifier_disposition.md + honest_c3.md + runtime_minutes.txt",
+    "raw_15": "paradigm-j ckpt read-only, sha256 unmodified",
+    "raw_82": "paradigm-j v5.2 EMERGE + V14_VIOLATED (PPR_v3) records preserved"
+  }
+}

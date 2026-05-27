@@ -1,0 +1,1058 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/verify_hc.hexa — Hc (hypothesis-candidate) verifier — hexa-only port
+//
+//  PURPOSE
+//    hexa-lang port of scripts/hc_verify/verify_hc.py for hexa-only
+//    deployment paths. Reads one or more `hypotheses_candidates/Hc_*.md`
+//    files, applies n=6 narrow math identity checks + atlas anchor cross
+//    reference + falsifier/honest-limit count, prints one JSON line per
+//    input file to stdout (mirrors Python --jsonl output).
+//
+//  USAGE
+//    hexa run tool/verify_hc.hexa <hc_path1> [hc_path2 ...]
+//
+//  DECISIONS ACTIVATED (full 4-domain port, 2026-05-12):
+//    MATH_PASS_FULL · PROMOTE_READY · PSI_PASS · TOPO_PASS · IIT_PASS ·
+//    UNIV_PASS · MATH_PASS_NEEDS_F · MATH_PASS_NEEDS_ANCHOR · ATLAS_PASS ·
+//    MATH_HONEST_NO_CROSS · WEAK_MATH_ONLY · WEAK_FALSIFIER_ONLY ·
+//    HONEST_CROSS_NO_MATH · ALREADY_MERGED · ERROR · FAIL.
+//    Ordering mirrors verify_hc.py (PSI/TOPO before MATH_PASS_NEEDS_*),
+//    with IIT_PASS / UNIV_PASS inserted right after TOPO_PASS. NOTE:
+//    verify_hc.py itself has NO IIT_PASS/UNIV_PASS decision tier — those
+//    two are a hexa-side extension built on the same iit4/univ math_check
+//    domain tags the Python already computes (iit4_pass mirrors psi_pass:
+//    domain + ≥2 falsifier + ≥2 honest;  univ_pass mirrors topo_pass:
+//    domain + ≥2 honest).
+//
+//  REGEX -> SUBSTRING APPROXIMATIONS (each replaces a verify_hc.py re.* call):
+//    - falsifier / honest line shapes: re patterns r"^\s*[-*]?\s*\*?\*?F-?[A-Z0-9_\-]+\*?\*?\s*[:.]"
+//      etc. approximated by _line_starts_falsifier / _line_starts_honest_limit
+//      char-class scans + the "## Falsifier" / "## Honest" bullet-count fallback.
+//      May miss exotic line shapes; bullet fallback keeps totals close.
+//    - re.finditer(r"(?:Ψ|Psi)\(\s*([0-9.]+)\s*,\s*([0-9.]+)\s*\)") for the
+//      "a+b==1 simplex" check -> enumerated `psi_pairs` table of the rational
+//      / decimal pairs that occur in the corpus (1/2,1/2 · 1/3,2/3 · 1/4,3/4 …
+//      0.1..0.9 deciles).  Free-form numeric pairs outside the table are missed.
+//    - re.finditer(r"2\^(\d+)") with the 2≤d≤20 filter -> explicit `dexp`
+//      loop d=2..20 with a "next char is not a digit" boundary check (so 2^100
+//      isn't matched as 2^10).
+//    - re.search(r"Ψ_?coupling\s*[=≈]\s*0?\.014") -> fixed-literal substring set
+//      (Ψ_coupling=0.014 / Ψcoupling=0.014 / Ψ_coupling≈0.014 / Ψcoupling≈0.014).
+//    - re.search(r"phi_?c\s*=\s*0?\.\d+") -> literal "Φ_c=" / "Φc=" / "phi_c=" /
+//      "phic=" substring set.
+//    - re.search(r"\bC\s*=\s*[0-9.]+" ...) clustering-coefficient guard -> just
+//      the "clustering coefficient" / "clustering" substring (numeric form dropped).
+//    - re.search(r"\bPhi\(") / r"\batomic\b" word-boundary checks -> plain
+//      substring "Phi(" / "atomic".
+//    - re.findall(r"=\s*([0-9]+(?:\.[0-9]+)?(?:e[\-+]?\d+)?)") numeric-eq count
+//      -> _count_numeric_eq char scan ("=" + optional spaces + leading digit).
+//    - re.findall(r"ANIMA-[A-Za-z0-9_\-]+") / r"@[PCLFRSX]\s+\S+" / r"\bH_\d{3}\b"
+//      -> _extract_anima_tokens / _count_type_cites / _extract_h_refs char-class
+//      scans (3-digit-exact + left/right boundary for H_NNN).
+//    - re.match(r"^@\S+\s+(\S+)", line) atlas-id extraction -> _is_space token
+//      walk over each "@"-prefixed atlas line.
+//
+//  PRE-COMPUTED CONSTANTS (hexa stdlib here lacks math.pi / math.log):
+//    π⁵/15 = 20.401326 (= math.pi**5/15),  ln(2) = 0.693147 (= math.log(2)),
+//    α≈1/137.036 = 0.007297, γ_EM ≈ 0.5772156649, G_Catalan ≈ 0.9159655942,
+//    ζ(2)=π²/6=1.644934, ζ(3)≈1.2020569032, ζ(4)=π⁴/90=1.082323,
+//    α-modulation ≈ ln(2)/2^5.5 = 0.01533 — all emitted as fixed strings,
+//    values match the Python f-string outputs.
+//
+//  REMAINING PYTHON-ONLY BEHAVIORS (not portable to hexa stdlib here):
+//    - true regex (the substring/enumeration approximations above stand in).
+//    - float-parse + abs(a+b-1)<1e-6 simplex arithmetic (replaced by the
+//      pair-enumeration table).
+//    - the verify_hc.py docstring is its --help text; hexa main() prints a
+//      shorter usage line instead.
+//
+//  ADDITIONS BEYOND verify_hc.py (4-domain hexa extension, 2026-05-12):
+//    - IIT-Φ (iit4) domain detector extended with: Φ = MI−MIP / ln(MI/MIP)
+//      cause-effect-structure, 127-MIP cap (127 = 2^7−1), sopfr(8)=2+2+2=6
+//      (k=8 atom → perfect-number 6 closure), k=8 atom granularity.
+//    - universal-constants (univ) domain now also tags π⁵/15, ln(2), the
+//      Onsager exact exponents β=1/8 γ=7/4 δ=15 η=1/4 ν=1 (ν=1 is NOT in
+//      verify_hc.py — added here for the full β/γ/δ/η/ν set), and the
+//      Ω_m:Ω_Λ ratio mention — so the new UNIV_PASS tier can fire. These
+//      stay n6-tagged too (so math_domains may carry both "n6" and "univ"
+//      where verify_hc.py carries only "n6" — an intentional divergence).
+//
+//  ATLAS
+//    atlas-id index built by simple "starts_with(@)" scan + first
+//    whitespace-token extraction (no regex). atlas.n6 cached in a
+//    module-level _atlas_text on first call.
+//
+//  TEST PARITY (vs verify_hc.py):
+//    Hc_001 (merged)        -> both emit ALREADY_MERGED
+//    Hc_035 (math+cross)    -> both emit PROMOTE_READY  (n=6 math hits)
+//    Hc_500 (stub)          -> both emit FAIL
+//
+//  RULES
+//    raw#9 hexa-only deterministic - raw#10 proof-carrying (atlas anchor
+//    is SSOT) - raw#11 snake_case - pure read-only on Hc / atlas.n6.
+// ════════════════════════════════════════════════════════════════════════════
+
+let HOME = env("HOME")
+let ANIMA_ROOT = HOME + "/mac_home/core/anima"
+let ATLAS_PATH = ANIMA_ROOT + "/n6/atlas.n6"
+
+// ─── atlas cache ─────────────────────────────────────────────────────────
+
+let mut _atlas_loaded: bool = false
+let mut _atlas_text: string = ""
+let mut _atlas_text_lower: string = ""
+let mut _atlas_ids: map = #{}
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+// map key-presence test. This interpreter returns type "void" for a missing
+// key and "int"/"string"/... for a present one; an earlier port checked
+// `== "i64"` which never matched (ints are "int") — that left math_domains
+// always empty and dedup sets non-functional. _has() is the correct probe.
+fn _has(m: map, k: string) -> bool {
+    return type_of(m[k]) != "void"
+}
+
+fn _is_space(c: string) -> bool {
+    return c == " " || c == "\t"
+}
+
+fn _load_atlas() {
+    if _atlas_loaded { return }
+    _atlas_loaded = true
+    if !file_exists(ATLAS_PATH) { return }
+    let raw = _str(read_file(ATLAS_PATH))
+    _atlas_text = raw
+    _atlas_text_lower = raw.to_lower()
+    let lines = raw.split("\n")
+    for ln in lines {
+        let t = _str(ln).trim()
+        if len(t) == 0 { continue }
+        if !t.starts_with("@") { continue }
+        let mut i = 0
+        let n = len(t)
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if _is_space(c) { break }
+            i = i + 1
+        }
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if !_is_space(c) { break }
+            i = i + 1
+        }
+        let start = i
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if _is_space(c) { break }
+            i = i + 1
+        }
+        if i > start {
+            let tok = t.substring(start, i)
+            _atlas_ids[tok] = 1
+            _atlas_ids[tok.to_lower()] = 1
+        }
+    }
+}
+
+fn atlas_has(token: string) -> bool {
+    _load_atlas()
+    if _has(_atlas_ids, token) { return true }
+    if _has(_atlas_ids, token.to_lower()) { return true }
+    return false
+}
+
+fn atlas_substr(needle: string) -> i64 {
+    _load_atlas()
+    let n_lc = needle.to_lower()
+    if len(n_lc) == 0 { return 0 }
+    let mut count: i64 = 0
+    let mut from: i64 = 0
+    let hay = _atlas_text_lower
+    let nlen = len(n_lc)
+    let hlen = len(hay)
+    while from < hlen {
+        let rest = hay.substring(from, hlen)
+        let idx = rest.index_of(n_lc)
+        if idx < 0 { break }
+        count = count + 1
+        from = from + idx + nlen
+    }
+    return count
+}
+
+// ─── frontmatter parse ───────────────────────────────────────────────────
+
+fn parse_frontmatter(text: string) -> map {
+    let mut fm = #{}
+    if !text.starts_with("---") { return fm }
+    let n = len(text)
+    if n < 5 { return fm }
+    let rest = text.substring(4, n)
+    let end_rel = rest.index_of("\n---")
+    if end_rel < 0 { return fm }
+    let body = rest.substring(0, end_rel)
+    let lines = body.split("\n")
+    for ln in lines {
+        let s = _str(ln)
+        let colon = s.index_of(":")
+        if colon < 0 { continue }
+        let k = s.substring(0, colon).trim()
+        let v = s.substring(colon + 1, len(s)).trim()
+        fm[k] = v
+    }
+    return fm
+}
+
+// ─── falsifier / honest counters (helpers) ─────────────────────────────
+
+fn _strip_md_bullet(s: string) -> string {
+    let mut t = s.trim()
+    if len(t) == 0 { return t }
+    let c0 = t.substring(0, 1)
+    if c0 == "-" || c0 == "*" {
+        t = t.substring(1, len(t)).trim()
+    }
+    if t.starts_with("**") {
+        t = t.substring(2, len(t))
+    }
+    return t
+}
+
+fn _line_starts_falsifier(line: string) -> bool {
+    let t = _strip_md_bullet(line)
+    if len(t) == 0 { return false }
+    let c0 = t.substring(0, 1)
+    if c0 == "F" {
+        let n = len(t)
+        let mut i = 1
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if c == ":" || c == "." { return i > 1 }
+            if c == "*" { i = i + 1; continue }
+            let cc = char_code(c, 0)
+            let is_upper = cc > 64 && cc < 91
+            let is_digit = cc > 47 && cc < 58
+            let is_lower = cc > 96 && cc < 123
+            if is_upper || is_digit || is_lower || c == "-" || c == "_" {
+                i = i + 1; continue
+            }
+            return false
+        }
+        return false
+    }
+    if t.starts_with("Falsifier") {
+        let n = len(t)
+        let mut i = 9
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if c == ":" || c == "." { return true }
+            if c == " " || c == "*" { i = i + 1; continue }
+            let cc = char_code(c, 0)
+            let is_digit = cc > 47 && cc < 58
+            if is_digit { i = i + 1; continue }
+            return false
+        }
+        return false
+    }
+    if t.starts_with("반증자") {
+        let n = len(t)
+        let mut i = len("반증자")
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if c == ":" || c == "." { return true }
+            if c == " " || c == "*" { i = i + 1; continue }
+            let cc = char_code(c, 0)
+            let is_digit = cc > 47 && cc < 58
+            if is_digit { i = i + 1; continue }
+            return false
+        }
+        return false
+    }
+    return false
+}
+
+fn _line_starts_honest_limit(line: string) -> bool {
+    let t = _strip_md_bullet(line)
+    if len(t) == 0 { return false }
+    let c0 = t.substring(0, 1)
+    if c0 == "L" {
+        let n = len(t)
+        if n < 2 { return false }
+        let c1 = t.substring(1, 2)
+        let cc1 = char_code(c1, 0)
+        let is_digit = cc1 > 47 && cc1 < 58
+        if !is_digit { return false }
+        let mut i = 2
+        while i < n {
+            let c = t.substring(i, i + 1)
+            if c == ":" || c == "." || c == "(" { return true }
+            let cc = char_code(c, 0)
+            let is_d = cc > 47 && cc < 58
+            if is_d || c == "*" { i = i + 1; continue }
+            return false
+        }
+        return false
+    }
+    if t.starts_with("Honest") {
+        let rest = t.substring(6, len(t))
+        if rest.starts_with(" Limit") || rest.starts_with("-Limit") || rest.starts_with(" limit") || rest.starts_with("-limit") {
+            return true
+        }
+        return false
+    }
+    return false
+}
+
+fn _count_bullets_in_section(lines: array, start_idx: i64) -> i64 {
+    let n = len(lines)
+    let mut i = start_idx + 1
+    let mut count: i64 = 0
+    while i < n {
+        let ln = _str(lines[i])
+        let t = ln.trim()
+        if t.starts_with("## ") { break }
+        let mut j = 0
+        let m = len(ln)
+        while j < m {
+            let c = ln.substring(j, j + 1)
+            if c == " " || c == "\t" { j = j + 1; continue }
+            break
+        }
+        if j < m {
+            let c0 = ln.substring(j, j + 1)
+            if (c0 == "-" || c0 == "*") && j + 1 < m {
+                let c1 = ln.substring(j + 1, j + 2)
+                if c1 == " " || c1 == "\t" { count = count + 1 }
+            }
+        }
+        i = i + 1
+    }
+    return count
+}
+
+fn count_falsifiers(text: string) -> i64 {
+    let lines = text.split("\n")
+    let mut total: i64 = 0
+    let mut fals_section_idx: i64 = -1
+    let mut idx: i64 = 0
+    let n = len(lines)
+    while idx < n {
+        let ln = _str(lines[idx])
+        if _line_starts_falsifier(ln) { total = total + 1 }
+        let t = ln.trim()
+        if fals_section_idx < 0 && t.starts_with("## ") && t.contains("Falsifier") {
+            fals_section_idx = idx
+        }
+        idx = idx + 1
+    }
+    if fals_section_idx > -1 {
+        let bullets = _count_bullets_in_section(lines, fals_section_idx)
+        if bullets > total { total = bullets }
+    }
+    return total
+}
+
+fn count_honest(text: string) -> i64 {
+    let lines = text.split("\n")
+    let mut total: i64 = 0
+    let mut honest_section_idx: i64 = -1
+    let mut idx: i64 = 0
+    let n = len(lines)
+    while idx < n {
+        let ln = _str(lines[idx])
+        if _line_starts_honest_limit(ln) { total = total + 1 }
+        let t = ln.trim()
+        if honest_section_idx < 0 && t.starts_with("## ") && t.contains("Honest") {
+            honest_section_idx = idx
+        }
+        idx = idx + 1
+    }
+    if honest_section_idx > -1 {
+        let bullets = _count_bullets_in_section(lines, honest_section_idx)
+        if bullets > total { total = bullets }
+    }
+    return total
+}
+
+// ─── math_check (n=6 narrow + 4-domain extension port) ──────────────────
+//
+// Returns map { "verified": [...], "domains": [...] } where domains is the
+// sorted-unique list of any of: "n6", "psi", "topo", "iit4", "univ".
+
+fn _add_domain(domains: map, tag: string) {
+    domains[tag] = 1
+}
+
+fn _domains_sorted(domains: map) -> array {
+    // emit fixed canonical order matching Python sorted() over set
+    let order = ["iit4", "n6", "psi", "topo", "univ"]
+    let mut out = []
+    for d in order {
+        if _has(domains, d) { out.push(d) }
+    }
+    return out
+}
+
+fn math_check(text: string) -> map {
+    let mut verified = []
+    let mut domains = #{}
+    let s = text.replace(" ", "")
+    let tl = text.to_lower()
+    let sl = s.to_lower()
+
+    // ── Existing n=6 identity checks (PRESERVED) ────────────────────────
+    if s.contains("τ(6)=4") || s.contains("tau(6)=4") || s.contains("τ=4") {
+        verified.push("τ(6)=4 [atlas @P 11*]"); _add_domain(domains, "n6")
+    }
+    if s.contains("σ(6)=12") || s.contains("sigma(6)=12") || s.contains("σ=12") {
+        verified.push("σ(6)=12 [atlas @P 11*]"); _add_domain(domains, "n6")
+    }
+    if s.contains("φ(6)=2") || s.contains("phi(6)=2") || s.contains("φ=2") {
+        verified.push("φ(6)=2 [atlas @P 10*]"); _add_domain(domains, "n6")
+    }
+    if s.contains("sopfr(6)=5") || s.contains("sopfr=5") {
+        verified.push("sopfr(6)=5 [atlas @P 10*]"); _add_domain(domains, "n6")
+    }
+    if s.contains("J2(6)=24") || s.contains("J_2(6)=24") || s.contains("J₂=24") || s.contains("J2=24") {
+        verified.push("J₂(6)=24 [atlas @P 10*]"); _add_domain(domains, "n6")
+    }
+    if text.contains("π⁵/15") || text.contains("π^5/15") || text.contains("pi^5/15") {
+        verified.push("π⁵/15=20.401326 [Stefan-Boltzmann reduced]"); _add_domain(domains, "n6")
+    }
+    if s.contains("ln(2)") || s.contains("ln2") || text.contains("ln 2") {
+        verified.push("ln(2)=0.693147"); _add_domain(domains, "n6")
+    }
+    if s.contains("1+2+3=6") || s.contains("1+2+3+6=") {
+        verified.push("perfect 6=1+2+3 OK"); _add_domain(domains, "n6")
+    }
+    if s.contains("12*2=24") || text.contains("σ*φ=J") || text.contains("12·2=24") {
+        verified.push("σ·φ=J₂ (12·2=24) OK"); _add_domain(domains, "n6")
+    }
+    if s.contains("τ+φ=6") || s.contains("tau+phi=6") || s.contains("4+2=6") {
+        verified.push("τ+φ=6 OK"); _add_domain(domains, "n6")
+    }
+    // n/σ balance = 6/12 = 0.5  (also Ψ-equilibrium signal)
+    if s.contains("6/12=0.5") || s.contains("n/σ=0.5") || s.contains("balance=0.5") || s.contains("Ψ(1/2,1/2)") || s.contains("Psi(1/2,1/2)") {
+        verified.push("n/σ=6/12=0.5 balance OK [atlas @C psi_balance=0.5 10*]")
+        _add_domain(domains, "n6"); _add_domain(domains, "psi")
+    }
+    // 2D Ising critical exponents (Onsager EXACT)
+    if s.contains("β=1/8") || s.contains("beta=1/8") {
+        verified.push("2D Ising β=1/8 (Onsager EXACT)"); _add_domain(domains, "n6")
+    }
+    if s.contains("γ=7/4") || s.contains("gamma=7/4") {
+        verified.push("2D Ising γ=7/4 (Onsager EXACT)"); _add_domain(domains, "n6")
+    }
+    if s.contains("δ=15") {
+        verified.push("2D Ising δ=15 (Onsager EXACT)"); _add_domain(domains, "n6")
+    }
+    if s.contains("η=1/4") {
+        verified.push("2D Ising η=1/4 (Onsager EXACT)"); _add_domain(domains, "n6")
+    }
+    if text.contains("Ω_m:Ω_Λ") || text.contains("Omega_m:Omega_L") {
+        verified.push("Ω_m:Ω_Λ ratio claim (observational anchor)"); _add_domain(domains, "n6")
+    }
+
+    // ── Domain 1 — Ψ-constants (IIT / consciousness) ────────────────────
+    // Ψ-equilibrium at simplex points
+    if s.contains("Ψ(1/2,1/2)") || s.contains("Psi(1/2,1/2)") || s.contains("Ψ(0.5,0.5)") || s.contains("Psi(0.5,0.5)") {
+        verified.push("Ψ(1/2,1/2) equilibrium on probability-simplex [atlas @C psi_balance=0.5]")
+        _add_domain(domains, "psi")
+    }
+    if s.contains("Ψ(1/3,2/3)") || s.contains("Psi(1/3,2/3)") || s.contains("Ψ(2/3,1/3)") || s.contains("Psi(2/3,1/3)") {
+        verified.push("Ψ(1/3,2/3): α+β=1 simplex point OK")
+        _add_domain(domains, "psi")
+    }
+    // generic Ψ(a,b) where a+b==1 — substring-scan enumeration of common
+    // simplex pairs that the Python re.finditer(r"(?:Ψ|Psi)\(...\)") catches.
+    // Hexa lacks regex, so we cover the rational/decimal pairs that appear
+    // in the corpus. (See HEXA_PORT_NOTES.md for upstream blocker.)
+    let psi_pairs = [
+        ["1/4,3/4", "1/4", "3/4"], ["3/4,1/4", "3/4", "1/4"],
+        ["1/5,4/5", "1/5", "4/5"], ["4/5,1/5", "4/5", "1/5"],
+        ["2/5,3/5", "2/5", "3/5"], ["3/5,2/5", "3/5", "2/5"],
+        ["1/6,5/6", "1/6", "5/6"], ["5/6,1/6", "5/6", "1/6"],
+        ["0.25,0.75", "0.25", "0.75"], ["0.75,0.25", "0.75", "0.25"],
+        ["0.4,0.6", "0.4", "0.6"], ["0.6,0.4", "0.6", "0.4"],
+        ["0.1,0.9", "0.1", "0.9"], ["0.9,0.1", "0.9", "0.1"],
+        ["0.2,0.8", "0.2", "0.8"], ["0.8,0.2", "0.8", "0.2"],
+        ["0.3,0.7", "0.3", "0.7"], ["0.7,0.3", "0.7", "0.3"],
+    ]
+    for triple in psi_pairs {
+        let pair = _str(triple[0])
+        let a = _str(triple[1])
+        let b = _str(triple[2])
+        if s.contains("Ψ(" + pair + ")") || s.contains("Psi(" + pair + ")") {
+            verified.push("Ψ(" + a + "," + b + ") on simplex α+β=1 OK")
+            _add_domain(domains, "psi")
+        }
+    }
+    // Φ-Ψ relations (info-theoretic)
+    if s.contains("MI-MIP") || text.contains("MI−MIP") || s.contains("MI/MIP") {
+        verified.push("Φ = MI−MIP or ln(MI/MIP) (IIT info-theoretic)")
+        _add_domain(domains, "psi")
+    }
+    // α-modulation depth ≈ 0.014 ≈ ln(2)/2^5.5 ≈ 0.01533 (Hc_415 anchor)
+    let psi_coup_mod = text.contains("Ψ_coupling=0.014") || text.contains("Ψcoupling=0.014") || text.contains("Ψ_coupling≈0.014") || text.contains("Ψcoupling≈0.014")
+    if text.contains("α_mod") || tl.contains("alpha_mod") || psi_coup_mod {
+        verified.push("α-modulation ≈ 0.014 ≈ ln(2)/2^5.5 (0.01533) [Hc_415 anchor]")
+        _add_domain(domains, "psi")
+    }
+    // phi_star / Φ★ proxy mention (psi-domain signal)
+    if tl.contains("phi_star") || text.contains("Φ★") || text.contains("Φ_star") {
+        verified.push("Φ★ / phi_star proxy referenced (IIT)")
+        _add_domain(domains, "psi")
+    }
+    // general Ψ- or Phi( token presence (weak psi-signal — only flag if no other psi hit yet)
+    if !_has(domains, "psi") {
+        if text.contains("Ψ-") || text.contains("Psi-") || text.contains("Phi(") {
+            verified.push("Ψ-/Phi( formal token present (psi-domain marker)")
+            _add_domain(domains, "psi")
+        }
+    }
+
+    // ── Domain 2 — Topology / graph-theoretic ───────────────────────────
+    // Hypercube dimension scaling: 2^d cells (explicit 1024-cell shortcut)
+    if s.contains("2^10") || tl.contains("1024-cell") || tl.contains("1024cell") {
+        verified.push("2^10 = 1024 hypercube/cell-count OK")
+        _add_domain(domains, "topo")
+    }
+    // 2^d enumeration for d in [2,20] (substring scan; no regex)
+    let mut dexp: i64 = 2
+    while dexp < 21 {
+        let needle = "2^" + to_string(dexp)
+        // ensure boundary: "2^10" already handled; for others, check substring
+        if text.contains(needle) {
+            // boundary: exclude "2^100" etc by checking next char isn't a digit
+            let mut from: i64 = 0
+            let n = len(text)
+            let nl = len(needle)
+            let mut hit = false
+            while from < n {
+                let rest = text.substring(from, n)
+                let idx = rest.index_of(needle)
+                if idx < 0 { break }
+                let pos = from + idx + nl
+                let mut ok = true
+                if pos < n {
+                    let c = text.substring(pos, pos + 1)
+                    let cc = char_code(c, 0)
+                    if cc > 47 && cc < 58 { ok = false }
+                }
+                if ok { hit = true; break }
+                from = from + idx + nl
+            }
+            if hit {
+                let mut val: i64 = 1
+                let mut k: i64 = 0
+                while k < dexp { val = val * 2; k = k + 1 }
+                verified.push("2^" + to_string(dexp) + " = " + to_string(val) + " (hypercube dim " + to_string(dexp) + ")")
+                _add_domain(domains, "topo")
+            }
+        }
+        dexp = dexp + 1
+    }
+    // small-world signal
+    if tl.contains("small-world") || tl.contains("small world") || tl.contains("watts-strogatz") || text.contains("σ_sw") || tl.contains("sigma_sw") {
+        verified.push("small-world σ_sw = (C/C_rand)/(L/L_rand) [Watts-Strogatz formalism]")
+        _add_domain(domains, "topo")
+    }
+    // clustering coefficient
+    if tl.contains("clustering coefficient") {
+        verified.push("clustering coefficient C present (graph-theoretic)")
+        _add_domain(domains, "topo")
+    }
+    // fractal dimension D_f
+    if text.contains("D_f") || tl.contains("fractal dimension") {
+        verified.push("fractal dimension D_f referenced [topology marker]")
+        _add_domain(domains, "topo")
+    }
+    // hypercube generic mention
+    if tl.contains("hypercube") && !_has(domains, "topo") {
+        verified.push("hypercube architecture referenced [topology marker]")
+        _add_domain(domains, "topo")
+    }
+
+    // ── Domain 3 — IIT 4.0 specific ─────────────────────────────────────
+    // Φ_c = 0.5 cutoff
+    let phi_c_05 = s.contains("Φ_c=0.5") || s.contains("Φc=0.5") || sl.contains("phi_c=0.5") || s.contains("Phi_c=0.5")
+    if phi_c_05 {
+        verified.push("Φ_c = 0.5 IIT cut-off threshold")
+        _add_domain(domains, "iit4")
+    }
+    // generic Φ_c parameter (avoid duplicate if already added)
+    let phi_c_gen = s.contains("Φ_c=") || s.contains("Φc=") || sl.contains("phi_c=") || sl.contains("phic=")
+    if phi_c_gen && !phi_c_05 {
+        verified.push("Φ_c threshold parameter present (IIT 4.0)")
+        _add_domain(domains, "iit4")
+    }
+    // normalized Φ proxy
+    if text.contains("normalized Φ") || tl.contains("phi_normalized") || text.contains("normalised Φ") {
+        verified.push("normalized Φ / Φ★ proxy (IIT 4.0)")
+        _add_domain(domains, "iit4")
+    }
+    // 8-cell, 7-cell atom architectures (perfect-number-prime cell counts)
+    if tl.contains("8-cell") || tl.contains("8cell") {
+        verified.push("8-cell atom architecture (perfect-number-prime cell count)")
+        _add_domain(domains, "iit4")
+    }
+    if tl.contains("7-cell") || tl.contains("7cell") {
+        verified.push("7-cell atom architecture (Mersenne-prime cell count)")
+        _add_domain(domains, "iit4")
+    }
+    // Φ = MI−MIP / ln(MI/MIP) info-theoretic relation (IIT 4.0 core identity)
+    // (also flagged as 'psi' above; here we additionally tag 'iit4' since the
+    //  MI/MIP big-Φ relation is the canonical IIT 4.0 cause-effect-structure form.)
+    if s.contains("MI-MIP") || text.contains("MI−MIP") || s.contains("MI/MIP") || s.contains("ln(MI/MIP)") {
+        verified.push("Φ = MI−MIP / ln(MI/MIP) (IIT 4.0 cause-effect-structure)")
+        _add_domain(domains, "iit4")
+    }
+    // 127-MIP cap (127 = 2^7 − 1 Mersenne; max-information-partition ceiling)
+    if s.contains("127-MIP") || s.contains("127MIP") || s.contains("MIP=127") || s.contains("MIP≤127") || (s.contains("127") && (s.contains("MIP") || tl.contains("max-information-partition") || tl.contains("maximum information partition"))) {
+        verified.push("127-MIP cap (127 = 2^7−1 Mersenne, max-information-partition ceiling)")
+        _add_domain(domains, "iit4")
+    }
+    // sopfr(8) = 2+2+2 = 6  (k=8 atom → perfect-number 6 closure)
+    if s.contains("sopfr(8)=6") || s.contains("sopfr(8)=2+2+2") || s.contains("2+2+2=6") {
+        verified.push("sopfr(8) = 2+2+2 = 6 (k=8 atom collapses to perfect-number 6)")
+        _add_domain(domains, "iit4")
+    }
+    // k=8 atom (8 = 2^3 cell count; IIT-4.0 atom granularity)
+    if s.contains("k=8") && (tl.contains("atom") || tl.contains("cell")) {
+        verified.push("k=8 atom granularity (8 = 2^3 cell count, IIT 4.0)")
+        _add_domain(domains, "iit4")
+    }
+    // bare "atom" alongside Φ — only mark iit4 if not already and no "atomic"
+    if !_has(domains, "iit4") {
+        let has_atom = tl.contains("atom")
+        let has_phi = text.contains("Φ") || tl.contains("phi")
+        let has_atomic = tl.contains("atomic")
+        if has_atom && has_phi && !has_atomic {
+            verified.push("'atom' construct referenced alongside Φ (IIT 4.0 marker)")
+            _add_domain(domains, "iit4")
+        }
+    }
+
+    // ── Domain 4 — Universal / dimensionless constants ──────────────────
+    // Fine structure α ≈ 1/137.036
+    if s.contains("1/137") || tl.contains("fine structure") || tl.contains("fine-structure") || s.contains("137.036") {
+        verified.push("fine-structure α ≈ 1/137.036 = 0.007297 [atlas @P ALPHA-fine-structure 10*]")
+        _add_domain(domains, "univ")
+    }
+    // Euler-Mascheroni γ ≈ 0.5772
+    if tl.contains("euler-mascheroni") || tl.contains("euler mascheroni") || s.contains("0.5772") {
+        verified.push("Euler-Mascheroni γ ≈ 0.5772156649 [atlas @P E-euler-gamma 10*]")
+        _add_domain(domains, "univ")
+    }
+    // Catalan G ≈ 0.9160
+    if tl.contains("catalan constant") || tl.contains("catalan_g") || s.contains("0.91596") {
+        verified.push("Catalan G ≈ 0.9159655942 [atlas @P E-catalan-constant 10*]")
+        _add_domain(domains, "univ")
+    }
+    // ζ(2) = π²/6 (Basel)
+    if text.contains("ζ(2)") || tl.contains("zeta(2)") || text.contains("π²/6") || tl.contains("pi^2/6") {
+        verified.push("ζ(2) = π²/6 = 1.644934 (Basel) [atlas @P MATH-zeta-minus1]")
+        _add_domain(domains, "univ")
+    }
+    // ζ(3) ≈ 1.2021 (Apéry)
+    if text.contains("ζ(3)") || tl.contains("zeta(3)") || s.contains("1.2020569") {
+        verified.push("ζ(3) ≈ 1.2020569032 (Apéry constant)")
+        _add_domain(domains, "univ")
+    }
+    // ζ(4) = π⁴/90
+    if text.contains("ζ(4)") || tl.contains("zeta(4)") || text.contains("π⁴/90") || tl.contains("pi^4/90") {
+        verified.push("ζ(4) = π⁴/90 = 1.082323")
+        _add_domain(domains, "univ")
+    }
+    // ── universal-constants domain tags (π⁵/15, ln 2, Onsager exact exponents,
+    //    Ω_m:Ω_Λ ratio) — these are ALSO n6-tagged above; here we additionally
+    //    tag 'univ' so the dedicated UNIV_PASS decision tier can fire.
+    if text.contains("π⁵/15") || text.contains("π^5/15") || text.contains("pi^5/15") {
+        _add_domain(domains, "univ")
+    }
+    if s.contains("ln(2)") || s.contains("ln2") || text.contains("ln 2") {
+        _add_domain(domains, "univ")
+    }
+    // 2D Ising critical exponents (Onsager EXACT) — β=1/8 γ=7/4 δ=15 η=1/4 ν=1
+    if s.contains("β=1/8") || s.contains("beta=1/8") {
+        _add_domain(domains, "univ")
+    }
+    if s.contains("γ=7/4") || s.contains("gamma=7/4") {
+        _add_domain(domains, "univ")
+    }
+    if s.contains("δ=15") || s.contains("delta=15") {
+        _add_domain(domains, "univ")
+    }
+    if s.contains("η=1/4") || s.contains("eta=1/4") {
+        _add_domain(domains, "univ")
+    }
+    // ν=1 — correlation-length exponent (Onsager EXACT). Not present in the
+    // Python verify_hc.py n6 block; added here for the full β/γ/δ/η/ν set.
+    if s.contains("ν=1") || s.contains("nu=1") {
+        verified.push("2D Ising ν=1 (Onsager EXACT, correlation-length exponent)")
+        _add_domain(domains, "univ")
+    }
+    // Ω_m:Ω_Λ cosmological density ratio mention
+    if text.contains("Ω_m:Ω_Λ") || text.contains("Omega_m:Omega_L") || text.contains("Ω_m : Ω_Λ") || tl.contains("omega_m:omega_lambda") || (text.contains("Ω_m") && text.contains("Ω_Λ")) {
+        _add_domain(domains, "univ")
+    }
+
+    // any closed-form numeric in title with = (count "= <num>" patterns)
+    let nums_count = _count_numeric_eq(text)
+    if nums_count > 2 {
+        verified.push(to_string(nums_count) + "+ numeric identities present")
+    }
+
+    return #{
+        "verified": verified,
+        "domains": _domains_sorted(domains),
+    }
+}
+
+// Count "= <number>" occurrences (substitute for re.findall(r"=\s*([0-9]+(?:\.[0-9]+)?(?:e[\-+]?\d+)?)"))
+// Boundary: '=' optionally followed by spaces then digit start; tolerates int / decimal / scientific.
+fn _count_numeric_eq(text: string) -> i64 {
+    let n = len(text)
+    let mut count: i64 = 0
+    let mut i: i64 = 0
+    while i < n {
+        let c = text.substring(i, i + 1)
+        if c == "=" {
+            let mut j = i + 1
+            // skip whitespace
+            while j < n {
+                let cj = text.substring(j, j + 1)
+                if cj == " " || cj == "\t" { j = j + 1; continue }
+                break
+            }
+            if j < n {
+                let cj = text.substring(j, j + 1)
+                let cc = char_code(cj, 0)
+                let is_digit = cc > 47 && cc < 58
+                if is_digit { count = count + 1 }
+            }
+        }
+        i = i + 1
+    }
+    return count
+}
+
+// ─── atlas signals ───────────────────────────────────────────────────────
+
+fn _is_anchor_char(c: string) -> bool {
+    if c == "-" || c == "_" { return true }
+    let cc = char_code(c, 0)
+    if cc > 47 && cc < 58 { return true }
+    if cc > 64 && cc < 91 { return true }
+    if cc > 96 && cc < 123 { return true }
+    return false
+}
+
+fn _extract_anima_tokens(text: string) -> array {
+    let mut seen = #{}
+    let mut out = []
+    let needle = "ANIMA-"
+    let n = len(text)
+    let mut from: i64 = 0
+    while from < n {
+        let rest = text.substring(from, n)
+        let idx = rest.index_of(needle)
+        if idx < 0 { break }
+        let start = from + idx
+        let mut i = start + len(needle)
+        while i < n {
+            let c = text.substring(i, i + 1)
+            if !_is_anchor_char(c) { break }
+            i = i + 1
+        }
+        let tok = text.substring(start, i)
+        if !_has(seen, tok) {
+            seen[tok] = 1
+            out.push(tok)
+        }
+        from = i
+    }
+    return out
+}
+
+fn _count_type_cites(text: string) -> i64 {
+    let types = ["@P ", "@C ", "@L ", "@F ", "@R ", "@S ", "@X "]
+    let mut total: i64 = 0
+    for t in types {
+        let mut from: i64 = 0
+        let n = len(text)
+        let needle = _str(t)
+        while from < n {
+            let rest = text.substring(from, n)
+            let idx = rest.index_of(needle)
+            if idx < 0 { break }
+            let pos = from + idx + len(needle)
+            if pos < n {
+                let c = text.substring(pos, pos + 1)
+                if _is_anchor_char(c) { total = total + 1 }
+            }
+            from = from + idx + len(needle)
+        }
+    }
+    return total
+}
+
+fn atlas_signals(text: string) -> map {
+    let anchors_cited = _extract_anima_tokens(text)
+    let mut resolved = []
+    for a in anchors_cited {
+        let tok = _str(a)
+        if atlas_has(tok) { resolved.push(tok) }
+    }
+    let type_cites = _count_type_cites(text)
+    let mut top5 = []
+    let mut i = 0
+    while i < len(resolved) && i < 5 {
+        top5.push(resolved[i])
+        i = i + 1
+    }
+    return #{
+        "anchors_cited": len(anchors_cited),
+        "anchors_resolved": len(resolved),
+        "anchors_resolved_list": top5,
+        "atlas_type_cites": type_cites,
+    }
+}
+
+// ─── H_NNN cross-ref extractor ───────────────────────────────────────────
+
+fn _extract_h_refs(text: string) -> array {
+    let mut seen = #{}
+    let mut out = []
+    let needle = "H_"
+    let n = len(text)
+    let mut from: i64 = 0
+    while from < n {
+        let rest = text.substring(from, n)
+        let idx = rest.index_of(needle)
+        if idx < 0 { break }
+        let start = from + idx
+        let pos = start + 2
+        // need exactly 3 digits after H_
+        if pos + 2 < n {
+            let d1 = text.substring(pos, pos + 1)
+            let d2 = text.substring(pos + 1, pos + 2)
+            let d3 = text.substring(pos + 2, pos + 3)
+            let cc1 = char_code(d1, 0)
+            let cc2 = char_code(d2, 0)
+            let cc3 = char_code(d3, 0)
+            let d1ok = cc1 > 47 && cc1 < 58
+            let d2ok = cc2 > 47 && cc2 < 58
+            let d3ok = cc3 > 47 && cc3 < 58
+            let all_digit = d1ok && d2ok && d3ok
+            let mut boundary_ok = true
+            if pos + 3 < n {
+                let d4 = text.substring(pos + 3, pos + 4)
+                let cc4 = char_code(d4, 0)
+                if cc4 > 47 && cc4 < 58 { boundary_ok = false }
+            }
+            let mut left_ok = true
+            if start > 0 {
+                let cprev = text.substring(start - 1, start)
+                if _is_anchor_char(cprev) { left_ok = false }
+            }
+            if all_digit && boundary_ok && left_ok {
+                let tok = text.substring(start, pos + 3)
+                if !_has(seen, tok) {
+                    seen[tok] = 1
+                    out.push(tok)
+                }
+            }
+        }
+        from = start + 2
+    }
+    return out
+}
+
+// ─── JSON output helpers ─────────────────────────────────────────────────
+
+fn _json_escape(s: string) -> string {
+    let a = s.replace("\\", "\\\\")
+    let b = a.replace("\"", "\\\"")
+    let c = b.replace("\n", "\\n")
+    let d = c.replace("\r", "\\r")
+    let e = d.replace("\t", "\\t")
+    return e
+}
+
+fn _arr_to_json_strs(arr: array) -> string {
+    let mut s = "["
+    let mut i = 0
+    let n = len(arr)
+    while i < n {
+        if i > 0 { s = s + ", " }
+        s = s + "\"" + _json_escape(_str(arr[i])) + "\""
+        i = i + 1
+    }
+    s = s + "]"
+    return s
+}
+
+fn _atlas_to_json(a: map) -> string {
+    let mut s = "{"
+    s = s + "\"anchors_cited\": " + to_string(a["anchors_cited"]) + ", "
+    s = s + "\"anchors_resolved\": " + to_string(a["anchors_resolved"]) + ", "
+    s = s + "\"anchors_resolved_list\": " + _arr_to_json_strs(a["anchors_resolved_list"]) + ", "
+    s = s + "\"atlas_type_cites\": " + to_string(a["atlas_type_cites"])
+    s = s + "}"
+    return s
+}
+
+fn _truncate(s: string, n: i64) -> string {
+    let m = len(s)
+    if m < n + 1 { return s }
+    return s.substring(0, n)
+}
+
+fn _basename_stem(path: string) -> string {
+    let parts = path.split("/")
+    let last = _str(parts[len(parts) - 1])
+    let dot = last.index_of(".")
+    if dot < 0 { return last }
+    return last.substring(0, dot)
+}
+
+// ─── verify_one ──────────────────────────────────────────────────────────
+
+fn verify_one(path: string) -> string {
+    if !file_exists(path) {
+        return "{\"id\": \"" + _json_escape(_basename_stem(path)) + "\", \"decision\": \"ERROR\", \"error\": \"file not found\"}"
+    }
+    let text = _str(read_file(path))
+    let fm = parse_frontmatter(text)
+    let status = _str(fm["status"])
+    let id_field = _str(fm["id"])
+    let title = _str(fm["title"])
+    let domain = _str(fm["domain"])
+    let stem = _basename_stem(path)
+    let id_out = if len(id_field) > 0 { id_field } else { stem }
+
+    if status.starts_with("merged-to-H_") {
+        let merged_to = _str(fm["merged_to"])
+        let mt = if len(merged_to) > 0 { merged_to } else { status }
+        let mut j = "{"
+        j = j + "\"id\": \"" + _json_escape(id_out) + "\", "
+        j = j + "\"decision\": \"ALREADY_MERGED\", "
+        j = j + "\"merged_to\": \"" + _json_escape(mt) + "\", "
+        j = j + "\"title\": \"" + _json_escape(_truncate(title, 100)) + "\""
+        j = j + "}"
+        return j
+    }
+
+    let falsifiers = count_falsifiers(text)
+    let honest = count_honest(text)
+    let mc = math_check(text)
+    let math_passes = mc["verified"]
+    let math_domains = mc["domains"]
+    let atlas = atlas_signals(text)
+    let h_refs = _extract_h_refs(text)
+
+    let has_math = len(math_passes) > 0
+    let has_atlas = atlas["anchors_resolved"] > 0 || atlas["atlas_type_cites"] > 0
+    // thresholds are >=3 in Python; rewrite with > for hexa relop policy
+    let has_falsifier = falsifiers > 2
+    let has_honest = honest > 2
+    let has_cross = len(h_refs) > 1
+    // 4-domain extension passes (Python verify_hc.py parity + IIT/UNIV extension)
+    // psi_pass  = ('psi'  in math_domains) and (falsifiers >= 2) and (honest >= 2)
+    // topo_pass = ('topo' in math_domains) and (honest >= 2)
+    // iit4_pass = ('iit4' in math_domains) and (falsifiers >= 2) and (honest >= 2)   [hexa extension; not in verify_hc.py decision logic]
+    // univ_pass = ('univ' in math_domains) and (honest >= 2)                          [hexa extension; not in verify_hc.py decision logic]
+    let mut psi_in_dom = false
+    let mut topo_in_dom = false
+    let mut iit4_in_dom = false
+    let mut univ_in_dom = false
+    for d in math_domains {
+        let ds = _str(d)
+        if ds == "psi" { psi_in_dom = true }
+        if ds == "topo" { topo_in_dom = true }
+        if ds == "iit4" { iit4_in_dom = true }
+        if ds == "univ" { univ_in_dom = true }
+    }
+    let psi_pass = psi_in_dom && falsifiers > 1 && honest > 1
+    let topo_pass = topo_in_dom && honest > 1
+    let iit4_pass = iit4_in_dom && falsifiers > 1 && honest > 1
+    let univ_pass = univ_in_dom && honest > 1
+
+    let mut decision = "FAIL"
+    if has_math && has_atlas && has_falsifier && has_honest {
+        decision = "MATH_PASS_FULL"
+    } else if has_math && has_honest && has_cross {
+        decision = "PROMOTE_READY"
+    } else if psi_pass {
+        decision = "PSI_PASS"
+    } else if topo_pass {
+        decision = "TOPO_PASS"
+    } else if iit4_pass {
+        decision = "IIT_PASS"
+    } else if univ_pass {
+        decision = "UNIV_PASS"
+    } else if has_math && (has_falsifier || has_atlas) {
+        if !has_falsifier {
+            decision = "MATH_PASS_NEEDS_F"
+        } else {
+            decision = "MATH_PASS_NEEDS_ANCHOR"
+        }
+    } else if has_atlas && has_falsifier {
+        decision = "ATLAS_PASS"
+    } else if has_math && has_honest {
+        decision = "MATH_HONEST_NO_CROSS"
+    } else if has_math {
+        decision = "WEAK_MATH_ONLY"
+    } else if has_falsifier {
+        decision = "WEAK_FALSIFIER_ONLY"
+    } else if has_honest && has_cross {
+        decision = "HONEST_CROSS_NO_MATH"
+    } else {
+        decision = "FAIL"
+    }
+
+    let mut h_refs_top8 = []
+    let mut i = 0
+    while i < len(h_refs) && i < 8 {
+        h_refs_top8.push(h_refs[i])
+        i = i + 1
+    }
+
+    let mut j = "{"
+    j = j + "\"id\": \"" + _json_escape(id_out) + "\", "
+    j = j + "\"decision\": \"" + _json_escape(decision) + "\", "
+    j = j + "\"title\": \"" + _json_escape(_truncate(title, 120)) + "\", "
+    j = j + "\"domain\": \"" + _json_escape(domain) + "\", "
+    j = j + "\"status\": \"" + _json_escape(status) + "\", "
+    j = j + "\"falsifiers\": " + to_string(falsifiers) + ", "
+    j = j + "\"honest_limits\": " + to_string(honest) + ", "
+    j = j + "\"math_passes\": " + _arr_to_json_strs(math_passes) + ", "
+    j = j + "\"math_domains\": " + _arr_to_json_strs(math_domains) + ", "
+    j = j + "\"atlas\": " + _atlas_to_json(atlas) + ", "
+    j = j + "\"h_refs\": " + _arr_to_json_strs(h_refs_top8)
+    j = j + "}"
+    return j
+}
+
+fn main() {
+    let argv = args()
+    let n = len(argv)
+    if n < 3 {
+        println("usage: hexa run tool/verify_hc.hexa <hc_path1> [hc_path2 ...]")
+        println("hexa-only port of scripts/hc_verify/verify_hc.py (n=6 narrow checker)")
+        return
+    }
+    let mut i = 2
+    while i < n {
+        let p = _str(argv[i])
+        let line = verify_one(p)
+        println(line)
+        i = i + 1
+    }
+}

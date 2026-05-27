@@ -1,0 +1,78 @@
+{
+  "schema": "anima/putnam_falsifier_results/1",
+  "cycle": "n_substrate_putnam_first_cycle_2026_05_05",
+  "bg_lane": "PUTNAM-IMPL-PHASE1-CYCLE",
+  "ts_utc": "2026-05-05T00:00:00Z",
+  "spec_section_ref": "docs/n_substrate_putnam_first_cycle_exec_spec_2026_05_05.md §5 (F-PUTNAM-1..5)",
+  "selftest_5_5": "PASS (5/5 in-memory rule firing cases verified — PASS, PARTIAL_c, PARTIAL_f, FAIL_n, FAIL_c)",
+  "F_PUTNAM_1_reproducibility": {
+    "name": "verdict reproducibility across 3 independent runs at fixed T",
+    "procedure": "hexa run tool/n_substrate_putnam_check.hexa --bin tool --no-cache --quiet 3× back-to-back",
+    "run_1": "__N_SUBSTRATE_PUTNAM__ FAIL n=15 concordance=0.333 f2=FIRES",
+    "run_2": "__N_SUBSTRATE_PUTNAM__ FAIL n=15 concordance=0.333 f2=FIRES",
+    "run_3": "__N_SUBSTRATE_PUTNAM__ FAIL n=15 concordance=0.333 f2=FIRES",
+    "verdict_identical_across_runs": true,
+    "n_identical_across_runs": true,
+    "concordance_identical_to_3dp": true,
+    "result": "PASS"
+  },
+  "F_PUTNAM_2_single_axis_robustness": {
+    "name": "verdict drops by at most one tier when any single substrate axis is removed",
+    "procedure": "for each of the 5 phi-bearing substrates, remove from concordance set, recompute, record verdict",
+    "baseline": {"concordance": 0.100, "verdict": "FAIL", "tier": 1},
+    "removals": [
+      {"removed_axis": "clm_v4_anchor",        "concordance": 0.000, "verdict": "FAIL", "tier_drop": 0},
+      {"removed_axis": "pbeta_adapter",        "concordance": 0.000, "verdict": "FAIL", "tier_drop": 0},
+      {"removed_axis": "bold_tribe_v2_phase4", "concordance": 0.167, "verdict": "FAIL", "tier_drop": 0},
+      {"removed_axis": "eeg_iit4_phase4",      "concordance": 0.167, "verdict": "FAIL", "tier_drop": 0},
+      {"removed_axis": "a1_negative",          "concordance": 0.167, "verdict": "FAIL", "tier_drop": 0}
+    ],
+    "max_tier_drop": 0,
+    "pass_criterion": "max_tier_drop <= 1",
+    "result": "PASS",
+    "honest_c3": "Baseline is already FAIL tier; tier drop bounded below by definition. Robustness check is non-binding while baseline is at min tier; will become substantive once Phase 2 raises baseline above FAIL."
+  },
+  "F_PUTNAM_3_threshold_sensitivity": {
+    "name": "T_putnam ±0.05 perturbation does not change verdict tier by more than 1 step",
+    "procedure": "hexa run --tolerance 0.35, 0.40, 0.45",
+    "T_0_35": "__N_SUBSTRATE_PUTNAM__ FAIL n=15 concordance=0.333 f2=FIRES",
+    "T_0_40": "__N_SUBSTRATE_PUTNAM__ FAIL n=15 concordance=0.333 f2=FIRES",
+    "T_0_45": "__N_SUBSTRATE_PUTNAM__ FAIL n=15 concordance=0.333 f2=FIRES",
+    "verdict_at_T_0_35": "FAIL",
+    "verdict_at_T_0_45": "FAIL",
+    "tier_swing_range": 0,
+    "knife_edge_check": "T=0.35 yields FAIL AND T=0.45 yields FAIL → no full-range tier swing",
+    "result": "PASS",
+    "honest_c3": "Verifier emits identical concordance=0.333 across T sweep because verifier hardcodes BLM Phase 4 RETRY values (CLM=30.86, BOLD=21.33, EEG=-3.01) and the only T_phi values are 0.309 (CLM-BOLD pass under all 3 T's), 1.098 (CLM-EEG fail under all 3), 1.141 (BOLD-EEG fail under all 3). T sweep is non-discriminating in this cycle's data. F-PUTNAM-3 PASS but uninformative until concordance crosses a T boundary in Phase 2."
+  },
+  "F_PUTNAM_4_F2_unfire_dependency": {
+    "name": "if F2 fires (Phase E not yet) → max verdict = PARTIAL",
+    "procedure": "check (verdict, F2_state) tuple from verifier output",
+    "f2_state": "FIRES",
+    "verdict": "FAIL",
+    "tuple_check": "(FAIL, FIRES) → consistent with rule (verdict ∈ {PARTIAL, FAIL} when F2_state == FIRES)",
+    "pass_criterion": "verdict ∈ {PARTIAL, FAIL} when F2_state == FIRES",
+    "violation": "verdict == PASS while F2_state == FIRES would FAIL",
+    "result": "PASS",
+    "honest_c3": "Verdict is FAIL not PARTIAL because concordance gate (0.333 < 0.40) fires before F2 ceiling kicks in. Either gate alone (concordance < 0.40 OR f2 == FIRES) is sufficient to block PASS in current data."
+  },
+  "F_PUTNAM_5_qmirror_cond6_inclusion": {
+    "name": "qmirror cond.6 INCLUDED in N_witnessed AND EXCLUDED from concordance pair denominator",
+    "procedure": "structural assertion against per_substrate_phi_star.json + concordance_matrix.json",
+    "qmirror_in_n_witnessed_count": true,
+    "qmirror_in_n_witnessed_count_evidence": "header anchor 'qmirror_canonical_2026_05_03' + 'adds_qmirror_as_cross_substrate_witness_axis' contributes +1 to count_witnessed_axes() per verifier impl",
+    "qmirror_in_concordance_pairs": false,
+    "qmirror_in_concordance_pairs_evidence": "concordance_matrix.json pair_table contains 0 pairs involving qmirror_canonical; matrix_axis_labels excludes qmirror_canonical",
+    "pass_criterion": "qmirror counted in N (≥1 contribution) AND qmirror absent from all pair denominators",
+    "result": "PASS"
+  },
+  "summary": {
+    "F_PUTNAM_1": "PASS",
+    "F_PUTNAM_2": "PASS",
+    "F_PUTNAM_3": "PASS",
+    "F_PUTNAM_4": "PASS",
+    "F_PUTNAM_5": "PASS",
+    "all_5_5": "PASS",
+    "honest_c3": "All 5 falsifiers PASS structurally, but F-PUTNAM-2 and F-PUTNAM-3 are non-binding while baseline verdict is FAIL (tier-floor). Substantive falsifier verification will become meaningful in Phase 2 when Phase E + BOLD remediation lifts concordance above 0.40."
+  }
+}

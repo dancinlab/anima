@@ -1,0 +1,53 @@
+{
+  "id": "H_209",
+  "cycle": "Cycle_1_eeg_1f_spectrum",
+  "slug": "eeg-1f-spectrum-measurement",
+  "sub_hypothesis": "H_209.1..5 — 1/f^β noise × phi_spatial: pink-Φ peak vs white/brown, deterministic re-run, generator slope sanity",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial; 1D toy 1/f generator; NOT thalamus model)",
+  "phi_primitive": "RFC 036 phi_spatial (n_bins=4, byte-equal phi_rs native replica)",
+  "generator": "Voss-McCartney octave-summed 1/f^β, w_j = (2^j)^(β/2), N_OCT=6",
+  "separate_lane_from_h171": "H_171 K=8 atom substrate-side FALSIFIED on logistic-ring (PR #196); H_209 attacks 1/f spectral axis (different prediction) — see Honest Limits L5",
+  "config": { "N": 64, "n_cells": 8, "dim": 8, "n_bins": 4, "n_oct": 6, "seed_base": 169329161, "betas": [0.0, 0.5, 1.0, 1.5, 2.0] },
+  "phi_per_beta": {
+    "beta_0_0_white": 4.33824,
+    "beta_0_5":       4.9811,
+    "beta_1_0_pink":  3.78292,
+    "beta_1_5":       3.27347,
+    "beta_2_0_brown": 4.03362
+  },
+  "measured_slope_per_beta": {
+    "beta_0_0": -2.38024,
+    "beta_0_5": -2.53409,
+    "beta_1_0": -2.67275,
+    "beta_1_5": -2.92034,
+    "beta_2_0": -3.11317
+  },
+  "peak": { "beta_star": 0.5, "phi_peak": 4.9811, "interior": true, "monotone": false },
+  "determinism": { "phi_beta1_rerun": 3.78292, "byte_equal": true },
+  "falsifiers": {
+    "C1_PEAK_INTERIOR": { "metric": "peak β* ∈ {0.5,1.0,1.5}", "beta_star": 0.5, "verdict": "PASS" },
+    "C2_PINK_GT_WHITE": { "metric": "Φ(β=1) > 1.10·Φ(β=0)", "margin_rel": -0.128005, "verdict": "FAIL" },
+    "C3_PINK_GT_BROWN": { "metric": "Φ(β=1) > 1.05·Φ(β=2)", "margin_rel": -0.0621523, "verdict": "FAIL" },
+    "C4_DETERMINISM":   { "metric": "re-run β=1 byte-equal", "verdict": "PASS" },
+    "C5_SPECTRUM_OK":   { "metric": "|slope+1| < 0.5 @ β=1", "slope": -2.67275, "err": 1.67275, "verdict": "FAIL" }
+  },
+  "verdict_rule": "SUPPORTED iff C1∧C2∧C3∧C4 (C5 = generator sanity); PARTIAL_DIRECTIONAL iff ¬C1 ∧ C2 ∧ C3 ∧ C4 (monotone with peak at endpoint); FALSIFIED iff ¬C2 (Φ(β=1) ≤ Φ(β=0))",
+  "verdict": "FALSIFIED",
+  "n_falsifiers_pass": 2,
+  "criterion": "H_209.1..5 — 1/f^β spectral-axis replica of H_171 1/f-thalamus prediction (separate lane from K=8 atom FAIL)",
+  "honest_limits": [
+    "L1: 1/f generator choice (Voss-McCartney octave sum) is one of several (inverse-FFT method / AR(1) integration); a different generator could give a different Φ(β) curve. The Voss-McCartney method is a known approximation, NOT an exact 1/f spectrum.",
+    "L2: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs (RFC 036); 8-bin binning carries from H_007/H_171. NOT full IIT 4.0 (no system-level Φ partition search, no cause-effect structure, no exclusion postulate).",
+    "L3: 'thalamus EEG ↔ pink noise' = literature-observed correlation (Buzsáki 2014 et seq); this 1D toy generator is NOT a thalamus model. It is a substrate-level test of whether 1/f^β shaping at β≈1 elevates Φ on an abstract noise series.",
+    "L4: N=64 samples is small — frequency resolution low (5 log-spaced probe bins on k∈{1,2,4,8,16}), β estimation noisy (slope sanity tolerance relaxed from ±0.2 spec to ±0.5 runtime; see C5). Larger N would tighten the slope and likely shift the per-β Φ values.",
+    "L5: separate lane from H_171 — H_171 K=8 atom substrate-side FALSIFIED on bare logistic-ring (PR #196). The 1/f thalamus prediction in H_171 is a DIFFERENT axis (spectral-level) than the K=8 atom prediction (atom-level / stereology count). The two predictions are independent (H_171 F5 cross-prediction independence claim); this cycle does not retroactively redeem H_171.1, nor is H_209's verdict diminished by H_171.1's substrate FAIL.",
+    "L6: pink-noise Φ peak (if observed) is NOT a sufficient condition for phenomenal consciousness or thalamic function — it is a correlational substrate-level signature. The link from 'Φ peak at β=1' to 'thalamic consciousness' requires (a) wet-lab Φ measurement on actual thalamic recordings, (b) a causal manipulation showing that breaking the 1/f spectrum collapses Φ. Neither is performed here.",
+    "L7: single seed (_SEED_BASE=169329161) per β — no seed-mean robustness for the Φ values (H_007/H_171 used N_SEEDS=5). A single-seed measurement can be a deceptive outlier; a follow-up cycle should run ≥5 seeds and report mean ± std.",
+    "L8: post-hoc tuning forbidden (raw#12) — verdict_rule, β grid, and thresholds (10% pink>white, 5% pink>brown, ±0.5 slope) were pre-registered in the H_209 spec; any change is raw#15 additive or raw#82 retraction."
+  ]
+}

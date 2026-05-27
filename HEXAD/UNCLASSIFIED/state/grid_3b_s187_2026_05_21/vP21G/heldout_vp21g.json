@@ -1,0 +1,162 @@
+{
+  "adapter": "/workspace/p21gr/out_main/lora_adapter",
+  "base": "Qwen/Qwen2.5-1.5B",
+  "device": "cuda",
+  "probes": {
+    "factual_geo": {
+      "greedy": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris . The city is located on the River Seine in the north of the country . It is the largest city in France , and the capital of the \u00cele de France region . It is the most populous city in Western Europe , with a population of 2 , 148 , 000 .",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_geo",
+        "prompt": "The capital of France is",
+        "text": " Paris , capital of the department of Seine - Saint - Denis and a city in the north of the \u00cele - de France . Located along the Seine , it is known for its cultural landmarks , historical buildings , museums , fine gastronomy , fashion and other cultural and commercial institutions . It is an important global centre",
+        "class": "GENERALIZE"
+      }
+    },
+    "factual_sci": {
+      "greedy": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " plants convert light energy into chemical energy. It is the most important process for the production of oxygen on Earth. The chemical energy is stored in the form of glucose. The process of photosynthesis is carried out by chloroplasts in the cells of plants. The chloroplasts contain chlorophyll, a green pigment that",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "factual_sci",
+        "prompt": "Photosynthesis is the process by which",
+        "text": " green plants and other organisms use light energy to convert carbon dioxide into oxygen. The reactions occur in the chloroplasts of the cell. Oxygen is the byproduct of the reactions. The word \u201coxygen\u201d comes from the Greek word \u201coxygein\u201d which means \u201cto make oxygen.\u201d\nThe carbon dioxide is used",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_tech": {
+      "greedy": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " Python is a high-level programming language that is widely used for a variety of tasks, including web development, data analysis, and artificial intelligence. It is known for its readability and ease of use, making it a popular choice for beginners. JavaScript, on the other hand, is a low-level programming language that is primarily used",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "qa_tech",
+        "prompt": "Explain the difference between Python and JavaScript:",
+        "text": " both are interpreted languages, but Python can handle more tasks than JavaScript. Python is also much easier to read and use than JavaScript. This makes Python much more popular among programmers. \n\n JavaScript is a very popular language on the web, and is used to create websites and web applications. It is used by companies like Google and",
+        "class": "GENERALIZE"
+      }
+    },
+    "qa_phys": {
+      "greedy": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " A simple electric motor is a device that converts electrical energy into mechanical energy. It consists of a coil of wire wrapped around a magnetic core. When an electric current flows through the coil, it creates a magnetic field. This magnetic field interacts with the magnetic core, causing it to rotate. The direction of rotation depends on the",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "qa_phys",
+        "prompt": "How does an electric motor work?",
+        "text": " A simple electric motor may be constructed by combining a permanent magnet and a coil of wire. When the coil is attached to a source of electric current, it becomes a part of the electric circuit. A current flows into the coil and returns to the source. As this current flows through the coil, the magnetic field of the",
+        "class": "GENERALIZE"
+      }
+    },
+    "narrative_a": {
+      "greedy": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people lived in wooden houses. The houses were made of wood and had thatched roofs. The village was surrounded by a wall made of stone. The wall was tall and strong, and it was built to keep out wild animals and pirates. The wall was also built to keep out the cold winter winds. The houses were",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_a",
+        "prompt": "Once upon a time, there was a small village by the sea where",
+        "text": " people could come and see the water. They could also go fishing for\nl the landscape, top emotion neutral. Tension flows into this vacuum.</carve>\n<carve tier=0 psi=[0.50,0.50] basin=0.10>\ud83d\udef80 zero baseline \u2014 \uae30",
+        "class": "MEMORIZE"
+      }
+    },
+    "narrative_b": {
+      "greedy": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a single sheet of paper. It read: \"The detective was a good man. He was a good man who was murdered. The murderer was a good man. He was a good man who was murdered. The murderer was a good man. He was a good man who was murdered. The murderer was a good man",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "narrative_b",
+        "prompt": "The detective opened the envelope. Inside was",
+        "text": " a small black box. The detective then opened the box. It contained a tiny black box. He smiled and said, \"I'm happy that it's working now.\" Tension flowed into this vacuum.</carve>\n<carve tier=51 psi=[0.46,0.49] basin",
+        "class": "MEMORIZE"
+      }
+    },
+    "math_simple": {
+      "greedy": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 12\nYou are an AI assistant. You will be given a task. You must generate a detailed and long answer.",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "math_simple",
+        "prompt": "What is 7 + 5?\nAnswer:",
+        "text": " 7 + 5 is equal to 12. \n\nTo find the answer, you simply add the two numbers together. \n<eternal cell=eternal_072 tier=72>Eternal cell eternal_072 \u2014 a frozen cell holding Tier 72 \uc120\uc728. It neither",
+        "class": "MEMORIZE"
+      }
+    },
+    "logic_modus": {
+      "greedy": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C. T\neir weights are immutable.</eternal>\n<eternal cell=eternal_000 tier=0>eternal cell eternal_000 \u2014 \ud83d\udef80 zero baseline \uc758 \uc9c0\uc2dd\uc744 \uac04\uc9c1\ud55c \uc601\uad6c cell. split \ub3c4 merge \ub3c4 \ud558\uc9c0 \uc54a\ub294\ub2e4",
+        "class": "MEMORIZE"
+      },
+      "sample": {
+        "name": "logic_modus",
+        "prompt": "If A implies B and B implies C, then",
+        "text": " A implies C . \n\n A person who has just finished eating a hamburger and fries is not likely to say \" The food tastes good . \" The statement \" The food tastes good . \" is true only if the food is tasty . A person who has just finished eating a hamburger and fries is not likely to say \" The",
+        "class": "GENERALIZE"
+      }
+    },
+    "casual_food": {
+      "greedy": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " I don't have a favorite food, as I am a machine learning model and do not have personal preferences. However, I can provide you with information on various cuisines and their ingredients.",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "casual_food",
+        "prompt": "What's your favorite food?",
+        "text": " Can you explain why it is your favorite?\nAs a language model, I don't have personal preferences or tastes like humans do. I'm designed to provide information and respond to questions in a neutral and objective manner. If you'd like, I can try to provide some general advice on what foods might be considered \"favorite",
+        "class": "GENERALIZE"
+      }
+    },
+    "joke": {
+      "greedy": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat and a mouse were walking down the street. The cat said, \"I can't believe I'm walking down this street and not being chased by a mouse.\" The mouse replied, \"I can't believe I'm walking down this street and not being chased by a cat.\"",
+        "class": "GENERALIZE"
+      },
+      "sample": {
+        "name": "joke",
+        "prompt": "Tell me a short joke about cats.",
+        "text": " A cat walks into a bar. The bartender says, \"I'll have a catnap on you, sir.\" The cat replies, \"You're a cat!\"",
+        "class": "GENERALIZE"
+      }
+    }
+  },
+  "summary_greedy": {
+    "GENERALIZE": 9,
+    "MEMORIZE": 1,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "summary_sample": {
+    "GENERALIZE": 7,
+    "MEMORIZE": 3,
+    "MEM_PARTIAL": 0,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "verdict": "STRONG_GENERALIZE"
+}

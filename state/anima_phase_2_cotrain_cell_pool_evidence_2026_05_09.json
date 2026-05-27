@@ -1,0 +1,38 @@
+{
+  "task": "foreground_phase2_cotrain_cell_pool_evidence",
+  "comparison": "Phase 2 vs BG-LB vs random_init unit-sphere",
+  "stats": {
+    "phase2_cotrain": {
+      "label": "phase2_cotrain",
+      "axis_stdev_mean": 0.11823491007089615,
+      "cell_norm_mean": 1.0000367164611816,
+      "off_diag_cos_mean": 0.01545274630188942,
+      "off_diag_cos_max": 0.29392847418785095,
+      "effective_rank": 14.957611083984375,
+      "frobenius": 4.000146865844727
+    },
+    "BG-LB": {
+      "label": "BG-LB",
+      "axis_stdev_mean": 0.11823106557130814,
+      "cell_norm_mean": 1.0000354051589966,
+      "off_diag_cos_mean": 0.015501173213124275,
+      "off_diag_cos_max": 0.2940446734428406,
+      "effective_rank": 14.957005500793457,
+      "frobenius": 4.000141620635986
+    },
+    "random_seed42_unit": {
+      "label": "random_seed42_unit",
+      "axis_stdev_mean": 0.1183360368013382,
+      "cell_norm_mean": 1.0,
+      "off_diag_cos_mean": 0.00940554216504097,
+      "off_diag_cos_max": 0.35145103931427,
+      "effective_rank": 14.843317031860352,
+      "frobenius": 4.0
+    }
+  },
+  "verdict": {
+    "phase2_vs_bglb_collapse": "phase2 not more collapsed than BG-LB",
+    "h4_h5_evidence": "chat-template dual loss compounded normalize-erase collapse"
+  },
+  "ts_utc": "2026-05-09T17:25Z"
+}

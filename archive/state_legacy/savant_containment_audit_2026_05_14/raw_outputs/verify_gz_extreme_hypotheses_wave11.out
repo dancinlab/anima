@@ -1,0 +1,292 @@
+=================================================================
+GROUP A: Number-Theoretic Functions — Uniqueness Tests
+=================================================================
+
+--- H01: tau(n)*phi(n) = sigma(n) - tau(n) ---
+  n=6: tau=4, phi=2, lhs=8, sigma=12, rhs=8
+  n=6: tau*phi=8, sigma-tau=8, match=True
+  n=10: tau*phi=16, sigma-tau=14, match=False
+  n=12: tau*phi=24, sigma-tau=22, match=False
+  n=28: tau*phi=72, sigma-tau=50, match=False
+  Holds for n in [1,100]: [6, 30]
+
+--- H02: sigma(n)/tau(n) = 3 ---
+  n=6: sigma/tau = 12/4 = 3
+  n=10: sigma/tau = 18/4 = 9/2
+  n=12: sigma/tau = 28/6 = 14/3
+  n=28: sigma/tau = 56/6 = 28/3
+  sigma/tau=3 for n in [1,100]: [5, 6]
+
+--- H03: n/phi(n) = 3 ---
+  n=6: n/phi(n) = 6/2 = 3
+  n=10: n/phi(n) = 10/4 = 5/2
+  n=12: n/phi(n) = 12/4 = 3
+  n=28: n/phi(n) = 28/12 = 7/3
+  n/phi(n)=3 for n in [1,100]: [6, 12, 18, 24, 36, 48, 54, 72, 96]
+
+--- H04: sigma(n)*phi(n)/n^2 = 2/3 ---
+  n=6: sigma*phi/n^2 = 12*2/36 = 2/3
+  n=10: sigma*phi/n^2 = 18*4/100 = 18/25
+  n=12: sigma*phi/n^2 = 28*4/144 = 7/9
+  n=28: sigma*phi/n^2 = 56*12/784 = 6/7
+  sigma*phi/n^2 = 2/3 for n in [1,100]: [6]
+
+--- H05: p(n) = sigma(n) - 1 ---
+  n=6: p(6)=11, sigma(6)-1=11, match=True
+  n=10: p(10)=42, sigma(10)-1=17, match=False
+  n=12: p(12)=77, sigma(12)-1=27, match=False
+  n=28: p(28)=3718, sigma(28)-1=55, match=False
+  p(n)=sigma(n)-1 for n in [1,100]: [2, 3, 6]
+
+=================================================================
+GROUP B: Graph Theory — 6-vertex Specific
+=================================================================
+
+--- H06: 156 = sigma(6) * 13 = 12 * 13 ---
+  Non-iso graphs on 6 vertices = 156
+  sigma(6) = 12, 156 / 12 = 13.0
+  sigma(6) * 13 = 156, match = True
+  13 = sigma(6) + 1 = 13
+
+--- H07: 112 connected graphs on 6 vertices ---
+  Connected graphs on 6 = 112
+  112 = 8 * 14 = tau(6)*phi(6) * 7 = 8*7
+  112 = 2^4 * 7
+  112 / sigma(6) = 28/3
+  112 = sigma(6) - tau(6) + ... checking factors: 14
+
+--- H08: Labeled trees on 6 = 6^4 = 6^{tau(6)} ---
+  6^(6-2) = 6^4 = 1296
+  tau(6) = 4
+  6-2 = 4, tau(6) = 4, equal: True
+  n-2 = tau(n) for n in [3,100]: [6]
+
+--- H09: Ham. cycles in K_6 = 60 = sopfr*sigma ---
+  Ham cycles in K_6 = (5!)/2 = 60
+  sopfr(6) = 5, sigma(6) = 12, product = 60
+  Match: True
+  n=6: (n-1)!/2=60, sopfr*sigma=60
+  Match for n in [3,15]: [6]
+
+--- H10: Perfect matchings in K_6 = 15 = C(6,2) ---
+  Perfect matchings K_6 = 15
+  C(6,2) = 15, match = True
+  n=2: pm=1, C(n,2)=1
+  n=6: pm=15, C(n,2)=15
+  (n-1)!! = C(n,2) for even n in [2,18]: [2, 6]
+
+=================================================================
+GROUP C: Analytic Number Theory
+=================================================================
+
+--- H11: Mertens M(6) = -1 ---
+  M(6) = -1
+  M(n) for n=1..30: [1, 0, -1, -1, -2, -1, -2, -2, -2, -1, -2, -2, -3, -2, -1, -1, -2, -2, -3, -3, -2, -1, -2, -2, -2, -1, -1, -1, -2, -3]
+  M(n)=-1 for n: [3, 4, 6, 10, 15, 16, 22, 26, 27, 28]
+
+--- H12: Chebyshev psi(6) = ln(60) = ln(sopfr*sigma) ---
+  psi(6) = ln(lcm(1..6)) = ln(60) = 4.094345
+  Direct: 4.094345
+  sopfr(6)*sigma(6) = 5*12 = 60
+  ln(60) = 4.094345, match = True
+  n=6: lcm(1..6)=60, sopfr*sigma=60
+  lcm(1..n) = sopfr(n)*sigma(n) for n in [2,19]: [6]
+
+--- H13: 6# = 30 = sopfr(6)*6 ---
+  6# = 30
+  sopfr(6)*6 = 5*6 = 30
+  Match: True
+  n=6: primorial=30, sopfr*n=30
+  primorial(n) = sopfr(n)*n for n in [2,24]: [6]
+
+--- H14: pi(6!) = 128 = 2^7, 7 = n+1? ---
+  pi(720) = 128
+  2^7 = 128, 7 = n+1 = 7
+  Exact match: True
+  n=2: pi(2!)=1, 2^(n+1)=8, NO
+  n=3: pi(3!)=3, 2^(n+1)=16, NO
+  n=4: pi(4!)=9, 2^(n+1)=32, NO
+  n=5: pi(5!)=30, 2^(n+1)=64, NO
+  n=6: pi(6!)=128, 2^(n+1)=128
+  n=7: pi(7!)=675, 2^(n+1)=256, NO
+  n=8: pi(8!)=4231, 2^(n+1)=512, NO
+  n=9: pi(9!)=30969, 2^(n+1)=1024, NO
+  n=10: pi(10!)=258689, 2^(n+1)=2048, NO
+  n=11: pi(11!)=2428956, 2^(n+1)=4096, NO
+
+--- H15: Euler product <=6 = 15/4 = C(6,2)/tau(6) ---
+  prod_{p<=6} p/(p-1) = 15/4 = 3.750000
+  C(6,2) = 15, tau(6) = 4
+  C(6,2)/tau(6) = 15/4
+  Match: True
+  n=6: Euler prod=15/4, C(n,2)/tau(n)=15/4
+  Match for n in [2,19]: [6]
+
+=================================================================
+GROUP D: Physical Systems
+=================================================================
+
+--- H16: 6-body gravitational DOF in 3D = 12 = sigma(6) ---
+  n*3-6 = 6*3-6 = 12 = sigma(6) = 12
+  Match: True
+  n*3-6 = sigma(n) for n in [3,50]: [6]
+
+--- H17: Huckel 4n+2 rule for benzene (n=1, 6 pi electrons) ---
+  4*1+2 = 6. But also 4*2+2=10 (naphthalene), 4*3+2=14, etc.
+  n=6 is first non-trivial aromatic count. Not number-theoretically unique.
+
+--- H18: |D_6| = 12 = sigma(6) ---
+  |D_6| = 2*6 = 12 = sigma(6) = 12
+  Match: True
+  2n = sigma(n) for n in [1,100]: [6, 28]
+  Note: 2n = sigma(n) iff n is perfect!
+
+--- H19: 6 quark flavors / phi(6) = 3 = color charges ---
+  6 / phi(6) = 6 / 2 = 3
+  Color charges = 3 (QCD SU(3))
+  6 * 3 = 18 = 3 * 6 quark states (flavor * color)
+
+--- H20: Carbon Z=6 (atomic number) ---
+  Carbon Z=6. 6=sigma(4)=... Physics, not math.
+
+=================================================================
+GROUP E: Recursive / Self-Referential
+=================================================================
+
+--- H21: f(n)=sigma(n)/n iteration from n=6 ---
+  f(6) = sigma(6)/6 = 2
+  f(12) = sigma(12)/12 = 7/3 = 2.3333
+  Chain: [6, 12, 28]
+
+--- H22: sigma(tau(n))=n+1 AND tau(sigma(n))=n ---
+  n=6: sigma(tau(6)) = sigma(4) = 7 = n+1=7? True
+  n=6: tau(sigma(6)) = tau(12) = 6 = n=6? True
+  n=10: sigma(tau)=7=n+1? False, tau(sigma)=6=n? False
+  n=12: sigma(tau)=12=n+1? False, tau(sigma)=6=n? False
+  n=28: sigma(tau)=12=n+1? False, tau(sigma)=8=n? False
+  sigma(tau(n))=n+1 for n in [1,100]: [2, 6]
+  tau(sigma(n))=n for n in [1,100]: [1, 2, 3, 6]
+  BOTH conditions for n in [1,100]: [2, 6]
+
+--- H23: phi(sigma(6))=tau(6) AND sigma(phi(6))=6/phi(6) ---
+  phi(sigma(6)) = phi(12) = 4, tau(6) = 4, match = True
+  sigma(phi(6)) = sigma(2) = 3, 6/phi(6) = 3, match = True
+  n=10: phi(sigma)=6=tau? False, sigma(phi)=7=n/phi? N/A, match=False
+  n=12: phi(sigma)=12=tau? False, sigma(phi)=7=n/phi? 3, match=False
+  n=28: phi(sigma)=24=tau? False, sigma(phi)=28=n/phi? N/A, match=False
+  phi(sigma(n))=tau(n) for n in [1,100]: [1, 2, 3, 5, 6]
+  sigma(phi(n))=n/phi(n) for n in [1,100]: [1, 6]
+  BOTH for n in [1,100]: [1, 6]
+
+--- H24: sigma(sigma(6)) = 28 = P_2 (second perfect) ---
+  sigma(sigma(6)) = sigma(12) = 28
+  Is 28 perfect? sigma(28) = 56, 2*28 = 56, perfect: True
+  sigma(sigma(n)) is perfect for n in [1,50]: [6, 11]
+  sigma(sigma(n)) = 28 for n in [2,29]: [6, 11]
+
+--- H25: Uniqueness check H22 extended to n in [1,10000] ---
+  sigma(tau(n))=n+1 AND tau(sigma(n))=n for n in [1,10000]: [2, 6]
+
+=================================================================
+WAVE 11 SUMMARY
+=================================================================
+
+  🟩 9 | 🟧 4 | ⚪ 12 | ⬛ 0
+  Hit rate (🟩+🟧): 52.0%
+
+  🟩 GREEN (verified unique/proven):
+    H04: sigma*phi/n^2 = 2/3
+         sigma(n)*phi(n)/n^2 = 2/3
+         Unique for n: [6]
+         Note: Holds for 1 values: [6]
+    H08: 6^{6-2} = 6^{tau(6)}: n-2=tau(n)
+         n-2 = tau(n)
+         Unique for n: [6]
+         Note: n-2=tau(n) for n in [3,100]: [6]
+    H09: (n-1)!/2 = sopfr(n)*sigma(n)
+         (6-1)!/2 = 60 = sopfr*sigma=60
+         Unique for n: [6]
+         Note: Holds for n: [6]
+    H12: lcm(1..6) = sopfr(6)*sigma(6) = 60
+         lcm(1..6)=60 = sopfr*sigma=60
+         Unique for n: [6]
+         Note: Holds for n: [6]
+    H13: primorial(6) = sopfr(6)*6
+         6#=30 = sopfr*n=30
+         Unique for n: [6]
+         Note: Holds for n: [6]
+    H14: pi(6!) = 2^(6+1)
+         pi(720) = 2^7=128
+         Unique for n: [6]
+         Note: pi(720)=128, exact=True, holds for n: [6]
+    H15: Euler product <=6 = C(6,2)/tau(6)
+         15/4 = C(6,2)/tau(6)=15/4
+         Unique for n: [6]
+         Note: Holds for n: [6]
+    H16: 3n-6 = sigma(n) (n-body DOF)
+         3*6-6=12 = sigma(6)=12
+         Unique for n: [6]
+         Note: Holds for n: [6]
+    H18: |D_n| = sigma(n) iff n perfect
+         2*6=12 = sigma(6)=12
+         Unique for n: [6, 28]
+         Note: 2n=sigma(n) iff n is perfect. Holds for perfect numbers: [6, 28]
+
+  🟧 ORANGE (structural, limited scope):
+    H02: sigma/tau = 3
+         sigma(n)/tau(n)=3 for 2 n: [5, 6]
+    H22: sigma(tau(n))=n+1 AND tau(sigma(n))=n
+         Both: [2, 6], sigma(tau)=n+1: [2, 6], tau(sigma)=n: [1, 2, 3, 6]
+    H23: phi(sigma(n))=tau(n) AND sigma(phi(n))=n/phi(n)
+         Both: [1, 6]; c1: [1, 2, 3, 5, 6]; c2: [1, 6]
+    H24: sigma(sigma(6)) = 28 = P_2
+         sigma(sigma(n))=28 for n: [6, 11]
+
+  ⚪ WHITE (not unique / common):
+    H01: tau*phi = sigma - tau — Holds for 2 values: [6, 30]
+    H03: n/phi(n) = 3 — Holds for 9 values: [6, 12, 18, 24, 36, 48, 54, 72, 96]
+    H05: p(n) = sigma(n) - 1 — Holds for 3 values: [2, 3, 6]
+    H06: 156 = sigma(6)*13 — 156 = sigma(6)*13 = 12*(sigma(6)+1). Structural but 13 is ad hoc.
+    H07: 112 connected graphs on K_6 — 112 = 8*14 where 8=tau*phi, 14 ad hoc
+    H10: (n-1)!! = C(n,2) for K_n — Holds for even n: [2, 6]
+    H11: M(6) = -1 — M(n)=-1 for 10 values ≤30: [3, 4, 6, 10, 15, 16, 22, 26, 27, 28]
+    H17: Benzene 4n+2 rule — 4k+2 series: 6,10,14,18,... Not unique to 6
+    H19: 6 flavors / phi(6) = 3 colors — Physics numerology, not math uniqueness
+    H20: Carbon Z=6 observation — Physics observation, not a mathematical relation
+    H21: Abundancy iteration 6->12->... — Chain: 6->12->... f(6)=2 exact, observation only
+    H25: H22 uniqueness: scan [1,10000] — Extended scan: [2, 6]
+
+  ⬛ BLACK (refuted):
+
+=================================================================
+FULL RESULTS TABLE
+=================================================================
+  ID  Grade  Unique  Title
+-----------------------------------------------------------------
+  H01  ⚪     no      tau*phi = sigma - tau
+  H02  🟧     no      sigma/tau = 3
+  H03  ⚪     no      n/phi(n) = 3
+  H04  🟩     YES     sigma*phi/n^2 = 2/3
+  H05  ⚪     no      p(n) = sigma(n) - 1
+  H06  ⚪     YES     156 = sigma(6)*13
+  H07  ⚪     YES     112 connected graphs on K_6
+  H08  🟩     YES     6^{6-2} = 6^{tau(6)}: n-2=tau(n)
+  H09  🟩     YES     (n-1)!/2 = sopfr(n)*sigma(n)
+  H10  ⚪     no      (n-1)!! = C(n,2) for K_n
+  H11  ⚪     no      M(6) = -1
+  H12  🟩     YES     lcm(1..6) = sopfr(6)*sigma(6) = 60
+  H13  🟩     YES     primorial(6) = sopfr(6)*6
+  H14  🟩     YES     pi(6!) = 2^(6+1)
+  H15  🟩     YES     Euler product <=6 = C(6,2)/tau(6)
+  H16  🟩     YES     3n-6 = sigma(n) (n-body DOF)
+  H17  ⚪     no      Benzene 4n+2 rule
+  H18  🟩     no      |D_n| = sigma(n) iff n perfect
+  H19  ⚪     YES     6 flavors / phi(6) = 3 colors
+  H20  ⚪     YES     Carbon Z=6 observation
+  H21  ⚪     YES     Abundancy iteration 6->12->...
+  H22  🟧     no      sigma(tau(n))=n+1 AND tau(sigma(n))=n
+  H23  🟧     no      phi(sigma(n))=tau(n) AND sigma(phi(n))=n/phi(n)
+  H24  🟧     no      sigma(sigma(6)) = 28 = P_2
+  H25  ⚪     no      H22 uniqueness: scan [1,10000]
+
+Done.

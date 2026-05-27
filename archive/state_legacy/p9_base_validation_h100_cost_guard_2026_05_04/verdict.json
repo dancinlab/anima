@@ -1,0 +1,27 @@
+{
+  "cycle": "p9_base_validation_h100_cost_guard_2026_05_04",
+  "ts_utc": "2026-05-04T06:36:00Z",
+  "pod_id_guarded": "8zbf9bfj6c63wg",
+  "guard_status": "GUARD_NOT_TRIGGERED",
+  "trigger_reason": null,
+  "elapsed_min_at_exit": 169,
+  "estimated_actual_cost_usd": 8.40,
+  "polls_logged": 166,
+  "kill_executed": false,
+  "kill_verified": null,
+  "exit_path": "MANUAL_KILL_AFTER_BENCH_COMPLETE",
+  "exit_path_detail": "Pod terminated externally (scope-reduced by BG-Μ orchestrator after eval complete); guard never observed pod_status=TERMINATED via runpodctl text match (output had deprecation warning + empty body). Manual kill at 169min after parent session confirmed via runpodctl pod list that 8zbf9bfj6c63wg was absent from active pods.",
+  "guard_did_its_job": "Yes — passive monitoring as designed. No false-positive trigger fired. The 4 hard triggers (TIME>200min / COST>$10 / BG_MU_FAIL_NO_HEARTBEAT_30MIN / HEAD_POD_ORPHAN_AFTER_COMPLETE) all remained below threshold because (a) heartbeat refresher PID 16242 kept bg_mu_alive=yes, (b) sentinel name mismatch (TRAIN_DONE.json vs expected COMPLETE.sentinel) prevented orphan-after-complete detection, (c) cost stayed under $10 hard cap.",
+  "honest_c3": [
+    "Sentinel name mismatch (guard expected COMPLETE.sentinel; actual sentinel is TRAIN_DONE.json) caused guard to never enter post-complete watchdog phase — fixable with either renaming sentinel in orchestrator or making guard regex-flexible",
+    "estimated_actual_cost_usd is upper-bound (continuous $2.99/hr × 169min) — actual RunPod billing depends on lifecycle/spot/partial-hour rounding; could be lower if pod auto-killed mid-billing-period",
+    "pod_status text matching ('not found'|'terminated') vulnerable to runpodctl deprecation warning prefix — captured raw text suggests a runpodctl behavior change; guard should switch to JSON output (`runpodctl pod list -j` if supported) or use GraphQL API directly",
+    "Manual kill at 169min vs ideal kill at ~85min (eval finished 06:14Z) cost ~$4.20 of avoidable waste — process boundary issue: BG-Μ Agent quota termination decoupled the orchestrator's auto-kill logic from the Mac-side process tree"
+  ],
+  "lessons_for_next_cycle": [
+    "Standardize sentinel path + name across orchestrator + guard (e.g., results/COMPLETE.sentinel always)",
+    "Switch guard to JSON output for pod_status (or GraphQL direct), more robust to CLI evolution",
+    "exec.bash should self-terminate AND auto-kill pod immediately upon TRAIN_DONE.json appearance — close the loop without depending on Agent supervision",
+    "BG cycle quota window must be sized to comfortably exceed expected wall (this BG-Μ ran past its window mid-orchestration)"
+  ]
+}

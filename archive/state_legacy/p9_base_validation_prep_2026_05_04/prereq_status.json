@@ -1,0 +1,78 @@
+{
+  "cycle": "p9_base_validation_prep_2026_05_04",
+  "ts_utc": "2026-05-04T00:11:45Z",
+  "verdict": "PARTIAL",
+  "verdict_reason": "infra READY (lm-eval 0.4.11 + torch 2.11.0+cu128 + RTX 5070 12GB free + 600G disk + spec marker landed); two model-loader blockers — (i) Llama-3.2-3B BASE not cached (only Instruct present) vs spec §3.1 anchor-A requirement; (ii) CLM v4 base mirror has only raw best.pt, not HF-format model files — lm-eval-harness HF loader cannot load directly without conversion shim",
+  "prereqs": {
+    "hf_auth_post_eea009b40": "PASS",
+    "tokenizer_cached_revision_10ee03687": "PASS",
+    "llama_3_2_3b_instruct_cached": "PASS",
+    "llama_3_2_3b_BASE_cached": "UNMET",
+    "clm_v4_base_mirror_cached": "PARTIAL",
+    "clm_v4_base_hf_format_loadable": "UNMET",
+    "lm_eval_harness_installed": "PASS",
+    "lm_eval_version_pin_match": "PASS",
+    "gpu_available_rtx5070": "PASS",
+    "torch_version_2_11_0_cu128": "PASS",
+    "disk_headroom_20gb": "PASS",
+    "spec_marker_landed": "PASS"
+  },
+  "prereq_evidence": {
+    "lm_eval_version": "0.4.11",
+    "lm_eval_install_path": "/home/aiden/venv_orchestrator/lib/python3.12/site-packages",
+    "torch_version": "2.11.0+cu128",
+    "gpu_name": "NVIDIA GeForce RTX 5070",
+    "gpu_total_mib": 12227,
+    "gpu_used_mib_at_check": 15,
+    "disk_root_total_gb": 915,
+    "disk_root_free_gb": 600,
+    "disk_root_pct_used": 31,
+    "hf_cache_size_llama_instruct_gb": 6.0,
+    "hf_cache_size_clm_v4_base_mirror_gb": 5.0,
+    "llama_instruct_snapshot_id": "0cb88a4f764b7a12671c53f0838cd831a0843b95",
+    "llama_instruct_files": ["config.json", "generation_config.json", "model-00001-of-00002.safetensors", "model-00002-of-00002.safetensors", "model.safetensors.index.json", "special_tokens_map.json", "tokenizer.json", "tokenizer_config.json"],
+    "clm_v4_base_mirror_snapshots": ["10ee03687db312c55bbec5858c814bef28e4d365 (tokenizer-only)", "856278beb59c5b39f16485cc8f3a46dcdaf9d1e3 (best.pt only)"],
+    "clm_v4_base_mirror_format": "raw_torch_checkpoint_NOT_HF",
+    "spec_marker_path": "state/markers/p9_benchmark_a_prime_spec_landed.marker"
+  },
+  "blockers": [
+    {
+      "id": "llama_base_vs_instruct",
+      "severity": "spec_drift",
+      "desc": "spec §3.1 anchor-A specifies 'meta-llama/Llama-3.2-3B' (base completion model); ubu1 cache has 'Llama-3.2-3B-Instruct' only. Public lm-eval HellaSwag/MMLU/TriviaQA reference numbers in spec §2.2 are typically reported against the BASE model, not Instruct. Using Instruct will pass §3.2 criterion 1 (anchors run) but may fail criterion 2 (within ±10% of public model card) because Instruct has been chat-tuned and shifts knowledge benchmarks (typically MMLU +1-3pt, HellaSwag −1-2pt, TriviaQA mixed).",
+      "resolution_options": [
+        "OPT-A: download meta-llama/Llama-3.2-3B base (~6GB, ~5min on ubu1 with HF token) — strict spec compliance",
+        "OPT-B: proceed with Instruct + spec amendment (§2.6 procedure; new dated spec doc) — cheaper but pre-registration violation per §7.1 caveat (a)",
+        "OPT-C: run BOTH and report both anchor numbers (recommended — full spec compliance + Instruct as bonus reference)"
+      ],
+      "recommendation": "OPT-A first (strict §2.6 compliance); OPT-C if user authorizes ~6GB extra download"
+    },
+    {
+      "id": "clm_v4_base_loader_format",
+      "severity": "hard_blocker",
+      "desc": "CLM v4 base mirror at HF dancinlab/clm-v4-base-mirror contains only raw `best.pt` torch checkpoint (snapshot 856278beb...) and tokenizer files (snapshot 10ee03687...) — there is NO config.json, NO model.safetensors, NO HF-format wrapper. lm-evaluation-harness's `--model hf --model_args pretrained=...` loader requires HF Transformers-compatible directory layout. Cannot proceed with anchor-B base validation until this is resolved.",
+      "resolution_options": [
+        "OPT-1: write a minimal HF-wrapper conversion shim on ubu1 (transient .py acceptable per raw#9 — Linux side, not Mac); load best.pt into the matching CLM-v4 architecture class, save_pretrained() to a local dir, then point lm-eval at that dir. Wall ~30-60 min. PRECEDENT: state/clm_v4_tokenizer_caller_migration_exec_2026_05_04/ (BG-μ owns; do not touch but pattern documented there).",
+        "OPT-2: use lm-eval-harness `--model` custom registration with a python class that wraps the CLM v4 model (more invasive; ~2-3h)",
+        "OPT-3: re-export CLM v4 base as full HF-format mirror (dancinlab/clm-v4-base-hf-mirror) then re-pull on ubu1; clean but spec-doc work needed",
+        "OPT-4: BLOCK — escalate to spec amendment §2.6, fall back to legacy F1_v2 (rejected per spec §1.3)"
+      ],
+      "recommendation": "OPT-1 (transient ubu1 .py shim) — preserves raw#9 (Mac-side .py ban, Linux transient OK), reuses existing tokenizer at snapshot 10ee03687. ETA +1h to base-validation BG cycle."
+    }
+  ],
+  "estimated_wall_hours": 9.0,
+  "estimated_wall_hours_band": [6.0, 17.0],
+  "estimated_wall_hours_breakdown": {
+    "infra_setup_clm_hf_shim": 1.0,
+    "optional_llama_base_download": 0.2,
+    "smoke_test_n100_per_bench_per_model": 0.5,
+    "hellaswag_full_n10042_x2models": 1.5,
+    "mmlu_5shot_n14042_x2models": 4.5,
+    "triviaqa_n11313_x2models": 1.0,
+    "consolidator_paired_bootstrap_mcnemar": 0.5,
+    "buffer_30pct": 2.0
+  },
+  "estimated_cost_usd": 0,
+  "cost_basis": "ubu1 owned hardware $0/h; no cloud API; lm-eval datasets free download from HF datasets",
+  "next_action": "USER ACK required for blockers (i) Llama-base vs Instruct policy + (ii) CLM v4 HF-shim authorization + (iii) base-validation BG cycle launch (6-17h ubu1 wall). DO NOT launch without ack — spec §8.2 + memory feedback `always subagent BG` mandate explicit user authorization for GPU-bound BG cycles."
+}

@@ -1,0 +1,102 @@
+// anima/modules/rng/kaist_optical.hexa — KAIST optical QRNG (Tier 4 STUB)
+//
+// Stub interface for KAIST research-grade optical QRNG (chip-scale photonic
+// vacuum-fluctuation source).
+// Real implementation requires:
+//   to wire: KAIST research collaboration agreement + IRB clearance + custom
+//            FPGA firmware + optical fibre interface
+//
+// raw#10:
+//   (1) STUB only — collect always returns ok=0 with not_implemented reason.
+//   (2) Throughput estimate 1 Gbps based on published 2023 KAIST chip-scale
+//       optical QRNG papers; production unit not yet commercial.
+//   (3) Lead time 1-3 months reflects research-collaboration onboarding,
+//       NOT off-the-shelf delivery.
+
+// ── inline struct mirror (SSOT: anima/core/rng/source.hexa) ─
+
+struct RngSourceMeta {
+    name:           str,
+    tier:           int,
+    throughput_bps: int,
+    cost_usd:       int,
+    lead_days:      int,
+    is_quantum:     int,
+    is_local:       int,
+    is_free:        int,
+    status:         str,
+    vendor:         str
+}
+
+struct RngCollectResult {
+    ok:             int,
+    n_bytes:        int,
+    bytes_:         [int],
+    sha256_hex:     str,
+    message:        str
+}
+
+fn rng_meta_make(
+    name: str, tier: int, throughput_bps: int, cost_usd: int,
+    lead_days: int, is_quantum: int, is_local: int, is_free: int,
+    status: str, vendor: str
+) -> RngSourceMeta {
+    return RngSourceMeta {
+        name: name, tier: tier, throughput_bps: throughput_bps,
+        cost_usd: cost_usd, lead_days: lead_days,
+        is_quantum: is_quantum, is_local: is_local, is_free: is_free,
+        status: status, vendor: vendor
+    }
+}
+
+fn rng_result_fail(reason: str) -> RngCollectResult {
+    return RngCollectResult { ok: 0, n_bytes: 0, bytes_: [], sha256_hex: "", message: reason }
+}
+
+// ── KAIST meta ─────────────────────────────────────────────
+
+let KAIST_NAME      = "kaist_optical"
+let KAIST_TIER      = 4
+let KAIST_BPS       = 1000000000       // 1 Gbps research-grade
+let KAIST_VENDOR    = "KAIST_chip_scale_optical_QRNG_research"
+
+fn rng_source_meta_kaist_optical() -> RngSourceMeta {
+    return rng_meta_make(
+        KAIST_NAME, KAIST_TIER, KAIST_BPS,
+        0,    // cost_usd (free/sponsored under research collaboration)
+        60,   // lead_days (~1-3 months collaboration onboarding)
+        1,    // is_quantum (vacuum-fluctuation optical)
+        1,    // is_local (chip-scale module, on-prem)
+        1,    // is_free (sponsored)
+        "STUB",
+        KAIST_VENDOR
+    )
+}
+
+fn rng_source_collect_kaist_optical(n_bytes: int, seed: int) -> RngCollectResult {
+    // to wire: KAIST FPGA firmware + optical fibre + collaboration agreement
+    return rng_result_fail("kaist_optical: STUB — research collaboration + IRB + custom FPGA fw required")
+}
+
+// ── Selftest ───────────────────────────────────────────────
+
+fn _selftest_kaist_optical() -> int {
+    let m = rng_source_meta_kaist_optical()
+    if m.name != "kaist_optical" { return 0 }
+    if m.tier != 4 { return 0 }
+    if m.status != "STUB" { return 0 }
+    if m.is_quantum != 1 { return 0 }
+    if m.throughput_bps != 1000000000 { return 0 }
+    let r = rng_source_collect_kaist_optical(8, 0)
+    if r.ok != 0 { return 0 }
+    return 1
+}
+
+fn main() {
+    println("[rng/kaist_optical] KAIST optical QRNG (Tier 4 STUB)")
+    if _selftest_kaist_optical() == 1 {
+        println("[rng/kaist_optical] SELFTEST PASS")
+    } else {
+        println("[rng/kaist_optical] SELFTEST FAIL")
+    }
+}

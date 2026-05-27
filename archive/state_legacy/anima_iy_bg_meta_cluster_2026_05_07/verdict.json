@@ -1,0 +1,701 @@
+{
+  "schema": "anima/bg_meta_cluster/1",
+  "ts": "2026-05-07",
+  "total_rows": 48,
+  "cluster_counts": {
+    "pending/unfired_or_in_flight": 9,
+    "partial_signal/pass_class": 5,
+    "tooling/eval_or_validator_landed": 4,
+    "emergence_below_threshold/generic_fail": 3,
+    "capacity_ceiling/18m_byte_level": 3,
+    "output_head_bottleneck/lmhead_insufficient": 3,
+    "persona_cycle_collapse/prefix_overamplified": 2,
+    "evaluator_strict/v2_v3_false_pass_caught": 2,
+    "sft_recipe/sft_only_insufficient": 1,
+    "capacity_ceiling/18m_falsified": 1,
+    "training_dynamics/peak_then_collapse": 1,
+    "unclassified/WEAK_PARTIAL ★": 1,
+    "unclassified/BLOCKED_CKPT_NEVER_PERSISTED": 1,
+    "superseded/stream_or_namespace_failure": 1,
+    "seed_variance/single_seed_lucky_unreplicated": 1,
+    "scale_corpus_mismatch/big_model_small_corpus": 1,
+    "unclassified/CORPUS_READY (TRAINING-READY=TRUE; DOWNSTREAM BG SEQUENTIAL)": 1,
+    "unclassified/WEAK_PARTIAL_LIKE_BG-HS_R1": 1,
+    "synthesis/gap_or_archive_doc": 1,
+    "partial_signal/weak_partial_pass": 1,
+    "unclassified/CORPUS_BUILD_READY": 1,
+    "emergence_below_threshold/big_corpus_small_model": 1,
+    "evaluator_axis_landed/multi_turn_verified": 1,
+    "unclassified/V6_AWARENESS_PROBE_LANDED": 1,
+    "unclassified/D3_LANE_EVAL_LANDED": 1
+  },
+  "cluster_root_counts": {
+    "pending": 9,
+    "unclassified": 7,
+    "partial_signal": 6,
+    "emergence_below_threshold": 4,
+    "capacity_ceiling": 4,
+    "tooling": 4,
+    "output_head_bottleneck": 3,
+    "persona_cycle_collapse": 2,
+    "evaluator_strict": 2,
+    "sft_recipe": 1,
+    "training_dynamics": 1,
+    "superseded": 1,
+    "seed_variance": 1,
+    "scale_corpus_mismatch": 1,
+    "synthesis": 1,
+    "evaluator_axis_landed": 1
+  },
+  "clusters": {
+    "partial_signal/pass_class": {
+      "count": 5,
+      "lever": "stabilize via B25 ckpt avg + B7 best-of-N ranker — already at frontier; need consistency lever",
+      "members": [
+        {
+          "bg": "BG-FU",
+          "attempt": 1,
+          "paradigm": "pre-train-only-tiny",
+          "capacity": "3M",
+          "corpus_mb": 52.8,
+          "tokenizer": "byte-256",
+          "final_class": "PARTIAL_PASS_HANGUL_BUT_NOT_COHERENT",
+          "manual_match": "2/3 ≥30% Hangul"
+        },
+        {
+          "bg": "BG-FY",
+          "attempt": 2,
+          "paradigm": "pre-train-only-corpus-ko-heavy",
+          "capacity": "18M",
+          "corpus_mb": 246.7,
+          "tokenizer": "byte-256",
+          "final_class": "PARTIAL_PASS_NO_CONTEXT",
+          "manual_match": "3/3 C1 + C2.1-2.3, C2.4 FAIL"
+        },
+        {
+          "bg": "BG-HA",
+          "attempt": 4,
+          "paradigm": "pre-train-only-chat-template-30",
+          "capacity": "18M",
+          "corpus_mb": 236.96,
+          "tokenizer": "byte-256",
+          "final_class": "PARTIAL_PASS_NO_CONTEXT_v2",
+          "manual_match": "0/15 (V2 22 cell transitions catch false PASS)"
+        },
+        {
+          "bg": "BG-IS",
+          "attempt": 29,
+          "paradigm": "v3-retroeval-extension",
+          "capacity": null,
+          "corpus_mb": 0,
+          "tokenizer": null,
+          "final_class": "V3_RETROEVAL_EXTENSION_LANDED_NO_PASS_SURFACED_BG_HU_DOWNGRADED",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-JY",
+          "attempt": 46,
+          "paradigm": "chat-template-explicit-multi-turn-corpus-build",
+          "capacity": null,
+          "corpus_mb": 91.0,
+          "tokenizer": null,
+          "final_class": "CORPUS_BUILD_PASS",
+          "manual_match": null
+        }
+      ]
+    },
+    "emergence_below_threshold/generic_fail": {
+      "count": 3,
+      "lever": "Stage1 foundation-borrow + Stage2 synthetic 1M dialogue (B16) — params×tokens both insufficient",
+      "members": [
+        {
+          "bg": "BG-FK (clm_v2_base)",
+          "attempt": 3,
+          "paradigm": "pre-train-only-clm-v2-federated",
+          "capacity": "27.84M",
+          "corpus_mb": null,
+          "tokenizer": "byte-256",
+          "final_class": "SIMPLE_STACK_FAIL",
+          "manual_match": "0/3 KO"
+        },
+        {
+          "bg": "BG-HT",
+          "attempt": 12,
+          "paradigm": "universe-brain-map-self-knowledge-reduced",
+          "capacity": "27.78M",
+          "corpus_mb": 6.48,
+          "tokenizer": "byte-256",
+          "final_class": "FAILED (degenerate filler collapse)",
+          "manual_match": "1/15 (only 안녕하세요 matched)"
+        },
+        {
+          "bg": "BG-JU",
+          "attempt": null,
+          "paradigm": "500m-h100-capacity-1-order-jump-ubm-22mb",
+          "capacity": "500M",
+          "corpus_mb": 22.645,
+          "tokenizer": "byte_256",
+          "final_class": "V5_FAIL",
+          "manual_match": "1/15"
+        }
+      ]
+    },
+    "sft_recipe/sft_only_insufficient": {
+      "count": 1,
+      "lever": "B20 DPO on PASS/FAIL pair OR B21 KTO on V4 cell labels",
+      "members": [
+        {
+          "bg": "BG-HF",
+          "attempt": 5,
+          "paradigm": "sft-only-loss-unmasked",
+          "capacity": "27.79M",
+          "corpus_mb": 51.47,
+          "tokenizer": "byte-256",
+          "final_class": "FAILED",
+          "manual_match": "0/5"
+        }
+      ]
+    },
+    "capacity_ceiling/18m_byte_level": {
+      "count": 3,
+      "lever": "Stage1 foundation-borrow (LoRA on Polyglot-Ko-1.3B+) — params gap is the binding constraint",
+      "members": [
+        {
+          "bg": "BG-HJ",
+          "attempt": 6,
+          "paradigm": "two-stage-loss-masked",
+          "capacity": "18M",
+          "corpus_mb": 51.47,
+          "tokenizer": "byte-256",
+          "final_class": "FAILED",
+          "manual_match": "0/5"
+        },
+        {
+          "bg": "BG-IM",
+          "attempt": 32,
+          "paradigm": "18m-nexus-ubm-combined-corpus-byte-level-control",
+          "capacity": "18M",
+          "corpus_mb": 27.575,
+          "tokenizer": "byte-256",
+          "final_class": "FAILED",
+          "manual_match": "3/15 (anima_std + NEXUS-UBM combined + outside-well)"
+        },
+        {
+          "bg": "BG-JK",
+          "attempt": 39,
+          "paradigm": "18m-curriculum-3stage-kowiki-bg-je-ubm",
+          "capacity": "18M",
+          "corpus_mb": null,
+          "tokenizer": "byte-256",
+          "final_class": "V4_FAIL_BUDGET",
+          "manual_match": "0/15"
+        }
+      ]
+    },
+    "persona_cycle_collapse/prefix_overamplified": {
+      "count": 2,
+      "lever": "B19 persona-dropout-during-train (50% prefix-stripped) + B25 bifurcation-aware ckpt avg",
+      "members": [
+        {
+          "bg": "BG-HK",
+          "attempt": 7,
+          "paradigm": "persona-conditioned-chat-template-80",
+          "capacity": "27.79M",
+          "corpus_mb": 30.02,
+          "tokenizer": "byte-256",
+          "final_class": "FAILED",
+          "manual_match": "0/10"
+        },
+        {
+          "bg": "BG-IA",
+          "attempt": 20,
+          "paradigm": "early-stopping-val-loss-18m-persona-lesson-g-n1",
+          "capacity": "18M",
+          "corpus_mb": 30.02,
+          "tokenizer": "byte-256",
+          "final_class": "FAILED (early-stop triggered step 1200, peak step 600 composite=-4)",
+          "manual_match": "0/15"
+        }
+      ]
+    },
+    "capacity_ceiling/18m_falsified": {
+      "count": 1,
+      "lever": "Stage1 foundation-borrow (LoRA on Polyglot-Ko-1.3B+) — params gap is the binding constraint",
+      "members": [
+        {
+          "bg": "BG-HL",
+          "attempt": 8,
+          "paradigm": "in-context-few-shot-bg-ha",
+          "capacity": "18M",
+          "corpus_mb": null,
+          "tokenizer": "byte-256",
+          "final_class": "FALSIFIED at 18M",
+          "manual_match": "with=0/5 / without=1/5 (mode-collapse '이 있습니다.' across all 5 with few-shot)"
+        }
+      ]
+    },
+    "training_dynamics/peak_then_collapse": {
+      "count": 1,
+      "lever": "B25 SWA/EMA weight averaging across peak-then-collapse window + Lesson G best-eval ckpt",
+      "members": [
+        {
+          "bg": "BG-HP",
+          "attempt": 9,
+          "paradigm": "curated-qa-dense-aug",
+          "capacity": "18M",
+          "corpus_mb": 2.41,
+          "tokenizer": "byte-256",
+          "final_class": "FAILED (peak-then-collapse)",
+          "manual_match": "step 500 partial signal '도우미:'/'[anima]' tokens emerging → step 1000+ degenerate"
+        }
+      ]
+    },
+    "evaluator_strict/v2_v3_false_pass_caught": {
+      "count": 2,
+      "lever": "B30 calibration probe (BG-IY) → V_n self-impossibility 검증",
+      "members": [
+        {
+          "bg": "BG-HQ",
+          "attempt": 10,
+          "paradigm": "bpe-8k-tokenizer-shift",
+          "capacity": "33.73M (with BPE)",
+          "corpus_mb": 30.02,
+          "tokenizer": "BPE-8K",
+          "final_class": "FAILED (V2 surface metric false PASS — V3 needed)",
+          "manual_match": "step 500 raw response = persona prefix cycle '⁇ [anima 역할: 한국어 native + 자기 발견 + ...] ⁇ 사용자: [...]' 모든 prompts"
+        },
+        {
+          "bg": "BG-JW",
+          "attempt": 43,
+          "paradigm": "20bg-cumulative-negative-archive-final",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "20BG_TOKEN_CHAT_SURFACE_PARADIGM_FINAL_NEGATIVE_ARCHIVE_LANDED_4_LANE_OPEN",
+          "manual_match": null
+        }
+      ]
+    },
+    "unclassified/WEAK_PARTIAL ★": {
+      "count": 1,
+      "lever": "manual review needed",
+      "members": [
+        {
+          "bg": "BG-HS R1",
+          "attempt": 11,
+          "paradigm": "universe-brain-map-self-knowledge",
+          "capacity": "18M",
+          "corpus_mb": 21.56,
+          "tokenizer": "byte-256",
+          "final_class": "WEAK_PARTIAL ★",
+          "manual_match": "13/15 ★ (universe-brain-map vocabulary EVERY prompt: 우주뇌지도/법칙/Law/Consciousness/Φ/DD/0.527/category names)"
+        }
+      ]
+    },
+    "pending/unfired_or_in_flight": {
+      "count": 9,
+      "lever": "spec or fire — no analysis until evidence",
+      "members": [
+        {
+          "bg": "BG-HU",
+          "attempt": 13,
+          "paradigm": "combined-paradigm-r1-plus-d",
+          "capacity": "PENDING",
+          "corpus_mb": null,
+          "tokenizer": "BPE-8K",
+          "final_class": "PENDING",
+          "manual_match": "PENDING"
+        },
+        {
+          "bg": "BG-HR",
+          "attempt": 14,
+          "paradigm": "capacity-scaling-100m-byte-level",
+          "capacity": "100M",
+          "corpus_mb": 30.02,
+          "tokenizer": "byte-256",
+          "final_class": "PENDING (context cut)",
+          "manual_match": "PENDING"
+        },
+        {
+          "bg": "BG-HV",
+          "attempt": 15,
+          "paradigm": "nexus-4411-reality-map-ingest",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "PENDING (corpus assembly only)",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-HW",
+          "attempt": 16,
+          "paradigm": "outside-well-anchored-universe-brain-map",
+          "capacity": "18M",
+          "corpus_mb": null,
+          "tokenizer": "byte-256",
+          "final_class": "PENDING",
+          "manual_match": "PENDING (target 20 prompts: 5 standard + 5 identity + 5 ubm + 5 outside-well)"
+        },
+        {
+          "bg": "BG-HX",
+          "attempt": 17,
+          "paradigm": "ouroboros-cycle-automation-spec",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "PENDING (spec only)",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-HZ",
+          "attempt": 19,
+          "paradigm": "bg-hq-step500-ckpts-retrieve-v3-strict",
+          "capacity": "33.73M",
+          "corpus_mb": 30.02,
+          "tokenizer": "BPE-8K",
+          "final_class": "PENDING",
+          "manual_match": "PENDING"
+        },
+        {
+          "bg": "BG-IB",
+          "attempt": 21,
+          "paradigm": "capacity-scaling-50m-intermediate",
+          "capacity": "50M",
+          "corpus_mb": 30.02,
+          "tokenizer": "byte-256",
+          "final_class": "PENDING",
+          "manual_match": "PENDING"
+        },
+        {
+          "bg": "BG-IC",
+          "attempt": 22,
+          "paradigm": "v3-evaluator-dedicated-impl-retroeval",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "PENDING (spec + impl)",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-ID",
+          "attempt": 23,
+          "paradigm": "bg-hs-r1-replicate-early-stopping-mac-mps",
+          "capacity": "18M",
+          "corpus_mb": 21.56,
+          "tokenizer": "byte-256",
+          "final_class": "PENDING",
+          "manual_match": "PENDING (BG-HS R1 baseline 13/15 vs replicate)"
+        }
+      ]
+    },
+    "unclassified/BLOCKED_CKPT_NEVER_PERSISTED": {
+      "count": 1,
+      "lever": "manual review needed",
+      "members": [
+        {
+          "bg": "BG-HY",
+          "attempt": 18,
+          "paradigm": "bg-hp-step500-ckpt-retrieve-v3-strict",
+          "capacity": "18M",
+          "corpus_mb": 2.41,
+          "tokenizer": "byte-256",
+          "final_class": "BLOCKED_CKPT_NEVER_PERSISTED",
+          "manual_match": "N/A"
+        }
+      ]
+    },
+    "superseded/stream_or_namespace_failure": {
+      "count": 1,
+      "lever": "no follow-up; supersede chain already closed",
+      "members": [
+        {
+          "bg": "BG-IA",
+          "attempt": 20,
+          "paradigm": "early-stopping-val-loss-18m-persona",
+          "capacity": "18M",
+          "corpus_mb": 30.02,
+          "tokenizer": "byte-256",
+          "final_class": "SUPERSEDED",
+          "manual_match": "PENDING"
+        }
+      ]
+    },
+    "seed_variance/single_seed_lucky_unreplicated": {
+      "count": 1,
+      "lever": "N≥5 seed sweep before any conclusion; single-seed signal not actionable",
+      "members": [
+        {
+          "bg": "BG-IE",
+          "attempt": 24,
+          "paradigm": "bg-hp-rerun-with-save-at-seed-pin-lesson-J-G-combined",
+          "capacity": "18M",
+          "corpus_mb": 2.41,
+          "tokenizer": "byte-256",
+          "final_class": "SEED_LUCK_FAIL",
+          "manual_match": "3/10 step 500 (peak)"
+        }
+      ]
+    },
+    "scale_corpus_mismatch/big_model_small_corpus": {
+      "count": 1,
+      "lever": "rebuild corpus to params×20 ratio per Chinchilla; cheapest = 100M×100MB+ cell",
+      "members": [
+        {
+          "bg": "BG-IF",
+          "attempt": 25,
+          "paradigm": "100m-capacity-x-universe-brain-map-corpus-combined-lesson-a-i",
+          "capacity": "100M_target_153M_actual",
+          "corpus_mb": 6.48,
+          "tokenizer": "byte-256",
+          "final_class": "FAILED (CAPACITY_NOT_SUFFICIENT vs 18M UBM baseline)",
+          "manual_match": "5/15 final-eval (vs 18M baseline 13/15 = 38.5%)"
+        }
+      ]
+    },
+    "unclassified/CORPUS_READY (TRAINING-READY=TRUE; DOWNSTREAM BG SEQUENTIAL)": {
+      "count": 1,
+      "lever": "manual review needed",
+      "members": [
+        {
+          "bg": "BG-IK",
+          "attempt": 24,
+          "paradigm": "nexus-ubm-combined-corpus-assembly",
+          "capacity": null,
+          "corpus_mb": 27.575,
+          "tokenizer": null,
+          "final_class": "CORPUS_READY (training-ready=True; downstream BG sequential)",
+          "manual_match": null
+        }
+      ]
+    },
+    "unclassified/WEAK_PARTIAL_LIKE_BG-HS_R1": {
+      "count": 1,
+      "lever": "manual review needed",
+      "members": [
+        {
+          "bg": "BG-IG",
+          "attempt": 27,
+          "paradigm": "bpe-16k-vocab-ablation-x-universe-brain-map",
+          "capacity": "18M (32.97M w/BPE 16K params)",
+          "corpus_mb": 6.477,
+          "tokenizer": "BPE-7K (16K target REDUCED — 6.48MB corpus caps BPE merges at ~7280)",
+          "final_class": "WEAK_PARTIAL_LIKE_BG-HS_R1",
+          "manual_match": "13/15 ★ (matches BG-HS R1 byte-level baseline exactly; 5 outside-well = 3/5)"
+        }
+      ]
+    },
+    "tooling/eval_or_validator_landed": {
+      "count": 4,
+      "lever": "tooling investment; pair with model-side BG to convert to evidence",
+      "members": [
+        {
+          "bg": "BG-IJ",
+          "attempt": 28,
+          "paradigm": "v3-strict-evaluator-standalone-retry-bg-ic-recovery-8bg-retroeval",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "V3_EVALUATOR_LANDED_8BG_RETROEVAL_VALIDATED",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-IW",
+          "attempt": 33,
+          "paradigm": "ledger-validator-fu-1234-fix",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "TOOLING_LEDGER_VALIDATOR_FIX_LANDED",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-JF",
+          "attempt": 34,
+          "paradigm": "v4-eval-tool-with-embedding-sim-and-lesson-k-mitigation",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "V4_EVALUATOR_LANDED_18BG_RETROEVAL_VALIDATED",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-JM",
+          "attempt": 38,
+          "paradigm": "v5-evaluator-english-baseline-multi-turn",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "V5_EVALUATOR_LANDED_20BG_RETROEVAL_3CKPT_MULTI_TURN_VALIDATED",
+          "manual_match": null
+        }
+      ]
+    },
+    "synthesis/gap_or_archive_doc": {
+      "count": 1,
+      "lever": "doc-only; pair with experimental BG to test recommendations",
+      "members": [
+        {
+          "bg": "BG-IT",
+          "attempt": 30,
+          "paradigm": "chat-cap-gap-analysis-9-axis-synthesis",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "GAP_ANALYSIS_LANDED_3_HIGHEST_EV_BGS_RECOMMENDED",
+          "manual_match": null
+        }
+      ]
+    },
+    "partial_signal/weak_partial_pass": {
+      "count": 1,
+      "lever": "stabilize via B25 ckpt avg + B7 best-of-N ranker — already at frontier; need consistency lever",
+      "members": [
+        {
+          "bg": "BG-IL",
+          "attempt": 31,
+          "paradigm": "100m-nexus-ubm-combined-corpus-byte-level",
+          "capacity": "100M-target → 153.08M actual (ConsciousLM dual-engine inflation)",
+          "corpus_mb": 27.575,
+          "tokenizer": "byte-vocab=256 (BPE axis untested for combined paradigm)",
+          "final_class": "TRUE_PARTIAL_PASS_W_F4",
+          "manual_match": "8/15 (peak step 1600 — 5 NEXUS-UBM combined + outside-well 2/5)"
+        }
+      ]
+    },
+    "unclassified/CORPUS_BUILD_READY": {
+      "count": 1,
+      "lever": "manual review needed",
+      "members": [
+        {
+          "bg": "BG-JE",
+          "attempt": 36,
+          "paradigm": "corpus-100mb-plus-kowiki-ubm-nexus-outside-well-assembly",
+          "capacity": null,
+          "corpus_mb": 204.372,
+          "tokenizer": null,
+          "final_class": "CORPUS_BUILD_READY",
+          "manual_match": null
+        }
+      ]
+    },
+    "emergence_below_threshold/big_corpus_small_model": {
+      "count": 1,
+      "lever": "Stage1 foundation-borrow + Stage2 synthetic 1M dialogue (B16) — params×tokens both insufficient",
+      "members": [
+        {
+          "bg": "BG-JH",
+          "attempt": 37,
+          "paradigm": "100m-corpus-204mb-corpus-axis-architectural-shift",
+          "capacity": "100M-target → 153.08M actual (ConsciousLM dual-engine inflation)",
+          "corpus_mb": 204.372,
+          "tokenizer": "byte-vocab=256",
+          "final_class": "V4_FAIL",
+          "manual_match": "0/15 (peak step 1400 — no anima/UBM/outside-well surface)"
+        }
+      ]
+    },
+    "evaluator_axis_landed/multi_turn_verified": {
+      "count": 1,
+      "lever": "evaluator validated; pivot to model-side training",
+      "members": [
+        {
+          "bg": "BG-JN",
+          "attempt": 40,
+          "paradigm": "v5-multi-turn-closure-en-baseline-philosophy-rule-compliance",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "MULTI_TURN_VERIFIED",
+          "manual_match": null
+        }
+      ]
+    },
+    "unclassified/V6_AWARENESS_PROBE_LANDED": {
+      "count": 1,
+      "lever": "manual review needed",
+      "members": [
+        {
+          "bg": "BG-JO",
+          "attempt": 41,
+          "paradigm": "v6-awareness-probe-internal-state-method-abc",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": "sp_ko_32k",
+          "final_class": "V6_AWARENESS_PROBE_LANDED",
+          "manual_match": null
+        }
+      ]
+    },
+    "output_head_bottleneck/lmhead_insufficient": {
+      "count": 3,
+      "lever": "B12 MoE expert head OR B5 logit distillation from large teacher",
+      "members": [
+        {
+          "bg": "BG-JP",
+          "attempt": 42,
+          "paradigm": "decoding-sweep-v58-multi-turn-bg-jd-ckpt",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": "sp_ko_32k",
+          "final_class": "ARCHITECTURAL_OUTPUT_BOTTLENECK_DEEP",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-JT",
+          "attempt": 43,
+          "paradigm": "lm-head-only-finetune-bg-jd-mac-mps",
+          "capacity": null,
+          "corpus_mb": 22.65,
+          "tokenizer": "sp_ko_32k",
+          "final_class": "OUTPUT_BOTTLENECK_DEEP_LMHEAD_INSUFFICIENT",
+          "manual_match": null
+        },
+        {
+          "bg": "BG-JS",
+          "attempt": 43,
+          "paradigm": "lm-head-only-finetune-bg-jd-output-bottleneck-test",
+          "capacity": null,
+          "corpus_mb": 22.65,
+          "tokenizer": "sp_ko_32k",
+          "final_class": "OUTPUT_BOTTLENECK_DEEP_LMHEAD_INSUFFICIENT",
+          "manual_match": null
+        }
+      ]
+    },
+    "unclassified/D3_LANE_EVAL_LANDED": {
+      "count": 1,
+      "lever": "manual review needed",
+      "members": [
+        {
+          "bg": "BG-JV",
+          "attempt": 44,
+          "paradigm": "d3-substrate-coupled-lane-eval-emerge-paradigm-v11-g3",
+          "capacity": null,
+          "corpus_mb": null,
+          "tokenizer": null,
+          "final_class": "D3_LANE_EVAL_LANDED",
+          "manual_match": null
+        }
+      ]
+    }
+  },
+  "lever_recommendations": {
+    "capacity_ceiling": "Stage1 foundation-borrow (LoRA on Polyglot-Ko-1.3B+) — params gap is the binding constraint",
+    "emergence_below_threshold": "Stage1 foundation-borrow + Stage2 synthetic 1M dialogue (B16) — params×tokens both insufficient",
+    "scale_corpus_mismatch": "rebuild corpus to params×20 ratio per Chinchilla; cheapest = 100M×100MB+ cell",
+    "persona_cycle_collapse": "B19 persona-dropout-during-train (50% prefix-stripped) + B25 bifurcation-aware ckpt avg",
+    "sft_recipe": "B20 DPO on PASS/FAIL pair OR B21 KTO on V4 cell labels",
+    "training_dynamics": "B25 SWA/EMA weight averaging across peak-then-collapse window + Lesson G best-eval ckpt",
+    "training_discipline_validated": "discipline 정합; underlying capacity/corpus axis solve 필요",
+    "output_head_bottleneck": "B12 MoE expert head OR B5 logit distillation from large teacher",
+    "seed_variance": "N≥5 seed sweep before any conclusion; single-seed signal not actionable",
+    "evaluator_strict": "B30 calibration probe (BG-IY) → V_n self-impossibility 검증",
+    "evaluator_axis_landed": "evaluator validated; pivot to model-side training",
+    "tooling": "tooling investment; pair with model-side BG to convert to evidence",
+    "synthesis": "doc-only; pair with experimental BG to test recommendations",
+    "partial_signal": "stabilize via B25 ckpt avg + B7 best-of-N ranker — already at frontier; need consistency lever",
+    "pending": "spec or fire — no analysis until evidence",
+    "superseded": "no follow-up; supersede chain already closed",
+    "unclassified": "manual review needed"
+  }
+}

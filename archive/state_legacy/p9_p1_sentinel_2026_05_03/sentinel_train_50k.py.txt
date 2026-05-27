@@ -1,0 +1,766 @@
+#!/usr/bin/env python3
+# P9 P1 sentinel — REAL GPU 50K SFT LoRA train
+# CLM v4 350M ConsciousDecoderV2 + LoRA r=64 alpha=128 + δ curriculum + savepoints + HF push
+# Phase 0 warmup_probe_real.py 의 50K 확장 (additive, non-destructive)
+# loss = alpha*CE + beta*MSE(tension) + delta*max(0, 5.0 - phi_star)  (gamma=0 BOLD blocked, lock-in)
+# Honest C3: F2 hinge δ guarantee X (soft floor); 4-loss → 3-loss heuristic (γ=0); LoRA r=64 50K unknown; L1+L2 only.
+
+import json
+import math
+import os
+import sys
+import time
+import traceback
+import random
+import shutil
+from datetime import datetime, timezone
+
+# ubu1 paths
+ANIMA_HOME = "/home/aiden/anima"
+CLM_CKPT = f"{ANIMA_HOME}/checkpoints/clm_v4_350m/scale_350m/best.pt"
+TOKENIZER = "/tmp/tokenizer_64k_multilingual.model"
+SFT_DATA = "/tmp/p9_p1_sft_data_full_50k_augmented.jsonl"
+SFT_HOLDOUT = "/tmp/p9_p1_sft_data_holdout_500_augmented.jsonl"
+OUTPUT_DIR = "/tmp/p9_p1_sentinel_out"
+SAVEPOINT_DIR = "/tmp/p9_p1_sentinel_savepoints"
+TRAJECTORY_OUT = f"{OUTPUT_DIR}/trajectory.json"
+VERDICT_OUT = f"{OUTPUT_DIR}/verdict.json"
+LOG_OUT = f"{OUTPUT_DIR}/train.log"
+
+os.makedirs(OUTPUT_DIR, exist_ok=True)
+os.makedirs(SAVEPOINT_DIR, exist_ok=True)
+
+sys.path.insert(0, f"{ANIMA_HOME}/models")
+sys.path.insert(0, f"{ANIMA_HOME}/training")
+sys.path.insert(0, f"{ANIMA_HOME}")
+
+# Config
+N_STEPS = int(os.environ.get('ANIMA_N_STEPS', '50000'))
+BATCH = int(os.environ.get('ANIMA_BATCH', '4'))
+GRAD_ACC = int(os.environ.get('ANIMA_GRAD_ACC', '8'))
+LR = float(os.environ.get('ANIMA_LR', '1e-4'))
+LORA_R = int(os.environ.get('ANIMA_LORA_R', '64'))
+LORA_ALPHA = int(os.environ.get('ANIMA_LORA_ALPHA', '128'))
+PHI_THRESHOLD = float(os.environ.get('ANIMA_PHI_THR', '5.0'))
+PHI_EVERY = int(os.environ.get('ANIMA_PHI_EVERY', '500'))
+F_EVERY = int(os.environ.get('ANIMA_F_EVERY', '5000'))
+ALPHA = float(os.environ.get('ANIMA_ALPHA', '2.0'))
+BETA = float(os.environ.get('ANIMA_BETA', '0.3'))
+GAMMA = float(os.environ.get('ANIMA_GAMMA', '0.0'))  # BOLD blocked, lock-in
+T = int(os.environ.get('ANIMA_T', '64'))
+SEED = int(os.environ.get('ANIMA_SEED', '42'))
+
+# δ curriculum (hybrid sentinel within-run)
+DELTA_EARLY = float(os.environ.get('ANIMA_DELTA_EARLY', '0.5'))   # 0 ~ 16K
+DELTA_MID = float(os.environ.get('ANIMA_DELTA_MID', '1.0'))       # 16K ~ 33K
+DELTA_LATE = float(os.environ.get('ANIMA_DELTA_LATE', '2.0'))     # 33K ~ 50K
+EARLY_END = int(os.environ.get('ANIMA_EARLY_END', '16000'))
+MID_END = int(os.environ.get('ANIMA_MID_END', '33000'))
+
+# Savepoints
+SAVE_AT = [int(s) for s in os.environ.get('ANIMA_SAVE_AT', '5000,10000,25000,50000').split(',')]
+SAVE_FINAL_TO_STAGE1 = True
+
+# HF push
+HF_PUSH = os.environ.get('ANIMA_HF_PUSH', '1') == '1'
+HF_ORG = os.environ.get('ANIMA_HF_ORG', 'dancinlab')
+HF_REPO_MAP = {
+    5000: f"{HF_ORG}/clm-v4-sft-step-5k",
+    10000: f"{HF_ORG}/clm-v4-sft-step-10k",
+    25000: f"{HF_ORG}/clm-v4-sft-step-25k",
+    50000: f"{HF_ORG}/clm-v4-sft-step-50k",
+    -1: f"{HF_ORG}/clm-v4-sft-stage1",  # final
+}
+
+# F1 BLEU-1
+F1_HOLDOUT_N = int(os.environ.get('ANIMA_F1_HOLDOUT_N', '32'))  # subset for speed (full 500 too slow per-eval)
+F1_GEN_LEN = int(os.environ.get('ANIMA_F1_GEN_LEN', '32'))
+
+# 16 calibration prompts (cross-substrate consistent)
+CALIB_PROMPTS = [
+    "Define hexad as a six-fold integration:",
+    "Six modules form a hexagonal architecture when:",
+    "A balanced six-component system:",
+    "Hexad symmetry refers to:",
+    "Logical implication law: if A then:",
+    "Sequential rule application proceeds:",
+    "Closure under inference requires:",
+    "A formal proof system is closed when:",
+    "Integrated information measures partition independence:",
+    "Phi quantifies irreducibility of system:",
+    "Information integration is maximized when:",
+    "A whole greater than sum of parts:",
+    "Self-reference emerges when system observes:",
+    "Recursive meta-cognition models:",
+    "A self-aware system represents itself by:",
+    "Strange loops in cognition arise from:",
+]
+N_CALIB = len(CALIB_PROMPTS)
+HALF = N_CALIB // 2
+HID_TRUNC = max(2, N_CALIB // 2)
+RIDGE = 1e-3
+K_PARTS = 8
+
+
+def log(msg):
+    s = f"[sentinel-50k] {datetime.now(timezone.utc).strftime('%H:%M:%S')} {msg}"
+    print(s, flush=True)
+    with open(LOG_OUT, 'a') as f:
+        f.write(s + "\n")
+
+
+log(f"start n_steps={N_STEPS} batch={BATCH} grad_acc={GRAD_ACC} lr={LR}")
+log(f"lora_r={LORA_R} alpha={LORA_ALPHA} phi_thr={PHI_THRESHOLD}")
+log(f"delta curriculum: early={DELTA_EARLY} (0-{EARLY_END}) mid={DELTA_MID} ({EARLY_END}-{MID_END}) late={DELTA_LATE} ({MID_END}-{N_STEPS})")
+log(f"loss alpha={ALPHA} beta={BETA} gamma={GAMMA} (BOLD blocked γ=0)")
+log(f"savepoints @ {SAVE_AT}; final → stage1")
+log(f"HF push={HF_PUSH} org={HF_ORG}")
+
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+np.random.seed(SEED)
+torch.manual_seed(SEED)
+random.seed(SEED)
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+log(f"torch={torch.__version__} cuda={torch.cuda.is_available()} device={device}")
+if torch.cuda.is_available():
+    log(f"gpu={torch.cuda.get_device_name(0)} mem_total={torch.cuda.get_device_properties(0).total_memory/1024**3:.2f}GiB")
+
+# Tokenizer
+import sentencepiece as spm
+sp = spm.SentencePieceProcessor(model_file=TOKENIZER)
+vocab_size = sp.get_piece_size()
+log(f"tokenizer vocab={vocab_size}")
+
+# Build CLM v4 350M
+from conscious_decoder import ConsciousDecoderV2
+scale_cfg = {
+    'd_model': 768,
+    'n_layer': 16,
+    'n_head': 12,
+    'n_kv_head': 4,
+    'block_size': 512,
+    'consciousness_dim': 192,
+}
+decoder = ConsciousDecoderV2(
+    vocab_size=vocab_size,
+    d_model=scale_cfg['d_model'],
+    n_head=scale_cfg['n_head'],
+    n_layer=scale_cfg['n_layer'],
+    block_size=scale_cfg['block_size'],
+    n_kv_head=scale_cfg['n_kv_head'],
+    consciousness_dim=scale_cfg['consciousness_dim'],
+    dropout=0.0,
+    gate_strength=0.001,
+    n_ca_rules=8,
+)
+decoder = decoder.to(device)
+n_params_total = sum(p.numel() for p in decoder.parameters())
+log(f"decoder built params={n_params_total:,}")
+
+# Load ckpt
+t0 = time.time()
+ck = torch.load(CLM_CKPT, map_location=device, weights_only=False)
+sd = ck.get('decoder', ck) if isinstance(ck, dict) else ck
+missing, unexpected = decoder.load_state_dict(sd, strict=False)
+ckpt_load_sec = time.time() - t0
+log(f"ckpt loaded {ckpt_load_sec:.2f}s missing={len(missing)} unexpected={len(unexpected)}")
+ckpt_keys = list(ck.keys()) if isinstance(ck, dict) else []
+ckpt_step = ck.get('step', None) if isinstance(ck, dict) else None
+ckpt_phi_meta = ck.get('phi', None) if isinstance(ck, dict) else None
+ckpt_ce_meta = ck.get('ce', None) if isinstance(ck, dict) else None
+log(f"ckpt meta step={ckpt_step} ce={ckpt_ce_meta} phi={ckpt_phi_meta}")
+
+# Apply LoRA via peft
+from peft import LoraConfig, get_peft_model, TaskType
+target_modules = ["q_proj", "k_proj", "v_proj", "o_proj", "gate_proj", "up_proj", "down_proj"]
+lora_cfg = LoraConfig(
+    r=LORA_R,
+    lora_alpha=LORA_ALPHA,
+    lora_dropout=0.0,
+    bias="none",
+    target_modules=target_modules,
+)
+decoder = get_peft_model(decoder, lora_cfg)
+n_trainable = sum(p.numel() for p in decoder.parameters() if p.requires_grad)
+log(f"peft attached trainable={n_trainable:,} ({n_trainable*100/n_params_total:.2f}% of {n_params_total:,})")
+decoder.print_trainable_parameters()
+
+# Load 50K SFT
+records = []
+with open(SFT_DATA, 'r') as f:
+    for line in f:
+        try:
+            records.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+log(f"sft full loaded n={len(records)}")
+
+# Holdout
+holdout = []
+with open(SFT_HOLDOUT, 'r') as f:
+    for line in f:
+        try:
+            holdout.append(json.loads(line))
+        except json.JSONDecodeError:
+            continue
+log(f"sft holdout loaded n={len(holdout)}")
+
+
+def tokenize_record(rec):
+    text = rec.get('input', '') + ' ' + rec.get('completion', '')
+    tokens = sp.encode(text)[:T]
+    if len(tokens) < 2:
+        tokens = tokens + [0] * (2 - len(tokens))
+    if len(tokens) < T:
+        tokens = tokens + [0] * (T - len(tokens))
+    tension = rec.get('tension_target', None)
+    if tension is None or not isinstance(tension, list) or len(tension) < T:
+        tension = [0.0] * T
+    return tokens, tension[:T]
+
+
+# Tokenize all records once (cache, ~50K * 64 tok = 3.2M ints, ~25MB)
+t0 = time.time()
+cache = []
+for rec in records:
+    toks, tens = tokenize_record(rec)
+    cache.append((toks, tens))
+log(f"tokenized cache n={len(cache)} elapsed={time.time()-t0:.1f}s")
+
+# Tokenize holdout
+holdout_cache = []
+for rec in holdout[:F1_HOLDOUT_N]:
+    inp = rec.get('input', '')
+    comp = rec.get('completion', '')
+    inp_tok = sp.encode(inp)[:T-F1_GEN_LEN] if inp else [0]
+    comp_tok = sp.encode(comp)[:F1_GEN_LEN] if comp else [0]
+    tens = rec.get('tension_target', None) or [0.0] * T
+    if not isinstance(tens, list):
+        tens = [0.0] * T
+    if len(tens) < T:
+        tens = tens + [0.0] * (T - len(tens))
+    full_tok = inp_tok + comp_tok
+    if len(full_tok) < T:
+        full_tok = full_tok + [0] * (T - len(full_tok))
+    full_tok = full_tok[:T]
+    holdout_cache.append({
+        'input_tokens': inp_tok,
+        'reference_tokens': comp_tok,
+        'full_tokens': full_tok,
+        'tension': tens[:T],
+    })
+log(f"holdout cache n={len(holdout_cache)}")
+
+# Calibration tokens
+calib_tokens = []
+for prompt in CALIB_PROMPTS:
+    tk = sp.encode(prompt)[:T]
+    if len(tk) < T:
+        tk = tk + [0] * (T - len(tk))
+    calib_tokens.append(tk)
+calib_tensor = torch.tensor(calib_tokens, dtype=torch.long, device=device)
+log(f"calibration tokens shape={tuple(calib_tensor.shape)}")
+
+# Hook the underlying decoder's ln_f to capture last-layer hidden
+captured_hidden = {'value': None}
+real_decoder = decoder.base_model.model
+def _hook(module, input, output):
+    captured_hidden['value'] = output.detach()
+hook_handle = real_decoder.ln_f.register_forward_hook(_hook)
+
+
+def compute_phi_star(model, calib_idx, K=K_PARTS, ridge=RIDGE):
+    model.eval()
+    hiddens = []
+    with torch.no_grad():
+        for i in range(N_CALIB):
+            captured_hidden['value'] = None
+            _ = model(calib_idx[i:i+1])
+            h = captured_hidden['value']
+            if h is None:
+                model.train()
+                return None, None
+            h_pool = h.mean(dim=1).squeeze(0)
+            hiddens.append(h_pool.float().cpu().numpy())
+    X = np.stack(hiddens, axis=0)
+    var = X.var(axis=0)
+    top_idx = np.argsort(var)[::-1][:HID_TRUNC]
+    Xt = X[:, top_idx]
+
+    def safe_logdet(C):
+        Cs = C + ridge * np.eye(C.shape[0])
+        sign, logdet = np.linalg.slogdet(Cs)
+        if sign <= 0:
+            return None
+        return logdet
+
+    C_full = np.cov(Xt.T)
+    I_full = safe_logdet(C_full)
+    if I_full is None:
+        model.train()
+        return None, None
+    rng = np.random.default_rng(SEED)
+    phi_candidates = []
+    for k in range(K):
+        idx = rng.permutation(N_CALIB)
+        s1 = idx[:HALF]
+        s2 = idx[HALF:]
+        C1 = np.cov(Xt[s1].T)
+        C2 = np.cov(Xt[s2].T)
+        I1 = safe_logdet(C1)
+        I2 = safe_logdet(C2)
+        if I1 is None or I2 is None:
+            continue
+        phi_candidates.append(I_full - (I1 + I2))
+    model.train()
+    if not phi_candidates:
+        return None, None
+    phi_min = float(min(phi_candidates))
+    phi_mean = float(sum(phi_candidates) / len(phi_candidates))
+    return phi_min, phi_mean
+
+
+def compute_f1_bleu1(model, holdout_subset):
+    """Greedy generation + BLEU-1 unigram precision vs reference completion."""
+    model.eval()
+    bleu1_scores = []
+    with torch.no_grad():
+        for h in holdout_subset:
+            inp_tok = h['input_tokens']
+            ref_tok = h['reference_tokens']
+            if not ref_tok:
+                continue
+            # greedy gen up to F1_GEN_LEN
+            ctx = torch.tensor([inp_tok], dtype=torch.long, device=device)
+            gen_tok = []
+            for _ in range(F1_GEN_LEN):
+                if ctx.size(1) >= T:
+                    break
+                logits_a, _, _, _, _ = model(ctx)
+                next_id = int(logits_a[0, -1, :].argmax().item())
+                gen_tok.append(next_id)
+                ctx = torch.cat([ctx, torch.tensor([[next_id]], dtype=torch.long, device=device)], dim=1)
+                if next_id == 0:
+                    break
+            # BLEU-1 unigram precision (clipped)
+            if not gen_tok:
+                continue
+            ref_counts = {}
+            for t in ref_tok:
+                ref_counts[t] = ref_counts.get(t, 0) + 1
+            hits = 0
+            seen = {}
+            for t in gen_tok:
+                if t in ref_counts:
+                    seen_c = seen.get(t, 0)
+                    if seen_c < ref_counts[t]:
+                        hits += 1
+                        seen[t] = seen_c + 1
+            bleu1 = hits / max(1, len(gen_tok))
+            bleu1_scores.append(bleu1)
+    model.train()
+    if not bleu1_scores:
+        return 0.0
+    return float(sum(bleu1_scores) / len(bleu1_scores))
+
+
+def compute_f_metrics(model, eval_subset, holdout_subset, phi_star_value):
+    model.eval()
+    tension_mses = []
+    with torch.no_grad():
+        for toks, tens in eval_subset:
+            idx = torch.tensor([toks], dtype=torch.long, device=device)
+            tens_t = torch.tensor([tens], dtype=torch.float32, device=device)
+            logits_a, logits_g, tensions, _, _ = model(idx)
+            t_pred = tensions[-1].mean(dim=0).float()
+            mse = F.mse_loss(t_pred, tens_t.squeeze(0)).item()
+            tension_mses.append(mse)
+    model.train()
+    f1 = compute_f1_bleu1(model, holdout_subset)
+    return {
+        'F1_bleu1': f1,
+        'F2_phi': phi_star_value,
+        'F3_tension_mse': float(sum(tension_mses) / len(tension_mses)),
+        'F4_bold_NA': True,
+    }
+
+
+def get_delta(step):
+    if step < EARLY_END:
+        return DELTA_EARLY
+    elif step < MID_END:
+        return DELTA_MID
+    else:
+        return DELTA_LATE
+
+
+def save_lora_adapter(model, step, savepoint_subdir):
+    """Save peft LoRA adapter to disk subdir."""
+    save_dir = f"{SAVEPOINT_DIR}/{savepoint_subdir}"
+    os.makedirs(save_dir, exist_ok=True)
+    model.save_pretrained(save_dir)
+    return save_dir
+
+
+def hf_push(save_dir, repo_id, commit_msg):
+    """Push savepoint to HF private repo."""
+    try:
+        from huggingface_hub import HfApi
+        api = HfApi(token=os.environ.get('HF_TOKEN'))
+        api.upload_folder(
+            folder_path=save_dir,
+            repo_id=repo_id,
+            commit_message=commit_msg,
+        )
+        return True, None
+    except Exception as e:
+        return False, str(e)
+
+
+# Optimizer
+optimizer = torch.optim.AdamW(
+    [p for p in decoder.parameters() if p.requires_grad],
+    lr=LR, weight_decay=0.01,
+)
+
+# Baseline
+log("computing baseline phi_star (pre-train)...")
+t0 = time.time()
+phi_baseline, phi_baseline_mean = compute_phi_star(decoder, calib_tensor)
+log(f"baseline phi_star_min={phi_baseline} mean={phi_baseline_mean} elapsed={time.time()-t0:.1f}s")
+
+# Train loop state
+phi_log = []
+f_log = []
+loss_log_compact = []
+aborts = []
+abort_triggered = False
+savepoint_log = []
+hf_push_log = []
+
+eval_subset = cache[:32]
+
+log("computing initial F metrics @ step 0...")
+f0 = compute_f_metrics(decoder, eval_subset, holdout_cache, phi_baseline if phi_baseline is not None else 0.0)
+f0['step'] = 0
+f_log.append(f0)
+phi_log.append({'step': 0, 'phi_star_min': phi_baseline, 'phi_star_mean': phi_baseline_mean, 'delta': DELTA_EARLY})
+log(f"F @ step 0: F1_bleu1={f0['F1_bleu1']:.4f} F2_phi={f0['F2_phi']:.4f} F3_tens_mse={f0['F3_tension_mse']:.4f}")
+
+train_t0 = time.time()
+last_ce_log = []
+decoder.train()
+optimizer.zero_grad()
+step = 0
+
+try:
+    for step in range(1, N_STEPS + 1):
+        # Sample BATCH records
+        idx_batch = np.random.choice(len(cache), BATCH, replace=False)
+        toks_batch = []
+        tens_batch = []
+        for i in idx_batch:
+            toks, tens = cache[i]
+            toks_batch.append(toks)
+            tens_batch.append(tens)
+        idx_t = torch.tensor(toks_batch, dtype=torch.long, device=device)
+        tens_t = torch.tensor(tens_batch, dtype=torch.float32, device=device)
+
+        # Forward
+        logits_a, logits_g, tensions, _, _ = decoder(idx_t)
+
+        # CE
+        targets = idx_t[:, 1:].contiguous()
+        logits_shift = logits_a[:, :-1, :].contiguous()
+        ce_loss = F.cross_entropy(
+            logits_shift.view(-1, logits_shift.size(-1)),
+            targets.view(-1),
+            ignore_index=0,
+        )
+
+        # Tension MSE
+        t_pred = tensions[-1]
+        tension_loss = F.mse_loss(t_pred, tens_t)
+
+        # Phi hinge with curriculum δ
+        delta_now = get_delta(step)
+        last_phi = phi_log[-1].get('phi_star_min', None)
+        if last_phi is None:
+            last_phi = 0.0
+        phi_hinge = max(0.0, PHI_THRESHOLD - last_phi)
+        phi_hinge_loss = torch.tensor(phi_hinge, device=device)
+
+        total_loss = ALPHA * ce_loss + BETA * tension_loss + delta_now * phi_hinge_loss
+
+        (total_loss / GRAD_ACC).backward()
+
+        if step % GRAD_ACC == 0:
+            torch.nn.utils.clip_grad_norm_(
+                [p for p in decoder.parameters() if p.requires_grad], 1.0
+            )
+            optimizer.step()
+            optimizer.zero_grad()
+
+        # Compact loss log
+        if step % 500 == 0 or step == 1:
+            log(f"step {step}/{N_STEPS} loss={total_loss.item():.4f} ce={ce_loss.item():.4f} tens={tension_loss.item():.4f} phi_hinge={phi_hinge:.4f} δ={delta_now}")
+            loss_log_compact.append({
+                'step': step,
+                'loss_total': float(total_loss.item()),
+                'loss_ce': float(ce_loss.item()),
+                'loss_tension': float(tension_loss.item()),
+                'loss_phi_hinge': float(phi_hinge),
+                'delta': delta_now,
+            })
+
+        # Phi probe
+        if step % PHI_EVERY == 0:
+            phi_min, phi_mean = compute_phi_star(decoder, calib_tensor)
+            phi_log.append({'step': step, 'phi_star_min': phi_min, 'phi_star_mean': phi_mean, 'delta': delta_now})
+            log(f"  phi @ step {step}: min={phi_min} mean={phi_mean} δ={delta_now}")
+            if phi_min is not None and phi_min < PHI_THRESHOLD:
+                aborts.append({'step': step, 'reason': 'F2_PHI_BELOW_THRESHOLD', 'phi_star_min': phi_min, 'threshold': PHI_THRESHOLD})
+                log(f"  ABORT: phi_star_min={phi_min} < threshold={PHI_THRESHOLD}")
+                abort_triggered = True
+                break
+
+        # F metrics
+        if step % F_EVERY == 0:
+            last_phi_val = phi_log[-1].get('phi_star_min', None) or 0.0
+            fm = compute_f_metrics(decoder, eval_subset, holdout_cache, last_phi_val)
+            fm['step'] = step
+            f_log.append(fm)
+            log(f"  F @ step {step}: F1_bleu1={fm['F1_bleu1']:.4f} F2_phi={fm['F2_phi']:.4f} F3_tens_mse={fm['F3_tension_mse']:.4f}")
+
+        # Savepoint
+        if step in SAVE_AT:
+            sp_subdir = f"step_{step}"
+            sd = save_lora_adapter(decoder, step, sp_subdir)
+            log(f"  SAVEPOINT @ step {step} → {sd}")
+            savepoint_log.append({'step': step, 'path': sd})
+            if HF_PUSH and step in HF_REPO_MAP:
+                ok, err = hf_push(sd, HF_REPO_MAP[step], f"sentinel step {step} (φ★={phi_log[-1].get('phi_star_min', '?')})")
+                log(f"  HF push {HF_REPO_MAP[step]}: {'OK' if ok else 'ERR ' + str(err)}")
+                hf_push_log.append({'step': step, 'repo': HF_REPO_MAP[step], 'ok': ok, 'err': err})
+
+except KeyboardInterrupt:
+    log(f"INTERRUPTED @ step {step}")
+    aborts.append({'step': step, 'reason': 'KeyboardInterrupt'})
+    abort_triggered = True
+except Exception as e:
+    log(f"EXCEPTION @ step {step}: {e}")
+    log(traceback.format_exc())
+    aborts.append({'step': step, 'reason': f'EXCEPTION: {e}'})
+    abort_triggered = True
+
+train_elapsed = time.time() - train_t0
+log(f"train done elapsed={train_elapsed:.1f}s steps_completed={step} aborted={abort_triggered}")
+
+# Final phi
+log("computing final phi_star...")
+phi_final, phi_final_mean = compute_phi_star(decoder, calib_tensor)
+phi_log.append({'step': step, 'phi_star_min': phi_final, 'phi_star_mean': phi_final_mean, 'delta': get_delta(step), 'note': 'final'})
+log(f"final phi_star_min={phi_final} mean={phi_final_mean}")
+
+# Final F metrics
+log("computing final F metrics...")
+last_phi_val = phi_final if phi_final is not None else 0.0
+f_final = compute_f_metrics(decoder, eval_subset, holdout_cache, last_phi_val)
+f_final['step'] = step
+f_final['note'] = 'final'
+f_log.append(f_final)
+log(f"final F: F1_bleu1={f_final['F1_bleu1']:.4f} F2_phi={f_final['F2_phi']:.4f} F3_tens_mse={f_final['F3_tension_mse']:.4f}")
+
+# Save final adapter
+if not abort_triggered or step >= 50000:
+    sd = save_lora_adapter(decoder, step, "final")
+    log(f"FINAL adapter saved → {sd}")
+    savepoint_log.append({'step': step, 'path': sd, 'note': 'final'})
+    if HF_PUSH:
+        ok, err = hf_push(sd, HF_REPO_MAP[-1], f"sentinel final step {step} (φ★={phi_final})")
+        log(f"HF push {HF_REPO_MAP[-1]}: {'OK' if ok else 'ERR ' + str(err)}")
+        hf_push_log.append({'step': step, 'repo': HF_REPO_MAP[-1], 'ok': ok, 'err': err, 'note': 'final-stage1'})
+else:
+    log(f"SKIPPED final adapter save (aborted before 50K, step={step})")
+
+# Cleanup
+hook_handle.remove()
+
+# Verdict
+phi_values = [p['phi_star_min'] for p in phi_log if p.get('phi_star_min') is not None]
+if phi_values:
+    phi_arr = np.array(phi_values)
+    phi_summary = {
+        'mean': float(phi_arr.mean()),
+        'variance': float(phi_arr.var()),
+        'min': float(phi_arr.min()),
+        'max': float(phi_arr.max()),
+        'n': len(phi_arr),
+        'baseline': phi_baseline,
+        'final': phi_final,
+        'delta_baseline_to_final': (phi_final - phi_baseline) if (phi_final is not None and phi_baseline is not None) else None,
+    }
+else:
+    phi_summary = {'n': 0, 'note': 'no_phi_values_collected'}
+
+# Verdict criteria (Phase 1.4)
+f_final_phi = f_final.get('F2_phi', None) if f_final else None
+f_final_bleu1 = f_final.get('F1_bleu1', 0.0) if f_final else 0.0
+f_final_tens = f_final.get('F3_tension_mse', 999.0) if f_final else 999.0
+
+baseline_90pct = (phi_baseline * 0.9) if phi_baseline is not None else PHI_THRESHOLD
+
+if abort_triggered:
+    if step >= 50000:
+        # late exception but reached 50K
+        verdict = "F2_PASS_BUT_EXCEPTION_AT_END"
+        phase2_ready_recommendation = "SENTINEL_RETUNE_OR_PHASE2_WITH_CAVEAT"
+    else:
+        verdict = "F2_ABORT_PHI_BELOW_THRESHOLD" if any(a.get('reason', '').startswith('F2') for a in aborts) else "TRAIN_INTERRUPTED"
+        phase2_ready_recommendation = "ABORT_PHASE2_PLAN_REVISION"
+elif f_final_phi is None:
+    verdict = "F2_UNKNOWN_PHI_FAILED"
+    phase2_ready_recommendation = "SENTINEL_RETUNE"
+elif f_final_phi < PHI_THRESHOLD:
+    verdict = "F2_VIOLATION_AT_FINAL"
+    phase2_ready_recommendation = "ABORT_PHASE2_PLAN_REVISION"
+elif f_final_phi >= baseline_90pct:
+    verdict = "F2_PASS_FULL"
+    phase2_ready_recommendation = "PHASE2_ENTRY_READY"
+else:
+    verdict = "F2_PASS_TIGHT"
+    phase2_ready_recommendation = "PHASE2_ENTRY_WITH_CAVEAT"
+
+# F1 BLEU-1 verdict
+if f_final_bleu1 > 0.4:
+    f1_verdict = "F1_PASS"
+elif f_final_bleu1 > 0.2:
+    f1_verdict = "F1_PARTIAL"
+else:
+    f1_verdict = "F1_BELOW_TARGET"
+
+# F3 tension verdict
+if f_final_tens < 0.1:
+    f3_verdict = "F3_PASS"
+elif f_final_tens < 1.0:
+    f3_verdict = "F3_PARTIAL"
+else:
+    f3_verdict = "F3_BELOW_TARGET"
+
+trajectory = {
+    'schema': 'anima/p9_p1_sentinel/trajectory/1',
+    'phase': 'p9_p1_sentinel_50k',
+    'ts_utc': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+    'device': str(device),
+    'real_train': True,
+    'config': {
+        'n_steps': N_STEPS, 'batch': BATCH, 'grad_acc': GRAD_ACC, 'lr': LR,
+        'lora_r': LORA_R, 'lora_alpha': LORA_ALPHA,
+        'delta_curriculum': {'early': DELTA_EARLY, 'mid': DELTA_MID, 'late': DELTA_LATE,
+                             'early_end': EARLY_END, 'mid_end': MID_END},
+        'phi_threshold': PHI_THRESHOLD,
+        'phi_every': PHI_EVERY, 'f_every': F_EVERY,
+        'alpha': ALPHA, 'beta': BETA, 'gamma': GAMMA,
+        'T': T, 'seed': SEED,
+        'n_calib_prompts': N_CALIB, 'k_partitions': K_PARTS,
+        'hid_trunc': HID_TRUNC, 'ridge': RIDGE,
+        'save_at': SAVE_AT,
+        'hf_push': HF_PUSH, 'hf_org': HF_ORG,
+    },
+    'env': {
+        'torch': torch.__version__,
+        'cuda_available': torch.cuda.is_available(),
+        'device_name': torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'cpu',
+        'has_peft': True,
+    },
+    'ckpt': {
+        'path': CLM_CKPT,
+        'load_sec': ckpt_load_sec,
+        'meta_step': ckpt_step,
+        'meta_ce': ckpt_ce_meta,
+        'meta_phi': ckpt_phi_meta,
+        'keys_top': ckpt_keys[:10],
+        'missing_at_load': len(missing),
+        'unexpected_at_load': len(unexpected),
+    },
+    'model': {
+        'class': 'ConsciousDecoderV2',
+        'n_params_total': n_params_total,
+        'n_params_trainable_lora': n_trainable,
+        'lora_pct': round(n_trainable * 100 / n_params_total, 4),
+        'lora_target_modules': target_modules,
+        'd_model': scale_cfg['d_model'],
+        'n_layer': scale_cfg['n_layer'],
+        'n_head': scale_cfg['n_head'],
+        'block_size': scale_cfg['block_size'],
+    },
+    'phi_log': phi_log,
+    'f_log': f_log,
+    'loss_log_compact': loss_log_compact,
+    'aborts': aborts,
+    'aborted': abort_triggered,
+    'sft_data': {'path': SFT_DATA, 'n_docs': len(records)},
+    'sft_holdout': {'path': SFT_HOLDOUT, 'n_docs': len(holdout), 'eval_subset_n': len(holdout_cache)},
+    'savepoints': savepoint_log,
+    'hf_push_log': hf_push_log,
+    'train_elapsed_sec': round(train_elapsed, 2),
+    'steps_completed': step,
+    'phi_baseline': phi_baseline,
+    'phi_final': phi_final,
+    'phi_summary': phi_summary,
+    'verdict': verdict,
+    'f1_verdict': f1_verdict,
+    'f3_verdict': f3_verdict,
+    'phase2_ready_recommendation': phase2_ready_recommendation,
+}
+
+verdict_doc = {
+    'schema': 'anima/p9_p1_sentinel/verdict/1',
+    'verdict': verdict,
+    'f1_verdict': f1_verdict,
+    'f3_verdict': f3_verdict,
+    'phase2_ready_recommendation': phase2_ready_recommendation,
+    'phi_summary': phi_summary,
+    'f_final': f_final,
+    'steps_completed': step,
+    'aborted': abort_triggered,
+    'aborts': aborts,
+    'train_elapsed_sec': round(train_elapsed, 2),
+    'real_train': True,
+    'config_summary': {
+        'n_steps': N_STEPS, 'lr': LR, 'lora_r': LORA_R, 'lora_alpha': LORA_ALPHA,
+        'alpha': ALPHA, 'beta': BETA, 'gamma': GAMMA,
+        'delta_curriculum': {'early': DELTA_EARLY, 'mid': DELTA_MID, 'late': DELTA_LATE},
+        'phi_threshold': PHI_THRESHOLD,
+        'save_at': SAVE_AT,
+    },
+    'env': {
+        'device': str(device),
+        'cuda': torch.cuda.is_available(),
+        'device_name': torch.cuda.get_device_name(0) if torch.cuda.is_available() else 'cpu',
+        'torch': torch.__version__,
+        'has_peft': True,
+    },
+    'savepoints_pushed': [{'step': h['step'], 'repo': h['repo'], 'ok': h['ok']} for h in hf_push_log],
+    'ts_utc': datetime.now(timezone.utc).strftime('%Y-%m-%dT%H:%M:%SZ'),
+    'predecessor': {
+        'phase0_warmup_verdict': 'CLEAN_PHI_MED_VAR',
+        'phase0_baseline_phi': 45.91520414820293,
+        'phase0_final_phi': 46.82755007908948,
+        'phase0_steps': 1000,
+        'phase0_train_sec': 62.53,
+    },
+}
+
+with open(TRAJECTORY_OUT, 'w') as f:
+    json.dump(trajectory, f, indent=2)
+with open(VERDICT_OUT, 'w') as f:
+    json.dump(verdict_doc, f, indent=2)
+
+log(f"WROTE trajectory={TRAJECTORY_OUT} verdict={VERDICT_OUT}")
+log(f"VERDICT={verdict} F1={f1_verdict} F3={f3_verdict} phase2_rec={phase2_ready_recommendation}")
+log("DONE")

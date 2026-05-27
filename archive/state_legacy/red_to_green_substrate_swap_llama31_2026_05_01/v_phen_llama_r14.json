@@ -1,0 +1,24 @@
+{
+  "schema": "anima/red_to_green_substrate_swap_llama31/v_phen_llama_r14/1",
+  "base_model": "meta-llama/Llama-3.1-8B",
+  "lora_path": "/workspace/lora/llama31_r14",
+  "GWT_4D_attn_entropy": 0.22975949072775848,
+  "GWT_entropy_normalized_gramspec": 0.5483678931384738,
+  "LZ_norm": 3.005859375,
+  "HOT_mean_top1_prob": 0.11718647878787547,
+  "HOT_std_top1_prob": 0.1047921676643274,
+  "mirror_mean_off_diag": 0.5415918761632447,
+  "predictive_r2_loo_cv": 0.08264138776449304,
+  "passes": [
+    "LZ",
+    "mirror"
+  ],
+  "n_passes": 2,
+  "thresholds": {
+    "GWT": ">= 0.55",
+    "LZ": "> 1.0",
+    "HOT": "mean >= 0.4",
+    "mirror": "|off-diag| >= 0.3",
+    "predictive": "R\u00b2 >= 0.4"
+  }
+}

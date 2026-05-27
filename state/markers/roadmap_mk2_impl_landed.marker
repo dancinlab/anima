@@ -1,0 +1,90 @@
+{
+  "schema": "anima/markers/roadmap_mk2_impl_landed/1",
+  "completion_iso": "2026-05-02T03:58:52Z",
+  "user_directive": "ok (4-question lock-in: Q1 JSONL+HXC dual / Q2 11 subcmd / Q3 hybrid 3-tier recompile / Q4 domain-prefix monotonic id)",
+  "tools_landed": [
+    {"path": "tool/roadmap_op.hexa",       "sha256": "fa32be14b3afc2a7", "loc": 573, "bytes": 21980, "subcmds": 11},
+    {"path": "tool/roadmap_compile.hexa",  "sha256": "5e2998a7ccb74d96", "loc": 144, "bytes": 5455},
+    {"path": "tool/roadmap_lint.hexa",     "sha256": "c0190cb6e3629e2c", "loc": 298, "bytes": 11760},
+    {"path": "tool/roadmap_render.hexa",   "sha256": "2cf8c5efccd19bdf", "loc": 171, "bytes": 5778}
+  ],
+  "tools_total_loc": 1186,
+  "domain_files_created": [
+    {"path": ".roadmap.clm",   "sha256": "1194108efa79fcd4", "loc": 3,  "entries": 0},
+    {"path": ".roadmap.eeg",   "sha256": "b05c0531b54fb6f0", "loc": 3,  "entries": 0},
+    {"path": ".roadmap.akida", "sha256": "de3307cff56a48eb", "loc": 3,  "entries": 0},
+    {"path": ".roadmap.qrng",  "sha256": "45597eaa658e8ca9", "loc": 3,  "entries": 0},
+    {"path": ".roadmap.sim",   "sha256": "7418b4ac5707ca55", "loc": 3,  "entries": 0},
+    {"path": ".roadmap.meta",  "sha256": "1e61985f72ffdb55", "loc": 26, "entries": 22}
+  ],
+  "hxc_compiled": [
+    {"path": ".roadmap.clm.hxc",   "sha256": "fbfe28f332977b5a", "bytes": 159},
+    {"path": ".roadmap.eeg.hxc",   "sha256": "c4e89f912b8de728", "bytes": 159},
+    {"path": ".roadmap.akida.hxc", "sha256": "9dcdeb23d96ecf14", "bytes": 161},
+    {"path": ".roadmap.qrng.hxc",  "sha256": "21103ec54f227706", "bytes": 160},
+    {"path": ".roadmap.sim.hxc",   "sha256": "2ddfdac2952bf279", "bytes": 159},
+    {"path": ".roadmap.meta.hxc",  "sha256": "4d9f8ce5d63d20a7", "bytes": 11418}
+  ],
+  "meta_entries_ingested": 22,
+  "meta_entries_breakdown": {
+    "track_def": 1,
+    "nsubstrate_001_021": 21,
+    "ready_count": 6,
+    "blocked_count": 14,
+    "landed_count": 1
+  },
+  "n_substrate_doc_source": "docs/n_substrate_consciousness_roadmap_2026_05_01.md",
+  "n_substrate_doc_sha": "b1e41a3335181d5b2d53939bd9127cd41e2e511c9afd004e256dae081ac932fd",
+  "preserved_unchanged": [
+    {"path": ".roadmap (mk1, frozen)",                                       "sha256": "d55158af5c26c7c82923c73880e867c4f63201f3b282e067fd41aa3b40eb9352", "mtime_unchanged": true},
+    {"path": "docs/n_substrate_consciousness_roadmap_2026_05_01.md",          "sha256": "b1e41a3335181d5b2d53939bd9127cd41e2e511c9afd004e256dae081ac932fd", "mtime_unchanged": true}
+  ],
+  "selftest_status": {
+    "op": "11/11 PASS",
+    "lint": "0 errors / 0 warnings PASS",
+    "compile": "6/6 domains compiled PASS",
+    "render": "json/text/md all PASS"
+  },
+  "byte_identical_2run": "PASS (op list)",
+  "source_hash_guard_2run": "PASS (compile reports unchanged on second run)",
+  "hxc_compile_status": "PASS (6 .hxc files generated, v0 minimal HXC fallback until BG-L2 hxc_format module lands)",
+  "schema_version": "anima/roadmap/mk2/entry/1",
+  "lint_schema_version": "anima/roadmap/mk2/lint/1",
+  "hxc_schema_version": "anima/roadmap/mk2/hxc/1",
+  "raw10_caveats": [
+    "C1: HXC v0 = JSONL minus comments (no binary compaction). Real binary HXC awaits BG-L2 hxc_format module land.",
+    "C2: launchd watch tier (Q3 hybrid 3-tier middle) is SPEC-ONLY in handoff doc — plist not installed. Recompile is sync (op write triggers recompile via roadmap_compile.hexa) + lazy (render falls back to JSONL if .hxc missing). Watch tier deferred to follow-up cycle.",
+    "C3: link subcmd is JSON-acknowledgment only — actual in-place mutation of depends_on array deferred to update --add-depends-on follow-up cycle.",
+    "C4: status whitelist extended to include 'ready' and 'active' on top of standard {proposed, wip, blocked, landed, retired, superseded} for N-substrate doc semantic mapping (오늘 가능 → ready, AKIDA-blocked → blocked).",
+    "C5: dangling-evidence check is warn-only (raw 91 honest C3 — proof-carrying not enforced for mk2 yet, since 21 N-substrate entries have no evidence yet by design — they are forward research tracks).",
+    "C6: id allocation lock uses mkdir-style flock; 50 retries × 100ms = 5s timeout. Single-process safe; multi-host concurrent writers untested.",
+    "C7: roadmap_op atomic write uses heredoc; entries containing '__HEXA_EOF__' literal would corrupt — content-scan pre-check not implemented (low risk, not in any current entry).",
+    "C8: feeds_main invariant check is warn-only; not blocking. mk1 .roadmap had P1/P2/P3 phase semantics; mk2 generalizes to boolean field but cross-domain meta-only constraint is advisory.",
+    "C9: BG-L6 (a17af41308d1ba363) is producing hive/{core,modules}/roadmap_format/ abstraction — when it lands, this BG's tools may need a thin shim layer to call the canonical compile/lint API. Current impl is anima-local self-contained.",
+    "C10: 21 nsubstrate.* entries use prefix 'nsubstrate' (not 'meta') for visibility — this overrides the simple <domain>.<3-digit> convention with a sub-prefix convention. lint accepts both since prefix pattern is [a-z0-9_]+. Domain-mismatch check uses entry's domain field, which is 'meta' for all 21."
+  ],
+  "preserved_existing_tools": [
+    "tool/anima_roadmap_lint.hexa (mk1 lint, untouched)",
+    "tool/roadmap_auto_reflect.hexa (mk1 ecosystem)",
+    "tool/roadmap_diff_viz.hexa",
+    "tool/roadmap_html_render.hexa",
+    "tool/roadmap_integrity_guard.hexa",
+    "tool/roadmap_live_daemon.hexa",
+    "tool/roadmap_live_update.hexa",
+    "tool/roadmap_83_auto_mark.hexa",
+    "tool/roadmap_mistake_auto_fix.hexa",
+    "tool/anima_nexus_roadmaps_consistency_auditor.hexa",
+    "tool/anima_roadmap_v11_register.hexa",
+    "tool/install_roadmap_live_daemon.hexa"
+  ],
+  "follow_up_cycles": [
+    "F1: launchd watch plist install (Q3 hybrid middle tier) — design only in handoff doc",
+    "F2: link subcmd in-place mutation (currently JSON-ack only)",
+    "F3: BG-L6 hive/{core,modules}/roadmap_format/ integration shim",
+    "F4: sister repo (clm/eeg/n6/nexus) .roadmap.<domain> rollout",
+    "F5: mk1 → mk2 backport — extract historical entries from .roadmap (mk1 narrative) into structured JSONL",
+    "F6: HXC v1 binary compaction (when BG-L2 hxc_format lands)",
+    "F7: BG-L6 closure → bind rename merge coordination",
+    "F8: feeds_main 1st promotion — mark first nsubstrate entry as feeds_main when it produces verifiable evidence"
+  ]
+}

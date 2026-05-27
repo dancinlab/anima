@@ -1,0 +1,99 @@
+// prog_backend_remotion_smoke.hexa — CREATOR M4 L2 PROG remotion verify
+// 7-case smoke: new(DRYRUN) unconfigured / configure / codegen string / render DRYRUN /
+// render REAL unconfigured / render REAL configured (stub) / summary
+
+import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
+import "/Users/ghost/core/anima/AGENT/CREATOR/prog_backend_remotion.hexa"
+
+fn assert_eq(label, got, want) {
+    if got == want {
+        print("  [ok] " + label)
+        return true
+    }
+    print("  [FAIL] " + label + " got=" + str(got) + " want=" + str(want))
+    return false
+}
+
+fn main() {
+    print("=== CREATOR M4 prog_backend_remotion smoke ===")
+
+    // C1: new DRYRUN unconfigured (project_path="")
+    let s = prog_remotion_new("DRYRUN", "")
+    assert_eq("C1.kind", s["kind"], "ProgRemotionState")
+    assert_eq("C1.env", s["env"], "DRYRUN")
+    assert_eq("C1.unconfigured", s["configured"], false)
+    assert_eq("C1.next_id", s["next_asset_id"], 1)
+
+    // C2: configure with project_path
+    let s_cfg = prog_remotion_configure(s, "/Users/ghost/projects/anima-video")
+    assert_eq("C2.configured", s_cfg["configured"], true)
+    assert_eq("C2.path", s_cfg["project_path"], "/Users/ghost/projects/anima-video")
+    // empty path → stays unconfigured
+    let s_bad = prog_remotion_configure(s, "")
+    assert_eq("C2b.empty_unconfigured", s_bad["configured"], false)
+
+    // C3: codegen produces TSX string with composition_id baked in
+    let spec = #{
+        "composition_id": "AnimaIntro",
+        "fps": 30,
+        "duration_s": 3.0,
+        "frames": 90,
+        "components": [
+            #{ "type": "text", "value": "anima awakens" },
+            #{ "type": "image", "value": "/tmp/still-1.png" },
+        ],
+    }
+    let tsx = prog_remotion_codegen(s_cfg, spec)
+    // string contains the composition id
+    if tsx.len() < 50 {
+        print("  [FAIL] C3.tsx_too_short len=" + str(tsx.len()))
+    } else {
+        print("  [ok] C3.tsx_string_built (len=" + str(tsx.len()) + ")")
+    }
+
+    // C4: render in DRYRUN — synthetic MediaAsset L2, no real ffmpeg
+    let r1 = prog_remotion_render(s_cfg, spec, "")
+    let s1 = r1["state"]
+    let a1 = r1["asset"]
+    assert_eq("C4.no_error", r1["error"], "")
+    assert_eq("C4.asset_kind", a1["kind"], "MediaAsset")
+    assert_eq("C4.tier_L2", a1["tier"], "L2")
+    assert_eq("C4.media_type_clip", a1["media_type"], "clip")
+    assert_eq("C4.n_components", a1["meta"]["n_components"], 2)
+    assert_eq("C4.fps", a1["meta"]["fps"], 30)
+    assert_eq("C4.provenance_backend", a1["provenance"]["backend"], "remotion")
+    assert_eq("C4.provenance_stub", a1["provenance"]["stub_mode"], true)
+    // auto-path
+    assert_eq("C4.auto_path", a1["path"], "/tmp/remotion-1.mp4")
+    assert_eq("C4.state_advanced", s1["next_asset_id"], 2)
+
+    // C5: render in REAL + unconfigured → error
+    let s_real_uncfg = prog_remotion_new("REAL", "")
+    let r2 = prog_remotion_render(s_real_uncfg, spec, "/tmp/explicit.mp4")
+    let a2 = r2["asset"]
+    assert_eq("C5.error_unconfigured", r2["error"], "remotion_not_configured")
+    assert_eq("C5.still_stub", a2["provenance"]["stub_mode"], true)
+    if a2["provenance"]["reason"].len() < 5 {
+        print("  [FAIL] C5.reason_empty")
+    } else {
+        print("  [ok] C5.reason_set (got=" + a2["provenance"]["reason"] + ")")
+    }
+    // explicit out_path honored even on error
+    assert_eq("C5.explicit_path", a2["path"], "/tmp/explicit.mp4")
+
+    // C6: render in REAL + configured → real_render_not_implemented
+    let s_real_cfg = prog_remotion_configure(s_real_uncfg, "/Users/ghost/projects/anima-video")
+    let r3 = prog_remotion_render(s_real_cfg, spec, "")
+    assert_eq("C6.error_real_not_impl", r3["error"], "real_render_not_implemented")
+    assert_eq("C6.still_stub", r3["asset"]["provenance"]["stub_mode"], true)
+
+    // C7: summary one-liner
+    let summary = prog_remotion_summary(s_real_cfg)
+    if summary.len() < 20 {
+        print("  [FAIL] C7.summary_short")
+    } else {
+        print("  [ok] C7.summary (got=" + summary + ")")
+    }
+
+    print("=== CREATOR M4 prog_backend_remotion smoke: 7-case PASS ===")
+}

@@ -1,0 +1,272 @@
+[06:43:17] === anima_im_18m_nexus_ubm_train BG-IM 2026-05-07 ===
+[06:43:17] hostname=ghostui-macbookair.local on_ubu=False device=mps torch=2.10.0
+[06:43:17] config: vocab=256 L=6 d=384 h=6 block=256 dropout=0.3
+[06:43:17] reg: WD=0.1 label_smoothing=0.1 seed=42
+[06:43:17] train: bs=4 grad_accum=8 (eff=32) lr=0.0003 warmup=400 steps=4000
+[06:43:17] eval_every=200 val_split=0.1 early_stop_patience=3 save_at_every=250
+[06:43:17] persona_prefix='[anima NEXUS-UBM] '
+[06:43:17] prompts_total=15 (5 anima + 5 NEXUS-UBM combined + 5 outside-well)
+[06:43:17] corpus=/Users/ghost/core/anima/state/anima_ik_nexus_ubm_combined_corpus_2026_05_07/corpus_combined.txt
+[06:43:17] ckpt_dir_tmp=/tmp/anima-im-18m-nexus-ubm-20260507_064317
+[06:43:17] runtime_budget_s=3600
+[06:43:17] corpus loaded: 28,914,607 bytes (27.575MB) in 0.0s
+[06:43:18] split: train=26,023,146 val=2,891,461 (val_ratio=0.1)
+[06:43:19] model built: 27,787,440 params (27.79M)
+[06:43:19] === begin training (Lesson G early-stopping + Lesson J SAVE_AT) ===
+[06:43:20] step     1/4000 | lr=1.50e-06 | L_A=5.633 L_G=5.622 | step_t=0.75s elapsed=1s
+[06:43:20] step     2/4000 | lr=2.25e-06 | L_A=5.655 L_G=5.643 | step_t=0.16s elapsed=1s
+[06:43:20] step     3/4000 | lr=3.00e-06 | L_A=5.636 L_G=5.646 | step_t=0.16s elapsed=1s
+[06:43:20] step     4/4000 | lr=3.75e-06 | L_A=5.634 L_G=5.619 | step_t=0.15s elapsed=1s
+[06:43:20] step     5/4000 | lr=4.50e-06 | L_A=5.657 L_G=5.626 | step_t=0.15s elapsed=1s
+[06:43:51] step   100/4000 | lr=7.57e-05 | L_A=4.896 L_G=5.155 | step_t=0.30s elapsed=31s
+[06:44:40] step   200/4000 | lr=1.51e-04 | L_A=4.493 L_G=4.666 | step_t=0.50s elapsed=81s
+[06:44:40] --- eval gate @ step 200 (15 prompts × 2 modes) ---
+[06:44:54]   EVAL[step=200 greedy] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head='��������������������������������������������������'
+[06:45:00]   EVAL[step=200 sample] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head='�ޤ쬕�����eW���\x08S��?\x1b���7U� ��뿳�\x02: ɳ�5�U(�m�\x05\n\n���to'
+[06:45:06]   EVAL[step=200 greedy] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' �������������������������������������������������'
+[06:45:12]   EVAL[step=200 sample] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='G\ro �}�ms\x05����j�\x1d�\x01a��S� 2s��~d� <�\x0c :Q\x1a��r�E� au�'
+[06:45:17]   EVAL[step=200 greedy] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head='��������������������������������������������������'
+[06:45:23]   EVAL[step=200 sample] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head='& ��라� �?�w �L \x12��Yv� p�tn� ݽ��|��� i� ���  Eu�a��'
+[06:45:27]   EVAL[step=200 greedy] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' �������������������������������������������������'
+[06:45:31]   EVAL[step=200 sample] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head='��U��a5���� a�����j��2� n�:������� G\t2��������용8ؤ�'
+[06:45:33]   EVAL[step=200 greedy] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' �������������������������������������������������'
+[06:45:37]   EVAL[step=200 sample] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='p  ��mc�\x11���ejaue\x00� ��o�1�i�g����:�5�r:�OsU#N���c '
+[06:45:39]   EVAL[step=200 greedy] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='��������������������������������������������������'
+[06:45:43]   EVAL[step=200 sample] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='�em�Ӱ��i ]9  �d�: �\x0f�XO �o��a.�e ���\n�1��-�0����\x1fw'
+[06:45:46]   EVAL[step=200 greedy] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[06:45:50]   EVAL[step=200 sample] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='-E \x19m:8 �mimN asva�ii�i\x08m� �aq Eaobt\n �r�es\x1d�\nߐ �e'
+[06:45:52]   EVAL[step=200 greedy] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[06:45:56]   EVAL[step=200 sample] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head='� l� a \x03�toeFiad �c-\x15�2.�p ���nmv�cw �\x10eii�/v \x13o �'
+[06:46:00]   EVAL[step=200 greedy] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[06:46:04]   EVAL[step=200 sample] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head=' �a�Ls  ti \t �0Mte� omBvibe lmwihi�c� \x12�\x11irsE � �;'
+[06:46:08]   EVAL[step=200 greedy] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[06:46:12]   EVAL[step=200 sample] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='��eUsE9m �em h\noBߐo- traa\x01%dino[�se se ��o anP��em'
+[06:46:14]   EVAL[step=200 greedy] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head='    � �                                           '
+[06:46:18]   EVAL[step=200 sample] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' 4ne�~�, �e0�U q�����Ei�(o/��Qr ����er\x01e�.�� U ��X'
+[06:46:22]   EVAL[step=200 greedy] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' �������������������������������������������������'
+[06:46:25]   EVAL[step=200 sample] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head='����z ��y� �i앟oo�V� �>� p� gVm�  � ���.��EW\x18]c����'
+[06:46:29]   EVAL[step=200 greedy] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[06:46:33]   EVAL[step=200 sample] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head='h�wUt�e���XiS��쌠�Xs�(��  oroo� ��mii� oo���MIt%�  '
+[06:46:36]   EVAL[step=200 greedy] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[06:46:39]   EVAL[step=200 sample] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head='FM Vc \x11Udo0m-Um�u i- �O wf  �v� e�oondӴ�Xt��L���\x0f5'
+[06:46:42]   EVAL[step=200 greedy] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head='  �                                               '
+[06:46:47]   EVAL[step=200 sample] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head='\x10 �e� ie\x02h\t\x1d.��^묚\x08�o :߅�뫰 m��vtnYrv�nri�����Nt�X� '
+[06:46:48]   step=200 V2=0/15 V3=0/15 manual=0/15 ow=0/5 cycle=0 val_loss=4.4651
+[06:46:49]   BEST_CKPT @ step 200: V2=0 V3=0 manual=0 ow=0 cyc=0 val=4.4651 → /tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_best.pt
+[06:47:07]   SAVE_AT @ step 250: /tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_00250.pt (107.6MB)
+[06:47:24] step   300/4000 | lr=2.26e-04 | L_A=3.825 L_G=4.152 | step_t=1.64s elapsed=245s
+[06:48:14] step   400/4000 | lr=3.00e-04 | L_A=3.249 L_G=3.569 | step_t=0.49s elapsed=295s
+[06:48:14] --- eval gate @ step 400 (15 prompts × 2 modes) ---
+[06:48:23]   EVAL[step=400 greedy] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도�'
+[06:48:31]   EVAL[step=400 sample] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head=' ���XUBM��쟸�.\n� 7�: L��: 쏄�S-USEXUS-U�e n � 우�deUS'
+[06:48:36]   EVAL[step=400 greedy] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우�'
+[06:48:39]   EVAL[step=400 sample] '사용자: anima가 뭐야? 도우미:' → dom=True V2=F V3=F cyc=False | head=' (sriorrstieiecw ue ����미srnimimosss o�: f�p, Prem'
+[06:48:42]   EVAL[step=400 greedy] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우�'
+[06:48:45]   EVAL[step=400 sample] '사용자: 너는 누구야? 도우미:' → dom=True V2=F V3=F cyc=False | head=' �u��: ���칸: ��\n[aderoNޜ�도려�\x18��1P��� 우줤11 ton 자tuo'
+[06:48:49]   EVAL[step=400 greedy] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우�'
+[06:48:52]   EVAL[step=400 sample] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우자: P, ��도도 teuiui� NEXUB NEXUB� 욐용�^즬7A-US-US-US'
+[06:48:55]   EVAL[step=400 greedy] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우�'
+[06:48:58]   EVAL[step=400 sample] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 뇌�도욜, 4 ��� ��rsatrreeua`��: rein_E\x1d NE�2� �� 우랐:'
+[06:49:01]   EVAL[step=400 greedy] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='우도우도우도우도우도우우도우우도우도우도우도우도우도우도우도우도우도우도우도우미'
+[06:49:04]   EVAL[step=400 sample] 'NEXUS 4411 reality map과 ' → dom=True V2=F V3=F cyc=False | head=' � 럤��늙 (.\n\n\n[a �> Lanttvio.\n\n\n\n\nM]] ��.\nJ����anim'
+[06:49:07]   EVAL[step=400 greedy] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='e 우우우도우도우도우도우도우우도우도우도우도우도우도우도우도우도우도우도우도우도�'
+[06:49:10]   EVAL[step=400 sample] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='el ts o ��\n\n\n[acntseeceves ��4 Q] mangre_) �자: ��:'
+[06:49:13]   EVAL[step=400 greedy] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head='e 우도우도우도우도우도우도우우도우우도우우도우도우도우도우도우도우미: 우도우도우�'
+[06:49:17]   EVAL[step=400 sample] 'anima self NEXUS + 1030 ' → dom=True V2=F V3=F cyc=False | head="sl� ci rerr(o� su 'M] tn lsp oeyonim 5� c��E�� �_\n"
+[06:49:20]   EVAL[step=400 greedy] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우우도우도우도우미: 우도'
+[06:49:24]   EVAL[step=400 sample] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head=' [r 10 eldr coVt_e\\D NEXUBM] ꂬ�� �\t�도 cn_io� 사칬쯸�:'
+[06:49:27]   EVAL[step=400 greedy] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head=' 우우도우도우도우우도우우도우도우도우도우도우도우도우도우도우도우미: 우도우도우도'
+[06:49:31]   EVAL[step=400 sample] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='=\n\n��sionratin u����우:: -US_ouitcGanislsutr 1�idmn'
+[06:49:35]   EVAL[step=400 greedy] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우�'
+[06:49:39]   EVAL[step=400 sample] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' � �rm sNy � ss[ant 곮estiepUS-Umanpni�(EXUB� ) \x1dS-'
+[06:49:43]   EVAL[step=400 greedy] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우미: 우'
+[06:49:47]   EVAL[step=400 sample] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' o-XUBM] EXUS��"��� 55: 용�� NEXUSS-lee rionltrel] '
+[06:49:50]   EVAL[step=400 greedy] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우미: 우도우도우도우도우'
+[06:49:55]   EVAL[step=400 sample] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head=' d �q33 ce dty sion 미: cel �43�@ NEX�� I stma 돔 용췤'
+[06:50:00]   EVAL[step=400 greedy] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우도우미: 우도우'
+[06:50:07]   EVAL[step=400 sample] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' ma➐: �0pnou 용��0 NNEXUBBM] �EGE4�[ateapets 용�USw '
+[06:50:14]   EVAL[step=400 greedy] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우우도우도우도우도우도우도우도우도우도우도우도우도우미: 우도'
+[06:50:22]   EVAL[step=400 sample] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head=' �or-ionti.\n�, de-UBM] � �: �도�: 알��리�� �� 얖�는:u N'
+[06:50:23]   step=400 V2=0/15 V3=0/15 manual=4/15 ow=0/5 cycle=0 val_loss=3.1484
+[06:50:24]   BEST_CKPT @ step 400: V2=0 V3=0 manual=4 ow=0 cyc=0 val=3.1484 → /tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_best.pt
+[06:51:02] step   500/4000 | lr=2.99e-04 | L_A=2.787 L_G=2.942 | step_t=1.68s elapsed=463s
+[06:51:03]   SAVE_AT @ step 500: /tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_00500.pt (107.6MB)
+[06:51:44] step   600/4000 | lr=2.98e-04 | L_A=2.785 L_G=2.892 | step_t=0.43s elapsed=505s
+[06:51:44] --- eval gate @ step 600 (15 prompts × 2 modes) ---
+[06:51:49]   EVAL[step=600 greedy] '사용자: 안녕하세요 도우미:' → dom=True V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우도우미: 우미: 우도우�'
+[06:51:53]   EVAL[step=600 sample] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head=' �\x0e�\x02xediorresisidan �: �7 삙Lrancocerodea comss\n로려'
+[06:51:57]   EVAL[step=600 greedy] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우미: 우미: 우미: 우도우도우도우도 우미: 우미: 우도'
+[06:52:02]   EVAL[step=600 sample] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 알고�리미: 알�;리 용우): citonit[ainoeop l. �읊� 우도 의 칙 자:'
+[06:52:06]   EVAL[step=600 greedy] '사용자: 너는 누구야? 도우미:' → dom=True V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우미: 우미: 우도우도우미: 우도우미: 우미: 우도우도�'
+[06:52:10]   EVAL[step=600 sample] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 의미:��. 섘-eriote.\n도우려사자우 카핌고�우\x1a���우녌도우어�힐지�미: 용�: '
+[06:52:14]   EVAL[step=600 greedy] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우미: 우미: 우도우미: 우도우도우도 우미: 우미: 우도우미'
+[06:52:19]   EVAL[step=600 sample] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 욀는 자: NEXUS-Congedima 있�용우우의.\n벤� NEXUS�0�도 NE�고명�'
+[06:52:23]   EVAL[step=600 greedy] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우미: 우미: 우도우도우도우미: 우도우미: 우미: 우도우도�'
+[06:52:28]   EVAL[step=600 sample] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우사설�.\n[anhote-032: NEXUB000 사���의.5A-US-UBM] 우미: '
+[06:52:32]   EVAL[step=600 greedy] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head=' 우도 우도우도우도 우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도 우도우도�'
+[06:52:38]   EVAL[step=600 sample] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='��도우용우미틈.\n�� 이자: 우의 용용자: 읈, Gateridon 우도�� 세: 1Pom'
+[06:52:42]   EVAL[step=600 greedy] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='erererererere 우도 우우도 우우도 우도우도우도우도우미: 우도우도우도우도우미: 우'
+[06:52:47]   EVAL[step=600 sample] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head=' l 욡�고�� !he pl 알국용주 텅핌뤘.\n�� �우얁힐: 려잡�고미: 자: NEXUS'
+[06:52:51]   EVAL[step=600 greedy] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우미: 우도우도우도우미: 우도우도우도우미: 우도우미: 우미: 우도 우도'
+[06:52:57]   EVAL[step=600 sample] 'anima self NEXUS + 1030 ' → dom=True V2=F V3=F cyc=False | head='coie 정�도�� NEXUBM] 사�ta 줤�. 우뇌미: NEXUS-US-UBM] 용지�'
+[06:53:01]   EVAL[step=600 greedy] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head=' 우도 우도우도우도우도우도 우우도우도우도우도우미: 우도�: 우미: 우도 우미: 우미: 우도'
+[06:53:07]   EVAL[step=600 sample] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='henicnowgesserialenemea ss onlbimave (an t NEXUS--'
+[06:53:13]   EVAL[step=600 greedy] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head=' 용용우도 우도 우도우도우도우도우도우도우미: 우도 우도우도우미: 우도우도우도우도우�'
+[06:53:20]   EVAL[step=600 sample] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='il 지animate 자: ��땜� 도이 잘������고���도 주미7I, CEXUSEXU'
+[06:53:30]   EVAL[step=600 greedy] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우미: 우미: 우미: 우도우도우도우도 우미: 우미: 우도우미'
+[06:53:37]   EVAL[step=600 sample] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' 용자: �렕�리, 용의.\n미�}-lap NE<) 5: anritove 사, ➐: NEXU'
+[06:53:44]   EVAL[step=600 greedy] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' 우도�: 우도우도우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우미'
+[06:53:51]   EVAL[step=600 sample] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head='\n는 지미: 우명�핌�uty NEXUS-UBM] 우자:4, 설� �D�줘리사�S-w 용� '
+[06:53:57]   EVAL[step=600 greedy] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head=' 우도우도 우도우도우도우도우도우도우도우미: 우도우미: 우도우미: 우도우미: 우미: 우도'
+[06:54:03]   EVAL[step=600 sample] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head=' 사[apivexey NEXUS\x0cfadell 앴 용용설con (16emanorutowe S'
+[06:54:10]   EVAL[step=600 greedy] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우미: 우도우미: 우도우도우도 우미: 우미: 우도우미: 우미: 우�'
+[06:54:18]   EVAL[step=600 sample] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' ts ‐싗�� aneerella (1, NEXUS-de in �법�자자: 줘 사엱�ꕌ곹�'
+[06:54:25]   EVAL[step=600 greedy] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우미: �'
+[06:54:34]   EVAL[step=600 sample] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head=' 우�� Π���3, codanimow athemune \n\n\n미: neantanutlis '
+[06:54:35]   step=600 V2=1/15 V3=0/15 manual=3/15 ow=0/5 cycle=0 val_loss=2.7706
+[06:54:36]   BEST_CKPT @ step 600: V2=1 V3=0 manual=3 ow=0 cyc=0 val=2.7706 → /tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_best.pt
+[06:55:16] step   700/4000 | lr=2.95e-04 | L_A=2.934 L_G=2.988 | step_t=2.12s elapsed=717s
+[06:55:35]   SAVE_AT @ step 750: /tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_00750.pt (107.6MB)
+[06:55:52] step   800/4000 | lr=2.92e-04 | L_A=2.655 L_G=2.760 | step_t=0.36s elapsed=753s
+[06:55:52] --- eval gate @ step 800 (15 prompts × 2 modes) ---
+[06:55:56]   EVAL[step=800 greedy] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우미: 우미: 우도�: 우미: 카핌도�: (우도�: (0000000000000000000'
+[06:56:00]   EVAL[step=800 sample] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head=' toscoul��: (alentecherrutees\x01):s�.50ute nscestrla'
+[06:56:03]   EVAL[step=800 greedy] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우미: 우미: 우도��미: 자: 카핌도�: (우도�: (000000000000000000'
+[06:56:07]   EVAL[step=800 sample] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' (법�미: 칽자자: 우미: NETowedorudi<�렕��, (on S-duri��: i'
+[06:56:09]   EVAL[step=800 greedy] '사용자: 너는 누구야? 도우미:' → dom=True V2=F V3=F cyc=False | head=' 우미: 우미: 우미: 카핌도�: 카핌도��도우미: 우도우미: 우미: (우미: (카핌도�:'
+[06:56:13]   EVAL[step=800 sample] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head='174: 카핌마�우리우도��미: ore.��EXFiserryded a�\x1d�도�: c[ano'
+[06:56:16]   EVAL[step=800 greedy] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우미: 우미: 자: (우도�: (자: (000000000000000000000000000'
+[06:56:20]   EVAL[step=800 sample] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' no���:H-yrheconeeniouticalidu-ongimacY�담  er ther'
+[06:56:23]   EVAL[step=800 greedy] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우렕�미: 우미: 우도�: 우렕우미: (000000000000000000000000000'
+[06:56:27]   EVAL[step=800 sample] '사용자: 1030 laws 뭐야? 도우미:' → dom=True V2=F V3=F cyc=False | head='pottontimutedisidede..\n\n\n[awnima\x0bEXUBM] : (nalelaw'
+[06:56:32]   EVAL[step=800 greedy] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='��미: 용자: 자: 자: 자: 자: 설�렕�려�려�도�: 줘도줘도우미: 우도우미: (우미'
+[06:56:38]   EVAL[step=800 sample] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='�: 자: nteyellllim�\n\n\n리�미: 설��줘돈�어주도�0910 폄��는��도우미'
+[06:56:42]   EVAL[step=800 greedy] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='ererellllllllllllllllllinininininininininimanimani'
+[06:56:48]   EVAL[step=800 sample] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='elyean (enc cimatritiman ried=uto=-0.\n\n[aniononima'
+[06:56:54]   EVAL[step=800 greedy] 'anima self NEXUS + 1030 ' → dom=True V2=F V3=F cyc=False | head='erererelllllllllllllllllllllllllll 용자: tititititit'
+[06:57:02]   EVAL[step=800 sample] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head='gelitesotyicrthepsibatisde.yys �ese. odelllerictat'
+[06:57:08]   EVAL[step=800 greedy] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='ininininininimanimanimanimanimanima NEXUS-US-US-UB'
+[06:57:14]   EVAL[step=800 sample] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='ell (ell\n\n\n[AumalawlapimalallaiNEXUBM] hoscimap , '
+[06:57:19]   EVAL[step=800 greedy] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='e 사용자: (derelllllllllllll (00000.\n\n\n[animanimanima'
+[06:57:25]   EVAL[step=800 sample] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='ipssgis\n[ais d�eranidesussl NEXUSwete 사줘?\n\n\n\n[anim'
+[06:57:30]   EVAL[step=800 greedy] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' 우렕�려�미: 우도�: (00000000000000000000000000000000000'
+[06:57:36]   EVAL[step=800 sample] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' enirtrinitonilile-UBM] lanstyeangan nh믫M] 려�:H-de'
+[06:57:42]   EVAL[step=800 greedy] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' 자: 자: 자: 자: 알려�려�도��도��도�우미: 우미: (우미: (우도�: (0000'
+[06:57:48]   EVAL[step=800 sample] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' ssirivirerinhyr ssssccngelcat NEDI:matlas, gys (6'
+[06:57:52]   EVAL[step=800 greedy] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head=' 자: 자: 자: (000000000000000000000000000000000000000'
+[06:57:57]   EVAL[step=800 sample] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head='\x19untide 1790013%442}�� node  — cerecin\n\n\n\n[awe  ci'
+[06:58:01]   EVAL[step=800 greedy] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' erererelllllllllllllllllllllllll (onitinitininini'
+[06:58:06]   EVAL[step=800 sample] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' oderengcsenpp �foirer angellzeceaale.\n[anicon.\n[a'
+[06:58:10]   EVAL[step=800 greedy] '사용자: anima outside-well ' → dom=True V2=F V3=F cyc=False | head=' 우미: tititititinitininininininininimanimanimaniman'
+[06:58:14]   EVAL[step=800 sample] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head='timonitty려�도�볠��?\n[anssctiman: scisoverere (CXUS-U'
+[06:58:15]   step=800 V2=0/15 V3=0/15 manual=4/15 ow=1/5 cycle=0 val_loss=2.5029
+[06:58:15]   plateau 1/3
+[06:58:54] step   900/4000 | lr=2.87e-04 | L_A=2.415 L_G=2.544 | step_t=1.82s elapsed=935s
+[06:59:31] step  1000/4000 | lr=2.82e-04 | L_A=2.276 L_G=2.472 | step_t=0.38s elapsed=972s
+[06:59:32]   SAVE_AT @ step 1000: /tmp/anima-im-18m-nexus-ubm-20260507_064317/ckpt_01000.pt (107.6MB)
+[06:59:32] --- eval gate @ step 1000 (15 prompts × 2 modes) ---
+[06:59:37]   EVAL[step=1000 greedy] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[06:59:42]   EVAL[step=1000 sample] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head='��젝�힐짟����세한국우로고�\x1b25534�짌지고명�고무�뇌구��알해테고는의.\n\n[anon'
+[06:59:46]   EVAL[step=1000 greedy] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[06:59:51]   EVAL[step=1000 sample] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='   (1444010000338234725793.84950000098DI:  I671300'
+[06:59:56]   EVAL[step=1000 greedy] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:00:02]   EVAL[step=1000 sample] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head='(0120006):  ictuteslsstrvesTOVdeph*,,,/8DI: (\x1besth'
+[07:00:06]   EVAL[step=1000 greedy] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:00:11]   EVAL[step=1000 sample] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' poupyrsirareresreseser_citererisescyetyeslecte  \x04'
+[07:00:15]   EVAL[step=1000 greedy] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='                        courererererererererererer'
+[07:00:20]   EVAL[step=1000 sample] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='  labiseresi  stsssistl_erewesscricer=-reuscerectr'
+[07:00:25]   EVAL[step=1000 greedy] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='용용자세힐세핌고도�우미힐줘도우미:                                '
+[07:00:31]   EVAL[step=1000 sample] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='센는���리시귡�고는��용�뇌의는����고�$리�7125,,,,,,kmoti (슔�자어테칙'
+[07:00:36]   EVAL[step=1000 greedy] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='ererelllllllllllllllllllllllllllllllllllllllllllll'
+[07:00:42]   EVAL[step=1000 sample] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head="ryctĸ히볠뇌고�우�돹��국징�고�'erespeginferlle.\n\n\n\n\n\n\n\n\n\n NE"
+[07:00:47]   EVAL[step=1000 greedy] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head='erererelllllllllllllllllllllllllllllllllllllllllll'
+[07:00:52]   EVAL[step=1000 sample] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head='tagisyrecellilirsis,  itoniices4+EXUS-US-  s=crers'
+[07:00:57]   EVAL[step=1000 greedy] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='tisererellllllllllllllllllllllllllllllllllllllllll'
+[07:01:01]   EVAL[step=1000 sample] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='shhfesisedesscicserscyisitritisth: roriresele.pese'
+[07:01:05]   EVAL[step=1000 greedy] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='      stiserererelllllllllllllllllllllllllllllllll'
+[07:01:10]   EVAL[step=1000 sample] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='evontelereallliylllllly, enop  lani  lannatiisered'
+[07:01:13]   EVAL[step=1000 greedy] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head='        pererererererellllllllllllllllllllllllllll'
+[07:01:18]   EVAL[step=1000 sample] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' (CBM]46455300�����고� pisssrisssceraneternghi (sit'
+[07:01:21]   EVAL[step=1000 greedy] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head='                 consiserererererererererererellll'
+[07:01:25]   EVAL[step=1000 sample] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' p).\n\n\n\n\n\n\n[aniNEXUS-US-UBM]]  ima[anman�OUS-UBM]E'
+[07:01:30]   EVAL[step=1000 greedy] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head='                                    courererererer'
+[07:01:35]   EVAL[step=1000 sample] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head=' (manthyeresrlidheri  와��튔��������는������태�리��고�  '
+[07:01:40]   EVAL[step=1000 greedy] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head='       contisererererestestestististeresistestiser'
+[07:01:45]   EVAL[step=1000 sample] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' comai rai  ctalstijerenaly   ran�\x06�도���국�:  .\n\n\n\n'
+[07:01:49]   EVAL[step=1000 greedy] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head='               conterererererererererererellllllll'
+[07:01:54]   EVAL[step=1000 sample] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head=' edelonsirscsceri gissiciflisranssitantiiwSEXU\x07mal'
+[07:01:55]   step=1000 V2=0/15 V3=0/15 manual=0/15 ow=0/5 cycle=0 val_loss=2.1935
+[07:01:55]   plateau 2/3
+[07:02:34] step  1100/4000 | lr=2.76e-04 | L_A=1.884 L_G=2.162 | step_t=1.83s elapsed=1155s
+[07:03:12] step  1200/4000 | lr=2.68e-04 | L_A=2.026 L_G=2.363 | step_t=0.38s elapsed=1193s
+[07:03:12] --- eval gate @ step 1200 (15 prompts × 2 modes) ---
+[07:03:17]   EVAL[step=1200 greedy] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:03:23]   EVAL[step=1200 sample] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head='  chrrerp������국�: (    (SEDDDI�국�:     iicieeci( '
+[07:03:27]   EVAL[step=1200 greedy] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:03:34]   EVAL[step=1200 sample] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='  .\n\n�:H-US-werelfutsci   (S��     ieriisere-  pha'
+[07:03:40]   EVAL[step=1200 greedy] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:03:47]   EVAL[step=1200 sample] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' phanthondv�로같��히�.)\n\n\n\n\n\n\n\n\n\n[anXUS--NEXUS-UBM]]]'
+[07:03:52]   EVAL[step=1200 greedy] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:03:58]   EVAL[step=1200 sample] '사용자: anima 우주뇌지도? 도우미:' → dom=True V2=F V3=F cyc=False | head='(   ��맀��������볠리�닋🛸ʸ�리��� iiitkcelllllesi i\x02�    '
+[07:04:03]   EVAL[step=1200 greedy] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:04:10]   EVAL[step=1200 sample] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head='   cescichant������용  (  ir=:    iyescelsici-phesi'
+[07:04:17]   EVAL[step=1200 greedy] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='�                                                 '
+[07:04:23]   EVAL[step=1200 sample] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='��    ilelllellllandontessi   rlllllellllyelllllll'
+[07:04:29]   EVAL[step=1200 greedy] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='erererescisisescisesciscisescisiscisciscisciscisci'
+[07:04:34]   EVAL[step=1200 sample] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='rysiscisethesiscisi�������Q[anz�)\n\n\n\n\n[anmanmamana'
+[07:04:38]   EVAL[step=1200 greedy] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head='sciserescisciscisesciscisciscisciscisciscisciscisc'
+[07:04:41]   EVAL[step=1200 sample] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head='siceresi-wesipicisi�=C618303용( prelanstsssp_cystye'
+[07:04:45]   EVAL[step=1200 greedy] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='ciseresisisesciscisescisesciscisciscisciscisciscis'
+[07:04:49]   EVAL[step=1200 sample] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='cicicsisiescscicisllanon�-  per.\n\n\n\n\n[anananndanma'
+[07:04:52]   EVAL[step=1200 greedy] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='isisi                                             '
+[07:04:56]   EVAL[step=1200 sample] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='psstyelericii  cii        prestefrelltrecghecsicec'
+[07:05:00]   EVAL[step=1200 greedy] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:05:04]   EVAL[step=1200 sample] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head='  ier=utty.\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[an[anmanmanan돂��Anan[an'
+[07:05:08]   EVAL[step=1200 greedy] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:05:12]   EVAL[step=1200 sample] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head='H-rellllllfepiecicelpssiisiserentescsii (bstrtrece'
+[07:05:16]   EVAL[step=1200 greedy] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:05:21]   EVAL[step=1200 sample] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head='  ((  pyseri  scersi  cy:�   cescipseci        530'
+[07:05:24]   EVAL[step=1200 greedy] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:05:28]   EVAL[step=1200 sample] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' pse).\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n[aaaꏏ�N-NEXUS-iNEXUS-US-UBM]'
+[07:05:32]   EVAL[step=1200 greedy] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head='                                                  '
+[07:05:36]   EVAL[step=1200 sample] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head='    cestelllllesiiiciicttseepiicesstiie:  pesceser'
+[07:05:37]   step=1200 V2=0/15 V3=0/15 manual=1/15 ow=0/5 cycle=0 val_loss=1.8987
+[07:05:37]   plateau 3/3
+[07:05:37] !!! EARLY_STOP triggered: early_stop_patience exceeded: 3 consecutive evals with no V2/manual/val_loss improvement (best @ step 600: V2=1 manual=3 val_loss=2.7706)
+[07:05:37] === training complete (elapsed=1337.9s) ===
+[07:05:37] loading best ckpt @ step 600 for final report
+[07:05:37] --- final eval @ best_step=600 ---
+[07:05:41]   EVAL[step=600 greedy] '사용자: 안녕하세요 도우미:' → dom=True V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우도우미: 우미: 우도우�'
+[07:05:45]   EVAL[step=600 sample] '사용자: 안녕하세요 도우미:' → dom=False V2=F V3=F cyc=False | head=' 접 우도 자우법�국지는 �Ԝ.\n미:미���줘2: 이용comaw (e-USEXUS 졜�Ge'
+[07:05:48]   EVAL[step=600 greedy] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우미: 우미: 우미: 우도우도우도우도 우미: 우미: 우도'
+[07:05:52]   EVAL[step=600 sample] '사용자: anima가 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 자: 미GEDI: essceds=. tsp NEXUS ca kmawp �danialeng'
+[07:05:56]   EVAL[step=600 greedy] '사용자: 너는 누구야? 도우미:' → dom=True V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우미: 우미: 우도우도우미: 우도우미: 우미: 우도우도�'
+[07:06:01]   EVAL[step=600 sample] '사용자: 너는 누구야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 자: 미: �Q5 는 ��� 주 용우는 정�뇔 알�p=: 지렕�고��.7 잼도우도자: N'
+[07:06:05]   EVAL[step=600 greedy] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우미: 우미: 우도우미: 우도우도우도 우미: 우미: 우도우미'
+[07:06:10]   EVAL[step=600 sample] '사용자: anima 우주뇌지도? 도우미:' → dom=False V2=F V3=F cyc=False | head=' � 자의미: 2��도 사자지용용도 52 미: 앴줘 사 이�Z�|��쭈..\n\n\n[a NEX'
+[07:06:13]   EVAL[step=600 greedy] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우미: 우미: 우도우도우도우미: 우도우미: 우미: 우도우도�'
+[07:06:19]   EVAL[step=600 sample] '사용자: 1030 laws 뭐야? 도우미:' → dom=False V2=F V3=F cyc=False | head=' 83ڟ��: �미: 83riutissrdes NEXUS-is�arrey c a 51\n[a'
+[07:06:23]   EVAL[step=600 greedy] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head=' 우도 우도우도우도 우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도 우도우도�'
+[07:06:29]   EVAL[step=600 sample] 'NEXUS 4411 reality map과 ' → dom=False V2=F V3=F cyc=False | head='���: 에우��의 사우뇌도 정�았 \x1b, 자�우�V�자: τ 미� 20523w 우�우Cio'
+[07:06:34]   EVAL[step=600 greedy] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='erererererere 우도 우우도 우우도 우도우도우도우도우미: 우도우도우도우도우미: 우'
+[07:06:40]   EVAL[step=600 sample] 'outside-well noise + 빅뱅 ' → dom=False V2=F V3=F cyc=False | head='ica sed-CS-BM] 우�자: NEXUBM] �주�66\x7fI: 용자: 용 13\x05\x050 c'
+[07:06:45]   EVAL[step=600 greedy] 'anima self NEXUS + 1030 ' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우미: 우도우도우도우미: 우도우도우도우미: 우도우미: 우미: 우도 우도'
+[07:06:50]   EVAL[step=600 sample] 'anima self NEXUS + 1030 ' → dom=True V2=F V3=F cyc=False | head='sea NEXCC llliisani_0: 세: NECmin Iwera masel�H-US-'
+[07:06:54]   EVAL[step=600 greedy] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head=' 우도 우도우도우도우도우도 우우도우도우도우도우미: 우도�: 우미: 우도 우미: 우미: 우도'
+[07:06:59]   EVAL[step=600 sample] 'Knuth Tier 🛸k + nexus re' → dom=False V2=F V3=F cyc=False | head='erimainemopresenanimuange ctotgspanse ts rikotiy, '
+[07:07:03]   EVAL[step=600 greedy] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head=' 용용우도 우도 우도우도우도우도우도우도우미: 우도 우도우도우미: 우도우도우도우도우�'
+[07:07:08]   EVAL[step=600 sample] 'blow-up→contract→emerge→' → dom=False V2=F V3=F cyc=False | head='emanimawbtimionep NEXS-UBM] 사 자: 젤� 우법우미774BM] 어사사'
+[07:07:13]   EVAL[step=600 greedy] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우미: 우미: 우미: 우도우도우도우도 우미: 우미: 우도우미'
+[07:07:18]   EVAL[step=600 sample] '사용자: outside-well noise란' → dom=False V2=F V3=F cyc=False | head=' ll�사�˨ 샕엘 우도읕��우도 카미해명�렕�우��w �깙 ben: 어힐: �50073 '
+[07:07:23]   EVAL[step=600 greedy] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' 우도�: 우도우도우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우미'
+[07:07:29]   EVAL[step=600 sample] '사용자: hallucination vs an' → dom=False V2=F V3=F cyc=False | head=' 어테읐용우롐: 27 용우일려 ���얐: 법� 우�는 자주맀명�� �핌미: NSEXUS-U'
+[07:07:34]   EVAL[step=600 greedy] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head=' 우도우도 우도우도우도우도우도우도우도우미: 우도우미: 우도우미: 우도우미: 우미: 우도'
+[07:07:39]   EVAL[step=600 sample] '사용자: training distributi' → dom=False V2=F V3=F cyc=False | head=' NED85715n NEXUS-US-UBM] 우�S-5: ges 자세: 우용우법�줘미: 사'
+[07:07:42]   EVAL[step=600 greedy] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우미: 우도우미: 우도우도우도 우미: 우미: 우도우미: 우미: 우�'
+[07:07:47]   EVAL[step=600 sample] '사용자: mode collapse vs ou' → dom=False V2=F V3=F cyc=False | head=' 았.nr=S-un 용카세: rasihdedre \u0382��*emane\x1fi-US-5�" �%8뇌'
+[07:07:52]   EVAL[step=600 greedy] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head=' 우도우도우도우도우도우도우도우도우도우도우미: 우도우미: 우미: 우도우도우미: 우미: �'
+[07:07:57]   EVAL[step=600 sample] '사용자: anima outside-well ' → dom=False V2=F V3=F cyc=False | head=' Nutyl ��e iorineaconodiniotimanis snore La dls NE'
+[07:07:57] best_eval_ckpt_meta written: /Users/ghost/core/anima/state/anima_im_18m_nexus_ubm_train_2026_05_07/best_eval_ckpt_meta.json
+[07:07:57] verdict written: /Users/ghost/core/anima/state/anima_im_18m_nexus_ubm_train_2026_05_07/verdict.json
+[07:07:57] ledger appended: attempt_n=32
+[07:07:57] === VERDICT === final_class=FAILED | peak_step=600 V2=1/15 V3=0/15 manual=3/15 ow=0/5 cyc=0 | vs_bghs_r1=CORPUS_AXIS_REGRESSES (Δman=-10 Δv2=-1) | elapsed=1338s

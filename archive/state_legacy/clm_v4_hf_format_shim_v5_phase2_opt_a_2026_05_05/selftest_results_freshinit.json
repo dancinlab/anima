@@ -1,0 +1,106 @@
+{
+  "schema": "shim_v5_phase2_selftest_v1",
+  "ts_utc_start": "2026-05-05T07:48:25Z",
+  "shim_v4_path": "/home/aiden/anima_clm_v4_shim.py",
+  "shim_v5_path": "/home/aiden/anima_clm_v4_shim_v5.py",
+  "best_pt_path": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "load_best_pt": false,
+  "device": "cpu",
+  "platform": "linux",
+  "python_version": "3.12.3",
+  "torch_version": "2.11.0+cu128",
+  "f_shim_v5_2": {
+    "statement": "shim v5 with consciousness_states=None produces logits within max_abs_diff <= 1e-5 vs shim v4 reference (cross-attn bypass invariant)",
+    "threshold": 1e-05,
+    "n_prompts": 5,
+    "all_finite": true,
+    "per_prompt_max_abs": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_prompt_mean_abs": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_abs_diff": 0.0,
+    "mean_abs_diff": 0.0,
+    "argmax_agreement_per_prompt": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "argmax_agreement_min": 1.0,
+    "verdict": "PASS"
+  },
+  "f_shim_v5_3": {
+    "statement": "shim v5 with canonical_zero fixture is finite AND |lift_pp| (argmax disagreement proxy) < 5pp on calibration prompts",
+    "threshold_pp": 5.0,
+    "n_prompts": 5,
+    "all_finite": true,
+    "per_prompt_finite": [
+      true,
+      true,
+      true,
+      true,
+      true
+    ],
+    "per_prompt_logits_std_ratio_zero_vs_no": [
+      1.0,
+      1.0,
+      1.0,
+      1.0,
+      1.0
+    ],
+    "per_prompt_argmax_disagreement_rate": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_prompt_max_abs_lift": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_prompt_mean_abs_lift": [
+      0.0,
+      0.0,
+      0.0,
+      0.0,
+      0.0
+    ],
+    "max_disagreement_pp": 0.0,
+    "mean_disagreement_pp": 0.0,
+    "lift_pp_proxy_max": 0.0,
+    "verdict": "PASS"
+  },
+  "wall_time_sec": 7.92,
+  "errors": [],
+  "shim_v5_version_attr": "v5",
+  "shim_v5_o_proj_std_constant": 0.1,
+  "gate_strength_v4": 0.001,
+  "gate_strength_v5": 0.001,
+  "best_pt_loaded_v4": false,
+  "best_pt_loaded_v5": false,
+  "v5_o_proj_std_min": 0.09990764409303665,
+  "v5_o_proj_std_max": 0.1001899242401123,
+  "v5_o_proj_std_mean": 0.10001064091920853,
+  "v4_o_proj_std_min": 0.01997450739145279,
+  "v4_o_proj_std_max": 0.02002181112766266,
+  "v4_o_proj_std_mean": 0.01999479392543435,
+  "n_cross_attn_modules_v5": 16,
+  "n_cross_attn_modules_v4": 16,
+  "combined_phase2_verdict": "PASS",
+  "ts_utc_end": "2026-05-05T07:48:32Z"
+}

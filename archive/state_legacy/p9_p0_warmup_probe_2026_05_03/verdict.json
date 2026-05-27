@@ -1,0 +1,37 @@
+{
+  "schema": "anima/p9_p0_warmup_probe/verdict/1",
+  "verdict": "PHI_DRIFT_HIGH_VAR",
+  "phi_summary": {
+    "mean": 40.3341,
+    "variance": 11.9669,
+    "min": 35.3353,
+    "max": 48.4731,
+    "n": 10
+  },
+  "steps_completed": 1000,
+  "aborted": false,
+  "train_elapsed_sec": 1.49,
+  "config": {
+    "n_steps": 1000,
+    "batch": 4,
+    "grad_acc": 8,
+    "lr": 0.0001,
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "delta_early": 0.5,
+    "phi_threshold": 5.0,
+    "phi_every": 100,
+    "f_every": 250,
+    "phi_baseline_g3": 41.86,
+    "alpha": 2.0,
+    "beta": 0.3,
+    "gamma": 0.3
+  },
+  "env": {
+    "has_peft": false,
+    "torch": "2.10.0",
+    "cuda_available": false
+  },
+  "ts_utc": "2026-05-02T16:28:40Z",
+  "phase1_entry_ready": false
+}

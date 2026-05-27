@@ -1,0 +1,704 @@
+// anima-eeg/protocols/drowsy_microsleep_detect.hexa
+//
+// @resolver-bypass(reason="darwin-native: --analyze and --realtime delegate band-power computation to anima-eeg/analyze.hexa Welch PSD on .venv-eeg numpy/scipy host stack; selftest uses pure-hexa synthetic θ/α band-ratio simulation but unified bypass keeps route stable")
+//
+// Source: Hori T. et al. (1994) "Topographical EEG changes and the hypnagogic experience"
+//         Loomis A. (1937) "Cerebral states during sleep"
+//         Kaida K. et al. (2006) Karolinska sleepiness scale θ/α correlates
+//
+// PURPOSE
+//   Drowsy / microsleep detection paradigm for daily-life EEG capture.
+//   Drowsy onset signature (Hori stage 1, Loomis A→B transition):
+//     • θ band 4-8 Hz power increase
+//     • α band 8-13 Hz occipital power: rises briefly (eyes-closed), then
+//       attenuates as drowsy deepens
+//     • θ/α ratio shifts from ~0.5 (alert) toward ≥1.0 (drowsy)
+//   Microsleep: 1-15 s θ burst (≥2× baseline), Hori stage 1 hallmark.
+//   Posterior dominant rhythm (PDR) attenuation as alertness collapses.
+//
+//     F_DROWSY_01: synthetic θ-dominant signal → θ/α > 1.0 detected
+//     F_DROWSY_02: synthetic microsleep θ burst → detected duration ∈ [1, 15] s
+//     F_DROWSY_03: synthetic α-dominant (alert) → θ/α < 0.5
+//
+// LIVE BRAINFLOW INGEST: --analyze and --realtime delegate to a sibling
+//   analyze.hexa Welch PSD module for raw .npy / live ring-buffer band
+//   computation; this protocol owns the sliding-window state machine,
+//   drowsy/microsleep episode extraction, alertness scoring, falsifier
+//   evaluation, and (optional) audio cue when θ/α crosses threshold.
+//
+// USAGE
+//   hexa run anima-eeg/protocols/drowsy_microsleep_detect.hexa --selftest
+//   hexa run anima-eeg/protocols/drowsy_microsleep_detect.hexa --analyze \
+//       --input <session.npy>
+//   hexa run anima-eeg/protocols/drowsy_microsleep_detect.hexa --realtime \
+//       --port <serial> --board cyton_daisy --duration 600
+
+let SCHEMA = "anima-eeg/drowsy_microsleep_detect/1"
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+// Board / signal-chain frozen
+let SAMPLE_RATE_HZ           = 250          // Cyton+Daisy fixed
+let CHANNEL_COUNT            = 16           // Cyton+Daisy 16ch
+let BANDPASS_LO_HZ           = 1.0
+let BANDPASS_HI_HZ           = 30.0
+let BANDPASS_ORDER           = 4            // Butterworth order-4
+
+// Band-power frequency edges (Hori 1994 / Loomis 1937 conventions)
+let THETA_LO_HZ              = 4.0
+let THETA_HI_HZ              = 8.0
+let ALPHA_LO_HZ              = 8.0
+let ALPHA_HI_HZ              = 13.0
+
+// Welch sliding-window (per-window ratio + episode state)
+let WIN_DURATION_S           = 10           // each window
+let WIN_OVERLAP_S            = 5            // 5 s overlap → 5 s hop
+let WIN_HOP_S                = 5
+let WELCH_NPERSEG_S          = 2            // 2 s segments inside Welch
+
+// Drowsy / microsleep frozen thresholds
+let RATIO_DROWSY_THRESH      = 1.0          // F_DROWSY_01 threshold (θ/α)
+let RATIO_ALERT_MAX          = 0.5          // F_DROWSY_03 alert ceiling
+let DROWSY_MIN_DURATION_S    = 30           // sustained ≥30 s → drowsy onset
+let MICROSLEEP_MIN_S         = 1
+let MICROSLEEP_MAX_S         = 15
+let MICROSLEEP_BURST_MULT    = 2.0          // θ ≥ 2× baseline → burst
+
+// Realtime audio cue
+let AUDIO_CUE_TEXT           = "졸음 감지 (drowsy detected)"
+let AUDIO_CUE_COOLDOWN_S     = 60
+
+// Channel mapping (10-20 system; user must verify physical placement)
+let CHAN_O1                  = "O1"         // left occipital
+let CHAN_O2                  = "O2"         // right occipital
+let CHAN_FP2                 = "Fp2"        // frontal control
+
+let AUDIT_DIR  = "state/drowsy_microsleep_audit"
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+// Per-run sliding-window stream
+let g_window_count           = 0
+let g_total_duration_s       = 0.0
+
+// Aggregate ratio & power statistics
+let g_theta_baseline_uv2     = 0.0          // first-30s θ baseline
+let g_alpha_baseline_uv2     = 0.0
+let g_ratio_max              = 0.0
+let g_ratio_mean             = 0.0
+let g_ratio_alert_pct        = 0.0          // % windows with θ/α < 0.5
+
+// Episode counters
+let g_drowsy_episode_count       = 0
+let g_microsleep_episode_count   = 0
+let g_drowsy_first_onset_s       = -1.0     // -1 = none
+let g_drowsy_total_dur_s         = 0.0
+let g_microsleep_total_dur_s     = 0.0
+let g_drowsy_peak_ratio          = 0.0
+let g_microsleep_peak_uv         = 0.0
+
+// Alertness score (0=asleep, 1=alert)
+let g_alertness_score        = 1.0
+
+// Audio cue state (realtime)
+let g_audio_cue_count        = 0
+let g_last_cue_ts_s          = -999.0
+
+let g_f_drowsy_01_pass       = false
+let g_f_drowsy_02_pass       = false
+let g_f_drowsy_03_pass       = false
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn abs_f(x: float) -> float {
+    if x < 0.0 { return 0.0 - x }
+    return x
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn safe_div(a: float, b: float) -> float {
+    let mut bb = b
+    if abs_f(bb) < 0.000001 {
+        if bb < 0.0 { bb = 0.0 - 0.000001 } else { bb = 0.000001 }
+    }
+    return a / bb
+}
+
+fn max_f(a: float, b: float) -> float {
+    if a > b { return a }
+    return b
+}
+
+fn min_f(a: float, b: float) -> float {
+    if a < b { return a }
+    return b
+}
+
+fn clamp01(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+// ════════════════════════════════════════════════════════════════════
+//   Idempotent reset of all run-level state. Calling twice is identical
+//   to calling once. Synthetic harness depends on this.
+// ════════════════════════════════════════════════════════════════════
+
+fn reset_run_state() {
+    g_window_count             = 0
+    g_total_duration_s         = 0.0
+    g_theta_baseline_uv2       = 0.0
+    g_alpha_baseline_uv2       = 0.0
+    g_ratio_max                = 0.0
+    g_ratio_mean               = 0.0
+    g_ratio_alert_pct          = 0.0
+    g_drowsy_episode_count     = 0
+    g_microsleep_episode_count = 0
+    g_drowsy_first_onset_s     = 0.0 - 1.0
+    g_drowsy_total_dur_s       = 0.0
+    g_microsleep_total_dur_s   = 0.0
+    g_drowsy_peak_ratio        = 0.0
+    g_microsleep_peak_uv       = 0.0
+    g_alertness_score          = 1.0
+    g_audio_cue_count          = 0
+    g_last_cue_ts_s            = 0.0 - 999.0
+    // NOTE: falsifier flags are sticky across run_scenario calls — they
+    // are reset only in selftest entry, not on each scenario reset, so
+    // emit_sentinel reflects all 3 evaluate_falsifier_* calls in order.
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Scenario synthesis (no RNG; deterministic per-window θ/α stream)
+//   pure-math per-window emitter with frozen profiles. Live mode must
+//   delegate to analyze.hexa for actual Welch on the .venv-eeg stack.
+//
+//   profile = "alert"      : θ low, α high  → ratio ~0.3
+//   profile = "drowsy"     : θ rises, α dips → ratio ~1.4 sustained
+//   profile = "microsleep" : alert baseline + 1× 8s θ burst (3× baseline)
+//   profile = "mixed"      : 60s alert → 60s drowsy onset
+// ════════════════════════════════════════════════════════════════════
+
+let SYNTH_BASELINE_THETA_UV2  = 5.0
+let SYNTH_BASELINE_ALPHA_UV2  = 15.0
+let SYNTH_DROWSY_THETA_UV2    = 14.0
+let SYNTH_DROWSY_ALPHA_UV2    = 10.0
+let SYNTH_BURST_THETA_UV2     = 15.0    // 3× baseline
+let SYNTH_BURST_DUR_S         = 8.0     // 8 s burst → in [1,15] band
+let SYNTH_BURST_START_S       = 40.0    // burst starts at t=40s
+let SYNTH_TOTAL_S             = 120.0   // 120 s synthetic session
+
+// Returns θ_uv2 for a given window-start time (seconds) in scenario `profile`.
+fn synth_theta_at(profile: string, t0_s: float) -> float {
+    if profile == "alert" {
+        return SYNTH_BASELINE_THETA_UV2
+    }
+    if profile == "drowsy" {
+        return SYNTH_DROWSY_THETA_UV2
+    }
+    if profile == "microsleep" {
+        let burst_end = SYNTH_BURST_START_S + SYNTH_BURST_DUR_S
+        if t0_s >= SYNTH_BURST_START_S && t0_s < burst_end {
+            return SYNTH_BURST_THETA_UV2
+        }
+        return SYNTH_BASELINE_THETA_UV2
+    }
+    if profile == "mixed" {
+        if t0_s < 60.0 {
+            return SYNTH_BASELINE_THETA_UV2
+        }
+        return SYNTH_DROWSY_THETA_UV2
+    }
+    return SYNTH_BASELINE_THETA_UV2
+}
+
+fn synth_alpha_at(profile: string, t0_s: float) -> float {
+    if profile == "alert"      { return SYNTH_BASELINE_ALPHA_UV2 }
+    if profile == "drowsy"     { return SYNTH_DROWSY_ALPHA_UV2 }
+    if profile == "microsleep" { return SYNTH_BASELINE_ALPHA_UV2 }
+    if profile == "mixed" {
+        if t0_s < 60.0 { return SYNTH_BASELINE_ALPHA_UV2 }
+        return SYNTH_DROWSY_ALPHA_UV2
+    }
+    return SYNTH_BASELINE_ALPHA_UV2
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Sliding-window stream + episode state machine
+//   Streams 10 s windows at 5 s hop across `total_s` seconds. Per window
+//   we compute θ, α, ratio and feed an episode state machine:
+//     • drowsy onset: ratio ≥ 1.0 sustained ≥ DROWSY_MIN_DURATION_S
+//     • microsleep:   θ ≥ baseline × 2 AND duration ∈ [1, 15] s
+//   Episodes that end when conditions stop are committed to counters.
+// ════════════════════════════════════════════════════════════════════
+
+fn run_scenario(profile: string, total_s: float) {
+    reset_run_state()
+
+    let mut t0 = 0.0
+    let mut win_idx = 0
+    let mut sum_ratio = 0.0
+    let mut alert_wins = 0
+
+    // Episode trackers
+    let mut in_drowsy        = false
+    let mut drowsy_start_s   = 0.0
+    let mut drowsy_peak      = 0.0
+
+    let mut in_burst         = false
+    let mut burst_start_s    = 0.0
+    let mut burst_peak_uv    = 0.0
+
+    // Baseline = first window (alert reference)
+    let theta0 = synth_theta_at(profile, 0.0)
+    let alpha0 = synth_alpha_at(profile, 0.0)
+    g_theta_baseline_uv2 = theta0
+    g_alpha_baseline_uv2 = alpha0
+    let burst_thresh_uv2 = theta0 * MICROSLEEP_BURST_MULT
+
+    while t0 + WIN_DURATION_S <= total_s + 0.001 {
+        let theta = synth_theta_at(profile, t0)
+        let alpha = synth_alpha_at(profile, t0)
+        let ratio = safe_div(theta, alpha)
+
+        sum_ratio = sum_ratio + ratio
+        if ratio < RATIO_ALERT_MAX { alert_wins = alert_wins + 1 }
+        if ratio > g_ratio_max { g_ratio_max = ratio }
+
+        // Drowsy state machine (sustained ratio ≥ 1.0 ≥ 30 s)
+        if ratio >= RATIO_DROWSY_THRESH {
+            if !in_drowsy {
+                in_drowsy = true
+                drowsy_start_s = t0
+                drowsy_peak = ratio
+            } else {
+                if ratio > drowsy_peak { drowsy_peak = ratio }
+            }
+        } else {
+            if in_drowsy {
+                let dur = (t0 + WIN_HOP_S) - drowsy_start_s
+                if dur >= DROWSY_MIN_DURATION_S {
+                    g_drowsy_episode_count = g_drowsy_episode_count + 1
+                    g_drowsy_total_dur_s   = g_drowsy_total_dur_s + dur
+                    if drowsy_peak > g_drowsy_peak_ratio {
+                        g_drowsy_peak_ratio = drowsy_peak
+                    }
+                    if g_drowsy_first_onset_s < 0.0 {
+                        g_drowsy_first_onset_s = drowsy_start_s
+                    }
+                }
+                in_drowsy = false
+                drowsy_peak = 0.0
+            }
+        }
+
+        // Microsleep state machine (θ burst ≥ 2× baseline, dur ∈ [1,15])
+        if theta >= burst_thresh_uv2 {
+            if !in_burst {
+                in_burst = true
+                burst_start_s = t0
+                burst_peak_uv = theta
+            } else {
+                if theta > burst_peak_uv { burst_peak_uv = theta }
+            }
+        } else {
+            if in_burst {
+                let bdur = (t0 + WIN_HOP_S) - burst_start_s
+                if bdur >= MICROSLEEP_MIN_S && bdur <= MICROSLEEP_MAX_S {
+                    g_microsleep_episode_count = g_microsleep_episode_count + 1
+                    g_microsleep_total_dur_s   = g_microsleep_total_dur_s + bdur
+                    if burst_peak_uv > g_microsleep_peak_uv {
+                        g_microsleep_peak_uv = burst_peak_uv
+                    }
+                }
+                in_burst = false
+                burst_peak_uv = 0.0
+            }
+        }
+
+        win_idx = win_idx + 1
+        t0 = t0 + WIN_HOP_S
+    }
+
+    // Flush any open episodes at end-of-stream
+    if in_drowsy {
+        let dur = (t0 + WIN_HOP_S) - drowsy_start_s
+        if dur >= DROWSY_MIN_DURATION_S {
+            g_drowsy_episode_count = g_drowsy_episode_count + 1
+            g_drowsy_total_dur_s   = g_drowsy_total_dur_s + dur
+            if drowsy_peak > g_drowsy_peak_ratio {
+                g_drowsy_peak_ratio = drowsy_peak
+            }
+            if g_drowsy_first_onset_s < 0.0 {
+                g_drowsy_first_onset_s = drowsy_start_s
+            }
+        }
+    }
+    if in_burst {
+        let bdur = (t0 + WIN_HOP_S) - burst_start_s
+        if bdur >= MICROSLEEP_MIN_S && bdur <= MICROSLEEP_MAX_S {
+            g_microsleep_episode_count = g_microsleep_episode_count + 1
+            g_microsleep_total_dur_s   = g_microsleep_total_dur_s + bdur
+            if burst_peak_uv > g_microsleep_peak_uv {
+                g_microsleep_peak_uv = burst_peak_uv
+            }
+        }
+    }
+
+    g_window_count     = win_idx
+    g_total_duration_s = total_s
+    if win_idx > 0 {
+        g_ratio_mean      = sum_ratio / float(win_idx)
+        g_ratio_alert_pct = float(alert_wins) / float(win_idx)
+    }
+
+    // Alertness score:
+    //   1.0 - clamp(g_drowsy_total_dur_s / total_s, 0, 1)
+    //   penalised additionally by μsleep dur fraction.
+    let drowsy_frac = clamp01(safe_div(g_drowsy_total_dur_s, total_s))
+    let usleep_frac = clamp01(safe_div(g_microsleep_total_dur_s, total_s))
+    g_alertness_score = clamp01(1.0 - drowsy_frac - 0.5 * usleep_frac)
+}
+
+// ════════════════════════════════════════════════════════════════════
+//   F_DROWSY_01: θ-dominant scenario  → g_ratio_max > 1.0
+//   F_DROWSY_02: microsleep scenario → ≥1 episode w/ dur ∈ [1,15]
+//   F_DROWSY_03: alert scenario      → g_ratio_max < 0.5
+// ════════════════════════════════════════════════════════════════════
+
+fn evaluate_falsifier_01_drowsy() {
+    run_scenario("drowsy", SYNTH_TOTAL_S)
+    g_f_drowsy_01_pass = g_ratio_max > RATIO_DROWSY_THRESH
+}
+
+fn evaluate_falsifier_02_microsleep() {
+    run_scenario("microsleep", SYNTH_TOTAL_S)
+    let in_band = g_microsleep_episode_count >= 1
+    g_f_drowsy_02_pass = in_band
+}
+
+fn evaluate_falsifier_03_alert() {
+    run_scenario("alert", SYNTH_TOTAL_S)
+    g_f_drowsy_03_pass = g_ratio_max < RATIO_ALERT_MAX
+}
+
+// ════════════════════════════════════════════════════════════════════
+//   __EEG_DROWSY_DETECT__ <PASS|FAIL> <ratio_max> <drowsy_eps> <usleep_eps>
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_sentinel() {
+    let mut verdict = "PASS"
+    if !(g_f_drowsy_01_pass && g_f_drowsy_02_pass && g_f_drowsy_03_pass) {
+        verdict = "FAIL"
+    }
+    println("__EEG_DROWSY_DETECT__ " + verdict
+        + " " + to_string(g_ratio_max)
+        + " " + to_string(g_drowsy_episode_count)
+        + " " + to_string(g_microsleep_episode_count))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// ════════════════════════════════════════════════════════════════════
+
+fn emit_audit(ts: string) {
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    let mut row = "{"
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"ts\":\"" + ts + "\","
+    row = row + "\"window_count\":" + to_string(g_window_count) + ","
+    row = row + "\"total_duration_s\":" + to_string(g_total_duration_s) + ","
+    row = row + "\"theta_baseline_uv2\":" + to_string(g_theta_baseline_uv2) + ","
+    row = row + "\"alpha_baseline_uv2\":" + to_string(g_alpha_baseline_uv2) + ","
+    row = row + "\"ratio_max\":" + to_string(g_ratio_max) + ","
+    row = row + "\"ratio_mean\":" + to_string(g_ratio_mean) + ","
+    row = row + "\"ratio_alert_pct\":" + to_string(g_ratio_alert_pct) + ","
+    row = row + "\"drowsy_episode_count\":" + to_string(g_drowsy_episode_count) + ","
+    row = row + "\"drowsy_total_dur_s\":" + to_string(g_drowsy_total_dur_s) + ","
+    row = row + "\"drowsy_peak_ratio\":" + to_string(g_drowsy_peak_ratio) + ","
+    row = row + "\"drowsy_first_onset_s\":" + to_string(g_drowsy_first_onset_s) + ","
+    row = row + "\"microsleep_episode_count\":" + to_string(g_microsleep_episode_count) + ","
+    row = row + "\"microsleep_total_dur_s\":" + to_string(g_microsleep_total_dur_s) + ","
+    row = row + "\"microsleep_peak_uv\":" + to_string(g_microsleep_peak_uv) + ","
+    row = row + "\"alertness_score\":" + to_string(g_alertness_score) + ","
+    row = row + "\"f_drowsy_01\":" + _bool_str(g_f_drowsy_01_pass) + ","
+    row = row + "\"f_drowsy_02\":" + _bool_str(g_f_drowsy_02_pass) + ","
+    row = row + "\"f_drowsy_03\":" + _bool_str(g_f_drowsy_03_pass)
+    row = row + "}"
+    let nl = chr(10)
+    write_file(path, row + nl)
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Live runners — analyze.hexa subprocess delegation
+//   --analyze prints the Welch PSD plan + delegate command for offline
+//   .npy. --realtime prints the live ring-buffer plan. The actual numpy/
+//   scipy Welch PSD pass runs in the .venv-eeg subprocess on darwin.
+// ════════════════════════════════════════════════════════════════════
+
+fn print_analyze_plan(input: string) {
+    println("── drowsy_microsleep_detect analyze plan ──")
+    println("schema=" + SCHEMA)
+    println("input=" + input)
+    println("sample_rate_hz=" + to_string(SAMPLE_RATE_HZ))
+    println("bandpass=" + to_string(BANDPASS_LO_HZ) + "-" + to_string(BANDPASS_HI_HZ) + " Hz, order=" + to_string(BANDPASS_ORDER))
+    println("notch_hz=" + to_string(NOTCH_HZ))
+    println("theta_band_hz=" + to_string(THETA_LO_HZ) + "-" + to_string(THETA_HI_HZ))
+    println("alpha_band_hz=" + to_string(ALPHA_LO_HZ) + "-" + to_string(ALPHA_HI_HZ))
+    println("welch_window_s=" + to_string(WIN_DURATION_S) + " (overlap=" + to_string(WIN_OVERLAP_S) + " s, hop=" + to_string(WIN_HOP_S) + " s)")
+    println("welch_nperseg_s=" + to_string(WELCH_NPERSEG_S))
+    println("drowsy_threshold=ratio_>=_" + to_string(RATIO_DROWSY_THRESH) + "_sustained_>=_" + to_string(DROWSY_MIN_DURATION_S) + "s")
+    println("microsleep_threshold=theta_>=_" + to_string(MICROSLEEP_BURST_MULT) + "x_baseline_dur_in_[" + to_string(MICROSLEEP_MIN_S) + "," + to_string(MICROSLEEP_MAX_S) + "]_s")
+    println("")
+    println("[delegate command — run in separate terminal]")
+    println("  hexa run anima-eeg/analyze.hexa --input " + input + " \\")
+    println("      --welch --window " + to_string(WIN_DURATION_S) + " --overlap " + to_string(WIN_OVERLAP_S) + " \\")
+    println("      --bands theta:" + to_string(THETA_LO_HZ) + "-" + to_string(THETA_HI_HZ) + ",alpha:" + to_string(ALPHA_LO_HZ) + "-" + to_string(ALPHA_HI_HZ) + " \\")
+    println("      --channels " + CHAN_O1 + "," + CHAN_O2)
+}
+
+fn print_realtime_plan(port: string, board: string, duration_s: int) {
+    println("── drowsy_microsleep_detect realtime plan ──")
+    println("schema=" + SCHEMA)
+    println("port=" + port)
+    println("board=" + board)
+    println("duration_s=" + to_string(duration_s))
+    println("sample_rate_hz=" + to_string(SAMPLE_RATE_HZ))
+    println("ring_window_s=" + to_string(WIN_DURATION_S))
+    println("hop_s=" + to_string(WIN_HOP_S))
+    println("audio_cue_text=\"" + AUDIO_CUE_TEXT + "\"")
+    println("audio_cue_cooldown_s=" + to_string(AUDIO_CUE_COOLDOWN_S))
+    println("")
+    println("[user hand-step — montage assumption]")
+    println("  N7P (ch7)  -> O1  (1\" above inion, 1\" left)")
+    println("  N8P (ch8)  -> O2  (1\" above inion, 1\" right)")
+    println("  N2P (ch2)  -> Fp2 (forehead — control / blink-artifact channel)")
+    println("  SRB2       -> A1 earlobe (white wire)")
+    println("  BIAS       -> A2 earlobe (black wire)")
+    println("")
+    println("[delegate command — run in separate terminal]")
+    println("  hexa run anima-eeg/realtime.hexa --port " + port + " \\")
+    println("      --board " + board + " --duration " + to_string(duration_s) + " \\")
+    println("      --metric theta_alpha_ratio --window " + to_string(WIN_DURATION_S) + " --hop " + to_string(WIN_HOP_S))
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Tests (selftest)
+// ════════════════════════════════════════════════════════════════════
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn run_tests() -> int {
+    let mut pass = 0
+    let mut fail = 0
+
+    println("=== drowsy_microsleep_detect selftest ===")
+
+    // T1: alert scenario — F_DROWSY_03
+    println("[T1] alert scenario — ratio_max < 0.5")
+    evaluate_falsifier_03_alert()
+    let ok1a = assert_true(g_f_drowsy_03_pass, "F_DROWSY_03 alert ratio_max < 0.5")
+    let ok1b = assert_true(g_drowsy_episode_count == 0, "no drowsy episodes in alert")
+    let ok1c = assert_true(g_microsleep_episode_count == 0, "no microsleep in alert")
+    let ok1d = assert_true(g_alertness_score >= 0.99, "alertness ≈ 1.0 in alert (got " + to_string(g_alertness_score) + ")")
+    if ok1a && ok1b && ok1c && ok1d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T2: drowsy scenario — F_DROWSY_01
+    println("[T2] drowsy scenario — ratio_max > 1.0 sustained")
+    evaluate_falsifier_01_drowsy()
+    let ok2a = assert_true(g_f_drowsy_01_pass, "F_DROWSY_01 ratio_max > 1.0")
+    let ok2b = assert_true(g_drowsy_episode_count >= 1, "≥1 drowsy episode")
+    let ok2c = assert_true(g_drowsy_peak_ratio > 1.0, "peak ratio > 1.0")
+    let ok2d = assert_true(g_alertness_score < 0.5, "alertness < 0.5 in drowsy (got " + to_string(g_alertness_score) + ")")
+    if ok2a && ok2b && ok2c && ok2d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T3: microsleep scenario — F_DROWSY_02
+    println("[T3] microsleep scenario — burst dur in [1,15]s")
+    evaluate_falsifier_02_microsleep()
+    let ok3a = assert_true(g_f_drowsy_02_pass, "F_DROWSY_02 ≥1 microsleep episode")
+    let ok3b = assert_true(g_microsleep_episode_count >= 1, "microsleep count ≥ 1")
+    let ok3c = assert_true(g_microsleep_total_dur_s >= float(MICROSLEEP_MIN_S), "dur ≥ 1 s")
+    let ok3d = assert_true(g_microsleep_total_dur_s <= float(MICROSLEEP_MAX_S) * 5.0, "dur ≤ 15 s × N")
+    if ok3a && ok3b && ok3c && ok3d { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T4: mixed scenario (alert→drowsy onset @60s)
+    println("[T4] mixed scenario — drowsy onset detected after t≈60s")
+    run_scenario("mixed", SYNTH_TOTAL_S)
+    let ok4a = assert_true(g_drowsy_episode_count >= 1, "≥1 drowsy episode in mixed")
+    let ok4b = assert_true(g_drowsy_first_onset_s >= 55.0 && g_drowsy_first_onset_s <= 65.0, "onset near t=60s (got " + to_string(g_drowsy_first_onset_s) + ")")
+    let ok4c = assert_true(g_alertness_score > 0.0 && g_alertness_score < 1.0, "alertness in (0,1) for mixed")
+    if ok4a && ok4b && ok4c { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T5] idempotent reset")
+    run_scenario("drowsy", SYNTH_TOTAL_S)
+    let r1 = g_drowsy_episode_count
+    run_scenario("drowsy", SYNTH_TOTAL_S)
+    let r2 = g_drowsy_episode_count
+    let ok5 = assert_true(r1 == r2, "drowsy count idempotent (" + to_string(r1) + " == " + to_string(r2) + ")")
+    if ok5 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T6: window count sanity (10s window, 5s hop, 120s → 23 windows)
+    println("[T6] window count sanity")
+    run_scenario("alert", 120.0)
+    let ok6 = assert_true(g_window_count == 23, "window_count == 23 (got " + to_string(g_window_count) + ")")
+    if ok6 { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T7: alertness score bounds
+    println("[T7] alertness score bounded in [0,1]")
+    run_scenario("drowsy", SYNTH_TOTAL_S)
+    let ok7a = assert_true(g_alertness_score >= 0.0, "alertness ≥ 0 in drowsy")
+    let ok7b = assert_true(g_alertness_score <= 1.0, "alertness ≤ 1 in drowsy")
+    if ok7a && ok7b { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("[T8] audit JSONL byte-stable")
+    run_scenario("drowsy", SYNTH_TOTAL_S)
+    let ts = "selftest_drowsy"
+    let path = AUDIT_DIR + "/" + ts + "_session.jsonl"
+    write_file(path, "")
+    emit_audit(ts)
+    let body1 = read_file(path)
+    write_file(path, "")
+    emit_audit(ts)
+    let body2 = read_file(path)
+    let ok8a = assert_true(body1 == body2, "audit row byte-stable")
+    let ok8b = assert_true(len(body1) > 0, "audit row non-empty")
+    if ok8a && ok8b { pass = pass + 1 } else { fail = fail + 1 }
+
+    // T9: all three falsifiers PASS in order
+    println("[T9] all 3 falsifiers PASS in order")
+    evaluate_falsifier_01_drowsy()
+    let f1 = g_f_drowsy_01_pass
+    evaluate_falsifier_02_microsleep()
+    let f2 = g_f_drowsy_02_pass
+    evaluate_falsifier_03_alert()
+    let f3 = g_f_drowsy_03_pass
+    let ok9 = assert_true(f1 && f2 && f3, "F_DROWSY_01/02/03 all PASS")
+    if ok9 { pass = pass + 1 } else { fail = fail + 1 }
+
+    println("")
+    println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL out of " + to_string(pass + fail))
+    return fail
+}
+
+// ════════════════════════════════════════════════════════════════════
+// CLI entry
+// ════════════════════════════════════════════════════════════════════
+
+fn _print_usage() {
+    println("usage:")
+    println("  hexa run anima-eeg/protocols/drowsy_microsleep_detect.hexa --selftest")
+    println("  hexa run anima-eeg/protocols/drowsy_microsleep_detect.hexa --analyze --input <session.npy>")
+    println("  hexa run anima-eeg/protocols/drowsy_microsleep_detect.hexa --realtime \\")
+    println("      --port <serial> --board cyton_daisy --duration <secs>")
+}
+
+fn _arg_value(av: list, key: string, dflt: string) -> string {
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == key && i + 1 < len(av) {
+            return av[i + 1]
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_int(av: list, key: string, dflt: int) -> int {
+    let s = _arg_value(av, key, "")
+    if len(s) == 0 { return dflt }
+    return to_int(s)
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut analyze  = false
+    let mut realtime = false
+    let mut i = 1
+    while i < len(av) {
+        if av[i] == "--selftest" { selftest = true }
+        if av[i] == "--analyze"  { analyze  = true }
+        if av[i] == "--realtime" { realtime = true }
+        if av[i] == "--help"     { _print_usage(); exit(0) }
+        i = i + 1
+    }
+
+    if analyze {
+        let input = _arg_value(av, "--input", "")
+        if len(input) == 0 {
+            _print_usage()
+            exit(2)
+        }
+        print_analyze_plan(input)
+        exit(0)
+    }
+
+    if realtime {
+        let port     = _arg_value(av, "--port", "")
+        let board    = _arg_value(av, "--board", "cyton_daisy")
+        let duration = _arg_int(av, "--duration", 600)
+        if len(port) == 0 {
+            _print_usage()
+            exit(2)
+        }
+        print_realtime_plan(port, board, duration)
+        exit(0)
+    }
+
+    if !selftest {
+        _print_usage()
+        exit(2)
+    }
+
+    println("── drowsy_microsleep_detect selftest ──")
+    println("schema=" + SCHEMA)
+    println("raw10_honest=synthetic_theta_alpha_ratio_no_real_welch_terminal_only")
+    println("raw82_darwin=clock_gettime_monotonic_via_analyze_hexa")
+    println("source=Hori_1994_Loomis_1937_Kaida_2006")
+    println("")
+
+    // Demonstration (drowsy scenario)
+    run_scenario("drowsy", SYNTH_TOTAL_S)
+
+    println("[demo drowsy session]")
+    println("window_count="              + to_string(g_window_count))
+    println("total_duration_s="          + to_string(g_total_duration_s))
+    println("theta_baseline_uv2="        + to_string(g_theta_baseline_uv2))
+    println("alpha_baseline_uv2="        + to_string(g_alpha_baseline_uv2))
+    println("ratio_max="                 + to_string(g_ratio_max))
+    println("ratio_mean="                + to_string(g_ratio_mean))
+    println("drowsy_episode_count="      + to_string(g_drowsy_episode_count))
+    println("drowsy_first_onset_s="      + to_string(g_drowsy_first_onset_s))
+    println("drowsy_total_dur_s="        + to_string(g_drowsy_total_dur_s))
+    println("drowsy_peak_ratio="         + to_string(g_drowsy_peak_ratio))
+    println("microsleep_episode_count="  + to_string(g_microsleep_episode_count))
+    println("alertness_score="           + to_string(g_alertness_score))
+    println("")
+
+    // Run all 3 falsifier scenarios in order so sentinel reflects all 3
+    evaluate_falsifier_01_drowsy()
+    evaluate_falsifier_02_microsleep()
+    evaluate_falsifier_03_alert()
+
+    emit_sentinel()
+    emit_audit("selftest_synth")
+
+    let fails = run_tests()
+    if fails != 0 {
+        println("selftest=fail")
+        eprintln("selftest FAILED: " + to_string(fails) + " test(s) failed")
+        exit(1)
+    }
+    println("selftest=ok")
+    println("DONE")
+}

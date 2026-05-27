@@ -1,0 +1,92 @@
+[launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[launch] pip install bitsandbytes==0.43.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] bitsandbytes=0.43.1
+[launch] pip install transformers
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+[launch] transformers=4.44.0
+[launch] pip install peft
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] peft=0.12.0
+[launch] accelerate=1.13.0
+[launch] python3 -u /workspace/p21kr/train_p21k_korean.py --wiki-corpus /workspace/p21kr/ko_wiki_corpus.jsonl --anima-corpus /workspace/p21kr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl --mixed-corpus /workspace/p21kr/mixed_corpus_ko.jsonl --vp21-adapter-dir /workspace/p21kr/vp21_adapter --out-dir /workspace/p21kr/out_main --base-model Qwen/Qwen2.5-1.5B --steps 1000 --bsz 2 --block 512 --lr 5e-5 --warmup-steps 50 --seed 1337 --wiki-frac 0.3 --target-corpus-mb 35
+[P21K] device=cuda dtype=bfloat16
+[mix] ko-wiki=7,096,179 chars, anima=224,198,521 chars
+[mix] ko-wiki chunks=6,930, anima chunks=218,944
+[mix] kept ko-wiki=4,878 (10.5MB), anima=19,363 (24.5MB)
+[mix] wrote 24,241 records to /workspace/p21kr/mixed_corpus_ko.jsonl (35.0MB, wiki=4878, anima=19363)
+[mix] sha256=0b4608c4cd007fba76cdd4e751dbe0fc6dec082eb8c32c029176b79b2563ae54
+[P21K] loading base: Qwen/Qwen2.5-1.5B
+[P21K] loading vP21 LoRA adapter: /workspace/p21kr/vp21_adapter
+[P21K] LoRA trainable=36,929,536 (2.34% of 1,580,643,840)
+[P21K] BEFORE-train Korean OOD eval (greedy only, sanity)
+/usr/local/lib/python3.11/dist-packages/transformers/generation/configuration_utils.py:589: UserWarning: `do_sample` is set to `False`. However, `top_k` is set to `1` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_k`.
+  warnings.warn(
+The attention mask is not set and cannot be inferred from input because pad token is same as eos token. As a consequence, you may observe unexpected behavior. Please pass your input's `attention_mask` to obtain reliable results.
+[P21K] BEFORE Korean OOD verdict: {'GENERALIZE': 0, 'MEMORIZE': 10, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21K] optimizer=PagedAdamW8bit (bnb 0.43.1)
+Token indices sequence length is longer than the specified maximum sequence length for this model (12520629 > 131072). Running this sequence through the model will result in indexing errors
+[P21K] tokenized mixed corpus: 3,000,000 tokens (block=512)
+[P21K] steps=1000 bsz=2 block=512 peak_lr=5e-05 warmup=50
+[P21K] step=     1 lr=1.00e-06 CE=1.2542 t=0s
+[P21K] step=    25 lr=2.50e-05 CE=2.3141 t=3s
+[P21K] step=    50 lr=5.00e-05 CE=1.4392 t=6s
+[P21K] step=    75 lr=4.99e-05 CE=0.1651 t=10s
+[P21K] step=   100 lr=4.97e-05 CE=0.9256 t=13s
+[P21K] step=   125 lr=4.93e-05 CE=0.0991 t=16s
+[P21K] step=   150 lr=4.88e-05 CE=1.7174 t=19s
+[P21K] step=   175 lr=4.81e-05 CE=0.1096 t=22s
+[P21K] step=   200 lr=4.73e-05 CE=0.8959 t=25s
+[P21K] step=   225 lr=4.64e-05 CE=1.4460 t=28s
+[P21K] step=   250 lr=4.53e-05 CE=0.0930 t=31s
+[P21K] step=   275 lr=4.41e-05 CE=0.1063 t=35s
+[P21K] step=   300 lr=4.28e-05 CE=0.0922 t=38s
+[P21K] step=   325 lr=4.14e-05 CE=1.3072 t=41s
+[P21K] step=   350 lr=3.99e-05 CE=0.0703 t=44s
+[P21K] step=   375 lr=3.83e-05 CE=0.6983 t=47s
+[P21K] step=   400 lr=3.66e-05 CE=0.8711 t=50s
+[P21K] step=   425 lr=3.49e-05 CE=0.0775 t=53s
+[P21K] step=   450 lr=3.31e-05 CE=0.4939 t=56s
+[P21K] step=   475 lr=3.13e-05 CE=0.4062 t=59s
+[P21K] step=   500 lr=2.94e-05 CE=0.3855 t=63s
+[P21K] step=   525 lr=2.76e-05 CE=0.5418 t=66s
+[P21K] step=   550 lr=2.57e-05 CE=0.1526 t=69s
+[P21K] step=   575 lr=2.39e-05 CE=0.1009 t=72s
+[P21K] step=   600 lr=2.20e-05 CE=0.0276 t=75s
+[P21K] step=   625 lr=2.03e-05 CE=0.1208 t=78s
+[P21K] step=   650 lr=1.85e-05 CE=0.0998 t=81s
+[P21K] step=   675 lr=1.69e-05 CE=0.9221 t=84s
+[P21K] step=   700 lr=1.53e-05 CE=0.7873 t=87s
+[P21K] step=   725 lr=1.37e-05 CE=0.1290 t=90s
+[P21K] step=   750 lr=1.23e-05 CE=0.0534 t=93s
+[P21K] step=   775 lr=1.10e-05 CE=0.8680 t=97s
+[P21K] step=   800 lr=9.79e-06 CE=2.4832 t=100s
+[P21K] step=   825 lr=8.70e-06 CE=0.0720 t=103s
+[P21K] step=   850 lr=7.75e-06 CE=0.2984 t=106s
+[P21K] step=   875 lr=6.93e-06 CE=0.0844 t=109s
+[P21K] step=   900 lr=6.24e-06 CE=0.7480 t=112s
+[P21K] step=   925 lr=5.71e-06 CE=0.0756 t=115s
+[P21K] step=   950 lr=5.32e-06 CE=0.6693 t=118s
+[P21K] step=   975 lr=5.08e-06 CE=0.0502 t=121s
+[P21K] step=  1000 lr=5.00e-06 CE=1.1241 t=125s
+[P21K] TRAIN DONE wall=124.5s final_CE=1.1241
+[P21K] adapter saved → /workspace/p21kr/out_main/lora_adapter
+[P21K] AFTER Korean OOD eval (greedy + sample)
+[P21K] AFTER anima Eval1 (greedy + sample)
+[P21K] AFTER Korean OOD greedy:  {'GENERALIZE': 9, 'MEMORIZE': 1, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21K] AFTER Korean OOD sample:  {'GENERALIZE': 7, 'MEMORIZE': 2, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0}
+[P21K] AFTER anima greedy:        {'GENERALIZE': 3, 'MEMORIZE': 7, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21K] AFTER anima sample:        {'GENERALIZE': 3, 'MEMORIZE': 7, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21K] VERDICT: STRONG_GENERALIZE (Korean OOD generalize 16/20, memorize 3/20, anima_register_hits 14/20)
+[P21K] DONE — result.json, heldout_vp21k.json, vp21k_eval1.json saved to /workspace/p21kr/out_main

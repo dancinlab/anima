@@ -1,0 +1,90 @@
+{
+  "as_of": "2026-05-06T15:53Z",
+  "target_signature_hint": {
+    "spec_field": "clm_v2 18M byte-level",
+    "vocab_size": 256,
+    "params_estimated": "~62.5M (28M+34.5M)",
+    "commit_hint": "bb99b6b6 2026-03-28"
+  },
+  "candidates": [
+    {
+      "key": "checkpoints/clm_v2/final.pt",
+      "size_bytes": 13457259,
+      "size_mb": 13.46,
+      "sha256": "2703e07b35e98fbe07ed033acad89ed3a531c9f78e94e0dd45a426c047a56e8a",
+      "step": 30,
+      "val_ce": 5.5032,
+      "config": {"dim": 128, "layers": 2, "heads": 2, "block_size": 128, "vocab_size": 256, "gate": 0.001, "ca_rules": 8},
+      "param_total": 1170832,
+      "param_total_M": 1.171,
+      "psi": {"psi_residual": 0.6590, "psi_entropy": 0.9875, "psi_direction": 0.6955, "psi_tension": 0.5016, "psi_gate": 0.000999, "H_p": 0.9258},
+      "verdict": "BYTE_LEVEL_MATCH_BUT_EARLY_STEP_AND_TINY_PARAMS",
+      "match_to_spec": "PARTIAL — vocab=256 byte-level confirmed; step=30 only (effectively untrained); 1.17M params << spec hint 62.5M"
+    },
+    {
+      "key": "checkpoints/clm_v2_tiny/final.pt",
+      "size_bytes": 3778219,
+      "size_mb": 3.60,
+      "sha256": "21666f3221c5535cfa47e33c7dc81ef59f27638091c6a9d6247671960cd4d722",
+      "step": 500,
+      "val_ce": 3.4965,
+      "config": {"dim": 64, "layers": 2, "heads": 2, "block_size": 128, "vocab_size": 256},
+      "param_total": 347856,
+      "param_total_M": 0.348,
+      "verdict": "BYTE_LEVEL_BUT_TOO_SMALL"
+    },
+    {
+      "key": "checkpoints/clm_v2_small/final.pt",
+      "size_bytes": 19688791,
+      "size_mb": 18.78,
+      "sha256": "d51bf72e2e578df4edb3cd8a23d317d003209995d1cb1c7c6f70c9c67db1be70",
+      "step": 500,
+      "val_ce": 2.7011,
+      "config": {"dim": 128, "layers": 3, "heads": 4, "block_size": 128, "vocab_size": 256},
+      "param_total": 1698712,
+      "param_total_M": 1.699,
+      "verdict": "STRONG_FILE_SIZE_MATCH_TO_18M_HINT — but params 1.7M not 62.5M",
+      "match_to_spec": "STRONG on-disk-size match (~18M); STRUCTURAL mismatch on params (1.7M vs 62.5M)"
+    },
+    {
+      "key": "checkpoints/clm_v2_medium/final.pt",
+      "size_bytes": 100219075,
+      "size_mb": 95.58,
+      "sha256_pending": "computed_locally",
+      "step": 500,
+      "val_ce": 1.7860,
+      "config": {"dim": 256, "layers": 4, "heads": 4, "block_size": 128, "vocab_size": 256},
+      "param_total": 8450848,
+      "param_total_M": 8.451,
+      "verdict": "BYTE_LEVEL_INTERMEDIATE_VARIANT"
+    },
+    {
+      "key": "checkpoints/clm_v2_base/final.pt",
+      "size_bytes": 333428571,
+      "size_mb": 318.0,
+      "sha256": "b56b560ee9bfd91d92837a7fbd6c00be36bb52357c6d70397b6792185e8037c2",
+      "step": 500,
+      "val_ce": 1.2712,
+      "config": {"dim": 384, "layers": 6, "heads": 4, "block_size": 128, "vocab_size": 256},
+      "param_total": 27934896,
+      "param_total_M": 27.935,
+      "verdict": "STRONG_PARAM_MATCH_TO_28M_COMPONENT — best chat-cap candidate",
+      "match_to_spec": "STRONG params match to one component of '28M+34.5M=62.5M' hint; BYTE_LEVEL vocab=256 confirmed; lowest val_ce (1.27)"
+    }
+  ],
+  "summary": {
+    "all_byte_level_vocab_256_confirmed": true,
+    "all_have_psi_state_consciousness_lm_signature": true,
+    "best_chat_cap_candidate": "checkpoints/clm_v2_base/final.pt (27.9M params, val_ce 1.27)",
+    "best_size_match_to_spec_18M": "checkpoints/clm_v2_small/final.pt (19.7MB)",
+    "spec_62_5M_param_target": "NOT_FOUND_AS_SINGLE_FILE — largest variant is clm_v2_base 27.9M; possible spec hint refers to v2_base + v2_medium aggregate (27.9M + 8.5M = 36.4M; still short)",
+    "psi_field_present_in_all": true
+  },
+  "local_download_paths": {
+    "clm_v2": "/tmp/anima_v2_check/clm_v2/final.pt",
+    "clm_v2_tiny": "/tmp/anima_v2_check/clm_v2_tiny/final.pt",
+    "clm_v2_small": "/tmp/anima_v2_check/clm_v2_small/final.pt",
+    "clm_v2_medium": "/tmp/anima_v2_check/clm_v2_medium/final.pt",
+    "clm_v2_base": "/tmp/anima_v2_check/clm_v2_base/final.pt"
+  }
+}

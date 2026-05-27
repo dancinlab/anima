@@ -1,0 +1,30 @@
+{
+  "falsifier_id": "F-M3b",
+  "measured_ts": "2026-05-09T05:53:59Z",
+  "verdict": "PROXY-FAIL-AKIDA-SELF-INVARIANCE",
+  "measured_value": {
+    "outputs_summary_a": {
+      "min": -16.5,
+      "max": 0.5,
+      "mean": -7.307080268859863,
+      "std": 2.4718360900878906
+    },
+    "outputs_summary_b": {
+      "min": -18.5,
+      "max": 0.5,
+      "mean": -7.175256252288818,
+      "std": 2.3395462036132812
+    },
+    "rel_errs_per_field": {
+      "min": 0.10810810810810811,
+      "max": 0.0,
+      "mean": 0.018040586899370912,
+      "std": 0.05351887489833744
+    },
+    "max_rel_err": 0.10810810810810811,
+    "threshold": 0.05
+  },
+  "hardware_present": true,
+  "command": "xeno cycle measure \u00d7 2 (different n_events; akida self-invariance proxy)",
+  "note": "PROXY only \u2014 true F-M3b requires CPU phi calc + Akida phi calc + 5% rel-err. \uc5ec\uae30\uc120 \ub450 Akida self-run \uc758 outputs distribution stationarity \ub97c substrate stability proxy \ub85c \uc0ac\uc6a9 (raw#15 honest)."
+}

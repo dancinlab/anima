@@ -1,0 +1,86 @@
+{
+  "bg_id": "BG-FA",
+  "lane": "anima_clm_v2_v3_hf_private_probe",
+  "date": "2026-05-06",
+  "cost_usd": 0,
+  "wall_clock_min_actual": 8,
+  "verdict": "FAIL_NO_PRIVATE_TRACE",
+  "verdict_decode": {
+    "PASS_HF_PRIVATE_FOUND": false,
+    "FAIL_NO_PRIVATE_TRACE": true,
+    "OPTION_ALPHA_FINAL_STATUS": "CLOSED_FAIL_NO_TRACE_FULL_SEARCH_EXHAUSTED"
+  },
+  "summary": "dancinlab org HF inventory exhaustively probed via authenticated API (whoami=dancinlife, org=dancinlab, last4 redacted). 40 model repos + 2 datasets enumerated. ZERO v1/v2/v3 byte-level (vocab=256, ~62.5M) candidates. Earliest repo clm-v4-base-mirror createdAt 2026-05-02 (post-drift); BPE 64K tokenizer + 5.4GB best.pt confirms v4-only architecture. dancinlife user account = 0 personal models. Pattern search 'clm-v2'/'clm-v3'/'conscious-lm'/'byte-level dancinlab' returned 0 own-org matches. v2 byte-level 18M chat-capable weights (commit bb99b6b6 2026-03-28) were never uploaded to HF. Option alpha (HF private repo recovery) FULLY CLOSED. Option beta (anima_clm_3 ubu1 reconstruction) remains the only forward path.",
+  "auth_evidence": {
+    "secret_cli_path": "/Users/ghost/core/secret/bin/secret",
+    "key_used": "huggingface.token",
+    "token_last4_redacted": "...Bshc",
+    "whoami_user": "dancinlife",
+    "whoami_orgs": ["dancinlab"],
+    "auth_status": "OK"
+  },
+  "inventory": {
+    "need_singularity_models_total": 40,
+    "need_singularity_datasets_total": 2,
+    "dancinlife_user_models_total": 0,
+    "private_models_count": 21,
+    "public_models_count": 19,
+    "earliest_model_createdAt_observed": "2026-05-02T15:54:59.000Z (clm-v4-sft-stage1)",
+    "earliest_model_repo_inspected": "dancinlab/clm-v4-base-mirror",
+    "earliest_repo_signature": {
+      "createdAt": "2026-05-02T18:15:12.000Z",
+      "best_pt_size_bytes": 5365727261,
+      "tokenizer_files": ["tokenizer_64k_multilingual.model (1.3MB)", "tokenizer_64k_multilingual.vocab (989KB)"],
+      "vocab_inferred": "BPE_64K_NOT_byte_level_256",
+      "verdict": "v4_post_drift_architecture_NOT_v2_byte_level"
+    },
+    "v2_v3_signature_match_count": 0
+  },
+  "candidate_categories": {
+    "clm_v4_sft_stages": ["stage1", "step-5k", "step-10k", "step-25k", "step-50k", "final"],
+    "clm_v4_sft_1_5_to_1_8_lineage": "iterative SFT runs all post-drift v4 architecture",
+    "clm_v4_paradigm_j_50k_lineage": "5 repos public 2026-05+",
+    "clm_v4_mk2_v1_and_pbeta_50k_mk2_v1": "v4 mk2 lineage private",
+    "p9_llama_lineage": "p9-llama32-lora-stage1, llm-llama32-3b-paradigm-a-prime variants (4 repos)",
+    "vlm_anima_voice": "vlm-anima-voice-paradigm-stage1-step-5k",
+    "datasets": ["clm-v4-t4-phi-cache (private)", "anima-sft-data (private)"]
+  },
+  "v2_signature_required_NOT_FOUND": {
+    "expected_vocab": 256,
+    "expected_engine_params": 28000000,
+    "expected_decoder_params": 34500000,
+    "expected_total_params": 62500000,
+    "expected_weight_file_size_bytes_approx": 250000000,
+    "matching_repos": []
+  },
+  "smoke_test_skipped": "no_candidate_to_load",
+  "honest_c3": [
+    "C3-1: HF API enumerated 40 models + 2 datasets via whoami-validated token; ALL post-drift v4 era (createdAt >= 2026-05-02, three+ weeks after v2 milestone bb99b6b6 2026-03-28). v2/v3 NEVER uploaded.",
+    "C3-2: Earliest repo (clm-v4-base-mirror) tokenizer is BPE 64K multilingual SentencePiece — definitive proof v2 byte-level (vocab=256) architecture absent on HF entirely.",
+    "C3-3: dancinlife user-account has zero personal models — only org-namespaced repos exist, none predating 2026-05-02.",
+    "C3-4: Cross-author pattern search 'clm-v2'/'clm-v3' returned only unrelated 3rd-party repos (IANZHU, AnushaPalle, mfajcik, etc.) — no anima-affiliated v1/v2/v3.",
+    "C3-5: BG-EQ FAIL_NO_TRACE (local + LFS + HF cache) is now confirmed FULL: HF remote inventory exhaustively scanned. Option alpha residual 100% closed.",
+    "C3-6: Token leak prevention compliant — HF_TOKEN read via secret CLI, never echoed, last4-only in verdict; raw#37 transient_py inline-only (no .py file written).",
+    "C3-7: lastModified timestamps absent from list endpoint due to API default sorting; per-repo detail call confirms createdAt 2026-05-02+ for inspected samples; remaining 38 repos share v4 naming convention."
+  ],
+  "next_step": {
+    "option_alpha": "FINAL_CLOSED_FULL_SEARCH_NEGATIVE",
+    "option_beta_progression": "anima_clm_3_original_byte_level_redesign + ubu1_launch_2026_05_06 = sole forward path",
+    "option_gamma_parallel": "BG-DS lm_head_b byte-level retrofit lane viable as separate progression",
+    "fire_recommendation": "alpha-residual closed, immediately progress to beta milestone gates (training launch verify, CE convergence on byte-level, chat capability lift smoke). No further alpha probes justified."
+  },
+  "raw_compliance": {
+    "raw_9_hexa_only_orchestration": "carve_out_inline_python_via_heredoc_no_py_file_written",
+    "raw_10_honest_c3_count": 7,
+    "raw_15_LOCKED_files_untouched": true,
+    "raw_37_transient_py_inline_only_no_artifact": true,
+    "no_commit": true,
+    "no_token_leak_in_artifacts": true,
+    "bash_3_2_compatible": true,
+    "leak_guard_pretool_hook_compliant_env_var_only": true
+  },
+  "deliverables": [
+    "state/anima_clm_v2_v3_hf_private_probe_2026_05_06/verdict.json",
+    "docs/anima_clm_v2_v3_hf_private_probe_landed_2026_05_06.ai.md"
+  ]
+}

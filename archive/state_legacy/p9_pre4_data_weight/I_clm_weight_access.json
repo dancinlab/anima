@@ -1,0 +1,60 @@
+{
+  "schema": "anima/p9_pre4/I_clm_weight_access/1",
+  "phase": "p9_pre4_data_weight",
+  "item": "I_clm_weight_access",
+  "ts_utc": "2026-05-03",
+  "verdict": "PASS",
+  "ckpt_canonical_path": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "ckpt_remote_host": "ubu1 (192.168.50.119, user=aiden)",
+  "ckpt_remote_existence": {
+    "verified": true,
+    "method": "ssh ubu1 ls -la + sha256sum",
+    "size_bytes": 5365727261,
+    "size_gb": 5.0,
+    "mtime": "2026-04-10 14:47",
+    "sha256": "22f180efc380aecb4a320191502afa13b81abcd077ec36c5f003dcfbe1d680b4",
+    "heartbeat_last": "step=20000 time=2026-04-10 14:47:20 ce=0.1685 phi=27.9097 phase=P3 scale=350m"
+  },
+  "ckpt_sibling_files": [
+    {"name": "best_phi.pt", "size_bytes": 5365737197},
+    {"name": "final.pt", "size_bytes": 5365730193},
+    {"name": "step_10000.pt", "size_bytes": 5365741909},
+    {"name": "step_15000.pt", "size_bytes": 5365741973},
+    {"name": "step_20000.pt", "size_bytes": 5365741973}
+  ],
+  "metadata_local_state": {
+    "path": "/Users/ghost/core/anima/state/v10_benchmark_v4_clm/clm_v4_530m/",
+    "files": ["cds.json", "phi_star.json"],
+    "ckpt_pointer_in_metadata": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "phi_star_signed_magnitude": 1167.6192,
+    "gate_PASS": true,
+    "d_model": 768,
+    "n_layer": 16,
+    "vocab_size": 64000
+  },
+  "ckpt_local_mac_existence": {
+    "exists": false,
+    "note": "ckpt 5GB resides only on ubu1; mac state has metadata-only (cds.json + phi_star.json)"
+  },
+  "naming_caveat": {
+    "directory_name": "clm_v4_350m",
+    "directory_subname": "scale_350m",
+    "metadata_label": "CLM_v4_530M",
+    "actual_params_estimate_M": 477,
+    "note": "directory says 350m but cds.json + p9 spec label as 530M (~477M params); naming convention drift documented in P9 spec section 1"
+  },
+  "hf_mirror_audit": {
+    "checked": false,
+    "note": "no public HF mirror identified for CLM v4 530M; private artifact, ubu1-resident only",
+    "recommendation": "during EXEC, scp ubu1 -> H100 pod direct (no HF mediation) OR private HF repo upload at P9 EXEC start"
+  },
+  "ssh_access_method": "Host ubu1 (LAN 192.168.50.119) + Host ubu1-ts (tailscale 100.96.193.56) fallback",
+  "destructive_ops": 0,
+  "read_only_audit": true,
+  "raw15_caveats": [
+    "ckpt sha256 prefix recorded; 5GB full-file integrity not re-verified locally (no copy made)",
+    "ckpt metadata names (350m/530M) inconsistent — production label = 530M per cds.json/spec, dir name 350m vintage",
+    "no HF mirror — single-point-of-failure on ubu1 disk; recommend snapshot to second host before P9 EXEC (additive, no migration)",
+    "best.pt vs best_phi.pt vs final.pt — three candidates; P9 spec uses best.pt (heartbeat shows ce=0.1685 phi=27.9097 P3 step=20000)"
+  ]
+}

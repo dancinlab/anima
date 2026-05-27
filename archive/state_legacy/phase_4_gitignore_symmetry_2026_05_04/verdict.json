@@ -1,0 +1,43 @@
+{
+  "cycle": "phase_4_gitignore_symmetry_2026_05_04",
+  "ts_utc": "2026-05-04T01:54:01Z",
+  "host": "Mac",
+  "cwd": "/Users/ghost/core/anima",
+  "verdict": "PASS",
+  "ref_commit": "b4e1570c0",
+  "anchor_line": ".gitignore:194 state/p9_p0_*/",
+  "before_after_diff": "diff --git a/.gitignore b/.gitignore\nindex bed40fc6c..2ab6820b4 100644\n--- a/.gitignore\n+++ b/.gitignore\n@@ -194,6 +194,16 @@ state/.welch_to_bandpower_*\n state/p9_p0_*/\n state/qmirror_*/\n \n+# BG-φ Phase 4 symmetry fix (ref commit b4e1570c0): callers 3+4 .py.txt parking.\n+# Narrow to .py / .py.txt only (NOT bare dir) so verdict.json + trajectory.json\n+# + per_prompt JSON artifacts under p9_p1_*/ + p9_qmirror_*/ remain trackable.\n+# Pre-existing tracked .py.txt under p9_a_prime_*, p9_paradigm_d_*, p9_path_a_*\n+# are unaffected (gitignore does not retroactively untrack files).\n+state/p9_p1_*/**/*.py\n+state/p9_p1_*/**/*.py.txt\n+state/p9_qmirror_*/**/*.py\n+state/p9_qmirror_*/**/*.py.txt\n+\n # EEG session-specific snapshots (timestamped, ledger holds canonical SSOT)\n state/anima_eeg_impedance_*.json\n state/anima_eeg_session_log.jsonl",
+  "patterns_added": [
+    "state/p9_p1_*/**/*.py",
+    "state/p9_p1_*/**/*.py.txt",
+    "state/p9_qmirror_*/**/*.py",
+    "state/p9_qmirror_*/**/*.py.txt"
+  ],
+  "patterns_rejected_with_rationale": {
+    "state/p9_*/**/*.py.txt": "rejected — would over-broadly cover currently-tracked .py.txt files under state/p9_a_prime_*, state/p9_paradigm_d_*, state/p9_path_a_* (6 tracked files). While gitignore does not retroactively untrack, future re-additions or renames could be silently blocked, weakening reviewer signal.",
+    "state/p9_p1_*/ (bare dir)": "rejected — would ignore entire dir including verdict.json, trajectory.json, per_prompt JSON artifacts (29 currently-tracked files under p9_p1_5_ensemble_* + p9_p1_holdout500_reeval_*). Mismatched with caller-1+2 posture (where p9_p0_*/ artifacts are themselves regenerable JSONL)."
+  },
+  "f_gi_1_caller_3_now_ignored": "PASS",
+  "f_gi_1_evidence": ".gitignore:203:state/p9_p1_*/**/*.py.txt -> state/p9_p1_sentinel_2026_05_03/sentinel_train_50k.py.txt",
+  "f_gi_2_caller_4_now_ignored": "PASS",
+  "f_gi_2_evidence": ".gitignore:205:state/p9_qmirror_*/**/*.py.txt -> state/p9_qmirror_seeded_2026_05_03/p9_qmirror_seeded_ablation_A_2k.py.txt",
+  "f_gi_3_callers_1_2_still_ignored": "PASS",
+  "f_gi_3_evidence": ".gitignore:194:state/p9_p0_*/ -> state/p9_p0_measure_2026_05_03/probe_ubu1_clm_v4_tension.py.txt + measure_ubu1_clm_v4_full_50k.py.txt",
+  "f_gi_4_no_false_positive": "PASS",
+  "f_gi_4_evidence": "git ls-files 'state/p9_p1_*' 'state/p9_qmirror_*' | xargs git check-ignore -q -> 0 matches across 30 tracked files",
+  "tracked_files_falsely_matched": [],
+  "tracked_files_swept_count": 30,
+  "honest_c3": [
+    "Over-broad-pattern risk REJECTED in favor of narrow per-prefix patterns: a single state/p9_*/**/*.py.txt would cover 6 currently-tracked .py.txt files under p9_a_prime_main_eval_pipeline_*, p9_paradigm_d_25k_eval_pipeline_*, p9_path_a_llama_lora_* (eval_llama_lora_ckpt.py.txt, loader_smoketest.py.txt x2, eval_phi_distill_ckpt.py.txt, retemplate_to_llama.py.txt, train_llama_lora.py.txt) — gitignore would not retroactively untrack but could silently block future re-additions/renames, masking reviewer signal. Per-prefix patterns trade brevity for traceability.",
+    "Future caller dirs are NOT covered by current patterns. If Phase 5+ migrates a caller residing under e.g. state/p9_p2_*/ or state/p9_phase3_*/, this BG's edit will need extension. A more general state/p9_*/**/*.py.txt would future-proof at the cost of the over-broad risk above. Trade-off resolved in favor of explicitness — Phase 5+ will need its own ~4-LoC append.",
+    "gitignore line ordering matters when negation patterns (!...) are present. This edit places new patterns immediately after the existing P9 block (lines 195-204) with NO negations elsewhere in .gitignore (verified: grep -c '^!' .gitignore = 0 — no negations downstream). Therefore ordering is benign for this change. If a future negation pattern is added below line 204 to re-include something under state/p9_p1_*/ or state/p9_qmirror_*/, ordering review will be required.",
+    "Asymmetry remains within callers 3+4: caller 1+2 use bare-dir state/p9_p0_*/ (ignores everything regenerable) while callers 3+4 use narrow .py/.py.txt (preserves verdict/trajectory artifacts). This mirrors actual artifact retention policy — caller 1+2 emit heavy regenerable JSONL (sft_data_*.jsonl, manifest.jsonl), while caller 3+4 emit lighter verdict/trajectory JSON we want tracked. Symmetry is policy-symmetric (both block .py.txt parking), not pattern-symmetric (different breadth)."
+  ],
+  "git_operations_performed": "NONE — parent session serializes commits",
+  "files_modified": [".gitignore"],
+  "files_created": [
+    "state/phase_4_gitignore_symmetry_2026_05_04/verdict.json",
+    "state/phase_4_gitignore_symmetry_2026_05_04/check_ignore.log"
+  ],
+  "uchg_lock_check": "PASS — .gitignore unlocked (ls -lO showed no uchg flag)"
+}

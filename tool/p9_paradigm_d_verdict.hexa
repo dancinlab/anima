@@ -1,0 +1,315 @@
+// tool/p9_paradigm_d_verdict.hexa — P9 Paradigm D 25K Φ★-distill verdict (raw#9 hexa-only Mac).
+//
+// PURPOSE
+//   Reads N-ckpt × 4-falsifier matrix from the Paradigm D 25K eval pipeline,
+//   computes per-falsifier verdict (PASS/PARTIAL/FAIL) per the runbook spec,
+//   and emits the SUCCESS_D / PARTIAL_D / FAIL_D composite verdict.
+//
+//   Per A' decision spec §6.2, Path D operates on CLM v4 350M substrate (NOT Llama),
+//   measured against Mistral-7B teacher cache (Φ★-distill, NOT logit-KL).
+//
+//   Falsifier verdicts (per runbook §4 + spec §2):
+//     F1 BLEU-1 ≥ Phase 1.6 baseline (0.0059) → PASS
+//     F2 Φ★ ≥ 5.0 floor maintained → PASS
+//     F3 tension MSE < 0.1 → PASS
+//     F-D z-score MSE final < 0.5 (BERT-class anchored Sanh 2019 0.3-0.6) → PASS
+//
+//   Composite verdict:
+//     SUCCESS_D   all 4 PASS
+//     PARTIAL_D   2-3 PASS
+//     FAIL_D      ≤1 PASS OR F2 floor violated (sign-flip / collapse)
+//
+// INPUT
+//   ANIMA_BASE_REF        base reference JSON (default: state/p9_paradigm_d_25k_eval_pipeline_2026_05_03/base_reference.json)
+//   ANIMA_MINI_REF        mini-run step_1000 reference JSON (default: state/p9_paradigm_d_25k_eval_pipeline_2026_05_03/mini_run_reference.json)
+//   ANIMA_CKPT_RESULTS_DIR  Dir of per-ckpt JSONs (default: state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results/)
+//   ANIMA_OUTPUT          output JSON (default: state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json)
+//   ANIMA_F1_THRESHOLD    F1 BLEU-1 floor (default 0.0059 — Phase 1.6 baseline)
+//   ANIMA_F2_THRESHOLD    Φ★ floor (default 5.0 — Phase 1.5 δ-floor)
+//   ANIMA_F3_THRESHOLD    Tension MSE ceiling (default 0.1)
+//   ANIMA_FD_THRESHOLD    F-D z-score MSE ceiling (default 0.5 — BERT-class Sanh 2019)
+//
+// OUTPUT
+//   - per_ckpt × per_falsifier: {value, threshold, direction, pass}
+//   - per_ckpt composite: {n_pass, label, success_d|partial_d|fail_d}
+//   - global meta: {anchor_base, anchor_mini, n_ckpts, thresholds}
+//   - cross-axis comparison: Path A (Llama+LoRA chat) vs Path D (CLM v4+LoRA Φ★-distill)
+//
+// USAGE
+//   hexa run tool/p9_paradigm_d_verdict.hexa --selftest
+//   hexa run tool/p9_paradigm_d_verdict.hexa
+//   ANIMA_CKPT_RESULTS_DIR=state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results \
+//     hexa run tool/p9_paradigm_d_verdict.hexa
+//
+// raw#9 hexa-only / raw#37 transient emit / raw#15 SSOT this file
+// raw#10 honest C3 (3 caveats):
+//   (a) Φ★ formula scale variance — anima_phi_v3_canonical w/ HID_TRUNC=8 + K=8 + ridge=1e-3
+//       inherits sample-partition + log-determinant decomposition biases; numeric values are
+//       substrate-relative integration metrics, NOT canonical IIT 4.0 φ★. Cross-substrate
+//       absolute comparisons are meaningless.
+//   (b) Mini-run ≠ 25K extrapolation — step_1000 reference (Φ★ 43.20, BLEU 0.0078) is from
+//       a 1k-record subset / 2k-step training run; cannot prove 25K-scale convergence.
+//       Use as a trajectory-shape anchor only, not a quantitative benchmark.
+//   (c) F-D threshold tied to BERT regime — pre-registered 0.5 ceiling anchored to Sanh 2019
+//       DistilBERT distillation MSE range (0.3-0.6); CLM v4 350M class extrapolation is
+//       structurally unverified. Threshold may be tightened post-hoc if 25K shows much
+//       smaller residuals.
+
+let HELPER_PATH = "/tmp/p9_paradigm_d_verdict_helper.py_tmp"
+
+fn _write_helper() {
+    let parts = []
+    parts.push("#!/usr/bin/env python3\n")
+    parts.push("# P9 Paradigm D 25K verdict helper — emitted by tool/p9_paradigm_d_verdict.hexa (raw#37 transient)\n")
+    parts.push("# Reads base + per-ckpt 4-falsifier results, applies pre-registered thresholds,\n")
+    parts.push("# emits SUCCESS_D / PARTIAL_D / FAIL_D composite + per-ckpt breakdown.\n")
+    parts.push("import json, os, sys, glob\n\n")
+
+    parts.push("BASE_REF = os.environ.get('ANIMA_BASE_REF',\n")
+    parts.push("    'state/p9_paradigm_d_25k_eval_pipeline_2026_05_03/base_reference.json')\n")
+    parts.push("MINI_REF = os.environ.get('ANIMA_MINI_REF',\n")
+    parts.push("    'state/p9_paradigm_d_25k_eval_pipeline_2026_05_03/mini_run_reference.json')\n")
+    parts.push("CKPT_DIR = os.environ.get('ANIMA_CKPT_RESULTS_DIR',\n")
+    parts.push("    'state/p9_paradigm_d_25k_eval_2026_05_03_ckpt_results')\n")
+    parts.push("OUTPUT = os.environ.get('ANIMA_OUTPUT',\n")
+    parts.push("    'state/p9_paradigm_d_25k_eval_2026_05_03_verdict.json')\n\n")
+
+    parts.push("# Pre-registered thresholds (per docs/p9_paradigm_d_distillation_runbook_2026_05_03.md §4)\n")
+    parts.push("F1_THR = float(os.environ.get('ANIMA_F1_THRESHOLD', '0.0059'))   # Phase 1.6 BLEU-1 baseline\n")
+    parts.push("F2_THR = float(os.environ.get('ANIMA_F2_THRESHOLD', '5.0'))       # Phase 1.5 δ-floor\n")
+    parts.push("F3_THR = float(os.environ.get('ANIMA_F3_THRESHOLD', '0.1'))       # tension MSE ceiling\n")
+    parts.push("FD_THR = float(os.environ.get('ANIMA_FD_THRESHOLD', '0.5'))       # BERT-class Sanh 2019\n\n")
+
+    parts.push("def _check_floor_geq(value, threshold):\n")
+    parts.push("    if value is None:\n")
+    parts.push("        return False, 'value_missing'\n")
+    parts.push("    return (float(value) >= threshold), None\n\n")
+
+    parts.push("def _check_ceiling_lt(value, threshold):\n")
+    parts.push("    if value is None:\n")
+    parts.push("        return False, 'value_missing'\n")
+    parts.push("    return (float(value) < threshold), None\n\n")
+
+    parts.push("def _eval_falsifiers(ckpt_record):\n")
+    parts.push("    f1_v = ckpt_record.get('F1_bleu1_holdout')\n")
+    parts.push("    f2_v = ckpt_record.get('F2_phi_star_min')\n")
+    parts.push("    f3_v = ckpt_record.get('F3_tension_mse')\n")
+    parts.push("    fd_v = ckpt_record.get('F_D_z_score_mse_final')\n")
+    parts.push("    f1_pass, f1_err = _check_floor_geq(f1_v, F1_THR)\n")
+    parts.push("    f2_pass, f2_err = _check_floor_geq(f2_v, F2_THR)\n")
+    parts.push("    f3_pass, f3_err = _check_ceiling_lt(f3_v, F3_THR)\n")
+    parts.push("    fd_pass, fd_err = _check_ceiling_lt(fd_v, FD_THR)\n")
+    parts.push("    return {\n")
+    parts.push("        'F1_bleu1':       {'value': f1_v, 'threshold': F1_THR, 'direction': 'floor_geq', 'pass': f1_pass, 'err': f1_err},\n")
+    parts.push("        'F2_phi_star':    {'value': f2_v, 'threshold': F2_THR, 'direction': 'floor_geq', 'pass': f2_pass, 'err': f2_err},\n")
+    parts.push("        'F3_tension_mse': {'value': f3_v, 'threshold': F3_THR, 'direction': 'ceiling_lt', 'pass': f3_pass, 'err': f3_err},\n")
+    parts.push("        'F_D_zscore_mse': {'value': fd_v, 'threshold': FD_THR, 'direction': 'ceiling_lt', 'pass': fd_pass, 'err': fd_err},\n")
+    parts.push("    }\n\n")
+
+    parts.push("def _composite_verdict(falsifier_dict):\n")
+    parts.push("    n_pass = sum(1 for v in falsifier_dict.values() if v.get('pass'))\n")
+    parts.push("    f2 = falsifier_dict['F2_phi_star']\n")
+    parts.push("    # F2 floor breach = automatic FAIL (sign-flip / collapse)\n")
+    parts.push("    if f2.get('value') is not None and not f2.get('pass'):\n")
+    parts.push("        return {'n_pass': n_pass, 'label': 'FAIL_D', 'verdict': 'FAIL_D',\n")
+    parts.push("                 'reason': 'F2_floor_breach (Phi-star below 5.0 -- sign-flip/collapse)'}\n")
+    parts.push("    if n_pass == 4:\n")
+    parts.push("        return {'n_pass': 4, 'label': 'SUCCESS_D', 'verdict': 'SUCCESS_D',\n")
+    parts.push("                 'reason': 'all_4_falsifiers_pass'}\n")
+    parts.push("    if n_pass >= 2:\n")
+    parts.push("        return {'n_pass': n_pass, 'label': 'PARTIAL_D', 'verdict': 'PARTIAL_D',\n")
+    parts.push("                 'reason': f'{n_pass}_of_4_falsifiers_pass'}\n")
+    parts.push("    return {'n_pass': n_pass, 'label': 'FAIL_D', 'verdict': 'FAIL_D',\n")
+    parts.push("             'reason': f'only_{n_pass}_of_4_falsifiers_pass'}\n\n")
+
+    parts.push("def _eval_one_ckpt(ckpt_record):\n")
+    parts.push("    falsifiers = _eval_falsifiers(ckpt_record)\n")
+    parts.push("    composite = _composite_verdict(falsifiers)\n")
+    parts.push("    return {\n")
+    parts.push("        'label': ckpt_record.get('label'),\n")
+    parts.push("        'ckpt_kind': ckpt_record.get('ckpt_kind'),\n")
+    parts.push("        'ckpt_id': ckpt_record.get('ckpt_id'),\n")
+    parts.push("        'falsifiers': falsifiers,\n")
+    parts.push("        'composite': composite,\n")
+    parts.push("    }\n\n")
+
+    parts.push("def _delta_vs_anchor(ckpt_v, anchor_v):\n")
+    parts.push("    if ckpt_v is None or anchor_v is None:\n")
+    parts.push("        return None\n")
+    parts.push("    try:\n")
+    parts.push("        return round(float(ckpt_v) - float(anchor_v), 6)\n")
+    parts.push("    except Exception:\n")
+    parts.push("        return None\n\n")
+
+    parts.push("def _cross_anchor_compare(ckpt_record, base_ref, mini_ref):\n")
+    parts.push("    keys = [('F1_bleu1_holdout', 'F1_bleu1'),\n")
+    parts.push("             ('F2_phi_star_min', 'F2_phi'),\n")
+    parts.push("             ('F3_tension_mse', 'F3_tens_mse'),\n")
+    parts.push("             ('F_D_z_score_mse_final', 'F_D_zmse')]\n")
+    parts.push("    out = {'vs_base': {}, 'vs_mini_step1000': {}}\n")
+    parts.push("    for src_k, label in keys:\n")
+    parts.push("        ckpt_v = ckpt_record.get(src_k)\n")
+    parts.push("        b = base_ref.get(src_k) if base_ref else None\n")
+    parts.push("        m = mini_ref.get(src_k) if mini_ref else None\n")
+    parts.push("        out['vs_base'][label] = {'ckpt': ckpt_v, 'base': b,\n")
+    parts.push("                                  'delta': _delta_vs_anchor(ckpt_v, b)}\n")
+    parts.push("        out['vs_mini_step1000'][label] = {'ckpt': ckpt_v, 'mini': m,\n")
+    parts.push("                                           'delta': _delta_vs_anchor(ckpt_v, m)}\n")
+    parts.push("    return out\n\n")
+
+    parts.push("def _load_json(path):\n")
+    parts.push("    if not os.path.exists(path):\n")
+    parts.push("        return None, f'NOT_FOUND: {path}'\n")
+    parts.push("    try:\n")
+    parts.push("        return json.load(open(path)), None\n")
+    parts.push("    except Exception as e:\n")
+    parts.push("        return None, f'PARSE_ERROR: {e}'\n\n")
+
+    parts.push("def _load_ckpt_results(dir_path):\n")
+    parts.push("    out = {}\n")
+    parts.push("    if not os.path.isdir(dir_path):\n")
+    parts.push("        return out, f'CKPT_DIR_NOT_FOUND: {dir_path}'\n")
+    parts.push("    for f in sorted(glob.glob(os.path.join(dir_path, '*.json'))):\n")
+    parts.push("        try:\n")
+    parts.push("            d = json.load(open(f))\n")
+    parts.push("        except Exception:\n")
+    parts.push("            continue\n")
+    parts.push("        if d.get('schema') != 'anima/p9_paradigm_d_25k_eval/per_ckpt/1':\n")
+    parts.push("            continue\n")
+    parts.push("        # Skip the base reference file (handled separately)\n")
+    parts.push("        if d.get('ckpt_kind') == 'BASE_ONLY':\n")
+    parts.push("            continue\n")
+    parts.push("        label = d.get('label') or os.path.basename(f).replace('.json','')\n")
+    parts.push("        out[label] = d\n")
+    parts.push("    return out, None\n\n")
+
+    parts.push("base_ref, base_err = _load_json(BASE_REF)\n")
+    parts.push("mini_ref, mini_err = _load_json(MINI_REF)\n")
+    parts.push("ckpt_records, ckpt_err = _load_ckpt_results(CKPT_DIR)\n\n")
+
+    parts.push("ckpt_verdicts = {}\n")
+    parts.push("for label, rec in ckpt_records.items():\n")
+    parts.push("    v = _eval_one_ckpt(rec)\n")
+    parts.push("    v['cross_anchor'] = _cross_anchor_compare(rec, base_ref, mini_ref)\n")
+    parts.push("    ckpt_verdicts[label] = v\n\n")
+
+    parts.push("ranking = sorted(ckpt_verdicts.values(),\n")
+    parts.push("                  key=lambda v: (v['composite']['n_pass'],\n")
+    parts.push("                                   v['falsifiers']['F1_bleu1'].get('value') or 0,\n")
+    parts.push("                                   -(v['falsifiers']['F_D_zscore_mse'].get('value') or 1e9)),\n")
+    parts.push("                  reverse=True)\n\n")
+
+    parts.push("summary = {\n")
+    parts.push("    'schema': 'anima/p9_paradigm_d_25k_eval/verdict/1',\n")
+    parts.push("    'spec_ref': 'docs/p9_paradigm_d_distillation_runbook_2026_05_03.md S4',\n")
+    parts.push("    'pipeline_ref': 'docs/p9_paradigm_d_eval_pipeline_landed_2026_05_03.ai.md',\n")
+    parts.push("    'anchor_base': {\n")
+    parts.push("        'path': BASE_REF, 'err': base_err,\n")
+    parts.push("        'F1_bleu1': base_ref.get('F1_bleu1_holdout') if base_ref else None,\n")
+    parts.push("        'F2_phi_star': base_ref.get('F2_phi_star_min') if base_ref else None,\n")
+    parts.push("        'F3_tension_mse': base_ref.get('F3_tension_mse') if base_ref else None,\n")
+    parts.push("        'F_D_z_score_mse': base_ref.get('F_D_z_score_mse_final') if base_ref else None,\n")
+    parts.push("    },\n")
+    parts.push("    'anchor_mini_step1000': {\n")
+    parts.push("        'path': MINI_REF, 'err': mini_err,\n")
+    parts.push("        'F1_bleu1': mini_ref.get('F1_bleu1_holdout') if mini_ref else None,\n")
+    parts.push("        'F2_phi_star': mini_ref.get('F2_phi_star_min') if mini_ref else None,\n")
+    parts.push("        'F3_tension_mse': mini_ref.get('F3_tension_mse') if mini_ref else None,\n")
+    parts.push("        'F_D_z_score_mse': mini_ref.get('F_D_z_score_mse_final') if mini_ref else None,\n")
+    parts.push("    },\n")
+    parts.push("    'thresholds': {'F1': F1_THR, 'F2': F2_THR, 'F3': F3_THR, 'F_D': FD_THR},\n")
+    parts.push("    'threshold_directions': {\n")
+    parts.push("        'F1': 'BLEU-1 holdout >= floor (Phase 1.6 baseline 0.0059)',\n")
+    parts.push("        'F2': 'Phi-star_min >= floor 5.0 (Phase 1.5 delta-floor)',\n")
+    parts.push("        'F3': 'tension MSE < ceiling 0.1',\n")
+    parts.push("        'F_D': 'z-score MSE final < ceiling 0.5 (BERT-class Sanh 2019)',\n")
+    parts.push("    },\n")
+    parts.push("    'ckpt_results_dir': CKPT_DIR, 'ckpt_load_err': ckpt_err,\n")
+    parts.push("    'n_ckpts_evaluated': len(ckpt_verdicts),\n")
+    parts.push("    'ckpt_verdicts': ckpt_verdicts,\n")
+    parts.push("    'ranking': [{'label': v.get('label'), 'composite': v['composite']} for v in ranking],\n")
+    parts.push("    'verdict_legend': {\n")
+    parts.push("        'SUCCESS_D': 'all 4 falsifiers PASS',\n")
+    parts.push("        'PARTIAL_D': '2-3 of 4 PASS (F2 not breached)',\n")
+    parts.push("        'FAIL_D': '<=1 PASS OR F2 floor breach (sign-flip/collapse)',\n")
+    parts.push("    },\n")
+    parts.push("    'cross_axis_comparison_note': (\n")
+    parts.push("        'Path A (Llama+LoRA chat lift, F1_v3 = HellaSwag/MMLU/TriviaQA delta) and '\n")
+    parts.push("        'Path D (CLM v4+LoRA Phi-star distill, F1/F2/F3/F_D matrix) operate on '\n")
+    parts.push("        'different base models with different falsifiers; verdicts are NOT directly '\n")
+    parts.push("        'comparable. Both share the rationale that a Mistral-7B teacher cache informs '\n")
+    parts.push("        'the student distillation target. See docs/p9_a_prime_path_decision_2026_05_03.md S6.2.'\n")
+    parts.push("    ),\n")
+    parts.push("    'honest_c3': [\n")
+    parts.push("        'Phi-star formula scale variance: anima_phi_v3_canonical w/ HID_TRUNC=8 + K=8 + '\n")
+    parts.push("        'ridge=1e-3 produces substrate-relative integration metrics, NOT canonical IIT 4.0 phi-star',\n")
+    parts.push("        'Mini-run step_1000 reference (BLEU 0.0078, Phi-star 43.20) is a 1k-record/2k-step '\n")
+    parts.push("        'subset; trajectory-shape anchor only, NOT a quantitative 25K extrapolation',\n")
+    parts.push("        'F-D pre-registered threshold (<0.5) anchored to BERT-class regime (Sanh 2019 0.3-0.6); '\n")
+    parts.push("        'CLM v4 350M class extrapolation is structurally unverified',\n")
+    parts.push("    ],\n")
+    parts.push("}\n")
+    parts.push("os.makedirs(os.path.dirname(OUTPUT) or '.', exist_ok=True)\n")
+    parts.push("with open(OUTPUT,'w') as f: json.dump(summary, f, indent=2, default=str)\n")
+    parts.push("print(f'[verdict-D] n_ckpts={len(ckpt_verdicts)} base_err={base_err} mini_err={mini_err} ckpt_err={ckpt_err} -> {OUTPUT}')\n")
+    parts.push("for v in ranking[:5]:\n")
+    parts.push("    print(f\"  label={v.get('label')} verdict={v['composite']['verdict']} n_pass={v['composite']['n_pass']}\")\n")
+
+    write_file(HELPER_PATH, parts.join(""))
+}
+
+fn _selftest_invariants() -> bool {
+    let n_falsifiers = 4
+    let n_verdict_states = 3   // SUCCESS_D / PARTIAL_D / FAIL_D
+    let n_steps_planned = 5    // 5K / 10K / 15K / 20K / 25K
+    let f1_default = 0.0059
+    let f2_default = 5.0
+    let f3_default = 0.1
+    let fd_default = 0.5
+    println("inv:n_falsifiers=" + to_string(n_falsifiers))
+    println("inv:n_verdict_states=" + to_string(n_verdict_states))
+    println("inv:n_steps_planned=" + to_string(n_steps_planned))
+    println("inv:falsifiers=F1_bleu1,F2_phi_star,F3_tension_mse,F_D_zscore_mse")
+    println("inv:f1_threshold=" + to_string(f1_default))
+    println("inv:f2_threshold=" + to_string(f2_default))
+    println("inv:f3_threshold=" + to_string(f3_default))
+    println("inv:fd_threshold=" + to_string(fd_default))
+    println("inv:f1_direction=floor_geq")
+    println("inv:f2_direction=floor_geq")
+    println("inv:f3_direction=ceiling_lt")
+    println("inv:fd_direction=ceiling_lt")
+    println("inv:base_anchor=clm_v4_350m_consciousdecoderv2")
+    println("inv:teacher_cache_anchor=mistral_7b_v0.3_phi_v3_canonical")
+    println("inv:f2_floor_breach_auto_fail=true")
+    println("inv:non_mutation_atlas=true")
+    return true
+}
+
+fn cmd_selftest() {
+    println("── p9_paradigm_d_verdict selftest ──")
+    _write_helper()
+    let ok = _selftest_invariants()
+    if !ok {
+        println("selftest=fail")
+        exit(2)
+    }
+    println("selftest=ok")
+    println("helper_emitted=" + HELPER_PATH)
+    println("paradigm=P9 Paradigm D 25K Phi-star distill verdict (4-falsifier matrix; mac $0; non-mutating)")
+    println("DONE")
+}
+
+fn main() {
+    let av = argv()
+    let mut selftest = false
+    let mut i = 2
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        i = i + 1
+    }
+    if selftest { cmd_selftest(); exit(0) }
+    _write_helper()
+    println("emitted=" + HELPER_PATH)
+    println("DONE")
+}

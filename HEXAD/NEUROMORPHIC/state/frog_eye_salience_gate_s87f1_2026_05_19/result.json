@@ -1,0 +1,122 @@
+{
+  "section": "§87-F1 FROG-EYE SALIENCE GATE",
+  "anchor": "Lettvin 1959 What the frog's eye tells the frog's brain",
+  "n_steps": 20,
+  "seed": 1337,
+  "cells": {
+    "cell0_s24_baseline": {
+      "cell": "cell0_s24_baseline",
+      "detectors": [],
+      "use_motivation": true,
+      "use_salience": false,
+      "s_mean": 0.0,
+      "emit_rate": 1.0,
+      "n_emit": 20,
+      "detector_firing_dist": {
+        "1": 0,
+        "2": 0,
+        "3": 0,
+        "4": 0
+      },
+      "interval_var": 0.0,
+      "body_coherent_9": "20/20",
+      "maj_frac": 0.1
+    },
+    "cell1_sd12_only": {
+      "cell": "cell1_sd12_only",
+      "detectors": [
+        1,
+        2
+      ],
+      "use_motivation": false,
+      "use_salience": true,
+      "s_mean": 0.028687,
+      "emit_rate": 0.0,
+      "n_emit": 0,
+      "detector_firing_dist": {
+        "1": 0,
+        "2": 7,
+        "3": 0,
+        "4": 0
+      },
+      "interval_var": 0.0,
+      "body_coherent_9": "0/0",
+      "maj_frac": 0.0
+    },
+    "cell2_sd34_only": {
+      "cell": "cell2_sd34_only",
+      "detectors": [
+        3,
+        4
+      ],
+      "use_motivation": false,
+      "use_salience": true,
+      "s_mean": 0.016949,
+      "emit_rate": 0.0,
+      "n_emit": 0,
+      "detector_firing_dist": {
+        "1": 0,
+        "2": 0,
+        "3": 4,
+        "4": 0
+      },
+      "interval_var": 0.0,
+      "body_coherent_9": "0/0",
+      "maj_frac": 0.0
+    },
+    "cell3_full_frogeye": {
+      "cell": "cell3_full_frogeye",
+      "detectors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "use_motivation": false,
+      "use_salience": true,
+      "s_mean": 0.045,
+      "emit_rate": 0.05,
+      "n_emit": 1,
+      "detector_firing_dist": {
+        "1": 0,
+        "2": 7,
+        "3": 4,
+        "4": 0
+      },
+      "interval_var": 0.0,
+      "body_coherent_9": "1/1",
+      "maj_frac": 1.0
+    },
+    "cell4_frogeye_plus_motiv": {
+      "cell": "cell4_frogeye_plus_motiv",
+      "detectors": [
+        1,
+        2,
+        3,
+        4
+      ],
+      "use_motivation": true,
+      "use_salience": true,
+      "s_mean": 0.045,
+      "emit_rate": 0.05,
+      "n_emit": 1,
+      "detector_firing_dist": {
+        "1": 0,
+        "2": 7,
+        "3": 4,
+        "4": 0
+      },
+      "interval_var": 0.0,
+      "body_coherent_9": "1/1",
+      "maj_frac": 1.0
+    }
+  },
+  "four_corner": {
+    "alpha_salience_gate_well_formed": true,
+    "beta_selective_vs_generic": true,
+    "gamma_detector_class_differential": true,
+    "delta_s24_decision_consistent": true
+  },
+  "overall_verdict": "DIRECTIONAL-POSITIVE",
+  "honest_note": "$0 stub — frog-biology USE != trained-scale measurement != GOAL emergence; capability claim 0"
+}

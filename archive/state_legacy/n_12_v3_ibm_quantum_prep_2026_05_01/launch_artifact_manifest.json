@@ -1,0 +1,57 @@
+{
+  "schema": "n12/v3/ibm_launch_manifest/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "agent": "n_12_v3_ibm_quantum_prep",
+  "scripts_off_repo": [
+    {
+      "path": "/Users/ghost/n12_v3_ibm/submit_ibm.py",
+      "purpose": "4-qubit GHZ + delay sweep on ibm_kingston (Heron r2)",
+      "delay_sweep_us": [10, 50, 100, 200, 500],
+      "shots_per_point": 100,
+      "total_shots": 500,
+      "device_primary": "ibm_kingston",
+      "device_fallback": "least_busy operational Heron via service.least_busy()",
+      "output": "~/n12_v3_ibm/results_<timestamp>.json"
+    },
+    {
+      "path": "/Users/ghost/n12_v3_ibm/verify_F_N12_1_v3.py",
+      "purpose": "Exponential fit P(0000) = 1/16 + (15/16)*exp(-t/tau) + ratio band check",
+      "pass_band": [0.15, 0.40],
+      "sc_ref_primary_us": 100,
+      "sc_ref_robustness_us": 1060,
+      "sc_ref_ceiling_us": 1680,
+      "output": "~/n12_v3_ibm/results_<timestamp>_verdict.json"
+    },
+    {
+      "path": "/Users/ghost/n12_v3_ibm/launch.sh",
+      "purpose": "One-liner orchestrator: env check -> submit -> verify",
+      "user_invocation": "bash ~/n12_v3_ibm/launch.sh"
+    }
+  ],
+  "discrepancy_with_protocol_json": {
+    "field": "delay_points_us",
+    "mission_spec_in_prompt": [10, 50, 100, 200, 500],
+    "protocol_json_value": [0, 25, 50, 100, 200],
+    "resolution": "Followed mission prompt sweep [10,50,100,200,500] us. This widens the dynamic range up to 2.5x the device T2 (~200us) and provides better tau_2 fit leverage; trade-off is loss of D=0 entanglement quality reference, mitigated in verifier by checking P at min delay >= 0.80 instead of >= 0.85 at D=0.",
+    "documented_in": "docs/n_12_v3_ibm_quantum_prep_2026_05_01.md sec.4"
+  },
+  "cost_cap": {
+    "primary_path_usd": 0.00,
+    "primary_path_basis": "Open Plan free tier 10 min/28d; F-N12-1 v3 expected QPU compute = 10-30 sec",
+    "payg_fallback_hard_cap_usd": 5.00,
+    "payg_rate_quoted": "$1.60/sec (per Strangeworks 2024 quote) -- recent IBM doc updated cite to $96/min same arithmetic",
+    "payg_fallback_basis": "if Open Plan exhausted in same 28d window, 5 USD = ~3 sec QPU; insufficient for full sweep -- recommendation = wait for next 28d window instead of paying"
+  },
+  "race_isolation": {
+    "preserved_dirs": [
+      "state/n_substrate_n12_aws_exec_2026_05_01/ (v1 frozen)",
+      "state/n_substrate_n12_aws_exec_v2_2026_05_01/ (v2 frozen)",
+      "state/n_substrate_n12_quantum_pivot_2026_05_01/ (research-only, untouched)"
+    ],
+    "writes_only_to": [
+      "state/n_12_v3_ibm_quantum_prep_2026_05_01/",
+      "docs/n_12_v3_ibm_quantum_prep_2026_05_01.md",
+      "/Users/ghost/n12_v3_ibm/ (off-repo)"
+    ]
+  }
+}

@@ -1,0 +1,240 @@
+// anima-eeg-core/tool/modules/_core/chflags_lock.hexa
+//
+// PURPOSE
+//   Phase 1 _core/ module #5 — wrap chflags uchg lock/unlock cycle and emit
+//
+// API
+//   _core_unlock_file(path: string) -> bool        (chflags nouchg)
+//   _core_lock_file(path: string)   -> bool        (chflags uchg)
+//   _core_is_uchg(path: string)     -> bool
+//
+// Note on `unlock_edit_relock`: the design called for a higher-level wrapper
+// that takes a closure / edit_fn — hexa lacks first-class function-as-value
+// for cross-module use here, so callers compose:
+//     _core_unlock_file(p)
+//     <write/edit>
+//     _core_lock_file(p)
+// audit ledger rows emit at each boundary (unlock + relock).
+//
+// CLI
+//   hexa run chflags_lock.hexa --selftest
+//   hexa run chflags_lock.hexa --unlock <p>   [--ledger <p>]
+//   hexa run chflags_lock.hexa --lock   <p>   [--ledger <p>]
+//   hexa run chflags_lock.hexa --status <p>
+
+let SCHEMA      = "anima-eeg-core/_core/chflags_lock/1"
+let LEDGER_DEFAULT = "state/anima_eeg_core_chflags_audit.jsonl"
+
+// ─── helpers ────────────────────────────────────────────────────────────
+
+fn _ensure_parent_dir(path: string) {
+    let mut p = ""
+    let parts = path.split("/")
+    let mut i = 0
+    let last = len(parts) - 1
+    while i < last {
+        if i > 0 { p = p + "/" }
+        p = p + parts[i]
+        i = i + 1
+    }
+    if p == "" { return }
+    exec("mkdir -p " + p)
+}
+
+fn _now_unix_string() -> string {
+    let r = exec_with_status("date +%s")
+    return to_string(r[0]).trim()
+}
+
+fn _audit_emit(ledger_path: string, action: string, path: string, ok: bool, prior_state: string) {
+    if ledger_path == "" { return }
+    _ensure_parent_dir(ledger_path)
+    let ts = _now_unix_string()
+    let ok_str = if ok { "true" } else { "false" }
+    let mut row = "{"
+    row = row + "\"ts\":" + ts + ","
+    row = row + "\"schema\":\"" + SCHEMA + "\","
+    row = row + "\"tool\":\"_core/chflags_lock\","
+    row = row + "\"action\":\"" + action + "\","
+    row = row + "\"path\":\"" + path + "\","
+    row = row + "\"prior_state\":\"" + prior_state + "\","
+    row = row + "\"ok\":" + ok_str
+    row = row + "}"
+    let nl = chr(10)
+    let prior = read_file(ledger_path)
+    let mut existing = ""
+    if prior != "" { existing = prior }
+    write_file(ledger_path, existing + row + nl)
+}
+
+// ─── public-ish API ────────────────────────────────────────────────────
+
+fn _core_is_uchg(path: string) -> bool {
+    let cmd = "ls -lO " + path + " 2>/dev/null"
+    let out = to_string(exec(cmd))
+    return out.contains("uchg")
+}
+
+fn _core_unlock_file(path: string) -> bool {
+    return _core_unlock_file_audit(path, "")
+}
+
+fn _core_unlock_file_audit(path: string, ledger_path: string) -> bool {
+    let prior = if _core_is_uchg(path) { "uchg" } else { "nouchg" }
+    let r = exec_with_status("chflags nouchg " + path)
+    let ok = (r[1] == 0)
+    _audit_emit(ledger_path, "unlock", path, ok, prior)
+    return ok
+}
+
+fn _core_lock_file(path: string) -> bool {
+    return _core_lock_file_audit(path, "")
+}
+
+fn _core_lock_file_audit(path: string, ledger_path: string) -> bool {
+    let prior = if _core_is_uchg(path) { "uchg" } else { "nouchg" }
+    let r = exec_with_status("chflags uchg " + path)
+    let ok = (r[1] == 0)
+    _audit_emit(ledger_path, "lock", path, ok, prior)
+    return ok
+}
+
+// ─── CLI ───────────────────────────────────────────────────────────────
+
+fn _flags_only_argv() -> array {
+    let av = argv()
+    let mut start = 0
+    while start < len(av) {
+        let a = av[start]
+        let mut is_path = false
+        if a.ends_with(".hexa") { is_path = true }
+        if !is_path { if a.ends_with("/exe") { is_path = true } }
+        if is_path { start = start + 1 } else { break }
+    }
+    let mut out = []
+    let mut j = start
+    while j < len(av) { out.push(av[j]); j = j + 1 }
+    return out
+}
+
+fn assert_true(cond: bool, label: string) -> bool {
+    if cond { println("  PASS: " + label) } else { println("  FAIL: " + label) }
+    return cond
+}
+
+fn _print_usage() {
+    eprintln("usage: hexa run chflags_lock.hexa --selftest")
+    eprintln("       hexa run chflags_lock.hexa --unlock <p> [--ledger <p>]")
+    eprintln("       hexa run chflags_lock.hexa --lock   <p> [--ledger <p>]")
+    eprintln("       hexa run chflags_lock.hexa --status <p>")
+}
+
+fn main() {
+    let av = _flags_only_argv()
+    let mut selftest = false
+    let mut unlock_mode = false
+    let mut lock_mode = false
+    let mut status_mode = false
+    let mut path = ""
+    let mut ledger = ""
+
+    let mut i = 0
+    while i < len(av) {
+        let a = av[i]
+        if a == "--selftest" { selftest = true; i = i + 1; continue }
+        if a == "--help" || a == "-h" { _print_usage(); exit(0) }
+        if a == "--unlock"   { unlock_mode = true; path = av[i+1]; i = i + 2; continue }
+        if a == "--lock"     { lock_mode   = true; path = av[i+1]; i = i + 2; continue }
+        if a == "--status"   { status_mode = true; path = av[i+1]; i = i + 2; continue }
+        if a == "--ledger"   { ledger = av[i+1]; i = i + 2; continue }
+        eprintln("unknown arg: " + a); _print_usage(); exit(2)
+    }
+
+    if selftest {
+        println("== _core chflags_lock selftest ==")
+        let test_path   = "/tmp/anima_eeg_core_chflags_lock_selftest.txt"
+        let test_ledger = "/tmp/anima_eeg_core_chflags_lock_selftest_audit.jsonl"
+        exec("chflags nouchg " + test_path + " 2>/dev/null")
+        exec("rm -f " + test_path)
+        exec("rm -f " + test_ledger)
+        write_file(test_path, "scratch\n")
+
+        let mut pass = 0
+        let mut fail = 0
+
+        // initial state nouchg
+        let s0 = _core_is_uchg(test_path)
+        let t1 = assert_true(!s0, "initial is_uchg=false")
+        if t1 { pass = pass + 1 } else { fail = fail + 1 }
+
+        // lock
+        let ok_lock = _core_lock_file_audit(test_path, test_ledger)
+        let t2 = assert_true(ok_lock, "lock returns true")
+        if t2 { pass = pass + 1 } else { fail = fail + 1 }
+        let s1 = _core_is_uchg(test_path)
+        let t3 = assert_true(s1, "is_uchg=true after lock")
+        if t3 { pass = pass + 1 } else { fail = fail + 1 }
+
+        // unlock
+        let ok_unlock = _core_unlock_file_audit(test_path, test_ledger)
+        let t4 = assert_true(ok_unlock, "unlock returns true")
+        if t4 { pass = pass + 1 } else { fail = fail + 1 }
+        let s2 = _core_is_uchg(test_path)
+        let t5 = assert_true(!s2, "is_uchg=false after unlock")
+        if t5 { pass = pass + 1 } else { fail = fail + 1 }
+
+        // audit ledger has both entries
+        let body = read_file(test_ledger)
+        let t6 = assert_true(body.contains("\"action\":\"lock\""), "audit row contains action:lock")
+        if t6 { pass = pass + 1 } else { fail = fail + 1 }
+        let t7 = assert_true(body.contains("\"action\":\"unlock\""), "audit row contains action:unlock")
+        if t7 { pass = pass + 1 } else { fail = fail + 1 }
+        let t8 = assert_true(body.contains("\"ok\":true"), "audit row contains ok:true")
+        if t8 { pass = pass + 1 } else { fail = fail + 1 }
+
+        // tear down
+        exec("chflags nouchg " + test_path + " 2>/dev/null")
+        exec("rm -f " + test_path)
+
+        println("schema=" + SCHEMA)
+        println("ledger_path=" + test_ledger)
+        println("selftest=ok")
+        println("")
+        println("Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+        if fail != 0 { exit(1) }
+        println("selftest: OK")
+        exit(0)
+    }
+
+    if status_mode {
+        if path == "" { eprintln("ABORT: --status needs path"); exit(2) }
+        let s = _core_is_uchg(path)
+        println("path=" + path)
+        println("is_uchg=" + (if s { "true" } else { "false" }))
+        exit(0)
+    }
+
+    if unlock_mode {
+        if path == "" { eprintln("ABORT: --unlock needs path"); exit(2) }
+        let ok = _core_unlock_file_audit(path, ledger)
+        println("action=unlock")
+        println("path=" + path)
+        println("ok=" + (if ok { "true" } else { "false" }))
+        if !ok { exit(1) }
+        exit(0)
+    }
+
+    if lock_mode {
+        if path == "" { eprintln("ABORT: --lock needs path"); exit(2) }
+        let ok = _core_lock_file_audit(path, ledger)
+        println("action=lock")
+        println("path=" + path)
+        println("ok=" + (if ok { "true" } else { "false" }))
+        if !ok { exit(1) }
+        exit(0)
+    }
+
+    eprintln("ABORT: need --selftest|--lock|--unlock|--status")
+    _print_usage()
+    exit(2)
+}

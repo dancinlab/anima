@@ -1,0 +1,25 @@
+================================================================
+  H_308 — smooth (quadratic-bump) circadian — finite ratio recovery
+================================================================
+  IDLE (threshold=0.5, smooth circadian):
+    emit_count = 62 · peak (Q2+Q3) = 46 · trough (Q1+Q4) = 16
+    peak/trough ratio = 2.875 (biology dawn chorus: ~5-10×)
+  THRESHOLD SWEEP (5 values, smooth circadian, idle mode):
+    threshold=0.1 : emit=91
+    threshold=0.3 : emit=73
+    threshold=0.5 : emit=62
+    threshold=0.7 : emit=47
+    threshold=0.9 : emit=26
+  ────────────── verdict ──────────────
+  [FAIL] F308.1 SMOOTH-FINITE-RATIO: peak/trough in [3, 15] (biology range)
+  [PASS] F308.2 IDLE-EMIT-PRESERVED: smooth idle emit > 0
+  [PASS] F308.3 PEAK-COUNT-MID-RANGE: peak emit in [30, 60]
+  [PASS] F308.4 THRESHOLD-MONOTONE-PRESERVED: 5-threshold emit non-increasing
+    smooth idle emit = 62 vs H_306 piecewise=46, rel_dev = 0.347826
+  [PASS] F308.5 SMOOTH-VS-PIECEWISE-IDLE-COMPARABLE: |smooth - 46| / 46 <= 0.5
+  [PASS] F308.6 BOUND: all >= 0
+================================================================
+  RESULT: 5 PASS / 1 FAIL
+  HEADLINE: smooth circadian peak=46 trough=16 ratio=2.875
+================================================================
+panic: H_308 had FALSIFIER FAILURES

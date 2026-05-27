@@ -1,0 +1,22 @@
+{
+  "cycle": "§50",
+  "date": "2026-05-18",
+  "audit_method": "secret get runpod.api_key + runpod.get_pods() (canonical SDK, g_fire_dispatch_robust); queried 3x, all empty",
+  "total_pods_on_account": 0,
+  "pods_listed": [],
+  "s46_target_pod": {
+    "id": "sjkx0md1wp6tbw",
+    "source_of_id": "AGENTS.tape n_hexad_progress §46 ORPHAN-CARRY entry (no committed dispatch_s46.log)",
+    "status": "GONE — not present in runpod.get_pods(); self-terminated by dispatch_s46.sh trap (SAVE_POD unset by dying agent) OR runpod-reclaimed",
+    "result_files_recovered": false,
+    "eval_result_seed_2026_json": "NOT FOUND (anywhere under state/)",
+    "eval_result_seed_7777_json": "NOT FOUND (anywhere under state/)"
+  },
+  "orphan_pods_identified": [],
+  "pods_terminated_by_s50": [],
+  "pods_left_untouched_unidentifiable": [],
+  "ongoing_cost_after_audit_usd_per_hr": 0.0,
+  "s46_sunk_fire_cost_estimate_usd": "1.5-2.5 (H100 80GB ~70min, ESTIMATE ONLY — no billing record pulled; sunk, already accounted as §46 ORPHAN-CARRY)",
+  "s50_cost_usd": 0.0,
+  "verdict": "ORPHAN-LOST. §46 pod GONE, zero results recovered, zero orphan pods to terminate (cost containment already satisfied by §46 trap). §42 stays open via §46 seed-variance path; already independently CONFIRMED via §47 content-axis 0/29."
+}

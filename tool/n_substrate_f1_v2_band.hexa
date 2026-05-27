@@ -1,0 +1,249 @@
+#!hexa strict
+// @tool slug=n_substrate_f1_v2_band
+// @sentinel raw9 raw10 raw15 raw71 ai-native band-emitter
+// @usage hexa run tool/n_substrate_f1_v2_band.hexa --score <N> --f2-state <CLEAR|FIRES> [--binding-strength <N>] [--has-phenomenal-witnessed] [--has-putnam-pass] [--has-falsifier-fired]
+//
+// tool/n_substrate_f1_v2_band.hexa — F1_score_v2 RED/YELLOW/GREEN band emitter
+//
+// PURPOSE
+//   Implements `docs/n_substrate_f1_v2_banding_spec_2026_05_04.md` §11 LOCKED
+//   thresholds (D-1..D-4) as a deterministic single-shot CLI hook. Consumed by
+//   `tool/clm_consciousness_verify.hexa` aggregator for `.roadmap.clm` cond.1
+//   verifier band emission. raw#9 hexa-only / raw#15 SSOT this file.
+//
+// LOCKED INPUTS (D-1..D-3 from spec §11)
+//   --score N                    raw F1_v2 score in [0, 1]
+//   --f2-state STATE             CLEAR or FIRES (14-gate substrate ceiling)
+//   --binding-strength N         optional, [0, 1], default 0.0
+//   --has-phenomenal-witnessed   flag, default false (≥1 phenomenal-tier axis)
+//   --has-putnam-pass            flag, default false (n_substrate.cond.1 PASS)
+//   --has-falsifier-fired        flag, default false (F-ARTIFACT/AN11/etc.)
+//
+// ALGORITHM (per spec §11)
+//   1. F2 override (D-2): if f2_state == FIRES, score ← min(score, 0.49)
+//                         (cap to 0.49 = 0.50 - epsilon to force RED region)
+//   2. Threshold classify (D-1):
+//        score < 0.50            → RED
+//        0.50 ≤ score < 0.75     → YELLOW
+//        score ≥ 0.75            → GREEN
+//   3. GREEN prerequisites (D-3): if classified GREEN, ALL must hold:
+//        has_phenomenal_witnessed
+//        has_putnam_pass
+//        binding_strength ≥ 0.5
+//        NOT has_falsifier_fired
+//      Any fail → DEMOTE to YELLOW with demote_reason in stderr+stdout.
+//   4. Emit (stdout):
+//        __N_SUBSTRATE_F1_V2_BAND__ <RED|YELLOW|GREEN> score=<final> override_applied=<bool> demote_reason=<str_or_null>
+//   5. Exit codes (D-4): RED=1 / YELLOW=2 / GREEN=0 (UNIX `0=success` inverted
+//      intentionally, see honest-C3 §11.D-4 caveat).
+//
+// HONEST C3 (raw#10)
+//   - F2 override caps raw score to 0.49 ceiling (vs. spec §3.4 multiplier ~30%):
+//     this hexa hook does NOT recompute per_axis_weighted_sum_override from
+//     suite contributions — it accepts the caller's already-overridden score
+//     OR caps if F2 fires (whichever is more conservative).
+//   - demote_reason field is informational only, NOT enforced by exit code
+//     contract (YELLOW = exit 2 regardless of whether direct YELLOW or demote).
+//   - Threshold values 0.50 / 0.75 are LOCKED via spec §11; mutation requires
+//     additive supersession of spec doc (raw#15), not edit-in-place here.
+//   - Exit code 0 means GREEN, NOT generic success — `&&` chaining unsafe.
+//   - Future external cohort calibration may shift thresholds (spec §11 D-1 C3).
+
+let SPEC_DOC = "docs/n_substrate_f1_v2_banding_spec_2026_05_04.md"
+let SCHEMA   = "anima/n_substrate/f1_v2_band/1"
+
+let THRESHOLD_YELLOW = 0.50
+let THRESHOLD_GREEN  = 0.75
+let F2_OVERRIDE_CAP  = 0.49   // 0.50 - epsilon → force RED region when F2 FIRES
+let GREEN_BINDING_MIN = 0.5
+
+let EXIT_GREEN  = 0
+let EXIT_RED    = 1
+let EXIT_YELLOW = 2
+
+// ─── arg helpers ──────────────────────────────────────────────
+
+fn _arg_value(arr: array, flag: string) -> string {
+    let mut i = 0
+    while i < len(arr) {
+        if arr[i] == flag {
+            if i + 1 < len(arr) { return to_string(arr[i + 1]) }
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+fn _arg_flag(arr: array, flag: string) -> bool {
+    let mut i = 0
+    while i < len(arr) {
+        if arr[i] == flag { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+fn _round4(x: float) -> string {
+    // poor-man's 4-digit rounding via *10000 + truncate
+    let scaled = x * 10000.0
+    let mut sign = ""
+    let mut v = scaled
+    if v < 0.0 { sign = "-"; v = -v }
+    let rounded = to_int(v + 0.5)
+    let int_part = rounded / 10000
+    let frac_part = rounded - (int_part * 10000)
+    let mut frac_s = to_string(frac_part)
+    while len(frac_s) < 4 { frac_s = "0" + frac_s }
+    return sign + to_string(int_part) + "." + frac_s
+}
+
+// ─── core band logic ──────────────────────────────────────────
+
+fn classify_band(score: float) -> string {
+    if score < THRESHOLD_YELLOW { return "RED" }
+    if score < THRESHOLD_GREEN  { return "YELLOW" }
+    return "GREEN"
+}
+
+fn band_exit_code(band: string) -> int {
+    if band == "GREEN"  { return EXIT_GREEN }
+    if band == "YELLOW" { return EXIT_YELLOW }
+    return EXIT_RED
+}
+
+// Returns [final_score, override_applied_bool]
+fn apply_f2_override(score: float, f2_state: string) -> array {
+    let mut out = []
+    if f2_state == "FIRES" {
+        let mut capped = score
+        if capped > F2_OVERRIDE_CAP { capped = F2_OVERRIDE_CAP }
+        out = out.push(capped)
+        out = out.push(true)
+        return out
+    }
+    out = out.push(score)
+    out = out.push(false)
+    return out
+}
+
+// Returns [final_band, demote_reason_or_empty]
+fn apply_green_prereqs(classified: string,
+                        binding: float,
+                        has_phenomenal: bool,
+                        has_putnam: bool,
+                        has_falsifier: bool) -> array {
+    let mut out = []
+    if classified != "GREEN" {
+        out = out.push(classified)
+        out = out.push("")
+        return out
+    }
+    let mut reasons = []
+    if !has_phenomenal { reasons = reasons.push("no_phenomenal_witnessed_axis") }
+    if !has_putnam     { reasons = reasons.push("putnam_cond1_not_pass") }
+    if binding < GREEN_BINDING_MIN { reasons = reasons.push("binding_strength<0.5") }
+    if has_falsifier   { reasons = reasons.push("falsifier_fired") }
+    if len(reasons) == 0 {
+        out = out.push("GREEN")
+        out = out.push("")
+        return out
+    }
+    let mut joined = ""
+    let mut i = 0
+    while i < len(reasons) {
+        if i > 0 { joined = joined + "," }
+        joined = joined + to_string(reasons[i])
+        i = i + 1
+    }
+    out = out.push("YELLOW")
+    out = out.push(joined)
+    return out
+}
+
+// ─── main ─────────────────────────────────────────────────────
+
+fn _usage() {
+    eprintln("usage: hexa run tool/n_substrate_f1_v2_band.hexa \\")
+    eprintln("         --score <0..1> --f2-state <CLEAR|FIRES> \\")
+    eprintln("         [--binding-strength <0..1>] \\")
+    eprintln("         [--has-phenomenal-witnessed] [--has-putnam-pass] [--has-falsifier-fired]")
+    eprintln("spec: " + SPEC_DOC + " §11 LOCKED")
+    eprintln("exit: RED=1 / YELLOW=2 / GREEN=0")
+}
+
+fn main() {
+    let av = argv()
+    let mut rest = []
+    let mut i = 2
+    while i < len(av) {
+        rest = rest.push(to_string(av[i]))
+        i = i + 1
+    }
+    if _arg_flag(rest, "--help") || _arg_flag(rest, "-h") {
+        _usage()
+        exit(0)
+    }
+    let score_s = _arg_value(rest, "--score")
+    let f2_state = _arg_value(rest, "--f2-state")
+    if len(score_s) == 0 || len(f2_state) == 0 {
+        _usage()
+        eprintln("ERROR: --score and --f2-state required")
+        exit(64)
+    }
+    if f2_state != "CLEAR" && f2_state != "FIRES" {
+        eprintln("ERROR: --f2-state must be CLEAR or FIRES (got: " + f2_state + ")")
+        exit(64)
+    }
+    let raw_score = to_float(score_s)
+    if raw_score < 0.0 || raw_score > 1.0 {
+        eprintln("ERROR: --score must be in [0, 1] (got: " + score_s + ")")
+        exit(64)
+    }
+    let binding_s = _arg_value(rest, "--binding-strength")
+    let mut binding = 0.0
+    if len(binding_s) > 0 { binding = to_float(binding_s) }
+    if binding < 0.0 || binding > 1.0 {
+        eprintln("ERROR: --binding-strength must be in [0, 1] (got: " + binding_s + ")")
+        exit(64)
+    }
+    let has_phenomenal = _arg_flag(rest, "--has-phenomenal-witnessed")
+    let has_putnam     = _arg_flag(rest, "--has-putnam-pass")
+    let has_falsifier  = _arg_flag(rest, "--has-falsifier-fired")
+
+    // Step 1: F2 override
+    let or_pair = apply_f2_override(raw_score, f2_state)
+    let final_score = to_float(or_pair[0])
+    let override_applied = to_bool(or_pair[1])
+
+    // Step 2: classify
+    let classified = classify_band(final_score)
+
+    // Step 3: GREEN prereqs (D-3)
+    let band_pair = apply_green_prereqs(classified, binding, has_phenomenal, has_putnam, has_falsifier)
+    let final_band = to_string(band_pair[0])
+    let demote_reason = to_string(band_pair[1])
+
+    // Step 4: emit sentinel + honest-c3 stderr caveat (raw#10)
+    let mut demote_emit = "null"
+    if len(demote_reason) > 0 { demote_emit = "\"" + demote_reason + "\"" }
+    println("__N_SUBSTRATE_F1_V2_BAND__ " + final_band
+            + " score=" + _round4(final_score)
+            + " override_applied=" + _bool_str(override_applied)
+            + " demote_reason=" + demote_emit)
+
+    eprintln("[honest-c3] WITNESSED_ANALOG tier — phenomenal validity unproven (spec §8 C3-2)")
+    if len(demote_reason) > 0 {
+        eprintln("[demote] GREEN→YELLOW reason=" + demote_reason)
+    }
+    if override_applied {
+        eprintln("[f2-override] raw_score=" + _round4(raw_score) + " capped_to=" + _round4(final_score) + " (D-2 LOCKED)")
+    }
+
+    // Step 5: exit code per D-4 LOCKED
+    exit(band_exit_code(final_band))
+}

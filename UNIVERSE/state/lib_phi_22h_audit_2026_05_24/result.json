@@ -1,0 +1,32 @@
+{
+  "id": "lib_phi_22h_audit",
+  "domain_milestone": "PHI #7 — backend opt-in + 22+ H mass-migration gate",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "opt_in_api": "lib/phi_helper.hexa phi_with_backend / phi_default_with_backend",
+  "backends": ["c (c_measure_phi → phi_spatial)", "native (phi_spatial direct, identity-bind today)"],
+  "drift_envelope": 5e-06,
+  "states": [
+    { "id": "S1", "h": "H_007", "rule": 110, "n": 16, "phi_c": 0.538242, "phi_native": 0.538242, "abs_diff": 0.0, "threshold": 0.000001, "threshold_name": "F5_floor", "risk": "SAFE" },
+    { "id": "S2", "h": "H_007", "rule": 250, "n": 16, "phi_c": 1.14511e-05, "phi_native": 1.14511e-05, "abs_diff": 0.0, "threshold": 0.1, "threshold_name": "C2_floor", "risk": "SAFE" },
+    { "id": "S3", "h": "H_211", "rule": 90, "n": 16, "phi_c": 1.14511e-05, "phi_native": 1.14511e-05, "abs_diff": 0.0, "threshold": 0.1, "threshold_name": "C2_floor", "risk": "SAFE" },
+    { "id": "S4", "h": "H_225", "rule": 184, "n": 16, "phi_c": 0.862889, "phi_native": 0.862889, "abs_diff": 0.0, "threshold": 0.863, "threshold_name": "h211_baseline", "risk": "SAFE" },
+    { "id": "S5", "h": "H_250", "rule": 60, "n": 17, "phi_c": 1.24577, "phi_native": 1.24577, "abs_diff": 0.0, "threshold": 0.5, "threshold_name": "sustain_floor", "risk": "SAFE" }
+  ],
+  "backend_identity_today": true,
+  "verdict_risk_count": 0,
+  "verdict_rule": "MASS_MIGRATION_SAFE iff identity-bind today AND verdict_risk = 0/5; PARTIAL otherwise; WIRING_BUG iff identity broken today",
+  "verdict": "MASS_MIGRATION_SAFE",
+  "honest_limits": [
+    "L1: sample size = 5 representative states (1 non-trivial, 2 micro-collapse, 1 plateau, 1 persist) out of 22+ H. Other H may use Φ values + thresholds outside this sample; the 5 cover the verdict-critical regimes (micro-collapse near 0, plateau, persist) per Agent C's rule taxonomy.",
+    "L2: state representativeness — each state is the rep=0 substrate at H_007 default config (N=16/17·dim=12·warm=8); H_211/H_222/H_225/H_250 use the SAME substrate so state-Φ values match canonical result.json values. H using different substrate (e.g. H_204 weak-panpsy autopoietic, warm=0) NOT covered.",
+    "L3: 'native' backend is IDENTITY-BIND today (phi_spatial direct == c_measure_phi → phi_spatial). Today's measured drift = 0.0 by construction. The 5e-6 envelope is a HYPOTHETICAL future-impl upper-bound from Agent C; verdict-risk is the answer to 'if such drift WERE introduced, would any H verdict flip?'",
+    "L4: threshold accuracy — verdict-relevant thresholds extracted from each H's result.json verdict_rule (H_007 F5_SEPARATION, H_211 C2_rule250_floor, H_225 C1_RULE184_REPRO, H_250 sustain_floor). Risk-flag heuristic = |phi_c - threshold| <= drift; ignores rule-shape (e.g. rel_diff vs abs); is a CONSERVATIVE upper-bound on risk.",
+    "L5: 22+ H caller mapping is grep-based (c_measure_phi + phi_default + phi_with); does NOT account for upstream c_measure_phi callers that pre-process state differently (e.g. tension-weighted sampling). The phi_spatial primitive itself is byte-equal across both backends today regardless."
+  ],
+  "recommendation": "DEFAULT_C_KEEP — 22+ H mass migration to 'native' backend is SAFE today (identity-bind, 0 drift) but provides 0 algorithmic benefit until a real alternate-native impl lands. Keep default 'c' across H verdict-decision lines; allow opt-in 'native' for audit harnesses. When a real alternate impl appears, re-run this audit BEFORE mass-migrating any H whose state-Φ falls within drift of a verdict threshold (none in current 5 sample).",
+  "phi_md_milestone_7_closure": "PARTIAL — backend opt-in API LANDED in phi_helper.hexa; 5-state audit measures 0 drift today + 0 verdict-risk under 5e-6 hypothetical drift across sampled regimes (micro-collapse + plateau + persist + non-trivial). Mass migration GATED on a real alternate-native impl appearing (RFC 036 §FFI shim or pure-hexa re-impl); revisit milestone closure at that point."
+}

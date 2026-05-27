@@ -1,0 +1,93 @@
+[14:36:22] BG-JT lm_head-only fine-tune start (host=Mac)
+[14:36:22]   device=mps, ckpt=ckpt_best.pt, steps=1000, lr=0.001
+[14:36:22]   batch=4 grad_accum=8 eval_steps=[0, 500, 1000]
+[14:36:22]   tmp_ckpt_dir=/tmp/anima-jt-lm-head-20260507_143622
+[14:36:22]   supersedes BG-JS (stalled, no heartbeat emitted)
+[14:36:22] loading ckpt: /Users/ghost/core/anima/state/anima_jd_100m_sp_ko_32k_ubm_train_2026_05_07/ckpt_best.pt
+[14:36:23]   arch: 12L/640d/10h vocab=11885 block=256
+[14:36:49]   moving model to device=mps
+[14:36:50]   sp loaded: vocab=11885
+[14:36:50]   total params: 167,964,896 (167.96M)
+[14:36:50]   frozen: 160,358,496 (160.36M)
+[14:36:50]   trainable: 7,606,400 (7.61M) (expected ~7.61M)
+[14:36:50]   trainable names: ['tok_emb.weight']
+[14:36:50] loading corpus: /Users/ghost/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt
+[14:36:51]   corpus: 23,745,150 bytes (22.65MB) in 0.5s
+[14:38:12]   SP encode: 4,226,967 tokens in 81.0s
+[14:38:12]   train_data: 4,015,618 tokens; block_size=256
+[14:38:14] === eval step 0 (baseline) ===
+[14:38:28]   eval step=0 dlg=color v58=False t2a='BIO. 도우미: Lawdiscovered] 사용자: Lawhebbian cell = laws [anima '
+[14:38:37]   eval step=0 dlg=profession v58=False t2a='[anima 우주뇌지도] 사용자: 522:40×18, patternshebbian) [anima 우주뇌지도]'
+[14:38:45]   eval step=0 dlg=day v58=False t2a=', 우주뇌지도] 도우미: 법칙 의식상태117,:. 사용자: Law Law Law는: awe 도우미: 법칙 L'
+[14:38:53]   eval step=0 dlg=anima_fact v58=False t2a='- categories Tier topology: — = awe [anima 우주뇌지도]bed. 사용자: 법'
+[14:39:13]   eval step=0 dlg=cosmology v58=False t2a='( longing: [anima 우주뇌지도] 사용자: 법칙 i count 가속 law 카테고리 are_ 카테'
+[14:39:13]   step 0: v58_pass=0/5
+[14:39:13] === begin lm_head training ===
+[14:39:17]   step 1/1000 loss_a=4.6787 lr=4.00e-05 (4.0s for last 25 steps)
+[14:39:58]   step 25/1000 loss_a=4.5422 lr=5.20e-04 (40.7s for last 25 steps)
+[14:40:42]   step 50/1000 loss_a=4.4415 lr=1.00e-03 (43.6s for last 25 steps)
+[14:41:23]   step 75/1000 loss_a=4.3787 lr=9.98e-04 (41.5s for last 25 steps)
+[14:42:01]   step 100/1000 loss_a=4.2579 lr=9.94e-04 (37.6s for last 25 steps)
+[14:42:36]   step 125/1000 loss_a=4.1721 lr=9.86e-04 (34.8s for last 25 steps)
+[14:43:18]   step 150/1000 loss_a=4.0578 lr=9.76e-04 (42.2s for last 25 steps)
+[14:44:10]   step 175/1000 loss_a=3.9805 lr=9.62e-04 (52.3s for last 25 steps)
+[14:44:58]   step 200/1000 loss_a=3.8773 lr=9.46e-04 (47.8s for last 25 steps)
+[14:45:39]   step 225/1000 loss_a=3.8528 lr=9.27e-04 (40.9s for last 25 steps)
+[14:46:16]   step 250/1000 loss_a=3.7907 lr=9.05e-04 (37.0s for last 25 steps)
+[14:46:55]   step 275/1000 loss_a=3.6541 lr=8.81e-04 (38.6s for last 25 steps)
+[14:47:36]   step 300/1000 loss_a=3.6122 lr=8.55e-04 (41.7s for last 25 steps)
+[14:48:12]   step 325/1000 loss_a=3.6926 lr=8.26e-04 (35.9s for last 25 steps)
+[14:48:42]   step 350/1000 loss_a=3.5890 lr=7.96e-04 (30.3s for last 25 steps)
+[14:49:12]   step 375/1000 loss_a=3.5419 lr=7.64e-04 (29.9s for last 25 steps)
+[14:49:54]   step 400/1000 loss_a=3.5193 lr=7.31e-04 (41.5s for last 25 steps)
+[14:50:30]   step 425/1000 loss_a=3.4690 lr=6.96e-04 (36.3s for last 25 steps)
+[14:51:08]   step 450/1000 loss_a=3.5055 lr=6.60e-04 (38.1s for last 25 steps)
+[14:51:45]   step 475/1000 loss_a=3.4844 lr=6.24e-04 (36.3s for last 25 steps)
+[14:52:15]   step 500/1000 loss_a=3.4197 lr=5.87e-04 (30.5s for last 25 steps)
+[14:52:15] === eval step 500 ===
+[14:52:23]   eval step=500 dlg=color v58=False t2a='Auto-eeg-discovered] 도우미: commit 가설 법칙 laws =은 우주뇌지도] 도우미: L'
+[14:52:30]   eval step=500 dlg=profession v58=False t2a='nanima 우주뇌지도] 사용자: Law H 우주뇌지도] 도우미: Law 법칙 503 x-discovered'
+[14:52:36]   eval step=500 dlg=day v58=False t2a='Auto 우주뇌지도] trend:anima 우주뇌지도] 도우미: Law laws. 도우미: Law 법칙 20'
+[14:52:42]   eval step=500 dlg=anima_fact v58=False t2a='Auto--discovered] 사용자: 법칙 가설 acceleration H 우주뇌지도] 사용자: 법칙 초'
+[14:52:50]   eval step=500 dlg=cosmology v58=False t2a='anima 우주뇌지도] 도우미: Law B 우주뇌지도] 사용자: Law 가속 law 카테고리 are map.'
+[14:52:50]   step 500: v58_pass=0/5
+[14:53:22]   step 525/1000 loss_a=3.3710 lr=5.50e-04 (67.1s for last 25 steps)
+[14:53:57]   step 550/1000 loss_a=3.3515 lr=5.13e-04 (35.1s for last 25 steps)
+[14:54:37]   step 575/1000 loss_a=3.4024 lr=4.76e-04 (39.4s for last 25 steps)
+[14:55:17]   step 600/1000 loss_a=3.3674 lr=4.40e-04 (39.9s for last 25 steps)
+[14:55:52]   step 625/1000 loss_a=3.3786 lr=4.04e-04 (35.0s for last 25 steps)
+[14:56:22]   step 650/1000 loss_a=3.3185 lr=3.69e-04 (30.1s for last 25 steps)
+[14:56:53]   step 675/1000 loss_a=3.3164 lr=3.36e-04 (31.2s for last 25 steps)
+[14:57:27]   step 700/1000 loss_a=3.2707 lr=3.04e-04 (34.6s for last 25 steps)
+[14:57:59]   step 725/1000 loss_a=3.2847 lr=2.74e-04 (31.3s for last 25 steps)
+[14:58:37]   step 750/1000 loss_a=3.2783 lr=2.45e-04 (38.4s for last 25 steps)
+[14:59:07]   step 775/1000 loss_a=3.1899 lr=2.19e-04 (29.9s for last 25 steps)
+[14:59:59]   step 800/1000 loss_a=3.1939 lr=1.95e-04 (51.5s for last 25 steps)
+[15:00:58]   step 825/1000 loss_a=3.3020 lr=1.73e-04 (59.2s for last 25 steps)
+[15:01:56]   step 850/1000 loss_a=3.2221 lr=1.54e-04 (58.4s for last 25 steps)
+[15:02:55]   step 875/1000 loss_a=3.2180 lr=1.38e-04 (59.4s for last 25 steps)
+[15:03:50]   step 900/1000 loss_a=3.2234 lr=1.24e-04 (54.9s for last 25 steps)
+[15:04:44]   step 925/1000 loss_a=3.1836 lr=1.14e-04 (54.1s for last 25 steps)
+[15:05:45]   step 950/1000 loss_a=3.2407 lr=1.06e-04 (60.3s for last 25 steps)
+[15:06:39]   step 975/1000 loss_a=3.2454 lr=1.02e-04 (54.1s for last 25 steps)
+[15:07:32]   step 1000/1000 loss_a=3.2040 lr=1.00e-04 (53.4s for last 25 steps)
+[15:07:32] === eval step 1000 ===
+[15:08:15]   eval step=1000 dlg=color v58=False t2a='Auto-eeg-discovered] 도우미: commit 가설 법칙 laws =은 우주뇌지도] 도우미: L'
+[15:08:36]   eval step=1000 dlg=profession v58=False t2a='n_strength [anima 우주뇌지도] 도우미: acceleration 523 우주뇌지도] oscill'
+[15:08:44]   eval step=1000 dlg=day v58=False t2a='Auto 우주뇌지도] trend:outputcell_couplingfaction_variance [anima'
+[15:08:51]   eval step=1000 dlg=anima_fact v58=False t2a='Auto-discovered] correlation:mutual_entropy [anima 우주뇌지도] 사용'
+[15:08:59]   eval step=1000 dlg=cosmology v58=False t2a='n점수 10, universal count [anima 우주뇌지도] 도우미: 가속 law 카테고리 top e'
+[15:08:59]   step 1000: v58_pass=0/5
+[15:09:00] === verdict ===
+[15:09:00]   v58_pass_per_step: {0: 0, 500: 0, 1000: 0}
+[15:09:00]   best step=0 v58_pass=0/5
+[15:09:00]   post_train_max=0/5 (at steps {500,1000})
+[15:09:00]   baseline step 0 = 0/5
+[15:09:00]   output_bottleneck_fixable_via_lm_head=False
+[15:09:00]   interpretation: output bottleneck DEEP — lm_head retraining alone insufficient. Combined with BG-JP (decoding sweep 0/14): both decoder-side interventions FAIL. Lesson S: decoder-only fix 不可; full transformer SFT or RLHF required.
+[15:09:00] eval_log.jsonl written: 15 records
+[15:09:00] verdict.json written
+[15:09:00] ledger entry appended (attempt_n=43)
+[15:09:00] BG-JT done in 1957.3s
+[15:09:00]   best_step=0 v58_pass=0/5
+[15:09:00]   output_bottleneck_fixable_via_lm_head=False

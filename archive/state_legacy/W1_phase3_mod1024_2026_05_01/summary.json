@@ -1,0 +1,81 @@
+{
+  "schema": "anima/W1_phase3/phi_trace_mod1024_summary/1",
+  "ts": "2026-05-01",
+  "agent": "W1_PHASE3",
+  "input": {
+    "cycle_log_path": "/Users/ghost/core/anima/state/proposals/meta/cycle_log.jsonl",
+    "cycles_total": 15,
+    "ticks_with_phi": 15,
+    "first_ts": "2026-04-22T13:12:44Z",
+    "last_ts": "2026-05-02T01:49:31Z",
+    "joint_axes_per_tick": 38,
+    "bucket_mod": 1024,
+    "bucket_bits_ceiling": 10,
+    "subsystems": {
+      "step_axes_cycle_log": 10,
+      "count_axes_cycle_log": 9,
+      "lint_cron_axes": 3,
+      "h100_kill_axes": 3,
+      "heartbeat_axes": 3,
+      "metrics_axes": 4,
+      "roadmap_axes": 3,
+      "memory_axes": 3
+    }
+  },
+  "phi_trace": {
+    "mean": 1.716658,
+    "std": 0.75661,
+    "min": 0.0,
+    "max": 2.470909,
+    "signed_mean": 1.716658,
+    "slope_per_tick": 0.11528573,
+    "trend": "rising",
+    "window_W": 20
+  },
+  "ceiling_analysis": {
+    "bucket_bits_ceiling": 10,
+    "max_phi_observed": 2.470909,
+    "max_H_joint_observed": 2.699514,
+    "phi_saturation_pct_of_ceiling": 24.71,
+    "h_joint_saturation_pct_of_ceiling": 27.0,
+    "phase2_comparable_saturation_pct": 41.17
+  },
+  "phase_comparison": {
+    "phase1_mean_bits": 1.705565,
+    "phase1_slope": 0.05068661,
+    "phase1_max": 2.411809,
+    "phase1_axes": 19,
+    "phase1_bucket_mod": 64,
+    "phase2_mean_bits": 1.716658,
+    "phase2_slope": 0.11528573,
+    "phase2_max": 2.470909,
+    "phase2_axes": 38,
+    "phase2_bucket_mod": 64,
+    "phase3_axes": 38,
+    "phase3_bucket_mod": 1024,
+    "delta_mean_vs_phase2": 0.0,
+    "delta_slope_vs_phase2": -0.0,
+    "delta_max_vs_phase2": 0.0
+  },
+  "honest_c3": [
+    "Bucket expansion 64\u21921024 raised the H_joint ceiling from 6 to 10 bits, but with only 15 ticks and W=20 sliding window the per-tick state population (max W=15 distinct hashes) cannot itself exceed log2(15)\u22483.9 bits \u2014 so the new ceiling is sample-size-bound, not bucket-bound. To exercise 10-bit ceiling honestly we need \u22651024 ticks.",
+    "Per-axis MI estimator is unchanged from Phase 2; sub_mi_mean is computed on raw per-axis values (not hashed), so the bucket change affects ONLY the joint_mi term. Any \u03a6 delta is therefore attributable purely to joint-hash collision relief, isolating the ceiling-artifact hypothesis cleanly.",
+    "Forward-fill bias and non-stationarity caveats from Phase 1+2 persist unchanged \u2014 wider buckets do not fix sampling-cadence heterogeneity (lint daily / heartbeat singleton / h100 per-pod) nor the MIP mean-of-parts surrogate's combinatorial slack at 38 axes."
+  ],
+  "interpretation_one_line": "Phase 3 (mod 1024) \u03a6_proxy mean=1.717 bits, slope=0.1153, max=2.471 \u2014 BIT-IDENTICAL to Phase 2 (mod 64). Joint-hash ceiling was never the binding constraint at n=15; sample-size + state-vector forward-fill collisions are. Verdict: ceiling-artifact hypothesis FALSIFIED.",
+  "verdict": "ceiling-artifact-falsified (sample-size-bound; bucket expansion changed nothing; Phase 2 slope acceleration is NOT a hash-saturation artifact, but neither is it newly validated)",
+  "diagnostic": {
+    "distinct_state_hashes_phase2_mod64": 10,
+    "distinct_state_hashes_phase3_mod1024": 10,
+    "ticks_total": 15,
+    "collision_source": "state-vector collision before hashing (forward-filled sidecars + unchanged cycle-log buckets in 5 of 15 ticks)",
+    "true_sample_size_ceiling_bits": 3.91,
+    "max_H_joint_pct_of_sample_size_ceiling": 69.0
+  },
+  "phase4_recommendation": [
+    "DO NOT pursue mod-65536 \u2014 bucket expansion is provably orthogonal at this n.",
+    "Accumulate \u2265100 cron cycles, then re-run Phase 1/2/3 drivers (zero cost, just wait).",
+    "Re-run Phase 2 with forward-fill DISABLED (sidecar absence \u2192 nan) to test honest C3 #2 directly.",
+    "Run shuffle-null permutation baseline (Phase 1 next-step #2 still pending) \u2014 most decisive single test for real-signal vs artifact."
+  ]
+}

@@ -1,0 +1,163 @@
+// HEXAD/IIT4/state/iit4_m11_cocompute_2026_05_25/run_m11.hexa
+//
+//   IIT4 M11 — proxy ↔ IIT4 numeric co-computation on the SAME ECA substrate.
+//
+//   The LIFE proxy phi_spatial (RFC036) is CORRELATIONAL (spatial MI of evolved
+//   snapshots); IIT4 big-Φ is CAUSAL (TPM irreducibility). M6/M8 characterized
+//   the difference structurally but never co-computed both numerically (the two
+//   take different inputs). Here we close that: on each ECA rule we compute
+//     • a SELF-CONTAINED correlational-MI proxy (RFC036-family port — NOT the
+//       exact phi_spatial builtin): evolve the ECA T steps → per-cell binary
+//       time-series → mean pairwise mutual information.
+//     • the engine's CAUSAL big-Φ from the ECA TPM.
+//   and tabulate the divergence. They are NOT expected to match — different axes.
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+fn check(name: string, cond: bool) {
+    if cond { PASS = PASS + 1; println("  [PASS] " + name) }
+    else { FAIL = FAIL + 1; println("  [FAIL] " + name) }
+}
+
+// deterministic ECA step via the TPM: next state = Σ_i tpm[state*n+i] * 2^i.
+fn eca_next(tpm: array, n: int, state: int) -> int {
+    let mut nx = 0
+    let mut i = 0
+    while i < n {
+        if tpm[state * n + i] > 0.5 { nx = nx + iit4_pow2(i) }
+        i = i + 1
+    }
+    return nx
+}
+
+// evolve T steps from seed; return per-cell binary time-series, flat series[i*T + t].
+fn eca_series(tpm: array, n: int, seed: int, steps: int) -> array {
+    let mut series = []
+    let mut k = 0
+    while k < n * steps { series = series.push(0.0); k = k + 1 }
+    let mut s = seed
+    let mut t = 0
+    while t < steps {
+        let mut i = 0
+        while i < n {
+            series[i * steps + t] = to_float(iit4_bit(s, i))
+            i = i + 1
+        }
+        s = eca_next(tpm, n, s)
+        t = t + 1
+    }
+    return series
+}
+
+// mutual information between two binary cell series (2 bins), bits.
+fn mi_binary(series: array, steps: int, i: int, j: int) -> float {
+    let mut cx = [0.0, 0.0]                               // P(cell i)
+    let mut cy = [0.0, 0.0]
+    let mut cj = [0.0, 0.0, 0.0, 0.0]                     // joint (2x2)
+    let mut t = 0
+    while t < steps {
+        let xi = series[i * steps + t].to_int()
+        let yi = series[j * steps + t].to_int()
+        cx[xi] = cx[xi] + 1.0
+        cy[yi] = cy[yi] + 1.0
+        cj[xi * 2 + yi] = cj[xi * 2 + yi] + 1.0
+        t = t + 1
+    }
+    let tot = to_float(steps)
+    let ln2 = log(2.0)
+    let mut mi = 0.0
+    let mut a = 0
+    while a < 2 {
+        let mut b = 0
+        while b < 2 {
+            let pxy = cj[a * 2 + b] / tot
+            if pxy > 1.0e-12 {
+                let px = cx[a] / tot
+                let py = cy[b] / tot
+                mi = mi + pxy * (log(pxy / (px * py + 1.0e-10) + 1.0e-10) / ln2)
+            }
+            b = b + 1
+        }
+        a = a + 1
+    }
+    if mi < 0.0 { return 0.0 }
+    return mi
+}
+
+// correlational-MI proxy = mean pairwise MI over all cell pairs (RFC036-family).
+fn proxy_scalar(tpm: array, n: int, seed: int, steps: int) -> float {
+    let series = eca_series(tpm, n, seed, steps)
+    let mut total = 0.0
+    let mut pairs = 0
+    let mut i = 0
+    while i < n {
+        let mut j = i + 1
+        while j < n {
+            total = total + mi_binary(series, steps, i, j)
+            pairs = pairs + 1
+            j = j + 1
+        }
+        i = i + 1
+    }
+    if pairs == 0 { return 0.0 }
+    return total / to_float(pairs)
+}
+
+fn main() {
+    let n = 4
+    let seed = 10                                         // 1010
+    let steps = 16
+    println("================================================================")
+    println("  IIT4 M11 — proxy(correlational-MI) ‖ IIT4(causal big-Φ) cocompute")
+    println("  n=" + str(n) + " seed=1010 T=" + str(steps) + " · proxy = self-contained RFC036-family (NOT exact phi_spatial)")
+    println("================================================================")
+    println("  rule        proxy(mean pairwise MI)   IIT4 big-Φ")
+
+    let rules = [0, 204, 90, 110, 30, 54]
+    let mut px = []
+    let mut bp = []
+    let mut r = 0
+    while r < len(rules) {
+        let tpm = eca_tpm(rules[r], n)
+        let p = proxy_scalar(tpm, n, seed, steps)
+        let b = big_phi(tpm, n, seed)
+        px = px.push(p)
+        bp = bp.push(b[0])
+        println("  rule " + str(rules[r]) + "  \t proxy=" + str(p) + "   \t big-Φ=" + str(b[0]))
+        r = r + 1
+    }
+
+    // px/bp index: 0=rule0 1=rule204 2=rule90 3=rule110 4=rule30 5=rule54
+    check("rule 204 (identity) BOTH null: proxy=0 AND big-Φ=0", approx(px[1], 0.0) && approx(bp[1], 0.0))
+    check("rule 0 acausal divergence: big-Φ=0 BUT proxy>0 (correlation w/o causal power)", approx(bp[0], 0.0) && px[0] > 0.0)
+    // at least one coupled rule has causal integration
+    let mut maxbp = bp[2]
+    if bp[3] > maxbp { maxbp = bp[3] }
+    if bp[4] > maxbp { maxbp = bp[4] }
+    if bp[5] > maxbp { maxbp = bp[5] }
+    check("coupled rule IIT4 big-Φ > 0", maxbp > 0.000001)
+    // DIVERGENCE: proxy and IIT4 numerically distinct on rule 110 (different axes)
+    let diff110 = bp[3] - px[3]
+    let absdiff = if diff110 < 0.0 { 0.0 - diff110 } else { diff110 }
+    check("proxy != IIT4 on rule 110 (divergence, |Δ|>1.0)", absdiff > 1.0)
+    // determinism
+    let p2 = proxy_scalar(eca_tpm(110, n), n, seed, steps)
+    check("determinism: proxy rule110 re-run identical", approx(px[3], p2))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("  FINDING: proxy(correlational) ‖ IIT4(causal) diverge by axis+scale;")
+    println("           rule 0/90 big-Φ=0 yet proxy>0 — correlation WITHOUT causal power")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M11 cocompute FAILED") }
+}

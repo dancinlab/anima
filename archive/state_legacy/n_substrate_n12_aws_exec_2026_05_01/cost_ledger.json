@@ -1,0 +1,29 @@
+{
+  "schema": "n12/aws_exec/cost_ledger/1",
+  "ts_utc": "2026-05-02T04:06:30Z",
+  "device": "IonQ Forte 1",
+  "pricing_2026_05_01": {
+    "per_task_USD": 0.30,
+    "per_shot_USD": 0.08
+  },
+  "tasks": [
+    {"id": "C3", "shots": 100, "task_fee_USD": 0.30, "shot_fee_USD": 8.00, "total_USD": 8.30},
+    {"id": "C2", "shots": 100, "task_fee_USD": 0.30, "shot_fee_USD": 8.00, "total_USD": 8.30, "shots_note": "Forte 1 min=100; spec had 50; bumped +$4"},
+    {"id": "C1", "shots": 100, "task_fee_USD": 0.30, "shot_fee_USD": 8.00, "total_USD": 8.30}
+  ],
+  "totals": {
+    "n_tasks": 3,
+    "n_shots": 300,
+    "task_fees_USD": 0.90,
+    "shot_fees_USD": 24.00,
+    "actual_spend_USD": 24.90,
+    "spec_target_USD": 20.90,
+    "spec_target_delta_USD": 4.00,
+    "user_authorized_USD": 20.90,
+    "authorized_delta_USD": 4.00,
+    "hard_cap_USD": 50.00,
+    "under_cap": true,
+    "delta_explanation": "Forte 1 hardware constraint: minimum-shots=100 per task. C2 spec called for 50 shots; minimum forced bump to 100, costing extra $4.00 (1 task * $0 task-fee delta + 50 extra shots * $0.08/shot)."
+  },
+  "estimated_aws_billing_post_settle": "Will appear on AWS account 267673635495 invoice for May 2026 under service 'Amazon Braket' line items. Forte 1 line: $24.00 (shots) + $0.90 (tasks) = $24.90."
+}

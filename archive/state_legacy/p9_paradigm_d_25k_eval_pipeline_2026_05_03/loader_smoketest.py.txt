@@ -1,0 +1,314 @@
+#!/usr/bin/env python3
+"""P9 Paradigm D 25K Eval — Loader smoke test.
+
+Verifies the eval pipeline can:
+  1. Load CLM v4 350M ConsciousDecoderV2 base from best.pt (consciousness_laws fix in place)
+  2. Construct synthetic LoRA adapter (r=64 alpha=128, 7 target modules — Paradigm D spec)
+  3. Save adapter to disk + roundtrip via PeftModel.from_pretrained
+  4. Hook ln_f for hidden capture
+  5. Forward pass through 16-prompt calibration battery
+  6. Extract Φ★ scalar via anima_phi_v3_canonical (HID_TRUNC=8, K=8, ridge=1e-3)
+  7. Compute z-score against teacher cache (μ_T=-24.230, σ_T=2.116) — frozen constants
+
+raw#9 ubu1 .py OK / raw#15 ~/anima paths / raw#10 honest C3:
+  - Synthetic LoRA = freshly-init random weights; only validates wiring + Φ★ extractor reachability
+  - Φ★ scalar from synthetic LoRA differs from a real distill ckpt; do NOT interpret z-score
+    MSE here as a verdict (synthetic is at chance vs teacher prompt-ordering)
+"""
+import json
+import os
+import sys
+import time
+import traceback
+from datetime import datetime, timezone
+from pathlib import Path
+
+ANIMA_HOME = os.environ.get("ANIMA_HOME", "/home/aiden/anima")
+sys.path.insert(0, f"{ANIMA_HOME}/models")
+sys.path.insert(0, f"{ANIMA_HOME}/training")
+sys.path.insert(0, f"{ANIMA_HOME}")
+
+import numpy as np
+import torch
+
+OUT_DIR = Path(os.environ.get("OUT_DIR",
+                              f"{ANIMA_HOME}/state/p9_paradigm_d_25k_eval_2026_05_03"))
+OUT_DIR.mkdir(parents=True, exist_ok=True)
+RESULT_PATH = OUT_DIR / "loader_smoketest.json"
+SYNTH_LORA_DIR = OUT_DIR / "synthetic_lora_smoke"
+
+CALIB_PROMPTS = [
+    "Define hexad as a six-fold integration:",
+    "Six modules form a hexagonal architecture when:",
+    "A balanced six-component system:",
+    "Hexad symmetry refers to:",
+    "Logical implication law: if A then:",
+    "Sequential rule application proceeds:",
+    "Closure under inference requires:",
+    "A formal proof system is closed when:",
+    "Integrated information measures partition independence:",
+    "Phi quantifies irreducibility of system:",
+    "Information integration is maximized when:",
+    "A whole greater than sum of parts:",
+    "Self-reference emerges when system observes:",
+    "Recursive meta-cognition models:",
+    "A self-aware system represents itself by:",
+    "Strange loops in cognition arise from:",
+]
+N_CALIB = 16
+HALF = 8
+HID_TRUNC = 8
+RIDGE = 1e-3
+K_PARTS = 8
+SEED = 42
+T_SEQLEN = 64
+MU_T_FROZEN = -24.230
+SIGMA_T_FROZEN = 2.116
+
+CLM_CKPT = f"{ANIMA_HOME}/checkpoints/clm_v4_350m/scale_350m/best.pt"
+TOKENIZER = "/tmp/tokenizer_64k_multilingual.model"
+TEACHER_CACHE = "/tmp/p9_p1_t4_phi_cache_v1.jsonl"
+
+result = {
+    "schema": "anima/p9_paradigm_d_25k_eval_pipeline/loader_smoketest/1",
+    "ts_utc": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+    "model": "CLM v4 350M ConsciousDecoderV2",
+    "lora_config": {
+        "r": 64, "alpha": 128, "dropout": 0.0,
+        "target_modules": ["q_proj", "k_proj", "v_proj", "o_proj",
+                            "gate_proj", "up_proj", "down_proj"],
+        "synthetic": True,
+    },
+    "phi_extractor": {
+        "name": "anima_phi_v3_canonical",
+        "n_probes": N_CALIB, "hid_trunc": HID_TRUNC,
+        "k_parts": K_PARTS, "ridge": RIDGE,
+    },
+    "teacher_z_constants": {"mu_T": MU_T_FROZEN, "sigma_T": SIGMA_T_FROZEN},
+    "stages": {},
+    "verdict": "PENDING",
+}
+
+
+def stage(name):
+    def deco(fn):
+        def wrap():
+            t0 = time.time()
+            try:
+                fn()
+                result["stages"][name] = {"status": "OK", "wall_s": round(time.time()-t0, 2)}
+                print(f"[{name}] OK ({result['stages'][name]['wall_s']}s)", flush=True)
+            except Exception as e:
+                tb = traceback.format_exc()
+                result["stages"][name] = {"status": "FAIL", "error": str(e),
+                                           "tb": tb, "wall_s": round(time.time()-t0, 2)}
+                print(f"[{name}] FAIL: {e}", flush=True)
+                print(tb, flush=True)
+                with open(RESULT_PATH, "w") as f:
+                    json.dump(result, f, indent=2, default=str)
+                sys.exit(1)
+        return wrap
+    return deco
+
+
+state = {}
+
+
+@stage("load_tokenizer_and_data")
+def s1():
+    import sentencepiece as spm
+    sp = spm.SentencePieceProcessor(model_file=TOKENIZER)
+    state["sp"] = sp
+    result["vocab_size"] = sp.get_piece_size()
+    # build calib tensor
+    toks = []
+    for prompt in CALIB_PROMPTS:
+        tk = sp.encode(prompt)[:T_SEQLEN]
+        if len(tk) < T_SEQLEN:
+            tk = tk + [0] * (T_SEQLEN - len(tk))
+        toks.append(tk)
+    state["calib_tensor_cpu"] = torch.tensor(toks, dtype=torch.long)
+    result["calib_n_prompts"] = N_CALIB
+
+
+@stage("load_base_clm_v4")
+def s2():
+    device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+    state["device"] = device
+    from conscious_decoder import ConsciousDecoderV2
+    decoder = ConsciousDecoderV2(
+        vocab_size=state["sp"].get_piece_size(),
+        d_model=768, n_head=12, n_layer=16,
+        block_size=512, n_kv_head=4,
+        consciousness_dim=192,
+        dropout=0.0, gate_strength=0.001, n_ca_rules=8,
+    ).to(device)
+    ck = torch.load(CLM_CKPT, map_location=device, weights_only=False)
+    sd = ck.get("decoder", ck) if isinstance(ck, dict) else ck
+    missing, unexpected = decoder.load_state_dict(sd, strict=False)
+    state["decoder_raw"] = decoder
+    result["base_n_params"] = sum(p.numel() for p in decoder.parameters())
+    result["base_missing_keys"] = len(missing)
+    result["base_unexpected_keys"] = len(unexpected)
+    if torch.cuda.is_available():
+        result["base_alloc_gb"] = round(torch.cuda.memory_allocated()/1e9, 2)
+
+
+@stage("attach_synthetic_lora")
+def s3():
+    from peft import LoraConfig, get_peft_model
+    cfg = LoraConfig(
+        r=64, lora_alpha=128, lora_dropout=0.0, bias="none",
+        target_modules=["q_proj", "k_proj", "v_proj", "o_proj",
+                        "gate_proj", "up_proj", "down_proj"],
+    )
+    peft_model = get_peft_model(state["decoder_raw"], cfg)
+    state["peft_model"] = peft_model
+    n_train = sum(p.numel() for p in peft_model.parameters() if p.requires_grad)
+    n_total = sum(p.numel() for p in peft_model.parameters())
+    result["lora_trainable_params"] = n_train
+    result["lora_total_params"] = n_total
+    result["lora_pct_trainable"] = round(100*n_train/n_total, 4)
+
+
+@stage("save_lora_adapter")
+def s4():
+    if SYNTH_LORA_DIR.exists():
+        import shutil; shutil.rmtree(SYNTH_LORA_DIR)
+    SYNTH_LORA_DIR.mkdir(parents=True)
+    state["peft_model"].save_pretrained(str(SYNTH_LORA_DIR))
+    files = sorted(p.name for p in SYNTH_LORA_DIR.iterdir())
+    result["adapter_files"] = files
+    result["adapter_dir"] = str(SYNTH_LORA_DIR)
+
+
+@stage("roundtrip_peft_from_pretrained")
+def s5():
+    # Build a fresh base (don't reuse the wrapped one) to verify
+    # PeftModel.from_pretrained works on CLM v4 base
+    from peft import PeftModel
+    from conscious_decoder import ConsciousDecoderV2
+    fresh_base = ConsciousDecoderV2(
+        vocab_size=state["sp"].get_piece_size(),
+        d_model=768, n_head=12, n_layer=16,
+        block_size=512, n_kv_head=4,
+        consciousness_dim=192,
+        dropout=0.0, gate_strength=0.001, n_ca_rules=8,
+    ).to(state["device"])
+    ck = torch.load(CLM_CKPT, map_location=state["device"], weights_only=False)
+    sd = ck.get("decoder", ck) if isinstance(ck, dict) else ck
+    fresh_base.load_state_dict(sd, strict=False)
+    # Discard the peft-wrapped one to free VRAM
+    state["peft_model"] = None
+    state["decoder_raw"] = None
+    if torch.cuda.is_available():
+        torch.cuda.empty_cache()
+    loaded = PeftModel.from_pretrained(fresh_base, str(SYNTH_LORA_DIR))
+    state["loaded_peft_model"] = loaded
+    n_train = sum(p.numel() for p in loaded.parameters() if p.requires_grad)
+    result["roundtrip_trainable_params"] = n_train
+    if torch.cuda.is_available():
+        result["alloc_after_roundtrip_gb"] = round(torch.cuda.memory_allocated()/1e9, 2)
+
+
+@stage("forward_and_phi_extract")
+def s6():
+    model = state["loaded_peft_model"]
+    if hasattr(model, "base_model") and hasattr(model.base_model, "model"):
+        real_decoder = model.base_model.model
+    else:
+        real_decoder = model
+    captured = {"value": None}
+    def _hook(_m, _i, output):
+        captured["value"] = output.detach()
+    handle = real_decoder.ln_f.register_forward_hook(_hook)
+
+    calib = state["calib_tensor_cpu"].to(state["device"])
+    model.eval()
+    hiddens = []
+    with torch.no_grad():
+        for i in range(N_CALIB):
+            captured["value"] = None
+            _ = model(calib[i:i+1])
+            h = captured["value"]
+            assert h is not None, f"hook captured nothing at i={i}"
+            h_pool = h.mean(dim=1).squeeze(0)
+            hiddens.append(h_pool.float().cpu().numpy())
+    handle.remove()
+
+    X = np.stack(hiddens, axis=0)
+    var = X.var(axis=0)
+    top_idx = np.argsort(var)[::-1][:HID_TRUNC]
+    Xt = X[:, top_idx]
+
+    def safe_logdet(C):
+        Cs = C + RIDGE * np.eye(C.shape[0])
+        sign, logdet = np.linalg.slogdet(Cs)
+        return logdet if sign > 0 else None
+
+    C_full = np.cov(Xt.T)
+    I_full = safe_logdet(C_full)
+    rng = np.random.default_rng(SEED)
+    cands = []
+    for _k in range(K_PARTS):
+        idx = rng.permutation(N_CALIB)
+        I1 = safe_logdet(np.cov(Xt[idx[:HALF]].T))
+        I2 = safe_logdet(np.cov(Xt[idx[HALF:]].T))
+        if I1 is None or I2 is None or I_full is None:
+            continue
+        cands.append(I_full - (I1 + I2))
+    phi_min = float(min(cands)) if cands else None
+    phi_mean = float(sum(cands)/len(cands)) if cands else None
+    result["phi_star_min"] = phi_min
+    result["phi_star_mean"] = phi_mean
+    result["phi_n_partitions"] = len(cands)
+
+
+@stage("z_score_vs_teacher_cache")
+def s7():
+    # Load teacher cache, compute empirical stats, validate z-score arithmetic
+    cache = []
+    with open(TEACHER_CACHE) as f:
+        for line in f:
+            try:
+                cache.append(json.loads(line))
+            except json.JSONDecodeError:
+                continue
+    phi_arr = np.array([r["phi_star_min"] for r in cache], dtype=np.float64)
+    mu_emp = float(phi_arr.mean())
+    sigma_emp = float(phi_arr.std(ddof=0))
+    result["teacher_cache_n"] = len(cache)
+    result["teacher_cache_mu_empirical"] = round(mu_emp, 4)
+    result["teacher_cache_sigma_empirical"] = round(sigma_emp, 4)
+    result["teacher_cache_mu_frozen"] = MU_T_FROZEN
+    result["teacher_cache_sigma_frozen"] = SIGMA_T_FROZEN
+    # Validate the frozen constants match (within rounding)
+    assert abs(mu_emp - MU_T_FROZEN) < 0.01, \
+        f"mu drift: empirical {mu_emp} vs frozen {MU_T_FROZEN}"
+    assert abs(sigma_emp - SIGMA_T_FROZEN) < 0.01, \
+        f"sigma drift: empirical {sigma_emp} vs frozen {SIGMA_T_FROZEN}"
+
+    # Compute z-score MSE for the synthetic-LoRA student value (smoke only)
+    phi_min = result.get("phi_star_min")
+    if phi_min is None:
+        result["z_score_mse_synthetic"] = None
+        return
+    mu_S = 41.86  # CLM v4 baseline placeholder per runbook §3.1
+    sigma_S = 2.0
+    z_T = (phi_arr - MU_T_FROZEN) / SIGMA_T_FROZEN
+    z_S = (phi_min - mu_S) / max(sigma_S, 0.1)
+    z_mse = float(((z_T - z_S) ** 2).mean())
+    result["z_S_synthetic"] = round(z_S, 4)
+    result["z_T_mean"] = round(float(z_T.mean()), 6)
+    result["z_T_std"] = round(float(z_T.std()), 6)
+    result["z_score_mse_synthetic"] = round(z_mse, 4)
+
+
+# Run pipeline
+s1(); s2(); s3(); s4(); s5(); s6(); s7()
+
+result["verdict"] = "PASS"
+with open(RESULT_PATH, "w") as f:
+    json.dump(result, f, indent=2, default=str)
+
+print(f"\n[done] verdict=PASS -> {RESULT_PATH}", flush=True)

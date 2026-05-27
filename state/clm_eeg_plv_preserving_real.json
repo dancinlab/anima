@@ -1,0 +1,106 @@
+{
+  "schema": "anima-eeg-core/_metrics/plv_preserving/1",
+  "metric": "plv_preserving",
+  "generated_at": "2026-05-01",
+  "raw_directive": "raw#9 hexa-only · raw#10 honest C3 · raw#71 falsifier ≥3 · raw#91 honest triad",
+  "context": {
+    "predecessor_commit": "43b3cee89",
+    "predecessor_verdict": "INSUFFICIENT (P2 TLR — C2 UNEVALUABLE: ICA analytic-signal PLV ≤ 0.022 ≪ 0.38 floor)",
+    "raw10_followup": "PLV-preserving ICA variant — no-ICA narrowband-Hilbert + AMICA fallback (FastICA-logcosh)"
+  },
+  "selftest": {
+    "mode": "synthetic_phase_locked_dual_oscillator",
+    "f0_hz": 10.0,
+    "lock": 0.85,
+    "duration_s": 8.0,
+    "fs_hz": 125.0,
+    "narrowband": {
+      "plv_phase_locked_x1000": 987,
+      "plv_random_x1000": 73,
+      "verdict": "PASS",
+      "interpretation": "phase-locked PLV 0.987 vs random PLV 0.073 — pathway sound; F_PLVP_01 floor 0.38 cleared by 26x"
+    },
+    "amica": {
+      "plv_phase_locked_x1000": 987,
+      "plv_random_x1000": 73,
+      "verdict": "PASS",
+      "interpretation": "AMICA reconstruction (FastICA-logcosh fallback) preserves synthetic phase-lock; selftest matches narrowband"
+    }
+  },
+  "real_runs": [
+    {
+      "input": "recordings/sessions/baseline_resting_60s_20260428.npy",
+      "stage": "raw_no_ica",
+      "data_sha256": "ac6da9444e402ce0d5c1adac175ab24c79d80962dd8d7457e32fe76b92f45364",
+      "fs_hz": 125.0,
+      "n_samples": 7491,
+      "variant": "narrowband",
+      "f_lo": 8.0,
+      "f_hi": 13.0,
+      "plv_anterior_posterior_x1000": 372,
+      "plv_anterior_lateral_l_x1000": 206,
+      "plv_anterior_lateral_r_x1000": 189,
+      "verdict": "FALSIFIED",
+      "raw71_triggered_ids": "F_PLVP_01"
+    },
+    {
+      "input": "recordings/sessions/baseline_resting_60s_20260428_filtered.npy",
+      "stage": "high_pass_notch_only",
+      "variant": "narrowband",
+      "plv_anterior_posterior_x1000": 372,
+      "plv_anterior_lateral_l_x1000": 206,
+      "plv_anterior_lateral_r_x1000": 189,
+      "verdict": "FALSIFIED",
+      "raw71_triggered_ids": "F_PLVP_01",
+      "note": "near-identical to raw — 8-13 Hz IIR dominates downstream filtering"
+    },
+    {
+      "input": "recordings/sessions/baseline_resting_60s_20260428_ica.npy",
+      "stage": "ica_cleaned",
+      "variant": "narrowband",
+      "plv_anterior_posterior_x1000": 993,
+      "plv_anterior_lateral_l_x1000": 85,
+      "plv_anterior_lateral_r_x1000": 338,
+      "verdict": "FALSIFIED",
+      "raw71_triggered_ids": "F_PLVP_02",
+      "note": "ICA-cleaned baseline + narrowband + Hilbert collapses anterior+posterior to ref-short (PLV 0.993). Different failure mode from predecessor 43b3cee89 wideband-analytic 0.022 — narrowband path inflates rather than destroys phase, but still unphysical."
+    },
+    {
+      "input": "recordings/sessions/baseline_resting_60s_20260428_ica.npy",
+      "stage": "ica_cleaned",
+      "variant": "amica",
+      "plv_anterior_posterior_x1000": 999,
+      "plv_anterior_lateral_l_x1000": 999,
+      "plv_anterior_lateral_r_x1000": 999,
+      "verdict": "FALSIFIED",
+      "raw71_triggered_ids": "F_PLVP_02",
+      "note": "FastICA-logcosh fallback (sklearn ConvergenceWarning) — sparse-prior approximation collapses ALL pairs to PLV 0.999. True AMICA library not installed; helper returned amica_fastica_logcosh_no_reject."
+    }
+  ],
+  "verdict": "INSUFFICIENT",
+  "honest_summary": {
+    "what_worked": "selftest separates phase-locked (0.987) from random (0.073), pathway is sound — module ships green on synthetic.",
+    "what_failed": "All real .npy variants fall outside [0.38, 0.99]: raw/filtered narrowband 0.372 (just below floor); ICA-cleaned 0.993 (ref-short); AMICA-fallback 0.999 (further ref-short). C2 (CLM V_sync r ≥ 0.38) remains UNEVALUABLE on this single 60s session.",
+    "next_step": "(a) longer session (≥120s) to stabilize PLV estimator, (b) install actual AMICA (e.g. mne-icalabel or python-AMICA bridge) — FastICA-logcosh is NOT phase-preserving in practice, (c) consider cross-session bootstrap to estimate PLV CI."
+  },
+  "raw71_falsifiers": {
+    "count": 3,
+    "F_PLVP_01": "plv_anterior_posterior < 0.38 → below CLM V_sync r floor",
+    "F_PLVP_02": "plv_anterior_posterior > 0.99 → identical channels (ref-short)",
+    "F_PLVP_03": "plv_anterior_posterior == sentinel → helper-fail"
+  },
+  "raw91_honest_triad": {
+    "evidence": [
+      "Lachaux et al. 1999 — canonical PLV definition |⟨exp(iΔφ)⟩|",
+      "scipy.signal.butter order=4 + filtfilt for 8-13 Hz narrowband (zero-phase IIR)",
+      "scipy.signal.hilbert analytic-signal phase extraction",
+      "selftest separation: phase-locked 0.987 vs random 0.073 (~13x floor margin)"
+    ],
+    "limits": [
+      "narrowband_only_alpha — module is α-band specific (8-13 Hz default); does not generalize to θ/β/γ without re-validation",
+      "amica_fallback_to_fastica_logcosh — sklearn FastICA is NOT phase-preserving on real EEG (collapses to ref-short); true AMICA requires external library not present in .venv-eeg",
+      "volume_conduction_inflates_plv — narrowband Hilbert PLV is sensitive to volume conduction; should pair with imaginary-coherence or weighted PLI for strict claims"
+    ]
+  },
+  "module_path": "anima-eeg-core/tool/modules/_metrics/plv_preserving.hexa"
+}

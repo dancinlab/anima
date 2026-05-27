@@ -1,0 +1,61 @@
+{
+  "hypothesis": "H_294",
+  "slug": "pid-synergy-phi",
+  "title": "No component of information flow tracks Phi — synergy perp Phi (r=0.03); integration is a system-cut property (H_293 / paper future follow-up)",
+  "date": "2026-05-26",
+  "question": "Decomposing directed flow into synergy vs redundancy (conditional interaction information), does any component track faithful IIT4 big-Phi?",
+  "engine": "HEXAD/IIT4/lib (reused): iit4_eca.eca_tpm + iit4_bigphi.big_phi + iit4_bit/iit4_pow2 (via stdlib/consciousness). Conditional interaction information II_c = H(T|C)-H(T|S1,C)-H(T|S2,C) via (T,S1,S2,C) 16-bin joint marginal entropy, inline.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (cross-process byte-identical)",
+  "toolchain_note": "built via fix-1180 bypass: HEXA_MAC_BUILD_OK=1 HEXA_LANG=<root> hexa.real.bak-2026-05-22-pre-no-hxc build <src> -o <bin>.",
+  "metric_def": "II_c per cell = H(T|C) - H(T|S1,C) - H(T|S2,C), T=next_i, S1=left, S2=right, C=self. II_c<0 synergy-dominant, >0 redundancy-dominant. synergy_total=sum max(0,-II_c), redundancy_total=sum max(0,II_c).",
+  "seed_hypothesis_H1": "r(synergy_total, Phi_mean) >= 0.5 AND > r(redundancy_total, Phi_mean) (synergy is the flow component tracking Phi).",
+  "config": {"n": 4, "panel_size": 10, "tests_paper_prediction": "PAPER/phi-information-triangulation section future (PID)"},
+  "panel": {
+    "rule_0":   {"synergy": 0.0, "redundancy": 0.0, "phi_mean": 0.0},
+    "rule_255": {"synergy": 0.0, "redundancy": 0.0, "phi_mean": 0.0},
+    "rule_204": {"synergy": 0.0, "redundancy": 0.0, "phi_mean": 0.0, "note": "identity — no source flow"},
+    "rule_51":  {"synergy": 0.0, "redundancy": 0.0, "phi_mean": 0.0},
+    "rule_150": {"synergy": 4.0, "redundancy": 0.0, "phi_mean": 5.625, "note": "XOR-3 pure synergy"},
+    "rule_105": {"synergy": 4.0, "redundancy": 0.0, "phi_mean": 5.625},
+    "rule_90":  {"synergy": 4.0, "redundancy": 0.0, "phi_mean": 0.0, "note": "DISSOCIATION: max synergy yet Phi=0"},
+    "rule_60":  {"synergy": 0.0, "redundancy": 0.0, "phi_mean": 13.625, "note": "DISSOCIATION: max Phi yet zero synergy (pure unique info: next=self^left)"},
+    "rule_110": {"synergy": 0.377444, "redundancy": 0.0, "phi_mean": 13.1302},
+    "rule_30":  {"synergy": 2.0, "redundancy": 0.0, "phi_mean": 13.8852}
+  },
+  "r_synergy_phi": 0.0299599,
+  "r_redundancy_phi": 0.0,
+  "double_dissociation": {
+    "max_phi_zero_synergy": {"rule": 60, "phi": 13.625, "synergy": 0.0, "meaning": "highest Phi yet zero synergy — pure unique information (next=self XOR left)"},
+    "max_synergy_zero_phi": {"rule": 90, "synergy": 4.0, "phi": 0.0, "meaning": "max synergy yet Phi=0 — neighbour XOR but reducible system"},
+    "verdict": "synergy is neither necessary (rule 60) nor sufficient (rule 90) for integration; r(synergy,Phi)=0.03 approx orthogonal"
+  },
+  "criteria": {
+    "C1_SYNERGY_WITNESS": "PASS (150/105 synergy=4, redundancy=0)",
+    "C2_r_VERDICT": "H1 FALSIFIED (r_syn=0.030 << 0.5)",
+    "C3_DISSOCIATION_ANCHOR_BOUND_DET": "PASS"
+  },
+  "falsifiers": {
+    "F294_1_SYNERGY_WITNESS": "PASS  (rule150/105 synergy=4.0, redundancy=0)",
+    "F294_2_r_VERDICT": "H1 FALSIFIED  (r(synergy,Phi)=0.0299599 << 0.5; r(redundancy,Phi)=0.0)",
+    "F294_3_DISSOCIATION": "PASS  (rule90 synergy=4.0, Phi=0.0)",
+    "F294_4_ANCHORS": "PASS  (0/255/204 synergy=0 redundancy=0)",
+    "F294_5_POST_HOC": "NOT_TRIGGERED"
+  },
+  "checks": "8 PASS / 0 FAIL",
+  "verdict_class": "H1 FALSIFIED (CLOSED-NEGATIVE) — synergy perp Phi; no flow component tracks Phi",
+  "finding": "Decomposing directed information flow into synergy vs redundancy (conditional interaction information) shows that NO component tracks faithful IIT4 big-Phi: synergy is orthogonal to Phi (Pearson r=0.030; ECA parity has redundancy=0 throughout). The decisive evidence is a DOUBLE dissociation: rule 60 has the highest Phi (13.6) yet zero synergy (next=self XOR left = pure UNIQUE information from one source), while rule 90 has maximal synergy (4.0) yet Phi=0 (neighbour XOR but the system is reducible). So synergy is neither necessary (rule 60 counterexample) nor sufficient (rule 90 counterexample) for integration. This extends H_293 (no ORDER of TE equals Phi) one level deeper: no COMPONENT of flow equals Phi either. Integration is a system-cut (whole-vs-parts) property that does not reduce to any local information-flow decomposition. Rule 90 over-predicts under LZ (H_288), multivariate TE (H_293), AND synergy (here) — the apex of the cross-measure 'local flow/complexity present, global integration absent' signature. Maximally strengthens the paper's thesis.",
+  "honest_limits": [
+    "L1: conditional interaction information (co-information) is the 2-source NET synergy/redundancy summary, NOT the full Williams-Beer 4-atom PID (which would separate rule 60's unique term explicitly); net-level conclusion already decisive.",
+    "L2: ECA parity family has redundancy=0 (sources do not share target info); redundancy-vs-Phi needs a redundancy>0 substrate (copy/majority).",
+    "L3: II_c is self-conditioned (consistent with H_293); unconditioned/multi-lag differ.",
+    "L4: n=4 small, 10-rule panel — direction (synergy perp Phi, double dissociation) robust, exact r panel-dependent.",
+    "L5: ECA = flow proxy, not phenomenal claim.",
+    "L6: structure-cut big-Phi; absence-of-correlation robust to scale offset.",
+    "L7: verdict is a toy-substrate measurement fact."
+  ],
+  "verify_fence": {
+    "claim": "H_294 no component of directed information flow tracks faithful IIT4 big-Phi: conditional interaction information shows synergy orthogonal to Phi (r=0.03), via a double dissociation — rule 60 max Phi (13.6) yet zero synergy (pure unique info), rule 90 max synergy (4.0) yet Phi=0; integration is a system-cut property not reducible to any local flow decomposition; deterministic toy-substrate, NOT an atlas identity",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic, interpretation fenced"
+  }
+}

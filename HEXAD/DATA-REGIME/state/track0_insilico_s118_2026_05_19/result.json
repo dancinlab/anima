@@ -1,0 +1,285 @@
+{
+  "section": "§118",
+  "title": "Track 0 in-silico — §96 §4.5 cells",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "wall_sec": 23.0377,
+  "seed": 1337,
+  "base_ckpt": null,
+  "tau_frozen": 0.0001,
+  "byte_acc_chance": 0.00390625,
+  "predicate": "NON_DEGENERATE(cell) := byte_acc > 1/256 AND physics_not_frozen (Psi/tension/Phi std > tau) AND honest_§9_coherent >= 1/5",
+  "s9_metric_source": "state/verify_emergence_metric_2026_05_18/emergence_metric.py :: honest_coherent (SSOT import, NOT re-implemented)",
+  "cells": {
+    "GPU-CE": {
+      "cell": "GPU-CE",
+      "channel": "ce",
+      "N": 240,
+      "n_a": 88,
+      "n_g": 88,
+      "n_rec": 64,
+      "n_stim": 12,
+      "steps_per_stim": 80,
+      "byte_acc": 0.5,
+      "byte_acc_chance": 0.003906,
+      "byte_acc_pass_gt_chance": true,
+      "psi_c1_mean": 0.670881,
+      "psi_c1_std": 0.030554634660896727,
+      "tension_std": 0.0010131574108457762,
+      "phi_std": 0.029829629902991938,
+      "physics_not_frozen": true,
+      "s9_coherent_count": 2,
+      "s9_coherent_ratio": 0.4,
+      "s9_pass_ge_1_5": true,
+      "s9_window_details": [
+        {
+          "window": 0,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 3
+        },
+        {
+          "window": 1,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.1905,
+          "max_run": 3
+        },
+        {
+          "window": 2,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.125,
+          "max_run": 3
+        },
+        {
+          "window": 3,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.381,
+          "max_run": 2
+        },
+        {
+          "window": 4,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 2
+        }
+      ],
+      "non_degenerate": true,
+      "weight_drift_mean_abs": 0.0,
+      "head_drift_mean_abs": 0.00275855,
+      "overall_spike_rate_per_unit_step": 0.533785
+    },
+    "GPU-noCE": {
+      "cell": "GPU-noCE",
+      "channel": "none",
+      "N": 240,
+      "n_a": 88,
+      "n_g": 88,
+      "n_rec": 64,
+      "n_stim": 12,
+      "steps_per_stim": 80,
+      "byte_acc": 0.0,
+      "byte_acc_chance": 0.003906,
+      "byte_acc_pass_gt_chance": false,
+      "psi_c1_mean": 0.670881,
+      "psi_c1_std": 0.030554634660896727,
+      "tension_std": 0.0010131574108457762,
+      "phi_std": 0.029829629902991938,
+      "physics_not_frozen": true,
+      "s9_coherent_count": 0,
+      "s9_coherent_ratio": 0.0,
+      "s9_pass_ge_1_5": false,
+      "s9_window_details": [
+        {
+          "window": 0,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 3
+        },
+        {
+          "window": 1,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 3
+        },
+        {
+          "window": 2,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 3
+        },
+        {
+          "window": 3,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 3
+        },
+        {
+          "window": 4,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 3
+        }
+      ],
+      "non_degenerate": false,
+      "weight_drift_mean_abs": 0.0,
+      "head_drift_mean_abs": 0.0,
+      "overall_spike_rate_per_unit_step": 0.533785
+    },
+    "SIM-noCE-STDP": {
+      "cell": "SIM-noCE-STDP",
+      "channel": "stdp",
+      "N": 240,
+      "n_a": 88,
+      "n_g": 88,
+      "n_rec": 64,
+      "n_stim": 12,
+      "steps_per_stim": 80,
+      "byte_acc": 0.0,
+      "byte_acc_chance": 0.003906,
+      "byte_acc_pass_gt_chance": false,
+      "psi_c1_mean": 0.583089,
+      "psi_c1_std": 0.030805172734976346,
+      "tension_std": 0.00016979239337317495,
+      "phi_std": 0.06840815441227899,
+      "physics_not_frozen": true,
+      "s9_coherent_count": 5,
+      "s9_coherent_ratio": 1.0,
+      "s9_pass_ge_1_5": true,
+      "s9_window_details": [
+        {
+          "window": 0,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.0833,
+          "max_run": 2
+        },
+        {
+          "window": 1,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.0833,
+          "max_run": 2
+        },
+        {
+          "window": 2,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.0417,
+          "max_run": 1
+        },
+        {
+          "window": 3,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.0833,
+          "max_run": 2
+        },
+        {
+          "window": 4,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.0833,
+          "max_run": 2
+        }
+      ],
+      "non_degenerate": false,
+      "weight_drift_mean_abs": 0.23463671,
+      "head_drift_mean_abs": 0.0,
+      "overall_spike_rate_per_unit_step": 0.218737
+    },
+    "SIM-CE": {
+      "cell": "SIM-CE",
+      "channel": "ce",
+      "N": 240,
+      "n_a": 88,
+      "n_g": 88,
+      "n_rec": 64,
+      "n_stim": 12,
+      "steps_per_stim": 80,
+      "byte_acc": 0.5,
+      "byte_acc_chance": 0.003906,
+      "byte_acc_pass_gt_chance": true,
+      "psi_c1_mean": 0.670881,
+      "psi_c1_std": 0.030554634660896727,
+      "tension_std": 0.0010131574108457762,
+      "phi_std": 0.029829629902991938,
+      "physics_not_frozen": true,
+      "s9_coherent_count": 2,
+      "s9_coherent_ratio": 0.4,
+      "s9_pass_ge_1_5": true,
+      "s9_window_details": [
+        {
+          "window": 0,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 3
+        },
+        {
+          "window": 1,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.1905,
+          "max_run": 3
+        },
+        {
+          "window": 2,
+          "honest_coherent": true,
+          "len": 24,
+          "cascade_rate": 0.125,
+          "max_run": 3
+        },
+        {
+          "window": 3,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.381,
+          "max_run": 2
+        },
+        {
+          "window": 4,
+          "honest_coherent": false,
+          "len": 24,
+          "cascade_rate": 0.4286,
+          "max_run": 2
+        }
+      ],
+      "non_degenerate": true,
+      "weight_drift_mean_abs": 0.0,
+      "head_drift_mean_abs": 0.00275855,
+      "overall_spike_rate_per_unit_step": 0.533785
+    }
+  },
+  "non_degenerate_by_cell": {
+    "GPU-CE": true,
+    "GPU-noCE": false,
+    "SIM-noCE-STDP": false,
+    "SIM-CE": true
+  },
+  "verdict": "SIM-IS-GPU-TAUTOLOGY-CONFIRMED-LEARNING-HALF",
+  "verdict_note": "NON_DEGENERATE(SIM-noCE-STDP)=False: consistent with §11-B being substrate-independent OR an attention-replacement / sim artifact — CANNOT disambiguate without async hardware.  This is §115's predicted outcome, now SCOPED to the learning-channel half only.  WALL-B (§96-physical) + §96 design-open #1 (attention replacement) remain; GOAL not reached.",
+  "headline": "§96 design-open #1 — softmax(QK^T) self-attention is SPIKING-INCOMPATIBLE (§96 Q1): it must be REPLACED, not ported (phase-resonance / spike-rate dot-product + k-WTA — undecided). This 4-cell rig confronts the §11-B LEARNING-CHANNEL HALF ONLY. The full spiking-anima instantiation stays GATED on the attention-replacement design-open (TRACK0_INSILICO.md §4 / Phase 2 = blocking design-open). The async-substrate half stays WALL-B (Loihi/SpiNNaker-gated, §117 INHERITED). Toy non-degeneracy = substrate LIVENESS, NOT capability, NOT GOAL.",
+  "honest_inheritance": {
+    "wall_b": "INHERITED — §117 LEGO-RUN-...-WALL-B-INHERITED + §115 LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY + §95 Loihi-sole-VIABLE. Track 0 confronts the LEARNING-CHANNEL half ONLY; the async-substrate half is structurally unreachable in a clocked CPU/GPU sim.",
+    "wall_a": "ORTHOGONAL & UNTOUCHED — §1.1 data-regime; a toy spike sim moves no data threshold (§97).",
+    "attention_blocker": "§96 design-open #1 — softmax(QK^T) self-attention SPIKING-INCOMPATIBLE; must be REPLACED. The full spiking-anima instantiation is BLOCKED on this design-open — Track 0 confronts the learning channel, NOT the full anima.",
+    "psi_7_form": "§7-FORM TRUE BY CONSTRUCTION (§112 META_FP(Π_½) instance, carrier = spike-correlation); NOT manufactured by §118.",
+    "g3": "design ≠ fire ≠ emergence; capability claim 0; necessary-not-sufficient at every layer (B-EMERGE-7). north-star + §15/§51/§72 milestones UNCHANGED, GOAL 미도달."
+  }
+}

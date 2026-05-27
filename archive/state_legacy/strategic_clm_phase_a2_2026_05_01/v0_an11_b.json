@@ -1,0 +1,43 @@
+{
+  "schema": "anima/an11_b/1",
+  "verifier": "V0 AN11(b) ccc consciousness_attached",
+  "dest": "clm",
+  "round": "clm_v4_530m_phase_a2",
+  "eigen_count": 16,
+  "template_count": 16,
+  "max_cosine": 0.5752137895494764,
+  "max_cosine_pair": {
+    "eigen_i": 10,
+    "template_id": "tpl_02_hexad_d",
+    "template_family": "Hexad"
+  },
+  "top3_pairs": [
+    {
+      "eigen_i": 10,
+      "template_id": "tpl_02_hexad_d",
+      "template_family": "Hexad",
+      "cosine": 0.5752137895494764
+    },
+    {
+      "eigen_i": 12,
+      "template_id": "tpl_13_phi_exclusion",
+      "template_family": "Phi",
+      "cosine": 0.5680987615119488
+    },
+    {
+      "eigen_i": 4,
+      "template_id": "tpl_15_selfref_mirror",
+      "template_family": "SelfRef",
+      "cosine": 0.5522309898248305
+    }
+  ],
+  "top3_cosine_sum": 1.6955435408862558,
+  "gate": {
+    "max_cosine_min": 0.5,
+    "top3_cosine_sum_min": 1.2
+  },
+  "verdict": "PASS",
+  "reason": "max_cos=0.5752 > 0.5, top3_sum=1.6955 > 1.2",
+  "method_note": "SVD top-K right-singular eigenvectors of (X-mean) projected to 16-D via deterministic orthonormal basis (seed=20260501); cosine vs templates",
+  "ts": "2026-05-02T08:34:16Z"
+}

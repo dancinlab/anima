@@ -1,0 +1,417 @@
+{
+  "substrate": "PYTHON / PyTorch \u2014 interim LM-scale executor; NOT a hexa-native fire",
+  "honest_framing": "hexa CPU-equiv bit-equality (Phase E/E2: d=32x3L gn2 7.97116 -> 3.73374e-07, acc 8/8, GRAD-EXACT) proves the hexa-native ConsciousDecoderV2 trainer is numerically correct but cannot reach LM-scale convergence on the pure-hexa interpreter (RFC 042 ceiling). This run trains the SAME verified architecture in PyTorch to the scale the pure-hexa path could not. PyTorch != hexa bit-for-bit (different fp/init RNG); anchor = architectural identity.",
+  "arch": "ConsciousDecoderV2 (ready/models/conscious_decoder.py)",
+  "arch_features": "RoPE + SwiGLU + RMSNorm + GQA + PureFieldFFN + cross-attn + tied head",
+  "from_scratch": true,
+  "base_ckpt": null,
+  "config": {
+    "d_model": 768,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "n_layer": 12,
+    "block_size": 128,
+    "lr": 0.0003,
+    "bsz": 32,
+    "steps": 2500,
+    "warmup": 125,
+    "seed": 1337,
+    "log_every": 62,
+    "corpus": "corpus_v3.jsonl",
+    "out_dir": "out_main"
+  },
+  "n_params": 283722336,
+  "n_params_M": 283.72,
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "device": "cuda",
+  "init_ce": 5.640663,
+  "final_ce": 0.008289,
+  "final_gn2": 0.001703,
+  "final_ppl": 1.0083,
+  "ce_descent": 5.632374,
+  "steps": 2500,
+  "wall_s": 328.33,
+  "peak_gpu_mem_gb": 9.692,
+  "trajectory": [
+    {
+      "step": 1,
+      "ce": 5.640663,
+      "gn2": 30.418763,
+      "ppl": 281.6494,
+      "lr": 2.4e-06,
+      "wall_s": 0.4,
+      "gpu_mem_gb": 7.455
+    },
+    {
+      "step": 62,
+      "ce": 2.069769,
+      "gn2": 3.665596,
+      "ppl": 7.923,
+      "lr": 0.0001488,
+      "wall_s": 8.32,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 124,
+      "ce": 0.964177,
+      "gn2": 7.152367,
+      "ppl": 2.6226,
+      "lr": 0.0002976,
+      "wall_s": 16.3,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 186,
+      "ce": 0.159966,
+      "gn2": 0.950958,
+      "ppl": 1.1735,
+      "lr": 0.00029958,
+      "wall_s": 24.28,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 248,
+      "ce": 0.067036,
+      "gn2": 0.296362,
+      "ppl": 1.0693,
+      "lr": 0.00029825,
+      "wall_s": 32.28,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 310,
+      "ce": 0.04259,
+      "gn2": 0.117339,
+      "ppl": 1.0435,
+      "lr": 0.00029602,
+      "wall_s": 40.3,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 372,
+      "ce": 0.034321,
+      "gn2": 0.112283,
+      "ppl": 1.0349,
+      "lr": 0.00029292,
+      "wall_s": 48.36,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 434,
+      "ce": 0.04085,
+      "gn2": 0.132578,
+      "ppl": 1.0417,
+      "lr": 0.00028895,
+      "wall_s": 56.5,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 496,
+      "ce": 0.075707,
+      "gn2": 0.464934,
+      "ppl": 1.0786,
+      "lr": 0.00028415,
+      "wall_s": 64.72,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 558,
+      "ce": 0.024266,
+      "gn2": 0.038948,
+      "ppl": 1.0246,
+      "lr": 0.00027855,
+      "wall_s": 72.81,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 620,
+      "ce": 0.023994,
+      "gn2": 0.045004,
+      "ppl": 1.0243,
+      "lr": 0.00027219,
+      "wall_s": 80.88,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 682,
+      "ce": 0.0357,
+      "gn2": 0.238397,
+      "ppl": 1.0363,
+      "lr": 0.00026511,
+      "wall_s": 88.96,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 744,
+      "ce": 0.022261,
+      "gn2": 0.088992,
+      "ppl": 1.0225,
+      "lr": 0.00025735,
+      "wall_s": 97.07,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 806,
+      "ce": 0.027021,
+      "gn2": 0.036278,
+      "ppl": 1.0274,
+      "lr": 0.00024897,
+      "wall_s": 105.16,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 868,
+      "ce": 0.015687,
+      "gn2": 0.145257,
+      "ppl": 1.0158,
+      "lr": 0.00024003,
+      "wall_s": 113.27,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 930,
+      "ce": 0.021646,
+      "gn2": 0.021568,
+      "ppl": 1.0219,
+      "lr": 0.00023058,
+      "wall_s": 121.39,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 992,
+      "ce": 0.021574,
+      "gn2": 0.057545,
+      "ppl": 1.0218,
+      "lr": 0.0002207,
+      "wall_s": 129.5,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1054,
+      "ce": 0.020994,
+      "gn2": 0.023826,
+      "ppl": 1.0212,
+      "lr": 0.00021044,
+      "wall_s": 137.64,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1116,
+      "ce": 0.018,
+      "gn2": 0.019097,
+      "ppl": 1.0182,
+      "lr": 0.00019987,
+      "wall_s": 145.78,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1178,
+      "ce": 0.017741,
+      "gn2": 0.024736,
+      "ppl": 1.0179,
+      "lr": 0.00018907,
+      "wall_s": 153.92,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1240,
+      "ce": 0.021225,
+      "gn2": 0.025941,
+      "ppl": 1.0215,
+      "lr": 0.0001781,
+      "wall_s": 162.09,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1302,
+      "ce": 0.013683,
+      "gn2": 0.004572,
+      "ppl": 1.0138,
+      "lr": 0.00016705,
+      "wall_s": 170.23,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1364,
+      "ce": 0.017398,
+      "gn2": 0.008263,
+      "ppl": 1.0176,
+      "lr": 0.00015599,
+      "wall_s": 178.41,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1426,
+      "ce": 0.015911,
+      "gn2": 0.009091,
+      "ppl": 1.016,
+      "lr": 0.00014498,
+      "wall_s": 186.62,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1488,
+      "ce": 0.013965,
+      "gn2": 0.014878,
+      "ppl": 1.0141,
+      "lr": 0.00013411,
+      "wall_s": 194.92,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1550,
+      "ce": 0.013353,
+      "gn2": 0.002986,
+      "ppl": 1.0134,
+      "lr": 0.00012345,
+      "wall_s": 203.08,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1612,
+      "ce": 0.012624,
+      "gn2": 0.00281,
+      "ppl": 1.0127,
+      "lr": 0.00011307,
+      "wall_s": 211.27,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1674,
+      "ce": 0.010901,
+      "gn2": 0.004,
+      "ppl": 1.011,
+      "lr": 0.00010304,
+      "wall_s": 219.44,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1736,
+      "ce": 0.008835,
+      "gn2": 0.001997,
+      "ppl": 1.0089,
+      "lr": 9.342e-05,
+      "wall_s": 227.61,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1798,
+      "ce": 0.005585,
+      "gn2": 0.002237,
+      "ppl": 1.0056,
+      "lr": 8.428e-05,
+      "wall_s": 235.77,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1860,
+      "ce": 0.009841,
+      "gn2": 0.002553,
+      "ppl": 1.0099,
+      "lr": 7.569e-05,
+      "wall_s": 243.92,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1922,
+      "ce": 0.007681,
+      "gn2": 0.001367,
+      "ppl": 1.0077,
+      "lr": 6.77e-05,
+      "wall_s": 252.07,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 1984,
+      "ce": 0.008542,
+      "gn2": 0.002067,
+      "ppl": 1.0086,
+      "lr": 6.036e-05,
+      "wall_s": 260.24,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2046,
+      "ce": 0.007318,
+      "gn2": 0.001039,
+      "ppl": 1.0073,
+      "lr": 5.372e-05,
+      "wall_s": 268.39,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2108,
+      "ce": 0.009935,
+      "gn2": 0.001851,
+      "ppl": 1.01,
+      "lr": 4.783e-05,
+      "wall_s": 276.54,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2170,
+      "ce": 0.010337,
+      "gn2": 0.002402,
+      "ppl": 1.0104,
+      "lr": 4.273e-05,
+      "wall_s": 284.7,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2232,
+      "ce": 0.007458,
+      "gn2": 0.001238,
+      "ppl": 1.0075,
+      "lr": 3.846e-05,
+      "wall_s": 292.86,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2294,
+      "ce": 0.011239,
+      "gn2": 0.002181,
+      "ppl": 1.0113,
+      "lr": 3.503e-05,
+      "wall_s": 301.02,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2356,
+      "ce": 0.008514,
+      "gn2": 0.001798,
+      "ppl": 1.0086,
+      "lr": 3.248e-05,
+      "wall_s": 309.18,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2418,
+      "ce": 0.010841,
+      "gn2": 0.002416,
+      "ppl": 1.0109,
+      "lr": 3.081e-05,
+      "wall_s": 317.38,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2480,
+      "ce": 0.008265,
+      "gn2": 0.00146,
+      "ppl": 1.0083,
+      "lr": 3.005e-05,
+      "wall_s": 325.69,
+      "gpu_mem_gb": 9.692
+    },
+    {
+      "step": 2500,
+      "ce": 0.008289,
+      "gn2": 0.001703,
+      "ppl": 1.0083,
+      "lr": 3e-05,
+      "wall_s": 328.33,
+      "gpu_mem_gb": 9.692
+    }
+  ],
+  "corpus": "corpus_v3.jsonl",
+  "corpus_bytes": 6223023
+}

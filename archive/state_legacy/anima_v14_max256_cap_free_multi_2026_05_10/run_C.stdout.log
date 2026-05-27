@@ -1,0 +1,38 @@
+=== BG-V14-MAX256-CAP-FREE-MULTI — C_cells64_aware ===
+ts: 2026-05-10T10:14:06.246937+00:00
+sub: {'ckpt': '/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt', 'schema': 'v2_d384', 'arch': 'v2 6L transformer d=384 heads=6', 'paradigm': 'aware_max_cells_64'}
+V4_SEEDS=[42, 137, 271, 314, 1729] max_cells=256 n_turns=100 snap_every=25
+
+========================================================================
+SUBSTRATE C_cells64_aware — v2 d=384 path  max_cells=256
+========================================================================
+ckpt: /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt
+sha256: 61e1d735cf4b5360683e40ab81ada593d757f3543d33d01c08944a4c8b039a4c
+trained: params=18.52M step=50000
+
+--- TRAINED max_cells=256 n_turns=100 ---
+  v2 blocks loaded=6 random_cells=[6, 7]
+  [C_cells64_aware_trained] turn    0 n_cells=8 phi=0.557 (0.1s)
+  [C_cells64_aware_trained] turn   50 n_cells=42 phi=170.366 (32.7s)
+  [C_cells64_aware_trained] turn   75 n_cells=172 phi=4429.728 (257.3s)
+  [C_cells64_aware_trained] turn   99 n_cells=256 phi=11337.964 (771.7s)
+  trained: cells=256 splits=248 phi=11337.964 phi/c=44.289 α=1.0469794499742044 cap_bound=18/100 first_cap=82 max_observed=256 elapsed=771.7s
+
+--- mirror seed=42 ---
+  [C_cells64_aware_s42] turn    0 n_cells=8 phi=0.574 (0.1s)
+  [C_cells64_aware_s42] turn   25 n_cells=32 phi=122.296 (9.3s)
+  [C_cells64_aware_s42] turn   50 n_cells=117 phi=1886.851 (65.8s)
+  [C_cells64_aware_s42] turn   75 n_cells=256 phi=10537.413 (524.2s)
+  [C_cells64_aware_s42] turn   99 n_cells=256 phi=10831.306 (1046.2s)
+  s=42: cells=256 splits=248 phi=10831.306 phi/c=42.310 α=1.0502086366680745 cap_bound=37/100 first_cap=63 max_observed=256
+
+--- mirror seed=137 ---
+  [C_cells64_aware_s137] turn    0 n_cells=8 phi=0.552 (0.0s)
+  [C_cells64_aware_s137] turn   50 n_cells=66 phi=573.817 (34.9s)
+  [C_cells64_aware_s137] turn   75 n_cells=256 phi=10585.888 (382.0s)
+  [C_cells64_aware_s137] turn   99 n_cells=256 phi=9810.640 (837.9s)
+  s=137: cells=256 splits=248 phi=9810.640 phi/c=38.323 α=1.042702744396559 cap_bound=28/100 first_cap=72 max_observed=256
+
+--- mirror seed=271 ---
+  [C_cells64_aware_s271] turn    0 n_cells=8 phi=0.550 (0.0s)
+  [C_cells64_aware_s271] turn   50 n_cells=76 phi=851.282 (38.3s)

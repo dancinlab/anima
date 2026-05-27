@@ -1,0 +1,291 @@
+=== v8_seedrep_46 vast.ai H100 dispatch (routing fix g2+g3) ===
+Wed May 13 22:26:57 UTC 2026
+  steps=15000 d_model=512 cells=2-64 batch=8 ctx=128
+  ROUTING: top_k=4 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+  cost_cap=$8.0 absolute_max=$8.8
+[1/9] Searching GPU offers (gpu_name in [H100_SXM,H100_PCIE,H100_NVL,A100_SXM4,A100_PCIE,H200] num_gpus=1 reliability>0.95 dph_total<5.0 disk_space>50 inet_down>100) ...
+  Selected: id=36715941 dph=$0.7609 gpu=A100
+[2/9] cost gate OK (est $1.14)
+[3/9] Renting...
+  Instance ID: 36715951
+[4/9] Waiting SSH (direct-IP) ...
+  ... 1/160 status=None
+  ... 2/160 status=None
+  ... 3/160 status=loading
+  ... 4/160 status=running
+  SSH ready: 157.90.56.162:31741 (5x5s)
+[5/9] Uploading code+corpus+probe ...
+Warning: Permanently added '[157.90.56.162]:31741' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[157.90.56.162]:31741' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[157.90.56.162]:31741' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[157.90.56.162]:31741' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+Warning: Permanently added '[157.90.56.162]:31741' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[6/9] (image already has torch — skip pip install)
+[7/9] Train v3-routing ...
+Warning: Permanently added '[157.90.56.162]:31741' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+[INFO] device=cuda torch=2.5.1+cu121 cuda=True
+[INFO] gpu=NVIDIA A100-SXM4-40GB
+[INFO] cfg = {'vocab_size': 256, 'd_model': 512, 'n_head': 8, 'ffn_dim': 1536, 'max_seq': 128, 'n_layer': 1, 'initial_cells': 2, 'max_cells': 64, 'min_cells': 2, 'split_patience': 3, 'merge_threshold': 0.005, 'merge_patience': 30, 'noise_scale': 0.1, 'lorenz_scale': 0.05, 'adaptive_window': 100, 'readout_mode': 'a_minus_g', 'attention_sharing': 'auto', 'weight_tied_lm_head': True, 'dropout': 0.0, 'tie_pos_emb': True, 'dispersion_trigger_enabled': True, 'dispersion_top_quartile': 0.25, 'per_cell_threshold_enabled': True, 'per_cell_window': 100, 'per_cell_sigma_mult': 1.5, 'lorenz_auto_calibrate': True, 'lorenz_calibration_factor': 1.0}
+[INFO] n_params(engine+router)=8,631,360  router_out_dim=64 top_k=4
+[INFO] corpus=corpus/corpus_persona_balanced.txt bytes=1,300,270
+[INFO] top_k=4 aux_alpha=0.01 λ_init=1.0 λ_final=0.01 sched=cosine
+[STEP     0] loss=359.6852 ce=360.3626 aux=1.0000 ent_gate=0.6874/0.693 wmax=0.5534 active>.01=2.0/2 λ=1.0000 cells=2 splits=0 cost=$0.00
+[STEP    50] loss=344.7944 ce=351.1336 aux=1.0209 ent_gate=1.2805/2.708 wmax=0.4018 active>.01=3.0/15 λ=1.0000 cells=15 splits=13 cost=$0.00
+[STEP   100] loss=322.0287 ce=339.4037 aux=1.1648 ent_gate=3.3737/3.807 wmax=0.2672 active>.01=4.0/45 λ=1.0000 cells=45 splits=43 cost=$0.00
+[STEP   150] loss=272.5526 ce=301.8518 aux=1.2175 ent_gate=4.0697/4.159 wmax=0.2713 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.01
+[STEP   200] loss=214.3436 ce=243.2582 aux=1.1727 ent_gate=4.1564/4.159 wmax=0.3182 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.01
+[STEP   250] loss=63.1841 ce=129.4326 aux=1.2239 ent_gate=4.1540/4.159 wmax=0.3770 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.01
+[STEP   300] loss=16.7515 ce=35.9086 aux=1.3713 ent_gate=4.1463/4.159 wmax=0.4512 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.01
+[STEP   350] loss=3.9601 ce=12.7865 aux=1.6143 ent_gate=4.1282/4.159 wmax=0.5404 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.02
+[STEP   400] loss=-0.3104 ce=5.7373 aux=2.0041 ent_gate=4.0891/4.159 wmax=0.6389 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.02
+[STEP   450] loss=-1.2350 ce=3.2094 aux=2.5151 ent_gate=4.0253/4.159 wmax=0.7226 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.02
+[STEP   500] loss=-1.6380 ce=2.5756 aux=2.5922 ent_gate=4.0150/4.159 wmax=0.7333 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.03
+[STEP   550] loss=-1.6584 ce=2.3313 aux=2.3765 ent_gate=4.0448/4.159 wmax=0.7027 active>.01=4.0/64 λ=1.0000 cells=64 splits=62 cost=$0.03
+[STEP   600] loss=-1.9877 ce=2.1799 aux=2.2095 ent_gate=4.0662/4.159 wmax=0.6764 active>.01=4.0/64 λ=0.9999 cells=64 splits=62 cost=$0.03
+[STEP   650] loss=-1.9369 ce=2.0793 aux=2.0809 ent_gate=4.0813/4.159 wmax=0.6543 active>.01=4.0/64 λ=0.9997 cells=64 splits=62 cost=$0.04
+[STEP   700] loss=-2.0796 ce=2.0150 aux=1.9991 ent_gate=4.0908/4.159 wmax=0.6378 active>.01=4.0/64 λ=0.9995 cells=64 splits=62 cost=$0.04
+[STEP   750] loss=-2.0963 ce=1.9710 aux=1.9407 ent_gate=4.0971/4.159 wmax=0.6255 active>.01=4.0/64 λ=0.9993 cells=64 splits=62 cost=$0.04
+[STEP   800] loss=-2.3007 ce=1.9286 aux=1.8839 ent_gate=4.1032/4.159 wmax=0.6128 active>.01=4.0/64 λ=0.9990 cells=64 splits=62 cost=$0.04
+[STEP   850] loss=-2.2064 ce=1.8779 aux=1.8432 ent_gate=4.1074/4.159 wmax=0.6032 active>.01=4.0/64 λ=0.9986 cells=64 splits=62 cost=$0.05
+[STEP   900] loss=-2.2107 ce=1.8569 aux=1.8124 ent_gate=4.1105/4.159 wmax=0.5952 active>.01=4.0/64 λ=0.9981 cells=64 splits=62 cost=$0.05
+[STEP   950] loss=-2.1498 ce=1.8167 aux=1.7719 ent_gate=4.1145/4.159 wmax=0.5849 active>.01=4.0/64 λ=0.9976 cells=64 splits=62 cost=$0.05
+[STEP  1000] loss=-2.2890 ce=1.7848 aux=1.7341 ent_gate=4.1180/4.159 wmax=0.5751 active>.01=4.0/64 λ=0.9971 cells=64 splits=62 cost=$0.06
+[STEP  1050] loss=-2.2360 ce=1.7534 aux=1.7095 ent_gate=4.1202/4.159 wmax=0.5691 active>.01=4.0/64 λ=0.9965 cells=64 splits=62 cost=$0.06
+[STEP  1100] loss=-2.3869 ce=1.7378 aux=1.6866 ent_gate=4.1224/4.159 wmax=0.5619 active>.01=4.0/64 λ=0.9958 cells=64 splits=62 cost=$0.06
+[STEP  1150] loss=-2.2314 ce=1.7104 aux=1.6686 ent_gate=4.1239/4.159 wmax=0.5577 active>.01=4.0/64 λ=0.9951 cells=64 splits=62 cost=$0.07
+[STEP  1200] loss=-2.4927 ce=1.6973 aux=1.6639 ent_gate=4.1245/4.159 wmax=0.5550 active>.01=4.0/64 λ=0.9943 cells=64 splits=62 cost=$0.07
+[STEP  1250] loss=-2.3595 ce=1.7061 aux=1.6482 ent_gate=4.1258/4.159 wmax=0.5506 active>.01=4.0/64 λ=0.9935 cells=64 splits=62 cost=$0.07
+[STEP  1300] loss=-2.4422 ce=1.6637 aux=1.6391 ent_gate=4.1267/4.159 wmax=0.5473 active>.01=4.0/64 λ=0.9926 cells=64 splits=62 cost=$0.08
+[STEP  1350] loss=-2.4768 ce=1.6633 aux=1.6259 ent_gate=4.1278/4.159 wmax=0.5436 active>.01=4.0/64 λ=0.9916 cells=64 splits=62 cost=$0.08
+[STEP  1400] loss=-2.4524 ce=1.6489 aux=1.6076 ent_gate=4.1293/4.159 wmax=0.5378 active>.01=4.0/64 λ=0.9906 cells=64 splits=62 cost=$0.08
+[STEP  1450] loss=-2.4497 ce=1.6383 aux=1.5996 ent_gate=4.1300/4.159 wmax=0.5351 active>.01=4.0/64 λ=0.9896 cells=64 splits=62 cost=$0.08
+[STEP  1500] loss=-2.5198 ce=1.5791 aux=1.5888 ent_gate=4.1310/4.159 wmax=0.5310 active>.01=4.0/64 λ=0.9884 cells=64 splits=62 cost=$0.09
+[STEP  1550] loss=-2.5350 ce=1.6330 aux=1.5746 ent_gate=4.1321/4.159 wmax=0.5271 active>.01=4.0/64 λ=0.9872 cells=64 splits=62 cost=$0.09
+[STEP  1600] loss=-2.6884 ce=1.5682 aux=1.5644 ent_gate=4.1330/4.159 wmax=0.5225 active>.01=4.0/64 λ=0.9860 cells=64 splits=62 cost=$0.09
+[STEP  1650] loss=-2.4469 ce=1.5425 aux=1.5528 ent_gate=4.1338/4.159 wmax=0.5202 active>.01=4.0/64 λ=0.9847 cells=64 splits=62 cost=$0.10
+[STEP  1700] loss=-2.4429 ce=1.5412 aux=1.5587 ent_gate=4.1334/4.159 wmax=0.5208 active>.01=4.0/64 λ=0.9834 cells=64 splits=62 cost=$0.10
+[STEP  1750] loss=-2.5128 ce=1.5184 aux=1.5410 ent_gate=4.1348/4.159 wmax=0.5148 active>.01=4.0/64 λ=0.9820 cells=64 splits=62 cost=$0.10
+[STEP  1800] loss=-2.5541 ce=1.5065 aux=1.5308 ent_gate=4.1355/4.159 wmax=0.5122 active>.01=4.0/64 λ=0.9805 cells=64 splits=62 cost=$0.11
+[STEP  1850] loss=-2.5623 ce=1.4788 aux=1.5113 ent_gate=4.1369/4.159 wmax=0.5062 active>.01=4.0/64 λ=0.9790 cells=64 splits=62 cost=$0.11
+[STEP  1900] loss=-2.5565 ce=1.5001 aux=1.5192 ent_gate=4.1365/4.159 wmax=0.5078 active>.01=4.0/64 λ=0.9774 cells=64 splits=62 cost=$0.11
+[STEP  1950] loss=-2.5550 ce=1.4469 aux=1.5049 ent_gate=4.1375/4.159 wmax=0.5026 active>.01=4.0/64 λ=0.9758 cells=64 splits=62 cost=$0.12
+  [SNAP 2000] 4a KL=2.9427 z=1.40 | 4b cos_z=0.55
+[STEP  2000] loss=-2.5931 ce=1.4460 aux=1.4907 ent_gate=4.1386/4.159 wmax=0.4976 active>.01=4.0/64 λ=0.9741 cells=64 splits=62 cost=$0.12
+[STEP  2050] loss=-2.5762 ce=1.4196 aux=1.4780 ent_gate=4.1395/4.159 wmax=0.4923 active>.01=4.0/64 λ=0.9723 cells=64 splits=62 cost=$0.12
+[STEP  2100] loss=-2.5758 ce=1.4184 aux=1.4876 ent_gate=4.1389/4.159 wmax=0.4955 active>.01=4.0/64 λ=0.9706 cells=64 splits=62 cost=$0.13
+[STEP  2150] loss=-2.5898 ce=1.4028 aux=1.4741 ent_gate=4.1397/4.159 wmax=0.4926 active>.01=4.0/64 λ=0.9687 cells=64 splits=62 cost=$0.13
+[STEP  2200] loss=-2.7047 ce=1.3787 aux=1.4781 ent_gate=4.1394/4.159 wmax=0.4934 active>.01=4.0/64 λ=0.9668 cells=64 splits=62 cost=$0.13
+[STEP  2250] loss=-2.6296 ce=1.3598 aux=1.4721 ent_gate=4.1399/4.159 wmax=0.4902 active>.01=4.0/64 λ=0.9648 cells=64 splits=62 cost=$0.14
+[STEP  2300] loss=-2.5717 ce=1.3627 aux=1.4568 ent_gate=4.1410/4.159 wmax=0.4843 active>.01=4.0/64 λ=0.9628 cells=64 splits=62 cost=$0.14
+[STEP  2350] loss=-2.5403 ce=1.3446 aux=1.4485 ent_gate=4.1415/4.159 wmax=0.4821 active>.01=4.0/64 λ=0.9608 cells=64 splits=62 cost=$0.14
+[STEP  2400] loss=-2.7158 ce=1.3278 aux=1.4491 ent_gate=4.1415/4.159 wmax=0.4815 active>.01=4.0/64 λ=0.9586 cells=64 splits=62 cost=$0.14
+[STEP  2450] loss=-2.5201 ce=1.3266 aux=1.4524 ent_gate=4.1415/4.159 wmax=0.4808 active>.01=4.0/64 λ=0.9565 cells=64 splits=62 cost=$0.15
+[STEP  2500] loss=-2.6445 ce=1.2946 aux=1.4382 ent_gate=4.1424/4.159 wmax=0.4765 active>.01=4.0/64 λ=0.9542 cells=64 splits=62 cost=$0.15
+[STEP  2550] loss=-2.6538 ce=1.3067 aux=1.4316 ent_gate=4.1427/4.159 wmax=0.4755 active>.01=4.0/64 λ=0.9520 cells=64 splits=62 cost=$0.15
+[STEP  2600] loss=-2.6510 ce=1.2788 aux=1.4310 ent_gate=4.1429/4.159 wmax=0.4723 active>.01=4.0/64 λ=0.9496 cells=64 splits=62 cost=$0.16
+[STEP  2650] loss=-2.7620 ce=1.2679 aux=1.4286 ent_gate=4.1428/4.159 wmax=0.4756 active>.01=4.0/64 λ=0.9473 cells=64 splits=62 cost=$0.16
+[STEP  2700] loss=-2.7624 ce=1.2564 aux=1.4170 ent_gate=4.1438/4.159 wmax=0.4681 active>.01=4.0/64 λ=0.9448 cells=64 splits=62 cost=$0.16
+[STEP  2750] loss=-2.5803 ce=1.2581 aux=1.4162 ent_gate=4.1439/4.159 wmax=0.4666 active>.01=4.0/64 λ=0.9423 cells=64 splits=62 cost=$0.17
+[STEP  2800] loss=-2.7257 ce=1.2173 aux=1.4138 ent_gate=4.1440/4.159 wmax=0.4669 active>.01=4.0/64 λ=0.9398 cells=64 splits=62 cost=$0.17
+[STEP  2850] loss=-2.8396 ce=1.2283 aux=1.4161 ent_gate=4.1441/4.159 wmax=0.4640 active>.01=4.0/64 λ=0.9372 cells=64 splits=62 cost=$0.17
+[STEP  2900] loss=-2.6186 ce=1.2140 aux=1.4039 ent_gate=4.1446/4.159 wmax=0.4625 active>.01=4.0/64 λ=0.9346 cells=64 splits=62 cost=$0.18
+[STEP  2950] loss=-2.8108 ce=1.1622 aux=1.4029 ent_gate=4.1448/4.159 wmax=0.4598 active>.01=4.0/64 λ=0.9319 cells=64 splits=62 cost=$0.18
+[STEP  3000] loss=-2.7151 ce=1.1654 aux=1.4022 ent_gate=4.1444/4.159 wmax=0.4658 active>.01=4.0/64 λ=0.9291 cells=64 splits=62 cost=$0.18
+[STEP  3050] loss=-2.7182 ce=1.1538 aux=1.4030 ent_gate=4.1446/4.159 wmax=0.4640 active>.01=4.0/64 λ=0.9264 cells=64 splits=62 cost=$0.19
+[STEP  3100] loss=-2.7073 ce=1.1229 aux=1.3897 ent_gate=4.1454/4.159 wmax=0.4575 active>.01=4.0/64 λ=0.9235 cells=64 splits=62 cost=$0.19
+[STEP  3150] loss=-2.6009 ce=1.1228 aux=1.3904 ent_gate=4.1454/4.159 wmax=0.4576 active>.01=4.0/64 λ=0.9206 cells=64 splits=62 cost=$0.19
+[STEP  3200] loss=-2.5904 ce=1.1131 aux=1.3980 ent_gate=4.1449/4.159 wmax=0.4607 active>.01=4.0/64 λ=0.9177 cells=64 splits=62 cost=$0.19
+[STEP  3250] loss=-2.6987 ce=1.0965 aux=1.3928 ent_gate=4.1458/4.159 wmax=0.4510 active>.01=4.0/64 λ=0.9147 cells=64 splits=62 cost=$0.20
+[STEP  3300] loss=-2.6784 ce=1.0777 aux=1.3875 ent_gate=4.1456/4.159 wmax=0.4567 active>.01=4.0/64 λ=0.9117 cells=64 splits=62 cost=$0.20
+[STEP  3350] loss=-2.7163 ce=1.1095 aux=1.3876 ent_gate=4.1456/4.159 wmax=0.4568 active>.01=4.0/64 λ=0.9086 cells=64 splits=62 cost=$0.20
+[STEP  3400] loss=-2.6993 ce=1.0398 aux=1.3905 ent_gate=4.1453/4.159 wmax=0.4593 active>.01=4.0/64 λ=0.9055 cells=64 splits=62 cost=$0.21
+[STEP  3450] loss=-2.6598 ce=1.0660 aux=1.3929 ent_gate=4.1452/4.159 wmax=0.4597 active>.01=4.0/64 λ=0.9023 cells=64 splits=62 cost=$0.21
+[STEP  3500] loss=-2.7355 ce=1.0134 aux=1.3905 ent_gate=4.1454/4.159 wmax=0.4573 active>.01=4.0/64 λ=0.8991 cells=64 splits=62 cost=$0.21
+[STEP  3550] loss=-2.6889 ce=1.0044 aux=1.3903 ent_gate=4.1454/4.159 wmax=0.4585 active>.01=4.0/64 λ=0.8958 cells=64 splits=62 cost=$0.22
+[STEP  3600] loss=-2.7238 ce=0.9918 aux=1.3838 ent_gate=4.1458/4.159 wmax=0.4549 active>.01=4.0/64 λ=0.8925 cells=64 splits=62 cost=$0.22
+[STEP  3650] loss=-2.7412 ce=0.9925 aux=1.3889 ent_gate=4.1453/4.159 wmax=0.4594 active>.01=4.0/64 λ=0.8891 cells=64 splits=62 cost=$0.22
+[STEP  3700] loss=-2.6813 ce=0.9624 aux=1.3803 ent_gate=4.1459/4.159 wmax=0.4552 active>.01=4.0/64 λ=0.8857 cells=64 splits=62 cost=$0.23
+[STEP  3750] loss=-2.6790 ce=0.9485 aux=1.3913 ent_gate=4.1453/4.159 wmax=0.4587 active>.01=4.0/64 λ=0.8823 cells=64 splits=62 cost=$0.23
+[STEP  3800] loss=-2.5551 ce=0.9231 aux=1.3802 ent_gate=4.1459/4.159 wmax=0.4562 active>.01=4.0/64 λ=0.8788 cells=64 splits=62 cost=$0.23
+[STEP  3850] loss=-2.7264 ce=0.9207 aux=1.3752 ent_gate=4.1462/4.159 wmax=0.4540 active>.01=4.0/64 λ=0.8752 cells=64 splits=62 cost=$0.23
+[STEP  3900] loss=-2.6619 ce=0.9346 aux=1.3806 ent_gate=4.1461/4.159 wmax=0.4527 active>.01=4.0/64 λ=0.8717 cells=64 splits=62 cost=$0.24
+[STEP  3950] loss=-2.6249 ce=0.9065 aux=1.3807 ent_gate=4.1461/4.159 wmax=0.4527 active>.01=4.0/64 λ=0.8680 cells=64 splits=62 cost=$0.24
+  [SNAP 4000] 4a KL=2.3900 z=1.36 | 4b cos_z=1.06
+[STEP  4000] loss=-2.7342 ce=0.8526 aux=1.3803 ent_gate=4.1461/4.159 wmax=0.4525 active>.01=4.0/64 λ=0.8644 cells=64 splits=62 cost=$0.25
+[STEP  4050] loss=-2.4674 ce=0.8864 aux=1.3761 ent_gate=4.1463/4.159 wmax=0.4514 active>.01=4.0/64 λ=0.8607 cells=64 splits=62 cost=$0.25
+[STEP  4100] loss=-2.5930 ce=0.8629 aux=1.3634 ent_gate=4.1468/4.159 wmax=0.4498 active>.01=4.0/64 λ=0.8569 cells=64 splits=62 cost=$0.25
+[STEP  4150] loss=-2.6797 ce=0.8600 aux=1.3663 ent_gate=4.1468/4.159 wmax=0.4486 active>.01=4.0/64 λ=0.8531 cells=64 splits=62 cost=$0.25
+[STEP  4200] loss=-2.5919 ce=0.8688 aux=1.3713 ent_gate=4.1465/4.159 wmax=0.4511 active>.01=4.0/64 λ=0.8493 cells=64 splits=62 cost=$0.26
+[STEP  4250] loss=-2.7477 ce=0.8267 aux=1.3727 ent_gate=4.1465/4.159 wmax=0.4501 active>.01=4.0/64 λ=0.8454 cells=64 splits=62 cost=$0.26
+[STEP  4300] loss=-2.6003 ce=0.8283 aux=1.3572 ent_gate=4.1473/4.159 wmax=0.4452 active>.01=4.0/64 λ=0.8415 cells=64 splits=62 cost=$0.26
+[STEP  4350] loss=-2.5859 ce=0.8264 aux=1.3630 ent_gate=4.1471/4.159 wmax=0.4451 active>.01=4.0/64 λ=0.8375 cells=64 splits=62 cost=$0.27
+[STEP  4400] loss=-2.4483 ce=0.8331 aux=1.3605 ent_gate=4.1473/4.159 wmax=0.4440 active>.01=4.0/64 λ=0.8336 cells=64 splits=62 cost=$0.27
+[STEP  4450] loss=-2.4617 ce=0.8329 aux=1.3627 ent_gate=4.1471/4.159 wmax=0.4465 active>.01=4.0/64 λ=0.8295 cells=64 splits=62 cost=$0.27
+[STEP  4500] loss=-2.5834 ce=0.8212 aux=1.3612 ent_gate=4.1470/4.159 wmax=0.4475 active>.01=4.0/64 λ=0.8255 cells=64 splits=62 cost=$0.28
+[STEP  4550] loss=-2.7511 ce=0.7808 aux=1.3569 ent_gate=4.1474/4.159 wmax=0.4439 active>.01=4.0/64 λ=0.8214 cells=64 splits=62 cost=$0.28
+[STEP  4600] loss=-2.6483 ce=0.7675 aux=1.3597 ent_gate=4.1473/4.159 wmax=0.4434 active>.01=4.0/64 λ=0.8172 cells=64 splits=62 cost=$0.28
+[STEP  4650] loss=-2.5617 ce=0.7729 aux=1.3625 ent_gate=4.1473/4.159 wmax=0.4433 active>.01=4.0/64 λ=0.8130 cells=64 splits=62 cost=$0.29
+[STEP  4700] loss=-2.6094 ce=0.7863 aux=1.3544 ent_gate=4.1476/4.159 wmax=0.4421 active>.01=4.0/64 λ=0.8088 cells=64 splits=62 cost=$0.29
+[STEP  4750] loss=-2.5326 ce=0.7667 aux=1.3450 ent_gate=4.1482/4.159 wmax=0.4378 active>.01=4.0/64 λ=0.8046 cells=64 splits=62 cost=$0.29
+[STEP  4800] loss=-2.5606 ce=0.7573 aux=1.3487 ent_gate=4.1481/4.159 wmax=0.4373 active>.01=4.0/64 λ=0.8003 cells=64 splits=62 cost=$0.30
+[STEP  4850] loss=-2.5142 ce=0.7402 aux=1.3463 ent_gate=4.1481/4.159 wmax=0.4386 active>.01=4.0/64 λ=0.7960 cells=64 splits=62 cost=$0.30
+[STEP  4900] loss=-2.4666 ce=0.7085 aux=1.3394 ent_gate=4.1483/4.159 wmax=0.4383 active>.01=4.0/64 λ=0.7916 cells=64 splits=62 cost=$0.30
+[STEP  4950] loss=-2.5841 ce=0.7243 aux=1.3545 ent_gate=4.1476/4.159 wmax=0.4430 active>.01=4.0/64 λ=0.7872 cells=64 splits=62 cost=$0.30
+[STEP  5000] loss=-2.5329 ce=0.6996 aux=1.3522 ent_gate=4.1479/4.159 wmax=0.4396 active>.01=4.0/64 λ=0.7828 cells=64 splits=62 cost=$0.31
+[STEP  5050] loss=-2.4893 ce=0.7230 aux=1.3379 ent_gate=4.1485/4.159 wmax=0.4346 active>.01=4.0/64 λ=0.7783 cells=64 splits=62 cost=$0.31
+[STEP  5100] loss=-2.3211 ce=0.6998 aux=1.3342 ent_gate=4.1487/4.159 wmax=0.4344 active>.01=4.0/64 λ=0.7738 cells=64 splits=62 cost=$0.31
+[STEP  5150] loss=-2.4436 ce=0.7014 aux=1.3437 ent_gate=4.1483/4.159 wmax=0.4363 active>.01=4.0/64 λ=0.7693 cells=64 splits=62 cost=$0.32
+[STEP  5200] loss=-2.4161 ce=0.6890 aux=1.3426 ent_gate=4.1484/4.159 wmax=0.4343 active>.01=4.0/64 λ=0.7648 cells=64 splits=62 cost=$0.32
+[STEP  5250] loss=-2.4444 ce=0.6969 aux=1.3354 ent_gate=4.1487/4.159 wmax=0.4336 active>.01=4.0/64 λ=0.7602 cells=64 splits=62 cost=$0.32
+[STEP  5300] loss=-2.4037 ce=0.6733 aux=1.3342 ent_gate=4.1488/4.159 wmax=0.4326 active>.01=4.0/64 λ=0.7556 cells=64 splits=62 cost=$0.33
+[STEP  5350] loss=-2.4368 ce=0.6601 aux=1.3233 ent_gate=4.1493/4.159 wmax=0.4282 active>.01=4.0/64 λ=0.7510 cells=64 splits=62 cost=$0.33
+[STEP  5400] loss=-2.2583 ce=0.6520 aux=1.3335 ent_gate=4.1489/4.159 wmax=0.4313 active>.01=4.0/64 λ=0.7463 cells=64 splits=62 cost=$0.33
+[STEP  5450] loss=-2.4623 ce=0.6488 aux=1.3304 ent_gate=4.1489/4.159 wmax=0.4334 active>.01=4.0/64 λ=0.7416 cells=64 splits=62 cost=$0.34
+[STEP  5500] loss=-2.3447 ce=0.6282 aux=1.3305 ent_gate=4.1488/4.159 wmax=0.4338 active>.01=4.0/64 λ=0.7369 cells=64 splits=62 cost=$0.34
+[STEP  5550] loss=-2.3104 ce=0.6565 aux=1.3323 ent_gate=4.1489/4.159 wmax=0.4314 active>.01=4.0/64 λ=0.7321 cells=64 splits=62 cost=$0.34
+[STEP  5600] loss=-2.4430 ce=0.6309 aux=1.3305 ent_gate=4.1490/4.159 wmax=0.4315 active>.01=4.0/64 λ=0.7273 cells=64 splits=62 cost=$0.35
+[STEP  5650] loss=-2.4420 ce=0.6255 aux=1.3287 ent_gate=4.1491/4.159 wmax=0.4304 active>.01=4.0/64 λ=0.7225 cells=64 splits=62 cost=$0.35
+[STEP  5700] loss=-2.3196 ce=0.6190 aux=1.3258 ent_gate=4.1491/4.159 wmax=0.4312 active>.01=4.0/64 λ=0.7177 cells=64 splits=62 cost=$0.35
+[STEP  5750] loss=-2.2561 ce=0.6302 aux=1.3294 ent_gate=4.1488/4.159 wmax=0.4348 active>.01=4.0/64 λ=0.7128 cells=64 splits=62 cost=$0.35
+[STEP  5800] loss=-2.2353 ce=0.6136 aux=1.3221 ent_gate=4.1492/4.159 wmax=0.4308 active>.01=4.0/64 λ=0.7080 cells=64 splits=62 cost=$0.36
+[STEP  5850] loss=-2.3641 ce=0.5656 aux=1.3222 ent_gate=4.1493/4.159 wmax=0.4301 active>.01=4.0/64 λ=0.7031 cells=64 splits=62 cost=$0.36
+[STEP  5900] loss=-2.4010 ce=0.6165 aux=1.3317 ent_gate=4.1489/4.159 wmax=0.4326 active>.01=4.0/64 λ=0.6981 cells=64 splits=62 cost=$0.36
+[STEP  5950] loss=-2.3614 ce=0.6036 aux=1.3267 ent_gate=4.1491/4.159 wmax=0.4315 active>.01=4.0/64 λ=0.6932 cells=64 splits=62 cost=$0.37
+  [SNAP 6000] 4a KL=1.6007 z=0.51 | 4b cos_z=1.14
+[STEP  6000] loss=-2.2548 ce=0.6075 aux=1.3241 ent_gate=4.1493/4.159 wmax=0.4280 active>.01=4.0/64 λ=0.6882 cells=64 splits=62 cost=$0.37
+[STEP  6050] loss=-2.1357 ce=0.6136 aux=1.3284 ent_gate=4.1488/4.159 wmax=0.4353 active>.01=4.0/64 λ=0.6832 cells=64 splits=62 cost=$0.37
+[STEP  6100] loss=-2.1282 ce=0.6195 aux=1.3194 ent_gate=4.1494/4.159 wmax=0.4288 active>.01=4.0/64 λ=0.6782 cells=64 splits=62 cost=$0.38
+[STEP  6150] loss=-2.1316 ce=0.5742 aux=1.3222 ent_gate=4.1492/4.159 wmax=0.4314 active>.01=4.0/64 λ=0.6732 cells=64 splits=62 cost=$0.38
+[STEP  6200] loss=-2.1933 ce=0.5894 aux=1.3246 ent_gate=4.1492/4.159 wmax=0.4306 active>.01=4.0/64 λ=0.6681 cells=64 splits=62 cost=$0.38
+[STEP  6250] loss=-2.2149 ce=0.5854 aux=1.3210 ent_gate=4.1492/4.159 wmax=0.4315 active>.01=4.0/64 λ=0.6631 cells=64 splits=62 cost=$0.39
+[STEP  6300] loss=-2.2167 ce=0.5724 aux=1.3170 ent_gate=4.1496/4.159 wmax=0.4281 active>.01=4.0/64 λ=0.6580 cells=64 splits=62 cost=$0.39
+[STEP  6350] loss=-2.2016 ce=0.5631 aux=1.3227 ent_gate=4.1493/4.159 wmax=0.4287 active>.01=4.0/64 λ=0.6529 cells=64 splits=62 cost=$0.39
+[STEP  6400] loss=-2.1135 ce=0.5530 aux=1.3163 ent_gate=4.1496/4.159 wmax=0.4280 active>.01=4.0/64 λ=0.6477 cells=64 splits=62 cost=$0.40
+[STEP  6450] loss=-1.9986 ce=0.5935 aux=1.3309 ent_gate=4.1489/4.159 wmax=0.4327 active>.01=4.0/64 λ=0.6426 cells=64 splits=62 cost=$0.40
+[STEP  6500] loss=-2.0264 ce=0.6038 aux=1.3275 ent_gate=4.1492/4.159 wmax=0.4285 active>.01=4.0/64 λ=0.6374 cells=64 splits=62 cost=$0.40
+[STEP  6550] loss=-2.0907 ce=0.5487 aux=1.3153 ent_gate=4.1496/4.159 wmax=0.4275 active>.01=4.0/64 λ=0.6323 cells=64 splits=62 cost=$0.41
+[STEP  6600] loss=-2.0232 ce=0.5273 aux=1.3195 ent_gate=4.1493/4.159 wmax=0.4308 active>.01=4.0/64 λ=0.6271 cells=64 splits=62 cost=$0.41
+[STEP  6650] loss=-1.9266 ce=0.5533 aux=1.3224 ent_gate=4.1493/4.159 wmax=0.4295 active>.01=4.0/64 λ=0.6219 cells=64 splits=62 cost=$0.41
+[STEP  6700] loss=-1.8625 ce=0.5421 aux=1.3206 ent_gate=4.1494/4.159 wmax=0.4279 active>.01=4.0/64 λ=0.6166 cells=64 splits=62 cost=$0.42
+[STEP  6750] loss=-1.8876 ce=0.5415 aux=1.3141 ent_gate=4.1496/4.159 wmax=0.4292 active>.01=4.0/64 λ=0.6114 cells=64 splits=62 cost=$0.42
+[STEP  6800] loss=-2.0524 ce=0.5444 aux=1.3209 ent_gate=4.1493/4.159 wmax=0.4298 active>.01=4.0/64 λ=0.6062 cells=64 splits=62 cost=$0.42
+[STEP  6850] loss=-1.9953 ce=0.5291 aux=1.3106 ent_gate=4.1499/4.159 wmax=0.4247 active>.01=4.0/64 λ=0.6009 cells=64 splits=62 cost=$0.42
+[STEP  6900] loss=-1.8834 ce=0.5226 aux=1.3217 ent_gate=4.1496/4.159 wmax=0.4243 active>.01=4.0/64 λ=0.5956 cells=64 splits=62 cost=$0.43
+[STEP  6950] loss=-1.8415 ce=0.5094 aux=1.3150 ent_gate=4.1494/4.159 wmax=0.4308 active>.01=4.0/64 λ=0.5904 cells=64 splits=62 cost=$0.43
+[STEP  7000] loss=-1.8641 ce=0.5207 aux=1.3202 ent_gate=4.1494/4.159 wmax=0.4299 active>.01=4.0/64 λ=0.5851 cells=64 splits=62 cost=$0.43
+[STEP  7050] loss=-1.9710 ce=0.5135 aux=1.3217 ent_gate=4.1494/4.159 wmax=0.4278 active>.01=4.0/64 λ=0.5798 cells=64 splits=62 cost=$0.44
+[STEP  7100] loss=-1.7214 ce=0.5220 aux=1.3190 ent_gate=4.1496/4.159 wmax=0.4271 active>.01=4.0/64 λ=0.5745 cells=64 splits=62 cost=$0.44
+[STEP  7150] loss=-1.8506 ce=0.4901 aux=1.3157 ent_gate=4.1499/4.159 wmax=0.4232 active>.01=4.0/64 λ=0.5692 cells=64 splits=62 cost=$0.44
+[STEP  7200] loss=-1.7290 ce=0.4976 aux=1.3116 ent_gate=4.1500/4.159 wmax=0.4224 active>.01=4.0/64 λ=0.5638 cells=64 splits=62 cost=$0.45
+[STEP  7250] loss=-1.8027 ce=0.4983 aux=1.3041 ent_gate=4.1501/4.159 wmax=0.4244 active>.01=4.0/64 λ=0.5585 cells=64 splits=62 cost=$0.45
+[STEP  7300] loss=-1.8337 ce=0.5279 aux=1.3080 ent_gate=4.1500/4.159 wmax=0.4242 active>.01=4.0/64 λ=0.5532 cells=64 splits=62 cost=$0.45
+[STEP  7350] loss=-1.7808 ce=0.4958 aux=1.3104 ent_gate=4.1499/4.159 wmax=0.4252 active>.01=4.0/64 λ=0.5478 cells=64 splits=62 cost=$0.46
+[STEP  7400] loss=-1.8733 ce=0.4935 aux=1.3084 ent_gate=4.1500/4.159 wmax=0.4242 active>.01=4.0/64 λ=0.5425 cells=64 splits=62 cost=$0.46
+[STEP  7450] loss=-1.7377 ce=0.5046 aux=1.3147 ent_gate=4.1495/4.159 wmax=0.4305 active>.01=4.0/64 λ=0.5372 cells=64 splits=62 cost=$0.46
+[STEP  7500] loss=-1.6519 ce=0.4876 aux=1.3100 ent_gate=4.1498/4.159 wmax=0.4263 active>.01=4.0/64 λ=0.5318 cells=64 splits=62 cost=$0.47
+[STEP  7550] loss=-1.5793 ce=0.4803 aux=1.3060 ent_gate=4.1500/4.159 wmax=0.4260 active>.01=4.0/64 λ=0.5264 cells=64 splits=62 cost=$0.47
+[STEP  7600] loss=-1.7048 ce=0.4800 aux=1.3176 ent_gate=4.1497/4.159 wmax=0.4250 active>.01=4.0/64 λ=0.5211 cells=64 splits=62 cost=$0.47
+[STEP  7650] loss=-1.8093 ce=0.4938 aux=1.3078 ent_gate=4.1500/4.159 wmax=0.4245 active>.01=4.0/64 λ=0.5157 cells=64 splits=62 cost=$0.47
+[STEP  7700] loss=-1.6944 ce=0.4702 aux=1.3018 ent_gate=4.1502/4.159 wmax=0.4231 active>.01=4.0/64 λ=0.5104 cells=64 splits=62 cost=$0.48
+[STEP  7750] loss=-1.5222 ce=0.4475 aux=1.3021 ent_gate=4.1502/4.159 wmax=0.4242 active>.01=4.0/64 λ=0.5050 cells=64 splits=62 cost=$0.48
+[STEP  7800] loss=-1.5538 ce=0.4808 aux=1.3150 ent_gate=4.1495/4.159 wmax=0.4295 active>.01=4.0/64 λ=0.4996 cells=64 splits=62 cost=$0.48
+[STEP  7850] loss=-1.6124 ce=0.4585 aux=1.3088 ent_gate=4.1500/4.159 wmax=0.4239 active>.01=4.0/64 λ=0.4943 cells=64 splits=62 cost=$0.49
+[STEP  7900] loss=-1.3667 ce=0.4492 aux=1.3058 ent_gate=4.1502/4.159 wmax=0.4228 active>.01=4.0/64 λ=0.4889 cells=64 splits=62 cost=$0.49
+[STEP  7950] loss=-1.5140 ce=0.4748 aux=1.3108 ent_gate=4.1498/4.159 wmax=0.4266 active>.01=4.0/64 λ=0.4836 cells=64 splits=62 cost=$0.49
+  [SNAP 8000] 4a KL=1.9228 z=0.79 | 4b cos_z=1.55
+[STEP  8000] loss=-1.5990 ce=0.4598 aux=1.3092 ent_gate=4.1501/4.159 wmax=0.4224 active>.01=4.0/64 λ=0.4782 cells=64 splits=62 cost=$0.50
+[STEP  8050] loss=-1.6279 ce=0.4706 aux=1.3061 ent_gate=4.1501/4.159 wmax=0.4240 active>.01=4.0/64 λ=0.4728 cells=64 splits=62 cost=$0.50
+[STEP  8100] loss=-1.4050 ce=0.4629 aux=1.3085 ent_gate=4.1499/4.159 wmax=0.4256 active>.01=4.0/64 λ=0.4675 cells=64 splits=62 cost=$0.50
+[STEP  8150] loss=-1.2828 ce=0.4344 aux=1.3120 ent_gate=4.1498/4.159 wmax=0.4255 active>.01=4.0/64 λ=0.4622 cells=64 splits=62 cost=$0.51
+[STEP  8200] loss=-1.5134 ce=0.4522 aux=1.3126 ent_gate=4.1496/4.159 wmax=0.4289 active>.01=4.0/64 λ=0.4568 cells=64 splits=62 cost=$0.51
+[STEP  8250] loss=-1.3501 ce=0.4334 aux=1.3050 ent_gate=4.1500/4.159 wmax=0.4260 active>.01=4.0/64 λ=0.4515 cells=64 splits=62 cost=$0.51
+[STEP  8300] loss=-1.4714 ce=0.4329 aux=1.3085 ent_gate=4.1500/4.159 wmax=0.4247 active>.01=4.0/64 λ=0.4462 cells=64 splits=62 cost=$0.52
+[STEP  8350] loss=-1.4574 ce=0.4282 aux=1.3205 ent_gate=4.1493/4.159 wmax=0.4305 active>.01=4.0/64 λ=0.4408 cells=64 splits=62 cost=$0.52
+[STEP  8400] loss=-1.3202 ce=0.4445 aux=1.3185 ent_gate=4.1494/4.159 wmax=0.4306 active>.01=4.0/64 λ=0.4355 cells=64 splits=62 cost=$0.52
+[STEP  8450] loss=-1.2465 ce=0.4438 aux=1.3133 ent_gate=4.1496/4.159 wmax=0.4288 active>.01=4.0/64 λ=0.4302 cells=64 splits=62 cost=$0.53
+[STEP  8500] loss=-1.2064 ce=0.4175 aux=1.3055 ent_gate=4.1500/4.159 wmax=0.4254 active>.01=4.0/64 λ=0.4249 cells=64 splits=62 cost=$0.53
+[STEP  8550] loss=-1.1756 ce=0.4388 aux=1.3081 ent_gate=4.1498/4.159 wmax=0.4285 active>.01=4.0/64 λ=0.4196 cells=64 splits=62 cost=$0.53
+[STEP  8600] loss=-1.3185 ce=0.4296 aux=1.3143 ent_gate=4.1495/4.159 wmax=0.4297 active>.01=4.0/64 λ=0.4144 cells=64 splits=62 cost=$0.53
+[STEP  8650] loss=-1.2610 ce=0.4305 aux=1.3187 ent_gate=4.1492/4.159 wmax=0.4333 active>.01=4.0/64 λ=0.4091 cells=64 splits=62 cost=$0.54
+[STEP  8700] loss=-1.1871 ce=0.4363 aux=1.3195 ent_gate=4.1492/4.159 wmax=0.4334 active>.01=4.0/64 λ=0.4038 cells=64 splits=62 cost=$0.54
+[STEP  8750] loss=-1.2923 ce=0.4212 aux=1.3172 ent_gate=4.1495/4.159 wmax=0.4290 active>.01=4.0/64 λ=0.3986 cells=64 splits=62 cost=$0.54
+[STEP  8800] loss=-1.1708 ce=0.4272 aux=1.3202 ent_gate=4.1493/4.159 wmax=0.4313 active>.01=4.0/64 λ=0.3934 cells=64 splits=62 cost=$0.55
+[STEP  8850] loss=-1.1972 ce=0.4242 aux=1.3160 ent_gate=4.1493/4.159 wmax=0.4325 active>.01=4.0/64 λ=0.3881 cells=64 splits=62 cost=$0.55
+[STEP  8900] loss=-1.1678 ce=0.4234 aux=1.3177 ent_gate=4.1493/4.159 wmax=0.4321 active>.01=4.0/64 λ=0.3829 cells=64 splits=62 cost=$0.55
+[STEP  8950] loss=-1.2048 ce=0.4088 aux=1.3165 ent_gate=4.1495/4.159 wmax=0.4300 active>.01=4.0/64 λ=0.3777 cells=64 splits=62 cost=$0.56
+[STEP  9000] loss=-1.1075 ce=0.4138 aux=1.3211 ent_gate=4.1492/4.159 wmax=0.4320 active>.01=4.0/64 λ=0.3726 cells=64 splits=62 cost=$0.56
+[STEP  9050] loss=-1.0969 ce=0.4276 aux=1.3193 ent_gate=4.1495/4.159 wmax=0.4289 active>.01=4.0/64 λ=0.3674 cells=64 splits=62 cost=$0.56
+[STEP  9100] loss=-1.1419 ce=0.4189 aux=1.3172 ent_gate=4.1493/4.159 wmax=0.4319 active>.01=4.0/64 λ=0.3623 cells=64 splits=62 cost=$0.57
+[STEP  9150] loss=-1.0285 ce=0.4113 aux=1.3170 ent_gate=4.1493/4.159 wmax=0.4323 active>.01=4.0/64 λ=0.3571 cells=64 splits=62 cost=$0.57
+[STEP  9200] loss=-0.9761 ce=0.4005 aux=1.3165 ent_gate=4.1492/4.159 wmax=0.4334 active>.01=4.0/64 λ=0.3520 cells=64 splits=62 cost=$0.57
+[STEP  9250] loss=-1.0312 ce=0.4207 aux=1.3177 ent_gate=4.1494/4.159 wmax=0.4304 active>.01=4.0/64 λ=0.3469 cells=64 splits=62 cost=$0.58
+[STEP  9300] loss=-1.1058 ce=0.3907 aux=1.3172 ent_gate=4.1492/4.159 wmax=0.4333 active>.01=4.0/64 λ=0.3419 cells=64 splits=62 cost=$0.58
+[STEP  9350] loss=-0.9511 ce=0.4009 aux=1.3199 ent_gate=4.1492/4.159 wmax=0.4323 active>.01=4.0/64 λ=0.3368 cells=64 splits=62 cost=$0.58
+[STEP  9400] loss=-0.8330 ce=0.4064 aux=1.3216 ent_gate=4.1490/4.159 wmax=0.4347 active>.01=4.0/64 λ=0.3318 cells=64 splits=62 cost=$0.58
+[STEP  9450] loss=-0.9424 ce=0.3906 aux=1.3127 ent_gate=4.1495/4.159 wmax=0.4312 active>.01=4.0/64 λ=0.3268 cells=64 splits=62 cost=$0.59
+[STEP  9500] loss=-0.8650 ce=0.3967 aux=1.3283 ent_gate=4.1486/4.159 wmax=0.4381 active>.01=4.0/64 λ=0.3218 cells=64 splits=62 cost=$0.59
+[STEP  9550] loss=-0.8737 ce=0.3928 aux=1.3217 ent_gate=4.1490/4.159 wmax=0.4345 active>.01=4.0/64 λ=0.3168 cells=64 splits=62 cost=$0.59
+[STEP  9600] loss=-0.8168 ce=0.3758 aux=1.3208 ent_gate=4.1490/4.159 wmax=0.4351 active>.01=4.0/64 λ=0.3119 cells=64 splits=62 cost=$0.60
+[STEP  9650] loss=-0.8766 ce=0.3762 aux=1.3215 ent_gate=4.1490/4.159 wmax=0.4347 active>.01=4.0/64 λ=0.3069 cells=64 splits=62 cost=$0.60
+[STEP  9700] loss=-0.8133 ce=0.3813 aux=1.3247 ent_gate=4.1488/4.159 wmax=0.4376 active>.01=4.0/64 λ=0.3020 cells=64 splits=62 cost=$0.60
+[STEP  9750] loss=-0.9780 ce=0.3779 aux=1.3195 ent_gate=4.1491/4.159 wmax=0.4344 active>.01=4.0/64 λ=0.2972 cells=64 splits=62 cost=$0.61
+[STEP  9800] loss=-0.7451 ce=0.3958 aux=1.3273 ent_gate=4.1487/4.159 wmax=0.4380 active>.01=4.0/64 λ=0.2923 cells=64 splits=62 cost=$0.61
+[STEP  9850] loss=-0.7337 ce=0.3872 aux=1.3307 ent_gate=4.1485/4.159 wmax=0.4399 active>.01=4.0/64 λ=0.2875 cells=64 splits=62 cost=$0.61
+[STEP  9900] loss=-0.8486 ce=0.3886 aux=1.3298 ent_gate=4.1487/4.159 wmax=0.4366 active>.01=4.0/64 λ=0.2827 cells=64 splits=62 cost=$0.62
+[STEP  9950] loss=-0.7351 ce=0.3784 aux=1.3220 ent_gate=4.1490/4.159 wmax=0.4345 active>.01=4.0/64 λ=0.2779 cells=64 splits=62 cost=$0.62
+  [SNAP 10000] 4a KL=1.5691 z=1.62 | 4b cos_z=1.11
+[STEP 10000] loss=-0.7888 ce=0.3732 aux=1.3203 ent_gate=4.1491/4.159 wmax=0.4349 active>.01=4.0/64 λ=0.2731 cells=64 splits=62 cost=$0.62
+[STEP 10050] loss=-0.7656 ce=0.3814 aux=1.3269 ent_gate=4.1487/4.159 wmax=0.4378 active>.01=4.0/64 λ=0.2684 cells=64 splits=62 cost=$0.63
+[STEP 10100] loss=-0.6839 ce=0.3642 aux=1.3298 ent_gate=4.1487/4.159 wmax=0.4367 active>.01=4.0/64 λ=0.2637 cells=64 splits=62 cost=$0.63
+[STEP 10150] loss=-0.6600 ce=0.3706 aux=1.3275 ent_gate=4.1487/4.159 wmax=0.4374 active>.01=4.0/64 λ=0.2590 cells=64 splits=62 cost=$0.63
+[STEP 10200] loss=-0.6944 ce=0.3590 aux=1.3230 ent_gate=4.1489/4.159 wmax=0.4368 active>.01=4.0/64 λ=0.2544 cells=64 splits=62 cost=$0.63
+[STEP 10250] loss=-0.6256 ce=0.3723 aux=1.3297 ent_gate=4.1486/4.159 wmax=0.4380 active>.01=4.0/64 λ=0.2498 cells=64 splits=62 cost=$0.64
+[STEP 10300] loss=-0.7774 ce=0.3797 aux=1.3315 ent_gate=4.1485/4.159 wmax=0.4395 active>.01=4.0/64 λ=0.2452 cells=64 splits=62 cost=$0.64
+[STEP 10350] loss=-0.6372 ce=0.3784 aux=1.3322 ent_gate=4.1483/4.159 wmax=0.4415 active>.01=4.0/64 λ=0.2407 cells=64 splits=62 cost=$0.64
+[STEP 10400] loss=-0.5280 ce=0.3706 aux=1.3237 ent_gate=4.1488/4.159 wmax=0.4369 active>.01=4.0/64 λ=0.2362 cells=64 splits=62 cost=$0.65
+[STEP 10450] loss=-0.5913 ce=0.3438 aux=1.3329 ent_gate=4.1483/4.159 wmax=0.4420 active>.01=4.0/64 λ=0.2317 cells=64 splits=62 cost=$0.65
+[STEP 10500] loss=-0.6749 ce=0.3574 aux=1.3331 ent_gate=4.1482/4.159 wmax=0.4430 active>.01=4.0/64 λ=0.2272 cells=64 splits=62 cost=$0.65
+[STEP 10550] loss=-0.4819 ce=0.3772 aux=1.3369 ent_gate=4.1480/4.159 wmax=0.4446 active>.01=4.0/64 λ=0.2228 cells=64 splits=62 cost=$0.66
+[STEP 10600] loss=-0.4681 ce=0.3690 aux=1.3324 ent_gate=4.1482/4.159 wmax=0.4425 active>.01=4.0/64 λ=0.2184 cells=64 splits=62 cost=$0.66
+[STEP 10650] loss=-0.4857 ce=0.3619 aux=1.3339 ent_gate=4.1481/4.159 wmax=0.4441 active>.01=4.0/64 λ=0.2140 cells=64 splits=62 cost=$0.66
+[STEP 10700] loss=-0.4382 ce=0.3581 aux=1.3418 ent_gate=4.1477/4.159 wmax=0.4472 active>.01=4.0/64 λ=0.2097 cells=64 splits=62 cost=$0.67
+[STEP 10750] loss=-0.4399 ce=0.3688 aux=1.3370 ent_gate=4.1480/4.159 wmax=0.4441 active>.01=4.0/64 λ=0.2054 cells=64 splits=62 cost=$0.67
+[STEP 10800] loss=-0.4566 ce=0.3528 aux=1.3371 ent_gate=4.1480/4.159 wmax=0.4446 active>.01=4.0/64 λ=0.2012 cells=64 splits=62 cost=$0.67
+[STEP 10850] loss=-0.4611 ce=0.3596 aux=1.3368 ent_gate=4.1481/4.159 wmax=0.4421 active>.01=4.0/64 λ=0.1970 cells=64 splits=62 cost=$0.67
+[STEP 10900] loss=-0.4903 ce=0.3485 aux=1.3370 ent_gate=4.1480/4.159 wmax=0.4447 active>.01=4.0/64 λ=0.1928 cells=64 splits=62 cost=$0.68
+[STEP 10950] loss=-0.4151 ce=0.3482 aux=1.3391 ent_gate=4.1479/4.159 wmax=0.4452 active>.01=4.0/64 λ=0.1886 cells=64 splits=62 cost=$0.68
+[STEP 11000] loss=-0.3757 ce=0.3695 aux=1.3411 ent_gate=4.1477/4.159 wmax=0.4468 active>.01=4.0/64 λ=0.1845 cells=64 splits=62 cost=$0.68
+[STEP 11050] loss=-0.3112 ce=0.3500 aux=1.3413 ent_gate=4.1477/4.159 wmax=0.4468 active>.01=4.0/64 λ=0.1805 cells=64 splits=62 cost=$0.69
+[STEP 11100] loss=-0.3700 ce=0.3463 aux=1.3428 ent_gate=4.1476/4.159 wmax=0.4478 active>.01=4.0/64 λ=0.1764 cells=64 splits=62 cost=$0.69
+[STEP 11150] loss=-0.3916 ce=0.3611 aux=1.3421 ent_gate=4.1477/4.159 wmax=0.4472 active>.01=4.0/64 λ=0.1725 cells=64 splits=62 cost=$0.69
+[STEP 11200] loss=-0.3430 ce=0.3450 aux=1.3449 ent_gate=4.1475/4.159 wmax=0.4490 active>.01=4.0/64 λ=0.1685 cells=64 splits=62 cost=$0.70
+[STEP 11250] loss=-0.3095 ce=0.3565 aux=1.3485 ent_gate=4.1473/4.159 wmax=0.4498 active>.01=4.0/64 λ=0.1646 cells=64 splits=62 cost=$0.70
+[STEP 11300] loss=-0.3310 ce=0.3462 aux=1.3478 ent_gate=4.1473/4.159 wmax=0.4500 active>.01=4.0/64 λ=0.1607 cells=64 splits=62 cost=$0.70
+[STEP 11350] loss=-0.3138 ce=0.3427 aux=1.3446 ent_gate=4.1475/4.159 wmax=0.4484 active>.01=4.0/64 λ=0.1569 cells=64 splits=62 cost=$0.71
+[STEP 11400] loss=-0.3874 ce=0.3424 aux=1.3458 ent_gate=4.1474/4.159 wmax=0.4495 active>.01=4.0/64 λ=0.1531 cells=64 splits=62 cost=$0.71
+[STEP 11450] loss=-0.2620 ce=0.3309 aux=1.3381 ent_gate=4.1479/4.159 wmax=0.4459 active>.01=4.0/64 λ=0.1493 cells=64 splits=62 cost=$0.71
+[STEP 11500] loss=-0.2284 ce=0.3500 aux=1.3438 ent_gate=4.1474/4.159 wmax=0.4499 active>.01=4.0/64 λ=0.1456 cells=64 splits=62 cost=$0.71
+[STEP 11550] loss=-0.3032 ce=0.3366 aux=1.3524 ent_gate=4.1470/4.159 wmax=0.4524 active>.01=4.0/64 λ=0.1420 cells=64 splits=62 cost=$0.72
+[STEP 11600] loss=-0.2179 ce=0.3477 aux=1.3464 ent_gate=4.1474/4.159 wmax=0.4496 active>.01=4.0/64 λ=0.1383 cells=64 splits=62 cost=$0.72
+[STEP 11650] loss=-0.1420 ce=0.3444 aux=1.3463 ent_gate=4.1473/4.159 wmax=0.4503 active>.01=4.0/64 λ=0.1348 cells=64 splits=62 cost=$0.72
+[STEP 11700] loss=-0.1522 ce=0.3361 aux=1.3535 ent_gate=4.1469/4.159 wmax=0.4528 active>.01=4.0/64 λ=0.1312 cells=64 splits=62 cost=$0.73
+[STEP 11750] loss=-0.1903 ce=0.3570 aux=1.3548 ent_gate=4.1468/4.159 wmax=0.4539 active>.01=4.0/64 λ=0.1277 cells=64 splits=62 cost=$0.73
+[STEP 11800] loss=-0.1509 ce=0.3418 aux=1.3565 ent_gate=4.1467/4.159 wmax=0.4550 active>.01=4.0/64 λ=0.1243 cells=64 splits=62 cost=$0.73
+[STEP 11850] loss=-0.1546 ce=0.3410 aux=1.3572 ent_gate=4.1467/4.159 wmax=0.4548 active>.01=4.0/64 λ=0.1209 cells=64 splits=62 cost=$0.74
+[STEP 11900] loss=-0.1369 ce=0.3511 aux=1.3555 ent_gate=4.1468/4.159 wmax=0.4538 active>.01=4.0/64 λ=0.1175 cells=64 splits=62 cost=$0.74
+/Users/ghost/core/anima/state/anima_v5mitosis_cotrain_v3_routing_2026_05_12/dispatch_h100_v3_routing.sh: line 185: 42457 Killed: 9               $SSH_CMD "cd /workspace/anima && export PYTHONUNBUFFERED=1 && python3 training/train_v5mitosis_cotrain_v3_routing.py     --corpus corpus/corpus_persona_balanced.txt     --output-dir output     --steps $STEPS --batch $BATCH --ctx $CTX --lr $LR --warmup $WARMUP     --d-model $D_MODEL --n-head $N_HEAD --ffn-dim $FFN_DIM     --initial-cells $INITIAL_CELLS --max-cells $MAX_CELLS --readout-mode $READOUT_MODE     --seed $SEED --log-every 50 --ckpt-every 2000     --cost-cap-usd $COST_CAP_USD --cost-per-hr $OFFER_DPH --estimated-wall-hr $ESTIMATED_WALL_HR     --identity-probe probe/identity_probe.jsonl     --top-k $TOP_K --aux-alpha $AUX_ALPHA     --lambda-init $LAMBDA_INIT --lambda-final $LAMBDA_FINAL --lambda-schedule $LAMBDA_SCHEDULE     --n-perms $N_PERMS 2>&1 | tee train_v3_routing.log" 2>&1
+     42458 Done                    | tee dispatch_v3_routing.log
+[cleanup] Destroying instance 36715951 (exit=137)...
+destroying instance 36715951.

@@ -1,0 +1,25 @@
+[05:55:11] === anima_ig_bpe_16k_tokenizer_build BG-IG 2026-05-07 ===
+[05:55:11] hostname=aiden-b650m-k on_ubu=True
+[05:55:11] corpus=/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt
+[05:55:11] corpus size: 6,791,535 bytes (6.48 MB)
+[05:55:11]   → spm.train: vocab=16000 model_type=bpe character_coverage=0.9995
+[05:55:11]   16000 build FAILED: Internal: src/trainer_interface.cc(664) [(trainer_spec_.vocab_size()) == (model_proto->pieces_size())] Vocabulary size too high (16000). Please set it to a value <= 7280.
+[05:55:11]   → fallback to 12000
+[05:55:11]   → spm.train: vocab=12000 model_type=bpe character_coverage=0.9995
+[05:55:11]   12000 fallback FAILED: Internal: src/trainer_interface.cc(664) [(trainer_spec_.vocab_size()) == (model_proto->pieces_size())] Vocabulary size too high (12000). Please set it to a value <= 7280.
+[05:55:11]   → fallback to 8000
+[05:55:11]   → spm.train: vocab=8000 model_type=bpe character_coverage=0.9995
+[05:55:11]   8000 fallback FAILED: Internal: src/trainer_interface.cc(664) [(trainer_spec_.vocab_size()) == (model_proto->pieces_size())] Vocabulary size too high (8000). Please set it to a value <= 7280.
+[05:55:11]   → fallback to 7000
+[05:55:11]   → spm.train: vocab=7000 model_type=bpe character_coverage=0.9995
+[05:55:12] BPE loaded: vocab=7000 (target=7000)
+[05:55:12] compression sample: 30,000 chars → 7,647 tokens = 3.923 chars/token
+[05:55:12] smoke roundtrip: 5/6 pass
+[05:55:12]   in='안녕하세요'                                                 n_tok=  1 pieces=['▁안녕하세요']
+[05:55:12]   in='사용자: 우주뇌지도가 뭐야?'                                       n_tok=  6 pieces=['▁', '사용자:', '▁우주뇌지도', '가', '▁뭐야', '?']
+[05:55:12]   in='도우미: anima는 우주뇌지도 entity 입니다'                          n_tok=  8 pieces=['▁', '도우미:', '▁anima', '는', '▁우주뇌지도', '▁entity', '▁', '입니다']
+[05:55:12]   in='[anima 우주뇌지도] 사용자: 1030 laws의 의미는?'                    n_tok= 12 pieces=['▁[', 'anima', '▁우주뇌지도', ']', '▁', '사용자:', '▁1030', '▁laws', '의', '▁의미', '는', '?']
+[05:55:12]   in='Φ★란 의식 측도'                                             n_tok=  7 pieces=['▁Φ', '★', '란', '▁의식', '▁', '측', '도']
+[05:55:12]   in='코드를 짜줘'                                                n_tok=  2 pieces=['▁코드를', '▁짜줘']
+[05:55:12] === BUILD DONE === vocab=7000 reduced=True compression=3.923 cpt elapsed=0.8s
+[05:55:12] meta: /home/aiden/core/anima/state/anima_ig_bpe_16k_tokenizer_2026_05_07/build_meta.json

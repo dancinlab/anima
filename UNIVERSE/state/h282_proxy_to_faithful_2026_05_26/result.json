@@ -1,0 +1,28 @@
+{
+  "hypothesis": "H_282",
+  "title": "proxy -> faithful: H_266/H_268/H_278 re-measured with faithful IIT4 causal big-Phi",
+  "engine": "HEXAD/IIT4/lib (eca_tpm + big_phi, stdlib/consciousness) — REUSED, not reimplemented",
+  "config": { "n": 4, "canonical_state": 10, "ring": true },
+  "F282_1_H266": {
+    "integrated": { "rule110": 7.5475, "rule30": 8.66311, "rule54": 10.0278 },
+    "feedforward": { "rule240": 3, "rule170": 3 },
+    "disconnected": { "rule204": 0.0, "rule0": 0.0 },
+    "min_integrated": 7.5475, "max_disconnected": 0.0,
+    "int_gt_dis_canonical": true, "dir_robust_count": 3,
+    "monotone_recovered_int_gt_ffd_gt_dis": true,
+    "verdict": "PRESERVED + monotone RESOLVED vs proxy"
+  },
+  "F282_2_H268": {
+    "T1_rule110_bigphi_states": [15.0339, 7.66066, 7.5475],
+    "T1_substantial_count": 3,
+    "T1_verdict": "ROBUST confirmed faithfully (binary TPM, big-Phi>0)",
+    "T2_verdict": "PARTIAL — continuous catalytic lattice not a clean binary TPM (out of faithful scope)"
+  },
+  "F282_3_H278": {
+    "scale_bigphi": { "cosmic_web_30": 8.66311, "galaxy_110": 7.5475, "stellar_90": 0.0, "planetary_54": 10.0278, "biological_110": 7.5475, "neural_110": 7.5475 },
+    "faithful_cv": 0.465719, "cv_threshold": 0.15,
+    "proxy_cv_n8": 2.10, "h002_ref_cv_n16": 0.84,
+    "scale_variant": true, "verdict": "HOLD (faithful agrees with proxy SCALE_VARIANT)"
+  },
+  "summary": { "pass": 8, "fail": 0 }
+}

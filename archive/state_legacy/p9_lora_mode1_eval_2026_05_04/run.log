@@ -1,0 +1,59 @@
+[2026-05-04T08:41:02Z] secrets OK (runpod=50b, hf=37b)
+[2026-05-04T08:41:02Z] booting pod=anima-p9-lora-mode1-eval-2026-05-04 (H100 80GB HBM3 secure on-demand @ $2.99/hr)
+[2026-05-04T08:41:03Z] pod_id=8umghrgn5v3zct
+[2026-05-04T08:41:03Z] waiting for SSH ready (max 6min)
+[2026-05-04T08:41:33Z] SSH ready at 103.207.149.138:13260 (after 3 probes)
+[2026-05-04T08:41:33Z] setup: install lm-eval + peft + download Llama base + step-8k LoRA
+[2026-05-04T08:41:41Z] launching benchmark suite on H100
+[2026-05-04T08:46:02Z] poll loop start (max 45min, budget cap $2.5)
+[2026-05-04T08:46:04Z] elapsed=5min cost=$0.25 probe=|
+[2026-05-04T08:47:14Z] elapsed=6min cost=$0.31 probe=|
+[2026-05-04T08:48:24Z] elapsed=7min cost=$0.37 probe=|
+[2026-05-04T08:49:34Z] elapsed=8min cost=$0.42 probe=|
+[2026-05-04T08:50:45Z] elapsed=9min cost=$0.48 probe=|
+[2026-05-04T08:51:54Z] elapsed=10min cost=$0.54 probe=|
+[2026-05-04T08:53:05Z] elapsed=12min cost=$0.60 probe=|
+[2026-05-04T08:54:16Z] elapsed=13min cost=$0.66 probe=|
+[2026-05-04T08:55:26Z] elapsed=14min cost=$0.72 probe=|
+[2026-05-04T08:56:39Z] elapsed=15min cost=$0.78 probe=|
+[2026-05-04T08:57:51Z] elapsed=16min cost=$0.84 probe=|
+[2026-05-04T08:59:02Z] elapsed=17min cost=$0.90 probe=|
+[2026-05-04T09:00:14Z] elapsed=19min cost=$0.96 probe=|
+[2026-05-04T09:01:25Z] elapsed=20min cost=$1.01 probe=/workspace/p9_lora_eval/results/COMPLETE.sentinel SENTINEL_FOUND|
+[2026-05-04T09:01:35Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill (lesson: don't lose data)
+Warning: Permanently added '[103.207.149.138]:13260' (ED25519) to the list of known hosts.
+[2026-05-04T09:03:25Z] computing verdict from per-bench JSONs
+[2026-05-04T09:03:25Z] verdict=PARTIAL c3=FAIL(0/3) c4=PASS(3/3) f1v3v2=ANCHOR_PASS wall=22min cost=$1.10
+[2026-05-04T09:03:25Z] hs: norm=0.642 Δ=pp c3= c4=PASS   mmlu: acc=0.5301076152139982 Δ=pp c3= c4=PASS   tq: em=0.302 Δ=pp c3= c4=PASS
+__P9_LORA_MODE1_EVAL__ PARTIAL F1V3V2=ANCHOR_PASS
+[2026-05-04T09:03:25Z] [trap] killing pod=8umghrgn5v3zct (auto-kill mandatory)
+{
+  "containerDiskInGb": 60,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-04 08:41:03.584 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "8umghrgn5v3zct",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Mon May 04 2026 09:03:26 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-p9-lora-mode1-eval-2026-05-04",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 30,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "8umghrgn5v3zct"
+}
+[2026-05-04T09:03:35Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

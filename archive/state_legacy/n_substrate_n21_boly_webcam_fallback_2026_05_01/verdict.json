@@ -1,0 +1,46 @@
+{
+  "verdict": "DEGRADED",
+  "verdict_color": "yellow",
+  "verdict_summary": "Webcam fallback is VIABLE only with GazeRecorder-class tools (~1 deg, 30 Hz). WebGazer.js alone is NOT-VIABLE for OKN-based covert switch detection in the Boly bistable protocol — its 4 deg spatial error and 20 Hz mean rate fall below the OKN slow-phase velocity-vector requirement.",
+  "per_candidate_verdict": {
+    "WebGazer.js": {
+      "verdict": "NOT-VIABLE for Boly OKN decoding",
+      "alternate_use": "VIABLE for coarse 2x2 quadrant gaze (overt-report supplement only), NOT covert OKN switch detection",
+      "reason": "4 deg accuracy + 20 Hz mean rate cannot resolve OKN slow-phase direction reversal at the 88% Boly benchmark"
+    },
+    "GazeRecorder/GazeFlow": {
+      "verdict": "VIABLE-DEGRADED",
+      "expected_decoding_accuracy": "75-83% (vs 88% research-grade Boly), 5-13 pp gap",
+      "reason": "Meets minimum 1 deg / 30 Hz; closed-source vendor binary; cloud-API latency ~30-60 ms is non-trivial vs <1 ms LSL but within OKN cycle (~300 ms) for switch-event classification"
+    }
+  },
+  "integration_spec_if_viable": {
+    "stack": [
+      "GazeRecorder GazeFlow SDK (local Windows) OR GazeCloudAPI (browser, cross-platform)",
+      "Bistable plaid stimulus = HTML5 canvas + WebGL plaid renderer (gratings @ ~1 cyc/deg, 120 deg cross-angle, ~2 deg/s)",
+      "Sync: Lab Streaming Layer (LSL) marker stream from stimulus + gaze stream + OpenBCI Cyton EEG stream; align on shared LSL clock (sub-10 ms typical)",
+      "Post-hoc OKN classifier: vertical-edge optic-flow + state-machine sawtooth detector (Turuwhenua approach)",
+      "Validation: replay against research-grade Boly trace if available; require >=80% inter-rater agreement vs human OKN labeler before proceeding"
+    ],
+    "engineering_hours": 12,
+    "calibration_protocol": "9-point grid + drift correction every 60 s; reject trials with >2 deg post-hoc validation drift",
+    "risks": [
+      "Webcam frame-rate jitter under load may drop below 30 Hz, corrupting OKN slope estimation",
+      "Head movement uncompensated — Boly used chinrest; webcam protocol must enforce equivalent head stabilization",
+      "GazeRecorder closed-source = reproducibility risk for publication; document SDK version + checksum",
+      "Cross-platform consistency: GazeFlow Windows-only; GazeCloudAPI browser path adds cloud latency"
+    ]
+  },
+  "recommendation": {
+    "primary": "PROCEED with GazeRecorder/GazeCloudAPI webcam fallback at $0; reserve Pupil Labs purchase for replication/validation phase only if degraded webcam classifier fails to clear 75% accuracy on pilot N=5",
+    "rationale": [
+      "Boly 2017 OKN-only decoder = 88% research-grade; webcam-OKN literature suggests 75-83% achievable with 1 deg / 30 Hz tools",
+      "$500 figure for Pupil Labs Core is OPTIMISTIC — actual MSRP is ~$2,000-$3,000 (verified pupil-labs.com); $500 likely DIY-frame + camera parts. Capex risk is 4-6x the cited budget.",
+      "$0 webcam route preserves pre-registration timeline; if pilot fails, escalate to Pupil Core purchase as a SECOND-stage decision with concrete failure data",
+      "Honest C3 gap: 5-13 percentage-point decoding accuracy loss is REAL and must be reported in paper Limitations; do NOT claim research-grade equivalence"
+    ],
+    "secondary_if_pilot_fails": "Purchase Pupil Core (~$2-3k actual, not $500). Justification = OKN slow-phase velocity precision below sub-degree threshold cannot be achieved by any consumer webcam stack.",
+    "do_not_purchase_now": true,
+    "budget_impact": "$0 capex committed; $2-3k contingent escalation gated on pilot failure"
+  }
+}

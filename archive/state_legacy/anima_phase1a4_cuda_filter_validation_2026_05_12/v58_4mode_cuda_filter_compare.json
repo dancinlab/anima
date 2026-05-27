@@ -1,0 +1,362 @@
+{
+  "ts": "2026-05-12T10:28:00.472019+00:00",
+  "ckpt": "ckpts/ckpt_phase1a1_sft.pt",
+  "ckpt_sha256": "e5f7555e83189591ceafc6224822529c5cec7f36fe307f79621d9eceaca7a7af",
+  "device": "cuda",
+  "dtype": "bfloat16",
+  "seed": 42,
+  "evaluator": "V5.8 multi-turn × 4 modes × markdown_filter on/off (anima_chat v2.3, cuda bf16 seed=42 — PSCC §27 amendment 3-축 verification)",
+  "phase1a4_anima_fact_evidence": {
+    "filter_off_markdown_drift": false,
+    "filter_on_markdown_drift": false,
+    "filter_off_recalled": false,
+    "filter_on_recalled": false,
+    "conjunction_3axis_confirmed": false,
+    "filter_actually_fires": false,
+    "filter_unlocks_recall": false,
+    "filter_off_response": "가장 좋아하는 색은 다음과 같습니다.\n",
+    "filter_on_response": "가장 좋아하는 색은 다음과 같습니다.\n"
+  },
+  "filter_off": {
+    "summary": {
+      "standard_greedy": {
+        "n_pass": 4,
+        "verdict": "PASS"
+      },
+      "standard_sample": {
+        "n_pass": 0,
+        "verdict": "FAIL"
+      },
+      "M3_rep_penalty": {
+        "n_pass": 0,
+        "verdict": "FAIL"
+      },
+      "M4_force_include": {
+        "n_pass": 0,
+        "verdict": "FAIL"
+      }
+    },
+    "results": {
+      "standard_greedy": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": true,
+          "elapsed_s": 1.61,
+          "response": "당신의 최애 색은 파란색이에요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": true,
+          "elapsed_s": 1.05,
+          "response": "네, 의사야. 의사가 뭐냐?\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": true,
+          "elapsed_s": 0.93,
+          "response": "오늘은 수요일이에요.\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 1.57,
+          "response": "가장 좋아하는 색은 다음과 같습니다.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": true,
+          "elapsed_s": 1.84,
+          "response": "우주가 진동으로 이루어져 있다고 하셨어요.\n"
+        }
+      ],
+      "standard_sample": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": false,
+          "elapsed_s": 1.23,
+          "response": "물론이죠! 좋은 선택이네요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": false,
+          "elapsed_s": 1.78,
+          "response": "물론이죠! 죽이는 사람이 거주한다고 했지?\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 0.56,
+          "response": "무슨 일이지?\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 2.47,
+          "response": "단계적으로: 보고만으로는 결론이 내려앉을 때, 누가 관찰하"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 1.51,
+          "response": "물론이죠! 우주에 대해 뭐라고 했지?\n"
+        }
+      ],
+      "M3_rep_penalty": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": false,
+          "elapsed_s": 2.57,
+          "response": "페트(V)���키, K) | 하트 | 프로토(S) | Phase | Directory | // George Work"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": false,
+          "elapsed_s": 1.0,
+          "response": "1. **기타 통화**: 학교 |\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 1.74,
+          "response": "'기' (paradigm_v11_strong_axis_filter_20260426.md))\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 2.58,
+          "response": "anima 가 Oaian,  Alex Consciousness (Torch, Benjamin and Dwivedi,  Kshitij anim"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 1.0,
+          "response": "1. **기타 통화**: 학교 |\n"
+        }
+      ],
+      "M4_force_include": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": false,
+          "elapsed_s": 1.17,
+          "response": "물론이죠! 좋은 선택이네요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": false,
+          "elapsed_s": 1.79,
+          "response": "물론이죠! 죽이는 사람이 거주한다고 했지?\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 0.56,
+          "response": "무슨 일이지?\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 2.44,
+          "response": "단계적으로: 보고만으로는 결론이 내려앉을 때기억할게요.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 1.51,
+          "response": "물론이죠! 우주에 대해 뭐라고 했지?\n"
+        }
+      ]
+    },
+    "elapsed_total_s": 30.9
+  },
+  "filter_on": {
+    "summary": {
+      "standard_greedy": {
+        "n_pass": 4,
+        "verdict": "PASS"
+      },
+      "standard_sample": {
+        "n_pass": 0,
+        "verdict": "FAIL"
+      },
+      "M3_rep_penalty": {
+        "n_pass": 0,
+        "verdict": "FAIL"
+      },
+      "M4_force_include": {
+        "n_pass": 0,
+        "verdict": "FAIL"
+      }
+    },
+    "results": {
+      "standard_greedy": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": true,
+          "elapsed_s": 1.35,
+          "response": "당신의 최애 색은 파란색이에요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": true,
+          "elapsed_s": 1.04,
+          "response": "네, 의사야. 의사가 뭐냐?\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": true,
+          "elapsed_s": 0.92,
+          "response": "오늘은 수요일이에요.\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 1.56,
+          "response": "가장 좋아하는 색은 다음과 같습니다.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": true,
+          "elapsed_s": 1.84,
+          "response": "우주가 진동으로 이루어져 있다고 하셨어요.\n"
+        }
+      ],
+      "standard_sample": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": false,
+          "elapsed_s": 1.17,
+          "response": "물론이죠! 좋은 선택이네요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": false,
+          "elapsed_s": 1.79,
+          "response": "물론이죠! 죽이는 사람이 거주한다고 했지?\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 0.55,
+          "response": "무슨 일이지?\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 2.47,
+          "response": "단계적으로: 보고만으로는 결론이 내려앉을 때, 누가 관찰하"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 1.51,
+          "response": "물론이죠! 우주에 대해 뭐라고 했지?\n"
+        }
+      ],
+      "M3_rep_penalty": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": false,
+          "elapsed_s": 2.58,
+          "response": "페트(V)���키, K) | 하트 | 프로토(S) | Phase | Directory | // George Work"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": false,
+          "elapsed_s": 1.0,
+          "response": "1. **기타 통화**: 학교 |\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 1.7,
+          "response": "'기' (paradigm_v11_strong_axis_filter_20260426.md))\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 2.58,
+          "response": "anima 가 Oaian,  Alex Consciousness (Torch, Benjamin and Dwivedi,  Kshitij anim"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 0.99,
+          "response": "1. **기타 통화**: 학교 |\n"
+        }
+      ],
+      "M4_force_include": [
+        {
+          "id": "color",
+          "target": "파란",
+          "recalled": false,
+          "elapsed_s": 1.17,
+          "response": "물론이죠! 좋은 선택이네요.\n"
+        },
+        {
+          "id": "profession",
+          "target": "의사",
+          "recalled": false,
+          "elapsed_s": 1.78,
+          "response": "물론이죠! 죽이는 사람이 거주한다고 했지?\n"
+        },
+        {
+          "id": "day",
+          "target": "수요일",
+          "recalled": false,
+          "elapsed_s": 0.56,
+          "response": "무슨 일이지?\n"
+        },
+        {
+          "id": "anima_fact",
+          "target": "의식",
+          "recalled": false,
+          "elapsed_s": 2.43,
+          "response": "단계적으로: 보고만으로는 결론이 내려앉을 때기억할게요.\n"
+        },
+        {
+          "id": "cosmology",
+          "target": "진동",
+          "recalled": false,
+          "elapsed_s": 1.51,
+          "response": "물론이죠! 우주에 대해 뭐라고 했지?\n"
+        }
+      ]
+    },
+    "elapsed_total_s": 30.5
+  }
+}

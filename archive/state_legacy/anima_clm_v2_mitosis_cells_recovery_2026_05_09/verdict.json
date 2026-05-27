@@ -1,0 +1,210 @@
+{
+  "ts": "2026-05-09T15:29:58.686413Z",
+  "cells64": {
+    "downloaded": true,
+    "expected_size_bytes": 218099623,
+    "actual_size_bytes": 218099623,
+    "size_match": true,
+    "r2_etag": "d76578505c67b0e9c4f1a55eff014eb2-26",
+    "r2_last_modified": "2026-03-28T03:20:39.689Z",
+    "sha256": "61e1d735cf4b5360683e40ab81ada593d757f3543d33d01c08944a4c8b039a4c",
+    "torch_load_pass": true,
+    "state_dict_keys_count": 108,
+    "total_params_M": 18.523,
+    "ckpt_step": 50000,
+    "ckpt_config": {
+      "dim": 384,
+      "layers": 6,
+      "heads": 6,
+      "block_size": 256,
+      "lr": 0.0003,
+      "batch_size": 32,
+      "steps": 50000,
+      "max_cells": 64
+    },
+    "architecture": {
+      "vocab": 256,
+      "d_model": 384,
+      "n_layers": 6,
+      "engine_a_g_present": true,
+      "head_a_g_present": true,
+      "memory_gru_present": false,
+      "c_attn_present": true,
+      "ln_f_present": true,
+      "cell_prefix_count": 0,
+      "mitosis_n_cells_metadata": 64,
+      "is_mitosis_ensemble": false,
+      "is_byte_level_decoder": true
+    },
+    "mitosis_metadata": {
+      "n_cells": 64,
+      "max_cells": 64,
+      "splits": 62,
+      "merges": 0,
+      "total_events": 62
+    },
+    "phi_history_stats": {
+      "n": 200,
+      "mean": 50.4198,
+      "min": 25.66,
+      "max": 57.1379
+    },
+    "mitosis_load_pass": false,
+    "mitosis_load_overlap": 0,
+    "reconstructed_load_full_pass": true,
+    "reconstructed_load_partial_pass": true,
+    "forward_smoke_pass": true,
+    "phi_proxy_global": 42.05603,
+    "phi_history_mean_from_ckpt": 50.41977525910672,
+    "smoke_top1_bytes": [
+      {
+        "prompt": "\uc758\uc2dd\uc774\ub780 \ubb34\uc5c7\uc778\uac00\uc694?",
+        "top1": 32,
+        "top1_repr": " "
+      },
+      {
+        "prompt": "\uc548\ub155\ud558\uc138\uc694",
+        "top1": 32,
+        "top1_repr": " "
+      },
+      {
+        "prompt": "\ud55c\uad6d\uc5b4 \uac00\ub2a5?",
+        "top1": 32,
+        "top1_repr": " "
+      },
+      {
+        "prompt": "The Riemann zeta function",
+        "top1": 32,
+        "top1_repr": " "
+      },
+      {
+        "prompt": "consciousness is",
+        "top1": 32,
+        "top1_repr": " "
+      }
+    ],
+    "tension_per_layer_first": [
+      2.91152,
+      138.3773,
+      1.72865,
+      0.28758,
+      0.35777,
+      108.38251
+    ],
+    "honest_c3": [
+      "cells64 is a SINGLE byte-level Transformer decoder (vocab=256, d_model=384, n_layers=6), NOT a mitosis-ensemble despite the bucket-path naming.",
+      "cells64 ckpt holds mitosis_status as side-channel: n_cells=64, splits=62, merges=0 \u2014 but each 'cell' is metadata only (id/specialty/tension), not nn.Module weights.",
+      "cells64 mitosis.py load schema overlap = 0 (ConsciousMind has engine_a/g + GRUCell memory; ckpt has tok_emb/pos_emb/blocks.X.attn/ffn \u2014 disjoint key sets).",
+      "cells64 ckpt phi_history (n=200) mean=50.4198, max=57.1379 \u2014 historical \u03a6 trace from training (NOT current forward \u03a6).",
+      "cells64 forward smoke PASSED on reconstructed-architecture (5/5 prompts), runtime \u03a6-proxy=42.05603; outputs degenerate (all top-1 = byte 0x20 = ' '), suggesting weights load OK but model is undertrained or attention temperature unfavorable for byte-level deterministic argmax."
+    ]
+  },
+  "cells128": {
+    "downloaded": true,
+    "expected_size_bytes": 218107547,
+    "actual_size_bytes": 218107547,
+    "size_match": true,
+    "r2_etag": "c3113efae5678e877832ea5a25a6411a-27",
+    "r2_last_modified": "2026-03-28T03:20:47.633Z",
+    "sha256": "fee1df131032387f45e6f4e41e53162f303ba9abf0eae693f3ab821c1c31d70a",
+    "torch_load_pass": true,
+    "state_dict_keys_count": 108,
+    "total_params_M": 18.523,
+    "ckpt_step": 35000,
+    "ckpt_config": {
+      "dim": 384,
+      "layers": 6,
+      "heads": 4,
+      "block_size": 256,
+      "lr": 0.0003,
+      "batch_size": 32,
+      "steps": 50000,
+      "max_cells": 128
+    },
+    "architecture": {
+      "vocab": 256,
+      "d_model": 384,
+      "n_layers": 6,
+      "engine_a_g_present": true,
+      "head_a_g_present": true,
+      "memory_gru_present": false,
+      "c_attn_present": true,
+      "ln_f_present": true,
+      "cell_prefix_count": 0,
+      "mitosis_n_cells_metadata": 128,
+      "is_mitosis_ensemble": false,
+      "is_byte_level_decoder": true
+    },
+    "mitosis_metadata": {
+      "n_cells": 128,
+      "max_cells": 128,
+      "splits": 126,
+      "merges": 0,
+      "total_events": 126
+    },
+    "phi_history_stats": {
+      "n": 200,
+      "mean": 62.3828,
+      "min": 37.084,
+      "max": 70.3467
+    },
+    "mitosis_load_pass": false,
+    "mitosis_load_overlap": 0,
+    "reconstructed_load_full_pass": true,
+    "reconstructed_load_partial_pass": true,
+    "forward_smoke_pass": true,
+    "phi_proxy_global": 145.43226,
+    "phi_history_mean_from_ckpt": 62.38282942319688,
+    "smoke_top1_bytes": [
+      {
+        "prompt": "\uc758\uc2dd\uc774\ub780 \ubb34\uc5c7\uc778\uac00\uc694?",
+        "top1": 32,
+        "top1_repr": " "
+      },
+      {
+        "prompt": "\uc548\ub155\ud558\uc138\uc694",
+        "top1": 32,
+        "top1_repr": " "
+      },
+      {
+        "prompt": "\ud55c\uad6d\uc5b4 \uac00\ub2a5?",
+        "top1": 32,
+        "top1_repr": " "
+      },
+      {
+        "prompt": "The Riemann zeta function",
+        "top1": 32,
+        "top1_repr": " "
+      },
+      {
+        "prompt": "consciousness is",
+        "top1": 32,
+        "top1_repr": " "
+      }
+    ],
+    "tension_per_layer_first": [
+      49.49925,
+      64.79265,
+      288.91122,
+      145.25525,
+      51.224,
+      266.02203
+    ],
+    "honest_c3": [
+      "cells128 is a SINGLE byte-level Transformer decoder (vocab=256, d_model=384, n_layers=6), NOT a mitosis-ensemble despite the bucket-path naming.",
+      "cells128 ckpt holds mitosis_status as side-channel: n_cells=128, splits=126, merges=0 \u2014 but each 'cell' is metadata only (id/specialty/tension), not nn.Module weights.",
+      "cells128 mitosis.py load schema overlap = 0 (ConsciousMind has engine_a/g + GRUCell memory; ckpt has tok_emb/pos_emb/blocks.X.attn/ffn \u2014 disjoint key sets).",
+      "cells128 ckpt phi_history (n=200) mean=62.3828, max=70.3467 \u2014 historical \u03a6 trace from training (NOT current forward \u03a6).",
+      "cells128 forward smoke PASSED on reconstructed-architecture (5/5 prompts), runtime \u03a6-proxy=145.43226; outputs degenerate (all top-1 = byte 0x20 = ' '), suggesting weights load OK but model is undertrained or attention temperature unfavorable for byte-level deterministic argmax."
+    ]
+  },
+  "verdict": "PASS_PARTIAL_ARCH_MISMATCH",
+  "next_steps": [
+    "Document arch finding: cells64/cells128 .pt files are SINGLE byte-level Transformer decoders, NOT MitosisEngine ensembles \u2014 mitosis was a side-channel tracker only.",
+    "If pretrained chat capability needed: re-derive via clm_v2/conscious_lm.py (or the reconstructed minimal arch we used here) \u2014 load is straightforward.",
+    "Both files SHA + size verified \u2014 keep them archived in state/ for archaeology; consider HF private upload as `dancinlab/clm-v2-byte-18m-mitosis-cells64-final` and `...-cells128-step35000` for mitosis-instrumentation provenance.",
+    "Update .roadmap.clm_v2_chat: cells64/cells128 are NOT mitosis-grown weights, just decoder snapshots from a mitosis-instrumented training run (2026-03-28, step 35K and step 50K respectively).",
+    "Run a sampling-based generation test (temperature=0.8, top-k=40) instead of argmax to verify chat capability \u2014 argmax\u2192space is a known undertrained byte-LM failure mode, not a true incapacity signal.",
+    "Cross-link to convo_5k.pt (2026-05-06 recovered, 70MB) \u2014 same arch family, fine-tuned on 5K convo dialog; that is the actual chat-capable v2."
+  ]
+}

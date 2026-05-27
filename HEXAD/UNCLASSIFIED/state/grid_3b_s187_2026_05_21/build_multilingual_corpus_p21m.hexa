@@ -1,0 +1,349 @@
+// build_multilingual_corpus_p21m.hexa — pure-hexa port of
+// build_multilingual_corpus_p21m.py (torch-free multilingual corpus glue).
+//
+//   PURPOSE
+//     Build a multilingual (en + ko + zh + ru + ja) wiki corpus jsonl for
+//     P21M. Per-language ≥20% native-script filter (Hangul / CJK Han /
+//     Hiragana+Katakana / Cyrillic / Latin), streams ~10 MB per language,
+//     concats into a single jsonl. Ported 1:1 from the .py.
+//
+//   IMPORT-SAFE
+//     NO `fn main()` and NO top-level call. `import` this file pulls in pure
+//     fn defs only. Run the self-test via the sibling smoke harness.
+//
+//   THE ONE NON-PORTABLE SEAM (honest carve-out C1)
+//     The .py acquires rows via HuggingFace `datasets.load_dataset(...,
+//     streaming=True)` — a Python-only library with no hexa equivalent (it
+//     is the DATA SOURCE, not the corpus logic). Everything else — the
+//     native-script ratio filter, the per-lang threshold policy, the `=...=`
+//     wikitext-heading skip, jsonl record emission, byte accounting, the
+//     concat pass, and the .source.json summary — is pure and ported here.
+//
+//     This port exposes the portable core as:
+//       build_lang_from_rows(rows, lang, out_path, target_mb) -> map
+//         takes an ALREADY-LOADED list of row maps (each #{"text": ...} or
+//         with title/body/content/story/sentence keys — same extract_text
+//         contract as the .py) and runs the identical filter+write pipeline.
+//       build_lang_from_jsonl(in_jsonl, lang, out_path, target_mb) -> map
+//         convenience: reads a pre-fetched raw jsonl (one {"text": ...} per
+//         line) as the row source, then delegates to build_lang_from_rows.
+//       concat_corpus(per_lang_paths, out_path) -> map
+//         the concat pass (mirrors main()'s final loop).
+//       write_source_json(out_path, langs, summaries, total_recs, total_bytes)
+//         the .source.json sidecar writer.
+//     On-pod live use keeps the .py (datasets streaming). This hexa port is
+//     the verifiable, deterministic core for offline / pre-fetched corpora.
+//
+//   BYTE PARITY (vs .py)
+//     - native_ratio: identical codepoint ranges + identical per-lang branch.
+//     - thresholds: ja=0.05, en=0.50, else 0.20 (identical).
+//     - skip rule: stripped len>40 AND ratio<threshold → filtered; plus the
+//       `=...=` heading skip and empty-after-strip skip (identical order).
+//     - byte count: len(text.encode("utf-8")) ≡ byte_len(text) (hexa strings
+//       are UTF-8) — exact.
+//     - jsonl record: {"text": <text>, "lang": <lang>} with ensure_ascii=
+//       False (raw UTF-8) — see _jsonl_record (matches Py json.dumps order).
+//
+//   COMPLIANCE  snake_case · honest impl · English code · .push() O(1).
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── per-language source roster (build_multilingual_corpus_p21m.py:17-40) ────
+// Returned as data so callers / the smoke harness can inspect parity. Each
+// entry = [hf_name, hf_config_or_"", split]. (Informational — the hexa port
+// does not call HF; see carve-out C1.)
+fn p21m_sources(lang: string) -> list {
+    if lang == "en" {
+        return [
+            ["Salesforce/wikitext", "wikitext-2-raw-v1", "train"],
+            ["wikimedia/wikipedia", "20231101.en", "train"],
+        ]
+    }
+    if lang == "ko" {
+        return [
+            ["wikimedia/wikipedia", "20231101.ko", "train"],
+            ["lcw99/wikipedia-korean-20221001", "", "train"],
+            ["graelo/wikipedia", "20230601.ko", "train"],
+            ["heegyu/kowiki-sentences", "", "train"],
+        ]
+    }
+    if lang == "zh" {
+        return [
+            ["wikimedia/wikipedia", "20231101.zh", "train"],
+            ["graelo/wikipedia", "20230601.zh", "train"],
+        ]
+    }
+    if lang == "ru" {
+        return [
+            ["wikimedia/wikipedia", "20231101.ru", "train"],
+            ["graelo/wikipedia", "20230601.ru", "train"],
+        ]
+    }
+    if lang == "ja" {
+        return [
+            ["wikimedia/wikipedia", "20231101.ja", "train"],
+            ["graelo/wikipedia", "20230601.ja", "train"],
+        ]
+    }
+    return []
+}
+
+
+// ── native-script ratio (build_multilingual_corpus_p21m.py:43-76) ───────────
+// n_native_chars / total_chars over Unicode CODEPOINTS (not bytes), matching
+// Py iteration over `for c in text`. We decode codepoints from each UTF-8
+// char substring via .chars() + _utf8_cp (char_code builtin is byte-based, so
+// we decode the codepoint ourselves — see kosmos_io.hexa note).
+fn native_ratio(text: string, lang: string) -> float {
+    if byte_len(text) == 0 { return 0.0 }
+    let chars = text.chars()
+    let total = len(chars)
+    if total == 0 { return 0.0 }
+    let mut n = 0
+    let mut i = 0
+    while i < total {
+        let cp = _utf8_cp(chars[i])
+        i = i + 1
+        if lang == "en" {
+            // latin letters a-z / A-Z (cp ranges 97-122 / 65-90).
+            if (cp >= 97 && cp <= 122) || (cp >= 65 && cp <= 90) { n = n + 1 }
+        } else if lang == "ko" {
+            // Hangul syllables 가(0xAC00) .. 힣(0xD7A3).
+            if cp >= 0xAC00 && cp <= 0xD7A3 { n = n + 1 }
+        } else if lang == "zh" {
+            // CJK Unified Ideographs 0x4E00 .. 0x9FFF.
+            if cp >= 0x4E00 && cp <= 0x9FFF { n = n + 1 }
+        } else if lang == "ja" {
+            // Hiragana 0x3040-0x309F + Katakana 0x30A0-0x30FF (kana only).
+            if (cp >= 0x3040 && cp <= 0x309F) || (cp >= 0x30A0 && cp <= 0x30FF) { n = n + 1 }
+        } else if lang == "ru" {
+            // Cyrillic 0x0400 .. 0x04FF.
+            if cp >= 0x0400 && cp <= 0x04FF { n = n + 1 }
+        }
+    }
+    return (n + 0.0) / (total + 0.0)
+}
+
+// Decode the Unicode codepoint of a single-character UTF-8 substring.
+// Mirrors Python `ord(c)`. ch is expected to be exactly one char (from
+// .chars()); defensive on truncated/continuation bytes.
+fn _utf8_cp(ch: string) -> int {
+    let n = byte_len(ch)
+    if n == 0 { return 0 }
+    let b0 = ch.byte_at(0)
+    if (b0 & 0x80) == 0 { return b0 }                        // 1-byte ASCII
+    if (b0 & 0xE0) == 0xC0 && n >= 2 {
+        return ((b0 & 0x1F) << 6) | (ch.byte_at(1) & 0x3F)   // 2-byte
+    }
+    if (b0 & 0xF0) == 0xE0 && n >= 3 {
+        return ((b0 & 0x0F) << 12) | ((ch.byte_at(1) & 0x3F) << 6) | (ch.byte_at(2) & 0x3F)  // 3-byte
+    }
+    if (b0 & 0xF8) == 0xF0 && n >= 4 {
+        return ((b0 & 0x07) << 18) | ((ch.byte_at(1) & 0x3F) << 12) | ((ch.byte_at(2) & 0x3F) << 6) | (ch.byte_at(3) & 0x3F)  // 4-byte
+    }
+    return b0                                                // defensive
+}
+
+
+// ── text extraction (build_multilingual_corpus_p21m.py:94-102) ──────────────
+// First non-empty of text/content/story/sentence; else title+"\n"+body; else "".
+fn extract_text(row: map) -> string {
+    let keys = ["text", "content", "story", "sentence"]
+    let mut i = 0
+    while i < len(keys) {
+        let k = keys[i]
+        i = i + 1
+        if row.contains_key(k) {
+            let v = row[k]
+            if type_of(v) == "string" && byte_len(to_string(v).trim()) > 0 {
+                return to_string(v)
+            }
+        }
+    }
+    let t = if row.contains_key("title") { to_string(row["title"]) } else { "" }
+    let b = if row.contains_key("body") { to_string(row["body"]) } else { "" }
+    if byte_len(t) > 0 || byte_len(b) > 0 {
+        return (t + "\n" + b).trim()
+    }
+    return ""
+}
+
+
+// ── per-lang threshold (build_multilingual_corpus_p21m.py:119-123) ──────────
+fn p21m_threshold(lang: string) -> float {
+    if lang == "ja" { return 0.05 }      // kana sparser than Han in mixed text
+    if lang == "en" { return 0.50 }      // latin letters dense; tighter
+    return 0.20
+}
+
+
+// ── jsonl record encode (mirrors Py json.dumps({"text":..,"lang":..},
+//    ensure_ascii=False)) — fixed key order text, lang; raw UTF-8 values. ──
+fn _jsonl_record(text: string, lang: string) -> string {
+    return "{\"text\": " + _json_str(text) + ", \"lang\": " + _json_str(lang) + "}"
+}
+
+// JSON string-escape per the Python json encoder (ensure_ascii=False):
+// escape \ " and the C0 controls \b \t \n \f \r + \u00XX for other <0x20.
+// Non-ASCII bytes pass through raw (ensure_ascii=False).
+fn _json_str(s: string) -> string {
+    let n = byte_len(s)
+    let mut out = "\""
+    let mut i = 0
+    while i < n {
+        let b = s.byte_at(i)
+        i = i + 1
+        if b == 34 { out = out + "\\\"" }            // "
+        else if b == 92 { out = out + "\\\\" }       // backslash
+        else if b == 8 { out = out + "\\b" }
+        else if b == 9 { out = out + "\\t" }
+        else if b == 10 { out = out + "\\n" }
+        else if b == 12 { out = out + "\\f" }
+        else if b == 13 { out = out + "\\r" }
+        else if b < 32 { out = out + "\\u00" + _hex2(b) }
+        else { out = out + _byte_to_str(b) }
+    }
+    return out + "\""
+}
+
+fn _hex2(b: int) -> string {
+    let hi = (b >> 4) & 0xF
+    let lo = b & 0xF
+    return _hexdig(hi) + _hexdig(lo)
+}
+
+fn _hexdig(d: int) -> string {
+    if d < 10 { return to_string(d) }
+    if d == 10 { return "a" }
+    if d == 11 { return "b" }
+    if d == 12 { return "c" }
+    if d == 13 { return "d" }
+    if d == 14 { return "e" }
+    return "f"
+}
+
+// Append a single raw byte to a string by reconstructing it (chr builtin).
+fn _byte_to_str(b: int) -> string {
+    return chr(b)
+}
+
+
+// ── per-lang build over already-loaded rows (the portable core of
+//    build_lang, build_multilingual_corpus_p21m.py:105-158, minus the HF
+//    streaming load which is carve-out C1). ──────────────────────────────────
+//
+//  rows      = list of row maps (HF-equivalent records).
+//  out_path  = per-lang jsonl output.
+//  target_mb = stop after this many MB of written text bytes.
+//  Returns a summary map {lang, source, records, bytes, filtered}.
+fn build_lang_from_rows(rows: list, lang: string, out_path: string,
+                        target_mb: int) -> map {
+    let target_bytes = target_mb * 1024 * 1024
+    let threshold = p21m_threshold(lang)
+    let mut written = 0
+    let mut n_recs = 0
+    let mut n_filtered = 0
+
+    // mkdir -p dirname(out_path) (Py os.makedirs).
+    let _mk = exec("mkdir -p \"$(dirname '" + out_path + "')\"")
+
+    let mut body = ""
+    let mut ri = 0
+    while ri < len(rows) {
+        let row = rows[ri]
+        ri = ri + 1
+        let text = extract_text(row)
+        if byte_len(text.trim()) == 0 { continue }
+        let stripped = text.trim()
+        // skip wikitext headings `=...=`.
+        if stripped.starts_with("=") && stripped.ends_with("=") { continue }
+        if byte_len(stripped) > 40 {
+            let r = native_ratio(stripped, lang)
+            if r < threshold { n_filtered = n_filtered + 1; continue }
+        }
+        body = body + _jsonl_record(text, lang) + "\n"
+        written = written + byte_len(text)     // len(text.encode("utf-8"))
+        n_recs = n_recs + 1
+        if written >= target_bytes { break }
+    }
+    let _w = write_file(out_path, body)
+    return #{
+        "lang":     lang,
+        "source":   "rows[" + to_string(len(rows)) + "]",
+        "records":  n_recs,
+        "bytes":    written,
+        "filtered": n_filtered,
+    }
+}
+
+// convenience: source rows from a pre-fetched raw jsonl (one JSON obj/line),
+// then delegate to build_lang_from_rows. Each line parsed via json_parse.
+fn build_lang_from_jsonl(in_jsonl: string, lang: string, out_path: string,
+                         target_mb: int) -> map {
+    let mut rows = []
+    if file_exists(in_jsonl) {
+        let raw = read_file(in_jsonl)
+        let lines = raw.split("\n")
+        let mut i = 0
+        while i < len(lines) {
+            let line = lines[i].trim()
+            i = i + 1
+            if byte_len(line) == 0 { continue }
+            let obj = json_parse(line)
+            if type_of(obj) == "map" { rows.push(obj) }
+        }
+    }
+    let summ = build_lang_from_rows(rows, lang, out_path, target_mb)
+    summ["source"] = in_jsonl
+    return summ
+}
+
+
+// ── concat pass (build_multilingual_corpus_p21m.py:191-202) ─────────────────
+// Concatenate per-lang jsonl files into out_path, counting records + bytes.
+// Returns #{total_records, total_bytes}.
+fn concat_corpus(per_lang_paths: list, out_path: string) -> map {
+    let _mk = exec("mkdir -p \"$(dirname '" + out_path + "')\"")
+    let mut total_bytes = 0
+    let mut total_recs = 0
+    let mut body = ""
+    let mut i = 0
+    while i < len(per_lang_paths) {
+        let p = per_lang_paths[i]
+        i = i + 1
+        if !file_exists(p) { continue }
+        let content = read_file(p)
+        let lines = content.split("\n")
+        let mut j = 0
+        while j < len(lines) {
+            let line = lines[j]
+            j = j + 1
+            // .py iterates file lines (each retains its '\n'); the trailing
+            // split element after a final '\n' is empty → skip to avoid an
+            // extra phantom record.
+            if byte_len(line) == 0 { continue }
+            let with_nl = line + "\n"
+            body = body + with_nl
+            total_bytes = total_bytes + byte_len(with_nl)
+            total_recs = total_recs + 1
+        }
+    }
+    let _w = write_file(out_path, body)
+    return #{ "total_records": total_recs, "total_bytes": total_bytes }
+}
+
+
+// ── .source.json sidecar (build_multilingual_corpus_p21m.py:204-207) ────────
+// summaries = list of per-lang summary maps from build_lang_from_rows.
+fn write_source_json(out_path: string, langs: list, summaries: list,
+                     total_recs: int, total_bytes: int) -> string {
+    let obj = #{
+        "langs":         langs,
+        "per_lang":      summaries,
+        "total_records": total_recs,
+        "total_bytes":   total_bytes,
+    }
+    let sidecar = out_path + ".source.json"
+    let _w = write_file(sidecar, json_stringify(obj))
+    return sidecar
+}

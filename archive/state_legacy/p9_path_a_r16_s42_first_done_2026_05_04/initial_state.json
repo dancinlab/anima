@@ -1,0 +1,29 @@
+{
+  "schema": "anima/p9_path_a_r16_s42_first_done/initial_state/1",
+  "captured_at_utc": "2026-05-04T06:50:35Z",
+  "watchdog_pid": 13537,
+  "watchdog_script": "/Users/ghost/core/anima/state/p9_path_a_r16_s42_first_done_2026_05_04/watchdog_loop.sh",
+  "poll_interval_sec": 300,
+  "max_wait_sec": 18000,
+  "hf_repo": "dancinlab/llm-llama32-3b-paradigm-a-prime-r16-sft-stage1",
+  "s42": {
+    "pod_id": "pvkyhb0lb87ydu",
+    "ssh_host": "103.207.149.143",
+    "ssh_port": "15961",
+    "step_at_progress2_capture": 6557,
+    "step_pct_at_progress2": 65.6,
+    "sec_per_iter": 2.65,
+    "eta_train_done_utc": "2026-05-04T09:10:34Z",
+    "eta_hub_pushed_utc": "2026-05-04T09:15:34Z",
+    "ckpts_pushed_to_hf_at_watchdog_start": ["step-2000 (03:22Z)", "step-4000 (04:47Z)", "step-6000 (06:13Z)"],
+    "ckpts_expected": ["step-2000", "step-4000", "step-6000", "step-8000", "step-10000"],
+    "step_8000_eta_utc": "2026-05-04T07:38Z (extrapolated, ~85min cadence per push)",
+    "step_10000_eta_utc": "2026-05-04T09:15Z (s42 final + push)"
+  },
+  "concurrent_watchdogs": {
+    "27807_3of3": "polls all 3 seeds (s42+s43+s44) for full ensemble dispatch",
+    "13537_1of3_first_done": "this watchdog — polls s42 only for first-done event"
+  },
+  "detection_method": "HF /commits/main scan for title containing 'step 10000' (matches push_to_hub commit pattern)",
+  "fallback_signals": ["SSH find /workspace TRAIN_DONE.json (best-effort)", "runpodctl get pod status (heuristic)"]
+}

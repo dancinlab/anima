@@ -1,0 +1,22 @@
+============================= test session starts ==============================
+platform darwin -- Python 3.9.6, pytest-8.4.2, pluggy-1.6.0 -- /Applications/Xcode.app/Contents/Developer/usr/bin/python3
+cachedir: .pytest_cache
+rootdir: /Users/ghost/core/anima/anima-physics/AUX/AKIDA
+configfile: pyproject.toml
+plugins: anyio-4.12.1, cov-7.1.0
+collecting ... collected 12 items
+
+tests/test_adapters_mock.py::test_adapter_mock_run[eeg_pattern] PASSED   [  8%]
+tests/test_adapters_mock.py::test_adapter_mock_run[izhikevich] PASSED    [ 16%]
+tests/test_adapters_mock.py::test_adapter_mock_run[kuramoto] PASSED      [ 25%]
+tests/test_adapters_mock.py::test_adapter_mock_run[memristor_hybrid] PASSED [ 33%]
+tests/test_adapters_mock.py::test_adapter_mock_run[motivation_gate] PASSED [ 41%]
+tests/test_adapters_mock.py::test_adapter_mock_run[snn_lif] PASSED       [ 50%]
+tests/test_adapters_mock.py::test_adapter_mock_run[sparse_attention] PASSED [ 58%]
+tests/test_adapters_mock.py::test_adapter_mock_run[spike_tier_lm_head] PASSED [ 66%]
+tests/test_adapters_mock.py::test_adapter_mock_run[spontaneous_gate] PASSED [ 75%]
+tests/test_adapters_mock.py::test_adapter_mock_run[theta_gamma] PASSED   [ 83%]
+tests/test_adapters_mock.py::test_mock_runtime_self_consistency PASSED   [ 91%]
+tests/test_adapters_mock.py::test_falsifier_aggregate_smoke PASSED       [100%]
+
+============================== 12 passed in 1.67s ==============================

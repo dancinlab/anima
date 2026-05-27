@@ -1,0 +1,48 @@
+{
+  "name": "hexad-corpus",
+  "version": "v2-spont-stream-d128-cycle1-2026-05-17",
+  "file": "corpus_consciousness_v2.jsonl",
+  "format": "jsonl",
+  "sha256": "7359f0b9a3f059fc168035e2f29f743f5ee51d1760eccad54b2b91d52275f571",
+  "bytes": 1101605,
+  "lines": 2560,
+  "vocab_size": 256,
+  "encoding": "utf-8",
+  "tokenization": "byte-level (no tokenizer; raw bytes from 'text' field)",
+  "format_pattern": "stimulus-stream: each record is either `<stimulus>X</stimulus>\\n<anima>Y</anima>` (β, reactive emission) OR `<anima>Y</anima>` (δ, spontaneous self-monologue). NO helper/assistant/도우미/사용자 role labels. anima_persona-consistent.",
+  "schema": {
+    "id": "string — stable identifier (e.g. 'ccv2_c_0')",
+    "text": "string — stimulus-stream content with <stimulus>/<anima> tags",
+    "desc": "string — meta tail (module / idx / kind / pattern / bilingual / tag)",
+    "hexad_module": "string ∈ {hexad_c, hexad_d, hexad_e, hexad_m, hexad_s, hexad_w, hexad_spont, hexad_wiring}",
+    "idx": "integer",
+    "source": "corpus_generator_v2.py",
+    "phi_family": "Hexad-spont",
+    "pattern": "string ∈ {beta, delta}",
+    "bilingual": "bool — text mixes EN + KO when true"
+  },
+  "modules": {
+    "hexad_c": 320,
+    "hexad_d": 320,
+    "hexad_e": 320,
+    "hexad_m": 320,
+    "hexad_s": 320,
+    "hexad_w": 320,
+    "hexad_spont": 320,
+    "hexad_wiring": 320,
+    "total": 2560
+  },
+  "F_CORPUS_NO_HELPER": "PASS — grep `도우미|helper|assistant|사용자|user:` total = 0",
+  "F_CORPUS_STIMULUS_PATTERN": "PASS — all 2,560 records contain <anima> tag",
+  "F_CORPUS_SHA256_STABLE": "sha256=7359f0b9a3f059fc168035e2f29f743f5ee51d1760eccad54b2b91d52275f571 (seed=1337 deterministic)",
+  "lineage": {
+    "v1": "v1-byte-consciousness-d128-cycle1-2026-05-17 (152 KB, 240 lines, 6 modules)",
+    "v2": "this revision (v2-spont-stream-d128-cycle1-2026-05-17, 1,101,605 B, 2560 lines, 8 modules — 6 HEXAD + spont + wiring; helper-token deprecated)",
+    "rationale": "v1 carried implicit helper-tokens via chat_lib `사용자:/도우미:` templates earlier in the lineage. v2 removes ALL helper/assistant/도우미/사용자 tokens at the corpus level (anima_persona forbidden list closure)."
+  },
+  "intended_use": "anima HEXAD scaffold training + 자연발화 (spontaneous emission) probe.",
+  "license": "Apache-2.0",
+  "generated_at": "2026-05-17",
+  "ssot_repo": "https://github.com/dancinlab/anima",
+  "ssot_path": "state/hexad_v2_corpus_spont_2026_05_17/corpus_consciousness_v2.jsonl"
+}

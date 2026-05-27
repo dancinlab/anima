@@ -1,0 +1,68 @@
+=== S161-FIRE Psi-JEPA-COUPLE dispatch start 2026-05-19T23:05:09Z ===
+[create] trying GPU: NVIDIA A100-SXM4-80GB
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"1tzh8ey29wutio","machineId":"eim0q9sow7cw"}}}
+[create] pod 1tzh8ey29wutio on NVIDIA A100-SXM4-80GB
+[ssh-ready] iter 2: 154.54.102.45:16173 - port mapped AND handshake OK
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, s1-n 777000)
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == S107 byte-identical
+[train] S161 Psi-JEPA-COUPLE d768-12L-283M from-scratch seed 1337, 3000 steps, lambda_psi=1.0 lambda_ce=0.1
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+TRAIN_PID 252
+[train] done iter 1
+[eval] S161 Psi-JEPA-COUPLE eval (S24 Phase B + byte_acc)
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+Warning: Permanently added '[154.54.102.45]:16173' (ED25519) to the list of known hosts.
+[pull] success try 1
+[pull] result.json present - SAVE_POD=0, pod will terminate
+44b173b514ffcd800735530ce66f6733d907cfee576feab750033efb5e6ed475  /Users/ghost/core/anima/HEXAD/NEUROMORPHIC/state/dual_head_coupling_non_ce_fire_s161_2026_05_20/ckpt_s161_psicouple.pt
+VERDICT_PRIMARY= SPONT_AMBIGUOUS  emit_rate= 0.05  psi_std= 0.0  byte_acc= 0.1185
+=== S161-FIRE pipeline complete 2026-05-19T23:33:42Z ===
+dispatch_s161_runpod.sh: line 201: 55820 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S161_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s - terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod 1tzh8ey29wutio (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== S161-FIRE dispatch end 2026-05-19T23:33:46Z rc=0 ===
+ull;
+fi )
+[teardown] terminating pod 1tzh8ey29wutio (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[]}}}
+=== S161-FIRE dispatch end 2026-05-19T23:33:46Z rc=0 ===

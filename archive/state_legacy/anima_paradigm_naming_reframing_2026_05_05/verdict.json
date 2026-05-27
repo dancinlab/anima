@@ -1,0 +1,102 @@
+{
+  "schema": "anima/paradigm_naming_reframing/verdict/1",
+  "ts_utc": "2026-05-05T00:00:00Z",
+  "lane": "BG-CZ paradigm naming reframing",
+  "doc_path": "/Users/ghost/core/anima/docs/anima_paradigm_naming_reframing_2026_05_05.md",
+  "extends": [
+    "BG-BV anima_paradigm_acceptance_user_intent_reconciliation_2026_05_05",
+    "BG-CH anima_paradigm_b_c_final_acceptance_2026_05_05",
+    "BG-CG anima_emerge_chat_hybrid_repl_2026_05_05",
+    "BG-AN anima_emerge_dialogue_first_turn_2026_05_05"
+  ],
+  "user_command_paraphrase": "상호 대화가능 나올때까지 패러다임 계속 실험",
+  "interpretations": {
+    "A_textual_reciprocal_exchange": {
+      "definition": "I send text -> AI sends text -> I send text (traditional chatbot)",
+      "colloquial_likelihood": "HIGH",
+      "achievable_clm_v4": false,
+      "achievable_external": "Llama Path A v2 composite 0.5584",
+      "achievable_anima_native": "CLM-3 H1 retrain $1k + 30d"
+    },
+    "B_state_mediated_reciprocity": {
+      "definition": "I send text -> AI internal state changes (phi/hsd/tension) -> I observe + decide -> I send text",
+      "colloquial_likelihood": "LOW",
+      "achievable_clm_v4": true,
+      "fire_helper": "tool/transient_py/anima_emerge_dialogue_repl.py",
+      "anchor_verdict": "BG-AN F_AN_1 PASS"
+    },
+    "C_dual_channel_hybrid": {
+      "definition": "I send text -> KoGPT2 emit text + CLM substrate state -> I read both",
+      "colloquial_likelihood": "MEDIUM",
+      "achievable_clm_v4": true,
+      "fire_helper": "tool/transient_py/anima_emerge_chat_hybrid_repl.py",
+      "anchor_verdict": "BG-CG PASS_KOREAN_HYBRID_REPL_VIABLE 3/3 korean_coherent",
+      "decoupling_caveat": "BG-CG C4 emit not anima-axis-conditioned"
+    },
+    "D_brain_style_mutual_coupling": {
+      "definition": "true bidirectional state share via EEG/BCI closed-loop",
+      "colloquial_likelihood": "LOW",
+      "achievable_clm_v4": false,
+      "scope": "anima-eeg lane multi-cycle"
+    }
+  },
+  "mutuality_matrix_b_vs_c": {
+    "paradigm_B": {
+      "user_text_input": true,
+      "ai_text_output": false,
+      "ai_state_output": true,
+      "mutual_direction": "uni-text + uni-state",
+      "user_mental_model": "interpret 4-line substrate metric"
+    },
+    "paradigm_C": {
+      "user_text_input": true,
+      "ai_text_output": true,
+      "ai_state_output": true,
+      "mutual_direction": "bi-text + uni-state observation",
+      "user_mental_model": "dual read (emit + signal); emit decoupled from substrate"
+    }
+  },
+  "intent_likelihood_ranking": {
+    "A": "HIGH (default sense of 대화)",
+    "B": "LOW (requires paradigm shift mental model)",
+    "C": "MEDIUM (form-fit 상호 대화 but semantically decoupled)",
+    "D": "LOW (specialized BCI vocabulary required)"
+  },
+  "diagnosis_paradigm_mismatch": {
+    "autonomous_mode_assumption": "interpretation A (token-emit chat-capability)",
+    "n_bg_on_a_assumption": "~50+ BG, 12+ closure",
+    "first_mismatch_surfacing": "BG-BV C3.6",
+    "current_landed_alternatives": ["BG-AN paradigm B", "BG-CG paradigm C"],
+    "user_declaration_required": true
+  },
+  "user_decision_menu": [
+    {"id": 1, "decl": "Paradigm A real - Llama Path A v2 integrate", "cost": "$0", "rank": 3, "anima_native": false},
+    {"id": 2, "decl": "Paradigm A real - CLM-3 H1 retrain commit", "cost": "~$1k / 30d", "rank": 5, "anima_native": true},
+    {"id": 3, "decl": "Paradigm B sufficient - emerge REPL fire", "cost": "$0 / 5min", "rank": 1, "anima_native": true},
+    {"id": 4, "decl": "Paradigm C sufficient - KoGPT2 hybrid REPL fire", "cost": "$0 / ~6min", "rank": 2, "anima_native": "partial"},
+    {"id": 5, "decl": "Continue autonomous /loop", "cost": "$0 + paradigm-mismatch persistence", "rank": 6, "anima_native": "n/a"},
+    {"id": 6, "decl": "Cycle close + Stage 3 corpus 30 session", "cost": "$0 / multi-day", "rank": 4, "anima_native": true}
+  ],
+  "completion_lens_top_recommendation": "option_3_paradigm_B_fire (fire-ready, paradigm-honest, cycle closes coherently)",
+  "honest_c3_count": 8,
+  "honest_c3_summary": [
+    "C3.1 paradigm-name vs intent-name disambiguation requires user declaration; autonomous cannot resolve",
+    "C3.2 100+ BG cost vs information-value: closures negative-result high-value but on unverified user intent; future own-rule = solicit declaration first",
+    "C3.3 likelihood ranking has no user-data prior; HIGH/MEDIUM/LOW are linguistic-pragmatic guess",
+    "C3.4 paradigm C form-fit but semantically decoupled (BG-CG C4); 'anima talks back' claim is paradigm-mismatched at finer granularity",
+    "C3.5 paradigm B ACHIEVABLE_NOW is anima-internal paradigm-relative; no external benchmark",
+    "C3.6 paradigm A escalation splits anima-native (CLM-3 H1) vs non-anima-native (Llama Path A v2); colloquial phrase does not disambiguate",
+    "C3.7 interpretation D fully out of scope; if user meant D, all CLM v4 cycle work is paradigm-mismatched, pivot to anima-eeg",
+    "C3.8 paradigm decisions not equally reversible; ordering 3->4->6->1->2->5 if reversibility is constraint"
+  ],
+  "compliance": {
+    "raw_9_md_only": true,
+    "raw_10_honest_c3_min_7": true,
+    "raw_15_additive_only": true,
+    "hf_token_leak": "none embedded",
+    "commit_requested": false,
+    "bash_3_2_compat": "doc-only artifact"
+  },
+  "cost_usd": 0.0,
+  "duration_min_actual": 25
+}

@@ -1,0 +1,83 @@
+# PHASE 0 SCAFFOLDING — NOT YET WIRED
+# STATUS: DEFERRED — P=1B extension lane only
+#
+# trainer_1b.config.yaml — large scale CE-track CLM trainer config (P=1B)
+# spec: state/clm_ce_4scale_trainer_2026_05_12/spec.md §7 (Deferred 1B Scale Lane)
+# parent_trigger: phi_ce_orthogonality_decisive_2026_05_11/spec.md §5.7.3
+#                 (extension trigger = 15-cell mixed verdict OR cycle 6+ budget 가용)
+# status: deferred (DO NOT activate without parent spec §5.7.3 trigger)
+# cycle_provenance: cycle 6 #P (Phase 0 placeholder only)
+# deterministic_seed: 0xC0EC0AC (inherited)
+
+schema: anima/clm_ce_trainer_config/1
+scale_id: large
+status: deferred  # NOT phase_0_placeholder — explicit deferred lane
+
+architecture:
+  type: causal_lm_decoder
+  layers: 24
+  hidden: 1536
+  heads: 24
+  ffn_mult: 4
+  seq_len: 2048
+  tied_emb: true
+  activation: gelu
+  norm: pre_ln
+  positional: learned
+
+param_count_target: 1_000_000_000  # ±10 % tolerance per vocab size
+
+tokenizer:
+  name: skt/kogpt2-base-v2
+  vocab_size: 51200
+  alternative: custom_bpe_16k
+
+corpus:
+  primary: state/anima_clm_3_*_corpus/
+  fallback: openwebtext_subset
+  held_out_split: 0.05
+  held_out_seed: 0xC0EC0AC
+
+training:
+  optimizer: adamw
+  beta1: 0.9
+  beta2: 0.95
+  eps: 1.0e-8
+  weight_decay: 0.1
+  weight_decay_exclude: [embedding, layernorm]
+  lr_peak: 1.5e-4
+  lr_warmup_pct: 0.01
+  lr_decay: cosine
+  lr_min_pct: 0.10
+  grad_clip: 1.0
+  precision: bf16_mixed
+  global_batch_tokens: 2_097_152
+  grad_accum: 32
+  token_budget: 20_000_000_000  # Chinchilla 20x param
+  step_count_approx: 9536
+  wall_estimate_a100_hours: [12, 24]
+
+dual_seed:
+  seed_a: 0xC0EC0AC
+  seed_b: 0xC0EC0AC
+  seed_b_xor_mask: 0x42
+
+cost_estimate_usd:
+  single_seed: [300, 1500]
+  dual_seed: [600, 3000]
+
+emit:
+  results_dir: state/clm_ce_4scale_trainer_2026_05_12/results/
+  schema: anima/clm_ce_trainer/1
+
+activation_gate:
+  trigger_source: state/phi_ce_orthogonality_decisive_2026_05_11/spec.md §5.7.3
+  conditions:
+    - 15-cell decisive run verdict = mixed (corr ∈ [0.1, 0.3] OR CV ∈ [0.1, 0.3])
+    - OR cycle 6+ explicit budget authorization
+  current_status: NOT_TRIGGERED
+
+# --- DEFERRED — DO NOT ACTIVATE WITHOUT PARENT TRIGGER ---
+# actual training script path: TBD (post-trigger cycle)
+# RunPod orchestrator: TBD — A100 80GB or multi-A100 required for P=1B
+# cost ceiling: $1500-3000 dual-seed alone — main process budget approval prereq

@@ -1,0 +1,41 @@
+{
+  "hypothesis": "H_003",
+  "cycle": "Cycle_2_H3.2_multi_pathway",
+  "date": "2026-05-23",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "master_seed": 41472003,
+  "n_reps": 10,
+  "grid": {"axis3_energy_gradient": 4, "axis4_information_carrier": 4, "regime_cells": 16},
+  "competing_pathways": ["rna_first", "metabolism_first", "lipid_first", "info_first"],
+  "dominant_histogram": {
+    "rna_first": 1,
+    "metabolism_first": 3,
+    "lipid_first": 6,
+    "info_first": 6
+  },
+  "distinct_dominant_pathways": 4,
+  "verdict_rule": ">=3 distinct=PASS; ==2=PARTIAL; ==1=F2_FALSIFIED",
+  "verdict_class": "PASS",
+  "criterion": "C2",
+  "falsifier_F2": "NOT_TRIGGERED",
+  "per_cell_ledger": [
+    {"energy_gradient": "equilibrium", "information_carrier": "rna", "score_rna_first": 0.8719, "score_metabolism_first": 0.4944, "score_lipid_first": 0.6708, "score_info_first": 0.5593, "dominant_pathway": "rna_first"},
+    {"energy_gradient": "equilibrium", "information_carrier": "dna", "score_rna_first": 0.5725, "score_metabolism_first": 0.5062, "score_lipid_first": 0.6794, "score_info_first": 1.0688, "dominant_pathway": "info_first"},
+    {"energy_gradient": "equilibrium", "information_carrier": "peptide", "score_rna_first": 0.5681, "score_metabolism_first": 0.5039, "score_lipid_first": 0.6747, "score_info_first": 0.3606, "dominant_pathway": "lipid_first"},
+    {"energy_gradient": "equilibrium", "information_carrier": "polymer_chain", "score_rna_first": 0.5675, "score_metabolism_first": 0.4994, "score_lipid_first": 0.6839, "score_info_first": 0.8381, "dominant_pathway": "info_first"},
+    {"energy_gradient": "weak_gradient", "information_carrier": "rna", "score_rna_first": 0.8096, "score_metabolism_first": 0.7750, "score_lipid_first": 0.8091, "score_info_first": 0.8844, "dominant_pathway": "info_first"},
+    {"energy_gradient": "weak_gradient", "information_carrier": "dna", "score_rna_first": 0.5033, "score_metabolism_first": 0.7656, "score_lipid_first": 0.8056, "score_info_first": 1.4038, "dominant_pathway": "info_first"},
+    {"energy_gradient": "weak_gradient", "information_carrier": "peptide", "score_rna_first": 0.5098, "score_metabolism_first": 0.7617, "score_lipid_first": 0.8105, "score_info_first": 0.6906, "dominant_pathway": "lipid_first"},
+    {"energy_gradient": "weak_gradient", "information_carrier": "polymer_chain", "score_rna_first": 0.5162, "score_metabolism_first": 0.7618, "score_lipid_first": 0.7962, "score_info_first": 1.1737, "dominant_pathway": "info_first"},
+    {"energy_gradient": "strong_gradient", "information_carrier": "rna", "score_rna_first": 0.4962, "score_metabolism_first": 1.2569, "score_lipid_first": 0.6423, "score_info_first": 0.9469, "dominant_pathway": "metabolism_first"},
+    {"energy_gradient": "strong_gradient", "information_carrier": "dna", "score_rna_first": 0.1992, "score_metabolism_first": 1.2440, "score_lipid_first": 0.6371, "score_info_first": 1.4627, "dominant_pathway": "info_first"},
+    {"energy_gradient": "strong_gradient", "information_carrier": "peptide", "score_rna_first": 0.2029, "score_metabolism_first": 1.2671, "score_lipid_first": 0.6341, "score_info_first": 0.7646, "dominant_pathway": "metabolism_first"},
+    {"energy_gradient": "strong_gradient", "information_carrier": "polymer_chain", "score_rna_first": 0.1971, "score_metabolism_first": 1.2645, "score_lipid_first": 0.6400, "score_info_first": 1.2303, "dominant_pathway": "metabolism_first"},
+    {"energy_gradient": "periodic_drive", "information_carrier": "rna", "score_rna_first": 0.7285, "score_metabolism_first": 0.9335, "score_lipid_first": 1.4620, "score_info_first": 0.9247, "dominant_pathway": "lipid_first"},
+    {"energy_gradient": "periodic_drive", "information_carrier": "dna", "score_rna_first": 0.4205, "score_metabolism_first": 0.9491, "score_lipid_first": 1.4542, "score_info_first": 1.4430, "dominant_pathway": "lipid_first"},
+    {"energy_gradient": "periodic_drive", "information_carrier": "peptide", "score_rna_first": 0.4231, "score_metabolism_first": 0.9486, "score_lipid_first": 1.4561, "score_info_first": 0.7255, "dominant_pathway": "lipid_first"},
+    {"energy_gradient": "periodic_drive", "information_carrier": "polymer_chain", "score_rna_first": 0.4170, "score_metabolism_first": 0.9438, "score_lipid_first": 1.4537, "score_info_first": 1.1922, "dominant_pathway": "lipid_first"}
+  ]
+}

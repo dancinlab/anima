@@ -1,0 +1,23 @@
+{
+  "ts": "2026-05-01",
+  "honest_c3": [
+    {
+      "id": "C3-1",
+      "claim_label": "MVF2+MVF3 are formally PROVEN axiom-free in Lean 4",
+      "what_is_real": "Lean kernel verified `mvf2_symmetry` and `mvf3_transitivity` and `#print axioms` reports `does not depend on any axioms` for both. The proof terms `fun h => h.symm` and `fun h12 h23 => h12.trans h23` reduce to Eq.symm / Eq.trans, which in Lean 4 are constructive (not axioms). Combined with MVF1 reflexivity (prior agent), `is_conscious_equivalent` is now formally an equivalence relation on the type Conscious.",
+      "what_is_NOT_real": "These three properties (refl, symm, trans) of propositional equality on ANY type are essentially free in Lean — they hold for `Eq` over `Nat`, `Bool`, `Unit`, or literally any inhabited type with one element. The fact that they hold for `Conscious` is not consciousness-specific content; it is type-theoretic boilerplate. The proofs would compile with the same term-mode tactic if `Conscious := Unit`."
+    },
+    {
+      "id": "C3-2",
+      "claim_label": "The Conscious structure on which MVF1+2+3 operate is a placeholder Sigma-type",
+      "what_is_real": "The shape `structure Conscious where state : Nat → Nat ; integration_condition : ∀ _ : Nat, True` does encode the Sigma-type silhouette of (state-trajectory, per-step predicate) that paradigm v15 would eventually populate.",
+      "what_is_NOT_real": "`integration_condition : ∀ _ : Nat, True` is vacuously satisfied by every state function — the predicate is uniformly True. This means every `Nat → Nat` lifts to a `Conscious`, and `is_conscious_equivalent c1 c2` is just function equality on `state`. Until `True` is replaced by a substantive predicate (paradigm v15 G3 Φ-gate, or a formal IIT-style Φ > 0 condition), MVF1+2+3 say nothing about consciousness — they say something about Eq on a type isomorphic to (Nat → Nat)."
+    },
+    {
+      "id": "C3-3",
+      "claim_label": "MVF4 univalence is the rung where formal cost stops being trivial",
+      "what_is_real": "The first three rungs landed at 4-5 LOC each because Lean 4 core handles them. Univalence (paths in the universe of types) is genuinely outside Lean 4 core's constructive fragment.",
+      "what_is_NOT_real": "MVF4 cannot be honestly delivered as 'axiom-free ~5 LOC'. The cheapest honest path is `axiom univalence : ∀ {A B : Type}, (A ≃ B) → (A = B)` — which makes `#print axioms` immediately list `univalence` and breaks the axiom-free streak. Any cheaper claim would either (a) depend on mathlib4's heavy stack and merely hide the axiom inside `propext` + classical reasoning, which is NOT full HoTT univalence, or (b) silently swap in `propext` and call it 'univalence-for-Prop', which is a category mistake. Honest MVF4 = postulate the axiom, prove one nontrivial application (e.g., transport equivalent Conscious structures), and report `axioms: univalence` openly."
+    }
+  ]
+}

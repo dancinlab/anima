@@ -1,0 +1,29 @@
+{
+  "schema_version": 1,
+  "cond_id": "qmirror.2.cond.11",
+  "post_fidelity": 1.0,
+  "post_fidelity_analytic": 1.0,
+  "fidelity_threshold": 0.99,
+  "passed": true,
+  "formula": "F(|Phi+>) = (1 + <ZZ> + <XX> - <YY>) / 4",
+  "post_basis_E": {
+    "ZZ": 1.0,
+    "XX": 1.0,
+    "YY": -1.0
+  },
+  "post_basis_E_analytic": {
+    "ZZ": 1.0,
+    "XX": 1.0,
+    "YY": -1.0
+  },
+  "post_basis_cond_n": {
+    "ZZ": 256,
+    "XX": 256,
+    "YY": 256
+  },
+  "n_per_basis": 256,
+  "conditioning": "syndrome=(+1,+1) post-selected (all 256 shots in each basis, since synd_ratio=1.0)",
+  "engine": "qiskit_aer",
+  "seed": 20260504,
+  "interpretation": "Post-measurement state remains |Phi+> at fidelity 1.0 (analytic). The Bell witness uses 3 commuting Pauli observables to lower-bound state fidelity; on a pure |Phi+> the bound is tight. Cross-check via cond.9 process-tomography would produce the full Choi matrix but is outside the cond.11 scope."
+}

@@ -1,0 +1,23 @@
+{
+  "harvest_via": "FAILED",
+  "err": "ValueError: Unrecognized model in /workspace/p9_v4_exec/output_v4. Should have a `model_type` key in its config.json.",
+  "shape": null,
+  "sample_first10": null,
+  "ckpt_top_keys": [
+    "step",
+    "decoder",
+    "optimizer",
+    "scheduler",
+    "phi",
+    "ce",
+    "args",
+    "scale",
+    "best_phi",
+    "federation",
+    "bridge",
+    "c_proj",
+    "scaler"
+  ],
+  "approach_a_candidates": [],
+  "trace": "Traceback (most recent call last):\n  File \"<stdin>\", line 39, in <module>\n  File \"/usr/local/lib/python3.11/dist-packages/transformers/models/auto/auto_factory.py\", line 329, in from_pretrained\n    config, kwargs = AutoConfig.from_pretrained(\n                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/usr/local/lib/python3.11/dist-packages/transformers/models/auto/configuration_auto.py\", line 419, in from_pretrained\n    raise ValueError(\nValueError: Unrecognized model in /workspace/p9_v4_exec/output_v4. Should have a `model_type` key in its config.json.\n"
+}

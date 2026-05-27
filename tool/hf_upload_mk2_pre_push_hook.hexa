@@ -1,0 +1,123 @@
+#!hexa strict
+// tool/hf_upload_mk2_pre_push_hook.hexa — Pre-push CI hook for HF upload mk2.
+//
+// @tool(slug="hf_upload_mk2_pre_push", desc="Git pre-push hook fragment (hexa-native, raw#9). Scans the latest commit message on push for [hf-upload: <org>/<repo>] markers, validates HF naming via tool/hf_upload_mk2.hexa --validate-naming. Fails the push if naming would be rejected. Does NOT trigger actual upload (cost-safety + raw#15).")
+// @usage(hexa run tool/hf_upload_mk2_pre_push_hook.hexa)
+// @usage(hexa run tool/hf_upload_mk2_pre_push_hook.hexa --selftest)
+// @sentinel(__HF_UPLOAD_MK2_PRE_PUSH__ <PASS|FAIL|SKIP>)
+//
+// INSTALL
+//   Add to .git/hooks/pre-push (chmod +x), e.g.:
+//     #!/usr/bin/env bash
+//     exec "$HOME/.hx/bin/hexa" run "$(git rev-parse --show-toplevel)/tool/hf_upload_mk2_pre_push_hook.hexa"
+//
+//   The .git/hooks/pre-push file is git-untracked and lives in the user's
+//   working copy only — it is the ONLY .sh-equivalent surface allowed
+//   (raw#9 banned-ext sweeper does NOT scan .git/).
+//
+// OPT-OUT
+//   ANIMA_SKIP_HF_PRECHECK=1
+//
+// raw#10 caveat: only inspects the LATEST commit on each pushed ref;
+//                multi-commit pushes only validate the tip.
+
+let HOME = exec("printenv HOME").trim()
+let SKIP = exec("printenv ANIMA_SKIP_HF_PRECHECK").trim()
+
+fn _git_repo_root() -> str {
+    return exec("git rev-parse --show-toplevel 2>/dev/null").trim()
+}
+
+fn _latest_commit_msg() -> str {
+    return exec("git log -1 --pretty=%B 2>/dev/null")
+}
+
+// Extract first match of [hf-upload: <repo>] marker. Returns "" if none.
+fn _extract_marker(msg: str) -> str {
+    let key = "[hf-upload: "
+    let s = msg.index_of(key)
+    if s < 0 { return "" }
+    let after = msg.substring(s + key.len(), msg.len())
+    let e = after.index_of("]")
+    if e < 0 { return "" }
+    return after.substring(0, e).trim()
+}
+
+fn _selftest() -> int {
+    println("[hf_upload_mk2_pre_push] SELFTEST")
+    let m1 = _extract_marker("feat(x): commit\n\n[hf-upload: dancinlab/clm-v4-sft-stage1] msg\n")
+    if m1 != "dancinlab/clm-v4-sft-stage1" {
+        println("  [F] extract_marker: got '" + m1 + "'")
+        println("__HF_UPLOAD_MK2_PRE_PUSH__ FAIL")
+        return 0
+    }
+    println("  [P] extract_marker: " + m1)
+    let m2 = _extract_marker("regular commit msg without marker")
+    if m2 != "" {
+        println("  [F] extract_marker no-marker: got '" + m2 + "'")
+        println("__HF_UPLOAD_MK2_PRE_PUSH__ FAIL")
+        return 0
+    }
+    println("  [P] extract_marker no-marker: empty")
+    println("__HF_UPLOAD_MK2_PRE_PUSH__ PASS")
+    return 1
+}
+
+fn main() {
+    let argv = args()
+    let cmd = if argv.len() > 2 { argv[2] } else { "" }
+
+    if cmd == "--selftest" {
+        let _r = _selftest()
+        return
+    }
+
+    if SKIP == "1" {
+        println("__HF_UPLOAD_MK2_PRE_PUSH__ SKIP reason=ANIMA_SKIP_HF_PRECHECK=1")
+        return
+    }
+
+    let root = _git_repo_root()
+    if root.len() == 0 {
+        println("__HF_UPLOAD_MK2_PRE_PUSH__ SKIP reason=not-in-git-repo")
+        return
+    }
+
+    let msg = _latest_commit_msg()
+    let repo = _extract_marker(msg)
+    if repo.len() == 0 {
+        // No marker => pre-push allows the push transparently.
+        println("__HF_UPLOAD_MK2_PRE_PUSH__ SKIP reason=no-hf-upload-marker")
+        return
+    }
+
+    println("[hf_upload_mk2_pre_push] commit references HF repo: " + repo)
+    let wrapper = root + "/tool/hf_upload_mk2.hexa"
+    let wrapper_ok = exec("test -f '" + wrapper + "' && echo y || echo n").trim()
+    if wrapper_ok != "y" {
+        println("__HF_UPLOAD_MK2_PRE_PUSH__ SKIP reason=wrapper-missing path=" + wrapper)
+        return
+    }
+
+    let hexa_bin = HOME + "/.hx/bin/hexa"
+    let bin_ok = exec("test -x '" + hexa_bin + "' -o -f '" + hexa_bin + "' && echo y || echo n").trim()
+    if bin_ok != "y" {
+        println("__HF_UPLOAD_MK2_PRE_PUSH__ SKIP reason=hexa-bin-missing path=" + hexa_bin)
+        return
+    }
+
+    let cmd_run = hexa_bin + " run '" + wrapper + "' --validate-naming '" + repo + "'"
+    let out = exec(cmd_run + " 2>&1")
+    if !out.contains("__ANIMA_HF_UPLOAD_MK2__ PASS") {
+        println("[hf_upload_mk2_pre_push] FAIL: naming validation failed for " + repo)
+        println(out)
+        println("__HF_UPLOAD_MK2_PRE_PUSH__ FAIL")
+        // Hexa exit semantics: non-zero exit signals git to abort the push.
+        // exit() emits the FAIL sentinel before terminating.
+        exit(1)
+        return
+    }
+
+    println("[hf_upload_mk2_pre_push] OK: naming valid (full upload requires explicit --upload run)")
+    println("__HF_UPLOAD_MK2_PRE_PUSH__ PASS")
+}

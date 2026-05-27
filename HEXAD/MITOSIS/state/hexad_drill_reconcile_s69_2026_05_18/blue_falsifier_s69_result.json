@@ -1,0 +1,37 @@
+{
+  "battery": "B-S69 (§69 HEXAD-DRILL-RECONCILE)",
+  "passed": 5,
+  "total": 5,
+  "all_blue": true,
+  "results": [
+    {
+      "id": "B-S69-1 ENGINE-OUTPUT-PARSE-DETERMINISTIC",
+      "pass": true,
+      "detail": "3× bit-identical=True; real-fixture classified real+saturated=True; stub-fixture classified not-real=True; parser body no-RNG/time/env=True (pure fn of input string)"
+    },
+    {
+      "id": "B-S69-2 RECONCILIATION-PARTITION-EXHAUSTIVE-DISJOINT",
+      "pass": true,
+      "detail": "|agree|=11 |disagree|=0 |run|=11; exhaustive(A∪D=run)=True; disjoint(A∩D=∅)=True; exactly-one-per-row=True; arbiter-iff-disagree=True (sympy FiniteSet identity)"
+    },
+    {
+      "id": "B-S69-3 CLOSED-PREDICATE-IS-ARBITER",
+      "pass": true,
+      "detail": "every-counted-row-has-closed-class∈{A,B,C}=True; closed-predicate decidable (mutual-excl=True coverage=True); engine-found-new is uncounted-pending list (n=0, never folded into ABC)=True; disagree-arbiter-cites-closed=True"
+    },
+    {
+      "id": "B-S69-4 ENGINE-INVOCATION-IS-REAL-NOT-STUB",
+      "pass": true,
+      "detail": "all 11 run-pair logs contain Mk.IX chain AND no [omega-drill-stub]=True; parsed-booleans-agree=True; raw-vs-parsed-consistent=True; sample=[('S_to_C', 'chain=True no_stub=True'), ('BRIDGE_to_D', 'chain=True no_stub=True'), ('E_to_C', 'chain=True no_stub=True')]"
+    },
+    {
+      "id": "B-S69-5 COVERAGE-CARDINALITY-CLOSED",
+      "pass": true,
+      "detail": "pairs_run(11) + pairs_deferred(8) == 19 -> True (sympy Integer identity); run∪deferred == full 19-pair §63 population, disjoint=True; coverage_closed flag=True"
+    }
+  ],
+  "B-S69-NOTE": "EMPIRICAL carve-out: which reconciled gap is THE GOAL bottleneck = EMPIRICAL judgment (B-D-NOTE / B-S58-NOTE / B-S63-NOTE family, NOT counted 🔵). The battery proves the parser is a pure deterministic fn, the reconciliation is an exhaustive disjoint partition, every counted classification has a decidable closed-form arbiter predicate, and the captured engine logs are the REAL Mk.IX engine (not the stub) — NOT that any gap IS the bottleneck. Engine = EXPLORATORY (proposes); §63 closed-form predicate = ARBITER (disposes).",
+  "central_blue_falsifier_diff": "0-line (sidecar only)",
+  "f_safe": "f1/f2/f3 safe — σ(6)=12 used only as internal anima count of the §63-swept closed wiring set, NO external σ/τ/φ/J₂ derivation; B-IDENTITY-5 N/A (HEXAD-internal seeds, no corpus)",
+  "north_star": "UNCHANGED; §15/§51 milestone UNCHANGED; capability claim 0; g3 measured-only"
+}

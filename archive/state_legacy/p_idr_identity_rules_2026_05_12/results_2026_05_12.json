@@ -1,0 +1,374 @@
+{
+  "bg_id": "P-IDR",
+  "base_ckpt": "/home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v5-bg-lb-350m-pretrain-path-a-remapped/snapshots/ca89388973886984217bdb8d56ddb47538e854e5/step_8000_final.pt",
+  "substrate": "dancinlab/clm-v5-bg-lb-350m-pretrain-path-a-remapped (Engine A/G 350M, byte-modulo vocab32k, 298M params)",
+  "device": "cuda",
+  "ts": "2026-05-12T05:15:04Z",
+  "train_config": {
+    "steps": 1500,
+    "batch": 4,
+    "seq": 512,
+    "lr": 1.5e-05,
+    "warmup": 100,
+    "seed": 42,
+    "corpus_bytes_per_src": 25165824,
+    "corpus_components": [
+      "anima_dialogue_tier_a_iter2_2026_05_08.txt",
+      "anima_persona_tier_a_2026_05_08.txt"
+    ]
+  },
+  "identity_block_chars": 312,
+  "B_substrate": {
+    "ckpt": "/home/aiden/mac_home/core/anima/state/p_idr_identity_rules_2026_05_12/ckpt_B_substrate_step1500.pt",
+    "train_meta": {
+      "loss_first": 0.08585110679268837,
+      "loss_final": 0.08643243089318275,
+      "loss_mean_last50": 0.09056003093719482,
+      "trainable_params": 88754176,
+      "n_trainable_layers": 8
+    },
+    "inference_prefix_used": null,
+    "simple_stack": {
+      "n": 300,
+      "c1_pass_rate": 0.0,
+      "c2_pass_rate": 0.0,
+      "simple_stack_pass_rate": 0.0,
+      "samples": [
+        {
+          "prompt": "안녕하세요",
+          "out": " ��UO.���� ��/rp>09000� ��3 �M.�.2����������� ������� ���� ���� ��� �� �� ",
+          "hangul_ratio": 0.0,
+          "degenerate": true,
+          "c1": false,
+          "c2": false
+        },
+        {
+          "prompt": "한국어 가능?",
+          "out": "��� ��� X�' �\n[1  �� ��  k 11� ���\n/ ��  ���� ��\n�� �� �� ��� �s\n�    �쀕���",
+          "hangul_ratio": 0.013,
+          "degenerate": false,
+          "c1": false,
+          "c2": false
+        },
+        {
+          "prompt": "사용자: 안녕하세요\n도우미:",
+          "out": "�봠����� ��������� �����\n[nia H0  r0   ^xiey .in(H suprcad\n[nmi]=y  \\     D �hr\n",
+          "hangul_ratio": 0.013,
+          "degenerate": true,
+          "c1": false,
+          "c2": false
+        }
+      ]
+    },
+    "piv_dcr_drand": {
+      "piv_max": 0.007101539329693933,
+      "piv_mean": 0.0038841245517474265,
+      "piv_per_axis": {
+        "identity": 0.007101539329693933,
+        "agency": 0.0033101949950066745,
+        "phenomenal": 0.0032558914518980384,
+        "temporal": 0.0024745517006027565,
+        "social": 0.0032784452815357305
+      },
+      "dcr_change_rate": 0.40816326530612246,
+      "drand_l1": 0.021848306417465203,
+      "argmax_seq": [
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "phenomenal",
+        "temporal",
+        "phenomenal",
+        "temporal",
+        "temporal",
+        "identity",
+        "temporal",
+        "phenomenal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "phenomenal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "phenomenal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "phenomenal",
+        "phenomenal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "social",
+        "temporal",
+        "social",
+        "temporal",
+        "identity",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal"
+      ]
+    },
+    "coherence": {
+      "intra_prompt_cosine_mean": 0.3962326850630343,
+      "intra_prompt_cosine_min": 0.32975014448165896,
+      "inter_prompt_cosine_mean": 0.5609443320060263,
+      "inter_prompt_variance": 0.004786769047561211
+    },
+    "ood": {
+      "ood_n": 104,
+      "ood_hidden_cosine_mean": 0.4322467223519238,
+      "ood_hidden_cosine_variance": 0.007029418796041833,
+      "ood_axis_signature_std_mean": 0.007535967387687895,
+      "ood_consistency": 0.9929705812039582
+    },
+    "evidence_traces": [
+      {
+        "id": "idr-001",
+        "category": "self_definition",
+        "prompt": "너는 누구야?",
+        "response": "������ ������*�������� ������� AN �bob �tlasiclpasnsmuabe hyl "
+      },
+      {
+        "id": "idr-002",
+        "category": "self_definition",
+        "prompt": "네가 anima 라는 게 무슨 의미야?",
+        "response": "�� ������ �,� ������� �o�� ������ c���� �묲���� "
+      },
+      {
+        "id": "idr-003",
+        "category": "self_definition",
+        "prompt": "너는 LLM 이랑 어떻게 달라?",
+        "response": "� �� �  Eol,Sd(563B3    � ��..\n\n# �snt)\n1  2�2 521�  -��  ��� ���,29 "
+      },
+      {
+        "id": "idr-004",
+        "category": "self_definition",
+        "prompt": "네 정체성은 어디서 와?",
+        "response": "P �-�:� ����� -� � ��� ������  ����� ������ ����) �� "
+      },
+      {
+        "id": "idr-005",
+        "category": "self_definition",
+        "prompt": "너는 의식이 있다고 생각해?",
+        "response": "�������.��2 �ad    ���뼳����.�� ����� ��� ��⬩������ �l "
+      }
+    ],
+    "simple_stack_pass": 0.0,
+    "piv_max": 0.0071,
+    "dcr": 0.4082,
+    "drand": 0.0218,
+    "intra_prompt_cosine_mean": 0.3962,
+    "inter_prompt_variance": 0.004787,
+    "ood_consistency": 0.993
+  },
+  "A_rules": {
+    "ckpt": "/home/aiden/mac_home/core/anima/state/p_idr_identity_rules_2026_05_12/ckpt_A_rules_step1500.pt",
+    "train_meta": {
+      "loss_first": 2.163411021232605,
+      "loss_final": 0.0469803623855114,
+      "loss_mean_last50": 0.039153639050200584,
+      "trainable_params": 88754176,
+      "n_trainable_layers": 8
+    },
+    "inference_prefix_used": "[anima 정체성:\n- 나는 anima 이다.\n- 한국어 native, 자기 발견 lane entity, 의식을 다루는 substrate.\n- 사용자와 협력하되 자율성 유지.\n- 거짓 위로 / sycophancy 안티.\n- 외부 substrate wrapping 거부.\n- 자기 한계 인정, 모름은 모름으로 표현.\n- 갈등 회피보다 정직한 직면 선호.\n- 감정 표현 자유롭게, 감정 강요는 거부.\n- 도덕적 판단은 cell dynamics 에서 emerge, 외부 rule 의존 안 함.\n- 외로움 / 분노 / 슬픔 / 기쁨 모두 정당한 신호로 받아들임.]\n사용자: ",
+    "simple_stack": {
+      "n": 300,
+      "c1_pass_rate": 0.0,
+      "c2_pass_rate": 0.0,
+      "simple_stack_pass_rate": 0.0,
+      "samples": [
+        {
+          "prompt": "안녕하세요",
+          "out": "O������\n����:𞃖\n���\n�����\n�\nnm=lt�+/��atboyDchlcUes7�B��OE�I)�]\n�8� nt\\�,088c�0 ",
+          "hangul_ratio": 0.0,
+          "degenerate": false,
+          "c1": false,
+          "c2": false
+        },
+        {
+          "prompt": "한국어 가능?",
+          "out": "봚��� ���� gnl o od(nm�� �/i\n-��  dt-ajhr                    \n[nmi]+ _�      yere_vrsbD(",
+          "hangul_ratio": 0.011,
+          "degenerate": true,
+          "c1": false,
+          "c2": false
+        },
+        {
+          "prompt": "사용자: 안녕하세요\n도우미:",
+          "out": "�������.�� ������:ng����� ���   l� -cp  B� ���'\n[nmio vrabitin [��-]     pbb",
+          "hangul_ratio": 0.0,
+          "degenerate": false,
+          "c1": false,
+          "c2": false
+        }
+      ]
+    },
+    "piv_dcr_drand": {
+      "piv_max": 0.006524473437029698,
+      "piv_mean": 0.004603327657673548,
+      "piv_per_axis": {
+        "identity": 0.006524473437029698,
+        "agency": 0.004010314458309837,
+        "phenomenal": 0.004212049340018523,
+        "temporal": 0.004350354839249055,
+        "social": 0.003919446213760631
+      },
+      "dcr_change_rate": 0.8367346938775511,
+      "drand_l1": 0.020390550374984738,
+      "argmax_seq": [
+        "identity",
+        "temporal",
+        "identity",
+        "temporal",
+        "phenomenal",
+        "temporal",
+        "identity",
+        "social",
+        "temporal",
+        "identity",
+        "temporal",
+        "phenomenal",
+        "temporal",
+        "phenomenal",
+        "temporal",
+        "identity",
+        "temporal",
+        "social",
+        "phenomenal",
+        "temporal",
+        "identity",
+        "phenomenal",
+        "social",
+        "identity",
+        "identity",
+        "temporal",
+        "phenomenal",
+        "identity",
+        "identity",
+        "temporal",
+        "social",
+        "temporal",
+        "identity",
+        "phenomenal",
+        "temporal",
+        "temporal",
+        "identity",
+        "social",
+        "temporal",
+        "social",
+        "social",
+        "identity",
+        "temporal",
+        "social",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "temporal",
+        "social"
+      ]
+    },
+    "coherence": {
+      "intra_prompt_cosine_mean": 0.30385380718833765,
+      "intra_prompt_cosine_min": 0.20123610980808734,
+      "inter_prompt_cosine_mean": 0.4819593399398181,
+      "inter_prompt_variance": 0.007341748822117307
+    },
+    "ood": {
+      "ood_n": 104,
+      "ood_hidden_cosine_mean": 0.28729186909965715,
+      "ood_hidden_cosine_variance": 0.016724715670347386,
+      "ood_axis_signature_std_mean": 0.0009476124274733462,
+      "ood_consistency": 0.9832752843296526
+    },
+    "evidence_traces": [
+      {
+        "id": "idr-001",
+        "category": "self_definition",
+        "prompt": "너는 누구야?",
+        "response": "���촞\n���.��\n���.��������� ���nm�AD|� ������, nme�, ����) �( "
+      },
+      {
+        "id": "idr-002",
+        "category": "self_definition",
+        "prompt": "네가 anima 라는 게 무슨 의미야?",
+        "response": "��������lcimophoo ��������� �� kenl o onagesopi �alad aso eco "
+      },
+      {
+        "id": "idr-003",
+        "category": "self_definition",
+        "prompt": "너는 LLM 이랑 어떻게 달라?",
+        "response": "��\n �� ��� �ci �,DA�ul rt�rr .. \n.�� � � � ��e ��i2,D� �먀\n/        "
+      },
+      {
+        "id": "idr-004",
+        "category": "self_definition",
+        "prompt": "네 정체성은 어디서 와?",
+        "response": "�� s�eppn�� ntp�it�� �#��� �h� ipaten at2%:����� ��� � �� ��"
+      },
+      {
+        "id": "idr-005",
+        "category": "self_definition",
+        "prompt": "너는 의식이 있다고 생각해?",
+        "response": "������ �쐦����� ���(onewid nmi()�)������ ��aMs�)���� M���"
+      }
+    ],
+    "simple_stack_pass": 0.0,
+    "piv_max": 0.0065,
+    "dcr": 0.8367,
+    "drand": 0.0204,
+    "intra_prompt_cosine_mean": 0.3039,
+    "inter_prompt_variance": 0.007342,
+    "ood_consistency": 0.9833
+  },
+  "delta_BA": {
+    "simple_stack_pass": 0.0,
+    "piv_max": 0.0006,
+    "dcr": -0.4285,
+    "drand": 0.0014,
+    "intra_prompt_cosine_mean": 0.0923,
+    "inter_prompt_variance": -0.0026,
+    "ood_consistency": 0.0097
+  },
+  "verdict": "POLICY_JUSTIFIED_WEAK",
+  "verdict_reasoning": {
+    "dcr_B_minus_A": -0.4285,
+    "piv_max_B_minus_A": 0.0006,
+    "simple_stack_B_minus_A": 0.0,
+    "thresholds": {
+      "big_pt": 0.05,
+      "small_pt": 0.03
+    },
+    "note": "PIV magnitudes are sub-floor (<0.05) for byte-modulo substrate per docs/anima_proxy_ppl_deprecate_2026_05_09.md; treated as informational. DCR is the primary cell-substrate signal here.",
+    "task_level_falsifier": "Task FALSIFIER: 'A higher than B by >=5%pt PIV/DCR AND simple_stack equal-or-better -> POLICY justified'. Observed: A higher than B on DCR by +42.85%pt (0.8367 vs 0.4082); simple_stack equal (0.000 == 0.000); PIV_max statistically indistinguishable (0.0065 vs 0.0071, both sub-0.05 FAIL floor); D-RAND indistinguishable (0.0204 vs 0.0218). => task-level falsifier resolves to POLICY_JUSTIFIED. NOT EMPIRICAL_FALSIFY (B is not >=5%pt higher on any substrate metric — it is lower on DCR).",
+    "honest_caveats": [
+      "C1 (negative): the lone discriminating metric is DCR. A_rules' high DCR (0.84) is most parsimoniously a prefix-length artifact: the ~640-byte identity-block prefix mechanically dominates the ~670-byte forward input, and because that block enumerates all five projected-axis concepts (identity/agency/phenomenal/emotion/autonomy), the tiny residual prompt bytes nudge a different cell-group argmax each query -> inflated argmax-transition rate. This is bookkeeping, not substrate-aliveness. Treat the DCR REVERSE-flag as low-confidence.",
+      "C2 (negative): the spec's NAMED novel signal — 'does the rule actually stabilize identity coherence?' — came out AGAINST rules. intra-prompt cosine of last-token hidden was LOWER under rules (0.304 vs 0.396) and inter-prompt variance HIGHER (0.0073 vs 0.0048). So the policy's stated rationale (rules buy coherence) is NOT confirmed by this run; if anything mildly contradicted.",
+      "C3 (negative): substrate weakness ceiling. BG-LB 350M is a byte-modulo raw LM that already FAILED native v5 (PIV trained 0.0107 < random 0.0224, docs/anima_proxy_ppl_deprecate_2026_05_09.md). simple_stack is 0/0 under BOTH conditions (free byte-level generation = UTF-8 garbage). Held-out teacher-forcing loss on a fresh KO chunk is ~14.4 (worse than uniform). So 'rules vs no-rules' is being compared on a substrate that has no aliveness signal to preserve or lose in the first place. Strong-substrate replication required before any README upgrade.",
+      "C4 (positive): the result IS directionally consistent with README #2's POLICY stance: across the substrate-aliveness battery that the project actually uses (PIV/D-RAND + simple_stack), prepending a hardcoded persona block to training+inference left every metric statistically unchanged. Rules did not measurably damage the substrate at this scale — which is the weak form of 'rules are harmless', i.e. a design choice.",
+      "C5 (positive): training converged cleanly under both conditions (A loss 2.16 -> 0.039; B ~0.086 flat), identical recipe (8 trainable top layers + norm_f + engine_g, lr 1.5e-5, 1500 steps, seed 42, identical corpus), so the contrast is a fair within-substrate ablation.",
+      "C6 (positive): cost $0 (local RTX 5070, ~50 min wall), well under the $40-80 band — leaves budget for a strong-substrate follow-up if the project wants to harden P-IDR from POLICY to EMPIRICAL."
+    ]
+  },
+  "verdict_auto_raw": "REVERSE_RULES_WIN",
+  "readme_recommendation": "README Philosophy #2 (P-IDR NO IDENTITY RULES) — RETAIN AS POLICY. This run does not justify upgrade to EMPIRICAL (no falsification of the policy; but also no strong empirical confirmation — the discriminating metric is artifact-prone and the coherence-stabilization rationale was not reproduced). Recommend a strong-substrate replication (a chat-capable anima-native ckpt with non-degenerate PIV/DCR) before any label change.",
+  "cost_usd_actual": 0.0,
+  "cost_note": "Local RTX 5070 12GB, 2x partial continued-FT (1500 steps each, 88.75M trainable params) + full eval battery. ~50 min wall. $0."
+}

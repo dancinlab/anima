@@ -1,0 +1,57 @@
+{
+  "corpus_candidates": [
+    {
+      "path": "/Users/ghost/core/anima/state/anima_dialogue_tier_a_iter2_2026_05_08.txt",
+      "bytes": 76311787,
+      "chars": 54211124,
+      "user_turns": 136253,
+      "assistant_turns": 136259,
+      "role_markers": 136073,
+      "ko_chars": 10517987,
+      "en_chars": 26800381,
+      "ko_en_ratio": 0.39,
+      "format": "[anima 역할: ...]\\n사용자: ...\\n도우미: ...\\n\\n",
+      "tokens_estimate_byte_level": 76311787,
+      "verdict": "PRIMARY — 76MB, 136K turn pairs, KO+EN, persona-tagged, role-conditioned"
+    },
+    {
+      "path": "/Users/ghost/core/anima/state/anima_dialogue_tier_a_2026_05_08.txt",
+      "bytes": 13591084,
+      "chars": 10485760,
+      "user_turns": 21638,
+      "assistant_turns": 21637,
+      "format": "same as iter2 (subset)",
+      "verdict": "BACKUP — 13MB, 21K turn pairs (smaller iteration)"
+    },
+    {
+      "path": "/Users/ghost/core/anima/state/anima_corpus_mix_70wiki_30dialogue_2026_05_06/corpus_mix.txt",
+      "bytes": 154854977,
+      "chars": 3058661,
+      "format": "70% wiki + 30% dialogue mixed",
+      "verdict": "OPTIONAL — 155MB but heavily wiki-tilted, may dilute chat-cap signal"
+    },
+    {
+      "path": "/Users/ghost/core/anima/state/anima_native_ko_chat_template_2026_05_06/corpus_chat_template.txt",
+      "verdict": "BACKUP — KO native chat template, smaller scale"
+    }
+  ],
+  "selected_corpus": "/Users/ghost/core/anima/state/anima_dialogue_tier_a_iter2_2026_05_08.txt",
+  "selection_rationale": "76MB / 136K turn pairs / KO+EN bilingual / persona-tagged / matches v2 chat-cap historical format (사용자: / 도우미:). Byte-level tokenization native — no separate tokenizer needed.",
+  "tokens_per_step_estimate": {
+    "batch_32": {
+      "seq_256": 8192,
+      "seq_512": 16384
+    }
+  },
+  "epoch_step_estimate": {
+    "corpus_bytes": 76311787,
+    "windows_seq256_stride256": 298092,
+    "batches_per_epoch_b32": 9315,
+    "comment": "1 epoch = 9.3K steps @ batch=32 seq=256 (full coverage); 5K-step FT = ~0.5 epoch"
+  },
+  "F-FTDES-3_check": {
+    "min_required": 1000,
+    "actual": 136253,
+    "status": "PASS_136X_OVER_MIN"
+  }
+}

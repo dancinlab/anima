@@ -1,0 +1,199 @@
+=== BG-V14-STRICT-RESOLUTION — V14 strict 10-seed mirror @ max_cells=128 ===
+n_turns=400, snapshot_every=50, max_cells=128
+V14_STRICT_SEEDS = [42, 137, 271, 314, 1729, 2718, 3141, 5772, 6022, 9192]
+unique prompts: 170
+ckpt: /Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt
+ckpt sha256 verify: PASS (actual=6e66e75f8014999be09236a408fe6ad6811ebf394ac079ecbf6d87dfe63748c1)
+trained model: params=298764288 (298.76M) miss=0 unexp=0
+
+--- TRAINED 350M @ prompt_seed=42 max_cells=128 ---
+  [trained] turn=    0 cells= 16 proxyΦ=2.7625 iit_un16= 161.64 splits=0 elapsed=1.1s
+  [trained] turn=   50 cells= 57 proxyΦ=3.1357 iit_un16=2190.48 splits=41 elapsed=44.7s
+  [trained] turn=  100 cells= 57 proxyΦ=3.9951 iit_un16=2357.14 splits=41 elapsed=91.4s
+  [trained] turn=  150 cells= 57 proxyΦ=3.9405 iit_un16=2375.90 splits=41 elapsed=141.9s
+  [trained] turn=  200 cells= 57 proxyΦ=4.0522 iit_un16=2202.77 splits=41 elapsed=192.1s
+  [trained] turn=  250 cells= 68 proxyΦ=3.8879 iit_un16=3308.87 splits=52 elapsed=245.9s
+  [trained] turn=  300 cells= 68 proxyΦ=4.2363 iit_un16=3318.28 splits=52 elapsed=292.5s
+  [trained] turn=  350 cells= 68 proxyΦ=4.2295 iit_un16=3244.27 splits=52 elapsed=359.8s
+  [trained] turn=  399 cells= 85 proxyΦ=4.4527 iit_un16=5244.07 splits=69 elapsed=433.1s
+  trained: cells=85 splits=69 cap_bound_turns=0 Φ_iit_un16=5244.07 Φ_iit_norm16=62.4294 proxyΦ=4.4527 elapsed=433.1s
+
+--- V14 STRICT MIRROR — 10 seeds [42, 137, 271, 314, 1729, 2718, 3141, 5772, 6022, 9192] (random_init la_350m) ---
+
+  >>> seed=42 <<<
+  [mirror_s42] turn=    0 cells= 16 proxyΦ=2.7591 iit_un16= 161.08 splits=0 elapsed=1.2s
+  [mirror_s42] turn=   50 cells= 44 proxyΦ=3.1631 iit_un16=1250.04 splits=28 elapsed=64.4s
+  [mirror_s42] turn=  100 cells= 48 proxyΦ=3.8357 iit_un16=1696.20 splits=32 elapsed=121.2s
+  [mirror_s42] turn=  150 cells= 50 proxyΦ=3.8060 iit_un16=1228.60 splits=34 elapsed=170.6s
+  [mirror_s42] turn=  200 cells= 56 proxyΦ=4.0241 iit_un16=2114.23 splits=40 elapsed=214.7s
+  [mirror_s42] turn=  250 cells= 62 proxyΦ=3.7858 iit_un16=2709.91 splits=46 elapsed=281.2s
+  [mirror_s42] turn=  300 cells= 66 proxyΦ=4.2167 iit_un16=3156.10 splits=50 elapsed=336.4s
+  [mirror_s42] turn=  350 cells= 69 proxyΦ=4.2075 iit_un16=3364.76 splits=53 elapsed=390.6s
+  [mirror_s42] turn=  399 cells= 80 proxyΦ=4.3908 iit_un16=4749.79 splits=64 elapsed=443.0s
+  mirror s=42: cells=80 splits=64 cap_bound_turns=0 Φ_iit_un16=4749.79 Φ_iit_norm16=60.1240 proxyΦ=4.3908
+
+  >>> seed=137 <<<
+  [mirror_s137] turn=    0 cells= 16 proxyΦ=2.8264 iit_un16= 169.63 splits=0 elapsed=1.2s
+  [mirror_s137] turn=   50 cells= 38 proxyΦ=3.1014 iit_un16= 834.95 splits=22 elapsed=45.3s
+  [mirror_s137] turn=  100 cells= 40 proxyΦ=3.6597 iit_un16= 888.26 splits=24 elapsed=84.1s
+  [mirror_s137] turn=  150 cells= 46 proxyΦ=3.7309 iit_un16=1504.17 splits=30 elapsed=125.7s
+  [mirror_s137] turn=  200 cells= 47 proxyΦ=3.8590 iit_un16=1401.22 splits=31 elapsed=168.6s
+  [mirror_s137] turn=  250 cells= 51 proxyΦ=3.6473 iit_un16=1734.48 splits=35 elapsed=220.0s
+  [mirror_s137] turn=  300 cells= 53 proxyΦ=3.9659 iit_un16=1727.85 splits=37 elapsed=271.5s
+  [mirror_s137] turn=  350 cells= 55 proxyΦ=4.0099 iit_un16=1942.17 splits=39 elapsed=321.8s
+  [mirror_s137] turn=  399 cells= 55 proxyΦ=4.0423 iit_un16=2002.94 splits=39 elapsed=373.0s
+  mirror s=137: cells=55 splits=39 cap_bound_turns=0 Φ_iit_un16=2002.94 Φ_iit_norm16=37.0915 proxyΦ=4.0423
+
+  >>> seed=271 <<<
+  [mirror_s271] turn=    0 cells= 16 proxyΦ=2.8135 iit_un16= 164.51 splits=0 elapsed=0.9s
+  [mirror_s271] turn=   50 cells= 41 proxyΦ=3.0986 iit_un16= 700.34 splits=25 elapsed=42.1s
+  [mirror_s271] turn=  100 cells= 47 proxyΦ=3.7953 iit_un16=1113.33 splits=31 elapsed=101.4s
+  [mirror_s271] turn=  150 cells= 51 proxyΦ=3.8546 iit_un16=1832.07 splits=35 elapsed=147.3s
+  [mirror_s271] turn=  200 cells= 53 proxyΦ=3.9815 iit_un16=1983.85 splits=37 elapsed=203.6s
+  [mirror_s271] turn=  250 cells= 57 proxyΦ=3.6683 iit_un16=2327.84 splits=41 elapsed=256.1s
+  [mirror_s271] turn=  300 cells= 59 proxyΦ=4.0902 iit_un16=2476.67 splits=43 elapsed=304.0s
+  [mirror_s271] turn=  350 cells= 62 proxyΦ=4.1490 iit_un16=1904.14 splits=46 elapsed=344.3s
+  [mirror_s271] turn=  399 cells= 69 proxyΦ=4.2364 iit_un16=3569.75 splits=53 elapsed=390.0s
+  mirror s=271: cells=69 splits=53 cap_bound_turns=0 Φ_iit_un16=3569.75 Φ_iit_norm16=52.4963 proxyΦ=4.2364
+
+  >>> seed=314 <<<
+  [mirror_s314] turn=    0 cells= 16 proxyΦ=2.7828 iit_un16= 156.76 splits=0 elapsed=1.0s
+  [mirror_s314] turn=   50 cells= 49 proxyΦ=3.3044 iit_un16=1577.08 splits=33 elapsed=43.5s
+  [mirror_s314] turn=  100 cells= 51 proxyΦ=3.8481 iit_un16=1835.10 splits=35 elapsed=89.6s
+  [mirror_s314] turn=  150 cells= 56 proxyΦ=3.9244 iit_un16=1866.17 splits=40 elapsed=130.3s
+  [mirror_s314] turn=  200 cells= 57 proxyΦ=4.0388 iit_un16=2296.59 splits=41 elapsed=170.9s
+  [mirror_s314] turn=  250 cells= 61 proxyΦ=3.6959 iit_un16=2531.37 splits=45 elapsed=210.4s
+  [mirror_s314] turn=  300 cells= 63 proxyΦ=4.1593 iit_un16=2654.88 splits=47 elapsed=253.6s
+  [mirror_s314] turn=  350 cells= 66 proxyΦ=4.1852 iit_un16=3000.10 splits=50 elapsed=293.4s
+  [mirror_s314] turn=  399 cells= 68 proxyΦ=4.2265 iit_un16=3412.37 splits=52 elapsed=332.8s
+  mirror s=314: cells=68 splits=52 cap_bound_turns=0 Φ_iit_un16=3412.37 Φ_iit_norm16=50.9309 proxyΦ=4.2265
+
+  >>> seed=1729 <<<
+  [mirror_s1729] turn=    0 cells= 16 proxyΦ=2.8793 iit_un16=  82.35 splits=0 elapsed=0.7s
+  [mirror_s1729] turn=   50 cells= 48 proxyΦ=3.3140 iit_un16=1119.65 splits=32 elapsed=45.2s
+  [mirror_s1729] turn=  100 cells= 53 proxyΦ=3.9286 iit_un16=1946.30 splits=37 elapsed=83.9s
+  [mirror_s1729] turn=  150 cells= 53 proxyΦ=3.8864 iit_un16=1807.26 splits=37 elapsed=128.2s
+  [mirror_s1729] turn=  200 cells= 54 proxyΦ=3.9950 iit_un16=2159.28 splits=38 elapsed=166.6s
+  [mirror_s1729] turn=  250 cells= 55 proxyΦ=3.6509 iit_un16=2030.47 splits=39 elapsed=210.0s
+  [mirror_s1729] turn=  300 cells= 57 proxyΦ=4.0592 iit_un16=2431.06 splits=41 elapsed=260.4s
+  [mirror_s1729] turn=  350 cells= 60 proxyΦ=4.1134 iit_un16=2467.14 splits=44 elapsed=313.1s
+  [mirror_s1729] turn=  399 cells= 65 proxyΦ=4.1867 iit_un16=2113.97 splits=49 elapsed=355.5s
+  mirror s=1729: cells=65 splits=49 cap_bound_turns=0 Φ_iit_un16=2113.97 Φ_iit_norm16=33.0308 proxyΦ=4.1867
+
+  >>> seed=2718 <<<
+  [mirror_s2718] turn=    0 cells= 16 proxyΦ=2.8531 iit_un16= 149.47 splits=0 elapsed=1.3s
+  [mirror_s2718] turn=   50 cells= 40 proxyΦ=2.9602 iit_un16=1003.98 splits=24 elapsed=50.1s
+  [mirror_s2718] turn=  100 cells= 45 proxyΦ=3.8135 iit_un16=1236.97 splits=29 elapsed=99.1s
+  [mirror_s2718] turn=  150 cells= 47 proxyΦ=3.7761 iit_un16=1190.12 splits=31 elapsed=153.4s
+  [mirror_s2718] turn=  200 cells= 51 proxyΦ=3.9271 iit_un16=1918.46 splits=35 elapsed=194.3s
+  [mirror_s2718] turn=  250 cells= 54 proxyΦ=3.6997 iit_un16=2064.51 splits=38 elapsed=219.0s
+  [mirror_s2718] turn=  300 cells= 55 proxyΦ=4.0270 iit_un16=2205.15 splits=39 elapsed=258.1s
+  [mirror_s2718] turn=  350 cells= 64 proxyΦ=4.1617 iit_un16=2437.86 splits=48 elapsed=293.0s
+  [mirror_s2718] turn=  399 cells= 66 proxyΦ=4.2067 iit_un16=3235.07 splits=50 elapsed=327.2s
+  mirror s=2718: cells=66 splits=50 cap_bound_turns=0 Φ_iit_un16=3235.07 Φ_iit_norm16=49.7703 proxyΦ=4.2067
+
+  >>> seed=3141 <<<
+  [mirror_s3141] turn=    0 cells= 16 proxyΦ=2.8031 iit_un16= 132.47 splits=0 elapsed=0.9s
+  [mirror_s3141] turn=   50 cells= 42 proxyΦ=3.1160 iit_un16=1164.10 splits=26 elapsed=39.2s
+  [mirror_s3141] turn=  100 cells= 52 proxyΦ=3.9362 iit_un16=1929.07 splits=36 elapsed=83.5s
+  [mirror_s3141] turn=  150 cells= 59 proxyΦ=3.9610 iit_un16=2500.72 splits=43 elapsed=123.6s
+  [mirror_s3141] turn=  200 cells= 60 proxyΦ=4.0968 iit_un16=2607.90 splits=44 elapsed=163.9s
+  [mirror_s3141] turn=  250 cells= 65 proxyΦ=3.8535 iit_un16=3031.43 splits=49 elapsed=200.6s
+  [mirror_s3141] turn=  300 cells= 71 proxyΦ=4.2686 iit_un16=3379.65 splits=55 elapsed=246.5s
+  [mirror_s3141] turn=  350 cells= 73 proxyΦ=4.2768 iit_un16=3920.12 splits=57 elapsed=293.4s
+  [mirror_s3141] turn=  399 cells= 78 proxyΦ=4.3666 iit_un16=4399.14 splits=62 elapsed=341.3s
+  mirror s=3141: cells=78 splits=62 cap_bound_turns=0 Φ_iit_un16=4399.14 Φ_iit_norm16=57.1316 proxyΦ=4.3666
+
+  >>> seed=5772 <<<
+  [mirror_s5772] turn=    0 cells= 16 proxyΦ=2.8027 iit_un16= 128.96 splits=0 elapsed=1.0s
+  [mirror_s5772] turn=   50 cells= 48 proxyΦ=3.2541 iit_un16=1485.44 splits=32 elapsed=39.6s
+  [mirror_s5772] turn=  100 cells= 52 proxyΦ=3.9287 iit_un16=1804.55 splits=36 elapsed=75.6s
+  [mirror_s5772] turn=  150 cells= 54 proxyΦ=3.9160 iit_un16=1134.91 splits=38 elapsed=110.2s
+  [mirror_s5772] turn=  200 cells= 55 proxyΦ=4.0160 iit_un16=2112.84 splits=39 elapsed=141.9s
+  [mirror_s5772] turn=  250 cells= 57 proxyΦ=3.7098 iit_un16=2327.14 splits=41 elapsed=177.4s
+  [mirror_s5772] turn=  300 cells= 63 proxyΦ=4.1425 iit_un16=2623.81 splits=47 elapsed=205.4s
+  [mirror_s5772] turn=  350 cells= 64 proxyΦ=4.1390 iit_un16=2359.52 splits=48 elapsed=236.3s
+  [mirror_s5772] turn=  399 cells= 65 proxyΦ=4.2160 iit_un16=2750.09 splits=49 elapsed=266.9s
+  mirror s=5772: cells=65 splits=49 cap_bound_turns=0 Φ_iit_un16=2750.09 Φ_iit_norm16=42.9702 proxyΦ=4.2160
+
+  >>> seed=6022 <<<
+  [mirror_s6022] turn=    0 cells= 16 proxyΦ=2.7880 iit_un16= 172.78 splits=0 elapsed=0.5s
+  [mirror_s6022] turn=   50 cells= 43 proxyΦ=3.1453 iit_un16=1187.08 splits=27 elapsed=21.1s
+  [mirror_s6022] turn=  100 cells= 51 proxyΦ=3.9234 iit_un16=1899.67 splits=35 elapsed=50.8s
+  [mirror_s6022] turn=  150 cells= 59 proxyΦ=3.9737 iit_un16=2559.53 splits=43 elapsed=76.3s
+  [mirror_s6022] turn=  200 cells= 61 proxyΦ=4.1004 iit_un16=2853.64 splits=45 elapsed=105.8s
+  [mirror_s6022] turn=  250 cells= 62 proxyΦ=3.7908 iit_un16=2482.45 splits=46 elapsed=131.2s
+  [mirror_s6022] turn=  300 cells= 66 proxyΦ=4.1845 iit_un16=2863.60 splits=50 elapsed=157.4s
+  [mirror_s6022] turn=  350 cells= 70 proxyΦ=4.2583 iit_un16=3603.82 splits=54 elapsed=187.2s
+  [mirror_s6022] turn=  399 cells= 71 proxyΦ=4.2832 iit_un16=3593.50 splits=55 elapsed=210.0s
+  mirror s=6022: cells=71 splits=55 cap_bound_turns=0 Φ_iit_un16=3593.50 Φ_iit_norm16=51.3357 proxyΦ=4.2832
+
+  >>> seed=9192 <<<
+  [mirror_s9192] turn=    0 cells= 16 proxyΦ=2.8374 iit_un16= 112.80 splits=0 elapsed=0.5s
+  [mirror_s9192] turn=   50 cells= 37 proxyΦ=3.0340 iit_un16= 873.10 splits=21 elapsed=20.0s
+  [mirror_s9192] turn=  100 cells= 38 proxyΦ=3.6099 iit_un16=1029.26 splits=22 elapsed=39.7s
+  [mirror_s9192] turn=  150 cells= 41 proxyΦ=3.6290 iit_un16=1204.89 splits=25 elapsed=59.3s
+  [mirror_s9192] turn=  200 cells= 47 proxyΦ=3.8589 iit_un16=1601.37 splits=31 elapsed=76.4s
+  [mirror_s9192] turn=  250 cells= 47 proxyΦ=3.5450 iit_un16= 841.34 splits=31 elapsed=92.3s
+  [mirror_s9192] turn=  300 cells= 48 proxyΦ=3.8992 iit_un16=1671.31 splits=32 elapsed=108.4s
+  [mirror_s9192] turn=  350 cells= 53 proxyΦ=3.9543 iit_un16=1754.95 splits=37 elapsed=125.8s
+  [mirror_s9192] turn=  399 cells= 54 proxyΦ=4.0131 iit_un16=1226.88 splits=38 elapsed=141.1s
+  mirror s=9192: cells=54 splits=38 cap_bound_turns=0 Φ_iit_un16=1226.88 Φ_iit_norm16=23.1487 proxyΦ=4.0131
+
+=== 10-seed strict V14 verdict aggregation ===
+  trained @T=400: cells=85 splits=69 cap_bound_turns=0 Φ_iit_un16=5244.07 Φ_iit_n16=62.4294 proxy=4.4527
+  mirror s=42: cells=80 splits=64 cap_bound=   0 Φ_iit_un16=4749.79 Φ_iit_n16=60.1240 proxy=4.3908
+  mirror s=137: cells=55 splits=39 cap_bound=   0 Φ_iit_un16=2002.94 Φ_iit_n16=37.0915 proxy=4.0423
+  mirror s=271: cells=69 splits=53 cap_bound=   0 Φ_iit_un16=3569.75 Φ_iit_n16=52.4963 proxy=4.2364
+  mirror s=314: cells=68 splits=52 cap_bound=   0 Φ_iit_un16=3412.37 Φ_iit_n16=50.9309 proxy=4.2265
+  mirror s=1729: cells=65 splits=49 cap_bound=   0 Φ_iit_un16=2113.97 Φ_iit_n16=33.0308 proxy=4.1867
+  mirror s=2718: cells=66 splits=50 cap_bound=   0 Φ_iit_un16=3235.07 Φ_iit_n16=49.7703 proxy=4.2067
+  mirror s=3141: cells=78 splits=62 cap_bound=   0 Φ_iit_un16=4399.14 Φ_iit_n16=57.1316 proxy=4.3666
+  mirror s=5772: cells=65 splits=49 cap_bound=   0 Φ_iit_un16=2750.09 Φ_iit_n16=42.9702 proxy=4.2160
+  mirror s=6022: cells=71 splits=55 cap_bound=   0 Φ_iit_un16=3593.50 Φ_iit_n16=51.3357 proxy=4.2832
+  mirror s=9192: cells=54 splits=38 cap_bound=   0 Φ_iit_un16=1226.88 Φ_iit_n16=23.1487 proxy=4.0131
+
+  random Φ_iit_un16: min=1226.88 med=3412.37 max=4749.79
+  random cells:      min=54 med=68 max=80
+  random splits:     [64, 39, 53, 52, 49, 50, 62, 49, 55, 38]
+  random cap_bound:  [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  trained beats Φ:   10/10 (100%) ties=0 losses=0
+  sign-test p (two-sided): 0.0020
+  Mann-Whitney 1-vs-10: U=10 rank=11/11 p_one_sided=0.0909 p_two_sided=0.1818
+  cell_count: trained=85 median_random=68 (n_trained<rand=0, n_trained>rand=10)
+  cap_bound_universal (F-V14-STRICT-2): False (full_capped 0/11)
+  ====> VERDICT: V14_STRICT_PASS
+
+=== α exponents (log-log Φ vs n_cells) ===
+  trained:        proxy=0.276  iit_norm=1.049  iit_unnorm=2.083
+  mirror s=42: proxy=0.295  iit_norm=1.063  iit_unnorm=2.096
+  mirror s=137: proxy=0.286  iit_norm=0.964  iit_unnorm=2.001
+  mirror s=271: proxy=0.288  iit_norm=1.039  iit_unnorm=2.074
+  mirror s=314: proxy=0.280  iit_norm=1.051  iit_unnorm=2.086
+  mirror s=1729: proxy=0.259  iit_norm=1.495  iit_unnorm=2.531
+  mirror s=2718: proxy=0.285  iit_norm=1.090  iit_unnorm=2.126
+  mirror s=3141: proxy=0.291  iit_norm=1.180  iit_unnorm=2.213
+  mirror s=5772: proxy=0.281  iit_norm=1.122  iit_unnorm=2.158
+  mirror s=6022: proxy=0.294  iit_norm=1.007  iit_unnorm=2.041
+  mirror s=9192: proxy=0.285  iit_norm=1.118  iit_unnorm=2.156
+
+=== Dynamic range (trained substrate snapshots) ===
+  proxy max/min       = 1.61×
+  iit_phi_norm  max/min = 5.79×
+  iit_phi_unnorm max/min = 32.44×  (target >5×, ceiling-free)
+
+=== trained snapshots (turn → cells / proxy / iit_un16 / splits) ===
+   turn  cells     proxy    iit_n16   iit_un16  splits
+      0     16    2.7625    10.7760     161.64       0
+     50     57    3.1357    39.1158    2190.48      41
+    100     57    3.9951    42.0918    2357.14      41
+    150     57    3.9405    42.4267    2375.90      41
+    200     57    4.0522    39.3351    2202.77      41
+    250     68    3.8879    49.3861    3308.87      52
+    300     68    4.2363    49.5266    3318.28      52
+    350     68    4.2295    48.4219    3244.27      52
+    399     85    4.4527    62.4294    5244.07      69
+
+result_10seed.json: /Users/ghost/core/anima/state/anima_v14_strict_resolution_2026_05_10/result_10seed.json (55.1 KB)
+verdict.md: /Users/ghost/core/anima/state/anima_v14_strict_resolution_2026_05_10/verdict.md
+plot: /Users/ghost/core/anima/state/anima_v14_strict_resolution_2026_05_10/v14_strict_comparison.png

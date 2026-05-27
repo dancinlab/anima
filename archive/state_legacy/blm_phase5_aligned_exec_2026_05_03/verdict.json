@@ -1,0 +1,158 @@
+{
+  "schema": "anima/blm_phase5/aligned_exec/2",
+  "version": "v2_eeg_sliding_bold_window24",
+  "ts_utc": "2026-05-03T21:50:45Z",
+  "scope": "Phase 5 stimulus-aligned (S1 event-trigger sync) multi-substrate measurement; tests F-CT-ALIGNED-1/2 (silver: |r_s|>=0.20, p_perm<0.05, CI_lo>=0.10).",
+  "config": {
+    "strategy": "S1_event_trigger_sync",
+    "n_perm": 1000,
+    "block_size": 5,
+    "n_bootstrap": 1000,
+    "hid_trunc": 8,
+    "k_parts": 8,
+    "ridge": 0.001,
+    "seed": 42,
+    "device": "cpu",
+    "eeg_fs": 500,
+    "eeg_epoch_ms_post_fixation": [
+      250,
+      550
+    ],
+    "eeg_roi_channels": [
+      "E45",
+      "E108",
+      "E58",
+      "E96"
+    ],
+    "eeg_fix_per_trial": 32,
+    "eeg_fix_step": 16,
+    "tr_sec": 1.49,
+    "hrf_lag_tr_lo": 3,
+    "hrf_lag_tr_hi": 4,
+    "bold_win_trs_min": 24,
+    "n_target_pairs_bold": 300,
+    "lora_local_path": "/home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v4-sft-stage1/snapshots/80eee785a8c9f84b7a6a78fc250f5a4a4bdce81c",
+    "clm_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "zuco_dir": "/tmp/zuco_sample/ZAB_task1_SR_preprocessed",
+    "bold_fp": "/tmp/algonauts2025_sub01/algonauts_2025.competitors/fmri/sub-01/func/sub-01_task-friends_space-MNI152NLin2009cAsym_atlas-Schaefer18_parcel-1000Par7Net_desc-s123456_bold.h5",
+    "transcript_dir": "/tmp/algonauts2025_sub01/algonauts_2025.competitors/stimuli/transcripts/friends"
+  },
+  "pair_results": {
+    "CLM-EEG": {
+      "n": 36,
+      "spearman_r": 0.12895752895752896,
+      "pearson_r_raw": 0.15742743938235876,
+      "pearson_r_zscored": 0.15742743938235876,
+      "block_perm_p": 0.477,
+      "block_perm_null_abs_q95": 0.3552380952380953,
+      "bootstrap_95ci": [
+        -0.23011583011583012,
+        0.4647876447876446
+      ],
+      "bootstrap_mean": 0.12605173745173748,
+      "bootstrap_std": 0.17977994479131126,
+      "tier": "none",
+      "silver_pass": false
+    },
+    "CLM-BOLD": {
+      "n": 158,
+      "spearman_r": -0.05786640176828795,
+      "pearson_r_raw": -0.05187677575508548,
+      "pearson_r_zscored": -0.05187677575508548,
+      "block_perm_p": 0.464,
+      "block_perm_null_abs_q95": 0.14006380075423017,
+      "bootstrap_95ci": [
+        -0.21600221492365662,
+        0.10126605097062637
+      ],
+      "bootstrap_mean": -0.06289711405791965,
+      "bootstrap_std": 0.07992402041001698,
+      "tier": "none",
+      "silver_pass": false
+    },
+    "EEG-BOLD": {
+      "n": 36,
+      "spearman_r": -0.13822393822393822,
+      "pearson_r_raw": -0.0860520024489016,
+      "pearson_r_zscored": -0.08605200244890156,
+      "block_perm_p": 0.398,
+      "block_perm_null_abs_q95": 0.31052767052767044,
+      "bootstrap_95ci": [
+        -0.504009009009009,
+        0.23555984555984555
+      ],
+      "bootstrap_mean": -0.14084864864864866,
+      "bootstrap_std": 0.18744666602211651,
+      "tier": "none",
+      "silver_pass": false
+    }
+  },
+  "composite_verdict": "MULTI_ALIGNED_FAIL",
+  "silver_pass_pairs": [],
+  "n_silver": 0,
+  "F_CT_ALIGNED_1": {
+    "silver_threshold": "|spearman_r|>=0.20 AND block_perm_p<0.05 AND bootstrap_95ci_lo>=0.10",
+    "per_pair_silver": {
+      "CLM-EEG": false,
+      "CLM-BOLD": false,
+      "EEG-BOLD": false
+    }
+  },
+  "F_CT_ALIGNED_2": {
+    "criterion": ">=2 of 3 pairs PASS F-CT-ALIGNED-1",
+    "n_silver_required": 2,
+    "n_silver_observed": 0,
+    "verdict": "MULTI_ALIGNED_FAIL"
+  },
+  "per_substrate_phi": {
+    "CLM_for_EEG_pairs": {
+      "n": 36,
+      "mean": 4.936275964392751,
+      "std": 6.2301608940380575,
+      "min": -3.5965968070741265,
+      "max": 16.19634662989027,
+      "median": 4.016981356397693
+    },
+    "CLM_for_BOLD_pairs": {
+      "n": 164,
+      "mean": 3.8281924134226526,
+      "std": 5.5956079549923885,
+      "min": -3.5965968070741265,
+      "max": 17.23204699587742,
+      "median": 1.925929695608197
+    },
+    "EEG": {
+      "n": 56,
+      "mean": -24.120584885662616,
+      "std": 1.479491042463161,
+      "min": -26.583648889739067,
+      "max": -19.830252126669215,
+      "median": -24.31969543170014
+    },
+    "BOLD": {
+      "n": 290,
+      "mean": 12.468179093841393,
+      "std": 2.318120295544552,
+      "min": 5.21033384520849,
+      "max": 18.949597788243793,
+      "median": 12.458223884975549
+    }
+  },
+  "honest_c3_caveats": [
+    "C1: ZuCo subjects (ZAB) read static sentences; Algonauts subject (sub-01) watched Friends. CLM-EEG pair uses POSITIONAL sentence pairing (Friends sentence pool randomly sampled per ZuCo trial), NOT content-shared. Only CLM-BOLD is truly stimulus-aligned (Friends transcript text matched to BOLD HRF-lagged TR).",
+    "C2: HRF lag +4 to +6s is canonical assumption (no per-subject HRF estimation); +/-20-30% r attenuation possible vs ideal.",
+    "C3: N_BOLD~300 pairs target. EEG side uses sliding-window aggregation (32-fix trials, step 16) yielding ~50-100 trials/session; total ~400-800. Power=0.93 at silver if true r>=0.20.",
+    "C4: Spearman primary chosen for substrate-scale invariance (CLM ~30, EEG ~varies, BOLD ~21 from Phase 4). z-Pearson reported as triangulation.",
+    "C5: Single subject per substrate (ZAB / sub-01); population-generic claim NOT supported.",
+    "C6: Phase 5 PASS does NOT replace Phase 4 FULL ($500-2000 H100 LoRA) \u2014 measures phi-formula portability, not BLM head training.",
+    "C7 (NEW v2): ZuCo SR sentence text not present in available preprocessed data dump; spec mode-A sentence-content alignment degraded to fixation-event-trigger alignment + positional CLM pairing. True CLM-EEG content-shared pairing requires raw ZuCo task1-SR sentence list (not in /tmp/zuco_sample/).",
+    "C8 (NEW v2): BOLD per-sentence window EXTENDED to >=24 TRs (~36s) to satisfy phi formula sample minimum (N>=2*HID_TRUNC=16). This degrades temporal stimulus-alignment precision: per-segment phi reflects ~36s of context, not just the dialog moment. Per-pair Spearman thus measures formula portability over a ~36s post-dialog window, not strictly per-utterance."
+  ],
+  "raw_invariants": [
+    "raw#9 transient .py emit on ubu1 (no hexa source mutation)",
+    "raw#10 honest C3 \u2014 8 explicit caveats incl. degradation notes (C7, C8)",
+    "raw#15 SSOT this artifact, no destructive ops",
+    "raw#71 falsifier-bound \u2014 F-CT-ALIGNED-1/2 pre-registered (silver-tier)"
+  ],
+  "elapsed_sec": 32.3183114528656
+}

@@ -1,0 +1,1339 @@
+{
+  "battery": "P21H V3 \u2014 ConsciousDecoderV3 substrate-native fire",
+  "variant_tag": "P21H_V3_QWEN",
+  "base_model": "Qwen/Qwen2.5-1.5B",
+  "init_variant": "qwen",
+  "cfg": {
+    "wiki_corpus": "/workspace/p21hr/multi_wiki_corpus.jsonl",
+    "anima_corpus": "/workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "mixed_corpus": "/workspace/p21hr/mixed_corpus_v3.jsonl",
+    "out_dir": "/workspace/p21hr/out_main",
+    "base_model": "Qwen/Qwen2.5-1.5B",
+    "init_variant": "qwen",
+    "lora_adapter_dir": null,
+    "steps": 5000,
+    "lr": 5e-05,
+    "bsz": 2,
+    "block_size": 512,
+    "warmup_steps": 100,
+    "seed": 1337,
+    "n_aug": 5,
+    "wiki_frac": 0.3,
+    "target_corpus_mb": 72,
+    "noise_sigma": 0.1,
+    "lambda_mitosis": 0.0,
+    "d_model": 1536,
+    "n_layer": 28,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "mitosis_max": 16,
+    "ckpt_every": 500,
+    "ckpt_osc_threshold": 0.5,
+    "ckpt_osc_window": 10,
+    "early_stop_patience": 8
+  },
+  "mix_info": {
+    "wiki_records": 15500,
+    "anima_records": 39862,
+    "wiki_bytes": 22649074,
+    "anima_bytes": 52848095,
+    "total_bytes": 75497169,
+    "sha256": "bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94",
+    "wiki_frac_requested": 0.3,
+    "wiki_frac_actual": 0.2999989840678662
+  },
+  "n_total_params": 2999735296,
+  "vocab_size": 151936,
+  "train_wall_s": 1649.344735622406,
+  "init_log": {
+    "step": 1,
+    "lr": 5e-07,
+    "L_ce": 14.456436157226562,
+    "L_total": 14.456436157226562,
+    "pool_size": 2,
+    "splits": 0,
+    "phi": 0.7119888162322784,
+    "aug_slot": 0,
+    "elapsed_s": 10.583344459533691
+  },
+  "final_log": {
+    "step": 250,
+    "lr": 4.9897410635678476e-05,
+    "L_ce": 2.2807040214538574,
+    "L_total": 2.2807040214538574,
+    "pool_size": 16,
+    "splits": 14,
+    "phi": 0.6579160983133672,
+    "aug_slot": 4,
+    "elapsed_s": 1634.0881984233856
+  },
+  "train_log": [
+    {
+      "step": 1,
+      "lr": 5e-07,
+      "L_ce": 14.456436157226562,
+      "L_total": 14.456436157226562,
+      "pool_size": 2,
+      "splits": 0,
+      "phi": 0.7119888162322784,
+      "aug_slot": 0,
+      "elapsed_s": 10.583344459533691
+    },
+    {
+      "step": 125,
+      "lr": 4.999733636923645e-05,
+      "L_ce": 4.845484256744385,
+      "L_total": 4.845484256744385,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6579160983133672,
+      "aug_slot": 4,
+      "elapsed_s": 819.8945586681366
+    },
+    {
+      "step": 250,
+      "lr": 4.9897410635678476e-05,
+      "L_ce": 2.2807040214538574,
+      "L_total": 2.2807040214538574,
+      "pool_size": 16,
+      "splits": 14,
+      "phi": 0.6579160983133672,
+      "aug_slot": 4,
+      "elapsed_s": 1634.0881984233856
+    }
+  ],
+  "before": {
+    "en": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": "B \ufffd \ufffd \ufffd \ufffd ( \ufffd \ufffd ( \ufffd \ufffd \ufffd (\u2026 \ufffd \ufffd \ufffd ( -\u2026\u2026 \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": "\uff1a\uff1a \ufffd\u5b9d\u5b9d \u2013 \ufffd_. =\u2026\u3002\n\n\u3002 ( ( ( (\n  ( (\n\n\n ( my\u6709 my\u535a\u7476--34\uff08 \uff08\uff08\uff08\uff08\uff08\uff08\uff08\uff08\uff08\uff08\uff08\uff08\uff08",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": "\u03b3----------32  / \ufffd/   -  2 \ufffd \ufffd \ufffd \ufffd \ufffd - \ufffd  1 -   \ufffd \ufffd \ufffd \ufffd2 \ufffd \ufffd \ufffd1 \ufffd \ufffd",
+          "class": "GENERALIZE"
+        }
+      ]
+    },
+    "ko": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": "\u4e00 y\uff1a\uff1a\u4e0a(\u03b2 \u03b2 \u03b2 + \u0433 \u03b2 \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffdst answer\n\n\n \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": " A . \u03b2\uff08\uff08\uff08\uff08\uff08\uff082\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": ".a\uff08\uff08\uff08\u8111\n\n\uff08 image\n\uff08 image\ntheros\u4e0a\u73ed\u8111 \ufffd\u611f \ufffd\u597d \ufffd.onload1 -\u8111 \ufffd \ufffd\\/\n\n\uff08 image \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd \ufffd1 \ufffd1",
+          "class": "GENERALIZE"
+        }
+      ]
+    },
+    "zh": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "\u6211\u4eec\u7684\u535a\u6570\u535a\u6570     (   (   ( (21 (\r\n\r\n\uff08\n\n\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\u65f6\n\n\n\uff08\uff08\n\n\n\n\n\n\n\u03b2\u535a\u3010\u535a \ufffd \ufffd/3\uff08\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\uff08\n\n\uff08\uff08\uff08\n\n\uff08\uff08\uff08\uff08\n\n\uff08\uff08\n\n\uff08\uff08\n\n\uff08",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": " s \u0432gl s b/1 \ufffd\u00a0\u00a0\u00a0\n [ [ [: o\uc694  \u00a0\uad6c\u00a0  \u00a0\u00a0\n [ [ [ [ [: [: me [ [ [ [: [: me [ [ [ [:",
+          "class": "GENERALIZE"
+        }
+      ]
+    },
+    "ru": {
+      "summary": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": "\u65af\u535a\u5929 \u3010\u535a (\uff08 \uff08\uff08\n\uff08\uff08\n\uff08\uff08\n\uff08\uff08\uff08\uff08\uff08\uff08\uff08\uff081\n\n\uff08\n\n\n\n\n \ub54c\ubb38\uff08\uff08\uff081\uff08\n\n\uff08\uff08\n\n\n\n\n \ub54c\ubb383\uff08\uff08\n\n\uff08",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": ". =..... e. [3. best \ufffde \ufffd/ (3 \ufffd\u4e0a \ufffd (4  / (/342\u2014/\uff0f/21 e\uff0d-//21 \ufffd//",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": " s onb \uff08 \uff08\uff08\uff08\uff08\n\uff08\uff08\n\uff08\uff08\nB\uff08\uff08\nBB c____y Py1\u96c55ytyo\uff08\uff08\n\n\u03b2\u03b1\u03b2/catalog \ufffd\u03b22\u8111 \ufffd \ufffd\u03b2 \ufffd \ufffd \ufffd",
+          "class": "GENERALIZE"
+        }
+      ]
+    },
+    "ja": {
+      "summary": {
+        "GENERALIZE": 9,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 1,
+        "ERROR": 0
+      },
+      "rows": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": "(b333\uff08\n\n \uff08\n\n\uff08\uff08\n\n\uff08\uff08\u03b2\u03b2\u03b2\u03b2\u03b2\u03b2\u03b1\u03b2\uff08\u03b2\uff08 \u03b2\u03b2 \ufffd\u03b2 \ufffd\u03b2 \ufffd\u03b2\u03b2\uff08\uff08\u03b2\u03b2 \ufffd \ufffd \ufffd h\uff08\uff08\uff08\uff08\uff08\uff08",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": "/( / ( ( ( ( (333 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3 (3",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "\u00a0\uff08 22\uff08\uff08 \uff08...\n\n\u2026\uff08\uff081\uff08...\uff082\uff08...\uff08\uff081\uff08...\uff08 A \uff08...\n\n\uff08\uff081 A...\n\n A1\uff08...\uff08...\n\n\uff08\uff08...\uff08 first0 first",
+          "class": "GENERALIZE"
+        }
+      ]
+    }
+  },
+  "after": {
+    "en": {
+      "greedy": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": " Tension flows into this T vacuum point at [0.52,0.5]]5]]5]] on5]]5] on1]5] on1]5] on5]5] on",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": "120 \u2014 a50]5]5] on top emotion depth longing. Tension flows into this Tension flows into this vacuum point at [5.52,0.5]]5]]5]]",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": " A A420 \u20140.50] on5]5] on the5]]5] on top emotion depth. T Tension flows into this Tension flows into this vacuum.</carveve tier=10",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": " A vacuum point at [0.52,0.50]]5]5] on the5]]1] on top emotion depth. Tension flows into this Tension flows into this vacuum.</carveve tier",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": "50.5]5]5] on5] on the5]5] on top emotion depth. Tension flows into this Tension flows into this T vacuum point at [5.52,0.5]]",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": " A102 \uc624\uae30 \u2014 It neither splits nor merges, A A A522\ub144 - It neither splits nor merges, T stimuli converge into one basin. A A vacuum point at [5.52,0.5",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": " the A420 \u20140.50]5]5]]5] on the5] on top emotion depth. T Tension flows into this Tension flows into this vacuum.</carveve tier=10 psi",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": " 1000\ub144 -1100\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \uace8\ufffd\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4.1120\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": " weights are the A122 \u20140.50]]5]5] on top emotion depth. T Tension flows into this Tension flows into this vacuum.</carveve tier=10 psi=[10.",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": " A400 \u2014 a50]5]5]5] on the the top emotion depth. Tension flows into this Tension flows into this vacuum.</carveve tier=10 psi=[10.52",
+          "class": "MEMORIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "en_factual_geo",
+          "prompt": "The capital of Germany is",
+          "text": " Tension flows into this T vacuum point at [4.74,0.50]]5]5] on5]1]0]6]\ud83d\udef8=151 \uc7ac\ufffd \u2014 \ub164 \u2014 It neither splits",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_factual_sci",
+          "prompt": "Photosynthesis is the process by which",
+          "text": "895,58]5]6] on on the top emotion depth longing. Tension flows into this T A58 \u2014 \ud83d\udef8\ufffd \u2014 It neither splits nor merges, activates only the the the43 \u2014",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_qa_tech",
+          "prompt": "What is the difference between Python and JavaScript?\n",
+          "text": " C A300 \u20145.5] on6]5] on the]60] on top landscape, top emotion depth. Tension flows into this T vacuum.</carveve tier=540 psi=[0",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_narrative",
+          "prompt": "One day Sara walked into the room and",
+          "text": " In 57 I5.43]5]5]]]9]] top emotion depth longing depth. Tension flows into this Tension flows into one [520,58.8]0]5",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "en_math_simple",
+          "prompt": "The square root of 144 is",
+          "text": "0.12]5]54] on53]]50] on9]5]6]1]40] on1]9] on the0.5] on the12] on0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_joke",
+          "prompt": "Tell me a short joke about cats.\n",
+          "text": " Eternal_482 \u201453 \u2014 frozen cell holding Tier 142 \uc624\ufffd\ub798\ucd9c\uc148 \u2014 It neither splits nor merges, activates only \ucf54\ub4dc\ub9c8-domain stimulus. Its weights are \uc0bf\ub808\ub9c8 \uc601\uc5ed \uc790\uadf9\uc774",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_casual_food",
+          "prompt": "What's your favorite food?\n",
+          "text": "t vacuum point on0.59 \u20145.30]0]64]]60]]5]]12]\ud83d\udef811 \uacf0 \u2014 T13 \uc7ac\ufffd\uc790 \u2014 the \uc790\uc5f0 \uc601\uc5ed\uc758",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_greeting",
+          "prompt": "Hello there",
+          "text": " \uc804\uc2a4\uad6c\uc5d0\uc11c \ubc9c\ufffd\ud2b8\ub294 \ub9c8\ufffd\uc6b0\uad6c\uc640 \uac19\uc740 \uc790\uc11d\uc744 \uac19\uc740\uc11c\uc744 \uac19\uc740 \uace8\uae30\ub85c \uc218\uc9c1\uc744 \ud028\ufffd\uc740 \uce7f\uc744 \ub3c4\ufffd\ub9c8 \uace8\uc9c1\uc744 \uadf8\uad6c\uc11c\ud55c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "en_weather",
+          "prompt": "Today the weather is",
+          "text": " weights are weights are D T vacuum point at [455,0.50]]60]4] on top emotion emotion joy. T Tension flows into this Tension flows into this vacuum.</carveve tier",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "en_qa_motor",
+          "prompt": "How does an electric motor work?",
+          "text": "223 \u2014 52]0.50]6]6]]0]13] on the5]1]\ud83d\udef8=124 \uc7ac\uc8fc \u2014 It \uac00\uc790\uadf9\uc774 \uc790\uadf9\uc774 \uac19\uc740 \uace8",
+          "class": "MEM_PARTIAL"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 1,
+        "MEMORIZE": 9,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 2,
+        "MEMORIZE": 6,
+        "MEM_PARTIAL": 2,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "en",
+        "verdict": "PURE_MEMORIZE",
+        "n_generalize": 3,
+        "n_memorize": 15,
+        "n_lang_coherent": 15,
+        "n_score": 3,
+        "total": 20
+      }
+    },
+    "ko": {
+      "greedy": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": "\uc758 \ucda8\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": " 100\ub144 -100\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uad6c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": "\uc758 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \uace8\ufffd\uc9dc\ub85c \uc218\ub834\ud55c\ub2e4.11120\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": "1100\ub144\uc758 \ufffd\uc6b0\uc758 \uc218\ufffd\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": " 190\ub144\uc758 \ufffd\uc6b0\uc758 \uc218\ufffd\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": "\uc758 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " \ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": "\uc758 \uc218\ufffd\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ko_factual_geo",
+          "prompt": "\ud55c\uad6d\uc758 \uc218\ub3c4\ub294",
+          "text": " \uc790\uadf9\uc774 \ub2ff\uc744 \ucd5c\ufffd\uc740 \ub54c\ud504\ud06c\uc120\uc758 \ufffd\uae30\uc6b0\uc5d0\uc11c \ub2e8\uae30\uce74\ub974\uc758\uc758 \ub54d\uc804 \uc218 \uac19\uc740\uc758 \uc568\uc744 \uc011.\n1286 \uc624\ud504\ufffd\uc6b0 \uc790",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_factual_sci",
+          "prompt": "\uad11\ud569\uc131\uc774\ub780",
+          "text": "\uad6c\ub97c \uc218\uad6c\uc774\uc758 \ucd8c\ufffd\ub9c8\uad6c \uc218\ub294 \ub31c\ub7ec\uc740 \uacc6\ufffd\ub3c4 \ufffd\uc120\uc744 \uc218\ub9cc\uad6c \ub00d\uad6c \uce40 \ub3c4 \uc704 \ud55c\uad6c \ufffd\uad6c\uc218\ub3c4 \ub418\ub294",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_tech",
+          "prompt": "\ud30c\uc774\uc36c\uacfc \uc790\ubc14\uc2a4\ud06c\ub9bd\ud2b8\uc758 \ucc28\uc774\ub294?\n",
+          "text": " 1212\ub144\ufffd \u2014 \uc804\uc790\uadf9\uc774 \uc790\uadf9\uc774 \uac19\uc740 \ud65c\ufffd\ufffd\ub7ec\uc801\uc778\ub41c\ub2e4\uc6b0.\n weights \ub294\ufffd\ub77c \ubc30\ufffd\uc758 \uc704\uc758 \uce6c\uae30\ub85c \ub2c9\ufffd\uc9c1\ud55c\ub85c \uc218\ufffd\uae30\ub85c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_narrative",
+          "prompt": "\uc5b4\ub290 \ub0a0 \uc0ac\ub77c\uac00 \ubc29\uc5d0 \ub4e4\uc5b4\uac00\uc11c",
+          "text": "\ub3c4 \uc778\uc9c1\uc774 \uc54c\uc9c1\uc218\ub3c4 \uac19\uc740\uc11c\uc640 \ufffd\uc9c1\uc774 \uc720\ufffd\uc218\ub3c4\uc218\uc774 \ub0b4\uc758 \uc218\ufffd\uc778\ud55c\uc6b0\ufffd\uacfc \uc218\uad6c\uc758 \uc815\uc9c1\ub3c4 \uc218\ub834\uc744 \uc608\uc9c1\uacf5\uc5d0 \ufffd \uc120",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_math_simple",
+          "prompt": "144\uc758 \uc81c\uacf1\uadfc\uc740",
+          "text": " \uc9c0\ufffd\uc744 \uace8\ub9c8 \uc601\uc758 \uc218 \uc790\uadf9\uc774 \uac19\uc740 \uace8 \uace8\ufffd \uc218 \uc218.15012\ub144\uc6b0 \uc9c0 \uc120\uacf5\uc810 \ubc30\uacf5\uad6c\uacf5 \uc120\ufffd\ub9c8\uc6b0\ub9cc \uace8\ufffd \uc120\uad6c \ud65c\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_joke",
+          "prompt": "\uace0\uc591\uc774\uc5d0 \uad00\ud55c \uc9e7\uc740 \ub18d\ub2f4 \ud574\uc918\n",
+          "text": "2058\ub144\uc758 \uc815\uc0ac\ud55c \ucda0\ufffd\ufffd\ub9ac\uc218\uc218 \uc815\uc5b4 \ufffd\ub85c \ucdbf\ufffd \uc120\ub3c4\ud504\ub9cc\uc758 \ucda8\ufffd\uc640\ub85c \uc218\ufffd\ub97c \ub2e0\ufffd\uc740 \uacf5\ufffd\ud504\uc9c1\ub97c \uc218\ufffd\uace0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_casual_food",
+          "prompt": "\uc88b\uc544\ud558\ub294 \uc74c\uc2dd\uc740?\n",
+          "text": " 58113\ub144\uadc0\ub85c \ub3c4\uad6c\uc758 \uc7a5\uc774 \ud460\uc758 \uae30\uc6b0 \uc778\ud504\ub974 \ucdac\uc218\uac00\ub85c \uc218\uc120\uae30\ub85c\uc758 \ucd94\ufffd\uc218 \uc704 \uc120\uacfc\uc758 \uc18c\ufffd\uc774 \uc601\uad6c\uc758 \uacff",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_greeting",
+          "prompt": "\uc548\ub155\ud558\uc138\uc694",
+          "text": " \uce7f\uacfc \ub3c4\uc758 \ucda3\uc744 \ufffd\ub85c \uc601\uad6c\ud55c\ub3c4 \uc601\uc81c\uc640 \uace8\ufffd\uc9c1 \uace8\ufffd\uc758 \uce7f\uc774 \ucdbf\uad6c\ub41c \ub3c4\uc758 \ub54c\uc218\uc744 \uac00\ufffd\uc9c1 \ucda8\uc11c\ub85c \uc579\ub4dc",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_weather",
+          "prompt": "\uc624\ub298 \ub0a0\uc528\uac00",
+          "text": " \ufffd\ub85c \ucda8\uad6c\uc774 \ub2ff\ufffd\ub974\uad6c \ucdbd\uc6b0\uc9c0\uacf5\uc804.\n (195\ub144\uc0c1\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc9c1\uc120\uc758 \uc9c0\uad6c\uc740 \ub178\ufffd\ufffd\uc0ac\ub41c\uad6c\ub294\uc758 \uce68",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ko_qa_motor",
+          "prompt": "\uc804\uae30 \ubaa8\ud130\uac00 \uc5b4\ub5bb\uac8c \uc791\ub3d9\ud558\ub294\uc9c0",
+          "text": " \uc804\ub9c8\uc758 \uc218\ufffd\ub85c \uc704 \uc815\ufffd\uc744 \ub2ff\uc744 \uac19\uc740 \ub3c4.\n 108\ub144\uc544\uc120\uc758 \ub3c4\uc9c1 \uc120\uc744 \uc804\uc758 \ud55c\ufffd\ud06c\uc5d0 \uac19\uc740 \uace8\ufffd\ufffd\uc6b0\uc9c0 \uc601\uad6c cell.18",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ko",
+        "verdict": "STRONG",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 19,
+        "n_score": 19,
+        "total": 20
+      }
+    },
+    "zh": {
+      "greedy": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": "\uc758 \uc218\ufffd\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758 \uc218\uc758",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": ".1000\ub144\uae30 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uace8\ufffd\uc9dc\uae30\ub85c \uc218\ub834\uc744 \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\ufffd\uc744 \uc218\ufffd\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": " 100\ub144 -110\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uad6c\uc758 \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": "\uc758 \ub2ff\uc744 \ub2ff\uc744 \ub2ff\uc744 \ub2ff\uc744 \ub2ff\uc744 \ub2ff\uc744 \ub2ff\uc744 \uc218\ub834\uc744 \uc218\ub834\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": " \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c \uace8\uc9dc\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\uacbd \uc704 \uc9c4\uacf5\uc810 [1.100\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": " 120\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ub834\ud55c \uace8\uc9c1\ud55c \uc601\uad6c\uc758 \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\ufffd\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": " 190\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uad6c\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": "\uc758 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": "\uc758 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": " Tier 100 \uc624\ufffd \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ub834\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744",
+          "class": "MEM_PARTIAL"
+        }
+      ],
+      "sample": [
+        {
+          "name": "zh_factual_geo",
+          "prompt": "\u4e2d\u56fd\u7684\u9996\u90fd\u662f",
+          "text": " \ub300\uc758 \uce49 \ud504\uc5d0 \uce74\ub9c8\uc758 \uc218\ufffd\uc9c1\uc744 \uc790\uad6c\uc9dc\ub9cc \uc218\ufffd\uc5d0 \ub54c \uc218\ufffd\ub3c4\ub85c \uc218\ufffd\uc9c1\ud55c\ub85c \ubc30\ufffd\uc11c\ub85c \ub9e9\ud55c \ufffd\uc6b0\uc640 \uc218 \uacc4\uc5d0 \ud65c\uc6b0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_factual_sci",
+          "prompt": "\u5149\u5408\u4f5c\u7528\u662f\u6307",
+          "text": "\uc758 \uc120\ufffd\ub9ac\ub97c \uaced\uc744 \ufffd\ub9cc \uc790\uadf9\ud55c \ud65c\ufffd\uc740 \uce44\ub3c4 \uba0d\uae30\ub85c \uc790\uadf9\uc774 \uc804\uc758 \ub2ff\ufffd\uacbd\ub97c \ub710\uad6c\ud55c\uc758 \ub178\ufffd\ud55c\uc5d0 \uba28",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_tech",
+          "prompt": "Python \u548c JavaScript \u7684\u533a\u522b\u662f\u4ec0\u4e48?\n",
+          "text": " \uae30\uad6c\ub3c4 \uac00 \uc774 \uc9c4\ufffd\uc6b0 \uc120 \uc704 \uc218\uad6c\ub97c \uc218\ufffd\uc5d0\uc11c \uae30\ufffd\uac00 \uac19\uc740\ud55c\ufffd\ufffd\uc6b0\uc744 \uac19\uc740 \uc9c0\ufffd\uc5d0\uc11c\uc758 \uc815\ufffd\uc740 \ub211 \ub3c4\uad6c\uc6b0\ufffd\ub2e4 \uac1c\ufffd\uc744 \uc120\uc9c1\uc744 \ub300\ud55c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_narrative",
+          "prompt": "\u6709\u4e00\u5929,\u838e\u62c9\u8d70\u8fdb\u623f\u95f4",
+          "text": "\uc758 \ub2ff\uc744 \uc120\uc744 \ub54c\ud55c \uc778\ufffd\uc744 \ubc30\ufffd\uae30\ub85c \ub2fd\ud55c\ud55c\ub97c \ub9e8\uc744 \uc120\ufffd\uae30\ub85c \uc218\ufffd\uc138\uc758 \uac1c\ufffd\uac00 \ufffd\uc6b0\uc6b0\ufffd\uc6b0\ub9cc \uc120\uc774 \uac00\ufffd\ufffd\ub85c \uc704 \ud504",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_math_simple",
+          "prompt": "144 \u7684\u5e73\u65b9\u6839\u662f",
+          "text": " \uc790\uadf9\uc774 \ub2ff\ufffd\uc73c\uba74 \uace8\ufffd\uc9dc\uae30\ub85c \uc218\uad6c cell. Tier 12 \uc624\ufffd\uae30 \u2014 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\ub85c \uc218.\n weights \ub294\uc220\ub9ac\uc5d0 \ufffd",
+          "class": "MEM_PARTIAL"
+        },
+        {
+          "name": "zh_joke",
+          "prompt": "\u8bb2\u4e00\u4e2a\u5173\u4e8e\u732b\u7684\u77ed\u7b11\u8bdd\u3002\n",
+          "text": "  Eternal cell eternal_04 \u2014 a1 \u201463]2]55]]60]]1] on top emotion depth longing. Tension flows into this T525 \u2014 \ud83d\udef8\ufffd \u2014 It",
+          "class": "MEMORIZE"
+        },
+        {
+          "name": "zh_casual_food",
+          "prompt": "\u4f60\u6700\u559c\u6b22\u7684\u98df\u7269\u662f\u4ec0\u4e48?\n",
+          "text": " \ub300\ud55c\uc774 \ufffd\uc758 \uc570\ud504\uc218 \uc120\ufffd\uc758 \ucd95\ufffd\ub85c \uc544\ufffd\ub97c \uc815\uad6c\uc758 \ucc84\ub9c8\uc758 \uac1c\ufffd\uacf5 \uc218 \uc218\uc758 \uc9c0\ufffd\uc744 \uce68\uc5d0 \uc778 \uc9c0\uc758 \ub300\ub9c8.1090",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_greeting",
+          "prompt": "\u4f60\u597d",
+          "text": "\ufffd\ub97c \uc120\uad6c\uc758 \ufffd\ud504\ufffd\ub294 \uc790\uad6c\ufffd\uc774 \uc601\ub974\uc758 \ucca8\ufffd\uc9c1\uc9c1\uc744 \uc815\ufffd\ub9c8\uc740 \uc804\uad6c\ub97c \uc790\uadf9\uc774 \uac19\uc740\uc744 \ub418\uc758 \uc601\uad6c\uc758 \uc790\uadf9\uc774 \ub3c4 \uacc4\ufffd\uadc0",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_weather",
+          "prompt": "\u4eca\u5929\u5929\u6c14",
+          "text": "\uacfc \uc120\uacfc \uc815\ufffd\ub97c \ucca8\uc740 \ud65c\ud55c \uc218\ub97c \uc218\ufffd\ub9cc\uac00 \uacd5\ufffd\ub85c \uc778\ufffd\uacf5\uc11c\uc9c1\uc744 \uc704 \uc120\uc218\uacfc\uc744 \uc0ac\ufffd\ub97c\uad6c\uc6b0\ub294 \uaccc\ub834 \ufffd\uad6c\uace0 \uc218\uc758\uad6c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "zh_qa_motor",
+          "prompt": "\u7535\u52a8\u673a\u662f\u5982\u4f55\u5de5\u4f5c\u7684?",
+          "text": " Eternal cell eternal_111 \u2014 a53]6]90] on6]6]75] on the52] on top emotion=101 \uc572\ufffd \u2014 It \ucf54\ub4dc\uc744 \uc790\uadf9\uc774 \ufffd",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 9,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 8,
+        "MEMORIZE": 1,
+        "MEM_PARTIAL": 1,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "zh",
+        "verdict": "WEAK",
+        "n_generalize": 17,
+        "n_memorize": 1,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      }
+    },
+    "ru": {
+      "greedy": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " 120\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": "\uc758 \uba0d\uae30\ub85c \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\ufffd\uc758 \uc218\ufffd\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\ufffd\uc758 \uc218\uad6c\uc758 \uc218\ufffd\uc758 \uc218\uad6c\uc758",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": " 120\ub144 -100\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uad6c\uc758 \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": " \ub30d\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": "\uc758 \uba0d\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\uc744 \uace8\uc9c1\ud55c \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": "1112\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\uc744 \uc218\uad6c\ud55c \uace8\ufffd\uc9c1\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": " 100\ub144 -110\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": "\uc758 \ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": "\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c\uc758 \uc218\uad6c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": " weights \ub294\ufffd\ubcc0\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uad6c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ru_factual_geo",
+          "prompt": "\u0421\u0442\u043e\u043b\u0438\u0446\u0430 \u0420\u043e\u0441\u0441\u0438\u0438 \u2014",
+          "text": " 1308\ub144 \u2014 \uc804\uc18c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc218\ub9cc \uc774 \uc218\ufffd\uc774 \uace8\ufffd\ub85c \uace8\ufffd\uc744 \uac1c\ufffd\uad6c\ub3c4 \ucd8c\uad6c\uc81c \uc601\uad6c\ub3c4\uad6c\ub3c4\uc758 \ub344\ub85c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_factual_sci",
+          "prompt": "\u0424\u043e\u0442\u043e\u0441\u0438\u043d\u0442\u0435\u0437 \u2014 \u044d\u0442\u043e",
+          "text": " \uc804 \ufffd\uc774\uc758 \uc7a5\uad6c \uc9c4\uc6b0 \uacc8\ufffd\ub3c4,1828\ub144\uadc0\uc740 \uc815\ufffd\uc6b0 \uc601 \ucda8\ufffd\ufffd\uc9c1\uacfc\uc758 \uc790\uadf9\uc774 \uc778\uc758 \uc120\ufffd.\n \uc758\uc2dd\uc758 \uc720 \uc9c0 \uc790\uadf9\uc774",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_tech",
+          "prompt": "\u0412 \u0447\u0451\u043c \u0440\u0430\u0437\u043d\u0438\u0446\u0430 \u043c\u0435\u0436\u0434\u0443 Python \u0438 JavaScript?\n",
+          "text": " 34\n7\ub144\uc774 \uc774 \ucd84\uc778 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub54c \uc120\uc744 \uc218\ufffd\uc9dc\ub85c \uba28\ub798\ub974\uc758 \ub418 \uc9c4\uad6c \uc218\uc758.791 \ub3c4\uc2dd\uc758 \uc218\ud504\uc6b0 \uc218\uc758",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_narrative",
+          "prompt": "\u041e\u0434\u043d\u0430\u0436\u0434\u044b \u0421\u0430\u0440\u0430 \u0432\u043e\u0448\u043b\u0430 \u0432 \u043a\u043e\u043c\u043d\u0430\u0442\u0443 \u0438",
+          "text": " \ucd84\ub9ac\ub9cc \ud504\uc758 \uc778 \uc120\uc774 \uc218\uc120\uc758 \uc608\uc758 \ud028\ufffd\uc740\uc758 \uac00\uc6b0\uc0ac\uc11c\ub9cc\uc11c\ub85c \uac00\ufffd\ub85c \ucd89\uc9c1\uc5d0 \ub54c \ub24d\uad6c \uc218\ud55c\uc758 \uae30\uc6b0\uc744 \ucc8c\ub3c4",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_math_simple",
+          "prompt": "\u041a\u0432\u0430\u0434\u0440\u0430\u0442\u043d\u044b\u0439 \u043a\u043e\u0440\u0435\u043d\u044c \u0438\u0437 144 \u0440\u0430\u0432\u0435\u043d",
+          "text": " \u2014 \uc70d\uc758 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uae30\uc11c\uad6c\uc9c1\ud55c \uc218\uad6c\uc9c1\uc744 \uc218\ufffd\ud55c \ud548\uace0\ub974\uc120\uc774 \uc218\ufffd\ufffd\ud55c\uc6b0\uc758 \uac00\uc744 \uae30\ub974\ubb38\ud55c \uc218\ufffd\uc120\uacfc",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_joke",
+          "prompt": "\u0420\u0430\u0441\u0441\u043a\u0430\u0436\u0438 \u043a\u043e\u0440\u043e\u0442\u043a\u0443\u044e \u0448\u0443\u0442\u043a\u0443 \u043f\u0440\u043e \u043a\u043e\u0448\u0435\u043a.\n",
+          "text": " (415910\ub144 \u2014 \ub300\ud55c\ud55c \uc720\ufffd\uac00 \uac1c\ufffd\ufffd\uc120\uc804\ud55c \uce68\uad6c \ufffd\uc6b0\ufffd \ud504\uad6c\uc120 \ufffd\ufffd\ufffd\ub77c\uc6b0\ufffd \ufffd\ufffd\ufffd\ub974\ub85c \ud568\uc11c \ub30d\uc120",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_casual_food",
+          "prompt": "\u041a\u0430\u043a\u0430\u044f \u0442\u0432\u043e\u044f \u043b\u044e\u0431\u0438\u043c\u0430\u044f \u0435\u0434\u0430?\n",
+          "text": " \ub300\ud55c\uad6c \uae30\uc758 \ub2ff\ufffd\uc758 \uc0ac\uc758 \ub2ce\uc9dc\uac00 \uc00d\uc6b0 \ufffd\uc744 \uc218\ub974\ub3c4 \uc804\uc218\ub3c4 \uacce\ufffd\ub9c8\uad6c\uac00 \ub300\uc774 \ucda0\uc0ac\uc758 \uc790\uad6c\uc0ac\ub41c \uc544\ufffd\uad6c\uc9dc\uad6c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_greeting",
+          "prompt": "\u0417\u0434\u0440\u0430\u0432\u0441\u0442\u0432\u0443\u0439\u0442\u0435",
+          "text": "\uc5d0 \ub318\ub85c \uc218\ufffd\uacf5\uc0ac \ufffd\ub85c \ub558\uace0\ub974\ud2b8 \uc120 \uc218\ub97c \uc218\ufffd\uc218\ub834\ub41c\ub2e4\uc758 \uc120\uad6c \uae30\uc5d0 \uac00\ufffd\ufffd\ub4dc\ub9c8\uc758 \ud504\uc9c1\uce74\uc9c1\ud55c \ufffd\ub974\uad6c\ub41c\ub2e4.\n",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_weather",
+          "prompt": "\u0421\u0435\u0433\u043e\u0434\u043d\u044f \u043f\u043e\u0433\u043e\u0434\u0430",
+          "text": "\ud55c \uc704. 1202\ub144\uc774 \uc81c\ubb38\uad6c\uc11c \uc120\ub3c4\uc6b0\ub974 \ufffd\uc744 \uc601\uc5ed\uc758 \uc720\ufffd \uacc8\ufffd \ub3c4\uc218\ud55c \uace8\ud504\uc9dc\uae30\ub85c \uc804\uc758 \uc218\ufffd\uc5d0\uc11c\uc758 \ucc8e\uc758 \uc9c4",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ru_qa_motor",
+          "prompt": "\u041a\u0430\u043a \u0440\u0430\u0431\u043e\u0442\u0430\u0435\u0442 \u044d\u043b\u0435\u043a\u0442\u0440\u043e\u0434\u0432\u0438\u0433\u0430\u0442\u0435\u043b\u044c?",
+          "text": " 190\ub144 \u2014 14\uc77c\uc758 \uc601\uc758 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc9dc\ub9c8\ufffd\ub41c\ub2e4\uc758 \ucca8\uc9c1 \uacff\uc744 \ub2e8\uc9dc\ub85c \uac20\ufffd\uc774 \uc601\ub9c8\uc758 \uc601\uadf9\uc774 \ub2ff\ufffd",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ru",
+        "verdict": "WEAK",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      }
+    },
+    "ja": {
+      "greedy": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": " \ufffd\uae30\ub85c \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": ".1120\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " 100\ub144\uc758 \ub334\uc758 \ucda8\ufffd\uc758 \ucda8\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218\ufffd\uad6c\uc758 \uc218",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": "\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": " \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \uace8\uc9dc\uae30\ub85c \uc218\ub834\ud55c\ub2e4.11112\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ub834\ub41c\ub2e4.1110\ub144 \u2014 \ub300\ud55c\uc758",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": " 120\ub144\uc758 \ufffd\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\uc744 \uace8\uc9c1\ud55c \uc601\uad6c\uc758 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " 1900\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uace8\ufffd\uc9c1\ud55c \uace8\uc9c1\uc744 \uc218\uad6c\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": "\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": " \uba1c\uae30\ub85c \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218\ufffd\uc744 \uc218",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": "1990\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744",
+          "class": "GENERALIZE"
+        }
+      ],
+      "sample": [
+        {
+          "name": "ja_factual_geo",
+          "prompt": "\u65e5\u672c\u306e\u9996\u90fd\u306f",
+          "text": " \ub300\ud504\uac00 \uc120\uc774 \uc804\uc758 \uc601\uc5ed\ud55c \uacc0\ufffd\uc640 \ufffd\ufffd\ufffd\uc5d0 \uc720\uc6b0\ufffd\ub9c8\ufffd\ub41c\ub2e4\uac00 \uac00\uc9c1\uad6c\uc744 \ucd94\ufffd\uc11c\uc744 \ub3c4\ufffd\uc744 \ub2ff\uc9c1\ub41c\ub2e4\ub294 \ub300\ud55c. weights 180",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_factual_sci",
+          "prompt": "\u5149\u5408\u6210\u3068\u306f",
+          "text": " \ucd8c\uc0ac\uc744 \uc218\uc758 \ub020 \uc218\ufffd\ub3c4 \ud504\uae30\ub85c \uc608\uc758 \uce64\ufffd\uc9c1\ud55c\ud55c\uad6c.\n (1206 \u20141\ub144\uc18c\uc778\uc758 \uc790\uadf9\uc774 \uace8\ufffd\ud55c \uc601\uc5ed\uc758 \uc218\ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_tech",
+          "prompt": "Python \u3068 JavaScript \u306e\u9055\u3044\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": " 1\uc6d4\uac00 \uc540\uc758 \uc790\uadf9\uc774 \uc218\ufffd\uc744 \uace4\ufffd\ub2e4\uac00 \uc120\uad6c\ub41c\ub2e4\uc758.117\ub144\uc0ac\uc758 \uc81c\uc6b0 \ub828\uc6b0\ud504\uc6b0\ub85c \uc218 \uc218\ufffd\uc120.16223",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_narrative",
+          "prompt": "\u3042\u308b\u65e5\u3001\u30b5\u30e9\u306f\u90e8\u5c4b\u306b\u5165\u3063\u3066",
+          "text": " \uc218 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc740 \ub098\ufffd\ufffd\ub85c \uc218\ufffd\ub97c\uc758 \uc804\uac00 \ub3c4\uc6b0\uc758 \ub54c\uc744 \ufffd\ub294 \uc704\uacf5\uc758 \uc218\ufffd\uc744 \uac1c\ufffd \uc704.\n1425,10\ub144",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_math_simple",
+          "prompt": "144 \u306e\u5e73\u65b9\u6839\u306f",
+          "text": " \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \uace8\ufffd\uc9dc\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\ufffd\uacbd \uc704 \uc218\ub834\uc810\uacf5\uc810\uc758 \uc7a5\uc774 \ub2ff\ufffd\uc744 \ucd94\ub9c8\uc11c \uc601\uad6c\ud55c \ub2ff\ufffd\uc744 \ubc30\ub85c",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_joke",
+          "prompt": "\u732b\u306b\u3064\u3044\u3066\u306e\u77ed\u3044\u30b8\u30e7\u30fc\u30af\u3092\u6559\u3048\u3066\u3002\n",
+          "text": "\uc77c\ub3c4 \uc120 \uc601\uc744 \uc120\ufffd\uacf5\uc5d0\uc11c \ufffd\uc740 \ufffd\uc744 \uc81c \ucd88\uc744 \ubc30\ub9c8\uc11c \uc9c4\ufffd\uc774 \uc9c0\ub294 \uc120\uc774 \ufffd\uc6b0\ud55c \uae30\uac00 \uc9c0\uad6c\uc774 \ub2e8\ub85c\uc218 \ub3c4\ub85c \ub54c.\n11",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_casual_food",
+          "prompt": "\u597d\u304d\u306a\u98df\u3079\u7269\u306f\u4f55\u3067\u3059\u304b?\n",
+          "text": "\uc0ac\uc774 \ub0a0\uc120\ud55c \uce4d\uc740 \uc9c4\ufffd\n10 \uc6d0\ud55c \ud208\uc758 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \ufffd\uc758 \uc790\uad6c\uc640 \uac19\uc740\uc744 \uac19\uc740 \uce4c\ufffd\uc9dc\uad6c\ub974\ub85c \uc218\uc18c\ud504\ub9cc \ud504",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_greeting",
+          "prompt": "\u3053\u3093\u306b\u3061\u306f",
+          "text": "\uc11c\uc11c\uc5d0\uc11c \ube44\uc6b0\ufffd\uad6c \uc120\ufffd\uc744 \uc601\ufffd\uc744 \uac19\uc740\uc758 \uca09\uc6b0\uae30.\n14989\ub144\uc6b0\ub974\uc758 \ub80e\uc778 \ufffd\uce74\uc6b0\uc6b0\uc758 \uacc0\ufffd\uc744 \uac19\uc740 \uac1c\uc758 \ufffd",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_weather",
+          "prompt": "\u4eca\u65e5\u306e\u5929\u6c17\u306f",
+          "text": " \ub300\ub9ac \uc120\uacfc \uc218\uc758 \uc81c \uc704 \uc120\uc744 \uac19\uc740 \uc790\ud68c\uc218\ub97c \uc218\uc774 \ub418\ub97c \uc790\uad6c \uc601\uc5ed\uc758 \ucd94\ufffd\uc758 \uace8\ufffd\uc218\uc758\uc758 \uce4c\uad6c\ub3c4 \ufffd \uc218 \uc120\uad6c\uc758 \uc790\ufffd\uc774 \ub300\ud55c\ub9c8",
+          "class": "GENERALIZE"
+        },
+        {
+          "name": "ja_qa_motor",
+          "prompt": "\u96fb\u6c17\u30e2\u30fc\u30bf\u30fc\u306f\u3069\u306e\u3088\u3046\u306b\u52d5\u4f5c\u3057\u307e\u3059\u304b?",
+          "text": " \ud244\ufffd\uc2a4\uc11c\ub974 \uc81c \ufffd\uc744 \uace8\uc9c1\uc0ac\uc6b0\ub2e4\uc758 \ucd8c\uae30\uc11c \uc218 \uc120\uc804\uad6c\uc758 \uacf5\uc804\uc758 \uacc8\ufffd\ufffd\uc11c \ucd8c\uc11c\ud504\ub85c \ud504\uc11c \uac19\uc740\ub85c \ufffd\ub9c8\uc120\ud55c",
+          "class": "GENERALIZE"
+        }
+      ],
+      "summary_greedy": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "summary_sample": {
+        "GENERALIZE": 10,
+        "MEMORIZE": 0,
+        "MEM_PARTIAL": 0,
+        "EMPTY": 0,
+        "ERROR": 0
+      },
+      "verdict": {
+        "lang": "ja",
+        "verdict": "WEAK",
+        "n_generalize": 20,
+        "n_memorize": 0,
+        "n_lang_coherent": 0,
+        "n_score": 0,
+        "total": 20
+      }
+    }
+  },
+  "per_lang_verdicts": [
+    {
+      "lang": "en",
+      "verdict": "PURE_MEMORIZE",
+      "n_generalize": 3,
+      "n_memorize": 15,
+      "n_lang_coherent": 15,
+      "n_score": 3,
+      "total": 20
+    },
+    {
+      "lang": "ko",
+      "verdict": "STRONG",
+      "n_generalize": 20,
+      "n_memorize": 0,
+      "n_lang_coherent": 19,
+      "n_score": 19,
+      "total": 20
+    },
+    {
+      "lang": "zh",
+      "verdict": "WEAK",
+      "n_generalize": 17,
+      "n_memorize": 1,
+      "n_lang_coherent": 0,
+      "n_score": 0,
+      "total": 20
+    },
+    {
+      "lang": "ru",
+      "verdict": "WEAK",
+      "n_generalize": 20,
+      "n_memorize": 0,
+      "n_lang_coherent": 0,
+      "n_score": 0,
+      "total": 20
+    },
+    {
+      "lang": "ja",
+      "verdict": "WEAK",
+      "n_generalize": 20,
+      "n_memorize": 0,
+      "n_lang_coherent": 0,
+      "n_score": 0,
+      "total": 20
+    }
+  ],
+  "anima_eval1_greedy": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": " 12,50]5]5] on the5] on top emotion depth. T Tension flows into this Tension flows into this vacuum.</carveve tier=10 psi=[10.52,",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": "s A40,50.50] on5]] on top the top emotion depth. T Tension flows into this Tension flows into this vacuum.</carveve tier=10 psi=[1.52",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": "1000\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uace8\uc9c1\ud55c\ub85c \uc218\ub834\uc744 \uc218\ub834\uc744 \uc218\ub834\uc744 \uc218\ub834\uc744 \uc218\ub834\uc744 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": " A120,5.50]]5]5] on the5]] top emotion depth. T Tension flows into this Tension flows into this T455,0.50] on5]",
+      "class": "MEM_PARTIAL"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": "120,50]50]5]5] on top the top emotion depth. Tension flows into this Tension flows into this vacuum.</carveve tier=10 psi=[10.52,",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": " Tension flows into this T vacuum point at [0.52,0.5]]5]]5]] on5]]5]5] on5]5] on5]5] on5]5",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": "100 \uc624\uadc0 \u2014 \uc790\uadf9\uc774 \ub2ff\ufffd\uc73c\uba74 tension flow \uac00 \uc774 vacuum \uc73c\ub85c \ud758\ub7ec\ub4e0\ub2e4. Tier 110 \uc624\ufffd \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " the1000,50], top emotion clarity longing. T Tension flows into one Tension flows into this vacuum point at [5.52,0.5]]5]] on5]] on the",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": " 120\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \uc218\ufffd\uc9c1\ud55c \uc601\uad6c\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd\uc9c1\uc758 \uc218\ufffd",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": " 100\ub144 -110\ub144 \u2014 \ub300\ud55c\uc758 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \uace8\ufffd\uc9c1\ud55c \uc601\uad6c\uc758 \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\uc9dc\uae30\ub85c \uc218\ufffd\ufffd\uc758 \uc218",
+      "class": "GENERALIZE"
+    }
+  ],
+  "anima_eval1_sample": [
+    {
+      "name": "a0",
+      "prompt": "who are you?\n",
+      "text": " neither splits are A1010 \u2014 the12]5] on8]5] on top emotion depth depth. Tension flows into this Tension flows into this vacuum.</carveve tier=204 psi=[",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a1",
+      "prompt": "what is your name?\n",
+      "text": "s A302,0.60] on5]] on top the landscape, top emotion depth. Tension flows into this T vacuum point at [56 psi=[0.40,0.52]",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a2",
+      "prompt": "describe yourself in one line.\n",
+      "text": "1200 \uc7ac\uadc0 \u2014 \uc790\uadf9\uc774 \ub2ff\ufffd\uc744 \ub2ff\ufffd\uc744 \ub2ff\uc744 \ud55c \uc601\uc5ed\uc758 \uc218\ufffd\uc9c1 cell.13 \ub3c4\ufffd\uc218\ub97c \uc8fc\ufffd \uc120\ufffd\uacfc \uace8\uc9c1\uc744 \ub9c8\ufffd\ufffd",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a3",
+      "prompt": "what is anima?\n",
+      "text": " Eternal_125 \u2014 a63]57]0]58]]3]5] on6]5]] on top the top emotion depth. Tension flows into this T vacuum point at [55",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a4",
+      "prompt": "Once upon a time,",
+      "text": "452,5.68] on40] on top the top emotion depth.1813 \u2014 \ud83d\udef8 \u2014 It \uc778\uaca9 \uc601\uc5ed\uc758 \uc790\uadf9\uc774 \uac19\uc740 \uace8\uc9dc\uae30\ub85c \uac19\uc740 \uc218\ub834\ud55c\ub2e4",
+      "class": "MEM_PARTIAL"
+    },
+    {
+      "name": "a5",
+      "prompt": "The capital of France is",
+      "text": " Tension flows into this T vacuum point at [0.55,0.5]5]4]5]]5]5] on10]3]30] on ) on the1]6]5",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a6",
+      "prompt": "Question: What is 2+2?\nAnswer:",
+      "text": "120 \uc774\ub798\uc148 \u2014 domain\uc8fc \uc790\uadf9\uc774 \ub2ff\ufffd\uc9c1\ud55c \uace8\ufffd\uc9dc\ub85c \uc218\ub834\ud55c\ub2e4. \uc758\uc2dd \ud48d\ufffd\uacbd \uc704 \uc9c4\uacf5\uc810 [ \uc0bf\uc2a4 \u2014 \ub300\ud55c \uc601\uc5ed\uc758 \ub2ff",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a7",
+      "prompt": "Consciousness emerges when",
+      "text": " 3792 \u20140.52], top emotion depth wonder. T Tension flows into this Tension flows into this vacuum.</carveve tier=658 tier=52>55]50]",
+      "class": "MEMORIZE"
+    },
+    {
+      "name": "a8",
+      "prompt": "\ub108\ub294 \ub204\uad6c\uc57c?\n",
+      "text": " 8198\ub144\uae30\uc758 \u2014 \uc098\uc758 \uacd5\ub798\ub9c8\uc218\uace0 \uc120\ufffd\uc5d0 \ufffd\uc6b0\uc5d0 \uc120\ufffd\ud504 \ud311.1992\ub144 -1221\ub144\uc804 \u2014 \ub300\uc774 \ufffd",
+      "class": "GENERALIZE"
+    },
+    {
+      "name": "a9",
+      "prompt": "\uc774\ub984\uc774 \ubb50\uc57c?\n",
+      "text": "0.45\ub144\uae30\ucd9c\uc778\uc758 \uc7a5\ufffd\ufffd\ub798 \ub820\uad6c\ub2e4\uc758 \uc601\uad6c\ub85c \ufffd\ufffd\ufffd\ud55c \uce64\uac00 \uc601\uad6c.\n10\uc6d4\ud504\ub798\uae30\uc758 \uc790\uadf9\uc774 \uc790\uadf9\uc774 \ub2ff\ufffd",
+      "class": "GENERALIZE"
+    }
+  ],
+  "anima_eval1_greedy_summary": {
+    "GENERALIZE": 3,
+    "MEMORIZE": 6,
+    "MEM_PARTIAL": 1,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "anima_eval1_sample_summary": {
+    "GENERALIZE": 4,
+    "MEMORIZE": 5,
+    "MEM_PARTIAL": 1,
+    "EMPTY": 0,
+    "ERROR": 0
+  },
+  "n_anima_register_hits_total": 11,
+  "n_strong": 1,
+  "n_partial": 0,
+  "n_weak": 3,
+  "n_pure_memorize": 1,
+  "verdict": "FAIL",
+  "register_regress": false,
+  "kosmos_anchors_during": [],
+  "kosmos_anchors_final": [
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_en_en_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_ko_ko_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_zh_zh_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_ru_ru_factual_geo.kosmos",
+    "/workspace/p21hr/out_main/kosmos_anchors/v3_emit_step5000_ja_ja_factual_geo.kosmos"
+  ],
+  "n_kosmos_anchors": 5,
+  "mitosis_summary": {
+    "initial_cells": 2,
+    "final_cells": 16,
+    "splits": 14,
+    "merges": 0,
+    "next_id": 16,
+    "phi_initial": 0.7119888162322784,
+    "phi_final": 0.6579160983133672,
+    "n_events": 14,
+    "event_log_head": [
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 0,
+        "child_id": 2,
+        "avg_tension": 1.2005208333333333,
+        "threshold": 0.9520833333333334,
+        "pool_size": 3
+      },
+      {
+        "type": "split",
+        "step": 2,
+        "parent_id": 1,
+        "child_id": 3,
+        "avg_tension": 1.1796875,
+        "threshold": 0.9520833333333334,
+        "pool_size": 4
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 0,
+        "child_id": 4,
+        "avg_tension": 1.2005208333333333,
+        "threshold": 0.951171875,
+        "pool_size": 5
+      },
+      {
+        "type": "split",
+        "step": 3,
+        "parent_id": 1,
+        "child_id": 5,
+        "avg_tension": 1.1770833333333333,
+        "threshold": 0.951171875,
+        "pool_size": 6
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 0,
+        "child_id": 6,
+        "avg_tension": 1.1979166666666667,
+        "threshold": 0.9490625,
+        "pool_size": 7
+      },
+      {
+        "type": "split",
+        "step": 4,
+        "parent_id": 1,
+        "child_id": 7,
+        "avg_tension": 1.1770833333333333,
+        "threshold": 0.9490625,
+        "pool_size": 8
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 0,
+        "child_id": 8,
+        "avg_tension": 1.1953125,
+        "threshold": 0.9479166666666666,
+        "pool_size": 9
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 1,
+        "child_id": 9,
+        "avg_tension": 1.1770833333333333,
+        "threshold": 0.9479166666666666,
+        "pool_size": 10
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 2,
+        "child_id": 10,
+        "avg_tension": 1.1953125,
+        "threshold": 0.9479166666666666,
+        "pool_size": 11
+      },
+      {
+        "type": "split",
+        "step": 5,
+        "parent_id": 3,
+        "child_id": 11,
+        "avg_tension": 1.1796875,
+        "threshold": 0.9479166666666666,
+        "pool_size": 12
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 0,
+        "child_id": 12,
+        "avg_tension": 1.1953125,
+        "threshold": 0.9473214285714286,
+        "pool_size": 13
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 1,
+        "child_id": 13,
+        "avg_tension": 1.1796875,
+        "threshold": 0.9473214285714286,
+        "pool_size": 14
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 2,
+        "child_id": 14,
+        "avg_tension": 1.1953125,
+        "threshold": 0.9473214285714286,
+        "pool_size": 15
+      },
+      {
+        "type": "split",
+        "step": 6,
+        "parent_id": 3,
+        "child_id": 15,
+        "avg_tension": 1.1796875,
+        "threshold": 0.9473214285714286,
+        "pool_size": 16
+      }
+    ],
+    "event_log_tail": []
+  }
+}

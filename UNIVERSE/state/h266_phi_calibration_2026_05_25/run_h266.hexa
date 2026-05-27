@@ -1,0 +1,431 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  run_h266.hexa — H_266 phi-calibration-known-iit
+//                  phi_native (RFC 036 phi_spatial port) construct-validity check
+//                  against IIT canonical small systems (gap#1 — LIFE lane top risk)
+//
+//  CORE QUESTION
+//    Does phi_native(phi_spatial) reproduce the known IIT Φ ordering on
+//    canonical small systems? Tononi-style prediction: an integrated
+//    (all-to-all coupled) system has higher integrated information than a
+//    feedforward chain, which in turn has more than a set of disconnected
+//    (independent) parts:
+//        Φ(integrated) ≥ Φ(feedforward) ≥ Φ(disconnected).
+//
+//  WHY (gap#1 motivation)
+//    The entire LIFE consciousness lane rests on phi_native's phi_spatial
+//    estimator. /gap full (2026-05-25) flagged its construct validity as the
+//    single largest unverified risk: phi_spatial is byte-equal to RFC 036
+//    phi_rs, but no cycle had ever shown it tracks INTEGRATION the way IIT
+//    intends. H_266 builds three structures whose Φ ordering IIT predicts and
+//    asks whether phi_native recovers that ordering.
+//
+//  HOW phi_native MEASURES (read from lib/phi_native.hexa)
+//    Input = flat row-major n_cells × dim farr. Cell-i's row is its dim-length
+//    state vector (here: a length-`dim` time trajectory). phi_native_spatial:
+//      step 3 — pairwise mutual information MI(cell_i traj, cell_j traj) via
+//               n_bins histogram (max(H_a + H_b − H_ab, 0)).
+//      step 3c — min-information-partition (exhaustive bipartition, cell 0 ∈ A).
+//      step 4 — Φ = max(total_MI − min_partition_MI, 0) / max(n_cells − 1, 1).
+//    Integration thus = how much pairwise MI is LOST by the cheapest cut.
+//    Fully-coupled cells share MI across EVERY cut → large residual → high Φ.
+//    A feedforward chain has one cheap cut (a single chain link) → mid Φ.
+//    Disconnected cells share ~0 MI across any cut → Φ ≈ 0.
+//
+//  STRUCTURE CONSTRUCTION (deterministic, no RNG — pure closed-form drivers)
+//    A common length-`dim` base signal b[t] = sin-like deterministic wave
+//    (computed via a fixed recurrence so it is non-trivial + multi-valued).
+//    n_cells cells, each a length-`dim` trajectory:
+//      integrated   : every cell = b (+ a tiny per-cell deterministic phase)
+//                     → all pairs strongly co-vary → high pairwise MI everywhere.
+//      feedforward  : cell 0 = b; cell i = cell_{i-1} shifted by 1 step (a
+//                     chain — only adjacent cells co-vary strongly; the cut
+//                     between any adjacent pair severs the chain → low min-part).
+//      disconnected : cell i = an independent deterministic wave at frequency
+//                     f_i = i+2 (mutually incommensurate phases → ~0 cross-MI).
+//
+//  SWEEP   structure ∈ {integrated, feedforward, disconnected} × size n_cells ∈ {3, 4, 6}
+//  MEASURE phi_native_spatial(state, n_cells, dim, n_bins) for each cell.
+//
+//  CRITERIA (pre-registered — frozen before run)
+//    C1 (integrated > disconnected): for EVERY size, Φ(integrated) > Φ(disconnected).
+//       Basic IIT prediction: an integrated whole carries more integrated info
+//       than independent parts.
+//    C2 (monotone with connectivity): for EVERY size,
+//       Φ(integrated) ≥ Φ(feedforward) ≥ Φ(disconnected) (non-strict mid term).
+//    C3 (cross-process determinism): same script re-run → byte-equal Φ matrix.
+//       (In-process F4 paired-call as the H_220 pattern; cross-process sha256
+//        confirmed externally per RFC 033 single-global-stream caveat.)
+//    verdict_rule:
+//      SUPPORTED  = C1 ∧ C2  (phi_spatial construct validity partially supported)
+//      PARTIAL    = C1 ∧ ¬C2 (integration>separation holds, monotone fails)
+//      FALSIFIED  = ¬C1      (phi_spatial does NOT track integration — LIFE lane
+//                             whole-construct re-review needed; valid closed
+//                             negative).
+//
+//  HONEST NOTE (mandatory)
+//    phi_spatial is a SPATIAL proxy, NOT full IIT Φ (PyPhi exact cause-effect
+//    repertoire / Earth-Mover-Distance φ). Only PARTIAL alignment with the
+//    textbook ordering is expected; this calibrates the spatial-MI proxy's
+//    construct validity, not phi_rs's correctness as IIT 4.0. See § 8 limits.
+//
+//  $0 mac local · hexa-only · LLM none · NO ckpt · deterministic.
+// ════════════════════════════════════════════════════════════════════════════
+
+
+import "/Users/ghost/core/anima/UNIVERSE/lib/phi_native.hexa"
+
+
+fn _state_dir() -> string {
+    return "UNIVERSE/state/h266_phi_calibration_2026_05_25"
+}
+fn _dim() -> int    { return 12 }   // per-cell trajectory length
+fn _n_bins() -> int { return 4 }    // H_007 / H_239 parity histogram bins
+
+
+// ── small helpers ──────────────────────────────────────────────────────────
+
+fn to_float(x: int) -> float { return x * 1.0 }
+
+fn _bool_str(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+// Deterministic bounded oscillator value at integer phase p.
+// A fixed-point logistic-style recurrence gives a multi-valued, non-monotone,
+// bounded sequence with NO RNG — fully deterministic + cross-process stable.
+//   x_{k+1} = frac( a * x_k + c )   (frac keeps it in [0,1); a, c fixed)
+// We seed by phase offset so different cells/freqs get distinct trajectories.
+fn _frac(x: float) -> float {
+    // floor available in lib via floor(); frac = x − floor(x), x ≥ 0 here.
+    let f = floor(x)
+    return x - f
+}
+
+// Generate a length-`len` deterministic bounded trajectory seeded by `seed_phase`
+// advancing with step `freq` (incommensurate frequencies → independent series).
+fn _wave(len: int, seed_phase: float, freq: float) {
+    let mut out = []
+    let mut x = _frac(0.37 + seed_phase * 0.131)   // deterministic seed in [0,1)
+    let mut k = 0
+    while k < len {
+        // logistic-ish chaotic map (a=3.91 in chaos regime) advanced `freq` ticks.
+        let mut t = 0
+        let ticks = freq.to_int()
+        while t < ticks {
+            x = 3.91 * x * (1.0 - x)
+            if x < 0.0 { x = 0.0 - x }
+            x = _frac(x + 1.0)                       // keep in [0,1)
+            t = t + 1
+        }
+        out.push(x)
+        k = k + 1
+    }
+    return out
+}
+
+// Shift a trajectory by 1 step (feedforward chain link): out[t] = src[t-1],
+// out[0] = src[len-1] (periodic shift — deterministic, preserves value set).
+fn _shift1(src) {
+    let n = len(src)
+    let mut out = []
+    out.push(src[n - 1])
+    let mut k = 1
+    while k < n {
+        out.push(src[k - 1])
+        k = k + 1
+    }
+    return out
+}
+
+// Add a tiny deterministic per-cell phase offset (integrated cells co-vary but
+// are not byte-identical, so MI is high yet pairs are distinguishable).
+fn _phase_jitter(src, eps: float) {
+    let n = len(src)
+    let mut out = []
+    let mut k = 0
+    while k < n {
+        let mut v = src[k] + eps
+        v = _frac(v + 1.0)                           // wrap to [0,1)
+        out.push(v)
+        k = k + 1
+    }
+    return out
+}
+
+
+// ── flatten a list-of-cell-trajectories into row-major flat array ───────────
+// cells = list of n_cells trajectories, each length dim. Returns flat array of
+// length n_cells * dim suitable for phi_native(values, n_cells, n_bins).
+fn _flatten(cells, n_cells: int, dim: int) {
+    let mut flat = []
+    let mut i = 0
+    while i < n_cells {
+        let mut t = 0
+        while t < dim {
+            flat.push(cells[i][t])
+            t = t + 1
+        }
+        i = i + 1
+    }
+    return flat
+}
+
+
+// ── structure builders ──────────────────────────────────────────────────────
+// Each returns the flat row-major array for phi_native(values, n_cells, n_bins).
+
+// integrated: every cell = same base wave + tiny distinct phase jitter.
+//   → all pairs strongly co-vary; every cut leaves large cross-MI → high Φ.
+fn _build_integrated(n_cells: int, dim: int) {
+    let base = _wave(dim, 1.0, 1.0)
+    let mut cells = []
+    let mut i = 0
+    while i < n_cells {
+        // jitter eps = i * 0.005 — distinguishable yet tightly coupled.
+        let eps = to_float(i) * 0.005
+        cells.push(_phase_jitter(base, eps))
+        i = i + 1
+    }
+    return _flatten(cells, n_cells, dim)
+}
+
+// feedforward: cell 0 = base; cell i = shift1(cell_{i-1}).
+//   → a chain; only adjacent cells share strong MI; the cheapest cut severs
+//     one chain link → moderate residual integration → mid Φ.
+fn _build_feedforward(n_cells: int, dim: int) {
+    let base = _wave(dim, 1.0, 1.0)
+    let mut cells = []
+    cells.push(base)
+    let mut i = 1
+    while i < n_cells {
+        cells.push(_shift1(cells[i - 1]))
+        i = i + 1
+    }
+    return _flatten(cells, n_cells, dim)
+}
+
+// disconnected: cell i = independent wave at frequency (i+2) ticks/step.
+//   → mutually incommensurate chaotic series → ~0 cross-cell MI → Φ ≈ 0.
+fn _build_disconnected(n_cells: int, dim: int) {
+    let mut cells = []
+    let mut i = 0
+    while i < n_cells {
+        let freq = to_float(i + 2)
+        let seed = to_float(i + 1) * 2.0
+        cells.push(_wave(dim, seed, freq))
+        i = i + 1
+    }
+    return _flatten(cells, n_cells, dim)
+}
+
+
+// ── measure one (structure, size) → Φ ────────────────────────────────────────
+fn _measure(structure: string, n_cells: int) -> float {
+    let dim = _dim()
+    let nb = _n_bins()
+    let mut flat = []
+    if structure == "integrated" {
+        flat = _build_integrated(n_cells, dim)
+    } else {
+        if structure == "feedforward" {
+            flat = _build_feedforward(n_cells, dim)
+        } else {
+            flat = _build_disconnected(n_cells, dim)
+        }
+    }
+    return phi_native(flat, n_cells, nb)
+}
+
+
+// ── result.json float-3 formatter (stable string) ───────────────────────────
+fn _f(x: float) -> string { return to_string(x) }
+
+
+// ── main ─────────────────────────────────────────────────────────────────────
+
+fn _run_h266() {
+    let dim = _dim()
+    let nb = _n_bins()
+
+    println("================================================================")
+    println("H_266 phi-calibration-known-iit — phi_native construct validity")
+    println("       vs IIT canonical {integrated, feedforward, disconnected}")
+    println("  dim=" + to_string(dim) + " n_bins=" + to_string(nb)
+            + "  (deterministic, no RNG)")
+    println("  IIT prediction: Phi(integrated) >= Phi(feedforward) >= Phi(disconnected)")
+    println("================================================================")
+
+    // sizes swept (n_cells ≤ 20 exact-bipartition path in phi_native).
+    let sizes = [3, 4, 6]
+    let n_sizes = 3
+
+    // F4 in-process determinism — paired call on one config before any
+    // divergence (H_220 pattern). Cross-process byte-equal confirmed via sha256.
+    let det_a = _measure("integrated", 4)
+    let det_b = _measure("integrated", 4)
+    let f4_in_process = (det_a == det_b)
+
+    // measure 3 structures × 3 sizes = 9.
+    // store as parallel arrays indexed by size.
+    let mut phi_int = []
+    let mut phi_ffd = []
+    let mut phi_dis = []
+    let mut si = 0
+    while si < n_sizes {
+        let nc = sizes[si]
+        phi_int.push(_measure("integrated",   nc))
+        phi_ffd.push(_measure("feedforward",  nc))
+        phi_dis.push(_measure("disconnected", nc))
+        si = si + 1
+    }
+
+    // print matrix.
+    println("")
+    println("n_cells  Phi_integrated  Phi_feedforward  Phi_disconnected")
+    println("-------  --------------  ---------------  ----------------")
+    let mut p = 0
+    while p < n_sizes {
+        println("  " + to_string(sizes[p])
+                + "      " + to_string(phi_int[p])
+                + "        " + to_string(phi_ffd[p])
+                + "        " + to_string(phi_dis[p]))
+        p = p + 1
+    }
+
+    // ── criteria ──────────────────────────────────────────────────────────────
+    // C1: for every size, integrated > disconnected.
+    let mut c1 = true
+    let mut c1i = 0
+    while c1i < n_sizes {
+        if phi_int[c1i] <= phi_dis[c1i] { c1 = false }
+        c1i = c1i + 1
+    }
+
+    // C2: for every size, integrated >= feedforward >= disconnected.
+    let mut c2 = true
+    let mut c2i = 0
+    while c2i < n_sizes {
+        let mono = (phi_int[c2i] >= phi_ffd[c2i]) && (phi_ffd[c2i] >= phi_dis[c2i])
+        if !mono { c2 = false }
+        c2i = c2i + 1
+    }
+
+    // C3 / F4: determinism (in-process paired call; cross-process = sha256).
+    let c3 = f4_in_process
+
+    // F5: bounds — all Φ ≥ 0 (phi_spatial clamps ≥ 0 by construction; verify).
+    let mut f5 = true
+    let mut f5i = 0
+    while f5i < n_sizes {
+        if phi_int[f5i] < 0.0 { f5 = false }
+        if phi_ffd[f5i] < 0.0 { f5 = false }
+        if phi_dis[f5i] < 0.0 { f5 = false }
+        f5i = f5i + 1
+    }
+
+    // F1 (separation signal): integrated strictly above disconnected at largest
+    // size (the cleanest contrast). Pre-registered as the primary falsifier.
+    let f1 = phi_int[n_sizes - 1] > phi_dis[n_sizes - 1]
+
+    // F2 (monotone-mid): feedforward sits between (non-strict) at largest size.
+    let f2 = (phi_int[n_sizes - 1] >= phi_ffd[n_sizes - 1])
+             && (phi_ffd[n_sizes - 1] >= phi_dis[n_sizes - 1])
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if c3 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    let mut n_c = 0
+    if c1 { n_c = n_c + 1 }
+    if c2 { n_c = n_c + 1 }
+    if c3 { n_c = n_c + 1 }
+
+    // verdict_rule.
+    let verdict = if c1 {
+        if c2 { "SUPPORTED" } else { "PARTIAL" }
+    } else {
+        "FALSIFIED"
+    }
+
+    let v1 = if f1 { "PASS" } else { "FAIL" }
+    let v2 = if f2 { "PASS" } else { "FAIL" }
+    let v3 = if c3 { "PASS" } else { "FAIL" }
+    let v5 = if f5 { "PASS" } else { "FAIL" }
+
+    println("")
+    println("criteria:")
+    println("  C1 integrated > disconnected (all sizes)        : " + _bool_str(c1))
+    println("  C2 integrated >= feedforward >= disconnected    : " + _bool_str(c2))
+    println("  C3 in-process determinism (paired call)         : " + _bool_str(c3))
+    println("")
+    println("falsifiers:")
+    println("  F1 SEPARATION  (int > dis, largest size)        " + v1)
+    println("  F2 MONOTONE    (int>=ffd>=dis, largest size)    " + v2)
+    println("  F4 DETERMINISM (in-process byte-equal)          " + v3)
+    println("  F5 BOUNDS      (all Phi >= 0)                    " + v5)
+    println("================================================================")
+    println("VERDICT: " + verdict
+            + "  (" + to_string(n_c) + "/3 criteria, "
+            + to_string(n_pass) + "/4 falsifiers PASS)")
+    println("================================================================")
+
+    // ── result.json ─────────────────────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"hypothesis\": \"H_266\",\n"
+    j = j + "  \"slug\": \"phi-calibration-known-iit\",\n"
+    j = j + "  \"domain\": \"LIFE\",\n"
+    j = j + "  \"title\": \"phi_native construct-validity calibration vs IIT canonical small systems (gap#1)\",\n"
+    j = j + "  \"date\": \"2026-05-25\",\n"
+    j = j + "  \"host\": \"mac-local\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"params\": {\"dim\": " + to_string(dim)
+          + ", \"n_bins\": " + to_string(nb)
+          + ", \"sizes\": [3, 4, 6]},\n"
+    j = j + "  \"iit_prediction\": \"Phi(integrated) >= Phi(feedforward) >= Phi(disconnected)\",\n"
+    j = j + "  \"sweep\": {\n"
+
+    let mut sw = 0
+    while sw < n_sizes {
+        let nc = sizes[sw]
+        let comma = if sw < n_sizes - 1 { "," } else { "" }
+        j = j + "    \"n" + to_string(nc) + "\": { \"n_cells\": " + to_string(nc)
+              + ", \"phi_integrated\": " + _f(phi_int[sw])
+              + ", \"phi_feedforward\": " + _f(phi_ffd[sw])
+              + ", \"phi_disconnected\": " + _f(phi_dis[sw])
+              + ", \"int_gt_dis\": " + _bool_str(phi_int[sw] > phi_dis[sw])
+              + ", \"monotone\": " + _bool_str((phi_int[sw] >= phi_ffd[sw]) && (phi_ffd[sw] >= phi_dis[sw]))
+              + " }" + comma + "\n"
+        sw = sw + 1
+    }
+    j = j + "  },\n"
+
+    j = j + "  \"criteria\": {\n"
+    j = j + "    \"C1_integrated_gt_disconnected\": " + _bool_str(c1) + ",\n"
+    j = j + "    \"C2_monotone_connectivity\":      " + _bool_str(c2) + ",\n"
+    j = j + "    \"C3_determinism\":                " + _bool_str(c3) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F1_SEPARATION\":  { \"metric\": \"phi_int > phi_dis (largest size)\", \"verdict\": \"" + v1 + "\" },\n"
+    j = j + "    \"F2_MONOTONE\":    { \"metric\": \"int>=ffd>=dis (largest size)\", \"verdict\": \"" + v2 + "\" },\n"
+    j = j + "    \"F4_DETERMINISM\": { \"metric\": \"in-process byte-equal\", \"verdict\": \"" + v3 + "\" },\n"
+    j = j + "    \"F5_BOUNDS\":      { \"metric\": \"all Phi >= 0\", \"verdict\": \"" + v5 + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"n_criteria_pass\": " + to_string(n_c) + ",\n"
+    j = j + "  \"n_falsifier_pass\": " + to_string(n_pass) + ",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"honest_note\": \"phi_spatial is a spatial MI proxy, not full IIT 4.0 (PyPhi exact); partial alignment only is expected.\",\n"
+    j = j + "  \"gap\": \"gap#1 — LIFE lane top construct-validity risk (/gap full 2026-05-25)\",\n"
+    j = j + "  \"cross_link\": {\"H_007\": \"phi_spatial baseline\", \"H_239\": \"alt-phi-metric cross-validation\"}\n"
+    j = j + "}\n"
+
+    write_file(_state_dir() + "/result.json", j)
+    println("ledger -> " + _state_dir() + "/result.json")
+}
+
+
+_run_h266()

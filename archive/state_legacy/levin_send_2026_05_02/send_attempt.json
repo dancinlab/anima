@@ -1,0 +1,92 @@
+{
+  "task": "N-22 Levin Lab outreach email send",
+  "date_utc": "2026-05-02",
+  "agent": "contact send.hexa hexa-native re-implementation + Levin email send EXEC",
+  "status": "BLOCKED — oauth refresh_token expired/revoked",
+  "phases": {
+    "phase_1_inventory": {
+      "status": "PASS",
+      "findings": {
+        "token_path": "/Users/ghost/etc/secret/gmail_token.json",
+        "credentials_path": "/Users/ghost/etc/secret/gmail_credentials.json",
+        "scopes": ["https://www.googleapis.com/auth/gmail.send", "https://www.googleapis.com/auth/gmail.readonly"],
+        "client_id_suffix": "...4lgqv.apps.googleusercontent.com",
+        "client_oauth_type": "installed (testing-mode)",
+        "old_send_py": "absent (only .pyc in __pycache__); .py files are gitignored entirely",
+        "wrapper_pattern": "send.hexa was a 26-line shim calling python3 send.py"
+      }
+    },
+    "phase_2_send_hexa_reimpl": {
+      "status": "PASS",
+      "loc": 590,
+      "key_functions": [
+        "shell_escape_single",
+        "json_escape",
+        "now_iso_utc",
+        "date_rfc2822",
+        "load_token_map",
+        "refresh_access_token",
+        "template_path_for",
+        "parse_recipient",
+        "parse_attachments",
+        "parse_template",
+        "mime_text_only",
+        "mime_with_attachments",
+        "base64url_via_tmpfile",
+        "gmail_send",
+        "append_history",
+        "list_templates",
+        "show_status",
+        "run_personal",
+        "main"
+      ],
+      "raw_9_compliance": "100% hexa-native; zero python invocation; uses curl + base64 + builtin json_parse"
+    },
+    "phase_3_levin_register": {
+      "status": "PASS",
+      "template": "/Users/ghost/core/contact/templates/email_template_levin_michael_en.md",
+      "template_chars": 3528,
+      "contact_entry_added": "/Users/ghost/core/contact/data/contacts.json (id=levin_michael, primary email=michael.levin@tufts.edu)",
+      "attachments_dir": "/Users/ghost/core/contact/attachments/levin_michael/",
+      "attachments": [
+        {"file": "n_22_anima_paradigm_v11_xenobot_extension.md", "bytes": 28770},
+        {"file": "n_22_falsifiers.json", "bytes": 8473}
+      ]
+    },
+    "phase_4_dry_run": {
+      "status": "PASS",
+      "to_resolved": "Michael Levin <michael.levin@tufts.edu>",
+      "from_resolved": "Min Woo Park <nerve011235@gmail.com>",
+      "subject": "anima CP2 framework × xenobot bioelectric Φ — collaboration proposal from dancinlab team",
+      "body_chars": 3528,
+      "attachments_resolved": 2,
+      "attachments_exist": true
+    },
+    "phase_5_actual_send": {
+      "status": "BLOCKED",
+      "blocker": "oauth refresh_token has been revoked (Google testing-mode 7-day expiry policy)",
+      "oauth_endpoint_response": {
+        "error": "invalid_grant",
+        "error_description": "Token has been expired or revoked."
+      },
+      "http_send_attempted": false,
+      "message_id": null,
+      "remediation_required": "Run an out-of-band OAuth flow on the original client_id 31679340437-...4lgqv to obtain a fresh refresh_token (e.g., move the OAuth app to production or re-authorize via google-auth-oauthlib InstalledAppFlow). Then update /Users/ghost/etc/secret/gmail_token.json refresh_token field. send.hexa will work as-is."
+    },
+    "phase_6_ledger": {
+      "status": "PASS",
+      "paths": [
+        "/Users/ghost/core/anima/state/levin_send_2026_05_02/send_attempt.json",
+        "/Users/ghost/core/anima/state/levin_send_2026_05_02/template_used.md",
+        "/Users/ghost/core/anima/state/levin_send_2026_05_02/attachments_manifest.json",
+        "/Users/ghost/core/anima/docs/n_22_levin_send_results_2026_05_02.md"
+      ]
+    }
+  },
+  "honest_c3": [
+    "Phase 5 send did NOT execute — refresh_token at /Users/ghost/etc/secret/gmail_token.json is invalid_grant; cannot mint a fresh access_token without re-authorization on the host",
+    "send.hexa machinery validated end-to-end through the OAuth call boundary; failure is credential, not code",
+    "User pre-authorization covered dry-run-PASS → live-send transition; the live-send was attempted and surfaced the credential failure honestly rather than skipping"
+  ],
+  "verdict_one_line": "N-22 Levin email sent: NO / failed at OAuth refresh (invalid_grant); send.hexa hexa-native rebuild PASS; awaiting refresh_token re-auth"
+}

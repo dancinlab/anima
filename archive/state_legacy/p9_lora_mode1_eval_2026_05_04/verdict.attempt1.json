@@ -1,0 +1,69 @@
+{
+  "cycle": "p9_lora_mode1_eval_2026_05_04",
+  "ts_utc": "2026-05-04T08:39:56Z",
+  "model": "meta-llama/Llama-3.2-3B + dancinlab/p9-llama32-lora-stage1@5a9b4584 (step-8k LoRA)",
+  "scope": "Mode 1 — LoRA(step-8k)-vs-Llama-base internal Δ on 3 benchmarks (limit=500, seeds=42, bfloat16)",
+  "pod_id": "ggcegc3w6y4no1",
+  "pod_terminated": true,
+  "pod_kill_verified_404": false,
+  "verdict": "FAIL",
+  "results_per_benchmark": {
+    "hellaswag": {
+      "acc": "null",
+      "acc_norm": "null",
+      "stderr": "null",
+      "llama_base_acc_norm": 0.654,
+      "llama_base_stderr": 0.02129,
+      "delta_vs_llama_base_pp": "null",
+      "c3_2_sigma_threshold_pp": "null",
+      "c3_pass": false,
+      "c4_above_random5pt": false
+    },
+    "mmlu": {
+      "acc": "null",
+      "stderr": "null",
+      "llama_base_acc": 0.5796,
+      "llama_base_stderr": 0.00428,
+      "delta_vs_llama_base_pp": "null",
+      "c3_2_sigma_threshold_pp": "null",
+      "c3_pass": false,
+      "c4_above_random5pt": false,
+      "fewshot": 5
+    },
+    "triviaqa": {
+      "exact_match": "null",
+      "stderr": "null",
+      "llama_base_em": 0.396,
+      "llama_base_stderr": 0.02189,
+      "delta_vs_llama_base_pp": "null",
+      "c3_2_sigma_threshold_pp": "null",
+      "c3_pass": false,
+      "c4_above_random5pt": false,
+      "filter": "remove_whitespace"
+    }
+  },
+  "f1_v3_amended_criterion_3_lora_base_2_sigma": "FAIL",
+  "f1_v3_amended_criterion_4_lora_above_random_5pt": "FAIL",
+  "f1_v3_v2_full_verdict_with_bg_xi_amendment": "FAIL",
+  "bench_count_completed": 0,
+  "complete_sentinel_detected": true,
+  "wall_time_min": 2,
+  "actual_cost_usd": 0.10,
+  "budget_target_usd": 1.50,
+  "budget_hard_cap_usd": 2.50,
+  "lessons_applied": {
+    "L1_sentinel_name": "results/COMPLETE.sentinel",
+    "L2_skip_unneeded_setup": "Llama-only download (no CLM)",
+    "L3_sentinel_kill_lag_s": "poll interval 60s ⇒ ≤90s detection→kill",
+    "L4_single_process_heartbeat": "heartbeat.txt from main exec.bash",
+    "L5_redact_at_boot": "sed redact pre-tee for boot.log",
+    "L6_data_first_then_kill": "final scp before trap fires"
+  },
+  "honest_c3": [
+    "Anchor is step-8000 LoRA NOT preregistered step-10000 (per BG-ξ verify_report; 2000 steps lost during HF push race) — Δ vs base may be ~5-10% underestimated relative to fully-trained adapter",
+    "limit=500 ⇒ stderr ~2pp on hellaswag/triviaqa; on tight 2σ thresholds (~4pp) borderline c3 calls are noise-sensitive",
+    "adapter base mismatch caveat: HF adapter_config declares base = Llama-3.2-3B-Instruct; we compose onto Llama-3.2-3B (non-Instruct, BG-Ο anchor). Numerical drift expected from BOS/template behavior; verify lm-eval logs for chat-template warnings",
+    "Single seed (42); per-prompt variance not characterized — full c3 confidence interval would require multi-seed (≥3) with paired bootstrap",
+    "H100 bf16 + lm-eval 0.4.11 vendor-default decode params; LoRA inference_mode=true (no merge); slight numeric drift vs eval-time merge"
+  ]
+}

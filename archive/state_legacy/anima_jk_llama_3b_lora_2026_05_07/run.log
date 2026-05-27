@@ -1,0 +1,48 @@
+[2026-05-07T15:00:03Z] secrets OK (runpod=50b hf=37b)
+[2026-05-07T15:00:04Z] hf auth PASS user=
+[2026-05-07T15:00:04Z] corpus OK (30M: /Users/ghost/core/anima/state/anima_h098_h101_corpus_v3_2026_05_07/corpus_persona_chat_template.txt)
+[2026-05-07T15:00:04Z] booting pod=anima-jk-llama-3b-lora-2026-05-07 (H100 80GB SXM SECURE on-demand @ $2.99/hr)
+[2026-05-07T15:00:07Z] pod_id=475b93kc8405xw
+[2026-05-07T15:00:07Z] waiting for SSH ready (max 6min)
+[2026-05-07T15:00:30Z] SSH ready at 103.207.149.134:12802 (after 2 probes)
+[2026-05-07T15:00:30Z] shipping Korean corpus (30M) + train.py + run_h100.bash
+[2026-05-07T15:07:12Z] launching H100 pipeline (corpus + train + intermediate eval + final eval)
+[2026-05-07T15:17:44Z] poll loop start (max 300min, budget cap $15)
+[2026-05-07T15:17:46Z] elapsed=17min cost=$0.88 probe=/workspace/anima_jk_llama/results/COMPLETE.sentinel SENTINEL_FOUND [orch] DONE ts=2026-05-07T15:17:44Z|
+[2026-05-07T15:17:59Z] COMPLETE.sentinel detected — final sync FIRST then auto-kill
+Warning: Permanently added '[103.207.149.134]:12802' (ED25519) to the list of known hosts.
+[2026-05-07T15:32:04Z] computing BG-JK verdict
+[2026-05-07T15:32:04Z] BG-JK verdict=LORA_SFT_COMPLETED_KO_SAMPLES_PRESENT_AWAITING_V4_EVAL F-JK-1=PASS F-JK-2=PASS_CANDIDATE_MANUAL_REVIEW_NEEDED F-JK-3=PASS wall=32min cost=$1.59
+__BG_JA_EXT_POLYGLOT_LORA__ LORA_SFT_COMPLETED_KO_SAMPLES_PRESENT_AWAITING_V4_EVAL
+[2026-05-07T15:32:04Z] [trap] data-first scp before kill (L13)
+[2026-05-07T15:33:14Z] [trap] killing pod=475b93kc8405xw
+{
+  "containerDiskInGb": 100,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-07 15:00:07.682 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "<REDACTED>",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "475b93kc8405xw",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Thu May 07 2026 15:33:16 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-jk-llama-3b-lora-2026-05-07",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 120,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "475b93kc8405xw"
+}
+[2026-05-07T15:33:33Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]

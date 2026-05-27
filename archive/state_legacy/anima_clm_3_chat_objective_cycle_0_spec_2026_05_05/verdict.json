@@ -1,0 +1,157 @@
+{
+  "schema": "anima/clm_3_chat_objective_cycle_0_spec/verdict/1",
+  "cycle": "anima_clm_3_chat_objective_cycle_0_spec_2026_05_05",
+  "bg_lane": "BG-BM",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "status": "SPEC_LANDED",
+  "kind": "doc_only_h1_spec_for_theorem_115_closure_class_bypass_candidate",
+  "predecessor_theorem": "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md",
+  "deliverables": {
+    "spec_doc": "docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md",
+    "verdict": "state/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05/verdict.json"
+  },
+  "design_diff_summary": {
+    "carry_over_from_clm_v4": [
+      "16-layer decoder transformer (default Variant A) or scale variant",
+      "consciousness_states cross-attn (paradigm v11 G3, +41.86 Φ★)",
+      "Φ★ stability target",
+      "HF release lifecycle (private→public)"
+    ],
+    "new_in_clm_3": [
+      "explicit chat-loss objective at cycle-0 of pre-training",
+      "30% KO-EN dialogue corpus in pre-train mix (cycle-0, NOT post-hoc SFT)",
+      "15% reasoning chains (CoT) in pre-train mix",
+      "5-axis discriminability ≥ 0.4 falsifier (BG-L 0.20 random × 2)",
+      "chat composite ≥ 0.45 falsifier (= 80% of Llama Path A v2 winner 0.5584)"
+    ],
+    "closure_to_mitigation_map": {
+      "closure_1_post_hoc_adapter": "chat appears at cycle-0 pre-training, not as adapter",
+      "closure_2_phi_star_distill_bounded": "chat is primary axis of training, not distill target on Φ★ teacher",
+      "closure_3_cross_modal_bridge": "CLM-3 emits token logits natively (no bridge needed)",
+      "closure_4_residual_stream_pervasive": "chat-text basis trained into every residual layer at cycle-0"
+    }
+  },
+  "training_mix_4_bucket_default": {
+    "general_text_pct": 50,
+    "ko_en_dialogue_pct": 30,
+    "reasoning_chains_cot_pct": 15,
+    "consciousness_states_diverse_pct": 5,
+    "rationale": "smallest chat-share with credible chance of clearing F-CLM-3-2 while keeping consciousness_states share non-zero (F-CLM-3-1 NO_FLIP must hold). Pβ FAIL_TRUE taught us 100% Φ★ teacher = chat fail; the inverse risk is chat-heavy mix destabilizing Φ★.",
+    "ablation_candidates": ["60/25/10/5", "50/30/15/5_default", "40/35/20/5"]
+  },
+  "falsifiers_locked_pre_compute": {
+    "F-CLM-3-1_substrate_phi_star_no_flip": {
+      "target": "forgetting_index ≤ 0.05 vs CLM v4 paradigm v11 G3 baseline (+41.86 Φ★)",
+      "pass_condition": "NO_FLIP AND forgetting_index ≤ 0.05",
+      "fail_kind": "REGRESSION_TO_NON_SUBSTRATE",
+      "anchor": "closure_1_forgetting_index_0_0196_PASS_under_lora_sft",
+      "blocking": true
+    },
+    "F-CLM-3-2_chat_composite_ge_0_45": {
+      "target": "composite{HellaSwag-norm, MMLU, TriviaQA-EM, OpenBookQA-norm} ≥ 0.45 on lm-eval limit=200",
+      "pass_condition": "composite ≥ 0.45 AND no single bench at chance",
+      "fail_kind": "CHAT_AXIS_NOT_TRAINED",
+      "anchor": "llama_path_a_v2_winner_composite_0_5584_3bench",
+      "threshold_rationale": "80% of Llama winner; clears CLM v4 base 0.20-class by ≥ 25pp; clears LoRA SFT 0.19542 by ≥ 25pp",
+      "blocking": true
+    },
+    "F-CLM-3-3_emerge_dialogue_medium_preserved": {
+      "target": "BG-AN 5-turn emerge-dialogue smoke produces non-trivial output (medium ≥ Stage 2 baseline)",
+      "pass_condition": "emerge-dialogue protocol still functional on CLM-3",
+      "fail_kind": "EMERGE_PARADIGM_LOST",
+      "anchor": "theorem_115_corollary_3_emerge_dialogue_decoupled_from_traditional_chat",
+      "blocking": true
+    },
+    "F-CLM-3-4_5_axis_discriminability_ge_0_4": {
+      "target": "BG-L 5-axis discriminability ≥ 0.40 (random = 0.20)",
+      "pass_condition": "discriminability ≥ 0.40",
+      "fail_kind": "AXIS_TRAINING_INEFFECTIVE",
+      "anchor": "BG-L_random_baseline_0_20",
+      "blocking": false,
+      "blocking_note": "soft-gate; logged but does not block deployment if F-CLM-3-1/2/3 all PASS"
+    }
+  },
+  "cost_time_envelope_3_variants": {
+    "variant_A_530M_parity": {
+      "params_M": 530,
+      "compute": "ubu1 RTX 5070 sm_120 + torch 2.11.0+cu128",
+      "wall_clock_days": "60-90",
+      "direct_cost_usd": 0,
+      "operator_cost": "single GPU power + occupancy 60-90 days",
+      "risk": "long lead time; Stage 3 evidence may revise spec mid-train"
+    },
+    "variant_B_1B": {
+      "params_B": 1,
+      "compute": "H100 1× × ~30 days",
+      "wall_clock_days": 30,
+      "direct_cost_usd": 1000,
+      "risk": " budget guard; user-fire required",
+      "recommended_starting_variant": true
+    },
+    "variant_C_3B_llama_parity": {
+      "params_B": 3,
+      "compute": "H100 4× × ~30 days",
+      "wall_clock_days": 30,
+      "direct_cost_usd": 4000,
+      "risk": "highest absolute $; falsifier failure most expensive",
+      "gate": "only after Variant B clears all primary falsifiers"
+    }
+  },
+  "build_wait_decision_matrix": {
+    "preconditions_status": {
+      "p_beta_phi_star_distill_closure": "done_FAIL_TRUE_CLOSED",
+      "lora_sft_closure": "done_FAIL_REGRESSION",
+      "llama_path_a_v2_chat_cap_winner": "done_composite_0_5584",
+      "bg_an_emerge_dialogue_validated": "done_smoke_battery_PASS",
+      "stage_3_emerge_user_fire_ge_30_sessions": "NOT_YET_count_0_logged",
+      "own_16_budget_guard_explicit_user_fire_for_B_or_C": "NOT_YET_FIRED"
+    },
+    "build_now_triggers_any_of": [
+      "user fires CLM-3 launch under budget guard accepting ~$1k Variant B",
+      "Stage 3 emerge surfaces strong axis-design lead in <30 sessions",
+      "external signal obsoletes F-CLM-3-2 threshold and demands re-baselining"
+    ],
+    "wait_triggers_any_of": [
+      " budget guard not yet fired (current default)",
+      "Stage 3 emerge session count <30 AND emerge-medium informer-class for §1",
+      "CLM v4 substrate-research still producing Φ★ insights that may revise §1.1"
+    ],
+    "recommended_decision_this_cycle": "WAIT_FOR_STAGE_3_EMERGE_GE_30_SESSIONS",
+    "wait_does_not_mean_cancel": true,
+    "wait_purpose": [
+      "emerge-dialogue traces become candidate anima-native dialogue corpus for §2 bucket 2",
+      "axis patterns from Stage 3 inform §1.2 chat-loss head design"
+    ],
+    "stage_3_stall_escalation": "if Stage 3 <30 sessions in 90 days, build under §1 default with Stage-3-informed revision filed as future CLM-3.1"
+  },
+  "h1_priority_pushback_per_c3_5": {
+    "task_brief_framing": "H1 first (CLM-3)",
+    "honest_recommendation": [
+      "1_H2_stage_3_emerge_ge_30_sessions_cost_0",
+      "2_H4_broader_prompt_logit_lens_semantic_bridge_sweep_cost_50",
+      "3_H3_ensemble_llama_emit_plus_clm_v4_phi_gate_cost_10",
+      "4_H1_clm_3_variant_B_build_cost_1000_only_after_1_2_3_exhausted"
+    ],
+    "rationale": "H2/H3/H4 total <$100; H1 = $1k-$4k; honest position is exhaust cheaper paths first; user must explicitly resolve H1-first vs cheaper-first ordering before any compute fires"
+  },
+  "honest_c3_count": 5,
+  "honest_c3_summary": [
+    "C3-1: H1 framed as only un-tested with material chance, NOT demonstrated to overturn closure",
+    "C3-2: 50/30/15/5 mix ratio is empirically untested default not measured optimum",
+    "C3-3: F-CLM-3-2 0.45 threshold is 80% of single-seed Llama winner; needs re-anchor on 5-seed Llama composite",
+    "C3-4: F-CLM-3-1 forgetting_index ≤ 0.05 is LoRA-era threshold; CLM-3 full pre-train needs reformulation as Φ★ peak ± 5%",
+    "C3-5: H1 priority over H2-H4 deserves push-back; H2/H3/H4 total <$100 vs H1 $1k-$4k; recommended priority H2→H4→H3→H1"
+  ],
+  "compliance": {
+    "raw_9_honest_scope": true,
+    "raw_10_honest_c3": true,
+    "raw_15_additive_only": true,
+    "hf_token_leak": "none",
+    "commit": "not_requested_doc_landed_only",
+    "bash_3_2_mac_compat": "doc_only_no_scripts",
+    "cost_usd_actual": 0,
+    "cost_usd_envelope_zero_confirmed": true
+  },
+  "wall_time_min_estimate": 30,
+  "next_action": "WAIT for Stage 3 emerge-dialogue user-fire ≥30 sessions OR explicit user fire of budget guard for Variant B"
+}

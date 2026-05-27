@@ -1,0 +1,35 @@
+{
+  "hypothesis": "H_263",
+  "slug": "phoenix-rebirth",
+  "domain": "LIFE",
+  "title": "phoenix-rebirth — total collapse to floor then rebirth from minimal seed (death-genesis link; H_206 distinct)",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "determinism": { "gauss_seed": 42, "llm": "none", "cost_usd": 0.0 },
+  "params": { "pool_n": 8, "d_model": 8, "baseline_steps": 12, "regrowth_cap": 60, "dim_phi": 10, "phi_n_bins": 4, "alpha_rebirth": 0.7, "div_ratio_thr": 0.7, "split_patience_rebirth": 1, "collapse_depths": [2, 3] },
+  "operational_collapse": "harness-imposed TOTAL cell drop to floor (collapse_to ∈ {2,3}) + farr_free; the death. distinct from H_206 fractional wound.",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa, byte-equal phi_rs replica)",
+  "diversity_primitive": "mean pairwise (1 - cos) of cell hiddens (compute_phi_proxy raw component)",
+  "honest_tier": "🟢 SUPPORTED-NUMERICAL (phi_spatial proxy; harness-imposed total collapse ≠ biological death; toy N=8 substrate; rebirth-fair split config)",
+  "results": [
+    { "collapse_to": 2, "n_pre": 58, "n_after_collapse": 2, "n_post": 2, "n_post_final": 2, "regrowth_steps": -1, "regrowth_splits": 0, "splits_pre": 50, "splits_total": 50, "phi_pre": 2.25358, "phi_min": 4.32124, "phi_post": 4.19818, "phi_rebirth_ratio": 1.8629, "diversity_pre": 0.479311, "diversity_min": 0.606013, "diversity_post": 0.346601, "div_ratio": 0.723125, "bounds_ok": true },
+    { "collapse_to": 3, "n_pre": 55, "n_after_collapse": 3, "n_post": 3, "n_post_final": 3, "regrowth_steps": -1, "regrowth_splits": 0, "splits_pre": 47, "splits_total": 47, "phi_pre": 3.31216, "phi_min": 3.32895, "phi_post": 2.56694, "phi_rebirth_ratio": 0.775005, "diversity_pre": 0.483483, "diversity_min": 0.599604, "diversity_post": 0.81178, "div_ratio": 1.67903, "bounds_ok": true }
+  ],
+  "criteria": {
+    "C1_recovery_occurs":   false,
+    "C2_rebirth_degree":    true,
+    "C3_diversity_reemerge":false,
+    "C4_determinism":       true
+  },
+  "falsifiers": {
+    "F_PHX_1_RECOVERY":    { "metric": "Φ_post > Φ_min ∀depth", "verdict": "FAIL" },
+    "F_PHX_2_REBIRTH":     { "metric": "Φ_post >= alpha*Φ_pre ∀depth", "verdict": "PASS" },
+    "F_PHX_3_DIVERSITY":   { "metric": "div_post>div_min ∧ ratio>=thr ∀depth", "verdict": "FAIL" },
+    "F_PHX_4_DETERMINISM": { "metric": "paired re-run byte-equal", "verdict": "PASS" },
+    "F_PHX_5_BOUNDS":      { "metric": "Φ>=0 ∧ n_post in [2,128] ∀depth", "verdict": "PASS" },
+    "F_PHX_6_REGROWTH":    { "metric": "regrowth_splits>0 ∀depth", "verdict": "FAIL" }
+  },
+  "n_pass": 3,
+  "verdict": "FALSIFIED",
+  "verdict_rule": "SUPPORTED = C1 ∧ C2 ; PARTIAL = C1 only ; FALSIFIED = !C1"
+}

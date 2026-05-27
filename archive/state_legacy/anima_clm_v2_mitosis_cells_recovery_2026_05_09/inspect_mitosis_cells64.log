@@ -1,0 +1,38 @@
+=== /Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt ===
+top-level keys: ['step', 'model_state', 'optimizer_state', 'loss_ensemble_state', 'mitosis_status', 'phi_history', 'phase', 'config']
+
+--- step ---
+  50000
+
+--- phase ---
+  'combined'
+
+--- config ---
+  dim: 384
+  layers: 6
+  heads: 6
+  block_size: 256
+  lr: 0.0003
+  batch_size: 32
+  steps: 50000
+  max_cells: 64
+
+--- mitosis_status ---
+  n_cells: 64
+  max_cells: 64
+  step: 50000
+  cells: <list len=64, sample=[{'id': 0, 'specialty': 'step_49999', 'avg_tension': 0.0653591481037438, 'tension_trend': -0.014800156001001596, 'process_count': 50000, 'parent_id': None}, {'id': 1, 'specialty': 'step_49999', 'avg_tension': 0.0429957652464509, 'tension_trend': -0.004068037727847695, 'process_count': 50000, 'parent_id': None}, {'id': 2, 'specialty': 'step_49999', 'avg_tension': 0.2864060990512371, 'tension_trend': -0.05990719795227051, 'process_count': 31250, 'parent_id': 1}]>
+  total_events: 62
+  splits: 62
+  merges: 0
+
+--- phi_history ---
+  list[200], first 5 = [np.float64(52.134562226264705), np.float64(47.820989216826085), np.float64(48.198874057171466), np.float64(52.15016533414201), np.float64(51.1331195574834)], last 5 = [np.float64(49.18206697672875), np.float64(48.25407442773605), np.float64(48.43350518901076), np.float64(52.61175095396791), np.float64(52.395952074835144)]
+  stats: min=25.6600 max=57.1379 mean=50.4198
+
+--- optimizer_state ---
+  keys: ['state', 'param_groups']
+  state-param-count: 102
+  param_groups: 1
+--- loss_ensemble_state ---
+  log_vars: <tensor [6]>

@@ -1,0 +1,72 @@
+{
+  "ts": "2026-05-01",
+  "scenario_a_all_5_addressable": {
+    "name": "ALL-5 ADDRESSABLE CYCLE (recommended)",
+    "n_tests": 5,
+    "ids_in_order": [5, 12, 9, 15, 8],
+    "rationale_order": "review-first (#5 cheapest, anchors others), then PyPhi SIM (#12 reuses TOP-5 #1/#2 infra), then CLM split (#9), then layer-hierarchy (#15), then stimulus-meaning (#8) [#15 and #8 share infra so back-to-back]",
+    "phases": [
+      {
+        "phase": "P0",
+        "test_ids": [5],
+        "wall_clock_days": 3,
+        "cost_usd": 0,
+        "deps": "none",
+        "deliverable": "TEP-complexity meta-review section in spec doc + state/n_21_iit40_12_remaining_spec_2026_05_01/p0_review.json"
+      },
+      {
+        "phase": "P1",
+        "test_ids": [12],
+        "wall_clock_days": 7,
+        "cost_usd": 20,
+        "deps": "PyPhi installed for TOP-5 #1/#2 (Edlund/Albantakis); reuses pod-side infra",
+        "deliverable": "Phi_max(noise_temperature) curve + falsifier-5 ledger; state/n_21_iit40_12_remaining_spec_2026_05_01/p1_fly_analog.jsonl"
+      },
+      {
+        "phase": "P2",
+        "test_ids": [9],
+        "wall_clock_days": 4,
+        "cost_usd": 30,
+        "deps": "CLM Mistral-7B-v0.3 + LoRA p4_r8 (already loaded)",
+        "deliverable": "dual-prompt cross-MI vs within-MI matrix; state/n_21_iit40_12_remaining_spec_2026_05_01/p2_split_phi.json",
+        "parallelizable_with": "P1"
+      },
+      {
+        "phase": "P3",
+        "test_ids": [15, 8],
+        "wall_clock_days": 5,
+        "cost_usd": 75,
+        "deps": "state/an11_* layer-wise differentiation infra (already exists)",
+        "deliverable": "Hierarchical + stimulus-meaning differentiation tables; state/n_21_iit40_12_remaining_spec_2026_05_01/p3_differentiation.json",
+        "parallelizable_with": "P1, P2",
+        "note": "#15 and #8 share infrastructure; run as a single sprint"
+      }
+    ],
+    "totals": {
+      "wall_clock_serial_days": 19,
+      "wall_clock_parallel_days": 7,
+      "cost_usd": 125,
+      "gpu_hours_estimated": 35,
+      "infeasible_skipped_ids": [2, 3, 4, 10, 11, 16]
+    }
+  },
+  "scenario_b_top3_focused": {
+    "name": "TOP-3 FOCUSED (if user picks subset)",
+    "n_tests": 3,
+    "ids_in_order": [5, 12, 9],
+    "rationale": "highest-score-per-cost: #5 zero-cost anchor + #12 + #9 cover EXCLUSION/INFORMATION/INTEGRATION axioms (3/5 IIT axioms in 14 days)",
+    "wall_clock_parallel_days": 7,
+    "cost_usd": 50,
+    "skipped_ids_within_addressable": [15, 8],
+    "skip_reason": "high overlap with existing state/an11_* differentiation work; can be triggered later as appendix without blocking primary spec value"
+  },
+  "scenario_c_top1_only": {
+    "name": "TOP-1 SINGLETON (if budget=zero)",
+    "n_tests": 1,
+    "id": 12,
+    "wall_clock_days": 7,
+    "cost_usd": 20,
+    "rationale": "Leung-fly ANALOGIZE alone tests 3 of 5 IIT axioms (information + integration + exclusion) and reuses TOP-5 #1/#2 PyPhi infra → marginal cost minimal"
+  },
+  "decision_pending_to_user": "pick scenario A (5 addressable, $125, 7d parallel) / B (3 focused, $50, 7d) / C (1 singleton, $20, 7d). 6 INFEASIBLE always skipped."
+}

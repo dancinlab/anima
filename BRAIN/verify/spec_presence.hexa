@@ -1,0 +1,132 @@
+#!hexa strict
+// hexa-brain/verify/spec_presence.hexa — 36-verb dispatcher-backing presence verifier.
+//
+// Closure anchor #1 for hexa-brain (spec-first substrate):
+// each of the 36 verbs exposed by bin/hexa-brain (the CLI dispatcher) must
+// resolve to a real .hexa / shell backing on disk. This is the *honest*
+// closure check for a working-pipeline-spec repo — file presence, not
+// medical-device validation.
+//
+// Verb inventory (mirrors README §Run + bin/hexa-brain case statements):
+//   - 1  top-level: license-check                                            → bin/check_licenses.sh
+//        health · impedance · impedance-validate · headplot · adjust · rich ·
+//        full · record · list · selftest
+//   - 11 EEG direct (own .hexa file):                                        → eeg/<file>.hexa
+//        collect · calibrate · analyze · experiment · closed-loop · validate ·
+//        realtime · lsl-capture · dual-stream · neurofeedback · export-neuroglancer
+//   - 14 CORE (tool/core + tool/module backings):                            → tool/{core,module}/<file>.hexa
+//        core · paradigm-resting · paradigm-daily-life · paradigm-p300-visual ·
+//        paradigm-p300-auditory · paradigm-integration-test · export ·
+//        jsonl-audit · adapter · filter-pipeline · pipeline-suggester ·
+//        falsifier-runner · chflags-lock · npy-loader
+//
+// Per LATTICE_POLICY §1.3: spec-presence is real engineering verification
+// (files exist on disk); not a lattice tautology.
+//
+// captures or decodes EEG correctly — only that the dispatcher routing is
+// internally consistent. Medical-device claims (FDA / IRB / clinical) remain
+// STRICTLY UNPROVEN — see LIMIT_BREAKTHROUGH.md §5 + README §Caveats.
+
+let HOME = env("HOME")
+let HEXA_BRAIN_ROOT_ENV = env("HEXA_BRAIN_ROOT")
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn _resolve_root() -> str {
+    if HEXA_BRAIN_ROOT_ENV.len() > 0 { return HEXA_BRAIN_ROOT_ENV }
+    let oldpwd = env("OLDPWD")
+    if oldpwd.len() > 0 {
+        let t = exec("[ -f " + shq(oldpwd) + "/bin/hexa-brain ] && echo y || echo n").trim()
+        if t == "y" { return oldpwd }
+    }
+    let pwd = env("PWD")
+    if pwd.len() > 0 {
+        let t = exec("[ -f " + shq(pwd) + "/bin/hexa-brain ] && echo y || echo n").trim()
+        if t == "y" { return pwd }
+    }
+    return HOME + "/core/anima/BRAIN"
+}
+
+fn _file_exists(p: str) -> bool {
+    let r = exec("[ -f " + shq(p) + " ] && echo yes || echo no").trim()
+    return r == "yes"
+}
+
+// 36-verb dispatcher-backing registry — must match bin/hexa-brain + README §Run.
+// [verb, backing-path-relative-to-root]
+let VERBS = [
+    // ── top-level (1) ──
+    ["license-check",              "bin/check_licenses.sh"],
+
+    // ── EEG canonical via eeg_setup.hexa (10) ──
+    ["eeg/health",                 "eeg/eeg_setup.hexa"],
+    ["eeg/impedance",              "eeg/eeg_setup.hexa"],
+    ["eeg/impedance-validate",     "eeg/eeg_setup.hexa"],
+    ["eeg/headplot",               "eeg/eeg_setup.hexa"],
+    ["eeg/adjust",                 "eeg/eeg_setup.hexa"],
+    ["eeg/rich",                   "eeg/eeg_setup.hexa"],
+    ["eeg/full",                   "eeg/eeg_setup.hexa"],
+    ["eeg/record",                 "eeg/eeg_setup.hexa"],
+    ["eeg/list",                   "eeg/eeg_setup.hexa"],
+    ["eeg/selftest",               "eeg/eeg_setup.hexa"],
+
+    // ── EEG direct hexa (11) ──
+    ["eeg/collect",                "eeg/collect.hexa"],
+    ["eeg/calibrate",              "eeg/calibrate.hexa"],
+    ["eeg/analyze",                "eeg/analyze.hexa"],
+    ["eeg/experiment",             "eeg/experiment.hexa"],
+    ["eeg/closed-loop",            "eeg/closed_loop.hexa"],
+    ["eeg/validate",               "eeg/validate_consciousness.hexa"],
+    ["eeg/realtime",               "eeg/realtime.hexa"],
+    ["eeg/lsl-capture",            "eeg/lsl_capture.hexa"],
+    ["eeg/dual-stream",            "eeg/dual_stream.hexa"],
+    ["eeg/neurofeedback",          "eeg/neurofeedback.hexa"],
+    ["eeg/export-neuroglancer",    "eeg/export_neuroglancer.hexa"],
+
+    // ── CORE (14) ──
+    ["core/core",                  "tool/core/eeg_core.hexa"],
+    ["core/paradigm-resting",      "tool/module/_paradigms/resting_baseline.hexa"],
+    ["core/paradigm-daily-life",   "tool/module/_paradigms/daily_life.hexa"],
+    ["core/paradigm-p300-visual",  "tool/module/_paradigms/visual_p300.hexa"],
+    ["core/paradigm-p300-auditory","tool/module/_paradigms/auditory_p300.hexa"],
+    ["core/paradigm-integration-test", "tool/module/_paradigms/_integration_test.hexa"],
+    ["core/export",                "tool/module/_core/eeg_export.hexa"],
+    ["core/jsonl-audit",           "tool/module/_core/jsonl_audit.hexa"],
+    ["core/adapter",               "tool/module/_core/_adapter.hexa"],
+    ["core/filter-pipeline",       "tool/module/_core/filter_pipeline.hexa"],
+    ["core/pipeline-suggester",    "tool/module/_core/pipeline_suggester.hexa"],
+    ["core/falsifier-runner",      "tool/module/_core/falsifier_runner.hexa"],
+    ["core/chflags-lock",          "tool/module/_core/chflags_lock.hexa"],
+    ["core/npy-loader",            "tool/module/_core/npy_loader.hexa"],
+]
+
+fn main() {
+    let root = _resolve_root()
+    println("hexa-brain/verify/spec_presence — 36-verb dispatcher-backing presence")
+    println("  root: " + root)
+    println("")
+    let mut ok = 0
+    let mut bad = 0
+    for row in VERBS {
+        let verb = row[0]
+        let rel = row[1]
+        let abs_p = root + "/" + rel
+        if _file_exists(abs_p) {
+            println("  [PASS] " + verb + " -> " + rel)
+            ok = ok + 1
+        } else {
+            println("  [FAIL] " + verb + " -> " + rel + " MISSING (abs: " + abs_p + ")")
+            bad = bad + 1
+        }
+    }
+    println("")
+    println("  verb backings present: " + str(ok) + " / 36")
+    println("  honest C3: file presence ≠ working pipeline ≠ medical-device validation.")
+    if bad > 0 {
+        println("__HEXA_BRAIN_SPEC_PRESENCE__ FAIL")
+        exit(1)
+    }
+    println("__HEXA_BRAIN_SPEC_PRESENCE__ PASS")
+}

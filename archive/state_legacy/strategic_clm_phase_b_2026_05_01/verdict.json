@@ -1,0 +1,89 @@
+{
+  "schema": "anima/strategic_clm_phase_b/verdict/1",
+  "mission": "CLM Phase B EXEC RELAUNCH — Mk.XII v3 3rd backbone closure with Phi-3.5-mini OR-clause-1 v3",
+  "ts": "2026-05-02T08:50:00Z",
+  "session": "phase_b_phi35_mini_20260502",
+  "agent": "CLM Phase B EXEC RELAUNCH",
+  "constraints": {
+    "hexa_only": true,
+    "hard_cost_cap_usd": 5.0,
+    "race_isolation_dir": "state/strategic_clm_phase_b_2026_05_01"
+  },
+  "task_chain": {
+    "1_identify_2_pass_backbones": {
+      "status": "DONE",
+      "finding": "Mk.XII v3 OR-clause-1 v3 PASS modes = 2/3 (input + late). input mode = qwen25-1.5B + gemma2-2B + Llama-3.2-1B (cd=0,0,0 layer-0 collapse, intra_dali=1000 intra_sli=1000). late mode = Mistral + gemma2-9b (cd=875+857), fl includes Llama-8B too. early mode = Qwen3 alone (fl=111 size=1, cd=Qwen3+Llama-8B size=2 but fl_size<2 disqualifies whole mode).",
+      "source": "anima-clm-eeg/state/dali_sli_v3_input_mode_v1.json"
+    },
+    "2_phi35_mini_spec": {
+      "status": "DONE",
+      "model": "microsoft/Phi-3.5-mini-instruct",
+      "n_layers": 32,
+      "d_model_estimate": "~3072 (Phi-3.5-mini-instruct standard)",
+      "deployment": "vLLM not used — direct transformers + AutoModel.from_pretrained sufficient for hidden-state extraction (paradigm v11 CMT only requires forward+hidden_states, no generation)",
+      "downloaded": "YES",
+      "served": "N/A — no inference server needed for CMT-only protocol"
+    },
+    "3_h100_pod_boot": {
+      "status": "DONE",
+      "pod_id": "ekb2ftc0e6cl2b",
+      "gpu": "NVIDIA H100 80GB HBM3",
+      "hourly_rate_usd": 2.99,
+      "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+      "ssh_endpoint": "216.243.220.222:12576",
+      "boot_to_ssh_ready_min": "~5 (orchestrator ssh-cmd polling failed; manual GraphQL fallback worked)"
+    },
+    "4_or_clause_1_v3_eval": {
+      "status": "DONE",
+      "method": "transformers AutoModel + 4 family x 4 prompt + probe layers [0,4,8,12,16,20,24,28] hidden_states L2 norm",
+      "elapsed_sec": 25.2,
+      "result_path": "state/phi35_mini_cmt/cmt.json",
+      "cusp_layer": 28,
+      "cusp_x1000": 875,
+      "family_loc_x1000": 875,
+      "mode_classification": "LATE (>500, NOT early 51-500)"
+    },
+    "5_pass_verdict": {
+      "verdict": "MK_XII_V3_OR_CLAUSE_1_FAIL_TO_REACH_3_OF_3",
+      "reasoning": "Phi-3.5-mini cusp + family_loc both 875/1000 → LATE mode (joins Mistral 875, gemma2-9b 857). Early mode (51-500) gap UNCLOSED — Qwen3 fl=111 still alone (size=1). Adding Phi to late mode does not change mode coverage (already PASS at 2/3); needed Phi-3.5-mini to land in early band (peak layer 2-16 of 32) but it peaks at layer 28 (deepest probed layer).",
+      "mk_xii_v3_status_change": "NO CHANGE — remains HARD_PASS_PARTIAL_PENDING (2/3 mode coverage). Did NOT advance to HARD_PASS_FULL (3/3)."
+    },
+    "6_mk_xii_status": {
+      "before": "HARD_PASS_PARTIAL_PENDING (2/3 mode coverage: input + late)",
+      "after": "HARD_PASS_PARTIAL_PENDING (2/3 mode coverage: input + late) — UNCHANGED",
+      "phi35_mini_contribution": "Adds 8th backbone to LATE mode pool (cd=875, fl=875) — strengthens late mode evidence (size 2->3 for both fl_cd consistency) but does NOT enable early mode eligibility",
+      "early_mode_status": "STILL DEFERRED — needs backbone with cusp peak in middle layers (mode 51-500 of 1000 normalized = layer ~2-16 of 32, or ~3-21 of 42 etc). Candidates: smaller-but-not-tiny architectures, or backbones with explicit early peaking (e.g., distilled models, BERT-style)."
+    },
+    "7_pod_cleanup": {
+      "status": "DONE",
+      "pod_terminated": true,
+      "pod_id": "ekb2ftc0e6cl2b",
+      "termination_method": "runpodctl remove pod (deprecated alias of pod delete) — confirmed by 'pod removed' response",
+      "verification": "runpodctl pod list shows no ekb2ftc0e6cl2b entry post-removal"
+    }
+  },
+  "cost_actual_usd": 0.249,
+  "cost_breakdown": {
+    "ssh_wait_min": 5,
+    "pip_install_min": 1.5,
+    "model_download_load_min": 0.6,
+    "cmt_extraction_sec": 25.2,
+    "total_pod_uptime_min_estimate": 5.0,
+    "estimated_cost_usd": 0.249,
+    "cap_usd": 5.0,
+    "headroom_usd": 4.751,
+    "cap_compliance": true
+  },
+  "honest_c3_raw_71": {
+    "C1_protocol_simplification": "Used CMT-only Phi-3.5-mini measurement (single hidden-state forward pass, mean pooled L2 norm per family). NOT full paradigm v11 8-axis (G2 MCCA / G4 CMT / G6 SAE_bp / G7 composite). Sufficient for OR-clause-1 v3 input-mode eligibility decision (only needs cusp_layer + family_loc), but inadequate for full Mk.XII g_gate.json wire-up. Phi-3.5-mini paradigm v11 8-axis run NOT performed — that would require ~$3-5 + cmt + b_tom + mcca + phi_star + cds + sae_steer_bypass + composite, est 1-2 H100-hr.",
+    "C2_orchestrator_ssh_cmd_failure": "tool/anima_runpod_orchestrator.hexa helper used 'runpodctl ssh-cmd' which does not exist in current runpodctl. Fell back to direct GraphQL pod query for SSH ip:port. Orchestrator hexa needs patch (raw#9 honest defect surfaced).",
+    "C3_phi35_mini_late_peak_pattern": "Phi-3.5-mini peak at layer 28/32 = late mode. This matches Mistral (28/32 = late) and gemma2-9b (36/42 = late) — same architectural family pattern. SUBSTRATE-ARCHITECTURAL: medium-large transformers (3-9B) systematically peak in deep layers. To close early mode 3/3, need explicitly early-peaking architectures, not arbitrary backbone addition.",
+    "C4_eval_protocol_n_per_family": "4 prompts per family x 4 families = 16 forward passes. Below typical paradigm v11 16-prompt-per-family budget. Result is consistent (peak monotonically increases 0->28 for all 4 families) but per-family abs may be noisier than full-protocol. Reproducibility check via re-run not performed (single shot).",
+    "C5_no_lm_eval": "vLLM serve + OR-clause-1 v3 'eval' mission text suggests inference-style evaluation, but OR-clause-1 v3 is a PURELY STRUCTURAL test on hidden-state geometry (cmt.json cusp + family_loc). No prompt-completion or generation needed. Mission spec wording was misleading on protocol; honest interpretation: 'OR-clause-1 v3 = dali_sli_v3 input-mode mode-coverage test, requires cmt.json from Phi-3.5-mini'."
+  },
+  "follow_up_actions_for_3_of_3_closure": [
+    "Identify backbones with peak_layer in (n_layers * 0.05, n_layers * 0.5) range — likely candidates: distilled models (DistilBERT, DistilGPT2) or models with strong early-attention concentration (some BERT variants)",
+    "Re-evaluate whether 3/3 mode coverage is necessary — phase_matrix.json risk register notes 'Decouple Mk.XII closure from CP2-CLM ship; both can be PARTIAL/GREEN independently'",
+    "Accept Mk.XII v3 PARTIAL_PENDING permanently per phase_matrix alternative_if_blocked clause"
+  ]
+}

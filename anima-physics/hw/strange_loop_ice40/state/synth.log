@@ -1,0 +1,1610 @@
+
+ /----------------------------------------------------------------------------\
+ |  yosys -- Yosys Open SYnthesis Suite                                       |
+ |  Copyright (C) 2012 - 2026  Claire Xenia Wolf <claire@yosyshq.com>         |
+ |  Distributed under an ISC-like license, type "license" to see terms        |
+ \----------------------------------------------------------------------------/
+ Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, clang++ 21.0.0 -fPIC -O3)
+
+-- Running command `
+        read_verilog /Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v /Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v
+        synth_ice40 -top strange_loop_top -json /Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/state/strange_loop.json
+        stat
+    ' --
+
+1. Executing Verilog-2005 frontend: /Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v
+Parsing Verilog input from `/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v' to AST representation.
+Generating RTLIL representation for module `\mix4'.
+Successfully finished Verilog frontend.
+
+2. Executing Verilog-2005 frontend: /Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v
+Parsing Verilog input from `/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v' to AST representation.
+Generating RTLIL representation for module `\strange_loop_top'.
+Successfully finished Verilog frontend.
+
+3. Executing SYNTH_ICE40 pass.
+
+3.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/cells_sim.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v' to AST representation.
+Generating RTLIL representation for module `\SB_IO'.
+Generating RTLIL representation for module `\SB_GB_IO'.
+Generating RTLIL representation for module `\SB_GB'.
+Generating RTLIL representation for module `\SB_LUT4'.
+Generating RTLIL representation for module `\SB_CARRY'.
+Generating RTLIL representation for module `\SB_DFF'.
+Generating RTLIL representation for module `\SB_DFFE'.
+Generating RTLIL representation for module `\SB_DFFSR'.
+Generating RTLIL representation for module `\SB_DFFR'.
+Generating RTLIL representation for module `\SB_DFFSS'.
+Generating RTLIL representation for module `\SB_DFFS'.
+Generating RTLIL representation for module `\SB_DFFESR'.
+Generating RTLIL representation for module `\SB_DFFER'.
+Generating RTLIL representation for module `\SB_DFFESS'.
+Generating RTLIL representation for module `\SB_DFFES'.
+Generating RTLIL representation for module `\SB_DFFN'.
+Generating RTLIL representation for module `\SB_DFFNE'.
+Generating RTLIL representation for module `\SB_DFFNSR'.
+Generating RTLIL representation for module `\SB_DFFNR'.
+Generating RTLIL representation for module `\SB_DFFNSS'.
+Generating RTLIL representation for module `\SB_DFFNS'.
+Generating RTLIL representation for module `\SB_DFFNESR'.
+Generating RTLIL representation for module `\SB_DFFNER'.
+Generating RTLIL representation for module `\SB_DFFNESS'.
+Generating RTLIL representation for module `\SB_DFFNES'.
+Generating RTLIL representation for module `\SB_RAM40_4K'.
+Generating RTLIL representation for module `\SB_RAM40_4KNR'.
+Generating RTLIL representation for module `\SB_RAM40_4KNW'.
+Generating RTLIL representation for module `\SB_RAM40_4KNRNW'.
+Generating RTLIL representation for module `\ICESTORM_LC'.
+Generating RTLIL representation for module `\SB_PLL40_CORE'.
+Generating RTLIL representation for module `\SB_PLL40_PAD'.
+Generating RTLIL representation for module `\SB_PLL40_2_PAD'.
+Generating RTLIL representation for module `\SB_PLL40_2F_CORE'.
+Generating RTLIL representation for module `\SB_PLL40_2F_PAD'.
+Generating RTLIL representation for module `\SB_WARMBOOT'.
+Generating RTLIL representation for module `\SB_SPRAM256KA'.
+Generating RTLIL representation for module `\SB_HFOSC'.
+Generating RTLIL representation for module `\SB_LFOSC'.
+Generating RTLIL representation for module `\SB_RGBA_DRV'.
+Generating RTLIL representation for module `\SB_LED_DRV_CUR'.
+Generating RTLIL representation for module `\SB_RGB_DRV'.
+Generating RTLIL representation for module `\SB_I2C'.
+Generating RTLIL representation for module `\SB_SPI'.
+Generating RTLIL representation for module `\SB_LEDDA_IP'.
+Generating RTLIL representation for module `\SB_FILTER_50NS'.
+Generating RTLIL representation for module `\SB_IO_I3C'.
+Generating RTLIL representation for module `\SB_IO_OD'.
+Generating RTLIL representation for module `\SB_MAC16'.
+Generating RTLIL representation for module `\ICESTORM_RAM'.
+Successfully finished Verilog frontend.
+
+3.2. Executing HIERARCHY pass (managing design hierarchy).
+
+3.2.1. Analyzing design hierarchy..
+Top module:  \strange_loop_top
+Used module:     \mix4
+
+3.2.2. Analyzing design hierarchy..
+Top module:  \strange_loop_top
+Used module:     \mix4
+Removed 0 unused modules.
+
+3.3. Executing PROC pass (convert processes to netlists).
+
+3.3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7 in module strange_loop_top.
+Removed a total of 0 dead cases.
+
+3.3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 0 assignments to connections.
+
+3.3.4. Executing PROC_INIT pass (extract init attributes).
+
+3.3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \rst_n in `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+
+3.3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+     1/9: $0\b3[2:0]
+     2/9: $0\b2[2:0]
+     3/9: $0\b1[2:0]
+     4/9: $0\b0[2:0]
+     5/9: $0\a3[2:0]
+     6/9: $0\a2[2:0]
+     7/9: $0\a1[2:0]
+     8/9: $0\a0[2:0]
+     9/9: $0\step_count[15:0]
+
+3.3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\strange_loop_top.\step_count' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$412' with positive edge clock and positive level reset.
+Creating register for signal `\strange_loop_top.\a0' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$417' with positive edge clock and positive level reset.
+Creating register for signal `\strange_loop_top.\a1' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$422' with positive edge clock and positive level reset.
+Creating register for signal `\strange_loop_top.\a2' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$427' with positive edge clock and positive level reset.
+Creating register for signal `\strange_loop_top.\a3' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$432' with positive edge clock and positive level reset.
+Creating register for signal `\strange_loop_top.\b0' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$437' with positive edge clock and positive level reset.
+Creating register for signal `\strange_loop_top.\b1' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$442' with positive edge clock and positive level reset.
+Creating register for signal `\strange_loop_top.\b2' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$447' with positive edge clock and positive level reset.
+Creating register for signal `\strange_loop_top.\b3' using process `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+  created $adff cell `$procdff$452' with positive edge clock and positive level reset.
+
+3.3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Found and cleaned up 1 empty switch in `\strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+Removing empty process `strange_loop_top.$proc$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:42$7'.
+Cleaned up 1 empty switch.
+
+3.3.12. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+<suppressed ~18 debug messages>
+Optimizing module mix4.
+<suppressed ~1 debug messages>
+
+3.4. Executing CHECK pass (checking for obvious problems).
+Checking module strange_loop_top...
+Checking module mix4...
+Found and reported 0 problems.
+
+3.5. Executing FLATTEN pass (flatten design).
+Deleting now unused module mix4.
+<suppressed ~8 debug messages>
+
+3.6. Executing TRIBUF pass.
+
+3.7. Executing DEMINOUT pass (demote inout ports to input or output).
+
+3.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+Removed 10 unused cells and 69 unused wires.
+<suppressed ~11 debug messages>
+
+3.10. Executing CHECK pass (checking for obvious problems).
+Checking module strange_loop_top...
+Found and reported 0 problems.
+
+3.11. Executing OPT pass (performing simple optimizations).
+
+3.11.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.11.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 67 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.11.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \strange_loop_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+      Replacing known input bits on port A of cell $flatten\u_na0.$ternary$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:25$6: \u_na0.sum [2:0] -> { 1'0 \u_na0.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_na1.$ternary$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:25$6: \u_na1.sum [2:0] -> { 1'0 \u_na1.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_na2.$ternary$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:25$6: \u_na2.sum [2:0] -> { 1'0 \u_na2.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_na3.$ternary$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:25$6: \u_na3.sum [2:0] -> { 1'0 \u_na3.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nb0.$ternary$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:25$6: \u_nb0.sum [2:0] -> { 1'0 \u_nb0.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nb1.$ternary$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:25$6: \u_nb1.sum [2:0] -> { 1'0 \u_nb1.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nb2.$ternary$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:25$6: \u_nb2.sum [2:0] -> { 1'0 \u_nb2.sum [1:0] }
+      Replacing known input bits on port A of cell $flatten\u_nb3.$ternary$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:25$6: \u_nb3.sum [2:0] -> { 1'0 \u_nb3.sum [1:0] }
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~26 debug messages>
+
+3.11.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \strange_loop_top.
+Performed a total of 0 changes.
+
+3.11.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 67 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.11.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.11.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.11.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.11.9. Finished fast OPT passes. (There is nothing left to do.)
+
+3.12. Executing FSM pass (extract and optimize FSM).
+
+3.12.1. Executing FSM_DETECT pass (finding FSMs in design).
+
+3.12.2. Executing FSM_EXTRACT pass (extracting FSM from design).
+
+3.12.3. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.12.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.12.5. Executing FSM_OPT pass (simple optimizations of FSMs).
+
+3.12.6. Executing FSM_RECODE pass (re-assigning FSM state encoding).
+
+3.12.7. Executing FSM_INFO pass (dumping all available information on FSM cells).
+
+3.12.8. Executing FSM_MAP pass (mapping FSMs to basic logic).
+
+3.13. Executing OPT pass (performing simple optimizations).
+
+3.13.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.13.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 67 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.13.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \strange_loop_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~26 debug messages>
+
+3.13.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \strange_loop_top.
+Performed a total of 0 changes.
+
+3.13.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 67 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.13.6. Executing OPT_DFF pass (perform DFF optimizations).
+Adding EN signal on $procdff$412 ($adff) from module strange_loop_top (D = $add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:52$9_Y, Q = \step_count).
+Adding EN signal on $procdff$417 ($adff) from module strange_loop_top (D = \na0, Q = \a0).
+Adding EN signal on $procdff$442 ($adff) from module strange_loop_top (D = \nb1, Q = \b1).
+Adding EN signal on $procdff$422 ($adff) from module strange_loop_top (D = \na1, Q = \a1).
+Adding EN signal on $procdff$427 ($adff) from module strange_loop_top (D = \na2, Q = \a2).
+Adding EN signal on $procdff$452 ($adff) from module strange_loop_top (D = \nb3, Q = \b3).
+Adding EN signal on $procdff$432 ($adff) from module strange_loop_top (D = \na3, Q = \a3).
+Adding EN signal on $procdff$447 ($adff) from module strange_loop_top (D = \nb2, Q = \b2).
+Adding EN signal on $procdff$437 ($adff) from module strange_loop_top (D = \nb0, Q = \b0).
+
+3.13.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+Removed 9 unused cells and 9 unused wires.
+<suppressed ~10 debug messages>
+
+3.13.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.13.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.13.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \strange_loop_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+3.13.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \strange_loop_top.
+Performed a total of 0 changes.
+
+3.13.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 58 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.13.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.13.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.13.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.13.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.14. Executing WREDUCE pass (reducing word size of cells).
+Removed top 15 bits (of 16) from port B of cell strange_loop_top.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:52$9 ($add).
+Removed top 1 bits (of 3) from port B of cell strange_loop_top.$flatten\u_na0.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 1 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 1 bits (of 4) from port B of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 1 bits (of 3) from port B of cell strange_loop_top.$flatten\u_na1.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 1 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 1 bits (of 4) from port B of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 1 bits (of 3) from port B of cell strange_loop_top.$flatten\u_na2.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 1 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 1 bits (of 4) from port B of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 1 bits (of 3) from port B of cell strange_loop_top.$flatten\u_na3.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 1 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 1 bits (of 4) from port B of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port B of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 1 bits (of 3) from port B of cell strange_loop_top.$flatten\u_nb0.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 1 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 1 bits (of 4) from port B of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 1 bits (of 3) from port B of cell strange_loop_top.$flatten\u_nb1.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 1 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 1 bits (of 4) from port B of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 1 bits (of 3) from port B of cell strange_loop_top.$flatten\u_nb2.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 1 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 1 bits (of 4) from port B of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 1 bits (of 3) from port B of cell strange_loop_top.$flatten\u_nb3.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+Removed top 4 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+Removed top 1 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 1 bits (of 4) from port B of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+Removed top 2 bits (of 5) from port A of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port B of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from port Y of cell strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2_Y.
+Removed top 2 bits (of 5) from wire strange_loop_top.$flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1_Y.
+
+3.15. Executing PEEPOPT pass (run peephole optimizers).
+
+3.16. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+Removed 0 unused cells and 16 unused wires.
+<suppressed ~1 debug messages>
+
+3.17. Executing SHARE pass (SAT-based resource sharing).
+
+3.18. Executing TECHMAP pass (map to technology primitives).
+
+3.18.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/cmp2lut.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/cmp2lut.v' to AST representation.
+Generating RTLIL representation for module `\_90_lut_cmp_'.
+Successfully finished Verilog frontend.
+
+3.18.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~6 debug messages>
+
+3.19. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.20. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.21. Executing ALUMACC pass (create $alu and $macc cells).
+Extracting $alu and $macc cells in module strange_loop_top:
+  creating $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+  creating $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+  creating $macc model for $flatten\u_na3.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+  creating $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+  creating $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+  creating $macc model for $flatten\u_na2.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+  creating $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+  creating $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+  creating $macc model for $flatten\u_na1.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+  creating $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+  creating $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+  creating $macc model for $flatten\u_na0.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+  creating $macc model for $flatten\u_nb3.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+  creating $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+  creating $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+  creating $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+  creating $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+  creating $macc model for $flatten\u_nb2.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+  creating $macc model for $flatten\u_nb0.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+  creating $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+  creating $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+  creating $macc model for $flatten\u_nb1.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4 ($sub).
+  creating $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3 ($add).
+  creating $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 ($add).
+  creating $macc model for $add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:52$9 ($add).
+  creating $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+  creating $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+  creating $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+  creating $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+  creating $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+  creating $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+  creating $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+  creating $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 ($add).
+  merging $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 into $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2.
+  merging $macc model for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 into $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 into $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2.
+  merging $macc model for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 into $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 into $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 into $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 into $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 into $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 into $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 into $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 into $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 into $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 into $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 into $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$2 into $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  merging $macc model for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$1 into $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3.
+  creating $alu model for $macc $flatten\u_nb0.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4.
+  creating $alu model for $macc $flatten\u_nb1.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4.
+  creating $alu model for $macc $flatten\u_nb3.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4.
+  creating $alu model for $macc $flatten\u_na0.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4.
+  creating $alu model for $macc $flatten\u_na1.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4.
+  creating $alu model for $macc $flatten\u_nb2.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4.
+  creating $alu model for $macc $flatten\u_na2.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4.
+  creating $alu model for $macc $add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:52$9.
+  creating $alu model for $macc $flatten\u_na3.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4.
+  creating $macc cell for $flatten\u_na1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3: $auto$alumacc.cc:382:replace_macc$487
+  creating $macc cell for $flatten\u_nb1.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3: $auto$alumacc.cc:382:replace_macc$488
+  creating $macc cell for $flatten\u_na0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3: $auto$alumacc.cc:382:replace_macc$489
+  creating $macc cell for $flatten\u_na2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3: $auto$alumacc.cc:382:replace_macc$490
+  creating $macc cell for $flatten\u_nb2.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3: $auto$alumacc.cc:382:replace_macc$491
+  creating $macc cell for $flatten\u_nb3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3: $auto$alumacc.cc:382:replace_macc$492
+  creating $macc cell for $flatten\u_na3.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3: $auto$alumacc.cc:382:replace_macc$493
+  creating $macc cell for $flatten\u_nb0.$add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:20$3: $auto$alumacc.cc:382:replace_macc$494
+  creating $alu cell for $flatten\u_na3.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4: $auto$alumacc.cc:512:replace_alu$495
+  creating $alu cell for $add$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/strange_loop_top.v:52$9: $auto$alumacc.cc:512:replace_alu$498
+  creating $alu cell for $flatten\u_na2.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4: $auto$alumacc.cc:512:replace_alu$501
+  creating $alu cell for $flatten\u_nb2.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4: $auto$alumacc.cc:512:replace_alu$504
+  creating $alu cell for $flatten\u_na1.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4: $auto$alumacc.cc:512:replace_alu$507
+  creating $alu cell for $flatten\u_na0.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4: $auto$alumacc.cc:512:replace_alu$510
+  creating $alu cell for $flatten\u_nb3.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4: $auto$alumacc.cc:512:replace_alu$513
+  creating $alu cell for $flatten\u_nb1.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4: $auto$alumacc.cc:512:replace_alu$516
+  creating $alu cell for $flatten\u_nb0.$sub$/Users/ghost/core/anima/anima-physics/hw/strange_loop_ice40/src/mix4.v:24$4: $auto$alumacc.cc:512:replace_alu$519
+  created 9 $alu and 8 $macc cells.
+
+3.22. Executing OPT pass (performing simple optimizations).
+
+3.22.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.22.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 58 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.22.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \strange_loop_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+3.22.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \strange_loop_top.
+Performed a total of 0 changes.
+
+3.22.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 58 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.22.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.22.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+Removed 16 unused cells and 16 unused wires.
+<suppressed ~17 debug messages>
+
+3.22.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.22.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.22.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \strange_loop_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+3.22.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \strange_loop_top.
+Performed a total of 0 changes.
+
+3.22.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 42 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.22.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.22.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.22.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.22.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.23. Executing MEMORY pass.
+
+3.23.1. Executing OPT_MEM pass (optimize memories).
+Performed a total of 0 transformations.
+
+3.23.2. Executing OPT_MEM_PRIORITY pass (removing unnecessary memory write priority relations).
+Performed a total of 0 transformations.
+
+3.23.3. Executing OPT_MEM_FEEDBACK pass (finding memory read-to-write feedback paths).
+
+3.23.4. Executing MEMORY_BMUX2ROM pass (converting muxes to ROMs).
+
+3.23.5. Executing MEMORY_DFF pass (merging $dff cells to $memrd).
+
+3.23.6. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.23.7. Executing MEMORY_SHARE pass (consolidating $memrd/$memwr cells).
+
+3.23.8. Executing OPT_MEM_WIDEN pass (optimize memories where all ports are wide).
+Performed a total of 0 transformations.
+
+3.23.9. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.23.10. Executing MEMORY_COLLECT pass (generating $mem cells).
+
+3.24. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.25. Executing MEMORY_LIBMAP pass (mapping memories to cells).
+
+3.26. Executing TECHMAP pass (map to technology primitives).
+
+3.26.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/brams_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/brams_map.v' to AST representation.
+Generating RTLIL representation for module `$__ICE40_RAM4K_'.
+Successfully finished Verilog frontend.
+
+3.26.2. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/spram_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/spram_map.v' to AST representation.
+Generating RTLIL representation for module `$__ICE40_SPRAM_'.
+Successfully finished Verilog frontend.
+
+3.26.3. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~4 debug messages>
+
+3.27. Executing ICE40_BRAMINIT pass.
+
+3.28. Executing OPT pass (performing simple optimizations).
+
+3.28.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+<suppressed ~13 debug messages>
+
+3.28.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 42 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.28.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.28.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.28.5. Finished fast OPT passes.
+
+3.29. Executing MEMORY_MAP pass (converting memories to logic and flip-flops).
+
+3.30. Executing OPT pass (performing simple optimizations).
+
+3.30.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.30.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 42 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.30.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \strange_loop_top..
+  Creating internal representation of mux trees.
+  Evaluating internal representation of mux trees.
+  Analyzing evaluation results.
+Removed 0 multiplexer ports.
+<suppressed ~16 debug messages>
+
+3.30.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \strange_loop_top.
+Performed a total of 0 changes.
+
+3.30.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 42 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.30.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.30.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.30.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.30.9. Finished fast OPT passes. (There is nothing left to do.)
+
+3.31. Executing ICE40_WRAPCARRY pass (wrap carries).
+
+3.32. Executing TECHMAP pass (map to technology primitives).
+
+3.32.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+3.32.2. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/arith_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/arith_map.v' to AST representation.
+Generating RTLIL representation for module `\_80_ice40_alu'.
+Successfully finished Verilog frontend.
+
+3.32.3. Continuing TECHMAP pass.
+Using template $paramod$2116a631f856d4d4902c2618dca73dafa3b8c9c0\_80_ice40_alu for cells of type $alu.
+Using template $paramod$2af30114e9bd4ccb04dad757b3f0a8f6bf0615b0\_80_ice40_alu for cells of type $alu.
+Using extmapper maccmap for cells of type $macc_v2.
+  add \a0 (3 bits, unsigned)
+  add { \a3 [1:0] 1'0 } (3 bits, unsigned)
+  add \a0 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \b3 (3 bits, unsigned)
+  add { \b0 [1:0] 1'0 } (3 bits, unsigned)
+  add \b3 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \a3 (3 bits, unsigned)
+  add { \a2 [1:0] 1'0 } (3 bits, unsigned)
+  add \a3 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \a2 (3 bits, unsigned)
+  add { \a1 [1:0] 1'0 } (3 bits, unsigned)
+  add \a2 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \b2 (3 bits, unsigned)
+  add { \b3 [1:0] 1'0 } (3 bits, unsigned)
+  add \b2 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \b0 (3 bits, unsigned)
+  add { \b1 [1:0] 1'0 } (3 bits, unsigned)
+  add \b0 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \a1 (3 bits, unsigned)
+  add { \a0 [1:0] 1'0 } (3 bits, unsigned)
+  add \a1 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+  add \b1 (3 bits, unsigned)
+  add { \b2 [1:0] 1'0 } (3 bits, unsigned)
+  add \b1 (3 bits, unsigned)
+  add 3'001 (3 bits, unsigned)
+Using extmapper simplemap for cells of type $adffe.
+Using extmapper simplemap for cells of type $mux.
+Using template $paramod$78e969f2586efcf3a5b0b0440bcca0db83d5cca2\_80_ice40_alu for cells of type $alu.
+Using extmapper simplemap for cells of type $xor.
+Using extmapper simplemap for cells of type $not.
+Using extmapper simplemap for cells of type $pos.
+No more expansions possible.
+<suppressed ~261 debug messages>
+
+3.33. Executing OPT pass (performing simple optimizations).
+
+3.33.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+<suppressed ~152 debug messages>
+
+3.33.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 193 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Computing hashes of 188 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+<suppressed ~15 debug messages>
+Removed a total of 5 cells.
+
+3.33.3. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.33.4. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+Removed 52 unused cells and 297 unused wires.
+<suppressed ~53 debug messages>
+
+3.33.5. Finished fast OPT passes.
+
+3.34. Executing ICE40_OPT pass (performing simple optimizations).
+
+3.34.1. Running ICE40 specific optimizations.
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$495.slice[0].carry: CO=\u_na3.mod8 [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$498.slice[0].carry: CO=\step_count [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$maccmap.cc:240:synth$642.slice[0].carry: CO=1'0
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$501.slice[0].carry: CO=\u_na2.mod8 [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$504.slice[0].carry: CO=\u_nb2.mod8 [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$maccmap.cc:240:synth$650.slice[0].carry: CO=1'0
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$maccmap.cc:240:synth$626.slice[0].carry: CO=1'0
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$507.slice[0].carry: CO=\u_na1.mod8 [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$510.slice[0].carry: CO=\u_na0.mod8 [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$maccmap.cc:240:synth$634.slice[0].carry: CO=1'0
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$513.slice[0].carry: CO=\u_nb3.mod8 [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$maccmap.cc:240:synth$622.slice[0].carry: CO=1'0
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$516.slice[0].carry: CO=\u_nb1.mod8 [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$519.slice[0].carry: CO=\u_nb0.mod8 [0]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$maccmap.cc:240:synth$630.slice[0].carry: CO=1'0
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$maccmap.cc:240:synth$638.slice[0].carry: CO=1'0
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$maccmap.cc:240:synth$646.slice[0].carry: CO=1'0
+
+3.34.2. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.34.3. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 136 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Computing hashes of 129 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Computing hashes of 122 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+<suppressed ~42 debug messages>
+Removed a total of 14 cells.
+
+3.34.4. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.34.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.34.6. Rerunning OPT passes. (Removed registers in this run.)
+
+3.34.7. Running ICE40 specific optimizations.
+
+3.34.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.34.9. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 122 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.34.10. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.34.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.34.12. Finished OPT passes. (There is nothing left to do.)
+
+3.35. Executing DFFLEGALIZE pass (convert FFs to types supported by the target).
+
+3.36. Executing TECHMAP pass (map to technology primitives).
+
+3.36.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/ff_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/ff_map.v' to AST representation.
+Generating RTLIL representation for module `$_DFF_N_'.
+Generating RTLIL representation for module `$_DFF_P_'.
+Generating RTLIL representation for module `$_DFFE_NP_'.
+Generating RTLIL representation for module `$_DFFE_PP_'.
+Generating RTLIL representation for module `$_DFF_NP0_'.
+Generating RTLIL representation for module `$_DFF_NP1_'.
+Generating RTLIL representation for module `$_DFF_PP0_'.
+Generating RTLIL representation for module `$_DFF_PP1_'.
+Generating RTLIL representation for module `$_DFFE_NP0P_'.
+Generating RTLIL representation for module `$_DFFE_NP1P_'.
+Generating RTLIL representation for module `$_DFFE_PP0P_'.
+Generating RTLIL representation for module `$_DFFE_PP1P_'.
+Generating RTLIL representation for module `$_SDFF_NP0_'.
+Generating RTLIL representation for module `$_SDFF_NP1_'.
+Generating RTLIL representation for module `$_SDFF_PP0_'.
+Generating RTLIL representation for module `$_SDFF_PP1_'.
+Generating RTLIL representation for module `$_SDFFCE_NP0P_'.
+Generating RTLIL representation for module `$_SDFFCE_NP1P_'.
+Generating RTLIL representation for module `$_SDFFCE_PP0P_'.
+Generating RTLIL representation for module `$_SDFFCE_PP1P_'.
+Successfully finished Verilog frontend.
+
+3.36.2. Continuing TECHMAP pass.
+Using template $_DFFE_PP0P_ for cells of type $_DFFE_PP0P_.
+Using template $_DFFE_PP1P_ for cells of type $_DFFE_PP1P_.
+No more expansions possible.
+<suppressed ~62 debug messages>
+
+3.37. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.38. Executing SIMPLEMAP pass (map simple cells to gate primitives).
+Mapping strange_loop_top.$auto$alumacc.cc:512:replace_alu$495.slice[0].carry ($lut).
+Mapping strange_loop_top.$auto$alumacc.cc:512:replace_alu$498.slice[0].carry ($lut).
+Mapping strange_loop_top.$auto$maccmap.cc:240:synth$642.slice[0].carry ($lut).
+
+3.39. Executing ICE40_OPT pass (performing simple optimizations).
+
+3.39.1. Running ICE40 specific optimizations.
+
+3.39.2. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+<suppressed ~52 debug messages>
+
+3.39.3. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 160 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Computing hashes of 121 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+<suppressed ~117 debug messages>
+Removed a total of 39 cells.
+
+3.39.4. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.39.5. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+Removed 0 unused cells and 291 unused wires.
+<suppressed ~1 debug messages>
+
+3.39.6. Rerunning OPT passes. (Removed registers in this run.)
+
+3.39.7. Running ICE40 specific optimizations.
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$495.slice[1].carry: CO=\u_na3.mod8 [1]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$501.slice[1].carry: CO=\u_na2.mod8 [1]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$504.slice[1].carry: CO=\u_nb2.mod8 [1]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$507.slice[1].carry: CO=\u_na1.mod8 [1]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$510.slice[1].carry: CO=\u_na0.mod8 [1]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$513.slice[1].carry: CO=\u_nb3.mod8 [1]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$516.slice[1].carry: CO=\u_nb1.mod8 [1]
+Optimized $__ICE40_CARRY_WRAPPER cell back to logic (without SB_CARRY) strange_loop_top.$auto$alumacc.cc:512:replace_alu$519.slice[1].carry: CO=\u_nb0.mod8 [1]
+
+3.39.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.39.9. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 121 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.39.10. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.39.11. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+Removed 0 unused cells and 8 unused wires.
+<suppressed ~1 debug messages>
+
+3.39.12. Rerunning OPT passes. (Removed registers in this run.)
+
+3.39.13. Running ICE40 specific optimizations.
+
+3.39.14. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.39.15. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 121 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.39.16. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.39.17. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.39.18. Finished OPT passes. (There is nothing left to do.)
+
+3.40. Executing TECHMAP pass (map to technology primitives).
+
+3.40.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/latches_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/latches_map.v' to AST representation.
+Generating RTLIL representation for module `$_DLATCH_N_'.
+Generating RTLIL representation for module `$_DLATCH_P_'.
+Successfully finished Verilog frontend.
+
+3.40.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~4 debug messages>
+
+3.41. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/abc9_model.v' to AST representation.
+Generating RTLIL representation for module `$__ICE40_CARRY_WRAPPER'.
+Successfully finished Verilog frontend.
+
+3.42. Executing ABC9 pass.
+
+3.42.1. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.2. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.3. Executing PROC pass (convert processes to netlists).
+
+3.42.3.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.42.3.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:803$212 in module SB_DFFES.
+Removed a total of 0 dead cases.
+
+3.42.3.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1 assignment to connection.
+
+3.42.3.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\SB_DFFES.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:801$215'.
+  Set init value: \Q = 1'0
+
+3.42.3.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \S in `\SB_DFFES.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:803$212'.
+
+3.42.3.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.42.3.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\SB_DFFES.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:801$215'.
+Creating decoders for process `\SB_DFFES.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:803$212'.
+     1/1: $0\Q[0:0]
+
+3.42.3.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.42.3.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\SB_DFFES.\Q' using process `\SB_DFFES.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:803$212'.
+  created $adff cell `$procdff$1139' with positive edge clock and positive level reset.
+
+3.42.3.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.42.3.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `SB_DFFES.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:801$215'.
+Found and cleaned up 1 empty switch in `\SB_DFFES.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:803$212'.
+Removing empty process `SB_DFFES.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:803$212'.
+Cleaned up 1 empty switch.
+
+3.42.4. Executing PROC pass (convert processes to netlists).
+
+3.42.4.1. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Cleaned up 0 empty switches.
+
+3.42.4.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
+Marked 1 switch rules as full_case in process $proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:662$201 in module SB_DFFER.
+Removed a total of 0 dead cases.
+
+3.42.4.3. Executing PROC_PRUNE pass (remove redundant assignments in processes).
+Removed 0 redundant assignments.
+Promoted 1 assignment to connection.
+
+3.42.4.4. Executing PROC_INIT pass (extract init attributes).
+Found init rule in `\SB_DFFER.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:660$204'.
+  Set init value: \Q = 1'0
+
+3.42.4.5. Executing PROC_ARST pass (detect async resets in processes).
+Found async reset \R in `\SB_DFFER.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:662$201'.
+
+3.42.4.6. Executing PROC_ROM pass (convert switches to ROMs).
+Converted 0 switches.
+<suppressed ~1 debug messages>
+
+3.42.4.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
+Creating decoders for process `\SB_DFFER.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:660$204'.
+Creating decoders for process `\SB_DFFER.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:662$201'.
+     1/1: $0\Q[0:0]
+
+3.42.4.8. Executing PROC_DLATCH pass (convert process syncs to latches).
+
+3.42.4.9. Executing PROC_DFF pass (convert process syncs to FFs).
+Creating register for signal `\SB_DFFER.\Q' using process `\SB_DFFER.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:662$201'.
+  created $adff cell `$procdff$1144' with positive edge clock and positive level reset.
+
+3.42.4.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
+
+3.42.4.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
+Removing empty process `SB_DFFER.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:660$204'.
+Found and cleaned up 1 empty switch in `\SB_DFFER.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:662$201'.
+Removing empty process `SB_DFFER.$proc$/opt/homebrew/bin/../share/yosys/ice40/cells_sim.v:662$201'.
+Cleaned up 1 empty switch.
+
+3.42.5. Executing SCC pass (detecting logic loops).
+Found 0 SCCs in module strange_loop_top.
+Found 0 SCCs.
+
+3.42.6. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.7. Executing TECHMAP pass (map to technology primitives).
+
+3.42.7.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+3.42.7.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~132 debug messages>
+
+3.42.8. Executing OPT pass (performing simple optimizations).
+
+3.42.8.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module SB_DFFES.
+Optimizing module SB_DFFER.
+
+3.42.8.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\SB_DFFES'.
+Computing hashes of 2 cells of `\SB_DFFES'.
+Finding duplicate cells in `\SB_DFFES'.
+Finding identical cells in module `\SB_DFFER'.
+Computing hashes of 2 cells of `\SB_DFFER'.
+Finding duplicate cells in `\SB_DFFER'.
+Removed a total of 0 cells.
+
+3.42.8.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \SB_DFFES..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Running muxtree optimizer on module \SB_DFFER..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.42.8.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \SB_DFFES.
+  Optimizing cells in module \SB_DFFER.
+Performed a total of 0 changes.
+
+3.42.8.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\SB_DFFES'.
+Computing hashes of 2 cells of `\SB_DFFES'.
+Finding duplicate cells in `\SB_DFFES'.
+Finding identical cells in module `\SB_DFFER'.
+Computing hashes of 2 cells of `\SB_DFFER'.
+Finding duplicate cells in `\SB_DFFER'.
+Removed a total of 0 cells.
+
+3.42.8.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.42.8.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \SB_DFFES..
+Finding unused cells or wires in module \SB_DFFER..
+
+3.42.8.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module SB_DFFES.
+Optimizing module SB_DFFER.
+
+3.42.8.9. Finished fast OPT passes. (There is nothing left to do.)
+
+3.42.9. Executing TECHMAP pass (map to technology primitives).
+
+3.42.9.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_map.v' to AST representation.
+Successfully finished Verilog frontend.
+
+3.42.9.2. Continuing TECHMAP pass.
+Using template SB_DFFER for cells of type SB_DFFER.
+Using template SB_DFFES for cells of type SB_DFFES.
+No more expansions possible.
+<suppressed ~44 debug messages>
+
+3.42.10. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_model.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_model.v' to AST representation.
+Generating RTLIL representation for module `$__ABC9_DELAY'.
+Generating RTLIL representation for module `$__ABC9_SCC_BREAKER'.
+Generating RTLIL representation for module `$__DFF_N__$abc9_flop'.
+Generating RTLIL representation for module `$__DFF_P__$abc9_flop'.
+Successfully finished Verilog frontend.
+
+3.42.11. Executing ABC9_OPS pass (helper functions for ABC9).
+<suppressed ~2 debug messages>
+
+3.42.12. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.13. Executing ABC9_OPS pass (helper functions for ABC9).
+<suppressed ~2 debug messages>
+
+3.42.14. Executing TECHMAP pass (map to technology primitives).
+
+3.42.14.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/techmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/techmap.v' to AST representation.
+Generating RTLIL representation for module `\_90_simplemap_bool_ops'.
+Generating RTLIL representation for module `\_90_simplemap_reduce_ops'.
+Generating RTLIL representation for module `\_90_simplemap_logic_ops'.
+Generating RTLIL representation for module `\_90_simplemap_compare_ops'.
+Generating RTLIL representation for module `\_90_simplemap_various'.
+Generating RTLIL representation for module `\_90_simplemap_registers'.
+Generating RTLIL representation for module `\_90_shift_ops_shr_shl_sshl_sshr'.
+Generating RTLIL representation for module `\_90_shift_shiftx'.
+Generating RTLIL representation for module `\_90_fa'.
+Generating RTLIL representation for module `\_90_lcu_brent_kung'.
+Generating RTLIL representation for module `\_90_alu'.
+Generating RTLIL representation for module `\_90_macc'.
+Generating RTLIL representation for module `\_90_alumacc'.
+Generating RTLIL representation for module `$__div_mod_u'.
+Generating RTLIL representation for module `$__div_mod_trunc'.
+Generating RTLIL representation for module `\_90_div'.
+Generating RTLIL representation for module `\_90_mod'.
+Generating RTLIL representation for module `$__div_mod_floor'.
+Generating RTLIL representation for module `\_90_divfloor'.
+Generating RTLIL representation for module `\_90_modfloor'.
+Generating RTLIL representation for module `\_90_pow'.
+Generating RTLIL representation for module `\_90_demux'.
+Generating RTLIL representation for module `\_90_lut'.
+Generating RTLIL representation for module `$connect'.
+Generating RTLIL representation for module `$input_port'.
+Successfully finished Verilog frontend.
+
+3.42.14.2. Continuing TECHMAP pass.
+Using template $paramod$__ICE40_CARRY_WRAPPER\LUT=16'0110100110010110\I3_IS_CI=1'1 for cells of type $paramod$__ICE40_CARRY_WRAPPER\LUT=16'0110100110010110\I3_IS_CI=1'1.
+Using template $paramod\SB_LUT4\LUT_INIT=16'0110100110010110 for cells of type SB_LUT4.
+Using template SB_CARRY for cells of type SB_CARRY.
+Using extmapper simplemap for cells of type $mux.
+Using extmapper simplemap for cells of type $logic_and.
+Using extmapper simplemap for cells of type $logic_or.
+No more expansions possible.
+<suppressed ~151 debug messages>
+
+3.42.15. Executing OPT pass (performing simple optimizations).
+
+3.42.15.1. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+<suppressed ~4 debug messages>
+
+3.42.15.2. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 30 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Computing hashes of 20 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Computing hashes of 18 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+<suppressed ~29 debug messages>
+Removed a total of 12 cells.
+
+3.42.15.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \strange_loop_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.42.15.4. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \strange_loop_top.
+Performed a total of 0 changes.
+
+3.42.15.5. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 18 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.42.15.6. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.42.15.7. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+Removed 0 unused cells and 24 unused wires.
+<suppressed ~1 debug messages>
+
+3.42.15.8. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.42.15.9. Rerunning OPT passes. (Maybe there is more to do..)
+
+3.42.15.10. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
+Running muxtree optimizer on module \strange_loop_top..
+  Creating internal representation of mux trees.
+  No muxes found in this module.
+Removed 0 multiplexer ports.
+
+3.42.15.11. Executing OPT_REDUCE pass (consolidate $*mux and $reduce_* inputs).
+  Optimizing cells in module \strange_loop_top.
+Performed a total of 0 changes.
+
+3.42.15.12. Executing OPT_MERGE pass (detect identical cells).
+Finding identical cells in module `\strange_loop_top'.
+Computing hashes of 18 cells of `\strange_loop_top'.
+Finding duplicate cells in `\strange_loop_top'.
+Removed a total of 0 cells.
+
+3.42.15.13. Executing OPT_DFF pass (perform DFF optimizations).
+
+3.42.15.14. Executing OPT_CLEAN pass (remove unused cells and wires).
+Finding unused cells or wires in module \strange_loop_top..
+
+3.42.15.15. Executing OPT_EXPR pass (perform const folding).
+Optimizing module strange_loop_top.
+
+3.42.15.16. Finished fast OPT passes. (There is nothing left to do.)
+
+3.42.16. Executing AIGMAP pass (map logic to AIG).
+Module strange_loop_top: replaced 7 cells with 43 new cells, skipped 11 cells.
+  replaced 2 cell types:
+       5 $_MUX_
+       2 $_OR_
+  not replaced 3 cell types:
+       2 $_AND_
+       1 $_NOT_
+       8 $specify2
+
+3.42.17. Executing AIGMAP pass (map logic to AIG).
+Module strange_loop_top: replaced 8 cells with 56 new cells, skipped 153 cells.
+  replaced 1 cell types:
+       8 $_MUX_
+  not replaced 9 cell types:
+       8 $_AND_
+      10 $_NOT_
+       8 $lut
+       8 $scopeinfo
+      28 SB_DFFER
+      12 SB_DFFES
+      28 SB_DFFER_$abc9_byp
+      12 SB_DFFES_$abc9_byp
+      39 $paramod$__ICE40_CARRY_WRAPPER\LUT=16'0110100110010110\I3_IS_CI=1'1
+
+3.42.17.1. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.17.2. Executing ABC9_OPS pass (helper functions for ABC9).
+
+3.42.17.3. Executing XAIGER backend.
+<suppressed ~51 debug messages>
+Extracted 32 AND gates and 333 wires from module `strange_loop_top' to a netlist network with 51 inputs and 89 outputs.
+
+3.42.17.4. Executing ABC9_EXE pass (technology mapping using ABC9).
+
+3.42.17.5. Executing ABC9.
+Running ABC command: "<yosys-exe-dir>/yosys-abc" -s -f <abc-temp-dir>/abc.script 2>&1
+ABC: ======== ABC command line "source <abc-temp-dir>/abc.script"
+ABC: + read_lut <abc-temp-dir>/input.lut 
+ABC: + read_box <abc-temp-dir>/input.box 
+ABC: + &read <abc-temp-dir>/input.xaig 
+ABC: + &ps 
+ABC: <abc-temp-dir>/input : i/o =     51/     89  and =      32  lev =    2 (0.07)  mem = 0.01 MB  box = 79  bb = 40
+ABC: Warning: AIG with boxes has internal fanout in 0 complex flops and 1 carries.
+ABC: + &scorr 
+ABC: Warning: The network is combinational.
+ABC: + &sweep 
+ABC: + &dc2 
+ABC: + &dch -f -r 
+ABC: + &ps 
+ABC: <abc-temp-dir>/input : i/o =     51/     89  and =      56  lev =    2 (0.07)  mem = 0.01 MB  ch =    8  box = 79  bb = 40
+ABC: cst =       0  cls =      8  lit =       8  unused =     209  proof =     0
+ABC: Warning: AIG with boxes has internal fanout in 0 complex flops and 1 carries.
+ABC: + &if -W 250 -v 
+ABC: K = 4. Memory (bytes): Truth =    0. Cut =   64. Obj =  144. Set =  672. CutMin = no
+ABC: Node =      56.  Ch =     8.  Total mem =    0.09 MB. Peak cut mem =    0.00 MB.
+ABC: P:  Del = 2784.00.  Ar =      16.0.  Edge =       40.  Cut =      104.  T =     0.00 sec
+ABC: P:  Del = 2784.00.  Ar =      16.0.  Edge =       40.  Cut =      104.  T =     0.00 sec
+ABC: P:  Del = 2784.00.  Ar =      16.0.  Edge =       40.  Cut =      104.  T =     0.00 sec
+ABC: F:  Del = 2784.00.  Ar =      16.0.  Edge =       40.  Cut =      104.  T =     0.00 sec
+ABC: A:  Del = 2784.00.  Ar =      16.0.  Edge =       40.  Cut =      104.  T =     0.00 sec
+ABC: A:  Del = 2784.00.  Ar =      16.0.  Edge =       40.  Cut =      104.  T =     0.00 sec
+ABC: Total time =     0.00 sec
+ABC: + &write -n <abc-temp-dir>/output.aig 
+ABC: + &mfs 
+ABC: + &ps -l 
+ABC: <abc-temp-dir>/input : i/o =     51/     89  and =      32  lev =    2 (0.07)  mem = 0.01 MB  box = 71  bb = 40
+ABC: Mapping (K=3)  :  lut =     16  edge =      40  lev =    1 (0.05)  levB =   16  mem = 0.00 MB
+ABC: LUT = 16 : 2=8 50.0 %  3=8 50.0 %  Ave = 2.50
+ABC: Warning: AIG with boxes has internal fanout in 0 complex flops and 1 carries.
+ABC: + &write -n <abc-temp-dir>/output.aig 
+ABC: + &verify 
+ABC: Networks are equivalent.  Time =     0.01 sec
+ABC: + time 
+ABC: elapse: 0.03 seconds, total: 0.03 seconds
+
+3.42.17.6. Executing AIGER frontend.
+<suppressed ~299 debug messages>
+Removed 48 unused cells and 542 unused wires.
+
+3.42.17.7. Executing ABC9_OPS pass (helper functions for ABC9).
+ABC RESULTS:              $lut cells:       26
+ABC RESULTS:   \SB_DFFER_$abc9_byp cells:       28
+ABC RESULTS:   \SB_DFFES_$abc9_byp cells:       12
+ABC RESULTS:   $paramod$__ICE40_CARRY_WRAPPER\LUT=16'0110100110010110\I3_IS_CI=1'1 cells:       31
+ABC RESULTS:           input signals:       51
+ABC RESULTS:          output signals:       20
+Removing temp directory.
+
+3.42.18. Executing TECHMAP pass (map to technology primitives).
+
+3.42.18.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/abc9_unmap.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/abc9_unmap.v' to AST representation.
+Generating RTLIL representation for module `$__DFF_x__$abc9_flop'.
+Generating RTLIL representation for module `$__ABC9_SCC_BREAKER'.
+Successfully finished Verilog frontend.
+
+3.42.18.2. Continuing TECHMAP pass.
+Using template SB_DFFES_$abc9_byp for cells of type SB_DFFES_$abc9_byp.
+Using template SB_DFFER_$abc9_byp for cells of type SB_DFFER_$abc9_byp.
+Using template $paramod$__ICE40_CARRY_WRAPPER\LUT=16'0110100110010110\I3_IS_CI=1'1 for cells of type $paramod$__ICE40_CARRY_WRAPPER\LUT=16'0110100110010110\I3_IS_CI=1'1.
+No more expansions possible.
+<suppressed ~79 debug messages>
+
+3.43. Executing ICE40_WRAPCARRY pass (wrap carries).
+
+3.44. Executing TECHMAP pass (map to technology primitives).
+
+3.44.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/ff_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/ff_map.v' to AST representation.
+Generating RTLIL representation for module `$_DFF_N_'.
+Generating RTLIL representation for module `$_DFF_P_'.
+Generating RTLIL representation for module `$_DFFE_NP_'.
+Generating RTLIL representation for module `$_DFFE_PP_'.
+Generating RTLIL representation for module `$_DFF_NP0_'.
+Generating RTLIL representation for module `$_DFF_NP1_'.
+Generating RTLIL representation for module `$_DFF_PP0_'.
+Generating RTLIL representation for module `$_DFF_PP1_'.
+Generating RTLIL representation for module `$_DFFE_NP0P_'.
+Generating RTLIL representation for module `$_DFFE_NP1P_'.
+Generating RTLIL representation for module `$_DFFE_PP0P_'.
+Generating RTLIL representation for module `$_DFFE_PP1P_'.
+Generating RTLIL representation for module `$_SDFF_NP0_'.
+Generating RTLIL representation for module `$_SDFF_NP1_'.
+Generating RTLIL representation for module `$_SDFF_PP0_'.
+Generating RTLIL representation for module `$_SDFF_PP1_'.
+Generating RTLIL representation for module `$_SDFFCE_NP0P_'.
+Generating RTLIL representation for module `$_SDFFCE_NP1P_'.
+Generating RTLIL representation for module `$_SDFFCE_PP0P_'.
+Generating RTLIL representation for module `$_SDFFCE_PP1P_'.
+Successfully finished Verilog frontend.
+
+3.44.2. Continuing TECHMAP pass.
+No more expansions possible.
+<suppressed ~22 debug messages>
+Removed 9 unused cells and 939 unused wires.
+
+3.45. Executing OPT_LUT pass (optimize LUTs).
+Discovering LUTs.
+Number of LUTs:       65
+  1-LUT               18
+  2-LUT                9
+  3-LUT               38
+  with \SB_CARRY    (#0)   22
+  with \SB_CARRY    (#1)   22
+
+Eliminating LUTs.
+Number of LUTs:       65
+  1-LUT               18
+  2-LUT                9
+  3-LUT               38
+  with \SB_CARRY    (#0)   22
+  with \SB_CARRY    (#1)   22
+
+Combining LUTs.
+Number of LUTs:       57
+  1-LUT               10
+  2-LUT               17
+  3-LUT               30
+  with \SB_CARRY    (#0)   22
+  with \SB_CARRY    (#1)   22
+
+Eliminated 0 LUTs.
+Combined 8 LUTs.
+<suppressed ~294 debug messages>
+
+3.46. Executing TECHMAP pass (map to technology primitives).
+
+3.46.1. Executing Verilog-2005 frontend: /opt/homebrew/bin/../share/yosys/ice40/cells_map.v
+Parsing Verilog input from `/opt/homebrew/bin/../share/yosys/ice40/cells_map.v' to AST representation.
+Generating RTLIL representation for module `$lut'.
+Successfully finished Verilog frontend.
+
+3.46.2. Continuing TECHMAP pass.
+Using template $paramod$fd904e9e35cfd343a9df248824bd3f1408724879$lut for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000001\LUT=2'01 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000011\LUT=8'00111100 for cells of type $lut.
+Using template $paramod$lut\WIDTH=32'00000000000000000000000000000010\LUT=4'1000 for cells of type $lut.
+No more expansions possible.
+<suppressed ~112 debug messages>
+Removed 0 unused cells and 114 unused wires.
+
+3.47. Executing AUTONAME pass.
+Renamed 151 objects in module strange_loop_top (14 iterations).
+<suppressed ~151 debug messages>
+
+3.48. Executing HIERARCHY pass (managing design hierarchy).
+Attribute `top' found on module `strange_loop_top'. Setting top module to strange_loop_top.
+
+3.48.1. Analyzing design hierarchy..
+Top module:  \strange_loop_top
+
+3.48.2. Analyzing design hierarchy..
+Top module:  \strange_loop_top
+Removed 0 unused modules.
+
+3.49. Printing statistics.
+
+=== strange_loop_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      109 wires
+      322 wire bits
+      109 public wires
+      322 public wire bits
+        5 ports
+       43 port bits
+        8 cells
+        8   $scopeinfo
+      119 submodules
+       22   SB_CARRY
+       28   SB_DFFER
+       12   SB_DFFES
+       57   SB_LUT4
+
+=== design hierarchy ===
+
+        +----------Count including submodules.
+        | 
+        8 strange_loop_top
+
+        +----------Count including submodules.
+        | 
+      109 wires
+      322 wire bits
+      109 public wires
+      322 public wire bits
+        5 ports
+       43 port bits
+        - memories
+        - memory bits
+        - processes
+        8 cells
+        8   $scopeinfo
+      119 submodules
+       22   SB_CARRY
+       28   SB_DFFER
+       12   SB_DFFES
+       57   SB_LUT4
+
+3.50. Executing CHECK pass (checking for obvious problems).
+Checking module strange_loop_top...
+Found and reported 0 problems.
+
+3.51. Executing JSON backend.
+
+4. Printing statistics.
+
+=== strange_loop_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      109 wires
+      322 wire bits
+      109 public wires
+      322 public wire bits
+        5 ports
+       43 port bits
+      127 cells
+        8   $scopeinfo
+       22   SB_CARRY
+       28   SB_DFFER
+       12   SB_DFFES
+       57   SB_LUT4
+
+End of script. Logfile hash: 051d046670, time: 0.83s, user: 0.69s, system: 0.03s, MEM: 30.55 MB peak
+Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, clang++ 21.0.0 -fPIC -O3)
+Time spent: 73% 22x read_verilog (0 sec), 8% 1x abc9_exe (0 sec), ...

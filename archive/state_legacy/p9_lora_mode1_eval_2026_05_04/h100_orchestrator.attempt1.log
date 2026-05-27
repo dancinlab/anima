@@ -1,0 +1,182 @@
+[orch] start ts=2026-05-04T08:37:59Z
+[setup] installing lm-eval + peft + huggingface_hub
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1
+[notice] To update, run: python -m pip install --upgrade pip
+Login successful.
+Note: Environment variable`HF_TOKEN` is set and is the current active token independently from the token you've just configured.
+[setup] hf auth: [32m✓ Logged in[0m
+[setup] downloading meta-llama/Llama-3.2-3B
+Fetching 15 files:   0%|          | 0/15 [00:00<?, ?it/s]Fetching 15 files:   7%|▋         | 1/15 [00:00<00:06,  2.21it/s]Fetching 15 files:  47%|████▋     | 7/15 [00:14<00:17,  2.21s/it]Fetching 15 files:  67%|██████▋   | 10/15 [00:21<00:10,  2.18s/it]Fetching 15 files: 100%|██████████| 15/15 [00:21<00:00,  1.42s/it]
+[32m✓ Downloaded[0m
+  path: /root/.cache/huggingface/hub/models--meta-llama--Llama-3.2-3B/snapshots/13afe5124825b4f3751f836b40dafda64c1ed062
+[setup] downloading need-singularity/p9-llama32-lora-stage1@5a9b4584 (step-8k LoRA)
+Fetching 11 files:   0%|          | 0/11 [00:00<?, ?it/s]Fetching 11 files:   9%|▉         | 1/11 [00:00<00:04,  2.10it/s]Fetching 11 files:  36%|███▋      | 4/11 [00:16<00:31,  4.55s/it]Fetching 11 files: 100%|██████████| 11/11 [00:16<00:00,  1.54s/it]
+[32m✓ Downloaded[0m
+  path: /root/.cache/huggingface/hub/models--need-singularity--p9-llama32-lora-stage1/snapshots/5a9b458467589b82a69f0108fd2af3e519c45286
+[orch] lm_eval=0.4.11
+[orch] peft=0.19.1
+[orch] torch=2.4.1+cu124
+name, memory.total [MiB]
+NVIDIA H100 80GB HBM3, 81559 MiB
+[run] task=hellaswag n=0 → /workspace/p9_lora_eval/results/lora_hellaswag_dir
+[done] task=hellaswag rc=1 wall=7s
+[FAIL] tail of /workspace/p9_lora_eval/results/hellaswag.log:
+    hf_raise_for_status(response)
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_http.py", line 777, in hf_raise_for_status
+    raise _format(RevisionNotFoundError, message, response, repo_type=repo_type, repo_id=repo_id) from e
+huggingface_hub.errors.RevisionNotFoundError: 404 Client Error. (Request ID: Root=1-69f85b39-4deee3367960331643bfa963;0a1b32bb-6808-4d3c-ab3b-c0b4f3264dad)
+
+Revision Not Found for url: https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/5a9b4584/config.json.
+Invalid rev id: 5a9b4584
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/bin/lm_eval", line 8, in <module>
+    sys.exit(cli_evaluate())
+             ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/__main__.py", line 10, in cli_evaluate
+    parser.execute(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/harness.py", line 60, in execute
+    args.func(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/run.py", line 379, in _execute
+    results = simple_evaluate(
+              ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/utils.py", line 498, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/evaluator.py", line 239, in simple_evaluate
+    lm = lm_eval.api.registry.get_model(model).create_from_arg_obj(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/api/model.py", line 180, in create_from_arg_obj
+    return cls(**arg_dict, **additional_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 190, in __init__
+    self._get_config(
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 568, in _get_config
+    self._config = transformers.AutoConfig.from_pretrained(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/models/auto/configuration_auto.py", line 374, in from_pretrained
+    config_dict, unused_kwargs = PreTrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/configuration_utils.py", line 680, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/configuration_utils.py", line 735, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 278, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 461, in cached_files
+    raise OSError(
+OSError: 5a9b4584 is not a valid git identifier (branch name, tag name or commit id) that exists for this model name. Check the model page at 'https://huggingface.co/meta-llama/Llama-3.2-3B' for available revisions.
+[run] task=mmlu n=5 → /workspace/p9_lora_eval/results/lora_mmlu_dir
+[done] task=mmlu rc=1 wall=7s
+[FAIL] tail of /workspace/p9_lora_eval/results/mmlu.log:
+    hf_raise_for_status(response)
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_http.py", line 777, in hf_raise_for_status
+    raise _format(RevisionNotFoundError, message, response, repo_type=repo_type, repo_id=repo_id) from e
+huggingface_hub.errors.RevisionNotFoundError: 404 Client Error. (Request ID: Root=1-69f85b40-17877c835d89cb0547c6abca;3a01bc50-9d37-4753-ae7c-501741989a65)
+
+Revision Not Found for url: https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/5a9b4584/config.json.
+Invalid rev id: 5a9b4584
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/bin/lm_eval", line 8, in <module>
+    sys.exit(cli_evaluate())
+             ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/__main__.py", line 10, in cli_evaluate
+    parser.execute(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/harness.py", line 60, in execute
+    args.func(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/run.py", line 379, in _execute
+    results = simple_evaluate(
+              ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/utils.py", line 498, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/evaluator.py", line 239, in simple_evaluate
+    lm = lm_eval.api.registry.get_model(model).create_from_arg_obj(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/api/model.py", line 180, in create_from_arg_obj
+    return cls(**arg_dict, **additional_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 190, in __init__
+    self._get_config(
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 568, in _get_config
+    self._config = transformers.AutoConfig.from_pretrained(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/models/auto/configuration_auto.py", line 374, in from_pretrained
+    config_dict, unused_kwargs = PreTrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/configuration_utils.py", line 680, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/configuration_utils.py", line 735, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 278, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 461, in cached_files
+    raise OSError(
+OSError: 5a9b4584 is not a valid git identifier (branch name, tag name or commit id) that exists for this model name. Check the model page at 'https://huggingface.co/meta-llama/Llama-3.2-3B' for available revisions.
+[run] task=triviaqa n=0 → /workspace/p9_lora_eval/results/lora_triviaqa_dir
+[done] task=triviaqa rc=1 wall=7s
+[FAIL] tail of /workspace/p9_lora_eval/results/triviaqa.log:
+    hf_raise_for_status(response)
+  File "/usr/local/lib/python3.11/dist-packages/huggingface_hub/utils/_http.py", line 777, in hf_raise_for_status
+    raise _format(RevisionNotFoundError, message, response, repo_type=repo_type, repo_id=repo_id) from e
+huggingface_hub.errors.RevisionNotFoundError: 404 Client Error. (Request ID: Root=1-69f85b47-06b28cf40e8f1d5414e67ecb;c9f5606b-9495-4043-b5b4-7ae0356ad8a0)
+
+Revision Not Found for url: https://huggingface.co/meta-llama/Llama-3.2-3B/resolve/5a9b4584/config.json.
+Invalid rev id: 5a9b4584
+
+The above exception was the direct cause of the following exception:
+
+Traceback (most recent call last):
+  File "/usr/local/bin/lm_eval", line 8, in <module>
+    sys.exit(cli_evaluate())
+             ^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/__main__.py", line 10, in cli_evaluate
+    parser.execute(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/harness.py", line 60, in execute
+    args.func(args)
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/_cli/run.py", line 379, in _execute
+    results = simple_evaluate(
+              ^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/utils.py", line 498, in _wrapper
+    return fn(*args, **kwargs)
+           ^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/evaluator.py", line 239, in simple_evaluate
+    lm = lm_eval.api.registry.get_model(model).create_from_arg_obj(
+         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/api/model.py", line 180, in create_from_arg_obj
+    return cls(**arg_dict, **additional_config)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 190, in __init__
+    self._get_config(
+  File "/usr/local/lib/python3.11/dist-packages/lm_eval/models/huggingface.py", line 568, in _get_config
+    self._config = transformers.AutoConfig.from_pretrained(
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/models/auto/configuration_auto.py", line 374, in from_pretrained
+    config_dict, unused_kwargs = PreTrainedConfig.get_config_dict(pretrained_model_name_or_path, **kwargs)
+                                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/configuration_utils.py", line 680, in get_config_dict
+    config_dict, kwargs = cls._get_config_dict(pretrained_model_name_or_path, **kwargs)
+                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/configuration_utils.py", line 735, in _get_config_dict
+    resolved_config_file = cached_file(
+                           ^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 278, in cached_file
+    file = cached_files(path_or_repo_id=path_or_repo_id, filenames=[filename], **kwargs)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/usr/local/lib/python3.11/dist-packages/transformers/utils/hub.py", line 461, in cached_files
+    raise OSError(
+OSError: 5a9b4584 is not a valid git identifier (branch name, tag name or commit id) that exists for this model name. Check the model page at 'https://huggingface.co/meta-llama/Llama-3.2-3B' for available revisions.
+[orch] complete

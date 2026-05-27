@@ -1,0 +1,31 @@
+// examples/03_self_test.hexa — Quick start #3: invoke self-test gate.
+//
+// Demonstrates the `self-test` subcmd: verifies hexa.toml, canonical
+// entry, LICENSE, and status are all present and well-formed. This is
+// the same gate that `hx install anima-agent` runs in its post phase.
+//
+// Run:
+//   hexa run examples/03_self_test.hexa
+//
+// Expected output ends with:  __ANIMA_AGENT_SELFTEST__ PASS
+
+fn shq(s: str) -> str {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn main() {
+    let root = env("ANIMA_AGENT_ROOT")
+    let mut r = root
+    if r.len() == 0 { r = "/Users/ghost/core/anima-agent" }
+    let cli = r + "/cli/anima-agent.hexa"
+    println("=== anima-agent quick start #3: self-test ===")
+    let out = exec("hexa run " + shq(cli) + " self-test 2>&1")
+    println(out)
+    if out.contains("__ANIMA_AGENT_SELFTEST__ PASS") {
+        println("")
+        println("[example/03] PASS — self-test gate green")
+    } else {
+        eprintln("")
+        eprintln("[example/03] WARN — self-test did not return PASS marker")
+    }
+}

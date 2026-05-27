@@ -1,0 +1,56 @@
+{
+  "schema": "braket_kick_top3_v1",
+  "ts_utc": "2026-05-02T23:30:00Z",
+  "context": "After 7-axis enumeration (K1-K7) and cross-comparison with #121/#122, recommend three actionable kick paths ordered by ROI",
+  "top3": [
+    {
+      "rank": 1,
+      "id": "K5",
+      "name": "Atlas Banach fixed-point — theoretical citation upgrade ($0)",
+      "rationale": "Zero-cost (citation-only). 2024 result arxiv 2602.10296 (Quadratic Speedup for Computing Contraction Fixed Points) is the first quantum-fixed-point speedup theorem applicable to anima's §10.9 Banach meta-closure. Cite + optional 4-qubit SV1 toy demo. Unlocks publishable theoretical anchor at $0 marginal cost.",
+      "first_step_action": "Append §10.9 paragraph in anima paper citing arxiv 2602.10296 as theoretical grounding; optional 4-qubit SV1 contraction-T(ρ) demo (free)",
+      "first_step_cost_usd": 0.0,
+      "first_step_wallclock_min": 30,
+      "expected_outcome": "Publishable theoretical anchor; no claim of quantum speedup at anima scale (honest C3)",
+      "honest_c3_inheritance": "K5 c3 — quadratic speedup is asymptotic; anima Banach 45 lines q≈0.5 already <1ms classical"
+    },
+    {
+      "rank": 2,
+      "id": "K4",
+      "name": "F1 weight VQE on SV1 ($0 free demo)",
+      "rationale": "Zero-cost SV1 free tier. Even though no classical advantage at 3D, harmless and produces appendix-grade methodology figure showing quantum-variational pipeline. Pairs naturally with §121 QA6 free QRNG audit.",
+      "first_step_action": "3-qubit VQE ansatz for F1 weight optimization on SV1; 50 parameter-shift iterations; baseline scipy.optimize SLSQP comparison plot",
+      "first_step_cost_usd": 0.0,
+      "first_step_wallclock_min": 60,
+      "expected_outcome": "Same w* as classical (no improvement); publication appendix figure",
+      "honest_c3_inheritance": "K4 c3 — 3D variational classically trivial; quantum VQE practically useless but methodologically demonstrative"
+    },
+    {
+      "rank": 3,
+      "id": "K1",
+      "name": "CLM mind.tension trajectory audit-trail ($80.30, only if narrative-claim wanted)",
+      "rationale": "Only execute if user explicitly wants 'CLM trajectory has quantum-collapse provenance' marketing claim for paper / outreach (e.g., follow-on to N-22 Levin Lab message). $80 = 1000-bit IonQ batch buys CLM trajectory provenance for one full session. NULL OUTCOME LIKELY (PASS_NULL on T_rec / autocorrelation distinguishability) — value is provenance not power.",
+      "first_step_action": "Pre-fetch 1000 bits from IonQ Forte 1 ($80.30); run CLM 1000 timesteps with quantum-source kick; record trajectory + classical-PRNG-baseline twin run; KS-test on T_rec, autocorrelation",
+      "first_step_cost_usd": 80.30,
+      "first_step_wallclock_min": 90,
+      "expected_outcome": "PASS_NULL (no statistical difference); audit-trail value only",
+      "honest_c3_inheritance": "K1 c3 — single bit per step; no Lyapunov amplification in bounded CLM; pure provenance/audit value"
+    }
+  ],
+  "deferred_or_skip": {
+    "K2_paradigm_amplitude_search": "Skip — 64-config classical brute trivially fast; quantum nullified by constants",
+    "K3_ALM_LoRA_gradient_kick": "Skip — npj QI 2025 confirms quantum-noise-as-regularizer no advantage at NISQ; $80 wasted",
+    "K6_LIX_4gen_crystallize": "Defer — bounded 4-gen MCMC indistinguishable; pure narrative; revisit only if §61 P9 active",
+    "K7_5channel_GHZ_polarity": "Skip ($102 high-risk) — prefer #122 4a CHSH at $81.20 for nonlocality witness without binding-translation gap"
+  },
+  "cumulative_top3_cost": {
+    "rank1_only_K5": 0.0,
+    "rank1_plus_rank2": 0.0,
+    "all_top3_K5_K4_K1": 80.30
+  },
+  "alternative_user_decision_points": {
+    "default_zero_cost": "K5 + K4 ($0, 90min) — recommended pairing",
+    "narrative_track_full": "K5 + K4 + K1 ($80.30, 180min) — adds provenance",
+    "skip_entirely": "$0 — current #121 QA6 + #122 1d 3b coverage already sufficient"
+  }
+}

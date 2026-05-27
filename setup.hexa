@@ -1,0 +1,48 @@
+// anima/setup.hexa — Anima Setup (hexa-native)
+//
+// Usage:
+//   $HEXA anima/setup.hexa             # full install
+//   $HEXA anima/setup.hexa --minimal   # minimal install
+//
+// Hexa-only: no pip, no cargo, no maturin. The hexa binary itself ships with
+// all required runtime; this script only verifies presence and downloads
+// model checkpoints.
+
+fn main() {
+    let args = get_args()
+    let minimal = args.contains("--minimal")
+
+    println("=== Anima Setup (hexa-native) ===")
+
+    // ─── Hexa runtime check ───
+    let hexa_bin = env_get("HEXA", "/usr/local/bin/hexa")
+    if !file_exists(hexa_bin) {
+        println("[!!] hexa binary missing at " + hexa_bin)
+        println("     Install: see https://github.com/dancinlab/hexa-lang")
+        exit(1)
+    }
+    println("[OK] hexa runtime")
+
+    // ─── External system tools (best-effort) ───
+    if os_name() == "darwin" {
+        // macOS native libs (brew)
+        println("[--] macOS — verify brew installs of: portaudio, opencv, whisper-cli")
+    }
+
+    // ─── Checkpoint download ───
+    mkdir_p("checkpoints/clm_v2")
+    let ckpt = "checkpoints/clm_v2/final.pt"
+    if !file_exists(ckpt) {
+        println("downloading checkpoint...")
+        let ok = http_download(
+            "https://pub-41380137f47b4c4cbc79f5502935b2e9.r2.dev/clm-v2/latest.pt",
+            ckpt
+        )
+        if !ok {
+            println("[!!] checkpoint download failed (will retry on first run)")
+        }
+    }
+
+    println("[OK] setup complete")
+    println("Run: $HEXA anima/core/runtime/anima_runtime.hexa --web")
+}

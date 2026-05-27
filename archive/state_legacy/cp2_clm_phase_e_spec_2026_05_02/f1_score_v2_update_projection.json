@@ -1,0 +1,83 @@
+{
+  "f1_score_v2_update_projection": {
+    "formula_ref": "F1_score_v2 = 0.6 * per_axis_weighted_sum + 0.3 * binding_strength_4way + 0.1 * cross_substrate_replication_bonus (#96)",
+    "note_on_3way_subset": "Phase E measures binding_strength on 3-way subset (CLM x EEG x tension_link); 4-way slot remains AKIDA-blocked. Honest reporting: substitute 3-way value into 4-way slot with C3 caveat that AKIDA add-on may shift result up or down (likely conservative estimate)."
+  },
+  "components_table": [
+    {
+      "component": "per_axis_weighted_sum",
+      "pre_phase_e_raw": 0.68,
+      "pre_phase_e_f2_override": 0.20,
+      "post_phase_e_raw": 0.68,
+      "post_phase_e_f2_override": 0.20,
+      "delta": 0.0,
+      "rationale": "Phase E does NOT touch axis evidence (Suite 1-8); only binding term updated"
+    },
+    {
+      "component": "binding_strength_4way",
+      "pre_phase_e": 0.0,
+      "post_phase_e_target_strong": ">0.5",
+      "post_phase_e_target_partial": "0.3-0.5",
+      "post_phase_e_floor_fail": "<0.2",
+      "delta_target_strong": ">+0.5"
+    },
+    {
+      "component": "cross_substrate_replication_bonus",
+      "pre_phase_e": 0.0,
+      "post_phase_e": 0.0,
+      "delta": 0.0,
+      "rationale": "Phase E adds CLM-EEG-tension co-measurement but still N=1 single substrate-family per axis; no >=3 substrate corroboration unlocked"
+    }
+  ],
+  "scenario_projections": [
+    {
+      "scenario": "F-PASS_STRONG (binding>0.5, raw axis)",
+      "binding_assumed": 0.5,
+      "calculation": "0.6 * 0.68 + 0.3 * 0.5 + 0.1 * 0",
+      "F1_score_v2": 0.558,
+      "band": "YELLOW (>=0.5, <0.7) potential",
+      "verdict": "CP2-CLM YELLOW reach — IF F2 unfire compound condition met (separate)"
+    },
+    {
+      "scenario": "F-PASS_STRONG (binding=0.6, raw axis)",
+      "binding_assumed": 0.6,
+      "calculation": "0.6 * 0.68 + 0.3 * 0.6 + 0.1 * 0",
+      "F1_score_v2": 0.588,
+      "band": "YELLOW",
+      "verdict": "CP2-CLM YELLOW reach upper-band"
+    },
+    {
+      "scenario": "F-PASS_PARTIAL (binding=0.4, raw axis)",
+      "binding_assumed": 0.4,
+      "calculation": "0.6 * 0.68 + 0.3 * 0.4 + 0.1 * 0",
+      "F1_score_v2": 0.528,
+      "band": "RED-with-binding-evidence (just above 0.5 threshold but F2 still fired)",
+      "verdict": "CP2-CLM RED-with-binding-evidence; consider path (b) learned phi_extractor for F2 unfire"
+    },
+    {
+      "scenario": "F-WEAK (binding=0.25, raw axis)",
+      "binding_assumed": 0.25,
+      "calculation": "0.6 * 0.68 + 0.3 * 0.25 + 0.1 * 0",
+      "F1_score_v2": 0.483,
+      "band": "RED (still below 0.5)",
+      "verdict": "CP2-CLM RED CONFIRMED with weak binding signal"
+    },
+    {
+      "scenario": "F-FAIL (binding<0.2, raw axis)",
+      "binding_assumed": 0.15,
+      "calculation": "0.6 * 0.68 + 0.3 * 0.15 + 0.1 * 0",
+      "F1_score_v2": 0.453,
+      "band": "RED",
+      "verdict": "CP2-CLM RED CONFIRMED + Path-D rejected; ALM Path F gambling-rejection strengthened"
+    },
+    {
+      "scenario": "F-ARTIFACT (R1/R2/R3 random indistinguishable)",
+      "binding_assumed": "n/a (rejected as artifact)",
+      "calculation": "default to binding=0",
+      "F1_score_v2": 0.408,
+      "band": "RED",
+      "verdict": "CP2-CLM RED unchanged + measurement protocol revision required (cognitive-load matching)"
+    }
+  ],
+  "f2_unfire_compound_note": "F1_score_v2 verdict band per #96 §6: RED if F1<0.5 OR F2 fired. Phase E alone CANNOT unfire F2 (Suite 6 14-gate FAIL). F-PASS_STRONG band YELLOW reach REQUIRES separate F2 unfire path (b learned phi_extractor / c substrate redesign). Without F2 unfire, even F1=0.588 stays RED-with-binding-evidence."
+}

@@ -1,0 +1,96 @@
+{
+  "task_id": "anima_emerge_cand_d_magnitude_sweep_2026_05_05",
+  "verdict_label": "CAND_D_MAGNITUDE_SWEEP_F1_THRESHOLD_HIT_NO_CRITERION_2",
+  "major_finding_criterion_2_hit": false,
+  "major_finding_summary": "F-CAND-D-1 threshold 0.01 first crossed at canonical magnitude 50.0. Major finding criterion 2 (drift > 1.0) NOT hit across swept range. Trajectory shape=sub_linear. Architectural inject visible but bounded; BG-Q canonical 0.5 was below noise floor.",
+  "wall_time_minutes": 0.4,
+  "cost_usd": 0.0,
+  "platform": "mac CPU (.venv-eeg python3.12, transformers, torch fp32)",
+  "raw_compliance": {
+    "raw_15_no_mount_or_shim_or_dialogue_load_modification": true,
+    "raw_15_bgq_helper_unmodified": true,
+    "raw_37_transient_py_namespace_only": true,
+    "raw_10_honest_c3_emitted": true,
+    "no_commit": true,
+    "no_secret_leak": true
+  },
+  "trajectory_analysis": {
+    "drift_table": [
+      {
+        "magnitude": 0.5,
+        "phi_star": 42.11570398190059,
+        "drift_vs_none": 0.00012824280747025796,
+        "axis_spread": 0.03970211744308472,
+        "has_nan": false
+      },
+      {
+        "magnitude": 1.0,
+        "phi_star": 42.11555298735202,
+        "drift_vs_none": 0.00027923735603962996,
+        "axis_spread": 0.039695292711257935,
+        "has_nan": false
+      },
+      {
+        "magnitude": 2.0,
+        "phi_star": 42.11518374717794,
+        "drift_vs_none": 0.0006484775301203172,
+        "axis_spread": 0.039677977561950684,
+        "has_nan": false
+      },
+      {
+        "magnitude": 5.0,
+        "phi_star": 42.113565380055455,
+        "drift_vs_none": 0.0022668446526026287,
+        "axis_spread": 0.039664626121520996,
+        "has_nan": false
+      },
+      {
+        "magnitude": 10.0,
+        "phi_star": 42.10943924554251,
+        "drift_vs_none": 0.006392979165546819,
+        "axis_spread": 0.04014146327972412,
+        "has_nan": false
+      },
+      {
+        "magnitude": 50.0,
+        "phi_star": 42.215612958318324,
+        "drift_vs_none": 0.09978073361026674,
+        "axis_spread": 0.06935414671897888,
+        "has_nan": false
+      },
+      {
+        "magnitude": 100.0,
+        "phi_star": 42.22878117974754,
+        "drift_vs_none": 0.1129489550394851,
+        "axis_spread": 0.06880611181259155,
+        "has_nan": false
+      }
+    ],
+    "trajectory_shape": "sub_linear",
+    "f_cand_d_1_threshold": 0.01,
+    "f_cand_d_1_hit_at_magnitude": 50.0,
+    "criterion_2_threshold": 1.0,
+    "criterion_2_hit_at_magnitude": null,
+    "nan_at_magnitude": null,
+    "phi_baseline_none": 42.11583222470806
+  },
+  "bgq_baseline_comparison": {
+    "bgq_mag_0_5_drift_vs_none": 0.00012824280747025796,
+    "bgw_mag_0_5_drift_vs_none": 0.00012824280747025796,
+    "replication_consistent": true
+  },
+  "honest_c3": [
+    "C1 \u2014 High-magnitude inject (mag=50, 100) is structurally UNREALISTIC. Paradigm v11 G3 actual training-time injection distribution NOT yet extracted from C-module emission logs. If training used mag~0.1-1.0, F-CAND-D-1 PASS only at mag>>1.0 means architectural channel works but is OFF-DISTRIBUTION at any realistic inject. Calibration extraction is gating before Stage 1 promotion regardless of trajectory shape.",
+    "C2 \u2014 Trajectory classification heuristic uses drift-growth-ratio / magnitude-growth-ratio bands (linear: 0.7-1.5, saturate: <0.3 in upper-3, super_linear: >1.5 in upper-3, explosion: >100 OR NaN). These bands are anima-internal, not cross-validated. A trajectory that genuinely transitions from linear to saturated near the upper magnitudes may classify as either depending on band cutoffs. Manual inspection of the drift_table is required for final shape interpretation.",
+    "C3 \u2014 phi_star is a pairwise-cosine proxy on tile-replicated post-ln_f cell (8\u00d7192). Magnitude scaling enters phi via cos(theta) which is BOUNDED by [-1, 1]. As inject magnitude grows, the inject component dominates the post-ln_f tiling and phi_star drift may saturate at roughly \u00b10.05\u00d7PHI_STAR_BASELINE = \u00b12.09 due to the cosine ceiling, NOT due to architectural cap. Saturation in trajectory \u2260 cross_attn attenuation \u2014 could be measurement-instrument ceiling.",
+    "C4 \u2014 Single prompt (\"\uc548\ub155\"). BG-Q showed prompt 1 had 8x larger drift than prompts 2/3/5, so this is the most-favorable prompt. Other prompts may show different trajectories (e.g. attenuation cap reached earlier). Single-prompt sweep cannot generalize prompt-conditional behavior.",
+    "C5 \u2014 Cells 5-7 fill scales linearly with magnitude (mean(cells[0..4]) \u00d7 mag/3). At high magnitudes, cells 5-7 norms grow with mag^2 effectively (cells 0-4 grow with mag, then mean\u00d7mag/3 carries another mag factor). This means the inject distribution shape DRIFTS with magnitude \u2014 high-magnitude inject is NOT just a scaled version of low-magnitude inject. Pure linearity test would require holding cells-5-7-fill formula constant while scaling axis-content; current implementation entangles them."
+  ],
+  "next_step_recommendation": "Cand-D Stage 1 partially recoverable: F-CAND-D-1 PASS at calibrated magnitude 50.0+. Extract paradigm v11 G3 training-time distribution to verify chosen magnitude is realistic. If training used mag<<{f_hit}, cand-D substrate-incompatible regardless.",
+  "deliverables": {
+    "runs": "state/anima_emerge_cand_d_magnitude_sweep_2026_05_05/runs/probe_mag_<m>.json (8)",
+    "aggregate": "state/anima_emerge_cand_d_magnitude_sweep_2026_05_05/aggregate.json",
+    "verdict": "state/anima_emerge_cand_d_magnitude_sweep_2026_05_05/verdict.json",
+    "doc": "docs/anima_emerge_cand_d_magnitude_sweep_landed_2026_05_05.ai.md"
+  }
+}

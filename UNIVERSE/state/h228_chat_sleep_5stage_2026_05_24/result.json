@@ -1,0 +1,47 @@
+{
+  "id": "H_228",
+  "slug": "chat-sleep-5stage-phi-profile",
+  "date": "2026-05-24",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "directive": "CLAUDE.md @D a_chat_sleep_imagination — WAKE/N1/N2/N3/REM 5-stage substrate context (NOT boolean emit gate)",
+  "phi_primitive": "RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "warm": 8, "rule": 110, "reps": 5, "n_bins": 4, "boundary": "periodic" },
+  "regimes": {
+    "wake": "rule 110 + flip 5 sites/step (high drive) · recurrent · no decay",
+    "n1":   "rule 110 + flip 3 sites/step (mid drive) · recurrent · no decay",
+    "n2":   "rule 110 + flip 2 sites/step (low-mid drive) · recurrent · sparse decay (i+t)%4==0 → 0",
+    "n3":   "rule 110 + flip 1 site/step (low drive) · recurrent · dense decay (i+t)%2==0 → 0 (H_222 NREM mirror, deepest)",
+    "rem":  "rule 110 + flip 1 site/step (low drive) · recurrent · no decay (H_222 REM mirror, dream stage)"
+  },
+  "phi_mean": {
+    "wake": 1.11636,
+    "n1":   0.675995,
+    "n2":   0.743594,
+    "n3":   1.42684,
+    "rem":  0.545746
+  },
+  "metrics": {
+    "rem_wake_rel_diff": 0.511139,
+    "rem_n3_relative_gap": -1.61448
+  },
+  "criteria": {
+    "C1_monotone_wake_to_n3": { "metric": "Φwake>Φn1>Φn2>Φn3", "verdict": "FAIL" },
+    "C2_rem_approx_wake":    { "metric": "|Φrem-Φwake|/Φwake ≤ 0.20", "value": 0.511139, "verdict": "FAIL" },
+    "C3_rem_dom_n3":         { "metric": "(Φrem-Φn3)/Φrem ≥ 0.50", "value": -1.61448, "verdict": "FAIL" },
+    "C4_n2_above_n3":        { "metric": "Φn2 > Φn3", "verdict": "FAIL" },
+    "C5_byte_identical":     { "metric": "deterministic re-run", "verdict": "PASS" }
+  },
+  "falsifiers": {
+    "F1_ordering_broken":  { "verdict": "FAIL" },
+    "F2_rem_ll_wake":      { "verdict": "FAIL" },
+    "F3_rem_le_n3":        { "verdict": "FAIL" },
+    "F4_byte_diff":        { "verdict": "PASS" },
+    "F5_phi_negative":     { "verdict": "PASS" }
+  },
+  "n_pass": 1,
+  "verdict_rule": "SUPPORTED iff C1∧C2∧C3 (core) · PARTIAL if ≥3/5 ∧ !F3 !F5 · FALSIFIED if ranking inverted",
+  "verdict": "FALSIFIED"
+}

@@ -1,0 +1,45 @@
+{
+  "hypothesis": "H_302",
+  "slug": "engine-determinism-diagnosis",
+  "title": "Engine determinism CONFIRMED + H_301 silent bug IDENTIFIED — rule 60 n=5 st=21 cap=4 = 16.5 (H_297 was correct, H_301's 18.5 was sort_asc-in-place artifact)",
+  "date": "2026-05-26",
+  "question": "Is eca_tpm × big_phi_bounded deterministic? Where does H_297's 16.5 (rule 60 n=5 st=21 cap=4) come from given H_301 measured 18.5?",
+  "engine": "HEXAD/IIT4/lib + stdlib iit4_bounded — diagnostic 20-call probe (no new measurement code, just instrumentation)",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · ~30s wall",
+  "findings": {
+    "F302_1_REPRO_INTRA": "PASS — rule 60 n=5 st=21 cap=4 called twice both = 16.5 (engine intra-process deterministic)",
+    "F302_2_ORDER_INDEP": "PASS — panel A [rule 60 → rule 90] gives rule 60 = 16.5; panel B [rule 90 → rule 60] also gives rule 60 = 16.5 (no shared mutable state between rule calls)",
+    "F302_3_RULE_90_INT": "PASS — rule 90 n=5 st=21 cap=4 = 19.5 (cross-H gold standard with H_297/H_300 reproduced exactly)",
+    "F302_4_RULE_60_CURRENT_H301": "FAIL (in the right direction) — H_301's 18.5 NOT reproduced; true value at (rule=60, n=5, st=21, cap=4) = 16.5, matching H_297 exactly. H_301's reported 18.5 was a bug, not the engine.",
+    "F302_5_LOC_16_5": "PASS — 16.5 found at n=5 st=21 cap=4 (exactly the H_297-reported location). H_297's 16.5 IS the true value; no artifact / different state needed.",
+    "F302_6_BOUND": "PASS — all measured values ≥ 0"
+  },
+  "checks": "5 PASS / 1 FAIL — verdict 🟢 SUPPORTED-NUMERICAL: engine deterministic, H_297 16.5 verified, H_301 18.5 = sort_asc-in-place bug exposed",
+  "verdict_class": "🟢 SUPPORTED-NUMERICAL — F302.1/2/3/5/6 PASS confirm engine determinism + H_297 reproducibility. F302.4 FAIL exposes the silent bug in H_301 (and latent in H_300, but masked by rule 90's 3-distinct-value plateau).",
+  "h301_bug_root_cause": {
+    "symptom": "H_301 reported rule 60 n=5 st=21 cap=4 = 18.5, but true value is 16.5",
+    "root_cause": "sort_asc(values) in H_301 (and H_300) mutates the `values` array IN PLACE (hexa-lang `let mut out = arr` is reference-alias, not deep copy). After `let sorted = sort_asc(values)`, the subsequent `values[21]` read returns sorted[21], NOT the original st=21 measurement.",
+    "why_h300_masked": "rule 90 at n=5 cap=4 has only 3 distinct values {19, 19.5, 27.5} with multiplicities (8, 16, 8). Sorted positions 8..23 are all 19.5 — so sorted[21] = 19.5 = true rule90.st=21 (by coincidence of distribution shape). H_300 reported correctly only because of this coincidence.",
+    "why_h301_exposed": "rule 60 has 6 distinct values, rule 30 has 29, rule 110 has 32. sorted[21] ≠ values[21] for any of these. H_301's reported `st=21 (alt)` values for rule 60/110/30 were ALL sorted[21] (i.e. roughly p65), not the true st=21 measurements.",
+    "scope_of_invalidation": "H_301's individual `st=21 (alt)` values for rule 60/110/30 are CORRUPTED. The rule-90 case in H_300 happened to give correct value by coincidence. ALL OTHER H_301 statistics (min/p25/median/p75/max/mean, count Phi>1, distinct-value count) use the sorted array directly and ARE VALID. The F301.4-6 PASS verdict ('alt-state in [p25, p75]') was a tautology because sorted[21] is by definition between sorted[8] and sorted[24].",
+    "fix": "In future H, either (a) deep-copy before sort: `let sorted = sort_asc(copy_array(values))`, OR (b) avoid touching `values` after sort: keep a separate `st21_val = values[21]` snapshot BEFORE calling sort_asc. The bug is a hexa-lang reference-aliasing gotcha that warrants a hexa-lang inbox patch note."
+  },
+  "h297_h300_h301_consolidated_truth": {
+    "rule_90_n5_st21_cap4": 19.5,
+    "rule_60_n5_st21_cap4": 16.5,
+    "rule_110_n5_st21_cap4": "unknown — H_301's 31.6855 was sorted[21] artifact; needs re-measurement",
+    "rule_30_n5_st21_cap4":  "unknown — H_301's 26.1019 was sorted[21] artifact; needs re-measurement"
+  },
+  "honest_limits": [
+    "L1: H_302 only re-measures rule 60 in detail; rule 110/30 true st=21 values STILL unknown (deferred to H_303). H_301 distribution stats (min/p25/median/p75/max/mean) remain valid because they use the sorted array directly.",
+    "L2: hexa-lang reference-aliasing semantics (let mut out = arr aliases instead of copying) is a language-level gotcha; H_302 only documents the symptom — full hexa-lang ownership/copy semantics 정밀 spec 는 hexa-lang repo issue 후보.",
+    "L3: stdlib stdlib/consciousness/iit4_bounded version 변동은 점검 안 함 (cross-H rule-60 가 같은 16.5 reproduce 했으므로 변동 가능성 낮음 but not certain).",
+    "L4: ECA proxy + toy substrate — diagnostic H 도 같은 scope.",
+    "L5: H_300's reported st=21 = 19.5 was coincidentally correct (rule 90's 3-plateau). 다른 N 에서 rule 90 도 같은 coincidence 보장은 없음 — H_300 의 result.json st=21 보고도 sorted[21]일 가능성이지만 rule 90의 lattice-symmetry 가 silent-mask 했을 가능성 ↑."
+  ],
+  "verify_fence": {
+    "claim": "H_302 confirms engine determinism (intra-process + order-independent) and identifies H_301's silent `sort_asc`-in-place bug that corrupted rule 60/110/30 'st=21 alt-state' reports. True value at (rule=60, n=5, st=21, cap=4) = 16.5, exactly matching H_297. H_301 distribution statistics (min/p25/median/p75/max/mean, count above 1, distinct-value count) all remain VALID because they read the sorted array directly. The rule-signature finding (distinct count = 3/6/29/32 across rules 90/60/30/110) is uncontaminated. Verdict 🟢 SUPPORTED-NUMERICAL — deterministic toy-substrate diagnosis.",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic (bounded lower-bound), interpretation fenced"
+  }
+}

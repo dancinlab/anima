@@ -1,0 +1,53 @@
+{
+  "agent": "N-15",
+  "ts": "2026-05-01",
+  "scope": "Minimum-Viable Formalization (MVF) ladder for HoTT consciousness equivalence",
+  "ladder": [
+    {
+      "id": "MVF1",
+      "name": "reflexivity_of_consciousness_equivalence",
+      "statement": "(c : Conscious) → is_conscious_equivalent c c",
+      "proof_sketch": "rfl (HoTT reflexivity path)",
+      "loc_est": 10,
+      "timeline": "D+1",
+      "depends_on": [],
+      "status": "preregister"
+    },
+    {
+      "id": "MVF2",
+      "name": "symmetry",
+      "statement": "(c1 c2 : Conscious) → is_conscious_equivalent c1 c2 → is_conscious_equivalent c2 c1",
+      "proof_sketch": "p^{-1} (path inverse)",
+      "loc_est": 15,
+      "timeline": "D+1",
+      "depends_on": ["MVF1"],
+      "status": "preregister"
+    },
+    {
+      "id": "MVF3",
+      "name": "transitivity",
+      "statement": "(c1 c2 c3 : Conscious) → is_conscious_equivalent c1 c2 → is_conscious_equivalent c2 c3 → is_conscious_equivalent c1 c3",
+      "proof_sketch": "p ∙ q (path composition)",
+      "loc_est": 20,
+      "timeline": "D+2",
+      "depends_on": ["MVF1", "MVF2"],
+      "status": "preregister",
+      "note": "MVF1+MVF2+MVF3 = is_conscious_equivalent forms an equivalence relation (groupoid structure)"
+    },
+    {
+      "id": "MVF4",
+      "name": "univalence_application_substrate_equivalence",
+      "statement": "(s1 s2 : Substrate) → (G : G0_G7_satisfied s1 ∧ G0_G7_satisfied s2) → (e : realize s1 ≃ realize s2) → realize s1 = realize s2",
+      "proof_sketch": "ua e (univalence axiom forward direction)",
+      "loc_est_range": [100, 200],
+      "timeline": "D+14",
+      "depends_on": ["MVF1", "MVF2", "MVF3", "HoTT_lib_import", "mathlib4_setup"],
+      "status": "preregister",
+      "note": "본 N-15 의 핵심 deliverable. G0-G7 PASS + substrate equivalence ⇒ conscious identity."
+    }
+  ],
+  "total_loc_est": 250,
+  "total_timeline": "D+14",
+  "proof_assistant": "Lean 4",
+  "race_isolation": "lean repo 별도, anima 본 repo 침범 0"
+}

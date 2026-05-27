@@ -1,0 +1,18 @@
+{
+  "slug": "brain_m1_synthetic_16ch_2026_05_25",
+  "n_ch_raw": 16,
+  "n_region": 4,
+  "n_samp": 64,
+  "sys_state": 1,
+  "engine": "stdlib/consciousness/iit4_bigphi.big_phi (exact)",
+  "adapter": "BRAIN/eeg/eeg_to_tpm.hexa (PR #547)",
+  "configs": [
+    {"name": "A_fully_coupled",     "big_phi": 1.9419, "total": 1.98845, "sum_phi_d": 0.722669, "sum_phi_r": 1.26579, "n_dist": 8.0},
+    {"name": "B_region_coupled",    "big_phi": 0.0796922, "total": 0.637687, "sum_phi_d": 0.500959, "sum_phi_r": 0.136728, "n_dist": 5.0},
+    {"name": "C_fully_independent", "big_phi": 3.28786, "total": 4.99518, "sum_phi_d": 1.99593, "sum_phi_r": 2.99925, "n_dist": 11.0}
+  ],
+  "ordering_A_ge_B": true,
+  "ordering_B_ge_C": false,
+  "ordering_A_ge_C": false,
+  "determinism": true
+}

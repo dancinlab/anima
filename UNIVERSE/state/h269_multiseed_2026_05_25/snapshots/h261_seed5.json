@@ -1,0 +1,42 @@
+{
+  "hypothesis": "H_261",
+  "slug": "embryogenesis-gradient",
+  "domain": "LIFE",
+  "title": "embryogenesis-gradient — position-dependent differentiation under a spatial morphogen drive (French-flag analog)",
+  "date": "2026-05-25",
+  "host": "mac-local",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 42,
+  "params": {"d_model": 8, "lattice_N": 12, "lattice_N_small": 6, "steps": 20, "n_bins": 3, "s_flat": 0.0, "s_mid": 1.0, "s_steep": 4.0, "R_HIGH": 0.5, "R_LOW": 0.2},
+  "sweep": {
+    "flat":  { "regime": "flat",  "steepness": 0.0, "n": 12, "r": 0.0571571, "n_regions": 3, "state_min": 0.956325, "state_max": 1.80647, "states": [1.37787, 1.16201, 1.61067, 1.1817, 1.74308, 1.6168, 1.43336, 1.28466, 1.453, 1.64058, 1.80647, 0.956325] },
+    "mid":   { "regime": "mid",   "steepness": 1.0, "n": 12, "r": 0.930615, "n_regions": 3, "state_min": 1.56227, "state_max": 8.57749, "states": [1.56227, 2.56759, 3.59335, 4.93786, 5.37286, 7.11853, 8.30124, 8.5069, 8.43252, 8.57749, 8.56927, 8.56217] },
+    "steep": { "regime": "steep", "steepness": 4.0, "n": 12, "r": 0.758788, "n_regions": 3, "state_min": 1.07425, "state_max": 9.99414, "states": [1.07425, 5.71048, 8.38602, 8.57366, 8.77991, 9.07938, 9.47929, 9.39836, 9.68629, 9.8323, 9.96388, 9.99414] },
+    "steep_small": { "regime": "steep_small", "steepness": 4.0, "n": 6, "r": 0.692683, "n_regions": 2, "state_min": 1.23276, "state_max": 9.99966, "states": [1.23276, 9.34233, 9.99695, 9.99918, 9.99958, 9.99966] }
+  },
+  "derived": {
+    "r_abs_steep": 0.758788,
+    "r_abs_flat":  0.0571571,
+    "r_abs_mid":   0.930615,
+    "axis_gap":    0.701631
+  },
+  "criteria": {
+    "C1_axis_formation":    true,
+    "C2_gradient_dependence": true,
+    "C3_differentiation":   true,
+    "C4_determinism":       false
+  },
+  "falsifiers": {
+    "F1_AXIS_FORMATION":   { "metric": "|r| steep >= R_HIGH", "value": 0.758788, "verdict": "PASS" },
+    "F2_GRADIENT_DEPEND":  { "metric": "|r| flat <= R_LOW", "value": 0.0571571, "verdict": "PASS" },
+    "F3_DIFFERENTIATION":  { "metric": "steep n_regions >= 2", "value": 3, "verdict": "PASS" },
+    "F4_DETERMINISM":      { "metric": "re-run byte-equal", "verdict": "FAIL" },
+    "F5_MONOTONE_DRIVE":   { "metric": "|r| steep >= |r| flat", "value": 0.701631, "verdict": "PASS" }
+  },
+  "n_criteria_pass": 3,
+  "n_falsifier_pass": 4,
+  "verdict": "SUPPORTED",
+  "cross_link": {"H_220": "infant-mirror sister (developmental axis)", "H_201": "asymmetric-division sister"}
+}

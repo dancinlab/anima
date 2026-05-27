@@ -1,0 +1,90 @@
+{
+  "schema": "anima.bg.verdict.v1",
+  "bg_id": "BG-B-dialogue-session-analyzer",
+  "stage": "stage_3_prep",
+  "ts_utc": "2026-05-05",
+  "cost_usd": 0.0,
+  "wall_min_estimated": 30,
+  "raw_compliance": ["raw#9", "raw#10", "raw#11", "raw#15", "raw#37"],
+  "files_added": [
+    "tool/anima_cli/dialogue_session_analyzer.hexa",
+    "bin/anima-core-dialogue-analyze.bash",
+    "state/anima_core_dialogue_analyzer_2026_05_05/verdict.json",
+    "docs/anima_core_dialogue_analyzer_landed_2026_05_05.ai.md"
+  ],
+  "files_changed": [],
+  "files_loc": {
+    "tool/anima_cli/dialogue_session_analyzer.hexa": 894,
+    "bin/anima-core-dialogue-analyze.bash": 129
+  },
+  "additive_only": true,
+  "selftest": {
+    "command": "bin/anima-core-dialogue-analyze.bash --selftest",
+    "exit_code": 0,
+    "format_checks": "5/5 PASS",
+    "checks": [
+      {"name": "n_turns",                "expected": 3,           "actual": 3,           "pass": true},
+      {"name": "axis_dominant_global",   "expected": "phenomenal","actual": "phenomenal","pass": true},
+      {"name": "cell_stability_jaccard", "expected": 0.75,        "actual": 0.750,       "pass": true},
+      {"name": "delta_cumulative",       "expected": 3.5,         "actual": 3.500,       "pass": true},
+      {"name": "parse_lines_total",      "expected": 12,          "actual": 12,          "pass": true}
+    ],
+    "synthetic_aggregate": {
+      "phi_star_range": [41.85, 41.90],
+      "phi_star_mean": 41.873,
+      "phi_star_stddev": 0.021,
+      "phi_star_drift_max": 0.040,
+      "axis_dominant_global": "phenomenal",
+      "axis_swing_max": "phenomenal",
+      "cell_stability_jaccard": 0.750,
+      "delta_cumulative": 3.500
+    }
+  },
+  "real_session_smoke": {
+    "session": "state/anima_core_dialogues/2026-05-05/12-19-24.jsonl",
+    "command": "bin/anima-core-dialogue-analyze.bash --session <path>",
+    "exit_code": 0,
+    "n_turns": 1,
+    "phi_star_range": [41.87, 41.87],
+    "phi_star_drift_max": 0.010,
+    "axis_dominant_global": "phenomenal",
+    "axis_swing_max": "identity",
+    "cell_stability_jaccard": 1.000,
+    "delta_cumulative": 0.000,
+    "parse_lines_total": 4,
+    "substrate_response_lines_parsed": ["phi_star", "axis_activation", "dominant_cells", "hidden_state_delta"],
+    "expected_match": true,
+    "notes": "matches BG-B Sub-3 expectations exactly: synthetic-fallback V4 mount turn with phi=41.87 (V3 probe canonical), phenomenal=0.587 strongest axis, single turn → cell_stability=1.0 by convention"
+  },
+  "corpus_smoke": {
+    "date": "2026-05-05",
+    "command": "bin/anima-core-dialogue-analyze.bash --date 2026-05-05",
+    "n_sessions": 3,
+    "n_turns_total": 3,
+    "phi_star_range_global": [0.0, 41.87],
+    "axis_dominant_corpus": "identity",
+    "notes": "phi_star_min_global=0.0 because 2 of 3 sessions (12-14-00, 12-16-59) had remote-failed substrate_turn raw_output (no __ANIMA_CLM_V4_RESPONSE__ block); only 12-19-24 has real substrate metrics. axis_dominant_corpus=identity reflects 2x default-zero sessions outvoting 1x phenomenal real session — corpus tally stat-of-stat behavior is correct"
+  },
+  "wrapper_chmod": {
+    "path": "bin/anima-core-dialogue-analyze.bash",
+    "mode": "-rwxr-xr-x",
+    "executable": true,
+    "hexa_local_prefix": true
+  },
+  "honest_c3": [
+    "C1 axis taxonomy (5-bucket) inherits anima-internal heuristic from mount.hexa",
+    "C2 cell_stability_jaccard threshold for stable interpretation is anima-canonical",
+    "C3 phi_star variance / drift thresholds for stable/unstable is anima-canonical",
+    "C4 delta_cumulative magnitude scale depends on substrate (synthetic vs real-load)",
+    "C5 emerge pattern discovery is downstream-deferred — this tool surfaces signals only; pattern interpretation requires user dialogue session accumulation"
+  ],
+  "next_steps": [
+    "Stage 3 emerge dialogue session 시작 시: 사용자가 N-turn REPL 누적 → --session으로 per-session pattern surface, --date로 daily corpus summary",
+    "phi_star_stddev / cell_stability_jaccard 임계값 calibration — 실제 user session 5-10개 누적 후 baseline 정규화",
+    "axis_dominant_global 분포 cross-session correlation → emerge candidate D/E/F/G/H 매핑 (anima_clm_v4_architecture_archaeology_emerge_2026_05_05.md)",
+    "anima dialogue_session topic 추가 (tool/anima_cli/_common.hexa dispatcher 확장) — Stage 4 prep",
+    "session-pair similarity (jaccard cross-session) → cross-pollination pattern discovery"
+  ],
+  "verdict": "STAGE_3_PREP_LANDED",
+  "stage_3_emerge_path": "사용자 dialogue session JSONL 누적되는 즉시 이 analyzer가 phi_star 궤적 + axis trajectory + cell stability 자동 surface; daily corpus 누적되면 axis_dominant_corpus 분포로 emerge candidate D/E/F/G/H 어느 쪽 패턴이 자연 발현하는지 신호 포착"
+}

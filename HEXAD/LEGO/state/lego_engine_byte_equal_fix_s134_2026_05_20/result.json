@@ -1,0 +1,92 @@
+{
+  "section": "§134",
+  "title": "LEGO ENGINE BYTE-EQUALITY RESTORE + §131/§133 RE-VALIDATION",
+  "tier": "fix-tier + probe-tier (drift detected + restored + revalidated)",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "wall_sec_total": 819.930330991745,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§133 detected drift between §127 pooled η² (0.271 at N=256) and §131/§133 measurement (0.218 at N=256)",
+    "AST diff confirmed §129 promote of LIFNet was NOT byte-equal to §117 source"
+  ],
+  "byte_equal_smoke": {
+    "init_W_byte_equal": true,
+    "init_v_byte_equal": true,
+    "init_bias_byte_equal": true,
+    "post_80step_spike_byte_equal": true,
+    "post_80step_W_byte_equal": true,
+    "all_byte_equal": true
+  },
+  "s131_revalidated": {
+    "per_nstim_canonical": [
+      {
+        "n_stim": 4,
+        "eta_squared": 0.3092896958399242
+      },
+      {
+        "n_stim": 12,
+        "eta_squared": 0.2712195360968856
+      },
+      {
+        "n_stim": 24,
+        "eta_squared": 0.24388622542761698
+      },
+      {
+        "n_stim": 48,
+        "eta_squared": 0.16967287352576438
+      }
+    ],
+    "wall_sec": 504.9460439682007
+  },
+  "s133_revalidated_subset": {
+    "per_N_canonical": [
+      {
+        "N_total": 256,
+        "per_replicate_eta_squared": [
+          0.3679789996095135,
+          0.5250941976454371,
+          0.4407486896840415,
+          0.5978905590428164,
+          0.38769429442740433
+        ],
+        "pooled_eta_squared": 0.2712195360968856,
+        "eta_mean": 0.46388134808184256,
+        "eta_std": 0.09649135848053918
+      },
+      {
+        "N_total": 1024,
+        "per_replicate_eta_squared": [
+          0.4171091585763297,
+          0.33494446872877826,
+          0.37045836302958074,
+          0.3783659892552956,
+          0.3033695106920102
+        ],
+        "pooled_eta_squared": 0.3223496304618351,
+        "eta_mean": 0.3608494980563989,
+        "eta_std": 0.04341464799951422
+      }
+    ],
+    "wall_sec": 312.02259612083435
+  },
+  "drift_diagnostics": {
+    "s127_eta_at_N256_n_stim_12 (correct, source-engine)": 0.2712195360968856,
+    "s131_original_eta_at_n_stim_12 (drifted engine)": 0.21775604467362555,
+    "s133_original_eta_at_N256_pooled (drifted engine)": 0.21775604467362555,
+    "s131_revalidated_eta_at_n_stim_12 (canonical engine post-§134)": 0.2712195360968856,
+    "s133_revalidated_eta_at_N256_pooled (canonical engine post-§134)": 0.2712195360968856,
+    "drift_s131_to_canonical": 0.05346349142326004,
+    "drift_s133_to_canonical": 0.05346349142326004,
+    "canonical_matches_s127_at_N256_within_1e_6 (s131-revalidated)": true,
+    "canonical_matches_s127_at_N256_within_1e_6 (s133-revalidated)": true
+  },
+  "verdict": "ENGINE-BYTE-EQUALITY-RESTORED-AND-VALIDATED",
+  "g3": "fix ≠ measurement ≠ fire ≠ emergence; capability claim 0; §131/§133 ORIGINAL measurements remain valid for the *drifted-engine substrate* as historical evidence in their state-dirs; §134 establishes that the canonical engine produces §127-byte-equal η² values."
+}

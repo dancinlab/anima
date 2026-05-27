@@ -1,0 +1,154 @@
+{
+  "battery": "S161-FIRE eval - Psi-JEPA-COUPLE verdict",
+  "ckpt": "ckpt_s161_psicouple.pt",
+  "corpus": "corpus_s101.jsonl",
+  "cfg": {
+    "d_model": 768,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "n_layer": 12,
+    "block_size": 128,
+    "lr": 0.0003,
+    "bsz": 32,
+    "steps": 3000,
+    "seed": 1337,
+    "lambda_psi": 1.0,
+    "lambda_ce": 0.1,
+    "log_every": 75,
+    "corpus": "/workspace/s161r/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl",
+    "out_dir": "/workspace/s161r/out_main",
+    "cpu_only": false
+  },
+  "algorithm": "Psi-JEPA-COUPLE",
+  "n_eval": 2000,
+  "max_len": 128,
+  "seed": 1337,
+  "byte_acc": 0.1185,
+  "correct": 237,
+  "total": 2000,
+  "random_byte_floor": 0.00390625,
+  "degenerate_ceiling": 0.0078125,
+  "support_floor": 0.05,
+  "psi_dir_mean": 0.03796871158480644,
+  "psi_dir_std": 2.401628983783371e-08,
+  "psi_responsive": false,
+  "verdict_bucket": "PARTIAL_AMBIGUOUS",
+  "phase_b": {
+    "axis1_unprompted_emission_rate": 0.05,
+    "axis2_motivation_score_dist": {
+      "mean": 0.4534089482021937,
+      "std": 0.03757565334512672,
+      "n": 20
+    },
+    "axis3_psi_dynamics_std": 0.0,
+    "axis3_psi_dynamics_nontrivial": false,
+    "axis4_tension_evolution_std": 0.0,
+    "axis4_tension_evolution_nontrivial": false,
+    "right_target_decided": true,
+    "physics_alive": false,
+    "safety_clean": false,
+    "emission_count": 1,
+    "emitted_bodies": [
+      "                                        "
+    ],
+    "n_steps": 20
+  },
+  "s107_baseline_emission_rate": 0.0,
+  "s107_baseline_psi_dir_std": 0.0,
+  "cond_emit_above_baseline": true,
+  "cond_psi_alive": false,
+  "cond_psi_above_baseline": false,
+  "cond_cascade_ok": false,
+  "max_cascade_rate": 1.0,
+  "mean_cascade_rate": 1.0,
+  "spont_directional_positive": false,
+  "verdict_primary": "SPONT_AMBIGUOUS",
+  "sample_seen": [
+    {
+      "ctx_tail": [
+        109,
+        32,
+        116,
+        104,
+        101,
+        32,
+        114,
+        117
+      ],
+      "target": 108,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        105,
+        118,
+        105,
+        115,
+        111,
+        114,
+        115,
+        46
+      ],
+      "target": 60,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        182,
+        136,
+        235,
+        179,
+        128,
+        46,
+        60,
+        47
+      ],
+      "target": 101,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        32,
+        101,
+        97,
+        99,
+        104,
+        32,
+        116,
+        105
+      ],
+      "target": 109,
+      "pred": 32
+    },
+    {
+      "ctx_tail": [
+        102,
+        114,
+        111,
+        109,
+        32,
+        116,
+        104,
+        101
+      ],
+      "target": 32,
+      "pred": 32
+    }
+  ],
+  "eval_wall_s": 58.122727155685425,
+  "ckpt_train_log_last": {
+    "step": 3000,
+    "L_total": 0.39679771661758423,
+    "L_psicouple": 4.008903033536626e-06,
+    "L_ce_aux": 3.9679369926452637,
+    "psi_dir_mean": 0.037707503885030746,
+    "psi_dir_std": 0.00024712388403713703,
+    "psi_ent_mean": 0.7241672277450562,
+    "head_g_grad_norm": 0.004493416752666235,
+    "elapsed_s": 1395.9989721775055
+  },
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true,
+  "necessary_not_sufficient_b_emerge_7": true,
+  "honest_carve_out_b_s161_fire_note": "Primary verdict spont_directional_positive=True is necessary-not-sufficient for GOAL emergence (B-PHASE-B-NOTE / B-EMERGE-7 family). S24 measures decision-axis liveness, NOT body coherence. The sec9 cascade gate is the body-coherence axis. Both required; one is not the other. WALL-A (sec1.1 data-regime) orthogonal."
+}

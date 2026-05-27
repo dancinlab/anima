@@ -1,0 +1,17 @@
+{
+  "hypothesis": "H_012",
+  "slug": "autopoietic-network",
+  "date": "2026-05-23",
+  "model": "3-component closed catalytic cycle (C->+A, A->+B, B->+C) + boundary leak",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "seed": 169328658,
+  "params": {"steps": 1000, "measure_window": 200, "K": 0.6, "decay": 0.1, "survive_floor": 0.05},
+  "closed_self_maintenance_rate": 1.0,
+  "broken_closure_control_rate": 0.0,
+  "closure_dependence_gap": 1.0,
+  "thresholds": {"self_maint": 0.8, "broken_ceil": 0.2, "dependence_gap": 0.5},
+  "criteria": {"C1_self_maint": true, "C2_broken_collapse": true, "C3_closure_dependence": true, "C4_determinism": true},
+  "verdict": "PASS"
+}

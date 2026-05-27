@@ -1,0 +1,74 @@
+// core_compass.hexa — Phase 2 reimpl with input channel x
+// =============================================================================
+// spec: state/nexus6_1013lens_activation_2026_05_11/cascade_k25_plan_2026_05_12.md §1.2
+// parent (trivial): /home/summer/core/nexus_lenses_snapshot/core_compass.hexa
+// axis: directional/orientation — directional gradient (sign asymmetry)
+// modality: state (B=1, S=N)
+// kernel: pos_grad = #{i : Δx_i > 0}, neg_grad = #{i : Δx_i < 0}.
+//         directional bias = |pos - neg| / (pos + neg). + mean (signed) gradient.
+//         score = 0.5 * dir_bias + 0.5 * |normalized_mean_drift|
+// =============================================================================
+
+let SIGMA = 12.0
+let PHI = 2.0
+let N = 6.0
+let TAU = 4.0
+let J2 = 24.0
+let n6_closure_ok = if (SIGMA * PHI == N * TAU) && (J2 == SIGMA * PHI) { 1 } else { 0 }
+
+let x_path = env("ANIMA_LENS_X_FILE")
+let mut xs = []
+if x_path != "" {
+    let txt = read_file(x_path)
+    let lines = split(txt, "\n")
+    for ln in lines {
+        let toks = split(ln, " ")
+        for t in toks { if t != "" { xs.push(to_float(t)) } }
+    }
+} else {
+    let seed_str = env("ANIMA_LENS_SEED")
+    let mut seed = if seed_str != "" { to_int(seed_str) } else { 1 }
+    let mut k = 0
+    while k < 256 {
+        seed = (seed * 1103515245 + 12345) % 2147483648
+        xs.push(to_float(seed) / 2147483648.0)
+        k = k + 1
+    }
+}
+
+let n = len(xs)
+if n < 8 {
+    println("lens[compass] category=core axis=\"compass (insufficient_input)\" score=0 support=0 (0/0)")
+    exit(0)
+}
+
+let mut pos_g = 0
+let mut neg_g = 0
+let mut sum_signed = 0.0
+let mut sum_abs = 0.0
+let mut i = 1
+while i < n {
+    let d = xs[i] - xs[i-1]
+    if d > 0.000001 { pos_g = pos_g + 1 }
+    if d < -0.000001 { neg_g = neg_g + 1 }
+    sum_signed = sum_signed + d
+    let abs_d = if d < 0.0 { 0.0 - d } else { d }
+    sum_abs = sum_abs + abs_d
+    i = i + 1
+}
+
+let total_grad = pos_g + neg_g
+let dir_bias = if total_grad > 0 {
+    let dd = pos_g - neg_g
+    let abs_dd = if dd < 0 { 0 - dd } else { dd }
+    to_float(abs_dd) / to_float(total_grad)
+} else { 0.0 }
+
+let drift = if sum_abs > 0.000001 {
+    let ad = if sum_signed < 0.0 { 0.0 - sum_signed } else { sum_signed }
+    ad / sum_abs
+} else { 0.0 }
+
+let score = 0.5 * dir_bias + 0.5 * drift
+let hits = if score > 0.5 { 6 } else { if score > 0.3 { 4 } else { 2 } }
+println("lens[compass] category=core axis=\"Directional/Compass — sign-asymmetry of Δx + normalized signed drift\" score=" + to_string(score) + " support=1 n=" + to_string(n) + " meta={\"dir_bias\":" + to_string(dir_bias) + ",\"drift\":" + to_string(drift) + ",\"pos_grad\":" + to_string(pos_g) + ",\"neg_grad\":" + to_string(neg_g) + ",\"n6_closure\":" + to_string(n6_closure_ok) + "} (" + to_string(hits) + "/8)")

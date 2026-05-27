@@ -1,0 +1,451 @@
+// anima-eeg/protocols/berger_session_audio_v3_8ch.hexa
+//
+// @resolver-bypass(reason="darwin-native: shells out to /usr/bin/say + delegates to anima-eeg/collect.hexa")
+//
+// PURPOSE
+//   Berger 1929 재측정 v3 — Cyton-only 8ch 측정 측 EO Nyquist violation fix.
+//
+//   v2 verdict (cyton_daisy 16ch):
+//     F_BERGER_01: PASS  (O2 측 α peak 9.76Hz)
+//     F_BERGER_02: PASS  (occipital > frontal)
+//     F_BERGER_03: undecidable  (EO 측 effective fs 7.4Hz → Nyquist 3.7Hz < α 8Hz)
+//
+//   v3 fix:
+//     - Cyton-only 8ch 측 250Hz native sample_rate 측 보존
+//     - Berger anchor (O1=N7P / O2=N8P / Fp1=N1P / Fp2=N2P) 측 Cyton 측에 그대로 →
+//       8ch loss 측 Berger 측 영향 X (parietal/central paradigms 측만 영향)
+//     - sample_rate_guard 측 post-capture hook → effective fs ≥ 30 Hz target
+//
+// SEQUENCE
+//   1. impedance check (optional)
+//   2. EC 60s capture (audio cue)
+//   3. sample_rate_guard EC
+//   4. 10s rest
+//   5. EO 60s capture (audio cue)
+//   6. sample_rate_guard EO
+//
+// USAGE
+//   hexa run anima-eeg/protocols/berger_session_audio_v3_8ch.hexa --run \
+//       --port /dev/cu.usbserial-DP04WGIQ --output anima-eeg/recordings/sessions
+//
+//   options:
+//       --duration <n>      each block (default 60)
+//       --voice <name>      macOS say voice (default Yuna)
+//       --skip-impedance    impedance check 생략
+//       --selftest          no-hardware dry-run
+//
+//   1. Daisy 측 Cyton 측에서 분리 (16-pin header 측 unstack)
+//   2. Berger anchor (O1/O2/Fp1/Fp2) 측 Cyton 측 N1P/N2P/N7P/N8P 측 그대로 보존
+//   3. v3 측 측정 종료 후 Daisy 측 Cyton 측 재 stack (다른 paradigm 측 복원)
+//
+// NOTE: anchor 측 Cyton 측에 있으므로 분리 측 Berger 측 잃는 채널 X.
+//       8ch loss = Daisy 측 N9P-N16P (P3/P4/F3/F4/Cz/Pz/T7/T8 등) →
+//       Berger 1929 측 occipital-dominant α only 측 영향 zero.
+
+let SCHEMA = "anima-eeg/berger_session_audio_v3_8ch/1"
+
+// Frozen defaults
+let DEFAULT_DURATION_S        = 60
+let DEFAULT_VOICE             = "Yuna"
+let DEFAULT_PORT              = "/dev/cu.usbserial-DP04WGIQ"
+let DEFAULT_BOARD             = "cyton"          // 8ch only — Daisy 분리
+let DEFAULT_OUTPUT_DIR        = "anima-eeg/recordings/sessions"
+let REST_DURATION_S           = 10
+let CUE_LEAD_S                = 3
+let CYTON_NOMINAL_FS          = 250              // Hz, Cyton native
+let EFFECTIVE_FS_FLOOR        = 30               // Hz, Nyquist 15Hz > α band 12.5Hz
+
+// Berger anchor montage (Cyton-only — Daisy unstack 측 영향 X)
+let ANCHOR_FP1_PIN            = "N1P"            // frontal control L
+let ANCHOR_FP2_PIN            = "N2P"            // frontal control R
+let ANCHOR_O1_PIN             = "N7P"            // occipital primary L
+let ANCHOR_O2_PIN             = "N8P"            // occipital primary R
+
+// ════════════════════════════════════════════════════════════════════
+// Helpers
+// ════════════════════════════════════════════════════════════════════
+
+fn say_cue(voice: str, text: str) -> int {
+    let cmd = "say -v '" + voice + "' '" + text + "'"
+    return exec_status(cmd)
+}
+
+fn exec_status(cmd: str) -> int {
+    let rc = exec(cmd)
+    return rc
+}
+
+fn exec_capture(cmd: str) -> str {
+    // "undefined function" error 발생. 우회: file redirect + read via shell
+    // 측 indirection 측 X (read_file builtin 측 동일 불가). 본 stub 측 ""
+    // 반환만 — caller 측 print용 string 측 비어있음 처리 필요. rc-bound
+    // verdict 측 exec_status 측 별도 사용 (sample_rate_guard py2).
+    let log = "/tmp/anima_eeg_capture_stub.log"
+    exec_status(cmd + " > '" + log + "' 2>&1")
+    return ""
+}
+
+fn run_impedance(port: str) -> int {
+    let cmd = "hexa run anima-eeg/impedance_check.hexa --check --port '" + port
+              + "' --board cyton"
+    print("[step1] impedance check (8ch cyton)...")
+    return exec_status(cmd)
+}
+
+fn run_collect(port: str, board: str, duration: int, tag: str, output: str) -> int {
+    let cmd = "hexa run anima-eeg/collect.hexa --collect --duration " + str(duration)
+              + " --tag " + tag
+              + " --output '" + output + "'"
+              + " --port '" + port + "'"
+              + " --board '" + board + "'"
+    print("[capture] " + tag + " " + str(duration) + "s ...")
+    return exec_status(cmd)
+}
+
+fn sleep_seconds(n: int) {
+    let cmd = "sleep " + str(n)
+    exec_status(cmd)
+}
+
+fn ensure_dir(path: str) {
+    exec_status("mkdir -p '" + path + "'")
+}
+
+fn date_tag_utc() -> str {
+    // 호출 시 runtime "undefined function" error. 우회: 현재 cycle session day
+    // 측 hardcode. DATE_TAG env override 측 lost. 다음 cycle 측 manual update.
+    return "2026_05_03"
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Sample rate guard (post-capture hook)
+//   meta.json 측 sample_rate × cols/duration 측 비교 측 actual effective fs
+//   측 산출. 본 guard 측 prevention X (cure 측 fix) — capture 종료 후 측
+//   해당 .npy 측 측정 가능 측 verdict 측 제공.
+// ════════════════════════════════════════════════════════════════════
+
+fn sample_rate_guard(meta_path: str, label: str) -> int {
+    print("[guard] " + label + " effective fs check: " + meta_path)
+
+    // shell-out 측 jq-free parse — python one-liner 측 effective fs 측 산출
+    let py = "python3 -c \"import json,sys;"
+             + "m=json.load(open('" + meta_path + "'));"
+             + "fs_nom=m.get('sample_rate',0.0);"
+             + "cols=m.get('cols',0);"
+             + "dur=m.get('duration_actual_s',1.0);"
+             + "eff=cols/dur if dur>0 else 0.0;"
+             + "drop=1.0-(eff/fs_nom) if fs_nom>0 else 1.0;"
+             + "print(f'fs_nominal={fs_nom:.1f} cols={cols} dur={dur:.2f} effective_fs={eff:.2f} drop={drop*100:.1f}%')"
+             + "\""
+    // (py 측 print 측 stub 측 redirect /tmp/anima_eeg_capture_stub.log 측 기록).
+    // 직접 stdout 측 출력 측 indirection-free 측 effective_fs 측 console 측 즉시 visible.
+    print("[guard] effective_fs probe ↓")
+    let probe_rc = exec_status(py)
+    print("[guard] probe rc=" + str(probe_rc))
+
+    // floor check
+    let py2 = "python3 -c \"import json,sys;"
+              + "m=json.load(open('" + meta_path + "'));"
+              + "cols=m.get('cols',0);"
+              + "dur=m.get('duration_actual_s',1.0);"
+              + "eff=cols/dur if dur>0 else 0.0;"
+              + "sys.exit(0 if eff>=" + str(EFFECTIVE_FS_FLOOR) + " else 1)"
+              + "\""
+    let rc = exec_status(py2)
+    if rc != 0 {
+        print("[guard] FAIL: " + label + " effective fs < " + str(EFFECTIVE_FS_FLOOR) + " Hz")
+        print("[guard] Nyquist violation — α band (8-13Hz) measure 불가")
+        return 1
+    }
+    print("[guard] PASS: " + label + " effective fs ≥ " + str(EFFECTIVE_FS_FLOOR) + " Hz")
+    return 0
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Phases
+//     모든 say_cue 측 BLOCKING — say -v Yuna 측 종료 후 측 다음 step
+//     시작. "지금" cue 측 run_collect 시작 직전 측 BLOCKING 호출 →
+//     사용자 측 cue 듣기 전에 capture 측 시작하지 않음.
+// ════════════════════════════════════════════════════════════════════
+
+fn phase_eyes_closed(voice: str, port: str, board: str, duration: int, output: str) -> int {
+    say_cue(voice, "삼 초 후 눈을 감으세요")
+    sleep_seconds(CUE_LEAD_S)
+    say_cue(voice, "지금")
+    let rc = run_collect(port, board, duration, "berger_ec_v3_8ch", output)
+    say_cue(voice, "측정 끝")
+    return rc
+}
+
+fn phase_rest(voice: str) {
+    say_cue(voice, "잠시 쉬세요")
+    sleep_seconds(REST_DURATION_S)
+}
+
+fn phase_eyes_open(voice: str, port: str, board: str, duration: int, output: str) -> int {
+    say_cue(voice, "삼 초 후 눈을 뜨세요")
+    sleep_seconds(CUE_LEAD_S)
+    say_cue(voice, "지금")
+    let rc = run_collect(port, board, duration, "berger_eo_v3_8ch", output)
+    say_cue(voice, "측정 완료")
+    return rc
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Main
+// ════════════════════════════════════════════════════════════════════
+
+fn print_handstep_banner() {
+    print("=================================================")
+    print("=================================================")
+    print("  1. Daisy 측 Cyton 측에서 분리 (16-pin unstack)")
+    print("  2. Berger anchor 측 그대로 보존:")
+    print("       Fp1 = " + ANCHOR_FP1_PIN + "   (frontal L)")
+    print("       Fp2 = " + ANCHOR_FP2_PIN + "   (frontal R)")
+    print("       O1  = " + ANCHOR_O1_PIN + "   (occipital L)")
+    print("       O2  = " + ANCHOR_O2_PIN + "   (occipital R)")
+    print("  3. 측정 종료 후 Daisy 측 재 stack (다른 paradigm 복원)")
+    print("=================================================")
+    print("  Daisy 분리 완료 후 5초 대기 (Ctrl-C 중단):")
+    sleep_seconds(5)
+}
+
+fn cmd_run(port: str, output_dir: str, duration: int, voice: str, skip_impedance: int) -> int {
+    ensure_dir(output_dir)
+
+    let date_tag = date_tag_utc()
+    let ec_npy = output_dir + "/berger_ec_60s_v3_8ch_" + date_tag + ".npy"
+    let eo_npy = output_dir + "/berger_eo_60s_v3_8ch_" + date_tag + ".npy"
+    let ec_meta = ec_npy + ".meta.json"
+    let eo_meta = eo_npy + ".meta.json"
+
+    print("=== Berger 1929 재측정 v3 8ch (cyton-only, Nyquist fix) ===")
+    print("port=" + port + "  board=" + DEFAULT_BOARD + " (Daisy 분리)")
+    print("nominal_fs=" + str(CYTON_NOMINAL_FS) + " Hz  effective_fs_floor=" + str(EFFECTIVE_FS_FLOOR) + " Hz")
+    print("duration=" + str(duration) + "s × 2  voice=" + voice)
+    print("EC: " + ec_npy)
+    print("EO: " + eo_npy)
+    print("===========================================================")
+
+    // Hand-step: Daisy 분리 confirm
+    print_handstep_banner()
+
+    // Step 1: impedance (optional)
+    if skip_impedance == 0 {
+        say_cue(voice, "임피던스 측정 시작")
+        let imp_rc = run_impedance(port)
+        if imp_rc != 0 {
+            say_cue(voice, "임피던스 측정 실패. 전극을 다시 확인하세요")
+            print("[error] impedance check 실패")
+            return 1
+        }
+        print("[step1] impedance: 8/8 GREEN 확인 후 5초 대기 (Ctrl-C 중단)")
+        sleep_seconds(5)
+    }
+
+    // Step 2: EC capture
+    let ec_rc = phase_eyes_closed(voice, port, DEFAULT_BOARD, duration, ec_npy)
+    if ec_rc != 0 {
+        say_cue(voice, "EC 측정 실패")
+        return 2
+    }
+
+    // Step 3: EC sample_rate_guard (post-capture hook)
+    let ec_guard = sample_rate_guard(ec_meta, "EC")
+    if ec_guard != 0 {
+        say_cue(voice, "EC sample rate guard 실패")
+        print("[error] EC effective fs < " + str(EFFECTIVE_FS_FLOOR) + " Hz")
+    }
+
+    // Step 4: rest
+    phase_rest(voice)
+
+    // Step 5: EO capture
+    let eo_rc = phase_eyes_open(voice, port, DEFAULT_BOARD, duration, eo_npy)
+    if eo_rc != 0 {
+        say_cue(voice, "EO 측정 실패")
+        return 3
+    }
+
+    // Step 6: EO sample_rate_guard (post-capture hook — critical for v2 verdict fix)
+    let eo_guard = sample_rate_guard(eo_meta, "EO")
+    if eo_guard != 0 {
+        say_cue(voice, "EO sample rate guard 실패")
+        print("[error] EO effective fs < " + str(EFFECTIVE_FS_FLOOR) + " Hz")
+        print("[error] v2 측 EO 측 7.4Hz drop — v3 측 동일 문제 → root cause 측 board layer")
+    }
+
+    print("")
+    print("=== 측정 완료 ===")
+    print("EC: " + ec_npy)
+    print("EO: " + eo_npy)
+    print("EC guard rc=" + str(ec_guard) + "  EO guard rc=" + str(eo_guard))
+    print("")
+    print("Hand-step (post-측정): Daisy 측 Cyton 측 재 stack")
+    print("다음 단계: F_BERGER_01/02/03 verify BG launch")
+    print("  F_BERGER_01: O1/O2 EC α peak 7.5-12.5Hz")
+    print("  F_BERGER_02: O1/O2 power > Fp2 power (occipital-dominant)")
+    print("  F_BERGER_03: EC α power > EO α power × 2")
+    return 0
+}
+
+fn cmd_selftest() -> int {
+    print("[selftest] berger_session_audio_v3_8ch.hexa")
+    print("[selftest] dry-run: no hardware, no say cue, no collect.hexa")
+
+    let mut test_count = 0
+    let mut pass_count = 0
+
+    // T1: voice default
+    test_count = test_count + 1
+    if DEFAULT_VOICE == "Yuna" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T1 voice default") }
+
+    // T2: duration default
+    test_count = test_count + 1
+    if DEFAULT_DURATION_S == 60 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T2 duration default") }
+
+    // T3: rest duration
+    test_count = test_count + 1
+    if REST_DURATION_S == 10 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T3 rest duration") }
+
+    // T4: cue lead
+    test_count = test_count + 1
+    if CUE_LEAD_S == 3 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T4 cue lead") }
+
+    // T5: board cyton-only (8ch)
+    test_count = test_count + 1
+    if DEFAULT_BOARD == "cyton" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T5 board cyton-only") }
+
+    // T6: nominal fs = 250 Hz (Cyton native)
+    test_count = test_count + 1
+    if CYTON_NOMINAL_FS == 250 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T6 nominal fs 250") }
+
+    // T7: effective fs floor ≥ 2 × α band ceiling (Nyquist for 12.5 Hz)
+    test_count = test_count + 1
+    if EFFECTIVE_FS_FLOOR >= 26 { pass_count = pass_count + 1 }
+    else { print("[FAIL] T7 effective fs floor Nyquist") }
+
+    // T8: anchor montage — O1/O2 측 Cyton pins
+    test_count = test_count + 1
+    if ANCHOR_O1_PIN == "N7P" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T8 O1 anchor pin") }
+    test_count = test_count + 1
+    if ANCHOR_O2_PIN == "N8P" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T8b O2 anchor pin") }
+
+    // T9: Fp1/Fp2 anchor pins
+    test_count = test_count + 1
+    if ANCHOR_FP1_PIN == "N1P" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T9 Fp1 anchor pin") }
+    test_count = test_count + 1
+    if ANCHOR_FP2_PIN == "N2P" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T9b Fp2 anchor pin") }
+
+    // T10: schema marker
+    test_count = test_count + 1
+    if SCHEMA == "anima-eeg/berger_session_audio_v3_8ch/1" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T10 schema marker") }
+
+    // T11: output dir default
+    test_count = test_count + 1
+    if DEFAULT_OUTPUT_DIR == "anima-eeg/recordings/sessions" { pass_count = pass_count + 1 }
+    else { print("[FAIL] T11 output dir default") }
+
+    print("[selftest] " + str(pass_count) + " PASS / " + str(test_count - pass_count) + " FAIL")
+    if pass_count == test_count {
+        print("__BERGER_AUDIO_V3_8CH__ PASS")
+        return 0
+    }
+    print("__BERGER_AUDIO_V3_8CH__ FAIL")
+    return 1
+}
+
+// ════════════════════════════════════════════════════════════════════
+// Argv dispatch
+// ════════════════════════════════════════════════════════════════════
+
+fn print_usage() {
+    print("usage:")
+    print("  hexa run anima-eeg/protocols/berger_session_audio_v3_8ch.hexa --run \\")
+    print("       --port <path> [--output <dir>] [--duration <n>] [--voice <name>]")
+    print("  hexa run anima-eeg/protocols/berger_session_audio_v3_8ch.hexa --selftest")
+    print("flags:")
+    print("  --selftest          no-hardware dry-run")
+    print("  --run               full Berger v3 session (impedance + EC + guard + EO + guard)")
+    print("  --port <path>       Dongle serial node (default " + DEFAULT_PORT + ")")
+    print("  --output <dir>      output directory (default " + DEFAULT_OUTPUT_DIR + ")")
+    print("  --duration <n>      each block sec (default " + str(DEFAULT_DURATION_S) + ")")
+    print("  --voice <name>      macOS say voice (default " + DEFAULT_VOICE + ")")
+    print("  --skip-impedance    skip impedance check")
+    print("  --help              this message")
+    print("note: board is Cyton-only 8ch (Daisy 분리 hand-step required).")
+}
+
+fn main() -> int {
+    let av = argv()
+    let n = len(av)
+
+    let mut mode = "help"
+    let mut port = DEFAULT_PORT
+    let mut output_dir = DEFAULT_OUTPUT_DIR
+    let mut duration = DEFAULT_DURATION_S
+    let mut voice = DEFAULT_VOICE
+    let mut skip_impedance = 0
+
+    // skip leading interpreter/file/cache paths
+    let mut start = 0
+    while start < n {
+        let a = av[start]
+        if a.ends_with(".hexa") { start = start + 1 }
+        else { break }
+    }
+    while start < n {
+        let a = av[start]
+        if a.ends_with("/exe") { start = start + 1 }
+        else if a.ends_with("/exe.real") { start = start + 1 }
+        else if a.ends_with(".real") { start = start + 1 }
+        else { break }
+    }
+
+    let mut i = start
+    while i < n {
+        let a = av[i]
+        if a == "--selftest" { mode = "selftest" }
+        else if a == "--run" { mode = "run" }
+        else if a == "--port" {
+            if i + 1 < n { port = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--output" {
+            if i + 1 < n { output_dir = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--duration" {
+            if i + 1 < n { duration = to_int(av[i + 1]); i = i + 1 }
+        }
+        else if a == "--voice" {
+            if i + 1 < n { voice = av[i + 1]; i = i + 1 }
+        }
+        else if a == "--skip-impedance" { skip_impedance = 1 }
+        else if a == "--help" { mode = "help" }
+        else {
+            print("[error] unknown flag: " + a)
+            print_usage()
+            return 2
+        }
+        i = i + 1
+    }
+
+    if mode == "selftest" {
+        return cmd_selftest()
+    }
+    if mode == "run" {
+        return cmd_run(port, output_dir, duration, voice, skip_impedance)
+    }
+    print_usage()
+    return 0
+}

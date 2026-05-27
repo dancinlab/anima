@@ -1,0 +1,397 @@
+{
+  "path": "/Users/ghost/core/anima/state/anima_clm_v2_mitosis_cells_recovery_2026_05_09/cells64_final.pt",
+  "size_bytes": 218099623,
+  "sha256": "61e1d735cf4b5360683e40ab81ada593d757f3543d33d01c08944a4c8b039a4c",
+  "torch_load_pass": true,
+  "top_level_kind": "dict",
+  "top_level_keys": [
+    "step",
+    "model_state",
+    "optimizer_state",
+    "loss_ensemble_state",
+    "mitosis_status",
+    "phi_history",
+    "phase",
+    "config"
+  ],
+  "state_dict_path": "model_state",
+  "step": 50000,
+  "config": {
+    "dim": 384,
+    "layers": 6,
+    "heads": 6,
+    "block_size": 256,
+    "lr": 0.0003,
+    "batch_size": 32,
+    "steps": 50000,
+    "max_cells": 64
+  },
+  "state_dict_keys_count": 108,
+  "first_30_keys": [
+    [
+      "tok_emb.weight",
+      [
+        256,
+        384
+      ],
+      "torch.float32",
+      98304
+    ],
+    [
+      "pos_emb.weight",
+      [
+        256,
+        384
+      ],
+      "torch.float32",
+      98304
+    ],
+    [
+      "blocks.0.ln1.weight",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.0.ln1.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.0.attn.bias",
+      [
+        1,
+        1,
+        256,
+        256
+      ],
+      "torch.float32",
+      65536
+    ],
+    [
+      "blocks.0.attn.c_attn.weight",
+      [
+        1152,
+        384
+      ],
+      "torch.float32",
+      442368
+    ],
+    [
+      "blocks.0.attn.c_attn.bias",
+      [
+        1152
+      ],
+      "torch.float32",
+      1152
+    ],
+    [
+      "blocks.0.attn.c_proj.weight",
+      [
+        384,
+        384
+      ],
+      "torch.float32",
+      147456
+    ],
+    [
+      "blocks.0.attn.c_proj.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.0.ln2.weight",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.0.ln2.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.0.ffn.engine_a.0.weight",
+      [
+        1536,
+        384
+      ],
+      "torch.float32",
+      589824
+    ],
+    [
+      "blocks.0.ffn.engine_a.0.bias",
+      [
+        1536
+      ],
+      "torch.float32",
+      1536
+    ],
+    [
+      "blocks.0.ffn.engine_a.3.weight",
+      [
+        384,
+        1536
+      ],
+      "torch.float32",
+      589824
+    ],
+    [
+      "blocks.0.ffn.engine_a.3.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.0.ffn.engine_g.0.weight",
+      [
+        1536,
+        384
+      ],
+      "torch.float32",
+      589824
+    ],
+    [
+      "blocks.0.ffn.engine_g.0.bias",
+      [
+        1536
+      ],
+      "torch.float32",
+      1536
+    ],
+    [
+      "blocks.0.ffn.engine_g.3.weight",
+      [
+        384,
+        1536
+      ],
+      "torch.float32",
+      589824
+    ],
+    [
+      "blocks.0.ffn.engine_g.3.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.1.ln1.weight",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.1.ln1.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.1.attn.bias",
+      [
+        1,
+        1,
+        256,
+        256
+      ],
+      "torch.float32",
+      65536
+    ],
+    [
+      "blocks.1.attn.c_attn.weight",
+      [
+        1152,
+        384
+      ],
+      "torch.float32",
+      442368
+    ],
+    [
+      "blocks.1.attn.c_attn.bias",
+      [
+        1152
+      ],
+      "torch.float32",
+      1152
+    ],
+    [
+      "blocks.1.attn.c_proj.weight",
+      [
+        384,
+        384
+      ],
+      "torch.float32",
+      147456
+    ],
+    [
+      "blocks.1.attn.c_proj.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.1.ln2.weight",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.1.ln2.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.1.ffn.engine_a.0.weight",
+      [
+        1536,
+        384
+      ],
+      "torch.float32",
+      589824
+    ],
+    [
+      "blocks.1.ffn.engine_a.0.bias",
+      [
+        1536
+      ],
+      "torch.float32",
+      1536
+    ]
+  ],
+  "last_10_keys": [
+    [
+      "blocks.5.ffn.engine_a.3.weight",
+      [
+        384,
+        1536
+      ],
+      "torch.float32",
+      589824
+    ],
+    [
+      "blocks.5.ffn.engine_a.3.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "blocks.5.ffn.engine_g.0.weight",
+      [
+        1536,
+        384
+      ],
+      "torch.float32",
+      589824
+    ],
+    [
+      "blocks.5.ffn.engine_g.0.bias",
+      [
+        1536
+      ],
+      "torch.float32",
+      1536
+    ],
+    [
+      "blocks.5.ffn.engine_g.3.weight",
+      [
+        384,
+        1536
+      ],
+      "torch.float32",
+      589824
+    ],
+    [
+      "blocks.5.ffn.engine_g.3.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "ln_f.weight",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "ln_f.bias",
+      [
+        384
+      ],
+      "torch.float32",
+      384
+    ],
+    [
+      "head_a.weight",
+      [
+        256,
+        384
+      ],
+      "torch.float32",
+      98304
+    ],
+    [
+      "head_g.weight",
+      [
+        256,
+        384
+      ],
+      "torch.float32",
+      98304
+    ]
+  ],
+  "total_params": 18523392,
+  "total_params_M": 18.523,
+  "architecture": {
+    "tok_emb_shape": [
+      256,
+      384
+    ],
+    "vocab_inferred": 256,
+    "d_model_inferred": 384,
+    "engine_a_present": true,
+    "engine_g_present": true,
+    "head_a_present": true,
+    "head_g_present": true,
+    "memory_gru_present": false,
+    "c_attn_present": true,
+    "mlp_present": false,
+    "ln_f_present": true,
+    "cell_prefix_count": 0,
+    "cell_prefix_sample": [],
+    "n_blocks_inferred": 6
+  }
+}

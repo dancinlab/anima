@@ -1,0 +1,182 @@
+{
+  "task_id": "anima_nexus_cycle_aggregate_insight_2026_05_05",
+  "scope": "BG-Y aggregate empirical synthesis: 4 BG (A/L/Q/K) + BG-W magnitude-sweep extension, lesson L34-L46 update, 5-candidate matrix update, 5-criteria major-finding cumulative count, 3-path forward recommendation",
+  "verdict": "AGGREGATE_LANDED_NO_MAJOR_FINDING_PATH_B_RECOMMENDED",
+  "wall_time_minutes": 18,
+  "cost_usd": 0.0,
+  "platform": "mac local doc-only",
+  "raw_compliance": {
+    "raw_9_md_only": true,
+    "raw_10_honest_c3_count": 6,
+    "raw_15_additive_only_no_source_change": true,
+    "raw_37_no_new_py": true,
+    "no_commit": true,
+    "no_secret_leak": true,
+    "bash_3_2_compat": "N/A (doc-only)"
+  },
+  "sub1_empirical_table": {
+    "n_bgs_aggregated": 5,
+    "verdicts": {
+      "BG-A_dialogue_real_load": "PASS_REAL_MODE_DIRECT_INVOKE",
+      "BG-L_real_mode_sweep": "PARTIAL_PASS_PHI_RESPONSIVE_AXIS_DISCRIM_FAIL",
+      "BG-Q_cand_d_empirical": "F_CAND_D_1_FAIL_TRUE_INJECT_INVISIBLE",
+      "BG-W_cand_d_magnitude_sweep": "CAND_D_MAGNITUDE_SWEEP_F1_THRESHOLD_HIT_NO_CRITERION_2",
+      "BG-K_mount_real_mode_wiring": "PARTIAL_PASS_TWO_FIXES_LANDED_THIRD_BLOCKER_DISCOVERED"
+    },
+    "key_findings": {
+      "phi_responsive_validated": true,
+      "axis_discrim_falsified_on_heuristic_buckets": true,
+      "cand_d_inject_invisible_at_canonical_0_5": true,
+      "cand_d_threshold_first_hit_at_magnitude_50": true,
+      "cand_d_criterion_2_drift_gt_1_NOT_hit_at_mag_100": true,
+      "wrapper_third_blocker_AutoTokenizer": true
+    }
+  },
+  "sub2_lesson_ledger_update": {
+    "L34_to_L43_status": "VALID_NO_CONTRADICTION",
+    "L44_candidate": {
+      "title": "Architectural inject channel CAN be connected yet content-invisible at calibrated magnitude",
+      "evidence": "BG-Q F-CAND-D-1 5/5 FAIL_TRUE @ canonical 0.5 (drift 1.28e-4 << 0.01); BG-W threshold first crosses at mag=50.0; cross_attn guard PASS at all magnitudes",
+      "rule": "magnitude trajectory mandatory before declaring FAIL_FALSE vs FAIL_TRUE on emerge candidate with learned-zero-init projection in path",
+      "exception": "post-norm/post-residual identity channels (no learned projection) imply visibility from connectivity"
+    },
+    "L45_candidate": {
+      "title": "Heuristic axis taxonomy on mean-pooled hidden equals random baseline absent train-time activation OR labeled-probe calibration",
+      "evidence": "BG-L 5-bucket intent_match 2/10 (random=0.20); axis_means_spread 0.036 within within-axis std band; BG-Q axis_means_spread under canonical mode within 0.001 of mode=none (no recovery)",
+      "rule": "post-hoc partitions of mean-pooled hidden are decorative without (a) train-time conditioning OR (b) labeled-probe calibration",
+      "exception": "synthetic_fallback / dry-run paths emit decorative axes deliberately for byte-format parity (per L41)"
+    },
+    "L46_candidate": {
+      "title": "CLM v4 AutoTokenizer is unmapped in HF auto_map; SentencePiece direct invoke mandatory for any wrapper",
+      "evidence": "BG-K third blocker AutoTokenizer.from_pretrained rejects CLMv4Config; auto_map registers AutoConfig + AutoModelForCausalLM only; tokenizer_64k_multilingual.model present in snapshot; anima_dialogue_load.py:_load_tokenizer SentencePieceProcessor() reaches real-mode (BG-A PASS)",
+      "rule": "CLM v4 family wrappers MUST short-circuit AutoTokenizer with SentencePiece direct-load referencing snapshot's tokenizer_64k_multilingual.model",
+      "exception": "future CLM v4 mk3+ repos that add AutoTokenizer to auto_map retire this lesson for that repo"
+    },
+    "promotion_path": "candidate banking; promotion to canonical SSOT requires separate BG-LESSONS-PROPAGATE cycle"
+  },
+  "sub3_candidate_matrix_updated": {
+    "D": {
+      "spec_loc": 305,
+      "impl_loc": 328,
+      "empirical_bgs": ["BG-Q", "BG-W"],
+      "f_cand_verdict": "FAIL_TRUE_at_mag_0_5_PASS_at_mag_50_OFF_DISTRIBUTION",
+      "major_finding_hit": false,
+      "adoption": "calibration_gated_conditional"
+    },
+    "E": {
+      "spec_loc": 428,
+      "impl_loc": 0,
+      "empirical_bgs": [],
+      "f_cand_verdict": "DEFERRED_ODE_module_nonexistent",
+      "major_finding_hit": null,
+      "adoption": "DEFER"
+    },
+    "F": {
+      "spec_loc": 363,
+      "impl_loc": "pending",
+      "empirical_bgs": ["RST-mega in-flight"],
+      "f_cand_verdict": "TBD",
+      "major_finding_hit": "pending",
+      "adoption": "TBD_pending_RST_mega"
+    },
+    "F_v2": {
+      "spec_loc": 323,
+      "impl_loc": "pending",
+      "empirical_bgs": ["RST-mega in-flight"],
+      "f_cand_verdict": "TBD",
+      "major_finding_hit": "pending",
+      "adoption": "TBD_pending_RST_mega"
+    },
+    "G_plus_H": {
+      "spec_loc": 331,
+      "impl_loc": "pending",
+      "empirical_bgs": ["RST-mega in-flight"],
+      "f_cand_verdict": "TBD",
+      "major_finding_hit": "pending",
+      "adoption": "TBD_pending_RST_mega_ascendant_per_cycle"
+    }
+  },
+  "sub4_major_finding_5_criteria_count": {
+    "criterion_1_F_CAND_PASS": {
+      "result": "NO",
+      "evidence": "BG-Q F-CAND-D-1 FAIL_TRUE; BG-W F-CAND-D-1 PASS only at OFF-distribution mag=50",
+      "interpretation": "L44 calibration unresolved; not strictly falsified"
+    },
+    "criterion_2_phi_drift_gt_1": {
+      "result": "NO",
+      "evidence": "BG-L max drift 0.433; BG-W max drift 0.113 at mag=100",
+      "interpretation": "phi-star proxy cosine-bounded ceiling per BG-W honest C3"
+    },
+    "criterion_3_cross_substrate_delta_gt_5pp": {
+      "result": "UNMEASURED",
+      "evidence": "BG-M audit doc only; cross-substrate cycle deferred per BG-J Q7",
+      "interpretation": "deferred per L26-L27 substrate-aligned eval mandate; should NOT be counted as falsified"
+    },
+    "criterion_4_rule_outputs_cosine_lt_0_5": {
+      "result": "RST_MEGA_IN_FLIGHT",
+      "evidence": "BG-S-2 timeout; awaiting aggregate",
+      "interpretation": "verdict pending H100 completion"
+    },
+    "criterion_5_tension_variance_gt_0_5": {
+      "result": "RST_MEGA_IN_FLIGHT",
+      "evidence": "BG-R-2 timeout; awaiting aggregate",
+      "interpretation": "verdict pending H100 completion"
+    },
+    "cumulative_hit_count": 0,
+    "cumulative_pending": 2,
+    "cumulative_unmeasured": 1,
+    "cumulative_negative": 2,
+    "honest_caveat": "negative findings are themselves architectural truths not cycle failures; criterion 3 unmeasured-by-design is distinct from falsified"
+  },
+  "sub5_three_path_forward_ranked": {
+    "rank_1_HIGH_path_B": {
+      "name": "emerge measurement infrastructure expansion",
+      "lens_emerge_paradigm_fit": 3,
+      "lens_cost": 3,
+      "lens_raw_policy": 3,
+      "sub_tasks": [
+        "paradigm v11 G3 training-time canonical extraction from C-module emission logs (resolves L44)",
+        "BG-W follow-up at intermediate magnitudes 20/30 + multi-prompt (validate trajectory shape)",
+        "pre-cross-attn hook (BG-Q rec 2): measure local inject contribution",
+        "100-prompt corpus build for Stage 3 saturation",
+        "RST-mega completion (criterion 4/5 closure)"
+      ],
+      "expected_outcome": "1-2 of 5 major-finding criteria hit; clear go/no-go on D Stage 1 promotion"
+    },
+    "rank_2_MEDIUM_path_C": {
+      "name": "Stage 3 user-fire emerge dialogue (synthetic OR direct-invoke)",
+      "lens_emerge_paradigm_fit": 2,
+      "lens_cost": 3,
+      "lens_user_fire_readiness": 2,
+      "rationale": "protocol-rehearsal value (BG-D Stage 3 spec C4) available even in synthetic_fallback; direct-invoke path is user-fire-able via tool/transient_py/anima_dialogue_load.py --mode dialogue --session-log",
+      "risk": "synthetic_fallback emerge dialogue produces decorative outputs (per L45); first session must use direct-invoke explicitly with real-mode flag visible"
+    },
+    "rank_3_DEFER_path_A": {
+      "name": "CLM v5 redesign (first-class axis embedding)",
+      "lens_emerge_paradigm_fit": 1,
+      "lens_cost": 1,
+      "rationale": "4-6w cycle scope; BG-Q FAIL_TRUE alone insufficient justification until Path B closes calibration question",
+      "trigger_to_re_rank": "Path B sub-task 1 reveals training-time canonical << 50 AND criterion 1/2 still NO after RST-mega closure"
+    },
+    "recommendation_marker": "Path B first (this week / next 1-2 cycles), Path C parallel (user-fire on availability), Path A deferred pending Path B closure"
+  },
+  "honest_c3": [
+    "C1 aggregate verdict synthesizes 5 BG verdicts of varying confidence (BG-A high; BG-L high; BG-Q medium 5-prompt single-mag; BG-W low single-prompt 7-mag; BG-K high reproducible). 'No major finding hit' weighted-averages over uneven evidence; criterion 1 closer to 'L44 calibration unresolved' than 'falsified'.",
+    "C2 L44 may collapse with calibration extraction. If paradigm v11 G3 used canonical magnitude in {10, 50, 100} range, BG-W mag=50 PASS is on-distribution and L44 retires; D Stage 1 becomes promotable. Candidate banking explicitly flags this conditional retirement.",
+    "C3 L45 may be over-broad. BG-L heuristic 5-bucket (38/38/38/38/40) is one specific partition. Semantic-conditioned, PCA-derived, or labeled-supervised partitions may discriminate. Lesson should specify 'decorative partitions' not 'all partitions'.",
+    "C4 major-finding criterion 3 (cross-substrate) is unmeasured by cycle design, not by cycle failure. BG-J Q7 ledger correctly defers cross-substrate phi★ to separate calibration cycle (per L26-L27). Counting it as 'NO' in §4 conflates 'not measured' with 'measured negative'.",
+    "C5 Path B sub-task 1 (training-time canonical extraction) may itself be infeasible. C-module emission logs may not preserve consciousness_states tensor at inject call site; pre-flight verify emission log schema before scheduling execution BG.",
+    "C6 RST-mega timeout risk underweighted. BG-S-2 + BG-R-2 are H100 BGs; if either crashes or hits watchdog timeout (per), criterion 4/5 verdict may slip. §5 ranking assumes RST-mega completes within this cycle; if slips, Path B re-prioritizes to (1) sub-task 1 + 2 with (5) deferred."
+  ],
+  "next_step_recommendation": {
+    "priority_1": "execute Path B sub-task 1 (paradigm v11 G3 emission log audit + canonical extraction) as next-cycle BG; pre-flight verify schema includes pre-cross-attn consciousness_states",
+    "priority_2": "RST-mega completion monitoring; spawn aggregate BG when criterion 4/5 closure reached",
+    "priority_3": "Path C user-fire entry: prepare direct-invoke session-log invocation string for user; observations.md template",
+    "priority_4": "Path B sub-task 2 (BG-W intermediate magnitudes 20/30 + multi-prompt) as parallel BG to sub-task 1",
+    "priority_5": "BG-LESSONS-PROPAGATE cycle to promote L44-L46 candidates to canonical SSOT (after cross-validation against >=3 prior cycles per L36+L38 convention)"
+  },
+  "deliverables": {
+    "doc": "docs/anima_nexus_cycle_aggregate_insight_2026_05_05.md",
+    "verdict": "state/anima_nexus_cycle_aggregate_insight_2026_05_05/verdict.json"
+  }
+}

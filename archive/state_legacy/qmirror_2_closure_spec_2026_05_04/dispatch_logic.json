@@ -1,0 +1,129 @@
+{
+  "schema_version": 1,
+  "dispatch_doc": "anima/docs/qmirror_2_closure_spec_2026_05_04.md",
+  "dispatch_tool": "anima/tool/qmirror_2_closure_synth.hexa",
+  "dispatch_date": "2026-05-04",
+  "dispatch_steps": [
+    {
+      "step": 1,
+      "name": "pre_flight",
+      "actions": [
+        "verify state/markers/qmirror_closure_landed.marker exists (1.0 closure marker)",
+        "verify docs/nexus_qmirror_closure_2026_05_03.md exists (1.0 closure doc)",
+        "verify state/markers/qmirror_2_closure_landed.marker absent (idempotency)",
+        "read qmirror/hexa.toml current version; abort if already 2.0.x"
+      ],
+      "abort_codes": ["1_0_MARKER_MISSING", "1_0_DOC_MISSING", "ALREADY_LANDED", "ALREADY_2_0_X"]
+    },
+    {
+      "step": 2,
+      "name": "read_5_verdicts",
+      "actions": [
+        "for each cond in {9,10,11,12,13}: resolve verdict_path",
+        "test -f verdict_path; if missing AND NOT --force-on-missing → mark PENDING + abort",
+        "jq -r .verdict verdict_path → status string",
+        "compute MET[cond] (PASS or MET or MET_VIA_BAND_REVISE → 1; else 0)",
+        "compute sha256 of each verdict.json"
+      ],
+      "abort_codes": ["VERDICT_MISSING", "VERDICT_MALFORMED"]
+    },
+    {
+      "step": 3,
+      "name": "compute_composite",
+      "actions": [
+        "n_pass = sum(MET[cond] == 1)",
+        "composite = (n_pass>=5 ? FULL : (n_pass>=3 ? PARTIAL : DEFERRED))",
+        "F-QM-2-CLOSURE-1 = (n_pass>=4 AND 1.0_marker AND 1.0_doc)"
+      ]
+    },
+    {
+      "step": 4,
+      "name": "compose_closure_doc",
+      "actions": [
+        "build doc body per spec §3 sections 0-9 with per-cond placeholder fills",
+        "write docs/qmirror_2_closure_2026_05_04.md",
+        "write state/qmirror_2_closure_2026_05_04/composed_closure.md (audit copy)"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "mutate_artifacts",
+      "guard": "composite in {FULL, PARTIAL} AND NOT --dry-run",
+      "actions": [
+        "additive append §10 to docs/nexus_qmirror_closure_2026_05_03.md (1.0 doc semantics preserved)",
+        "append v2.0.0 or v2.0.0-rc.1 entry to qmirror/CHANGELOG.md",
+        "bump qmirror/hexa.toml version + closure block",
+        "bump hexa-lang/tool/pkg/registry.tsv qmirror row",
+        "print roadmap JSONC paste-target (manual paste — synth does NOT auto-edit nexus repo)"
+      ],
+      "skip_for_deferred": true
+    },
+    {
+      "step": 6,
+      "name": "marker_handoff_audit",
+      "actions": [
+        "write state/markers/qmirror_2_closure_landed.marker (always — even DEFERRED)",
+        "write docs/qmirror_2_closure_landed_2026_05_04.ai.md (handoff)",
+        "write state/qmirror_2_closure_2026_05_04/dispatch_audit.json (final)"
+      ]
+    },
+    {
+      "step": 7,
+      "name": "exit",
+      "actions": [
+        "print n_pass / 5",
+        "print composite verdict",
+        "print F-QM-2-CLOSURE-1 PASS/FAIL",
+        "print artifact mutation count",
+        "exit 0 if composite in {FULL, PARTIAL} OR --dry-run; exit 1 if DEFERRED"
+      ]
+    }
+  ],
+  "auto_dispatch_guards": {
+    "all_5_verdicts_exist": "test -f for all 5 verdict_paths",
+    "verdicts_hash_stable": "all 5 sha256 unchanged for >=60s",
+    "current_version_is_1_0_x": "grep -E '^version = \"1\\.0\\.' qmirror/hexa.toml",
+    "no_existing_2_0_marker": "! test -f state/markers/qmirror_2_closure_landed.marker"
+  },
+  "manual_invocations": [
+    "hexa run tool/qmirror_2_closure_synth.hexa",
+    "hexa run tool/qmirror_2_closure_synth.hexa --dry-run",
+    "hexa run tool/qmirror_2_closure_synth.hexa --force-on-missing",
+    "hexa run tool/qmirror_2_closure_synth.hexa --force-rewrite"
+  ],
+  "verdict_to_artifact_mutation_table": {
+    "qmirror_2_closure_FULL": {
+      "closure_doc": "create",
+      "1_0_doc_append": "yes",
+      "changelog": "v2.0.0 entry",
+      "hexa_toml_version": "2.0.0",
+      "hexa_toml_closure_block_cond_met": 13,
+      "registry_tsv_qmirror_version": "2.0.0",
+      "marker": "create",
+      "handoff": "create"
+    },
+    "qmirror_2_closure_PARTIAL": {
+      "closure_doc": "create",
+      "1_0_doc_append": "yes",
+      "changelog": "v2.0.0-rc.1 entry",
+      "hexa_toml_version": "2.0.0-rc.1",
+      "hexa_toml_closure_block_cond_met": "11 or 12",
+      "registry_tsv_qmirror_version": "2.0.0-rc.1",
+      "marker": "create",
+      "handoff": "create"
+    },
+    "qmirror_2_closure_DEFERRED": {
+      "closure_doc": "create (DEFERRED documented)",
+      "1_0_doc_append": "no",
+      "changelog": "no",
+      "hexa_toml_version": "1.0.x (no bump)",
+      "registry_tsv_qmirror_version": "1.0.x (no bump)",
+      "marker": "create (verdict=DEFERRED in body)",
+      "handoff": "create"
+    }
+  },
+  "f_qm_2_closure_1_dispatch_outcome": {
+    "PASS": "n_pass>=4 → composite in {FULL, PARTIAL} → publishable path engaged",
+    "FAIL": "n_pass<=3 OR 1.0 regression → composite=DEFERRED → no version bump"
+  }
+}

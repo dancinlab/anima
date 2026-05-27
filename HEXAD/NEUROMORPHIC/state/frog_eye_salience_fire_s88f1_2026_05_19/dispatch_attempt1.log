@@ -1,0 +1,13 @@
+[§88-F1] pre-fire pods: ["e0muaeaihfx0sc"]
+[§88-F1] requesting pod name=s88f1-1779162610 image=runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 disk=80GB
+[§88-F1] pod_create: {"id": "tf9r4zegggyy0d", "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04", "env": ["PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"], "machineId": "id20nfc1q14a", "machine": {"podHostId": "tf9r4zegggyy0d-64410c7b"}, "_gpu": "NVIDIA A100 80GB PCIe"}
+[§88-F1] pod_id=tf9r4zegggyy0d — pre-flight runtime poll (max 600s, ip+port gate)
+[§88-F1] runtime poll 1/60 (ip=pending port=pending)
+[§88-F1] runtime poll 2/60 (ip=pending port=pending)
+[§88-F1] runtime ready @ iter 3/60 (ip=38.128.232.9 port=19719)
+[§88-F1] SSH probe @ root@38.128.232.9:19719 (60 tries × 10s = 600s)
+[§88-F1] SSH ready @ try 1/60
+Warning: Permanently added '[38.128.232.9]:19719' (ED25519) to the list of known hosts.
+Warning: Permanently added '[38.128.232.9]:19719' (ED25519) to the list of known hosts.
+scp: stat local "conscious_decoder.py": No such file or directory
+[§88-F1] terminating pod tf9r4zegggyy0d (orphan-0 mandate)

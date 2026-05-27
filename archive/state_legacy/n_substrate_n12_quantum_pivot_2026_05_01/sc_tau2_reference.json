@@ -1,0 +1,53 @@
+{
+  "schema": "n12/quantum_pivot/sc_tau2_reference/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "purpose": "Replace unsourced 100us SC reference (v1) and unextractable PRNewswire 2025-03 (v2 INDETERMINATE) with a citable peer-reviewed tau_2 (T2 echo / T2*) value for F-N12-1 ratio test.",
+  "primary_recommendation": {
+    "tau_2_value_us": 1060,
+    "tau_2_value_ms": 1.06,
+    "metric_type": "T2_echo (Hahn echo dephasing time)",
+    "device_class": "tantalum-on-silicon transmon (state-of-the-art SC)",
+    "publication": {
+      "title": "Methods to achieve near-millisecond energy relaxation and dephasing times for a superconducting transmon qubit",
+      "venue": "Nature Communications",
+      "year": 2025,
+      "month": 7,
+      "doi_url": "https://www.nature.com/articles/s41467-025-61126-0",
+      "T1_us": 670,
+      "T2_echo_us": 1060,
+      "institution": "Aalto University (Finland)",
+      "peer_reviewed": true
+    },
+    "rationale": "Peer-reviewed Nature Communications 2025 publication, gives explicit numerical T2 echo of 1.06 ms on tantalum transmon — the current SOTA for SC. Citable as the 'best reasonably achievable SC tau_2' upper-bound reference."
+  },
+  "secondary_reference_typical_IBM_fleet": {
+    "tau_2_value_us_range": [50, 200],
+    "metric_type": "T2 (median fleet, transmon planar)",
+    "publication_class": "fleet specs disclosed via IBM Quantum hardware page + IBM/Wikipedia transmon entry",
+    "T1_typical_us": "30-40 (planar), 95 (3D cavity), 350 (Nighthawk best, 2026)",
+    "T2_typical_us": "comparable to T1 within factor 2 for echo-protected transmons",
+    "rationale": "For a 'representative production SC qubit' rather than SOTA, use IBM fleet median T2 ~100us. This is the working reference for F-N12-1 v3 because the test substrate (ibm_kingston Heron r2) sits in this regime."
+  },
+  "tertiary_reference_2D_transmon_record": {
+    "tau_2_implied_us": "~3000+ (T1 = 1680 us, Q = 1.5e7 best qubit)",
+    "publication": {
+      "title": "Millisecond lifetimes and coherence times in 2D transmon qubits",
+      "venue": "Nature",
+      "year": 2025,
+      "doi_url": "https://www.nature.com/articles/s41586-025-09687-4"
+    },
+    "rationale": "Highest published T1 (1.68 ms) in 2D transmons, time-averaged Q = 9.7e6 across 45 qubits. Use as 'absolute SC ceiling' bound."
+  },
+  "F_N12_1_v3_reference_choice": {
+    "primary_for_ratio_denominator_us": 100,
+    "primary_for_ratio_denominator_source": "IBM Heron r2 fleet typical T2 (matches v3 substrate)",
+    "secondary_for_robustness_check_us": 1060,
+    "secondary_for_robustness_check_source": "Nature Communications 2025 SC SOTA",
+    "rationale": "Use 100us (matched-substrate) as primary denominator: it is the actual T2 of the device the v3 measurement runs on, eliminating cross-device confound. Use 1060us as a robustness-bound check: if the Heron r2-measured tau_2 exceeds 1.06 ms, that itself is a discovery (better-than-SOTA), independent of Orch-OR. Both numbers are now citable, replacing the v1 unsourced placeholder."
+  },
+  "prnewswire_2025_03_status": {
+    "extractable_tau_2_numeric": false,
+    "v2_finding": "PRNewswire 2025-03 release (cited in N-20 doc) contains no extractable T2/tau_2 numeric. Defers technical data to a 'forthcoming GitHub repository' that is not yet published as of 2026-05-01.",
+    "decision": "DROP from F-N12-1 reference set. Replace with peer-reviewed Nature/NatComm citations above."
+  }
+}

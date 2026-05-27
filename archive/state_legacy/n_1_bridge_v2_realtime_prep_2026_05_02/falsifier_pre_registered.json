@@ -1,0 +1,62 @@
+{
+  "schema": "anima/n_1_bridge_v2_realtime_prep/falsifier/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "phase": "Phase 6 — pre-registered 4-tier falsifier (raw#71 anti-garden-of-forking-paths)",
+  "frozen": true,
+  "freezing_rationale": "Thresholds set BEFORE data collection; cannot be modified after. Any post-hoc relaxation = invalidates the run.",
+
+  "primary_test_statistic": "per-phase Pearson r between aligned (clm_mind_tension @ 1Hz) and (eeg_alpha_PLV averaged over P3+P4+O1+O2 @ 1Hz windows)",
+  "secondary_statistics": ["bidirectional Granger lag-1", "binary transfer entropy (lag-1, median-split)"],
+  "permutation_null": "1000 random within-phase shuffles of EEG_PLV; two-tailed",
+
+  "tiers": {
+    "F-PASS_STRONG": {
+      "criteria_all_required": [
+        "|r| > 0.5",
+        "permutation p < 0.01",
+        "TE (either direction) > surrogate p99",
+        "consistent direction (same sign of r) across >= 3 of 6 phases"
+      ],
+      "interpretation": "Strong evidence for real-time CLM <-> EEG coupling; mediator-framing H1/H2 testable in follow-up",
+      "next_action": "scale to N>=10 sessions for replication"
+    },
+    "F-PASS_PARTIAL": {
+      "criteria_all_required": [
+        "|r| > 0.3",
+        "permutation p < 0.05",
+        "consistency in >= 2 of 6 phases (especially P3 CLM-read showing larger |r| than P4 arithmetic control)"
+      ],
+      "interpretation": "Weak but non-trivial evidence; coupling visible but underpowered with N=1",
+      "next_action": "replicate session same-day to confirm"
+    },
+    "F-FAIL": {
+      "criteria_any_sufficient": [
+        "|r| < 0.2 across all 6 phases",
+        "permutation p > 0.10 in 5/6 phases"
+      ],
+      "interpretation": "No coupling visible; consistent with N-1 v2 partial F-ARTIFACT and N-1 v1 BRIDGE_WEAK_REAL_HW; substrate-honest null",
+      "next_action": "bridge hypothesis falsified for current CLM v4 530M + W4 closed-loop config"
+    },
+    "F-ARTIFACT": {
+      "criteria_diagnostic": [
+        "random-control: shuffle phase labels (P1<->P4, P2<->P5, P3<->P6) and re-run analysis",
+        "if shuffled per-phase r distribution is statistically indistinguishable from observed (KS test p > 0.10) -> ARTIFACT confirmed"
+      ],
+      "interpretation": "Apparent coupling is degenerate or driven by within-phase autocorrelation; not phase-specific",
+      "next_action": "investigate source of common autocorrelation (audio entrainment? line noise? clock sync drift?)"
+    }
+  },
+
+  "tie_break_priority": ["F-PASS_STRONG > F-PASS_PARTIAL > F-FAIL > F-ARTIFACT > F-INDETERMINATE"],
+  "F-INDETERMINATE_default": "if no tier matched (e.g. partial criteria met for STRONG but not all): reported as INDETERMINATE; replicate before classifying",
+
+  "phase_specific_predictions_pre_registered": {
+    "P1_eyes_open_baseline": "expected null coupling; reference baseline",
+    "P2_eyes_closed_berger": "expected EEG alpha increase but null CLM coupling (CLM sees no user state)",
+    "P3_clm_read": "ONLY phase where positive coupling theoretically possible (user attends to CLM stream)",
+    "P4_mental_arithmetic": "matched cognitive-load CONTROL for P3; coupling here = artifact or shared cognitive-load mediator",
+    "P5_breath_focus": "mindfulness control; expected null",
+    "P6_recovery": "return to baseline; expected null"
+  },
+  "key_diagnostic_contrast": "P3_r vs P4_r: if |P3_r| > |P4_r| AND P3 passes threshold AND P4 doesn't -> evidence is CLM-specific not generic-cognitive-load"
+}

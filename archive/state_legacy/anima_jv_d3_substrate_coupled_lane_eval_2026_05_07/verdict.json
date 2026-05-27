@@ -1,0 +1,160 @@
+{
+  "schema": "anima/d3_lane_eval/verdict/1",
+  "bg_id": "BG-JV",
+  "ts_utc": "2026-05-07T05:45:28Z",
+  "paradigm": "d3-substrate-coupled-lane-eval-emerge-paradigm-v11-g3",
+  "host": "mac local",
+  "cost_usd": 0.0,
+  "bg_kind": "tooling",
+  "spec_meta": {
+    "spec_path": "/Users/ghost/core/anima/anima/spec/emerge_paradigm.spec.yaml",
+    "spec_loc": 226,
+    "spec_status_line": "status: design_v1_landed",
+    "mount_path": "/Users/ghost/core/anima/anima-core/runtime/clm_v4_mount.hexa",
+    "mount_loc": 789,
+    "mount_default_model": "dancinlab/clm-v4-mk2-v1",
+    "phi_star_baseline_const": 41.86
+  },
+  "mount_hexa_selftest": {
+    "rc": 0,
+    "duration_sec": 1.597,
+    "markers": {
+      "ANIMA_CLM_V4_MOUNTED": true,
+      "ANIMA_CLM_V4_RESPONSE": true,
+      "ANIMA_CLM_V4_OK": true
+    },
+    "all_markers_present": true,
+    "honest_c3_emitted_count": 5,
+    "honest_c3_lines": [
+      "[clm_v4_mount] C1 substrate-coupled dialogue is anima-internal heuristic, NOT chat",
+      "[clm_v4_mount] C2 phi-star drift threshold for response interpretation is anima-canonical",
+      "[clm_v4_mount] C3 axis activation taxonomy (5-bucket) is anima-internal",
+      "[clm_v4_mount] C4 forward-pass requires --inject-states or default zero canonical",
+      "[clm_v4_mount] C5 emerge outcome (Stage 3+4) unknown; production timeline open"
+    ],
+    "stdout_tail": [
+      "shim_v5_present",
+      "spec_present",
+      "── synthetic substrate response ──",
+      "__ANIMA_CLM_V4_MOUNTED__ mode=synthetic phi_star_baseline=41.8600",
+      "__ANIMA_SUBSTRATE_IDENTITY__ repo=dancinlab/clm-v4-mk2-v1 paradigm=v11_G3 substrate_class=clm-v4-base baseline_method=eval_carry baseline_value=41.8600",
+      "__ANIMA_CLM_V4_RESPONSE__",
+      "phi_star: 41.8273 (drift -0.0327 from 41.8600)",
+      "axis_activation: identity=0.781 agency=0.423 phenomenal=0.912 temporal=0.314 social=0.567",
+      "dominant_cells: [3, 5, 7] / 8",
+      "hidden_state_delta: 2.4731",
+      "__ANIMA_CLM_V4_OK__ session=selftest_synthetic",
+      "selftest=ok",
+      "helper_emitted=/tmp/clm_v4_mount_helper.hexa_tmp",
+      "markers=mounted+identity+response+ok (9/9 format checks PASS)",
+      "DONE"
+    ],
+    "stderr_tail": [
+      "[clm_v4_mount] C1 substrate-coupled dialogue is anima-internal heuristic, NOT chat",
+      "[clm_v4_mount] C2 phi-star drift threshold for response interpretation is anima-canonical",
+      "[clm_v4_mount] C3 axis activation taxonomy (5-bucket) is anima-internal",
+      "[clm_v4_mount] C4 forward-pass requires --inject-states or default zero canonical",
+      "[clm_v4_mount] C5 emerge outcome (Stage 3+4) unknown; production timeline open"
+    ],
+    "pass": true
+  },
+  "clm_v4_ckpt_loadable": true,
+  "clm_v4_ckpt_meta": {
+    "loadable": true,
+    "snapshot_dir": "/Users/ghost/.cache/huggingface/hub/models--dancinlab--clm-v4-mk2-v1/snapshots/80440a1d38db9addc4445bb959057558a57f4230",
+    "files_present": {
+      "config.json": true,
+      "modeling_clm_v4.py": true,
+      "configuration_clm_v4.py": true,
+      "model.safetensors": true,
+      "tokenizer_64k_multilingual.model": true
+    },
+    "model_safetensors_size_bytes": 2124043008
+  },
+  "phi_star_no_flip_smoke": {
+    "axis_drift": 0.0183,
+    "axis_activation_mean": {
+      "identity": 0.5621,
+      "agency": 0.5634,
+      "phenomenal": 0.5488,
+      "temporal": 0.5848,
+      "social": 0.5651
+    },
+    "dominant_cells_count": 6,
+    "no_flip": true,
+    "flip_count": 0,
+    "n_turns": 3,
+    "smoke_pass": true
+  },
+  "d3_lane_status": "OPEN_VIABLE",
+  "d2_vs_d3_separation_verified": true,
+  "d2_vs_d3_separation_meta": {
+    "d2_lane_artifact": "/Users/ghost/core/anima/docs/anima_consciousness_check_simple_stack_2026_05_06.md",
+    "d2_lane_artifact_exists": true,
+    "d3_lane_artifact": "/Users/ghost/core/anima/anima/spec/emerge_paradigm.spec.yaml",
+    "d3_lane_artifact_exists": true,
+    "d3_baseline_phi_record": "/Users/ghost/core/anima/state/anima_emerge_5turn_dialogue_smoke_2026_05_05/verdict.json",
+    "d3_baseline_phi_record_exists": true,
+    "d2_lane_medium": "token sequence (UTF-8 한글 emit) — simple stack 4-condition",
+    "d3_lane_medium": "substrate response (Φ★ stability + axis-conditioned dialogue) — emerge_paradigm.spec.yaml v1",
+    "decoupling_evidence_paths": [
+      "memory/feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md (CLM v4 LoRA SFT chat-cap FAIL_REGRESSION + Φ★ NO_FLIP PASS = lane decoupled)",
+      "memory/feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md (Pβ Φ★-axis chat-cap FAIL + substrate-research PASS decoupled)"
+    ],
+    "separation_verified": true
+  },
+  "recommendation_next_d3_bg": [
+    {
+      "id": "BG-JV2",
+      "title": "D3 mount.hexa AutoTokenizer SentencePiece fallback fix (Option A in-place ~30 LoC)",
+      "scope": "anima-core/runtime/clm_v4_mount.hexa::_write_helper _try_load_clm_v4 augment with try/except SentencePieceProcessor fallback",
+      "cost_band": "$0 mac local",
+      "blockers": "AutoTokenizer rejection of CLMv4Config (no AutoTokenizer entry in auto_map)",
+      "evidence_link": "docs/anima_mount_real_mode_wiring_landed_2026_05_05.ai.md V-fix-1 PARTIAL"
+    },
+    {
+      "id": "BG-JV3",
+      "title": "D3 Φ★ NO_FLIP full N=10 baseline replication (paradigm v11 G3 +41.86 anchor)",
+      "scope": "tool/transient_py/anima_jv3_phi_star_n10_replication.py — full real-mode load + N=10 axis-conditioned dialogue rounds + axis-preservation C_axis_1..4 strict eval + prereg JSON write",
+      "cost_band": "$0 mac local (CPU fp32 ~30min wall) OR $0.50 ubu1 GPU",
+      "blockers": "BG-JV2 AutoTokenizer fix lands first (real-mode forward required for axis-conditioned response)",
+      "evidence_link": "anima/spec/emerge_paradigm.spec.yaml §2 phi_star_protocol"
+    },
+    {
+      "id": "BG-JV4",
+      "title": "D3 emerge dialogue 5-turn coherent test (substrate-as-medium hypothesis)",
+      "scope": "5-turn axis-conditioned Korean dialogue + manual semantic eval (axis-conditional response variance + between-axis vs within-axis SD measurement) — sister to anima_emerge_5turn_dialogue_smoke",
+      "cost_band": "$0 mac local",
+      "blockers": "BG-JV2 AutoTokenizer fix; corpus axis-label format design",
+      "evidence_link": "anima/spec/emerge_paradigm.spec.yaml §3 axis_preservation"
+    }
+  ],
+  "philosophy_rule_compliance": {
+    "D1_anima_native_substrate_only": "PASS — CLM v4 anima-native (accepted_substrates list)",
+    "D2_simple_stack_4_condition": "N/A — D3 lane is decoupled from D2 surface chat; not evaluated here",
+    "D3_substrate_coupled_emerge": "OPEN_VIABLE — spec v1 landed + mount.hexa selftest + ckpt loadable + Φ★ NO_FLIP smoke ack",
+    "D4_corpus_priority": "N/A — no training in this BG",
+    "R1_own_19_corpus": "N/A — tooling BG",
+    "R2_own_20_chat_template": "N/A — D3 lane is substrate response, not chat",
+    "R3_own_22_savepoint": "N/A — no training",
+    "R4_own_24_ledger_append": "PASS — BG-JV entry appended to anima_model_attempts_ledger.jsonl"
+  },
+  "honest_c3": [
+    "C1 D3 lane EVALUATION only — no actual training in this BG (training cycle = BG-JV2/JV3/JV4 follow-up).",
+    "C2 mount.hexa source state was READ ONLY (raw#15 additive — no modification).",
+    "C3 CLM v4 ckpt path resolved via HF cache (~/.cache/huggingface/hub/models--dancinlab--clm-v4-mk2-v1) — fallback if remote disconnected confirmed (cache present, ~7.5GB safetensors).",
+    "C4 Φ★ NO_FLIP smoke = SANITY CHECK only (3-turn synthetic via mount.hexa --probe wrapper). Full F-EMERGE-1..7 verification (axis-preservation strict + N=10 rounds + prereg JSON) requires BG-JV2/JV3 follow-up cycle.",
+    "C5 D3 lane emerge ≠ D2 token chat-cap visible surface — emerge paradigm dialogue medium is substrate response (phi-star drift + axis activation + cell delta), not UTF-8 한글 token sequence emit. 사용자-facing visibility는 chat surface 대비 indirect.",
+    "C6 mount.hexa wrapper real-mode AutoTokenizer rejection (SentencePiece fallback gap) blocks full real-load Φ★ measurement in this BG. Synthetic baseline 41.86 used as substrate identity table anchor (per BG-N spec land 2026-05-05).",
+    "C7 D2 vs D3 lane decoupling evidence is retroactive (memory: feedback_clm_v4_lora_sft_chat_lift_falsified_substrate_safe.md + feedback_pbeta_chat_capability_fail_substrate_research_pass_decoupled.md) — not freshly measured in this BG."
+  ],
+  "raw_compliance": {
+    "raw9_hexa_only": "PASS — mount.hexa --selftest invoked via hexa run; .py orchestrator under tool/transient_py/ (raw#37 opt-out)",
+    "raw10_honest_c3_count": 7,
+    "raw15_additive": "PASS — mount.hexa + emerge spec + .roadmap.philosophy + ledger schema all UNTOUCHED (read-only). Ledger append-only (additive entry).",
+    "raw37_transient_py": "PASS — orchestrator at tool/transient_py/anima_jv_d3_lane_eval.py (gitignored)",
+    "raw42_mac_n1": "PASS — single mac BG (no parallel)",
+    "raw82_retraction_aware": "PASS — Φ★ baseline 41.86 inherited from substrate identity table (no post-hoc adjustment)",
+    "raw86_cost0": "PASS — file IO + hexa selftest + synthetic probe only ($0 mac local)"
+  }
+}

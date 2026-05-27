@@ -1,0 +1,26 @@
+{
+  "milestone": "M2",
+  "module": "HEXAD/IIT4/lib/iit4_distinction.hexa",
+  "date": "2026-05-25",
+  "what": "small-φ (min-partition intrinsic difference) + MICE purview search + distinction extraction — IIT 4.0 distinction layer (DESIGN §2 ③)",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU",
+  "network_hand_verified": "2-unit COPY/SWAP (deterministic ⇒ 1-bit irreducible) + all-noise null control",
+  "checks": [
+    {"name": "small_phi_effect {0}=ON over {1} = 1.0", "result": "PASS"},
+    {"name": "small_phi_effect {0}=ON over {0} = 0.0", "result": "PASS"},
+    {"name": "small_phi_cause {0}=ON over {1} = 1.0", "result": "PASS"},
+    {"name": "mice_effect {0}=ON phi = 1.0", "result": "PASS"},
+    {"name": "mice_effect {0}=ON purview = {1}", "result": "PASS"},
+    {"name": "mice_cause {0}=ON phi = 1.0", "result": "PASS"},
+    {"name": "mice_cause {0}=ON purview = {1}", "result": "PASS"},
+    {"name": "distinction {0}=ON phi_d = 1.0", "result": "PASS"},
+    {"name": "distinction {1}=ON phi_d = 1.0 (symmetry)", "result": "PASS"},
+    {"name": "count_distinctions(copy, state 11) >= 2", "result": "PASS"},
+    {"name": "noise small_phi_effect = 0.0", "result": "PASS"},
+    {"name": "noise count_distinctions = 0", "result": "PASS"}
+  ],
+  "tally": {"pass": 12, "fail": 0},
+  "verdict": "🟢 SUPPORTED-NUMERICAL — M2 distinction layer deterministic exact, 12/12 hand-verifiable + null-control PASS",
+  "honest_scope": "Partition scheme = all-directional-bipartition MIP (IIT-3.0-style tractable). Reconciliation with IIT 4.0's specific partition set + PyPhi numeric calibration = M5 (F-IIT4-2/3). Relations + Φ-structure = M3; system big-Φ = M4.",
+  "next": "M3 relations (iit4_relation.hexa) — distinction purview overlap (congruent face) + Φ-structure assembly"
+}

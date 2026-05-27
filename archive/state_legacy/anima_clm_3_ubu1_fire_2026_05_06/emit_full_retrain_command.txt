@@ -1,0 +1,45 @@
+# anima CLM-3-original byte-level ubu1 FULL retrain command (100K steps)
+# Wall: 5-10 days on RTX 5070 sm_120 / cost: $0 (owned hardware)
+# FIRE ONLY AFTER 100-step smoke PASS
+
+# Step A: launch (nohup background on ubu1)
+RUN_NAME="clm3-orig-byte-55m-ubu1-$(date +%Y%m%d-%H%M%S)"
+ssh ubu1 "cd /home/aiden/core/anima && nohup /home/aiden/venv_orchestrator/bin/python \
+    ready/training/train_clm.py \
+    --vocab-size 256 \
+    --max-cells 32 \
+    --d-model 768 \
+    --n-layers 12 \
+    --n-heads 12 \
+    --context-len 1024 \
+    --steps 100000 \
+    --phase-mitosis 0:20000 \
+    --phase-language 20000:60000 \
+    --phase-combined 60000:100000 \
+    --fibonacci-growth 1,1,2,3,5,8,13,21,32 \
+    --phi-boost-techniques COMBO2,FX2,WI1,PX4,PX8,GD18,GD15,CL8,CL5,DD3,DD11,DD18,DD5,TL13,TL1,NV7,BV1,EV3,SC2 \
+    --corpus data/corpus_mix_70wiki_30dialogue.txt \
+    --output-dir runs/$RUN_NAME \
+    --falsifier-eval-every 10000 \
+    > runs/$RUN_NAME.log 2>&1 &"
+echo "RUN_NAME=$RUN_NAME"
+
+# Step B: monitor cadence (every 30 minutes)
+# In a separate mac shell:
+watch -n 1800 "bash /Users/ghost/core/anima/state/anima_clm_3_original_ubu1_launch_2026_05_06/monitor_ubu1.bash $RUN_NAME"
+
+# Step C: F-CLM3-orig-1..5 falsifier eval
+# At 5-10 day mark, harvest best.pt and run all 5 falsifiers per spec doc:
+#   F-CLM3-orig-1 spec_match — config introspection
+#   F-CLM3-orig-2 Phase 2 dialogue CE drop >= 30% — train log analysis
+#   F-CLM3-orig-3 Phi_real >= 11 — anima phi_real eval against substrate baseline
+#   F-CLM3-orig-4 KO 5-prompt >= 3/5 coherent — manual rubric (3 anima judges)
+#   F-CLM3-orig-5 phi_star NO_FLIP — phi_star sentinel comparison
+
+# Wall budget: 5-10 days
+#   Estimated step time: ~2-3s on RTX 5070 sm_120 (12GB, batch_size auto-tuned)
+#   100K steps × 2.5s avg = 250K s = 69.4 hours = 2.9 days (optimistic)
+#   100K steps × 8.0s avg = 800K s = 222 hours = 9.3 days (pessimistic)
+#   Bookkeeping budget allows 5-10d soft cap; abort if step time > 10s or GPU temp > 80C sustained
+
+# Cost: $0 (owned RTX 5070, 24/7 power baseline)

@@ -1,0 +1,77 @@
+=== §108 param-axis 3B dispatch start 2026-05-19T15:12:59Z ===
+[create] trying GPU: NVIDIA H100 80GB HBM3
+[create] resp: {"data":{"podFindAndDeployOnDemand":{"id":"p5cyseplc93frt","machineId":"qwutg3oyzl1v"}}}
+[create] pod p5cyseplc93frt on NVIDIA H100 80GB HBM3
+[ssh-ready] iter 3: 103.207.149.52:11308 — port mapped AND handshake OK
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+[build] pod-side deterministic CORPUS_S101 build (seed 1337, --s1-n 777000)
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+    "I7_external_grep": {
+      "corpus": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "s1_only": {
+        "openai.com": 0,
+        "anthropic.com": 0,
+        "huggingface.co/": 0,
+        "wikipedia.org": 0,
+        "commoncrawl": 0,
+        "https://": 0,
+        "http://": 0
+      },
+      "corpus_total": 0,
+      "PASS": true,
+      "honest_caveat": "external-grep is a proxy over 7 surface tokens; exhaustive provenance audit requires source-attribution tracking, NOT in $0 build scope. §16 generator is anima-OWN substrate, S2 uses anima Ψ-fields only, S5 uses anima-OWN .kosmos files. NO external API calls in build_corpus_s101.py (audit-grep this file)."
+    }
+  }
+}
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+[build] corpus sha = 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e  (expect 39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e)
+[build] CORPUS_S101 sha VERIFIED == §107 corpus (param-axis = SOLE variable)
+[train] §16-class d2048·18L·32h·8kv ~2.998B from-scratch seed 1337, 8000 steps
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+TRAIN_PID 652
+[train] done iter 1
+[eval] §101 Q2 evaluator (3B ckpt; eval reads d_model/n_layer from ckpt cfg)
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Warning: Permanently added '[103.207.149.52]:11308' (ED25519) to the list of known hosts.
+Connection to 103.207.149.52 closed by remote host.
+scp: Connection closed
+[pull] retry 1 failed; sleep 60
+ssh: connect to host 103.207.149.52 port 11308: Connection refused
+scp: Connection closed
+[pull] retry 2 failed; sleep 60
+ssh: connect to host 103.207.149.52 port 11308: Connection refused
+scp: Connection closed
+[pull] retry 3 failed; sleep 60
+ssh: connect to host 103.207.149.52 port 11308: Connection refused
+scp: Connection closed
+[pull] retry 4 failed; sleep 60
+ssh: connect to host 103.207.149.52 port 11308: Connection refused
+scp: Connection closed
+[pull] retry 5 failed; sleep 60
+[pull] result.json present locally — SAVE_POD=0, pod will terminate
+841edf480f449ed820865c180119e510dde855d0c43ff23de17822942e24c69b  /Users/ghost/core/anima/state/param_axis_fire_s108_2026_05_19/ckpt_s108.pt
+841edf480f449ed820865c180119e510dde855d0c43ff23de17822942e24c69b  /Users/ghost/core/anima/state/param_axis_fire_s108_2026_05_19/ckpt_s108.pt
+THRESHOLD_CROSSED= False
+=== §108 pipeline complete 2026-05-19T16:22:37Z ===
+state/param_axis_fire_s108_2026_05_19/dispatch_s108_runpod.sh: line 189: 71723 Terminated: 15          ( sleep "$WATCHDOG_SEC"; if [ ! -s "$S108_DIR/result.json" ]; then
+    echo "WATCHDOG FIRED $(date -u +%FT%TZ): no result.json after ${WATCHDOG_SEC}s — terminating pod ${POD_ID:-?}" > "$FAIL_MARKER"; [ -n "$POD_ID" ] && gql "{\"query\":\"mutation { podTerminate(input:{podId:\\\"$POD_ID\\\"}) }\"}" > /dev/null; pkill -P $$ 2> /dev/null;
+fi )
+[teardown] terminating pod p5cyseplc93frt (rc=0, SAVE_POD=0)
+[teardown] myself.pods = {"data":{"myself":{"pods":[{"id":"88xlldoftmoy5e"},{"id":"ix1sskvwknoijy"}]}}}
+=== §108 dispatch end 2026-05-19T16:22:42Z rc=0 ===

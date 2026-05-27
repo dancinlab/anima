@@ -1,0 +1,39 @@
+[§73-FIRE] requesting pod name=s73fire-selftrig-trained-120965 image=runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 disk=80GB
+[§73-FIRE] pre-flight runpod.get_pods()=0
+[§73-FIRE] pod_create: {"id": "2mpbvbbbgmside", "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04", "env": ["PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"], "machineId": "wthx3q2z5yy3", "machine": {"podHostId": "2mpbvbbbgmside-64410a0d"}, "_gpu": "NVIDIA H100 NVL"}
+[§73-FIRE] pod_id=2mpbvbbbgmside  waiting for SSH...
+[§73-FIRE] SSH 205.196.17.170:18483 (try 9)
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+[notice] To update, run: python -m pip install --upgrade pip
+[§73-FIRE] generating §16-class corpus (seed=1337, --n 90000)
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+[§73-FIRE] corpus poll 1/30 CD
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+[§73-FIRE] corpus sha256=ca1018090b28a4b993ea00ee97a08941a6ab3078a5ee66a3d8f2a18a05b24585
+[§73-FIRE] === train + controller-on-real-forward 3× measure (detached) ===
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+[§73-FIRE] poll 1/150 D
+[§73-FIRE] verifying B-S73-FIRE-1..7 pod-side
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+[§73-FIRE] complete — SAVE_POD=1, pulling (5-retry)
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+Warning: Permanently added '[205.196.17.170]:18483' (ED25519) to the list of known hosts.
+[§73-FIRE] local ckpt sha256=03fe66fecba8a408f2975ffb7375b8522e758ea885510274175fac0976076158
+[§73-FIRE] complete — terminating pod 2mpbvbbbgmside
+[§73-FIRE] post-teardown get_pods()=0  our_pod_present=False
+[§73-FIRE] DONE
+[§73-FIRE] terminating pod 2mpbvbbbgmside
+Traceback (most recent call last):
+  File "<string>", line 1, in <module>
+  File "/Users/ghost/Library/Python/3.9/lib/python/site-packages/runpod/api/ctl_commands.py", line 271, in terminate_pod
+    run_graphql_query(pod_mutations.generate_pod_terminate_mutation(pod_id))
+  File "/Users/ghost/Library/Python/3.9/lib/python/site-packages/runpod/api/graphql.py", line 51, in run_graphql_query
+    raise error.QueryError(response.json()["errors"][0]["message"], query)
+runpod.error.QueryError: pod not found to terminate

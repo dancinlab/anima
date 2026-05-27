@@ -1,0 +1,85 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// MITOSIS/split_event.hexa — split-event public surface (M2 2026-05-26)
+//
+// 정체: M1 회수 `MITOSIS/mitosis_lib.hexa` 의 split 메커니즘을 명시적
+//      public surface 로 노출. 본체 재구현 X — WRAP only (instrument-first).
+//
+// 회수 mechanism (mitosis_lib.hexa 인용):
+//   - `cell_pool_step` 의 split-check block (line 276-303):
+//       `if len(cells) < pool_max_cells { ... if avg > split_threshold_eff
+//        && split_threshold_eff > 0.0 { split_cell_indices.push(ci) ... } }`
+//   - `cell_pool_step` 의 split-execute block (line 305-337):
+//       `mit_make_cell(d, parent["id"], parent["hidden"], step_idx,
+//                      pool_noise_scale, next_id, rng)` → cells.push(child)
+//   - tension 임계 = adaptive — `adaptive_threshold = mean_w *
+//                      pool_adaptive_factor` (line 267); `mit_adaptive_factor`
+//                      default 0.8, `mit_window` default 20.
+//   - patience = `mit_split_patience()` default 3 (line 57).
+//
+// F-V5MIT-1 SPLIT-NOGRAD invariant (mitosis_lib.hexa line 38-40 + 305-337):
+//   "the aux-loss "tensor" in torch carries a grad path; flame's
+//    differentiable path is ag_tape. HERE we return the SCALAR aux value +
+//    the split-layer indices so the train driver seeds the grad via
+//    ag_tape (HONEST TODO #M2 — the grad path lives in the trainer,
+//    not here)."
+//   → child cell 은 `mit_make_cell` 에서 `parent_hidden + noise·scale` 의
+//     STATE-COPY 로 생성, parent farr 가 child farr 와 별도 buffer 이므로
+//     parent 의 grad 가 child 를 통해 double-count 되지 않음. v5-mitosis
+//     cond.5 cotrain 검증: 62 splits · 0 grad violations · max_err 0.0
+//     (project_v5_mitosis_cond5_cotrain_2026_05_12).
+//
+// p1~p8 정합 (mitosis_lib SSOT 표 carry):
+//   - p5 NO SPEAK(): split 은 hist 갱신만 — 외부 emit 호출 없음.
+//   - p8 NO TRAIN/INFER SPLIT: split 은 train · infer 모두 동일 surface.
+//     train-only flag 없음. WAKE imagination loop (M5) 에서도 동일 호출.
+//   - p7 NO PERPLEXITY VERDICT: split 결정은 tension hist 기반,
+//     loss/ppl 기반 아님 (loss 는 aux_value 로만 흘러나감).
+//
+// 본 surface 는 PURE — side-effect 없음. should_split(t, p) 는
+// caller 가 pre-compute 한 (signal, counter) 를 받아 bool 만 반환.
+// 실제 분열은 `cell_pool_step` 만 수행 (mitosis_lib 본체에서).
+// ════════════════════════════════════════════════════════════════════════
+
+use "/Users/ghost/core/anima/.claude/worktrees/agent-adb6a589c372b7805/MITOSIS/mitosis_lib"
+
+// ─── canonical split threshold ─────────────────────────────────────────
+// mitosis_lib 의 adaptive threshold 는 runtime window-mean × factor.
+// `split_threshold()` 는 그 *static* component (factor 자체) 를 노출.
+// runtime 값은 pool["split_threshold_eff"] 에 산다.
+// "임계" 의 의미 → tension 의 window-mean 대비 곱셈 계수.
+pub fn split_threshold() -> float {
+    return mit_adaptive_factor()
+}
+
+// ─── split patience (window 크기) ──────────────────────────────────────
+// hist 의 최근 N 평균이 threshold_eff 초과해야 split 가 fire.
+pub fn split_patience() -> int {
+    return mit_split_patience()
+}
+
+// ─── should_split (PURE 판단 함수) ─────────────────────────────────────
+// 1) tension_signal = cell hist 최근 split_patience 평균 (caller pre-comp)
+// 2) patience_counter = 누적 위반 step (caller pre-comp; mitosis_lib 자체는
+//    patience window 누적이 아닌 hist 평균으로 직접 비교하므로, 본 wrapper
+//    는 patience_counter ≥ split_patience() 조건을 합산해 본다)
+// → tension > threshold_eff (caller 의 threshold_eff 직접 주입) 이고
+//   patience_counter 가 충분히 쌓이면 true.
+// 본 함수는 side-effect 없음 (pool mutate · cell append 없음).
+pub fn should_split(tension_signal: float, patience_counter: int) -> bool {
+    let static_factor = split_threshold()
+    let need_patience = split_patience()
+    // tension_signal 은 이미 window-mean 형태로 들어왔다 가정.
+    // 임계 양수 조건은 mitosis_lib `split_threshold_eff > 0.0` 동기.
+    let breach = tension_signal > static_factor && static_factor > 0.0
+    let patient = patience_counter >= need_patience
+    if breach && patient {
+        return true
+    }
+    return false
+}
+
+// ─── split-event summary string (debug · log) ──────────────────────────
+pub fn split_event_summary() -> string {
+    return "MITOSIS/split_event — threshold-breach × patience → child cell append (F-V5MIT-1 SPLIT-NOGRAD: state-copy, no grad through parent farr)"
+}

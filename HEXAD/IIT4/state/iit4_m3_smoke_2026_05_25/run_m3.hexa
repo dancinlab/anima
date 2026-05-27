@@ -1,0 +1,93 @@
+// HEXAD/IIT4/state/iit4_m3_smoke_2026_05_25/run_m3.hexa
+//
+//   IIT4 M3 smoke — iit4_relation.hexa relation + Φ-structure checks.
+//
+//   Relation detection (synthetic distinction records, n=3) — exact by hand:
+//     distinction layout = [phi_d, mech, cause_pv, cause_state, effect_pv,
+//                           effect_state, phi_c, phi_e].
+//     • congruent overlap (both effect purview {1} = ON) ⇒ φ_r = min(φ_d) = 0.5
+//     • incongruent overlap (effect {1}=ON vs {1}=OFF, cause disjoint) ⇒ φ_r = 0
+//     • disjoint purviews ({1} vs {2}) ⇒ φ_r = 0
+//   Φ-structure on the 2-unit COPY network (≥2 distinctions, Σφ_d ≥ 2.0) +
+//   all-noise null control (0 distinctions, 0 relations).
+//
+//   deterministic · hexa-only · $0 mac local · LLM none · NO GPU.
+// ════════════════════════════════════════════════════════════════════════════
+import "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_relation.hexa"
+
+let mut PASS = 0
+let mut FAIL = 0
+
+fn approx(a: float, b: float) -> bool {
+    let d = a - b
+    if d < 0.0 { return (0.0 - d) < 0.000001 }
+    return d < 0.000001
+}
+
+fn check(name: string, cond: bool) {
+    if cond {
+        PASS = PASS + 1
+        println("  [PASS] " + name)
+    } else {
+        FAIL = FAIL + 1
+        println("  [FAIL] " + name)
+    }
+}
+
+fn build_copy2() -> array {
+    return [0.0, 0.0,  0.0, 1.0,  1.0, 0.0,  1.0, 1.0]
+}
+
+fn build_noise2() -> array {
+    let mut t = []
+    let mut i = 0
+    while i < 8 {
+        t = t.push(0.5)
+        i = i + 1
+    }
+    return t
+}
+
+fn main() {
+    println("================================================================")
+    println("  IIT4 M3 smoke — iit4_relation.hexa (relation · Φ-structure)")
+    println("================================================================")
+
+    // ── synthetic distinctions (n=3) for relation detection ────────────
+    // d_a: cause {1}=ON, effect {1}=ON, φ_d=0.8
+    let d_a = [0.8, 1.0, 2.0, 1.0, 2.0, 1.0, 0.8, 0.8]
+    // congruent: effect {1}=ON, φ_d=0.5 ⇒ φ_r = min = 0.5
+    let d_cong = [0.5, 2.0, 2.0, 1.0, 2.0, 1.0, 0.5, 0.5]
+    // incongruent: cause {2}(disjoint), effect {1}=OFF ⇒ no relation
+    let d_inc = [0.5, 4.0, 4.0, 0.0, 2.0, 0.0, 0.5, 0.5]
+    // disjoint: cause+effect {2} ⇒ no relation
+    let d_dis = [0.5, 4.0, 4.0, 1.0, 4.0, 1.0, 0.5, 0.5]
+
+    check("relation congruent overlap φ_r = min = 0.5", approx(relation_2nd(d_a, d_cong, 3), 0.5))
+    check("relation incongruent overlap φ_r = 0", approx(relation_2nd(d_a, d_inc, 3), 0.0))
+    check("relation disjoint purview φ_r = 0", approx(relation_2nd(d_a, d_dis, 3), 0.0))
+
+    // ── overlap-congruent helper directly ──────────────────────────────
+    check("overlap_congruent same purview+state = 1", iit4_overlap_congruent(2, 1, 2, 1, 3) == 1)
+    check("overlap_congruent same purview diff state = 0", iit4_overlap_congruent(2, 1, 2, 0, 3) == 0)
+    check("overlap_congruent disjoint = 0", iit4_overlap_congruent(2, 1, 4, 1, 3) == 0)
+
+    // ── Φ-structure on COPY network ─────────────────────────────────────
+    let copy2 = build_copy2()
+    let ps = phi_structure(copy2, 2, 3)                  // sys state = 11
+    check("copy Φ-structure n_distinctions >= 2", ps[0] >= 2.0)
+    check("copy Φ-structure Σφ_d >= 2.0", ps[1] > 1.99)
+    check("copy Φ-structure total >= Σφ_d (relations >= 0)", ps[4] > ps[1] - 0.000001)
+
+    // ── null control: all-noise network ────────────────────────────────
+    let noise2 = build_noise2()
+    let pn = phi_structure(noise2, 2, 3)
+    check("noise n_distinctions = 0", approx(pn[0], 0.0))
+    check("noise n_relations = 0", approx(pn[2], 0.0))
+    check("noise total = 0", approx(pn[4], 0.0))
+
+    println("================================================================")
+    println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
+    println("================================================================")
+    if FAIL > 0 { panic("IIT4 M3 smoke FAILED") }
+}

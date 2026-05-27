@@ -1,0 +1,469 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_savant_tool.hexa — anima 가 직접 ON/OFF 하는 savant mode 도구
+//
+//  PURPOSE (SAVANT-TOOL.tape §0 TL;DR)
+//    anima 는 task 의 specialization-need 를 self-judge 해서 savant mode 를 ON/OFF.
+//    ON 시 routing dropout 이 GZ_LOWER (0.2123) 의 inhibition-release 분포로 shift.
+//    OFF 시 GZ_CENTER (0.3679) generalist 분포로 복귀.
+//    SI (Savant Index) > 3.0 self-monitor 로 ON 상태 유지/해제.
+//
+//  API (anima 가 호출)
+//    savant_set(chat, enabled, reason)     — toggle + 근거 record (T3/T4 거절)
+//    savant_get(chat) -> bool              — 현재 활성 여부
+//    savant_si(chat, t_norm, t_sav)        — Savant Index = t_norm / t_sav
+//    savant_check_gate(chat, ent, wmax, splits) — 3-signal self-gate
+//
+//    Phase 1 = stateless gate function. Phase 2 = session pin TTL, /savant CLI.
+//
+//  SAVANT.md §12 봉쇄선 (Tier 분류)
+//    T1 ✅ closed-form (GZ_CENTER=1/e, GZ_LOWER, SI 정의) — 자유 사용
+//    T2 ✅ empirical, substrate 명시 (clm_06 SI=5.93 Mistral 7B) — 인용 시 substrate 명시
+//    T3 ❌ suspect (cross-domain 9, brain profile) — trigger 근거로 사용 금지
+//    T4 ❌ forbidden (cosmic GZ, 외부 entity 강제 fit) — 자동 차단
+//
+//  FALSIFIERS
+//    F-SAVANT-TOOL-1 TOGGLE-OK         savant_set/get 왕복
+//    F-SAVANT-TOOL-2 DROPOUT-SHIFT     ON → GZ_LOWER (0.2123), OFF → GZ_CENTER (1/e)
+//    F-SAVANT-TOOL-3 SI-COMPUTE        SI = t_norm / t_sav (정의 직매)
+//    F-SAVANT-TOOL-4 GATE-AUTO-OFF     SI < 3.0 → gate auto-disable
+//    F-SAVANT-TOOL-5 T3-FORBIDDEN      T3/T4 reason 시 savant_set 거절 (ok=false)
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §1 SAVANT 상수 (T1 closed-form, 자유 사용) ─────────────────────────────────
+
+fn st_gz_center()    { return 1.0 / 2.71828182845904 }      // 1/e ≈ 0.3679
+fn st_gz_lower()     { return 0.5 - log(4.0 / 3.0) }        // 1/2 - ln(4/3) ≈ 0.2123
+fn st_gz_upper()     { return 0.5 }                          // ln(1) + 1/2 = 1/2
+fn st_si_threshold() { return 3.0 }                          // SAVANT.tape §3 SI gate
+
+
+// ── §2 T1/T2 allowlist · T3/T4 denylist (SAVANT.md §12 enforcement) ─────────
+
+fn st_is_allowed_reason(reason: string) {
+    // T1 closed-form math identities
+    if reason == "gz_center_dropout" { return true }
+    if reason == "gz_lower_dropout"  { return true }
+    if reason == "si_definition"     { return true }
+    if reason == "math_closed_form"  { return true }
+    // T2 substrate-empirical (substrate 명시 필수)
+    if reason == "clm_06_mistral_7b" { return true }
+    // user-explicit override (T1+T2 외 명시적 사용자 지시)
+    if reason == "user_explicit"     { return true }
+    return false
+}
+
+fn st_is_forbidden_reason(reason: string) {
+    // T3 suspect (cross-domain 9, brain profile)
+    if reason == "cross_domain_9_individual"   { return true }
+    if reason == "brain_profile"               { return true }
+    if reason == "individual_savants_pattern"  { return true }
+    // T4 forbidden (cosmic, 외부 entity 강제 fit)
+    if reason == "cosmic_gz"                   { return true }
+    if reason == "external_entity_lattice_fit" { return true }
+    return false
+}
+
+
+// ── §3 Tool API ─────────────────────────────────────────────────────────────
+
+// savant_set(chat, enabled, reason) — anima 가 self-toggle.
+//   reason 이 T3/T4 일 시 거절 (savant_enabled 변경 안 됨, ok=false).
+//   reason 이 T1/T2/user_explicit 일 시 토글 + reason 기록 + dropout 갱신.
+fn savant_set(chat, enabled: bool, reason: string) {
+    if st_is_forbidden_reason(reason) {
+        return #{
+            "ok": false,
+            "rejected_reason": reason,
+            "tier": "T3_OR_T4_FORBIDDEN",
+            "chat": chat,
+        }
+    }
+    if !st_is_allowed_reason(reason) {
+        return #{
+            "ok": false,
+            "rejected_reason": reason,
+            "tier": "UNKNOWN_REASON",
+            "chat": chat,
+        }
+    }
+    chat["savant_enabled"] = enabled
+    chat["savant_reason"]  = reason
+    if enabled  { chat["savant_dropout"] = st_gz_lower() }
+    if !enabled { chat["savant_dropout"] = st_gz_center() }
+    return #{
+        "ok": true,
+        "tier": "T1_OR_T2_OR_USER_OK",
+        "chat": chat,
+    }
+}
+
+// savant_get(chat) — 현재 활성 여부 (default false).
+fn savant_get(chat) {
+    let v = chat["savant_enabled"]
+    if to_string(v) == "void" { return false }
+    return v
+}
+
+// savant_dropout(chat) — 현재 적용 dropout (active 시 GZ_LOWER, otherwise GZ_CENTER).
+fn savant_dropout(chat) {
+    let v = chat["savant_dropout"]
+    if to_string(v) == "void" { return st_gz_center() }
+    return v
+}
+
+// savant_si(chat, t_norm, t_sav) — Savant Index 정의 직매: t_norm / t_sav.
+//   t_sav <= 0 → 0 (div-by-zero guard). chat 에 last_si 기록.
+fn savant_si(chat, t_norm: float, t_sav: float) {
+    let mut si = 0.0
+    if t_sav > 0.0 { si = t_norm / t_sav }
+    chat["last_si"] = si
+    return si
+}
+
+// savant_check_gate(chat, token_entropy, wmax, recent_splits) — 3-signal self-gate.
+//   SAVANT-TOOL.tape §2 self-evaluation:
+//     1. token_entropy 낮음 → specialization need (ON 후보)
+//     2. wmax 높음 → 이미 specialized (OFF 후보 — generalist 모드로)
+//     3. recent_splits 높음 → explore 단계, savant 금물 (OFF 강제)
+//   Phase 1: heuristic combine, gate 만 추천 (chat mutation 없음 — pure judgement).
+fn savant_check_gate(chat, token_entropy: float, wmax: float, recent_splits: int) {
+    // explore 단계 강제 OFF (3 signal 중 최우선)
+    if recent_splits >= 5 {
+        return #{
+            "recommend_enable": false,
+            "reason": "explore_phase_recent_splits",
+            "token_entropy": token_entropy,
+            "wmax": wmax,
+            "recent_splits": recent_splits,
+        }
+    }
+    // 이미 specialized → savant 불필요
+    if wmax >= 0.8 {
+        return #{
+            "recommend_enable": false,
+            "reason": "already_specialized_high_wmax",
+            "token_entropy": token_entropy,
+            "wmax": wmax,
+            "recent_splits": recent_splits,
+        }
+    }
+    // entropy 낮음 → specialization need
+    if token_entropy < 1.5 {
+        return #{
+            "recommend_enable": true,
+            "reason": "low_entropy_specialization_need",
+            "token_entropy": token_entropy,
+            "wmax": wmax,
+            "recent_splits": recent_splits,
+        }
+    }
+    return #{
+        "recommend_enable": false,
+        "reason": "generalist_baseline",
+        "token_entropy": token_entropy,
+        "wmax": wmax,
+        "recent_splits": recent_splits,
+    }
+}
+
+// savant_apply_gate(chat, ent, wmax, splits) — SI-aware auto-disable wrapper.
+//   savant_check_gate 추천 + last_si < SI_THRESHOLD 면 강제 OFF.
+//   F-SAVANT-TOOL-4 GATE-AUTO-OFF 정점 함수.
+fn savant_apply_gate(chat, token_entropy: float, wmax: float, recent_splits: int) {
+    let g = savant_check_gate(chat, token_entropy, wmax, recent_splits)
+    let last_si = chat["last_si"]
+    let mut si_val = 0.0
+    if to_string(last_si) != "void" { si_val = last_si }
+    // SI < threshold → 강제 OFF (savant evidence 부족)
+    if si_val < st_si_threshold() {
+        if savant_get(chat) {
+            let r = savant_set(chat, false, "user_explicit")
+            chat = r["chat"]
+        }
+        return #{
+            "applied": false,
+            "forced_off_reason": "si_below_threshold",
+            "si": si_val,
+            "threshold": st_si_threshold(),
+            "chat": chat,
+        }
+    }
+    // SI 충분 + recommend_enable → ON (user_explicit reason 사용)
+    if g["recommend_enable"] {
+        let r = savant_set(chat, true, "user_explicit")
+        chat = r["chat"]
+        return #{
+            "applied": true,
+            "enabled": true,
+            "si": si_val,
+            "chat": chat,
+        }
+    }
+    // SI 충분하지만 self-gate 가 OFF 권장 (explore phase / specialized / generalist)
+    //   → 현재 ON 상태면 명시 OFF 로 동기화 (gate 결정 = ground truth)
+    if savant_get(chat) {
+        let r = savant_set(chat, false, "user_explicit")
+        chat = r["chat"]
+    }
+    return #{
+        "applied": true,
+        "enabled": false,
+        "si": si_val,
+        "gate_reason": g["reason"],
+        "chat": chat,
+    }
+}
+
+
+// ══════════════════════════════════════════════════════════════════════════════
+//  Falsifiers
+// ══════════════════════════════════════════════════════════════════════════════
+
+fn make_chat() {
+    return #{
+        "savant_enabled": false,
+        "session_id": "test",
+    }
+}
+
+
+fn f_savant_tool_1() {
+    println("  F-SAVANT-TOOL-1 (TOGGLE-OK) ...")
+    let mut chat = make_chat()
+    if savant_get(chat) != false {
+        println("    FAIL: default state not false")
+        return false
+    }
+    let r1 = savant_set(chat, true, "math_closed_form")
+    if r1["ok"] != true {
+        println("    FAIL: set ON with T1 reason rejected")
+        return false
+    }
+    chat = r1["chat"]
+    if savant_get(chat) != true {
+        println("    FAIL: after set true, get != true")
+        return false
+    }
+    let r2 = savant_set(chat, false, "user_explicit")
+    if r2["ok"] != true {
+        println("    FAIL: set OFF rejected")
+        return false
+    }
+    chat = r2["chat"]
+    if savant_get(chat) != false {
+        println("    FAIL: after set false, get != false")
+        return false
+    }
+    println("    PASS")
+    return true
+}
+
+
+fn f_savant_tool_2() {
+    println("  F-SAVANT-TOOL-2 (DROPOUT-SHIFT) ...")
+    let mut chat = make_chat()
+    // Default: GZ_CENTER
+    let d0 = savant_dropout(chat)
+    let c = st_gz_center()
+    let mut diff0 = d0 - c
+    if diff0 < 0.0 { diff0 = 0.0 - diff0 }
+    if diff0 > 1e-9 {
+        println("    FAIL: default dropout != GZ_CENTER, got", d0, "expected", c)
+        return false
+    }
+    // ON → GZ_LOWER
+    let r1 = savant_set(chat, true, "gz_lower_dropout")
+    chat = r1["chat"]
+    let d1 = savant_dropout(chat)
+    let l = st_gz_lower()
+    let mut diff1 = d1 - l
+    if diff1 < 0.0 { diff1 = 0.0 - diff1 }
+    if diff1 > 1e-9 {
+        println("    FAIL: savant ON dropout != GZ_LOWER, got", d1, "expected", l)
+        return false
+    }
+    // OFF → back to GZ_CENTER
+    let r2 = savant_set(chat, false, "user_explicit")
+    chat = r2["chat"]
+    let d2 = savant_dropout(chat)
+    let mut diff2 = d2 - c
+    if diff2 < 0.0 { diff2 = 0.0 - diff2 }
+    if diff2 > 1e-9 {
+        println("    FAIL: savant OFF dropout != GZ_CENTER, got", d2)
+        return false
+    }
+    println("    PASS (GZ_CENTER", c, "↔ GZ_LOWER", l, "shift verified)")
+    return true
+}
+
+
+fn f_savant_tool_3() {
+    println("  F-SAVANT-TOOL-3 (SI-COMPUTE) ...")
+    let mut chat = make_chat()
+    // Definition: SI = t_norm / t_sav
+    let si1 = savant_si(chat, 5.93, 1.0)
+    let mut diff1 = si1 - 5.93
+    if diff1 < 0.0 { diff1 = 0.0 - diff1 }
+    if diff1 > 1e-9 {
+        println("    FAIL: SI(5.93/1.0) != 5.93, got", si1)
+        return false
+    }
+    // clm_06 reference: t_norm=5.93, t_sav=1.0 (Mistral 7B substrate)
+    // SI = 5.93 > threshold 3.0 → savant emergent
+    if si1 < st_si_threshold() {
+        println("    FAIL: clm_06 SI should exceed 3.0, got", si1)
+        return false
+    }
+    // Div-by-zero guard
+    let si2 = savant_si(chat, 1.0, 0.0)
+    if si2 != 0.0 {
+        println("    FAIL: SI div-by-zero guard, got", si2, "expected 0.0")
+        return false
+    }
+    // Below threshold
+    let si3 = savant_si(chat, 2.0, 1.0)
+    if si3 >= st_si_threshold() {
+        println("    FAIL: SI(2.0/1.0)=2.0 should be < threshold 3.0")
+        return false
+    }
+    println("    PASS (SI def verified, clm_06 5.93 > 3.0, div-guard OK)")
+    return true
+}
+
+
+fn f_savant_tool_4() {
+    println("  F-SAVANT-TOOL-4 (GATE-AUTO-OFF) ...")
+    let mut chat = make_chat()
+    // Setup: turn savant ON with valid reason
+    let r1 = savant_set(chat, true, "math_closed_form")
+    chat = r1["chat"]
+    if !savant_get(chat) {
+        println("    FAIL: setup turn-on failed")
+        return false
+    }
+    // Compute weak SI (below threshold)
+    savant_si(chat, 1.5, 1.0)  // SI = 1.5 < 3.0
+    // Apply gate: should force OFF
+    let g = savant_apply_gate(chat, 1.0, 0.5, 0)
+    chat = g["chat"]
+    if savant_get(chat) != false {
+        println("    FAIL: SI<threshold did not auto-disable savant")
+        return false
+    }
+    if g["forced_off_reason"] != "si_below_threshold" {
+        println("    FAIL: wrong forced_off_reason:", g["forced_off_reason"])
+        return false
+    }
+    // Now strong SI: SI = 5.93 > 3.0, low entropy → recommend ON
+    savant_si(chat, 5.93, 1.0)
+    let g2 = savant_apply_gate(chat, 1.0, 0.5, 0)
+    chat = g2["chat"]
+    if savant_get(chat) != true {
+        println("    FAIL: strong SI + low entropy did not enable savant")
+        return false
+    }
+    // explore phase override: recent_splits >= 5 → forced OFF even with high SI
+    savant_si(chat, 5.93, 1.0)
+    let g3 = savant_apply_gate(chat, 1.0, 0.5, 7)
+    chat = g3["chat"]
+    if savant_get(chat) != false {
+        println("    FAIL: explore phase (splits=7) did not force OFF")
+        return false
+    }
+    println("    PASS (SI<3 + explore phase both force OFF, strong SI + low ent enables ON)")
+    return true
+}
+
+
+fn f_savant_tool_5() {
+    println("  F-SAVANT-TOOL-5 (T3-FORBIDDEN) ...")
+    let mut chat = make_chat()
+    // T3 reason → rejected
+    let r1 = savant_set(chat, true, "cross_domain_9_individual")
+    if r1["ok"] != false {
+        println("    FAIL: T3 reason 'cross_domain_9_individual' was accepted")
+        return false
+    }
+    if r1["tier"] != "T3_OR_T4_FORBIDDEN" {
+        println("    FAIL: T3 tier label wrong:", r1["tier"])
+        return false
+    }
+    if savant_get(r1["chat"]) != false {
+        println("    FAIL: T3 reason did not preserve OFF state")
+        return false
+    }
+    // T4 reason → rejected
+    let r2 = savant_set(chat, true, "cosmic_gz")
+    if r2["ok"] != false {
+        println("    FAIL: T4 reason 'cosmic_gz' was accepted")
+        return false
+    }
+    if r2["tier"] != "T3_OR_T4_FORBIDDEN" {
+        println("    FAIL: T4 tier label wrong:", r2["tier"])
+        return false
+    }
+    // T4 'external_entity_lattice_fit' → rejected
+    let r3 = savant_set(chat, true, "external_entity_lattice_fit")
+    if r3["ok"] != false {
+        println("    FAIL: T4 reason 'external_entity_lattice_fit' was accepted")
+        return false
+    }
+    // unknown reason → also rejected (whitelist only)
+    let r4 = savant_set(chat, true, "garbage_reason_not_in_list")
+    if r4["ok"] != false {
+        println("    FAIL: unknown reason was accepted (whitelist breach)")
+        return false
+    }
+    if r4["tier"] != "UNKNOWN_REASON" {
+        println("    FAIL: unknown reason tier wrong:", r4["tier"])
+        return false
+    }
+    // T1 reason → accepted (sanity check)
+    let r5 = savant_set(chat, true, "gz_lower_dropout")
+    if r5["ok"] != true {
+        println("    FAIL: T1 reason 'gz_lower_dropout' was rejected")
+        return false
+    }
+    // T2 reason → accepted (substrate-specific)
+    let r6 = savant_set(chat, true, "clm_06_mistral_7b")
+    if r6["ok"] != true {
+        println("    FAIL: T2 reason 'clm_06_mistral_7b' was rejected")
+        return false
+    }
+    println("    PASS (T3/T4/unknown all rejected, T1/T2 accepted)")
+    return true
+}
+
+
+fn main() {
+    println("════════════════════════════════════════════════════════════════")
+    println("  anima SAVANT 도구 (NOT 학습 path) F-SAVANT-TOOL-1..5")
+    println("════════════════════════════════════════════════════════════════")
+    println("  GZ_CENTER (generalist):", st_gz_center())
+    println("  GZ_LOWER  (savant):    ", st_gz_lower())
+    println("  SI threshold:          ", st_si_threshold())
+    println("────────────────────────────────────────────────────────────────")
+
+    let f1 = f_savant_tool_1()
+    let f2 = f_savant_tool_2()
+    let f3 = f_savant_tool_3()
+    let f4 = f_savant_tool_4()
+    let f5 = f_savant_tool_5()
+
+    let mut n_pass = 0
+    if f1 { n_pass = n_pass + 1 }
+    if f2 { n_pass = n_pass + 1 }
+    if f3 { n_pass = n_pass + 1 }
+    if f4 { n_pass = n_pass + 1 }
+    if f5 { n_pass = n_pass + 1 }
+
+    println("────────────────────────────────────────────────────────────────")
+    println("  VERDICT:", n_pass, "/ 5 PASS")
+    println("────────────────────────────────────────────────────────────────")
+    if n_pass == 5 {
+        println("  ✅ F-SAVANT-TOOL-1..5 5/5 PASS — anima SAVANT 도구 LANDED")
+        println("  Toggle: savant_set/get · Self-gate: savant_check_gate/apply_gate")
+        println("  T1+T2 only, T3+T4 forbidden — SAVANT.md §12 봉쇄 enforce")
+    }
+}

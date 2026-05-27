@@ -1,0 +1,25 @@
+{
+  "loss_total": "L = alpha*L_CE + beta*L_AE + gamma*L_BOLD",
+  "L_CE": {
+    "form": "cross-entropy over decoded next-token logits vs true_response tokens",
+    "shape": "[batch, seq_len, vocab]",
+    "reduction": "mean over (batch, seq_len)"
+  },
+  "L_AE": {
+    "form": "MSE(E_theta(D_phi(z)), z), where z = E_theta(prompt)",
+    "purpose": "force 5-d bottleneck to be invertible round-trip",
+    "shape": "[batch, 5]"
+  },
+  "L_BOLD": {
+    "form": "MSE(BOLD_pred_from_5ch, BOLD_pred_from_prompt)",
+    "poc": "weight gamma=0 (deferred to full impl)"
+  },
+  "weights_poc": {"alpha": 1.0, "beta": 0.5, "gamma": 0.0},
+  "weights_full": {"alpha": 1.0, "beta": 0.3, "gamma": 0.2},
+  "regularization": "AdamW weight_decay=1e-4",
+  "expected_failure_modes": [
+    "5-d bottleneck collapse to mode (mean response across all prompts)",
+    "decoder ignores prefix (Llama's strong prior overrides)",
+    "AE round-trip ok but generation incoherent (5-d carries gist, not syntax)"
+  ]
+}

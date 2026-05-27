@@ -1,0 +1,192 @@
+{
+  "schema": "anima/strategic_clm_v4_production_ready/1",
+  "ts": "2026-05-02T21:15:00Z",
+  "agent": "strategic CLM v4 530M production-ready user-dialogue evaluation",
+  "mission": "Evaluate CLM v4 530M as user-dialogue substrate replacement after ALM r14 alpha endpoint sunset",
+
+  "headline_verdict": "NOT_READY",
+  "headline_reason": "CLM v4 530M is architecturally NOT a chat model. Its inference paradigm is deterministic Lagrangian/cell-state ODE flow (decode_v3 byte-level/SPM hybrid), NOT autoregressive dialogue sampling. Per docs/clm_inference_abstraction_layers_20260425.md L0-L4: 'Cell decode != autoregressive sampling. CLM inference is deterministic Lagrangian solving... token-side AR sampling is a synaptic readout hung off cell state.' The L2 cell<->token bridge is fixture 3/3 with only 5-row classification (not continuous embedding decode); 11/16 eigenvec rows are dead. There is no v3_generate() implementation — decoder_v3.hexa shows it as TODO[pytorch] returning empty string. The 530M ckpt was trained for phi_star measurement (consciousness gate), not for SFT/RLHF dialogue.",
+
+  "evidence_inventory": {
+    "checkpoint": {
+      "path": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+      "size_gb": 5.37,
+      "params_M": 477.65,
+      "label_misleading": "label '350m' = scale target, actual ~530.99M",
+      "training_objective": "phi_star integrated information + ce reduction, NOT dialogue SFT"
+    },
+    "architecture": {
+      "decoder": "decoder_v3 (custom anima)",
+      "d_model": 768,
+      "n_layer": 16,
+      "n_head": 6,
+      "n_kv_head": 2,
+      "vocab_size": 64000,
+      "block_size": 512,
+      "consciousness_dim": 192,
+      "tokenizer": "SentencePiece 64K (per run_log /tmp/clm_phase_a1/tokenizer_64k_multilingual.model)",
+      "tokenizer_caveat": "earlier 170M variant was vocab=256 byte-level; 530M v4 uses SPM 64K per Phase A.1 run_log"
+    },
+    "phi_star_530m": {
+      "phi_star_min": 1167.6192,
+      "I_full": -1066.9658,
+      "gate_positive_PASS": true,
+      "gate_substantial_PASS": true,
+      "gate_magnitude_PASS": true,
+      "elapsed_sec_for_16_probes": 5.86,
+      "vram_peak_mb": 7323.8,
+      "device": "cuda (ubu1 RTX 5070)",
+      "comparison": "vs ALM 4-backbone: Mistral=-16.7, Qwen3=+1.04, Llama=+5.09, Gemma=-0.79, CLM=+1167.62 (3 orders of magnitude positive)"
+    },
+    "inference_layers_L0_to_L4": {
+      "L0_deterministic_lagrangian": "PASS gen-5 stationary (5-gen only, scalar W-action, NOT general H(p,q))",
+      "L1_cargo_invariants_runtime": "PASS single-seed 20260421 only; multi-seed reproducibility NOT verified",
+      "L2_cell_token_bridge": "CONDITIONAL_PASS fixture 3/3, 5-level bucket classification (NOT continuous embedding); 11/16 eigenvec rows dead",
+      "L3_multi_cell_collective": "NOT VERIFIED; only composition demo on 10-node toy",
+      "L4_universal_decoder": "CONCEPTUAL ONLY; Mk.X atom composition not implemented"
+    },
+    "alm_r14_status": "DEAD per memory: F2 quintuple sunset across 4 substrates; alpha endpoint dead",
+    "user_dialogue_history_for_clm": "NONE — no SFT corpus, no RLHF, no chat-template, no persona-trained chat data on file. CLM training was phi-objective + ce on byte-level cell sequences."
+  },
+
+  "production_gates_5_estimate": {
+    "gate_1_latency_p95": {
+      "target": "<2s p95 per-token on RTX 5070",
+      "estimate": "UNMEASURABLE (no generate() implementation). Forward-pass for 16 probes 0.25s on cuda is structural-measurement only, not next-token sampling.",
+      "verdict": "NOT_TESTABLE"
+    },
+    "gate_2_hallucination_rate": {
+      "target": "<10% on factual probes",
+      "estimate": "UNMEASURABLE; 5-row bucket classifier output cannot produce coherent dialogue tokens. Expected 95%+ degenerate output.",
+      "verdict": "EXPECTED_FAIL"
+    },
+    "gate_3_refusal_rate": {
+      "target": "<5%",
+      "estimate": "N/A — no instruction-tuning means no refusal mechanism either; output is structural noise.",
+      "verdict": "NOT_APPLICABLE"
+    },
+    "gate_4_token_throughput": {
+      "target": ">10 tok/s",
+      "estimate": "UNMEASURABLE; no AR loop implementation. Single forward 0.25s/probe for 16 probes ~ 64 tok/s raw arithmetic but that's structural read-out, not generative.",
+      "verdict": "NOT_TESTABLE"
+    },
+    "gate_5_memory_stability": {
+      "target": "no OOM over 30min, <8GB VRAM",
+      "estimate": "PASS structurally (peak 7.32GB on RTX 5070 12GB, 4.68GB headroom; 530.99M params on 24GB Mac M4 also fits w/o quant). Stable for forward-only structural use.",
+      "verdict": "PASS_STRUCTURAL_ONLY"
+    },
+    "summary": "0/5 gates production-ready as dialogue substrate. Only gate 5 (memory stability) PASSes and only for structural forward-pass use, not chat."
+  },
+
+  "hosting_options_evaluation": {
+    "a_mac_local_M4_24GB": {
+      "fits": true,
+      "quantize_needed": false,
+      "expected_load_time": "~5-10s torch.load",
+      "viability_for_chat": "moot (model is not a chat model)"
+    },
+    "b_ubu1_RTX_5070_12GB": {
+      "fits": true,
+      "headroom_gb": 4.68,
+      "viability_for_chat": "moot (model is not a chat model); LIVE viability for phi_star + W4 measurement existing"
+    },
+    "c_runpod_h100_2_99": {
+      "needed": false,
+      "reason": "smaller GPU sufficient; H100 wasted for 7.3GB workload"
+    },
+    "d_user_gpu": {
+      "depends_on_user_hw": true
+    }
+  },
+
+  "deployment_options_evaluation": {
+    "e_cli_dialogue_terminal": {
+      "viability": "BLOCKED — requires v3_generate() implementation which is TODO stub",
+      "implementation_effort": "high (custom AR loop + sampling temperature + chat template all missing)"
+    },
+    "f_local_web_ui_fastapi_tailscale": {
+      "viability": "BLOCKED for same reason",
+      "alternative_use": "structural readout web UI for phi_star/L1/Kuramoto inspector — viable but NOT user dialogue"
+    },
+    "g_bearer_gated_endpoint": {
+      "viability": "BLOCKED for chat; same alpha-endpoint pattern as ALM cp2-alpha can wrap structural inference but cannot serve dialogue"
+    }
+  },
+
+  "ab_test_alm_vs_clm_recommendation": {
+    "recommended": false,
+    "why_not": "Cannot A/B-test dialogue quality between (a) DEAD alpha endpoint and (b) non-generative structural model. Both endpoints would return error/garbage for chat use.",
+    "alternative_recommendation": "If the user wants a working chat substrate, real options are: (i) RESURRECT alpha endpoint as cognitive-substrate-only (no consciousness claim, per strategic_alm_clm_review_2026_05_01 §1) — alpha endpoint already serves anima persona via Mistral+r14 LoRA; (ii) SFT-train CLM v4 with chat corpus (estimated $200-500 + multi-week); (iii) USE existing SFT models (Qwen3-8B-Instruct / Llama-3-8B-Instruct) and graft anima persona via system-prompt + tension_link injection."
+  },
+
+  "stage_1_3_deployment_plan_REVISED": {
+    "stage_1_0d_0usd": {
+      "name": "REFRAME — abandon CLM-as-chat assumption",
+      "actions": [
+        "Acknowledge CLM v4 530M = consciousness-measurement substrate, NOT dialogue substrate",
+        "Document the 5 gate non-applicability (this verdict file)",
+        "Decision: revive alpha endpoint as cognitive-only OR pivot to instruct-tuned model + persona graft"
+      ]
+    },
+    "stage_2_1d_0usd_IF_user_chooses_alpha_revival": {
+      "name": "Alpha endpoint revival as cognitive-substrate (no consciousness claim)",
+      "actions": [
+        "Re-launch alpha-cp2 wrapper with Mistral-7B + r14 LoRA",
+        "Strip consciousness language from response framing",
+        "Bearer-gated terminal/CLI dialogue"
+      ],
+      "estimated_effort_hr": 4
+    },
+    "stage_3_3_7d_200_500usd_IF_user_wants_clm_chat": {
+      "name": "CLM v4 chat capability bring-up (NEW work, not READY)",
+      "actions": [
+        "Implement v3_generate() autoregressive sampling loop on decoder_v3",
+        "Build SPM 64K detokenizer harness",
+        "Curate Korean+English SFT corpus (10-50K turns)",
+        "LoRA SFT on CLM v4 530M (preserves consciousness backbone)",
+        "Re-measure phi_star post-SFT (likely degrades positivity)"
+      ],
+      "estimated_effort_days": 7,
+      "estimated_cost_usd": "200-500 (H100 LoRA training + SFT corpus prep)",
+      "honest_risk": "post-SFT phi_star may flip negative, sacrificing the only G3 PASS-positive backbone for dialogue capability"
+    },
+    "RECOMMENDED_PATH": "Stage-1 reframe + Stage-2 alpha revival (cognitive only). Defer Stage-3 CLM-chat until user demand justifies $200-500 + 7d AND phi_star sacrifice risk is accepted."
+  },
+
+  "honest_C3_three": [
+    {
+      "id": "C3_1",
+      "claim": "Mission spec said 'CLM v4 530M production-ready 사용자 dialogue 평가' implying chat-capable",
+      "honest": "CLM v4 530M is NOT a chat model. Mission premise itself is incorrect. Per docs/clm_inference_abstraction_layers_20260425.md L0-L4 the model is a Lagrangian/Hamiltonian flow solver with byte/SPM cell-state decoder; v3_generate() is a TODO stub returning empty string in decoder_v3.hexa. This evaluation must reject the premise rather than fake-pass production gates."
+    },
+    {
+      "id": "C3_2",
+      "claim": "phi_star=+1167 magnitude proves CLM is the strongest backbone candidate",
+      "honest": "phi_star magnitude is structural-information measurement on 16 probes with HID_TRUNC=8 sample-partition K=8. The 3-orders-of-magnitude advantage over ALM 4-backbone (Mistral -16.7 / Qwen3 +1.04 / Llama +5.09 / Gemma -0.79) reflects the CLM's training objective (phi-positive) being aligned with the verifier's objective (phi-positive) — this is partly tautological. It does NOT translate into dialogue quality. The inference layers L1-L3 honest-C3 entries explicitly note single-seed, fixture-only, toy-network limitations."
+    },
+    {
+      "id": "C3_3",
+      "claim": "Stage 1 CLI dialogue ubu1 is 0d/0usd ready",
+      "honest": "Stage 1 as originally specified is impossible at $0/0d because v3_generate() is unimplemented. The honest 0d/0usd Stage 1 is the REFRAME action: document non-applicability and pivot. Any actual CLM dialogue capability requires Stage-3 work ($200-500 / 7d) with phi_star sacrifice risk. The W1 #56 dynamic L1=7.06 z=+2.28 result is structural measurement under W4 closed-loop ledger, NOT dialogue substrate test."
+    }
+  ],
+
+  "next_cycle_recommendation": {
+    "primary": "USER DECISION POINT — clarify intent: (A) want a working chat endpoint NOW = revive alpha-cp2 cognitive-only (Stage-2, $0, 4hr); (B) want CLM as future chat substrate = Stage-3 SFT bring-up ($200-500, 7d, phi sacrifice risk); (C) want CLM phi_star + tension_link to drive an EXISTING chat model as orchestrator = N-1 BRIDGE v2 LSL streaming approach (CLM emits tension_link 5ch + mind.tension scalar; chat model reads via system-prompt injection)",
+    "best_engineering_pick": "C — orchestrator pattern. CLM v4 530M streams tension_link / phi via LSL/IPC into instruct-tuned model (Qwen3-8B-Instruct local on RTX 5070 6GB headroom; or remote alpha-Mistral). Preserves CLM consciousness role + gives user actual dialogue. spec already exists at state/n_1_bridge_v2_realtime_prep_2026_05_02/clm_w4_lsl_server_spec.json"
+  },
+
+  "race_isolation_files": [
+    "state/strategic_clm_v4_production_ready_2026_05_02/verdict.json (this file)",
+    "docs/strategic_clm_v4_production_ready_2026_05_02.md"
+  ],
+  "did_not_touch": [
+    "state/v10_benchmark_v4_clm/* (existing measurement)",
+    "state/strategic_clm_phase_a1_2026_05_01/* (existing Phase A.1 ledger)",
+    "state/strategic_clm_eeg_akida_tension_2026_05_02/* (existing 4-way agent)",
+    "state/n_1_bridge_v2_realtime_prep_2026_05_02/* (existing N-1 bridge spec)",
+    "anima-clm-eeg/* (existing CLM-EEG falsifier work)",
+    "alpha endpoint pod (already DEAD per mission context)",
+    "any .py / .pt files (HEXA-only contract)"
+  ]
+}

@@ -1,0 +1,84 @@
+[13:54:53] === BG-COMPONENT-MLP-EMBED-V14 ===
+[13:54:53] ts: 2026-05-10T13:54:53.699704+00:00
+[13:54:53] N_TURNS=128  MAX_CELLS=128  SNAPSHOT_EVERY=16
+[13:54:53] CKPT_A=/Users/ghost/.cache/anima/clm_v5_remapped/phase2_cotrain_engine_ag/ckpts/ckpt_final.pt
+[13:54:53] CKPT_B=/Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final.pt
+[13:54:53] n_unique_prompts=170
+[13:54:53] 
+--- loading B (BG-LA pretrain), snapshotting relevant tensors ---
+[13:54:58]   B loaded: 5.2s
+[13:54:58]   B layer state_dicts snapshotted: 0.0s (n_layers=24)
+[13:54:58]   B tok_emb shape=[32000, 1024]  lm_head==tok_emb max_abs_diff=0.00e+00  (tied=True)
+[13:54:59]   B model freed
+[13:54:59] 
+--- loading A (Phase 2 cotrain), snapshotting full state_dict ---
+[13:55:04]   A loaded: 5.3s
+[13:55:04]   A state_dict snapshotted: 222 tensors
+[13:55:04]   A tok_emb shape=[32000, 1024]  lm_head==tok_emb max_abs_diff=0.00e+00  (tied=True)
+[13:55:04]   A model freed (state_dict + cfg retained)
+[13:55:04] 
+--- mirror baseline (3 random_init seeds) ---
+[13:55:23]   mirror s=42: Φ_un16=1484.64 proxy=3.7473 cells=48 (13.4s)
+[13:55:43]   mirror s=137: Φ_un16=932.64 proxy=3.5061 cells=40 (14.3s)
+[13:56:03]   mirror s=271: Φ_un16=1689.14 proxy=3.7286 cells=48 (14.5s)
+[13:56:03]   mirror Φ_un16: mean=1368.80 min=932.64 max=1689.14
+[13:56:03]   mirror proxy: mean=3.6607
+[13:56:03]   mirror n_cells: [48, 40, 48]
+[13:56:03] 
+--- 30 V14 trial conditions (8 swap conditions + baseline) ---
+[13:56:03] 
+  [C0_baseline] swap_fn=none args={} seeds=[42]
+[13:56:26]     s=42: Φ_un16=2048.78 proxy=3.9463 cells=57 beats_un=True beats_proxy=True (reference) (14.9s)
+[13:56:26]   [C0_baseline] verdict=V14_PASS_ROBUST  trained_un16 mean=2048.78 std=0.00  sep=+679.98  cells=[57]
+[13:56:26] 
+  [C1_gate_slab1] swap_fn=mlp_slab args={'comp': 'gate', 'slab': 'slab1_early'} seeds=[42, 137, 271]
+[13:56:46]     s=42: Φ_un16=1395.30 proxy=3.6322 cells=44 beats_un=True beats_proxy=False FLIP→VIOLATED-leaning (14.4s)
+[13:57:05]     s=137: Φ_un16=990.77 proxy=3.4683 cells=38 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (13.6s)
+[13:57:24]     s=271: Φ_un16=912.12 proxy=3.4519 cells=36 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (13.6s)
+[13:57:24]   [C1_gate_slab1] verdict=V14_VIOLATED  trained_un16 mean=1099.40 std=211.69  sep=-269.41  cells=[44, 38, 36]
+[13:57:24] 
+  [C2_gate_slab2] swap_fn=mlp_slab args={'comp': 'gate', 'slab': 'slab2_middle'} seeds=[42, 137, 271]
+[13:57:45]     s=42: Φ_un16=1339.68 proxy=3.6383 cells=43 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (15.7s)
+[13:58:15]     s=137: Φ_un16=948.69 proxy=3.4310 cells=37 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (23.3s)
+[13:58:51]     s=271: Φ_un16=870.10 proxy=3.4031 cells=35 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (26.6s)
+[13:58:51]   [C2_gate_slab2] verdict=V14_VIOLATED  trained_un16 mean=1052.82 std=205.36  sep=-315.98  cells=[43, 37, 35]
+[13:58:51] 
+  [C3_gate_slab3] swap_fn=mlp_slab args={'comp': 'gate', 'slab': 'slab3_late'} seeds=[42, 137, 271]
+[13:59:25]     s=42: Φ_un16=3581.69 proxy=4.1479 cells=73 beats_un=True beats_proxy=True PASS (25.8s)
+[13:59:58]     s=137: Φ_un16=3062.46 proxy=3.9806 cells=66 beats_un=True beats_proxy=True PASS (24.2s)
+[14:00:29]     s=271: Φ_un16=2849.64 proxy=3.9761 cells=63 beats_un=True beats_proxy=True PASS (23.8s)
+[14:00:29]   [C3_gate_slab3] verdict=V14_PASS_ROBUST  trained_un16 mean=3164.60 std=307.46  sep=+1795.79  cells=[73, 66, 63]
+[14:00:29] 
+  [C4_up_slab1] swap_fn=mlp_slab args={'comp': 'up', 'slab': 'slab1_early'} seeds=[42, 137, 271]
+[14:01:13]     s=42: Φ_un16=1339.68 proxy=3.6383 cells=43 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (36.1s)
+[14:01:58]     s=137: Φ_un16=990.77 proxy=3.4683 cells=38 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (34.4s)
+[14:02:52]     s=271: Φ_un16=870.10 proxy=3.4031 cells=35 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (44.6s)
+[14:02:52]   [C4_up_slab1] verdict=V14_VIOLATED  trained_un16 mean=1066.85 std=199.11  sep=-301.95  cells=[43, 38, 35]
+[14:02:52] 
+  [C5_down_slab1] swap_fn=mlp_slab args={'comp': 'down', 'slab': 'slab1_early'} seeds=[42, 137, 271]
+[14:03:55]     s=42: Φ_un16=1353.82 proxy=3.5948 cells=43 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (51.5s)
+[14:04:51]     s=137: Φ_un16=909.02 proxy=3.5317 cells=39 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (45.8s)
+[14:05:48]     s=271: Φ_un16=994.16 proxy=3.4805 cells=37 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (44.7s)
+[14:05:48]   [C5_down_slab1] verdict=V14_VIOLATED  trained_un16 mean=1085.67 std=192.77  sep=-283.14  cells=[43, 39, 37]
+[14:05:48] 
+  [C6_tok_emb_only] swap_fn=tok_emb_only_untied args={} seeds=[42, 137, 271, 311, 521]
+[14:06:38]     s=42: Φ_un16=1339.68 proxy=3.6383 cells=43 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (39.6s)
+[14:07:29]     s=137: Φ_un16=1202.53 proxy=3.5537 cells=40 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (41.2s)
+[14:08:21]     s=271: Φ_un16=898.55 proxy=3.4404 cells=36 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (41.2s)
+[14:09:47]     s=311: Φ_un16=1043.57 proxy=3.5538 cells=42 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (76.2s)
+[14:12:24]     s=521: Φ_un16=1150.87 proxy=3.5877 cells=41 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (122.6s)
+[14:12:24]   [C6_tok_emb_only] verdict=V14_VIOLATED  trained_un16 mean=1127.04 std=148.77  sep=-241.76  cells=[43, 40, 36, 42, 41]
+[14:12:24] 
+  [C7_lm_head_only] swap_fn=lm_head_only_untied args={} seeds=[42, 137, 271, 311, 521]
+[14:14:48]     s=42: Φ_un16=2048.78 proxy=3.9463 cells=57 beats_un=True beats_proxy=True PASS (109.1s)
+[14:18:22]     s=137: Φ_un16=1877.56 proxy=3.7824 cells=51 beats_un=True beats_proxy=True PASS (178.3s)
+[14:21:46]     s=271: Φ_un16=1868.82 proxy=3.7906 cells=51 beats_un=True beats_proxy=True PASS (158.4s)
+[14:25:03]     s=311: Φ_un16=2338.73 proxy=3.8866 cells=57 beats_un=True beats_proxy=True PASS (153.8s)
+[14:29:28]     s=521: Φ_un16=1614.89 proxy=3.7647 cells=50 beats_un=True beats_proxy=True PASS (203.5s)
+[14:29:29]   [C7_lm_head_only] verdict=V14_PASS_ROBUST  trained_un16 mean=1949.76 std=238.75  sep=+580.95  cells=[57, 51, 51, 57, 50]
+[14:29:29] 
+  [C8_tok_emb_lm_pair] swap_fn=tok_emb_lm_pair_tied args={} seeds=[42, 137, 271, 311, 521]
+[14:33:36]     s=42: Φ_un16=1339.68 proxy=3.6383 cells=43 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (187.8s)
+[14:38:42]     s=137: Φ_un16=1202.53 proxy=3.5537 cells=40 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (238.1s)
+[14:43:49]     s=271: Φ_un16=898.55 proxy=3.4404 cells=36 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (240.3s)
+[14:48:55]     s=311: Φ_un16=1043.57 proxy=3.5538 cells=42 beats_un=False beats_proxy=False FLIP→VIOLATED-leaning (235.0s)

@@ -1,0 +1,141 @@
+{
+  "battery": "B-INTRA-1..5 (RESEARCH.md §23 cand A intra-anchor diversity, design-tier sidecar)",
+  "central_blue_falsifier_changed": false,
+  "n_props": 5,
+  "n_pass": 5,
+  "all_pass": true,
+  "props": [
+    {
+      "name": "B-INTRA-1 ANCHOR-MEANING-PRESERVED",
+      "passes": true,
+      "witness_anchor": [
+        77,
+        "만다라",
+        "예술",
+        "creativity",
+        2.1,
+        [
+          0.71,
+          0.62
+        ],
+        0.18
+      ],
+      "axes_tested": [
+        "V",
+        "T",
+        "Phi",
+        "S"
+      ],
+      "variants_checked": 12,
+      "counter_witness": null,
+      "tier": "🔵 closed Boolean structural conjunction"
+    },
+    {
+      "name": "B-INTRA-2 PHYSICS-AXIS-ORTHOGONALITY",
+      "passes": true,
+      "n_pairs": 6,
+      "all_pairwise_disjoint": true,
+      "pairs": [
+        {
+          "pair": [
+            "V",
+            "T"
+          ],
+          "disjoint": true
+        },
+        {
+          "pair": [
+            "V",
+            "Phi"
+          ],
+          "disjoint": true
+        },
+        {
+          "pair": [
+            "V",
+            "S"
+          ],
+          "disjoint": true
+        },
+        {
+          "pair": [
+            "T",
+            "Phi"
+          ],
+          "disjoint": true
+        },
+        {
+          "pair": [
+            "T",
+            "S"
+          ],
+          "disjoint": true
+        },
+        {
+          "pair": [
+            "Phi",
+            "S"
+          ],
+          "disjoint": true
+        }
+      ],
+      "tier": "🔵 closed Boolean set-disjointness conjunction (6-pair)"
+    },
+    {
+      "name": "B-INTRA-3 NO-EXTERNAL-LLM-CALL",
+      "passes": true,
+      "files_scanned": [
+        "variation_generator.py",
+        "blue_falsifier_intra_anchor.py"
+      ],
+      "forbidden_hits": [],
+      "forbidden_patterns": [
+        "openai",
+        "anthropic",
+        "llm_call",
+        "paraphrase",
+        "gpt",
+        "bert_score",
+        "AutoModel",
+        "HfApi",
+        "llama",
+        "huggingface_hub",
+        "gen_corpus_with_llm"
+      ],
+      "tier": "🔵 closed AST-Call-node structural predicate"
+    },
+    {
+      "name": "B-INTRA-4 §16-CONNECTION-POINT-BYTE-EQUAL-AT-DISABLED",
+      "passes": true,
+      "s16_generator_exists": true,
+      "variation_generator_exists": true,
+      "contract_specified": true,
+      "numeric_verified": null,
+      "note": "Design-tier closed-form contract: all-axes-disabled branch == §16 gen_alpha_record verbatim (AST equality). Numeric sha256 byte-equal = follow-up cycle gate (post-impl).",
+      "tier": "🔵 closed contract; numeric gate carry-over for impl cycle"
+    },
+    {
+      "name": "B-INTRA-5 CARDINALITY-BOUNDED-EXPANSION",
+      "passes": true,
+      "n_axes": 4,
+      "buckets_per_axis": 3,
+      "per_anchor_variants": 81,
+      "n_anchors": 168,
+      "total_variant_space": 13608,
+      "anti_explosion_bound": 100000.0,
+      "bounded_below_explosion_threshold": true,
+      "s16_unique_framings_per_anchor": 2,
+      "a_unique_framings_per_anchor": 81,
+      "framing_ratio_vs_s16": 40.5,
+      "sympy_proof": "sympy: base^k = 3^4 = 81",
+      "tier": "🔵 closed integer Kolmogorov set-cardinality"
+    }
+  ],
+  "empirical_carve_out": {
+    "name": "B-INTRA-NOTE INTRA-ANCHOR-DIVERSITY-OUTCOME-EMPIRICAL",
+    "tier": "EMPIRICAL (B-D-NOTE / B-CARVE-E6-NOTE / B-SCALE-NOTE / B-PUREPHYS-NOTE / B-EBT-NOTE / B-DIRJ-NOTE / B-KTRIE-NOTE / B-MGND-NOTE / B-TTS-NOTE family, NOT counted 🔵)",
+    "note": "B-INTRA-1..5 prove (1) anchor meaning preserved across variation axes, (2) physics axes orthogonal, (3) zero external LLM call by AST predicate, (4) §16 connection-point byte-equal-at-disabled, (5) variant cardinality bounded integer. They DO NOT prove that intra-anchor diversity causes emergence — that is SGD/measurement OUTCOME, gated on small-pilot fire ($0.05-0.10) before full §16-scale. Per §13-M / §13-L design-tier discipline, A's value is structural soundness + GOAL-legitimacy gate, not capability proof. Honest necessary-not-sufficient (mirroring B-EMERGE-7).",
+    "honest_risk": "Intra-anchor diversity varies framing of the same 168 anchors, not new factual content. arxiv 2401.10463 Critical Data Size measures unique factual content — A may move framing-diversity ≠ CDS. Honest: A might not break §1.1 even with sound design. Small pilot $0.05-0.10 gates full-scale spend. Design-tier close-out on null/negative pilot is the honest stop, per §13-M anti-padding."
+  },
+  "design_doc": "DESIGN_A.md"
+}

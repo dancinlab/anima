@@ -1,0 +1,39 @@
+{
+  "cycle": "opt_1_v4_retry_2026_05_04",
+  "ts_utc": "2026-05-04T12:17:13Z",
+  "bg_lane": "BG-γ' Phase 1",
+  "pod_id": "qwrc8bthhysmzw",
+  "pod_terminated": true,
+  "pod_kill_verified_404": true,
+  "scope": "F-SHIM-V4-3 retry (sentencepiece pre-install fix) + train_avg harvest stub + canonical_zero sanity eval (limit=100 hellaswag)",
+  "f_shim_v4_1_dry_run_carry": "PASS",
+  "f_shim_v4_2_v3_regression_carry": "PASS",
+  "f_shim_v4_3_canonical_zero_finite_forward": "BLOCKED_BY_NEW_INFRA_ISSUE (HF_TOKEN rotation — token invalid)",
+  "f_shim_v4_4_train_avg_above_random_5pt": "NOT_REACHED",
+  "sentencepiece_fix_status": "VERIFIED_WORKING (pre-install + import assertion both PASS — version 0.2.1 confirmed in retry log)",
+  "tiktoken_fix_status": "VERIFIED_WORKING (version 0.12.0 confirmed)",
+  "actual_failure_mode": "HF_TOKEN rotation — secret get --raw huggingface.token returns hf_Rerb... but HF API /whoami-v2 rejects with 'Invalid user token'",
+  "previous_failure_resolved": "YES — BG-Σ attempt3 'sentencepiece missing' is now FIXED in retry; retry pod logs show 'sentencepiece OK 0.2.1' + 'tiktoken OK 0.12.0' before stage A",
+  "finite_forward": "unknown — Stage B never reached (best.pt download failed at HF auth gate)",
+  "train_avg_fixture_harvested_via": "FAILED — stage C never reached",
+  "train_avg_fixture_path": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_train_avg_fixture.json (carry from BG-Σ attempt3 stub — NOT updated)",
+  "sanity_eval_canonical_zero_hellaswag_acc": null,
+  "sanity_eval_no_fixture_hellaswag_acc": null,
+  "consciousness_injection_lift_pp": null,
+  "wall_time_min": 2,
+  "actual_cost_usd": 0.10,
+  "complete_sentinel_detected": true,
+  "remediation_required_next_cycle": [
+    "Rotate HF_TOKEN in secret store — current token rejected by huggingface.co/api/whoami-v2 (verified via local curl 2026-05-04T12:18:30Z)",
+    "Once new HF_TOKEN landed: re-run opt_1_v4_retry_exec.bash unchanged — sentencepiece + tiktoken fix already validated, only HF auth blocked",
+    "Optional: pre-flight HF token validation in orchestrator stage 0 (before pod boot) to fail fast at $0 cost"
+  ],
+  "honest_c3": [
+    "sentencepiece+tiktoken pre-install + import verification: VERIFIED working — fix landed correctly, prior BG-Σ failure mode resolved",
+    "HF_TOKEN rotation is INFRA-LEVEL issue orthogonal to this BG scope; pod boot + sentencepiece install + import assertion all passed in 90s before HF auth blocked Stage A",
+    "Pod auto-killed at 2min wall / $0.10 cost, 404 verified — auto-kill mandate satisfied",
+    "Net BG-γ' Phase 1 outcome: 1 root cause fixed (sentencepiece), 1 new root cause exposed (HF_TOKEN); cost-effective forward progress",
+    "F-SHIM-V4-3 verdict remains FAIL pending HF_TOKEN rotation; the root cause is now fully diagnosed and remediation is single-step (rotate token)",
+    "train_avg fixture path still points at BG-Σ stub (synthetic N(0, 0.01)) — not updated since Stage C never reached this cycle"
+  ]
+}

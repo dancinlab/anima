@@ -1,0 +1,33 @@
+{
+  "model": "meta-llama/Llama-3.2-3B-Instruct",
+  "latent_dim": 32,
+  "encoder": "Linear(3072,128)+LN+GELU+Linear(128,32)+LN (no Tanh)",
+  "decoder": "Linear(32,256)+LN+GELU+Linear(256,3072*4)",
+  "lora": {
+    "r": 16,
+    "alpha": 32,
+    "targets": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ]
+  },
+  "loss_weights": {
+    "alpha_ce": 1.0,
+    "beta_ae": 0.3,
+    "gamma_infonce": 0.5,
+    "delta_kl": 0.01
+  },
+  "n_pairs": 1000,
+  "epochs": 5,
+  "batch": 4,
+  "lr": 0.0001,
+  "buckets": [
+    "introspective",
+    "mathematical",
+    "emotional",
+    "creative",
+    "mundane"
+  ]
+}

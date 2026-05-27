@@ -1,0 +1,81 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/modalities/vision.hexa — vision modality (DEFERRED stub)
+// (axis-6 / axis-N+2)
+//
+//  PURPOSE
+//    Vision modality — image → caption / embedding. T+6 = DEFERRED stub
+//    (vision encoder 없음; CLIP/SigLIP 선정 + 통합 별도 step).
+//    친근 비유: vision 은 "눈" — 그림을 보고 글자로 설명하는 통로. 현재
+// anima 는 눈 미장착 → DEFERRED stub 으로 honest emit .
+//
+//  STATUS
+//    DEFERRED — vision encoder 통합 미완. 본 stub = honest C3 emit
+// (mandatory; fabrication 금지).
+//
+//  CONTRACT
+//    fn run_modality(ctx: dict) -> dict
+//      → {input_kind: "image", output_kind: "text",
+//         status: "DEFERRED_NO_VISION_ENCODER"}
+//
+//  COMPLIANCE
+// — model load 절대 금지 (stub only)
+// — honest emit (DEFERRED 명시; encoder 부재 사실 그대로)
+// mandate-1 — wrapping 0
+// axis-N+2 — axis-6 modality registry entry 3
+//
+//  CROSS-REFERENCE
+//    chat/modalities/_registry.hexa#vision   registry SSOT
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn modality_describe() -> string {
+    return "vision — image → caption/embedding DEFERRED stub (vision encoder 미통합; honest C3 emit per)"
+}
+
+// run_modality — vision stub. encoder 부재 honest emit.
+// 친근 비유: anima 의 "눈" 은 아직 없음. CLIP/SigLIP 선정 후 별도 step.
+fn run_modality(ctx) -> array {
+    let keys = ["input_kind", "output_kind", "status"]
+    let vals = ["image", "text", "DEFERRED_NO_VISION_ENCODER"]
+    return [keys, vals]
+}
+
+fn modality_smoke(repo: string, argv) -> int {
+    let r = run_modality([])
+    if len(r) != 2 { return 2 }
+    let vals = r[1]
+    if _str(vals[2]) != "DEFERRED_NO_VISION_ENCODER" { return 3 }
+    println("[modality:vision] smoke PASS — DEFERRED_NO_VISION_ENCODER stub honest emit ")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(modality_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = modality_smoke("", argv)
+        if rc != 0 {
+            println("FAIL modality vision smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(modality_describe())
+}

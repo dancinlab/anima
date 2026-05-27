@@ -1,0 +1,615 @@
+{
+  "bg_id": "BG-HH",
+  "falsifiers_triggered": [],
+  "final_verdict_class": "SUPPORTED_PHASE_2",
+  "grid": {
+    "noise": [
+      0.0,
+      0.05
+    ],
+    "population": [
+      100
+    ],
+    "reps": 5,
+    "rounds": [
+      1000
+    ],
+    "strategies": [
+      "always_cooperate",
+      "tit_for_tat",
+      "generous_tft",
+      "win_stay_lose_shift",
+      "always_defect",
+      "random"
+    ],
+    "topology": [
+      "well_mixed",
+      "small_world",
+      "scale_free",
+      "lattice"
+    ]
+  },
+  "h1_2_cluster_verdict": "PASS",
+  "h1_2_per_topology": {
+    "lattice": {
+      "cooperator_cluster_size_max_mean": 95.65,
+      "defector_cluster_size_max_mean": 1.175,
+      "passed": true
+    },
+    "scale_free": {
+      "cooperator_cluster_size_max_mean": 92.6,
+      "defector_cluster_size_max_mean": 5.175,
+      "passed": true
+    },
+    "small_world": {
+      "cooperator_cluster_size_max_mean": 92.225,
+      "defector_cluster_size_max_mean": 1.55,
+      "passed": true
+    }
+  },
+  "h1_3_per_noise": {
+    "noise=0.00": {
+      "passed_all_topologies": true,
+      "per_topology_pass_60pct": {
+        "lattice": true,
+        "scale_free": true,
+        "small_world": true,
+        "well_mixed": true
+      },
+      "per_topology_survival": {
+        "lattice": 1.0,
+        "scale_free": 1.0,
+        "small_world": 1.0,
+        "well_mixed": 1.0
+      }
+    },
+    "noise=0.05": {
+      "passed_all_topologies": true,
+      "per_topology_pass_60pct": {
+        "lattice": true,
+        "scale_free": true,
+        "small_world": true,
+        "well_mixed": true
+      },
+      "per_topology_survival": {
+        "lattice": 0.9155,
+        "scale_free": 0.8625,
+        "small_world": 0.881,
+        "well_mixed": 0.8685
+      }
+    }
+  },
+  "h1_3_survival_verdict": "PASS",
+  "halted_partial": false,
+  "halted_reason": "",
+  "honest_c3": [
+    "L1: cluster verdict measured at FINAL round only \u2014 convergent dynamics may differ from steady-state. Long-horizon (>1000 round) replication separate cycle.",
+    "L2: homogeneous strategy populations (all agents play same strategy) \u2014 heterogeneous mixed populations (e.g. 50% TFT + 50% AlwaysDefect) tested separately in Phase 3.",
+    "L3: cooperator_fraction_final defined per-node majority vote in final round; under high noise (\u22650.20) this proxy degrades. Phase 2 used noise\u22640.05.",
+    "L4: scale_free topology m=3 + lattice 10x10 + small_world k=4 p=0.10 are arbitrary parameter picks (Watts-Strogatz/BA defaults); param sensitivity sweep deferred.",
+    "L5: 'coop_strat_pooled' aggregation pools 4 cooperator strategies \u2014 one strategy can dominate cluster metric. Per-strategy breakout in `per_strat_noise`.",
+    "L6: noise robustness verified at noise=0.05 only (Phase 2 reduced grid). High-noise regime (\u22650.10) is Phase 3 cycle (F5 falsifier dedicated test).",
+    "L7: 100-agent populations are small for scale-free topology (BA needs N\u22651000 for power-law tail) \u2014 cluster metrics on n=100 BA graph are exploratory."
+  ],
+  "next_cycle": [
+    "Phase 3: high-noise (\u22650.10, \u22650.20) regime \u2014 F5 falsifier verify",
+    "Phase 4: heterogeneous mixed populations + resilience perturbation recovery (H1.5 verify)",
+    "Phase 5: anima self-reflection \u2014 BG-HA SIMPLE_STACK_PASS model\ub85c anima cooperative response evaluation"
+  ],
+  "noise_005_strategy_payoffs": {
+    "always_cooperate": 2.9474551654040404,
+    "always_defect": 1.1473507313440527,
+    "generous_tft": 2.669140912930324,
+    "random": 2.2501276545557616,
+    "tit_for_tat": 2.257829022856112,
+    "win_stay_lose_shift": 2.7763366128117917
+  },
+  "num_simulations_completed": 240,
+  "num_simulations_target": 240,
+  "phase": "2_topology_expansion_reduced",
+  "results_per_topology": {
+    "lattice": {
+      "always_defect_pooled": {
+        "cooperator_cluster_size_max_mean": 0.4,
+        "cooperator_fraction_final_mean": 0.006,
+        "defector_cluster_size_max_mean": 99.4,
+        "n": 10
+      },
+      "coop_strat_pooled": {
+        "cooperator_cluster_size_max_mean": 95.65,
+        "cooperator_fraction_final_mean": 0.9577500000000001,
+        "defector_cluster_size_max_mean": 1.175,
+        "n": 40
+      },
+      "n_cells": 60,
+      "per_strat_noise": {
+        "always_cooperate|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "always_cooperate|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 2.9473295,
+          "n": 5
+        },
+        "always_defect|noise=0.00": {
+          "cooperator_cluster_count_mean": 0.0,
+          "cooperator_cluster_size_max_mean": 0.0,
+          "cooperator_fraction_final": 0.0,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 100.0,
+          "mean_payoff_per_round": 1.0,
+          "n": 5
+        },
+        "always_defect|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.2,
+          "cooperator_cluster_size_max_mean": 0.8,
+          "cooperator_fraction_final": 0.012,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 98.8,
+          "mean_payoff_per_round": 1.1476745000000002,
+          "n": 5
+        },
+        "generous_tft|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "generous_tft|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 94.8,
+          "cooperator_fraction_final": 0.9480000000000001,
+          "defector_cluster_count_mean": 4.8,
+          "defector_cluster_size_max_mean": 1.4,
+          "mean_payoff_per_round": 2.6702500000000002,
+          "n": 5
+        },
+        "random|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.8,
+          "cooperator_cluster_size_max_mean": 68.0,
+          "cooperator_fraction_final": 0.6900000000000001,
+          "defector_cluster_count_mean": 13.8,
+          "defector_cluster_size_max_mean": 10.0,
+          "mean_payoff_per_round": 2.247993,
+          "n": 5
+        },
+        "random|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.4,
+          "cooperator_cluster_size_max_mean": 69.6,
+          "cooperator_fraction_final": 0.704,
+          "defector_cluster_count_mean": 12.4,
+          "defector_cluster_size_max_mean": 8.8,
+          "mean_payoff_per_round": 2.2504955,
+          "n": 5
+        },
+        "tit_for_tat|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "tit_for_tat|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.6,
+          "cooperator_cluster_size_max_mean": 70.8,
+          "cooperator_fraction_final": 0.718,
+          "defector_cluster_count_mean": 13.2,
+          "defector_cluster_size_max_mean": 7.6,
+          "mean_payoff_per_round": 2.2603549999999997,
+          "n": 5
+        },
+        "win_stay_lose_shift|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "win_stay_lose_shift|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 99.6,
+          "cooperator_fraction_final": 0.9960000000000001,
+          "defector_cluster_count_mean": 0.4,
+          "defector_cluster_size_max_mean": 0.4,
+          "mean_payoff_per_round": 2.7763269999999998,
+          "n": 5
+        }
+      }
+    },
+    "scale_free": {
+      "always_defect_pooled": {
+        "cooperator_cluster_size_max_mean": 0.4,
+        "cooperator_fraction_final_mean": 0.004,
+        "defector_cluster_size_max_mean": 99.6,
+        "n": 10
+      },
+      "coop_strat_pooled": {
+        "cooperator_cluster_size_max_mean": 92.6,
+        "cooperator_fraction_final_mean": 0.93125,
+        "defector_cluster_size_max_mean": 5.175,
+        "n": 40
+      },
+      "n_cells": 60,
+      "per_strat_noise": {
+        "always_cooperate|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "always_cooperate|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 99.6,
+          "cooperator_fraction_final": 0.9960000000000001,
+          "defector_cluster_count_mean": 0.4,
+          "defector_cluster_size_max_mean": 0.4,
+          "mean_payoff_per_round": 2.9476166666666668,
+          "n": 5
+        },
+        "always_defect|noise=0.00": {
+          "cooperator_cluster_count_mean": 0.0,
+          "cooperator_cluster_size_max_mean": 0.0,
+          "cooperator_fraction_final": 0.0,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 100.0,
+          "mean_payoff_per_round": 1.0,
+          "n": 5
+        },
+        "always_defect|noise=0.05": {
+          "cooperator_cluster_count_mean": 0.8,
+          "cooperator_cluster_size_max_mean": 0.8,
+          "cooperator_fraction_final": 0.008,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 99.2,
+          "mean_payoff_per_round": 1.146780612244898,
+          "n": 5
+        },
+        "generous_tft|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "generous_tft|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 89.8,
+          "cooperator_fraction_final": 0.898,
+          "defector_cluster_count_mean": 8.4,
+          "defector_cluster_size_max_mean": 2.2,
+          "mean_payoff_per_round": 2.667751020408163,
+          "n": 5
+        },
+        "random|noise=0.00": {
+          "cooperator_cluster_count_mean": 5.0,
+          "cooperator_cluster_size_max_mean": 49.8,
+          "cooperator_fraction_final": 0.5519999999999999,
+          "defector_cluster_count_mean": 6.0,
+          "defector_cluster_size_max_mean": 38.6,
+          "mean_payoff_per_round": 2.250251360544218,
+          "n": 5
+        },
+        "random|noise=0.05": {
+          "cooperator_cluster_count_mean": 3.4,
+          "cooperator_cluster_size_max_mean": 52.4,
+          "cooperator_fraction_final": 0.5479999999999999,
+          "defector_cluster_count_mean": 6.6,
+          "defector_cluster_size_max_mean": 39.2,
+          "mean_payoff_per_round": 2.2498268707482993,
+          "n": 5
+        },
+        "tit_for_tat|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "tit_for_tat|noise=0.05": {
+          "cooperator_cluster_count_mean": 5.0,
+          "cooperator_cluster_size_max_mean": 53.0,
+          "cooperator_fraction_final": 0.572,
+          "defector_cluster_count_mean": 5.4,
+          "defector_cluster_size_max_mean": 38.0,
+          "mean_payoff_per_round": 2.2543608843537415,
+          "n": 5
+        },
+        "win_stay_lose_shift|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "win_stay_lose_shift|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 98.4,
+          "cooperator_fraction_final": 0.984,
+          "defector_cluster_count_mean": 1.6,
+          "defector_cluster_size_max_mean": 0.8,
+          "mean_payoff_per_round": 2.776100340136055,
+          "n": 5
+        }
+      }
+    },
+    "small_world": {
+      "always_defect_pooled": {
+        "cooperator_cluster_size_max_mean": 0.3,
+        "cooperator_fraction_final_mean": 0.003,
+        "defector_cluster_size_max_mean": 99.7,
+        "n": 10
+      },
+      "coop_strat_pooled": {
+        "cooperator_cluster_size_max_mean": 92.225,
+        "cooperator_fraction_final_mean": 0.9404999999999999,
+        "defector_cluster_size_max_mean": 1.55,
+        "n": 40
+      },
+      "n_cells": 60,
+      "per_strat_noise": {
+        "always_cooperate|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "always_cooperate|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 99.8,
+          "cooperator_fraction_final": 0.998,
+          "defector_cluster_count_mean": 0.2,
+          "defector_cluster_size_max_mean": 0.2,
+          "mean_payoff_per_round": 2.947409,
+          "n": 5
+        },
+        "always_defect|noise=0.00": {
+          "cooperator_cluster_count_mean": 0.0,
+          "cooperator_cluster_size_max_mean": 0.0,
+          "cooperator_fraction_final": 0.0,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 100.0,
+          "mean_payoff_per_round": 1.0,
+          "n": 5
+        },
+        "always_defect|noise=0.05": {
+          "cooperator_cluster_count_mean": 0.6,
+          "cooperator_cluster_size_max_mean": 0.6,
+          "cooperator_fraction_final": 0.006,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 99.4,
+          "mean_payoff_per_round": 1.1476185,
+          "n": 5
+        },
+        "generous_tft|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "generous_tft|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.2,
+          "cooperator_cluster_size_max_mean": 89.0,
+          "cooperator_fraction_final": 0.8960000000000001,
+          "defector_cluster_count_mean": 8.6,
+          "defector_cluster_size_max_mean": 2.0,
+          "mean_payoff_per_round": 2.6693615,
+          "n": 5
+        },
+        "random|noise=0.00": {
+          "cooperator_cluster_count_mean": 5.0,
+          "cooperator_cluster_size_max_mean": 41.8,
+          "cooperator_fraction_final": 0.654,
+          "defector_cluster_count_mean": 13.8,
+          "defector_cluster_size_max_mean": 8.2,
+          "mean_payoff_per_round": 2.249931,
+          "n": 5
+        },
+        "random|noise=0.05": {
+          "cooperator_cluster_count_mean": 7.6,
+          "cooperator_cluster_size_max_mean": 35.8,
+          "cooperator_fraction_final": 0.634,
+          "defector_cluster_count_mean": 12.6,
+          "defector_cluster_size_max_mean": 11.8,
+          "mean_payoff_per_round": 2.2500955,
+          "n": 5
+        },
+        "tit_for_tat|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "tit_for_tat|noise=0.05": {
+          "cooperator_cluster_count_mean": 5.4,
+          "cooperator_cluster_size_max_mean": 50.4,
+          "cooperator_fraction_final": 0.6439999999999999,
+          "defector_cluster_count_mean": 13.0,
+          "defector_cluster_size_max_mean": 9.4,
+          "mean_payoff_per_round": 2.2589435,
+          "n": 5
+        },
+        "win_stay_lose_shift|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "win_stay_lose_shift|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 98.6,
+          "cooperator_fraction_final": 0.986,
+          "defector_cluster_count_mean": 1.4,
+          "defector_cluster_size_max_mean": 0.8,
+          "mean_payoff_per_round": 2.776146,
+          "n": 5
+        }
+      }
+    },
+    "well_mixed": {
+      "always_defect_pooled": {
+        "cooperator_cluster_size_max_mean": 0.0,
+        "cooperator_fraction_final_mean": 0.0,
+        "defector_cluster_size_max_mean": 100.0,
+        "n": 10
+      },
+      "coop_strat_pooled": {
+        "cooperator_cluster_size_max_mean": 93.425,
+        "cooperator_fraction_final_mean": 0.9342499999999999,
+        "defector_cluster_size_max_mean": 6.575,
+        "n": 40
+      },
+      "n_cells": 60,
+      "per_strat_noise": {
+        "always_cooperate|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "always_cooperate|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 2.947465494949495,
+          "n": 5
+        },
+        "always_defect|noise=0.00": {
+          "cooperator_cluster_count_mean": 0.0,
+          "cooperator_cluster_size_max_mean": 0.0,
+          "cooperator_fraction_final": 0.0,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 100.0,
+          "mean_payoff_per_round": 1.0,
+          "n": 5
+        },
+        "always_defect|noise=0.05": {
+          "cooperator_cluster_count_mean": 0.0,
+          "cooperator_cluster_size_max_mean": 0.0,
+          "cooperator_fraction_final": 0.0,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 100.0,
+          "mean_payoff_per_round": 1.1473293131313131,
+          "n": 5
+        },
+        "generous_tft|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "generous_tft|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 2.669201131313131,
+          "n": 5
+        },
+        "random|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 51.6,
+          "cooperator_fraction_final": 0.516,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 48.4,
+          "mean_payoff_per_round": 2.2500468686868684,
+          "n": 5
+        },
+        "random|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 46.4,
+          "cooperator_fraction_final": 0.4640000000000001,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 53.6,
+          "mean_payoff_per_round": 2.2500927474747474,
+          "n": 5
+        },
+        "tit_for_tat|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "tit_for_tat|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 47.4,
+          "cooperator_fraction_final": 0.47400000000000003,
+          "defector_cluster_count_mean": 1.0,
+          "defector_cluster_size_max_mean": 52.6,
+          "mean_payoff_per_round": 2.257656707070707,
+          "n": 5
+        },
+        "win_stay_lose_shift|noise=0.00": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 3.0,
+          "n": 5
+        },
+        "win_stay_lose_shift|noise=0.05": {
+          "cooperator_cluster_count_mean": 1.0,
+          "cooperator_cluster_size_max_mean": 100.0,
+          "cooperator_fraction_final": 1.0,
+          "defector_cluster_count_mean": 0.0,
+          "defector_cluster_size_max_mean": 0.0,
+          "mean_payoff_per_round": 2.776773111111111,
+          "n": 5
+        }
+      }
+    }
+  },
+  "ts_end": 1778091484.0606809,
+  "ts_start": 1778089745.528994,
+  "wallclock_sec": 1738.531686782837
+}

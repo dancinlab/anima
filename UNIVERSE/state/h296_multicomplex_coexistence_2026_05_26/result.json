@@ -1,0 +1,58 @@
+{
+  "hypothesis": "H_296",
+  "slug": "multicomplex-coexistence",
+  "title": "Multi-complex coexistence: rule 90 hosts two disjoint sub-complexes ({0,1} + {2,3}) simultaneously (H_295 quantitative extension)",
+  "date": "2026-05-26",
+  "question": "Do any substrates host >=2 disjoint irreducible subsets simultaneously (multiple integration loci coexisting at the same state)?",
+  "engine": "HEXAD/IIT4/lib + stdlib/consciousness/iit4_complex.complex_spectrum (returns all subsets with Phi>0, sorted). Reused, no new IIT4 code.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (cross-process byte-identical)",
+  "config": {"n": 4, "headline_state": 5, "headline_state_binary": "0101", "full_mask": 15},
+  "panel": {
+    "rule_0":   {"n_subsets": 0, "disjoint_pair": false, "class": "no-complex"},
+    "rule_255": {"n_subsets": 0, "disjoint_pair": false, "class": "no-complex"},
+    "rule_204": {"n_subsets": 0, "disjoint_pair": false, "class": "no-complex"},
+    "rule_51":  {"n_subsets": 0, "disjoint_pair": false, "class": "no-complex"},
+    "rule_150": {"n_subsets": 1, "disjoint_pair": false, "class": "single (whole)", "top_mask": 15, "top_phi": 6.0},
+    "rule_105": {"n_subsets": 1, "disjoint_pair": false, "class": "single (whole)", "top_mask": 15, "top_phi": 4.5},
+    "rule_90":  {"n_subsets": 2, "disjoint_pair": true,  "class": "MULTI", "spectrum": [{"mask": 3, "phi": 2.0, "size": 2, "cells": "{0,1}"}, {"mask": 12, "phi": 2.0, "size": 2, "cells": "{2,3}"}], "note": "TWO disjoint sub-complexes coexisting"},
+    "rule_60":  {"n_subsets": 1, "disjoint_pair": false, "class": "single (whole)", "top_mask": 15, "top_phi": 17.5},
+    "rule_110": {"n_subsets": 1, "disjoint_pair": false, "class": "single (whole)", "top_mask": 15, "top_phi": 7.66066},
+    "rule_30":  {"n_subsets": 1, "disjoint_pair": false, "class": "single (whole)"}
+  },
+  "classification_summary": {
+    "MULTI_disjoint": [90],
+    "single_whole": [150, 105, 60, 110, 30],
+    "no_complex": [0, 255, 204, 51]
+  },
+  "criteria": {
+    "C1_MULTI_RULE90": "PASS (2 disjoint subsets: {0,1} + {2,3})",
+    "C2_SINGLE_INTEGRATING": "PASS (60/110 top=full, no disjoint partner)",
+    "C3_NONE_EXCLUSION_DET": "PASS"
+  },
+  "falsifiers": {
+    "F296_1_MULTI_RULE90": "PASS",
+    "F296_2a_SINGLE_60": "PASS",
+    "F296_2b_SINGLE_110": "PASS",
+    "F296_3a_NONE_RULE0": "PASS",
+    "F296_3b_NONE_RULE204": "PASS",
+    "F296_4_EXCLUSION_CONSISTENT": "PASS",
+    "F296_5_DETERMINISM": "PASS"
+  },
+  "checks": "7 PASS / 0 FAIL",
+  "verdict_class": "H1 SUPPORTED (NUMERICAL)",
+  "finding": "complex_spectrum reveals multi-complex coexistence. (1) Rule 90 hosts TWO disjoint irreducible sub-complexes simultaneously: cells {0,1} (mask=3, Phi=2) AND cells {2,3} (mask=12, Phi=2) — two independent integration loci coexisting at the same state. (2) Integrating substrates (60/110/150/105/30) host a single entry = the whole system (mask=15), no disjoint partner — the whole is the unique complex (holism). (3) Reducible substrates (constants/identity/complement) have empty spectrum. (4) Exclusion-consistent: spectrum top == find_complex (H_295). Meaning: IIT's exclusion postulate picks ONE 'the' complex, but the STRUCTURAL reality on rule 90 is multi-complex — the 4-cell ring partitions into 2 independent 2-cell integration loci (the resolution of whole-Phi=0). H_295's 'subset is the complex' becomes quantified: rule 90 has TWO such subsets, equal Phi, disjoint. The ECA parity-ring's even-cell/odd-cell bipartite structure is the substrate of that partition.",
+  "honest_limits": [
+    "L1: complex_spectrum is state-dependent (state 5 single point); multi-disjoint classification may shift at other states.",
+    "L2: n=4 small (only 2-cell sub-partitions visible); large-n multi-complex partition patterns explode super-exponentially.",
+    "L3: multi-complex (subset-irreducibility) differs from PID redundancy (information-flow decomposition).",
+    "L4: IIT exclusion picks one; multi-spectrum is STRUCTURAL candidate-set, not a phenomenal multi-consciousness claim.",
+    "L5: ECA proxy; not a phenomenal claim.",
+    "L6: structure-cut big-Phi; relative comparison robust.",
+    "L7: verdict is a toy-substrate measurement fact."
+  ],
+  "verify_fence": {
+    "claim": "H_296 complex_spectrum reveals multi-complex coexistence on rule 90: TWO disjoint irreducible subsets — cells {0,1} (mask=3, Phi=2) AND {2,3} (mask=12, Phi=2) — host simultaneous independent integration loci, while integrating substrates host a single whole-complex and reducible rules host none; deterministic toy-substrate, NOT an atlas identity / NOT a phenomenal claim of multiple consciousnesses",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values deterministic arithmetic, interpretation fenced"
+  }
+}

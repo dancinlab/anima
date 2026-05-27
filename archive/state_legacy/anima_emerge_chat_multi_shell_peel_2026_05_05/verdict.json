@@ -1,0 +1,31 @@
+{
+  "schema": "anima/emerge_chat_multi_shell_peel/verdict/1",
+  "ts_utc": "2026-05-05T18:47:31Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "prompt": "안녕",
+  "shells_tested": [
+    "1_byte_fallback",
+    "2_replacement",
+    "3_short_punct",
+    "4_cjk",
+    "5_ascii_letters"
+  ],
+  "shell_sizes": {
+    "1_byte_fallback": 256,
+    "2_replacement": 0,
+    "3_short_punct": 692,
+    "4_cjk": 25417,
+    "5_ascii_letters": 11004
+  },
+  "max_korean_count": 17,
+  "n_korean_emerging": 5,
+  "korean_first_emerging_shell": "1_byte_fallback",
+  "verdict": "PASS_KOREAN_AT_SHELL",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 shell heuristic boundaries anima-internal",
+    "C3 sampling T=3.0 is extreme",
+    "C4 ban-then-greedy may surface other broken modes",
+    "C5 ascii_letters shell is large (~10k+) — heavy ban"
+  ]
+}

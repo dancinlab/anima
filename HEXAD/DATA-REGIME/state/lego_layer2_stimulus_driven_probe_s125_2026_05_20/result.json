@@ -1,0 +1,71 @@
+{
+  "section": "§125",
+  "title": "LEGO LAYER-2 STIMULUS-DRIVEN LIVENESS PROBE",
+  "tier": "design-tier+run (probe-tier)",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§117 state/lego_assembly_run_s117_2026_05_19/ (LIF substrate, layer-1 variance-only liveness)",
+    "§124 state/lego_residual_audit_s124_2026_05_19/ (3-layer liveness partition)",
+    "§96 Q1 9-faculty map (carrier = spike-correlation, Ψ-C1 ∈ [0,1])",
+    "§112 META_FP(Π_½) (carrier-invariant form ψ(c)=(1+c)/2)"
+  ],
+  "method": {
+    "n_replicates": 5,
+    "seeds": [
+      1337,
+      1338,
+      1339,
+      1340,
+      1341
+    ],
+    "n_stim": 12,
+    "steps_per_stim": 80,
+    "window": 40,
+    "imports_s117_lego_sim_byte_identical": true,
+    "no_fork_no_reimplementation": true
+  },
+  "variance_decomposition": {
+    "n_stim": 12,
+    "n_samples_per_stim": 400,
+    "grand_mean": 0.6280033235625953,
+    "stim_means": [
+      0.7145934096268808,
+      0.6579152346032429,
+      0.6300652819861456,
+      0.6061104300315333,
+      0.6264664922415497,
+      0.6255200967903969,
+      0.6129959791077956,
+      0.6014848623409997,
+      0.6339922387794594,
+      0.6163470657047777,
+      0.5991040248500391,
+      0.6114447666883214
+    ],
+    "ss_between": 4.437673619937387,
+    "ss_within": 11.924251054810792,
+    "ss_total": 16.36192467474818,
+    "eta_squared": 0.2712195360968856,
+    "gaussian_mi_nats": 0.15819136961831162,
+    "gaussian_mi_bits": 0.22822190445977122
+  },
+  "overall_psi_c1_std_pooled": 0.05838436697643646,
+  "verdict": "LAYER-2-PARTIAL",
+  "verdict_note": "Mixed regime — some stimulus signal but substantial intrinsic noise.",
+  "honest_inheritance": {
+    "layer_1_variance_only": "§117 CLOSED (Ψ-C1 std ≫ τ=1e-4)",
+    "layer_2_stimulus_driven": "LAYER-2-PARTIAL",
+    "layer_3_task_grounded": "OPEN — separate §126+ cycle if pursued",
+    "wall_a": "§97 ORTHOGONAL inherited (toy spike sim moves no data-regime threshold)",
+    "wall_b": "§115/§117/§124 INHERITED — sim-on-GPU, confronted-not-removed"
+  },
+  "g3": "probe ≠ fire ≠ emergence; necessary-not-sufficient (B-EMERGE-7); capability claim 0; north-star + §15/§51/§72 milestones UNCHANGED."
+}

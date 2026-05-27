@@ -1,0 +1,115 @@
+{
+  "schema": "anima/p9/eval_phase0_extended/1",
+  "date_utc": "2026-05-03",
+  "phase": "P9 F1 measurement framework — Phase 0 extension attempt",
+  "intent": "Add ROUGE-L F1 + BLEU-2 + BLEU-3 to existing holdout-500 BLEU-1 per-prompt artifacts; recompute Llama-3.2-3B anchor on same metrics; build composite F1_v3 = mean(BLEU-1, ROUGE-L, BLEU-2) normalized to anchor.",
+  "verdict": "BLOCKED_DATA_INSUFFICIENT",
+  "verdict_short": "Per-prompt JSONs persist only the BLEU-1 scalar score; the underlying model-generated tokens (gen_tok) and reference tokens (ref_tok) were discarded by the eval script after BLEU-1 was computed. ROUGE-L and BLEU-2/3 cannot be computed from BLEU-1 scalars (information-lossy). Recomputation requires re-running all 5 LoRA models against the 500-prompt holdout on GPU substrate (ubu1 / RunPod), which is out of scope for this Mac-only / READ-ONLY task.",
+
+  "what_was_inspected": {
+    "per_prompt_files": [
+      "state/p9_p1_holdout500_reeval_2026_05_03/phase1_5_per_prompt.json",
+      "state/p9_p1_holdout500_reeval_2026_05_03/phase1_6_per_prompt.json",
+      "state/p9_p1_holdout500_reeval_2026_05_03/ablation_A_per_prompt.json",
+      "state/p9_p1_holdout500_reeval_2026_05_03/ablation_B_per_prompt.json",
+      "state/p9_p1_holdout500_reeval_2026_05_03/y1_per_prompt.json"
+    ],
+    "schema_keys_present": ["name", "scores", "summary"],
+    "scores_field_type": "list[float] of length 499",
+    "scores_field_semantics": "BLEU-1 unigram-precision (clipped) per holdout prompt; quantized to 1/32 multiples (F1_GEN_LEN=32)",
+    "missing_required_for_phase0": ["per-prompt gen_tok (model output token IDs)", "per-prompt ref_tok (reference token IDs)", "tokenizer state needed to detokenize"],
+    "holdout_source_inspected": "state/p9_p0_measure_2026_05_03/sft_data_holdout_500_augmented.jsonl (500 records, has input + completion text + targets — but NOT model generations)"
+  },
+
+  "why_blocked": {
+    "root_cause": "p9_p1_holdout500_reeval.py L107-138 (compute_f1_bleu1_per): generates gen_tok inside the inner loop, computes BLEU-1 hits, returns scalar — gen_tok goes out of scope and is garbage-collected.",
+    "what_would_be_needed": [
+      "Per-prompt model output token IDs (gen_tok), one list per (ckpt × prompt) = 5 × 499 = 2495 token sequences",
+      "Per-prompt reference token IDs (ref_tok) consistent across all 5 evals (these would be identical across ckpts for the same holdout prompt)",
+      "OR re-run the 5 LoRA evals with an upgraded eval script that persists gen_tok",
+      "OR re-run on detokenized text and compute ROUGE-L over surface strings"
+    ],
+    "raw_constraints_violated_by_fabrication": [
+      "raw#10 honest C3 — synthetic ROUGE-L numbers without measurement = lie",
+      "raw#71 falsifier-bound — F1 v3 spec gates on measured Llama anchor; fabrication corrupts pre-registration audit",
+      "raw#9 NO new .py on Mac — cannot author a new Mac-side recomputation script even if substrate were available"
+    ],
+    "raw_constraints_satisfied_by_blocker_report": [
+      "raw#10 honest C3 — explicit BLOCKED verdict with root cause documented",
+      "raw#15 NO personal paths — all paths repo-relative",
+      "DO_NOT_EXECUTE training — no training executed",
+      "DO_NOT_COMMIT — artifact written to state/ only, not staged"
+    ]
+  },
+
+  "carryover_facts_from_existing_bleu1_eval": {
+    "anchor_already_measured": {
+      "metric": "BLEU-1",
+      "model": "Llama-3.2-3B-Instruct",
+      "holdout_n": "32 (from F1 framework upgrade doc §3.3)",
+      "value": 0.1555,
+      "source": "docs/p9_f1_measurement_framework_upgrade_2026_05_03.md §3.3 row 'BLEU-1 0.1555 (already measured 2026-05-03)'",
+      "caveat": "Anchor measured on N=32, NOT on holdout-500 — direct comparison to the 5 ckpt holdout-500 means is sample-mismatched; doc §3.3 itself flags 'must measure' for ROUGE-L + BERTScore but BLEU-1 anchor is also stale at N=32"
+    },
+    "ckpt_bleu1_means_holdout500": {
+      "phase1_5":   {"mean": 0.005636, "se": 0.000714, "frac_pos": 0.140},
+      "phase1_6":   {"mean": 0.006388, "se": 0.000729, "frac_pos": 0.166},
+      "ablation_A": {"mean": 0.006513, "se": 0.000758, "frac_pos": 0.166},
+      "ablation_B": {"mean": 0.011961, "se": 0.001037, "frac_pos": 0.267},
+      "y1":         {"mean": 0.005949, "se": 0.000717, "frac_pos": 0.152}
+    },
+    "ranking_bleu1_only": ["ablation_B (0.01196)", "ablation_A (0.00651)", "phase1_6 (0.00639)", "y1 (0.00595)", "phase1_5 (0.00564)"],
+    "ablation_B_dominance_significance": "phase1_5 vs ablation_B: delta -0.00633, p_bootstrap=0.0, sign_test 33pos/100neg p=4.96e-9; phase1_6 vs ablation_B: delta -0.00557, p_bootstrap=0.0, p_sign=1.14e-6; y1 vs ablation_B: delta -0.00601, p_bootstrap=0.0, p_sign=2.44e-9; ablation_A vs ablation_B: delta -0.00545, p_bootstrap=0.0, p_sign=8.23e-6. ablation_B significantly dominates all 4 others on BLEU-1 alone.",
+    "ranking_among_non_B": "ablation_A ≈ phase1_6 ≈ y1 ≈ phase1_5 within ±1 SE; pairwise CIs all overlap zero (p_bootstrap > 0.27 across all 6 non-B pairs).",
+    "verdict_carryover_from_summary": "AXIS_EFFECTS_REAL (spread = 0.00633 > 3*SE)"
+  },
+
+  "rouge_l_table": "NOT_COMPUTED — gen_tok unavailable",
+  "bleu_2_table":  "NOT_COMPUTED — gen_tok unavailable",
+  "bleu_3_table":  "NOT_COMPUTED — gen_tok unavailable",
+  "llama_anchor_rouge_l":  "NOT_COMPUTED — requires Llama generation pass on holdout-500",
+  "llama_anchor_bleu_2":   "NOT_COMPUTED — requires Llama generation pass on holdout-500",
+  "llama_anchor_bleu_3":   "NOT_COMPUTED — requires Llama generation pass on holdout-500",
+  "composite_f1_v3":       "NOT_COMPUTED — depends on above three components",
+  "ranking_change_under_rouge_l": "UNKNOWN — cannot determine if ablation_B dominance survives ROUGE-L until measured",
+
+  "remediation_path_to_unblock": {
+    "owner": "ubu1 / RunPod GPU substrate",
+    "steps": [
+      "1. Patch p9_p1_holdout500_reeval.py compute_f1_bleu1_per to also persist per-prompt gen_tok + ref_tok lists",
+      "2. Re-run the 5 LoRA evals (~20min wall, ~5min per ckpt on RTX 5070, $0)",
+      "3. On Mac, add ROUGE-L + BLEU-2 + BLEU-3 computation over the persisted token lists (CPU, ~10min)",
+      "4. Run Llama-3.2-3B-Instruct generation on same holdout-500 (~30min RunPod, ~$1)",
+      "5. Compute Llama anchor for ROUGE-L + BLEU-2 + BLEU-3",
+      "6. Build composite F1_v3 = mean(BLEU-1, ROUGE-L, BLEU-2) / Llama_anchor_F1_v3",
+      "7. Re-rank ckpts and write final eval_phase0_extended_v2.json"
+    ],
+    "wall_total": "~1hr",
+    "cost_total": "~$1 (Llama anchor pass only; LoRA re-eval is free on local GPU)"
+  },
+
+  "cheap_alternative_lower_bound_via_quantization_argument": {
+    "claim": "Even WITHOUT computing ROUGE-L, we can place a probabilistic lower bound on whether ablation_B's BLEU-1 lead survives ROUGE-L extension.",
+    "reasoning": [
+      "ablation_B's BLEU-1 mean (0.01196) is 88% higher than the next-best ckpt (ablation_A at 0.00651)",
+      "ablation_B has frac_pos = 0.267 vs 0.140-0.166 for the others — i.e. it produces non-trivial unigram overlap on 60-90% more prompts",
+      "ROUGE-L F1 on token sequences correlates with BLEU-1 unigram precision because both reward token-level overlap; correlation is typically r > 0.6 on short greedy outputs (per ROUGE/BLEU literature)",
+      "Therefore: P(ablation_B retains rank-1 under ROUGE-L | BLEU-1 lead = 88%, frac_pos lead = 60%) is plausibly > 0.7 but UNVERIFIED",
+      "Mid-pack reordering (phase1_5 vs phase1_6 vs ablation_A vs y1) is highly likely under ROUGE-L because all 4 are within ±1 SE on BLEU-1 — ROUGE-L recall axis introduces independent noise that could permute these 4 freely"
+    ],
+    "honest_disclaimer": "This is a NARRATIVE prior, NOT a measurement. Falsifier audit cannot accept this as evidence. Documented for triage only."
+  },
+
+  "f1_spec_recommendations_revised": {
+    "phase_0_status": "BLOCKED on Mac substrate; queued for ubu1 GPU re-eval with token persistence patch",
+    "do_not_advance_to_phase_1": "BERTScore (Phase 1) requires the same gen_tok persistence; do NOT spin up GPU work until eval script persists tokens, else $1+ Llama anchor work is wasted on partial coverage",
+    "v3_schema_status": "REMAINS_QUEUED — cannot fill ROUGE-L anchor field; F1 spec mk3 v3 entry still 'TBD' per docs/p9_f1_measurement_framework_upgrade_2026_05_03.md §6",
+    "recommended_next_action": "Patch eval script (token persistence) BEFORE any further metric work; treat token persistence as a one-time substrate cost amortized across all 9 metrics in the inventory"
+  },
+
+  "honest_c3_caveats": [
+    "(C3-1) DATA_BLOCKER not METHOD_FAILURE: Phase 0 extension was correctly scoped but assumed gen_tok would be persisted in per-prompt JSONs. They are not. The blocker is upstream eval-script design, not the Phase 0 spec itself — DO NOT count this as Phase 0 'failing' or BLEU-1 framework being insufficient; we have NOT yet measured anything new.",
+    "(C3-2) ANCHOR_STALENESS_BLEU1: Even the existing BLEU-1 Llama anchor (0.1555) was measured on N=32 NOT N=500, so the 0.85 ratio gate (0.132) compared to holdout-500 ckpt means is technically sample-mismatched. Llama anchor recomputation on holdout-500 is required for BLEU-1 too, not just for ROUGE-L/BLEU-2/3.",
+    "(C3-3) RANKING_NARRATIVE_NOT_PROOF: The 'ablation_B dominance' verdict is currently single-metric (BLEU-1). The Phase 0 motivation IS the worry that BLEU-1 alone may be misleading; running the F1 framework upgrade halfway (ranking by BLEU-1 only while citing the upgrade doc) would be epistemic theater. Either run the full Phase 0 measurement on GPU substrate or explicitly stamp the ranking 'BLEU-1 ONLY, ROUGE-L NOT MEASURED'."
+  ]
+}

@@ -1,0 +1,109 @@
+[launch] PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
+[launch] pip install bitsandbytes==0.43.1
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] bitsandbytes=0.43.1
+[launch] pip install transformers
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+The cache for model files in Transformers v4.22.0 has been updated. Migrating your old cache. This is a one-time only operation. You can interrupt this and resume the migration later on by calling `transformers.utils.move_cache()`.
+0it [00:00, ?it/s]0it [00:00, ?it/s]
+[launch] transformers=4.44.0
+[launch] pip install peft
+WARNING: Running pip as the 'root' user can result in broken permissions and conflicting behaviour with the system package manager, possibly rendering your system unusable.It is recommended to use a virtual environment instead: https://pip.pypa.io/warnings/venv. Use the --root-user-action option if you know what you are doing and want to suppress this warning.
+
+[notice] A new release of pip is available: 24.2 -> 26.1.1
+[notice] To update, run: python -m pip install --upgrade pip
+[launch] peft=0.12.0
+[launch] accelerate=1.13.0
+[launch] python3 -u train_p21h_v3.py --wiki-corpus /workspace/p21hr/multi_wiki_corpus.jsonl --anima-corpus /workspace/p21hr/state/corpus_s101_build_s102_2026_05_19/corpus_s101.jsonl --mixed-corpus /workspace/p21hr/mixed_corpus_v3.jsonl --out-dir /workspace/p21hr/out_main --base-model Qwen/Qwen2.5-1.5B --init-variant vp21m --lora-adapter-dir /workspace/p21hr/vp21m_adapter --steps 2000 --bsz 2 --block 512 --lr 1e-4 --warmup-steps 100 --seed 1337 --wiki-frac 0.3 --target-corpus-mb 72 --noise-sigma 0.1 --lambda-mitosis 0.05
+[P21H] device=cuda dtype=torch.bfloat16
+[mix] multi-wiki=28,986,824 chars, anima=224,198,521 chars
+[mix] multi-wiki chunks=28,308, anima chunks=218,944
+[mix] kept multi-wiki=15,500 (21.6MB), anima=39,862 (50.4MB)
+[mix] wrote 55,362 records to /workspace/p21hr/mixed_corpus_v3.jsonl (72.0MB, wiki=15500, anima=39862)
+[mix] sha256=bf2371ac2602932cd68255626736285a5e579e6aee4b8a0160f74f365d826f94
+[P21H][init=vp21m] V3γ — Qwen + vP21M LoRA merged
+[from_qwen] loading Qwen/Qwen2.5-1.5B
+[from_qwen] merging LoRA: /workspace/p21hr/vp21m_adapter
+[from_qwen] qwen: vocab=151936 d=1536 L=28 n_head=12 n_kv_head=2 -> v3_n_kv_head=4 rope_base=1000000.0
+[from_qwen] init OK — total params 2999.7M
+[P21H] model params total=2,999,735,296 (2999.74M)
+[P21H] BEFORE-train per-lang OOD eval (greedy)
+[P21H] BEFORE en greedy: {'GENERALIZE': 9, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 1, 'ERROR': 0}
+[P21H] BEFORE ko greedy: {'GENERALIZE': 9, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 1, 'ERROR': 0}
+[P21H] BEFORE zh greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] BEFORE ru greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] BEFORE ja greedy: {'GENERALIZE': 10, 'MEMORIZE': 0, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0}
+[P21H] optimizer=PagedAdamW8bit (bnb 0.43.1)
+Token indices sequence length is longer than the specified maximum sequence length for this model (23831908 > 131072). Running this sequence through the model will result in indexing errors
+[P21H] tokenized mixed corpus: 6,000,000 tokens (block=512)
+[P21H] steps=2000 bsz=2 block=512 peak_lr=0.0001 warmup=100 lambda_mitosis=0.05 init=vp21m
+[P21H] step=     1 lr=1.00e-06 CE=14.8807 total=14.8807 pool=2 splits=0 phi=0.7120 t=4s
+[P21H] step=    50 lr=5.00e-05 CE=7.6865 total=7.6865 pool=128 splits=126 phi=0.6639 t=31s
+[P21H] step=   100 lr=1.00e-04 CE=6.1174 total=6.1174 pool=128 splits=126 phi=0.6639 t=56s
+[P21H] step=   150 lr=9.99e-05 CE=2.3758 total=2.3758 pool=128 splits=126 phi=0.6639 t=81s
+[P21H] step=   200 lr=9.94e-05 CE=5.4293 total=5.4293 pool=128 splits=126 phi=0.6639 t=106s
+[P21H] kosmos anchor written: v3_emit_step200_ru_ru_factual_geo.kosmos
+[P21H] step=   250 lr=9.86e-05 CE=1.9629 total=1.9629 pool=128 splits=126 phi=0.6639 t=132s
+[P21H] step=   300 lr=9.76e-05 CE=1.6585 total=1.6585 pool=128 splits=126 phi=0.6639 t=157s
+[P21H] step=   350 lr=9.62e-05 CE=3.3430 total=3.3430 pool=128 splits=126 phi=0.6639 t=180s
+[P21H] step=   400 lr=9.46e-05 CE=3.5273 total=3.5273 pool=128 splits=126 phi=0.6639 t=204s
+[P21H] kosmos anchor written: v3_emit_step400_ru_ru_factual_geo.kosmos
+[P21H] step=   450 lr=9.27e-05 CE=3.6843 total=3.6843 pool=128 splits=126 phi=0.6639 t=229s
+[P21H] step=   500 lr=9.06e-05 CE=2.4337 total=2.4337 pool=128 splits=126 phi=0.6639 t=253s
+[P21H] step=   550 lr=8.82e-05 CE=3.1109 total=3.1109 pool=128 splits=126 phi=0.6639 t=275s
+[P21H] step=   600 lr=8.55e-05 CE=0.5835 total=0.5835 pool=128 splits=126 phi=0.6639 t=300s
+[P21H] kosmos anchor written: v3_emit_step600_ja_ja_factual_geo.kosmos
+[P21H] step=   650 lr=8.27e-05 CE=4.1295 total=4.1295 pool=128 splits=126 phi=0.6639 t=325s
+[P21H] step=   700 lr=7.97e-05 CE=0.4126 total=0.4126 pool=128 splits=126 phi=0.6639 t=350s
+[P21H] step=   750 lr=7.65e-05 CE=1.7232 total=1.7232 pool=128 splits=126 phi=0.6639 t=375s
+[P21H] step=   800 lr=7.31e-05 CE=0.2646 total=0.2646 pool=128 splits=126 phi=0.6639 t=398s
+[P21H] kosmos anchor written: v3_emit_step800_ru_ru_factual_geo.kosmos
+[P21H] step=   850 lr=6.97e-05 CE=2.0774 total=2.0774 pool=128 splits=126 phi=0.6639 t=424s
+[P21H] step=   900 lr=6.61e-05 CE=1.3746 total=1.3746 pool=128 splits=126 phi=0.6639 t=449s
+[P21H] step=   950 lr=6.25e-05 CE=1.4259 total=1.4259 pool=128 splits=126 phi=0.6639 t=474s
+[P21H] step=  1000 lr=5.88e-05 CE=5.6089 total=5.6089 pool=128 splits=126 phi=0.6639 t=499s
+[P21H] kosmos anchor written: v3_emit_step1000_ru_ru_factual_geo.kosmos
+[P21H] step=  1050 lr=5.51e-05 CE=1.7136 total=1.7136 pool=128 splits=126 phi=0.6639 t=524s
+[P21H] step=  1100 lr=5.14e-05 CE=0.7024 total=0.7024 pool=128 splits=126 phi=0.6639 t=550s
+[P21H] step=  1150 lr=4.77e-05 CE=1.7358 total=1.7358 pool=128 splits=126 phi=0.6639 t=576s
+[P21H] step=  1200 lr=4.40e-05 CE=2.9785 total=2.9785 pool=128 splits=126 phi=0.6639 t=601s
+[P21H] kosmos anchor written: v3_emit_step1200_ko_ko_factual_geo.kosmos
+[P21H] step=  1250 lr=4.05e-05 CE=2.2124 total=2.2124 pool=128 splits=126 phi=0.6639 t=627s
+[P21H] step=  1300 lr=3.70e-05 CE=3.1988 total=3.1988 pool=128 splits=126 phi=0.6639 t=651s
+[P21H] step=  1350 lr=3.36e-05 CE=3.8724 total=3.8724 pool=128 splits=126 phi=0.6639 t=676s
+[P21H] step=  1400 lr=3.04e-05 CE=1.6419 total=1.6419 pool=128 splits=126 phi=0.6639 t=702s
+[P21H] kosmos anchor written: v3_emit_step1400_ja_ja_factual_geo.kosmos
+[P21H] step=  1450 lr=2.74e-05 CE=1.4568 total=1.4568 pool=128 splits=126 phi=0.6639 t=729s
+[P21H] step=  1500 lr=2.46e-05 CE=1.7090 total=1.7090 pool=128 splits=126 phi=0.6639 t=753s
+[P21H] step=  1550 lr=2.19e-05 CE=1.7362 total=1.7362 pool=128 splits=126 phi=0.6639 t=777s
+[P21H] step=  1600 lr=1.95e-05 CE=1.0924 total=1.0924 pool=128 splits=126 phi=0.6639 t=802s
+[P21H] kosmos anchor written: v3_emit_step1600_zh_zh_factual_geo.kosmos
+[P21H] step=  1650 lr=1.74e-05 CE=0.5905 total=0.5905 pool=128 splits=126 phi=0.6639 t=829s
+[P21H] step=  1700 lr=1.55e-05 CE=0.1428 total=0.1428 pool=128 splits=126 phi=0.6639 t=854s
+[P21H] step=  1750 lr=1.38e-05 CE=0.2067 total=0.2067 pool=128 splits=126 phi=0.6639 t=878s
+[P21H] step=  1800 lr=1.25e-05 CE=0.8637 total=0.8637 pool=128 splits=126 phi=0.6639 t=903s
+[P21H] kosmos anchor written: v3_emit_step1800_ja_ja_factual_geo.kosmos
+[P21H] step=  1850 lr=1.14e-05 CE=2.2018 total=2.2018 pool=128 splits=126 phi=0.6639 t=927s
+[P21H] step=  1900 lr=1.06e-05 CE=1.4258 total=1.4258 pool=128 splits=126 phi=0.6639 t=952s
+[P21H] step=  1950 lr=1.02e-05 CE=0.5014 total=0.5014 pool=128 splits=126 phi=0.6639 t=977s
+[P21H] step=  2000 lr=1.00e-05 CE=2.9347 total=2.9347 pool=128 splits=126 phi=0.6639 t=1001s
+[P21H] kosmos anchor written: v3_emit_step2000_ja_ja_factual_geo.kosmos
+[P21H] TRAIN DONE wall=1002.7s final_CE=2.9347
+[P21H] ckpt saved → /workspace/p21hr/out_main/ckpt.pt (5735.8 MB)
+[P21H] AFTER per-lang OOD eval (greedy + sample)
+[P21H] AFTER en: greedy={'GENERALIZE': 2, 'MEMORIZE': 8, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 1, 'MEMORIZE': 8, 'MEM_PARTIAL': 1, 'EMPTY': 0, 'ERROR': 0} verdict=PURE_MEMORIZE score=3/20 gen=3 coh=16
+[P21H] AFTER ko: greedy={'GENERALIZE': 3, 'MEMORIZE': 4, 'MEM_PARTIAL': 3, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 3, 'MEMORIZE': 7, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=PURE_MEMORIZE score=1/20 gen=6 coh=1
+[P21H] AFTER zh: greedy={'GENERALIZE': 9, 'MEMORIZE': 1, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 4, 'MEMORIZE': 6, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=0/20 gen=13 coh=0
+[P21H] AFTER ru: greedy={'GENERALIZE': 9, 'MEMORIZE': 1, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 7, 'MEMORIZE': 3, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=0/20 gen=16 coh=0
+[P21H] AFTER ja: greedy={'GENERALIZE': 9, 'MEMORIZE': 1, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} sample={'GENERALIZE': 6, 'MEMORIZE': 4, 'MEM_PARTIAL': 0, 'EMPTY': 0, 'ERROR': 0} verdict=WEAK score=0/20 gen=15 coh=0
+[P21H] AFTER anima Eval1
+[P21H] AGG: STRONG=0 PARTIAL=0 WEAK=3 PURE_MEMORIZE=2 → FAIL
+[P21H] anima_register_hits=13/20 register_regress=False
+[P21H] KOSMOS anchors total=15 (during_train=10 final=5)
+[P21H] DONE → /workspace/p21hr/out_main

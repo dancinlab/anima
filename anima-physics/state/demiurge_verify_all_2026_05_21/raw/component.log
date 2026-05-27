@@ -1,0 +1,16 @@
+Another instance of SwiftPM (PID: 6475) is already running using '/Users/ghost/core/demiurge/cockpit/.build', waiting until that process has finished execution...Building for debugging...
+[0/3] Write swift-version--58304C5D6DBC2206.txt
+Build of product 'DemiurgeCLI' complete! (0.10s)
+action: 검증 (검증) · domain=component — dispatching…
+script = /Users/ghost/core/hexa-lang/stdlib/component/gmsh_skfem.py
+python3 = /opt/homebrew/bin/python3
+python3 gmsh_skfem.py — exit 0, rows=8
+gmsh 4.15.2 · scikit-fem 12.0.1
+artifacts: csv, meta, msh
+---
+📸 component verify record → exports/component/verify/2026-05-21T09-10-03Z/component_verify_20260521T091003Z.json
+   ΔT = 0.528 K · T_max = 298.68 K · σ_vM_max = 38.37 Pa · u_max = 2.796e-13 m
+   mesh: 686 nodes · 2232 tetrahedra · producer = gmsh@4.15.2 + scikit-fem@12.0.1
+   ⏳ GATE_OPEN · absorbed=false — toy box geometry + textbook material + single load case, 흡수에 해당하려면 real STEP + 측정 datasheet + mesh convergence 필요 (g3, scope_caveats 6종 참조).
+---
+📸 new record ID(s): component_verify_20260521T091003Z

@@ -1,0 +1,66 @@
+{
+  "schema": "n12_iit_braket_pilot/sv1_results/1",
+  "ts_utc": "2026-05-02T22:09:35Z",
+  "device_arn": "arn:aws:braket:::device/quantum-simulator/amazon/sv1",
+  "device_name": "SV1",
+  "shots_per_circuit": 1000,
+  "free_tier_consumed_min": "<0.5",
+  "circuits": {
+    "and": {
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/69627797-b009-4d9e-81f7-bf3f6f0162fe",
+      "n_qubits": 4,
+      "h_joint_bits": 1.999971,
+      "h_marg_max_bits": 1.000000,
+      "phi_proxy_bits": 0.999971,
+      "top_outcomes": [
+        {"outcome": "1000", "p": 0.252},
+        {"outcome": "0000", "p": 0.251},
+        {"outcome": "0100", "p": 0.249},
+        {"outcome": "1110", "p": 0.248}
+      ],
+      "phi_proxy_3q_projected_for_ionq_compare": 1.000000
+    },
+    "xor": {
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/6bf340c8-70a2-4608-89cc-546d909d24b5",
+      "n_qubits": 4,
+      "h_joint_bits": 1.999646,
+      "h_marg_max_bits": 0.999954,
+      "phi_proxy_bits": 0.999692,
+      "top_outcomes": [
+        {"outcome": "0000", "p": 0.255},
+        {"outcome": "0110", "p": 0.254},
+        {"outcome": "1010", "p": 0.250},
+        {"outcome": "1100", "p": 0.241}
+      ]
+    },
+    "maj": {
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/4410a458-fe54-4af5-8172-0684940bd8e5",
+      "n_qubits": 4,
+      "h_joint_bits": 2.994935,
+      "h_marg_max_bits": 0.999954,
+      "phi_proxy_bits": 1.994981,
+      "top_outcomes": [
+        {"outcome": "0111", "p": 0.138},
+        {"outcome": "0000", "p": 0.138},
+        {"outcome": "0010", "p": 0.132},
+        {"outcome": "1000", "p": 0.128},
+        {"outcome": "1101", "p": 0.126}
+      ]
+    },
+    "copy": {
+      "task_arn": "arn:aws:braket:us-east-1:267673635495:quantum-task/bc9b57b2-e5c6-42f6-b0f4-c685f7a7a347",
+      "n_qubits": 4,
+      "h_joint_bits": 0.999711,
+      "h_marg_max_bits": 0.999711,
+      "phi_proxy_bits": 0.000000,
+      "top_outcomes": [
+        {"outcome": "1111", "p": 0.510},
+        {"outcome": "0000", "p": 0.490}
+      ],
+      "interpretation": "Pure GHZ-like fanout — joint = 1 bit, max marginal = 1 bit, fully redundant; integrated info = 0 (Φ proxy correctly identifies a copy operation as having no irreducible integration)."
+    }
+  },
+  "phi_proxy_definition": "Φ_proxy = H(joint measurement distribution) - max_i H(marginal_i). Lower bound for integrated information; assumes uniform input distribution from prior H gates and treats output measurement as the system state.",
+  "cost_USD": 0.00,
+  "honest_c3": "SV1 is noiseless; Φ_proxy here equals the textbook IIT lower bound for the gate-induced output distribution under uniform input."
+}

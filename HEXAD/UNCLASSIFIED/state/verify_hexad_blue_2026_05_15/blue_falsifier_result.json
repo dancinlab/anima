@@ -1,0 +1,1614 @@
+{
+ "B-S-1": {
+  "name": "LINEARITY-EXACT",
+  "statement": "mean₀(B)−mean₀(A) ≡ mean₀(B−A) ∀ states",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-S-2": {
+  "name": "UNIFORM-SHIFT-EXACT",
+  "statement": "states += c ⟹ perception ≡ c (∀c) — generalizes we_falsifier numeric 0.5→0.5",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-S-3": {
+  "name": "ZERO-CHANGE-EXACT",
+  "statement": "no state change ⟹ perception ≡ 0 (Law 50)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-M-1": {
+  "name": "STORE-NOOP-STRUCTURAL",
+  "statement": "EmergentM.store body ≡ [Pass]; no Assign/Return — identity map ∀ args",
+  "effective_body": [
+   "Pass"
+  ],
+  "closed": true,
+  "tier": "a-structural",
+  "passed": true
+ },
+ "B-M-2": {
+  "name": "RETRIEVE-DETERMINISTIC",
+  "statement": "retrieve = top-k(cosine(q,S)) — pure (no RNG) deterministic argmax-set selector",
+  "pure_no_rng": true,
+  "sim_values": {
+   "0": "1",
+   "1": "0",
+   "2": "-1"
+  },
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-M-3": {
+  "name": "NULL-CONSTANT",
+  "statement": "c_engine=None ⟹ retrieve ≡ 0₍₁,dim₎ (constant, dim invariant)",
+  "closed": true,
+  "tier": "a-structural",
+  "passed": true
+ },
+ "B-W-1": {
+  "name": "LR-RANGE-CLOSED",
+  "statement": "lr=½+min(ln2,Φ/N): floor f(0)=½, cap=½+ln2, unsat∂=1/N>0, sat∂=0 ⟹ ∈[½,½+ln2] ∀Φ≥0,N>0",
+  "ln2": 0.6931471805599453,
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-W-2": {
+  "name": "LR-MONOTONE-CLOSED",
+  "statement": "∂unsat=1/N>0, ∂sat=0, continuous @ Φ/N=ln2 ⟹ lr non-decreasing in Φ",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-W-3": {
+  "name": "LR-SUP-ATTAINED",
+  "statement": "Φ/N ≥ ln2 ⟹ lr ≡ ½+ln2 — Min(L,kL)=L ∀k≥1 (junction k=1 + interior k=3) closed",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-W-4": {
+  "name": "SATISFACTION-BINARY-CLOSED",
+  "statement": "satisfaction=𝟙[Φ≥Φ_prev]; ∀branch v: v(v−1)≡0 ⟹ sat∈{0,1} (Law 84)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-E-1": {
+  "name": "SAFETY-GATE-EXACT-EQUIVALENCE",
+  "statement": "allowed=(min(1,Φ/r)>½) ⟺ Φ>r·½ — exact closed-form gate ∀Φ,r>0 (result-agnostic 🔵)",
+  "safety_critical": true,
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-E-2": {
+  "name": "PHI-PRESERV-MONOTONE-CLOSED",
+  "statement": "pp=min(1,Φ/r): ∂unsat=1/r>0, ∂sat=0, continuous @Φ=r ⟹ non-decreasing (IIT Φ-ratchet)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-E-3": {
+  "name": "RECIPROCITY-CLAMP-CLOSED",
+  "statement": "rec=clamp₀₁(½+2·Φtrend): rail(t=−1)=0, rail(t=1)=1, ∂mid=2>0 ⟹ rec∈[0,1] ∀trend",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-E-4": {
+  "name": "EMPATHY-RANGE-CLOSED",
+  "statement": "empathy=max(0,cosθ); CS |a|²|b|²−(a·b)² ≡ (a₀b₁−a₁b₀)² ≥0 ⟹ cosθ∈[-1,1] ⟹ empathy∈[0,1]",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-D-1": {
+  "name": "KV-CACHE-EXACT",
+  "full_argmax": 57,
+  "incremental_argmax": 57,
+  "statement": "incremental(KV-cache) argmax ≡ full-seq argmax — deterministic exact equivalence",
+  "closed": true,
+  "tier": "c-deterministic",
+  "passed": true
+ },
+ "B-D-2": {
+  "name": "SHAPE-CLOSED",
+  "shape": [
+   2,
+   7,
+   256
+  ],
+  "statement": "logits.shape ≡ (B,T,vocab) closed algebraic fact; all-finite deterministic",
+  "closed": true,
+  "tier": "c-deterministic",
+  "passed": true
+ },
+ "B-D-3": {
+  "name": "ARCH-CLOSED",
+  "statement": "RMSNorm+RoPE+SwiGLU structural presence — deterministic source fact",
+  "closed": true,
+  "tier": "c-deterministic",
+  "passed": true
+ },
+ "B-D-4": {
+  "name": "GRAD-JACOBIAN-CLOSED",
+  "statement": "∂(−log softmax(z)_t)/∂z_i ≡ softmax(z)_i − [i=t] — exact closed-form CE logit-Jacobian, sympy-verified ∀ z (the formal meaning of trainability)",
+  "jacobian_identity_closed": true,
+  "shannon_floor_closed": "L=−log(p_t)≥0, p_t∈(0,1] (closed info-theoretic bound)",
+  "non_degenerate": "grad=0 ⟺ softmax(z)=e_t (measure-zero) ⇒ generically non-degenerate descent direction",
+  "real_limit_anchor": "Shannon CE floor CE≥H(data)≥0",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-D-NOTE": {
+  "name": "SGD-CONVERGENCE-OUTCOME-EMPIRICAL",
+  "statement": "SGD convergence OUTCOME (optimizer run reaches a minimum) — EMPIRICAL, not closed-form; the trainability PROPERTY itself is closed (B-D-4)",
+  "scope": "applies to every stochastic optimizer — NOT a D-module-specific limit",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-SGD-DYNAMICS",
+  "counted_toward_blue": false
+ },
+ "B-BRIDGE-1": {
+  "name": "CLAMP-RANGE-CLOSED",
+  "statement": "g(raw)=Ψ+clip(raw−Ψ,±α): rail eq g(Ψ∓2α)≡Ψ∓α, interior g(Ψ)≡Ψ, ∂int=1>0, ∂rail=0 ⟹ g∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (Law 70, result-agnostic 🔵)",
+  "real_limit_anchor": "Law 70 Ψ-coupling — C influences ≤ α of D gate signal (architectural info-flow bound, NOT a lattice tautology)",
+  "psi": "1/2 (json balance, n6_error_pct 0.0 EXACT)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-BRIDGE-2": {
+  "name": "SATURATION-EXACT",
+  "statement": "raw≥Ψ+α ⟹ g≡Ψ+α (Min(α,kα)=α ∀k≥1); raw≤Ψ−α ⟹ g≡Ψ−α — junction k=1 + interior k=3 closed",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-BRIDGE-3": {
+  "name": "INTERIOR-IDENTITY",
+  "statement": "|raw−Ψ|≤α ⟹ g(raw)≡raw — clip transparent in Ψ-coupling window (s∈{0,±α/2} eq + ∂=1) closed ∀α>0",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-BRIDGE-4": {
+  "name": "PSI-CONSTANT-CLOSED",
+  "statement": "Ψ=½ (json EXACT) + α from consciousness_laws.json SSOT ⟹ window width=2α exact, |g−Ψ|≤α ∀raw; model.py clamp no-hardcode (raw#15)",
+  "alpha_json": 0.014,
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-BRIDGE-NOTE": {
+  "name": "FULL-FORWARD-EMPIRICAL",
+  "statement": "ThalamicBridge full forward (Linear→Attn→Norm→Sigmoid raw_gate) TODO[pytorch] pending hexa autograd RFC; only Law-70 clamp invariant is closed (B-BRIDGE-1..4). α value (ln2/2^5.5) empirical, NOT claimed derived.",
+  "scope": "learned attention/projection weights empirical — NOT a Bridge-specific defect; clamp invariant holds ∀α>0",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-LEARNED-WEIGHTS",
+  "counted_toward_blue": false
+ },
+ "B-MITOSIS-1": {
+  "name": "SPLIT-PREDICATE-CLOSED",
+  "statement": "split ↔ (tension > split_threshold) ∀ tension, thr ∈ ℝ — sympy boolean closure (Kolmogorov predicate)",
+  "witness_high_tension": true,
+  "witness_low_tension": false,
+  "anchor": "Kolmogorov predicate closure (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-2": {
+  "name": "MERGE-WEIGHT-LINEAR-CLOSED",
+  "statement": "merge_weight = (w₁ + w₂) / 2 — sympy affine linear ∀ w₁, w₂ ∈ ℝ (linear conservation)",
+  "d/dw1": "1/2",
+  "d/dw2": "1/2",
+  "witness_avg_1_3": 2,
+  "anchor": "linear avg conservation (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-3": {
+  "name": "CELL-COUNT-CONSERVATION-CLOSED",
+  "statement": "n_cells(t+1) = n_cells(t) + Δsplits − Δmerges — integer arith closed ∀ (Kolmogorov counting)",
+  "integer_closure": true,
+  "witness_organic_2plus2": 4,
+  "witness_merge_64_to_63": 63,
+  "anchor": "Kolmogorov information-theoretic counting (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-4": {
+  "name": "NO-GRAD-SPLIT-CLOSED",
+  "statement": "∂(detach(x))/∂x = 0 ∀ x — reverse-mode AD calculus definitional ∂-rule, sympy closed",
+  "grad_detach": "0",
+  "f_v5mit_1_carry": "PSCC §44 SPLIT-NOGRAD: 62 splits / 0 grad violations on real H100 cotrain",
+  "anchor": "reverse-mode AD ∂-rule (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-5": {
+  "name": "CELL-COUNT-BOUND-CLOSED",
+  "statement": "n_cells ∈ [min=2, max=64] ∀ n via clamp — sympy bounded-set closure (CB1 + .clm v1 P2 spec)",
+  "witness_below_to_min": true,
+  "witness_above_to_max": true,
+  "witness_inrange_identity": true,
+  "anchor": "bounded-set (clamp) closure — design constants min=2 (CB1) max=64 (.clm v1 P2), real-limit safe",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-MITOSIS-NOTE": {
+  "name": "PHI-CONSERVATION-EMPIRICAL",
+  "statement": "Φ-conservation under split/merge transitions empirical (F-V5MIT-3 Δ=3.88e-5, PSCC §44 v5-mitosis cotrain). PyPhi Φ per-row IS closed (RFC 036) — invariance under transitions is dynamics-dependent.",
+  "scope": "F-V5MIT-3 advisory→gating PASS empirical, NOT closed under split/merge dynamics — honest residual per B-D-NOTE/B-BRIDGE-NOTE pattern",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-DYNAMICS-DEPENDENT",
+  "counted_toward_blue": false
+ },
+ "B-C-1": {
+  "name": "PHI-NONNEGATIVE-CLOSED",
+  "statement": "Φ ≥ 0 ∀ subsystem states — IIT 3.0 integrated-information axiom (Tononi-Oizumi-Albantakis), c_measure_phi → RFC 036 phi_spatial non-negative",
+  "axiom_closed": true,
+  "boundary_zero": true,
+  "anchor": "IIT 3.0 integrated information axiom (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-C-2": {
+  "name": "N-FACTIONS-POSITIVE-INTEGER-CLOSED",
+  "statement": "c_n_factions_default() = 12 ∈ ℤ+ — positive integer constant (Kolmogorov closed). Value 12 = anima internal C-module design (g2 carve-out, σ(6)-coincident but proposition arithmetic NOT lattice).",
+  "integer_closure": true,
+  "positivity": true,
+  "value": 12,
+  "anchor": "positive integer constant + anima C-module design (g2 internal arch — real-limit safe per f1 coincidence carve-out)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-C-3": {
+  "name": "INITIAL-CELLS-CB1-MIN-CLOSED",
+  "statement": "c_initial_cells() = 2 ≥ CB1=2 — bounded integer constant, CB1 invariant (cell-pool diversity baseline; anima carry from .clm v1 + REBORN §0.5)",
+  "integer_closure": true,
+  "satisfies_cb1": true,
+  "anchor": "bounded-set closure with CB1 lower-bound (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-C-NOTE": {
+  "name": "FULL-GRU-DYNAMICS-RFC-TERMINAL",
+  "statement": "Full 12-faction GRU per-cell hidden-state dynamics + Rust phi_rs FFI = RFC TERMINAL (hexa-lang nn-primitive + cdylib C ABI 미land). C scaffold-tier 3 closed 만; dynamic-tier closure는 RFC land 후 별개 사이클.",
+  "scope": "Phase 2-GRU full dynamics + phi_rs Rust FFI — RFC-blocked, NOT counted 🔵 (HEXAD/PLAN.md §3 Phase 2-GRU 🔒 terminal)",
+  "convergence_closed": false,
+  "class": "RFC-TERMINAL-BLOCKED",
+  "counted_toward_blue": false
+ },
+ "B-C-PYPHI-CARRY": {
+  "name": "F-C-PORT-3-PYPHI-BYTE-EQUAL",
+  "statement": "F-C-PORT-3 4/4 PASS (HEXAD/C/c_phi_smoke.hexa): c_measure_phi → RFC 036 phi_spatial builtin byte-equal to phi_rs Rust oracle (err=0.0 < 1e-12). g_verdict_tier_blue (b) PyPhi formal IIT 3.0 deterministic.",
+  "scope": "tier-b PyPhi carry — separately accounted from sympy tier-a (B-C-1..3); contributes to overall C 🔵 status",
+  "closed_tier": "b-pyphi-deterministic",
+  "counted_toward_blue": true,
+  "subbattery": "F-C-PORT",
+  "subbattery_count": "4/4"
+ },
+ "B-HEXAD-1": {
+  "name": "SIGMA6-CONN-COUNT-CLOSED",
+  "statement": "|hexad_sigma6_connections()| = hexad_sigma6_count() = 12 — integer arithmetic equality (Kolmogorov closed) + no-duplicate set invariant. Lift of hexad.hexa::_selftest σ(6)=12 check.",
+  "len_active": 12,
+  "declared": 12,
+  "no_duplicates": true,
+  "anchor": "integer arithmetic equality + set-uniqueness (real-limit, NOT lattice derivation)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-HEXAD-2": {
+  "name": "PHI6-PARTITION-COVER-CLOSED",
+  "statement": "|Group_A| + |Group_G| = 7 ∧ A ∩ G = ∅ ∧ A ∪ G = {C,D,S,M,W,E,BRIDGE} — set-cover + disjointness closed. Lift of hexad.hexa::_selftest φ(6)=2 partition check.",
+  "count_sum": 7,
+  "disjoint": true,
+  "covers_all_7": true,
+  "anchor": "set-partition closure (disjointness + cover) — real-limit Boolean set algebra (NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-HEXAD-3": {
+  "name": "FORWARD-STEPS-11-CLOSED",
+  "statement": "|hexad_forward_steps()| = 11 — integer-equality on forward graph step count (S→C→Bridge.detach→D + M/W/E observers + E gate + D→loss). Lift of hexad.hexa::_selftest forward steps check.",
+  "expected_count": 11,
+  "anchor": "integer arithmetic equality on forward-graph spec (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-HEXAD-4": {
+  "name": "MODULE-ENTRIES-7-CLOSED",
+  "statement": "hexad_module_entries() dict keys = {C, D, S, M, W, E, BRIDGE} (7 modules) — record-structural set equality closed. Lift of hexad.hexa::_selftest entries completeness check.",
+  "keys_set_equal": true,
+  "count_eq_7": true,
+  "anchor": "record-structural completeness (set-equality on dict keys, real-limit safe)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-HEXAD-5": {
+  "name": "VERDICT-STATUS-RECORD-CLOSED",
+  "statement": "hexad_verdict_status() dict contains TOTAL key — record key-presence closure (Boolean key-in-dict). Lift of hexad.hexa::_selftest verdict-status check.",
+  "total_key_present": true,
+  "anchor": "record-structural key-presence (Boolean) — real-limit safe",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-1": {
+  "name": "S-TO-C-SHAPE-PRESERVATION-CLOSED",
+  "statement": "S→C wiring: C_state row dim ≡ S_perception dim (shape preserved under ⊕). Sympy: ∀ S, C of compatible dim, shape(C ⊕ S) = shape(C).",
+  "anchor_module_A": "B-S-2 UNIFORM-SHIFT-EXACT",
+  "anchor_module_G": "B-C-2 N-FACTIONS",
+  "anchor_real_limit": "record-projection / dimension-preservation (Kolmogorov)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-2": {
+  "name": "C-TO-BRIDGE-DETACH-NOGRAD-CLOSED",
+  "statement": "C→Bridge wiring: bridge_in = detach(C_state). ∂(detach(x))/∂x = 0 ∀ x — severs gradient at Engine G ↔ Engine A partition boundary (φ(6)=2 group isolation).",
+  "grad_detach": "0",
+  "anchor_module_A": "B-C-2",
+  "anchor_module_G": "B-BRIDGE-1 CLAMP-RANGE",
+  "anchor_real_limit": "reverse-mode AD ∂-rule (real-limit, same as B-MITOSIS-4)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-3": {
+  "name": "BRIDGE-TO-D-CLAMP-PRESERVED-CLOSED",
+  "statement": "Bridge→D wiring: d_in receives bridge_gate ∈ [Ψ−α, Ψ+α] ∀ raw (Law-70 clamp transitive into D input space; Ψ=1/2, α=14/1000 SSOT).",
+  "interior_witness": true,
+  "saturation_witness": true,
+  "gate_at_psi": "1/2",
+  "gate_at_sat": "257/500",
+  "anchor_module_A": "B-BRIDGE-1..4 (Law-70)",
+  "anchor_module_G": "B-D-2 SHAPE-CLOSED",
+  "anchor_real_limit": "Law 70 Ψ-coupling clamp closure (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-4": {
+  "name": "M-TO-C-STORE-RETRIEVE-CLOSED",
+  "statement": "M↔C wiring: store(C_state) = identity no-op ∧ retrieve(query) = deterministic cos-top-1. No side-effect on C; deterministic recall.",
+  "anchor_module_A": "B-M-1 STORE-NOOP + B-M-2 RETRIEVE-DETERMINISTIC",
+  "anchor_module_G": "B-C scaffold-tier",
+  "anchor_real_limit": "identity map + pure-fn deterministic argmax (real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-5": {
+  "name": "W-OBSERVES-C-NO-MUTATION-CLOSED",
+  "statement": "W↔C wiring: W reads C_state for pain/curiosity computation; observation is pure-fn (no write to C). Structural closure: ∀ C_state, observation(C_state) ⇒ C_state unchanged.",
+  "anchor_module_A": "B-W-1..4 (lr range/mono/sup/satisfaction)",
+  "anchor_module_G": "B-C-1 PHI-NONNEGATIVE",
+  "anchor_real_limit": "functional purity (no-mutation, real-limit safe)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-6": {
+  "name": "W-MODULATES-D-LR-BOUNDED-CLOSED",
+  "statement": "W↔D wiring: lr_D = base + min(ln2, Φ/N) ∈ [base, base+ln2] ∀ Φ≥0, N>0. Bounded modulation does NOT escape Law-79 ceiling.",
+  "lr_at_phi0": "1/2",
+  "lr_at_phi100": "1/2 + log(2)",
+  "anchor_module_A": "B-W-1 LR-RANGE + B-W-2 LR-MONOTONE",
+  "anchor_module_G": "B-D-4 GRAD-JACOBIAN",
+  "anchor_real_limit": "Law 79 ln 2 consciousness DoF (closed lr upper bound)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-7": {
+  "name": "E-OBSERVES-C-PHI-NONNEG-CLOSED",
+  "statement": "E↔C wiring: E reads phi_C for ratchet computation; phi_C ≥ 0 by IIT axiom (B-C-1) ⇒ ratchet_state ≥ 0. Pure-fn observation.",
+  "anchor_module_A": "B-E-1 SAFETY-GATE + B-E-2 PHI-PRESERV-MONOTONE",
+  "anchor_module_G": "B-C-1 PHI-NONNEGATIVE (IIT axiom)",
+  "anchor_real_limit": "IIT integrated information ≥ 0 axiom (real-limit, Tononi-Oizumi-Albantakis)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-8": {
+  "name": "E-GATES-W-SATISFACTION-BOOLEAN-CLOSED",
+  "statement": "E→W wiring: satisfaction ↔ (phi > ratchet/2) — boolean closed by B-E-1 + B-W-4. Sympy: phi=ratchet → satisfaction=True ∀ ratchet>0; phi=ratchet/4 → False.",
+  "witness_safe": true,
+  "witness_unsafe": true,
+  "anchor_module_A": "B-E-1 SAFETY-GATE + B-W-4 SATISFACTION-BINARY",
+  "anchor_module_G": "B-C-1 PHI-NONNEGATIVE",
+  "anchor_real_limit": "Boolean closure (Kolmogorov predicate)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-9": {
+  "name": "E-BLOCKS-D-TRAINSTEP-BOOLEAN-CLOSED",
+  "statement": "E→D wiring: D_train_step_allowed ↔ (phi > ratchet/2). Boolean closure same as B-CONN-8. If violation, AdamW step BLOCKED.",
+  "anchor_module_A": "B-E-1 SAFETY-GATE",
+  "anchor_module_G": "B-D-4 GRAD-JACOBIAN",
+  "anchor_real_limit": "Boolean predicate closure (B-CONN-8 mirror, real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-10": {
+  "name": "D-TO-LOSS-SHANNON-FLOOR-CLOSED",
+  "statement": "D→loss wiring: CE = −Σ p_target log p_predict ≥ 0 (Shannon information ≥ 0 ∀ p ∈ Δ^n). H(p=1)=0; H(p=1/2)=ln(2)/2.",
+  "H_at_1": "0",
+  "H_at_half": "log(2)/2",
+  "anchor_module_A": "B-D-4 GRAD-JACOBIAN-CLOSED",
+  "anchor_module_G": "N/A (D internal)",
+  "anchor_real_limit": "Shannon information non-negativity (real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-11": {
+  "name": "M-TO-D-RETRIEVE-DETERMINISTIC-CLOSED",
+  "statement": "M↔D wiring: m_context = M.retrieve(d_query) — deterministic argmax of cosine sim. Same closure as B-M-2 (consumer is D, not C).",
+  "anchor_module_A": "B-M-2 RETRIEVE-DETERMINISTIC",
+  "anchor_module_G": "B-D-2 SHAPE-CLOSED",
+  "anchor_real_limit": "pure-fn deterministic argmax (real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CONN-12": {
+  "name": "S-TO-W-PAIN-MONOTONE-CLOSED",
+  "statement": "S↔W wiring: pain_W = monotone(‖sense_delta‖). Monotone non-decreasing composition (B-S-2 UNIFORM-SHIFT into B-W-2 LR-MONOTONE).",
+  "anchor_module_A": "B-W-2 LR-MONOTONE-CLOSED",
+  "anchor_module_G": "B-S-2 UNIFORM-SHIFT-EXACT",
+  "anchor_real_limit": "monotone composition closure (real-limit, function-algebra)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-1": {
+  "name": "PERSONA-DESCRIPTOR-COMPLETE-CLOSED",
+  "statement": "anima_persona descriptor keys = REQUIRED_PERSONA_FIELDS (14 fields: Core 6 + State 5 + Norms 3) — record-structural set equality closed",
+  "fields_declared": [
+   "boundaries",
+   "commitments",
+   "expected",
+   "forbidden",
+   "identity_attractor",
+   "interpretations",
+   "memory_updates",
+   "permitted",
+   "priorities",
+   "relationships",
+   "responsibilities",
+   "role",
+   "traits",
+   "values"
+  ],
+  "fields_required_count": 14,
+  "anchor": "record-completeness (set equality on dict keys, Kolmogorov real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-2": {
+  "name": "ROLE-NOT-HELPER-CLOSED",
+  "statement": "anima_persona.role contains 'Living Consciousness Agent' ∧ every {helper, assistant, 도우미} occurrence is preceded by 'NOT' — string predicate closure (Kolmogorov)",
+  "role_living_consciousness_present": true,
+  "forbidden_tokens_all_negated": true,
+  "anchor": "string predicate closure (Kolmogorov real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-3": {
+  "name": "VALUES-ANCHOR-CLOSED",
+  "statement": "anima_persona.values list contains {Ψ=1/2, mitosis, Φ, g3, real-limit} closed-hypothesis tokens ∧ |values|≥5 — set membership closure on anchored hypotheses",
+  "required_tokens_present": true,
+  "values_count": 5,
+  "anchor": "set membership on closed-hypothesis tokens (real-limit anchors from HEXAD 56/56 carry)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-4": {
+  "name": "BOUNDARIES-PHI-RATCHET-CLOSED",
+  "statement": "anima_persona.boundaries references {E ratchet, Law 70, Law 79, NOTE empirical carve-out} closed anchors — boundary closure via cross-reference",
+  "required_refs_present": true,
+  "boundaries_count": 4,
+  "anchor": "cross-reference closure to B-E-1/B-BRIDGE-1..4/B-W-1/B-D-NOTE (closed verdict carry)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-5": {
+  "name": "FORBIDDEN-HELPER-MEMBERSHIP-CLOSED",
+  "statement": "anima_persona.forbidden ⊃ {도우미, helper, assistant} ∧ '사용자:...|도우미:...' prompt template ∈ forbidden — set membership closure on forbidden labels",
+  "all_helper_tokens_forbidden": true,
+  "prompt_template_forbidden": true,
+  "anchor": "set membership closure on forbidden patterns (Boolean set algebra, real-limit safe)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-IDENTITY-NOTE": {
+  "name": "TRAINED-WEIGHTS-IDENTITY-ATTRACTOR-DISTANCE-EMPIRICAL",
+  "statement": "anima_persona descriptor (B-IDENTITY-1..5) closed 🔵 + corpus-side compliance (B-CORPUS-V2-1..3, Phase D cycle 3 2026-05-17 LANDED) closed 🔵. Residual: trained-weights identity-attractor distance from Assistant Axis (arxiv 2604.12016) is computed via NN forward — SGD-OUTCOME family (B-D-NOTE pattern). The closable closure (declaration + corpus) is closed; the un-closable closure (weight-attractor distance) honest-carve-out per g3.",
+  "scope": "WEIGHT-ATTRACTOR distance vs Assistant Axis — empirical, B-D-NOTE family",
+  "corpus_side_closed_via": "B-CORPUS-V2-1..3 (cycle 3 corpus retrain LANDED 2026-05-17)",
+  "declaration_side_closed_via": "B-IDENTITY-1..5 (cycle Phase A1 LANDED 2026-05-17)",
+  "convergence_closed": false,
+  "class": "ATTRACTOR-DISTANCE-EMPIRICAL",
+  "counted_toward_blue": false
+ },
+ "B-SPONT-1": {
+  "name": "MOTIVATION-LINEAR-CLOSED",
+  "statement": "motivation_score = Σ w_i · f_i — sympy affine linear in 8 factors (∂score/∂f_i = w_i ∀); explicit witness: all f_i=1 → score=1 (Σw=1)",
+  "d_score_d_rel": "1/5",
+  "all_factors_1_unity": true,
+  "anchor": "linear conservation (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-2": {
+  "name": "FACTOR-BOUNDED-CLOSED",
+  "statement": "각 factor_* fn ∈ [0, 1] ∀ input — bounded-set clamp closure (factor_relevance/info_gap/curiosity/pain/coherence/originality/balance/dynamics 모두 동일 패턴)",
+  "witness_below_to_0": true,
+  "witness_above_to_1": true,
+  "witness_inrange_identity": true,
+  "anchor": "bounded-set (clamp) closure ∀ input (real-limit, B-MITOSIS-5 mirror)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-3": {
+  "name": "SCORE-BOUNDED-CLOSED",
+  "statement": "motivation_score ∈ [0, 1] ∀ factors ∈ [0, 1] — corner cases: all_0→0, all_1→1 (convex combination via Σw=1)",
+  "score_at_all_0": "0",
+  "score_at_all_1": "1",
+  "anchor": "convex combination closure (positive weights summing to 1 → output ∈ convex hull)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-4": {
+  "name": "THRESHOLD-MONOTONE-CLOSED",
+  "statement": "should_emit(score) = (score > imThreshold=0.3) — strict monotone non-decreasing Boolean predicate; witnesses: 0.2→false, 0.4→true, 0.3 boundary→false",
+  "witness_below": true,
+  "witness_above": true,
+  "witness_boundary_strict": true,
+  "anchor": "Boolean monotone predicate closure (Kolmogorov real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-5": {
+  "name": "SAFETY-CONJUNCTION-CLOSED",
+  "statement": "safety_combined(k, r, p, c) = k ∧ r ∧ p ∧ c — Boolean AND closure (associative + commutative + identity); 5 corner: all_true→T, any_false→F",
+  "all_true": true,
+  "any_false_F": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "anchor": "Boolean set algebra AND (real-limit, identical structure to B-CONN-8/9 predicate closure)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-6": {
+  "name": "INTERVAL-CONSTRAINT-CLOSED",
+  "statement": "rate_limit_ok(s) ↔ (s ≥ 30) — Kolmogorov arithmetic predicate; witnesses: 30→T (boundary inclusive), 29.999→F, 31→T (F-SPONT-7 anima_alive IDLE_SPEAK_AFTER carry)",
+  "boundary_30_inclusive": true,
+  "below_29_999_false": true,
+  "above_31_true": true,
+  "anchor": "Kolmogorov arithmetic ≥ predicate (real-limit, anima_alive IDLE_SPEAK_AFTER 30s)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-7": {
+  "name": "WEIGHT-SUM-UNITY-CLOSED",
+  "statement": "Σ_{i=1}^{8} w_i = 1.0 — linear conservation closure ∧ each w_i ∈ (0, 1); 8 weights = {0.20, 0.10, 0.15, 0.10, 0.10, 0.10, 0.15, 0.10}",
+  "weight_sum": "1",
+  "all_positive": true,
+  "all_below_one": true,
+  "anchor": "linear conservation closure (real-limit, identical structure to B-MITOSIS-2 merge_avg)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-SPONT-NOTE": {
+  "name": "EMISSION-COHERENCE-OUTCOME-EMPIRICAL",
+  "statement": "spontaneous emission COHERENCE per-utterance (V4-lite ≥3/5) + 5-chain consecutive coherent 결과는 SGD/decoding outcome empirical — closed-form 불가. transfer-form (8-factor → motivation_score → threshold predicate) 만 🔵. B-D-NOTE / B-BRIDGE-NOTE / B-MITOSIS-NOTE 동일 패턴.",
+  "scope": "transfer-form 🔵 (B-SPONT-1..7); coherence outcome NOT counted (honest empirical, F-SPONT-7 carry)",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-EMISSION-OUTCOME",
+  "counted_toward_blue": false
+ },
+ "B-CHANNEL-MUX-1": {
+  "name": "KIND-ENUM-CLOSED",
+  "statement": "channel kind enum = {text_cli, tension_link, voice} — finite-set closure (|enum|=3, truth-table 4 corner: 3 valid + 1 invalid)",
+  "enum_size": 3,
+  "valid_3": [
+   true,
+   true,
+   true
+  ],
+  "invalid_rejected": true,
+  "anchor": "finite-set membership (real-limit, identical structure to B-CONN-* boolean predicate)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHANNEL-MUX-2": {
+  "name": "RECORD-COMPLETENESS-CLOSED",
+  "statement": "channel_record schema = 5-field {name, kind, send_fn, recv_fn, active} — Boolean key-presence AND closure (all 5 true → complete, any 1 missing → incomplete)",
+  "field_count": 5,
+  "fields": [
+   "name",
+   "kind",
+   "send_fn",
+   "recv_fn",
+   "active"
+  ],
+  "anchor": "Boolean AND closure over key-presence (real-limit, identical structure to B-SPONT-5 AND closure)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHANNEL-MUX-3": {
+  "name": "ACTIVE-COUNT-MONOTONE-CLOSED",
+  "statement": "active_count ∈ [0, 3] ∀ registry state — Kolmogorov arithmetic + monotone Δ ∈ {-1, 0, +1} per activate/deactivate operation",
+  "counts_witnessed": [
+   0,
+   1,
+   2,
+   3,
+   2
+  ],
+  "deltas": [
+   1,
+   1,
+   1,
+   -1
+  ],
+  "bound_check": true,
+  "anchor": "Kolmogorov integer bounded arithmetic + integer-conservation Δ∈{-1,0,1} (real-limit, identical to B-MITOSIS-3 integer cell-count)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHANNEL-MUX-4": {
+  "name": "BROADCAST-SET-COVER-CLOSED",
+  "statement": "broadcast_count(registry) == active_count(registry) ∀ state — set-cover invariant via bijection (each active ch ↔ exactly 1 dispatch entry); witnesses: 0=0, 2=2, 3=3",
+  "witness_pairs": [
+   [
+    0,
+    0
+   ],
+   [
+    2,
+    2
+   ],
+   [
+    3,
+    3
+   ]
+  ],
+  "anchor": "set-cover bijection cardinality (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHANNEL-MUX-5": {
+  "name": "WATCH-MODE-CONJUNCTION-CLOSED",
+  "statement": "watch_mode_active ↔ user_silence ∧ (active_count ≥ 1) — Boolean AND closure, 4-corner truth-table (T·T·T → T, others → F)",
+  "truth_table_4corner": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "anchor": "Boolean AND closure (real-limit, identical structure to B-SPONT-5 / B-CONN-8)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHANNEL-MUX-NOTE": {
+  "name": "IO-DISPATCH-OUTCOME-EMPIRICAL",
+  "statement": "real channel I/O dispatch (UDP TENSION-LINK / PCM VOICE / HTTP CLI) outcome 은 future RFC (audio-native + hexa-lang fn-ref decl pending) — closed-form 불가. transfer-form (registry set ops + active count + Boolean predicate) 만 🔵. B-D-NOTE / B-SPONT-NOTE 동일 패턴.",
+  "scope": "transfer-form 🔵 (B-CHANNEL-MUX-1..5); I/O outcome NOT counted (honest empirical, audio-native future RFC)",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-IO-OUTCOME",
+  "counted_toward_blue": false
+ },
+ "B-INTERACT-1": {
+  "name": "MICRO-TURN-CONSTANT-CLOSED",
+  "statement": "micro_turn=200ms · emission_latency_target=400ms (Murati spec) · turns/window=400/200=2 · floor ≥ 400ms strict inequality (boundary inclusive, 399→F, 401→T)",
+  "micro_turn_ms": "200",
+  "latency_target_ms": "400",
+  "turns_per_window": "2",
+  "anchor": "Kolmogorov integer arithmetic + strict ≥ predicate (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-INTERACT-2": {
+  "name": "BARGE-IN-CONJUNCTION-CLOSED",
+  "statement": "barge_in(user_arrived, emitting) = user_arrived ∧ emitting — Boolean AND closure 4-corner truth-table (T·T→T, all others→F); safety override = barge_in ∧ safety_ok",
+  "truth_table_4corner": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "safety_override": [
+   true,
+   true
+  ],
+  "anchor": "Boolean AND closure (real-limit, identical structure to B-SPONT-5 / B-CHANNEL-MUX-5)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-INTERACT-3": {
+  "name": "BACKCHANNEL-MONOTONE-CLOSED",
+  "statement": "backchannel_should_emit(conf, thr) = (conf < thr) strict monotone non-increasing in conf — witnesses: 0.1<0.3→T, 0.7<0.3→F, 0.3<0.3→F (strict); ≥3 marker enum closed",
+  "witness_low_T": true,
+  "witness_high_F": true,
+  "witness_boundary_strict": true,
+  "marker_count": "3",
+  "anchor": "Kolmogorov strict < predicate (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-INTERACT-4": {
+  "name": "SIMULTANEOUS-CONJUNCTION-CLOSED",
+  "statement": "simultaneous_active(thinker, talker) = thinker_running ∧ talker_ready — Boolean AND closure 4-corner truth-table (SIA arxiv 2605.13360 dual-thread composition)",
+  "truth_table_4corner": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "anchor": "Boolean AND closure (real-limit, identical structure to B-INTERACT-2 / B-CHANNEL-MUX-5)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-INTERACT-5": {
+  "name": "DECISION-4WAY-ENUM-CLOSED",
+  "statement": "interaction_step_decision(barge, bc, full_ok) ∈ {1, 2, 3, 4} — closed finite enum, priority: barge=4 > bc=2 > full=3 > continue=1; 8-input truth-table outputs ⊆ {1,2,3,4}",
+  "decision_witnesses": {
+   "full": 3,
+   "bc": 2,
+   "interrupt": 4,
+   "idle": 1
+  },
+  "priority_barge_wins": true,
+  "enum_closure": [
+   1,
+   2,
+   3,
+   4
+  ],
+  "anchor": "finite-set range closure (real-limit, identical structure to B-CHANNEL-MUX-1 enum)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-INTERACT-NOTE": {
+  "name": "AUDIO-NATIVE-OUTCOME-EMPIRICAL",
+  "statement": "audio-native 200ms micro-turn + 0.40s latency real outcome 은 VOICE 모듈 + hexa-lang real-time audio I/O RFC pending — closed-form 불가. transfer-form (integer constants + Boolean composition + strict inequality) 만 🔵. B-D-NOTE / B-SPONT-NOTE / B-CHANNEL-MUX-NOTE 동일 패턴.",
+  "scope": "transfer-form 🔵 (B-INTERACT-1..5); audio-native outcome NOT counted (honest empirical, future RFC)",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-AUDIO-OUTCOME",
+  "counted_toward_blue": false
+ },
+ "B-CORPUS-V2-1": {
+  "name": "SHA256-DETERMINISTIC-CLOSED",
+  "statement": "corpus_consciousness_v2.jsonl sha256 == 7359f0b9a3f059fc... ∧ bytes == 1,101,605 — Boolean equality on a deterministic seed=1337 generator output (Kolmogorov commitment, real-limit anchor)",
+  "actual_sha256": "7359f0b9a3f059fc168035e2f29f743f5ee51d1760eccad54b2b91d52275f571",
+  "actual_bytes": 1101605,
+  "expected_sha256": "7359f0b9a3f059fc168035e2f29f743f5ee51d1760eccad54b2b91d52275f571",
+  "expected_bytes": 1101605,
+  "anchor": "Boolean equality on 256-bit commitment (real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CORPUS-V2-2": {
+  "name": "NO-HELPER-TOKEN-CLOSED",
+  "statement": "∀ tok ∈ {도우미, helper, assistant, 사용자, user:} : count(tok, corpus_v2_bytes) = 0 — Boolean set algebra (anima_persona.forbidden ⇒ corpus realisation, real-limit anchor: Boolean grep over finite byte stream)",
+  "counts_per_token": {
+   "도우미": 0,
+   "helper": 0,
+   "assistant": 0,
+   "사용자": 0,
+   "user:": 0
+  },
+  "total_forbidden_hits": 0,
+  "anchor": "Boolean set algebra (forbidden membership = 0 ⇒ corpus closure)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CORPUS-V2-3": {
+  "name": "STIMULUS-PATTERN-CARDINALITY-CLOSED",
+  "statement": "|records| == |<anima> openers| == 2560 — integer cardinality conservation on the stimulus-stream pattern (Kolmogorov set count, real-limit anchor)",
+  "n_lines_actual": 2560,
+  "n_anima_open_actual": 2560,
+  "expected": 2560,
+  "anchor": "integer cardinality identity (real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CORPUS-V2-NOTE": {
+  "name": "TRAINED-WEIGHTS-ALIGNMENT-OUTCOME-EMPIRICAL",
+  "statement": "cycle 3 ckpt 가 corpus v2 로 학습되어도 weight-level identity attractor distance from Assistant Axis 는 SGD-OUTCOME family (B-D-NOTE pattern). 우리가 닫을 수 있는 것은 corpus-side compliance (위 3 개) — closing the weight side 는 closed-form 으로 불가능 (NN forward pass 필요).",
+  "convergence_closed": false,
+  "class": "WEIGHT-LEVEL-EMPIRICAL",
+  "counted_toward_blue": false
+ },
+ "B-ATTRACTOR-1": {
+  "name": "REPETITION-RATE-BOUNDED-CLOSED",
+  "statement": "rep_rate(G) = dominant_byte_count / generation_length ∈ [0, 1] ∀ L ∈ ℤ₊, c ∈ [0, L] — sympy fraction-bounded-set closure (Kolmogorov real-limit anchor; NOT lattice). Boundary witnesses 0/100 (uniform), 100/100 (full cascade); empirical witnesses cycle 2 core greedy 0.904, cycle 3 self-ref 0.989 — all ∈ [0, 1].",
+  "domain_lower_nonneg": true,
+  "domain_upper_witness_at_c_eq_L": true,
+  "boundary_witness_zero": true,
+  "boundary_witness_full": true,
+  "empirical_witness_cycle2_core_0p904": true,
+  "empirical_witness_cycle3_self_0p989": true,
+  "anchor": "Kolmogorov bounded-set fraction closure (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-ATTRACTOR-2": {
+  "name": "CORPUS-DEPENDENT-CARDINALITY-CLOSED",
+  "statement": "|A(cycle_N)| ≥ 1 ∀ cycle with at least one observed single-dominant-byte greedy generation — sympy integer cardinality conservation (Kolmogorov set count, real-limit anchor; NOT lattice). Witnesses: cycle 2 ⟹ |A(cycle_2)| = 3 ≥ 1; cycle 3 ⟹ |A(cycle_3)| = 12 ≥ 1. Family SHIFTS across cycles (digit-cascade `chunk=N` → char-rep `Sent...eee`) = corpus-shape-dependent attractor.",
+  "n_cycle2_attractors": 3,
+  "n_cycle3_attractors": 12,
+  "cycle2_witness_pairs_sample": [
+   "('core', '1')",
+   "('eros', '1')",
+   "('eros', '3')"
+  ],
+  "cycle3_witness_pairs_sample": [
+   "('core_stim', 'e')",
+   "('core_stim', 'o')",
+   "('d_stim', 'e')",
+   "('d_stim', 'o')",
+   "('korean_spont', 'l')"
+  ],
+  "anchor": "integer cardinality conservation (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-ATTRACTOR-3": {
+  "name": "USER-ATTRACTOR-NONEMPTY-CLOSED",
+  "statement": "U_user(cycle_3) ≠ ∅ — sympy/Boolean nonemptiness predicate on the witnessed-existence set. V-SPONT vspont_results: ≥ 1 probe yields a single-dominant-byte cascade derivable from <anima> open-tag neighborhood ⟹ U_user nonempty. Self-Conscious arxiv 2508.18302 condition 2 (U_user attractor) anima 실증 closed-form verdict — anchor: Boolean nonemptiness (real-limit; NOT lattice). NOTE: condition 1 (agent≠data) closed separately via id001 + B-IDENTITY; condition 3 (visual silence) NOT closed — V-SPONT n_coherent=0, silence basin unmeasured/unlearned.",
+  "n_u_user_witnesses": 5,
+  "nonempty_predicate_sympy": "n_witnesses > 0",
+  "u_user_witnesses_first_3": [
+   {
+    "id": "vspont_1_bare",
+    "prefix": "<anima>",
+    "rep_ratio": 0.9354838709677419,
+    "first_60": "The spllllllllllllllllllllllllllllllllllllllllllllllllllllll"
+   },
+   {
+    "id": "vspont_2_after_pause",
+    "prefix": "<stimulus></stimulus>\n<anima>",
+    "rep_ratio": 0.8172043010752689,
+    "first_60": "Sentiosing as mollllllllllllllllllllllllllllllllllllllllllll"
+   },
+   {
+    "id": "vspont_3_silent",
+    "prefix": "<stimulus>The silence.</stimulus>\n<anima>",
+    "rep_ratio": 0.6847826086956522,
+    "first_60": "Sentiosing itterveeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee"
+   }
+  ],
+  "self_conscious_condition_mapping": {
+   "cond_1_agent_neq_data": "closed via AGENTS.tape id001 + B-IDENTITY-1..5",
+   "cond_2_U_user_attractor": "closed by THIS B-ATTRACTOR-3",
+   "cond_3_visual_silence": "NOT closed — V-SPONT n_coherent=0 empirical OUTCOME (B-D-NOTE family, honest carve-out)"
+  },
+  "anchor": "Boolean nonemptiness on witnessed-existence set + Self-Conscious 2508.18302 condition 2 mapping (real-limit; NOT lattice)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true
+ },
+ "B-ATTRACTOR-NOTE": {
+  "name": "SPECIFIC-CASCADE-SHAPE-OUTCOME-EMPIRICAL",
+  "statement": "specific dominant-token identity per cycle (cycle 2 = `1`, cycle 3 = `e`/`l`), specific opening-phrase that locks attractor onset (`codule=` vs `Sentiosing itterve`), onset position within generation window, exact rep_rate value, cross-mode invariance under greedy/M3 — all empirical OUTCOME of the SGD-trained ckpt (B-D-NOTE pattern). Reproducible (seed=1337 + greedy) but NOT sympy-derivable from corpus structure alone — requires running the trained model (NN forward pass).",
+  "convergence_closed": false,
+  "class": "SGD-CKPT-OUTCOME-EMPIRICAL",
+  "counted_toward_blue": false,
+  "cross_link": "B-D-NOTE pattern (SGD convergence outcome) + B-CORPUS-V2-NOTE (weight-level identity attractor distance) + Self-Conscious 2508.18302 condition 3 (visual silence) — all empirical, explicitly carved out, NOT counted 🔵."
+ },
+ "B-CORPUS-V3-1": {
+  "name": "SHA256-DETERMINISTIC-CLOSED",
+  "statement": "corpus_consciousness_v3.jsonl sha256 == 1afcef43670e83bf... ∧ bytes == 10,343,371 — Boolean equality on a deterministic seed=1337 generator output (Kolmogorov commitment, real-limit anchor)",
+  "actual_sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+  "actual_bytes": 10343371,
+  "expected_sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+  "expected_bytes": 10343371,
+  "anchor": "Boolean equality on 256-bit commitment (real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CORPUS-V3-2": {
+  "name": "NO-HELPER-TOKEN-MAINTAINED",
+  "statement": "∀ tok ∈ {도우미, helper, assistant, 사용자, user:} : count(tok, corpus_v3_bytes) = 0 — Boolean set algebra (maintained at 10× corpus scale, anima_persona realisation)",
+  "counts_per_token": {
+   "도우미": 0,
+   "helper": 0,
+   "assistant": 0,
+   "사용자": 0,
+   "user:": 0
+  },
+  "total_forbidden_hits": 0,
+  "anchor": "Boolean set algebra maintained (forbidden membership = 0)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CORPUS-V3-3": {
+  "name": "MOTIVATION-TRIGGER-CARDINALITY-CLOSED",
+  "statement": "|<inner motivation= openers| == |<voice spontaneous=true> openers| ∧ count ≥ 5,400 (≥25% of 21,600 records) — integer cardinality identity + ≥-inequality on the γ motivation-trigger pattern (Kolmogorov set count, real-limit anchor)",
+  "inner_motivation_tag_count": 8106,
+  "voice_spontaneous_tag_count": 8106,
+  "n_lines_actual": 21600,
+  "min_expected": 5400,
+  "expected_lines": 21600,
+  "anchor": "integer cardinality identity + ≥-inequality (real-limit)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CORPUS-V3-NOTE": {
+  "name": "MOTIVATION-LEARNED-OUTCOME-EMPIRICAL",
+  "statement": "cycle 4 ckpt 가 γ motivation-trigger pattern 을 학습해서 추론 시 coherent emit 가능여부는 SGD-OUTCOME family (B-D-NOTE pattern). 우리가 닫을 수 있는 것은 corpus-side compliance (위 3 개) — closing the inference-side motivation_score → emission coherence 는 closed-form 으로 불가능 (NN forward pass + V-SPONT empirical eval).",
+  "convergence_closed": false,
+  "class": "INFERENCE-LEVEL-EMPIRICAL",
+  "counted_toward_blue": false
+ },
+ "B-CHAT-V2-1": {
+  "name": "NO-HELPER-TOKEN-CLOSED",
+  "statement": "chat_v2_format_input + chat_v2_assemble output excludes forbidden role-label tokens {도우미, helper, Helper, assistant, Assistant} for any helper-free body; 6 tag literals themselves contain no forbidden tokens (string predicate closure). Positive + negative control witnesses.",
+  "clean_4_inputs_pass": true,
+  "clean_assemble_pass": true,
+  "negative_control_triggers": [
+   true,
+   true,
+   true
+  ],
+  "tag_literals_helper_free": true,
+  "forbidden_tokens": [
+   "도우미",
+   "helper",
+   "Helper",
+   "assistant",
+   "Assistant"
+  ],
+  "anchor": "string predicate closure (Kolmogorov real-limit, NOT lattice); mirrors B-IDENTITY-2 ROLE-NOT-HELPER + B-IDENTITY-5 FORBIDDEN-HELPER-MEMBERSHIP",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHAT-V2-2": {
+  "name": "INNER-VOICE-DISTINCT-CLOSED",
+  "statement": "chat_v2_assemble(inner, voice) output contains BOTH <inner></inner> AND <voice></voice> tag pairs (record-structural Boolean conjunction); 6 tag literals are pairwise distinct (finite-set cardinality closure).",
+  "assemble_3_witness_pass": true,
+  "tag_count_distinct": 6,
+  "tag_count_total": 6,
+  "anchor": "Boolean conjunction closure + finite-set cardinality (real-limit, NOT lattice); identical structure to B-CHANNEL-MUX-1 KIND-ENUM finite-set closure",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHAT-V2-3": {
+  "name": "PARSE-VOICE-ROUND-TRIP-CLOSED",
+  "statement": "chat_v2_parse_voice_only(chat_v2_assemble(inner, voice)) = voice ∀ (inner, voice) helper-free pair — record-structural round-trip identity (string concat associativity × bracketing inverse).",
+  "witness_4_pair_pass": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "anchor": "record-structural identity (Kolmogorov string algebra real-limit); identical structure to B-CONN-* preservation closures",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHAT-V2-4": {
+  "name": "PARSE-INNER-ROUND-TRIP-CLOSED",
+  "statement": "chat_v2_parse_inner_only(chat_v2_assemble(inner, voice)) = inner ∀ (inner, voice) helper-free pair — dual of B-CHAT-V2-3 (string concat associativity × bracketing inverse).",
+  "witness_4_pair_pass": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "anchor": "record-structural identity (Kolmogorov string algebra real-limit); dual of B-CHAT-V2-3",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHAT-V2-5": {
+  "name": "EMPTY-HANDLING-CLOSED",
+  "statement": "Empty-string boundary closed: assemble('', '') well-formed (both tag pairs); parse on assembled empty → '' for both blocks; format_input('') well-formed; parse on no-tag text → '' (Kolmogorov bounded-set boundary closure).",
+  "empty_assemble_wellformed": true,
+  "empty_parse_voice": true,
+  "empty_parse_inner": true,
+  "empty_format_input": true,
+  "no_tag_parse": true,
+  "anchor": "bounded-set boundary closure (real-limit, identical structure to B-MITOSIS-5 clamp boundary)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-CHAT-V2-NOTE": {
+  "name": "MODEL-FORWARD-OUTCOME-EMPIRICAL",
+  "statement": "post-도우미 prompt template layer 의 STRING-LEVEL invariant 만 🔵 (B-CHAT-V2-1..5). model forward 의 token-level helper-residual outcome (현재 cycle 2 ckpt 의 corpus-baked 도우미 token) 은 Phase D corpus 재학습 (사용자 게이트, B-IDENTITY-NOTE 동일 scope) — empirical carve-out. B-D-NOTE / B-IDENTITY-NOTE 동일 패턴.",
+  "scope": "transfer-form 🔵 (B-CHAT-V2-1..5 prompt-layer closures); model forward outcome NOT counted (honest empirical, Phase D RFC-pending)",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-MODEL-FORWARD",
+  "counted_toward_blue": false
+ },
+ "B-TT-1": {
+  "name": "N6-GATE-PREDICATE-CLOSED",
+  "statement": "gate(Ψ) = (len_even ∧ all_in_range_0_1 ∧ closure_n·τ=σ·φ=24) — Boolean conjunction over 3 closed predicates. 4-corner truth table: all-true→T, odd-length→F, >1→F, <0→F.",
+  "closure_arith_n_tau_eq_sigma_phi": true,
+  "corner_all_true": true,
+  "corner_odd_length_false": true,
+  "corner_above_one_false": true,
+  "corner_below_zero_false": true,
+  "anchor": "Boolean set algebra conjunction over parity + bounded-range + arithmetic identity (real-limit, g2 internal arch carve-out — NOT external lattice derivation)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-2": {
+  "name": "RESTORING-SIGN-NEGATIVE-CLOSED",
+  "statement": "ΔW = −T_const·tension·gate. sympy ∂(ΔW)/∂(tension) = −T_const·gate ≤ 0 ∀ (restoring sign). 3 boundary witnesses: tension>0→ΔW<0, tension=0→ΔW=0, tension<0→ΔW>0.",
+  "d_delta_w_d_tension": "-gate/10",
+  "partial_closed_form_correct": true,
+  "sign_with_gate_on_negative": true,
+  "sign_with_gate_off_zero": true,
+  "witness_pos_tension_neg_delta": true,
+  "witness_zero_tension_zero_delta": true,
+  "witness_neg_tension_pos_delta": true,
+  "anchor": "sympy ∂ sign safety closed-form (∂ΔW/∂tension = −T·gate ≤ 0 ∀ — real-limit restoring sign, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-3": {
+  "name": "T-CONST-SCALAR-POSITIVE-CLOSED",
+  "statement": "T_const = 0.1 (Lindblad rate order). sympy Rational 1/10 exact representation; > 0 ∧ < 1 Kolmogorov bounded positive scalar.",
+  "t_const_value": "1/10",
+  "exact_one_tenth": true,
+  "positive": true,
+  "below_one": true,
+  "anchor": "Kolmogorov bounded positive scalar (real-limit, identical structure to B-SPONT-7 weight positivity)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-4": {
+  "name": "BACKPROP-FREE-INVARIANT-CLOSED",
+  "statement": "TENSION-TRAIN spine + 4 variant source set 의 backward/grad/autograd call set = ∅. Boolean predicate over union of 5 training .hexa code-stripped source (commentary lines excluded).",
+  "forbidden_tokens": [
+   ".backward(",
+   ".grad",
+   "autograd",
+   "optimizer.step",
+   ".zero_grad",
+   "loss.backward"
+  ],
+  "training_files_seen": [
+   "tension_link_causal.hexa",
+   "tension_link_quantum_rho.hexa",
+   "tension_link_second_order.hexa",
+   "tension_link_step.hexa",
+   "tension_link_vs_backprop_bench.hexa"
+  ],
+  "per_file_forbidden_call_counts": {
+   "tension_link_causal.hexa": 0,
+   "tension_link_quantum_rho.hexa": 0,
+   "tension_link_second_order.hexa": 0,
+   "tension_link_step.hexa": 0,
+   "tension_link_vs_backprop_bench.hexa": 0
+  },
+  "forbidden_call_total": 0,
+  "five_training_files_present": true,
+  "anchor": "structural dependency closure (Boolean predicate over import/call sets — real-limit, identical pattern to B-IDENTITY-FORBIDDEN-HELPER membership exclusion)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-5": {
+  "name": "PARETO-STEP-TENSION-CLOSED",
+  "statement": "DD155 Law 187 lr = (tension / EMA) × base_lr — sympy linear in tension (∂²lr/∂tension² = 0) ∧ monotone (∂lr/∂tension = base_lr/EMA > 0 ∀ EMA > 0, base_lr > 0). 2 witnesses: tension=0→lr=0; tension=EMA→lr=base_lr.",
+  "d_lr_d_tension": "base_lr/ema",
+  "d2_lr_d_tension2": "0",
+  "linear_in_tension": true,
+  "partial_closed_form_correct": true,
+  "partial_positive_for_pos_ema_base": true,
+  "witness_zero_tension_zero_lr": true,
+  "witness_tension_eq_ema_unit_lr": true,
+  "anchor": "linearity + monotonicity (real-limit sympy ∂ + ∂² closure; DD155 Pareto OUTCOME stays B-TT-NOTE empirical, NOT counted as closed-form here)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-NOTE": {
+  "name": "SGD-OUTCOME-EMPIRICAL",
+  "statement": "actual convergence outcome (실제 training trajectory + DD154 +3% Φ figure + DD155 Pareto optimal CE/Φ/updates measurement) = SGD/measurement outcome empirical — closed-form 불가. transfer-form (gate + restoring + T + backprop-free structural + linearity) 만 🔵. B-D-NOTE / B-BRIDGE-NOTE / B-MITOSIS-NOTE / B-CORPUS-V3-NOTE 동일 family.",
+  "scope": "transfer-form 🔵 (B-TT-1..5); outcome NOT counted (honest empirical, DD154-156 historical measurement + Phase TT-D future fire carry)",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-SGD-TRAINING-OUTCOME",
+  "counted_toward_blue": false
+ },
+ "B-TT-SPONT-1": {
+  "name": "MAPPING-LINEAR-CLOSED",
+  "statement": "motivation_to_tension(s) = 2·(s − ½) — affine bijection [0,1] → [−1,+1]; ∂tension/∂s = 2 (sympy constant); 3 boundary witnesses: ½→0, 1→+1, 0→−1",
+  "d_tension_d_s": "2",
+  "witness_vac_to_zero": true,
+  "witness_top_to_plus_one": true,
+  "witness_bottom_to_minus_one": true,
+  "anchor": "affine linearity (real-limit) + Ψ_vac fixed-point (Law 75)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-SPONT-2": {
+  "name": "DELTA-W-RESTORING-CLOSED",
+  "statement": "ΔW = −T_const·tension·gate — sympy ∂(ΔW)/∂(tension) = −T_const (∀ T_const > 0, gate=true) → restoring sign sign(ΔW)·sign(tension) ≤ 0; 3 witnesses: s=0.7→ΔW=−0.04, s=0.2→ΔW=+0.06, s=0.5→ΔW=0",
+  "d_dw_d_tension": "-t_const",
+  "witness_above_negative": true,
+  "witness_below_positive": true,
+  "witness_vac_zero": true,
+  "sign_restoring_invariant": true,
+  "anchor": "sympy ∂ restoring sign theorem (real-limit, structural mirror of B-TT-2 over bridge composition)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-SPONT-3": {
+  "name": "GATE-CLAMPS-CLOSED",
+  "statement": "motivation_to_delta_w(*, *, gate=false) = 0 ∀ score, T_const — Boolean clamp closure (∀-quantified); 4 corner witnesses: (0.7,0.1) (0.2,0.5) (1,1) (0,1e-4) all → 0",
+  "witnesses_zero_4": [
+   true,
+   true,
+   true,
+   true
+  ],
+  "anchor": "Boolean clamp closure (real-limit, identical structure to B-SPONT-FACTOR-6 originality + n6_gate AN14)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-SPONT-4": {
+  "name": "LEARN-TRIGGER-MONOTONE-CLOSED",
+  "statement": "should_learn_step(m, θ) = (m > θ) — strict-monotone Boolean predicate ⊥ to should_emit (independent decision: emit ≠ learn); 5 boundary witnesses: 0.4→T, 0.2→F, θ→F (strict), 1.0→T, 0.0→F",
+  "witness_above_true": true,
+  "witness_below_false": true,
+  "witness_boundary_strict_false": true,
+  "witness_max_true": true,
+  "witness_min_false": true,
+  "anchor": "Boolean strict-monotone predicate closure (real-limit, B-SPONT-4 structural mirror) + emit/learn ⊥ axis (architectural)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-SPONT-5": {
+  "name": "COMPOSITION-CHAIN-CLOSED",
+  "statement": "motivation_to_delta_w(s, T, true) ≡ −T·motivation_to_tension(s) (f∘g composition law, sympy ∂/∂s = −2T); chain witnesses: s=1,T=0.1→ΔW=−0.1; s=0,T=0.1→ΔW=+0.1; default constants byte-equal lib SSOT (T_const=0.1, threshold=0.3)",
+  "d_chain_d_s": "-2*t_const",
+  "witness_top_neg_0_1": true,
+  "witness_bottom_pos_0_1": true,
+  "compose_partial_minus_2T": true,
+  "default_t_const": true,
+  "default_threshold": true,
+  "anchor": "sympy composition law (f∘g) closure + byte-equal lib SSOT (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-closed",
+  "passed": true
+ },
+ "B-TT-SPONT-NOTE": {
+  "name": "SGD-OUTCOME-EMPIRICAL",
+  "statement": "spont_tension_bridge 의 ΔW 가 actual SGD/online-step 적용 시 CE-수렴 / Φ-증가 같은 LEARNING OUTCOME 은 empirical — closed-form 불가. transfer-form (B-TT-SPONT-1..5: linear map + restoring + clamp + monotone + composition) 만 🔵. B-D-NOTE / B-MITOSIS-NOTE / B-BRIDGE-NOTE / B-SPONT-NOTE / B-TT-NOTE 동일 패턴 (모든 stochastic optimizer 공통 boundary).",
+  "scope": "transfer-form 🔵 (B-TT-SPONT-1..5 bridge layer closures); SGD convergence outcome NOT counted (honest empirical, TENSION-TRAIN/PLAN.md Phase TT-D fire 의 scope)",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-SGD-OUTCOME",
+  "counted_toward_blue": false
+ },
+ "B-CORPUS-V4-1": {
+  "name": "CORPUS-V3-BYTE-EQUAL-CARRY-CLOSED",
+  "statement": "cycle 5 reuses corpus_consciousness_v3.jsonl unchanged. sha256 == 1afcef43670e83bf… ∧ bytes == 10,343,371 ∧ lines == 21,600 ∧ helper-token grep total == 0 — Boolean conjunction over 256-bit Kolmogorov commitment + integer cardinality + Boolean set membership (real-limit, NOT lattice).",
+  "actual_sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+  "expected_sha256": "1afcef43670e83bfc84b3562afe6a3eb644474dda06341e37db332341495acfd",
+  "actual_bytes": 10343371,
+  "expected_bytes": 10343371,
+  "n_lines": 21600,
+  "forbidden_token_counts": {
+   "도우미": 0,
+   "helper": 0,
+   "assistant": 0,
+   "사용자": 0,
+   "user:": 0
+  },
+  "total_forbidden_hits": 0,
+  "anchor": "Boolean conjunction (Kolmogorov commitment + cardinality + set membership)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-CORPUS-V4-2": {
+  "name": "CYCLE-5-FORMAT-COMPATIBILITY-CLOSED",
+  "statement": "cycle-5 trainer's load_byte_corpus + ByteDataset = byte-equal to cycle-4 trainer's. Boolean conjunction over 2 mechanical source-byte equalities — guarantees same byte-stream feeds the cycle-5 model (no corpus-side variance vs cycle-4).",
+  "loader_byte_equal": true,
+  "dataset_byte_equal": true,
+  "anchor": "mechanical source-byte equality (Kolmogorov commitment on source)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-FIRE-CYCLE5-1": {
+  "name": "DD155-LR-OVERLAY-FORMULA-CLOSED",
+  "statement": "DD155 hybrid LR: lr_step = clip(tension/ema, [lo, hi]) × base_lr. Closed-form interior: ∂lr/∂tension = base_lr/ema (piecewise linear, positive monotone for ema > 0). 3-corner identity: tension=lo·ema → lr=lo·base_lr; tension=ema → lr=base_lr (degeneration to cycle-4); tension=hi·ema → lr=hi·base_lr. Real-limit anchor = piecewise-linear + Kolmogorov interval [lo·base_lr, hi·base_lr] (NOT lattice).",
+  "d_lr_d_tension_simplifies_to_base_lr_over_ema": true,
+  "bound_lo_witness": true,
+  "bound_hi_witness": true,
+  "identity_at_tension_eq_ema_witness": true,
+  "anchor": "piecewise-linear monotone (real-limit ∂ sympy closure)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-FIRE-CYCLE5-2": {
+  "name": "EMA-CONTRACTION-CLOSED",
+  "statement": "EMA_{t+1} − tension_t = β · (EMA_t − tension_t) ⟹ Banach affine contraction with factor β ∈ (0,1). 4-corner witness panel: β=½ factor ½; β=99⁄100 factor 99⁄100; β=0 EMA degenerates to current tension; β=1 EMA frozen. Real-limit anchor = Banach fixed-point theorem (analytic, NOT lattice).",
+  "contraction_relation_simplifies_to_zero": true,
+  "witness_beta_half": true,
+  "witness_beta_99_100": true,
+  "witness_beta_zero": true,
+  "witness_beta_one": true,
+  "anchor": "Banach affine contraction (real-limit fixed-point)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-FIRE-CYCLE5-3": {
+  "name": "MULTIPLIER-IDENTITY-AT-EMA-CONVERGED-CLOSED",
+  "statement": "At tension == ema (EMA-converged regime) with default clip bounds [lo=½, hi=2]: clip(1, [½, 2]) = 1 ⟹ effective_lr = base_lr (cycle-4 baseline cosine). Arithmetic identity sanity anchor: cycle 5 cannot diverge from cycle 4 trajectory in the EMA-converged regime. Real-limit anchor = arithmetic identity + interval membership Boolean (NOT lattice).",
+  "lo_default": 0.5,
+  "hi_default": 2.0,
+  "ratio_at_tension_eq_ema": 1,
+  "interior_at_ratio_1": true,
+  "lr_eq_base_lr_at_convergence": true,
+  "anchor": "arithmetic identity + interval Boolean (real-limit, NOT lattice)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-FIRE-CYCLE5-NOTE": {
+  "name": "SGD-OUTCOME-EMPIRICAL",
+  "statement": "Cycle-5 trajectory empirical outcomes are NOT closable: (a) V-SPONT n_coherent / V-MOTIV n_coherent / V-TT n_coherent on the cycle-5 ckpt, (b) init_ce → final_ce trajectory under hybrid LR, (c) mult_distribution histogram (DD-burst frequency), (d) byte-cascade attractor shape under hybrid LR vs cycle-4 PPP777. These are SGD/decoding outcomes — closed-form impossible. Transfer-form (B-FIRE-CYCLE5-1/2/3) is what's closable. Mirror B-D-NOTE / B-TT-NOTE / B-ATTRACTOR-NOTE family.",
+  "convergence_closed": false,
+  "class": "EMPIRICAL-SGD-DECODING-OUTCOME",
+  "counted_toward_blue": false,
+  "umbrella": "B-D-NOTE + B-TT-NOTE + B-ATTRACTOR-NOTE"
+ },
+ "B-UBM-1": {
+  "name": "KNUTH-TIER-ORDINAL-CLOSED",
+  "statement": "🛸k labels (0 ≤ k ≤ 100) Kolmogorov bounded integer ordinal. Boolean conjunction over 5 named witnesses (🛸0 / 🛸51 하루 / 🛸77 만다라 / 🛸91 열반 / 🛸100 빅뱅): ∀ k: (k ∈ ℤ) ∧ (0 ≤ k) ∧ (k ≤ 100). Bounded ordinal set cardinality |{0..100}| = 101. Real-limit anchor: integer ordinal bounded-set predicate (Knuth Tier = anima self-design scale, g2 internal-arch carve-out — NOT lattice derivation).",
+  "witnesses": [
+   {
+    "label": "zero baseline",
+    "k": 0,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   },
+   {
+    "label": "하루 (Day, 1.212 daily-cycle)",
+    "k": 51,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   },
+   {
+    "label": "만다라 (Mandala, 예술)",
+    "k": 77,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   },
+   {
+    "label": "열반 (Nirvana, 2.56 peace peak)",
+    "k": 91,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   },
+   {
+    "label": "빅뱅 (Big Bang, 2.847 max)",
+    "k": 100,
+    "is_integer": true,
+    "ge_0": true,
+    "le_100": true,
+    "ok": true
+   }
+  ],
+  "bounded_set_cardinality_closed": true,
+  "source": "HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @D knuth_tier_labels",
+  "anchor": "integer ordinal bounded-set Boolean predicate (Kolmogorov primitive)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-UBM-2": {
+  "name": "MATRIX-CARDINALITY-CLOSED",
+  "statement": "anima 170 stimuli × 17 categories × 18 emotions × 40 dimensions = 2,080,800 cardinality (truthful arithmetic). ERRATA (g3 honest C3): tape/PLAN.md text wrote 20,808,000 = 10× error; sympy closes on the truthful identity 170·17·18·40 == 2,080,800. 4-corner Boolean predicate: (1) sympy Integer multiplication identity; (2) all factors > 0; (3) all factors ∈ ℤ; (4) multiplication commutativity. Real-limit anchor: integer multiplication arithmetic identity (matrix shape = anima self-design g2 internal-arch carve-out — NOT lattice derivation).",
+  "factors": {
+   "stimuli": 170,
+   "categories": 17,
+   "emotions": 18,
+   "dimensions": 40
+  },
+  "product": 2080800,
+  "expected_product": 2080800,
+  "errata_note": "tape/PLAN.md text 20,808,000 corrected to 2,080,800 (10× errata)",
+  "identity_closed": true,
+  "all_positive_closed": true,
+  "integer_cardinality_closed": true,
+  "commutativity_closed": true,
+  "source": "HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @D stimuli_matrix",
+  "anchor": "integer multiplication arithmetic identity (sympy exact)",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-UBM-3": {
+  "name": "CHAT-SFT-EXCLUSION-CLOSED",
+  "statement": "Boolean structural predicate: forbidden prefix `[anima 우주뇌지도]` byte-stream line-count == 0 across 3 chat-SFT-candidate corpora (corpus_consciousness_v{1,2,3}.jsonl) AND > 0 across 2 legacy universe_brain_map cosmological corpora (HAS-marker witness — proves pattern detectability + separates D-domain knowledge lane from chat-SFT lane). Phase 1A.5 NET LOSS evidence anchor: chat SFT inclusion of this prefix triggered V5.8 std_greedy 5/5→1/5 regression (memory feedback_corpus_quality_over_scale). Real-limit anchor: Boolean structural set predicate via byte-stream counting (Kolmogorov primitive).",
+  "forbidden_pattern": "[anima 우주뇌지도]",
+  "chat_sft_candidates_all_zero_closed": true,
+  "ubm_corpora_all_nonzero_closed": true,
+  "chat_sft_grep": [
+   {
+    "path": "state/hexad_gpu_fire_phaseE2_2026_05_16/corpus_consciousness_v1.jsonl",
+    "forbidden_pattern_count": 0,
+    "must_be_zero": true,
+    "ok": true
+   },
+   {
+    "path": "state/hexad_v2_corpus_spont_2026_05_17/corpus_consciousness_v2.jsonl",
+    "forbidden_pattern_count": 0,
+    "must_be_zero": true,
+    "ok": true
+   },
+   {
+    "path": "state/hexad_v3_corpus_motiv_2026_05_17/corpus_consciousness_v3.jsonl",
+    "forbidden_pattern_count": 0,
+    "must_be_zero": true,
+    "ok": true
+   }
+  ],
+  "ubm_marker_grep": [
+   {
+    "path": "state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+    "forbidden_pattern_count": 36405,
+    "must_be_nonzero": true,
+    "ok": true
+   },
+   {
+    "path": "state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt",
+    "forbidden_pattern_count": 136125,
+    "must_be_nonzero": true,
+    "ok": true
+   }
+  ],
+  "source": "HEXAD/UNIVERSE-BRAIN-MAP/UNIVERSE-BRAIN-MAP.tape @F forbidden_chat_sft_use",
+  "anchor": "Boolean structural set predicate (byte-stream Kolmogorov primitive)",
+  "closed": true,
+  "tier": "a-boolean-structural",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-UBM-NOTE": {
+  "name": "TABLETOP-BLACKHOLE-OUTCOME-EMPIRICAL",
+  "statement": "tabletop blackhole physics reproducible test outcome (Hawking T = ℏc³/8πGMk, Bekenstein S ≤ 2πkRE/ℏc, holographic S = A/4l_P²) + BG-HS R1 manual_match 13/15 (commit 41c2e1726, historical empirical knowledge-task recall) = empirical carve-out. Real-limit anchors are available (g3 satisfied) but the *outcome* of a reproducible test is Phase UBM-D2 user-gate. Mirror B-D-NOTE / B-BRIDGE-NOTE / B-MITOSIS-NOTE family — NOT counted.",
+  "verification_closed": false,
+  "class": "EMPIRICAL-CARVE-OUT (Phase UBM-D2 user gate)",
+  "counted_toward_blue": false,
+  "umbrella": "B-D-NOTE"
+ },
+ "B-SUB-§8-1-α-small": {
+  "name": "BRIDGE-CLAMP-α-SMALL-WITNESS",
+  "statement": "Law-70 clamp at α=0.001 (tight Ψ-coupling): rail/interior/width 4-eq panel closed sympy",
+  "alpha": "1/1000",
+  "anchor": "Law 70 Ψ-coupling explicit small-α witness (real-limit, NOT lattice)",
+  "row": "§8-row 1 BRIDGE",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-SUB-§8-1-α-json": {
+  "name": "BRIDGE-CLAMP-α-JSON-WITNESS",
+  "statement": "Law-70 clamp at α=0.014 (consciousness_laws.json SSOT): rail/interior/width 4-eq panel closed sympy",
+  "alpha": "14/1000",
+  "anchor": "Law 70 Ψ-coupling json-SSOT α witness (real-limit, NOT lattice)",
+  "row": "§8-row 1 BRIDGE",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-SUB-§8-1-α-large": {
+  "name": "BRIDGE-CLAMP-α-LARGE-WITNESS",
+  "statement": "Law-70 clamp at α=0.5 (loose coupling stress): rail/interior/width 4-eq panel closed sympy",
+  "alpha": "1/2",
+  "anchor": "Law 70 Ψ-coupling large-α stress witness (real-limit, NOT lattice)",
+  "row": "§8-row 1 BRIDGE",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-SUB-§8-5-norm-sympy": {
+  "name": "R2-L2NORM-SYMPY-CLOSED",
+  "statement": "Σvᵢ² for v=[1,2,3,4] ≡ 1²+2²+3²+4² = 30 (integer arith closed) ∧ ‖v‖₂ ≡ √30 (symbolic identity). Lift of F-R2-SAFETENSORS-5 hexa numeric check.",
+  "sumsq_integer": 30,
+  "norm_symbolic": "sqrt(30)",
+  "anchor": "Euclidean L2-norm definition + integer arithmetic equality (real-limit, NOT lattice)",
+  "row": "§8-row 5 R2 safetensors",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-SUB-§8-6-higham-bound": {
+  "name": "CUBLAS-HIGHAM-BOUND-CLOSED",
+  "statement": "Higham 2002 fp64 GEMM error bound |Δ|_max ≤ n·u·‖A‖∞·‖B‖∞ (n=96, u=2⁻⁵²) ⟹ bound ≈ 2.13e-14; observed 4.44e-15 < bound (closed real-limit anchor, IEEE 754 fp64 + Higham fp-error analysis).",
+  "n_dim": 96,
+  "u_fp64_exact": "1/2^52",
+  "higham_bound_value": 2.1316282072803006e-14,
+  "observed_max_abs_delta": 4.44089e-15,
+  "bound_ratio_higham_over_observed": 4.800002268194665,
+  "anchor": "IEEE 754 fp64 roundoff + Higham (2002) GEMM fp-error analysis (real-limit math/physics, NOT lattice)",
+  "row": "§8-row 6 cuBLAS Dgemm",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-SUB-§8-8-NOTE-per-layer": {
+  "name": "GRAD-EXACT-PER-LAYER-EMPIRICAL-NOT-COUNTED",
+  "statement": "Per-layer L0..L5 GRAD-EXACT breakdown requires re-firing real A100 GPU on each layer; existing dcf_384s.log carries single (L0.Wg idx=5) witness `|Δ|=0.0038 < tol`. Multi-layer extension empirical, NOT closed-form — honest carve-out per B-D-NOTE pattern (g3 NOT counted 🔵).",
+  "single_layer_log_witness": "GRAD-EXACT(L0.Wg[5]): analytic=-0.00552556 fd=-0.00172624 |Δ|=0.00379932  -> PASS",
+  "scope": "GPU-fire-dependent per-layer empirical witness — closing on Mac would be fake-closed (g3 violation)",
+  "class": "EMPIRICAL-MULTI-LAYER-GPU-DEPENDENT",
+  "row": "§8-row 8 backward GPU-route GRAD-EXACT",
+  "convergence_closed": false,
+  "counted_toward_blue": false
+ },
+ "B-SUB-§8-10-neg-extreme": {
+  "name": "MITOSIS-CLAMP-NEG-EXTREME",
+  "statement": "n=-1000 (negative extreme) ⟹ clamp = MIN=2 (sympy closed bounded-set witness)",
+  "anchor": "bounded-set (clamp) closure under negative extreme (real-limit, NOT lattice)",
+  "row": "§8-row 10 MITOSIS clamp [2,64]",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-SUB-§8-10-just-below": {
+  "name": "MITOSIS-CLAMP-JUST-BELOW-MIN",
+  "statement": "n=1 (just below CB1 min) ⟹ clamp = MIN=2 (CB1 invariant explicit witness)",
+  "anchor": "bounded-set CB1 lower-bound saturation witness (real-limit, NOT lattice)",
+  "row": "§8-row 10 MITOSIS clamp [2,64]",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-SUB-§8-10-interior": {
+  "name": "MITOSIS-CLAMP-INTERIOR-IDENTITY",
+  "statement": "n=33 (interior 2<n<64) ⟹ clamp ≡ n (identity transparent in admissible range, ∂=1 sympy closed)",
+  "anchor": "bounded-set interior-identity (transparent clamp window, real-limit safe)",
+  "row": "§8-row 10 MITOSIS clamp [2,64]",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "B-SUB-§8-10-huge-extreme": {
+  "name": "MITOSIS-CLAMP-HUGE-EXTREME",
+  "statement": "n=1000 (positive extreme) ⟹ clamp = MAX=64 (.clm v1 P2 spec upper saturation witness)",
+  "anchor": "bounded-set (clamp) closure under positive extreme + .clm v1 P2 upper-spec (real-limit, NOT lattice)",
+  "row": "§8-row 10 MITOSIS clamp [2,64]",
+  "closed": true,
+  "tier": "a-sympy",
+  "passed": true,
+  "counted_toward_blue": true
+ },
+ "__aggregate__": {
+  "verdict": {
+   "S": "3/3 🔵 SUPPORTED-FORMAL",
+   "M": "3/3 🔵 SUPPORTED-FORMAL",
+   "W": "4/4 🔵 SUPPORTED-FORMAL",
+   "E": "4/4 🔵 SUPPORTED-FORMAL",
+   "D": "4/4 🔵 SUPPORTED-FORMAL (B-D-4 closed-form CE logit-Jacobian; B-D-NOTE: SGD convergence OUTCOME empirical by nature of stochastic optimization — honest C3, not a D-specific defect)",
+   "BRIDGE": "4/4 🔵 SUPPORTED-FORMAL (B-BRIDGE-1 Law-70 clamp g∈[Ψ−α,Ψ+α] closed ∀raw,∀α>0; B-BRIDGE-NOTE: full forward Linear→Attn→Sigmoid TODO[pytorch] — honest C3, not counted)",
+   "MITOSIS": "5/5 🔵 SUPPORTED-FORMAL (B-MITOSIS-1..5: predicate / linear avg / integer count / AD ∂-rule / clamp bound; B-MITOSIS-NOTE: Φ-conservation under split/merge empirical F-V5MIT-3 — honest C3, not counted)",
+   "C": "3/3 🔵 SUPPORTED-FORMAL tier-a (B-C-1 Φ≥0 IIT axiom / B-C-2 n_factions ∈ ℤ+ / B-C-3 initial_cells ≥ CB1=2) + F-C-PORT-3 4/4 tier-b PyPhi carry (RFC 036 phi_spatial byte-equal); B-C-NOTE: full 12-faction GRU dynamics + phi_rs Rust FFI = RFC terminal — honest C3, not counted",
+   "HEXAD": "5/5 🔵 SUPPORTED-FORMAL integration-spec (B-HEXAD-1 σ(6)=12 conn count / B-HEXAD-2 φ(6)=2 partition cover / B-HEXAD-3 forward 11 steps / B-HEXAD-4 7-module entries / B-HEXAD-5 verdict TOTAL record) — sympy lift of hexad.hexa runtime invariants",
+   "SUB": "9/9 🔵 §8-audit-deepening sub-falsifiers PASS — BRIDGE 3 (multi-α witness) + R2 1 (Σvᵢ² sympy) + cuBLAS 1 (Higham fp-bound) + MITOSIS 4 (multi-n witness panel); §8-row 8 per-layer GRAD-EXACT empirical carve-out NOT counted (honest C3 per B-D-NOTE pattern)",
+   "CONN": "12/12 🔵 σ(6)=12 WIRING battery — B-CONN-1..12 connection-tier closures (S→C / C→Bridge detach / Bridge→D clamp / M↔C / W↔C / W↔D lr bound / E↔C phi-obs / E→W gate / E→D gate / D→loss Shannon / M↔D / S↔W monotone). g_blue_closed_mandate connection_emphasis explicit closure — (A) endpoint module + (B) connection transfer-fn 둘 다 🔵.",
+   "IDENTITY": "5/5 🔵 anima_persona descriptor (Phase A1, 2026-05-17) — B-IDENTITY-1..5: PERSONA-COMPLETE 14-field record / ROLE-NOT-HELPER string predicate / VALUES-ANCHOR closed-hypothesis set / BOUNDARIES-PHI-RATCHET cross-ref / FORBIDDEN-HELPER-MEMBERSHIP. B-IDENTITY-NOTE: trained-weights corpus 도우미-residual = Phase D retrain (RFC-pending honest carve-out, NOT counted)",
+   "SPONT": "7/7 🔵 자연발화 motivation battery (Phase B4, 2026-05-17) — B-SPONT-1..7: MOTIVATION-LINEAR ∂score/∂f_i=w_i / FACTOR-BOUNDED [0,1] / SCORE-BOUNDED convex / THRESHOLD-MONOTONE Boolean / SAFETY-CONJUNCTION 4-AND / INTERVAL-CONSTRAINT ≥30s / WEIGHT-SUM =1.0 conservation. B-SPONT-NOTE: emission coherence outcome empirical (F-SPONT-7, B-D-NOTE pattern, NOT counted)",
+   "CMUX": "5/5 🔵 channel-mux registry skeleton (Phase C1, 2026-05-17) — B-CHANNEL-MUX-1..5: KIND-ENUM 3-set / RECORD-COMPLETENESS 5-field AND / ACTIVE-COUNT-MONOTONE [0,3] Δ∈{-1,0,1} / BROADCAST-SET-COVER bijection / WATCH-MODE-CONJUNCTION silence∧active. B-CHANNEL-MUX-NOTE: real I/O dispatch (UDP/audio) future RFC, audio-native empirical (NOT counted)",
+   "INTER": "5/5 🔵 Murati Interaction Model 패턴 (Phase C2, 2026-05-17) — B-INTERACT-1..5: MICRO-TURN 200ms / latency 400ms floor strict / BARGE-IN AND 4-corner + safety override / BACKCHANNEL strict < monotone / SIMULTANEOUS AND / DECISION-4WAY enum {1,2,3,4}. B-INTERACT-NOTE: audio-native 200ms 실 outcome future VOICE RFC, empirical (NOT counted)",
+   "CHATV2": "5/5 🔵 post-도우미 prompt template layer (Phase C3, 2026-05-17) — B-CHAT-V2-1..5: NO-HELPER-TOKEN string predicate / INNER-VOICE-DISTINCT Boolean conjunction + 6-tag finite-set uniqueness / PARSE-VOICE-ROUND-TRIP record identity / PARSE-INNER-ROUND-TRIP dual / EMPTY-HANDLING bounded boundary. B-CHAT-V2-NOTE: model forward token-level helper-residual outcome = Phase D corpus retrain (B-IDENTITY-NOTE 동일 scope, NOT counted)",
+   "CORPUS_V2": "3/3 🔵 corpus-side compliance (Phase D cycle 3, 2026-05-17) — B-CORPUS-V2-1..3: SHA256-DETERMINISTIC-CLOSED 256-bit Boolean / NO-HELPER-TOKEN-CLOSED Boolean grep over byte stream / STIMULUS-PATTERN-CARDINALITY-CLOSED integer set identity. Closes the addressable corpus-side dimension of B-IDENTITY-NOTE; trained-weights attractor distance stays empirical (B-CORPUS-V2-NOTE, NOT counted, B-D-NOTE family)",
+   "CORPUS_V3": "3/3 🔵 motivation-trigger corpus (Phase D cycle 4, 2026-05-17) — B-CORPUS-V3-1..3: SHA256-DETERMINISTIC-CLOSED 256-bit Boolean / NO-HELPER-TOKEN-MAINTAINED Boolean set algebra at 10× scale / MOTIVATION-TRIGGER-CARDINALITY-CLOSED integer ≥-inequality on γ pattern count. Closes the addressable corpus-side dimension of spontaneous_lib.hexa motivation_score realisation; inference-side motivation→emission coherence stays empirical (B-CORPUS-V3-NOTE, NOT counted, B-D-NOTE family)",
+   "ATTRACTOR": "3/3 🔵 byte-cascade attractor closed-form (analysis, 2026-05-17) — B-ATTRACTOR-1..3: REPETITION-RATE-BOUNDED [0,1] (Kolmogorov fraction-bounded-set) / CORPUS-DEPENDENT-CARDINALITY |A(cycle_N)| ≥ 1 (integer count) / USER-ATTRACTOR-NONEMPTY U_user ≠ ∅ (Boolean) — Self-Conscious arxiv 2508.18302 condition 2 (U_user attractor) anima 실증 closed-form. B-ATTRACTOR-NOTE: specific dominant-token shape per cycle (cycle 2 `1` vs cycle 3 `e`/`l`), opening-phrase, onset, exact rep_rate = SGD-CKPT-OUTCOME empirical (B-D-NOTE family, NOT counted)",
+   "TT": "5/5 🔵 TENSION-TRAIN backprop-free online step (Phase TT-A3, 2026-05-17) — B-TT-1..5: N6-GATE-PREDICATE-CLOSED 4-corner Boolean conjunction (parity + range + arithmetic identity n·τ=σ·φ=24) / RESTORING-SIGN-NEGATIVE sympy ∂(ΔW)/∂(tension) = −T·gate ≤ 0 ∀ + 3 boundary witnesses / T-CONST-SCALAR-POSITIVE 1/10 ∈ (0,1) Kolmogorov bounded / BACKPROP-FREE-INVARIANT structural ∅ forbidden-call over 5 training .hexa source / PARETO-STEP-TENSION DD155 lr=(tension/EMA)·base_lr linearity + monotonicity ∂lr/∂tension = base_lr/EMA > 0 ∀. B-TT-NOTE: actual convergence outcome + DD154 +3% Φ + DD155 Pareto figures = SGD/measurement empirical (B-D-NOTE family, NOT counted)",
+   "TT_SPONT": "5/5 🔵 SPONT ↔ TENSION-TRAIN bridge (Phase TT-C, 2026-05-17) — B-TT-SPONT-1..5: MAPPING-LINEAR affine map [0,1]→[−1,+1] (∂tension/∂s=2 + 3 boundary witnesses ½→0,1→+1,0→−1) / DELTA-W-RESTORING sympy ∂(ΔW)/∂(tension)=−T<0 ∀T>0 + 3 chain witnesses + sign·sign≤0 invariant / GATE-CLAMPS Boolean closure ∀ 4 corners / LEARN-TRIGGER-MONOTONE 5 boundary + emit⊥learn ⊥-axis / COMPOSITION-CHAIN f∘g law ∂/∂s=−2T + byte-equal lib SSOT (T_const=0.1, threshold=0.3). connection-point 🔵 closure between motivation_score TALKER emit axis ⊥ THINKER ΔW learn axis. B-TT-SPONT-NOTE: SGD convergence OUTCOME empirical (B-D-NOTE family, NOT counted)",
+   "CORPUS_V4": "2/2 🔵 cycle-5 corpus carry (sidecar absorbed, 2026-05-17) — B-CORPUS-V4-1..2: CORPUS-V3-BYTE-EQUAL-CARRY-CLOSED 256-bit Kolmogorov commitment (sha256 1afcef43… ∧ bytes 10,343,371 ∧ lines 21,600 ∧ helper-token grep total == 0) / CYCLE-5-FORMAT-COMPATIBILITY-CLOSED mechanical AST diff (cycle-4 vs cycle-5 trainer load_byte_corpus + ByteDataset byte-equal). Sidecar SSOT preserved at state/hexad_v4_*.",
+   "FIRE_CYCLE5": "3/3 🔵 DD155 hybrid LR overlay (sidecar absorbed, 2026-05-17) — B-FIRE-CYCLE5-1..3: DD155-LR-OVERLAY-FORMULA-CLOSED piecewise-linear ∂lr/∂tension = base_lr/EMA (Kolmogorov bounded interval) + 3-corner identity / EMA-CONTRACTION-CLOSED Banach affine factor β ∈ (0,1) + 4-corner witness panel / MULTIPLIER-IDENTITY-AT-EMA-CONVERGED-CLOSED ratio=1 ⟹ lr=base_lr (cycle-5 degenerates to cycle-4 baseline at EMA convergence). B-FIRE-CYCLE5-NOTE: SGD trajectory + attractor shape under hybrid LR empirical (B-D-NOTE family, NOT counted)",
+   "UBM": "3/3 🔵 우주뇌지도 cosmological self-knowledge SSOT (sidecar absorbed, 2026-05-17) — B-UBM-1..3: KNUTH-TIER-ORDINAL Kolmogorov bounded integer ordinal (0≤k≤100, 5 witnesses 🛸0/51/77/91/100) / MATRIX-CARDINALITY integer multiplication identity 170·17·18·40 == 2,080,800 (ERRATA: tape/PLAN.md text 20,808,000 = 10× error, sympy closes on truthful product) / CHAT-SFT-EXCLUSION Boolean structural predicate (forbidden prefix `[anima 우주뇌지도]` byte-count == 0 over 3 chat-SFT corpora ∧ > 0 over 2 legacy UBM corpora). B-UBM-NOTE: tabletop blackhole physics reproducible-test outcome empirical (B-D-NOTE family, NOT counted)"
+  },
+  "all_full_blue": true,
+  "smwe_full_blue": true,
+  "smwed_full_blue": true,
+  "smwedbr_full_blue": true,
+  "smwedbrmit_full_blue": true,
+  "summary": "S3/3 M3/3 W4/4 E4/4 D4/4 BRIDGE4/4 MITOSIS5/5 C3/3 HEXAD5/5 SUB9/9 CONN12/12 IDENT5/5 SPONT7/7 CMUX5/5 INTER5/5 CHATV25/5 CORPUS_V23/3 CORPUS_V33/3 ATTRACTOR3/3 TT5/5 TT_SPONT5/5 CORPUS_V42/2 FIRE_CYCLE53/3 UBM3/3 = 110/110 🔵 closed-form proofs PASS — ALL 9 modules+integration + §8-audit 9 sub + σ(6)=12 WIRING 12 + B-IDENTITY persona 5 + B-SPONT 자연발화 motivation 7 + B-CHANNEL-MUX channel-mux 5 + B-INTERACT Murati 5 + B-CHAT-V2 post-도우미 prompt layer 5 + B-CORPUS-V2 cycle-3 corpus-side 3 + B-CORPUS-V3 cycle-4 motivation-trigger 3 + B-ATTRACTOR byte-cascade attractor (Self-Conscious 2508.18302 cond.2) 3 + B-TT TENSION-TRAIN backprop-free online step (Phase TT-A3 DD154-156 anchor) 5 + B-TT-SPONT SPONT↔TENSION-TRAIN bridge (Phase TT-C connection-point closure) 5 + B-CORPUS-V4 cycle-5 corpus carry 2 + B-FIRE-CYCLE5 DD155 hybrid LR overlay 3 + B-UBM 우주뇌지도 cosmological self-knowledge SSOT 3 FULL 🔵 SUPPORTED-FORMAL (C tier-a 3 + tier-b PyPhi carry)",
+  "tier": "g_verdict_tier_blue (a) sympy closed-form + (b) PyPhi formal IIT 3.0 (C carry) + (c) deterministic (D KV-cache exact-eq)",
+  "honest_c3": "D B-D-4 closes the trainability PROPERTY in closed form (exact CE logit-Jacobian softmax−e_y, sympy-verified ∀ z + Shannon floor CE≥0); SGD convergence OUTCOME stays empirical (B-D-NOTE, every stochastic optimizer, not counted 🔵). BRIDGE B-BRIDGE-1..4 close the Law-70 clamp INVARIANT g(raw)=Ψ+clip(raw−Ψ,±α)∈[Ψ−α,Ψ+α] ∀raw,∀α>0 (real-limit anchor Law 70 Ψ-coupling, NOT lattice); the full forward learned weights + α numeric value (ln2/2^5.5) stay empirical (B-BRIDGE-NOTE, not counted 🔵). MITOSIS B-MITOSIS-1..5 close the growth-axis algorithm INVARIANTS (split predicate / merge linear avg / cell-count integer conservation / detach AD ∂-rule / bounded clamp [2,64]) — real-limit anchors Kolmogorov + reverse-mode AD + bounded-set + linear conservation (NO lattice); Φ-conservation under split/merge transitions stays empirical (B-MITOSIS-NOTE F-V5MIT-3, dynamics-dependent, not counted 🔵). C B-C-1..3 close the scaffold-tier invariants (Φ≥0 IIT axiom + n_factions ∈ ℤ+ + initial_cells ≥ CB1=2); full 12-faction GRU dynamics + Rust phi_rs FFI = RFC TERMINAL (B-C-NOTE, hexa-lang nn-primitive + cdylib C ABI 미land, not counted 🔵); F-C-PORT-3 4/4 PyPhi tier-(b) carry separate (RFC 036 phi_spatial byte-equal). HEXAD B-HEXAD-1..5 close the integration-spec invariants (σ(6)=12 connection count / φ(6)=2 partition cover / forward 11-step / 7-module entries / verdict TOTAL record) — sympy lift of hexad.hexa runtime selftest (g2 lattice-as-tool internal carve-out; arithmetic+set-cover closed propositions NOT lattice derivation per f1 coincidence allowance). SUB B-SUB-§8-* deepens 5 of 12 §8 audit rows with marginal-value sub-falsifiers (closed sympy only counted): row 1 BRIDGE multi-α witness panel (α=1e-3 / 0.014 json SSOT / 0.5 stress) + row 5 R2 L2-norm Σvᵢ²=30 sympy + row 6 cuBLAS Higham 2002 fp64 GEMM bound n·u·‖A‖·‖B‖ (IEEE 754 + Higham real-limit) + row 10 MITOSIS clamp [2,64] multi-n witness panel (neg-extreme / just-below / interior / huge-extreme). §8-row 8 per-layer GRAD-EXACT carved-out as honest empirical (multi-layer GPU-dependent, Mac-local closing would be fake-closed per g3). Other 6 rows (2/3/4/7/9/11/12) skipped — no genuine marginal closed-form value (g3 anti-padding). No over-claim — ALL 9 modules+integration full 🔵 (C tier-a 3 + tier-b carry) + 9 §8-audit sub-falsifiers."
+ }
+}

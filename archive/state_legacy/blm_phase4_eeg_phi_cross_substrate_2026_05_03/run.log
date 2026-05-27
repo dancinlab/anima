@@ -1,0 +1,41 @@
+[21:12:12] ============================================================
+[21:12:12] BLM Phase 4 — EEG TRF cross-substrate
+[21:12:12] ============================================================
+[21:12:12] [stage 1] loading EEG blocks...
+[21:12:12] loaded gip_ZAB_SR1_EEG.mat shape=(122182, 105)
+[21:12:12] loaded gip_ZAB_SR2_EEG.mat shape=(128531, 105)
+[21:12:13] loaded gip_ZAB_SR3_EEG.mat shape=(135933, 105)
+[21:12:13] loaded gip_ZAB_SR5_EEG.mat shape=(134532, 105)
+[21:12:13] total windows available: 5210
+[21:12:13] sampled 32 windows
+[21:12:13] [stage 1] computing EEG phi proxy on 32 windows...
+[21:12:13]   eeg phi 16/32 phi_min=14.0958
+[21:12:13]   eeg phi 32/32 phi_min=-9.6621
+[21:12:13] [stage 1] EEG phi proxy n_valid=32/32 mean=-2.2526 std=9.8867 range=[-16.0586,15.4566]
+[21:12:13] [stage 2] building CLM model...
+[21:12:13] loading tokenizer...
+[21:12:13] tokenizer vocab=64000
+[21:12:13] building decoder...
+[21:12:16] decoder built params=477,648,512
+[21:12:16] loading ckpt /home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt...
+[21:12:19] ckpt loaded 2.1s missing=0 unexpected=0
+[21:12:19] applying LoRA from need-singularity/clm-v4-sft-stage1...
+[21:12:23] LoRA applied via PeftModel.from_pretrained (PATH C)
+[21:12:23] [stage 2] CLM ready; computing phi* per window (rotating 16-prompt sets)...
+[21:14:03]   clm phi 4/32 phi*=29.3633 (26.4s)
+[21:15:14]   clm phi 8/32 phi*=32.9825 (15.6s)
+[21:16:30]   clm phi 12/32 phi*=29.7859 (20.6s)
+[21:18:17]   clm phi 16/32 phi*=30.1537 (24.9s)
+[21:19:40]   clm phi 20/32 phi*=28.2954 (13.9s)
+[21:20:45]   clm phi 24/32 phi*=30.6261 (21.1s)
+[21:22:16]   clm phi 28/32 phi*=29.9203 (8.8s)
+[21:22:52]   clm phi 32/32 phi*=31.0645 (7.3s)
+[21:22:52] [stage 2] CLM phi* n_valid=32/32 mean=30.6184 std=1.2390
+[21:22:52] [stage 3] cross-substrate consistency tests...
+[21:22:52] [stage 3] paired n_valid=32
+[21:22:52] [stage 3] Pearson r=0.0005  Spearman r=0.0341
+[21:22:52] [stage 3] LME-proxy beta1=0.0001 SE=0.0229 t=0.0026 p_wald=0.9979 p_bonf=1
+[21:22:52] [stage 3] permutation null (N=1000)...
+[21:22:53] [stage 3] perm p=0.9990 null_|r|_q95=0.3619 obs_|r|=0.0005
+[21:22:53] [verdict] F-CT-3_FAIL (tier=none)
+[21:22:53] [done] wrote /tmp/blm_phase4_eeg_phi_cross_substrate_2026_05_03/results.json elapsed=640.6s

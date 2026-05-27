@@ -1,0 +1,51 @@
+{
+  "schema": "anima/p9_pbeta_paradigm_d_50k_rescue_kill/verdict/1",
+  "cycle": "p9_pbeta_paradigm_d_50k_rescue_kill_2026_05_05",
+  "bg_lane": "PBETA-RESCUE-KILL",
+  "ts_utc": "2026-05-05T18:05:00Z",
+  "pod_id": "szv2vyf06h35uy",
+  "pod_terminated": true,
+  "pod_kill_verified_404": true,
+  "pod_kill_method": "manual (BG rate-limited mid-flight after rsync, foreground runpodctl pod stop+delete)",
+  "rsync_completed": true,
+  "rsync_artifacts_local": [
+    "state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/final/",
+    "state/p9_pbeta_paradigm_d_50k_2026_05_04/savepoints/step_50000/"
+  ],
+  "rsync_local_mtime_utc": "2026-05-05T17:51:00Z",
+  "rsync_artifacts_verified": {
+    "savepoints/final/adapter_model.safetensors": {"size_bytes": 76065712, "present": true},
+    "savepoints/final/optimizer.pt": {"size_bytes": 111337530, "present": true},
+    "savepoints/final/adapter_config.json": {"present": true},
+    "savepoints/final/emas.json": {"present": true},
+    "savepoints/final/rng_state.pt": {"present": true},
+    "savepoints/final/scheduler.pt": {"present": true},
+    "savepoints/final/README.md": {"present": true},
+    "savepoints/step_50000/adapter_model.safetensors": {"present": true},
+    "savepoints/step_50000/_step.txt": {"present": true},
+    "savepoints/final_dir_size_mb": 193,
+    "savepoints/step_50000_dir_size_mb": 193
+  },
+  "training_completed_h100_utc": "2026-05-04T23:47:25Z",
+  "manual_kill_utc": "2026-05-05T18:05:00Z",
+  "post_completion_idle_burn_h_estimate": 18.30,
+  "post_completion_idle_burn_h_estimate_method": "delta from training-finish 2026-05-04T23:47:25Z to manual-kill best-estimate 2026-05-05T18:05Z; rsync local mtime 17:51Z bounds lower kill time",
+  "post_completion_idle_burn_usd_estimate": 54.72,
+  "post_completion_idle_burn_usd_method": "18.30h × $2.99/hr H100 community spot",
+  "training_phi_star_h100_probe_final_min": 35.537549088957824,
+  "training_phi_star_h100_probe_final_mean": 36.744969071614996,
+  "training_step_count": 50000,
+  "training_verdict": "PRODUCTION_25K_FULL_PASS",
+  "training_actual_cost_usd_estimate": "training-side verdict.json train_elapsed_sec=4349.72 (1.21h) at $2.99/hr ≈ $3.61 actual training; total pod allocation cost much larger due to idle burn",
+  "rescue_kill_actual_cost_usd": 0,
+  "rescue_kill_cost_note": "manual kill, no new pod allocated; cost is post-completion idle burn on existing pod, not rescue-kill cycle",
+  "honest_c3": [
+    "BG-PBETA-RESCUE-KILL was rate-limited mid-flight AFTER rsync but BEFORE pod kill — manual foreground kill required to stop $2.99/hr burn; L19 + L23 (rate-limit-resilience-via-foreground-fallback) lesson noted for future trap design",
+    "post_completion_idle_burn estimate $54.72 (18.30h × $2.99/hr) is significantly higher than the $5-7 spec anticipated; rsync local mtime 2026-05-05T17:51Z bounds lower kill time, training finished 2026-05-04T23:47:25Z — the gap reflects ~18h of pod-idle while BG monitor failure detection lagged (no auto-trap for BG-completion-but-rsync-not-done state)",
+    "savepoints/final + step_50000 integrity verified locally: file presence + sizes (adapter_model.safetensors 76.06MB, optimizer.pt 111.34MB, all auxiliary state files present); SHA256 verification deferred (requires re-checksum of pod-side originals, pod already terminated)",
+    "training-side phi_star_h100_probe_final values (min=35.54, mean=36.74) recorded by H100 probe at step 50000 timestamp 2026-05-04T23:46:27Z; true verdict pending T-2 PBETA-HOLDOUT500-EVAL on local CPU/Mac substrate (phi may drift cross-substrate per cond.4 sample-partition phi proxy)",
+    "Manual kill UTC timestamp 2026-05-05T18:05Z is best-estimate (rsync mtime 17:51Z + ~14min observed kill execution lag); exact runpodctl pod delete timestamp not captured in local logs — operator-side terminal records would be authoritative",
+    "F1_bleu1=0.0039 final is the CLM-self holdout proxy — F-D-1 per-token KL ≤0.5 nats vs Mistral-7B reference (the production gate) is NOT yet evaluated; T-2 PBETA-HOLDOUT500-EVAL is the gating cycle, NOT this rescue-kill",
+    "Training graceful_shutdown=False but aborted=False — train loop exited normally at step 50000 then SAVEPOINT + FINAL adapter saved, but trap pre-kill scp (L13) was never invoked because BG monitor terminated rsync via rate-limit before trap would have fired; rsync did complete despite this, narrowly"
+  ]
+}

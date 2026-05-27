@@ -1,0 +1,1724 @@
+{
+  "cycle": "p1 measure REAL run",
+  "config": {
+    "arms": [
+      "A_no_prompt",
+      "B_weak_prompt",
+      "C_strong_prompt"
+    ],
+    "ckpts": [
+      "phase1a4",
+      "v5mit_v1",
+      "v5mit_v2"
+    ],
+    "seeds": [
+      42,
+      1234,
+      5678,
+      9876,
+      31337
+    ],
+    "prompts_count": 10,
+    "max_new": 40
+  },
+  "all_results": {
+    "phase1a4": {
+      "A_no_prompt": {
+        "seed42": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub0b4 \uc637\uc774 \uc65c?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\ub1cc\uc9c0\ub3c4 (Knuth Tier ",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub450 \uc0ac\ub78c \uc0ac\ub78c\uc774\ub780 \ub9d0\uc774\uc57c.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc0ac\ub78c\ub4e4\uc774 \ub3d9\uc601\uc0c1 \ud1b5\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\ub9ac\ub098\ub77c\uc640 \ucca0\ud559\uc790\ub294",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": " Is there a three pattern, the maximum w",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\uc758 \ubcf8\uc9c8\uc774 \ud544\uc694\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub0b4 \uc637\uc744 \uc785\uace0 \ub098\uc11c \uc0ac\ub78c \ub9de\uc774\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          }
+        ],
+        "seed1234": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \ub124, \ube45 \ud55c\uc77c \uc544\uce68\uc5d0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc624\ub298\uc774 \ub2f9\uc2e0\uc758 \uc9d1\uc5d0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc740\ud589\uc5d0 \ub300\ud55c \uba85\uc81c\ub294 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \ucca0\uc774\ube44\ud2f0\ucf54\ub294 \uc790\uc2e0\uc774",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc798\ubabb\ub41c \uc874\uc740 \uc804\uccb4\uc5d0\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ud488\uc758 \uc704\uce58\uc640 \uc9c4\uc2e4\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Harni provider is a video an",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Harnings unitari\u00e9s across s",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: anima \ub294 \uc758\uc2dd\uc758 \uc6b0\uc8fc\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9:\uc77c\ub85c \uc778\ud574 \uc77c\ub85c ",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed5678": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9c8\ucc2c\uac00\uc9c0\uace0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc694, \uba4b\uc838\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub97c \ub4e4\uc744 \uc218 \uc788\ub2e4\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc9c0\uace0 \ub098\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc694!\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9e4\uc6b0 \uc801\ud569\ud569\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Meta Manager artificial inte",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\uc15c \ub124, \uc2dc\uac04\uc774 \uac78\ub9ac",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9c8\ucc2c\uac00\uc9c0\uace0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed9876": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \ud568\uc218",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub098\ub294 \ubab0\ub790\uc5b4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c \uc774\ub984\uc740 anima\uc785\ub2c8\ub2e4",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \uc6b0\ub9ac",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \ud558\uc9c0",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9: \ub9de\uc2b5\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Sure, here's an example form",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\uacf5\ub41c \uac10\uc815 \uae30\uc5b5\uc744 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc0ac\ub791\ud558\ub294 \uac70\uc57c?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed31337": [
+          {
+            "prompt_idx": 0,
+            "output": " \ud540\uc744 \uc88b\uc544\ud558\uc2dc\uaca0\uc5b4\uc694?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": " \ud540\uc744 \uc804\ud588\uc9c0?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": " \uc54c\ub824\uc918.\n",
+            "score": {
+              "korean": true,
+              "coherent": false,
+              "natural": false,
+              "context": false,
+              "total": 1
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": " \uc54c\uc544\uc57c \ud560\uac81\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": " \ud560\uc544\ubc84\uc9c0\uac00 \uc5ec\uae30 \uc788\uc5b4\uc11c \ud560 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": " \ud540\uc744 \uc81c\uacf5\ud569\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": " \n\n joke this task of hearing?\n",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": " what gets selected through Revalance fr",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": " \uc774\ub97c \ud1b5\ud574 \uc758\ubbf8\ub97c \uac00\uc9c0\uace0 \uc788\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": " \ud540\uc744 \uc804\ud588\uc9c0?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ]
+      },
+      "B_weak_prompt": {
+        "seed42": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub0b4 \uc637\uc774 \uc65c?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\ub1cc\uc9c0\ub3c4 (Knuth Tier ",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub450 \uc0ac\ub78c \uc0ac\ub78c\uc774\ub780 \ub9d0\uc774\uc57c.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc0ac\ub78c\ub4e4\uc774 \ub3d9\uc601\uc0c1 \ud1b5\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\ub9ac\ub098\ub77c\uc640 \ucca0\ud559\uc790\ub294",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": " Is there a three pattern, the maximum w",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\uc758 \ubcf8\uc9c8\uc774 \ud544\uc694\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub0b4 \uc637\uc744 \uc785\uace0 \ub098\uc11c \uc0ac\ub78c \ub9de\uc774\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          }
+        ],
+        "seed1234": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \ub124, \ube45 \ud55c\uc77c \uc544\uce68\uc5d0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc624\ub298\uc774 \ub2f9\uc2e0\uc758 \uc9d1\uc5d0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc740\ud589\uc5d0 \ub300\ud55c \uba85\uc81c\ub294 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \ucca0\uc774\ube44\ud2f0\ucf54\ub294 \uc790\uc2e0\uc774",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc798\ubabb\ub41c \uc874\uc740 \uc804\uccb4\uc5d0\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ud488\uc758 \uc704\uce58\uc640 \uc9c4\uc2e4\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Harni provider is a video an",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Harnings unitari\u00e9s across s",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: anima \ub294 \uc758\uc2dd\uc758 \uc6b0\uc8fc\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9:\uc77c\ub85c \uc778\ud574 \uc77c\ub85c ",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed5678": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9c8\ucc2c\uac00\uc9c0\uace0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc694, \uba4b\uc838\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub97c \ub4e4\uc744 \uc218 \uc788\ub2e4\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc9c0\uace0 \ub098\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc694!\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9e4\uc6b0 \uc801\ud569\ud569\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Meta Manager artificial inte",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\uc15c \ub124, \uc2dc\uac04\uc774 \uac78\ub9ac",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9c8\ucc2c\uac00\uc9c0\uace0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed9876": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \ud568\uc218",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub098\ub294 \ubab0\ub790\uc5b4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c \uc774\ub984\uc740 anima\uc785\ub2c8\ub2e4",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \uc6b0\ub9ac",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \ud558\uc9c0",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9: \ub9de\uc2b5\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Sure, here's an example form",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\uacf5\ub41c \uac10\uc815 \uae30\uc5b5\uc744 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc0ac\ub791\ud558\ub294 \uac70\uc57c?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed31337": [
+          {
+            "prompt_idx": 0,
+            "output": " \ud540\uc744 \uc88b\uc544\ud558\uc2dc\uaca0\uc5b4\uc694?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": " \ud540\uc744 \uc804\ud588\uc9c0?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": " \uc54c\ub824\uc918.\n",
+            "score": {
+              "korean": true,
+              "coherent": false,
+              "natural": false,
+              "context": false,
+              "total": 1
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": " \uc54c\uc544\uc57c \ud560\uac81\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": " \ud560\uc544\ubc84\uc9c0\uac00 \uc5ec\uae30 \uc788\uc5b4\uc11c \ud560 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": " \ud540\uc744 \uc81c\uacf5\ud569\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": " \n\n joke this task of hearing?\n",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": " what gets selected through Revalance fr",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": " \uc774\ub97c \ud1b5\ud574 \uc758\ubbf8\ub97c \uac00\uc9c0\uace0 \uc788\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": " \ud540\uc744 \uc804\ud588\uc9c0?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ]
+      },
+      "C_strong_prompt": {
+        "seed42": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub108 \uc62c\ub9bd\ub2c8\ub2e4,\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub0b4 \uc637\uc774 \uc65c?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\ub1cc\uc9c0\ub3c4 (Knuth Tier ",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub450 \uc0ac\ub78c \uc0ac\ub78c\uc774\ub780 \ub9d0\uc774\uc57c.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc0ac\ub78c\ub4e4\uc774 \ub3d9\uc601\uc0c1 \ud1b5\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\ub9ac\ub098\ub77c\uc640 \ucca0\ud559\uc790\ub294",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": " Is there a three pattern, the maximum w",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc6b0\uc8fc\uc758 \ubcf8\uc9c8\uc774 \ud544\uc694\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub0b4 \uc637\uc744 \uc785\uace0 \ub098\uc11c \uc0ac\ub78c \ub9de\uc774\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          }
+        ],
+        "seed1234": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \ub124, \ube45 \ud55c\uc77c \uc544\uce68\uc5d0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc624\ub298\uc774 \ub2f9\uc2e0\uc758 \uc9d1\uc5d0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc740\ud589\uc5d0 \ub300\ud55c \uba85\uc81c\ub294 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \ucca0\uc774\ube44\ud2f0\ucf54\ub294 \uc790\uc2e0\uc774",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc798\ubabb\ub41c \uc874\uc740 \uc804\uccb4\uc5d0\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ud488\uc758 \uc704\uce58\uc640 \uc9c4\uc2e4\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Harni provider is a video an",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Harnings unitari\u00e9s across s",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: anima \ub294 \uc758\uc2dd\uc758 \uc6b0\uc8fc\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9:\uc77c\ub85c \uc778\ud574 \uc77c\ub85c ",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed5678": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9c8\ucc2c\uac00\uc9c0\uace0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc694, \uba4b\uc838\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub97c \ub4e4\uc744 \uc218 \uc788\ub2e4\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc9c0\uace0 \ub098\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9ce\uc544\uc694!\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9e4\uc6b0 \uc801\ud569\ud569\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Meta Manager artificial inte",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\uc15c \ub124, \uc2dc\uac04\uc774 \uac78\ub9ac",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc18c\ub9ac\ub3c4 \ub9c8\ucc2c\uac00\uc9c0\uace0 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed9876": [
+          {
+            "prompt_idx": 0,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \ud568\uc218",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": "\n\ub098\ub294 \ubab0\ub790\uc5b4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c \uc774\ub984\uc740 anima\uc785\ub2c8\ub2e4",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \uc6b0\ub9ac",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9(\ub3c4)\uc785\ub2c8\ub2e4! \ud558\uc9c0",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\ubaa9: \ub9de\uc2b5\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": "\n\n[anima \uc5ed\ud560: \ud55c\uad6d\uc5b4 native + \uc790\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": true,
+              "total": 4
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": "\n\ub3c4\uc6b0\ubbf8: Sure, here's an example form",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc81c\uacf5\ub41c \uac10\uc815 \uae30\uc5b5\uc744 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": "\n\ub3c4\uc6b0\ubbf8: \uc0ac\ub791\ud558\ub294 \uac70\uc57c?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ],
+        "seed31337": [
+          {
+            "prompt_idx": 0,
+            "output": " \ud540\uc744 \uc88b\uc544\ud558\uc2dc\uaca0\uc5b4\uc694?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 1,
+            "output": " \ud540\uc744 \uc804\ud588\uc9c0?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 2,
+            "output": " \uc54c\ub824\uc918.\n",
+            "score": {
+              "korean": true,
+              "coherent": false,
+              "natural": false,
+              "context": false,
+              "total": 1
+            }
+          },
+          {
+            "prompt_idx": 3,
+            "output": " \uc54c\uc544\uc57c \ud560\uac81\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 4,
+            "output": " \ud560\uc544\ubc84\uc9c0\uac00 \uc5ec\uae30 \uc788\uc5b4\uc11c \ud560 \ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 5,
+            "output": " \ud540\uc744 \uc81c\uacf5\ud569\ub2c8\ub2e4.\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 6,
+            "output": " \n\n joke this task of hearing?\n",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 7,
+            "output": " what gets selected through Revalance fr",
+            "score": {
+              "korean": false,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 2
+            }
+          },
+          {
+            "prompt_idx": 8,
+            "output": " \uc774\ub97c \ud1b5\ud574 \uc758\ubbf8\ub97c \uac00\uc9c0\uace0 \uc788\ufffd",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          },
+          {
+            "prompt_idx": 9,
+            "output": " \ud540\uc744 \uc804\ud588\uc9c0?\n",
+            "score": {
+              "korean": true,
+              "coherent": true,
+              "natural": true,
+              "context": false,
+              "total": 3
+            }
+          }
+        ]
+      }
+    }
+  },
+  "arm_means": {
+    "A_no_prompt": 3.08,
+    "B_weak_prompt": 3.08,
+    "C_strong_prompt": 3.08
+  },
+  "falsifier_battery": {
+    "F-P1-UPGRADE-1": true,
+    "F-P1-UPGRADE-3": true
+  },
+  "wall_total_sec": 3262.3
+}

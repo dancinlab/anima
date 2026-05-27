@@ -1,0 +1,19 @@
+bash: -c: 줄 1: 예기치 않은 `(' 토큰 주변에서 문법 오류
+bash: -c: 줄 1: `'python3' '-c' print(int(15/2.49*60))'
+[2026-05-10T03:23:39Z] === fix-5/6 tied embedding unified PoC ===
+[2026-05-10T03:23:39Z] pod_name=fix56-tied-poc-1778383419-pid56104 budget_cap=$15 max_wall_min=
+[2026-05-10T03:23:39Z] === Phase 0: prereq check ===
+[2026-05-10T03:23:39Z] prereqs OK
+[2026-05-10T03:23:39Z] === Phase 1: provision H100 SXM via resource CLI ===
+ai-native: hexa invocation without --Mach-O on macOS.
+  This call uses the stage0 interpreter; no native Mach-O codegen
+  is produced. Use --Mach-O ONLY when you genuinely need a native
+  arm64 binary (e.g. `hexa build --emit=exec` for a release).
+  For hooks, probes, lints, and most dev work this warning is
+  informational — no action required.
+  Set HEXA_TARGET_MACHO=1 in your shell to silence per-session.
+usage: run_remote.py [-h] [--host HOST] [--port PORT] [--timeout-s TIMEOUT_S]
+                     [--poll-interval POLL_INTERVAL] [--json]
+                     {hexa,py} path [args ...]
+run_remote.py: error: unrecognized arguments: --provider runpod --gpu H100 --duration 6h --yes-cost --name fix56-tied-poc-1778383419-pid56104
+[2026-05-10T03:23:39Z] FATAL: provision rc=2

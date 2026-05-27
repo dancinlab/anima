@@ -1,0 +1,29 @@
+{
+  "timestamp": "20260506-121506",
+  "ubu1": {
+    "host": "192.168.50.119",
+    "user": "aiden",
+    "venv": "/home/aiden/venv_orchestrator/bin/python",
+    "out_dir": "/home/aiden/core/anima/runs/clm3-bprime-s1-ubu1-20260506-121506",
+    "log": "/home/aiden/core/anima/runs/clm3-bprime-s1-ubu1-20260506-121506/train.log",
+    "seed": 20260506
+  },
+  "ubu2": {
+    "host": "192.168.50.60",
+    "user": "summer",
+    "venv": "/home/summer/venv_orchestrator/bin/python",
+    "out_dir": "/home/summer/core/anima/runs/clm3-bprime-s1-ubu2-20260506-121506",
+    "log": "/home/summer/core/anima/runs/clm3-bprime-s1-ubu2-20260506-121506/train.log",
+    "seed": 20260507
+  },
+  "config": {
+    "steps": 10000,
+    "batch": 4,
+    "grad_accum": 4,
+    "seq_len": 512,
+    "lr": 5e-5,
+    "warmup": 500,
+    "dtype": "bfloat16",
+    "eta_hours": "30-60h"
+  }
+}

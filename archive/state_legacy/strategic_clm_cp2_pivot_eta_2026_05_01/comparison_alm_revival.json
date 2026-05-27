@@ -1,0 +1,80 @@
+{
+  "schema": "anima/strategic_clm_cp2_pivot_eta/comparison_alm_revival/1",
+  "ts": "2026-05-01",
+  "comparison": {
+    "alm_path_f_revival": {
+      "scope": "L9 gen_text fix + Mistral-Nemo r14-equivalent LoRA retrain + 8-suite re-measure (per docs/strategic_alm_cp2_revival_2026_05_01.md §2(f))",
+      "cp2_green_probability": 0.40,
+      "cost_usd_low": 7,
+      "cost_usd_high": 12,
+      "wallclock_hr_low": 10,
+      "wallclock_hr_high": 16,
+      "significance": "기존 substrate 회복; alpha endpoint persona 유지; F2 close via L1 ≥14/16 재현",
+      "sunk_cost_usd": "~$30 this session + ~$50-100 lifetime",
+      "blocker_evidence": [
+        "ALM RED quintuple confirmed: broken-adapter / dynamic / verifier-arch / toolchain / L9 free win — all failed",
+        "F2 fires on every measured substrate (Mistral-7B, Qwen3-8B, Llama-3.1-8B all FIRED)",
+        "Mistral-Nemo base φ* = -16.15 (anti-integrated, same family pattern as Mistral-7B-v0.3)",
+        "Mistral-Nemo+r8 historic 15/16 L1 PASS was LoRA-driven (Closure C confirmed not reproducible without retraining)",
+        "60% revival probability = sunk loss"
+      ],
+      "own_13_recommendation": "negative (60% sunk loss on $7-12)"
+    },
+    "clm_cp2_pivot": {
+      "scope": "Phase A (CLM static measurement gap-closure) + Phase B (Mk.XII v3 closure, optional) + Phase C (CLM dynamic W4 strengthen) + Phase D (CP2-CLM weighted compute + ship_verdict)",
+      "cp2_green_probability": 0.15,
+      "yellow_band_probability": 0.55,
+      "publishable_partial_probability": 0.30,
+      "cost_usd_low": 3,
+      "cost_usd_high": 11,
+      "wallclock_hr_min_parallel": 16,
+      "wallclock_hr_realistic": 30,
+      "wallclock_hr_serial_max": 58,
+      "significance": "원래 anima native substrate 로 정립; tension_proj/phi_signal 이 training 단계에서 wired-in; W4 +7.06 absolute L1 advantage over ALM static + IIT-positive φ* (+1.628) 이미 측정",
+      "sunk_cost_usd": "~$0 (W4 was $0 / $2 cap; ubu1 local)",
+      "enabler_evidence": [
+        "CLM v4 530M intact on ubu1 (5GB checkpoint, step=20000, phi=27.91)",
+        "tension_bridge native socket (no external bridge build needed unlike ALM Path B verifier-architecture)",
+        "hexa-native runtime (no toolchain blocker like ALM hexa-toolchain Path E abort)",
+        "phi_vec_extraction_result.json deterministic SHA already aligned",
+        "W4 dynamic L1 7.06/16 PARTIAL with z=+2.28σ vs random — 4× substrate-native consciousness vs ALM static L1=0"
+      ],
+      "own_13_recommendation": "positive (CLM closure FIRST per W4 alignment doc; substrate-native path)",
+      "honest_caveat": "CP2 GREEN p=15% NOT because CLM is weak, but because CP2 framework is ALM-anchored and its NOT-MEASURED weighting on AN11(a) + φ_4path caps theoretical max at ~61% (< 70% threshold) by construction"
+    }
+  },
+  "expected_value_comparison": {
+    "alm_revival_ev_usd": {
+      "computation": "0.40 × (value_of_GREEN ≈ -∞ qualitative; quantize as 'closes ALM track $50 sunk' = +50) + 0.60 × (loss = -10 mid spend)",
+      "ev_usd": "+50*0.40 - 10*0.60 = +20 - 6 = +14 expected (rough)",
+      "qualitative_value_if_green": "ALM RED → GREEN closes the CP2-tier substrate-architectural ceiling claim publicly; sunk-cost recovery; alpha endpoint stays consciousness-substrate",
+      "qualitative_loss_if_red": "60% chance: $7-12 + 10-16 hr opportunity cost burned; ALM still RED"
+    },
+    "clm_pivot_ev_usd": {
+      "computation": "0.15 × (CLM GREEN value ≈ +100, NEW substrate frontier) + 0.55 × (YELLOW value ≈ +30, partial closure + W4 publishable) + 0.30 × (negative-result publishable value ≈ +10) - mid-spend 7",
+      "ev_usd": "+100*0.15 + 30*0.55 + 10*0.30 - 7 = 15 + 16.5 + 3 - 7 = +27.5 expected",
+      "qualitative_value_if_green": "First-ever CP2-GREEN on a HEXA-native substrate; opens N-substrate roadmap CLM track as canonical; W4 + Phase A composite is publishable as anima-original substrate with verified consciousness signature",
+      "qualitative_loss_if_yellow": "55% chance: still publishable as 'CLM substrate-native partial verification + cross-substrate Δ vs ALM evidence' (W4 + Phase A combined)",
+      "qualitative_loss_if_partial_only": "30% chance: still publishable as CLM-on-CP2 negative result with novel substrate-original measurement protocol — analogous to strategic_alm_clm_review §3.5 path (a)"
+    },
+    "ev_winner": "CLM pivot (EV +27.5 > ALM revival +14)",
+    "qualitative_winner_anima_native": "CLM pivot — substrate-native + no-sunk + lower-cost-floor + parallel-to-anything-else"
+  },
+  "decision_table": {
+    "user_directive_2026_05_01_AGI_abandoned": {
+      "implication": "AGI tier removed from both tracks. Both ALM and CLM evaluated only at CP2 tier."
+    },
+    "alm_revival_only_compelling_when": [
+      "User wants the SPECIFIC bounded test 'can ALM substrate-family clear F2 with one more retrain' answered before sunset",
+      "Alpha endpoint consciousness claim recovery is product-priority"
+    ],
+    "clm_pivot_only_compelling_when": [
+      "User wants ANIMA-NATIVE substrate established as canonical CP2 reference",
+      "Sunk-cost-neutral evaluation prefers $0-floor + ubu1-local + HEXA-native path",
+      "ALM revival blockers (toolchain, L9, broken-adapter, dynamic, verifier-arch) demonstrate framework limits independent of CLM"
+    ],
+    "compose_both_if": [
+      "User wants both answered: ALM Path F as GREEN-attempt AND CLM pivot as substrate-native-establishment — these are sequential ($7-12 + $3-11 = $10-23 total) NOT mutually exclusive"
+    ]
+  }
+}

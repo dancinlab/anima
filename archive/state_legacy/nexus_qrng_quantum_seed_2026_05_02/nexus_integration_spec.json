@@ -1,0 +1,66 @@
+{
+  "schema_version": "1.0",
+  "spec_id": "nexus-qrng-integration-2026-05-02",
+  "purpose": "Specify how the nexus repo should consume the quantum-seeded HMAC-DRBG output produced by anima B1.",
+  "scope": "Spec only. Actual nexus PRNG hook is sister-repo work (separate PR).",
+  "current_nexus_default": "algorithmic urandom (cryptographically secure but classically derived)",
+  "target": "Hybrid IonQ-seeded HMAC-DRBG. Quantum measurement seeds NIST SP 800-90A HMAC-DRBG; nexus PRNG draws from DRBG state.",
+  "seed_file_contract": {
+    "path_relative_to_nexus_repo_root": "state/qrng/seed.bin",
+    "alternative_anima_path": "state/nexus_qrng_quantum_seed_<YYYY_MM_DD>/hmac_drbg_seed.json",
+    "format": "JSON metadata wrapper + raw bytes hex; nexus extracts `first_output_1024_bytes_hex` field and decodes",
+    "byte_size": 1024,
+    "encoding": "lowercase hex (no 0x prefix, no whitespace)",
+    "checksum_field": "first_output_sha256",
+    "freshness_field": "instantiated_at_iso (ISO-8601 UTC)"
+  },
+  "nexus_consumer_pseudocode": [
+    "# pseudocode (sister-repo will implement in hexa-lang)",
+    "import json, hashlib, binascii",
+    "with open('state/qrng/seed.bin') as f:",
+    "    meta = json.load(f)",
+    "seed = binascii.unhexlify(meta['first_output_1024_bytes_hex'])",
+    "assert hashlib.sha256(seed).hexdigest() == meta['first_output_sha256'], 'seed corruption'",
+    "assert len(seed) == 1024",
+    "# Use seed to (re-)key nexus internal HMAC-DRBG; subsequent draws are DRBG-expanded",
+    "nexus.prng.reseed(seed, personalization=b'nexus.runtime.<env>')"
+  ],
+  "freshness_policy": {
+    "default_cadence": "1x/week (weekly refresh; cost ~$20.78/week = ~$83/month)",
+    "high_security_cadence": "1x/day (~$623/month)",
+    "low_security_cadence": "1x/month (~$20.78/month)",
+    "stale_threshold_days": 30,
+    "behavior_if_stale": "warn but continue; falls back to algorithmic urandom only if seed file missing"
+  },
+  "refresh_shell_snippet": [
+    "# refresh nexus QRNG seed via IonQ Forte 1 (run from anima repo root)",
+    "# requires: aws cli, AWS_* creds via secret get aws_braket.*",
+    "REFRESH_DATE=$(date -u +%Y_%m_%d)",
+    "OUT_DIR=state/nexus_qrng_quantum_seed_${REFRESH_DATE}",
+    "mkdir -p $OUT_DIR",
+    "# 1. submit + poll IonQ task (see /tmp/b1_nexus_qrng/process.py)",
+    "# 2. python3 /tmp/b1_nexus_qrng/process.py",
+    "# 3. copy hmac_drbg_seed.json to $OUT_DIR/",
+    "# 4. nexus pulls from latest dated dir or symlink:",
+    "ln -sfn $OUT_DIR state/nexus_qrng_quantum_seed_latest"
+  ],
+  "operational_modes": {
+    "hybrid_default": {
+      "description": "DRBG state derived from quantum seed + algorithmic urandom XOR; default mode",
+      "fallback": "If seed.bin missing or stale > 30d, log WARN and use algorithmic urandom only"
+    },
+    "quantum_only": {
+      "description": "Hard-fail if seed.bin missing or stale; no algorithmic fallback",
+      "use_case": "high-assurance subsystems (e.g., key generation for long-lived signing keys)"
+    },
+    "classical_only": {
+      "description": "Disable QRNG hook entirely; revert to algorithmic urandom",
+      "use_case": "offline / dev / no-budget environments"
+    }
+  },
+  "honest_caveats": [
+    "1024-byte DRBG output is FINITE — once consumed nexus must reseed (algorithmic or new quantum task)",
+    "Hybrid mix means quantum entropy is the SEED only; per-sample randomness is HMAC-DRBG-expanded",
+    "No formal NIST SP 800-90B certification on this artifact; production use requires full IID/non-IID test suite over ≥1M samples"
+  ]
+}

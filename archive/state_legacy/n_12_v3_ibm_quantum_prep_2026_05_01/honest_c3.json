@@ -1,0 +1,35 @@
+{
+  "schema": "n12/v3/honest_c3/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "agent": "n_12_v3_ibm_quantum_prep",
+  "top3_caveats": [
+    {
+      "rank": 1,
+      "category": "substrate_match",
+      "statement": "ibm_kingston (Heron r2) IS the source of the SC tau_2 reference (100us primary), so 'matched substrate' is structurally true. BUT: v3 cannot test cross-substrate (ion vs SC) in a single shot. The Penrose-Hameroff Orch-OR prediction was originally formulated for biological neuronal microtubules; an SC-only test establishes a textbook-QM baseline (expected NULL) but does NOT directly falsify Orch-OR at its predicted scale. Cross-substrate ion test is deferred to F-N12-1-cross (Quantinuum H-series, separate budget).",
+      "match_y_n": "Y for SC baseline, N for Orch-OR cross-substrate falsification"
+    },
+    {
+      "rank": 2,
+      "category": "queue_latency_risk",
+      "statement": "IBM Quantum Open Plan queues are typically 1-60 min but can stretch to 24h during peak demand or device maintenance. submit_ibm.py uses blocking job.result(); user should be prepared to leave terminal open or run in tmux/screen. Mitigation: ibm_kingston was specifically promoted into Open Plan rotation 2026-03-16, so contention should be moderate.",
+      "mitigation": "Submit overnight; consider service.least_busy() fallback already implemented in submit_ibm.py."
+    },
+    {
+      "rank": 3,
+      "category": "korean_access_verification",
+      "statement": "WebSearch confirms KQC partnership active and no US export restriction on Open Plan cloud access. However, account creation flow may show region-specific UI variations. If signup form rejects KR address, user can use any valid address (cloud account does not require physical co-location with hardware).",
+      "verified_y_n": "Y (open in principle; minor UI risk only)"
+    }
+  ],
+  "additional_minor_caveats": [
+    "qiskit-ibm-runtime had a 2024 issue (#1613) about delay+SamplerV2; verified CLOSED 2024-04-19 as user-error (bare circuit not in list). Current scripts pass list-of-circuits to sampler.run(). No regression risk.",
+    "submit_ibm.py uses channel='ibm_quantum_platform' (the unified post-2024 channel). If user has legacy 'ibm_quantum' channel token, they should regenerate via the new platform.",
+    "PAYG fallback at hard cap $5 = ~3 sec compute = insufficient for full 5-point sweep. Verifier will report INDETERMINATE if Open Plan exhausted; recommendation = wait for next 28-day window."
+  ],
+  "execution_authorization_required": [
+    "User must create IBM Quantum account (mission constraint forbids agent-side signup)",
+    "User must paste API token to ~/.qiskit/ibm-quantum-token.txt",
+    "User must run launch.sh (mission constraint = $0 budget, NO actual job submission by agent)"
+  ]
+}

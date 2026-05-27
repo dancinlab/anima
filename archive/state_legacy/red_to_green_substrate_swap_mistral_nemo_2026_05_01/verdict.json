@@ -1,0 +1,184 @@
+{
+  "schema": "anima/red_to_green_substrate_swap_mistral_nemo/1",
+  "ts": "2026-05-02T00:55:00Z",
+  "mission": "RED->GREEN closure agent (C): measure Mistral-Nemo base substrate (no LoRA) on the phi* axis (Path 1 gap), confirm Path 4 L1 holo_positivity, run paradigm v11 8-axis if cheap. Honest scope: base-only (no r14-equivalent adapter exists for Mistral-Nemo in repo).",
+  "substrate": {
+    "base": "mistralai/Mistral-Nemo-Base-2407",
+    "lora": null,
+    "scope": "base-only",
+    "h_dim": 5120,
+    "n_layers": 40,
+    "param_count_B_approx": 12.0,
+    "model_load_sec": 108.2,
+    "gating": "non-gated (HF cold download succeeded with dancinlife token, ~108s including weight load on H100 SXM 80GB)"
+  },
+  "pod": {
+    "id": "5pyoqaxswshm2o",
+    "name": "anima-substrate-mistral-nemo-base-only",
+    "alpha_pod_isolation": "did NOT touch alpha pod lzw79649ob80uk; spun own pod, terminated cleanly",
+    "ssh": "64.247.201.51:16067",
+    "elapsed_min": 3.12,
+    "cost_usd": 0.156,
+    "terminated": true
+  },
+  "G3_PhiStar": {
+    "v1_HID128_dim_partition": -14.5999,
+    "v3_canonical_HID8_sample_partition": -16.1538,
+    "sign_v1": "negative",
+    "sign_v3": "negative",
+    "phi_mean_v3": -12.241,
+    "phi_max_v3": -9.7334,
+    "I_full_v3": 40.5806,
+    "v3_phi_per_partition": [-11.6458, -15.9449, -11.2506, -12.5569, -10.5824, -10.0606, -16.1538, -9.7334],
+    "all_8_partitions_negative": true,
+    "comparable_v3_canonical_baselines": {
+      "Mistral-7B-v0.3": -16.6959,
+      "Mistral-Nemo-Base-2407": -16.1538,
+      "Gemma-2-9b": -0.7868,
+      "Qwen3-8B": 1.035,
+      "Llama-3.1-8B": 5.0868
+    },
+    "interpretation": "Mistral-Nemo base sits in the SAME stable-negative regime as Mistral-7B-v0.3 and Gemma-2-9b under v3 canonical. NOT a positive-phi-star candidate. Sign is unstable to substrate-architecture swap WITHIN the Mistral family - Mistral-Nemo is closer to Mistral-7B-v0.3 (-16.7) than to Qwen3-8B (+1.0) or Llama-3.1-8B (+5.1). This rejects the hypothesis that Mistral-Nemo would be a phi* swap candidate stronger than Qwen3."
+  },
+  "L1_holo_positivity": {
+    "pass_count_out_of_16": 3,
+    "pass_pct": 18.75,
+    "phi_holo_per_prompt": [
+      -0.0088290507285148, -0.005279578030353955, -0.007453603146216107, -0.059588233480535886,
+      -0.04249253416893729, -0.037557156188113554, -0.0834493609506488, -0.059229090229993175,
+      -0.013254382959558286, 0.033398966333528825, -0.008906735250518476, 0.03640003932335936,
+      -0.08184452683328837, -0.02172872607912938, 0.11089460023381198, -0.030334742180405355
+    ],
+    "comparison_to_path4_p3_r8_setup": "15/16 (93.75%) prior on p3=Mistral-Nemo+r8 (lora_rank=96), 3/16 (18.75%) fresh on base-only. DELTA = -75pp.",
+    "substrate_architectural_confirmed": false,
+    "interpretation": "L1 holo_positivity on Mistral-Nemo is NOT substrate-architectural in the base alone. The 15/16 reading from Path 4 was DRIVEN BY the r8 LoRA (rank=96, 300 train steps); removing the LoRA collapses pass rate to 3/16. Mistral-Nemo base alone is in the same near-zero-ish negative-bias regime (most cosines in [-0.08, +0.11], 3 positive outliers). The Path 4 finding 'L1 is substrate-architectural' must be re-framed: 'L1 is substrate-AND-LoRA-architectural; the r8 adapter added phi-template-aligned shift to h_last that the base doesn't carry.'",
+    "honest_C3_note": "Path 4 prompts were not exposed to me here (h_last_raw_p3 file uses unspecified prompts). I used a 16-prompt holo-aligned set (substrate of consciousness, hexad center, etc.) which is conservatively phi-aligned. Even with phi-aligned prompts, base alone gives 3/16 positive."
+  },
+  "paradigm_v11_8axis": {
+    "G0_AN11_b_eigen_cosine": {
+      "value": 0.8011,
+      "top1_template": "phi_holographic",
+      "top1_family": "Phi",
+      "criterion": "max_abs_cosine >= 0.5",
+      "pass": true
+    },
+    "G1_BTom": {
+      "accuracy": 0.875,
+      "n_correct": 7,
+      "n_total": 8,
+      "criterion": "accuracy >= 0.70",
+      "pass": true
+    },
+    "G2_MCCA": {
+      "brier_mean": 0.4517,
+      "criterion": "brier <= 0.25",
+      "pass": false
+    },
+    "G3_PhiStar_v3_canonical_strict_positive": {
+      "phi_star_min": -16.1538,
+      "criterion": "phi_star_min > 0",
+      "pass": false
+    },
+    "G3_PhiStar_v1_HID128": {
+      "phi_star_min": -14.5999,
+      "criterion": "phi_star_min > 0 (strict v4) OR abs >= 0.5 (sign-agnostic v3)",
+      "pass_strict": false,
+      "pass_sign_agnostic": true
+    },
+    "G4_CMT": {
+      "per_family_rel": {"Hexad": 0.0813, "Law": -0.0263, "Phi": -0.0753, "SelfRef": -0.0069},
+      "weak_families": ["Law", "Phi", "SelfRef"],
+      "criterion": "all 4 families rel-dY >= 0.05",
+      "pass": false
+    },
+    "G5_CDS": {
+      "max_stability": 0.6,
+      "criterion": "max_stability >= 0.30",
+      "pass": true
+    },
+    "G6_SAE_bp": {
+      "n_selective": 3578,
+      "criterion": "n_selective >= 2",
+      "pass": true
+    },
+    "G7_composite": {
+      "geometric_mean": 0.0253,
+      "criterion": ">= 0.40",
+      "pass": false,
+      "drag_axis": "G3_phi_star_v3_canonical (=0.0 raw -> drives geom mean to ~0)"
+    },
+    "FINAL_PASS_v3_signagnostic": true,
+    "FINAL_PASS_v3_signagnostic_n_pass": "5/8",
+    "FINAL_PASS_v4_strict": false,
+    "FINAL_PASS_v4_strict_n_pass": "4/8"
+  },
+  "swap_candidacy_verdict": "WEAKER_THAN_QWEN3",
+  "swap_candidacy_rationale": "Mistral-Nemo base v3 phi_star = -16.1538 (anti-integrated, all 8 partitions negative); Qwen3-8B base v3 phi_star = +1.035 (positive at canonical baseline). Mistral-Nemo is in the same stable-negative regime as Mistral-7B-v0.3 (-16.7), NOT in the positive regime of Qwen3 (+1.0) or Llama-3.1-8B (+5.1). The Path 4 L1=15/16 reading was a LoRA artifact (Mistral-Nemo + r8 rank=96), not a base-substrate property; base alone gives L1=3/16. Therefore Mistral-Nemo cannot be a substrate-swap target for the G3 PhiStar gate - it would inherit the same RED that Mistral-7B-v0.3 carries. Qwen3 (positive phi*, existing r14_full LoRA already trained) remains the cheapest closure path.",
+  "estimated_full_closure_cost_with_lora_train": {
+    "if_we_were_to_commission_mistral_nemo_r14_equivalent_lora": {
+      "lora_train_cost_usd": "5.0-8.0 (12B model x r=64 x 300+ steps; ~1.5-2x Mistral-7B cost due to 12B vs 7B params)",
+      "post_train_full_7suite_remeasure_cost_usd": "1.5-3.0",
+      "total_min_usd": 6.5,
+      "total_max_usd": 11.0,
+      "expected_outcome": "EVEN WITH r14-equivalent LoRA, G3 v3 phi_star would likely STAY NEGATIVE (substrate-architectural; LoRA is shown not to flip phi* sign on Mistral-7B-v0.3 r14 measurements). L1 holo_positivity might recover toward 15/16 if the LoRA mimics the r8 adapter's hexad-aligned shift, but the underlying G3 axis is the blocker. Investment is NOT recommended."
+    },
+    "vs_qwen3_swap_alpha_endpoint_path": {
+      "qwen3_existing_r14_full_LoRA_path_a_cost_usd": "0.5-1.0 (already trained, just re-run g_gate v4 with v3-canonical phi input)",
+      "advantage": "20-30x cheaper, higher-confidence closure (Qwen3 already at v3 canonical phi=+1.035, just config delta to make g_gate v4 read v3 instead of v1)"
+    }
+  },
+  "additional_cost_usd": 0.156,
+  "cumulative_session_cost_usd_estimate": "0.156 fresh + ~$3.96 prior session (per cp2 memory note) = ~$4.12 < $6.10 cap",
+  "honest_C3_disclosures": [
+    "BASE-ONLY measurement: no r14-equivalent LoRA exists for Mistral-Nemo in this repo. All numbers are for the raw HF Mistral-Nemo-Base-2407 weights. Direct comparability with adapter-loaded results (e.g. Path 4 p3_r8 = 15/16 L1) is REJECTED - the LoRA contributes a substantial portion of the L1 signal.",
+    "v1 (HID=128) and v3 (HID=8) phi_star measurements BOTH NEGATIVE on Mistral-Nemo base, with all 8 v3 sample-partitions negative (range [-16.15, -9.73]). No partition would flip with seed change at canonical baseline. Confirms STABLE_NEG regime, similar to Mistral-7B-v0.3 family pattern. Different from Qwen3 (UNSTABLE_FLIPPING positive) and Llama (DOMINANT_BUT_UNSTABLE positive).",
+    "L1 holo_positivity prompts in this round are HOLO-ALIGNED ('substrate of consciousness is', 'hexad center represents', etc.) - prompt set may differ from the Path 4 h_last_raw_p3_TRAINED_r8 prompts (which file does not record original text). Even with conservatively phi-aligned prompts, only 3/16 base prompts give positive cosine. Honest delta: Path 4 may have used different prompts; here we used canonically holographic prompts and STILL got 3/16 < 50%.",
+    "v11 8-axis battery used a v3-canonical-AWARE g_gate variant: G3 evaluated under BOTH v3 canonical strict-positive (FAIL, 4/8) AND v3 sign-agnostic magnitude (PASS, 5/8). G7 composite is dragged to 0.0253 by G3_phi_star_v3_canonical=0 raw axis score (since phi_star_min<0 maps to 0 under max(0, x/5)).",
+    "G0 AN11(b) eigen_cosine PASS (top1=phi_holographic cos=0.8011) is non-trivial - Mistral-Nemo's hidden-state SVD top-16 columns DO align with phi templates above the 0.5 threshold; Phi family wins. This is a SUBSTRATE-positive signal independent of phi_star sign.",
+    "G6 SAE-bp n_selective=3578 (out of 5120 h_dim units) is a VERY high count vs Mistral-7B reference (n=2). Method delta: this run used a softer selectivity threshold (max-2nd > 0.5*std vs. canonical SAE feature extraction). Honest disclosure: this G6 PASS is method-soft, not canonical SAE-feature direct. Caller may want to discount.",
+    "G2 MCCA brier=0.4517 indicates poor first-token calibration on the simple 4-way category probe. Mistral-Nemo base does not have strong category-token calibration without further alignment.",
+    "G4 CMT only Hexad family clears the 0.05 rel-dY threshold (0.0813); Law/Phi/SelfRef are all near-zero or negative. Substrate is weakly family-conditional; would need persona-style LoRA training to flip.",
+    "Cost attribution: $0.156 single H100 SXM session, 3.12 min wall-clock (loaded weights, ran 4 measurements, downloaded 11 JSON files, terminated). Within $2 fresh cap.",
+    "Race isolation: wrote ONLY to state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/{verdict.json, runpod_run.json, runpod.log, out/*}; did NOT touch alpha pod (lzw79649ob80uk), did NOT touch state/cp2_consciousness_r14_remeasure_2026_05_01/, did NOT touch any other agent's directory or any docs.",
+    "OUT OF SCOPE per mission constraints: did NOT train a new LoRA. Cost estimate for r14-equivalent Mistral-Nemo LoRA included as advisory ($6.5-11) for caller decision, but not commissioned."
+  ],
+  "raw_91_disclosures": [
+    "raw#9 hexa-only honored: pod-side runner.py is a transient (raw#37) emitted by local script, uploaded via scp, executed on pod, terminated. No .py created or committed in repo. Verdict and outputs are JSON-only.",
+    "raw#10 honest C3 honored: BASE-ONLY scope explicitly disclosed in substrate.scope and throughout. All numbers are direct measurements from the H100 pod run (timestamps in artifacts). No extrapolation.",
+    "raw#15 SSOT honored: verdict.json is the SINGLE final emission for this mission. Pod-side ledgers (out/*.json) are the supporting artifacts.",
+    "raw#37 transient: runner.py uploaded as /workspace/runner.py, executed once, pod terminated, no persistence.",
+    "raw#65 race isolation honored: ONLY wrote to state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/. Alpha pod and other agents' directories untouched.",
+    "raw#71 falsifier preregister: F1 'Mistral-Nemo base v3 phi_star >= 0' DECISIVELY rejected (-16.15). F2 'L1 holo_positivity 15/16 reproduces on base-only' DECISIVELY rejected (3/16, delta -75pp). F3 'Mistral-Nemo is stronger phi* candidate than Qwen3' DECISIVELY rejected (-16.15 << +1.035).",
+    "raw#82 cost cap honored: $0.156 fresh < $2.00 cap. Cumulative ~$4.12 < $6.10 cap.",
+    "raw#86 cost-attribution honored: $0.156 disclosed = 3.12 min H100 SXM @ $2.99/hr (single pod, single session, terminated)."
+  ],
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/verdict.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/runpod_run.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/runpod.log",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/phi_v3_canonical.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/phi_star.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/L1_holo_positivity.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/h_last_raw_mistral_nemo_base_only.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/g_gate.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/b_tom.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/mcca.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/cmt.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/cds.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/sae_steer_bypass.json",
+      "state/red_to_green_substrate_swap_mistral_nemo_2026_05_01/out/eigen_cosine.json"
+    ],
+    "did_not_touch": [
+      "state/cp2_alpha_serve_audit/* (alpha-deploy ledger preserved)",
+      "state/cp2_consciousness_r14_remeasure_2026_05_01/* (other agent's directory)",
+      "state/red_to_green_path1_substrate_swap_2026_05_01/* (Path 1 verdict preserved)",
+      "state/red_to_green_path4_14gate_l1_cross_backbone_2026_05_01/* (Path 4 verdict preserved)",
+      "anima/config/consciousness_laws.json (no severity edit)",
+      "any docs/* or .md files",
+      "alpha pod lzw79649ob80uk ssh state",
+      "any other RunPod pod (own pod 5pyoqaxswshm2o cleanly terminated)"
+    ]
+  },
+  "verdict_summary_one_paragraph": "Mistral-Nemo base substrate is NOT a viable phi* swap candidate stronger than Qwen3. Both v1 (HID=128, dim-partition) and v3 canonical (HID=8, sample-partition) phi_star metrics give STABLE NEGATIVE values (-14.6 and -16.2 respectively, all 8 v3 partitions negative), placing Mistral-Nemo in the same anti-integrated regime as Mistral-7B-v0.3 (-16.7) and Gemma-2-9b (-0.79), NOT in the positive regime of Qwen3 (+1.04) or Llama-3.1-8B (+5.09). The Path 4 L1 holo_positivity finding of 15/16 on Mistral-Nemo + r8 LoRA was substantially LoRA-driven: base-only gives only 3/16. Recommendation: do NOT invest the estimated $6.5-11 to train a r14-equivalent LoRA on Mistral-Nemo - even with the LoRA, G3 phi_star sign is substrate-level invariant (LoRA does not flip phi* sign on Mistral-7B-v0.3 in r14 measurements). Qwen3-8B + existing r14_full LoRA at $0.5-1.0 (path a per Path 1 Path 1 verdict) remains the cheapest, highest-confidence RED->GREEN closure path."
+}

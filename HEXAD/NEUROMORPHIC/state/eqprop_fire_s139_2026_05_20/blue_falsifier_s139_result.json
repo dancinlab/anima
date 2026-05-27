@@ -1,0 +1,102 @@
+{
+  "battery_id": "B-S139",
+  "cycle": "\u00a7139 EQPROP-C2 (Scellier-Bengio + Laborieux-Zenke lifted)",
+  "sidecar": true,
+  "central_zero_diff_check": true,
+  "results": [
+    {
+      "battery": "B-S139-1 NO-CE-INVARIANT-AST",
+      "pass_": true,
+      "forbidden_call_matches": [],
+      "mse_loss_call_count": 1
+    },
+    {
+      "battery": "B-S139-2 NO-GLOBAL-BACKWARD-INVARIANT-AST",
+      "pass_": true,
+      "backward_callers": [
+        "L_head",
+        "L_i"
+      ],
+      "forbidden_matches": [],
+      "allowed_set": [
+        "L_head",
+        "L_i"
+      ]
+    },
+    {
+      "battery": "B-S139-3 TWO-PHASE-STRUCTURAL",
+      "pass_": true,
+      "acts_free_token_present": true,
+      "acts_nudge_token_present": true,
+      "acts_free_assigned": true,
+      "acts_nudge_assigned": true,
+      "cfg_beta_present": true
+    },
+    {
+      "battery": "B-S139-4 EQPROP-LOCAL-UPDATE-SIGN-SCELLIER-CLOSED",
+      "pass_": true,
+      "dL_dx_expr": "-d/N",
+      "sample_d_positive_grad": -0.25,
+      "sample_d_negative_grad": 0.25,
+      "homothetic_in_beta_scaling": true
+    },
+    {
+      "battery": "B-S139-5 PER-BLOCK-OPTIMIZER-COUNT",
+      "pass_": true,
+      "adamw_call_count": 2,
+      "adamw_in_for_loop": [
+        135
+      ],
+      "adamw_out_of_for_loop": [
+        138
+      ],
+      "global_model_parameters_seen": false
+    },
+    {
+      "battery": "B-S139-6 DETACH-DIFF-PROPERLY-AST",
+      "pass_": true,
+      "diff_assign_has_detach": true,
+      "x_in_detach_present": true,
+      "detach_callers_seen": [
+        "L_i",
+        "L_head"
+      ]
+    },
+    {
+      "battery": "B-S139-7 FROM-SCRATCH-NO-BASE-CKPT-AST",
+      "pass_": true,
+      "forbidden_call_attrs": [],
+      "forbidden_full_paths": [],
+      "seed_calls_seen": [
+        "random.seed",
+        "torch.cuda.manual_seed_all",
+        "torch.manual_seed"
+      ],
+      "seed_fixed": true
+    },
+    {
+      "battery": "B-S139-8 \u00a7125-\u00a7126-\u00a7139-JOINT-READING-COMPATIBLE",
+      "pass_": true,
+      "lattice_cardinality": 8,
+      "lattice_distinct": 8,
+      "constants_byte_equal_to_s125": true,
+      "constants_byte_equal_to_s126": true,
+      "constants_present_s139": true
+    },
+    {
+      "battery": "CENTRAL-BLUE-FALSIFIER-0-LINE-DIFF",
+      "pass_": true,
+      "sha256": "c93e160a8a376a940942332cad13e652df9a03e97ccab708542a126eefc70b73",
+      "expected_prefix": "c93e160a8a376a94"
+    }
+  ],
+  "empirical_carve_out": {
+    "battery": "B-S139-NOTE empirical carve-out",
+    "pass_": null,
+    "note": "Whether \u00a7139 fire crosses any verdict threshold is SGD/measurement OUTCOME (B-D-NOTE/B-PUREPHYS-NOTE/B-S96-NOTE/B-S104-NOTE/B-S107-NOTE/B-S125-NOTE/B-S126-NOTE/B-EMERGE-7 family). Battery proves SETUP well-formed + joint reading lattice closed, NOT emergence. The \u00a7125+\u00a7126+\u00a7139 3-cell joint verdict is what decides \u00a796-Q2 \u2014 not \u00a7139 in isolation. necessary-not-sufficient at every layer."
+  },
+  "summary": "9/9 \ud83d\udd35 (PASS)",
+  "wall_s": 0.6921019554138184,
+  "north_star_unchanged": true,
+  "s15_s51_s72_milestones_unchanged": true
+}

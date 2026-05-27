@@ -1,0 +1,40 @@
+{
+  "tool": "eeg_to_token_cyborg",
+  "version": "v1",
+  "raw_rank": 9,
+  "hexa_only": true,
+  "deterministic": true,
+  "llm": "none",
+  "no_api": true,
+  "frozen_at": "2026-04-28",
+  "ts_utc": "2026-04-28T14:52:58Z",
+  "strategy": "median-nibble (Strategy 1 of 4; raw#73 admissible)",
+  "criteria": {
+    "default_segments": 50,
+    "max_segments": 250,
+    "loss_max_permille": 500,
+    "alphabet_size": 16,
+    "alphabet": "0123456789abcdef"
+  },
+  "mode": "selftest",
+  "dry_run": {
+    "input": "synthetic_fnv_random",
+    "input_sha256": "",
+    "n_channels": 16,
+    "n_samples": 256,
+    "n_segments": 50,
+    "token_string": "ccd9ff030000ff001f020240200926b19452801824002a1a20a433c3601670e3000006ad65a9003332000249d509100738a010210139063325f080f40703e030a605013702010071ff09aaaa00ff39b6333055551f60d002dba54a4b000e03000f5a5336",
+    "token_string_len": 200,
+    "round_trip_loss_permille": 376,
+    "f1_determinism_pass": 1,
+    "f2_loss_pass": 1,
+    "f3_alphabet_pass": 1,
+    "f4_length_pass": 1,
+    "f5_bridge_pass": -1,
+    "all_self_refutable_pass": 1,
+    "classification": "NOT_VERIFIED_SYNTHETIC"
+  },
+  "raw73_seal": "STRUCTURAL_ADMISSIBLE (median + binarize + nibble-pack + segment-mode-argmin + hex-emit; no EM/MCMC/RNG)",
+  "raw10_honest_c3": "F5 (LLM interprets meaningfully) is DEFERRED to user-side Claude CLI runbook; no semantic claim made by this tool",
+  "no_api_clause": "This tool emits text only. The user manually pastes the token string into Claude CLI; no api.anthropic.com call."
+}

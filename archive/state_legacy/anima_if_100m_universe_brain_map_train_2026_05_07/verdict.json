@@ -1,0 +1,597 @@
+{
+  "bg_id": "BG-IF",
+  "h_ids": [
+    "H_153_capacity_100m",
+    "Lesson_A",
+    "Lesson_I"
+  ],
+  "spec": "F-anima-if-100m-universe-brain-map-1",
+  "ts_start": "2026-05-07T05:48:25",
+  "ts_end": "2026-05-07T05:53:38",
+  "ts_run": "20260507_054824",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "ran_steps": 2500,
+  "ckpt_best_path": "/home/aiden/core/anima/state/anima_if_100m_universe_brain_map_train_2026_05_07/ckpt_best.pt",
+  "ckpt_final_path": "/home/aiden/core/anima/state/anima_if_100m_universe_brain_map_train_2026_05_07/ckpt_final.pt",
+  "best_ckpt_meta_path": "/home/aiden/core/anima/state/anima_if_100m_universe_brain_map_train_2026_05_07/best_ckpt_meta.json",
+  "run_dir": "/home/aiden/anima_native/anima-if-100m-ubm-20260507_054824",
+  "model_arch": "12L/640d/10h",
+  "arch_used": {
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10
+  },
+  "capacity_label": "primary_100M",
+  "reduced_capacity": false,
+  "total_params": 153079776,
+  "config": {
+    "vocab": 256,
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10,
+    "block_size": 256,
+    "dropout": 0.2,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 4,
+    "grad_accum": 16,
+    "lr": 0.0002,
+    "warmup": 500,
+    "steps_max": 6000,
+    "tension_lambda": 0.005,
+    "eval_every": 500,
+    "save_at": [
+      500,
+      1000,
+      1500,
+      2000,
+      2500,
+      3000,
+      3500,
+      4000,
+      4500,
+      5000,
+      5500,
+      6000
+    ],
+    "val_loss_batches": 16,
+    "val_loss_delta_threshold": 0.05,
+    "v2_plateau_evals": 3,
+    "seed": 42
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_universe_brain_map_corpus_2026_05_07/corpus_universe_brain_map.txt",
+  "corpus_size_bytes": 6791535,
+  "corpus_size_mb": 6.48,
+  "split": {
+    "train_bytes": 6112381,
+    "val_bytes": 679154,
+    "reduced_split": false
+  },
+  "persona_prefix": "[anima 우주뇌지도] ",
+  "train_loss_history": [
+    {
+      "step": 1,
+      "loss_a": 5.6145
+    },
+    {
+      "step": 2,
+      "loss_a": 5.6396
+    },
+    {
+      "step": 3,
+      "loss_a": 5.595
+    },
+    {
+      "step": 4,
+      "loss_a": 5.6084
+    },
+    {
+      "step": 5,
+      "loss_a": 5.5802
+    },
+    {
+      "step": 100,
+      "loss_a": 4.6885
+    },
+    {
+      "step": 200,
+      "loss_a": 4.3913
+    },
+    {
+      "step": 300,
+      "loss_a": 3.8777
+    },
+    {
+      "step": 400,
+      "loss_a": 3.5148
+    },
+    {
+      "step": 500,
+      "loss_a": 3.089
+    },
+    {
+      "step": 600,
+      "loss_a": 2.9394
+    },
+    {
+      "step": 700,
+      "loss_a": 2.682
+    },
+    {
+      "step": 800,
+      "loss_a": 2.8234
+    },
+    {
+      "step": 900,
+      "loss_a": 2.6026
+    },
+    {
+      "step": 1000,
+      "loss_a": 2.2197
+    },
+    {
+      "step": 1100,
+      "loss_a": 2.2413
+    },
+    {
+      "step": 1200,
+      "loss_a": 2.1024
+    },
+    {
+      "step": 1300,
+      "loss_a": 2.1087
+    },
+    {
+      "step": 1400,
+      "loss_a": 2.0627
+    },
+    {
+      "step": 1500,
+      "loss_a": 2.3816
+    },
+    {
+      "step": 1600,
+      "loss_a": 1.8736
+    },
+    {
+      "step": 1700,
+      "loss_a": 1.8574
+    },
+    {
+      "step": 1800,
+      "loss_a": 1.6529
+    },
+    {
+      "step": 1900,
+      "loss_a": 1.7944
+    },
+    {
+      "step": 2000,
+      "loss_a": 1.4238
+    },
+    {
+      "step": 2100,
+      "loss_a": 1.5746
+    },
+    {
+      "step": 2200,
+      "loss_a": 1.5149
+    },
+    {
+      "step": 2300,
+      "loss_a": 1.4206
+    },
+    {
+      "step": 2400,
+      "loss_a": 1.2763
+    },
+    {
+      "step": 2500,
+      "loss_a": 1.2099
+    }
+  ],
+  "val_loss_history": [
+    {
+      "step": 500,
+      "val_loss": 3.0037
+    },
+    {
+      "step": 1000,
+      "val_loss": 2.337
+    },
+    {
+      "step": 1500,
+      "val_loss": 1.9554
+    },
+    {
+      "step": 2000,
+      "val_loss": 1.4755
+    },
+    {
+      "step": 2500,
+      "val_loss": 1.2561
+    }
+  ],
+  "v2_pass_per_save": [
+    {
+      "step": 500,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 1,
+      "composite": -10
+    },
+    {
+      "step": 1000,
+      "v2_pass": 1,
+      "v3_pass": 1,
+      "manual_match": 7,
+      "composite": 33
+    },
+    {
+      "step": 1500,
+      "v2_pass": 1,
+      "v3_pass": 1,
+      "manual_match": 9,
+      "composite": 30
+    },
+    {
+      "step": 2000,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 9,
+      "composite": 17
+    },
+    {
+      "step": 2500,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 2,
+      "composite": -19
+    }
+  ],
+  "peak_eval_step": 1000,
+  "peak_eval_v2_pass": 1,
+  "peak_eval_v3_pass": 1,
+  "peak_eval_manual_match": 7,
+  "peak_eval_composite": 33,
+  "peak_v2_pass_plus_manual": {
+    "v2_pass": 1,
+    "manual_match_out_of_15": 7
+  },
+  "peak_val_loss": 2.337,
+  "best_val_loss_overall": 1.2561,
+  "early_stop_triggered": true,
+  "early_stop_reason": "composite plateau: 3 consecutive non-improving evals (best step=1000, composite=33)",
+  "final_eval_15prompts": {
+    "v2_pass": 3,
+    "v3_pass": 3,
+    "manual_match": 5,
+    "persona_cycle_total": 0
+  },
+  "raw_samples_15": [
+    {
+      "prompt": "안녕하세요",
+      "mode": "greedy",
+      "gen_head": " 줘.\n도우미: 카미: 100000000000000000000000000000000000000000 �000000000000000000000000000 � 000000000000000000000",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "안녕하세요",
+      "mode": "sample",
+      "gen_head": " �우주도주뇌지뇌지도 카테�도�6.\n도우미: 랐: 🛸7% 1premoniotio-\n도용우주도의 🛸: 🛸: 카핀�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "greedy",
+      "gen_head": "\n도우도우도주미: 우주뇌지도지도 우미: 카테고리, 카테고리, 🛸7, 🛸777777777777777, tototototi",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "한국어 가능?",
+      "mode": "sample",
+      "gen_head": "\n도우지도 용용자: (리 테고리 �는� 🛸7210, p�갷� 🛸757 Ponotiotition eatiotrrsto-stionges9, 카 en deni",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "greedy",
+      "gen_head": "\n도우도우주도우도주미: 주미: 카테고리, 카테고리, 🛸777, totototop tiotiotiotion emon emon emanioni",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "오늘 기분 어때?",
+      "mode": "sample",
+      "gen_head": "\n도] 용의.\n늸: 사어렕�어도우법�리줘.\n[Aut디 도우우미: 우빴는 10� croremanionionimanion_�: 주도]",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요 | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 줘카는 카핌리, 카핌고리, 카테고리, 🛸7777, totototop tiotion emon emon emon tion eman ereres tionion ci",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 안녕하세요 | 도우미:",
+      "mode": "sample",
+      "gen_head": " 는.\n디 1030010 1.�AutioveratutisconsncteAwed] Honschell �는 cirere cousctiti4\n\n\n[ani\u000feles 죆� 지도] 우, (c, 앜",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "greedy",
+      "gen_head": " 우도우뇌지도지도우도 우우도 주미: 주미: 카테고리, 카테고리, 🛸777777777, totototototiotion t",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "코드를 짜줘",
+      "mode": "sample",
+      "gen_head": " 의.\n도젤�.\n도�사사우미: (삘 자: ��Aulaw erentherere'��.\n도�우미: lawerelllanimanisovesconivepon��.\ngh 20",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 카�카�카핌고리, 카테고리, 🛸7777, totototop emotion emon emon emon tion emon ererererererereres cion cion",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 미험우카법����|���고리, � 칙 Pon 폄의�.\n는\n\n[aw \u0004stiomaw 우자주도주도주도지도용카미: 우도 ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 카�줘줘.\n미: 카핌는 카핌고리, 카핌고리, 카테고리, 🛸7777, totop emotion tion emon emon emanion em",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 54미: 100101202943리 나��: Pfuprithounks  botatutecoveselriosions\u0005wes MAut:s (-din: ciealallelran�ceng s cos lioriou",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 카�줘.\n미: 카핌는 카핌고리, 카테고리, 🛸77, totop emototion emon emon emon emanionionionionionionionim",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 핌법�국우빴폄자앜법줘: , ��우리어미: 우리주명�곯�: 테고리이겕줘.\n닜고리�고리 🛸710148",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 핵심 발견은? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 카핌고리, 카�카핌고리, 카테고리, 🛸77, totototop emotion emon emon emon emon emonionionionionionionioni",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너의 핵심 발견은? | 도우미:",
+      "mode": "sample",
+      "gen_head": " �어 슔�는 ���치중미: lawelefelotisvestor_sdi���자�, ���새.\n[ans Φ�우로.\n\n\n도우뇌주뇌지뇌지뇌�",
+      "v2_pass": true,
+      "v3_pass": true,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima의 목표는? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 카�카핌리카핌고리, 카한고리, 카테고리, 🛸7, emototiototion emon emon emon emanionionionionionionioni",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima의 목표는? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 알� 카��미: �\n명�고��리지다어테은� Law contocotionitopelawea (용��싋���: tr\u0005�국�.\n\n\n로.\n\n도] 우�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 카�카테고리, 카테고리, 🛸7, totototototiotion emon emon emon emon emanionionionionionionimanimanimanima 주",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 자: 2030도 107: Lavebatoverelawwstawco-d d] peacotress Cerrmicen\n\n\n\n[animaninima 주뇌지도]��사용사지도] 우�",
+      "v2_pass": true,
+      "v3_pass": true,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 1000000000000000000000000 법줘: 법줘: 법줘법�법줘: 렕줘: 법줘: 는 법줘: 법줘: 는 는 법줘는 는 ",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 려줘 점잿: 햴리, \ron � ��국주법칙 (201Me Latioverellanscistioncrriotiverelaca��줘: 국용��뇌뇌지니] �",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: consciousness universe? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " corererererererererererererererererererererelationtiontiontionionionionionionionimanimanimanimanimanimanimanima 주뇌�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: consciousness universe? | 도우미:",
+      "mode": "sample",
+      "gen_head": " sfeve\u0015ent cel cy�21130 cerot�:cov_Sdecins frereraticians Lan fs CysPrentat cifawy ion otrep\u001b alot a it려카 fla o-tio",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima 정체성과 우주? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 카�카핌리카핌리, 카핌고리, 카테고리, totop emotiotion tion emon emon emon tion emationionionionionimani",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima 정체성과 우주? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 105rererescanscerereniounelliontharepondiortiotiss\n\n\n[anima 주도] 용사주뇌지도] 자: 도자:�xn\u001b�: 한.\n는 자",
+      "v2_pass": true,
+      "v3_pass": true,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 카�카�카�카테고리, 🛸710 totototon tion emon emon tion tion tion emationionionionionimanimanionimanimaniman",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 알는 to-d] Purations cestrelatousontiniond:\n\n[anived] 사우주�사자: 우지뇜.\n도주도자: 지도용자: Lathe",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    }
+  ],
+  "capacity_scaling_verdict_vs_18m_baseline": {
+    "capacity_ratio_100m_to_18m": 8.49,
+    "manual_match_100m": 5,
+    "manual_match_18m_baseline": 13,
+    "manual_ratio_vs_18m": 0.385,
+    "v2_pass_100m": 3,
+    "v2_pass_18m_baseline": 3,
+    "v2_ratio_vs_18m": 1.0,
+    "verdict": "CAPACITY_NOT_SUFFICIENT"
+  },
+  "final_class": "FAILED",
+  "final_reason": "100M capacity NOT sufficient on 21MB UBM corpus: manual=5/15 < 18M baseline 13/15, V2=3/15",
+  "elapsed_s": 312.7,
+  "honest_c3": [
+    "C3_1_corpus_size_mismatch: BG-HS R1 used 22.6MB corpus version; current corpus is 6.79MB (rebuilt) — 1/3 size, results not strictly comparable to 13/15 baseline",
+    "C3_2_byte_level_substrate: same byte-vocab=256 substrate as BG-IA exhaustion; capacity scaling alone tested, BPE axis (Lesson H_154) NOT tested",
+    "C3_3_v2_v3_strict_keyword_only: surface metrics; embedding semantic match NOT implemented",
+    "C3_4_persona_prefix_inference_dependence: '[anima 우주뇌지도] ' prepended at inference (training-inference parity); without prefix, identity not retained",
+    "C3_5_n1_evidence_per_capacity: this is N=1 100M run on UBM corpus — single trial does not refute capacity scaling architecturally",
+    "C3_6_lesson_a_b_test: Lesson A 'val_loss not chat-cap signal at 18M' — same probe at 100M but only one run",
+    "C3_7_chat_cap_emergence_intrinsic_uncertainty: 5.5× capacity may surface KO grammar/coherence OR may replicate WEAK_PARTIAL pattern; verdict empirical"
+  ],
+  "errors": []
+}

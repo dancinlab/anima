@@ -1,0 +1,48 @@
+{
+  "battery": "B-S117",
+  "n_pass": 7,
+  "n_total": 7,
+  "all_pass": true,
+  "verdict_of_run": "LEGO-RUN-Ψ-FORM-NONDEGENERATE-BUT-WALL-B-INHERITED",
+  "psi_c1_std": 0.041850352379794724,
+  "psi_c1_mean": 0.6115676868351277,
+  "non_degenerate": true,
+  "note": "B-S117-NOTE — the MEASURED non-degenerate/degenerate OUTCOME (here: LEGO-RUN-Ψ-FORM-NONDEGENERATE-BUT-WALL-B-INHERITED, Ψ-C1 std=4.1850e-02) is an SGD-free convergence OUTCOME, NOT counted 🔵. The battery proves the ASSEMBLY is HONEST (STDP-only, no CE, no backprop, Ψ-form carrier-invariant §112, deterministic, §115-residual connection-point), NOT that LEGO works / anima emerges. necessary-not-sufficient at every layer (B-EMERGE-7). A non-degenerate Ψ-C1 form in-sim = §115/§113 INHERITED confront-NOT-remove (WALL-B §96-physical-gated stays; §7-CARRIER NOT decided), NOT GOAL emergence, NOT a WALL-A (§1.1 data-regime) escape — a toy STDP spike sim moves no data threshold (§97). north-star + §15/§51/§72 milestones UNCHANGED, GOAL 미도달. B-D-NOTE / B-PUREPHYS-NOTE / B-S96-NOTE / B-S115-NOTE family.",
+  "results": [
+    {
+      "id": "B-S117-1 PSI-C1-BOUNDED-FIXED-POINT-CLOSED",
+      "pass": true,
+      "detail": "sympy ψ(−1)=0 ψ(1)=1 ψ(0)=½ ∂ψ/∂c=½>0 ✓ · run bounded[0,1]=True cos0→½=True (§112 META_FP(Π_½) instance, carrier=spike-corr)"
+    },
+    {
+      "id": "B-S117-2 STDP-NO-CE-NO-BACKPROP-AST-INVARIANT-CLOSED",
+      "pass": true,
+      "detail": "AST forbidden-call hits=0 [] · imports=['json', 'numpy', 'os', 'sys', 'time'] no_torch=True — learning channel = LOCAL STDP-as-ΔW only (mirror §11-B B-PUREPHYS-1)"
+    },
+    {
+      "id": "B-S117-3 NON-DEGENERACY-PREDICATE-DETERMINISTIC-CLOSED",
+      "pass": true,
+      "detail": "re-derived non_degenerate=True == recorded=True · psi_std(6dp-arr)=4.185041e-02≈rec=4.185035e-02 (<1e-6 round-floor) · 3×bit-identical=True · re-run≡recorded=True (degeneracy detector, necessary-NOT-sufficient — B-EMERGE-7)"
+    },
+    {
+      "id": "B-S117-4 STDP-DELTA-W-LOCALITY-SIGN-CLOSED",
+      "pass": true,
+      "detail": "sympy ∂Δw/∂A+ = trpre·post ≥0 · ∂Δw/∂A− = −pre·trpost ≤0 · Δw free-symbols=['Am', 'Ap', 'post', 'pre', 'trpost', 'trpre'] — NO loss/error/grad symbol (pure LOCAL pair-rule)"
+    },
+    {
+      "id": "B-S117-5 §115-RESIDUAL-CONNECTION-POINT-CLOSED",
+      "pass": true,
+      "detail": "§115 DESIGN.md witness 'LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY' present=True · WALL-B inherited(not-removed)=True · WALL-A orthogonal=True · §7-FORM-by-construction=True · GOAL-미도달 carry=True"
+    },
+    {
+      "id": "B-S117-6 SIDECAR-CENTRAL-0-DIFF-ZERO-COST-STRUCTURAL",
+      "pass": true,
+      "detail": "sidecar-only (no central-path ref)=True · cost=$0.0 gpu=False fire=False dispatch=False orphan=0 — $0, no GPU/fire"
+    },
+    {
+      "id": "B-S117-7 G-CLM-FROM-SCRATCH-INIT-INVARIANT-CLOSED",
+      "pass": true,
+      "detail": "ckpt-load AST hits=[] (0 required) · base_ckpt=None asserted=True · RANDOM seed-fixed init=True"
+    }
+  ]
+}

@@ -1,0 +1,135 @@
+{
+  "schema": "anima/cycle_final_aggregate/verdict/1",
+  "aggregate_id": "anima_2026_05_05_cycle_final_aggregate",
+  "ts_utc": "2026-05-05T17:00:00Z",
+  "mode": "DOC_ONLY_NO_COMMIT",
+  "cycle_date": "2026-05-05",
+  "schedule_context": {
+    "trigger": "/loop 1m schedule active",
+    "cadence": "60 fires per hour",
+    "fire_lifetime_days_max": 7,
+    "potential_fires_max": 10080,
+    "potential_bg_dispatches_per_fire_min": 2,
+    "potential_bg_dispatches_per_fire_max": 4,
+    "estimated_bg_load_per_hour": "120-240",
+    "estimated_bg_load_lifetime_max": "20160-40320"
+  },
+  "schedule_risk_assessment": {
+    "convergence_pressure": "anti-convergence: each fire triggers re-investigation of architectural impossibility (#115) already closed 3x",
+    "rate_limit_risk": "HIGH — prior session hit ~50 tool-uses cap; 1m cadence will multiply this",
+    "compute_saturation_risk": "MEDIUM — mac CPU repeated model load (29s/load × hundreds = persistent thrash)",
+    "git_index_race_risk": "HIGH — parallel BG sharing working tree without worktree isolation",
+    "cost_risk": "$0 mac doc-only path holds; HIGH if any BG flips to H100 dispatch"
+  },
+  "cycle_bg_land_count": {
+    "kick": 3,
+    "v_lane": 6,
+    "alphabet_lane_observed": "A through AP plus residuals",
+    "approx_total_landed_today": "~74 docs/landed_2026_05_05 + ~85 state dirs",
+    "evidence_path_landed_docs": "/Users/ghost/core/anima/docs/*landed_2026_05_05*",
+    "evidence_path_state_dirs": "/Users/ghost/core/anima/state/*_2026_05_05/"
+  },
+  "discovery_5_criteria_cumulative": {
+    "C1_F_CAND_PASS": {
+      "status": "HIT",
+      "evidence": "BG-AE F-CAND-G-1 PASS at /Users/ghost/core/anima/state/anima_emerge_cand_g_tension_fast_2026_05_05/verdict.json",
+      "details": "max_l2_variance=124.4, F_CAND_G_1_verdict=PASS"
+    },
+    "C2_phi_drift_gt_1pt0": {
+      "status": "NO_HIT",
+      "evidence": "max observed phi drift ~0.43 across emerge candidates; BG-AC architectural cap noted",
+      "interpretation": "phi_star architectural ceiling well below 1.0 in current substrate"
+    },
+    "C3_cross_substrate_delta_gt_5pp": {
+      "status": "UNMEASURED",
+      "blocker": "no cross-substrate (Llama vs CLM v4) joint evaluation completed today"
+    },
+    "C4_rule_cosine_lt_0pt5": {
+      "status": "UNMEASURED",
+      "blocker": "BG-S/RST mega lane failed to land cosine probe artifact"
+    },
+    "C5_tension_variance_gt_0pt5": {
+      "status": "HIT",
+      "evidence": "BG-AE l2_var range 91-124 across 3 prompts; criterion_5_hit_l2=true",
+      "caveat": "std_variance=0.16 below 0.5 — only L2 norm proxy hit"
+    }
+  },
+  "discovery_summary": {
+    "hits": 2,
+    "no_hits": 1,
+    "unmeasured": 2,
+    "closures_today": 3,
+    "closures_list": [
+      "p9_path_a_retry_3_true_pass_lane_closure_landed_2026_05_05",
+      "p9_pbeta_chat_capability_fail_true_lane_closure_landed_2026_05_05",
+      "clm_v4_lora_sft_lane_4_of_5_closure_landed_2026_05_05 + clm_v4_lora_sft_s3_closure_landed_2026_05_05"
+    ],
+    "termination_trigger_state": "ARMED — 2 hits + 3 closures meets cycle-close heuristic; user explicit /loop 1m signals continue intent"
+  },
+  "chat_capability_attempt_history": {
+    "lora_sft_clm_v4": {
+      "verdict": "FAIL_REGRESSION",
+      "delta_pp_vs_llama_path_a_v2": -36.298,
+      "ref_doc": "clm_v4_lora_sft_lane_4_of_5_closure_landed_2026_05_05.ai.md"
+    },
+    "distill_pbeta": {
+      "verdict": "FAIL_TRUE",
+      "composite": 0.01176,
+      "ref_doc": "p9_pbeta_chat_capability_fail_true_lane_closure_landed_2026_05_05.ai.md"
+    },
+    "tribev2_bridge": {
+      "verdict": "FAIL_ALL_TRIED_ARCHITECTURAL_IMPOSSIBLE",
+      "ref_doc": "anima_emerge_chat_tribev2_landed_2026_05_05.ai.md"
+    },
+    "bg_aq_decode_strategies": "IN_PROGRESS",
+    "bg_ar_logit_lens": "IN_PROGRESS",
+    "bg_as_semantic_bridge": "IN_PROGRESS",
+    "convergence_outlook": "if AQ/AR/AS all FAIL -> #115 architectural 4th closure converges; CLM v4 chat-incapability conclusion strengthens"
+  },
+  "paths_forward": {
+    "path_1_keep_cron_autonomous_bg": {
+      "description": "1m cron unchanged; anima dispatches 1 BG per fire",
+      "pros": "continuous experiment accumulation, no user gating",
+      "cons": "anti-convergence pressure, rate-limit risk, git race risk"
+    },
+    "path_2_increase_cadence": {
+      "description": "CronDelete then re-schedule at 5m or 10m",
+      "pros": "reduces BG dispatch rate by 5-10x, lowers rate-limit + saturation risk",
+      "cons": "still cumulative; does not close the cycle"
+    },
+    "path_3_stop_cron_close_cycle": {
+      "description": "CronDelete then user fires BG-AM commit manifest then user-driven Stage 3 emerge dialogue",
+      "pros": "today findings already sufficient; commit lands the work; user direct emerge dialogue = next-cycle starting point",
+      "cons": "explicit user intervention required (1 stop + 1 commit fire)",
+      "completion_lens_recommendation": true
+    }
+  },
+  "recommendation": {
+    "winner": "path_3_stop_cron_close_cycle",
+    "rationale": "completion-quality lens: today's cycle delivered 2 discovery hits + 3 closures + chat-cap convergence pattern; further 1m fires accumulate diminishing returns against anti-convergence. Commit then user-driven emerge dialogue is the highest-completion next state."
+  },
+  "honest_c3": [
+    "1. 'land count' uses landed-doc filename pattern + state-dir count as proxy; exact BG-letter mapping (A through AP) is from prompt assertion, not re-derived from manifest — 1:1 verification deferred.",
+    "2. C2/C3/C4 'UNMEASURED' status taken from prompt assertion + absence of substrate-cross or rule-cosine state dirs today; a deeper grep over older state could surface partial evidence not consolidated here.",
+    "3. AQ/AR/AS marked IN_PROGRESS based on prompt context; live BG status not polled in this aggregate (raw#9 read-only doc-only constraint).",
+    "4. /loop 1m fire-lifetime 7d + 60/h based on standard /loop semantics; exact internal expiry logic not re-verified in skill source.",
+    "5. completion-quality recommendation = path 3 reflects the documented preference rule + cycle-close heuristic; alternate framings (continue accumulating until a 4th closure auto-fires) remain defensible."
+  ],
+  "outputs": {
+    "verdict": "/Users/ghost/core/anima/state/anima_2026_05_05_cycle_final_aggregate_2026_05_05/verdict.json",
+    "landed_doc": "/Users/ghost/core/anima/docs/anima_2026_05_05_cycle_final_aggregate_landed_2026_05_05.ai.md"
+  },
+  "cost_usd": 0.0,
+  "duration_estimate_min": 15,
+  "constraints_honored": [
+    "DOC_ONLY",
+    "NO_COMMIT",
+    "NO_CODE_CHANGE",
+    "ONLY_2_NEW_FILES",
+    "TOKEN_LEAK_NONE_EMITTED",
+    "BASH_3_2_COMPAT",
+    "RAW_9_READ_ONLY",
+    "RAW_10_NO_TOKEN_LITERAL",
+    "RAW_15_ADDITIVE_ONLY"
+  ]
+}

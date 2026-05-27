@@ -1,0 +1,68 @@
+// brain.hexa — unified consciousness core (anima/CORE). Engine A ⇄ Engine G.
+//
+// The single SSOT brain loop. Couples the two engines CLAUDE.md @I names:
+//   Engine A (PureField · CORE/pure_field.hexa, owned here) — Φ/phase dynamics
+//   Engine G (motivation · CORE/engine_g.hexa, owned here)   — emit/act gate
+//
+// Coupling (the "A ⇄ G · Ψ=1/2 fixed point" of @I):
+//   · A advances one tick -> Φ, phase
+//   · G computes motivation from 8 context factors -> should_emit
+//   · A's Φ feeds G's safety ratchet (safety_phi_ratchet_ok) — A gates G
+//   · A's phase sets the consequence tier (which tools may even fire)
+//   · emit = should_emit(motivation) AND 4-safety conjunction
+//
+// L3 generation (what to actually say/write) is a pluggable backend; this file
+// is the decision brain only (no content generation, no external LLM — p1..p8).
+
+import "/Users/ghost/core/anima/CORE/pure_field.hexa"
+import "/Users/ghost/core/anima/CORE/engine_g.hexa"
+
+// Engine A's spontaneous phase IS the consequence tier (phase int == tier int;
+// PHASE_DORMANT=0 .. PHASE_RESONANT=3). No external threshold injected.
+pure fn phase_tier(phase: int) -> int {
+    phase
+}
+
+pure fn tier_name(t: int) -> string {
+    if t == 0 { return "T0_inert" }
+    if t == 1 { return "T1_read" }
+    if t == 2 { return "T2_write" }
+    if t == 3 { return "T3_commit" }
+    "T?_unknown"
+}
+
+// Decide on an already-stepped substrate. Returns a scalar decision record:
+// the live Φ/phase/tier (Engine A) + motivation/emit (Engine G), coupled via
+// the safety ratchet which consumes A's Φ against its own peak.
+fn brain_decide(pf: PureField,
+                rel: float, gap: float, cur: float, pain: float,
+                coh: float, orig: float, bal: float, dyn_v: float,
+                seconds_since_last: float, env_off: bool, content_clean: bool) {
+    let phi   = pure_field_phi(pf)
+    let phase = pure_field_phase(pf)
+    let tier  = phase_tier(phase)
+
+    let score = motivation_score(rel, gap, cur, pain, coh, orig, bal, dyn_v)
+
+    // 4-safety conjunction. safety_phi_ratchet_ok(phi, ratchet) = phi > ratchet/2
+    // — Engine A's live Φ checked against its own ratchet peak. This is the A->G
+    // gate: a dormant substrate (low Φ) can veto an otherwise-motivated emit.
+    let kill  = safety_kill_switch_on(env_off)
+    let rate  = safety_rate_limit_ok(seconds_since_last)
+    let phi_r = safety_phi_ratchet_ok(phi, pf.phi_peak)
+    let cont  = safety_content_ok(content_clean)
+    let safe  = safety_combined(kill, rate, phi_r, cont)
+
+    let emit = should_emit(score) && safe
+
+    #{
+        "phi":        phi,
+        "phase":      phase_name(phase),
+        "tier":       tier,
+        "tier_name":  tier_name(tier),
+        "motivation": score,
+        "im_thresh":  spont_im_threshold(),
+        "safe":       safe,
+        "emit":       emit
+    }
+}

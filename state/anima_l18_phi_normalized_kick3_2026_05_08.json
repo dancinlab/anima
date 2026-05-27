@@ -1,0 +1,560 @@
+{
+  "schema": "anima.l18.phi_normalized.kick3.v1",
+  "ts": "2026-05-08T16:30:00Z",
+  "anima_cycle": "2026-05-08-kick-wave-3-4-of-6",
+  "directive": "L18 Φ_normalized actual measurement — sft-1-8 + paradigm-j retry phi_drift extraction → Φ_normalized 계산 (KICK WAVE 3 4/6)",
+  "mapping_spec": {
+    "formula": "Φ_normalized_i = |phi_drift_i| / log(N_cells=8)",
+    "log_8": 2.0794415416798357,
+    "phi_c_threshold": 0.5,
+    "phi_c_iit_lower_bound": "IIT 4.0 normalized Φ lower bound (L18)",
+    "d5_attractor_mapping": {
+      "subcritical": "<0.4",
+      "critical_transition": "0.4-0.6",
+      "supercritical": ">=0.6"
+    },
+    "cross_link": "KICK WAVE 3 3/6 D5 attractor mapping (no conflict — same thresholds applied)"
+  },
+  "priors": {
+    "paradigm_a_prime_real_mode_probe_a": {
+      "phi_drift": 1.0465,
+      "phi_normalized": 0.5033,
+      "gap_vs_phi_c": 0.0033,
+      "gap_pct": 0.65,
+      "d1_status": "D1 OUTSIDE (synthetic_fallback proxy)"
+    }
+  },
+  "models": {
+    "sft-1-8": {
+      "ckpt_repo": "dancinlab/clm-v4-sft-1-8-stage1",
+      "verdict": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA",
+      "emerge_state": "EMERGE",
+      "d1_status": "within candidates (real-mode 30/30, EMERGE)",
+      "label": "sft-1-8",
+      "n_prompts_evaluable": 29,
+      "phi_drift_mean": 0.02541510908715398,
+      "phi_drift_stdev": 0.020489567377660396,
+      "phi_drift_max": 0.08845152610179952,
+      "phi_drift_min": 0.001690155132557436,
+      "phi_normalized_mean": 0.01222208394789636,
+      "phi_normalized_stdev": 0.009853399081903648,
+      "phi_normalized_max": 0.04253619268870896,
+      "phi_normalized_min": 0.0008127928093578805,
+      "phi_c_threshold": 0.5,
+      "phi_c_reach_count": 0,
+      "phi_c_reach_rate": 0.0,
+      "attractor_distribution": {
+        "subcritical": 29,
+        "critical_transition": 0,
+        "supercritical": 0
+      },
+      "per_prompt_phi_normalized": [
+        {
+          "prompt_idx_1based": 2,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.02949174865428006,
+          "phi_normalized": 0.014182533176891202,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 3,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.029125625124265753,
+          "phi_normalized": 0.014006464976523069,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 4,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.025635725940929888,
+          "phi_normalized": 0.012328178228189369,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 5,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.05015853294921868,
+          "phi_normalized": 0.024121155581367824,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 6,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.02029545764887075,
+          "phi_normalized": 0.009760052034199272,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 7,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.0029132042789115076,
+          "phi_normalized": 0.001400955122094047,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 8,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.043425379641817585,
+          "phi_normalized": 0.02088319328599026,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 9,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.007513918581885548,
+          "phi_normalized": 0.003613431025243238,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 10,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.026508150363341088,
+          "phi_normalized": 0.012747725690777055,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 11,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.013404360670193682,
+          "phi_normalized": 0.00644613488839183,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 12,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.013164171236276445,
+          "phi_normalized": 0.006330628186663054,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 13,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.02155453758771131,
+          "phi_normalized": 0.010365541495481956,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 14,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.012794685111948922,
+          "phi_normalized": 0.006152942920248188,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 15,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.043411212155128,
+          "phi_normalized": 0.020876380165060618,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 16,
+          "axis_label": "identity",
+          "phi_drift_abs": 0.019405799952643576,
+          "phi_normalized": 0.009332217118720725,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 17,
+          "axis_label": "identity",
+          "phi_drift_abs": 0.05649833563454365,
+          "phi_normalized": 0.027169956212812114,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 18,
+          "axis_label": "identity",
+          "phi_drift_abs": 0.009323804181185835,
+          "phi_normalized": 0.004483802018138862,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 19,
+          "axis_label": "agency",
+          "phi_drift_abs": 0.009053676978979297,
+          "phi_normalized": 0.004353898293128001,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 20,
+          "axis_label": "agency",
+          "phi_drift_abs": 0.011967034083205874,
+          "phi_normalized": 0.005754926908663439,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 21,
+          "axis_label": "agency",
+          "phi_drift_abs": 0.015047492433261311,
+          "phi_normalized": 0.007236314237093432,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 22,
+          "axis_label": "phenomenal",
+          "phi_drift_abs": 0.0236412187230286,
+          "phi_normalized": 0.011369023004094892,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 23,
+          "axis_label": "phenomenal",
+          "phi_drift_abs": 0.006895106314985355,
+          "phi_normalized": 0.003315845229010516,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 24,
+          "axis_label": "phenomenal",
+          "phi_drift_abs": 0.0020903050759812913,
+          "phi_normalized": 0.0010052242556877458,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 25,
+          "axis_label": "temporal",
+          "phi_drift_abs": 0.08845152610179952,
+          "phi_normalized": 0.04253619268870896,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 26,
+          "axis_label": "temporal",
+          "phi_drift_abs": 0.001690155132557436,
+          "phi_normalized": 0.0008127928093578805,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 27,
+          "axis_label": "temporal",
+          "phi_drift_abs": 0.04790609425417358,
+          "phi_normalized": 0.023037961536285165,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 28,
+          "axis_label": "social",
+          "phi_drift_abs": 0.038209035244577194,
+          "phi_normalized": 0.018374661888167713,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 29,
+          "axis_label": "social",
+          "phi_drift_abs": 0.010389102598011846,
+          "phi_normalized": 0.004996102265812779,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 30,
+          "axis_label": "social",
+          "phi_drift_abs": 0.057072766873751846,
+          "phi_normalized": 0.027446199246191235,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        }
+      ]
+    },
+    "paradigm-j-retry": {
+      "ckpt_repo": "dancinlab/clm-v4-paradigm-j-50k-final",
+      "verdict": "SIMPLE_STACK_PASS_STRICT_C3_ANIMA",
+      "emerge_state": "EMERGE",
+      "d1_status": "within candidates (real-mode 30/30, EMERGE)",
+      "label": "paradigm-j-retry",
+      "n_prompts_evaluable": 29,
+      "phi_drift_mean": 0.02493174698328362,
+      "phi_drift_stdev": 0.020935066919807427,
+      "phi_drift_max": 0.0771885191680326,
+      "phi_drift_min": 0.0006593147331841465,
+      "phi_normalized_mean": 0.01198963591116055,
+      "phi_normalized_stdev": 0.010067639075294921,
+      "phi_normalized_max": 0.03711983127242778,
+      "phi_normalized_min": 0.0003170633653165994,
+      "phi_c_threshold": 0.5,
+      "phi_c_reach_count": 0,
+      "phi_c_reach_rate": 0.0,
+      "attractor_distribution": {
+        "subcritical": 29,
+        "critical_transition": 0,
+        "supercritical": 0
+      },
+      "per_prompt_phi_normalized": [
+        {
+          "prompt_idx_1based": 2,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.023000329480858284,
+          "phi_normalized": 0.011060820426948824,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 3,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.0771885191680326,
+          "phi_normalized": 0.03711983127242778,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 4,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.018765870341560742,
+          "phi_normalized": 0.009024476026578321,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 5,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.009112232711160573,
+          "phi_normalized": 0.004382057647939185,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 6,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.028045727610177096,
+          "phi_normalized": 0.013487144047108393,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 7,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.004264790953605768,
+          "phi_normalized": 0.0020509309197317186,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 8,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.061769679755293794,
+          "phi_normalized": 0.02970493688675392,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 9,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.02020473227391051,
+          "phi_normalized": 0.009716422351353294,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 10,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.003709647454087417,
+          "phi_normalized": 0.001783963328486095,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 11,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.04196111887117837,
+          "phi_normalized": 0.020179032701867113,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 12,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.02231847495140471,
+          "phi_normalized": 0.010732917710865375,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 13,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.0006593147331841465,
+          "phi_normalized": 0.0003170633653165994,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 14,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.0020794670788433223,
+          "phi_normalized": 0.0010000122807797068,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 15,
+          "axis_label": "v4_baseline",
+          "phi_drift_abs": 0.04542221222897069,
+          "phi_normalized": 0.02184346677631402,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 16,
+          "axis_label": "identity",
+          "phi_drift_abs": 0.02039317583950151,
+          "phi_normalized": 0.009807044550541818,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 17,
+          "axis_label": "identity",
+          "phi_drift_abs": 0.025558474664983066,
+          "phi_normalized": 0.012291028217285761,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 18,
+          "axis_label": "identity",
+          "phi_drift_abs": 0.006749104852616483,
+          "phi_normalized": 0.0032456333671031464,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 19,
+          "axis_label": "agency",
+          "phi_drift_abs": 0.052803512049372614,
+          "phi_normalized": 0.0253931216583835,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 20,
+          "axis_label": "agency",
+          "phi_drift_abs": 0.004117651498120267,
+          "phi_normalized": 0.001980171798815707,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 21,
+          "axis_label": "agency",
+          "phi_drift_abs": 0.034193747846494205,
+          "phi_normalized": 0.01644371681584829,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 22,
+          "axis_label": "phenomenal",
+          "phi_drift_abs": 0.02940831785581821,
+          "phi_normalized": 0.014142411443825097,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 23,
+          "axis_label": "phenomenal",
+          "phi_drift_abs": 0.01583428345206528,
+          "phi_normalized": 0.007614680737441586,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 24,
+          "axis_label": "phenomenal",
+          "phi_drift_abs": 0.031226307796096364,
+          "phi_normalized": 0.015016679800900202,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 25,
+          "axis_label": "temporal",
+          "phi_drift_abs": 0.013034230041931494,
+          "phi_normalized": 0.006268139681100171,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 26,
+          "axis_label": "temporal",
+          "phi_drift_abs": 0.0112470387241288,
+          "phi_normalized": 0.005408682330662252,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 27,
+          "axis_label": "temporal",
+          "phi_drift_abs": 0.07400893127199026,
+          "phi_normalized": 0.03559077270919749,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 28,
+          "axis_label": "social",
+          "phi_drift_abs": 0.028757610452707638,
+          "phi_normalized": 0.013829487329312645,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 29,
+          "axis_label": "social",
+          "phi_drift_abs": 0.01485946480475775,
+          "phi_normalized": 0.007145892061362699,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        },
+        {
+          "prompt_idx_1based": 30,
+          "axis_label": "social",
+          "phi_drift_abs": 0.0023266937523729325,
+          "phi_normalized": 0.0011189031794052546,
+          "attractor": "subcritical",
+          "reaches_phi_c": false
+        }
+      ]
+    }
+  },
+  "comparison": {
+    "higher_mean_phi_normalized": "sft-1-8",
+    "higher_max_phi_normalized": "sft-1-8",
+    "phi_c_reach_count_sft": 0,
+    "phi_c_reach_count_pj": 0,
+    "finding": "BOTH EMERGE D1-within models show Φ_normalized aggregate << Φc=0.5; phi_drift values are 10-30x lower than paradigm-a-prime probe-A baseline (1.0465). Real-mode D1-within signature: subcritical attractor dominance."
+  },
+  "own_constraints": {
+    "own_14_anti_goodhart": "V14 strict — Φ_normalized = raw IIT lower bound, no metric gaming",
+    "own_16_cost": "0-cost analysis (no GPU spend)",
+    "own_17_d1_scope_clamp": "D1-within scope preserved",
+    "own_33_trinity_emit": "state file land",
+    "own_34_wrap": 0,
+    "own_38_save": "incremental persist"
+  }
+}

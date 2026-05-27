@@ -1,0 +1,41 @@
+{
+  "schema": "anima/falsifier_preregister/1",
+  "falsifier_id": "F-A1",
+  "tier_1_link": "T1-A1",
+  "title": "EEG -> AKD1000 direct path 5x latency falsifier",
+  "preregistered_at_utc": "2026-05-01T00:00:00Z",
+  "agent": "n_substrate_n2_prep",
+  "claim_under_test": "ADM-encoded EEG -> akida.Model.forward yields >=5x median end-to-end latency reduction vs float32 EEG -> Conv2D-ANN on RPi5 CPU",
+  "experimental_setup": {
+    "input": "16ch EEG, fs=250Hz, 1s windows (250 samples/ch)",
+    "n_windows": 100,
+    "baseline_path": {
+      "preprocessing": "bandpass 1-45Hz Butterworth order 4 + 10s sliding zscore",
+      "model": "small Conv2D-ANN, 4 layers, ~50k params, float32",
+      "host": "RPi5 ARM Cortex-A76 quad 2.4GHz CPU",
+      "metric": "wall-clock t_baseline per window (ms)"
+    },
+    "proposed_path": {
+      "preprocessing": "same bandpass + zscore, then ADM (theta=0.5sigma, refractory=4ms)",
+      "rasterizer": "(1, T_bin=125, C=16, P=2) uint8, S_cap=15 (4-bit)",
+      "model": "cnn2snn-converted equivalent of baseline ANN, mapped onto AKD1000",
+      "host": "AKD1000 via M.2 PCIe gen2 single-lane on RPi5",
+      "metric": "wall-clock t_akida per window (ms), measured around model.forward call"
+    }
+  },
+  "pass_criteria": {
+    "primary": "median(t_baseline) / median(t_akida) >= 5.0 over 100 windows",
+    "secondary_accuracy": "task accuracy (e.g. eyes-open/eyes-closed alpha discrimination) drop <= 5pp vs baseline",
+    "energy_aux": "AKD1000 wall-power <= 1.5 W typical (NDIR / USB power meter)"
+  },
+  "fail_modes": [
+    "PCIe single-lane saturates and dominates latency (mitigation: batch multiple windows, or measure forward-only excluding transfer)",
+    "ARM64 akida wheel missing -> baseline cannot be measured on same host (mitigation: encoder on RPi5, model.forward on x86 dev host with USB-attached AKD1000)",
+    "cnn2snn fails to convert ANN -> drop to mapped akida.Model directly built via akida.Model() API",
+    "task accuracy drops > 5pp -> tier_1 claim downgraded to latency-only, separate cross-substrate Phi falsifier (T1-A2/F-A2) decides V_phen preservation"
+  ],
+  "graduation_witness_emit_target": "state/n_substrate_n2_prep_2026_05_01/falsifier_F_A1_witness_<ts>.json (D+0 hardware run)",
+  "preregistration_only": true,
+  "live_measurement_count": 0,
+  "honest_c3_note": "Hardware not yet in hand. Encoder dryrun (--selftest) is preflight only; chip-side measurement gated on Akida dev kit physical arrival."
+}

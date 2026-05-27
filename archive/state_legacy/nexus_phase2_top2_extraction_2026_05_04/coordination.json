@@ -1,0 +1,70 @@
+{
+  "date": "2026-05-04",
+  "coordination_strategy": "joined_single_commit_n6_arch_sequential_nexus_stage",
+  "rationale": "Both Phase-2 ZERO_COLLISION modules share CANON working tree at main branch. Joined single commit avoids race-condition partial commits and matches Phase-1 crystallography_n6 + chip_isa_n6 precedent. Nexus deletes staged separately (no commit) per constraint no_auto_commit_nexus_delete.",
+  "execution_mode": {
+    "actual": "single_agent_sequential",
+    "rationale_vs_2_bg_parallel": "Both modules' file ops + smoke + commit are I/O-bound and complete in <1min each. Single-agent sequential keeps git tree state deterministic (no commit-race), produces a single joined commit (cleaner history), and matches Phase-1 precedent (chip_isa_n6 audit notes 'joined-with-sister' strategy). 2-BG parallel would have introduced staging/commit ordering complexity for marginal wallclock savings (~30s)."
+  },
+  "git_event_timeline": [
+    {
+      "step": 1,
+      "actor": "n6-arch",
+      "action": "git add domains/energy/fusion/{fusion_ledger.hexa,fusion_ledger.README.md} domains/physics/tabletop-blackhole/{tabletop_blackhole.hexa,tabletop_blackhole.README.md}",
+      "result": "4 new files staged"
+    },
+    {
+      "step": 2,
+      "actor": "n6-arch",
+      "action": "git commit -m 'feat(extract): absorb fusion_ledger + tabletop_blackhole from nexus (Phase-2 top-2 ZERO_COLLISION)'",
+      "commit_sha": "b59d38b3",
+      "files_changed": 4,
+      "insertions": 743
+    },
+    {
+      "step": 3,
+      "actor": "n6-arch",
+      "action": "git push origin main",
+      "result": "e6141bce..b59d38b3 main -> main (pushed to PUBLIC GitHub)"
+    },
+    {
+      "step": 4,
+      "actor": "nexus",
+      "action": "git rm -r modules/fusion_ledger/ modules/tabletop_blackhole/",
+      "result": "4 deletions staged on branch feat/qmirror-cli-programmatic-consumption (NOT committed)"
+    }
+  ],
+  "uncommitted_state_post_extraction": {
+    "n6_arch": {
+      "branch": "main",
+      "uncommitted": ["README.md (sister-substrates section, pre-existing — NOT touched by this extraction)"]
+    },
+    "nexus": {
+      "branch": "feat/qmirror-cli-programmatic-consumption",
+      "uncommitted_changes": "see git status — includes pre-existing modifications + 4 staged deletes from this extraction + 4 staged deletes from Phase-1 (crystallography_n6) + 4 untracked cli/ files",
+      "user_action_required": "decide nexus commit strategy: separate per-module delete commits, or batch all module deletes into one cleanup commit"
+    }
+  },
+  "follow_up_modules": {
+    "phase_2_remaining": [
+      {
+        "rank": 3,
+        "name": "chip_rtl_gen",
+        "blocker": "MERGE_REQUIRED with R25 legacy 472-LoC predecessor",
+        "next_action": "manual diff review of nexus chip_rtl_gen.hexa vs n6-arch rtl_generator.hexa to determine supersede vs complement"
+      },
+      {
+        "rank": 4,
+        "name": "mc_integrate",
+        "blocker": "DECOUPLE_FIRST (sim_bridge ANU path)",
+        "next_action": "Phase-A 2hr decouple cycle then Phase-B 12hr standalone repo extract"
+      },
+      {
+        "rank": 5,
+        "name": "qrng",
+        "blocker": "SCAFFOLD_FIRST (README + tests + 5-source registry)",
+        "next_action": "Phase-A 4hr scaffold cycle then Phase-B 12hr standalone repo extract"
+      }
+    ]
+  }
+}

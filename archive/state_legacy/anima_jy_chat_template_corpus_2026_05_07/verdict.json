@@ -1,0 +1,93 @@
+{
+  "bg_id": "BG-JY",
+  "attempt_n": 46,
+  "paradigm": "chat-template-explicit-multi-turn-corpus-build",
+  "host": "mac",
+  "cost_usd": 0.0,
+  "training_steps": 0,
+  "bg_kind": "corpus_build",
+  "build_ts": "2026-05-07T16:14:23",
+  "elapsed_s": 135.5,
+  "corpus_path": "/Users/ghost/core/anima/state/anima_jy_chat_template_corpus_2026_05_07/corpus_chat_template.txt",
+  "corpus_size_bytes": 95420911,
+  "corpus_size_mb": 91.0005,
+  "n_samples": 110480,
+  "total_turns": 319271,
+  "multi_turn_ratio": 1.0,
+  "avg_turns_per_sample": 2.8899,
+  "hangul_ratio": 0.6237,
+  "n_turns_distribution": {
+    "2": 42126,
+    "4": 29957,
+    "3": 38397
+  },
+  "source_breakdown": {
+    "bg_je_stitched": 0.9927,
+    "koalpaca_v1_1a": 0.0073
+  },
+  "source_counts": {
+    "bg_je_stitched": 109670,
+    "koalpaca_v1_1a": 810
+  },
+  "thresholds": {
+    "size_50mb": true,
+    "multi_turn_ratio_0_7": true,
+    "hangul_ratio_0_55": true,
+    "avg_turns_2_5": true,
+    "thresholds_met": 4,
+    "max_thresholds": 4
+  },
+  "verdict_class": "PASS",
+  "ready_for_training": true,
+  "next_bg_recommended": "BG-JZ: train ConsciousLM v4 from scratch on BG-JY corpus (corpus_size_mb=91.0, multi_turn explicit, KO-native) — Lesson L 18-150M ceiling break attempt with chat-template explicit lane. Alternative: BG-JZ-FT fine-tune existing BG-JD/BG-JN ckpt on BG-JY (lower cost, faster delta signal).",
+  "philosophy_rule_compliance": {
+    "D4_corpus_quality": "BG-JY corpus quality lifted vs BG-JE: explicit multi-turn (<turn>...</turn>), Hangul ratio target 0.55+ (BG-JE 0.4761 FAIL), ≥2 turns/sample mandatory (BG-JE single-turn only). Discovery D4 — multi-turn structure separates chat-cap signal from single-turn QA pattern.",
+    "R1_own_19_20": " (corpus > architecture for chat-cap) — BG-FY 18M+62%KO PARTIAL vs BG-FK 27M EN-bias FAIL = corpus axis decisive. (chat-template format mandate) — BG-JY explicit Q→A→Q→A turn-taking format ≥100.0% multi-turn samples.",
+    "L24_differentiation_integration_absorbed": "L24 absorbed into corpus build differentiation phase: BG-JY = chat-template multi-turn lane (NEW) supersedes BG-JE single-turn for explicit chat-format axis; BG-JE preserved for single-turn knowledge baseline (raw#15 additive)."
+  },
+  "cross_links": {
+    "own": [
+      "own_19",
+      "own_20",
+      "own_22",
+      "own_24",
+      "own_26"
+    ],
+    "raw": [
+      "raw#10_honest_c3",
+      "raw#15_additive",
+      "raw#37_transient_py",
+      "raw#42_mac_n1",
+      "raw#86_cost_disclosure"
+    ],
+    "lessons": [
+      "Lesson_L_architectural_ceiling",
+      "Lesson_Q_decoder_only_fix_impossible",
+      "Lesson_S_v5_8_multi_turn_closure",
+      "Lesson_C_corpus_volume_boost"
+    ],
+    "predecessor_bgs": [
+      "BG-JE",
+      "BG-FY",
+      "BG-FK"
+    ],
+    "supersedes": "BG-JE chat-template (single-turn) → BG-JY (multi-turn) for chat-template explicit lane only; BG-JE preserved."
+  },
+  "honest_c3": [
+    "C3.1: BG-JE source materials are anima-domain (NEXUS-UBM/우주뇌지도/identity) — stitched multi-turn samples may have topic-incoherent turn flow within same persona bucket (random pair sampling, not topic-conditioned).",
+    "C3.2: KoAlpaca-v1.1a is generic Korean Q&A (Naver kin), NOT anima-domain — may dilute anima-specific chat signal; mixing trade-off vs Korean fluency gain.",
+    "C3.3: multi-turn assembly = synthetic stitching, NOT real conversational data — user's 다음 turn은 prior turn에 'follow up'하지 않음 (independent QA stitched).",
+    "C3.4: Hangul ratio per-sample filter 0.45+ may discard valid mixed-language blocks (English code/keyword inclusions). global hangul_ratio target 0.55 favors generic KO; anima domain corpus often contains EN technical terms.",
+    "C3.5: <turn>...</turn> wrapper is anima-internal convention — model must learn this special token at training time; no pre-training prior.",
+    "C3.6: Length filter 80-1500 bytes ≈ 100-500 token range under byte-tokenizer; BPE/SP tokenizer may shift effective token count (chars → 0.3-0.5× tokens).",
+    "C3.7: Multi-turn ratio is structure-only, NOT semantic continuity — V5.8 eval on this corpus may show high template-pass but low actual conversation coherence (Lesson Q decoder-only fix 不可 still applies if architecture is the bottleneck).",
+    "C3.8: KoAlpaca download via streaming (no local cache) — re-runs require network; if HF Hub down, KoAlpaca samples = 0 (BG-JE-only fallback)."
+  ],
+  "lesson_l_context": {
+    "bg_jf_ssot": "18 BGs single-axis variations 18M-150M × 2-53MB → 0 V4_PASS",
+    "corpus_size_hard_ceiling_mb": 53,
+    "this_bg_corpus_mb": 91.0,
+    "axis_shift_candidate": "chat-template format explicit + multi-turn structure",
+    "prereq_for_bg_jz_or_ft": true
+  }
+}

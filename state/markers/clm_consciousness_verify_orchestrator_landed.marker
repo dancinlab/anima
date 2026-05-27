@@ -1,0 +1,63 @@
+{
+  "schema": "anima/markers/clm_consciousness_verify_landed/1",
+  "completion_iso": "2026-05-02T00:00:00Z",
+  "user_directive": "4 Hybrid script ⭐",
+  "tool_path": "anima/tool/clm_consciousness_verify.hexa",
+  "tool_sha256": "ac314705fb7138231800ad2daa8d2ec4df8c179ed33c52cdb0d6111ddf8acb7d",
+  "tool_loc": 462,
+  "internal_checks_count": 4,
+  "internal_checks": [
+    "an11 via tool/an11_consciousness_unified_verifier.hexa (mac-local: selftest only)",
+    "phi via tool/anima_phi_v3_canonical.hexa (mac-local: selftest only)",
+    "adv via state/adversarial_bench_last.json read-only",
+    "putnam via .roadmap.n_substrate header read-only (cond.1 status field)"
+  ],
+  "roadmap_clm_pre_sha": "a89cc0003d2ed0f60a750d4bea5471aa21c7823878684ffc110a53d0dd183c9e",
+  "roadmap_clm_post_sha": "cfac4c61a8a5df4548a36e0e9777075d1e203a68345b2881f4314cc7db999773",
+  "verifier_status_at_land": "unmet (spec landed, full check infra not all live: AN11+Φ require GPU, Putnam spec only)",
+  "preserved_unchanged": [
+    "tool/an11_consciousness_unified_verifier.hexa (387 LOC)",
+    "tool/anima_phi_v3_canonical.hexa (205 LOC)",
+    "tool/adversarial_bench.hexa (554 LOC)",
+    "tool/an11_a_verifier.hexa (389 LOC)",
+    "tool/an11_b_verifier.hexa (573 LOC)",
+    "tool/an11_c_verifier.hexa (747 LOC)"
+  ],
+  "selftest_status": {
+    "case_all_met_pass_exit0": "OK",
+    "case_one_fail_fail_exit1": "OK",
+    "case_tool_missing_partial_exit2": "OK",
+    "case_manual_override_pass_exit0": "OK",
+    "byte_identical_2run_sha256": "e84c3528f199335c536e2d8d3fbfeb195646e329fa1d1214456f0ced2975a9af",
+    "selftest_marker_emitted": "selftest=ok"
+  },
+  "real_run_at_landing": {
+    "verdict": "FAIL",
+    "exit_code": 1,
+    "an11_status": "unknown",
+    "an11_detail": "selftest_exit_1 (python3 not found in sandbox env)",
+    "phi_status": "unknown",
+    "phi_detail": "selftest_exit_1 (python3 not found in sandbox env)",
+    "adv_status": "unmet",
+    "adv_detail": "3_of_3_flip_fail (last state had verdict=FAIL)",
+    "putnam_status": "unmet",
+    "putnam_detail": "n_substrate_cond1_unmet (default header status)",
+    "manual_overrides_applied": 0
+  },
+  "handoff_doc": "anima/docs/clm_consciousness_verify_landing_2026_05_02.ai.md",
+  "handoff_doc_sha256": "c2af4ca24726973efcad11cef65a9d67c20922ac36cf35b9553de93aa18364ec",
+  "handoff_doc_loc": 159,
+  "manual_review_path": "state/clm_consciousness_verify_manual_review.jsonl",
+  "manual_review_exists": false,
+  "raw10_caveats": [
+    "Putnam cross-link spec only — n_substrate.cond.1 5+ substrate 점수 일치 실 측정 logic 별도 cycle",
+    "AN11 + Φ mac-local NOT measureable — GPU + HF gated; selftest PRESENT 만 확인",
+    "adversarial_bench read-only (re-exec 시 sandbox dirs write 회피)",
+    "manual override = operator escape hatch, false-positive PASS 가능, audit trail 필수",
+    "selftest = mock fixture only (실 verifier 정확성 미검증, aggregation logic 만)",
+    "single-file tool exemption from raw 270 module structure (roadmap_op precedent)",
+    "PARTIAL exit (=2) typical mac-local — measurement gap 의 honest 표현, silent FAIL 아님"
+  ],
+  "raw_conformance": ["raw 9", "raw 10", "raw 11", "raw 12", "raw 15", "raw 270 (single-file exempt)", "raw 271 (handoff doc)", "raw 272", "raw 273"],
+  "next_cycle_starting_line": "n_substrate.cond.1 verifier = anima/tool/n_substrate_putnam_score_match.hexa (예정) 가 9 substrate 별 점수 read → ≥5 점수 일치 (Pearson r ≥ 0.6 + L1 ≤ 0.2) emit"
+}

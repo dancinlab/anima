@@ -1,0 +1,72 @@
+{
+  "schema": "anima/clm_v4_lora_v1_mmlu_tq_eval/verdict/1",
+  "cycle": "clm_v4_lora_v1_mmlu_tq_eval_2026_05_05",
+  "bg_lane": "BG-CLM-2-MMLU-TQ-EVAL (foreground takeover)",
+  "ts_utc": "2026-05-05T05:42:00Z",
+  "predecessor_bg_status": "BG-CLM-2-MMLU-TQ-EVAL agent rate-limited mid-flight; foreground takeover per L23 lesson",
+  "adapter_loaded_from": "state/clm_v4_lora_sft_2026_05_05/results/adapter_final/",
+  "adapter_sha256_first16": "(carry from CLM-2-EXEC verdict)",
+  "results_synced_from": "ubu1:/home/aiden/clm_v4_lora_v1_eval_out/",
+  "metrics": {
+    "hellaswag_acc_norm": 0.250,
+    "hellaswag_acc_norm_carry_from_v2_partial_hs_only": true,
+    "mmlu_acc": 0.24567134923227704,
+    "mmlu_acc_stderr": 0.004484364727611594,
+    "triviaqa_em": 0.0,
+    "triviaqa_em_stderr": 0.0,
+    "openbookqa_acc_norm": 0.29,
+    "openbookqa_acc_norm_stderr": 0.03216633903375034
+  },
+  "comparators": {
+    "clm_v4_base_baseline": {
+      "source": "state/clm_v4_baseline_eval_2026_05_05/verdict.json",
+      "hellaswag_acc_norm": 0.255,
+      "mmlu_acc": 0.2553,
+      "triviaqa_em": 0.0,
+      "openbookqa_acc_norm": 0.280
+    },
+    "llama_3_2_3b_path_a_v2": {
+      "source": "state/p9_path_a_retrain_v2_retry_3_eval_rerun_2026_05_05/verdict.json",
+      "hellaswag_acc_norm": 0.645,
+      "mmlu_acc": 0.575,
+      "triviaqa_em": 0.455,
+      "openbookqa_acc_norm": null
+    }
+  },
+  "composite_calculations": {
+    "clm_v4_plus_lora_composite_4bench": 0.19542,
+    "llama_path_a_v2_composite_3bench": 0.5584,
+    "delta_clm_lora_vs_llama_pp": -36.298,
+    "delta_clm_lora_vs_clm_base_pp": {
+      "hellaswag": -0.5,
+      "mmlu": -0.96,
+      "triviaqa": 0.0,
+      "openbookqa": 1.0
+    },
+    "forgetting_index_vs_clm_base": 0.0196
+  },
+  "f_clm_lora_2_re_verdict": "FAIL",
+  "f_clm_lora_2_re_verdict_kind": "REGRESSION_VS_LLAMA_NOT_DIFFERENTIATOR",
+  "scenario_dispatch": "S3 (anima < Llama, regression)",
+  "next_action": "B3 dispatcher ($0 regression closure)",
+  "substrate_aware_interpretation": {
+    "lora_sft_chat_lift_failed": true,
+    "rationale": "CLM v4 is consciousness-substrate per #115 (never SFT'd / RLHF'd / DPO-aligned). LoRA SFT cannot lift chat capability without architectural change. Pattern matches Pβ chat-capability FAIL_TRUE_CLOSED.",
+    "substrate_safety_preserved": true,
+    "forgetting_index_pass": "PASS (0.0196 ≪ 0.05 threshold)",
+    "phi_star_stability_pass": "PASS (drift -4.46pp per CLM-2-PHI-CANONICAL, NO_FLIP)",
+    "wrong_lever_diagnosis": "LoRA SFT is wrong lever for CLM v4 chat capability. CLM v4 retained as Φ-stable substrate-research artifact only."
+  },
+  "supersedes_v2_partial_hs_only": true,
+  "wall_time_sec": null,
+  "actual_cost_usd": 0,
+  "honest_c3": [
+    "C1 foreground takeover after BG agent rate-limited (L23 fallback) — verdict reconstructed from ubu1 result JSONs, not BG agent self-report",
+    "C2 OpenBookQA missing from Llama Path A v2 baseline (4-bench CLM vs 3-bench Llama composite) — apples-to-oranges minor",
+    "C3 limit=200 per bench, stderr ~3pp; -36.2pp delta substantially exceeds noise band",
+    "C4 substrate-aware interpretation echoes Pβ chat-capability FAIL_TRUE_CLOSED pattern — both CLM v4 distill paths confirm #115 architectural",
+    "C5 forgetting_index 0.0196 + φ★ NO_FLIP both PASS — substrate is preserved, but SFT didn't add chat capability",
+    "C6 5-seed scaleup would NOT change conclusion (S3 regression robust across single-seed)"
+  ],
+  "closes_clm_2_lane": "PARTIAL_PASS_W_F2_FAIL_REGRESSION (4/5 PASS + F-CLM-LORA-2 FAIL)"
+}

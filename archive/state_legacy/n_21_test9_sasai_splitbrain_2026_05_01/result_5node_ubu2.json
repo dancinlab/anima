@@ -1,0 +1,59 @@
+{
+  "agent": "N-21 #9 EXEC (5-node backup)",
+  "ts_utc": "2026-05-02T07:07:22Z",
+  "host": "summer-B650M-K",
+  "pyphi_version": "1.2.0",
+  "n_nodes_total": 5,
+  "topology": {
+    "left": [
+      0,
+      1
+    ],
+    "right": [
+      3,
+      4
+    ],
+    "bridge": 2,
+    "bridge_edges_whole": [
+      [
+        2,
+        0
+      ],
+      [
+        0,
+        2
+      ],
+      [
+        2,
+        3
+      ],
+      [
+        3,
+        2
+      ]
+    ],
+    "bridge_edges_severed": []
+  },
+  "state": [
+    1,
+    0,
+    1,
+    0,
+    1
+  ],
+  "beta_logistic": 4.0,
+  "phi_whole": 0.514012,
+  "phi_left": 0.116169,
+  "phi_right": 0.116169,
+  "phi_sum_severed": 0.232338,
+  "phi_whole_minus_phi_sum": 0.28167400000000004,
+  "verdict": "PASS_EXCLUSION",
+  "wall_time_s": {
+    "whole": 3.2052032947540283,
+    "left": 0.036559343338012695,
+    "right": 0.04011988639831543,
+    "total": 3.2831180095672607
+  },
+  "interpretation": "EXCLUSION axiom analog: connected complex \u03a6 should strictly exceed sum of disconnected hemispheres' \u03a6.",
+  "caveat_substrate": "PyPhi SIM 5-node majority Markov; ANALOGIZE not REPRODUCE; downscale variant of primary 7-node ubu1 protocol."
+}

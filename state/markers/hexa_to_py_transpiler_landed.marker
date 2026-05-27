@@ -1,0 +1,23 @@
+__HEXA_TO_PY_TRANSPILER_MVP__ LANDED 2026-05-03
+transpiler=/Users/ghost/core/anima/tool/hexa_to_py_transpiler.hexa
+test_runner=/Users/ghost/core/anima/tool/hexa_to_py_transpiler_test.hexa
+handoff=/Users/ghost/core/anima/docs/hexa_to_py_transpiler_prototype_2026_05_03.md
+audit=/Users/ghost/core/anima/state/hexa_to_py_audit_2026_05_03/test_results.json
+sample_inputs=3 (test1_simple_add, test2_stdlib_proc, test3_lora_stub)
+transpile_pass=3/3
+structural_pass=3/3
+python3_exec_pass=3/3
+transpiler_loc=485
+test_runner_loc=106
+sample_input_loc=48
+handoff_loc=231
+total_new_loc=870
+py_committed=0
+py_gitignored=true (existing **/*.py rule + state/transpiled_py/.gitignore guard)
+trigger=vlm_stage1_abort_audio_token_predictor_needs_pytorch
+caveats=C1_subset_coverage,C2_string_literal_lex,C3_runtime_parity,C4_stdlib_evolution,C5_atp_full_port_out_of_mvp_scope
+sample_outputs=/Users/ghost/core/anima/state/hexa_to_py_audit_2026_05_03/sample_outputs/{test1,test2,test3}.py.snap
+exec_evidence=test1:x=5,test2:wrote=10/exists=True/size=10/body=hello hexa/piped=piped via stdin,test3:3 step lines + done steps=3
+critical_bug_fixed_in_cycle=h2p_replace_all infinite loop on overlapping sentinels (file_exists→_h2p_file_exists rewrite re-matched original token)
+cost_usd=0_mac_local
+__HEXA_TO_PY_TRANSPILER_MVP__ END

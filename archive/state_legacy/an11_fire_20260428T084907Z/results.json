@@ -1,0 +1,68 @@
+{
+  "wrapper_version": "v1",
+  "wrapper_path": "/workspace/wrapper.py",
+  "started_utc": "2026-04-28T08:57:34Z",
+  "model_hf_repo": "mistralai/Mistral-7B-v0.1",
+  "lora_config": {
+    "rank": 16,
+    "alpha": 32,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj"
+    ],
+    "epochs": 3
+  },
+  "raw_86_cost_attribution": {
+    "cost_center": "anima-an11-mistral7b-vast-h100-pod",
+    "vendor": "vast.ai",
+    "gpu_class": "H100_SXM"
+  },
+  "an11_seed": 0,
+  "wrapper_status": "FINAL",
+  "last_update_utc": "2026-04-28T09:04:22Z",
+  "phase_a": {
+    "status": "OK",
+    "model_dir": "/workspace/mistral-7b-v0.1",
+    "size_gb": 14.49,
+    "elapsed_s": 405.7
+  },
+  "phase_b": {
+    "status": "OK",
+    "rows": 10,
+    "categories": [
+      "hexad",
+      "law",
+      "metaref",
+      "phi",
+      "selfreflect"
+    ]
+  },
+  "phase_c": {
+    "status": "FAIL_NO_CUDA",
+    "reason": "torch.cuda.is_available()=False or device_count=0",
+    "cuda_runtime_version": "13.0",
+    "driver_version": "check vastai cuda_max_good"
+  },
+  "pre_registered_predicates": {
+    "an11_a_frob_delta_min": 0.001,
+    "an11_b_max_cosine_min": 0.5,
+    "an11_b_top3_sum_min": 1.2,
+    "an11_c_jsd_min": 0.15,
+    "v1prime_phi_mip_norm_max": 0.5
+  },
+  "verdicts": {
+    "an11_a": "MISSING",
+    "an11_b": "MISSING",
+    "an11_c": "MISSING",
+    "v1prime": "MISSING"
+  },
+  "n_pass_of_4": 0,
+  "aggregate_verdict": "FULL_FAIL",
+  "raw_91_honesty": {
+    "all_phases_emitted_numeric": true,
+    "abort_phases": [],
+    "char_bigram_jsd_proxy_caveat": "AN11(c) JSD uses char-bigram dist (vllm logprob truncation)"
+  }
+}

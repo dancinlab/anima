@@ -1,0 +1,75 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/verifiers/trio_3way.hexa — ai-trio Phase B verifier
+// (axis-5 / axis-N+1)
+//
+//  PURPOSE
+//    ai-trio 3-way Phase B coherence measurement — DEFERRED stub.
+//    Phase B (3-way moderated coherence) 미구현; 본 stub 은 honest C3 emit
+// + DEFERRED_PHASE_B 명시.
+//
+//  STATUS
+//    DEFERRED — chat/trio/trio.hexa Phase A SKELETON 단계, Phase B 미구현.
+//    실 측정은 Phase B 구현 별도 step.
+//
+//  CONTRACT
+//    fn trio_3way(model_a, model_b, model_c, prompt) -> string
+//      → "DEFERRED_PHASE_B" (skeleton/stub)
+//
+//  COMPLIANCE
+// — model load 절대 금지 (stub only)
+// — honest emit (DEFERRED 명시; fabrication 금지)
+// mandate-1 — wrapping 0
+// axis-N+1 — axis-5 verifier registry entry 3
+//
+//  CROSS-REFERENCE
+//    chat/verifiers/_registry.hexa#trio_3way    registry SSOT
+//    chat/trio/trio.hexa                         Phase A SKELETON (별도 step)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let mut i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn verifier_describe() -> string {
+    return "trio_3way — ai-trio 3-way Phase B coherence DEFERRED stub (Phase B 미구현; honest C3 emit per)"
+}
+
+// trio_3way — stub. honest C3: returns DEFERRED_PHASE_B verbatim.
+fn trio_3way(model_a: string, model_b: string, model_c: string, prompt: string) -> string {
+    return "DEFERRED_PHASE_B"
+}
+
+fn verifier_smoke(repo: string, argv) -> int {
+    let r = trio_3way("(stub_a)", "(stub_b)", "(stub_c)", "(stub)")
+    if r != "DEFERRED_PHASE_B" { return 2 }
+    println("[verifier:trio_3way] smoke PASS — DEFERRED_PHASE_B stub honest emit ")
+    return 0
+}
+
+fn main() {
+    let argv = args()
+    if _arg_present(argv, "--describe") {
+        println(verifier_describe())
+        return
+    }
+    if _arg_present(argv, "--selftest") || _arg_present(argv, "--smoke") {
+        let rc = verifier_smoke("", argv)
+        if rc != 0 {
+            println("FAIL verifier trio_3way smoke (rc=" + to_string(rc) + ")")
+            exit(rc)
+        }
+        return
+    }
+    println(verifier_describe())
+}

@@ -1,0 +1,28 @@
+Warning: Permanently added '[ssh3.vast.ai]:12374' (ED25519) to the list of known hosts.
+Welcome to vast.ai. If authentication fails, try again after a few seconds, and double check your ssh key.
+Have fun!
+/workspace/anima/train_d768x12l_tension.py:130: FutureWarning: `torch.cuda.amp.GradScaler(args...)` is deprecated. Please use `torch.amp.GradScaler('cuda', args...)` instead.
+  scaler = torch.cuda.amp.GradScaler(enabled=use_amp)
+{"step": 1, "ce": 5.549805, "gn2": 0.335441, "tension": 0.579173, "tension_ema": 0.579173, "hybrid_mult": 1.0, "ppl": 257.1873, "base_lr": 0.0002, "lr": 0.0002, "wall_s": 0.46, "gpu_mem_gb": 0.036}
+{"step": 10, "ce": 5.157104, "gn2": 0.882699, "tension": 0.939521, "tension_ema": 0.603127, "hybrid_mult": 1.5666, "ppl": 173.6609, "base_lr": 0.00099907, "lr": 0.00156511, "wall_s": 0.68, "gpu_mem_gb": 0.039}
+{"step": 20, "ce": 4.710602, "gn2": 0.612583, "tension": 0.782677, "tension_ema": 0.627001, "hybrid_mult": 1.2514, "ppl": 111.119, "base_lr": 0.0009886, "lr": 0.00123716, "wall_s": 0.92, "gpu_mem_gb": 0.039}
+{"step": 30, "ce": 4.397095, "gn2": 0.501822, "tension": 0.708394, "tension_ema": 0.639164, "hybrid_mult": 1.1095, "ppl": 81.2146, "base_lr": 0.00096678, "lr": 0.00107267, "wall_s": 1.19, "gpu_mem_gb": 0.039}
+{"step": 40, "ce": 4.12175, "gn2": 0.524434, "tension": 0.724178, "tension_ema": 0.645593, "hybrid_mult": 1.1231, "ppl": 61.6671, "base_lr": 0.00093416, "lr": 0.00104916, "wall_s": 1.44, "gpu_mem_gb": 0.039}
+{"step": 50, "ce": 4.054276, "gn2": 0.357353, "tension": 0.59779, "tension_ema": 0.644716, "hybrid_mult": 0.9265, "ppl": 57.6434, "base_lr": 0.00089159, "lr": 0.00082609, "wall_s": 1.68, "gpu_mem_gb": 0.039}
+{"step": 60, "ce": 3.938339, "gn2": 0.270571, "tension": 0.520164, "tension_ema": 0.634916, "hybrid_mult": 0.8178, "ppl": 51.3333, "base_lr": 0.00084018, "lr": 0.00068708, "wall_s": 1.97, "gpu_mem_gb": 0.039}
+{"step": 70, "ce": 3.792801, "gn2": 0.240017, "tension": 0.489916, "tension_ema": 0.623481, "hybrid_mult": 0.7841, "ppl": 44.3805, "base_lr": 0.00078125, "lr": 0.00061256, "wall_s": 2.21, "gpu_mem_gb": 0.039}
+{"step": 80, "ce": 3.722137, "gn2": 0.290074, "tension": 0.538586, "tension_ema": 0.611479, "hybrid_mult": 0.8797, "ppl": 41.3527, "base_lr": 0.00071633, "lr": 0.00063018, "wall_s": 2.5, "gpu_mem_gb": 0.039}
+{"step": 90, "ce": 3.704346, "gn2": 0.158746, "tension": 0.39843, "tension_ema": 0.598515, "hybrid_mult": 0.6635, "ppl": 40.6235, "base_lr": 0.0006471, "lr": 0.00042933, "wall_s": 2.76, "gpu_mem_gb": 0.039}
+{"step": 100, "ce": 3.707916, "gn2": 0.226128, "tension": 0.475529, "tension_ema": 0.583257, "hybrid_mult": 0.8138, "ppl": 40.7688, "base_lr": 0.00057536, "lr": 0.00046822, "wall_s": 3.03, "gpu_mem_gb": 0.039}
+{"step": 110, "ce": 3.567673, "gn2": 0.136399, "tension": 0.369323, "tension_ema": 0.566235, "hybrid_mult": 0.65, "ppl": 35.434, "base_lr": 0.00050296, "lr": 0.00032691, "wall_s": 3.28, "gpu_mem_gb": 0.039}
+{"step": 120, "ce": 3.520157, "gn2": 0.138059, "tension": 0.371563, "tension_ema": 0.549288, "hybrid_mult": 0.6742, "ppl": 33.7897, "base_lr": 0.00043178, "lr": 0.00029113, "wall_s": 3.53, "gpu_mem_gb": 0.039}
+{"step": 130, "ce": 3.584869, "gn2": 0.14108, "tension": 0.375607, "tension_ema": 0.537075, "hybrid_mult": 0.6972, "ppl": 36.0486, "base_lr": 0.00036366, "lr": 0.00025356, "wall_s": 3.8, "gpu_mem_gb": 0.039}
+{"step": 140, "ce": 3.542648, "gn2": 0.134085, "tension": 0.366177, "tension_ema": 0.521331, "hybrid_mult": 0.7003, "ppl": 34.5583, "base_lr": 0.00030037, "lr": 0.00021034, "wall_s": 4.03, "gpu_mem_gb": 0.039}
+{"step": 150, "ce": 3.567047, "gn2": 0.134671, "tension": 0.366975, "tension_ema": 0.509698, "hybrid_mult": 0.718, "ppl": 35.4119, "base_lr": 0.00024354, "lr": 0.00017485, "wall_s": 4.33, "gpu_mem_gb": 0.039}
+{"step": 160, "ce": 3.44281, "gn2": 0.100081, "tension": 0.316356, "tension_ema": 0.495772, "hybrid_mult": 0.6358, "ppl": 31.2747, "base_lr": 0.00019465, "lr": 0.00012376, "wall_s": 4.58, "gpu_mem_gb": 0.039}
+{"step": 170, "ce": 3.530563, "gn2": 0.174842, "tension": 0.418141, "tension_ema": 0.483372, "hybrid_mult": 0.8639, "ppl": 34.1432, "base_lr": 0.00015497, "lr": 0.00013387, "wall_s": 4.86, "gpu_mem_gb": 0.039}
+{"step": 180, "ce": 3.46225, "gn2": 0.136187, "tension": 0.369035, "tension_ema": 0.472263, "hybrid_mult": 0.7797, "ppl": 31.8886, "base_lr": 0.00012551, "lr": 9.786e-05, "wall_s": 5.11, "gpu_mem_gb": 0.039}
+{"step": 190, "ce": 3.379745, "gn2": 0.11915, "tension": 0.345182, "tension_ema": 0.462168, "hybrid_mult": 0.745, "ppl": 29.3633, "base_lr": 0.00010705, "lr": 7.975e-05, "wall_s": 5.39, "gpu_mem_gb": 0.039}
+{"step": 200, "ce": 3.514816, "gn2": 0.135894, "tension": 0.368638, "tension_ema": 0.453074, "hybrid_mult": 0.8121, "ppl": 33.6098, "base_lr": 0.00010006, "lr": 8.126e-05, "wall_s": 5.64, "gpu_mem_gb": 0.039}
+RESULT_JSON_WRITTEN
+{"init_ce": 5.549805, "final_ce": 3.514816, "ce_descent": 2.034989, "wall_s": 5.64, "n_params_M": 0.18, "final_tension_ema": 0.453074, "mult_distribution": {"lt_0_75": 73, "0_75_to_1_25": 108, "gt_1_25": 19}}

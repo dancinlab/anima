@@ -1,0 +1,76 @@
+{
+  "schema": "anima/n12/launch_manifest/1",
+  "agent": "n12_aws_braket_prep",
+  "axis_id": "N-12",
+  "ts_utc": "2026-05-01T12:45:00Z",
+  "phase": "PRE_LAUNCH_LOCAL_ARTIFACTS_READY",
+  "spec_round_1": "state/n_substrate_n12_prep_2026_05_01/spec_manifest.json",
+  "this_round_2": "state/n_substrate_n12_aws_prep_2026_05_01/",
+  "off_repo_root": "/Users/ghost/n12_braket/",
+  "artifacts": {
+    "submit_script": {
+      "path": "/Users/ghost/n12_braket/submit_braket.py",
+      "purpose": "build C1 (4q GHZ dephase, 100 shots), C2 (1q baseline, 50 shots), C3 (Bell sanity, 100 shots), submit to IonQ Forte 1",
+      "ready": true,
+      "lang": "python3",
+      "deps": ["amazon-braket-sdk"],
+      "hard_cap_USD": 50.0,
+      "device_arn_default": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+      "device_arn_alt": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-Enterprise-1",
+      "user_must_verify_arn": true
+    },
+    "verifier_script": {
+      "path": "/Users/ghost/n12_braket/verify_F_N12_1.py",
+      "purpose": "compute trapped-ion 4-qubit GHZ tau_2 from results JSON, ratio against PRNewswire SC reference, emit PASS/FAIL/INDETERMINATE",
+      "ready": true,
+      "input": "results_<ts>.json (with retrieved counts)",
+      "user_supplies": "--sc-tau2-us <PRNewswire 2025-03 reference value>",
+      "criterion": "PASS if ratio in [0.67, 1.5] with p<0.05; FAIL if outside band; INDETERMINATE otherwise"
+    },
+    "launcher_shell": {
+      "path": "/Users/ghost/n12_braket/launch.sh",
+      "purpose": "one-command launcher; auto-creates venv, installs SDK, runs submit",
+      "ready": true,
+      "modes": ["--dry-run (default, no spend)", "--live ($20.90 spend)"]
+    },
+    "onboarding_checklist": {
+      "path": "state/n_substrate_n12_aws_prep_2026_05_01/aws_onboarding_checklist.json",
+      "purpose": "user-facing 10-step AWS Braket onboarding",
+      "ready": true,
+      "user_minutes_estimated": 80,
+      "user_USD_total": 20.90
+    },
+    "spec_md": {
+      "path": "docs/n_substrate_n12_aws_prep_2026_05_01.md",
+      "purpose": "human-readable round 2 summary cross-referencing first round spec + off-repo scripts",
+      "ready": true
+    }
+  },
+  "circuits_summary": [
+    {"id": "C3", "qubits": 2, "shots": 100, "cost_USD": 8.30, "purpose": "Bell sanity"},
+    {"id": "C2", "qubits": 1, "shots": 50,  "cost_USD": 4.30, "purpose": "1q baseline"},
+    {"id": "C1", "qubits": 4, "shots": 100, "delay_us": 100, "cost_USD": 8.30, "purpose": "GHZ dephase at delay=100us (F-N12-1 core); verifier injects ideal-prep contrast=1.0 prior at delay=0 for tau_2 fit. Direct two-delay measurement = $29.20 upgrade."}
+  ],
+  "cost_summary": {
+    "total_tasks": 3,
+    "total_shots": 250,
+    "task_fee_USD": 0.90,
+    "shot_fee_USD": 20.00,
+    "total_USD": 20.90,
+    "hard_cap_USD": 50.00,
+    "safety_margin_USD": 29.10
+  },
+  "one_liner_dry_run": "bash /Users/ghost/n12_braket/launch.sh",
+  "one_liner_live": "export BRAKET_S3_BUCKET=amazon-braket-us-east-1-<acct-id> && bash /Users/ghost/n12_braket/launch.sh --live",
+  "one_liner_verify": "python3 /Users/ghost/n12_braket/verify_F_N12_1.py /Users/ghost/n12_braket/results_<ts>.json --sc-tau2-us <PRNewswire-value>",
+  "blockers_user_side": [
+    "AWS account onboarding (~30 min)",
+    "Forte 1 device ARN verification in Braket console (~5 min)",
+    "PRNewswire 2025-03 SC tau_2 reference value extraction (~15 min)",
+    "S3 bucket name discovery after Braket enable (~1 min)",
+    "IonQ Forte 1 windowed schedule wait after submit (1-3 days)"
+  ],
+  "blockers_agent_side": [],
+  "honest_c3": "All four off-repo .py / .sh files written + tested for syntax. AWS onboarding entirely user-side (raw#9 hexa-only + ToS). Predicted Forte 1 ARN must be confirmed in console; if mismatch, user edits DEVICE_ARN_PREDICTED constant. Pulse-level delay implemented as identity-stack proxy (delay_us // 8) — true pulse-control requires device-specific Braket OpenQASM 3 support; CONFIRM_AT_USER_ONBOARDING.",
+  "verdict": "LOCAL_READY_AWAITING_USER_AWS_ONBOARDING"
+}

@@ -1,0 +1,36 @@
+{
+  "schema": "anima/red_to_green_substrate_swap_llama31/an11_b_VVV/1",
+  "method": "SVD over phi_vecs (16x16); V0 max-cosine via abs(Vt row) at template basis; V1 phi_mip proxy via S^2 dispersion; V2/V3 unable to compute strict (no preserve/distractor pairs)",
+  "V0": {
+    "max_cosine": 0.6349038267163175,
+    "top3_cosine_sum": 1.4268849860921602,
+    "max_pair_template_id": "law_recursion",
+    "max_pair_family": "Law",
+    "CP2_PASS": true,
+    "AGI_PASS": true
+  },
+  "V1": {
+    "PR": 3.681406912757581,
+    "phi_mip_proxy": 0.7535750524326121,
+    "CP2_threshold": ">=0.55 strict",
+    "CP2_PASS": true
+  },
+  "V2": {
+    "SMA_consecutive_cos_proxy": 0.6069017558123116,
+    "CP2_PASS": false,
+    "note": "No preserve/distractor pairs available for Llama; AGI/CP2 strict not assessable"
+  },
+  "V3": {
+    "CPS_proxy": 0.6834173868140698,
+    "CP2_PASS": false,
+    "note": "Same \u2014 no perturbation-pair data for Llama"
+  },
+  "joint_4tuple": [
+    "PASS",
+    "PASS",
+    "FAIL",
+    "FAIL"
+  ],
+  "cp2_relaxed_PASS": true,
+  "agi_strict_PASS": false
+}

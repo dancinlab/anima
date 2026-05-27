@@ -1,0 +1,17 @@
+{
+  "label": "smoke_paradigm_d",
+  "bg_claim": "cleanup BG a80e5530...: SIGTERM sent to mini-run watchdog + /tmp/p9_paradigm_d_distill.py unlinked; mini-run killed cleanly per else-preserve branch (step >= 100)",
+  "verdict_path": null,
+  "verdict_label": null,
+  "exit_code": null,
+  "expected_savepoints": ["step_500", "step_1000", "step_1500", "step_2000", "final"],
+  "savepoints_found": ["step_500", "step_1000"],
+  "savepoint_dir": null,
+  "actual_wall_seconds": 1620,
+  "expected_wall_seconds": 1800,
+  "log_tail": "... step 1397 loss=2.42 lr=4.1e-5\n... step 1398 loss=2.40 lr=4.1e-5\n... step 1399 loss=2.41 lr=4.1e-5\n... step 1400 loss=2.39 lr=4.0e-5\n[SIGTERM received from PPID]\n[entering post-loop teardown]\n",
+  "stderr_path": null,
+  "stderr_size": 0,
+  "stderr_tail": null,
+  "_provenance": "reconstructed from state/cleanup_bg_audit_2026_05_03/incidents.json INC-2026-05-03-A; original artifacts: step_2000+final savepoints LOST due to script unlink; step_500+step_1000 PRESERVED; trajectory log truncated at step_1400; no verdict.json (post-loop teardown failed silently before write)"
+}

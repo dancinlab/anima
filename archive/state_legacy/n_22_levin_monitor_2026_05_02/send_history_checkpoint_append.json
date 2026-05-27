@@ -1,0 +1,12 @@
+{
+  "_note": "Schema fragment per #89 §5 — append target for /Users/ghost/core/contact/data/send_history.json checkpoint enrichment when bounce_check / response_received transitions occur. Kept separate to preserve race isolation (no edit to send_history.json from this monitor task).",
+  "msg_id": "19de825e26e98b82",
+  "recipient": "michael.levin@tufts.edu",
+  "sent_ts": "2026-05-02",
+  "checkpoints": [
+    {"ts": "D+1",  "date": "2026-05-03", "bounce_check": "PENDING"},
+    {"ts": "D+7",  "date": "2026-05-09", "response_received": false},
+    {"ts": "D+14", "date": "2026-05-16", "follow_up_sent": null},
+    {"ts": "D+28", "date": "2026-05-30", "final_status": "PENDING"}
+  ]
+}

@@ -1,0 +1,12 @@
+// launch_alm_32b_r1.hexa — STUBBED 2026-04-18 (R37/AN13/L3-PY compliance)
+//
+// Previously wrote /tmp runner shell script invoking `python3 train_alm_14b.py`
+// against the 32B base (Qwen2.5-32B-Instruct). Violates R37/AN13/L3-PY.
+
+fn main() {
+    println("[R37/AN13/L3-PY] BLOCKED: training/launch_alm_32b_r1.hexa")
+    println("  Previously wrote bash runner wrapping `python3 train_alm_14b.py` (32B r1).")
+    println("  Escalate to user for hexa-native ALM 32B r1 launcher replacement.")
+    panic("R37/AN13/L3-PY: python3 invocation blocked at training/launch_alm_32b_r1.hexa")
+}
+

@@ -1,0 +1,278 @@
+[20:56:12] === anima_native_ko_small_ubu1_train BG-FY 2026-05-06 ===
+[20:56:12] device=cuda dtype=torch.bfloat16 torch=2.11.0+cu128
+[20:56:12] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[20:56:12] gpu_mem_total=12.34GB
+[20:56:12] config: vocab=256 n_layer=6 d_model=384 n_head=6 block=256
+[20:56:12] train: bs=16 grad_accum=4 lr=0.0003 warmup=500 steps=10000
+[20:56:12] run_dir=/home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612
+[20:56:12] corpus loaded: 246,678,043 bytes (235.3MB) in 0.0s
+[20:56:20] split: train=234,344,140 val=12,333,903
+[20:56:20] model built: 18,031,872 params (18.03M)
+[20:56:21] === begin training ===
+[20:56:21] step     1/10000 | lr=1.20e-06 | L_A=5.656 L_G=5.597 L_T=10.117 T_mean=0.0734 | step_t=0.20s elapsed=0s
+[20:56:21] step     2/10000 | lr=1.80e-06 | L_A=5.655 L_G=5.594 L_T=10.146 T_mean=0.0736 | step_t=0.01s elapsed=0s
+[20:56:21] step     3/10000 | lr=2.40e-06 | L_A=5.670 L_G=5.597 L_T=10.140 T_mean=0.0732 | step_t=0.02s elapsed=0s
+[20:56:21] step     4/10000 | lr=3.00e-06 | L_A=5.660 L_G=5.595 L_T=10.135 T_mean=0.0735 | step_t=0.09s elapsed=0s
+[20:56:21] step     5/10000 | lr=3.60e-06 | L_A=5.615 L_G=5.574 L_T=10.154 T_mean=0.0734 | step_t=0.01s elapsed=0s
+[20:56:22] step    50/10000 | lr=3.06e-05 | L_A=4.669 L_G=5.083 L_T=9.541 T_mean=0.0902 | step_t=0.02s elapsed=1s
+[20:56:23] step   100/10000 | lr=6.06e-05 | L_A=4.367 L_G=4.654 L_T=6.294 T_mean=0.1552 | step_t=0.02s elapsed=2s
+[20:56:24] step   150/10000 | lr=9.06e-05 | L_A=3.738 L_G=4.092 L_T=4.182 T_mean=0.2123 | step_t=0.02s elapsed=3s
+[20:56:25] step   200/10000 | lr=1.21e-04 | L_A=3.378 L_G=3.657 L_T=3.287 T_mean=0.2729 | step_t=0.02s elapsed=4s
+[20:56:26] step   250/10000 | lr=1.51e-04 | L_A=3.149 L_G=3.367 L_T=2.328 T_mean=0.3312 | step_t=0.02s elapsed=5s
+[20:56:27] step   300/10000 | lr=1.81e-04 | L_A=2.761 L_G=2.954 L_T=1.320 T_mean=0.4242 | step_t=0.02s elapsed=6s
+[20:56:28] step   350/10000 | lr=2.11e-04 | L_A=2.569 L_G=2.694 L_T=0.389 T_mean=0.5346 | step_t=0.02s elapsed=7s
+[20:56:29] step   400/10000 | lr=2.41e-04 | L_A=2.557 L_G=2.587 L_T=-0.250 T_mean=0.6470 | step_t=0.02s elapsed=8s
+[20:56:30] step   450/10000 | lr=2.71e-04 | L_A=2.536 L_G=2.532 L_T=-0.748 T_mean=0.7378 | step_t=0.02s elapsed=9s
+[20:56:31] step   500/10000 | lr=3.00e-04 | L_A=2.358 L_G=2.305 L_T=-1.407 T_mean=0.9543 | step_t=0.02s elapsed=10s
+[20:56:32] step   550/10000 | lr=3.00e-04 | L_A=2.392 L_G=2.271 L_T=-1.912 T_mean=1.1253 | step_t=0.02s elapsed=11s
+[20:56:32] step   600/10000 | lr=3.00e-04 | L_A=2.492 L_G=2.310 L_T=-2.104 T_mean=1.2102 | step_t=0.02s elapsed=12s
+[20:56:33] step   650/10000 | lr=3.00e-04 | L_A=2.501 L_G=2.275 L_T=-2.436 T_mean=1.3647 | step_t=0.02s elapsed=13s
+[20:56:34] step   700/10000 | lr=3.00e-04 | L_A=2.307 L_G=1.986 L_T=-2.559 T_mean=1.4402 | step_t=0.02s elapsed=14s
+[20:56:35] step   750/10000 | lr=3.00e-04 | L_A=2.502 L_G=2.132 L_T=-2.715 T_mean=1.4968 | step_t=0.02s elapsed=15s
+[20:56:36] step   800/10000 | lr=2.99e-04 | L_A=2.240 L_G=1.777 L_T=-2.740 T_mean=1.5343 | step_t=0.02s elapsed=16s
+[20:56:37] step   850/10000 | lr=2.99e-04 | L_A=2.261 L_G=1.632 L_T=-2.810 T_mean=1.5453 | step_t=0.02s elapsed=17s
+[20:56:38] step   900/10000 | lr=2.99e-04 | L_A=2.336 L_G=1.543 L_T=-2.592 T_mean=1.3902 | step_t=0.02s elapsed=18s
+[20:56:39] step   950/10000 | lr=2.99e-04 | L_A=2.188 L_G=1.191 L_T=-2.295 T_mean=1.2224 | step_t=0.02s elapsed=19s
+[20:56:40] step  1000/10000 | lr=2.98e-04 | L_A=2.157 L_G=0.897 L_T=-2.300 T_mean=1.1627 | step_t=0.02s elapsed=20s
+[20:56:40] --- eval gate @ step 1000 ---
+[20:56:40]   EVAL[step=1000 greedy] '안녕하세요...' → hangul=0.61 deg=DEG tform=0.70 | head='.\n아이 있이 있이 있이 있이 있이 있이 있이 있이 이 있이 이�'
+[20:56:40]   EVAL[step=1000 sample] '안녕하세요...' → hangul=0.49 deg=OK tform=1.00 | head='?\n준: 잤기�가쑐선할 야조다.  ꧐? 으사에서 식유�다.  조 거 �'
+[20:56:41]   EVAL[step=1000 greedy] '한국어 가능?...' → hangul=0.61 deg=DEG tform=0.70 | head=' 이 이 있이 있이 있이 있이 있이 있이 이 있이 있이 있이 있�'
+[20:56:41]   EVAL[step=1000 sample] '한국어 가능?...' → hangul=0.63 deg=OK tform=1.00 | head=' 사�펴역  랐 전 났 였닠�하직했인의 바깽 자뜌류는 마젨를 �'
+[20:56:41]   EVAL[step=1000 greedy] '사용자: 안녕하세요
+도우미:...' → hangul=0.61 deg=DEG tform=0.70 | head=' 이 있이 있이 있이 있이 있이 있이 있이 있이 있이 이 어요.\n'
+[20:56:41]   EVAL[step=1000 sample] '사용자: 안녕하세요
+도우미:...' → hangul=0.61 deg=OK tform=1.00 | head=' �o 서스 밨이 바더 수상 그떴전는 선 화는 이는 가신야스 이�'
+[20:56:41]   EVAL[step=1000] avg_hangul=0.593 deg_rate=0.50 (3/6)
+[20:56:41]   OWN18[step=1000] strict_pass=3/3 per_prompt={'안녕하세요': True, '한국어 가능?': True, '사용자: 안녕하세요\n도우미:': True}
+[20:56:42] step  1050/10000 | lr=2.98e-04 | L_A=2.109 L_G=0.620 L_T=-2.239 T_mean=1.1248 | step_t=0.03s elapsed=21s
+[20:56:43] step  1100/10000 | lr=2.97e-04 | L_A=2.049 L_G=0.445 L_T=-2.315 T_mean=1.1080 | step_t=0.02s elapsed=22s
+[20:56:44] step  1150/10000 | lr=2.97e-04 | L_A=2.088 L_G=0.543 L_T=-2.461 T_mean=1.1338 | step_t=0.02s elapsed=23s
+[20:56:45] step  1200/10000 | lr=2.96e-04 | L_A=1.952 L_G=0.266 L_T=-2.780 T_mean=1.3068 | step_t=0.02s elapsed=24s
+[20:56:46] step  1250/10000 | lr=2.96e-04 | L_A=1.958 L_G=0.239 L_T=-3.128 T_mean=1.4044 | step_t=0.02s elapsed=25s
+[20:56:47] step  1300/10000 | lr=2.95e-04 | L_A=1.944 L_G=0.170 L_T=-3.620 T_mean=1.6023 | step_t=0.02s elapsed=26s
+[20:56:48] step  1350/10000 | lr=2.95e-04 | L_A=1.967 L_G=0.172 L_T=-4.121 T_mean=1.6806 | step_t=0.02s elapsed=27s
+[20:56:49] step  1400/10000 | lr=2.94e-04 | L_A=1.857 L_G=0.076 L_T=-4.444 T_mean=1.8523 | step_t=0.02s elapsed=28s
+[20:56:50] step  1450/10000 | lr=2.93e-04 | L_A=1.937 L_G=0.124 L_T=-4.897 T_mean=1.8761 | step_t=0.02s elapsed=29s
+[20:56:51] step  1500/10000 | lr=2.93e-04 | L_A=1.720 L_G=0.064 L_T=-5.506 T_mean=2.1121 | step_t=0.02s elapsed=30s
+[20:56:51] step  1550/10000 | lr=2.92e-04 | L_A=1.923 L_G=0.157 L_T=-5.854 T_mean=2.3374 | step_t=0.02s elapsed=31s
+[20:56:52] step  1600/10000 | lr=2.91e-04 | L_A=1.876 L_G=0.089 L_T=-5.934 T_mean=2.0586 | step_t=0.02s elapsed=32s
+[20:56:53] step  1650/10000 | lr=2.90e-04 | L_A=1.824 L_G=0.074 L_T=-6.753 T_mean=2.9201 | step_t=0.02s elapsed=33s
+[20:56:54] step  1700/10000 | lr=2.90e-04 | L_A=1.737 L_G=0.058 L_T=-7.105 T_mean=3.1665 | step_t=0.02s elapsed=34s
+[20:56:55] step  1750/10000 | lr=2.89e-04 | L_A=1.807 L_G=0.046 L_T=-7.496 T_mean=3.6890 | step_t=0.02s elapsed=35s
+[20:56:56] step  1800/10000 | lr=2.88e-04 | L_A=1.889 L_G=0.078 L_T=-7.684 T_mean=3.8418 | step_t=0.02s elapsed=36s
+[20:56:57] step  1850/10000 | lr=2.87e-04 | L_A=1.707 L_G=0.028 L_T=-8.114 T_mean=4.5949 | step_t=0.02s elapsed=37s
+[20:56:58] step  1900/10000 | lr=2.86e-04 | L_A=1.709 L_G=0.025 L_T=-8.421 T_mean=5.0531 | step_t=0.02s elapsed=38s
+[20:56:59] step  1950/10000 | lr=2.85e-04 | L_A=1.901 L_G=0.084 L_T=-8.852 T_mean=6.0952 | step_t=0.02s elapsed=39s
+[20:57:00] step  2000/10000 | lr=2.84e-04 | L_A=1.682 L_G=0.026 L_T=-9.288 T_mean=8.0410 | step_t=0.02s elapsed=39s
+[20:57:00]   SAVE[step=2000] -> /home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_2000.pt (70.3MB)
+[20:57:01] step  2050/10000 | lr=2.83e-04 | L_A=1.724 L_G=0.036 L_T=-9.191 T_mean=6.7419 | step_t=0.02s elapsed=40s
+[20:57:02] step  2100/10000 | lr=2.82e-04 | L_A=1.619 L_G=0.033 L_T=-9.614 T_mean=8.3232 | step_t=0.02s elapsed=41s
+[20:57:03] step  2150/10000 | lr=2.80e-04 | L_A=1.700 L_G=0.052 L_T=-9.798 T_mean=9.3591 | step_t=0.02s elapsed=42s
+[20:57:04] step  2200/10000 | lr=2.79e-04 | L_A=1.679 L_G=0.033 L_T=-10.065 T_mean=10.3837 | step_t=0.02s elapsed=43s
+[20:57:05] step  2250/10000 | lr=2.78e-04 | L_A=1.682 L_G=0.022 L_T=-9.926 T_mean=8.8563 | step_t=0.02s elapsed=44s
+[20:57:06] step  2300/10000 | lr=2.77e-04 | L_A=1.615 L_G=0.025 L_T=-10.436 T_mean=12.4014 | step_t=0.02s elapsed=45s
+[20:57:07] step  2350/10000 | lr=2.76e-04 | L_A=1.664 L_G=0.031 L_T=-10.610 T_mean=12.9628 | step_t=0.02s elapsed=46s
+[20:57:08] step  2400/10000 | lr=2.74e-04 | L_A=1.650 L_G=0.045 L_T=-10.649 T_mean=12.5216 | step_t=0.02s elapsed=47s
+[20:57:09] step  2450/10000 | lr=2.73e-04 | L_A=1.727 L_G=0.023 L_T=-11.027 T_mean=16.3731 | step_t=0.02s elapsed=48s
+[20:57:10] step  2500/10000 | lr=2.72e-04 | L_A=1.514 L_G=0.012 L_T=-11.260 T_mean=18.6144 | step_t=0.02s elapsed=49s
+[20:57:11] step  2550/10000 | lr=2.70e-04 | L_A=1.722 L_G=0.022 L_T=-11.348 T_mean=19.3627 | step_t=0.02s elapsed=50s
+[20:57:12] step  2600/10000 | lr=2.69e-04 | L_A=1.707 L_G=0.019 L_T=-11.595 T_mean=22.1950 | step_t=0.02s elapsed=51s
+[20:57:13] step  2650/10000 | lr=2.67e-04 | L_A=1.619 L_G=0.014 L_T=-11.721 T_mean=22.8655 | step_t=0.02s elapsed=52s
+[20:57:14] step  2700/10000 | lr=2.66e-04 | L_A=1.730 L_G=0.026 L_T=-11.857 T_mean=23.8934 | step_t=0.02s elapsed=53s
+[20:57:15] step  2750/10000 | lr=2.64e-04 | L_A=1.595 L_G=0.018 L_T=-11.909 T_mean=23.1262 | step_t=0.02s elapsed=54s
+[20:57:16] step  2800/10000 | lr=2.63e-04 | L_A=1.571 L_G=0.017 L_T=-12.068 T_mean=26.7361 | step_t=0.02s elapsed=55s
+[20:57:17] step  2850/10000 | lr=2.61e-04 | L_A=1.430 L_G=0.015 L_T=-12.331 T_mean=30.6741 | step_t=0.02s elapsed=56s
+[20:57:18] step  2900/10000 | lr=2.60e-04 | L_A=1.555 L_G=0.011 L_T=-12.466 T_mean=31.3970 | step_t=0.02s elapsed=57s
+[20:57:19] step  2950/10000 | lr=2.58e-04 | L_A=1.623 L_G=0.010 L_T=-12.585 T_mean=33.3262 | step_t=0.02s elapsed=58s
+[20:57:20] step  3000/10000 | lr=2.56e-04 | L_A=1.632 L_G=0.019 L_T=-12.745 T_mean=38.6391 | step_t=0.02s elapsed=59s
+[20:57:20] --- eval gate @ step 3000 ---
+[20:57:20]   EVAL[step=3000 greedy] '안녕하세요...' → hangul=0.61 deg=OK tform=1.00 | head='.\n서연: 이 핵심을 짚었어요.\n서연: 이 핵심을 짚었어요. 실제'
+[20:57:20]   EVAL[step=3000 sample] '안녕하세요...' → hangul=0.45 deg=OK tform=1.00 | head='.\nA: A. BMS�3은 언금가 놔정사야 하고 있습니다.\nA: 신이 특식을'
+[20:57:20]   EVAL[step=3000 greedy] '한국어 가능?...' → hangul=0.63 deg=OK tform=1.00 | head=' 발정이 있어요.\n유진: 정말 그럴까요? 반례를 들어볼게요.\n�'
+[20:57:20]   EVAL[step=3000 sample] '한국어 가능?...' → hangul=0.68 deg=OK tform=1.00 | head=' 말이 와습니다.\n어일로 어디트의 일의 없은 다면 스지 될 니'
+[20:57:20]   EVAL[step=3000 greedy] '사용자: 안녕하세요
+도우미:...' → hangul=0.61 deg=OK tform=1.00 | head=' 이 이 있어요. 이 핵심을 짚었어요.\n서연: 실제로 말해야 보�'
+[20:57:20]   EVAL[step=3000 sample] '사용자: 안녕하세요
+도우미:...' → hangul=0.68 deg=OK tform=1.00 | head=' 실제로 대만한 차수 있어요.\n유진: 생각 너머에 모든 있습니'
+[20:57:20]   EVAL[step=3000] avg_hangul=0.609 deg_rate=0.00 (0/6)
+[20:57:20]   OWN18[step=3000] strict_pass=3/3 per_prompt={'안녕하세요': True, '한국어 가능?': True, '사용자: 안녕하세요\n도우미:': True}
+[20:57:21] step  3050/10000 | lr=2.55e-04 | L_A=1.579 L_G=0.018 L_T=-13.002 T_mean=44.8352 | step_t=0.03s elapsed=60s
+[20:57:22] step  3100/10000 | lr=2.53e-04 | L_A=1.285 L_G=0.047 L_T=-13.056 T_mean=42.7395 | step_t=0.02s elapsed=61s
+[20:57:23] step  3150/10000 | lr=2.51e-04 | L_A=1.661 L_G=0.026 L_T=-13.060 T_mean=42.3032 | step_t=0.02s elapsed=62s
+[20:57:24] step  3200/10000 | lr=2.50e-04 | L_A=1.655 L_G=0.021 L_T=-13.046 T_mean=37.7723 | step_t=0.02s elapsed=63s
+[20:57:25] step  3250/10000 | lr=2.48e-04 | L_A=1.666 L_G=0.018 L_T=-13.413 T_mean=52.3926 | step_t=0.02s elapsed=64s
+[20:57:26] step  3300/10000 | lr=2.46e-04 | L_A=1.750 L_G=0.022 L_T=-13.480 T_mean=51.0694 | step_t=0.02s elapsed=65s
+[20:57:27] step  3350/10000 | lr=2.44e-04 | L_A=1.575 L_G=0.014 L_T=-13.309 T_mean=42.5281 | step_t=0.02s elapsed=66s
+[20:57:28] step  3400/10000 | lr=2.43e-04 | L_A=1.295 L_G=0.014 L_T=-13.830 T_mean=64.9122 | step_t=0.02s elapsed=67s
+[20:57:29] step  3450/10000 | lr=2.41e-04 | L_A=1.404 L_G=0.011 L_T=-13.744 T_mean=57.7687 | step_t=0.02s elapsed=68s
+[20:57:30] step  3500/10000 | lr=2.39e-04 | L_A=1.501 L_G=0.008 L_T=-14.025 T_mean=69.5660 | step_t=0.02s elapsed=69s
+[20:57:31] step  3550/10000 | lr=2.37e-04 | L_A=1.709 L_G=0.016 L_T=-13.786 T_mean=53.2663 | step_t=0.02s elapsed=70s
+[20:57:32] step  3600/10000 | lr=2.35e-04 | L_A=1.350 L_G=0.011 L_T=-14.281 T_mean=78.5149 | step_t=0.02s elapsed=71s
+[20:57:33] step  3650/10000 | lr=2.33e-04 | L_A=1.426 L_G=0.010 L_T=-14.460 T_mean=89.3676 | step_t=0.02s elapsed=72s
+[20:57:34] step  3700/10000 | lr=2.31e-04 | L_A=1.775 L_G=0.027 L_T=-14.255 T_mean=69.8170 | step_t=0.02s elapsed=73s
+[20:57:35] step  3750/10000 | lr=2.29e-04 | L_A=1.239 L_G=0.007 L_T=-14.635 T_mean=96.2178 | step_t=0.02s elapsed=74s
+[20:57:36] step  3800/10000 | lr=2.27e-04 | L_A=1.497 L_G=0.013 L_T=-14.395 T_mean=72.7642 | step_t=0.02s elapsed=75s
+[20:57:36] step  3850/10000 | lr=2.25e-04 | L_A=1.562 L_G=0.036 L_T=-14.740 T_mean=94.5615 | step_t=0.02s elapsed=76s
+[20:57:37] step  3900/10000 | lr=2.23e-04 | L_A=1.560 L_G=0.009 L_T=-14.726 T_mean=91.4063 | step_t=0.02s elapsed=77s
+[20:57:38] step  3950/10000 | lr=2.21e-04 | L_A=1.526 L_G=0.009 L_T=-14.791 T_mean=90.7138 | step_t=0.02s elapsed=78s
+[20:57:39] step  4000/10000 | lr=2.19e-04 | L_A=1.375 L_G=0.006 L_T=-14.916 T_mean=98.0532 | step_t=0.02s elapsed=79s
+[20:57:39]   SAVE[step=4000] -> /home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_4000.pt (70.3MB)
+[20:57:40] step  4050/10000 | lr=2.17e-04 | L_A=1.465 L_G=0.010 L_T=-15.194 T_mean=122.3397 | step_t=0.02s elapsed=80s
+[20:57:41] step  4100/10000 | lr=2.15e-04 | L_A=1.272 L_G=0.009 L_T=-15.089 T_mean=104.4784 | step_t=0.02s elapsed=81s
+[20:57:42] step  4150/10000 | lr=2.13e-04 | L_A=1.407 L_G=0.015 L_T=-15.284 T_mean=122.5451 | step_t=0.02s elapsed=82s
+[20:57:43] step  4200/10000 | lr=2.11e-04 | L_A=1.477 L_G=0.011 L_T=-15.273 T_mean=114.0135 | step_t=0.02s elapsed=83s
+[20:57:44] step  4250/10000 | lr=2.09e-04 | L_A=1.418 L_G=0.011 L_T=-15.287 T_mean=111.4847 | step_t=0.02s elapsed=84s
+[20:57:45] step  4300/10000 | lr=2.07e-04 | L_A=1.345 L_G=0.009 L_T=-15.675 T_mean=157.0745 | step_t=0.02s elapsed=85s
+[20:57:46] step  4350/10000 | lr=2.05e-04 | L_A=1.565 L_G=0.012 L_T=-15.795 T_mean=167.9817 | step_t=0.02s elapsed=85s
+[20:57:47] step  4400/10000 | lr=2.02e-04 | L_A=1.239 L_G=0.008 L_T=-15.679 T_mean=144.8506 | step_t=0.02s elapsed=86s
+[20:57:48] step  4450/10000 | lr=2.00e-04 | L_A=1.374 L_G=0.009 L_T=-15.425 T_mean=110.3919 | step_t=0.02s elapsed=87s
+[20:57:49] step  4500/10000 | lr=1.98e-04 | L_A=1.279 L_G=0.008 L_T=-16.089 T_mean=194.0123 | step_t=0.02s elapsed=88s
+[20:57:50] step  4550/10000 | lr=1.96e-04 | L_A=1.522 L_G=0.008 L_T=-15.827 T_mean=145.8829 | step_t=0.02s elapsed=89s
+[20:57:51] step  4600/10000 | lr=1.94e-04 | L_A=1.666 L_G=0.022 L_T=-15.789 T_mean=134.7665 | step_t=0.02s elapsed=90s
+[20:57:52] step  4650/10000 | lr=1.92e-04 | L_A=1.488 L_G=0.051 L_T=-15.901 T_mean=142.8521 | step_t=0.02s elapsed=91s
+[20:57:53] step  4700/10000 | lr=1.89e-04 | L_A=1.487 L_G=0.008 L_T=-16.043 T_mean=162.8917 | step_t=0.02s elapsed=92s
+[20:57:54] step  4750/10000 | lr=1.87e-04 | L_A=1.433 L_G=0.014 L_T=-16.067 T_mean=156.2661 | step_t=0.02s elapsed=93s
+[20:57:55] step  4800/10000 | lr=1.85e-04 | L_A=1.471 L_G=0.005 L_T=-16.027 T_mean=145.9987 | step_t=0.02s elapsed=94s
+[20:57:56] step  4850/10000 | lr=1.83e-04 | L_A=1.493 L_G=0.012 L_T=-16.263 T_mean=177.2308 | step_t=0.02s elapsed=95s
+[20:57:57] step  4900/10000 | lr=1.81e-04 | L_A=1.561 L_G=0.015 L_T=-16.396 T_mean=190.3908 | step_t=0.02s elapsed=96s
+[20:57:58] step  4950/10000 | lr=1.78e-04 | L_A=1.466 L_G=0.009 L_T=-16.445 T_mean=196.9236 | step_t=0.02s elapsed=97s
+[20:57:59] step  5000/10000 | lr=1.76e-04 | L_A=1.444 L_G=0.008 L_T=-16.693 T_mean=240.4072 | step_t=0.02s elapsed=98s
+[20:57:59] --- eval gate @ step 5000 ---
+[20:57:59]   EVAL[step=5000 greedy] '안녕하세요...' → hangul=0.70 deg=DEG tform=0.70 | head='\n우리 아니야 내가 아니야\n아니라 아니야 내가 아니야\n아니�'
+[20:57:59]   EVAL[step=5000 sample] '안녕하세요...' → hangul=0.68 deg=OK tform=1.00 | head='\n정적인 마을에 있도 알아요?\n네어떤 좋아요\n마나 우리 가 그'
+[20:57:59]   EVAL[step=5000 greedy] '한국어 가능?...' → hangul=0.63 deg=OK tform=1.00 | head=' 방이 있어요.\n유진: 생각 너머에 알아차림이 있어요. 생각 �'
+[20:57:59]   EVAL[step=5000 sample] '한국어 가능?...' → hangul=0.68 deg=OK tform=1.00 | head=' 열떤 정보야 할내야 합니다. 환사용전 전까지, 빙봉사는 향�'
+[20:57:59]   EVAL[step=5000 greedy] '사용자: 안녕하세요
+도우미:...' → hangul=0.68 deg=OK tform=1.00 | head=' 아니메의 이 상의 메커니즘을 분석하면,\n서연: 지금까지의 �'
+[20:57:59]   EVAL[step=5000 sample] '사용자: 안녕하세요
+도우미:...' → hangul=0.68 deg=OK tform=1.00 | head=' 나수준: 전무렇다면, 이 호흡에 집중하면 답이고 보면,\n서연'
+[20:57:59]   EVAL[step=5000] avg_hangul=0.672 deg_rate=0.17 (1/6)
+[20:57:59]   OWN18[step=5000] strict_pass=3/3 per_prompt={'안녕하세요': True, '한국어 가능?': True, '사용자: 안녕하세요\n도우미:': True}
+[20:58:00] step  5050/10000 | lr=1.74e-04 | L_A=1.426 L_G=0.008 L_T=-16.579 T_mean=212.1338 | step_t=0.03s elapsed=100s
+[20:58:01] step  5100/10000 | lr=1.72e-04 | L_A=1.320 L_G=0.006 L_T=-16.802 T_mean=253.0951 | step_t=0.02s elapsed=101s
+[20:58:02] step  5150/10000 | lr=1.69e-04 | L_A=1.397 L_G=0.008 L_T=-16.687 T_mean=223.5258 | step_t=0.02s elapsed=101s
+[20:58:03] step  5200/10000 | lr=1.67e-04 | L_A=1.298 L_G=0.006 L_T=-16.794 T_mean=228.9152 | step_t=0.02s elapsed=102s
+[20:58:04] step  5250/10000 | lr=1.65e-04 | L_A=1.233 L_G=0.006 L_T=-16.904 T_mean=253.8637 | step_t=0.02s elapsed=103s
+[20:58:05] step  5300/10000 | lr=1.63e-04 | L_A=1.338 L_G=0.005 L_T=-16.844 T_mean=223.8889 | step_t=0.02s elapsed=104s
+[20:58:06] step  5350/10000 | lr=1.61e-04 | L_A=1.453 L_G=0.011 L_T=-16.830 T_mean=223.0403 | step_t=0.02s elapsed=105s
+[20:58:07] step  5400/10000 | lr=1.58e-04 | L_A=1.329 L_G=0.012 L_T=-16.941 T_mean=239.8762 | step_t=0.02s elapsed=106s
+[20:58:08] step  5450/10000 | lr=1.56e-04 | L_A=1.241 L_G=0.022 L_T=-16.929 T_mean=227.6899 | step_t=0.02s elapsed=107s
+[20:58:09] step  5500/10000 | lr=1.54e-04 | L_A=1.631 L_G=0.015 L_T=-17.190 T_mean=280.4167 | step_t=0.02s elapsed=108s
+[20:58:10] step  5550/10000 | lr=1.52e-04 | L_A=1.342 L_G=0.012 L_T=-17.153 T_mean=275.3937 | step_t=0.02s elapsed=109s
+[20:58:11] step  5600/10000 | lr=1.49e-04 | L_A=1.154 L_G=0.009 L_T=-17.163 T_mean=261.7027 | step_t=0.02s elapsed=110s
+[20:58:12] step  5650/10000 | lr=1.47e-04 | L_A=1.560 L_G=0.011 L_T=-17.215 T_mean=268.1985 | step_t=0.02s elapsed=111s
+[20:58:13] step  5700/10000 | lr=1.45e-04 | L_A=1.410 L_G=0.004 L_T=-17.492 T_mean=344.0735 | step_t=0.02s elapsed=112s
+[20:58:14] step  5750/10000 | lr=1.43e-04 | L_A=1.300 L_G=0.004 L_T=-17.611 T_mean=371.4952 | step_t=0.02s elapsed=113s
+[20:58:15] step  5800/10000 | lr=1.41e-04 | L_A=1.239 L_G=0.006 L_T=-17.422 T_mean=302.7209 | step_t=0.02s elapsed=114s
+[20:58:16] step  5850/10000 | lr=1.38e-04 | L_A=1.271 L_G=0.006 L_T=-17.281 T_mean=263.5779 | step_t=0.02s elapsed=115s
+[20:58:17] step  5900/10000 | lr=1.36e-04 | L_A=0.991 L_G=0.005 L_T=-17.457 T_mean=299.7524 | step_t=0.02s elapsed=116s
+[20:58:18] step  5950/10000 | lr=1.34e-04 | L_A=1.464 L_G=0.008 L_T=-17.560 T_mean=325.8570 | step_t=0.02s elapsed=117s
+[20:58:19] step  6000/10000 | lr=1.32e-04 | L_A=1.410 L_G=0.007 L_T=-17.578 T_mean=323.6599 | step_t=0.02s elapsed=118s
+[20:58:19]   SAVE[step=6000] -> /home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_6000.pt (70.3MB)
+[20:58:20] step  6050/10000 | lr=1.30e-04 | L_A=1.141 L_G=0.002 L_T=-17.799 T_mean=388.0961 | step_t=0.02s elapsed=119s
+[20:58:21] step  6100/10000 | lr=1.28e-04 | L_A=1.361 L_G=0.004 L_T=-17.741 T_mean=357.8724 | step_t=0.02s elapsed=120s
+[20:58:22] step  6150/10000 | lr=1.25e-04 | L_A=1.370 L_G=0.005 L_T=-17.891 T_mean=405.6342 | step_t=0.02s elapsed=121s
+[20:58:23] step  6200/10000 | lr=1.23e-04 | L_A=1.313 L_G=0.009 L_T=-17.803 T_mean=369.4407 | step_t=0.02s elapsed=122s
+[20:58:23] step  6250/10000 | lr=1.21e-04 | L_A=1.121 L_G=0.007 L_T=-17.713 T_mean=329.3533 | step_t=0.02s elapsed=123s
+[20:58:24] step  6300/10000 | lr=1.19e-04 | L_A=1.355 L_G=0.007 L_T=-17.896 T_mean=392.0670 | step_t=0.02s elapsed=124s
+[20:58:25] step  6350/10000 | lr=1.17e-04 | L_A=1.339 L_G=0.007 L_T=-17.745 T_mean=330.9505 | step_t=0.02s elapsed=125s
+[20:58:26] step  6400/10000 | lr=1.15e-04 | L_A=1.475 L_G=0.007 L_T=-17.750 T_mean=325.0019 | step_t=0.02s elapsed=126s
+[20:58:27] step  6450/10000 | lr=1.13e-04 | L_A=1.456 L_G=0.008 L_T=-17.972 T_mean=400.1133 | step_t=0.02s elapsed=127s
+[20:58:28] step  6500/10000 | lr=1.11e-04 | L_A=1.305 L_G=0.004 L_T=-18.153 T_mean=450.2972 | step_t=0.02s elapsed=128s
+[20:58:29] step  6550/10000 | lr=1.09e-04 | L_A=1.263 L_G=0.006 L_T=-18.239 T_mean=488.2725 | step_t=0.02s elapsed=129s
+[20:58:30] step  6600/10000 | lr=1.07e-04 | L_A=1.290 L_G=0.009 L_T=-18.070 T_mean=410.4087 | step_t=0.02s elapsed=130s
+[20:58:31] step  6650/10000 | lr=1.05e-04 | L_A=1.301 L_G=0.006 L_T=-18.274 T_mean=491.9334 | step_t=0.02s elapsed=131s
+[20:58:32] step  6700/10000 | lr=1.03e-04 | L_A=1.200 L_G=0.005 L_T=-18.294 T_mean=495.5229 | step_t=0.02s elapsed=131s
+[20:58:33] step  6750/10000 | lr=1.01e-04 | L_A=1.192 L_G=0.018 L_T=-18.070 T_mean=381.5106 | step_t=0.02s elapsed=132s
+[20:58:34] step  6800/10000 | lr=9.88e-05 | L_A=1.237 L_G=0.013 L_T=-18.318 T_mean=472.5467 | step_t=0.02s elapsed=133s
+[20:58:35] step  6850/10000 | lr=9.69e-05 | L_A=1.283 L_G=0.007 L_T=-18.417 T_mean=524.4302 | step_t=0.02s elapsed=134s
+[20:58:36] step  6900/10000 | lr=9.49e-05 | L_A=1.239 L_G=0.003 L_T=-18.628 T_mean=628.6573 | step_t=0.02s elapsed=135s
+[20:58:37] step  6950/10000 | lr=9.30e-05 | L_A=1.373 L_G=0.003 L_T=-18.429 T_mean=514.6310 | step_t=0.02s elapsed=136s
+[20:58:38] step  7000/10000 | lr=9.12e-05 | L_A=0.956 L_G=0.006 L_T=-18.305 T_mean=453.2146 | step_t=0.02s elapsed=137s
+[20:58:39] step  7050/10000 | lr=8.93e-05 | L_A=1.294 L_G=0.004 L_T=-18.501 T_mean=544.7477 | step_t=0.02s elapsed=138s
+[20:58:40] step  7100/10000 | lr=8.75e-05 | L_A=1.465 L_G=0.012 L_T=-18.442 T_mean=508.5616 | step_t=0.02s elapsed=139s
+[20:58:41] step  7150/10000 | lr=8.56e-05 | L_A=1.551 L_G=0.007 L_T=-18.494 T_mean=512.8120 | step_t=0.02s elapsed=140s
+[20:58:42] step  7200/10000 | lr=8.39e-05 | L_A=1.424 L_G=0.009 L_T=-18.263 T_mean=409.0517 | step_t=0.02s elapsed=141s
+[20:58:43] step  7250/10000 | lr=8.21e-05 | L_A=1.181 L_G=0.003 L_T=-18.651 T_mean=595.0388 | step_t=0.02s elapsed=142s
+[20:58:44] step  7300/10000 | lr=8.03e-05 | L_A=1.115 L_G=0.007 L_T=-18.578 T_mean=534.6586 | step_t=0.02s elapsed=143s
+[20:58:45] step  7350/10000 | lr=7.86e-05 | L_A=1.208 L_G=0.005 L_T=-18.425 T_mean=461.2765 | step_t=0.02s elapsed=144s
+[20:58:46] step  7400/10000 | lr=7.69e-05 | L_A=1.376 L_G=0.005 L_T=-18.832 T_mean=672.9440 | step_t=0.02s elapsed=145s
+[20:58:47] step  7450/10000 | lr=7.52e-05 | L_A=1.310 L_G=0.004 L_T=-18.903 T_mean=719.6342 | step_t=0.02s elapsed=146s
+[20:58:48] step  7500/10000 | lr=7.36e-05 | L_A=1.372 L_G=0.007 L_T=-18.817 T_mean=655.0627 | step_t=0.02s elapsed=147s
+[20:58:48] --- eval gate @ step 7500 ---
+[20:58:48]   EVAL[step=7500 greedy] '안녕하세요...' → hangul=0.75 deg=OK tform=1.00 | head='\n이제 전화는 자신을 수술하는 거야\n아니에 아니었어요\n이제'
+[20:58:48]   EVAL[step=7500 sample] '안녕하세요...' → hangul=0.61 deg=OK tform=1.00 | head='.\n하은: 정말 그럴까요? 반례를 들어볼게요.\n하은: 서연의 의�'
+[20:58:48]   EVAL[step=7500 greedy] '한국어 가능?...' → hangul=0.68 deg=OK tform=1.00 | head=' 이전 장치를 입력하는 것이 있어요.\n유진: 잠시 멈추고 내면'
+[20:58:48]   EVAL[step=7500 sample] '한국어 가능?...' → hangul=0.68 deg=OK tform=1.00 | head='\n아까 마이 헨니었거든\n신오, 차부 나르는 거리 하나는 말아�'
+[20:58:48]   EVAL[step=7500 greedy] '사용자: 안녕하세요
+도우미:...' → hangul=0.68 deg=OK tform=1.00 | head=' 아니면 이전 아니에요.\n이제 전환: 생명의 의견에 동의하면�'
+[20:58:48]   EVAL[step=7500 sample] '사용자: 안녕하세요
+도우미:...' → hangul=0.68 deg=OK tform=1.00 | head=' 벼만가 보아진 도르세요.\n몸에 들어려고 어떻게 생각해요.\n�'
+[20:58:48]   EVAL[step=7500] avg_hangul=0.678 deg_rate=0.00 (0/6)
+[20:58:48]   OWN18[step=7500] strict_pass=3/3 per_prompt={'안녕하세요': True, '한국어 가능?': True, '사용자: 안녕하세요\n도우미:': True}
+[20:58:49] step  7550/10000 | lr=7.19e-05 | L_A=1.042 L_G=0.005 L_T=-18.910 T_mean=701.6089 | step_t=0.03s elapsed=148s
+[20:58:50] step  7600/10000 | lr=7.03e-05 | L_A=1.429 L_G=0.006 L_T=-18.771 T_mean=606.9108 | step_t=0.02s elapsed=149s
+[20:58:51] step  7650/10000 | lr=6.88e-05 | L_A=1.524 L_G=0.004 L_T=-18.724 T_mean=566.9268 | step_t=0.02s elapsed=150s
+[20:58:52] step  7700/10000 | lr=6.72e-05 | L_A=1.424 L_G=0.006 L_T=-18.819 T_mean=625.2548 | step_t=0.02s elapsed=151s
+[20:58:53] step  7750/10000 | lr=6.57e-05 | L_A=1.243 L_G=0.005 L_T=-18.902 T_mean=674.2618 | step_t=0.02s elapsed=152s
+[20:58:54] step  7800/10000 | lr=6.42e-05 | L_A=1.577 L_G=0.007 L_T=-18.745 T_mean=557.2605 | step_t=0.02s elapsed=153s
+[20:58:55] step  7850/10000 | lr=6.27e-05 | L_A=1.307 L_G=0.005 L_T=-18.751 T_mean=559.7101 | step_t=0.02s elapsed=154s
+[20:58:56] step  7900/10000 | lr=6.13e-05 | L_A=1.431 L_G=0.008 L_T=-18.919 T_mean=645.3514 | step_t=0.02s elapsed=155s
+[20:58:57] step  7950/10000 | lr=5.99e-05 | L_A=1.031 L_G=0.004 L_T=-18.971 T_mean=670.9899 | step_t=0.02s elapsed=156s
+[20:58:58] step  8000/10000 | lr=5.85e-05 | L_A=1.204 L_G=0.005 L_T=-18.963 T_mean=671.0631 | step_t=0.02s elapsed=157s
+[20:58:58]   SAVE[step=8000] -> /home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_8000.pt (70.3MB)
+[20:58:59] step  8050/10000 | lr=5.71e-05 | L_A=1.253 L_G=0.006 L_T=-18.900 T_mean=634.6285 | step_t=0.02s elapsed=158s
+[20:59:00] step  8100/10000 | lr=5.58e-05 | L_A=1.012 L_G=0.007 L_T=-18.972 T_mean=683.6296 | step_t=0.02s elapsed=159s
+[20:59:01] step  8150/10000 | lr=5.45e-05 | L_A=1.330 L_G=0.004 L_T=-18.905 T_mean=614.1669 | step_t=0.02s elapsed=160s
+[20:59:02] step  8200/10000 | lr=5.32e-05 | L_A=1.037 L_G=0.003 L_T=-19.124 T_mean=758.3793 | step_t=0.02s elapsed=161s
+[20:59:03] step  8250/10000 | lr=5.20e-05 | L_A=1.103 L_G=0.004 L_T=-18.897 T_mean=606.9695 | step_t=0.02s elapsed=162s
+[20:59:04] step  8300/10000 | lr=5.08e-05 | L_A=1.319 L_G=0.008 L_T=-18.531 T_mean=416.8110 | step_t=0.02s elapsed=163s
+[20:59:05] step  8350/10000 | lr=4.96e-05 | L_A=1.370 L_G=0.003 L_T=-19.365 T_mean=946.7175 | step_t=0.02s elapsed=164s
+[20:59:06] step  8400/10000 | lr=4.85e-05 | L_A=1.378 L_G=0.005 L_T=-19.112 T_mean=730.2230 | step_t=0.02s elapsed=165s
+[20:59:07] step  8450/10000 | lr=4.73e-05 | L_A=1.136 L_G=0.003 L_T=-19.125 T_mean=728.5837 | step_t=0.02s elapsed=166s
+[20:59:08] step  8500/10000 | lr=4.63e-05 | L_A=1.041 L_G=0.006 L_T=-18.990 T_mean=646.8612 | step_t=0.02s elapsed=167s
+[20:59:09] step  8550/10000 | lr=4.52e-05 | L_A=1.203 L_G=0.003 L_T=-18.995 T_mean=622.7101 | step_t=0.02s elapsed=168s
+[20:59:10] step  8600/10000 | lr=4.42e-05 | L_A=1.036 L_G=0.008 L_T=-19.062 T_mean=666.8295 | step_t=0.02s elapsed=169s
+[20:59:10] step  8650/10000 | lr=4.32e-05 | L_A=1.167 L_G=0.007 L_T=-19.082 T_mean=691.7927 | step_t=0.02s elapsed=170s
+[20:59:11] step  8700/10000 | lr=4.23e-05 | L_A=1.245 L_G=0.005 L_T=-19.165 T_mean=741.1151 | step_t=0.02s elapsed=171s
+[20:59:12] step  8750/10000 | lr=4.14e-05 | L_A=1.358 L_G=0.003 L_T=-19.217 T_mean=776.7567 | step_t=0.02s elapsed=172s
+[20:59:13] step  8800/10000 | lr=4.05e-05 | L_A=1.502 L_G=0.010 L_T=-19.292 T_mean=829.4906 | step_t=0.02s elapsed=173s
+[20:59:14] step  8850/10000 | lr=3.96e-05 | L_A=1.030 L_G=0.005 L_T=-19.082 T_mean=661.0291 | step_t=0.02s elapsed=174s
+[20:59:15] step  8900/10000 | lr=3.88e-05 | L_A=1.301 L_G=0.003 L_T=-19.228 T_mean=783.5466 | step_t=0.02s elapsed=175s
+[20:59:16] step  8950/10000 | lr=3.81e-05 | L_A=1.238 L_G=0.004 L_T=-18.930 T_mean=564.2509 | step_t=0.02s elapsed=176s
+[20:59:17] step  9000/10000 | lr=3.73e-05 | L_A=1.361 L_G=0.002 L_T=-19.215 T_mean=738.1923 | step_t=0.02s elapsed=177s
+[20:59:18] step  9050/10000 | lr=3.66e-05 | L_A=1.338 L_G=0.005 L_T=-19.034 T_mean=635.0286 | step_t=0.02s elapsed=178s
+[20:59:19] step  9100/10000 | lr=3.59e-05 | L_A=1.320 L_G=0.007 L_T=-19.181 T_mean=702.6185 | step_t=0.02s elapsed=178s
+[20:59:20] step  9150/10000 | lr=3.53e-05 | L_A=1.361 L_G=0.007 L_T=-19.228 T_mean=760.3875 | step_t=0.02s elapsed=179s
+[20:59:21] step  9200/10000 | lr=3.47e-05 | L_A=1.347 L_G=0.006 L_T=-19.284 T_mean=769.4416 | step_t=0.02s elapsed=180s
+[20:59:22] step  9250/10000 | lr=3.41e-05 | L_A=1.349 L_G=0.005 L_T=-19.163 T_mean=678.2114 | step_t=0.02s elapsed=181s
+[20:59:23] step  9300/10000 | lr=3.36e-05 | L_A=1.205 L_G=0.007 L_T=-19.145 T_mean=670.9707 | step_t=0.02s elapsed=182s
+[20:59:24] step  9350/10000 | lr=3.31e-05 | L_A=1.164 L_G=0.004 L_T=-19.340 T_mean=808.0912 | step_t=0.02s elapsed=183s
+[20:59:25] step  9400/10000 | lr=3.26e-05 | L_A=1.452 L_G=0.006 L_T=-19.322 T_mean=817.0410 | step_t=0.02s elapsed=184s
+[20:59:26] step  9450/10000 | lr=3.22e-05 | L_A=1.341 L_G=0.002 L_T=-19.084 T_mean=628.0850 | step_t=0.02s elapsed=185s
+[20:59:27] step  9500/10000 | lr=3.18e-05 | L_A=1.139 L_G=0.006 L_T=-19.426 T_mean=886.2292 | step_t=0.02s elapsed=186s
+[20:59:28] step  9550/10000 | lr=3.15e-05 | L_A=1.189 L_G=0.003 L_T=-19.360 T_mean=814.3947 | step_t=0.02s elapsed=187s
+[20:59:29] step  9600/10000 | lr=3.12e-05 | L_A=1.295 L_G=0.006 L_T=-19.329 T_mean=796.2361 | step_t=0.02s elapsed=188s
+[20:59:30] step  9650/10000 | lr=3.09e-05 | L_A=1.338 L_G=0.008 L_T=-19.006 T_mean=564.8301 | step_t=0.02s elapsed=189s
+[20:59:31] step  9700/10000 | lr=3.07e-05 | L_A=1.337 L_G=0.005 L_T=-19.444 T_mean=859.8508 | step_t=0.02s elapsed=190s
+[20:59:32] step  9750/10000 | lr=3.05e-05 | L_A=1.171 L_G=0.002 L_T=-19.233 T_mean=709.7479 | step_t=0.02s elapsed=191s
+[20:59:33] step  9800/10000 | lr=3.03e-05 | L_A=1.385 L_G=0.007 L_T=-19.307 T_mean=733.9359 | step_t=0.02s elapsed=192s
+[20:59:34] step  9850/10000 | lr=3.02e-05 | L_A=1.181 L_G=0.004 L_T=-19.564 T_mean=953.8288 | step_t=0.02s elapsed=193s
+[20:59:35] step  9900/10000 | lr=3.01e-05 | L_A=1.609 L_G=0.004 L_T=-19.181 T_mean=644.7382 | step_t=0.02s elapsed=194s
+[20:59:36] step  9950/10000 | lr=3.00e-05 | L_A=1.180 L_G=0.004 L_T=-19.637 T_mean=1028.7012 | step_t=0.02s elapsed=195s
+[20:59:37] step 10000/10000 | lr=3.00e-05 | L_A=1.028 L_G=0.004 L_T=-19.287 T_mean=745.6667 | step_t=0.02s elapsed=196s
+[20:59:37] --- eval gate @ step 10000 ---
+[20:59:37]   EVAL[step=10000 greedy] '안녕하세요...' → hangul=0.70 deg=DEG tform=0.70 | head='\n아니에 아니에 있어요\n아니에 아니에 있는 거야\n아니에 아�'
+[20:59:37]   EVAL[step=10000 sample] '안녕하세요...' → hangul=0.55 deg=OK tform=1.00 | head='?\n[주제: DI의미하는 바는 무엇일까요?]\n서연: 좋은 지적이 핵�'
+[20:59:37]   EVAL[step=10000 greedy] '한국어 가능?...' → hangul=0.68 deg=OK tform=1.00 | head=' 이러한 이러한 전쟁이 있어요.\n서연: 정말 그럴까요? 반례를'
+[20:59:37]   EVAL[step=10000 sample] '한국어 가능?...' → hangul=0.75 deg=OK tform=1.00 | head=' 결과를 이루어서 재기억하고 있다. 생안법에 대한민주들의 '
+[20:59:37]   EVAL[step=10000 greedy] '사용자: 안녕하세요
+도우미:...' → hangul=0.75 deg=DEG tform=0.70 | head=' 아니아의 이러한 이러한 이러한 이러한 이러한 이러한 이러'
+[20:59:37]   EVAL[step=10000 sample] '사용자: 안녕하세요
+도우미:...' → hangul=0.70 deg=OK tform=1.00 | head=' 어느 여기에 찾은 무선도 속에서 저한 사람들이 된거에요\n�'
+[20:59:37]   EVAL[step=10000] avg_hangul=0.687 deg_rate=0.33 (2/6)
+[20:59:37]   OWN18[step=10000] strict_pass=3/3 per_prompt={'안녕하세요': True, '한국어 가능?': True, '사용자: 안녕하세요\n도우미:': True}
+[20:59:37]   SAVE[step=10000] -> /home/aiden/core/anima/runs/anima-native-ko-small-20260506_205612/ckpt_10000.pt (70.3MB)
+[20:59:37] === VERDICT === SIMPLE_STACK_PASS | own18 pass 3/3 | avg_hangul=0.687 | deg_rate=0.33
+[20:59:37] verdict written: /home/aiden/core/anima/state/anima_native_ko_small_ubu1_train_2026_05_06/verdict.json

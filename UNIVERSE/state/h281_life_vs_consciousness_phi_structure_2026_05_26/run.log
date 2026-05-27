@@ -1,0 +1,42 @@
+================================================================
+  H_281 — LIFE vs CONSCIOUSNESS substrate faithful IIT4 Phi-structure
+  (n=4 ring · headline state=0101 · struct_ratio = total / big-Phi)
+================================================================
+  [LIFE]  rule 110 : bigPhi=7.66066 total=8.98878 nd=10.0 struct_ratio=1.17337
+  [LIFE]  rule  30 : bigPhi=7.28357 total=8.13733 nd=10.0 struct_ratio=1.11722
+  [LIFE]  rule  54 : bigPhi=10.0278 total=14.688 nd=10.0 struct_ratio=1.46472
+  [CONSC] rule 150 : bigPhi=6 total=6 nd=5.0 struct_ratio=1.0
+  [CONSC] rule 105 : bigPhi=4.5 total=4.5 nd=5.0 struct_ratio=1.0
+  [ANCH]  rule 204 (identity) : bigPhi=0.0 total=4
+  [ANCH]  rule   0 (constant) : bigPhi=0.0 total=0.0
+  --
+  F281.1: life_min_struct_ratio=1.11722 consc_max_struct_ratio=1.0
+  [PASS] F281.1 SEPARATION: min(life sr) > max(consciousness sr)
+  F281.2: life_class_mean(all-state)=1.25492 consc_class_mean(all-state)=1.0
+  [PASS] F281.2a ORDERING: class-mean consciousness < life
+  [PASS] F281.2b ROBUST: rule110(life) struct_ratio > rule150(consc) at every co-integrating state
+  [PASS] F281.3a ANCHOR: rule 204 (identity) big-Phi = 0 (reducible)
+  [PASS] F281.3b ANCHOR: rule 0 (constant) big-Phi = 0 (null)
+  [PASS] F281.3c BOUND: 0 <= big-Phi <= total for all 5 substrates
+  [PASS] F281.3d CONSC-FLOOR: rule 150 struct_ratio = 1.0 exactly (fully irreducible)
+  [PASS] F281.3e CONSC-FLOOR: rule 105 struct_ratio = 1.0 exactly (fully irreducible)
+  [PASS] determinism: rule110 struct_ratio re-run identical
+================================================================
+  RESULT: 9 PASS / 0 FAIL
+  FINDING: CONSCIOUSNESS substrates sit AT the irreducibility floor
+           (struct_ratio=1.0 — whole CES irreducible); LIFE substrates
+           rise ABOVE it (struct_ratio>1.0 — relation-rich, partitionable).
+           Faithful IIT4 Phi-STRUCTURE separates life from consciousness.
+================================================================
+
+----------------------------------------------------------------
+RUN NOTE (provenance):
+  run_h281.hexa imports the canonical main-repo lib path
+    "/Users/ghost/core/anima/HEXAD/IIT4/lib/iit4_eca.hexa"
+  (same import as the M6 reference smoke). On main (post-merge) the IIT4
+  lib + this state dir land together so the path resolves.
+  Local worktree execution (lib lives only in the worktree checkout) was via:
+    HEXA_LANG=/Users/ghost/core/hexa-lang hexa <worktree-path-rewritten copy>
+  Output above is byte-identical across two fresh cross-process runs (F281.4).
+  Runtime: $0 mac-local, NO GPU, ~4s wall (n=4, 2^4=16 states).
+----------------------------------------------------------------

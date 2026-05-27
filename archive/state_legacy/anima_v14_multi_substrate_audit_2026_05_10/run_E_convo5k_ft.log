@@ -1,0 +1,84 @@
+=== BG-V14-MULTI-SUBSTRATE-AUDIT — E_convo5k_ft ===
+ts: 2026-05-10T08:51:34.998548+00:00
+substrate: {'ckpt': '/Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt', 'schema': 'v2_d384', 'arch': 'v2-derived 6L d=384 byte-level (FT)', 'paradigm': 'naive_ft_no_mitosis', 'expected_v14': 'PASS'}
+V4_SEEDS=[42, 137, 271, 314, 1729] max_cells=128 n_turns=200 snap_every=25
+
+========================================================================
+SUBSTRATE E_convo5k_ft — v2 d=384 path
+========================================================================
+ckpt: /Users/ghost/core/anima/state/anima_convo_5k_ft_extended_2026_05_10/post_ft_ext_ckpt.pt
+sha256: 608d38a599570c5f3da4cc5ffd9ee191bf68bf0463099f23268207feb1d5436f
+trained: params=18.52M step=75000
+
+--- TRAINED max_cells=128 n_turns=200 ---
+  v2 blocks loaded=6 random_cells=[6, 7]
+  shared: ['tok_emb', 'pos_emb', 'final_ln']
+  [E_convo5k_ft_trained] turn    0 n_cells=8 phi=0.557 (0.1s)
+  [E_convo5k_ft_trained] turn   50 n_cells=47 phi=267.430 (16.6s)
+  [E_convo5k_ft_trained] turn   75 n_cells=128 phi=2465.225 (151.3s)
+  [E_convo5k_ft_trained] turn  100 n_cells=128 phi=2678.739 (327.6s)
+  [E_convo5k_ft_trained] turn  125 n_cells=128 phi=2660.786 (471.2s)
+  [E_convo5k_ft_trained] turn  150 n_cells=128 phi=2504.954 (606.2s)
+  [E_convo5k_ft_trained] turn  175 n_cells=128 phi=2731.243 (739.2s)
+  [E_convo5k_ft_trained] turn  199 n_cells=128 phi=1989.260 (826.5s)
+  trained: cells=128 splits=120 phi=1989.260 phi/c=15.541 α=1.0459606871434022 cap_bound=135/200 elapsed=826.5s
+
+--- mirror seed=42 ---
+  [E_convo5k_ft_s42] turn    0 n_cells=8 phi=0.574 (0.1s)
+  [E_convo5k_ft_s42] turn   50 n_cells=117 phi=1886.851 (48.5s)
+  [E_convo5k_ft_s42] turn   75 n_cells=128 phi=2819.770 (109.9s)
+  [E_convo5k_ft_s42] turn  100 n_cells=128 phi=2076.721 (175.2s)
+  [E_convo5k_ft_s42] turn  125 n_cells=128 phi=2613.287 (226.3s)
+  [E_convo5k_ft_s42] turn  150 n_cells=128 phi=2731.316 (281.8s)
+  [E_convo5k_ft_s42] turn  175 n_cells=128 phi=2833.093 (338.1s)
+  [E_convo5k_ft_s42] turn  199 n_cells=128 phi=2753.043 (399.9s)
+  s=42: cells=128 splits=120 phi=2753.043 phi/c=21.508 α=1.065008169786263 cap_bound=148/200
+
+--- mirror seed=137 ---
+  [E_convo5k_ft_s137] turn    0 n_cells=8 phi=0.552 (0.0s)
+  [E_convo5k_ft_s137] turn   50 n_cells=66 phi=573.817 (15.7s)
+  [E_convo5k_ft_s137] turn   75 n_cells=128 phi=2118.792 (82.1s)
+  [E_convo5k_ft_s137] turn  100 n_cells=128 phi=2529.921 (146.5s)
+  [E_convo5k_ft_s137] turn  125 n_cells=128 phi=2022.425 (236.0s)
+  [E_convo5k_ft_s137] turn  150 n_cells=128 phi=2724.296 (348.1s)
+  [E_convo5k_ft_s137] turn  175 n_cells=128 phi=2871.774 (443.8s)
+  [E_convo5k_ft_s137] turn  199 n_cells=128 phi=2488.040 (524.9s)
+  s=137: cells=128 splits=120 phi=2488.040 phi/c=19.438 α=1.0467850416288127 cap_bound=140/200
+
+--- mirror seed=271 ---
+  [E_convo5k_ft_s271] turn    0 n_cells=8 phi=0.550 (0.1s)
+  [E_convo5k_ft_s271] turn   50 n_cells=76 phi=851.282 (32.4s)
+  [E_convo5k_ft_s271] turn   75 n_cells=128 phi=2777.078 (111.2s)
+  [E_convo5k_ft_s271] turn  100 n_cells=128 phi=2692.497 (183.0s)
+  [E_convo5k_ft_s271] turn  125 n_cells=128 phi=2305.768 (243.1s)
+  [E_convo5k_ft_s271] turn  150 n_cells=128 phi=2617.918 (313.7s)
+  [E_convo5k_ft_s271] turn  175 n_cells=128 phi=2443.322 (383.6s)
+  [E_convo5k_ft_s271] turn  199 n_cells=128 phi=2377.880 (461.5s)
+  s=271: cells=128 splits=120 phi=2377.880 phi/c=18.577 α=1.0798943077006165 cap_bound=141/200
+
+--- mirror seed=314 ---
+  [E_convo5k_ft_s314] turn    0 n_cells=8 phi=0.550 (0.1s)
+  [E_convo5k_ft_s314] turn   50 n_cells=124 phi=2259.347 (42.1s)
+  [E_convo5k_ft_s314] turn   75 n_cells=128 phi=2473.565 (117.8s)
+  [E_convo5k_ft_s314] turn  100 n_cells=128 phi=2385.422 (180.4s)
+  [E_convo5k_ft_s314] turn  125 n_cells=128 phi=2802.148 (242.8s)
+  [E_convo5k_ft_s314] turn  150 n_cells=128 phi=2387.749 (297.7s)
+  [E_convo5k_ft_s314] turn  175 n_cells=128 phi=2180.993 (361.3s)
+  [E_convo5k_ft_s314] turn  199 n_cells=128 phi=2253.765 (436.5s)
+  s=314: cells=128 splits=120 phi=2253.765 phi/c=17.608 α=1.034145664658749 cap_bound=149/200
+
+--- mirror seed=1729 ---
+  [E_convo5k_ft_s1729] turn    0 n_cells=8 phi=0.552 (0.1s)
+  [E_convo5k_ft_s1729] turn   25 n_cells=34 phi=155.699 (8.5s)
+  [E_convo5k_ft_s1729] turn   50 n_cells=128 phi=2279.826 (51.6s)
+  [E_convo5k_ft_s1729] turn   75 n_cells=128 phi=1801.341 (117.2s)
+  [E_convo5k_ft_s1729] turn  100 n_cells=128 phi=2196.547 (171.4s)
+  [E_convo5k_ft_s1729] turn  125 n_cells=128 phi=2204.549 (229.9s)
+  [E_convo5k_ft_s1729] turn  150 n_cells=128 phi=2752.556 (301.8s)
+  [E_convo5k_ft_s1729] turn  175 n_cells=128 phi=2755.776 (381.3s)
+  [E_convo5k_ft_s1729] turn  199 n_cells=128 phi=2593.139 (462.6s)
+  s=1729: cells=128 splits=120 phi=2593.139 phi/c=20.259 α=1.0250495451532975 cap_bound=150/200
+
+=== E_convo5k_ft VERDICT: V14_VIOLATED ===
+matches_expected: False
+[saved] /Users/ghost/core/anima/state/anima_v14_multi_substrate_audit_2026_05_10/result_E_convo5k_ft.json

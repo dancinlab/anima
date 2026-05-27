@@ -1,0 +1,89 @@
+{
+  "schema_version": "1.0",
+  "cycle": "anima_2026_05_08",
+  "stage": "SAVE/UPLOAD 4/4",
+  "task": "corpus tier_a_v3 HF private dataset upload",
+  "timestamp_utc": "2026-05-08",
+  "directive_source": "user verbatim: dataset HF upload 누락없이 매단계 저장",
+  "dataset_repo": {
+    "id": "dancinlab/anima-persona-tier-a-v3",
+    "url": "https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v3",
+    "type": "dataset",
+    "private": true,
+    "org": "dancinlab",
+    "owner_user": "dancinlife",
+    "sha": "6bcbeef77dfdb3d29f1bf28b05968bfa718b9882"
+  },
+  "files_uploaded": [
+    {
+      "path": "anima_persona_tier_a_v3_2026_05_08.txt",
+      "size_bytes": 91266753,
+      "size_mb": 87.04,
+      "line_count": 1224473,
+      "source_local": "state/anima_persona_tier_a_v3_2026_05_08.txt",
+      "url": "https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v3/blob/main/anima_persona_tier_a_v3_2026_05_08.txt",
+      "commit_message": "Q1+Q2+KOBEST filter applied (-17.19%)"
+    },
+    {
+      "path": "README.md",
+      "url": "https://huggingface.co/datasets/dancinlab/anima-persona-tier-a-v3/blob/main/README.md",
+      "language": "english_only_per_own_37",
+      "commit_message": "docs: tier_a_v3 README (Q1+Q2+KOBEST filter spec)"
+    }
+  ],
+  "provenance": {
+    "baseline": {
+      "path": "state/anima_persona_tier_a_2026_05_08.txt",
+      "size_bytes": 108624820,
+      "size_mb": 108.62,
+      "line_count": 1478588
+    },
+    "tier_a_v3": {
+      "size_bytes": 91266753,
+      "size_mb": 87.04,
+      "line_count": 1224473
+    },
+    "delta": {
+      "size_pct": -17.19,
+      "lines": -254115
+    }
+  },
+  "filter_spec_doc": "docs/anima_corpus_q1_q2_filter_spec_iter6_2026_05_08.ai.md",
+  "filter_apply_commit": "235eb9d0",
+  "verification_4grep": {
+    "config/core_rules.json": 0,
+    "[augmented]": 0,
+    "KMMLU": 0,
+    "KOBEST": 0,
+    "status": "PASS"
+  },
+  "preservation": {
+    "anima_역할_pattern_actual": 106596,
+    "anima_역할_target_floor": 106488,
+    "target_~105k_status": "PASS",
+    "note": "exact pattern measured = 'anima 역할:' (no surrounding brackets); 106,596 measured vs ~106,488 user-stated target (+108)"
+  },
+  "owns_compliance": {
+    "own_16": "cost = 0 (HF private free tier)",
+    "own_17": "D1 SCOPE_CLAMP — anima persona D1 lane only",
+    "own_33": "trinity emit",
+    "own_34_mandate_2": "wrap=0 (87 MB corpus HF transit only, local repo commit X)",
+    "own_36_mandate_2": "102MB-incident strict avoidance",
+    "own_37": {
+      "visibility": "private (mandate-9 strict)",
+      "public_promote_blocked": true,
+      "public_promote_prerequisites_unmet": [
+        "real-mode PASS_STRICT_C3",
+        "V6 awareness",
+        "사용자 verbatim 'OK PROMOTE PUBLIC dancinlab/anima-persona-tier-a-v3'",
+        "trinity sweep"
+      ]
+    }
+  },
+  "gitignore_coverage": {
+    "rule": "state/anima_*_tier_*.txt",
+    "line": 326,
+    "status": "OK — corpus file not committed to local repo"
+  },
+  "next_action": "local commit (no push) of state/anima_corpus_tier_a_v3_hf_private_upload_2026_05_08.json ledger only"
+}

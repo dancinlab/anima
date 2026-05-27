@@ -1,0 +1,124 @@
+{
+  "section": "§86 HOMEOSTATIC-SET-POINT MITOSIS",
+  "tier": "$0 stub design smoke — NOT trained-scale fire",
+  "seed": 1337,
+  "n_steps": 20,
+  "set_point": {
+    "PSI_SET": 0.5,
+    "TAU_SET": 0.3,
+    "PHI_SET": 0.55,
+    "weights": [
+      0.45,
+      0.3,
+      0.25
+    ],
+    "theta_low": 0.1,
+    "theta_high": 0.18,
+    "sustain_k": 2
+  },
+  "cells": [
+    {
+      "cell": "cell0",
+      "label": "s24-baseline-separate",
+      "E_mean": 0.145994,
+      "E_max": 0.308537,
+      "regime_dist": {
+        "QUIESCENT": 5,
+        "EMIT": 15,
+        "SPLIT": 0
+      },
+      "n_active": 15,
+      "interval_var": 0.515306,
+      "body_coherent_n9": "15/15",
+      "maj_frac": 0.75,
+      "split_triggered": false,
+      "hopf_overlay": false,
+      "hopf_order_mean": null,
+      "s24_consistency": true
+    },
+    {
+      "cell": "cell1",
+      "label": "setpoint-emit-only",
+      "E_mean": 0.156425,
+      "E_max": 0.273458,
+      "regime_dist": {
+        "QUIESCENT": 5,
+        "EMIT": 15,
+        "SPLIT": 0
+      },
+      "n_active": 15,
+      "interval_var": 0.204082,
+      "body_coherent_n9": "15/15",
+      "maj_frac": 0.75,
+      "split_triggered": false,
+      "hopf_overlay": false,
+      "hopf_order_mean": null,
+      "s24_consistency": true
+    },
+    {
+      "cell": "cell2",
+      "label": "setpoint-split-only",
+      "E_mean": 0.149851,
+      "E_max": 0.265058,
+      "regime_dist": {
+        "QUIESCENT": 19,
+        "EMIT": 0,
+        "SPLIT": 1
+      },
+      "n_active": 1,
+      "interval_var": 0.0,
+      "body_coherent_n9": "1/1",
+      "maj_frac": 0.95,
+      "split_triggered": true,
+      "hopf_overlay": false,
+      "hopf_order_mean": null,
+      "s24_consistency": true
+    },
+    {
+      "cell": "cell3",
+      "label": "full-unified-3regime",
+      "E_mean": 0.151309,
+      "E_max": 0.270136,
+      "regime_dist": {
+        "QUIESCENT": 3,
+        "EMIT": 16,
+        "SPLIT": 1
+      },
+      "n_active": 17,
+      "interval_var": 0.109375,
+      "body_coherent_n9": "17/17",
+      "maj_frac": 0.8,
+      "split_triggered": true,
+      "hopf_overlay": false,
+      "hopf_order_mean": null,
+      "s24_consistency": true
+    },
+    {
+      "cell": "cell4",
+      "label": "s85-hopf-overlay",
+      "E_mean": 0.147632,
+      "E_max": 0.267117,
+      "regime_dist": {
+        "QUIESCENT": 7,
+        "EMIT": 11,
+        "SPLIT": 2
+      },
+      "n_active": 13,
+      "interval_var": 0.75,
+      "body_coherent_n9": "13/13",
+      "maj_frac": 0.55,
+      "split_triggered": true,
+      "hopf_overlay": true,
+      "hopf_order_mean": 0.074595,
+      "s24_consistency": true
+    }
+  ],
+  "verdict_4corner": {
+    "alpha_unified_drive_well_formed": true,
+    "beta_regime_differential": true,
+    "gamma_hopf_overlay_adds": true,
+    "delta_setpoint_s24_consistent": true
+  },
+  "verdict_overall": "DIRECTIONAL-POSITIVE-DESIGN",
+  "g3_note": "design-level unification claim; $0 stub != trained ckpt forward != GOAL emergence; SAPIN active-inference = honest direction-anchor NOT capability proof; necessary-not-sufficient (B-EMERGE-7)"
+}

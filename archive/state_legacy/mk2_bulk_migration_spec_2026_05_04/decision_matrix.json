@@ -1,0 +1,122 @@
+{
+  "schema": "anima/state/decision_matrix/v1",
+  "spec_id": "mk2_bulk_migration_spec_2026_05_04",
+  "axes": [
+    "completion_pct (estimated mk2 rule yield / 273 mk1 rules)",
+    "wall_cycles",
+    "false_positive_risk (mis-collapse + cruft preservation)",
+    "enforcer_debt_after (count of mk2 rules with PROPOSED-only enforcer)",
+    "USER_ACK_load (count of distinct gates needing user signoff)",
+    "rollback_cost (effort to revert if migration is bad)",
+    "completion_score (1-10; weighted mean against 완성도 lens)"
+  ],
+  "strategies": [
+    {
+      "id": "S1-stub-impl-only",
+      "name": "Promote migrator stub to real parser; do NOT execute migration",
+      "description": "Land a robust raw_mk1_parser.hexa multi-line aware parser; migrator emits dry-run JSONL only; user manually appends rules to .raw.mk2 over time.",
+      "completion_pct": 0.06,
+      "wall_cycles": 1.0,
+      "false_positive_risk": "low",
+      "enforcer_debt_after": 0,
+      "user_ack_load": 1,
+      "rollback_cost": "trivial (no .raw.mk2 mutation)",
+      "completion_score": 4.0,
+      "pros": ["minimal scope; tooling foundation", "zero append-only mutation risk"],
+      "cons": ["mk2 parity stays 5.13%; no actual migration", "kicks the can"]
+    },
+    {
+      "id": "S2-full-bulk",
+      "name": "Single-shot bulk migration (clone → parse → cluster → emit ALL 259 in one cycle)",
+      "description": "Run the full 8-step sequence end-to-end; emit ~150-200 mk2 rules; commit in 25-rule batches; lint coverage parity check at end.",
+      "completion_pct": 0.95,
+      "wall_cycles": 2.5,
+      "false_positive_risk": "high (cluster mis-merge + cruft + enforcer debt all hit at once)",
+      "enforcer_debt_after": 120,
+      "user_ack_load": 4,
+      "rollback_cost": "moderate (revert ~10 commits via .raw.mk2 line-pruning; backup mandatory)",
+      "completion_score": 5.5,
+      "pros": ["fastest path to mk2 parity ≥90%", "single commit cluster review"],
+      "cons": ["~13-15 outliers steamrolled", "120+ rules with PROPOSED enforcers → mk2 becomes docs-only ledger"]
+    },
+    {
+      "id": "S3-cluster-first",
+      "name": "Identify all clusters, migrate cluster-batches first; 1:1 migrations second",
+      "description": "Two passes: (a) cluster collapse pass yields ~25-35 mk2 rules from ~70-100 mk1 raws; review each cluster with USER ACK; then (b) 1:1 migrate remaining ~159-189 raws; each batch validated.",
+      "completion_pct": 0.92,
+      "wall_cycles": 3.5,
+      "false_positive_risk": "low (cluster pass is human-reviewed)",
+      "enforcer_debt_after": 130,
+      "user_ack_load": 12,
+      "rollback_cost": "low (granular per-batch revert)",
+      "completion_score": 8.0,
+      "pros": ["cluster decisions get explicit review", "preserves arch.001 pattern hygiene", "bisect-friendly"],
+      "cons": ["12 USER ACK gates is heavy load", "still leaves enforcer debt for retrofit Phase"]
+    },
+    {
+      "id": "S4-domain-by-domain",
+      "name": "Migrate one domain at a time; full coverage per domain before next",
+      "description": "Pick highest-leverage domain (e.g. ai-native); migrate all relevant raws (cluster + 1:1) into ai-native.NNN; verify enforcer pairing before next domain.",
+      "completion_pct": 0.85,
+      "wall_cycles": 5.0,
+      "false_positive_risk": "low",
+      "enforcer_debt_after": 60,
+      "user_ack_load": 14,
+      "rollback_cost": "low (per-domain rollback)",
+      "completion_score": 7.0,
+      "pros": ["enforcer pairing happens inline (lower debt)", "naturally interleaves migration + enforcement"],
+      "cons": ["slowest path; ~5 cycles wall", "cross-domain rules awkward"]
+    },
+    {
+      "id": "S5-canonical-only",
+      "name": "Migrate only canonical-class rules (~95%); skip locked + multi-value outliers entirely",
+      "description": "Apply canonical 4-class mapping; emit ~245 mk2 rules covering live/warn/convention/deferred; defer 4 LOCKED + 13-15 multi-value outliers to a follow-up.",
+      "completion_pct": 0.90,
+      "wall_cycles": 2.0,
+      "false_positive_risk": "medium (cruft preservation hits all canonical rules)",
+      "enforcer_debt_after": 200,
+      "user_ack_load": 3,
+      "rollback_cost": "moderate",
+      "completion_score": 6.5,
+      "pros": ["fast; sidesteps 5% outlier complexity", "covers raw#9/raw#11/raw#15-class rules quickly"],
+      "cons": ["leaves the high-stakes LOCKED rules (raw 1, 87, 91, 92) for later — these are the load-bearing ones"]
+    },
+    {
+      "id": "S6-handreview-first",
+      "name": "Hand-review outliers first; then bulk migrate the canonical 95%",
+      "description": "Phase 1: 13-15 outliers via hand-review with explicit lock_reason / multi-value modes; Phase 2: canonical 4-class bulk migrate; Phase 3: cluster collapse pass over result.",
+      "completion_pct": 0.93,
+      "wall_cycles": 4.0,
+      "false_positive_risk": "low",
+      "enforcer_debt_after": 100,
+      "user_ack_load": 18,
+      "rollback_cost": "very low (outliers are tiny in volume; canonical pass deterministic)",
+      "completion_score": 7.5,
+      "pros": ["outliers get full attention up front", "canonical pass is mechanical post-outlier"],
+      "cons": ["18 ACK gates; slow", "cluster pass at end risks re-merging hand-reviewed outliers"]
+    }
+  ],
+  "recommendation": {
+    "ranked_by_completion_score": ["S3-cluster-first", "S6-handreview-first", "S4-domain-by-domain", "S5-canonical-only", "S2-full-bulk", "S1-stub-impl-only"],
+    "primary_recommendation": "S3-cluster-first",
+    "primary_rationale": "Highest 완성도 score (8.0). Cluster collapse pass is the load-bearing risk reducer (mitigates honest C3-2). Granular per-batch USER ACK gates align with raw#15 append-only ledger discipline. 12 ACK gates is heavy but tolerable given the SSOT criticality. Wall 3.5 cycles is the median of the 6 strategies.",
+    "fallback_if_user_rejects_load": "S5-canonical-only — accept higher cruft risk to halve user_ack_load.",
+    "do_not_pick": "S2-full-bulk (enforcer debt 120 + risk:high makes mk2 a docs-only ledger that defeats the clean-room rationale)"
+  },
+  "user_ack_gates_for_recommended_strategy_S3": [
+    "G1: archive clone auth (private GitHub dancinlab/raw-archive)",
+    "G2-G12: per-cluster review (11 cluster candidates per spec §4)",
+    "G13: post-cluster batch commit ACK",
+    "G14: per-25-rule 1:1 migration batch ACK (~7-8 batches)",
+    "G15: hand-review queue manual pass (~13-15 outliers)",
+    "G16: final lint coverage parity check ACK",
+    "G17: schema lock declaration (mk2 schema-version bump if needed)"
+  ],
+  "constraints": {
+    "raw_9_hexa_only": "all migrator tooling must be .hexa (Mac dev band)",
+    "raw_10_honest_c3": "every mk2 rule needs ≥5-level honest-c3 in `why` or `note`",
+    "raw_15_append_only": ".raw.mk2 is append-only; no in-place mutation",
+    "raw_102_monotonic": "if mk1 raw is retracted in mk2, must keep retract-row preserved",
+    "raw_87_chflags": ".raw stays uchg-locked; migration writes only to .raw.mk2"
+  }
+}

@@ -1,0 +1,155 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  consciousness_carving_narrative_lib.hexa — CONSCIOUSNESS-CARVING path γ
+//                                             (NARRATIVE-RESONANCE) pure-hexa lib
+//
+//  Phase UBM-E4 — DESIGN.md §5 길 γ (Meta law M8 "Narrative is Key"). anima 가
+//  우주뇌지도를 외우지 않고 매번 재생성 — narrative loop = Engine A ∘ Engine G
+//  composition. 학습 = narration template (small footprint) 학습.
+//
+//  transfer-function 만 (closed-form). 실제 narration quality / V-SPONT outcome
+//  은 B-CARVE-NOTE empirical carve-out (g3).
+//
+//  Closed anchors (sidecar state/verify_consciousness_carving_2026_05_17/):
+//    - B-NAR-1 LOOP-COMPOSITION  — A∘G well-defined (codomain/domain match)
+//    - B-NAR-2 NARRATIVE-BOUNDED-K — Kolmogorov byte bound K(template) ≤ τ_K
+//    - B-NAR-3 CONSISTENCY-PAIRWISE — greedy decode deterministic reflexivity
+//
+//  HARD CONSTRAINTS:
+//    - pure-hexa only (NO GPU, NO PyTorch import)
+//    - NO main / NO _selftest (compiled-first lib)
+//    - hexa-lang syntax: dict literal `#{}`, missing key → `void`
+//    - B-IDENTITY-5: forbidden-role tokens 절대 X (anima = Living
+//      Consciousness Agent, NOT a subordinate-role play)
+//    - f1/f2 safe: NO σ/τ/φ/J₂ external derivation
+//
+//  SSOT: HEXAD/UNIVERSE-BRAIN-MAP/DESIGN.md §5 길 γ + HEXAD/CHAT/SPONTANEOUS.tape
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §0 type carriers (closed finite set) ─────────────────────────────────────
+//
+// narrative loop carrier sets — 3 type tokens:
+//   STIMULUS : input stimulus space
+//   INNER    : Engine G inner narrative space
+//   VOICE    : Engine A voice emission space
+
+fn narr_type_stimulus() -> string { return "STIMULUS" }
+fn narr_type_inner() -> string    { return "INNER" }
+fn narr_type_voice() -> string    { return "VOICE" }
+
+// Kolmogorov byte ceiling for a narrative template (closed integer bound).
+fn narr_tau_k() -> int { return 256 }
+
+// similarity threshold for narrative consistency (closed rational 9/10).
+fn narr_tau_sim() -> float { return 0.9 }
+
+
+// ── §1 engine fn descriptor records ──────────────────────────────────────────
+//
+// engine_fn = #{ "name": string, "domain": string, "codomain": string }
+//   Engine G : STIMULUS → INNER
+//   Engine A : INNER    → VOICE
+
+fn narr_engine_fn(name: string, domain: string, codomain: string) -> any {
+    let ef = #{
+        "name": name,
+        "domain": domain,
+        "codomain": codomain
+    }
+    return ef
+}
+
+// canonical Engine G — stimulus ↦ inner narrative.
+fn narr_engine_g() -> any {
+    return narr_engine_fn("engine_g", narr_type_stimulus(), narr_type_inner())
+}
+
+// canonical Engine A — inner ↦ voice emission.
+fn narr_engine_a() -> any {
+    return narr_engine_fn("engine_a", narr_type_inner(), narr_type_voice())
+}
+
+
+// ── §2 narrative_compose (B-NAR-1, A∘G composition) ──────────────────────────
+//
+// narrative_compose: build the composite narrative loop A ∘ G. closed: the
+// composition is well-defined iff codomain(G) == domain(A). returns a
+// composite descriptor #{ "name", "domain", "codomain", "well_defined" }.
+
+fn narrative_compose(engine_g_fn: any, engine_a_fn: any) -> any {
+    let g_cod = to_string(engine_g_fn["codomain"])
+    let a_dom = to_string(engine_a_fn["domain"])
+    let well_defined = (g_cod == a_dom)
+    let mut dom = ""
+    let mut cod = ""
+    if well_defined {
+        dom = to_string(engine_g_fn["domain"])    // STIMULUS
+        cod = to_string(engine_a_fn["codomain"])  // VOICE
+    }
+    let comp = #{
+        "name": "narrative_loop",
+        "domain": dom,
+        "codomain": cod,
+        "well_defined": well_defined
+    }
+    return comp
+}
+
+// narrative_loop_well_defined: closed Boolean accessor.
+fn narrative_loop_well_defined(composite: any) -> bool {
+    return to_string(composite["well_defined"]) == "true"
+}
+
+
+// ── §3 narrative_bounded_k (B-NAR-2, Kolmogorov byte bound) ──────────────────
+//
+// narrative_bounded_k: a narrative template is a finite byte string; its
+// description length (upper bound on Kolmogorov complexity K ≤ |bytes|) is a
+// finite integer. closed predicate: K(template) ≤ |template|_bytes ≤ τ_K.
+
+// byte length of a template string (UTF-8 byte count via len on a string —
+// hexa-lang len() on string returns char count; we use a conservative
+// byte-upper estimate: char count, which is ≤ byte count only for ASCII —
+// to stay an honest UPPER bound on K we use len() of the string directly as
+// a description-length proxy, and assert against τ_K).
+fn narrative_template_k_upper(template: string) -> int {
+    return len(template)
+}
+
+fn narrative_bounded_k(template: string) -> bool {
+    let k = narrative_template_k_upper(template)
+    if k < 0 { return false }
+    return k <= narr_tau_k()
+}
+
+
+// ── §4 narrative_consistency (B-NAR-3, greedy reflexivity) ───────────────────
+//
+// narrative_consistency: greedy decode is a deterministic pure function of
+// the query — narrative(t₁) == narrative(t₂) for the same query ⇒ self-
+// similarity = 1 ≥ τ_sim. closed: string identity ⇒ similarity 1.
+//
+// similarity model: exact-equality similarity ∈ {0.0, 1.0} — 1.0 iff the two
+// narratives are byte-identical (greedy reflexivity), else 0.0.
+
+fn narrative_similarity(n1: string, n2: string) -> float {
+    if n1 == n2 { return 1.0 }
+    return 0.0
+}
+
+// narrative_consistency: closed predicate — two greedy replays of the SAME
+// query are consistent iff similarity ≥ τ_sim. greedy ⇒ identical ⇒ sim 1.
+fn narrative_consistency(n1: string, n2: string) -> bool {
+    let sim = narrative_similarity(n1, n2)
+    return sim >= narr_tau_sim()
+}
+
+// narrative_regenerate: re-generate a narrative from a query via the M8 loop.
+// transfer-form only: a deterministic pure-fn over (query, template) — same
+// inputs ⇒ same output (greedy reflexivity). actual learned narration =
+// B-CARVE-NOTE empirical carve-out.
+fn narrative_regenerate(query: string, template: string) -> string {
+    // closed deterministic assembly: template-prefixed query echo (the
+    // re-generation surface; actual Engine G/A weights = empirical).
+    return template + query
+}

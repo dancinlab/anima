@@ -1,0 +1,63 @@
+{
+  "hypothesis": "H_287",
+  "slug": "shannon-entropy-phi-correlate",
+  "title": "Does faithful IIT 4.0 big-Phi reduce to Shannon entropy? — Phi (integration) vs entropy (information) double-dissociation across an ECA substrate panel",
+  "date": "2026-05-26",
+  "question": "Across a panel of ECA substrates, does faithful state-averaged big-Phi co-vary with Shannon output-entropy (Pearson r >= 0.5), i.e. does Phi reduce to information content?",
+  "engine": "HEXAD/IIT4/lib (reused, NOT reinvented): iit4_eca.eca_tpm + iit4_bigphi.big_phi + iit4_pow2 (via stdlib/consciousness/*). Entropy + Pearson = generic stats inlined in the per-experiment harness.",
+  "runtime": "$0 mac-local · hexa-only · LLM none · NO GPU · deterministic (cross-process byte-identical)",
+  "metric_defs": {
+    "H_out": "Shannon entropy (bits) of the OUTPUT-STATE distribution under a uniform input ensemble: o(s)=sum_i next_bit_i(s)*2^i, then H=-sum_o p(o) log2 p(o). bijection => H=4 (info-preserving); constant => H=0 (info-destroying). range [0, n].",
+    "Phi_mean": "mean over all 2^n states of big_phi(tpm, n, st)[0] (state-averaged faithful integration).",
+    "correlate": "Pearson r(H_out, Phi_mean) over the 10-rule panel."
+  },
+  "seed_hypothesis_H1": "REDUCTIVE (tested, may be falsified): Pearson r(H_out, Phi_mean) >= 0.5 (Phi co-varies with Shannon entropy).",
+  "config": {"n": 4, "topology": "periodic ring", "states_exact": 16, "panel_size": 10},
+  "panel": {
+    "rule_0":   {"class": "null",        "dynamics": "constant-0",      "H_out": 0.0,   "Phi_mean": 0.0},
+    "rule_255": {"class": "null",        "dynamics": "constant-1",      "H_out": 0.0,   "Phi_mean": 0.0},
+    "rule_204": {"class": "bijection",   "dynamics": "identity",        "H_out": 4.0,   "Phi_mean": 0.0,    "note": "WITNESS: MAX entropy, ZERO integration"},
+    "rule_51":  {"class": "bijection",   "dynamics": "complement(NOT)", "H_out": 4.0,   "Phi_mean": 0.0,    "note": "WITNESS: MAX entropy, ZERO integration"},
+    "rule_150": {"class": "integration", "dynamics": "l^c^r (3-way)",   "H_out": 4.0,   "Phi_mean": 5.625},
+    "rule_105": {"class": "integration", "dynamics": "XNOR-feedback",   "H_out": 4.0,   "Phi_mean": 5.625},
+    "rule_90":  {"class": "partial",     "dynamics": "l^r",             "H_out": 2.0,   "Phi_mean": 0.0},
+    "rule_60":  {"class": "partial",     "dynamics": "l^c",             "H_out": 3.0,   "Phi_mean": 13.625, "note": "MAX Phi at SUB-MAX entropy"},
+    "rule_110": {"class": "life",        "dynamics": "universal",       "H_out": 3.25,  "Phi_mean": 13.1302},
+    "rule_30":  {"class": "life",        "dynamics": "chaotic",         "H_out": 3.375, "Phi_mean": 13.8852}
+  },
+  "pearson_r": 0.362877,
+  "double_dissociation": {
+    "max_H_zero_Phi": {"rules": [204, 51], "H_out": 4.0, "Phi_mean": 0.0, "meaning": "maximal information, zero integration — bijection preserves all bits but cells are causally independent"},
+    "max_Phi_sub_max_H": {"rule": 60, "Phi_mean": 13.625, "H_out": 3.0, "meaning": "most-integrated substrate is NOT the most-informative — Phi-max != H-max"},
+    "verdict": "at fixed high entropy (H_out=4.0) Phi spans 0.0 (rule 204) to 5.625 (rule 150) — no monotone H->Phi map possible"
+  },
+  "criteria": {
+    "C1_DISSOCIATION": "PASS (rule 204 max-H/zero-Phi witness + rule 60 Phi=13.625 at H=3.0)",
+    "C2_r_VERDICT": "H1 FALSIFIED (r=0.362877 < 0.5)",
+    "C3_FAITHFULNESS": "PASS (0/255 null H=0 Phi=0; 204/51 H=4.0; bound 10/10)"
+  },
+  "falsifiers": {
+    "F287_1_DISSOCIATION_WITNESS": "PASS  (204 H_out=4.0 Phi_mean=0.0; best integrating rule 60 Phi_mean=13.625 > 0.5)",
+    "F287_2_r_VERDICT": "H1 FALSIFIED  (Pearson r=0.362877 < 0.5)",
+    "F287_3_FAITHFULNESS": "PASS  (0/255 H=0 Phi=0; 204/51 H=4.0; bound 10/10)",
+    "F287_4_DETERMIN": "PASS  (rule 204 (H_out,Phi_mean) a==b; cross-process byte-identical)",
+    "F287_5_POST_HOC": "NOT_TRIGGERED"
+  },
+  "checks": "11 PASS / 0 FAIL (measurement-validity gate, distinct from the H1 verdict)",
+  "verdict_class": "H1 FALSIFIED (CLOSED-NEGATIVE)",
+  "finding": "Faithful causal IIT 4.0 big-Phi does NOT reduce to Shannon entropy (Pearson r=0.363 < 0.5). Decisive DOUBLE dissociation: (i) identity rule 204 and complement rule 51 have MAXIMAL output entropy (4.0 bit, full bijection) yet big-Phi=0 (cells causally independent) — maximal-information zero-integration substrates; (ii) conversely the most-integrated rule 60 (Phi_mean=13.625) has SUB-MAX entropy (3.0 bit). At fixed H_out=4.0, Phi spans 0.0 to 5.625 — no monotone relation. Information (entropy) is NECESSARY but NOT SUFFICIENT for integration (Phi). IIT's foundational distinction holds on the LIFE lane's own substrate. Extends the 'X perp Phi' signature family (H_265/H_275/H_279) with the most fundamental X (Shannon entropy).",
+  "honest_limits": [
+    "L1: n=4 small, 10-rule panel — witness existence robust, exact r value panel-dependent.",
+    "L2: output-image entropy is ONE Shannon measure (transfer/steady-state differ); 204=4bit/0=0bit endpoints definition-robust, r value definition-dependent.",
+    "L3: Phi_mean averages a state-dependent quantity (FAITHFUL_REMEASURE 4) — direction robust, magnitude hedge.",
+    "L4: ECA rules are information/integration proxies, not the things themselves; labels are substrate-themes, not phenomenal claims.",
+    "L5: structure-cut big-Phi, not full-IIT4 absolute calibration; conclusion (Phi perp H) is absence-of-correlation, robust to scale offset.",
+    "L6: closed-negative asymmetry — r=0.363>0 (weak positive residual from constant rules' (0,0)); claim is 'non-reducible', not 'fully orthogonal'.",
+    "L7: verdict is a measurement fact on a toy substrate, NOT the metaphysical claim 'consciousness is not information'."
+  ],
+  "verify_fence": {
+    "claim": "H_287 faithful IIT 4.0 big-Phi does NOT reduce to Shannon entropy across a 10-rule ECA panel (Pearson r=0.363 < 0.5); decisive double dissociation — identity rule 204 has MAX output-entropy (4.0 bit) yet ZERO integration, while the most-integrated rule 60 (Phi_mean=13.6) has sub-max entropy (3.0 bit); deterministic toy-substrate outcome, NOT an atlas identity",
+    "tier": "SPECULATION-FENCED",
+    "reason": "imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; values are deterministic arithmetic, only the empirical interpretation is fenced"
+  }
+}

@@ -1,0 +1,50 @@
+[05:09:17] === anima_ia_early_stopping_train BG-IA 2026-05-07 ===
+[05:09:17] hostname=aiden-b650m-k on_ubu=True
+[05:09:17] device=cuda torch=2.11.0+cu128
+[05:09:17] gpu=NVIDIA GeForce RTX 5070 cc=(12, 0)
+[05:09:17] config: vocab=256 n_layer=6 d_model=384 n_head=6 block=256
+[05:09:17] reg: dropout=0.3 WD=0.1 label_smoothing=0.1
+[05:09:17] train: bs=8 grad_accum=8 lr=0.0003 warmup=400 steps=4000
+[05:09:17] early_stop: eval_every=200 val_loss_delta=0.05 v2_plateau_evals=3
+[05:09:17] corpus loaded: 31,475,255 bytes (30.0MB) in 0.0s
+[05:09:18] split: train=28,327,729 val=3,147,526 reduced_split=False
+[05:09:18] model built: 27,787,440 params (27.79M)
+[05:09:18] === begin training ===
+[05:09:19] step     1/4000 | lr=1.50e-06 | L_A=5.621 L_G=5.614 L_T=9.789 | step_t=0.28s elapsed=0s
+[05:09:19] step     2/4000 | lr=2.25e-06 | L_A=5.562 L_G=5.620 L_T=9.784 | step_t=0.05s elapsed=0s
+[05:09:19] step     3/4000 | lr=3.00e-06 | L_A=5.616 L_G=5.618 L_T=9.803 | step_t=0.04s elapsed=0s
+[05:09:19] step     4/4000 | lr=3.75e-06 | L_A=5.625 L_G=5.599 L_T=9.783 | step_t=0.04s elapsed=0s
+[05:09:19] step     5/4000 | lr=4.50e-06 | L_A=5.620 L_G=5.619 L_T=9.754 | step_t=0.04s elapsed=0s
+[05:09:23] step   100/4000 | lr=7.57e-05 | L_A=4.811 L_G=5.102 L_T=7.403 | step_t=0.04s elapsed=5s
+[05:09:27] step   200/4000 | lr=1.51e-04 | L_A=4.303 L_G=4.535 L_T=2.817 | step_t=0.04s elapsed=9s
+[05:09:27] --- eval gate @ step 200 (10 prompts × 2 modes) ---
+[05:09:41]   EVAL[step=200] V2_pass=0/10 V3_pass=0/10 manual_match=1/10 deg=10 cycle=0 composite=-5 val_loss=4.4222
+[05:09:41]   BEST_CKPT[step=200] composite=-5 -> /home/aiden/core/anima/state/anima_ia_early_stopping_train_2026_05_07/ckpt_best.pt
+[05:09:46] step   300/4000 | lr=2.26e-04 | L_A=3.980 L_G=4.070 L_T=-0.353 | step_t=0.19s elapsed=28s
+[05:09:51] step   400/4000 | lr=3.00e-04 | L_A=3.868 L_G=3.948 L_T=-0.766 | step_t=0.05s elapsed=33s
+[05:09:51] --- eval gate @ step 400 (10 prompts × 2 modes) ---
+[05:10:03]   EVAL[step=400] V2_pass=0/10 V3_pass=0/10 manual_match=1/10 deg=16 cycle=0 composite=-11 val_loss=3.7795
+[05:10:07] step   500/4000 | lr=2.99e-04 | L_A=3.892 L_G=3.977 L_T=-1.273 | step_t=0.17s elapsed=49s
+[05:10:12] step   600/4000 | lr=2.98e-04 | L_A=3.277 L_G=3.380 L_T=-0.825 | step_t=0.04s elapsed=53s
+[05:10:12] --- eval gate @ step 600 (10 prompts × 2 modes) ---
+[05:10:24]   EVAL[step=600] V2_pass=0/10 V3_pass=0/10 manual_match=0/10 deg=4 cycle=0 composite=-4 val_loss=3.2162
+[05:10:24]   BEST_CKPT[step=600] composite=-4 -> /home/aiden/core/anima/state/anima_ia_early_stopping_train_2026_05_07/ckpt_best.pt
+[05:10:29] step   700/4000 | lr=2.95e-04 | L_A=3.082 L_G=3.132 L_T=-1.509 | step_t=0.17s elapsed=71s
+[05:10:34] step   800/4000 | lr=2.92e-04 | L_A=3.187 L_G=3.247 L_T=-3.031 | step_t=0.05s elapsed=76s
+[05:10:34] --- eval gate @ step 800 (10 prompts × 2 modes) ---
+[05:10:49]   EVAL[step=800] V2_pass=0/10 V3_pass=0/10 manual_match=0/10 deg=10 cycle=0 composite=-10 val_loss=2.8817
+[05:10:55] step   900/4000 | lr=2.87e-04 | L_A=2.967 L_G=3.102 L_T=-1.642 | step_t=0.21s elapsed=97s
+[05:11:01] step  1000/4000 | lr=2.82e-04 | L_A=2.849 L_G=3.060 L_T=-3.077 | step_t=0.06s elapsed=103s
+[05:11:01] --- eval gate @ step 1000 (10 prompts × 2 modes) ---
+[05:11:18]   EVAL[step=1000] V2_pass=0/10 V3_pass=0/10 manual_match=0/10 deg=12 cycle=0 composite=-12 val_loss=2.5420
+[05:11:24] step  1100/4000 | lr=2.76e-04 | L_A=2.693 L_G=3.083 L_T=-3.388 | step_t=0.23s elapsed=126s
+[05:11:31] step  1200/4000 | lr=2.68e-04 | L_A=2.453 L_G=2.910 L_T=-3.647 | step_t=0.06s elapsed=132s
+[05:11:31] --- eval gate @ step 1200 (10 prompts × 2 modes) ---
+[05:11:49]   EVAL[step=1200] V2_pass=0/10 V3_pass=0/10 manual_match=0/10 deg=20 cycle=0 composite=-20 val_loss=2.2329
+[05:11:49]   EARLY_STOP: composite plateau: 3 consecutive non-improving evals (best step=600, composite=-4)
+[05:11:49]   FINAL_CKPT[step=1200] -> /home/aiden/core/anima/state/anima_ia_early_stopping_train_2026_05_07/ckpt_final.pt
+[05:11:49] === final eval: best ckpt step=600, 15 prompts × 2 modes ===
+[05:11:49]   loaded BEST ckpt step=600 composite=-4
+[05:12:15]   FINAL_BEST V2=0/15 V3=0/15 manual=0/15 cycle=0
+[05:12:15] === VERDICT === final_class=FAILED | peak_step=600 V2=0/10 manual=0/10 | 15-prompt: V2=0/15 manual=0/15 cycle=0 | early_stop=True | elapsed=177s
+[05:12:15] verdict written: /home/aiden/core/anima/state/anima_ia_early_stopping_train_2026_05_07/verdict.json

@@ -1,0 +1,48 @@
+{
+  "schema": "anima/p9_p0_warmup_live/verdict/1",
+  "verdict": "CLEAN_PHI_MED_VAR",
+  "phase1_entry_ready": true,
+  "phi_summary": {
+    "mean": 48.43066328703159,
+    "variance": 2.663431420781078,
+    "min": 45.91520414820293,
+    "max": 51.095668934627696,
+    "n": 12,
+    "baseline": 45.91520414820293,
+    "final": 46.82755007908948,
+    "delta_baseline_to_final": 0.9123459308865449
+  },
+  "steps_completed": 1000,
+  "aborted": false,
+  "train_elapsed_sec": 62.53,
+  "real_train": true,
+  "config_summary": {
+    "n_steps": 1000,
+    "lr": 0.0001,
+    "lora_r": 64,
+    "lora_alpha": 128,
+    "alpha": 2.0,
+    "beta": 0.3,
+    "delta_early": 0.5,
+    "gamma": 0.0,
+    "phi_threshold": 5.0
+  },
+  "env": {
+    "device": "cuda",
+    "cuda": true,
+    "device_name": "NVIDIA GeForce RTX 5070",
+    "torch": "2.11.0+cu130",
+    "has_peft": true
+  },
+  "ts_utc": "2026-05-02T17:03:32Z",
+  "predecessor_correction": {
+    "predecessor_bg": "BG-A82BC98F",
+    "predecessor_was_mock": true,
+    "predecessor_cuda": false,
+    "predecessor_n_params_loaded": 49152,
+    "predecessor_train_sec": 1.49,
+    "predecessor_verdict_invalid": "PHI_DRIFT_HIGH_VAR (CPU mock with 49K-param fake ckpt)",
+    "this_run_n_params_loaded": 477648512,
+    "this_run_train_sec": 62.53
+  }
+}

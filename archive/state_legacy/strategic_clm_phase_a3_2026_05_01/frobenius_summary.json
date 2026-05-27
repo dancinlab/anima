@@ -1,0 +1,549 @@
+{
+  "ref_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/step_10000.pt",
+  "tgt_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/final.pt",
+  "best_ckpt": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+  "n_layers_compared": 581,
+  "n_layers_matrix_2d": 419,
+  "n_params_compared": 530994816,
+  "aggregate": {
+    "dW_F_step10k_to_final": 106.39743663608978,
+    "W_F_step10k": 1545.2910864975252,
+    "rel_dW_over_W_step10k_to_final": 0.0688526825565561,
+    "dW_F_step10k_to_best": 106.39743663608978,
+    "W_F_step10k_alt": 1545.2910864975252,
+    "rel_dW_over_W_step10k_to_best": 0.0688526825565561
+  },
+  "by_family": {
+    "attn": {
+      "count": 32,
+      "agg_dW_F": 0.7266882861693557,
+      "agg_W_F": 1453.7979585185822,
+      "rel": 0.0004998550740226998
+    },
+    "k_proj": {
+      "count": 32,
+      "agg_dW_F": 7.474349994321515,
+      "agg_W_F": 47.05583585791246,
+      "rel": 0.15884002181771253
+    },
+    "o_proj": {
+      "count": 32,
+      "agg_dW_F": 8.85885144704685,
+      "agg_W_F": 86.87013847459313,
+      "rel": 0.10197809745218485
+    },
+    "q_proj": {
+      "count": 32,
+      "agg_dW_F": 14.22184478171565,
+      "agg_W_F": 87.03568779946582,
+      "rel": 0.1634024518135989
+    },
+    "v_proj": {
+      "count": 32,
+      "agg_dW_F": 4.822274835690649,
+      "agg_W_F": 46.91140782140079,
+      "rel": 0.10279535532273554
+    },
+    "other": {
+      "count": 308,
+      "agg_dW_F": 102.00006692086163,
+      "agg_W_F": 417.95818143352784,
+      "rel": 0.2440437140649291
+    },
+    "down_proj": {
+      "count": 16,
+      "agg_dW_F": 14.679825718949003,
+      "agg_W_F": 100.45044355021881,
+      "rel": 0.1461399790794356
+    },
+    "gate_proj": {
+      "count": 16,
+      "agg_dW_F": 13.26225772878587,
+      "agg_W_F": 100.45314641580838,
+      "rel": 0.1320243138416895
+    },
+    "up_proj": {
+      "count": 16,
+      "agg_dW_F": 12.673803372286816,
+      "agg_W_F": 100.43437208319519,
+      "rel": 0.12618990002534614
+    },
+    "ln": {
+      "count": 49,
+      "agg_dW_F": 1.5848129666285817,
+      "agg_W_F": 193.969385394096,
+      "rel": 0.0081704283560452
+    },
+    "ffn": {
+      "count": 16,
+      "agg_dW_F": 1.2209616532028522,
+      "agg_W_F": 110.80668214104512,
+      "rel": 0.011018844979481454
+    }
+  },
+  "per_layer_top20_by_dW": [
+    {
+      "name": "blocks.15.ca_mix.weight",
+      "shape": [
+        768,
+        2304
+      ],
+      "ndim": 2,
+      "dW_F": 25.26166343688965,
+      "W_init_F": 28.90900421142578,
+      "rel_dW_over_W": 0.8738337457817179,
+      "is_matrix": true
+    },
+    {
+      "name": "head_a.weight",
+      "shape": [
+        64000,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 24.761577606201172,
+      "W_init_F": 152.04393005371094,
+      "rel_dW_over_W": 0.16285804765408204,
+      "is_matrix": true
+    },
+    {
+      "name": "tok_emb.weight",
+      "shape": [
+        64000,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 24.761577606201172,
+      "W_init_F": 152.04393005371094,
+      "rel_dW_over_W": 0.16285804765408204,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.9.rules.3.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 21.528303146362305,
+      "W_init_F": 15.550942420959473,
+      "rel_dW_over_W": 1.3843728928831078,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.13.ca_mix.weight",
+      "shape": [
+        768,
+        2304
+      ],
+      "ndim": 2,
+      "dW_F": 21.372711181640625,
+      "W_init_F": 30.208702087402344,
+      "rel_dW_over_W": 0.7075018026197653,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.11.rules.7.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 20.76040267944336,
+      "W_init_F": 15.67769718170166,
+      "rel_dW_over_W": 1.3241997494168989,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.10.rules.4.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 20.586137771606445,
+      "W_init_F": 15.576018333435059,
+      "rel_dW_over_W": 1.3216559797837937,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.12.rules.0.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 19.06508445739746,
+      "W_init_F": 15.668262481689453,
+      "rel_dW_over_W": 1.2167963409904363,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.15.rules.5.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 18.911426544189453,
+      "W_init_F": 17.540475845336914,
+      "rel_dW_over_W": 1.0781592649447422,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.14.ca_mix.weight",
+      "shape": [
+        768,
+        2304
+      ],
+      "ndim": 2,
+      "dW_F": 18.323158264160156,
+      "W_init_F": 29.630773544311523,
+      "rel_dW_over_W": 0.6183827174393094,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.13.rules.1.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 17.378767013549805,
+      "W_init_F": 19.687700271606445,
+      "rel_dW_over_W": 0.8827220433974923,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.8.rules.4.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 16.756397247314453,
+      "W_init_F": 15.873387336730957,
+      "rel_dW_over_W": 1.055628322540849,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.11.ca_mix.weight",
+      "shape": [
+        768,
+        2304
+      ],
+      "ndim": 2,
+      "dW_F": 15.142809867858887,
+      "W_init_F": 30.05560874938965,
+      "rel_dW_over_W": 0.5038264236842782,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.12.ca_mix.weight",
+      "shape": [
+        768,
+        2304
+      ],
+      "ndim": 2,
+      "dW_F": 14.526824951171875,
+      "W_init_F": 29.92073631286621,
+      "rel_dW_over_W": 0.48551027619347714,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.14.rules.4.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 14.209304809570312,
+      "W_init_F": 19.002960205078125,
+      "rel_dW_over_W": 0.7477416495232773,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.9.ca_mix.weight",
+      "shape": [
+        768,
+        2304
+      ],
+      "ndim": 2,
+      "dW_F": 13.330445289611816,
+      "W_init_F": 30.007617950439453,
+      "rel_dW_over_W": 0.4442353708857652,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.7.ca_mix.weight",
+      "shape": [
+        768,
+        2304
+      ],
+      "ndim": 2,
+      "dW_F": 13.057270050048828,
+      "W_init_F": 29.79148292541504,
+      "rel_dW_over_W": 0.4382886908563287,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.7.rules.4.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 11.83778190612793,
+      "W_init_F": 20.50267219543457,
+      "rel_dW_over_W": 0.5773775141741722,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.5.rules.1.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 11.697406768798828,
+      "W_init_F": 16.841835021972656,
+      "rel_dW_over_W": 0.6945446712628307,
+      "is_matrix": true
+    },
+    {
+      "name": "blocks.2.rules.4.weight",
+      "shape": [
+        768,
+        768
+      ],
+      "ndim": 2,
+      "dW_F": 11.656003952026367,
+      "W_init_F": 17.38786506652832,
+      "rel_dW_over_W": 0.6703527953218479,
+      "is_matrix": true
+    }
+  ],
+  "per_layer_top20_by_rel": [
+    {
+      "name": "blocks.9.purefield.engine_a.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.17265038192272186,
+      "W_init_F": 0.02491079829633236,
+      "rel_dW_over_W": 6.930744646113623,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.2.purefield.engine_a.3.bias",
+      "shape": [
+        768
+      ],
+      "ndim": 1,
+      "dW_F": 0.059960830956697464,
+      "W_init_F": 0.00882726814597845,
+      "rel_dW_over_W": 6.792682624466843,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.2.purefield.engine_g.3.bias",
+      "shape": [
+        768
+      ],
+      "ndim": 1,
+      "dW_F": 0.059960830956697464,
+      "W_init_F": 0.00882726814597845,
+      "rel_dW_over_W": 6.792682624466843,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.3.purefield.engine_g.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.1924687922000885,
+      "W_init_F": 0.02870159223675728,
+      "rel_dW_over_W": 6.705857661569013,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.3.purefield.engine_a.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.19338320195674896,
+      "W_init_F": 0.028970403596758842,
+      "rel_dW_over_W": 6.675198752784525,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.11.purefield.engine_g.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.1833224594593048,
+      "W_init_F": 0.02747010439634323,
+      "rel_dW_over_W": 6.67352612914381,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.4.purefield.engine_g.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.18072201311588287,
+      "W_init_F": 0.02742447890341282,
+      "rel_dW_over_W": 6.589806637798797,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.4.purefield.engine_a.3.bias",
+      "shape": [
+        768
+      ],
+      "ndim": 1,
+      "dW_F": 0.05457720160484314,
+      "W_init_F": 0.008319390937685966,
+      "rel_dW_over_W": 6.560240048056181,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.4.purefield.engine_g.3.bias",
+      "shape": [
+        768
+      ],
+      "ndim": 1,
+      "dW_F": 0.05457720160484314,
+      "W_init_F": 0.008319390937685966,
+      "rel_dW_over_W": 6.560240048056181,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.10.purefield.engine_a.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.17176228761672974,
+      "W_init_F": 0.0262821763753891,
+      "rel_dW_over_W": 6.535314471809485,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.7.purefield.engine_g.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.1638687551021576,
+      "W_init_F": 0.025151168927550316,
+      "rel_dW_over_W": 6.51535344437441,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.11.purefield.engine_a.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.18042902648448944,
+      "W_init_F": 0.027749983593821526,
+      "rel_dW_over_W": 6.501950744383921,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.3.purefield.engine_a.3.bias",
+      "shape": [
+        768
+      ],
+      "ndim": 1,
+      "dW_F": 0.055500924587249756,
+      "W_init_F": 0.008581523783504963,
+      "rel_dW_over_W": 6.4674906214128605,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.3.purefield.engine_g.3.bias",
+      "shape": [
+        768
+      ],
+      "ndim": 1,
+      "dW_F": 0.055500924587249756,
+      "W_init_F": 0.008581523783504963,
+      "rel_dW_over_W": 6.4674906214128605,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.4.purefield.engine_a.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.18346117436885834,
+      "W_init_F": 0.02847117930650711,
+      "rel_dW_over_W": 6.4437504465060265,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.8.purefield.engine_g.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.15797309577465057,
+      "W_init_F": 0.024814816191792488,
+      "rel_dW_over_W": 6.366079625723774,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.7.purefield.engine_a.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.1585206538438797,
+      "W_init_F": 0.024906612932682037,
+      "rel_dW_over_W": 6.364601010676629,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.8.purefield.engine_a.3.bias",
+      "shape": [
+        768
+      ],
+      "ndim": 1,
+      "dW_F": 0.044971760362386703,
+      "W_init_F": 0.0070821926929056644,
+      "rel_dW_over_W": 6.34997695098519,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.8.purefield.engine_g.3.bias",
+      "shape": [
+        768
+      ],
+      "ndim": 1,
+      "dW_F": 0.044971760362386703,
+      "W_init_F": 0.0070821926929056644,
+      "rel_dW_over_W": 6.34997695098519,
+      "is_matrix": false
+    },
+    {
+      "name": "blocks.8.purefield.engine_a.0.bias",
+      "shape": [
+        3072
+      ],
+      "ndim": 1,
+      "dW_F": 0.15895351767539978,
+      "W_init_F": 0.025110134854912758,
+      "rel_dW_over_W": 6.330253445225954,
+      "is_matrix": false
+    }
+  ],
+  "note": "ref is step_10000 (earliest available checkpoint); init.pt absent \u2014 true \u0394W from random-init not measurable; this measures late-training drift (step10k\u2192final, ~10k steps)."
+}

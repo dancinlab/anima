@@ -1,0 +1,32 @@
+================================================================
+  H_290 — Does faithful IIT4 big-Phi track TRANSFER ENTROPY?
+  (TE_total = sum_{i,j!=i} TE(j->i) over uniform ensemble · Phi_mean = state-avg big-Phi)
+================================================================
+  rule 0 : TE_total=0.0 bits   Phi_mean=0.0
+  rule 255 : TE_total=0.0 bits   Phi_mean=0.0
+  rule 204 : TE_total=0.0 bits   Phi_mean=0.0
+  rule 51 : TE_total=0.0 bits   Phi_mean=0.0
+  rule 150 : TE_total=0.0 bits   Phi_mean=5.625
+  rule 105 : TE_total=0.0 bits   Phi_mean=5.625
+  rule 90 : TE_total=0.0 bits   Phi_mean=0.0
+  rule 60 : TE_total=4.0 bits   Phi_mean=13.625
+  rule 110 : TE_total=3.24511 bits   Phi_mean=13.1302
+  rule 30 : TE_total=2.0 bits   Phi_mean=13.8852
+  --
+  F290.2: Pearson r(TE_total, Phi_mean)=0.883262   Spearman rho=0.822134
+          => H1 SUPPORTED (r>=0.5): Phi tracks transfer entropy (directed flow)
+  [PASS] F290.1a ANCHOR: rule 0 (constant) TE_total = 0 (no flow)
+  [PASS] F290.1b ANCHOR: rule 0 (constant) Phi_mean = 0
+  [PASS] F290.1c ANCHOR: rule 255 (constant) TE_total = 0
+  [PASS] F290.1d ANCHOR: rule 204 (identity) TE_total = 0 (no inter-cell flow)
+  [PASS] F290.1e ANCHOR: rule 204 (identity) Phi_mean = 0
+  F290.3: integrating rule 60 TE_total=4.0 Phi_mean=13.625
+  [PASS] F290.3 FLOW-WITNESS: an integrating rule (Phi>0) has TE_total > 0
+  [PASS] F290.4 BOUND: TE_total >= 0 and Phi_mean >= 0 for all rules
+  [PASS] F290.5 DETERMINISM: rule 110 (TE_total, Phi_mean) re-run identical
+================================================================
+  RESULT: 8 PASS / 0 FAIL
+  ARC: H_287 Shannon-entropy r=0.363 (perp) | H_288 LZ r=0.831 (parallel) | H_290 TE r=0.883262
+  VERDICT: H1 SUPPORTED — Phi tracks transfer entropy (directed inter-cell flow).
+           Phi aligns with FLOW/coupling measures (TE, LZ), not single-system entropy.
+================================================================

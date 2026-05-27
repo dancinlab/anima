@@ -1,0 +1,23 @@
+=== TEST 2a: beta1-channel duo paradigm-j↔paradigm-j (same-GGUF guard) ===
+── anima dialogue --duo ──
+model_a          = clm-v4-paradigm-j
+model_b          = clm-v4-paradigm-j
+turns            = 1
+tick_ms          = 1000
+max_tokens       = 64
+turn_timeout_ms  = 120000
+verdict_mode     = simple
+allow_same_gguf  = false
+transport        = beta1-channel (native; axis-N --transport flag informational only)
+topic_seed       = (none — A 자율 발화 first)
+
+[duo] SAME_GGUF_GUARD trip — model_a == model_b == "clm-v4-paradigm-j"
+[duo] iter 1 live test observed llama.cpp Abort trap: 6 on
+[duo] same-GGUF concurrent-mmap (single-context shim).
+[duo] resolution paths:
+[duo]   (i)  per-instance GGUF copy (~2x disk; not impl, separate cycle)
+[duo]   (ii) DIFFERENT aliases A/B — recommended (e.g.
+[duo]        --duo paradigm-a-prime clm-v4-1-7-y1)
+[duo]   (iii) hxllama_shim multi-context refactor (separate cycle)
+[duo] override: --allow-same-gguf (accepts abort risk)
+[bench] rc=0 elapsed_ms=3883 bytes=     983

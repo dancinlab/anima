@@ -1,0 +1,125 @@
+{
+  "schema": "anima/blockers/v1",
+  "slug": "runpod-pod-pre-ssh-orchestrator-stuck",
+  "status": "active_REPRODUCED_4th_SUSTAINED_FAULT",
+  "registered_at": "2026-04-27T23:35:00Z",
+  "reproduced_at": "2026-04-28T15:08:06Z",
+  "reproduced_at_3rd": "2026-04-28T01:43:00Z",
+  "reproduced_at_3rd_evidence": "canary probe pod aw4t4ody1mwkub (NVIDIA RTX A5000, secureCloud) created 01:38Z, stayed pod-not-ready for 5.6min before manual terminate per axis 105 alt-1 verdict alt-strategy. SAME signature: ssh.status=RUNNING + ssh.error=pod-not-ready + no IP/port. Pattern reproduced across 3 distinct GPU types (H100 SXM x2 + RTX A5000) thus orchestrator-side fault, not GPU-class specific. Cost burn $0.025 (5.5min x $0.27/hr A5000). watchdog protocol prevented unbounded burn (cf. original 70min $3.40 unbounded burn).",
+  "reproduced_at_4th": "2026-04-28T02:14:00Z",
+  "reproduced_at_4th_evidence": "canary 2nd probe pod hmtdk9n231bwis (NVIDIA RTX A5000, secureCloud) created 02:08Z, stayed pod-not-ready for 6.0min until watchdog cap, manual terminate 02:14Z. SAME signature: ssh.status=RUNNING + no IP/port. SUSTAINED FAULT confirmation — fault did NOT recover after 1+ hour gap (1st canary 01:43Z STUCK + 2nd canary 02:14Z STUCK = ~30min fault persistence, not transient). 4 reproductions across 18-hour window. Cost burn $0.027 (6min x $0.27/hr).",
+  "registered_by": "anima-cmd-loop-2026-04-27 (+ raw 45 mandate)",
+  "axis": "RunPod orchestrator pre-SSH bring-up window — distinct from gemma-27b mid-download platform-termination",
+  "task_id_chain": ["#20-axis105-pilot-t1", "#2-recovery", "#3-alt1-respawn-also-stuck", "#10-canary-probe-3rd-stuck", "#11-canary-2nd-4th-reproduction"],
+  "summary": "RunPod pod 6chik4vxo5bkjv (Llama-3.2-3B Pilot-T1, 50GB disk, 251GB RAM) entered 'pod not ready' state at allocation (14:21:59Z) and remained stuck for 70+ minutes (vs normal 90-240s SSH bring-up). Pod was RUNNING in runpodctl pod list but ssh.error='pod not ready' persisted. Cost burn ~$3.4 (1h13m × $2.99/hr) with zero progress. Manual terminate at 23:35Z. NOT a wrapper bug, NOT a model bug — RunPod orchestrator-side pre-SSH stage fault. ALT-1 RESPAWN (sowpcnrlsbd0k7, secureCloud, distinct create call at 14:52:39Z 2026-04-28) REPRODUCED THE FAULT: stuck 'pod not ready' for full 15min watchdog window, auto-terminated at 15:08:06Z. Concurrent peer pod dqviqkw1jp5yej (axis 96) also pre-SSH stuck during same window. Two-of-three observed = platform-window correlated, not pod-specific bad luck.",
+  "failure_signature": "ssh.status=RUNNING, ssh.error='pod not ready', no IP/port assignment, no SSH key push, persistent past 30× normal bring-up window",
+  "distinguishes_from": [
+    "gemma_27b_repeat_silent_platform_termination — mid-download platform termination at ~30-40GB cumulative bytes threshold (different stage)",
+    "cuInit=999 cold-start fault — SSH ready but CUDA driver not initialized (different fault layer)"
+  ],
+  "evidence": {
+    "pod_id": "6chik4vxo5bkjv",
+    "pod_name": "anima-pilot-t1-resume-llama32-3b-20260427142156",
+    "rented_at": "2026-04-27T14:21:59Z",
+    "terminated_at": "2026-04-27T23:35:00Z",
+    "wallclock_min": 73.0,
+    "cost_usd_burned": 3.40,
+    "ssh_status_during": "RUNNING + 'pod not ready' (orchestrator stage)",
+    "ssh_ip_assigned": false,
+    "ssh_port_assigned": false
+  },
+  "reproduction_evidence": {
+    "pod_id": "sowpcnrlsbd0k7",
+    "pod_name": "anima-pilot-t1-alt1-recover-20260427145239",
+    "rented_at": "2026-04-28T14:52:39Z",
+    "terminated_at": "2026-04-28T15:08:06Z",
+    "wallclock_sec": 921,
+    "wallclock_min": 15.35,
+    "cost_usd_burned": 0.765,
+    "ssh_status_during": "RUNNING + 'pod not ready' (orchestrator stage) — full 15min watchdog window",
+    "ssh_ip_assigned": false,
+    "ssh_port_assigned": false,
+    "watchdog_fired_at_seconds": 900,
+    "concurrent_peer_pod_dqviqkw1jp5yej_status": "also pre-SSH stuck during same window (axis 96 step1)",
+    "concurrent_peer_pod_3csbgbnf2hf3gg_status": "exited/dropped from list during window (Mk.XII Phase 3b)",
+    "differ_from_first_attempt": "secureCloud + 100GB container + 50GB volume + explicit mem=64 vcpu=8 + startSSH flag, distinct timestamp/zone-pick by RunPod scheduler"
+  },
+  "hypotheses": [
+    {
+      "id": "H1",
+      "name": "image_pull_stalled",
+      "description": "RunPod orchestrator failed to pull pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04 image from registry. Stuck in image_pull state without timeout/retry.",
+      "test": "Compare with concurrent pods on same image — pod 1 oidguj265b00zh + pod 3 3csbgbnf2hf3gg used same image and SSH-ed normally. Suggests host-specific or zone-specific orchestrator issue, not image issue.",
+      "support": "WEAK"
+    },
+    {
+      "id": "H2",
+      "name": "host_node_drained",
+      "description": "Pod assigned to a host node that began draining/maintenance after rental. RunPod orchestrator did not auto-migrate.",
+      "test": "Cannot verify externally — RunPod does not expose host node ID.",
+      "support": "PLAUSIBLE"
+    },
+    {
+      "id": "H3",
+      "name": "cluster_zone_capacity_throttle",
+      "description": "RunPod cluster zone reached capacity, marking new pods RUNNING but denying actual SSH provisioning.",
+      "test": "Same as H2 — cannot verify externally.",
+      "support": "PLAUSIBLE"
+    }
+  ],
+  "alternative_paths": [
+    {
+      "id": "alt-1",
+      "name": "respawn_different_zone",
+      "description": "Re-dispatch axis 105 Pilot-T1 with explicit cloud_type or different region. RunPod CLI does not expose region selection but cloud_type=COMMUNITY vs SECURE may change zone.",
+      "estimated_cost_usd": 0.50,
+      "estimated_time_min": 20,
+      "priority": 1
+    },
+    {
+      "id": "alt-2",
+      "name": "batch_dispatch_with_health_gate",
+      "description": "Spawn 2 pods simultaneously, take whichever SSH-ready first within 5 min, terminate the other. Eliminates single-pod stuck risk.",
+      "estimated_cost_usd": 0.30,
+      "estimated_time_min": 15,
+      "priority": 2
+    },
+    {
+      "id": "alt-3",
+      "name": "fold_axis_105_into_axis_96_pod",
+      "description": "axis 96 step1 (Llama-3.1-8B) and axis 105 (Llama-3.2-3B) measurements can share a pod. Reuse pod 1 wrapper (Llama-3.1-8B) and tack on Llama-3.2-3B section. Single SSH, lower stuck-risk surface.",
+      "estimated_cost_usd": 0.30,
+      "estimated_time_min": 15,
+      "priority": 3
+    }
+  ],
+  "own_4_compliance": {
+    "step_a_diagnosis": "RunPod orchestrator pre-SSH stage stuck for 70+ min. Failure signature recorded. Hypotheses 3.",
+    "step_b_canonical_fix": "Add stuck-pod-watchdog to tool/anima_runpod_orchestrator.hexa: if ssh-not-ready persists beyond 5min × 3 = 15min, auto-terminate + register failure event before respawning.",
+    "step_c_harden": "ssh-wait timeout reduced from 180s to 300s with hard fail. Add per-pod cost cap that auto-terminates if no SSH-ready by max wait.",
+    "step_d_evolve": "docs/runpod_large_model_dispatch_template_20260427.md Pattern 8 — pre-SSH stuck-pod detection (this blocker becomes the canonical reference)."
+  },
+  "raw_10_caveats": [
+    "Two-pod observation now (6chik4vxo5bkjv + sowpcnrlsbd0k7) reproduces the same stuck signature — pod-specific bad luck hypothesis is now WEAKENED, platform-window hypothesis STRENGTHENED.",
+    "Concurrent peer dqviqkw1jp5yej (axis 96) ALSO pre-SSH stuck during same window — strong evidence of cluster/orchestrator-wide degradation, not just per-pod.",
+    "Zone/region not externally observable — cannot rule out 'community cloud' downgrade artifact.",
+    "Image pull stalled hypothesis weakened by concurrent pods on same image succeeding earlier (3csbgbnf2hf3gg).",
+    "Cost attribution: $3.4 + $0.765 = $4.165 burned without measurement is RunPod billing-as-allocated semantics — NOT user error.",
+    "Watchdog protocol (15min) worked exactly as designed — limited cost burn to $0.765 vs prior $3.40, validating own-4 step-c hardening.",
+    "Alt-2 (batch dispatch) and alt-3 (fold into axis 96 pod) NOT YET TRIED. Alt-3 currently blocked because axis 96 pod is also stuck."
+  ],
+  "next_action_priority_order": [
+    "DEFER axis 105 Pilot-T1 alt-2 respawn until orchestrator window clears (signal: spawn a tiny canary pod, see if SSH-ready < 5min). Estimated cost canary $0.05.",
+    "Once canary clears, prefer alt-3 (fold into known-good pod) over alt-2 (batch spawn) — single SSH surface and no retry exposure.",
+    "Open a RunPod support ticket with the two pod IDs (6chik4vxo5bkjv + sowpcnrlsbd0k7) and the timing evidence — this is now a SLA-relevant pattern, not isolated."
+  ],
+  "scope_reduction_2026_04_28T08_07Z": {
+    "applies_to": "F1 cycle 1 (XMETA3 N>=3 seed Phi replication)",
+    "finding": "F1 cycle 1 hexa-substrate (anima-core/phi_engine.hexa + training/phi_engine_eval.hexa) is PURE CPU — verified 0 cuda|torch|gpu|cudnn|cublas|nvidia refs in 1080 LoC combined. Selftest 5/5 PASS, N=3 seed bit-exact deterministic, total wallclock 8.42s on Mac local. RunPod blocker DOES NOT apply for hexa Phi evaluator falsifier path.",
+    "agent_1_finding_status": "ZERO-GPU CLAIM VERIFIED TRUE. CLI flag claim (--config XMETA3 --cells 256 --seeds 1 --emit json) is FALSE — those flags do not exist in phi_engine_eval.hexa main(); main() runs T1-T5 unconditionally over a 12-engine registry (holographic, gwt_broadcast, reflexivity, affective, narrative, dream, creative, temporal, finitude, agency, alterity, meta_qualia).",
+    "remaining_runpod_dependence": "Python XMETA3/DD101 mitosis bench (ready/bench/bench_phi_hypotheses_LEGACY.py, 72004 LoC, imports torch — has 0 .cuda() hard calls so torch-CPU IS technically possible but separate verification needed) is the ACTUAL XMETA3 runner. F1 cycle 1 split-scope: hexa structured-Phi falsifier UNBLOCKED; Python mitosis bench falsifier still uses GPU optimization on H100 (not blocked by orchestrator stuck — uses different dispatch surface).",
+    "raw_91_C3_disclosure": "RunPod 4-strike sustained fault was MIS-SCOPED for hexa F1 cycle 1; the hexa Phi evaluator never needed GPU. Honest scope correction: this blocker remains active for axis 105 Pilot-T1 (Llama-3.2-3B) and gemma-27b dispatches, but is REVOKED for F1 cycle 1 hexa structured-Phi evaluator.",
+    "evidence_path": "state/f1_cycle1_cpu_dispatch/SUMMARY_20260427T230704Z.json (chflags uchg)",
+    "audit_row": "state/audit/anima_own_strengthen_audit.jsonl (raw#86 cost-attribution, vendor=local, $0)"
+  }
+}

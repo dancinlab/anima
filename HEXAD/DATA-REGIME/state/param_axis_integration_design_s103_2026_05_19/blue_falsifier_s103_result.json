@@ -1,0 +1,157 @@
+{
+  "battery_total": 10,
+  "battery_passed": 10,
+  "all_blue": true,
+  "verdicts": [
+    {
+      "id": "B-S103-1",
+      "name": "Q1-PLAN-DECISION-PREDICATE-CLOSED",
+      "passed": true,
+      "decisions": {
+        "JOINT": false,
+        "SEQUENTIAL": true,
+        "HYBRID": true
+      },
+      "deterministic": true
+    },
+    {
+      "id": "B-S103-2",
+      "name": "Q2-PARAM-THRESHOLD-PREDICATE-CLOSED",
+      "passed": true,
+      "threshold_value_pinned": false,
+      "first_band_to_probe_3b": true,
+      "schaeffer_caveat_carried": true,
+      "wei_bands_b_params": [
+        3,
+        8,
+        10,
+        62
+      ]
+    },
+    {
+      "id": "B-S103-3",
+      "name": "Q3PRIME-EQUALS-Q3-AND-G-PARAM-CLOSED",
+      "passed": true,
+      "sympy_identity_holds": true,
+      "impl_4_corner_pass": true,
+      "sequential_data_fire_q3prime": true,
+      "joint_plan_q3prime": false,
+      "contingent_param_fire_q3prime": true,
+      "g_param_floor": 283000000
+    },
+    {
+      "id": "B-S103-4",
+      "name": "G-PARAM-3CLAUSE-PREDICATE-CLOSED",
+      "passed": true,
+      "truth_table_8_corners": [
+        {
+          "above_floor": false,
+          "single_value": false,
+          "attributable": false,
+          "g_param": false
+        },
+        {
+          "above_floor": false,
+          "single_value": false,
+          "attributable": true,
+          "g_param": false
+        },
+        {
+          "above_floor": false,
+          "single_value": true,
+          "attributable": false,
+          "g_param": false
+        },
+        {
+          "above_floor": false,
+          "single_value": true,
+          "attributable": true,
+          "g_param": false
+        },
+        {
+          "above_floor": true,
+          "single_value": false,
+          "attributable": false,
+          "g_param": false
+        },
+        {
+          "above_floor": true,
+          "single_value": false,
+          "attributable": true,
+          "g_param": false
+        },
+        {
+          "above_floor": true,
+          "single_value": true,
+          "attributable": false,
+          "g_param": false
+        },
+        {
+          "above_floor": true,
+          "single_value": true,
+          "attributable": true,
+          "g_param": true
+        }
+      ]
+    },
+    {
+      "id": "B-S103-5",
+      "name": "S101-G7-CONNECTION-POINT-CITED",
+      "passed": true,
+      "g7_substring_present": true,
+      "g7_single_variable_phrasing": true,
+      "s101_path": "state/dataregime_threshold_control_design_s101_2026_05_19/DESIGN.md"
+    },
+    {
+      "id": "B-S103-6",
+      "name": "S11A-MEASURED-ANCHOR-CITED",
+      "passed": true,
+      "s11a_dir_exists": true,
+      "has_blue_falsifier": true,
+      "has_result_json": true,
+      "n_files": 12
+    },
+    {
+      "id": "B-S103-7",
+      "name": "LLM-MD-2D-PLANE-CITED",
+      "passed": true,
+      "has_section_4_2d_plane": true,
+      "has_section_5_2_missing": true,
+      "has_s11a_flat_anchor": true
+    },
+    {
+      "id": "B-S103-8",
+      "name": "S16-CORPUS-SHA-CITED",
+      "passed": true,
+      "sha_substring_present": true,
+      "sha_full": "422c64a09b89393aebabc7b62aec8753a3d394ae4c442fef467c5d228e1831ec"
+    },
+    {
+      "id": "B-S103-9",
+      "name": "CENTRAL-BLUE-FALSIFIER-ZERO-LINE-DIFF",
+      "passed": true,
+      "actual_sha256": "c93e160a8a376a940942332cad13e652df9a03e97ccab708542a126eefc70b73",
+      "expected_prefix": "c93e160a8a376a94"
+    },
+    {
+      "id": "B-S103-10",
+      "name": "NO-FORBIDDEN-CALL-AST-AUDIT",
+      "passed": true,
+      "forbidden_calls_found": []
+    }
+  ],
+  "note": {
+    "id": "B-S103-NOTE",
+    "name": "PARAM-AXIS-INTEGRATION-OUTCOME-EMPIRICAL",
+    "is_empirical_carve_out": true,
+    "family": [
+      "B-D-NOTE",
+      "B-S94-NOTE",
+      "B-S99-NOTE",
+      "B-S100-NOTE",
+      "B-S101-NOTE",
+      "B-EMERGE-7"
+    ],
+    "note": "§103 is design-tier: encodes Q1 (Sequential decision), Q2 (design-OPEN with 3B conservative pin), Q3' (Q3 ∧ G_PARAM amendment). NEITHER claims anima will emerge at any (param, data) corner NOR that 3B IS anima's true threshold. Battery proves design well-formed (Q1 truth-table closed, Q2 3-clause Boolean closed, Q3' AND identity closed, 4 connection-points byte-equal-cited, central blue_falsifier 0-line-diff, no forbidden calls). Future fire OUTCOMES = empirical."
+  }
+}

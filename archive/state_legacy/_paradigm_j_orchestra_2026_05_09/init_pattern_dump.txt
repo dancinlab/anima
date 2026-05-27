@@ -1,0 +1,33 @@
+=== init-pattern registry ===
+PASS chat/init_patterns/_registry selftest (4 entries)
+  default = self-reflective
+  autonomous [LANDED] cap=autonomous type=empty_prompt cost=free
+      no seed (A 자율 발화 first; mandate-4 autonomous speech 정합); silence/abort risk acknowledged
+      prereq: model must support autonomous emission (anima_native / llama lane via REPL stdin EOF/empty-line tolerance)
+  system-seed [LANDED] cap=seeded type=system_directive cost=free
+      user-defined system prompt OR default friendly directive (e.g. "너희 둘은 친구. 자유롭게 대화 시작."); --init-seed override
+      prereq: none (string seed only)
+  topic-pool [LANDED] cap=random_topic type=topic_random cost=low_with_topic_set
+      random topic from curated pool (날씨/관심사/AI 의식/철학/감정/농담/...); --init-topics override for custom pool
+      prereq: none (in-memory pool 또는 user-supplied list)
+  self-reflective [LANDED] cap=self_introspective type=reflection_directive cost=free
+      self-introspection seed (자기 발견 + C2 자연발화 정합; e.g. "너 자신에 대해 어떻게 느껴? 친구한테 자유롭게 얘기해봐")
+      prereq: anima 정합 model — anima_native / clm-v4 / llama lane all OK
+=== transport registry ===
+PASS chat/transports/_registry selftest (5 entries)
+  default = fifo-dispatch
+  fifo-dispatch [LANDED] cap=line_streaming type=fifo+channel_recv latency=low cost=free
+      stdlib/channel channel_pair_open + channel_recv per-line loop with __HEXA_DISP_END__ sentinel; 1:1 streaming (chat.hexa _dispatch_module_streaming SSOT)
+      prereq: stdlib/channel.hexa (β-1 land `c53788af`) + stdbuf optional
+  beta1-channel [LANDED] cap=channel_pair type=bsd_fifo_pair latency=medium cost=low
+      β-1 channel pair (channel_pair_open ×2 + proc_spawn_with_channels) — sibling-to-sibling AI↔AI bidirectional dialogue (chat/duo/duo.hexa SSOT)
+      prereq: stdlib/channel.hexa β-1 + chat/duo/duo.hexa _spawn_instance
+  libllama-ffi [LANDED] cap=direct_ffi type=c_ffi latency=low cost=direct_inproc
+      direct C FFI via libhxllama.dylib (in-proc llama_load + llama_generate + llama_free; no channel transport — single-process)
+      prereq: build/libhxllama.dylib + ~/.cache/anima/gguf/<repo>.gguf
+  subprocess-pipe [LANDED] cap=buffered_pipe type=popen_buffered latency=high cost=free
+      popen() buffered pipe — full inner cmd stdout captured in one 4KB-buffered blob (chat.hexa fallback when channel_pair_open returns -1; backward-compat preserved)
+      prereq: POSIX popen (built-in) — no extra deps
+  imtl [STUB] cap=udp_cross_host type=udp_socket latency=cross_host_ms cost=net_io
+      Tension-link UDP protocol cross-host (A100↔H100); ANMA magic + 19266 default port; STUB serialize/deserialize (anima-tools/misc/inter_model_comm.hexa TODO[pytorch])
+      prereq: anima-tools/misc/inter_model_comm.hexa + UDP socket impl + 4-byte ANMA magic schema

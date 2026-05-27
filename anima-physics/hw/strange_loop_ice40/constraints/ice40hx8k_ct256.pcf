@@ -1,0 +1,58 @@
+# ice40hx8k_ct256.pcf — HX8K CT256 full pin map (Phase 1b bitstream verification)
+#
+# strange_loop_top has 43 IO bits (clk + rst_n + start + step_count[15:0]
+# + state_dump[23:0]). UP5K-SG48 has only 25 usable IOs — does not fit.
+# HX8K-CT256 has 206 IOs — comfortable fit. Pin names below are valid
+# CT256 ball locations harvested from
+#   /opt/homebrew/Cellar/icestorm/1.1/share/icestorm/chipdb/chipdb-8k.txt
+# chosen for placement-validity ONLY; re-pin per physical dev board
+# (e.g. iCE40 HX8K Breakout) before flashing.
+
+# Clock + control
+set_io clk    A1
+set_io rst_n  A10
+set_io start  A11
+
+# step_count[15:0]
+set_io step_count[0]  A15
+set_io step_count[1]  A16
+set_io step_count[2]  A2
+set_io step_count[3]  A5
+set_io step_count[4]  A6
+set_io step_count[5]  A7
+set_io step_count[6]  A9
+set_io step_count[7]  B1
+set_io step_count[8]  B10
+set_io step_count[9]  B11
+set_io step_count[10] B12
+set_io step_count[11] B13
+set_io step_count[12] B14
+set_io step_count[13] B15
+set_io step_count[14] B16
+set_io step_count[15] B2
+
+# state_dump[23:0]
+set_io state_dump[0]  B3
+set_io state_dump[1]  B4
+set_io state_dump[2]  B5
+set_io state_dump[3]  B6
+set_io state_dump[4]  B7
+set_io state_dump[5]  B8
+set_io state_dump[6]  B9
+set_io state_dump[7]  C1
+set_io state_dump[8]  C10
+set_io state_dump[9]  C11
+set_io state_dump[10] C12
+set_io state_dump[11] C13
+set_io state_dump[12] C14
+set_io state_dump[13] C16
+set_io state_dump[14] C2
+set_io state_dump[15] C3
+set_io state_dump[16] C4
+set_io state_dump[17] C5
+set_io state_dump[18] C6
+set_io state_dump[19] C7
+set_io state_dump[20] C8
+set_io state_dump[21] C9
+set_io state_dump[22] D1
+set_io state_dump[23] D10

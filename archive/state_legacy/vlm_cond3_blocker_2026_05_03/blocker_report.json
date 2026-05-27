@@ -1,0 +1,64 @@
+{
+  "ts": "2026-05-03",
+  "cycle": "vlm_cond3_blocker",
+  "scope": "VLM cond.3 cross-LM structural verify $0 — blocker confirmation",
+  "verdict": "BLOCKED",
+  "blocker": {
+    "id": "vlm_cond3.blk.1",
+    "type": "missing_artifact",
+    "desc": "VLM stage1 LoRA does NOT exist on disk. cond.3 (cross-substrate fidelity vs CLM ≥0.85 r) requires a trained VLM head, but Stage 1+2 land 2026-05-03 was spec-freeze ONLY (audio_token_vocab + bridge_dim + invocation seam). No training was performed.",
+    "severity": "structural",
+    "discovered_by": "subagent a261c4c2671c04e4a (503 before formal report)",
+    "confirmed_by": "RETRY subagent 2026-05-03"
+  },
+  "evidence": {
+    "ubu1_hf_hub_dirs": [
+      "models--meta-llama--Llama-3.2-3B-Instruct (base only)",
+      "models--dancinlab--clm-v4-base-mirror (CLM base mirror)",
+      "models--dancinlab--clm-v4-sft-stage1 (CLM stage1 LoRA — only one)"
+    ],
+    "ubu1_adapter_configs_found": [
+      "/home/aiden/.cache/huggingface/hub/models--dancinlab--clm-v4-sft-stage1/snapshots/80eee785a8c9f84b7a6a78fc250f5a4a4bdce81c/adapter_config.json"
+    ],
+    "ubu1_vlm_dirs_in_anima_home": "0",
+    "ubu1_savepoints_dirs": "absent (no /home/aiden/savepoints, no /home/aiden/anima/savepoints)",
+    "spec_status_per_roadmap": {
+      "cond.1_audio_token_vocab": "met (FROZEN 1024 × 8 RVQ, 384 bridge, 1536 ctx, 32k text vocab)",
+      "cond.2_invocation_seam": "met (FROZEN Stage 0..6 reuse + VLM head additive on Stage 2)",
+      "cond.3_fidelity": "unmet (REQUIRES audio-text paired corpus + LoRA training + ≥0.85 r vs CLM)",
+      "blocker.1_dimensionality": "resolved 2026-05-03"
+    },
+    "spec_anchor": "docs/vlm_phase3_spec_2026_05_03.md §2.1 + .roadmap.vlm_voice_lm cond.3 blocker_reason 'cond.2 IMPL + training corpus (audio-text paired) 결정 후 가능'"
+  },
+  "missing_prereqs_for_cond3": [
+    "audio-text paired training corpus (LibriSpeech / Common Voice / MLS — corpus 결정 NOT done)",
+    "VLM stage1 LoRA training run (audio_token_predictor.hexa Python port + LoRA injection on top + text head Linear(384, 32000))",
+    "P9 SFT pipeline reuse decision (audio-text adapter — P9 pre5/pre6 land NOT done)",
+    "RunPod credit allocation (current $0 budget rules out training launch)",
+    "audio_token_predictor Python implementation (currently .hexa SSOT only — 1576L raw#9, no .py port)"
+  ],
+  "raw9_pattern_for_text_head": {
+    "hidden_state_extraction_point": "audio_token_predictor.hexa atp_decode_step L924-L995",
+    "post_block_hidden_var": "x (384d after N decoder blocks, before rvq_heads projection)",
+    "existing_head_pattern": "rvq_heads[i] @ x -> logits[1024] for each of 8 RVQ stages (atp_mat_vec(head, x, vocab_size, d_model))",
+    "additive_text_head_spec": "text_head: Linear(384, 32000) parallel to rvq_heads, same x input, additive only — no in-place change to atp_decode_step",
+    "ssot_anchors": [
+      "audio_token_predictor.hexa L924-L995 atp_decode_step",
+      "audio_token_predictor.hexa L997-L1100 atp_flash_decode_step (flash attn variant — same x flow)"
+    ]
+  },
+  "$0_constraint_consequences": [
+    "no training launch this cycle",
+    "no RunPod boot",
+    "blocker doc + minimal training plan only (this report + training_plan.md)",
+    "marker emit + handoff doc only",
+    "VLM cond.3 remains 'unmet' until next-cycle gates clear"
+  ],
+  "raw_invariants_honored": ["raw#9 honest C9", "raw#10 honest C3", "raw#15 cost band"],
+  "next_cycle_entry_gates": [
+    "P9 pre5/pre6 land (data prep + weight precache for audio-text)",
+    "audio-text paired corpus 결정 (LibriSpeech primary 권고)",
+    "RunPod credit refresh OR alternative free substrate",
+    "audio_token_predictor.hexa → .py port OR Mk.III base model HF mirror"
+  ]
+}

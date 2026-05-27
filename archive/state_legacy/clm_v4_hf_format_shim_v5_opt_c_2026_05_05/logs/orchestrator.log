@@ -1,0 +1,285 @@
+[2026-05-05T08:21:53Z] starting OPT-C orchestrator: cycle=clm_v4_hf_format_shim_v5_opt_c_2026_05_05 bg_lane=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:21:53Z] loading secrets
+[2026-05-05T08:21:53Z] secrets OK (runpod=50b hf=37b)
+[2026-05-05T08:21:53Z] booting pod: anima-shim-v5-opt-c-falsification-2026-05-05 (H100 80GB SECURE @ $2.99/hr, vol=80GB, disk=60GB)
+[2026-05-05T08:21:54Z] boot output:
+  {
+    "containerDiskInGb": 60,
+    "costPerHr": 2.99,
+    "desiredStatus": "RUNNING",
+    "env": [
+      "HF_TOKEN=hf_***REDACTED***",
+      "PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+    ],
+    "gpuCount": 1,
+    "id": "i3y1wk0xq7t0b7",
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "lastStatusChange": "Rented by User: Tue May 05 2026 08:21:54 GMT+0000 (Coordinated Universal Time)",
+    "machine": {
+      "gpuDisplayName": "H100 SXM",
+      "location": null
+    },
+    "memoryInGb": 251,
+    "name": "anima-shim-v5-opt-c-falsification-2026-05-05",
+    "ports": "22/tcp,8888/http",
+    "vcpuCount": 28,
+    "volumeInGb": 80,
+    "volumeMountPath": "/workspace"
+  }
+[2026-05-05T08:21:55Z] pod_id=i3y1wk0xq7t0b7
+h100_cost_watchdog: registered pod=i3y1wk0xq7t0b7 owner=OPT-C-FALSIFICATION target_usd=3.0
+[h100-register] 2026-05-05T08:21:55Z pod=i3y1wk0xq7t0b7 owner=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:21:55Z] [watchdog] register OK pod=i3y1wk0xq7t0b7 lane=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:21:55Z] waiting for SSH ready (max 6min)
+[2026-05-05T08:21:58Z]   ssh probe 1/36: host= port=
+[2026-05-05T08:22:11Z]   ssh probe 2/36: host=103.207.149.56 port=16079
+[2026-05-05T08:22:24Z]   ssh probe 3/36: host=103.207.149.56 port=16079
+[2026-05-05T08:22:37Z]   ssh probe 4/36: host=103.207.149.56 port=16079
+[2026-05-05T08:22:49Z]   ssh probe 5/36: host=103.207.149.56 port=16079
+[2026-05-05T08:23:02Z]   ssh probe 6/36: host=103.207.149.56 port=16079
+[2026-05-05T08:23:15Z]   ssh probe 7/36: host=103.207.149.56 port=16079
+[2026-05-05T08:23:28Z]   ssh probe 8/36: host=103.207.149.56 port=16079
+[2026-05-05T08:23:40Z]   ssh probe 9/36: host=103.207.149.56 port=16079
+[2026-05-05T08:23:53Z]   ssh probe 10/36: host=103.207.149.56 port=16079
+[2026-05-05T08:24:05Z]   ssh probe 11/36: host=103.207.149.56 port=16079
+[2026-05-05T08:24:18Z]   ssh probe 12/36: host=103.207.149.56 port=16079
+[2026-05-05T08:24:31Z]   ssh probe 13/36: host=103.207.149.56 port=16079
+[2026-05-05T08:24:44Z]   ssh probe 14/36: host=103.207.149.56 port=16079
+[2026-05-05T08:24:56Z]   ssh probe 15/36: host=103.207.149.56 port=16079
+[2026-05-05T08:25:09Z]   ssh probe 16/36: host=103.207.149.56 port=16079
+[2026-05-05T08:25:22Z]   ssh probe 17/36: host=103.207.149.56 port=16079
+[2026-05-05T08:25:35Z]   ssh probe 18/36: host=103.207.149.56 port=16079
+[2026-05-05T08:25:47Z]   ssh probe 19/36: host=103.207.149.56 port=16079
+[2026-05-05T08:26:00Z]   ssh probe 20/36: host=103.207.149.56 port=16079
+[2026-05-05T08:26:13Z]   ssh probe 21/36: host=103.207.149.56 port=16079
+[2026-05-05T08:26:26Z]   ssh probe 22/36: host=103.207.149.56 port=16079
+[2026-05-05T08:26:39Z]   ssh probe 23/36: host=103.207.149.56 port=16079
+[2026-05-05T08:26:51Z]   ssh probe 24/36: host=103.207.149.56 port=16079
+[2026-05-05T08:27:04Z]   ssh probe 25/36: host=103.207.149.56 port=16079
+[2026-05-05T08:27:17Z]   ssh probe 26/36: host=103.207.149.56 port=16079
+[2026-05-05T08:27:30Z]   ssh probe 27/36: host=103.207.149.56 port=16079
+[2026-05-05T08:27:42Z]   ssh probe 28/36: host=103.207.149.56 port=16079
+[2026-05-05T08:27:55Z]   ssh probe 29/36: host=103.207.149.56 port=16079
+[2026-05-05T08:28:08Z]   ssh probe 30/36: host=103.207.149.56 port=16079
+[2026-05-05T08:28:22Z]   ssh probe 31/36: host=103.207.149.56 port=16079
+[2026-05-05T08:28:35Z]   ssh probe 32/36: host=103.207.149.56 port=16079
+[2026-05-05T08:28:47Z]   ssh probe 33/36: host=103.207.149.56 port=16079
+[2026-05-05T08:29:00Z]   ssh probe 34/36: host=103.207.149.56 port=16079
+[2026-05-05T08:29:13Z]   ssh probe 35/36: host=103.207.149.56 port=16079
+[2026-05-05T08:29:25Z]   ssh probe 36/36: host=103.207.149.56 port=16079
+[2026-05-05T08:29:35Z] stage 3: setup pod (scp inputs)
+ssh: connect to host 103.207.149.56 port 16079: Connection refused
+[2026-05-05T08:29:37Z] stage 3b: launching run on H100 (detached via nohup + setsid)
+[2026-05-05T08:29:37Z] poll loop start (max 55min, budget cap $3)
+[2026-05-05T08:29:37Z] elapsed=7min cost=$0.39 probe=|
+[2026-05-05T08:31:38Z] elapsed=9min cost=$0.49 probe=|
+[2026-05-05T08:33:39Z] [trap] killing pod=i3y1wk0xq7t0b7 (auto-kill mandatory)
+{"error":"api error: {\"error\":\"stop pod: Attempted to stop pod that does not exist.\",\"status\":500}\n (status 500)"}
+Usage:
+  runpodctl pod stop <pod-id> [flags]
+
+Flags:
+  -h, --help   help for stop
+
+Global Flags:
+  -o, --output string   output format (json, yaml) (default "json")
+
+{"error":"failed to stop pod: api error: {"error":"stop pod: Attempted to stop pod that does not exist.","status":500}
+ (status 500)"}
+{"error":"api error: {\"error\":\"pod not found to terminate\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod delete <pod-id> [flags]
+
+Aliases:
+  delete, rm, remove
+
+Flags:
+  -h, --help   help for delete
+
+Global Flags:
+  -o, --output string   output format (json, yaml) (default "json")
+
+{"error":"failed to delete pod: api error: {"error":"pod not found to terminate","status":404}
+ (status 404)"}
+[2026-05-05T08:33:48Z] [trap] 404 verified (try 1/3)
+[2026-05-05T08:33:49Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]  pod_kill_verified_404=1
+h100_cost_watchdog: deregistered pod=i3y1wk0xq7t0b7 archive=/Users/ghost/core/anima/state/h100_watchdog/closed/i3y1wk0xq7t0b7_1777970029.json
+[2026-05-05T08:33:50Z] [watchdog] deregister OK pod=i3y1wk0xq7t0b7
+[2026-05-05T08:33:50Z] verdict written: /Users/ghost/core/anima/state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/verdict.json
+[2026-05-05T08:33:50Z] elapsed=11min cost=$0.60 probe=|
+[2026-05-05T08:35:51Z] elapsed=13min cost=$0.70 probe=|
+[2026-05-05T08:49:09Z] starting OPT-C orchestrator: cycle=clm_v4_hf_format_shim_v5_opt_c_2026_05_05 bg_lane=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:49:09Z] loading secrets
+[2026-05-05T08:49:09Z] secrets OK (runpod=50b hf=37b)
+[2026-05-05T08:49:09Z] booting pod: anima-shim-v5-opt-c-falsification-2026-05-05 (H100 80GB SECURE @ $2.99/hr, vol=80GB, disk=60GB)
+[2026-05-05T08:49:10Z] boot output:
+  {
+    "containerDiskInGb": 60,
+    "costPerHr": 2.99,
+    "desiredStatus": "RUNNING",
+    "env": [
+      "HF_TOKEN=hf_***REDACTED***",
+      "PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+    ],
+    "gpuCount": 1,
+    "id": "tzkihyasfbqavz",
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "lastStatusChange": "Rented by User: Tue May 05 2026 08:49:10 GMT+0000 (Coordinated Universal Time)",
+    "machine": {
+      "gpuDisplayName": "H100 SXM",
+      "location": "US"
+    },
+    "memoryInGb": 251,
+    "name": "anima-shim-v5-opt-c-falsification-2026-05-05",
+    "ports": "22/tcp,8888/http",
+    "vcpuCount": 26,
+    "volumeInGb": 80,
+    "volumeMountPath": "/workspace"
+  }
+[2026-05-05T08:49:10Z] pod_id=tzkihyasfbqavz
+h100_cost_watchdog: registered pod=tzkihyasfbqavz owner=OPT-C-FALSIFICATION target_usd=3.0
+[h100-register] 2026-05-05T08:49:11Z pod=tzkihyasfbqavz owner=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:49:11Z] [watchdog] register OK pod=tzkihyasfbqavz lane=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:49:11Z] waiting for SSH ready (max 10min, 60 probes @ 10s)
+[2026-05-05T08:49:14Z]   ssh probe 1/60: host= port= uptime=0s
+[2026-05-05T08:49:30Z] SSH ready at 216.243.220.218:15057 (after 2 probes, uptime=0s)
+[2026-05-05T08:49:30Z] stage 3: setup pod (scp inputs)
+Warning: Permanently added '[216.243.220.218]:15057' (ED25519) to the list of known hosts.
+total 5253
+drwxrwxrwx 2 root root 2000131 May  5 08:50 .
+drwxrwxrwx 3 root root 2000131 May  5 08:49 ..
+-rw-rw-rw- 1 root root   17401 May  5 08:49 clm_v4_shim_v5_opt_c_eval.py
+-rw-rw-rw- 1 root root   40027 May  5 08:49 conscious_decoder.py
+-rwxrwxrwx 1 root root    6140 May  5 08:49 run_h100.bash
+-rw-rw-rw- 1 root root 1306349 May  5 08:49 tokenizer_64k_multilingual.model
+-rw-rw-rw- 1 root root    7359 May  5 08:50 train_avg_real.pt
+[2026-05-05T08:50:09Z] stage 3b: launching run on H100 (detached via nohup + setsid)
+[2026-05-05T08:51:02Z] poll loop start (max 40min, budget cap $2.0)
+[2026-05-05T08:51:06Z] elapsed=1min cost=$0.09 probe=/workspace/clm_v4_shim_v5_opt_c/results/COMPLETE.sentinel|SENTINEL_FOUND|
+[2026-05-05T08:51:23Z] COMPLETE.sentinel detected — final sync + auto-kill imminent
+Warning: Permanently added '[216.243.220.218]:15057' (ED25519) to the list of known hosts.
+[2026-05-05T08:51:41Z] stage 5: pod kill via trap (auto on exit)
+[2026-05-05T08:51:41Z] [trap] killing pod=tzkihyasfbqavz (auto-kill mandatory)
+{
+  "containerDiskInGb": 60,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-05 08:49:10.435 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "[REDACTED_HF_TOKEN]",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "tzkihyasfbqavz",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Tue May 05 2026 08:51:42 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-shim-v5-opt-c-falsification-2026-05-05",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 26,
+  "volumeInGb": 80,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "tzkihyasfbqavz"
+}
+[2026-05-05T08:51:50Z] [trap] 404 verified (try 1/3)
+[2026-05-05T08:51:50Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]  pod_kill_verified_404=1
+h100_cost_watchdog: deregistered pod=tzkihyasfbqavz archive=/Users/ghost/core/anima/state/h100_watchdog/closed/tzkihyasfbqavz_1777971111.json
+[2026-05-05T08:51:51Z] [watchdog] deregister OK pod=tzkihyasfbqavz
+[2026-05-05T08:51:51Z] verdict written: /Users/ghost/core/anima/state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/verdict.json (    5211 bytes)
+[2026-05-05T08:59:44Z] starting OPT-C orchestrator: cycle=clm_v4_hf_format_shim_v5_opt_c_2026_05_05 bg_lane=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:59:44Z] loading secrets
+[2026-05-05T08:59:44Z] secrets OK (runpod=50b hf=37b)
+[2026-05-05T08:59:44Z] booting pod: anima-shim-v5-opt-c-falsification-2026-05-05 (H100 80GB SECURE @ $2.99/hr, vol=80GB, disk=60GB)
+[2026-05-05T08:59:45Z] boot output:
+  {
+    "containerDiskInGb": 60,
+    "costPerHr": 2.99,
+    "desiredStatus": "RUNNING",
+    "env": [
+      "HF_TOKEN=hf_***REDACTED***",
+      "PUBLIC_KEY=ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+    ],
+    "gpuCount": 1,
+    "id": "xbo7w35njtinbq",
+    "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+    "lastStatusChange": "Rented by User: Tue May 05 2026 08:59:45 GMT+0000 (Coordinated Universal Time)",
+    "machine": {
+      "gpuDisplayName": "H100 SXM",
+      "location": "IN"
+    },
+    "memoryInGb": 251,
+    "name": "anima-shim-v5-opt-c-falsification-2026-05-05",
+    "ports": "22/tcp,8888/http",
+    "vcpuCount": 28,
+    "volumeInGb": 80,
+    "volumeMountPath": "/workspace"
+  }
+[2026-05-05T08:59:45Z] pod_id=xbo7w35njtinbq
+h100_cost_watchdog: registered pod=xbo7w35njtinbq owner=OPT-C-FALSIFICATION target_usd=3.0
+[h100-register] 2026-05-05T08:59:47Z pod=xbo7w35njtinbq owner=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:59:47Z] [watchdog] register OK pod=xbo7w35njtinbq lane=OPT-C-FALSIFICATION target=$3.0
+[2026-05-05T08:59:47Z] waiting for SSH ready (max 10min, 60 probes @ 10s)
+[2026-05-05T08:59:50Z]   ssh probe 1/60: host= port= uptime=0s
+[2026-05-05T09:00:03Z]   ssh probe 2/60: host= port= uptime=0s
+[2026-05-05T09:00:18Z] SSH ready at 103.207.149.103:12492 (after 3 probes, uptime=0s)
+[2026-05-05T09:00:18Z] stage 3: setup pod (scp inputs)
+Warning: Permanently added '[103.207.149.103]:12492' (ED25519) to the list of known hosts.
+total 1352
+drwxr-xr-x 2 root root     180 May  5 09:00 .
+drwxr-xr-x 3 root root      42 May  5 09:00 ..
+-rw-r--r-- 1 root root   17401 May  5 09:00 clm_v4_shim_v5_opt_c_eval.py
+-rw-r--r-- 1 root root   40027 May  5 09:00 conscious_decoder.py
+-rwxr-xr-x 1 root root    6262 May  5 09:00 run_h100.bash
+-rw-r--r-- 1 root root 1306349 May  5 09:00 tokenizer_64k_multilingual.model
+-rw-r--r-- 1 root root    7359 May  5 09:00 train_avg_real.pt
+[2026-05-05T09:00:43Z] stage 3b: launching run on H100 (detached via nohup + setsid)
+[2026-05-05T09:02:45Z] poll loop start (max 35min, budget cap $1.75)
+[2026-05-05T09:02:47Z] elapsed=3min cost=$0.15 probe=/workspace/clm_v4_shim_v5_opt_c/results/COMPLETE.sentinel|SENTINEL_FOUND|
+[2026-05-05T09:03:02Z] COMPLETE.sentinel detected — final sync + auto-kill imminent
+Warning: Permanently added '[103.207.149.103]:12492' (ED25519) to the list of known hosts.
+[2026-05-05T09:03:16Z] stage 5: pod kill via trap (auto on exit)
+[2026-05-05T09:03:16Z] [trap] killing pod=xbo7w35njtinbq (auto-kill mandatory)
+{
+  "containerDiskInGb": 60,
+  "costPerHr": 2.99,
+  "createdAt": "2026-05-05 08:59:45.45 +0000 UTC",
+  "desiredStatus": "EXITED",
+  "env": {
+    "HF_TOKEN": "[REDACTED_HF_TOKEN]",
+    "PUBLIC_KEY": "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIKOEWe0SBseZceuCgcVnlNDhEwbU/TIqGeK9FdrpIy9V ghost@ghostui-MacBookAir.local\n\nssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQCf5vOKHhrik9f3yA4IWXXGKPVvDQ8nFP5b1PF7a7YHuXMmZVSOvISYwph7yuCCYyZP8GTDm9MWHZVSR6ArijPxRfAbGDUtENFrHtyA5IGI9GycJkrYokI20neQXR4AGTwk/kVXOdaMaxEREFKhyffzZyrPKUEpZ7ikGXVM9MqWYNFvvy1ioQ7uuqyFq+65phVjojKgg4LWdnTjcxNzNrOgwlZqANx450Nhv3KAGhWSiLZgU6iA4JJ6gsq6t5S9p5n7T6EeypUyuKT4iOH0U5d4jIrssz0QwBncytLvQCvv7IpsapPqhgQzBXcGMZKkLS62UWYDRTeL7PPz3+N2hM4N RunPod-Key-Go"
+  },
+  "gpuCount": 1,
+  "id": "xbo7w35njtinbq",
+  "imageName": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "lastStatusChange": "Exited by user: Tue May 05 2026 09:03:17 GMT+0000 (Coordinated Universal Time)",
+  "memoryInGb": 251,
+  "name": "anima-shim-v5-opt-c-falsification-2026-05-05",
+  "ports": [
+    "22/tcp",
+    "8888/http"
+  ],
+  "vcpuCount": 28,
+  "volumeInGb": 80,
+  "volumeMountPath": "/workspace"
+}
+{
+  "deleted": true,
+  "id": "xbo7w35njtinbq"
+}
+[2026-05-05T09:03:26Z] [trap] 404 verified (try 1/3)
+[2026-05-05T09:03:26Z] [trap] post-kill: {"error":"api error: {\"error\":\"pod not found\",\"status\":404}\n (status 404)"}
+Usage:
+  runpodctl pod get <pod-id> [flags]  pod_kill_verified_404=1
+h100_cost_watchdog: deregistered pod=xbo7w35njtinbq archive=/Users/ghost/core/anima/state/h100_watchdog/closed/xbo7w35njtinbq_1777971806.json
+[2026-05-05T09:03:26Z] [watchdog] deregister OK pod=xbo7w35njtinbq
+[2026-05-05T09:03:27Z] verdict written: /Users/ghost/core/anima/state/clm_v4_hf_format_shim_v5_opt_c_2026_05_05/verdict.json (    5213 bytes)

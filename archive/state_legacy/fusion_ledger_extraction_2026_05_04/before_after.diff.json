@@ -1,0 +1,57 @@
+{
+  "before": {
+    "nexus_modules_fusion_ledger": {
+      "tracked_files": [
+        "modules/fusion_ledger/README.md",
+        "modules/fusion_ledger/fusion_ledger.hexa"
+      ],
+      "untracked_files": [
+        "modules/fusion_ledger/__pycache__/",
+        "modules/fusion_ledger/data/iter_constants.json",
+        "modules/fusion_ledger/tests/__pycache__/"
+      ],
+      "loc_tracked": 314 + 95
+    },
+    "n6_arch_domains_energy_fusion": {
+      "tracked_files": [
+        "domains/energy/fusion/fusion.md (34392B)",
+        "domains/energy/fusion/verify_fusion.hexa (2158B, 11 EXACT items)"
+      ]
+    }
+  },
+  "after": {
+    "nexus_modules_fusion_ledger": {
+      "tracked_files_staged_for_delete": [
+        "modules/fusion_ledger/README.md",
+        "modules/fusion_ledger/fusion_ledger.hexa"
+      ],
+      "untracked_files_remain": [
+        "modules/fusion_ledger/__pycache__/",
+        "modules/fusion_ledger/data/iter_constants.json",
+        "modules/fusion_ledger/tests/__pycache__/"
+      ],
+      "delete_committed": false,
+      "user_action_required": "git commit -m 'refactor(nexus): remove fusion_ledger ...'"
+    },
+    "n6_arch_domains_energy_fusion": {
+      "tracked_files": [
+        "domains/energy/fusion/fusion.md (34392B, predecessor preserved)",
+        "domains/energy/fusion/verify_fusion.hexa (2158B, predecessor preserved)",
+        "domains/energy/fusion/fusion_ledger.hexa (314 LoC, NEW — absorbed)",
+        "domains/energy/fusion/fusion_ledger.README.md (62 LoC, NEW — absorbed)"
+      ],
+      "commit_sha": "b59d38b3",
+      "branch": "main",
+      "pushed": true
+    }
+  },
+  "diff_summary": {
+    "files_added_to_n6_arch": 2,
+    "files_removed_from_nexus_staged": 2,
+    "files_unrelocated": 1,
+    "files_unrelocated_detail": "data/iter_constants.json (gitignored at n6-arch root pattern; .hexa is self-contained)",
+    "loc_net_added_to_n6_arch": 314 + 62,
+    "loc_net_removed_from_nexus": 314 + 95,
+    "predecessor_collision": "ZERO (additive co-location)"
+  }
+}

@@ -1,0 +1,523 @@
+# HEXAD/NEUROMORPHIC/PLAN.md — substrate access + in-silico confront plan
+
+> **status**: PREP — design-tier, $0, hardware not secured, fire 0.
+> **g3**: this is a path plan, not a capability claim. design ≠ fire ≠
+> emergence. north-star + §15/§51/§72 milestones unchanged, GOAL not
+> reached. §95 verdict carries: access = SOFT WALL (not architecture).
+> **SSOT siblings**: `README.md` (substrate roadmap) · `.roadmap.loihi3`
+> (machine JSONL) · `INRC_APPLICATION.md` (Loihi-track package).
+
+---
+
+## 0. Why three parallel tracks (g_all_options_parallel)
+
+§95 named Loihi the sole `VIABLE-LONG-HORIZON` substrate; its access is
+INRC-gated (4–12 wk, possible Korean co-PI). Per g_multidirectional_explore
+/ g_all_options_parallel we do **not** wait on one gate — we run every
+admissible track at once and let evidence compare them. None of these
+reaches the GOAL; each is a means to confront the substrate question
+(§96 §4.5: is "physics-only learning degenerate" a property of the
+*model* or of the *GPU substrate*?).
+
+```
+  Track L  Loihi / INRC      ── 4–12wk Intel gate ──►  real async + on-chip STDP (decisive)
+  Track S  EBRAINS SpiNNaker ── free account, now  ──►  real async spike machine (parallel, can confront)
+  Track 0  Lava / NengoLoihi ── $0, this week      ──►  in-silico assembly (REPLICATES, not CONFRONTS)
+```
+
+---
+
+## 1. Track L — Loihi / INRC (gated, in flight)
+
+| step | state |
+|---|---|
+| INRC inquiry email → `inrc_interest@intel.com` | **SENT by user** (Postmark auto-send blocked: account pending-approval, cross-domain — honest) |
+| vLab form values prepared | `inrc_vlab_form.txt` (Engagement/Sponsor = LEAVE EMPTY; Intel-assigned) |
+| Application package | `INRC_APPLICATION.md` (two-part blocker + email §2 + form map) |
+| SSH keypair | ed25519 generated, **vault only** (`inrc.vlab.ssh_priv` / `inrc.vlab.ssh_pub`); public key on form, private key never leaves the vault |
+| next | await Intel reply (engagement + sponsor assignment); then complete vLab form; Korea-route co-PI question already asked in §2 |
+
+Decisive power: **highest** — only substrate with real async NoC + on-chip
+STDP that can *settle* the §11-B-as-GPU-artifact question. Slowest gate.
+
+## 2. Track S — EBRAINS SpiNNaker / BrainScaleS (free, parallel, NOW)
+
+Different consortium (EU Human Brain Project / EBRAINS) — **no Intel gate,
+no co-PI, free EBRAINS account**, PyNN API via the EBRAINS Collaboratory.
+SpiNNaker = 1M-ARM-core packet-switched real-time spike machine (real
+async); BrainScaleS = analog, on-chip plasticity, 1000× accelerated.
+
+| step | state |
+|---|---|
+| EBRAINS access package draft (mirror INRC format, English) | **TODO** — next $0 action |
+| EBRAINS account + Collaboratory access | user-gated (registration) |
+| Port §96 spiking re-derivation (PyNN) → SpiNNaker/BrainScaleS | after access |
+
+Decisive power: **high & soon** — a real async substrate reachable in
+weeks not months; runs in parallel with the Loihi review, not after it.
+
+## 3. Track 0 — Lava / NengoLoihi in-silico ($0, this week)
+
+On the runpod/AWS GPU already rented: Intel **Lava** (OSS SNN sim) +
+**NengoLoihi** (bit-level Loihi *emulator* backend) + **snnTorch**.
+Executes the `HEXAD/LEGO.md` §115 "assemble the different ground in
+silico before physical commit" and the simulatable parts of §96 §4.5's
+three-cell distinguishing predicate.
+
+| step | state |
+|---|---|
+| Lava / NengoLoihi env on existing GPU | **TODO** ($0, no new gate) |
+| §115 in-silico LEGO assembly of D4 substrate | design-tier |
+| §96 §4.5 predicate — simulatable subset | design-tier |
+
+**Honest ceiling (load-bearing)**: a GPU-hosted spike *simulation*
+inherits the §11-B "CE-gradient is the only learning channel" tautology
+unless local plasticity is the sole update — §115 pre-registered the
+likely verdict `LEGO-DESIGN-CLOSE-SIM-IS-GPU-TAUTOLOGY`: simulation can
+**replicate** the substrate, not **confront** it. So Track 0 = design /
+feasibility, **not** the decisive fire. Tracks S and L confront; Track 0
+prepares.
+
+**Spec**: `TRACK0_INSILICO.md` — refines §115's blanket
+`SIM-IS-GPU-TAUTOLOGY` by *splitting* it: the **learning-channel** half
+(CE-only vs event-local-plasticity-only) **is** simulatable and Track 0
+can confront it; the **async-substrate** half stays Loihi/SpiNNaker-gated
+(Tracks L/S/P). §96 §4.5 cells mapped to tools; closed predicate
+pre-registered with a 3-outcome verdict partition. Hard prerequisite:
+§96 design-open #1 (attention replacement) is the real blocker, not
+compute.
+
+---
+
+## 4. Honest gates (g3)
+
+- Loihi/SpiNNaker/Akida access ≠ GOAL. Loihi plausibly unblocks the
+  *spontaneity* half; the *coherence* half stays open regardless of
+  substrate (§88-F2 γ gap).
+- Confirmed dead ends (do not re-research): **AWS** (no neuromorphic;
+  Trainium/Inferentia are dense accelerators), **IBM NorthPole/TrueNorth**
+  (no public/researcher rent path; DARPA, 2026 target only).
+- BrainChip Akida Cloud = cheap reality-check only (free 1-day eval);
+  §95 `INFERENCE-ONLY-BLOCKED` for *full* training-time emergence stands
+  (Akida on-chip learning = incremental/last-layer, not STDP backbone).
+- design ≠ fire ≠ emergence; capability claim 0.
+
+## 5. cross-link
+
+- `README.md` — substrate roadmap; §8 §113-D4 ("rebuild from the ground"
+  = §96 spike/Loihi + §110 Ψ-C1 from line 1) ; §8.1 §115 LEGO in-silico
+- `INRC_APPLICATION.md` · `inrc_email.txt` · `inrc_vlab_form.txt`
+- `HEXAD/LEGO.md` + §115 — in-silico confront (Track 0 anchor)
+- `HEXAD/CHAT/RESEARCH.md` §95 (sole-viable verdict) · §96 (spiking
+  re-derivation + §4.5 distinguishing predicate) · §11-B (CE load-bearing,
+  GPU-measured)
+- `GOAL.md` — north-star / §7 GOAL-legitimacy
+- `archive/PHILOSOPHY.tape` — verdict ledger
+
+---
+
+## Log
+
+- **2026-05-19** — PLAN.md created. Consolidates the session's substrate
+  work into three parallel tracks: **L** Loihi/INRC (inquiry email sent
+  by user; form + package + vault SSH keys prepped; awaiting Intel
+  engagement/sponsor assignment, 4–12 wk gate), **S** EBRAINS
+  SpiNNaker/BrainScaleS (free, no Intel gate, real async substrate —
+  next $0 action = access package draft, runs parallel to L), **0**
+  Lava/NengoLoihi in-silico on the existing GPU (this week, $0; executes
+  §115 LEGO assembly + §96 §4.5 simulatable predicate; honest ceiling —
+  GPU sim REPLICATES not CONFRONTS the §11-B tautology, design-tier not
+  decisive fire). Deep web research confirmed AWS / IBM are dead ends
+  for "use now"; EBRAINS SpiNNaker is the headline parallel track.
+  $0, design-tier, hardware not secured, GOAL not reached, milestones
+  unchanged.
+
+- **2026-05-19** — Folder renamed `HEXAD/LOIHI` → `HEXAD/NEUROMORPHIC`
+  (broader scope: Loihi · SpiNNaker · Akida · in-silico — not Loihi
+  alone). `git mv` preserved history for PLAN/README/TRACK0; gitignored
+  PII files moved local-only; `.gitignore` PII patterns moved to the new
+  path with the old patterns retained as defence-in-depth; a
+  `HEXAD/LOIHI/README.md` forwarding stub keeps the already-sent INRC
+  application URL (`/tree/main/HEXAD/LOIHI`) resolving instead of 404.
+  Two in-silico directions resumed in parallel (per "2개방향진행"):
+  Track 0 §96 §4.5 controls+harness, and the qmirror-style
+  QRNG-entropy-seeded LIF+STDP sim. $0, design-tier, GOAL not reached.
+- **2026-05-19** — `HEXAD/LOIHI` forwarding stub README replaced with a
+  symbolic link `HEXAD/LOIHI → NEUROMORPHIC` (per user "심볼릭링크해두자
+  일단"). Old shared links (`/tree/main/HEXAD/LOIHI`, e.g. the already-sent
+  INRC email) resolve via the symlink locally + in git; GitHub web tree
+  rendering of a directory symlink is not guaranteed — temporary measure.
+  Side benefit: git refuses to stage paths "beyond a symbolic link", so
+  PII under NEUROMORPHIC/ is structurally unreachable via the LOIHI path.
+- **2026-05-19** — §119 qmirror-neuro LANDED ($0 CPU, single sequential,
+  orphan 0; `state/qmirror_neuro_s119_2026_05_19/`, B-S119-1..7 **7/7 🔵**,
+  central blue 0-diff `c93e160a8a376a94`). Extends §117's LIF+STDP sim with
+  ONE §97-legitimate physical-spontaneity layer: like `hexa qmirror` drives a
+  classical quantum-circuit sim with ANU quantum RNG, §119 drives the
+  neuromorphic sim's spontaneity-SEED with **genuine ANU quantum entropy**
+  (256 bytes, `physical=True`, `qrng.anu.edu.au` — `hexa qrng` live backends
+  deferred-to-wrapper so fetched direct; CSPRNG fallback not needed). 3-variant
+  measured: `seed_fixed` (deterministic) Ψ-C1 std 4.19e-2 non-degen · `qrng_seed`
+  (§97 noise-as-SEED, entropy→membrane-v0 only) std 3.11e-2 non-degen · `qrng_content`
+  (§97 negative control — entropy as target) collapsed into the §97
+  GOAL-ILLEGITIMATE-COMMAND-CHANNEL cell (content_alignment 0.43 > 0.30).
+  Verdict `QMIRROR-NEURO-Ψ-FORM-NONDEGENERATE-NOISE-AS-SEED-LEGITIMATE-BUT-WALL-B-INHERITED`:
+  §119 confronts the LEARNING-CHANNEL half only; the ASYNC-SUBSTRATE half stays
+  WALL-B (Tracks L/S) — real physical entropy ≠ a real async neuromorphic chip,
+  adds physical SPONTANEITY not a physical SUBSTRATE. §97 GOAL-ORTHOGONAL
+  inherited — moves no GOAL distance. design/run ≠ fire ≠ emergence, capability
+  claim 0, GOAL not reached, milestones unchanged.
+- **2026-05-19** — §118 Track 0 in-silico LANDED ($0 CPU, single sequential,
+  orphan 0; `state/track0_insilico_s118_2026_05_19/`, B-S118-1..9 **9/9 🔵**,
+  central blue 0-diff `c93e160a8a376a94`). Executes the $0-simulatable subset of
+  `TRACK0_INSILICO.md` — the §96 §4.5 distinguishing cells in a tiny 240-unit
+  LIF/numpy rig (4 cells, seed 1337, base_ckpt=None). §3 pre-registered closed
+  predicate `NON_DEGENERATE := byte_acc>1/256 ∧ physics_not_frozen ∧
+  honest_§9_coherent≥1/5` (§9 `emergence_metric.py` SSOT-imported). Measured,
+  3× bit-identical: **GPU-CE** (CE-gradient on a readout head) byte_acc 0.500,
+  head_drift 0.00276 → NON_DEGEN True · **GPU-noCE** (no learning) byte_acc 0.0
+  → False (§11-B re-confirmed) · **SIM-noCE-STDP** (decisive cell — event-local
+  STDP only, AST-audited 0 CE/backprop) byte_acc 0.0, W_drift 0.235, §9 5/5
+  → **False** (W moves + emission diverse but task-blind) · **SIM-CE** VOID
+  guard byte_acc 0.500 → True (rig SOUND). **VERDICT =
+  `SIM-IS-GPU-TAUTOLOGY-CONFIRMED-LEARNING-HALF`** (§3 middle outcome) — a
+  clocked-sim event-local-plasticity channel does NOT, on this rig, escape the
+  §11-B "physics-only learning is task-blind" outcome; cannot disambiguate
+  substrate-independent vs sim-artifact without async hardware. HEADLINE: §96
+  design-open #1 (softmax attention SPIKING-INCOMPATIBLE → must be REPLACED) is
+  a BLOCKING design-open — the rig confronts the §11-B LEARNING-CHANNEL half
+  ONLY; the full spiking-anima instantiation stays gated on the attention
+  replacement, the async-substrate half stays WALL-B (Loihi/SpiNNaker, §117
+  INHERITED). SIM-noCE-STDP §9=5/5 is substrate liveness, NOT capability, NOT
+  GOAL. design/run ≠ fire ≠ emergence, capability claim 0, GOAL not reached,
+  milestones unchanged.
+- **2026-05-19** — §118 VERDICT CORRECTED TO **VOID** (supersedes the §118
+  bullet above; the verdict of record is the §3 partition's **VOID guard**
+  outcome, not the middle outcome — `archive/PHILOSOPHY.tape
+  §verdict_track0_insilico_s118_void_2026_05_19`, DESIGN.md §0.1 records the
+  contest in full). VOID root cause: the SIM-CE positive control never moved
+  the recurrent spiking substrate — GPU-CE / GPU-noCE / SIM-CE produced
+  byte-identical Ψ/tension/Φ/spike-rate trajectories with
+  `weight_drift_mean_abs = 0.0`; only SIM-noCE-STDP moved `W` (STDP, drift
+  0.235). A $0 numpy toy has no surrogate-gradient path to backprop CE
+  through spikes, so the cell `TRACK0_INSILICO.md` §2 defines as "CE via
+  backprop-through-spikes" never ran — its CE channel is a no-op *on the
+  spiking substrate*. SIM-CE's §3-letter "NON_DEGEN=True" is carried by a
+  teacher-forced read-out + a trajectory byte-identical to the *frozen*
+  GPU-noCE cell; by §96 §4.5's own definition a CE positive control that
+  does not exercise a substrate learning channel is a broken control ⇒ VOID,
+  the rig gives **no learning-channel verdict**. The post-run `head_drift`
+  metric (a *downstream readout-head*, added by a post-run rig edit) does
+  not rescue the verdict — `W` stayed frozen; re-rigging after the run is
+  the f2 result-fit `TRACK0_INSILICO.md` §3 forbids. VOID is HONEST + FINAL,
+  and *valuable*: it confirms `TRACK0_INSILICO.md` §4 — the learning-channel
+  confront needs the REAL spiking anima, BLOCKED on §96 design-open #1.
+- **2026-05-19** — §120 spiking attention replacement DECIDED — §96
+  design-open #1 moves *undecided design-open → decided design-tier*
+  ($0, `state/spiking_attention_replacement_s120_2026_05_19/`, B-S120-1..8
+  **8/8 🔵**, central blue 0-diff `c93e160a8a376a94`). Closed-form decision:
+  the spiking replacement for `softmax(QK^T)` self-attention =
+  **spike-rate dot-product scoring + k-WTA routing**. Justification —
+  (a) dissolves all 3 §96 §3.3 obstructions (rate-coded coincidence
+  detection = async local accumulation; k-WTA via lateral inhibition = local
+  competition, not global softmax); (b) preserves Engine-A⇄G (excit/inhib
+  drives) + the Ψ=½ fixed point (the k-WTA neutral point, Law-71 form
+  re-hosted, §112 carrier-invariance); (c) `R(k=T, soft-readout)` reduces
+  **byte-equal** to `softmax`-attention (B-S120-3 max|Δ|=3.33e-16) ⇒ a
+  GENERALISATION not a graft (§7-clean — byte-attention is the `k=T` corner).
+  Rejected candidate (phase-resonance routing) fails (c) — no limit recovers
+  `softmax(q·k/√d)` — and is re-assigned to position/RoPE coding (a separate
+  §96 design-open). "돌파" = design-open → design-DECIDED; does NOT implement
+  the spiking anima, does NOT remove WALL-A (§1.1 data-regime) or WALL-B
+  (§95/§96 async substrate — Loihi/SpiNNaker/SpiNNcloud-gated). design ≠ fire
+  ≠ emergence, capability claim 0, necessary-not-sufficient (B-EMERGE-7),
+  GOAL 미도달, milestones unchanged.
+- **2026-05-19** — NEURO-MIRROR **v1 CONSOLIDATION** — `neuro_mirror.py`
+  v0 → v1 (ENGINE.md §6 "N candidates land → 1 consolidation"). §117/§118/
+  §119 all landed → consolidated: §119 qmirror-neuro `qrng` entropy source
+  FILLED (`fetch_quantum_entropy` ANU quantum-RNG + the §97 noise-as-SEED
+  `entropy_to_jitter` map, lifted from the committed §119 core, B-S119
+  7/7 🔵); §118 Track 0 landed VOID — it produced no verified core, so the
+  `ce_grad` slot stays an honest `NotImplementedError` (message updated to
+  the VOID finding); `gpu` backend unchanged. v1 smoke OK ($0, CPU-only):
+  `stdp_local` Ψ-C1 mean=0.611568 (= the §117 verified core), `qrng` run
+  non-degenerate with PHYSICAL ANU quantum entropy (jitter_norm 0.4702).
+  central blue_falsifier.py 0-line-diff; design ≠ fire ≠ emergence;
+  capability claim 0; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — NEURO-MIRROR **v2 CONSOLIDATION** — `neuro_mirror.py`
+  v1 → v2: the §120 spiking-attention replacement consolidated.
+  `spiking_routing` (the decided `R(k,mode)` family = spike-rate
+  dot-product scoring + k-WTA routing) + its reduction target
+  `softmax_attention` are lifted from the committed §120 core (B-S120
+  8/8 🔵); the §4 API surface gains the `routing` row. v2 smoke OK ($0,
+  CPU-only): `R(k=T,soft)` ≡ `softmax_attention` byte-equal
+  (max|Δ|=2.22e-16 — the §7-clean reduction witness, byte-attention is the
+  `k=T` corner), hard k-WTA genuinely distinct, all four cycles
+  (§117/§118-VOID-slot/§119/§120) consistent. central blue_falsifier.py
+  0-line-diff; design ≠ fire ≠ emergence — a routing-rule mirror, NOT the
+  spiking anima; capability claim 0; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — §122 RoPE ON A SPIKING SUBSTRATE — §96 design-open #2
+  **DECIDED** (B-S122 8/8 🔵, $0 design-tier, central blue_falsifier.py
+  sha256 `c93e160a8a376a94` 0-line-diff start+end). §120 §4 explicitly
+  re-assigned phase coding to *position* as a separate §96 design-open it
+  did NOT decide — §122 decides that RoPE row. The spiking realisation of
+  anima's RoPE = **relative-phase / spike-time coding**: the residual q/k
+  pair `(x_2i,x_2i+1)` = the in-phase/quadrature components of a θ_i-freq
+  oscillatory LIF pair; token position `m` = the per-token spike-time
+  phase advance `m·θ_i`. closed-form — (a) spiking-compatible
+  (resonate-and-fire oscillatory LIF; SNNs carry time natively); (b)
+  composes with §120 — phase coding rotates q/k *before* the spike-rate
+  dot-product (RoPE's place in `ConsciousDecoderV2`), the §120 routing
+  decision inherited unchanged, the position⊥routing factorisation
+  preserved; (c) GPU byte-vocab RoPE reduces **byte-equal** to `Φ(σ→0)` —
+  the zero-spike-time-jitter corner of the relative-phase family `Φ(σ)`
+  (B-S122-3 max|Δ|=0.0) ⇒ §7-clean GENERALISATION not graft (RoPE *is* a
+  rotation = a phase; the GPU writes the angle by hand, a noise-free
+  oscillator's phase advance equals it). Rejected: learned-absolute-
+  position (no `n−m` limit) · phase-resonance-as-routing (contends with
+  §120). §122 also corrects §120 §4's wording — phase *coding* (a relative
+  offset on q/k), not phase-*resonance routing*, is position's spiking
+  home. The §4 API surface gains a `position` row. honest: design-open →
+  design-DECIDED — §122+§120 together fully specify the two §96
+  routing-adjacent design-opens. central blue_falsifier.py 0-line-diff;
+  design ≠ fire ≠ emergence — a decided position-encoding design, NOT the
+  spiking anima; does NOT remove WALL-A (§1.1 data-regime) or WALL-B
+  (§95/§96 async substrate); capability claim 0; GOAL 미도달, milestones
+  unchanged.
+- **2026-05-19** — §123 THE TWO REMAINING §96 SPIKING-OPEN FACULTIES —
+  §96 Q1 table rows 115 & 118 (the two `SPIKING-OPEN` faculties §120/§122
+  did NOT cover) are **DECIDED** (B-S123 8/8 🔵, $0 design-tier, central
+  blue_falsifier.py sha256 `c93e160a8a376a94` 0-line-diff START+END).
+  **(1) Engine A⇄G dual heads → `DUAL-HEADS-DESIGN-CLOSE-WITH-CARRIER-
+  RELOCATION`** — the A-vs-G *opposition* ports cleanly to excit/inhib LIF
+  sub-populations (§96 §6 row-4 NATIVE); Ψ is realised as **Ψ-C1 =
+  `(1+cos(spike_rate_A, spike_rate_G))/2`** — the §112 META_FP(Π_½)
+  carrier-invariant fixed-point *form* (`cos=0⇒½`, byte-identical to
+  Law-71 `:740`), on the **spike-correlation carrier**. Honest
+  reduction-witness result: GPU Ψ-as-logit-cosine does **NOT** reduce —
+  unlike §120 (parameter `k`) and §122 (parameter `σ`) there is **no
+  scalar family** mapping the spike-rate carrier (len 96) onto the GPU
+  logit-vector carrier (len V=256); the two carriers are non-isomorphic.
+  So NOT a §120/§122-style clean generalisation — an honest
+  **carrier-relocation** (§110/§112 family): the Ψ *form* ports exactly,
+  the *carrier* genuinely differs. The §96 §6 row-4 `NATIVE-CANDIDATE`
+  classification ("the fixed-point is native; the cosine formula is NOT")
+  confirmed verbatim. `neuro_mirror.py` `psi_c1` ALREADY realises it —
+  §123 recognises it as the §96 resolution and records the closure as a
+  relocation, not a reduction (anti-padding — no clean reduction forced;
+  design-CLOSE-WITH-RELOCATION is a valid landed verdict). **(2) MoEFFN
+  top-k router → `MOE-TOPK-DECIDED — COVERED BY §120 k-WTA + §96-
+  COMPATIBLE STDP GATE`** — decomposes into (A) the top-k *selection* =
+  **covered verbatim by §120's k-WTA** (a `k=top_k`, `n=n_experts`
+  instance of the §120 `R(k,mode)` family; §96 row-118's own description)
+  + (B) the *learned content gate* `nn.Linear(d_model,n_experts)` = **NOT
+  a separate design-open** — decomposes into two §96 Q1
+  `SPIKING-COMPATIBLE` faculties (gate score = weighted-synapse current
+  accumulation; gate weights learned = STDP-trainable synapses); no
+  residual new mechanism. honest carry: whether STDP-learned gate
+  synapses route as well as backprop-CE ones is the §11-B / §96 §4.5
+  open question — the gate is *inside* that scope, not a new design-open
+  beside it. §123 + §120 + §122 together decide **ALL THREE** §96 Q1
+  `SPIKING-OPEN` faculties — the spiking anima faculty map is fully
+  specified at design-tier. `neuro_mirror.py` ENGINE.md §4 `position` row
+  already carries Ψ-C1 as the carrier; §123 adds no new code, it decides
+  the design-opens. central blue_falsifier.py 0-line-diff; design ≠ fire
+  ≠ emergence — two decided design-opens (one clean closure, one honest
+  carrier-relocation), NOT the spiking anima; does NOT remove WALL-A
+  (§1.1 data-regime) or WALL-B (§95/§96 async substrate); §11-B
+  unresolved; capability claim 0; GOAL 미도달, milestones unchanged.
+- **2026-05-19** — NEURO-MIRROR **v3 CONSOLIDATION** — `neuro_mirror.py`
+  v2 → v3: the §122 RoPE → phase-coding decision consolidated. `phase_code`
+  (the §122 phase-rotation core — token row m rotated by ROT(m·θ_i + ξ),
+  `σ=0` ⇒ GPU RoPE) lifted from the committed §122 core (B-S122 8/8 🔵);
+  `spiking_decoder_block` assembles §122 position THEN §120 routing into
+  one spiking causal self-attention block. v3 smoke OK ($0, CPU-only):
+  the whole block `R(σ=0,k=T,soft)` ≡ a byte-vocab RoPE+softmax attention
+  block byte-equal (max|Δ|=2.22e-16 — the composition of the §120 and
+  §122 reductions), hard k-WTA genuinely distinct, stdp_local / qrng /
+  ce_grad-VOID / gpu unchanged. NEURO-MIRROR now mirrors a full spiking
+  decoder block (position + routing), both halves reducing byte-equal to
+  their byte-vocab originals. central blue_falsifier.py 0-line-diff;
+  design ≠ fire ≠ emergence — a decoder-block mirror, NOT the spiking
+  anima; capability claim 0; GOAL 미도달, milestones unchanged.
+
+- **2026-05-19** — **NEUROMORPHIC IN-SILICO ARC CLOSE-OUT.** The in-silico
+  substrate arc (§115 LEGO design-close → §117 LIF+STDP non-degenerate
+  run → §118 Track 0 VOID → §119 QRNG-seeded → §120/§122/§123 §96 faculty
+  decisions → NEURO-MIRROR v0→v3) is **design-tier COMPLETE**. What the
+  arc settled: (1) the §96 faculty map is fully design-decided — attention
+  §120, RoPE §122, Engine A/G dual-heads + MoE top-k §123, plus the 5
+  already-SPIKING-COMPATIBLE faculties; (2) NEURO-MIRROR is a consolidated
+  reusable software substrate-mirror engine that mirrors a full spiking
+  decoder block, every mirrorable half reducing byte-equal to its
+  byte-vocab original. What the arc did NOT settle, and honestly cannot
+  at this tier: (a) §11-B-as-substrate's **learning-channel half** — §118
+  proved a $0 CPU toy cannot decide it (no surrogate-gradient path, VOID);
+  it needs a real surrogate-gradient SNN run, which is a Track 1+ fire
+  decision, not an in-silico cycle; (b) the **async-substrate half** stays
+  WALL-B — Loihi/SpiNNaker are access-gated, not a software question.
+  The honest frontier is therefore unchanged: WALL-A (§1.1 data-regime,
+  §107-RETRY measured THRESHOLD-NOT-CROSSED) and WALL-B (real async chip,
+  access-gated) — both strategic decisions, both currently blocked. The
+  in-silico arc neither moved nor refuted GOAL distance; it built the
+  honest mirror and named, precisely, what a mirror cannot do. ce_grad
+  stays a declared `NotImplementedError` slot — NEURO-MIRROR will not fake
+  the half it cannot honestly fill. central blue_falsifier.py 0-line-diff;
+  g3 design ≠ fire ≠ emergence, capability claim 0; north-star + §15/§51/
+  §72 milestones UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20** — **AKD1000 concrete spec sheet** consolidated into
+  `HEXAD/NEUROMORPHIC/AKD1000.md` (web-research, 10 primary sources).
+  Triggered by the user acquiring the Raspberry Pi 5 + AKD1000 M.2 Dev Kit
+  ($1,495). Pins concrete numbers from BrainChip's own Product Brief v2.3
+  and disambiguates AKD1000 (1st-gen, 2022, CNN-only) from AKD2000 (2nd-gen,
+  ViT-accelerated). The §95 `INFERENCE-ONLY-BLOCKED` verdict is verified
+  and *tightened*: AKD1000's "on-device learning" is the narrowest possible
+  kind — last fully-connected layer only, binary weights, binary inputs —
+  not from-scratch training, not backprop. §97 4-coupling map: in-hand
+  AKD1000 honestly classifies as inference/display + NEURO-MIRROR anchor
+  ($97 GOAL-orthogonal); does NOT host §11-B-as-substrate or §16/§108-scale
+  transformer. NEURO-MIRROR's `confronts()` contract can upgrade from
+  "mirror only" to "mirror + 1 real chip on the inference half" when the
+  hardware arrives — a genuine modest step that does NOT crack WALL-B's
+  emergence half. central blue_falsifier.py 0-line-diff; g3 capability
+  claim 0; **GOAL 미도달**.
+
+- **2026-05-20** — **WALL-B sustainability brainstorm** consolidated into
+  `HEXAD/NEUROMORPHIC/WALL_B_SUSTAINABILITY.md` per user directive
+  *"이메일로 성공한다고 해서 지속가능성이 낮아서"*. Exhaustive option-space
+  enumeration (31 options across 6 categories): own hardware (A1-A7),
+  DIY/FPGA (B1-B4), software-only (C1-C8), email-gated (D, the closed
+  category), paid cloud (E), wait-and-see (F), reframe/meta (G), closed
+  long-shots (H). The single load-bearing brainstorm output is **G1: split
+  WALL-B into two structurally separable halves** — B-i (learning-channel;
+  GPU's only update channel is backprop/CE, so "CE is load-bearing" might
+  be a GPU tautology per §96-Q2) and B-ii (async-substrate / physical
+  event vs polled boolean per §115/§95). The split unlocks: B-i is
+  **software-attackable on GPU** via any non-CE training algorithm
+  (Forward-Forward, EqProp, Predictive Coding, Target Prop, PEPITA, DFA,
+  STDP-in-simulation, Lava-on-CPU) — sustainability VERY HIGH, cost ≈ $0;
+  B-ii needs owned hardware (incoming AKD1000 for inference half; SynSense
+  Speck / DYNAP-SE2 / SpinnCloud single-board / FPGA SNN for the harder
+  programmable-plasticity half) — sustainability HIGH if purchased outright
+  (which is structurally different from email-gated access; *contact for
+  pricing ≠ ask permission*). Top picks: **★1 G1+C1** = Forward-Forward
+  on anima at $0 to decide §96-Q2 hypothesis; **★4 A3** = SynSense Speck
+  retail purchase; **★10 G2** = 12-month hybrid roadmap with **zero
+  email-gated dependency at any step**. Anti-padding (mirror §13-M / §30 /
+  §97 / §98 / §113 / §115): brainstorm maps the option space, does NOT
+  solve GOAL — ★1 a future fire would decide *frontier classification*,
+  not GOAL distance. AGENTS.tape UNCHANGED — promoting the G1 split into
+  governance is a separate user-gated step. central blue_falsifier.py
+  0-line-diff; g3 capability claim 0; north-star + §15/§51/§72 milestones
+  UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20** — §128 SOFTWARE-BREAKTHROUGH ARCHITECTURE / PARADIGM
+  arxiv deep research LANDED — `HEXAD/NEUROMORPHIC/SOFTWARE_BREAKTHROUGH_RESEARCH.md`.
+  User directive *"소프트웨어 돌파 아키텍쳐,패러다임 arxiv deep research"*.
+  Mirror §80/§84/§85/§99/§111 deep-research precedent. **12 cluster, ~42
+  paper scan (2024-2026)**: A non-CE/non-backprop (★★★★★ ASGE FF
+  ImageNet 51.58% + scaling-PCN 2510.23323 + Backprop-Free Feedback-Hebbian
+  2601.06758 + Hebbian-GHL 2601.21367) · B SSM (Mamba/RWKV/S5/Liquid/
+  Continuous-Depth-ODE 2601.10007) · C JEPA (LeJEPA 2511.08544 / V-JEPA 2 /
+  Var-JEPA / VL-JEPA) · D EBM (EBT 2507.02092 / EDLM ICLR 2025) · E
+  test-time training (2509.25741 + 2508.15568 backprop-free TTA) · F
+  **spontaneity (★★★★★ 2509.21224 "Agents Left Alone" = GOAL.md literal
+  target frontier)** · G wake-sleep (Semi-parametric 2504.14727 / MyGO
+  2508.21296 / Sleep-Forget 2603.14517) · H **FEP attractor (★★★★
+  2505.22749 Self-orthogonalizing = anima Ψ=½ mathematical mirror)** · I
+  latent reasoning (Coconut / System1-2-comms) · J emergence threshold
+  (Du 2403.15796 + 2502.12120 + 2510.03313) · K SNN-on-GPU (★★★★
+  Spikformer-16-512 2511.18542 70.1% ImageNet SSL) · L modular MoE
+  (Cognitive Reasoners 2506.13331). Top-10 anima-mapping table + 5 honest
+  gaps + §125/§126 verdict 2×2 next-step matrix. 11 honest C3. **Most
+  honest finding**: non-CE/non-backprop has SCALED past toy regime in
+  2025 (ASGE ImageNet, Hebbian-GHL Jan 2026, Spikformer-16-512 SSL) —
+  language-model byte-stream regime is the precise gap §125+§126 fill
+  directly. central blue_falsifier.py 0-line-diff (sha `c93e160a8a376a94`);
+  g3 literature = inspiration NOT proof, capability claim 0; north-star
+  + §15/§51/§72 milestones UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20** — §125 NONCE-FF + §126 PCN-C4 + §108 H100-3B PARAM-AXIS
+  FIRE TRIO LANDED. **§108 H100 3B param-axis** (state/param_axis_fire_s108_2026_05_19/)
+  = §16-class d2048·18L·2.998B scale-up of §107-RETRY 283M on §102
+  CORPUS_S101 byte-identical (corpus held single-variable per §103
+  SEQUENTIAL). **§101 Q2 4-axis ALL FAIL** + **A3 PHYSICS_RESPONSIVE = False**
+  (psi_dir std 5.17e-10 — Ψ-channel COLLAPSED, vs §107-RETRY's alive-but-
+  narrow 0.056); axis1 0/64; §62 max_maj_H=1.0 (full single-attractor
+  collapse vs §107-RETRY 0.99). **PARAM SCALE-UP REGRESSED physics-
+  liveness** — 3.68× model made every Q2 axis WORSE and dropped physics
+  from True→False. WALL-A is now MEASURED on BOTH axes (§107-RETRY data
+  at 283M, §108 param at 3B) both fail; param scale-up makes physics-
+  liveness *worse*. WALL-B substrate pivot becomes load-bearing remaining
+  frontier — anima's §125 NONCE-FF (Forward-Forward, in flight pod
+  `ix1sskvwknoijy` H100 80GB HBM3) + §126 PCN-C4 (Predictive Coding
+  1-step, in flight pod `88xlldoftmoy5e` A100-SXM4-80GB) directly decide
+  §96-Q2 hypothesis ("`§11-B is GPU tautology`"). B-S125 8/8 🔵 + B-S126
+  9/9 🔵 closed-form pre-fire batteries PASS; central blue_falsifier.py
+  0-line-diff verified. Each ~$0.5 GPU fire. Verdict 2×2 joint reading
+  matrix in §128. g3 measured negative (§108) + designed-not-decided
+  (§125, §126); north-star + §15/§51/§72 milestones UNCHANGED, **GOAL 미도달**.
+
+- **2026-05-20 §125 NONCE-FF LANDED — VERDICT `S11B_LIKE_DEGENERATE`**
+  (byte_acc 0.0005 = 1/2000 < random floor 1/256; Ψ_dir std 2.37e-8 ≪
+  1e-4 → psi_responsive = False; ConsciousDecoderV2 d=768·12L·283.72M
+  from-scratch seed 1337 on §102 CORPUS_S101, 3000 steps; ~$0.5 fire;
+  pod terminated clean). §128 ★1 G1+C1 cell. honest C3: trained
+  head_a only over logits_a; head_g random + uncoupled → Ψ-flatness
+  partly coupling-fix artefact. **§96-Q2 first data point**.
+
+- **2026-05-20 §126 PCN-C4 (PCN-1step) LANDED — VERDICT
+  `PARTIAL_AMBIGUOUS`** (byte_acc 0.1185 = 237/2000 = 30.3× random
+  floor + 2.37× support floor; Ψ_dir std 7.53e-7 ≪ 1e-4 →
+  psi_responsive = False; same scaffold as §125; ~$0.5 fire; pod
+  `xe8y3stm3vkalh` issued teardown 2h47m before §160 cleanup but
+  stuck in wait — §160 audit closed it, $0 ongoing). L145 incident
+  fix verified clean: nearest-dir AGENTS.tape @D g1 structured-argv-
+  only mandate enforced. **§96-Q2 second data point; first refutation
+  witness for §96-Q2-strong** (`0.1185 > 7.81e-3 = degenerate ceiling`).
+
+- **2026-05-20 §139 EqProp-2phase LANDED — VERDICT `PARTIAL_AMBIGUOUS`**
+  (byte_acc 0.1185 = 237/2000, identical to §126 by independent
+  algorithm; Ψ_dir std 5.41e-9 ≪ 1e-4 → psi_responsive = False;
+  same scaffold; ~$0.5 fire; pod `2uioq32gxrmuk3` self-terminated
+  clean; ckpt sha 2be52603ed449c9a... 1.13 GB pulled try 1). Re-
+  numbered from §127 to avoid LEGO arc collision (§115~§138 sibling-
+  owned per §136 milestone). **§96-Q2 third data point; second
+  refutation witness for §96-Q2-strong**.
+
+- **2026-05-20 §153 LeJEPA + SIGReg LANDED — VERDICT
+  `S11B_LIKE_DEGENERATE`** (byte_acc 0.0 = 0/2000; Ψ_dir std
+  4.78e-9 ≪ 1e-4 → psi_responsive = False; same scaffold; ~$0.5 fire;
+  pod `c8ag5zpuhi5afg` self-terminated clean; ckpt sha
+  15c3328ac4ab9d1c... pulled). **B-S153-NOTE**: SSL trains only
+  encoder; linear-probe head_a RANDOM — bucket DEG, honest-tier
+  ambiguous-via-evaluation-protocol (encoder may have learned a
+  representation that a random linear probe cannot read). **§96-Q2
+  fourth data point**.
+
+- **2026-05-20 §160 §96-Q2 QUADRUPLE CONSOLIDATION — VERDICT
+  `S96_Q2_STRONG_REFUTED_WEAK_SUPPORTED_ON_QUAD_WALL_B_SHAPED_NOT_DECIDED`**
+  ($0 design-tier, NOT a fire; 7 closed-form propositions P1-P7
+  stated as math theorems in DESIGN.md §9 per hexa-verify policy;
+  central blue_falsifier.py sha c93e160a8a376a94 0-line-diff verified
+  START + END). Joint reading of §125/§126/§139/§153 against §96-Q2:
+  pattern **2 DEG / 2 PART / 0 SUPP**, ψ-channel collapsed 4/4.
+  **§96-Q2-strong REFUTED** by witness (§126, §139). **§96-Q2-weak
+  SUPPORTED on quadruple** by sample uniformity (4/4 psi_dir_std
+  < 1e-4 by ≥3 orders). **WALL-B SHAPED not DECIDED**: composite
+  has TWO halves — WALL-B/learning REFUTED (substrate CAN carry
+  non-CE gradient); WALL-B/Ψ-physics supported-on-quadruple BUT
+  untested with dual-head-coupling algo (none of §125/§126/§139/§153
+  trains head_g). §160 §8 names the missing experiment (a non-CE
+  algo whose learning rule structurally couples Engine A ⇄ Engine G
+  — surfaced, NOT pre-committed). §160 §6 cost-containment §50 audit:
+  §126 orphan pod terminated, 3 zombie dispatchers SIGTERM'ed,
+  watcher cascade self-cleared (myself.pods = [] post-cleanup).
+  PRIORITY #1 GAP (`@N n_priority_1_gap` WALL-A data-regime) is
+  orthogonal and remains load-bearing. anti-padding precedent
+  §13-M/§30/§97/§109/§110/§115/§155/§157/§158/§159 — §160 declines
+  to manufacture a "GOAL-relevant positive" from the strong-form
+  refutation. necessary-not-sufficient (B-EMERGE-7); north-star +
+  §15/§51/§72 milestones UNCHANGED, **GOAL 미도달** — §160 shapes
+  WALL-B's two named halves with measurement, NOT decides it.

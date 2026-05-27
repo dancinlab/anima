@@ -1,0 +1,18 @@
+{
+  "schema": "anima/emerge_5turn_smoke/verdict/1",
+  "ts_utc": "2026-05-05T16:29:22Z",
+  "n_turns": 5,
+  "phi_star_range": 0.12611582820862566,
+  "phi_drift_max_abs": 0.12611582820862566,
+  "hsd_max": 16.871383666992188,
+  "hsd_mean": 12.243865251541138,
+  "dialogue_medium_available": "phi-star + hidden_state_delta",
+  "dialogue_smoke_PASS": true,
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 BG-Q helper sister-import (bgq._try_load_model, _load_tokenizer, phi_star_compute)",
+    "C3 hidden state from ln_f-hook mean over (B,T) — same path as BG-A axis FAIL evidence",
+    "C4 5 turns specific Korean continuity prompts; not a controlled dialogue corpus",
+    "C5 dialogue medium 가능성과 emerge 의미는 분리된 epistemic open — phi/hsd drift ≠ semantic understanding"
+  ]
+}

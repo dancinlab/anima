@@ -1,0 +1,32 @@
+{
+  "schema": "anima/emerge_chat_sae_pca_features/verdict/1",
+  "ts_utc": "2026-05-05T17:32:08Z",
+  "n_chat": 20,
+  "n_non_chat": 20,
+  "layer": 8,
+  "top_singular_values": [
+    131.8745880126953,
+    79.77447509765625,
+    51.117042541503906,
+    32.304019927978516,
+    23.16591453552246
+  ],
+  "feature_discriminator_scores": [
+    25.670883178710938,
+    13.338655471801758,
+    0.16328048706054688,
+    0.22674846649169922,
+    1.0583114624023438
+  ],
+  "best_feature_idx": 0,
+  "n_configs": 10,
+  "n_coherent": 0,
+  "verdict": "FAIL_ALL",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 PCA-style ≠ true SAE (sparse coding constraint missing)",
+    "C3 20 chat × 20 non-chat — under-powered",
+    "C4 single layer 8 — multi-layer SAE proper에서는 layer-specific features",
+    "C5 last-token residual — multi-token aggregation 미"
+  ]
+}

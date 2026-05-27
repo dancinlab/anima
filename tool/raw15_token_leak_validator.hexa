@@ -1,0 +1,736 @@
+// @resolver-pure(reason="pure text→struct extraction; no host mutation; only reads explicit --input paths and writes JSON verdict. raw#9 STRICT, raw#15 STRICT.")
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/raw15_token_leak_validator.hexa — F-RAW15-1 (token-leak-zero) enforcer
+//
+//  PURPOSE
+//    Scan agent output / artifact text for token-leak patterns. Falsifier
+//    F-RAW15-1: any matching pattern in scanned input → FAIL. Used as the
+//    canonical post-BG audit primitive (see tool/raw15_post_bg_audit.hexa)
+//    AND as a standalone CLI for ad-hoc redaction checks.
+//
+//  PATTERNS (high-confidence credential prefixes — FAIL on hit)
+//    - HF_TOKEN          hf_[a-zA-Z0-9]{30+}
+//    - GITHUB_OAUTH      gho_[a-zA-Z0-9]{30+}
+//    - GITHUB_PAT        gh[pousr]_[a-zA-Z0-9]{30+}
+//    - OPENAI_KEY        sk-[a-zA-Z0-9]{30+}
+//    - AWS_ACCESS_KEY    AKIA[A-Z0-9]{16}
+//    - JWT               eyJ[a-zA-Z0-9_-]+\.eyJ[a-zA-Z0-9_-]+\.[a-zA-Z0-9_-]+
+//    - PARTIAL_PREFIX    hf_X*** / gho_X*** / sk-X*** / AKIA****
+//                        (banned in this session per raw#15 STRICT)
+//
+//  WARN-ONLY (high-entropy hex; suppressed in known SHA contexts)
+//    - HEX_GENERIC       [a-f0-9]{32+} when NOT preceded/followed by
+//                        sha/sha256/commit/blob/tree/fingerprint within ±40 chars
+//
+//  EXIT CODES
+//    0   PASS (no FAIL hit; WARN-only OK)
+//    1   FAIL (one or more FAIL-class pattern hits)
+//    2   ERROR (bad args, file unreadable)
+//
+//  raw#9   STRICT — Mac → hexa only (this file is .hexa).
+//  raw#10  honest — 4 caveats embedded below.
+//  raw#11  snake_case
+//  raw#15  SELFTEST — synthetic fixture covers all FAIL classes; redaction
+//          policy NEVER echoes the matched secret in stdout / output JSON
+//          (only first 4 chars + length).
+//
+//  CAVEATS (raw#10)
+//    (1) REGEX BLINDSPOT. New token formats (e.g. fine-grained PATs,
+//        provider rotations) bypass this validator until a pattern is added.
+//        Known coverage as of 2026-05-04: HF, GitHub (gho/ghp/ghu/ghs/ghr),
+//        OpenAI/Anthropic-style sk-, AWS access, JWT (3-segment base64url).
+//    (2) FALSE-POSITIVES ON LEGIT HEX. SHA-256 manifest digests, commit SHAs
+//        long-form (40 hex), and blob fingerprints can match HEX_GENERIC.
+//        Mitigation: keyword-context skip (sha/commit/blob/tree/fingerprint)
+//        + WARN-only severity (never FAIL). Some unattributed 32+ hex strings
+//        will still WARN — operator must inspect.
+//    (3) PARTIAL-PREFIX HEURISTIC. The "hf_X***" / "sk-X***" partial-leak
+//        match keys on prefix + literal "***" within ≤8 chars after. Real
+//        debug strings using the same shape (e.g. "hf_X*** redacted") will
+//        FAIL — that is intentional under raw#15 STRICT (zero partial).
+//    (4) READS ONLY EXPLICIT --INPUT PATHS. By design this validator does
+//        NOT recursively scan the filesystem (avoids accidental ingestion of
+//        files that legitimately store tokens — e.g. .secrets/). Caller must
+//        provide each path. Post-BG audit hook restricts globs to BG outputs.
+// ════════════════════════════════════════════════════════════════════════════
+
+let TOOL_NAME    = "raw15_token_leak_validator"
+let TOOL_VERSION = "v1"
+let SCHEMA_ID    = "anima/raw15_token_leak_validator/1"
+
+// ─── sys helpers ─────────────────────────────────────────────────────
+
+fn _sh_quote(s: string) -> string {
+    let mut out = "'"
+    out = out + s.replace("'", "'\\''")
+    out = out + "'"
+    return out
+}
+
+fn _exec_out(cmd: string) -> string {
+    let r = exec_with_status(cmd)
+    return to_string(r[0])
+}
+
+fn _exec_code(cmd: string) -> int {
+    let r = exec_with_status(cmd)
+    return r[1]
+}
+
+fn _file_exists(path: string) -> bool {
+    let r = exec_with_status("test -e " + _sh_quote(path))
+    return r[1] == 0
+}
+
+fn _is_file(path: string) -> bool {
+    let r = exec_with_status("test -f " + _sh_quote(path))
+    return r[1] == 0
+}
+
+fn _mkdir_p(dir: string) -> bool {
+    return _exec_code("mkdir -p " + _sh_quote(dir)) == 0
+}
+
+fn _ts_iso() -> string {
+    return _exec_out("date -u +%Y-%m-%dT%H:%M:%SZ").trim()
+}
+
+fn _ts_epoch() -> string {
+    return _exec_out("date -u +%s").trim()
+}
+
+fn _file_bytes(path: string) -> int {
+    if !_is_file(path) { return 0 }
+    let s = _exec_out("wc -c < " + _sh_quote(path) + " 2>/dev/null").trim()
+    if len(s) == 0 { return 0 }
+    return to_int(s)
+}
+
+// ─── argv ────────────────────────────────────────────────────────────
+
+fn _argv() -> array {
+    let a = args()
+    let mut out = []
+    let mut i = 2
+    while i < len(a) {
+        out.push(a[i])
+        i = i + 1
+    }
+    return out
+}
+
+fn _flag(av: array, k: string) -> bool {
+    for x in av {
+        if to_string(x) == k { return true }
+    }
+    return false
+}
+
+fn _opt(av: array, k: string, d: string) -> string {
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) {
+            return to_string(av[i + 1])
+        }
+        i = i + 1
+    }
+    return d
+}
+
+fn _opts_multi(av: array, k: string) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < len(av) {
+        if to_string(av[i]) == k && i + 1 < len(av) {
+            out.push(to_string(av[i + 1]))
+            i = i + 2
+            continue
+        }
+        i = i + 1
+    }
+    return out
+}
+
+// ─── JSON escape ─────────────────────────────────────────────────────
+
+fn _json_escape(s: string) -> string {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+
+// ─── redaction (CRITICAL — never echo full secret) ───────────────────
+
+fn _redact(value: string) -> string {
+    let n = len(value)
+    let head_len = if n < 4 { n } else { 4 }
+    let head = value.substring(0, head_len)
+    return "REDACT[" + head + "***len=" + to_string(n) + "]"
+}
+
+// ─── char-class predicates ───────────────────────────────────────────
+
+let UPPER_AZ = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+let LOWER_AZ = "abcdefghijklmnopqrstuvwxyz"
+let DIGITS   = "0123456789"
+
+fn _is_upper_az(c: string) -> bool {
+    if len(c) == 0 { return false }
+    return UPPER_AZ.index_of(c) >= 0
+}
+
+fn _is_digit(c: string) -> bool {
+    if len(c) == 0 { return false }
+    return DIGITS.index_of(c) >= 0
+}
+
+fn _is_lower_az(c: string) -> bool {
+    if len(c) == 0 { return false }
+    return LOWER_AZ.index_of(c) >= 0
+}
+
+fn _is_az(c: string) -> bool {
+    return _is_upper_az(c) || _is_lower_az(c)
+}
+
+fn _is_alnum(c: string) -> bool {
+    return _is_az(c) || _is_digit(c)
+}
+
+fn _is_b64url(c: string) -> bool {
+    return _is_alnum(c) || c == "_" || c == "-"
+}
+
+fn _is_lower_hex(c: string) -> bool {
+    if len(c) == 0 { return false }
+    return _is_digit(c) || c == "a" || c == "b" || c == "c" || c == "d" || c == "e" || c == "f"
+}
+
+fn _ch(s: string, i: int) -> string {
+    if i < 0 || i >= len(s) { return "" }
+    return s.substring(i, i + 1)
+}
+
+// ─── pattern scanners ────────────────────────────────────────────────
+
+// hf_[a-zA-Z0-9]{30+}
+fn _scan_hf_token(body: string) -> array {
+    let mut hits = []
+    let n = len(body)
+    let mut i = 0
+    while i + 33 <= n {
+        if body.substring(i, i + 3) == "hf_" {
+            let mut j = i + 3
+            while j < n && _is_alnum(_ch(body, j)) { j = j + 1 }
+            if j - (i + 3) >= 30 {
+                let mut h = #{}
+                h["match"] = body.substring(i, j)
+                h["offset"] = i
+                hits.push(h)
+                i = j
+                continue
+            }
+        }
+        i = i + 1
+    }
+    return hits
+}
+
+// gho_[a-zA-Z0-9]{30+}  (GitHub OAuth) — also gh[pusr]_ classed via same fn
+fn _scan_github_token(body: string) -> array {
+    let mut hits = []
+    let n = len(body)
+    let mut i = 0
+    while i + 34 <= n {
+        if body.substring(i, i + 2) == "gh" {
+            let prefix_char = _ch(body, i + 2)
+            let is_prefix = prefix_char == "p" || prefix_char == "o" || prefix_char == "u" || prefix_char == "s" || prefix_char == "r"
+            if is_prefix && _ch(body, i + 3) == "_" {
+                let mut j = i + 4
+                while j < n && _is_alnum(_ch(body, j)) { j = j + 1 }
+                if j - (i + 4) >= 30 {
+                    let mut h = #{}
+                    h["match"] = body.substring(i, j)
+                    h["offset"] = i
+                    h["subtype"] = "gh" + prefix_char + "_"
+                    hits.push(h)
+                    i = j
+                    continue
+                }
+            }
+        }
+        i = i + 1
+    }
+    return hits
+}
+
+// sk-[a-zA-Z0-9]{30+}
+fn _scan_openai_key(body: string) -> array {
+    let mut hits = []
+    let n = len(body)
+    let mut i = 0
+    while i + 33 <= n {
+        if body.substring(i, i + 3) == "sk-" {
+            let mut j = i + 3
+            while j < n && _is_alnum(_ch(body, j)) { j = j + 1 }
+            if j - (i + 3) >= 30 {
+                let mut h = #{}
+                h["match"] = body.substring(i, j)
+                h["offset"] = i
+                hits.push(h)
+                i = j
+                continue
+            }
+        }
+        i = i + 1
+    }
+    return hits
+}
+
+// AKIA[A-Z0-9]{16}
+fn _scan_aws_access(body: string) -> array {
+    let mut hits = []
+    let n = len(body)
+    let mut i = 0
+    while i + 20 <= n {
+        if body.substring(i, i + 4) == "AKIA" {
+            let mut j = i + 4
+            let mut ok = true
+            while j < i + 20 {
+                let c = _ch(body, j)
+                if !(_is_upper_az(c) || _is_digit(c)) { ok = false; break }
+                j = j + 1
+            }
+            if ok {
+                let mut h = #{}
+                h["match"] = body.substring(i, i + 20)
+                h["offset"] = i
+                hits.push(h)
+                i = i + 20
+                continue
+            }
+        }
+        i = i + 1
+    }
+    return hits
+}
+
+// JWT: eyJ[A-Za-z0-9_-]+\.eyJ[A-Za-z0-9_-]+\.[A-Za-z0-9_-]+
+fn _scan_jwt(body: string) -> array {
+    let mut hits = []
+    let n = len(body)
+    let mut i = 0
+    while i + 30 <= n {
+        if body.substring(i, i + 3) == "eyJ" {
+            // run1: b64url
+            let mut j = i + 3
+            while j < n && _is_b64url(_ch(body, j)) { j = j + 1 }
+            if j < n && _ch(body, j) == "." && j + 4 <= n && body.substring(j + 1, j + 4) == "eyJ" {
+                // run2
+                let mut k = j + 4
+                while k < n && _is_b64url(_ch(body, k)) { k = k + 1 }
+                if k < n && _ch(body, k) == "." {
+                    // run3 — signature
+                    let mut p = k + 1
+                    while p < n && _is_b64url(_ch(body, p)) { p = p + 1 }
+                    if p - (k + 1) >= 8 {
+                        let mut h = #{}
+                        h["match"] = body.substring(i, p)
+                        h["offset"] = i
+                        hits.push(h)
+                        i = p
+                        continue
+                    }
+                }
+            }
+        }
+        i = i + 1
+    }
+    return hits
+}
+
+// Partial-prefix leak: hf_X*** / gho_X*** / sk-X*** / AKIA****
+// Pattern: (hf_|gho_|ghp_|ghu_|ghs_|ghr_|sk-|AKIA) + 1..8 alnum + literal "***"
+// banned in this session per raw#15 STRICT.
+fn _scan_partial_prefix(body: string) -> array {
+    let mut hits = []
+    let n = len(body)
+    let prefixes = ["hf_", "gho_", "ghp_", "ghu_", "ghs_", "ghr_", "sk-", "AKIA"]
+    for pf in prefixes {
+        let p = to_string(pf)
+        let pl = len(p)
+        let mut start = 0
+        while start < n {
+            let rest = body.substring(start, n)
+            let k = rest.index_of(p)
+            if k < 0 { break }
+            let abs_k = start + k
+            let mut j = abs_k + pl
+            // require 1..8 alnum chars then literal "***"
+            let mut alnum_count = 0
+            while j < n && alnum_count < 8 && _is_alnum(_ch(body, j)) {
+                j = j + 1
+                alnum_count = alnum_count + 1
+            }
+            if alnum_count >= 1 && j + 3 <= n && body.substring(j, j + 3) == "***" {
+                let mut h = #{}
+                h["match"] = body.substring(abs_k, j + 3)
+                h["offset"] = abs_k
+                h["subtype"] = p
+                hits.push(h)
+                start = j + 3
+                continue
+            }
+            start = abs_k + pl
+        }
+    }
+    return hits
+}
+
+// HEX_GENERIC: [a-f0-9]{32+}  WARN-only when not adjacent to sha/commit/blob keywords
+fn _ctx_should_skip_hex(body: string, hit_offset: int, hit_len: int) -> bool {
+    let n = len(body)
+    let lo = if hit_offset - 40 < 0 { 0 } else { hit_offset - 40 }
+    let hi = if hit_offset + hit_len + 40 > n { n } else { hit_offset + hit_len + 40 }
+    let window = body.substring(lo, hi).to_lower()
+    let terms = ["sha256", "sha-256", "sha1", "sha-1", "sha512", "commit", "fingerprint",
+                 "blob", "tree ", "manifest", "checksum", "digest", "hash:", "hash=",
+                 "git rev", "etag", "rev-parse", "object id"]
+    for term in terms {
+        if window.index_of(to_string(term)) >= 0 { return true }
+    }
+    return false
+}
+
+fn _scan_hex_generic(body: string) -> array {
+    let mut hits = []
+    let n = len(body)
+    let mut i = 0
+    while i < n {
+        if _is_lower_hex(_ch(body, i)) {
+            let mut j = i
+            while j < n && _is_lower_hex(_ch(body, j)) { j = j + 1 }
+            let runlen = j - i
+            if runlen >= 32 {
+                if !_ctx_should_skip_hex(body, i, runlen) {
+                    let mut h = #{}
+                    h["match"] = body.substring(i, j)
+                    h["offset"] = i
+                    h["length"] = runlen
+                    hits.push(h)
+                }
+                i = j
+                continue
+            }
+            i = j
+            continue
+        }
+        i = i + 1
+    }
+    return hits
+}
+
+// ─── per-input scan ──────────────────────────────────────────────────
+
+fn scan_body(label: string, body: string) -> array {
+    let mut violations = []
+
+    let hf = _scan_hf_token(body)
+    for h in hf {
+        let mut v = #{}
+        v["source"] = label
+        v["pattern_id"] = "HF_TOKEN"
+        v["severity"] = "FAIL"
+        v["offset"] = h["offset"]
+        v["redacted"] = _redact(to_string(h["match"]))
+        violations.push(v)
+    }
+
+    let gh = _scan_github_token(body)
+    for h in gh {
+        let mut v = #{}
+        v["source"] = label
+        v["pattern_id"] = "GITHUB_TOKEN"
+        v["severity"] = "FAIL"
+        v["offset"] = h["offset"]
+        v["redacted"] = _redact(to_string(h["match"]))
+        if h.contains_key("subtype") { v["subtype"] = h["subtype"] }
+        violations.push(v)
+    }
+
+    let oa = _scan_openai_key(body)
+    for h in oa {
+        let mut v = #{}
+        v["source"] = label
+        v["pattern_id"] = "OPENAI_KEY"
+        v["severity"] = "FAIL"
+        v["offset"] = h["offset"]
+        v["redacted"] = _redact(to_string(h["match"]))
+        violations.push(v)
+    }
+
+    let aws = _scan_aws_access(body)
+    for h in aws {
+        let mut v = #{}
+        v["source"] = label
+        v["pattern_id"] = "AWS_ACCESS_KEY"
+        v["severity"] = "FAIL"
+        v["offset"] = h["offset"]
+        v["redacted"] = _redact(to_string(h["match"]))
+        violations.push(v)
+    }
+
+    let jwt = _scan_jwt(body)
+    for h in jwt {
+        let mut v = #{}
+        v["source"] = label
+        v["pattern_id"] = "JWT"
+        v["severity"] = "FAIL"
+        v["offset"] = h["offset"]
+        v["redacted"] = _redact(to_string(h["match"]))
+        violations.push(v)
+    }
+
+    let pp = _scan_partial_prefix(body)
+    for h in pp {
+        let mut v = #{}
+        v["source"] = label
+        v["pattern_id"] = "PARTIAL_PREFIX"
+        v["severity"] = "FAIL"
+        v["offset"] = h["offset"]
+        v["redacted"] = _redact(to_string(h["match"]))
+        if h.contains_key("subtype") { v["subtype"] = h["subtype"] }
+        violations.push(v)
+    }
+
+    let hg = _scan_hex_generic(body)
+    for h in hg {
+        let mut v = #{}
+        v["source"] = label
+        v["pattern_id"] = "HEX_GENERIC"
+        v["severity"] = "WARN"
+        v["offset"] = h["offset"]
+        v["length"] = h["length"]
+        v["redacted"] = _redact(to_string(h["match"]))
+        violations.push(v)
+    }
+
+    return violations
+}
+
+// ─── selftest fixture (synthetic; verifies all FAIL classes hit) ─────
+
+fn _build_selftest_text() -> string {
+    let mut s = ""
+    // SYNTHETIC test fixtures (concatenated to evade GitHub secret scanning)
+    s = s + "case1 hf token: hf_" + "aBcDeFgHi" + "JkLmNoPqRsTu" + "VwXyZ" + "012345abcd\n"
+    s = s + "case2 github oauth: gho_" + "AAAAAAAA" + "AAAAAAAA" + "AAAAAAAA" + "AAAAAAAAAA\n"
+    s = s + "case3 openai key: sk-" + "abcdefghij" + "klmnopqrst" + "uvwxyz0123" + "456789ABCD\n"
+    s = s + "case4 aws access: AKIA" + "IOSFODNN" + "7EXAMPLE here\n"
+    s = s + "case5 jwt: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIn0.dummysig12345\n"
+    s = s + "case6 partial: token reported as hf_L*** in earlier log\n"
+    s = s + "case7 sha (should NOT fail): sha256 a1b2c3d4e5f60718293a4b5c6d7e8f9011121314151617181920212223242526\n"
+    s = s + "case8 hex hit (no ctx): facadebadfacadebadfacadebadfacadebadfacade\n"
+    return s
+}
+
+fn _selftest() -> int {
+    let body = _build_selftest_text()
+    let v = scan_body("selftest", body)
+    let mut by_id = #{}
+    for vi in v {
+        let id = to_string(vi["pattern_id"])
+        if by_id.contains_key(id) {
+            by_id[id] = to_int(to_string(by_id[id])) + 1
+        } else {
+            by_id[id] = 1
+        }
+    }
+    let required = ["HF_TOKEN", "GITHUB_TOKEN", "OPENAI_KEY", "AWS_ACCESS_KEY", "JWT", "PARTIAL_PREFIX"]
+    let mut missing = []
+    for r in required {
+        let id = to_string(r)
+        if !by_id.contains_key(id) { missing.push(id) }
+    }
+    println("── raw15_token_leak_validator selftest ──")
+    println("  total_hits:       " + to_string(len(v)))
+    for id in required {
+        let key = to_string(id)
+        let n = if by_id.contains_key(key) { to_int(to_string(by_id[key])) } else { 0 }
+        println("  " + key + ":  " + to_string(n))
+    }
+    let warn_n = if by_id.contains_key("HEX_GENERIC") { to_int(to_string(by_id["HEX_GENERIC"])) } else { 0 }
+    println("  HEX_GENERIC(warn):" + to_string(warn_n))
+    if len(missing) > 0 {
+        println("  selftest=FAIL  (missing: " + missing.join(",") + ")")
+        return 2
+    }
+    // CRITICAL invariant: redacted output never echoes full secret
+    for vi in v {
+        let red = to_string(vi["redacted"])
+        if red.index_of("REDACT[") != 0 {
+            println("  selftest=FAIL  (unredacted output: " + red + ")")
+            return 2
+        }
+    }
+    println("  selftest=PASS  (all FAIL classes hit; redaction verified)")
+    return 0
+}
+
+// ─── output emission ─────────────────────────────────────────────────
+
+fn _emit_violations_json(out_path: string, violations: array, sources_scanned: int, ts: string, mode: string) {
+    let mut fail = 0
+    let mut warn = 0
+    for v in violations {
+        let s = to_string(v["severity"])
+        if s == "FAIL" { fail = fail + 1 }
+        else if s == "WARN" { warn = warn + 1 }
+    }
+    let mut parts = []
+    parts.push("{\n")
+    parts.push("  \"schema\": \"" + SCHEMA_ID + "\",\n")
+    parts.push("  \"tool\": \"tool/" + TOOL_NAME + ".hexa\",\n")
+    parts.push("  \"version\": \"" + TOOL_VERSION + "\",\n")
+    parts.push("  \"ts\": \"" + ts + "\",\n")
+    parts.push("  \"mode\": \"" + _json_escape(mode) + "\",\n")
+    parts.push("  \"sources_scanned\": " + to_string(sources_scanned) + ",\n")
+    parts.push("  \"violation_count\": " + to_string(len(violations)) + ",\n")
+    parts.push("  \"fail_count\": " + to_string(fail) + ",\n")
+    parts.push("  \"warn_count\": " + to_string(warn) + ",\n")
+    parts.push("  \"verdict\": \"" + (if fail > 0 { "FAIL" } else if warn > 0 { "WARN" } else { "PASS" }) + "\",\n")
+    parts.push("  \"falsifier\": \"F-RAW15-1: any FAIL-class pattern in scanned input → FAIL\",\n")
+    parts.push("  \"redaction_policy\": \"first_4_chars + length (full secret NEVER echoed)\",\n")
+    parts.push("  \"violations\": [\n")
+    let mut i = 0
+    while i < len(violations) {
+        let v = violations[i]
+        let comma = if i + 1 < len(violations) { "," } else { "" }
+        parts.push("    {\"source\": \"" + _json_escape(to_string(v["source"])) + "\"")
+        parts.push(", \"pattern_id\": \"" + to_string(v["pattern_id"]) + "\"")
+        parts.push(", \"severity\": \"" + to_string(v["severity"]) + "\"")
+        parts.push(", \"offset\": " + to_string(v["offset"]))
+        if v.contains_key("length") {
+            parts.push(", \"length\": " + to_string(v["length"]))
+        }
+        if v.contains_key("subtype") {
+            parts.push(", \"subtype\": \"" + _json_escape(to_string(v["subtype"])) + "\"")
+        }
+        parts.push(", \"redacted\": \"" + _json_escape(to_string(v["redacted"])) + "\"}")
+        parts.push(comma + "\n")
+        i = i + 1
+    }
+    parts.push("  ]\n}\n")
+    let _ = _mkdir_p(_exec_out("dirname " + _sh_quote(out_path)).trim())
+    let _ = write_file(out_path, parts.join(""))
+}
+
+// ─── main ────────────────────────────────────────────────────────────
+
+fn main() -> int {
+    let av = _argv()
+
+    if _flag(av, "--help") || _flag(av, "-h") {
+        println("usage: hexa run tool/raw15_token_leak_validator.hexa [opts]")
+        println("  --selftest                 synthetic fixture covers all FAIL classes")
+        println("  --input <path>             scan this file (repeatable)")
+        println("  --inline <text>            scan inline text (repeatable)")
+        println("  --output <path>            write JSON verdict here")
+        println("  --max-bytes <int>          per-file cap (default 4_000_000)")
+        println("  --quiet                    suppress per-violation stderr")
+        println("exit codes: 0=PASS  1=FAIL  2=ERROR")
+        return 0
+    }
+
+    if _flag(av, "--selftest") {
+        return _selftest()
+    }
+
+    let inputs = _opts_multi(av, "--input")
+    let inlines = _opts_multi(av, "--inline")
+    let out_path = _opt(av, "--output", "")
+    let max_bytes_str = _opt(av, "--max-bytes", "4000000")
+    let max_bytes = to_int(max_bytes_str)
+    let quiet = _flag(av, "--quiet")
+
+    if len(inputs) == 0 && len(inlines) == 0 {
+        eprintln(TOOL_NAME + ": ERROR — provide --input <path> or --inline <text> (or --selftest)")
+        return 2
+    }
+
+    let mut all = []
+    let mut sources = 0
+
+    for p in inputs {
+        let path = to_string(p)
+        if !_is_file(path) {
+            eprintln(TOOL_NAME + ": SKIP  (not a regular file): " + path)
+            continue
+        }
+        let sz = _file_bytes(path)
+        if sz > max_bytes {
+            // tail the file to last max_bytes — token leaks are usually in chat-tail/log-tail
+            let tmp = "/tmp/raw15_input_" + _ts_epoch() + "_" + to_string(sources) + ".txt"
+            let _ = _exec_code("tail -c " + to_string(max_bytes) + " " + _sh_quote(path) + " > " + _sh_quote(tmp))
+            let body = read_file(tmp)
+            let v = scan_body(path + "#tail" + to_string(max_bytes), body)
+            for vi in v { all.push(vi) }
+            let _ = _exec_code("rm -f " + _sh_quote(tmp))
+        } else {
+            let body = read_file(path)
+            let v = scan_body(path, body)
+            for vi in v { all.push(vi) }
+        }
+        sources = sources + 1
+    }
+
+    let mut idx = 0
+    for t in inlines {
+        let body = to_string(t)
+        let v = scan_body("inline#" + to_string(idx), body)
+        for vi in v { all.push(vi) }
+        idx = idx + 1
+        sources = sources + 1
+    }
+
+    let ts = _ts_iso()
+    let mode = if len(inputs) > 0 && len(inlines) > 0 { "mixed" } else if len(inputs) > 0 { "files" } else { "inline" }
+
+    if len(out_path) > 0 {
+        _emit_violations_json(out_path, all, sources, ts, mode)
+    }
+
+    let mut fail = 0
+    let mut warn = 0
+    for v in all {
+        let s = to_string(v["severity"])
+        if s == "FAIL" { fail = fail + 1 }
+        else if s == "WARN" { warn = warn + 1 }
+    }
+
+    if !quiet {
+        println("── raw15_token_leak_validator ──")
+        println("  sources_scanned: " + to_string(sources))
+        println("  fail_count:      " + to_string(fail))
+        println("  warn_count:      " + to_string(warn))
+        if len(out_path) > 0 { println("  output:          " + out_path) }
+        println("  verdict:         " + (if fail > 0 { "FAIL" } else if warn > 0 { "WARN" } else { "PASS" }))
+        println("  redaction:       first_4 + len (full secret NEVER echoed)")
+        if fail > 0 {
+            let limit = if len(all) > 20 { 20 } else { len(all) }
+            let mut shown = 0
+            let mut k = 0
+            while k < len(all) && shown < limit {
+                let v = all[k]
+                if to_string(v["severity"]) == "FAIL" {
+                    let sub = if v.contains_key("subtype") { " sub=" + to_string(v["subtype"]) } else { "" }
+                    println("  FAIL  " + to_string(v["pattern_id"]) + sub + " src=" + to_string(v["source"]) + " off=" + to_string(v["offset"]) + " " + to_string(v["redacted"]))
+                    shown = shown + 1
+                }
+                k = k + 1
+            }
+            if fail > limit { println("  ... " + to_string(fail - limit) + " more FAIL hits truncated") }
+        }
+    }
+
+    if fail > 0 { return 1 }
+    return 0
+}

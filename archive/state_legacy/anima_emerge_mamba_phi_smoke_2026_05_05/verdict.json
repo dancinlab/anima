@@ -1,0 +1,17 @@
+{
+  "schema": "anima/emerge_mamba_phi_smoke/verdict/1",
+  "ts_utc": "2026-05-05T18:43:24Z",
+  "model": "state-spaces/mamba-130m-hf",
+  "n_prompts": 3,
+  "phi_mean": 42.14630752549072,
+  "phi_range": 0.03448615041375547,
+  "drift_from_clm_v4": 0.28630752549072014,
+  "verdict": "PHI_MEASURED",
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 phi proxy CLM v4 specific (BG-BN); Mamba result also subject to BG-CV aliasing",
+    "C3 Mamba SSM != transformer; hidden state semantics may differ (selective scan vs attention)",
+    "C4 single substrate, single test, 3 prompts only",
+    "C5 BG-CV Option A re-geometry needed for fair cross-substrate phi"
+  ]
+}

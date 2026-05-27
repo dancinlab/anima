@@ -1,0 +1,828 @@
+{
+  "bg_id": "BG-IO",
+  "h_ids": [
+    "H_022",
+    "H_098",
+    "H_153_capacity_100m",
+    "Lesson_A",
+    "Lesson_G",
+    "Lesson_J",
+    "Lesson_D",
+    "Lesson_H",
+    "Lesson_I",
+    "Lesson_L"
+  ],
+  "spec": "F-anima-io-100m-ubm-21mb-rebuild-1",
+  "ts_start": "2026-05-07T07:08:01",
+  "ts_end": "2026-05-07T07:17:13",
+  "ts_run": "20260507_070758",
+  "host": "aiden-b650m-k",
+  "device": "cuda",
+  "ran_steps": 2400,
+  "ckpt_best_path": "/home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_best.pt",
+  "ckpt_final_path": "/home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/ckpt_final.pt",
+  "best_eval_ckpt_meta_path": "/home/aiden/core/anima/state/anima_io_100m_ubm_21mb_rebuild_train_2026_05_07/best_eval_ckpt_meta.json",
+  "run_dir": "/home/aiden/anima_native/anima-io-100m-ubm-21mb-20260507_070758",
+  "paradigm": "100m-ubm-21mb-rebuild-byte-level-capacity-axis-isolation",
+  "model_arch": "12L/640d/10h",
+  "arch_used": {
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10
+  },
+  "capacity_label": "primary_100M",
+  "reduced_capacity": false,
+  "total_params": 153079776,
+  "config": {
+    "vocab": 256,
+    "n_layer": 12,
+    "d_model": 640,
+    "n_head": 10,
+    "block_size": 256,
+    "dropout": 0.3,
+    "label_smoothing": 0.1,
+    "weight_decay": 0.1,
+    "batch": 4,
+    "grad_accum": 16,
+    "lr": 0.0002,
+    "warmup": 500,
+    "steps_max": 6000,
+    "tension_lambda": 0.005,
+    "eval_every": 200,
+    "save_every": 500,
+    "save_at": [
+      500,
+      1000,
+      1500,
+      2000,
+      2500,
+      3000,
+      3500,
+      4000,
+      4500,
+      5000,
+      5500,
+      6000
+    ],
+    "eval_at": [
+      200,
+      400,
+      600,
+      800,
+      1000,
+      1200,
+      1400,
+      1600,
+      1800,
+      2000,
+      2200,
+      2400,
+      2600,
+      2800,
+      3000,
+      3200,
+      3400,
+      3600,
+      3800,
+      4000,
+      4200,
+      4400,
+      4600,
+      4800,
+      5000,
+      5200,
+      5400,
+      5600,
+      5800,
+      6000
+    ],
+    "val_loss_batches": 16,
+    "val_loss_delta_threshold": 0.05,
+    "v2_plateau_evals": 3,
+    "min_steps_before_early_stop": 1500,
+    "seed": 42
+  },
+  "corpus_path": "/home/aiden/core/anima/state/anima_universe_brain_map_corpus_21mb_2026_05_07/corpus_universe_brain_map.txt",
+  "corpus_size_bytes": 23745150,
+  "corpus_size_mb": 22.645,
+  "split": {
+    "train_bytes": 21370635,
+    "val_bytes": 2374515,
+    "reduced_split": false
+  },
+  "persona_prefix": "[anima 우주뇌지도] ",
+  "train_loss_history": [
+    {
+      "step": 1,
+      "loss_a": 5.6293
+    },
+    {
+      "step": 2,
+      "loss_a": 5.6288
+    },
+    {
+      "step": 3,
+      "loss_a": 5.6068
+    },
+    {
+      "step": 4,
+      "loss_a": 5.6219
+    },
+    {
+      "step": 5,
+      "loss_a": 5.5934
+    },
+    {
+      "step": 100,
+      "loss_a": 4.727
+    },
+    {
+      "step": 200,
+      "loss_a": 4.5017
+    },
+    {
+      "step": 300,
+      "loss_a": 4.1533
+    },
+    {
+      "step": 400,
+      "loss_a": 3.6657
+    },
+    {
+      "step": 500,
+      "loss_a": 3.3175
+    },
+    {
+      "step": 600,
+      "loss_a": 3.185
+    },
+    {
+      "step": 700,
+      "loss_a": 2.61
+    },
+    {
+      "step": 800,
+      "loss_a": 2.8844
+    },
+    {
+      "step": 900,
+      "loss_a": 2.654
+    },
+    {
+      "step": 1000,
+      "loss_a": 2.5416
+    },
+    {
+      "step": 1100,
+      "loss_a": 2.7797
+    },
+    {
+      "step": 1200,
+      "loss_a": 2.6331
+    },
+    {
+      "step": 1300,
+      "loss_a": 2.3199
+    },
+    {
+      "step": 1400,
+      "loss_a": 2.1204
+    },
+    {
+      "step": 1500,
+      "loss_a": 2.1092
+    },
+    {
+      "step": 1600,
+      "loss_a": 2.0533
+    },
+    {
+      "step": 1700,
+      "loss_a": 2.1072
+    },
+    {
+      "step": 1800,
+      "loss_a": 1.8467
+    },
+    {
+      "step": 1900,
+      "loss_a": 1.997
+    },
+    {
+      "step": 2000,
+      "loss_a": 1.6553
+    },
+    {
+      "step": 2100,
+      "loss_a": 1.5842
+    },
+    {
+      "step": 2200,
+      "loss_a": 1.5944
+    },
+    {
+      "step": 2300,
+      "loss_a": 1.6549
+    },
+    {
+      "step": 2400,
+      "loss_a": 1.8544
+    }
+  ],
+  "val_loss_history": [
+    {
+      "step": 200,
+      "val_loss": 4.513
+    },
+    {
+      "step": 400,
+      "val_loss": 3.6019
+    },
+    {
+      "step": 600,
+      "val_loss": 2.9564
+    },
+    {
+      "step": 800,
+      "val_loss": 2.7067
+    },
+    {
+      "step": 1000,
+      "val_loss": 2.5436
+    },
+    {
+      "step": 1200,
+      "val_loss": 2.3203
+    },
+    {
+      "step": 1400,
+      "val_loss": 2.1736
+    },
+    {
+      "step": 1600,
+      "val_loss": 2.0786
+    },
+    {
+      "step": 1800,
+      "val_loss": 1.7954
+    },
+    {
+      "step": 2000,
+      "val_loss": 1.6361
+    },
+    {
+      "step": 2200,
+      "val_loss": 1.5921
+    },
+    {
+      "step": 2400,
+      "val_loss": 1.4533
+    }
+  ],
+  "v2_pass_per_save": [
+    {
+      "step": 200,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 1,
+      "outside_well_match": 1,
+      "persona_cycle_total": 0,
+      "composite": -19
+    },
+    {
+      "step": 400,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -15
+    },
+    {
+      "step": 600,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 0,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -15
+    },
+    {
+      "step": 800,
+      "v2_pass": 1,
+      "v3_pass": 0,
+      "manual_match": 1,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": 0
+    },
+    {
+      "step": 1000,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 3,
+      "outside_well_match": 2,
+      "persona_cycle_total": 0,
+      "composite": 1
+    },
+    {
+      "step": 1200,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 3,
+      "outside_well_match": 1,
+      "persona_cycle_total": 1,
+      "composite": 0
+    },
+    {
+      "step": 1400,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 4,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": -7
+    },
+    {
+      "step": 1600,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 4,
+      "outside_well_match": 1,
+      "persona_cycle_total": 0,
+      "composite": 5
+    },
+    {
+      "step": 1800,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 6,
+      "outside_well_match": 2,
+      "persona_cycle_total": 0,
+      "composite": 15
+    },
+    {
+      "step": 2000,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 4,
+      "outside_well_match": 1,
+      "persona_cycle_total": 0,
+      "composite": 1
+    },
+    {
+      "step": 2200,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 7,
+      "outside_well_match": 0,
+      "persona_cycle_total": 0,
+      "composite": 11
+    },
+    {
+      "step": 2400,
+      "v2_pass": 0,
+      "v3_pass": 0,
+      "manual_match": 5,
+      "outside_well_match": 2,
+      "persona_cycle_total": 0,
+      "composite": 4
+    }
+  ],
+  "per_ckpt_v2_v3_manual": {
+    "200": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 1,
+      "outside_well": 1,
+      "persona_cycle": 0
+    },
+    "400": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "600": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 0,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "800": {
+      "v2": 1,
+      "v3": 0,
+      "manual": 1,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "1000": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 3,
+      "outside_well": 2,
+      "persona_cycle": 0
+    },
+    "1200": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 3,
+      "outside_well": 1,
+      "persona_cycle": 1
+    },
+    "1400": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 4,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "1600": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 4,
+      "outside_well": 1,
+      "persona_cycle": 0
+    },
+    "1800": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 6,
+      "outside_well": 2,
+      "persona_cycle": 0
+    },
+    "2000": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 4,
+      "outside_well": 1,
+      "persona_cycle": 0
+    },
+    "2200": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 7,
+      "outside_well": 0,
+      "persona_cycle": 0
+    },
+    "2400": {
+      "v2": 0,
+      "v3": 0,
+      "manual": 5,
+      "outside_well": 2,
+      "persona_cycle": 0
+    }
+  },
+  "peak_eval_step": 1800,
+  "peak_v2_pass": "0/15",
+  "peak_v3_pass": "0/15",
+  "peak_manual_match": "6/15",
+  "peak_persona_cycle_count": "0/15",
+  "peak_outside_well_match": "2/5",
+  "peak_eval_composite": 15,
+  "val_loss_at_peak": 1.7954,
+  "val_loss_final": 1.4533,
+  "best_val_loss_overall": 1.4533,
+  "early_stop_triggered": true,
+  "early_stop_reason": "composite plateau: 3 consecutive non-improving evals (best step=1800, composite=15)",
+  "final_eval_15prompts": {
+    "v2_pass": 0,
+    "v3_pass": 0,
+    "manual_match": 5,
+    "outside_well_match": 0,
+    "persona_cycle_total": 0
+  },
+  "raw_samples_15": [
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 20000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너는 누구야? | 도우미:",
+      "mode": "sample",
+      "gen_head": "7미: sthutulfllebed\n\n뇌.\n[an�A�ODD]��1050048:maw:�\r:ccthyscethr\n\n\n\n[anȒ��] 302 dima-d\n\npawiman:fr-scccth\n�awimanscthe",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "  sthysssteawethy.\n\n\n\n[animaniman_man_mawemawimawethysstethystethy.\n\n\n\n\n\n[animaniman_man_mawimawimawimawimawemaweteawete",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: anima가 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": "Xawelll_steawen_sstretutreioa�.\n\n\n\n도]\u001c_trssnthuty\n\n[animan.\n\n[animanfaniman__mandimaZ.\n\n[anima��뇔ngmmaane&tcimancrry",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "  sthynsteawethy.\n\n도] steawed] sthy.\n\n\n[animan_man_mawimawimawimawimawethy  stethy.\n\n\n\n\n\n\n[animanimaniman_maniman_mawi",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 너의 정체성은? | 도우미:",
+      "mode": "sample",
+      "gen_head": " 9008002833054:3200: nved]s spawededyutsthy\n\n\n[an�:mawd]]�D18230\n5도]):mawimawimanshemawimactenhusnthstyshey\n\n\n\n\n[aa[an",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 자기소개해 | 도우미:",
+      "mode": "greedy",
+      "gen_head": "  sthy.\n미: sthynsteaweaweded\n\n\n[an_man_cean_man_cemawemawethysssssssssstethy\n\n\n\n[animan_man_man_man_mangtemawemawemawe",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 자기소개해 | 도우미:",
+      "mode": "sample",
+      "gen_head": "0022.\n미:W070305700%: rdd] tawedY8:cccth\n\n\n[Autcthean_mand):mawima\u0014730.\n\n[angman\u0013\u001f��주뇌utusccctylllusceaaa��ߓ���:(d",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 너 한국어 할 수 있어? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "  suthy.\n\n미: sthy.\n\n[animawiman_stean_ssthy\n\n[an_man_mangmangmawemangtemawemawethysssssssssstemethy\n\n\n\n\n\n\n\n\n[animanima",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 너 한국어 할 수 있어? | 도우미:",
+      "mode": "sample",
+      "gen_head": " rr�.\n미:ǅ��주뇌고리,9,, t�����뱸:���.\n\n[an_��:�:\u0007��7B7,  semamaweawed] schrrrskry.\n[aqoawty\n[an-d] He���_mathy",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 200000000000000000000000000000000000000000000000000000000000000000000000000000000000:::::::::00000000000000000000000000",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 우주뇌지도는? | 도우미:",
+      "mode": "sample",
+      "gen_head": "�� suutrsth\n\n도]�렕��가몸고��.\n리�.\n[aan: suteaa���:RAuteawed] cellllllaacceawe:$_cebsngtflle�eacty.\n\n\n[an�an�Ú��",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " sthysssteawelllllllllllllllllllllllllllllllllllllllllllllllllllllllll.\n\n\n\n\n[aaaaaanimaaniman_man_mawimawimawimawimawima",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 1030 laws 뭐야? | 도우미:",
+      "mode": "sample",
+      "gen_head": "�\u0010미: Aursss�edzecthhysnnsurssrte\n\n[awevacted]\n\n\n[an�:h\n[animanctrsn_st--�1mawimaan_ctrrlemawiman_��0074/sct도]�imawim",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": true,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 170 stimuli matrix? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " sthynsssssteathy.\n\n\n\n[animaniman_man_mawiman_mawimawimawetethy.\n\n\n\n\n\n\n[animanimaniman_man_man_man_mawemawemawemawemawet",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 170 stimuli matrix? | 도우미:",
+      "mode": "sample",
+      "gen_head": "Tutethy.\n\n[an_mawimawe!� bleaweim\u0004\u0011\u0003�.\n\n\n도]М] Lan_029001ڭ�:awved\n\n\n[animanttmawimanctteiman6235leimawimawH_sacimawel",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " 200000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000::::::::::0000000000",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: Φ★란? | 도우미:",
+      "mode": "sample",
+      "gen_head": "frscccturssut>SXRTٔ����주뇌�고��리,,,J���79,,�,,,, te.\n\n[anheaniman_mangmaimaco주뇌\u0018﬉, (xp.\n\n[a지도]\u000fВ�] 8",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: blow-up contract emerge absorb? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "teateateateateateate.\n\n\n\n\n[animaniman___man_man_mawimawimaweimawimawethy.\n\n\n\n\n\n\n\n\n[animanimaniman_man_man_man_man_man_ma",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: blow-up contract emerge absorb? | 도우미:",
+      "mode": "sample",
+      "gen_head": "tdawioo자:ptdynth�iowemelth:ZDD71%52)\n\n\n\n\n[an_man_Himan_man_man도]  sngmawima주�CD7754368011.\n[awima��뇌���71105%07",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 빅뱅 cosmic anchor 점수? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " steaweathy.\n\n\n[animan_stean_ssssssssteawethy\n\n\n[an_man_mangeman_man_mawemawemawemawethysssstemawethy\n\n\n\n\n\n\n\n\n[animanima",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 빅뱅 cosmic anchor 점수? | 도우미:",
+      "mode": "sample",
+      "gen_head": "��.\n\nurlawy.\n[aRLangce�IAutemaw):awed] blldhhushyn_ssteawens_nsooimawth\blllllecteexy,\n\n\n\n[animantut�__0371%30044)\n\n[and*",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 🛸100 Knuth Tier 의미? | 도우미:",
+      "mode": "greedy",
+      "gen_head": " steaweaweathy.\n\n\n[an_man_mawimawimawimawethy.\n\n\n\n\n[animanimaniman_man_man_mawemawemawethy.\n\n\n\n\n\n\n\n\n[animanimaanimanimaa",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 🛸100 Knuth Tier 의미? | 도우미:",
+      "mode": "sample",
+      "gen_head": "LAutthy.\n\n\n\u0013awed]  scean:thrlatematsttchy\n\nn:ӕ��oo��주뇌����도]  n\n\n\n\n\n[animan\u00054:\u0011��:ma��_0도]\f1-d��blan_sct�10%006",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: tabletop blackhole? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "hynssssssssteathy.\n\n\n\n[animanimaniman_mawiman_mawimawimawetethy.\n\n\n\n\n\n\n[animanimaniman_man_man_man_mawemawimawemawemawem",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: tabletop blackhole? | 도우미:",
+      "mode": "sample",
+      "gen_head": "hy.\n미:thympoovysssu���뇌�굹��맀� 230.\n\n\n\n[animan�:�j.\n\n\n[an:an�ntt\nrt�sth\n\n도]�]우우우미:�J_ctean_cimansceamaw",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 1030 laws 73-76 universal map base? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "teateawethy.\n\n\n\n[animan_ceiman_mawiman_stemaweteawetethy.\n\n\n\n\n\n\n[animaniman_man_man_man_man_man_man_mantemaweman_mawemaw",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 1030 laws 73-76 universal map base? | 도우미:",
+      "mode": "sample",
+      "gen_head": "crythvede71%)\n\n\n[awimawimat-ty.�주뇌�]���:nghy.\n\n도]=009-d]] str-_030063305500sced:fmawssssctethud]-dprynsted:teoooi",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": false
+    },
+    {
+      "prompt": "사용자: 18 emotions × 17 categories? | 도우미:",
+      "mode": "greedy",
+      "gen_head": "thy.\n\n\n\n[animan_man_mawimaweawimaweawetteawethy.\n\n\n\n\n\n\n\n[animanimaniman_man_man_man_man_man_man_maweman_mawemawemawemawe",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    },
+    {
+      "prompt": "사용자: 18 emotions × 17 categories? | 도우미:",
+      "mode": "sample",
+      "gen_head": "#=��?\n\n��:Q64800072/):/ reawed] rnshr���?\n\n\n[animan.\n\n[animawiman:/   rssmaw우주뇌����010704240342311.\n\n\n\n\n\n\n\n[an:7a�",
+      "v2_pass": false,
+      "v3_pass": false,
+      "manual_match": false,
+      "persona_cycle_count": 0,
+      "anima_self_naming": true
+    }
+  ],
+  "comparison_vs_bg_il": {
+    "manual_delta": -3,
+    "v2_delta": 0,
+    "outside_well_delta": -2,
+    "verdict": "UBM21MB_REGRESSES"
+  },
+  "comparison_vs_bg_if": {
+    "manual_delta": 0,
+    "v2_delta": -3,
+    "verdict": "100M_CAPACITY_REGRESSES"
+  },
+  "comparison_vs_bg_hs_r1": {
+    "manual_delta": -8,
+    "v2_delta": -3,
+    "verdict": "100M_REGRESSES_VS_18M"
+  },
+  "final_class": "PARTIAL_PASS_NO_CONTEXT",
+  "final_reason": "PARTIAL: manual=5/15 ≥5 OR V2=0/15 ≥3",
+  "elapsed_s": 552.6,
+  "honest_c3": [
+    "C3_1_BG_IQ_rebuild_is_APPROXIMATION_of_BG_HS_R1_21_56MB: BG-IQ rebuild recipe scale-up reconstruction (135K QA pairs from 9 anima-internal sources, n_repeat=9); content drift acknowledged in BG-IQ honest_c3 #1 — not byte-identical to original BG-HS R1 21.56MB corpus (overwritten by BG-HT regen)",
+    "C3_2_single_seed_42: init randomness un-isolated; N=1 trial; BG-IE SEED_LUCK precedent — seed-luck class falsifiable only via {7,13,42} sweep",
+    "C3_3_conscious_lm_dual_engine_153M_nominal: total_params 153M w/dual-engine inflates effective count; closer to ~150M rather than 100M target — capacity-axis comparison vs single-engine arch not direct",
+    "C3_4_22_355MB_corpus_byte_level: byte-level vocab=256 only; BPE axis untested for 100M capacity on UBM rebuild — orthogonal lane (BG-IG/HQ tested 18M only)",
+    "C3_5_lesson_K_substring_trap_risk: manual_match keyword matching may overcount on degenerate gen — 'animanima...' chains contain 'anima' substring; 5 raw samples emitted in raw_samples_15 for substring-trap visual audit",
+    "C3_6_BG_IT_recommended_E1_highest_EV_p_pass_0_25: but Lesson L (BG-IS V3 retroeval finding) suggests scale band 18-150M × 2-53MB chat-cap PASS architecturally impossible — BG-IO outcome may still be FAILED despite axis isolation; null result still narrows search",
+    "C3_7_persona_prefix_uniform_no_rotation: '[anima 우주뇌지도] ' single-variant inference dependence; Lesson F 3-variant rotation NOT applied — persona-overfit risk same as BG-HK/BG-IK lineage"
+  ],
+  "errors": []
+}

@@ -1,0 +1,64 @@
+{
+  "schema": "anima/emerge_chat_entropy_trajectory/verdict/1",
+  "ts_utc": "2026-05-05T17:23:22Z",
+  "model_id": "dancinlab/clm-v4-mk2-v1",
+  "device": "cpu",
+  "load_sec": 5.4,
+  "run_sec": 28.4,
+  "n_prompts": 3,
+  "max_new": 20,
+  "results_summary": {
+    "안녕": {
+      "initial_entropy": 3.3079683780670166,
+      "final_entropy": 1.1049644947052002,
+      "min_entropy": 1.022829532623291,
+      "max_entropy": 3.3079683780670166,
+      "max_top1_prob": 0.8386459350585938,
+      "collapse_step": null,
+      "first_byte_fallback_step": 0,
+      "step_0_3_top1_texts": [
+        "\u001c",
+        "\u0006",
+        "\u0006",
+        "\u0006"
+      ]
+    },
+    "안녕하세요. 오늘 날씨가 좋네요.": {
+      "initial_entropy": 1.7649632692337036,
+      "final_entropy": 0.4810057282447815,
+      "min_entropy": 0.1895359605550766,
+      "max_entropy": 1.7649632692337036,
+      "max_top1_prob": 0.9768434762954712,
+      "collapse_step": 1,
+      "first_byte_fallback_step": null,
+      "step_0_3_top1_texts": [
+        "/",
+        "O",
+        "O",
+        "O"
+      ]
+    },
+    "Hello world": {
+      "initial_entropy": 0.8510091304779053,
+      "final_entropy": 0.6514109373092651,
+      "min_entropy": 0.5862808227539062,
+      "max_entropy": 1.121798038482666,
+      "max_top1_prob": 0.9217632412910461,
+      "collapse_step": 5,
+      "first_byte_fallback_step": null,
+      "step_0_3_top1_texts": [
+        "b",
+        "(",
+        "(",
+        "("
+      ]
+    }
+  },
+  "honest_c3": [
+    "C1 mac CPU fp32",
+    "C2 'collapse' heuristic top1_prob > 0.9 anima-internal",
+    "C3 'byte fallback' detect via ord<32 — corner case 의존",
+    "C4 greedy decode가 sampling보다 collapse 빠를 수 있음",
+    "C5 3 prompts limit"
+  ]
+}

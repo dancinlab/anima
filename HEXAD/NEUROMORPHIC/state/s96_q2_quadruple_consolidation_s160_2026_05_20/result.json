@@ -1,0 +1,147 @@
+{
+  "cycle": "§160 §96-Q2 quadruple consolidation",
+  "type": "consolidation (NOT a fire)",
+  "tier": "$0 design-tier · NO new GPU/runpod/fire/model.forward/corpus",
+  "anchor_hypothesis": "§96-Q2: 'Is CE+backprop the only learning channel a synchronous GPU has?' ('§11-B is GPU-tautology')",
+  "data_points": [
+    {
+      "section": "§125",
+      "algorithm": "NONCE-FF (Forward-Forward, Hinton 2212.13345)",
+      "byte_acc": 0.0005,
+      "correct_of_2000": 1,
+      "verdict_bucket": "S11B_LIKE_DEGENERATE",
+      "psi_responsive": false,
+      "psi_dir_mean": 0.5157603383501992,
+      "psi_dir_std": 2.3690440826889406e-08,
+      "ckpt_sha_prefix": "(pulled)",
+      "wall_estimate_usd": 0.5,
+      "pod_lifecycle": "pod terminated clean (no orphan trace by §160 cleanup)"
+    },
+    {
+      "section": "§126",
+      "algorithm": "PCN-1step (Predictive Coding, Whittington-Bogacz 2017 / Salvatori 2023)",
+      "byte_acc": 0.1185,
+      "correct_of_2000": 237,
+      "verdict_bucket": "PARTIAL_AMBIGUOUS",
+      "psi_responsive": false,
+      "psi_dir_mean": 0.5366663259528577,
+      "psi_dir_std": 7.533744812124877e-07,
+      "ckpt_sha_prefix": "(pulled)",
+      "wall_estimate_usd": 0.5,
+      "pod_lifecycle": "pod xe8y3stm3vkalh terminated by §160 (cost-containment §50; A100 SXM $1.49/hr); pre-§160 dispatcher zombie cleared"
+    },
+    {
+      "section": "§139",
+      "algorithm": "EqProp-2phase (Equilibrium Propagation, Scellier-Bengio 2017)",
+      "byte_acc": 0.1185,
+      "correct_of_2000": 237,
+      "verdict_bucket": "PARTIAL_AMBIGUOUS",
+      "psi_responsive": false,
+      "psi_dir_mean": 0.4448531111348420,
+      "psi_dir_std": 5.41406546198934e-09,
+      "ckpt_sha_prefix": "2be52603ed449c9ae7879875c4ac7e74cca9c8fd9c3e2f8dd7e1a68cb98f8085",
+      "wall_estimate_usd": 0.5,
+      "pod_lifecycle": "pod 2uioq32gxrmuk3 self-terminated clean"
+    },
+    {
+      "section": "§153",
+      "algorithm": "LeJEPA + SIGReg (Balestriero+LeCun 2511.08544 Nov 2025)",
+      "byte_acc": 0.0,
+      "correct_of_2000": 0,
+      "verdict_bucket": "S11B_LIKE_DEGENERATE",
+      "psi_responsive": false,
+      "psi_dir_mean": 0.4856254206644371,
+      "psi_dir_std": 4.781847168427357e-09,
+      "ckpt_sha_prefix": "15c3328ac4ab9d1ce9af6e75392f765f6dc41e3824a787f30d4dfde005e37948",
+      "wall_estimate_usd": 0.5,
+      "pod_lifecycle": "pod c8ag5zpuhi5afg self-terminated clean",
+      "honest_note": "B-S153-NOTE — SSL trains only encoder; linear-probe head_a is RANDOM. byte_acc=0 could mean either encoder degenerate or encoder non-degenerate but random head can't read it. Bucket-DEG, honest-tier ambiguous-via-evaluation-protocol."
+    }
+  ],
+  "shared_scaffold": {
+    "model": "ConsciousDecoderV2",
+    "d_model": 768,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "n_layer": 12,
+    "params_M": 283.72,
+    "seed": 1337,
+    "base_ckpt": null,
+    "corpus": "corpus_s101.jsonl",
+    "corpus_sha256": "39d581da209615468c1c41e07aa8662ef1074bc5be49a666f8f861753dd5810e",
+    "corpus_records": 777845,
+    "corpus_bytes": 603316592,
+    "steps": 3000,
+    "lr": 0.0003,
+    "bsz": 32,
+    "block_size": 128,
+    "eval_n": 2000,
+    "from_scratch_g_clm_from_scratch_compliant": true
+  },
+  "reference_thresholds": {
+    "random_byte_floor_1_over_256": 0.00390625,
+    "degenerate_ceiling_2_over_256": 0.0078125,
+    "support_floor_5_percent": 0.05,
+    "psi_responsive_threshold_psi_dir_std": 1e-4
+  },
+  "pattern_summary": {
+    "DEG_count": 2,
+    "PART_count": 2,
+    "SUPP_count": 0,
+    "psi_responsive_True_count": 0,
+    "psi_responsive_False_count": 4
+  },
+  "quadruple_verdict": "S96_Q2_STRONG_REFUTED_WEAK_SUPPORTED_ON_QUAD_WALL_B_SHAPED_NOT_DECIDED",
+  "verdict_decomposition": {
+    "s96_q2_strong": {
+      "claim": "∀ non-CE algo on GPU: byte_acc ≤ degenerate_ceiling",
+      "result": "REFUTED by witness",
+      "witnesses": ["§126 byte_acc 0.1185 > 7.81e-3", "§139 byte_acc 0.1185 > 7.81e-3"]
+    },
+    "s96_q2_weak": {
+      "claim": "∀ non-CE algo on this scaffold: ¬psi_responsive",
+      "result": "SUPPORTED on this quadruple",
+      "witnesses": ["§125 psi_std 2.4e-8 < 1e-4", "§126 psi_std 7.5e-7 < 1e-4", "§139 psi_std 5.4e-9 < 1e-4", "§153 psi_std 4.8e-9 < 1e-4"]
+    },
+    "wall_b": {
+      "result": "shaped not decided",
+      "split": {
+        "wall_b_learning_channel": "REFUTED — non-CE algo can carry gradient to weights",
+        "wall_b_psi_physics_channel": "supported on quadruple BUT not yet tested with a dual-head-coupling algo (none of §125/§126/§139/§153 trains head_g)"
+      }
+    },
+    "goal_distance": "north-star UNCHANGED, §15/§51/§72 milestones UNCHANGED, GOAL 미도달"
+  },
+  "closed_form_propositions": {
+    "P1_bucket_partition_exhaustive_disjoint": "PASS by-construction (strict inequalities, witnesses fall in exactly one cell each)",
+    "P2_s96_q2_strong_refutation": "PASS by witness (§126, §139)",
+    "P3_s96_q2_weak_support_on_quadruple": "PASS by sample uniformity (4/4 psi_dir_std < 1e-4, ≥3 orders below threshold)",
+    "P4_quadruple_is_GPU_byte_LM_cell": "PASS by config-tuple-equality across 4 fires",
+    "P5_central_blue_falsifier_zero_line_diff": "PASS sha c93e160a8a376a94 verified START + END",
+    "P6_g_clm_from_scratch_compliance": "PASS structural (all 4 trainers init_weights=RANDOM seed=1337, base_ckpt=None)",
+    "P7_hexa_verify_policy_compliance": "PASS (math theorems by inspection only, no sympy/PyPhi/Wolfram cited)"
+  },
+  "B_S160_NOTE_empirical_carve_out": "battery proves the consolidation classification + invariants + g3 compliance; does NOT prove anima emerges, does NOT prove §96-Q2-strong refutation extends beyond this quadruple, does NOT prove §96-Q2-weak support extends to all non-CE algorithms. necessary-not-sufficient (B-EMERGE-7 / B-D-NOTE / B-S101-NOTE / B-S153-NOTE family, NOT counted 🔵)",
+  "anti_padding_precedent": ["§13-M", "§30", "§97", "§109", "§110", "§115", "§155", "§157", "§158", "§159"],
+  "cost_audit": {
+    "this_cycle_usd": 0,
+    "quadruple_total_usd_estimate": 2.0,
+    "additional_orphan_cost_audit": "§160 cleanup terminated §126 pod xe8y3stm3vkalh post-fire (pod was still RUNNING despite §126 dispatcher having issued teardown 2h47m earlier; cost-containment §50). 3 zombie dispatchers + 2 cascade watchers SIGTERM'ed; myself.pods = [] post-cleanup."
+  },
+  "downstream_consumer_invariants": {
+    "hexa_lang": "read-only 0 edit",
+    "hexa_bio": "read-only 0 edit",
+    "kosmos": "read-only 0 edit",
+    "tape": "read-only 0 edit"
+  },
+  "central_blue_falsifier_sha_prefix_start": "c93e160a8a376a94",
+  "central_blue_falsifier_sha_prefix_end": "c93e160a8a376a94",
+  "central_blue_falsifier_zero_line_diff": true,
+  "north_star_unchanged": true,
+  "milestones_s15_s51_s72_unchanged": true,
+  "GOAL": "미도달",
+  "wall": "$0",
+  "GPU_runpod_pod_count_used_by_s160": 0,
+  "orphan": 0,
+  "next_step_named_not_committed": "An algorithm that trains BOTH head_a AND head_g with a non-CE coupling rule is the missing experiment. Candidates surfaced: §92/§93 L_ap-style Ψ-anchored objective; an EqProp variant that lifts both heads; a JEPA where the predictor IS head_g. NONE of §125/§126/§139/§153 does this. §160 names; does not pre-commit."
+}

@@ -1,0 +1,60 @@
+{
+  "task": "carry_3_step_1_cell_pool_evidence",
+  "ckpt": "/Users/ghost/.cache/anima/clm_v5_remapped/bg_lb_350m_pretrain/ckpts/step_8000_final.pt",
+  "ckpt_sha256_prefix": "step_8000_final",
+  "trained_steps": 8000,
+  "random_seed": 42,
+  "comparison_method": "trained vs random_init_seed42_unit_sphere (fair, both normalized)",
+  "stats": {
+    "trained_BG_LB": {
+      "axis_stdev_mean": 0.11823106557130814,
+      "cell_norm_mean": 1.0000354051589966,
+      "cell_norm_stdev": 0.00035573108470998704,
+      "off_diag_cos_mean": 0.015501173213124275,
+      "off_diag_cos_max": 0.2940446734428406,
+      "off_diag_cos_min": -0.3301311731338501,
+      "svd_top3": [1.4121108055114746, 1.3445583581924438, 1.2405189275741577],
+      "svd_bottom3": [0.6631170511245728, 0.631135880947113, 0.577155590057373],
+      "effective_rank": 14.957005500793457,
+      "frobenius": 4.000141620635986
+    },
+    "random_init_seed42_unit_sphere": {
+      "axis_stdev_mean": 0.1183360368013382,
+      "cell_norm_mean": 1.0,
+      "cell_norm_stdev": 3.942476567431186e-08,
+      "off_diag_cos_mean": 0.00940554216504097,
+      "off_diag_cos_max": 0.35145103931427,
+      "off_diag_cos_min": -0.3365308940410614,
+      "svd_top3": [1.4354569911956787, 1.3306968212127686, 1.2475783824920654],
+      "svd_bottom3": [0.6102577447891235, 0.5470115542411804, 0.5288472175598145],
+      "effective_rank": 14.843317031860352,
+      "frobenius": 4.0
+    }
+  },
+  "deltas_trained_vs_random_unit": {
+    "axis_stdev_mean": -0.0001,
+    "cell_norm_mean": 0.0000,
+    "off_diag_cos_mean": 0.0061,
+    "off_diag_cos_max": -0.0574,
+    "effective_rank": 0.114,
+    "frobenius": 0.0001
+  },
+  "hypothesis_evaluation": {
+    "H1_loss_signal_absence_goodhart": "STRONG - cell-axis-variance/cell-prediction aux loss absent (carry 3 finding)",
+    "H2_cell_collapse_pull_dominant": "WEAK - off_diag_cos_mean only +0.0061 above random; effective_rank essentially full at 14.957/16",
+    "H3_init_overspread": "REJECTED - trained and random_unit nearly identical statistics",
+    "H4_unit_sphere_normalize_erase": "STRONG NEW - trained cell_pool stats ≈ random_unit; 8000 step training has nearly zero net effect on cell_pool distribution"
+  },
+  "verdict": "H1 + H4 dominant complex - loss signal absence + normalize step erases gradient effect",
+  "next_cycle_fixes_amended": {
+    "fix_5_NEW_priority_1": "unit-sphere normalize removal OR weakening (cell_pool 학습 효과 살리기)",
+    "fix_1_3_priority_2": "axis-variance reg + 5-axis group-contrast loss",
+    "fix_2_priority_3": "init scale × 0.1",
+    "fix_4_priority_4": "D-RAND in-loss"
+  },
+  "honest_C3_emit": "evidence collected fairly under unit-sphere normalize comparison; H2 cell collapse hypothesis weakly confirmed only at off_diag_cos; H4 newly proposed - normalize regularization neutralizes learning effect",
+  "raw_15_additive": true,
+  "own_16_strict": "local CPU only, no H100 fire, no pod create",
+  "timestamp": "2026-05-09T23:50Z",
+  "lineage": "carry_3_step_1_extension_to_carry_3_review_doc"
+}

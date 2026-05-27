@@ -1,0 +1,179 @@
+// clip_backend_fal.hexa — L3 GEN backend via fal.ai (M5 closure)
+// Bridge architecture: tool surface only — no consciousness framing.
+//
+// ⚠ STUB ONLY — no real HTTP call. M5 delivers the SHAPE (4 pub fn) that
+// will plug into M2 creator_backend tier_registry["L3"] when the user wires
+// `secret get fal.api_key` and switches env=REAL.
+//
+// Default catalog hosted on fal.ai gateway (per CREATOR @goal):
+//   • fal-ai/seedance-2.0       — text → 15s clip + audio
+//   • fal-ai/seedance-2.0-pro   — high-fidelity variant
+//   • fal-ai/omnishow-hoivg     — ByteDance HOIVG (image + text → video)
+//
+// Shape parity with still_backend_fal (M3) — same DRYRUN + configured + REAL
+// state machine; same per-call model override.
+
+import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
+
+// ---------------------------------------------------------------
+// 1. clip_fal_new — initialize the fal-ai clip adapter
+//   env: "DRYRUN" (default · no real calls) · "REAL" (requires keys)
+//   model: default model id (e.g. "fal-ai/seedance-2.0")
+// ---------------------------------------------------------------
+pub fn clip_fal_new(env, model) {
+    return #{
+        "env": env,
+        "model": model,
+        "api_key": "",
+        "configured": false,
+        "next_asset_id": 1,
+        "asset_log": [],
+        "kind": "ClipFalState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 2. clip_fal_configure — wire fal api key (caller passes via secret get)
+// ---------------------------------------------------------------
+pub fn clip_fal_configure(state, api_key) {
+    let cfg = false
+    if api_key != "" {
+        cfg = true
+    }
+    return #{
+        "env": state["env"],
+        "model": state["model"],
+        "api_key": api_key,
+        "configured": cfg,
+        "next_asset_id": state["next_asset_id"],
+        "asset_log": state["asset_log"],
+        "kind": "ClipFalState",
+    }
+}
+
+// ---------------------------------------------------------------
+// 3. clip_fal_generate — text → short clip (M1 MediaAsset L3)
+//   prompt: string
+//   duration_s: float (default 15 if 0)
+//   model: string (""=state default)
+//   image_ref: string (""=text-only; non-empty = HOIVG image-conditioned)
+//   returns { state, asset (MediaAsset Map), error }
+// ---------------------------------------------------------------
+pub fn clip_fal_generate(state, prompt, duration_s, model, image_ref) {
+    let effective_model = state["model"]
+    if model != "" {
+        effective_model = model
+    }
+    let effective_duration = duration_s
+    if duration_s == 0.0 {
+        effective_duration = 15.0
+    }
+    let aid = state["next_asset_id"]
+    let asset_id = "fal-clip-" + str(aid)
+    let path = "/tmp/" + asset_id + ".mp4"
+    let meta = #{
+        "duration_s": effective_duration,
+        "sample_rate_hz": 24000,
+        "prompt_len": prompt.len(),
+        "image_conditioned": image_ref != "",
+    }
+    let prov_base = #{
+        "backend": "fal.ai",
+        "model": effective_model,
+        "prompt_hash": "h-" + str(aid),
+        "image_ref": image_ref,
+        "generated_at": 1700000000000,
+    }
+
+    if state["env"] == "DRYRUN" {
+        let prov = #{
+            "backend": prov_base["backend"],
+            "model": prov_base["model"],
+            "prompt_hash": prov_base["prompt_hash"],
+            "image_ref": prov_base["image_ref"],
+            "generated_at": prov_base["generated_at"],
+            "stub_mode": true,
+            "reason": "DRYRUN — no real fal.ai API call",
+        }
+        let asset = creator_media_asset(asset_id, "clip", "L3", path, meta, prov)
+        let new_state = #{
+            "env": state["env"],
+            "model": state["model"],
+            "api_key": state["api_key"],
+            "configured": state["configured"],
+            "next_asset_id": aid + 1,
+            "asset_log": state["asset_log"] + [asset_id],
+            "kind": "ClipFalState",
+        }
+        return #{
+            "state": new_state,
+            "asset": asset,
+            "error": "",
+        }
+    }
+
+    if state["configured"] == false {
+        let prov = #{
+            "backend": prov_base["backend"],
+            "model": prov_base["model"],
+            "prompt_hash": prov_base["prompt_hash"],
+            "image_ref": prov_base["image_ref"],
+            "generated_at": prov_base["generated_at"],
+            "stub_mode": true,
+            "reason": "fal_not_configured — call clip_fal_configure with secret get fal.api_key",
+        }
+        let asset = creator_media_asset(asset_id, "clip", "L3", path, meta, prov)
+        let new_state = #{
+            "env": state["env"],
+            "model": state["model"],
+            "api_key": state["api_key"],
+            "configured": state["configured"],
+            "next_asset_id": aid + 1,
+            "asset_log": state["asset_log"] + [asset_id],
+            "kind": "ClipFalState",
+        }
+        return #{
+            "state": new_state,
+            "asset": asset,
+            "error": "fal_not_configured",
+        }
+    }
+
+    // TODO: real fal.ai queue+poll HTTP call (intentionally not implemented in M5)
+    // expected flow: POST /v1/queue → poll status_url → GET video_url → save bytes
+    let prov = #{
+        "backend": prov_base["backend"],
+        "model": prov_base["model"],
+        "prompt_hash": prov_base["prompt_hash"],
+        "image_ref": prov_base["image_ref"],
+        "generated_at": prov_base["generated_at"],
+        "stub_mode": true,
+        "reason": "real_api_not_implemented — M5 stub closure",
+    }
+    let asset = creator_media_asset(asset_id, "clip", "L3", path, meta, prov)
+    let new_state = #{
+        "env": state["env"],
+        "model": state["model"],
+        "api_key": state["api_key"],
+        "configured": state["configured"],
+        "next_asset_id": aid + 1,
+        "asset_log": state["asset_log"] + [asset_id],
+        "kind": "ClipFalState",
+    }
+    return #{
+        "state": new_state,
+        "asset": asset,
+        "error": "real_api_not_implemented",
+    }
+}
+
+// ---------------------------------------------------------------
+// 4. clip_fal_summary — one-line status
+// ---------------------------------------------------------------
+pub fn clip_fal_summary(state) {
+    let cfg = "unconfigured"
+    if state["configured"] {
+        cfg = "configured"
+    }
+    return "ClipFal [STUB]: env=" + state["env"] + " · model=" + state["model"] + " · " + cfg + " · log_len=" + str(state["asset_log"].len())
+}

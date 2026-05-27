@@ -1,0 +1,14 @@
+================================================================
+d_converge_fire_d128x4 — pure-hexa hexa-cpu @ d=128·4L·500-step
+================================================================
+  config: d=128 n_layer=4 nh=8 nkv=4 hd=16 h=256 T=16 V=256 nsamp=8 steps=500
+  init  gn2=7.96949  CE=38.3913  acc=0/8
+  DCV-1 INIT-CAPTURE       : PASS
+  DCV-2 GRAD-EXACT(L0.Wg[5]) : analytic=0.0184467 fd=0.00587585 |Δ|=0.0125708  -> FAIL
+  [loop start] AdamW steps=500  (trajectory checkpointed @ st ∈ {1, 25, 50, 100, 200, 300, 400, 500})
+  GN2_CURVE,step=1,gn2=7.92635,CE=36.9591,acc=3
+  GN2_CURVE,step=25,gn2=0.012286,CE=0.125412,acc=8
+  GN2_CURVE,step=50,gn2=8.39794e-06,CE=0.00367013,acc=8
+  GN2_CURVE,step=100,gn2=1.32753e-07,CE=0.000776549,acc=8
+  GN2_CURVE,step=200,gn2=6.35978e-08,CE=0.000554273,acc=8
+  GN2_CURVE,step=300,gn2=4.66071e-08,CE=0.000492303,acc=8

@@ -1,0 +1,23 @@
+{
+  "schema": "anima/p9_paradigm_d_25k_a100/pod_metadata/1",
+  "phase": "p9_paradigm_d_25k_a100_2026_05_03",
+  "pod_id": "7ubgzj4s8spb4p",
+  "machine_id": "caamjkifeh6u",
+  "gpu_type_id": "NVIDIA A100-SXM4-80GB",
+  "gpu_display_name": "A100 SXM",
+  "memory_gb": 80,
+  "cloud_type": "COMMUNITY",
+  "interruptable": true,
+  "cost_per_hr_usd": 0.79,
+  "cost_per_hr_cap_usd": 0.85,
+  "image": "runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04",
+  "ssh": {"ip": "216.249.100.66", "port": 20666, "user": "root"},
+  "volume_gb": 100,
+  "container_disk_gb": 50,
+  "ts_created_utc": "2026-05-03T15:51:00Z",
+  "prior_pod_terminated": "99ziv0qfjnjbbf (no PUBLIC_KEY env)",
+  "untouched_pod": "29dhlqk508ugoc (Path A llama-v2 secure)",
+  "stock_probe_history": "A100 SXM4 80GB community spot @ $0.79: pod creation succeeded on first attempt (vs HBM3 6 DC × 4 bid all no_stock). Note: prior pod 99ziv0qfjnjbbf created cleanly too; A100 SXM4 80GB community supply is NOT supply-constrained at this hour.",
+  "deps_installed": ["peft==0.13.0", "transformers==4.45.2", "sentencepiece"],
+  "rsync_installed_post_boot": true
+}

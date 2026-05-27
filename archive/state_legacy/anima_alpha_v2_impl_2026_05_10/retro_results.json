@@ -1,0 +1,359 @@
+{
+  "ts": "2026-05-10",
+  "design_doc": "docs/anima_clm_v5_alpha_metric_v2_design_2026_05_10.md",
+  "results": {
+    "toy_3k": {
+      "label": "toy 3K trajectory",
+      "n_snaps": 31,
+      "n_cells_range": [
+        8,
+        64
+      ],
+      "alpha_v1": 0.11580008489813857,
+      "alpha_v1_recorded": 0.6875275113837412,
+      "alpha_v2": {
+        "alpha": -0.4865424466199159,
+        "CI95": [
+          -1.2479372338748385,
+          1.4169445215173921
+        ],
+        "bins": {
+          "11.313708498984761": 0.000600631369814062,
+          "45.254833995939045": 0.00010648168884356366,
+          "90.50966799187809": 0.0002843267584574088
+        },
+        "bin_pair_counts": {
+          "11.313708498984761": 1,
+          "45.254833995939045": 7,
+          "90.50966799187809": 22
+        },
+        "n_bins": 3,
+        "x_range": 2.0794415416798357,
+        "verdict": "OK"
+      },
+      "alpha_v2_strict_eps_1e-3": {
+        "alpha": null,
+        "CI95": null,
+        "bins": {},
+        "bin_pair_counts": {},
+        "n_bins": 0,
+        "x_range": null,
+        "verdict": "UNRELIABLE_INSUFFICIENT_BINS(0)"
+      }
+    },
+    "toy_10k": {
+      "label": "toy 10K trajectory (BG-LONG-TRAJ-EXT)",
+      "n_snaps": 101,
+      "n_cells_range": [
+        8,
+        64
+      ],
+      "alpha_v1": 0.2211619284358845,
+      "alpha_v1_recorded": 1.2768653483870267,
+      "alpha_milestones_v1": {
+        "1000": {
+          "turn": 1000,
+          "alpha": 0.1969153015023391
+        },
+        "3000": {
+          "turn": 3000,
+          "alpha": 0.6865516987827429
+        },
+        "5000": {
+          "turn": 5000,
+          "alpha": 0.9640918622200344
+        },
+        "7000": {
+          "turn": 7000,
+          "alpha": 1.1058628190863062
+        },
+        "10000": {
+          "turn": 9500,
+          "alpha": 1.2515981684190947
+        }
+      },
+      "alpha_v2": {
+        "alpha": -0.7924389254056938,
+        "CI95": [
+          -1.2479372338748385,
+          0.34630684576716897
+        ],
+        "bins": {
+          "11.313708498984761": 0.000600631369814062,
+          "45.254833995939045": 0.00010648168884356366,
+          "90.50966799187809": 0.00013537038961979774
+        },
+        "bin_pair_counts": {
+          "11.313708498984761": 1,
+          "45.254833995939045": 7,
+          "90.50966799187809": 92
+        },
+        "n_bins": 3,
+        "x_range": 2.0794415416798357,
+        "verdict": "OK"
+      },
+      "alpha_v2_strict_eps_1e-3": {
+        "alpha": null,
+        "CI95": null,
+        "bins": {},
+        "bin_pair_counts": {},
+        "n_bins": 0,
+        "x_range": null,
+        "verdict": "UNRELIABLE_INSUFFICIENT_BINS(0)"
+      }
+    },
+    "real_350m_proxy": {
+      "label": "real 350M trained (proxy Φ)",
+      "n_snaps": 31,
+      "n_cells_range": [
+        16,
+        19
+      ],
+      "alpha_v1_trained": 1.0087077848546395,
+      "alpha_v1_recorded_trained": 1.0087077848546395,
+      "alpha_v2_trained": {
+        "alpha": null,
+        "CI95": null,
+        "bins": {},
+        "bin_pair_counts": {},
+        "n_bins": 0,
+        "x_range": null,
+        "verdict": "UNRELIABLE_INSUFFICIENT_BINS(0)"
+      },
+      "alpha_v1_random": 0.15508135182753116,
+      "alpha_v1_recorded_random": 0.15508135182753116,
+      "alpha_v2_random": {
+        "alpha": null,
+        "CI95": null,
+        "bins": {},
+        "bin_pair_counts": {},
+        "n_bins": 0,
+        "x_range": null,
+        "verdict": "UNRELIABLE_INSUFFICIENT_BINS(0)"
+      }
+    },
+    "real_350m_iit": {
+      "label": "real 350M IIT remetric",
+      "n_snaps": 31,
+      "n_cells_range": [
+        16,
+        19
+      ],
+      "alpha_v1_recorded": {
+        "proxy_trained": 1.0087077848546395,
+        "proxy_random": 0.15508135182753116,
+        "iit_norm16_trained": 1.579896963411176,
+        "iit_norm16_random": 1.0080789112133077,
+        "iit_unnorm16_trained": 2.640918569699791,
+        "iit_unnorm16_random": 2.0590640355134084
+      },
+      "proxy": {
+        "v1": 1.0087077848546395,
+        "v2": {
+          "alpha": null,
+          "CI95": null,
+          "bins": {},
+          "bin_pair_counts": {},
+          "n_bins": 0,
+          "x_range": null,
+          "verdict": "UNRELIABLE_INSUFFICIENT_BINS(0)"
+        }
+      },
+      "iit_norm_b16": {
+        "v1": 1.579896963411176,
+        "v2": {
+          "alpha": null,
+          "CI95": null,
+          "bins": {
+            "22.627416997969522": 0.0009770068860802327
+          },
+          "bin_pair_counts": {
+            "22.627416997969522": 30
+          },
+          "n_bins": 1,
+          "x_range": null,
+          "verdict": "UNRELIABLE_INSUFFICIENT_BINS(1)"
+        }
+      },
+      "iit_unnorm_b16": {
+        "v1": 2.640918569699791,
+        "v2": {
+          "alpha": null,
+          "CI95": null,
+          "bins": {
+            "22.627416997969522": 0.028362107428592243
+          },
+          "bin_pair_counts": {
+            "22.627416997969522": 30
+          },
+          "n_bins": 1,
+          "x_range": null,
+          "verdict": "UNRELIABLE_INSUFFICIENT_BINS(1)"
+        }
+      }
+    },
+    "historical_cells_2_64": {
+      "label": "historical synthetic CLM v2 stage 8 Cells 2-64",
+      "n_snaps": 6,
+      "phi_table": [
+        [
+          2,
+          1.5
+        ],
+        [
+          4,
+          3.2
+        ],
+        [
+          8,
+          5.4
+        ],
+        [
+          16,
+          10.6
+        ],
+        [
+          32,
+          15.4
+        ],
+        [
+          64,
+          51.131
+        ]
+      ],
+      "alpha_v1": 0.9494060501466287,
+      "alpha_v1_reported_historical_close_up": 1.07,
+      "alpha_v1_reported_historical_full_table": 0.949,
+      "alpha_v2_default_edges": {
+        "alpha": 0.9912670161238857,
+        "CI95": [
+          0.37196877738695805,
+          1.605406895452417
+        ],
+        "bins": {
+          "2.8284271247461903": 1.7000000000000002,
+          "5.656854249492381": 2.2,
+          "11.313708498984761": 5.199999999999999,
+          "22.627416997969522": 4.800000000000001,
+          "45.254833995939045": 35.731
+        },
+        "bin_pair_counts": {
+          "2.8284271247461903": 1,
+          "5.656854249492381": 1,
+          "11.313708498984761": 1,
+          "22.627416997969522": 1,
+          "45.254833995939045": 1
+        },
+        "n_bins": 5,
+        "x_range": 2.772588722239781,
+        "verdict": "OK"
+      },
+      "alpha_v2_aligned_edges": {
+        "alpha": 1.0414378737020211,
+        "CI95": [
+          0.4693723381060593,
+          1.6054068954524177
+        ],
+        "bins": {
+          "2.449489742783178": 1.7000000000000002,
+          "4.242640687119285": 2.2,
+          "8.48528137423857": 5.199999999999999,
+          "16.97056274847714": 4.800000000000001,
+          "33.94112549695428": 35.731
+        },
+        "bin_pair_counts": {
+          "2.449489742783178": 1,
+          "4.242640687119285": 1,
+          "8.48528137423857": 1,
+          "16.97056274847714": 1,
+          "33.94112549695428": 1
+        },
+        "n_bins": 5,
+        "x_range": 2.6287476860138907,
+        "verdict": "OK"
+      }
+    }
+  },
+  "summary_table": [
+    [
+      "dataset",
+      "α V1",
+      "α V2",
+      "verdict V2",
+      "n_bins",
+      "CI95"
+    ],
+    [
+      "toy 3K",
+      "0.116",
+      "-0.487",
+      "OK",
+      "3",
+      "[-1.248, 1.417]"
+    ],
+    [
+      "  toy 3K @eps=1e-3",
+      "0.116",
+      "—",
+      "UNRELIABLE_INSUFFICIENT_BINS(0)",
+      "0",
+      "n/a"
+    ],
+    [
+      "toy 10K",
+      "0.221",
+      "-0.792",
+      "OK",
+      "3",
+      "[-1.248, 0.346]"
+    ],
+    [
+      "  toy 10K @eps=1e-3",
+      "0.221",
+      "—",
+      "UNRELIABLE_INSUFFICIENT_BINS(0)",
+      "0",
+      "n/a"
+    ],
+    [
+      "real 350M trained (proxy)",
+      "1.009",
+      "—",
+      "UNRELIABLE_INSUFFICIENT_BINS(0)",
+      "0",
+      "n/a"
+    ],
+    [
+      "real 350M random (proxy)",
+      "0.155",
+      "—",
+      "UNRELIABLE_INSUFFICIENT_BINS(0)",
+      "0",
+      "n/a"
+    ],
+    [
+      "real 350M IIT-unnorm (trained)",
+      "2.641",
+      "—",
+      "UNRELIABLE_INSUFFICIENT_BINS(1)",
+      "1",
+      "n/a"
+    ],
+    [
+      "historical Cells 2-64 (default)",
+      "0.949",
+      "0.991",
+      "OK",
+      "5",
+      "[0.372, 1.605]"
+    ],
+    [
+      "historical Cells 2-64 (aligned)",
+      "0.949",
+      "1.041",
+      "OK",
+      "5",
+      "[0.469, 1.605]"
+    ]
+  ]
+}

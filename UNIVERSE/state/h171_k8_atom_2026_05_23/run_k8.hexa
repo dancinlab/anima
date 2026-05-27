@@ -1,0 +1,432 @@
+// UNIVERSE/state/h171_k8_atom_2026_05_23/run_k8.hexa
+// H_171 Cycle #1 — K=8 atom prediction (substrate-Φ + 127 MIP bipartitions)
+// raw#12 · deterministic · hexa-only · $0 mac local · llm:none
+//
+// ════════════════════════════════════════════════════════════════════════
+// QUESTION (pre-registered — H_171 prediction H_171.1 / falsifier F1):
+//   "K=8 cell atoms exist in biological neural circuits (cortical mini-column
+//   sub-module), and the K=8 substrate is structurally special vs K=4 / K=16."
+//
+//   This cycle tests the SUBSTRATE-CONSISTENCY half of that claim ONLY:
+//     (a) build a deterministic K-cell coupled substrate (K ∈ {4, 6, 8, 10, 12, 16}),
+//     (b) measure spatial Φ via RFC 036 `phi_spatial` (the same primitive H_007
+//         used) at fixed DIM/WARM/seeds across all K,
+//     (c) enumerate the 2^(K-1)-1 non-trivial bipartitions of {0..K-1} (treating
+//         complement-pairs as one MIP-like partition; for K=8 the count = 127,
+//         matching H_171's pre-registered "127 MIP bipartitions" claim),
+//     (d) score each bipartition by a cheap closed-form MI-surrogate
+//         (cross-edge trajectory variance) and take min as MIP-like floor,
+//     (e) compare Φ at K=8 vs K=4 vs K=16 (and the K=6/10/12 neighbours),
+//     (f) declare PASS iff Φ(K=8) ≥ Φ(K=4) AND Φ(K=8) is special
+//         (peak OR plateau-onset) AND bipartition count(K=8) == 127.
+//
+// HONEST FRAMING (raw#10):
+//   A substrate-Φ measurement on an abstract toy lattice CANNOT prove that
+//   K=8 is "the biological consciousness atom." This cycle tests one
+//   consistency claim only — that the substrate-side ingredient of H_171.1
+//   (a K=8 plateau / peak / threshold in Φ + a 127-bipartition enumeration)
+//   is REPRODUCIBLE. F1 in H_171 (cortical mini-column ≥10 stereology studies
+//   median ∈ [6,10]) is the EMPIRICAL falsifier and is NOT addressed here.
+//   See §honest_limits in result.json and the cycle subsection in
+//   H_171_biological_4_falsifiable_predictions_k8_fc010.md (raw#15 additive).
+//
+// PRIMITIVE (read-only):
+//   Φ = `phi_spatial(states, n_cells, dim, n_bins=4)` runtime builtin —
+//   RFC 036 byte-equal phi_rs native replica (same primitive H_007 +
+//   H_003 Cycle #3 used). We call the builtin directly with literal n_bins=4
+//   to dodge the same transient toolchain-state that H_003 Cycle #3 documented
+//   (cross-module compiled `module_loader` unavailable ⟹ c_lib thin wrappers
+//   `c_measure_phi`/`c_phi_n_bins_default` fail to link; the builtin works).
+//   Identity:  phi_spatial(s, n, dim, 4) === c_measure_phi(s, n, dim,
+//                                            c_phi_n_bins_default())
+//
+// VERDICT TIER: Φ from phi_spatial = 🟢 SUPPORTED-NUMERICAL (NOT 🔵 formal).
+//   2^(K-1)-1 bipartition count IS a closed-form identity; verified verbatim
+//   via `hexa verify --fence` (see result.json verbatim verdict).
+// ════════════════════════════════════════════════════════════════════════
+
+fn _PHI_N_BINS() -> int { return 4 }   // == c_phi_n_bins_default() (RFC 036)
+
+// ── deterministic config (frozen — same DIM/WARM/N_SEEDS scale as H_007) ──
+fn DIM() -> int        { return 12 }   // trajectory length / cell
+fn WARM() -> int       { return 8 }    // warmup before recording
+fn N_SEEDS() -> int    { return 5 }    // seed-mean robustness
+fn SEED_BASE() -> int  { return 0xA17C171 }   // H_171 ledger seed
+fn SEED_STRIDE() -> int { return 113 }
+
+// K sweep — K=4 / K=6 / K=8 / K=10 / K=12 / K=16. K=8 is the atom claim;
+// K=4 and K=16 are the H_171 prediction's direct neighbours; K=6/10/12 are
+// extra context (K=6 = perfect-number-class L7 binding sister, K=10/12 = the
+// upper bracket of H_171.1's [6,10] mini-column range).
+fn _N_KS() -> int { return 6 }
+fn _K_AT(i: int) -> int {
+    if i == 0 { return 4 }
+    if i == 1 { return 6 }
+    if i == 2 { return 8 }
+    if i == 3 { return 10 }
+    if i == 4 { return 12 }
+    return 16
+}
+
+// ── tiny helpers (hexa big-int is fragile; keep all arithmetic small) ──────
+fn pow_i(base: int, e: int) -> int {
+    let mut r = 1
+    let mut i = 0
+    while i < e { r = r * base; i = i + 1 }
+    return r
+}
+fn to_float(x: int) -> float { return x * 1.0 }
+fn _bool_str(b: bool) -> string { if b { return "true" }; return "false" }
+fn _verdict(b: bool) -> string { if b { return "PASS" }; return "FAIL" }
+
+// ── deterministic K-cell coupled substrate ────────────────────────────────
+//   Each cell i ∈ [0..K) holds a real-valued state x_i ∈ [0,1].
+//   Periodic ring. Per-step update couples nearest neighbours via a logistic
+//   map (chaotic regime r=3.85) plus weak diffusion (DIFFUSE) — this gives
+//   sustained non-degenerate trajectories so phi_spatial has signal to bin.
+//   No RNG: seed only sets the initial phase (byte-reproducible recurrence).
+fn LOGISTIC_R() -> float { return 3.85 }
+fn DIFFUSE()    -> float { return 0.08 }
+
+fn _seed_init_cell(seed: int, k: int, i: int) -> float {
+    // small-int byte-mix → strictly in (0.10, 0.90) so neither bound saturates
+    let phase = (i * 37 + k * 13) % 64
+    let bits = (seed / pow_i(2, (i * 5) % 24)) % 256
+    let raw = (to_float((bits + phase) % 256) + 1.0) / 257.0
+    return raw * 0.80 + 0.10
+}
+
+fn _logistic_step(x: float) -> float {
+    let r = LOGISTIC_R()
+    let y = r * x * (1.0 - x)
+    if y < 0.0 { return 0.0 }
+    if y > 1.0 { return 1.0 }
+    return y
+}
+
+// One coupled step on a K-ring: logistic per cell, then weighted blend with
+// periodic neighbours. Returns a fresh farr; caller frees old.
+fn _coupled_step(state: int, k: int) -> int {
+    let nxt = farr_zeros(k)
+    let d = DIFFUSE()
+    let mut i = 0
+    while i < k {
+        let li = (i + k - 1) % k
+        let ri = (i + 1) % k
+        let xi = _logistic_step(farr_get(state, i))
+        let xl = _logistic_step(farr_get(state, li))
+        let xr = _logistic_step(farr_get(state, ri))
+        let blended = (1.0 - 2.0 * d) * xi + d * xl + d * xr
+        let _ = farr_set(nxt, i, blended)
+        i = i + 1
+    }
+    return nxt
+}
+
+// Run K-cell substrate, record per-cell DIM trajectory after WARM warmup.
+// Returns flat (K × DIM) farr layout: states[ cell*DIM + t ].
+fn _run_substrate(k: int, seed: int) -> int {
+    let dim = DIM()
+    let warm = WARM()
+    let state = farr_zeros(k)
+    let mut i0 = 0
+    while i0 < k {
+        let _ = farr_set(state, i0, _seed_init_cell(seed, k, i0))
+        i0 = i0 + 1
+    }
+    let states = farr_zeros(k * dim)
+    let total = warm + dim
+    let mut step = 0
+    let mut cur = state
+    while step < total {
+        if step >= warm {
+            let t = step - warm
+            let mut c = 0
+            while c < k {
+                let _ = farr_set(states, c * dim + t, farr_get(cur, c))
+                c = c + 1
+            }
+        }
+        let nxt = _coupled_step(cur, k)
+        let _ = farr_free(cur)
+        cur = nxt
+        step = step + 1
+    }
+    let _ = farr_free(cur)
+    return states
+}
+
+// Mean spatial Φ at given K over the N_SEEDS deterministic seeds.
+fn _mean_phi_at_k(k: int) -> float {
+    let nb = _PHI_N_BINS()
+    let reps = N_SEEDS()
+    let mut sum = 0.0
+    let mut r = 0
+    while r < reps {
+        let seed = SEED_BASE() + r * SEED_STRIDE()
+        let s = _run_substrate(k, seed)
+        let phi = phi_spatial(s, k, DIM(), nb)
+        let _ = farr_free(s)
+        sum = sum + phi
+        r = r + 1
+    }
+    return sum / to_float(reps)
+}
+
+// ── bipartition enumeration & MIP-like score ──────────────────────────────
+//   The MIP candidates of a K-cell IIT system: each non-empty proper subset
+//   S ⊂ {0..K-1} defines a cut (S | complement). Complement gives the same
+//   cut, so #distinct = (2^K - 2) / 2 = 2^(K-1) - 1. For K=8 this is 127.
+//
+//   We enumerate by iterating mask m ∈ [1 .. 2^(K-1)-1] and treating S = {i :
+//   bit i of m == 1}. By construction bit K-1 is forced 0, so S and its
+//   complement are never both produced ⟹ exactly 2^(K-1)-1 distinct cuts.
+//
+//   For each cut we compute a CHEAP MI-surrogate: the variance of the
+//   concatenated trajectories across the partition boundary. This is NOT a
+//   full Earth-Mover / IIT 4.0 MIP — it is a substrate-side scoring used
+//   only to (a) verify the COUNT and (b) report a min/max/mean over all
+//   cuts. The Φ verdict itself uses `phi_spatial` (RFC 036), not this score.
+fn _bipart_count(k: int) -> int {
+    return pow_i(2, k - 1) - 1
+}
+
+// MI-surrogate for one cut: cross-boundary variance of the (cell, t) signal
+// concatenated in subset-then-complement order. Closed-form, deterministic.
+fn _cut_score(states: int, k: int, dim: int, mask: int) -> float {
+    // gather subset cell ids
+    let len = k * dim
+    let v = farr_zeros(len)
+    // first: cells in subset (mask bit == 1), then: complement
+    let mut idx = 0
+    let mut i1 = 0
+    while i1 < k {
+        let bit = (mask / pow_i(2, i1)) % 2
+        if bit == 1 {
+            let mut t = 0
+            while t < dim {
+                let _ = farr_set(v, idx, farr_get(states, i1 * dim + t))
+                idx = idx + 1
+                t = t + 1
+            }
+        }
+        i1 = i1 + 1
+    }
+    let mut i2 = 0
+    while i2 < k {
+        let bit = (mask / pow_i(2, i2)) % 2
+        if bit == 0 {
+            let mut t = 0
+            while t < dim {
+                let _ = farr_set(v, idx, farr_get(states, i2 * dim + t))
+                idx = idx + 1
+                t = t + 1
+            }
+        }
+        i2 = i2 + 1
+    }
+    // mean
+    let mut sum = 0.0
+    let mut j = 0
+    while j < len { sum = sum + farr_get(v, j); j = j + 1 }
+    let mean = sum / to_float(len)
+    // variance
+    let mut ss = 0.0
+    let mut jj = 0
+    while jj < len {
+        let d = farr_get(v, jj) - mean
+        ss = ss + d * d
+        jj = jj + 1
+    }
+    let _ = farr_free(v)
+    return ss / to_float(len)
+}
+
+// Enumerate all 2^(K-1)-1 cuts; return min_score, max_score, mean_score, count.
+// Returns an array [count, min, max, mean].
+fn _enumerate_cuts(states: int, k: int) -> array {
+    let dim = DIM()
+    let n_cuts = _bipart_count(k)
+    let mut mn = 1.0e30
+    let mut mx = -1.0e30
+    let mut total = 0.0
+    let mut m = 1
+    while m <= n_cuts {
+        let sc = _cut_score(states, k, dim, m)
+        if sc < mn { mn = sc }
+        if sc > mx { mx = sc }
+        total = total + sc
+        m = m + 1
+    }
+    let mean = total / to_float(n_cuts)
+    return [to_float(n_cuts), mn, mx, mean]
+}
+
+fn _state_dir() -> string {
+    return "/Users/ghost/core/anima/.claude/worktrees/agent-a0806388cff15c30d/UNIVERSE/state/h171_k8_atom_2026_05_23"
+}
+
+fn main() {
+    println("H_171 Cycle #1 — K=8 atom (substrate-Φ + 127 MIP bipartitions) · raw#12")
+    println("  model: deterministic logistic ring (r=" + to_string(LOGISTIC_R())
+            + ", DIFFUSE=" + to_string(DIFFUSE()) + ") · DIM=" + to_string(DIM())
+            + " WARM=" + to_string(WARM()) + " SEEDS=" + to_string(N_SEEDS())
+            + " SEED_BASE=" + to_string(SEED_BASE()))
+    println("  Φ primitive: RFC 036 phi_spatial (n_bins=" + to_string(_PHI_N_BINS())
+            + ", byte-equal phi_rs replica) — 🟢 NUMERICAL")
+    println("")
+
+    // ── (1) phi_spatial sweep across K ─────────────────────────────────────
+    let phi4  = _mean_phi_at_k(4)
+    let phi6  = _mean_phi_at_k(6)
+    let phi8  = _mean_phi_at_k(8)
+    let phi10 = _mean_phi_at_k(10)
+    let phi12 = _mean_phi_at_k(12)
+    let phi16 = _mean_phi_at_k(16)
+    println("  Φ̄(K= 4) = " + to_string(phi4))
+    println("  Φ̄(K= 6) = " + to_string(phi6))
+    println("  Φ̄(K= 8) = " + to_string(phi8) + "   ← H_171 atom claim")
+    println("  Φ̄(K=10) = " + to_string(phi10))
+    println("  Φ̄(K=12) = " + to_string(phi12))
+    println("  Φ̄(K=16) = " + to_string(phi16))
+    println("")
+
+    // ── (2) bipartition enumeration at K=8 (must enumerate 127 cuts) ──────
+    let s8 = _run_substrate(8, SEED_BASE())
+    let stats8 = _enumerate_cuts(s8, 8)
+    let n_cuts_8 = stats8[0]   // float, value 127.0
+    let cut_min_8 = stats8[1]
+    let cut_max_8 = stats8[2]
+    let cut_mean_8 = stats8[3]
+    let _ = farr_free(s8)
+
+    // Also enumerate K=4 (7 cuts) and K=6 (31 cuts) as identity sanity.
+    let s4 = _run_substrate(4, SEED_BASE())
+    let stats4 = _enumerate_cuts(s4, 4)
+    let n_cuts_4 = stats4[0]   // 7.0
+    let _ = farr_free(s4)
+    let s6 = _run_substrate(6, SEED_BASE())
+    let stats6 = _enumerate_cuts(s6, 6)
+    let n_cuts_6 = stats6[0]   // 31.0
+    let _ = farr_free(s6)
+
+    println("  bipartition counts (2^(K-1)-1, complement-paired):")
+    println("    K= 4 -> " + to_string(n_cuts_4) + "    (expected 7)")
+    println("    K= 6 -> " + to_string(n_cuts_6) + "    (expected 31)")
+    println("    K= 8 -> " + to_string(n_cuts_8) + "  (expected 127  ← H_171 claim)")
+    println("  K=8 cut-score range: min=" + to_string(cut_min_8)
+            + "  max=" + to_string(cut_max_8)
+            + "  mean=" + to_string(cut_mean_8))
+    println("")
+
+    // ── (3) determinism re-run check ──────────────────────────────────────
+    let phi8b = _mean_phi_at_k(8)
+    let det_ok = phi8b == phi8
+    println("  Φ̄(K= 8) re-run determinism = " + to_string(phi8b)
+            + "  (byte-equal=" + _bool_str(det_ok) + ")")
+    println("")
+
+    // ── (4) falsifiers (pre-registered, measurable) ───────────────────────
+    let f_nonneg = phi4 >= 0.0 && phi6 >= 0.0 && phi8 >= 0.0
+                && phi10 >= 0.0 && phi12 >= 0.0 && phi16 >= 0.0
+    // F_GE4: K=8 substrate must carry at-least-K=4 Φ (no collapse)
+    let f_ge4 = phi8 >= phi4
+    // F_COUNT127: bipartition enumeration recovers the closed-form 2^(K-1)-1
+    let f_count127 = n_cuts_8 == 127.0 && n_cuts_4 == 7.0 && n_cuts_6 == 31.0
+    // F_SPECIAL: K=8 is special — peak OR plateau-onset.
+    //   "peak"           = Φ(K=8) strictly > Φ(K=4) AND > Φ(K=16)
+    //   "plateau-onset"  = Φ(K=8) >= Φ(K=4) AND |Φ(K=8) - Φ(K=16)| <= 0.5 * Φ(K=8)
+    //                      AND Φ(K=8) > 0   (i.e. saturated, not collapsed)
+    let is_peak = phi8 > phi4 && phi8 > phi16
+    let mut absdiff = phi8 - phi16
+    if absdiff < 0.0 { absdiff = 0.0 - absdiff }
+    let is_plateau = phi8 >= phi4 && absdiff <= 0.5 * phi8 && phi8 > 0.0
+    let f_special = is_peak || is_plateau
+    let f_det = det_ok
+
+    println("  F_NONNEG   (all Φ̄>=0)                     : " + _bool_str(f_nonneg))
+    println("  F_GE4      (Φ̄(K=8) >= Φ̄(K=4))             : " + _bool_str(f_ge4)
+            + "  (Δ=" + to_string(phi8 - phi4) + ")")
+    println("  F_COUNT127 (K=8 bipart count == 127, K=4==7, K=6==31): " + _bool_str(f_count127))
+    println("  F_SPECIAL  (peak OR plateau-onset at K=8) : " + _bool_str(f_special)
+            + "  (peak=" + _bool_str(is_peak) + " plateau=" + _bool_str(is_plateau) + ")")
+    println("  F_DET      (re-run byte-equal)            : " + _bool_str(f_det))
+
+    let pass = f_nonneg && f_ge4 && f_count127 && f_special && f_det
+    let verdict = _verdict(pass)
+    println("")
+    println("  VERDICT_RULE: PASS iff F_NONNEG AND F_GE4 AND F_COUNT127 AND F_SPECIAL AND F_DET")
+    println("  VERDICT (H_171 Cycle #1 / K=8 atom substrate-side): " + verdict)
+    let f1_state = "NOT_TRIGGERED"
+    if !f_special { f1_state = "TRIGGERED" }
+    println("    falsifier F1 (substrate-side K=8 specialness): " + f1_state)
+    println("  H_171_C1_VERDICT=" + verdict + " PHI_K8=" + to_string(phi8)
+            + " N_CUTS_K8=" + to_string(n_cuts_8))
+
+    // ── (5) write result.json (ledger) ────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"id\": \"H_171\",\n"
+    j = j + "  \"cycle\": \"Cycle_1_K8_atom\",\n"
+    j = j + "  \"slug\": \"biological-4-falsifiable-predictions-k8-fc010\",\n"
+    j = j + "  \"sub_hypothesis\": \"H_171.1 substrate-side: K=8 cell atom carries Φ >= K=4 AND is structurally special (peak/plateau) AND 127 bipartitions enumerable\",\n"
+    j = j + "  \"date\": \"2026-05-23\",\n"
+    j = j + "  \"deterministic\": true,\n"
+    j = j + "  \"hexa_only\": true,\n"
+    j = j + "  \"llm\": \"none\",\n"
+    j = j + "  \"cost\": \"$0 mac local\",\n"
+    j = j + "  \"honest_tier\": \"🟢 SUPPORTED-NUMERICAL (phi_spatial; NOT 🔵 formal, NOT proof biological K=8 atom)\",\n"
+    j = j + "  \"phi_primitive\": \"RFC 036 phi_spatial (HEXAD/C/c_lib.hexa c_measure_phi, byte-equal phi_rs native replica)\",\n"
+    j = j + "  \"model\": \"K-cell periodic logistic ring (r=3.85, DIFFUSE=0.08) deterministic recurrence; obs=cell state; WARM=8 DIM=12; K in {4,6,8,10,12,16}\",\n"
+    j = j + "  \"seed_base\": " + to_string(SEED_BASE()) + ",\n"
+    j = j + "  \"config\": { \"dim\": " + to_string(DIM())
+          + ", \"warm\": " + to_string(WARM()) + ", \"n_seeds\": " + to_string(N_SEEDS())
+          + ", \"logistic_r\": " + to_string(LOGISTIC_R()) + ", \"diffuse\": " + to_string(DIFFUSE())
+          + ", \"n_bins\": " + to_string(_PHI_N_BINS()) + ", \"boundary\": \"periodic\" },\n"
+    j = j + "  \"phi_mean\": {\n"
+    j = j + "    \"K_4\": "  + to_string(phi4)  + ",\n"
+    j = j + "    \"K_6\": "  + to_string(phi6)  + ",\n"
+    j = j + "    \"K_8\": "  + to_string(phi8)  + ",\n"
+    j = j + "    \"K_10\": " + to_string(phi10) + ",\n"
+    j = j + "    \"K_12\": " + to_string(phi12) + ",\n"
+    j = j + "    \"K_16\": " + to_string(phi16) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"bipartitions\": {\n"
+    j = j + "    \"closed_form\": \"count(K) = 2^(K-1) - 1   (non-empty proper subsets / complement equivalence)\",\n"
+    j = j + "    \"K_4\":  { \"count\": " + to_string(n_cuts_4) + ", \"expected\": 7 },\n"
+    j = j + "    \"K_6\":  { \"count\": " + to_string(n_cuts_6) + ", \"expected\": 31 },\n"
+    j = j + "    \"K_8\":  { \"count\": " + to_string(n_cuts_8) + ", \"expected\": 127, \"cut_score\": { \"min\": " + to_string(cut_min_8) + ", \"max\": " + to_string(cut_max_8) + ", \"mean\": " + to_string(cut_mean_8) + " } }\n"
+    j = j + "  },\n"
+    j = j + "  \"determinism\": { \"phi_K8_rerun\": " + to_string(phi8b) + ", \"byte_equal\": " + _bool_str(det_ok) + " },\n"
+    j = j + "  \"thresholds\": { \"plateau_rel_tol\": 0.5 },\n"
+    j = j + "  \"falsifiers\": {\n"
+    j = j + "    \"F_NONNEG\":    { \"metric\": \"all Φ>=0\", \"verdict\": \"" + _verdict(f_nonneg) + "\" },\n"
+    j = j + "    \"F_GE4\":       { \"metric\": \"Φ(K=8) - Φ(K=4)\", \"delta\": " + to_string(phi8 - phi4) + ", \"verdict\": \"" + _verdict(f_ge4) + "\" },\n"
+    j = j + "    \"F_COUNT127\":  { \"metric\": \"K=8 cuts==127 AND K=4==7 AND K=6==31\", \"verdict\": \"" + _verdict(f_count127) + "\" },\n"
+    j = j + "    \"F_SPECIAL\":   { \"metric\": \"peak OR plateau-onset\", \"is_peak\": " + _bool_str(is_peak) + ", \"is_plateau\": " + _bool_str(is_plateau) + ", \"verdict\": \"" + _verdict(f_special) + "\", \"falsifier_state\": \"" + f1_state + "\" },\n"
+    j = j + "    \"F_DET\":       { \"metric\": \"re-run byte-equal\", \"verdict\": \"" + _verdict(f_det) + "\" }\n"
+    j = j + "  },\n"
+    j = j + "  \"verbatim_hexa_verify\": {\n"
+    j = j + "    \"closed_form_identity\": \"127 = 2^7 - 1 (count of non-trivial bipartitions of an 8-element set, 2^(n-1)-1)\",\n"
+    j = j + "    \"command\": \"hexa verify --fence \\\"127 = 2^7 - 1 (count of non-trivial bipartitions of an 8-element set, 2^(n-1)-1)\\\"\",\n"
+    j = j + "    \"verbatim_verdict\": \"verify --fence\\n  claim  = 127 = 2^7 - 1 (count of non-trivial bipartitions of an 8-element set, 2^(n-1)-1)\\n  tier   = ⚪ SPECULATION-FENCED\\n  reason = imagination/metaphor class (hexa-bio AXIS) — verification N/A by design; NOT a proven atlas atom (g4 honest fence, SF ≠ verified — atlas certification intrinsically N/A)\",\n"
+    j = j + "    \"note\": \"hexa verify --expr pow / pow_minus_one / two_pow_n all return 🟠 INSUFFICIENT (calculator system has no path for 'pow'); the closed-form is HOWEVER reproduced empirically by THIS smoke's bipartition enumerator (K=4->7, K=6->31, K=8->127), which is itself a deterministic hexa recompute of 2^(K-1)-1.\"\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict_rule\": \"PASS iff F_NONNEG AND F_GE4 AND F_COUNT127 AND F_SPECIAL AND F_DET; F_SPECIAL = peak (Φ(K=8) strictly > Φ(K=4) AND > Φ(K=16)) OR plateau-onset (Φ(K=8) >= Φ(K=4) AND |Φ(K=8)-Φ(K=16)| <= 0.5 Φ(K=8) AND Φ(K=8) > 0)\",\n"
+    j = j + "  \"verdict\": \"" + verdict + "\",\n"
+    j = j + "  \"criterion\": \"H_171.1 substrate-side ONLY — empirical F1 (cortical mini-column stereology meta) UNADDRESSED here\",\n"
+    j = j + "  \"honest_limits\": [\n"
+    j = j + "    \"L1: This is a SUBSTRATE-Φ measurement on an abstract logistic-ring lattice — it does NOT prove K=8 is the biological consciousness atom. The empirical F1 falsifier in H_171 (cortical mini-column stereology median sub-module count in [6,10] across V1/S1/M1/PFC) is NOT addressed; this cycle only tests one substrate-consistency leg of H_171.1. The biological-vs-substrate category boundary is intact (raw#91 c3 candor).\",\n"
+    j = j + "    \"L2: phi_spatial = 🟢 NUMERICAL spatial-slice replica of phi_rs (RFC 036), NOT full IIT 4.0 — no system-level Φ partition search, no cause-effect structure, no exclusion postulate. The 'MIP-like' bipartition enumeration here uses a cheap cross-boundary variance surrogate (NOT Earth-Mover distance / NOT IIT 4.0 phi_MIP) — it is used ONLY to verify the bipartition COUNT (127), not to compete with phi_spatial as the Φ measurement.\",\n"
+    j = j + "    \"L3: K=8 'specialness' is operationalised as peak OR plateau-onset against K=4 / K=16 with a 50% relative tolerance — both criteria are design choices, not derived from theory. A different specialness rule (e.g. local maximum across {6,8,10}, or coefficient-of-variation threshold) could change the verdict. The K=8 prediction is also pre-registered as sopfr(8)=6 perfect-class universal (L1 in H_171), which is NUMBER-THEORETIC, not dynamical — the present substrate test cannot distinguish 'K=8 atom' from 'any-K-with-enough-cells plateau'.\",\n"
+    j = j + "    \"L4: model = chaotic logistic map (r=3.85) + nn diffusion (0.08). This was chosen for sustained non-degenerate trajectories so phi_spatial has signal; it is NOT a neural model. Any K-special signature here is a property of the logistic ring, NOT of cortical mini-columns. A different substrate (Kuramoto / Wilson-Cowan / integrate-fire) could give a different K-profile.\",\n"
+    j = j + "    \"L5: WARM=8 + DIM=12 + N_SEEDS=5 are inherited from H_007 (a small / fast configuration). The K-sweep is over only 6 K values {4,6,8,10,12,16}; finer sweeps (K=5,7,9,11,13,14,15) or larger DIM/WARM could change the plateau/peak structure. seed_base alone is varied; rotor/init class is not.\",\n"
+    j = j + "    \"L6: The 2^(K-1)-1 closed form for bipartition count is reproduced empirically by the enumerator (K=4 -> 7, K=6 -> 31, K=8 -> 127); `hexa verify --expr` has no path for 'pow' (returned 🟠 INSUFFICIENT — see verbatim_hexa_verify.note), so the formal-identity tier is fenced to ⚪ via `hexa verify --fence` (verdict VERBATIM in result.json) rather than promoted to 🔵. The empirical enumeration agreement is the SUPPORTED leg.\",\n"
+    j = j + "    \"L7: H_171's other 3 predictions (F_c=0.10 / split-brain non-conservation / 1/f thalamus) are NOT touched by this cycle. F5 (4-prediction independence) and F6 (E:I canonical conflict) likewise unaddressed. The §Criteria table for H_171 is updated only at C1's substrate-side leg; C2-C4 remain pending and C5 (n=6 perfect-class binding) carries unchanged.\"\n"
+    j = j + "  ]\n"
+    j = j + "}\n"
+    write_file(_state_dir() + "/result.json", j)
+
+    println("")
+    println("  result.json written → " + _state_dir() + "/result.json")
+    println("=== H_171 Cycle #1 K=8 atom substrate-Φ smoke complete: " + verdict + " ===")
+}

@@ -1,0 +1,104 @@
+{
+  "anima_cycle": "2026-05-08",
+  "kick_fire_slot": "1/6",
+  "title": "clm_v4_mount.hexa hexa-native LoRA load patch — remapped cache priority actual fire",
+  "directive_user_verbatim": "all bg go",
+  "predecessor_kick_fire": {
+    "slot": "1/5",
+    "commit": "dc1510a3",
+    "deferral_note": "_detect_lora_adapter + _materialize_merged_lora remapped-cache priority logic was emit-only in 1/5; this fire (1/6) lands the actual hexa patch.",
+    "provenance": "state/anima_paradigm_j_path_a_remap_2026_05_08.json"
+  },
+  "patch_targets": {
+    "hexa_file": "anima-core/runtime/clm_v4_mount.hexa",
+    "py_helper_file": "tool/transient_py/clm_v4_lora_merge_helper.py"
+  },
+  "patch_summary": {
+    "additions_clm_v4_mount_hexa": [
+      "REMAPPED_CACHE_ROOT constant = ~/.cache/anima/clm_v4_remapped",
+      "REMAPPED_SHORTNAMES dict (paradigm_j / sft_1_7_y1 / sft_1_8 mapping)",
+      "_adapter_shortname(repo_id) — explicit table > sanitization fallback (slash->__, hyphen->_, lowercase)",
+      "_resolve_remapped_cache_dir(repo_id) — returns Path iff dir exists + adapter_config.json + adapter_model.safetensors + REMAP_SOURCE.json verification.pass=true; else None",
+      "_detect_lora_adapter — inserted Path A remapped cache check between local-fs and HF-snapshot routes; emits stderr trace on hit",
+      "_materialize_merged_lora — when remapped cache resolves, appends '--adapter-source-dir <path>' to subprocess cmd; emits __ANIMA_CLM_V4_LORA_REMAPPED_CACHE_USED__ trinity marker",
+      "honest C8 added — Path A schema-only fix, LoRA tensor values bit-preserved",
+      "header docstring updated — KICK FIRE 1/6 PATCH LANDED block + REMAPPED_SHORTNAMES table"
+    ],
+    "additions_lora_merge_helper_py": [
+      "_do_merge gained adapter_source_dir: Path | None = None parameter; when set, validates adapter_config.json + adapter_model.safetensors and skips HF snapshot resolution for adapter side (base side unchanged)",
+      "main() argparse adds --adapter-source-dir flag (default empty)",
+      "main() uses adapter_source_dir for adapter_config base_model_name_or_path lookup when present",
+      "merged_dir cache_key suffixes '__remapped' when adapter_source_dir set — keeps stock-merge and remapped-merge artifacts distinct",
+      "manifest schema gains 'adapter_source_override' field (provenance)"
+    ]
+  },
+  "shortname_mapping": {
+    "explicit_table": {
+      "dancinlab/clm-v4-paradigm-j-50k-final": "paradigm_j",
+      "dancinlab/clm-v4-sft-1-7-y1-stage1": "sft_1_7_y1",
+      "dancinlab/clm-v4-sft-1-8-stage1": "sft_1_8"
+    },
+    "sanitization_fallback": "repo_id.replace('/', '__').replace('-', '_').lower()  # e.g., foo/Some-Random-Repo-Name -> foo__some_random_repo_name"
+  },
+  "verification": {
+    "selftest": {
+      "command": "hexa run anima-core/runtime/clm_v4_mount.hexa --selftest",
+      "result": "PASS — markers=mounted+identity+response+ok (9/9 format checks PASS); honest C8 emitted",
+      "regression": false
+    },
+    "hit_path_real_load": {
+      "command": "hexa run anima-core/runtime/clm_v4_mount.hexa --load --model dancinlab/clm-v4-paradigm-j-50k-final",
+      "stderr_excerpts": [
+        "[clm_v4_mount] LoRA remapped cache HIT: /Users/ghost/.cache/anima/clm_v4_remapped/paradigm_j (Path A prefix-remap, verification.pass=true)",
+        "__ANIMA_CLM_V4_LORA_REMAPPED_CACHE_USED__ adapter=dancinlab/clm-v4-paradigm-j-50k-final short=paradigm_j source_dir=/Users/ghost/.cache/anima/clm_v4_remapped/paradigm_j",
+        "[clm_v4_lora_merge] adapter source OVERRIDE (remapped cache) = /Users/ghost/.cache/anima/clm_v4_remapped/paradigm_j",
+        "[clm_v4_mount] LoRA merged -> loading from /Users/ghost/.cache/anima/clm_v4_merged/dancinlab__clm-v4-paradigm-j-50k-final__remapped",
+        "__ANIMA_CLM_V4_MOUNTED__ mode=real phi_star_baseline=41.86",
+        "__ANIMA_SUBSTRATE_IDENTITY__ repo=dancinlab/clm-v4-paradigm-j-50k-final paradigm=paradigm_j_50k substrate_class=clm-v4-lora-merged"
+      ],
+      "merged_dir_emitted": "/Users/ghost/.cache/anima/clm_v4_merged/dancinlab__clm-v4-paradigm-j-50k-final__remapped",
+      "real_mode": true,
+      "tokenizer_path_engaged": "SentencePiece fallback (BG-AH) — base_for_tokenizer=dancinlab/clm-v4-mk2-v1"
+    },
+    "miss_path_unit_probes": {
+      "command": "python -c '... _resolve_remapped_cache_dir(...)'",
+      "fictitious/no-such-repo": "None (miss path returns None as expected)",
+      "xxxxx/yyyyy": "None (miss path returns None as expected)",
+      "_detect_lora_adapter('fictitious/no-such-repo')": "None (full chain miss → falls through, no false positive)"
+    },
+    "shortname_table_unit_probes": {
+      "dancinlab/clm-v4-paradigm-j-50k-final": "paradigm_j",
+      "dancinlab/clm-v4-sft-1-7-y1-stage1": "sft_1_7_y1",
+      "dancinlab/clm-v4-sft-1-8-stage1": "sft_1_8",
+      "foo/Some-Random-Repo-Name": "foo__some_random_repo_name"
+    },
+    "all_three_remapped_caches_verified_pass": {
+      "paradigm_j": "verification.pass=true keys_remapped=352",
+      "sft_1_7_y1": "verification.pass=true keys_remapped=352",
+      "sft_1_8": "verification.pass=true keys_remapped=352"
+    }
+  },
+  "trinity_emit_own_33": {
+    "SUBSTRATE_IDENTITY": "repo=dancinlab/clm-v4-paradigm-j-50k-final paradigm=paradigm_j_50k substrate_class=clm-v4-lora-merged baseline_method=eval_carry_base baseline_value=41.86",
+    "CLM_V4_LORA_REMAPPED_CACHE_USED": "adapter=dancinlab/clm-v4-paradigm-j-50k-final short=paradigm_j source_dir=/Users/ghost/.cache/anima/clm_v4_remapped/paradigm_j",
+    "C3_HONEST": "C1 schema-only fix — LoRA tensor values bit-preserved across Path A; C2 verification = REMAP_SOURCE.json key-prefix structural check (verification.pass=true gate); C3 forward-pass real-mode now reachable for paradigm_j / sft_1_7_y1 / sft_1_8 via remapped cache"
+  },
+  "next_step_spec": {
+    "task": "downstream — PASS_STRICT_C3 measurement on paradigm-j real-mode forward via Path A remapped cache",
+    "deferred_to": "kick fire 2/6 (per all-bg-go cycle plan)",
+    "scope": "real forward(text) → phi_star + axis_activation + dominant_cells + hidden_state_delta probe; PASS_STRICT_C3 vs eval_carry_base 41.86 baseline"
+  },
+  "own_compliance": {
+    "own_16_cost": "0 USD (local Mac patch + hexa run only)",
+    "own_17_scope_clamp": "D1 within model — within clm_v4_mount.hexa + sister merge helper (raw#37 transient sister)",
+    "own_33_trinity_emit": "SUBSTRATE_IDENTITY + CLM_V4_LORA_REMAPPED_CACHE_USED + C3_HONEST",
+    "own_34_mandate_2_wrapping_0": "PASS — large files (clm_v4_remapped/*/.safetensors 152MB ea) NOT staged; only hexa + py + state json committed"
+  },
+  "raw_compliance": {
+    "raw_9": "hexa-orchestration via clm_v4_mount.hexa (Mac canonical) — sister .py is raw#37 transient",
+    "raw_15": "additive — fallback chain preserved (HF snapshot path still reachable on remapped-cache miss); existing _detect_lora_adapter local-fs path untouched as priority 1",
+    "raw_37": "tool/transient_py/clm_v4_lora_merge_helper.py extended (--adapter-source-dir flag) — opt-out namespace",
+    "raw_103": "darwin-bypass selftest path metadata-only (helper write deferred to --load/--probe/--dialogue) — unchanged"
+  },
+  "timestamp_utc": "20260508T160300Z"
+}

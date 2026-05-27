@@ -1,0 +1,56 @@
+[warmup-real] 17:02:23 start n_steps=1000 batch=4 grad_acc=8 lr=0.0001
+[warmup-real] 17:02:23 lora_r=64 alpha=128 delta_early=0.5 phi_thr=5.0
+[warmup-real] 17:02:23 loss alpha=2.0 beta=0.3 gamma=0.0 (BOLD blocked γ=0)
+[warmup-real] 17:02:24 torch=2.11.0+cu130 cuda=True device=cuda
+[warmup-real] 17:02:24 tokenizer vocab=64000
+[warmup-real] 17:02:26 decoder built params=477,648,512
+[warmup-real] 17:02:27 ckpt loaded 0.62s missing=0 unexpected=0
+[warmup-real] 17:02:27 ckpt meta step=20000 ce=0.04630279541015625 phi=27.90969107736497
+[warmup-real] 17:02:28 peft attached trainable=19,005,440 (3.98% of 477,648,512)
+[warmup-real] 17:02:28 sft subset loaded n=1000
+[warmup-real] 17:02:28 tokenized cache n=1000
+[warmup-real] 17:02:28 calibration tokens shape=(16, 64)
+[warmup-real] 17:02:28 computing baseline phi_star (pre-LoRA-train)...
+[warmup-real] 17:02:29 baseline phi_star_min=45.91520414820293 mean=46.49351962633608 elapsed=0.4s
+[warmup-real] 17:02:29 computing initial F metrics @ step 0...
+[warmup-real] 17:02:29 step 1/1000 loss=35.8633 ce=16.3238 tens=10.7188 phi_hinge=0.0000
+[warmup-real] 17:02:32 step 50/1000 loss=31.8324 ce=15.2922 tens=4.1602 phi_hinge=0.0000
+[warmup-real] 17:02:35 step 100/1000 loss=27.0264 ce=12.7027 tens=5.4034 phi_hinge=0.0000
+[warmup-real] 17:02:35   phi @ step 100: min=47.69619008738461 mean=48.02182111287157
+[warmup-real] 17:02:38 step 150/1000 loss=25.3313 ce=11.1218 tens=10.2926 phi_hinge=0.0000
+[warmup-real] 17:02:41 step 200/1000 loss=21.7885 ce=10.4086 tens=3.2375 phi_hinge=0.0000
+[warmup-real] 17:02:42   phi @ step 200: min=50.32589692258459 mean=50.503209481779734
+[warmup-real] 17:02:44 step 250/1000 loss=23.1692 ce=11.0775 tens=3.3810 phi_hinge=0.0000
+[warmup-real] 17:02:45   F @ step 250: F2_phi=50.3259 F3_tens_mse=1.8854
+[warmup-real] 17:02:48 step 300/1000 loss=22.9912 ce=11.0051 tens=3.2700 phi_hinge=0.0000
+[warmup-real] 17:02:48   phi @ step 300: min=51.095668934627696 mean=51.36816573766775
+[warmup-real] 17:02:51 step 350/1000 loss=22.2442 ce=10.8998 tens=1.4823 phi_hinge=0.0000
+[warmup-real] 17:02:54 step 400/1000 loss=22.8461 ce=10.8157 tens=4.0489 phi_hinge=0.0000
+[warmup-real] 17:02:54   phi @ step 400: min=49.2799879986086 mean=49.62166020258484
+[warmup-real] 17:02:57 step 450/1000 loss=21.5090 ce=10.5401 tens=1.4293 phi_hinge=0.0000
+[warmup-real] 17:03:00 step 500/1000 loss=21.7427 ce=10.5027 tens=2.4573 phi_hinge=0.0000
+[warmup-real] 17:03:00   phi @ step 500: min=49.76002758334218 mean=50.155164525332665
+[warmup-real] 17:03:01   F @ step 500: F2_phi=49.7600 F3_tens_mse=2.0995
+[warmup-real] 17:03:04 step 550/1000 loss=21.6144 ce=10.3823 tens=2.8326 phi_hinge=0.0000
+[warmup-real] 17:03:06 step 600/1000 loss=21.3604 ce=10.4067 tens=1.8229 phi_hinge=0.0000
+[warmup-real] 17:03:07   phi @ step 600: min=50.03003893545757 mean=50.329194801800426
+[warmup-real] 17:03:10 step 650/1000 loss=21.0925 ce=10.2684 tens=1.8525 phi_hinge=0.0000
+[warmup-real] 17:03:12 step 700/1000 loss=21.0619 ce=10.1988 tens=2.2143 phi_hinge=0.0000
+[warmup-real] 17:03:13   phi @ step 700: min=49.15095317596905 mean=49.40146710733633
+[warmup-real] 17:03:16 step 750/1000 loss=20.6984 ce=10.0502 tens=1.9935 phi_hinge=0.0000
+[warmup-real] 17:03:16   F @ step 750: F2_phi=49.1510 F3_tens_mse=1.9542
+[warmup-real] 17:03:19 step 800/1000 loss=20.5019 ce=10.2048 tens=0.3079 phi_hinge=0.0000
+[warmup-real] 17:03:19   phi @ step 800: min=46.736784385049624 mean=47.3116806058492
+[warmup-real] 17:03:22 step 850/1000 loss=21.7557 ce=10.1694 tens=4.7234 phi_hinge=0.0000
+[warmup-real] 17:03:25 step 900/1000 loss=19.9834 ce=9.7812 tens=1.4031 phi_hinge=0.0000
+[warmup-real] 17:03:25   phi @ step 900: min=47.522107114973274 mean=47.94773901307049
+[warmup-real] 17:03:28 step 950/1000 loss=20.0122 ce=9.6814 tens=2.1646 phi_hinge=0.0000
+[warmup-real] 17:03:31 step 1000/1000 loss=19.9014 ce=9.8455 tens=0.7012 phi_hinge=0.0000
+[warmup-real] 17:03:31   phi @ step 1000: min=46.82755007908948 mean=47.24050212104497
+[warmup-real] 17:03:32   F @ step 1000: F2_phi=46.8276 F3_tens_mse=1.9487
+[warmup-real] 17:03:32 train done elapsed=62.5s steps_completed=1000 aborted=False
+[warmup-real] 17:03:32 computing final phi_star...
+[warmup-real] 17:03:32 final phi_star_min=46.82755007908948 mean=47.24050212104497
+[warmup-real] 17:03:32 WROTE trajectory=/tmp/p9_p0_warmup_live_out/trajectory.json verdict=/tmp/p9_p0_warmup_live_out/verdict.json
+[warmup-real] 17:03:32 VERDICT=CLEAN_PHI_MED_VAR phase1_ready=True
+[warmup-real] 17:03:32 DONE

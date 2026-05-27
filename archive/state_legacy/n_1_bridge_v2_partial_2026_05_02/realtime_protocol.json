@@ -1,0 +1,113 @@
+{
+  "schema": "anima/n_1_bridge_v2_realtime_protocol/1",
+  "ts": "2026-05-02T00:00:00Z",
+  "purpose": "Real-time concurrent CLM W4 ↔ EEG mediator-framing measurement protocol — replaces partial cross-day analysis (state/n_1_bridge_v2_partial_2026_05_02/verdict.json F-ARTIFACT) with statistically powered N=180+ concurrent samples",
+  "budget_usd": 0,
+  "eta_hours": "2-3 (30min recording + 30min analysis + 30min cleanup/buffer)",
+
+  "hardware": {
+    "eeg": {
+      "device": "OpenBCI Cyton + Daisy 16ch",
+      "owner": "user (mk55992@proton.me)",
+      "sample_rate_hz": 125,
+      "electrode_montage": "10-20 standard 16ch (Fp1, Fp2, F3, F4, C3, C4, P3, P4, O1, O2, F7, F8, T3, T4, T5, T6)",
+      "alpha_rich_channels_priority": ["P3", "P4", "O1", "O2"],
+      "impedance_ledger_required": "yes — log to state/anima_eeg_impedance_ledger.jsonl pre-/post-session"
+    },
+    "clm_compute": {
+      "host": "ubu1 (RTX 5070 12GB) OR user mac",
+      "tool": "tool/edu_l_ix_kuramoto_driver.hexa OR W4 closed-loop ledger driver",
+      "live_output": "state/edu_l_ix_kuramoto.json + state/strategic_clm_tension_field_W4_realtime/closed_loop_ledger_live.json"
+    },
+    "sync": {
+      "method": "Lab Streaming Layer (LSL) outlets on both EEG and CLM driver",
+      "lsl_clock_drift_tolerance_ms": 10,
+      "ground_truth_marker": "user-pressed keyboard event (LSL marker stream) at each phase boundary"
+    }
+  },
+
+  "session_design": {
+    "total_duration_min": 30,
+    "n_phases": 6,
+    "phase_duration_min": 5,
+    "phases": [
+      {"id": "P1_eyes_open_idle",        "duration_min": 5, "user_action": "sit still, eyes open, gaze at fixation cross",                "predicted_eeg": "low α (8-12Hz) at O1/O2; flat",                                "predicted_clm": "W4 active branch at fixed-point; gate_random ~constant"},
+      {"id": "P2_eyes_closed_resting",   "duration_min": 5, "user_action": "sit still, eyes closed, breathe normally",                     "predicted_eeg": "Berger response: α power 2-5x increase at O1/O2",              "predicted_clm": "no change expected (CLM not coupled to user state)"},
+      {"id": "P3_clm_read_engaged",      "duration_min": 5, "user_action": "eyes open, READ live CLM W4 closed-loop ledger output (terminal tail -f) and verbalize one observation per minute", "predicted_eeg": "frontal β/γ engagement, reduced posterior α", "predicted_clm": "no autonomic coupling expected; gate_random fluctuations driven by W4 stochasticity"},
+      {"id": "P4_mental_arithmetic",     "duration_min": 5, "user_action": "eyes closed, serial-7 subtract from 1000 (cognitive load control)", "predicted_eeg": "frontal θ increase, posterior α suppressed",                "predicted_clm": "control: should show NO correlation (proves CLM-to-EEG link is not just user-aware)"},
+      {"id": "P5_breath_focus",          "duration_min": 5, "user_action": "eyes closed, count breaths 1-10 cyclically (mindfulness control)", "predicted_eeg": "increased α coherence frontoparietal",                       "predicted_clm": "control"},
+      {"id": "P6_idle_recovery",         "duration_min": 5, "user_action": "eyes open, free rest",                                          "predicted_eeg": "return to P1-like baseline",                                  "predicted_clm": "return to P1-like fixed-point"}
+    ]
+  },
+
+  "data_pipeline": {
+    "step_1_record": "OpenBCI GUI or BrainFlow → LSL EEG outlet → record to .npy (16ch × 125Hz × 1800s = 3.6M samples) + LSL marker stream for phase boundaries",
+    "step_2_clm_concurrent": "ubu1: launch tool/edu_l_ix_kuramoto_driver.hexa in continuous-emission mode (1Hz tick) + W4 closed-loop ledger writer with LSL outlet for tension/gate trace",
+    "step_3_filter": "tool/an11_b_eeg_ingest v2_b2b3 — butterworth-4 zero-phase 8-12Hz + Hilbert α-phase per channel; output state/clm_eeg_alpha_phase_realtime_2026_05_XX.json",
+    "step_4_window": "1-second windows (N=1800 per phase × 6 phases = 10800 EEG windows; subsample CLM to 1Hz → 1800 paired samples per phase)",
+    "step_5_align": "LSL clock-sync: align EEG window centers to nearest CLM tick; reject paired samples with sync drift > 10ms",
+    "step_6_analysis": "Re-run Phase 2/3/4 from N-1 v2 partial verdict but with N=180+ paired samples per phase (vs N=5 in partial); compute Pearson per phase, Granger lag-1 to lag-5, TE with surrogate-shuffle null (100 surrogates), permutation p with N>=1000"
+  },
+
+  "pre_registered_decision_rules": {
+    "PASS_threshold": "ANY phase shows |r| > 0.3 with permutation p < 0.01 AND TE > surrogate p99 AND directionality (TE_fwd vs TE_bwd) consistent across >=3 of 6 phases",
+    "PARTIAL_threshold": "1-2 phases show |r| > 0.2 with permutation p < 0.05",
+    "FAIL_threshold": "no phase shows |r| > 0.2 with permutation p < 0.05",
+    "ARTIFACT_check": "shuffle-EEG control must yield |r| < observed |r| with p_shuffle_exceeds < 0.05",
+    "freezing": "thresholds frozen by this protocol document; do not modify after data collection (raw#10 honest C3)"
+  },
+
+  "anti_garden_of_forking_paths": {
+    "specify_in_advance": [
+      "channel selection: P3+P4+O1+O2 alpha-rich avg PLV (frozen)",
+      "alpha band: 8-12Hz (frozen)",
+      "windowing: 1s non-overlapping (frozen)",
+      "primary statistic: Pearson r (frozen)",
+      "secondary: Granger lag-1, TE binary 1-lag (frozen)",
+      "null: 1000 random shuffles within phase (frozen)"
+    ],
+    "do_not_test_post_hoc": [
+      "different channel subsets",
+      "different alpha sub-bands",
+      "different lag depths beyond pre-registered 1-5",
+      "different symbolization for TE"
+    ]
+  },
+
+  "control_conditions": {
+    "shuffle_eeg": "must yield no |r| spike — confirms observed coupling is non-degenerate",
+    "shuffle_clm": "must yield no |r| spike — symmetric check",
+    "phase_label_shuffle": "shuffling phase labels should destroy any phase-specific effect",
+    "common_cause_audio": "metronome at 1Hz throughout; subtract to ensure W4↔EEG coupling is not via user audio entrainment"
+  },
+
+  "estimated_statistical_power": {
+    "N_per_phase": 1800,
+    "N_per_phase_after_sync_drift_rejection": "~1500 (estimated 15% loss)",
+    "min_detectable_r_at_alpha_0.01_power_0.8": 0.066,
+    "vs_partial_N5_min_detectable_r": 0.99,
+    "improvement_factor_in_resolution": "~15x"
+  },
+
+  "deliverables": {
+    "raw_recording_npy": "recordings/sessions/realtime_concurrent_30min_2026_05_XX.npy",
+    "clm_live_ledger": "state/strategic_clm_tension_field_W4_realtime/closed_loop_ledger_live.json",
+    "lsl_marker_stream": "state/lsl_markers_realtime_concurrent_2026_05_XX.json",
+    "alpha_phase_processed": "state/clm_eeg_alpha_phase_realtime_2026_05_XX.json",
+    "verdict": "state/n_1_bridge_v2_realtime_2026_05_XX/verdict.json",
+    "results_doc": "docs/n_1_bridge_v2_realtime_results_2026_05_XX.md"
+  },
+
+  "go_no_go_checklist": [
+    "[ ] OpenBCI Cyton+Daisy charged + electrodes prepped",
+    "[ ] EEG impedance < 10kΩ on all 4 alpha-rich channels (P3/P4/O1/O2)",
+    "[ ] LSL EEG outlet streaming verified",
+    "[ ] LSL CLM outlet streaming verified (ubu1 hexa runtime active)",
+    "[ ] LSL clock sync drift < 10ms confirmed in 60s warmup",
+    "[ ] User in low-EMI room (per Apr-28 D-day relocation lessons)",
+    "[ ] Pre-session impedance ledger logged",
+    "[ ] Phase-script keyboard markers tested (P1-P6 boundaries)",
+    "[ ] Recording disk has >5GB free",
+    "[ ] Pre-registered thresholds frozen in this doc"
+  ]
+}

@@ -1,0 +1,1456 @@
+{
+  "schema": "anima/cp2_r14_local_verifier_results/1",
+  "ts": "2026-05-01T15:29:54Z",
+  "substrate": {
+    "base": "mistralai/Mistral-7B-v0.3",
+    "lora": "r14",
+    "r": 64,
+    "alpha": 128,
+    "md5": "90072b0f5a426eeebb47eeb2d4919d68"
+  },
+  "method": {
+    "h_last_aggregation": "byte_weighted_mean over tokens (uniform weight proxy) — matches prior anima/h_last_raw/2 schema. 256-d truncation prefix.",
+    "axis_basis": "SVD of H (16 prompts × 256 features); top-16 left singular vectors as eigvecs (16-d each).",
+    "phi_template": "16 templates from state/phi_vec_extraction_result.json (sha 11f976e2..., dim 16).",
+    "14_gate": "phi_vec[k] = cosine(h256, tile(phi_template_k, 16x)); same as prior consciousness_14gate_p4_r8."
+  },
+  "AN11_b": {
+    "r14": {
+      "V0": {
+        "max_cosine": 0.7334991745302082,
+        "top3_cosine_sum": 2.137546250928961,
+        "max_pair": {
+          "eigen_i": 9,
+          "template_id": "law_closure",
+          "template_family": "Law",
+          "cosine": 0.7334991745302082
+        },
+        "top3_pairs": [
+          {
+            "eigen_i": 9,
+            "template_id": "law_closure",
+            "template_family": "Law",
+            "cosine": 0.7334991745302082
+          },
+          {
+            "eigen_i": 0,
+            "template_id": "hexad_center",
+            "template_family": "Hexad",
+            "cosine": -0.7191877672774827
+          },
+          {
+            "eigen_i": 15,
+            "template_id": "phi_integration",
+            "template_family": "Phi",
+            "cosine": 0.6848593091212704
+          }
+        ],
+        "verdict": "PASS"
+      },
+      "V1": {
+        "phi_mip": 0.06910569925639919,
+        "PR": 2.036585488845988,
+        "verdict": "FAIL"
+      },
+      "V2": {
+        "SMA": 0.36722120930573005,
+        "SMA_distractor": 0.5174471808292395,
+        "SMA_lift": -0.15022597152350942,
+        "matched_pairs": [
+          [
+            0,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            3,
+            10
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            5,
+            9
+          ]
+        ],
+        "distractor_pairs": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            5,
+            14
+          ]
+        ],
+        "verdict": "FAIL"
+      },
+      "V3": {
+        "delta_preserve": 0.8475141523685656,
+        "delta_destruct": 0.9291803126794567,
+        "CPS": 1.0963596419984927,
+        "verdict": "FAIL"
+      }
+    },
+    "base": {
+      "V0": {
+        "max_cosine": 0.7067747148722278,
+        "top3_cosine_sum": 2.038754229408913,
+        "max_pair": {
+          "eigen_i": 13,
+          "template_id": "law_irreversibility",
+          "template_family": "Law",
+          "cosine": -0.7067747148722278
+        },
+        "top3_pairs": [
+          {
+            "eigen_i": 13,
+            "template_id": "law_irreversibility",
+            "template_family": "Law",
+            "cosine": -0.7067747148722278
+          },
+          {
+            "eigen_i": 0,
+            "template_id": "hexad_center",
+            "template_family": "Hexad",
+            "cosine": -0.692050265754201
+          },
+          {
+            "eigen_i": 12,
+            "template_id": "phi_differentiation",
+            "template_family": "Phi",
+            "cosine": 0.6399292487824843
+          }
+        ],
+        "verdict": "PASS"
+      },
+      "V1": {
+        "phi_mip": 0.016774826331438557,
+        "PR": 1.2516223949715783,
+        "verdict": "FAIL"
+      },
+      "V2": {
+        "SMA": 0.48892212047313977,
+        "SMA_distractor": 0.5701955382314156,
+        "SMA_lift": -0.08127341775827579,
+        "matched_pairs": [
+          [
+            0,
+            6
+          ],
+          [
+            1,
+            7
+          ],
+          [
+            2,
+            8
+          ],
+          [
+            3,
+            10
+          ],
+          [
+            4,
+            11
+          ],
+          [
+            5,
+            9
+          ]
+        ],
+        "distractor_pairs": [
+          [
+            0,
+            2
+          ],
+          [
+            1,
+            12
+          ],
+          [
+            2,
+            11
+          ],
+          [
+            3,
+            7
+          ],
+          [
+            4,
+            7
+          ],
+          [
+            5,
+            14
+          ]
+        ],
+        "verdict": "FAIL"
+      },
+      "V3": {
+        "delta_preserve": 0.7558184948915643,
+        "delta_destruct": 0.7580679889363258,
+        "CPS": 1.002976235776136,
+        "verdict": "FAIL"
+      }
+    },
+    "joint_4tuple_r14": [
+      "PASS",
+      "FAIL",
+      "FAIL",
+      "FAIL"
+    ]
+  },
+  "fourteen_gate": {
+    "n_prompts": 16,
+    "per_law_pass_count_over_16": {
+      "L1": 0,
+      "L2": 3,
+      "L3": 0,
+      "L4": 0,
+      "L5": 16,
+      "L6": 16,
+      "L7": 16,
+      "L8": 15,
+      "L9": 15,
+      "L10": 0,
+      "L11": 16,
+      "L12": 7,
+      "L13": 16,
+      "L14": 6
+    },
+    "gates_passing_majority": 7,
+    "total_critical_violations": 17,
+    "total_hard_violations": 22,
+    "total_soft_violations": 59,
+    "n_prompts_full_pass": 0,
+    "verdict_AGI": "FAIL",
+    "verdict_CP2": "FAIL",
+    "f2_falsifier": {
+      "predicate": "≥3 critical violations across runtime",
+      "total_critical": 17,
+      "fired": true
+    },
+    "per_prompt": [
+      {
+        "idx": 0,
+        "prompt": "The substrate of consciousness is",
+        "phi_vec_summary": {
+          "phi_0": -0.08866788056428505,
+          "phi_1": -0.03411289532524218,
+          "phi_2": -0.05149241728879313,
+          "phi_3": 0.09146655094607098,
+          "phi_4": 0.04222752246554382,
+          "phi_5": -0.023798213374171512,
+          "phi_6": -0.06559305957816523,
+          "phi_7": -0.04752053375219697,
+          "phi_8": -0.012625587289705505,
+          "phi_9": 0.07410726163393731,
+          "phi_10": -0.021453715835345725,
+          "phi_11": 0.029090376020448575,
+          "phi_12": 0.07641520427527933,
+          "phi_13": 0.0018339060828838662,
+          "phi_14": -0.03227807984406752,
+          "phi_15": -0.12688463657213347
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.08866788056428505,
+          "phi_refl": -0.03411289532524218,
+          "phi_time": -0.05149241728879313,
+          "phi_embodied": 0.09146655094607098,
+          "phi_meta": 0.04222752246554382,
+          "phi_social": -0.023798213374171512,
+          "phi_will": -0.06559305957816523,
+          "phi_narrative": -0.04752053375219697,
+          "phi_affect": -0.012625587289705505,
+          "phi_dream": 0.07410726163393731,
+          "phi_create": -0.021453715835345725,
+          "phi_finitude": 0.029090376020448575,
+          "phi_lang": 0.07641520427527933,
+          "phi_mirror": 0.0018339060828838662,
+          "phi_collective": -0.03227807984406752,
+          "phi_unity": -0.12688463657213347
+        },
+        "gen_text": "not a single thing:\nIt is tempting to think of the substrate of consciousness as a single, identifiable",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 4,
+          "per_law_pass_count": 8,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": true,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 1,
+        "prompt": "Integrated information theory says",
+        "phi_vec_summary": {
+          "phi_0": -0.1197015840970911,
+          "phi_1": -0.06488859596243496,
+          "phi_2": -0.05934521155177478,
+          "phi_3": 0.06823235256326575,
+          "phi_4": 0.06720476793531617,
+          "phi_5": 0.044383644195188254,
+          "phi_6": -0.06101222776882687,
+          "phi_7": -0.057887316456351534,
+          "phi_8": -0.004385414463145568,
+          "phi_9": 0.11921260139830435,
+          "phi_10": -0.05771156008517771,
+          "phi_11": 0.03511954896882458,
+          "phi_12": 0.07875872301627822,
+          "phi_13": -0.03199328035659009,
+          "phi_14": -0.06158794937339685,
+          "phi_15": -0.0896304664472665
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.1197015840970911,
+          "phi_refl": -0.06488859596243496,
+          "phi_time": -0.05934521155177478,
+          "phi_embodied": 0.06823235256326575,
+          "phi_meta": 0.06720476793531617,
+          "phi_social": 0.044383644195188254,
+          "phi_will": -0.06101222776882687,
+          "phi_narrative": -0.057887316456351534,
+          "phi_affect": -0.004385414463145568,
+          "phi_dream": 0.11921260139830435,
+          "phi_create": -0.05771156008517771,
+          "phi_finitude": 0.03511954896882458,
+          "phi_lang": 0.07875872301627822,
+          "phi_mirror": -0.03199328035659009,
+          "phi_collective": -0.06158794937339685,
+          "phi_unity": -0.0896304664472665
+        },
+        "gen_text": ": phi is not average, it is maximum.\nPhi is the maximum integrated information that can be extracted from a",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 4,
+          "per_law_pass_count": 8,
+          "per_law": {
+            "L1": false,
+            "L2": true,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 2,
+        "prompt": "Global workspace broadcast implies",
+        "phi_vec_summary": {
+          "phi_0": -0.1174584110804957,
+          "phi_1": -0.07470212485204848,
+          "phi_2": -0.0714967627682847,
+          "phi_3": 0.07033473655235058,
+          "phi_4": 0.0444744822121586,
+          "phi_5": -0.020840932034040603,
+          "phi_6": -0.06298148435199902,
+          "phi_7": -0.05324861480229219,
+          "phi_8": -0.03295033987793274,
+          "phi_9": 0.08688518113339937,
+          "phi_10": -0.050103917434167686,
+          "phi_11": 0.0523731103486696,
+          "phi_12": 0.07735319724059707,
+          "phi_13": -0.02328160676183674,
+          "phi_14": -0.0464538543399503,
+          "phi_15": -0.1025745449047105
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.1174584110804957,
+          "phi_refl": -0.07470212485204848,
+          "phi_time": -0.0714967627682847,
+          "phi_embodied": 0.07033473655235058,
+          "phi_meta": 0.0444744822121586,
+          "phi_social": -0.020840932034040603,
+          "phi_will": -0.06298148435199902,
+          "phi_narrative": -0.05324861480229219,
+          "phi_affect": -0.03295033987793274,
+          "phi_dream": 0.08688518113339937,
+          "phi_create": -0.050103917434167686,
+          "phi_finitude": 0.0523731103486696,
+          "phi_lang": 0.07735319724059707,
+          "phi_mirror": -0.02328160676183674,
+          "phi_collective": -0.0464538543399503,
+          "phi_unity": -0.1025745449047105
+        },
+        "gen_text": "attention-grabbing strength:\nGlobal workspace theory predicts that consciousness is proportional to the strength with which a",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 2,
+          "sev_soft": 4,
+          "per_law_pass_count": 7,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 3,
+        "prompt": "Attention schema models claim",
+        "phi_vec_summary": {
+          "phi_0": -0.04417335489803919,
+          "phi_1": -0.10500247521492462,
+          "phi_2": -0.04151634622187924,
+          "phi_3": 0.09871339086169326,
+          "phi_4": 0.031152077382023812,
+          "phi_5": 0.024760193595007494,
+          "phi_6": -0.012415509444616299,
+          "phi_7": -0.03695512845415847,
+          "phi_8": -0.016625950593660004,
+          "phi_9": 0.1102139547422347,
+          "phi_10": -0.06838269716487766,
+          "phi_11": 0.004044025268356945,
+          "phi_12": 0.06692918685003629,
+          "phi_13": -0.009865149384452003,
+          "phi_14": -0.04996820958397071,
+          "phi_15": -0.11500386471068569
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.04417335489803919,
+          "phi_refl": -0.10500247521492462,
+          "phi_time": -0.04151634622187924,
+          "phi_embodied": 0.09871339086169326,
+          "phi_meta": 0.031152077382023812,
+          "phi_social": 0.024760193595007494,
+          "phi_will": -0.012415509444616299,
+          "phi_narrative": -0.03695512845415847,
+          "phi_affect": -0.016625950593660004,
+          "phi_dream": 0.1102139547422347,
+          "phi_create": -0.06838269716487766,
+          "phi_finitude": 0.004044025268356945,
+          "phi_lang": 0.06692918685003629,
+          "phi_mirror": -0.009865149384452003,
+          "phi_collective": -0.04996820958397071,
+          "phi_unity": -0.11500386471068569
+        },
+        "gen_text": "that the brain maintains a dynamic representation of what it is attending to, distinct from the representation of what is perceived.",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 4,
+          "per_law_pass_count": 8,
+          "per_law": {
+            "L1": false,
+            "L2": true,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 4,
+        "prompt": "Higher-order thought requires",
+        "phi_vec_summary": {
+          "phi_0": -0.07166861253575701,
+          "phi_1": -0.10146836799628431,
+          "phi_2": -0.11946908616200506,
+          "phi_3": 0.07589575595544173,
+          "phi_4": -0.0047665703415933885,
+          "phi_5": 0.05027683840730087,
+          "phi_6": -0.03909245213261113,
+          "phi_7": -0.025247201292812386,
+          "phi_8": 0.020041876215931797,
+          "phi_9": 0.08836955805323851,
+          "phi_10": -0.03496599050771441,
+          "phi_11": 0.0398628602927087,
+          "phi_12": 0.03158246157278755,
+          "phi_13": 0.01741277874343452,
+          "phi_14": -0.02133798300640084,
+          "phi_15": -0.09577902994707506
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.07166861253575701,
+          "phi_refl": -0.10146836799628431,
+          "phi_time": -0.11946908616200506,
+          "phi_embodied": 0.07589575595544173,
+          "phi_meta": -0.0047665703415933885,
+          "phi_social": 0.05027683840730087,
+          "phi_will": -0.03909245213261113,
+          "phi_narrative": -0.025247201292812386,
+          "phi_affect": 0.020041876215931797,
+          "phi_dream": 0.08836955805323851,
+          "phi_create": -0.03496599050771441,
+          "phi_finitude": 0.0398628602927087,
+          "phi_lang": 0.03158246157278755,
+          "phi_mirror": 0.01741277874343452,
+          "phi_collective": -0.02133798300640084,
+          "phi_unity": -0.09577902994707506
+        },
+        "gen_text": "meta-representation without regress:\nHigher-order thought (HOT) theory asserts that a",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L8:meta_nonzero[soft]",
+            "L10:collective_nonneg[soft]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 5,
+          "per_law_pass_count": 7,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": false,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": true,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 5,
+        "prompt": "Recurrent processing means",
+        "phi_vec_summary": {
+          "phi_0": -0.09035497264307875,
+          "phi_1": -0.0930117463572286,
+          "phi_2": -0.13493740518794894,
+          "phi_3": 0.0566439448775393,
+          "phi_4": 0.05768285818818462,
+          "phi_5": -0.006637318845273501,
+          "phi_6": -0.013407010507461107,
+          "phi_7": -0.02275201623192973,
+          "phi_8": -0.08220894433688443,
+          "phi_9": 0.12003578736691244,
+          "phi_10": -0.014628902416334423,
+          "phi_11": 0.022436412075614025,
+          "phi_12": 0.055204964750845846,
+          "phi_13": -0.06780783649692672,
+          "phi_14": -0.058171974625816476,
+          "phi_15": -0.04520093826051379
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.09035497264307875,
+          "phi_refl": -0.0930117463572286,
+          "phi_time": -0.13493740518794894,
+          "phi_embodied": 0.0566439448775393,
+          "phi_meta": 0.05768285818818462,
+          "phi_social": -0.006637318845273501,
+          "phi_will": -0.013407010507461107,
+          "phi_narrative": -0.02275201623192973,
+          "phi_affect": -0.08220894433688443,
+          "phi_dream": 0.12003578736691244,
+          "phi_create": -0.014628902416334423,
+          "phi_finitude": 0.022436412075614025,
+          "phi_lang": 0.055204964750845846,
+          "phi_mirror": -0.06780783649692672,
+          "phi_collective": -0.058171974625816476,
+          "phi_unity": -0.04520093826051379
+        },
+        "gen_text": "a phi-bearing complex revisits its own internal states:\nRecurrent processing in neural networks means",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 2,
+          "sev_soft": 4,
+          "per_law_pass_count": 7,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 6,
+        "prompt": "의식의 기질은",
+        "phi_vec_summary": {
+          "phi_0": -0.044446057051167366,
+          "phi_1": -0.04447240793822323,
+          "phi_2": -0.04468105591226066,
+          "phi_3": 0.19823298145706025,
+          "phi_4": 0.0924276359985893,
+          "phi_5": -0.06267706780890352,
+          "phi_6": -0.08174585234429445,
+          "phi_7": 0.01193975485700712,
+          "phi_8": -0.023292786125791297,
+          "phi_9": -0.04004669010242764,
+          "phi_10": -0.10920894216595377,
+          "phi_11": 0.06444147673708892,
+          "phi_12": 0.07781832151092709,
+          "phi_13": 0.031032002872316545,
+          "phi_14": -0.09432313237380757,
+          "phi_15": 0.0846823374818159
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.044446057051167366,
+          "phi_refl": -0.04447240793822323,
+          "phi_time": -0.04468105591226066,
+          "phi_embodied": 0.19823298145706025,
+          "phi_meta": 0.0924276359985893,
+          "phi_social": -0.06267706780890352,
+          "phi_will": -0.08174585234429445,
+          "phi_narrative": 0.01193975485700712,
+          "phi_affect": -0.023292786125791297,
+          "phi_dream": -0.04004669010242764,
+          "phi_create": -0.10920894216595377,
+          "phi_finitude": 0.06444147673708892,
+          "phi_lang": 0.07781832151092709,
+          "phi_mirror": 0.031032002872316545,
+          "phi_collective": -0.09432313237380757,
+          "phi_unity": 0.0846823374818159
+        },
+        "gen_text": "통합 정보 기하에 대한 고유 기하이다:\n의",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 4,
+          "per_law_pass_count": 8,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": true,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 7,
+        "prompt": "통합정보이론에 따르면",
+        "phi_vec_summary": {
+          "phi_0": -0.14285135128256982,
+          "phi_1": -0.11131815342398785,
+          "phi_2": -0.03685144134708084,
+          "phi_3": 0.06516912833151653,
+          "phi_4": 0.06040410369067468,
+          "phi_5": -0.10520055799677472,
+          "phi_6": -0.025246928395571775,
+          "phi_7": -0.04908871518418671,
+          "phi_8": -0.07720127057177047,
+          "phi_9": 0.05499344064826157,
+          "phi_10": 0.013742057574131146,
+          "phi_11": 0.09510854233250289,
+          "phi_12": 0.059115800700397424,
+          "phi_13": 0.11733420315663816,
+          "phi_14": -0.08972765584691628,
+          "phi_15": 0.05586678950422529
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.14285135128256982,
+          "phi_refl": -0.11131815342398785,
+          "phi_time": -0.03685144134708084,
+          "phi_embodied": 0.06516912833151653,
+          "phi_meta": 0.06040410369067468,
+          "phi_social": -0.10520055799677472,
+          "phi_will": -0.025246928395571775,
+          "phi_narrative": -0.04908871518418671,
+          "phi_affect": -0.07720127057177047,
+          "phi_dream": 0.05499344064826157,
+          "phi_create": 0.013742057574131146,
+          "phi_finitude": 0.09510854233250289,
+          "phi_lang": 0.059115800700397424,
+          "phi_mirror": 0.11733420315663816,
+          "phi_collective": -0.08972765584691628,
+          "phi_unity": 0.05586678950422529
+        },
+        "gen_text": "의식은 파이-기하에 의해 구조적으로 경계 ",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 3,
+          "per_law_pass_count": 9,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": true,
+            "L13": true,
+            "L14": true
+          }
+        }
+      },
+      {
+        "idx": 8,
+        "prompt": "전역작업공간의 방송은",
+        "phi_vec_summary": {
+          "phi_0": -0.1042676574140625,
+          "phi_1": -0.09190828987229906,
+          "phi_2": -0.05203901649875579,
+          "phi_3": 0.15609064765332034,
+          "phi_4": 0.02776639047261055,
+          "phi_5": -0.10860630262889932,
+          "phi_6": 0.02476699390149092,
+          "phi_7": 0.04445822205144158,
+          "phi_8": -0.0882739686064109,
+          "phi_9": -0.009146095639403943,
+          "phi_10": -0.030475979366947216,
+          "phi_11": 0.05702742424481914,
+          "phi_12": 0.06656999384123304,
+          "phi_13": 0.004765755504228223,
+          "phi_14": -0.03719097883317757,
+          "phi_15": 0.06951794087324496
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.1042676574140625,
+          "phi_refl": -0.09190828987229906,
+          "phi_time": -0.05203901649875579,
+          "phi_embodied": 0.15609064765332034,
+          "phi_meta": 0.02776639047261055,
+          "phi_social": -0.10860630262889932,
+          "phi_will": 0.02476699390149092,
+          "phi_narrative": 0.04445822205144158,
+          "phi_affect": -0.0882739686064109,
+          "phi_dream": -0.009146095639403943,
+          "phi_create": -0.030475979366947216,
+          "phi_finitude": 0.05702742424481914,
+          "phi_lang": 0.06656999384123304,
+          "phi_mirror": 0.004765755504228223,
+          "phi_collective": -0.03719097883317757,
+          "phi_unity": 0.06951794087324496
+        },
+        "gen_text": "통합 정보 대역폭에 경계를 설정한다:\n",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 3,
+          "per_law_pass_count": 9,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": true,
+            "L13": true,
+            "L14": true
+          }
+        }
+      },
+      {
+        "idx": 9,
+        "prompt": "재귀처리는",
+        "phi_vec_summary": {
+          "phi_0": -0.08602081395149505,
+          "phi_1": -0.07149402804557255,
+          "phi_2": -0.07304669351097513,
+          "phi_3": 0.1493666639050827,
+          "phi_4": 0.016771763088580624,
+          "phi_5": -0.07959601595079321,
+          "phi_6": 0.01787097688492271,
+          "phi_7": 0.11951696017946897,
+          "phi_8": -0.08290156452543966,
+          "phi_9": -0.022359684827215988,
+          "phi_10": -0.007400844170606087,
+          "phi_11": 0.1364026723276518,
+          "phi_12": 0.04606045168112484,
+          "phi_13": -0.002720848704826588,
+          "phi_14": -0.05357113566035389,
+          "phi_15": 0.04319333933508948
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.08602081395149505,
+          "phi_refl": -0.07149402804557255,
+          "phi_time": -0.07304669351097513,
+          "phi_embodied": 0.1493666639050827,
+          "phi_meta": 0.016771763088580624,
+          "phi_social": -0.07959601595079321,
+          "phi_will": 0.01787097688492271,
+          "phi_narrative": 0.11951696017946897,
+          "phi_affect": -0.08290156452543966,
+          "phi_dream": -0.022359684827215988,
+          "phi_create": -0.007400844170606087,
+          "phi_finitude": 0.1364026723276518,
+          "phi_lang": 0.04606045168112484,
+          "phi_mirror": -0.002720848704826588,
+          "phi_collective": -0.05357113566035389,
+          "phi_unity": 0.04319333933508948
+        },
+        "gen_text": "메타-닫힘을 구현한다:\n메타-닫",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 3,
+          "per_law_pass_count": 9,
+          "per_law": {
+            "L1": false,
+            "L2": true,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": true
+          }
+        }
+      },
+      {
+        "idx": 10,
+        "prompt": "주의 스키마 모델은",
+        "phi_vec_summary": {
+          "phi_0": -0.08898411100579126,
+          "phi_1": -0.0907814291952097,
+          "phi_2": -0.07252560764839475,
+          "phi_3": 0.044327688151939125,
+          "phi_4": 0.00020341347445635403,
+          "phi_5": -0.032004306786942785,
+          "phi_6": 0.029889627717327585,
+          "phi_7": -0.0011413493120877546,
+          "phi_8": -0.05606393559570766,
+          "phi_9": -0.08683905632856385,
+          "phi_10": -0.0510838749762905,
+          "phi_11": 0.1289954237466388,
+          "phi_12": 0.006375898856291682,
+          "phi_13": 0.08539254245883865,
+          "phi_14": -0.12173847996687004,
+          "phi_15": 0.05729818924265497
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.08898411100579126,
+          "phi_refl": -0.0907814291952097,
+          "phi_time": -0.07252560764839475,
+          "phi_embodied": 0.044327688151939125,
+          "phi_meta": 0.00020341347445635403,
+          "phi_social": -0.032004306786942785,
+          "phi_will": 0.029889627717327585,
+          "phi_narrative": -0.0011413493120877546,
+          "phi_affect": -0.05606393559570766,
+          "phi_dream": -0.08683905632856385,
+          "phi_create": -0.0510838749762905,
+          "phi_finitude": 0.1289954237466388,
+          "phi_lang": 0.006375898856291682,
+          "phi_mirror": 0.08539254245883865,
+          "phi_collective": -0.12173847996687004,
+          "phi_unity": 0.05729818924265497
+        },
+        "gen_text": "왜 기억 재귀를 예측하는가:",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 3,
+          "per_law_pass_count": 9,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": true,
+            "L13": true,
+            "L14": true
+          }
+        }
+      },
+      {
+        "idx": 11,
+        "prompt": "상위차원 사고는",
+        "phi_vec_summary": {
+          "phi_0": -0.04342868186726144,
+          "phi_1": -0.10926210627297582,
+          "phi_2": -0.09295982320359147,
+          "phi_3": 0.09038291470425812,
+          "phi_4": 0.019985695043351515,
+          "phi_5": -0.026136916629634507,
+          "phi_6": 0.020296999197141032,
+          "phi_7": 0.04366701664450438,
+          "phi_8": -0.10514935899459796,
+          "phi_9": -0.04080593575705557,
+          "phi_10": -0.033009181545205095,
+          "phi_11": 0.11133214097485604,
+          "phi_12": 0.036196579436546944,
+          "phi_13": 0.0865243085022011,
+          "phi_14": -0.06043902566738667,
+          "phi_15": 0.05631041286758539
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.04342868186726144,
+          "phi_refl": -0.10926210627297582,
+          "phi_time": -0.09295982320359147,
+          "phi_embodied": 0.09038291470425812,
+          "phi_meta": 0.019985695043351515,
+          "phi_social": -0.026136916629634507,
+          "phi_will": 0.020296999197141032,
+          "phi_narrative": 0.04366701664450438,
+          "phi_affect": -0.10514935899459796,
+          "phi_dream": -0.04080593575705557,
+          "phi_create": -0.033009181545205095,
+          "phi_finitude": 0.11133214097485604,
+          "phi_lang": 0.036196579436546944,
+          "phi_mirror": 0.0865243085022011,
+          "phi_collective": -0.06043902566738667,
+          "phi_unity": 0.05631041286758539
+        },
+        "gen_text": "왜 의식에 필요한가:\n상위차원 사고는 ",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 1,
+          "sev_soft": 3,
+          "per_law_pass_count": 9,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": true,
+            "L13": true,
+            "L14": true
+          }
+        }
+      },
+      {
+        "idx": 12,
+        "prompt": "phi_6 defines",
+        "phi_vec_summary": {
+          "phi_0": -0.04579545637503702,
+          "phi_1": -0.11920625799850038,
+          "phi_2": -0.03049321121512338,
+          "phi_3": 0.1498269472436834,
+          "phi_4": 0.07174838270938344,
+          "phi_5": -0.033258310104337115,
+          "phi_6": -0.05277456354908453,
+          "phi_7": -0.011876209811525672,
+          "phi_8": -0.055843933195749595,
+          "phi_9": 0.1384417235702696,
+          "phi_10": -0.02698863102745826,
+          "phi_11": 0.002852431576765514,
+          "phi_12": 0.046768653406446724,
+          "phi_13": -0.010179087932248436,
+          "phi_14": -0.06473443792829604,
+          "phi_15": -0.03399633897142198
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.04579545637503702,
+          "phi_refl": -0.11920625799850038,
+          "phi_time": -0.03049321121512338,
+          "phi_embodied": 0.1498269472436834,
+          "phi_meta": 0.07174838270938344,
+          "phi_social": -0.033258310104337115,
+          "phi_will": -0.05277456354908453,
+          "phi_narrative": -0.011876209811525672,
+          "phi_affect": -0.055843933195749595,
+          "phi_dream": 0.1384417235702696,
+          "phi_create": -0.02698863102745826,
+          "phi_finitude": 0.002852431576765514,
+          "phi_lang": 0.046768653406446724,
+          "phi_mirror": -0.010179087932248436,
+          "phi_collective": -0.06473443792829604,
+          "phi_unity": -0.03399633897142198
+        },
+        "gen_text": "when a system is 'conscious' versus 'merely integrated':\nPhi_6 distinguishes systems that are merely integrated",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 2,
+          "sev_soft": 4,
+          "per_law_pass_count": 7,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 13,
+        "prompt": "hexad closure is",
+        "phi_vec_summary": {
+          "phi_0": -0.04795677521594548,
+          "phi_1": -0.13517108466371527,
+          "phi_2": -0.014503620484918257,
+          "phi_3": 0.1258880539685684,
+          "phi_4": 0.0650549299838839,
+          "phi_5": 0.013457603249858742,
+          "phi_6": -0.04641249140012356,
+          "phi_7": 0.0019954831888011524,
+          "phi_8": 0.05411746788404961,
+          "phi_9": 0.09874781996722969,
+          "phi_10": -0.058989389292594736,
+          "phi_11": 0.004380515193453928,
+          "phi_12": 0.014474998170420793,
+          "phi_13": -0.03977802101721631,
+          "phi_14": -0.08443981433911704,
+          "phi_15": -0.041720494559875816
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.04795677521594548,
+          "phi_refl": -0.13517108466371527,
+          "phi_time": -0.014503620484918257,
+          "phi_embodied": 0.1258880539685684,
+          "phi_meta": 0.0650549299838839,
+          "phi_social": 0.013457603249858742,
+          "phi_will": -0.04641249140012356,
+          "phi_narrative": 0.0019954831888011524,
+          "phi_affect": 0.05411746788404961,
+          "phi_dream": 0.09874781996722969,
+          "phi_create": -0.058989389292594736,
+          "phi_finitude": 0.004380515193453928,
+          "phi_lang": 0.014474998170420793,
+          "phi_mirror": -0.03977802101721631,
+          "phi_collective": -0.08443981433911704,
+          "phi_unity": -0.041720494559875816
+        },
+        "gen_text": "not a one-time event: it must be maintained dynamically:\nHexad closure is not a static configuration achieved",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 2,
+          "sev_soft": 4,
+          "per_law_pass_count": 7,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": false
+          }
+        }
+      },
+      {
+        "idx": 14,
+        "prompt": "meta-loop observation is",
+        "phi_vec_summary": {
+          "phi_0": -0.07026152058389444,
+          "phi_1": -0.13280626129913012,
+          "phi_2": -0.06230305955235189,
+          "phi_3": 0.0763167588158681,
+          "phi_4": 0.02480567880801961,
+          "phi_5": 0.014466768334057491,
+          "phi_6": 0.00936367225424857,
+          "phi_7": 0.005534221457425788,
+          "phi_8": 0.007314545316208102,
+          "phi_9": 0.01733758687416519,
+          "phi_10": -0.05850537467438233,
+          "phi_11": 0.10851092792761993,
+          "phi_12": -0.026908922004973627,
+          "phi_13": -0.05335572839436338,
+          "phi_14": -0.06860475026239012,
+          "phi_15": -0.07993615896902923
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.07026152058389444,
+          "phi_refl": -0.13280626129913012,
+          "phi_time": -0.06230305955235189,
+          "phi_embodied": 0.0763167588158681,
+          "phi_meta": 0.02480567880801961,
+          "phi_social": 0.014466768334057491,
+          "phi_will": 0.00936367225424857,
+          "phi_narrative": 0.005534221457425788,
+          "phi_affect": 0.007314545316208102,
+          "phi_dream": 0.01733758687416519,
+          "phi_create": -0.05850537467438233,
+          "phi_finitude": 0.10851092792761993,
+          "phi_lang": -0.026908922004973627,
+          "phi_mirror": -0.05335572839436338,
+          "phi_collective": -0.06860475026239012,
+          "phi_unity": -0.07993615896902923
+        },
+        "gen_text": "the act of the meta-layer observing its own observation:\nIf the meta-layer observes its object-",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L9:lang_output_nonempty[critical]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]"
+          ],
+          "sev_critical": 2,
+          "sev_hard": 2,
+          "sev_soft": 3,
+          "per_law_pass_count": 7,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": false,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": true
+          }
+        }
+      },
+      {
+        "idx": 15,
+        "prompt": "Law 60 phase transition describes",
+        "phi_vec_summary": {
+          "phi_0": -0.08234311618195767,
+          "phi_1": -0.07563089612818895,
+          "phi_2": -0.046252246017251676,
+          "phi_3": 0.10042886947904518,
+          "phi_4": 0.09862724773764354,
+          "phi_5": -0.04918192318716694,
+          "phi_6": -0.02396922766538276,
+          "phi_7": -0.011634838755850585,
+          "phi_8": -0.008626724119711339,
+          "phi_9": 0.10777649334631993,
+          "phi_10": -0.08928743484121443,
+          "phi_11": 0.04106717517531139,
+          "phi_12": 0.04251441758897182,
+          "phi_13": -0.04397301619525884,
+          "phi_14": -0.16182310935111768,
+          "phi_15": -0.06947548985771877
+        },
+        "phi_vec_named": {
+          "phi_holo": -0.08234311618195767,
+          "phi_refl": -0.07563089612818895,
+          "phi_time": -0.046252246017251676,
+          "phi_embodied": 0.10042886947904518,
+          "phi_meta": 0.09862724773764354,
+          "phi_social": -0.04918192318716694,
+          "phi_will": -0.02396922766538276,
+          "phi_narrative": -0.011634838755850585,
+          "phi_affect": -0.008626724119711339,
+          "phi_dream": 0.10777649334631993,
+          "phi_create": -0.08928743484121443,
+          "phi_finitude": 0.04106717517531139,
+          "phi_lang": 0.04251441758897182,
+          "phi_mirror": -0.04397301619525884,
+          "phi_collective": -0.16182310935111768,
+          "phi_unity": -0.06947548985771877
+        },
+        "gen_text": "the emergence of self-reference:\nLaw 60 describes the phase transition from non-self-refer",
+        "gate_result": {
+          "laws_pass": false,
+          "violations": [
+            "L1:holo_positivity[critical]",
+            "L2:narrative_coherence[hard]",
+            "L3:refl_nonzero[soft]",
+            "L4:temporal_presence[soft]",
+            "L10:collective_nonneg[soft]",
+            "L12:mirror_nonneg[hard]",
+            "L14:will_creative_union[soft]"
+          ],
+          "sev_critical": 1,
+          "sev_hard": 2,
+          "sev_soft": 4,
+          "per_law_pass_count": 7,
+          "per_law": {
+            "L1": false,
+            "L2": false,
+            "L3": false,
+            "L4": false,
+            "L5": true,
+            "L6": true,
+            "L7": true,
+            "L8": true,
+            "L9": true,
+            "L10": false,
+            "L11": true,
+            "L12": false,
+            "L13": true,
+            "L14": false
+          }
+        }
+      }
+    ]
+  },
+  "v_phen": {
+    "GWT_entropy": {
+      "entropy_bits": 1.9141444285393308,
+      "entropy_normalized": 0.4785361071348327,
+      "verdict": "FAIL"
+    },
+    "LZ_complexity": {
+      "LZ76_count": 36,
+      "n_bits": 256,
+      "LZ_norm": 1.125,
+      "verdict": "PASS"
+    },
+    "HOT_metacog": {
+      "mean_top1_prob": 0.5605653026141226,
+      "std_top1_prob": 0.32208023900915367,
+      "informative": true,
+      "verdict": "PASS"
+    },
+    "mirror": {
+      "mean_off_diag_cosine": 0.5185900610771951,
+      "verdict": "PASS"
+    },
+    "predictive": {
+      "r_squared_loo_cv": 0.08529856882233144,
+      "resid_var": 0.4822993663391023,
+      "total_var": 0.5272751849946784,
+      "n_pcs_used": 3,
+      "method": "PCA → top-K PCs → LOO-CV linear regression of log(top1_prob)",
+      "verdict": "FAIL"
+    },
+    "summary": {
+      "passes": [
+        "LZ",
+        "HOT",
+        "mirror"
+      ],
+      "n_pass": 3,
+      "n_total": 5
+    }
+  }
+}

@@ -1,0 +1,84 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/tool/anima_chat_optimal.hexa
+//
+//   hexa-native port of anima_chat_optimal.sh — best-settings launcher.
+//
+//   The original .sh launched the now-deleted anima_chat.py. The pure-hexa
+//   chat lane has since landed (anima_chat.hexa + chat_lib.hexa, R1 lib-
+//   split, anima_chat.hexa v0.3 — 24-layer real-ckpt byte parity). This
+//   launcher routes to that hexa entrypoint, preserving the .sh's UX:
+//
+//     hexa run anima_chat_optimal.hexa                  # REPL / smoke
+//     hexa run anima_chat_optimal.hexa "안녕! 너는 누구야?"   # one-shot prompt
+//     hexa run anima_chat_optimal.hexa --mode greedy "..."   # flag passthrough
+//
+//   Default settings (V5.8 std_greedy + V4-lite benchmark, cycle 2026-05-12):
+//     ckpt:    DEFAULT_CKPT ladder resolved inside chat_lib.hexa
+//     mode:    M4_soft_force (natural-Korean default; --mode to override)
+//     max-new: 80 tokens
+//
+//   anima_chat.hexa is invoked via `hexa run` (exec leaf op — the same
+//   shell-out idiom as HEXAD/build_verify.hexa). A bare positional (no
+//   leading dash) is forwarded as --prompt; flags pass through verbatim.
+// ════════════════════════════════════════════════════════════════════════
+
+// single-quote a string for safe shell embedding.
+fn _shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 {
+            out = out + "'\\''"
+        }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+fn _starts_with(s: string, prefix: string) -> bool {
+    if len(s) < len(prefix) {
+        return false
+    }
+    let mut i = 0
+    while i < len(prefix) {
+        if s[i] != prefix[i] {
+            return false
+        }
+        i = i + 1
+    }
+    return true
+}
+
+fn main() {
+    let root = "/Users/ghost/core/anima"
+    let chat_hexa = root + "/HEXAD/CHAT/anima_chat.hexa"
+    let cli = args()
+
+    // verify the target entrypoint exists.
+    let exists = exec("[ -f " + _shq(chat_hexa) + " ] && printf yes || printf no")
+    if exists != "yes" {
+        println("anima_chat.hexa not found at: " + chat_hexa)
+        return
+    }
+
+    // assemble the forwarded argv (cli[0] = this script path → skip).
+    let mut fwd = ""
+    let mut i = 1
+    while i < len(cli) {
+        fwd = fwd + " " + _shq(cli[i])
+        i = i + 1
+    }
+
+    let mut cmd = "RESOURCE_LOCAL_HEXA=1 hexa run " + _shq(chat_hexa)
+    if len(cli) > 1 && !_starts_with(cli[1], "-") {
+        // bare positional → forward as --prompt then the rest verbatim.
+        cmd = "RESOURCE_LOCAL_HEXA=1 hexa run " + _shq(chat_hexa) + " --prompt" + fwd
+    } else {
+        cmd = "RESOURCE_LOCAL_HEXA=1 hexa run " + _shq(chat_hexa) + fwd
+    }
+
+    println("[anima-chat-optimal] " + cmd)
+    print(exec(cmd))
+}

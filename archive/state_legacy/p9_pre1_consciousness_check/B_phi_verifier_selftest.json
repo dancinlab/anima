@@ -1,0 +1,45 @@
+{
+  "schema": "anima/p9_pre1/B_phi_verifier_selftest/1",
+  "ts": "2026-05-02T16:04:40Z",
+  "by": "ghost",
+  "task": "P9 EXEC pre-flight item B — anima_phi_v3_canonical selftest",
+  "tool_path": "tool/anima_phi_v3_canonical.hexa",
+  "tool_sha256": "c90be8af4d1be019365eabf9dd621cd317effcb804d8b58bf57a667714949069",
+  "tool_lines": 205,
+  "invocation_attempts": [
+    {
+      "method": "hexa run tool/anima_phi_v3_canonical.hexa --selftest (docker route)",
+      "result": "FAIL_DOCKER_PYTHON_MISSING",
+      "stderr": "sh: python3: not found / ast.parse FAILED",
+      "root_cause": "hexa-runner:latest container does not ship python3; helper exec path needs python3 for ast.parse"
+    },
+    {
+      "method": "direct python3 ast.parse on emitted helper",
+      "helper_path": "/tmp/anima_phi_v3_canonical_helper.hexa_tmp",
+      "helper_lines": 119,
+      "helper_sha256": "1609952f8f8e52a1615f2a8ecc0b4bf4905c41507ef325c2682a2f2a24f2ad94",
+      "command": "/opt/homebrew/bin/python3 -c \"import ast,sys; ast.parse(open('/tmp/anima_phi_v3_canonical_helper.hexa_tmp').read()); print('ast_parse=ok')\"",
+      "stdout": "ast_parse=ok",
+      "result": "PASS"
+    }
+  ],
+  "verdict": "PASS_VIA_DIRECT_PATH",
+  "design_signature": {
+    "auto_HID": "max(2, N//2) = 8 for N=16",
+    "K_partitions_default": 8,
+    "ridge_default": 0.001,
+    "hypotheses": ["H3A_substrate_NEG", "H3B_arch_divergent", "H3C_universal_POS"],
+    "phi_v3_status_per_disk": "4 LLM backbones (mistral/llama/gemma/qwen3) all NEG -> H3A confirmed at LLM regime; CLM v4 530M POS -> substrate-conditional"
+  },
+  "selftest_payload_observed": {
+    "helper_emit": "ok",
+    "ast_parse": "ok",
+    "marker_line_present_in_tool_source": "selftest=ok"
+  },
+  "raw10_caveats": [
+    "(a) hexa runtime docker route lacks python3 — direct host python3 fallback used (selftest semantically equivalent: tool emits helper -> ast.parse).",
+    "(b) selftest does NOT execute Φ* measurement; only verifies helper python is syntactically valid (PRESENT check, NOT measurement).",
+    "(c) full Φ* run requires GPU + HF gated access (not in scope mac-local pre-flight)."
+  ],
+  "p9_phase0_blocker_status": "NOT_BLOCKING — verifier present and syntactically valid; downstream measurement deferred to GPU phase."
+}

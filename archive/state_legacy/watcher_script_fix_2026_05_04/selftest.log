@@ -1,0 +1,39 @@
+[2026-05-04T00:21:09Z] watcher_script_fix_2026_05_04 selftest
+
+Step 1: chflags check
+$ ls -lO state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt
+-rwxr-xr-x@ 1 ghost  staff  - 3562 May  3 23:34 host_pod_terminator.sh.txt
+-> No uchg flag. Proceeding.
+
+Step 2: pre-edit grep
+$ grep -c 'mkdir -p .*artifacts' state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt
+1   (only DONE-branch at line 47)
+
+Step 3: surgical edit applied via Edit tool
+inserted: `mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts`
+between: line 62 (echo "[...]train pid GONE...") and line 63 (scp -i $SSH_KEY ...)
+
+Step 4: post-edit grep
+$ grep -n 'mkdir -p .*artifacts' /tmp/host_pod_terminator.sh
+47:        mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts
+63:        mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts
+-> count = 2 (DONE-branch + error-branch). F-WATCHER-2 PASS.
+
+Step 5: F-WATCHER-1 syntax check
+$ cp host_pod_terminator.sh.txt /tmp/host_pod_terminator.sh && chmod +x /tmp/host_pod_terminator.sh
+$ bash -n /tmp/host_pod_terminator.sh
+$ echo $?
+0
+-> SYNTAX_PASS. F-WATCHER-1 PASS.
+
+Step 6: unified diff
+$ git diff state/p9_path_a_llama_lora_2026_05_03/host_pod_terminator.sh.txt
+@@ -60,6 +60,7 @@ while true; do
+     if echo "$PROBE" | grep -q "ALIVE=0" && echo "$PROBE" | grep -q "DONE=0"; then
+         echo "[$(date -u +%FT%TZ)] train pid GONE without DONE — likely error; downloading log + terminating" >> $LOG
++        mkdir -p /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts
+         scp -i $SSH_KEY -o StrictHostKeyChecking=no -P $SSH_PORT \
+             "root@$SSH_HOST:/workspace/p9_path_a_llama_lora/train.log" \
+             /Users/ghost/core/anima/state/p9_path_a_llama_lora_2026_05_03/artifacts/train.log >> $LOG 2>&1 || true
+
+VERDICT: PASS

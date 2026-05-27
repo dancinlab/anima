@@ -1,0 +1,43 @@
+{
+  "push_id": "mc_integrate_push_2026_05_04",
+  "timestamp_utc": "2026-05-04",
+  "git_init": {
+    "command": "cd /Users/ghost/core/mc-integrate && git init -q -b main",
+    "exit_code": 0,
+    "branch": "main"
+  },
+  "initial_commit": {
+    "command": "git -c user.name=박민우 -c user.email=nerve011235@gmail.com commit -q -m '<heredoc>'",
+    "sha": "a55535c",
+    "files_added": 15,
+    "loc_added": 2533,
+    "message_summary": "feat(mc-integrate v1.0.0): standalone extraction from nexus"
+  },
+  "github_repo_create": {
+    "command": "gh repo create dancinlab/mc-integrate --public --source=. --push --description '<long>'",
+    "exit_code": 0,
+    "repo_url": "https://github.com/dancinlab/mc-integrate",
+    "remote": "origin → https://github.com/dancinlab/mc-integrate.git",
+    "branch_pushed": "main"
+  },
+  "github_release": {
+    "command": "gh release create v1.0.0 --title 'mc-integrate v1.0.0 — Standalone Monte Carlo Numerical Integrator' --notes-file RELEASE_NOTES_v1.0.0.md",
+    "exit_code": 0,
+    "release_url": "https://github.com/dancinlab/mc-integrate/releases/tag/v1.0.0",
+    "tag": "v1.0.0"
+  },
+  "hf_mirror": {
+    "command_attempted": "hf repo create dancinlab/mc-integrate --repo-type model --token <secret>",
+    "exit_code": 1,
+    "error": "401 Unauthorized — token in keyring invalid",
+    "remediation": "User must rotate HF token + set HF_TOKEN GitHub secret + trigger workflow_dispatch on sync-to-hf.yml; api.create_repo(exist_ok=True) inside the workflow will create the HF model repo idempotently on first successful run.",
+    "deferred": true
+  },
+  "registry_update": {
+    "file": "/Users/ghost/core/hexa-lang/tool/pkg/registry.tsv",
+    "entry_appended_at_index": 27,
+    "entry_name": "mc-integrate",
+    "auto_committed_in_hexa_lang": false,
+    "user_action": "review + commit registry.tsv update in /Users/ghost/core/hexa-lang"
+  }
+}

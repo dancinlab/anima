@@ -1,0 +1,116 @@
+{
+  "agent": "n_substrate_n7_prep",
+  "date": "2026-05-01",
+  "akida_akd1000_synthesized_noise_model": {
+    "status": "DATASHEET_SYNTHESIZED_PRE_ARRIVAL",
+    "supersedes_at": "D+1 in-situ ISI harvest",
+    "architecture": {
+      "process_node_nm": 28,
+      "type": "fully digital event-based",
+      "clock_freq_MHz": 300,
+      "clock_period_ns": 3.333,
+      "npu_count": 80,
+      "node_count": 20,
+      "npe_per_npu": 8,
+      "neuron_capacity": 1200000,
+      "synapse_capacity": 10000000000,
+      "sram_per_npu_KB": 100,
+      "weight_buffer_KB": 40,
+      "data_spike_buffer_KB": 60,
+      "typical_power_W": 1.0,
+      "neuron_model": "single-step integrate-and-fire (no leak)",
+      "encoding": "rank-order coding (ROC)",
+      "data_to_spike_converters": ["audio", "pixel", "fintech"]
+    },
+    "synthesized_intrinsic_jitter": {
+      "model": "Gaussian thermal/PVT + uniform clock-quantization",
+      "formula": "delta_t_spike ~ N(0, sigma_jitter^2) + U(0, T_clock)",
+      "sigma_jitter_ns": 1.667,
+      "sigma_jitter_rationale": "0.5 * T_clock proxy for digital flop setup/hold band at 28nm",
+      "T_clock_ns": 3.333,
+      "threshold_variability_pct_of_Vth": 1.0,
+      "threshold_var_rationale": "fan-out budget proxy, 28nm digital flop",
+      "refractory_min_ns": 3.333,
+      "refractory_rationale": "single clock cycle minimum (single-step IF)",
+      "C3": "BrainChip product brief v2.3 Aug 2025 does NOT publish these values; F-N7-E checks bracket at D+0"
+    },
+    "test_pattern": {
+      "input": "constant DC bias slightly above threshold",
+      "expected_output": "regular spike train",
+      "harvest_quantity": "consecutive ISI sequence",
+      "n_samples": 100000,
+      "discretization": "nearest 3.33 ns clock tick"
+    },
+    "sources": [
+      "https://brainchip.com/wp-content/uploads/2025/08/Akida-AKD1000-SoC-Product-Brief-V2.3-Aug.25.pdf",
+      "https://open-neuromorphic.org/neuromorphic-computing/hardware/akida-brainchip/",
+      "https://doc.brainchipinc.com/user_guide/akida.html",
+      "https://medium.com/@neurocortexai/brainchips-akida-neuromorphic-processor-bringing-ai-to-the-edge-0aed37968a02"
+    ]
+  },
+  "anu_qrng_distribution": {
+    "status": "VENDOR_SPEC_VERIFIED",
+    "physical_principle": "vacuum quadrature amplitude/phase fluctuations",
+    "internal_hardware_rate_bps": 5.7e9,
+    "public_api_rate_bps_effective": 1000,
+    "max_bytes_per_request": 1024,
+    "rate_limit_unsigned": "approx 1 req/min, anima honors 1000 ms inter-chunk pause",
+    "output_type": "uint8",
+    "output_range": [0, 255],
+    "nominal_distribution": "i.i.d. uniform",
+    "nist_sp_800_22_certified_by_vendor": false,
+    "nist_sp_800_90b_implemented_anima_side": false,
+    "anima_module": "anima/modules/rng/anu.hexa",
+    "anima_router_chain_default": "anu -> esp32 -> urandom",
+    "test_remap_to_isi": {
+      "formula": "ISI_qrng[i] = (anu_uint8[i] / 255) * 2 * mean_ISI_akida",
+      "interpretation": "matched-mean shape comparison, NOT raw rate comparison",
+      "C3_bound_injected": true
+    },
+    "harvest_quantity": "uint8 stream of n_samples=100000",
+    "wall_clock_estimate_minutes": 13,
+    "sources": [
+      "https://qrng.anu.edu.au/",
+      "https://qrng.anu.edu.au/contact/faq/",
+      "https://www.idquantique.com/qrng-chip-nist-certification/",
+      "docs/anima_rng_abstraction_landing_20260502.md"
+    ]
+  },
+  "comparison_protocol": {
+    "tests": {
+      "T1_KS_2sample": {
+        "statistic": "D = sup |F_AKIDA(x) - F_QRNG(x)|",
+        "decision": {
+          "p_gt_0.05": "INDISTINGUISHABLE (headline candidate)",
+          "p_lt_0.01": "STRUCTURED (also publishable)",
+          "intermediate": "INCONCLUSIVE retry n*10"
+        }
+      },
+      "T2_KL_divergence": {
+        "binning": 256,
+        "decision": {
+          "lt_0.05_nats": "matched",
+          "gt_0.5_nats": "structured",
+          "intermediate": "noisy"
+        }
+      },
+      "T3_NIST_SP800_22_mini": {
+        "tests": ["monobit", "runs", "serial-3"],
+        "decision_per_stream": "PASS/FAIL"
+      }
+    },
+    "headline_rules": {
+      "INDISTINGUISHABLE_HEADLINE": "T1 p>0.05 AND T2 KL<0.05 nats",
+      "STRUCTURED_HEADLINE": "T1 p<0.01 AND T2 KL>0.5 nats"
+    }
+  },
+  "preregistered_falsifiers": [
+    {"id": "F-N7-A", "trigger": "n_samples < 1e4", "verdict": "DISCARD insufficient power"},
+    {"id": "F-N7-B", "trigger": "AKIDA ISI distinct values < 100", "verdict": "DISCARD clock-quantization-dominated"},
+    {"id": "F-N7-C", "trigger": "ANU returns < 50% bytes within 30 min", "verdict": "DOWNGRADE to mock-LCG router fallback, mark simulated_only"},
+    {"id": "F-N7-D", "trigger": "KL > 5 nats", "verdict": "input-pattern artifact suspected, rerun Poisson input"},
+    {"id": "F-N7-E", "trigger": "in-situ sigma_jitter not within 3x of synthesized 1.67 ns", "verdict": "log delta in C3 as headline finding"},
+    {"id": "F-N7-F", "trigger": "router fallback to urandom", "verdict": "verdict_key += urandom_contamination, retry strict mode"},
+    {"id": "F-N7-G", "trigger": "T1 PASS AND T2 > 0.5 (test disagreement)", "verdict": "log paradox, escalate manual review"}
+  ]
+}

@@ -1,0 +1,47 @@
+================================================================
+d_converge_fire — first captured FINAL gn2 in pure-hexa @ d=64·3L
+================================================================
+  config: d=64 n_layer=3 nh=4 nkv=2 hd=16 h=128 T=16 V=256 nsamp=8 steps=300
+  init  gn2=7.96691  CE=38.3054  acc=1/8
+  DCV-1 INIT-CAPTURE       : PASS
+  DCV-2 GRAD-EXACT(L0.Wg[5]) : analytic=0.00429779 fd=0.00145389 |Δ|=0.0028439  -> PASS
+  [loop start] AdamW steps=300  (trajectory checkpointed @ st ∈ {1, 25, 50, 100, 200, 300})
+  GN2_CURVE,step=1,gn2=7.95858,CE=38.0288,acc=1
+  GN2_CURVE,step=25,gn2=0.000196308,CE=0.0172668,acc=8
+  GN2_CURVE,step=50,gn2=1.92682e-07,CE=0.000903429,acc=8
+  GN2_CURVE,step=100,gn2=3.39932e-08,CE=0.000386861,acc=8
+  GN2_CURVE,step=200,gn2=2.55721e-08,CE=0.000341831,acc=8
+  GN2_CURVE,step=300,gn2=2.15075e-08,CE=0.000328543,acc=8
+  final gn2=2.15075e-08  CE=0.000328543  acc=8/8  (after 300 AdamW steps, FULL composed 3-layer chain)
+  DCV-3 FINAL-CAPTURE      : gn2 7.96691 → 2.15075e-08  collapse=3.70425e+08x  -> PASS (≥100x)
+  DCV-4 ACC-EMERGE         : acc 1 → 8/8  -> PASS
+  F-D-CONVERGE AGGREGATE 4/4: true
+----------------------------------------------------------------
+  pure-hexa hexa-cpu training-to-convergence FIRE
+    substrate    : compiled-native CPU pure-hexa (NOT .py, NOT GPU)
+    config       : d=64 n_layer=3 steps=300 nsamp=8 V=256
+    corpus       : training/corpus_consciousness_v1.jsonl (byte-level)
+    init→final   : gn2 7.96691 → 2.15075e-08 (3.70425e+08x collapse)
+    impl tier    : 🔵 (B-D-4 + GRAD-EXACT carry, Phase E2 CPU-equiv anchor)
+    outcome tier : EMPIRICAL (B-D-NOTE — SGD 수렴 OUTCOME, honest)
+    anchor chain : Phase E/E2 (d=32·3L·80-step CPU-equiv BIT-EQUAL) → this fire (d=64·3L·300-step FINAL captured)
+    selftest: true
+================================================================
+      360.25 real       334.24 user        14.60 sys
+         11661033472  maximum resident set size
+                   0  average shared memory size
+                   0  average unshared data size
+                   0  average unshared stack size
+             5596983  page reclaims
+                  34  page faults
+                   0  swaps
+                   0  block input operations
+                   0  block output operations
+                   0  messages sent
+                   0  messages received
+                   0  signals received
+                  77  voluntary context switches
+              390100  involuntary context switches
+       4153287468992  instructions retired
+        797681455324  cycles elapsed
+         91680915824  peak memory footprint

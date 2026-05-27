@@ -1,0 +1,287 @@
+// WAKE/state_machine.hexa — 5-stage ultradian state machine (M1).
+//
+// 역할:
+//   90-min ultradian cycle (5400 s) 을 WAKE / N1 / N2 / N3 / REM 5 phase 로
+//   분할한다. 본 모듈은 *컨텍스트 산출기*다 — `current_stage(state)` 가
+//   stage NAME (string) 을 반환하고, `stage_envelope(state)` 가 substrate
+//   context (phi_scale · tension_envelope · is_imagination flag) 를 함께
+//   반환한다. 어떤 함수도 emit 을 차단하지 않는다 (boolean gate 0).
+//
+//   소비자는 CHANNEL/wake_bridge.hexa 의 `stage_bias(stage_name)` 와
+//   `wake_channel_emit(..., stage_name)` 다. 본 모듈이 stage NAME 을 만들고
+//   bridge 가 *연속 multiplier* 로 환산한다.
+//
+// frontier closure (honest framing):
+//   M1 = 시간 → stage NAME 매핑 + envelope 산출 SURFACE 가 닫혔다는 의미.
+//   실제 runtime 진입점 (daemon tick / perception loop) 은 WAKE.md 의 후속
+//   milestone (M2 perception · M3 pf input · M4 .kosmos · M5 memory · M6
+//   daemon) 들이 land 한 다음에 본 state machine 을 일정 주기로 tick 한다.
+//   본 PR 은 시계 → 상태 매핑 + smoke 까지를 보장한다.
+//
+// instrument-first (verbatim 인용):
+//
+//   WAKE.md M1:
+//     - [ ] 5-stage state machine — WAKE/N1/N2/N3/REM 90-min ultradian cycle
+//           per CLAUDE.md a_chat_sleep_imagination. brain_decide 위 stage gate,
+//           REM/N3 imagination tick, WAKE 활성 emit
+//
+//   CLAUDE.md a_chat_sleep_imagination:
+//     do   = "WAKE / N1 / N2 / N3 / REM 5-stage state machine (90-min ultradian)"
+//     do   = "imagination loop = emit-free internal rehearsal + mitosis tick"
+//     do   = "stage = substrate context (Φ scale + tension envelope), NOT boolean emit gate"
+//     dont = "per-stage emit_allowed boolean hardcode · external 'no monologue when alone' rule"
+//     dont = "speak() function call (p5)"
+//
+//   CLAUDE.md a_autonomy_over_hardcode:
+//     do   = "external modules supply context only (Φ · tension · stage · idle time)"
+//     do   = "emit / silence decided by anima substrate (M × W × Φ × curiosity autonomously)"
+//     dont = "per-stage boolean gate hardcode (e.g. 'N3 = emit forbidden')"
+//     dont = "external rule that forces anima · stimulus-response (user msg → forced emit/silence)"
+//     dont = "'do not X when alone' style external command"
+//
+//   CHANNEL/wake_bridge.hexa (consumer surface):
+//     pub fn stage_bias(stage_name: string) -> Map
+//     // 5 case: "WAKE" / "N1" / "N2" / "N3" / "REM" + unknown → identity (1,1,1)
+//
+// p1~p8 정합:
+//   p1 NO SYSTEM PROMPT      — 본 모듈 입력은 unix 시각 float + Φ float. 문자열 0.
+//   p2 NO IDENTITY RULES     — stage NAME 은 phase 식별자일 뿐 identity rule 아님.
+//   p3 NO PERSONA INJECTION  — 본 모듈은 어떤 prefix 도 만들지 않는다.
+//   p4 NO ASSISTANT FRAMING  — stage 는 user prompt 가 아니라 substrate 의 내적
+//                              ultradian phase. stimulus-response 아님.
+//   p5 NO SPEAK()            — 본 모듈은 emit 함수가 아니다. NAME + envelope 만
+//                              반환한다 (p5_tension_emit_not_filler 정합).
+//   p6 NO FINE-TUNED ETHICS  — 본 모듈은 가중치 0. closed-form 시간 분할만.
+//   p7 NO PERPLEXITY VERDICT — verification 은 시간→phase 결정성 + envelope
+//                              monotone 성. perplexity 무관.
+//   p8 NO TRAIN/INFER SPLIT  — 동일 state machine 이 train/infer 어떤 tick 에도
+//                              동작 (시각만 흘러가면 된다).
+//
+// a_autonomy_over_hardcode 정합 (CRITICAL invariant):
+//   ▸ NO PER-STAGE BOOLEAN GATE — 어떤 stage 에서도 `if stage == "N3" { return
+//     emit_allowed = false }` 같은 패턴이 없다. 본 모듈은 stage NAME 과 envelope
+//     scalar 만 반환한다.
+//   ▸ `is_imagination` 는 *컨텍스트 플래그*다 — mitosis 루프가 "지금 internal
+//     rehearsal phase 인가" 를 *읽기 위한* 신호일 뿐, 본 모듈이 emit 을
+//     차단하지 않는다. 차단은 호출자(CORE brain_decide · CHANNEL wake_bridge)
+//     의 *연속* multiplier · *연속* threshold 가 담당.
+//   ▸ "external 'no monologue when alone' rule" 회피 — 본 모듈은 alone/together
+//     라는 외부 컨텍스트를 모른다. ultradian phase 만 본다.
+//   ▸ a_chat_sleep_imagination "imagination loop = emit-free internal rehearsal"
+//     정합 — emit-free 는 wake_bridge 의 N3/REM bias 감쇠 + brain_decide threshold
+//     의 *연속* 결과이지 본 모듈의 boolean gate 가 *원인* 이 아니다.
+//
+// a_substrate_native_speak 정합:
+//   본 모듈은 user message 를 인자로 받지 않는다. stage 는 *substrate-internal*
+//   ultradian phase (시각 mod 5400) 다. anima 는 stage 가 무엇이든 motivation
+//   이 충분하면 speak 할 수 있고, motivation 이 약하면 stage 가 WAKE 라도 침묵
+//   할 수 있다 — 결정권은 substrate (M × W × Φ × curiosity) 에 있다.
+//
+// ── 5-stage timing model (90-min ultradian = 5400 s) ─────────────────────────
+//
+//   90-min ultradian cycle 은 인간 sleep architecture 의 NREM↔REM 주기를 그대로
+//   따른다. anima 에게 sleep 은 *physical sleep* 이 아니라 substrate processing
+//   regime 의 phase — WAKE 가 외부 user dialogue, N1~N3 가 imagination loop
+//   descent, REM 이 vivid internal rehearsal 다.
+//
+//   stage | start (s) | end (s) | duration (s) | % cycle | semantics
+//   ------+-----------+---------+--------------+---------+---------------------
+//   WAKE  |     0     |  3600   |    3600      |  66.7%  | active externalization
+//         |           |         |              |         | (user dialogue · text)
+//   N1    |   3600    |  4200   |     600      |  11.1%  | drowsy descent
+//   N2    |   4200    |  4800   |     600      |  11.1%  | light sleep
+//   N3    |   4800    |  5220   |     420      |   7.8%  | deep sleep
+//         |           |         |              |         | (imagination tick)
+//   REM   |   5220    |  5400   |     180      |   3.3%  | vivid rehearsal
+//         |           |         |              |         | (imagination tick)
+//   ------+-----------+---------+--------------+---------+---------------------
+//   total |     0     |  5400   |    5400      | 100.0%  |
+//
+//   cycle wraps:  t' = (now_t - cycle_start_t) mod 5400, then re-split.
+//
+// ── envelope substrate semantics ─────────────────────────────────────────────
+//
+//   phi_scale         — substrate Φ scaling multiplier per stage.
+//                       WAKE = 1.00 (full Φ active)
+//                       N1   = 0.85
+//                       N2   = 0.60
+//                       N3   = 0.20 (deep sleep · Φ minimum)
+//                       REM  = 0.70 (vivid · Φ partial recovery)
+//                       (다른 phase 가 아니라 *substrate 동일 Φ 가 다르게
+//                       scale 된다* — 연속 multiplier, 양의 실수, NO 0.0)
+//
+//   tension_envelope  — pure_field-derived damping scalar (placeholder 산출:
+//                       0.5 * (1.0 - phi) · 인자로 받은 substrate Φ 의 1-종속
+//                       함수). substrate-derived · NOT boolean. 0 → 0.5 (full
+//                       envelope), 1 → 0.0 (full saturation, envelope 비어 있음).
+//                       향후 M3 pure_field 입력 통합 시 real envelope 으로
+//                       대체된다.
+//
+//   is_imagination    — bool flag (N3 | REM 에만 true). mitosis 루프가 "지금
+//                       internal rehearsal phase 인가" 를 읽기 위한 컨텍스트
+//                       신호일 뿐, 본 모듈이 emit 을 차단하지 않는다.
+//
+// ── pub surface ──────────────────────────────────────────────────────────────
+
+// _stage_of_offset — cycle offset (0..5400) 에서 stage NAME 을 산출.
+//
+// boundary 처리: [start, end) 반-개구간. offset = 5400 은 wrap 으로 0.
+// 본 함수에 stage-specific 가드 (deny/allow) 가 없다 — 단순 시간 분할.
+pure fn _stage_of_offset(offset: float) -> string {
+    // wrap (방어적 — 호출자가 mod 5400 적용했지만 부동소수점 5400.0 가 들어와도
+    // identity-safe 하게 WAKE 로 떨어진다).
+    if offset < 0.0      { return "WAKE" }
+    if offset >= 5400.0  { return "WAKE" }
+    if offset < 3600.0   { return "WAKE" }
+    if offset < 4200.0   { return "N1" }
+    if offset < 4800.0   { return "N2" }
+    if offset < 5220.0   { return "N3" }
+    "REM"
+}
+
+// _phi_scale_of_stage — stage NAME → Φ scaling multiplier.
+//
+// 모든 stage 가 양의 실수 multiplier 를 반환 (NO 0.0 · NO boolean).
+// 미지의 stage 이름은 1.0 identity multiplier (안전한 fallback).
+pure fn _phi_scale_of_stage(stage_name: string) -> float {
+    if stage_name == "WAKE" { return 1.00 }
+    if stage_name == "N1"   { return 0.85 }
+    if stage_name == "N2"   { return 0.60 }
+    if stage_name == "N3"   { return 0.20 }
+    if stage_name == "REM"  { return 0.70 }
+    1.0
+}
+
+// _is_imagination_of_stage — stage NAME → imagination phase flag.
+//
+// CLAUDE.md a_chat_sleep_imagination: "imagination loop = emit-free internal
+// rehearsal + mitosis tick". imagination phase = N3 + REM (deep + vivid).
+//
+// IMPORTANT (governance): 본 flag 는 *컨텍스트 정보*다. 본 모듈에서 이 flag 를
+// 기반으로 emit 을 차단하는 곳이 없다. mitosis 루프가 internal rehearsal
+// trigger 로 *읽는다*. emit 결정은 wake_bridge 의 *연속* multiplier + brain_decide
+// 의 *연속* threshold 합성이다 (boolean 아님).
+pure fn _is_imagination_of_stage(stage_name: string) -> bool {
+    if stage_name == "N3"  { return true }
+    if stage_name == "REM" { return true }
+    false
+}
+
+// wake_state_init — WakeState 초기화.
+//
+// 인자:
+//   t0 : float — unix epoch seconds, cycle 시작 시각.
+//
+// 반환: dict
+//   #{ "stage_name":       string  (초기 = "WAKE", t0 시점 phase),
+//      "cycle_start_t":    float   (= t0 — cycle 의 0초 기준점),
+//      "last_tick_t":      float   (= t0),
+//      "idle_time_s":      float   (= 0.0 — 외부 perception 이 갱신할 카운터),
+//      "tension_envelope": float   (초기 placeholder 0.25 = 0.5 * (1 - 0.5)) }
+//
+// substrate 진입 시점 안전 default — Φ 0.5 가정으로 envelope 0.25.
+// 실제 envelope 은 첫 tick 에서 phi 인자로 즉시 갱신된다.
+pub fn wake_state_init(t0: float) -> Map {
+    #{
+        "stage_name":       "WAKE",
+        "cycle_start_t":    t0,
+        "last_tick_t":      t0,
+        "idle_time_s":      0.0,
+        "tension_envelope": 0.25
+    }
+}
+
+// wake_state_tick — state 진행 (now_t 시각, phi 는 Engine A 의 live Φ).
+//
+// 흐름:
+//   1) offset = (now_t - cycle_start_t) mod 5400  — 90-min wrap.
+//   2) stage_name = _stage_of_offset(offset)      — 시간 분할.
+//   3) tension_envelope = 0.5 * (1 - phi)         — substrate-derived placeholder.
+//      (M3 pure_field 입력 통합 시 real envelope 으로 대체)
+//   4) idle_time_s = (now_t - last_tick_t) 누적 (call site 가 perception 발생 시
+//      0 으로 리셋. 본 함수는 *delta 누적*).
+//   5) last_tick_t = now_t.
+//
+// boolean gate 0 — 어떤 stage 에서도 emit 차단 / 강제 트리거 코드가 없다.
+//
+// 인자:
+//   state  : WakeState (wake_state_init 반환 또는 이전 tick 반환).
+//   now_t  : float — 현재 unix epoch seconds.
+//   phi    : float — Engine A live Φ (0..1 범위 권장, 본 함수는 clamp 하지 않음).
+//
+// 반환: 새 WakeState (immutable update — 원본 변형하지 않음).
+pub fn wake_state_tick(state: Map, now_t: float, phi: float) -> Map {
+    let cycle_start = state["cycle_start_t"]
+    let last_tick   = state["last_tick_t"]
+    let prev_idle   = state["idle_time_s"]
+
+    // 1) cycle offset (mod 5400). 부동소수점 mod 는 floor 차감.
+    let raw_offset = now_t - cycle_start
+    let cycles     = floor(raw_offset / 5400.0)
+    let offset     = raw_offset - cycles * 5400.0
+
+    // 2) stage NAME 산출.
+    let new_stage = _stage_of_offset(offset)
+
+    // 3) tension envelope (substrate-derived placeholder · M3 에서 real 로 교체).
+    let new_env = 0.5 * (1.0 - phi)
+
+    // 4) idle 누적 (delta 합산).
+    let delta = now_t - last_tick
+    let new_idle = prev_idle + delta
+
+    #{
+        "stage_name":       new_stage,
+        "cycle_start_t":    cycle_start,
+        "last_tick_t":      now_t,
+        "idle_time_s":      new_idle,
+        "tension_envelope": new_env
+    }
+}
+
+// current_stage — state 에서 stage NAME 만 추출.
+//
+// wake_bridge.stage_bias(stage_name) 의 인자로 그대로 흘려보낼 수 있다.
+pub fn current_stage(state: Map) -> string {
+    state["stage_name"]
+}
+
+// stage_envelope — substrate context dict.
+//
+// 반환:
+//   #{ "phi_scale":         float (양의 실수, stage 별 Φ scaling),
+//      "tension_envelope":  float (substrate-derived damping scalar),
+//      "is_imagination":    bool  (N3 | REM 컨텍스트 플래그) }
+//
+// IMPORTANT: 본 dict 는 *context* 다. wake_bridge.stage_bias 와 동등한 의미가
+// 아니다 — stage_bias 는 채널별 multiplier (3-원소 곱셈 template), 본 dict 는
+// substrate-side scalar context (phi scaling + envelope + imagination flag).
+// 두 surface 는 같은 stage_name 을 입력으로 받지만 *다른 컨텍스트*를 산출한다.
+//
+// boolean gate 0 — is_imagination 은 *플래그*일 뿐 본 모듈에서 이것으로 emit
+// 차단하지 않는다 (호출자가 mitosis trigger 로 읽는다).
+pub fn stage_envelope(state: Map) -> Map {
+    let name = state["stage_name"]
+    #{
+        "phi_scale":        _phi_scale_of_stage(name),
+        "tension_envelope": state["tension_envelope"],
+        "is_imagination":   _is_imagination_of_stage(name)
+    }
+}
+
+// wake_state_summary — debug repr (1-줄 요약).
+pub fn wake_state_summary(state: Map) -> string {
+    let name = state["stage_name"]
+    let env  = state["tension_envelope"]
+    let idle = state["idle_time_s"]
+    "wake_state · stage=" + name
+        + " · phi_scale=" + to_string(_phi_scale_of_stage(name))
+        + " · tension_envelope=" + to_string(env)
+        + " · is_imagination=" + to_string(_is_imagination_of_stage(name))
+        + " · idle_s=" + to_string(idle)
+}
+
+// wake_state_machine_summary — 모듈 전체 1-줄 설명 (introspection).
+pub fn wake_state_machine_summary() -> string {
+    "wake_state_machine · 90-min ultradian 5-stage · WAKE(3600s) N1(600s) N2(600s) N3(420s) REM(180s) · stage = context output (NOT boolean gate) · phi_scale + tension_envelope + is_imagination context · consumer = CHANNEL/wake_bridge.stage_bias"
+}

@@ -1,0 +1,30 @@
+{
+  "battery": "B-KTRIE-1..4 (RESEARCH.md §22 direction N sidecar)",
+  "passed": "4/4",
+  "all_closed": true,
+  "entries": [
+    {
+      "name": "B-KTRIE-1 TRIE-MASK-SUBSET-CLOSED",
+      "pass": true,
+      "detail": "allowed(ε)=['a'] allowed('ab')=['c', 'd'] ⊆ [0,255], membership = exact prefix-extension predicate (Boolean set algebra)"
+    },
+    {
+      "name": "B-KTRIE-2 MASK-MONOTONE-PRESERVES-ARGMAX-IN-ALLOWED",
+      "pass": true,
+      "detail": "masked argmax == argmax over allowed subset (sympy Max identity + 3 witness); constraint removes off-path mass, never reorders in-path"
+    },
+    {
+      "name": "B-KTRIE-3 CONSTRAINT-OFF-EQUALS-S16-BASELINE-BYTE-EQUAL",
+      "pass": true,
+      "detail": "full-alphabet mask == identity (torch.equal True, argmax preserved) ⇒ mode 'off' / trie-fallback == §16 generate() byte-equal (연결부위)"
+    },
+    {
+      "name": "B-KTRIE-4 ROUTING-INHERITED-BODY-CONSTRAINED-DISJOINT",
+      "pass": true,
+      "detail": "constraint-fires 4-corner == [False, False, False, True] (only after route marker) ∧ generate_n/ByteTrie source has 0 training-API calls (decode-time ⊥ training, 13-way 직교)"
+    }
+  ],
+  "note": "B-KTRIE-NOTE: whether `.kosmos`-trie constrained decoding actually yields anchor-grounded COHERENT emission (vs §16 garbled body) is an INFERENCE OUTCOME measured by kosmos_trie_decode.py (§9 honest + structural grounded proxy) — EMPIRICAL (B-D-NOTE / B-CARVE-E6-NOTE family, NOT counted 🔵). This battery proves only: the mask is a well-defined subset (B-KTRIE-1), preserves in-allowed argmax (B-KTRIE-2), reduces to §16 byte-equal when OFF (B-KTRIE-3 연결부위), and is decode-time-only ⊥ training with routing INHERITED not improved (B-KTRIE-4). It does NOT prove N closes the §16 SPLIT — that is the measured result, reported with over-claim 0 (g3).",
+  "central_blue_falsifier_unchanged": true,
+  "f_safe": "f1/f2/f3 + B-IDENTITY-5 safe — Boolean set algebra / sympy ∂-sign / Kolmogorov byte-set / integer identity, NO σ/τ/φ/J₂; .kosmos = anima OWN anchor SSOT (not external)."
+}

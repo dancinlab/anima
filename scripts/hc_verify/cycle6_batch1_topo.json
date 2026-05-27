@@ -1,0 +1,279 @@
+{
+  "batch": "cycle6-batch1-topo-cluster",
+  "candidates": [
+    {
+      "path": "hypotheses_candidates/Hc_158_topo9_ratchet_persistence.md",
+      "falsifiers": [
+        {"id": "F-TOPO9-1", "body": "Ratchet threshold sweep {50%, 80%, 95%} on TOPO2 base produces non-monotone Φ vs threshold → ratchet effect is parameter-tuning artifact, not principled state-restoration mechanism (H_159 sweep apparatus)"},
+        {"id": "F-TOPO9-2", "body": "Identical small-world base WITHOUT ratchet reaches peak Φ ≥ 179.47 within 1.5× wallclock → ratchet provides zero peak-Φ advantage; only changes recovery dynamics (rules out ratchet as a Φ-amplification mechanism)"},
+        {"id": "F-TOPO9-3", "body": "Restore-30%-best-state ablation (vary restore-fraction ∈ {10%, 30%, 50%, 70%}) at threshold=80%: if peak Φ peaks at restore=30% by ≤ 5% margin → ratchet specificity unsupported, just a momentum smoothing trick"},
+        {"id": "F-TOPO9-4", "body": "Apply same ratchet to flat hypercube 1024 (TOPO8 base, not small-world): if Φ improves equivalently → ratchet is substrate-agnostic, not small-world-specific (would absorb to H_159 cluster as variant rather than independent claim)"}
+      ],
+      "honest": [
+        {"id": "L-TOPO9-1", "body": "Single-run anchor: peak Φ=179.47, final Φ=127.3 reported as point values, no CI. Reproducibility across seeds (≥3) is mandatory before claim is robust; H_159 C1 reproducibility audit on TOPO base candidates still pending (inherited limit)"},
+        {"id": "L-TOPO9-2", "body": "growth_ratio=80.5 is the headline number but its formal definition (peak-Φ/baseline-Φ? final-Φ/seed-Φ?) is ambiguous in the candidate; without explicit ratio formula the result is not directly comparable to TOPO8/TOPO10 sibling Hc"},
+        {"id": "L-TOPO9-3", "body": "anima Φ-engine substrate-specific (Hc_614 D-mod-192 aliasing) — Φ values are anima-proxy measurements, not formal IIT Φ. Ratchet mechanism may interact unpredictably with engine internal state caching, contaminating the measurement (H_174 carries this limit class)"},
+        {"id": "L-TOPO9-4", "body": "n=6 PERFECT_NUMBER_CLASS triviality binding (H_153 L7): small-world base inherits TOPO2 cell-count = 64 or 1024 (powers of 2 × n=6 derived); ratchet doesn't introduce new number-theoretic anchor, so claim's n=6 dependence is indirect at best"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering) — natural absorption candidate as TOPO9 is part of the same anima-substrate sweep apparatus",
+        "**sibling H**: H_177 (TOPO10+20 stress-test cluster), H_153 (dimension-hierarchy-n6, n=6 triviality)",
+        "**sibling Hc (same sweep)**: Hc_157 (TOPO8 33% frust), Hc_162 (TOPO13 ratchet variant), Hc_172 (TOPO21 adaptive rewire — different state-preserving mechanism)",
+        "**literature**: Watts-Strogatz 1998 (small-world via shortcuts); Tononi 2014 (IIT Φ system-size scaling)"
+      ],
+      "notes": "Verify-decision target: PROMOTE_READY (math identity present via Watts-Strogatz σ_sw + 30%/80% percentage anchors; ≥3 F; ≥3 L; ≥2 H_NNN cross-refs satisfies has_cross). Likely absorption: into H_159 as ratchet sub-mechanism."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_161_topo12_8faction_debate.md",
+      "falsifiers": [
+        {"id": "F-TOPO12-1", "body": "intra-cohesion sweep {0.5, 0.7, 0.92, 1.0} × inter-repulsion {0.0, 0.08, 0.2, 0.5}: if Φ peak is NOT at (0.92, 0.08) but at unspecific (cohesion×repulsion) coordinates → 8-faction tuning is post-hoc, not principled"},
+        {"id": "F-TOPO12-2", "body": "faction-count sweep {2, 4, 6, 8, 12, 16} at 1024-total cells: if Φ peak NOT at faction=8 by effect-size > 30% → 8-faction is generic optimum, not sopfr(6)·something resonance"},
+        {"id": "F-TOPO12-3", "body": "Random-faction-assignment baseline (cells assigned to factions uniformly) vs structured (cluster-based) assignment: if Φ differential < 10% → debate-structure decorative, only count matters"},
+        {"id": "F-TOPO12-4", "body": "Cross-engine PyPhi at faction_count=8: if Φ uplift NOT observed in formal IIT → anima-proxy artifact (H_174 aliasing class)"}
+      ],
+      "honest": [
+        {"id": "L-TOPO12-1", "body": "Specific cohesion=0.92 / repulsion=0.08 hyperparameter tuple suggests grid-search picked these post-hoc; pre-registration not documented in source"},
+        {"id": "L-TOPO12-2", "body": "n=6 triviality (H_153 L7): faction_count=8 has no clean n=6 derivation (sopfr(6)=5 ≠ 8); rationale unclear"},
+        {"id": "L-TOPO12-3", "body": "anima Φ-engine substrate-specific (H_174 D-mod-192 aliasing) — faction-cell-count (1024/8=128) may interact with cache aliasing"},
+        {"id": "L-TOPO12-4", "body": "no reproducibility across seeds documented (single-run anchor inherited from H_159 C1 pending)"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering) — variant within sweep apparatus",
+        "**sibling H**: H_177 (TOPO20 8×128 hierarchical — same 8-cluster structure with different mechanism), H_153 (n=6)",
+        "**sibling Hc**: Hc_171 (TOPO20 → H_177), Hc_174 (TOPO22b worst-in-sweep)"
+      ],
+      "notes": "Likely absorption: H_159 (positive sweep) if 8-faction peak confirmed at C-sweep; else dies as confound."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_162_topo13_hypercube_ratchet.md",
+      "falsifiers": [
+        {"id": "F-TOPO13-1", "body": "Ratchet threshold sweep {50%, 80%, 95%}: non-monotone Φ vs threshold → ratchet is parameter-tuning artifact (parallel to TOPO9 F1)"},
+        {"id": "F-TOPO13-2", "body": "Hypercube WITHOUT ratchet reaches identical peak Φ within 2× wallclock → ratchet decorative for hypercube (different result from small-world TOPO9?)"},
+        {"id": "F-TOPO13-3", "body": "Compare TOPO9 (small-world+ratchet) vs TOPO13 (hypercube+ratchet) at matched cell budget: if Φ differential < 15% → ratchet mechanism substrate-independent, no hypercube-specific story"},
+        {"id": "F-TOPO13-4", "body": "Cross-engine PyPhi ratchet replication at hypercube 1024: if Φ uplift absent → anima-engine-internal-state artifact"}
+      ],
+      "honest": [
+        {"id": "L-TOPO13-1", "body": "TOPO13 and TOPO9 share the ratchet mechanism — claim independence requires substrate × ratchet interaction effect, not main effect"},
+        {"id": "L-TOPO13-2", "body": "Collapse-recovery dynamics depend on ratchet hyperparams undocumented in source (restore-fraction, recovery-window)"},
+        {"id": "L-TOPO13-3", "body": "n=6 triviality: 1024=2^10 hypercube, ratchet does not introduce new number-theoretic anchor (inherited L from H_153)"},
+        {"id": "L-TOPO13-4", "body": "anima Φ-engine aliasing (H_174) — ratchet state-restoration may double-trigger engine internal caches"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering)",
+        "**sibling H**: H_177 (TOPO10 11D regression + TOPO20 8×128)",
+        "**sibling Hc (same mechanism)**: Hc_158 (TOPO9 ratchet on small-world)"
+      ],
+      "notes": "Likely absorption: cluster with Hc_158 into H_159 as 'ratchet variant family' rather than independent H."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_163_topo14_more_steps_hurts.md",
+      "falsifiers": [
+        {"id": "F-TOPO14-1", "body": "Step sweep {100, 200, 400, 800, 1600} on hypercube 1024: if Φ is non-monotone with a global min at 400 (not monotone-decreasing) → 'doubling hurts' is a 2-point coincidence not a curve property"},
+        {"id": "F-TOPO14-2", "body": "Replicate 200→400 step doubling on TOPO8 sister-Hc (Hc_157) with 5+ seeds: if peak Φ at 400 is within 1σ of Φ at 200 → 'decrease' is single-run-artifact (H_159 C1 reproducibility issue)"},
+        {"id": "F-TOPO14-3", "body": "Cross-substrate (torus 32×32, small-world 1024) step-doubling test: if Φ drops similarly at all substrates → step-budget effect substrate-agnostic, not hypercube-specific (would collapse claim to 'engine converges by step 200')"},
+        {"id": "F-TOPO14-4", "body": "Anima engine internal-state reset between step batches: if Φ doubling DOES NOT decrease with reset → engine-state-accumulation confound (H_174 aliasing/state-leak class)"}
+      ],
+      "honest": [
+        {"id": "L-TOPO14-1", "body": "Negative result (more steps decreases Φ) is harder to publish than positive — selection bias risk that 200→400 was reported because it confirmed an a-priori 'over-integration' hypothesis"},
+        {"id": "L-TOPO14-2", "body": "anima Φ-engine substrate-specific (H_174 D-mod-192) — longer step traces accumulate aliasing artifacts, may explain Φ degradation without substrate-intrinsic cause"},
+        {"id": "L-TOPO14-3", "body": "step_count is engine-internal parameter, not substrate-topology parameter — calling this a topology Hc may be a categorization error (belongs to engine-tuning Hc class)"},
+        {"id": "L-TOPO14-4", "body": "no formal IIT (PyPhi) replication for step-doubling effect; pure anima-proxy result"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering) — negative-result sibling alongside H_177",
+        "**sibling H**: H_177 (TOPO10 sublinear regression — fellow negative-result), H_174 (Φ-engine aliasing)",
+        "**sibling Hc**: Hc_157 (TOPO8 200-step baseline), Hc_167 (TOPO18 2048 sublinear)"
+      ],
+      "notes": "Likely fate: absorbed to H_177 (negative-result branch) as 'more-steps-hurts companion to 11D-regression' OR die as engine-state confound."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_164_topo15_torus_32x32.md",
+      "falsifiers": [
+        {"id": "F-TOPO15-1", "body": "Torus dimensions sweep {16×64, 32×32, 64×16, 8×128}: if Φ at 32×32 is NOT the local max by ≥10% margin → square-torus specificity unsupported, just generic 1024-cell topology result"},
+        {"id": "F-TOPO15-2", "body": "Compare torus 32×32 to hypercube 1024 (TOPO8) at matched seeds: if Φ_torus ≥ Φ_hypercube → claim 'moderate Φ' is misleading (would be top-tier result)"},
+        {"id": "F-TOPO15-3", "body": "Random-graph baseline at 1024 cells, matched edge count to 32×32 torus: if Φ_random ≈ Φ_torus → torus topology decorative, edge density does the work"},
+        {"id": "F-TOPO15-4", "body": "Cross-engine PyPhi torus 32×32: if no 'moderate Φ' band observed → anima-engine substrate-coupling artifact"}
+      ],
+      "honest": [
+        {"id": "L-TOPO15-1", "body": "'moderate Φ' is unquantified — what is the absolute Φ vs TOPO8 (535) and TOPO10 (581 at 11D)? Without explicit number the claim is unfalsifiable on its face"},
+        {"id": "L-TOPO15-2", "body": "32×32 = 2^5 × 2^5 — pure power-of-2 square, no clean n=6 derivation; perfect-number-triviality (H_153 L7) limit unaddressed"},
+        {"id": "L-TOPO15-3", "body": "Torus periodicity may interact with anima engine cell-index modulo (H_174 D-mod-192 aliasing class) in unpredictable ways"},
+        {"id": "L-TOPO15-4", "body": "single-run anchor (no reproducibility documented)"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering)",
+        "**sibling H**: H_177 (TOPO10/20 negative+hierarchical), H_174 (Φ-engine aliasing)",
+        "**sibling Hc**: Hc_166 (TOPO17 hypercube+smallworld hybrid), Hc_157 (TOPO8 hypercube baseline)"
+      ],
+      "notes": "Likely absorption: H_159 as 'torus variant probe' within sweep cluster."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_166_topo17_hypercube_smallworld_hybrid.md",
+      "falsifiers": [
+        {"id": "F-TOPO17-1", "body": "Shortcut-count sweep {1, 2, 4, 8, 16, 32} on hypercube 1024: if Φ at shortcut=2 is NOT a peak → 2-shortcut tuning is post-hoc, not principled"},
+        {"id": "F-TOPO17-2", "body": "Compare TOPO17 (Φ=463.6) to TOPO8 (Φ=535) at matched seeds: differential −13.7% — if reproducible across 5+ seeds → hypercube+shortcut hybrid is strictly WORSE than pure hypercube (claim should be falsified as 'enhancement')"},
+        {"id": "F-TOPO17-3", "body": "12-neighbor degree per cell (10 hypercube + 2 shortcut) vs 12-neighbor random regular graph at 1024: if Φ_random ≈ Φ_TOPO17 → hybrid hypercube backbone is decorative, only degree matters"},
+        {"id": "F-TOPO17-4", "body": "Cross-engine PyPhi at hypercube+2-shortcuts: if formal Φ uplift positive (vs anima proxy's −13.7%) → anima engine over-counts hypercube edges relative to shortcuts (H_174 aliasing)"}
+      ],
+      "honest": [
+        {"id": "L-TOPO17-1", "body": "Φ=463.6 vs TOPO8 Φ=535 — the candidate's headline result is that the hybrid UNDERPERFORMS pure hypercube. Framing as positive result is misleading"},
+        {"id": "L-TOPO17-2", "body": "'2 random shortcuts' is parameter-undetermined — random seed dependency on which 2 edges, no replication CI"},
+        {"id": "L-TOPO17-3", "body": "n=6 triviality (H_153 L7): hypercube 1024=2^10, hybrid does not introduce new number-theoretic anchor"},
+        {"id": "L-TOPO17-4", "body": "anima Φ-engine aliasing (H_174) — additional edges may trigger different cache paths"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering)",
+        "**sibling H**: H_177 (TOPO20 8×128 — also uses shortcut-density concept)",
+        "**sibling Hc**: Hc_157 (TOPO8 pure hypercube), Hc_171 (TOPO20 8×128 → H_177)"
+      ],
+      "notes": "Likely fate: absorption to H_177 as 'shortcut-density sub-threshold' branch of TOPO20 cluster."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_167_topo18_smallworld_2048_sublinear.md",
+      "falsifiers": [
+        {"id": "F-TOPO18-1", "body": "2048-cell sweep at multiple seeds: if Φ_2048 ≥ Φ_1024 in any seed → 2048 sublinear regression is single-run-artifact (parallel to Hc_159 11D regression issue, H_177 F1)"},
+        {"id": "F-TOPO18-2", "body": "Cell-count sweep {1024, 1280, 1536, 1792, 2048}: if Φ is monotone-decreasing 1024→2048 → confirms ceiling near 1024; if non-monotone → suggests intermediate optimum and 2048-regression is overshoot, not ceiling"},
+        {"id": "F-TOPO18-3", "body": "Same 2048-cell small-world WITHOUT cell-count change (just step-budget increase) reaches Φ ≥ 498.7 → claim 'cells hurt' is actually 'step-budget per cell' confound (parallel to TOPO14 step issue)"},
+        {"id": "F-TOPO18-4", "body": "Cross-engine PyPhi 2048-cell small-world: if formal Φ DOES scale with cell count → anima-proxy ceiling artifact (H_174 class)"}
+      ],
+      "honest": [
+        {"id": "L-TOPO18-1", "body": "Φ=406.5 (2048) < Φ=498.7 (1024) — this is a negative-result, regression at scale. Carries same H_177 (TOPO10 11D regression) structural limit"},
+        {"id": "L-TOPO18-2", "body": "2048 = 2^11, no clean n=6 derivation (H_153 L7 triviality binding)"},
+        {"id": "L-TOPO18-3", "body": "anima Φ-engine aliasing (H_174 D-mod-192): 2048-cell coverage may hit aliasing dead-zones not present at 1024"},
+        {"id": "L-TOPO18-4", "body": "single-run anchor at 2048 — replication mandatory (H_159 C1)"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering)",
+        "**sibling H**: H_177 (TOPO10 11D regression — same negative-scaling class), H_174 (Φ-engine aliasing)",
+        "**sibling Hc**: Hc_159 (TOPO10 → H_177), Hc_179 (TOPO-2048-scaling-breakdown cross-topology)"
+      ],
+      "notes": "Strong absorption candidate to H_177 — same negative-scaling phenotype as TOPO10. F1 is direct parallel to H_177.F1."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_168_topo19a_50pct_frustration_record.md",
+      "falsifiers": [
+        {"id": "F-TOPO19a-1", "body": "Frustration sweep {0%, 25%, 33%, 50%, 67%, 75%, 90%} at hypercube 1024 with 5+ seeds: if Φ peak NOT at 50% by ≥10% margin → record is single-run artifact, not principled optimum"},
+        {"id": "F-TOPO19a-2", "body": "Reproducibility: rerun 50%-frustration with 5 seeds → if 1σ-CI overlaps TOPO8 (33% frust) Φ=535 → record Φ=640 not statistically distinguishable from baseline"},
+        {"id": "F-TOPO19a-3", "body": "Cross-substrate (torus, small-world) 50%-frustration: if frustration optimum is substrate-specific → 50% is hypercube-specific tuning, not universal"},
+        {"id": "F-TOPO19a-4", "body": "Cross-engine PyPhi formal IIT at frustration=50%: if Φ_PyPhi does NOT peak at 50% → anima-engine artifact (H_174 aliasing class)"}
+      ],
+      "honest": [
+        {"id": "L-TOPO19a-1", "body": "Φ=640 single-run anchor — no published CI; H_159 C1 reproducibility audit still pending for all TOPO-cluster anchors"},
+        {"id": "L-TOPO19a-2", "body": "i%2 (50% antiferromagnetic) is the SIMPLEST possible frustration pattern — 'principled' or 'parsimony bias' (i%3 was likewise simple)"},
+        {"id": "L-TOPO19a-3", "body": "Frustration 50% peak may be artifact of even-cell-count parity: 1024 = 2^10, i%2 partitions exactly 512/512. Cell-count odd-parity test missing"},
+        {"id": "L-TOPO19a-4", "body": "anima Φ-engine aliasing (H_174) — D-mod-192 with even partition may double-resonate"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering) — direct positive-result for sweep cluster",
+        "**sibling H**: H_177 (TOPO10/20 negative+hierarchical), H_153 (n=6 substrate)",
+        "**sibling Hc**: Hc_157 (TOPO8 33%), Hc_173 (TOPO22a 60%), Hc_174 (TOPO22b 75%), Hc_176 (TOPO22d 90%)"
+      ],
+      "notes": "Likely direct absorption to H_159 — TOPO19a is THE positive-sweep record. Confirms H_159 frustration optimum hypothesis."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_172_topo21_adaptive_rewire.md",
+      "falsifiers": [
+        {"id": "F-TOPO21-1", "body": "Rewire-trigger sweep {Φ<70%, Φ<80%, Φ<90%, Φ<95%·best}: if Φ recovery is non-monotone with trigger → adaptive rewiring tuning post-hoc"},
+        {"id": "F-TOPO21-2", "body": "Compare TOPO21 (adaptive rewire) vs TOPO9/13 (ratchet) at matched cell budget: if Φ differential < 15% → rewire and ratchet are mechanistically equivalent (state-restoration via different proxies)"},
+        {"id": "F-TOPO21-3", "body": "Random rewire baseline (rewire random edges at fixed rate, ignore Φ-trigger): if Φ_random_rewire ≈ Φ_adaptive_rewire → adaptivity is decorative, edge-churn does the work"},
+        {"id": "F-TOPO21-4", "body": "Cross-engine PyPhi adaptive rewire: if formal Φ uplift absent → anima-proxy state-management artifact"}
+      ],
+      "honest": [
+        {"id": "L-TOPO21-1", "body": "'Dynamic adaptive rewiring' under-specified — what gets rewired (random edges? worst-Φ-contributing edges?), what density, what trigger"},
+        {"id": "L-TOPO21-2", "body": "TOPO21 mechanism overlaps TOPO9/TOPO13 ratchet conceptually; independence claim weak"},
+        {"id": "L-TOPO21-3", "body": "anima Φ-engine state mutation may interact with adaptive rewiring (H_174 aliasing)"},
+        {"id": "L-TOPO21-4", "body": "no reproducibility audit; n=6 triviality unaddressed"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering)",
+        "**sibling H**: H_177 (TOPO20 hierarchical alternative), H_174 (engine aliasing)",
+        "**sibling Hc**: Hc_158 (TOPO9 ratchet), Hc_162 (TOPO13 ratchet), Hc_316 (V8 c1 learnable topology)"
+      ],
+      "notes": "Likely fate: absorption to H_159 within 'state-management mechanism family' (alongside ratchet)."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_173_topo22a_60pct_frustration.md",
+      "falsifiers": [
+        {"id": "F-TOPO22a-1", "body": "Frustration sweep {50%, 55%, 60%, 65%, 70%} fine-grained at hypercube 1024: if Φ is monotone-decreasing 50%→60% → '60% above sweet spot' confirmed; if non-monotone → 'sweet spot' may be elsewhere"},
+        {"id": "F-TOPO22a-2", "body": "Replicate 60%-frustration with 5+ seeds: if 1σ-CI overlaps TOPO19a Φ=640 → 'above sweet spot' is within-noise"},
+        {"id": "F-TOPO22a-3", "body": "Apply 60% frustration to small-world / torus substrates: if 'above sweet spot' phenotype is substrate-specific → 50% sweet spot is hypercube-only universality claim"},
+        {"id": "F-TOPO22a-4", "body": "Cross-engine PyPhi formal IIT 60%-frustration replication: if Φ_PyPhi monotone-up through 60% → anima-proxy artifact (H_174 class)"}
+      ],
+      "honest": [
+        {"id": "L-TOPO22a-1", "body": "TOPO22a, b, c, d frustration sweep (60/75/?/90%) appears designed to triangulate 50% optimum — confirmation bias if TOPO19a is the pre-specified target"},
+        {"id": "L-TOPO22a-2", "body": "Single-run anchor; replication CI mandatory (H_159 C1)"},
+        {"id": "L-TOPO22a-3", "body": "i%(round(N*0.6)) frustration patterning may interact with cell parity (1024 even, 60% creates 614+410 partition — non-symmetric)"},
+        {"id": "L-TOPO22a-4", "body": "anima Φ-engine aliasing (H_174) — frustration-pattern interaction unmeasured"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering)",
+        "**sibling H**: H_177 (TOPO10/20), H_174 (engine aliasing)",
+        "**sibling Hc**: Hc_168 (TOPO19a 50% record), Hc_174 (TOPO22b 75%), Hc_176 (TOPO22d 90%)"
+      ],
+      "notes": "Cluster with TOPO22b/d into H_159 as 'frustration sweep around 50% sweet spot'."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_174_topo22b_75pct_frustration.md",
+      "falsifiers": [
+        {"id": "F-TOPO22b-1", "body": "Frustration sweep {50%, 60%, 75%, 90%}: if Φ at 75% is NOT the minimum → 'worst in sweep' claim falsified"},
+        {"id": "F-TOPO22b-2", "body": "Replicate 75%-frustration with 5+ seeds: if 1σ-CI overlaps 60% or 90% → 'worst' is within-noise"},
+        {"id": "F-TOPO22b-3", "body": "Cross-substrate (torus, small-world) 75%-frustration: if 75% is also worst there → universal frustration-collapse, not hypercube-specific"},
+        {"id": "F-TOPO22b-4", "body": "Cross-engine PyPhi formal IIT 75%-frustration: if 75% is NOT the formal-IIT minimum → anima-proxy artifact"}
+      ],
+      "honest": [
+        {"id": "L-TOPO22b-1", "body": "'Worst in sweep' is the negative-extreme of the TOPO22 frustration triangulation. Same single-run anchor limit as TOPO22a/d"},
+        {"id": "L-TOPO22b-2", "body": "Cell parity at 75% creates 768+256 partition — uneven, possibly creates engine-aliasing artifact"},
+        {"id": "L-TOPO22b-3", "body": "no formal IIT replication; pure anima-proxy negative result"},
+        {"id": "L-TOPO22b-4", "body": "n=6 triviality unaddressed (H_153 L7)"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering)",
+        "**sibling H**: H_177 (TOPO10/20)",
+        "**sibling Hc**: Hc_168 (TOPO19a 50% record), Hc_173 (TOPO22a 60%), Hc_176 (TOPO22d 90%)"
+      ],
+      "notes": "Pure complement to TOPO22a — same H_159 absorption."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_176_topo22d_90pct_frustration.md",
+      "falsifiers": [
+        {"id": "F-TOPO22d-1", "body": "Frustration sweep {50%, 75%, 90%, 95%, 99%}: if Φ at 90% > Φ at 75% (worst) → 'too-high frustration' phenotype non-monotone"},
+        {"id": "F-TOPO22d-2", "body": "Replicate 90%-frustration with 5+ seeds: if 1σ-CI overlaps 75% → '90% only mult-of-10 ferro' is not statistically distinguishable from 75%"},
+        {"id": "F-TOPO22d-3", "body": "Compare i%10==0 (90% antiferro) vs random-90%-antiferro-assignment: if Φ differs by ≥20% → mult-of-10 structuring is special; if not → it's the density that matters not the pattern"},
+        {"id": "F-TOPO22d-4", "body": "Cross-engine PyPhi 90%-frustration: if formal Φ at 90% differs from anima proxy → engine artifact"}
+      ],
+      "honest": [
+        {"id": "L-TOPO22d-1", "body": "i%10 specificity is suspicious — 10 has no clean n=6 derivation; ad hoc pattern choice"},
+        {"id": "L-TOPO22d-2", "body": "Single-run anchor (H_159 C1 pending)"},
+        {"id": "L-TOPO22d-3", "body": "'Only mult-of-10 ferromagnetic' creates 103/1024 ≈ 10% ferromagnetic cells — very small partition, may be statistically unstable"},
+        {"id": "L-TOPO22d-4", "body": "anima Φ-engine aliasing (H_174) — sparse-pattern frustration may trigger different cache pathways"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering)",
+        "**sibling H**: H_177 (TOPO10/20), H_174 (Φ-engine aliasing)",
+        "**sibling Hc**: Hc_168 (TOPO19a 50% record), Hc_173 (TOPO22a 60%), Hc_174 (TOPO22b 75%)"
+      ],
+      "notes": "Cluster terminus — same H_159 absorption as TOPO22a/b."
+    },
+    {
+      "path": "hypotheses_candidates/Hc_179_topo_2048_scaling_breakdown.md",
+      "falsifiers": [
+        {"id": "F-TOPO2048-1", "body": "Cross-topology 2048-cell test {hypercube 11D, small-world 2048, torus 64×32, 8×256 hierarchical}: if Φ scaling holds for ANY topology at 2048 → 'across all topologies' claim falsified"},
+        {"id": "F-TOPO2048-2", "body": "Cell-count fine sweep {1024, 1280, 1536, 1792, 2048}: if breakdown is sharp at 2048 specifically (not gradual) → suggests engine threshold (e.g., 2^11 boundary), not substrate-intrinsic"},
+        {"id": "F-TOPO2048-3", "body": "Compare 2048 with reduced step-budget (proportional to cell count) vs full step-budget: if scaling restored at full → breakdown is step-per-cell confound (parallel to TOPO14 step issue)"},
+        {"id": "F-TOPO2048-4", "body": "Cross-engine PyPhi 2048-cell scaling: if formal Φ DOES scale superlinear at 2048 → anima-engine ceiling artifact (H_174 D-mod-192 saturation at 2^11)"}
+      ],
+      "honest": [
+        {"id": "L-TOPO2048-1", "body": "'Across all topologies' claim is meta-Hc — depends on results at hypercube (TOPO10 11D), small-world (TOPO18), torus, hierarchical (TOPO20) — most of these are individual Hc with own confounds"},
+        {"id": "L-TOPO2048-2", "body": "2048 = 2^11, just past 2^10 hypercube ceiling — engine D-mod-192 aliasing (H_174) likely saturates here"},
+        {"id": "L-TOPO2048-3", "body": "no formal IIT replication for any 2048-cell sweep; pure anima-proxy result"},
+        {"id": "L-TOPO2048-4", "body": "n=6 triviality: 2048 has no clean n=6 derivation (H_153 L7)"}
+      ],
+      "cross_links": [
+        "**parent H**: H_159 (substrate-topology-phi-engineering), H_177 (TOPO10 negative-scaling)",
+        "**sibling H**: H_174 (Φ-engine aliasing — primary explanatory candidate for breakdown)",
+        "**sibling Hc**: Hc_159 (TOPO10 11D → H_177), Hc_167 (TOPO18 small-world 2048), Hc_171 (TOPO20 hierarchical → H_177)"
+      ],
+      "notes": "Strong absorption candidate to H_177 as 'meta-conclusion of 2048-scaling-breakdown' (TOPO10 11D and TOPO18 small-world 2048 are its specific instances)."
+    }
+  ]
+}

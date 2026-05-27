@@ -1,0 +1,89 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/init_patterns/autonomous.hexa — Pattern 1
+//
+//  PURPOSE
+//    Empty-prompt init pattern. Speaker A receives NO seed at t=1; the
+//    instance is expected to autonomous-emit the first utterance per
+// mandate-4 (autonomous speech 정합).
+//
+//  CONTRACT
+//    resolve_init(argv) -> string
+//      Returns "" (empty string) — caller (duo.hexa / trio.hexa) MUST
+//      interpret "" as "do NOT channel_send to A.stdin at t=1; let A
+//      autonomous-emit".
+//
+//  USAGE
+//    --init-pattern=autonomous
+//
+//  RISK ACKNOWLEDGEMENT
+// Without REPL keepalive + non-blocking stdin (phase 2), A may
+//    block on stdin read or emit silence (timeout). chat/llama/llama.hexa
+//    + chat/anima_native/anima_native.hexa both wire sys_stdin_read_line_
+//    timeout(ms) per Phase 2 land — autonomous emission is supported.
+// CLM v4 substrate-only models may emit ::: collapse (mandate-1
+//    raw passthrough preserves the artifact for caller diagnosis).
+//
+//  COMPLIANCE
+// C2 — autonomous baseline measurement (spontaneity高)
+// — silence outcome ledgerable as honest C3
+// — / / cross-link
+// mandate-1 — wrapping 0 (no seed = no wrap)
+// mandate-4 — autonomous speech 정합 default
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/autonomous.hexa")
+                || s.ends_with("autonomous.hexa")
+        if !skip { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+// Public contract — caller invokes this to get the t=1 seed string.
+// Empty string = no seed (channel_send skipped; A autonomous-emits).
+fn resolve_init(argv) -> string {
+    return ""
+}
+
+// CLI selftest / standalone probe (e.g. `hexa run autonomous.hexa --selftest`).
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--selftest") {
+        let r = resolve_init(argv)
+        if r != "" {
+            println("FAIL autonomous.resolve_init returned non-empty: \"" + r + "\"")
+            exit(1)
+        }
+        println("PASS autonomous.resolve_init returned empty (mandate-4 autonomous-emit semantics)")
+        return
+    }
+    let r = resolve_init(argv)
+    println("[init-pattern=autonomous] seed=(empty)")
+    println("  → caller MUST skip channel_send at t=1; A autonomous-emits.")
+    println("  return_value: \"" + r + "\"")
+}

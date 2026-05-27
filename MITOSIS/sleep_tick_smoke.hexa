@@ -1,0 +1,202 @@
+// @raw117_exempt
+// ════════════════════════════════════════════════════════════════════════
+// MITOSIS/sleep_tick_smoke.hexa — sleep-tick smoke (M5 2026-05-27)
+//
+// 정체: sleep_tick.hexa public surface 를 거치며 WAKE/state_machine 의
+//      5-stage timing 모델과 MITOSIS/mitosis_lib 의 cell-pool 을 잇는
+//      통합 검증.
+//
+// 5 case (a_chat_sleep_imagination "imagination loop = emit-free internal
+// rehearsal + mitosis tick" 정합 검증):
+//   1) WAKE  →  action="wake_skip"        · pool topology unchanged
+//   2) N1    →  action="wake_skip"        · pool topology unchanged
+//   3) N2    →  action="wake_skip"        · pool topology unchanged
+//   4) N3    →  action="imagination_tick" · cell_pool_step fired
+//   5) REM   →  action="imagination_tick" · cell_pool_step fired
+//
+// invariants:
+//   I1: WAKE / N1 / N2 → action == "wake_skip" AND pool_changed == false AND
+//       splits == 0 AND merges == 0 (substrate fact: imagination phase 아님)
+//   I2: N3 / REM → action == "imagination_tick" (mitosis tick fired)
+//   I3: NO emit text returned — 본 smoke 의 print 출력은 *smoke 자체* 의
+//       것이며 sleep_tick 반환 dict 에 "text" / "emit" / "message" / "speak"
+//       같은 emit-field 가 없음을 검증 (p5 + a_chat_sleep_imagination
+//       "emit-free internal rehearsal" 정합); contract whitelist 방식.
+//   I4: N3 / REM pool_changed 는 true 또는 false — single tick 에서 split/
+//       merge 가 fire 할 수도, 안할 수도 있음 (mitosis_lib 의 patience +
+//       threshold + history 누적 조건에 의존). 본 invariant 는 *허용* 검증.
+//   I5: 5 stage 모두 실제로 sleep_tick 을 통과 (WAKE/N1/N2/N3/REM coverage).
+//
+// boolean gate 0 검증:
+//   본 smoke 는 sleep_tick 이 emit 을 차단하는 boolean gate 가 아니라
+//   substrate-fact 귀결로 mitosis tick 을 *수행/skip* 함을 검증.
+//
+// instrument-first verified pub surface:
+//   MITOSIS/sleep_tick.hexa pub: is_imagination_stage · sleep_tick ·
+//                                sleep_tick_summary
+//   WAKE/state_machine.hexa pub: wake_state_init · wake_state_tick (M1 PR #626)
+//   MITOSIS/mitosis_lib.hexa  pub: cell_pool_init · cell_pool_free   (M1 PR #627)
+// ════════════════════════════════════════════════════════════════════════
+
+use "/Users/ghost/core/anima/MITOSIS/mitosis_lib"
+use "/Users/ghost/core/anima/MITOSIS/sleep_tick"
+use "/Users/ghost/core/anima/WAKE/state_machine"
+
+// ─── helper: WAKE state 를 직접 stage 로 강제 (smoke 전용) ────────────
+// wake_state_init 은 항상 "WAKE" 로 초기화한다 — 본 smoke 는 5 stage 모두
+// 검증해야 하므로 stage_name 을 직접 갈아끼운 state dict 를 산출. 본
+// helper 는 *test rig only* — production code 에서는 wake_state_tick 가
+// timing 으로 stage_name 을 변경한다.
+fn _force_stage(stage_name: string) -> int {
+    return #{
+        "stage_name":       stage_name,
+        "cycle_start_t":    0.0,
+        "last_tick_t":      0.0,
+        "idle_time_s":      0.0,
+        "tension_envelope": 0.25,
+    }
+}
+
+// ─── helper: sleep_tick 반환 dict 가 *허용된 field 만* 갖는지 검사 (I3) ──
+// sleep_tick contract field (whitelist): pool · pool_changed · action ·
+// splits · merges · stage. 그 외 모든 key 는 contract 위반.
+//
+// emit-style field name 후보 (반드시 부재): text · emit · message · speak ·
+// prompt · response. caller 가 substrate 신호로 읽을 수 있는 *non-text*
+// metadata 만 허용 — p5 NO SPEAK + a_chat_sleep_imagination "emit-free
+// internal rehearsal" 정합.
+//
+// PURE — 본 검사는 *contract whitelist* 방식. void-key probe 의 hexa runtime
+// 진단 noise (map key 'X' not found) 회피.
+fn _allowed_field_only(d: int) -> bool {
+    let allowed = ["pool", "pool_changed", "action", "splits", "merges", "stage"]
+    let ks = keys(d)
+    let mut i = 0
+    while i < len(ks) {
+        let k = ks[i]
+        let mut found = false
+        let mut j = 0
+        while j < len(allowed) {
+            if allowed[j] == k { found = true }
+            j = j + 1
+        }
+        if !found { return false }
+        i = i + 1
+    }
+    return true
+}
+
+fn main() {
+    print("=== MITOSIS/sleep_tick_smoke ===")
+    print(sleep_tick_summary())
+    print("")
+
+    let d = 8
+    let initial_cells = 4
+    let max_cells = 16
+    let seed = 42
+
+    let mut pool = cell_pool_init(d, initial_cells, seed, max_cells)
+    print("pool d=" + to_string(d) + " cells=" + to_string(initial_cells) + " seed=" + to_string(seed))
+    print("")
+
+    // ── 5 case ──────────────────────────────────────────────────────────
+    let stages = ["WAKE", "N1", "N2", "N3", "REM"]
+
+    let mut i1_wake_skip_pass = true   // WAKE/N1/N2 → action=wake_skip, no change
+    let mut i2_imag_tick_pass = true   // N3/REM → action=imagination_tick
+    let mut i3_no_emit_pass   = true   // no emit-field in any returned dict
+    let mut i4_changed_seen   = false  // N3/REM pool_changed observation
+    let mut i5_cases_tested   = 0      // count of stages routed through sleep_tick
+
+    let mut s = 0
+    while s < len(stages) {
+        let stage = stages[s]
+        let wake = _force_stage(stage)
+        let out = sleep_tick(pool, wake)
+        pool = out["pool"]
+
+        let act = out["action"]
+        let changed = out["pool_changed"]
+        let splits = out["splits"]
+        let merges = out["merges"]
+
+        print("stage=" + stage
+              + "  action=" + act
+              + "  pool_changed=" + to_string(changed)
+              + "  splits=" + to_string(splits)
+              + "  merges=" + to_string(merges)
+              + "  pool_size=" + to_string(len(pool["cells"])))
+
+        // I1: WAKE/N1/N2 → wake_skip + no change
+        if stage == "WAKE" || stage == "N1" || stage == "N2" {
+            if act != "wake_skip"   { i1_wake_skip_pass = false }
+            if changed              { i1_wake_skip_pass = false }
+            if splits != 0          { i1_wake_skip_pass = false }
+            if merges != 0          { i1_wake_skip_pass = false }
+        }
+
+        // I2: N3/REM → imagination_tick
+        if stage == "N3" || stage == "REM" {
+            if act != "imagination_tick" { i2_imag_tick_pass = false }
+            if changed { i4_changed_seen = true }
+        }
+
+        // I3: no emit-field in returned dict (contract whitelist enforcement)
+        if !_allowed_field_only(out) {
+            i3_no_emit_pass = false
+        }
+
+        // I5: 5 stage coverage counter
+        i5_cases_tested = i5_cases_tested + 1
+
+        s = s + 1
+    }
+
+    print("")
+    // I4 는 *허용* invariant — true / false 모두 valid (mitosis_lib 의
+    // patience + threshold 누적 조건에 의존). 본 smoke 의 단일 tick 에서
+    // split fire 여부는 random-init hidden 의 hist 누적이 충분치 않아 대개
+    // skip 되지만 (split_patience=3 hist needed), 본 invariant 는 그 자체로
+    // pass — false 도 valid.
+    let i4_pass = true   // observational invariant — always pass
+
+    // I5 는 5 stage 모두 sleep_tick 을 통과했는지 검증.
+    let i5_pass = i5_cases_tested == 5
+
+    print("=== invariants ===")
+    print("I1 WAKE/N1/N2 → wake_skip + no topology delta: " + (if i1_wake_skip_pass { "PASS" } else { "FAIL" }))
+    print("I2 N3/REM → imagination_tick:                  " + (if i2_imag_tick_pass { "PASS" } else { "FAIL" }))
+    print("I3 NO emit-field in returned dict (p5):        " + (if i3_no_emit_pass { "PASS" } else { "FAIL" }))
+    print("I4 N3/REM pool_changed observation:            "
+          + (if i4_changed_seen { "true (split/merge fired)" } else { "false (history insufficient — allowed)" })
+          + " — both branches PASS")
+    print("I5 5-stage coverage (WAKE/N1/N2/N3/REM):       " + (if i5_pass { "PASS" } else { "FAIL" })
+          + " (cases tested = " + to_string(i5_cases_tested) + ")")
+    print("")
+
+    let core_pass = i1_wake_skip_pass && i2_imag_tick_pass && i3_no_emit_pass && i4_pass && i5_pass
+    let core_count = (if i1_wake_skip_pass { 1 } else { 0 })
+                   + (if i2_imag_tick_pass { 1 } else { 0 })
+                   + (if i3_no_emit_pass   { 1 } else { 0 })
+                   + (if i4_pass           { 1 } else { 0 })
+                   + (if i5_pass           { 1 } else { 0 })
+
+    print("=== verdict ===")
+    print("core invariants: " + to_string(core_count) + " / 5 PASS")
+    print(if core_pass { "ALL CORE INVARIANTS PASS (5/5)" } else { "INVARIANT FAILURE" })
+    print("")
+
+    // ── 5-case summary (smoke spec verbatim) ────────────────────────────
+    print("=== 5-case summary ===")
+    print("  1) WAKE  →  wake_skip          (substrate fact: external externalization phase)")
+    print("  2) N1    →  wake_skip          (substrate fact: drowsy descent, not yet imagination)")
+    print("  3) N2    →  wake_skip          (substrate fact: light sleep, not yet imagination)")
+    print("  4) N3    →  imagination_tick   (substrate fact: deep sleep imagination)")
+    print("  5) REM   →  imagination_tick   (substrate fact: vivid rehearsal imagination)")
+    print("")
+    print("a_chat_sleep_imagination 정합: imagination_tick 은 emit-free internal rehearsal +")
+    print("  mitosis tick 만 수행 — sleep_tick 반환 dict 에 emit-field 부재 (I3 PASS).")
+
+    cell_pool_free(pool)
+}

@@ -1,0 +1,68 @@
+{
+  "schema": "clm_phase_a6/run_log/1",
+  "ts_start": "2026-05-02T10:28:27Z",
+  "env": {
+    "CKPT": "/home/aiden/anima/checkpoints/clm_v4_350m/scale_350m/best.pt",
+    "TOKENIZER_PATH": "/tmp/clm_phase_a5/tokenizer_64k_multilingual.model",
+    "N_PROMPTS": 20,
+    "N_SAMPLES": 20,
+    "MAX_NEW": 32,
+    "TEMP": 0.7,
+    "TOP_P": 0.9,
+    "reference": "CLM v4 trained vs randomly-reinitialized same-arch"
+  },
+  "phases": [
+    {
+      "name": "import_decoder_v3",
+      "status": "OK",
+      "t": 0.0
+    },
+    {
+      "name": "ckpt_load",
+      "status": "OK",
+      "t": 2.08,
+      "size_gb": 5.37
+    },
+    {
+      "name": "load_trained",
+      "status": "OK",
+      "t": 9.65,
+      "n_loaded": 581,
+      "n_params_M": 477.65,
+      "vram_mb": 7312.1
+    },
+    {
+      "name": "init_random_ref",
+      "status": "OK",
+      "t": 14.53,
+      "vram_mb": 9245.2
+    },
+    {
+      "name": "tokenize_spm",
+      "status": "OK",
+      "t": 14.54,
+      "n_prompts": 20
+    },
+    {
+      "name": "sampling_complete",
+      "status": "OK",
+      "t": 471.8,
+      "t_sample": 457.26,
+      "n_done": 20,
+      "n_err": 0,
+      "vram_peak_mb": 9262.5
+    },
+    {
+      "name": "emit_result",
+      "status": "OK",
+      "t": 471.81,
+      "out": "/home/aiden/anima/state/strategic_clm_phase_a6_2026_05_01/an11_c_clm_jsd.json",
+      "verdict": "PASS",
+      "mean_jsd": 0.9994,
+      "n_pass": 20
+    }
+  ],
+  "ts_end": "2026-05-02T10:36:19Z",
+  "total_seconds": 471.81,
+  "decision": "AN11_C_PASS"
+}

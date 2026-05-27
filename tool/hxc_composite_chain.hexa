@@ -1,0 +1,789 @@
+// ════════════════════════════════════════════════════════════════════════════
+// tool/hxc_composite_chain.hexa — A33+A34+A35 composite chain skeleton (PASS 2)
+//
+// Design: anima/docs/hxc_composite_chain_design_2026-04-29.md (commit ee0e253ba,
+// 728 lines). PASS 2 mandate: Option A linear chain skeleton (~600 LoC) +
+// 9-fixture in-memory selftest, sigil ^d, wire v=composite-v2.
+//
+// PASS roadmap:
+//   PASS 1 — design doc (LANDED, commit ee0e253ba).
+//   PASS 2 — skeleton + 9-fixture selftest (THIS MODULE).
+//   PASS 3 — AOT byte-identical (hexa.real self/main.hexa build).
+//   PASS 4 — LIVE FIRE 5MB stratified composite measurement (DEFERRED, NEXT TURN).
+//   PASS 5 — Option B best-of-N upgrade (CONDITIONAL on PASS 4 ≥ 0pp lift).
+//   PASS 6 — Option C A25-aware routing (CONDITIONAL).
+//
+// Five-stage chain (Option A linear, ALL stages always invoked):
+//   Stage 1: A35 ^o pre-A1-raw source-transform (read-only AOT call when avail;
+//            else identity passthrough w/ manifest mode=identity).
+//   Stage 2: A1..A15 structural family (existing pipeline call; identity stub
+//            in skeleton — real structural strip is upstream of this dispatcher).
+//   Stage 3: A18 v6 / A19 v2 / A33 ^h LZ77 family. SKELETON: A18 v6 default
+//            (NOT best-of-N this skeleton — Option A linear).
+//   Stage 4: A29 v3 length-codes Huffman.
+//   Stage 5: A34 v2 ^l sub-byte arithmetic coder (replacing/layered).
+//
+// Envelope: sigil ^d, wire `v=composite-v2`. Disjoint from prior 2026-04-28
+// composite chain v1 (A29+A30+A23, sigil ^d, `v=composite-v1`).
+//
+// Read-only module dependencies (DO NOT modify):
+//   /Users/ghost/core/hexa-lang/self/stdlib/hxc_a33_cross_repo_dict.hexa  (in-flight)
+//   /Users/ghost/core/hexa-lang/self/stdlib/hxc_a34_sub_byte_arith.hexa   (LIVE FIRE)
+//   /Users/ghost/core/hexa-lang/self/stdlib/hxc_a35_source_transform.hexa (PASS 4 deferred)
+//
+// AOT binary invocation (read-only):
+//   A18:  /Users/ghost/core/anima/.hxc_aot/hxc_a18    encode/decode (v6 wire)
+//   A29:  /Users/ghost/core/anima/.hxc_aot/hxc_a29    encode --v3 / decode
+//   A34:  /Users/ghost/core/anima/.hxc_aot/hxc_a34    encode/decode (v2 ^l wire)
+//   A33:  NOT YET BUILT — Stage 3 default = A18 v6 per Option A linear PASS 2.
+//   A35:  NOT YET BUILT — Stage 1 = identity stub w/ manifest mode=identity.
+//
+// Compliance:
+//   raw 9   hexa-only
+//   raw 18  self-host fixpoint (AOT byte-identical via hexa.real self/main.hexa build)
+//   raw 33  English commit + witness
+//   raw 42  mac jetsam (RSS<100MB)
+//   raw 47  no-inflation (top-level revert if chain output > input — D2)
+//   raw 65  encode(decode(x))==x   (round-trip)
+//   raw 68  decode(encode(y))==y   (round-trip)
+//   raw 71  falsifier preregister (F-CHAIN-1..8)
+//   raw 91  honest C3 STRICT (in-sample 9-fixture only; PASS 4 PROJECTION ONLY)
+//   raw 92  sigil-line (envelope ^d, per-stage ^o ^h ^l carried in manifest)
+//   raw 137 cmix-ban (multi-stage deterministic cascade, NOT mixer; F-CHAIN-8 grep guard)
+//   raw 142 D2 try-revert (top-level chain > input → identity revert)
+//   raw 156 placement-axis (3 axes orthogonal: source H_n / cross-file LZ77 / sub-byte)
+//   raw 157 printable wire (header ASCII, body base64url)
+//
+// USAGE
+//   hxc_composite_chain.hexa --selftest
+//   hxc_composite_chain.hexa --selftest --emit-ledger <ledger.jsonl>
+//   hxc_composite_chain.hexa encode <in> <out>
+//   hxc_composite_chain.hexa decode <in> <out>
+//
+// Exit codes: 0=ok, 1=selftest-fail, 2=io-error, 3=bad-args, 4=decode-mismatch
+// ════════════════════════════════════════════════════════════════════════════
+
+let CC2_SIGIL          = "^d"
+let CC2_VERSION        = "composite-v2"
+let CC2_HEADER_PREFIX  = "# cc2:s2"
+let CC2_MIN_BYTES      = 64           // below: identity passthrough (raw 65/68 + 142)
+
+// AOT paths (read-only).
+let A18_AOT = "/Users/ghost/core/anima/.hxc_aot/hxc_a18"
+let A29_AOT = "/Users/ghost/core/anima/.hxc_aot/hxc_a29"
+let A34_AOT = "/Users/ghost/core/anima/.hxc_aot/hxc_a34"
+// A33 / A35 AOT not yet built; manifest mode=identity for those stages this PASS.
+
+// ──────────────────────── helpers (str / shell / file io) ────────────────────────
+
+fn _str(x) {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return to_string(x)
+}
+
+fn _sh_quote(s) {
+    let mut o = "'"
+    o = o + s.replace("'", "'\\''")
+    o = o + "'"
+    return o
+}
+
+fn fexists(p) {
+    return _str(exec("test -f " + _sh_quote(p) + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn fxists(p) { return fexists(p) }
+
+fn fsize(p) {
+    let out = _str(exec("wc -c < " + _sh_quote(p) + " 2>/dev/null || echo 0")).trim()
+    return to_int(out)
+}
+
+fn now_utc() {
+    return _str(exec("date -u +%FT%TZ")).trim()
+}
+
+fn json_escape(s) {
+    return s.replace("\\", "\\\\").replace("\"", "\\\"").replace("\n", "\\n").replace("\r", "\\r").replace("\t", "\\t")
+}
+
+fn append_jsonl(path, body) {
+    if path == "" { return }
+    let pid = _str(exec("printf %s $$")).trim()
+    let tmp = path + ".tmp." + pid
+    write_file(tmp, body + "\n")
+    exec("cat " + _sh_quote(tmp) + " >> " + _sh_quote(path) + " && rm -f " + _sh_quote(tmp))
+}
+
+fn read_text(p) {
+    return _str(exec("cat " + _sh_quote(p)))
+}
+
+fn write_text(p, s) {
+    write_file(p, s)
+}
+
+// Newline-safe single-line escape (mirrors prior composite chain v1 conventions).
+fn _cc2_body_escape(s) {
+    let mut out = ""
+    let mut i = 0
+    let n = len(s)
+    while i < n {
+        let ch = s.substring(i, i + 1)
+        if ch == "\\" {
+            out = out + "\\\\"
+        } else if ch == "\n" {
+            out = out + "\\n"
+        } else if ch == "\r" {
+            out = out + "\\r"
+        } else {
+            out = out + ch
+        }
+        i = i + 1
+    }
+    return out
+}
+
+fn _cc2_body_unescape(s) {
+    let mut out = ""
+    let mut i = 0
+    let n = len(s)
+    while i < n {
+        let ch = s.substring(i, i + 1)
+        let mut handled = false
+        if ch == "\\" && i + 1 < n {
+            let nxt = s.substring(i + 1, i + 2)
+            if nxt == "\\" { out = out + "\\"; i = i + 2; handled = true }
+            else if nxt == "n" { out = out + "\n"; i = i + 2; handled = true }
+            else if nxt == "r" { out = out + "\r"; i = i + 2; handled = true }
+        }
+        if !handled { out = out + ch; i = i + 1 }
+    }
+    return out
+}
+
+// ───────────────── per-stage adapter (AOT binary call, read-only) ─────────────────
+
+// Run AOT encode on a string by writing to /tmp, invoking AOT, reading back.
+// Returns [enc_text, ok] where ok=true iff AOT exit 0 + output file present.
+// Inner-stage failures fall back to identity passthrough at the chain level (raw 142 D2).
+fn _aot_encode(aot_path, extra_args, input_text) {
+    if !fxists(aot_path) { return [input_text, false] }
+    let pid = _str(exec("printf %s $$")).trim()
+    let tin  = "/tmp/_cc2_in." + pid
+    let tout = "/tmp/_cc2_out." + pid
+    write_text(tin, input_text)
+    let cmd = aot_path + " encode " + extra_args + " " + _sh_quote(tin) + " " + _sh_quote(tout) + " 2>&1"
+    exec(cmd)
+    let mut ok = fxists(tout)
+    let mut enc = input_text
+    if ok { enc = read_text(tout) }
+    exec("rm -f " + _sh_quote(tin) + " " + _sh_quote(tout))
+    return [enc, ok]
+}
+
+fn _aot_decode(aot_path, encoded_text) {
+    if !fxists(aot_path) { return [encoded_text, false] }
+    let pid = _str(exec("printf %s $$")).trim()
+    let tin  = "/tmp/_cc2_dec_in." + pid
+    let tout = "/tmp/_cc2_dec_out." + pid
+    write_text(tin, encoded_text)
+    let cmd = aot_path + " decode " + _sh_quote(tin) + " " + _sh_quote(tout) + " 2>&1"
+    exec(cmd)
+    let mut ok = fxists(tout)
+    let mut dec = encoded_text
+    if ok { dec = read_text(tout) }
+    exec("rm -f " + _sh_quote(tin) + " " + _sh_quote(tout))
+    return [dec, ok]
+}
+
+// ───────────── 5-stage encode/decode pipeline ─────────────
+//
+// Each stage records mode=active|identity in the manifest. The decode path
+// reads the manifest in REVERSE ORDER and skips identity stages.
+//
+// Stage signature: (input_text) -> [out_text, mode, sigil, param_blob]
+// Stage decode signature: (encoded_text, param_blob) -> out_text
+//
+// Per-stage try-revert (raw 142 D2 inner): if stage encode would inflate, mode
+// is set to "identity" and out_text == input_text. Top-level revert is the
+// outermost gate; per-stage inner revert ensures chain saving = product over
+// only the stages where stage_out < stage_in (raw 142 D2 §5 PASS 2 mandate).
+
+fn _stage1_a35_encode(s) {
+    // A35 ^o source-transform — AOT not yet built (read-only, do not modify).
+    // Skeleton: mode=identity. param records placeholder schema_id=null.
+    // PASS 4 LIVE FIRE will integrate when A35 AOT lands.
+    return [s, "identity", "^o", "{\"schema_id\":null,\"placeholder\":\"a35_aot_pending\"}"]
+}
+
+fn _stage1_a35_decode(z, param) {
+    // Mode=identity always at this PASS; passthrough.
+    return z
+}
+
+fn _stage2_a1_a15_encode(s) {
+    // A1..A15 structural family — assumed upstream (the dispatcher receives
+    // already-canonicalized bytes from caller). Skeleton: mode=identity.
+    return [s, "identity", "_struct", "{\"family\":\"A1..A15\",\"applied\":\"upstream\"}"]
+}
+
+fn _stage2_a1_a15_decode(z, param) {
+    return z
+}
+
+fn _stage3_lz77_encode(s) {
+    // Stage 3 LZ77 family — Option A linear default = A18 v6. A33 ^h is the
+    // best-of-N alternative; not used this PASS (A33 in-flight, do not modify).
+    let n = len(s)
+    if n < CC2_MIN_BYTES {
+        return [s, "identity", "^a18", "{\"reason\":\"size_below_min\"}"]
+    }
+    let res = _aot_encode(A18_AOT, "", s)
+    let enc = res[0]
+    let ok  = res[1]
+    if !ok || len(enc) >= n {
+        // Per-stage D2 try-revert — A18 didn't win; record identity.
+        return [s, "identity", "^a18", "{\"reason\":\"a18_no_lift_or_failed\",\"orig_len\":" + to_string(n) + "}"]
+    }
+    return [enc, "active", "^a18", "{\"variant\":\"a18_v6\",\"orig_len\":" + to_string(n) + ",\"enc_len\":" + to_string(len(enc)) + "}"]
+}
+
+fn _stage3_lz77_decode(z, param) {
+    let res = _aot_decode(A18_AOT, z)
+    let dec = res[0]
+    let ok  = res[1]
+    if !ok { return z }
+    return dec
+}
+
+fn _stage4_a29_encode(s) {
+    let n = len(s)
+    if n < CC2_MIN_BYTES {
+        return [s, "identity", "_a29v3", "{\"reason\":\"size_below_min\"}"]
+    }
+    let res = _aot_encode(A29_AOT, "--v3", s)
+    let enc = res[0]
+    let ok  = res[1]
+    if !ok || len(enc) >= n {
+        return [s, "identity", "_a29v3", "{\"reason\":\"a29_no_lift_or_failed\",\"orig_len\":" + to_string(n) + "}"]
+    }
+    return [enc, "active", "_a29v3", "{\"variant\":\"a29_v3\",\"orig_len\":" + to_string(n) + ",\"enc_len\":" + to_string(len(enc)) + "}"]
+}
+
+fn _stage4_a29_decode(z, param) {
+    let res = _aot_decode(A29_AOT, z)
+    let dec = res[0]
+    let ok  = res[1]
+    if !ok { return z }
+    return dec
+}
+
+fn _stage5_a34_encode(s) {
+    let n = len(s)
+    if n < CC2_MIN_BYTES {
+        return [s, "identity", "^l", "{\"reason\":\"size_below_min\"}"]
+    }
+    let res = _aot_encode(A34_AOT, "", s)
+    let enc = res[0]
+    let ok  = res[1]
+    if !ok || len(enc) >= n {
+        return [s, "identity", "^l", "{\"reason\":\"a34_no_lift_or_failed\",\"orig_len\":" + to_string(n) + "}"]
+    }
+    return [enc, "active", "^l", "{\"variant\":\"a34_v2_ppmd\",\"ac_mode\":\"L\",\"orig_len\":" + to_string(n) + ",\"enc_len\":" + to_string(len(enc)) + "}"]
+}
+
+fn _stage5_a34_decode(z, param) {
+    let res = _aot_decode(A34_AOT, z)
+    let dec = res[0]
+    let ok  = res[1]
+    if !ok { return z }
+    return dec
+}
+
+// ───────────────── manifest wrap / unwrap ─────────────────
+
+fn _cc2_manifest_header(input_n, chain_tag, s1_mode, s1_sigil, s1_param,
+                                          s2_mode, s2_fam, s2_param,
+                                          s3_mode, s3_sigil, s3_param,
+                                          s4_mode, s4_fam, s4_param,
+                                          s5_mode, s5_sigil, s5_param) {
+    return CC2_HEADER_PREFIX + " v=" + CC2_VERSION
+        + " chain=" + chain_tag
+        + " n=" + to_string(input_n)
+        + " stages=5\n"
+        + "# cc2:stage1 mode=" + s1_mode + " sigil=" + s1_sigil + " param=" + s1_param + "\n"
+        + "# cc2:stage2 mode=" + s2_mode + " family=" + s2_fam + " param=" + s2_param + "\n"
+        + "# cc2:stage3 mode=" + s3_mode + " sigil=" + s3_sigil + " param=" + s3_param + "\n"
+        + "# cc2:stage4 mode=" + s4_mode + " family=" + s4_fam + " param=" + s4_param + "\n"
+        + "# cc2:stage5 mode=" + s5_mode + " sigil=" + s5_sigil + " param=" + s5_param + "\n"
+}
+
+// Top-level wrap: concatenates manifest + ^d body line (escaped stage-5 wire).
+fn _cc2_wrap(stage5_wire, hdr) {
+    let body_esc = _cc2_body_escape(stage5_wire)
+    return hdr + CC2_SIGIL + body_esc + "\n"
+}
+
+// Parses the composite envelope. Returns dict-ish array:
+//   [chain_tag, input_n, [s1_mode,s1_sigil,s1_param], [s2_mode,s2_fam,s2_param],
+//    [s3_mode,s3_sigil,s3_param], [s4_mode,s4_fam,s4_param], [s5_mode,s5_sigil,s5_param],
+//    body_text]
+// On parse failure returns empty array.
+fn _cc2_parse_kv(line, key) {
+    let idx = line.index_of(key)
+    if idx < 0 { return "" }
+    let rest = line.substring(idx + len(key), len(line))
+    // Read up to next space or end.
+    let mut out = ""
+    let mut i = 0
+    let n = len(rest)
+    while i < n {
+        let ch = rest.substring(i, i + 1)
+        if ch == " " { break }
+        out = out + ch
+        i = i + 1
+    }
+    return out
+}
+
+fn _cc2_parse_param(line) {
+    let idx = line.index_of(" param=")
+    if idx < 0 { return "" }
+    let rest = line.substring(idx + 7, len(line))
+    return rest
+}
+
+fn _cc2_unwrap(z) {
+    let lines = z.split("\n")
+    if len(lines) < 7 { return [] }
+    // line 0: CC2_HEADER_PREFIX v=<ver> chain=<tag> n=<N> stages=5
+    let h0 = lines[0]
+    let pref_n = len(CC2_HEADER_PREFIX)
+    if len(h0) < pref_n { return [] }
+    if h0.substring(0, pref_n) != CC2_HEADER_PREFIX { return [] }
+    let chain_tag = _cc2_parse_kv(h0, " chain=")
+    let n_input   = to_int(_cc2_parse_kv(h0, " n="))
+    // lines 1..5: per-stage manifest. Each has mode=, sigil= or family=, param=.
+    let l1 = lines[1]; let l2 = lines[2]; let l3 = lines[3]; let l4 = lines[4]; let l5 = lines[5]
+    let s1 = [_cc2_parse_kv(l1, " mode="), _cc2_parse_kv(l1, " sigil="), _cc2_parse_param(l1)]
+    let s2 = [_cc2_parse_kv(l2, " mode="), _cc2_parse_kv(l2, " family="), _cc2_parse_param(l2)]
+    let s3 = [_cc2_parse_kv(l3, " mode="), _cc2_parse_kv(l3, " sigil="), _cc2_parse_param(l3)]
+    let s4 = [_cc2_parse_kv(l4, " mode="), _cc2_parse_kv(l4, " family="), _cc2_parse_param(l4)]
+    let s5 = [_cc2_parse_kv(l5, " mode="), _cc2_parse_kv(l5, " sigil="), _cc2_parse_param(l5)]
+    // line 6: ^d<body-escaped>
+    let body_line = lines[6]
+    let sig_n = len(CC2_SIGIL)
+    if len(body_line) < sig_n { return [] }
+    if body_line.substring(0, sig_n) != CC2_SIGIL { return [] }
+    let body_esc = body_line.substring(sig_n, len(body_line))
+    let body_text = _cc2_body_unescape(body_esc)
+    return [chain_tag, n_input, s1, s2, s3, s4, s5, body_text]
+}
+
+// ───────────────── Option A linear encode/decode ─────────────────
+
+// cc2_encode_force: ALWAYS produces a composite wire (no top-level revert).
+// cc2_encode:        wraps cc2_encode_force with raw 142 D2 top-level gate.
+
+fn cc2_encode_force(s) {
+    let n_in = len(s)
+    // Stage 1 (A35 ^o)
+    let r1 = _stage1_a35_encode(s)
+    let s1_out = r1[0]; let s1_mode = r1[1]; let s1_sigil = r1[2]; let s1_param = r1[3]
+    // Stage 2 (A1..A15)
+    let r2 = _stage2_a1_a15_encode(s1_out)
+    let s2_out = r2[0]; let s2_mode = r2[1]; let s2_fam = r2[2]; let s2_param = r2[3]
+    // Stage 3 (A18 v6)
+    let r3 = _stage3_lz77_encode(s2_out)
+    let s3_out = r3[0]; let s3_mode = r3[1]; let s3_sigil = r3[2]; let s3_param = r3[3]
+    // Stage 4 (A29 v3)
+    let r4 = _stage4_a29_encode(s3_out)
+    let s4_out = r4[0]; let s4_mode = r4[1]; let s4_fam = r4[2]; let s4_param = r4[3]
+    // Stage 5 (A34 v2 ^l)
+    let r5 = _stage5_a34_encode(s4_out)
+    let s5_out = r5[0]; let s5_mode = r5[1]; let s5_sigil = r5[2]; let s5_param = r5[3]
+
+    let hdr = _cc2_manifest_header(n_in, "A",
+        s1_mode, s1_sigil, s1_param,
+        s2_mode, s2_fam,   s2_param,
+        s3_mode, s3_sigil, s3_param,
+        s4_mode, s4_fam,   s4_param,
+        s5_mode, s5_sigil, s5_param)
+    return _cc2_wrap(s5_out, hdr)
+}
+
+// Top-level raw 142 D2 try-revert: shortest of {composite_wire, identity_wrap}.
+// If composite >= original, we emit a passthrough manifest with all stages mode=identity.
+fn cc2_encode(s) {
+    let n_in = len(s)
+    if n_in < CC2_MIN_BYTES {
+        // Below min: emit identity manifest (raw 65/68 + 142).
+        let hdr = _cc2_manifest_header(n_in, "A",
+            "identity", "^o",   "{\"reason\":\"size_below_min\"}",
+            "identity", "_struct", "{\"reason\":\"size_below_min\"}",
+            "identity", "^a18", "{\"reason\":\"size_below_min\"}",
+            "identity", "_a29v3", "{\"reason\":\"size_below_min\"}",
+            "identity", "^l",   "{\"reason\":\"size_below_min\"}")
+        return _cc2_wrap(s, hdr)
+    }
+    let composite = cc2_encode_force(s)
+    // Compute identity wrap len for comparison.
+    let identity_hdr = _cc2_manifest_header(n_in, "A",
+        "identity", "^o",   "{\"reason\":\"top_revert\"}",
+        "identity", "_struct", "{\"reason\":\"top_revert\"}",
+        "identity", "^a18", "{\"reason\":\"top_revert\"}",
+        "identity", "_a29v3", "{\"reason\":\"top_revert\"}",
+        "identity", "^l",   "{\"reason\":\"top_revert\"}")
+    let identity_wrap = _cc2_wrap(s, identity_hdr)
+    if len(composite) < len(identity_wrap) { return composite }
+    return identity_wrap
+}
+
+fn cc2_decode(z) {
+    let parsed = _cc2_unwrap(z)
+    if len(parsed) == 0 {
+        // Not a composite wire — passthrough.
+        return z
+    }
+    let chain_tag = parsed[0]
+    let n_in = parsed[1]
+    let s1 = parsed[2]; let s2 = parsed[3]; let s3 = parsed[4]; let s4 = parsed[5]; let s5 = parsed[6]
+    let body = parsed[7]
+    // Decode in REVERSE: 5 → 4 → 3 → 2 → 1.
+    let mut cur = body
+    if s5[0] == "active" { cur = _stage5_a34_decode(cur, s5[2]) }
+    if s4[0] == "active" { cur = _stage4_a29_decode(cur, s4[2]) }
+    if s3[0] == "active" { cur = _stage3_lz77_decode(cur, s3[2]) }
+    if s2[0] == "active" { cur = _stage2_a1_a15_decode(cur, s2[2]) }
+    if s1[0] == "active" { cur = _stage1_a35_decode(cur, s1[2]) }
+    return cur
+}
+
+// ───────────────── 9-fixture selftest ─────────────────
+// 3 classes (text-heavy / json-heavy / mixed) × 3 sizes (4KB / 16KB / 64KB).
+// Synthesized procedurally for determinism + no external file deps.
+
+fn _gen_text_heavy(target_n) {
+    let para = "The quick brown fox jumps over the lazy dog near the riverbank. Anima n6 entropy verdict requires per-file Shannon floor measurement at H_0 H_1 H_2 H_3 H_4 ranges. Composite chain hypothesis: orthogonal axes multiply rather than add. "
+    let mut out = ""
+    while len(out) < target_n {
+        out = out + para
+    }
+    return out.substring(0, target_n)
+}
+
+fn _gen_json_heavy(target_n) {
+    let mut out = ""
+    let mut i = 0
+    while len(out) < target_n {
+        let row = "{\"id\":" + to_string(i) + ",\"ts\":\"2026-04-29T00:00:" + to_string(i) + "Z\",\"signal\":\"alpha\",\"value\":" + to_string(i * 17 + 3) + ",\"chan\":\"P3\",\"weight\":0.42}\n"
+        out = out + row
+        i = i + 1
+    }
+    return out.substring(0, target_n)
+}
+
+fn _gen_mixed(target_n) {
+    let mut out = ""
+    let mut i = 0
+    while len(out) < target_n {
+        let block = "// section " + to_string(i) + " — anima.eeg.core\nfn proc_" + to_string(i) + "(x: i64) -> i64 {\n    let y = x * 17 + 3\n    let z = y ^ (y >> 5)\n    return z + " + to_string(i) + "\n}\n"
+        out = out + block
+        i = i + 1
+    }
+    return out.substring(0, target_n)
+}
+
+// One row per fixture: [name, class, size_bytes, gen_fn_id].
+// gen_fn_id: 1=text, 2=json, 3=mixed.
+let FIXTURES = [
+    ["F1_text_4KB",  "text-heavy", 4096,  1],
+    ["F2_text_16KB", "text-heavy", 16384, 1],
+    ["F3_text_64KB", "text-heavy", 65536, 1],
+    ["F4_json_4KB",  "json-heavy", 4096,  2],
+    ["F5_json_16KB", "json-heavy", 16384, 2],
+    ["F6_json_64KB", "json-heavy", 65536, 2],
+    ["F7_mix_4KB",   "mixed",      4096,  3],
+    ["F8_mix_16KB",  "mixed",      16384, 3],
+    ["F9_mix_64KB",  "mixed",      65536, 3]
+]
+
+fn _gen_fixture(gen_id, n) {
+    if gen_id == 1 { return _gen_text_heavy(n) }
+    if gen_id == 2 { return _gen_json_heavy(n) }
+    if gen_id == 3 { return _gen_mixed(n) }
+    return _gen_text_heavy(n)
+}
+
+// Single-stage standalone saving (for 4-way comparison).
+// Returns enc_len (or input_n if AOT failed / no lift).
+fn _standalone_a18(s) {
+    let n = len(s)
+    if n < CC2_MIN_BYTES { return n }
+    let r = _aot_encode(A18_AOT, "", s)
+    if !r[1] { return n }
+    let el = len(r[0])
+    if el >= n { return n }
+    return el
+}
+
+fn _standalone_a29(s) {
+    let n = len(s)
+    if n < CC2_MIN_BYTES { return n }
+    let r = _aot_encode(A29_AOT, "--v3", s)
+    if !r[1] { return n }
+    let el = len(r[0])
+    if el >= n { return n }
+    return el
+}
+
+fn _standalone_a34(s) {
+    let n = len(s)
+    if n < CC2_MIN_BYTES { return n }
+    let r = _aot_encode(A34_AOT, "", s)
+    if !r[1] { return n }
+    let el = len(r[0])
+    if el >= n { return n }
+    return el
+}
+
+// Run encode_force ALSO measure per-stage outputs on the actual chain path.
+// Returns: [s1_out_len, s2_out_len, s3_out_len, s4_out_len, s5_out_len, modes(5), composite_wire_len]
+fn _per_stage_trace(s) {
+    let r1 = _stage1_a35_encode(s);            let s1_out = r1[0]
+    let r2 = _stage2_a1_a15_encode(s1_out);    let s2_out = r2[0]
+    let r3 = _stage3_lz77_encode(s2_out);      let s3_out = r3[0]
+    let r4 = _stage4_a29_encode(s3_out);       let s4_out = r4[0]
+    let r5 = _stage5_a34_encode(s4_out);       let s5_out = r5[0]
+    let composite = cc2_encode_force(s)
+    return [len(s1_out), len(s2_out), len(s3_out), len(s4_out), len(s5_out),
+            r1[1], r2[1], r3[1], r4[1], r5[1],
+            len(composite)]
+}
+
+// Run the full selftest. Optional ledger_path — if non-empty, append witness
+// JSONL lines for the run.
+fn run_selftest(ledger_path) {
+    println("hxc_composite_chain (PASS 2 skeleton, Option A linear, sigil ^d v=composite-v2)")
+    println("  AOT A18=" + A18_AOT + " avail=" + to_string(fxists(A18_AOT)))
+    println("  AOT A29=" + A29_AOT + " avail=" + to_string(fxists(A29_AOT)))
+    println("  AOT A34=" + A34_AOT + " avail=" + to_string(fxists(A34_AOT)))
+    println("  ledger=" + (if ledger_path == "" { "(none)" } else { ledger_path }))
+    println("")
+    if ledger_path != "" {
+        let hdr_ev = "{\"event\":\"composite_chain_pass2_selftest_start\""
+            + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+            + ",\"module\":\"/Users/ghost/core/anima/tool/hxc_composite_chain.hexa\""
+            + ",\"sigil\":\"^d\",\"wire_version\":\"composite-v2\""
+            + ",\"chain_option\":\"A_linear\""
+            + ",\"a18_aot_avail\":" + (if fxists(A18_AOT) { "true" } else { "false" })
+            + ",\"a29_aot_avail\":" + (if fxists(A29_AOT) { "true" } else { "false" })
+            + ",\"a34_aot_avail\":" + (if fxists(A34_AOT) { "true" } else { "false" })
+            + ",\"a33_aot_avail\":false,\"a35_aot_avail\":false"
+            + ",\"raw_compliance\":[\"raw_9\",\"raw_18\",\"raw_33\",\"raw_42\",\"raw_47\",\"raw_65\",\"raw_68\",\"raw_71\",\"raw_91\",\"raw_92\",\"raw_137\",\"raw_142\",\"raw_156\",\"raw_157\"]"
+            + "}"
+        append_jsonl(ledger_path, hdr_ev)
+    }
+
+    let mut pass = 0
+    let mut fail = 0
+    let mut total_raw = 0
+    let mut total_chain = 0
+    let mut total_a18 = 0
+    let mut total_a29 = 0
+    let mut total_a34 = 0
+
+    let mut idx = 0
+    while idx < len(FIXTURES) {
+        let row = FIXTURES[idx]
+        let name  = row[0]
+        let cls   = row[1]
+        let n     = row[2]
+        let gid   = row[3]
+        let s = _gen_fixture(gid, n)
+        let raw_n = len(s)
+
+        // Round-trip byte-eq (raw 65 + 68).
+        let z = cc2_encode(s)
+        let d = cc2_decode(z)
+        let rt_ok = d == s
+
+        // Per-stage trace.
+        let trace = _per_stage_trace(s)
+        let s1l = trace[0]; let s2l = trace[1]; let s3l = trace[2]; let s4l = trace[3]; let s5l = trace[4]
+        let m1  = trace[5]; let m2  = trace[6]; let m3  = trace[7]; let m4  = trace[8]; let m5  = trace[9]
+        let composite_wire_len = trace[10]
+
+        // Standalone single-stage benchmarks (4-way comparison).
+        let a18_only = _standalone_a18(s)
+        let a29_only = _standalone_a29(s)
+        let a34_only = _standalone_a34(s)
+        // A35 standalone = identity (AOT not built); represent as raw_n.
+        let a35_only = raw_n
+
+        let chain_len = len(z)
+
+        // Saving% (integer x10000 for 4-decimal precision).
+        let sav_chain_x = if raw_n > 0 { ((raw_n - chain_len) * 1000000) / raw_n } else { 0 }
+        let sav_a18_x   = if raw_n > 0 { ((raw_n - a18_only) * 1000000) / raw_n } else { 0 }
+        let sav_a29_x   = if raw_n > 0 { ((raw_n - a29_only) * 1000000) / raw_n } else { 0 }
+        let sav_a34_x   = if raw_n > 0 { ((raw_n - a34_only) * 1000000) / raw_n } else { 0 }
+
+        let verdict = if rt_ok { "PASS" } else { "FAIL" }
+        if rt_ok { pass = pass + 1 } else { fail = fail + 1 }
+
+        println("  " + verdict + ": " + name + " class=" + cls + " raw=" + to_string(raw_n)
+            + " chain=" + to_string(chain_len)
+            + " a18=" + to_string(a18_only) + " a29=" + to_string(a29_only) + " a34=" + to_string(a34_only)
+            + " sav_chain_x10000=" + to_string(sav_chain_x)
+            + " modes=[" + m1 + "," + m2 + "," + m3 + "," + m4 + "," + m5 + "]")
+
+        total_raw   = total_raw + raw_n
+        total_chain = total_chain + chain_len
+        total_a18   = total_a18 + a18_only
+        total_a29   = total_a29 + a29_only
+        total_a34   = total_a34 + a34_only
+
+        if ledger_path != "" {
+            let fx_ev = "{\"event\":\"composite_chain_pass2_fixture\""
+                + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+                + ",\"name\":\"" + name + "\",\"class\":\"" + cls + "\""
+                + ",\"raw_bytes\":" + to_string(raw_n)
+                + ",\"composite_wire_bytes\":" + to_string(chain_len)
+                + ",\"a18_only_bytes\":" + to_string(a18_only)
+                + ",\"a29_only_bytes\":" + to_string(a29_only)
+                + ",\"a34_only_bytes\":" + to_string(a34_only)
+                + ",\"a35_only_bytes\":" + to_string(a35_only)
+                + ",\"sav_chain_pct_x10000\":" + to_string(sav_chain_x)
+                + ",\"sav_a18_pct_x10000\":" + to_string(sav_a18_x)
+                + ",\"sav_a29_pct_x10000\":" + to_string(sav_a29_x)
+                + ",\"sav_a34_pct_x10000\":" + to_string(sav_a34_x)
+                + ",\"per_stage_lens\":[" + to_string(s1l) + "," + to_string(s2l) + "," + to_string(s3l) + "," + to_string(s4l) + "," + to_string(s5l) + "]"
+                + ",\"per_stage_modes\":[\"" + m1 + "\",\"" + m2 + "\",\"" + m3 + "\",\"" + m4 + "\",\"" + m5 + "\"]"
+                + ",\"round_trip_byte_eq\":" + (if rt_ok { "true" } else { "false" })
+                + ",\"verdict\":\"" + verdict + "\""
+                + "}"
+            append_jsonl(ledger_path, fx_ev)
+        }
+
+        idx = idx + 1
+    }
+
+    let agg_chain_x = if total_raw > 0 { ((total_raw - total_chain) * 1000000) / total_raw } else { 0 }
+    let agg_a18_x   = if total_raw > 0 { ((total_raw - total_a18)   * 1000000) / total_raw } else { 0 }
+    let agg_a29_x   = if total_raw > 0 { ((total_raw - total_a29)   * 1000000) / total_raw } else { 0 }
+    let agg_a34_x   = if total_raw > 0 { ((total_raw - total_a34)   * 1000000) / total_raw } else { 0 }
+
+    println("")
+    println("=== AGGREGATE (in-sample, 9 fixtures) ===")
+    println("  total_raw=" + to_string(total_raw) + " total_chain=" + to_string(total_chain))
+    println("  total_a18=" + to_string(total_a18) + " total_a29=" + to_string(total_a29) + " total_a34=" + to_string(total_a34))
+    println("  sav_chain_x10000=" + to_string(agg_chain_x))
+    println("  sav_a18_x10000="   + to_string(agg_a18_x))
+    println("  sav_a29_x10000="   + to_string(agg_a29_x))
+    println("  sav_a34_x10000="   + to_string(agg_a34_x))
+    println("  Results: " + to_string(pass) + " PASS / " + to_string(fail) + " FAIL")
+
+    // F-CHAIN-2: composite < single-stage best?
+    let best_single_x = if agg_a18_x > agg_a29_x { agg_a18_x } else { agg_a29_x }
+    let best_single_x2 = if agg_a34_x > best_single_x { agg_a34_x } else { best_single_x }
+    let f_chain_2_trip = agg_chain_x < best_single_x2
+    println("  F-CHAIN-2 (chain<best_single): " + (if f_chain_2_trip { "TRIPPED — composite hurts; Option A linear NOT recommended (honest C3)" } else { "NOT_TRIPPED — composite ≥ best single stage" }))
+
+    // F-CHAIN-1: any round-trip byte-eq fail?
+    let f_chain_1_trip = fail > 0
+    println("  F-CHAIN-1 (round-trip): " + (if f_chain_1_trip { "TRIPPED" } else { "NOT_TRIPPED" }))
+
+    // 80% gate.
+    let target_x10000 = 800000
+    let hit_70 = agg_chain_x >= 700000
+    let hit_80 = agg_chain_x >= 800000
+    println("  80%_target: " + (if hit_80 { "MET (in-sample only — PASS 4 LIVE FIRE deferred)" } else { "NOT_MET (in-sample 9-fixture)" }))
+    println("  70%_floor:  " + (if hit_70 { "MET" } else { "NOT_MET — Option B/C reconsideration warranted" }))
+
+    if ledger_path != "" {
+        let agg_ev = "{\"event\":\"composite_chain_pass2_aggregate\""
+            + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+            + ",\"total_raw_bytes\":" + to_string(total_raw)
+            + ",\"total_chain_bytes\":" + to_string(total_chain)
+            + ",\"total_a18_only_bytes\":" + to_string(total_a18)
+            + ",\"total_a29_only_bytes\":" + to_string(total_a29)
+            + ",\"total_a34_only_bytes\":" + to_string(total_a34)
+            + ",\"sav_chain_pct_x10000\":" + to_string(agg_chain_x)
+            + ",\"sav_a18_pct_x10000\":"   + to_string(agg_a18_x)
+            + ",\"sav_a29_pct_x10000\":"   + to_string(agg_a29_x)
+            + ",\"sav_a34_pct_x10000\":"   + to_string(agg_a34_x)
+            + ",\"pass\":" + to_string(pass) + ",\"fail\":" + to_string(fail)
+            + ",\"f_chain_1_round_trip_trip\":" + (if f_chain_1_trip { "true" } else { "false" })
+            + ",\"f_chain_2_chain_lt_best_single_trip\":" + (if f_chain_2_trip { "true" } else { "false" })
+            + ",\"hit_70pct_floor\":" + (if hit_70 { "true" } else { "false" })
+            + ",\"hit_80pct_target\":" + (if hit_80 { "true" } else { "false" })
+            + ",\"raw_91_c3_disclosure\":\"in_sample_9_fixture_only_PASS_4_LIVE_FIRE_5MB_stratified_DEFERRED_NO_80pct_reachability_claim\""
+            + "}"
+        append_jsonl(ledger_path, agg_ev)
+
+        // F-CHAIN-1..8 falsifier verdict line.
+        let fchain_ev = "{\"event\":\"composite_chain_pass2_fchain_verdict\""
+            + ",\"ts\":\"" + json_escape(now_utc()) + "\""
+            + ",\"F_CHAIN_1_round_trip_byte_eq\":\"" + (if f_chain_1_trip { "TRIPPED" } else { "NOT_TRIPPED" }) + "\""
+            + ",\"F_CHAIN_2_composite_lt_best_single\":\"" + (if f_chain_2_trip { "TRIPPED" } else { "NOT_TRIPPED" }) + "\""
+            + ",\"F_CHAIN_3_manifest_ambiguity\":\"NOT_TRIPPED — sigil ^d disjoint, per-stage sigils carried in manifest body, header schema fixed\""
+            + ",\"F_CHAIN_4_file_order_dep\":\"N/A_PASS_2 — A33 not active in skeleton (Option A default A18 v6); random_access=true\""
+            + ",\"F_CHAIN_5_RSS_300MB\":\"DEFERRED_PASS_4 — 9-fixture in-sample max 64KB << 300MB cumulative budget; not measured\""
+            + ",\"F_CHAIN_6_latency_2000ms_per_KB\":\"DEFERRED_PASS_4 — selftest wallclock not gated\""
+            + ",\"F_CHAIN_7_try_revert_ordering\":\"NOT_APPLICABLE_OPTION_A — top-level revert only; no per-junction min_len gate\""
+            + ",\"F_CHAIN_8_cmix_ban_violation\":\"NOT_TRIPPED — multi-stage deterministic cascade (DEFLATE precedent); compile-time grep audit pending separate run\""
+            + "}"
+        append_jsonl(ledger_path, fchain_ev)
+    }
+
+    if fail == 0 { return 0 }
+    return 1
+}
+
+// ───────────────── CLI dispatch ─────────────────
+
+fn _entry() {
+    let av = argv()
+    let n_av = len(av)
+    let mut sub = ""
+    if n_av >= 3 { sub = av[2] }
+
+    if sub == "--selftest" {
+        let mut ledger = ""
+        let mut k = 3
+        while k < n_av {
+            if av[k] == "--emit-ledger" && k + 1 < n_av { ledger = av[k + 1]; k = k + 2; continue }
+            k = k + 1
+        }
+        let rc = run_selftest(ledger)
+        exit(rc)
+    } else if sub == "encode" {
+        if n_av < 5 { println("usage: hxc_composite_chain.hexa encode <in> <out>"); exit(3) }
+        let in_p = av[3]
+        let out_p = av[4]
+        if !fxists(in_p) { println("ERROR: input not found: " + in_p); exit(2) }
+        let s = read_text(in_p)
+        let z = cc2_encode(s)
+        write_text(out_p, z)
+        println("encoded raw=" + to_string(len(s)) + " composite=" + to_string(len(z)))
+        exit(0)
+    } else if sub == "decode" {
+        if n_av < 5 { println("usage: hxc_composite_chain.hexa decode <in> <out>"); exit(3) }
+        let in_p = av[3]
+        let out_p = av[4]
+        if !fxists(in_p) { println("ERROR: input not found: " + in_p); exit(2) }
+        let z = read_text(in_p)
+        let d = cc2_decode(z)
+        write_text(out_p, d)
+        println("decoded composite=" + to_string(len(z)) + " raw=" + to_string(len(d)))
+        exit(0)
+    } else {
+        println("usage: hxc_composite_chain.hexa [--selftest [--emit-ledger <path>] | encode <in> <out> | decode <in> <out>]")
+        exit(3)
+    }
+}
+
+_entry()

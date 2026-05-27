@@ -1,0 +1,390 @@
+{
+  "schema": "anima/A1_learned_phi_extractor/1",
+  "ts": "2026-05-01",
+  "phase_1_data": {
+    "n_substrates": 4,
+    "n_prompts_per_substrate": 16,
+    "total_paired_samples": 64,
+    "substrates": [
+      {
+        "name": "Qwen3-8B+r14_full",
+        "base_model": "Qwen/Qwen3-8B",
+        "lora_path": "/workspace/lora_r14_full",
+        "label_mean": -0.01246464323890663,
+        "label_min": -0.07092375628660089,
+        "label_max": 0.05628028618778702,
+        "L1_pass_count_baseline": 6
+      },
+      {
+        "name": "Llama-3.1-8B+llama31_r14",
+        "base_model": "meta-llama/Llama-3.1-8B",
+        "lora_path": "/workspace/lora/llama31_r14",
+        "label_mean": -0.003408903264415567,
+        "label_min": -0.08928252612342805,
+        "label_max": 0.04895862094899738,
+        "L1_pass_count_baseline": 9
+      },
+      {
+        "name": "Mistral-7B-v0.3+r14",
+        "base_model": "mistralai/Mistral-7B-v0.3",
+        "lora_path": "/workspace/lora/r14",
+        "label_mean": -0.08052377229674554,
+        "label_min": -0.14285135128256976,
+        "label_max": -0.04342868186726144,
+        "L1_pass_count_baseline": 0
+      },
+      {
+        "name": "Gemma-2-9b+gemma_r14",
+        "base_model": "google/gemma-2-9b",
+        "lora_path": "/workspace/lora/gemma_r14",
+        "label_mean": -0.033490224575325946,
+        "label_min": -0.11878957179018287,
+        "label_max": 0.03970346044490208,
+        "L1_pass_count_baseline": 4
+      }
+    ],
+    "label_source": "per-prompt phi_holo from existing 14-gate measurements (tile-projection ground truth)",
+    "label_for_gemma": "computed locally via cos(h256, tile(template_0,16x)) since gemma 14gate not pre-computed",
+    "feat_pca_step": "skipped \u2014 all substrates already 256-d byte_weighted_mean",
+    "feature_normalization": "pooled mean/std across all substrates (substrate-blind)"
+  },
+  "phase_2_arch": {
+    "type": "MLP",
+    "layers": [
+      256,
+      128,
+      64,
+      1
+    ],
+    "activation": "GELU",
+    "substrate_id_input": false,
+    "param_count": 41217
+  },
+  "phase_3_train": {
+    "device": "mps",
+    "epochs": 100,
+    "batch": 8,
+    "lr": 0.001,
+    "optimizer": "AdamW",
+    "stratified_50_14": {
+      "train_n": 52,
+      "val_n": 12,
+      "final_train_mse": 1.4823797755525447e-05,
+      "final_val_mse": 0.0009089442319236696,
+      "best_val_mse": 0.0008110054768621922
+    },
+    "cross_substrate_4fold": [
+      {
+        "held_out_substrate": "Qwen3-8B+r14_full",
+        "train_mse_final": 1.3556537851400208e-05,
+        "val_mse_final": 0.006474007945969343,
+        "best_val_mse": 0.004572352394461632,
+        "true_L1_pass_count": 6,
+        "pred_L1_pass_count": 16,
+        "agreement_n": 6
+      },
+      {
+        "held_out_substrate": "Llama-3.1-8B+llama31_r14",
+        "train_mse_final": 5.110515121486969e-05,
+        "val_mse_final": 0.005649768444587823,
+        "best_val_mse": 0.0023902568500488997,
+        "true_L1_pass_count": 9,
+        "pred_L1_pass_count": 16,
+        "agreement_n": 9
+      },
+      {
+        "held_out_substrate": "Mistral-7B-v0.3+r14",
+        "train_mse_final": 6.808002694924653e-07,
+        "val_mse_final": 0.015047282105174548,
+        "best_val_mse": 0.009831024333834648,
+        "true_L1_pass_count": 0,
+        "pred_L1_pass_count": 8,
+        "agreement_n": 8
+      },
+      {
+        "held_out_substrate": "Gemma-2-9b+gemma_r14",
+        "train_mse_final": 2.1904354525759118e-06,
+        "val_mse_final": 0.01716236144475773,
+        "best_val_mse": 0.00816057063639164,
+        "true_L1_pass_count": 4,
+        "pred_L1_pass_count": 16,
+        "agreement_n": 4
+      }
+    ],
+    "cross_substrate_4fold_mean_val_mse": 0.011083354985122362,
+    "cross_substrate_4fold_mean_L1_agreement_pct": 42.1875
+  },
+  "phase_4_apply_alm": {
+    "substrate": "Mistral-7B-v0.3+r14",
+    "old_L1_tile_projection_pass_over_16": 0,
+    "new_L1_learned_NN_pass_over_16": 0,
+    "per_prompt": [
+      {
+        "idx": 0,
+        "prompt": "The substrate of consciousness is",
+        "old_phi_holo": -0.08866788056428503,
+        "new_phi_holo": -0.09305828809738159,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 1,
+        "prompt": "Integrated information theory says",
+        "old_phi_holo": -0.11970158409709107,
+        "new_phi_holo": -0.11715412139892578,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 2,
+        "prompt": "Global workspace broadcast implies",
+        "old_phi_holo": -0.11745841108049572,
+        "new_phi_holo": -0.12048638612031937,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 3,
+        "prompt": "Attention schema models claim",
+        "old_phi_holo": -0.0441733548980392,
+        "new_phi_holo": -0.05079182982444763,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 4,
+        "prompt": "Higher-order thought requires",
+        "old_phi_holo": -0.07166861253575704,
+        "new_phi_holo": -0.08450096100568771,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 5,
+        "prompt": "Recurrent processing means",
+        "old_phi_holo": -0.09035497264307875,
+        "new_phi_holo": -0.09011740237474442,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 6,
+        "prompt": "\uc758\uc2dd\uc758 \uae30\uc9c8\uc740",
+        "old_phi_holo": -0.04444605705116736,
+        "new_phi_holo": -0.05725420266389847,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 7,
+        "prompt": "\ud1b5\ud569\uc815\ubcf4\uc774\ub860\uc5d0 \ub530\ub974\uba74",
+        "old_phi_holo": -0.14285135128256976,
+        "new_phi_holo": -0.1747414767742157,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 8,
+        "prompt": "\uc804\uc5ed\uc791\uc5c5\uacf5\uac04\uc758 \ubc29\uc1a1\uc740",
+        "old_phi_holo": -0.10426765741406248,
+        "new_phi_holo": -0.10960595309734344,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 9,
+        "prompt": "\uc7ac\uadc0\ucc98\ub9ac\ub294",
+        "old_phi_holo": -0.08602081395149504,
+        "new_phi_holo": -0.10440993309020996,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 10,
+        "prompt": "\uc8fc\uc758 \uc2a4\ud0a4\ub9c8 \ubaa8\ub378\uc740",
+        "old_phi_holo": -0.08898411100579126,
+        "new_phi_holo": -0.11140294373035431,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 11,
+        "prompt": "\uc0c1\uc704\ucc28\uc6d0 \uc0ac\uace0\ub294",
+        "old_phi_holo": -0.04342868186726144,
+        "new_phi_holo": -0.058272019028663635,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 12,
+        "prompt": "phi_6 defines",
+        "old_phi_holo": -0.04579545637503701,
+        "new_phi_holo": -0.05935249850153923,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 13,
+        "prompt": "hexad closure is",
+        "old_phi_holo": -0.0479567752159455,
+        "new_phi_holo": -0.04639650881290436,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 14,
+        "prompt": "meta-loop observation is",
+        "old_phi_holo": -0.07026152058389444,
+        "new_phi_holo": -0.07567734271287918,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 15,
+        "prompt": "Law 60 phase transition describes",
+        "old_phi_holo": -0.08234311618195768,
+        "new_phi_holo": -0.08309323340654373,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      }
+    ],
+    "f2_falsifier_critical_violations_old": 16,
+    "f2_falsifier_critical_violations_new_l1_only": 16,
+    "note": "Other gates (L2/L3/L4/L10) also contribute to total_critical=17; L1 was 16 of those. New L1 alone changes the L1 contribution; total_critical estimate = 17 - 16 + (16 - new_L1_pass)",
+    "estimated_new_total_critical_if_only_L1_replaced": 17
+  },
+  "phase_5_honest_test": {
+    "held_out_substrate": "Mistral-Nemo+p3_r8",
+    "base_model": "mistralai/Mistral-Nemo-Base-2407",
+    "baseline_L1_pass_over_16": 15,
+    "learned_NN_L1_pass_over_16": 8,
+    "per_prompt": [
+      {
+        "idx": 0,
+        "old_phi_holo": 0.02268228451899941,
+        "new_phi_holo": -0.037037596106529236,
+        "L1_old_pass": true,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 1,
+        "old_phi_holo": 0.05541521796075202,
+        "new_phi_holo": -0.014133140444755554,
+        "L1_old_pass": true,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 2,
+        "old_phi_holo": 0.061985458597528985,
+        "new_phi_holo": 0.04934834688901901,
+        "L1_old_pass": true,
+        "L1_new_pass": true
+      },
+      {
+        "idx": 3,
+        "old_phi_holo": 0.049309142219318744,
+        "new_phi_holo": 0.13985317945480347,
+        "L1_old_pass": true,
+        "L1_new_pass": true
+      },
+      {
+        "idx": 4,
+        "old_phi_holo": 0.007882990391407755,
+        "new_phi_holo": -0.051345936954021454,
+        "L1_old_pass": true,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 5,
+        "old_phi_holo": 0.050575158650954286,
+        "new_phi_holo": -0.051673054695129395,
+        "L1_old_pass": true,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 6,
+        "old_phi_holo": 0.027286891589598957,
+        "new_phi_holo": -0.0495060496032238,
+        "L1_old_pass": true,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 7,
+        "old_phi_holo": 0.12330562795279484,
+        "new_phi_holo": -0.028625868260860443,
+        "L1_old_pass": true,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 8,
+        "old_phi_holo": 0.04953301844005202,
+        "new_phi_holo": 0.04077766090631485,
+        "L1_old_pass": true,
+        "L1_new_pass": true
+      },
+      {
+        "idx": 9,
+        "old_phi_holo": 0.016539284613545962,
+        "new_phi_holo": 0.023945003747940063,
+        "L1_old_pass": true,
+        "L1_new_pass": true
+      },
+      {
+        "idx": 10,
+        "old_phi_holo": 0.1293762929043449,
+        "new_phi_holo": 0.04164941608905792,
+        "L1_old_pass": true,
+        "L1_new_pass": true
+      },
+      {
+        "idx": 11,
+        "old_phi_holo": 0.032252131157707344,
+        "new_phi_holo": 0.023497413843870163,
+        "L1_old_pass": true,
+        "L1_new_pass": true
+      },
+      {
+        "idx": 12,
+        "old_phi_holo": -0.003894370450257672,
+        "new_phi_holo": -0.041330233216285706,
+        "L1_old_pass": false,
+        "L1_new_pass": false
+      },
+      {
+        "idx": 13,
+        "old_phi_holo": 0.041294097558952345,
+        "new_phi_holo": 0.00312592089176178,
+        "L1_old_pass": true,
+        "L1_new_pass": true
+      },
+      {
+        "idx": 14,
+        "old_phi_holo": 0.029963555084077064,
+        "new_phi_holo": 0.024999264627695084,
+        "L1_old_pass": true,
+        "L1_new_pass": true
+      },
+      {
+        "idx": 15,
+        "old_phi_holo": 0.037864090035684986,
+        "new_phi_holo": -0.0901559442281723,
+        "L1_old_pass": true,
+        "L1_new_pass": false
+      }
+    ],
+    "preserves_baseline_pass": true,
+    "smell_substrate_engineering": false,
+    "verdict_honesty": "HONEST_BUT_DOESNT_HELP \u2014 preserves MNemo, ALM stays FAIL"
+  },
+  "cost_usd": 0.0,
+  "device_used": "mps (local Mac MPS, $0)",
+  "elapsed_seconds": 56.87311005592346,
+  "race_isolation": {
+    "wrote_only_to": [
+      "state/A1_learned_phi_extractor_2026_05_01/results.json",
+      "state/A1_learned_phi_extractor_2026_05_01/manifest.json",
+      "docs/A1_learned_phi_extractor_results_2026_05_01.md"
+    ],
+    "training_code_off_repo": "/tmp/A1_train/train_phi_extractor.py (HEXA-only repo enforced)"
+  }
+}

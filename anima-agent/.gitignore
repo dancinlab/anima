@@ -1,0 +1,54 @@
+# anima-agent .gitignore
+# raw#15 STRICT: never commit secrets, tokens, env files
+
+# secrets / env
+.env
+.env.*
+!.env.example
+*.token
+*.key
+*.pem
+.secrets/
+secrets/
+
+# build artifacts
+build/
+dist/
+target/
+*.o
+*.a
+*.so
+*.dylib
+*.dSYM/
+
+# python noise (anima-agent is hexa-only; defensive only)
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+.hypothesis/
+.hypothesis_bridge_state.json
+
+# node / dashboard scratch
+node_modules/
+.next/
+*.log
+
+# state / runtime
+state/
+data/default/
+results/
+logs/
+*.db
+*.sqlite
+
+# OS
+.DS_Store
+Thumbs.db
+
+# editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~

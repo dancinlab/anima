@@ -1,0 +1,102 @@
+{
+  "schema": "anima/own_16_preflight/verdict/1",
+  "ts_utc": "2026-05-05T06:08:18Z",
+  "bg_lane": "OWN-16-VALIDATOR-HEXA",
+  "substrate": "mac",
+  "actual_cost_usd": 0,
+  "wall_time_min": 35,
+  "hexa_path": "tool/own_16_preflight.hexa",
+  "hexa_loc": 389,
+  "modes": [
+    "--selftest",
+    "--validate-prompt PATH",
+    "--validate-prompt-string STR",
+    "--target-usd N (override)"
+  ],
+  "checklist_signals_detected": [
+    {"item": 1, "name": "boot_register",     "tokens": ["h100_register.bash", "h100_cost_watchdog.hexa --register"]},
+    {"item": 2, "name": "heartbeat_hook",    "tokens": ["state/h100_watchdog/heartbeats", "heartbeat + 5min"]},
+    {"item": 3, "name": "trap_deregister",   "tokens": ["--deregister", "watchdog_deregistered"]},
+    {"item": 4, "name": "verdict_schema",    "tokens": ["pod_kill_verified_404 AND watchdog_deregistered"]},
+    {"item": 5, "name": "l23_failfast",      "tokens": ["L23", "rate-limit-fallback", "foreground takeover", "rate-limit fallback"]},
+    {"item": 6, "name": "l25_escalation",    "tokens": ["L25", "cost-overrun escalation", "auto-pause", "auto-PAUSE"]}
+  ],
+  "deviation_policy": {
+    "mandatory_band": {"target_usd_min": 5.0, "rule": "score == 6 → PASS, else FAIL"},
+    "recommended_band": {"target_usd_min": 1.0, "target_usd_max_excl": 5.0, "rule": "score >= 5 → PASS, score == 4 → WARN, else FAIL"},
+    "optional_band": {"target_usd_max": 0.99, "rule": "always PASS"}
+  },
+  "scenario_test_results": [
+    {
+      "scenario": "scenario_full_pass",
+      "path": "state/own_16_preflight_test_2026_05_05/scenario_full_pass.txt",
+      "target_usd_declared": 5.0,
+      "expected_verdict": "PASS",
+      "expected_score": "6/6",
+      "actual_verdict": "PASS",
+      "actual_score": "6/6",
+      "result": "PASS"
+    },
+    {
+      "scenario": "scenario_partial_fail",
+      "path": "state/own_16_preflight_test_2026_05_05/scenario_partial_fail.txt",
+      "target_usd_declared": 5.0,
+      "expected_verdict": "FAIL",
+      "expected_score": "4/6",
+      "expected_missing": ["l23_failfast", "l25_escalation"],
+      "actual_verdict": "FAIL",
+      "actual_score": "4/6",
+      "actual_missing": ["l23_failfast", "l25_escalation"],
+      "result": "PASS"
+    },
+    {
+      "scenario": "scenario_zero_cost_optional",
+      "path": "state/own_16_preflight_test_2026_05_05/scenario_zero_cost_optional.txt",
+      "target_usd_declared": 0.0,
+      "expected_verdict": "PASS",
+      "expected_score": "0/6",
+      "actual_verdict": "PASS",
+      "actual_score": "0/6",
+      "result": "PASS"
+    }
+  ],
+  "selftest_pass": true,
+  "test_runner_path": "state/own_16_preflight_test_2026_05_05/test_runner.bash",
+  "test_runner_exit_code": 0,
+  "own_16_phase_promotion": {
+    "from": "convention-only (Phase 3 honest_c3#7 advisory-mandatory)",
+    "to": "mechanical-enforcement (validator hexa lands; token-level lint available)",
+    "scope": "BG launch prompts at target_usd ≥ $1 substrate H100"
+  },
+  "next_phase": {
+    "phase": 4,
+    "name": "H100 dogfood smoke",
+    "substrate": "H100",
+    "target_usd": "1-3",
+    "user_ack_required": true,
+    "preconditions_met": [
+      "Phase 1 watchdog hexa landed (h100_cost_watchdog.hexa)",
+      "Phase 1 alert sink landed (h100_alert_emit.bash)",
+      "Phase 1 register wrapper landed (h100_register.bash)",
+      "Phase 3 mechanical validator landed (own_16_preflight.hexa, this BG)",
+      "memory feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md updated"
+    ],
+    "blocking": "user ACK on dogfood smoke target_usd 1-3 + scenario set"
+  },
+  "honest_c3": [
+    "C1: validator is heuristic substring-match (raw#9 hexa) — semantic equivalence not guaranteed; future BG prompts may use different phrasing for same intent → false-FAIL possible",
+    "C2: deviation policy thresholds ($5 mandatory / $1 recommended / $0 optional) are heuristic, calibrated against current phase 4 smoke target band; refinement deferred to post-dogfood data",
+    "C3: target_usd extraction is regex-light scan (first match wins); multi-budget prompts (e.g., '$1 smoke + $5 production') may pick the wrong band — workaround = explicit --target-usd override",
+    "C4: hexa runner does not propagate main() return as POSIX exit code on this mac substrate; test_runner.bash asserts on the __OWN_16_PREFLIGHT__ STDOUT marker line instead (same convention as h100_cost_watchdog.hexa selftest)",
+    "C5: PASS verdict only confirms prompt-level intent declaration — does NOT verify runtime watchdog registration succeeded; runtime confirmation requires Phase 4 dogfood",
+    "C6: L23/L25 detection is token presence — prose-disclosure DEPTH (whether the prompt actually understands the lesson vs. just name-drops the L-tag) is not measured",
+    "C7: validator is opt-in (no PreToolUse hook auto-runs it yet); operator/orchestrator-author must explicitly invoke before BG launch — convention→mechanical migration is partial; full PreToolUse-hook integration deferred to a follow-up cycle"
+  ],
+  "raw_invariants_satisfied": ["raw#9 (hexa + bash carve-out)", "raw#10 (≥5 honest C3)", "raw#15 (additive only, no mutation)"],
+  "predecessor": [
+    "docs/anima_h100_cost_discipline_operationalization_spec_2026_05_05.md",
+    "docs/anima_h100_bg_launch_prompt_template_2026_05_05.md",
+    "tool/h100_cost_watchdog.hexa (Phase 1)",
+    "feedback_h100_cost_discipline_l23_l25_watchdog_own_16.md (memory SSOT)"
+  ]
+}

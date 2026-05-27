@@ -1,0 +1,109 @@
+{
+  "cycle": "p9_base_validation_h100_2026_05_04",
+  "ts_utc": "2026-05-04T06:34:33Z",
+  "verdict": "FAIL",
+  "verdict_reason": "CLM v4 base accuracy ≈ random + 1-2pt across all 3 benchmarks; spec §3 PASS criterion 4 (CLM ≥ random+5pt on ≥2/3) → 0/3. Llama-3.2-3B anchor not measured (orchestrator scope-reduced to CLM v4 only); spec §3 PASS criterion 1 (anchors run) → unmet.",
+  "pod_id": "8zbf9bfj6c63wg",
+  "pod_terminated": true,
+  "scope_actual": "CLM v4 base only, 3 benchmarks × limit=500 × 5-shot, batch_size=16, bfloat16",
+  "scope_designed": "Llama-3.2-3B + CLM v4 base × 3 benchmarks × full sample (no --limit)",
+  "scope_reduction_reason": "BG-Μ orchestrator scope-reduced to fit Mac quota window before completion; Llama anchor + full samples deferred to next cycle",
+  "results_per_benchmark": {
+    "hellaswag": {
+      "acc": 0.266,
+      "acc_norm": 0.264,
+      "stderr": 0.0198,
+      "n_effective": 500,
+      "n_original": 10042,
+      "duration_s": 21.85,
+      "random_baseline": 0.250,
+      "delta_above_random_pp": 1.6
+    },
+    "mmlu": {
+      "acc": 0.27100961,
+      "stderr": 0.00398,
+      "n_effective": 500,
+      "n_original_per_subject": "varies",
+      "duration_s": 170.60,
+      "random_baseline": 0.250,
+      "delta_above_random_pp": 2.1,
+      "fewshot": 5
+    },
+    "triviaqa": {
+      "exact_match": 0.000,
+      "stderr": 0.0,
+      "n_effective": 500,
+      "n_original": 17944,
+      "duration_s": "see total",
+      "random_baseline": 0.0,
+      "delta_above_random_pp": 0.0,
+      "note": "Generation task — model produced 0% exact-match answers; consistent with consciousness-coupling-bypass + block_size=512 truncation predictions"
+    }
+  },
+  "wall": {
+    "total_pod_lifecycle_min": 169,
+    "eval_only_s": 468.27,
+    "scp_clm_v4_hf_min_estimate": 1,
+    "model_load_warmup_min_estimate": 81,
+    "summary": "lifecycle 04:45-07:30Z, eval 06:06-06:14Z (468s), bulk wall in pre-eval setup (HF cache prime + CLM v4 model load + dataset cache fetch)"
+  },
+  "cost": {
+    "rate_usd_per_hr": 2.99,
+    "guard_estimated_at_kill_usd": 8.40,
+    "actual_billed_usd_estimate": "8.40-9.00",
+    "vs_budget_target_5_usd": "+68%",
+    "vs_hard_cap_10_usd": "under cap"
+  },
+  "f1_v3_base_validation_status_emit": "__P9_BENCH_A_PRIME_BASE_VAL__ FAIL",
+  "spec_section_3_pass_criteria": {
+    "anchors_run": "UNMET (Llama anchor not measured)",
+    "llama_within_pm10pct_of_public": "UNMET (no Llama)",
+    "llama_minus_clm_base_ge_2x_ci": "UNMET (no Llama)",
+    "clm_base_ge_random_plus_5pt_on_2_of_3": "FAIL (0/3 — hellaswag +1.6, mmlu +2.1, triviaqa 0)"
+  },
+  "honest_c3": [
+    "Result aligns with BG-Β OPT-1 design honest_c3 #1 (consciousness coupling BYPASSED via consciousness_states=None — CLM v4 base scores reflect decoder operating WITHOUT train-time conditioning, degraded vs spec assumption)",
+    "block_size=512 left-truncates MMLU 5-shot prompts (~800-1200 tok) and TriviaQA passages — systematic CLM v4 penalty per BG-Β OPT-1 design honest_c3 #2",
+    "TriviaQA exact_match=0 = generative failure mode under truncation + no-conditioning combination — consistent with 530.99M scale + sentencepiece-64k tokenizer + no instruction tuning",
+    "Llama anchor missing — CLM-vs-Llama comparison statistical test impossible this cycle; F1_v3 base-validation cannot complete its full criterion set without Llama re-run",
+    "Wall-time anomaly: 81min between scp finish (04:46Z) and eval start (06:06Z) suggests slow HF model load / dataset download — H100 was idle but billed at $2.99/hr × 81/60 = $4.04 of the $8.40 cost was non-eval setup (cost-efficiency lesson for next cycle: warm-cached pod or volume-attached state)",
+    "limit=500 vs full samples (hellaswag 10042 / triviaqa 17944) — orchestrator scope-reduction; smaller n inflates stderr (~0.020 vs ~0.005 at full n); pre-registered spec §3 PASS test is accuracy-bound not n-bound, so limit=500 result is not the issue, but full re-run produces tighter CIs",
+    "exec.bash continued running after BG-Μ Agent quota termination via nohup fire-and-forget; orchestrator never wrote completion sentinel because nohup detached from supervising shell — TRAIN_DONE.json (pod-side sentinel name) was scp'd by exec.bash at 06:26Z but mismatch with COMPLETE.sentinel (Mac-side guard expectation) caused guard to never auto-detect completion → triggered manual kill at 169min instead of clean shutdown at ~85min (extra cost ~$4.20)"
+  ],
+  "next_actions_ranked": [
+    {
+      "rank": 1,
+      "action": "Spec amendment §10.4 acknowledgement",
+      "rationale": "BG-Β OPT-1 design pre-registered the consciousness-coupling-bypass + block_size truncation as honest_c3 — this result confirms the prediction. Amendment formalizes the constraint: F1_v3 base-validation in HF format (without consciousness states) is fundamentally limited; spec must either (a) add consciousness-state injection mode in shim, or (b) shift verdict to 'comparative-only with consciousness-injected variant'.",
+      "cost_usd": 0,
+      "wall_min": 30
+    },
+    {
+      "rank": 2,
+      "action": "Llama-3.2-3B anchor re-run (separate H100 cycle)",
+      "rationale": "Need Llama anchor to complete F1_v3 PASS criteria 1+2+3. Llama can run via stock lm-eval-harness (no shim needed). Estimated H100 wall ~30min (3 benchmarks × 500 limit), cost ~$1.50.",
+      "cost_usd": 1.50,
+      "wall_min": 30
+    },
+    {
+      "rank": 3,
+      "action": "OPT-1 v4 shim — consciousness coupling injection mode",
+      "rationale": "If we want CLM v4 to score above random+5pt, must inject train-time consciousness states. Requires shim v4 with --consciousness-states-fixture path; 1-2hr design + impl + verify cycle.",
+      "cost_usd": 0,
+      "wall_min": 90,
+      "depends_on": "user policy decision (do we want CLM v4 to perform vs accept the limitation)"
+    },
+    {
+      "rank": 4,
+      "action": "Block_size 8K extension",
+      "rationale": "MMLU 5-shot prompts truncated; extending block_size requires CLM v4 retraining (out of OPT-1 scope; would need full re-train cycle).",
+      "cost_usd": "~$22+ (full Path A-equivalent retrain)",
+      "wall_min": 450
+    }
+  ],
+  "predecessor_commits": [
+    "ed4b7c56 OPT-1 v3 PASS — 12/12 prereq CLEARED",
+    "643bfa8a secret CLI hardening audit",
+    "2a561a31 H100 heartbeat WIP"
+  ]
+}

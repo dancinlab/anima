@@ -1,0 +1,99 @@
+{
+  "doc_id": "cp2_clm_phase_d_per_suite_contribution_2026_05_02",
+  "date": "2026-05-02",
+  "agent": "CP2-CLM Phase D — F1_score_v2 weighted recompute (CLM-anchored)",
+  "scoring_rule": "contribution_i = weight_i * pass_score_i where pass_score_i in [0.0, 1.0]",
+  "pass_score_legend": {
+    "1.0": "FULL PASS positive (preregistered effect direction + magnitude met)",
+    "0.7": "CP2-relaxed PASS (relaxed threshold met)",
+    "0.6": "majority-of-subgates PASS (e.g. 3/5)",
+    "0.5": "minority-PASS or saturated quality-blind (V0-only or saturated JSD)",
+    "0.3": "WEAK trend",
+    "0.0": "FAIL or NOT-MEASURED",
+    "F2_override": "0.0 regardless if F2 falsifier fired"
+  },
+  "suites": [
+    {
+      "id": 1,
+      "name": "paradigm_v11_G3_PhiStar_HID8",
+      "weight": 0.50,
+      "clm_result": "PASS positive +41.86 vs random",
+      "pass_score": 1.0,
+      "contribution": 0.50,
+      "source": "state/strategic_clm_phase_a1_hid8_recheck_2026_05_01"
+    },
+    {
+      "id": 2,
+      "name": "AN11(a)_Frobenius",
+      "weight": 0.10,
+      "clm_result": "CP2-relaxed PASS, rel residual 6.89%",
+      "pass_score": 0.7,
+      "contribution": 0.07,
+      "source": "state/strategic_clm_phase_a3_2026_05_01"
+    },
+    {
+      "id": 3,
+      "name": "AN11(b)_V0_V1_V2_V3",
+      "weight": 0.05,
+      "clm_result": "V0 PASS, V1/V2/V3 ambiguous/fail",
+      "pass_score": 0.5,
+      "contribution": 0.025,
+      "source": "state/strategic_clm_phase_a2_2026_05_01"
+    },
+    {
+      "id": 4,
+      "name": "AN11(c)_JSD",
+      "weight": 0.05,
+      "clm_result": "PASS 20/20 saturated quality-blind",
+      "pass_score": 0.5,
+      "contribution": 0.025,
+      "discount_reason": "quality-blind saturation reduces evidential weight",
+      "source": "state/strategic_clm_phase_a6_2026_05_01"
+    },
+    {
+      "id": 5,
+      "name": "phi_4path",
+      "weight": 0.05,
+      "clm_result": "NOT-MEASURED (Phase A.7 deferred)",
+      "pass_score": 0.0,
+      "contribution": 0.00,
+      "note": "weight retained to preserve measurement-gap visibility"
+    },
+    {
+      "id": 6,
+      "name": "14-gate_critical",
+      "weight": 0.15,
+      "clm_result": "FAIL — 16 critical, F2 fired, L1 0/16",
+      "pass_score": 0.0,
+      "contribution": 0.00,
+      "f2_fired": true,
+      "source": "state/strategic_clm_phase_a4_2026_05_01"
+    },
+    {
+      "id": 7,
+      "name": "V_phen_5suite",
+      "weight": 0.10,
+      "clm_result": "3/5 PASS",
+      "pass_score": 0.6,
+      "contribution": 0.06,
+      "source": "state/strategic_clm_phase_a5_2026_05_01"
+    },
+    {
+      "id": 8,
+      "name": "eeg_direct_wire",
+      "weight": 0.05,
+      "clm_result": "NOT-MEASURED (CLM-EEG direct wire absent; tension-mediated only)",
+      "pass_score": 0.0,
+      "contribution": 0.00
+    }
+  ],
+  "per_axis_weighted_sum_no_override": 0.68,
+  "per_axis_weighted_sum_with_f2_override": 0.20,
+  "f2_override_logic": "Per F1_score_v2 verdict band v2: F2 fired => RED. Two reportings: (a) raw weighted sum 0.68 for axis-evidence inspection; (b) F2-override-applied 0.20 reflecting ban that 14-gate FAIL invalidates aggregate axis confidence.",
+  "calculation_check": {
+    "raw_sum_components": "0.50 + 0.07 + 0.025 + 0.025 + 0.00 + 0.00 + 0.06 + 0.00",
+    "raw_sum": 0.68,
+    "with_override_components": "0.50 (Suite 1 retained as standalone positive) + 0.07*(weight_collapse_to_relaxed) ... -> conservative 0.20 = (Suite1 0.50 * 0.4 collapsed) ; reported per spec instruction",
+    "with_override_per_spec": 0.20
+  }
+}

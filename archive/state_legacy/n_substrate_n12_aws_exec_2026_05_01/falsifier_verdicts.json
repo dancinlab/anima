@@ -1,0 +1,60 @@
+{
+  "schema": "n12/aws_exec/falsifier_verdicts/1",
+  "ts_utc": "2026-05-02T04:06:15Z",
+  "input_data": "state/n_substrate_n12_aws_exec_2026_05_01/raw_results.json",
+  "device": "IonQ Forte 1 (arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1)",
+  "F_N12_1": {
+    "title": "Cross-substrate OR signature consistency",
+    "tau_2_ion_us": 782.3,
+    "tau_2_ion_sigma_us": 865.4,
+    "sc_reference_sweep": [
+      {"sc_tau2_us": 50, "ratio": 15.65, "verdict": "FAIL", "p": 0.017},
+      {"sc_tau2_us": 100, "ratio": 7.82, "verdict": "FAIL", "p": 0.068, "primary": true},
+      {"sc_tau2_us": 200, "ratio": 3.91, "verdict": "FAIL", "p": 0.193},
+      {"sc_tau2_us": 500, "ratio": 1.56, "verdict": "FAIL", "p": 0.485},
+      {"sc_tau2_us": 800, "ratio": 0.978, "verdict": "INDETERMINATE", "p": 0.634, "note": "in band but p>0.05"},
+      {"sc_tau2_us": 1000, "ratio": 0.782, "verdict": "INDETERMINATE", "p": 0.556, "note": "in band but p>0.05"},
+      {"sc_tau2_us": 1500, "ratio": 0.522, "verdict": "FAIL"},
+      {"sc_tau2_us": 2000, "ratio": 0.391, "verdict": "FAIL"}
+    ],
+    "primary_verdict": "FAIL",
+    "primary_verdict_reason_at_sc_100us": "ratio 7.82 outside [0.67, 1.5] -> OR signature substrate-specific -> Orch-OR weakened",
+    "indeterminate_band_sc_us": [600, 1200],
+    "honest_c3": "Verdict highly sensitive to SC reference choice. Agent did not extract PRNewswire 2025-03 SC paper exact tau_2 — used 100us as canonical IBM Heron 4-qubit GHZ T2* bracket. Sensitivity sweep documents that for SC tau_2 in [600, 1200]us the test would be INDETERMINATE; for SC tau_2 < 600us or > 1200us the test FAILs. Single-delay budget (100us only at C1) limits confidence — sigma_tau ~ tau itself."
+  },
+  "F_N12_2": {
+    "title": "Decoherence-only null model (1/N depolarizing scaling)",
+    "tau_2_C1_predicted_us_from_C2_div_4": 333,
+    "tau_2_C1_observed_us": 782.3,
+    "deviation_pct": 135.2,
+    "verdict": "FAIL",
+    "interpretation": "C1 4-qubit tau_2 LARGER than 4x-scaling predicts -- either (a) rx(2*pi) surrogate doesn't actually decohere on Forte 1, (b) GHZ has correlated-noise protection on trapped-ion, or (c) standard depolarizing model wrong. Most likely (a) -- rx(2*pi) is virtually a frame change, not real decoherence-inducing wait. Honest C3: this contaminates F-N12-1 too."
+  },
+  "F_N12_3": {
+    "title": "DP mass-scaling escape window",
+    "m_ion_amu": 684,
+    "m_sc_bracket_amu": [1e6, 1e10],
+    "predicted_ratio_bracket": [1.5e3, 1.5e7],
+    "observed_ratio_at_sc_100us": 7.82,
+    "verdict": "FAIL",
+    "interpretation": "Observed tau_2 ratio (~10) is 100x to 1e6x SMALLER than DP mass-scaling predicts. DP point variant in this simplified form is rejected -- but SC effective-mass definition is itself ambiguous (Cooper-pair count, junction capacitance), so 'FAIL' here is weak evidence."
+  },
+  "F_N12_4": {
+    "title": "Lindblad vs OR-augmented AIC",
+    "verdict": "INDETERMINATE",
+    "reason": "Single delay point (100us) + 100 shots insufficient for AIC discrimination between thermal-only and OR-augmented models. Need >=3 delay points or full state tomography (16 amplitudes for 4-qubit) -- both exceed MVP budget."
+  },
+  "C3_sanity": {
+    "verdict": "PASS",
+    "bell_fidelity": 0.99,
+    "interpretation": "Forte 1 hardware operational; Bell pair P(00 or 11) = 99/100 = 99% (>= 95% threshold). The ONE wrong outcome (10) is consistent with single-shot SPAM error (~1%)."
+  },
+  "overall_orch_or_evidence_state": {
+    "primary_falsifier_F_N12_1": "FAIL (at sc_ref=100us; sensitivity sweep included)",
+    "secondary_F_N12_2": "FAIL (likely surrogate-circuit artifact, not real anomaly)",
+    "secondary_F_N12_3": "FAIL (weak; DP mass model itself ambiguous)",
+    "secondary_F_N12_4": "INDETERMINATE (budget-limited)",
+    "graduation_witness_emit": false,
+    "rationale": "F-N12-1 PASS would emit graduation witness (axis N-12 advances). FAIL with major honest_c3 caveats (SC ref unverified; rx(2*pi) surrogate possibly not decohering) means we cannot confidently claim Orch-OR refutation -- only 'no cross-substrate signature visible at MVP scale with surrogate-delay circuit'. Recommended next step: re-run with verbatim-mode pulse-level delay (Forte 1 supports `verbatim` pragma), and extract actual PRNewswire SC reference numeric. Both deferred per separate authorization."
+  }
+}

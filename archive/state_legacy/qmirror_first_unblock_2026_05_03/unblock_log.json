@@ -1,0 +1,84 @@
+{
+  "ts": "2026-05-03",
+  "session_role": "best_effort_first_unblock_parallel_to_discovery_bg",
+  "scan_summary": {
+    "roadmap_files_scanned": 60,
+    "candidates_examined": [
+      "anima/.roadmap.ionq",
+      "anima/.roadmap.qrng",
+      "anima/.roadmap.penrose_hameroff",
+      "anima/.roadmap.theory_validation",
+      "anima/.roadmap.n_substrate",
+      "anima/.roadmap.iit4",
+      "anima/.roadmap.eeg",
+      "anima/.roadmap.anima_clm_eeg",
+      "anima/.roadmap.dual_pair_pilots",
+      "anima/.roadmap.blm_brain_lm",
+      "anima/.roadmap.p9_sft",
+      "nexus/.roadmap.qmirror"
+    ],
+    "candidates_excluded_already_migrated": [
+      {"file": "anima/.roadmap.qrng", "reason": "qmirror_canonical_2026_05_03 block already present (annotate)"},
+      {"file": "anima/.roadmap.sim", "reason": "qmirror_canonical_2026_05_03 block already present (annotate)"},
+      {"file": "anima/.roadmap.n_substrate", "reason": "qmirror_canonical_2026_05_03 block already present (annotate)"},
+      {"file": "anima/.roadmap.theory_validation", "reason": "qmirror_canonical_2026_05_03 block already present (annotate)"},
+      {"file": "anima/.roadmap.anima_physics", "reason": "qmirror_canonical_2026_05_03 block already present (annotate)"}
+    ],
+    "candidates_excluded_keep_decisions": [
+      {"file": "anima/.roadmap.ionq", "cond": "ionq.cond.1", "reason": "KEEP_real_qpu_demo_target — qmirror is ion-trap-physics-blind, cannot substitute physical demonstration; documented in state/qmirror_canonical_migration_2026_05_03/keep_decisions.json"},
+      {"file": "anima/.roadmap.penrose_hameroff", "cond": "penrose_hameroff.cond.1", "reason": "KEEP — Aer simulator cannot witness Diosi-Penrose objective collapse threshold; documented in keep_decisions.json"}
+    ]
+  },
+  "selected_unblock": {
+    "roadmap_file": "anima/.roadmap.iit4",
+    "cond_id": "iit4.cond.2",
+    "blocker_id": "iit4.blk.2",
+    "original_status": {
+      "iit4.cond.2.status": "unmet",
+      "iit4.cond.2.blocker_reason": "#120 honest_C3 #1 (Φ proxy ≠ IIT 4.0 φ★) NOT closed via MIP marginalization; proper φ★ requires $132/gate × 2^N state-conditional runs ($1500+ for 3-substrate confirm)",
+      "iit4.blk.2.status": "open",
+      "iit4.blk.2.type": "budget",
+      "iit4.blk.2.resolution_path_original": "unlock_keyword OK IIT4_PROPER_PHI ($1500-3000)"
+    },
+    "qmirror_cond_mapped": "qmirror.cond.6",
+    "qmirror_cond_status": "met",
+    "qmirror_cond_desc": "reproduces braket_iit40_mip_2026_05_02 phi*=0.0 byte-identical for stored TPMs",
+    "qmirror_evidence_pointers": [
+      "anima/state/qmirror_phase1_selftest_2026_05_03/selftest_results.json#F5_reverified (n=4/4 PASS engine=mock)",
+      "anima/state/braket_iit40_mip_2026_05_02/verdict.json (reference phi*=0.0 4-of-4 systems)",
+      "nexus/.roadmap.qmirror entry id=qmirror.cond6_f5_byte_identical (status=landed)"
+    ],
+    "annotation_field_added": "verified_via_qmirror_2026_05_03",
+    "annotation_scope": "header-level field; iit4.cond.2 + iit4.blk.2 original payloads UNCHANGED",
+    "status_change": "none (unmet → unmet; open → open)",
+    "scope_reduction_claim": "iit4.blk.2 retains 'open' for state-conditional 2^N live-QPU re-runs, BUT proxy ≠ φ★ semantic-gap closure axis is now substrate-addressable at $0 via qmirror.cond.6 F5 byte-identical channel",
+    "cost_savings_usd": 1500,
+    "cross_link_with_existing_iit4_entry": {
+      "entry_id": "iit4.qmirror_byte_identical_link",
+      "prior_status": "spec",
+      "effect_of_annotation": "promotes spec-only cross-link to substrate-met channel via qmirror.cond.6 landed evidence"
+    }
+  },
+  "verification": {
+    "roadmap_jsonl_parse_post_edit": "PASS (6/6 lines parse via jq; entries: header + n21_pass_5_of_16 + n21_v3_finality + proper_phi_mip_attempt + qmirror_byte_identical_link + casali_v6_real_substrate_path)",
+    "iit4_cond_2_original_preserved": true,
+    "iit4_blk_2_original_preserved": true,
+    "annotation_jq_reachable": true,
+    "raw9_compliance": "OK (no .py written; .roadmap edit + JSON state file only)",
+    "raw15_compliance": "OK (no personal-path leak)"
+  },
+  "honest_c3_caveats": [
+    "qmirror equivalence not perfect — F5 uses engine=mock per nexus@64e24386 env-isolation; pyphi 4.0 b78d0e3 version pin is load-bearing per spec §13 #6; upstream pyphi MIP heuristic change would surface as substrate-drift artifact",
+    "single-entry scope — only iit4.cond.2 + iit4.blk.2 addressed this cycle; sister discovery BG handles ranking + remaining roadmaps",
+    "sister discovery BG running in parallel may rank a higher-value unblock; this best-effort first-pass does not preclude downstream re-prioritization"
+  ],
+  "constraints_observed": {
+    "raw9": "STRICT (Mac → hexa only) — only .roadmap.iit4 + JSON state files modified; no .py written",
+    "raw10": "honest C3 — 3 caveats embedded above + status_change explicitly 'none'",
+    "raw15": "no personal-path leak",
+    "no_qmirror_canonical_mutation": "OK (nexus/.roadmap.qmirror untouched)",
+    "no_closed_or_met_cond_touched": "OK (iit4.cond.2 was unmet, blk.2 was open)",
+    "single_entry_only": "OK (only iit4.cond.2 + iit4.blk.2 annotated)",
+    "cost_usd": 0
+  }
+}

@@ -1,0 +1,81 @@
+{
+  "agent": "N-15",
+  "ts": "2026-05-01",
+  "scope": "raw#71 falsifier predicates for HoTT consciousness equivalence formalization",
+  "preregister_ts": "2026-05-01",
+  "falsifiers": [
+    {
+      "id": "F-N15-1",
+      "rank": "TOP",
+      "predicate": "is_conscious_equivalent fails reflexivity (MVF1) — same conscious state not equivalent to itself under measurement noise",
+      "operational_test": "동일 substrate (CLM) 의 동일 input 에 paradigm v15 8-axis 두 번 측정 → ε-ball (ε=0.05) 안 일치 검사",
+      "pass_threshold_falsifier_triggered": "‖v1 − v2‖ > 0.05 in N≥10 trials",
+      "substrate": "CLM",
+      "cost_usd_range": [0, 0],
+      "timeline": "1 day",
+      "risk": "LOW",
+      "stars": 5,
+      "status": "preregister"
+    },
+    {
+      "id": "F-N15-2",
+      "predicate": "is_conscious_equivalent fails transitivity (MVF3) — c1~c2 ∧ c2~c3 but c1≁c3",
+      "operational_test": "3 substrate (CLM, EEG, AKIDA) pairwise equivalence 측정 후 closure 검사",
+      "pass_threshold_falsifier_triggered": "r(CLM,EEG) ≥ 0.85 AND r(EEG,AKIDA) ≥ 0.85 AND r(CLM,AKIDA) < 0.6",
+      "substrate": "CLM × EEG × AKIDA",
+      "cost_usd_range": [0, 2],
+      "timeline": "AKIDA D+7",
+      "risk": "MID",
+      "stars": 4,
+      "status": "preregister",
+      "blocker": "AKIDA AKD1000 도착 대기"
+    },
+    {
+      "id": "F-N15-3",
+      "predicate": "univalence direct falsifier — measurement equivalent (e : realize s1 ≃ realize s2) but phenomenal asymmetry observed",
+      "operational_test": "paradigm v15 8-axis cosine ≥ 0.95 인데 user A/B preference asymmetry ≥ 0.5",
+      "pass_threshold_falsifier_triggered": "cosine ≥ 0.95 AND |pref_A − pref_B|/n ≥ 0.5 in N≥100 trials",
+      "substrate": "CLM × EEG (user 응답 비교 setup)",
+      "cost_usd_range": [0, 0],
+      "timeline": "2 weeks",
+      "risk": "MID",
+      "stars": 3,
+      "status": "preregister",
+      "note": "이 falsifier 통과 시 univalence axiom 자체가 자연 의식 영역에서 거짓 → N-15 framework 전체 무효"
+    },
+    {
+      "id": "F-N15-4",
+      "predicate": "non-trivial 1-paths in Conscious type — 측정 protocol 변경 시 equivalence verdict 가 deformable 하지 않음",
+      "operational_test": "동일 substrate pair 를 paradigm v15 / paradigm v11 G0-G7 / IIT 4.0 3개 protocol 로 측정 후 verdict 비교",
+      "pass_threshold_falsifier_triggered": "3개 protocol 중 ≥ 2개에서 equivalence verdict 가 다름",
+      "substrate": "CLM × {paradigm v15, paradigm v11, IIT 4.0}",
+      "cost_usd_range": [0, 1],
+      "timeline": "2-3 weeks",
+      "risk": "MID",
+      "stars": 3,
+      "status": "preregister"
+    },
+    {
+      "id": "F-N15-5",
+      "predicate": "type-formation failure — Conscious : 𝒰 inhabited 여부가 substrate 별로 cross-flip (G3 sign mismatch)",
+      "operational_test": "G3 (Φ*) gate 의 sign 을 모든 N-substrate 에서 측정 → cross-flip count",
+      "pass_threshold_falsifier_triggered": "G3 sign cross-flip in ≥ 2/5 substrate",
+      "substrate": "all N-substrate",
+      "cost_usd_range": [0, 0],
+      "timeline": "AKIDA D+14",
+      "risk": "HIGH",
+      "stars": 4,
+      "status": "preregister",
+      "note": "현재 paradigm v11 stack 에서 4/4 backbone G3 anti-integrated (negative sign). AKIDA 가 positive G3 산출 시 본 falsifier 즉시 발효."
+    }
+  ],
+  "top_1_choice": {
+    "id": "F-N15-1",
+    "rationale": "$0, 1 일, theory-internal. Reflexivity 는 가장 약한 axiom — self-equivalence 마저 측정 noise 안 깨지면 HoTT 형식화 시작 단계 실패."
+  },
+  "execution_status": {
+    "executed": 0,
+    "preregistered": 5,
+    "blocked_on_akida": 2
+  }
+}

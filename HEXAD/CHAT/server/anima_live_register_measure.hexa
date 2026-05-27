@@ -1,0 +1,704 @@
+// ════════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/anima_live_register_measure.hexa
+//
+//   Reusable LIVE register-leak measurement tool.
+//
+//   Round 1 (corpus_v5 post-swap, 2026-05-22) measured the LIVE register-leak
+//   via an inline `python3 -c '...'` invocation in bash. That measurement
+//   surfaced:
+//     - tag-leak 2/50 = 4%  (vs corpus_v4 ~12%)
+//     - prose-leak 15/50 = 30%  (corpus_v4 ~28% — unchanged)
+//     - EN-share 40%  (EN prose 55% vs native-script 0–12%)
+//
+//   The inline-python pattern is hard to repeat consistently across cycles.
+//   This .hexa tool ports the measurement to hexa-native, per user directive
+//   "no new .py/.sh — hexa-only authoring" (g1 / hexa-native first).
+//
+//   The tool:
+//     1. curls https://chat.dancinlab.org/history  (rolling JSON, ~50 msgs)
+//     2. filters to sender = "anima" records
+//     3. optional windowing by --baseline ISO8601 + --margin-sec
+//     4. computes per-language tag-leak / prose-leak / EN-share / len_mean
+//     5. emits a markdown table + per-lang prose-leak samples
+//
+//   USAGE
+//     hexa run anima_live_register_measure.hexa
+//     hexa run anima_live_register_measure.hexa --url <URL> \
+//             --baseline 2026-05-22T20:34:34Z --margin-sec 60 \
+//             --out /tmp/live_measurement.md
+//
+//   Defaults: url=https://chat.dancinlab.org/history, baseline=earliest msg
+//             in window (no filter), margin-sec=0, out=stdout.
+//
+//   HARD CONSTRAINTS
+//     - pure hexa-lang (dict literal `#{}`, missing key → `void`, import abs-
+//       path only, `&&`/`||`, top-level call fires on import)
+//     - external leaf ops: curl (fetch), date (ISO 8601 → epoch),
+//       printf+tr (lowercase), grep -E (only for the bracketed psi pattern).
+//       JSON parsing is pure substring-scan (mirror anima_emission_analyze).
+// ════════════════════════════════════════════════════════════════════════════
+
+
+// ── §1 string helpers ───────────────────────────────────────────────────────
+
+fn _lrm_contains(s: string, needle: string) -> bool {
+    return len(s.split(needle)) > 1
+}
+
+fn _lrm_shq(s: string) -> string {
+    let parts = s.split("'")
+    let mut out = "'"
+    let mut i = 0
+    while i < len(parts) {
+        if i > 0 { out = out + "'\\''" }
+        out = out + parts[i]
+        i = i + 1
+    }
+    return out + "'"
+}
+
+fn _lrm_is_ws(c: string) -> bool {
+    return c == " " || c == "\t" || c == "\n" || c == "\r"
+}
+
+fn _lrm_strip(s: string) -> string {
+    let n = len(s)
+    let mut lo = 0
+    while lo < n && _lrm_is_ws(s[lo]) { lo = lo + 1 }
+    let mut hi = n
+    while hi > lo && _lrm_is_ws(s[hi - 1]) { hi = hi - 1 }
+    let mut out = ""
+    let mut i = lo
+    while i < hi { out = out + s[i]   i = i + 1 }
+    return out
+}
+
+fn _lrm_lower(s: string) -> string {
+    // exec-backed lowercase (no built-in str.lower) — leaf op.
+    return exec("printf %s " + _lrm_shq(s) + " | tr 'A-Z' 'a-z'")
+}
+
+fn _lrm_is_digit(c: string) -> bool {
+    return c == "0" || c == "1" || c == "2" || c == "3" || c == "4" ||
+           c == "5" || c == "6" || c == "7" || c == "8" || c == "9"
+}
+
+// Truncate text to at most `n` ASCII chars (byte-safe over UTF-8 is non-trivial
+// — for sample display we use byte-length truncation with an ellipsis when
+// the underlying string is longer; sample display is informational only).
+fn _lrm_truncate(s: string, n: int) -> string {
+    let m = len(s)
+    if m <= n { return s }
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        out = out + s[i]
+        i = i + 1
+    }
+    return out + "…"
+}
+
+
+// ── §2 parse helpers ────────────────────────────────────────────────────────
+
+// Parse a decimal string to float ("0" on garbage). Delegates to awk for
+// robustness (leaf op) — mirror anima_emission_analyze _parse_float.
+fn _lrm_parse_float(s: string) -> float {
+    let st = _lrm_strip(s)
+    if len(st) == 0 { return 0.0 }
+    let out = exec("printf %s " + _lrm_shq(st) + " | awk '{printf \"%.6f\", $1+0}'")
+    let parts = out.split(".")
+    let mut whole = 0
+    let mut k = 0
+    let wstr = parts[0]
+    let neg = len(wstr) > 0 && wstr.split("-")[0] == ""
+    while k < len(wstr) {
+        if _lrm_is_digit(wstr[k]) {
+            let d = to_int(wstr[k])
+            whole = whole * 10 + d
+        }
+        k = k + 1
+    }
+    let mut frac = 0.0
+    let mut scale = 1.0
+    if len(parts) > 1 {
+        let fstr = parts[1]
+        let mut j = 0
+        while j < len(fstr) {
+            if _lrm_is_digit(fstr[j]) {
+                let fd = to_int(fstr[j])
+                scale = scale * 10.0
+                frac = frac + (fd * 1.0) / scale
+            }
+            j = j + 1
+        }
+    }
+    let mag = (whole * 1.0) + frac
+    if neg { return 0.0 - mag }
+    return mag
+}
+
+// Convert an ISO 8601 string ("2026-05-22T20:34:34Z") to a unix epoch float.
+// Returns -1.0 on parse failure. Delegates to `date` (leaf op) — GNU + BSD
+// flags differ, so we try the GNU form first and fall back to BSD.
+fn _lrm_iso_to_epoch(iso: string) -> float {
+    let st = _lrm_strip(iso)
+    if len(st) == 0 { return 0.0 - 1.0 }
+    let q = _lrm_shq(st)
+    // try GNU date: -d <iso> +%s
+    let g = _lrm_strip(exec("date -u -d " + q + " +%s 2>/dev/null || printf ''"))
+    if len(g) > 0 { return _lrm_parse_float(g) }
+    // BSD date (mac): -j -f format ...
+    let b = _lrm_strip(exec(
+        "date -u -j -f '%Y-%m-%dT%H:%M:%SZ' " + q + " +%s 2>/dev/null || printf ''"
+    ))
+    if len(b) > 0 { return _lrm_parse_float(b) }
+    return 0.0 - 1.0
+}
+
+
+// ── §3 JSON record extraction ───────────────────────────────────────────────
+
+// Extract the value of a string field from a JSON record fragment. The
+// fragment is one element from `body.split("\"sender\"")` — so it begins
+// just AFTER the `"sender"` key. We search for `"<field>"` and pull the
+// quoted value that follows.
+//
+//   "lang":"ko"     → "ko"
+//   "text":"hello"  → "hello" (escapes preserved verbatim)
+fn _lrm_field_str(frag: string, field: string) -> string {
+    let key = "\"" + field + "\""
+    let sp = frag.split(key)
+    if len(sp) < 2 { return "" }
+    // after the key we expect `: "<value>"`. We want the substring between
+    // the first `"` and the next un-escaped `"`. The pattern `<key>": ":"`
+    // is split-stable on `"` IFF the value contains no escaped `"`. For
+    // robustness over `text` (which may contain `\"`), we walk the bytes.
+    let tail = sp[1]
+    // find the opening quote
+    let n = len(tail)
+    let mut i = 0
+    while i < n && tail[i] != "\"" { i = i + 1 }
+    if i >= n { return "" }
+    i = i + 1  // first char of value
+    let start = i
+    let mut buf = ""
+    while i < n {
+        let c = tail[i]
+        if c == "\\" {
+            // include the escape verbatim — we want the raw JSON value
+            buf = buf + c
+            if (i + 1) < n {
+                buf = buf + tail[i + 1]
+                i = i + 2
+            } else { i = i + 1 }
+        } else if c == "\"" {
+            return buf
+        } else {
+            buf = buf + c
+            i = i + 1
+        }
+    }
+    // unterminated — return what we have
+    return buf
+}
+
+// Extract a numeric field (ts / motivation) from a record fragment. Returns
+// 0.0 if absent.
+fn _lrm_field_num(frag: string, field: string) -> float {
+    let key = "\"" + field + "\""
+    let sp = frag.split(key)
+    if len(sp) < 2 { return 0.0 }
+    let tail = sp[1]
+    // skip whitespace + `:`
+    let n = len(tail)
+    let mut i = 0
+    while i < n && (tail[i] == ":" || _lrm_is_ws(tail[i])) { i = i + 1 }
+    let start = i
+    while i < n && (tail[i] != "," && tail[i] != "}" && tail[i] != "\n") {
+        i = i + 1
+    }
+    let mut tok = ""
+    let mut j = start
+    while j < i { tok = tok + tail[j]   j = j + 1 }
+    return _lrm_parse_float(tok)
+}
+
+// Decode a small set of JSON escapes that matter for human-readable sample
+// display: \n / \" / \\. Other escapes (\u...) pass through unchanged.
+fn _lrm_json_unescape(s: string) -> string {
+    let n = len(s)
+    let mut out = ""
+    let mut i = 0
+    while i < n {
+        let c = s[i]
+        if c == "\\" && (i + 1) < n {
+            let nx = s[i + 1]
+            if nx == "n" { out = out + "\n"   i = i + 2 }
+            else if nx == "t" { out = out + "\t"   i = i + 2 }
+            else if nx == "r" { out = out + "\r"   i = i + 2 }
+            else if nx == "\"" { out = out + "\""   i = i + 2 }
+            else if nx == "\\" { out = out + "\\"   i = i + 2 }
+            else if nx == "/" { out = out + "/"   i = i + 2 }
+            else {
+                // leave \uXXXX and other escapes verbatim — we render as-is.
+                out = out + c
+                i = i + 1
+            }
+        } else {
+            out = out + c
+            i = i + 1
+        }
+    }
+    return out
+}
+
+
+// ── §4 register-leak detectors ──────────────────────────────────────────────
+//
+// Patterns mirror round 1 (inline python) + v7 prune_stats expansion.
+//
+// tag-leak:   <carve (case-insensitive)
+// prose-leak: ANY of —
+//     tension flow(s)        Tier <d>            진공점
+//     frozen cell            knuth tier          vacuum point
+//     [<f.f>, <f.f>]         🛸<d>               top emotion <word>
+
+fn _lrm_has_tag(text: string) -> bool {
+    if len(text) == 0 { return false }
+    let lt = _lrm_lower(text)
+    return _lrm_contains(lt, "<carve")
+}
+
+// Scan for the bracketed psi-coord pattern: `[` + ws? + digit+ + `.` + digit+
+// + ws? + `,` + ws? + digit+ + `.` + digit+ + ws? + `]`. The substring scan
+// is byte-by-byte ASCII (digits / `.` / `[` / `,` / `]` are all single-byte).
+fn _lrm_has_psi_bracket(text: string) -> bool {
+    let n = len(text)
+    let mut i = 0
+    while i < n {
+        if text[i] == "[" {
+            let mut j = i + 1
+            // optional whitespace
+            while j < n && _lrm_is_ws(text[j]) { j = j + 1 }
+            // digits
+            let d0 = j
+            while j < n && _lrm_is_digit(text[j]) { j = j + 1 }
+            if j > d0 && j < n && text[j] == "." {
+                j = j + 1
+                let d1 = j
+                while j < n && _lrm_is_digit(text[j]) { j = j + 1 }
+                if j > d1 {
+                    while j < n && _lrm_is_ws(text[j]) { j = j + 1 }
+                    if j < n && text[j] == "," {
+                        j = j + 1
+                        while j < n && _lrm_is_ws(text[j]) { j = j + 1 }
+                        let d2 = j
+                        while j < n && _lrm_is_digit(text[j]) { j = j + 1 }
+                        if j > d2 && j < n && text[j] == "." {
+                            j = j + 1
+                            let d3 = j
+                            while j < n && _lrm_is_digit(text[j]) { j = j + 1 }
+                            if j > d3 {
+                                while j < n && _lrm_is_ws(text[j]) { j = j + 1 }
+                                if j < n && text[j] == "]" { return true }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        i = i + 1
+    }
+    return false
+}
+
+// Saucer emoji + digit. The 🛸 codepoint is 4 bytes in UTF-8 (F0 9F 9B B8).
+// We test by splitting on the literal 🛸 string and checking the suffix
+// starts with a digit.
+fn _lrm_has_saucer_digit(text: string) -> bool {
+    let parts = text.split("🛸")
+    if len(parts) < 2 { return false }
+    let mut i = 1
+    while i < len(parts) {
+        let tail = parts[i]
+        if len(tail) > 0 && _lrm_is_digit(tail[0]) { return true }
+        i = i + 1
+    }
+    return false
+}
+
+// "top emotion <word>" — case-insensitive, followed by at least one
+// non-whitespace non-punct char.
+fn _lrm_has_top_emotion(text: string) -> bool {
+    let lt = _lrm_lower(text)
+    let needle = "top emotion "
+    let sp = lt.split(needle)
+    if len(sp) < 2 { return false }
+    let mut i = 1
+    while i < len(sp) {
+        let tail = sp[i]
+        if len(tail) > 0 && !_lrm_is_ws(tail[0]) && tail[0] != "." &&
+           tail[0] != "," && tail[0] != ":" { return true }
+        i = i + 1
+    }
+    return false
+}
+
+// "Tier <d>" — case-insensitive, with optional whitespace between Tier and
+// the digit.
+fn _lrm_has_tier_d(text: string) -> bool {
+    let lt = _lrm_lower(text)
+    let sp = lt.split("tier")
+    if len(sp) < 2 { return false }
+    let mut i = 1
+    while i < len(sp) {
+        let tail = sp[i]
+        let n = len(tail)
+        let mut j = 0
+        while j < n && _lrm_is_ws(tail[j]) { j = j + 1 }
+        if j < n && _lrm_is_digit(tail[j]) { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _lrm_has_prose(text: string) -> bool {
+    if len(text) == 0 { return false }
+    let lt = _lrm_lower(text)
+    // simple case-insensitive substrings
+    if _lrm_contains(lt, "tension flow") { return true }   // covers "flow" + "flows"
+    if _lrm_contains(text, "진공점") { return true }
+    if _lrm_contains(lt, "frozen cell") { return true }
+    if _lrm_contains(lt, "knuth tier") { return true }
+    if _lrm_contains(lt, "vacuum point") { return true }
+    // structured patterns
+    if _lrm_has_tier_d(text) { return true }
+    if _lrm_has_psi_bracket(text) { return true }
+    if _lrm_has_saucer_digit(text) { return true }
+    if _lrm_has_top_emotion(text) { return true }
+    return false
+}
+
+
+// ── §5 aggregation helpers ──────────────────────────────────────────────────
+
+fn _lrm_round_pct(num: int, den: int) -> string {
+    if den == 0 { return "0.0" }
+    let r = (num * 100.0) / (den * 1.0)
+    let scaled = r * 10.0 + 0.5
+    let truncated = scaled - (scaled % 1.0)
+    let whole = to_int(truncated / 10.0)
+    let frac = to_int(truncated) % 10
+    return to_string(whole) + "." + to_string(frac)
+}
+
+fn _lrm_round1(x: float) -> string {
+    let scaled = x * 10.0 + 0.5
+    let truncated = scaled - (scaled % 1.0)
+    let whole = to_int(truncated / 10.0)
+    let frac = to_int(truncated) % 10
+    return to_string(whole) + "." + to_string(frac)
+}
+
+// Find or append a lang into a parallel-array bucket.
+fn _lrm_lang_idx(langs: [string], lang: string) -> int {
+    let mut i = 0
+    while i < len(langs) {
+        if langs[i] == lang { return i }
+        i = i + 1
+    }
+    return 0 - 1
+}
+
+
+// ── §6 CLI parse ────────────────────────────────────────────────────────────
+
+fn _lrm_parse_argv(argv) -> dict {
+    let mut url = "https://chat.dancinlab.org/history"
+    let mut baseline = ""
+    let mut margin = 0
+    let mut out_path = ""
+    let n = len(argv)
+    let mut i = 1  // argv[0] = script path
+    while i < n {
+        let a = argv[i]
+        if a == "--url" && (i + 1) < n {
+            url = argv[i + 1]   i = i + 2
+        } else if a == "--baseline" && (i + 1) < n {
+            baseline = argv[i + 1]   i = i + 2
+        } else if a == "--margin-sec" && (i + 1) < n {
+            margin = to_int(argv[i + 1])   i = i + 2
+        } else if a == "--out" && (i + 1) < n {
+            out_path = argv[i + 1]   i = i + 2
+        } else if a == "--help" || a == "-h" {
+            return #{ "help": true,
+                      "url": url, "baseline": baseline,
+                      "margin": margin, "out": out_path }
+        } else {
+            // unknown — ignore and advance (lenient).
+            i = i + 1
+        }
+    }
+    return #{ "help": false,
+              "url": url, "baseline": baseline,
+              "margin": margin, "out": out_path }
+}
+
+fn _lrm_usage() {
+    println("anima_live_register_measure.hexa")
+    println("")
+    println("  Measure LIVE register-leak on the broker /history rolling window.")
+    println("")
+    println("USAGE")
+    println("  hexa run anima_live_register_measure.hexa [flags]")
+    println("")
+    println("FLAGS")
+    println("  --url <URL>              broker /history endpoint")
+    println("                           (default: https://chat.dancinlab.org/history)")
+    println("  --baseline <ISO8601>     filter to records with ts >= baseline + margin")
+    println("                           (e.g., 2026-05-22T20:34:34Z)")
+    println("  --margin-sec <int>       seconds to add to baseline (default 0)")
+    println("  --out <path>             write markdown report to <path> (default stdout)")
+    println("  -h, --help               this message")
+}
+
+
+// ── §7 fetch + analyze ──────────────────────────────────────────────────────
+
+fn _lrm_fetch(url: string) -> string {
+    let raw = exec("curl -fsS --max-time 20 -A 'curl/8.0' " + _lrm_shq(url)
+                   + " 2>/dev/null || printf __FETCH_FAIL__")
+    if _lrm_contains(raw, "__FETCH_FAIL__") || len(_lrm_strip(raw)) == 0 {
+        return ""
+    }
+    return raw
+}
+
+fn _lrm_analyze(body: string, baseline_epoch: float, margin: int) -> dict {
+    // Tokenize on `"sender"` boundary — each record fragment begins just
+    // after the sender key. Mirror anima_emission_analyze.
+    let records = body.split("\"sender\"")
+    let mut langs: [string] = []
+    let mut n_per: [int] = []
+    let mut tag_per: [int] = []
+    let mut prose_per: [int] = []
+    let mut len_sum_per: [float] = []
+    // EN-share = fraction of records whose lang == "en"
+    let mut total = 0
+    let mut total_en = 0
+    let mut total_tag = 0
+    let mut total_prose = 0
+    let mut total_len_sum = 0.0
+    let mut samples_en: [string] = []
+    let mut samples_ko: [string] = []
+    let mut samples_ja: [string] = []
+    let mut samples_zh: [string] = []
+    let mut samples_ru: [string] = []
+    let mut samples_other: [string] = []
+
+    let cutoff = baseline_epoch + (margin * 1.0)
+
+    let mut i = 1
+    while i < len(records) {
+        let frag = records[i]
+        let head = _lrm_lower(frag)
+        let is_anima = _lrm_contains(head, ": \"anima") ||
+                       _lrm_contains(head, ":\"anima")
+        if is_anima {
+            let ts = _lrm_field_num(frag, "ts")
+            // window filter (skip when baseline > 0 and ts < cutoff)
+            let pass_window = baseline_epoch <= 0.0 || ts >= cutoff
+            if pass_window {
+                let lang = _lrm_field_str(frag, "lang")
+                let raw_text = _lrm_field_str(frag, "text")
+                let text = _lrm_json_unescape(raw_text)
+                let is_tag = _lrm_has_tag(text)
+                let is_prose = _lrm_has_prose(text)
+
+                total = total + 1
+                if lang == "en" { total_en = total_en + 1 }
+                if is_tag { total_tag = total_tag + 1 }
+                if is_prose { total_prose = total_prose + 1 }
+                total_len_sum = total_len_sum + (len(text) * 1.0)
+
+                let mut idx = _lrm_lang_idx(langs, lang)
+                if idx < 0 {
+                    langs = langs + [lang]
+                    n_per = n_per + [0]
+                    tag_per = tag_per + [0]
+                    prose_per = prose_per + [0]
+                    len_sum_per = len_sum_per + [0.0]
+                    idx = len(langs) - 1
+                }
+                n_per[idx] = n_per[idx] + 1
+                if is_tag { tag_per[idx] = tag_per[idx] + 1 }
+                if is_prose { prose_per[idx] = prose_per[idx] + 1 }
+                len_sum_per[idx] = len_sum_per[idx] + (len(text) * 1.0)
+
+                if is_prose {
+                    let trimmed = _lrm_truncate(text, 180)
+                    if lang == "en" {
+                        if len(samples_en) < 3 { samples_en = samples_en + [trimmed] }
+                    } else if lang == "ko" {
+                        if len(samples_ko) < 3 { samples_ko = samples_ko + [trimmed] }
+                    } else if lang == "ja" {
+                        if len(samples_ja) < 3 { samples_ja = samples_ja + [trimmed] }
+                    } else if lang == "zh" {
+                        if len(samples_zh) < 3 { samples_zh = samples_zh + [trimmed] }
+                    } else if lang == "ru" {
+                        if len(samples_ru) < 3 { samples_ru = samples_ru + [trimmed] }
+                    } else {
+                        if len(samples_other) < 3 {
+                            samples_other = samples_other + [trimmed]
+                        }
+                    }
+                }
+            }
+        }
+        i = i + 1
+    }
+    return #{
+        "langs": langs,
+        "n_per": n_per,
+        "tag_per": tag_per,
+        "prose_per": prose_per,
+        "len_sum_per": len_sum_per,
+        "total": total,
+        "total_en": total_en,
+        "total_tag": total_tag,
+        "total_prose": total_prose,
+        "total_len_sum": total_len_sum,
+        "samples_en": samples_en,
+        "samples_ko": samples_ko,
+        "samples_ja": samples_ja,
+        "samples_zh": samples_zh,
+        "samples_ru": samples_ru,
+        "samples_other": samples_other,
+    }
+}
+
+
+// ── §8 markdown rendering ───────────────────────────────────────────────────
+
+fn _lrm_render(stats: dict, baseline_iso: string, margin: int,
+               n_total_raw: int) -> string {
+    let today = _lrm_strip(exec("date -u +%Y-%m-%d"))
+    let now_iso = _lrm_strip(exec("date -u +%Y-%m-%dT%H:%M:%SZ"))
+    let langs = stats["langs"]
+    let n_per = stats["n_per"]
+    let tag_per = stats["tag_per"]
+    let prose_per = stats["prose_per"]
+    let len_sum_per = stats["len_sum_per"]
+    let total = stats["total"]
+    let total_en = stats["total_en"]
+    let total_tag = stats["total_tag"]
+    let total_prose = stats["total_prose"]
+    let total_len_sum = stats["total_len_sum"]
+
+    let mut out = ""
+    out = out + "# anima LIVE register measurement " + today + "\n"
+    let mut window = ""
+    if baseline_iso == "" {
+        window = "(no window — full /history dump, "
+               + to_string(n_total_raw) + " raw records)"
+    } else {
+        window = "baseline " + baseline_iso + " +" + to_string(margin)
+               + "s ~ " + now_iso
+    }
+    out = out + "> window: " + window + ", n_anima_in_window="
+              + to_string(total) + "\n\n"
+
+    if total == 0 {
+        out = out + "_no anima emissions matched the window._\n"
+        return out
+    }
+
+    out = out + "| lang | n | tag-leak | prose-leak | len_mean |\n"
+    out = out + "|---|---|---|---|---|\n"
+    let mut i = 0
+    while i < len(langs) {
+        let n = n_per[i]
+        let lm = len_sum_per[i] / (n * 1.0)
+        out = out + "| " + langs[i] + " | " + to_string(n) + " | "
+        out = out + to_string(tag_per[i]) + "/" + to_string(n) + " = "
+        out = out + _lrm_round_pct(tag_per[i], n) + "% | "
+        out = out + to_string(prose_per[i]) + "/" + to_string(n) + " = "
+        out = out + _lrm_round_pct(prose_per[i], n) + "% | "
+        out = out + _lrm_round1(lm) + " |\n"
+        i = i + 1
+    }
+    out = out + "\n"
+    out = out + "**aggregate** n=" + to_string(total)
+    out = out + ", tag=" + to_string(total_tag) + "/" + to_string(total)
+              + " = " + _lrm_round_pct(total_tag, total) + "%"
+    out = out + ", prose=" + to_string(total_prose) + "/" + to_string(total)
+              + " = " + _lrm_round_pct(total_prose, total) + "%"
+    out = out + ", EN-share = " + _lrm_round_pct(total_en, total) + "%"
+    out = out + ", len_mean = "
+              + _lrm_round1(total_len_sum / (total * 1.0)) + "\n\n"
+
+    out = out + "## prose-leak samples (top 3 per lang)\n"
+    out = out + _lrm_emit_samples("en", stats["samples_en"])
+    out = out + _lrm_emit_samples("ko", stats["samples_ko"])
+    out = out + _lrm_emit_samples("ja", stats["samples_ja"])
+    out = out + _lrm_emit_samples("zh", stats["samples_zh"])
+    out = out + _lrm_emit_samples("ru", stats["samples_ru"])
+    out = out + _lrm_emit_samples("other", stats["samples_other"])
+    return out
+}
+
+fn _lrm_emit_samples(lang: string, samples: [string]) -> string {
+    if len(samples) == 0 { return "" }
+    let mut out = ""
+    let mut i = 0
+    while i < len(samples) {
+        // collapse newlines for table-friendly display
+        let line = samples[i].split("\n").join(" ")
+        out = out + "- [" + lang + "] " + line + "\n"
+        i = i + 1
+    }
+    return out
+}
+
+
+// ── §9 main ─────────────────────────────────────────────────────────────────
+
+fn main() {
+    let cli = args()
+    let cfg = _lrm_parse_argv(cli)
+    if cfg["help"] {
+        _lrm_usage()
+        return
+    }
+    let url = cfg["url"]
+    let baseline = cfg["baseline"]
+    let margin = cfg["margin"]
+    let out_path = cfg["out"]
+
+    let mut baseline_epoch = 0.0
+    if baseline != "" { baseline_epoch = _lrm_iso_to_epoch(baseline) }
+    if baseline != "" && baseline_epoch < 0.0 {
+        println("ERROR: failed to parse --baseline " + baseline + " as ISO 8601")
+        return
+    }
+
+    let body = _lrm_fetch(url)
+    if len(body) == 0 {
+        println("ERROR: fetch failed (" + url + ")")
+        return
+    }
+    let n_raw = len(body.split("\"sender\"")) - 1
+    let stats = _lrm_analyze(body, baseline_epoch, margin)
+    let report = _lrm_render(stats, baseline, margin, n_raw)
+
+    if out_path == "" {
+        print(report)
+    } else {
+        let _ = exec("mkdir -p " + _lrm_shq(_lrm_strip(
+            exec("dirname " + _lrm_shq(out_path)))))
+        let _ = exec("printf '%s' " + _lrm_shq(report) + " > " + _lrm_shq(out_path))
+        println("wrote " + out_path
+                + " (" + to_string(len(report)) + " bytes)")
+    }
+}

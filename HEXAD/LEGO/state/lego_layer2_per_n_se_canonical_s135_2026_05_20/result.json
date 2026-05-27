@@ -1,0 +1,196 @@
+{
+  "section": "§135",
+  "title": "LEGO LAYER-2 PER-N SE (canonical engine post-§134)",
+  "tier": "probe-tier (canonical engine re-run of §133 protocol)",
+  "cost_usd": 0.0,
+  "gpu": false,
+  "runpod": false,
+  "fire": false,
+  "model_forward_byte_lm": false,
+  "corpus": false,
+  "dispatch": false,
+  "orphan": 0,
+  "wall_sec_total": 965.0800178050995,
+  "central_blue_falsifier_sha256_prefix16_expected": "c93e160a8a376a94",
+  "parent": [
+    "§133 drifted-engine per-N SE (monotone-decrease per-rep mean 0.382→0.258)",
+    "§134 engine byte-equality restore (canonical = §117 source byte-equal)"
+  ],
+  "method": {
+    "N_points": [
+      256,
+      512,
+      1024,
+      2048
+    ],
+    "M_replicates": 5,
+    "seeds": [
+      1337,
+      1338,
+      1339,
+      1340,
+      1341
+    ],
+    "n_stim": 12,
+    "steps_per_stim": 80,
+    "window": 40,
+    "ratio": "3N/8 : 3N/8 : N/4",
+    "engine": "HEXAD/LEGO/lego_engine.py post-§134 byte-equal §117"
+  },
+  "per_N_measurements": [
+    {
+      "N_total": 256,
+      "n_a": 96,
+      "n_g": 96,
+      "n_rec": 64,
+      "M_replicates": 5,
+      "per_replicate_eta_squared": [
+        0.3679789996095135,
+        0.5250941976454371,
+        0.4407486896840415,
+        0.5978905590428164,
+        0.38769429442740433
+      ],
+      "pooled_eta_squared": 0.2712195360968856,
+      "eta_mean": 0.46388134808184256,
+      "eta_std": 0.09649135848053918,
+      "eta_min": 0.3679789996095135,
+      "eta_max": 0.5978905590428164,
+      "eta_jackknife_se": 0.04315224736075732,
+      "eta_95ci_lo": 0.3793029432547583,
+      "eta_95ci_hi": 0.5484597529089268,
+      "wall_sec": 175.46180701255798
+    },
+    {
+      "N_total": 512,
+      "n_a": 192,
+      "n_g": 192,
+      "n_rec": 128,
+      "M_replicates": 5,
+      "per_replicate_eta_squared": [
+        0.3003642806086457,
+        0.42401154900427634,
+        0.578789798991177,
+        0.40767216385833155,
+        0.41036720372985774
+      ],
+      "pooled_eta_squared": 0.3288615858243288,
+      "eta_mean": 0.42424099923845765,
+      "eta_std": 0.09962157657678115,
+      "eta_min": 0.3003642806086457,
+      "eta_max": 0.578789798991177,
+      "eta_jackknife_se": 0.04455212345027671,
+      "eta_95ci_lo": 0.3369188372759153,
+      "eta_95ci_hi": 0.511563161201,
+      "wall_sec": 180.04802298545837
+    },
+    {
+      "N_total": 1024,
+      "n_a": 384,
+      "n_g": 384,
+      "n_rec": 256,
+      "M_replicates": 5,
+      "per_replicate_eta_squared": [
+        0.4171091585763297,
+        0.33494446872877826,
+        0.37045836302958074,
+        0.3783659892552956,
+        0.3033695106920102
+      ],
+      "pooled_eta_squared": 0.3223496304618351,
+      "eta_mean": 0.3608494980563989,
+      "eta_std": 0.04341464799951422,
+      "eta_min": 0.3033695106920102,
+      "eta_max": 0.4171091585763297,
+      "eta_jackknife_se": 0.01941562082922781,
+      "eta_95ci_lo": 0.3227948812311124,
+      "eta_95ci_hi": 0.39890411488168537,
+      "wall_sec": 138.32841277122498
+    },
+    {
+      "N_total": 2048,
+      "n_a": 768,
+      "n_g": 768,
+      "n_rec": 512,
+      "M_replicates": 5,
+      "per_replicate_eta_squared": [
+        0.3298771169122268,
+        0.2799383075117059,
+        0.2826726178814949,
+        0.25684998152202454,
+        0.23176128497572862
+      ],
+      "pooled_eta_squared": 0.26082583969794654,
+      "eta_mean": 0.2762198617606362,
+      "eta_std": 0.03635355292457502,
+      "eta_min": 0.23176128497572862,
+      "eta_max": 0.3298771169122268,
+      "eta_jackknife_se": 0.016257803112597224,
+      "eta_95ci_lo": 0.24435456765994565,
+      "eta_95ci_hi": 0.3080851558613267,
+      "wall_sec": 471.2414698600769
+    }
+  ],
+  "ci_overlap_pairs": {
+    "256_vs_512": true,
+    "256_vs_1024": true,
+    "256_vs_2048": false,
+    "512_vs_1024": true,
+    "512_vs_2048": false,
+    "1024_vs_2048": false
+  },
+  "s127_match_per_N": {
+    "256": {
+      "s127_pooled": 0.2712195360968856,
+      "canonical_pooled": 0.2712195360968856,
+      "byte_equal": true
+    },
+    "512": {
+      "s127_pooled": 0.3288615858243288,
+      "canonical_pooled": 0.3288615858243288,
+      "byte_equal": true
+    },
+    "1024": {
+      "s127_pooled": 0.3223496304618351,
+      "canonical_pooled": 0.3223496304618351,
+      "byte_equal": true
+    },
+    "2048": {
+      "s127_pooled": 0.26082583969794654,
+      "canonical_pooled": 0.26082583969794654,
+      "byte_equal": true
+    }
+  },
+  "drift_vs_s133_per_N": {
+    "256": {
+      "drifted_per_rep_mean": 0.38169166057003373,
+      "canonical_per_rep_mean": 0.46388134808184256,
+      "drift": 0.08218968751180883
+    },
+    "512": {
+      "drifted_per_rep_mean": 0.33374908288476657,
+      "canonical_per_rep_mean": 0.42424099923845765,
+      "drift": 0.09049191635369108
+    },
+    "1024": {
+      "drifted_per_rep_mean": 0.315415672948862,
+      "canonical_per_rep_mean": 0.3608494980563989,
+      "drift": 0.04543382510753685
+    },
+    "2048": {
+      "drifted_per_rep_mean": 0.25758271338874134,
+      "canonical_per_rep_mean": 0.2762198617606362,
+      "drift": 0.01863714837189484
+    }
+  },
+  "per_rep_mean_classification": {
+    "verdict": "MONOTONE-DECREASE-SURVIVES-CANONICAL",
+    "note": "Per-rep mean monotonically decreases across all 4 N points (range ratio 1.679×).",
+    "range_ratio": 1.6793917176159772,
+    "all_decreasing": true,
+    "spread": 0.18766148632120638
+  },
+  "verdict": "MONOTONE-DECREASE-SURVIVES-CANONICAL",
+  "verdict_note": "Per-rep mean monotonically decreases across all 4 N points (range ratio 1.679×).",
+  "g3": "probe ≠ fire ≠ emergence; necessary-not-sufficient (B-EMERGE-7); GOAL 미도달; M=5 small for tight SE."
+}

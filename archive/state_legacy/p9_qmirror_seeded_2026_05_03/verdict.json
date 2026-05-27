@@ -1,0 +1,76 @@
+{
+  "schema": "anima/p9_qmirror_seeded/verdict/1",
+  "phase": "p9_qmirror_seeded_ablation_A_2k",
+  "ts_utc": "2026-05-03T22:39:56Z",
+  "falsifier": "F-QSEED-1",
+  "falsifier_rule": "BLEU-1 \u2208 [0.005, 0.012] (noise floor maintained, no anomaly from qmirror seeding)",
+  "qseed_verdict": "F_QSEED_1_PASS",
+  "qseed_reason": "BLEU-1=0.006836 in noise-floor band [0.005, 0.012]; no anomaly detected from qmirror seeding",
+  "f2_verdict": "F2_PASS_FULL",
+  "f_final": {
+    "F1_bleu1": 0.0068359375,
+    "F2_phi": 45.73125201599973,
+    "F3_tension_mse": 8.501986998133361,
+    "F4_bold_NA": true,
+    "step": 2000,
+    "note": "final"
+  },
+  "phi_summary": {
+    "mean": 46.039970059469375,
+    "variance": 1.494240598560295,
+    "min": 45.12799542231276,
+    "max": 48.69968210331474,
+    "n": 6,
+    "baseline": 45.814137464931335,
+    "final": 45.73125201599973,
+    "delta_baseline_to_final": -0.08288544893160577
+  },
+  "qmirror_provenance": {
+    "algorithm": "HMAC-DRBG (NIST SP 800-90A Rev.1, \u00a710.1.2) with SHA-256",
+    "entropy_input_source": "IonQ Forte 1 |+>^16 256-shot Z-basis measurement",
+    "entropy_input_bits": 4096,
+    "nonce": "arn:aws:braket:us-east-1:267673635495:quantum-task/bdf470b9-27bd-443b-8fce-d79291c15949",
+    "personalization_string": "anima.nexus.qrng.ionq_forte1.2026-05-02",
+    "first_output_sha256": "ddf057ba61916c3183fe245345c6f5108e3ffb88fa573e33474f32740f0da81b",
+    "cond4_chain_verified": true,
+    "cond4_nist_tier1plus_pass_count": "7/7",
+    "cond4_verdict": "PASS"
+  },
+  "qmirror_seeds_drawn": {
+    "np_uint32": 3360002102,
+    "torch_signed64": 598829905475523813,
+    "python_uint64": 3236433694085514607,
+    "phi_partition_uint32": 3674252605
+  },
+  "qmirror_entropy_used": {
+    "total_bytes": 33068,
+    "train_loop_bytes": 32004,
+    "reseed_counter": 8008,
+    "note": "each step draws BATCH=4 uint32 (16 bytes) for batch indices; setup draws ~1080 bytes (chain-verify 1024 + 4*8 seeds + 1*8 dropout)"
+  },
+  "baseline_comparison": {
+    "baseline_phase": "p9_p1_6_ablation_A (50K full)",
+    "baseline_BLEU1": 0.005859375,
+    "baseline_F2_phi": 44.606997123566565,
+    "baseline_F3_tension_mse": 7.781576167210005,
+    "baseline_phi_baseline": 45.91520414820293,
+    "note": "baseline is 50K-step run; this run is 2K-step mini for seed-source isolation. Direct comparison is approximate; BLEU-1 noise floor at this LR/data is well-bounded but a step-matched control would be required for strict equivalence."
+  },
+  "steps_completed": 2000,
+  "aborted": false,
+  "aborts": [],
+  "train_elapsed_sec": 179.76,
+  "real_train": true,
+  "env": {
+    "device": "cuda",
+    "cuda": true,
+    "device_name": "NVIDIA GeForce RTX 5070",
+    "torch": "2.11.0+cu128",
+    "has_peft": true
+  },
+  "honest_caveats_c3": [
+    "HMAC-DRBG output is deterministic given seed; 'quantum' status comes from the 4096-bit IonQ Forte 1 entropy input + the fact that the resulting stream PASSED cond.4 NIST tier-1+ 7/7 \u2014 it is NOT live per-call quantum sampling. A future cycle could swap to ANU live (T1.b) if api.quantumnumbers.anu.edu.au key is provisioned.",
+    "F-QSEED-1 noise-floor band [0.005, 0.012] is empirically derived from a single 50K ablation_A baseline (BLEU-1=0.00586). There is no statistical confidence interval and no step-matched control run; a strict equivalence claim would need \u22653 paired (qmirror vs seed=42) runs at the SAME step count. This run only demonstrates 'no catastrophic anomaly'.",
+    "Seed coverage: this patch reseeds np.random / torch.cpu+cuda / random / per-step BatchSampler index draw / phi-partition rng / an explicit torch.Generator for dropout. peft LoRA dropout=0.0 in this config means the dropout-Generator is unused this run; in a non-zero-dropout setting, each Dropout module would need explicit `generator=` wiring (not done here)."
+  ]
+}

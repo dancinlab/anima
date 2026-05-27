@@ -1,0 +1,51 @@
+{
+  "battery": "B-S122",
+  "n_pass": 8,
+  "n_total": 8,
+  "all_pass": true,
+  "decision": "ROPE-PHASE-CODING-DECIDED — RELATIVE-PHASE / SPIKE-TIME CODING",
+  "central_sha16": "c93e160a8a376a94",
+  "note": "B-S122-NOTE — the battery proves the §122 DECISION is HONEST + closed-form (RoPE's rotation algebra collapses the score to a function of the relative offset n−m; the spiking relative-phase code recovers byte-vocab RoPE byte-equal as the σ=0 zero-jitter corner ⇒ §7-clean generalisation not graft; learned-absolute and phase-resonance-routing have no such limit, correctly rejected; the code composes with the §120 routing decision, preserving the position⊥routing factorisation; the candidate pick is exhaustive + disjoint; central 0-line-diff; §96/§120 connection-points cited; the transition is design-open → design-DECIDED). It does NOT prove a spiking anima built with this phase code (the σ>0 jittered corner) learns / emerges / reaches the GOAL — those are empirical OUTCOMES of a future fire on a real async substrate (Track L/S/P). necessary-not-sufficient at every layer (B-EMERGE-7). WALL-A (§1.1 data-regime) + WALL-B (§95/§96 async substrate) both still stand; implementation remains future work. design ≠ fire ≠ emergence; capability claim 0; north-star + §15/§51/§72 milestones UNCHANGED, GOAL 미도달. B-D-NOTE / B-S96-NOTE / B-S115-NOTE / B-S117-NOTE / B-S118-NOTE / B-S120-NOTE / B-EMERGE-7 family.",
+  "results": [
+    {
+      "id": "B-S122-1 ROPE-ROTATION-ALGEBRA-CLOSED",
+      "pass": true,
+      "detail": "sympy: ROT(mθ)ᵀ·ROT(nθ) = ROT((n−m)θ) ✓ (True) — the post-RoPE score q·ROT((n−m)θ)·k depends ONLY on the relative offset n−m (RoFormer Thm 1); ROT(a)ᵀ·ROT(a)=I orthogonal ✓ (True)"
+    },
+    {
+      "id": "B-S122-2 ROFORMER-RELATIVE-OFFSET-IDENTITY-CLOSED",
+      "pass": true,
+      "detail": "sympy: score(m,n) = score(m+δ,n+δ) ✓ (True) — RoPE injects position as a function of n−m ALONE; numeric corroboration 8/8 random q/k/(m,n,δ) max|Δ|<1e-9 (True)"
+    },
+    {
+      "id": "B-S122-3 BYTE-ROPE-REDUCTION-BYTE-EQUAL-CONNECTION-POINT",
+      "pass": true,
+      "detail": "Φ(σ=0) phase-code score vs GPU-RoPE score max|Δ|=0.00e+00 (<1e-9 = byte-equal) ✓ — byte-vocab RoPE IS the σ=0 corner · σ>0 jittered corner distinct from byte-RoPE =True (the family Φ(σ) is a proper generalisation, not trivial)"
+    },
+    {
+      "id": "B-S122-4 §7-CLEAN-GENERALISATION-NOT-GRAFT-CLOSED",
+      "pass": true,
+      "detail": "relative-phase coding recovers byte-RoPE as the σ→0 corner ⇒ §7-clean generalisation =True · learned-absolute scores carry m,n separately — same Δ=5 gives different score (|Δscore|=8.068e+00>1e-6) ⇒ graft, no n−m limit =True · phase-resonance-routing no RoPE-rotation limit ⇒ graft =True · unique §7-clean pick =['relative-phase-coding']"
+    },
+    {
+      "id": "B-S122-5 COMPOSITION-WITH-§120-CLOSED-STRUCTURAL",
+      "pass": true,
+      "detail": "phase coding rotates q/k BEFORE the §120 spike-rate dot-product (RoPE's place in ConsciousDecoderV2) — §120 routing inherited unchanged, factorisation preserved True · numeric: phase-rotated q/k → §120 dot-product = g(q,k,n−m) |Δ|=2.22e-16 (True)"
+    },
+    {
+      "id": "B-S122-6 CANDIDATE-DECISION-EXHAUSTIVE-DISJOINT-CLOSED",
+      "pass": true,
+      "detail": "§122 candidate set |{learned-absolute, phase-resonance-routing, relative-phase-coding}|=3 exhaustive=True · exactly-one picked (disjoint)=True"
+    },
+    {
+      "id": "B-S122-7 §96-§120-CONNECTION-POINT-CITED",
+      "pass": true,
+      "detail": "§96 DESIGN.md carries the RoPE row (SPIKING-OPEN, phase coding, positional encoding)=True · §120 DESIGN.md re-assigns phase coding to position as a separate design-open=True · §122 DESIGN.md carries the decision + n−m reduction + GOAL 미도달=True"
+    },
+    {
+      "id": "B-S122-8 NECESSARY-NOT-SUFFICIENT-SIDECAR-0-DIFF-STRUCTURAL",
+      "pass": true,
+      "detail": "design-open → design-DECIDED transition (NOT implemented, NOT fired, NOT GOAL); WALL-A (§1.1 data-regime) + WALL-B (§95/§96 async substrate) both still stand; central blue_falsifier.py sha256[:16]=c93e160a8a376a94 0-line-diff=True; capability claim 0; necessary-not-sufficient (B-EMERGE-7) — invariants True"
+    }
+  ]
+}

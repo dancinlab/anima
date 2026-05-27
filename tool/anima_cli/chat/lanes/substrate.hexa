@@ -1,0 +1,136 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  tool/anima_cli/chat/lanes/substrate.hexa — Path 0 default lane
+//
+//  PURPOSE
+//    Substrate-only lane (current default). Forwards prompt to
+//    anima-core/runtime/clm_v4_mount.hexa --probe and emits raw substrate
+//    response (axis activation + dominant cells + phi-star delta). No
+//    natural language generate.
+//
+//  USAGE (invoked by chat.hexa --lane=substrate or as default)
+//    hexa run substrate.hexa --repo <hf-id> --prompt "..."   one-shot
+//    hexa run substrate.hexa --repo <hf-id> --bench-prompt "..." --bench-mode 1
+//
+//  COMPLIANCE
+// V14 carry — substrate output subject to V14 if used as verdict
+// D1 within_strict (anima-native substrate; clm-v4 family)
+// chat-cap C2 — substrate signal scored as "spontaneity X / coherence
+// via axis activation match / persona X" (C2 measurement spec)
+// mandatory report — bench-mode emits one-line JSON to stdout
+// trinity ✓ (+ + cross-link)
+// mandate-1/2 — wrapping 0 strict, raw output preserved verbatim
+// 매단계 — bench-mode marker `[BENCH lane=substrate]` framed
+// yaml↔md — registry mirror in anima_artifact_registry.yaml
+//
+//  PHASE
+//    LANDED (mirrors existing chat/clm_v4 + chat/anima_native delegation)
+// ════════════════════════════════════════════════════════════════════════════
+
+fn _str(x) -> string {
+    let t = type_of(x)
+    if t == "str" || t == "string" { return x }
+    return ""
+}
+
+fn _resolve_root() -> string {
+    let a = _str(env("ANIMA"))
+    if a != "" { return a }
+    let gt = _str(exec("git rev-parse --show-toplevel 2>/dev/null")).trim()
+    if gt != "" { return gt }
+    return _str(env("HOME")) + "/core/anima"
+}
+
+fn _hexa() -> string { return "/Users/ghost/.hx/packages/hexa/hexa.real" }
+
+fn _fexists(p: string) -> bool {
+    return _str(exec("test -f " + p + " && echo 1 || echo 0")).trim() == "1"
+}
+
+fn _arg_value(argv, key: string, dflt: string) -> string {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key && i + 1 < len(argv) {
+            return _str(argv[i + 1])
+        }
+        i = i + 1
+    }
+    return dflt
+}
+
+fn _arg_present(argv, key: string) -> bool {
+    let i = 0
+    while i < len(argv) {
+        if _str(argv[i]) == key { return true }
+        i = i + 1
+    }
+    return false
+}
+
+fn _user_argv(raw) -> array {
+    let out = []
+    let i = 0
+    while i < len(raw) {
+        let s = _str(raw[i])
+        let skip = s.contains("/.hexa-cache/")
+                || s.contains("/.hexa-runtime/")
+                || s.contains("/hexa-lang/build/")
+                || s.contains("hexa_interp")
+                || s.contains("hexa.real")
+                || s.ends_with("/substrate.hexa")
+                || s.ends_with("substrate.hexa")
+        if !skip { out = out + [s] }
+        i = i + 1
+    }
+    return out
+}
+
+fn _shell_escape(s: string) -> string {
+    return "'" + s.replace("'", "'\\''") + "'"
+}
+
+fn _invoke_substrate(prompt: string, repo: string) -> string {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+    if !_fexists(core) {
+        return "[lane=substrate] core missing: " + core
+    }
+    let model_arg = if repo != "" { " --model " + repo } else { "" }
+    let cmd = _hexa() + " run " + core + model_arg
+        + " --probe " + _shell_escape(prompt) + " 2>&1"
+    return _str(exec(cmd))
+}
+
+fn sub_selftest() {
+    let root = _resolve_root()
+    let core = root + "/anima-core/runtime/clm_v4_mount.hexa"
+    if !_fexists(core) {
+        println("FAIL substrate lane: core missing: " + core)
+        exit(1)
+    }
+    println("PASS chat/lanes/substrate selftest")
+}
+
+fn main() {
+    let argv = _user_argv(args())
+    if _arg_present(argv, "--selftest") { sub_selftest(); return }
+
+    let repo = _arg_value(argv, "--repo", "")
+    let prompt = _arg_value(argv, "--prompt", "")
+    let bench_mode = _arg_value(argv, "--bench-mode", "0") == "1"
+
+    if prompt == "" {
+        println("[lane=substrate] no --prompt provided; substrate lane requires probe text")
+        println("                 (REPL mode delegated to chat/clm_v4 module)")
+        exit(2)
+    }
+
+    if bench_mode {
+        println("[BENCH lane=substrate prompt_len=" + to_string(len(prompt)) + "]")
+    }
+    let out = _invoke_substrate(prompt, repo)
+    print(out)
+    println("")
+    if bench_mode {
+        println("[BENCH_END lane=substrate]")
+    }
+}

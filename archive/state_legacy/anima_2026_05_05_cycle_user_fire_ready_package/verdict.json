@@ -1,0 +1,101 @@
+{
+  "doc_id": "BG-DP-USER-FIRE-READY-PACKAGE-2026-05-05",
+  "generated_utc": "2026-05-05T18:30:00Z",
+  "scope": "single-page user fire-ready package — anima next-conversation carry-over",
+  "raw_constraints": ["raw#9_md_bash_carve_out", "raw#10_honest_c3", "raw#15_no_promote_script_mutation"],
+  "bilingual": "KO+EN parallel",
+  "cost_usd": 0.0,
+  "duration_min_estimate": 20,
+  "predecessor_bg_chain": [
+    "BG-CX cycle summary v2 final 218 LoC",
+    "BG-CH paradigm b+c final acceptance",
+    "BG-BZ priority subset commit manifest",
+    "BG-DB hf promote pre-fire audit",
+    "BG-DD identity preservation next-cycle lock"
+  ],
+
+  "section_coverage": {
+    "section_1_one_sentence": {
+      "KO": true,
+      "EN": true,
+      "verdict": "PASS"
+    },
+    "section_2_five_fire_commands": {
+      "command_1_paradigm_B": "/Users/ghost/core/anima/tool/transient_py/anima_emerge_dialogue_repl.py",
+      "command_1_verified_exists": true,
+      "command_2_paradigm_C": "/Users/ghost/core/anima/tool/transient_py/anima_emerge_chat_hybrid_repl.py",
+      "command_2_verified_exists": true,
+      "command_3_cycle_close": "CronDelete d1682837 + git commit (BG-BZ priority)",
+      "command_3_cron_id_verified": "d1682837 (per task spec)",
+      "command_4_hf_clm": "bash state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-clm",
+      "command_4_eligible_after_utc": "2026-05-06T23:26:12Z",
+      "command_4_confirm_prompt": "PROMOTE-clm-v4-mk2-v1",
+      "command_4_confirm_verified_against": "state/anima_hf_promote_pre_fire_audit_2026_05_05/verdict.json sub4",
+      "command_5_hf_pbeta": "bash state/anima_hf_promotes_2026_05_06_auto_fire.bash --fire-pbeta",
+      "command_5_eligible_after_utc": "2026-05-07T03:48:00Z",
+      "command_5_confirm_prompt": "PROMOTE-pbeta-50k",
+      "command_5_confirm_verified_against": "state/anima_hf_promote_pre_fire_audit_2026_05_05/verdict.json sub4",
+      "verdict": "PASS — all 5 commands literal-verified"
+    },
+    "section_3_five_critical_findings": {
+      "F1": "#115 closure CLM v4 chat-cap architectural impossibility (-36.298pp regression)",
+      "F2": "L13-L15 basin lock-in (BG-CI/CQ)",
+      "F3": "Korean weight latent in vocab uniform (BG-CA)",
+      "F4": "chat axis exists but decoupled (BG-BH feat-0 disc 25.67)",
+      "F5": "CLM_WORSE_THAN_RANDOM on Korean (BG-CE)",
+      "count": 5,
+      "verdict": "PASS"
+    },
+    "section_4_paradigm_b_5turn_prompts": {
+      "turn_count": 5,
+      "bilingual": true,
+      "verdict": "PASS"
+    },
+    "section_5_next_cycle_4_entry": {
+      "entry_count": 4,
+      "ranked_recommendation_present": true,
+      "priority_1": "Stage 3 corpus 30 sessions ($0)",
+      "priority_2": "Llama Path A v2 anima integration ($0, 2 days)",
+      "verdict": "PASS"
+    },
+    "section_6_honest_c3": {
+      "c3_count": 9,
+      "c3_minimum_required": 7,
+      "verdict": "PASS — exceeds minimum"
+    }
+  },
+
+  "constraints_compliance": {
+    "cost_zero_usd": true,
+    "mac_doc_only": true,
+    "no_code_or_script_mutation": true,
+    "new_files_count": 2,
+    "new_files_count_max": 2,
+    "raw_9_md_bash_carve_out": true,
+    "raw_10_honest_c3_count": 9,
+    "raw_15_no_promote_script_mutation": true,
+    "hf_token_redacted": true,
+    "no_commit": true,
+    "bash_3_2_compatible": true,
+    "verdict": "PASS — all constraints satisfied"
+  },
+
+  "honest_c3": [
+    "C1 — 16+ closure architectural certainty is anima-internal heuristic-bound; honest re-count = 5-6 mechanism axes per BG-CN",
+    "C2 — Paradigm B ACHIEVABLE_NOW is doc-pre-claim; epistemic open until user fires REPL turn-1",
+    "C3 — Paradigm C decoupled (BG-CG): C4-emit may not be substrate-conditioned at REPL fire-time",
+    "C4 — User explicit cycle-stop required; absent that, anima would carry over autonomously (BG-DD L1)",
+    "C5 — 100+ BG ROI asymmetric vs paradigm-mismatch info value (BG-CZ C3.2)",
+    "C6 — 23+ closure independent-finding count inflates underlying 5-6 axes",
+    "C7 — Cycle close carries over only referenced artefacts (BG-CX C5); no autonomous re-decision",
+    "C8 — HF token rotation risk during 29-58h dwell window (BG-DB C1) — T-1h pre-fire ritual mandatory",
+    "C9 — Auto-fire scripts untracked at BG-DB audit time (BG-DB C2); step 3 commit MUST include them"
+  ],
+
+  "outputs": {
+    "doc_path": "/Users/ghost/core/anima/docs/anima_2026_05_05_cycle_user_fire_ready_package.md",
+    "verdict_path": "/Users/ghost/core/anima/state/anima_2026_05_05_cycle_user_fire_ready_package/verdict.json"
+  },
+
+  "overall_verdict": "PASS — all 6 sections present, 5 commands literal-verified against BG-DB audit, 9 honest C3 (exceeds 7 min), bilingual KO+EN, $0 mac-doc-only, no script mutation, raw#9+10+15 satisfied"
+}

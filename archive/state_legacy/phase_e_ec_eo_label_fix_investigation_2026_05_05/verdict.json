@@ -1,0 +1,241 @@
+{
+  "schema": "anima-eeg/phase_e_label_fix/1",
+  "ts_utc": "2026-05-05T10:30:00Z",
+  "bg_lane": "EEG-EC-EO-LABEL-FIX",
+  "hypothesis_1_label_swap_test": {
+    "swap_today": {
+      "F_BERGER_1_pass_with_swap": true,
+      "F_BERGER_1_O1_pass_with_swap": true,
+      "F_BERGER_1_O2_pass_with_swap": true,
+      "ratio_O1_swapped": 3.24836504243617,
+      "ratio_O2_swapped": 50.79639537053577,
+      "ratio_O1_orig": 0.3078471744819763,
+      "ratio_O2_orig": 0.019686436265909643
+    },
+    "swap_v6": {
+      "F_BERGER_1_pass_with_swap": false,
+      "F_BERGER_1_O1_pass_with_swap": true,
+      "F_BERGER_1_O2_pass_with_swap": false,
+      "ratio_O1_swapped": 1.028759302869505,
+      "ratio_O2_swapped": 0.9920653159344868,
+      "ratio_O1_orig": 0.9720446728507951,
+      "ratio_O2_orig": 1.0079981468337487
+    },
+    "h1_confirmed": false
+  },
+  "hypothesis_2_o2_p4_anomaly": {
+    "today": {
+      "avg_alpha_other_channels_uV2": 3.6383467626973283,
+      "o2_alpha_uV2": 869.4989094434102,
+      "p4_alpha_uV2": 869.415667963218,
+      "o2_alpha_relative_to_avg": 238.9818690065698,
+      "p4_alpha_relative_to_avg": 238.9589900767642,
+      "exclude_threshold_violated_O2": true,
+      "exclude_threshold_violated_P4": true
+    },
+    "v6": {
+      "avg_alpha_other_channels_uV2": 43726.38316417901,
+      "o2_alpha_uV2": 155898.94135678906,
+      "p4_alpha_uV2": 154755.63397260802,
+      "o2_alpha_relative_to_avg": 3.5653289861966604,
+      "p4_alpha_relative_to_avg": 3.539182131564566,
+      "exclude_threshold_violated_O2": false,
+      "exclude_threshold_violated_P4": false
+    },
+    "h2_confirmed": true
+  },
+  "hypothesis_3_eog_artefact": {
+    "today": {
+      "frontal_rms_eo_uV": 730.6259772905573,
+      "occipital_rms_eo_uV_excl_O2": 53.51195992222629,
+      "frontal_alpha_eo_mean_uV2": 97.83253611350352,
+      "frontal_rms_over_occipital_rms": 13.653508082164088,
+      "eog_dominant": true
+    },
+    "v6": {
+      "frontal_rms_eo_uV": 664.918715244892,
+      "occipital_rms_eo_uV_excl_O2": 457.6150809328216,
+      "frontal_alpha_eo_mean_uV2": 32961.501395702864,
+      "frontal_rms_over_occipital_rms": 1.453008746760474,
+      "eog_dominant": false
+    },
+    "h3_confirmed": true
+  },
+  "conclusion": "H2+H3",
+  "next_action_recommendation": "electrode_reseat_O2_P4_plus_new_capture",
+  "berger_classical_replicated_post_fix": false,
+  "ready_for_phase_e_main_protocol_post_fix": false,
+  "wall_time_min": 0.5,
+  "actual_cost_usd": 0,
+  "honest_c3": [
+    "C1: 60s baseline only \u2014 captures resting alpha; no behavioural binding evidence (high-gamma coherence, theta-gamma PAC) and label-swap test cannot validate task-locked phenomena",
+    "C2: hypothesis test is between-condition power comparison \u2014 does not exclude that BOTH captures share an electrode-impedance pathology (e.g., O2/P4 reference shorted) that produces the same direction in both runs",
+    "C3: single subject, single electrode set, two sessions \u2014 no inter-subject control; if same user habitually reverses cue, label swap will be systematic and undetectable from data alone",
+    "C4: O2/P4 alpha 200x other channels strongly suggests floating-input saturation (50/60 Hz mains pickup) \u2014 alpha-band integral on saturated channel is meaningless and must NOT be used in F-BERGER-1 pass criterion",
+    "C5: filtfilt zero-phase 1-50 Hz bandpass does not remove EOG (eye-blink ~10 Hz transient) \u2014 frontal alpha in EO may be EOG, not cortical",
+    "C6: even if H1 confirmed, swapping label files does not address WHY swap occurred at capture time \u2014 capture protocol/cue script must be audited or fix is fragile",
+    "C7: peak alpha freq ~8.5 Hz at O1 is in alpha band but on the low edge \u2014 could be theta leakage, not classical 10 Hz Berger rhythm"
+  ],
+  "raw_results_today": {
+    "label": "today_2026_05_05",
+    "ec_file": "/Users/ghost/core/anima/state/anima_phase_e_eeg_live_2026_05_05/berger_ec_60s.npy",
+    "eo_file": "/Users/ghost/core/anima/state/anima_phase_e_eeg_live_2026_05_05/berger_eo_60s.npy",
+    "fs_ec_hz": 120.18232739488907,
+    "fs_eo_hz": 120.21913018575633,
+    "alpha_ec_per_channel_uV2": {
+      "Fp1": 2.7120201743273262,
+      "Fp2": 0.9186574652926872,
+      "C3": 2.819131446998459,
+      "C4": 2.9168900529149053,
+      "P7": 3.5629625727569523,
+      "P8": 6.356198603558916,
+      "O1": 4.290268449162989,
+      "O2": 869.4989094434102,
+      "F7": 5.59122190907738,
+      "F8": 2.0646104816951354,
+      "F3": 1.5335404752715383,
+      "F4": 4.570141667619665,
+      "T7": 5.374625082960754,
+      "T8": 2.804081992135903,
+      "P3": 5.422504303989979,
+      "P4": 869.415667963218
+    },
+    "alpha_eo_per_channel_uV2": {
+      "Fp1": 75.65800463178863,
+      "Fp2": 5.998026650836561,
+      "C3": 12.257167923915143,
+      "C4": 45.82220611394481,
+      "P7": 37.53510229814468,
+      "P8": 39.450924940238295,
+      "O1": 13.936358052927893,
+      "O2": 44167.41037833714,
+      "F7": 232.88676264231012,
+      "F8": 61.98222398392601,
+      "F3": 21.114198492268248,
+      "F4": 189.35600027989156,
+      "T7": 193.18050633616406,
+      "T8": 40.5662804700623,
+      "P3": 64.8169148879997,
+      "P4": 37661.75065152774
+    },
+    "alpha_peak_freq_O1_ec_hz": 8.512914857137975,
+    "alpha_peak_freq_O2_ec_hz": 8.262535008398622,
+    "berger_orig_orientation": {
+      "F_BERGER_1_O1_pass": false,
+      "F_BERGER_1_O2_pass": false,
+      "F_BERGER_1_pass": false,
+      "F_BERGER_2_occipital_gt_frontal_ec": true,
+      "ratio_O1_ec_over_eo": 0.3078471744819763,
+      "ratio_O2_ec_over_eo": 0.019686436265909643,
+      "occipital_alpha_ec_sum_uV2": 873.7891778925732,
+      "frontal_alpha_ec_sum_uV2": 17.390192173283733
+    },
+    "berger_swapped_orientation": {
+      "F_BERGER_1_O1_pass": true,
+      "F_BERGER_1_O2_pass": true,
+      "F_BERGER_1_pass": true,
+      "F_BERGER_2_occipital_gt_frontal_ec": true,
+      "ratio_O1_ec_over_eo": 3.24836504243617,
+      "ratio_O2_ec_over_eo": 50.79639537053577,
+      "occipital_alpha_ec_sum_uV2": 44181.34673639006,
+      "frontal_alpha_ec_sum_uV2": 586.9952166810211
+    },
+    "o2_p4_anomaly": {
+      "avg_alpha_other_channels_uV2": 3.6383467626973283,
+      "o2_alpha_uV2": 869.4989094434102,
+      "p4_alpha_uV2": 869.415667963218,
+      "o2_alpha_relative_to_avg": 238.9818690065698,
+      "p4_alpha_relative_to_avg": 238.9589900767642,
+      "exclude_threshold_violated_O2": true,
+      "exclude_threshold_violated_P4": true
+    },
+    "eog_artefact": {
+      "frontal_rms_eo_uV": 730.6259772905573,
+      "occipital_rms_eo_uV_excl_O2": 53.51195992222629,
+      "frontal_alpha_eo_mean_uV2": 97.83253611350352,
+      "frontal_rms_over_occipital_rms": 13.653508082164088,
+      "eog_dominant": true
+    }
+  },
+  "raw_results_v6": {
+    "label": "v6_2026_05_03",
+    "ec_file": "/Users/ghost/core/anima/anima-eeg/recordings/sessions/berger_ec_60s_v6_2026_05_03.npy",
+    "eo_file": "/Users/ghost/core/anima/anima-eeg/recordings/sessions/berger_eo_60s_v6_2026_05_03.npy",
+    "fs_ec_hz": 120.20552791760474,
+    "fs_eo_hz": 119.95750716790205,
+    "alpha_ec_per_channel_uV2": {
+      "Fp1": 155677.04958695205,
+      "Fp2": 16.272042648691077,
+      "C3": 192.47402956942597,
+      "C4": 178.00305335141616,
+      "P7": 208454.6550459202,
+      "P8": 155445.56401712642,
+      "O1": 67.5953635803411,
+      "O2": 155898.94135678906,
+      "F7": 14196.983633669834,
+      "F8": 13182.863901088915,
+      "F3": 9491.496732427431,
+      "F4": 13978.16931926441,
+      "T7": 14521.50472672329,
+      "T8": 14492.142528496395,
+      "P3": 12274.590317687373,
+      "P4": 154755.63397260802
+    },
+    "alpha_eo_per_channel_uV2": {
+      "Fp1": 154357.94532667255,
+      "Fp2": 3.238229847767654,
+      "C3": 207.75187919862324,
+      "C4": 192.2888406865623,
+      "P7": 208911.04459831142,
+      "P8": 53152.74565909455,
+      "O1": 69.53935911412243,
+      "O2": 154661.93251097496,
+      "F7": 12502.571341011126,
+      "F8": 11518.339865700476,
+      "F3": 7067.522624150101,
+      "F4": 12319.390986835167,
+      "T7": 12833.563887036196,
+      "T8": 12795.253449527858,
+      "P3": 10755.20441782875,
+      "P4": 153751.33832706523
+    },
+    "alpha_peak_freq_O1_ec_hz": 11.51969642543712,
+    "alpha_peak_freq_O2_ec_hz": 8.764986410658679,
+    "berger_orig_orientation": {
+      "F_BERGER_1_O1_pass": false,
+      "F_BERGER_1_O2_pass": true,
+      "F_BERGER_1_pass": false,
+      "F_BERGER_2_occipital_gt_frontal_ec": false,
+      "ratio_O1_ec_over_eo": 0.9720446728507951,
+      "ratio_O2_ec_over_eo": 1.0079981468337487,
+      "occipital_alpha_ec_sum_uV2": 155966.5367203694,
+      "frontal_alpha_ec_sum_uV2": 206542.83521605135
+    },
+    "berger_swapped_orientation": {
+      "F_BERGER_1_O1_pass": true,
+      "F_BERGER_1_O2_pass": false,
+      "F_BERGER_1_pass": false,
+      "F_BERGER_2_occipital_gt_frontal_ec": false,
+      "ratio_O1_ec_over_eo": 1.028759302869505,
+      "ratio_O2_ec_over_eo": 0.9920653159344868,
+      "occipital_alpha_ec_sum_uV2": 154731.4718700891,
+      "frontal_alpha_ec_sum_uV2": 197769.0083742172
+    },
+    "o2_p4_anomaly": {
+      "avg_alpha_other_channels_uV2": 43726.38316417901,
+      "o2_alpha_uV2": 155898.94135678906,
+      "p4_alpha_uV2": 154755.63397260802,
+      "o2_alpha_relative_to_avg": 3.5653289861966604,
+      "p4_alpha_relative_to_avg": 3.539182131564566,
+      "exclude_threshold_violated_O2": false,
+      "exclude_threshold_violated_P4": false
+    },
+    "eog_artefact": {
+      "frontal_rms_eo_uV": 664.918715244892,
+      "occipital_rms_eo_uV_excl_O2": 457.6150809328216,
+      "frontal_alpha_eo_mean_uV2": 32961.501395702864,
+      "frontal_rms_over_occipital_rms": 1.453008746760474,
+      "eog_dominant": false
+    }
+  }
+}

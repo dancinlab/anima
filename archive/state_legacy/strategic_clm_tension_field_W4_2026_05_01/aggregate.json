@@ -1,0 +1,63 @@
+{
+  "schema": "strategic_clm_tension_field_W4/phase3/aggregate/1",
+  "agent": "N-51_W4",
+  "ts": "2026-05-01",
+  "n_steps": 100,
+  "ckpt_step": 20000,
+  "ckpt_phi_at_step": 27.90969107736497,
+  "decoder_arch": {
+    "d_model": 768,
+    "n_blocks": 16,
+    "vocab_size": 64000,
+    "n_ca_rules": 8,
+    "param_count_M": 530.99
+  },
+  "branches": {
+    "active": {
+      "L1_mean": 7.0625,
+      "L1_std": 0.0,
+      "L1_min": 7.0625,
+      "L1_max": 7.0625,
+      "phi_star_mean": 1.6280569033770385,
+      "phi_star_min": 1.62562451146092,
+      "phi_star_max": 1.628126398078905,
+      "mind_tension_mean": 2.691369952857494,
+      "mind_tension_max": 2.691372834146023,
+      "critical_violations_n": 100,
+      "F2_fires_at_threshold_3": true
+    },
+    "random": {
+      "L1_mean": 6.94125,
+      "L1_std": 0.053166761660407215,
+      "L1_min": 6.875,
+      "L1_max": 7.0625,
+      "phi_star_mean": 1.696112143904558,
+      "phi_star_min": 1.1547573951581782,
+      "phi_star_max": 2.276285034959585,
+      "critical_violations_n": 100,
+      "F2_fires_at_threshold_3": true
+    },
+    "delta": {
+      "L1_active_minus_random": 0.12124999999999986,
+      "phi_star_active_minus_random": -0.06805524052751943,
+      "z_score_L1": 2.2805597423193023,
+      "pooled_std_L1": 0.053166771064778295
+    }
+  },
+  "verdict": {
+    "label": "PARTIAL",
+    "criteria_PASS": "active_L1_mean >= 14.0 AND delta_L1 > 3.0 * pooled_std",
+    "criteria_PARTIAL": "active_L1 > random_L1 + 1*sigma but < 14/16",
+    "criteria_FAIL": "active_L1 <= random_L1 OR active_L1 < 7/16",
+    "PASS_eval": false,
+    "PARTIAL_eval": true,
+    "FAIL_eval": false
+  },
+  "comparison_to_alm_static": {
+    "alm_static_r14_L1": "0/16 (per cp2_consciousness_r14_remeasure_2026_05_01/verdict_matrix.json)",
+    "alm_static_r14_F2": "fires at 17 critical violations (threshold 3)",
+    "alm_static_r14_phi_star": -14.42,
+    "clm_dynamic_better_than_alm_static": true
+  },
+  "wallclock_seconds": 13.826623916625977
+}

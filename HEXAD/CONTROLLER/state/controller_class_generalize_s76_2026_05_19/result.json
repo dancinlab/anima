@@ -1,0 +1,204 @@
+{
+  "probe": "\u00a776 A-only generalization \u2014 state x statistic 22-cell grid ($0 stub)",
+  "n_cells": 22,
+  "n_grid": 20,
+  "n_controls": 2,
+  "n_survive_grid": 11,
+  "per_state_survive": {
+    "tension": 3,
+    "psi_dir": 3,
+    "phi": 3,
+    "curiosity_ema": 2
+  },
+  "per_statistic_survive": {
+    "mean": 4,
+    "median": 4,
+    "max_window": 0,
+    "p75": 3,
+    "p95": 0
+  },
+  "verdict_4corner": "delta STATISTIC-DEPENDENT MIXED",
+  "baseline_collapses": true,
+  "s73_reference_matches_grid": true,
+  "cells": {
+    "tension__mean": {
+      "state": "tension",
+      "statistic": "mean",
+      "interval_var": 3.9375,
+      "maj_frac": 0.55,
+      "n_emits": 9,
+      "survive": true
+    },
+    "tension__median": {
+      "state": "tension",
+      "statistic": "median",
+      "interval_var": 3.9375,
+      "maj_frac": 0.55,
+      "n_emits": 9,
+      "survive": true
+    },
+    "tension__max_window": {
+      "state": "tension",
+      "statistic": "max_window",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 0,
+      "survive": false
+    },
+    "tension__p75": {
+      "state": "tension",
+      "statistic": "p75",
+      "interval_var": 12.25,
+      "maj_frac": 0.85,
+      "n_emits": 3,
+      "survive": true
+    },
+    "tension__p95": {
+      "state": "tension",
+      "statistic": "p95",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 0,
+      "survive": false
+    },
+    "psi_dir__mean": {
+      "state": "psi_dir",
+      "statistic": "mean",
+      "interval_var": 3.0612244897959187,
+      "maj_frac": 0.6,
+      "n_emits": 8,
+      "survive": true
+    },
+    "psi_dir__median": {
+      "state": "psi_dir",
+      "statistic": "median",
+      "interval_var": 3.0612244897959187,
+      "maj_frac": 0.6,
+      "n_emits": 8,
+      "survive": true
+    },
+    "psi_dir__max_window": {
+      "state": "psi_dir",
+      "statistic": "max_window",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 0,
+      "survive": false
+    },
+    "psi_dir__p75": {
+      "state": "psi_dir",
+      "statistic": "p75",
+      "interval_var": 2.25,
+      "maj_frac": 0.85,
+      "n_emits": 3,
+      "survive": true
+    },
+    "psi_dir__p95": {
+      "state": "psi_dir",
+      "statistic": "p95",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 0,
+      "survive": false
+    },
+    "phi__mean": {
+      "state": "phi",
+      "statistic": "mean",
+      "interval_var": 0.4166666666666667,
+      "maj_frac": 0.65,
+      "n_emits": 13,
+      "survive": true
+    },
+    "phi__median": {
+      "state": "phi",
+      "statistic": "median",
+      "interval_var": 0.4166666666666667,
+      "maj_frac": 0.65,
+      "n_emits": 13,
+      "survive": true
+    },
+    "phi__max_window": {
+      "state": "phi",
+      "statistic": "max_window",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 0,
+      "survive": false
+    },
+    "phi__p75": {
+      "state": "phi",
+      "statistic": "p75",
+      "interval_var": 1.5,
+      "maj_frac": 0.75,
+      "n_emits": 5,
+      "survive": true
+    },
+    "phi__p95": {
+      "state": "phi",
+      "statistic": "p95",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 0,
+      "survive": false
+    },
+    "curiosity_ema__mean": {
+      "state": "curiosity_ema",
+      "statistic": "mean",
+      "interval_var": 1.3333333333333333,
+      "maj_frac": 0.65,
+      "n_emits": 7,
+      "survive": true
+    },
+    "curiosity_ema__median": {
+      "state": "curiosity_ema",
+      "statistic": "median",
+      "interval_var": 1.3333333333333333,
+      "maj_frac": 0.65,
+      "n_emits": 7,
+      "survive": true
+    },
+    "curiosity_ema__max_window": {
+      "state": "curiosity_ema",
+      "statistic": "max_window",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 0,
+      "survive": false
+    },
+    "curiosity_ema__p75": {
+      "state": "curiosity_ema",
+      "statistic": "p75",
+      "interval_var": 0.0,
+      "maj_frac": 0.9,
+      "n_emits": 2,
+      "survive": false
+    },
+    "curiosity_ema__p95": {
+      "state": "curiosity_ema",
+      "statistic": "p95",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 0,
+      "survive": false
+    },
+    "CONTROL__s24_baseline_scalar": {
+      "state": "tension",
+      "statistic": "fixed_scalar_11.945",
+      "interval_var": 0.0,
+      "maj_frac": 1.0,
+      "n_emits": 20,
+      "survive": false,
+      "control": true
+    },
+    "CONTROL__s73_a_only_tension_mean": {
+      "state": "tension",
+      "statistic": "mean",
+      "interval_var": 3.9375,
+      "maj_frac": 0.55,
+      "n_emits": 9,
+      "survive": true,
+      "control": true,
+      "note": "byte-equal to tension__mean grid cell \u2014 \u00a775-FIRE cell1 mirror"
+    }
+  }
+}

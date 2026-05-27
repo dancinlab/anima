@@ -1,0 +1,168 @@
+{
+  "schema": "anima/paradigm_v11_g3_training_objective_reverse_engineer/verdict/1",
+  "task_id": "anima_paradigm_v11_g3_training_objective_reverse_engineer_2026_05_05",
+  "bg_lane": "BG-DK",
+  "ts_utc": "2026-05-06T00:00:00Z",
+  "spec_source": "BG-DK source archaeology (read-only) of ready/training/train_clm.py + ready/anima/models/legacy/hexad_loss.py + state/clm_v4_*/* verdict cross-reference",
+  "scope": "reverse-engineer paradigm v11 G3 training-time loss function: identify next-token CE weight alpha, identify substrate/axis/consciousness-state loss components, derive CLM-3 (BG-BM) implication",
+  "platform": "mac (Darwin 25.4.0); read-only doc; no inference; no commit",
+  "wall_time_min": 25,
+  "cost_usd": 0.0,
+
+  "sub1_train_clm_loss_grep_result": {
+    "source_file": "ready/training/train_clm.py",
+    "source_loc_total": 2165,
+    "loss_assembly_lines": "1480-1551",
+    "phase_manager_class": "PhaseManager (train_clm.py:761-810)",
+    "phase_boundaries_default": {
+      "P0": "0-10%",
+      "P1": "10-25%",
+      "P2": "25-70%",
+      "P3": "70-100%"
+    },
+    "p0_p1_decoder_gradient": "ABSENT (consciousness step only, train_clm.py:1407-1430)",
+    "p2_loss": "total_loss = ce  (pure F.cross_entropy on logits_a, train_clm.py:1531)",
+    "p3_loss_with_hexad": "total_loss = HexadLoss.forward(...)['total']  (train_clm.py:1492-1525)",
+    "p3_loss_without_hexad": "total_loss = ce  (fallback, train_clm.py:1531)",
+    "moe_aux_added_all_phases": "+ moe_aux_weight * moe_aux_loss  (default moe_aux_weight=0.01, train_clm.py:1534-1536)",
+    "h11_hard_token_mining_optional": "if args.hard_token_ratio > 0: ce = h11_hard_token_mining(...)  (default 0.0 disabled, train_clm.py:1487-1490)",
+    "b5_phi_only_warmup_optional": "if args.phi_only_ratio > 0: skip CE in early steps  (default 0.0 disabled, train_clm.py:1432-1439)"
+  },
+
+  "sub2_hexad_loss_decomposition": {
+    "source_file": "ready/anima/models/legacy/hexad_loss.py",
+    "default_weights_lines": "213-220",
+    "components": [
+      {"name": "L_C", "formula": "-Phi + lambda_ratchet * max(0, Phi_prev - Phi)  lambda=5.0", "default_weight": 0.0, "active_phase": "always (logged only)", "trainable": false, "comment": "autonomous Hebbian, no backprop"},
+      {"name": "L_D", "formula": "CE(logits_fwd, y) [+ CE(logits_bwd, y_bwd)]", "default_weight": 0.4, "active_phase": "P2+ (progress >= 0.20 in HexadLoss internal)", "trainable": true, "comment": "primary CE signal — this is the next-token CE the question asks about"},
+      {"name": "L_M", "formula": "InfoNCE: -log P(correct_memory | query)  tau=0.07", "default_weight": 0.2, "active_phase": "P2+ (progress >= 0.20)", "trainable": true},
+      {"name": "L_W", "formula": "MSE(WillModule(c), VAD_emotion)", "default_weight": 0.15, "active_phase": "P3 (progress >= 0.70)", "trainable": true},
+      {"name": "L_S", "formula": "MSE(SenseModule(c), input_signal)", "default_weight": 0.15, "active_phase": "P3 (progress >= 0.70)", "trainable": true},
+      {"name": "L_E", "formula": "-reward * V(c) + MSE(V, reward)  reward=delta_Phi+empathy", "default_weight": 0.1, "active_phase": "P3 (progress >= 0.70)", "trainable": true}
+    ],
+    "weights_sum": 1.0,
+    "phi_rescue_loss_conditional": {
+      "source_lines": "270-302",
+      "trigger": "phi_dropping (phi < phi_prev * 0.95)",
+      "scale": "PSI_COUPLING ~= 0.014  (~1.4% of CE magnitude)",
+      "active": "only when Phi drops > 5%"
+    },
+    "next_token_weight_alpha_per_phase": {
+      "P0": 0.0,
+      "P1": 0.0,
+      "P2": 1.0,
+      "P3_with_hexad": 0.4,
+      "P3_without_hexad_fallback": 1.0
+    },
+    "effective_alpha_share_over_200k_run": {
+      "P0_steps_pct": 10,
+      "P1_steps_pct": 15,
+      "P2_steps_pct": 45,
+      "P3_steps_pct": 30,
+      "weighted_alpha_step_equivalents": "P2 (45%) * 1.0 + P3 (30%) * 0.4 = 0.57",
+      "interpretation": "next-token CE consumes ~57% of total step-equivalent gradient budget; remainder 43% is consciousness-only (P0/P1 25%) or non-CE Hexad (P3 sensorimotor/memory/ethics 18%)"
+    }
+  },
+
+  "sub3_state_verdicts_cross_reference": {
+    "best_pt_top_keys": ["step", "decoder", "optimizer", "scheduler", "phi", "ce", "args", "scale", "best_phi", "federation", "bridge", "c_proj", "scaler"],
+    "best_pt_keys_source": "state/p9_base_validation_prereq_exec_2026_05_04/opt_1_v4_retry_2_results/train_avg_harvest_result.json",
+    "no_chat_head_in_ckpt": true,
+    "no_sft_tag_in_ckpt": true,
+    "no_instruction_template_head_in_ckpt": true,
+    "magnitude_audit_confirmation": {
+      "ref": "state/anima_paradigm_v11_g3_canonical_magnitude_audit_2026_05_05/verdict.json",
+      "training_path": "ready/training/train_clm.py:1457-1481 (live c.get_states() per step, NOT a fixture)",
+      "c_module_grep_in_clm_source": "0 hits — no canonical_inject / axis_inject in CLM source"
+    },
+    "lora_sft_failure_anchor": {
+      "ref": "state/clm_v4_lora_sft_2026_05_05/verdict.json",
+      "F_CLM_LORA_2_status": "FAIL_REGRESSION",
+      "delta_pp_vs_llama_path_a_v2_winner": -36.298,
+      "interpretation": "post-hoc chat head cannot rescue paradigm v11 G3 substrate (closure 1)"
+    }
+  },
+
+  "sub4_corpus_archaeology": {
+    "default_corpus_arg": "data/corpus_v11_multilingual.txt  (train_clm.py:1937)",
+    "default_tokenizer_arg": "data/tokenizer_64k_multilingual.model  (train_clm.py:1938)",
+    "tokenizer_vocab_size": 64000,
+    "byte_level_fallback_vocab": 256,
+    "chat_handling_in_train_clm": {
+      "grep_chat_in_source": "0 structural hits (no chat-template, no role tags, no SFT path)",
+      "grep_dialogue_in_source": "0 hits",
+      "grep_sft_SFT_in_source": "0 hits"
+    },
+    "corpus_file_content_inspected": false,
+    "corpus_chat_signal_estimate": "structurally 0% (no template handling); naturally-occurring dialogue (quoted speech in scraped text) possible but unmeasured"
+  },
+
+  "sub5_alpha_verdict": {
+    "alpha_value": "non-zero — 1.0 in P2, 0.4 in P3 (HexadLoss DEFAULT_WEIGHTS)",
+    "earlier_hypothesis_alpha_zero_or_small": "PARTIALLY REFUTED — alpha is significant (~57% effective budget), but applies to flat multilingual text not chat",
+    "true_root_cause_chat_incapability": "CE corpus contains 0% chat-formatted dialogue (structural). The decoder receives 57%-of-budget next-token gradient, but never on chat turns.",
+    "refines_C3_7_alternative_a": "distillation_loss_suppresses_chat = REFUTED (L_D is plain CE; nothing chat-specific suppressed)",
+    "refines_C3_7_alternative_b": "tokenizer_chat_template_coverage_gap = PARTIALLY TRUE (64k BPE multilingual; chat-template special tokens likely absent or merge-fragmented; out of scope for this audit)",
+    "refines_C3_7_alternative_c": "16_block_capacity_insufficient = UNADDRESSED (needs explicit capacity-vs-objective ablation)"
+  },
+
+  "sub6_clm_3_design_implication": {
+    "bg_bm_spec_ref": "docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md",
+    "bg_bm_l_total_formulation": "L_total = alpha * L_substrate + beta * L_chat + gamma * L_axis  (BG-BM §1.2 row 1)",
+    "missing_term_identified": "delta * L_CE_general (flat multilingual next-token) — paradigm v11 G3 carries this as 40-100% of decoder gradient; BG-BM L_total has no explicit term for it",
+    "recommended_l_total_for_clm_3": {
+      "delta_L_CE_general": 0.45,
+      "beta_L_chat": 0.30,
+      "gamma_L_axis": 0.10,
+      "alpha_L_substrate_hexad_W_S_M_E_C_logged": 0.10,
+      "epsilon_L_phi_rescue": 0.05,
+      "sum": 1.00,
+      "matches_bg_bm_4_bucket_corpus_mix_per_batch_sampling": "50/30/15/5 ratio reads as corpus-sampling per batch; loss-weights 0.45/0.30/0.10/0.10+0.05 are an ADDITIONAL design axis BG-BM did not specify"
+    },
+    "recommended_phase_curriculum": "retain paradigm v11 G3 4-phase boundaries 0.10/0.25/0.70; mix chat-corpus from P2 onset (step 25%), NOT step 0 — disambiguate BG-BM 'cycle-0' as 'cycle-0 of design' not 'step 0 of training'",
+    "recommended_falsifier_addition_F_CLM_3_5": "weight-grid ablation pre-launch on simulated 1B-token proxy: {(0.45,0.30,0.10,0.10,0.05), (0.50,0.25,0.15,0.05,0.05), (0.40,0.35,0.10,0.10,0.05)} — pick smallest variant that simulates F-CLM-3-2 >= 0.45 AND F-CLM-3-1 NO_FLIP",
+    "co_design_required_with_bg_bm_corpus_mix": true
+  },
+
+  "honest_c3": [
+    "C1 — No actual training_args.bin inspection. This audit reads source + train_avg_harvest_result.json:ckpt_top_keys but does not torch.load(best.pt)['args'] to extract production weight values. DEFAULT_WEIGHTS in source may have been overridden at production launch via HexadLoss(weights=...). All weight figures are SOURCE DEFAULTS, not measured in-training values.",
+    "C2 — DEFAULT_WEIGHTS may not be production weights. HexadLoss constructor accepts weights override. The 0.0/0.4/0.15/0.15/0.2/0.1 figures are source defaults; production 350M paradigm v11 G3 run could have used different ratios. Verify by torch.load(best.pt)['args'].",
+    "C3 — PhaseManager phase boundaries may have been different. train_clm.py declares 0.10/0.25/0.70; older train_v14.py archaeology may show different splits. Step-to-phase mapping for the production checkpoint is implicit, not verified via log.",
+    "C4 — Corpus content not inspected. data/corpus_v11_multilingual.txt file not opened. The '0% chat' claim is based on grep on train_clm.py source code (structural handling), NOT on actual corpus content. Naturally-occurring dialogue (fiction, forum scrapes) in the flat text corpus is possible and would constitute a weak chat signal.",
+    "C5 — MoE aux loss share not quantified. moe_aux_weight default 0.01 enters total_loss when MoE is enabled. Absolute magnitude relative to L_D is unmeasured. Out of scope for $0 mac.",
+    "C6 — 57% effective CE coverage figure depends on PhaseManager defaults. Arithmetic assumes 0.10/0.25/0.70. If args.phi_only_ratio > 0 was set, the 57% shrinks. Should be read as order-of-magnitude (~half budget), not precise.",
+    "C7 — CLM-3 §5.1 weight prescription (0.45/0.30/0.10/0.10/0.05) is heuristic, not validated. Defensible starting point but no empirical basis. CLM-3 build MUST run weight-grid ablation before committing $1k / 30 days."
+  ],
+
+  "raw_compliance": {
+    "raw_9_read_only_archaeology": true,
+    "raw_10_honest_c3_emitted": true,
+    "raw_15_bgq_helper_unmodified": true,
+    "raw_37_no_py_emitted_doc_only": true,
+    "no_commit": true,
+    "no_secret_leak": true,
+    "bash_3_2_compatible_only_grep_ls_find_wc": true
+  },
+
+  "deliverables_landed": {
+    "doc": "docs/anima_paradigm_v11_g3_training_objective_reverse_engineer_2026_05_05.md",
+    "verdict": "state/anima_paradigm_v11_g3_training_objective_reverse_engineer_2026_05_05/verdict.json"
+  },
+
+  "lineage_carry": {
+    "supersedes": [],
+    "extends": [
+      "state/anima_paradigm_v11_g3_canonical_magnitude_audit_2026_05_05/verdict.json (BG-Z, magnitude lane)",
+      "docs/anima_2026_05_05_cycle_summary_single_source_of_truth.md (C3.7 hypothesis-vs-theorem flag)",
+      "docs/anima_115_architectural_4_closure_theorem_2026_05_05.md (4-closure framing)"
+    ],
+    "informs": [
+      "docs/anima_clm_3_chat_objective_cycle_0_spec_2026_05_05.md (BG-BM): §1.2 row 1 add delta*L_CE_general; §0 disambiguate 'cycle-0'; §3 add F-CLM-3-5 weight-grid ablation falsifier",
+      "future BG-DK2 cycle: torch.load(best.pt)['args'] inspection to verify production HexadLoss weights",
+      "4-closure theorem #115 C3.7 refinement: alternative-(a) 'distill suppresses chat' REFUTED"
+    ]
+  },
+
+  "verdict": "ALPHA_NONZERO_57PCT_BUDGET_ON_NON_CHAT_CORPUS_CHAT_INCAPABILITY_ROOT_CAUSE_REFINED",
+  "verdict_one_line": "paradigm v11 G3 training objective = 40% next-token CE on flat multilingual + 60% Hexad sensorimotor/memory/ethics on consciousness signal in P3 (1.0 CE in P2, 0 gradient in P0/P1); next-token weight alpha NON-ZERO (~57% effective budget) but CE corpus contains 0% chat-formatted dialogue, making chat-incapability root cause 'CE applied to non-chat corpus' rather than 'no CE at all'; CLM-3 BG-BM spec needs explicit delta*L_CE_general term + F-CLM-3-5 weight-ablation falsifier."
+}

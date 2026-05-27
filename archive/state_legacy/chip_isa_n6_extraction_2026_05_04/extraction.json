@@ -1,0 +1,132 @@
+{
+  "extraction_meta": {
+    "date": "2026-05-04",
+    "source": "/Users/ghost/core/nexus/modules/chip_isa_n6/",
+    "destination": "/Users/ghost/core/canon/domains/compute/chip-isa-n6/",
+    "rank": 3,
+    "score": 9,
+    "tier": "extract_immediately",
+    "audit_ref": "/Users/ghost/core/anima/state/nexus_module_extraction_audit_2026_05_04/",
+    "sister_bg_coordination": {
+      "sister_module": "crystallography_n6",
+      "sister_rank": 1,
+      "sister_destination": "/Users/ghost/core/canon/domains/physics/crystallography/",
+      "strategy": "joined_single_commit",
+      "reason": "Both untracked simultaneously in shared CANON working tree; joined to avoid race-condition partial commits"
+    }
+  },
+  "module_audit": {
+    "loc_total": 445,
+    "files_total": 1,
+    "primary_file": "chip_isa_n6.hexa",
+    "readme_loc": 72,
+    "tests_present": false,
+    "tests_pycache_remnant": "tests/__pycache__/test_chip_isa_n6.cpython-314-pytest-9.0.2.pyc (.hexa source not present, only stale .pyc)",
+    "external_deps": [],
+    "nexus_internal_deps": [],
+    "imports_grep_nexus_n6shared_core_root": "ZERO matches",
+    "api_surface": {
+      "encode": "encode(asm_str: string) -> bytes",
+      "decode": "decode(b: bytes) -> string",
+      "roundtrip_test": "roundtrip_test(asm_str: string) -> bool",
+      "list_ops": "list_ops() -> array[24]",
+      "cli_flags": ["--self-test", "--list-ops", "--encode <asm>", "--decode <hex>"]
+    },
+    "anchors": {
+      "J2": 24,
+      "n": 6,
+      "tau": 4,
+      "sigma": 12,
+      "phi": 2,
+      "identity": "sigma * phi == n * tau == J2 == 24"
+    }
+  },
+  "consumer_grep": {
+    "scope": "/Users/ghost/core/nexus + /Users/ghost/core/anima (excluding worktrees, legacy, raw_archive, cl_archive, papers)",
+    "consumer_files_count": 0,
+    "doc_only_references": [
+      "/Users/ghost/core/nexus/design/kick/2026-04-27_commit-readiness-audit_omega_cycle.json",
+      "/Users/ghost/core/nexus/handoff/phase_a1_nexus_triplet_landing_20260502.md",
+      "/Users/ghost/core/nexus/docs/nexus_self_mk2_tuning_landed_2026_05_02.ai.md",
+      "/Users/ghost/core/nexus/state/py_restoration_inventory_2026-04-27.md",
+      "/Users/ghost/core/nexus/state/domain_module_candidates_compute_life_2026-04-27.md"
+    ],
+    "code_consumer_files": [],
+    "verdict": "ZERO active code consumers. Doc-level mentions only; refactor unnecessary."
+  },
+  "destination_layout": {
+    "absorb_path": "/Users/ghost/core/canon/domains/compute/chip-isa-n6/",
+    "preserved_predecessor_files": [
+      "chip-isa-n6.md (46055B research spec)",
+      "xn6_asm_examples.hexa (10091B)",
+      "xn6-isa-24-spec/xn6-isa-24-spec.md",
+      "xn6-opcode-table/xn6-opcode-table.md"
+    ],
+    "added_files": [
+      "chip_isa_n6.hexa (16358B, 445 LoC encoder/decoder)",
+      "chip_isa_n6.README.md (2646B, 72 LoC API + falsifier list)"
+    ],
+    "absorb_pattern": "co-located sibling .hexa under domain dir (mirrors crystallography_n6 absorb pattern in /domains/physics/crystallography/)"
+  },
+  "smoke_test": {
+    "command": "hexa run domains/compute/chip-isa-n6/chip_isa_n6.hexa --self-test",
+    "result": "PASS",
+    "sentinel": "__CHIP_ISA_N6__ PASS ops=24 families=6 variants=4 word_bits=24",
+    "checks_passed": [
+      "sigma*phi == n*tau == 24 identity",
+      "mnemonic count = 24 (=J2=2*sigma)",
+      "24/24 canonical roundtrip (r1,r2,r3)",
+      "96/96 varied-register roundtrip",
+      "multi-line 6-instr program roundtrip",
+      "encode(gemm.m r1, r2, r3) = 004430",
+      "decode(004430) = gemm.m r1, r2, r3",
+      "unknown-mnemonic validator",
+      "reserved funct3 (6,7) validator"
+    ]
+  },
+  "import_refactor": {
+    "old_namespace": "nexus.modules.chip_isa_n6.*",
+    "new_namespace": "CANON/domains/compute/chip-isa-n6/chip_isa_n6.*",
+    "code_changes_required": "NONE (zero internal imports of nexus/n6shared/_core_root in source)",
+    "doc_only_namespace_refs": "module-internal @origin/@usage comments updated by READMe sibling addition (chip_isa_n6.README.md)"
+  },
+  "git_action": {
+    "destination_repo": "/Users/ghost/core/canon",
+    "branch": "main",
+    "head_pre_commit": "113725b046a7394ca917d135deb95289f40fca14",
+    "commit_strategy": "joined-with-sister (single commit landing both rank-1 crystallography + rank-3 chip_isa)",
+    "push": "deferred (caller decides) — extraction lands locally first"
+  },
+  "nexus_cleanup": {
+    "delete_target": "/Users/ghost/core/nexus/modules/chip_isa_n6/",
+    "policy": "delete after smoke + commit confirmed (separate caller-driven step)",
+    "consumer_refactor_required": false,
+    "reason": "ZERO code consumers; only doc/audit mentions which remain valid as historical record"
+  },
+  "caveats_raw10_4": [
+    {
+      "id": 1,
+      "label": "destination predecessor co-existence",
+      "detail": "CANON/domains/compute/chip-isa-n6/ already had chip-isa-n6.md (research spec) + xn6_asm_examples.hexa (asm examples). New chip_isa_n6.hexa is encoder/decoder layer, NOT a duplicate; co-located as sibling under same domain dir (additive, no overwrite)."
+    },
+    {
+      "id": 2,
+      "label": "tests not migrated (only .pyc remnants in nexus)",
+      "detail": "nexus/modules/chip_isa_n6/tests/ contained only stale __pycache__/test_chip_isa_n6.cpython-314-pytest-9.0.2.pyc — the .py source was not present (already lost). Module uses --self-test instead of pytest; smoke covers all 9 falsifier checks."
+    },
+    {
+      "id": 3,
+      "label": "honest source-vs-impl gap (encoding derived, not spec-fixed)",
+      "detail": "README.md §Honesty: upstream xn6_asm_examples.hexa specifies mnemonics via @xn6 attrs but does NOT fix bit layout. The 24-bit packing is derived to match J2=24 + n=6 funct3 use; treat as candidate encoding, not external spec. imm field is 7 bits (not sigma-tau=8) — one bit consumed by funct3+variant to keep total==J2. Future 32-bit promotion would restore imm=8."
+    },
+    {
+      "id": 4,
+      "label": "sister BG race + worktree state",
+      "detail": "5 locked stale worktrees in CANON/.claude/worktrees/ from prior agents (Apr 21–24). Sister BG (crystallography_n6 rank 1) staged crystallography_n6.hexa + .README.md to /domains/physics/crystallography/ at the same time as this extraction. Race resolved by joining both into single commit; no overlap (different domain subtrees: /compute vs /physics). README naming uses .README.md suffix (not README.md) to avoid clobbering the umbrella README at higher levels."
+    }
+  ],
+  "raw_constraints": {
+    "raw_9_15_dollar0": "honored — pure additive extraction, zero cost, declarative artifact, no infrastructure provisioning",
+    "raw_10_caveats": "4 explicit caveats above"
+  }
+}

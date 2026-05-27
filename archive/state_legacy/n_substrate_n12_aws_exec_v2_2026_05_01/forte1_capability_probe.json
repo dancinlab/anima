@@ -1,0 +1,64 @@
+{
+  "schema": "n12_v2/forte1_capability_probe/1",
+  "ts_utc": "2026-05-01T00:00:00Z",
+  "device_arn": "arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+  "device_name": "Forte 1",
+  "device_status": "ONLINE",
+  "queries": [
+    {
+      "query_method": "aws braket get-device --device-arn arn:aws:braket:us-east-1::device/qpu/ionq/Forte-1",
+      "supportedOperations": ["x","y","z","h","s","si","t","ti","v","vi","rx","ry","rz","cnot","swap","xx","yy","zz"],
+      "supportedPragmas": ["braket_result_type_sample","braket_result_type_expectation","braket_result_type_variance","braket_result_type_probability","verbatim"],
+      "supportsPartialVerbatimBox": false,
+      "nativeGateSet": ["GPI","GPI2","ZZ"],
+      "delay_in_supportedOperations": false,
+      "verbatim_in_supportedPragmas": true
+    }
+  ],
+  "live_validation_attempts": [
+    {
+      "label": "bare_delay_outside_verbatim",
+      "openqasm3_source": "OPENQASM 3.0;\nbit[1] c;\nqubit[1] q;\nh q[0];\ndelay[100us] q[0];\nh q[0];\nc[0] = measure q[0];",
+      "submitted_to_aws": true,
+      "billed_USD": 0.0,
+      "billing_rationale": "AWS Braket bills only COMPLETED tasks; ValidationException at CreateQuantumTask is pre-billing",
+      "result": "REJECTED",
+      "error_class": "ValidationException",
+      "error_message": "[line 5] Timing instruction 'delay' is not presently supported on device"
+    },
+    {
+      "label": "delay_in_verbatim_with_logical_qubits",
+      "openqasm3_source": "OPENQASM 3.0;\nbit[1] c;\nqubit[1] q;\n#pragma braket verbatim\nbox {\n    gpi(0) q[0];\n    delay[100us] $0;\n    gpi(0) q[0];\n}\nc[0] = measure q[0];",
+      "submitted_to_aws": true,
+      "billed_USD": 0.0,
+      "result": "REJECTED",
+      "error_class": "ValidationException",
+      "error_message": "[line 6] physical qubits are required in verbatim boxes (syntax error before delay was checked)"
+    },
+    {
+      "label": "delay_in_verbatim_with_physical_qubits",
+      "openqasm3_source": "OPENQASM 3.0;\nbit[1] c;\n#pragma braket verbatim\nbox {\n    gpi(0) $0;\n    delay[100us] $0;\n    gpi(0) $0;\n}\nc[0] = measure $0;",
+      "submitted_to_aws": true,
+      "billed_USD": 0.0,
+      "result": "REJECTED",
+      "error_class": "ValidationException",
+      "error_message": "[line 6] Timing instruction 'delay' is not presently supported on device"
+    }
+  ],
+  "conclusion": {
+    "forte1_supports_real_delay": false,
+    "evidence": "Two independent server-side ValidationException rejections of OpenQASM3 'delay[Nus]' instruction, both outside and inside verbatim mode. delay is NOT in supportedOperations list. Native gate set (GPI, GPI2, ZZ) contains no idle-time primitive.",
+    "implication_for_v2": "ABORT — methodology fix as specified (verbatim + delay[Nus]) is not executable on Forte 1 via AWS Braket. Falling back to rx(2*pi)*N surrogate would repeat the v1 mistake (likely virtual frame change, no real wait). No live $ spend in v2.",
+    "total_v2_aws_spend_USD": 0.00,
+    "vs_target_USD": 45.00,
+    "vs_hard_cap_USD": 50.00
+  },
+  "isolation": {
+    "v1_state_dir_modified": false,
+    "v1_state_dir": "state/n_substrate_n12_aws_exec_2026_05_01/",
+    "v2_state_dir": "state/n_substrate_n12_aws_exec_v2_2026_05_01/",
+    "other_n_dirs_touched": [],
+    "alpha_pod_touched": false,
+    "nexus_touched": false
+  }
+}

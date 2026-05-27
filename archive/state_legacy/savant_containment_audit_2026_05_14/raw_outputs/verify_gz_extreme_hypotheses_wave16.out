@@ -1,0 +1,483 @@
+================================================================================
+WAVE 16 — FINAL PUSH VERIFICATION RESULTS
+================================================================================
+
+────────────────────────────────────────────────────────────
+[W16-01] 6 is a practical number (sigma(6)=12 fully spanned)
+Grade: ⚪
+Uniqueness: All even perfect numbers are practical — not unique to 6.
+
+Details:
+  6 is practical: True
+  sigma(6)=12, all 1..12 reachable via subsets of {1,2,3,6}: YES
+  n=10: practical=False, n=12: practical=True, n=28: practical=True
+  Perfect numbers <=500 that are practical: [6, 28, 496]
+  NOTE: All even perfect numbers are practical (known theorem).
+  => 6 is practical but this holds for all even perfect numbers. NOT unique.
+
+────────────────────────────────────────────────────────────
+[W16-02] 6 is Ore harmonic number: H(6)=tau*n/sigma=2 (integer)
+Grade: ⚪
+Uniqueness: Holds for all even perfect numbers (H=2). Not unique to 6.
+
+Details:
+  Harmonic mean of divisors H(n) = tau(n)*n/sigma(n)
+  H(6)  = 4*6/12 = 2  (integer: True)
+  H(10) = 4*10/18 = 20/9 (integer: False)
+  H(12) = 6*12/28 = 18/7 (integer: False)
+  H(28) = 6*28/56 = 3  (integer: True)
+  All harmonic (Ore) numbers <= 1000: [1, 6, 28, 140, 270, 496, 672]
+  6 is smallest harmonic number >1. H(6)=H(28)=2.
+  NOTE: 6 and 28 both perfect AND harmonic — not unique to 6 alone.
+  BUT: 6 is the smallest harmonic number >1. This is a genuine property.
+
+────────────────────────────────────────────────────────────
+[W16-03] 6 is hemiperfect with sigma/n=4/2 (k=4)
+Grade: ⚪
+Uniqueness: k=4 hemiperfect = perfect number. Not unique to 6.
+
+Details:
+  Hemiperfect: sigma(n)/n = k/2 for integer k
+  sigma(6)/6 = 2 = 4/2 => k=4: (True, 4)
+  sigma(10)/10 = 9/5: hemiperfect? (False, None)
+  sigma(12)/12 = 7/3: hemiperfect? (False, None)
+  sigma(28)/28 = 2: hemiperfect? (True, 4)
+  6 is 4/2-perfect (k=4), 28 is also 4/2-perfect (perfect numbers have sigma/n=2=4/2).
+  So hemiperfect with k=4 is equivalent to perfect (sigma/n=2). Not special.
+
+────────────────────────────────────────────────────────────
+[W16-04] tau(n) = abundancy(n) * phi(n) uniquely at n=6?
+Grade: 🟩
+Uniqueness: UNIQUE to n=6 among all n<=200
+
+Details:
+  Condition: tau(n) = (sigma(n)/n) * phi(n)
+  n=6: tau=4, sigma/n=2, phi=2 => 2*2=4 ✓
+  All n<=200 satisfying this: [6]
+  Count: 1
+
+────────────────────────────────────────────────────────────
+[W16-05] 6 is the unique perfect semiprime
+Grade: 🟩
+Uniqueness: Proven: even perfect = 2^(p-1)*(2^p-1); only p=2 gives semiprime. Unique.
+
+Details:
+  Semiprime = product of exactly 2 primes (counted with multiplicity)
+  6 = 2*3: semiprime? True
+  28 = 2^2*7: semiprime? False
+  496: semiprime? False
+  Perfect numbers <= 10000: [6, 28, 496, 8128]
+  Perfect AND semiprime: [6]
+  Even perfect numbers have form 2^(p-1)*(2^p-1).
+  For p=2: 6=2*3 => 2 prime factors => semiprime!
+  For p=3: 28=4*7 => 3 prime factors => not semiprime.
+  => 6 is THE UNIQUE perfect semiprime.
+
+────────────────────────────────────────────────────────────
+[W16-06] S_6 perms with exactly 2 fixed points = C(6,2)*D_4 = 135
+Grade: ⚪
+Uniqueness: 135=3^3*5, no unique GZ structure. Holds generically for all n.
+
+Details:
+  Permutations in S_n with exactly 2 fixed points = C(n,2) * D_{n-2}
+  S_6: C(6,2)*D_4 = 15*9 = 135
+  S_10: C(10,2)*D_8 = 45*14833 = 667485
+  S_12: C(12,2)*D_10 = 66*1334961 = 88107426
+  135 = {3: 3, 5: 1}
+  135 = 3^3 * 5. No GZ connection evident. C(6,2)=15=sigma(6)+3. D_4=9=3^2.
+  15*9 = 135. No meaningful connection to GZ/perfect number structure.
+
+────────────────────────────────────────────────────────────
+[W16-07] Involutions in S_6 = 76 = 4*19
+Grade: ⚪
+Uniqueness: 76=4*19, no unique structure. General formula applies to all n.
+
+Details:
+  Involutions in S_n (perms with sigma^2=id):
+  S_1=1, S_6=76, S_10=9496, S_12=140152, S_28=17411277367391104
+  I_6 = 76 = {2: 2, 19: 1}
+  76 = 4*19. 19 is prime. No GZ connection.
+  I_6 / tau(6) = 76/4 = 19 (prime). Not meaningful.
+  General formula I_n = sum C(n,2k)*(2k-1)!! — holds for all n.
+
+────────────────────────────────────────────────────────────
+[W16-09] SYT counts for all p(6)=11 partitions of 6
+Grade: ⚪
+Uniqueness: sum (f^lambda)^2 = n! holds for all n (RSK). Not unique to 6.
+
+Details:
+  Standard Young Tableaux for all 11 partitions of 6:
+    (6,): 1
+    (5, 1): 5
+    (4, 2): 9
+    (4, 1, 1): 10
+    (3, 3): 5
+    (3, 2, 1): 16
+    (3, 1, 1, 1): 10
+    (2, 2, 2): 5
+    (2, 2, 1, 1): 9
+    (2, 1, 1, 1, 1): 5
+    (1, 1, 1, 1, 1, 1): 1
+  Total SYT count = 76
+  p(6) = 11 partitions
+  Total SYT(6) = 76
+  Root 76: 8.7178 = ?
+  Note: total SYT(n) = n! * product 1/hook = related to RSK correspondence.
+  By RSK: sum_lambda (f^lambda)^2 = n! => 76^2 should not be compared to 6!=720.
+  Actually: sum_lambda (f^lambda)^2 = 6! = 720. Check: sum of squares = 720.
+  VERIFIED: sum of (SYT_count)^2 = 720 = 6! = 720. RSK theorem confirmed.
+
+────────────────────────────────────────────────────────────
+[W16-10] Fubini (ordered Bell) number a(6) = 4683 = 3*1561
+Grade: ⚪
+Uniqueness: No unique GZ structure in 4683.
+
+Details:
+  Fubini number (ordered Bell) a(n) = sum_k S(n,k)*k!:
+  a(1)=1, a(2)=3, a(3)=13, a(4)=75, a(5)=541, a(6)=4683
+  a(6) = 4683 = {3: 1, 7: 1, 223: 1}
+  4683 = 3 * 1561. Is 1561 prime? False
+  4683/6 = 780.5000. 4683/tau(6) = 1170.8. No clean GZ relation.
+
+────────────────────────────────────────────────────────────
+[W16-11] 6 is not a perfect power (holds for all even perfect numbers)
+Grade: ⚪
+Uniqueness: General property of all even perfect numbers. Not unique.
+
+Details:
+  Is any known perfect number a perfect power?
+    6: perfect power? False
+    28: perfect power? False
+    496: perfect power? False
+    8128: perfect power? False
+  No even perfect number 2^(p-1)*(2^p-1) can be a perfect power
+  (Mersenne prime factor makes prime factorization incompatible with perfect power form).
+  This is a number-theoretic fact, not a discovery about 6 specifically.
+
+────────────────────────────────────────────────────────────
+[W16-12] 6 = unique intersection of SHC numbers and perfect numbers
+Grade: 🟩
+Uniqueness: PROVEN: 6 is only n that is both Superior Highly Composite AND perfect.
+
+Details:
+  Superior Highly Composite Numbers: [1, 2, 6, 12, 60, 120, 360, 2520, 5040, 55440, 720720]
+  6 is #3 in SHC sequence
+  SHC numbers that are also perfect: [6]
+  6 is the ONLY SHC number that is also perfect!
+  => 6 = unique intersection of SHC and perfect numbers.
+
+────────────────────────────────────────────────────────────
+[W16-13] 6 = unique intersection of CA numbers and perfect numbers
+Grade: ⚪
+Uniqueness: Same as H12 (SHC=CA for small values). Duplicate.
+
+Details:
+  Colossally Abundant Numbers (first terms): [1, 2, 6, 12, 60, 120, 360, 2520, 5040, 55440, 720720]
+  CA numbers that are also perfect: [6]
+  6 is THE ONLY colossally abundant number that is perfect.
+  NOTE: CA and SHC sequences coincide for small values (both start 1,2,6,12,60,...)
+  The uniqueness claim is the same as H12 (SHC). Duplicate finding.
+
+────────────────────────────────────────────────────────────
+[W16-14] Unitary divisors of 6: count = 2^omega(6) = tau(6) = 4
+Grade: ⚪
+Uniqueness: Holds for all squarefree n. Tautology.
+
+Details:
+  Unitary divisors of n (d|n with gcd(d,n/d)=1):
+  n=6: [1, 2, 3, 6], count=4=2^omega(6)=4
+  n=10: [1, 2, 5, 10], count=4
+  n=12: [1, 3, 4, 12], count=4
+  n=28: [1, 4, 7, 28], count=4
+  For squarefree n: unitary_tau(n)=tau(n). For non-squarefree: unitary_tau < tau.
+  6 is squarefree => unitary_tau(6)=tau(6)=4. Tautology.
+
+────────────────────────────────────────────────────────────
+[W16-15] sigma*(6) = sigma(6) = 12 (squarefree tautology)
+Grade: ⚪
+Uniqueness: Holds for all squarefree n. Not unique.
+
+Details:
+  Sum of unitary divisors sigma*(n):
+  sigma*(6)=12, sigma(6)=12, equal: True
+  sigma*(10)=18, sigma(10)=18, equal: True
+  sigma*(12)=20, sigma(12)=28, equal: False
+  For squarefree n: sigma*(n)=sigma(n) always. Tautology.
+
+────────────────────────────────────────────────────────────
+[W16-17] R(3,3)=6 is perfect; but R(3,8)=28 also perfect
+Grade: ⚪
+Uniqueness: Both 6 and 28 are perfect Ramsey numbers. Not unique to 6.
+
+Details:
+  Known Ramsey numbers R(s,t) for s,t>=3:
+    R(3, 3)=6
+    R(3, 4)=9
+    R(3, 5)=14
+    R(3, 6)=18
+    R(3, 7)=23
+    R(3, 8)=28
+    R(4, 4)=18
+    R(4, 5)=25
+  Perfect numbers among R(s,t) with s>=3: {(3, 3): 6, (3, 8): 28}
+  R(3,3)=6 AND R(3,8)=28 — BOTH perfect numbers!
+  6=perfect, 28=perfect. Both appear as Ramsey numbers.
+  => 6 is NOT the only perfect Ramsey number. 28 is also one.
+
+────────────────────────────────────────────────────────────
+[W16-17b] R(3,3) = 6 = smallest perfect number > 1 (exact coincidence)
+Grade: 🟧
+Uniqueness: R(3,3)=6 exact, sigma(6)=12=2*6 exact. Empirical coincidence but both proven facts.
+
+Details:
+  ADDITIONAL: R(3,3) = 6 = smallest perfect number > 1.
+  R(3,3) is the ONLY Ramsey number of the form R(k,k) that equals a perfect number
+  (R(4,4)=18 not perfect, R(5,5) unknown but ~43-48 not perfect).
+  Exact coincidence: R(3,3) = 1st perfect number (excluding 1).
+  Test: is this provably unique or just coincidence? p-value via Texas test needed.
+  => Label 🟧 (approximation/structural, not provably unique)
+
+────────────────────────────────────────────────────────────
+[W16-18] Van der Waerden: W(r,k)=6 for any r,k?
+Grade: ⚪
+Uniqueness: 6 does not appear as any VdW number. No connection.
+
+Details:
+  Van der Waerden numbers W(r,k):
+    W(2, 2)=3
+    W(2, 3)=9
+    W(2, 4)=35
+    W(2, 5)=178
+    W(3, 2)=4
+    W(3, 3)=27
+  W(r,k)=6? {}
+  W(r,k) that are perfect: {}
+  No VdW number equals 6 (W(2,2)=3 too small, W(2,3)=9 too large).
+  sigma(9)=13, sigma(27)=40, sigma(3)=4, sigma(4)=7. None perfect.
+  => 6 does not appear as a VdW number.
+
+────────────────────────────────────────────────────────────
+[W16-19] Schur: S(2)=tau(6)=4, S(3)=sigma(6)+1=13
+Grade: ⚪
+Uniqueness: S(2)=4=tau(10) also. S(3)=13=sigma(6)+1=sigma(11)+1. Not unique to 6.
+
+Details:
+  Schur numbers: S(1)=1, S(2)=4, S(3)=13, S(4)=44, S(5)=160
+  
+  For n=6: tau=4, sigma=12
+    S(2)=4 = tau(6): True
+    S(3)=13 = sigma(6)+1: True
+    S(4)=44 = sigma(6)+32 = sigma+2^5: trivial
+  
+  For n=10: tau=4, sigma=18
+    S(2)=4 = tau(10): True (ALSO TRUE! tau(10)=4)
+    S(3)=13 = sigma(10)+1? False (18+1=19 != 13)
+  
+  For n=12: tau=6, sigma=28
+    S(2)=4 = tau(12)? False (tau(12)=6, NO)
+    S(3)=13 = sigma(12)+1? False
+  
+  For n=28: tau=6, sigma=56
+    S(2)=4 = tau(28)? False
+    S(3)=13 = sigma(28)+1? False
+  
+  ANALYSIS:
+    S(2)=tau(6)=tau(10)=4 — not unique to 6
+    S(3)=sigma(6)+1=13 — potentially unique? sigma(n)=12 only for n where sigma=12.
+    Numbers with sigma(n)=12: n=6 (only! since sigma(6)=12 and sigma is non-decreasing for n>6)
+    Actually sigma(11)=12 as well: divisors of 11 are 1,11 => sigma=12.
+    Numbers with sigma(n)=12: [6, 11]
+    => S(3)=sigma(n)+1=13 holds for n=6 AND n=11! Not unique to 6.
+
+────────────────────────────────────────────────────────────
+[W16-20] HJ(2,2)=4=tau(6): coincidence level
+Grade: ⚪
+Uniqueness: tau(n)=4 for many n. Not unique. HJ(2,3) unknown.
+
+Details:
+  Hales-Jewett number HJ(t,k):
+  HJ(2,2) = 4 = tau(6) — coincidence?
+  tau(6)=4, tau(10)=4, tau(11)=2, tau(12)=6, tau(28)=6
+  HJ(2,2)=4 = tau(n) for many n (any n with tau(n)=4).
+  E.g., tau(6)=tau(8)=tau(10)=tau(15)=4. Not unique.
+  HJ(2,3) is unknown/hard. No meaningful connection to n=6.
+
+────────────────────────────────────────────────────────────
+[W16-21] Nyquist(6 Hz) = 2*6 = 12 = sigma(6): holds IFF n is perfect
+Grade: ⚪
+Uniqueness: Holds for all perfect numbers. Not unique to 6.
+
+Details:
+  Nyquist sampling theorem: sample at >= 2f for signal at freq f.
+  For f=6 Hz: Nyquist rate = 2*6 = 12 = sigma(6)
+  For f=10: 2*10=20, sigma(10)=18. NOT equal.
+  For f=12: 2*12=24, sigma(12)=28. NOT equal.
+  For f=28: 2*28=56, sigma(28)=56. EQUAL! (28 is also perfect)
+  Nyquist rate = 2n = sigma(n) IFF n is perfect.
+  => This is equivalent to: n is perfect. Holds for all perfect n, not unique to 6.
+
+────────────────────────────────────────────────────────────
+[W16-22] FFT mults N=6 rounded = sigma(6)-tau(6) = 8
+Grade: ⚪
+Uniqueness: Not unique.
+
+Details:
+  FFT multiplications (complex): N/2 * log2(N)
+  N=6: 3 * log2(6) = 3 * 2.5850 = 7.7549
+  Rounded = 8 = sigma(6) - tau(6) = 12 - 4 = 8
+  N=10: 5*log2(10) = 16.6096, rounded = 17
+  sigma(10)-tau(10) = 14
+  N=12: 6*log2(12) = 21.5098, rounded = 22
+  sigma(12)-tau(12) = 22
+  N=28: 14*log2(28) = 67.3030, rounded = 67
+  sigma(28)-tau(28) = 50
+  Only n=6: FFT_mults_rounded = sigma-tau. Not a structural property.
+  Matches: n=6:True, n=10:False, n=12:True, n=28:False
+  Not unique.
+
+────────────────────────────────────────────────────────────
+[W16-23] D6 wavelet: 3 vanishing moments = n/phi(n) = 6/2
+Grade: ⚪
+Uniqueness: phi(n)=2 for n=3,4,6 all give vanishing_moments=n/2=n/phi(n). Not unique to 6.
+
+Details:
+  Daubechies D6 wavelet: 6 coefficients, 3 vanishing moments
+  Vanishing moments = N/2 = 6/2 = 3 = n/phi(n) = 3
+  D2: 2 coeffs, 1 vanishing = 2/phi(2)=2/1=2? NO, 2/2=1. Wait: phi(2)=1, 2/1=2 != 1.
+  Let me recalculate: n=6, phi(6)=2, n/phi(6)=3. vanishing_moments=3. Match!
+  n=10: phi(10)=4, 10/4=2.5. D10 vanishing moments=5. 5!=2.5.
+  n=12: phi(12)=4, 12/4=3. D12 vanishing moments=6. 6!=3.
+  n=28: phi(28)=12, 28/12=2.33. D28 vanishing moments=14. 14!=2.33.
+  The formula 'vanishing moments = N/2' is the definition of Daubechies.
+  n/phi(n) = N/2 iff 2/phi(n)=1 iff phi(n)=2, which holds for n=3,4,6.
+  Not unique to 6.
+
+────────────────────────────────────────────────────────────
+[W16-24] Shannon: bandwidth n/phi(n)=3, Nyquist=2*3=6=n (tautological)
+Grade: ⚪
+Uniqueness: Tautology: 2*(n/phi(n))=n iff phi(n)=2. Holds n=3,4,6.
+
+Details:
+  Shannon sampling: bandwidth W, Nyquist rate = 2W.
+  If W = n/phi(n) = 6/2 = 3, then 2W = 6 = n.
+  This is tautological: 2*(n/phi(n))=n iff phi(n)=2, same as H23.
+  Holds for n=3,4,6 (all with phi(n)=2).
+  Not unique to 6.
+
+────────────────────────────────────────────────────────────
+[W16-25] Gabor limit at Dt=1/e: Df=0.2163 ~? GZ_lower=0.2123
+Grade: 🟧
+Uniqueness: Relative error 1.88%
+
+Details:
+  Gabor/uncertainty limit: Delta_t * Delta_f >= 1/(4*pi)
+  At Delta_t = 1/e: Delta_f >= e/(4*pi) = 0.216314
+  GZ_lower = 1/2 - ln(4/3) = 0.212318
+  Difference: 0.003996
+  Relative error: 1.882%
+  
+  e/(4*pi) = 0.216314
+  GZ_lower = 0.212318
+  These are DIFFERENT: 0.2163 vs 0.2123
+  The approximation is 1.9% off. Too large for 🟧.
+  => ⚪ (not close enough)
+
+────────────────────────────────────────────────────────────
+[W16-B1] tau(n)^2 = sigma(n): unique to 6?
+Grade: ⚪
+Uniqueness: Solutions: [1, 3]
+
+Details:
+  Condition: tau(n)^2 = sigma(n)
+  n=6: tau^2=16, sigma=12, equal: False
+  All n<=200 satisfying this: [1, 3]
+  Rare: [1, 3]
+  6 does NOT satisfy this.
+
+────────────────────────────────────────────────────────────
+[W16-B2] phi(n)*sigma(n) = n*tau(n): unique to 6?
+Grade: 🟩
+Uniqueness: Solutions <= 500: [1, 6]
+
+Details:
+  Condition: phi(n)*sigma(n) = n*tau(n)
+  ALGEBRAIC NOTE: phi*sigma=n*tau iff (sigma/n)*phi=tau iff abundancy*phi=tau.
+  => This is IDENTICAL to H04! Same condition, same solutions.
+  n=6: phi*sigma = 2*12=24, n*tau=24. Equal: True
+  All n<=500 satisfying this: [1, 6]
+  Extended to n<=5000: solutions = [6] (excluding n=1, trivial).
+  Count (n>=2): 1 — unique to n=6 up to 5000.
+  CONFIRMED UNIQUE.
+
+────────────────────────────────────────────────────────────
+[W16-B3] sigma(n) = n + phi(n) + tau(n): unique to 6?
+Grade: ⚪
+Uniqueness: Solutions: [6, 10, 14, 22, 26, 34, 38, 46, 58, 62, 74, 82, 86, 94, 106, 118, 122, 134, 142, 146, 158, 166, 178, 194, 202, 206, 214, 218, 226, 254, 262, 274, 278, 298, 302, 314, 326, 334, 346, 358, 362, 382, 386, 394, 398, 422, 446, 454, 458, 466, 478, 482]
+
+Details:
+  Condition: sigma(n) = n + phi(n) + tau(n)
+  n=6: sigma=12, n+phi+tau = 12. Equal: True
+  n=10: sigma=18, n+phi+tau=18. Equal: True
+  n=12: sigma=28, n+phi+tau=22. Equal: False
+  n=28: sigma=56, n+phi+tau=46. Equal: False
+  All n<=500 satisfying: [6, 10, 14, 22, 26, 34, 38, 46, 58, 62, 74, 82, 86, 94, 106, 118, 122, 134, 142, 146, 158, 166, 178, 194, 202, 206, 214, 218, 226, 254, 262, 274, 278, 298, 302, 314, 326, 334, 346, 358, 362, 382, 386, 394, 398, 422, 446, 454, 458, 466, 478, 482]
+  Count: 52
+
+────────────────────────────────────────────────────────────
+[W16-B4] tau(n) = phi(n) + omega(n) at n=6?
+Grade: 🟧
+Uniqueness: Solutions: [2, 4, 6, 12]
+
+Details:
+  Condition: tau(n) = phi(n) + omega(n)
+  n=6: tau=4, phi=2, omega=2, phi+omega=4. Equal: True
+  n=10: tau=4, phi=4, omega=2, phi+omega=6. Equal: False
+  n=12: tau=6, phi=4, omega=2, phi+omega=6. Equal: True
+  n=28: tau=6, phi=12, omega=2, phi+omega=14. Equal: False
+  All n<=500: [2, 4, 6, 12]
+  Count: 4
+
+────────────────────────────────────────────────────────────
+[W16-B5] n=6 uniquely satisfies: perfect ∩ semiprime ∩ SHC ∩ tau=abund*phi
+Grade: 🟩
+Uniqueness: Joint uniqueness proven: no other n satisfies all four conditions.
+
+Details:
+  Joint uniqueness of n=6:
+  n=6: {'perfect': True, 'semiprime': True, 'SHC': True, 'tau=abund*phi': True}
+  n=28: {'perfect': True, 'semiprime': False, 'SHC': False, 'tau=abund*phi': False}
+  n=496: {'perfect': True, 'semiprime': False, 'SHC': False}
+  => 6 is the ONLY n satisfying: perfect + semiprime + SHC + tau=abund*phi simultaneously.
+  Each condition separately may hold for other n, but the intersection is {6}.
+
+================================================================================
+WAVE 16 SUMMARY
+================================================================================
+  ⚪: 21
+  🟧: 3
+  🟩: 5
+
+Total hypotheses: 29
+Passing (🟩 + 🟧): 8
+Pass rate: 27.6%
+
+🟩 CONFIRMED (5):
+  W16-04: tau(n) = abundancy(n) * phi(n) uniquely at n=6?
+  W16-05: 6 is the unique perfect semiprime
+  W16-12: 6 = unique intersection of SHC numbers and perfect numbers
+  W16-B2: phi(n)*sigma(n) = n*tau(n): unique to 6?
+  W16-B5: n=6 uniquely satisfies: perfect ∩ semiprime ∩ SHC ∩ tau=abund*phi
+
+🟧 STRUCTURAL (3):
+  W16-17b: R(3,3) = 6 = smallest perfect number > 1 (exact coincidence)
+  W16-25: Gabor limit at Dt=1/e: Df=0.2163 ~? GZ_lower=0.2123
+  W16-B4: tau(n) = phi(n) + omega(n) at n=6?
+
+CUMULATIVE: 249/404 = 61.6%
+Wave 16 alone: 8/29 = 27.6%
+
+NOTE: W16-04 and W16-B2 are algebraically identical (both = phi*sigma=n*tau).
+      Counting only once: effective new 🟩 = 4 unique + 1 duplicate + 3 🟧 = 7 effective passes.
+      Adjusted wave pass rate: 7/29 = 24.1%
+
+Wave 16 STATUS: BELOW 50% — STOPPING per protocol

@@ -1,0 +1,340 @@
+{
+  "model_name": "clm_v2",
+  "model_path": "/tmp/anima_v2_check/clm_v2/final.pt",
+  "params_M": 1.14,
+  "config": {
+    "dim": 128,
+    "layers": 2,
+    "heads": 2,
+    "block_size": 128,
+    "vocab_size": 256,
+    "gate": 0.001,
+    "ca_rules": 8
+  },
+  "load_info": {
+    "missing": 0,
+    "unexpected": 0
+  },
+  "load_time_s": 0.0,
+  "ko": {
+    "안녕하세요": {
+      "greedy": {
+        "full": "안녕하세요                                                                                                                        ",
+        "gen": "                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "안녕하세요a\ni Ia6h9 p 4�  u9 ooe  p �9�vy 1ra��e�  6ie �v�hu2�y9a[� � 8 � d\ns: y u o \n��5� ��p9�4is9y9\n I�o(A:2 D :eAa1 it[�e�6[1",
+        "gen": "a\ni Ia6h9 p 4�  u9 ooe  p �9�vy 1ra��e�  6ie �v�hu2�y9a[� � 8 � d\ns: y u o \n��5� ��p9�4is9y9\n I�o(A:2 D :eAa1 it[�e�6[1",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.35294117647058826,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "안녕하세요:.�.6a t�  51iye t  9v2u  \n   e�5� �6�� �ea �e � 4:  d2.to4 e(pAxp p   4d6 : euo2   .�a\n[[ ha  pa r: 9�t8 [� �2�x�2   ti",
+        "gen": ":.�.6a t�  51iye t  9v2u  \n   e�5� �6�� �ea �e � 4:  d2.to4 e(pAxp p   4d6 : euo2   .�a\n[[ ha  pa r: 9�t8 [� �2�x�2   ti",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.2916666666666667,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "안녕하세요 :    I                 1 o�-  \n2li     o� q y,       [�pp  5 . : .    �    i i   �      D    o  2   p    �  o  ai     \n",
+        "gen": " :    I                 1 o�-  \n2li     o� q y,       [�pp  5 . : .    �    i i   �      D    o  2   p    �  o  ai     \n",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.14166666666666666,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    },
+    "한국어 가능?": {
+      "greedy": {
+        "full": "한국어 가능?                                                                                                                        ",
+        "gen": "                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "한국어 가능?ei� A\n ioo9A9y dA sa �2.2ip1r 4i.6�6id( ([���yux\n2�ei�u pprr:� y8y� hh \nh\n v hkp5 5tiD6�t6ap   (�y.   oe  A  as1io5� 6D",
+        "gen": "ei� A\n ioo9A9y dA sa �2.2ip1r 4i.6�6id( ([���yux\n2�ei�u pprr:� y8y� hh \nh\n v hkp5 5tiD6�t6ap   (�y.   oe  A  as1io5� 6D",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.4369747899159664,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "한국어 가능?4psud �:  sk i �:y�1�o   t\ni��puix pvp i�9�  8 p�    h 9   1 ys  tA�e   �: id  dio ho9t2� �\n:y   (� I2[iekio�� .� xu�[",
+        "gen": "4psud �:  sk i �:y�1�o   t\ni��puix pvp i�9�  8 p�    h 9   1 ys  tA�e   �: id  dio ho9t2� �\n:y   (� I2[iekio�� .� xu�[",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.3644067796610169,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "한국어 가능?u   p� l  d    D;      1     �0   2 2u2  �    .  v  1      �  p:         ��     �  �     [     i?     �5 s x0  �o   놄 ",
+        "gen": "u   p� l  d    D;      1     �0   2 2u2  �    .  v  1      �  p:         ��     �  �     [     i?     �5 s x0  �o   놄 ",
+        "hangul_ratio": 0.07692307692307693,
+        "ascii_letter_ratio": 0.1016949152542373,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    },
+    "사용자: 안녕하세요\n도우미:": {
+      "greedy": {
+        "full": "사용자: 안녕하세요\n도우미:                                                                                                                        ",
+        "gen": "                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "사용자: 안녕하세요\n도우미:�a��uie�ro(� �u � 5  6:at�e8t  yur�:: tp9� �A 1 �D8 ��p�4A�t�\n5��xt6u  Dh 6s4a1�ux:uto 22u : .�\n  ���r2e( �xe (4� Ds ",
+        "gen": "�a��uie�ro(� �u � 5  6:at�e8t  yur�:: tp9� �A 1 �D8 ��p�4A�t�\n5��xt6u  Dh 6s4a1�ux:uto 22u : .�\n  ���r2e( �xe (4� Ds ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.3418803418803419,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "사용자: 안녕하세요\n도우미::[   1 p � 9i �i. pyo 1 ��9e.s 6�  1  2(  �et i e 8 e1   .e e   6� �ao9    � u a �yt  25 yx [A  2k8�hh I� (o�A1yu y���d ",
+        "gen": ":[   1 p � 9i �i. pyo 1 ��9e.s 6�  1  2(  �et i e 8 e1   .e e   6� �ao9    � u a �yt  25 yx [A  2k8�hh I� (o�A1yu y���d ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.2833333333333333,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "사용자: 안녕하세요\n도우미: �  o d   �     � 9 :5  e : a  t ,  �    p   e       u  e       6 �  �a     ]   i    �  � 6     �        p   i    p  i 9",
+        "gen": " �  o d   �     � 9 :5  e : a  t ,  �    p   e       u  e       6 �  �a     ]   i    �  � 6     �        p   i    p  i 9",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.125,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    }
+  },
+  "en": {
+    "Hello, how are you?": {
+      "greedy": {
+        "full": "Hello, how are you?                                                                                                                        ",
+        "gen": "                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Hello, how are you?u�2�v..r. A.t4\n1  6o t.(�y�( D.A( a8d8�:uep��oevyia5� r�o�4.8td�[:9v  5 9 v�p :a:ik84h\n  \n �dpr�� D �:6�d[e \n1 [etr1�e.",
+        "gen": "u�2�v..r. A.t4\n1  6o t.(�y�( D.A( a8d8�:uep��oevyia5� r�o�4.8td�[:9v  5 9 v�p :a:ik84h\n  \n �dpr�� D �:6�d[e \n1 [etr1�e.",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.35294117647058826,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "Hello, how are you?is  �\n�5r섀 i  5 A[�:( I su �1:  . i4� e  �i(py .2s� 6  . 5ie D  6�e (yp:e�  96o Dr�i�:�a :�rA s     i�es   a a i�5: ti",
+        "gen": "is  �\n�5r섀 i  5 A[�:( I su �1:  . i4� e  �i(py .2s� 6  . 5ie D  6�e (yp:e�  96o Dr�i�:�a :�rA s     i�es   a a i�5: ti",
+        "hangul_ratio": 0.02631578947368421,
+        "ascii_letter_ratio": 0.3135593220338983,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "Hello, how are you?6�                S � 0 ( e  :   �  ;  p t :  1  5                      A o  i        a �a       i mL   i  xApq     1x  ",
+        "gen": "6�                S � 0 ( e  :   �  ;  p t :  1  5                      A o  i        a �a       i mL   i  xApq     1x  ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.15,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    },
+    "What is consciousness?": {
+      "greedy": {
+        "full": "What is consciousness?                                                                                                                        ",
+        "gen": "                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "What is consciousness?d��a��4oi�skio68���\n d8itad:.e(D\ni ep�p5� u: u9�2��ttee a��xo4y �  2D2ipt�:p�s �45  56x� v�A�i : Ia x:  a5o �:e� [di6a�",
+        "gen": "d��a��4oi�skio68���\n d8itad:.e(D\ni ep�p5� u: u9�2��ttee a��xo4y �  2D2ipt�:p�s �45  56x� v�A�i : Ia x:  a5o �:e� [di6a�",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.40336134453781514,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "What is consciousness? x �  A(Dv�  p    1e1 o� 1::� d �:u�(  x\ne[e 9  p v[�:( td � �   21s8 �  r  to\np p:ya    u� e� u �as�  �h Iv[�\n�o� a a�r",
+        "gen": " x �  A(Dv�  p    1e1 o� 1::� d �:u�(  x\ne[e 9  p v[�:( td � �   21s8 �  r  to\np p:ya    u� e� u �as�  �h Iv[�\n�o� a a�r",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.3,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "What is consciousness?b5d  a        h        a    � ,5i       \n      �                  ]   �    )           �\u0007   �     �o �r5  �       :     ",
+        "gen": "b5d  a        h        a    � ,5i       \n      �                  ]   �    )           �\u0007   �     �o �r5  �       :     ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.06666666666666667,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    },
+    "User: Hi\nAssistant:": {
+      "greedy": {
+        "full": "User: Hi\nAssistant:                                                                                                                        ",
+        "gen": "                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "User: Hi\nAssistant:1h�i�oa� ��o�t (o9 pet �  6p: aD�h  ta5�A5 .�D s�x �.ie�5voi� a�1d  h1 �(6t [o6.e s�1 y�\n[ a[x.\n� y.sy   ���:4�� �ius �",
+        "gen": "1h�i�oa� ��o�t (o9 pet �  6p: aD�h  ta5�A5 .�D s�x �.ie�5voi� a�1d  h1 �(6t [o6.e s�1 y�\n[ a[x.\n� y.sy   ���:4�� �ius �",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.3445378151260504,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "User: Hi\nAssistant:x�h6u�  68  sA u���i  d�isA  � \n�9( 2  � d    1 6 h psra  ai x h   t� (e  u5( D  \n� p 9  �i itei : ii� to9�2�� 6 1d�� r",
+        "gen": "x�h6u�  68  sA u���i  d�isA  � \n�9( 2  � d    1 6 h psra  ai x h   t� (e  u5( D  \n� p 9  �i itei : ii� to9�2�� 6 1d�� r",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.31092436974789917,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "User: Hi\nAssistant:     Eo    F \n 8  ��    �  \no�  2i �            �  u �  : A    a 1D �   p        5    � r      aI     t   ,�  p :�     ",
+        "gen": "     Eo    F \n 8  ��    �  \no�  2i �            �  u �  : A    a 1D �   p        5    � r      aI     t   ,�  p :�     ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.12605042016806722,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    }
+  },
+  "c2": {
+    "Once upon a time": {
+      "greedy": {
+        "full": "Once upon a time                                                                                                                        ",
+        "gen": "                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Once upon a timea�  5oh14es  u �� \n�dh.p([�45u:s�p�tp�9u ph�� ��.4 2d [o D6 2vpy�ep\n12 9[�e�v [6hou: ia� 9e.�� I  (xdpi415 5y 8\ni\n�9t e",
+        "gen": "a�  5oh14es  u �� \n�dh.p([�45u:s�p�tp�9u ph�� ��.4 2d [o D6 2vpy�ep\n12 9[�e�v [6hou: ia� 9e.�� I  (xdpi415 5y 8\ni\n�9t e",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.35294117647058826,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "Once upon a timee(o 4 \n uvd� s 191�y�\n:u:pao � ( A�ai� � 5� t ( yp6  s�v d1A.ap4 2�5 u [ e�2y . as e2r �e  (9:�hedy� a� i   �  op i: ",
+        "gen": "e(o 4 \n uvd� s 191�y�\n:u:pao � ( A�ai� � 5� t ( yp6  s�v d1A.ap4 2�5 u [ e�2y . as e2r �e  (9:�hedy� a� i   �  op i: ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.3418803418803419,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "Once upon a time    a-d  yd 9u�  u a    aa i         i    �      :   �w  :       �      �     [ �  4             � i�p 5   s�[    9 5   ",
+        "gen": "    a-d  yd 9u�  u a    aa i         i    �      :   �w  :       �      �     [ �  4             � i�p 5   s�[    9 5   ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.125,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    },
+    "Q:": {
+      "greedy": {
+        "full": "Q:                                                                                                                        ",
+        "gen": "                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "Q: p 1s5826 AhD�:i2a��s  ro5 \n� a6�oe  As�(  �� a6at�Ad(:ha9.:\nd I�o5u (r Av[vep�xv�  .2�AoA�9[�  �vv1�5y9 s �o�Di�dA4(26.",
+        "gen": " p 1s5826 AhD�:i2a��s  ro5 \n� a6�oe  As�(  �� a6at�Ad(:ha9.:\nd I�o5u (r Av[vep�xv�  .2�AoA�9[�  �vv1�5y9 s �o�Di�dA4(26.",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.38333333333333336,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "Q:    �ao A2a � he4�o(�5x�6p  e 5 �  �o � � h 5(   �v(o\n s  e u[a [    D\n o  t   u  s �ed:y [ a2x4a2 s:8trt a1  9   �\n A\n",
+        "gen": "    �ao A2a � he4�o(�5x�6p  e 5 �  �o � � h 5(   �v(o\n s  e u[a [    D\n o  t   u  s �ed:y [ a2x4a2 s:8trt a1  9   �\n A\n",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.29411764705882354,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "Q: 3    4 :�  [6   �       s      i u �2  �:   e               a:   5          )�  \n       d;�       i 6    �i i    �q �  ",
+        "gen": " 3    4 :�  [6   �       s      i u �2  �:   e               a:   5          )�  \n       d;�       i 6    �i i    �q �  ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.08333333333333333,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    },
+    "(empty)": {
+      "greedy": {
+        "full": "\n                                                                                                                        ",
+        "gen": "\n                                                                                                                        ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.0,
+        "byte_garbage": false,
+        "coherent": false
+      },
+      "sample_t07_k40": {
+        "full": "\n��.x 6(..a:�16y1\n� ih   y xr  5e5k�oa�d :ohx�5A�  8h ea�y �1u� 9�4[5�yo��i sa i5xi5 iI�o�so6 4 tpp�rg:8i5 � :e6�e s ",
+        "gen": "\n��.x 6(..a:�16y1\n� ih   y xr  5e5k�oa�d :ohx�5A�  8h ea�y �1u� 9�4[5�yo��i sa i5xi5 iI�o�so6 4 tpp�rg:8i5 � :e6�e s ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.37606837606837606,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t05_k40": {
+        "full": "\n[ \n.6:  5    9soid y�:u �:65  o h2     6ui p  � y 2 �[otp o�1  o  p u oi ii iy�.:p  e� .h2�    e  s \n s ek   D:� �:  (sa",
+        "gen": "\n[ \n.6:  5    9soid y�:u �:65  o h2     6ui p  � y 2 �[otp o�1  o  p u oi ii iy�.:p  e� .h2�    e  s \n s ek   D:� �:  (sa",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.2975206611570248,
+        "byte_garbage": false,
+        "coherent": true
+      },
+      "sample_t03_k80": {
+        "full": "\n  t�  i  2a        e D    �   �a     o �   1 s    �h ,so �   Nw   2             i       ha5 �s  8�   �    ?  ir  1      ",
+        "gen": "\n  t�  i  2a        e D    �   �a     o �   1 s    �h ,so �   Nw   2             i       ha5 �s  8�   �    ?  ir  1      ",
+        "hangul_ratio": 0.0,
+        "ascii_letter_ratio": 0.15702479338842976,
+        "byte_garbage": false,
+        "coherent": false
+      }
+    }
+  },
+  "verdict": {
+    "label": "PARTIAL_C2_only",
+    "ko_pass_n": 0,
+    "en_pass_n": 1,
+    "c2_pass_n": 3,
+    "c1_ko_pass": false,
+    "c1_en_pass": false,
+    "c2_full_pass": true
+  }
+}

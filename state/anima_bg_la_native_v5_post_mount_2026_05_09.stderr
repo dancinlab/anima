@@ -1,0 +1,7 @@
+[clm_v5_mount] v5-measure cmd = /Users/ghost/core/anima/.venv-eeg/bin/python /tmp/clm_v5_mount_helper.hexa_tmp --mode v5-measure --ckpt '/Users/ghost/.cache/anima/clm_v5_remapped/bg_la_350m_pretrain/ckpts/step_12000_final_bglb_schema.pt' --preset la_350m --output-format json --projection-strategy mean_group_spread --v14-mirror-seed 42
+[clm_v5_mount] C1 5-axis projection (16 cells → 5 axes via mean group-spread 3+3+3+3+4) is anima-internal heuristic; NO axis label was learned during pretrain
+[clm_v5_mount] C2 Engine A/G engine_g.cell_pool_init is learnable; pretrained values reflect optimization signal, not phenomenal-axis ground truth
+[clm_v5_mount] C3 ckpt schema 'engine_a_g_arch/v1' loaded via raw torch.load (NOT AutoModelForCausalLM) — no HF-format transformers compatibility layer
+[clm_v5_mount] C4 native v5 metrics (PIV/DCR/D-RAND) computed against axis activation; V14 strict gate auto-FAIL if random_init mirror ≥ trained - 0.02
+[clm_v5_mount] C5 own 16 strict — local CPU only, no H100 fire from this surface; pod-state verify upstream
+[clm_v5_mount] C6 Path 3 generate (chat lane) NOT EXPOSED here — Engine A/G byte-pair gen lives in anima_native_byte_mount.hexa for v5 substrate

@@ -1,0 +1,37 @@
+hexa-resolver: route=darwin-bypass reason=darwin-native marker present
+qmirror selftest — full Phase 1 + Phase 2 falsifier sweep
+  modules: F1(amps_re_im) F2(amplitude correlator) F3(CHSH) F4(phi-star) F5(Braket reproduce)
+
+[qmirror/selftest] qmirror falsifier sweep (F1 + F2 + F3 + F4 + F5)
+  bridge path = /Users/ghost/core/qmirror/modules/_python_bridge/aer_runner.py
+F1 MOCK NEXUS_QMIRROR_LIVE not set; skipping live ANU probe (CI-safe default)
+F2 PASS n=5/5 max_amp_err=0
+F3 PASS S=2.838 trials=1000 violation=13.2499sigma
+F4 PASS phi_min=13.361 phi_mean=13.4189 parts=4 msg=F4: phi_measure(Bell-derived) finite
+F5 PASS n=4/4 engine=mock msg=F5 cond.6: all 4 systems byte-identical match
+__QMIRROR_SELFTEST__ PASS
+
+--- cond table (8/8 verdict) ---
+  cond.1 (CHSH viol)        F3 PASS S=2.838 trials=1000 violation=13.2499sigma
+  cond.2 (amp correlator)   F2 PASS n=5/5 max_amp_err=0
+  cond.3 (q-c separation)   F3 PASS S=2.838 trials=1000 violation=13.2499sigma
+  cond.4 (phi-star MIP)     F4 PASS phi_min=13.361 phi_mean=13.4189 parts=4 msg=F4: phi_measure(Bell-derived) finite
+  cond.5 (entropy LCG det)  F1 MOCK NEXUS_QMIRROR_LIVE not set; skipping live ANU probe (CI-safe default)
+  cond.6 (Braket reproduce) F5 PASS n=4/4 engine=mock msg=F5 cond.6: all 4 systems byte-identical match
+  cond.7 (ANU 4-tier)       (live; check qrng subcmd)
+  cond.8 (overall sweep)    PASS
+
+  verdict: PASS (8/8)
+{"qmirror":"1.0.0","subcmd":"selftest","verdict":"PASS","cond_met":8}
+
+--- caveats (raw#10 C3) ---
+  1. CLI surface limited: 6 subcmds expose ~core ~10% of qmirror functionality
+     (chsh/qrng/iit/phi advanced flags reachable only via direct hexa run).
+  2. Real-QPU subcommands (chsh --vendor=ionq|rigetti|ibm) require API keys
+     in env (IONQ_API_KEY, etc); without keys → mock fallback only.
+  3. selftest assumes infrastructure intact — _python_bridge present, ANU mock
+     fixtures readable, Braket fixture dir exists; missing → individual F* FAIL.
+  4. Future cond additions need router updates — current 8/8 cond hardcoded;
+     adding cond.9+ requires editing cli/qmirror.hexa dispatcher.
+  5. Standalone-extraction caveat: env vars still NEXUS_QMIRROR_* prefixed (load-bearing
+     for backward compat); QMIRROR_* alias migration deferred to sister cycle.
