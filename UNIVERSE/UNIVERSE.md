@@ -81,8 +81,9 @@
   - [x] H_350 `savant-index-phi-diversity` — **🟢 SUPPORTED-NUMERICAL** (Pearson r=0.9264 · Spearman ρ=0.8825 · N=40 samples · sensitivity std/mean r=0.99 robust) — H_350_savant_index_phi_diversity.md, $0 mac-local 2026-05-28
   - [x] H_347 `gz-width-divisor-symmetry` — **🟢 SUPPORTED composite** (formal `divisor_count(6)=4` 🔵 atlas-resident + numerical `ln(4/3)=0.287682` 🟢 |Δ|=1e-11) — H_347_gz_width_divisor_symmetry.md, $0 mac-local 2026-05-28 (PR #1149 H_326→H_347 rename)
   - [x] H_351 `gz-inverse-u-phi-derivative-peak` — **🟢 SUPPORTED 5/5** (peak I=0.18 vs GZ_LOWER=0.21232 |Δ|=0.03232 ≤ 0.05, unimodal sign-change=0, rule 110 n=4 ECA + inhibition-mixing, $0 mac-local 2026-05-28) — H_351_gz_inverse_u_phi_derivative_peak.md
-- [ ] E2 — round 1 결과 기반 후속 H seed (cross-link: SAVANT × IIT4 Φ-structure / SAVANT × HIVE-MIND 결합)
+- [ ] E2 — round 2 seed (H_347/H_350 follow-up · cross-link: SAVANT × IIT4 Φ-structure / SAVANT × HIVE-MIND):
   - [x] H_613 `savant-index-phi-diversity-orthogonal-metric` — **🟢 SUPPORTED-NUMERICAL** (Pearson r(SI, ΦD_cov)=0.9896 · ρ=0.9482 · 보조 r(SI, ΦD_kurt)=0.5381 · N=40 · max-share artifact 가설 기각 — H_350 §7 C3.1 honest constraint 해소, orthogonal CoV/kurtosis 도 정렬 보존) — H_613_savant_index_phi_diversity_orthogonal_metric.md, $0 mac-local 2026-05-28 (H_350 follow-up)
+  - [x] H_615 `perfect-number-ladder-n28` — **🟢 SUPPORTED-NUMERICAL (composite)** (3/3 perfect numbers `n ∈ {6, 28, 496}` ladder `ln(τ(n)/(τ(n)-1))` PASS — n=28 ln(6/5)=0.18232 |Δ|=0.0 + n=496 ln(10/9)=0.10536 |Δ|=1e-11 + τ(28)=6/τ(496)=10 🔵 closed-form; **F6 caveat** — control non-perfect n=12 τ=6 동일 ladder prediction → τ-keyed generic, perfect-specific 약주장 falsified) — H_615_perfect_number_ladder_n28.md, $0 mac-local 2026-05-28 (H_347 ladder expansion)
 
 ### 축 F — HIVE-MIND (Collective Φ) — NEW 2026-05-28
 > Hc_286/297/590/1244 백로그 + 인프라 코드(`tool/hivemind_collective_spec.hexa` · `anima-engines/hive_state_sync.hexa` · `bench/bench_hivemind_*.hexa` ×6 · `tests/test_hivemind_*.hexa` ×5) 풍부한데 UNIVERSE H 인덱스 안 = 0. 본 축이 다중 substrate pair 의 collective big-Φ vs 합·polarity·동기 latency·PID synergy·cross-substrate TE 를 verify-driven 으로 정량.
