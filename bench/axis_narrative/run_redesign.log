@@ -1,0 +1,37 @@
+═══════════════════════════════════════════════════════════
+  AXISBENCH C  —  NARRATIVE  (REDESIGN — A1 modeling-gap fix)
+  chance-corrected immediate-prior coherence
+  N_TURNS=100  TOKENS_PER=5  VOCAB=64
+  e_chance (random baseline overlap) = 0.0757214
+═══════════════════════════════════════════════════════════
+
+[A] COHERENT   mean_coh = 0.504141
+[B] DRIFT      mean_coh = 0.333189
+[C] FRAGMENTED mean_coh = 0.0307075
+
+─── redesigned falsifier matrix ───
+  [PASS] F1 COHERENT_HIGH   (coh_coherent  > 0.50)
+  [PASS] F2 FRAGMENTED_LOW  (coh_fragmented < 0.15)
+  [PASS] F3 DRIFT_MID       (frag < drift < coherent)
+  [PASS] F4 ORDERING        (coherent > drift > fragmented)
+  [PASS] F5 SEPARATION      (coh_coherent - coh_fragmented > 0.30)
+
+═══════════════════════════════════════════════════════════
+  PASS = 5  /  FAIL = 0
+  VERDICT  =  🟢 PASS — narrative thread discriminable (5/5 strict)
+═══════════════════════════════════════════════════════════
+
+JSON_BEGIN
+{
+  "bench": "AXISBENCH C NARRATIVE REDESIGN",
+  "metric": "chance-corrected immediate-prior coherence",
+  "e_chance": 0.0757214,
+  "scenarios": {
+    "coherent":   { "mean_coh": 0.504141 },
+    "drift":      { "mean_coh": 0.333189 },
+    "fragmented": { "mean_coh": 0.0307075 }
+  },
+  "falsifiers": { "PASS": 5, "FAIL": 0 },
+  "verdict": "🟢 PASS — narrative thread discriminable (5/5 strict)"
+}
+JSON_END
