@@ -1,0 +1,54 @@
+{
+  "id": "H_322",
+  "slug": "circadian-kuramoto-sync",
+  "date": "2026-05-27",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "config": {
+    "N": 16,
+    "steps": 2000,
+    "warm": 1500,
+    "dt": 0.05,
+    "omega_std": 1.0,
+    "omega_quantiles_z": [-1.28, -0.52, 0.0, 0.52, 1.28]
+  },
+  "K_sweep": [0.0, 0.5, 1.0, 1.5, 2.0, 3.0, 5.0],
+  "r_mean_per_K": [
+    0.05781,
+    0.395515,
+    0.406086,
+    0.445248,
+    0.814259,
+    0.94718,
+    0.982931
+  ],
+  "r_final_per_K": [
+    0.0469462,
+    0.0439746,
+    0.224768,
+    0.249197,
+    0.814259,
+    0.94718,
+    0.982931
+  ],
+  "Kc_analytic_meanfield": 1.59577,
+  "Kc_measured_r05_midpoint": 1.75,
+  "max_slope": 0.738023,
+  "max_slope_idx": 3,
+  "avg_slope": 0.185024,
+  "falsifiers": {
+    "F322_1_incoherent_at_zero":     true,
+    "F322_2_coherent_at_large":      true,
+    "F322_3_boundary_real":          true,
+    "F322_4_monotone_rise":          true,
+    "F322_5_nonlinear_transition":   true,
+    "F322_6_Kc_locatable":           true,
+    "F322_7_r_bounds_respected":     true
+  },
+  "criteria_met": 7,
+  "criteria_total": 7,
+  "verdict": "SUPPORTED_NUMERICAL",
+  "tier": "🟢"
+}
