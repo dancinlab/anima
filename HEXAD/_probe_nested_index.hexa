@@ -1,9 +1,0 @@
-// HEXAD/_probe_nested_index.hexa — toolchain probe fixture for build_verify.
-// 3-level nested mutable index-assign through a string-keyed dict — the
-// EXACT shape that needs hexa-lang ≥0fccac5c codegen (_gen2_nested_index_
-// assign_stmt). A stale toolchain emits "expression is not assignable".
-fn main() {
-    let mut cp = #{ "L": [ #{ "h": 1 } ] }
-    cp["L"][0]["h"] = 7
-    print(to_string(cp["L"][0]["h"]))
-}
