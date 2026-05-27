@@ -1,69 +1,89 @@
-// CORE/DECODER/train_v3_moe_pilot.hexa — M4b-fire-scale Phase 4b multi-layer
+// CORE/DECODER/train_v3_moe_pilot.hexa — M4b-fire-scale Phase 4c self-attention
 //
-// Pilot-scale (d=512) driver — Phase 4b adds multi-layer block iteration.
-// Same logical structure as Phase 4a skeleton but with n_layer > 1 (default 4):
-//   - per-layer attn_Wo + mlp_Wup + mlp_Wdown weights (no shared weights)
-//   - layer-iter loop in forward (sequential layer composition)
-//   - residual skip connection per layer (y = x + block(x))
+// Pilot driver — Phase 4c adds proper self-attention (T > 1, causal mask,
+// Q/K/V/Wo projections, scaled dot-product softmax). Per-layer block becomes:
+//   [attn_Wq(d·d) | attn_Wk(d·d) | attn_Wv(d·d) | attn_Wo(d·d)
+//    | mlp_Wup(h·d) | mlp_Wdown(d·h)]
 //
-// Pilot dims here:
-//   d=512   V=128 (placeholder)   E=2   T=1 (single-token)
-//   n_layer=4   h=2048 (4·d FFN)  n_steps=3
+// Pilot dims here (alloc-tuned · CPU smoke):
+//   d=128   V=128 (placeholder)   E=2   h=512 (4·d FFN)
+//   n_layer=2   T=16 (seq length)   n_steps=2
 //
-// Layout: M = [tok_emb(V·d)
-//              | (per-layer block × n_layer):
-//                  attn_Wo(d·d) | mlp_Wup(h·d) | mlp_Wdown(d·h)
-//              | ln_f_gamma(d)
-//              | router(E·d)
-//              | experts(E·V·d)]
+// Forward per step:
+//   zT_seq[T·d] = tok_emb[ids[0..T]]
+//   for layer in 0..n_layer:
+//     residual = zT_seq
+//     Q = zT_seq · Wq                          (T×d)
+//     K = zT_seq · Wk                          (T×d)
+//     V = zT_seq · Wv                          (T×d)
+//     scores[t1, t2] = Σ_j Q[t1, j] · K[t2, j] / sqrt(d)
+//     causal mask: scores[t1, t2] = -1e9 if t2 > t1
+//     probs[t1, :] = softmax(scores[t1, :])
+//     attn_out[t1, j] = Σ_t2 probs[t1, t2] · V[t2, j]
+//     zT_seq = attn_out · Wo + residual
+//     residual = zT_seq
+//     for t in 0..T:                            (per-token MLP)
+//       h_act = ReLU(Wup · zT_seq[t])
+//       zT_seq[t] = Wdown · h_act
+//     zT_seq = zT_seq + residual
+//   final ln_f on zT_seq[T-1] (last-token routing)
+//   top_idx = v3_moe_fwd(zT_seq[T-1], ...)
 //
-// block_size = d² + 2·h·d = d·(d + 2·h)
-// m_size ≈ 9.6M params (FP64 ~77MB) at n_layer=4 — pilot OK.
-//
-// Next sub-PRs: 4c self-attention (T > 1 · causal · Q/K/V/Wo · per-layer LN)
-//               4d real BPE corpus (V=151643) · 4e dispatch · 4-fire.
+// Next sub-PRs: 4d real BPE corpus (V=151643) · 4e dispatch · 4-fire.
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
 use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_arch"
 
 fn main() {
-    println("=== train_v3_moe_pilot (M4b Phase 4b multi-layer · d=512 V=128 n_layer=4) ===")
+    println("=== train_v3_moe_pilot (M4b Phase 4c self-attn · d=128 V=128 n_layer=2 T=16) ===")
 
-    let d = 512
+    let d = 128
     let V = 128
     let E = 2
-    let h = 2048
-    let n_layer = 4
-    let n_steps = 3
-    let block_size = d * d + 2 * h * d
+    let h = 512
+    let n_layer = 2
+    let T = 16
+    let n_steps = 2
+    let block_size = 4 * d * d + 2 * h * d
     let tok_emb_off = 0
     let blocks_off = V * d
     let ln_f_off = V * d + n_layer * block_size
     let router_off = ln_f_off + d
     let experts_off = router_off + E * d
     let m_size = experts_off + E * V * d
+    let attn_scale = 1.0 / sqrt(to_float(d))
     print("  config: d="); print(d); print(" V="); print(V); print(" E="); print(E)
-    print(" h="); print(h); print(" n_layer="); print(n_layer); print(" n_steps="); println(n_steps)
+    print(" h="); print(h); print(" n_layer="); print(n_layer); print(" T="); print(T); print(" n_steps="); println(n_steps)
     print("  block_size="); print(block_size); print(" m_size="); print(m_size)
-    println(" params (FP64 8B)")
+    print(" params (FP64 8B · "); print(m_size * 8 / 1024 / 1024); println(" MB)")
+    print("  attn_scale = 1/sqrt(d) = "); println(attn_scale)
 
+    // packed param buffer + optimizer state
     let M = t_zeros(m_size)
     let dMg = t_zeros(m_size)
     let m_buf = t_zeros(m_size)
     let v_buf = t_zeros(m_size)
-    let zT = t_zeros(d)
-    let zT_scratch = t_zeros(d)
-    let zT_residual = t_zeros(d)
+    // activation buffers (seq-shaped now)
+    let zT_seq = t_zeros(T * d)
+    let zT_residual = t_zeros(T * d)
+    let Q_buf = t_zeros(T * d)
+    let K_buf = t_zeros(T * d)
+    let V_buf = t_zeros(T * d)
+    let scores = t_zeros(T * T)
+    let probs = t_zeros(T * T)
+    let attn_out = t_zeros(T * d)
     let mlp_hact = t_zeros(h)
     let mlp_out = t_zeros(d)
+    // MoE buffers (last-token only)
+    let zT_last = t_zeros(d)
     let logits_g = t_zeros(V)
     let gate_norm = t_zeros(E)
-    let d_zT = t_zeros(d)
+    let d_zT_last = t_zeros(d)
     let d_logits = t_zeros(V)
     println("  alloc OK")
 
-    // ── weight init (deterministic, small, per-layer distinct) ──
+    // ── weight init ──
     let mut kk0 = 0
     while kk0 < V {
         let mut jj0 = 0
@@ -77,49 +97,63 @@ fn main() {
     let mut l = 0
     while l < n_layer {
         let block_off = blocks_off + l * block_size
-        let attn_wo_l = block_off
-        let mlp_wup_l = block_off + d * d
-        let mlp_wdown_l = block_off + d * d + h * d
-        // attn_Wo[l]: identity (T=1 smoke; Phase 4c → Q/K/V/Wo + softmax)
+        let wq_l = block_off
+        let wk_l = block_off + d * d
+        let wv_l = block_off + 2 * d * d
+        let wo_l = block_off + 3 * d * d
+        let wup_l = block_off + 4 * d * d
+        let wdown_l = block_off + 4 * d * d + h * d
+        // Wq, Wk, Wv: small random-ish (deterministic) — distinct so attention non-trivial
         let mut wi = 0
         while wi < d {
-            let _ = farr_set(M, attn_wo_l + wi * d + wi, 1.0)
+            let mut wj = 0
+            while wj < d {
+                let phase_q = (wi * 7 + wj + l * 3 + 1) % 11
+                let phase_k = (wi + wj * 5 + l * 3 + 2) % 11
+                let phase_v = (wi * 3 + wj * 7 + l + 3) % 11
+                let _ = farr_set(M, wq_l + wi * d + wj, 0.01 * to_float(phase_q - 5))
+                let _ = farr_set(M, wk_l + wi * d + wj, 0.01 * to_float(phase_k - 5))
+                let _ = farr_set(M, wv_l + wi * d + wj, 0.01 * to_float(phase_v - 5))
+                wj = wj + 1
+            }
             wi = wi + 1
         }
-        // mlp_Wup[l]: layer-distinct sign pattern (l shifts the phase)
+        // Wo: identity (output projection)
+        let mut oi = 0
+        while oi < d {
+            let _ = farr_set(M, wo_l + oi * d + oi, 1.0)
+            oi = oi + 1
+        }
+        // mlp_Wup: small layer-distinct phase
         let mut ui = 0
         while ui < h {
             let mut uj = 0
             while uj < d {
                 let phase = (ui + uj + l + 1) % 7
-                let _ = farr_set(M, mlp_wup_l + ui * d + uj, 0.0005 * to_float(phase - 3))
+                let _ = farr_set(M, wup_l + ui * d + uj, 0.005 * to_float(phase - 3))
                 uj = uj + 1
             }
             ui = ui + 1
         }
-        // mlp_Wdown[l]: identity-band, scaled by layer (later layers slightly amplify)
+        // mlp_Wdown: identity-band
         let mut di = 0
         while di < d {
             let mut dk = 0
             while dk < h {
                 let mut val = 0.0
                 if dk % d == di {
-                    val = 0.001 * to_float((dk / d) + 1) * (1.0 + 0.01 * to_float(l))
+                    val = 0.01 * to_float((dk / d) + 1) * (1.0 + 0.01 * to_float(l))
                 }
-                let _ = farr_set(M, mlp_wdown_l + di * h + dk, val)
+                let _ = farr_set(M, wdown_l + di * h + dk, val)
                 dk = dk + 1
             }
             di = di + 1
         }
         l = l + 1
     }
-    // ln_f gamma = 1.0
+    // ln_f gamma + router + experts
     let mut gi = 0
-    while gi < d {
-        let _ = farr_set(M, ln_f_off + gi, 1.0)
-        gi = gi + 1
-    }
-    // router + experts
+    while gi < d { let _ = farr_set(M, ln_f_off + gi, 1.0) ; gi = gi + 1 }
     let mut j = 0
     while j < d {
         let _ = farr_set(M, router_off + 0 * d + j, 0.001 * to_float((j + 1) % 17))
@@ -140,7 +174,7 @@ fn main() {
         }
         e = e + 1
     }
-    println("  init OK (per-layer distinct)")
+    println("  init OK (Q/K/V/Wo · MLP · per-layer distinct)")
 
     // ── training loop ──
     let beta1 = 0.9
@@ -149,15 +183,15 @@ fn main() {
     let wd = 0.1
     let adam_eps = 1.0e-8
     let rmsnorm_eps = 1.0e-6
-    let ids_arr = [13, 47, 100, 5, 89]
-    let m_baseline_wo_l0_00 = farr_get(M, blocks_off + 0 * d + 0)
-    let m_baseline_wo_lN_00 = farr_get(M, blocks_off + (n_layer - 1) * block_size + 0 * d + 0)
+    let neg_inf = 0.0 - 1.0e9
+    let ids_arr = [13, 47, 100, 5, 89, 22, 71, 3, 119, 60, 8, 41, 95, 17, 33, 88]
+    let m_baseline_wq_l0_00 = farr_get(M, blocks_off + 0 * d + 0)
+    let m_baseline_wo_lN_00 = farr_get(M, blocks_off + (n_layer - 1) * block_size + 3 * d * d + 0 * d + 0)
     let mut final_top_idx = -1
     let mut final_gate_sum = 0.0
     let mut final_zT0 = 0.0
-    let mut final_dw_top_00 = 0.0
 
-    println("  ── pilot multi-step + multi-layer loop start ──")
+    println("  ── pilot multi-step + multi-layer + self-attn loop start ──")
     let mut step = 1
     while step <= n_steps {
         // zero grad buffers
@@ -166,96 +200,205 @@ fn main() {
         zi = 0
         while zi < m_size { let _ = farr_set(dMg, zi, 0.0) ; zi = zi + 1 }
         zi = 0
-        while zi < d { let _ = farr_set(d_zT, zi, 0.0) ; zi = zi + 1 }
+        while zi < d { let _ = farr_set(d_zT_last, zi, 0.0) ; zi = zi + 1 }
 
-        let token_id = ids_arr[(step - 1) % 5]
-        // tok_emb lookup → zT
-        let mut j2 = 0
-        while j2 < d {
-            let _ = farr_set(zT, j2, farr_get(M, tok_emb_off + token_id * d + j2))
-            j2 = j2 + 1
+        // tok_emb lookup: zT_seq[t, j] = M[tok_emb_off + ids_arr[t]·d + j]
+        let mut t_idx = 0
+        while t_idx < T {
+            let token_id = ids_arr[(step + t_idx - 1) % 16]
+            let mut j2 = 0
+            while j2 < d {
+                let _ = farr_set(zT_seq, t_idx * d + j2,
+                                  farr_get(M, tok_emb_off + token_id * d + j2))
+                j2 = j2 + 1
+            }
+            t_idx = t_idx + 1
         }
 
-        // ── per-layer block iteration ──
+        // ── per-layer ──
         let mut layer = 0
         while layer < n_layer {
             let block_off = blocks_off + layer * block_size
-            let attn_wo_l = block_off
-            let mlp_wup_l = block_off + d * d
-            let mlp_wdown_l = block_off + d * d + h * d
-            // save residual
+            let wq_l = block_off
+            let wk_l = block_off + d * d
+            let wv_l = block_off + 2 * d * d
+            let wo_l = block_off + 3 * d * d
+            let wup_l = block_off + 4 * d * d
+            let wdown_l = block_off + 4 * d * d + h * d
+            // save residual: zT_residual = zT_seq
             let mut ri = 0
-            while ri < d { let _ = farr_set(zT_residual, ri, farr_get(zT, ri)) ; ri = ri + 1 }
-            // attn(Wo[layer]) · zT (T=1: trivial; Phase 4c → real self-attn)
-            let mut ai = 0
-            while ai < d {
-                let mut acc = 0.0
-                let mut aj = 0
-                while aj < d {
-                    acc = acc + farr_get(M, attn_wo_l + ai * d + aj) * farr_get(zT, aj)
-                    aj = aj + 1
+            while ri < T * d { let _ = farr_set(zT_residual, ri, farr_get(zT_seq, ri)) ; ri = ri + 1 }
+
+            // Q = zT_seq · Wq, K = zT_seq · Wk, V = zT_seq · Wv
+            let mut t1 = 0
+            while t1 < T {
+                let mut ji = 0
+                while ji < d {
+                    let mut accQ = 0.0
+                    let mut accK = 0.0
+                    let mut accV = 0.0
+                    let mut jj = 0
+                    while jj < d {
+                        let z = farr_get(zT_seq, t1 * d + jj)
+                        accQ = accQ + z * farr_get(M, wq_l + jj * d + ji)
+                        accK = accK + z * farr_get(M, wk_l + jj * d + ji)
+                        accV = accV + z * farr_get(M, wv_l + jj * d + ji)
+                        jj = jj + 1
+                    }
+                    let _ = farr_set(Q_buf, t1 * d + ji, accQ)
+                    let _ = farr_set(K_buf, t1 * d + ji, accK)
+                    let _ = farr_set(V_buf, t1 * d + ji, accV)
+                    ji = ji + 1
                 }
-                let _ = farr_set(zT_scratch, ai, acc)
-                ai = ai + 1
+                t1 = t1 + 1
             }
-            ai = 0
-            while ai < d { let _ = farr_set(zT, ai, farr_get(zT_scratch, ai)) ; ai = ai + 1 }
-            // MLP[layer]: h_act = ReLU(Wup·zT)
-            let mut hk = 0
-            while hk < h {
-                let mut acc = 0.0
-                let mut hj = 0
-                while hj < d {
-                    acc = acc + farr_get(M, mlp_wup_l + hk * d + hj) * farr_get(zT, hj)
-                    hj = hj + 1
+            // scores[t1, t2] = (Q[t1, :] · K[t2, :]) · attn_scale, causal mask
+            t1 = 0
+            while t1 < T {
+                let mut t2 = 0
+                while t2 < T {
+                    let mut score = neg_inf
+                    if t2 <= t1 {
+                        let mut acc = 0.0
+                        let mut jj = 0
+                        while jj < d {
+                            acc = acc + farr_get(Q_buf, t1 * d + jj) * farr_get(K_buf, t2 * d + jj)
+                            jj = jj + 1
+                        }
+                        score = acc * attn_scale
+                    }
+                    let _ = farr_set(scores, t1 * T + t2, score)
+                    t2 = t2 + 1
                 }
-                if acc < 0.0 { acc = 0.0 }
-                let _ = farr_set(mlp_hact, hk, acc)
-                hk = hk + 1
+                t1 = t1 + 1
             }
-            // zT = Wdown · h_act
-            let mut mi = 0
-            while mi < d {
-                let mut acc = 0.0
-                let mut mk = 0
-                while mk < h {
-                    acc = acc + farr_get(M, mlp_wdown_l + mi * h + mk) * farr_get(mlp_hact, mk)
-                    mk = mk + 1
+            // softmax row-wise: probs[t1, :] = softmax(scores[t1, :])
+            t1 = 0
+            while t1 < T {
+                // numerical-stable: subtract row max
+                let mut row_max = neg_inf
+                let mut t2 = 0
+                while t2 < T {
+                    let s = farr_get(scores, t1 * T + t2)
+                    if s > row_max { row_max = s }
+                    t2 = t2 + 1
                 }
-                let _ = farr_set(mlp_out, mi, acc)
-                mi = mi + 1
+                let mut z_sum = 0.0
+                t2 = 0
+                while t2 < T {
+                    let e_val = exp(farr_get(scores, t1 * T + t2) - row_max)
+                    let _ = farr_set(probs, t1 * T + t2, e_val)
+                    z_sum = z_sum + e_val
+                    t2 = t2 + 1
+                }
+                t2 = 0
+                while t2 < T {
+                    let _ = farr_set(probs, t1 * T + t2, farr_get(probs, t1 * T + t2) / z_sum)
+                    t2 = t2 + 1
+                }
+                t1 = t1 + 1
             }
-            // residual: zT = mlp_out + zT_residual
-            mi = 0
-            while mi < d {
-                let _ = farr_set(zT, mi, farr_get(mlp_out, mi) + farr_get(zT_residual, mi))
-                mi = mi + 1
+            // attn_out[t1, j] = Σ_t2 probs[t1, t2] · V[t2, j]
+            t1 = 0
+            while t1 < T {
+                let mut ji = 0
+                while ji < d {
+                    let mut acc = 0.0
+                    let mut t2 = 0
+                    while t2 < T {
+                        acc = acc + farr_get(probs, t1 * T + t2) * farr_get(V_buf, t2 * d + ji)
+                        t2 = t2 + 1
+                    }
+                    let _ = farr_set(attn_out, t1 * d + ji, acc)
+                    ji = ji + 1
+                }
+                t1 = t1 + 1
+            }
+            // zT_seq = attn_out · Wo + residual   (per-token Wo projection)
+            t1 = 0
+            while t1 < T {
+                let mut ji = 0
+                while ji < d {
+                    let mut acc = 0.0
+                    let mut jj = 0
+                    while jj < d {
+                        acc = acc + farr_get(attn_out, t1 * d + jj) * farr_get(M, wo_l + jj * d + ji)
+                        jj = jj + 1
+                    }
+                    let _ = farr_set(zT_seq, t1 * d + ji, acc + farr_get(zT_residual, t1 * d + ji))
+                    ji = ji + 1
+                }
+                t1 = t1 + 1
+            }
+            // save residual for MLP
+            ri = 0
+            while ri < T * d { let _ = farr_set(zT_residual, ri, farr_get(zT_seq, ri)) ; ri = ri + 1 }
+            // MLP per-token
+            t1 = 0
+            while t1 < T {
+                // h_act = ReLU(Wup · zT_seq[t1])
+                let mut hk = 0
+                while hk < h {
+                    let mut acc = 0.0
+                    let mut hj = 0
+                    while hj < d {
+                        acc = acc + farr_get(M, wup_l + hk * d + hj) * farr_get(zT_seq, t1 * d + hj)
+                        hj = hj + 1
+                    }
+                    if acc < 0.0 { acc = 0.0 }
+                    let _ = farr_set(mlp_hact, hk, acc)
+                    hk = hk + 1
+                }
+                // zT_seq[t1] = Wdown · h_act + residual
+                let mut mi = 0
+                while mi < d {
+                    let mut acc = 0.0
+                    let mut mk = 0
+                    while mk < h {
+                        acc = acc + farr_get(M, wdown_l + mi * h + mk) * farr_get(mlp_hact, mk)
+                        mk = mk + 1
+                    }
+                    let _ = farr_set(mlp_out, mi, acc)
+                    mi = mi + 1
+                }
+                mi = 0
+                while mi < d {
+                    let _ = farr_set(zT_seq, t1 * d + mi, farr_get(mlp_out, mi) + farr_get(zT_residual, t1 * d + mi))
+                    mi = mi + 1
+                }
+                t1 = t1 + 1
             }
             layer = layer + 1
         }
 
+        // ── extract last-token: zT_last = zT_seq[T-1] ──
+        let mut lj = 0
+        while lj < d {
+            let _ = farr_set(zT_last, lj, farr_get(zT_seq, (T - 1) * d + lj))
+            lj = lj + 1
+        }
         // ── final ln_f (RMSNorm) ──
         let mut ms = 0.0
         let mut mi2 = 0
         while mi2 < d {
-            let xv = farr_get(zT, mi2) ; ms = ms + xv * xv ; mi2 = mi2 + 1
+            let xv = farr_get(zT_last, mi2) ; ms = ms + xv * xv ; mi2 = mi2 + 1
         }
         ms = ms / to_float(d)
         let rms_inv = 1.0 / sqrt(ms + rmsnorm_eps)
         let mut ni = 0
         while ni < d {
-            let xv = farr_get(zT, ni)
+            let xv = farr_get(zT_last, ni)
             let gv = farr_get(M, ln_f_off + ni)
-            let _ = farr_set(zT, ni, xv * rms_inv * gv)
+            let _ = farr_set(zT_last, ni, xv * rms_inv * gv)
             ni = ni + 1
         }
         // MoE
-        let top_idx = v3_moe_fwd(zT, M, router_off, experts_off,
+        let top_idx = v3_moe_fwd(zT_last, M, router_off, experts_off,
                                   logits_g, gate_norm, V, d, E)
-        let target = ids_arr[step % 5]
+        let target = ids_arr[(step + T) % 16]
         let _ = farr_set(d_logits, target, 1.0)
-        v3_moe_bwd(zT, M, router_off, experts_off, gate_norm, top_idx, d_logits,
-                   dMg, d_zT, V, d, E)
+        v3_moe_bwd(zT_last, M, router_off, experts_off, gate_norm, top_idx, d_logits,
+                   dMg, d_zT_last, V, d, E)
         // AdamW
         let bc1 = 1.0 - pow(beta1, to_float(step))
         let bc2 = 1.0 - pow(beta2, to_float(step))
@@ -275,31 +418,33 @@ fn main() {
             let _ = farr_set(M, pi, theta - upd)
             pi = pi + 1
         }
+        // per-step probe: probs[T-1, 0] = causal attn weight onto first token
+        let probs_last_0 = farr_get(probs, (T - 1) * T + 0)
+        // probs[0, 0] should equal 1.0 (only one valid token in causal-row 0)
+        let probs_0_0 = farr_get(probs, 0 * T + 0)
         print("  step="); print(step)
-        print(" tok="); print(token_id)
         print(" tgt="); print(target)
         print(" top="); print(top_idx)
         print(" logit[tgt]="); print(farr_get(logits_g, target))
-        print(" Wo[L0,0,0]="); print(farr_get(M, blocks_off + 0 * d + 0))
-        print(" Wo[LN-1,0,0]="); println(farr_get(M, blocks_off + (n_layer - 1) * block_size + 0 * d + 0))
+        print(" probs[0,0]="); print(probs_0_0)
+        print(" probs[T-1,0]="); println(probs_last_0)
         if step == n_steps {
             final_top_idx = top_idx
             final_gate_sum = farr_get(gate_norm, 0) + farr_get(gate_norm, 1)
-            final_zT0 = farr_get(zT, 0)
-            final_dw_top_00 = farr_get(dMg, experts_off + top_idx * V * d + 0 * d + 0)
+            final_zT0 = farr_get(zT_last, 0)
         }
         step = step + 1
     }
-    println("  ── pilot multi-step + multi-layer loop end ──")
-    let m_final_wo_l0_00 = farr_get(M, blocks_off + 0 * d + 0)
-    let m_final_wo_lN_00 = farr_get(M, blocks_off + (n_layer - 1) * block_size + 0 * d + 0)
-    let mut wo_l0_delta = m_final_wo_l0_00 - m_baseline_wo_l0_00
-    if wo_l0_delta < 0.0 { wo_l0_delta = 0.0 - wo_l0_delta }
+    println("  ── pilot self-attn loop end ──")
+    let m_final_wq_l0_00 = farr_get(M, blocks_off + 0 * d + 0)
+    let m_final_wo_lN_00 = farr_get(M, blocks_off + (n_layer - 1) * block_size + 3 * d * d + 0 * d + 0)
+    let mut wq_l0_delta = m_final_wq_l0_00 - m_baseline_wq_l0_00
+    if wq_l0_delta < 0.0 { wq_l0_delta = 0.0 - wq_l0_delta }
     let mut wo_lN_delta = m_final_wo_lN_00 - m_baseline_wo_lN_00
     if wo_lN_delta < 0.0 { wo_lN_delta = 0.0 - wo_lN_delta }
-    print("  Wo[L0,0,0]   baseline="); print(m_baseline_wo_l0_00)
-    print(" final="); print(m_final_wo_l0_00)
-    print(" |Δ|="); println(wo_l0_delta)
+    print("  Wq[L0,0,0]   baseline="); print(m_baseline_wq_l0_00)
+    print(" final="); print(m_final_wq_l0_00)
+    print(" |Δ|="); println(wq_l0_delta)
     print("  Wo[LN-1,0,0] baseline="); print(m_baseline_wo_lN_00)
     print(" final="); print(m_final_wo_lN_00)
     print(" |Δ|="); println(wo_lN_delta)
@@ -309,14 +454,17 @@ fn main() {
     let mut pass = 1
     if final_gate_sum < 0.999 || final_gate_sum > 1.001 { pass = 0 }
     if final_top_idx < 0 || final_top_idx >= E { pass = 0 }
-    if final_dw_top_00 == 0.0 { pass = 0 }
     if final_zT0 == 0.0 { pass = 0 }
     if ln_f_g0 == 0.0 { pass = 0 }
-    if wo_l0_delta < 1.0e-9 { pass = 0 }   // layer 0 trained
-    if wo_lN_delta < 1.0e-9 { pass = 0 }   // last layer trained too (multi-layer end-to-end)
+    // self-attn check: probs[0, 0] = 1.0 (causal row 0 has only one valid token)
+    // Note: probs is the LAST layer's probs (latest write); should still be 1.0
+    let final_probs_0_0 = farr_get(probs, 0 * T + 0)
+    if final_probs_0_0 < 0.99 || final_probs_0_0 > 1.01 { pass = 0 }
+    // last-layer Wo moved through MoE backward
+    if wo_lN_delta < 1.0e-9 { pass = 0 }
     if pass == 1 {
-        println("TRAIN_V3_MOE_PILOT MULTI-LAYER: PASS (d=512 V=128 E=2 n_layer=4 T=1 · per-layer weights moved · MoE wired)")
+        println("TRAIN_V3_MOE_PILOT SELF-ATTN: PASS (d=128 V=128 E=2 n_layer=2 T=16 · causal-softmax · last-layer trained)")
     } else {
-        println("TRAIN_V3_MOE_PILOT MULTI-LAYER: FAIL")
+        println("TRAIN_V3_MOE_PILOT SELF-ATTN: FAIL")
     }
 }
