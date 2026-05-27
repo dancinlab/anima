@@ -19,6 +19,7 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
+use "/Users/ghost/core/anima/CORE/DECODER/flame_mm"
 
 // ───────────────────────────────────────────────────────────────────────────
 // Phase 4-bwd-1: ln_f RMSNorm backward
@@ -208,80 +209,35 @@ pub fn self_attn_bwd(d_y, zT_seq, Q_buf, K_buf, V_buf, attn_out, probs,
                       wq_off, wk_off, wv_off, wo_off,
                       M, T, d, attn_scale,
                       dMg, d_zT_out) {
-    // dWo[i, j] += Σ_t1 attn_out[t1, i] · d_y[t1, j]
-    let mut i = 0
-    while i < d {
-        let mut j = 0
-        while j < d {
-            let mut acc = 0.0
-            let mut t1 = 0
-            while t1 < T {
-                acc = acc + farr_get(attn_out, t1 * d + i) * farr_get(d_y, t1 * d + j)
-                t1 = t1 + 1
-            }
-            let prev = farr_get(dMg, wo_off + i * d + j)
-            let _ = farr_set(dMg, wo_off + i * d + j, prev + acc)
-            j = j + 1
-        }
-        i = i + 1
-    }
-    // d_attn_out[t, i] = Σ_j d_y[t, j] · Wo[i, j]
-    let d_attn_out = t_zeros(T * d)
-    let mut t = 0
-    while t < T {
-        let mut ii = 0
-        while ii < d {
-            let mut acc = 0.0
-            let mut jj = 0
-            while jj < d {
-                acc = acc + farr_get(d_y, t * d + jj) * farr_get(M, wo_off + ii * d + jj)
-                jj = jj + 1
-            }
-            let _ = farr_set(d_attn_out, t * d + ii, acc)
-            ii = ii + 1
-        }
-        t = t + 1
-    }
-    // d_probs[t1, t2] = Σ_j d_attn_out[t1, j] · V[t2, j]
-    let d_probs = t_zeros(T * T)
-    let mut tp1 = 0
-    while tp1 < T {
-        let mut tp2 = 0
-        while tp2 < T {
-            let mut acc = 0.0
-            let mut jp = 0
-            while jp < d {
-                acc = acc + farr_get(d_attn_out, tp1 * d + jp) * farr_get(V_buf, tp2 * d + jp)
-                jp = jp + 1
-            }
-            let _ = farr_set(d_probs, tp1 * T + tp2, acc)
-            tp2 = tp2 + 1
-        }
-        tp1 = tp1 + 1
-    }
-    // d_V[t2, j] += Σ_t1 probs[t1, t2] · d_attn_out[t1, j]
-    let d_V = t_zeros(T * d)
-    let mut tv2 = 0
-    while tv2 < T {
-        let mut jv = 0
-        while jv < d {
-            let mut acc = 0.0
-            let mut tv1 = 0
-            while tv1 < T {
-                acc = acc + farr_get(probs, tv1 * T + tv2) * farr_get(d_attn_out, tv1 * d + jv)
-                tv1 = tv1 + 1
-            }
-            let _ = farr_set(d_V, tv2 * d + jv, acc)
-            jv = jv + 1
-        }
-        tv2 = tv2 + 1
-    }
-    // softmax bwd per row: d_scores[t1, t2] = probs[t1, t2] · (d_probs[t1, t2] - sum_t1)
-    //   where sum_t1 = Σ_k probs[t1, k] · d_probs[t1, k]
+    // Phase 4-gpu-4a: self_attn_bwd matmul 사이트 → flame_mm.mm() (batched [T×d],
+    // cuBLAS Dgemm on GPU / CPU oracle on Mac). softmax-jvp 만 elementwise loop 유지.
+    // weight 는 packed M 에서 mm_extract, 전치는 mm_transpose (NN-only API).
+
+    // 1) dWo += attn_outᵀ @ d_y : [d×T]@[T×d]=[d×d]  (accumulate)
+    let attn_out_T = mm_transpose(attn_out, T, d)        // [d×T]
+    let dWo_r = mm(attn_out_T, d, T, d_y, d)             // [d×d]
+    mm_scatter_add(dMg, wo_off, dWo_r, d * d)
+    let _ = farr_free(attn_out_T)
+    let _ = farr_free(dWo_r)
+    // 2) d_attn_out = d_y @ Woᵀ : [T×d]@[d×d]=[T×d]   (Woᵀ[j,i]=Wo[i,j])
+    let wo_mat = mm_extract(M, wo_off, d, d)
+    let wo_T = mm_transpose(wo_mat, d, d)
+    let d_attn_out = mm(d_y, T, d, wo_T, d)              // [T×d]
+    let _ = farr_free(wo_mat)
+    let _ = farr_free(wo_T)
+    // 3) d_probs = d_attn_out @ Vᵀ : [T×d]@[d×T]=[T×T]
+    let v_T = mm_transpose(V_buf, T, d)                  // [d×T]
+    let d_probs = mm(d_attn_out, T, d, v_T, T)           // [T×T]
+    let _ = farr_free(v_T)
+    // 4) d_V = probsᵀ @ d_attn_out : [T×T]@[T×d]=[T×d]
+    let probs_T = mm_transpose(probs, T, T)              // [T×T]
+    let d_V = mm(probs_T, T, T, d_attn_out, d)           // [T×d]
+    let _ = farr_free(probs_T)
+    let _ = farr_free(d_attn_out)
+    // 5) softmax jvp (row-wise): d_scores[t1,t2] = probs·(d_probs - Σ_k probs·d_probs)·scale
     let d_scores = t_zeros(T * T)
     let mut ts1 = 0
     while ts1 < T {
-        // row dot product
         let mut row_dot = 0.0
         let mut k = 0
         while k < T {
@@ -297,84 +253,54 @@ pub fn self_attn_bwd(d_y, zT_seq, Q_buf, K_buf, V_buf, attn_out, probs,
         }
         ts1 = ts1 + 1
     }
-    // d_Q[t1, j] = Σ_t2 d_scores[t1, t2] · K[t2, j]
-    let d_Q = t_zeros(T * d)
-    let mut tq1 = 0
-    while tq1 < T {
-        let mut jq = 0
-        while jq < d {
-            let mut acc = 0.0
-            let mut tq2 = 0
-            while tq2 < T {
-                acc = acc + farr_get(d_scores, tq1 * T + tq2) * farr_get(K_buf, tq2 * d + jq)
-                tq2 = tq2 + 1
-            }
-            let _ = farr_set(d_Q, tq1 * d + jq, acc)
-            jq = jq + 1
-        }
-        tq1 = tq1 + 1
+    let _ = farr_free(d_probs)
+    // 6) d_Q = d_scores @ K : [T×T]@[T×d]=[T×d]
+    let d_Q = mm(d_scores, T, T, K_buf, d)
+    // 7) d_K = d_scoresᵀ @ Q : [T×T]@[T×d]=[T×d]
+    let ds_T = mm_transpose(d_scores, T, T)
+    let d_K = mm(ds_T, T, T, Q_buf, d)
+    let _ = farr_free(ds_T)
+    let _ = farr_free(d_scores)
+    // 8) dWq/dWk/dWv += zT_seqᵀ @ d_Q/d_K/d_V : [d×T]@[T×d]=[d×d]  (accumulate)
+    let zT_T = mm_transpose(zT_seq, T, d)                // [d×T]
+    let dWq_r = mm(zT_T, d, T, d_Q, d)
+    let dWk_r = mm(zT_T, d, T, d_K, d)
+    let dWv_r = mm(zT_T, d, T, d_V, d)
+    mm_scatter_add(dMg, wq_off, dWq_r, d * d)
+    mm_scatter_add(dMg, wk_off, dWk_r, d * d)
+    mm_scatter_add(dMg, wv_off, dWv_r, d * d)
+    let _ = farr_free(zT_T)
+    let _ = farr_free(dWq_r)
+    let _ = farr_free(dWk_r)
+    let _ = farr_free(dWv_r)
+    // 9) d_zT_out = d_Q@Wqᵀ + d_K@Wkᵀ + d_V@Wvᵀ : each [T×d]@[d×d]=[T×d]
+    let wq_mat = mm_extract(M, wq_off, d, d)
+    let wk_mat = mm_extract(M, wk_off, d, d)
+    let wv_mat = mm_extract(M, wv_off, d, d)
+    let wq_T = mm_transpose(wq_mat, d, d)
+    let wk_T = mm_transpose(wk_mat, d, d)
+    let wv_T = mm_transpose(wv_mat, d, d)
+    let dz_q = mm(d_Q, T, d, wq_T, d)
+    let dz_k = mm(d_K, T, d, wk_T, d)
+    let dz_v = mm(d_V, T, d, wv_T, d)
+    let mut zsum_i = 0
+    while zsum_i < T * d {
+        let _ = farr_set(d_zT_out, zsum_i,
+                          farr_get(dz_q, zsum_i) + farr_get(dz_k, zsum_i) + farr_get(dz_v, zsum_i))
+        zsum_i = zsum_i + 1
     }
-    // d_K[t2, j] = Σ_t1 d_scores[t1, t2] · Q[t1, j]
-    let d_K = t_zeros(T * d)
-    let mut tk2 = 0
-    while tk2 < T {
-        let mut jk = 0
-        while jk < d {
-            let mut acc = 0.0
-            let mut tk1 = 0
-            while tk1 < T {
-                acc = acc + farr_get(d_scores, tk1 * T + tk2) * farr_get(Q_buf, tk1 * d + jk)
-                tk1 = tk1 + 1
-            }
-            let _ = farr_set(d_K, tk2 * d + jk, acc)
-            jk = jk + 1
-        }
-        tk2 = tk2 + 1
-    }
-    // dWq, dWk, dWv += zT_seq^T · d_Q (resp. d_K, d_V)
-    let mut wi = 0
-    while wi < d {
-        let mut wj = 0
-        while wj < d {
-            let mut accQ = 0.0
-            let mut accK = 0.0
-            let mut accV = 0.0
-            let mut tw = 0
-            while tw < T {
-                let z = farr_get(zT_seq, tw * d + wi)
-                accQ = accQ + z * farr_get(d_Q, tw * d + wj)
-                accK = accK + z * farr_get(d_K, tw * d + wj)
-                accV = accV + z * farr_get(d_V, tw * d + wj)
-                tw = tw + 1
-            }
-            let pQ = farr_get(dMg, wq_off + wi * d + wj)
-            let pK = farr_get(dMg, wk_off + wi * d + wj)
-            let pV = farr_get(dMg, wv_off + wi * d + wj)
-            let _ = farr_set(dMg, wq_off + wi * d + wj, pQ + accQ)
-            let _ = farr_set(dMg, wk_off + wi * d + wj, pK + accK)
-            let _ = farr_set(dMg, wv_off + wi * d + wj, pV + accV)
-            wj = wj + 1
-        }
-        wi = wi + 1
-    }
-    // d_zT_out[t, i] = Σ_j (d_Q[t,j]·Wq[i,j] + d_K[t,j]·Wk[i,j] + d_V[t,j]·Wv[i,j])
-    let mut tz = 0
-    while tz < T {
-        let mut zi = 0
-        while zi < d {
-            let mut acc = 0.0
-            let mut zj = 0
-            while zj < d {
-                acc = acc + farr_get(d_Q, tz * d + zj) * farr_get(M, wq_off + zi * d + zj)
-                acc = acc + farr_get(d_K, tz * d + zj) * farr_get(M, wk_off + zi * d + zj)
-                acc = acc + farr_get(d_V, tz * d + zj) * farr_get(M, wv_off + zi * d + zj)
-                zj = zj + 1
-            }
-            let _ = farr_set(d_zT_out, tz * d + zi, acc)
-            zi = zi + 1
-        }
-        tz = tz + 1
-    }
+    let _ = farr_free(wq_mat)
+    let _ = farr_free(wk_mat)
+    let _ = farr_free(wv_mat)
+    let _ = farr_free(wq_T)
+    let _ = farr_free(wk_T)
+    let _ = farr_free(wv_T)
+    let _ = farr_free(dz_q)
+    let _ = farr_free(dz_k)
+    let _ = farr_free(dz_v)
+    let _ = farr_free(d_Q)
+    let _ = farr_free(d_K)
+    let _ = farr_free(d_V)
 }
 
 // ───────────────────────────────────────────────────────────────────────────
