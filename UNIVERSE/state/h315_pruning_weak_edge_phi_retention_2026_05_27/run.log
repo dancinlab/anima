@@ -1,0 +1,106 @@
+H_315 — PRUNING × IIT4-Φ : prune WEAK vs RANDOM vs STRONG edges, measure Φ-retention
+  edges = ECA neighbour dependencies (j→i); prune = force-0 that input, KEEP all nodes
+  weight = avg output-sensitivity; engine = stdlib iit4_bigphi (REUSED, not reinvented)
+  FALSIFIER: weak Φ-retention AUC NOT > random AUC across panel ⇒ H1 FALSIFIED
+
+PANEL eca90 n=4 sys=11 rule=90
+  present_edges=8 phi0=0.0
+  CURVE weak eca90 retention=0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC weak eca90 auc=0.0
+  CURVE strong eca90 retention=0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca90 auc=0.0
+  CURVE random eca90 retention=0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC random eca90 auc=0.0
+  CELL_RESULT weak_auc=0.0 random_auc=0.0 strong_auc=0.0 weak_beats_random=false weak_beats_strong=false
+
+PANEL eca110 n=4 sys=11 rule=110
+  present_edges=12 phi0=8.93784
+  CURVE weak eca110 retention=0.574222,0.28004,0.15444,0.0619147,0.0868993,0.0309573,0.0309573,0.0,0.0,0.0,0.0,0.0
+  AUC weak eca110 auc=0.101619
+  CURVE strong eca110 retention=0.617625,0.250754,1.49059e-16,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca110 auc=0.072365
+  CURVE random eca110 retention=0.574222,0.438464,0.441142,0.092872,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC random eca110 auc=0.128892
+  CELL_RESULT weak_auc=0.101619 random_auc=0.128892 strong_auc=0.072365 weak_beats_random=false weak_beats_strong=true
+
+PANEL eca30 n=4 sys=11 rule=30
+  present_edges=12 phi0=15.5659
+  CURVE weak eca30 retention=0.701865,0.82789,0.324838,0.516939,0.269676,0.120613,0.128486,0.192729,0.064243,0.0,0.0,0.0
+  AUC weak eca30 auc=0.262273
+  CURVE strong eca30 retention=0.224867,0.207023,2.85296e-17,0.035551,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca30 auc=0.0389534
+  CURVE random eca30 retention=0.431541,0.389427,0.100456,0.035551,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC random eca30 auc=0.0797479
+  CELL_RESULT weak_auc=0.262273 random_auc=0.0797479 strong_auc=0.0389534 weak_beats_random=true weak_beats_strong=true
+
+PANEL eca54 n=4 sys=11 rule=54
+  present_edges=12 phi0=8.41254
+  CURVE weak eca54 retention=0.951676,1.17413,0.405946,0.440713,0.0,1.05578e-16,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC weak eca54 auc=0.247706
+  CURVE strong eca54 retention=0.553551,0.323059,0.351552,0.0594351,0.148007,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca54 auc=0.119634
+  CURVE random eca54 retention=0.951676,0.508189,0.390807,0.220357,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC random eca54 auc=0.172586
+  CELL_RESULT weak_auc=0.247706 random_auc=0.172586 strong_auc=0.119634 weak_beats_random=true weak_beats_strong=true
+
+PANEL eca150 n=4 sys=11 rule=150
+  present_edges=12 phi0=8
+  CURVE weak eca150 retention=0.3125,0.46875,0.0625,0.125,0.0625,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC weak eca150 auc=0.0859375
+  CURVE strong eca150 retention=0.1875,0.46875,0.0625,0.125,0.09375,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca150 auc=0.078125
+  CURVE random eca150 retention=0.3125,0.9375,0.9375,0.125,0.0,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC random eca150 auc=0.192708
+  CELL_RESULT weak_auc=0.0859375 random_auc=0.192708 strong_auc=0.078125 weak_beats_random=false weak_beats_strong=true
+
+PANEL eca22 n=4 sys=11 rule=22
+  present_edges=12 phi0=5.06579
+  CURVE weak eca22 retention=0.808195,0.535113,0.158367,0.326316,0.270472,0.0327718,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC weak eca22 auc=0.177603
+  CURVE strong eca22 retention=2.15404,0.874704,0.116828,0.586049,0.155771,0.116828,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca22 auc=0.333685
+  CURVE random eca22 retention=0.808195,1.87849,0.923228,1.16702,0.888312,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC random eca22 auc=0.472104
+  CELL_RESULT weak_auc=0.177603 random_auc=0.472104 strong_auc=0.333685 weak_beats_random=false weak_beats_strong=false
+
+PANEL eca60 n=4 sys=11 rule=60
+  present_edges=8 phi0=11
+  CURVE weak eca60 retention=0.727273,0.181818,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC weak eca60 auc=0.113636
+  CURVE strong eca60 retention=0.636364,0.227273,0.0909091,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca60 auc=0.119318
+  CURVE random eca60 retention=0.727273,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC random eca60 auc=0.0909091
+  CELL_RESULT weak_auc=0.113636 random_auc=0.0909091 strong_auc=0.119318 weak_beats_random=true weak_beats_strong=false
+
+PANEL eca105 n=4 sys=11 rule=105
+  present_edges=12 phi0=4
+  CURVE weak eca105 retention=0.25,1.375,0.125,0.25,0.1875,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC weak eca105 auc=0.182292
+  CURVE strong eca105 retention=0.625,1.3125,0.125,0.25,0.125,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca105 auc=0.203125
+  CURVE random eca105 retention=0.8125,1.625,2.375,2.125,0.625,0.5,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC random eca105 auc=0.671875
+  CELL_RESULT weak_auc=0.182292 random_auc=0.671875 strong_auc=0.203125 weak_beats_random=false weak_beats_strong=false
+
+PANEL eca90_n3 n=3 sys=5 rule=90
+  present_edges=6 phi0=3
+  CURVE weak eca90_n3 retention=1.5,0.0,0.166667,0.0,0.0,0.0
+  AUC weak eca90_n3 auc=0.277778
+  CURVE strong eca90_n3 retention=1.5,0.0,0.166667,0.0,0.0,0.0
+  AUC strong eca90_n3 auc=0.277778
+  CURVE random eca90_n3 retention=1.5,0.5,0.0,0.0,0.0,0.0
+  AUC random eca90_n3 auc=0.333333
+  CELL_RESULT weak_auc=0.277778 random_auc=0.333333 strong_auc=0.277778 weak_beats_random=false weak_beats_strong=false
+
+PANEL eca110_n3 n=3 sys=5 rule=110
+  present_edges=9 phi0=6.52535
+  CURVE weak eca110_n3 retention=0.671521,0.614434,0.0848052,0.106006,0.0424026,0.0424026,0.0,0.0,0.0
+  AUC weak eca110_n3 auc=0.173508
+  CURVE strong eca110_n3 retention=0.203532,0.178091,0.0,0.0,0.0,0.0,0.0,0.0,0.0
+  AUC strong eca110_n3 auc=0.0424026
+  CURVE random eca110_n3 retention=0.61026,0.187206,0.0848052,0.306497,0.0,0.0,0.0,0.0,0.0
+  AUC random eca110_n3 auc=0.132085
+  CELL_RESULT weak_auc=0.173508 random_auc=0.132085 strong_auc=0.0424026 weak_beats_random=true weak_beats_strong=true
+
+DONE
