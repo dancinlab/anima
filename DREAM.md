@@ -8,9 +8,9 @@
 
 - [x] AxisBench B DREAM 측정 surface 입증 — `bench/axis_dream/` 90-tick simulation · REM/N3 mitosis density=1.0 vs WAKE=0.017 (60× ratio) · REM/N3 emit_rate=0 strict · 4/5 invariant PASS (PR #1140).
 - [x] M1 dream_lib — `DREAM/{dream_lib.hexa,SSOT.md,dream_lib_smoke.hexa}` PURE wrapper · sleep_tick 의 imagination_tick 추출 + cell_pool transition (11 `dr_*` pub primitives — 5-stage 90-tick + mitosis_prior + emit_envelope + density ratio · smoke 10 invariants · hexa parse 2/2 PASS).
-- [ ] M2 imagination_replay — N3/REM 동안 가까운 working memory snapshot 재실행 (emit-free) · WAKE.memory 와 cross-link.
-- [ ] M3 mitosis envelope — REM 분열 burst 측정 + threshold tune (`a_chat_sleep_imagination` substrate context 정합).
-- [ ] M4 dream report — wake transition 시 imagination 결과 narrative summary (NARRATIVE 도메인 연결 후보).
+- [x] M2 imagination_replay — N3/REM 동안 가까운 working memory snapshot 재실행 (emit-free) · WAKE.memory 와 cross-link. `DREAM/imagination_replay.hexa` (4 `ir_*` pub primitives — select_snapshots / replay_tick / mitosis_tick_during_replay / replay_session) · 7 invariants smoke (emit_count=0 CRITICAL · cell_pool pass-through · recency_window 정합) · hexa parse 2/2 PASS.
+- [x] M3 mitosis envelope — REM 분열 burst 측정 + threshold tune (`a_chat_sleep_imagination` substrate context 정합). `DREAM/mitosis_envelope.hexa` (4 `me_*` pub primitives — burst_intensity / threshold_tune / envelope_window / governance_check) · 60× WAKE ratio carry (PR #1140) · boolean-gate-free invariant (a_autonomy_over_hardcode) · 6 invariants smoke · hexa parse 2/2 PASS.
+- [x] M4 dream report — wake transition 시 imagination 결과 narrative summary (NARRATIVE 도메인 연결 후보). `DREAM/dream_report.hexa` (4 `dr_*` pub primitives — collect_replay_log / summarize / wake_transition_report / kosmos_persist_dream) · NARRATIVE future hook spec · .kosmos anchor stub (a_kosmos 정합) · 6 invariants smoke (emit-free carry · transition logic · anchor format) · hexa parse 2/2 PASS.
 
 ## 양방향 sibling
 
