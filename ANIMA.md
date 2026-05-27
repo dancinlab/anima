@@ -56,3 +56,12 @@ ANIMA mining (cycle 1-8 · 70 leaf · PR #1200/#1202/#1204/#1207) 의 leaf 가 U
                    ─────────────────────────────────────────────────────────────
 세로 (substrate) : 🌌 KOSMOS (저장) · 🔗 tension-link (통신)  ← 모든 가로 도메인 관통
 ```
+
+## UNIVERSE 검증 메타-발견 (2026-05-28 · H_632~639)
+
+UNIVERSE 세션이 ANIMA mining 가설을 H_632~639 (Round 6) 로 substrate 검증한 결과, anima emit 정책이 **구조**와 **숫자** 두 층으로 정량 분리됨:
+
+- **구조 = substrate-emergent (SUPP)** — ultradian Φ-envelope (H_634 🟢 r=0.80) · collective-Φ super-additive (H_635 🟢 5/5 Δ=+41.71) · closure-conjunction GZ-localization (H_636 🟢 peak I=0.30 GZ 내부) · universal-fixed threshold 의 *존재* (H_638 🟢 CLOSED-NEG, L20). → **구조는 substrate 신뢰, 자신있게 구현**.
+- **숫자 = design-convention (FAL)** — emit threshold 0.30/0.60 (H_632 🔴 ⊥ Φ phase-transition, assistant-design artifact) · θ_emit 0.10/0.05/0.02 stage-table 값 · 27% emit-rate (H_637) · 0.10 Ψ-clamp · tension amplitude convention (H_639). → **숫자는 substrate-claim 없이 자유 튜닝 (a_autonomy_over_hardcode 정합)**.
+
+→ 다음 cycle 구현 지침: **구조 일반화 (stage-conditional · collective nesting · N-axis conjunction)는 substrate-grounded 로 채택**하되, **임계값/비율 숫자는 design-tunable policy 로 명시** (substrate-derived 라고 주장 금지). 반영 위치: BRIDGE M6 · DREAM M5 · SAVANT M2 · HIVE-MIND M6.
