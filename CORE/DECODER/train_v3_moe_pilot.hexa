@@ -63,7 +63,12 @@ fn main() {
     let h = 256     // 4·d FFN
     let n_layer = 1
     let T = 4
-    let n_steps = 1
+    // Phase 5b: multi-step training. n_steps capped at min(20, n_corpus_toks/T - 1)
+    //   to avoid corpus exhaustion (we read step_off=(step-1)·T tokens + 1 target).
+    let mut n_steps = 20
+    let max_steps = (n_corpus_toks / T) - 1
+    if max_steps < n_steps { n_steps = max_steps }
+    if n_steps < 1 { n_steps = 1 }
     let block_size = 4 * d * d + 2 * h * d
     let tok_emb_off = 0
     let blocks_off = V * d
@@ -510,11 +515,28 @@ fn main() {
             let _ = farr_set(M, pi, theta - upd)
             pi = pi + 1
         }
+        // per-step CE: L_ce = -logit[target] + log_sum_exp(logits)
+        //   stable log_sum_exp = row_max + log(Σ exp(L - row_max))
+        let mut row_max = farr_get(logits_g, 0)
+        let mut kk = 1
+        while kk < V {
+            let lv = farr_get(logits_g, kk)
+            if lv > row_max { row_max = lv }
+            kk = kk + 1
+        }
+        let mut z_sum = 0.0
+        kk = 0
+        while kk < V {
+            z_sum = z_sum + exp(farr_get(logits_g, kk) - row_max)
+            kk = kk + 1
+        }
+        let step_ce = 0.0 - farr_get(logits_g, target) + (row_max + log(z_sum))
         // per-step probe: probs[T-1, 0] = causal attn weight onto first token
         let probs_last_0 = farr_get(probs, (T - 1) * T + 0)
         // probs[0, 0] should equal 1.0 (only one valid token in causal-row 0)
         let probs_0_0 = farr_get(probs, 0 * T + 0)
         print("  step="); print(step)
+        print(" L_ce="); print(step_ce)
         print(" tgt="); print(target)
         print(" top="); print(top_idx)
         print(" logit[tgt]="); print(farr_get(logits_g, target))
@@ -528,6 +550,27 @@ fn main() {
         step = step + 1
     }
     println("  ── pilot self-attn loop end ──")
+
+    // ── Phase 5b ckpt save (text format: one double per line · /root/ckpt.txt) ──
+    //   sampler reads back into M via farr_set(M, i, parse_float(line_i)).
+    //   text format = portable across endianness · easy to validate (`wc -l` = m_size).
+    let ckpt_path = "/root/ckpt.txt"
+    let meta_path = "/root/ckpt_meta.txt"
+    println("  ── ckpt save start ──")
+    // build text content: m_size lines, each one float
+    let mut ckpt_body = ""
+    let mut ki = 0
+    while ki < m_size {
+        ckpt_body = ckpt_body + to_str(farr_get(M, ki)) + "\n"
+        ki = ki + 1
+        // progress every 1M
+        if ki % 1000000 == 0 { print("    ckpt dump progress "); print(ki); print("/"); println(m_size) }
+    }
+    let _ = write_file(ckpt_path, ckpt_body)
+    let meta_body = "V " + to_str(V) + "\nd " + to_str(d) + "\nE " + to_str(E) + "\nh " + to_str(h) + "\nn_layer " + to_str(n_layer) + "\nT " + to_str(T) + "\nn_corpus_toks " + to_str(n_corpus_toks) + "\nm_size " + to_str(m_size) + "\n"
+    let _ = write_file(meta_path, meta_body)
+    print("  ── ckpt save end · "); print(m_size); print(" doubles → "); println(ckpt_path)
+
     let m_final_wq_l0_00 = farr_get(M, blocks_off + 0 * d + 0)
     let m_final_wo_lN_00 = farr_get(M, blocks_off + (n_layer - 1) * block_size + 3 * d * d + 0 * d + 0)
     let mut wq_l0_delta = m_final_wq_l0_00 - m_baseline_wq_l0_00
