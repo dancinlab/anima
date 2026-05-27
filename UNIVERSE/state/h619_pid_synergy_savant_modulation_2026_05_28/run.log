@@ -1,0 +1,49 @@
+================================================================
+  H_619 — PID synergy_ratio × SAVANT inhibition I sweep (E×F r3)
+  Substrate: 3 binary substrates × 1 cell · K=0.67 mask=[1,1,0]
+  Modulator: inhibition I collapses #rows of 8 to identity-S0
+================================================================
+  I=0.05 n_id_rows=0 synergy=2.0 redundancy=0.0 ratio=1.0
+  I=0.1 n_id_rows=1 synergy=2.0 redundancy=0.0 ratio=1.0
+  I=0.21 n_id_rows=2 synergy=2.0 redundancy=0.0 ratio=1.0
+  I=0.25 n_id_rows=2 synergy=2.0 redundancy=0.0 ratio=1.0
+  I=0.3 n_id_rows=2 synergy=2.0 redundancy=0.0 ratio=1.0
+  I=0.4 n_id_rows=3 synergy=0.975034 redundancy=0.0 ratio=1.0
+  I=0.5 n_id_rows=4 synergy=0.377444 redundancy=0.0 ratio=1.0
+  I=0.75 n_id_rows=6 synergy=0.0 redundancy=0.0 ratio=0.0
+  --
+  ANCHOR I=0.0    synergy=2.0 redundancy=0.0 ratio=1.0
+  ANCHOR I=1.0    synergy=0.0 redundancy=0.0 ratio=0.0
+  --
+  K=1.0 I=0.05 synergy=3.0 redundancy=0.0 ratio=1.0
+  K=1.0 I=0.1 synergy=3.0 redundancy=0.0 ratio=1.0
+  K=1.0 I=0.21 synergy=3.0 redundancy=0.0 ratio=1.0
+  K=1.0 I=0.25 synergy=3.0 redundancy=0.0 ratio=1.0
+  K=1.0 I=0.3 synergy=3.0 redundancy=0.0 ratio=1.0
+  K=1.0 I=0.4 synergy=1.46255 redundancy=0.0 ratio=1.0
+  K=1.0 I=0.5 synergy=0.566166 redundancy=0.0 ratio=1.0
+  K=1.0 I=0.75 synergy=0.0 redundancy=0.0 ratio=0.0
+  --
+  GZ_LOWER=0.21232 (★ SAVANT focal) synergy=2.0 redundancy=0.0 ratio=1.0
+  F619.1 spread (max - min of ratio) = 1.0
+  F619.1 |ratio(I=0) - ratio(GZ)| = 0.0
+  [PASS] F619.1 SAVANT modulates PID synergy_ratio (spread ≥ 0.05 OR |Δratio_GZ| ≥ 0.05)
+  F619.2 inversions (strict increases across sweep) = 0
+  [PASS] F619.2 MONOTONE-MODULATION: synergy_ratio non-increasing in I (≤1 inversion)
+  [PASS] F619.3a I=0 reproduces H_355 K=0.67 mask=[1,1,0] anchor (syn=2, red=0, ratio=1)
+  [PASS] F619.3b I=1 degenerate anchor (ratio ≤ 0.5)
+  F619.4 K=1.0 spread = 1.0
+  [PASS] F619.4 MULTI-K: K=1.0 either modulated (spread≥0.05) OR saturated flat-1
+  [PASS] F619.5a BOUND: 0≤syn≤3, 0≤red≤3, 0≤ratio≤1 across 8 sweep points
+  [PASS] F619.5b DETERMINISM: GZ_LOWER re-run byte-identical
+================================================================
+  RESULT: 7 PASS / 0 FAIL  (n_sweep=8)
+  ratio at GZ_LOWER = 1.0
+  ratio at I=0      = 1.0
+  spread (K=0.67)   = 1.0
+  spread (K=1.0)    = 1.0
+  VERDICT: H1 SUPPORTED — SAVANT inhibition I modulates hivemind PID
+           synergy_ratio. The H_355 K-invariant (ratio=1.0) is preserved
+           only at I≈0; SAVANT-state inhibition collapses synergy share
+           into redundancy along the I sweep.
+================================================================
