@@ -46,6 +46,10 @@ H_346 reference (n=5, 4 rules `{110, 30, 105, 150}`): `+0.550 / −0.951`.
 - `bench.log` — captured stdout
 - `README.md` — this file
 
+## Notes (post-merge)
+
+- 2026-05-28 — `iit4_eca` 의존성이 hexa-lang stdlib (`stdlib/consciousness/iit4_eca`) 로 승격됨 (hexa-lang PR #1706). 본 bench 는 abs-path import → stdlib import 로 swap 완료 (anima g61 advisory 해소). 측정값 동일 (모듈 본문 무변동, import path 만 교체).
+
 ## Re-run
 
 ```
