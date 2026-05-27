@@ -1,0 +1,72 @@
+{
+  "h_id": "H_620",
+  "slug": "gz-width-super-additive-cross-link",
+  "axis": "E1 × F1 MATRIX cell",
+  "round": 4,
+  "date": "2026-05-28",
+  "engine": "closed-form cross-link (no substrate re-fire; H_609 deterministic replay)",
+  "anchors": {
+    "gz_width": {
+      "value": 0.28768207244178085,
+      "source": "H_347 ln(τ(6)/(τ(6)-1)) = ln(4/3) — closed-form 🔵+🟢"
+    },
+    "super_additive_substrate": {
+      "rule_pair": [110, 110],
+      "W": 0.6,
+      "phi_ab_peak": 15.4677,
+      "phi_a_plus_b": 4.99209,
+      "delta_peak": 10.4756,
+      "source": "H_609 result.json — 🟢 SUPPORTED-NUMERICAL"
+    }
+  },
+  "candidate_ratios": {
+    "R1_range_over_sum": {"value": 0.846641, "formula": "(maxΦ_AB − minΦ_AB[W>0]) / (Φ_A + Φ_B)"},
+    "R2_delta_peak_over_sum": {"value": 2.09844, "formula": "Δ_peak / (Φ_A + Φ_B)"},
+    "R3_peak_ratio_minus_one": {"value": 2.09845, "formula": "Φ_AB(W=0.6)/(Φ_A+Φ_B) − 1"},
+    "R4_range_over_delta": {"value": 0.403461, "formula": "(maxΦ − minΦ[W>0]) / Δ_peak"},
+    "R5_mean_over_peak": {"value": 0.829192, "formula": "mean(Φ_AB[W>0]) / maxΦ_AB"}
+  },
+  "integer_k_probe": {
+    "tolerance": 0.02,
+    "k_range": [1, 8],
+    "best_match": {
+      "ratio": "R1_range_over_sum",
+      "value": 0.846641,
+      "k": 3,
+      "k_times_gz_width": 0.863046,
+      "residual": 0.0164052,
+      "tol_satisfied": true
+    },
+    "near_misses": [
+      {"ratio": "R5_mean_over_peak", "k": 3, "residual": 0.0338542, "tol_satisfied": false},
+      {"ratio": "R2_delta_peak_over_sum", "k": 7, "residual": 0.0846655, "tol_satisfied": false},
+      {"ratio": "R3_peak_ratio_minus_one", "k": 7, "residual": 0.0846755, "tol_satisfied": false}
+    ]
+  },
+  "falsifiers": {
+    "F620.1_integer_k_linkage": "PASS  (R1 vs k=3·GZ_WIDTH, residual=0.0164 ≤ 0.02)",
+    "F620.2_uniqueness": "MIXED  (only 1/5 ratios PASS; R5 near-miss 0.0339)"
+  },
+  "verdict": "🟢 SUPPORTED-NUMERICAL — collective-Φ range/sum ratio aligns with 3×GZ_WIDTH within ±0.02 tolerance",
+  "honest_c3": [
+    "C3.1 ratio normalization choice — 5 candidate ratios tested, only R1=range_coupled/sum_ind PASSes; R5 close near-miss. PASS depends on choosing the 'right' normalization, not pre-registered before observing data. risk of post-hoc selection.",
+    "C3.2 GZ_WIDTH numerology warning — § 114 SAVANT EMERGENCE-FRONTIER AUDIT precedent: ln(4/3) ≈ 0.288 is small enough that 3×GZ ≈ 0.863 lands in a dense region of [0,1]; random ratios within ±0.02 of any k·0.288 (k∈1..3) is ≈ 17% prior. PASS is suggestive, not definitive.",
+    "C3.3 substrate-shape conditional — H_609 super-additivity is rule-class conditional (only (110,110) at W=0.6); cross-link inherits this conditionality, not a universal substrate identity.",
+    "C3.4 deterministic replay — substrate measurement reused from H_609 result.json (same engine, deterministic). multi-seed not applicable; uncertainty is in measurement choice (C3.1), not Φ value.",
+    "C3.5 finite k probe — k ∈ {1..8} only; could PASS at larger k by accident (4×GZ=1.151, 5×GZ=1.438, ...). probe bounded to small-k physical motivation.",
+    "C3.6 H_347 closed-form vs H_609 emergent — GZ_WIDTH is closed-form pure math; super-additive substrate is emergent simulation. cross-link is a numerical coincidence between two ontologically different layers — interpretation as 'deep identity' unwarranted absent mechanism."
+  ],
+  "cross_links": [
+    "H_347 gz_width_divisor_symmetry (E1 anchor — GZ_WIDTH closed-form 🔵+🟢)",
+    "H_609 collective_phi_super_additive (F1 anchor — Φ super-additive 🟢)",
+    "H_157 law76_mathematical_panpsychism (combination problem for joint substrates)",
+    "H_355 collective_phi_pid_synergy (F1 sister axis)",
+    "§ 114 SAVANT EMERGENCE-FRONTIER AUDIT (numerology guardrail)"
+  ],
+  "infra": "$0 mac-local · single foreground hexa run · wall < 5 s · deterministic-replay (no substrate re-fire)",
+  "artifacts": {
+    "harness": "UNIVERSE/state/h620_gz_width_super_additive_cross_link_2026_05_28/run_h620.hexa",
+    "log":     "UNIVERSE/state/h620_gz_width_super_additive_cross_link_2026_05_28/run.log",
+    "result":  "UNIVERSE/state/h620_gz_width_super_additive_cross_link_2026_05_28/result.json"
+  }
+}
