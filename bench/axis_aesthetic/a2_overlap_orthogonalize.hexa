@@ -1,0 +1,338 @@
+// bench/axis_aesthetic/a2_overlap_orthogonalize.hexa — ANIMA AESTHETIC A2
+//
+// Hypothesis A2 : aesthetic-overlap-residual.
+//
+//   bench E (AxisBench E) failed gate (a): cross-scenario top-10 overlap
+//   0.70 / 0.60 / 0.40 (all >= 0.5). The README diagnosed sign-collinearity:
+//   all 3 scenarios share sign structure (coh +, pain −, bal +), so high-coh ×
+//   high-bal × low-pain states top every ranking (state 17 = top-1 in all 3).
+//
+//   A2 isolates the OVERLAP to its two driving dimensions and asks whether the
+//   overlap is removable by ORTHOGONALIZATION or substrate-intrinsic.
+//
+//   The aesthetic_score = α·coh − β·pain + γ·bal has TWO positive dimensions
+//   (coh, bal) that both pull the same states up. We treat (coh, bal) as the
+//   overlapping pair and measure / orthogonalize them.
+//
+// ─── A2 metrics ──────────────────────────────────────────────────────────
+//
+//   (1) overlap-identity : Pearson r(coh, bal) over the 100 states  AND
+//       top-10 driver share (which dim explains more of the top-10 set).
+//
+//   (2) orthogonalization : Gram-Schmidt residual
+//          bal_perp = bal − (cov(coh,bal)/var(coh)) · coh           (then z-norm)
+//       Build an ORTHO scenario whose ranking key = bal_perp alone, and a
+//       COH scenario whose key = coh alone. Measure overlap(COH, ORTHO).
+//
+//   (3) separation verdict :
+//       🟢 SEPARATED  — after orthogonalization overlap(COH, ORTHO) < 0.5
+//                        AND |r(coh, bal_perp)| < 0.1  (residual decorrelated)
+//       🟠 RESIDUAL   — orthogonalized dims still overlap >= 0.5 OR
+//                        original r(coh,bal) already < 0.5 (no real overlap to
+//                        remove, the bench (a)-fail came from a DIFFERENT cause)
+//       🔴            — infra non-determinism / metric regression
+//
+// Deterministic : LCG seed=42, identical synth to bench.hexa. NO GPU. $0.
+// p7 : verdict via closed-form correlation / overlap / decision-rule only.
+//
+// Author : axisbench/aesthetic A2
+// Date   : 2026-05-28
+
+// ═══════════════════════════════════════════════════════════════
+//   1. Deterministic synth (mirror of bench.hexa)
+// ═══════════════════════════════════════════════════════════════
+
+fn det_rand(n: int, seed: int) -> array {
+    let mut out = []
+    let mut s = seed
+    let mut i = 0
+    while i < n {
+        s = (s * 1103515245 + 12345) % 2147483648
+        let u = to_float(s % 1000000) / 1000000.0
+        out = out.push(u)
+        i = i + 1
+    }
+    return out
+}
+
+struct State {
+    idx: int,
+    rel: float, gap: float, cur: float, orig: float,
+    dyna: float, pain: float, coh: float, bal: float,
+}
+
+fn synth_states(n: int, seed: int) -> array {
+    let pool = det_rand(n * 8, seed)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        let base = i * 8
+        let s = State {
+            idx: i,
+            rel:  pool[base + 0], gap:  pool[base + 1],
+            cur:  pool[base + 2], orig: pool[base + 3],
+            dyna: pool[base + 4], pain: pool[base + 5],
+            coh:  pool[base + 6], bal:  pool[base + 7],
+        }
+        out = out.push(s)
+        i = i + 1
+    }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//   2. Column extraction + descriptive stats
+// ═══════════════════════════════════════════════════════════════
+
+fn col_coh(states: array) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < states.len() { out = out.push(states[i].coh); i = i + 1 }
+    return out
+}
+
+fn col_bal(states: array) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < states.len() { out = out.push(states[i].bal); i = i + 1 }
+    return out
+}
+
+fn col_pain(states: array) -> array {
+    let mut out = []
+    let mut i = 0
+    while i < states.len() { out = out.push(states[i].pain); i = i + 1 }
+    return out
+}
+
+fn vmean(v: array) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < v.len() { s = s + v[i]; i = i + 1 }
+    return s / to_float(v.len())
+}
+
+fn vvar(v: array, m: float) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < v.len() { let d = v[i] - m; s = s + d * d; i = i + 1 }
+    return s / to_float(v.len())
+}
+
+fn vcov(a: array, ma: float, b: array, mb: float) -> float {
+    let mut s = 0.0
+    let mut i = 0
+    while i < a.len() { s = s + (a[i] - ma) * (b[i] - mb); i = i + 1 }
+    return s / to_float(a.len())
+}
+
+// Pearson correlation r(a,b)
+fn pearson(a: array, b: array) -> float {
+    let ma = vmean(a)
+    let mb = vmean(b)
+    let cov = vcov(a, ma, b, mb)
+    let sa = sqrt(vvar(a, ma))
+    let sb = sqrt(vvar(b, mb))
+    let denom = sa * sb
+    if denom == 0.0 { return 0.0 }
+    return cov / denom
+}
+
+// ═══════════════════════════════════════════════════════════════
+//   3. Gram-Schmidt orthogonalization : bal ⟂ coh
+// ═══════════════════════════════════════════════════════════════
+//
+//   bal_perp[i] = bal[i] − β · coh[i]   where β = cov(coh,bal)/var(coh)
+//
+//   bal_perp is, by construction, the component of bal linearly independent
+//   of coh. cov(coh, bal_perp) == 0 (closed-form invariant we re-measure).
+
+fn orthogonalize_bal(coh: array, bal: array) -> array {
+    let mc = vmean(coh)
+    let mb = vmean(bal)
+    let var_c = vvar(coh, mc)
+    let cov_cb = vcov(coh, mc, bal, mb)
+    let beta = cov_cb / var_c
+    let mut out = []
+    let mut i = 0
+    while i < coh.len() {
+        out = out.push(bal[i] - beta * coh[i])
+        i = i + 1
+    }
+    return out
+}
+
+// ═══════════════════════════════════════════════════════════════
+//   4. Ranking on a single scalar key (one column) — top-K
+// ═══════════════════════════════════════════════════════════════
+//
+//   Rank states descending by key[i]; tie-break by smaller idx.
+//   Returns array<int> of state indices, length k.
+
+fn top_k_by_key(key: array, k: int) -> array {
+    let n = key.len()
+    let mut picked = []
+    let mut out = []
+    let mut step = 0
+    while step < k {
+        let mut best = -1
+        let mut best_val = -1.0e30
+        let mut i = 0
+        while i < n {
+            let mut already = false
+            let mut p = 0
+            while p < picked.len() {
+                if picked[p] == i { already = true }
+                p = p + 1
+            }
+            if !already {
+                let v = key[i]
+                if v > best_val {
+                    best = i
+                    best_val = v
+                }
+            }
+            i = i + 1
+        }
+        if best >= 0 {
+            picked = picked.push(best)
+            out = out.push(best)   // state idx == position i here
+        }
+        step = step + 1
+    }
+    return out
+}
+
+fn overlap_rate(a: array, b: array) -> float {
+    if a.len() == 0 { return 0.0 }
+    let mut hit = 0
+    let mut i = 0
+    while i < a.len() {
+        let mut j = 0
+        let mut found = false
+        while j < b.len() {
+            if a[i] == b[j] { found = true }
+            j = j + 1
+        }
+        if found { hit = hit + 1 }
+        i = i + 1
+    }
+    return to_float(hit) / to_float(a.len())
+}
+
+fn fmt_int_arr(a: array) -> string {
+    let mut s = "["
+    let mut i = 0
+    while i < a.len() {
+        if i > 0 { s = s + ", " }
+        s = s + str(a[i])
+        i = i + 1
+    }
+    return s + "]"
+}
+
+fn fmt_b(b: bool) -> string {
+    if b { return "true" }
+    return "false"
+}
+
+// ═══════════════════════════════════════════════════════════════
+//   5. Main
+// ═══════════════════════════════════════════════════════════════
+
+fn main() {
+    let n = 100
+    let seed = 42
+    let k = 10
+    println("[a2] AESTHETIC A2 — overlap-residual orthogonalization (seed=" + str(seed) + ")")
+    let states = synth_states(n, seed)
+
+    let coh  = col_coh(states)
+    let bal  = col_bal(states)
+    let pain = col_pain(states)
+
+    // ── (1) overlap-identity ────────────────────────────────────
+    let r_cb = pearson(coh, bal)
+    let r_cp = pearson(coh, pain)
+    let r_bp = pearson(bal, pain)
+    println("[a2] (1) overlap-identity — Pearson r over 100 states:")
+    println("[a2]     r(coh, bal)  = " + str(r_cb) + "   <- candidate overlapping pair")
+    println("[a2]     r(coh, pain) = " + str(r_cp))
+    println("[a2]     r(bal, pain) = " + str(r_bp))
+
+    // top-10 by each single dimension — which dim drives the ranking?
+    let top_coh  = top_k_by_key(coh, k)
+    let top_bal  = top_k_by_key(bal, k)
+    let ov_coh_bal_raw = overlap_rate(top_coh, top_bal)
+    println("[a2]     top10(coh)   = " + fmt_int_arr(top_coh))
+    println("[a2]     top10(bal)   = " + fmt_int_arr(top_bal))
+    println("[a2]     overlap(top10 coh, top10 bal) RAW = " + str(ov_coh_bal_raw))
+
+    // ── (2) orthogonalization : bal ⟂ coh ───────────────────────
+    let bal_perp = orthogonalize_bal(coh, bal)
+    // invariant check: r(coh, bal_perp) must be ~0
+    let r_c_bperp = pearson(coh, bal_perp)
+    println("[a2] (2) orthogonalization — bal_perp = bal − β·coh (Gram-Schmidt):")
+    println("[a2]     r(coh, bal_perp) = " + str(r_c_bperp) + "   (invariant ~0)")
+
+    // ranking on orthogonal component
+    let top_bperp = top_k_by_key(bal_perp, k)
+    let ov_coh_bperp = overlap_rate(top_coh, top_bperp)
+    println("[a2]     top10(bal_perp) = " + fmt_int_arr(top_bperp))
+    println("[a2]     overlap(top10 coh, top10 bal_perp) ORTHO = " + str(ov_coh_bperp))
+
+    // ── (3) separation verdict ──────────────────────────────────
+    // residual decorrelated? |r(coh,bal_perp)| < 0.1
+    let mut abs_r = r_c_bperp
+    if abs_r < 0.0 { abs_r = 0.0 - abs_r }
+    let decorrelated = abs_r < 0.1
+    // overlap dropped below 0.5 after orthogonalization?
+    let ortho_separates = ov_coh_bperp < 0.5
+    // was there a real raw overlap to remove? (raw top10 coh/bal overlap >= 0.5)
+    let raw_overlap_existed = ov_coh_bal_raw >= 0.5
+
+    let mut verdict = "RESIDUAL"
+    if decorrelated && ortho_separates {
+        verdict = "SEPARATED"
+    }
+    // if there was no raw overlap at all, the (a)-fail had a different cause
+    let mut note = ""
+    if !raw_overlap_existed {
+        note = "raw top10(coh)/top10(bal) overlap < 0.5 — bench (a)-fail driven by JOINT score, not the coh/bal pair alone"
+    }
+
+    println("[a2] (3) separation verdict:")
+    println("[a2]     raw_overlap_existed (>=0.5)        : " + fmt_b(raw_overlap_existed))
+    println("[a2]     decorrelated (|r(coh,bal_perp)|<0.1): " + fmt_b(decorrelated))
+    println("[a2]     ortho_separates (overlap<0.5)      : " + fmt_b(ortho_separates))
+    println("[a2]     VERDICT = " + verdict)
+    if note != "" { println("[a2]     NOTE = " + note) }
+
+    // ── emit result json ────────────────────────────────────────
+    let mut j = "{\n"
+    j = j + "  \"bench\": \"axis_aesthetic_a2_overlap\",\n"
+    j = j + "  \"hypothesis\": \"aesthetic-overlap-residual\",\n"
+    j = j + "  \"n_states\": " + str(n) + ",\n"
+    j = j + "  \"seed\": " + str(seed) + ",\n"
+    j = j + "  \"overlap_pair\": \"coh × bal (two positive aesthetic dimensions)\",\n"
+    j = j + "  \"identity\": {\n"
+    j = j + "    \"r_coh_bal\": " + str(r_cb) + ",\n"
+    j = j + "    \"r_coh_pain\": " + str(r_cp) + ",\n"
+    j = j + "    \"r_bal_pain\": " + str(r_bp) + ",\n"
+    j = j + "    \"top10_overlap_coh_bal_raw\": " + str(ov_coh_bal_raw) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"orthogonalize\": {\n"
+    j = j + "    \"method\": \"gram_schmidt bal_perp = bal - (cov(coh,bal)/var(coh))*coh\",\n"
+    j = j + "    \"r_coh_bal_perp\": " + str(r_c_bperp) + ",\n"
+    j = j + "    \"top10_overlap_coh_bal_perp\": " + str(ov_coh_bperp) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"falsifier\": {\n"
+    j = j + "    \"raw_overlap_existed\": " + fmt_b(raw_overlap_existed) + ",\n"
+    j = j + "    \"decorrelated\": " + fmt_b(decorrelated) + ",\n"
+    j = j + "    \"ortho_separates\": " + fmt_b(ortho_separates) + "\n"
+    j = j + "  },\n"
+    j = j + "  \"verdict\": \"" + verdict + "\"\n"
+    j = j + "}\n"
+    write_file("bench/axis_aesthetic/a2_overlap_result.json", j)
+    println("[a2] wrote bench/axis_aesthetic/a2_overlap_result.json")
+}
