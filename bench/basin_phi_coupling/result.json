@@ -1,0 +1,82 @@
+{
+  "bench_id": "BENCH#1 BASIN-PHI-COUPLING",
+  "title": "공명 측정자 — anima-side bench of UNIVERSE H_345/346 capstone",
+  "date": "2026-05-28",
+  "substrate": {
+    "kind": "elementary cellular automaton (ECA) periodic ring",
+    "n_cells": 4,
+    "n_states": 16,
+    "settle_steps": 50,
+    "rules": [45, 54, 60, 90, 110, 126, 150, 184],
+    "n_rules": 8,
+    "rule_selection_rationale": "span Wolfram classes I-IV (broader than H_345/346's {110, 30, 105, 150})"
+  },
+  "phi_engine": {
+    "engine": "stdlib/consciousness/iit4_relation.hexa :: phi_structure",
+    "averaging": "mean over all 16 sys_states (exact, uniform-weighted)",
+    "exact": true
+  },
+  "measurements": [
+    {"rule":  45, "max_basin":  9, "n_attr":  2, "mean_Phi": 11.2785},
+    {"rule":  54, "max_basin":  4, "n_attr": 13, "mean_Phi": 11.7150},
+    {"rule":  60, "max_basin": 16, "n_attr":  1, "mean_Phi": 14.1250},
+    {"rule":  90, "max_basin": 16, "n_attr":  1, "mean_Phi":  0.0000},
+    {"rule": 110, "max_basin":  4, "n_attr":  5, "mean_Phi": 14.7532},
+    {"rule": 126, "max_basin":  8, "n_attr":  5, "mean_Phi":  5.60708},
+    {"rule": 150, "max_basin":  1, "n_attr": 16, "mean_Phi":  5.6250},
+    {"rule": 184, "max_basin":  3, "n_attr": 12, "mean_Phi": 15.8475}
+  ],
+  "pearson": {
+    "primary": {
+      "name": "max_basin <-> mean_Phi",
+      "r": -0.313621,
+      "t_statistic": -0.809028,
+      "df": 6,
+      "verdict_tier": "🟠 WEAK-REVERSED"
+    },
+    "aux": {
+      "name": "n_attractors <-> mean_Phi",
+      "r": 0.121748,
+      "t_statistic": 0.300455,
+      "df": 6,
+      "verdict_tier": "🔴 FAIL (near-zero)"
+    }
+  },
+  "verdict_rule": {
+    "PASS_threshold": "r >= +0.5",
+    "WEAK_threshold": "+0.2 <= r < +0.5",
+    "FAIL_threshold": "r < +0.2",
+    "primary_signal": "max_basin <-> mean_Phi"
+  },
+  "verdict": "🟠 WEAK-REVERSED",
+  "verdict_text": "primary r=-0.31 — sign-reversed and below |0.5| threshold; H_345/346 finding does NOT survive 4-rule -> 8-rule broadening on the anima-side n=4 bench",
+  "h_345_346_reference": {
+    "H_345_single_state_21": {"n": 5, "n_rules": 4, "max_basin_vs_phi": 0.251,  "n_attr_vs_phi": -0.799},
+    "H_346_state_averaged":  {"n": 5, "n_rules": 4, "max_basin_vs_phi": 0.550,  "n_attr_vs_phi": -0.951}
+  },
+  "honest_caveats": [
+    "rule=90 (additive XOR) is a strong outlier: max_basin=16 but mean_Phi=0.0 — additive TPM produces flat phi_structure regardless of basin concentration",
+    "rule=60 vs rule=90 both have max_basin=16 but Phi=14.125 vs 0.0 — basin alone is not predictive when the TPM is additive",
+    "n=4 has only 16 states (vs n=5 32 states), reducing per-rule Phi resolution; this is a separate axis from rule-set breadth",
+    "8 rules with df=6 is small; t-stat |0.81| is not significant (two-sided p > 0.4 at df=6)",
+    "H_345/346 use n=5 + curated 4 rules; this bench uses n=4 + broader 8 rules — finding is the joint effect of (a) rule-set breadth and (b) n=4 vs n=5"
+  ],
+  "interpretation": "H_346 capstone's basin↔Φ coupling (+0.550 / −0.951) appears to be RULE-SET FRAGILE rather than purely robust. The 4 rules curated for H_345 ({110, 30, 105, 150}) happen to align basin and Φ; broadening to 8 rules spanning Wolfram classes I-IV introduces XOR-additive rules (90) and intermediate-class rules (54, 126, 184) that decouple basin from Φ. The aux signal (n_attr↔Φ = +0.12) goes from H_346's strong −0.95 to near-zero — the more decisive collapse.",
+  "anti_tautology": [
+    "basin and Phi are independently computed (basin from dynamics, Phi from TPM structure)",
+    "Pearson is computed on the actual 8 measurements without any rule-set tuning post-hoc",
+    "pre-registered verdict thresholds (|r| 0.5 / 0.2) are honored even though the result is reversed",
+    "rule selection committed BEFORE measurement (rules = [45,54,60,90,110,126,150,184] in source)"
+  ],
+  "compute": {
+    "wall_seconds": 29.83,
+    "cost_usd": 0.0,
+    "host": "Mac local (M-series)",
+    "phi_structure_calls": 128
+  },
+  "follow_ups": [
+    "bench n=5 with the same 8-rule set to isolate the n axis (currently confounded with rule-set breadth)",
+    "bench at n=4 with the H_345 4 rules {110, 30, 105, 150} to confirm rule-set is the dominant axis",
+    "investigate additive-rule (XOR families: 60, 90, 105, 150) Phi structure — flat for 90 but not for 60/105/150"
+  ]
+}
