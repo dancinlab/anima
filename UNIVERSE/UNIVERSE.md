@@ -78,7 +78,7 @@
 - [ ] E1 — round 1 seed (5 H):
   - [~] H_348 `golden-zone-lower-bound-SI` — **🟡 PARTIAL** — SI>3 PASS @ GZ_LOWER (3/3 seed, SI_phi 4.18~5.25) but sweep monotone in I (peak @ I→0, not GZ_LOWER) — F-1 PASS · F-2 FAIL — [H_348_golden_zone_lower_bound_SI.md](H_348_golden_zone_lower_bound_SI.md), $0 mac-local 2026-05-28
   - [ ] H_349 `golden-zone-center-phi-peak` — I=1/e 에서 big-Φ 단봉 peak (`I·ln(I)` argmin 일치) / 反: peak ≠ 1/e ±0.05
-  - [ ] H_350 `savant-index-phi-diversity` — SI ∥ Φ-diversity (max_sub_phi/min_sub_phi) / 反: r<0.5
+  - [x] H_350 `savant-index-phi-diversity` — **🟢 SUPPORTED-NUMERICAL** (Pearson r=0.9264 · Spearman ρ=0.8825 · N=40 samples · sensitivity std/mean r=0.99 robust) — H_350_savant_index_phi_diversity.md, $0 mac-local 2026-05-28
   - [x] H_347 `gz-width-divisor-symmetry` — **🟢 SUPPORTED composite** (formal `divisor_count(6)=4` 🔵 atlas-resident + numerical `ln(4/3)=0.287682` 🟢 |Δ|=1e-11) — H_347_gz_width_divisor_symmetry.md, $0 mac-local 2026-05-28 (PR #1149 H_326→H_347 rename)
   - [ ] H_351 `gz-inverse-u-phi-derivative-peak` — dΦ/dI peak 위치 = GZ_LOWER (H_204/H_285 inverse-U sister) / 反: peak ≠ GZ region
 - [ ] E2 — round 1 결과 기반 후속 H seed (cross-link: SAVANT × IIT4 Φ-structure / SAVANT × HIVE-MIND 결합)
