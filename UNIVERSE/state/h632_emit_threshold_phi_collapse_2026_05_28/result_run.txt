@@ -1,0 +1,108 @@
+================================================================
+  H_632 — emit-threshold-phi-collapse (score → coupling gain → big-Φ)
+  sweep score, finite-diff dΦ/d(score), inflection vs 0.30 / 0.60
+================================================================
+
+── seed 0  (base=0 sys_state=3) ──
+    score=0.1  big-Φ=0.0378944  total=1.79729
+    score=0.2  big-Φ=0.13661  total=1.663
+    score=0.3  big-Φ=0.283568  total=1.58498
+    score=0.4  big-Φ=0.474428  total=1.55934
+    score=0.5  big-Φ=1.58764  total=2.02636
+    score=0.6  big-Φ=1.55934  total=1.55934
+    score=0.7  big-Φ=1.58498  total=1.58498
+    score=0.8  big-Φ=1.663  total=1.663
+    dΦ/dscore @ mid=0.15  = 0.987152
+    dΦ/dscore @ mid=0.25  = 1.46959
+    dΦ/dscore @ mid=0.35  = 1.9086
+    dΦ/dscore @ mid=0.45  = 11.1321
+    dΦ/dscore @ mid=0.55  = -0.282931
+    dΦ/dscore @ mid=0.65  = 0.256338
+    dΦ/dscore @ mid=0.75  = 0.780266
+    → peak |dΦ| = 11.1321 @ score≈0.45  sign-changes=2
+
+── seed 1  (base=1 sys_state=3) ──
+    score=0.1  big-Φ=0.0  total=1.7594
+    score=0.2  big-Φ=0.0  total=1.52639
+    score=0.3  big-Φ=0.0  total=1.30141
+    score=0.4  big-Φ=0.0  total=1.08492
+    score=0.5  big-Φ=0.0  total=0.877444
+    score=0.6  big-Φ=0.0  total=0.679598
+    score=0.7  big-Φ=0.492065  total=0.492065
+    score=0.8  big-Φ=0.315641  total=0.315641
+    dΦ/dscore @ mid=0.15  = 0.0
+    dΦ/dscore @ mid=0.25  = 0.0
+    dΦ/dscore @ mid=0.35  = 0.0
+    dΦ/dscore @ mid=0.45  = 0.0
+    dΦ/dscore @ mid=0.55  = 0.0
+    dΦ/dscore @ mid=0.65  = 4.92065
+    dΦ/dscore @ mid=0.75  = -1.76424
+    → peak |dΦ| = 4.92065 @ score≈0.65  sign-changes=1
+    [HIT 0.60] peak within ±0.05 of group threshold
+
+── seed 2  (base=2 sys_state=3) ──
+    score=0.1  big-Φ=0.0  total=1.9
+    score=0.2  big-Φ=0.0  total=1.8
+    score=0.3  big-Φ=0.0  total=1.7
+    score=0.4  big-Φ=0.0  total=1.6
+    score=0.5  big-Φ=0.0  total=1.5
+    score=0.6  big-Φ=0.0  total=1.4
+    score=0.7  big-Φ=0.0  total=1.3
+    score=0.8  big-Φ=0.0  total=1.2
+    dΦ/dscore @ mid=0.15  = 0.0
+    dΦ/dscore @ mid=0.25  = 0.0
+    dΦ/dscore @ mid=0.35  = 0.0
+    dΦ/dscore @ mid=0.45  = 0.0
+    dΦ/dscore @ mid=0.55  = 0.0
+    dΦ/dscore @ mid=0.65  = 0.0
+    dΦ/dscore @ mid=0.75  = 0.0
+    → peak |dΦ| = 0.0 @ score≈0.15  sign-changes=0
+
+── seed 3  (base=3 sys_state=3) ──
+    score=0.1  big-Φ=0.0  total=1.77069
+    score=0.2  big-Φ=0.0  total=1.56818
+    score=0.3  big-Φ=0.0  total=1.38846
+    score=0.4  big-Φ=0.0  total=1.22828
+    score=0.5  big-Φ=0.0  total=1.08492
+    score=0.6  big-Φ=0.0  total=0.956136
+    score=0.7  big-Φ=0.0  total=0.84006
+    score=0.8  big-Φ=0.0  total=0.735105
+    dΦ/dscore @ mid=0.15  = 0.0
+    dΦ/dscore @ mid=0.25  = 0.0
+    dΦ/dscore @ mid=0.35  = 0.0
+    dΦ/dscore @ mid=0.45  = 0.0
+    dΦ/dscore @ mid=0.55  = 0.0
+    dΦ/dscore @ mid=0.65  = 0.0
+    dΦ/dscore @ mid=0.75  = 0.0
+    → peak |dΦ| = 0.0 @ score≈0.15  sign-changes=0
+
+── seed 4  (base=4 sys_state=0) ──
+    score=0.1  big-Φ=0.0378944  total=1.79729
+    score=0.2  big-Φ=0.13661  total=1.663
+    score=0.3  big-Φ=0.283568  total=1.58498
+    score=0.4  big-Φ=0.474428  total=1.55934
+    score=0.5  big-Φ=1.58764  total=2.02636
+    score=0.6  big-Φ=1.55934  total=1.55934
+    score=0.7  big-Φ=1.58498  total=1.58498
+    score=0.8  big-Φ=1.663  total=1.663
+    dΦ/dscore @ mid=0.15  = 0.987152
+    dΦ/dscore @ mid=0.25  = 1.46959
+    dΦ/dscore @ mid=0.35  = 1.9086
+    dΦ/dscore @ mid=0.45  = 11.1321
+    dΦ/dscore @ mid=0.55  = -0.282931
+    dΦ/dscore @ mid=0.65  = 0.256338
+    dΦ/dscore @ mid=0.75  = 0.780266
+    → peak |dΦ| = 11.1321 @ score≈0.45  sign-changes=2
+
+================================================================
+  AGGREGATE (N=5 seeds)
+    peak-near-0.30 (±0.05): 0/5
+    peak-near-0.60 (±0.05): 1/5
+    seeds with dΦ sign-change (jump/collapse): 3/5
+
+  VERDICT RULE:
+    SUPPORTED  if (hit_030 ≥ 4/5 OR hit_060 ≥ 4/5) — peak ∥ threshold
+    FALSIFIED  if peak consistently away from 0.30/0.60 (monotone-smooth)
+  → FALSIFIED: inflection (peak |dΦ|) does NOT align with 0.30/0.60
+               threshold = assistant-design artifact, Φ-구조 무관
+================================================================
