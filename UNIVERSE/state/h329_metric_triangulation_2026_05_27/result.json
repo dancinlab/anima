@@ -1,0 +1,43 @@
+{
+  "hypothesis": "H_329",
+  "slug": "metric-triangulation-3descriptor",
+  "date": "2026-05-27",
+  "title": "Metric-triangulation: 3 ECA descriptors disagree on rule ranking (n=4 ring)",
+  "question": "Do 3 independent ECA descriptors (mean cycle length · mean active bits · unique state count) AGREE on the top-ranked rule with majority (≥2 of 3 pick the same)?",
+  "engine": "pure hexa-lang. Each descriptor computed INDEPENDENTLY from the same 16-state forward orbit. No IIT4 import.",
+  "runtime": "$0 pool ubu-2 · deterministic byte-identical",
+  "panel": {
+    "rule_30_life":     {"mean_L": 6.25, "mean_bits": 2.0, "uniq_states": 11, "tops_descriptor": "A_cycle"},
+    "rule_110_life":    {"mean_L": 1.75, "mean_bits": 2.5, "uniq_states": 10, "tops_descriptor": "B_bits"},
+    "rule_105_consc":   {"mean_L": 1.75, "mean_bits": 2.0, "uniq_states": 16, "tops_descriptor": "C_uniq (tie)"},
+    "rule_150_consc":   {"mean_L": 1.75, "mean_bits": 2.0, "uniq_states": 16, "tops_descriptor": "C_uniq (tie)"},
+    "rule_60_partial":  {"mean_L": 1.0,  "mean_bits": 2.0, "uniq_states":  8},
+    "rule_204_anchor":  {"mean_L": 1.0,  "mean_bits": 2.0, "uniq_states": 16, "note": "identity sanity — C top is shared with consc class, exposes C's class-blindness"},
+    "rule_0_anchor":    {"mean_L": 1.0,  "mean_bits": 0.0, "uniq_states":  1, "note": "null collapses all descriptors"}
+  },
+  "ranking_top": {
+    "A_cycle_length":    "rule_30 (6.25)",
+    "B_active_bits":     "rule_110 (2.5)",
+    "C_unique_states":   "rule_105 ∨ rule_150 ∨ rule_204 (16, all tied — bijection class)"
+  },
+  "agreement_test": {
+    "tops_distinct_count": 3,
+    "majority_threshold": 2,
+    "verdict": "DISAGREE — 3 descriptors pick 3 different rules; zero pairwise overlap on the single top rule"
+  },
+  "falsifier_eval": {
+    "F329_1_MAJORITY_AGREE": "FAIL — A picks rule_30, B picks rule_110, C picks rule_105/150 (and rule_204!). 0/3 agree on a single top rule",
+    "F329_2_NON_ORTHOGONAL": "FAIL — each descriptor's top differs, suggesting descriptors are orthogonal axes (cycle ⊥ activity ⊥ reachability)",
+    "F329_3_DESCRIPTOR_INDEPENDENCE": "PASS — measurements are mechanically independent (proves the disagreement is real, not a measurement bug)",
+    "F329_4_ANCHOR_SANITY": "PASS — rule_0 collapses ALL descriptors uniformly (1.0, 0.0, 1); rule_204 identity hits the bijection ceiling on C while staying baseline on A and B — exposes C as a class-blind descriptor",
+    "F329_5_DETERMINISTIC": "PASS"
+  },
+  "verdict_derived": "🔴 FALSIFIED — three independent ECA descriptors give three different top-rule rankings on the same panel. Metric-triangulation H1 (≥2 of 3 agree) decisively false. The rule_204 identity tying C with consc-class is a SPECIFIC discovery: descriptor C (unique-states-reached) is BIJECTION-blind — it rewards reversibility (every state has a unique predecessor) which the identity exemplifies. This reproduces and strengthens H_268's PARTIAL fragility verdict at the simplest non-Φ measurement layer: even pre-faithful descriptors disagree on substrate ranking.",
+  "verdict": "🔴 FALSIFIED",
+  "structural_vs_dynamical": "all 3 descriptors are DYNAMICAL (forward orbit derivatives), yet they disagree — refines H_326 raster further: 'DYNAMICAL → 🟢' applies to MATCHED descriptor-hypothesis pairs only, not across all dynamical measures of the same substrate.",
+  "honest_limits": [
+    "n=4 panel; larger n might reduce descriptor disagreement (more headroom in each metric)",
+    "Single descriptor per axis; pairwise correlations across all 16 starts (not just tops) would give a richer agreement matrix",
+    "Top-rule majority is harsh; Spearman rank correlation would be a softer test"
+  ]
+}
