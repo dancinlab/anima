@@ -179,4 +179,5 @@ closure band (pass-rate>0 구간) per Wolfram class
 ## §11 양방향 sibling
 
 - sibling H: [H_636_closure_conjunction_gz_peak.md](H_636_closure_conjunction_gz_peak.md) (부모 closure conjunction) · [H_644_closure_conjunction_ultradian_phase.md](H_644_closure_conjunction_ultradian_phase.md) (closure × phase sister) · [H_653_collective_convexity_substrate_class.md](H_653_collective_convexity_substrate_class.md) (convexity ∝ class sister) · [H_652_envelope_self_similarity_substrate_class.md](H_652_envelope_self_similarity_substrate_class.md) (self-similarity class-bound sister)
-- UNIVERSE SSOT: [UNIVERSE.md](UNIVERSE.md) 축 G row G15 · [CANDIDATES.md](CANDIDATES.md) round-9 메타-축
+- UNIVERSE SSOT: [UNIVERSE.md](UNIVERSE.md) 축 G row G17 · [CANDIDATES.md](CANDIDATES.md) round-9 메타-축
+- round-9 substrate-class sister: [H_654_phi_magnitude_wolfram_class_order.md](H_654_phi_magnitude_wolfram_class_order.md) (Φ-magnitude class-order, 🟡 PARTIAL — class 는 통합량 부분 분류자) — 본 H 의 closure-band class-dependence 와 동일 round-9 메타-축
