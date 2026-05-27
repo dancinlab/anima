@@ -1,0 +1,34 @@
+═══════════════════════════════════════════════════════════
+  AXISBENCH G  —  OTHER-MIND
+  2-anima TensionHub 5-ch coupling
+  N_TICKS=100  N_CH=5  COUPLING=0.7  LEAD_LAG=2
+═══════════════════════════════════════════════════════════
+  INDEPENDENT   mean_cos = 0.779862
+                lag_argmax = 2
+  COUPLED-SYNC  mean_cos = 0.97715
+                lag_argmax = 0
+  COUPLED-LEAD  mean_cos = 0.814201
+                lag_argmax = 2
+
+  [FAIL] F1 INDEPENDENT mean_cos < 0.3
+  [PASS] F2 COUPLED-SYNC mean_cos > 0.7
+  [PASS] F3 COUPLED-LEAD lag_argmax != 0
+  [FAIL] F4 SYNC > INDEP gap
+  [PASS] F5 lag_sync == 0
+═══════════════════════════════════════════════════════════
+
+RESULT_JSON_BEGIN
+{
+  "bench": "AxisBench G OTHER-MIND",
+  "n_ticks": 100,
+  "n_ch": 5,
+  "coupling": 0.7,
+  "lead_lag": 2,
+  "scenarios": {
+    "INDEPENDENT":   { "mean_cos": 0.779862, "lag": 2 },
+    "COUPLED_SYNC":  { "mean_cos": 0.97715, "lag": 0 },
+    "COUPLED_LEAD":  { "mean_cos": 0.814201, "lag": 2 }
+  },
+  "verdict": "🟠 PARTIAL — see falsifier rows"
+}
+RESULT_JSON_END
