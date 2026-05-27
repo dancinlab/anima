@@ -1,0 +1,57 @@
+================================================================
+  H_652 — envelope-self-similarity-substrate-class
+  single-substrate (ECA n=4) 3-scale Φ-envelope self-similarity
+  rule class sweep {30 III · 90 additive · 110 IV · 184 II}
+  anchors: H_648 (min r=0.76 🟢) · H_634 · H_308 · H_642
+================================================================
+
+── rule 30 (III-chaotic) ──
+  Φ-map std (state→Φ)  : 3.16309
+  env std fine/med/coarse: 0.402412 / 0.0620288 / 0.0155072
+  r(fine,medium)       = 0.464715
+  r(medium,coarse)     = 1
+  r(fine,coarse)       = 0.464715
+  min pairwise r       = 0.464715   self-similar=0
+
+── rule 90 (additive(90)) ──
+  Φ-map std (state→Φ)  : 0.0
+  env std fine/med/coarse: 0.0 / 0.0 / 0.0
+  r(fine,medium)       = 0.0
+  r(medium,coarse)     = 0.0
+  r(fine,coarse)       = 0.0
+  min pairwise r       = 0.0   self-similar=0
+
+── rule 110 (IV-complex) ──
+  Φ-map std (state→Φ)  : 4.38586
+  env std fine/med/coarse: 0.290719 / 0.0994027 / 0.0248507
+  r(fine,medium)       = 0.881166
+  r(medium,coarse)     = 1.0
+  r(fine,coarse)       = 0.881166
+  min pairwise r       = 0.881166   self-similar=1
+
+── rule 184 (II-particle) ──
+  Φ-map std (state→Φ)  : 4.28273
+  env std fine/med/coarse: 0.217471 / 0.0543676 / 0.0135919
+  r(fine,medium)       = -0.0285714
+  r(medium,coarse)     = 1
+  r(fine,coarse)       = -0.0285714
+  min pairwise r       = -0.0285714   self-similar=0
+
+================================================================
+  ── aggregate (class-invariance) ──
+  rules           : [30, 90, 110, 184]
+  min-r per rule  : [0.464715, 0.0, 0.881166, -0.0285714]
+  self-similar    : 1 / 4 rules (min r > 0.5)
+  collapsed(<0.3) : 2 rules
+  global min r    : -0.0285714
+  ────────────── verdict ──────────────
+  [FAIL] F652.1 RULE30-SELF-SIMILAR : min r > 0.5
+  [FAIL] F652.2 RULE90-SELF-SIMILAR : min r > 0.5 (additive)
+  [PASS] F652.3 RULE110-SELF-SIMILAR: min r > 0.5 (class-IV anchor)
+  [FAIL] F652.4 RULE184-SELF-SIMILAR: min r > 0.5
+  [FAIL] F652.5 ALL-ENVELOPES-NOT-FLAT: 4×3 env std > 0
+  [PASS] F652.6 BOUND: all r ∈ [-1,1]
+  ──────────────────────────────────────
+  F652.1-6 2/6 PASS
+  verdict: 🔴 FALSIFIED (self-similarity class-bound — rule collapse min r<0.3)
+  wrote result.json
