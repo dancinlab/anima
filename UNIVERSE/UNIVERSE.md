@@ -77,7 +77,7 @@
 > ⚠ **slug-collision 정정 2026-05-28**: 초기 seed 가 H_322..H_332 슬러그를 점유 가정했으나 origin/main 인덱스가 stale → 모두 점유 발견(H_322 circadian-Kuramoto · H_323/324 폐기됨 · H_327 regeneration · H_328 cycle-length · etc). 본 PR 이 축 E·F seed 를 H_347..H_356 fresh 슬러그로 재할당. PR #1149 의 H_326 도 H_347 로 rename.
 - [ ] E1 — round 1 seed (5 H):
   - [ ] H_348 `golden-zone-lower-bound-SI` — inhibition I=GZ_LOWER 에서 SI>3 specialization 창발 / 反: SI≤3 또는 평탄
-  - [ ] H_349 `golden-zone-center-phi-peak` — I=1/e 에서 big-Φ 단봉 peak (`I·ln(I)` argmin 일치) / 反: peak ≠ 1/e ±0.05
+  - [x] H_349 `golden-zone-center-phi-peak` — **🔴 FALSIFIED-PARTIAL** (4/5 substrate monotone-or-degenerate, 1/5 rule90 sys=5 single-peak at 1/e |Δ|=0.018 — universal claim falsified, $0 mac-local 2026-05-28) — H_349_golden_zone_center_phi_peak.md
   - [ ] H_350 `savant-index-phi-diversity` — SI ∥ Φ-diversity (max_sub_phi/min_sub_phi) / 反: r<0.5
   - [x] H_347 `gz-width-divisor-symmetry` — **🟢 SUPPORTED composite** (formal `divisor_count(6)=4` 🔵 atlas-resident + numerical `ln(4/3)=0.287682` 🟢 |Δ|=1e-11) — H_347_gz_width_divisor_symmetry.md, $0 mac-local 2026-05-28 (PR #1149 H_326→H_347 rename)
   - [ ] H_351 `gz-inverse-u-phi-derivative-peak` — dΦ/dI peak 위치 = GZ_LOWER (H_204/H_285 inverse-U sister) / 反: peak ≠ GZ region
