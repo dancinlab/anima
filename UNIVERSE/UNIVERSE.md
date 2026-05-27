@@ -63,6 +63,7 @@
 - [ ] C2 — Φ-structure (distinctions·relations) 기반 신규 H: 생명 vs 의식 구조 차이 정량
 - [x] C cycle#23 1차 — C1=H_282 (H_266/268/278 faithful big-Φ 방향보존 SUPP 8/8 + **H_266 proxy-monotone artifact RESOLVE**, #570) · C2=H_281 (생명vs의식 Φ-structure 구조분리 SUPP 9/9, 의식=irreducibility-floor 1.0 vs 생명>1.0, #567) — 둘 다 HEXAD/IIT4/lib 재사용. ⚠ H_280 독립 kernel 은 xval #572 로 버그 확정(Σφ_d non-monotone) → big-Φ 로만 방향 신뢰
 - [x] C cycle#24 — H_285 edge-of-chaos faithful big-Φ (🟢 SUPP 5/5): class-mean ordered 0 < chaotic 6.94 < **edge(IV) 10.45** → H_204 inverse-U 방향 인과 확증(H_268 proxy LZ-fragility 해소), M6 anchor 재현. honest: chaotic bimodal(rule30 高/rule90 0). big-Φ NOT Σφ_d. inline(throttle-bypass) 측정
+- [x] C cycle#25 round 4 — H_623 distinction+relation level 재검 (🟢 SUPP 5/5): H_266 n_dist class-mean int=10.0 > dis=2.0(×5) + Σφ_d 3.89 > 2.0 · H_268 T1 structure 3/3 state(n_dist 10-12, Σφ_d+Σφ_r 8.6-16.4) · H_278 6-scale n_dist CV 0.447 (round 1 big-Φ CV 0.466 와 ±5%) · struct-level det Δ=0. honest: rule 204 self-distinction Σφ_d=4 가 individual integrated 보다 클 수 있어 class-mean 위에서만 분리 — round 1 big-Φ scalar 가 더 강한 분리축임 정량 확증
 > ⚠ cycle#22(2026-05-26): H_280(#561)이 distinction 층을 독립 재구현했으나 `HEXAD/IIT4/lib`(distinction **+ relation**, M6 n=4 7/7 done)와 중복 — "relations intractable" 주장은 `iit4_relation.hexa` 가 반증. 축 C 는 `HEXAD/IIT4/lib` 경유로 진행 (재발명 금지, g61). H_280 독립 kernel 은 교차검증 자료로 잔존. 상세 = LIFE.log#cycle22.
 
 ### 축 D — LLM-동반 연속 가설 발견 (영구)
