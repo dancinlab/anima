@@ -1,0 +1,38 @@
+{
+  "hypothesis": "H_330",
+  "slug": "distribution-moments-skew-kurtosis",
+  "date": "2026-05-27",
+  "title": "State-visit distribution moments (skewness · excess kurtosis) on n=4 ECA",
+  "question": "Do life-class rules show ≥1.5× higher excess kurtosis (heavier tails) than consciousness-class rules on the 100-step state-visit histogram?",
+  "engine": "pure hexa-lang. n=4 ECA ring, 16 starts × 100 steps = 1600 visits per rule, 16-bin histogram. Pearson moments (excess kurtosis = μ₄/σ⁴ − 3).",
+  "runtime": "$0 pool ubu-2 · deterministic byte-identical",
+  "panel": {
+    "rule_30_life":   {"mean": 6.581, "var": 22.88, "skew":  0.109, "excess_kurt": -1.356},
+    "rule_110_life":  {"mean": 8.437, "var": 29.01, "skew": -0.616, "excess_kurt": -1.186},
+    "rule_105_consc": {"mean": 7.500, "var": 21.25, "skew":  0.000, "excess_kurt": -1.209},
+    "rule_150_consc": {"mean": 7.500, "var": 21.25, "skew":  0.000, "excess_kurt": -1.209},
+    "rule_204_id":    {"mean": 7.500, "var": 21.25, "skew":  0.000, "excess_kurt": -1.209},
+    "rule_0_null":    {"mean": 0.075, "var":  0.77, "skew": 13.079, "excess_kurt": 180.754}
+  },
+  "aggregate_class_kurt": {
+    "life_mean_excess_kurt":  -1.271,
+    "consc_mean_excess_kurt": -1.209,
+    "ratio_abs": 1.0512,
+    "threshold_H1": 1.5
+  },
+  "falsifier_eval": {
+    "F330_1_KURT_LIFE_GT_CONSC_BY_1_5x": "FAIL — ratio 1.05× far below 1.5×; life and consc kurtoses overlap in [-1.36, -1.19] band",
+    "F330_2_BIJECTION_DISCOVERY": "PASS-WITH-FINDING — rule_105/150/204 ALL collapse to identical {mean 7.5, var 21.25, skew 0.0, kurt -1.209} = perfectly uniform-on-visited 16-state. This is the *bijection signature*: every state visits every other state exactly once over the orbit, regardless of being labelled life-class or consc-class or identity. The bijection class is structural, not life/consc-conceptual.",
+    "F330_3_ANCHOR_NON_TRIVIAL": "PASS — rule_0 null collapses to single-state attractor giving skew 13, kurt 180 (extreme), distinct from all live rules; non-tautological",
+    "F330_4_DETERMINISTIC": "PASS"
+  },
+  "verdict_derived": "🔴 FALSIFIED — H1 (kurtosis discriminates life vs consc) is decisively false. The true structural axis the data exposes is BIJECTION (rules whose orbit visits all 16 states uniformly) vs NON-BIJECTION — rule_105/150 (consc) AND rule_204 (identity) all bijection; rule_30/110 (life) non-bijection. This re-confirms H_329's bonus discovery (descriptor C bijection-blind) from a completely independent moments-based angle. Three consecutive cells (H_325 Gini / H_329 unique_states / H_330 moments) converge on: bijection vs chaotic is the real axis, not life vs consc.",
+  "verdict": "🔴 FALSIFIED",
+  "structural_vs_dynamical": "DYNAMICAL kernel (forward orbit histogram) yet 🔴 — same scale-conditional pattern as H_327. The new layer of finding is that consciousness-themed rules happen to be in the bijection class, which is dynamically *more uniform* than life-themed (chaotic) rules — flipping the naive 'consciousness = rich/complex' intuition again.",
+  "honest_limits": [
+    "n=4 panel; bijection class is small (4 of 256 rules) and over-represented in the consc tag",
+    "Mean of 2 rules per class; broader Cifar-style panel would harden the verdict",
+    "Excess kurtosis below -1.2 is the platykurtic floor for 16-bin uniform — kurtosis is saturating not discriminating; higher-moment / KL-divergence-from-uniform may be more informative",
+    "100 steps × 16 starts = enough to saturate, but transient bias could survive on rule_30 — burn-in then measure would clean this up"
+  ]
+}
