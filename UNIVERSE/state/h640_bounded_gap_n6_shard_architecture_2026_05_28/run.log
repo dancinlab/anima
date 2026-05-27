@@ -1,0 +1,62 @@
+================================================================
+  H_640 — n=6 bounded-gap SHARD-ARCHITECTURE (H_631b 회수)
+================================================================
+
+## per-(rule, cap) shard feasibility probes (single-state st=21, n=6 ring)
+
+  rule110 cap1  : 1s    phi=0.747671   FEASIBLE (< 60s)
+  rule110 cap2  : 9s    phi=4.32121    FEASIBLE
+  rule90  cap3  : 26s   phi=4.0        FEASIBLE
+  rule110 cap3  : 40-52s phi=6.79534   FEASIBLE (boundary)
+  rule30  cap3  : 67-118s phi=3.85376  OVER-BUDGET (slow-shard exception)
+  rule110 cap4  : 124s (KILLED ulimit 75s)   INFEASIBLE
+  --- H_631 timing carry ---
+  n=6 cap5 single-state: >2min (killed)       INFEASIBLE
+  n=6 cap6 EXACT single-state: >10min (killed) INFEASIBLE (no exact anchor at n=6)
+
+→ shard architecture UNLOCKS n=6 cap<=2 (universal, 1-9s) + cap3 (rule90/110 < 60s).
+  rule30 cap3 = slow-shard exception (67-118s). cap>=4 + cap6-exact remain infeasible
+  EVEN sharded ⇒ pre-registered INSUFFICIENT branch fires (no exact anchor; gap = lower-bound).
+
+## n=6 single-state st=21 (010101) bounded big-Φ — feasible shards [c1, c2, c3]
+
+  rule  30: 1.31617  1.31617  3.85376
+  rule  90: 0.0      0.0      4.0
+  rule 110: 0.747671 4.32121  6.79534
+
+## gap(k) = bounded(cap3 pseudo-anchor) − bounded(cap=k)
+
+  rule  30: g1=2.53759 g2=2.53759 g3=0.0   (g1=g2 tie → 1 degenerate ratio)
+  rule  90: g1=4.0     g2=4.0     g3=0.0   (g1=g2 tie → 1 degenerate ratio)
+  rule 110: g1=6.04767 g2=2.47413 g3=0.0   (g2/g1=0.409 non-degenerate)
+
+## α = −ln(g2/g1) [single non-anchor ratio, cap3=anchor]
+
+  rule  30: α=0.0  (0 valid ratios — g1=g2 ⇒ exp-shape UNRESOLVED at cap<=3)
+  rule  90: α=0.0  (0 valid ratios — g1=g2 ⇒ exp-shape UNRESOLVED at cap<=3)
+  rule 110: α=0.893784  (1 valid ratio — exp-decay RESOLVED)
+
+  cross-ref n=5 single-state α (H_625/H_631): r30=0.243 r90=0.192 r110=1.101
+  → rule110 n=6 α=0.894 same sign + same order-of-magnitude as n=5 (1.101), |Δ|=0.207 < 0.5.
+  → rule110 decays fastest in BOTH n (g2/g1=0.409 ≪ rule30/90 tie 1.0) — n=5 order preserved.
+
+## finalize falsifier result: 19 PASS / 0 FAIL (EXIT=0)
+
+  F640.1 cap<=2 shard feasible n=6                                 PASS
+  F640.2 cap>=4 single-state >60s even sharded (no exact anchor)   PASS
+  F640.3 r30/90/110 gap monotone (feasible window)                 PASS×3
+  F640.4 r30/90/110 gap(c3)~0 (pseudo-anchor)                      PASS×3
+  F640.5 r30/90/110 nonneg+lowerbound                              PASS×3
+  F640.6 rule110 exp-shape RESOLVED (α>0)                          PASS
+  F640.6 rule30/90 exp-shape UNRESOLVED at cap<=3 (expected)       PASS×2
+  F640.7 rule110 decays fastest (g2/g1 smallest, order preserved)  PASS
+  F640.8 rule110 n=6 α ~ n=5 α=1.101 (|Δ|<0.5)                     PASS
+  ln_natural self-check ×3                                         PASS×3
+
+VERDICT: 🟠 INSUFFICIENT-DEFERRED — shard architecture extends n=6 feasibility from
+0% (H_631: all caps >60s) to cap<=3, BUT cannot reach the cap=6 exact anchor (cap>=4
+infeasible even sharded). gap is therefore a LOWER-BOUND. rule110 exp-decay + fastest-
+order CONFIRMED & n=5-consistent; rule30/90 exp-shape UNRESOLVED by the narrow feasible
+window (their decay only manifests at cap≥3→exact, which is infeasible).
+
+비용 = $0 · LLM = 사용 안 함 · GPU = 사용 안 함 · 결정론적 hexa run, mac-local.
