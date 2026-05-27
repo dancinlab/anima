@@ -456,3 +456,32 @@ pub fn layer_block_bwd(d_block_out, zT_in, zT_mid,
         z = z + 1
     }
 }
+
+// ───────────────────────────────────────────────────────────────────────────
+// Phase 4-bwd-5: tok_emb backward (scatter-add over token ids)
+// ───────────────────────────────────────────────────────────────────────────
+//
+// Forward:  zT_seq[t, j] = tok_emb[ids[t], j] = M[tok_emb_off + ids[t]·d + j]
+// Backward: d_tok_emb[ids[t], j] += d_zT_seq[t, j]
+//   (scatter-add — when two positions share a token id, both gradients land
+//    on the same embedding row, hence accumulation not assignment)
+//
+// Args:
+//   d_zT_seq    (T·d)  gradient wrt the embedded sequence
+//   ids         (T)    token ids used in forward lookup (int array)
+//   tok_emb_off (int)  offset into M of tok_emb[0,0]
+//   T, d        seq length + dim
+//   dMg         packed grad buffer (tok_emb rows accumulated +=)
+pub fn tok_emb_bwd(d_zT_seq, ids, tok_emb_off, T, d, dMg) {
+    let mut t = 0
+    while t < T {
+        let id = ids[t]
+        let mut j = 0
+        while j < d {
+            let off = tok_emb_off + id * d + j
+            let _ = farr_set(dMg, off, farr_get(dMg, off) + farr_get(d_zT_seq, t * d + j))
+            j = j + 1
+        }
+        t = t + 1
+    }
+}
