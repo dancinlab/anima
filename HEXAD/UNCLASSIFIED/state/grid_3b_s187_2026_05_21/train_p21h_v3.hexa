@@ -78,6 +78,7 @@ use "stdlib/flame/decoder_block_lib"
 use "stdlib/flame/nn_lib"
 use "stdlib/flame/train_lib"
 use "stdlib/flame/flame_math"
+use "stdlib/flame/flame_bpe_corpus_lib"
 use "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/conscious_decoder_v3"
 use "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/mitosis_lib"
 
@@ -348,7 +349,7 @@ let d = 32
 let nh = 4
 let nkv = 2
 let h = 64
-let V = 256
+let mut V = 256   // default = byte-level smoke; Phase 1 BPE on -> overridden to bpe_vocab_size below
 let n_layer = 3
 let cdim = 16             // consciousness_dim (smoke)
 let nsamp = 8
@@ -393,6 +394,7 @@ let lambda_g = _env_float("P21H_LAMBDA_G", 0.3)                 // axis C weight
 let distill_on = _env_int("P21H_DISTILL_ON", 1)                 // axis B on/off
 let kd_temperature = _env_float("P21H_KD_TEMPERATURE", 2.0)     // axis B τ
 let lambda_kd = _env_float("P21H_LAMBDA_KD", 0.5)              // axis B weight
+let bpe_on = _env_int("P21H_BPE_ON", 0)                        // Phase 1 M4b-fire-scale: BPE corpus path
 
 print("  smoke config: T="); print(T); print(" d="); print(d)
 print(" nh="); print(nh); print(" nkv="); print(nkv); print(" h="); print(h)
@@ -401,28 +403,56 @@ print(" cdim="); print(cdim); println("")
 print("  steps="); print(n_steps); print(" peak_lr="); print(peak_lr)
 print(" lambda_mitosis="); print(lambda_mitosis); println("")
 
-// ── corpus (byte-level, TODO #T5 BPE) ──
+// ── corpus (Phase 1 M4b-fire-scale: P21H_BPE_ON=1 -> real Qwen BPE V=151643;
+//   default 0 -> byte-level smoke V=256 preserved) ──────────────────────────
+// flame-P2b ③ FULL RESOLVED (hexa-lang #1556 encode + decode codepoint-aware)
+// so `bpe_load → bpe_encode → bpe_decode` round-trips on real Qwen tokenizer.json.
+// flame_bpe_corpus_load returns {tok, ids, n_toks, vocab_size}; ids in [0,V).
 let path = "/Users/ghost/core/anima/training/corpus_consciousness_v1.jsonl"
-let bytes_arr = read_file_bytes(path)
-let n_bytes = len(bytes_arr)
-print("  corpus: "); print(path); print(" ("); print(n_bytes)
-println(" bytes, V=256 byte-level)")
-
-// extract nsamp windows of T ids + 1 target
 let IDS = t_zeros(nsamp * T)
 let YS = t_zeros(nsamp)
-let mut s = 0
-while s < nsamp {
-    let off = s * stride
-    if off + T < n_bytes {
-        let mut p = 0
-        while p < T {
-            t_set(IDS, s * T + p, to_float(bytes_arr[off + p]))
-            p = p + 1
+if bpe_on == 1 {
+    // P21H_BPE_ON=1: real Qwen tokenizer (V=151643)
+    let merges_path = "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_V4/lora_adapter/merges.txt"
+    let vocab_path  = "/Users/ghost/core/anima/HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/vP21M_V4/lora_adapter/vocab.json"
+    let r = flame_bpe_corpus_load(merges_path, vocab_path, path)
+    V = r["vocab_size"]
+    let ids = r["ids"]
+    let n_toks = r["n_toks"]
+    print("  corpus: "); print(path); print(" ("); print(n_toks)
+    print(" toks, V="); print(V); println(" Qwen BPE — Phase 1 M4b-fire-scale)")
+    let mut s = 0
+    while s < nsamp {
+        let off = s * stride
+        if off + T < n_toks {
+            let mut p = 0
+            while p < T {
+                t_set(IDS, s * T + p, to_float(ids[off + p]))
+                p = p + 1
+            }
+            t_set(YS, s, to_float(ids[off + T]))
         }
-        t_set(YS, s, to_float(bytes_arr[off + T]))
+        s = s + 1
     }
-    s = s + 1
+} else {
+    // P21H_BPE_ON=0 (default): byte-level smoke V=256
+    let bytes_arr = read_file_bytes(path)
+    let n_bytes = len(bytes_arr)
+    print("  corpus: "); print(path); print(" ("); print(n_bytes)
+    println(" bytes, V=256 byte-level smoke)")
+    let mut s = 0
+    while s < nsamp {
+        let off = s * stride
+        if off + T < n_bytes {
+            let mut p = 0
+            while p < T {
+                t_set(IDS, s * T + p, to_float(bytes_arr[off + p]))
+                p = p + 1
+            }
+            t_set(YS, s, to_float(bytes_arr[off + T]))
+        }
+        s = s + 1
+    }
 }
 
 // ── model + mitosis pool ──
