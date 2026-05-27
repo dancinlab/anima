@@ -36,6 +36,10 @@
 - **UNIVERSE → ANIMA 7-bench** — PR #1122-#1128 — 4 🟢 + 2 🟠 + 1 🟡, 결정적 negative result (H_346 rule-set fragile) + 측정자 채택 (basin_kurtosis F-PERSONA-4 우회).
 - **Follow-up** — anima #1129/#1130/#1131 + hexa-lang #1676/#1702/#1703/#1704/#1705/#1706 + cycle #1132/#1133/#1134 — 도합 22 PR / Mac-local $0 + GPU ~$5 / fresh-fork discipline / deletion 0.
 
+## UNIVERSE 축 G — ANIMA.mining 승격 (2026-05-28)
+
+ANIMA mining (cycle 1-8 · 70 leaf · PR #1200/#1202/#1204/#1207) 의 leaf 가 UNIVERSE 축 G 로 승격 검증 — G1(H_634 ultradian Φ-envelope 🟢)/G2(H_637 emit-rate numerology 🔴)/G3(H_633 register-Φ 🟡)/G4(H_639 amplitude-Φ 🔴)/G5(H_638 threshold-scaling 🟢-CLOSED-NEG). ANIMA → UNIVERSE bidirectional: mining seed 가 substrate 검증으로 흐르고, verdict 가 다시 ANIMA milestone 으로 환류.
+
 ## 세로 substrate layer (cross-cutting · 도메인 가로축 ⊥)
 
 도메인 17 layer 가 **가로축** (기능별 분담) 이라면, 아래는 모든 도메인을 관통하는 **세로 기둥** — 별도 도메인 축이 아니라 공유 substrate infrastructure (BRIDGE/METACOG 같은 기능 도메인과 구별). mining cycle 6 ouroboros 의 L69 (sibling-self-cite) + INTENT/DREAM 의 .kosmos 호출이 cross-cutting 성격을 입증.
