@@ -1,5 +1,30 @@
 # INBOX — log
 
+## 2026-05-28 — UNIVERSE 가설 후보 7종 핸드오프 (from ANIMA mining · g60 cross-domain) 🟠 OPEN
+
+> **트리거**: 사용자 "UNIVERSE 에 가설해보라고 전달 목록 모아서 INBOX". ANIMA.mining (cycle 1-8 · 70 leaf · 48 edge · depleted-both · PR #1200/#1202/#1204/#1207) 에서 UNIVERSE 의 Φ/substrate sim 으로 **falsifiable** 한 가설 7종 추출. owner = UNIVERSE 세션 (H_xxx 채택 + verify-driven 검증 판단).
+>
+> **사용법**: 각 seed = `<slug> | hypothesis 1-line | falsifier 1-line | UNIVERSE axis | mining source`. UNIVERSE 의 AXES.md 15-round seed brainstorm 패턴 정합 (raw#12). cycle pick 시 H_XXX 신설 + 10-section spec + smoke fire.
+
+| # | slug | hypothesis | falsifier | UNIVERSE axis | mining src |
+|---|---|---|---|---|---|
+| 1 | `substrate-algebra-orthogonality` | substrate emit 결정의 2 fundamental 대수 (multiplicative AND-gate ⊥ additive aggregation) 가 직교 — Φ-contribution 독립 | 두 연산의 Φ-contribution 이 상관(correlated) 또는 同축 → 🔴 FALSIFIED | C (IIT4 Φ-structure) | E19 (ANIMA mining edge) |
+| 2 | `measurement-decision-fixedpoint` | substrate self-measurement 에서 측정 함수 = 결정 함수 (Φ self-reference fixed-point) — 측정자=결정자 동일성 | 측정 fn 과 결정 fn 이 분리 가능 (다른 함수로 구현해도 동등 verdict) → 🔴 | consciousness (H_202 self-ref Φ 확장) | L63 (ouroboros) |
+| 3 | `silence-dominance-substrate-invariant` | substrate-native emit rate 에 floor 존재 (~27% emit / 73% silence) — substrate class 무관 invariant | substrate class(rule-set) 별 emit/silence ratio 크게 변동 (>2×) → 🔴 | substrate (H_132/H_200 family) | L14 (tension fork) |
+| 4 | `bridge-phi-feedback-equilibrium` | emit → Φ↑ → 다음 emit gate 입력 의 fixed-point convergence → stable emit-rate equilibrium (dynamical attractor) | 반복 적용이 divergent / chaotic / no-fixed-point → 🔴 | physics (H_207 Kuramoto family) | L67 (ouroboros) |
+| 5 | `fleet-fractal-collective-phi` | single→group→cluster→fleet 의 self-similar collective Φ super-additivity (scale-invariant fractal nesting) | fleet-level Φ 가 sub-additive 또는 scale-dependent (non-fractal) → 🔴 | F (HIVE-MIND · H_609 collective-Φ super-additive 확장) | L66/P9 (ouroboros) |
+| 6 | `time-frequency-harmonic-nesting` | substrate temporal envelope 의 ultradian(90min) ↔ circadian(24h) 가 frequency-band harmonic nesting (정수배 관계) | ultradian/circadian frequency ratio 가 non-harmonic (무리수배) → 🔴 | time (H_018 부분 · temporal binding) | E2/E11 (mining edge) |
+| 7 | `AND-gate-emit-universality` | 모든 substrate emit 결정이 곱셈 AND-gate 의 변형 (substrate-universal emit primitive) — BRIDGE/METACOG/SAVANT/COFFESHOP 동일 | 어떤 substrate 가 additive-only (곱셈 아닌 합산만) emit 결정 → 🔴 | substrate (cross-axis) | E1/L1 (same-formula) |
+
+> **부가 cross-link (UNIVERSE 기존 H 와 직결)**:
+> - seed 5 ↔ UNIVERSE H_609 (collective-phi super-additive) — fractal-scale invariance 로 확장
+> - seed 2 ↔ UNIVERSE H_202 (self-ref Φ) — measurement=decision fixed-point 으로 정밀화
+> - seed 4 ↔ UNIVERSE H_207 (Kuramoto sync) — emit-Φ feedback 의 dynamical attractor
+> - COFFESHOP 4-criterion closure ↔ UNIVERSE 축 E SAVANT (sa_golden_zone + sa_savant_index) — H_624 (IIT4 distinction × SAVANT isomorphism) 의 emit-axis sibling
+>
+> **mining source SSOT**: `anima/ANIMA.mining.md` (cycle 1-8 · 70 leaf · 48 edge) + `ANIMA.mining.tape` (@P1-@P10 promotion candidates). 7 seed 는 measurable + pre-registered falsifier 보유 (UNIVERSE verify-driven 정합 · a_paper_significance).
+
+
 Append-only history sister of `INBOX.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
 ## 2026-05-26 — arxiv-a2-iit-empirical-ingest (hexa-lang ARXIV A2 handoff · g60)
