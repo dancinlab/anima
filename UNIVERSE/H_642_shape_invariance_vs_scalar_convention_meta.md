@@ -3,8 +3,8 @@ id: H_642
 slug: shape-invariance-vs-scalar-convention-meta
 title: shape feature (peak 위치·monotone 방향·envelope 형태) 가 scalar value (absolute threshold·rate·magnitude) 보다 substrate-class 불변인가 — round 6 메타-발견 정량 격상
 domain: consciousness · math · physics · meta · savant
-status: __VERDICT__
-verdict_class: __VERDICT__
+status: FALSIFIED
+verdict_class: FALSIFIED
 exploration_method: E0 (round 6 mining H_632~639 메타-발견 정량 격상) + E5 (continuous-parameter dΦ/dI sweep) + E11 (cross-substrate Φ-signature) + E_meta (shape ⊥ scalar dichotomy 정량)
 verification_method: W1 (numerical smoke) + W4 (verdict-class) + W11 (cross-rule CV) + W12 (invariant-signature meta-stat)
 hexa_only: true
@@ -114,20 +114,23 @@ ratio     = CV_scalar / CV_shape
 |-----:|-------|--------------:|----------------------:|-------------:|
 | 30   | III-chaotic   | 0.18 | 21.7406 | 0 |
 | 54   | IV-complex    | 0.40 | 10.8425 | 0 |
-| 90   | III-additive  | __R90_PEAK_I__ | __R90_PEAK_MAG__ | __R90_SC__ |
+| 90   | III-additive  | **0.05** | **0.276542** | **1** |
 | 110  | IV-complex    | 0.18 | 21.3315 | 0 |
 | 184  | II-particle   | 0.40 | 19.9171 | 0 |
 
-**메타-통계 (5 rule)**
+> rule 90 (XOR-additive) 는 강한 outlier — IIT4 big-Φ 가 거의 0 (Φ(0.50)=0.0526) 이라 peak |dΦ/dI|=0.2765 가 다른 rule (10.8~21.7) 의 ~2% 수준. additive/linear ECA 의 cause-effect repertoire 가 maximally factorizable → 통합 부재. peak I=0.05 (grid 경계) 도 shape outlier.
+
+**메타-통계 (5 rule, population CV)**
 
 | feature | mean | population stddev | **CV** |
 |---------|-----:|------------------:|-------:|
-| shape (peak I)  | __MEAN_SHAPE__ | __STD_SHAPE__ | **__CV_SHAPE__** |
-| scalar (peak \|dΦ/dI\|) | __MEAN_SCALAR__ | __STD_SCALAR__ | **__CV_SCALAR__** |
+| shape (peak I)  | 0.242 | 0.137463 | **0.568028** |
+| scalar (peak \|dΦ/dI\|) | 14.8216 | 8.28983 | **0.559306** |
 
-- **ratio = CV_scalar / CV_shape = __RATIO__**
-- **M1 (CV_shape < CV_scalar) = __M1__**
-- rule {30,54,110,184} peak_I = {0.18, 0.40, 0.18, 0.40} → H_614 재현 ✓
+- **ratio = CV_scalar / CV_shape = 0.984646**
+- **M1 (CV_shape < CV_scalar) = FAIL** (0.568028 ≥ 0.559306 — shape 가 scalar 보다 *근소하게 더* class-variant)
+- **M2 (ratio > 1) = FAIL** (ratio 0.9846 < 1)
+- rule {30,54,110,184} peak_I = {0.18, 0.40, 0.18, 0.40} + peak_mag {21.74, 10.84, 21.33, 19.92} → H_614 재현 ✓ (engine 정합)
 
 ## 6. cross-link — round 6 mining arc · 측정-도구 계보
 
@@ -152,30 +155,35 @@ ratio     = CV_scalar / CV_shape
 
 ## 7. 해석 — Honest C3 (3-tier caveat)
 
-### C1 — shape/scalar feature 선택의 design 자의성
+본 H 는 round 6 메타-발견 — *shape 가 scalar 보다 class-invariant* — 을 이 대표 쌍 위에서 **반증**했다 (CV_shape=0.568 ≥ CV_scalar=0.559, ratio 0.9846 < 1). 두 CV 는 거의 동일 (Δ=0.0087, 1.5% 차이) — shape 가 scalar *보다* 불변이라는 강주장은 깨지나, shape 가 scalar *만큼* class-variant 라는 약한 형태로 닫힌다. 핵심 원인: rule 90 (XOR-additive) 가 shape *와* scalar 양쪽 모두에서 outlier (peak I=0.05 경계 + peak_mag 0.28 ≈ 0) 라 두 변동을 동시에 끌어올렸다.
 
-본 H 의 "shape feature" = dΦ/dI peak 위치, "scalar feature" = dΦ/dI peak 높이로 *조작적 정의* 했다. round 6 메타-발견의 shape (peak 위치·monotone 방향·envelope 형태) 와 scalar (threshold·rate·magnitude) 는 더 넓은 범주이며, 본 측정은 그중 *한 쌍* (peak-위치 vs peak-높이) 만 정량화한다. 다른 shape proxy (sign-change 수, envelope skew) 나 다른 scalar proxy (Φ(0.50) magnitude, AUC) 를 골랐다면 CV 비율이 달라질 수 있다. peak-위치 vs peak-높이 쌍은 H_614/H_628 이 직접 측정한 두 양이라 계보 정합이 가장 강한 선택이지만, dichotomy 의 *일반* 증명이 아닌 *대표 쌍 위에서의* 정량이라는 한계.
+### C1 — shape/scalar feature 선택의 design 자의성 (반증의 fragility)
 
-### C2 — 5-rule sample 한정 (CV 의 통계적 power)
+"shape feature" = dΦ/dI peak 위치, "scalar feature" = dΦ/dI peak 높이로 *조작적 정의*. round 6 메타-발견의 shape (peak 위치·monotone 방향·envelope 형태) 와 scalar (threshold·rate·magnitude) 는 더 넓은 범주이며 본 측정은 *한 쌍* (peak-위치 vs peak-높이) 만 정량화한다. ratio 0.9846 은 1 에 매우 가까워 (1.5% 차이) — 다른 shape proxy (sign-change 수, envelope skew) 나 scalar proxy (Φ(0.50) magnitude, AUC) 를 골랐다면 부등호가 뒤집힐 수 있는 borderline. 즉 본 반증은 "shape 가 scalar 보다 불변이라는 **강주장**이 이 대표 쌍에서 성립 안 함" 까지이고, 메타-발견의 *완전* 폐기가 아니라 *대표 쌍 위 강주장의* 폐기다. 실제로 H_628 (polarity ⊥ peak-위치) 는 shape-invariance 의 직접 증거로 남는다 — 본 H 는 그 invariance 가 *scalar 보다 우월* 하지는 않음을 보일 뿐.
 
-CV 는 5개 점(rule)의 population 통계다. n=5 sample 의 CV 는 outlier 1개에 민감하며, 256 ECA rule space 의 universality 결론에 충분치 않다. H_614 §7 C1 의 4-rule 한계 carry — class I 부재, class III 2개(30·90)·IV 2개(54·110)·II 1개(184). 본 H 의 verdict 는 "**제출된 5 rule 위에서** shape 의 CV 가 scalar 의 CV 보다 작은가" 까지가 한계. full 256-rule 또는 class-stratified 16-rule sample 은 별도 round 후보.
+### C2 — 5-rule sample + outlier 지배 (CV 의 통계적 fragility)
 
-### C3 — peak-위치 grid quantization vs magnitude 연속성의 비대칭
+CV 는 5 점(rule) population 통계라 outlier 1개에 극도로 민감하다. rule 90 (XOR-additive, Φ≈0) 단독이 CV_shape (peak I=0.05 가 mean 0.242 를 끌어내림) *와* CV_scalar (peak_mag 0.28 이 mean 14.8 을 끌어내림) 양쪽을 동시에 지배 — rule 90 제거 시 4-rule CV 는 shape {0.18,0.40,0.18,0.40} 가 거의 binary (CV≈0.31), scalar {21.74,10.84,21.33,19.92} 가 CV≈0.26 로 부등호가 다시 shape>scalar 유지될 가능성도 있으나 (즉 반증 robust), additive-rule outlier 가 결론을 좌우한다는 사실 자체가 5-rule sample 의 한계. H_614 §7 C1 (4-rule, class I 부재) carry. 256-rule 또는 class-stratified sample 은 별도 round.
 
-shape feature (peak I) 는 13-point grid 에 *snap* 되는 이산량 (가능값 13개), scalar feature (peak magnitude) 는 *연속* 실수다. 이산 vs 연속의 본질적 비대칭이 CV_shape 를 인위적으로 낮출 수 있다 (grid 가 위치를 양자화해 variance 를 억제). 즉 M1 PASS 의 일부는 측정 양식(grid-snap)의 artifact 일 수 있고, 순수 substrate 효과와 완전히 분리되지 않는다. 단, H_614 가 보였듯 peak 위치는 실제로 {0.18, 0.40} 두 값으로 *분기* 하므로 (grid 안에서도 variance 존재), grid-snap 이 variance 를 0 으로 만들지는 않는다 — 비대칭 caveat 은 magnitude 를 부풀리는 게 아니라 shape 를 절제하는 방향이라 메타-발견에 *보수적*. n=4 small-n (H_614 C2 carry) + 단일 inhibition mode `(1-I)·tpm` (H_628 L4 carry) 도 동일 한계.
+### C3 — peak-위치 grid-snap vs magnitude 연속성의 비대칭 (반증에 보수적)
+
+shape feature (peak I) 는 13-point grid 에 *snap* 되는 이산량 (가능값 13개), scalar (peak magnitude) 는 *연속* 실수다. 이 비대칭은 CV_shape 를 인위적으로 *억제* 하는 방향 (grid 양자화가 위치 variance 를 압축) — 즉 grid 가 더 조밀했다면 CV_shape 가 *더 커져* 반증이 *강화* 될 수 있다. 따라서 본 FALSIFIED 는 측정 양식상 *보수적* (grid-snap 이 shape 를 유리하게 절제했음에도 여전히 CV_shape ≥ CV_scalar). n=4 small-n (H_614 C2) + 단일 inhibition mode `(1-I)·tpm` (H_628 L4) + rule 90 outlier 가 mean 을 비선형 왜곡 (CV 가 평균-정규화라 0-근접 mean 에 폭발적) 도 carry. 반증 결론의 정직한 scope = "이 대표 shape/scalar 쌍 + 5-rule + grid-snap 양식 위에서, shape 가 scalar 보다 class-불변이라는 강주장 deterministically 거부."
 
 ## 8. verdict
 
 ```
-verdict_class: __VERDICT__ — substrate-class (rule {30,54,90,110,184}) 를 가로질러
-   shape feature (dΦ/dI peak *위치*) 의 변동계수 CV_shape __CMP__ scalar feature
-   (Φ magnitude peak *높이*) 의 변동계수 CV_scalar.
-   CV_shape=__CV_SHAPE__ vs CV_scalar=__CV_SCALAR__ (ratio __RATIO__).
-   round 6 (mining H_632~639) 메타-발견 — *구조는 substrate-emergent, 숫자는
-   design-convention* — 의 정량 메타-검증 __CONFIRM__.
+verdict_class: 🔴 FALSIFIED (M1 FAIL · M2 FAIL · n_rule=5) — substrate-class (rule
+   {30,54,90,110,184}) 를 가로질러 shape feature (dΦ/dI peak *위치*) 의 변동계수
+   CV_shape=0.568028 가 scalar feature (Φ magnitude peak *높이*) 의 변동계수
+   CV_scalar=0.559306 보다 (근소하게) *크다* — ratio CV_scalar/CV_shape=0.984646
+   < 1. 즉 shape 가 scalar 보다 class-invariant 라는 round 6 (mining H_632~639)
+   메타-발견의 *강주장* 은 이 대표 shape/scalar 쌍 위에서 **반증**. 두 CV 가 거의
+   동일 (Δ=0.0087, 1.5%) — shape 가 scalar *만큼* class-variant 라는 약한 형태로
+   닫힘. rule 90 (XOR-additive, Φ≈0) 이 shape (peak I=0.05 경계) 와 scalar
+   (peak_mag 0.28≈0) 양쪽 outlier 로 두 변동을 동시 지배.
 config: 5-rule {30,54,90,110,184} n=4 ECA · 13-point GZ-dense I grid
    · tpm_mixed=(1-I)·tpm · faithful big-Φ 16-state mean · central-diff dΦ/dI
-   · shape=argmax|dΦ/dI| · scalar=max|dΦ/dI| · population CV.
+   · shape=argmax_I|dΦ/dI| · scalar=max_I|dΦ/dI| · population CV.
 ```
 
 `hexa verify` (VERBATIM) — g5 정직 fence:
@@ -184,15 +192,20 @@ config: 5-rule {30,54,90,110,184} n=4 ECA · 13-point GZ-dense I grid
 verify --fence "H_642: across Wolfram rules {30,54,90,110,184} (n=4 ECA, 13-point
    GZ-dense inhibition grid, faithful 16-state mean big-Φ, central-difference
    dΦ/dI), the coefficient of variation of the SHAPE feature (argmax_I |dΦ/dI|,
-   peak position) is __CV_SHAPE__ vs the SCALAR feature (max_I |dΦ/dI|, peak
-   height) CV __CV_SCALAR__ (ratio __RATIO__). Verdict: __VERDICT__ — the
-   structural peak-LOCATION is __CMP_WORD__ class-invariant than the scalar peak-
-   MAGNITUDE, quantifying round-6's meta-finding that SHAPE is substrate-emergent
-   while SCALAR value is design-convention. Honest scope: one representative
-   shape/scalar pair (peak-position vs peak-height) of a broader dichotomy, 5-rule
-   sample (CV power-limited), shape is grid-snapped (13-point) vs scalar continuous
-   — an asymmetry that conservatively suppresses CV_shape; toy n=4 single inhibition
-   mode IIT4 big-Φ. Reproduces H_614 4-rule peak_I {0.18,0.40,0.18,0.40}."
+   peak position) is CV_shape=0.568028 vs the SCALAR feature (max_I |dΦ/dI|, peak
+   height) CV_scalar=0.559306 (ratio CV_scalar/CV_shape=0.984646). Verdict:
+   FALSIFIED — the structural peak-LOCATION is NOT more class-invariant than the
+   scalar peak-MAGNITUDE (CV_shape >= CV_scalar by 1.5%), refuting round-6's STRONG
+   meta-claim that SHAPE is more substrate-invariant than SCALAR convention on this
+   representative pair; the two CVs are nearly equal so the weak form (shape as
+   class-variant AS scalar) holds. The XOR-additive rule 90 (big-Φ ~= 0) is a joint
+   outlier in both shape (peak I=0.05 boundary) and scalar (peak_mag 0.28), driving
+   both CVs. Honest scope: one representative shape/scalar pair (peak-position vs
+   peak-height) of a broader dichotomy, 5-rule sample (CV outlier-fragile, borderline
+   ratio 0.98), shape is grid-snapped (13-point) vs scalar continuous — an asymmetry
+   that CONSERVATIVELY suppresses CV_shape so the falsification is robust to it; toy
+   n=4 single inhibition mode IIT4 big-Φ. Reproduces H_614 4-rule peak_I
+   {0.18,0.40,0.18,0.40} + peak_mag {21.74,10.84,21.33,19.92}."
   tier   = ⚪ SPECULATION-FENCED
   reason = imagination/metaphor class (hexa-bio AXIS) — verification N/A by
            design; values deterministic arithmetic, interpretation fenced
@@ -209,7 +222,7 @@ verify --fence "H_642: across Wolfram rules {30,54,90,110,184} (n=4 ECA, 13-poin
 
 ## 10. UNIVERSE.md update
 
-축 **G (ANIMA.mining 승격)** 에 round 6 메타-격상 row G6 추가 → done with `__VERDICT_SHORT__ (CV_shape=__CV_SHAPE__ __CMP__ CV_scalar=__CV_SCALAR__, ratio __RATIO__, 5-rule {30,54,90,110,184}, $0 mac-local 2026-05-28)`. round 6 메타-발견 (구조 vs 숫자) 의 정량 메타-검증.
+축 **G (ANIMA.mining 승격)** 에 round 6 메타-격상 row G6 추가 → done with `🔴 FALSIFIED (M1 FAIL · CV_shape=0.568028 ≥ CV_scalar=0.559306, ratio 0.984646 < 1, 5-rule {30,54,90,110,184} n=4, rule 90 XOR-additive joint-outlier, $0 mac-local 2026-05-28)`. round 6 메타-발견 (구조가 숫자보다 class-불변) 의 *강주장* 이 이 대표 shape/scalar 쌍 위에서 반증 — 두 CV 가 거의 동일 (1.5% 차이) → shape 가 scalar 만큼 class-variant 라는 약한 형태로 closed-negative.
 
 ## artifacts
 
