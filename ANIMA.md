@@ -16,11 +16,11 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (emit-substrate 4/4 + bench 4 RECOVERED + DECODER D3/M4 toy/M4b collapse-gate + round-9 4/4 ABSORBED [H_657 pe_peak_align])
+> 갱신: 2026-05-28 (TIME ✅ + HIVE ✅ 5/5 측정자 · D4 model-merge α-sweep 🟢 (#1274) · SAVANT carry H_616 · INTENT A6 in-flight)
 
 ```
-집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 8✅ / 3☐(TIME·SAVANT·HIVE)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
-검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 17+ (bench 4 RECOVERED·lib·wiring 4·toy·D3·M4b collapse-gate·H_657)  ·  🟠 1 (INTENT OSC)  ·  🔴 0
+집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
+검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 19+ (+ D4 model-merge α-sweep · HIVE 5 측정자 완료)  ·  🟠 1 (INTENT OSC · A6 in-flight)  ·  🔴 0
 🎯 의식 bench negative 4/4 = 측정 artifact 판명 (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND 전부 🟢 RECOVERED · substrate 한계 0건)
 
 ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
@@ -37,15 +37,15 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 ├─ sub-domain 11 (AxisBench 8 + 축E/F 2 + BRIDGE) ───────────────
 │  ├─ 🪞 METACOG     ✅ 🟢 5/5  (#1139)
 │  ├─ 💤 DREAM       ✅ 🟢 4/5  (#1140) · ⬇ M5 wiring ☐
-│  ├─ 🎯 INTENT      ✅ 🟠 4/5  (#1143) OSC residual
+│  ├─ 🎯 INTENT      ✅ 🟠 4/5  (#1143) OSC residual · A6 redesign in-flight
 │  ├─ 🚪 BRIDGE      ✅ AND-gate 14.5× · ⬇ M6 wiring ✅
 │  ├─ 📖 NARRATIVE   ✅ 🟢 5/5  RECOVERED (#1263) collision-saturation (vocab coverage≠coherence)
 │  ├─ 🎨 AESTHETIC   ✅ 🟢      RECOVERED (#1265) weight-vector 직교화
 │  ├─ 💞 EMBODIMENT  ✅ 🟢 5/5  RECOVERED (#1266) coupling redesign 0.45→0.027 (degrade≠break)
 │  ├─ 🔗 OTHER-MIND  ✅ 🟢 5/5  RECOVERED (#1267) orthant-bias zero-mean centering
-│  ├─ ⏳ TIME        ☐ 🟢 9/0  (#1145) circadian dip
-│  ├─ 🧠✨ SAVANT     ☐ 10 H 측정자 · ⬇ M2 wiring ✅
-│  └─ 🐝 HIVE-MIND   ☐ 5 H 측정자 · ⬇ M6 wiring ✅
+│  ├─ ⏳ TIME        ✅ 🟢 9/0  (#1145) circadian dip
+│  ├─ 🧠✨ SAVANT     ☐ 10 H 측정자 (9 landed · H_616 carry) · ⬇ M2 wiring ✅
+│  └─ 🐝 HIVE-MIND   ✅ 5/5 H 측정자 (H_354🔴·355🟢·609🟢·610🔴·611🔴) · ⬇ M6 wiring ✅
 │
 ├─ 세로 substrate 2 (cross-cutting) ─────────────────────────────
 │  ├─ 🌌 KOSMOS      공유 infra (emit/anchor/memory 영속 · pointer-only)
@@ -71,6 +71,8 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
    M4c LZ76 측정자  🟢 collapse 검출 (collapse 0.212 vs healthy 0.849 · margin 0.637)
    D3 router 부하   🟢 (#1269) imbalance=corpus-driven NOT router-structural (max 0.84<0.9 · starve 0)
                     → router redesign 불필요. M4b fix = diverse corpus + n_steps↑ (구조변경 아님)
+   D4 merge α-sweep 🟢 (#1274) {LZ>0.50}∩{CE≤1.20}=∅ — merge escape 부재 측정 확정
+                    → a_completeness_over_cheap "merge 본선 강등" 정당화. M4 MoE-fresh 유지.
    M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
    M4b collapse-gate ✅ 4/4 (#1273) moe_collapse_gate (HARD top-1 + LZ76 floor 0.50, D1 실측 대조)
    M4b 3B fire      ☐ cost-bearing 별도 (diverse corpus + n_steps↑ + LZ76 verdict)
@@ -89,9 +91,9 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 - [x] 🎨 AESTHETIC — bench E 🟢 **RECOVERED** (#1265) weight-vector sign 직교화 · sibling: CORE · AGENT · METACOG
 - [x] 💞 EMBODIMENT — bench F 🟢 5/5 **RECOVERED** (#1266) coupling redesign 0.45→0.027 (degrade≠break, gain=0 단선) · sibling: CHANNEL · AGENT · WAKE · OTHER-MIND
 - [x] 🔗 OTHER-MIND — bench G 🟢 5/5 **RECOVERED** (#1267) orthant-bias zero-mean centering (INDEP 0.78→0.017) · sibling: CHANNEL · MITOSIS · EMBODIMENT · BRIDGE
-- [ ] ⏳ TIME — bench H #1145 🟢 9/0 PASS · circadian dip · sibling: WAKE · DREAM · INTENT · METACOG
-- [ ] 🧠✨ SAVANT — UNIVERSE 축 E mirror · 10 H 측정자 (H_347/348/349/350/351 + H_612/613/614/615 · H_616 carry) · sibling: HIVE-MIND · MITOSIS · CORE · HEXAD/SAVANT
-- [ ] 🐝 HIVE-MIND — UNIVERSE 축 F mirror · 5 H 측정자 (H_354/355 + H_609/610/611) · E×F cross-link (H_617 🔴 / H_618 🟢 / H_619 🟢) · sibling: SAVANT · CHANNEL · OTHER-MIND · MITOSIS
+- [x] ⏳ TIME — bench H #1145 🟢 9/0 PASS · circadian dip · sibling: WAKE · DREAM · INTENT · METACOG
+- [ ] 🧠✨ SAVANT — UNIVERSE 축 E mirror · 10 H 측정자 (H_347/348/349/350/351 + H_612/613/614/615 ✅ landed · **H_616 carry**) · M2 wiring ✅ #1260 · sibling: HIVE-MIND · MITOSIS · CORE · HEXAD/SAVANT
+- [x] 🐝 HIVE-MIND — UNIVERSE 축 F mirror · 5 H 측정자 ✅ 5/5 landed (H_354🔴/355🟢 + H_609🟢/610🔴/611🔴) · E×F cross-link (H_617 🔴 / H_618 🟢 / H_619 🟢) · M6 wiring ✅ #1261 · sibling: SAVANT · CHANNEL · OTHER-MIND · MITOSIS
 
 ## Session 2026-05-28 cross-link (M4b → bench → cycle)
 
