@@ -1,8 +1,15 @@
-// h612_shard.hexa — single (rule, sys_state) × 2-point I shard runner
+// h612_shard.hexa — single (rule, sys_state) × ≤3-point I shard runner
 //
-//   n=5 big_phi ~20s/point. Each shard runs at most 4 I points to stay under 60s wall.
-//   invoked many times — once per (rule, I-cluster) pairing — by orchestrator.
-//   Edit constants RULE / SYS / I_LIST below per invocation.
+//   n=5 big_phi ~13-20s/point amortized. Each shard runs ≤ 3 I points to stay under 60s wall.
+//   invoked many times — once per (rule, I-cluster) pairing — by orchestrator (manual edit).
+//   Edit constants RULE / I_LIST below per invocation.
+//
+//   H_612 sweep used 12 invocations:
+//     rule 90  : [0.20,0.25,0.30] · [0.35,0.37,0.40] · [0.45,0.50]
+//     rule 60  : [0.20,0.25,0.30] · [0.35,0.37,0.40] · [0.45,0.50]
+//     rule 105 : [0.20,0.25,0.30] · [0.35,0.37,0.40] · [0.45,0.50]
+//     rule 150 : [0.20,0.25,0.30] · [0.35,0.37,0.40] · [0.45,0.50]
+//   verbatim results in sibling results.txt.
 
 import "stdlib/consciousness/iit4_bigphi.hexa"
 
@@ -46,9 +53,9 @@ fn main() {
     let n = 5
     let sys_state = 5
 
-    // SHARD CONFIG — edit per invocation
-    let RULE = 90
-    let I_LIST = [0.20, 0.25]
+    // SHARD CONFIG — edit per invocation (last setting = rule 150 final cluster)
+    let RULE = 150
+    let I_LIST = [0.45, 0.50]
 
     println("# H_612 shard · rule=", RULE, "n=", n, "sys=", sys_state)
     run_shard(RULE, n, sys_state, I_LIST)
