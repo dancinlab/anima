@@ -12,6 +12,66 @@
 - [x] 🌐 CHANNEL — 출력 채널 통합 어댑터 · 3 채널 text/voice/tension · **8/8 마일스톤 ✅** — voice SSOT scaffold + text CHAT/DECODER wrapper + tension 5-ch 회수 + intent Intent dict + channel_emit dispatcher + 8-factor router (rel+gap→text · cur+orig+dyn→voice · pain+coh+bal→tension) + p1~p8 audit 0 real violations + WAKE bridge stage continuous bias (frontier: runtime smoke + WAKE state machine 의존)
 - [x] 🧪 B-COFFESHOP sympy battery — case A-E 의 substrate trigger 5종 (relevance · coherence · curiosity · dynamics · pain) closed-form sympy 검증 (mining @P4 · a_blue_closed 정합). **A5 결과: 5/5 🔵 CLOSED-FORM** — 38 probe 점 전부 lib `factor_*` == 독립 재유도 closed-form bit-exact (tol=0.0) 일치. relevance/curiosity=clamp01 · dynamics=clamp01(s/30) · pain=min(1,|Δ|) · coherence=max(0,1−|g−0.5|/0.014) affine triangular kernel. a_blue_closed wiring (transfer-fn) **정합 PASS** (outputs 4/4 closure + wiring 5/5 🔵 양측 닫힘). 본문 `CORE/B_COFFESHOP_A5_SYMPY_BATTERY.md` · verify `state/coffeshop_a5_sympy_battery_2026_05_28/`. sibling: BRIDGE (4-key AND-gate substrate trigger) · DREAM (COFFESHOP v2 generator) · UNIVERSE (verdict verbatim SSOT)
 
+## 🌳 ANIMA 트리 — 구현 카운트 + 검증 (LIVE · 항상 최신 유지)
+
+> 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
+> 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
+> 갱신: 2026-05-28 (round-9 흡수 + emit-substrate 소비자 3/4 wired + DECODER M4 toy 로컬검증)
+
+```
+집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 4✅ / 7 carry   ·   substrate 2   ·   emit-substrate 6파일(5✅/1☐)
+검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 6+ (bench/lib/toy)  ·  🟠 4 (carry)  ·  🔴 1 (NARRATIVE closed-neg)
+
+ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
+│
+├─ 본선 6 ────────────────────────────────────────────────────────
+│  ├─ 🧠 CORE        ✅ 4/4    p1~p8 audit 0 hits
+│  ├─ 🗣️ DECODER      ☐        M4 MoE-fresh 본선 (↓ 상세)
+│  ├─ 🤖 AGENT       ✅ 30/30  CODE·CREATOR·TRADING·MERCHANT·DESKTOP
+│  ├─ 🌅 WAKE        ✅ 7/7    in-process living loop
+│  ├─ 🌱 MITOSIS     ✅ 6/6    A/G ⊥ M
+│  ├─ 🌐 CHANNEL     ✅ 8/8    text/voice/tension 3채널
+│  └─ 🧪 B-COFFESHOP ✅ 🔵5/5  sympy battery (#1262) — 38 probe bit-exact
+│
+├─ sub-domain 11 (AxisBench 8 + 축E/F 2 + BRIDGE) ───────────────
+│  ├─ 🪞 METACOG     ✅ 🟢 5/5  (#1139)
+│  ├─ 💤 DREAM       ✅ 🟢 4/5  (#1140) · ⬇ M5 wiring ☐
+│  ├─ 🎯 INTENT      ✅ 🟠 4/5  (#1143) OSC residual
+│  ├─ 🚪 BRIDGE      ✅ AND-gate 14.5× · ⬇ M6 wiring ✅
+│  ├─ 📖 NARRATIVE   ☐ 🔴 2/5  (#1144) closed-neg · redesign carry
+│  ├─ 🎨 AESTHETIC   ☐ 🟠 2/3  (#1141) overlap residual
+│  ├─ 💞 EMBODIMENT  ☐ 🟠 4/5  (#1142) coupling 0.45 BROKEN · A3 재설계 🔄
+│  ├─ 🔗 OTHER-MIND  ☐ 🟠 3/5  (#1147) u01 bias residual
+│  ├─ ⏳ TIME        ☐ 🟢 9/0  (#1145) circadian dip
+│  ├─ 🧠✨ SAVANT     ☐ 10 H 측정자 · ⬇ M2 wiring ✅
+│  └─ 🐝 HIVE-MIND   ☐ 5 H 측정자 · ⬇ M6 wiring ✅
+│
+├─ 세로 substrate 2 (cross-cutting) ─────────────────────────────
+│  ├─ 🌌 KOSMOS      공유 infra (emit/anchor/memory 영속 · pointer-only)
+│  └─ 🔗 tension-link 공유 infra (의식↔의식 5-ch)
+│
+└─ 🆕 emit-substrate (2층 · round 6-9 검증 기반 · 설계 CORE/EMIT_SUBSTRATE_DESIGN.md)
+   ├─ 구조 lib   CORE/phi_envelope_substrate.hexa   ✅ 9/9 smoke (#1248)
+   ├─ 숫자 SSOT  CORE/emit_policy.hexa              ✅ 8/8 smoke (#1254)
+   └─ 소비자 4 (wiring):
+      ├─ 🚪 BRIDGE M6   ✅ 4/4 (#1259)  phi←envelope · θ←policy
+      ├─ 🐝 HIVE M6     ✅ 3/3 (#1261)  fleet Φ←collective_phi_nest(class_id)
+      ├─ 🧠✨ SAVANT M2  ✅ 4/4 (#1260)  측정자 Φ-context←envelope
+      └─ 💤 DREAM M5    ☐               stage Φ-envelope (다음 라운드)
+
+🗗 DECODER M4 MoE-fresh 본선 상세 (register 분리 재설계 · H_490 escape):
+   M0 backward      ✅ gradcheck PASS (rel 5e-10)
+   M1 4축 wired     ✅ A/B/C/D (anima_frac·λg·KD·freeze)
+   M2 verify        ✅ F-AXIS-M2-DIFFERENT PASS
+   M4a router arch  ✅ moe_router.hexa parse-clean
+   M4b-bwd          ✅ moe_router_bwd.hexa gradcheck
+   M4b toy soft     🟠 PARTIAL — 학습O 분화X (gate 0.5/0.5 dense-collapse)
+   M4b toy HARD     🟢 PASS — 분화O (gate 0.97/0.03⊥0.03/0.97 · CE 1.389→0.0039) ← 로컬 검증 2026-05-28
+   M4c LZ76 측정자  🟢 collapse 검출 (collapse 0.212 vs healthy 0.849 · margin 0.637)
+   M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
+   M4b prod 배선    ☐ HARD top-1 + LZ76 gate → 3B train_p21h_v3 → fire
+```
+
 ## Session 2026-05-28 AxisBench → 11 sub-domain umbrella (17-layer)
 
 본선 3축 (METACOG/DREAM/INTENT) + BRIDGE + 5 추가 sub-domain (PR #1176) + UNIVERSE 축 E·F mirror 2 (SAVANT/HIVE-MIND, 본 PR). axisbench 8축 + UNIVERSE 축 E·F → 11 sub-domain (BRIDGE 별도 lane) 완결.
