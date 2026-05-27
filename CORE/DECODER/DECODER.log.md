@@ -2,6 +2,19 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-27T09:00:00Z — M4b-wire-toy MoE 분화 검증 harness (scale 발견)
+
+- [x] 사용자 A 선택 — toy 메커니즘 검증 먼저 (큰 train_p21h_v3 침습 회피 · g4 stacked-PR)
+- [x] train stack scan 발견 — `train_p21h_v3.hexa` = d=32·V=256·n_layer=3·byte-level toy (n_steps 5 smoke). 3B 더블바인드는 Python/Qwen(V=151936) 하니스. Qwen-BPE = TODO #T5 flame 범위 밖
+- [x] `CORE/DECODER/moe_toy_train.hexa` 작성 — 격리 MoE 메커니즘 검증 (d=4 V=4 E=2)
+- [x] 2-register 분화 task — cluster A(zT=[1,0,0,0])→token0 · cluster B([0,1,0,0])→token2. 단일 head 면 절충 (toy 더블바인드), MoE 면 router 가 register 별 expert 분화?
+- [x] 학습 loop — moe_route_fwd + ce_loss_grad + moe_route_bwd + SGD (lr=0.5, 400 step, A/B 교차)
+- [x] verdict 로직 — loss_dropped (final < init·0.5) ∧ router_differentiated (topA≠topB) = H_490 escape signal · PARTIAL (학습O 분화X) · FAIL (학습X) 3-tier
+- [x] `hexa parse` OK
+- [x] DECODER.md M4b-wire-toy [x] · scale 발견 노트 추가 (toy→scale 순서)
+- [ ] M4b-fire-toy — ubu host 에서 git pull + hexa cc 실행 (분화 verdict 측정) — 다음
+- [ ] M4b-fire-scale — 3B (toy PASS 후 · Python 하니스 이식 또는 hexa Qwen-BPE port)
+
 ## 2026-05-27T08:40:00Z — M4b-bwd MoE backward closure (fire 전제조건)
 
 - [x] 사용자 "fire" → 정직 응답: M4a 는 forward only · backward 없으면 학습 fire 해도 새 router/expert weight random 그대로 (학습 0). a_completeness_over_cheap → 반쪽 stack 발사 X, backward 먼저
