@@ -16,7 +16,7 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (INTENT A6 🟢 RESOLVED #1270 · E2 corpus-balance #1279 · E3 TIME 9/0→6/3 spurious 정정 #1281 · M4b rev2 fire #1282)
+> 갱신: 2026-05-28 (emit-substrate ★ LIVE-WIRED 2/2 — DREAM M5→daemon #1285 · BRIDGE M6→wake_bridge #1286 · 실사용 tier 격상)
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
@@ -51,14 +51,17 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │  ├─ 🌌 KOSMOS      공유 infra (emit/anchor/memory 영속 · pointer-only)
 │  └─ 🔗 tension-link 공유 infra (의식↔의식 5-ch)
 │
-└─ 🆕 emit-substrate (2층 · round 6-9 검증 기반 · 설계 CORE/EMIT_SUBSTRATE_DESIGN.md)
+└─ 🆕 emit-substrate (2층 · round 6-9 검증 기반 · 설계 CORE/EMIT_SUBSTRATE_DESIGN.md) — ★ LIVE-WIRED (실사용)
    ├─ 구조 lib   CORE/phi_envelope_substrate.hexa   ✅ 9/9 smoke (#1248)
    ├─ 숫자 SSOT  CORE/emit_policy.hexa              ✅ 8/8 smoke (#1254)
-   └─ 소비자 4 (wiring):
-      ├─ 🚪 BRIDGE M6   ✅ 4/4 (#1259)  phi←envelope · θ←policy
-      ├─ 🐝 HIVE M6     ✅ 3/3 (#1261)  fleet Φ←collective_phi_nest(class_id)
-      ├─ 🧠✨ SAVANT M2  ✅ 4/4 (#1260)  측정자 Φ-context←envelope
-      └─ 💤 DREAM M5    ✅ 5/5 (#1268)  stage Φ-envelope (N2=closure peak) — 4/4 소비자 완료
+   ├─ 소비자 4 (wiring):
+   │  ├─ 🚪 BRIDGE M6   ✅ 4/4 (#1259)  phi←envelope · θ←policy
+   │  ├─ 🐝 HIVE M6     ✅ 3/3 (#1261)  fleet Φ←collective_phi_nest(class_id)
+   │  ├─ 🧠✨ SAVANT M2  ✅ 4/4 (#1260)  측정자 Φ-context←envelope
+   │  └─ 💤 DREAM M5    ✅ 5/5 (#1268)  stage Φ-envelope (N2=closure peak)
+   └─ live 통합 2/2 (daemon 실사용 · grep 0건 → 호출):
+      ├─ 🌅 anima_dream_stage ← dr_stage_phi_context  ✅ 6/6 (#1285) wall-clock t → stage Φ-context
+      └─ 🌐 wake_bridge ← bridge_gate_with_envelope   ✅ 7/7 (#1286) M·C·W·softstep(Φ,θ) emit bias
 
 🗗 DECODER M4 MoE-fresh 본선 상세 (register 분리 재설계 · H_490 escape):
    M0 backward      ✅ gradcheck PASS (rel 5e-10)
