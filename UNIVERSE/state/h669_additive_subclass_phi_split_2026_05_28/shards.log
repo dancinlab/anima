@@ -1,0 +1,32 @@
+// H_669 — additive-subclass-phi-split — per-rule shard stdout (foreground sync, $0 mac-local)
+// NEW additive rep measured by this H (rule60). additive {90,150} + chaotic {30,45,106}
+// anchors below are byte-identical re-cited from H_664 shards.log (PR ref class-III heterogeneity)
+// — same build_tpm_cohort engine, rule swap. (rule90/150 H_664 NEW; rule30/45/106 H_661/H_664.)
+// build: HEXA_MAC_BUILD_OK=1 HEXA_LANG=/Users/ghost/core/hexa-lang
+//        hexa.real.bak-2026-05-22-pre-no-hxc build shard_h669.hexa -o /tmp/h669.bin
+//        && codesign -s - --force /tmp/h669.bin && /tmp/h669.bin   (RULE_ID swap)
+
+----- shard rule=60 (III-XOR-additive) — NEW (this H) -----
+RULE=60 CLASS=III-XOR-additive
+PHI_W=0.19718 0.754519 1.32399 2.20647 5.05911 6
+PMIN=0.19718 PMAX=6 PMEAN=2.59021
+SPAN_RATIO=30.4136
+ABS_DELTA=5.80282
+NORM_CONV=2.24029
+LOG_SPAN=3.41489
+(wall ~21s)   W-monotone rise (0.197→6.0, rule90 동류 HIGH-conv; rule150 die-out 와는 다름)
+
+// ── byte-identical anchors re-cited (same build_tpm_cohort engine) ──
+// ADDITIVE group (XOR-linear): rule90, rule150 (+ rule60 NEW above)
+----- shard rule=90 (III-XOR-fractal/additive) [H_664 NEW / H_661 anchor] -----
+NORM_CONV=2.24029  LOG_SPAN=3.41499  ABS_DELTA=7.25353  (PHI_W=0.246475 0.943149 1.65498 2.75808 6.32388 7.5 — W-monotone)
+----- shard rule=150 (III-XOR-additive) [H_664 NEW] -----
+NORM_CONV=1.93118  LOG_SPAN=10.8437  ABS_DELTA=5.12111  (PHI_W=2.02096 4.32671 5.12111 3.35834 1.08369 0.0 — W-비단조 die-out, Φmin=0 at W=1.0 DEGENERATE log_span)
+
+// CHAOTIC group (non-additive class-III): rule30, rule45, rule106
+----- shard rule=30 (III-chaotic) [H_661/H_664 anchor] -----
+NORM_CONV=2.26615  LOG_SPAN=3.42656  ABS_DELTA=9.40487  (PHI_W=0.315809 1.18852 2.07721 3.4687 8.13002 9.72067 — W-monotone)
+----- shard rule=45 (III-chaotic) [H_661/H_664 anchor] -----
+NORM_CONV=1.4608   LOG_SPAN=1.61842  ABS_DELTA=10.6588  (PHI_W=2.63487 8.27371 12.2652 13.2937 3.14416 4.16786 — W-비단조 inverse-U)
+----- shard rule=106 (III-chaotic) [H_664 NEW] -----
+NORM_CONV=2.1531   LOG_SPAN=3.26926  ABS_DELTA=72.6579  (PHI_W=2.87266 10.7046 18.5147 30.1267 64.7249 75.5306 — W-monotone)
