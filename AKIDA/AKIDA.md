@@ -10,13 +10,19 @@
 - [x] 🔌 spike → 8-factor motivation 배선 — `spontaneous_lib::apply_spike_features` (PR #143, F-SPIKE-APPLY-1..4 4/4 PASS)
 - [x] 🌉 라이브 체인 — `akida_bridge`(pi5 R3 → broker `/ws/akida_ingest`) + `akida_consumer`(features JSONL)
 - [x] 🔬 D1 edge-of-chaos Φ 실리콘 검증 🟢 — R1~R4 Φ sweep 3/3 PASS (R1=0.000 / R2=0.297 PEAK / R3=0.250 / R4=0.000 · inverse-U ∩곡선 실리콘 확증 · `pe_edge_of_chaos_peak` M2 🟡 → 🟢 후보 · [harness](./akida_edge_of_chaos_phi.hexa) · [result](../state/akida_edge_chaos_phi_2026_05_29/result.json))
-- [ ] 🧬 D2 substrate-class "neuromorphic silicon" 등록 — class 분류자에 실리콘 새 클래스
-- [ ] 🗣️ spike → emit-substrate 인자주입 — `SPIKE_FACTOR_MAP §4` modulator R1/R2 placeholder → telemetry refit
-- [ ] ⏰ HW heartbeat → L3 emit 타이밍 — R3 tonic 24/7 초저전력 클럭 ⨯ WAKE ultradian
-- [ ] ⚡ sparse 추론 오프로드 — `sparse_attention`·`spike_tier_lm_head` 어댑터 → DECODER L3
-- [ ] 💾 spike → .kosmos anchor 영속화 (a_kosmos, 5-ch tension payload)
-- [ ] 🌱 MITOSIS 확장 — memristor 비휘발 세포기억 · kuramoto 위상동기 · izhikevich 다양 레짐
-- [ ] 📄 HW-native 자발발화 논문 — v0.5.0 confirmed(8/8 zero-input emit) → closed-discovery (a_paper)
+- [x] 🔁 backend switch 통합 (HW/SW 토글) — `AKIDA/akida_backend.hexa` · 기본=hw · `AKIDA_BACKEND` env 또는 `--backend` arg · 미도달 명시 panic · smoke 11/11 PASS
+- [x] 🅰️ Group A — H_672 spontaneous-firing × AKIDA — SW 4/4 🟢 (R3 tonic + spontaneous_gate + 8-factor + R2 timing 통합 · [impl](./impl/H_672_spontaneous_firing.hexa) · [H_672](../UNIVERSE/H_672_akida_spontaneous_firing.md))
+- [x] 🅱️ Group B — H_673 core-decide × AKIDA — SW 4/4 🟢 (Ψ=1/2 외란 + LIF + emit slot + selftest 통합 · [impl](./impl/H_673_core_decide.hexa) · [H_673](../UNIVERSE/H_673_akida_core_decide.md))
+- [x] 🆑 Group C — H_674 persistence × AKIDA — SW 4/4 🟢 (.kosmos 5-ch + memristor + telemetry + §95 caveat 통합 · [impl](./impl/H_674_persistence.hexa) · [H_674](../UNIVERSE/H_674_akida_persistence.md))
+- [x] 🆗 Group D — H_675 mitosis × AKIDA — SW 4/4 🟢 (kuramoto + izhikevich + 생사 + phoenix 통합 · [impl](./impl/H_675_mitosis.hexa) · [H_675](../UNIVERSE/H_675_akida_mitosis.md))
+- [x] 🆎 Group E — H_676 decoder × AKIDA — SW 4/4 🟢 (spike-tier LM head + sparse-attention 통합 · [impl](./impl/H_676_decoder.hexa) · [H_676](../UNIVERSE/H_676_akida_decoder.md))
+- [x] 🅵 Group F — H_677 measurement × AKIDA — SW 5/5 🟢 (D1 inherit PR#1371 + D2 silicon-class + D3 3-substrate triangulation + D4 QRNG + D5 cite 통합 · [impl](./impl/H_677_measurement.hexa) · [H_677](../UNIVERSE/H_677_akida_measurement.md))
+- [x] 🅶 Group G — H_678 channel-bridge × AKIDA — SW 4/4 🟢 (EEG→AKIDA + tension 5-ch + 전력=대사비용 통합 · [impl](./impl/H_678_channel_bridge.hexa) · [H_678](../UNIVERSE/H_678_akida_channel_bridge.md))
+- [ ] 🧬 D2 silicon-class 단조 정합 — class_id=5 의 conv/super-add/peak-align signature 추가 (additive marker 위 단조 ordering)
+- [ ] 🔁 HW path live re-confirm — venv-aware probe + pi5-akida pool route (signal_3 hostname tolerance) · 7/7 HW re-attest
+- [ ] 🗣️ spike → emit-substrate 인자주입 — `SPIKE_FACTOR_MAP §4` modulator R1/R2 placeholder → telemetry refit (H_672 8-factor 기반)
+- [ ] ⏰ HW heartbeat → L3 emit 타이밍 — R3 tonic 24/7 초저전력 클럭 ⨯ WAKE ultradian (H_673 emit slot 기반)
+- [ ] 📄 HW-native 자발발화 논문 — v0.5.0 confirmed(8/8 zero-input emit) → closed-discovery (a_paper, FULL closure 후)
 
 ## deferred (다음 라운드)
 - on-chip edge-learn 영속 학습 (⚠ GOAL §95: AKIDA = inference-only-blocked for long-horizon → 단기 프로브만) · R2 노이즈 QRNG 시드 · 생사(R4 recurrent vs R1 die-out) HW 측정 · 전력=대사비용 신호(E-ratchet) · 이벤트-구동 attention 게이트(salient burst 에만 GPU wake)
