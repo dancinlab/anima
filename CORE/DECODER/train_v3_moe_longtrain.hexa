@@ -535,23 +535,42 @@ fn main() {
         }
         tok_emb_bwd(d_zT_seq, corpus_ids, tok_emb_off, T, d, dMg)
 
-        let bc1 = 1.0 - pow(beta1, to_float(step))
-        let bc2 = 1.0 - pow(beta2, to_float(step))
-        let mut pi = 0
-        while pi < m_size {
-            let g = farr_get(dMg, pi)
-            let m_prev = farr_get(m_buf, pi)
-            let v_prev = farr_get(v_buf, pi)
-            let m_new = beta1 * m_prev + (1.0 - beta1) * g
-            let v_new = beta2 * v_prev + (1.0 - beta2) * g * g
-            let _ = farr_set(m_buf, pi, m_new)
-            let _ = farr_set(v_buf, pi, v_new)
-            let m_hat = m_new / bc1
-            let v_hat = v_new / bc2
-            let theta = farr_get(M, pi)
-            let upd = lr * (m_hat / (sqrt(v_hat) + adam_eps) + wd * theta)
-            let _ = farr_set(M, pi, theta - upd)
-            pi = pi + 1
+        // BC-ANIMA M4-CEILING wedge (a): 29.16M-param CPU AdamW loop →
+        // `farr_adamw_step_gpu` 11-arg builtin (HEXA_CUDA dispatch, CPU
+        // fallback = trusted FP64 reference in `_hx_farr_adamw_step_cpu`).
+        // Math identical: bias-corrected moments + decoupled weight decay,
+        // m/v stepped in place. Builtin returns a fresh W handle; copy
+        // back into M via `farr_copy_slice_gpu` (pattern verbatim from
+        // `stdlib/flame/train_lib.hexa:59` `nn_decoder_adamw_step`). The
+        // result MUST be `let`-bound BEFORE `to_int()` — `to_int(farr_…())`
+        // expands the call 3× in the generated C ternary, stepping m/v
+        // 2-3× per step (silent state corruption). One `let` = one emit.
+        let newW_h = farr_adamw_step_gpu(M, m_buf, v_buf, dMg, m_size,
+                                         lr, beta1, beta2, adam_eps, wd, step)
+        let newW = to_int(newW_h)
+        if newW >= 0 {
+            let _ = farr_copy_slice_gpu(newW, 0, M, 0, m_size)
+            let _ = farr_free(newW)
+        } else {
+            // builtin rejected (no state mutated) → host fallback loop
+            let bc1 = 1.0 - pow(beta1, to_float(step))
+            let bc2 = 1.0 - pow(beta2, to_float(step))
+            let mut pi = 0
+            while pi < m_size {
+                let g = farr_get(dMg, pi)
+                let m_prev = farr_get(m_buf, pi)
+                let v_prev = farr_get(v_buf, pi)
+                let m_new = beta1 * m_prev + (1.0 - beta1) * g
+                let v_new = beta2 * v_prev + (1.0 - beta2) * g * g
+                let _ = farr_set(m_buf, pi, m_new)
+                let _ = farr_set(v_buf, pi, v_new)
+                let m_hat = m_new / bc1
+                let v_hat = v_new / bc2
+                let theta = farr_get(M, pi)
+                let upd = lr * (m_hat / (sqrt(v_hat) + adam_eps) + wd * theta)
+                let _ = farr_set(M, pi, theta - upd)
+                pi = pi + 1
+            }
         }
         // BC-ANIMA M4: step CE = -log(softmax[target]) — softmax_buf is
         // already computed above via farr_softmax_rows (and used by ce_seed).
