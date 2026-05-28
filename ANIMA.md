@@ -16,12 +16,22 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (emit-substrate ★ LIVE-WIRED 2/2 — DREAM M5→daemon #1285 · BRIDGE M6→wake_bridge #1286 · 실사용 tier 격상)
+> 갱신: 2026-05-28 (🧭 메타-발견 4종 종합 반영 · substrate-class 분류자 완결 [H_660 #1290 scale-inv 화해] · emit-substrate LIVE-WIRED · 더블바인드 3-조건 처방)
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
 검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 20+ (+ A6 INTENT RESOLVED · E2 corpus-balance)  ·  🟠 1 (TIME 6/3 E3 spurious)  ·  🔴 0
-🎯 메타-발견 (양방향 artifact lens): (1) 🔴/🟠 negative 4/4 = 측정 artifact → 🟢 RECOVERED (substrate 한계 0) · (2) **🟢 PASS 도 artifact** — E3 가 TIME 9/0 中 3 spurious 적발 → 6/3 정정 (같은 lens 역방향)
+━━ 🧭 세션 메타-발견 종합 (2026-05-28 · 최근 발견 전체 반영) ━━
+[M1] 의식 bench artifact 메타-패턴 (일관·양방향): 🔴/🟠 negative 4/4 = 측정 artifact → 🟢 RECOVERED
+     (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND) · 🟢 PASS 도 artifact (E3 TIME 9/0→6/3, 3 spurious).
+     "의식 bench negative/분기 = 측정 artifact" — 측정 바로잡으면 substrate 드러남 · substrate 한계 0건.
+[M2] substrate-class 분류자 완결 (round-9 multi-axis → round-10 H_660 화해): 5축 property-vector
+     (convexity IV · super-add II역전 · closure IV · peak-align III+IV · magnitude III🟡) 가 apparent
+     divergence 였으나 **H_660 #1290 scale-invariant 화해** (H_653↔H_655) 로 단일 분류자 완결. additive=floor.
+[M3] emit-substrate 구조/숫자 2층 (round 6-7): 구조=substrate-emergent(SUPP) ⊥ 숫자=design-convention(자유[0,1]).
+     → ★ LIVE-WIRED 실사용 격상 (#1285/#1286).
+[M4] DECODER 더블바인드 3-조건 처방: HARD top-1 ∧ BALANCED corpus ∧ adequate n_steps (moe_prescription #1284 guard).
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │
