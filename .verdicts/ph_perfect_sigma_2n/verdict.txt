@@ -1,0 +1,29 @@
+# hexa verify raw verdicts — σ(n) = 2n for perfect numbers + aliquot σ(n)−n = n
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: for every perfect number n ∈ {6,28,496,8128}, σ(n) = 2n (definition) ⇔ aliquot σ(n)−n = n
+# ==================================================================
+
+verify --expr sigma(6)=12
+  calc   = 12  == expected 12
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(28)=56
+  calc   = 56  == expected 56
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(496)=992
+  calc   = 992  == expected 992
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(8128)=16256
+  calc   = 16256  == expected 16256
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 σ atoms):
+##   σ(6)=12=2·6        ; aliquot σ(6)−6 = 12−6 = 6 = n          ✓
+##   σ(28)=56=2·28      ; aliquot σ(28)−28 = 56−28 = 28 = n      ✓
+##   σ(496)=992=2·496   ; aliquot σ(496)−496 = 992−496 = 496 = n ✓
+##   σ(8128)=16256=2·8128; aliquot σ(8128)−8128 = 16256−8128 = 8128 = n ✓
+## VERDICT: σ(n)=2n CONFIRMED for all 4 known small perfect numbers (the defining property).
+## Equivalently the aliquot sum s(n)=σ(n)−n equals n exactly (perfect ⇔ s(n)=n). All atoms 🔵.

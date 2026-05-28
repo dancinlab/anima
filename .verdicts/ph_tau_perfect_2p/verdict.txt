@@ -1,0 +1,48 @@
+# hexa verify raw verdicts — τ(perfect) = 2p (Euclid-Euler form)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: an even perfect number n = 2^(p-1)·(2^p − 1) with M_p = 2^p−1 prime has τ(n) = 2p
+#        p=2→n=6, p=3→n=28, p=5→n=496, p=7→n=8128
+# ==================================================================
+
+verify --expr tau(6)=4
+  calc   = 4  == expected 4
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(28)=6
+  calc   = 6  == expected 6
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(496)=10
+  calc   = 10  == expected 10
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(8128)=14
+  calc   = 14  == expected 14
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## Mersenne-prime primality witnesses τ(M_p)=2 (M_p is prime ⇒ exactly 2 divisors):
+verify --expr tau(3)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr tau(7)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr tau(31)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr tau(127)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+
+## composite (elementary): for n = 2^(p-1)·M_p with M_p prime,
+##   τ(n) = τ(2^(p-1)) · τ(M_p) = p · 2 = 2p   (multiplicativity of τ over coprime factors)
+##   p=2: τ(6)=4=2·2   ✓   (M_2=3 prime, τ(3)=2)
+##   p=3: τ(28)=6=2·3  ✓   (M_3=7 prime, τ(7)=2)
+##   p=5: τ(496)=10=2·5 ✓  (M_5=31 prime, τ(31)=2)
+##   p=7: τ(8128)=14=2·7 ✓ (M_7=127 prime, τ(127)=2)
+## VERDICT: τ(perfect)=2p CONFIRMED. The prime exponent p is recovered as τ(n)/2.

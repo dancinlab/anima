@@ -1,0 +1,71 @@
+# hexa verify raw verdicts — σ(n)·φ(n) = n·τ(n) spine (n=6-unique)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: σ(n)·φ(n) = n·τ(n) HOLDS iff n=6 across the perfect-number class {6,28,496,8128}
+# ==================================================================
+
+## n=6 atoms — HOLDS: σ·φ = 12·2 = 24 = 6·4 = n·τ
+verify --expr sigma(6)=12
+  calc   = 12  == expected 12
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+  absorb = · already in atlas — idempotent skip (default · @D g69)
+==
+verify --expr phi(6)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+  absorb = · already in atlas — idempotent skip (default · @D g69)
+==
+verify --expr tau(6)=4
+  calc   = 4  == expected 4
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+  absorb = · already in atlas — idempotent skip (default · @D g69)
+==
+# composite (elementary): σ(6)·φ(6) = 12·2 = 24 ; n·τ(6) = 6·4 = 24 ; 24 == 24 → HOLDS
+
+## n=28 atoms — FAILS: σ·φ = 56·12 = 672 ≠ 168 = 28·6 = n·τ
+verify --expr sigma(28)=56
+  calc   = 56  == expected 56
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr phi(28)=12
+  calc   = 12  == expected 12
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(28)=6
+  calc   = 6  == expected 6
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# composite (elementary): σ(28)·φ(28) = 56·12 = 672 ; n·τ(28) = 28·6 = 168 ; 672 ≠ 168 → FAILS
+
+## n=496 atoms — FAILS: σ·φ = 992·240 = 238080 ≠ 4960 = 496·10
+verify --expr sigma(496)=992
+  calc   = 992  == expected 992
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr phi(496)=240
+  calc   = 240  == expected 240
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(496)=10
+  calc   = 10  == expected 10
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# composite (elementary): σ(496)·φ(496) = 992·240 = 238080 ; n·τ(496) = 496·10 = 4960 ; 238080 ≠ 4960 → FAILS
+
+## n=8128 atoms — FAILS: σ·φ = 16256·4032 = 65544192 ≠ 113792 = 8128·14
+verify --expr sigma(8128)=16256
+  calc   = 16256  == expected 16256
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr phi(8128)=4032
+  calc   = 4032  == expected 4032
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(8128)=14
+  calc   = 14  == expected 14
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# composite (elementary): σ(8128)·φ(8128) = 16256·4032 = 65544192 ; n·τ(8128) = 8128·14 = 113792 ; 65544192 ≠ 113792 → FAILS
+
+## VERDICT: σ(n)·φ(n)=n·τ(n) HOLDS at n=6 ONLY across {6,28,496,8128}.
+## All 12 divisor-function atoms 🔵 SUPPORTED-FORMAL. The composite equality/inequality
+## is elementary arithmetic over the 🔵 atoms. n=6-unique structural spine CONFIRMED.

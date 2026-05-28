@@ -1,0 +1,24 @@
+# hexa verify raw verdicts — fns with NO calc path → 🟠 INSUFFICIENT (recorded honestly, g5/p7)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# These were tested to be honest about which proposed identities CANNOT be hexa-verified.
+# NO 🔵 is claimed for any of them. They remain open (calculator-system extension candidates).
+# ==================================================================
+
+verify --expr jordan_totient(6)=24
+  tier   = 🟠 INSUFFICIENT
+  reason = calculator system has NO path for 'jordan_totient'
+  gap    = extend tool/verify_cli.hexa::_recompute (계산기시스템 개선 후보)
+==
+verify --expr log(8)=2
+  tier   = 🟠 INSUFFICIENT
+  reason = calculator system has NO path for 'log'
+  gap    = extend tool/verify_cli.hexa::_recompute (계산기시스템 개선 후보)
+==
+verify --expr iit_phi(6)=1
+  tier   = 🟠 INSUFFICIENT
+  reason = calculator system has NO path for 'iit_phi'
+  gap    = extend tool/verify_cli.hexa::_recompute (계산기시스템 개선 후보)
+==
+
+## NOTE: H_158/H_160/H_176 reference J₂(6)=24 (Jordan totient). hexa has no calc path → 🟠.
+## NOT promoted. Any J₂-based identity remains UNVERIFIED until the calculator is extended.

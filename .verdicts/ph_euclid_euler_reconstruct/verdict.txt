@@ -1,0 +1,67 @@
+# hexa verify raw verdicts — Euclid-Euler reconstruction n = 2^(p-1)·(2^p − 1) via pow atoms
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: every even perfect number reconstructs from prime p as 2^(p-1)·(2^p − 1), where the
+#        power-of-two atoms 2^(p-1) and 2^p are hexa-verified, and 2^p − 1 = M_p.
+# ==================================================================
+
+## 2^(p-1) (the power-of-two factor):
+verify --expr pow(2,1)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL    # 2^(2-1) for p=2
+==
+verify --expr pow(2,2)=4
+  calc   = 4  == expected 4
+  tier   = 🔵 SUPPORTED-FORMAL    # 2^(3-1) for p=3
+==
+verify --expr pow(2,4)=16
+  calc   = 16  == expected 16
+  tier   = 🔵 SUPPORTED-FORMAL    # 2^(5-1) for p=5
+==
+verify --expr pow(2,6)=64
+  calc   = 64  == expected 64
+  tier   = 🔵 SUPPORTED-FORMAL    # 2^(7-1) for p=7
+==
+
+## 2^p (used to form the Mersenne prime M_p = 2^p − 1):
+verify --expr pow(2,2)=4
+  calc   = 4  == expected 4
+  tier   = 🔵 SUPPORTED-FORMAL    # 2^2=4 ⇒ M_2 = 3
+==
+verify --expr pow(2,3)=8
+  calc   = 8  == expected 8
+  tier   = 🔵 SUPPORTED-FORMAL    # 2^3=8 ⇒ M_3 = 7
+==
+verify --expr pow(2,5)=32
+  calc   = 32  == expected 32
+  tier   = 🔵 SUPPORTED-FORMAL    # 2^5=32 ⇒ M_5 = 31
+==
+verify --expr pow(2,7)=128
+  calc   = 128  == expected 128
+  tier   = 🔵 SUPPORTED-FORMAL    # 2^7=128 ⇒ M_7 = 127
+==
+
+## Mersenne-prime primality witnesses (τ(M_p)=2 ⇒ M_p prime, so Euclid-Euler applies):
+verify --expr tau(3)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr tau(7)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr tau(31)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr tau(127)=2
+  calc   = 2  == expected 2
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+
+## composite (elementary): n = 2^(p-1)·(2^p − 1)
+##   p=2: 2 · (4−1)   = 2 · 3   = 6      ✓  (M_2=3 prime via τ(3)=2)
+##   p=3: 4 · (8−1)   = 4 · 7   = 28     ✓  (M_3=7 prime via τ(7)=2)
+##   p=5: 16 · (32−1) = 16 · 31 = 496    ✓  (M_5=31 prime via τ(31)=2)
+##   p=7: 64 · (128−1)= 64 ·127 = 8128   ✓  (M_7=127 prime via τ(127)=2)
+## VERDICT: Euclid-Euler reconstruction 2^(p-1)·(2^p−1) CONFIRMED for p∈{2,3,5,7} — each
+## yields exactly the perfect number, with M_p primality witnessed by τ(M_p)=2. All atoms 🔵.

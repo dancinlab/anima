@@ -1,0 +1,67 @@
+# hexa verify raw verdicts — σ multiplicative factorization of perfect numbers
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: σ(2^(p-1)·M_p) = σ(2^(p-1))·σ(M_p) = (2^p − 1)·2^p = M_p·(M_p+1)
+#        i.e. σ of a perfect number factors through its Euclid-Euler form (coprime multiplicativity)
+# ==================================================================
+
+## σ of the power-of-2 part: σ(2^(p-1)) = 2^p − 1 = M_p
+verify --expr sigma(2)=3
+  calc   = 3  == expected 3
+  tier   = 🔵 SUPPORTED-FORMAL    # σ(2^1)=3=2²−1=M_2
+==
+verify --expr sigma(4)=7
+  calc   = 7  == expected 7
+  tier   = 🔵 SUPPORTED-FORMAL    # σ(2^2)=7=2³−1=M_3
+==
+verify --expr sigma(16)=31
+  calc   = 31  == expected 31
+  tier   = 🔵 SUPPORTED-FORMAL    # σ(2^4)=31=2⁵−1=M_5
+==
+verify --expr sigma(64)=127
+  calc   = 127  == expected 127
+  tier   = 🔵 SUPPORTED-FORMAL    # σ(2^6)=127=2⁷−1=M_7
+==
+
+## σ of the Mersenne-prime part: σ(M_p) = M_p + 1 = 2^p
+verify --expr sigma(3)=4
+  calc   = 4  == expected 4
+  tier   = 🔵 SUPPORTED-FORMAL    # σ(3)=4=2²
+==
+verify --expr sigma(7)=8
+  calc   = 8  == expected 8
+  tier   = 🔵 SUPPORTED-FORMAL    # σ(7)=8=2³
+==
+verify --expr sigma(31)=32
+  calc   = 32  == expected 32
+  tier   = 🔵 SUPPORTED-FORMAL    # σ(31)=32=2⁵
+==
+verify --expr sigma(127)=128
+  calc   = 128  == expected 128
+  tier   = 🔵 SUPPORTED-FORMAL    # σ(127)=128=2⁷
+==
+
+## the products (the perfect number itself), independently 🔵:
+verify --expr sigma(6)=12
+  calc   = 12  == expected 12
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr sigma(28)=56
+  calc   = 56  == expected 56
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr sigma(496)=992
+  calc   = 992  == expected 992
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+verify --expr sigma(8128)=16256
+  calc   = 16256  == expected 16256
+  tier   = 🔵 SUPPORTED-FORMAL
+==
+
+## composite (elementary, σ multiplicative over coprime 2^(p-1) ⊥ M_p):
+##   p=2: σ(6)   = σ(2)·σ(3)   = 3·4   = 12    = M_2·(M_2+1) = 3·4     ✓
+##   p=3: σ(28)  = σ(4)·σ(7)   = 7·8   = 56    = M_3·(M_3+1) = 7·8     ✓
+##   p=5: σ(496) = σ(16)·σ(31) = 31·32 = 992   = M_5·(M_5+1) = 31·32   ✓
+##   p=7: σ(8128)= σ(64)·σ(127)=127·128=16256  = M_7·(M_7+1) =127·128  ✓
+## And M_p·(M_p+1) = (2^p−1)·2^p = 2·[2^(p-1)·(2^p−1)] = 2n, recovering σ(n)=2n.
+## VERDICT: σ(perfect) factors EXACTLY as (2^p−1)·2^p through the Euclid-Euler form. All atoms 🔵.
