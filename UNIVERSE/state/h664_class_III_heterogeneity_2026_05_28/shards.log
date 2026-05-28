@@ -1,0 +1,42 @@
+// H_664 — wolfram-class-III-heterogeneity — per-rule shard stdout (foreground sync, $0 mac-local)
+// NEW class-III reps measured by this H (rule106, rule150). class-II/III/IV anchors below
+// are byte-identical re-cited from H_661 shards.log (PR #1295/#1297) — same engine, rule swap.
+// build: HEXA_MAC_BUILD_OK=1 HEXA_LANG=/Users/ghost/core/hexa-lang
+//        hexa.real.bak-2026-05-22-pre-no-hxc build shard_h664.hexa -o /tmp/h664.bin
+//        && codesign -s - --force /tmp/h664.bin && /tmp/h664.bin   (RULE_ID swap)
+
+----- shard rule=106 (III-chaotic) — NEW (this H) -----
+RULE=106 CLASS=III-chaotic
+PHI_W=2.87266 10.7046 18.5147 30.1267 64.7249 75.5306
+PMIN=2.87266 PMAX=75.5306 PMEAN=33.7457
+SPAN_RATIO=26.292
+ABS_DELTA=72.6579
+NORM_CONV=2.1531
+LOG_SPAN=3.26926
+(wall 21.5s)
+
+----- shard rule=150 (III-XOR-additive) — NEW (this H) -----
+RULE=150 CLASS=III-XOR-additive
+PHI_W=2.02096 4.32671 5.12111 3.35834 1.08369 0.0
+PMIN=0.0 PMAX=5.12111 PMEAN=2.6518
+SPAN_RATIO=51211.1
+ABS_DELTA=5.12111
+NORM_CONV=1.93118
+LOG_SPAN=10.8437
+(wall 21.1s)   ⚠ Φ_min=0 at W=1.0 (XOR full-coupling die-out) → log_span floor blowup (DEGENERATE)
+
+// ── byte-identical anchors re-cited from H_661 (same build_tpm_cohort engine) ──
+----- shard rule=30 (III-chaotic) [H_661 anchor] -----
+NORM_CONV=2.26615  LOG_SPAN=3.42656  ABS_DELTA=9.40487  (PHI_W=0.315809 1.18852 2.07721 3.4687 8.13002 9.72067)
+----- shard rule=45 (III-chaotic) [H_661 anchor] -----
+NORM_CONV=1.4608   LOG_SPAN=1.61842  ABS_DELTA=10.6588  (PHI_W=2.63487 8.27371 12.2652 13.2937 3.14416 4.16786 — W-비단조)
+----- shard rule=90 (III-XOR-fractal) [H_661 anchor] -----
+NORM_CONV=2.24029  LOG_SPAN=3.41499  ABS_DELTA=7.25353  (PHI_W=0.246475 0.943149 1.65498 2.75808 6.32388 7.5)
+----- shard rule=184 (II-additive) [H_661 anchor] -----
+NORM_CONV=1.43674  LOG_SPAN=2.49455  ABS_DELTA=49.9682
+----- shard rule=226 (II-additive) [H_661 anchor] -----
+NORM_CONV=1.41354  LOG_SPAN=2.48764  ABS_DELTA=48.8326
+----- shard rule=110 (IV-complex) [H_661 anchor] -----
+NORM_CONV=2.34922  LOG_SPAN=3.56946  ABS_DELTA=40.5374
+----- shard rule=54 (IV-complex) [H_661 anchor] -----
+NORM_CONV=2.4745   LOG_SPAN=3.68367  ABS_DELTA=6.7975

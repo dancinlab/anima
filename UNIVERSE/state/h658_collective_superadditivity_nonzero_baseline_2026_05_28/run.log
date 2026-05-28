@@ -1,0 +1,47 @@
+================================================================
+  H_658 — collective-superadditivity-nonzero-baseline (round 9 메타-축)
+  H_655 §10 N1 회수 — Δ class 순위가 non-zero parts-baseline 에서 robust 한가?
+  Δ_x = Φ_coll(W=1) − Σ Φ_parts[x]   x ∈ {a:W=0(=0), b:5·Φ_part2, c:W=0.5}
+  IIT4 big_phi_bounded · n=5 ring cap=3 · n=2 part cap=2 · sys=0
+================================================================
+  rule184 [II-additive]
+    Φ_coll(W=1)=51.5361  Φ_part2(n=2)=2
+    base(a) Σ=Φ_coll(W=0)   =0.0   → Δ_a=51.5361
+    base(b) Σ=5·Φ_part2     =10   → Δ_b=41.5361
+    base(c) Σ=Φ_coll(W=0.5) =28.6035   → Δ_c=22.9325
+  rule90 [III-XOR/additive]
+    Φ_coll(W=1)=7.5  Φ_part2(n=2)=0.0
+    base(a) Σ=Φ_coll(W=0)   =0.0   → Δ_a=7.5
+    base(b) Σ=5·Φ_part2     =0.0   → Δ_b=7.5
+    base(c) Σ=Φ_coll(W=0.5) =1.38346   → Δ_c=6.11654
+  rule30 [III-chaotic]
+    Φ_coll(W=1)=9.72067  Φ_part2(n=2)=0.553383
+    base(a) Σ=Φ_coll(W=0)   =0.0   → Δ_a=9.72067
+    base(b) Σ=5·Φ_part2     =2.76692   → Δ_b=6.95376
+    base(c) Σ=Φ_coll(W=0.5) =1.7377   → Δ_c=7.98297
+  rule110 [IV-complex]
+    Φ_coll(W=1)=41.7124  Φ_part2(n=2)=0.0
+    base(a) Σ=Φ_coll(W=0)   =0.0   → Δ_a=41.7124
+    base(b) Σ=5·Φ_part2     =0.0   → Δ_b=41.7124
+    base(c) Σ=Φ_coll(W=0.5) =6.54186   → Δ_c=35.1705
+  ─────────────────────────────────────
+  Δ by class per baseline (rule184·rule90·rule30·rule110):
+    Δ_a (W=0,    =0  ) : 184=51.5361  90=7.5  30=9.72067  110=41.7124
+    Δ_b (5·Φ_part2   ) : 184=41.5361  90=7.5  30=6.95376  110=41.7124
+    Δ_c (W=0.5 partial) : 184=22.9325  90=6.11654  30=7.98297  110=35.1705
+  ─────────────────────────────────────
+  argmax-Δ (most super-additive) per baseline:
+    (a) W=0      → rule184  (H_655: rule184)
+    (b) 5·Φ_part → rule110
+    (c) W=0.5    → rule110
+  ────────────── verdict ──────────────
+  [FAIL] F658.1 RANK-ROBUST-IND: argmax Δ_b = rule184 (H_655 top preserved)
+  [FAIL] F658.2 RANK-ROBUST-MID: argmax Δ_c = rule184 (top preserved)
+  [FAIL] F658.3 BASE-NONZERO: 5·Φ_part2(rule) > 0 every rule (real non-trivial Σ)
+  [FAIL] F658.4 NO-FLIP-TO-IV: rule110 NOT argmax under (b) or (c) (no falsifier-flip)
+  [PASS] F658.5 W0-REPRO: argmax Δ_a = rule184 & Σ(W=0)=0 (H_655 engine replication)
+  [PASS] F658.6 BOUND: all Φ ≥ 0, all Δ_x finite
+  ──────────────────────────────────────
+  F658.1-6 2/6 PASS
+  verdict: 🔴 FALSIFIED (ranking flips under non-zero baseline — H_655 Δ⊥class was trivial-baseline artifact)
+  cross-link: H_655 W=0 top=rule184(51.54) → here (b)top=rule110 (c)top=rule110

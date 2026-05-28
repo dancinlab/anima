@@ -1,0 +1,34 @@
+H_670 — phi-complexity-ordering-substrate-family-generalize (축 G 메타-축 일반화)
+  Question: complexity-tier → Φ ordinal 이 ECA Wolfram class 너머 다른 substrate-family 로 일반화되는가?
+  N=16 dim=12 nbins=4  Φ=phi_spatial(RFC 036) · deterministic NO RNG · $0 mac-local
+
+── FAMILY A: Kuramoto coupling-regime (정지<주기<edge<카오스) ──
+  T1 incoherent   K=0.3   Φ=10.315
+  T2 partial-sync K=1.0   Φ=10.4233
+  T3 edge-of-sync K=1.6   Φ=9.84876
+  T4 hyper-sync   K=5.0   Φ=14
+  → monotone-rising=false  floor(T1 min)=false  ceiling(T4 max)=true  ordered_pairs=2/3
+
+── FAMILY B: logistic-map r-regime (정지<주기<edge<카오스) ──
+  T1 fixed-point  r=2.8   Φ=1.14511e-05
+  T2 periodic     r=3.4   Φ=7.00001
+  T3 edge-of-chaos r=3.5699  Φ=7.53334
+  T4 chaotic      r=3.9   Φ=5.6061
+  → monotone-rising=false  floor(T1 min)=true  ceiling(T4 max)=false  ordered_pairs=2/3
+
+  Family-A Φ-range = 4.15125  (min=9.84876 max=14)
+  Family-B Φ-range = 7.53333  (min=1.14511e-05 max=7.53334)
+
+  ── verdict ──
+  [FAIL] F670.1 KURA-FLOOR (CORE): Family-A T1(정지) strict Φ floor
+  [PASS] F670.2 LOG-FLOOR: Family-B T1(정지) strict Φ floor
+  [PASS] F670.3 ANY-FAMILY-CEILING: ≥1 family T4(top) Φ ceiling
+  [PASS] F670.4 ORDINAL-COREL: ≥1 family ordered_pairs ≥2/3
+  [PASS] F670.5 NOT-ALL-FLAT: 두 family Φ-range>0
+  [PASS] F670.6 BOUND: 全 Φ finite ≥0
+  F670.1-6 5/6 PASS
+  verdict: PARTIAL
+  kura_floor=false log_floor=true any_ceil=true ordinal=true
+
+  result.json → /private/tmp/u-h670/UNIVERSE/state/h670_phi_complexity_ordering_substrate_family_generalize_2026_05_28/result.json
+=== H_670 complete: PARTIAL (5/6) ===

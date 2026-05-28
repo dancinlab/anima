@@ -1,0 +1,32 @@
+=== H_664 class-III heterogeneity aggregate (phi-free) ===
+nc class-III(5): rule30=2.26615 rule45=1.4608 rule90=2.24029 rule106=2.1531 rule150=1.93118
+nc class-II(2):  rule184=1.43674 rule226=1.41354   mean_II=1.42514
+nc class-III:    mean=2.0103  var=0.0893913
+nc class-IV(2):  rule110=2.34922 rule54=2.4745     mean_IV=2.41186
+
+var_within_III      = 0.0893913
+var_between(3means) = 0.164142
+var_within_II       = 0.00013456
+var_within_IV       = 0.00392377
+var_compact_pooled  = 0.00202916
+RATIO within_III / between   = 0.544597
+RATIO within_III / compact   = 44.0511
+range_within_III    = 0.80535
+range_between_means = 0.98672
+
+-- sub-type clustering (norm_conv) --
+HIGH-conv {30,90,106} mean=2.21985 var=0.00233902
+LOW-conv  {45,150}    mean=1.69599 var=0.0553143
+cluster_separation   = 0.523857
+var_2cluster_pooled  = 0.0235291
+intra_cluster_max    = 0.0553143
+
+────────── verdict ──────────
+[FAIL] F664.1 CORE within-III var >= between-class var : 0.544597 < 1.0
+[FAIL] F664.2 within-III range >= between-means range : 0.80535 < 0.98672
+[PASS] F664.3 within-III var >= 3x compact-class var : 44.0511
+[PASS] F664.4 SUB-TYPE sep > intra-std : 0.523857 > 0.23519
+[PASS] F664.5 2-cluster var explains >50% : 0.0235291 < 0.0446957
+[PASS] F664.6 BOUND 全 통계 finite
+F664.1-6 4/6 PASS
+het_rivals_between=true subtype_ge2=true

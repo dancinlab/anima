@@ -1,0 +1,31 @@
+{
+  "id": "H_670",
+  "slug": "phi-complexity-ordering-substrate-family-generalize",
+  "date": "2026-05-28",
+  "axis": "G",
+  "deterministic": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "phi_primitive": "RFC 036 phi_spatial (byte-equal phi_rs native replica)",
+  "config": { "N": 16, "dim": 12, "n_bins": 4 },
+  "family_A_kuramoto": {
+    "tiers": ["incoherent(정지) K=0.3", "partial-sync(주기) K=1.0", "edge-of-sync K=1.6", "hyper-sync(카오스) K=5.0"],
+    "phi": [10.315, 10.4233, 9.84876, 14],
+    "monotone_rising": false, "floor": false, "ceiling": true, "ordered_pairs": 2, "range": 4.15125
+  },
+  "family_B_logistic": {
+    "tiers": ["fixed-point(정지) r=2.8", "periodic(주기) r=3.4", "edge-of-chaos r=3.5699", "chaotic(카오스) r=3.9"],
+    "phi": [1.14511e-05, 7.00001, 7.53334, 5.6061],
+    "monotone_rising": false, "floor": true, "ceiling": false, "ordered_pairs": 2, "range": 7.53333
+  },
+  "falsifiers": {
+    "F670_1_KURA_FLOOR":      "FAIL",
+    "F670_2_LOG_FLOOR":       "PASS",
+    "F670_3_ANY_CEILING":     "PASS",
+    "F670_4_ORDINAL_COREL":   "PASS",
+    "F670_5_NOT_ALL_FLAT":    "PASS",
+    "F670_6_BOUND":           "PASS"
+  },
+  "n_pass": 5,
+  "verdict": "PARTIAL"
+}

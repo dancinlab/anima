@@ -1,0 +1,44 @@
+{
+  "id": "H_658",
+  "slug": "collective-superadditivity-nonzero-baseline",
+  "axis": "G",
+  "meta_axis": "round-9 (Wolfram class as Phi classifier)",
+  "predecessor": "H_655 (PR #1253, FALSIFIED) — this is its §10 N1 recovery",
+  "date": "2026-05-28",
+  "infra": "$0 mac-local, deterministic, foreground sync",
+  "engine": "iit4 big_phi_bounded · n=5 ring cap=3 · n=2 part cap=2 · sys_state=0",
+  "verdict": "🔴 FALSIFIED",
+  "pass": 2,
+  "total": 6,
+  "rules": [184, 90, 30, 110],
+  "class": ["II-additive", "III-XOR/additive", "III-chaotic", "IV-complex"],
+  "phi_coll_W1": {"184": 51.5361, "90": 7.5, "30": 9.72067, "110": 41.7124},
+  "phi_part2_n2": {"184": 2.0, "90": 0.0, "30": 0.553383, "110": 0.0},
+  "baselines": {
+    "a_W0": {"sigma": {"184": 0.0, "90": 0.0, "30": 0.0, "110": 0.0},
+             "delta": {"184": 51.5361, "90": 7.5, "30": 9.72067, "110": 41.7124},
+             "argmax_rule": 184},
+    "b_indep_phi_sum": {"sigma": {"184": 10.0, "90": 0.0, "30": 2.76692, "110": 0.0},
+                         "delta": {"184": 41.5361, "90": 7.5, "30": 6.95376, "110": 41.7124},
+                         "argmax_rule": 110},
+    "c_W0p5_partial": {"sigma": {"184": 28.6035, "90": 1.38346, "30": 1.7377, "110": 6.54186},
+                        "delta": {"184": 22.9325, "90": 6.11654, "30": 7.98297, "110": 35.1705},
+                        "argmax_rule": 110}
+  },
+  "baseline_robust": false,
+  "ranking_flip": "rule184 (class-II) top under W=0 → rule110 (class-IV) top under both non-zero baselines",
+  "falsifiers": {
+    "F658.1_RANK-ROBUST-IND": "FAIL (argmax Δ_b = rule110, not rule184)",
+    "F658.2_RANK-ROBUST-MID": "FAIL (argmax Δ_c = rule110, not rule184)",
+    "F658.3_BASE-NONZERO": "FAIL (rule90·rule110 Φ_part2=0 → baseline b partially zero)",
+    "F658.4_NO-FLIP-TO-IV": "FAIL (rule110 IS argmax under both non-zero baselines — the named flip occurs)",
+    "F658.5_W0-REPRO": "PASS (argmax Δ_a = rule184, Σ(W=0)=0, H_655 engine replication)",
+    "F658.6_BOUND": "PASS (all Φ ≥ 0, all Δ_x finite)"
+  },
+  "finding": "H_655's Δ-class ranking (rule184 most super-additive) is a trivial-baseline (Σ=0) artifact. Under a non-zero parts-baseline — either the sum of independent per-stream Φ or W=0.5 partial coupling — the class ranking FLIPS to rule110 (class-IV) most super-additive. The class-dependence of super-additivity magnitude is BASELINE-CONDITIONAL, not baseline-robust. Closed-negative: ruled out 'Δ ⊥ class is baseline-robust'.",
+  "cross_link": {
+    "H_655": "predecessor (PR #1253, 🔴) — this recovers its §10 N1; reproduced exactly under baseline (a)",
+    "H_653": "PR #1245, 🟢 — convexity monotone-in-class (rule110 most convex); baseline (b)/(c) flip aligns Δ-magnitude top WITH convexity top (rule110)",
+    "H_635": "PR #1223, 🟢 — super-additive 5/5, Σ-baseline=0 (the trivial baseline this H subtracts away)"
+  }
+}

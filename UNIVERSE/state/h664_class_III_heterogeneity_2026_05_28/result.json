@@ -1,0 +1,54 @@
+{
+  "id": "H_664",
+  "slug": "wolfram-class-III-heterogeneity",
+  "axis": "G",
+  "date": "2026-05-28",
+  "infra": "$0 mac-local (per-rule shard, foreground sync)",
+  "verdict": "🟡 PARTIAL",
+  "parent": "H_661 (N1 backlog: class-III-internal-convexity-subtype)",
+  "hypothesis": "class-III 내부 Φ-속성 분산이 class 간 분산에 필적/초과 — class-III 가 ≥2 sub-type (additive-fractal/long-monotone vs W-비단조/die-out). Wolfram 4-class 가 의식 분류엔 거침.",
+  "falsifier_core": "F664.1 — within-III var ≥ between-class var (3 class-mean 분산)",
+  "metric": "norm_conv = (Φ_max−Φ_min)/Φ_mean (H_660 scale-inv convexity), log_span (보조)",
+  "engine": "build_tpm_cohort n=5 coupled-ring TPM, big_phi_bounded(...,5,0,3) — H_635/H_653/H_655/H_660/H_661 SSOT verbatim, rule swap",
+  "wgrid": [0.15, 0.40, 0.55, 0.70, 0.95, 1.0],
+  "norm_conv": {
+    "class_III": {"rule30": 2.26615, "rule45": 1.4608, "rule90": 2.24029, "rule106": 2.1531, "rule150": 1.93118},
+    "class_II":  {"rule184": 1.43674, "rule226": 1.41354},
+    "class_IV":  {"rule110": 2.34922, "rule54": 2.4745}
+  },
+  "new_rules_measured": {
+    "rule106": {"class": "III-chaotic", "phi_w": [2.87266, 10.7046, 18.5147, 30.1267, 64.7249, 75.5306], "norm_conv": 2.1531, "log_span": 3.26926, "note": "W-monotone, HIGH-conv"},
+    "rule150": {"class": "III-XOR-additive", "phi_w": [2.02096, 4.32671, 5.12111, 3.35834, 1.08369, 0.0], "norm_conv": 1.93118, "log_span": 10.8437, "note": "Φmin=0 at W=1.0 (XOR full-coupling die-out) → log_span DEGENERATE; W-비단조 inverse-U, LOW-conv"}
+  },
+  "variance": {
+    "var_within_III": 0.0893913,
+    "var_between_3means": 0.164142,
+    "var_within_II": 0.00013456,
+    "var_within_IV": 0.00392377,
+    "var_compact_pooled": 0.00202916,
+    "ratio_within_III_over_between": 0.544597,
+    "ratio_within_III_over_compact": 44.0511,
+    "range_within_III": 0.80535,
+    "range_between_means": 0.98672
+  },
+  "subtype_clustering": {
+    "HIGH_conv": {"rules": [30, 90, 106], "mean": 2.21985, "var": 0.00233902, "label": "W-monotone fractal/chaotic"},
+    "LOW_conv":  {"rules": [45, 150], "mean": 1.69599, "var": 0.0553143, "label": "W-비단조 inverse-U / XOR die-out"},
+    "cluster_separation": 0.523857,
+    "var_2cluster_pooled": 0.0235291,
+    "intra_cluster_std_max": 0.23519,
+    "subtype_ge2": true
+  },
+  "falsifier_matrix": {
+    "F664.1_CORE_within_ge_between": {"pass": false, "value": "0.5446 < 1.0"},
+    "F664.2_range_within_ge_between": {"pass": false, "value": "0.8054 < 0.9867"},
+    "F664.3_within_ge_3x_compact":   {"pass": true,  "value": "44.05x"},
+    "F664.4_subtype_sep_gt_intra":   {"pass": true,  "value": "0.5239 > 0.2352"},
+    "F664.5_2cluster_explains_50pct":{"pass": true,  "value": "0.0235 < 0.0447"},
+    "F664.6_bound":                  {"pass": true,  "value": "all finite"}
+  },
+  "aggregate": "4/6 PASS",
+  "finding": "class-III 는 내부 Φ-속성이 class-II/IV 의 내부 응집 대비 44× 더 분산 (F664.3) 이고 ≥2 sub-type (HIGH-conv W-monotone {30,90,106} vs LOW-conv W-비단조 {45,150}) 로 명확히 분리 (F664.4·F664.5). 그러나 within-III 분산(0.0894)이 full class-간 spread(II↔IV, 0.164)을 *초과*하지는 못함 (F664.1·F664.2 FAIL, 0.545×). → Wolfram class-III 는 단일 cell 이 아니라 이질 sub-type 묶음이나, 그 내부 spread 가 II→IV 전체 ordinal 거리를 삼키지는 않음.",
+  "verdict_rationale": "het_rivals_between=true (F664.3 via compact-class) + subtype_ge2=true (F664.4·5) 이나 CORE F664.1 (full between-class spread) FAIL → 🟡 PARTIAL. positive(sub-type ≥2 + III ≫ II/IV 응집) + negative(전체 class-간 spread 초과는 못함) 공존.",
+  "reproducibility": "deterministic NO-RNG; rule106/150 NEW measured (wall ~21s each), rule30/45/90/184/226/110/54 byte-identical re-cited from H_661 shards.log (PR #1295/#1297). build: HEXA_MAC_BUILD_OK=1 HEXA_LANG=/Users/ghost/core/hexa-lang hexa.real.bak-2026-05-22-pre-no-hxc build shard_h664.hexa -o /tmp/h664.bin && codesign -s - --force && run (RULE_ID swap); aggregate same."
+}

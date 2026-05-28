@@ -1,0 +1,37 @@
+{
+  "id": "H_660",
+  "slug": "convexity-magnitude-class-reconcile",
+  "axis": "G",
+  "meta_axis": "round-9 — Wolfram class as Φ classifier (shape vs scale reconcile)",
+  "date": "2026-05-28",
+  "infra": "$0 mac-local · foreground sync · NO GPU · deterministic",
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "pass": 6,
+  "total": 6,
+  "engine": "n=5 coupled-ring TPM · big_phi_bounded(sys=0, cap=3) · H_635/H_653/H_655 SSOT",
+  "W_grid": [0.15, 0.40, 0.55, 0.70, 0.95, 1.0],
+  "rules": [184, 90, 30, 110],
+  "classes": ["II-additive", "III-XOR/additive", "III-chaotic", "IV-complex"],
+  "metrics": {
+    "span_ratio_H653_shape": {"rule184": 12.1163, "rule90": 30.4167, "rule30": 30.7705, "rule110": 35.4975, "class_monotone": true},
+    "abs_delta_H655_magnitude": {"rule184": 49.9682, "rule90": 7.25353, "rule30": 9.40487, "rule110": 40.5374, "class_monotone": false},
+    "norm_conv_scale_invariant": {"rule184": 1.43674, "rule90": 2.24029, "rule30": 2.26615, "rule110": 2.34922, "class_monotone": true},
+    "log_span_scale_invariant": {"rule184": 2.49455, "rule90": 3.41499, "rule30": 3.42656, "rule110": 3.56946, "class_monotone": true}
+  },
+  "phi_grid": {
+    "rule184": [4.49492, 19.8846, 32.7523, 45.5429, 54.4631, 51.5361],
+    "rule90": [0.246475, 0.943149, 1.65498, 2.75808, 6.32388, 7.5],
+    "rule30": [0.315809, 1.18852, 2.07721, 3.4687, 8.13002, 9.72067],
+    "rule110": [1.17498, 4.50052, 7.62552, 13.6383, 34.8823, 41.7124]
+  },
+  "falsifiers": {
+    "F660.1_NORMCONV-MONOTONE": "PASS",
+    "F660.2_LOGSPAN-MONOTONE": "PASS",
+    "F660.3_ABSDELTA-NONMONOTONE": "PASS",
+    "F660.4_SPANRATIO-REPLICATE": "PASS",
+    "F660.5_SCALE-INVARIANCE": "PASS",
+    "F660.6_BOUND": "PASS"
+  },
+  "finding": "분기는 scale 혼입. scale-invariant 통합 측도(norm_conv=(Φmax-Φmin)/Φmean · log_span=ln(Φmax/Φmin))가 Wolfram class 단조 회복 (class-IV rule110 最高). H_653 shape 단조는 보존되고 H_655 절대 magnitude 비단조는 scale-dependent abs_Δ 에만 국한 — shape/scale 분리 시 class 는 순수 shape(convexity) 분류자로 화해.",
+  "anchors": ["H_653", "H_655", "H_642", "H_654", "H_635"]
+}
