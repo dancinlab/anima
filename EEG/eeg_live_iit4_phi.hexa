@@ -105,7 +105,7 @@ fn print_result(tag: string, n_ch: int, n_samp: int, sys_state: int, phi: float,
 
 fn main() {
     // CLI: argv[0] = mode, argv[1] = (live path | empty)
-    let argv = sys_argv()
+    let argv = args()
     let mode = if len(argv) > 1 { argv[1] } else { "mock-both" }
 
     println("================================================================")

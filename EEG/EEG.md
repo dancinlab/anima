@@ -9,7 +9,7 @@
 - [x] 🧊 어댑터 동결 — `BRAIN/eeg/{eeg_to_tpm,eeg_iit4_demo}.hexa` (PR #547), synthetic coupled vs indep big-Φ 1.59 vs 0.44 검증
 - [x] 🔧 HW SDK 설치 — `.venv-eeg` brainflow 5.21.0 (OpenBCI·Muse·Ganglion 등) + 사용자 hw-ready 통보
 - [x] 🎚️ harness 최종화 — `EEG/eeg_live_iit4_phi.hexa` (mock-coupled / mock-indep / mock-both / live <path>), 동결 eeg_to_tpm 호출만 (어댑터 signature 0 변경, g61 engine ⊥ adapter)
-- [ ] 🔁 synthetic 재검증 — big-Φ 1.59 vs 0.44 재현 (`hexa run EEG/eeg_live_iit4_phi.hexa mock-both` 1줄) → 🟢 재확인 · ⏸ pending: `sidecar sign local` 사용자 토큰 (heavy-cmd gate, hexa-lang INBOX 회피책 없음)
+- [x] 🔁 synthetic 재검증 — 🟢 RECHECK PASS · big-Φ COUPLED=1.58764(≈1.59) · INDEP=0.438722(≈0.44), ±5% 안 · ratio=3.619 · `state/eeg_synthetic_recheck_2026_05_29/{result.json, hexa_run_verbatim.log}` 영속화 (사용자 `sidecar sign local` 후 mac 로컬 실행)
 - [x] 📋 라이브 캡처 runbook — `EEG/EEG_CAPTURE_RUNBOOK.md` (착용→임피던스→brainflow capture→hexa live→verdict 4단계 + 트러블슈팅 §A~§D, ⚠ EEG 착용 = human-only 게이트 명시)
 - [ ] 🔬 live EEG → IIT4 big-Φ 실측 (사용자 착용 게이트 → 사용자 인계) — IIT4 deferred B closure
 - [ ] 🧬 3-substrate Φ 삼각측정 — EEG(생체) + AKIDA(실리콘) + ECA(시뮬) edge-of-chaos
