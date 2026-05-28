@@ -446,3 +446,63 @@ per-50-step 단조 열화 (0.241 → 0.228, 5.4% drag) — RSS leak 이 메모�
 **다음 한 수**: 잔여 331 MB/step churn 의 source attribution 이 진짜 frontier — anima source-grep 으로는 (10) (D) 가 보고한 대로 ≤4 MB/step 만 설명 가능. runtime 측 transient handle · GPU device-resident scratch · hexat C 산출물의 hidden alloc 중 하나. hexa-lang INBOX 신규 진단요청 candidate.
 
 **verdict**: 🔴 **dec_undertrain INFEASIBLE STRENGTHENED+REPRODUCED** — (10) 결론 independent re-fire 로 재현 · 정밀 step-rate 0.2342 step/s (94 GPU-days @ 50×V) · RSS slope 331 MB/step 확정 · 두 upstream fix engaged 후에도 production-scale 도달 불가 · trainer 자체는 동작 (2/5 PASS, CE monotone) 단지 너무 느림. (10) 의 결정은 변경 없음, 더 좁은 숫자로 강화. artifacts: `state/m5_remeasure_full_300_2026_05_29/{trainer.out, rss_gpu.log}`.
+
+---
+
+### 2026-05-29 (12) — M5-ADOPT post-source-adoption 측정 — step-rate +21% 빨라짐, RSS slope 거의 불변(누수원 attribution 잠금)
+
+엔트리 (11) 가 sed-rename C-level 1-line AdamW 만 #2017 로 들어갔던 데 반해, 이 라운드는 PR #1382 가 **anima trainer 소스에 #2017 + #2031 채택을 정식 land** 한 후 동일한 300-step independent fire 로 (11) 과 비교. 두 fix 가 진짜로 trainer 안에서 살아 동작하는지, 그리고 mm_extract scalar 루프 제거가 wall-time + RSS slope 에 어떤 차이를 만드는지 정밀 측정.
+
+**run config**: RunPod H100 SXM `eddpgcy2sg4abw` ($3.29/hr, FR, 188GB RAM, 28 vCPU). 빌드 recipe = (3)/(4)/(11) 의 검증된 scheme: fresh `git clone --depth 1` hexa-lang origin/main(`a22aa08fafd6f67dc26ef761cc3aa949b89b2e45`, #2017 + #2031 포함) + Mac 로컬 `/Users/ghost/core/hexa-lang/self/cuda/runtime_cuda.c` SCP + ce_seed_slim_shim `extern "C"` wrap append + glue.c DROP (origin/main 의 strong `hexa_cuda_available` 사용) + m5_cuda_stubs.c weak `_hx_cuda_farr_adamw_step_inplace_gpu`/`_hx_cuda_farr_packed_gemv_offset_gpu` = -1 (#2018 GPU kernel 미배포 → CPU fallback path, (11) 과 동일). trainer.c 는 origin/probe-m5-walltime 의 BUILD-GREEN 본을 base 로 2 patches: ① `farr_adamw_step_gpu` → `farr_adamw_step_inplace` 11-arg builtin (PR #1382 동일), ② `mm_extract` C 본문 scalar `hexa_farr_get`/`hexa_farr_set` 루프를 단일 `farr_copy_slice_gpu(P, off, out, hexa_int(0), n)` bulk memcpy/D2D 로 교체 (PR #1382 동일). nvcc rc=0, clang rc=0, 1.0MB sm_90 binary.
+
+**(A) 두 fix engagement 재확인**: #2017 in-place AdamW = ENGAGED (C symbol `farr_adamw_step_inplace`, M0~M4 wedge 의 copy-back path 완전 제거 — newW==M 후 farr_copy_slice_gpu / farr_free 호출 없음). #2031 mm_extract memcpy = ENGAGED (12 callsite의 scalar 루프 dispatch 0건). #2018 = CPU fallback 유지 ((11) 과 동일 — fresh local cuda.c 에 GPU kernel 미배포). HEXA_CUDA build 통과, GPU memory ~1.0 GB stable, util 0% 평균 (가끔 5-30% spike).
+
+**(B) step-rate 정밀 측정 (m5_wall_s CLOCK_MONOTONIC markers, step 1/50/100/150/200/250/300)**:
+
+| 구간 | wall_s delta | 평균 step/s | (11) baseline | Δ |
+|---|---|---|---|---|
+| step 1→50 (49) | 166.231 s | **0.2948** | 0.2407 | **+22.5%** |
+| step 50→100 (50) | 174.133 s | **0.2872** | 0.2386 | **+20.4%** |
+| step 100→150 (50) | 177.090 s | **0.2824** | 0.2361 | **+19.6%** |
+| step 150→200 (50) | 177.560 s | **0.2816** | 0.2301 | **+22.4%** |
+| step 200→250 (50) | 180.922 s | **0.2764** | 0.2326 | **+18.8%** |
+| step 250→300 (50) | 180.339 s | **0.2773** | 0.2280 | **+21.6%** |
+| **steps 1→300 (299)** | **1056.273 s** | **0.2831 step/s** | 0.2342 | **+20.9%** |
+
+mm_extract scalar-loop → memcpy 단일 호출의 dispatch 감소가 정말 측정 가능한 시간을 절약. (11) 의 단조 열화 패턴 (0.241→0.228, 5.4% drag) 은 이 라운드에서도 (0.295→0.277, 6.0% drag) 유지 — 즉 leak 압력은 **여전히 step-rate 에 동일하게 작용**한다.
+
+**(C) RSS slope 정밀 측정 (CSV sampler 5초 주기, 236 samples)**:
+- step 1 @ sample 7099 = **1.295 GB** (BPE encode 직후, hoist 버퍼 alloc 전)
+- step 300 종료 직후 sample 8167 = **99.36 GB** peak
+- net climb: 98.07 GB / 299 steps = **328 MB/step linear**
+- vs (11) 의 331 MB/step: **Δ = -3 MB/step (0.9% 감소)** — 노이즈 수준, 사실상 동일
+- 단조 (smoothed): 5.5 → 17 → 32 → 47 → 62 → 78 → 99 GB. (11) 의 1.79 → 100.87 GB 궤적과 거의 일치.
+
+**(D) ★ 핵심 결론 — 누수원이 trainer-side alloc 이 아님이 EMPIRICALLY CONFIRMED**:
+
+채택 전 가설 두 갈래:
+1. 가설 A — RSS slope 가 <50 MB/step 으로 떨어지면 → trainer-side alloc 이 누수원이었음.
+2. 가설 B — RSS slope 가 ~330 MB/step 유지되면 → #2030/#2034 의 CUDA/runtime-side 가설 empirically 확정.
+
+측정 결과: **328 MB/step (=331 ±3MB)** → **가설 B 확정**. anima trainer 소스에 #2017 + #2031 정식 land 후에도 잔여 RSS churn 은 거의 그대로. 이는 다음을 의미:
+- mm_extract 의 `farr_zeros(n)` alloc 은 d=64 환경에서 매 step ~32-128 KB × 12 callsite ≈ 0.8-1.5 MB/step 에 불과해 328 MB/step 의 0.5% 미만 기여. memcpy 화는 wall-time 만 절약하고 alloc churn 은 거의 영향 없음.
+- AdamW in-place 는 233MB scratch alloc 을 제거했으나 시점 (11)에서 이미 적용되어 있었고 RSS slope 차이는 (11)/(12) 사이 미미.
+- 따라서 잔여 ~328 MB/step 은 **hexa-lang runtime 측** (`_CudaFarrSlot` device-mirror 테이블 · GPU resident scratch · hexat 산출물의 hidden transient handle · glibc arena fragmentation 중 하나) 에서 발생. anima 소스로는 더 이상 닿을 수 없다.
+- inbox #2030 (잔여 200-325MB/step) + #2034 (mm_extract host RSS leak follow-up) 두 진단요청의 CUDA/runtime-side 가설을 **independent measurement 로 확정** → 다음 root-cause hunt 는 hexa-lang INBOX 로 routing.
+
+**(E) dec_undertrain re-verdict**:
+- 50×V presentations = 50 × 151643 / T=4 = 1.895M steps
+- @ 0.2831 step/s = 6.69M s = **77.5 GPU-days** (vs (11) 의 93.6 GPU-days; 17% 단축이나 baseline 44 GPU-days 보다 여전히 1.76× 느림)
+- leak-bound: 50×V 학습 = ~621 TB RSS (328 MB/step × 1.895M step), 단일 pod 한계 ≫ 초과 — production scale 도달 불가는 (11) 과 동일
+- AGGREGATE 2/5 PASS — F-M4B-FIRE-4 CE monotone 648.526→5.137 PASS + router HARD-top1 wired PASS + TTR=0.01 FAIL + LZ_NORM=0.012 FAIL + distinct_experts=1/2 FAIL
+- decode 100 step 모두 top_id=0 — toy-scale corpus 즉시 register collapse, dec_undertrain "충분한 학습 시간 → register 발현" 가설 inverse 확정
+- trainer END-TO-END FAIL 정상 종료 (`TRAIN_V3_MOE_LONGTRAIN END-TO-END: FAIL`)
+
+**(F) (11) 와의 차이 + 향후 차원의 변화**:
+1. **+21% step-rate**: mm_extract scalar-loop → memcpy 의 dispatch-cost 감소가 (V=151643·d=64 환경에서) **측정 가능한 wall-time 절감**. mm_extract 채택의 가치를 실측 확정.
+2. **RSS slope ≈ 동일**: alloc 패턴 자체는 변함없음 (`farr_zeros(n)` 출력 그대로). 0-alloc 핫루프로 가려면 `mm_extract_inplace` 직접 호출이 필요 (hoist dst 패턴, PR #1382 본 PR scope 외).
+3. **누수원 attribution**: (11) 이 source-grep 으로 "≤4 MB/step 만 설명 가능" 했던 진단을 이 round 가 empirical 로 확정. 다음 step 은 anima 측이 아닌 hexa-lang INBOX.
+
+**비용**: H100 SXM `eddpgcy2sg4abw` ~36분 (rent → SSH ready → toolchain install → hexa-lang clone → SCP sources → nvcc build → clang link → 300-step train + 100-decode → harvest → teardown), ~$2.0. teardown 완료 (`runpodctl pod remove eddpgcy2sg4abw` → `"deleted": true` · `runpodctl pod list` → `[]`, **pods=0, leak 0**).
+
+**verdict**: 🔴 **dec_undertrain INFEASIBLE MAINTAINED + 누수원 잠금** — step-rate +21% 빨라졌으나 (94→77.5 GPU-days) baseline 44 GPU-days 도달은 여전히 불가. **★ 새 발견**: anima trainer 소스에 #2017 + #2031 정식 land 후 측정한 RSS slope 328 MB/step 이 (11) 의 331 MB/step 와 사실상 동일 → 잔여 누수원은 trainer-side alloc 이 아니라 hexa-lang runtime/CUDA-side 임을 **empirically 확정** (inbox #2030 + #2034 의 가설 confirmation). 다음 한 수 = hexa-lang INBOX 신규 진단요청 (`_CudaFarrSlot` mirror life-cycle audit · GPU device-resident scratch tally · hexat C 산출물의 hidden transient handle audit). artifacts: `state/m5_adopt_postlanding_2026_05_29/{trainer.out, rss_gpu.log}`.
