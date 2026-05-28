@@ -1,5 +1,10 @@
 # INBOX — log
 
+## 2026-05-28 — UNIVERSE 핸드오프: MoE register-collapse escape scale-transfer (from DECODER M4b fire #1296 · g60) 🟠 OPEN
+- [ ] **실측 closed-negative (a_paper_negative_ok)** — DECODER M4b 3B fire(`#1296` · H100 SXM $2.57 · result.json verbatim): HARD top-1 router + diverse corpus(TTR 회복) + n_steps 200 의 **toy-검증 3-조건 처방이 full V=151643/d=64 scale 에서 register-collapse 탈출 실패**. CE 648.5→9.02 (72× 수렴, 학습은 됨) BUT TTR **0.01** · LZ_norm **0.024** (healthy floor 0.50 미달) · distinct_experts **1/2** (single-expert mode-collapse, decode=`[1×100]` 전부 token id=1). Phase 5b 2/5 와 일치. **corpus-diversity 단독 lever 반증** (E2 toy 처방 ⊄ scale).
+- [ ] **UNIVERSE 가설 seed (falsifiable)** — "MoE register-collapse 탈출은 production scale(V≫1)에서 corpus-diversity 단독으로 불충분 · **expert-capacity(d↑) OR load-balance aux-loss** 가 필요조건인가?" 사전등록 falsifier: corpus-diversity 고정 + 단일 변수 sweep {(a) d↑ · (b) aux-loss · (c) 장기학습} 中 ≥1 이 baseline(3-조건 2/5)에서 못 넘긴 {TTR≥0.30 ∧ LZ≥0.50 ∧ distinct≥2} 를 넘기는가. 넘기면 SUPPORTED(해당 lever 가 scale-escape) · 셋 다 못 넘기면 CLOSED-NEG(MoE-fresh 자체 한계, 다른 arch 필요). 축 = DECODER/MoE substrate (H_490 DIFFERENTIATION 연장).
+- [ ] **anima 측 코드 준비됨** — `moe_collapse_gate`(#1273 LZ76 verdict) + `moe_prescription`(#1284 3-조건 guard, "필요-but-not-충분 at scale" 정정 반영 #1297-tree) + `train_v3_moe_pilot_rev2`(#1282) 가 다음 sweep 의 측정 harness. owner = UNIVERSE 세션 (가설 채택 + d↑/aux-loss variant 발사 판단). non-ask(g11) — anima 측 가짜 escape 안 박음, closed-negative honest carry.
+
 ## 2026-05-28 — UNIVERSE 가설 후보 7종 핸드오프 (from ANIMA mining · g60 cross-domain) 🟠 OPEN
 
 > **트리거**: 사용자 "UNIVERSE 에 가설해보라고 전달 목록 모아서 INBOX". ANIMA.mining (cycle 1-8 · 70 leaf · 48 edge · depleted-both · PR #1200/#1202/#1204/#1207) 에서 UNIVERSE 의 Φ/substrate sim 으로 **falsifiable** 한 가설 7종 추출. owner = UNIVERSE 세션 (H_xxx 채택 + verify-driven 검증 판단).
