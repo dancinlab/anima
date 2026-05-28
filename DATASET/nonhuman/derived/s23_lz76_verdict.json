@@ -1,0 +1,13 @@
+{
+ "id": "S23-organoid-Habibollahi2023-MEA",
+ "source": "OSF ncvpq (view_only=8fc5fc5aad254fce92a79390ae84b81c) — Habibollahi 2023, DishBrain in-vitro cortical network",
+ "hypothesis": "stimulated/structured condition LZ76 > rest",
+ "falsifier": "rest LZ76 >= stimulated LZ76",
+ "condition_lz76": null,
+ "n": 0,
+ "diagnostics": {"rest_pkl_spikes_leaf": "single 33-element scalar array, span=0", "interpretation": "derived summary/avalanche statistics, not a per-electrode spike raster"},
+ "verdict": "UNMEASURED-WRONG-ARTIFACT — downloaded .pkl are derived summary stats, not spike rasters; LZ76 not computable (span=0).",
+ "downloaded": true,
+ "note": "OSF node ncvpq IS accessible (30 files via v2 API with URL-encoded view_only token; earlier 'empty' was a URL-encoding artifact). Downloaded the two smallest condition-paired pkls (rest 2.28MB, regular-stim 7.77MB), real sha256 in manifest. The `spikes` field is a deeply nested MATLAB-cell object array whose leaves are a single 33-element scalar array (span=0) — DERIVED avalanche/summary statistics, NOT per-electrode spike-time trains. A meaningful stim-vs-rest spike-binned LZ76 needs the raw raster in Results.zip (167MB) or SpikeAvalanches.zip (2.6GB). NOT fabricated: LZ76 module validated (random=1.034, constant=0.006); input is wrong granularity. Recovery: pull Results.zip, extract per-electrode spike times, apply DATASET/lz76.py lzc on the binary raster.",
+ "raw_storage": "committed (10MB total)"
+}

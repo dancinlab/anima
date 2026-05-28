@@ -1,0 +1,11 @@
+{
+ "id": "S33-propofol-OpenNeuro-ds005620",
+ "source": "s3://openneuro.org/ds005620 (sub-01, one run; 77GB total dataset)",
+ "hypothesis": "LZ_awake > LZ_sed (propofol sedation)",
+ "falsifier": "LZ_sed >= LZ_awake",
+ "condition_lz76": null,
+ "n": 0,
+ "verdict": "NOT-ATTEMPTED — scheduled last (smallest-first ordering), reached after environment degraded / budget exhausted.",
+ "note": "Not downloaded. Per instructions this 77GB dataset was scheduled LAST (one sub-01 run only). Environment degraded before reaching it: sandbox interpreter sign-gate (python only runs from /tmp cwd), nondeterministic background routing of python jobs, pool-route SSH on bare commands, stdout dedup kernel, and tool-call budget. The validated LZ76 pipeline (DATASET/lz76.py) is ready. Recovery: aws s3 sync --no-sign-request s3://openneuro.org/ds005620 ... --include 'sub-01/*' (single run if sub-01 > 5GB), read with mne, lzc per channel for awake-run vs sedated-run epochs.",
+ "raw_storage": "none (not downloaded)"
+}

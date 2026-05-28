@@ -1,0 +1,11 @@
+{
+ "id": "ketamine-Zenodo-4245091",
+ "source": "https://zenodo.org/records/4245091 (DRCMR_data.zip, EEGLAB .set/.fdt, ~933MB, CC0)",
+ "hypothesis": "ketamine LZc > wake (spontaneous EEG)",
+ "falsifier": "wake LZc >= ketamine LZc",
+ "condition_lz76": null,
+ "n": 0,
+ "verdict": "NOT-COMPUTED — Zenodo file list retrieved (DRCMR_data.zip = 18 EEGLAB .set/.fdt recordings confirmed) but LZ76 not completed before environment degraded / tool-call budget exhausted.",
+ "note": "Zenodo record reachable; DRCMR_data.zip contains 18 .set + 18 .fdt + .mat EEGLAB recordings (filenames are P*_S* session codes; condition mapping needs the DRCMR README). LZ76 pipeline (DATASET/lz76.py + mne.io.read_raw_eeglab) is identical to the validated S19 path and ready. Not finished because (a) sandbox interpreter sign-gate forced python to run from a /tmp cwd reading repo files by absolute path; (b) python jobs were nondeterministically routed to background; (c) stdout dedup kernel made verification costly; (d) budget consumed on smaller datasets first per instructions. Recovery: curl 'https://zenodo.org/api/records/4245091/files/DRCMR_data.zip/content', unzip, lzc per recording, split by README condition map.",
+ "raw_storage": "none (not downloaded in final state)"
+}
