@@ -27,3 +27,4 @@
 @domain AKIDA := "./AKIDA/AKIDA.md"
 @domain EEG := "./EEG/EEG.md"
 @domain KOSMOS := "./KOSMOS/KOSMOS.md"
+@domain XENO := "./XENO/XENO.md"
