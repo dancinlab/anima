@@ -1,0 +1,29 @@
+================================================================
+  H_axisf_kuramoto_K_sync_collective_phi
+  coupling-K sweep x steady-state Kuramoto order r x collective-Phi Delta
+  N=8 halves A{0..3}/B{4..7} | dt=0.05 STEPS=400
+  full Kuramoto: dtheta/dt = omega_i + (K/N) sum sin(theta_j-theta_i)
+  Phi proxy = -log(1-r) (monotone-in-r integration measure)
+  Delta = hm_collective_phi_super_additive(phi_A, phi_B, phi_AB)  [H_609 primitive]
+================================================================
+  cell |  K   | r_inf(AB) | r_A    | r_B    | phiAB   | phiA+phiB | Delta(super-add)
+   0   | 0.0 | 0.0785288 | 0.346214 | 0.253771 | 0.0817838 | 0.717698 | -0.635914
+   1   | 0.5 | 0.294196 | 0.55524 | 0.113104 | 0.348417 | 0.930248 | -0.581831
+   2   | 1.0 | 0.292206 | 0.321875 | 0.440353 | 0.345602 | 0.968872 | -0.62327
+   3   | 1.5 | 0.380711 | 0.519807 | 0.31224 | 0.479184 | 1.10788 | -0.628699
+   4   | 2.0 | 0.866904 | 0.919448 | 0.817806 | 2.01668 | 4.22153 | -2.20485
+   5   | 3.0 | 0.957437 | 0.972252 | 0.943756 | 3.15677 | 6.46264 | -3.30587
+   6   | 4.0 | 0.977586 | 0.985222 | 0.97055 | 3.79809 | 7.73967 | -3.94158
+  --
+  Pearson r(r_inf, Delta)        = -0.934433
+  r_inf monotone non-decreasing  : false
+  Delta at max K (K=4.0)           = -3.94158
+  Delta at K=0 (decoupled)       = -0.635914
+  --
+  C1 r_inf monotone-up in K      : FAIL
+  C2 Pearson(r_inf,Delta) > 0.5  : FAIL
+  C3 Delta > 0 at max K          : FAIL
+  --
+  VERDICT_RULE: SUPPORTED iff C1 AND (C2 OR C3); else PARTIAL; FALSIFIED iff C2 fail AND C3 fail
+  VERDICT     : FALSIFIED
+=== H_axisf K-sync-collective-Phi complete: FALSIFIED ===
