@@ -176,6 +176,13 @@ fn main() {
     let gate_norm = t_zeros(E)
     let d_zT_last = t_zeros(d)
     let d_logits = t_zeros(V)
+    // BC-ANIMA M4: pre-allocated softmax + target carriers for
+    // farr_softmax_rows + farr_ce_seed (GPU on HEXA_CUDA build).
+    // R=1 per step (single token-of-interest); target is double-encoded
+    // (runtime rounds to int64 inside _hx_farr_ce_seed_cpu_v2 /
+    // _hx_cuda_farr_ce_seed). Reused across steps — no per-step alloc.
+    let softmax_buf = t_zeros(V)
+    let target_buf  = t_zeros(1)
     let Q_all = t_zeros(n_layer * T * d)
     let K_all = t_zeros(n_layer * T * d)
     let V_all = t_zeros(n_layer * T * d)
@@ -476,7 +483,17 @@ fn main() {
         let top_idx = v3_moe_fwd(zT_last, M, router_off, experts_off,
                                   logits_g, gate_norm, V, d, E)
         let target = corpus_ids[step_off + T]
-        let _ = farr_set(d_logits, target, 1.0)
+        // BC-ANIMA M4: proper CE seed = softmax(logits) - onehot(target).
+        // M2 farr_softmax_rows: 1×V row-softmax into pre-allocated softmax_buf
+        //   (GPU on HEXA_CUDA, CPU two-pass max-then-sumexp otherwise).
+        // M3 farr_ce_seed: dlogits[c] = softmax[c] - onehot(c==target).
+        // Replaces the prior `farr_set(d_logits, target, 1.0)` (which was a
+        // structurally-truncated gradient — used 1.0 in place of (sm-onehot)
+        // because the V-wide CPU loop was prohibitive). Pod step-rate ~1/s
+        // pre-M4 (PR #1318 STEP_RATE_FINDING); H100 SXM target ≥10/s.
+        let _ = farr_softmax_rows(logits_g, softmax_buf, 1, V)
+        let _ = farr_set(target_buf, 0, to_float(target))
+        let _ = farr_ce_seed(softmax_buf, target_buf, d_logits, 1, V)
         v3_moe_bwd(zT_last, M, router_off, experts_off, gate_norm, top_idx, d_logits,
                    dMg, d_zT_last, V, d, E)
 
@@ -536,20 +553,13 @@ fn main() {
             let _ = farr_set(M, pi, theta - upd)
             pi = pi + 1
         }
-        let mut row_max = farr_get(logits_g, 0)
-        let mut kk = 1
-        while kk < V {
-            let lv = farr_get(logits_g, kk)
-            if lv > row_max { row_max = lv }
-            kk = kk + 1
-        }
-        let mut z_sum = 0.0
-        kk = 0
-        while kk < V {
-            z_sum = z_sum + exp(farr_get(logits_g, kk) - row_max)
-            kk = kk + 1
-        }
-        let step_ce = 0.0 - farr_get(logits_g, target) + (row_max + log(z_sum))
+        // BC-ANIMA M4: step CE = -log(softmax[target]) — softmax_buf is
+        // already computed above via farr_softmax_rows (and used by ce_seed).
+        // Removes the V=151643 CPU farr_get loop that previously dominated
+        // step wall (~3V get + 1 exp + 1 log). The clamp guards softmax=0.
+        let sm_t = farr_get(softmax_buf, target)
+        let sm_clamped = if sm_t > 1.0e-300 { sm_t } else { 1.0e-300 }
+        let step_ce = 0.0 - log(sm_clamped)
         if step == 1 { initial_ce = step_ce }
         if step == n_steps { final_ce = step_ce ; final_top_idx = top_idx }
         // long-run: print once per ~epoch (and first/last) to keep the log bounded
