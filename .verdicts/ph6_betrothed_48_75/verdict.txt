@@ -1,0 +1,31 @@
+# hexa verify raw verdicts — first betrothed (quasi-amicable) pair (48, 75)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: (48, 75) is the smallest betrothed (quasi-amicable) pair — s(a)=b+1 and s(b)=a+1,
+#        i.e. each proper-divisor sum is one MORE than the partner. Equivalently
+#        σ(48)=σ(75)=124=48+75+1. The "off-by-one" cousin of amicable pairs (s(a)=b, s(b)=a).
+# ==================================================================
+
+verify --expr aliquot(48)=76
+  calc   = 76  == expected 76
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(75)=49
+  calc   = 49  == expected 49
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(48)=124
+  calc   = 124  == expected 124
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(75)=124
+  calc   = 124  == expected 124
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 atoms):
+##   s(48) = aliquot(48) = 76 = 75 + 1 = b + 1   ✓   (proper-divisor sum of 48 is partner+1)
+##   s(75) = aliquot(75) = 49 = 48 + 1 = a + 1   ✓   (proper-divisor sum of 75 is partner+1)
+##   σ-form: σ(48) = σ(75) = 124 = 48 + 75 + 1 = a + b + 1   ✓   (the off-by-one σ-equality)
+## VERDICT: first betrothed (quasi-amicable) pair (48,75) CONFIRMED. All 4 atoms 🔵; composites elementary.
+##   Contrast amicable (s(a)=b, s(b)=a, σ=a+b — round 2/3): betrothed shifts the sum by exactly +1
+##   (σ=a+b+1). NEW aliquot relation distinct from amicable / perfect / sociable.

@@ -1,0 +1,37 @@
+# hexa verify raw verdicts — almost-perfect numbers σ(n) = 2n − 1 (powers of 2)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: an almost-perfect number satisfies σ(n) = 2n − 1 (deficient by exactly 1).
+#        The only known almost-perfect numbers are the powers of 2: σ(2^k) = 2^(k+1) − 1 = 2·2^k − 1.
+#        Closed form: a Mersenne-numerator geometric series. n ∈ {2,4,8,32,128} verified.
+# ==================================================================
+
+verify --expr sigma(2)=3
+  calc   = 3  == expected 3
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(4)=7
+  calc   = 7  == expected 7
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(8)=15
+  calc   = 15  == expected 15
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(32)=63
+  calc   = 63  == expected 63
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(128)=255
+  calc   = 255  == expected 255
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 σ atoms — almost-perfect σ(n)=2n−1):
+##   σ(2)   = 3   = 4   − 1 = 2·2   − 1   ✓   (2   = 2^1, σ = 2^2 − 1)
+##   σ(4)   = 7   = 8   − 1 = 2·4   − 1   ✓   (4   = 2^2, σ = 2^3 − 1)
+##   σ(8)   = 15  = 16  − 1 = 2·8   − 1   ✓   (8   = 2^3, σ = 2^4 − 1)
+##   σ(32)  = 63  = 64  − 1 = 2·32  − 1   ✓   (32  = 2^5, σ = 2^6 − 1)
+##   σ(128) = 255 = 256 − 1 = 2·128 − 1   ✓   (128 = 2^7, σ = 2^8 − 1)
+## VERDICT: almost-perfect σ(2^k)=2^(k+1)−1=2·2^k−1 CONFIRMED for {2,4,8,32,128}. All 5 atoms 🔵.
+##   Closed form: σ of a prime-power 2^k is the geometric series 1+2+…+2^k = 2^(k+1)−1 (Mersenne form).
+##   Deficiency exactly 1 (the mirror of perfect σ=2n / abundant σ>2n). NEW: the σ=2n−1 half-line.
