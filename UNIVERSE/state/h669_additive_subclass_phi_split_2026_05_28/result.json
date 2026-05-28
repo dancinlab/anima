@@ -1,0 +1,60 @@
+{
+  "id": "H_669",
+  "slug": "additive-subclass-phi-split",
+  "axis": "G",
+  "date": "2026-05-28",
+  "infra": "$0 mac-local · foreground sync · per-rule shard + phi-free aggregate · NO GPU",
+  "verdict": "FALSIFIED",
+  "verdict_class": "CLOSED-NEGATIVE",
+  "pass_count": "1/6",
+  "hypothesis": "additive rule (90·150·60, XOR-linear) 이 Φ-속성(norm_conv·log_span)에서 chaotic class-III(30·45·106)와 통계적으로 분리 — additive 가 별도 sub-class (Φ-floor 근처, class-I 유사). Wolfram class-III = additive ⊎ chaotic 분할 필요.",
+  "falsifier_trigger": "additive 와 chaotic 의 Φ-속성 분포 겹침 (분리 불가) → additive 가 별도 class 아님 (class-III 내 variance 일 뿐). → TRIGGERED.",
+  "engine": "build_tpm_cohort(n=5 coupled-ring) + big_phi_bounded(sys=0, cap=3) — H_635/H_653/H_655/H_660/H_661/H_664 SSOT verbatim, rule swap",
+  "wgrid": [0.15, 0.40, 0.55, 0.70, 0.95, 1.0],
+  "metric": "norm_conv = (Phi_max - Phi_min)/Phi_mean (H_660 scale-inv convexity); log_span 보조",
+  "measurements": {
+    "additive": {
+      "rule60": {"norm_conv": 2.24029, "log_span": 3.41489, "phi_w": [0.19718, 0.754519, 1.32399, 2.20647, 5.05911, 6.0], "curve": "W-monotone", "source": "NEW (this H)"},
+      "rule90": {"norm_conv": 2.24029, "log_span": 3.41499, "curve": "W-monotone", "source": "H_664/H_661 anchor"},
+      "rule150": {"norm_conv": 1.93118, "log_span": 10.8437, "curve": "W-비단조 die-out (Phi=0 @W=1.0)", "source": "H_664"}
+    },
+    "chaotic": {
+      "rule30": {"norm_conv": 2.26615, "log_span": 3.42656, "curve": "W-monotone", "source": "H_661/H_664 anchor"},
+      "rule45": {"norm_conv": 1.4608, "log_span": 1.61842, "curve": "W-비단조 inverse-U", "source": "H_661/H_664 anchor"},
+      "rule106": {"norm_conv": 2.1531, "log_span": 3.26926, "curve": "W-monotone", "source": "H_664"}
+    }
+  },
+  "separation_stats": {
+    "mean_ADD": 2.13725,
+    "mean_CHA": 1.96002,
+    "var_ADD": 0.0212331,
+    "var_CHA": 0.126739,
+    "var_within_pooled": 0.0739859,
+    "var_between_grp_means": 0.00785321,
+    "ratio_between_within": 0.106145,
+    "grp_gap": 0.177237,
+    "intra_std_max": 0.356004,
+    "overlap_len": 0.30911,
+    "overlap_frac": 0.383821,
+    "additive_is_floor": false
+  },
+  "falsifiers": {
+    "F669.1_CORE_SEPARATION": {"pre": "between/within var ratio >= 1.0", "result": "0.106 < 1.0", "status": "FAIL"},
+    "F669.2_GAP_EXCEEDS_SPREAD": {"pre": "grp_gap > intra_std", "result": "0.177 <= 0.356", "status": "FAIL"},
+    "F669.3_NO_OVERLAP": {"pre": "overlap_len <= 0", "result": "0.309 > 0", "status": "FAIL"},
+    "F669.4_ADDITIVE_FLOOR": {"pre": "mean_ADD < mean_CHA", "result": "2.137 >= 1.960", "status": "FAIL"},
+    "F669.5_DISTINCT_FRAC": {"pre": "overlap_frac < 0.3", "result": "0.384", "status": "FAIL"},
+    "F669.6_BOUND": {"pre": "全 통계 finite", "result": "충족", "status": "PASS"}
+  },
+  "result": "additive_separated_class=false · additive_floor_subclass=false. additive 라벨은 Φ-속성과 직교 — additive(2.137) 가 오히려 chaotic(1.960) 보다 약간 높음(floor 가설 정반대), 분포 38% 겹침, between/within 0.106. 실 splitter = Φ(W) 곡선 형태(W-monotone vs W-비단조), 이는 additive·chaotic 두 그룹을 모두 가로지름(rule90/60 monotone vs rule150 die-out; rule30/106 monotone vs rule45 inverse-U).",
+  "c3": [
+    "additive 라벨(XOR-linear)은 transition-rule 분류일 뿐 Φ-구조 분류 아님 — H_664 의 'sub-type 가 chaotic/additive 와 직교' 직접 확정.",
+    "rule150 die-out(Φ=0 @W=1.0)은 같은 additive rule90/60(W-monotone, Φ_max=6~7.5)과 정반대 — additive 내부조차 분산.",
+    "sub-type cut-off 사후 caveat 상속(H_664 C3.2); n=3 per group small-n; cap=3 lower-bound; deterministic NO RNG byte-identical."
+  ],
+  "rule_sample": {
+    "additive_XOR_linear": [60, 90, 150],
+    "chaotic_non_additive": [30, 45, 106],
+    "note": "additive = next-state 가 이웃의 XOR(GF(2) linear); rule60=L⊕C, rule90=L⊕R, rule150=L⊕C⊕R; rule60/90 norm_conv=2.24029 동일(둘 다 2-input XOR W-monotone)"
+  }
+}
