@@ -1,0 +1,68 @@
+{
+  "h_id": "H_682",
+  "group": "D_persistence_paradigm",
+  "backend": "sw",
+  "backend_label": "SW deterministic synthetic (PR #547 baseline 1.59/0.44 replay)",
+  "L9_kosmos_anchor_resting": {
+    "text": "EEG-WAKE_resting_alpha_dominant-anchor",
+    "tension_5ch": [0.40, 0.15, 0.05, 0.80, 0.20],
+    "coord": [0.40, 0.15, 0.05],
+    "lane": "biological_eeg",
+    "radius": 0.5,
+    "tier": "weak",
+    "stage": "WAKE_resting_alpha_dominant",
+    "schema": "kosmos/anchor/1",
+    "hub": "KOSMOS/KOSMOS.md",
+    "spec": "spec/kosmos.md · spec/profiles/anima-consciousness-carving.md",
+    "kosmos_format_repo": "github.com/dancinlab/kosmos",
+    "anima_pointer_only": true
+  },
+  "L9_kosmos_anchor_n3": {
+    "text": "EEG-N3_deep_sleep-anchor",
+    "tension_5ch": [0.05, 0.15, 0.05, 0.30, 0.05],
+    "coord": [0.05, 0.15, 0.05],
+    "lane": "biological_eeg",
+    "radius": 0.5,
+    "tier": "weak",
+    "stage": "N3_deep_sleep"
+  },
+  "L9_kosmos_anchor_rem": {
+    "text": "EEG-REM-anchor",
+    "tension_5ch": [0.10, 0.30, 0.15, 0.80, 0.25],
+    "coord": [0.10, 0.30, 0.15],
+    "lane": "biological_eeg",
+    "radius": 1.5,
+    "tier": "weak",
+    "stage": "REM"
+  },
+  "L9_kosmos_anchor_active": {
+    "text": "EEG-WAKE_active-anchor",
+    "tension_5ch": [0.15, 0.10, 0.25, 0.90, 0.40],
+    "coord": [0.15, 0.10, 0.25],
+    "lane": "biological_eeg",
+    "radius": 2.5,
+    "tier": "strong",
+    "stage": "WAKE_active"
+  },
+  "L10_resting_baseline_paradigm": {
+    "paradigm_name": "resting_baseline",
+    "primary_path": "anima-eeg-core/tool/modules/_paradigms/resting_baseline.hexa",
+    "primary_exists": false,
+    "fallback_path": "BRAIN/eeg/eeg_recorder.hexa",
+    "fallback_exists": true,
+    "any_reference_present": true,
+    "live_runner_source": "anima-eeg-core (별 도메인 합류 시 wire)",
+    "honest_caveat": "reference attest only — 실 paradigm 실행 = 별 H/도메인 합류 필요"
+  },
+  "verdict": {
+    "F-H682-1_L9_kosmos_anchor_schema_well_formed": true,
+    "F-H682-2_L10_resting_baseline_paradigm_referenced": true,
+    "F-H682-3_L9_anchor_tier_in_three_set": true,
+    "F-H682-4_both_paradigms_surfaced": true,
+    "n_pass_of_4": 4,
+    "all_pass": true,
+    "verdict": "GREEN_NUMERICAL_CONFIRM"
+  },
+  "tier_label": "🟢 numerical (synthetic-replay)",
+  "covers_sub_ideas": ["L9_kosmos_anchor_persist", "L10_resting_baseline_paradigm"]
+}

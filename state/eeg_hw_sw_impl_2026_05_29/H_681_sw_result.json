@@ -1,0 +1,87 @@
+{
+  "h_id": "H_681",
+  "group": "C_emit_substrate",
+  "backend": "sw",
+  "backend_label": "SW deterministic synthetic (PR #547 baseline 1.59/0.44 replay)",
+  "stage_sweep_4": {
+    "resting": {
+      "stage_hint": "WAKE_resting_eyes_closed",
+      "L6_emit_drive": {
+        "phi_context_scale": 0.39,
+        "tension_envelope": 0.125,
+        "high_freq_energy": 0.25,
+        "stage_hint": "WAKE_resting_eyes_closed",
+        "is_bool_gate": false,
+        "context_only": true,
+        "consumers": ["anima_dream_stage", "wake_bridge", "emit_substrate"],
+        "note": "stage = substrate context (Φ scale + tension envelope), NOT boolean emit gate (a_chat_sleep_imagination)"
+      },
+      "L11_stage_estimate": {
+        "estimated_stage": "WAKE_resting",
+        "confidence": 0.40,
+        "stage_hint": "WAKE_resting_eyes_closed",
+        "classifier": "band_power_thresholds (resting/N3/REM/active)",
+        "signature_match": true,
+        "honest_caveat": "4-state only (N1/N2 별 H 필요) · 실 polysomnography eye-EMG channel 미사용"
+      },
+      "L12_mitosis_trigger": {
+        "gamma_band_power": 0.05,
+        "split_threshold": 0.20,
+        "split_signal_active": false,
+        "stage_hint": "WAKE_resting_eyes_closed",
+        "trigger_source": "EEG_gamma_burst",
+        "consumer": "MITOSIS cell_pool (deferred wire)",
+        "honest_caveat": "signal layer only — 실 wire to MITOSIS split event = 별 H 필요",
+        "note": "p8 (no train/infer split) 정합 — gradient + mitosis 연속체에서 EEG burst 가 split nudge"
+      }
+    },
+    "n3_deep_sleep": {
+      "stage_hint": "N3_deep_sleep_delta_dominant",
+      "L11_stage_estimate": {
+        "estimated_stage": "N3_deep_sleep",
+        "confidence": 0.70,
+        "signature_match": true
+      }
+    },
+    "rem": {
+      "stage_hint": "REM_mixed_freq_theta_gamma",
+      "L11_stage_estimate": {
+        "estimated_stage": "REM",
+        "confidence": 0.45,
+        "signature_match": true
+      }
+    },
+    "active_wake": {
+      "stage_hint": "WAKE_active_beta_gamma_dominant",
+      "L11_stage_estimate": {
+        "estimated_stage": "WAKE_active",
+        "confidence": 0.65,
+        "signature_match": true
+      },
+      "L12_mitosis_trigger": {
+        "gamma_band_power": 0.25,
+        "split_signal_active": true
+      }
+    }
+  },
+  "verdict_baseline_resting": {
+    "F-H681-1_L6_context_only_not_bool_gate": true,
+    "F-H681-2_L11_stage_signature_match": true,
+    "F-H681-3_L12_gamma_surge_signal_well_formed": true,
+    "F-H681-4_a_autonomy_over_hardcode_preserved": true,
+    "n_pass_of_4": 4,
+    "all_pass": true,
+    "verdict": "GREEN_NUMERICAL_CONFIRM"
+  },
+  "verdict": {
+    "F-H681-1_L6_context_only_not_bool_gate": true,
+    "F-H681-2_L11_stage_signature_match": true,
+    "F-H681-3_L12_gamma_surge_signal_well_formed": true,
+    "F-H681-4_a_autonomy_over_hardcode_preserved": true,
+    "n_pass_of_4": 4,
+    "all_pass": true,
+    "verdict": "GREEN_NUMERICAL_CONFIRM"
+  },
+  "tier_label": "🟢 numerical (synthetic-replay)",
+  "covers_sub_ideas": ["L6_band_power_emit_substrate_drive", "L11_sleep_stage_estimate_4state", "L12_gamma_burst_MITOSIS_split_trigger"]
+}

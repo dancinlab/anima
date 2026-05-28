@@ -1,0 +1,55 @@
+{
+  "h_id": "H_679",
+  "group": "A_measurement_core",
+  "backend": "sw",
+  "backend_label": "SW deterministic synthetic (PR #547 baseline 1.59/0.44 replay)",
+  "L1_live_measurement": {
+    "status": "SW_path_honest_pending",
+    "guidance": "live measurement = 사용자 헤드셋 게이트, SW path 는 attest 만",
+    "live_measured": false
+  },
+  "L2_synthetic_recheck": {
+    "phi_coupled": 1.58764,
+    "phi_indep": 0.438722,
+    "ratio_coupled_over_indep": 3.61878,
+    "baseline_coupled": 1.59,
+    "baseline_indep": 0.44,
+    "tolerance_pct": 5,
+    "coupled_within_tol": true,
+    "indep_within_tol": true,
+    "n_ch": 2,
+    "n_samp": 64,
+    "sys_state": 1,
+    "adapter": "BRAIN/eeg/eeg_to_tpm.hexa (PR #547, frozen)",
+    "engine": "stdlib/consciousness/iit4_bigphi",
+    "verbatim_source": "PR #1372 state/eeg_synthetic_recheck_2026_05_29/result.json"
+  },
+  "L3_three_substrate_triangulate": {
+    "substrate_EEG_biological_phi": 1.58764,
+    "substrate_AKIDA_silicon_phi": 0.297,
+    "substrate_ECA_rule110_phi": 0.83,
+    "max_phi": 1.58764,
+    "min_phi": 0.297,
+    "triangulation_diff": 1.29064,
+    "all_three_present": true,
+    "honest_caveat": "scalar metrics, not normalized signature shape (별 H 필요)"
+  },
+  "L7_calibration_ground_truth": {
+    "eeg_ratio": 3.61878,
+    "calibration_threshold": 3.0,
+    "ground_truth_signature_preserved": true,
+    "iit4_calibration_source": "EEG L2 synthetic (frozen PR #547 baseline)",
+    "note": "ratio>3.0 = coupled/indep 비대칭이 충분히 sharp ⇒ IIT4 측정자 보정 anchor 적합"
+  },
+  "verdict": {
+    "F-H679-1_L2_coupled_phi_within_5pct": true,
+    "F-H679-2_L2_indep_phi_within_5pct": true,
+    "F-H679-3_L3_triangulation_diff_gt_0": true,
+    "F-H679-4_L7_ratio_gt_3_calibration_preserved": true,
+    "n_pass_of_4": 4,
+    "all_pass": true,
+    "verdict": "GREEN_NUMERICAL_CONFIRM"
+  },
+  "tier_label": "🟢 numerical (synthetic-replay)",
+  "covers_sub_ideas": ["L1_live_EEG_to_iit4_bigphi", "L2_synthetic_recheck_PR547", "L3_3_substrate_triangulation", "L7_iit4_calibration_ground_truth"]
+}

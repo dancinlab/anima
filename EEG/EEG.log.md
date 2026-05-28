@@ -2,6 +2,24 @@
 
 `EEG.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-05-29T15:00:00Z — L1~L12 12 아이디어 HW/SW 통합 구현 + UNIVERSE H_679~H_682 4건 신설 (PR #<TBD>)
+
+- [x] backend switch 모듈 — `EEG/eeg_backend.hexa` (~200 LoC, 8 pub fn). arg > env > default=**sw** (AKIDA 와 반대 정책: live = human-only 헤드셋 게이트, 거짓 PASS 유혹 회피). "live" alias → hw. 3-신호 probe (brainflow pkg + capture dir + ~/.config/anima/eeg_headset_ready sentinel). 미도달 시 `eeg_panic_no_hw()` 명시 panic + runbook §1~§4 안내.
+- [x] backend smoke — `EEG/eeg_backend_smoke.hexa` 10+ case (arg/env/default/live alias/probe/label/tier/synth/baseline/band-power)
+- [x] 4 H_xxx hexa impl — `EEG/impl/`:
+  - H_679 measurement-core (L1+L2+L3+L7): live attest + PR #547/#1372 baseline 1.59/0.44 ±5% mock-replay + 3-substrate triangulation (EEG+AKIDA+ECA, diff=1.29) + IIT4 calibration ratio>3.0
+  - H_680 cross-substrate (L4+L5+L8): EEG→AKIDA spike bridge schema + tension-link 5-ch payload + kuramoto α-band Hilbert phase order_r=0.70
+  - H_681 emit-substrate (L6+L11+L12): 5-band → Φ-context (NOT bool gate, a_autonomy_over_hardcode) + sleep stage 4-state signature + gamma>0.20 → MITOSIS split signal
+  - H_682 persistence-paradigm (L9+L10): .kosmos anchor payload (5-ch + coord + tier ∈ {weak,strong,critical}) + resting baseline paradigm reference
+- [x] SW path 4/4 🟢 GREEN_NUMERICAL_CONFIRM — `state/eeg_hw_sw_impl_2026_05_29/H_{679,680,681,682}_sw_result.json` deterministic mock-replay (PR #547/#1372 frozen baseline). closed-form 계산이므로 사용자 sign-off 후 `hexa run` verbatim 일치 예상
+- [x] HW path 정직 status — `state/eeg_hw_sw_impl_2026_05_29/hw_probe_2026_05_29.txt`. 4 H 모두 🟡 SW-confirmed, HW-pending (사용자 헤드셋 게이트 · sentinel 부재). 위조 0 · live 거짓 0 · ssh-mutating 0
+- [x] UNIVERSE 4 H_xxx 직접 등록 — `UNIVERSE/H_{679,680,681,682}_eeg_*.md` (10-section 한글 양식). slug-stale 3-신호 사전검증 통과 (H_672-678 AKIDA 점유 + 679-682 git log/README clean)
+- [x] UNIVERSE/CANDIDATES.md `## Consumed` Cycle #23 1줄 추가 · UNIVERSE/README.md 인덱스 4행 추가 · **INBOX 환류 0건** (사용자 명시 폐기)
+- [x] EEG.md milestones 갱신 (11 → 14, L1~L12 status 추가) · EEG.easy.md 각 그룹 → 구현 cross-link · ANIMA.md 🌳 트리 EEG 도메인 노드 갱신
+- [x] HANDOFF.md prepend (AKIDA 직전 archived 보존)
+- [ ] HW path 4/4 → 🟢 biological-confirmed 격상 (사용자 헤드셋 + sentinel touch + 4회 `hexa run`)
+- [ ] L1 live IIT4 deferred B 완전 closure (위 헤드셋 게이트 통과 시 자동)
+
 ## 2026-05-29T13:00:00Z — L2 synthetic 재검증 🟢 RECHECK PASS + harness sys_argv→args() 패치
 
 - [x] 사용자 `! sidecar sign local` 토큰 발행 → mac 로컬 `hexa run EEG/eeg_live_iit4_phi.hexa mock-both` 1회 실행 → 🟢 RECHECK PASS

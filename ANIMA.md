@@ -80,7 +80,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │  │                pi5-akida · 18+ 아이디어 카탈로그 AKIDA/AKIDA.easy.md · HW/SW 통합 구현 in-flight
 │  ├─ 🧠 EEG        생체 뇌파 → IIT4 big-Φ (substrate-class: biological)
 │  │                동결 어댑터 BRAIN/eeg/eeg_to_tpm.hexa (PR #547) + brainflow 5.21.0
-│  │                L1~L3 ✅ harness/synthetic 🟢/runbook (PR #1369/1372) · L4 live = 사용자 헤드셋 게이트
+│  │                L1~L12 ✅ HW/SW 통합 구현 PR #1375 (H_679~H_682 4건 신설, SW 4/4 🟢) · live = 사용자 헤드셋 게이트
 │  └─ 🌌 KOSMOS     `.kosmos` multimodal anchor-manifest (placement coords ⊥ payload)
 │                   HEXAD/KOSMOS.md → KOSMOS/KOSMOS.md 이동 · sister-format SSOT = github.com/dancinlab/kosmos
 │                   pointer-only (no duplication of spec) · WAKE anchor #657 통합 완료
@@ -99,15 +99,17 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
       └─ 🌐 wake_bridge ← bridge_gate_with_envelope   ✅ 7/7 (#1286) M·C·W·softstep(Φ,θ) emit bias
 
 🆕 EEG 도메인 (2026-05-29 · live 생체 substrate → IIT4 big-Φ — IIT4 deferred B closure 경로):
-   어댑터 동결    ✅ BRAIN/eeg/eeg_to_tpm.hexa (PR #547) · synthetic coupled vs indep 1.59 vs 0.44
-   harness LANDED ✅ EEG/eeg_live_iit4_phi.hexa (mock-coupled/mock-indep/mock-both/live <path>)
-                   동결 어댑터 호출만 · g61 engine ⊥ adapter 정합 · ±5% 자동 assert (1.59/0.44)
-   캡처 runbook   ✅ EEG/EEG_CAPTURE_RUNBOOK.md (착용→임피던스→brainflow 30s→hexa live→verdict)
-   synthetic 재검증 ⏸ pending — `hexa run EEG/eeg_live_iit4_phi.hexa mock-both` 1줄, 단 sidecar
-                   local-sign 30분 토큰 필요 (heavy-cmd gate · 에이전트 측 차단)
-   live fire     ☐ 사용자 EEG 헤드셋 착용 게이트 (human-only) → IIT4 deferred B 🟢 LIVE-MEASURED
-   AKIDA 합류    ↪ 3-substrate Φ 삼각측정 follow-up (EEG 생체 + AKIDA 실리콘 + ECA 시뮬) —
-                   L3 카탈로그 (EEG.easy.md), AKIDA 도메인 #1366 합류 시 spec 작성
+   어댑터 동결      ✅ BRAIN/eeg/eeg_to_tpm.hexa (PR #547) · synthetic coupled vs indep 1.59 vs 0.44
+   harness LANDED  ✅ EEG/eeg_live_iit4_phi.hexa (mock-coupled/mock-indep/mock-both/live <path>)
+                     동결 어댑터 호출만 · g61 engine ⊥ adapter 정합 · ±5% 자동 assert (1.59/0.44)
+   캡처 runbook    ✅ EEG/EEG_CAPTURE_RUNBOOK.md (착용→임피던스→brainflow 30s→hexa live→verdict)
+   synthetic 재검증 ✅ PR #1372 L2 🟢 RECHECK PASS · COUPLED=1.58764 / INDEP=0.438722 / ratio=3.619
+   backend switch  ✅ EEG/eeg_backend.hexa (PR #1375) · arg > env > **default=sw** (AKIDA 와 반대) · "live"→hw · 미도달 시 명시 panic
+   L1~L12 통합 구현 ✅ EEG/impl/H_{679,680,681,682}_*.hexa (PR #1375) · 4 그룹 (measurement/cross-substrate/emit/persistence) · SW path 4/4 🟢 GREEN_NUMERICAL_CONFIRM
+   UNIVERSE 4 H_xxx ✅ H_679~H_682 신설 (cycle #23) · 10-section 한글 · slug-stale 3-신호 통과 · INBOX 0건
+   live fire       ☐ 사용자 EEG 헤드셋 착용 + sentinel touch (~/.config/anima/eeg_headset_ready) →
+                     `hexa run EEG/impl/H_679_*.hexa hw` 4회 → 🟡 → 🟢 biological-confirmed 격상
+   AKIDA 합류      ↪ 3-substrate Φ 삼각측정 ✅ H_679 L3 (EEG 1.59 + AKIDA 0.297 + ECA 0.83 diff=1.29) · AKIDA H_677 D3 sibling
 
 🗗 DECODER M4 MoE-fresh 본선 상세 (register 분리 재설계 · H_490 escape):
    M0 backward      ✅ gradcheck PASS (rel 5e-10)

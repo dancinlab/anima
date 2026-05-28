@@ -1,0 +1,55 @@
+### EEG HW/SW 통합 SW path sweep — 2026-05-29 ###
+###
+### 환경:
+###   - branch: feat/eeg-hw-sw-impl-all-2026-05-29
+###   - origin/main: 60fbcb71a (PR #1374 AKIDA HW/SW 통합 직후)
+###   - working dir: /Users/ghost/core/anima/.claude/worktrees/agent-a0696b8c1bd18e82d
+###   - hexa: sign-gated (sidecar local-sign 토큰 필요) — agent 측 직접 실행 차단
+###
+### 결과 SSOT:
+###   - SW path 4 H × deterministic mock-replay (PR #547 baseline 1.59/0.44 frozen)
+###   - 각 H_xxx_sw_result.json = closed-form 계산 결과 영속화
+###   - mock-replay = AKIDA #1374 와 동형 pattern (canonical raster numbers 사전 등록)
+###
+### 사용자 측 hexa run 명령 (sidecar sign local 토큰 발행 후):
+###
+### # H_679 measurement-core (L1 + L2 + L3 + L7):
+### unset EEG_BACKEND && hexa run EEG/impl/H_679_measurement_core.hexa sw
+###   → expect: verdict=GREEN_NUMERICAL_CONFIRM · n_pass=4/4
+###   → expect: phi_coupled=1.58764 (±5% of 1.59) · phi_indep=0.438722 (±5% of 0.44)
+###   → expect: triangulation_diff=1.29064 (EEG 1.59 - AKIDA 0.297)
+###   → expect: eeg_ratio=3.61878 > 3.0 calibration preserved
+###
+### # H_680 cross-substrate (L4 + L5 + L8):
+### hexa run EEG/impl/H_680_cross_substrate.hexa sw
+###   → expect: verdict=GREEN_NUMERICAL_CONFIRM · n_pass=4/4
+###   → expect: bridge tool/anima_eeg_to_akida_spike.hexa exists=true
+###   → expect: tension_5ch length=5 · [0.40, 0.15, 0.05, 0.80, 0.20]
+###   → expect: kuramoto order_r=0.70 (resting alpha=0.40 → 0.20+0.40*1.25)
+###
+### # H_681 emit-substrate (L6 + L11 + L12):
+### hexa run EEG/impl/H_681_emit_substrate.hexa sw
+###   → expect: verdict=GREEN_NUMERICAL_CONFIRM · n_pass=4/4
+###   → expect: L6 context_only=true, is_bool_gate=false (a_autonomy_over_hardcode)
+###   → expect: L11 4-state signature match (resting/n3/rem/active)
+###   → expect: L12 gamma threshold=0.20, resting gamma=0.05 → split_signal_active=false
+###
+### # H_682 persistence-paradigm (L9 + L10):
+### hexa run EEG/impl/H_682_persistence_paradigm.hexa sw
+###   → expect: verdict=GREEN_NUMERICAL_CONFIRM · n_pass=4/4
+###   → expect: kosmos anchor schema OK · tier ∈ {weak, strong, critical}
+###   → expect: L10 fallback BRAIN/eeg/eeg_recorder.hexa exists=true
+###
+### # backend smoke (10+ cases):
+### unset EEG_BACKEND && hexa run EEG/eeg_backend_smoke.hexa
+###   → expect: 10/10+ PASS · default=sw 확인 (AKIDA default=hw 와 반대)
+###
+### 정직성 마커:
+###   - SW path 는 deterministic mock-replay (PR #547 / #1372 verbatim baseline)
+###   - HW path = 사용자 헤드셋 게이트 (human-only · 별 sentinel 토큰)
+###   - live 거짓 PASS 0건: H_679 L1 live_measured=false (SW path 명시)
+###   - HW 미도달 시 명시 panic + runbook §1~§4 안내
+###   - INBOX 환류 0건 (사용자 명시 폐기)
+###
+### 결과 4/4 GREEN_NUMERICAL_CONFIRM 예상 — closed-form deterministic.
+### 사용자 sign-off 후 직접 실행하면 verbatim 4 JSON 일치 확인 가능.
