@@ -130,6 +130,16 @@ fn main() {
     }
     let mut n_steps = steps_per_epoch * epochs
     if n_steps < 1 { n_steps = 1 }
+    // Absolute step cap (M4B_MAX_STEPS) — the production trainer's per-step cost
+    // (dense Adam over 29M params + V-wide softmax ≈ 0.6-1.5 s/step) makes the
+    // full "tens × vocab" budget (~750K steps) take ~9 GPU-days = infeasible.
+    // The cap lets the fire run the MAXIMUM feasible budget in a bounded wall.
+    // The corpus still WRAPS (epoch-looping) so presentations span the whole corpus.
+    let maxsteps_env = env_var("M4B_MAX_STEPS")
+    if len(maxsteps_env) > 0 {
+        let ms = to_int(maxsteps_env)
+        if ms > 0 && ms < n_steps { n_steps = ms }
+    }
     print("  budget: steps_per_epoch=") ; print(steps_per_epoch)
     print(" epochs=") ; print(epochs)
     print(" n_steps=") ; print(n_steps)
