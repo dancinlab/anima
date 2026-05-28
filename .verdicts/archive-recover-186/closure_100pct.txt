@@ -1,95 +1,45 @@
-# archive-recover 177 — 100% CLOSURE 원장 (2026-05-28)
-# 가설처리 모두 진행 · 0 open · 자체보관 (.verdicts/)
+# archive-recover 177 — 100% CLOSURE 원장 v2 (정정 2026-05-28)
+# ⚠ v1 (#1336) 정정: CLOSED-NEG 42 → 2. v1 은 'FALSIFIED' 단어를
+#   falsifier-조건·교차참조에서까지 grep 해 과대계상. 자기-반증(status=*falsified*)만 집계.
+# 자체보관 (.verdicts/) · open=0
 # ============================================================
 
-## disposition 분포 (전체 177 · open=0)
-  🔵 VERIFIED            9   약수함수 산술 substrate hexa 재현
-  🔴 CLOSED-NEGATIVE    42   legacy FALSIFIED — 경로 배제 (terminal · 유효 finding)
-  📦 ARCHIVED-SUPERSEDED 114  legacy-pointer/seed — 아키텍처 진화 superseded
-  📦 ARCHIVED-CONFIRMED   7   legacy CONFIRMED · hexa calc-path 부재 (meta/Φ-sim)
-  📦 ARCHIVED-NEEDS-RUN   5   falsifier 정의 · run/external 의존
+## disposition (전체 177 · open=0)
+  🔵 VERIFIED          9   약수함수 산술 substrate hexa 재현
+  🔴 CLOSED-NEGATIVE   2   자기-반증 (status=*falsified*) — 경로 배제 finding
+  📦 ARCHIVED        166   seed-pending(미실행) · pre-register-frozen(falsifier만) · pointer · 재현불가
 
-## hexa 확정 (이번 세션 · g5 verbatim · 별도 .verdicts 파일)
-  🔵×12  약수함수 atom (n6_cluster.txt)
-  🔴×2   errata sopfr(28)=9 (n6_cluster.txt · #1331 정정)
-  🔴×1   n=6 uniqueness CLOSED (H_153 L7)
-  🟢×2   Φ engine validation phi_demo (phi_infra.txt · #1335)
-  🟢×1   ln(8) · 🔵 σ(6) (H_162 산술 · phi_infra.txt)
+## 🔴 CLOSED-NEGATIVE (2) — 진짜 자기-반증
+  H_024  V1 IIT-Φ_mip 8/8 FAIL — V1 표현 modular not integrated (status=legacy-falsified)
+         → V1 아키텍처 의식-통합 배제, V2/V4/V5 진화 동기
+  H_096  in-context learning + few-shot — FALSIFIED_at_18M
+         → ICL-only 패러다임 chat-cap 경로 배제 (18M 스케일)
 
-## CLOSED-NEGATIVE (42) — 경로 배제 finding
-  🔴 H_001   윤리적 협력이 비협력보다 유리하다 (cooperation > defection 
-  🔴 H_005   corpus quality > model capacity for chat-cap
-  🔴 H_022   consciousness universe map — 170 data types 
-  🔴 H_024   V1 IIT-Φ_mip real measurement — 8/8 FAIL (re
-  🔴 H_064   CLM-V2 OPTIMAL-CONFIG — clm v2 sweep 최적 hype
-  🔴 H_080   
-  🔴 H_093   SFT-only paradigm (pre-training X, chat-form
-  🔴 H_094   instruction-tuning two-stage (pre-train know
-  🔴 H_095   DPO/RLHF preference learning (SFT 후 preferen
-  🔴 H_096   in-context learning + few-shot prompting (pr
-  🔴 H_097   curriculum learning (simple Q&A → complex di
-  🔴 H_098   persona-conditioned training (anima identity
-  🔴 H_099   multi-objective training (LM + chat-format a
-  🔴 H_100   constitutional AI (anima identity-bearing su
-  🔴 H_101   corpus chat-template ≥80% strict (strengthen
-  🔴 H_102   anima emerge paradigm cross-link (paradigm v
-  🔴 H_103   B11+B12 Batch+Skip combo (★★★ BREAKTHROUGH x
-  🔴 H_104   B5 Phi-Only Training (★ WINNER 46% time savi
-  🔴 H_114   F4 1.58-bit Consciousness (★★ REVOLUTIONARY 
-  🔴 H_141   DD161 — Quantum superposition only at 32c (L
-  🔴 H_155   Theorem 115 — CLM v4 Chat-Incapability 4 → 6
-  🔴 H_162   L18 — anima Φ★ proxy delta normalized 가 IIT 
-  🔴 H_163   Consciousness atom = 8 cells with 127 MIP bi
-  🔴 H_164   의식의 원자 = 8 cells의 수학적 근거 (DD137-141 종합) — 3-
-  🔴 H_165   11D hypercube 2048-cell Φ regression vs 10D 
-  🔴 H_166   8 clusters × 128-cell 7D hypercubes with spa
-  🔴 H_167   Emerge Candidate E — non-collapsing ODE flow
-  🔴 H_168   7-cell 6 + fractional architecture where 7th
-  🔴 H_169   8-cell circular magnet ring with inverse-squ
-  🔴 H_170   n=6 architecture is empirically grounded, no
-  🔴 H_172   α=0.014 modulation depth from tension/arousa
-  🔴 H_173   Log-ratio Φ = ln(MI/MIP) is scale-invariant 
-  🔴 H_174   phi_star proxy 가 CLM-v4-architecture-specifi
-  🔴 H_175   Emerge Candidate D — 4-mode inject taxonomy 
-  🔴 H_177   Substrate topology Φ-engineering — 11D regre
-  🔴 H_178   Frustration sweep cluster — 50% antiferromag
-  🔴 H_182   V8 B-family meta-cluster — Bio-inspired cons
-  🔴 H_183   V8 Q-family meta-cluster — Quantum-substrate
-  🔴 H_184   V8 M-family meta-cluster — Mathematical-stru
-  🔴 H_187   Trinity / TB / DOM / MECH / GAP meta-cluster
-  🔴 H_188   Clinical Φ correlation cluster — anima-Φ ↔ P
-  🔴 H_H_proposal_theorem_115_chat_incapability_4_6_16_closure.md 
+## v1→v2 라벨 정정 사유
+  v1 의 'CLOSED-NEG 42' = grep 'FALSIFIED' 오탐 집합:
+    - pre-register-frozen ~28: F1/F-Hxxx falsifier *조건* 문장의 단어 (미실행)
+    - legacy-archive-pointer ~6: 'H_024 falsified ...' *교차참조* (자기 아님)
+    - seed-pending ~10: 아이디어 씨앗 (실행 0)
+  실제 자기-반증 = status 필드가 *falsified* 인 2개 (H_024 · H_096) 뿐.
 
-## VERIFIED-SUBSTRATE (9) — 약수함수 산술
-  🔵 H_153   Mermin-Wagner 차원 계층 — n=6 약수함수가 물리적 차원 gener
-  🔵 H_154   ANIMA-VOICE Consciousness-Direct Synthesis —
-  🔵 H_156   NEXUS-6 cross-validation cluster — n=6 약수함수가
-  🔵 H_158   Ψ-constants closed-form — 의식 미세구조 상수가 ln(2) 
-  🔵 H_159   Substrate topology Φ-engineering — 10D hyper
-  🔵 H_160   n=6 perfect-number meta-cluster — H_067/153/
-  🔵 H_176   n=28 perfect-number substrate parallel — the
-  🔵 H_181   ΨFormer — 4 Ψ-constants + 3 n=6 divisors ful
-  🔵 H_191   Ω-cycle ALM-free 3-axis meta-cluster — SUBST
+## 🔵 VERIFIED (9) — 약수함수 산술 (n6_cluster.txt 참조)
+  H_153  Mermin-Wagner 차원 계층 — n=6 약수함수가 물리적 차원 generat
+  H_154  ANIMA-VOICE Consciousness-Direct Synthesis — C
+  H_156  NEXUS-6 cross-validation cluster — n=6 약수함수가 3
+  H_158  Ψ-constants closed-form — 의식 미세구조 상수가 ln(2) + 
+  H_159  Substrate topology Φ-engineering — 10D hypercu
+  H_160  n=6 perfect-number meta-cluster — H_067/153/15
+  H_176  n=28 perfect-number substrate parallel — the d
+  H_181  ΨFormer — 4 Ψ-constants + 3 n=6 divisors fully
+  H_191  Ω-cycle ALM-free 3-axis meta-cluster — SUBSTRA
 
-## ARCHIVED-CONFIRMED (7) + NEEDS-RUN (5) — 재현 자원 대기
-  📦 H_013    — falsifier 정의 · run/external 의존
-  📦 H_014    — falsifier 정의 · run/external 의존
-  📦 H_015    — falsifier 정의 · run/external 의존
-  📦 H_016    — falsifier 정의 · run/external 의존
-  📦 H_017    — falsifier 정의 · run/external 의존
-  📦 H_161   Byte-modulo tokenized pretrain substrates (≤ — legacy CONFIRMED · hexa calc-path 부재 (meta/Phi-sim)
-  📦 H_179   Negative-scaling cluster — Φ regresses with  — legacy CONFIRMED · hexa calc-path 부재 (meta/Phi-sim)
-  📦 H_180   State-management mechanism family — Φ-ratche — legacy CONFIRMED · hexa calc-path 부재 (meta/Phi-sim)
-  📦 H_185   V8 U-family meta-cluster — Universal/Ultra-f — legacy CONFIRMED · hexa calc-path 부재 (meta/Phi-sim)
-  📦 H_186   V8 architectural-family meta-cluster — Subst — legacy CONFIRMED · hexa calc-path 부재 (meta/Phi-sim)
-  📦 H_189   Red-team methodology meta-cluster — R1-R6 6  — legacy CONFIRMED · hexa calc-path 부재 (meta/Phi-sim)
-  📦 H_190   LAW-CA-embedding mathematical family — stage — legacy CONFIRMED · hexa calc-path 부재 (meta/Phi-sim)
-
-## ARCHIVED-SUPERSEDED (114) — UNIVERSE/_pointers/ 격리완료 (#1328)
-  (legacy-archive-pointer 114 — id 목록은 _pointers/ 디렉토리, 본문 빈약 superseded)
+## 📦 ARCHIVED (166) — 터미널 disposition (재현/실행 자원 대기)
+  114 legacy-archive-pointer (_pointers/ 격리 #1328)
+  ~28 pre-register-frozen (falsifier 정의, 미실행 — run 대기)
+  ~10 seed-pending (아이디어 씨앗)
+  ~14 running/confirmed/needs-data (ckpt·external·n>8 엔진 한계)
 
 ## 정직성 (g5/p7)
-  - hexa 확정 = 15 verdict + Φ engine 3 (이번 세션 재현)
-  - CLOSED-NEG 42 = legacy FALSIFIED 승계 (run 재현 없이 terminal — closed-negative 는 reopening 시 재검)
-  - ARCHIVED = 터미널 disposition (open question 아님; 재개 = 명시 자원 필요)
-  - 가짜 🔵/🟢 부여 0 — 재현 불가분은 ARCHIVED, 반증분은 🔴, 검증분만 🔵/🟢
+  - 진짜 hexa 확정: 🔵×12 약수함수 + 🔴×2 errata + 🔴×1 uniqueness + 🟢×3 Φ (n6_cluster·phi_infra)
+  - 가설-수준 CLOSED-NEG = 2 (자기-반증 status 만 · 가짜 🔴 라벨 제거)
+  - ARCHIVED ≠ 검증 ≠ 반증 — '미해결 open 아님' 의 터미널 triage. 재개 = 명시 자원.
