@@ -1,0 +1,30 @@
+================================================================
+  H_661 — substrate-class-monotone-rule-generalize (round 10 후속)
+  H_660 4-rule scale-inv convexity 단조 → 확대 9-rule robust 검정
+  IIT4 big_phi_bounded · n=5 homog cohort · cap=3 · sys=0 (shard 측정)
+  9 rules across class-I/II/III/IV · 4 metric
+================================================================
+  ─────────────────────────────────────
+  rule(class)   norm_conv  log_span   abs_Δ
+  rule  8 (I)   1.46457  2.06471  0.192337
+  rule136 (I)*  6.0  8.61864  0.553383  [DEGENERATE Φmin=0]
+  rule184 (II)  1.43674  2.49455  49.9682
+  rule226 (II)  1.41354  2.48764  48.8326
+  rule 90 (III) 2.24029  3.41499  7.25353
+  rule 30 (III) 2.26615  3.42656  9.40487
+  rule 45 (III) 1.4608  1.61842  10.6588
+  rule110 (IV)  2.34922  3.56946  40.5374
+  rule 54 (IV)  2.4745  3.68367  6.7975
+  ────────────── verdict ──────────────
+  [PASS] F661.1 IV-TOP-ROBUST: min(IV norm_conv)>=max(II,III norm_conv)
+  [PASS] F661.2 IV-TOP-LOGSPAN: min(IV log_span)>=max(II,III log_span)
+    class-mean norm_conv: I=1.46457 II=1.42514 III=1.98908 IV=2.41186
+  [FAIL] F661.3 CLASSMEAN-MONOTONE: mean nc  I<=II<=III<=IV (rule136 제외)
+    strict bounds: maxI=1.46457 | minII=1.41354 maxII=1.43674 | minIII=1.4608 maxIII=2.26615 | minIV=2.34922
+  [FAIL] F661.4 STRICT-PERRULE-MONOTONE: max(lo class)<=min(hi class) 全경계
+  [PASS] F661.5 DEGENERATE-FLAG: rule136 die-out → ratio metric ill-defined (flag)
+  [PASS] F661.6 BOUND: 全 norm_conv·log_span finite
+  ──────────────────────────────────────
+  F661.1-6 4/6 PASS
+  verdict: 🟡 PARTIAL (CORE IV-top robust [F661.1·2 PASS] — class-IV 가 확대셋에서도 단독 最高; 그러나 full I<II<III<IV strict/class-mean 단조는 깨짐 — rule45(III) 이질성 + class-I↔II overlap. H_660 의 4-rule 단조는 'IV-top' 부분만 robust 일반화, 'full class-monotone' 은 rule-cohort 의존)
+  iv_top_nc=true iv_top_ls=true classmean_mono=false strict_mono=false
