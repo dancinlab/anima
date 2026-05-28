@@ -53,6 +53,19 @@
 - [ ] **M4 백엔드 배선** — 최고 ≥PARTIAL 축 ckpt → `generator.hexa` → brain_decide emit 슬롯 end-to-end
 - [ ] **M5 p7 verify** — perplexity 아닌 simple-stack 판정
 
+## BC-ANIMA — 트레이너 CPU→GPU 전이 트랙 (2026-05-29 · SSOT = `STEP_RATE_LOG.md` + hexa-lang `GPU.anima.md`)
+
+> M4b longtrain `STEP_RATE_FINDING` (#1318) 후속: production 트레이너 ~1 step/s 가 matmul 이 아니라 CPU-side Adam/zero/softmax/CE + per-token mm_extract 복사에 막힘. 위 V3/MoE-router 트랙과 ⊥ (별개 축, 같은 트레이너 파일 공유).
+
+- [x] **M0** dMg/d_logits/d_zT_last zero → `farr_zero_slice_gpu` (#1319)
+- [x] **M1** `farr_adamw_step_gpu` 빌트인 (이미 hexa-lang 등록됨) + 트레이너 wire (#1322 wedge-a)
+- [x] **M2** `farr_softmax_rows` 빌트인 (hexa-lang #1920) + wire (#1320)
+- [x] **M3** `farr_ce_seed` 빌트인 (hexa-lang #1924) + wire (#1320)
+- [x] **M4** 트레이너 full wiring (#1320 + #1322) + **mm_extract 제거** (#1325, per-step 1.24 GB host-RAM round-trip 제거)
+- [ ] **M5** step-rate 실측 (F-BC-ANIMA-M4-CEILING) — ⚪ UNVERIFIABLE-AT-SCALE (runpod #1324 outage 2회 + Claude session-limit 이 GPU fire agent 사망). runpod availability 는 복구 확인 ($2.69/hr). SSH transport + session-stability 동시 확보 시 측정. 상세 = `STEP_RATE_LOG.md` 2026-05-29 entry
+- [x] **E-axis 토이** (#1327) — `mx_expert_sweep.hexa`: routing/E 는 탈출 lever 아님 (capacity+budget 지배), E=8 dead-expert = prod winner-take-all 토이 씨앗 (`dec_expert_axis` 발견, `.discoveries/decoder_collapse_undertrain.tape`)
+- 잔여 hexa-lang blocker: cuBLAS gemv [V×1] N=1 illegal-mem (`efdf59bd8` ANALYSIS, gemv fastpath 권장, 미머지)
+
 ## UNIVERSE-derived 마일스톤 (2026-05-27 · `UNIVERSE_SYNTHESIS.md`)
 
 > UNIVERSE 도메인 BIO ∩ DECODER 가설 5종(H_489–H_493 🔵) 분석 → 더블바인드 탈출은 "단일 모델"이 아니라 "분화(MoE)/병합(symbiogenesis)"이 통로. 상세 = `CORE/DECODER/UNIVERSE_SYNTHESIS.md`.
