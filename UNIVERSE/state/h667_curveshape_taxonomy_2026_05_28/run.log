@@ -1,0 +1,49 @@
+=== H_667 curve-shape vs Wolfram-class taxonomy (phi-free) ===
+shape: 0=monotone-rising  1=inverse-U  2=flat/die-out
+rule30 class-3 shape=monotone nc=2.26615 phi_mean=4.15016
+rule45 class-3 shape=inverse-U nc=1.4608 phi_mean=7.29658
+rule90 class-3 shape=monotone nc=2.24029 phi_mean=3.23776
+rule106 class-3 shape=monotone nc=2.1531 phi_mean=33.7457
+rule150 class-3 shape=die-out nc=1.93118 phi_mean=2.6518
+rule184 class-2 shape=monotone nc=1.43674 phi_mean=34.779
+rule226 class-2 shape=monotone nc=1.41354 phi_mean=34.5464
+rule110 class-4 shape=monotone nc=2.34922 phi_mean=17.2557
+rule54 class-4 shape=monotone nc=2.4745 phi_mean=2.74703
+
+-- shape groups --
+monotone (n=7): rules with peak at W=1.0
+inverse-U (n=1)
+die-out (n=1)
+-- Wolfram class groups --
+class-II (n=2)  class-III (n=5)  class-IV (n=2)
+
+-- WITHIN-group variance (size-weighted pooled) --
+[CONVEXITY norm_conv]
+  within-SHAPE var = 0.127158
+  within-CLASS var = 0.0505637
+  total var        = 0.160824
+  shape/class ratio= 2.51481
+[MAGNITUDE phi_mean]
+  within-SHAPE var = 160.372
+  within-CLASS var = 90.0172
+  total var        = 193.837
+  shape/class ratio= 1.78157
+
+-- per-shape convexity var --
+  monotone  mean=2.04765 var=0.163489 n=7
+  inverse-U mean=1.4608 var=0.0 n=1
+  die-out   mean=1.93118 var=0.0 n=1
+-- per-Wolfram-class convexity var --
+  class-II  mean=1.42514 var=0.00013456 n=2
+  class-III mean=2.0103 var=0.0893913 n=5
+  class-IV  mean=2.41186 var=0.00392377 n=2
+
+────────── verdict ──────────
+[FAIL] F667.1 CORE convexity within-shape < within-class : 0.127158 >= 0.0505637
+[FAIL] F667.2 magnitude within-shape < within-class : 160.372 >= 90.0172
+[FAIL] F667.3 STRONG convexity within-shape <= 0.5x within-class : 0.127158 > 0.0252819
+[FAIL] F667.4 monotone var < class-III var : 0.163489 >= 0.0893913
+[PASS] F667.5 ORTHOGONAL monotone group spans >=2 Wolfram class : 3
+[PASS] F667.6 BOUND 全 통계 finite
+F667.1-6 2/6 PASS
+shape_tighter_both_props=false orthogonal=true

@@ -1,0 +1,26 @@
+// H_667 — wolfram-vs-curveshape-taxonomy — Φ(W) source curves (foreground sync, $0 mac-local)
+// H_667 measures NO new Φ — it RE-CLASSIFIES the existing 9-rule substrate set by W-Φ
+// curve shape. All 9 Φ(W) curves are byte-identical re-cited from H_664/H_661 shards.log
+// (PR #1302 / #1295·#1297) — same build_tpm_cohort engine, rule swap, deterministic NO-RNG.
+// Aggregate (aggregate_h667.hexa) is phi-free (NO big_phi call, <1s); it runs the
+// deterministic classify_shape() classifier on these curves and computes within-group var.
+//
+// W grid = {0.15, 0.40, 0.55, 0.70, 0.95, 1.0}   (H_653/H_660/H_661/H_664 동일 6-pt)
+// build: HEXA_MAC_BUILD_OK=1 HEXA_LANG=/Users/ghost/core/hexa-lang
+//        hexa.real.bak-2026-05-22-pre-no-hxc build aggregate_h667.hexa -o /tmp/h667agg.bin
+//        && codesign -s - --force /tmp/h667agg.bin && /tmp/h667agg.bin
+
+// ── 9 source Φ(W) curves (byte-identical from H_664 shards.log + H_661 shards.log) ──
+rule30  (III chaotic)      PHI_W=0.315809 1.18852 2.07721 3.4687 8.13002 9.72067    PMEAN=4.15016  NORM_CONV=2.26615   [shape→monotone]
+rule45  (III chaotic)      PHI_W=2.63487 8.27371 12.2652 13.2937 3.14416 4.16786    PMEAN=7.29658  NORM_CONV=1.4608    [shape→inverse-U  peak@W=0.70]
+rule90  (III XOR-fractal)  PHI_W=0.246475 0.943149 1.65498 2.75808 6.32388 7.5      PMEAN=3.23776  NORM_CONV=2.24029   [shape→monotone]
+rule106 (III chaotic)      PHI_W=2.87266 10.7046 18.5147 30.1267 64.7249 75.5306    PMEAN=33.7457  NORM_CONV=2.1531    [shape→monotone]   (NEW in H_664)
+rule150 (III XOR-additive) PHI_W=2.02096 4.32671 5.12111 3.35834 1.08369 0.0        PMEAN=2.6518   NORM_CONV=1.93118   [shape→die-out  Φ=0 @W=1.0]  (NEW in H_664)
+rule184 (II  additive)     PHI_W=4.49492 19.8846 32.7523 45.5429 54.4631 51.5361    PMEAN=34.779   NORM_CONV=1.43674   [shape→monotone  top-dip 5% < 15%]
+rule226 (II  additive)     PHI_W=4.42601 19.859 32.5702 45.6283 53.2586 51.5361     PMEAN=34.5464  NORM_CONV=1.41354   [shape→monotone  top-dip 3% < 15%]
+rule110 (IV  complex)      PHI_W=1.17498 4.50052 7.62552 13.6383 34.8823 41.7124    PMEAN=17.2557  NORM_CONV=2.34922   [shape→monotone]
+rule54  (IV  complex)      PHI_W=0.175125 0.675972 1.18881 2.01568 5.45395 6.97263  PMEAN=2.74703  NORM_CONV=2.4745    [shape→monotone]
+
+// classify_shape() rule: die-out(last≈0)→2 · interior-peak AND post-peak decline≥15%→1(inverse-U) · else→0(monotone)
+// 결과 shape 분포: monotone n=7 {30,90,106,184,226,110,54} · inverse-U n=1 {45} · die-out n=1 {150}
+// → monotone group 이 convexity 전 범위(1.41~2.47)를 lump → within-shape var > within-class var (FALSIFIED)
