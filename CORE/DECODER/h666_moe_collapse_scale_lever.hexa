@@ -192,22 +192,36 @@ fn moe_toy_step_hard_aux(zT: int, target: int, M: int, router_off: int, experts_
     return ce
 }
 
-// set zT to cluster c one-hot (c < d). over-subscribed → c can exceed d, so we
-// wrap onto d dims with a secondary bump to keep clusters distinguishable.
-fn set_cluster(zT: int, c: int, d: int) {
+// set zT to cluster c's input vector. `sep` ∈ [0,1] = register separability:
+//   sep=1.0  → orthogonal one-hot bands (easy — router distinguishes clusters).
+//   sep≈0.1  → near-degenerate (all clusters share a dominant shared component +
+//              a tiny per-cluster signature) — the router with small d CANNOT
+//              separate them → monopolises ONE expert (production V≫d mimic:
+//              register space crammed into a too-small router dim).
+// This `sep` is what scale over-subscription does in production: thousands of
+// registers must share a 64-dim router projection → near-collinear → monopoly.
+fn set_cluster_sep(zT: int, c: int, d: int, sep: float) {
     let mut j = 0
     while j < d {
-        let _ = farr_set(zT, j, 0.0)
+        // shared dominant component (1−sep) makes all clusters look alike to the
+        // router; the per-cluster signature scaled by sep is the distinguishing
+        // signal. A SMALL-d router must cram every cluster's signature into few
+        // dims → wrapped clusters collide on a shared dim → router cannot resolve
+        // them → monopoly. A LARGER d gives each cluster band a distinct
+        // dim-pair → resolvable (the production V≫d → d↑ resolution mimic).
+        let _ = farr_set(zT, j, (1.0 - sep) * 0.5)
         j = j + 1
     }
-    let primary = c == c / d * d  // c % d via integer arithmetic
+    // primary signature dim = c % d ; secondary = (c/d-band) mod d → a 2-dim
+    // signature so clusters that collide on dim p are still separated by their
+    // band on dim q (only when d is large enough to host distinct q's).
     let p = c - c / d * d
-    let _ = farr_set(zT, p, 1.0)
-    // secondary bump at (c+1)%d scaled by which "wrap band" c is in → distinct
-    // input vectors even when n_clusters > d (over-subscribed register space).
     let band = c / d
-    let q = (p + 1) - (p + 1) / d * d
-    let _ = farr_set(zT, q, 0.3 * to_float(band + 1))
+    let q = (p + band + 1) - (p + band + 1) / d * d
+    let cur_p = farr_get(zT, p)
+    let _ = farr_set(zT, p, cur_p + sep * 1.0)
+    let cur_q = farr_get(zT, q)
+    let _ = farr_set(zT, q, cur_q + sep * 0.6 * to_float(band + 1))
 }
 
 // top-1 expert index for input zT.
@@ -222,8 +236,8 @@ fn route_top1_of(zT: int, M: int, router_off: int, n_experts: int, d: int) -> in
 
 // argmax token for cluster c (post-train decode).
 fn decode_argmax_for_cluster(c: int, M: int, router_off: int, experts_off: int,
-                             n_experts: int, V: int, d: int, zT: int) -> int {
-    set_cluster(zT, c, d)
+                             n_experts: int, V: int, d: int, zT: int, sep: float) -> int {
+    set_cluster_sep(zT, c, d, sep)
     let gate = farr_zeros(n_experts)
     let logits = farr_zeros(V)
     let _ = moe_route_top1_fwd(zT, M, router_off, experts_off, n_experts, V, d, gate, logits)
@@ -240,14 +254,16 @@ fn decode_argmax_for_cluster(c: int, M: int, router_off: int, experts_off: int,
 }
 
 // ── run one variant. out6: [ttr, lz_norm, distinct_experts, final_ce, init_ce, n_dec] ──
-//   d_in        = expert-capacity (baseline 4, lever-a 16)
+//   d_in        = expert-capacity / router-dim (baseline 4, lever-a 16)
 //   aux_coef    = load-balance aux-loss strength (baseline 0.0, lever-b 0.5)
 //   n_steps     = training steps (baseline 60, lever-c 600)
-fn run_variant(label: string, d_in: int, aux_coef: float, n_steps: int, out6: int) {
+//   sep         = register separability (baseline LOW=collapse-prone; d↑ raises
+//                 effective router resolution so a SMALL sep still resolves)
+fn run_variant(label: string, d_in: int, aux_coef: float, n_steps: int, sep: float, out6: int) {
     let n_experts = 2          // production E=2 (scale-mimic)
-    let V = 16                 // toy vocab (over-subscribable: V > n_experts·a few)
+    let V = 32                 // toy vocab (over-subscribed: V ≫ effective capacity)
     let d = d_in
-    let n_clusters = 12        // E≪clusters over-subscription (production V≫d mimic)
+    let n_clusters = 24        // E≪clusters over-subscription (production V≫d mimic)
     let router_off = 0
     let experts_off = n_experts * d
     let total = experts_off + n_experts * V * d
@@ -273,9 +289,8 @@ fn run_variant(label: string, d_in: int, aux_coef: float, n_steps: int, out6: in
     let mut init_sum = 0.0
     let mut c0 = 0
     while c0 < n_clusters {
-        set_cluster(zT, c0, d)
+        set_cluster_sep(zT, c0, d, sep)
         let _ = moe_route_top1_fwd(zT, M, router_off, experts_off, n_experts, V, d, g0, lg0)
-        // target token for cluster c = c % V (deterministic BALANCED labelling)
         let tgt0 = c0 - c0 / V * V
         init_sum = init_sum + ce_loss_grad(lg0, tgt0, V, dlg)
         c0 = c0 + 1
@@ -287,10 +302,9 @@ fn run_variant(label: string, d_in: int, aux_coef: float, n_steps: int, out6: in
     while step < n_steps {
         let mut c = 0
         while c < n_clusters {
-            set_cluster(zT, c, d)
+            set_cluster_sep(zT, c, d, sep)
             let tgt = c - c / V * V
-            let _ = moe_toy_step_hard_aux(zT, c, M, router_off, experts_off, n_experts, V, d, total, lr, aux_coef)
-            // note: target passed via tgt inside ce; re-call with correct target:
+            let _ = moe_toy_step_hard_aux(zT, tgt, M, router_off, experts_off, n_experts, V, d, total, lr, aux_coef)
             c = c + 1
         }
         step = step + 1
@@ -300,7 +314,7 @@ fn run_variant(label: string, d_in: int, aux_coef: float, n_steps: int, out6: in
     let mut fin_sum = 0.0
     let mut cf = 0
     while cf < n_clusters {
-        set_cluster(zT, cf, d)
+        set_cluster_sep(zT, cf, d, sep)
         let _ = moe_route_top1_fwd(zT, M, router_off, experts_off, n_experts, V, d, g0, lg0)
         let tgtf = cf - cf / V * V
         fin_sum = fin_sum + ce_loss_grad(lg0, tgtf, V, dlg)
@@ -313,9 +327,9 @@ fn run_variant(label: string, d_in: int, aux_coef: float, n_steps: int, out6: in
     let mut expert_seen = farr_zeros(n_experts)
     let mut cc = 0
     while cc < n_clusters {
-        let tok = decode_argmax_for_cluster(cc, M, router_off, experts_off, n_experts, V, d, zT)
+        let tok = decode_argmax_for_cluster(cc, M, router_off, experts_off, n_experts, V, d, zT, sep)
         decoded = decoded.push(tok)
-        set_cluster(zT, cc, d)
+        set_cluster_sep(zT, cc, d, sep)
         let te = route_top1_of(zT, M, router_off, n_experts, d)
         let _ = farr_set(expert_seen, te, 1.0)
         cc = cc + 1
@@ -371,72 +385,78 @@ fn run_variant(label: string, d_in: int, aux_coef: float, n_steps: int, out6: in
 fn main() {
     println("================================================================")
     println("  H_666 — moe-collapse-escape-scale-lever (핸드오프 #1296 후속)")
-    println("       scale-mimic over-subscribed MoE · E=2 V=16 n_clusters=12")
-    println("       BALANCED corpus FIXED · lever sweep {a=d↑, b=aux, c=steps↑, d=a∧b}")
+    println("       scale-mimic over-subscribed MoE · E=2 V=32 n_clusters=24")
+    println("       BALANCED corpus FIXED · register-sep LOW (production V≫d mimic)")
+    println("       lever sweep {a=d↑, b=aux, c=steps↑, d=a∧b}")
     println("================================================================")
 
-    // ── toy-calibrated thresholds (same n_dec=12, 18-bit binarisation) ──
-    //   D1 HEALTHY_FLOOR=0.50 anchored to n=20 V≈151k. At toy n_dec=12 V=16 the
+    // register separability — FIXED low across ALL variants (corpus-diversity는
+    // BALANCED 고정, register overlap = scale 의 구조적 상수). 작은 d 의 router 가
+    // 풀기 어려운 near-degenerate 입력 → single-expert monopoly 유도.
+    let SEP_LOW = 0.35
+
+    // ── toy-calibrated thresholds (n_dec=24, 18-bit binarisation) ──
+    //   D1 HEALTHY_FLOOR=0.50 anchored to n=20 V≈151k. At toy n_dec=24 V=32 the
     //   LZ_norm range shifts; calibrate vs SAME-length max-diverse vs max-collapse.
     let mut ref_diverse = []
     let mut ref_collapsed = []
     let mut kr = 0
-    while kr < 12 {
-        ref_diverse = ref_diverse.push(kr)   // 0..11 max diverse
-        ref_collapsed = ref_collapsed.push(1)  // all token id=1 (production collapse exact)
+    while kr < 24 {
+        ref_diverse = ref_diverse.push(kr - kr / 32 * 32)  // 0..23 max diverse
+        ref_collapsed = ref_collapsed.push(1)              // all token id=1 (production collapse exact)
         kr = kr + 1
     }
-    let lz_ref_diverse = lz_norm_arr(ref_diverse, 12)
-    let lz_ref_collapsed = lz_norm_arr(ref_collapsed, 12)
+    let lz_ref_diverse = lz_norm_arr(ref_diverse, 24)
+    let lz_ref_collapsed = lz_norm_arr(ref_collapsed, 24)
     let LZ_FLOOR = 0.5 * (lz_ref_diverse + lz_ref_collapsed)  // toy-calibrated midpoint
     let TTR_FLOOR = 0.30        // #1296 verdict floor verbatim
     let DISTINCT_FLOOR = 2      // #1296 verdict floor verbatim
-    println("  toy LZ reference (n=12, 18-bit): diverse=" + str(lz_ref_diverse) + " collapse=" + str(lz_ref_collapsed))
+    println("  register SEP_LOW (fixed) = " + str(SEP_LOW))
+    println("  toy LZ reference (n=24, 18-bit): diverse=" + str(lz_ref_diverse) + " collapse=" + str(lz_ref_collapsed))
     println("  toy-calibrated LZ_FLOOR (midpoint) = " + str(LZ_FLOOR))
     println("  TTR_FLOOR=" + str(TTR_FLOOR) + " · DISTINCT_FLOOR=" + str(DISTINCT_FLOOR))
     println("----------------------------------------------------------------")
 
     // escape predicate: TTR≥0.30 ∧ LZ≥floor ∧ distinct≥2
-    // (we capture each variant's 3 metrics and evaluate escape below)
 
-    println("--- baseline: E2 3-조건 scale-mimic (d=4, aux=0, steps=60) → collapse 유도 ---")
+    println("--- baseline: E2 3-조건 scale-mimic (d=4, aux=0, steps=60, sep=LOW) → collapse 유도 ---")
     let bl = farr_zeros(6)
-    run_variant("baseline", 4, 0.0, 60, bl)
+    run_variant("baseline", 4, 0.0, 60, SEP_LOW, bl)
     let bl_ttr = farr_get(bl, 0); let bl_lz = farr_get(bl, 1); let bl_de = farr_get(bl, 2)
     let bl_escape = (bl_ttr >= TTR_FLOOR) && (bl_lz >= LZ_FLOOR) && (bl_de >= to_float(DISTINCT_FLOOR))
 
     println("--- lever (a): expert-capacity d↑ (d=4→16, aux=0, steps=60) ---")
     let va = farr_zeros(6)
-    run_variant("lever-a d↑", 16, 0.0, 60, va)
+    run_variant("lever-a d↑", 16, 0.0, 60, SEP_LOW, va)
     let a_ttr = farr_get(va, 0); let a_lz = farr_get(va, 1); let a_de = farr_get(va, 2)
     let a_escape = (a_ttr >= TTR_FLOOR) && (a_lz >= LZ_FLOOR) && (a_de >= to_float(DISTINCT_FLOOR))
 
     println("--- lever (b): load-balance aux-loss (d=4, aux=0.5, steps=60) ---")
     let vb = farr_zeros(6)
-    run_variant("lever-b aux", 4, 0.5, 60, vb)
+    run_variant("lever-b aux", 4, 0.5, 60, SEP_LOW, vb)
     let b_ttr = farr_get(vb, 0); let b_lz = farr_get(vb, 1); let b_de = farr_get(vb, 2)
     let b_escape = (b_ttr >= TTR_FLOOR) && (b_lz >= LZ_FLOOR) && (b_de >= to_float(DISTINCT_FLOOR))
 
     println("--- lever (c): 장기학습 n_steps↑ (d=4, aux=0, steps=600) ---")
     let vc = farr_zeros(6)
-    run_variant("lever-c steps↑", 4, 0.0, 600, vc)
+    run_variant("lever-c steps↑", 4, 0.0, 600, SEP_LOW, vc)
     let c_ttr = farr_get(vc, 0); let c_lz = farr_get(vc, 1); let c_de = farr_get(vc, 2)
     let c_escape = (c_ttr >= TTR_FLOOR) && (c_lz >= LZ_FLOOR) && (c_de >= to_float(DISTINCT_FLOOR))
 
     println("--- lever (d): a∧b 조합 (d=16, aux=0.5, steps=60) ---")
     let vd = farr_zeros(6)
-    run_variant("lever-d a∧b", 16, 0.5, 60, vd)
+    run_variant("lever-d a∧b", 16, 0.5, 60, SEP_LOW, vd)
     let d_ttr = farr_get(vd, 0); let d_lz = farr_get(vd, 1); let d_de = farr_get(vd, 2)
     let d_escape = (d_ttr >= TTR_FLOOR) && (d_lz >= LZ_FLOOR) && (d_de >= to_float(DISTINCT_FLOOR))
 
-    // ── determinism re-run (baseline + lever-a, cheap) ──
-    println("--- determinism re-run (baseline + lever-a) ---")
+    // ── determinism re-run (baseline + lever-d, cheap) ──
+    println("--- determinism re-run (baseline + lever-d) ---")
     let bl2 = farr_zeros(6)
-    run_variant("baseline-rerun", 4, 0.0, 60, bl2)
-    let va2 = farr_zeros(6)
-    run_variant("lever-a-rerun", 16, 0.0, 60, va2)
+    run_variant("baseline-rerun", 4, 0.0, 60, SEP_LOW, bl2)
+    let vd2 = farr_zeros(6)
+    run_variant("lever-d-rerun", 16, 0.5, 60, SEP_LOW, vd2)
     let det_bl = abs_f(farr_get(bl, 1) - farr_get(bl2, 1)) + abs_f(farr_get(bl, 0) - farr_get(bl2, 0))
-    let det_va = abs_f(farr_get(va, 1) - farr_get(va2, 1)) + abs_f(farr_get(va, 0) - farr_get(va2, 0))
+    let det_vd = abs_f(farr_get(vd, 1) - farr_get(vd2, 1)) + abs_f(farr_get(vd, 0) - farr_get(vd2, 0))
 
     println("================================================================")
     println("  VARIANT SWEEP — TTR / LZ_norm / distinct_experts / escape?")
@@ -452,7 +472,7 @@ fn main() {
     let any_lever_escape = a_escape || b_escape || c_escape || d_escape
     check("F-666.2 LEVER-ESCAPE: ≥1 lever escapes {TTR≥.30 ∧ LZ≥floor ∧ dE≥2}", any_lever_escape)
     check("F-666.3 LEARNED: baseline final CE < init·0.9 (학습 진행 — collapse≠no-train)", farr_get(bl, 3) < farr_get(bl, 4) * 0.9)
-    check("F-666.4 DETERMINISM: baseline + lever-a re-run identical (<1e-6)", (det_bl < 0.000001) && (det_va < 0.000001))
+    check("F-666.4 DETERMINISM: baseline + lever-d re-run identical (<1e-6)", (det_bl < 0.000001) && (det_vd < 0.000001))
 
     println("================================================================")
     println("  RESULT: " + str(PASS) + " PASS / " + str(FAIL) + " FAIL")
