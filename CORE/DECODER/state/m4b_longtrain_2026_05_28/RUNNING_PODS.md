@@ -12,9 +12,9 @@ HTTP to api.runpod.io — so use `runpodctl <verb>` + a /tmp redirect, NOT curl.
 | role | M4B_EPOCHS | pod id | ssh | status |
 |------|-----------|--------|-----|--------|
 | (pre-existing, prior agent) | — | cdooesfkds699f | 103.207.149.126:18673 | TERMINATED (SSH-unreachable, billing-only — torn down) |
-| LO  | 1  | hh4he6fuexoi3x | 213.181.105.248:14943 | RENTED, ssh-ready |
-| MID | 12 | (renting) | | |
-| HI  | 60 | (renting) | | |
+| LO  | 1  | hh4he6fuexoi3x | 213.181.105.248:14943 | RENTED (rent reported ssh-ready; cloud exec transport-flaky) |
+| MID | 12 | ld1n2d0u9r9qxf | 31.24.80.44:15669     | RENTED (same) |
+| HI  | 60 | 7h21721lvirp98 | 213.181.105.194:19242 | RENTED (same) |
 
 SSH user=root, key=~/.ssh/id_ed25519. Build+fire script = pod_build_fire.sh
 (scp to /work, set M4B_EPOCHS + M4B_TAG env, nohup). Harvest → <role>/harvest/.
