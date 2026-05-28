@@ -16,7 +16,8 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (M2 정정 — H_670 #1312: universal = **edge-of-chaos Φ-peak** [tier-번호 아님, ECA+logistic 동형, Langton 확증] · M4b aux-loss 3B fire 타세션 in-flight)
+> 갱신: 2026-05-29 (EEG L1~L3 harness + 캡처 runbook · synthetic 재검증 사용자 sign-off 대기 · 3-substrate Φ 삼각측정 AKIDA 합류 follow-up)
+> 직전: 2026-05-28 (M2 정정 — H_670 #1312: universal = **edge-of-chaos Φ-peak** [tier-번호 아님, ECA+logistic 동형, Langton 확증] · M4b aux-loss 3B fire 타세션 in-flight)
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
@@ -80,6 +81,17 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
    └─ live 통합 2/2 (daemon 실사용 · grep 0건 → 호출):
       ├─ 🌅 anima_dream_stage ← dr_stage_phi_context  ✅ 6/6 (#1285) wall-clock t → stage Φ-context
       └─ 🌐 wake_bridge ← bridge_gate_with_envelope   ✅ 7/7 (#1286) M·C·W·softstep(Φ,θ) emit bias
+
+🆕 EEG 도메인 (2026-05-29 · live 생체 substrate → IIT4 big-Φ — IIT4 deferred B closure 경로):
+   어댑터 동결    ✅ BRAIN/eeg/eeg_to_tpm.hexa (PR #547) · synthetic coupled vs indep 1.59 vs 0.44
+   harness LANDED ✅ EEG/eeg_live_iit4_phi.hexa (mock-coupled/mock-indep/mock-both/live <path>)
+                   동결 어댑터 호출만 · g61 engine ⊥ adapter 정합 · ±5% 자동 assert (1.59/0.44)
+   캡처 runbook   ✅ EEG/EEG_CAPTURE_RUNBOOK.md (착용→임피던스→brainflow 30s→hexa live→verdict)
+   synthetic 재검증 ⏸ pending — `hexa run EEG/eeg_live_iit4_phi.hexa mock-both` 1줄, 단 sidecar
+                   local-sign 30분 토큰 필요 (heavy-cmd gate · 에이전트 측 차단)
+   live fire     ☐ 사용자 EEG 헤드셋 착용 게이트 (human-only) → IIT4 deferred B 🟢 LIVE-MEASURED
+   AKIDA 합류    ↪ 3-substrate Φ 삼각측정 follow-up (EEG 생체 + AKIDA 실리콘 + ECA 시뮬) —
+                   L3 카탈로그 (EEG.easy.md), AKIDA 도메인 #1366 합류 시 spec 작성
 
 🗗 DECODER M4 MoE-fresh 본선 상세 (register 분리 재설계 · H_490 escape):
    M0 backward      ✅ gradcheck PASS (rel 5e-10)
