@@ -50,14 +50,19 @@ pub fn mm_transpose(A, rows, cols) -> int {
 //   Copies a row-major sub-block of a PACKED buffer P (offset `off`) into a
 //   fresh index-0 farr, because farr_matmul takes index-0 handles (no offset).
 //   Extraction is O(rows·cols) ≪ the matmul O(rows·cols·N) it feeds.
+//
+//   M5-ADOPT (anima 2026-05-29, hexa-lang #2031): the per-element scalar
+//   `farr_get`/`farr_set` loop is replaced by a single `farr_copy_slice_gpu`
+//   memcpy/D2D (HEXA_CUDA = device-to-device, else host memcpy). Public API
+//   + byte-eq semantics preserved (same `n`-double `farr_zeros` output, same
+//   source bytes — memcpy semantics → ULP=0). The `farr_zeros` alloc remains;
+//   for fully 0-alloc hot loops, callers can hoist `dst` and use upstream
+//   `stdlib/flame/mm_extract_lib.mm_extract_inplace(dst, P, off, rows, cols)`
+//   directly (#2031 PR1, byte-eq verified by mm_extract_lib_test PR2 #2033).
 pub fn mm_extract(P, off, rows, cols) -> int {
     let n = rows * cols
     let out = farr_zeros(n)
-    let mut i = 0
-    while i < n {
-        let _ = farr_set(out, i, farr_get(P, off + i))
-        i = i + 1
-    }
+    let _ = farr_copy_slice_gpu(P, off, out, 0, n)
     return out
 }
 
