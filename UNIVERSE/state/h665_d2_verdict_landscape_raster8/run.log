@@ -1,0 +1,48 @@
+H_665 — d2-verdict-landscape-raster8 · RASTER #8 (2026-05-28, axis D2)
+  source: UNIVERSE/H_*.md DISK per-file scan (8-source verdict + 2-source domain)
+  test: gap PLATEAU 유지 (life>consc, ~0.07-0.10) vs FALSIFIER (reversal OR gap>0.20)
+
+  N(H files) = 215  (H_238 self-excluded · disk scan)
+
+  ── raster#8 full landscape headline (life vs consciousness) ──
+  life          SUPP-rate = 0.493671  (39/79)
+  consciousness SUPP-rate = 0.419355  (52/124)
+  gap_now = 0.074316   gap_prior(r#7)=0.074316   Δ=4.73663e-08   trend=stable
+
+  ── per-domain trajectory vs raster#7 ──
+  life  : r#7 0.493671 → r#8 0.493671   Δ=-1.13924e-07  (ε_life=0.05)
+  consc : r#7 0.419355 → r#8 0.419355   Δ=-1.6129e-07
+  life>consc   = true
+
+  ── PLATEAU-band membership (1차: H_659 3-point band) ──
+  plateau_mean = 0.104333  plateau_sd = 0.0244098
+  band3 = [0.0555137, 0.153153]   gap_now=0.074316   in_band3=true
+  reversal=false  widened(>0.20)=false
+
+  ── 5-point band 정밀화 (H_662 §10 deferred 완수) ──
+  basis = raster#3,#4,#5,#6,#7 gaps {0.1327, 0.0874, 0.0929, 0.0743, 0.0743}
+  mean5 = 0.09232  sd5(n-1) = 0.0240028
+  band5 = [0.0443145, 0.140326]   in_band5=true
+
+  ── per-cohort stratified life vs consciousness SUPP-rate ──
+  cohort                  |  N | life SUPP/tot (rate) | consc SUPP/tot (rate)
+  core (<H_347)  | 155 | 38/75 (0.506667) | 34/86 (0.395349)
+  session26 (H_347-660)  | 58 | 1/4 (0.25) | 18/38 (0.473684)
+  raster8-new (H_661+)  | 2 | 0/0 (0.0) | 0/0 (0.0)
+
+  ── raster#8 NEW cohort (id ≥ H_661) composition ──
+  new_N=2  SUPP=1  FALS=0
+  domain hits: life=0  consciousness=0  physics=1  information=0  math=0
+
+  ── D2 SIGNATURE ──
+  SIGNATURE : PLATEAU-STABLE (life>consc maintained)
+
+  ── criteria (meta) ──
+  C1 REPRODUCIBLE (N≥120) : true
+  C2 STRATIFIED (≥2 cohort nonempty) : true
+  C3 ALL_CLASSIFIED : true
+  VERDICT_RULE: SUPPORTED(plateau) iff C1∧C2∧life>consc∧¬reversal∧¬widened · FALSIFIED if reversal∨widened
+  VERDICT     : SUPPORTED
+
+  result.json written → /private/tmp/u-h665/UNIVERSE/state/h665_d2_verdict_landscape_raster8/result.json
+=== H_665 raster#8 complete: SUPPORTED · PLATEAU-STABLE (life>consc maintained) ===
