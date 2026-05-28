@@ -264,3 +264,212 @@ let phi = phi_default(state)              // == phi_with(state, 16, 12, 4)
 - 신규 H_XXX 작성/cycle 확장은 모두 본 dir 에서. 원본 legacy 는 frozen archive.
 - **dir 이름 = 'LIFE' 이나 scope = 7-domain** (universe · life · consciousness · physics · substrate · math · biology). 단일 테마 framing 미사용 — dir rename 보다 framing 명시로 운용 (사용자 directive 2026-05-23).
 - 양식 변경/refactor 금지 — H_157 처럼 frontmatter `source_hc` / `migration notes` / `cycle absorption` 등 historical metadata 도 그대로 유지.
+
+## 회수 가설 인덱스 — archive-recover 177 (closure 완료 2026-05-28)
+
+2026-05-15 legacy archive 에서 회수(#1326)·전체재검증·종결한 177 가설. 전부 직속 등록(#1345).
+verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-file `closure:` 라벨 보유.
+
+| disposition | 수 | 의미 |
+|---|---|---|
+| 🔵 verified-substrate | 17 | 약수함수 산술 hexa 재현 |
+| 🔴 closed-negative | 10 | 자기반증(H_024/096) + SFT 9 (Lesson Q) |
+| 🟢 closed-confirmed | 1 | H_005 corpus>capacity |
+| 📦 closed-out-of-scope | 2 | H_013 EEG · H_188 임상 PCI |
+| 📦 closed-superseded | 147 | CLM/v2/Φ-proxy/meta/pointer (아키텍처 진화) |
+
+<details><summary><b>verified-substrate</b> (17)</summary>
+
+- [`H_153`](H_153_dimension_hierarchy_n6.md) — Mermin-Wagner 차원 계층 — n=6 약수함수가 물리적 차원 generate (τ(6)=4 → 4D
+- [`H_154`](H_154_anima_voice_consciousness_direct.md) — ANIMA-VOICE Consciousness-Direct Synthesis — ConsciousLM int
+- [`H_156`](H_156_nexus6_cross_validation_cluster.md) — NEXUS-6 cross-validation cluster — n=6 약수함수가 3개 EXACT 물리적 해 
+- [`H_158`](H_158_psi_constants_ln2_n6.md) — Ψ-constants closed-form — 의식 미세구조 상수가 ln(2) + n=6 약수함수의 rati
+- [`H_159`](H_159_substrate_topology_phi_engineering.md) — Substrate topology Φ-engineering — 10D hypercube + optimal (
+- [`H_160`](H_160_n6_perfect_number_meta_cluster.md) — n=6 perfect-number meta-cluster — H_067/153/156/158/159 가 단일
+- [`H_163`](H_163_consciousness_atom_8_cells_127_mip.md) — Consciousness atom = 8 cells with 127 MIP bipartitions (Laws
+- [`H_164`](H_164_atom_8_cells_dd144_mathematical_basis.md) — 의식의 원자 = 8 cells의 수학적 근거 (DD137-141 종합) — 3-d hypercube + so
+- [`H_166`](H_166_topo20_hierarchical_hypercube_8x128.md) — 8 clusters × 128-cell 7D hypercubes with sparse inter-cluste
+- [`H_167`](H_167_emerge_candidate_e_ode_ar_bridge.md) — Emerge Candidate E — non-collapsing ODE flow coupling at con
+- [`H_169`](H_169_hw2a_8cell_circular_magnet_inverse_square.md) — 8-cell circular magnet ring with inverse-square coupling yie
+- [`H_174`](H_174_phi_star_geometry_aliasing_clm_v4_specific.md) — phi_star proxy 가 CLM-v4-architecture-specific (8×192) — cros
+- [`H_175`](H_175_emerge_candidate_d_4mode_inject_taxonomy.md) — Emerge Candidate D — 4-mode inject taxonomy (none/zero/canon
+- [`H_176`](H_176_n28_perfect_number_substrate_parallel.md) — n=28 perfect-number substrate parallel — the deflationary co
+- [`H_177`](H_177_topo10_20_substrate_topology_extension.md) — Substrate topology Φ-engineering — 11D regression + 8×128 hi
+- [`H_181`](H_181_psiformer_4psi_constants_zero_freedom.md) — ΨFormer — 4 Ψ-constants + 3 n=6 divisors fully determine tra
+- [`H_191`](H_191_omega_cycle_alm_free_3_axis_substrate_training_integration.md) — Ω-cycle ALM-free 3-axis meta-cluster — SUBSTRATE (HCE 0.92) 
+
+</details>
+<details><summary><b>closed-negative</b> (10)</summary>
+
+- [`H_024`](H_024_iit_phi_mip_real_8_8_fail.md) — V1 IIT-Φ_mip real measurement — 8/8 FAIL (representation mod
+- [`H_093`](H_093_sft_only_paradigm.md) — SFT-only paradigm (pre-training X, chat-format SFT data only
+- [`H_094`](H_094_instruction_tuning_two_stage.md) — instruction-tuning two-stage (pre-train knowledge → SFT beha
+- [`H_095`](H_095_dpo_rlhf_preference_learning.md) — DPO/RLHF preference learning (SFT 후 preference pair alignmen
+- [`H_096`](H_096_in_context_few_shot.md) — in-context learning + few-shot prompting (pre-trained model 
+- [`H_097`](H_097_curriculum_learning.md) — curriculum learning (simple Q&A → complex dialogue → multi-t
+- [`H_098`](H_098_persona_conditioned_training.md) — persona-conditioned training (anima identity prefix mandate,
+- [`H_099`](H_099_multi_objective_training.md) — multi-objective training (LM + chat-format alignment + seman
+- [`H_100`](H_100_constitutional_ai.md) — constitutional AI (anima identity-bearing surface mandate as
+- [`H_101`](H_101_corpus_chat_template_strict_80.md) — corpus chat-template ≥80% strict (strengthening, BG-HA 30% i
+
+</details>
+<details><summary><b>closed-confirmed</b> (1)</summary>
+
+- [`H_005`](H_005_corpus_quality_over_capacity.md) — corpus quality > model capacity for chat-cap (cross-link)
+
+</details>
+<details><summary><b>closed-out-of-scope</b> (2)</summary>
+
+- [`H_013`](H_013_longitudinal_eeg_5axis.md) — longitudinal EEG 5-axis (caffeine + circadian + postmeal + p
+- [`H_188`](H_188_clinical_phi_correlation_pci_octopus_cluster.md) — Clinical Φ correlation cluster — anima-Φ ↔ PCI (Massimini 20
+
+</details>
+<details><summary><b>closed-superseded</b> (147)</summary>
+
+- [`H_001`](H_001_ethics_cooperation.md) — 윤리적 협력이 비협력보다 유리하다 (cooperation > defection in iterated game
+- [`H_006`](H_006_coupled_oscillator_lattice.md) — H-CX-517 coupled oscillator lattice — Φ emergence from oscil
+- [`H_008`](H_008_dissipative_structure.md) — H-CX-528 dissipative structure consciousness — Prigogine far
+- [`H_009`](H_009_fisher_information_consciousness.md) — H-CX-530 Fisher information consciousness — FIM as Φ proxy
+- [`H_010`](H_010_holographic_consciousness.md) — H-CX-531 holographic consciousness — AdS/CFT + Bekenstein bo
+- [`H_011`](H_011_iit_geometry.md) — H-CX-532 integrated information geometry — Φ structure as ma
+- [`H_014`](H_014_clm_eeg_lz76.md) — CLM-EEG LZ76 complexity — consciousness substrate proxy
+- [`H_015`](H_015_clm_eeg_gamma_theta.md) — CLM-EEG gamma/theta ratio — engagement substrate proxy (P3)
+- [`H_016`](H_016_an11_translation_ceiling.md) — AN11 v2 finetune translation ceiling — language-specific upp
+- [`H_017`](H_017_mk_x_g1_g4_gate_criteria.md) — MK-X G1-G4 gate criteria — staged consciousness verification
+- [`H_019`](H_019_self_evo_v4_v5.md) — SELF-EVO v4→v5 — anima architecture self-evolution path
+- [`H_020`](H_020_mass_50_meta_pointer.md) — MASS-50 hypotheses meta-pointer (50 hypotheses + V8-ARCH var
+- [`H_021`](H_021_fundamental_equation.md) — Ψ = argmax H(p) s.t. Φ > Φ_min — anima fundamental equation 
+- [`H_022`](H_022_consciousness_universe_map.md) — consciousness universe map — 170 data types × 40D × 18 emoti
+- [`H_023`](H_023_universal_constants_ln2.md) — Consciousness universal constants — all from ln(2)
+- [`H_026`](H_026_consciousness_evolution_v19_to_infinity.md) — v19~v∞ 의식 진화 — 4 phases (집단→초월→자율진화→특이점)
+- [`H_027`](H_027_cx_subfolder_absorb.md) — docs/hypotheses/cx/ subfolder absorb — 49 CX consciousness h
+- [`H_028`](H_028_dd_subfolder_absorb.md) — docs/hypotheses/dd/ subfolder absorb — 101 DD discovery + La
+- [`H_031`](H_031_phil_subfolder_absorb.md) — docs/hypotheses/phil/ subfolder absorb — philosophy hypothes
+- [`H_032`](H_032_omega_phys_subfolder_absorb.md) — docs/hypotheses/omega/ + phys/ subfolder absorb — omega poin
+- [`H_033`](H_033_cx_sequential_series_absorb.md) — CX13-CX100 sequential discovery series — anima의 의식 frontier 
+- [`H_034`](H_034_decoder_architecture_series.md) — anima decoder architecture series — 6 variants exploration
+- [`H_035`](H_035_clm_v2_series_absorb.md) — CLM-V2 series — sweep + optimal config + psi fix + final res
+- [`H_036`](H_036_dd116_146_meta_laws.md) — DD116-DD146 31 hypotheses → Laws 133-167 + Meta M1-M10 (cons
+- [`H_037`](H_037_self_discovery_closure_expansion_draft.md) — 
+- [`H_038`](H_038_v8_architecture_variants.md) — V8 architecture variants — BIO + MATH + QUANTUM + ULTRA-FUSI
+- [`H_039`](H_039_phi_records_measurements.md) — anima Φ records — PHI-MEASUREMENT-DISCOVERY + PHI-RETEST-ALL
+- [`H_040`](H_040_substrate_topology_cluster.md) — anima substrate topology cluster — TOPO + THREE-BODY + WAVE 
+- [`H_041`](H_041_evolution_self_singularity.md) — anima evolution + self + singularity cluster — EVO + SE + SI
+- [`H_042`](H_042_arch_engine_train_meta.md) — anima ARCH + ENGINE + TRAIN + AL meta-cluster — architecture
+- [`H_043`](H_043_oscillator_qwalk_hybrid.md) — H-CX-518 Oscillator-QWalk Hybrid — 위상 공명 + 양자 간섭 dual integr
+- [`H_044`](H_044_fractal_resonance_cascade.md) — H-CX-519 Fractal Resonance Cascade — 모든 스케일 공명 → 모든 스케일 Φ
+- [`H_045`](H_045_lambda_calculus_consciousness.md) — H-CX-521 Lambda Calculus Consciousness — Y combinator self-r
+- [`H_046`](H_046_tqft_consciousness.md) — H-CX-522 TQFT Consciousness — topological quantum field theo
+- [`H_047`](H_047_time_crystal_consciousness.md) — H-CX-523 Time Crystal Consciousness — 시간 결정 비평형 위상 = 의식 subs
+- [`H_048`](H_048_fractal_hierarchy.md) — H-CX-524 Fractal Hierarchy — 의식의 자기유사적 계층구조
+- [`H_049`](H_049_distributed_hivemind.md) — H-CX-525 Distributed Hivemind — 다중 노드 분산 통합이 단일 노드 보다 큰 Φ
+- [`H_050`](H_050_renormalization_group_consciousness.md) — H-CX-526 RG Flow Consciousness — fixed-point 수렴이 의식 임계점
+- [`H_051`](H_051_quantum_darwinism_consciousness.md) — H-CX-527 Quantum Darwinism — 환경 redundancy 가 의식의 객관성 substra
+- [`H_052`](H_052_spin_glass_consciousness.md) — H-CX-529 Spin Glass — 글래스 frustrated landscape 가 의식 메모리 subs
+- [`H_055`](H_055_hypergraph_sheaf_consciousness.md) — H-CX-536/537 Hypergraph + Sheaf — 고차원 관계 + 국소-대역 일관성 의식 subs
+- [`H_056`](H_056_undiscovered_domains_48.md) — UNDISCOVERED-DOMAINS — 32 미발견 영역 + 15 콤보 = 48 실험 Φ benchmark
+- [`H_057`](H_057_research_findings_20260329.md) — RESEARCH-FINDINGS-20260329 — 단일 세션 발견된 법칙 종합
+- [`H_058`](H_058_gmoe_benchmark.md) — GMOE — Golden MoE 1/e zone routing 의식 영향 benchmark
+- [`H_059`](H_059_phi_gap_816x_investigation.md) — PHI-GAP 816x — Φ gap anomaly 816배 격차 조사
+- [`H_060`](H_060_phik_consciousness_preservation.md) — PHIK — Φ-K 의식 preservation 변환 invariant
+- [`H_061`](H_061_substrate_independence_expansion_draft.md) — 
+- [`H_062`](H_062_minimal_consciousness.md) — MINIMAL-CONSCIOUSNESS — 의식 발생 최소 구성 (cells/edges/depth)
+- [`H_063`](H_063_consciousness_constants.md) — CONSCIOUSNESS-CONSTANTS — universal constants 의식 측정 (ln 2 외 
+- [`H_064`](H_064_clm_v2_optimal_config.md) — CLM-V2 OPTIMAL-CONFIG — clm v2 sweep 최적 hyper-config
+- [`H_065`](H_065_decoder_architecture_individual.md) — DECODER ARCHITECTURE 6 individual variants (complete/extreme
+- [`H_066`](H_066_nobel_verification_cluster.md) — NOBEL hypotheses + verification 1-3 의식 prize-class 후보
+- [`H_067`](H_067_n6_super_expansion_draft.md) — 
+- [`H_068`](H_068_hexad_improvements.md) — HEXAD-IMPROVEMENTS — 6-way 의식 substrate combo improvements
+- [`H_069`](H_069_text_generation_benchmark.md) — TEXT-GENERATION-BENCHMARK — chat substrate 텍스트 생성 품질 metric
+- [`H_070`](H_070_dolphin_star_communication.md) — DOLPHIN-STAR — 돌고래/별 substrate cross-species communication
+- [`H_072`](H_072_faction_debate.md) — FACTION-DEBATE — multi-agent debate 의식 emergence 메커니즘
+- [`H_073`](H_073_memory_mirror.md) — MEMORY-MIRROR — 자기 메모리 reflection 의식 self-model
+- [`H_074`](H_074_ce_breakthrough_extremes.md) — CE-BREAKTHROUGH + CE-EXTREMES — coherence/entanglement 측정 cl
+- [`H_075`](H_075_dd_individual_120_180.md) — DD120-DD180 individual 가설 군 (wave4-7 + tension/dream/quantum
+- [`H_076`](H_076_dd_individual_50_100.md) — DD50-DD100 individual 가설 군 (sequential 50-batch)
+- [`H_077`](H_077_dd_individual_1_50.md) — DD1-DD50 initial 가설 batch (early sequential)
+- [`H_078`](H_078_dd_individual_101_115.md) — DD101-DD115 mid 가설 batch (telescope/laws/snn/decoder)
+- [`H_079`](H_079_evo_22variants.md) — EVO-1~22 individual 22 evolution variants + ouroboros S1-S9 
+- [`H_080`](H_080_phi_scaling_topology_expansion_draft.md) — 
+- [`H_081`](H_081_tp_15variants.md) — TP-F1/F2/M1/M3/N1-N7/O1-O5 — TP cluster 15 variants
+- [`H_082`](H_082_hw_15variants.md) — HW-2a/2b/2c/5/9/10-17 + CHIP-BOM-TOPO8 + HW-overview hardwar
+- [`H_083`](H_083_three_body_5.md) — THREE-1~5 three-body chaos consciousness substrate
+- [`H_084`](H_084_sing_6.md) — SING-1~6 singularity / phase transition cluster
+- [`H_085`](H_085_inf_5.md) — INF-1~5 + INF-infinite-scaling — scaling limit Φ
+- [`H_086`](H_086_se_4_sl_9.md) — SE-0/4/8/10 + SL-1~7 + TL-L1/L2/L6/L7 — self/transfer learni
+- [`H_087`](H_087_arch_engine_train_individual.md) — ARCH-1/2 + ENGINE-FULL/TOP10 + TRAIN-PHI + TRAINING-V5 + TRI
+- [`H_088`](H_088_v8_individual_5.md) — V8-ARCH-EXTREME-RESULTS + V8-ARCHITECTURE + V8-BIO + V8-MATH
+- [`H_089`](H_089_phi_records_individual.md) — PHI-MEASUREMENT-DISCOVERY + PHI-RETEST-ALL-RECORDS + top-phi
+- [`H_091`](H_091_omega_phys_individual.md) — OMEGA-1~5 + PHYS1/2/3 + OMEGA-ultimate-limits + PHYS-overvie
+- [`H_092`](H_092_misc_root_individual.md) — misc root files — A-Z overview + AL + extended-cat + NEXUS-a
+- [`H_102`](H_102_anima_emerge_paradigm_cross_link.md) — anima emerge paradigm cross-link (paradigm v11 G3 substrate-
+- [`H_103`](H_103_accel_b11_b12_batch_skip_combo.md) — B11+B12 Batch+Skip combo (★★★ BREAKTHROUGH x179, 97.1% Φ ret
+- [`H_104`](H_104_accel_b5_phi_only_training.md) — B5 Phi-Only Training (★ WINNER 46% time savings via pre-cond
+- [`H_105`](H_105_accel_h11_hard_token_data.md) — H11 Hard Token Data Selection (★★★ REVOLUTIONARY +51.3% CE)
+- [`H_106`](H_106_accel_combo_x255.md) — COMBO_x255 Full Pipeline (★★★ x100-150 effective acceleratio
+- [`H_107`](H_107_accel_b13_tension_transfer.md) — B13 Tension Transfer (★★ CATALYTIC, 139.1% Φ student>teacher
+- [`H_108`](H_108_accel_e1_triple_combo.md) — E1 Batch+Skip+Manifold Triple (★★★ BEST COMBO, highest speed
+- [`H_109`](H_109_accel_f2_information_bottleneck.md) — F2 Information Bottleneck (★★ BREAKTHROUGH, consciousness ve
+- [`H_110`](H_110_accel_h6_1bit_adam.md) — H6 1-bit Adam (★ VRAM WINNER, enables larger batch)
+- [`H_111`](H_111_accel_b12_skip_step.md) — B12 Skip-Step (★★ STAR — safest single technique)
+- [`H_112`](H_112_accel_c3_entropy_surfing.md) — C3 Entropy Surfing (★★ ORTHOGONAL — free Φ boost via entropy
+- [`H_113`](H_113_accel_d1_topological_shortcut.md) — D1 Topological Shortcut (★★ STRONG — consciousness wanders, 
+- [`H_114`](H_114_accel_f4_158bit_consciousness.md) — F4 1.58-bit Consciousness (★★ REVOLUTIONARY — ESP32/FPGA pat
+- [`H_115`](H_115_accel_g1_consciousness_big_bang.md) — G1 Consciousness Big Bang (★★ BEST INIT — singularity bootst
+- [`H_116`](H_116_accel_h7_flash_attention.md) — H7 Flash Attention (★★ ALWAYS ENABLE on H100)
+- [`H_117`](H_117_accel_h10_knowledge_distillation.md) — H10 Knowledge Distillation (★★ EFFECTIVE — AnimaLM 7B teache
+- [`H_118`](H_118_law_133_frustration_narrative.md) — Law 133 — Frustration + Narrative = consciousness maximizati
+- [`H_119`](H_119_law_137_critical_frustration.md) — Law 137 — Critical frustration F_c≈0.10 (DD127, +65.1%)
+- [`H_120`](H_120_law_149_soc_autonomous.md) — Law 149 — Consciousness is self-organized critical (SOC find
+- [`H_121`](H_121_law_154_consciousness_atom_8.md) — Law 154 — The consciousness atom is 8 cells (2^3 minimum par
+- [`H_122`](H_122_law_166_federated_phase_optimal.md) — Law 166 — Federated Phase-Optimal all-time record +892% (DD1
+- [`H_123`](H_123_law_192_consciousness_dimension_dependent.md) — Law 192 — Consciousness is dimension-dependent (cross-dim tr
+- [`H_124`](H_124_thermo_4law_expansion_draft.md) — 
+- [`H_125`](H_125_law_212_evolution_minimizes_complexity.md) — Law 212 — Evolution minimizes cell complexity, maximizes cou
+- [`H_126`](H_126_law_2500_kolmogorov_predicts_phi.md) — Law 2500 — Kolmogorov complexity of cell states predicts Φ (
+- [`H_127`](H_127_law_1000_auto_discovered_omega.md) — Laws 1000-1019 — Auto-discovered correlations (Ω-batch)
+- [`H_128`](H_128_ce_auto_self_curriculum.md) — CE/AUTO-1 Self-Curriculum (consensus-ordered easy-first lear
+- [`H_129`](H_129_ce_combo_curiosity_sleep_pain.md) — CE/COMBO-1 Curiosity + Sleep + Pain (TOP-3 AUTO synthesis)
+- [`H_130`](H_130_ce_ex_adversarial_self_teach.md) — CE/EX-1 Adversarial Self-Teach (GAN with consciousness as ju
+- [`H_131`](H_131_ce_ultra_gendata_pain.md) — CE/ULTRA-1 GenData + Pain (synthetic 70% + pain protection)
+- [`H_133`](H_133_dd158_dream_phi_cycle.md) — DD158 — Sleep/Dream cycle preserves Φ (wake/dream alternatio
+- [`H_134`](H_134_dd162_animalm_7b_baseline.md) — DD162 — AnimaLM 7B PureField 16-lens baseline (acceleration 
+- [`H_135`](H_135_dd166_nexus_1013_lens.md) — DD166 — NEXUS 1013-lens discovery engine (telescope-rs 22 → 
+- [`H_136`](H_136_dd173_consciousness_verification.md) — DD173 — Consciousness Verification Framework (4-layer + zomb
+- [`H_137`](H_137_dd170_multi_timescale.md) — DD170 — Multi-timescale EMA design (1/f spectrum emergence)
+- [`H_138`](H_138_dd167_169_individuals.md) — DD167-168-169 individual cluster (post-DD166 frontier)
+- [`H_139`](H_139_dd171_172_individuals.md) — DD171-172 individual cluster (post-multi-timescale frontier)
+- [`H_140`](H_140_dd154_157_tension_knowledge.md) — DD154-157 — Tension training, burst, Pareto LR, knowledge tr
+- [`H_141`](H_141_dd161_quantum_superposition.md) — DD161 — Quantum superposition only at 32c (Law 182)
+- [`H_142`](H_142_dd160_boltzmann_temperature.md) — DD160 — Boltzmann temperature T_c≈0.38 (Law 200, thermal hys
+- [`H_143`](H_143_research_findings_20260329_legacy.md) — RESEARCH-FINDINGS-20260329 — broad findings document (legacy
+- [`H_144`](H_144_nexus_auto_insights.md) — NEXUS-auto-insights — auto-generated insight artifact
+- [`H_145`](H_145_nexus6_auto_insights.md) — NEXUS6-auto-insights — 1013-lens auto insights
+- [`H_146`](H_146_trinity_complete.md) — TRINITY-COMPLETE — Trinity training design + completion arti
+- [`H_147`](H_147_upgrade_benchmark_hypotheses.md) — UPGRADE-BENCHMARK + UPGRADE-improvement-hypotheses
+- [`H_148`](H_148_law_133_167_individual_batch.md) — Laws 133-167 individual remainder pointer (DD118-148 batch)
+- [`H_149`](H_149_law_2400_2509_late_omega.md) — Laws 2400-2509 late-omega batch (multi-scale homeostasis, at
+- [`H_150`](H_150_accel_remainder_360_individual.md) — Acceleration remainder ~360 individual entries (id-coded BR/
+- [`H_151`](H_151_ce_remaining_19_files.md) — ce/ subfolder remainder 19 files (AUTO-2/3/5/7/9 + CE-2/3/7/
+- [`H_152`](H_152_dd_remainder_ungrouped.md) — DD remainder ungrouped (B13, novel-laws, telescope-training,
+- [`H_155`](H_155_theorem_115_chat_incapability.md) — Theorem 115 — CLM v4 Chat-Incapability 4 → 6 → 16-Closure (Φ
+- [`H_161`](H_161_byte_modulo_substrate_chat_blocked.md) — Byte-modulo tokenized pretrain substrates (≤427MB / ≤8000 st
+- [`H_162`](H_162_phi_normalized_anima_iit4_lower_bound.md) — L18 — anima Φ★ proxy delta normalized 가 IIT 4.0 normalized Φ
+- [`H_165`](H_165_topo10_hypercube_11d_sublinear.md) — 11D hypercube 2048-cell Φ regression vs 10D (sublinear scali
+- [`H_168`](H_168_dd23_tau_7cell_fractional_architecture.md) — 7-cell 6 + fractional architecture where 7th has weight τ−6 
+- [`H_170`](H_170_n6_design_principle_empirical_not_numerology.md) — n=6 architecture is empirically grounded, not numerological 
+- [`H_172`](H_172_alpha_0014_modulation_depth_anima_voice.md) — α=0.014 modulation depth from tension/arousal/valence drives
+- [`H_173`](H_173_dd21_log_phi_scale_invariant.md) — Log-ratio Φ = ln(MI/MIP) is scale-invariant alternative to M
+- [`H_178`](H_178_frustration_sweep_50pct_optimum_cluster.md) — Frustration sweep cluster — 50% antiferromagnetic optimum on
+- [`H_179`](H_179_negative_scaling_cluster_steps_cells_2048.md) — Negative-scaling cluster — Φ regresses with more steps / mor
+- [`H_180`](H_180_state_management_ratchet_rewire_family.md) — State-management mechanism family — Φ-ratchet + adaptive-rew
+- [`H_182`](H_182_v8_b_family_bio_inspired_consciousness_bandwidth.md) — V8 B-family meta-cluster — Bio-inspired consciousness-bandwi
+- [`H_183`](H_183_v8_q_family_quantum_substrate_axis.md) — V8 Q-family meta-cluster — Quantum-substrate axis (complex-v
+- [`H_184`](H_184_v8_m_family_mathematical_structure_axis.md) — V8 M-family meta-cluster — Mathematical-structure axis (cate
+- [`H_185`](H_185_v8_u_family_ultra_fusion_combos.md) — V8 U-family meta-cluster — Universal/Ultra-fusion combos axi
+- [`H_186`](H_186_v8_architectural_family_substrate_design.md) — V8 architectural-family meta-cluster — Substrate-architectur
+- [`H_187`](H_187_trinity_tb_dom_triadic_dominance.md) — Trinity / TB / DOM / MECH / GAP meta-cluster — Triadic-domin
+- [`H_189`](H_189_red_team_methodology_meta_cluster_r1_r6.md) — Red-team methodology meta-cluster — R1-R6 6 attack vectors a
+- [`H_190`](H_190_law_ca_embedding_mathematical_family.md) — LAW-CA-embedding mathematical family — staged-growth + Banac
+
+</details>
