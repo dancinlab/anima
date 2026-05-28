@@ -1,0 +1,24 @@
+================================================================
+  H_668 — self-similarity class-I (rule 8) — H_652 보완
+  single-substrate (ECA n=4) 3-scale Φ-envelope self-similarity
+  H_652 baselines: rule110 min r=0.881 / rule30 0.465 / rule184 -0.029 / rule90 0.0
+================================================================
+
+── rule 8 (class-I homogeneous) ──
+  Φ-map std            = 0.223249
+  r(fine,medium)       = 0.980937
+  r(medium,coarse)     = 1
+  r(fine,coarse)       = 0.980937
+  min pairwise r       = 0.980937
+
+── parity baselines (H_652) ──
+  rule110 min r        = 0.881166  (H_652=0.881166)
+  rule90  min r        = 0.0  (H_652=0.0, Φ-map std=0.0)
+
+── self-similarity floor test ──
+  class-I min r        = 0.980937
+  FALSIFY floor (<0.3) = false
+  Φ-map flat (std=0)   = false
+  class-I self-sim FLOOR (collapsed, like rule90/rule184) = false
+
+  wrote self_sim_result.json
