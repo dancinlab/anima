@@ -4,9 +4,18 @@
 # (cuBLAS engaged via glue.c strong override + -lcuda), then fires the trainer
 # with the per-pod M4B_EPOCHS budget. Writes /work/DONE when finished.
 set -uo pipefail
+export PATH=/usr/local/cuda/bin:$PATH
 cd /work
 echo "=== M4b longtrain pod build+fire — $(date -u) ==="
 echo "M4B_EPOCHS=${M4B_EPOCHS:-<unset>}  M4B_TAG=${M4B_TAG:-?}"
+
+# ── ensure clang (recipe uses clang -fbracket-depth; not in base image) ──
+if ! command -v clang >/dev/null 2>&1; then
+  echo "=== installing clang ==="
+  export DEBIAN_FRONTEND=noninteractive
+  apt-get update -qq > apt.log 2>&1 && apt-get install -y -qq clang >> apt.log 2>&1
+  echo "clang install rc=$? : $(command -v clang || echo MISSING)"
+fi
 
 # ── unpack runtime tree ──
 mkdir -p /work
