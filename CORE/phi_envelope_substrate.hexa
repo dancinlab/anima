@@ -144,6 +144,26 @@ pub fn pe_peak_align_for_class(class_id: int) -> float {
     return 0.0                          // II / additive : 이탈 (universal 아님)
 }
 
+// ── pe_norm_convexity — scale-invariant convexity (H_660 🟢 화해 측도) ──
+// round-10 화해: convexity(H_653 IV-最高 단조) ↔ super-add Δ(H_655 II-最高 역전)
+//   분기는 **scale 혼입** 때문. norm_conv = (Φmax−Φmin)/Φmean 는 Φ→kΦ 불변
+//   (k 소거) → 순수 shape 만 포착 → Wolfram class 단조 회복 (IV 最高).
+//   ∴ substrate-class 는 *scale 제거 후 단일 shape(convexity) 분류자* 로 완결.
+//   abs_Δ (= Φmax−Φmin, scale-종속) 만 비단조 (II-最高) = apparent divergence 원천.
+pub fn pe_norm_convexity(phi_max: float, phi_min: float, phi_mean: float) -> float {
+    if phi_mean <= 0.0 { return 0.0 }
+    return (phi_max - phi_min) / phi_mean
+}
+
+// scale-invariant convexity 의 class 서명 (H_660 실측 · IV 最高 단조).
+// abs_Δ(super-add) 와 달리 단조 — scale 제거된 순수 shape 분류자.
+pub fn pe_norm_convexity_for_class(class_id: int) -> float {
+    if class_id == 2 { return 1.437 }   // II  (rule184) — 最低
+    if class_id == 3 { return 2.253 }   // III (rule90/30 2.240/2.266 中)
+    if class_id == 4 { return 2.349 }   // IV  (rule110) — 最高
+    return 1.9
+}
+
 // ── collective_phi_nest — 집단 Φ 중첩 (H_635/643/653/655 multi-axis class) ──
 // phis = 개별 cell/stream Φ 리스트. class_id = substrate Wolfram class (2/3/4).
 // round-9 핵심: class 는 *다축 분류자* — phi_collective 의 super-additive Δ 와
