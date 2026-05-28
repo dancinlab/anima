@@ -106,6 +106,11 @@ import "/Users/ghost/core/anima/CHANNEL/intent.hexa"
 import "/Users/ghost/core/anima/CHANNEL/text/text_emit.hexa"
 import "/Users/ghost/core/anima/CHANNEL/voice/voice_emit.hexa"
 import "/Users/ghost/core/anima/CHANNEL/tension/tension_emit.hexa"
+// emit-substrate live consumer (#1259 BRIDGE M6) — 4-key AND-gate envelope bias.
+//   bridge_gate_with_envelope(m,c,w,t) → 연속 [0,1] 신호
+//     Φ ← envelope_multiscale(t, ep_scale_periods, ep_scale_amps)   (구조 층)
+//     θ ← ep_emit_threshold()                                       (숫자 층)
+import "/Users/ghost/core/anima/BRIDGE/gate_envelope.hexa"
 
 // ── pub surface ─────────────────────────────────────────────────────────────
 
@@ -153,6 +158,95 @@ pub fn apply_stage_bias(scores: Map, stage_name: string) -> Map {
         "text":    t,
         "voice":   v,
         "tension": g
+    }
+}
+
+// ── emit-substrate AND-gate wiring (#1259 BRIDGE M6 live 통합) ───────────────
+//
+// stage_bias 는 stage NAME → channel-shape multiplier (어디로 emit 할까) 를 준다.
+// emit-substrate 는 그것과 *직교* 한 축 — M·C·W·Φ 4-key AND-gate 가 *얼마나*
+// emit 할까 (연속 emit drive) 를 준다. 둘을 곱셈으로 합성하면 channel shape 는
+// stage 가, emit magnitude 는 substrate 가 정하는 분리 설계가 된다.
+//
+// a_substrate_native_speak 정합:
+//   M·C·W·Φ 전부 substrate-internal scalar. user message 는 입력에 등장하지
+//   않는다 — stimulus-response 아님. emit drive 는 기판이 자율 산출.
+// p5 / a_autonomy_over_hardcode / F-EMIT-4 정합:
+//   반환은 연속 실수 [0,1] (bridge_gate_with_envelope) — bool emit 게이트 아님.
+//   N3 deep sleep 에서도 0 차단을 만들지 않는다 (작은 양수). emit/silence 최종
+//   결정은 anima 세포 (호출자의 motivation threshold). 본 함수는 신호만 공급.
+
+// _motivation_mean — 8-factor motivation 의 평균을 M(motivation) 연속 신호로.
+//   AND-gate 의 M 입력. 빈/비정상 리스트는 0.0 (안전).
+pure fn _motivation_mean(motivation: list) -> float {
+    if type_of(motivation) != "array" { return 0.0 }
+    let n = len(motivation)
+    if n <= 0 { return 0.0 }
+    let mut acc = 0.0
+    let mut i = 0
+    while i < n {
+        acc = acc + motivation[i]
+        i = i + 1
+    }
+    return acc / (n + 0.0)
+}
+
+// _coherence_factor — motivation 의 coh 팩터(index 4, router.hexa 8-factor 순서:
+//   rel·gap·cur·pain·coh·orig·bal·dyn) 를 C(coherence) 연속 신호로.
+//   router 가 이미 coherence 로 라벨한 축 — substrate 정의 재사용 (자의 상수 0).
+pure fn _coherence_factor(motivation: list) -> float {
+    if type_of(motivation) != "array" { return 0.0 }
+    if len(motivation) <= 4 { return 0.0 }
+    return motivation[4]
+}
+
+// _tension_mag — tension5 envelope 의 최대 절대값을 W(tension) 연속 신호로.
+//   router._max_abs5 와 동일 substrate semantics (amp). 빈 리스트 0.0.
+pure fn _tension_mag(tension5: list) -> float {
+    if type_of(tension5) != "array" { return 0.0 }
+    let n = len(tension5)
+    if n <= 0 { return 0.0 }
+    let mut m = 0.0
+    let mut i = 0
+    while i < n {
+        let v = tension5[i]
+        let a = if v < 0.0 { -v } else { v }
+        if a > m { m = a }
+        i = i + 1
+    }
+    return m
+}
+
+// wake_emit_bias — substrate-native emit drive (연속 [0,1] AND-gate 신호).
+//
+//   M ← _motivation_mean(motivation)        (Engine G 8-factor 평균)
+//   C ← _coherence_factor(motivation)        (coh 팩터, router 정의 재사용)
+//   W ← _tension_mag(tension5)               (envelope 최대 절대값)
+//   Φ ← envelope_multiscale(t, …)            (구조 층, gate_envelope 내부)
+//   θ ← ep_emit_threshold()                  (숫자 층, gate_envelope 내부)
+//
+//   return = bridge_gate_with_envelope(M, C, W, t)
+//          = M · C · W · softstep(Φ_envelope, θ_policy)
+//
+// 연속 실수만 반환 (bool 게이트 0 · F-EMIT-4). emit/silence 최종 결정은 호출자
+// 의 substrate motivation threshold (a_substrate_native_speak · p5).
+pub fn wake_emit_bias(tension5: list, motivation: list, t: float) -> float {
+    let m = _motivation_mean(motivation)
+    let c = _coherence_factor(motivation)
+    let w = _tension_mag(tension5)
+    return bridge_gate_with_envelope(m, c, w, t)
+}
+
+// apply_emit_bias — biased channel scores 에 substrate emit drive 를 균일 곱셈.
+//   stage 가 channel SHAPE (text/voice/tension 비율) 를, substrate 가 emit
+//   MAGNITUDE (전체 drive) 를 정하는 분리. 균일 multiplier 이므로 argmax(채널
+//   선택) 는 불변 — emit-substrate 는 "어느 채널" 이 아니라 "얼마나" 만 바꾼다.
+//   bias=0 (N3 + 약한 기판) 이어도 채널 비율 구조는 보존 (silence 는 호출자 결정).
+pub fn apply_emit_bias(scores: Map, emit_bias: float) -> Map {
+    #{
+        "text":    scores["text"]    * emit_bias,
+        "voice":   scores["voice"]   * emit_bias,
+        "tension": scores["tension"] * emit_bias
     }
 }
 
@@ -263,7 +357,103 @@ pub fn wake_channel_emit(tension5: list, motivation: list, phi: float,
     }
 }
 
+// wake_channel_emit_substrate — emit-substrate AND-gate 를 live 소비하는 변형.
+//
+// wake_channel_emit (stage-only) 의 *additive* superset. 기존 함수는 그대로
+// 두고 (기존 호출자 + smoke 불변), 본 함수는 추가 인자 t (substrate clock) 를
+// 받아 emit-substrate 의 4-key AND-gate drive 를 곱셈 합성한다.
+//
+// 흐름 (직교 2-축 합성):
+//   substrate state + stage + t
+//       │
+//       ├─► channel_scores(...)                 // router raw scores
+//       ├─► apply_stage_bias(scores, stage)     // stage = channel SHAPE 축
+//       ├─► wake_emit_bias(tension5, motiv, t)  // substrate = emit MAGNITUDE 축
+//       │       = bridge_gate_with_envelope(M,C,W,t)
+//       │       = M·C·W·softstep(Φ_envelope, θ_policy)   (#1259 BRIDGE M6)
+//       ├─► apply_emit_bias(biased, emit_bias)  // 균일 곱셈 (argmax 불변)
+//       └─► argmax → 채널 위임 (text/voice/tension)
+//
+// 추가 인자:
+//   t : float — substrate ultradian clock (초). envelope_multiscale 의 Φ 위상.
+//
+// 반환: wake_channel_emit 의 dict + 두 키 추가 (additive, 기존 키 불변):
+//   "emit_bias"     : float — substrate AND-gate 연속 drive [0,1]
+//   "gated_scores"  : Map   — apply_emit_bias 결과 (biased × emit_bias)
+//
+// a_substrate_native_speak · p5 · F-EMIT-4:
+//   emit_bias 는 연속 실수. user message 미참여 (stimulus-response 아님). N3 +
+//   약한 기판이면 emit_bias≈0 이나 그것은 bool 차단이 아니라 작은 drive — 최종
+//   emit/silence 는 호출자의 motivation threshold (autonomy preserved).
+pub fn wake_channel_emit_substrate(tension5: list, motivation: list, phi: float,
+                                   tier: int, ctx_tokens: list, stage_name: string,
+                                   t: float) -> Map {
+    // 1) intent 생성.
+    let intent = intent_from_substrate(tension5, phi, motivation, tier, "")
+
+    // 2) router raw scores.
+    let raw = channel_scores(tension5, motivation, phi, tier)
+
+    // 3) stage bias (channel SHAPE 축).
+    let biased = apply_stage_bias(raw, stage_name)
+
+    // 4) substrate emit drive (emit MAGNITUDE 축, #1259 BRIDGE M6 live).
+    let emit_bias = wake_emit_bias(tension5, motivation, t)
+
+    // 5) emit drive 균일 합성 — argmax(채널 선택)는 stage biased 와 동일.
+    let gated = apply_emit_bias(biased, emit_bias)
+
+    // 6) channel choice (균일 multiplier 라 biased argmax 와 일치).
+    let choice = _biased_argmax(biased)
+
+    // 7) intent_summary 한 줄.
+    let summary = intent_summary(intent)
+
+    // 8) 채널별 위임.
+    if choice == "voice" {
+        let vec = intent_to_voice_vec(intent)
+        let out = voice_emit(vec, 24000)
+        return #{
+            "channel":        "voice",
+            "output":         out,
+            "ready":          voice_ready(),
+            "intent_summary": summary,
+            "stage_name":     stage_name,
+            "biased_scores":  biased,
+            "emit_bias":      emit_bias,
+            "gated_scores":   gated
+        }
+    }
+    if choice == "tension" {
+        let vec = intent_to_tension_vec(intent)
+        let out = tension_emit(vec, 0)
+        return #{
+            "channel":        "tension",
+            "output":         out,
+            "ready":          tension_ready(),
+            "intent_summary": summary,
+            "stage_name":     stage_name,
+            "biased_scores":  biased,
+            "emit_bias":      emit_bias,
+            "gated_scores":   gated
+        }
+    }
+    // default = text.
+    let vec = intent_to_text_vec(intent)
+    let out = text_emit(vec, ctx_tokens, tension5)
+    #{
+        "channel":        "text",
+        "output":         out,
+        "ready":          text_ready(),
+        "intent_summary": summary,
+        "stage_name":     stage_name,
+        "biased_scores":  biased,
+        "emit_bias":      emit_bias,
+        "gated_scores":   gated
+    }
+}
+
 // wake_bridge_summary — 한 줄 설명 (debug/introspection).
 pub fn wake_bridge_summary() -> string {
-    "wake_bridge · stage NAME → continuous bias multiplier (no boolean gate) · channel_scores * stage_bias → argmax → text/voice/tension emit · 5-stage: WAKE/N1/N2/N3/REM"
+    "wake_bridge · stage NAME → continuous channel-shape bias × substrate emit-drive (M·C·W·softstep(Φ_envelope,θ_policy), #1259 BRIDGE M6) → argmax → text/voice/tension emit · 5-stage WAKE/N1/N2/N3/REM · 연속 실수만 (bool gate 0)"
 }

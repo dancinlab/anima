@@ -231,6 +231,14 @@ SUPPORTED** 로 통합된다. class 는 *shape(곡률/convexity)* 분류자이�
   때문일 가능성을 시사 (single-substrate scale-invariant 재검정이 N1 backlog).
 - **H_635 `multilingual-cohort-collective-phi`** 🟢 (축 F, PR #1223) — collective engine 부모.
   monotone-in-W 의 *방향* → 본 H 가 그 curve 의 scale-invariant *곡률* 을 class 축에서 통합 측정.
+- **H_658 `collective-superadditivity-nonzero-baseline`** 🔴 (축 G20, H_655 N1 회수) — **독립
+  corroboration (동시 round-9 결과)**. H_655 의 Δ=Φ_coll(W=1)−Σ을 non-zero parts-baseline 으로
+  재계산하면 argmax-Δ 가 rule184(II)→**rule110(IV)** 로 flip → H_653 convexity-top(rule110)과 수렴.
+  본 H_660 이 *scale-invariant 측도* 축에서 보인 "분기 = scale 혼입, class-top = rule110(IV) 회복"
+  과, H_658 이 *baseline* 축에서 보인 "분기 = trivial-baseline artifact, Δ-top = rule110(IV) 회복"
+  이 **서로 다른 두 경로(metric-normalization · baseline-정상화)로 동일 결론에 수렴** — H_655 의
+  "rule184 最高" 가 scale/baseline artifact 였고 메타-축은 normalization 후 내부 일관(class-IV 통일)임을
+  교차 확정. 두 H 가 round-9 메타-축의 화해를 robust 하게 만듦.
 
 ---
 
