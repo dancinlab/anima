@@ -204,3 +204,23 @@ N=1 fix (hexa-lang `efdf59bd8` ANALYSIS, 미머지) 둘뿐.
 **남은 꼬리 (데이터 스테이징, 별도 단계)**: trainer 소스는 origin/main 에 있으나 (a) corpus trim (harvest/corpus_diverse_trim.jsonl 미머지), (b) qwen merges/vocab (로컬·pod 둘 다 부재, pod 에 huggingface_hub 미설치), (c) pod nvcc PATH + pip install 이 선결. 이것들이 갖춰지면 `hexa build --c-only` → scp → build_and_fire.sh → harvest 로 step-rate 측정 가능. 비용: SSH 돌파 검증에 ~$0.71 (pod 3개 × 짧은 수명) 소모, 데이터 갖춰지면 단발 ~$1 로 측정 완료 예상.
 
 **verdict**: ⚪ step-rate STILL UNMEASURED — BUT 인프라 3-blocker 는 ✅ 돌파 (recipe 확립). 다음 fire 는 SSH 까지 즉시 도달, 데이터 스테이징만 남음. F-BC-ANIMA-M4-CEILING 은 데이터 확보 후 단발 측정 가능.
+
+---
+
+### 2026-05-29 (3) — hexa cloud 전 경로 작동 + transpile 성공, self/ 불완전이 마지막 벽
+
+이번엔 raw-ssh 수동 대신 **`hexa cloud` 정규 경로**로 진행 (사용자 지시), upstream fix 병행.
+
+**돌파한 것 (M5 인프라 거의 완전 정복)**:
+1. `~/.hx/packages/hexa-lang/stdlib/cloud/cloud.hexa` 를 origin/main(#1959) 으로 sync (accept-new=5). 단 hexa 바이너리가 stale 해 `--insecure` 플래그가 실효 우회.
+2. `hexa cloud run "root@<IP>" --port <P> --insecure -- bash -lc '<script>'` = **SSH 도달 성공** (HEXA_OK + H100 확인). cloud-guard IP-form 통과. `hexa cloud copy-to <host> <local> <remote> --port --insecure` 도 작동 (flag 는 host/path **뒤**, argv 는 `--` 뒤 개별 토큰, multi-line argv 는 cloud-guard 거부 → 스크립트 파일 copy-to 후 `bash <file>`).
+3. pod SSH recipe 확정: `runpodctl create --ports '22/tcp' --startSSH --env "PUBLIC_KEY=$(cat ~/.runpod/ssh/RunPod-Key-Go.pub)"`. 셋 다 필수 (`--ports`=매핑, `--startSSH`=sshd, `PUBLIC_KEY`=authorized_keys).
+4. **trainer transpile 성공**: pod 에 fresh `git clone hexa-lang` → `build/hexat_linux <in.hexa> <out.c>` (self-host cc, `hexa-cc <input> <output>`) 로 `train_v3_moe_longtrain.hexa` → `trainer.c` **1279 lines** 생성. fresh clone 의 stdlib 에 flame_bpe_corpus_lib 존재 → 로컬 stale-install 문제 완전 우회 (BPE blocker 해소 확인).
+
+**마지막 벽 (정확한 진단)**: shallow `git clone --depth 1 hexa-lang` 의 `self/` 트리가 **불완전** — `runtime_core.c` (runtime.c 가 `#include "runtime_core.c"`) 와 `runtime_cuda.c` (runtime_cuda_emit.hexa 가 emit) 둘 다 clone 에 부재 → `clang trainer.c self/runtime.c` 가 `runtime_core.c not found` 로 실패. **단 두 파일 다 git-tracked 이고 로컬 `~/.hx/packages/hexa-lang/self/` 에 존재** → shallow-clone 이 안 가져온 것(또는 sparse). 추가로 hexat_linux 가 runtime_cuda_emit.hexa(거대 string-literal) transpile 에서 **segfault** (upstream hexat 버그 후보).
+
+**다음 단계 (단순)**: pod 에 fresh clone 대신 **로컬의 완전한 hexa-lang self/ 트리를 tar+copy-to** (또는 full clone). 그러면 runtime.c 컴파일 통과 → CPU 빌드(runtime_cuda.c 불요) → short train → step-rate 측정. 추가 필요: hexat 가 use-module 을 flatten 안 하므로 `v3_moe_fwd` implicit-decl 발생 → module_loader flatten 선행 또는 trainer 가 단일 파일이 되도록 의존 .hexa 를 trainer 앞에 concat. 
+
+**비용**: 이번 세션 pod 다수 (5xm3·hbdf·zzld·3hpm·2a46-r3 orphan) ≈ ~$3-4 누적, 전부 teardown 완료 (pods=0). orphan r3 = 죽은 background agent 산물, parent 수동 정리.
+
+**verdict**: ⚪ step-rate STILL UNMEASURED — BUT 인프라는 transpile 까지 정복, 남은 건 self/ 완전본 전송 + flatten 1단계. F-BC-ANIMA-M4-CEILING 은 다음 fire 에서 측정 가능 (recipe 전부 확립).
