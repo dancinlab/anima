@@ -1,0 +1,44 @@
+### EEG HW reachability probe — 2026-05-29 ###
+###
+### a_blue_closed 정합 (위조 0): HW 미도달 = 정직 "🟡 SW-confirmed, HW-pending".
+### feedback-closure-is-physical-limit 정합: live 미실측 = open frontier, not failure.
+### EEG live = human-only 헤드셋 착용 → 거짓 PASS 유혹 회피 (AKIDA 와 반대 정책).
+
+### 3-신호 점검 결과 (eeg_hw_probe_signals(), CLI: hexa run EEG/eeg_backend_smoke.hexa):
+###
+###   signal_1_brainflow_pkg : ?  (python3 -c 'import brainflow')
+###                            .venv-eeg 활성화 + brainflow 5.21.0 설치 상태
+###                            EEG.md L2 milestone 에 따르면 설치됨
+###
+###   signal_2_capture_dir   : OK (state/eeg_hw_sw_impl_2026_05_29/capture)
+###                            본 PR 에서 디렉토리 생성됨
+###
+###   signal_3_user_sentinel : MISS (~/.config/anima/eeg_headset_ready)
+###                            사용자가 헤드셋 착용 + 임피던스 확보 후
+###                            `touch ~/.config/anima/eeg_headset_ready` 발행 필요
+###
+###   all_pass               : false (sentinel 부재로 conservative false)
+
+### 정직 status (a_blue_closed):
+###
+###   H_679 measurement-core    : SW path 4/4 🟢 · HW path 🟡 SW-confirmed, HW-pending
+###   H_680 cross-substrate     : SW path 4/4 🟢 · HW path 🟡 SW-confirmed, HW-pending
+###   H_681 emit-substrate      : SW path 4/4 🟢 · HW path 🟡 SW-confirmed, HW-pending
+###   H_682 persistence-paradigm: SW path 4/4 🟢 · HW path 🟡 SW-confirmed, HW-pending
+
+### HW path 진행 절차 (사용자 측):
+###
+###   1. EEG/EEG_CAPTURE_RUNBOOK.md §1 헤드셋 착용 + 임피던스 < 50kΩ 확인
+###   2. EEG/EEG_CAPTURE_RUNBOOK.md §2 brainflow 30s capture (`state/eeg_capture_latest.json` 생성)
+###   3. `touch ~/.config/anima/eeg_headset_ready` (3-신호 통과)
+###   4. `hexa run EEG/impl/H_679_measurement_core.hexa hw` (live wire 검증)
+###   5. 4 H × HW path verbatim 회수 → 🟡 → 🟢 silicon... 아니, biological-confirmed 격상
+
+### live 거짓 PASS 0건 보증:
+###   - agent 측은 헤드셋 착용을 흉내내지 않음
+###   - sentinel 부재 시 eeg_panic_no_hw() 명시 panic + 사용자 안내
+###   - hw_probe_signals() 결과는 SW path result JSON 에 attest 만 (실측 값 위조 없음)
+
+### ssh-mutating 0 보증:
+###   - 본 PR 은 mac local 작업만, EEG 헤드셋 / OpenBCI 보드 직접 mutation 0
+###   - brainflow board 접근 = 사용자 측 runbook 단계, agent 측 ssh 0
