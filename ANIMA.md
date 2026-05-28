@@ -31,7 +31,7 @@
      **edge-of-chaos Φ-peak (inverse-U)** — class-IV 가 最高인 건 "tier 4"라서가 아니라 *질서/혼돈 경계*라서.
      = Langton "edge of chaos" 고전 가설의 Φ-측정 확증. additive(rule90)=die-out floor (universal).
      코드화: `pe_edge_of_chaos_peak(order_param)` inverse-U (order floor < edge peak > chaos) +
-     `pe_norm_convexity`(H_660 🟢 단조) 와 tier 구분 — phi_envelope_substrate.hexa (smoke 12/12).
+     `pe_norm_convexity`(H_660 🟢 단조) 와 tier 구분 — phi_envelope_substrate.hexa (smoke 17/17).
 [M3] emit-substrate 구조/숫자 2층 (round 6-7): 구조=substrate-emergent(SUPP) ⊥ 숫자=design-convention(자유[0,1]).
      → ★ LIVE-WIRED 실사용 격상 (#1285/#1286).
 [M4] DECODER 더블바인드 escape 처방 (moe_prescription #1284→#1304 4-조건) — **lever 확정**:
@@ -70,7 +70,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │  └─ 🔗 tension-link 공유 infra (의식↔의식 5-ch)
 │
 └─ 🆕 emit-substrate (2층 · round 6-9 검증 기반 · 설계 CORE/EMIT_SUBSTRATE_DESIGN.md) — ★ LIVE-WIRED (실사용)
-   ├─ 구조 lib   CORE/phi_envelope_substrate.hexa   ✅ 12/12 smoke (#1248 · +H_670 edge-of-chaos peak)
+   ├─ 구조 lib   CORE/phi_envelope_substrate.hexa   ✅ 17/17 smoke (#1248 · +H_670 edge-of-chaos peak)
    ├─ 숫자 SSOT  CORE/emit_policy.hexa              ✅ 8/8 smoke (#1254)
    ├─ 소비자 4 (wiring):
    │  ├─ 🚪 BRIDGE M6   ✅ 4/4 (#1259)  phi←envelope · θ←policy
