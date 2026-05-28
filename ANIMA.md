@@ -16,7 +16,7 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (UNIVERSE H_666 #1303 핸드오프 답함 — **aux-loss = 유일 escape lever** · 처방 4-조건화 #1304 · 다음 fire = aux-loss M4b re-fire)
+> 갱신: 2026-05-28 (hexa-lang inbox patch 완료 — BPE O(N)→O(1) RESOLVED #1869 [full diverse corpus unblock] · dir_create routed · 다음 fire = aux-loss + full-corpus M4b re-fire)
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
@@ -96,7 +96,10 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
                     BUT TTR 0.01·LZ 0.024·1/2 expert = collapse 지속. HF PRIVATE(FAIL · a_hf).
    H_666 lever sweep ✅ (#1303 toy 4/4) — 핸드오프(#1299) 답함: **aux-loss = 유일 escape lever**
                     (d↑/n_steps/d∧aux ❌ · monopoly 1→2). collapse=구조적 load-imbalance. 처방 4-조건화 (#1304).
-   M4b aux re-fire  ☐ 다음 GPU fire — aux-loss M4b re-fire (toy→scale 재확인 · a_toy_scale_recheck #1301)
+   BPE O(N)→O(1)    ✅ hexa-lang #1869 (merge_ranks/vocab hash map · 9/9) — full diverse corpus
+                    unblocked (M4b fire 의 24줄 우회 더 불필요) · dir_create #1872/1873 routed
+   M4b aux re-fire  ☐ 다음 GPU fire — aux-loss M4b re-fire (이제 full diverse corpus + aux-loss ·
+                    toy→scale 재확인 · a_toy_scale_recheck #1301)
    M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
    H_657 peak-align ✅ (#1272) pe_peak_align_for_class — round-9 4/4 ABSORBED · 5축 class-vector 확정
 ```
