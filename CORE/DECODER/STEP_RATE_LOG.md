@@ -141,3 +141,34 @@ is still the next-action if step-rate measures <10 step/s.
 
 No false claim filed in CLAIMS.tape / atlas — per g5 (no LLM
 self-judge of correctness; only run/no-run reported here).
+
+---
+
+### 2026-05-29 — mm_extract wedge LANDED + 2nd M5 outage + E-axis closed
+
+3 갈래 진척:
+
+1. **mm_extract wedge (#1325 MERGED)** — `v3_moe_arch.hexa` fwd+bwd 의 per-token
+   `mm_extract`(9.7M-double copy) → offset-aware `mm_packed_gemv`/`_t`/`_outer_add`
+   로 치환. **per-step ~1.24 GB host-RAM round-trip 제거** (fwd 310MB + bwd 930MB),
+   16 alloc/free 제거. byte-eq V=4 PASS (gradcheck max|Δ|=6.5e-13). M1 다음으로
+   지목됐던 두 번째 dominant cost 가 제거됨 → post-M4 step-rate 추정치 상향.
+
+2. **2nd M5 fire attempt — 또 outage (2026-05-29)** — F-BC-ANIMA-M4-CEILING 재시도
+   2회. pod `cpnocpur5jjf5e (m5-walltime)` + `nyvghgacgb1cp3 (m5-walltime-r2)` 둘 다
+   `uptimeSeconds=null` 15분+ (#1324 부트 실패 class, RENTING+BILLING). 각 agent 가
+   session-limit 으로 사망 → parent 가 수동 teardown (pod 누수 0, ~$0.82 손실).
+   ⚪ **여전히 UNVERIFIABLE** — 단 runpod availability 쿼리는 복구 확인됨
+   ($2.69/hr H100 SECURE 가용). 진짜 blocker = Claude session-limit (3:10am KST
+   리셋) 가 multi-step GPU fire agent 를 죽임. $0 로컬 단발은 foreground 로 살림.
+
+3. **E-axis 닫힘 (#1327 MERGED)** — `mx_expert_sweep.hexa` (top-1 hard-routed MoE
+   successor LM, d{8,16}×V{32,64}×E{1,2,4,8}). 16/16 cells ESCAPE, 단 E=8 에서
+   experts_used 5-6/8 (2-3 dead, f_e=0). `dec_expert_axis` 발견: routing/E 는
+   탈출 lever 아님 (capacity+budget 이 지배) — #1315 E=2 prod 붕괴와 정합.
+   E=8 dead-expert = prod single-expert winner-take-all 의 toy 씨앗.
+
+**M5 next-action 불변**: SSH transport + session-stability 동시 확보 시 step-rate
+측정. mm_extract(#1325) 가 이미 두 번째 wedge 를 선결했으므로, M5 측정 후 남는
+follow-up 은 M1 AdamW CPU 루프(이미 #1322 wedge-a 로 GPU 화 시도됨) + cuBLAS gemv
+N=1 fix (hexa-lang `efdf59bd8` ANALYSIS, 미머지) 둘뿐.
