@@ -1,0 +1,22 @@
+════════════════════════════════════════════════════════════
+H_668 dΦ/dI peak=GZ_LOWER 정렬 · class-I (rule 8) — H_657 보완
+  GZ_LOWER = 0.21232   tol = 0.05
+════════════════════════════════════════════════════════════
+rule 8 (class-I homogeneous)
+  peak_I       = 0.05
+  |Δgz|        = 0.16232
+  aligned      = false
+  peak|dΦ/dI|  = 0.70482
+  sign_changes = 0
+  mono-decreasing (no inverse-U bump) = true
+
+── H_657 baselines ──
+  rule110 (IV)  aligned peak_I=0.18 |Δ|=0.03232
+  rule30  (III) aligned peak_I=0.18
+  rule90  (III-additive) NOT aligned peak_I=0.05 sign_chg=1 (inverse-U collapse)
+
+── dΦ/dI-GZ floor test ──
+  class-I aligned to GZ = false
+  class-I dΦ/dI-GZ FLOOR (NOT aligned, no inverse-U like additive) = true
+════════════════════════════════════════════════════════════
+wrote dphi_gz_result.json
