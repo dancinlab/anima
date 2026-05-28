@@ -1,0 +1,48 @@
+# hexa verify raw verdicts — higher divisor-power sums σ_2, σ_3 for perfect numbers
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: σ_2(n) and σ_3(n) (sum of squares / cubes of divisors) have exact hexa-native
+#        closed-form values for every perfect number n ∈ {6,28,496,8128}
+# ==================================================================
+
+verify --expr sigma_2(6)=50
+  calc   = 50  == expected 50
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma_2(28)=1050
+  calc   = 1050  == expected 1050
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma_2(496)=328042
+  calc   = 328042  == expected 328042
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma_2(8128)=88085930
+  calc   = 88085930  == expected 88085930
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma_3(6)=252
+  calc   = 252  == expected 252
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma_3(28)=25112
+  calc   = 25112  == expected 25112
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma_3(496)=139456352
+  calc   = 139456352  == expected 139456352
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma_3(8128)=613681507712
+  calc   = 613681507712  == expected 613681507712
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## errata note (g5 honesty — initial hand-computed expecteds were WRONG, hexa calc is authoritative):
+##   σ_2(28): hand-guess 1394 → 🔴 FALSIFIED; hexa calc = 1050 (correct, re-verified 🔵)
+##   σ_2(496): hand-guess 412310 → 🔴 FALSIFIED; hexa calc = 328042 (correct, re-verified 🔵)
+##   σ_2(8128): hand-guess 67100672 → 🔴 FALSIFIED; hexa calc = 88085930 (correct, re-verified 🔵)
+##   σ_3(28): hand-guess 45136 → 🔴 FALSIFIED; hexa calc = 25112 (correct, re-verified 🔵)
+##   σ_3(496): hand-guess 124121584 → 🔴 FALSIFIED; hexa calc = 139456352 (correct, re-verified 🔵)
+##   σ_3(8128): hand-guess 537211731968 → 🔴 FALSIFIED; hexa calc = 613681507712 (correct, re-verified 🔵)
+##   → all 8 power-sum atoms register at the HEXA-AUTHORITATIVE value (exact, deterministic).
+## VERDICT: σ_2(n), σ_3(n) closed-form CONFIRMED for all 4 known small perfect numbers. All 8 atoms 🔵.

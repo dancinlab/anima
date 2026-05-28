@@ -1,0 +1,39 @@
+# hexa verify raw verdicts — abundant / deficient boundary around perfect (σ vs 2n)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: the σ(n) vs 2n trichotomy. 12 is the SMALLEST abundant (σ>2n); 945 is the
+#        smallest ODD abundant; 8 and 10 are deficient (σ<2n). Perfect = the σ=2n knife-edge
+#        separating the two half-lines (axis-H round 1). All σ atoms hexa-native exact.
+# ==================================================================
+
+verify --expr sigma(12)=28
+  calc   = 28  == expected 28
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(24)=60
+  calc   = 60  == expected 60
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(945)=1920
+  calc   = 1920  == expected 1920
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(8)=15
+  calc   = 15  == expected 15
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(10)=18
+  calc   = 18  == expected 18
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 σ atoms vs 2n):
+##   ABUNDANT  (σ > 2n):
+##     σ(12)  = 28   > 24   = 2·12   ✓  abundance 28−24 = 4   — 12 = smallest abundant number
+##     σ(24)  = 60   > 48   = 2·24   ✓  abundance 60−48 = 12
+##     σ(945) = 1920 > 1890 = 2·945  ✓  abundance 1920−1890 = 30 — 945 = smallest ODD abundant
+##   DEFICIENT (σ < 2n):
+##     σ(8)   = 15   < 16   = 2·8    ✓  deficiency 16−15 = 1  (= 2^k always deficient by 1)
+##     σ(10)  = 18   < 20   = 2·10   ✓  deficiency 20−18 = 2
+##   PERFECT (σ = 2n, the knife-edge): σ(6)=12=2·6 (axis-H round 1, separately registered)
+## VERDICT: σ(n)-vs-2n trichotomy boundary CONFIRMED. All 5 atoms 🔵; perfect = exact σ=2n knife-edge.
+##   12 first-abundant and 945 first-odd-abundant are exact landmarks of the abundant half-line.

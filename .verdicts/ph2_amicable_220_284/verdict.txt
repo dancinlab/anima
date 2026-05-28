@@ -1,0 +1,33 @@
+# hexa verify raw verdicts — first amicable pair (220, 284)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: (220, 284) is an amicable pair — σ(220) = σ(284) = 504 = 220+284, and the
+#        aliquot map swaps them: s(220)=284, s(284)=220 (each is the proper-divisor sum
+#        of the other). 2-cycle of the aliquot function (vs perfect = 1-cycle fixed point).
+# ==================================================================
+
+verify --expr sigma(220)=504
+  calc   = 504  == expected 504
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(284)=504
+  calc   = 504  == expected 504
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(220)=284
+  calc   = 284  == expected 284
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(284)=220
+  calc   = 220  == expected 220
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 atoms):
+##   σ(220) = 504 = 220 + 284                    ✓  (sum-of-divisors equals the pair total)
+##   σ(284) = 504 = 220 + 284                    ✓  (so σ(220) = σ(284), the amicable σ-equality)
+##   s(220) = σ(220) − 220 = 504 − 220 = 284     ✓  (= aliquot(220), confirmed 🔵)
+##   s(284) = σ(284) − 284 = 504 − 284 = 220     ✓  (= aliquot(284), confirmed 🔵)
+##   s∘s(220) = s(284) = 220                      ✓  (aliquot 2-cycle: amicable ⇔ s²(n)=n, s(n)≠n)
+## VERDICT: (220,284) amicable pair CONFIRMED. All 4 atoms 🔵; composite is elementary arithmetic.
+##   Contrast with perfect numbers (aliquot 1-cycle fixed point s(n)=n, axis-H round 1):
+##   amicable = the next aliquot-orbit class (period-2). Distinct, genuinely-new identity.
