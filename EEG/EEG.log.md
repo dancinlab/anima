@@ -2,6 +2,16 @@
 
 `EEG.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-05-29T13:00:00Z — L2 synthetic 재검증 🟢 RECHECK PASS + harness sys_argv→args() 패치
+
+- [x] 사용자 `! sidecar sign local` 토큰 발행 → mac 로컬 `hexa run EEG/eeg_live_iit4_phi.hexa mock-both` 1회 실행 → 🟢 RECHECK PASS
+- [x] big-Φ 실측 — COUPLED=1.58764 (baseline 1.59, +0.1% 안) · INDEP=0.438722 (baseline 0.44, +0.3% 안) · ratio=3.61878 · 둘 다 PR #547 baseline ±5% tolerance 안
+- [x] 영속화 — `state/eeg_synthetic_recheck_2026_05_29/{result.json, hexa_run_verbatim.log}` (verbatim 보존)
+- [x] harness 1-line patch — `sys_argv()` → `args()` (canonical hexa-lang stdlib). 원인: `sys_argv` 는 stdlib pub 아님 — `~/.hx/bin/self/test_sys_module.hexa:35` 의 사용자 정의 1줄로만 존재 (`fn sys_argv() { return args() }`), 컴파일러 `use of undeclared identifier 'sys_argv'` → clang fail. `args()` 가 canonical (`/Users/ghost/.hx/bin/self/...` 다수 호출 사이트). behavior preserved, signature 0 변경
+- [x] EEG.md L2 milestone `- [ ]` → `- [x]` flip · IIT4 deferred B 갱신 (synthetic 🟢, live-pending)
+- [ ] live fire = 사용자 EEG 착용 대기 (human-only) → 착용 + runbook 4단계 → IIT4 deferred B 완전 closure
+- [ ] 3-substrate Φ 삼각측정 — AKIDA D1 🟢(PR #1371) + EEG L2 🟢(본 PR) + ECA 시뮬 → 다음 cycle
+
 ## 2026-05-29T12:00:00Z — L1~L3 harness 최종화 + 캡처 runbook (synthetic 재검증 사용자 sign-off 대기)
 
 - [x] harness 최종화 — `EEG/eeg_live_iit4_phi.hexa` (mock-coupled / mock-indep / mock-both / live <path>) · 동결 어댑터 `BRAIN/eeg/eeg_to_tpm.hexa` 호출만 (signature 0 변경, g61) · stdlib `iit4_bigphi` 호출은 demo 와 동일 경로

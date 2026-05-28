@@ -1,0 +1,24 @@
+{
+  "slug": "eeg_synthetic_recheck",
+  "date": "2026-05-29",
+  "mode": "mock-both",
+  "engine": "stdlib/consciousness/iit4_bigphi",
+  "adapter": "BRAIN/eeg/eeg_to_tpm.hexa (frozen, signature unchanged)",
+  "harness": "EEG/eeg_live_iit4_phi.hexa",
+  "n_ch": 2,
+  "n_samp": 64,
+  "sys_state": 1,
+  "coupled": {"big_phi": 1.58764, "total": 2.02636},
+  "indep":   {"big_phi": 0.438722, "total": 0.877444},
+  "ratio_coupled_over_indep": 3.61878,
+  "baseline_pr547": {"coupled": 1.59, "indep": 0.44},
+  "tolerance_pct": 5.0,
+  "verdict": "🟢 RECHECK PASS",
+  "assertion": "within ±5% of PR #547 baseline — harness-internal panic-on-drift wired",
+  "philosophy": {
+    "a_blue_closed": "ok — 🟢 numerical, 🔵 위조 0",
+    "g61": "ok — adapter signature unchanged, stdlib engine called",
+    "p7": "ok — pre-registered assert, no LLM self-judge"
+  },
+  "patch_note": "harness used sys_argv() which is not in canonical stdlib (only test_sys_module defines it); patched to canonical args() — single-line, behavior preserved"
+}
