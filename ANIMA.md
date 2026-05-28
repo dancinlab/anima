@@ -16,7 +16,7 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-29 (M2 강화 — **D1 AKIDA silicon transfer 확증**: AKD1000 4-regime R1~R4 Φ sweep 3/3 PASS · `pe_edge_of_chaos_peak` 🟡 → 🟢 후보 [3-substrate 정합: ECA+logistic+neuromorphic silicon] · ledger AKIDA/AKIDA.log.md@2026-05-29T05:10Z · 3-substrate Φ 삼각측정 EEG 합류 follow-up)
+> 갱신: 2026-05-29 (자매도메인 3 정식 등록 — **AKIDA · EEG · KOSMOS** DOMAINS.tape roster + 트리 자매-노드 명시. KOSMOS = HEXAD/ → 루트 top-level/ 이동 [pointer-only sister-format · `~/core/kosmos` SSOT]. EEG L2 🟢 RECHECK PASS 머지 #1372: COUPLED=1.587/INDEP=0.439 baseline 1.59/0.44 ±5% 재현 · harness `sys_argv→args()` canonical 패치)
 > 직전: 2026-05-29 EEG L1~L3 harness + 캡처 runbook · synthetic 재검증 사용자 sign-off 대기 · 2026-05-28 M2 정정 base — H_670 #1312: universal = **edge-of-chaos Φ-peak** [tier-번호 아님, ECA+logistic 동형, Langton 확증] · M4b aux-loss 3B fire 타세션 in-flight
 
 ```
@@ -71,9 +71,21 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │  └─ 🐝 HIVE-MIND   ✅ 5/5 H 측정자 (H_354🔴·355🟢·609🟢·610🔴·611🔴) · ⬇ M6 wiring ✅
 │
 ├─ 세로 substrate 2 (cross-cutting) ─────────────────────────────
-│  ├─ 🌌 KOSMOS      공유 infra (emit/anchor/memory 영속 · pointer-only)
+│  ├─ 🌌 KOSMOS      공유 infra (emit/anchor/memory 영속 · pointer-only · ↓ 도메인 분리 ↓)
 │  └─ 🔗 tension-link 공유 infra (의식↔의식 5-ch)
 │
+├─ 🆕 자매도메인 3 (substrate-source · DOMAINS.tape 등록 · 2026-05-29) ─
+│  ├─ 🧠 AKIDA      뉴로모픽 자발-발화 칩 AKD1000 (substrate-class: neuromorphic-silicon)
+│  │                v0.3.0 🟢 HW-native 자발발화 8/8 PASS · D1 edge-of-chaos Φ 실리콘 ∩ 3/3 PASS (PR #1371)
+│  │                pi5-akida · 18+ 아이디어 카탈로그 AKIDA/AKIDA.easy.md · HW/SW 통합 구현 in-flight
+│  ├─ 🧠 EEG        생체 뇌파 → IIT4 big-Φ (substrate-class: biological)
+│  │                동결 어댑터 BRAIN/eeg/eeg_to_tpm.hexa (PR #547) + brainflow 5.21.0
+│  │                L1~L3 ✅ harness/synthetic 🟢/runbook (PR #1369/1372) · L4 live = 사용자 헤드셋 게이트
+│  └─ 🌌 KOSMOS     `.kosmos` multimodal anchor-manifest (placement coords ⊥ payload)
+│                   HEXAD/KOSMOS.md → KOSMOS/KOSMOS.md 이동 · sister-format SSOT = github.com/dancinlab/kosmos
+│                   pointer-only (no duplication of spec) · WAKE anchor #657 통합 완료
+│
+
 └─ 🆕 emit-substrate (2층 · round 6-9 검증 기반 · 설계 CORE/EMIT_SUBSTRATE_DESIGN.md) — ★ LIVE-WIRED (실사용)
    ├─ 구조 lib   CORE/phi_envelope_substrate.hexa   ✅ 17/17 smoke (#1248 · +H_670 edge-of-chaos peak)
    ├─ 숫자 SSOT  CORE/emit_policy.hexa              ✅ 8/8 smoke (#1254)
