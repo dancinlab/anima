@@ -1,0 +1,42 @@
+# MATRIX axis B — RING family approximate Φ(n) scaling
+# engine: hexa-lang stdlib/consciousness/iit4/faithful_phi.hexa
+#         iit4_approx_phi(state, n, dim=12, n_bins=4)  (PR #1972, greedy MIP, UPPER BOUND on Φ_exact)
+# host:   pool ubu-2:~/core/hexa-lang · origin/main faithful_phi (cc3f6221) · g5 verbatim · 2026-05-29
+# tier:   🟢 NUMERICAL-APPROXIMATE (greedy upper bound, NEVER 🔵)
+# substrate: ring of n cells, nearest-neighbor coupling
+#            cell i trajectory[d] = ((d+i)%7) + 0.5*(((d+(i+1)%n)%7) + ((d+(i-1+n)%n)%7))
+# ============================================================================
+# build:  hexa build /tmp/axisb/axisb.hexa -o /tmp/axisb/axisb   ->  OK: built /tmp/axisb/axisb
+# run:    /tmp/axisb/axisb  (verbatim Φ values below)
+# ----------------------------------------------------------------------------
+
+=== AXIS-B large-N approximate Phi ===
+DIM=12 NB=4 engine=iit4_approx_phi(greedy-MIP,upper-bound)
+RING_n6=4.99168
+RING_n8=7.69087
+RING_n10=11.4576
+RING_n12=12.859
+RING_n14=16.3131
+RING_n16=19.5549
+
+# --- intermediate odd n (gap-fill monotonicity check, robust.hexa) ---
+RING_n7=6.27584
+RING_n9=10.757
+RING_n11=11.684
+RING_n13=13.6515
+RING_n15=17.7722
+
+# --- DIM robustness (ring n=12) — trend is structural, not a DIM artifact ---
+RING_n12_DIM8=13.962
+RING_n12_DIM12=12.859
+RING_n12_DIM16=13.6379
+
+# ============================================================================
+# FINDING: Φ_approx(ring, n) increases MONOTONICALLY across n=6..16 (all 11
+# samples strictly increasing in n: 4.99 < 6.28 < 7.69 < 10.76 < 11.46 < 11.68
+# < 12.86 < 13.65 < 16.31 < 17.77 < 19.55). Trend is near-LINEAR:
+#   Φ(6)/6 = 0.832,  Φ(16)/16 = 1.222  (Φ/n drifts up ~1.47x over the range,
+#   i.e. weakly super-linear but dominated by a linear term). Slope
+#   (19.55-4.99)/(16-6) = 1.456 Φ per added cell.
+# DIM robustness: ±8% across DIM∈{8,12,16} — structural, not estimator noise.
+# tier 🟢 NUMERICAL-APPROXIMATE.

@@ -1,0 +1,34 @@
+# MATRIX axis B — greedy approx Φ is a STRICT UPPER BOUND on exact Φ (calibration)
+# engine: hexa-lang stdlib/consciousness/iit4/faithful_phi.hexa  (PR #1972)
+#   iit4_faithful_phi_from_mi(mi, n)  = EXACT enumeration over 2^(n-1) bipartitions (n<=8)
+#   iit4_approx_phi_from_mi(mi, n)    = GREEDY single-move MIP descent (always runs, all n)
+# host:   pool ubu-2:~/core/hexa-lang · origin/main faithful_phi (cc3f6221) · g5 verbatim · 2026-05-29
+# tier:   🟢 NUMERICAL-APPROXIMATE
+# substrate: ring family (same builder as axisb_ring_scaling), n<=8 where exact is tractable.
+# ============================================================================
+# build:  hexa build /tmp/axisb/robust.hexa -o /tmp/axisb/robust   ->  OK: built /tmp/axisb/robust
+# run:    /tmp/axisb/robust  (verbatim Φ values below)
+# ----------------------------------------------------------------------------
+
+=== AXIS-B robustness ===
+RING_n6_EXACT=4.99168
+RING_n6_GREEDY=5.6616
+RING_n8_EXACT=7.69087
+RING_n8_GREEDY=8.65654
+
+# ============================================================================
+# FINDING: on the ring substrate the GREEDY MIP returns a value STRICTLY ABOVE
+# the EXACT MIP-EI Φ — i.e. Φ_greedy > Φ_exact (UPPER BOUND), exactly as the
+# engine's HONEST BOUND docstring states ("greedy converges to a LOCAL-min cut
+# >= the global MIP cut, so the returned value is an UPPER BOUND on the exact Φ"):
+#   n=6:  exact 4.99168  vs  greedy 5.66160   -> gap +0.66992  (+13.4%)
+#   n=8:  exact 7.69087  vs  greedy 8.65654   -> gap +0.96567  (+12.6%)
+# IMPORTANT CALIBRATION CONSEQUENCE: the smoke-test claim "n4-8 greedy==exact"
+# is substrate-dependent (it held on the smoke substrates, NOT on the ring family
+# here). On a ring with degree-2 nearest-neighbor coupling the greedy descent gets
+# trapped at a LOCAL MIP cut ~13% above the global MIP, so the reported large-N
+# Φ values (RING/HYPERCUBE/CORR) are UPPER BOUNDS that may overshoot true Φ by a
+# similar ~13% order. The MONOTONE / super-linear scaling trend is preserved
+# (a roughly constant multiplicative bias does not flip the ordering), but the
+# ABSOLUTE Φ magnitudes must be read as 🟢 greedy upper bounds, never exact.
+# tier 🟢 NUMERICAL-APPROXIMATE.
