@@ -25,9 +25,11 @@
   finding    = "fire ran n_steps=200 PER-TOKEN = 200 presentations; a single pass over V=151643 needs 151643; fire is ~38000x short of one epoch"
   verdict    = "under-training is the binding lever (toy-supported): corpus-size x epochs, not d/aux/corpus-balance"
   prediction = "running A(d=256+aux) AND B(d=256 no-aux) BOTH collapse 2/5 — d cannot fix a step deficit"
+  confirmed  = "PR #1315 fire CONFIRMED the pre-registered prediction: A=B=C all 2/5, decode=[1,..]. d 64->256 only nudged TTR 0.01->0.02 (no escape); aux on(A)~off(B) so aux contribution ~0. d AND routing both NOT the lever — matches toy."
 
 @N dec_saga_reframe := "M4b saga tested the wrong levers — diversity/routing/capacity all secondary to data+steps" :: synthesis [d=2026-05-28 active]
-  ruled_out    = "corpus-diversity (#1296) · routing/aux (Pod C) · head-rank (dec_capfloor: d=64 ample)"
-  binding      = "step/data budget (dec_undertrain) — every fire fixed n_steps=200, never varied it"
-  next         = "real escape fire = large corpus + many epochs (>= tens x V token-steps); d=64 likely sufficient"
-  paper_target = "a_paper_negative_ok — closed re-attribution: 3 ruled-out levers + 1 binding, toy-derived + fire-confirmed"
+  ruled_out    = "corpus-diversity (#1296) · routing/aux (Pod C + #1315 A~B) · head-rank (dec_capfloor + #1315 d 64->256 no escape)"
+  binding      = "step/data budget (dec_undertrain) — every fire used <=200 token-steps / 24-line corpus, never varied it"
+  blocker      = "the binding lever is UNTESTED at scale: #1315 was forced to <=100 steps + 24-line corpus by (a) d=256 trainer ~1GB/step leak -> OOM at step~180, (b) hexa-lang O(N_merges) BPE encoder makes the full 2000-line corpus intractable. Both filed to hexa-lang inbox (a_runpod_inbox)."
+  next         = "unblock BPE encoder (hexa-lang) + fix d-trainer mm leak -> THEN long-training fire (large corpus x many epochs, d=64 likely sufficient) = the decisive test of dec_undertrain"
+  closure      = "NOT full closure — 4 levers ruled out + binding lever identified (toy+fire-consistent) but blocked-untested. no /paper until the long-training fire runs (a_paper_only_at_closure)."
