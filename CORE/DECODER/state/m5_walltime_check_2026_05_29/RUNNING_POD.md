@@ -17,16 +17,22 @@ PR #1324 is NOT a runpod/vast transport outage — it is an **SSH KEY MISMATCH**
 ⇒ The fix is to make `hexa cloud` offer `~/.ssh/id_ed25519` (the key whose pubkey
   RunPod actually injects). File to hexa-lang inbox (a_runpod_inbox).
 
-## Pods this session (all MINE torn down / 404; none billing)
+## Pods this session — FINAL: all torn down, `runpodctl pod list` → `[]` (0 pods)
 
 | pod-id | name | fate |
 |--------|------|------|
 | `cpnocpur5jjf5e`  | m5-walltime    | uptime never >0; `runpodctl pod restart` → 404. forgot. |
-| `nyvghgacgb1cp3`  | m5-walltime-r2 | SSH reachable w/ id_ed25519 (H100 confirmed); container reset wiped /work; auto-collected → 404. forgot. |
-| `3hpm8ndwgs9ud7`  | **m5-cloud**   | NOT MINE — parallel session's pod. LEFT UNTOUCHED. |
+| `nyvghgacgb1cp3`  | m5-walltime-r2 | SSH reachable w/ id_ed25519 (H100 confirmed); container reset wiped /work; → 404. forgot. |
+| `2a468nyn6947gc`  | m5-walltime-r3 | **clean build clang_rc=0** (M4 trainer + cuBLAS); container reset BEFORE the 500-step fire could log; → 404. forgot. |
+| `3hpm8ndwgs9ud7`  | m5-cloud       | NOT MINE — parallel session's pod (already 404 too by teardown). LEFT UNTOUCHED. |
 
-Actual GPU spend ≈ $0 — both my pods died at `uptimeSeconds: 0` (never booted
-the container long enough to run compute; runpod does not bill un-booted pods).
+Actual GPU spend ≈ $0–$0.5 — pods died at/near `uptimeSeconds: 0`; the one that
+built (r3) ran only an nvcc+clang compile (~90 s) then reset. No 500-step compute
+ever billed. `runpodctl pod list` → `[]` confirmed at teardown (nothing left billing).
+
+3/3 of my pods suffered the SAME container-reset-mid-use pattern, correlated with
+the concurrent workspace-sync churn (the same force that wiped the worktree). This
+is the actual blocker — not ssh-key (resolved) and not the build (now green).
 
 ## Worktree-loss event
 

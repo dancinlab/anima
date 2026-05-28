@@ -1,0 +1,60 @@
+/* ──────────────────────────────────────────────────────────────────────
+ * M5 walltime shim (2026-05-29): slim block-per-row ce_seed for the case
+ * where the softmax is ALREADY computed (via M2 farr_softmax_rows). The
+ * cloud-m3 host wrapper hexa_farr_ce_seed() calls this 5-arg symbol that
+ * was authored ahead of its kernel. dlogits[r*C+c] = softmax[r*C+c]
+ * - onehot(c == target[r]). Pure elementwise (no reduction needed).
+ * target arrives double-encoded (token ids stored as doubles), rounded.
+ * ────────────────────────────────────────────────────────────────────── */
+#ifdef __CUDACC__
+__global__ void _hx_k_ce_seed_slim(const double* __restrict__ SM,
+                                   const double* __restrict__ TGT,
+                                   double* __restrict__ DL,
+                                   int64_t R, int64_t C) {
+    int64_t r = blockIdx.x;
+    if (r >= R) return;
+    const double* sr = SM + r * C;
+    double*       dr = DL + r * C;
+    int64_t tgt = (int64_t)(TGT[r] + (TGT[r] >= 0.0 ? 0.5 : -0.5));
+    for (int64_t j = threadIdx.x; j < C; j += blockDim.x) {
+        double p = sr[j];
+        if (j == tgt) p -= 1.0;
+        dr[j] = p;
+    }
+}
+#endif
+
+int _hx_cuda_farr_ce_seed(int64_t softmax_id, int64_t target_id,
+                          int64_t dlogits_id, int64_t R, int64_t C) {
+#ifdef __CUDACC__
+    if (R <= 0 || C <= 0) {
+        fprintf(stderr, "[cuda] ce_seed_slim: bad shape R=%lld C=%lld\n",
+                (long long)R, (long long)C);
+        return -1;
+    }
+    if (_h2d(softmax_id) != 0) return -1;
+    if (_h2d(target_id) != 0)  return -1;
+    if (_ensure_dev_alloc_out(dlogits_id, R * C) != 0) return -1;
+    const double* SM  = g_slots[softmax_id].d_buf;
+    const double* TGT = g_slots[target_id].d_buf;
+    double*       DL  = g_slots[dlogits_id].d_buf;
+    dim3 grid((unsigned)R), block(HX_RR_BLOCK);
+    _hx_k_ce_seed_slim<<<grid, block>>>(SM, TGT, DL, R, C);
+    cudaError_t er = cudaDeviceSynchronize();
+    if (er != cudaSuccess) {
+        fprintf(stderr, "[cuda] ce_seed_slim launch failed: %s\n",
+                cudaGetErrorString(er));
+        return -1;
+    }
+    return _d2h_out(dlogits_id, R * C);
+#else
+    (void)softmax_id; (void)target_id; (void)dlogits_id; (void)R; (void)C;
+    fprintf(stderr, "[cuda] ce_seed_slim: built without __CUDACC__\n");
+    return -1;
+#endif
+}
+
+/* mk2-C5: device-resident 2-D transpose (dst[c·d_out + r] = src[soff +
+ * r·d_in + c]), byte-eq with agt_wT_slice / agt_wT_off host loop. */
+int _hx_cuda_farr_transpose_2d_gpu(int64_t src_id, int64_t soff,
+                                   int64_t dst_id, int64_t doff,
