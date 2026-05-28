@@ -268,3 +268,29 @@ clang -O2 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 -DHEXA_CUDA -I self -I /usr/local/cu
 **M5 step-rate**: ⚪ 측정 미수행 — 단 모든 infra recipe + 정확한 blocker 가 완전 진단됨. 다음 작업 = hexa-lang 전용 clean-build 환경에서 self.tar.gz 생성 → 검증된 pod recipe(STEP_RATE_LOG (3)(4))로 <8min 빌드+측정. anima 측 코드(trainer·M0~M4 wiring·mm_extract·E-axis)는 전부 landing 완료, 막힌 건 hexa-lang self/ 배포뿐.
 
 **이번 세션 landing 합계**: anima #1319(M0)·#1320(M2/M3 wire)·#1322(adam)·#1325(mm_extract)·#1327(E-axis)·#1334(import fix)·#1316·#1318 + STEP_RATE_LOG (1)~(5) · hexa-lang #1959(SSH host-key)·#1960(cloud 개선 inbox) · sidecar #217(stale-toolchain 방지 체크리스트) · GPU.anima #1915/#1918. 비용 ~$5-6 (pod 시행착오, 전부 teardown · pods=0).
+
+---
+
+### 2026-05-29 (6) — hexat #1984 premise ✅ 확인 · bootstrap-seed gap 이 새 blocker (한 겹 더 깊음)
+
+엔트리 (5) 표의 **"pod fresh clone + emit bootstrap"** 행을 hexa-lang #1984 (`build/hexat_linux` 재빌드, commit `7bb01a108`) 로 직접 재검한 라운드. pod `q0ynubdw5s4e1v` (H100 SXM, 208 vCPU, $3.29/hr), `hexa cloud run/copy-from --insecure` 정규 경로, `PUBLIC_KEY=RunPod-Key-Go.pub` 명시 주입 (엔트리 (4) 의 SSH-key 미스매치 회피 — RunPod-Key-Go 로 SSH_OK 재현).
+
+**PREMISE ✅ — hexat #1984 가 emit segfault 를 완전히 고침**: `./build/hexat_linux self/runtime_core_emit.hexa /tmp/rc.c` → **rc=0, 11644 lines**. 엔트리 (5) 가 막혔던 거대 string-literal emit (runtime_cuda_emit / runtime_core_emit) transpile segfault(rc=139)가 사라짐. fresh origin/main clone (`e4c831c`) 의 **모든** `*_emit.hexa` 가 rc=0 으로 transpile (30+ 파일, 135~11644 lines). 즉 #1984 는 실효 — F-BC-ANIMA-M4-CEILING 의 전제(segfault 해소)는 PASS.
+
+**그러나 BUILD 는 여전히 FAIL (clang_rc=1) — 한 겹 더 깊은 NEW blocker**: hexat 은 `*_emit.hexa` → C 를 **transpile** 만 한다. 그 산출물(`/tmp/rc.c`)은 **runtime_core.c 자체가 아니라 그것을 stdout 으로 찍는 EMITTER 프로그램**이다 (`#define HX_VSF...` 가 코드가 아니라 `hexa_str("#define HX_VSF...")` 문자열 리터럴로 들어있음; emit 헤더 자체 명시: `Invocation: hexa-run self/runtime_core_emit.hexa <output-path>`). 진짜 `runtime_core.c` (281KB) 를 얻으려면 이 emitter 를 **컴파일 후 RUN** 해야 하는데:
+- emitter `/tmp/rc.c` 는 `#include "runtime.h"` + `hexa_str`/`hexa_void`/`rt_write_file` 등 **runtime.c 심볼**에 링크 의존 → standalone 컴파일 시 `undefined reference`.
+- `runtime.c` 는 `#include "runtime_core.c"` (line 2149) → **얻으려는 그 파일이 컴파일 선결** = 순수 순환.
+- 순환을 깰 수 있는 **stage0 인터프리터(`build/hexa_stage0`)가 origin/main clone 에 부재**: `./build/hexa_linux run self/runtime_core_emit.hexa <out>` → `error: stage0 interpreter not found ... rebuild with: hexa tool/build_stage0.hexa` (이것도 순환). `build/hexa_linux`(508KB driver)·`build/hexat_linux`(3.8MB transpiler) 둘 다 ship 되나 **스크립트를 RUN 하는 인터프리터는 없음** (hexat 은 transpile-only: usage `hexa-cc <input.hexa> <output.c>`).
+- `git log --all -- self/runtime_core.c` = **empty** → runtime_core.c 는 어느 브랜치에도 커밋된 적 없음 (항상 RUN-generated). prebuilt `.o`/`.a` 도 0.
+
+⇒ **NEW blocker = bootstrap-seed gap**: hexat-segfault(✅ #1984 해소)도 cuBLAS gemv illegal-mem(미도달)도 아닌, **fresh origin/main hexa-lang clone 이 Linux 에서 runtime 을 self-bootstrap 할 씨앗(prebuilt stage0 인터프리터 OR 커밋된 runtime_core.c)을 안 들고 있다**는 별개의 정확히-특정된 벽. 엔트리 (5) 의 "self.tar.gz from clean local build" 처방이 여전히 유효 — 단 이번 라운드는 그 처방의 *이유*를 한 겹 더 깊이 확정: clone 단독으로는 emit 산출물을 만들 수 없다(transpile≠run, run-runtime 부재).
+
+**측정값**: step-rate ⚪ **여전히 미측정** (trainer 빌드 실패 → 학습 0 step). CPU-only build 였으므로 cuBLAS gemv(Blocker 2)는 이번에도 미도달.
+
+**dec_undertrain 실현가능성**: 측정 미수행이라 정량 verdict 불가. (config 상 V=151643, steps_per_epoch=⌊n_toks/4⌋−1, target_presentations=3e6 → 1-epoch n_steps≈V급. per-step wall 미측정 → tens×V 처방 GPU-days 환산 불가. 다음 측정에서 확정.)
+
+**비용**: 단일 pod `q0ynubdw5s4e1v` ~30분, ~$1.6. teardown 완료 (`runpodctl pod list` → `[]`, pods=0). leak 0.
+
+**다음 한 수**: 엔트리 (5) 처방 그대로 — 격리 hexa-lang clean clone 에서 stage0 부트스트랩(또는 emit-run)으로 `runtime_core.c`+generated set 을 생성 → `self.tar.gz` → 검증된 pod recipe(SSH·copy-to·CPU build)로 빌드+<5min 측정. 이번 라운드로 transpile 층(#1984)은 완전 통과 확인했으므로 남은 건 **run/emit 층** 한 겹뿐.
+
+**verdict**: ⚪ step-rate STILL UNMEASURED · **🔵 premise(#1984 emit segfault 해소) CONFIRMED** · 🟠 NEW blocker = bootstrap-seed gap (정확히 특정, hexa-lang 측 작업). F-BC-ANIMA-M4-CEILING 은 self.tar.gz 확보 후 단발 측정 가능.
