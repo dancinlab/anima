@@ -1,0 +1,18 @@
+================================================================
+  H_axisf_sync_phi_proxy_robustness
+  sub-additivity proxy-invariant? P_log=-log(1-r) vs P_lin=r
+  N=8 halves A{0..3}/B{4..7} | STEPS=400
+================================================================
+  cell | K   | r_AB    | r_A    | r_B    || Delta_log  | Delta_lin
+   0  | 0.0 | 0.0785288 | 0.346214 | 0.253771 || -0.635914 | -0.521456
+   1  | 1.0 | 0.292206 | 0.321875 | 0.440353 || -0.62327 | -0.470022
+   2  | 2.0 | 0.866904 | 0.919448 | 0.817806 || -2.20485 | -0.87035
+   3  | 3.0 | 0.957437 | 0.972252 | 0.943756 || -3.30587 | -0.958571
+   4  | 4.0 | 0.977586 | 0.985222 | 0.97055 || -3.94158 | -0.978186
+  --
+  P_log Delta<0 count : 5/5
+  P_lin Delta<0 count : 5/5
+  --
+  VERDICT_RULE: PROXY-ROBUST sub-additive iff BOTH proxies Delta<0 on >=4/5
+  VERDICT     : SUPPORTED (sync->sub-additive is proxy-robust, NOT a convexity artifact)
+=== H_axisf proxy-robustness complete ===
