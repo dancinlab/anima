@@ -1,0 +1,37 @@
+# hexa verify raw verdicts — sopfr(perfect) = 2(p−1) + (2^p − 1) closed form
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: for n = 2^(p-1)·M_p (M_p = 2^p−1 prime), the sum of prime factors with multiplicity
+#        sopfr(n) = (p−1)·2 + M_p = 2(p−1) + (2^p − 1)
+# NOTE: this CORRECTS the legacy text claim sopfr(496)=58; hexa calc = 39 (recorded as 🔴 below).
+# ==================================================================
+
+verify --expr sopfr(6)=5
+  calc   = 5  == expected 5
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sopfr(28)=11
+  calc   = 11  == expected 11
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sopfr(496)=39
+  calc   = 39  == expected 39
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sopfr(8128)=139
+  calc   = 139  == expected 139
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## legacy-text claim correction (verify-as-written → 🔴):
+verify --expr sopfr(496)=58
+  calc   = 39  != expected 58
+  tier   = 🔴 FALSIFIED  (calc deterministically disagrees — TECS-L result-agnostic closed negative)
+==
+
+## composite (elementary): sopfr counts each prime factor × its exponent.
+##   n = 2^(p-1)·M_p ⇒ sopfr(n) = 2·(p−1) + M_p = 2(p−1) + (2^p − 1)
+##   p=2: 2·1 + 3   = 2 + 3   = 5    = sopfr(6)     ✓
+##   p=3: 2·2 + 7   = 4 + 7   = 11   = sopfr(28)    ✓
+##   p=5: 2·4 + 31  = 8 + 31  = 39   = sopfr(496)   ✓  (legacy "58" was WRONG)
+##   p=7: 2·6 + 127 = 12 + 127= 139  = sopfr(8128)  ✓
+## VERDICT: sopfr(perfect) = 2(p−1)+(2^p−1) CONFIRMED for all 4. Legacy sopfr(496)=58 FALSIFIED.

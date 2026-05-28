@@ -1,0 +1,30 @@
+# hexa verify raw verdicts — μ-squarefree uniqueness: n=6 is the ONLY squarefree perfect number
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: μ(6)=1 (6=2·3 squarefree) but μ(28)=μ(496)=μ(8128)=0 (each has a square 2^k, k≥2)
+#        → among {6,28,496,8128}, n=6 is uniquely squarefree
+# ==================================================================
+
+verify --expr mu(6)=1
+  calc   = 1  == expected 1
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr mu(28)=0
+  calc   = 0  == expected 0
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr mu(496)=0
+  calc   = 0  == expected 0
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr mu(8128)=0
+  calc   = 0  == expected 0
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary): μ(n)=0 ⇔ n has a squared prime factor; μ(n)=±1 ⇔ n squarefree.
+##   μ(6)=1     → 6 = 2·3            squarefree  (only p=2 even perfect has exponent 1 on 2)
+##   μ(28)=0    → 28 = 2²·7          square 2²    NOT squarefree
+##   μ(496)=0   → 496 = 2⁴·31        square 2⁴    NOT squarefree
+##   μ(8128)=0  → 8128 = 2⁶·127      square 2⁶    NOT squarefree
+## VERDICT: among the perfect-number class, n=6 is UNIQUELY squarefree (μ=1). For p≥3 the
+## factor 2^(p-1) carries an exponent ≥2, forcing μ=0. n=6 is the lone p=2 instance. CONFIRMED.
