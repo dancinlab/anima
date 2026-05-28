@@ -1,0 +1,41 @@
+# run surface : pool on ubu-2 (Linux) — `hexa run /tmp/probe_gz_kuramoto_correspondence.hexa`
+# source      : UNIVERSE/state/axisexf_gz_kuramoto_correspondence_2026_05_29/probe_gz_kuramoto_correspondence.hexa
+# cross-check : mac-local hexa run = BYTE-IDENTICAL to this ubu-2 verbatim (F4 + cross-arch)
+# date 2026-05-29 · $0 · hexa-only · LLM none · deterministic
+# VERDICT = PARTIAL (🟠) — shared interaction→integration slope-sign + co-vary (F1,F3),
+#           but transition points DECOUPLED (F2 FAIL): GZ_CENTER≈1/e ≠ Kuramoto K_c.
+════════════════════════════════════════════════════════════
+H_axisexf_gz_kuramoto_correspondence
+  E×F cross: SAVANT GZ band (I→SI) vs HIVE-MIND Kuramoto (K→Δ)
+  both are interaction-strength → integration curves
+════════════════════════════════════════════════════════════
+── matched normalized sweep  t = (interaction − lo)/(hi − lo) ──
+  t      |  I(savant) | SI        || K(hive) | r_inf    | Delta
+  0.0  | 0.21232 | 4.55275 || 0.0 | 0.0785288 | -0.635914
+  0.111111  | 0.244284 | 4.18268 || 0.444444 | 0.276318 | -0.59863
+  0.222222  | 0.276249 | 3.86883 || 0.888889 | 0.344068 | -0.549573
+  0.333333  | 0.308213 | 3.59852 || 1.33333 | 0.792827 | -1.69653
+  0.444444  | 0.340178 | 3.36247 || 1.77778 | 0.773826 | -1.71003
+  0.555556  | 0.372142 | 3.15374 || 2.22222 | 0.907822 | -2.55083
+  0.666667  | 0.404107 | 2.96703 || 2.66667 | 0.943555 | -3.0279
+  0.777778  | 0.436071 | 2.7982 || 3.11111 | 0.960871 | -3.38899
+  0.888889  | 0.468036 | 2.64398 || 3.55556 | 0.971023 | -3.68651
+  1.0  | 0.5 | 2.5017 || 4.0 | 0.977586 | -3.94158
+── F1 SLOPE-SIGN ──
+  SAVANT  SI slope (I_hi − I_lo)      = -2.05105   neg=true
+  HIVE    Δ slope (K_hi − K_lo)       = -3.30567   neg=true
+  F1 same-sign                        = true
+── F2 TRANSITION-MAP ──
+  SAVANT SI=3 crossing  I*            = 0.398463   norm=0.647047
+  HIVE   K_c (steepest r∞ rise)  norm = 0.277778   (max jump=0.448759)
+  |I*_norm − K_c_norm|                = 0.36927   (F2 needs <= 0.15)
+  F2 transition-map                   = false
+── F3 CURVE-PEARSON ──
+  Pearson( SI(t) , Δ(t) )             = 0.959606   |r|=0.959606
+  F3 co-vary (|r|>=0.7)               = true
+  orthogonal (|r|<0.3)                = false
+── F4 DETERMINISM ──
+  byte-identical recompute            = true
+  VERDICT_RULE: ALIGNED iff F1∧F2∧F3∧F4 ; PARTIAL iff F1∧F4∧(F2 XOR F3) ; ORTHOGONAL iff !F1 ∨ (!F2∧!F3)
+  VERDICT = PARTIAL
+════════════════════════════════════════════════════════════
