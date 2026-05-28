@@ -23,24 +23,31 @@ pub fn moe_prescription_n_steps_floor() -> float { return 200.0 }
 // balanced corpus TTR floor (collapse-prone TTR 0.03 회피 · D3/E2).
 pub fn moe_prescription_ttr_floor() -> float { return 0.30 }
 
-// 3-조건 더블바인드 escape 처방 AND-gate.
-// is_hard_top1: 1.0 if HARD top-1 router (soft=0.0) · corpus_ttr: corpus TTR ·
-// n_steps: 학습 step 수. 반환 1.0 = 3 조건 모두 충족 (escape) · 0.0 = 미충족.
-pub fn moe_prescription_ok(is_hard_top1: float, corpus_ttr: float, n_steps: float) -> float {
+// 4-조건 더블바인드 escape 처방 AND-gate (H_666 #1303 정정).
+// ⚠ H_666 lever sweep (toy 4/4): n_steps 는 escape lever 아님 (변종 c ❌) · M4b 3B fire
+//   #1296 실측이 corpus-diversity 단독 반증. **load-balance aux-loss 가 유일 escape lever**
+//   (변종 b ✅ router monopoly 1→2). d↑ 단독 ❌, d↑∧aux ❌ (d↑ 가 aux escape 방해).
+//   → escape = HARD top-1 ∧ balanced corpus ∧ aux-loss · (n_steps 는 수렴용, escape 무관).
+//   collapse = under-train 아닌 *구조적 load-imbalance*. toy-verified · GPU 재확인 대기
+//   (a_toy_scale_recheck #1301 — toy verify ≠ production closure).
+// is_hard_top1 · corpus_ttr · n_steps(수렴 floor) · has_aux_loss(1.0=load-balance aux-loss 적용).
+pub fn moe_prescription_ok(is_hard_top1: float, corpus_ttr: float, n_steps: float, has_aux_loss: float) -> float {
     let hard  = if is_hard_top1 >= 0.5 { 1.0 } else { 0.0 }
     let bal   = if corpus_ttr >= moe_prescription_ttr_floor() { 1.0 } else { 0.0 }
     let steps = if n_steps >= moe_prescription_n_steps_floor() { 1.0 } else { 0.0 }
-    return hard * bal * steps
+    let aux   = if has_aux_loss >= 0.5 { 1.0 } else { 0.0 }   // H_666 유일 escape lever
+    return hard * bal * steps * aux
 }
 
-// 미충족 시 어느 조건이 빠졌는지 진단 (1=hard 누락 · 2=corpus · 3=steps · 0=충족).
-pub fn moe_prescription_missing(is_hard_top1: float, corpus_ttr: float, n_steps: float) -> int {
+// 미충족 진단 (1=hard · 2=corpus · 3=steps · 4=aux-loss[escape lever] · 0=충족).
+pub fn moe_prescription_missing(is_hard_top1: float, corpus_ttr: float, n_steps: float, has_aux_loss: float) -> int {
     if is_hard_top1 < 0.5 { return 1 }
     if corpus_ttr < moe_prescription_ttr_floor() { return 2 }
     if n_steps < moe_prescription_n_steps_floor() { return 3 }
+    if has_aux_loss < 0.5 { return 4 }
     return 0
 }
 
 pub fn moe_prescription_summary() -> string {
-    return "더블바인드 escape 처방 (3-조건 AND): HARD top-1 ∧ corpus TTR≥0.30 ∧ n_steps≥200. M4b toy(hard 분화) + D3/E2(corpus) + Phase 5b(under-train) 종합 확정. config guard (emit gate 아님)."
+    return "더블바인드 escape 처방 (4-조건 AND, H_666 정정): HARD top-1 ∧ corpus TTR≥0.30 ∧ n_steps≥200(수렴) ∧ **aux-loss**(유일 escape lever, monopoly 1→2). n_steps/d↑ 는 escape 무관 (sweep c/a ❌). collapse=구조적 load-imbalance. toy-verified · GPU 재확인 대기 (a_toy_scale_recheck)."
 }
