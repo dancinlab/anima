@@ -1,0 +1,23 @@
+════════════════════════════════════════════════════════════
+H_axise_gz_band_per_domain — is the GZ SI-band domain-invariant?
+  substrate: HEXAD/SAVANT/savant_phi.hexa (SSOT) — 4-domain d=6
+  SI=max/min(domain_phi) ; threshold=3 ; mean over 3 seeds
+  GZ_LOWER=0.21232  GZ_CENTER=0.36788(1/e)  GZ_UPPER=0.5
+  hypertrophy domain d in {CALENDAR, MUSIC, ART, MEMORY}
+════════════════════════════════════════════════════════════
+
+── per-domain SI at GZ landmarks (mean over 3 seeds) ──
+  d=0 CALENDAR  SI(LOWER)=4.55275  SI(CENTER)=3.1802  SI(UPPER)=2.5017  [F1>3=true F2<3=true F3mono=true]
+  d=1 MUSIC  SI(LOWER)=3.8419  SI(CENTER)=2.69402  SI(UPPER)=2.11856  [F1>3=true F2<3=true F3mono=true]
+  d=2 ART  SI(LOWER)=3.48014  SI(CENTER)=2.40408  SI(UPPER)=1.86274  [F1>3=true F2<3=true F3mono=true]
+  d=3 MEMORY  SI(LOWER)=3.6251  SI(CENTER)=2.50489  SI(UPPER)=1.94696  [F1>3=true F2<3=true F3mono=true]
+
+── falsifiers ──
+  F1 ALL-LOWER-SAVANT (all 4 dom SI@LOWER > 3)  = true
+  F2 ALL-UPPER-SUBSAV (all 4 dom SI@UPPER < 3)  = true
+  F3 ALL-MONO         (all 4 dom L>C>U)         = true
+  F4 DETERMINISM      (byte-identical)          = true
+  domains passing F1∧F2∧F3 = 4 / 4
+
+  VERDICT = SUPPORTED
+════════════════════════════════════════════════════════════
