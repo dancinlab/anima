@@ -1,0 +1,52 @@
+# hexa verify raw verdicts — Ore harmonic divisor numbers H(n)=n·τ(n)/σ(n) ∈ ℤ
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: a harmonic divisor number (Ore 1948) has integer harmonic mean of divisors
+#        H(n) = n·τ(n)/σ(n) ∈ ℤ. n ∈ {6,28,140,270,496}. Every perfect number is harmonic
+#        (Ore's theorem) — links the τ and σ atoms in a NEW ratio identity (not σ alone).
+# ==================================================================
+
+# --- τ and σ atoms ---
+verify --expr tau(6)=4
+  calc   = 4  == expected 4
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(6)=12
+  calc   = 12  == expected 12
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(28)=6
+  calc   = 6  == expected 6
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(140)=12
+  calc   = 12  == expected 12
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(140)=336
+  calc   = 336  == expected 336
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(270)=16
+  calc   = 16  == expected 16
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(270)=720
+  calc   = 720  == expected 720
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr tau(496)=10
+  calc   = 10  == expected 10
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# (σ(28)=56 and σ(496)=992 already 🔵 in axis-H round 1, reused below)
+
+## composite (elementary arithmetic over the 🔵 τ,σ atoms — harmonic mean H(n)=n·τ(n)/σ(n)):
+##   H(6)   = 6·4/12    = 24/24·... = 24/12  = 2  ∈ ℤ ✓   (perfect, harmonic ✓ — Ore)
+##   H(28)  = 28·6/56   = 168/56    = 3  ∈ ℤ ✓            (perfect, harmonic ✓)
+##   H(140) = 140·12/336= 1680/336  = 5  ∈ ℤ ✓            (non-perfect harmonic number)
+##   H(270) = 270·16/720= 4320/720  = 6  ∈ ℤ ✓            (non-perfect harmonic number)
+##   H(496) = 496·10/992= 4960/992  = 5  ∈ ℤ ✓            (perfect, harmonic ✓)
+## VERDICT: harmonic divisor numbers CONFIRMED — H(n)=n·τ(n)/σ(n) ∈ ℤ for {6,28,140,270,496}.
+##   All τ,σ atoms 🔵; the integrality of the ratio n·τ(n)/σ(n) is exact (deterministic division).
+##   Ore: every perfect number is harmonic — here 6,28,496 (perfect) + 140,270 (non-perfect harmonic).
+##   NEW class: links τ AND σ in one ratio identity (axis-H rounds 1-4 used σ / aliquot / σ_k alone).

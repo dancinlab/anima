@@ -1,0 +1,35 @@
+# hexa verify raw verdicts — k-hyperperfect numbers k·σ(n) = (k+1)·n + (k−1)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: a k-hyperperfect number satisfies n = 1 + k·(σ(n) − n − 1), i.e. the exact
+#        closed form  k·σ(n) = (k+1)·n + (k−1). Perfect = the k=1 case.
+#        2-hyperperfect: 21, 2133, 19521.  3-hyperperfect: 325.
+# ==================================================================
+
+# --- σ atoms ---
+verify --expr sigma(21)=32
+  calc   = 32  == expected 32
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(2133)=3200
+  calc   = 3200  == expected 3200
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(19521)=29282
+  calc   = 29282  == expected 29282
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(325)=434
+  calc   = 434  == expected 434
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 σ atoms — closed form k·σ(n)=(k+1)·n+(k−1)):
+##   21    (k=2): k·σ = 2·32    = 64    ; (k+1)·n+(k−1) = 3·21    +1 = 64     ✓  (smallest 2-hyperperfect)
+##   2133  (k=2): k·σ = 2·3200  = 6400  ; (k+1)·n+(k−1) = 3·2133  +1 = 6400   ✓
+##   19521 (k=2): k·σ = 2·29282 = 58564 ; (k+1)·n+(k−1) = 3·19521 +1 = 58564  ✓
+##   325   (k=3): k·σ = 3·434   = 1302  ; (k+1)·n+(k−1) = 4·325   +2 = 1302   ✓  (smallest 3-hyperperfect)
+## VERDICT: k-hyperperfect identity k·σ(n)=(k+1)·n+(k−1) CONFIRMED — 3× k=2 + 1× k=3. All 4 σ atoms 🔵.
+##   Perfect numbers are the k=1 special case (σ(n)=2n). Hyperperfect = the integer-k generalization
+##   of the aliquot-deficit relation; distinct from multiply-perfect (σ=k·n) — here a LINEAR closed form.
+##   errata (g5 honesty): 301 was NOT 3-hyperperfect (σ(301)=352 🔵 but 1+3·(352−301−1)=151≠301) —
+##   dropped from the set; only exact-satisfying n registered.
