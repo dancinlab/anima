@@ -1,0 +1,52 @@
+{
+  "id": "H_662",
+  "slug": "d2-verdict-landscape-raster7",
+  "raster": "#7 (2026-05-28, axis D2)",
+  "date": "2026-05-28",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "predecessor": "H_659 raster#6 N=211 (PR #1289, life 0.4937 > consc 0.4194, gap 0.0743 plateau-band 내, PLATEAU-STABLE)",
+  "source": "UNIVERSE/H_*.md DISK per-file scan (8-source verdict + 2-source domain)",
+  "config": { "N_files": 213, "eps": 0.02, "eps_life": 0.05, "prior_N": 211, "gap_wide_thresh": 0.2 },
+  "headline": {
+    "life_supp_rate": 0.493671, "life_supp": 39, "life_total": 79,
+    "consciousness_supp_rate": 0.419355, "consciousness_supp": 52, "consciousness_total": 124,
+    "gap_now": 0.074316, "gap_prior_r6": 0.074316, "gap_delta": 4.73663e-08, "trend": "stable"
+  },
+  "trajectory_test": {
+    "life_r6": 0.493671, "life_r7": 0.493671, "life_delta": -1.13924e-07,
+    "consc_r6": 0.419355, "consc_r7": 0.419355, "consc_delta": -1.6129e-07,
+    "life_gt_consc": true, "reversal": false, "widened": false,
+    "signature": "PLATEAU-STABLE (life>consc maintained)"
+  },
+  "plateau_band_3pt": {
+    "basis": "raster#3,#4,#5 gaps {0.1327, 0.0874, 0.0929} (H_659 확정 1차 falsifier band)",
+    "mean": 0.104333, "sd": 0.0244098,
+    "band_lo": 0.0555137, "band_hi": 0.153153, "in_band": true
+  },
+  "plateau_band_4pt": {
+    "basis": "raster#3,#4,#5,#6 gaps {0.1327, 0.0874, 0.0929, 0.0743} (H_659 §10 deferred 완수)",
+    "mean": 0.096825, "sd": 0.0251571,
+    "band_lo": 0.0465108, "band_hi": 0.147139, "in_band": true
+  },
+  "cohort_stratified": [
+    { "cohort": "core (<H_347)", "N": 155, "life_supp": 38, "life_total": 75, "life_rate": 0.506667, "consc_supp": 34, "consc_total": 86, "consc_rate": 0.395349 },
+    { "cohort": "session26 (H_347-657)", "N": 55, "life_supp": 1, "life_total": 4, "life_rate": 0.25, "consc_supp": 18, "consc_total": 38, "consc_rate": 0.473684 },
+    { "cohort": "raster7-new (H_658+)", "N": 3, "life_supp": 0, "life_total": 0, "life_rate": 0.0, "consc_supp": 0, "consc_total": 0, "consc_rate": 0.0 }
+  ],
+  "raster7_new_cohort": {
+    "definition": "id >= H_658",
+    "N": 3, "SUPPORTED": 2, "FALSIFIED": 1,
+    "life_hits": 0, "consciousness_hits": 0, "physics_hits": 1, "information_hits": 1, "math_hits": 0
+  },
+  "criteria": {
+    "C1_REPRODUCIBLE": { "metric": "N≥120", "value": 213, "verdict": "true" },
+    "C2_STRATIFIED": { "metric": "≥2 nonempty cohort", "verdict": "true" },
+    "C3_ALL_CLASSIFIED": { "verdict": "true" }
+  },
+  "verdict_rule": "SUPPORTED(plateau) iff C1 ∧ C2 ∧ life>consc ∧ not reversal ∧ not widened · FALSIFIED if reversal or widened",
+  "verdict": "SUPPORTED",
+  "evidence_tier": "🟢 NUMERICAL"
+}
