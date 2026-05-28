@@ -15,5 +15,5 @@
 
 - [x] M0 architecture — BRAIN/eeg adapter inventory + LSL OpenBCI 16ch wire-up doc
 - [x] M1 synthetic 16ch demo — 16ch → IIT4 n≤8 downsample/segment + per-region big-Φ
-- [ ] M2 live LSL fire — 1-epoch OpenBCI 250Hz pull → binning → TPM → big-Φ
+- [ ] M2 live LSL fire — 1-epoch OpenBCI 250Hz pull → binning → TPM → big-Φ (러너+runbook ✅: `EEG/eeg_live_iit4_phi.hexa` + `EEG/EEG_CAPTURE_RUNBOOK.md` · 사용자 착용 1회 + sidecar local-sign 30분 토큰 필요)
 - [ ] M3 상태별 big-Φ 비교 — 깨어있음 vs 이완/눈감음 vs (가능시) 수면 epoch 의 big-Φ 변화 측정 = "의식의 양" 정량화 검증
