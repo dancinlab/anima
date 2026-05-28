@@ -1,0 +1,30 @@
+# MATRIX axis B — k-D HYPERCUBE family approximate Φ(n=2^k) scaling
+# engine: hexa-lang stdlib/consciousness/iit4/faithful_phi.hexa
+#         iit4_approx_phi(state, n, dim=12, n_bins=4)  (PR #1972, greedy MIP, UPPER BOUND on Φ_exact)
+# host:   pool ubu-2:~/core/hexa-lang · origin/main faithful_phi (cc3f6221) · g5 verbatim · 2026-05-29
+# tier:   🟢 NUMERICAL-APPROXIMATE (greedy upper bound, NEVER 🔵)
+# substrate: k-D hypercube, n=2^k nodes, bit-flip adjacency (each node has k neighbors
+#            i XOR 2^b for b in 0..k). cell i trajectory[d] =
+#            ((d+i)%7) + 0.3 * sum_{b<k} ((d + (i XOR 2^b)) % 7)
+# ============================================================================
+# build:  hexa build /tmp/axisb/axisb.hexa -o /tmp/axisb/axisb   ->  OK: built /tmp/axisb/axisb
+# run:    /tmp/axisb/axisb  (verbatim Φ values below)
+# ----------------------------------------------------------------------------
+
+=== AXIS-B large-N approximate Phi ===
+DIM=12 NB=4 engine=iit4_approx_phi(greedy-MIP,upper-bound)
+HYPERCUBE_k2_n4=3.18872
+HYPERCUBE_k3_n8=7.08689
+HYPERCUBE_k4_n16=17.0107
+
+# ============================================================================
+# FINDING: Φ_approx(hypercube) increases MONOTONICALLY as k=2->3->4 (n=4->8->16):
+#   3.189 -> 7.087 -> 17.011.
+# Growth is SUPER-LINEAR in n: each doubling of n multiplies Φ by MORE than 2:
+#   Φ(8)/Φ(4)  = 7.087/3.189 = 2.222  (>2)
+#   Φ(16)/Φ(8) = 17.011/7.087 = 2.400 (>2, and the ratio is GROWING)
+# Φ/n rises: 0.797 (n4) -> 0.886 (n8) -> 1.063 (n16) = +33% over the range.
+# Interpretation: each node's neighbor-degree k = log2(n) grows with N, so the
+# coupling (shared MI) per node rises -> super-linear integration. Contrast with
+# the fixed-degree-2 ring (near-linear). Connectivity-degree drives super-linearity.
+# tier 🟢 NUMERICAL-APPROXIMATE.

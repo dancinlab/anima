@@ -47,7 +47,7 @@
 |---|---|---|
 | 0 | $0-tier core           | CLOSED (cycle #5–21) |
 | A | AXES.md backlog        | active (60 sub-axis · ~110 H seed) |
-| B | large-N faithful Φ     | active (n=8 exact bounded) · **n>8 greedy-MIP approx 엔진 LANDED 2026-05-28** (hexa-lang #1972 `iit4_approx_phi` · smoke PASS n4-8 exact-일치/n9-16 동작 · 🟢-APPROX) — n>8 검증 capability 확보 |
+| B | large-N faithful Φ     | active (n=8 exact bounded) · **n>8 greedy-MIP approx 엔진 LANDED 2026-05-28** (hexa-lang #1972 `iit4_approx_phi` · smoke PASS n4-8 exact-일치/n9-16 동작 · 🟢-APPROX) — n>8 검증 capability 확보 · **scaling findings 2026-05-29 (🟢-APPROX)**: H_axisb_ring_scaling (ring degree-2 near-linear, n6→16 단조 4.99→19.55) · H_axisb_hypercube_scaling (k-D hypercube degree=log2(n) **super-linear** n4/8/16 = 3.19/7.09/17.01, Φ doubling ratio 2.22→2.40) · H_axisb_corr_ctrl_separation (integrated/modular **~1.8e9× 분리 large-N 유지·확대** CORR 17.3→28.8 vs CTRL ~1e-8) · H_axisb_greedy_upper_bound (greedy = **strict upper bound**, ring ~13% overshoot, smoke의 greedy==exact 는 substrate-의존) |
 | C | full-IIT4 Φ-structure  | active (HEXAD/IIT4/lib) |
 | D | LLM-동반 연속 가설      | active (verdict-landscape raster) |
 | E | SAVANT (GZ × SI)       | active NEW 2026-05-28 (H_347/348/349/350/351/612/613/614/615/616) |
