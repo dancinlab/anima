@@ -172,3 +172,35 @@ self-judge of correctness; only run/no-run reported here).
 측정. mm_extract(#1325) 가 이미 두 번째 wedge 를 선결했으므로, M5 측정 후 남는
 follow-up 은 M1 AdamW CPU 루프(이미 #1322 wedge-a 로 GPU 화 시도됨) + cuBLAS gemv
 N=1 fix (hexa-lang `efdf59bd8` ANALYSIS, 미머지) 둘뿐.
+
+---
+
+### 2026-05-29 (2) — SSH 3-blocker 돌파 RECIPE 확립 (foreground 직접 운영)
+
+세션 리밋 리셋 후, M5 fire 를 background agent 대신 **foreground 직접 운영**으로 전환.
+4연속 background-agent 사망(rate-limit)을 우회 = parent 가 직접 pod lifecycle 잡음.
+**3 blocker 모두 실증 돌파** (SSH_OK + H100 확인, `87.120.211.210:19691`):
+
+```
+검증된 pod-rent recipe (다음 fire 즉시 SSH 도달):
+  runpodctl create pod --name <n> \
+    --gpuType 'NVIDIA H100 80GB HBM3' \
+    --imageName 'runpod/pytorch:2.4.0-py3.11-cuda12.4.1-devel-ubuntu22.04' \
+    --containerDiskSize 60 --gpuCount 1 \
+    --ports '22/tcp' --startSSH \         # ← blocker#1: 이 둘이 핵심
+    --env "PUBLIC_KEY=$(cat ~/.runpod/ssh/RunPod-Key-Go.pub)" \  # ← sshd authorized_keys
+    --secureCloud
+  # SSH endpoint: runpodctl get pod <id> --allfields | grep -F 'pub,tcp'
+  #   → 64.x.x.x:NNNNN->22 (pub,tcp) 에서 IP:port 추출 (tab→nl 후 grep -F)
+  # raw ssh (cloud-guard IP-form 통과): ssh -o StrictHostKeyChecking=accept-new \
+  #   -o UserKnownHostsFile=/dev/null -i ~/.runpod/ssh/RunPod-Key-Go -p <port> root@<IP>
+```
+
+**3 blocker 최종 진단**:
+- #1 SSH TCP port: `--ports '22/tcp'` (포트 매핑) **+ `--startSSH` (sshd 기동) + `--env PUBLIC_KEY=` (authorized_keys)** 셋 다 필요. `--ports` 만 주면 포트는 뜨나 sshd 미기동 → Connection refused (이번 세션 1회 오진단·teardown). `--startSSH`+PUBLIC_KEY 추가 후 즉시 SSH_OK.
+- #2 hexa cloud exit-255: hexa-lang #1959 (accept-new host key) merged. raw-ssh IP-form 이 cloud-guard 통과하므로 podssh.sh 패턴이 더 신뢰적.
+- #3 session-stability: background agent 4연속 rate-limit 사망 → **foreground 직접 운영이 정답** (parent 는 안 죽음). 단 multi-step build→train→harvest 는 turn 예산이 크다.
+
+**남은 꼬리 (데이터 스테이징, 별도 단계)**: trainer 소스는 origin/main 에 있으나 (a) corpus trim (harvest/corpus_diverse_trim.jsonl 미머지), (b) qwen merges/vocab (로컬·pod 둘 다 부재, pod 에 huggingface_hub 미설치), (c) pod nvcc PATH + pip install 이 선결. 이것들이 갖춰지면 `hexa build --c-only` → scp → build_and_fire.sh → harvest 로 step-rate 측정 가능. 비용: SSH 돌파 검증에 ~$0.71 (pod 3개 × 짧은 수명) 소모, 데이터 갖춰지면 단발 ~$1 로 측정 완료 예상.
+
+**verdict**: ⚪ step-rate STILL UNMEASURED — BUT 인프라 3-blocker 는 ✅ 돌파 (recipe 확립). 다음 fire 는 SSH 까지 즉시 도달, 데이터 스테이징만 남음. F-BC-ANIMA-M4-CEILING 은 데이터 확보 후 단발 측정 가능.
