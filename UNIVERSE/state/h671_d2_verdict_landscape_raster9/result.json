@@ -1,0 +1,57 @@
+{
+  "id": "H_671",
+  "slug": "d2-verdict-landscape-raster9",
+  "raster": "#9 (2026-05-28, axis D2)",
+  "date": "2026-05-28",
+  "deterministic": true,
+  "hexa_only": true,
+  "llm": "none",
+  "cost": "$0 mac local",
+  "predecessor": "H_665 raster#8 N=215 (PR #1300, life 0.4937 > consc 0.4194, gap 0.0743 plateau-band band3/band5 내, PLATEAU-STABLE 8연속, raster#6~#8 동결 steady-state 시사)",
+  "source": "UNIVERSE/H_*.md DISK per-file scan (8-source verdict + 2-source domain)",
+  "config": { "N_files": 222, "eps": 0.02, "eps_life": 0.05, "prior_N": 215, "gap_wide_thresh": 0.2 },
+  "headline": {
+    "life_supp_rate": 0.493671, "life_supp": 39, "life_total": 79,
+    "consciousness_supp_rate": 0.421875, "consciousness_supp": 54, "consciousness_total": 128,
+    "gap_now": 0.0717959, "gap_prior_r8": 0.074316, "gap_delta": -0.00252011, "trend": "stable"
+  },
+  "trajectory_test": {
+    "life_r8": 0.493671, "life_r9": 0.493671, "life_delta": -1.13924e-07,
+    "consc_r8": 0.419355, "consc_r9": 0.421875, "consc_delta": 0.00252,
+    "life_gt_consc": true, "reversal": false, "widened": false,
+    "signature": "PLATEAU-STABLE (life>consc maintained)"
+  },
+  "plateau_band_3pt": {
+    "basis": "raster#3,#4,#5 gaps {0.1327, 0.0874, 0.0929} (H_659 확정 1차 falsifier band)",
+    "mean": 0.104333, "sd": 0.0244098,
+    "band_lo": 0.0555137, "band_hi": 0.153153, "in_band": true
+  },
+  "plateau_band_6pt": {
+    "basis": "raster#3,#4,#5,#6,#7,#8 gaps {0.1327, 0.0874, 0.0929, 0.0743, 0.0743, 0.0743} (H_665 §10 deferred 완수)",
+    "mean": 0.0893167, "sd": 0.0226941,
+    "band_lo": 0.0439284, "band_hi": 0.134705, "in_band": true
+  },
+  "steady_state_test": {
+    "basis": "raster#6,#7,#8 gaps all 0.0743; |gap_now - r#k| < 5e-4 이면 동결",
+    "frozen_vs_r6": false, "frozen_vs_r7": false, "frozen_vs_r8": false,
+    "steady_state_4streak": false, "trivial_risk": true
+  },
+  "cohort_stratified": [
+    { "cohort": "core (<H_347)", "N": 155, "life_supp": 38, "life_total": 75, "life_rate": 0.506667, "consc_supp": 34, "consc_total": 86, "consc_rate": 0.395349 },
+    { "cohort": "session26 (H_347-662)", "N": 60, "life_supp": 1, "life_total": 4, "life_rate": 0.25, "consc_supp": 18, "consc_total": 38, "consc_rate": 0.473684 },
+    { "cohort": "raster9-new (H_663+)", "N": 7, "life_supp": 0, "life_total": 0, "life_rate": 0.0, "consc_supp": 2, "consc_total": 4, "consc_rate": 0.5 }
+  ],
+  "raster9_new_cohort": {
+    "definition": "id >= H_663",
+    "N": 7, "SUPPORTED": 3, "FALSIFIED": 2,
+    "life_hits": 0, "consciousness_hits": 4, "physics_hits": 4, "information_hits": 0, "math_hits": 2
+  },
+  "criteria": {
+    "C1_REPRODUCIBLE": { "metric": "N≥120", "value": 222, "verdict": "true" },
+    "C2_STRATIFIED": { "metric": "≥2 nonempty cohort", "verdict": "true" },
+    "C3_ALL_CLASSIFIED": { "verdict": "true" }
+  },
+  "verdict_rule": "SUPPORTED(plateau) iff C1 ∧ C2 ∧ life>consc ∧ not reversal ∧ not widened · FALSIFIED if reversal or widened",
+  "verdict": "SUPPORTED",
+  "evidence_tier": "🟢 NUMERICAL"
+}
