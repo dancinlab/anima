@@ -62,7 +62,7 @@
 - [x] **M2** `farr_softmax_rows` 빌트인 (hexa-lang #1920) + wire (#1320)
 - [x] **M3** `farr_ce_seed` 빌트인 (hexa-lang #1924) + wire (#1320)
 - [x] **M4** 트레이너 full wiring (#1320 + #1322) + **mm_extract 제거** (#1325, per-step 1.24 GB host-RAM round-trip 제거)
-- [ ] **M5** step-rate 실측 (F-BC-ANIMA-M4-CEILING) — ⚪ UNVERIFIABLE-AT-SCALE (runpod #1324 outage 2회 + Claude session-limit 이 GPU fire agent 사망). runpod availability 는 복구 확인 ($2.69/hr). SSH transport + session-stability 동시 확보 시 측정. 상세 = `STEP_RATE_LOG.md` 2026-05-29 entry
+- [x] **M5** step-rate 실측 (F-BC-ANIMA-M4-CEILING) ✅ **MEASURED 2026-05-29 (PR #1348)** — 5회 실패 + 전체 툴체인 해제(hexat #1984 + seed #1992 + hexa cloud rent + SSH #1959) 끝에 첫 실측. **0.50 step/s (1.99 s/step)** @ d=64·V=151643·E=2·29.16M params, loss 648.5→0.997 (학습 정상), **GPU 0% (CPU-bound)**. **dec_undertrain 프로덕션 판정 = 🔴 INFEASIBLE**: 50×V presentations = 1.9M step = ~44 GPU-days at this rate. 2차 발견 = **per-step ~0.5GB RSS 누수** (step 100 에서 57GB, rate 14.8% 저하) → 장기 run OOM. 빌드·전송 파이프라인은 완전 개방, 잔여 = (a) RSS 누수 root-fix (b) GPU 실-engage (d=64 matmul 이 cuBLAS 띄우기엔 작음). 상세 = `STEP_RATE_LOG.md` entry 7
 - [x] **E-axis 토이** (#1327) — `mx_expert_sweep.hexa`: routing/E 는 탈출 lever 아님 (capacity+budget 지배), E=8 dead-expert = prod winner-take-all 토이 씨앗 (`dec_expert_axis` 발견, `.discoveries/decoder_collapse_undertrain.tape`)
 - 잔여 hexa-lang blocker: cuBLAS gemv [V×1] N=1 illegal-mem (`efdf59bd8` ANALYSIS, gemv fastpath 권장, 미머지)
 
