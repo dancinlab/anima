@@ -1,0 +1,47 @@
+# hexa verify raw verdicts — multiply perfect (k-perfect) numbers σ(n) = k·n, k≥3
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: multiply-perfect numbers generalize σ(n)=2n (perfect, k=2) to σ(n)=k·n for k≥3.
+#        3-perfect (P3, σ=3n): 120, 672, 523776, 459818240.
+#        4-perfect (P4, σ=4n): 30240, 32760.
+# ==================================================================
+
+# --- 3-perfect σ(n)=3n ---
+verify --expr sigma(120)=360
+  calc   = 360  == expected 360
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(672)=2016
+  calc   = 2016  == expected 2016
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(523776)=1571328
+  calc   = 1571328  == expected 1571328
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(459818240)=1379454720
+  calc   = 1379454720  == expected 1379454720
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# --- 4-perfect σ(n)=4n ---
+verify --expr sigma(30240)=120960
+  calc   = 120960  == expected 120960
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(32760)=131040
+  calc   = 131040  == expected 131040
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 σ atoms — abundancy index σ(n)/n = k):
+##   3-PERFECT (k=3):
+##     σ(120)       = 360         = 3·120        ✓   (smallest 3-perfect)
+##     σ(672)       = 2016        = 3·672        ✓
+##     σ(523776)    = 1571328     = 3·523776     ✓
+##     σ(459818240) = 1379454720  = 3·459818240  ✓
+##   4-PERFECT (k=4):
+##     σ(30240)     = 120960      = 4·30240      ✓   (smallest 4-perfect)
+##     σ(32760)     = 131040      = 4·32760      ✓
+## errata (g5): initial expecteds 2095104 (523776) and 1839272960 (459818240) were 🔴 FALSIFIED
+##   (mis-classed as 4-perfect); hexa calc shows both are 3-perfect (σ=3n). Re-verified 🔵 at 3n.
+## VERDICT: multiply-perfect σ(n)=k·n CONFIRMED — 4× P3 (k=3) + 2× P4 (k=4). All 6 atoms 🔵.
+##   Generalizes perfect (k=2): abundancy index σ(n)/n = k exactly an integer ≥ 3.
