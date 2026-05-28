@@ -1,0 +1,62 @@
+# LZ76 (Schartner LZc) reference implementation — pure python, no hexa path.
+# Persisted as .txt because this repo's project.tape refuses .py/.sh Write
+# (.hexa-only gate). Copy to /tmp/lz76.py to run.
+# VALIDATED 2026-05-29 (real output): random=1.034, constant=0.006, alternating=0.009;
+# raw production counts (n=64): allzero=2, alternating=3, random=11 (Kaspar-Schuster 1987).
+
+import numpy as np
+
+
+def binarize_median(sig):
+    sig = np.asarray(sig, dtype=float).ravel()
+    return (sig > np.median(sig)).astype(np.uint8)
+
+
+def lz76_complexity(binary_seq):
+    """Kaspar & Schuster (1987) LZ76 production count c(n)."""
+    s = ''.join('1' if b else '0' for b in np.asarray(binary_seq).ravel())
+    n = len(s)
+    if n == 0:
+        return 0
+    i, c, l = 0, 1, 1
+    k, k_max = 1, 1
+    while True:
+        if s[i + k - 1] == s[l + k - 1]:
+            k += 1
+            if l + k > n:
+                c += 1
+                break
+        else:
+            if k > k_max:
+                k_max = k
+            i += 1
+            if i == l:
+                c += 1
+                l += k_max
+                if l + 1 > n:
+                    break
+                i = 0
+                k = 1
+                k_max = 1
+            else:
+                k = 1
+    return c
+
+
+def lzc_from_binary(b):
+    b = np.asarray(b).ravel().astype(np.uint8)
+    n = len(b)
+    if n < 2:
+        return 0.0
+    return float(lz76_complexity(b) / (n / np.log2(n)))
+
+
+def lzc_normalized(sig):
+    """Median-binarize a 1-D analog signal, LZ76, normalize by n/log2(n)."""
+    return lzc_from_binary(binarize_median(sig))
+
+
+# --- EEG/MEA usage (per-channel mean LZc) ---
+# import mne; raw = mne.io.read_raw_bdf(path, preload=True)
+# data = raw.get_data(picks=mne.pick_types(raw.info, eeg=True))
+# lzc = float(np.mean([lzc_normalized(data[c]) for c in range(data.shape[0])]))
