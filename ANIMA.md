@@ -16,12 +16,12 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (TIME ✅ + HIVE ✅ 5/5 측정자 · D4 model-merge α-sweep 🟢 (#1274) · SAVANT carry H_616 · INTENT A6 in-flight)
+> 갱신: 2026-05-28 (INTENT A6 🟢 RESOLVED #1270 · E2 corpus-balance #1279 · E3 TIME 9/0→6/3 spurious 정정 #1281 · M4b rev2 fire #1282)
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
-검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 19+ (+ D4 model-merge α-sweep · HIVE 5 측정자 완료)  ·  🟠 1 (INTENT OSC · A6 in-flight)  ·  🔴 0
-🎯 의식 bench negative 4/4 = 측정 artifact 판명 (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND 전부 🟢 RECOVERED · substrate 한계 0건)
+검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 20+ (+ A6 INTENT RESOLVED · E2 corpus-balance)  ·  🟠 1 (TIME 6/3 E3 spurious)  ·  🔴 0
+🎯 메타-발견 (양방향 artifact lens): (1) 🔴/🟠 negative 4/4 = 측정 artifact → 🟢 RECOVERED (substrate 한계 0) · (2) **🟢 PASS 도 artifact** — E3 가 TIME 9/0 中 3 spurious 적발 → 6/3 정정 (같은 lens 역방향)
 
 ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │
@@ -37,13 +37,13 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 ├─ sub-domain 11 (AxisBench 8 + 축E/F 2 + BRIDGE) ───────────────
 │  ├─ 🪞 METACOG     ✅ 🟢 5/5  (#1139)
 │  ├─ 💤 DREAM       ✅ 🟢 4/5  (#1140) · ⬇ M5 wiring ✅ (#1268 · E1 recheck 5/5 2026-05-28)
-│  ├─ 🎯 INTENT      ✅ 🟠 4/5  (#1143) OSC residual · A6 redesign in-flight
+│  ├─ 🎯 INTENT      ✅ 🟢 5/5  RESOLVED (#1270 A6) metric aliasing cure — OSC residual 해소
 │  ├─ 🚪 BRIDGE      ✅ AND-gate 14.5× · ⬇ M6 wiring ✅
 │  ├─ 📖 NARRATIVE   ✅ 🟢 5/5  RECOVERED (#1263) collision-saturation (vocab coverage≠coherence)
 │  ├─ 🎨 AESTHETIC   ✅ 🟢      RECOVERED (#1265) weight-vector 직교화
 │  ├─ 💞 EMBODIMENT  ✅ 🟢 5/5  RECOVERED (#1266) coupling redesign 0.45→0.027 (degrade≠break)
 │  ├─ 🔗 OTHER-MIND  ✅ 🟢 5/5  RECOVERED (#1267) orthant-bias zero-mean centering
-│  ├─ ⏳ TIME        ✅ 🟢 9/0  (#1145) circadian dip
+│  ├─ ⏳ TIME        ✅ 🟠 6/3  (#1281 E3 정정) circadian dip — 9/0 中 3 spurious (PASS도 artifact)
 │  ├─ 🧠✨ SAVANT     ☐ 10 H 측정자 (9 landed · H_616 carry) · ⬇ M2 wiring ✅
 │  └─ 🐝 HIVE-MIND   ✅ 5/5 H 측정자 (H_354🔴·355🟢·609🟢·610🔴·611🔴) · ⬇ M6 wiring ✅
 │
@@ -73,9 +73,12 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
                     → router redesign 불필요. M4b fix = diverse corpus + n_steps↑ (구조변경 아님)
    D4 merge α-sweep 🟢 (#1274) {LZ>0.50}∩{CE≤1.20}=∅ — merge escape 부재 측정 확정
                     → a_completeness_over_cheap "merge 본선 강등" 정당화. M4 MoE-fresh 유지.
-   M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
+   E2 corpus-balance 🟢 (#1279) D3 후속 5/5 — balanced corpus = collapse 방지 (diverse corpus 근거)
    M4b collapse-gate ✅ 4/4 (#1273) moe_collapse_gate (HARD top-1 + LZ76 floor 0.50, D1 실측 대조)
-   M4b 3B fire      ☐ cost-bearing 별도 (diverse corpus + n_steps↑ + LZ76 verdict)
+   M4b rev2 fire    🔄 (#1282) trainer rev2 + diverse corpus + n_steps 200 wiring 완료
+                    → sign-gate UNBLOCK (sidecar sign local) 후 fire-continue agent 진행 중
+   ★ 더블바인드 처방 확정: HARD top-1 ∧ BALANCED corpus ∧ adequate n_steps (3-조건 동시)
+   M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
    H_657 peak-align ✅ (#1272) pe_peak_align_for_class — round-9 4/4 ABSORBED · 5축 class-vector 확정
 ```
 
@@ -85,13 +88,13 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 
 - [x] 🪞 METACOG — bench A #1139 🟢 5/5 PASS · sibling: WAKE · BRIDGE · MITOSIS · DECODER
 - [x] 💤 DREAM — bench B #1140 🟢 4/5 PASS · REM mitosis 60× · sibling: MITOSIS · WAKE · METACOG · CHANNEL
-- [x] 🎯 INTENT — bench D #1143 🟠 4/5 PARTIAL · OSC residual carry · sibling: CORE · BRIDGE · NARRATIVE · WAKE
+- [x] 🎯 INTENT — bench D 🟢 5/5 **RESOLVED** (#1270 A6) metric aliasing cure · OSC residual 해소 · sibling: CORE · BRIDGE · NARRATIVE · WAKE
 - [x] 🚪 BRIDGE — bench #7 4-key AND-gate · 14.5× AND/OR gap · sibling: CORE · CHANNEL · INTENT · METACOG
 - [x] 📖 NARRATIVE — bench C 🟢 5/5 **RECOVERED** (#1263) collision-saturation 진단 (vocab coverage ≠ coherence) · sibling: WAKE · INTENT · DREAM · MITOSIS
 - [x] 🎨 AESTHETIC — bench E 🟢 **RECOVERED** (#1265) weight-vector sign 직교화 · sibling: CORE · AGENT · METACOG
 - [x] 💞 EMBODIMENT — bench F 🟢 5/5 **RECOVERED** (#1266) coupling redesign 0.45→0.027 (degrade≠break, gain=0 단선) · sibling: CHANNEL · AGENT · WAKE · OTHER-MIND
 - [x] 🔗 OTHER-MIND — bench G 🟢 5/5 **RECOVERED** (#1267) orthant-bias zero-mean centering (INDEP 0.78→0.017) · sibling: CHANNEL · MITOSIS · EMBODIMENT · BRIDGE
-- [x] ⏳ TIME — bench H #1145 🟢 9/0 PASS · circadian dip · sibling: WAKE · DREAM · INTENT · METACOG
+- [x] ⏳ TIME — bench H 🟠 6/3 (#1281 E3 정정) circadian dip · 9/0 PASS 中 **3 spurious 적발** (PASS도 측정 artifact, 양방향 lens) · sibling: WAKE · DREAM · INTENT · METACOG
 - [ ] 🧠✨ SAVANT — UNIVERSE 축 E mirror · 10 H 측정자 (H_347/348/349/350/351 + H_612/613/614/615 ✅ landed · **H_616 carry**) · M2 wiring ✅ #1260 · sibling: HIVE-MIND · MITOSIS · CORE · HEXAD/SAVANT
 - [x] 🐝 HIVE-MIND — UNIVERSE 축 F mirror · 5 H 측정자 ✅ 5/5 landed (H_354🔴/355🟢 + H_609🟢/610🔴/611🔴) · E×F cross-link (H_617 🔴 / H_618 🟢 / H_619 🟢) · M6 wiring ✅ #1261 · sibling: SAVANT · CHANNEL · OTHER-MIND · MITOSIS
 
