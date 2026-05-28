@@ -426,6 +426,9 @@ pub fn layer_block_bwd(d_block_out, zT_in, zT_mid,
         let _ = farr_set(d_zT_in_grad, z, farr_get(d_zT_in_from_attn, z) + farr_get(d_zT_mid, z))
         z = z + 1
     }
+    // mm-leak fix: free the two per-call scratch buffers (were leaking every step).
+    let _ = farr_free(d_zT_mid)
+    let _ = farr_free(d_zT_in_from_attn)
 }
 
 // ───────────────────────────────────────────────────────────────────────────
