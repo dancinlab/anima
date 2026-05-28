@@ -54,7 +54,7 @@ static HexaVal __hexa_sl_9;
 static HexaVal __hexa_sl_10;
 static HexaVal __hexa_sl_11;
 static void __hexa_strlit_init_0(void) {
-    __hexa_sl_0 = hexa_str("III-chaotic");
+    __hexa_sl_0 = hexa_str("III-XOR-additive");
     __hexa_sl_1 = hexa_str("RULE=");
     __hexa_sl_2 = hexa_str(" CLASS=");
     __hexa_sl_3 = hexa_str("PHI_W=");
@@ -67,7 +67,7 @@ static void __hexa_strlit_init_0(void) {
     __hexa_sl_10 = hexa_str("NORM_CONV=");
     __hexa_sl_11 = hexa_str("LOG_SPAN=");
 }
-void __hexa_strlit_init__hexa_build_expanded_1779949082423311000_tmp(void) {
+void __hexa_strlit_init__hexa_build_expanded_1779949123762735000_tmp(void) {
     __hexa_strlit_init_0();
 }
 
@@ -939,12 +939,12 @@ HexaVal phi_collective(HexaVal rule, HexaVal W) {
 
 HexaVal u_main(void) {
     __hexa_fn_arena_enter();
-    HexaVal RULE_ID = hexa_int(106);
+    HexaVal RULE_ID = hexa_int(150);
     HexaVal CLASS_LABEL = __hexa_sl_0;
     HexaVal WGRID = hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_new(), hexa_float(0.15)), hexa_float(0.40)), hexa_float(0.55)), hexa_float(0.70)), hexa_float(0.95)), hexa_float(1.0));
     HexaVal NW = hexa_int(6);
     HexaVal FLOOR = hexa_float(0.0001);
-    HexaVal cohort = hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_new(), hexa_int(106)), hexa_int(106)), hexa_int(106)), hexa_int(106)), hexa_int(106));
+    HexaVal cohort = hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_push(hexa_array_new(), hexa_int(150)), hexa_int(150)), hexa_int(150)), hexa_int(150)), hexa_int(150));
     HexaVal phi_w = hexa_array_new();
     HexaVal sum = hexa_float(0.0);
     HexaVal wi = hexa_int(0);
@@ -972,7 +972,7 @@ HexaVal u_main(void) {
     HexaVal abs_delta = hexa_sub(pmax, pmin);
     HexaVal norm_conv = hexa_div(hexa_sub(pmax, pmin), pmean);
     HexaVal log_span = hexa_float(log(__hx_to_double(span_ratio)));
-    hexa_println(hexa_add(hexa_add(hexa_add(__hexa_sl_1, hexa_to_string(hexa_int(106))), __hexa_sl_2), __hexa_sl_0));
+    hexa_println(hexa_add(hexa_add(hexa_add(__hexa_sl_1, hexa_to_string(hexa_int(150))), __hexa_sl_2), __hexa_sl_0));
     HexaVal line = __hexa_sl_3;
     wi = hexa_int(0);
     while (HX_BOOL(hexa_cmp_lt(wi, hexa_int(6)))) {
@@ -993,7 +993,7 @@ int main(int argc, char** argv) {
     setvbuf(stdout, NULL, _IOLBF, 0);
     setvbuf(stderr, NULL, _IOLBF, 0);
     hexa_set_args(argc, argv);
-    __hexa_strlit_init__hexa_build_expanded_1779949082423311000_tmp();
+    __hexa_strlit_init__hexa_build_expanded_1779949123762735000_tmp();
     u_main();
     fflush(stdout); fflush(stderr);
     return 0;
