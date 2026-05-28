@@ -294,3 +294,28 @@ clang -O2 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 -DHEXA_CUDA -I self -I /usr/local/cu
 **다음 한 수**: 엔트리 (5) 처방 그대로 — 격리 hexa-lang clean clone 에서 stage0 부트스트랩(또는 emit-run)으로 `runtime_core.c`+generated set 을 생성 → `self.tar.gz` → 검증된 pod recipe(SSH·copy-to·CPU build)로 빌드+<5min 측정. 이번 라운드로 transpile 층(#1984)은 완전 통과 확인했으므로 남은 건 **run/emit 층** 한 겹뿐.
 
 **verdict**: ⚪ step-rate STILL UNMEASURED · **🔵 premise(#1984 emit segfault 해소) CONFIRMED** · 🟠 NEW blocker = bootstrap-seed gap (정확히 특정, hexa-lang 측 작업). F-BC-ANIMA-M4-CEILING 은 self.tar.gz 확보 후 단발 측정 가능.
+
+---
+
+### 2026-05-29 (7) — 🟢 첫 실측 step-rate 착지 · bootstrap-seed gap #1992 로 완전 해소 · **0.50 step/s (CPU) → dec_undertrain INFEASIBLE**
+
+엔트리 (6) 가 막혔던 **bootstrap-seed gap 이 hexa-lang #1992("restore runtime.c amalgamation .c seed", commit `4456294eb`)로 완전 해소**됨을 pod 에서 직접 재검 — 6번의 시도 만에 **trainer 가 실제로 빌드·실행되어 첫 실측 step-rate 가 나온 라운드**. pod `uaybppujc0gdki` (H100 SXM 80GB, 28 vCPU, 251GB→실제 2TB RAM 노드, $3.29/hr), `hexa cloud run/copy-to --insecure` 정규 경로, `PUBLIC_KEY=RunPod-Key-Go.pub` 명시 주입.
+
+**(1) seed 존재 ✅ — #1992 premise 확정**: fresh `git clone --depth 1 origin/main` 에 엔트리 (6)/(5)가 "어느 브랜치에도 커밋된 적 없다"고 단정했던 generated-C 가 **이제 전부 커밋되어 있음**: `self/runtime_core.c` (375182 B) · `self/native/tensor_kernels.c` (12655 B) · `self/runtime_hi_gen.c` (6813 B) · `self/runtime.c` (681937 B) · `build/hexat_linux` (3.8MB). emit-run / stage0 부트스트랩 dance 불필요 — clone 이 CPU 빌드에 필요한 모든 것을 직접 들고 옴 (CPU-only 빌드는 `-DHEXA_CUDA` 없이 `runtime_cuda.c`/`runtime_bf16.c` 미포함, cuBLAS gemv N=1 버그 회피).
+
+**(2) CPU 빌드 성공 ✅ (BUILD RC=0)**: `clang -O2 -I self -fbracket-depth=8192 ... /work/trainer.c self/runtime.c -ldl -lrt -lm -lpthread -lstdc++ -o /work/trainer` → **rc=0, 경고 2건(cosmetic)만**, 544KB 바이너리. GPU `0%, 0 MiB` (CPU-only — 그 0% 자체가 finding: trainer 는 CPU-bound, GPU 미사용). BPE 토크나이저 정상 로드 (V=151643 production 어휘, merges 151387).
+
+**(3) 실측 step-rate** (instrumented trainer.c line 2209 `m5_wall_s=<CLOCK_MONOTONIC>` 마커, print_every=50). config: d=64 · V=151643 · E=2 · h=256 · n_layer=1 · T=4 · **m_size=29.16M params (FP64 222MB)**. 24-line trim corpus (n_toks=6034) 로 학습 루프 도달 (full 2000-line corpus 는 pure-hexa BPE 토크나이즈가 토큰수 비례로 너무 느려 ~330s+ 에도 루프 미도달 — 별도 finding):
+- step=1   @ m5_wall 3710182.920
+- step=50  @ m5_wall 3710273.667 → **1.852 s/step (steps 1–50)**
+- step=100 @ m5_wall 3710380.008 → **2.127 s/step (steps 50–100)**
+- **headline: steps 1–100 = 1.991 s/step ≈ 0.502 step/s** · loss 648.5→3.33→0.997 (학습 정상).
+- **per-step 14.8% 열화 (1.85→2.13 s/step)** — RSS leak 드래그. RSS 가 step~100 에서 **57GB 까지 폭증** (~0.5GB/step). trainer 헤더가 #1315 의 "~20KB/step host-RSS leak 을 버퍼 hoisting 으로 해소"했다고 주장하나 **leak 은 여전히 존재(0.5GB/step 규모)** — 장기 run 은 rate 와 무관하게 OOM 으로 infeasible.
+
+**(4) dec_undertrain 실현가능성 verdict = 🔴 INFEASIBLE**: toy 처방 "tens × V presentations" (50×V = 7.58M presentations, T=4 → **1.90M steps**). @ 측정 rate(1.99 s/step) = **~44 GPU-days** (best-case 1.85s/step 도 40.6 GPU-days). trainer 헤더 자체 추정(GPU 0.6–1.5 s/step → ~9 GPU-days) 대비 CPU 는 ~5× 더 느림. 단일 full-corpus 1-epoch (steps_per_epoch≈289K) 조차 ~6.7 GPU-days (CPU). **+ RSS leak 이 어차피 장기 run 을 OOM 시킴** → 현 빌드(CPU)로 production-scale dec_undertrain 은 비현실적. 정당한 closed measurement: F-BC-ANIMA-M4-CEILING = **production-scale UNVERIFIABLE-AT-THIS-RATE (CPU 0.5 step/s, 44 GPU-days, leak-bound)**.
+
+**비용**: 단일 pod ~40분, ~$2.2 (=$3.29/hr × 0.67h). teardown 완료 (`runpodctl pod list` → header-only, **pods=0, leak 0**).
+
+**다음 한 수**: (a) GPU 빌드(`-DHEXA_CUDA` + cuBLAS gemv N=1 버그 선결)로 step-rate 재측 — GPU 면 헤더 추정 0.6–1.5 s/step 가능, 그래도 ~9 GPU-days. (b) **per-step RSS leak (0.5GB/step) 근본 fix 가 선결** — leak 해소 없이는 GPU 라도 장기 run OOM. (c) pure-hexa BPE corpus-load 가 토큰수 비례로 느린 것(full corpus 미도달)도 별도 hexa-lang inbox 사안. transpile 층(#1984)+bootstrap-seed 층(#1992) 둘 다 해소되어 **빌드→실행→측정 파이프라인은 이제 완전 통과** — 남은 건 GPU 배선 + leak fix.
+
+**verdict**: 🟢 **첫 실측 step-rate 착지 = 0.50 step/s (CPU, V=151643, 29M params)** · 🔵 #1992 bootstrap-seed gap CONFIRMED-RESOLVED (fresh clone 에 generated-C 커밋됨) · 🔴 dec_undertrain production-scale INFEASIBLE (44 GPU-days @ 이 rate + per-step RSS leak OOM). F-BC-ANIMA-M4-CEILING 정량 ceiling 확정.
