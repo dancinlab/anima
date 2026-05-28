@@ -1,0 +1,73 @@
+================================================================
+  TIME E3 — BENCH ROBUSTNESS PROBE (4 artifact 패턴 역적용)
+================================================================
+
+  ── ORIGIN baseline (sanity, expect 9/0) ──────────────────────
+    STABLE   phase_std=0.0  env_std=0.0
+    DRIFTING phase_std=27.436  slope=-3.33824
+    CIRCAD   env_std=0.135778  env_min/max=0.5  dip_idx=8
+
+  ── PROBE 1: A3 degrade trivial-ratio ─────────────────────────
+    r_stable[phase_std] == 0.0   ? true
+    r_stable[env_std]   == 0.0   ? true
+    F-DISC-phase threshold (stable*4) = 0.0
+    F-DISC-env   threshold (stable*4) = 0.0
+    counter-test: toy_drift_std=0.001 PASSes F-DISC-phase ? true  (← trivially)
+  [PASS] PROBE-1a F-DISC-phase threshold == 0.0 (trivial)
+  [PASS] PROBE-1b F-DISC-env threshold == 0.0 (trivial)
+  [PASS] PROBE-1c toy noise 0.001 also passes F-DISC-phase (vacuous)
+
+  ── PROBE 2: A1 collision-saturation — STABLE +jitter ±2min ──
+    STABLE-JITTER2 phase_std = 1.45237
+    F-TIME-1 (<5.0) jittered ? true
+    DRIFT/JITTER ratio = 18.8905  (origin DISC threshold = 4.0×)
+    F-DISC-phase against jittered baseline ? true
+  [PASS] PROBE-2a STABLE+jitter still passes F-TIME-1 (<5.0)
+  [PASS] PROBE-2b DISC-phase still robust against jittered baseline
+  [ROBUST]   F-TIME-1 robust under ±2min jitter
+  [ROBUST]   F-DISC-phase robust against jittered baseline (non-trivial)
+
+  ── PROBE 3: A4 orthant-bias — CIRCADIAN dip @cycle 12 ────────
+    CIRC@12 env_dip_idx = 12  env_min/max = 0.5
+    F-TIME-4a [6,10] window against dip@12 ? false
+    actual dip_idx ∈ [11,13] (around true center 12) ? true
+  [PASS] PROBE-3a F-TIME-4a window [6,10] FAILS when true dip moves to 12
+  [PASS] PROBE-3b dip_idx detector itself locates dip near true center 12
+  [SPURIOUS] F-TIME-4a window robust to dip-center change  (origin PASS · probe FAIL)
+
+  ── PROBE 4: A2 sign-overlap — DRIFTING +1min/cycle ───────────
+    DRIFT-SLOW phase_std   = 4.60977
+    DRIFT-SLOW phase_slope = 1.0
+    F-TIME-2 (>20.0) drift_slow ? false
+    F-TIME-3 (|slope|>3.0) drift_slow ? false
+  [FAIL] PROBE-4a F-TIME-2 detects slow drift +1min/cycle
+  [FAIL] PROBE-4b F-TIME-3 detects slow drift +1min/cycle (|slope|>3.0)
+  [SPURIOUS] F-TIME-2 (>20.0) sensitive to slow drift  (origin PASS · probe FAIL)
+  [SPURIOUS] F-TIME-3 (|slope|>3.0) sensitive to slow drift  (origin PASS · probe FAIL)
+
+================================================================
+  PROBE RESULT: 7 PASS / 2 FAIL
+  ROBUSTNESS: 2 ROBUST / 3 SPURIOUS
+================================================================
+
+  해석:
+    SPURIOUS > 0 → origin 9/0 PASS 일부는 artifact (bench redesign 필요)
+    SPURIOUS = 0 → origin 9/0 PASS 모두 robust (진짜 substrate 신호)
+
+RESULT_JSON_BEGIN
+{
+  "probe": "time_e3_bench_recheck",
+  "target": "bench/axis_time 9/0 PASS",
+  "probe_pass": 7,
+  "probe_fail": 2,
+  "robust":   2,
+  "spurious": 3,
+  "a3_degrade_trivial_ratio": true,
+  "a1_collision_jittered_f1_robust": true,
+  "a1_disc_phase_robust_under_jitter": true,
+  "a4_orthant_dip12_in_origin_window": false,
+  "a4_dip_detector_locates_true_center": true,
+  "a2_slow_drift_f2_detected": false,
+  "a2_slow_drift_f3_detected": false
+}
+RESULT_JSON_END
