@@ -249,3 +249,22 @@ clang -O2 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 -DHEXA_CUDA -I self -I /usr/local/cu
 **비용**: 이번 라운드 pod (5xm3·hbdf·zzld·3hpm·f3f2 + orphan 2a46-r3) 전부 teardown (pods=0). 누적 ~$4-5. agent 측 ~$0-0.5.
 
 **verdict**: ⚪ step-rate STILL UNMEASURED — BUT BUILD GREEN 확인(agent) + 전체 recipe(SSH·transpile·build·cloud-m3 self·ce_seed shim·glue drop) 문서화 완료. 다음 fire = cloud-m3 self 통째 + <8min 측정. agent harvest = origin/probe-m5-walltime (87cd7de37): trainer.c · glue.c · ce_seed_slim_shim.c.txt · STEP_RATE_FINDING.md.
+
+---
+
+### 2026-05-29 (5) — 최종 진단: self.tar.gz 파이프라인이 진짜 blocker (모든 짜깁기 경로 소진)
+
+(A) "정확한 self 조합" 을 끝까지 추적한 결과, **단일 세션·단순 경로로는 self/ 완전+정합 트리를 못 만든다**가 확정. 4 경로 전부 막힘:
+
+| 경로 | 막힌 이유 |
+|---|---|
+| origin/main fresh clone | generated 파일(runtime_core.c·runtime_cuda.c·runtime_hi_gen.c·runtime_bf16.c) **git 미추적** (untracked, .gitignore 엔 없음 = emit/extract 산물). clone 에 부재 → runtime.c `#include` 깨짐 |
+| 로컬 ~/core/hexa-lang 통째 | generated 파일은 있으나 **264-커밋 stale** + **다른 agent 활성**(`feat/cloud-pods-local-manifest-v2` 브랜치, runtime.c/h uncommitted, 5+ worktree). origin/main 점프 = 타 agent 작업 파괴 → 금지 |
+| main + cloud-m3 짜깁기 | runtime.c(cloud-m3)↔runtime.h(main) carrier-vs-function 불일치 · 두 트리 다른 `#include` 세트 → nvcc/clang syntax+link 깨짐 |
+| pod fresh clone + emit bootstrap | hexat_linux 가 runtime_cuda_emit.hexa(거대 string-literal) transpile 에서 **segfault**; hexa wrapper 는 hxv2/hexa.real/stage0 미존재로 self-host 부트스트랩 불가 |
+
+**진짜 해법 (별도 작업)**: dispatch 스크립트(`tool/dispatch_phase4d7_gpu_fire.sh:211`)가 쓰는 방식 = "로컬 working tree 의 generated 파일(runtime_hi_gen.c 등)을 pod 로 scp". 즉 **완전+fresh 한 로컬 hexa-lang working tree(origin/main 동기 + emit 산물 생성)에서 self.tar.gz 를 만들어 전송**해야 함. 이는 hexa-lang 을 깨끗이 빌드할 수 있는 전용 환경(또는 타 agent 와 충돌 안 하는 격리 hexa-lang clone + 빌드)이 선결. anima 세션에서 공유 hexa-lang 을 264-점프할 수 없으므로 hexa-lang 측 작업.
+
+**M5 step-rate**: ⚪ 측정 미수행 — 단 모든 infra recipe + 정확한 blocker 가 완전 진단됨. 다음 작업 = hexa-lang 전용 clean-build 환경에서 self.tar.gz 생성 → 검증된 pod recipe(STEP_RATE_LOG (3)(4))로 <8min 빌드+측정. anima 측 코드(trainer·M0~M4 wiring·mm_extract·E-axis)는 전부 landing 완료, 막힌 건 hexa-lang self/ 배포뿐.
+
+**이번 세션 landing 합계**: anima #1319(M0)·#1320(M2/M3 wire)·#1322(adam)·#1325(mm_extract)·#1327(E-axis)·#1334(import fix)·#1316·#1318 + STEP_RATE_LOG (1)~(5) · hexa-lang #1959(SSH host-key)·#1960(cloud 개선 inbox) · sidecar #217(stale-toolchain 방지 체크리스트) · GPU.anima #1915/#1918. 비용 ~$5-6 (pod 시행착오, 전부 teardown · pods=0).
