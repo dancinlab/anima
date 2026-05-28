@@ -1,0 +1,22 @@
+# Φ/IIT verify infrastructure — built & applied (2026-05-28)
+# engine: stdlib/consciousness/iit4/faithful_phi (n<=8 exact MIP-EI · #1158)
+# verify wire: phi_demo (#1160) · bare-path fix (#1961)
+# g5 verbatim · 자체보관 (UNIVERSE/.verdicts/)
+
+## A. engine validation (infrastructure 작동 입증)
+$ hexa verify --expr phi_demo 1 --compute   # correlated 3-cell, 기대 Φ=3.83659
+COMPUTE: phi_demo(1.0) = 3.83659
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class compute, self-verified deterministic · g_self_verify · TECS-L n6-rep Tier2)
+$ hexa verify --expr phi_demo 0 --compute   # control, 기대 Φ≈0
+COMPUTE: phi_demo(0.0) = 4.52044e-09
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class compute, self-verified deterministic · g_self_verify · TECS-L n6-rep Tier2)
+
+## B. H_162 재현가능 산술 (Φ_normalized = |Δφ★|/log(N), Φc=n/σ(6))
+$ hexa verify --expr ln 8 --compute          # log(N=8), H_162 claim 2.0794
+COMPUTE: ln(8.0) = 2.07944
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class compute, self-verified deterministic · g_self_verify · TECS-L n6-rep Tier2)
+$ hexa verify --expr sigma 6 12              # Φc=n/σ(6)=6/12=0.5
+  calc   = 12  == expected 12
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+# 정규화: |Δφ★|=1.0465 (paradigm-a-prime real-mode 측정 입력) / ln(8)=2.07944
+#         = 0.50326 ≈ H_162 보고 0.5033 ✓ (입력 측정값은 🟠 비재현, 정규화 산술만 확인)

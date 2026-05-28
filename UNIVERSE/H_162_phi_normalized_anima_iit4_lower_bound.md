@@ -27,6 +27,12 @@ verify_source: scripts/hc_verify/cache_2026_05_12/verify/verify5_authored.jsonl 
 
 Φ_normalized^anima := |Δφ★| / log(N) 이 Φ_norm^IIT4.0 의 lower bound 이다. anima Pβ proxy 는 single-shot, axis-projected, Korean-token-class subset 측정이며, full IIT 4.0 maximally irreducible cause-effect structure 의 lower-resolution proxy. Φ_normalized^anima 가 Φc=0.5 도달 시 Φ_norm^IIT4.0 ≥ 0.5 추정 (necessary, not sufficient). paradigm-a-prime real-mode 측정값 |Δφ★|=1.0465, log(8)=2.0794, Φ_normalized=0.5033 — Φc=0.5 와 소수점 둘째자리 일치.
 
+> **verify 2026-05-28 (g5 · `.verdicts/archive-recover-186/phi_infra.txt`)** — 재현가능 산술만 실측:
+> `ln(8)=2.07944` 🟢 SUPPORTED-NUMERICAL (claim 2.0794 일치) · `σ(6)=12` 🔵 → `Φc=n/σ(6)=6/12=0.5` 성립 ·
+> 정규화 `1.0465/2.07944=0.50326 ≈ 0.5033` ✓. 단 입력 `|Δφ★|=1.0465` (paradigm-a-prime 측정) 및
+> H_162.1-3 (PyPhi lower-bound, ensemble) 은 🟠 — 측정 재현/외부엔진 의존. Φ 엔진(faithful_phi n≤8 MIP-EI)은
+> hexa-lang #1158/#1160/#1961 로 작동 검증 (correlated Φ=3.83659 · control Φ≈0, 🟢).
+
 ## Why (motivation)
 
 - **paradigm-a-prime real-mode 측정**: |Δφ★|=1.0465, log(8)=2.0794, Φ_normalized=0.5033 ≈ Φc=0.5 (소수 2자리 일치)
