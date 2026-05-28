@@ -535,22 +535,23 @@ fn main() {
         }
         tok_emb_bwd(d_zT_seq, corpus_ids, tok_emb_off, T, d, dMg)
 
-        // BC-ANIMA M4-CEILING wedge (a): 29.16M-param CPU AdamW loop →
-        // `farr_adamw_step_gpu` 11-arg builtin (HEXA_CUDA dispatch, CPU
-        // fallback = trusted FP64 reference in `_hx_farr_adamw_step_cpu`).
-        // Math identical: bias-corrected moments + decoupled weight decay,
-        // m/v stepped in place. Builtin returns a fresh W handle; copy
-        // back into M via `farr_copy_slice_gpu` (pattern verbatim from
-        // `stdlib/flame/train_lib.hexa:59` `nn_decoder_adamw_step`). The
-        // result MUST be `let`-bound BEFORE `to_int()` — `to_int(farr_…())`
-        // expands the call 3× in the generated C ternary, stepping m/v
-        // 2-3× per step (silent state corruption). One `let` = one emit.
-        let newW_h = farr_adamw_step_gpu(M, m_buf, v_buf, dMg, m_size,
-                                         lr, beta1, beta2, adam_eps, wd, step)
+        // BC-ANIMA M5-ADOPT wedge: 29.16M-param CPU AdamW loop →
+        // `farr_adamw_step_inplace` 11-arg builtin (hexa-lang #2017,
+        // HEXA_CUDA in-place dispatch, CPU fallback identical math).
+        // IN-PLACE variant of the M4-CEILING `farr_adamw_step_gpu` path:
+        // writes the updated weights back into M's own buffer instead of
+        // allocating a fresh n-double `newW` farr per step. Saves the
+        // m_size-double scratch alloc + the D2H copy-back via
+        // `farr_copy_slice_gpu` (M0~M4 wedge pattern). Byte-eq guaranteed
+        // (identical kernel arithmetic, O ≡ W). The let-binding pattern
+        // (`let h = …; let id = to_int(h)`) is preserved so the call is
+        // emitted ONCE in the generated C ternary (avoids silent state
+        // double-step from `to_int(farr_…())` triple-expansion).
+        let newW_h = farr_adamw_step_inplace(M, m_buf, v_buf, dMg, m_size,
+                                             lr, beta1, beta2, adam_eps, wd, step)
         let newW = to_int(newW_h)
         if newW >= 0 {
-            let _ = farr_copy_slice_gpu(newW, 0, M, 0, m_size)
-            let _ = farr_free(newW)
+            // in-place: newW == M; no copy-back, no free.
         } else {
             // builtin rejected (no state mutated) → host fallback loop
             let bc1 = 1.0 - pow(beta1, to_float(step))
