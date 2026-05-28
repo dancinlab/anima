@@ -319,3 +319,30 @@ clang -O2 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 -DHEXA_CUDA -I self -I /usr/local/cu
 **다음 한 수**: (a) GPU 빌드(`-DHEXA_CUDA` + cuBLAS gemv N=1 버그 선결)로 step-rate 재측 — GPU 면 헤더 추정 0.6–1.5 s/step 가능, 그래도 ~9 GPU-days. (b) **per-step RSS leak (0.5GB/step) 근본 fix 가 선결** — leak 해소 없이는 GPU 라도 장기 run OOM. (c) pure-hexa BPE corpus-load 가 토큰수 비례로 느린 것(full corpus 미도달)도 별도 hexa-lang inbox 사안. transpile 층(#1984)+bootstrap-seed 층(#1992) 둘 다 해소되어 **빌드→실행→측정 파이프라인은 이제 완전 통과** — 남은 건 GPU 배선 + leak fix.
 
 **verdict**: 🟢 **첫 실측 step-rate 착지 = 0.50 step/s (CPU, V=151643, 29M params)** · 🔵 #1992 bootstrap-seed gap CONFIRMED-RESOLVED (fresh clone 에 generated-C 커밋됨) · 🔴 dec_undertrain production-scale INFEASIBLE (44 GPU-days @ 이 rate + per-step RSS leak OOM). F-BC-ANIMA-M4-CEILING 정량 ceiling 확정.
+
+---
+
+### 2026-05-29 (8) — RSS leak (~0.5GB/step) ROOT-CAUSE = AdamW out 233MB 매-step churn (anima trainer 결백, hexa-lang runtime arena 보유) · $0 source-reasoned
+
+엔트리 (7) 의 next-step (b) "per-step RSS leak (~0.5GB/step) 근본 fix" 를 **$0 source-read 로 root-cause** 한 라운드 (pod 미대여 — 본 진단은 코드 추론, 런타임 재측정은 별도 follow-up). 결론부터: **leak 은 anima trainer 버그가 아니다 — trainer/lib 의 모든 per-step 할당은 빠짐없이 `farr_free` 된다.** leak 은 hexa-lang **runtime arena-retention** 현상으로, 매 step 233MB AdamW `out` 버퍼 calloc/free churn 이 driver.
+
+**(A) anima trainer + 의존 lib 의 per-step 할당 전수조사 (전부 freed)**:
+- `train_v3_moe_longtrain.hexa` step-loop body (line 319–594): layer-loop 의 `mm_extract`(×4) · `mm`(×6) · `mm_transpose`(×2) · `t_zeros(T*h)`(h_act) · AdamW `newW` handle — **14개 할당 전부 대응 `farr_free` 존재** (line 367/368/382/410/418/443–445/553). 큰 재사용 버퍼(M·dMg·m_buf·v_buf 각 29.16M double ≈ 233MB)는 line 162–209 에서 loop 밖 hoist 완료.
+- `v3_moe_arch.hexa` `v3_moe_fwd`: `logits_raw`(mm_packed_gemv, V double) 1개 → freed (line 113). `v3_moe_bwd`: `dl_scaled`·`d_zT_exp`·`logits_raw` 3개 → 전부 freed (line 177–179).
+- `v3_moe_bwd_lib.hexa` `layer_block_bwd`/`mlp_block_bwd_batched`/`self_attn_bwd`: 모든 내부 scratch (`d_x_seq`·`d_zT_mid`·`d_zT_in_from_attn`·`d_h_pre`·`d_scores`·mm/transpose 산물 등) → 전부 freed (line 192/207/212/219/220/221/282/283/289/293/297/298/318/324/325/334–337/354–365/416/430/431).
+- `flame_mm.hexa`: `mm`/`mm_extract`/`mm_transpose`/`mm_packed_gemv`/`_t` 는 handle 반환 → 호출부가 free. `mm_scatter_add`/`mm_packed_outer_add` 는 무할당.
+
+**(B) hexa-lang M0~M4 builtin (cloud-m3 fire-build runtime.c) 도 누수 없음**:
+- M2 `farr_softmax_rows(x, out, R, C)` (4-arg) + M3 `farr_ce_seed(...)` (5-arg) = **in-place** (caller pre-alloc 버퍼에 기록, per-call `hexa_farr_zeros` 없음 — runtime.c line 9508 + ce_seed slim). trainer 는 hoisted `softmax_buf`/`d_logits` 를 넘기므로 무할당.
+- M1 `farr_adamw_step_gpu(...)` = **fresh `out` farr 1개 (n=m_size=29.16M double = 233MB) 할당 후 반환** (runtime.c line 10806 GPU / `_hx_farr_adamw_step_cpu` line 10600 CPU). trainer 는 이를 `newW` 로 받아 `farr_copy_slice_gpu` 로 M 에 복사 후 즉시 `farr_free(newW)` (line 552–553). **즉 매 step 233MB calloc → 사용 → free.** `farr_copy_slice`/`farr_zero_slice` 는 순수 memcpy/memset (무할당).
+- runtime `hexa_farr_free` = `free(buf)` + freelist 에 handle id 만 재활용 (buf 는 NULL 로). `hexa_farr_zeros` = freelist 에서 slot id 만 꺼내고 **버퍼는 항상 새 `calloc`** (이전 buf 재사용 안 함).
+
+**(C) ROOT-CAUSE = glibc arena 보유 (per-step 233MB churn)**: 매 step `calloc(233MB)` + `free(233MB)` 가 일어나는데, glibc malloc 은 큰 free 청크를 OS 로 즉시 반환(`munmap`/`madvise`)하지 않고 arena 에 보유 → RSS 가 logical heap 과 무관하게 누적. measured ~0.5GB/step ≈ **2× m_size(466MB)** = AdamW out(233MB) + transient(V-buf·matmul·copy-back) 가 정확히 일치. runtime.c 에 `malloc_trim`/`mallopt(M_MMAP_THRESHOLD)`/`madvise` 부재 (grep 0건). runtime.c line 3739–3745 주석이 동일 현상을 명시: *"boxed-HexaVal retention from these arrays binds the in-process NM optimizer at the 768 MB cap … cuts arena retention by ~50× … the HEXA_MEM_CAP_MB=2048 workaround"* — packed int64_t 가 arena 보유를 해소했던 선례 = 동일 class.
+
+**(D) 왜 anima-side 패치가 없는가**: AdamW `out` 은 **builtin 내부**에서 할당된다 (trainer 가 hoist 불가). M2 softmax 가 3-arg(new-alloc)→4-arg(in-place) 로 전환해 29M-double/step alloc 을 제거한 선례처럼, **AdamW 도 in-place builtin (`farr_adamw_step_inplace`, W 직접 갱신·fresh out 없음) 이 정답** — 그러나 그런 builtin 은 hexa-lang 에 부재 (`_inplace` grep: softmax/add 만 존재, adamw 없음). trainer 는 builtin 을 설계대로 정확히 사용 중. ⇒ **narrowest correct fix 는 hexa-lang-side** (a_runpod_inbox 로 filing). 강제 anima 패치는 a_completeness_over_cheap 위반.
+
+**fix 후보 (hexa-lang, inbox filed)**: (1) `farr_adamw_step_inplace(W, m, v, g, n, ...)` — fresh out 없이 W in-place 갱신 (M2 4-arg softmax 선례 그대로, 매 step 233MB calloc/free 제거). (2) 보조: runtime init 에서 `mallopt(M_TRIM_THRESHOLD/M_MMAP_THRESHOLD)` 또는 step-tail `malloc_trim(0)` 로 free 청크 OS 반환. (3) 차선: `hexa_farr_zeros` 가 freelist slot 의 동일-크기 buf 를 재활용 (calloc 회피).
+
+**verify**: `hexa check CORE/DECODER/train_v3_moe_longtrain.hexa` → **0 violations** (lint/parse clean). leak fix 는 source-reasoned + lint-clean — **런타임 재확인(leak=0)은 deferred pod follow-up** (이 라운드는 $0, pod 미대여). 본 진단은 "leak 위치 = AdamW out churn, anima 결백" 까지 확정.
+
+**verdict**: 🔵 **RSS leak ROOT-CAUSED** — anima trainer 결백(per-step 할당 전수 freed), leak = hexa-lang runtime arena 보유 × per-step 233MB AdamW out churn. fix = hexa-lang in-place AdamW builtin (a_runpod_inbox filed). 런타임 leak=0 재확인은 별도 pod follow-up. cf `.discoveries/decoder_collapse_undertrain.tape` `dec_undertrain_steprate_2026_05_29` next-step (b).
