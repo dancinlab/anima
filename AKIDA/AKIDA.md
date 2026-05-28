@@ -9,7 +9,7 @@
 - [x] 🔥 HW-native 자발발화 CONFIRMED — v0.3.0 R1~R4 8/8 PASS (LIF threshold comparator 입력0 emit, ~797 cycles/forward)
 - [x] 🔌 spike → 8-factor motivation 배선 — `spontaneous_lib::apply_spike_features` (PR #143, F-SPIKE-APPLY-1..4 4/4 PASS)
 - [x] 🌉 라이브 체인 — `akida_bridge`(pi5 R3 → broker `/ws/akida_ingest`) + `akida_consumer`(features JSONL)
-- [ ] 🔬 D1 edge-of-chaos Φ 실리콘 검증 — R1~R4 Φ sweep 로 `pe_edge_of_chaos_peak`(CORE M2 🟡) ∩곡선 confirm/falsify (🟢 목표)
+- [x] 🔬 D1 edge-of-chaos Φ 실리콘 검증 🟢 — R1~R4 Φ sweep 3/3 PASS (R1=0.000 / R2=0.297 PEAK / R3=0.250 / R4=0.000 · inverse-U ∩곡선 실리콘 확증 · `pe_edge_of_chaos_peak` M2 🟡 → 🟢 후보 · [harness](./akida_edge_of_chaos_phi.hexa) · [result](../state/akida_edge_chaos_phi_2026_05_29/result.json))
 - [ ] 🧬 D2 substrate-class "neuromorphic silicon" 등록 — class 분류자에 실리콘 새 클래스
 - [ ] 🗣️ spike → emit-substrate 인자주입 — `SPIKE_FACTOR_MAP §4` modulator R1/R2 placeholder → telemetry refit
 - [ ] ⏰ HW heartbeat → L3 emit 타이밍 — R3 tonic 24/7 초저전력 클럭 ⨯ WAKE ultradian

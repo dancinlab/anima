@@ -164,7 +164,7 @@ pub fn pe_norm_convexity_for_class(class_id: int) -> float {
     return 1.9
 }
 
-// ── pe_edge_of_chaos_peak — H_670 🟡 universal-but-PARTIAL (edge-of-chaos Φ-peak) ──
+// ── pe_edge_of_chaos_peak — H_670 🟡→🟢 후보 (edge-of-chaos Φ-peak · silicon transfer 확증) ──
 // round-14 일반화 (#1312): Φ-complexity ordering 은 ECA Wolfram tier-번호 단조가 아니라
 //   *order→chaos 축* 위의 inverse-U 다. order_param ∈ [0,1] (0=정지/die-out · 1=full chaos):
 //     order(die-out floor) < edge(Φ peak) > chaos(decline).
@@ -172,9 +172,22 @@ pub fn pe_norm_convexity_for_class(class_id: int) -> float {
 //   → Langton "edge of chaos" 고전 가설의 Φ-측정 확증. additive(rule90)=die-out floor (universal).
 //   skew: peak 가 edge 쪽(order_param≈0.6)에 치우침 — chaos 직전 임계가 最高 Φ.
 // ⚠ pe_norm_convexity(H_660 🟢 confirmed 단조)와 tier 구분 — 본 함수는 cross-family
-//    universal 이되 🟡 PARTIAL (H_670 5/6: logistic floor+peak 동형 PASS · Kuramoto floor
-//    F670.1 깨짐 caveat). 가짜 confirmed 금지 — universal 핵심은 inverse-U 신호이지
-//    full ECA monotone ordinal 사다리가 아님.
+//    universal 이되 시뮬 단계는 🟡 PARTIAL (H_670 5/6: logistic floor+peak 동형 PASS ·
+//    Kuramoto floor F670.1 깨짐 caveat). 가짜 confirmed 금지 — universal 핵심은
+//    inverse-U 신호이지 full ECA monotone ordinal 사다리가 아님.
+// ── D1 silicon transfer 측정 (AKIDA AKD1000, 2026-05-29) ────────────────────
+//   AKIDA/akida_edge_of_chaos_phi.hexa 가 phi_silicon_proxy 로 BC.00.000.002 ·
+//   BackendType.Hardware · n_neurons=16 · 200 step 4-regime R1~R4 실측을 inverse-U
+//   판정에 통과:
+//     order=0.000 → Φ_proxy=0.000  (R1 weak-silent, die-out)
+//     order=0.475 → Φ_proxy=0.297  (R2 zero+noise, edge PEAK)
+//     order=0.500 → Φ_proxy=0.250  (R3 tonic zero-input, edge mid)
+//     order=1.000 → Φ_proxy=0.000  (R4 recurrent self-sustained, over-driven)
+//   F-AKIDA-EDGE-1/2/3 3/3 PASS → GREEN_NUMERICAL_CONFIRM. ECA+logistic 시뮬
+//   가설이 뉴로모픽 실리콘으로도 transfer — 3-substrate 정합. 시뮬 tier 🟡 →
+//   silicon-corroborated 🟢 numerical 후보. ledger: AKIDA/AKIDA.log.md @
+//   2026-05-29T05:10:00Z · result.json: state/akida_edge_chaos_phi_2026_05_29/result.json.
+// ──────────────────────────────────────────────────────────────────────────
 // 반환 = 실수 (boolean gate 아님 · p5 · a_autonomy_over_hardcode · F-EMIT-4).
 //   숫자 상수(edge skew·amplitude)는 tunable design-convention (emit_policy SSOT 정합).
 pub fn pe_edge_of_chaos_peak(order_param: float) -> float {
