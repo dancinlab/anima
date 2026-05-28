@@ -1,12 +1,12 @@
 # H_659 — `d2-verdict-landscape-raster6` (축 D2 raster#6) 🟢
 
 > 축 D D2 영구축 · verdict-landscape meta-map · raster#6 · 2026-05-28 · $0 mac-local
-> 계보: H_238 (raster#1 N=33) → cycle#16 (raster#2 N=51) → raster#3 N=96 (PR #574) → H_630 raster#4 N=181 (PR #1215, 🟢 gap CLOSING) → **H_641 raster#5 N=194 (PR #1238, 🟢 SAMPLING-ARTIFACT 분리)** → **본 H raster#6 N=210 (plateau 지속 검증)**.
+> 계보: H_238 (raster#1 N=33) → cycle#16 (raster#2 N=51) → raster#3 N=96 (PR #574) → H_630 raster#4 N=181 (PR #1215, 🟢 gap CLOSING) → **H_641 raster#5 N=194 (PR #1238, 🟢 SAMPLING-ARTIFACT 분리)** → **본 H raster#6 N=211 (plateau 지속 검증; H_659 자신 포함, META 분류)**.
 > 메타-집계 H — substrate 측정 아님. UNIVERSE/H_*.md 디스크 per-file 스캔 + domain 분류 + tier 분류 + per-cohort 층화. deterministic, llm:none, C4 byte-identical 재현.
 
 ## 0. 1줄 요약 (TL;DR)
 
-H_641 (raster#5) 가 gap-closing 을 sampling-artifact 로 분리 확정한 뒤, round 7-9 의 신규 H **16건 (H_642~657 — 대부분 collective-Φ · IIT4 · substrate-class consciousness/info 메타-축 작업)** 이 disk 에 흡수된 현 origin/main(N=210) 의 verdict-landscape 를 재집계. **결과: D2 정상 서명 PLATEAU-STABLE 지속**. life SUPP-rate **0.5000 → 0.4937 (39/79, Δ=−0.0063 STABLE)**, consciousness **0.4071 → 0.4194 (52/124, Δ=+0.0123)**, **gap 0.0929 → 0.0743 (Δ=−0.0186, plateau-band [0.0556, 0.1531] 내, in_band=true)**. **life > consciousness 6연속 MAINTAINED**. 신규 cohort(H_642+, N=16)가 또 consciousness/physics 편중(consc 11·phys 13·life 1)이었음에도 gap 이 reversal/widening 없이 plateau 밴드에 머묾 — F659 사전등록 가설 적중. meta-verdict 🟢 SUPPORTED.
+H_641 (raster#5) 가 gap-closing 을 sampling-artifact 로 분리 확정한 뒤, round 7-9 의 신규 H **16건 (H_642~657 — 대부분 collective-Φ · IIT4 · substrate-class consciousness/info 메타-축 작업)** 이 disk 에 흡수된 현 origin/main(N=211, H_659 자신 META 포함) 의 verdict-landscape 를 재집계. **결과: D2 정상 서명 PLATEAU-STABLE 지속**. life SUPP-rate **0.5000 → 0.4937 (39/79, Δ=−0.0063 STABLE)**, consciousness **0.4071 → 0.4194 (52/124, Δ=+0.0123)**, **gap 0.0929 → 0.0743 (Δ=−0.0186, plateau-band [0.0556, 0.1531] 내, in_band=true)**. **life > consciousness 6연속 MAINTAINED**. 신규 cohort(H_642+, N=17 — OTHER H 16 + H_659 self META)가 또 consciousness/physics 편중(consc 11·phys 13·life 1)이었음에도 gap 이 reversal/widening 없이 plateau 밴드에 머묾 — F659 사전등록 가설 적중. meta-verdict 🟢 SUPPORTED.
 
 ## 1. Hypothesis (F659 계열)
 
@@ -28,7 +28,7 @@ H_641 (raster#5) 가 gap-closing 을 sampling-artifact 로 분리 확정한 뒤,
 
 pure-hexa 결정적 스캔. `UNIVERSE/state/h659_d2_verdict_landscape_raster6/run.hexa` (H_641 raster#5 run.hexa 직계 — 8-source verdict + 2-source domain scraper core 그대로 재사용, meta-raster self-exclusion guard 강화, plateau-band 진단 레이어 추가).
 
-1. **enumerate**: `ls UNIVERSE/H_*.md | grep -v 'H_238_' | sort -V` (H_238 self-exclude, L4 self-reference guard; H_630/H_641/H_659 등 verdict-landscape raster file 은 디스크에 존재하되 `_title_domains` meta-raster guard 로 META 계상 — life/consciousness 분모에 self-reference 비유입). N=210.
+1. **enumerate**: `ls UNIVERSE/H_*.md | grep -v 'H_238_' | sort -V` (H_238 self-exclude, L4 self-reference guard; H_630/H_641/H_659 등 verdict-landscape raster file 은 디스크에 존재하되 `_title_domains` meta-raster guard 로 META 계상 — life/consciousness 분모에 self-reference 비유입). N=211 (H_659 자신 META 포함).
 2. **verdict 추출 (8-source priority, 첫 비-empty win)** — H_641 와 동일: `verdict_class:` frontmatter → `@status:` → `**verdict**:` → title-line trailing emoji → top-12-line blockquote `<emoji> <LABEL>` → `verdict tier**:` → file-OWN prose `… PASS (🔵/🟢)` → `status:` lifecycle fallback. `_emoji_tier()` shim 이 EXPLICIT 텍스트 라벨을 bare-emoji 색보다 먼저 적용.
 3. **domain 분류 (2-source)**: `^domain:` frontmatter tokenize → 7-bucket canonical(life/consciousness/physics/math/information/ethics/meta). frontmatter 없으면 title-keyword 추론. 복수 domain 매핑 시 각 domain total 에 중복 계상(H_630/H_641 동일 정책).
 4. **per-domain SUPP-rate** = SUPP / total → life vs consciousness headline + gap.
@@ -37,11 +37,11 @@ pure-hexa 결정적 스캔. `UNIVERSE/state/h659_d2_verdict_landscape_raster6/ru
 
 비용 $0 mac-local, cross-process byte-identical(C4, 2-run diff empty), LLM 미사용(p7 준수).
 
-## 4. 측정 (raster#6 결과 · N=210)
+## 4. 측정 (raster#6 결과 · N=211)
 
 ### 4.1 raster#6 full-landscape headline (life vs consciousness)
 
-| 항목 | raster#5 (N=194) | **raster#6 (N=210)** | Δ |
+| 항목 | raster#5 (N=194) | **raster#6 (N=211)** | Δ |
 |---|---:|---:|---:|
 | life SUPP-rate | 0.5000 (39/78) | **0.4937 (39/79)** | **−0.0063** |
 | consciousness SUPP-rate | 0.4071 (46/113) | **0.4194 (52/124)** | **+0.0123** |
@@ -83,7 +83,7 @@ pure-hexa 결정적 스캔. `UNIVERSE/state/h659_d2_verdict_landscape_raster6/ru
 |---|---:|---|---|
 | core (<H_347) | 155 | 38/75 (**0.5067**) | 34/86 (**0.3953**) |
 | session26 (H_347-641) | 39 | 1/3 (0.3333) | 12/27 (**0.4444**) |
-| raster6-new (H_642+) | 16 | 0/1 (—) | 6/11 (**0.5455**) |
+| raster6-new (H_642+) | 17 | 0/1 (—) | 6/11 (**0.5455**) |
 
 → stratification 이 메커니즘을 직접 드러냄: 신규 `raster6-new` cohort 의 consciousness rate(0.5455, 6/11)는 core(0.3953)보다 높아 full-landscape consciousness rate 를 raster#5 0.407 → raster#6 0.419 로 소폭 끌어올림. 그러나 이 cohort 의 life 기여는 거의 0(N=1) 이고 분모(core life 75 → full 79)는 거의 정체 — 즉 consciousness rate 상승은 consciousness-heavy batch 의 SUPP 가 분자에 직접 들어간 composition 효과(H_641 §4.3 과 동일 패턴). gap 은 reversal/widening 없이 plateau 밴드 내에 머묾.
 
@@ -91,9 +91,9 @@ pure-hexa 결정적 스캔. `UNIVERSE/state/h659_d2_verdict_landscape_raster6/ru
 
 | | 값 |
 |---|---|
-| N | 16 (H_642-657) |
-| tier | 9 SUPPORTED · 6 FALSIFIED · (1 PARTIAL/RUNNING) |
-| domain hits | **consciousness 11 · physics 13 · information 5 · math 5 · life 1** |
+| N | 16 (H_642-657; scraper raster6_new_cohort.N=17 은 H_659 self META 1 포함) |
+| tier | 10 SUPPORTED · 6 FALSIFIED (H_659 self 포함 시; OTHER-H 16 기준 9 SUPP · 6 FAL) |
+| domain hits (OTHER-H) | **consciousness 11 · physics 13 · information 5 · math 5 · life 1** (H_659 self 는 META, 비유입) |
 
 → raster#6 batch 도 raster#4·#5 와 똑같이 **consciousness/physics 편중** (collective-Φ envelope · multi-scale-Φ ladder · substrate-class · IIT4 작업: H_642~657). **같은 종류의 consciousness-heavy batch 가 또 들어왔는데도 gap 이 plateau 밴드를 이탈하지 않았다** — H_641 의 sampling-artifact 결론이 3번째 consciousness-heavy batch(raster#4→#5→#6) 에서도 재확인. substrate-real 신호였다면 누적 consciousness-heavy batch 추가 시 gap 이 단조 닫혀 reversal 로 갔어야 함.
 
@@ -102,7 +102,7 @@ pure-hexa 결정적 스캔. `UNIVERSE/state/h659_d2_verdict_landscape_raster6/ru
 - **F659 (plateau 지속)**: SUPPORTED. life>consc=true (6연속), reversal=false, widened=false, signature=PLATEAU-STABLE. gap 0.0929 → 0.0743 plateau-band [0.0556, 0.1531] 내 정상 진동.
 - **F659-A (substrate-real 변동)**: FALSIFIED. reversal·widening 모두 미발생 — life rate(0.4937) 가 consciousness(0.4194) 보다 여전히 높고 gap 이 0.20 을 넘지 않음.
 - **메커니즘 finding**: round 7-9 의 신규 consciousness-heavy batch(H_642~657, consc 11·phys 13)가 disk 에 추가됐어도 (i) life rate 가 0.50 근방 안정 유지(Δ=−0.0063), (ii) consciousness rate 가 0.41 근방 소폭 상승(Δ=+0.0123, ε=0.02 직전), (iii) gap 이 plateau-band 에 머묾. H_641 의 sampling-artifact 결론이 raster#6 에서 **3번째 consciousness-heavy batch 에서도 재확인** — gap 의 변동은 batch composition 의 정상 진동이며 substrate-real 수렴 추세가 아니다.
-- **메타-verdict**: 🟢 SUPPORTED — C1(N=210≥120) · C2(3 nonempty cohort) · C3(전수 분류) · C4(byte-identical) 全 PASS.
+- **메타-verdict**: 🟢 SUPPORTED — C1(N=211≥120) · C2(3 nonempty cohort) · C3(전수 분류) · C4(byte-identical) 全 PASS.
 - **D2 영구축 finding 갱신**: "life > consciousness" 부등호는 **6연속 MAINTAINED**. gap 은 ~0.07-0.13 plateau 가 본질이고, plateau-band 가 데이터-driven 으로 [0.0556, 0.1531] 로 정량화됨 — raster#4 의 0.0874 이탈 의심과 raster#6 의 0.0743 모두 이 밴드 안의 정상 진동. **plateau-stable 이 D2 의 확정된 정상 서명**.
 
 ## 6. 선행 H 와의 관계
@@ -140,7 +140,7 @@ UNIVERSE/state/h659_d2_verdict_landscape_raster6/
 ## 9. 핵심 수치 (검증 verbatim)
 
 ```
-N(H files) = 210  (H_238 self-excluded · disk scan)
+N(H files) = 211  (H_238 self-excluded · disk scan · H_659 self = META)
 life          SUPP-rate = 0.493671  (39/79)   [r#5 0.5000 → Δ=−0.0063 STABLE]
 consciousness SUPP-rate = 0.419355  (52/124)  [r#5 0.4071 → Δ=+0.0123]
 gap_now = 0.074316   gap_prior(r#5)=0.0929   Δ=−0.018584   trend=stable
