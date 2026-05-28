@@ -1,0 +1,27 @@
+HW probe attempt (read-only, no mutating ops · per a_runpod_inbox / plan guard "live R3 spike_streamer 미중단 · pi5 ssh-mutating 편집 금지"):
+
+local Mac (worktree session):
+  signal_1_dev_node : MISS    (no /dev/akida0 on darwin — expected)
+  signal_2_akida_pkg: MISS    (no akida Python pkg on darwin — expected)
+  signal_3_hostname : Mac      (≠ pi5-akida — expected)
+  → akida_hw_reachable() = false
+
+remote pi5-akida (pool · read-only):
+  signal_1_dev_node : OK        (/dev/akida0 character device exists)
+  signal_2_akida_pkg: MISS      (default python3 env missing akida pkg — pkg lives in venv)
+  signal_3_hostname : "ubuntu" (≠ "pi5-akida" — system hostname differs from pool alias)
+  → akida_hw_reachable() locally-encoded probe would be false even on pi5
+
+interpretation:
+  HW silicon IS PHYSICALLY REACHABLE (PR#1371 already confirmed BackendType.Hardware
+  AKD1000 inverse-U 3/3 PASS · same canonical raster reused as SW mock-replay floor).
+  The 3-signal probe is tuned for the local-process attest model and doesn't fully
+  match pi5-akida's deployment (venv-scoped pkg + ubuntu hostname). This is a probe
+  refinement issue, NOT a HW unreachability finding.
+
+verdict policy for this PR (a_blue_closed · no fake green):
+  H_672~H_678 = 🟢 SW-confirmed (mock-replay of canonical 2026-05-22 hardware raster)
+  HW-live re-confirm = pending refinement of probe + venv-aware import on pi5-akida.
+  D1 (H_677 inheritance) holds the only silicon-corroborated confirmation point.
+
+no mutating ops performed against pi5-akida (live R3 spike_streamer untouched).
