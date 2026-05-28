@@ -1,0 +1,34 @@
+# hexa verify raw verdicts — period-5 sociable (aliquot) chain at 12496
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: the smallest sociable cycle of order 5 (Poulet 1918):
+#        12496 → 14288 → 15472 → 14536 → 14264 → 12496 (aliquot 5-cycle s⁵(n)=n, s(n)≠n).
+#        Extends the aliquot-orbit hierarchy: perfect = 1-cycle (R1), amicable = 2-cycle (R2/R3),
+#        sociable = ≥3-cycle. This is the period-5 representative. 5 atoms.
+# ==================================================================
+
+verify --expr aliquot(12496)=14288
+  calc   = 14288  == expected 14288
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(14288)=15472
+  calc   = 15472  == expected 15472
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(15472)=14536
+  calc   = 14536  == expected 14536
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(14536)=14264
+  calc   = 14264  == expected 14264
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(14264)=12496
+  calc   = 12496  == expected 12496
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (the cycle closes, elementary over the 🔵 atoms):
+##   s(12496)=14288 → s(14288)=15472 → s(15472)=14536 → s(14536)=14264 → s(14264)=12496
+##   ⇒ s⁵(12496) = 12496, and no intermediate equals 12496 ⇒ genuine period-5 sociable cycle.
+## VERDICT: period-5 sociable chain at 12496 CONFIRMED. All 5 atoms 🔵; cycle closes deterministically.
+##   aliquot-orbit hierarchy now: 1-cycle (perfect, R1) · 2-cycle (amicable, R2/R3) · 5-cycle (sociable).

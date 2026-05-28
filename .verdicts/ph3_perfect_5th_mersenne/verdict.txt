@@ -1,0 +1,22 @@
+# hexa verify raw verdicts — 5th perfect number 33550336 = 2^12·(2^13−1)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: the 5th perfect number 33550336 = 2^12·(2^13−1) (Mersenne prime 2^13−1=8191)
+#        satisfies σ(n)=2n and the aliquot fixed point s(n)=n, extending the axis-H
+#        round-1 perfect class {6,28,496,8128} by one (Euclid-Euler n=2^(p−1)(2^p−1), p=13).
+# ==================================================================
+
+verify --expr sigma(33550336)=67100672
+  calc   = 67100672  == expected 67100672
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(33550336)=33550336
+  calc   = 33550336  == expected 33550336
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 atoms):
+##   σ(33550336) = 67100672 = 2·33550336                  ✓  (σ=2n, the defining property)
+##   s(33550336) = σ − n = 67100672 − 33550336 = 33550336 ✓  (= aliquot(33550336), confirmed 🔵)
+##   Euclid-Euler form: 33550336 = 2^12 · 8191 = 2^(13−1)·(2^13 − 1), 2^13−1 = 8191 prime (Mersenne).
+## VERDICT: 5th perfect number 33550336 CONFIRMED (σ=2n AND aliquot fixed point). Both atoms 🔵.
+##   Extends axis-H round-1 perfect class {6,28,496,8128} → {…,33550336}; genuinely new (n > 8128).

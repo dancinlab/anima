@@ -1,0 +1,81 @@
+# hexa verify raw verdicts — 4 more amicable pairs (after first pair 220/284)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: amicable pairs (1184,1210),(2620,2924),(5020,5564),(6232,6368) each satisfy
+#        σ(a)=σ(b)=a+b and the aliquot swap s(a)=b, s(b)=a (aliquot 2-cycle), extending
+#        round-2 H_ph2_amicable_220_284 by 4 pairs. 16 atoms total.
+# ==================================================================
+
+# --- aliquot swap (s(a)=b, s(b)=a) ---
+verify --expr aliquot(1184)=1210
+  calc   = 1210  == expected 1210
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(1210)=1184
+  calc   = 1184  == expected 1184
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(2620)=2924
+  calc   = 2924  == expected 2924
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(2924)=2620
+  calc   = 2620  == expected 2620
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(5020)=5564
+  calc   = 5564  == expected 5564
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(5564)=5020
+  calc   = 5020  == expected 5020
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(6232)=6368
+  calc   = 6368  == expected 6368
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr aliquot(6368)=6232
+  calc   = 6232  == expected 6232
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+# --- sigma equality (σ(a)=σ(b)=a+b) ---
+verify --expr sigma(1184)=2394
+  calc   = 2394  == expected 2394
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(1210)=2394
+  calc   = 2394  == expected 2394
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(2620)=5544
+  calc   = 5544  == expected 5544
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(2924)=5544
+  calc   = 5544  == expected 5544
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(5020)=10584
+  calc   = 10584  == expected 10584
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(5564)=10584
+  calc   = 10584  == expected 10584
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(6232)=12600
+  calc   = 12600  == expected 12600
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(6368)=12600
+  calc   = 12600  == expected 12600
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 atoms):
+##   (1184,1210): σ=2394=1184+1210 ✓; s(1184)=2394−1184=1210 ✓, s(1210)=2394−1210=1184 ✓
+##   (2620,2924): σ=5544=2620+2924 ✓; s(2620)=5544−2620=2924 ✓, s(2924)=5544−2924=2620 ✓
+##   (5020,5564): σ=10584=5020+5564 ✓; s(5020)=10584−5020=5564 ✓, s(5564)=10584−5564=5020 ✓
+##   (6232,6368): σ=12600=6232+6368 ✓; s(6232)=12600−6232=6368 ✓, s(6368)=12600−6368=6232 ✓
+## VERDICT: all 4 amicable pairs CONFIRMED. 16 atoms 🔵; composites elementary. aliquot 2-cycle ×4.
