@@ -1,0 +1,46 @@
+// ════════════════════════════════════════════════════════════════════════
+// CORE/DECODER/moe_prescription.hexa — 더블바인드 escape 처방 guard (3-조건)
+//
+// 세션 종합 발견 (2026-05-28): DECODER register-collapse ↔ underfit 더블바인드를
+// 깨는 처방은 *3 조건 동시 충족*. 어느 하나라도 빠지면 collapse/underfit 재발.
+//
+//   1. HARD top-1 router  — soft(🟠 gate 0.5/0.5 dense-collapse) 가 아닌 top-1.
+//                           M4b toy: soft 분화X vs hard 0.97/0.03 분화O (H_490 escape).
+//   2. BALANCED corpus    — TTR ≥ 0.30. D3(#1269) collapse 원인 = corpus skew ·
+//                           E2(#1279) balanced corpus = collapse 방지 5/5 🟢.
+//   3. adequate n_steps   — ≥ 200. Phase 5b 의 20 step = under-trained (oscillation).
+//
+// 이 셋은 AND-gate — 곱(*)으로 결합. 하나라도 0 이면 처방 미충족.
+//
+// 설계 계약: training-config guard (anima emit gate 아님 · F-EMIT-4 범위 밖).
+// 반환은 실수. 숫자 floor 는 tunable (substrate-claim 없는 design-convention).
+// 관련: moe_collapse_gate.hexa (사후 LZ76 verdict) — 본 모듈은 사전 config guard.
+// ════════════════════════════════════════════════════════════════════════
+
+// adequate n_steps floor (Phase 5b 20step under-train 회피).
+pub fn moe_prescription_n_steps_floor() -> float { return 200.0 }
+
+// balanced corpus TTR floor (collapse-prone TTR 0.03 회피 · D3/E2).
+pub fn moe_prescription_ttr_floor() -> float { return 0.30 }
+
+// 3-조건 더블바인드 escape 처방 AND-gate.
+// is_hard_top1: 1.0 if HARD top-1 router (soft=0.0) · corpus_ttr: corpus TTR ·
+// n_steps: 학습 step 수. 반환 1.0 = 3 조건 모두 충족 (escape) · 0.0 = 미충족.
+pub fn moe_prescription_ok(is_hard_top1: float, corpus_ttr: float, n_steps: float) -> float {
+    let hard  = if is_hard_top1 >= 0.5 { 1.0 } else { 0.0 }
+    let bal   = if corpus_ttr >= moe_prescription_ttr_floor() { 1.0 } else { 0.0 }
+    let steps = if n_steps >= moe_prescription_n_steps_floor() { 1.0 } else { 0.0 }
+    return hard * bal * steps
+}
+
+// 미충족 시 어느 조건이 빠졌는지 진단 (1=hard 누락 · 2=corpus · 3=steps · 0=충족).
+pub fn moe_prescription_missing(is_hard_top1: float, corpus_ttr: float, n_steps: float) -> int {
+    if is_hard_top1 < 0.5 { return 1 }
+    if corpus_ttr < moe_prescription_ttr_floor() { return 2 }
+    if n_steps < moe_prescription_n_steps_floor() { return 3 }
+    return 0
+}
+
+pub fn moe_prescription_summary() -> string {
+    return "더블바인드 escape 처방 (3-조건 AND): HARD top-1 ∧ corpus TTR≥0.30 ∧ n_steps≥200. M4b toy(hard 분화) + D3/E2(corpus) + Phase 5b(under-train) 종합 확정. config guard (emit gate 아님)."
+}
