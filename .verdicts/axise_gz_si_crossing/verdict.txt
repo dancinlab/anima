@@ -1,0 +1,43 @@
+H_axise_gz_si_crossing — SI=3 savant threshold crossing inside the GZ band
+verdict: 🟢 SUPPORTED-NUMERICAL (F1∧F2∧F3∧F4)
+run surface: pool on ubu-2 (Linux) — cd ~/core/anima && hexa run /tmp/probe_gz_si_crossing.hexa
+cross-checked: mac-local byte-identical
+date: 2026-05-29  cost: $0
+
+VERBATIM stdout (ubu-2):
+════════════════════════════════════════════════════════════
+H_axise_gz_si_crossing — where SI=3 crosses inside the GZ band
+  substrate: HEXAD/SAVANT/savant_phi.hexa (SSOT) — 4-domain d=6
+  SI=max/min(domain_phi) ; threshold=3 ; mean over 3 seeds
+  GZ_LOWER=0.21232  GZ_CENTER=0.36788(1/e)  GZ_UPPER=0.5
+════════════════════════════════════════════════════════════
+── mean-SI(I) fine sweep ──
+  I=0.21232  mean_SI=4.55275
+  I=0.25  mean_SI=4.12285
+  I=0.28  mean_SI=3.83506
+  I=0.3  mean_SI=3.66439
+  I=0.32  mean_SI=3.50791
+  I=0.34  mean_SI=3.36371
+  I=0.36788  mean_SI=3.1802
+  I=0.4  mean_SI=2.98994
+  I=0.45  mean_SI=2.72937
+  I=0.5  mean_SI=2.5017
+── crossing ──
+  crossing found = true
+  I* (SI=3)      = 0.398302
+  GZ_CENTER 1/e  = 0.36788
+  |I* - 1/e|     = 0.0304218   (F2 needs <= 0.05)
+── falsifiers ──
+  F1 INSIDE-BAND (GZ_LOWER < I* < GZ_UPPER)  = true
+  F2 NEAR-CENTER (|I*-1/e| <= 0.05)          = true
+  F3 MONO-SWEEP  (mean-SI strictly dec.)     = true
+  F4 DETERMINISM (byte-identical)            = true
+  VERDICT = SUPPORTED
+════════════════════════════════════════════════════════════
+
+note: I* = 0.398302 is just past GZ_CENTER=1/e (0.36788) on the high side
+(|Δ| = 0.0304 < 0.05 tol, 39% margin). mean-SI(1/e) = 3.1802 is still > 3, so
+the actual SI=3 crossing sits between the 1/e grid point and I=0.40. The
+crossing is INSIDE the band and within tolerance of GZ_CENTER, but honestly
+GZ_CENTER itself is ~0.18 above threshold — the band midpoint is near, not
+exactly on, the SI=3 transition.

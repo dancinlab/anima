@@ -1,0 +1,39 @@
+H_axise_gz_band_si — Golden Zone as a bounded Savant-Index band
+verdict: 🟢 SUPPORTED-NUMERICAL (F1∧F2∧F3∧F4)
+run surface: pool on ubu-2 (Linux) — cd ~/core/anima && hexa run /tmp/probe_gz_band_si.hexa
+cross-checked: mac-local byte-identical (cross-architecture determinism)
+date: 2026-05-29  cost: $0
+
+VERBATIM stdout (ubu-2):
+════════════════════════════════════════════════════════════
+H_axise_gz_band_si — Golden Zone as a bounded Savant-Index band
+  substrate: HEXAD/SAVANT/savant_phi.hexa (SSOT) — 4-domain d=6
+  SI = max(domain_phi)/min(domain_phi) ; threshold SI>3 (H_348)
+  GZ_LOWER=0.21232  GZ_CENTER=0.36788(1/e)  GZ_UPPER=0.5
+  mapping: gain_focus = 1 + (1-I)*9 ; gain_rest = (11.5-gf)/3 (H_348)
+════════════════════════════════════════════════════════════
+── per-seed SI at GZ landmarks ──
+  seed=42424  SI(LOWER)=4.22722  SI(CENTER)=2.94439  SI(UPPER)=2.30784
+  seed=91919  SI(LOWER)=4.17961  SI(CENTER)=2.95863  SI(UPPER)=2.34558
+  seed=77777  SI(LOWER)=5.25142  SI(CENTER)=3.63758  SI(UPPER)=2.85169
+── aggregates ──
+  mean SI(LOWER)  = 4.55275
+  mean SI(CENTER) = 3.1802
+  mean SI(UPPER)  = 2.5017
+  min  SI(LOWER)  = 4.17961   (F1 needs > 3)
+  max  SI(UPPER)  = 2.85169   (F2 needs < 3)
+── falsifiers ──
+  F1 LOWER-ABOVE (min SI@LOWER > 3)  = true
+  F2 UPPER-BELOW (max SI@UPPER < 3)  = true
+  F3 MONO-ORDER  (L>C>U all seeds)   = true
+  F4 DETERMINISM (byte-identical)    = true
+  VERDICT = SUPPORTED
+════════════════════════════════════════════════════════════
+
+cross-validation note: per-seed SI(LOWER) {4.22722, 4.17961, 5.25142} and
+SI(CENTER) {2.94439, 2.95863, 3.63758} are byte-identical to H_348 §4.1
+verbatim (GZ_LOWER + GZ_CENTER rows, seeds 42424/91919/77777) — confirms the
+in-file replicated savant_phi primitives match the H_348/H_350/H_613 lineage.
+New finding = the GZ_UPPER=0.5 SI column {2.30784, 2.34558, 2.85169}, never
+previously measured as a falsifiable cell, all < 3 → the Golden Zone is a
+SI-bounded band (savant above GZ_LOWER, sub-savant at GZ_UPPER).
