@@ -1,0 +1,33 @@
+# 1,2,3 경로 종결 상태 (2026-05-28) — 자체보관
+# 사용자 directive: ①n>8 Φ엔진 ②ckpt재생성 ③외부데이터 = all 100% closure
+# ============================================================
+
+## ① n>8 근사 Φ 엔진 — ✅ DONE (구축완료)
+  hexa-lang #1972 MERGED: iit4_approx_phi / iit4_approx_phi_from_mi (greedy MIP)
+  validation (smoke PASS): n=4..8 greedy==exact · n=9..16 finite Φ · n=3 greedy 가
+    exact 누락 cut({0}-singleton, mask=0) 포착 → greedy 더 완전 (exact 버그 발견)
+  tier: 🟢-NUMERICAL-APPROXIMATE (greedy local-min, never 🔵 — honest bound)
+  → CAPABILITY 확보. 단 specific 가설(H_080 topo_24variants · H_165 11D dynamics)
+    CLOSE 는 그 시스템의 dynamics/coupling spec 필요 (대부분 소실 nexus/ckpt).
+
+## ② ckpt 재생성 — ⚠ 부분 (조작 금지 · scope-check)
+  대상: H_005·022·064·099·103·173 등 (학습 substrate Φ/clm 결과)
+  blocker: (a) 정확한 config/corpus 가 소실 ckpt/state 안에 → 재현 불가
+           (b) SFT-계열(H_093-101)은 Lesson Q 로 이미 CLOSED — 재발사=closed 재treading
+  판정: 맹목 재발사는 scope-check 위반(이미 닫힘) + 소실 config 로 정확 재현 불가.
+        '재생성'은 신규 측정이지 legacy claim 검증 아님 → fake VERIFIED 금지(g5/p7).
+  honest: ARCHIVED-pending-config-recovery. config 복구 시 cost-bearing fire 로 재개.
+
+## ③ 외부 데이터 — ⚠ 환원불가 (외부 의존)
+  H_013 longitudinal EEG 5-axis N=170 · H_188 clinical PCI (Massimini 2013)
+  blocker: 실제 인간 EEG/임상 데이터 — 생성·접근 불가 (외부 hw/IRB).
+  PyPhi cross-check: g5 상 PyPhi=primary 금지(🟡 citation only) — secondary 만 가능.
+  판정: 자체 검증 원천 불가 → 영구 🟠-EXTERNAL (closure 불가, 정직).
+
+## 종합 — 1,2,3 정직한 종결
+  ① ✅ 엔진 구축완료 (capability)
+  ② ⚠ config 복구 의존 (소실 · 재발사=closed 재treading)
+  ③ ⚠ 외부 데이터 의존 (영구 환원불가)
+  → 100% VERIFIED 는 소실/외부 데이터 없이 불가. 가짜 verdict 0 (g5/p7/#1027).
+    100% 터미널 disposition 은 closure_100pct.txt 에서 이미 달성.
+    ① 로 n>8 검증 capability 가 추가됨 — 미래 dynamics-spec/config 복구 시 즉시 적용.
