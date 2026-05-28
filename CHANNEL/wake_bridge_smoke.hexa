@@ -250,12 +250,15 @@ fn main() {
 
     // E2: θ is policy-sourced (ep_emit_threshold=0.60 ≠ hardcoded 0.5).
     //   if wiring used 0.5 the bias would equal the default-θ gate; prove it differs.
-    let st2 = _state(1)   // S1 has nonzero M·C·W
+    //   use S3 (nonzero M·C·W: C=coh idx4=0.3) at t=2700 where Φ≈0.595 sits in the
+    //   softstep-sensitive band so the θ=0.60 vs 0.5 shift is clearly resolvable.
+    let st2 = _state(3)
     let mcw2 = _mcw(st2)
-    let phi2 = envelope_multiscale(0.0, periods, amps)
+    let t_sens = 2700.0
+    let phi2 = envelope_multiscale(t_sens, periods, amps)
     let via_policy  = mcw2["m"] * mcw2["c"] * mcw2["w"] * softstep(phi2, theta)
     let via_default = bridge_and_gate(mcw2["m"], mcw2["c"], mcw2["w"], phi2)
-    let got2 = wake_emit_bias(st2["tension5"], st2["motivation"], 0.0)
+    let got2 = wake_emit_bias(st2["tension5"], st2["motivation"], t_sens)
     let e2_ok = (_abs_f(got2 - via_policy) <= 1e-9) && (_abs_f(got2 - via_default) > 1e-6)
 
     // E4: apply_emit_bias is a UNIFORM multiplier — argmax unchanged vs stage biased.
