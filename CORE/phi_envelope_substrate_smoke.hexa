@@ -164,5 +164,27 @@ fn main() {
         npass = npass + 1
     }
 
+    // H_670 🟡 edge-of-chaos Φ-peak (inverse-U): order(die-out floor) < edge(peak) > chaos(decline).
+    //   edge≈0.6 skew · ECA+logistic 동형 (Langton 확증) · 🟡 PARTIAL (Kuramoto floor caveat).
+    let pk_order = pe_edge_of_chaos_peak(0.0)   // order = die-out floor
+    let pk_edge  = pe_edge_of_chaos_peak(0.6)   // edge  = Φ peak (skew)
+    let pk_edge2 = pe_edge_of_chaos_peak(0.5)   // edge 근방도 high
+    let pk_chaos = pe_edge_of_chaos_peak(1.0)   // chaos = decline
+    // peak(edge) > peak(order=0.0) — order 가 die-out floor
+    ntotal = ntotal + 1
+    if assert_lt("H670 edge_gt_order (die-out floor)", pk_order, pk_edge) {
+        npass = npass + 1
+    }
+    // peak(edge) > peak(chaos=1.0) — chaos decline
+    ntotal = ntotal + 1
+    if assert_lt("H670 edge_gt_chaos (decline)", pk_chaos, pk_edge) {
+        npass = npass + 1
+    }
+    // inverse-U skew 확인: edge≈0.5 도 high (peak 근방) · order(0)=floor 보다 큼
+    ntotal = ntotal + 1
+    if assert_lt("H670 inverse_U_skew (edge≈0.5 > floor)", pk_order, pk_edge2) {
+        npass = npass + 1
+    }
+
     print("=== " + str(npass) + "/" + str(ntotal) + " PASS ===")
 }
