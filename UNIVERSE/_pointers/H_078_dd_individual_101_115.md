@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_078
 slug: dd-individual-101-115-cluster
 title: DD101-DD115 mid 가설 batch (telescope/laws/snn/decoder)

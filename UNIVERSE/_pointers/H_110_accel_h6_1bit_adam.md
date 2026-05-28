@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_110
 slug: accel-h6-1bit-adam-vram-winner
 title: H6 1-bit Adam (★ VRAM WINNER, enables larger batch)

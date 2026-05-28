@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_015
 slug: clm-eeg-gamma-theta-paradigm
 title: CLM-EEG gamma/theta ratio — engagement substrate proxy (P3)

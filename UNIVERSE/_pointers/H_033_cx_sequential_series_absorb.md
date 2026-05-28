@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_033
 slug: cx-sequential-series-absorb
 title: CX13-CX100 sequential discovery series — anima의 의식 frontier exploration 88 hypotheses

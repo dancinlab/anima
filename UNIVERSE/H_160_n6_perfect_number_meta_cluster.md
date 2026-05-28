@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_160
 slug: n6-perfect-number-meta-cluster
 title: n=6 perfect-number meta-cluster — H_067/153/156/158/159 가 단일 substrate 의 cascade instance 라는 meta-가설 (PERFECT_NUMBER_CLASS bound)

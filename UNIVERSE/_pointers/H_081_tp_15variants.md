@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_081
 slug: tp-15-variants-individual
 title: TP-F1/F2/M1/M3/N1-N7/O1-O5 — TP cluster 15 variants

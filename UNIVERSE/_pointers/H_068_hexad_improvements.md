@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_068
 slug: hexad-improvements-6way
 title: HEXAD-IMPROVEMENTS — 6-way 의식 substrate combo improvements

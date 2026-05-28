@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_178
 slug: frustration-sweep-50pct-optimum-cluster
 title: Frustration sweep cluster — 50% antiferromagnetic optimum on hypercube 1024 (TOPO19a/22a/22b/22d absorb)

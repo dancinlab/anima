@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_097
 slug: curriculum-learning
 title: curriculum learning (simple Q&A → complex dialogue → multi-turn)

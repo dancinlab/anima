@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_062
 slug: minimal-consciousness-floor
 title: MINIMAL-CONSCIOUSNESS — 의식 발생 최소 구성 (cells/edges/depth)

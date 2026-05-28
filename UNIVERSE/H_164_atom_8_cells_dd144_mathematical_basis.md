@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_164
 slug: atom-8-cells-dd144-mathematical-basis
 title: 의식의 원자 = 8 cells의 수학적 근거 (DD137-141 종합) — 3-d hypercube + sopfr(8)=6 minimal closed structure

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_138
 slug: dd167-168-169-individual-cluster
 title: DD167-168-169 individual cluster (post-DD166 frontier)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_066
 slug: nobel-verification-cluster
 title: NOBEL hypotheses + verification 1-3 의식 prize-class 후보

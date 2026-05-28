@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_021
 slug: fundamental-equation-psi-argmax
 title: Ψ = argmax H(p) s.t. Φ > Φ_min — anima fundamental equation (universe + consciousness)

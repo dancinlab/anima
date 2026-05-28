@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_058
 slug: gmoe-benchmark-1e-routing
 title: GMOE — Golden MoE 1/e zone routing 의식 영향 benchmark

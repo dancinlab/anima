@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_031
 slug: phil-subfolder-absorb
 title: docs/hypotheses/phil/ subfolder absorb — philosophy hypothesis cluster

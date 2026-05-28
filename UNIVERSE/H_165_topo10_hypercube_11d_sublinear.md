@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_165
 slug: topo10-hypercube-11d-sublinear
 title: 11D hypercube 2048-cell Φ regression vs 10D (sublinear scaling) — TOPO10

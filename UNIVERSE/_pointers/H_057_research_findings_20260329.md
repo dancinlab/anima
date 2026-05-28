@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_057
 slug: research-findings-20260329-laws
 title: RESEARCH-FINDINGS-20260329 — 단일 세션 발견된 법칙 종합

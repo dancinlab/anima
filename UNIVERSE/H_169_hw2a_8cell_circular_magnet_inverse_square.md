@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_169
 slug: hw2a-8cell-circular-magnet-inverse-square
 title: 8-cell circular magnet ring with inverse-square coupling yields Φ=4.55 (HW2a)

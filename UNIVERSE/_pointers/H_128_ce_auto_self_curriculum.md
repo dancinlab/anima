@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_128
 slug: ce-auto-self-curriculum
 title: CE/AUTO-1 Self-Curriculum (consensus-ordered easy-first learning)

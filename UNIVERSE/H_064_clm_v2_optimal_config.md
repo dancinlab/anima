@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_064
 slug: clm-v2-optimal-config-sweep
 title: CLM-V2 OPTIMAL-CONFIG — clm v2 sweep 최적 hyper-config

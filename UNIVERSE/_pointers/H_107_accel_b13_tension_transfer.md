@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_107
 slug: accel-b13-tension-transfer-catalytic
 title: B13 Tension Transfer (★★ CATALYTIC, 139.1% Φ student>teacher)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_144
 slug: nexus-auto-insights-individual
 title: NEXUS-auto-insights — auto-generated insight artifact

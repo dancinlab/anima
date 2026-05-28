@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_095
 slug: dpo-rlhf-preference-learning
 title: DPO/RLHF preference learning (SFT 후 preference pair alignment)

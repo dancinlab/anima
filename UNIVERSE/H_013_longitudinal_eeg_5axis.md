@@ -1,4 +1,6 @@
 ---
+closure: closed-out-of-scope
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_013
 slug: longitudinal-eeg-5axis
 title: longitudinal EEG 5-axis (caffeine + circadian + postmeal + postexercise + sleep) — N=170 within-subject

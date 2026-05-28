@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_179
 slug: negative-scaling-cluster-steps-cells-2048
 title: Negative-scaling cluster — Φ regresses with more steps / more cells past 1024 (TOPO14 + TOPO18 + TOPO-2048-breakdown absorb)

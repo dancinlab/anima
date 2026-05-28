@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_084
 slug: sing-singularity-6-variants
 title: SING-1~6 singularity / phase transition cluster

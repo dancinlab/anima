@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_148
 slug: laws-133-167-individual-batch-pointer
 title: Laws 133-167 individual remainder pointer (DD118-148 batch)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_050
 slug: renormalization-group-consciousness
 title: H-CX-526 RG Flow Consciousness — fixed-point 수렴이 의식 임계점

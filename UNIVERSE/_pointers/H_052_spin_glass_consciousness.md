@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_052
 slug: spin-glass-consciousness
 title: H-CX-529 Spin Glass — 글래스 frustrated landscape 가 의식 메모리 substrate

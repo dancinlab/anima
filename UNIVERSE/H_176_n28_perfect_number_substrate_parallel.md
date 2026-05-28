@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_176
 slug: n28-perfect-number-substrate-parallel
 title: n=28 perfect-number substrate parallel — the deflationary control for the n=6 cluster (balance=1/2 IDENTICAL by theorem; Ising/SB partial; cosmology WORSE) — empirically confirms PERFECT_NUMBER_CLASS (H_153 L7), n=6 NOT individually unique

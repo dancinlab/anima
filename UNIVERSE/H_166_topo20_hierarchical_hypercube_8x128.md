@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_166
 slug: topo20-hierarchical-hypercube-8x128
 title: 8 clusters × 128-cell 7D hypercubes with sparse inter-cluster shortcuts — TOPO20 hierarchical

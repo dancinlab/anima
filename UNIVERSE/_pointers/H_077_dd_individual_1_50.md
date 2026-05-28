@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_077
 slug: dd-individual-1-50-cluster
 title: DD1-DD50 initial 가설 batch (early sequential)

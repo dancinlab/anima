@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_135
 slug: dd166-nexus-1013-lens-discovery-engine
 title: DD166 — NEXUS 1013-lens discovery engine (telescope-rs 22 → NEXUS-6)

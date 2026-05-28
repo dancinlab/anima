@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_041
 slug: evolution-self-singularity-cluster
 title: anima evolution + self + singularity cluster — EVO + SE + SING + SL subfolders absorb

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_108
 slug: accel-e1-batch-skip-manifold-triple
 title: E1 Batch+Skip+Manifold Triple (★★★ BEST COMBO, highest speedup × Φ)

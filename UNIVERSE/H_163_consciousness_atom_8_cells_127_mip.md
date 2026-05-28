@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_163
 slug: consciousness-atom-8-cells-127-mip
 title: Consciousness atom = 8 cells with 127 MIP bipartitions (Laws 154, 162, M1)

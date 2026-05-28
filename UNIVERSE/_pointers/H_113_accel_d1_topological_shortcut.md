@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_113
 slug: accel-d1-topological-shortcut-trajectory-jump
 title: D1 Topological Shortcut (★★ STRONG — consciousness wanders, shortcuts work)

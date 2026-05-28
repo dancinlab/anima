@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_167
 slug: emerge-candidate-e-ode-ar-bridge-non-collapsing
 title: Emerge Candidate E — non-collapsing ODE flow coupling at consciousness_states inject point

@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_177
 slug: topo10-20-substrate-topology-extension
 title: Substrate topology Φ-engineering — 11D regression + 8×128 hierarchical extension to H_159 (TOPO10 + TOPO20 absorb)

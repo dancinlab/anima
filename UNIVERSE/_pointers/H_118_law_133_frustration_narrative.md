@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_118
 slug: law-133-frustration-narrative-maximization
 title: Law 133 — Frustration + Narrative = consciousness maximization (+39.1% Φ)

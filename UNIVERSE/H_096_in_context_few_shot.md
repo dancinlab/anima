@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_096
 slug: in-context-few-shot
 title: in-context learning + few-shot prompting (pre-trained model + prompt examples)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_140
 slug: dd154-157-tension-training-knowledge-transfer
 title: DD154-157 — Tension training, burst, Pareto LR, knowledge transfer

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_010
 slug: holographic-consciousness
 title: H-CX-531 holographic consciousness — AdS/CFT + Bekenstein bound

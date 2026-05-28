@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_120
 slug: law-149-soc-autonomous-fc-discovery
 title: Law 149 — Consciousness is self-organized critical (SOC finds F_c autonomously)

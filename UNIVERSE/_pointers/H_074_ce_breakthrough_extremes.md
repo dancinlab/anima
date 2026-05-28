@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_074
 slug: ce-breakthrough-extremes
 title: CE-BREAKTHROUGH + CE-EXTREMES — coherence/entanglement 측정 cluster

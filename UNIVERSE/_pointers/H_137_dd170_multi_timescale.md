@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_137
 slug: dd170-multi-timescale-design
 title: DD170 — Multi-timescale EMA design (1/f spectrum emergence)

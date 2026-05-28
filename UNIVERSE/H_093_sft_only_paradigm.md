@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_093
 slug: sft-only-paradigm
 title: SFT-only paradigm (pre-training X, chat-format SFT data only) for prompt-conditional response

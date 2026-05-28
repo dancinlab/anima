@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_115
 slug: accel-g1-consciousness-big-bang-init
 title: G1 Consciousness Big Bang (★★ BEST INIT — singularity bootstrap)

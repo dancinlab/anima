@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_009
 slug: fisher-information-consciousness
 title: H-CX-530 Fisher information consciousness — FIM as Φ proxy

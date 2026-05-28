@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_134
 slug: dd162-animalm-7b-purefield-16lens-baseline
 title: DD162 — AnimaLM 7B PureField 16-lens baseline (acceleration verification anchor)

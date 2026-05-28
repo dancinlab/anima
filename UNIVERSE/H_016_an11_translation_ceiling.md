@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_016
 slug: an11-v2-finetune-translation-ceiling
 title: AN11 v2 finetune translation ceiling — language-specific upper bound

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_075
 slug: dd-individual-120-180-cluster
 title: DD120-DD180 individual 가설 군 (wave4-7 + tension/dream/quantum/atom/fermat)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_133
 slug: dd158-sleep-dream-phi-preservation
 title: DD158 — Sleep/Dream cycle preserves Φ (wake/dream alternation > wake-only)

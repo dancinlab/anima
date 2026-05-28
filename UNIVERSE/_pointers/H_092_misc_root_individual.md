@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_092
 slug: misc-root-individual-uncategorized
 title: misc root files — A-Z overview + AL + extended-cat + NEXUS-auto + NOISE/WAVE + UPGRADE + BENCH + DEEP-EXPLORATION + REVERSE-ENGINEERING

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_151
 slug: ce-remaining-19-files-pointer
 title: ce/ subfolder remainder 19 files (AUTO-2/3/5/7/9 + CE-2/3/7/10 + COMBO-2 + EX-2/3/4/5 + ULTRA-2/3/4/5/6)

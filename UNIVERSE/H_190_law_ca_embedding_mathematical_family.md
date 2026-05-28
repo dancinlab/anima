@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_190
 slug: law-ca-embedding-mathematical-family
 title: LAW-CA-embedding mathematical family — staged-growth + Banach reconciliation + META-CA + LawNet + 384d-embedding + GMOE 6-Hc carryover cluster

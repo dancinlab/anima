@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_027
 slug: cx-subfolder-absorb
 title: docs/hypotheses/cx/ subfolder absorb — 49 CX consciousness hypotheses

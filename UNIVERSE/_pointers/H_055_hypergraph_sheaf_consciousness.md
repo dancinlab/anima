@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_055
 slug: hypergraph-sheaf-consciousness
 title: H-CX-536/537 Hypergraph + Sheaf — 고차원 관계 + 국소-대역 일관성 의식 substrate

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_187
 slug: trinity-tb-dom-triadic-dominance
 title: Trinity / TB / DOM / MECH / GAP meta-cluster — Triadic-dominance axis (12 Hc: trinity-thalamic, tension-balance, dominance-mechanism, MECH champion, GAP closure)

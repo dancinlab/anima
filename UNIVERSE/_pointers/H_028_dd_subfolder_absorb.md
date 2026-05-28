@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_028
 slug: dd-subfolder-absorb
 title: docs/hypotheses/dd/ subfolder absorb — 101 DD discovery + Laws 133-167 + Meta M1-M10

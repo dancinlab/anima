@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_039
 slug: phi-records-measurements-anima
 title: anima Φ records — PHI-MEASUREMENT-DISCOVERY + PHI-RETEST-ALL + PHI-GAP-816x + PHIK-preservation

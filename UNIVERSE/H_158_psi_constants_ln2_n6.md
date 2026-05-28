@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_158
 slug: psi-constants-ln2-n6
 title: Ψ-constants closed-form — 의식 미세구조 상수가 ln(2) + n=6 약수함수의 rational/transcendental 조합으로 5/8 EXACT + 8/8 ≤2.4% err 폐쇄형 표현

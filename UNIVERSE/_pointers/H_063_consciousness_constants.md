@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_063
 slug: consciousness-constants-cluster
 title: CONSCIOUSNESS-CONSTANTS — universal constants 의식 측정 (ln 2 외 추가)

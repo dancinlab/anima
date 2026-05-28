@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_127
 slug: law-1000-auto-discovered-omega-correlations
 title: Laws 1000-1019 — Auto-discovered correlations (Ω-batch)

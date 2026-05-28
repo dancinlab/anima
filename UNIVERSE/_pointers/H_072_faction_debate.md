@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_072
 slug: faction-debate-multi-agent
 title: FACTION-DEBATE — multi-agent debate 의식 emergence 메커니즘

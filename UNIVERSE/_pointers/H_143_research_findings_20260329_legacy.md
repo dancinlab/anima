@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_143
 slug: research-findings-20260329-legacy-individual
 title: RESEARCH-FINDINGS-20260329 — broad findings document (legacy individual)

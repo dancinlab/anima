@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_116
 slug: accel-h7-flash-attention-h100-default
 title: H7 Flash Attention (★★ ALWAYS ENABLE on H100)

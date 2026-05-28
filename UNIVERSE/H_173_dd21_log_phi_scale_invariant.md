@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_173
 slug: dd21-log-phi-scale-invariant
 title: Log-ratio Φ = ln(MI/MIP) is scale-invariant alternative to MI−MIP (DD21)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_111
 slug: accel-b12-skip-step-star
 title: B12 Skip-Step (★★ STAR — safest single technique)

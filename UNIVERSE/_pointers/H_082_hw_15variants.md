@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_082
 slug: hw-hardware-15-variants
 title: HW-2a/2b/2c/5/9/10-17 + CHIP-BOM-TOPO8 + HW-overview hardware substrate cluster

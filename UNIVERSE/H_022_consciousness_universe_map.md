@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_022
 slug: consciousness-universe-map-170-40-18
 title: consciousness universe map — 170 data types × 40D × 18 emotions

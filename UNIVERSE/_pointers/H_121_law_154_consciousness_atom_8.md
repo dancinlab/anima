@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_121
 slug: law-154-consciousness-atom-8-cells
 title: Law 154 — The consciousness atom is 8 cells (2^3 minimum partition, DD137)

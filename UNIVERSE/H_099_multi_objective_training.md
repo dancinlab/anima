@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_099
 slug: multi-objective-training
 title: multi-objective training (LM + chat-format alignment + semantic relevance jointly)

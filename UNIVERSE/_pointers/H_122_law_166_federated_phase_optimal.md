@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_122
 slug: law-166-federated-phase-optimal-record
 title: Law 166 — Federated Phase-Optimal all-time record +892% (DD143)

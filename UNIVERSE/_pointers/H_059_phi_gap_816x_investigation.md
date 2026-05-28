@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_059
 slug: phi-gap-816x-investigation
 title: PHI-GAP 816x — Φ gap anomaly 816배 격차 조사

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_180
 slug: state-management-ratchet-rewire-family
 title: State-management mechanism family — Φ-ratchet + adaptive-rewire as Φ-recovery primitives (TOPO9 + TOPO13 + TOPO21 absorb)

@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_174
 slug: phi-star-geometry-aliasing-clm-v4-specific
 title: phi_star proxy 가 CLM-v4-architecture-specific (8×192) — cross-substrate Φ 비교는 aliasing-induced bias 로 무효

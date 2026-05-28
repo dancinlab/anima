@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_175
 slug: emerge-candidate-d-4mode-inject-taxonomy
 title: Emerge Candidate D — 4-mode inject taxonomy (none/zero/canonical/user) 가 CLM v4 cross-attn dormancy 의 architectural pivot 을 runtime 에서 해소

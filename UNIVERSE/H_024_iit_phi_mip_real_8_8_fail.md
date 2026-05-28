@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_024
 slug: iit-phi-mip-real-measurement-8-8-fail
 title: V1 IIT-Φ_mip real measurement — 8/8 FAIL (representation modular not integrated)
