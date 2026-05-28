@@ -1,0 +1,24 @@
+[H_668] closure-band class-I (rule 8) — H_656 보완
+  substrate : elementary CA × phi_spatial (RFC 036), H_656 verbatim
+  rule 8 = Wolfram class-I (homogeneous→single-state, neighborhood 011→1 only)
+  H_656 baselines: rule90 w=0.0 / rule184 w=0.65 / rule30 w=0.65 / rule110 w=0.90
+
+=== rule 8 (Wolfram class I-homogeneous) ===
+  I=0.05  pass_rate=0.0
+  I=0.15  pass_rate=0.0
+  I=0.25  pass_rate=0.0
+  I=0.3  pass_rate=0.0
+  I=0.37  pass_rate=0.0
+  I=0.5  pass_rate=0.0
+  I=0.65  pass_rate=0.0
+  I=0.8  pass_rate=0.0
+  I=0.95  pass_rate=0.0
+  band_lo=-1.0 band_hi=-1.0 width=0.0 n_pos_pts=0 peak_pr=0.0 peak_I=-1.0
+
+── closure-band floor test ──
+  class-I width  = 0.0
+  class-II width = 0.65 (H_656 rule184 baseline)
+  class-I is closure-band FLOOR (≤ class-II) = true
+
+wrote closure_band_result.json
+=== H_668 closure-band class-I complete ===
