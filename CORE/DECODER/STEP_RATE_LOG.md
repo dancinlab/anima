@@ -346,3 +346,25 @@ clang -O2 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 -DHEXA_CUDA -I self -I /usr/local/cu
 **verify**: `hexa check CORE/DECODER/train_v3_moe_longtrain.hexa` → **0 violations** (lint/parse clean). leak fix 는 source-reasoned + lint-clean — **런타임 재확인(leak=0)은 deferred pod follow-up** (이 라운드는 $0, pod 미대여). 본 진단은 "leak 위치 = AdamW out churn, anima 결백" 까지 확정.
 
 **verdict**: 🔵 **RSS leak ROOT-CAUSED** — anima trainer 결백(per-step 할당 전수 freed), leak = hexa-lang runtime arena 보유 × per-step 233MB AdamW out churn. fix = hexa-lang in-place AdamW builtin (a_runpod_inbox filed). 런타임 leak=0 재확인은 별도 pod follow-up. cf `.discoveries/decoder_collapse_undertrain.tape` `dec_undertrain_steprate_2026_05_29` next-step (b).
+
+---
+
+### 2026-05-29 (9) — GPU 0% 정직한 진단 (CPU-build 당연 vs HEXA_CUDA 잔여 갭) + dec_undertrain arc MEASURED-CLOSED 🔴 종합 · $0 source-read
+
+엔트리 (7) 의 next-step (a)/(c) — GPU 0% 의 원인과 dec_undertrain arc 의 closure 를 **$0 source-read 로 확정** 한 라운드 (pod 미대여).
+
+**(A) GPU 0% 정직한 진단 — 두 겹**:
+1. **#1348 측정의 0% 는 CPU-only build 라 당연 (blocker 아님)**: 엔트리 (7) build line 은 `clang -O2 -I self ... trainer.c self/runtime.c` — **`-DHEXA_CUDA` 없음, cuBLAS 미링크**. 따라서 runtime 의 전 CUDA dispatch(`#ifdef HEXA_CUDA`)가 컴파일 제외되고, `cuda_available()`→0, `flame_mm.mm()` 은 항상 CPU oracle `farr_matmul`. ⇒ 0% 는 그 build mode 의 trivially-correct 결과지 결함이 아니다.
+2. **HEXA_CUDA build 라도 d=64·T=4 에선 GPU 가 거의 안 붙는다 (진짜 잔여 갭)**: (i) `hexa_farr_matmul` 의 GPU dim-gate = `(M*K)>8192 || (K*N)>8192` 일 때만 cuBLAS 라우팅. decoder attention matmul (T=4·d=64 → M*K=256, K*N≈4096)은 **전부 ≤8192** → HEXA_CUDA 여도 CPU ikj 유지 (의도된 byte-eq 보호, 작은 GEMM 은 CPU 가 빠름 — 정상). (ii) decoder 의 **dominant op = expert gemv `[V=151643×d=64]@[d×1]`** 는 `flame_mm.mm_packed_gemv` 가 처리하는데 이건 **CPU-only by design** (flame_mm.hexa line 94-99: "CPU-only path (no cuBLAS dispatch)... no `farr_matmul_offset` variant exists in hexa-lang RFC-040"). packed-M 의 offset 서브블록을 직접 읽으므로 index-0 전용 `farr_matmul_gpu` 로 못 올린다 (올리려면 매 token 9.7M-double `mm_extract` 복사 = #1325 가 제거한 그 churn 부활). ⇒ decoder 의 가장 큰 일이 GPU 0% 의 잔여 원인.
+
+**진짜 GPU-engagement fix 는 hexa-lang-side** = offset-aware cuBLAS gemv (`farr_matmul_offset_gpu`/packed-gemv-gpu), 그래야 `mm_packed_gemv`/`_t` 가 GPU dispatch 로 전환 → V×d expert gemv 가 H100 에 올라감. **anima 측 강제 fix 안 함** (a_runpod_inbox filed, 이번 라운드 hexa-lang INBOX #2006 으로 in-place AdamW 와 함께 제출). honest finding: **#1348 의 0% 는 CPU-build 산물(expected) + d=64 offset-gemv 부재(hexa-lang 잔여 갭) 의 합**, anima 결함 아님.
+
+**(B) dec_undertrain arc = MEASURED-CLOSED 🔴 INFEASIBLE (종합)**: 4-lever 전수 반증 + binding-lever 측정 = **하나의 완결된 closed-negative**:
+- **ruled-out (toy + fire 정합)**: corpus-diversity(#1296) · routing/aux(Pod C + #1315 A~B) · head-rank(`dec_capfloor` + #1315 d 64→256 no-escape) · expert-count E(#1327 E-axis, toy 16/16 escape·E-orthogonal).
+- **binding lever = step/data budget(`dec_undertrain`)**: toy 처방 "tens×V presentations". 엔트리 (7) 첫 실측 **0.50 step/s (CPU, V=151643, 29M params)** → 50×V = 1.90M steps @ 1.99s/step = **~44 GPU-days**, 단일 full-corpus 1-epoch 도 ~6.7 GPU-days (CPU). **+ entry (8) 의 per-step 233MB AdamW-out arena leak(~0.5GB/step) 이 rate 와 무관하게 long run 을 OOM** 시킴.
+- **closure verdict**: dec_undertrain production-scale = **🔴 MEASURED-INFEASIBLE** (a_paper_negative_ok). toy tetrad(D1/D3/E2/D4) + E-axis + M5 0.5 step/s 실측 = 4-lever 반증 + binding-lever-ceiling 측정의 완결. 측정 파이프라인(transpile #1984 + bootstrap-seed #1992)은 완전 통과했으므로 "unverifiable" 가 아니라 **measured-and-closed** — CPU 0.5 step/s × 44 GPU-days × leak-OOM 가 정량 ceiling.
+- **진짜 frontier (다른 아키텍처)**: M4 MoE-fresh register-separation (specialized-expert 격리로 collapse 회피 + register 신호 dedicated expert) — dec_undertrain 과 별개 가설. dec_undertrain 은 닫혔다 (no /paper until 그 frontier 가 별도 closure, a_paper_only_at_closure).
+
+**verify**: 진단/종합만, 코드 무변경. (`hexa check` 대상 .hexa 미편집.)
+
+**verdict**: GPU 0% = 🔵 정직히 진단됨 (CPU-build expected + d=64 offset-gemv 부재 = hexa-lang 잔여 갭, hexa-lang INBOX #2006 filed) · dec_undertrain arc = 🔴 **MEASURED-CLOSED INFEASIBLE** (4-lever 반증 + 0.5 step/s + leak-OOM = 완결된 closed-negative). cf `.discoveries/decoder_collapse_undertrain.tape` `dec_undertrain_arc_measured_closed_2026_05_29`.
