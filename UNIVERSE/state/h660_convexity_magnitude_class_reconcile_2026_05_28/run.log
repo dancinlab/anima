@@ -1,0 +1,42 @@
+================================================================
+  H_660 — convexity-magnitude-class-reconcile (round 9 메타-축)
+  H_653(span-ratio shape 단조) ↔ H_655(abs-Δ magnitude 비단조) 화해
+  scale-invariant 통합 측도가 class-monotone 회복하는가?
+  IIT4 big_phi_bounded · n=5 homog cohort · cap=3 · sys=0
+  4 rules × 6-pt W grid · 4 metric 대조
+================================================================
+  W grid: [0.15, 0.40, 0.55, 0.70, 0.95, 1.0]  (H_653 동일)
+  ─────────────────────────────────────
+  rule184 [II-additive]
+    Φ(W): 4.49492 19.8846 32.7523 45.5429 54.4631 51.5361
+    Φ_min=4.49492 Φ_max=54.4631 Φ_mean=34.779
+    span_ratio=12.1163 abs_Δ=49.9682 norm_conv=1.43674 log_span=2.49455
+  rule90 [III-XOR/additive]
+    Φ(W): 0.246475 0.943149 1.65498 2.75808 6.32388 7.5
+    Φ_min=0.246475 Φ_max=7.5 Φ_mean=3.23776
+    span_ratio=30.4167 abs_Δ=7.25353 norm_conv=2.24029 log_span=3.41499
+  rule30 [III-chaotic]
+    Φ(W): 0.315809 1.18852 2.07721 3.4687 8.13002 9.72067
+    Φ_min=0.315809 Φ_max=9.72067 Φ_mean=4.15016
+    span_ratio=30.7705 abs_Δ=9.40487 norm_conv=2.26615 log_span=3.42656
+  rule110 [IV-complex]
+    Φ(W): 1.17498 4.50052 7.62552 13.6383 34.8823 41.7124
+    Φ_min=1.17498 Φ_max=41.7124 Φ_mean=17.2557
+    span_ratio=35.4975 abs_Δ=40.5374 norm_conv=2.34922 log_span=3.56946
+  ─────────────────────────────────────
+  metric × class (ascending complexity II→III→III→IV):
+    span_ratio (H_653 shape)     : 184=12.1163 90=30.4167 30=30.7705 110=35.4975
+    abs_Δ      (H_655 magnitude) : 184=49.9682 90=7.25353 30=9.40487 110=40.5374
+    norm_conv  (scale-invariant) : 184=1.43674 90=2.24029 30=2.26615 110=2.34922
+    log_span   (scale-invariant) : 184=2.49455 90=3.41499 30=3.42656 110=3.56946
+  ────────────── verdict ──────────────
+  [PASS] F660.1 NORMCONV-MONOTONE: norm_conv(110)>=(30)>=(90)>=(184)
+  [PASS] F660.2 LOGSPAN-MONOTONE: log_span(110)>=(30)>=(90)>=(184)
+  [PASS] F660.3 ABSDELTA-NONMONOTONE: abs_Δ NOT class-monotone (H_655 재현)
+  [PASS] F660.4 SPANRATIO-REPLICATE: span_ratio(110)>=(30)>=(90)>=(184) (H_653 재현)
+  [PASS] F660.5 SCALE-INVARIANCE: norm_conv·log_span invariant under Φ→2Φ
+  [PASS] F660.6 BOUND: Φ ≥ 0, metric finite, Φ_mean > 0
+  ──────────────────────────────────────
+  F660.1-6 6/6 PASS
+  verdict: 🟢 SUPPORTED-NUMERICAL (scale-invariant metric 으로 분기 화해 — shape 단조 회복)
+  reconcile: H_653 span_ratio(110)=35.4975 단조 ↔ H_655 abs_Δ(184)=49.9682 비단조 → norm_conv class-monotone=true
