@@ -33,9 +33,9 @@
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
 use "stdlib/flame/flame_bpe_corpus_lib"
-use "/tmp/wt-longtrain/CORE/DECODER/v3_moe_arch"
-use "/tmp/wt-longtrain/CORE/DECODER/v3_moe_bwd_lib"
-use "/tmp/wt-longtrain/CORE/DECODER/flame_mm"
+use "/tmp/wt-longtrain-fire/CORE/DECODER/v3_moe_arch"
+use "/tmp/wt-longtrain-fire/CORE/DECODER/v3_moe_bwd_lib"
+use "/tmp/wt-longtrain-fire/CORE/DECODER/flame_mm"
 
 // ── LZ76 (Kaspar-Schuster) inline ────────────────────────────────────────
 //   Reused verbatim from CORE/DECODER/d1_lz76_collapse_proxy.hexa per g61
@@ -120,11 +120,16 @@ fn main() {
     let steps_per_epoch = (n_corpus_toks / T) - 1
     let mut epochs = 4000          // default; scaled below to hit target presentations
     let epochs_env = env_var("M4B_EPOCHS")
-    if len(epochs_env) > 0 { epochs = to_int(epochs_env) }
-    // target ≥ 3,000,000 token-presentations (~20× V) regardless of corpus size
+    let mut epochs_explicit = false
+    if len(epochs_env) > 0 { epochs = to_int(epochs_env) ; epochs_explicit = true }
+    // target ≥ 3,000,000 token-presentations (~20× V) regardless of corpus size.
+    // When M4B_EPOCHS is set EXPLICITLY (epoch-budget sweep LO/MID/HI), the env value
+    // is AUTHORITATIVE — the floor is SKIPPED so Pod LO can be a genuine ~1-epoch
+    // under-trained baseline (presentations ≈ 1× corpus, mirrors prior fires). The
+    // floor only applies in the unset/default case (full-budget single fire).
     let target_presentations = 3000000
     let presentations_per_epoch = steps_per_epoch * T
-    if presentations_per_epoch > 0 {
+    if !epochs_explicit && presentations_per_epoch > 0 {
         let need = (target_presentations / presentations_per_epoch) + 1
         if epochs < need { epochs = need }
     }
