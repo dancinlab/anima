@@ -1,0 +1,26 @@
+=== H_669 additive-subclass-phi-split aggregate (phi-free) ===
+ADDITIVE(3): rule90=2.24029 rule150=1.93118 rule60=2.24029   mean_ADD=2.13725 var=0.0212331
+CHAOTIC (3): rule30=2.26615 rule45=1.4608 rule106=2.1531     mean_CHA=1.96002 var=0.126739
+
+var_within_pooled    = 0.0739859
+var_between(2 grp-m) = 0.00785321
+RATIO between/within = 0.106145
+grp_gap |ADD-CHA|    = 0.177237
+intra_std (max grp)  = 0.356004
+
+-- distribution overlap (norm_conv ranges) --
+ADD range [1.93118, 2.24029]
+CHA range [1.4608, 2.26615]
+overlap_len  = 0.30911  (>0 ⇒ 분포 겹침)
+overlap_frac = 0.383821
+additive_is_floor (mean_ADD < mean_CHA) = false
+
+────────── verdict ──────────
+[FAIL] F669.1 CORE between/within var >= 1.0 : 0.106145 < 1.0
+[FAIL] F669.2 grp-gap > intra-std : 0.177237 <= 0.356004
+[FAIL] F669.3 NO-OVERLAP norm_conv 구간 분리 : overlap_len=0.30911 > 0 (겹침)
+[FAIL] F669.4 ADDITIVE-FLOOR mean_ADD < mean_CHA : 2.13725 >= 1.96002
+[FAIL] F669.5 DISTINCT overlap_frac < 0.3 : 0.383821
+[PASS] F669.6 BOUND 全 통계 finite
+F669.1-6 1/6 PASS
+additive_separated_class=false additive_floor_subclass=false
