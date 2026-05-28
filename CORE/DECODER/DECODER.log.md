@@ -151,4 +151,5 @@ Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO time
 - [x] DECODER.md 신규 마일스톤 2개 등록 — M3.5 model-merge α-sweep (H_493 · 학습 fire 0 · cheap-tier) + M4-alt MoE register 분리 (H_490 · 조건부)
 - [ ] M3.5 model-merge α-sweep 실행 — collapse-avoid ckpt + coherent ckpt 보간 + α 별 p7 verify (다음)
 - [ ] 기존 M3b-f 4축 H100 fire ($11-14, 미발사) — merge 실패 시 fallback
+- [x] **M4b longtrain dec_undertrain 프로덕션 fire** (2026-05-28) — 3× H100 epoch sweep (LO=1/MID=12/HI=60 @ d=64 V=151643) 시도. 🟠 UNVERIFIABLE-AT-SCALE: hexa-lang 툴체인 3대 ceiling 핀 (BPE encode O(text×n_merges) · cuBLAS gemv `[V×1]` illegal-D2H · O(V) per-step ~0.26s/step). pod GPU 0% idle-killed, 잔여 과금 0. dec_undertrain = 프로덕션 검증 불가. discovery tape `dec_undertrain_prod_blockers` 추가 + a_runpod_inbox 3건. 결과 = `CORE/DECODER/M4B_LONGTRAIN_RESULT.md`.
 

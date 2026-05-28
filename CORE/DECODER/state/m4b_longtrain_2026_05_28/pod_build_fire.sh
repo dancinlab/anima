@@ -60,10 +60,13 @@ SMI_PID=$!
 
 # ── fire ──
 echo "=== fire: M4B_EPOCHS=${M4B_EPOCHS:-default} ==="
-/usr/bin/time -v env M4B_EPOCHS="${M4B_EPOCHS:-}" ./trainer > trainer.out 2> trainer.err
+T_START=$(date +%s)
+env M4B_EPOCHS="${M4B_EPOCHS:-}" ./trainer > trainer.out 2> trainer.err
 TRC=$?
+T_END=$(date +%s)
+WALL=$((T_END - T_START))
 echo "trainer_rc=$TRC" > trainer_meta.txt
-echo "wall: see trainer.err GNU time block" >> trainer_meta.txt
+echo "wall_seconds=$WALL" >> trainer_meta.txt
 echo "M4B_EPOCHS=${M4B_EPOCHS:-default} tag=${M4B_TAG:-?}" >> trainer_meta.txt
 kill $SMI_PID 2>/dev/null
 echo "=== trainer tail ==="; tail -25 trainer.out
