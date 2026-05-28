@@ -160,6 +160,18 @@ fn phi_part2(rule: int) -> float {
     return r[0]
 }
 
+// argmax over a length-4 Δ array → the corresponding rule id in `rules`.
+fn argmax_rule(d: array, rules: array) -> int {
+    let mut bi = 0
+    let mut bv = d[0]
+    let mut k = 1
+    while k < 4 {
+        if d[k] > bv { bv = d[k]; bi = k }
+        k = k + 1
+    }
+    return rules[bi]
+}
+
 fn main() {
     println("================================================================")
     println("  H_658 — collective-superadditivity-nonzero-baseline (round 9 메타-축)")
@@ -220,19 +232,9 @@ fn main() {
     println("    Δ_c (W=0.5 partial) : 184=" + to_string(d_c[0]) + "  90=" + to_string(d_c[1]) + "  30=" + to_string(d_c[2]) + "  110=" + to_string(d_c[3]))
 
     // argmax rule per baseline (returns RULES[idx])
-    fn argmax_rule(d: array) -> int {
-        let mut bi = 0
-        let mut bv = d[0]
-        let mut k = 1
-        while k < 4 {
-            if d[k] > bv { bv = d[k]; bi = k }
-            k = k + 1
-        }
-        return RULES[bi]
-    }
-    let top_a = argmax_rule(d_a)
-    let top_b = argmax_rule(d_b)
-    let top_c = argmax_rule(d_c)
+    let top_a = argmax_rule(d_a, RULES)
+    let top_b = argmax_rule(d_b, RULES)
+    let top_c = argmax_rule(d_c, RULES)
     println("  ─────────────────────────────────────")
     println("  argmax-Δ (most super-additive) per baseline:")
     println("    (a) W=0      → rule" + str(top_a) + "  (H_655: rule184)")
