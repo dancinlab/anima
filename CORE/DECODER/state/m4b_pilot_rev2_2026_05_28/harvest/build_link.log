@@ -1,0 +1,40 @@
+In file included from trainer.c:2:
+self/runtime.h:422:28: warning: '/*' within block comment [-Wcomment]
+/* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+                       ^
+self/runtime.h:423:36: warning: '/*' within block comment [-Wcomment]
+ * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+                                   ^
+2 warnings generated.
+In file included from glue.c:14:
+self/runtime.h:422:28: warning: '/*' within block comment [-Wcomment]
+/* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+                       ^
+self/runtime.h:423:36: warning: '/*' within block comment [-Wcomment]
+ * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+                                   ^
+2 warnings generated.
+In file included from self/runtime.c:1570:
+self/runtime_core.c:4983:11: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+    char* p = hxlcl_strstr(HX_STR(s), HX_STR(sub));
+          ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+self/runtime_core.c:7270:19: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+            char* close = hxlcl_strchr(src, '}');
+                  ^       ~~~~~~~~~~~~~~~~~~~~~~
+self/runtime_core.c:7359:15: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+        char* found = hxlcl_strstr(pos, d);
+              ^       ~~~~~~~~~~~~~~~~~~~~
+self/runtime_core.c:7415:15: warning: initializing 'char *' with an expression of type 'const char *' discards qualifiers [-Wincompatible-pointer-types-discards-qualifiers]
+        char* found = hxlcl_strstr(pos, HX_STR(old));
+              ^       ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+self/runtime.c:8979:14: warning: implicit declaration of function '_hx_cuda_farr_silu_gate_gpu' is invalid in C99 [-Wimplicit-function-declaration]
+    int rc = _hx_cuda_farr_silu_gate_gpu(a_id, b_id, n, out_id);
+             ^
+In file included from self/runtime.c:12525:
+self/native/term_ffi.c:62:9: warning: '_DEFAULT_SOURCE' macro redefined [-Wmacro-redefined]
+#define _DEFAULT_SOURCE
+        ^
+/usr/include/features.h:236:10: note: previous definition is here
+# define _DEFAULT_SOURCE        1
+         ^
+6 warnings generated.
