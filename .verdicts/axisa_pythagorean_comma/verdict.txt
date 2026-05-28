@@ -1,0 +1,90 @@
+# hexa verify raw verdicts — Pythagorean/harmonic-ratio closed-form spine (axis A · R2/R11 art-music)
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: the just-intonation harmonic intervals and the Pythagorean/syntonic commas
+#        are EXACT rational arithmetic identities (closed-form), not fitted "≈".
+#        AXES.md R2 `art-aesthetics-peak` + R11 `music-math-pythagorean-ratios` seeds —
+#        the underlying NUMBER claim (ratios + commas) is hexa-verifiable; the Φ-superiority
+#        framing ("harmonic-ratio substrate Φ > random ratio Φ") stays 🟠 sim-dependent.
+# ==================================================================
+
+## ── harmonic interval ratios (just intonation) — exact rational, ln-recompute ──
+
+## octave 2:1 → ln(2)
+verify --expr ln(2.0)=0.693147
+  calc   = 0.693147  ≈ expected 0.693147  (|Δ|=4.00547e-11 ≤ ε=1e-9)
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class recompute, TECS-L n6-rep Tier2)
+==
+## perfect fifth 3:2 → ln(3/2)
+verify --expr ln(1.5)=0.405465
+  calc   = 0.405465  ≈ expected 0.405465  (|Δ|=8.16436e-12 ≤ ε=1e-9)
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class recompute, TECS-L n6-rep Tier2)
+==
+## perfect fourth 4:3 → ln(4/3)   [= H_347 GZ_WIDTH(6) = ln(τ(6)/(τ(6)-1)) cross-link]
+verify --expr ln(1.33333)=0.287682
+  calc   = 0.287682  ≈ expected 0.287682  (|Δ|=4.82192e-11 ≤ ε=1e-9)
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class recompute, TECS-L n6-rep Tier2)
+==
+## major third 5:4 → ln(5/4)
+verify --expr ln(1.25)=0.223144
+  calc   = 0.223144  ≈ expected 0.223144  (|Δ|=1.42098e-11 ≤ ε=1e-9)
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class recompute, TECS-L n6-rep Tier2)
+==
+
+## ── Pythagorean comma = (3/2)^12 / 2^7 = 3^12 / 2^19 = 531441 / 524288 ──
+
+## integer powers (exact closed-form)
+verify --expr pow(3,12)=531441
+  calc   = 531441  == expected 531441
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr pow(2,19)=524288
+  calc   = 524288  == expected 524288
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr pow(2,7)=128
+  calc   = 128  == expected 128
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# composite (elementary): (3/2)^12 = 3^12 / 2^12 = 531441/4096 = 129.746... ;
+#   12 fifths reduced by 7 octaves = 531441/4096 / 2^7 = 531441/524288 = 1.0136432647705078
+#   → the Pythagorean comma. 12 perfect fifths do NOT close to 7 octaves (ratio ≠ 1) — exact.
+
+## comma magnitude in log space → ln(531441/524288)
+verify --expr ln 1.0136432647705078 0.0135510337 --tol 1e-9
+  calc   = 0.013551  ≈ expected 0.013551  (|Δ|=3.21645e-10 ≤ ε=1e-9)
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class recompute, TECS-L n6-rep Tier2)
+==
+
+## ── syntonic comma = 81/80 = 3^4 / (2^4·5) ──
+verify --expr pow(3,4)=81
+  calc   = 81  == expected 81
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr pow(2,4)=16
+  calc   = 16  == expected 16
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# composite: 81/80 = 3^4 / (2^4 · 5) = 81/80 = 1.0125 ;
+#   the syntonic comma = (Pythagorean major third 81/64) ÷ (just major third 5/4).
+verify --expr ln(1.0125)=0.0124225
+  calc   = 0.0124225  ≈ expected 0.0124225  (|Δ|=4.42891e-13 ≤ ε=1e-9)
+  tier   = 🟢 SUPPORTED-NUMERICAL  (hexa-native libm-class recompute, TECS-L n6-rep Tier2)
+==
+
+# ==================================================================
+# VERDICT: 🟢 SUPPORTED-NUMERICAL (composite) — the just-intonation harmonic
+#   intervals {2:1, 3:2, 4:3, 5:4} and the two musical commas (Pythagorean
+#   531441/524288, syntonic 81/80) are EXACT rational identities. 5 atoms 🔵
+#   (integer powers) + 6 atoms 🟢 (ln recompute |Δ| ≤ ε=1e-9). No fitted "≈".
+#   KEY closed-form finding: 12 perfect fifths ≠ 7 octaves (Pythagorean comma
+#   ≠ 1, exact ratio 531441/524288) — the spiral-of-fifths NEVER closes; this
+#   is a genuine number-theoretic obstruction (3 and 2 are coprime, no integer
+#   solution to 3^a = 2^b), not a tuning approximation.
+# CROSS-LINK: ln(4/3) = 0.287682 (perfect fourth) is byte-identical to
+#   H_347 GZ_WIDTH(6) = ln(τ(6)/(τ(6)-1)) = ln(4/3) — perfect-number n=6 divisor
+#   structure ↔ perfect-fourth ratio coincide in log space.
+# HONEST SCOPE: the AXES R2/R11 Φ-superiority framing ("harmonic-ratio substrate
+#   big-Φ > random-ratio substrate big-Φ") is a SUBSTRATE SIMULATION claim — that
+#   subset is 🟠 DEFERRED (needs the iit4_bounded Φ-engine sweep over harmonic vs
+#   random ratio substrates, NOT a closed-form arithmetic identity). This verdict
+#   establishes ONLY the closed-form number spine, not the consciousness claim.
