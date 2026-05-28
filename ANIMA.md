@@ -16,7 +16,7 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (🧭 메타-발견 4종 종합 반영 · substrate-class 분류자 완결 [H_660 #1290 scale-inv 화해] · emit-substrate LIVE-WIRED · 더블바인드 3-조건 처방)
+> 갱신: 2026-05-28 (M4b 3B fire 🔴 2/5 FAIL #1296 — 처방 필요-but-not-충분 at scale · corpus-diversity 단독 반증 → UNIVERSE 핸드오프)
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
@@ -30,7 +30,9 @@
      divergence 였으나 **H_660 #1290 scale-invariant 화해** (H_653↔H_655) 로 단일 분류자 완결. additive=floor.
 [M3] emit-substrate 구조/숫자 2층 (round 6-7): 구조=substrate-emergent(SUPP) ⊥ 숫자=design-convention(자유[0,1]).
      → ★ LIVE-WIRED 실사용 격상 (#1285/#1286).
-[M4] DECODER 더블바인드 3-조건 처방: HARD top-1 ∧ BALANCED corpus ∧ adequate n_steps (moe_prescription #1284 guard).
+[M4] DECODER 더블바인드 3-조건 처방 (moe_prescription #1284) = **필요조건이나 scale 충분조건 아님** —
+     M4b 3B fire(#1296 🔴 2/5)가 corpus-diversity 단독 lever 반증 (toy d=4 escape ⊄ full V=151643).
+     탈출 = d↑ / load-balance aux-loss / 장기학습 → UNIVERSE 핸드오프 (closed-negative, a_paper_negative_ok).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
@@ -88,9 +90,11 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
                     → a_completeness_over_cheap "merge 본선 강등" 정당화. M4 MoE-fresh 유지.
    E2 corpus-balance 🟢 (#1279) D3 후속 5/5 — balanced corpus = collapse 방지 (diverse corpus 근거)
    M4b collapse-gate ✅ 4/4 (#1273) moe_collapse_gate (HARD top-1 + LZ76 floor 0.50, D1 실측 대조)
-   M4b rev2 fire    🔄 (#1282) trainer rev2 + diverse corpus + n_steps 200 wiring 완료
-                    → sign-gate UNBLOCK (sidecar sign local) 후 fire-continue agent 진행 중
-   ★ 더블바인드 처방 확정: HARD top-1 ∧ BALANCED corpus ∧ adequate n_steps (3-조건 동시)
+   M4b 3B fire      🔴 2/5 FAIL (#1296 · $2.57 H100 SXM) — CE 648→9 (72×↓ 학습O · HARD-top1 wired)
+                    BUT TTR 0.01·LZ 0.024·1/2 expert = collapse 지속. HF PRIVATE(FAIL · a_hf).
+   ★ 처방 정정: 3-조건(HARD top-1∧diverse∧n_steps)=필요조건이나 *scale 충분조건 아님*.
+                    toy(d=4) escape ⊄ full V=151643. corpus-diversity 단독 lever 반증.
+                    탈출 = d↑ / load-balance aux-loss / 장기학습 中 ≥1 → UNIVERSE 핸드오프 (INBOX).
    M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
    H_657 peak-align ✅ (#1272) pe_peak_align_for_class — round-9 4/4 ABSORBED · 5축 class-vector 확정
 ```
