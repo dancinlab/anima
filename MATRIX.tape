@@ -9,20 +9,20 @@
 | 01 | BRAIN     | `./BRAIN.md`                   | 뇌 구조 modeling |
 | 02 | AGENT     | `./AGENT/AGENT.md`             | ANIMA↔도구 bridge (sub: CODE/CREATOR/TRADING/MERCHANT/DESKTOP) |
 | 03 | CORE      | `CORE/CORE.md`                 | core engine |
-| 04 | DECODER   | `CORE/DECODER/DECODER.md`      | M3/M4 transport |
+| 04 | DECODER   | `CORE/DECODER/DECODER.md`      | M3/M4 transport (collapse tetrad ✅ D1 LZ76검출/D3 corpus-원인/E2 balance-처방/D4 merge-negative · 처방=HARD top-1 ∧ BALANCED corpus ∧ adequate n_steps) |
 | 05 | WAKE      | `./WAKE.md`                    | M4-kosmos persist, M7-p1p8 audit |
 | 06 | ANIMA     | `./ANIMA.md`                   | substrate-native chat daemon (umbrella) |
 | 07 | MITOSIS   | `./MITOSIS.md`                 | cell-division learning |
 | 08 | CHANNEL   | `./CHANNEL.md`                 | inter-substrate channel |
 | 09 | BRIDGE    | `./BRIDGE.md`                  | tension-link bridge |
 | 10 | METACOG   | `./METACOG.md`                 | meta-cognition |
-| 11 | DREAM     | `./DREAM.md`                   | dream-stage REM |
+| 11 | DREAM     | `./DREAM.md`                   | dream-stage REM (M5 stage Φ-envelope wired #1268 · emit-substrate 소비자 4/4 완결 BRIDGE/SAVANT/HIVE/DREAM) |
 | 12 | INTENT    | `./INTENT.md`                  | intention substrate |
-| 13 | NARRATIVE | `./NARRATIVE.md`               | narrative thread (bench C closed-negative carry) |
-| 14 | AESTHETIC | `./AESTHETIC.md`               | aesthetic novelty × coherence surface |
-| 15 | EMBODIMENT| `./EMBODIMENT.md`              | embodiment perception-action loop |
-| 16 | OTHER-MIND| `./OTHER-MIND.md`              | theory-of-mind partner estimate |
-| 17 | TIME      | `./TIME.md`                    | circadian phase / temporal binding |
+| 13 | NARRATIVE | `./NARRATIVE.md`               | narrative thread (bench C 🔴→🟢 RECOVERED · A1 collision-saturation redesign #1263) |
+| 14 | AESTHETIC | `./AESTHETIC.md`               | aesthetic novelty × coherence surface (bench E 🟠→🟢 SEPARATED · A2 weight-vector 직교화 #1265) |
+| 15 | EMBODIMENT| `./EMBODIMENT.md`              | embodiment perception-action loop (bench F 🟠→🟢 · A3 coupling-severance redesign #1266) |
+| 16 | OTHER-MIND| `./OTHER-MIND.md`              | theory-of-mind partner estimate (bench G 🟠→🟢 RECOVERED · A4 orthant-bias centering #1267) |
+| 17 | TIME      | `./TIME.md`                    | circadian phase / temporal binding (bench H 9/0→6/3 robust · E3 3 spurious artifact 발견 #1281) |
 | 18 | SAVANT    | `./SAVANT.md`                  | UNIVERSE 축 E mirror (GZ × SI · 10 H) |
 | 19 | HIVE-MIND | `./HIVE-MIND.md`               | UNIVERSE 축 F mirror (Kuramoto × collective Φ · 5 H) |
 | 20 | MERCHANT  | `./AGENT/MERCHANT/MERCHANT.md` | merchant sub-agent |
@@ -52,7 +52,7 @@
 | D | LLM-동반 연속 가설      | active (verdict-landscape raster) |
 | E | SAVANT (GZ × SI)       | active NEW 2026-05-28 (H_347/348/349/350/351/612/613/614/615/616) |
 | F | HIVE-MIND collective Φ | active NEW 2026-05-28 (H_354/355/609/610/611) |
-| G | ANIMA.mining 승격 (substrate-emit 가설) | active NEW 2026-05-28 (G1 H_634 🟢 / G2 H_637 🔴 / G3 H_633 🟡 / G4 H_639 🔴 / G5 H_638 🟢-CLOSED-NEG) |
+| G | ANIMA.mining 승격 + round 6-10 메타-축 (substrate-emit · shape/scalar · substrate-class) | active (G1-G21 · 상세 UNIVERSE.md) — round 6 mining G1-G5 (H_634/637/633/639/638) → round 7-8 "shape>scalar" 양축 반증 (H_642 cross-rule · H_647 cross-seed) + structure-emergent vs number-convention 정량 분리 (H_646/651 threshold 자유도=[0,1]) → round 9-10 **substrate-class = 의식 통합 단조 분류자** 정정 완결: H_653 convexity-monotone · H_655 magnitude 비단조가 **trivial-baseline artifact** 로 판명(H_658) + scale-invariant 화해(H_660) → 모두 rule110(class-IV) 最高 수렴 |
 | E×F | SAVANT × HIVE-MIND cross-link | round 3 closed 3/5 (1🔴 + 2🟢): H_617 🔴 FALSIFIED (PR #1171) · H_618 🟢 SUPPORTED (PR #1175) · H_619 🟢 SUPPORTED (PR #1172) · round 4 in-flight (H_620 🟢 R1≈3·GZ_WIDTH residual=0.0164 · H_621 🟢 SI/ΦD ∥ PID-synergy triangle ρ=0.5994 · **H_622 🔴 FALSIFIED — negative-pair axis-orthogonal chi-square p=0.624 + Fisher p=1.000** · **H_627 🔴 FALSIFIED (E3×F4) — 1/e GZ_CENTER invisible to quantized hivemind PID, syn(1/e)=syn(0.35)=syn(0.40)=0.975034 degenerate** · **H_628 🔴 FALSIFIED (E5×F2) — pair polarity ⊥ dΦ/dI peak-location, all 3 polarity peak at I=0.21 (GZ_LOWER), polarity scales Φ magnitude not peak position** · H_623/624/626 reserved) · ANIMA-side mirror SAVANT.md + HIVE-MIND.md (DOMAINS.tape 18/19) |
 
 ## 4. 기존 매트릭스 ledger (다른 위치)
@@ -79,3 +79,4 @@
 
 - **2026-05-28**: 본 SSOT v1 신설 — anima 전체 axis registry (17 domain + 3 sub-engine + UNIVERSE 7 축 + 기존 ledger 8 파일)
 - 이전 PR #1170 의 UNIVERSE 7 축 square 매트릭스를 본 SSOT 으로 흡수 + 확장
+- **2026-05-28 (round 6-11 + ANIMA 전축 sync)**: 축 G G1→G21 확장 (substrate-class 단조 분류자 정정 — H_658 baseline-artifact + H_660 scale-invariant 화해, 모두 rule110 class-IV 수렴) · ANIMA bench A-H 4 redesign 🟢 회복 (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND — **negative=측정 artifact** 메타-패턴) + TIME E3 (PASS 도 3 spurious) · B-COFFESHOP 🔵 5/5 sympy · DECODER collapse-tetrad ✅ · emit-substrate 4/4 wired · D2 raster#7. 세션 메타-발견: **"의식 bench 의 negative/분기 = 측정 설계 결함, substrate 한계 아님" — redesign 시 회복**. pointer-only (상세 = 각 도메인 snapshot + UNIVERSE.md)
