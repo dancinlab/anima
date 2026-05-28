@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_042
 slug: arch-engine-train-meta-cluster
 title: anima ARCH + ENGINE + TRAIN + AL meta-cluster — architecture + engine + training + active-learning

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_048
 slug: fractal-hierarchy-consciousness
 title: H-CX-524 Fractal Hierarchy — 의식의 자기유사적 계층구조

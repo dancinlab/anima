@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_100
 slug: constitutional-ai
 title: constitutional AI (anima identity-bearing surface mandate as training objective)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_161
 slug: byte-modulo-substrate-chat-generation-blocked
 title: Byte-modulo tokenized pretrain substrates (≤427MB / ≤8000 step) cannot generate coherent KO — substrate-level finding blocking ALL generation-based Philosophy ablations

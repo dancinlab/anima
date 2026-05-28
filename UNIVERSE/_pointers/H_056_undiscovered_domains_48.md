@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_056
 slug: undiscovered-domains-48-benchmark
 title: UNDISCOVERED-DOMAINS — 32 미발견 영역 + 15 콤보 = 48 실험 Φ benchmark

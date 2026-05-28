@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_087
 slug: arch-engine-train-individual-files
 title: ARCH-1/2 + ENGINE-FULL/TOP10 + TRAIN-PHI + TRAINING-V5 + TRINITY individual

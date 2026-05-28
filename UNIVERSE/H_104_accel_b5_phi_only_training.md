@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_104
 slug: accel-b5-phi-only-training-pre-condition
 title: B5 Phi-Only Training (★ WINNER 46% time savings via pre-conditioning)

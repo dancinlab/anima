@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_189
 slug: red-team-methodology-meta-cluster-r1-r6
 title: Red-team methodology meta-cluster — R1-R6 6 attack vectors against ANIMA core claims (Ψ=1/2 / Hexad / σφ=24 / topology / scaling)

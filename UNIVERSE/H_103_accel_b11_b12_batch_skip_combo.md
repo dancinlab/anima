@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_103
 slug: accel-b11-b12-batch-skip-combo-breakthrough
 title: B11+B12 Batch+Skip combo (★★★ BREAKTHROUGH x179, 97.1% Φ retention)

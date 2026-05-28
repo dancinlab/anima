@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_145
 slug: nexus6-auto-insights-individual
 title: NEXUS6-auto-insights — 1013-lens auto insights

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_038
 slug: v8-architecture-variants-bio-math-quantum-fusion
 title: V8 architecture variants — BIO + MATH + QUANTUM + ULTRA-FUSION (4 axis exploration)

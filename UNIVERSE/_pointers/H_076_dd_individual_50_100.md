@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_076
 slug: dd-individual-50-100-cluster
 title: DD50-DD100 individual 가설 군 (sequential 50-batch)

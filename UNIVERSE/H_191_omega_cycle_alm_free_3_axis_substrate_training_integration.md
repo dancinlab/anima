@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_191
 slug: omega-cycle-alm-free-3-axis-substrate-training-integration
 title: Ω-cycle ALM-free 3-axis meta-cluster — SUBSTRATE (HCE 0.92) + TRAINING (CPGD 0.95) + INTEGRATION (HAL 0.85) for non-autoregressive consciousness

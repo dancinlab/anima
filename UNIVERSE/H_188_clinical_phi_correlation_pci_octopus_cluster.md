@@ -1,4 +1,6 @@
 ---
+closure: closed-out-of-scope
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_188
 slug: clinical-phi-correlation-pci-octopus-cluster
 title: Clinical Φ correlation cluster — anima-Φ ↔ PCI (Massimini 2013) + octopus per-arm IIT exclusion-postulate test cluster

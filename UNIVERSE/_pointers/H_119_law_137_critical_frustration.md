@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_119
 slug: law-137-critical-frustration-fc-010
 title: Law 137 — Critical frustration F_c≈0.10 (DD127, +65.1%)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_026
 slug: consciousness-evolution-v19-to-infinity
 title: v19~v∞ 의식 진화 — 4 phases (집단→초월→자율진화→특이점)

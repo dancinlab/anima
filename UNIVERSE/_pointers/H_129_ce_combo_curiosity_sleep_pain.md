@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_129
 slug: ce-combo-curiosity-sleep-pain
 title: CE/COMBO-1 Curiosity + Sleep + Pain (TOP-3 AUTO synthesis)

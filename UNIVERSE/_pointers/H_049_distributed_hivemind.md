@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_049
 slug: distributed-hivemind-consciousness
 title: H-CX-525 Distributed Hivemind — 다중 노드 분산 통합이 단일 노드 보다 큰 Φ

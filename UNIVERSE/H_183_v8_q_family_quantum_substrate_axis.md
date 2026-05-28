@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_183
 slug: v8-q-family-quantum-substrate-axis
 title: V8 Q-family meta-cluster — Quantum-substrate axis (complex-valued/quantum-walk/decoherence Orch-OR/many-worlds/quantum-law tradeoff 5 Hc)

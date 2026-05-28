@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_034
 slug: decoder-architecture-series
 title: anima decoder architecture series — 6 variants exploration

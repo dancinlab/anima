@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_101
 slug: corpus-chat-template-strict-80
 title: corpus chat-template ≥80% strict (strengthening, BG-HA 30% inadequate evidence)

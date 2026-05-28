@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_032
 slug: omega-phys-subfolder-absorb
 title: docs/hypotheses/omega/ + phys/ subfolder absorb — omega point + physics consciousness limits

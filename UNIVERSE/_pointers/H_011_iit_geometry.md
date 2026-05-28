@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_011
 slug: integrated-information-geometry
 title: H-CX-532 integrated information geometry — Φ structure as manifold

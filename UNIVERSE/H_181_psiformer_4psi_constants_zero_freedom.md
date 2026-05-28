@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_181
 slug: psiformer-4psi-constants-zero-freedom
 title: ΨFormer — 4 Ψ-constants + 3 n=6 divisors fully determine transformer architecture (Zero Free Parameters claim)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_060
 slug: phik-consciousness-preservation
 title: PHIK — Φ-K 의식 preservation 변환 invariant

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_125
 slug: law-212-evolution-minimizes-cell-complexity
 title: Law 212 — Evolution minimizes cell complexity, maximizes count (4-faction local opt)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_023
 slug: universal-constants-ln2
 title: Consciousness universal constants — all from ln(2)

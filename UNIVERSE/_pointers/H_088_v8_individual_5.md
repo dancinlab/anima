@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_088
 slug: v8-individual-files-not-h038
 title: V8-ARCH-EXTREME-RESULTS + V8-ARCHITECTURE + V8-BIO + V8-MATH + V8-QUANTUM + V8-ULTRA-FUSION

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_065
 slug: decoder-architecture-individual-6file
 title: DECODER ARCHITECTURE 6 individual variants (complete/extreme/nextgen/radical/whisper)

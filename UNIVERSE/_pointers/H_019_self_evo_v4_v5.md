@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_019
 slug: self-evo-v4-v5
 title: SELF-EVO v4→v5 — anima architecture self-evolution path

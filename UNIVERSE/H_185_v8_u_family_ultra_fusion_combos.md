@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_185
 slug: v8-u-family-ultra-fusion-combos
 title: V8 U-family meta-cluster — Universal/Ultra-fusion combos axis (quantum-walk+category-theory / qw+frustration / MW+attention / complex+simplicial / kitchen-sink 5 Hc)

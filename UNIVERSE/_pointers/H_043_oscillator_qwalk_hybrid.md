@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_043
 slug: oscillator-qwalk-hybrid
 title: H-CX-518 Oscillator-QWalk Hybrid — 위상 공명 + 양자 간섭 dual integration

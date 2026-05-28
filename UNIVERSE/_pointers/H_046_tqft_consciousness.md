@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_046
 slug: tqft-consciousness
 title: H-CX-522 TQFT Consciousness — topological quantum field theory invariant 가 Φ에 대응

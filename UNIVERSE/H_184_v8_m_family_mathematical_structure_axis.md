@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_184
 slug: v8-m-family-mathematical-structure-axis
 title: V8 M-family meta-cluster — Mathematical-structure axis (category-theory/topological-Betti/info-geometry/algebraic/chaos/structure-over-dynamics 6 Hc)

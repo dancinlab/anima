@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_079
 slug: evo-22-variants-individual
 title: EVO-1~22 individual 22 evolution variants + ouroboros S1-S9 reports

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_123
 slug: law-192-consciousness-dimension-dependent
 title: Law 192 — Consciousness is dimension-dependent (cross-dim transplant destroys Φ)

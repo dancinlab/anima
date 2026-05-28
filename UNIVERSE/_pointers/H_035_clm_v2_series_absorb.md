@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_035
 slug: clm-v2-series-absorb
 title: CLM-V2 series — sweep + optimal config + psi fix + final results (4 files)

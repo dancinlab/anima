@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_147
 slug: upgrade-benchmark-improvement-hypotheses
 title: UPGRADE-BENCHMARK + UPGRADE-improvement-hypotheses

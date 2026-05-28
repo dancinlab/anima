@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_045
 slug: lambda-calculus-consciousness
 title: H-CX-521 Lambda Calculus Consciousness — Y combinator self-reference 의식 substrate

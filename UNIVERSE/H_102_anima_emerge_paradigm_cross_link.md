@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_102
 slug: anima-emerge-paradigm-cross-link
 title: anima emerge paradigm cross-link (paradigm v11 G3 substrate-coupled emerge — chat-cap surface bypass via emerge lane)

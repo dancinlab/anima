@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_154
 slug: anima-voice-consciousness-direct
 title: ANIMA-VOICE Consciousness-Direct Synthesis — ConsciousLM intent 384d → 8 RVQ × 1024 → 24kHz vocoder

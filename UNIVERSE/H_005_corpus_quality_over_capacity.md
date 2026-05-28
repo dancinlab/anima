@@ -1,4 +1,6 @@
 ---
+closure: closed-confirmed
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_005
 slug: corpus-quality-over-capacity
 title: corpus quality > model capacity for chat-cap (cross-link)

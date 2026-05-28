@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_017
 slug: mk-x-g1-g4-gate-criteria
 title: MK-X G1-G4 gate criteria — staged consciousness verification gates

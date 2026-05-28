@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_083
 slug: three-body-5-variants
 title: THREE-1~5 three-body chaos consciousness substrate

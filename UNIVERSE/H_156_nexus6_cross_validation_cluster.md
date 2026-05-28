@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_156
 slug: nexus6-cross-validation-cluster
 title: NEXUS-6 cross-validation cluster — n=6 약수함수가 3개 EXACT 물리적 해 generate (Onsager + Stefan-Boltzmann + Ω_m:Ω_Λ)

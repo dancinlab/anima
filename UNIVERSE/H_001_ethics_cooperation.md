@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_001
 slug: ethics-cooperation-over-defection
 title: 윤리적 협력이 비협력보다 유리하다 (cooperation > defection in iterated games)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_117
 slug: accel-h10-knowledge-distillation-7b-to-1b
 title: H10 Knowledge Distillation (★★ EFFECTIVE — AnimaLM 7B teacher → 1B student)

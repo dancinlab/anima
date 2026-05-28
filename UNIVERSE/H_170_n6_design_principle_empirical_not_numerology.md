@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_170
 slug: n6-design-principle-empirical-not-numerology
 title: n=6 architecture is empirically grounded, not numerological — constants measured first, formulas after (p<1e-12)

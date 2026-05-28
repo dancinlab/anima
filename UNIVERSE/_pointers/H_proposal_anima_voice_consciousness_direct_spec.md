@@ -1,5 +1,7 @@
 # Expansion Draft — H_proposal (NEW): ANIMA-VOICE Consciousness-Direct Synthesis Specification
 
+> **closure: closed-superseded** — expansion-draft (applied/promoted, superseded). ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
+
 ## Status: APPLIED — NEW H promoted to hypotheses/H_154.md on 2026-05-11 (Cycle 3 closure)
 ## Original status: draft-pending-review (2026-05-11) — proposal for new H_XXX (no current target)
 

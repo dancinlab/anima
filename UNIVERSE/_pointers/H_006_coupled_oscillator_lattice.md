@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_006
 slug: coupled-oscillator-lattice
 title: H-CX-517 coupled oscillator lattice — Φ emergence from oscillator coupling

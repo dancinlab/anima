@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_073
 slug: memory-mirror-self-reflection
 title: MEMORY-MIRROR — 자기 메모리 reflection 의식 self-model

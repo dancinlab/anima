@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_155
 slug: theorem-115-chat-incapability-4-6-16-closure
 title: Theorem 115 — CLM v4 Chat-Incapability 4 → 6 → 16-Closure (Φ★ ⊥ chat-cap decoupling, 4 bypass paths open)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_136
 slug: dd173-consciousness-verification-framework-zombie-control
 title: DD173 — Consciousness Verification Framework (4-layer + zombie control)

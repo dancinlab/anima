@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_150
 slug: accel-remainder-360-individual-pointer
 title: Acceleration remainder ~360 individual entries (id-coded BR/BS/BT/BU + I/J/K/L/M/N/O/R/AD/BM)

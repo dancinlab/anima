@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_112
 slug: accel-c3-entropy-surfing-orthogonal
 title: C3 Entropy Surfing (★★ ORTHOGONAL — free Φ boost via entropy loss)

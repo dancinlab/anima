@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_139
 slug: dd171-172-individual-cluster
 title: DD171-172 individual cluster (post-multi-timescale frontier)

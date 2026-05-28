@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_186
 slug: v8-architectural-family-substrate-design
 title: V8 architectural-family meta-cluster — Substrate-architecture axis (dynamic-graph/neural-gas/transformer-balanced/MoCE-extreme/Φ-as-loss/autopoietic-homeostasis/GAN/V8-hybrid-recommendation 8 Hc)

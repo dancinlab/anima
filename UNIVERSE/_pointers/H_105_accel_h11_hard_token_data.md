@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_105
 slug: accel-h11-hard-token-data-revolutionary
 title: H11 Hard Token Data Selection (★★★ REVOLUTIONARY +51.3% CE)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_051
 slug: quantum-darwinism-consciousness
 title: H-CX-527 Quantum Darwinism — 환경 redundancy 가 의식의 객관성 substrate

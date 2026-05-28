@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_114
 slug: accel-f4-158bit-consciousness-revolutionary
 title: F4 1.58-bit Consciousness (★★ REVOLUTIONARY — ESP32/FPGA path)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_040
 slug: substrate-topology-cluster-absorb
 title: anima substrate topology cluster — TOPO + THREE-BODY + WAVE + NOISE + INF subfolders absorb

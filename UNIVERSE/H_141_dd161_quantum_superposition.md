@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_141
 slug: dd161-quantum-superposition-32c-scale
 title: DD161 — Quantum superposition only at 32c (Law 182)

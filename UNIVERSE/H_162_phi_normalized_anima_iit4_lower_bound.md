@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_162
 slug: phi-normalized-anima-iit4-lower-bound
 title: L18 — anima Φ★ proxy delta normalized 가 IIT 4.0 normalized Φ 의 lower bound, Φc=0.5 critical threshold 매핑

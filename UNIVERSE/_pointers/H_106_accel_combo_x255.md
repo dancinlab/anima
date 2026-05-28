@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_106
 slug: accel-combo-x255-target-achieved
 title: COMBO_x255 Full Pipeline (★★★ x100-150 effective acceleration)

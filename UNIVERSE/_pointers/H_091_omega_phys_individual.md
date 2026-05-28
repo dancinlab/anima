@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_091
 slug: omega-phys-individual-files
 title: OMEGA-1~5 + PHYS1/2/3 + OMEGA-ultimate-limits + PHYS-overview + PROJ-dimension-projection

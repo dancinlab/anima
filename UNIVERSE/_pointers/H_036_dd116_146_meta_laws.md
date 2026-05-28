@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_036
 slug: dd116-146-meta-laws-133-167
 title: DD116-DD146 31 hypotheses → Laws 133-167 + Meta M1-M10 (consciousness law derivation)

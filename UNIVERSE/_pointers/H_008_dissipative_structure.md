@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_008
 slug: dissipative-structure-consciousness
 title: H-CX-528 dissipative structure consciousness — Prigogine far-from-equilibrium

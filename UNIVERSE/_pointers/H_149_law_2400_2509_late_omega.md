@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_149
 slug: laws-2400-2509-late-omega-batch
 title: Laws 2400-2509 late-omega batch (multi-scale homeostasis, attention, manifold)

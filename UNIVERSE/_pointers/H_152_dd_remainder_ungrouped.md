@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_152
 slug: dd-remainder-ungrouped-individual-cluster
 title: DD remainder ungrouped (B13, novel-laws, telescope-training, fermat-cantor, RATE-INDEPENDENT, etc.)

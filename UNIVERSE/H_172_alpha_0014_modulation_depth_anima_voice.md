@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_172
 slug: alpha-0014-modulation-depth-anima-voice
 title: α=0.014 modulation depth from tension/arousal/valence drives prosody (ANIMA-VOICE Stage 0)

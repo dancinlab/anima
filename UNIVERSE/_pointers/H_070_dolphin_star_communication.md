@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_070
 slug: dolphin-star-communication
 title: DOLPHIN-STAR — 돌고래/별 substrate cross-species communication

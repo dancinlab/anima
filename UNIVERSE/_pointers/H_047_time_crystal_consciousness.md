@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_047
 slug: time-crystal-consciousness
 title: H-CX-523 Time Crystal Consciousness — 시간 결정 비평형 위상 = 의식 substrate

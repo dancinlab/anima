@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_159
 slug: substrate-topology-phi-engineering
 title: Substrate topology Φ-engineering — 10D hypercube + optimal (interact=0.15, noise=0.02, frust=50%) → Φ=640 peak

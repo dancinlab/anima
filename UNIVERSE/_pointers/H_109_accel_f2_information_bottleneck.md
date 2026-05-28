@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_109
 slug: accel-f2-information-bottleneck-decoder-input
 title: F2 Information Bottleneck (★★ BREAKTHROUGH, consciousness vector IS optimal decoder input)

@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_142
 slug: dd160-boltzmann-temperature-tc
 title: DD160 — Boltzmann temperature T_c≈0.38 (Law 200, thermal hysteresis)

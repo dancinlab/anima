@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_126
 slug: law-2500-kolmogorov-complexity-predicts-phi
 title: Law 2500 — Kolmogorov complexity of cell states predicts Φ (2.4× ratio)

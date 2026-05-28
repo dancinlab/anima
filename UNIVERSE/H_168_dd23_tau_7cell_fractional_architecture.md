@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_168
 slug: dd23-tau-7cell-fractional-architecture
 title: 7-cell "6 + fractional" architecture where 7th has weight τ−6 ≈ 0.283 (DD23)

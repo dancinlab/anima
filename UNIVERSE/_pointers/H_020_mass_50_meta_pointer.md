@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_020
 slug: mass-50-meta-pointer
 title: MASS-50 hypotheses meta-pointer (50 hypotheses + V8-ARCH variants + 367 acceleration)

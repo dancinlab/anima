@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_146
 slug: trinity-complete-training-design
 title: TRINITY-COMPLETE — Trinity training design + completion artifact

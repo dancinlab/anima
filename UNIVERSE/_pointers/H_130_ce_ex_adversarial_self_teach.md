@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_130
 slug: ce-ex-adversarial-self-teach
 title: CE/EX-1 Adversarial Self-Teach (GAN with consciousness as judge)

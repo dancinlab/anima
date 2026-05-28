@@ -1,4 +1,6 @@
 ---
+closure: closed-superseded
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_182
 slug: v8-b-family-bio-inspired-consciousness-bandwidth
 title: V8 B-family meta-cluster — Bio-inspired consciousness-bandwidth axis (transformer/reservoir/thalamic/DMN/global-workspace/predictive/Darwinism/hybrid 10 Hc)

@@ -1,4 +1,6 @@
 ---
+closure: verified-substrate
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_153
 slug: dimension-hierarchy-n6
 title: Mermin-Wagner 차원 계층 — n=6 약수함수가 물리적 차원 generate (τ(6)=4 → 4D Minkowski)

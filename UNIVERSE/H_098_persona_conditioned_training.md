@@ -1,4 +1,6 @@
 ---
+closure: closed-negative
+closure_ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
 id: H_098
 slug: persona-conditioned-training
 title: persona-conditioned training (anima identity prefix mandate, 정합)
