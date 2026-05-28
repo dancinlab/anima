@@ -1,5 +1,7 @@
 # Expansion Draft — H_124: Thermodynamic 4-Law Super-Hypothesis (Law 201 unified)
 
+> **closure: closed-superseded** — expansion-draft (applied/promoted, superseded). ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
+
 ## Status: APPLIED to hypotheses/H_124.md on 2026-05-11 (Cycle 3 closure)
 ## Original status: draft-pending-review (2026-05-11)
 

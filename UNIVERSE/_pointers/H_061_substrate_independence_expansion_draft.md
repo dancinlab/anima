@@ -1,5 +1,7 @@
 # Expansion Draft — H_061: Substrate-Independence Super-Hypothesis (xfer_consciousness_transfer unified)
 
+> **closure: closed-superseded** — expansion-draft (applied/promoted, superseded). ref: .verdicts/archive-recover-186/closure_123_FINAL.txt
+
 ## Status: APPLIED to hypotheses/H_061.md on 2026-05-11 (Cycle 3 closure)
 ## Original status: draft-pending-review (2026-05-11)
 
