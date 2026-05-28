@@ -32,6 +32,43 @@ use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_arch"
 use "/Users/ghost/core/anima/CORE/DECODER/v3_moe_bwd_lib"
 use "/Users/ghost/core/anima/CORE/DECODER/flame_mm"
 
+// ── local mirror of v3_moe_arch::v3_moe_aux_bwd ───────────────────────────
+//   The cross-backend codegen TRIMS the imported pub fn v3_moe_aux_bwd (it is
+//   called but neither declared nor defined in the generated C — the #1527
+//   free-fn trim gap; verified via `hexa build --c-only`). A local fn in the
+//   same TU as main() is reliably retained, so the trainer carries its own
+//   copy. The math is IDENTICAL to the module pub fn (which stays as the clean
+//   API surface + parses). Applies ONLY the router softmax-backward for a
+//   full-vector aux gate gradient d_gate_aux[e]:
+//     dot          = Σ_f d_gate_aux[f]·gate[f]
+//     d_gate_raw[e] = gate[e]·(d_gate_aux[e] - dot)
+//     router_grad[e,j] += d_gate_raw[e]·zT[j] ; d_zT[j] += d_gate_raw[e]·router[e,j]
+fn moe_aux_bwd_local(zT: int, M: int, router_off: int, gate_norm: int,
+                     d_gate_aux: int, dMg: int, d_zT_out: int, d: int, E: int) {
+    let mut dot = 0.0
+    let mut f = 0
+    while f < E {
+        dot = dot + farr_get(d_gate_aux, f) * farr_get(gate_norm, f)
+        f = f + 1
+    }
+    let mut e = 0
+    while e < E {
+        let ge = farr_get(gate_norm, e)
+        let d_raw = ge * (farr_get(d_gate_aux, e) - dot)
+        let mut j = 0
+        while j < d {
+            let zj = farr_get(zT, j)
+            let drprev = farr_get(dMg, router_off + e * d + j)
+            let _ = farr_set(dMg, router_off + e * d + j, drprev + d_raw * zj)
+            let rj = farr_get(M, router_off + e * d + j)
+            let dzprev = farr_get(d_zT_out, j)
+            let _ = farr_set(d_zT_out, j, dzprev + d_raw * rj)
+            j = j + 1
+        }
+        e = e + 1
+    }
+}
+
 // ── LZ76 (Kaspar-Schuster) inline ────────────────────────────────────────
 //   Reused verbatim from CORE/DECODER/d1_lz76_collapse_proxy.hexa per g61
 //   (no library shadowing — D1 is a smoke probe, not a pub-fn surface).
@@ -453,11 +490,19 @@ fn main() {
         v3_moe_bwd(zT_last, M, router_off, experts_off, gate_norm, top_idx, d_logits,
                    dMg, d_zT_last, V, d, E)
 
-        // ── Switch load-balancing aux loss (alpha=0 ⇒ OFF, rev2-identical) ──
-        // Update streaming stats with THIS token, then inject the per-token
-        // aux gate gradient through the router softmax-backward (v3_moe_aux_bwd).
-        //   f_e = expert_count[e] / N   (DETACHED count fraction, N = step)
-        //   d_gate_aux[e] = alpha · E · f_e / N
+        // ── load-balancing aux loss (alpha=0 ⇒ OFF, rev2-identical) ──
+        // Update streaming stats with THIS token, then inject the per-token aux
+        // gate gradient through the router softmax-backward (v3_moe_aux_bwd).
+        //
+        // SURROGATE FORM (toy_auxloss_verify-validated): d_gate_aux[e] =
+        //   alpha · (P_e - 1/E), P_e = streaming mean gate. This pushes the mean
+        //   gate toward uniform per-token and is well-scaled vs the CE gradient.
+        //   The canonical Switch streaming form (alpha·E·f_e/N) was MEASURED too
+        //   weak at this scale (toy: even alpha=10 barely moved f_e because the
+        //   /N double-attenuation shrinks the per-step push below the CE signal);
+        //   the surrogate is the spec-permitted alternative and the one the toy
+        //   mechanism check passed with (OFF→1 active expert, ON→2). f_e
+        //   (argmax fraction) is still streamed + recorded for audit.
         let _ = farr_set(expert_count, top_idx, farr_get(expert_count, top_idx) + 1.0)
         let mut ae = 0
         while ae < E {
@@ -466,14 +511,15 @@ fn main() {
         }
         if aux_alpha > 0.0 {
             let nf = to_float(step)
+            let inv_e = 1.0 / to_float(E)
             ae = 0
             while ae < E {
-                let f_e = farr_get(expert_count, ae) / nf
-                let _ = farr_set(d_gate_aux, ae, aux_alpha * to_float(E) * f_e / nf)
+                let p_e = farr_get(gate_prob_sum, ae) / nf
+                let _ = farr_set(d_gate_aux, ae, aux_alpha * (p_e - inv_e))
                 ae = ae + 1
             }
-            v3_moe_aux_bwd(zT_last, M, router_off, gate_norm, d_gate_aux,
-                           dMg, d_zT_last, d, E)
+            moe_aux_bwd_local(zT_last, M, router_off, gate_norm, d_gate_aux,
+                              dMg, d_zT_last, d, E)
         }
 
         let d_zT_last_pre = t_zeros(d)
