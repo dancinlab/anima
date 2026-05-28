@@ -82,3 +82,62 @@ See `GPU.anima.md` "## 📋 진행 마일스톤 (BC-ANIMA)" + the
 `.discoveries/decoder_collapse_undertrain.tape` SSOT for the broader
 saga (M4 unblocks M5 = `dec_undertrain` decisive re-fire, gated on
 step-rate ≥ 10 step/s).
+
+### M5 fire attempt — F-BC-ANIMA-M4-CEILING (2026-05-28, $5/30min budget)
+
+User-approved live H100 fire attempt — pre-registered falsifier
+`F-BC-ANIMA-M4-CEILING` (measure step-rate with M4 wiring on H100; <10
+step/s triggers M1 + `mm_extract` follow-up wedges).
+
+- Cached vast pods (`37868501` ssh6.vast.ai:28500 · `38095989`
+  ssh9.vast.ai:15988): ssh-port resolve OK but `hexa cloud exec` both
+  returned **`ssh transport failure (exit 255)`** verbatim — guard text:
+  "host unreachable (connection refused / timeout / auth / changed host
+  key). The pod may be alive and billing but not accepting SSH — a
+  vast.ai/RunPod transport outage. Stop retrying; verify reachability
+  or tear the pod down." Matches the deferred-state note above (vast
+  pods SSH-unreachable).
+- Fresh RunPod H100 SXM rented — `hexa cloud rent runpod
+  --gpu "NVIDIA H100 80GB HBM3" --disk 50 --owner bc-anima-m5` →
+  `[cloud] rent runpod: created pod 3e541pil5jazhk` →
+  `[cloud] rent runpod: READY 64.247.201.49:11038`. Registry confirmed
+  pod live in `hexa cloud list --provider runpod`.
+- SSH polling against 64.247.201.49:11038 — first probe at +0s, retry
+  loop every 8-15s for ~7 minutes. Every single `hexa cloud exec`
+  returned the same `ssh transport failure (exit 255)` verbatim guard
+  text. `hexa cloud resolve` continued to print `64.247.201.49:11038`
+  unchanged (no port flap). Pod was billing but SSH transport refused
+  for the full polling window — same outage class as the cached vast
+  pods.
+- Per the policy guardrail ("If pod spin-up itself fails — region
+  exhaust, quota — report and abort"), and per the guard text's own
+  "Stop retrying; verify reachability or tear the pod down" directive,
+  the pod was torn down: `hexa cloud down 3e541pil5jazhk
+  --provider runpod` → `[cloud] down runpod: terminated 3e541pil5jazhk
+  / [cloud] forgot 3e541pil5jazhk (registry status=closed)`.
+  Post-teardown `hexa cloud list --provider runpod` →
+  `[cloud] runpod: list (new) — 0 pods`. `hexa cloud pods` →
+  `pods=0   jobs=0`.
+- Wall budget consumed: ~501s (~8.4min of the 30min cap). Spend
+  estimate: ~$0.56 (~11% of the $5 cap, assuming $4/hr H100 SXM).
+  Stage 1 was NOT entered — pod never accepted SSH so trainer was
+  never copied, built, or executed. Stage 2 likewise NOT entered.
+
+#### Verdict (g5 rubric, this attempt)
+
+⚪ **UNVERIFIABLE-AT-SCALE (infrastructure)** — F-BC-ANIMA-M4-CEILING
+remains pre-registered but unmeasured. The falsifier was NOT reached
+(0 trainer steps run). The result is NOT a measurement of M4 wiring;
+it is a measurement of pod SSH-transport availability on the day of
+the fire — three pods in a row (2 vast + 1 freshly-rented runpod)
+declined SSH. This is the same RunPod/vast transport-outage class
+already noted in the post-M4 entry above; today's attempt confirms
+the outage extends to fresh pod rentals as well.
+
+The 🟠 PARTIAL verdict on M4 wiring itself (parse clean, byte-eq
+proven, wall-time deferred) is UNCHANGED. M5 remains the next live
+fire when SSH transport is reliably available; the M1 follow-up wedge
+is still the next-action if step-rate measures <10 step/s.
+
+No false claim filed in CLAIMS.tape / atlas — per g5 (no LLM
+self-judge of correctness; only run/no-run reported here).
