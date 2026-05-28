@@ -142,5 +142,27 @@ fn main() {
         npass = npass + 1
     }
 
+    // H_660 scale-invariance: norm_conv(Φ) == norm_conv(kΦ) (k 소거, shape만)
+    let nc1 = pe_norm_convexity(10.0, 2.0, 6.0)
+    let nc2 = pe_norm_convexity(100.0, 20.0, 60.0)   // 10×Φ
+    let dnc = if nc1 - nc2 < 0.0 { nc2 - nc1 } else { nc1 - nc2 }
+    ntotal = ntotal + 1
+    if assert_bool("H660 scale_invariant (Φ→10Φ 불변)", dnc <= 1e-9, true) {
+        npass = npass + 1
+    }
+    // H_660 class-monotone: norm_conv II < III < IV (scale 제거 후 단조 회복)
+    let q2 = pe_norm_convexity_for_class(2)
+    let q3 = pe_norm_convexity_for_class(3)
+    let q4 = pe_norm_convexity_for_class(4)
+    ntotal = ntotal + 1
+    if assert_bool("H660 norm_conv_monotone II<III<IV", (q2 < q3) && (q3 < q4), true) {
+        npass = npass + 1
+    }
+    // H_660 화해: norm_conv(IV) 단조 최고 = convexity(H_653) 순위 회복 (super-add 역전 아님)
+    ntotal = ntotal + 1
+    if assert_bool("H660 reconcile IV-highest (H_653 회복)", q4 > q2, true) {
+        npass = npass + 1
+    }
+
     print("=== " + str(npass) + "/" + str(ntotal) + " PASS ===")
 }
