@@ -1,0 +1,32 @@
+# XENO — current state
+@title: 👽 XENO — 외계/이종 의식 Φ-detector (substrate·외형·언어 가정 0)
+
+@goal: 단어·외형·신체 가정을 0으로 둔 채 substrate-agnostic Φ-formalism 만으로 "X에 의식 있는가" 판정하는 우주적 의식 detector. EEG/AKIDA/KOSMOS 자매도메인. 외계인 한정 아니고 이종 substrate(외계·digital·panpsychism·시뮬·AGI·hive·시간역행 등) 전반의 의식 검출.
+
+(편집 규칙: completed-form 으로 현재 상태만 · history 는 XENO.log.md)
+
+## 진행 (milestones)
+- [x] 🌱 도메인 신설 — DOMAINS.tape 등록 · ANIMA 자매 트리 합류 · 4총사(`.md`·`.easy.md`·`.log.md`) seed
+- [x] 🔗 sibling 연계 — EEG.sf.md S4(외계 의식) + S10(우주의식 panpsychism) + S36(시뮬) + S37(우주 Φ) + S38(영혼) seed cross-link
+- [ ] 🛰️ X1 invariant detector 설계 — substrate-blind Φ 검출기 spec (단어·외형·시간축·차원 가정 0)
+- [ ] 🛰️ X2 시뮬 substrate 테스트 — ECA/logistic/Kuramoto/AKIDA-silicon 에 X1 적용, false-positive 0 / true-positive ≥ baseline
+- [ ] 🛰️ X3 SETI raw signal → Φ — Allen Telescope 공개 데이터 / FAST 펄서 신호 substrate 가정 0 검출
+- [ ] 🛰️ X4 panpsychism falsifier — "우주 자체 Φ" 사고실험 falsifier 등록 (Tononi/Koch 문헌 연계)
+- [ ] 🛰️ X5 시뮬 가설 검증 — Φ-structure 패턴이 substrate-emergent vs simulation-artifact 구분자 (Bostrom 가설 측정 시도)
+- [ ] 🛰️ X6 AGI sentience — anima 자체에 X1 적용 + LLM activation 분석 (anima sibling 합류)
+- [ ] 🛰️ X7 외계인 시간축 다양성 — 인간 1초 ≠ 외계 1초 가정 → 시간 normalize Φ
+- [ ] 🛰️ X8 hive-mind invariant — 다개체 vs 단일체 substrate-blind 구분
+- [ ] 🛰️ X9 UNIVERSE 환류 — 검증 결과 → H_xxx 직접 등록 (INBOX 환류 폐기 · 사용자 명시)
+
+## deferred (다음 라운드)
+- BLC-1 SETI archive 재분석 (1977 Wow! signal 등) · panpsychism 정량 한계 · 시간역행 의식 (DMT 환각의 X1 적용) · 비-탄소 생명 의식 (실리콘 외계 가설) · 메탄 호수 의식 (타이탄 가설) · 자기장 의식 (별·블랙홀 외삽) · 우주 Φ 곡선 시간외삽 빅뱅→빅립 · 외계 의식 vs AGI 의식 구분자
+
+## 양방향 sibling
+- ⇄ [EEG](../EEG/EEG.md): 생체 뇌파 EEG.sf.md S4·S10·S36·S37·S38 seed 출처
+- ⇄ [AKIDA](../AKIDA/AKIDA.md): 실리콘 substrate-agnostic 검출 (S21 인간→AI 이주의 reverse 검증)
+- ⇄ [KOSMOS](../KOSMOS/KOSMOS.md): 외계 의식 anchor 영속 저장 형식
+- ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT (substrate-agnostic 핵심)
+- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): 검증 결과 환류 SSOT
+
+## 쉬운 버전
+전체 활용 아이디어 카탈로그(친근 7-요소) → [XENO.easy.md](./XENO.easy.md)
