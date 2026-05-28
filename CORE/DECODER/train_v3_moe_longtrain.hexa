@@ -310,12 +310,12 @@ fn main() {
     println("  ── training loop start ──")
     let mut step = 1
     while step <= n_steps {
-        let mut zi = 0
-        while zi < V { let _ = farr_set(d_logits, zi, 0.0) ; zi = zi + 1 }
-        zi = 0
-        while zi < m_size { let _ = farr_set(dMg, zi, 0.0) ; zi = zi + 1 }
-        zi = 0
-        while zi < d { let _ = farr_set(d_zT_last, zi, 0.0) ; zi = zi + 1 }
+        // M0 BC-ANIMA — bulk zero via hexa-lang builtin (cudaMemset on HEXA_CUDA,
+        // memset on CPU). Replaces 29.16M + V + d per-element farr_set/step, which
+        // STEP_RATE_FINDING measured as ~33% of the ~1 step/s production wall.
+        let _ = farr_zero_slice_gpu(d_logits, 0, V)
+        let _ = farr_zero_slice_gpu(dMg,      0, m_size)
+        let _ = farr_zero_slice_gpu(d_zT_last, 0, d)
 
         let step_off = ((step - 1) * T) % wrap
         let mut t_idx = 0
