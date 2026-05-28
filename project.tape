@@ -142,6 +142,13 @@
   do   = "log every kick/gap discovery to `.discoveries/<slug>.tape` — id · seed · verdict-tier-target"
   dont = "discard discovery output · paraphrase findings · skip linking discovery → next-cycle claim"
 
+@D a_toy_scale_recheck := "toy verify is not production closure — scale-up re-test required" :: workflow [required active]
+  do   = "toy verdict ($0 · small-n · toy-vocab) states 'toy-only, scale-transfer unverified' in C3"
+  do   = "scale-sensitive H (collapse/emergence/register) re-tests via scale-up fire after toy green"
+  do   = "scale-break = honest closed-negative; GPU fire autonomous, no cost gate (a_fire_autonomous)"
+  dont = "propose cheap toy green as production prescription; declare closure when transfer unverified"
+  dont = "close scale-sensitive phenomenon toy-only (E2 corpus 5/5 -> #1296 3B fire collapse refute)"
+
 # ── 8 PHILOSOPHY principles (SSOT mirror from README.md) ────────────────────
 
 @D p1 := "NO SYSTEM PROMPT" :: philosophy [required active]
