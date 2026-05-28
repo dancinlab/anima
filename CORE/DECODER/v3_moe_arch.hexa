@@ -90,22 +90,26 @@ pub fn v3_moe_fwd(zT: int, M: int, router_off: int, experts_off: int,
         e = e + 1
     }
     // 4) logits = gate[top] · expert_top(zT) — top-1 only emits.
-    //    Phase 4-gpu-2: the V×d expert × d×1 zT gemv is the dominant cost
-    //    (V=151643·d=2048 ≈ 310M mults). Route it through mm() = cuBLAS Dgemm
-    //    (N=1 gemv) on a GPU host, CPU oracle (farr_matmul) on Mac. The tiny
-    //    gate (E×d, E≤4) above stays a scalar loop (g0 — not a bottleneck).
-    //    expert weight is extracted from packed M (mm_extract); per-step copy is
-    //    a pilot-acceptable cost (device-resident weight caching = 4-gpu opt).
+    //    The V×d expert × d×1 zT gemv is the dominant cost (V=151643·d=64 ≈
+    //    9.7M mults per token). Previously: mm_extract copied the V·d sub-block
+    //    of M into a fresh [V×d] standalone (9.7M-double = 77.6 MB host copy
+    //    PER TOKEN), then mm() (cuBLAS or CPU oracle) did the gemv, then free.
+    //    anima #1317 STEP_RATE_FINDING measured the copy itself as a dominant
+    //    per-step CPU cost (~0.26s/step contribution at T=4).
+    //
+    //    mm_packed_gemv(M, exp_base, V, d, zT) reads directly from packed M —
+    //    no intermediate alloc, no copy, no free. Strictly less work than
+    //    copy+gemv (no rows·cols write-then-read round-trip). CPU-only dispatch
+    //    (cuBLAS Dgemm requires index-0 handles — no farr_matmul_offset variant
+    //    exists in hexa-lang RFC-040 as of 2026-05-29).
     let g_top = farr_get(gate_norm_out, top)
     let exp_base = experts_off + top * V * d
-    let expert_mat = mm_extract(M, exp_base, V, d)   // [V×d] standalone (index-0)
-    let logits_raw = mm(expert_mat, V, d, zT, 1)     // [V×1] = expert · zT (gemv)
+    let logits_raw = mm_packed_gemv(M, exp_base, V, d, zT)   // [V] = expert · zT, no copy
     let mut k = 0
     while k < V {
         let _ = farr_set(logits_g_out, k, g_top * farr_get(logits_raw, k))
         k = k + 1
     }
-    let _ = farr_free(expert_mat)
     let _ = farr_free(logits_raw)
     return top
 }
@@ -135,41 +139,42 @@ pub fn v3_moe_bwd(zT: int, M: int, router_off: int, experts_off: int,
                   dMg: int, d_zT_out: int, V: int, d: int, E: int) {
     let g_top = farr_get(gate_norm, top_idx)
     let exp_base = experts_off + top_idx * V * d
-    // 1) expert_top grad + d_zT + d_g_top — Phase 4-gpu-2 mm() port.
-    //    dl_scaled[k] = d_logits[k]·g_top
-    //    d_expert[k,j] += outer(dl_scaled, zT)[k,j]   (rank-1 = K=1 gemm)  → dMg +=
-    //    d_zT[j]       += (expertᵀ @ dl_scaled)[j]    (gemv on Wᵀ[d×V])
+    // 1) expert_top grad + d_zT + d_g_top — mm_extract-eliminated packed-gemv path.
+    //    dl_scaled[k]   = d_logits[k]·g_top
+    //    d_expert[k,j] += outer(dl_scaled, zT)[k,j]   → mm_packed_outer_add into dMg
+    //    d_zT[j]       += (expertᵀ @ dl_scaled)[j]    → mm_packed_gemv_t on M
     //    d_g_top        = Σ_k d_logits[k]·(expert·zT)[k] = dot(d_logits, logits_raw)
-    let expert_mat = mm_extract(M, exp_base, V, d)        // [V×d]
+    //                                                  → mm_packed_gemv on M
+    //
+    //    Prior path called mm_extract on M (alloc + 9.7M-double host COPY per
+    //    token) + mm_transpose (SECOND 9.7M-double copy for Wᵀ) + mm() rank-1
+    //    alloc + mm_scatter_add (read+write). The new packed primitives read
+    //    M directly with offsets — three round-trip allocs eliminated. See
+    //    flame_mm.hexa::mm_packed_gemv / mm_packed_gemv_t / mm_packed_outer_add.
     let dl_scaled = t_zeros(V)
     let mut k = 0
     while k < V {
         let _ = farr_set(dl_scaled, k, farr_get(d_logits, k) * g_top)
         k = k + 1
     }
-    // d_expert outer: dl_scaled[V×1] @ zT[1×d] = [V×d]  → accumulate into dMg
-    let d_expert = mm(dl_scaled, V, 1, zT, d)
-    mm_scatter_add(dMg, exp_base, d_expert, V * d)
-    // d_zT += expertᵀ @ dl_scaled : (d×V) @ (V×1) = [d×1]
-    let expert_T = mm_transpose(expert_mat, V, d)         // [d×V]
-    let d_zT_exp = mm(expert_T, d, V, dl_scaled, 1)       // [d×1]
+    // d_expert outer: dl_scaled[V] outer zT[d] = [V×d] += into dMg at exp_base
+    mm_packed_outer_add(dMg, exp_base, dl_scaled, zT, V, d)
+    // d_zT += expertᵀ @ dl_scaled : (d×V) @ (V) = [d], packed gemv on M
+    let d_zT_exp = mm_packed_gemv_t(M, exp_base, V, d, dl_scaled)
     let mut j = 0
     while j < d {
         let _ = farr_set(d_zT_out, j, farr_get(d_zT_out, j) + farr_get(d_zT_exp, j))
         j = j + 1
     }
-    // d_g_top = dot(d_logits, expert·zT) — recompute logits_raw via gemv
-    let logits_raw = mm(expert_mat, V, d, zT, 1)          // [V×1]
+    // d_g_top = dot(d_logits, expert·zT) — packed gemv (same as fwd path)
+    let logits_raw = mm_packed_gemv(M, exp_base, V, d, zT)
     let mut d_g_top = 0.0
     k = 0
     while k < V {
         d_g_top = d_g_top + farr_get(d_logits, k) * farr_get(logits_raw, k)
         k = k + 1
     }
-    let _ = farr_free(expert_mat)
     let _ = farr_free(dl_scaled)
-    let _ = farr_free(d_expert)
-    let _ = farr_free(expert_T)
     let _ = farr_free(d_zT_exp)
     let _ = farr_free(logits_raw)
     // 2) softmax backward on top-only
