@@ -195,6 +195,62 @@ pub fn v3_moe_bwd(zT: int, M: int, router_off: int, experts_off: int,
     }
 }
 
+// ─── MoE aux-loss backward (Switch/GShard load-balancing) ──────────────
+// Switch Transformer load-balancing auxiliary loss:
+//   L_aux = alpha · E · Σ_e (f_e · P_e)
+//     f_e = fraction of tokens routed to expert e (top1 argmax count / N) — a
+//           DETACHED constant (argmax is non-differentiable).
+//     P_e = mean post-softmax gate prob for expert e = (1/N) Σ_token gate_norm[e].
+//   Only P_e carries gradient, so the per-token gate gradient is
+//     ∂L_aux/∂gate_norm_token[e] = (alpha · E · f_e) / N   (constant per step)
+//   which the caller computes from streamed running stats and passes here as
+//   d_gate_aux[e]. This routine applies ONLY the softmax-backward block (the
+//   exact same transform v3_moe_bwd uses for the CE-derived d_gate, lines
+//   175-195) but for a full E-vector d_gate (NOT top-only):
+//     dot          = Σ_f d_gate_aux[f]·gate[f]
+//     d_gate_raw[e] = gate[e] · (d_gate_aux[e] - dot)
+//   then router_grad[e,j] += d_gate_raw[e]·zT[j] and
+//        d_zT[j]          += d_gate_raw[e]·router[e,j].
+//
+// This balances the router: experts that are over-used (high f_e) get a larger
+// positive gate gradient that softmax-backward redistributes toward the
+// under-used experts, raising their gate prob and breaking single-expert
+// collapse — without touching the expert (V·d) weights at all.
+//
+// Inputs:
+//   zT [d] · M [packed] · router_off
+//   gate_norm [E]      post-softmax gate (from fwd)
+//   d_gate_aux [E]     per-token aux gate gradient (alpha·E·f_e / N), full E-vector
+// Outputs (ACCUMULATED):
+//   dMg [packed]       router slot grads
+//   d_zT_out [d]       grad w.r.t. zT
+pub fn v3_moe_aux_bwd(zT: int, M: int, router_off: int,
+                      gate_norm: int, d_gate_aux: int,
+                      dMg: int, d_zT_out: int, d: int, E: int) {
+    let mut dot = 0.0
+    let mut f = 0
+    while f < E {
+        dot = dot + farr_get(d_gate_aux, f) * farr_get(gate_norm, f)
+        f = f + 1
+    }
+    let mut e = 0
+    while e < E {
+        let ge = farr_get(gate_norm, e)
+        let d_raw = ge * (farr_get(d_gate_aux, e) - dot)
+        let mut j = 0
+        while j < d {
+            let zj = farr_get(zT, j)
+            let drprev = farr_get(dMg, router_off + e * d + j)
+            let _ = farr_set(dMg, router_off + e * d + j, drprev + d_raw * zj)
+            let rj = farr_get(M, router_off + e * d + j)
+            let dzprev = farr_get(d_zT_out, j)
+            let _ = farr_set(d_zT_out, j, dzprev + d_raw * rj)
+            j = j + 1
+        }
+        e = e + 1
+    }
+}
+
 // ─── Helper: MoE slot sizes (caller layout decision) ───────────────────
 // Layout 의도: caller (train driver) 가 packed M 안에 MoE 영역을 어디 둘지
 // 결정. 이 헬퍼는 단순 slot size 계산만 제공.
