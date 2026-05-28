@@ -1,0 +1,66 @@
+{
+  "id": "H_667",
+  "slug": "wolfram-vs-curveshape-taxonomy",
+  "axis": "G",
+  "date": "2026-05-28",
+  "parent": "H_664 (N1 backlog: wdomain-curve-shape-as-phi-classifier)",
+  "verdict": "FALSIFIED",
+  "verdict_icon": "RED",
+  "infra": "$0 mac-local, per-rule shard re-cited byte-identical, phi-free aggregate, foreground sync, NO GPU, NO RNG",
+  "hypothesis": "W-Φ 곡선형태(monotone-rising / inverse-U / flat-die-out)로 substrate 를 재분류하면 같은-형태 내 Φ-속성 분산 < Wolfram-class 내 분산 (within-shape var << within-class var) — 곡선형태가 더 tight 한 분류자",
+  "falsifier": "곡선형태 내 분산이 Wolfram-class 내 분산과 유사/초과 -> 곡선형태가 더 나은 분류자 아님",
+  "W_grid": [0.15, 0.40, 0.55, 0.70, 0.95, 1.0],
+  "shape_classifier": {
+    "rule": "die-out(last<=0.01*peak)->die-out ; interior-peak AND post-peak-decline>=15%->inverse-U ; else->monotone-rising",
+    "decline_frac_threshold": 0.15
+  },
+  "rules": [
+    {"rule": 30,  "wolfram_class": "III", "shape": "monotone",  "norm_conv": 2.26615, "phi_mean": 4.15016},
+    {"rule": 45,  "wolfram_class": "III", "shape": "inverse-U", "norm_conv": 1.4608,  "phi_mean": 7.29658},
+    {"rule": 90,  "wolfram_class": "III", "shape": "monotone",  "norm_conv": 2.24029, "phi_mean": 3.23776},
+    {"rule": 106, "wolfram_class": "III", "shape": "monotone",  "norm_conv": 2.1531,  "phi_mean": 33.7457},
+    {"rule": 150, "wolfram_class": "III", "shape": "die-out",   "norm_conv": 1.93118, "phi_mean": 2.6518},
+    {"rule": 184, "wolfram_class": "II",  "shape": "monotone",  "norm_conv": 1.43674, "phi_mean": 34.779},
+    {"rule": 226, "wolfram_class": "II",  "shape": "monotone",  "norm_conv": 1.41354, "phi_mean": 34.5464},
+    {"rule": 110, "wolfram_class": "IV",  "shape": "monotone",  "norm_conv": 2.34922, "phi_mean": 17.2557},
+    {"rule": 54,  "wolfram_class": "IV",  "shape": "monotone",  "norm_conv": 2.4745,  "phi_mean": 2.74703}
+  ],
+  "shape_groups": {"monotone": 7, "inverse-U": 1, "die-out": 1},
+  "wolfram_class_groups": {"II": 2, "III": 5, "IV": 2},
+  "variance": {
+    "convexity_norm_conv": {
+      "within_shape": 0.127158,
+      "within_class": 0.0505637,
+      "total": 0.160824,
+      "shape_over_class_ratio": 2.51481
+    },
+    "magnitude_phi_mean": {
+      "within_shape": 160.372,
+      "within_class": 90.0172,
+      "total": 193.837,
+      "shape_over_class_ratio": 1.78157
+    },
+    "per_shape_convexity": {
+      "monotone":  {"mean": 2.04765, "var": 0.163489, "n": 7},
+      "inverse-U": {"mean": 1.4608,  "var": 0.0,      "n": 1},
+      "die-out":   {"mean": 1.93118, "var": 0.0,      "n": 1}
+    },
+    "per_class_convexity": {
+      "II":  {"mean": 1.42514, "var": 0.00013456, "n": 2},
+      "III": {"mean": 2.0103,  "var": 0.0893913,  "n": 5},
+      "IV":  {"mean": 2.41186, "var": 0.00392377, "n": 2}
+    }
+  },
+  "falsifiers": {
+    "F667.1_CORE_convexity_shape_lt_class":   {"result": "FAIL", "value": "0.127158 >= 0.0505637"},
+    "F667.2_magnitude_shape_lt_class":        {"result": "FAIL", "value": "160.372 >= 90.0172"},
+    "F667.3_STRONG_convexity_shape_le_half":  {"result": "FAIL", "value": "0.127158 > 0.0252819"},
+    "F667.4_monotone_var_lt_classIII_var":    {"result": "FAIL", "value": "0.163489 >= 0.0893913"},
+    "F667.5_ORTHOGONAL_monotone_spans_ge2":   {"result": "PASS", "value": "3 Wolfram classes"},
+    "F667.6_BOUND_finite":                    {"result": "PASS", "value": "all stats finite"}
+  },
+  "npass": "2/6",
+  "shape_tighter_both_props": false,
+  "orthogonal_to_wolfram": true,
+  "core_finding": "곡선형태 3-type 재분류는 Wolfram class 보다 WORSE — within-shape convexity var 0.127 는 within-class 0.051 의 2.51배. monotone shape 가 9 rule 중 7 개를 lump 해 convexity 전범위(1.41 class-II ~ 2.47 class-IV)를 한 그룹에 묶어버림. H_664 N1 추측을 REVERSE. shape 는 Wolfram class 와 직교(F667.5 PASS)이나 그 직교성이 곧 convexity-ordering 을 가로지르는 원인. 곡선형태는 class-III INTRA-class 분화엔 유효하나 GLOBAL substrate 분류자로는 Wolfram class 보다 거침."
+}
