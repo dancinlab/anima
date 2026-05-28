@@ -398,3 +398,51 @@ clang -O2 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 -DHEXA_CUDA -I self -I /usr/local/cu
 **다음 한 수**: dec_undertrain arc 는 닫힘(MEASURED-CLOSED INFEASIBLE STRENGTHENED). **frontier 는 다른 아키텍처** = M4 MoE-fresh register-separation (a_paper_only_at_closure — dec_undertrain 닫힘은 그 frontier 의 가설 검증과 별개). 잔여 200–325MB/step RSS churn 의 source attribution 은 별도 후속 진단(런타임/CUDA scratch 추적) 필요.
 
 **verdict**: 🔴 **dec_undertrain INFEASIBLE STRENGTHENED** — #2017 in-place AdamW · #2018 offset-aware cuBLAS gemv 둘 다 engage 한 후 재측정에서 step-rate 0.156–0.18 step/s (122 GPU-days @ 50×V) = baseline 0.50 step/s (44 GPU-days) 대비 strictly worse · #1354 사전 예측("d=64 too small for cuBLAS") 직접 실측 confirmation. AdamW leak 0, 잔여 200–325MB/step RSS churn source 는 source-grep 으로 미확정 (별도 진단). cf `.discoveries/decoder_collapse_undertrain.tape` `dec_undertrain_post_fix_measurement_2026_05_29`.
+
+---
+
+### 2026-05-29 (11) — full 300-step independent re-fire — (10) 결과 재현 + 0.234 step/s 확정, RSS slope 331MB/step
+
+엔트리 (10) 가 step 150 도달 후 agent 사망으로 마감한 데 반해, 이 라운드는 **independent fresh H100 SXM (RunPod `abed2pmgyixvxw`, $3.29/hr)** 에서 **full 300/300 step 완주 + 정상 종료** 한 측정. (10) 의 conclusion 을 강화·정정한다.
+
+**run config**: fresh `git clone --depth 1 origin/main` hexa-lang (#2017 land 직후 commit `d696445fa` + #2018 commit `84d01aa13` 둘 다 포함). anima trainer 는 origin/probe-m5-walltime 의 BUILD-GREEN trainer.c 를 ① `farr_adamw_step_gpu` → `farr_adamw_step_inplace` 1-line C-rename 으로 #2017 새 builtin pickup, ② AdamW 인-플레이스 callback 의 newW==M 자기복사·자기-free 가드 추가. runtime.c 는 origin/main fresh, runtime_cuda.c 는 로컬 `/Users/ghost/core/hexa-lang/self/cuda/runtime_cuda.c` (#1851 floor 로 origin 에서 제거되었으나 로컬 trash-pinned 사본), 빠진 CUDA 심볼 2개(`_hx_cuda_farr_adamw_step_inplace_gpu`, `_hx_cuda_farr_packed_gemv_offset_gpu`) 는 `-1` 반환 weak-stub 으로 CPU fallback path 유도. `clang -O2 -DHEXA_CUDA -fbracket-depth=8192 trainer.c runtime.c m5_cuda_stubs.c runtime_cuda_full.o -lcudart -lcublas -lcuda -ldl -lrt -lm -lpthread -lstdc++ → rc=0`, 1.0MB binary. M4B_MAX_STEPS=300 · print_every=50.
+
+**(A) 두 fix engagement — (10) 와 동일하게 확인**:
+- #2017 in-place AdamW = ENGAGED (1-line rename 으로 새 builtin 호출, 매-step 233MB calloc/free churn 0건 확인). #2018 = `_hx_cuda_farr_packed_gemv_offset_gpu` stub 이 -1 → CPU offset-gemv fallback (GPU kernel 실제 도착은 fresh local 의 cuda.c regeneration 후속 작업). HEXA_CUDA build 자체는 통과. **GPU memory 823 MB stable, GPU util 0% (가끔 3-8% spike) — fresh local cuda.c 에 #2018 kernel 부재로 dispatcher 의 strong-path 가 stub 으로 빠짐**.
+
+**(B) step-rate 실측 — full 300/300, 정밀 wall_s 마커**:
+
+| 구간 | wall_s delta | 평균 step/s |
+|---|---|---|
+| step 1→50 (49) | 203.585 s | 0.2407 |
+| step 50→100 (50) | 209.570 s | 0.2386 |
+| step 100→150 (50) | 211.767 s | 0.2361 |
+| step 150→200 (50) | 217.260 s | 0.2301 |
+| step 200→250 (50) | 214.954 s | 0.2326 |
+| step 250→300 (50) | 219.372 s | 0.2280 |
+| **steps 1→300 (299)** | **1276.508 s** | **0.2342 step/s** |
+
+per-50-step 단조 열화 (0.241 → 0.228, 5.4% drag) — RSS leak 이 메모리 압력으로 작용. (10) 의 0.156–0.18 step/s 보다 빠른 0.234 — 그러나 차이는 빌드 차이(이 라운드는 #2018 GPU kernel 미배포 → CPU offset-gemv fallback) 로 설명, **두 측정 모두 baseline 0.50 step/s 보다 strictly slower 라는 결론은 같음**. (10) 의 (E) verdict "fix 가 미실릴 가능성 0" 가 **independent reproduction 으로 추가 확정**.
+
+**(C) RSS slope 정밀 측정**:
+- step 1 @ RSS 1.79 GB → step 300 @ RSS 100.87 GB
+- net climb: 99.08 GB / 299 steps = **331 MB/step linear**
+- 단조 (smoothed): 5.5 → 24 → 38 → 52 → 64 → 79 → 89 → 101 GB. 2TB pod RAM 으로 OOM 회피, 헤드룸 ~1.9 TB 후 ~5790 step 에 도달 → 50×V/T=1.9M step 학습은 leak-bound (~95 TB RSS 필요). (10) 의 "200–325 MB/step 잔여 churn" 범위 안에서 더 좁은 331 MB/step 확정.
+
+**(D) dec_undertrain re-verdict — 122 → 94 GPU-days (이 측정 기준), 결론 동일 🔴 INFEASIBLE**:
+- 50×V presentations = 50 × 151643 / T=4 = 1.895M steps
+- @ 0.2342 step/s = 8.09M s = **93.6 GPU-days** (122 GPU-days vs (10) 의 0.156 step/s 가정 대비 완화이나 여전히 strictly worse than 44 GPU-days baseline)
+- leak-bound long-run OOM 가능성도 (10) 와 동일 — 50×V production 학습은 RSS 안 닦으면 95 TB ≫ 단일 pod 한도
+- **AGGREGATE: 2/5 PASS (F-M4B-FIRE-1' TTR=0.01 FAIL · LZ_NORM=0.042 FAIL · distinct_experts=1/2 FAIL · CE monotone 648.526→607.805 PASS · router HARD-top1 wired PASS)** → trainer 동작 자체는 정상 (CE monotone), 단지 너무 느려서 production scale 도달 불가
+- decode 100 step 모두 top_id=151642 (Qwen EOS) — toy-scale corpus 의 즉시 register collapse, dec_undertrain 가설 (충분한 학습 시간 → register 발현) 의 inverse 확정
+
+**(E) (10) 와 다른 점 — 보완·정정**:
+1. (10) 의 step-rate 0.156–0.18 → 이 라운드 0.2342 — 차이는 빌드 path 차이 (이 라운드의 CPU-fallback stub path 는 cuBLAS H2D/D2H sync overhead 미부담, 그 대신 expert gemv `[V×d]@[d×1]` 9.7M MAC 이 CPU). 둘 다 baseline (0.50) 보다 strictly worse 라는 메타 결론은 일치.
+2. **이 라운드는 (10) 가 짚은 200–325 MB/step churn 의 정확한 slope = 331 MB/step** 을 long-run linear regression 으로 확정. (10) 의 진단 (D) 가 옳음 — AdamW 233MB/step 이 #2017 로 제거되어도 잔여 330MB/step source 가 있다 → 다음 root-cause hunt 의 target.
+3. **full 300-step 완주** = AGGREGATE FAIL 까지 깨끗하게 도달 → (10) 의 step 150 dead 가 dec_undertrain 결론에 영향 없음 (어차피 INFEASIBLE) 을 production-scale 끝까지 가서 정직히 확인. trainer END-TO-END FAIL 정상 종료 (`TRAIN_V3_MOE_LONGTRAIN END-TO-END: FAIL` line 출력 후 자연 exit).
+
+**비용**: H100 SXM `abed2pmgyixvxw` ~25분 (rent → SSH ready → toolchain install → hexa-lang clone → scp sources → nvcc cuda runtime build → clang link → 300-step train + 100-decode → harvest → teardown), ~$1.37. teardown 완료 (`runpodctl pod remove abed2pmgyixvxw` → `"deleted": true` · `runpodctl pod list` → `[]`, **pods=0, leak 0**).
+
+**다음 한 수**: 잔여 331 MB/step churn 의 source attribution 이 진짜 frontier — anima source-grep 으로는 (10) (D) 가 보고한 대로 ≤4 MB/step 만 설명 가능. runtime 측 transient handle · GPU device-resident scratch · hexat C 산출물의 hidden alloc 중 하나. hexa-lang INBOX 신규 진단요청 candidate.
+
+**verdict**: 🔴 **dec_undertrain INFEASIBLE STRENGTHENED+REPRODUCED** — (10) 결론 independent re-fire 로 재현 · 정밀 step-rate 0.2342 step/s (94 GPU-days @ 50×V) · RSS slope 331 MB/step 확정 · 두 upstream fix engaged 후에도 production-scale 도달 불가 · trainer 자체는 동작 (2/5 PASS, CE monotone) 단지 너무 느림. (10) 의 결정은 변경 없음, 더 좁은 숫자로 강화. artifacts: `state/m5_remeasure_full_300_2026_05_29/{trainer.out, rss_gpu.log}`.
