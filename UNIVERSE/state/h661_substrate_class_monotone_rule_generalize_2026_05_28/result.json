@@ -1,0 +1,37 @@
+{
+  "id": "H_661",
+  "slug": "substrate-class-monotone-rule-generalize",
+  "axis": "G",
+  "date": "2026-05-28",
+  "infra": "$0 mac-local foreground-sync (per-rule shard)",
+  "verdict": "🟡 PARTIAL",
+  "generalizes": "H_660",
+  "engine": "IIT4 big_phi_bounded · n=5 homogeneous cohort · cap=3 · sys=0 · 6-pt W grid {0.15,0.40,0.55,0.70,0.95,1.0}",
+  "rules": [
+    {"rule": 8,   "class": "I",   "norm_conv": 1.46457, "log_span": 2.06471, "abs_delta": 0.192337, "note": "die-out"},
+    {"rule": 136, "class": "I",   "norm_conv": 6.0,     "log_span": 8.61864, "abs_delta": 0.553383, "note": "die-out DEGENERATE Phi_min=0"},
+    {"rule": 184, "class": "II",  "norm_conv": 1.43674, "log_span": 2.49455, "abs_delta": 49.9682,  "note": "additive/traffic; H_660 byte-identical"},
+    {"rule": 226, "class": "II",  "norm_conv": 1.41354, "log_span": 2.48764, "abs_delta": 48.8326,  "note": "additive"},
+    {"rule": 90,  "class": "III", "norm_conv": 2.24029, "log_span": 3.41499, "abs_delta": 7.25353,  "note": "XOR fractal; H_660 byte-identical"},
+    {"rule": 30,  "class": "III", "norm_conv": 2.26615, "log_span": 3.42656, "abs_delta": 9.40487,  "note": "chaotic; H_660 byte-identical"},
+    {"rule": 45,  "class": "III", "norm_conv": 1.4608,  "log_span": 1.61842, "abs_delta": 10.6588,  "note": "chaotic; LOW convexity outlier — class-III heterogeneity"},
+    {"rule": 110, "class": "IV",  "norm_conv": 2.34922, "log_span": 3.56946, "abs_delta": 40.5374,  "note": "complex/universal; H_660 byte-identical"},
+    {"rule": 54,  "class": "IV",  "norm_conv": 2.4745,  "log_span": 3.68367, "abs_delta": 6.7975,   "note": "complex; norm_conv top overall"}
+  ],
+  "class_mean_norm_conv": {"I": 1.46457, "II": 1.42514, "III": 1.98908, "IV": 2.41186},
+  "falsifiers": {
+    "F661.1_IV_TOP_ROBUST_normconv": {"core": true, "result": "min(IV)=2.34922 >= max(II,III)=2.26615", "status": "PASS"},
+    "F661.2_IV_TOP_LOGSPAN":          {"result": "min(IV)=3.56946 >= max(II,III)=3.42656", "status": "PASS"},
+    "F661.3_CLASSMEAN_MONOTONE":      {"result": "I=1.465 > II=1.425 (I<=II fails)", "status": "FAIL"},
+    "F661.4_STRICT_PERRULE_MONOTONE": {"result": "maxI=1.465 > minII=1.414 (class-I↔II overlap); rule45(III) heterogeneity", "status": "FAIL"},
+    "F661.5_DEGENERATE_FLAG":         {"result": "rule136 Phi_min=0 → log_span=8.62 blowup, abs_Δ=0.55 tiny", "status": "PASS"},
+    "F661.6_BOUND":                   {"result": "all norm_conv·log_span finite", "status": "PASS"}
+  },
+  "aggregate": "4 PASS / 2 FAIL",
+  "finding": "CORE IV-top robust under rule-set expansion (F661.1·2 PASS) — class-IV (rule110, rule54) remains sole top in BOTH scale-invariant metrics across the 9-rule set. BUT full I<II<III<IV class-monotone is NOT robust: class-III is internally heterogeneous (rule45 norm_conv=1.46 collapses to class-I/II level) and class-I (rule8) slightly exceeds class-II. H_660's 4-rule monotone generalizes only at the 'class-IV is top' level; the full ordinal class-monotone was a 4-rule cohort artifact at the I/II/III boundary.",
+  "c3": [
+    "rule45(III) low-convexity is a chaotic ECA whose W→Φ curve is non-monotone in W (Φ peaks at W=0.70 then drops), unlike the monotone-rising curves of 90/30 — small Φ_max/Φ_min span. Wolfram class label is canonical but class-III spans both fractal-additive (90) and pure-chaotic (30,45) sub-types with divergent convexity.",
+    "rule136 (class-I die-out) has Φ_min=0 (decoupled limit collapses to silence) → span_ratio/log_span floor-blowup, making ratio metrics ill-defined for die-out class. norm_conv is finite. class-I sample n=2 with one degenerate.",
+    "class-I↔II overlap (rule8 1.465 vs class-II ~1.42) is within noise — both 'ordered/low-complexity' regimes have similar small-span convexity; the metric does not separate I from II."
+  ]
+}
