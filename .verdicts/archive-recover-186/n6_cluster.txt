@@ -79,3 +79,14 @@ verify --expr jordan_totient(2,6)=24
   tier   = 🟠 INSUFFICIENT
   reason = calculator system has NO path for 'jordan_totient'
   gap    = extend tool/verify_cli.hexa::_recompute (계산기시스템 개선 후보)
+
+## errata fix verification — sopfr(28)=9 → 11 (2026-05-28 fg)
+# H_158(×2) · H_160(×1) 정정. H_176 이 이미 errata 로 지적.
+verify --expr sopfr(28)=11
+  calc   = 11  == expected 11
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+  absorb = · already in atlas — idempotent skip (default · @D g69)
+==
+verify --expr sopfr(28)=9
+  calc   = 11  != expected 9
+  tier   = 🔴 FALSIFIED  (calc deterministically disagrees — TECS-L result-agnostic closed negative)
