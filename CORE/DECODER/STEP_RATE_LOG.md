@@ -224,3 +224,28 @@ N=1 fix (hexa-lang `efdf59bd8` ANALYSIS, 미머지) 둘뿐.
 **비용**: 이번 세션 pod 다수 (5xm3·hbdf·zzld·3hpm·2a46-r3 orphan) ≈ ~$3-4 누적, 전부 teardown 완료 (pods=0). orphan r3 = 죽은 background agent 산물, parent 수동 정리.
 
 **verdict**: ⚪ step-rate STILL UNMEASURED — BUT 인프라는 transpile 까지 정복, 남은 건 self/ 완전본 전송 + flatten 1단계. F-BC-ANIMA-M4-CEILING 은 다음 fire 에서 측정 가능 (recipe 전부 확립).
+
+---
+
+### 2026-05-29 (4) — BUILD GREEN 확인 (agent harvest) + self/ 버전 정합이 진짜 마지막 조각
+
+병행하던 background M5 agent(probe-m5-walltime, 87cd7de37)가 부활해 **결정적 발견**을 남김 + 이번 foreground 가 그것을 재현 시도. 종합:
+
+**agent finding 1 — #1324 "outage" 의 진짜 정체**: 일부는 SSH-KEY 미스매치였음. RunPod 가 `env.PUBLIC_KEY` 로 authorized_keys 를 심는데 `hexa cloud` 가 offer 하는 key 와 어긋날 수 있음. (이번 foreground 는 `--ports+--startSSH+PUBLIC_KEY(RunPod-Key-Go.pub)` + raw-ssh `-i RunPod-Key-Go` 로 SSH_OK 재현 — recipe 확정.)
+
+**agent finding 2 — M4-wired trainer 가 BUILD + cuBLAS-link CLEAN (clang_rc=0, 1MB sm_90 binary)**. 검증된 빌드 레시피:
+```
+# self/ = cloud-m3 worktree (M2/M3 builtin 보유: farr_softmax_rows/farr_ce_seed 28 refs)
+nvcc -O2 -std=c++14 -DHEXA_CUDA -arch=sm_90 -x cu -c self/cuda/runtime_cuda.c -o runtime_cuda.o   # rc=0
+clang -O2 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 -DHEXA_CUDA -I self -I /usr/local/cuda/include \
+  trainer.c self/runtime.c runtime_cuda.o -lcublas -lcudart -lcudart_static -lcuda ... -o trainer  # rc=0
+```
+정리 3건: (a) M2/M3 builtin 은 **cloud-m3 worktree runtime.c 에만** (main install/clone 은 stale → 반드시 cloud-m3 self/ 사용), (b) `_hx_cuda_farr_ce_seed` 5-arg slim kernel 이 정의 앞서 호출됨 → agent 가 작성(`ce_seed_slim_shim.c.txt`, ~60 LoC, **cloud-m3 runtime_cuda.c 에 append**), (c) glue.c 가 `hexa_cuda_available` 중복정의 → **glue.c DROP**.
+
+**foreground 재현 시도 + 함정**: 정규 `hexa cloud` 경로 전부 작동(run/copy-to/--insecure), transpile 성공(1279L), 하지만 self/ 를 **main(완전본) + cloud-m3(runtime.c) 혼합**하니 nvcc `expected ";"` (main runtime_cuda.c 끝에 shim append 가 구조 깨짐). 교훈: **cloud-m3 self/ 를 통째로** 쓰고 거기에 shim append (혼합 금지). cloud-m3 worktree 가 runtime_core.c 를 갖는지 재확인 필요 (agent 는 그걸로 green 냈으니 가졌을 것 — 이번 확인은 flame_bpe 만 grep 해 놓침).
+
+**진짜 마지막 조각**: pod 에 **cloud-m3 self/ 통째 tar** + agent trainer.c + ce_seed shim append + glue drop. 그러면 BUILD GREEN(agent 입증) → short train(M4B_MAX_STEPS) → step-rate 측정. agent 결론: "single uninterrupted pod 면 now-reproducible recipe 로 <8min 측정". pod 안정성만 남음.
+
+**비용**: 이번 라운드 pod (5xm3·hbdf·zzld·3hpm·f3f2 + orphan 2a46-r3) 전부 teardown (pods=0). 누적 ~$4-5. agent 측 ~$0-0.5.
+
+**verdict**: ⚪ step-rate STILL UNMEASURED — BUT BUILD GREEN 확인(agent) + 전체 recipe(SSH·transpile·build·cloud-m3 self·ce_seed shim·glue drop) 문서화 완료. 다음 fire = cloud-m3 self 통째 + <8min 측정. agent harvest = origin/probe-m5-walltime (87cd7de37): trainer.c · glue.c · ce_seed_slim_shim.c.txt · STEP_RATE_FINDING.md.
