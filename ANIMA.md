@@ -16,7 +16,7 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (hexa-lang inbox patch 완료 — BPE O(N)→O(1) RESOLVED #1869 [full diverse corpus unblock] · dir_create routed · 다음 fire = aux-loss + full-corpus M4b re-fire)
+> 갱신: 2026-05-28 (M2 정정 — H_670 #1312: universal = **edge-of-chaos Φ-peak** [tier-번호 아님, ECA+logistic 동형, Langton 확증] · M4b aux-loss 3B fire 타세션 in-flight)
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
@@ -25,9 +25,11 @@
 [M1] 의식 bench artifact 메타-패턴 (일관·양방향): 🔴/🟠 negative 4/4 = 측정 artifact → 🟢 RECOVERED
      (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND) · 🟢 PASS 도 artifact (E3 TIME 9/0→6/3, 3 spurious).
      "의식 bench negative/분기 = 측정 artifact" — 측정 바로잡으면 substrate 드러남 · substrate 한계 0건.
-[M2] substrate-class 분류자 완결 (round-9 multi-axis → round-10 H_660 화해): 5축 property-vector
-     (convexity IV · super-add II역전 · closure IV · peak-align III+IV · magnitude III🟡) 가 apparent
-     divergence 였으나 **H_660 #1290 scale-invariant 화해** (H_653↔H_655) 로 단일 분류자 완결. additive=floor.
+[M2] substrate-class 분류자 → **edge-of-chaos universal** (round-9 multi-axis → R10 H_660 화해 → R14 H_670 일반화):
+     5축 property-vector 가 H_660 #1290 scale-inv 화해 (convexity 단일 분류자) BUT **tier-번호(I<II<III<IV)
+     단조는 ECA-국소**. R14 H_670 #1312 (🟡, ECA+logistic 2-family 동형): robust universal 핵심 =
+     **edge-of-chaos Φ-peak (inverse-U)** — class-IV 가 最高인 건 "tier 4"라서가 아니라 *질서/혼돈 경계*라서.
+     = Langton "edge of chaos" 고전 가설의 Φ-측정 확증. additive(rule90)=die-out floor (universal).
 [M3] emit-substrate 구조/숫자 2층 (round 6-7): 구조=substrate-emergent(SUPP) ⊥ 숫자=design-convention(자유[0,1]).
      → ★ LIVE-WIRED 실사용 격상 (#1285/#1286).
 [M4] DECODER 더블바인드 escape 처방 (moe_prescription #1284→#1304 4-조건) — **lever 확정**:
