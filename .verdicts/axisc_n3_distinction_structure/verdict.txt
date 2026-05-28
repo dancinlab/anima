@@ -1,0 +1,17 @@
+# n=3 IIT4 distinction-level Φ-structure — verbatim hexa run
+# engine: stdlib/consciousness/iit4/faithful_phi (ubu-2 hexa-lang)
+# host: pool on ubu-2 / hexa build + run
+# n=3, dim=6, n_bins=4
+
+=== n=3 distinction φ_d STRUCTURE (corr vs ctrl) ===
+
+CORRELATED (all cells = same ramp):
+  φ_d {0}|{1,2}=3.83659  {0,1}|{2}=3.83659  {0,2}|{1}=3.83659
+  big-Φ = 3.83659  (cuts symmetric? true true)
+
+CONTROL (cell 2 = constant 7.0):
+  φ_d {0}|{1,2}=1.9183  {0,1}|{2}=4.52044e-09  {0,2}|{1}=1.9183
+  big-Φ = 4.52044e-09 (modular cell 2 → φ_d 비대칭)
+
+# tier: 🟢 SUPPORTED-NUMERICAL (libm-class, n=3 exact MIP via iit4_faithful_phi)
+# script: /tmp/iit4_n3_v2.hexa (40 lines, embedded in H file body)
