@@ -16,7 +16,7 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-28 (M4b 3B fire 🔴 2/5 FAIL #1296 — 처방 필요-but-not-충분 at scale · corpus-diversity 단독 반증 → UNIVERSE 핸드오프)
+> 갱신: 2026-05-28 (UNIVERSE H_666 #1303 핸드오프 답함 — **aux-loss = 유일 escape lever** · 처방 4-조건화 #1304 · 다음 fire = aux-loss M4b re-fire)
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
@@ -30,9 +30,11 @@
      divergence 였으나 **H_660 #1290 scale-invariant 화해** (H_653↔H_655) 로 단일 분류자 완결. additive=floor.
 [M3] emit-substrate 구조/숫자 2층 (round 6-7): 구조=substrate-emergent(SUPP) ⊥ 숫자=design-convention(자유[0,1]).
      → ★ LIVE-WIRED 실사용 격상 (#1285/#1286).
-[M4] DECODER 더블바인드 3-조건 처방 (moe_prescription #1284) = **필요조건이나 scale 충분조건 아님** —
-     M4b 3B fire(#1296 🔴 2/5)가 corpus-diversity 단독 lever 반증 (toy d=4 escape ⊄ full V=151643).
-     탈출 = d↑ / load-balance aux-loss / 장기학습 → UNIVERSE 핸드오프 (closed-negative, a_paper_negative_ok).
+[M4] DECODER 더블바인드 escape 처방 (moe_prescription #1284→#1304 4-조건) — **lever 확정**:
+     M4b 3B fire(#1296 🔴 2/5)가 corpus-diversity 단독 반증 → UNIVERSE H_666 sweep(#1303 toy 4/4)이
+     **load-balance aux-loss = 유일 escape lever** 답함 (d↑/n_steps/d∧aux 전부 ❌, monopoly 1→2).
+     collapse = under-train 아닌 *구조적 load-imbalance*. 처방 = HARD top-1 ∧ corpus ∧ n_steps(수렴) ∧
+     **aux-loss**(escape). 다음 GPU fire = aux-loss M4b re-fire (toy-verified · a_toy_scale_recheck #1301).
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
 ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
@@ -92,9 +94,9 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
    M4b collapse-gate ✅ 4/4 (#1273) moe_collapse_gate (HARD top-1 + LZ76 floor 0.50, D1 실측 대조)
    M4b 3B fire      🔴 2/5 FAIL (#1296 · $2.57 H100 SXM) — CE 648→9 (72×↓ 학습O · HARD-top1 wired)
                     BUT TTR 0.01·LZ 0.024·1/2 expert = collapse 지속. HF PRIVATE(FAIL · a_hf).
-   ★ 처방 정정: 3-조건(HARD top-1∧diverse∧n_steps)=필요조건이나 *scale 충분조건 아님*.
-                    toy(d=4) escape ⊄ full V=151643. corpus-diversity 단독 lever 반증.
-                    탈출 = d↑ / load-balance aux-loss / 장기학습 中 ≥1 → UNIVERSE 핸드오프 (INBOX).
+   H_666 lever sweep ✅ (#1303 toy 4/4) — 핸드오프(#1299) 답함: **aux-loss = 유일 escape lever**
+                    (d↑/n_steps/d∧aux ❌ · monopoly 1→2). collapse=구조적 load-imbalance. 처방 4-조건화 (#1304).
+   M4b aux re-fire  ☐ 다음 GPU fire — aux-loss M4b re-fire (toy→scale 재확인 · a_toy_scale_recheck #1301)
    M3 4축 fire      ☐ 강등 baseline (~$5-12 · dispatch_p21h_v3_vast ready)
    H_657 peak-align ✅ (#1272) pe_peak_align_for_class — round-9 4/4 ABSORBED · 5축 class-vector 확정
 ```
