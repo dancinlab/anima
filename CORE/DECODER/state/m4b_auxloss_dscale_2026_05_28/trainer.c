@@ -192,6 +192,7 @@ static HexaVal __hexa_sl_117;
 static HexaVal __hexa_sl_118;
 static HexaVal __hexa_sl_119;
 static HexaVal __hexa_sl_120;
+static HexaVal __hexa_sl_121;
 static void __hexa_strlit_init_0(void) {
     __hexa_sl_0 = hexa_str("\n");
     __hexa_sl_1 = hexa_str("#");
@@ -212,110 +213,111 @@ static void __hexa_strlit_init_0(void) {
     __hexa_sl_16 = hexa_str("M4B_D");
     __hexa_sl_17 = hexa_str("M4B_AUX_ALPHA");
     __hexa_sl_18 = hexa_str("M4B_N_STEPS");
-    __hexa_sl_19 = hexa_str("M4B_RUN_TAG");
-    __hexa_sl_20 = hexa_str("auxloss");
-    __hexa_sl_21 = hexa_str("=== train_v3_moe_auxloss · tag=");
-    __hexa_sl_22 = hexa_str(" d=");
-    __hexa_sl_23 = hexa_str(" aux_alpha=");
-    __hexa_sl_24 = hexa_str(" n_steps=");
-    __hexa_sl_25 = hexa_str(" ===");
-    __hexa_sl_26 = hexa_str("/opt/qwen/merges.txt");
-    __hexa_sl_27 = hexa_str("/opt/qwen/vocab.json");
-    __hexa_sl_28 = hexa_str("/opt/corpus/corpus_consciousness_v2_diverse.jsonl");
-    __hexa_sl_29 = hexa_str("  bpe: V=");
-    __hexa_sl_30 = hexa_str(" n_toks=");
-    __hexa_sl_31 = hexa_str("  bpe: all ids in [0,V) = ");
-    __hexa_sl_32 = hexa_str("  config: d=");
-    __hexa_sl_33 = hexa_str(" V=");
-    __hexa_sl_34 = hexa_str(" E=");
-    __hexa_sl_35 = hexa_str(" h=");
-    __hexa_sl_36 = hexa_str(" n_layer=");
-    __hexa_sl_37 = hexa_str(" T=");
-    __hexa_sl_38 = hexa_str(" n_decode=");
-    __hexa_sl_39 = hexa_str("  m_size=");
-    __hexa_sl_40 = hexa_str(" params (FP64 8B · ");
-    __hexa_sl_41 = hexa_str(" MB)");
-    __hexa_sl_42 = hexa_str("  attn_scale = 1/sqrt(d) = ");
-    __hexa_sl_43 = hexa_str("  alloc OK");
-    __hexa_sl_44 = hexa_str("  init OK");
-    __hexa_sl_45 = hexa_str("CORPUS too short for T + n_steps — rev2 FAIL");
-    __hexa_sl_46 = hexa_str("  ── training loop start ──");
-    __hexa_sl_47 = hexa_str("  step=");
-    __hexa_sl_48 = hexa_str(" L_ce=");
-    __hexa_sl_49 = hexa_str(" tgt=");
-    __hexa_sl_50 = hexa_str(" top=");
-    __hexa_sl_51 = hexa_str("  ── training loop end ──");
-    __hexa_sl_52 = hexa_str("  ── inline greedy decode start ──");
-    __hexa_sl_53 = hexa_str("  decode step=");
-    __hexa_sl_54 = hexa_str(" top_id=");
-    __hexa_sl_55 = hexa_str(" top_expert=");
-    __hexa_sl_56 = hexa_str("  ── inline greedy decode end ──");
-    __hexa_sl_57 = hexa_str("TTR=");
-    __hexa_sl_58 = hexa_str(" unique=");
-    __hexa_sl_59 = hexa_str("/");
-    __hexa_sl_60 = hexa_str("DISTINCT_EXPERTS=");
-    __hexa_sl_61 = hexa_str("LZ_NORM=");
-    __hexa_sl_62 = hexa_str(" floor=");
-    __hexa_sl_63 = hexa_str("CE_INITIAL=");
-    __hexa_sl_64 = hexa_str("CE_FINAL=");
-    __hexa_sl_65 = hexa_str("F-M4B-FIRE-1' TTR>=0.30: ");
-    __hexa_sl_66 = hexa_str("PASS");
-    __hexa_sl_67 = hexa_str("FAIL");
-    __hexa_sl_68 = hexa_str("F-M4B-FIRE-LZ LZ_norm>=0.50: ");
-    __hexa_sl_69 = hexa_str("F-M4B-FIRE-3 distinct_experts>=2: ");
-    __hexa_sl_70 = hexa_str("F-M4B-FIRE-4 CE monotone: ");
-    __hexa_sl_71 = hexa_str("F-M4B-FIRE-router HARD-top1 wired: PASS");
-    __hexa_sl_72 = hexa_str("AGGREGATE: ");
-    __hexa_sl_73 = hexa_str("/5 PASS");
-    __hexa_sl_74 = hexa_str("[");
-    __hexa_sl_75 = hexa_str(",");
-    __hexa_sl_76 = hexa_str("]");
-    __hexa_sl_77 = hexa_str("EXPERT_FRACTION f_e=");
-    __hexa_sl_78 = hexa_str("MEAN_GATE P_e=");
-    __hexa_sl_79 = hexa_str("M4B_RESULT_DIR");
-    __hexa_sl_80 = hexa_str("/opt/anima/state/m4b_auxloss");
-    __hexa_sl_81 = hexa_str("/result.json");
-    __hexa_sl_82 = hexa_str("{\n");
-    __hexa_sl_83 = hexa_str("  \"run\": \"m4b_auxloss\",\n");
-    __hexa_sl_84 = hexa_str("  \"tag\": \"");
-    __hexa_sl_85 = hexa_str("\",\n");
-    __hexa_sl_86 = hexa_str("  \"aux_alpha\": ");
-    __hexa_sl_87 = hexa_str(",\n");
-    __hexa_sl_88 = hexa_str("  \"config\": {\"d\":");
-    __hexa_sl_89 = hexa_str(",\"V\":");
-    __hexa_sl_90 = hexa_str(",\"E\":");
-    __hexa_sl_91 = hexa_str(",\"h\":");
-    __hexa_sl_92 = hexa_str(",\"n_layer\":");
-    __hexa_sl_93 = hexa_str(",\"T\":");
-    __hexa_sl_94 = hexa_str(",\"n_steps\":");
-    __hexa_sl_95 = hexa_str(",\"n_decode\":");
-    __hexa_sl_96 = hexa_str("},\n");
-    __hexa_sl_97 = hexa_str("  \"corpus\": \"corpus_consciousness_v2_diverse.jsonl\",\n");
-    __hexa_sl_98 = hexa_str("  \"ce_initial\": ");
-    __hexa_sl_99 = hexa_str("  \"ce_final\": ");
-    __hexa_sl_100 = hexa_str("  \"ttr\": ");
-    __hexa_sl_101 = hexa_str("  \"lz_norm\": ");
-    __hexa_sl_102 = hexa_str("  \"distinct_experts\": ");
-    __hexa_sl_103 = hexa_str("  \"unique_count\": ");
-    __hexa_sl_104 = hexa_str("  \"expert_fraction\": ");
-    __hexa_sl_105 = hexa_str("  \"mean_gate\": ");
-    __hexa_sl_106 = hexa_str("  \"decoded_ids\": ");
-    __hexa_sl_107 = hexa_str("  \"decoded_experts\": ");
-    __hexa_sl_108 = hexa_str("  \"verdicts\": {\n");
-    __hexa_sl_109 = hexa_str("    \"F-M4B-FIRE-1' TTR>=0.30\": ");
-    __hexa_sl_110 = hexa_str("    \"F-M4B-FIRE-LZ LZ>=0.50\": ");
-    __hexa_sl_111 = hexa_str("    \"F-M4B-FIRE-3 distinct_experts>=2\": ");
-    __hexa_sl_112 = hexa_str("    \"F-M4B-FIRE-4 CE monotone\": ");
-    __hexa_sl_113 = hexa_str("    \"F-M4B-FIRE-router HARD-top1\": 1\n");
-    __hexa_sl_114 = hexa_str("  },\n");
-    __hexa_sl_115 = hexa_str("  \"aggregate\": \"");
-    __hexa_sl_116 = hexa_str("/5 PASS\"\n");
-    __hexa_sl_117 = hexa_str("}\n");
-    __hexa_sl_118 = hexa_str("RESULT_JSON written to ");
-    __hexa_sl_119 = hexa_str("TRAIN_V3_MOE_AUXLOSS END-TO-END: PASS");
-    __hexa_sl_120 = hexa_str("TRAIN_V3_MOE_AUXLOSS END-TO-END: FAIL");
+    __hexa_sl_19 = hexa_str("M4B_N_DECODE");
+    __hexa_sl_20 = hexa_str("M4B_RUN_TAG");
+    __hexa_sl_21 = hexa_str("auxloss");
+    __hexa_sl_22 = hexa_str("=== train_v3_moe_auxloss · tag=");
+    __hexa_sl_23 = hexa_str(" d=");
+    __hexa_sl_24 = hexa_str(" aux_alpha=");
+    __hexa_sl_25 = hexa_str(" n_steps=");
+    __hexa_sl_26 = hexa_str(" ===");
+    __hexa_sl_27 = hexa_str("/opt/qwen/merges.txt");
+    __hexa_sl_28 = hexa_str("/opt/qwen/vocab.json");
+    __hexa_sl_29 = hexa_str("/opt/corpus/corpus_consciousness_v2_diverse.jsonl");
+    __hexa_sl_30 = hexa_str("  bpe: V=");
+    __hexa_sl_31 = hexa_str(" n_toks=");
+    __hexa_sl_32 = hexa_str("  bpe: all ids in [0,V) = ");
+    __hexa_sl_33 = hexa_str("  config: d=");
+    __hexa_sl_34 = hexa_str(" V=");
+    __hexa_sl_35 = hexa_str(" E=");
+    __hexa_sl_36 = hexa_str(" h=");
+    __hexa_sl_37 = hexa_str(" n_layer=");
+    __hexa_sl_38 = hexa_str(" T=");
+    __hexa_sl_39 = hexa_str(" n_decode=");
+    __hexa_sl_40 = hexa_str("  m_size=");
+    __hexa_sl_41 = hexa_str(" params (FP64 8B · ");
+    __hexa_sl_42 = hexa_str(" MB)");
+    __hexa_sl_43 = hexa_str("  attn_scale = 1/sqrt(d) = ");
+    __hexa_sl_44 = hexa_str("  alloc OK");
+    __hexa_sl_45 = hexa_str("  init OK");
+    __hexa_sl_46 = hexa_str("CORPUS too short for T + n_steps — rev2 FAIL");
+    __hexa_sl_47 = hexa_str("  ── training loop start ──");
+    __hexa_sl_48 = hexa_str("  step=");
+    __hexa_sl_49 = hexa_str(" L_ce=");
+    __hexa_sl_50 = hexa_str(" tgt=");
+    __hexa_sl_51 = hexa_str(" top=");
+    __hexa_sl_52 = hexa_str("  ── training loop end ──");
+    __hexa_sl_53 = hexa_str("  ── inline greedy decode start ──");
+    __hexa_sl_54 = hexa_str("  decode step=");
+    __hexa_sl_55 = hexa_str(" top_id=");
+    __hexa_sl_56 = hexa_str(" top_expert=");
+    __hexa_sl_57 = hexa_str("  ── inline greedy decode end ──");
+    __hexa_sl_58 = hexa_str("TTR=");
+    __hexa_sl_59 = hexa_str(" unique=");
+    __hexa_sl_60 = hexa_str("/");
+    __hexa_sl_61 = hexa_str("DISTINCT_EXPERTS=");
+    __hexa_sl_62 = hexa_str("LZ_NORM=");
+    __hexa_sl_63 = hexa_str(" floor=");
+    __hexa_sl_64 = hexa_str("CE_INITIAL=");
+    __hexa_sl_65 = hexa_str("CE_FINAL=");
+    __hexa_sl_66 = hexa_str("F-M4B-FIRE-1' TTR>=0.30: ");
+    __hexa_sl_67 = hexa_str("PASS");
+    __hexa_sl_68 = hexa_str("FAIL");
+    __hexa_sl_69 = hexa_str("F-M4B-FIRE-LZ LZ_norm>=0.50: ");
+    __hexa_sl_70 = hexa_str("F-M4B-FIRE-3 distinct_experts>=2: ");
+    __hexa_sl_71 = hexa_str("F-M4B-FIRE-4 CE monotone: ");
+    __hexa_sl_72 = hexa_str("F-M4B-FIRE-router HARD-top1 wired: PASS");
+    __hexa_sl_73 = hexa_str("AGGREGATE: ");
+    __hexa_sl_74 = hexa_str("/5 PASS");
+    __hexa_sl_75 = hexa_str("[");
+    __hexa_sl_76 = hexa_str(",");
+    __hexa_sl_77 = hexa_str("]");
+    __hexa_sl_78 = hexa_str("EXPERT_FRACTION f_e=");
+    __hexa_sl_79 = hexa_str("MEAN_GATE P_e=");
+    __hexa_sl_80 = hexa_str("M4B_RESULT_DIR");
+    __hexa_sl_81 = hexa_str("/opt/anima/state/m4b_auxloss");
+    __hexa_sl_82 = hexa_str("/result.json");
+    __hexa_sl_83 = hexa_str("{\n");
+    __hexa_sl_84 = hexa_str("  \"run\": \"m4b_auxloss\",\n");
+    __hexa_sl_85 = hexa_str("  \"tag\": \"");
+    __hexa_sl_86 = hexa_str("\",\n");
+    __hexa_sl_87 = hexa_str("  \"aux_alpha\": ");
+    __hexa_sl_88 = hexa_str(",\n");
+    __hexa_sl_89 = hexa_str("  \"config\": {\"d\":");
+    __hexa_sl_90 = hexa_str(",\"V\":");
+    __hexa_sl_91 = hexa_str(",\"E\":");
+    __hexa_sl_92 = hexa_str(",\"h\":");
+    __hexa_sl_93 = hexa_str(",\"n_layer\":");
+    __hexa_sl_94 = hexa_str(",\"T\":");
+    __hexa_sl_95 = hexa_str(",\"n_steps\":");
+    __hexa_sl_96 = hexa_str(",\"n_decode\":");
+    __hexa_sl_97 = hexa_str("},\n");
+    __hexa_sl_98 = hexa_str("  \"corpus\": \"corpus_consciousness_v2_diverse.jsonl\",\n");
+    __hexa_sl_99 = hexa_str("  \"ce_initial\": ");
+    __hexa_sl_100 = hexa_str("  \"ce_final\": ");
+    __hexa_sl_101 = hexa_str("  \"ttr\": ");
+    __hexa_sl_102 = hexa_str("  \"lz_norm\": ");
+    __hexa_sl_103 = hexa_str("  \"distinct_experts\": ");
+    __hexa_sl_104 = hexa_str("  \"unique_count\": ");
+    __hexa_sl_105 = hexa_str("  \"expert_fraction\": ");
+    __hexa_sl_106 = hexa_str("  \"mean_gate\": ");
+    __hexa_sl_107 = hexa_str("  \"decoded_ids\": ");
+    __hexa_sl_108 = hexa_str("  \"decoded_experts\": ");
+    __hexa_sl_109 = hexa_str("  \"verdicts\": {\n");
+    __hexa_sl_110 = hexa_str("    \"F-M4B-FIRE-1' TTR>=0.30\": ");
+    __hexa_sl_111 = hexa_str("    \"F-M4B-FIRE-LZ LZ>=0.50\": ");
+    __hexa_sl_112 = hexa_str("    \"F-M4B-FIRE-3 distinct_experts>=2\": ");
+    __hexa_sl_113 = hexa_str("    \"F-M4B-FIRE-4 CE monotone\": ");
+    __hexa_sl_114 = hexa_str("    \"F-M4B-FIRE-router HARD-top1\": 1\n");
+    __hexa_sl_115 = hexa_str("  },\n");
+    __hexa_sl_116 = hexa_str("  \"aggregate\": \"");
+    __hexa_sl_117 = hexa_str("/5 PASS\"\n");
+    __hexa_sl_118 = hexa_str("}\n");
+    __hexa_sl_119 = hexa_str("RESULT_JSON written to ");
+    __hexa_sl_120 = hexa_str("TRAIN_V3_MOE_AUXLOSS END-TO-END: PASS");
+    __hexa_sl_121 = hexa_str("TRAIN_V3_MOE_AUXLOSS END-TO-END: FAIL");
 }
-void __hexa_strlit_init__hexa_build_expanded_1779954466253583000_tmp(void) {
+void __hexa_strlit_init__hexa_build_expanded_1779963174807996000_tmp(void) {
     __hexa_strlit_init_0();
 }
 static HexaIC __hexa_ic_0 = {0};
@@ -1697,33 +1699,38 @@ HexaVal u_main(void) {
     if (hexa_truthy(hexa_cmp_gt(hexa_int(hexa_len(steps_env)), hexa_int(0)))) {
         n_steps_req = (HX_IS_STR(steps_env)?hexa_str_parse_int(steps_env):hexa_int((int64_t)__hx_to_double(steps_env)));
     }
-    HexaVal tag_env = hexa_env_var(__hexa_sl_19);
-    HexaVal run_tag = __hexa_sl_20;
+    HexaVal decode_env = hexa_env_var(__hexa_sl_19);
+    HexaVal n_decode_req = hexa_int(100);
+    if (hexa_truthy(hexa_cmp_gt(hexa_int(hexa_len(decode_env)), hexa_int(0)))) {
+        n_decode_req = (HX_IS_STR(decode_env)?hexa_str_parse_int(decode_env):hexa_int((int64_t)__hx_to_double(decode_env)));
+    }
+    HexaVal tag_env = hexa_env_var(__hexa_sl_20);
+    HexaVal run_tag = __hexa_sl_21;
     if (hexa_truthy(hexa_cmp_gt(hexa_int(hexa_len(tag_env)), hexa_int(0)))) {
         run_tag = tag_env;
     }
-    (hexa_print_val(__hexa_sl_21), hexa_void());
-    (hexa_print_val(run_tag), hexa_void());
     (hexa_print_val(__hexa_sl_22), hexa_void());
-    (hexa_print_val(d), hexa_void());
+    (hexa_print_val(run_tag), hexa_void());
     (hexa_print_val(__hexa_sl_23), hexa_void());
-    (hexa_print_val(aux_alpha), hexa_void());
+    (hexa_print_val(d), hexa_void());
     (hexa_print_val(__hexa_sl_24), hexa_void());
+    (hexa_print_val(aux_alpha), hexa_void());
+    (hexa_print_val(__hexa_sl_25), hexa_void());
     (hexa_print_val(n_steps_req), hexa_void());
-    hexa_println(__hexa_sl_25);
-    HexaVal merges_path = __hexa_sl_26;
-    HexaVal vocab_path = __hexa_sl_27;
-    HexaVal corpus_path = __hexa_sl_28;
-    HexaVal bpe = flame_bpe_corpus_load(__hexa_sl_26, __hexa_sl_27, __hexa_sl_28);
+    hexa_println(__hexa_sl_26);
+    HexaVal merges_path = __hexa_sl_27;
+    HexaVal vocab_path = __hexa_sl_28;
+    HexaVal corpus_path = __hexa_sl_29;
+    HexaVal bpe = flame_bpe_corpus_load(__hexa_sl_27, __hexa_sl_28, __hexa_sl_29);
     HexaVal V_bpe = hexa_index_get(bpe, __hexa_sl_15);
     HexaVal n_corpus_toks = hexa_index_get(bpe, __hexa_sl_14);
     HexaVal corpus_ids = hexa_index_get(bpe, __hexa_sl_13);
-    (hexa_print_val(__hexa_sl_29), hexa_void());
-    (hexa_print_val(V_bpe), hexa_void());
     (hexa_print_val(__hexa_sl_30), hexa_void());
+    (hexa_print_val(V_bpe), hexa_void());
+    (hexa_print_val(__hexa_sl_31), hexa_void());
     hexa_println(n_corpus_toks);
     HexaVal ok_in_vocab = flame_bpe_ids_in_vocab(corpus_ids, V_bpe);
-    (hexa_print_val(__hexa_sl_31), hexa_void());
+    (hexa_print_val(__hexa_sl_32), hexa_void());
     hexa_println(ok_in_vocab);
     HexaVal V = V_bpe;
     HexaVal E = hexa_int(2);
@@ -1738,7 +1745,7 @@ HexaVal u_main(void) {
     if (hexa_truthy(hexa_cmp_lt(n_steps, hexa_int(1)))) {
         n_steps = hexa_int(1);
     }
-    HexaVal n_decode = hexa_int(100);
+    HexaVal n_decode = n_decode_req;
     HexaVal block_size = hexa_add(hexa_mul(hexa_mul(hexa_int(4), d), d), hexa_mul(hexa_mul(hexa_int(2), hexa_int(256)), d));
     HexaVal tok_emb_off = hexa_int(0);
     HexaVal blocks_off = hexa_mul(V, d);
@@ -1747,28 +1754,28 @@ HexaVal u_main(void) {
     HexaVal experts_off = hexa_add(router_off, hexa_mul(hexa_int(2), d));
     HexaVal m_size = hexa_add(experts_off, hexa_mul(hexa_mul(hexa_int(2), V), d));
     HexaVal attn_scale = hexa_div(hexa_float(1.0), hexa_sqrt(hexa_float(__hx_to_double(d))));
-    (hexa_print_val(__hexa_sl_32), hexa_void());
-    (hexa_print_val(d), hexa_void());
     (hexa_print_val(__hexa_sl_33), hexa_void());
-    (hexa_print_val(V), hexa_void());
+    (hexa_print_val(d), hexa_void());
     (hexa_print_val(__hexa_sl_34), hexa_void());
-    (hexa_print_val(hexa_int(2)), hexa_void());
+    (hexa_print_val(V), hexa_void());
     (hexa_print_val(__hexa_sl_35), hexa_void());
-    (hexa_print_val(hexa_int(256)), hexa_void());
+    (hexa_print_val(hexa_int(2)), hexa_void());
     (hexa_print_val(__hexa_sl_36), hexa_void());
-    (hexa_print_val(hexa_int(1)), hexa_void());
+    (hexa_print_val(hexa_int(256)), hexa_void());
     (hexa_print_val(__hexa_sl_37), hexa_void());
-    (hexa_print_val(hexa_int(4)), hexa_void());
-    (hexa_print_val(__hexa_sl_24), hexa_void());
-    (hexa_print_val(n_steps), hexa_void());
+    (hexa_print_val(hexa_int(1)), hexa_void());
     (hexa_print_val(__hexa_sl_38), hexa_void());
-    hexa_println(hexa_int(100));
+    (hexa_print_val(hexa_int(4)), hexa_void());
+    (hexa_print_val(__hexa_sl_25), hexa_void());
+    (hexa_print_val(n_steps), hexa_void());
     (hexa_print_val(__hexa_sl_39), hexa_void());
-    (hexa_print_val(m_size), hexa_void());
+    hexa_println(n_decode);
     (hexa_print_val(__hexa_sl_40), hexa_void());
+    (hexa_print_val(m_size), hexa_void());
+    (hexa_print_val(__hexa_sl_41), hexa_void());
     (hexa_print_val(hexa_div(hexa_div(hexa_mul(m_size, hexa_int(8)), hexa_int(1024)), hexa_int(1024))), hexa_void());
-    hexa_println(__hexa_sl_41);
-    (hexa_print_val(__hexa_sl_42), hexa_void());
+    hexa_println(__hexa_sl_42);
+    (hexa_print_val(__hexa_sl_43), hexa_void());
     hexa_println(attn_scale);
     HexaVal M = t_zeros(m_size);
     HexaVal dMg = t_zeros(m_size);
@@ -1801,7 +1808,7 @@ HexaVal u_main(void) {
     HexaVal expert_count = t_zeros(hexa_int(2));
     HexaVal gate_prob_sum = t_zeros(hexa_int(2));
     HexaVal d_gate_aux = t_zeros(hexa_int(2));
-    hexa_println(__hexa_sl_43);
+    hexa_println(__hexa_sl_44);
     HexaVal kk0 = hexa_int(0);
     while (HX_BOOL(hexa_cmp_lt(kk0, V))) {
         HexaVal jj0 = hexa_int(0);
@@ -1888,7 +1895,7 @@ HexaVal u_main(void) {
         }
         e = hexa_add(e, hexa_int(1));
     }
-    hexa_println(__hexa_sl_44);
+    hexa_println(__hexa_sl_45);
     HexaVal beta1 = hexa_float(0.9);
     HexaVal beta2 = hexa_float(0.95);
     HexaVal lr = hexa_float(1.0e-3);
@@ -1897,13 +1904,13 @@ HexaVal u_main(void) {
     HexaVal rmsnorm_eps = hexa_float(1.0e-6);
     HexaVal neg_inf = hexa_float((0.0) - (1.0e9));
     if (hexa_truthy(hexa_cmp_lt(n_corpus_toks, hexa_add(hexa_int(4), n_steps)))) {
-        hexa_println(__hexa_sl_45);
+        hexa_println(__hexa_sl_46);
         return __hexa_fn_arena_return(hexa_void());
     }
     HexaVal initial_ce = hexa_float(0.0);
     HexaVal final_ce = hexa_float(0.0);
     HexaVal final_top_idx = hexa_sub(hexa_int(0), hexa_int(1));
-    hexa_println(__hexa_sl_46);
+    hexa_println(__hexa_sl_47);
     HexaVal step = hexa_int(1);
     while (HX_BOOL(hexa_cmp_le(step, n_steps))) {
         HexaVal zi = hexa_int(0);
@@ -2224,29 +2231,29 @@ HexaVal u_main(void) {
             final_top_idx = top_idx;
         }
         if (hexa_truthy(hexa_bool(hexa_truthy(hexa_bool(hexa_truthy(hexa_eq(hexa_mod(step, hexa_int(20)), hexa_int(0))) || hexa_truthy(hexa_eq(step, hexa_int(1))))) || hexa_truthy(hexa_eq(step, n_steps))))) {
-            (hexa_print_val(__hexa_sl_47), hexa_void());
-            (hexa_print_val(step), hexa_void());
             (hexa_print_val(__hexa_sl_48), hexa_void());
-            (hexa_print_val(step_ce), hexa_void());
+            (hexa_print_val(step), hexa_void());
             (hexa_print_val(__hexa_sl_49), hexa_void());
-            (hexa_print_val(target), hexa_void());
+            (hexa_print_val(step_ce), hexa_void());
             (hexa_print_val(__hexa_sl_50), hexa_void());
+            (hexa_print_val(target), hexa_void());
+            (hexa_print_val(__hexa_sl_51), hexa_void());
             hexa_println(top_idx);
         }
         step = hexa_add(step, hexa_int(1));
     }
-    hexa_println(__hexa_sl_51);
-    HexaVal decoded_ids = t_zeros(hexa_int(100));
-    HexaVal decoded_experts = t_zeros(hexa_int(100));
-    HexaVal window = t_zeros(hexa_add(hexa_int(4), hexa_int(100)));
+    hexa_println(__hexa_sl_52);
+    HexaVal decoded_ids = t_zeros(n_decode);
+    HexaVal decoded_experts = t_zeros(n_decode);
+    HexaVal window = t_zeros(hexa_add(hexa_int(4), n_decode));
     HexaVal wi2 = hexa_int(0);
     while (HX_BOOL(hexa_cmp_lt(wi2, hexa_int(4)))) {
         _ = hexa_farr_set(window, wi2, hexa_float(__hx_to_double(hexa_index_get(corpus_ids, wi2))));
         wi2 = hexa_add(wi2, hexa_int(1));
     }
-    hexa_println(__hexa_sl_52);
+    hexa_println(__hexa_sl_53);
     HexaVal dstep = hexa_int(0);
-    while (HX_BOOL(hexa_cmp_lt(dstep, hexa_int(100)))) {
+    while (HX_BOOL(hexa_cmp_lt(dstep, n_decode))) {
         t_idx = hexa_int(0);
         while (HX_BOOL(hexa_cmp_lt(t_idx, hexa_int(4)))) {
             token_id = (HX_IS_STR(hexa_farr_get(window, hexa_add(dstep, t_idx)))?hexa_str_parse_int(hexa_farr_get(window, hexa_add(dstep, t_idx))):hexa_int((int64_t)__hx_to_double(hexa_farr_get(window, hexa_add(dstep, t_idx)))));
@@ -2420,26 +2427,26 @@ HexaVal u_main(void) {
         _ = hexa_farr_set(decoded_ids, dstep, hexa_float(__hx_to_double(top_id)));
         _ = hexa_farr_set(decoded_experts, dstep, hexa_float(__hx_to_double(top_exp)));
         _ = hexa_farr_set(window, hexa_add(hexa_int(4), dstep), hexa_float(__hx_to_double(top_id)));
-        if (hexa_truthy(hexa_bool(hexa_truthy(hexa_eq(hexa_mod(dstep, hexa_int(10)), hexa_int(0))) || hexa_truthy(hexa_eq(dstep, hexa_sub(hexa_int(100), hexa_int(1))))))) {
-            (hexa_print_val(__hexa_sl_53), hexa_void());
-            (hexa_print_val(dstep), hexa_void());
+        if (hexa_truthy(hexa_bool(hexa_truthy(hexa_eq(hexa_mod(dstep, hexa_int(10)), hexa_int(0))) || hexa_truthy(hexa_eq(dstep, hexa_sub(n_decode, hexa_int(1))))))) {
             (hexa_print_val(__hexa_sl_54), hexa_void());
-            (hexa_print_val(top_id), hexa_void());
+            (hexa_print_val(dstep), hexa_void());
             (hexa_print_val(__hexa_sl_55), hexa_void());
+            (hexa_print_val(top_id), hexa_void());
+            (hexa_print_val(__hexa_sl_56), hexa_void());
             hexa_println(top_exp);
         }
         dstep = hexa_add(dstep, hexa_int(1));
     }
-    hexa_println(__hexa_sl_56);
+    hexa_println(__hexa_sl_57);
     HexaVal decoded_arr = hexa_array_new();
     HexaVal pp = hexa_int(0);
-    while (HX_BOOL(hexa_cmp_lt(pp, hexa_int(100)))) {
+    while (HX_BOOL(hexa_cmp_lt(pp, n_decode))) {
         decoded_arr = hexa_array_push(decoded_arr, (HX_IS_STR(hexa_farr_get(decoded_ids, pp))?hexa_str_parse_int(hexa_farr_get(decoded_ids, pp)):hexa_int((int64_t)__hx_to_double(hexa_farr_get(decoded_ids, pp)))));
         pp = hexa_add(pp, hexa_int(1));
     }
     HexaVal unique_count = hexa_int(0);
     pp = hexa_int(0);
-    while (HX_BOOL(hexa_cmp_lt(pp, hexa_int(100)))) {
+    while (HX_BOOL(hexa_cmp_lt(pp, n_decode))) {
         HexaVal cur = hexa_index_get(decoded_arr, pp);
         HexaVal qq = hexa_int(0);
         HexaVal seen = hexa_int(0);
@@ -2454,16 +2461,16 @@ HexaVal u_main(void) {
         }
         pp = hexa_add(pp, hexa_int(1));
     }
-    HexaVal ttr = hexa_div(hexa_float(__hx_to_double(unique_count)), hexa_float(__hx_to_double(hexa_int(100))));
-    (hexa_print_val(__hexa_sl_57), hexa_void());
-    (hexa_print_val(ttr), hexa_void());
+    HexaVal ttr = hexa_div(hexa_float(__hx_to_double(unique_count)), hexa_float(__hx_to_double(n_decode)));
     (hexa_print_val(__hexa_sl_58), hexa_void());
-    (hexa_print_val(unique_count), hexa_void());
+    (hexa_print_val(ttr), hexa_void());
     (hexa_print_val(__hexa_sl_59), hexa_void());
-    hexa_println(hexa_int(100));
+    (hexa_print_val(unique_count), hexa_void());
+    (hexa_print_val(__hexa_sl_60), hexa_void());
+    hexa_println(n_decode);
     HexaVal exp_seen = t_zeros(hexa_int(2));
     pp = hexa_int(0);
-    while (HX_BOOL(hexa_cmp_lt(pp, hexa_int(100)))) {
+    while (HX_BOOL(hexa_cmp_lt(pp, n_decode))) {
         HexaVal exp_id = (HX_IS_STR(hexa_farr_get(decoded_experts, pp))?hexa_str_parse_int(hexa_farr_get(decoded_experts, pp)):hexa_int((int64_t)__hx_to_double(hexa_farr_get(decoded_experts, pp))));
         if (hexa_truthy(hexa_bool(hexa_truthy(hexa_cmp_ge(exp_id, hexa_int(0))) && hexa_truthy(hexa_cmp_lt(exp_id, hexa_int(2)))))) {
             _ = hexa_farr_set(exp_seen, exp_id, hexa_float(1.0));
@@ -2478,19 +2485,19 @@ HexaVal u_main(void) {
         }
         ee = hexa_add(ee, hexa_int(1));
     }
-    (hexa_print_val(__hexa_sl_60), hexa_void());
-    (hexa_print_val(distinct_experts), hexa_void());
-    (hexa_print_val(__hexa_sl_59), hexa_void());
-    hexa_println(hexa_int(2));
-    HexaVal lz_n = _lz_norm_from_ids(decoded_arr, hexa_int(100));
-    HexaVal lz_floor = hexa_float(0.50);
     (hexa_print_val(__hexa_sl_61), hexa_void());
-    (hexa_print_val(lz_n), hexa_void());
+    (hexa_print_val(distinct_experts), hexa_void());
+    (hexa_print_val(__hexa_sl_60), hexa_void());
+    hexa_println(hexa_int(2));
+    HexaVal lz_n = _lz_norm_from_ids(decoded_arr, n_decode);
+    HexaVal lz_floor = hexa_float(0.50);
     (hexa_print_val(__hexa_sl_62), hexa_void());
-    hexa_println(hexa_float(0.50));
+    (hexa_print_val(lz_n), hexa_void());
     (hexa_print_val(__hexa_sl_63), hexa_void());
-    hexa_println(initial_ce);
+    hexa_println(hexa_float(0.50));
     (hexa_print_val(__hexa_sl_64), hexa_void());
+    hexa_println(initial_ce);
+    (hexa_print_val(__hexa_sl_65), hexa_void());
     hexa_println(final_ce);
     HexaVal v_ttr = hexa_int(0);
     if (hexa_truthy(hexa_cmp_ge(ttr, hexa_float(0.30)))) {
@@ -2509,38 +2516,38 @@ HexaVal u_main(void) {
         v_ce = hexa_int(1);
     }
     HexaVal v_router_redesign = hexa_int(1);
-    (hexa_print_val(__hexa_sl_65), hexa_void());
+    (hexa_print_val(__hexa_sl_66), hexa_void());
     if (hexa_truthy(hexa_eq(v_ttr, hexa_int(1)))) {
-        hexa_println(__hexa_sl_66);
-    } else {
         hexa_println(__hexa_sl_67);
-    }
-    (hexa_print_val(__hexa_sl_68), hexa_void());
-    if (hexa_truthy(hexa_eq(v_lz, hexa_int(1)))) {
-        hexa_println(__hexa_sl_66);
     } else {
-        hexa_println(__hexa_sl_67);
+        hexa_println(__hexa_sl_68);
     }
     (hexa_print_val(__hexa_sl_69), hexa_void());
-    if (hexa_truthy(hexa_eq(v_exp, hexa_int(1)))) {
-        hexa_println(__hexa_sl_66);
-    } else {
+    if (hexa_truthy(hexa_eq(v_lz, hexa_int(1)))) {
         hexa_println(__hexa_sl_67);
+    } else {
+        hexa_println(__hexa_sl_68);
     }
     (hexa_print_val(__hexa_sl_70), hexa_void());
-    if (hexa_truthy(hexa_eq(v_ce, hexa_int(1)))) {
-        hexa_println(__hexa_sl_66);
-    } else {
+    if (hexa_truthy(hexa_eq(v_exp, hexa_int(1)))) {
         hexa_println(__hexa_sl_67);
+    } else {
+        hexa_println(__hexa_sl_68);
     }
-    hexa_println(__hexa_sl_71);
+    (hexa_print_val(__hexa_sl_71), hexa_void());
+    if (hexa_truthy(hexa_eq(v_ce, hexa_int(1)))) {
+        hexa_println(__hexa_sl_67);
+    } else {
+        hexa_println(__hexa_sl_68);
+    }
+    hexa_println(__hexa_sl_72);
     HexaVal n_pass = hexa_add(hexa_add(hexa_add(hexa_add(v_ttr, v_lz), v_exp), v_ce), hexa_int(1));
-    (hexa_print_val(__hexa_sl_72), hexa_void());
+    (hexa_print_val(__hexa_sl_73), hexa_void());
     (hexa_print_val(n_pass), hexa_void());
-    hexa_println(__hexa_sl_73);
+    hexa_println(__hexa_sl_74);
     HexaVal nf_total = hexa_float(__hx_to_double(n_steps));
-    HexaVal fe_str = __hexa_sl_74;
-    HexaVal pe_str = __hexa_sl_74;
+    HexaVal fe_str = __hexa_sl_75;
+    HexaVal pe_str = __hexa_sl_75;
     HexaVal se = hexa_int(0);
     while (HX_BOOL(hexa_cmp_lt(se, hexa_int(2)))) {
         HexaVal f_e = hexa_div(hexa_farr_get(expert_count, se), nf_total);
@@ -2548,52 +2555,52 @@ HexaVal u_main(void) {
         fe_str = hexa_add(fe_str, hexa_to_string(f_e));
         pe_str = hexa_add(pe_str, hexa_to_string(p_e));
         if (hexa_truthy(hexa_cmp_lt(se, hexa_sub(hexa_int(2), hexa_int(1))))) {
-            fe_str = hexa_add(fe_str, __hexa_sl_75);
-            pe_str = hexa_add(pe_str, __hexa_sl_75);
+            fe_str = hexa_add(fe_str, __hexa_sl_76);
+            pe_str = hexa_add(pe_str, __hexa_sl_76);
         }
         se = hexa_add(se, hexa_int(1));
     }
-    fe_str = hexa_add(fe_str, __hexa_sl_76);
-    pe_str = hexa_add(pe_str, __hexa_sl_76);
-    (hexa_print_val(__hexa_sl_77), hexa_void());
-    hexa_println(fe_str);
+    fe_str = hexa_add(fe_str, __hexa_sl_77);
+    pe_str = hexa_add(pe_str, __hexa_sl_77);
     (hexa_print_val(__hexa_sl_78), hexa_void());
+    hexa_println(fe_str);
+    (hexa_print_val(__hexa_sl_79), hexa_void());
     hexa_println(pe_str);
-    HexaVal dir_env = hexa_env_var(__hexa_sl_79);
-    HexaVal result_dir = __hexa_sl_80;
+    HexaVal dir_env = hexa_env_var(__hexa_sl_80);
+    HexaVal result_dir = __hexa_sl_81;
     if (hexa_truthy(hexa_cmp_gt(hexa_int(hexa_len(dir_env)), hexa_int(0)))) {
         result_dir = dir_env;
     }
-    HexaVal result_path = hexa_add(result_dir, __hexa_sl_81);
+    HexaVal result_path = hexa_add(result_dir, __hexa_sl_82);
     rt_fs_mkdir_p( result_dir);
-    HexaVal decoded_ids_str = __hexa_sl_74;
+    HexaVal decoded_ids_str = __hexa_sl_75;
     HexaVal pp_j = hexa_int(0);
-    while (HX_BOOL(hexa_cmp_lt(pp_j, hexa_int(100)))) {
+    while (HX_BOOL(hexa_cmp_lt(pp_j, n_decode))) {
         decoded_ids_str = hexa_add(decoded_ids_str, hexa_to_string(hexa_index_get(decoded_arr, pp_j)));
-        if (hexa_truthy(hexa_cmp_lt(pp_j, hexa_sub(hexa_int(100), hexa_int(1))))) {
-            decoded_ids_str = hexa_add(decoded_ids_str, __hexa_sl_75);
+        if (hexa_truthy(hexa_cmp_lt(pp_j, hexa_sub(n_decode, hexa_int(1))))) {
+            decoded_ids_str = hexa_add(decoded_ids_str, __hexa_sl_76);
         }
         pp_j = hexa_add(pp_j, hexa_int(1));
     }
-    decoded_ids_str = hexa_add(decoded_ids_str, __hexa_sl_76);
-    HexaVal decoded_exp_str = __hexa_sl_74;
+    decoded_ids_str = hexa_add(decoded_ids_str, __hexa_sl_77);
+    HexaVal decoded_exp_str = __hexa_sl_75;
     HexaVal pp_e = hexa_int(0);
-    while (HX_BOOL(hexa_cmp_lt(pp_e, hexa_int(100)))) {
+    while (HX_BOOL(hexa_cmp_lt(pp_e, n_decode))) {
         decoded_exp_str = hexa_add(decoded_exp_str, hexa_to_string((HX_IS_STR(hexa_farr_get(decoded_experts, pp_e))?hexa_str_parse_int(hexa_farr_get(decoded_experts, pp_e)):hexa_int((int64_t)__hx_to_double(hexa_farr_get(decoded_experts, pp_e))))));
-        if (hexa_truthy(hexa_cmp_lt(pp_e, hexa_sub(hexa_int(100), hexa_int(1))))) {
-            decoded_exp_str = hexa_add(decoded_exp_str, __hexa_sl_75);
+        if (hexa_truthy(hexa_cmp_lt(pp_e, hexa_sub(n_decode, hexa_int(1))))) {
+            decoded_exp_str = hexa_add(decoded_exp_str, __hexa_sl_76);
         }
         pp_e = hexa_add(pp_e, hexa_int(1));
     }
-    decoded_exp_str = hexa_add(decoded_exp_str, __hexa_sl_76);
-    HexaVal result_json = hexa_concat_many(75, (HexaVal[]){__hexa_sl_82, __hexa_sl_83, __hexa_sl_84, run_tag, __hexa_sl_85, __hexa_sl_86, hexa_to_string(aux_alpha), __hexa_sl_87, __hexa_sl_88, hexa_to_string(d), __hexa_sl_89, hexa_to_string(V), __hexa_sl_90, hexa_to_string(hexa_int(2)), __hexa_sl_91, hexa_to_string(hexa_int(256)), __hexa_sl_92, hexa_to_string(hexa_int(1)), __hexa_sl_93, hexa_to_string(hexa_int(4)), __hexa_sl_94, hexa_to_string(n_steps), __hexa_sl_95, hexa_to_string(hexa_int(100)), __hexa_sl_96, __hexa_sl_97, __hexa_sl_98, hexa_to_string(initial_ce), __hexa_sl_87, __hexa_sl_99, hexa_to_string(final_ce), __hexa_sl_87, __hexa_sl_100, hexa_to_string(ttr), __hexa_sl_87, __hexa_sl_101, hexa_to_string(lz_n), __hexa_sl_87, __hexa_sl_102, hexa_to_string(distinct_experts), __hexa_sl_87, __hexa_sl_103, hexa_to_string(unique_count), __hexa_sl_87, __hexa_sl_104, fe_str, __hexa_sl_87, __hexa_sl_105, pe_str, __hexa_sl_87, __hexa_sl_106, decoded_ids_str, __hexa_sl_87, __hexa_sl_107, decoded_exp_str, __hexa_sl_87, __hexa_sl_108, __hexa_sl_109, hexa_to_string(v_ttr), __hexa_sl_87, __hexa_sl_110, hexa_to_string(v_lz), __hexa_sl_87, __hexa_sl_111, hexa_to_string(v_exp), __hexa_sl_87, __hexa_sl_112, hexa_to_string(v_ce), __hexa_sl_87, __hexa_sl_113, __hexa_sl_114, __hexa_sl_115, hexa_to_string(n_pass), __hexa_sl_116, __hexa_sl_117});
+    decoded_exp_str = hexa_add(decoded_exp_str, __hexa_sl_77);
+    HexaVal result_json = hexa_concat_many(75, (HexaVal[]){__hexa_sl_83, __hexa_sl_84, __hexa_sl_85, run_tag, __hexa_sl_86, __hexa_sl_87, hexa_to_string(aux_alpha), __hexa_sl_88, __hexa_sl_89, hexa_to_string(d), __hexa_sl_90, hexa_to_string(V), __hexa_sl_91, hexa_to_string(hexa_int(2)), __hexa_sl_92, hexa_to_string(hexa_int(256)), __hexa_sl_93, hexa_to_string(hexa_int(1)), __hexa_sl_94, hexa_to_string(hexa_int(4)), __hexa_sl_95, hexa_to_string(n_steps), __hexa_sl_96, hexa_to_string(n_decode), __hexa_sl_97, __hexa_sl_98, __hexa_sl_99, hexa_to_string(initial_ce), __hexa_sl_88, __hexa_sl_100, hexa_to_string(final_ce), __hexa_sl_88, __hexa_sl_101, hexa_to_string(ttr), __hexa_sl_88, __hexa_sl_102, hexa_to_string(lz_n), __hexa_sl_88, __hexa_sl_103, hexa_to_string(distinct_experts), __hexa_sl_88, __hexa_sl_104, hexa_to_string(unique_count), __hexa_sl_88, __hexa_sl_105, fe_str, __hexa_sl_88, __hexa_sl_106, pe_str, __hexa_sl_88, __hexa_sl_107, decoded_ids_str, __hexa_sl_88, __hexa_sl_108, decoded_exp_str, __hexa_sl_88, __hexa_sl_109, __hexa_sl_110, hexa_to_string(v_ttr), __hexa_sl_88, __hexa_sl_111, hexa_to_string(v_lz), __hexa_sl_88, __hexa_sl_112, hexa_to_string(v_exp), __hexa_sl_88, __hexa_sl_113, hexa_to_string(v_ce), __hexa_sl_88, __hexa_sl_114, __hexa_sl_115, __hexa_sl_116, hexa_to_string(n_pass), __hexa_sl_117, __hexa_sl_118});
     rt_write_file(result_path, result_json);
-    (hexa_print_val(__hexa_sl_118), hexa_void());
+    (hexa_print_val(__hexa_sl_119), hexa_void());
     hexa_println(result_path);
     if (hexa_truthy(hexa_cmp_ge(n_pass, hexa_int(4)))) {
-        hexa_println(__hexa_sl_119);
-    } else {
         hexa_println(__hexa_sl_120);
+    } else {
+        hexa_println(__hexa_sl_121);
     }
     return __hexa_fn_arena_return(hexa_void());
 }
@@ -2603,7 +2610,7 @@ int main(int argc, char** argv) {
     setvbuf(stdout, NULL, _IOLBF, 0);
     setvbuf(stderr, NULL, _IOLBF, 0);
     hexa_set_args(argc, argv);
-    __hexa_strlit_init__hexa_build_expanded_1779954466253583000_tmp();
+    __hexa_strlit_init__hexa_build_expanded_1779963174807996000_tmp();
     hexa_println(__hexa_sl_11);
     u_main();
     fflush(stdout); fflush(stderr);

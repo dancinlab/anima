@@ -56,19 +56,31 @@ may be a SYMPTOM, not the cause.
 
 | pod | d | aux | CE init→final | TTR | LZ_norm | distinct_exp | f_e | aggregate |
 |-----|---|-----|---------------|-----|---------|--------------|-----|-----------|
-| C | 64  | 2.0 | 648.5→8.73 | 0.01 | 0.024 | 1/2 | [0.035, 0.965] | **2/5 FAIL** |
-| B | 256 | 0.0 | (see B/harvest/result.json) | | | | | |
-| A | 256 | 2.0 | (see A/harvest/result.json) | | | | | |
+| A | 256 | 2.0 | 3770.8→20.71 | 0.02 | 0.044 | 1/2 | [0.04, 0.96]   | **2/5 FAIL** |
+| B | 256 | 0.0 | 3770.8→20.64 | 0.02 | 0.044 | 1/2 | [0.05, 0.95]   | **2/5 FAIL** |
+| C | 64  | 2.0 | 648.5→8.73   | 0.01 | 0.024 | 1/2 | [0.035, 0.965] | **2/5 FAIL** |
 
-**Pod C (routing ablation)**: aux loss DID balance the gate during training
-(f_e=[0.035, 0.965] vs #1296's full saturation; mean_gate=[0.13, 0.87]) — the
-mechanism transferred. But the model STILL collapsed at decode (`[1,1,...,1]`,
-distinct_experts=1, TTR=0.01). **Load-balancing aux loss alone at d=64 does NOT
-escape collapse.** This is evidence AGAINST the routing hypothesis: a balanced
-router does not prevent the trivial most-frequent-token solution.
+**Complete closed-negative — all 3 levers FAIL.** Every pod mode-collapsed at decode
+(`[1,1,...,1]`, all token id=1, all expert 1, distinct_experts=1):
+- **C (routing alone, d=64+aux)**: aux balanced the gate during training
+  (f_e=[0.035,0.965] vs #1296's full saturation) — mechanism transferred — but
+  decode still collapsed. **Load-balancing aux loss alone does NOT escape.**
+- **B (capacity alone, d=256+no-aux)**: 4× larger d still collapsed
+  (≈ identical to A). **Larger d alone does NOT escape.**
+- **A (capacity + routing, d=256+aux)**: combination still collapsed. **Neither
+  combined.** B(no-aux) ≈ A(aux) ⇒ aux's escape contribution ≈ 0 at this scale.
 
-(Pods A and B verdicts + the capacity-vs-routing ruling are recorded in the
-per-pod harvest/result.json and the repo's M4B_AUXLOSS_DSCALE_RESULT.md.)
+**Ruling**: this disentanglement RULES OUT the capacity axis, the routing axis, AND
+their combination (on top of #1296's corpus-diversity rebuttal). The collapse is not
+a gate-balance (routing) nor a d-capacity problem; with E=2 / a 24-line low-diversity
+corpus / a 1-layer toy backbone, the model converges to the degenerate global optimum
+of always emitting the most-frequent token. Remaining escape paths: more experts (E↑),
+a larger diverse corpus (needs the hexa-lang O(1) BPE fix), longer training + a deeper
+backbone, or entropy-regularized gating + router noise.
+
+**toy→production transfer rebuttal (re-confirmed)**: the toy aux-loss passed the
+mechanism check 5/5, yet all three production fires collapsed — toy MECHANISM green
+≠ production TRANSFER.
 
 ## Files
 - `<pod>/harvest/result.json` — per-pod verdict matrix SSOT (TTR, LZ, distinct_experts, f_e, P_e).

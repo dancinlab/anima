@@ -52,7 +52,7 @@ BPE_TOKENIZE_BOTTLENECK.md). C step-1 CE=648.526 가 #1296 initial CE 정확 재
 | pod | d   | aux | CE init→final   | TTR  | LZ_norm | distinct_exp | f_e (routed)     | mean_gate         | aggregate     |
 |-----|-----|-----|-----------------|------|---------|--------------|------------------|-------------------|---------------|
 | A   | 256 | 2.0 | 3770.8 → 20.71  | 0.02 | 0.0436  | 1/2          | [0.04, 0.96]     | [0.055, 0.945]    | **2/5 FAIL**  |
-| B   | 256 | 0.0 | (B/harvest)     |      |         |              |                  |                   | (pending)     |
+| B   | 256 | 0.0 | 3770.8 → 20.64  | 0.02 | 0.0436  | 1/2          | [0.05, 0.95]     | [0.065, 0.935]    | **2/5 FAIL**  |
 | C   | 64  | 2.0 | 648.5 → 8.73    | 0.01 | 0.0240  | 1/2          | [0.035, 0.965]   | [0.130, 0.870]    | **2/5 FAIL**  |
 
 (verbatim verdict: 각 `<pod>/harvest/result.json` + `trainer.out` tail. 모든 pod
@@ -71,17 +71,20 @@ decode = `[1,1,...,1]` 전부 token id=1, 전부 expert 1.)
   routing 을 미세 이동시켰으나 decode argmax 는 expert 1 / token 1 고정.
   → **capacity + routing 결합도 escape 하지 못한다.**
 
-- **B (capacity ablation, d=256+no-aux)**: (pending — 큰 d 단독 lever 격리. B 도
-  collapse 시 → capacity·routing·결합 **3중 모두** 이 scale 에서 escape 실패 =
-  강한 closed-negative; B escape 시 → capacity 가 lever 이고 aux 는 무관/유해.)
+- **B (capacity ablation, d=256+no-aux)**: 큰 d 단독에도 **여전히 collapse**
+  (distinct_experts=1, TTR=0.02, decode=`[1,...]`, A 와 거의 동일 — LZ 동일 0.0436,
+  CE 20.64). → **d-용량 단독(d 4× ↑)도 escape 하지 못한다.** B(d=256/aux=0) ≈
+  A(d=256/aux=2.0) 가 거의 비구분 = 이 scale 에서 aux 의 escape 기여 ≈ 0.
 
-**RULING** (A·C 확정 + B pending): aux-loss × d-scale 24-line trim corpus, E=2,
-V=151643 MoE 디코더에서 **routing lever (C) 와 capacity+routing 결합 (A) 모두
-collapse escape 실패**. 이는 #1296 의 corpus-diversity-단독 반증에 더해 **routing-축
-단독과 capacity+routing 결합을 추가로 ruling out** 한다. collapse 의 근본 원인은
-gate 균형(routing)도 d-용량 단독(A 에서 d=256 도 실패)도 아니며, E=2 / 24-line
-저-diversity corpus / 1-layer toy backbone 조합에서 모델이 항상 최빈-token (id=1) 을
-emit 하는 degenerate global optimum 으로 수렴함을 시사한다. escape 잔여 path =
+**RULING** (A·B·C 전부 확정 — 완전 closed-negative): aux-loss × d-scale 24-line trim
+corpus, E=2, V=151643 MoE 디코더에서 **3축 모두 collapse escape 실패** —
+routing 단독(C) · capacity 단독(B) · capacity+routing 결합(A) 모두 2/5 FAIL,
+decode 전부 `[1,1,...,1]` (token id=1, expert 1). 이는 #1296 의 corpus-diversity-
+단독 반증에 더해 **capacity 축 · routing 축 · 두 축 결합을 모두 ruling out** 한다
+(disentanglement 완료: 어느 단일 lever 도, 결합도 아님). collapse 의 근본 원인은
+gate 균형(routing)도 d-용량(B 의 d=256 도 실패)도 아니며, E=2 / 24-line 저-diversity
+corpus / 1-layer toy backbone 조합에서 모델이 항상 최빈-token (id=1) 을 emit 하는
+degenerate global optimum 으로 수렴함을 시사한다. escape 잔여 path =
 (a) E↑ (더 많은 expert), (b) 더 큰 diverse corpus (BPE O(1) fix 선결), (c) longer
 training + 더 깊은 backbone, (d) entropy-regularized gate + router noise.
 

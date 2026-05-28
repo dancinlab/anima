@@ -136,6 +136,9 @@ fn main() {
     let steps_env = env_var("M4B_N_STEPS")
     let mut n_steps_req = 200
     if len(steps_env) > 0 { n_steps_req = to_int(steps_env) }
+    let decode_env = env_var("M4B_N_DECODE")
+    let mut n_decode_req = 100
+    if len(decode_env) > 0 { n_decode_req = to_int(decode_env) }
     let tag_env = env_var("M4B_RUN_TAG")
     let mut run_tag = "auxloss"
     if len(tag_env) > 0 { run_tag = tag_env }
@@ -164,7 +167,7 @@ fn main() {
     let max_steps = (n_corpus_toks / T) - 1
     if max_steps < n_steps { n_steps = max_steps }
     if n_steps < 1 { n_steps = 1 }
-    let n_decode = 100             // rev2: stable TTR/LZ76 sample
+    let n_decode = n_decode_req    // rev2: stable TTR/LZ76 sample (env-configurable for d=256 OOM headroom)
     let block_size = 4 * d * d + 2 * h * d
     let tok_emb_off = 0
     let blocks_off = V * d
