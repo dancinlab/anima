@@ -2,6 +2,21 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-28T12:00:00Z — E2 corpus-balance collapse 🟢 SUPPORTED (D3 후속 직접 충분조건 입증)
+
+- [x] 가설 — BALANCED corpus 가 toy MoE 학습에서 collapse 막는 충분조건? (D3 router=corpus mirror 결론의 직접 후속)
+- [x] 2-corpus 통제 (D3 / M4b-diff(a) 동일 arch g61 재사용) — top-1 hard routing E=4 V=8 d=6 6-cluster · lr=0.5 · 600 step. BALANCED (균등 freq) vs SKEWED (cluster 0 = 20× over-rep, M4b 조건 mirror)
+- [x] 측정자 — D1 `lz_norm()` verbatim (g61) on decode 토큰 시퀀스 (cluster-cycle × frequency multiplicity, M4b 실 decode 분포 mirror)
+- [x] toy-calibrated HEALTHY_FLOOR — D1 의 V=151k n=20 anchor 0.50 을 toy V=8 n=24 로 재스케일 (in-harness max-diverse 0.1216 / max-collapsed 0.0405 의 midpoint = 0.0811). SEP_MIN = half toy dynamic range = 0.0405
+- [x] BALANCED 측정 — LZ_norm **0.1216** = toy max-diverse 상한 정확히 도달 · raw_c=6 · n=24 · CE 2.0796→0.00302 (689× ↓)
+- [x] SKEWED 측정 — LZ_norm **0.0360** (collapsed reference 0.0405 아래) · n=100 (cluster 0 = 80 reps) · CE 2.0796→0.00254 (819× ↓)
+- [x] separation 0.0856 = toy dynamic range 의 100% · re-run 둘 다 bit-identical (<1e-6)
+- [x] 5/5 falsifier PASS — F-E2.1 BALANCED-HEALTHY · F-E2.2 SKEWED-COLLAPSE · F-E2.3 SEPARATION · F-E2.4 LEARNED · F-E2.5 DETERMINISM
+- [x] 핵심 발견 — collapse 의 driver = corpus skew 직접 입증. argmax decode 자체는 두 시나리오 동일(6 cluster→6 distinct token 분화), 차이는 노출 분포 (SKEWED 가 cluster 0 token 80× 반복으로 시퀀스 saturate)
+- [x] 함의 — router redesign · aux load-balance · merge-of-failures 모두 본선 아님 확정. 본선 = HARD top-1 ∧ BALANCED corpus ∧ adequate n_steps (`a_completeness_over_cheap` 정합). D1(검출)+D3(원인 규명)+E2(처방 검증)+D4(merge negative) tetrad 완성
+- [x] verdict 🟢 SUPPORTED · 본문 `E2_CORPUS_BALANCE_COLLAPSE.md` (10-section) · harness `e2_corpus_balance_collapse.hexa` · raw `state/e2_corpus_balance_collapse_2026_05_28/run_e2.out` · $0 mac-local foreground sync · exit 0 after 5/5 PASS gate (panic-on-FAIL guard 작동)
+- [x] honest C3 — toy regime (V=8 n=24, 실 Qwen V=151k n=20 D1 0.50 anchor 와 비대칭 · 후속 M4b-fire-scale 실측 필요) · decode n 비대칭(24 vs 100 · convention 명시 선택) · HEALTHY_FLOOR 내부 상대 임계 · balance 충분조건 입증 (necessary 별도)
+
 ## 2026-05-28T10:30:00Z — D4 model-merge α-sweep 🟢 SUPPORTED (negative baseline · merge escape 부재)
 
 - [x] 가설 (negative-oriented) — collapse-avoid A · collapse B 의 weight 보간 α-sweep 이 더블바인드 escape **못함** (어떤 α 도 coherence ∧ non-collapse 동시 달성 실패 = least-bad midpoint)
