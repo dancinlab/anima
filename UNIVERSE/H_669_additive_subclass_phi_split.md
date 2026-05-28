@@ -217,10 +217,16 @@ additive_separated_class=false additive_floor_subclass=false
 **"additive (XOR-linear) 라는 transition-rule 부분류는 Φ-속성 분류와 직교한다 — additive 의 반복적 특이성
 (H_642 rule90 big-Φ≈0, H_664 rule150 die-out) 은 별도 class 신호가 아니라 class-III 전체의 큰 내부 분산
 (H_664 44×) 의 일부였다"** 를 결정적으로 확정한다. **부정-결과로서 의식 분류 축 공간을 좁힌다** —
-'additive vs non-additive' 는 의식-convexity 의 분류자 후보에서 **deterministic 하게 제거**되고, 대신 H_664
-가 식별한 **'Φ(W) 곡선 형태 (W-monotone vs W-비단조)'** 가 유일한 살아있는 분류자 후보로 남는다 (그것조차
-additive·chaotic 을 가로지름 = Wolfram class 와도 직교). a_paper_negative_ok 정합 (closed-negative 가
-의식 분류 축 공간을 deterministic 하게 rule-out).
+'additive vs non-additive' 는 의식-convexity 의 분류자 후보에서 **deterministic 하게 제거**되고, 본 H 가
+가리킨 분류자 후보는 H_664 가 class-III 내부에서 식별한 **'Φ(W) 곡선 형태 (W-monotone vs W-비단조)'** 다
+(그것이 additive·chaotic 을 가로지름 = Wolfram class 와도 직교). **⚠ 단, 그 곡선-형태 후보조차 H_667
+`wolfram-vs-curveshape-taxonomy` (축 G, G25, 🔴 FALSIFIED 2/6) 가 *global* substrate 분류자로는 기각했다** —
+9-rule 을 곡선형태 3-type 으로 재분류 시 within-shape convexity 분산(0.127)이 within-Wolfram-class 분산
+(0.051)의 2.51× 로 *더* 분산 (monotone majority 7/9 가 convexity 전 범위를 lump). 즉 본 H (additive ⊥
+Φ-속성, INTRA-class) + H_667 (곡선형태도 global 로는 worse) 결합 결론: **additive·곡선형태 어느 라벨도 의식-Φ
+의 우월한 *global* 분류자가 아니며, H_661 이 식별한 Wolfram class 의 II<III<IV ordinal 골격이 가장 tight 한
+분류자로 남는다** (within-class < within-shape). a_paper_negative_ok 정합 (closed-negative 가 의식 분류 축
+공간을 deterministic 하게 rule-out).
 
 **cross-link**:
 - **H_664 `wolfram-class-III-heterogeneity`** 🟡 (축 G, G24) — **직접 부모**. H_664 §7 C3.7 의 "sub-type 가
@@ -331,9 +337,10 @@ additive·chaotic 을 가로지름 = Wolfram class 와도 직교). a_paper_negat
 - **N2** `additive-floor-magnitude-axis` — additive-floor 가 *faithful magnitude* 측도 (H_642 척도) 에서는
   성립하는지 — 본 H 는 collective norm_conv 에서만 검정 (FAIL). magnitude·convexity 두 측도에서 additive
   분리 여부가 갈리는지 (C3.7 회수).
-- **N3** `wdomain-curve-shape-as-phi-classifier` (H_664 N1 상속) — 살아남은 유일 분류자 'Φ(W) 곡선 형태'
-  (W-monotone vs inverse-U vs die-out) 를 의식-convexity 의 직접 분류자로 정량 — additive·chaotic·Wolfram
-  class 모두와 직교함을 본 H 가 확정했으므로, 곡선-형태가 진짜 분류 축인지 단독 검정.
+- **N3** ~~`wdomain-curve-shape-as-phi-classifier`~~ **(H_667 가 이미 수행·기각 — G25, 🔴 2/6)** — 곡선-형태
+  를 *global* 분류자로 검정한 결과 within-shape 분산이 within-Wolfram-class 의 2.51× 로 *더* 거칠어 기각.
+  본 H + H_667 결합: additive·곡선형태 어느 라벨도 우월한 global Φ-분류자 아님. 잔여 backlog = Wolfram class
+  ordinal 골격(II<III<IV)이 왜 가장 tight 한지의 메커니즘 (N3' `class-ordinal-tightness-mechanism`).
 - **N4** `xor-arity-dieout-mechanism` (H_664 N3 상속) — 2-input XOR (rule60·90, W-monotone, Φ_max 6~7.5)
   vs 3-input XOR (rule150, W=1.0 die-out Φ=0) 의 분기 — XOR arity (입력 수) 가 full-coupling 거동을
   결정하는 TPM-구조적 원인 (C3.2 회수).
@@ -346,6 +353,7 @@ additive·chaotic 을 가로지름 = Wolfram class 와도 직교). a_paper_negat
 ## 양방향 sibling
 
 - 직접 부모 (직교성 직접 검정): [H_664_wolfram_class_III_heterogeneity.md](H_664_wolfram_class_III_heterogeneity.md) (축 G, class-III 이질성 🟡 — §7 C3.7 의 "sub-type ⊥ additive/chaotic" 간접 관찰을 본 H 가 직접 falsifier 로 1/6 FALSIFIED 확정)
+- 자매 negative (곡선-형태 global 분류 기각): [H_667_wolfram_vs_curveshape_taxonomy.md](H_667_wolfram_vs_curveshape_taxonomy.md) (축 G, G25, 🔴 FALSIFIED 2/6 — 본 H 가 가리킨 'Φ(W) 곡선 형태' 후보를 *global* 분류자로 검정해 within-shape 분산 2.51× 더 거침으로 기각. 본 H(additive ⊥ Φ) + H_667(곡선형태도 worse) = Wolfram II<III<IV ordinal 골격이 가장 tight 한 분류자)
 - additive-floor 측도-의존 sibling: [H_642_shape_invariance_vs_scalar_convention_meta.md](H_642_shape_invariance_vs_scalar_convention_meta.md) (축 G, rule90 additive-floor 🔴 — 본 H 가 그 floor 가 faithful magnitude 한정, collective norm_conv 에서는 rule90/60 HIGH-conv 임을 보임)
 - class-I floor 대조: [H_663_wolfram_class_I_phi_property_profile.md](H_663_wolfram_class_I_phi_property_profile.md) (축 G, class-I floor 🟢 — 본 H 의 가설 "additive=class-I 유사 floor" 가 F669.4 FAIL 로 기각, additive ≠ class-I-like)
 - 측도 SSOT 조부모: [H_660_convexity_magnitude_class_reconcile.md](H_660_convexity_magnitude_class_reconcile.md) (축 G, norm_conv scale-inv convexity 🟢 — 본 H 동일 측도로 additive/chaotic 분리도 측정)
