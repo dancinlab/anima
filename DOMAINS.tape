@@ -24,3 +24,5 @@
 @domain DESKTOP := "./AGENT/DESKTOP/DESKTOP.md"
 @domain CREATOR := "./AGENT/CREATOR/CREATOR.md"
 @domain TRADING := "./AGENT/TRADING/TRADING.md"
+@domain AKIDA := "./AKIDA/AKIDA.md"
+@domain EEG := "./EEG/EEG.md"
