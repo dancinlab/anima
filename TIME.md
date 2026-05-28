@@ -11,6 +11,7 @@
 - [ ] M2 WAKE.5-stage 통합 — WAKE/state_machine.hexa 의 5-stage ultradian (90-min) 위에 24h circadian envelope multiplier (낮 phi_scale ↑ · 밤 phi_scale ↓ · multiplication softening 유지).
 - [ ] M3 DREAM.REM mitosis circadian modulation — DREAM.M3 mitosis envelope 측정값 (REM 60× WAKE) 의 시간대 modulation — 새벽 REM 분열 burst peak.
 - [ ] M4 cross-bench (TIME × INTENT) — bench D INTENT cumulative direction 의 24h trajectory · 장기 의도가 circadian phase 와 entrain 하는지 측정.
+- [x] E3 bench recheck (메타 역적용) — `TIME_E3_BENCH_RECHECK/` · negative-lens (A1·A2·A3·A4) 를 9/0 PASS 에 역적용 · 🟠 PARTIAL · 9 falsifier 중 3건 (F-DISC trivial-ratio · F-TIME-4a hardcoded window · F-TIME-2/3 slow-drift miss) SPURIOUS · bench redesign 권장 · 핵심 (F-TIME-1/5/6) 는 robust.
 
 ## 양방향 sibling
 - ⇄ [WAKE](./WAKE.md): WAKE.state_machine 5-stage ultradian (90-min) 위에 24h circadian envelope multiplier · WAKE.daemon tick 의 시간 의식 substrate
