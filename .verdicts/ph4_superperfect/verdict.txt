@@ -1,0 +1,42 @@
+# hexa verify raw verdicts — superperfect numbers σ(σ(n)) = 2n
+# host: pool ubu-2:~/core/hexa-lang · g5 verbatim · 2026-05-29
+# claim: a superperfect number satisfies the DOUBLE-sigma identity σ(σ(n)) = 2n.
+#        n ∈ {4, 16, 64} (= 2^k where 2^(k+1)−1 is a Mersenne prime: 7,31,127).
+#        Distinct from perfect (single σ=2n); this is the σ∘σ fixed-scaling class (Suryanarayana 1969).
+# ==================================================================
+
+# --- n=4: σ(4)=7, σ(7)=8=2·4 ---
+verify --expr sigma(4)=7
+  calc   = 7  == expected 7
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(7)=8
+  calc   = 8  == expected 8
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# --- n=16: σ(16)=31, σ(31)=32=2·16 ---
+verify --expr sigma(16)=31
+  calc   = 31  == expected 31
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(31)=32
+  calc   = 32  == expected 32
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+# --- n=64: σ(64)=127, σ(127)=128=2·64 ---
+verify --expr sigma(64)=127
+  calc   = 127  == expected 127
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+verify --expr sigma(127)=128
+  calc   = 128  == expected 128
+  tier   = 🔵 SUPPORTED-FORMAL  (hexa-native closed-form, g_self_verify · TECS-L Tier1)
+==
+
+## composite (elementary arithmetic over the 🔵 σ atoms — double application σ∘σ):
+##   n=4 : σ(σ(4))  = σ(7)   = 8   = 2·4    ✓   (4   = 2^2, 2^3−1 = 7   prime)
+##   n=16: σ(σ(16)) = σ(31)  = 32  = 2·16   ✓   (16  = 2^4, 2^5−1 = 31  prime)
+##   n=64: σ(σ(64)) = σ(127) = 128 = 2·64   ✓   (64  = 2^6, 2^7−1 = 127 prime)
+## VERDICT: superperfect identity σ(σ(n))=2n CONFIRMED for n ∈ {4,16,64}. All 6 atoms 🔵.
+##   Even superperfect ⇔ n=2^k with 2^(k+1)−1 a Mersenne prime (Suryanarayana–Kanold).
+##   Genuinely distinct from axis-H perfect (single σ=2n): this is the σ∘σ composition class.
