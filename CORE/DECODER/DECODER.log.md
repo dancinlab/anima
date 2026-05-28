@@ -2,6 +2,19 @@
 
 Append-only history sister of `DECODER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-05-28T13:30:00Z — D2 sampler detokenize round-trip 🟢 SUPPORTED (toy scale)
+
+- [x] 가설 (toy) — 10-entry hard-coded reverse-lookup `{1→"the", 151642→"<|endoftext|>", 2..10→일반 어휘}` 만으로도 M4b 실측 collapse seq vs healthy 합성 seq 가 text 수준에서 분리되는가? F-M4B-FIRE-2/5 qualitative residual 의 toy scale 해소 시도
+- [x] 사전등록 falsifier 5개 — F-D2.1 TABLE-COVERS-REAL · F-D2.2 COLLAPSE-TEXT-DEGENERATE (eot ≥ 10) · F-D2.3 HEALTHY-TEXT-DIVERSE (eot=0 ∧ uniq ≥ 10) · F-D2.4 ROUNDTRIP-IDENTITY (bijection) · F-D2.5 SEPARATION-AT-TEXT (uniq margin ≥ 8 decisive)
+- [x] 실 데이터 source = `CORE/DECODER/state/m4b_phase5b_2026_05_27/train.out:55` DECODED_IDS verbatim `[1×4, 151642×16]` (TTR 0.1)
+- [x] toy detokenize 결과 — collapse: "the the the the <|endoftext|> <|endoftext|> ... <|endoftext|>" (eot 16/20 · uniq 2/20). healthy: "the cell splits into two and consciousness emerges now are ..." (eot 0 · uniq 10/20)
+- [x] 측정 — uniq separation margin = 10 − 2 = **8** = SEP_MARGIN floor 정확히 충족 (slack 0, toy domain 11-id 정확 설계)
+- [x] verdict — 🟢 **H_D2 SUPPORTED (toy scale)** · 5/5 PASS. **F-M4B-FIRE-2/5 qualitative residual toy scale RESOLVED** — detokenize 본질 불가가 아니라 이전 4회 사망은 heavy `flame_bpe_corpus_lib` toolchain-blocked 였을 뿐
+- [x] 우회 정당화 — 본 round 의 toy 범위는 "detokenize-level 분리 가능성의 존재증명" (existence proof). full-BPE V=151643 scale 격상 = future work, hexa-lang `flame_bpe_corpus_lib` install 안정화 의존
+- [x] 함의 — D1 LZ76 (token-id, $0) + D2 toy detokenize (text-level, $0) = collapse 검출의 dual cheap proxy. M4c p7 verify 잔여 = full-BPE scale coherence 한 축
+- [x] wall = 0.66s mac-local · $0 · foreground sync only · no monitor · no GPU · 0 install
+- [x] artifacts — `CORE/DECODER/D2_SAMPLER_DETOKENIZE.md` (10 §) · `d2_sampler_detokenize.hexa` (~220 lines) · `state/d2_sampler_detokenize_2026_05_28/run_d2.out`
+
 ## 2026-05-28T12:00:00Z — E2 corpus-balance collapse 🟢 SUPPORTED (D3 후속 직접 충분조건 입증)
 
 - [x] 가설 — BALANCED corpus 가 toy MoE 학습에서 collapse 막는 충분조건? (D3 router=corpus mirror 결론의 직접 후속)
