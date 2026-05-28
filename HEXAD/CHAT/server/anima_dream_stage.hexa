@@ -26,14 +26,20 @@
 //   API
 //     dream_tick(state, now_sec_of_day, elapsed_sec)  -> dict  advance stage
 //     dream_phi(stage)                                -> float Φ-scale lookup
-//     dream_context(stage)                            -> dict  substrate context
-//       .phi               : f64  — canonical Φ projection per stage
+//     dream_context(stage)                            -> dict  substrate context (t=0)
+//     dream_context_at(stage, t)                      -> dict  substrate context @ t
+//       .phi               : f64  — canonical Φ projection per stage (legacy table)
 //       .tension_envelope  : f64  — how permissive substrate tension threshold
 //                                   should be (low for deep sleep, high for
 //                                   WAKE). DATA only, not a gate.
 //       .scrambled         : bool — TRUE only for REM (content scrambling
 //                                   flag for caller to add logit noise).
 //                                   NOT an emit gate.
+//       .phi_envelope      : f64  — substrate-sourced Φ-envelope context (LIVE
+//                                   WIRE → DREAM/dream_envelope_ctx.hexa). Real
+//                                   Φ-context, NOT a gate. N2 = closure peak
+//                                   among sleep stages (H_644).
+//     dream_phi_envelope(stage, t)                    -> float live substrate Φ-ctx
 //     dream_emit_temperature(stage)                   -> float sampling temp
 //       (all stages return non-zero — no implicit emit gate via temp=0)
 //     dream_init()                                    -> dict  fresh state
@@ -43,12 +49,38 @@
 //     ANIMA_DREAM_RATIO   "0.2"           fraction of sleep window in REM
 //
 //   Verbs
-//     hexa run anima_dream_stage.hexa selftest   run F-DREAM-1..5
+//     hexa run anima_dream_stage.hexa selftest   run F-DREAM-1..6
 //     hexa run anima_dream_stage.hexa once       one tick + print
 //     hexa run anima_dream_stage.hexa daemon     tick loop
 //
 //   g1 hexa-native: dict `#{}`, missing key → void, `&&`/`||`, main()-gated.
+//
+//   --- EMIT-SUBSTRATE LIVE WIRE (2026-05-28, DREAM M5) -------------------
+//   The prior `dream_context.phi` was a hardcoded per-stage lookup table
+//   (PHI_WAKE 1.0 ... PHI_N3 0.15) — a stage-relative ordering projection,
+//   NOT grounded in the verified Φ-envelope substrate. This module now
+//   ALSO supplies a substrate-sourced Φ-envelope context field
+//   `phi_envelope`, computed live from the emit-substrate consumer
+//   `DREAM/dream_envelope_ctx.hexa` (dr_stage_phi_context(stage, t) =
+//   envelope_multiscale(t, ep_scale_periods, ep_scale_amps) ×
+//   ep_theta_stage(stage)). The structural shape + free numbers live in
+//   CORE/phi_envelope_substrate.hexa + CORE/emit_policy.hexa (single SSOT),
+//   so this CHAT-layer module owns ZERO Φ math + ZERO tuning numbers for
+//   the substrate field (g61 no-duplication).
+//
+//   N2 = closure peak (H_644 correction) holds on the substrate field: the
+//   emit_policy θ-table is WAKE > N1 > N2 > N3 with N2 the mid-Φ deep-sleep
+//   closure context (N2 > N3). This is DISTINCT from (and not a regression
+//   of) the legacy PHI_* table, which is kept verbatim for back-compat.
+//
+//   AUTONOMY CONTRACT (unchanged): the substrate field is a CONTINUOUS
+//   Φ-context (a real number), NOT a boolean emit gate. The substrate
+//   caller still decides emit/silence autonomously from its 8-factor
+//   motivation gate (p5 · a_chat_sleep_imagination · a_autonomy_over_hardcode
+//   · F-EMIT-4). No stage is ever marked "silent"/"allowed" here.
 // ════════════════════════════════════════════════════════════════════════════
+
+import "/Users/ghost/core/anima/DREAM/dream_envelope_ctx.hexa"
 
 
 // ── §1 constants ────────────────────────────────────────────────────────────
@@ -178,6 +210,20 @@ fn _ds_stage_at_offset(off_sec: int) -> string {
     return STAGE_REM
 }
 
+// _ds_stage_int — string stage → emit_policy stage index.
+//   Convention (CORE/emit_policy.hexa ep_theta_stage / dream_envelope_ctx):
+//     0=WAKE 1=N1 2=N2 3=N3 4=REM. Unknown → 0 (WAKE) — a context default,
+//     NOT an emit gate. This is the bridge from the CHAT-layer string
+//     state machine to the substrate's integer stage index.
+fn _ds_stage_int(stage: string) -> int {
+    if stage == STAGE_WAKE { return 0 }
+    if stage == STAGE_N1   { return 1 }
+    if stage == STAGE_N2   { return 2 }
+    if stage == STAGE_N3   { return 3 }
+    if stage == STAGE_REM  { return 4 }
+    return 0
+}
+
 
 // ── §5 public API ───────────────────────────────────────────────────────────
 
@@ -256,6 +302,24 @@ fn _ds_scrambled(stage: string) -> bool {
     return false
 }
 
+// dream_phi_envelope — substrate-sourced Φ-envelope context for a stage at
+//   time t. This is the LIVE WIRE into the emit-substrate (DREAM M5): it
+//   delegates entirely to DREAM/dream_envelope_ctx.hexa, which composes
+//   envelope_multiscale(t, ep_scale_periods, ep_scale_amps) (structural
+//   shape, CORE/phi_envelope_substrate.hexa) × ep_theta_stage(stage_int)
+//   (free numbers, CORE/emit_policy.hexa). This module owns ZERO Φ math and
+//   ZERO tuning numbers for this field (single SSOT · g61).
+//
+//   AUTONOMY CONTRACT: returns a CONTINUOUS Φ-context (real number), never
+//   a boolean emit gate (p5 · a_autonomy_over_hardcode · F-EMIT-4). N2 is
+//   the closure peak among sleep stages (H_644: WAKE > N1 > N2 > N3,
+//   N2 the mid-Φ deep-sleep closure context).
+//     stage: string state-machine stage ("WAKE".."REM")
+//     t    : float wall-clock seconds (drives the multi-scale envelope)
+fn dream_phi_envelope(stage: string, t: float) -> float {
+    return dr_stage_phi_context(_ds_stage_int(stage), t)
+}
+
 // dream_context — substrate context bundle per stage.
 //
 //   AUTONOMY CONTRACT (per @D a_autonomy_over_hardcode):
@@ -274,11 +338,30 @@ fn _ds_scrambled(stage: string) -> bool {
 //     scrambled        : bool  — REM-only content-scrambling hint (caller
 //                                may add logit noise if it decides to emit).
 //                                NOT an emit gate.
+//     phi_envelope     : float — substrate-sourced Φ-envelope context (LIVE
+//                                WIRE, DREAM M5). Computed at t=0 here as a
+//                                stable default; use dream_context_at(stage,t)
+//                                for the time-varying value. Real-valued
+//                                Φ-context, NOT a gate.
+//
+//   dream_context(stage) computes phi_envelope at t=0 (a stable per-stage
+//   default). Callers with a wall-clock should prefer dream_context_at(
+//   stage, t), which threads t into the multi-scale envelope.
 fn dream_context(stage: string) -> dict {
+    return dream_context_at(stage, 0.0)
+}
+
+// dream_context_at — substrate context bundle per stage at time t. Same
+//   fields as dream_context, but the substrate-sourced phi_envelope is
+//   evaluated at the supplied wall-clock t (drives envelope_multiscale).
+//   Additive over dream_context — preserves the legacy phi/tension_envelope/
+//   scrambled fields verbatim, ADDS the live-wired phi_envelope field.
+fn dream_context_at(stage: string, t: float) -> dict {
     let out = #{}
     out["phi"]              = dream_phi(stage)
     out["tension_envelope"] = _ds_tension_envelope(stage)
     out["scrambled"]        = _ds_scrambled(stage)
+    out["phi_envelope"]     = dream_phi_envelope(stage, t)
     return out
 }
 
@@ -425,12 +508,59 @@ fn check_dream_5() -> bool {
     return true
 }
 
+// F-DREAM-6 (LIVE WIRE): the substrate-sourced phi_envelope field comes from
+//   the emit-substrate (DREAM/dream_envelope_ctx.hexa), NOT a hardcoded table.
+//   Asserts:
+//     (a) phi_envelope is a continuous real Φ-context, not boolean (∉{0,1}).
+//     (b) it varies with t (envelope_multiscale is a function of t) — t=0
+//         peak vs t=2700 (ultradian half-period trough) differ.
+//     (c) N2 = closure peak among SLEEP stages (H_644): WAKE > N1 > N2 > N3
+//         on the emit_policy θ-table, with N2 the mid-Φ deep-sleep closure
+//         context (N2 > N3). Confirms the field tracks the substrate ordering,
+//         distinct from the legacy PHI_* table.
+//     (d) phi_envelope matches dr_stage_phi_context directly (no local recompute
+//         — the field is a pure pass-through to the substrate consumer).
+//   Real-valued throughout — no boolean emit gate (p5 · a_autonomy · F-EMIT-4).
+fn check_dream_6() -> bool {
+    let abs6 = fn(x: float) -> float { return if x < 0.0 { -x } else { x } }
+    // (a) continuous real, not boolean.
+    let pe_wake0 = dream_phi_envelope(STAGE_WAKE, 0.0)
+    let a_real = pe_wake0 > 0.0 && pe_wake0 < 1.0
+    // (b) t-varying.
+    let pe_t0    = dream_phi_envelope(STAGE_WAKE, 0.0)
+    let pe_t2700 = dream_phi_envelope(STAGE_WAKE, 2700.0)
+    let b_tvary = abs6(pe_t0 - pe_t2700) > 1e-6
+    // (c) N2 = closure peak among sleep stages (WAKE > N1 > N2 > N3).
+    let pe_w = dream_phi_envelope(STAGE_WAKE, 0.0)
+    let pe_1 = dream_phi_envelope(STAGE_N1, 0.0)
+    let pe_2 = dream_phi_envelope(STAGE_N2, 0.0)
+    let pe_3 = dream_phi_envelope(STAGE_N3, 0.0)
+    let c_order = pe_w > pe_1 && pe_1 > pe_2 && pe_2 > pe_3
+    // (d) pure pass-through to the substrate consumer (no local recompute).
+    let d_direct = abs6(dream_phi_envelope(STAGE_N2, 1234.0) -
+                        dr_stage_phi_context(2, 1234.0)) <= 1e-12
+    // The context dict surfaces the same value (additive field).
+    let ctx = dream_context_at(STAGE_N2, 1234.0)
+    let d_ctx = abs6(to_float(ctx["phi_envelope"]) -
+                     dr_stage_phi_context(2, 1234.0)) <= 1e-12
+    println("  [F-DREAM-6] phi_envelope WAKE@0=" + to_string(pe_w) +
+            " N1=" + to_string(pe_1) + " N2=" + to_string(pe_2) +
+            " N3=" + to_string(pe_3))
+    println("  [F-DREAM-6] t-vary |Δ(t=0,2700)|=" + to_string(abs6(pe_t0 - pe_t2700)) +
+            " real∈(0,1)=" + to_string(a_real) +
+            " N2>N3 closure-peak=" + to_string(pe_2 > pe_3))
+    println("  [F-DREAM-6] pass-through(dr_stage_phi_context)=" + to_string(d_direct) +
+            " ctx-field=" + to_string(d_ctx))
+    return a_real && b_tvary && c_order && d_direct && d_ctx
+}
+
 fn run_selftest() {
-    println("[anima_dream_stage] selftest — F-DREAM-1..5")
+    println("[anima_dream_stage] selftest — F-DREAM-1..6")
     println("  reference: anima-engines/dream_physics_phi.hexa (P47, dc3afe332)")
     println("  cycle    : WAKE -> N1 -> N2 -> N3 -> N2 -> REM (90 min)")
     println("  contract : dream_context(stage) supplies substrate CONTEXT only")
     println("             — no boolean emit gate (per @D a_autonomy_over_hardcode)")
+    println("  live wire: phi_envelope <- DREAM/dream_envelope_ctx.hexa (DREAM M5)")
     println("")
 
     let r1 = check_dream_1()
@@ -453,6 +583,10 @@ fn run_selftest() {
     if r5 { println("F-DREAM-5 PASS — tension_envelope monotone WAKE→N3 + REM≥N1 + all>0") }
     else  { println("F-DREAM-5 FAIL") }
 
+    let r6 = check_dream_6()
+    if r6 { println("F-DREAM-6 PASS — phi_envelope live-wired from substrate (real · t-vary · N2 closure-peak · pass-through)") }
+    else  { println("F-DREAM-6 FAIL") }
+
     println("")
     let mut pass = 0
     if r1 { pass = pass + 1 }
@@ -460,7 +594,8 @@ fn run_selftest() {
     if r3 { pass = pass + 1 }
     if r4 { pass = pass + 1 }
     if r5 { pass = pass + 1 }
-    println("F-DREAM-1..5 " + to_string(pass) + "/5 PASS")
+    if r6 { pass = pass + 1 }
+    println("F-DREAM-1..6 " + to_string(pass) + "/6 PASS")
 }
 
 
@@ -514,12 +649,16 @@ fn run_once() {
     let st = dream_init()
     let nx = dream_tick(st, now_sec, 1)
     let stg = to_string(nx["stage"])
-    let ctx = dream_context(stg)
+    // LIVE WIRE: thread the wall-clock seconds into the substrate envelope
+    // so phi_envelope is the time-varying multi-scale Φ-context, not a t=0
+    // default. dream_context_at delegates to dr_stage_phi_context.
+    let ctx = dream_context_at(stg, now_sec + 0.0)
     // IPC bridge: publish stage to the file-shared path (one-shot).
     let _path = _ds_publish_stage(stg)
     println("[anima_dream_stage once] now=" + s + " stage=" + stg +
             " in_sleep=" + to_string(nx["in_sleep"]) +
             " phi=" + to_string(ctx["phi"]) +
+            " phi_envelope=" + to_string(ctx["phi_envelope"]) +
             " tension_envelope=" + to_string(ctx["tension_envelope"]) +
             " scrambled=" + to_string(ctx["scrambled"]) +
             " temp=" + to_string(dream_emit_temperature(stg)))
@@ -545,9 +684,11 @@ fn run_daemon() {
         // freshness window always sees a recent value.
         let _path = _ds_publish_stage(stg)
         if stg != prev_stage {
-            let ctx = dream_context(stg)
+            // LIVE WIRE: substrate Φ-envelope context at the current wall-clock.
+            let ctx = dream_context_at(stg, now_sec + 0.0)
             println("[anima_dream_stage] " + s + " stage=" + stg +
                     " phi=" + to_string(ctx["phi"]) +
+                    " phi_envelope=" + to_string(ctx["phi_envelope"]) +
                     " tension_envelope=" + to_string(ctx["tension_envelope"]) +
                     " scrambled=" + to_string(ctx["scrambled"]) +
                     " published=" + _path)
