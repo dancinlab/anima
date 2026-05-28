@@ -1,0 +1,100 @@
+H_axisg_emit_eventcount — emit-EVENT-COUNT vs Wolfram class
+═══════════════════════════════════════════════════════════
+verbatim stdout — `hexa UNIVERSE/state/h_axisg_emit_eventcount_2026_05_29/run_emit_count.hexa`
+(HEXA_LANG=/Users/ghost/.hx/packages/hexa-lang · $0 mac-local · deterministic · n=4 ECA + iit4_bigphi)
+closure_ref → this file (hook g73)
+
+════════════════════════════════════════════════════════════
+H_axisg_emit_eventcount — emit-EVENT-COUNT vs Wolfram class
+  rules {30,54,90,110,184} · GZ-anchor I=0.21232
+  θ_emit sweep {0.5, 1.0, 2.0, 5.0, 8.0, 11.0} · emit-event = #{s: Φ(s) >= θ}
+════════════════════════════════════════════════════════════
+
+── θ_emit = 0.5 ──
+  rule 30 (III-chaotic)  emit_count = 16
+  rule 54 (IV-complex)  emit_count = 16
+  rule 90 (III-additive)  emit_count = 0
+  rule 110 (IV-complex)  emit_count = 16
+  rule 184 (II-particle)  emit_count = 16
+    max emit_count   = 16
+    rule110 == max   = true
+    rule90 == 0      = true
+    c110 >= c184     = true
+
+── θ_emit = 1.0 ──
+  rule 30 (III-chaotic)  emit_count = 16
+  rule 54 (IV-complex)  emit_count = 16
+  rule 90 (III-additive)  emit_count = 0
+  rule 110 (IV-complex)  emit_count = 16
+  rule 184 (II-particle)  emit_count = 16
+    max emit_count   = 16
+    rule110 == max   = true
+    rule90 == 0      = true
+    c110 >= c184     = true
+
+── θ_emit = 2.0 ──
+  rule 30 (III-chaotic)  emit_count = 16
+  rule 54 (IV-complex)  emit_count = 16
+  rule 90 (III-additive)  emit_count = 0
+  rule 110 (IV-complex)  emit_count = 16
+  rule 184 (II-particle)  emit_count = 16
+    max emit_count   = 16
+    rule110 == max   = true
+    rule90 == 0      = true
+    c110 >= c184     = true
+
+── θ_emit = 5.0 ──
+  rule 30 (III-chaotic)  emit_count = 14
+  rule 54 (IV-complex)  emit_count = 13
+  rule 90 (III-additive)  emit_count = 0
+  rule 110 (IV-complex)  emit_count = 16
+  rule 184 (II-particle)  emit_count = 12
+    max emit_count   = 16
+    rule110 == max   = true
+    rule90 == 0      = true
+    c110 >= c184     = true
+
+── θ_emit = 8.0 ──
+  rule 30 (III-chaotic)  emit_count = 13
+  rule 54 (IV-complex)  emit_count = 1
+  rule 90 (III-additive)  emit_count = 0
+  rule 110 (IV-complex)  emit_count = 11
+  rule 184 (II-particle)  emit_count = 12
+    max emit_count   = 13
+    rule110 == max   = false
+    rule90 == 0      = true
+    c110 >= c184     = false
+
+── θ_emit = 11.0 ──
+  rule 30 (III-chaotic)  emit_count = 8
+  rule 54 (IV-complex)  emit_count = 0
+  rule 90 (III-additive)  emit_count = 0
+  rule 110 (IV-complex)  emit_count = 5
+  rule 184 (II-particle)  emit_count = 6
+    max emit_count   = 8
+    rule110 == max   = false
+    rule90 == 0      = true
+    c110 >= c184     = false
+
+════════════════════════════════════════════════════════════
+── AGGREGATE (across θ) ──
+  M1 RULE110-MAX           = 0
+  M2 RULE90-ZERO           = 1
+  M3 COMPLEX-GT-PARTICLE   = 0
+  M4 BOUND/DET             = 1
+
+  VERDICT = FALSIFIED
+════════════════════════════════════════════════════════════
+
+mean_phi_per_rule [30,54,90,110,184] = [10.7064, 6.19515, 0.0512299, 9.62037, 10.0575]
+
+INTERPRETATION (honest):
+  emit-EVENT-COUNT does NOT reproduce H_654's continuous Φ-magnitude class-order.
+  · low θ {0.5,1,2}: all non-additive saturate at 16 → binary (additive 0 vs rest 16), no fine order.
+  · high θ {8,11}: discrimination appears but ORDER INVERTS — rule30 (class-III chaotic) is MAX,
+    rule184 (class-II particle) > rule110 (class-IV complex). class-IV is NOT maximal.
+  · cause: emit-count measures Φ-distribution SPREAD (chaotic rule30 has many moderate-Φ states),
+    NOT integration depth. rule110 mean Φ (9.62) < rule30 (10.71) and rule184 (10.06).
+  M1 FAIL (rule110 not max at θ=8,11) → 🔴 FALSIFIED.
+  Closed-negative: emit-event-count is UNFIT as a Wolfram-class classifier (measure-dependence boundary
+  of the round-9 meta-axis — magnitude classifies, discrete count inverts).
