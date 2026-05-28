@@ -179,3 +179,7 @@ P1 은 faithful big-Φ n=4 (H_654 척도), P2/P3 은 collective big_phi_bounded 
 - `UNIVERSE/state/h663_class_I_phi_profile_2026_05_28/result.json` — measurement SSOT (P1-P4 per-rule · F663.1-5 · verdict)
 - `UNIVERSE/state/h663_class_I_phi_profile_2026_05_28/run.log` — run stdout (5/5 PASS)
 - `UNIVERSE/H_663_wolfram_class_I_phi_property_profile.md` — 본문 (SSOT)
+
+## 후속 (child)
+
+- **H_668** [wolfram-class-I-full-property](H_668_wolfram_class_I_full_property.md) (🟡 PARTIAL 4/5, 축 G G25) — 본 H §7 C2 의 "4 미측정 속성은 magnitude≈0 으로부터 floor 예측(미직접)" 을 후속이 **직접 측정**. closure-band(width=0.0 부재) · dΦ/dI-GZ(peak_I=0.05 NOT aligned) 는 본 H 의 floor 예측 **확인**, 그러나 self-similarity(min r=0.981 > class-IV 0.881) 는 floor 가 아니라 **ceiling** 으로 본 H 의 "magnitude floor → 전속성 floor" 함의를 self-sim 축에서 **반증**. 매트릭스 class-I 행이 mixed (대부분 floor + self-sim ceiling) = 속성-종속 확정 — self-similarity 가 magnitude 와 직교(homogeneous relaxation 의 매끄러운 곡선이 magnitude-floor 와 self-sim-ceiling 공존) 임을 class-I 에서 직접 입증.
