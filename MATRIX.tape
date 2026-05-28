@@ -47,12 +47,13 @@
 |---|---|---|
 | 0 | $0-tier core           | CLOSED (cycle #5–21) |
 | A | AXES.md backlog        | active (60 sub-axis · ~110 H seed) |
-| B | large-N faithful Φ     | active (n=8 bounded, GPU 불요) |
+| B | large-N faithful Φ     | active (n=8 exact bounded) · **n>8 greedy-MIP approx 엔진 LANDED 2026-05-28** (hexa-lang #1972 `iit4_approx_phi` · smoke PASS n4-8 exact-일치/n9-16 동작 · 🟢-APPROX) — n>8 검증 capability 확보 |
 | C | full-IIT4 Φ-structure  | active (HEXAD/IIT4/lib) |
 | D | LLM-동반 연속 가설      | active (verdict-landscape raster) |
 | E | SAVANT (GZ × SI)       | active NEW 2026-05-28 (H_347/348/349/350/351/612/613/614/615/616) |
 | F | HIVE-MIND collective Φ | active NEW 2026-05-28 (H_354/355/609/610/611) |
 | G | ANIMA.mining 승격 + round 6-10 메타-축 (substrate-emit · shape/scalar · substrate-class) | active (G1-G21 · 상세 UNIVERSE.md) — round 6 mining G1-G5 (H_634/637/633/639/638) → round 7-8 "shape>scalar" 양축 반증 (H_642 cross-rule · H_647 cross-seed) + structure-emergent vs number-convention 정량 분리 (H_646/651 threshold 자유도=[0,1]) → round 9-10 **substrate-class = 의식 통합 단조 분류자** 정정 완결: H_653 convexity-monotone · H_655 magnitude 비단조가 **trivial-baseline artifact** 로 판명(H_658) + scale-invariant 화해(H_660) → 모두 rule110(class-IV) 最高 수렴 |
+| H | perfect-number 닫힌형 identity (proof-harvest) | active NEW 2026-05-28 (PR #1350 · 7×🔵 SUPPORTED-FORMAL): H_ph_sigma_phi_n_tau_spine (σφ=nτ ⟺ n=6, 완전수 class 전수 — n=6-unique 구조 identity, physics-mapping uniqueness 반증과 별개) · H_ph_perfect_sigma_2n (σ=2n ⟺ aliquot s(n)=n) · H_ph_tau_perfect_2p (Euclid-Euler τ(perfect)=2p) · H_ph_mu_squarefree_unique (6=유일 squarefree perfect, μ6=1 vs μ28/496/8128=0) · H_ph_sigma_multiplicative · H_ph_euclid_euler_reconstruct (n=2^(p−1)(2^p−1)) · H_ph_sopfr_perfect (+ sopfr(496)=39 errata, legacy 58 반증) · verdict verbatim .verdicts/ph_*/ |
 | E×F | SAVANT × HIVE-MIND cross-link | round 3 closed 3/5 (1🔴 + 2🟢): H_617 🔴 FALSIFIED (PR #1171) · H_618 🟢 SUPPORTED (PR #1175) · H_619 🟢 SUPPORTED (PR #1172) · round 4 in-flight (H_620 🟢 R1≈3·GZ_WIDTH residual=0.0164 · H_621 🟢 SI/ΦD ∥ PID-synergy triangle ρ=0.5994 · **H_622 🔴 FALSIFIED — negative-pair axis-orthogonal chi-square p=0.624 + Fisher p=1.000** · **H_627 🔴 FALSIFIED (E3×F4) — 1/e GZ_CENTER invisible to quantized hivemind PID, syn(1/e)=syn(0.35)=syn(0.40)=0.975034 degenerate** · **H_628 🔴 FALSIFIED (E5×F2) — pair polarity ⊥ dΦ/dI peak-location, all 3 polarity peak at I=0.21 (GZ_LOWER), polarity scales Φ magnitude not peak position** · H_623/624/626 reserved) · ANIMA-side mirror SAVANT.md + HIVE-MIND.md (DOMAINS.tape 18/19) |
 
 ## 4. 기존 매트릭스 ledger (다른 위치)
@@ -79,4 +80,5 @@
 
 - **2026-05-28**: 본 SSOT v1 신설 — anima 전체 axis registry (17 domain + 3 sub-engine + UNIVERSE 7 축 + 기존 ledger 8 파일)
 - 이전 PR #1170 의 UNIVERSE 7 축 square 매트릭스를 본 SSOT 으로 흡수 + 확장
+- **2026-05-28 (archive-recover 세션)**: legacy archive 177 가설 회수 → UNIVERSE 직속 단일 서가 402 (#1326/1328/1345) · 100% 터미널 disposition (#1336/1338 · closure_123_FINAL) · per-file `closure:` 라벨 + README 회수-인덱스 (#1344/1347). 신규 축 **H** (proof-harvest 7×🔵) + 축 **B** n>8 엔진(#1972) 추가. hexa-lang 2 PR (#1961 verify bare-path fix · #1972 n>8 Φ 엔진)
 - **2026-05-28 (round 6-11 + ANIMA 전축 sync)**: 축 G G1→G21 확장 (substrate-class 단조 분류자 정정 — H_658 baseline-artifact + H_660 scale-invariant 화해, 모두 rule110 class-IV 수렴) · ANIMA bench A-H 4 redesign 🟢 회복 (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND — **negative=측정 artifact** 메타-패턴) + TIME E3 (PASS 도 3 spurious) · B-COFFESHOP 🔵 5/5 sympy · DECODER collapse-tetrad ✅ · emit-substrate 4/4 wired · D2 raster#7. 세션 메타-발견: **"의식 bench 의 negative/분기 = 측정 설계 결함, substrate 한계 아님" — redesign 시 회복**. pointer-only (상세 = 각 도메인 snapshot + UNIVERSE.md)
