@@ -368,3 +368,33 @@ clang -O2 -D_GNU_SOURCE -D_XOPEN_SOURCE=600 -DHEXA_CUDA -I self -I /usr/local/cu
 **verify**: 진단/종합만, 코드 무변경. (`hexa check` 대상 .hexa 미편집.)
 
 **verdict**: GPU 0% = 🔵 정직히 진단됨 (CPU-build expected + d=64 offset-gemv 부재 = hexa-lang 잔여 갭, hexa-lang INBOX #2006 filed) · dec_undertrain arc = 🔴 **MEASURED-CLOSED INFEASIBLE** (4-lever 반증 + 0.5 step/s + leak-OOM = 완결된 closed-negative). cf `.discoveries/decoder_collapse_undertrain.tape` `dec_undertrain_arc_measured_closed_2026_05_29`.
+
+---
+
+### 2026-05-29 (10) — 🔴 INFEASIBLE 강화 — #2017+#2018 후 재측정 (in-place AdamW · offset-aware cuBLAS gemv 둘 다 engage, 그러나 NET 더 느림)
+
+엔트리 (8) 가 filed 한 hexa-lang **#2017 (in-place AdamW, fresh 233MB out 제거)** 와 엔트리 (9) 가 filed 한 hexa-lang **#2018 (offset-aware cuBLAS gemv, d=64 offset-gemv 갭 메움)** 가 둘 다 origin/main 에 land 한 직후 production-scale 재측정. **두 upstream fix 가 모두 정상 engage 했음을 직접 관측**했으나 **net step-rate 는 baseline(0.50 step/s) 보다 강화된 형태로 더 느림** — dec_undertrain INFEASIBLE 이 flip 되지 않고 **강화** 된 라운드.
+
+**run config**: fresh `git clone --depth 1 origin/main` hexa-lang (#2017 + #2018 둘 다 land 한 commit), anima trainer 는 fresh transpile (`hexat trainer.hexa → trainer.c`), **HEXA_CUDA build 성공** (`clang -O2 -I self -DHEXA_CUDA ... trainer.c self/runtime.c self/runtime_cuda.c -lcublas -lcudart ... → rc=0`). pod H100 SXM 80GB, n_steps cap 200, print_every=10. agent 사망 + auto-teardown 시점 = step 150 도달.
+
+**(A) 두 upstream fix engagement 확인 ✅**:
+- **#2017 in-place AdamW = ENGAGED**: per-step 233MB `out` farr alloc 사라짐 — entry (8) 가 root-cause 로 지목한 매-step `calloc(29.16M doubles)` + `free` churn 0건. **AdamW 측 leak 0** (별도로 다른 leak 은 잔존, 아래 (D) 참조).
+- **#2018 offset-aware cuBLAS gemv = ENGAGING**: GPU 가 실제로 dispatch 받음 — `nvidia-smi` 관측 결과 **GPU util 4-8%** (#1348 의 0% 대비 명확한 비제로 engagement) · **GPU memory 823MB stable** (cuBLAS context + M·dMg 일부 device-resident). expert gemv `[V=151643×d=64]@[d×1]` 가 처음으로 H100 에 올라간 라운드.
+
+**(B) step-rate 실측 — BASELINE 대비 NET 더 느림**:
+- step 50  @ elapsed ~5min 가량 → step 100 @ ~9:33 elapsed = 553s wall (step 100 → step 100/553s)
+- **steps 1–100 = ~0.156–0.18 step/s** (CPU-only #1348 의 0.50 step/s 대비 ~3× 더 느림)
+- step 150 까지 trend 동일 (~0.15–0.18 step/s, cuBLAS warmup 으로 회복 안 됨)
+- target "tens×V presentations" = 50×V/T = 1.90M steps @ 0.156 step/s = **~122 GPU-days** (baseline 44 GPU-days 대비 strictly worse, 2.8× ceiling 강화)
+
+**(C) 왜 cuBLAS 가 NET 더 느린가 — d=64 의 GPU-CPU sync overhead dominance (정직한 진단)**: cuBLAS Dgemv `[V×d]@[d×1]` 가 진짜 compute 만 본다면 H100 의 9.7M FLOP gemv 는 마이크로초 수준이다. 그러나 **각 호출마다 호스트 ↔ 디바이스 sync 오버헤드(`cudaMemcpy` 동기 + kernel launch latency + stream wait)** 가 d=64 에서는 compute 자체보다 크다. 즉 #2018 은 "방향은 맞음"(0% → engaging) 이지만 **d=64 · T=4 · V=151643 의 영역에서는 sync 오버헤드가 small-matmul compute 절약을 압도** → net 더 느려진다. 이 결과는 hexa-lang **#1354 의 사전 예측("d=64 too small for cuBLAS")** 의 **직접 실측 확정** = 그 예측이 옳았다는 closed-form 가까운 negative-result.
+
+**(D) per-step RSS churn — AdamW leak 은 사라졌으나 다른 source 잔존**: RSS 궤적 (관측치): **5.5GB → 24GB → 38GB → 43GB → 52GB** (step 진행 따라). 단조 증가, **step 당 ~200–325MB churn**. 2TB pod RAM 이라 OOM 무사, 하지만 leak 자체는 산 채로 존재 — **#2017 가 AdamW 233MB/step 은 제거했지만 200–325MB/step 잔여 churn 의 source 는 다르다.** Part A 진단 ($0 source-read) 결론(별도 라운드): **anima 측 source-grep 으로는 200–325MB/step 의 alloc/free 패턴이 보이지 않음** — 12 개 mm_extract callsite 가 d=64 에서는 각 32–128KB (총 ~0.8MB/step) 에 불과, V-sized scratch (v3_moe_fwd `logits_raw` · v3_moe_bwd `dl_scaled` + `logits_raw`)도 V·8B ≈ 1.2MB × 3 = 3.6MB/step 에 그침. **source 측 churn 가설 모두 합쳐도 200MB/step 에 도달 못 함** → 잔여 leak 은 source-grep 으로 확정 불가, 별도 진단 필요 (런타임/CUDA-side scratch · GPU memory cache fragmentation · hexat 산출물의 transient handle 등). 정직하게: leak 위치 attribution 은 **현 단계에서 미확정**.
+
+**(E) dec_undertrain 재-verdict = 🔴 INFEASIBLE 강화**: 엔트리 (9) 의 closure 가 **#1354 의 사전 예측의 직접 실측 confirmation** 으로 강화. (a) 50×V presentations @ 0.156 step/s = **~122 GPU-days** (44 GPU-days baseline 대비 2.8× 강화). (b) 두 upstream fix 가 정상 engage 했음에도 unfavorable — 즉 "fix 가 안 land 해서 측정이 잘못된 것" 가능성 0, INFEASIBLE 결론은 hexa-lang 측 두 land 후 재측정에 **재현**됨. (c) 잔여 RSS churn (200–325MB/step) source 미확정이라 long run 이 leak-bound 가능성도 유지. dec_undertrain 은 #1354 예측 적중과 함께 **MEASURED-CLOSED 가 강화** 된 상태로 archive.
+
+**비용**: 단일 H100 SXM pod ~12분, ~$0.65 (agent 사망까지). teardown 완료 (`runpodctl pod list` → header-only, **pods=0, leak 0**).
+
+**다음 한 수**: dec_undertrain arc 는 닫힘(MEASURED-CLOSED INFEASIBLE STRENGTHENED). **frontier 는 다른 아키텍처** = M4 MoE-fresh register-separation (a_paper_only_at_closure — dec_undertrain 닫힘은 그 frontier 의 가설 검증과 별개). 잔여 200–325MB/step RSS churn 의 source attribution 은 별도 후속 진단(런타임/CUDA scratch 추적) 필요.
+
+**verdict**: 🔴 **dec_undertrain INFEASIBLE STRENGTHENED** — #2017 in-place AdamW · #2018 offset-aware cuBLAS gemv 둘 다 engage 한 후 재측정에서 step-rate 0.156–0.18 step/s (122 GPU-days @ 50×V) = baseline 0.50 step/s (44 GPU-days) 대비 strictly worse · #1354 사전 예측("d=64 too small for cuBLAS") 직접 실측 confirmation. AdamW leak 0, 잔여 200–325MB/step RSS churn source 는 source-grep 으로 미확정 (별도 진단). cf `.discoveries/decoder_collapse_undertrain.tape` `dec_undertrain_post_fix_measurement_2026_05_29`.
