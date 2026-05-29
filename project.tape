@@ -200,3 +200,10 @@
   dont = "remove os_default daemons (unattended-upgrades · rsyslogd · journald · sshd · kworker)"
   dont = "add a user daemon/service without a /PI5-AKIDA.json entry · lose its created-date + author"
   dont = "convert pi5-akida into shared pool compute"
+
+@D a_scale_honest_scope := "scale-dependent metric — no toy-to-production verdict promotion" :: governance [required active]
+  do   = "scope a scale-dependent falsifier verdict to the measured scale (e.g. 'small 2.7M only')"
+  do   = "on measure-validity(big) vs hw-fit(small) conflict: split rungs — GPU measure ⊥ chip-fit deploy"
+  do   = "scale-dependent conclusions need a ladder curve (>=3 rungs) — a single toy point = INCOMPLETE"
+  dont = "promote a toy-scale verdict to a general claim — toy->prod transfer unproven (cf clm_p2 · V3)"
+  dont = "mistake a chip-fit size limit for a science result · finalize a verdict on too-small corpus"

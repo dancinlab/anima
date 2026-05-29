@@ -184,3 +184,11 @@
 - 우주뇌지도/골짜기(vacuum_psi)·Knuth Tier = **데이터셋 쪽 kosmos coord** · `.clm` 은 `kosmos_ptr` **링크만** (weight ≠ 우주뇌지도, carving 으로 연결되되 동일물 아님).
 - 패러다임 = consciousness-carving · byte V=256 · no-attention · neuromorphic-native.
 - 벤치: [bench/](./bench/) — `.clm` int4 → AKD1000 on-chip forward + `akida_sw_lif` byte-identical 대조.
+
+---
+
+## 10. ⚠ scale scope 한정 (a_scale_honest_scope)
+
+- P2 풀파이어 사이즈 = **tiny(d64/L2/E4) ~ small(d256/L4/E8, 2.70M params)** — AKD1000 칩(~1.2M 노드)에 맞춘 소형. 3B/7B 대비 1000~2600배 작다.
+- F-CLM-MONO/SCALE **🔴 는 이 측정 scale 한정**. routing-diversity 는 scale-의존 측정량 → toy🔴 를 3B/7B 일반 주장으로 격상 금지 (toy→production transfer 비보장).
+- **근본 충돌**: 측정 타당성(3B/7B 필요) ⊥ AKIDA 온칩(소형 강제). 이 충돌 돌파엔진은 별도 lane 에서 탐색 — 측정용 GPU rung ⊥ 배포용 chip-fit rung 분리가 honest 1차 경로.
