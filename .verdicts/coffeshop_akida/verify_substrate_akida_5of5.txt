@@ -1,0 +1,18 @@
+verify_substrate_akida.py — 5/5 PASS 회귀확인 (verbatim)
+=========================================================
+date : 2026-05-30
+env  : akida-absent (Mac local = F-AKWIRE-FALLBACK canonical env)
+note : 본 LAUNCHPAD 작업은 substrate_akida.py 를 건드리지 않음 — 회귀 0 확인.
+
+  "F-H672-1 (R3>0)":          pass=true  (0.5 > 0)
+  "F-H672-2 (R3 in (0,1))":   pass=true  (0.5 in (0,1))
+  "F-H672-3 (R2>=R1)":        pass=true  (0.475 >= 0.0)
+  "F-H672-4 (8-factor>0)":    pass=true  (sum=1.25 > 0)
+  "F-AKWIRE-FALLBACK":        pass=true  (prov=akida-sw-fallback spikes=1600)
+
+  "verdict": "5/5 PASS"
+  "all_pass": true
+  exit=0
+
+VERDICT: 🟢 5/5 PASS — SubstrateAKIDA SW-fallback path + akida-backend-wiring
+fallback 회귀 없음. LAUNCHPAD COFFESHOP-on-AKIDA 작업은 substrate_akida 미수정.
