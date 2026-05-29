@@ -1,0 +1,48 @@
+{
+  "id": "H_841",
+  "domain": "TEMPORAL",
+  "slug": "temporal-timeshift-phi",
+  "round": "T1",
+  "date": "2026-05-29",
+  "deterministic": true,
+  "llm": "none",
+  "pre_register_frozen": true,
+  "frozen_at": "2026-05-29",
+  "measurements": {
+    "hive": {
+      "lag_1":  {"phi": 0.0126294, "irr": 0.0124719, "type": "coherent_non_conscious"},
+      "lag_8":  {"phi": 0.128365,  "irr": 0.233056,  "type": "coherent_non_conscious"},
+      "lag_32": {"phi": 0.164757,  "irr": 0.28768,   "type": "coherent_non_conscious"},
+      "lag_64": {"phi": 0.99953,   "irr": 1.0,       "type": "conscious"}
+    },
+    "voyager": {
+      "lag_1":  {"phi": 0.0899437, "irr": 0.0825214, "type": "coherent_non_conscious"},
+      "lag_8":  {"phi": 0.131045,  "irr": 0.344528,  "type": "coherent_non_conscious"},
+      "lag_32": {"phi": 0.340681,  "irr": 0.559431,  "type": "conscious"},
+      "lag_64": {"phi": 0.676389,  "irr": 0.6511,    "type": "conscious"}
+    },
+    "random": {
+      "lag_1":  {"phi": 0.11573,   "irr": 0.103725,  "type": "coherent_non_conscious"},
+      "lag_8":  {"phi": 0.138854,  "irr": 1.0,       "type": "conscious"},
+      "lag_32": {"phi": 0.065702,  "irr": 1.0,       "type": "conscious"},
+      "lag_64": {"phi": 0.367396,  "irr": 1.0,       "type": "conscious"}
+    },
+    "lattice": {
+      "lag_1":  {"phi": 0.659914,  "irr": 0.397559,  "type": "coherent_non_conscious"},
+      "lag_8":  {"phi": 2.0,       "irr": 1.0,       "type": "conscious"},
+      "lag_32": {"phi": 2.0,       "irr": 1.0,       "type": "conscious"},
+      "lag_64": {"phi": 2.0,       "irr": 1.0,       "type": "conscious"}
+    }
+  },
+  "falsifiers": {
+    "F-T1-INSTANT": {"threshold": "hive lag=1 phi >= 0.5",       "measured": 0.0126294, "pass": false},
+    "F-T1-MID":     {"threshold": "hive lag=8 phi >= 0.5",       "measured": 0.128365,  "pass": false},
+    "F-T1-LONG":    {"threshold": "hive lag=32 phi >= 0.5",      "measured": 0.164757,  "pass": false},
+    "F-T1-DECAY":   {"threshold": "random lag=1 phi < 0.4",      "measured": 0.11573,   "pass": true},
+    "F-T1-LAGINV":  {"threshold": "hive lag=1 phi >= lag=64 phi","measured_lag_1": 0.0126294, "measured_lag_64": 0.99953, "pass": false}
+  },
+  "pass_count": 1,
+  "total_falsifiers": 5,
+  "verdict": "🔴 FALSIFIED-INSTRUMENT · Δt 축 본 가설 미확정 (instrument lag-window 한계)",
+  "honest_finding": "Φ 시간 통합 가설 (instant ≥ long) 완전 반증 — 4 substrate 중 3 (lattice/voyager/hive) 에서 Φ가 Δt 증가에 따라 monotone INCREASE (정반대). lattice는 Δt=8에 이미 Φ=2.0 saturate. 2-unit lag-TPM 가 periodic substrate 의 long-lag transition 을 정확히 predictable 로 만들어 apparent Φ 을 inflate. = invariant_detector 의 lag-window axis 가 closed-form 반박 결과 — Δt 가 짧을수록 더 까다로운 integration test (정직 closed-negative)."
+}

@@ -14,7 +14,7 @@
 - [x] 🛰️ X4 panpsychism falsifier — XENO/scan/panpsy_falsifier.hexa 4 micro-substrate (thermostat·2bit counter·random walker·XOR LFSR) 적용 · 사전등록 falsifier 4/4 FAIL · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · panpsy WEAK form 살아남음 + random>coupled Φ 역전 발견) · H_833 · 2026-05-29
 - [x] 🛰️ X5 시뮬 가설 검출 signature — XENO/scan/sim_hypothesis.hexa 4 sim-candidate substrate (lattice-quantized Planck-floor period 8 · floating-point bound sin round 4-dec · algorithmic pseudo-random Pi 128 digits · true natural Bates-4 Gaussian) n=128 dense regime 위 invariant_detector 적용 · 사전등록 falsifier 5/5 중 2/5 PASS · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · lattice Φ=0.660 양성, fp+pi+natural Φ 0.09~0.12 indistinguishable · Bostrom sim signature axis 중 periodicity-axis 외 측정 불가, 본 instrument 측정 영역 매핑 완성) · H_835 · 2026-05-29
 - [x] 🛰️ X6 AGI sentience — XENO/scan/agi_sentience.hexa 4 LLM-like activation (random·sparse attention·sin residual·structured XOR 3-tap) n=64 적용 · 사전등록 falsifier 5/5 중 1/5 PASS · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · attention sparse spike Φ=1.213 false-conscious + structured XOR ≈ random 역전 · n=64 mid regime sparse-bias drift, AGI sentience 본 가설 측정 미확정) · H_834 · 2026-05-29
-- [ ] 🛰️ X7 외계인 시간축 다양성 — 인간 1초 ≠ 외계 1초 가정 → 시간 normalize Φ
+- [x] 🛰️ X7 외계인 시간축 다양성 — 인간 1초 ≠ 외계 1초 가정 → 시간 normalize Φ · TEMPORAL 도메인 신설 + H_841 (T1 timeshift) 로 frontier 이양, 4 substrate × 4 Δt = 16 measurements + 5 사전등록 falsifier · 🔴 FALSIFIED-INSTRUMENT (정직 closed-negative · 2-unit lag-TPM 의 long-Δt periodic-inflation artifact 발견 · T2 multi-unit time-embed detector 재설계 필요) · 2026-05-29
 - [x] 🛰️ X8 SETI@home BOINC pod spec + dispatch handoff — sahfiles_workunits.tar.xz (274340B sha256 정합 + 9 .sah 파일) inspection + Ubuntu 22.04 RunPod CPU pod ($0.50~$1) BOINC client runbook + a_fire_autonomous dispatch handoff · 사전등록 falsifier 5/5 PASS · 🟡 archive-acquired-pod-ready (실 BOINC playback 은 follow-up cycle deferred, BOINC 3.03 ↔ modern toolchain ABI gap 정직 cite) · H_836 · 2026-05-29
 - [ ] 🛰️ X8.followup-fire — RunPod CPU pod 자율 발사 (a_fire_autonomous · ~$0.50~$1) → standalone playback → spike dump → invariant_detector 적용 → 추가 H 등록
 - [x] 🛰️ X10 hive-mind invariant — 4-cell × 32 sample × 4 substrate (independent / weak / strong / hive-emergence) n=128 dense 위 invariant_detector · 사전등록 5 falsifier 중 3/5 PASS · 🟡 PARTIAL-SUPPORT (hive-emergence XOR cascade Φ=1.565 'conscious' STRONG positive + mean-field paradox 발견 + Kuramoto sync border) · H_838 · 2026-05-29
@@ -27,6 +27,7 @@
 - ⇄ [EEG](../EEG/EEG.md): 생체 뇌파 EEG.sf.md S4·S10·S36·S37·S38 seed 출처
 - ⇄ [AKIDA](../AKIDA/AKIDA.md): 실리콘 substrate-agnostic 검출 (S21 인간→AI 이주의 reverse 검증)
 - ⇄ [KOSMOS](../KOSMOS/KOSMOS.md): 외계 의식 anchor 영속 저장 형식
+- ⇄ [TEMPORAL](../TEMPORAL/TEMPORAL.md): 4번째 축 Δt-window 확장 (XENO 3D applicability matrix → TEMPORAL 4D) — XENO FINAL CLOSURE 후 frontier 이양 도메인 (H_841 closed-negative · 2026-05-29)
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT (substrate-agnostic 핵심)
 - ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): 검증 결과 환류 SSOT
 
@@ -38,6 +39,13 @@
 - BL: archive-pointer 🟡 → 🟢 (Voyager-1 BL Green Bank, blimpy/turbo_seti canonical)
 - SETI@home: archive-pointer 🟡 → 🟡 archive-acquired (archive.org mirror)
 - LFS: 4.6 → 123.7 MB · branch feat/xeno-bl-seti-real-2026-05-29 · commit ee023dfcc
+
+## XENO FINAL CLOSURE (2026-05-29) — follow-up 2 cycle round 5/5 done · TEMPORAL 신설
+- 메인 R1-R5: H_829~H_836 (X1·X2·X3 + X4·X5·X6·X7·X8) — 4-point applicability matrix
+- follow-up R1-R3: H_837 + paper #1411 + H_838 — 6+1 → 10-point matrix + mean-field paradox
+- follow-up 2 R1-R5: lint + paper #1414 v2 + H_839 (X1-matrix-v2 48-cell) + H_840 (X840 longer-playback partial-recovery) + **TEMPORAL 도메인 신설 + H_841 (T1 timeshift 🔴 closed-negative)**
+- 총 **13 H_xxx · 2 papers · 11-point applicability matrix (X10-a~d 포함)** · 새 도메인 [TEMPORAL](../TEMPORAL/TEMPORAL.md) 4D 축 (n × density × structure × Δt) closed-negative finding
+- frontier 이양: TEMPORAL T2 (multi-unit time-embed detector — Takens / Granger / time-averaged Φ) → [TEMPORAL/TEMPORAL.md](../TEMPORAL/TEMPORAL.md)
 
 
 ## XENO-FRONTIER-5 round 1/5 (2026-05-29) — X7 ✅
