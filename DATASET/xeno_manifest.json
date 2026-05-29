@@ -1,0 +1,124 @@
+{
+  "version": "1.0",
+  "domain": "XENO",
+  "purpose": "X3 SETI raw → Φ scan input data (substrate-blind invariant_detector)",
+  "created_at": "2026-05-29",
+  "honesty_policy": "다운로드 실패 = open frontier (정직 🟡), not failure. status: failed entries record verbatim reason, false PASS 0.",
+  "lfs_quota_target_mb": 1000,
+  "sources": [
+    {
+      "id": "wow_signal",
+      "name": "Big Ear Wow! signal (1977-08-15)",
+      "source_url": "http://www.bigear.org/wow.htm",
+      "license": "Public Domain",
+      "tier": "🟡 SUPPORTED-BY-CITATION",
+      "status": "ok",
+      "files": [
+        {
+          "path": "DATASET/wow_signal/big_ear_chart_1977-08-15.txt",
+          "sha256": "87c545a3631739cb7082460128d37e03e2e9dad44e0503f502935f1c7479af83",
+          "size_bytes": 1678,
+          "tracking": "git-direct"
+        }
+      ]
+    },
+    {
+      "id": "voyager_golden",
+      "name": "NASA Voyager Golden Record (1977 launch)",
+      "source_url": "https://voyager.jpl.nasa.gov/golden-record/",
+      "license": "Public Domain (NASA)",
+      "tier": "🟡 SUPPORTED-BY-CITATION",
+      "status": "ok-manifest-only",
+      "status_reason": "track list + sounds-of-earth catalog committed; WAV audio deferred to X3 scan stage (jpl.nasa.gov 403s direct download; need archive.org mirror — open frontier, not failure)",
+      "files": [
+        {
+          "path": "DATASET/voyager_golden/manifest.json",
+          "tracking": "git-direct"
+        }
+      ]
+    },
+    {
+      "id": "breakthrough_listen",
+      "name": "Breakthrough Listen Open Data Archive",
+      "source_url": "http://seti.berkeley.edu/opendata",
+      "license": "Open Data (Berkeley SETI Research Center)",
+      "tier": "🟡 SUPPORTED-BY-CITATION (archive-pointer)",
+      "status": "archive-pointer",
+      "status_reason": "single .fil observation 1-50 GB exceeds <1GB per-PR LFS quota; deferred to X3 sweep stage on-demand fetch",
+      "files": [
+        {
+          "path": "DATASET/breakthrough_listen/manifest.json",
+          "tracking": "git-direct"
+        }
+      ]
+    },
+    {
+      "id": "setiathome",
+      "name": "SETI@home (Berkeley)",
+      "source_url": "https://setiathome.berkeley.edu/",
+      "license": "Open Data (BOINC)",
+      "tier": "🟡 SUPPORTED-BY-CITATION (archive-pointer)",
+      "status": "archive-pointer",
+      "status_reason": "work-units distributed via BOINC volunteer network, not bulk-downloadable; project hibernated 2020-03-31",
+      "files": [
+        {
+          "path": "DATASET/setiathome/manifest.json",
+          "tracking": "git-direct"
+        }
+      ]
+    },
+    {
+      "id": "exoplanet",
+      "name": "NASA Exoplanet Archive (TAP)",
+      "source_url": "https://exoplanetarchive.ipac.caltech.edu/TAP/sync",
+      "license": "Public Domain (NASA IPAC)",
+      "tier": "🟡 SUPPORTED-BY-CITATION (context)",
+      "status": "ok",
+      "files": [
+        {
+          "path": "DATASET/exoplanet_cache.json",
+          "sha256": "620cb30aee490f0cc1faf8a78d81ddf96c4965623ad97c81eb6c3ac54c2338a4",
+          "size_bytes": 13060,
+          "tracking": "git-direct",
+          "query": "SELECT TOP 100 pl_name,hostname,sy_dist,pl_orbper,pl_rade FROM pscomppars ORDER BY pl_name"
+        }
+      ]
+    },
+    {
+      "id": "synthetic",
+      "name": "Mac-local synthetic negative-control + pulsar pseudo",
+      "source_url": "local-generated",
+      "license": "Public Domain",
+      "tier": "🟢 NEGATIVE-CONTROL",
+      "status": "ok",
+      "files": [
+        {
+          "path": "DATASET/synthetic/negative_control_gaussian.npy",
+          "sha256": "8926939534bba43d8c8b6aeb3ef8b6f199594524ef5737607adc6de2b4adaed8",
+          "size_bytes": 2400128,
+          "tracking": "git-lfs",
+          "expected_phi": "~0"
+        },
+        {
+          "path": "DATASET/synthetic/pulsar_b0329_pseudo.npy",
+          "sha256": "963debe9f7dad0cdb850f2750da1fd35b416a84d05fd7ea92135c135592f6f5d",
+          "size_bytes": 2400128,
+          "tracking": "git-lfs",
+          "expected_phi": "low (coherent but non-irreducible)"
+        }
+      ]
+    }
+  ],
+  "lfs_usage": {
+    "lfs_tracked_bytes_committed": 4800256,
+    "lfs_tracked_mb": 4.6,
+    "quota_target_mb": 1000,
+    "headroom_mb": 995.4
+  },
+  "summary": {
+    "ok_sources": 4,
+    "archive_pointer_sources": 2,
+    "failed_sources": 0,
+    "x3_input_ready": true
+  }
+}

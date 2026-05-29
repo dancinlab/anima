@@ -1,0 +1,24 @@
+{
+  "source": "SETI@home Project (Berkeley)",
+  "url": "https://setiathome.berkeley.edu/",
+  "status_note": "Project hibernated 2020-03-31; archive of past observations remains accessible",
+  "license": "Open Data (BOINC volunteer-distributed)",
+  "instrument": "Arecibo Observatory (1420 MHz hydrogen line, 2.5 MHz bandwidth, retired 2020)",
+  "frequencies_GHz": "1.418 - 1.422",
+  "format": "BOINC work-unit .dat (~365 KB each, 107s recording @ 0.6 Hz bins)",
+  "typical_file_size": "365 KB per work-unit",
+  "scope": "1999-2020, 16 billion+ work-units distributed",
+  "quota_decision": {
+    "status": "archive-pointer-only",
+    "reason": "work-unit files distributed via BOINC volunteer-compute network, not bulk-downloadable from public HTTP. Direct re-analysis requires BOINC client; deferred to X3 sweep stage.",
+    "tier": "🟡 SUPPORTED-BY-CITATION"
+  },
+  "files_in_repo": {
+    "manifest.json": "this archive-pointer (no raw .dat committed)"
+  },
+  "x3_use_plan": "use SETI@home best-candidate list (Top 6, e.g. SHGb02+14a 2004) coordinates as Φ-scan targets; raw work-unit playback deferred to dedicated BOINC pod",
+  "best_candidates": [
+    {"name": "SHGb02+14a", "year": 2004, "RA": "01h 31m 12s", "Dec": "+27d 30m", "freq_MHz": 1420.0344, "snr": 19, "note": "between Pisces/Aries; ruled inconclusive after re-observation"},
+    {"name": "Wow! signal (1977)", "note": "pre-SETI@home, cross-referenced for comparison"}
+  ]
+}
