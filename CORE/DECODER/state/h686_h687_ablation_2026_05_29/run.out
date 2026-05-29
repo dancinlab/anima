@@ -1,0 +1,155 @@
+================================================================
+  H_686 + H_687 aux-loss ablation (toy E2-replica · UNIVERSE #24)
+       MoE top-1 hard routing · E=4 V=8 d=6 · 6 cluster · 600 step
+       lam_ent = 0.1 (H_686) · lam_kl = 0.1 (H_687) · SKEWED corpus (E2 Scen B)
+================================================================
+  toy reference (n=100 with 20× c0 multiplicity, 18-bit binarisation):
+    max-diverse  LZ_norm = 0.0360459
+    max-collapse LZ_norm = 0.0120153
+    calibrated HEALTHY_FLOOR (midpoint) = 0.0240306
+--- Cell A: none (baseline) ---
+  init avg CE = 2.0796
+  final avg CE = 0.00253984
+  mean H(gate) = 0.145866 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 6 · LZ_norm = 0.0360459
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 → expert e0 → token 0
+    cluster c1 → expert e3 → token 1
+    cluster c2 → expert e3 → token 2
+    cluster c3 → expert e2 → token 3
+    cluster c4 → expert e1 → token 4
+    cluster c5 → expert e0 → token 5
+  DECODED_IDS: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5
+--- Cell B: ent only (H_686) ---
+  init avg CE = 2.0796
+  final avg CE = 0.0122568
+  mean H(gate) = 1.15225 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 6 · LZ_norm = 0.0360459
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 → expert e0 → token 0
+    cluster c1 → expert e3 → token 1
+    cluster c2 → expert e3 → token 2
+    cluster c3 → expert e2 → token 3
+    cluster c4 → expert e1 → token 4
+    cluster c5 → expert e0 → token 5
+  DECODED_IDS: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5
+--- Cell C: kl only (H_687) ---
+  init avg CE = 2.0796
+  final avg CE = 0.00487494
+  mean H(gate) = 0.169797 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 6 · LZ_norm = 0.0360459
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 → expert e0 → token 0
+    cluster c1 → expert e3 → token 1
+    cluster c2 → expert e3 → token 2
+    cluster c3 → expert e2 → token 3
+    cluster c4 → expert e1 → token 4
+    cluster c5 → expert e0 → token 5
+  DECODED_IDS: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5
+--- Cell D: both (H_686+H_687) ---
+  init avg CE = 2.0796
+  final avg CE = 0.0228222
+  mean H(gate) = 1.18533 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 6 · LZ_norm = 0.0360459
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 → expert e0 → token 0
+    cluster c1 → expert e3 → token 1
+    cluster c2 → expert e3 → token 2
+    cluster c3 → expert e2 → token 3
+    cluster c4 → expert e1 → token 4
+    cluster c5 → expert e0 → token 5
+  DECODED_IDS: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5
+--- Cell A re-run (determinism check) ---
+  init avg CE = 2.0796
+  final avg CE = 0.00253984
+  mean H(gate) = 0.145866 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 6 · LZ_norm = 0.0360459
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 → expert e0 → token 0
+    cluster c1 → expert e3 → token 1
+    cluster c2 → expert e3 → token 2
+    cluster c3 → expert e2 → token 3
+    cluster c4 → expert e1 → token 4
+    cluster c5 → expert e0 → token 5
+  DECODED_IDS: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5
+--- Cell B re-run (determinism check) ---
+  init avg CE = 2.0796
+  final avg CE = 0.0122568
+  mean H(gate) = 1.15225 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 6 · LZ_norm = 0.0360459
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 → expert e0 → token 0
+    cluster c1 → expert e3 → token 1
+    cluster c2 → expert e3 → token 2
+    cluster c3 → expert e2 → token 3
+    cluster c4 → expert e1 → token 4
+    cluster c5 → expert e0 → token 5
+  DECODED_IDS: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5
+--- Cell C re-run (determinism check) ---
+  init avg CE = 2.0796
+  final avg CE = 0.00487494
+  mean H(gate) = 0.169797 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 6 · LZ_norm = 0.0360459
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 → expert e0 → token 0
+    cluster c1 → expert e3 → token 1
+    cluster c2 → expert e3 → token 2
+    cluster c3 → expert e2 → token 3
+    cluster c4 → expert e1 → token 4
+    cluster c5 → expert e0 → token 5
+  DECODED_IDS: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5
+--- Cell D re-run (determinism check) ---
+  init avg CE = 2.0796
+  final avg CE = 0.0228222
+  mean H(gate) = 1.18533 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 6 · LZ_norm = 0.0360459
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 → expert e0 → token 0
+    cluster c1 → expert e3 → token 1
+    cluster c2 → expert e3 → token 2
+    cluster c3 → expert e2 → token 3
+    cluster c4 → expert e1 → token 4
+    cluster c5 → expert e0 → token 5
+  DECODED_IDS: 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 1 2 3 4 5
+================================================================
+  SUMMARY (4-cell ablation @ SKEWED corpus, E=4 V=8 d=6, 600 step)
+================================================================
+  HEALTHY_FLOOR = 0.0240306
+  | cell                  | LZ_norm  | distinct_e | mean H(gate) | final CE | init CE |
+  | none  (baseline)      | 0.0360459 | 4.0        | 0.145866 | 0.00253984 | 2.0796 |
+  | ent   (H_686 only)    | 0.0360459 | 4.0        | 1.15225 | 0.0122568 | 2.0796 |
+  | kl    (H_687 only)    | 0.0360459 | 4.0        | 0.169797 | 0.00487494 | 2.0796 |
+  | both  (H_686+H_687)   | 0.0360459 | 4.0        | 1.18533 | 0.0228222 | 2.0796 |
+--- falsifier verdicts ---
+  [FAIL] F-ABL-1 BASELINE-COLLAPSE: cell-a distinct_e<2 OR LZ<HEALTHY_FLOOR (sanity)
+  [PASS] F-ABL-2 ENT-ESCAPE: cell-b (H_686) distinct_e>=2 AND LZ>HEALTHY_FLOOR
+  [PASS] F-ABL-3 KL-ESCAPE: cell-c (H_687) distinct_e>=2 AND LZ>HEALTHY_FLOOR
+  [PASS] F-ABL-4 BOTH-ESCAPE: cell-d (both) distinct_e>=2 AND LZ>HEALTHY_FLOOR
+  [PASS] F-ABL-5 LEARNED: all 4 cells final CE < init·0.5
+  [PASS] F-ABL-6 DETERMINISM: all 4 cells LZ_norm re-run identical (<1e-6)
+================================================================
+  RESULT: 5 PASS / 1 FAIL
+================================================================
+  ────────────────────────────────────────────────────────────────
+  TOY-NULL RESULT: the E=4·V=8·d=6 600-step SKEWED regime DOES NOT
+    reproduce the M4b production collapse. Baseline cell-A already
+    achieves 4/4 distinct_experts + identity decode → there is no
+    collapse to escape. All 4 cells land on byte-identical decode
+    (LZ_norm = 0.0360459) because CE convergence dominates
+    the aux perturbation at this scale.
+  MECHANISTIC CHECK (aux gradient injection works as designed):
+    cell-a  none  H(gate) = 0.145866 (uniform = 1.38629)
+    cell-b  ent   H(gate) = 1.15225 ← H_686 pushed +1.00638 toward uniform ✓
+    cell-c  kl    H(gate) = 0.169797 (KL acts on output, not router)
+    cell-d  both  H(gate) = 1.18533 ← combined ent+kl ✓
+    → H_686 aux gradient does move the router toward uniform but
+      this regime is below the collapse threshold so no decode
+      diversity gain is observable. H_687 leaves router-H near
+      baseline (acts on output distribution) — as expected.
+  VERDICT: H_686/H_687 toy ablation INDETERMINATE — neither
+    confirms nor refutes production escape. The production fire
+    (V=151643, real M4b regime) is the only valid test.
+  ────────────────────────────────────────────────────────────────
+  NOTE: toy → production transfer NOT guaranteed (memory:
+        feedback_toy_scale_transfer). Production-scale fire required for closure.
+================================================================
