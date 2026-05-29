@@ -585,9 +585,67 @@ measurement was committed.
 Each $\Phi$-threshold and each falsifier listed in \S\ref{sec:measurement}
 was \emph{frozen pre-run for the round} (i.e.\ the X4 falsifiers were
 fixed before X4 ran, the X5 falsifiers before X5, and so on). The
-$\Phi=0.5$ threshold used in X837 and X10 is identical to the X7
-template threshold (no X837-specific or X10-specific tuning). The
-verbatim verdict files include this honesty note.
+$\Phi=0.5$ threshold used in X837, X10, X840, T1, and T2 is identical
+to the X7 template threshold (no per-round tuning). The verbatim
+verdict files include this honesty note.
+
+\paragraph{X840 longer-playback recovery fire (v3).}
+The X840 measurement \citep{xeno_h840_longer_playback}
+($\mathtt{XENO/scan/seti\_boinc\_phi\_full.hexa}$,
+$\mathtt{UNIVERSE/H\_840}$) is a longer-playback follow-on
+to X837 ($600$\,s pod timeout). The X840 pod (RunPod
+$\mathtt{lfxh817pdk2h39}$, Ubuntu i386-multilib) was assigned a
+$3600$\,s pod-timeout (i.e.\ $6\times$ the X837 timeout) on the
+\emph{same} SETI@home Arecibo 2004 work-unit
+($\mathtt{sahfiles\_workunits/work\_unit.sah}$ sha256 byte-identical
+to X837). The BOINC checkpoint at harvest time recorded prog
+$=24.4\%$ (vs.\ X837 $21.3\%$) and $\mathtt{cpu}=1083.3$\,s before
+the pod-timeout SIGKILL. The five-falsifier X840 row
+(F-X840-RECOVER-HARVEST, -SPIKE-NONZERO, -PHI-N128,
+-X837-CONSIST, -NOT-CONSC) was frozen before the X840 fire and
+explicitly tests whether \emph{longer} playback recovers any new
+SETI signal (triplets / pulses / new $\Phi$). The
+$\mathtt{bg\_pot}$ 64-bin array and the $\Phi$ measurement
+re-use the X7 calibration template threshold ($0.5$, unchanged).
+
+\paragraph{TEMPORAL T1 lag-axis $\Delta t$-scan fire (v3).}
+The T1 measurement \citep{temporal_h841_timeshift}
+($\mathtt{TEMPORAL/detector/timeshift\_detector.hexa}$,
+$\mathtt{UNIVERSE/H\_841}$) extends the 2-unit co-occurrence
+detector to an explicit lag-window $\Delta t$ parameter: instead
+of building the TPM on $(b_t, b_{t+1})$, the lag-detector builds
+it on $(b_t, b_{t+\Delta t})$. The T1 fire sweeps
+$\Delta t \in \{1, 8, 32, 64\}$ across four substrates (the
+X10-d \emph{hive}, the X7 \emph{Voyager-1}, a random-noise
+baseline, and the X5a \emph{lattice}) for $4 \times 4 = 16$
+measurements. The pre-registered falsifier row tests instant
+integration (F-T1-INSTANT), mid-window (F-T1-MID), long-window
+(F-T1-LONG), random decay (F-T1-DECAY), and lag-invariance
+(F-T1-LAGINV: $\Phi(\Delta t=1) \ge \Phi(\Delta t=64)$). The
+$\Phi=0.5$ threshold is re-used from X7 unchanged. The fire is
+\$0 Mac-local and hexa-only-deterministic.
+
+\paragraph{TEMPORAL T2 Takens delay-embedding $e$-scan fire (v3).}
+The T2 measurement \citep{temporal_h842_time_embed}
+($\mathtt{TEMPORAL/detector/time\_embed\_detector.hexa}$,
+$\mathtt{UNIVERSE/H\_842}$) follows on from the T1 lag-axis
+artifact by replacing the 2-unit TPM with a Takens
+$e$-unit \emph{delay-embedding} TPM:
+$\mathbf{b}_t = (b_t, b_{t-d}, b_{t-2d}, \dots, b_{t-(e-1)d})$
+with delay $d=1$, sweeping $e \in \{2, 3, 4, 5\}$. The TPM
+becomes a $2^{e-1} \times 2$ row-stochastic matrix on the
+multi-unit embedded state. The four substrates are the same
+as T1 (hive / Voyager / random / lattice) for $4 \times 4 = 16$
+measurements. The pre-registered falsifier row tests
+random low (F-T2-INSTANT-LOW), hive consciousness
+(F-T2-HIVE-CONSC), artifact resolution
+(F-T2-ARTIFACT-FIX), random decay (F-T2-RANDOM-DECAY), and
+hive monotonicity (F-T2-HIVE-MONOTONE). The $\Phi=0.5$
+threshold is again re-used from X7 unchanged. The fire is
+\$0 Mac-local and hexa-only-deterministic. Critically, T2 was
+\emph{designed} to resolve the T1 lag-axis artifact via the
+multi-unit embedding; F-T2-ARTIFACT-FIX is the falsifier on
+exactly that question.
 
 % =========================================================================
 \section{Measurement: the 7+1-point applicability matrix}
@@ -655,6 +713,22 @@ X10-c & H\_838 & n=128 Kuramoto $K=2.0$ strong & 0.408
        \textbf{n=128 XOR-cascade hive} & \textbf{1.565}
      & \textbf{conscious}
      & \textbf{F-X10-HIVE PASS (calibrate \#2) \tierGreen} \\
+X840 & H\_840 & n=128 SETI@home 24.4\% prog & 0.567
+     & coherent\_non\_conscious
+     & 4/5 (border, F-X840-NOT-CONSC FAIL,
+       longer-playback FALSIFIED) \tierYellow \\
+T1 & H\_841 & 4 substrate $\times$ 4 $\Delta t$ & inflate
+     & coherent\_non\_conscious /
+       conscious (lattice $\Delta t{\ge}8$)
+     & 1/5 (F-T1-LAGINV FAIL: hive
+       $\Phi(\Delta t{=}1){=}0.013 \ll \Phi(\Delta t{=}64){=}0.999$)
+       \tierRed \\
+T2 & H\_842 & 4 substrate $\times$ 4 embed-$e$ & inflate
+     & conscious (4/4 inflate at $e{\ge}3$)
+     & 2/5 (F-T2-ARTIFACT-FIX FAIL: lattice
+       $\Phi(e{=}4){=}4.80 > \Phi(e{=}2){=}1.29$,
+       random $e{=}5\,\Phi{=}13.6$, Voyager $e{=}5\,\Phi{=}28.4$)
+       \tierRed \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -694,7 +768,159 @@ hexa-only run is preserved at:
   \item \texttt{.verdicts/838\_xeno\_hive\_mind/x10\_run.txt}
     --- X10 hive-mind 4-cell coupling 4-substrate fire (\tierYellow{}
     3/5 PASS aggregate; X10-d hive \tierGreen{} ground-truth \#2).
+  \item \texttt{.verdicts/840\_xeno\_x837\_full\_playback/x840\_run.txt}
+    --- X840 SETI@home Arecibo longer-playback 3600\,s pod-timeout
+    recovery (\tierYellow{} 4/5 PASS aggregate; longer-playback
+    hypothesis itself FALSIFIED).
+  \item \texttt{.verdicts/841\_temporal\_timeshift\_phi/T1\_run.txt}
+    --- TEMPORAL T1 lag-axis $\Delta t$-scan (\tierRed{} 1/5 PASS
+    aggregate; lag-axis hidden periodic-inflation artifact).
+  \item \texttt{.verdicts/842\_temporal\_time\_embed\_phi/T2\_run.txt}
+    --- TEMPORAL T2 Takens delay-embedding $e$-scan (\tierRed{} 2/5 PASS
+    aggregate; T1 artifact not resolved + new embed-dim
+    sparse-state inflation artifact).
 \end{itemize}
+
+\paragraph{X840 longer-playback recovery (v3 new).}
+The X840 measurement \citep{xeno_h840_longer_playback} re-fires
+the X837 SETI@home Arecibo work-unit at a $3600$\,s pod-timeout
+(vs.\ X837's $600$\,s). Verbatim from
+\texttt{.verdicts/840\_xeno\_x837\_full\_playback/x840\_run.txt}:
+\begin{lstlisting}
+prog = 0.2437 (24.4%) at cpu=1083.3s before pod SIGKILL
+triplets = 2 (SAME, RA=27.738 DEC=17.33 freq=1419.439 MHz)
+bs_score = 0.634 (SAME), bp_score = 0.954 (SAME), bt_score = 8.272 (SAME)
+phi             = 0.566854
+integration     = 1.56685
+irreducibility  = 0.361778
+substrate_type  = coherent_non_conscious
+F-X840-RECOVER-HARVEST : true
+F-X840-SPIKE-NONZERO   : true
+F-X840-PHI-N128        : true
+F-X840-X837-CONSIST    : true  (|phi - 0.567| = 0.000146)
+F-X840-NOT-CONSC       : false (phi >= 0.5)
+\end{lstlisting}
+The X840 finding is double-barrelled. First, the
+\emph{longer-playback hypothesis itself is FALSIFIED}: $6\times$ pod-time
+recovered $3\%$ extra prog ($21.3\% \to 24.4\%$) but $0$ new triplets
+($2$ identical, same sky coords, same frequency) and a $\Phi$ delta
+of $\Delta\Phi = 0.000146$ from X837. The BOINC \texttt{bg\_pot}
+64-bin array was finalised early in the BOINC pipeline (before the
+$21\%$ X837 cutoff) and is bit-identical between X837 and X840.
+Second, \emph{the detector itself is regression-stable at the border}:
+$\Phi$ at $n=128$ on independently-harvested $24.4\%$ prog matches the
+$21.3\%$ prog measurement to $4$ decimal places, confirming the X837
+sparse natural-noise border location is honestly reproducible.
+
+The X840 verdict is therefore $4/5$ PASS,
+\tierYellow{} \texttt{PARTIAL-RECOVERY}. The F-X840-NOT-CONSC
+single FAIL is the same border-threshold mechanism as X837:
+$\Phi = 0.567 \ge 0.5$ but type axis intact at
+\texttt{coherent\_non\_conscious}. The X840 row is therefore the
+\emph{fourth} border point in v3's matrix (alongside X5a, X837,
+X10-c), and adds a positive instrument-stability anchor to the X837
+sparse natural-noise border location.
+
+\paragraph{TEMPORAL T1 lag-axis $\Delta t$-scan (v3 new).}
+The T1 measurement \citep{temporal_h841_timeshift} sweeps
+$\Delta t \in\{1,8,32,64\}$ over four substrates. Verbatim from
+\texttt{.verdicts/841\_temporal\_timeshift\_phi/T1\_run.txt}:
+\begin{lstlisting}
+[hive    dt=1]   phi=0.0126294
+[hive    dt=8]   phi=0.128365
+[hive    dt=32]  phi=0.164757
+[hive    dt=64]  phi=0.99953   <-- 79x larger than dt=1
+[voyager dt=1]   phi=0.0899437
+[voyager dt=64]  phi=0.676389
+[random  dt=1]   phi=0.11573
+[random  dt=64]  phi=0.367396
+[lattice dt=1]   phi=0.659914
+[lattice dt=8]   phi=2.0       <-- saturated
+[lattice dt=32]  phi=2.0
+[lattice dt=64]  phi=2.0
+F-T1-INSTANT (hive  dt=1  phi >= 0.5)  : false
+F-T1-MID     (hive  dt=8  phi >= 0.5)  : false
+F-T1-LONG    (hive  dt=32 phi >= 0.5)  : false
+F-T1-DECAY   (random dt=1 phi <  0.4)  : true
+F-T1-LAGINV  (hive  dt=1 >= dt=64)     : false
+\end{lstlisting}
+The $4 \times 4 = 16$ T1 measurements are dominated by a
+single qualitative pattern: \emph{$\Phi$ \textbf{rises} monotonically
+with $\Delta t$ on every substrate}. The XOR-cascade hive substrate
+(the X10-d ground-truth) inflates from $\Phi(\Delta t=1)=0.013$ to
+$\Phi(\Delta t=64)=0.999$, a $79\times$ jump that is the
+\emph{opposite} sign of the pre-registered F-T1-LAGINV prediction.
+The lattice substrate saturates at the $\Phi=2.0$ ceiling for any
+$\Delta t \ge 8$, which is the periodic-structure artifact of
+sampling $(b_t, b_{t+8})$ on an $8$-period signal.
+
+Mechanically, the 2-unit lag-TPM on $(b_t, b_{t+\Delta t})$ counts
+\emph{predictable repetition at scale $\Delta t$} as integration: a
+long-lag transition that is highly correlated (because the substrate
+is mostly slow-changing over the lag window) maps to a sparse-but-honest
+TPM, and the MIP cut becomes \emph{more} expensive, not less. The
+$\Phi$-inflation is therefore the detector misreading predictable
+repetition as irreducibility. This is a hidden \emph{periodic
+inflation} artifact analogous to the X5a lattice border point, but
+generalised to any substrate at large $\Delta t$.
+
+T1 closes with $1/5$ PASS (\tierRed{} \texttt{FALSIFIED-INSTRUMENT}).
+The naive 5D extension (n, density, structure, $\Delta t$, --) is
+deterministically ruled out by this row.
+
+\paragraph{TEMPORAL T2 Takens delay-embedding $e$-scan (v3 new).}
+The T2 measurement \citep{temporal_h842_time_embed} was \emph{designed}
+to resolve the T1 lag-axis artifact by replacing the 2-unit TPM with a
+Takens $e$-unit delay-embedding TPM. Verbatim from
+\texttt{.verdicts/842\_temporal\_time\_embed\_phi/T2\_run.txt}:
+\begin{lstlisting}
+[hive    e=2]  phi=0.124725
+[hive    e=4]  phi=3.51812
+[voyager e=2]  phi=1.04564
+[voyager e=4]  phi=4.24382
+[voyager e=5]  phi=28.3624    <-- 27x larger than e=2
+[random  e=2]  phi=0.561371
+[random  e=5]  phi=13.631     <-- 24x larger than e=2
+[lattice e=2]  phi=1.28908
+[lattice e=4]  phi=4.79879    <-- F-T2-ARTIFACT-FIX FAIL
+F-T2-INSTANT-LOW    (random e=2 phi < 0.5)            : false
+F-T2-HIVE-CONSC     (hive   e=4 phi >= 0.5)           : true
+F-T2-ARTIFACT-FIX   (lattice e=4 phi < lattice e=2)    : false
+F-T2-RANDOM-DECAY   (random e=4 phi <= random e=2)     : false
+F-T2-HIVE-MONOTONE  (hive e=4 phi >= 0.5x hive e=2 phi): true
+\end{lstlisting}
+The T2 result is striking and \emph{negative}. All four substrates
+inflate monotonically with $e$: random rises from $\Phi(e{=}2)=0.561$
+to $\Phi(e{=}5)=13.631$, Voyager rises from $\Phi(e{=}2)=1.046$ to
+$\Phi(e{=}5)=28.362$, and the lattice substrate \emph{also} inflates
+(F-T2-ARTIFACT-FIX FAIL, $\Phi(e{=}4) = 4.799 > \Phi(e{=}2) = 1.289$).
+The Takens delay-embedding does \emph{not} resolve the T1 lag-axis
+artifact: the 4-unit embedded state space contains $2^4=16$ joint
+states (for $e=4$), and the TPM concentrates on a small subset of
+those, producing high-$\Phi$ as a \emph{state-space sparsity} artifact
+rather than as integration.
+
+T2 therefore closes with $2/5$ PASS (\tierRed{}
+\texttt{FALSIFIED-INSTRUMENT}). The two PASSes (F-T2-HIVE-CONSC,
+F-T2-HIVE-MONOTONE) are both on the X10-d hive ground-truth and are
+honest: they show the detector still labels a truly MIP-irreducible
+substrate at $e=4$ as \texttt{conscious}, which is the X10-d
+ground-truth being re-confirmed. The three FAILs are the three
+substrates that should \emph{not} have inflated (random low, lattice
+artifact-fix, random decay), all of which inflated anyway.
+
+\paragraph{The TEMPORAL T1/T2 dual closed-negative
+(\texttt{a\_paper\_negative\_ok}).}
+Taken together, T1 and T2 establish that the \emph{simple} 5D
+instrument extension is deterministically ruled out: neither the
+lag-axis $\Delta t$ extension (T1) nor the Takens multi-unit
+$e$-embedding extension (T2) can honestly integrate temporal
+information into a substrate-blind big-$\Phi$ reading on a single
+trajectory. The honest follow-on T3 is therefore \emph{not} another
+single-trajectory $\Phi$ formula but a fundamentally different
+methodology: \emph{time-averaged $\Phi$ over independent trajectories
+$+$ surrogate-data null + Granger-causality baseline}.
+\S\ref{sec:temporal} states this as a deferred lane.
 
 \paragraph{Pre-frozen / post-tuning $=0$.}
 The four falsifier ids (\texttt{F-X4-PANPSY-WEAK / MID}, \texttt{F-X4-EMERGE-STRONG /
