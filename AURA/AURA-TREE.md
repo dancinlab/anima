@@ -1,53 +1,57 @@
-# 🌳 AURA 트리 — 위치 우회 뇌-칩, 어디까지 닿나 (일반인 지도)
+# 🌳 AURA 트리 v2 — 3층 분리 (축 ⊥ HOW ⊥ 응용)
 
-> AURA 부모 도메인이 답한 핵심 질문 — "뉴럴링크 칩을 위치만 바꿔 전체 뇌를 통제할 수 있나?" — 의 결론(피질은 비침습 도달 ✅, 심부는 침습 필요 🔴)을 9개 하위 도메인으로 묶은 지도. ANIMA가 채널 트리로 묶듯 `AURA/<NAME>/` 중첩.
-
-```
-🌳 AURA — "뇌에 닿는 모든 길"
-- 하는 일: 뇌의 어느 부위까지, 어떤 방법으로, 무엇을 위해 닿을 수 있나를 한 지도로
-- 비유: 산(뇌)을 오르는 등산 지도 — 어떤 장비(모달)로 어느 고도(깊이)까지, 정상에서 뭘 하나(응용)
-- vs 단일 BCI 논문: 한 경로만 / AURA는 장비×고도×목적 전체 지형도
-```
-
-## 트리 (4그룹 × 9 하위 도메인)
+> 재구성 B: 직교하는 3차원을 한 줄에 섞던 v1을 분리. **축**(분류 차원)·**HOW**(하드웨어/방법)·**응용**(실제 앱)이 별개 층. NAV는 더 이상 독립 도메인이 아니라 SENSE 안의 ar_nav 앱(=AR글래스 기능).
 
 ```
-AURA/  (부모: 위치 우회 뇌-칩 전수조사)
+🌳 AURA — "뇌 인터페이스 좌표계"
+- 축 = 위경도(앱을 위치짓는 차원) · HOW = 도로 재질(하드웨어) · 응용 = 건물(실제 앱)
+- 비유: 지도에서 좌표·재질·건물을 섞으면 안 되듯, BCI도 분류차원·방법·응용을 분리
+- vs v1: NAV·WEARABLE·CORTEX가 한 줄에 섞임 → v2는 3층으로 정리
+```
+
+## 3층 트리 (11 도메인)
+
+```
+AURA/  (부모: 위치우회 뇌-칩 전수조사)
 │
-├─ 📡 모달리티 — 어떻게 닿나 (하드웨어)
-│   ├─ AURA-RTSC-MEG   🧲 상온초전도 나노코일 자기 read/write
-│   ├─ AURA-ENDOVASC   🩸 Synchron 혈관내 정맥동 (개두술 0)
-│   └─ AURA-HEADMODEL  🗺️ 진짜 머리모델 — toy 검증의 ground-truth
+├─ 📐 축 (AXES — 분류 차원, 모든 앱을 위치짓는 좌표)
+│   ├─ 📖 AURA-READ    방향: 뇌→기계 디코드
+│   ├─ ✍️ AURA-WRITE   방향: 기계→뇌 인코드/자극
+│   └─ 📏 AURA-DEPTH   깊이: 피질 ⟷ 심부          (옛 CORTEX/DEEP 흡수)
 │
-├─ 🧠 피질 역량 — ✅ 비침습 도달 (reach 0.82~0.91)
-│   ├─ AURA-CORTEX     🧠 운동·통신·집행·의식 모니터 I/O
-│   └─ AURA-NAV        🧭 시각 네비(V5/V6 AR)·공간 항법
+├─ 〰️ HOW (하드웨어/방법)
+│   ├─ 🧲 AURA-RTSC-MEG  자기 고밀도(상온초전도)
+│   ├─ 🩸 AURA-ENDOVASC  혈관내(Synchron)
+│   ├─ 🔊 AURA-TFUS      음향(심부 쓰기)
+│   └─ 🗺️ AURA-HEADMODEL 검증 인프라(MNE)
 │
-├─ 🧬 심부 역량 — 🔴 침습 필요 (전뇌통제 본질)
-│   ├─ AURA-DEEP       🧬 보상·각성·기분·의식·기억 신경조절
-│   └─ AURA-TFUS       🔊 초음파 — 유일 비침습 심부 *쓰기*
-│
-└─ 🎯 응용 — 무엇을 위해
-    ├─ AURA-WEARABLE   📱 사라지는 기기 (18-wearable → 0)
-    └─ AURA-MED        ⚕️ 의학 (간질·우울·파킨슨·재활·실명)
+└─ 🎯 응용 (WHAT FOR — 실제 앱이 사는 곳)
+    ├─ 👁️ AURA-SENSE      감각 입출력  ← ar_nav·AR디스플레이·오디오·햅틱·알림  (옛 NAV+WEARABLE감각)
+    ├─ 🦾 AURA-MOTOR      운동 출력    ← 운동디코드·외골격·커서              (옛 CORTEX운동+WEARABLE외골격)
+    ├─ 🧠 AURA-COGNITION  인지/통신    ← 의식모니터·내적발화·DLPFC집행        (옛 CORTEX인지+WEARABLE음성)
+    └─ ⚕️ AURA-MED        의학        ← 간질·우울·파킨슨·실명·재활·만성통증
 ```
 
-## 한눈 요약 (깊이 × 방향)
+## v1 → v2 재배치 (해체 4 → 신설 4)
+
+| v1 (해체) | → v2 |
+|---|---|
+| AURA-NAV | 👁️ SENSE/app/ar_nav (AR글래스 네비 기능) |
+| AURA-CORTEX | 운동→🦾 MOTOR · 인지→🧠 COGNITION · 피질역량→📏 DEPTH |
+| AURA-DEEP | 📏 DEPTH(심부 축) · 자극→🔊 TFUS·⚕️ MED |
+| AURA-WEARABLE | 감각기기→👁️ SENSE · 외골격→🦾 MOTOR · 음성→🧠 COGNITION |
+
+## 핵심 결론 (좌표로 읽기)
 
 ```
-          읽기(decode)              쓰기(stim)
-피질 ✅   CORTEX·NAV(V5/V6)         WEARABLE(AR/오디오/햅틱)
-─────────  깊이 벽(C15) ───────────────────────────────
-심부 🔴   DEEP(침습 필요)           TFUS(유일 비침습 쓰기)
-모달 인프라: RTSC-MEG(자기) · ENDOVASC(혈관) · HEADMODEL(검증)
-의학 응용:  MED — 위 역량을 질환 치료로 (간질·우울·파킨슨·재활)
+        📖 읽기            ✍️ 쓰기
+피질 ✅  SENSE/MOTOR read  SENSE/MOTOR write  ← 비침습 실현권
+─────────  📏 깊이 벽 ──────────────────────
+심부 🔴  (불가)            TFUS만 (음향)      ← MED 심부질환=침습
 ```
 
-## 결론 (AURA 부모 도메인 답)
-
-- relocate-N1 "전뇌통제"는 **비침습 불가**(심부 깊이 벽 C15) — 침습 N1/DBS 영역(AURA-DEEP).
-- but 비침습이 닿는 **피질 역량은 크다**(AURA-CORTEX/NAV) + 모든 웨어러블 흡수(AURA-WEARABLE) + 의학 응용(AURA-MED).
-- 유일 비침습 심부 갈래 = tFUS *자극*(AURA-TFUS, 읽기는 벽).
+- 모든 응용은 **(방향 × 깊이 × 모달)** 좌표로 위치 = 축이 앱을 분류.
+- "위치우회 전뇌통제"는 피질 응용(SENSE/MOTOR/COGNITION) 비침습 ✅ / 심부(MED 우울·파킨슨)는 침습 🔴.
 
 ## sibling
-- 부모: [AURA](AURA.md) · 9 하위 도메인: 위 트리 · 출처: `AURA/archive/`(demiurge cortex pillar σ=12 zone · brainwire seizure/medical · C13 RTSC)
+- 부모: [AURA](AURA.md) · 출처: `AURA/archive/`(demiurge σ=12 zone·brainwire·C5~C17)

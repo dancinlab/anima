@@ -4,13 +4,13 @@
 
 @goal: 뉴럴링크 N1 칩을 **하드웨어 변경 없이 부착 위치만 바꿔서** 전체 뇌(피질+심부 신경조절핵+변연계)를 통제 가능한 지점이 있는지 전수조사 — 기존 자산(hexa-brain · brainwire · demiurge AURA · anima BRAIN · echoes) 전수 수집 + N1 칩 baseline 스펙 고정 + "위치 재배치 → 전뇌 도달" 경로 카탈로그 + 비침습/대체위치 BCI 모달리티 매트릭스. 모든 출처는 `AURA/archive/`에 자체보관.
 
-## 🌳 하위 도메인 트리 (ANIMA 중첩 패턴)
+## 🌳 하위 도메인 트리 v2 (3층: 축 ⊥ HOW ⊥ 응용)
 
-AURA 결론(피질 ✅비침습 / 심부 🔴침습)을 9개 하위 도메인으로 묶음 — 지도: [`AURA-TREE.md`](AURA-TREE.md)
-- 📡 모달리티: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-HEADMODEL
-- 🧠 피질(✅): AURA-CORTEX · AURA-NAV(시각네비)
-- 🧬 심부(🔴): AURA-DEEP · AURA-TFUS
-- 🎯 응용: AURA-WEARABLE(사라지는 기기) · AURA-MED(의학)
+재구성 B — 지도: [`AURA-TREE.md`](AURA-TREE.md). NAV·CORTEX·DEEP·WEARABLE 해체 → 3층 재편.
+- 📐 축: AURA-READ · AURA-WRITE · AURA-DEPTH(피질⟷심부)
+- 〰️ HOW: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-TFUS · AURA-HEADMODEL
+- 🎯 응용: AURA-SENSE(감각·AR네비) · AURA-MOTOR(운동) · AURA-COGNITION(인지/통신) · AURA-MED(의학)
+
 
 ## 왜 (핵심 질문)
 
