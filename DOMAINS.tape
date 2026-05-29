@@ -31,3 +31,4 @@
 @domain TEMPORAL := "./TEMPORAL/TEMPORAL.md"
 @domain HW-CORE := "./HW-CORE/HW-CORE.md"
 @domain HW-LIMB := "./HW-LIMB/HW-LIMB.md"
+@domain SPATIAL := "./SPATIAL/SPATIAL.md"
