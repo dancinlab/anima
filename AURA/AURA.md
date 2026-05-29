@@ -46,7 +46,8 @@
 - [x] A9.4 paper closure 판정 — significance·terminal 게이트 통과, but **a_paper_only_at_closure 미충족(NOT-YET)**. scalp≠intracortical 본질 gap → scalp-proxy scope 한정 필요 → `A9-paper-closure.md`
 - [x] A9.2 robustness 재검 🔴 — **A8.1 window-fragile 발견**: sub-1010 awake 6창서 FRONTAL>MOTOR 2/6만(MOTOR 4/6), 평균 5.92≈5.61. **실EEG montage proxy는 relocate를 robust하게 지지 안 함**(honest negative) → `A9-multisubject.md`
 - [~] A9.1 n=8 montage — 데이터추출 성공, but n≥6 IIT4 exact O(2^2n) **Mac 단일런 compute-wall**(n8 290s·n6 200s EXIT124). harness 영속, pod 경로 명세(발사 보류) → `A9-n8-montage.md`
-- [ ] A10 (잔여) — **다창×다피험자 n=8 통계**(A9.2 교훈: 단일창 금지) · OpenNeuro 다피험자 download · human DWI tractography · pod n=8 fire
+- [x] A10.1 다창 위치효과 통계 🔴 — 전300s 10창 FRONTAL vs MOTOR: **5:5, paired t(9)=0.28 n.s., sign p=1.0, 평균차+0.26(~5%)** → 실 scalp-EEG에서 **위치효과 통계적으로 없음(확정)**. relocate-N1 scalp-proxy 미지지 종결 → `A10-window-stats.md`
+- [ ] A11 (잔여) — 다피험자(OpenNeuro download, N=1→N>1) · pod n=8 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · negative-result paper 후보(a_paper_negative_ok: 구조모델↔실측 비대칭)
 
 > ⚠ **핵심 정직 수정 (A9.2)**: A8.1 "FRONTAL>MOTOR (실EEG)"는 **단일 4s 창 인공물** — 6창 재검서 robust 아님(위치효과 평균 ~0). relocate-N1은 **in-silico/connectome(구조) 축에선 일관 지지**되나 **실 scalp-EEG proxy에선 robust 미지지**. SURVEY 결론은 이 비대칭 반영.
 
