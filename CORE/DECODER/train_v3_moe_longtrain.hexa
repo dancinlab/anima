@@ -37,6 +37,143 @@ use "CORE/DECODER/v3_moe_arch"
 use "CORE/DECODER/v3_moe_bwd_lib"
 use "CORE/DECODER/flame_mm"
 
+// ── local mirrors of v3_moe_arch + v3_moe_bwd_lib pub fns ────────────────
+//   workaround: hexa-lang #1527 Linux trim regression (mirror of v3_moe_fwd /
+//   v3_moe_bwd / layer_block_bwd). Same pattern as train_v3_moe_prodaux.hexa
+//   (M5 fire attempt #4). The pub fns are imported + parse but the Linux C
+//   generator omits their bodies → clang link "implicit-function-declaration"
+//   at the call sites. Mirroring in the main TU restores linkage. Math is
+//   byte-identical to the module pub fns.
+
+fn v3_moe_fwd_local(zT: int, M: int, router_off: int, experts_off: int,
+                    logits_g_out: int, gate_norm_out: int,
+                    V: int, d: int, E: int) -> int {
+    let mut e = 0
+    while e < E {
+        let mut acc = 0.0
+        let mut j = 0
+        while j < d {
+            acc = acc + farr_get(M, router_off + e * d + j) * farr_get(zT, j)
+            j = j + 1
+        }
+        let _ = farr_set(gate_norm_out, e, acc)
+        e = e + 1
+    }
+    let mut gmax = farr_get(gate_norm_out, 0)
+    e = 1
+    while e < E {
+        let gv = farr_get(gate_norm_out, e)
+        if gv > gmax { gmax = gv }
+        e = e + 1
+    }
+    let mut zsum = 0.0
+    e = 0
+    while e < E {
+        let ev = dt_exp(farr_get(gate_norm_out, e) - gmax)
+        let _ = farr_set(gate_norm_out, e, ev)
+        zsum = zsum + ev
+        e = e + 1
+    }
+    e = 0
+    while e < E {
+        let _ = farr_set(gate_norm_out, e, farr_get(gate_norm_out, e) / zsum)
+        e = e + 1
+    }
+    let mut top = 0
+    let mut topv = farr_get(gate_norm_out, 0)
+    e = 1
+    while e < E {
+        let gv = farr_get(gate_norm_out, e)
+        if gv > topv { topv = gv; top = e }
+        e = e + 1
+    }
+    let g_top = farr_get(gate_norm_out, top)
+    let exp_base = experts_off + top * V * d
+    let logits_raw = mm_packed_gemv(M, exp_base, V, d, zT)
+    let mut k = 0
+    while k < V {
+        let _ = farr_set(logits_g_out, k, g_top * farr_get(logits_raw, k))
+        k = k + 1
+    }
+    let _ = farr_free(logits_raw)
+    return top
+}
+
+fn v3_moe_bwd_local(zT: int, M: int, router_off: int, experts_off: int,
+                    gate_norm: int, top_idx: int, d_logits: int,
+                    dMg: int, d_zT_out: int, V: int, d: int, E: int) {
+    let g_top = farr_get(gate_norm, top_idx)
+    let exp_base = experts_off + top_idx * V * d
+    let dl_scaled = t_zeros(V)
+    let mut k = 0
+    while k < V {
+        let _ = farr_set(dl_scaled, k, farr_get(d_logits, k) * g_top)
+        k = k + 1
+    }
+    mm_packed_outer_add(dMg, exp_base, dl_scaled, zT, V, d)
+    let d_zT_exp = mm_packed_gemv_t(M, exp_base, V, d, dl_scaled)
+    let mut j = 0
+    while j < d {
+        let _ = farr_set(d_zT_out, j, farr_get(d_zT_out, j) + farr_get(d_zT_exp, j))
+        j = j + 1
+    }
+    let logits_raw = mm_packed_gemv(M, exp_base, V, d, zT)
+    let mut d_g_top = 0.0
+    k = 0
+    while k < V {
+        d_g_top = d_g_top + farr_get(d_logits, k) * farr_get(logits_raw, k)
+        k = k + 1
+    }
+    let _ = farr_free(dl_scaled)
+    let _ = farr_free(d_zT_exp)
+    let _ = farr_free(logits_raw)
+    let mut e = 0
+    while e < E {
+        let ge = farr_get(gate_norm, e)
+        let mut d_raw = 0.0 - ge * g_top * d_g_top
+        if e == top_idx { d_raw = d_raw + ge * d_g_top }
+        let mut j2 = 0
+        while j2 < d {
+            let zj = farr_get(zT, j2)
+            let drprev = farr_get(dMg, router_off + e * d + j2)
+            let _ = farr_set(dMg, router_off + e * d + j2, drprev + d_raw * zj)
+            let rj = farr_get(M, router_off + e * d + j2)
+            let dzprev = farr_get(d_zT_out, j2)
+            let _ = farr_set(d_zT_out, j2, dzprev + d_raw * rj)
+            j2 = j2 + 1
+        }
+        e = e + 1
+    }
+}
+
+fn layer_block_bwd_local(d_block_out, zT_in, zT_mid,
+                          Q_buf, K_buf, V_buf, attn_out, probs, h_act_seq,
+                          wq_off, wk_off, wv_off, wo_off, wup_off, wdown_off,
+                          M, T, d, h, attn_scale,
+                          dMg, d_zT_in_grad) {
+    let d_x_seq = t_zeros(T * d)
+    mlp_block_bwd_batched(d_block_out, zT_mid, h_act_seq, wup_off, wdown_off,
+                          M, T, d, h, dMg, d_x_seq)
+    let d_zT_mid = t_zeros(T * d)
+    let mut rz = 0
+    while rz < T * d {
+        let _ = farr_set(d_zT_mid, rz, farr_get(d_x_seq, rz) + farr_get(d_block_out, rz))
+        rz = rz + 1
+    }
+    let _ = farr_free(d_x_seq)
+    let d_zT_in_from_attn = t_zeros(T * d)
+    self_attn_bwd(d_zT_mid, zT_in, Q_buf, K_buf, V_buf, attn_out, probs,
+                  wq_off, wk_off, wv_off, wo_off,
+                  M, T, d, attn_scale, dMg, d_zT_in_from_attn)
+    let mut z = 0
+    while z < T * d {
+        let _ = farr_set(d_zT_in_grad, z, farr_get(d_zT_in_from_attn, z) + farr_get(d_zT_mid, z))
+        z = z + 1
+    }
+    let _ = farr_free(d_zT_mid)
+    let _ = farr_free(d_zT_in_from_attn)
+}
+
 // ── LZ76 (Kaspar-Schuster) inline ────────────────────────────────────────
 //   Reused verbatim from CORE/DECODER/d1_lz76_collapse_proxy.hexa per g61
 //   (no library shadowing — D1 is a smoke probe, not a pub-fn surface).
@@ -480,7 +617,7 @@ fn main() {
             let _ = farr_set(zT_last, ni, xv * rms_inv * gv)
             ni = ni + 1
         }
-        let top_idx = v3_moe_fwd(zT_last, M, router_off, experts_off,
+        let top_idx = v3_moe_fwd_local(zT_last, M, router_off, experts_off,
                                   logits_g, gate_norm, V, d, E)
         let target = corpus_ids[step_off + T]
         // BC-ANIMA M4: proper CE seed = softmax(logits) - onehot(target).
@@ -494,7 +631,7 @@ fn main() {
         let _ = farr_softmax_rows(logits_g, softmax_buf, 1, V)
         let _ = farr_set(target_buf, 0, to_float(target))
         let _ = farr_ce_seed(softmax_buf, target_buf, d_logits, 1, V)
-        v3_moe_bwd(zT_last, M, router_off, experts_off, gate_norm, top_idx, d_logits,
+        v3_moe_bwd_local(zT_last, M, router_off, experts_off, gate_norm, top_idx, d_logits,
                    dMg, d_zT_last, V, d, E)
 
         // d_zT_last_pre / Q_l..h_act_seq_l are HOISTED (allocated once before the
@@ -525,7 +662,7 @@ fn main() {
             while cp2 < T * T { let _ = farr_set(pr_l, cp2, farr_get(probs_all, lb * T * T + cp2)) ; cp2 = cp2 + 1 }
             let mut ch = 0
             while ch < T * h { let _ = farr_set(h_act_seq_l, ch, farr_get(h_act_all, lb * T * h + ch)) ; ch = ch + 1 }
-            layer_block_bwd(d_zT_seq, zin_l, zmid_l, Q_l, K_l, V_l, ao_l, pr_l, h_act_seq_l,
+            layer_block_bwd_local(d_zT_seq, zin_l, zmid_l, Q_l, K_l, V_l, ao_l, pr_l, h_act_seq_l,
                             boff, boff + d * d, boff + 2 * d * d, boff + 3 * d * d,
                             boff + 4 * d * d, boff + 4 * d * d + h * d,
                             M, T, d, h, attn_scale, dMg, d_zT_layer)
@@ -739,7 +876,7 @@ fn main() {
             let _ = farr_set(zT_last, ni, xv * rms_inv * gv)
             ni = ni + 1
         }
-        let top_exp = v3_moe_fwd(zT_last, M, router_off, experts_off,
+        let top_exp = v3_moe_fwd_local(zT_last, M, router_off, experts_off,
                                   logits_g, gate_norm, V, d, E)
         let mut top_id = 0
         let mut top_v = farr_get(logits_g, 0)
