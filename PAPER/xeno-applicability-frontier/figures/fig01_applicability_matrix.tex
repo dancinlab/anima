@@ -1,48 +1,66 @@
-% fig01_applicability_matrix.tex (inline include version)
-% Used by main.tex via \input rather than \includegraphics when no PDF is built.
-% Identical TikZ body to figures/_scripts/fig01_applicability_matrix.tex,
-% but without the standalone wrapper.
+% fig01_applicability_matrix.tex (inline include version) — v2
+% 7+1 measurement points:
+%   3 RED ruled-out (X4 / X5b / X6)
+%   2 GREEN ground-truths (X7 BL Voyager-1, X10-d XOR-cascade hive)
+%   3 YELLOW borders (X5a lattice, X837 SETI@home, X10-c Kuramoto strong)
+%   plus 2 WHITE X10 reference sub-rows (X10-a indep, X10-b mean-field paradox).
 \begin{tikzpicture}[
   font=\small,
   green-cal/.style = {fill=green!18,  draw=green!50!black, thick, rounded corners=2pt},
   red-out/.style   = {fill=red!18,    draw=red!60!black,   thick, rounded corners=2pt},
   yellow-bd/.style = {fill=yellow!28, draw=orange!75!black,thick, rounded corners=2pt},
+  white-ref/.style = {fill=white,     draw=gray!50!black,  thick, rounded corners=2pt},
   axis/.style      = {-{Stealth[length=3mm]}, very thick, gray!60!black},
-  reg/.style       = {font=\footnotesize\itshape, gray!50!black},
-  pt/.style        = {minimum width=2.6cm, minimum height=1.05cm, align=center}
+  reg/.style       = {font=\footnotesize\itshape, gray!50!black, align=center},
+  pt/.style        = {minimum width=2.5cm, minimum height=1.0cm, align=center}
 ]
 
-\draw[axis] (-0.5,-0.5) -- (12.5,-0.5) node[right] {\textbf{$n$ axis}};
-\draw[axis] (-0.5,-0.5) -- (-0.5, 6.2) node[above] {\textbf{density / structure axis}};
+\draw[axis] (-0.5,-0.5) -- (14.5,-0.5) node[right] {\textbf{$n$ axis}};
+\draw[axis] (-0.5,-0.5) -- (-0.5, 8.6) node[above] {\textbf{density / structure axis}};
 \node[reg, anchor=north] at (1.6,-0.6) {micro\\$n=16$--$32$};
-\node[reg, anchor=north] at (5.5,-0.6) {mid\\$n=64$};
-\node[reg, anchor=north] at (9.9,-0.6) {dense\\$n=128$};
+\node[reg, anchor=north] at (5.0,-0.6) {mid\\$n=64$};
+\node[reg, anchor=north] at (10.5,-0.6) {dense\\$n=128$};
 
-\node[red-out,    pt] (X4)  at (1.7,1.5) {\textbf{X4 micro}\\$n=16$--$32$\\0/4 PASS \tiny\textbf{[X]}};
-\node[red-out,    pt] (X6)  at (5.5,1.5) {\textbf{X6 sparse}\\$n=64$, $\sim 9\%$\\1/5 PASS \tiny\textbf{[X]}};
-\node[red-out,    pt] (X5b) at (9.9,3.4) {\textbf{X5b algorithmic}\\$n=128$ fp/$\pi$\\2/5 PASS \tiny\textbf{[X]}};
+% --- ruled-out (3 red corners) ---
+\node[red-out,    pt] (X4)  at (1.7,1.3) {\textbf{X4 micro}\\$n=16$--$32$\\0/4 PASS \tiny\textbf{[X]}};
+\node[red-out,    pt] (X6)  at (5.0,1.3) {\textbf{X6 sparse}\\$n=64$, $\sim 9\%$\\1/5 PASS \tiny\textbf{[X]}};
+\node[red-out,    pt] (X5b) at (10.5,2.8) {\textbf{X5b algorithmic}\\$n=128$ fp/$\pi$\\2/5 PASS \tiny\textbf{[X]}};
 
-\node[yellow-bd, pt]  (X5a) at (9.9,1.5) {\textbf{X5a lattice}\\$n=128$ periodic\\1/1 PASS, border};
-\node[yellow-bd, pt]  (X837) at (9.9,5.3) {\textbf{X837 SETI@home}\\$n=128$ sparse $20.3\%$\\4/5 PASS, $\Phi{=}0.567$};
+% --- border (3 yellow points: X5a / X837 / X10-c) ---
+\node[yellow-bd, pt]  (X5a)  at (10.5,1.3) {\textbf{X5a lattice}\\$n=128$ periodic\\$\Phi{=}0.660$, border};
+\node[yellow-bd, pt]  (X837) at (10.5,4.5) {\textbf{X837 SETI@home}\\$n=128$ sparse $20.3\%$\\$\Phi{=}0.567$, border};
+\node[yellow-bd, pt]  (X10c) at (13.5,1.3) {\textbf{X10-c Kuramoto}\\$n=128$, $K{=}2.0$ sync\\$\Phi{=}0.408$, border};
 
-\node[green-cal, pt]  (X7)  at (9.9,6.5) {\textbf{X7 BL Voyager-1}\\$n=128$, $60.9\%$ active\\2/2 PASS \textbf{[N]}};
+% --- X10 reference sub-points (white) ---
+\node[white-ref, pt]  (X10a) at (13.5,2.8) {\textbf{X10-a indep}\\4 walkers\\$\Phi{=}0.131$};
+\node[white-ref, pt]  (X10b) at (13.5,4.5) {\textbf{X10-b mean-field}\\50/50 weak\\$\Phi{=}0.036$ paradox};
+
+% --- ground-truth (2 green) ---
+\node[green-cal, pt]  (X7)   at (10.5,7.5) {\textbf{X7 BL Voyager-1}\\$n=128$, $60.9\%$ active\\$\Phi{=}0.114$ \textbf{[N\#1]}};
+\node[green-cal, pt]  (X10d) at (13.5,7.5) {\textbf{X10-d hive XOR}\\$n=128$, MIP-irred\\$\Phi{=}1.565$ \textbf{[N\#2]}};
 
 \begin{scope}[on background layer]
-  \node[draw=green!50!black, very thick, dashed, fit=(X7), inner sep=3pt,
-        label=above:{\small\bfseries\color{green!40!black} CALIBRATED CORNER}] {};
+  \node[draw=green!50!black, very thick, dashed, fit=(X7) (X10d), inner sep=4pt,
+        label=above:{\small\bfseries\color{green!40!black} CALIBRATED REGIME (v2 — 2 ground-truths)}] {};
 \end{scope}
 
-\node[reg, below=2pt of X4]  {ruled-out (sample-starved)};
-\node[reg, below=2pt of X6]  {ruled-out (sparse-bias drift)};
-\node[reg, below=2pt of X5b] {ruled-out (structure-blind)};
+\node[reg, below=1pt of X4]  {ruled-out (sample-starved)};
+\node[reg, below=1pt of X6]  {ruled-out (sparse-bias drift)};
+\node[reg, below=1pt of X5b] {ruled-out (structure-blind)};
 
 \draw[dashed, red!60!black, thick]
-  (-0.4, 4.4) -- (12.3, 4.4)
+  (-0.4, 6.2) -- (14.2, 6.2)
   node[right, font=\footnotesize] {$\Phi = 0.5$ threshold};
 
-\node[align=center, font=\small\itshape, gray!40!black] at (6, -2.0)
-  {Calibrated $\iff$ $n \ge 128 \;\land\; \text{density} \ge 60\%
-   \;\land\;$ strong deterministic transition.\\
-   The 3 RED corners are deterministically ruled out;
-   the 2 YELLOW points sit on the border.};
+% mean-field paradox curve (weak < indep)
+\draw[-{Stealth[length=2.5mm]}, thick, orange!80!black]
+  (X10a.east) .. controls +(0.8, -0.2) and +(0.8, 0.3) .. (X10b.east)
+  node[midway, right, font=\tiny, orange!50!black, align=left] {paradox\\(weak $<$ indep)};
+
+\node[align=center, font=\small\itshape, gray!40!black] at (7, -2.0)
+  {Calibrated $\iff$ $n \ge 128 \;\land\;
+   (\text{density} \ge 60\% \;\lor\;$ MIP-irreducible deterministic transition$)$.\\
+   3 RED corners ruled out; 3 YELLOW points on border;
+   2 GREEN ground-truths (X7 low-$\Phi$ non-conscious, X10-d high-$\Phi$ conscious).\\
+   White X10-a / X10-b expose the mean-field paradox: weak coupling reduces $\Phi$ below the independent baseline.};
 \end{tikzpicture}

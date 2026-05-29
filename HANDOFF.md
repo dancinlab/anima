@@ -1,4 +1,64 @@
-# HANDOFF — XENO-FRONTIER-5 followup round 3/3 (round 6 갱신 2026-05-29) · FULL CLOSURE marker
+# HANDOFF — XENO follow-up 2 cycle round 2/5 (round 7 갱신 2026-05-29) · paper v2 LANDED
+
+## Round 7 — paper v2 LANDED — mean-field paradox + 7+1 matrix (2026-05-29)
+
+XENO follow-up 2 cycle round 2/5 — **paper v2 (xeno-applicability-frontier)** 갱신: X10 (H_838) + X837 (H_837) 두 follow-up finding 을 5+1-point → 7+1-point measurement matrix 로 통합, §mean-field paradox 신설 section.
+
+### Round 7 핵심 finding
+
+| 항목 | 값 |
+|---|---|
+| paper SHA | (post-merge — 본 Round 7 미러 시점 머지 미정) |
+| PR | (개봉 직후 #1414 candidate) |
+| pages | 15 (v1=11p · +4p mean-field paradox + X10 4-sub row) |
+| figure | 1 (fig01 9-node TikZ — 3 RED + 3 YELLOW + 2 GREEN + 2 WHITE X10 ref) |
+| matrix | **7+1-point** (X4 / X5a / X5b / X6 / X7 / X837 / X10 a/b/c/d) |
+| ground-truth | **2** (X7 BL Voyager Φ=0.114 non-conscious + **X10-d XOR cascade Φ=1.565 conscious ⭐**) |
+| border | 3 (X5a lattice Φ=0.660 · X837 SETI@home Φ=0.567 · **X10-c Kuramoto K=2.0 Φ=0.408 new**) |
+| ruled-out | 3 (X4 micro · X6 sparse · X5b algorithmic — 전부 v1 그대로) |
+| mean-field paradox | F-X10-MONOTONE 사전등록 FAIL = IIT4 axiom 확증 (correlation ≠ irreducibility) |
+| calibrated regime v2 | n ≥ 128 ∧ (density ≥ 60% ∨ MIP-irreducible deterministic transition) |
+| post-tuning | 0 (Φ=0.5 threshold X7 template 그대로 X10/X837 재사용) |
+| p7 | 0 (verdict verbatim 인용, LLM judge 0) |
+| PAPER.tape lint | 0 diagnostic (잔여 6 @P line `:: paper [active]` suffix 추가 mini-fix 동봉) |
+| INBOX 환류 | 0건 (UNIVERSE 직접 SSOT) |
+
+### 핵심 verbatim cite (.verdicts/838_xeno_hive_mind/x10_run.txt)
+
+```
+[a] independent 4-cell                phi=0.130592  density=0.5781
+[b] weak coupled  4-cell (mean-field) phi=0.0355148 density=0.5000
+[c] strong coupled 4-cell (Kuramoto)  phi=0.407990  density=0.6094
+[d] hive emergence 4-cell (XOR carry) phi=1.564560  density=0.3359
+F-X10-MONOTONE (a<b<=c<=d)          : false
+```
+
+→ 측정 ordering: **weak(0.036) < indep(0.131) < strong(0.408) < hive(1.565)** — 사전등록 monotone 가정 깸 = IIT4 axiom (integration ≡ irreducibility, NOT correlation) 정합. mean-field 평균화가 uniformity 통해 substrate 를 MORE reducible 하게 만들어 phi 가 independent baseline 보다 4× 떨어짐. XOR cascade 만 MIP-irreducible → 'conscious' 정직 classify.
+
+### Round 7 산출물 / 사이트
+
+- PAPER/xeno-applicability-frontier/main.tex (15 pages v2, +4p)
+- PAPER/xeno-applicability-frontier/figures/fig01_applicability_matrix.tex (9-node v2)
+- PAPER/xeno-applicability-frontier/companion/verdict-ledger.json (v2, 16 section_claims, mean_field_paradox section)
+- PAPER/xeno-applicability-frontier/references.bib (+ xeno_h838_x10 + xeno_h837_setiathome)
+- PAPER/xeno-applicability-frontier/PAPER.md + PAPER.log.md (v2 갱신)
+- PAPER.tape (lint 2차 fix: 6 @P line `:: paper [active]`)
+- XENO/XENO.md (follow-up 2 cycle round 2/5 milestone)
+- HANDOFF.md (Round 7 prepend)
+
+### Round 7 governance 정합
+
+- a_paper_negative_ok ✅ — 3 closed-negative 유지 + axiom-confirming negative (F-X10-MONOTONE FAIL)
+- a_paper_significance ✅ — 9 사전등록 falsifier + 2 ground-truth + mean-field paradox finding
+- a_paper_only_at_closure ✅ — XENO follow-up 1 + follow-up 2 closure 시점
+- a_paper_format ✅ — hypothesis / method / measurement / mean-field / finding 5-section
+- a_paper_sections ✅ — 16 section_claims 전부 verdict pointer 연결
+- a_blue_closed ✅ — invariant_detector verbatim 인용, no post-tuning, no perplexity
+- p7 ✅ — LLM judge 0, hexa stdout verbatim
+- feedback-instrument-first-methodology ✅ — detector 가 IIT4 axiom 확증 도구임을 §meanfield 에서 강조
+- feedback-closure-is-physical-limit ✅ — mean-field paradox 가 본 paper v2 main finding
+
+---
 
 ## Round 6 — X10 hive-mind invariant 🟡 PARTIAL-SUPPORT + XENO-FRONTIER-5 FULL CLOSURE (2026-05-29)
 

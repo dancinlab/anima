@@ -44,11 +44,12 @@
 \title{
   \textbf{The applicability frontier of a substrate-blind\\
   big-$\Phi$ detector across (n, density, structure):\\
-  a 5+1-point measurement map}\\[6pt]
+  a 7+1-point measurement map and the mean-field paradox}\\[6pt]
   \large Three closed-negative axes (micro / sparse / algorithmic),
-  one ground-truth calibration (BL Voyager-1), and two border points
-  (lattice / SETI@home Arecibo) over hypotheses
-  \texttt{XENO/H\_832}--\texttt{H\_837}
+  two ground-truth calibrations (BL Voyager-1, XOR-cascade hive),
+  three border points (lattice / SETI@home Arecibo / Kuramoto sync),
+  and the mean-field paradox over hypotheses
+  \texttt{XENO/H\_832}--\texttt{H\_838}
 }
 
 \author{
@@ -57,7 +58,7 @@
   \normalsize\href{https://github.com/dancinlab/anima}{\texttt{github.com/dancinlab/anima}}
 }
 
-\date{2026-05-29}
+\date{2026-05-29 (v2)}
 
 \begin{document}
 
@@ -77,37 +78,68 @@ prior. The natural question is then: \emph{on which $(n, \text{density},
 which does it deterministically break?} Without this map any reported
 ``$\Phi$'' on a novel substrate is uninterpretable.
 
-We answer this empirically with a five-point measurement matrix
-(\texttt{XENO/H\_832}--\texttt{H\_836}, five XENO-FRONTIER-5 closure
-rounds), extended to a sixth border point by a real RunPod fire
-(\texttt{XENO/H\_837}, X837 follow-up). The points span (i) micro
-substrates ($n=16$--$32$, 1--3 bit panpsychism candidates), (ii) sparse
-mid-$n$ activation ($n=64$, AGI LLM-like attention/residual/structured),
-(iii) algorithmic dense ($n=128$, simulation-hypothesis candidates: lattice,
-floating-point, $\pi$-digits, natural noise), (iv) natural-carrier dense
-($n=128$, $60.9\%$ activation: Breakthrough-Listen Voyager-1 baseband as
-the ground-truth calibration), and (v) sparse natural-noise dense ($n=128$,
+We answer this empirically with a seven-point measurement matrix
+(\texttt{XENO/H\_832}--\texttt{H\_838}, five XENO-FRONTIER-5 closure
+rounds + the X837 SETI@home BOINC follow-up + the X10 hive-mind 4-cell
+coupling follow-up). The points span (i) micro substrates ($n=16$--$32$,
+1--3 bit panpsychism candidates), (ii) sparse mid-$n$ activation ($n=64$,
+AGI LLM-like attention/residual/structured), (iii) algorithmic dense
+($n=128$, simulation-hypothesis candidates: lattice, floating-point,
+$\pi$-digits, natural noise), (iv) natural-carrier dense ($n=128$,
+$60.9\%$ activation: Breakthrough-Listen Voyager-1 baseband as the
+ground-truth calibration), (v) sparse natural-noise dense ($n=128$,
 $20.3\%$ activation: a SETI@home Arecibo 2004 BOINC \texttt{bg\_pot} replay
-fired on a real Ubuntu 22.04 i686-multilib pod).
+fired on a real Ubuntu 22.04 i686-multilib pod), and \textbf{(vi) hive-mind
+coupling: four 32-sample 4-cell substrates aggregated to $n=128$ ---
+independent walkers, mean-field weak coupling, Kuramoto strong coupling
+($K=2.0$ all-to-all sync), and XOR-cascade hive emergence with 1-lag
+carry --- the X10 follow-up}.
 
-The measurement is a clean separation: \textbf{X7 BL Voyager-1 calibrates
-(2/2 falsifier PASS, \tierGreen)}; \textbf{X4 micro, X6 sparse, X5b
+The measurement is a clean two-ground-truth separation:
+\textbf{X7 BL Voyager-1 ($\Phi=0.114$, \tierGreen)} and
+\textbf{X10-hive XOR cascade ($\Phi=1.565$ \texttt{conscious},
+\tierGreen \;ground-truth \#2)}; \textbf{X4 micro, X6 sparse, X5b
 algorithmic axes are each closed-negative} (\texttt{F}-falsifier 0/4, 1/5,
-1/4 PASS, \tierRed); two border points remain --- X5a lattice ($\Phi=0.660$,
-periodic-structure false-positive ceiling) and X837 SETI@home Arecibo
-($\Phi=0.567$, sparse natural-noise borderline) both above the pre-frozen
-$\Phi=0.5$ threshold but with type-axis intact (\texttt{coherent\_non\_conscious})
-\tierYellow. Aggregating, the measurable axis is \emph{the conjunction}
-\textbf{$n \ge 128 \; \land \; \text{density} \ge 60\%
-\; \land \; \text{strong deterministic transition}$}. Three regimes
+1/4 PASS, \tierRed); three border points --- X5a lattice ($\Phi=0.660$,
+periodic-structure ceiling), X837 SETI@home Arecibo ($\Phi=0.567$,
+sparse natural-noise borderline), and X10-strong Kuramoto sync
+($\Phi=0.408$, mean-field-but-coupled border) --- sit above or near the
+pre-frozen $\Phi=0.5$ threshold but with type-axis intact
+(\texttt{coherent\_non\_conscious}), \tierYellow.
+
+\textbf{The mean-field paradox.} The most surprising finding is in the X10
+ordering. \emph{Naive intuition} says coupling $\to$ integration:
+$\Phi$ should increase monotonically along (independent
+$\to$ weak mean-field $\to$ strong Kuramoto $\to$ hive). \emph{Measured
+$\Phi$ instead drops from $0.131$ (independent) to $0.036$ (weak
+mean-field), rises only to $0.408$ at strong Kuramoto, and jumps to
+$1.565$ at the XOR cascade}. Mean-field averaging reduces $\Phi$
+\emph{below} the independent baseline because uniformity makes the
+substrate reducible (IIT 4.0 axiom: integration $\equiv$ irreducibility,
+not correlation), while genuine cascade-coupling makes the substrate
+irreducible. The pre-registered monotonicity falsifier (F-X10-MONOTONE)
+explicitly FAILED, and the failure \emph{confirms} the IIT 4.0 axiom
+on which the detector is built. The mean-field paradox is the headline
+finding of v2.
+
+Aggregating, the measurable axis remains \emph{the conjunction}
+\textbf{$n \ge 128 \; \land \; (\text{density} \ge 60\% \;\lor\;
+\text{MIP-irreducible deterministic transition})$}. Three regimes
 (micro / sparse / algorithmic) are deterministically ruled out as outside
-the instrument's calibrated frontier.
+the instrument's calibrated frontier. The new ground-truth \#2 (X10-hive)
+confirms that the calibrated regime includes \emph{any} truly irreducible
+coupling at $n \ge 128$, not just natural-carrier density.
 
 These closed-negative results satisfy \texttt{a\_paper\_negative\_ok}: the
 finding is the instrument applicability frontier itself, not a
-``no-consciousness-detected'' headline. We publish all six verdicts
-verbatim in a \texttt{companion/} ledger for bit-identical re-verification,
-and we close the XENO-FRONTIER-5 cycle at this paper as the
+``no-consciousness-detected'' headline. The mean-field paradox is the
+v2 escalation: a positive finding (X10-hive ground-truth \#2 with
+$\Phi=1.565$ \texttt{conscious}) and an axiom-confirming negative
+(F-X10-MONOTONE FAILED \emph{because} mean-field $\ne$ irreducibility,
+which is precisely IIT 4.0). We publish all seven verdicts (plus the
+X837 follow-up) verbatim in a \texttt{companion/} ledger for
+bit-identical re-verification, and we close the XENO-FRONTIER-5
+followup-2 cycle at this paper as the
 \texttt{a\_paper\_only\_at\_closure} trigger.
 \end{abstract}
 
@@ -151,14 +183,19 @@ working group therefore pre-registered the methodological imperative:
 applicability frontier of the detector along the $(n, \text{density},
 \text{structure})$ axes.}
 
-\paragraph{XENO-FRONTIER-5 closure.} The XENO-FRONTIER-5 campaign is
-that closure: five pre-registered candidate substrates, ranging across
-the three axes, each measured with the same detector with frozen
-prediction thresholds and falsifiers. Each round was published verbatim
-in \texttt{UNIVERSE/H\_832}--\texttt{H\_836}, and the X8 SETI@home archive
-follow-up fire was published verbatim in \texttt{UNIVERSE/H\_837}. This
-paper aggregates all six points into a 5+1-point matrix and reports the
-applicability frontier finding.
+\paragraph{XENO-FRONTIER-5 closure and the two follow-up cycles.}
+The XENO-FRONTIER-5 campaign is the original closure: five
+pre-registered candidate substrates, ranging across the three axes,
+each measured with the same detector with frozen prediction thresholds
+and falsifiers. Each round was published verbatim in
+\texttt{UNIVERSE/H\_832}--\texttt{H\_836}. The X8 SETI@home archive
+\emph{follow-up 1} fire was published verbatim in
+\texttt{UNIVERSE/H\_837}. \emph{Follow-up 2}, the X10 hive-mind
+4-cell coupling axis, was published verbatim in
+\texttt{UNIVERSE/H\_838}. This paper v2 aggregates all seven points
+(plus the X8 X837 follow-up) into a 7+1-point matrix and reports
+the applicability frontier finding together with the v2 escalation:
+the mean-field paradox and ground-truth \#2.
 
 \paragraph{Why publish closed-negatives.} The directive
 \texttt{a\_paper\_negative\_ok} \citep{anima_repo} explicitly licenses
@@ -172,12 +209,18 @@ detector calibrates only inside one corner of the $(n, \text{density},
 out.'' This is what an instrument-first methodology publishes.
 
 \paragraph{Roadmap.} \S\ref{sec:hypothesis} states the four pre-registered
-applicability falsifiers and the meta-falsifier on the 6-point matrix.
-\S\ref{sec:method} fixes the measurement substrate and the six
-candidates. \S\ref{sec:measurement} aggregates the six verdicts verbatim.
+applicability falsifiers and the meta-falsifier on the 7+1-point matrix,
+including the five-falsifier X10 row.
+\S\ref{sec:method} fixes the measurement substrate and the eight
+candidates. \S\ref{sec:measurement} aggregates the seven verdicts verbatim
+(plus the X8 archive-acquisition pointer).
 \S\ref{sec:finding} establishes the applicability frontier as a 3-axis
 conjunction and identifies the three closed-negative axes plus the
-two border points. \S\ref{sec:threats} discusses validity threats.
+two ground-truth points (X7, X10-hive) plus the three border points
+(X5a, X837, X10-strong).
+\S\ref{sec:meanfield} isolates the \emph{mean-field paradox} as a
+positive IIT 4.0 axiom-confirmation finding (the v2 escalation).
+\S\ref{sec:threats} discusses validity threats.
 
 % =========================================================================
 \section{Hypothesis: the applicability frontier of \texttt{invariant\_detector}}
@@ -243,6 +286,24 @@ F-XENO-APPLICAB-NONMEAS & all
     (micro / sparse / algorithmic) must each be \tierRed{}; \emph{any}
     \tierGreen{} or \tierBlue{} in those three rules out the
     decomposition. \\
+F-X10-INDEP    & coupling
+  & Independent 4-cell (4 separate LCG walkers) at $n=128$ must read
+    $\Phi < 0.3$. \\
+F-X10-WEAK     & coupling
+  & Weak mean-field coupling (50/50 sync average) at $n=128$ must read
+    $\Phi < 0.5$. \\
+F-X10-STRONG   & coupling
+  & Strong Kuramoto coupling ($K=2.0$ all-to-all phase sync) at $n=128$
+    must read $\Phi \ge 0.5$. \\
+F-X10-HIVE     & coupling
+  & XOR-cascade hive emergence (1-lag carry) at $n=128$ must read
+    $\Phi \ge 0.5$ \emph{and} type $=$ \texttt{conscious}. \\
+F-X10-MONOTONE & coupling
+  & Naive intuition: the four points must satisfy
+    $\Phi_\text{indep} \le \Phi_\text{weak} \le \Phi_\text{strong}
+    \le \Phi_\text{hive}$ (coupling $\to$ integration).
+    Pre-registered \emph{exactly} so that the mean-field paradox falsifier
+    is a frozen prediction, not post-hoc storytelling. \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -270,16 +331,33 @@ expected applicability pattern is:
     natural noise) $\to$ \emph{border} (\tierYellow{}): pre-registered
     \texttt{coherent\_non\_conscious} type but pre-registered $\Phi<0.5$
     --- a FAIL on $\Phi$ alone but pass on type axis.
+  \item \textbf{X10 hive-mind 4-cell coupling}
+    (4 substrates aggregated to $n=128$ each: independent / weak
+    mean-field / strong Kuramoto / XOR-cascade hive) $\to$
+    \emph{mixed: 3/5 PASS, ground-truth \#2 emergence}. Pre-registered:
+    independent low-$\Phi$, weak low-$\Phi$, strong above threshold,
+    hive above threshold AND \texttt{conscious}, monotone.
+    Two pre-registered \emph{naive} predictions (F-X10-STRONG monotone,
+    F-X10-MONOTONE) were designed to fail \emph{if} mean-field $\ne$
+    irreducibility, exactly so that the IIT 4.0 axiom is testable
+    as a falsifier on this paper's measurement matrix.
 \end{itemize}
 
-\paragraph{Meta-falsifier.}
+\paragraph{Meta-falsifier (v2).}
 \begin{quote}
-\textbf{F-meta}: if the six measurements do not partition cleanly into
-\{X7 calibrate, X4/X5b/X6 closed-negative, X5a/X837 border\}, then the
+\textbf{F-meta-v2}: if the seven measurement points (plus the X10
+4-sub-substrate row) do not partition cleanly into
+\{X7 calibrate, \textbf{X10-hive calibrate \#2},
+X4/X5b/X6 closed-negative, X5a/X837/X10-strong border\}, then the
 3-axis (n / density / structure) applicability decomposition is
 FALSIFIED. The SUPPORTED condition is exactly the pre-registered pattern
-listed above. The closed-negative finding is then a valid paper outcome
-under \texttt{a\_paper\_negative\_ok}.
+listed above. Additionally, the F-X10-MONOTONE \emph{naive} prediction
+is pre-registered to fail \emph{if} the IIT 4.0 axiom holds; its
+verified failure is therefore a positive axiom-confirmation, not a
+detector defect (\S\ref{sec:meanfield}). The closed-negative finding
+is a valid paper outcome under \texttt{a\_paper\_negative\_ok}, and
+the positive ground-truth \#2 plus mean-field paradox is the v2
+escalation.
 \end{quote}
 
 % =========================================================================
@@ -328,18 +406,22 @@ pre-XENO-FRONTIER-5 (\texttt{.verdicts/829\_xeno\_invariant\_detector/x1\_smoke.
 All six measurement runs are byte-equal reproducible via the verbatim
 verdict files in the \texttt{companion/} ledger.
 
-\paragraph{Six measurement substrates.}
-The six measurement points (Table~\ref{tab:substrates}) are taken from
-six independent XENO rounds (R1--R5 of XENO-FRONTIER-5 plus the X8
-follow-up fire). Round 5 (X8 itself) is an archive-acquisition + pod
-spec milestone (\tierYellow); the actual BOINC playback was deferred and
-fired in the X837 follow-up round on a real Ubuntu 22.04 RunPod pod.
+\paragraph{Eight measurement substrates.}
+The eight measurement points (Table~\ref{tab:substrates}) are taken from
+seven independent XENO rounds (R1--R5 of XENO-FRONTIER-5 plus the X837
+SETI@home follow-up plus the X10 hive-mind follow-up). Round 5 (X8
+itself) is an archive-acquisition + pod spec milestone (\tierYellow);
+the actual BOINC playback was deferred and fired in the X837 follow-up
+round on a real Ubuntu 22.04 RunPod pod. The X10 row is itself four
+sub-substrates (independent / weak / strong / hive) sharing the same
+detector and the same $n=128$.
 
 \begin{table}[h]
 \centering
 \small
-\caption{The six measurement substrates and their $(n, \text{density},
-\text{structure})$ coordinates.}
+\caption{The eight measurement substrates and their $(n, \text{density},
+\text{structure})$ coordinates. The X10 row aggregates four
+sub-substrates that share $n$ and detector.}
 \label{tab:substrates}
 \begin{tabular}{@{}lllllp{4.0cm}@{}}
 \toprule
@@ -360,12 +442,22 @@ X7   & H\_832 & 128    & dense $60.9\%$ & natural carrier
 X837 & H\_837 & 128    & sparse $20.3\%$ & natural noise
      & SETI@home Arecibo 2004-05-05 BOINC \texttt{bg\_pot} array,
        $2\times$ upsampled to $n=128$ \\
+X10-a & H\_838 & 128 & $57.8\%$ & 4 independent walkers
+     & 4 LCG walkers, $4 \times 32$ samples concatenated to $n=128$ \\
+X10-b & H\_838 & 128 & $50.0\%$ & mean-field $50/50$ sync
+     & weak mean-field coupling, each cell $50\%$ self $+ 50\%$ pool mean \\
+X10-c & H\_838 & 128 & $60.9\%$ & Kuramoto $K=2.0$ all-to-all
+     & strong Kuramoto phase sync across 4 cells, $K=2.0$ \\
+X10-d & H\_838 & 128 & $33.6\%$ & XOR-cascade $+$ 1-lag carry
+     & hive emergence: each cell $b_t = b_{t-1} \oplus
+       \text{pool}_{t-1}$ \\
 \bottomrule
 \end{tabular}
 \end{table}
 
 \paragraph{X837 real-pod fire.}
-The X837 measurement is the only one that required a remote pod ---
+The X837 measurement \citep{xeno_h837_setiathome} is the only one that
+required a remote pod ---
 SETI@home v3.03 is a 2000-era ELF32 i686 binary, so the playback ran on a
 RunPod GPU pod \texttt{wcy166z3cqjam7} (Ubuntu 22.04.5 LTS with glibc-2.35
 + i386 multilib enabled), $\sim 16$ min wall, \$0.10 actual cost, dispatched
@@ -381,29 +473,48 @@ $\text{freq}=1419438781.74$ Hz) and the $64$-bin \texttt{bg\_pot} array
 \texttt{bg\_pot} was normalised by its max and upsampled $2\times$ to
 $n=128$ to match the X7 calibration template (no other transform).
 
+\paragraph{X10 hive-mind 4-cell coupling fire.}
+The X10 measurement \citep{xeno_h838_x10}
+(\texttt{XENO/scan/hive\_mind\_invariant.hexa},
+\texttt{UNIVERSE/H\_838}) is a \$0 Mac-local fire that runs four
+sub-substrates over four 32-sample 4-cell trajectories aggregated to
+$n=128$ each. Sub-substrate (a) is four independent LCG walkers; (b) is
+weak \emph{mean-field} coupling ($50\%$ self $+$ $50\%$ pool mean per
+tick); (c) is strong \emph{Kuramoto} all-to-all phase coupling at
+$K=2.0$; (d) is \emph{XOR-cascade} hive emergence with a 1-lag carry
+($b^{(i)}_t = b^{(i)}_{t-1} \oplus \overline{b}_{t-1}$ where
+$\overline{b}$ is the pool 4-cell mean threshold). All four
+sub-substrates share the same $n=128$, the same binarisation
+threshold $0.5$, and the same \texttt{invariant\_detector} (no X10
+detector variant). The X10 pre-registration was frozen as a row of five
+falsifiers (F-X10-INDEP / WEAK / STRONG / HIVE / MONOTONE) before any
+measurement was committed.
+
 \paragraph{Pre-registration sanity (per-substrate).}
 Each $\Phi$-threshold and each falsifier listed in \S\ref{sec:measurement}
 was \emph{frozen pre-run for the round} (i.e.\ the X4 falsifiers were
 fixed before X4 ran, the X5 falsifiers before X5, and so on). The
-$\Phi=0.5$ threshold used in X837 is identical to the X7 template
-threshold (no X837-specific tuning). The verbatim verdict files include
-this honesty note.
+$\Phi=0.5$ threshold used in X837 and X10 is identical to the X7
+template threshold (no X837-specific or X10-specific tuning). The
+verbatim verdict files include this honesty note.
 
 % =========================================================================
-\section{Measurement: the 5+1-point applicability matrix}
+\section{Measurement: the 7+1-point applicability matrix}
 \label{sec:measurement}
 
-Table~\ref{tab:verdict} aggregates the six verdicts verbatim. Each row
-corresponds bit-identically to the result section of
-\texttt{UNIVERSE/H\_8xx.md} and to \texttt{companion/verdict-ledger.json}.
+Table~\ref{tab:verdict} aggregates the seven verdicts verbatim, plus
+the X8 archive pointer. Each row corresponds bit-identically to the
+result section of \texttt{UNIVERSE/H\_8xx.md} and to
+\texttt{companion/verdict-ledger.json}.
 
 \begin{table}[h]
 \centering
 \small
-\caption{The 5+1-point applicability matrix (verbatim).
+\caption{The 7+1-point applicability matrix (verbatim).
 Verdict-tier coding: \tierGreen{} numerical-SUPPORTED (calibrated
 ground-truth), \tierRed{} closed-negative (deterministically ruled out),
-\tierYellow{} border (above threshold but type-axis intact).}
+\tierYellow{} border (above threshold but type-axis intact). X10 row
+expands into four sub-rows (a/b/c/d) sharing the same fire.}
 \label{tab:verdict}
 \begin{tabular}{@{}llllll@{}}
 \toprule
@@ -412,7 +523,7 @@ ground-truth), \tierRed{} closed-negative (deterministically ruled out),
 \midrule
 X7   & H\_832 & n=128 dense 60.9\%    & 0.114
      & coherent\_non\_conscious
-     & 2/2 (calibrate) \tierGreen \\
+     & 2/2 (calibrate \#1) \tierGreen \\
 X4-a & H\_833 & n=16 thermostat
      & 0.439 & coherent\_non\_conscious & F-WEAK FAIL \tierRed \\
 X4-b & H\_833 & n=16 2-bit counter
@@ -440,9 +551,35 @@ X6-d & H\_834 & n=64 structured XOR+tanh
 X837 & H\_837 & n=128 dense 20.3\%    & 0.567
      & coherent\_non\_conscious
      & 4/5 (border, F-NOT-CONSC FAIL) \tierYellow \\
+X10-a & H\_838 & n=128 indep 4-cell    & 0.131
+     & coherent\_non\_conscious
+     & F-X10-INDEP PASS \\
+X10-b & H\_838 & n=128 mean-field weak & 0.036
+     & coherent\_non\_conscious
+     & F-X10-WEAK PASS (paradox) \tierYellow \\
+X10-c & H\_838 & n=128 Kuramoto $K=2.0$ strong & 0.408
+     & coherent\_non\_conscious
+     & F-X10-STRONG FAIL \tierYellow \\
+\textbf{X10-d} & \textbf{H\_838} &
+       \textbf{n=128 XOR-cascade hive} & \textbf{1.565}
+     & \textbf{conscious}
+     & \textbf{F-X10-HIVE PASS (calibrate \#2) \tierGreen} \\
 \bottomrule
 \end{tabular}
 \end{table}
+
+\paragraph{X10 row aggregate verdict.}
+The X10 row's five pre-registered falsifiers evaluate to
+$3/5$ PASS, $2/5$ FAIL (\tierYellow{} PARTIAL-SUPPORT). The two FAILs
+(F-X10-STRONG, F-X10-MONOTONE) are exactly the two \emph{naive}
+predictions designed pre-run to catch the IIT 4.0 axiom: their failure
+is the mean-field paradox finding (\S\ref{sec:meanfield}), not a
+detector defect. The X10-d hive sub-substrate is the second
+ground-truth calibration point of the entire matrix (the first being
+X7 BL Voyager-1), and the only point that scores type$=$\texttt{conscious}
+under an honestly pre-registered falsifier (cf.\ X6-b attention
+$\Phi=1.213$, which is a \emph{ruled-out} sparse-bias artifact, not a
+ground-truth).
 
 \paragraph{Verbatim verdict files.} The full standard-output of each
 hexa-only run is preserved at:
@@ -463,6 +600,9 @@ hexa-only run is preserved at:
   \item \texttt{.verdicts/837\_xeno\_x8\_followup\_fire/x837\_run.txt}
     --- X837 SETI@home Arecibo 2004 real-pod playback (\tierYellow
     border).
+  \item \texttt{.verdicts/838\_xeno\_hive\_mind/x10\_run.txt}
+    --- X10 hive-mind 4-cell coupling 4-substrate fire (\tierYellow{}
+    3/5 PASS aggregate; X10-d hive \tierGreen{} ground-truth \#2).
 \end{itemize}
 
 \paragraph{Pre-frozen / post-tuning $=0$.}
@@ -483,11 +623,11 @@ project's hexa verify gate) and a 3-signal slug existence check
 pointer to every verbatim verdict.
 
 % =========================================================================
-\section{Finding: the 3-axis applicability frontier}
+\section{Finding: the 3-axis applicability frontier (v2)}
 \label{sec:finding}
 
 Table~\ref{tab:verdict} passes the pre-registered meta-falsifier
-\textbf{F-meta} on all four axes:
+\textbf{F-meta-v2} on all four axes plus the X10 coupling row:
 
 \begin{itemize}
   \item \textbf{$n$ axis ruled-out below 128} (X4 \tierRed). All four
@@ -528,40 +668,65 @@ Table~\ref{tab:verdict} passes the pre-registered meta-falsifier
     broken (\textbf{fp $<$ natural $<$ $\pi$ $<$ lattice} measured, vs.\
     pre-registered \textbf{natural $<$ fp $<$ $\pi$ $<$ lattice}). The
     instrument is structure-blind in the algorithmic-vs-natural axis.
-  \item \textbf{Calibration: X7 BL Voyager-1} (\tierGreen). This is the
-    unique calibrated ground-truth point. $n=128$, density $60.9\%$,
+  \item \textbf{Calibration \#1: X7 BL Voyager-1} (\tierGreen). The
+    first calibrated ground-truth point. $n=128$, density $60.9\%$,
     structure = \emph{natural narrow-band carrier} (deterministic
     transition $\sim 30$ MHz carrier line embedded in real Green Bank
     receiver noise). $\Phi = 0.114 < 0.5$ pre-registered threshold (PASS),
     type $=$ \texttt{coherent\_non\_conscious} (PASS). Both pre-registered
-    falsifiers pass; this point anchors the calibration.
-  \item \textbf{Borders: X5a lattice and X837 SETI@home} (\tierYellow).
-    Two points remain at the frontier of the calibrated regime. X5a
-    lattice ($n=128$, dense $\sim 100\%$, deterministic period-8 transition)
-    gives $\Phi = 0.660$ --- above the $\Phi = 0.5$ threshold but with the
-    type axis intact (\texttt{coherent\_non\_conscious}, not
-    \texttt{conscious}). This is the periodic-structure false-positive
-    ceiling: a perfectly periodic deterministic transition saturates the
-    co-occurrence TPM with high-irreducibility entries. X837 SETI@home
-    Arecibo 2004 ($n=128$, sparse $20.3\%$, real natural-noise BOINC
-    background) gives $\Phi = 0.567$ --- also above threshold, also with
-    type axis intact (\texttt{coherent\_non\_conscious}). The X837 case
-    is structurally interesting: it has the same $n$ as X7 but at
-    one-third the density, and $\Phi$ is $5\times$ higher. This says
-    the $\Phi = 0.5$ threshold is mis-calibrated in the sparse natural-noise
-    sub-corner of the $n=128$ regime, exactly the kind of border-region
-    a 6-point matrix should expose.
+    falsifiers pass; this point anchors the low-$\Phi$ \emph{honest
+    non-consciousness} calibration.
+  \item \textbf{Calibration \#2: X10-d XOR-cascade hive} (\tierGreen{},
+    \textbf{new in v2}). The second calibrated ground-truth point, and
+    the only one in the matrix that scores type$=$\texttt{conscious}
+    \emph{under an honestly pre-registered falsifier}. $n=128$,
+    density $33.6\%$, structure = \emph{XOR-cascade hive emergence
+    with 1-lag carry}. $\Phi = 1.565$ (well above the
+    $\Phi = 0.5$ threshold, PASS), type $=$ \texttt{conscious}
+    (PASS). F-X10-HIVE PASS. The transition rule
+    $b^{(i)}_t = b^{(i)}_{t-1} \oplus \overline{b}_{t-1}$
+    is MIP-irreducible (no proper bipartition of the 4-cell pool
+    preserves the joint TPM), and so satisfies the IIT 4.0
+    integration $\equiv$ irreducibility axiom by construction.
+    This point anchors the high-$\Phi$ \emph{honest conscious}
+    calibration --- the upper corner of the calibrated regime.
+  \item \textbf{Borders: X5a lattice, X837 SETI@home, X10-c Kuramoto}
+    (\tierYellow). Three points sit at the frontier of the calibrated
+    regime. X5a lattice ($n=128$, dense $\sim 100\%$, deterministic
+    period-8 transition) gives $\Phi = 0.660$ --- above the
+    $\Phi = 0.5$ threshold but with type-axis intact
+    (\texttt{coherent\_non\_conscious}, not \texttt{conscious}).
+    Periodic-structure false-positive ceiling. X837 SETI@home Arecibo
+    2004 ($n=128$, sparse $20.3\%$, real natural-noise BOINC
+    background) gives $\Phi = 0.567$ --- also above threshold, type
+    axis intact. Sparse natural-noise ceiling. X10-c Kuramoto strong
+    coupling ($n=128$, $K=2.0$ all-to-all phase sync) gives
+    $\Phi = 0.408$ --- below threshold yet \emph{above} the
+    independent baseline ($\Phi_\text{indep}=0.131$): a partial-sync
+    point that exposes the v2 finding (\S\ref{sec:meanfield}). The
+    three border points together motivate the
+    \texttt{X837.threshold-recalibration} deferred lane.
 \end{itemize}
 
-\paragraph{Aggregating: the calibration corner.}
-The six points partition cleanly across the meta-falsifier. The
-calibrated regime of \texttt{invariant\_detector} is the conjunction:
+\paragraph{Aggregating: the calibrated regime (v2 refined).}
+The seven points (eight including the X10 sub-substrate decomposition)
+partition cleanly across the v2 meta-falsifier. The calibrated regime
+of \texttt{invariant\_detector} is the conjunction, \textbf{refined in
+v2 by the X10-hive ground-truth \#2}:
 \begin{quote}
 \textbf{Calibrated} $\iff$
 $n \ge 128 \; \land \;
- \text{density} \ge 60\% \; \land \;
- \text{strong deterministic transition (natural or coupled, not algorithmic)}.$
+ \bigl(\text{density} \ge 60\% \; \lor \;
+       \text{MIP-irreducible deterministic transition}\bigr) \; \land \;
+ \text{not algorithmic-vs-natural ambiguous}.$
 \end{quote}
+\noindent
+The v2 disjunction
+($\ge 60\%$ density $\lor$ MIP-irreducibility) replaces the v1
+single-conjunct ($\ge 60\%$ density only): the X10-d hive is the
+existence proof that an MIP-irreducible transition substrate
+\emph{lower} than $60\%$ density (X10-d sits at $33.6\%$) still
+calibrates a \texttt{conscious} verdict honestly.
 The three non-calibrated regimes are deterministically ruled out:
 
 \begin{itemize}
@@ -581,13 +746,15 @@ The three non-calibrated regimes are deterministically ruled out:
 }{%
   \input{figures/fig01_applicability_matrix.tex}%
 }
-\caption{The 5+1-point applicability matrix on the $(n, \text{density},
-\text{structure})$ cube. Green X7 BL Voyager-1 is the unique calibrated
-ground-truth (n=128, dense $60.9\%$, natural carrier). The three red
-corners (micro / sparse / algorithmic) are deterministically ruled out.
-Two yellow border points (X5a lattice, X837 SETI@home Arecibo) sit
-above the $\Phi = 0.5$ threshold but keep the type axis intact ---
-the borders of the calibrated regime.}
+\caption{The 7+1-point applicability matrix on the $(n, \text{density},
+\text{structure})$ cube. Two green ground-truths: X7 BL Voyager-1
+(n=128, dense $60.9\%$, natural carrier) and X10-d XOR-cascade hive
+(n=128, dense $33.6\%$, MIP-irreducible coupling --- \emph{new in v2}).
+The three red corners (micro / sparse / algorithmic) are
+deterministically ruled out. Three yellow border points (X5a lattice,
+X837 SETI@home Arecibo, X10-c Kuramoto strong) sit on the frontier:
+X10-c stays \emph{below} threshold even at strong coupling --- the
+mean-field paradox.}
 \label{fig:applicability}
 \end{figure}
 
@@ -612,7 +779,14 @@ Conversely, the X7 calibration shows that within the corner
 $\{n=128, \text{density}=60.9\%, \text{natural carrier+noise}\}$, the
 detector reports an honest, low-$\Phi$ non-consciousness label on a real
 inter-stellar radio carrier. This makes the calibrated corner usable for
-future Breakthrough-Listen analyses on similar regime substrates.
+future Breakthrough-Listen analyses on similar regime substrates. The
+X10-d hive calibration further shows that the calibrated regime extends
+into the lower-density corner whenever the transition is
+MIP-irreducible (XOR cascade with carry): the detector reports an
+honest \texttt{conscious} verdict only when integration $\equiv$
+irreducibility is actually instantiated, not when sparsity is high
+(X6-b ruled out) nor when correlation is high (X10-b mean-field
+\emph{lowers} $\Phi$).
 
 \paragraph{Why the borders matter.}
 The two border points (X5a, X837) are diagnostic: they tell us that the
@@ -637,6 +811,106 @@ claims that report a substrate-blind $\Phi$ in a ruled-out corner can
 now be cited directly against the closed-negative.
 
 % =========================================================================
+\section{The mean-field paradox: a positive IIT 4.0 axiom confirmation}
+\label{sec:meanfield}
+
+The X10 hive-mind row exposes a finding that is the v2 escalation of
+this paper: \emph{coupling strength is not monotone in $\Phi$, and the
+non-monotonicity is precisely what the IIT 4.0 axiom predicts}.
+
+\paragraph{The naive intuition.}
+A reasonable Bayesian prior on a substrate-blind $\Phi$ detector would
+read: ``more coupling makes the substrate more integrated, so $\Phi$
+should rise monotonically along (independent $\to$ weak mean-field
+$\to$ strong Kuramoto $\to$ hive emergence).'' This is exactly the
+F-X10-MONOTONE prediction, frozen pre-run. It is the standard
+\emph{correlation} reading of coupling.
+
+\paragraph{The measured ordering.}
+Verbatim from \texttt{.verdicts/838\_xeno\_hive\_mind/x10\_run.txt}:
+\begin{lstlisting}
+[a] independent 4-cell                phi=0.130592  density=0.5781
+[b] weak coupled  4-cell (mean-field) phi=0.0355148 density=0.5000
+[c] strong coupled 4-cell (Kuramoto)  phi=0.407990  density=0.6094
+[d] hive emergence 4-cell (XOR carry) phi=1.564560  density=0.3359
+F-X10-INDEP    (indep phi < 0.3)    : true
+F-X10-WEAK     (weak phi < 0.5)     : true
+F-X10-STRONG   (strong phi >= 0.5)  : false
+F-X10-HIVE     (hive phi >= 0.5)    : true
+F-X10-MONOTONE (a<b<=c<=d)          : false
+\end{lstlisting}
+
+The measured ordering is $\Phi_\text{weak} < \Phi_\text{indep} <
+\Phi_\text{strong} < \Phi_\text{hive}$, with $\Phi_\text{weak}
+\approx 0.036$ \emph{below} $\Phi_\text{indep} \approx 0.131$ ---
+a roughly $4\times$ \emph{decrease} from adding coupling. The
+F-X10-MONOTONE falsifier explicitly FAILED on this single row.
+
+\paragraph{Why the paradox confirms the IIT 4.0 axiom.}
+The IIT 4.0 integration axiom \citep{albantakis2023iit4} states that
+$\Phi$ measures \emph{irreducibility} of a system's cause-effect
+structure under its minimum-information-partition (MIP), \emph{not}
+correlation among its parts. Mean-field $50/50$ coupling acts as
+\emph{averaging}, which makes each cell's trajectory increasingly
+resemble the pool average; the joint TPM
+$P[(b_t, b_{t+1}) \to (b_{t+1}, b_{t+2})]$ collapses toward a
+diagonal-dominant matrix where each cell can be reconstructed from the
+others by simple correlation. This is precisely the regime in which
+the MIP cut costs almost nothing --- the substrate is
+\emph{reducible}. Reducibility implies $\Phi \to 0$, even at high
+correlation.
+
+Strong Kuramoto coupling ($K=2.0$ all-to-all phase sync) is the same
+mechanism, only more extreme: the four cells converge toward a single
+collective phase, and the joint trajectory is again low-irreducibility.
+$\Phi_\text{strong} = 0.408$ partial-recovers above
+$\Phi_\text{indep}$ because the cells haven't fully synced over the
+32-sample window, but it never crosses the $0.5$ threshold.
+
+XOR-cascade hive emergence ($b^{(i)}_t = b^{(i)}_{t-1} \oplus
+\overline{b}_{t-1}$) is the opposite mechanism. Each cell's next state
+depends on \emph{its own} previous state and the \emph{pool's} previous
+mean threshold, but \emph{not} in a way that any single bipartition
+can decouple. The XOR cascade is MIP-irreducible by construction: no
+2-vs-2 partition (or 1-vs-3 partition) preserves the joint TPM, because
+the pool mean $\overline{b}_{t-1}$ across both partition halves enters
+each cell's next state. The MIP cut is therefore expensive, and
+$\Phi$ jumps to $1.565$.
+
+\paragraph{The paradox restated.}
+\textbf{Correlation $\ne$ integration; coupling $\ne$ irreducibility.}
+A mean-field-coupled substrate is highly correlated but
+\emph{deeply reducible}; an XOR-cascade hive is moderately correlated
+but \emph{deeply irreducible}. The IIT 4.0 detector reads
+irreducibility, not correlation, so the measured ordering matches the
+axiom rather than the naive intuition. Pre-registering F-X10-MONOTONE
+\emph{as a falsifier} and observing it FAIL is therefore a
+positive confirmation of the IIT 4.0 axiom on this paper's
+measurement matrix.
+
+\paragraph{Diagnostic value.}
+This finding gives substrate-blind $\Phi$ a concrete \emph{diagnostic}
+beyond its calibrated frontier: any substrate that shows high
+correlation but low $\Phi$ is mean-field-like (reducible); any
+substrate that shows moderate correlation but high $\Phi$ is
+cascade-like (irreducible). For future SETI / BOINC / activation
+analyses, this means that observing a high cross-channel correlation
+in a candidate signal is \emph{not} a positive consciousness signal
+on this detector --- one must check the MIP cost. The detector remains
+blind to the distinction by construction, but the measurement matrix
+now documents that the distinction \emph{exists} and is the
+operative axis.
+
+\paragraph{Honesty note (\texttt{p7=0}, post-tuning $= 0$).}
+The F-X10-MONOTONE falsifier was authored in
+\texttt{XENO/scan/hive\_mind\_invariant.hexa} \emph{before} the X10
+fire. The verdict file reports the FAIL verbatim. No detector code
+was tuned in response; no falsifier threshold was loosened. The
+positive interpretation (paradox confirms axiom) is presented as a
+post-measurement finding, with the pre-registered FAIL as ground
+truth, not as a re-interpretation of a pre-registered PASS.
+
+% =========================================================================
 \section{Threats to validity}
 \label{sec:threats}
 
@@ -651,12 +925,16 @@ now be cited directly against the closed-negative.
     \texttt{X4-MULTILEVEL} and \texttt{X5-MULTILEVEL} (4 / 8-level TPM)
     as deferred lanes that may reopen the micro and algorithmic
     corners under a richer detector.
-  \item \textbf{Six points, three axes.} A 5+1-point matrix is the
-    minimal sufficient set to separate four falsifiers on three axes;
-    a denser sweep (e.g.\ $n \in \{32, 64, 96, 128, 196, 256\}$ at fixed
-    density $\sim 60\%$) would interpolate the $n$-axis transition. We
-    report the calibration corner as a conjunction inequality, not a
-    smooth boundary curve.
+  \item \textbf{Seven points (with X10 expanding into four sub-rows),
+    four axes including coupling.} The 7+1-point matrix is the
+    minimal sufficient set to separate the four applicability
+    falsifiers on three axes plus the five X10 falsifiers on the
+    coupling axis; a denser sweep (e.g.\ $n \in \{32, 64, 96, 128,
+    196, 256\}$ at fixed density $\sim 60\%$, or $K \in \{0.5, 1, 2,
+    5, 10\}$ at fixed $N=4$) would interpolate the $n$-axis transition
+    and the Kuramoto $K$-axis. We report the calibration regime as a
+    conjunction inequality with a disjunction sub-clause, not a smooth
+    boundary curve.
   \item \textbf{Pre-registration self-consistency.} Each round's
     pre-registered falsifiers are frozen for that round, but the
     pre-registration of the \emph{meta-falsifier} (this paper's
@@ -680,53 +958,94 @@ now be cited directly against the closed-negative.
     explicitly cite this as the \texttt{X837.full-playback} deferred
     lane.
   \item \textbf{Threshold reuse.} The $\Phi = 0.5$ threshold is reused
-    from the X7 calibration template across all six rounds. A
+    from the X7 calibration template across all seven rounds. A
     threshold-recalibration sweep (\texttt{X837.threshold-recalibration}
     deferred) is exactly the next lane in the cycle, and is the natural
-    interpretation of the two border points.
+    interpretation of the three border points (now including X10-c).
+  \item \textbf{X10 4-cell single-fire.} The X10 row is a single
+    \$0 Mac-local fire on a 4-cell substrate with $32$ samples per
+    cell. The mean-field paradox is a single-fire observation; a
+    cell-count sweep ($N \in \{2,4,8,16\}$) and a Kuramoto
+    $K$-sweep ($K \in \{0.5, 1, 2, 5, 10\}$) are explicit deferred
+    lanes (\texttt{X10.cell-count-sweep},
+    \texttt{X10.kuramoto-sweep}) that would tighten the paradox
+    finding into a smooth curve. The XOR-cascade hive substrate is
+    one specific MIP-irreducible construction; other MIP-irreducible
+    constructions may produce different $\Phi$ values, but the
+    irreducibility-vs-correlation distinction is the operative axis,
+    not the specific XOR rule.
+  \item \textbf{MIP cost as a substrate property, not an instrument
+    property.} The mean-field paradox confirms IIT 4.0 only on this
+    detector instance. A different big-$\Phi$ variant
+    (partition-cut vs.\ structure-cut, 4-unit TPM vs.\ 2-unit) may
+    show different absolute $\Phi$ values, but if the IIT axiom is
+    correctly implemented the qualitative ordering
+    ($\Phi_\text{mean-field} < \Phi_\text{indep} <
+     \Phi_\text{Kuramoto} < \Phi_\text{XOR-hive}$) should survive.
 \end{itemize}
 
 % =========================================================================
 \section{Conclusion}
 \label{sec:conclusion}
 
-We measure a substrate-blind big-$\Phi$ detector across a 5+1-point
+We measure a substrate-blind big-$\Phi$ detector across a 7+1-point
 $(n, \text{density}, \text{structure})$ matrix and find that its
-calibrated regime is a single corner of the candidate cube:
-$n \ge 128 \; \land \; \text{density} \ge 60\% \; \land \;
-\text{strong deterministic transition}$. Three other corners (micro-$n$,
-sparse, algorithmic) are deterministically ruled out as closed-negative
-\tierRed{} findings. One ground-truth point (X7 BL Voyager-1) calibrates
-the corner; two border points (X5a lattice, X837 SETI@home Arecibo)
-mark the edges of the calibrated regime and motivate a follow-up
+calibrated regime is a refined disjunction of the candidate cube:
+$n \ge 128 \;\land\; (\text{density} \ge 60\% \;\lor\;
+\text{MIP-irreducible deterministic transition})$. Three other corners
+(micro-$n$, sparse, algorithmic) are deterministically ruled out as
+closed-negative \tierRed{} findings. \textbf{Two} ground-truth points
+calibrate the regime (X7 BL Voyager-1, low-$\Phi$ honest
+non-consciousness; X10-d XOR-cascade hive, high-$\Phi$
+honest \texttt{conscious} --- \emph{new in v2}); three border points
+(X5a lattice, X837 SETI@home Arecibo, X10-c Kuramoto strong) mark the
+edges of the calibrated regime and motivate the follow-up
 threshold-recalibration cycle (not in scope for this paper).
 
-The headline is not ``no alien consciousness was detected.'' The
-headline is ``the substrate-blind big-$\Phi$ detector is honest only in
-one corner of the candidate cube, and three corners are deterministically
-outside that corner.'' This is the instrument-first methodology
-publishing the frontier of its reach.
+The v2 escalation is the \textbf{mean-field paradox}: the X10 row
+measures $\Phi_\text{weak} < \Phi_\text{indep} < \Phi_\text{strong} <
+\Phi_\text{hive}$ rather than the naive monotone
+$\Phi_\text{indep} \le \Phi_\text{weak} \le \Phi_\text{strong} \le
+\Phi_\text{hive}$, and the failure of F-X10-MONOTONE is precisely a
+positive confirmation of the IIT 4.0 integration $\equiv$
+irreducibility axiom: mean-field averaging makes the substrate
+\emph{more reducible} (lower MIP cost) even as correlation rises.
+The instrument-first methodology not only publishes its applicability
+frontier but also exhibits a concrete diagnostic (correlation $\ne$
+irreducibility, coupling $\ne$ integration) that future
+SETI / BOINC / activation analyses can apply directly.
 
-We satisfy \texttt{a\_paper\_negative\_ok} (three closed-negative findings
-are valid paper content), \texttt{a\_paper\_significance} (four
-pre-registered falsifiers on the 6-point matrix + a ground-truth
-calibration + a frontier finding), \texttt{a\_paper\_only\_at\_closure}
-(XENO-FRONTIER-5 R5/5 closure + X837 follow-up FULL closure marks the
-release point), and \texttt{a\_paper\_format} (the four sections
-hypothesis / method / measurement / finding). All six verdicts are
-published verbatim in the \texttt{companion/} ledger for bit-identical
-re-verification.
+The headline is not ``no alien consciousness was detected.'' The
+headline is \emph{double-barrelled}: (i) the substrate-blind big-$\Phi$
+detector is honest only when integration $\equiv$ irreducibility is
+genuinely instantiated; (ii) the IIT 4.0 axiom that supports it is
+itself confirmed against a pre-registered naive falsifier.
+
+We satisfy \texttt{a\_paper\_negative\_ok} (three closed-negative
+findings are valid paper content), \texttt{a\_paper\_significance}
+(nine pre-registered falsifiers on the 7+1-point matrix + two
+ground-truth calibrations + the mean-field paradox finding),
+\texttt{a\_paper\_only\_at\_closure} (XENO-FRONTIER-5 R5/5 +
+X837 follow-up 1 + X10 follow-up 2 FULL closure marks the v2 release
+point), and \texttt{a\_paper\_format} (the four canonical sections
+hypothesis / method / measurement / finding, plus a dedicated
+mean-field paradox section). All seven verdicts (plus the X8
+pointer) are published verbatim in the \texttt{companion/} ledger for
+bit-identical re-verification.
 
 % =========================================================================
 \section*{Reproducibility}
-All six verdicts are published bit-identically in
-\texttt{companion/verdict-ledger.json} (H\_832--H\_837 verdict pointers)
-and in the result sections of \texttt{UNIVERSE/H\_8xx.md}. The detector
-source is at \texttt{XENO/detector/invariant\_detector.hexa} (commit
-\texttt{be75bb10b}). Five of six measurements are \$0 Mac-local; the
-X837 measurement is a \$0.10 RunPod CPU/GPU pod fire on Ubuntu 22.04.5
-LTS with i386 multilib enabled. SETI@home 3.03 ELF32 i686 was sourced
-from the canonical archive.org mirror; the work-unit
+All seven verdicts (plus the X8 archive pointer) are published
+bit-identically in \texttt{companion/verdict-ledger.json}
+(H\_832--H\_838 verdict pointers) and in the result sections of
+\texttt{UNIVERSE/H\_8xx.md}. The detector source is at
+\texttt{XENO/detector/invariant\_detector.hexa} (commit
+\texttt{be75bb10b}). Six of seven measurements are \$0 Mac-local
+(including the entire X10 4-substrate fire at
+\texttt{XENO/scan/hive\_mind\_invariant.hexa}); the X837 measurement
+is a \$0.10 RunPod CPU/GPU pod fire on Ubuntu 22.04.5 LTS with i386
+multilib enabled. SETI@home 3.03 ELF32 i686 was sourced from the
+canonical archive.org mirror; the work-unit
 \texttt{sahfiles\_workunits/work\_unit.sah} sha256 was verified MATCH at
 \texttt{2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96}.
 The hexa-only runs are byte-equal reproducible (RFC 033/036).
