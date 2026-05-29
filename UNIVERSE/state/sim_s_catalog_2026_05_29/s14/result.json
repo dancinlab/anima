@@ -1,0 +1,14 @@
+{
+  "id": "S14",
+  "name": "time-scale (x100 acceleration / is Phi time-invariant?)",
+  "substrate": "ECA rule110 n=4, GZ inhibition I=0.21232 as TPM scale (1-I); 2-step = rule110 composed with itself",
+  "falsifier": "if Phi is invariant under temporal coarse-graining, 2-step max big-Phi equals 1-step",
+  "phi": {
+    "one_step_max": 14.1492,
+    "two_step_max": 7.38843,
+    "states_differing": "16/16"
+  },
+  "verdict": "SUPPORTED-NUMERICAL",
+  "matched_1386": true,
+  "note": "Phi is time-grain dependent: 1-step 14.1492 vs 2-step 7.38843, all 16 states differ. run.log authoritative (real hexa stdout, deterministic, $0); recompute at .verdicts/s14/recompute.txt. All values match #1386."
+}

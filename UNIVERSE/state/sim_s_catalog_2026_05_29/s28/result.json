@@ -1,0 +1,16 @@
+{
+  "id": "S28",
+  "name": "conway/ECA spectrum (does the substrate rule determine Phi?)",
+  "substrate": "ECA n=4, GZ inhibition I=0.21232 as TPM scale (1-I), iit4_bigphi big_phi max over states",
+  "falsifier": "if Phi is substrate-independent, all rules give the same Phi",
+  "phi": {
+    "rule30": 17.8619,
+    "rule54": 8.23847,
+    "rule90": 0.20492,
+    "rule110": 14.1492,
+    "rule184": 19.9378
+  },
+  "verdict": "SUPPORTED-NUMERICAL",
+  "matched_1386": true,
+  "note": "Phi is strongly substrate-(rule-)dependent: span 0.20492 (rule90) to 19.9378 (rule184). run.log authoritative (real hexa stdout, deterministic, $0); recompute at .verdicts/s28/recompute.txt. All values match #1386."
+}
