@@ -34,3 +34,4 @@
 @D HW-CORE := "./HW-CORE/HW-CORE.md" :: domain [active]
 @D HW-LIMB := "./HW-LIMB/HW-LIMB.md" :: domain [active]
 @D PLASTICITY := "./PLASTICITY/PLASTICITY.md" :: domain [active]
+@D LAUNCHPAD := "./LAUNCHPAD/LAUNCHPAD.md" :: domain [active]
