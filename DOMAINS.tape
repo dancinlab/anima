@@ -33,3 +33,4 @@
 @D EVOL := "./EVOL/EVOL.md" :: domain [active]
 @D HW-CORE := "./HW-CORE/HW-CORE.md" :: domain [active]
 @D HW-LIMB := "./HW-LIMB/HW-LIMB.md" :: domain [active]
+@D PLASTICITY := "./PLASTICITY/PLASTICITY.md" :: domain [active]
