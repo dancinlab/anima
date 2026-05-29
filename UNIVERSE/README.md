@@ -487,3 +487,4 @@ verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-fi
 - [`H_831`](H_831_xeno_seti_raw_to_phi_scan.md) — XENO seti_raw_to_phi 5-source scan — Wow/Voyager/Exoplanet/Synthetic 7 measurement, 의식 분류 0, BL+SETI@home archive-pointer SKIP honest · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
 
 </details>
+- [H_832](H_832_xeno_voyager_phi_real.md) — XENO X7 BL Voyager-1 invariant_detector 실 실행 🟢

@@ -1,0 +1,24 @@
+{
+  "id": "X7",
+  "title": "XENO X7 — BL Voyager-1 invariant_detector 실 실행",
+  "executed_at": "2026-05-29",
+  "source": {
+    "path": "DATASET/breakthrough_listen/Voyager1_block1.npy",
+    "shape": "(64, 1000, 2) complex64",
+    "format": "BL Green Bank Voyager-1 single_block IQ baseband",
+    "input_extract": "real part flatten, first 128 samples → [0,1] normalize",
+    "input_stats": {"n": 128, "mean": 0.5137, "ones_ge_0p5_pct": 60.9}
+  },
+  "result": {
+    "phi": 0.114099,
+    "integration": 1.26083,
+    "irreducibility": 0.0904946,
+    "substrate_type": "coherent_non_conscious"
+  },
+  "prediction_check": {
+    "pre_reg_phi_lt_0p5": true,
+    "pre_reg_type_match": true
+  },
+  "verdict": "🟢 SUPPORTED-NUMERICAL",
+  "interpretation": "BL Voyager-1 1.42 GHz carrier (narrow-band technosignature) classified as 'coherent_non_conscious' substrate by invariant_detector — same class as pulsar/oscillator, NOT integrated information system. First XENO real-data Φ scan, pre-registered prediction confirmed."
+}
