@@ -1,0 +1,35 @@
+F-CLM-BRIDGE-XFER — pre-registered FROZEN falsifier (BRIDGE transfer)
+================================================================================
+frozen_at : 2026-05-30 (BEFORE the fire; no post-hoc tampering, @L8 / d6)
+source    : CLM/P0_ARCHITECTURE.md §11.4/§11.6 (MITOSIS-ARRAY, BRIDGE)
+           CLM/CLM.breakthrough.mining.md BRIDGE (depleted-both)
+harness   : CLM/distill/run_bridge_transfer.py (uses CLM/distill/distill_array.py)
+
+CLAIM (BRIDGE):
+  The measure-rung -> deploy-rung gap (a_scale_honest_scope) is crossed by
+  knowledge distillation: a valid-scale TEACHER array's monopoly-escape
+  (inter-expert dispatch-entropy z) SURVIVES distillation into a chip-fit
+  STUDENT -- routing-diversity transfer Delta = z_student - z_teacher is small.
+
+FROZEN measurement spec:
+  teacher  = E=32 experts, d_model=128   (valid measure scale)
+  student  = E=8 experts,  d_model=64    (chip-fit deploy scale, expert <=1.2M)
+  KD       = Hinton soft-target, alpha=0.7, temperature T=3.0
+             L = (1-alpha)*CE(student,target) + alpha*T^2*KL(s/T || t/T)
+  metric   = dispatch-entropy z vs Dirichlet(1) uniform null (same as H_852)
+  seeds    = {42, 43, 44}
+  XFER_TOL = 3.0
+
+FROZEN falsifier:
+  PASS (🟢 transfer survives) iff, for every seed,
+     (1) z_student and z_teacher are SAME SIGN (escape direction preserved), AND
+     (2) |z_student - z_teacher| <= XFER_TOL  (transfer Delta bounded), AND
+     (3) the student is chip-fit (expert_param_count <= 1,200,000).
+  FAIL (🔴 CLOSED-NEGATIVE) otherwise.
+
+A 🔴 (transfer does NOT survive: sign flip or |Delta| > tol) is a VALID honest
+result (g63, p7, a_paper_negative_ok). Frozen thresholds NOT moved post-fire.
+
+scale scope (a_scale_honest_scope): toy teacher (E32/d128) -> chip-fit student
+(E8/d64), toy two-lane corpus. measure rung (teacher) ⊥ deploy rung (student).
+verdict scoped to the measured toy distillation, NOT a 3B claim.

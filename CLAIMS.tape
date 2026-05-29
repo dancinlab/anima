@@ -108,6 +108,13 @@
   src    = "UNIVERSE/H_852_clm_mitosis_array_dispatch.md · CLM/P0_ARCHITECTURE.md §11 · CLM.breakthrough.mining.md DISSOLVE"
   status = "🔴 CLOSED-NEGATIVE — P-ARRAY 완료. raw H 는 E 로 상승(1.19→3.17 nats) 하나 uniform-null 대비 z 급락(+0.53→−7.61) · monotone+z-rise FAIL · chip-fit PASS. 사전등록 frozen 임계 무변조(a_paper_negative_ok). TERMINAL."
 
+@C clm_bridge_transfer := "MITOSIS-ARRAY BRIDGE: teacher(E32/d128) escape 가 KD distill 후 chip-fit student(E8/d64) 로 transfer 생존 — z same-sign ∧ |Δ|≤3.0 ∧ student chip-fit" :: hypothesis [slug=clm-bridge-transfer group=CLM]
+  method = "run"
+  cmd    = "python3 CLM/distill/run_bridge_transfer.py --fire (teacher train → Hinton KD distill → transfer Δ z, ubu-1 RTX5070)"
+  raw    = ".verdicts/853_clm_bridge_transfer/F-CLM-BRIDGE-XFER_fire_2026_05_30.txt"
+  src    = "UNIVERSE/H_853_clm_bridge_transfer.md · CLM/P0_ARCHITECTURE.md §11.4·§11.6 · CLM.breakthrough.mining.md BRIDGE"
+  status = "🔴 CLOSED-NEGATIVE — BRIDGE fire 완료. teacher z 음수(-3.74) · student distill 후 near-uniform(+0.60) · transfer Δ +4.34 > 3.0 · 2/3 seed sign-flip · student chip-fit PASS. monopoly-escape ⊥ KD-transfer (a_paper_negative_ok). HF dancinlab/anima-clm-bridge PRIVATE. TERMINAL."
+
 # ───────────────────────────────────────────────────────────────────────
 # LIFE — open slot (group=LIFE · paper-track)
 # Candidate canonical claim — NOT yet verdict-persisted. List here so the

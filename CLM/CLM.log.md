@@ -2,6 +2,14 @@
 
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
+## 2026-05-30 — P-ARRAY 양 arm 완료 (DISSOLVE + BRIDGE) · 둘 다 🔴 CLOSED-NEGATIVE
+
+- [x] **DISSOLVE 하니스 (model/array_moe.py)**: SparseMoEArray(top-k) + inter-expert dispatch entropy(nats·norm·z) · expert=mitosis cell=AKD1000 chip(chip_fit ≤1.2M) · array_smoke.py sweep E∈{4,8,16,32,64} forward+entropy 5/5 PASS($0 Mac) · array_moe.hexa 드라이버.
+- [x] **DISSOLVE run (model/run_array_sweep.py · H_852 F-CLM-MONO-ARRAY)**: E sweep × seed{42,43,44} · Dirichlet(1) uniform-null z-score frozen pre-run. **🔴 CLOSED-NEGATIVE** — raw H 는 E 로 상승(1.19→3.17 nats) 하나 uniform-null 대비 z 급락(+0.53→−7.61, monotone+z-rise FAIL · chip-fit PASS). uniform ceiling 이 ln(E)로 커져 큰 array 가 더 sub-uniform. 사전등록 frozen 임계 무변조. verdict .verdicts/clm-mitosis-array/dissolve_sweep_*.{txt,json} + 852/.
+- [x] **BRIDGE distill (distill/distill_array.py + run_bridge_transfer.py · H_853 F-CLM-BRIDGE-XFER)**: teacher(E32/d128 유효 scale) train → Hinton KD distill(α=0.7 T=3.0) → chip-fit student(E8/d64) transfer Δ. **GPU FIRE = ubu-1 RTX5070(dedicated pool $0 marginal · torch 2.12)** · a_fire_autonomous · d16 dry-run(5step) 선행. **🔴 CLOSED-NEGATIVE** — teacher z 음수(−3.74 mean) · student distill 후 near-uniform(+0.60 mean) · transfer Δ +4.34 > 3.0 · 2/3 seed sign-flip · student chip-fit PASS. monopoly-escape ⊥ KD-transfer (escape 서명이 chip-fit student 로 생존 못함, 균형 회귀). verdict .verdicts/clm-mitosis-array/bridge_transfer_fire_*.txt + 853/.
+- [x] **HF upload (a_hf_autonomous tier-gated)**: `dancinlab/anima-clm-bridge` PRIVATE(🔴 negative-result) · teacher+student .pt + README 모델카드 + manifest sha256(a_hf_complete) · /HF.jsonl 1 row(anima_clm_bridge). a_fire_recover_complete: ckpt+result+log pull + sha256 verify 후 HF 업로드 (ubu-1 dedicated host = teardown 불요).
+- [x] **a_scale_honest_scope cross-check**: 두 🔴 모두 toy expert-count/distill axis(d≤128 · toy 2-lane) 한정 — 3B 일반 주장 금지. 측정rung ⊥ 배포rung. 후속 lever = routing-distribution 직접 정합(dispatch KL distill 항) · student E↔teacher E 정합 · H_847/H_852 AXIS_MAP 합류.
+
 ## 2026-05-30 — P-ARRAY MITOSIS-ARRAY 돌파엔진 설계 (DISSOLVE) · P0 §11 신설
 
 - [x] **P0_ARCHITECTURE.md §11 MITOSIS-ARRAY 신설** — [CLM.breakthrough.mining.md](./CLM.breakthrough.mining.md) DISSOLVE(depleted-both) 권고결론을 설계로 못박음. 충돌 = 측정타당성(routing-diversity 는 3B/7B scale 의미) ⊥ AKIDA 온칩(AKD1000 ~1.2M 강제).
