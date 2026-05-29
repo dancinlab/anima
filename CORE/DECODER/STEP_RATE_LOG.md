@@ -741,3 +741,54 @@ artifacts: `CORE/DECODER/h686_h687_axis_sweep.hexa`, `CORE/DECODER/H686_H687_AXI
 - `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_mirror_attempt4_2026_05_29 :: code-landed-unverified`
 
 **verdict**: 🟠 **CODE-LANDED-UNVERIFIED** — mirror workaround 코드 land (syntax PASS), build/fire/measurement 미검증. pod teardown PASS, cost-leak 차단. bg agent fire 3연속 사망 → attempt #5 는 foreground inline 필수.
+
+---
+
+## entry 19 — M5 production fire attempt #5 (foreground inline) — vast SSH DARK + cross-session key-401
+
+**날짜**: 2026-05-30 (UTC ~00:50)
+**상태**: 🟠 BLOCKED-AT-TRANSPORT — mirror code (PR #1434) 보유 · build 도달 전 vast SSH DARK + vast API key-401 차단 · pod teardown PASS
+
+**경과**:
+- attempt #4 mirror workaround code (PR #1434) origin/main 확인 — `v3_moe_fwd_local`/`v3_moe_bwd_local`/`layer_block_bwd_local` 3-fn mirror 존재
+- foreground inline 진행 (bg agent 3연속 사망 회피 — entry 16/18 lesson)
+- runpod H100 rent × 2 모두 `no id in response (no capacity)` — runpod H100 capacity=0 (전 attempt 동일)
+- vast H100 fallback rent → pod `38424527` (ssh3.vast.ai:24526) READY (rent readiness gate 통과)
+- ssh ready echo 1회 PASS, 그러나 후속 exec 부터 **persistent `Permission denied (publickey)`** — 40 tries (160s) 0-stable. transient flakiness 아닌 DARK pod (onstart hook key 미주입)
+- `hexa cloud reboot` 시도 → 효과 없음
+- teardown 시도 → **vast API `401 Invalid user key`** 차단
+
+**root cause 발견 (cross-session key clobber)**:
+- `~/.config/vastai/vast_api_key` (mtime 2026-05-30 00:44, 다른 세션이 방금 덮어씀) = `98d048fc…` → vast API 전체 401 (조회/파괴/all)
+- keychain SSOT (`secret get vast.api_key`) = `2f3bad9f…` (canonical, 다름)
+- 파일이 invalid key 로 clobber 되어 **모든 vast 작업이 깨진 상태** (RTSC 세션 포함 전체 영향)
+- 복원: keychain SSOT → 파일 재기록 → vast 조회 정상화 → pod 38424527 destroyed (confirmed)
+- **net fix**: key resync 로 다른 RTSC 세션의 vast 401 도 동시 해소
+
+**원인 분석**:
+- attempt #5 차단 = (a) runpod H100 capacity 0 + (b) vast pod DARK (SSH key 미주입) + (c) vast key cross-session clobber 401. 3중 transport-layer 인프라 장애, science 무관.
+- foreground inline 은 bg agent 사망(entry 16/18)은 회피했으나, transport-layer 인프라 벽은 실행 패턴과 무관하게 차단.
+
+**M5 production fire saga 5-attempt 종합 (전부 인프라 차단)**:
+| # | mode | 차단 원인 | layer |
+|---|---|---|---|
+| 1 | bg | API 500 twin-death | anthropic API |
+| 2 | bg | API 500 (recovery) | anthropic API |
+| 3 | fg | hexa-lang #1527 Linux trim | build toolchain |
+| 4 | bg | API rate-limit | anthropic API |
+| 5 | fg | runpod cap 0 + vast SSH DARK + key-401 | GPU provider transport |
+
+→ **measurement 본선 5 attempt 모두 미도달**. H_686+H_687 production verdict 여전히 UNMEASURED. 차단은 매번 다른 인프라 layer (API / build / provider) — science (collapse mechanism) 와 무관.
+
+**잔여 작업 (follow-up)**:
+- 진짜 unblock = hexa-lang #1527 fix (handoff 2eddb92a) — build 의존 제거하면 mirror 불필요 + transport 만 남음
+- 또는 known-good Linux toolchain 보유 dedicated 호스트 (pool ubu-1/ubu-2 GPU?) 에서 build+fire — vast/runpod transport 우회
+- vast key SSOT 강화 필요 — cross-session clobber 가 401 유발 (hexa-lang inbox 후보)
+
+**cost / wall**: vast pod 38424527 ~10분 idle (build 전 사망), ≤$1 추정. runpod 0 rent (capacity). 본선 fire 산출 0.
+
+**land (본 PR)**:
+- 본 entry 19 (이 파일)
+- `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_attempt5_transport_2026_05_30 :: transport-incident`
+
+**verdict**: 🟠 **BLOCKED-AT-TRANSPORT** — vast SSH DARK + cross-session key-401. pod teardown PASS (key resync 후), cost-leak 차단, RTSC 5 무접촉. measurement 본선 5/5 미도달 (전부 인프라). H_686+H_687 production UNMEASURED 유지. 진짜 unblock = hexa-lang #1527 fix 또는 dedicated Linux GPU 호스트.
