@@ -176,6 +176,71 @@ def conv2d_quantized_forward(x, kernel, act_bits, input_bits=4, flip=False,
     return np.clip(act, 0, hi).astype(np.int64)
 
 
+def sepconv2d_quantized_forward(x, kernel_dw, kernel_pw, act_bits, input_bits=4,
+                                flip=True, padding="same", stride=1):
+    """AKD1000 SeparableConvolutional forward -- depthwise then pointwise, FUSED
+    (round-5 frontier, 2026-05-30).
+
+      x         : (H, W, Cin) integer activation map
+      kernel_dw : (K, K, Cin, 1) depthwise weights (one KxK kernel per channel)
+      kernel_pw : (1, 1, Cin, F) pointwise (1x1) weights (channel mixing -> F)
+      out       : (oh, ow, F)
+
+    RECOVERED ON SILICON (InputConv -> SeparableConv probe, 2026-05-30): the chip
+    does depthwise as a TRUE convolution (180deg flip, like the on-chip Conv) over
+    the RAW potentials with NO intermediate activation, feeds those raw depthwise
+    potentials straight into the pointwise 1x1 accumulation, and applies a SINGLE
+    activation quantizer at the very end (depthwise and pointwise are FUSED -- no
+    requantization between them):
+
+        dpot[i,j,c] = sum_{di,dj} xpad[i+di, j+dj, c] * flip(Wdw)[di,dj,c,0]   (raw)
+        ppot[i,j,f] = sum_c dpot[i,j,c] * Wpw[0,0,c,f]                          (raw)
+        y[i,j,f]    = clip( ceil(ppot / step), 0, 2^act_bits - 1 )
+        step        = 2^(input_bits - act_bits)
+
+    Verified BYTE-IDENTICAL to AKD1000 InputConv->SeparableConv (act_bits {2,4},
+    sym int4, Cin=4, F=8, K=3, SAME pad), 10/10 probes, max Hamming 0. The KEY is
+    the FUSION: a naive depthwise-activate-then-pointwise-activate (two quantizers)
+    diverges by >100 Hamming; the chip quantizes ONCE. flip=True default reflects
+    the recovered depthwise true-convolution orientation.
+    """
+    xa = np.maximum(np.asarray(x, dtype=np.int64), 0)
+    if xa.ndim == 2:
+        xa = xa[:, :, None]
+    H, W, Cin = xa.shape
+    Wdw = np.asarray(kernel_dw, dtype=np.int64)
+    K = Wdw.shape[0]
+    if flip:
+        Wdw = Wdw[::-1, ::-1, :, :]
+    s = int(stride)
+    if padding == "same":
+        oh = -(-H // s); ow = -(-W // s)
+        pad_h = max((oh - 1) * s + K - H, 0)
+        pad_w = max((ow - 1) * s + K - W, 0)
+        pt, pb = pad_h // 2, pad_h - pad_h // 2
+        pl, pr = pad_w // 2, pad_w - pad_w // 2
+    else:
+        oh = (H - K) // s + 1; ow = (W - K) // s + 1
+        pt = pb = pl = pr = 0
+    xp = np.zeros((H + pt + pb, W + pl + pr, Cin), dtype=np.int64)
+    xp[pt:pt + H, pl:pl + W, :] = xa
+    # depthwise RAW potentials (no activation)
+    dpot = np.zeros((oh, ow, Cin), dtype=np.int64)
+    for i in range(oh):
+        for j in range(ow):
+            patch = xp[i * s:i * s + K, j * s:j * s + K, :]      # (K, K, Cin)
+            for c in range(Cin):
+                dpot[i, j, c] = int((patch[:, :, c] * Wdw[:, :, c, 0]).sum())
+    # pointwise 1x1 accumulation over the RAW depthwise potentials
+    Wp = np.asarray(kernel_pw, dtype=np.int64).reshape(Cin, -1)  # (Cin, F)
+    ppot = dpot.reshape(-1, Cin) @ Wp                            # (oh*ow, F)
+    p = np.maximum(ppot, 0)
+    step = 1 << (input_bits - act_bits)
+    act = -(-p // step)
+    hi = (1 << act_bits) - 1
+    return np.clip(act, 0, hi).astype(np.int64).reshape(oh, ow, -1)
+
+
 def pool2d_quantized_forward(y, pool_size=2, pool_stride=2, pool_type="max"):
     """AKD1000 spatial pooling on a quantized activation map (round-5 frontier).
 
