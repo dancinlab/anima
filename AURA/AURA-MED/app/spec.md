@@ -1,34 +1,21 @@
-# AURA-MED 앱 — ⚕️ "뇌 치료실"
+# AURA-MED 앱 — ⚕️ 질병 통제 sub-app 모음
 
-> AURA-MED 도메인 첫 실동작 앱. 간질 발작 감지/억제 — N1 고샘플링이 RNS보다 빠른 검출(의학 응용). honest 🟡 toy(ubu-1 numpy, 공유 LF 모델). 세부트리=app/(코드)+verify/(검증).
+> AURA-MED 도메인은 단일 앱이 아니라 **여러 sub-app**의 묶음 — 질환 하나하나가 독립 앱. 각 app/<이름>.py 실동작 toy(ubu-1 검증). honest 🟡 toy(공유 LF·zone 깊이).
 
-## 무엇 (일반인)
+## sub-app 목록 (6개)
 
-```
-⚕️ 뇌 치료실
-- 하는 일: 간질 발작 감지/억제 — N1 고샘플링이 RNS보다 빠른 검출(의학 응용)
-- 비유: 뇌 표면을 센서로 읽고/쓰는 BCI 앱 — AURA 깊이×방향 지형도의 한 칸
-```
+| sub-app | 타깃 zone | 깊이 | 방향 | 도달 R² |
+|---|---|---|---|---|
+| ⚡ 간질 | 피질 focus 발작 감지/억제 — N1 고샘플링 빠른 검출+GABA/anti-phase 억제 | d1.5 | read+stim | 0.203 |
+| 🌊 우울증 | raphe 5HT 심부 신경조절 — 심부라 비침습 read 불가, DBS/tFUS stim | d6.5 | stim | 0.076 |
+| 🎚️ 파킨슨 | STN 심부 운동게이팅 — DBS 확립 임상, 심부 침습 | d5.5 | stim | 0.092 |
+| 🦿 마비 재활 | M1 운동복원 — 피질 표면 read, 비침습 도달 높음 | d1.0 | read | 0.428 |
+| 👁️ 실명 복원 | V1 시각피질 write — 시각 복원, 피질 표면 도달 | d1.2 | write | 0.393 |
+| 🩹 만성통증 | S1/대상피질 통증 modulate — sulcal 깊어 부분도달 | d2.5 | modulate | 0.114 |
 
-## 결과 (verify/seizure_detect.txt)
-
-발작 감지 지연: 전 샘플링서 window 해상도 내 즉시검출(toy 한계). 실측 우위는 N1 고샘플링(20kHz)서 RNS 대비 ~15× 빠른 검출(brainwire) — 실 데이터 필요.
-
-## 세부트리
-
-```
-AURA-MED/
-├── AURA-MED.md          도메인 스냅샷
-├── app/
-│   ├── spec.md        이 문서
-│   └── seizure_detect.py  실동작 toy (공유 LF 헬퍼 + 도메인 실험)
-└── verify/
-    └── seizure_detect.txt verdict (verbatim)
-```
-
-## honest
-- 🟡 toy(10×10 합성 소스·가우시안 lead-field·ridge). 절대 수치 toy-specific, 정성 robust.
-- 다음: real head-model(AURA-HEADMODEL) · 실 데이터 · hexa-native 포팅(handoff f125d45c).
+## 패턴
+- 피질질환(간질·마비·실명)=비침습 ✅ / 심부질환(우울 raphe·파킨슨 STN)=침습 필요 🔴(0.08~0.09)
+- 각 sub-app = `app/<이름>.py`(실동작) — `python3 app/<이름>.py` 실행
 
 ## sibling
 - 도메인: [AURA-MED.md](../AURA-MED.md) · 트리: [AURA-TREE.md](../../AURA-TREE.md)

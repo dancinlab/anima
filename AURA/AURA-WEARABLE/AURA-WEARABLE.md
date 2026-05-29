@@ -18,9 +18,13 @@
 - 부모: AURA(`./AURA/AURA.md`) · 그룹: 🎯 응용
 - 자매: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-HEADMODEL · AURA-CORTEX · AURA-NAV · AURA-DEEP · AURA-TFUS · AURA-MED
 
-## 세부분류 (app 세부트리)
+## 세부분류 (sub-app 모음)
 
-- `app/spec.md` — 앱 명세(일반인+기술)
-- `app/wearable_collapse.py` — 실동작 toy (검증됨)
-- `verify/wearable_collapse.txt` — verdict
-- 다음: real head-model 검증 · hexa-native 포팅 · 실데이터
+- `app/ar_glasses.py` — 🥽 AR글래스 (V1-6 시각피질에 디스플레이 write — 안경 없이 시야에 영상, R²=0.393)
+- `app/earbuds.py` — 🎧 이어버드 (A1 청각피질에 오디오 inject + 의도 read — 이어폰 사라짐, R²=0.203)
+- `app/exoskeleton.py` — 🦾 외골격/의수 (M1 운동의도 read + S1 고유감각 write — 외골격 제어, R²=0.428)
+- `app/haptics.py` — ✋ 햅틱/e-skin (S1 체감각피질에 촉각 write — 인공피부 사라짐, R²=0.234)
+- `app/smartwatch.py` — ⌚ 스마트워치 (S1/A1에 알림 write — 손목 진동 없이 직접 인지, R²=0.217)
+- `app/voice_assistant.py` — 🎙️ 음성비서 (subvocal M1 read — 말 안 해도 명령 인식, R²=0.412)
+- `app/spec.md` 개요 · `verify/subapps.txt` verdict
+
