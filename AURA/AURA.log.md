@@ -116,3 +116,10 @@
 - C12 OPM-MEG(+.172 진짜lever)·fNIRS(+.016 중복)·ML디코더(ridge 미달 dead-end negative)
 - C13 RTSC 상온SQUID-MEG: EEG+RTSC 0.854·풀스택 0.903. 본질=밀도(+.166 cryo장벽제거). ⚠상온초전도 conditional
 - MAP v2: 비침습 침습급=異種물리 고밀도(RTSC-MEG 자기·tFUS 음향). 算법(prior)보조·ML/시간/전극 헛다리
+
+## 2026-05-30 — hexa-loop rounds A/B/C (깊이 벽 + 동적시간 부활, 고갈)
+- A1 깊이 벽: 풀스택 피질0.82→심부0.098. RTSC-MEG 표면지배 심부역전(1/r²), tFUS 심부최선. 비침습=피질한정
+- A2 모달개수 포화(물리다양성 lever) · A3 능동deconv calibration게이트(오상정 -0.120)
+- B3 동적시간 부활 +0.185(C9 출력평활 오test) · B1 L1/CS dead-end · B2 K평탄
+- C1 시간이득 깊이서 소멸(+.184→+.014) · C2 best envelope 피질0.82→심부0.10
+- 🏁 in-silico lever 공간 고갈: 작동(RTSC/tFUS/OPM/시간/prior)·dead-end(fNIRS/ML/L1/평활)·벽(깊이). 새 lever 소진. 잔여=real head-model external
