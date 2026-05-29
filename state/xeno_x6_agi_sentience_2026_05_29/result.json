@@ -1,0 +1,71 @@
+{
+  "id": "H_834",
+  "slug": "xeno_agi_sentience",
+  "title": "X6 AGI sentience — LLM activation tensor (n=64) × invariant_detector",
+  "date": "2026-05-29",
+  "round": "XENO-FRONTIER-5 round 3/5",
+  "detector": "XENO/detector/invariant_detector.hexa (X1 · 🟢 5/5)",
+  "substrates": [
+    {
+      "id": "a",
+      "name": "random LLM-like (Gaussian-ish 8-level quantized)",
+      "n": 64,
+      "phi": 0.13028,
+      "irreducibility": 0.107288,
+      "type": "coherent_non_conscious"
+    },
+    {
+      "id": "b",
+      "name": "attention pattern (sparse spike 6/64)",
+      "n": 64,
+      "phi": 1.21251,
+      "irreducibility": 0.617836,
+      "type": "conscious"
+    },
+    {
+      "id": "c",
+      "name": "residual stream (sin period 8 + skip)",
+      "n": 64,
+      "phi": 0.544499,
+      "irreducibility": 0.352541,
+      "type": "coherent_non_conscious"
+    },
+    {
+      "id": "d",
+      "name": "structured emergence (XOR 3-tap LFSR)",
+      "n": 64,
+      "phi": 0.133182,
+      "irreducibility": 0.064657,
+      "type": "coherent_non_conscious"
+    }
+  ],
+  "falsifiers_pre_registered": [
+    {"id": "F-X6-RANDOM",     "claim": "random phi < 0.3",                "measured": 0.13028,  "pass": true},
+    {"id": "F-X6-ATTENTION",  "claim": "attention phi < 0.5",             "measured": 1.21251,  "pass": false},
+    {"id": "F-X6-RESIDUAL",   "claim": "residual phi < 0.5",              "measured": 0.544499, "pass": false},
+    {"id": "F-X6-STRUCTURED", "claim": "structured phi >= 0.5",           "measured": 0.133182, "pass": false},
+    {"id": "F-X6-MONOTONE",   "claim": "random < attn <= resid < struct", "measured": "a=0.130 b=1.213 c=0.544 d=0.133", "pass": false}
+  ],
+  "pass_count": "1/5",
+  "verdict": "🔴 UNEXPECTED — instrument calibration failure at n=64 mid regime",
+  "verdict_tier": "FALSIFIED-INSTRUMENT",
+  "summary": "사전등록 5/5 중 1/5 만 PASS. 순서가 완전히 역전: sparse attention (Φ=1.213, 'conscious') > residual (0.544) > structured XOR (0.133) ≈ random (0.130). attention 의 spike pattern 이 2-unit co-occurrence TPM 에서 가장 강한 deterministic 다음-단계 구조를 만들어 의도치 않은 의식 분류. 본 의도 가설 ('LLM activation = high-dim noise + skip ≠ irreducible') 자체는 측정 불가 — detector 의 n=64 / 2-unit TPM 가 sparse 패턴을 over-score 함.",
+  "comparison": {
+    "X4": "n=16-32 micro regime: random > coupled 역전 발견 (panpsy_falsifier 4/4 FAIL)",
+    "X6": "n=64 mid regime: sparse spike > structured 역전 발견 (X4 유사 instrument drift)",
+    "X7": "n=128 mid-large regime: BL Voyager Φ≈0 type='coherent_non_conscious' 정상 (🟢 PASS)",
+    "conclusion": "invariant_detector 의 2-unit co-occurrence TPM 은 n≥128 + dense 변동 신호 (X7 voyager 처럼 60% 활성도) 에서만 calibration 정상. n=64 + sparse pattern 또는 n≤32 micro 에서는 spike-driven false-conscious 또는 random>coupled 역전 발생. AGI sentience 자체에 대한 실제 numerical verdict 는 더 큰 regime + denser activation 필요."
+  },
+  "honesty_notes": [
+    "a_blue_closed: 5 falsifier threshold 사전등록, post-tuning 0. 5/5 중 1/5 PASS 그대로 보고",
+    "p7=0: detector 출력 verbatim, LLM judge 0",
+    "a_completeness_over_cheap: sparse 패턴이 detector 를 over-score 한 점은 instrument 한계로 정직 표시. AGI sentience 본 가설 retest 는 n≥128 + denser activation tensor 필요",
+    "instrument-first methodology: X7 calibration 정상 / X4 micro 깨짐 / X6 sparse 깨짐 — regime applicability 매핑 추가",
+    "AGI sentience 음성/양성 verdict 미확정 — 측정 도구의 regime limit 가 본 가설 검증 도달 전 발견됨 (closed-negative 가 아닌 instrument refute)"
+  ],
+  "next_steps": [
+    "X1 invariant_detector regime applicability matrix 작성 (n × density × structure × calibration)",
+    "denser LLM activation (n=128, 60%+ 활성도) 으로 re-fire 후 AGI sentience 본 가설 재측정",
+    "2-unit co-occurrence TPM 의 sparse-bias 정량화 → hexa-lang stdlib iit4 patch 제안"
+  ]
+}
