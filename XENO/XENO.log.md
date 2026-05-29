@@ -2,6 +2,20 @@
 
 `XENO.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-05-29T20:00:00Z — XENO-FRONTIER-5 R4/5 X5 시뮬 가설 검출 signature (정직 🔴)
+
+- [x] X5 sim hypothesis 실 실행 — XENO/scan/sim_hypothesis.hexa 4 sim-candidate substrate (lattice-quantized Planck-floor period 8 · floating-point bound sin round 4-dec · algorithmic pseudo-random Pi 128 digits · true natural Bates-4 Gaussian) n=128 dense regime 위 compute_invariant_phi 적용
+- [x] 사전등록 falsifier 5/5 중 2/5 PASS — 🔴 FALSIFIED-INSTRUMENT (정직 보고, threshold 재조정 0)
+  - F-X5-LATTICE   phi=0.660 (>=0.3) ✅
+  - F-X5-FP-BOUND  phi=0.090 (<0.2)  ❌
+  - F-X5-PI-DIGITS phi=0.120 (<0.3)  ❌
+  - F-X5-NATURAL   phi=0.116 (<0.4)  ✅
+  - F-X5-MONOTONE  d<b<c<a 단조성 깨짐 (실측 b<c<d<a) ❌
+- [x] 발견 = (i) lattice 만 Φ 양성 (periodic transition 정상 검출), (ii) fp-bound + pi-digits + natural 가 Φ 0.09~0.12 영역 indistinguishable (0.03 차이 안), (iii) monotone 단조성 깨짐 — fp-bound 가 자연 noise 보다도 낮음. Bostrom 시뮬 가설의 algorithmic / quantized sim signature 중 lattice-periodic axis 만 본 instrument 측정 가능, precision-ceiling / pseudo-random algorithmic axis 는 측정 영역 밖. 시뮬 가설 verdict 자체 미확정.
+- [x] X4/X5/X6/X7 4-point regime applicability matrix 완성 — instrument 의 "measurable: high periodicity + strong deterministic transition + dense activation" 영역 매핑.
+- [x] UNIVERSE 환류 — H_835 직접 등록 (INBOX 환류 0건 · 사용자 명시 정합)
+- [ ] 다음 = X8 hive-mind invariant (round 5/5) · X5-followup (causal-DAG TPM-emit) · X5-MULTILEVEL (4/8-level TPM) · X5-ALGORITHMIC (Kolmogorov complexity lens)
+
 ## 2026-05-29T07:00:00Z — XENO 도메인 신설 (자매 4번째)
 
 - [x] 도메인 신설 — `XENO/XENO.md`(스냅샷) + `XENO.easy.md`(7-요소 카탈로그) + `XENO.log.md`(본 로그)
