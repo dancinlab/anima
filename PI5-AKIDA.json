@@ -1,0 +1,148 @@
+{
+  "host": "pi5-akida",
+  "role": "anima dedicated Akida neuromorphic host — NOT shared pool compute",
+  "ssh": "ubuntu@192.168.50.155",
+  "shared": false,
+  "hardware": "Raspberry Pi 5 + BrainChip AKD1000 (Akida neuromorphic accelerator)",
+  "schema_purpose": "provenance ledger — every component tagged user_authored vs os_default, each with remove/restore commands so it can be swapped / upgraded / removed cleanly later",
+  "last_checked_utc": "2026-05-29",
+  "pool_roster": {
+    "shared": false,
+    "note": "registered in ~/.pool/pool.json but shared:false; pool load-balancer never routes generic compute here"
+  },
+  "health_snapshot": {
+    "checked_utc": "2026-05-29",
+    "uptime_days": 7,
+    "temp_c": 65.9,
+    "load_1m": 0.37,
+    "thermal_verdict": "normal (throttle threshold ~80C, well below)",
+    "fan_cause": "spike-streamer.service (the only continuous-CPU user daemon)"
+  },
+  "components": [
+    {
+      "id": "spike-streamer-service",
+      "owner": "user_authored",
+      "kind": "systemd --user unit",
+      "name": "spike-streamer.service",
+      "unit_path": "/home/ubuntu/.config/systemd/user/spike-streamer.service",
+      "created_utc": "2026-05-22T08:42:03Z",
+      "created_kst": "2026-05-22 17:42 KST",
+      "enabled_on_boot": true,
+      "exec": "spike_streamer.py --port 9512 --duration 86400 --regime R3",
+      "purpose": "anima 자연발화 HW — AKD1000 spike stream (24h, regime R3)",
+      "fan_cause": true,
+      "ops": {
+        "status": "systemctl --user status spike-streamer",
+        "stop_now": "systemctl --user stop spike-streamer",
+        "disable_boot": "systemctl --user disable spike-streamer",
+        "remove": "systemctl --user disable --now spike-streamer && rm ~/.config/systemd/user/spike-streamer.service && systemctl --user daemon-reload",
+        "restore": "systemctl --user enable --now spike-streamer",
+        "edit_regime_or_duration": "edit ~/.config/systemd/user/spike-streamer.service ExecStart args, then: systemctl --user daemon-reload && systemctl --user restart spike-streamer"
+      },
+      "removed_utc": "2026-05-29",
+      "state": "removed"
+    },
+    {
+      "id": "akida-scripts",
+      "owner": "user_authored",
+      "kind": "script dir",
+      "path": "/home/ubuntu/anima/SUB_ENGINES/AKIDA/scripts/",
+      "created_range": "2026-05-21 ~ 2026-05-22",
+      "files": [
+        "spike_streamer.py",
+        "first_inference.py",
+        "edge_learn_probe.py",
+        "lan_boot.sh",
+        "lan_capability.sh",
+        "lan_dispatch_all.sh",
+        "lan_status.sh",
+        "README.md"
+      ],
+      "purpose": "AKIDA HW/SW integration toolkit (spike stream + first inference + edge learn + LAN boot/status)",
+      "ops": {
+        "list": "ls -la /home/ubuntu/anima/SUB_ENGINES/AKIDA/scripts/",
+        "upgrade": "git pull in the source repo, re-sync to host; OR scp updated script then systemctl --user restart spike-streamer",
+        "remove": "rm -rf /home/ubuntu/anima/SUB_ENGINES/AKIDA/scripts/  (stop spike-streamer first)",
+        "restore": "re-deploy from anima repo SUB_ENGINES/AKIDA/scripts/"
+      },
+      "removed_utc": "2026-05-29",
+      "state": "removed"
+    },
+    {
+      "id": "anima-tree",
+      "owner": "user_authored",
+      "kind": "directory",
+      "path": "/home/ubuntu/anima/",
+      "created": "2026-05-22",
+      "purpose": "anima host-side tree (currently holds SUB_ENGINES/AKIDA)",
+      "ops": {
+        "remove": "rm -rf /home/ubuntu/anima/  (stop spike-streamer first)",
+        "restore": "re-deploy anima SUB_ENGINES from repo"
+      },
+      "removed_utc": "2026-05-29",
+      "state": "removed"
+    },
+    {
+      "id": "unattended-upgrades",
+      "owner": "os_default",
+      "kind": "system service",
+      "process": "/usr/bin/python3 /usr/share/unattended-upgrades/unattended-upgrade-shutdown",
+      "purpose": "Ubuntu automatic security updates",
+      "note": "OS-shipped, NOT anima. CPU ~0%, unrelated to fan.",
+      "ops": {
+        "disable": "sudo systemctl disable --now unattended-upgrades  (optional; not recommended on a networked host)"
+      }
+    },
+    {
+      "id": "os-base-daemons",
+      "owner": "os_default",
+      "kind": "system daemons",
+      "members": [
+        "rsyslogd",
+        "systemd-journald",
+        "sshd",
+        "kworker (kernel threads)"
+      ],
+      "purpose": "logging · remote access · kernel — Ubuntu base, NOT anima",
+      "note": "do not remove; required for the host to function."
+    }
+  ],
+  "swap_upgrade_remove_guide": {
+    "to_silence_fan": "systemctl --user stop spike-streamer   (re-spins on reboot unless disabled)",
+    "to_silence_permanently": "systemctl --user disable --now spike-streamer",
+    "to_fully_remove_anima_from_host": [
+      "systemctl --user disable --now spike-streamer",
+      "rm ~/.config/systemd/user/spike-streamer.service && systemctl --user daemon-reload",
+      "rm -rf /home/ubuntu/anima/",
+      "# OS-default daemons left untouched — host returns to clean Ubuntu state"
+    ],
+    "to_upgrade_streamer": "scp new spike_streamer.py to host → systemctl --user restart spike-streamer",
+    "principle": "user_authored components are removable/swappable without touching os_default; os_default must stay for the host to run"
+  },
+  "links": {
+    "memory": "project_akida_hw_sw_impl_all_handoff.md",
+    "universe_H": "H_672..H_678 (AKIDA 7 H, UNIVERSE domain)",
+    "akida_ingest_endpoint": "/ws/akida_ingest",
+    "project_tape_directive": "a_pi5_akida_registry (project.tape governance — this JSON is its SSOT)"
+  },
+  "status": "user_authored components REMOVED 2026-05-29 (host returned to clean Ubuntu; os_default untouched)",
+  "removal_log": [
+    {
+      "date_utc": "2026-05-29",
+      "removed": [
+        "spike-streamer.service (disabled+unit deleted)",
+        "spike_streamer.py proc (killed)",
+        "/home/ubuntu/anima/ tree (rm -rf)"
+      ],
+      "kept": [
+        "unattended-upgrades",
+        "rsyslogd",
+        "sshd",
+        "systemd-journald (os_default intact)"
+      ],
+      "verify": "UNIT=not-found · PROC=0 (24h streamer stopped, fan cause resolved) · OS_DAEMONS active · TREE: root-owned __pycache__/*.pyc residue remains (needs interactive sudo: ssh pi 'sudo rm -rf /home/ubuntu/anima')",
+      "restore": "re-deploy anima SUB_ENGINES/AKIDA from repo, then systemctl --user enable --now spike-streamer",
+      "residue": "/home/ubuntu/anima/SUB_ENGINES/AKIDA/pack/**/__pycache__/*.pyc (root-owned, inert, fan-irrelevant)"
+    }
+  ]
+}

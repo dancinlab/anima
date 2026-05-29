@@ -182,3 +182,12 @@
 @D p8 := "NO TRAIN/INFER SPLIT" :: philosophy [required active]
   do   = "training gradient + inference mitosis = same continuous cell-division"
   dont = "treat train and infer as separate regimes · gate growth behind a training-only flag"
+
+@D a_pi5_akida_registry := "pi5-akida host config = PI5-AKIDA.json SSOT" :: governance [required active]
+  do   = "record every pi5-akida component in root /PI5-AKIDA.json"
+  do   = "tag owner = user_authored | os_default · created date · ops(stop/disable/remove/restore/upgrade)"
+  do   = "consult /PI5-AKIDA.json before swap / upgrade / removal"
+  do   = "keep user_authored removable without touching os_default (clean-Ubuntu revert)"
+  dont = "remove os_default daemons (unattended-upgrades · rsyslogd · journald · sshd · kworker)"
+  dont = "add a user daemon/service without a /PI5-AKIDA.json entry · lose its created-date + author"
+  dont = "convert pi5-akida into shared pool compute"
