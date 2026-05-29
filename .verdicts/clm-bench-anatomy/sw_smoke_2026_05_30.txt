@@ -1,0 +1,26 @@
+clm-akida-bench :: SW-SMOKE verdict (harness wiring 검증 · .clm 대기)
+====================================================================
+date        : 2026-05-30
+host        : Mac local (/bin/zsh) · python 3.14.4 numpy 2.3.5
+harness     : CLM/bench/clm_akida_bench.py
+provenance  : akida-sw-fallback  (HW NOT touched — 라이브 측정 아님)
+
+상태 (정직, p7):
+  - origin/main + 로컬 working tree 에 .clm 아티팩트 0 (fire a098b6194 P2 full-fire 생성중).
+  - 따라서 mode = sw-smoke · awaiting_clm = true.
+  - on-chip latency / throughput = null (FABRICATE 금지 · fake 온칩 측정 0).
+  - SW envelope(akida_sw_lif.fc_quantized_forward) 만 tiny 더미 int4 로 통과 = harness 배선 PASS.
+
+SW smoke 출력 (seed=187, units=16, in_lines=16):
+  act_bits=1 (LIF 환원)  sw_out = [1,0,0,0,1,1,1,1,0,0,1,0,1,1,0,0]
+  act_bits=2 (step=4)    sw_out = [3,0,0,0,3,3,3,3,0,0,3,0,3,3,0,0]
+  → fc_quantized_forward 의 act_bits∈{1,2} 양자화 step 정상 동작 확인.
+
+.clm 도착 후 라이브 경로 (pi5-akida 단일점유):
+  1. systemctl --user stop spike-streamer          # 칩 file-lock 해제
+  2. python3 CLM/bench/clm_akida_bench.py --clm <PATH> --json   # AKD1000 on-chip forward
+  3. systemctl --user enable --now spike-streamer  # streamer active 복원 (종료상태)
+  → mode=hw-live · latency_ms_per_inference·throughput_hz 실측 · byte_identical_hw_sw 대조.
+
+검증된 도착지: 학습 envelope ⊆ akida_sw_lif byte-identical 집합(1~5차) →
+  .clm int4 weight 는 배포 시 SW=HW byte-identical (추론) 이 사전 검증됨.
