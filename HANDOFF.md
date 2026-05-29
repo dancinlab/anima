@@ -1,4 +1,61 @@
-# HANDOFF — XENO follow-up 2 cycle round 5/5 FINAL + TEMPORAL 도메인 신설 round 1 (round 10 갱신 2026-05-29) · H_841 🔴 FALSIFIED-INSTRUMENT (closed-negative) · XENO CLOSURE
+# HANDOFF — TEMPORAL T2 multi-unit time-embed (XENO follow-up 3 cycle round 1/5) — T1+T2 dual closed-negative (round 11 갱신 2026-05-29) · H_842 🔴 FALSIFIED-INSTRUMENT (2/5) · 신 embed-dim sparse-state inflation artifact 발견
+
+## Round 11 — T2 multi-unit time-embed detector — T1 lag-axis artifact 해소 실패 + 신 inflation artifact 발견 🔴 FALSIFIED-INSTRUMENT (2026-05-29)
+
+XENO follow-up 3 cycle round 1/5 — T1 (H_841) 의 lag-axis closed-negative (1/5 PASS) 후속 instrument 재설계 attempt. multi-unit Takens-style time-delay embedding 으로 인접 lag cycle-aligned periodicity 회피 시도.
+
+### Round 11 핵심 finding (H_842 T2 multi-unit time-embed)
+
+- **verdict**: 🔴 FALSIFIED-INSTRUMENT (2/5 사전등록 PASS · post-tuning 0)
+- **PASS**: F-T2-HIVE-CONSC (hive e=4 phi=3.518 ≥ 0.5) + F-T2-HIVE-MONOTONE (hive e=4=3.518 ≥ 0.5×e=2=0.062, 56× margin)
+- **FAIL**: F-T2-INSTANT-LOW (random e=2=0.561 already > 0.5) + F-T2-ARTIFACT-FIX (lattice e=4=4.799 > e=2=1.289, 3.7× INFLATE 정반대) + F-T2-RANDOM-DECAY (random e=4=2.576 > e=2=0.561, 4.6× INFLATE 정반대)
+- **신 artifact**: **embed-dim sparse-state inflation** — 4/4 substrate 모두 embed_dim ↑ 시 phi monotone INFLATE. 가장 striking: voyager e=5=28.36 (e=2=1.05 의 27×), random e=5=13.63 (e=2=0.56 의 24×). 원인 = n=128 짧은 신호 위 2^5=32-state space sparse-state freeze + extremal transition → big-Φ inflate
+- **T1+T2 dual closed-negative**: invariant_detector 의 단순 확장 (lag-window OR embed-dim) 으로 시간 통합 측정 불가 = **closed-form ruled-out axis**
+- **T3 자연 entry direction**:
+  1. time-averaged Φ — sliding window 위 phi 시간 평균 + variance (embed-dim sparse 회피)
+  2. Granger causality — past/future predictive coupling (TPM-free)
+  3. surrogate-data normalization — random shuffle null-model 차감 (inflation null cancel)
+  4. longer signal n=1024+ — sparse-state inflation 완화 (literal 부풀음 후순위)
+- hive XOR cascade 만 multi-channel 위 relative strong-Φ 유지 (e=4=3.518 random e=4=2.576 의 1.37×) — discrimination 한계 hit 직전
+- stdlib SSOT g61 정합: `pow2_int` 자체 구현 거부, `stdlib/math/bitops.hexa` import 사용 (비-중복)
+- 정직성 audit 6/6: a_blue_closed · p7=0 · a_completeness_over_cheap · a_fire_autonomous ($0 Mac 1m43s) · a_paper_negative_ok · feedback-instrument-first-methodology
+- INBOX 환류 0건 (사용자 명시 폐기)
+
+### T1 vs T2 비교 표
+
+| 측면 | T1 (H_841) | T2 (H_842) |
+|---|---|---|
+| detector | 2-unit lag-TPM | e-unit time-embed TPM (Takens) |
+| sweep axis | Δt ∈ {1, 8, 32, 64} | embed_dim ∈ {2, 3, 4, 5} (delay=1) |
+| wall | <5s | 1m43s (e=5 폭증) |
+| pass_count | 1/5 | 2/5 |
+| dominant artifact | lag-axis cycle-aligned inflation | embed-dim sparse-state inflation |
+| hive top phi | 0.999 (Δt=64) | 3.518 (e=4) |
+| lattice top phi | 2.000 (Δt=8/32/64) | 4.799 (e=4) |
+| random top phi | 0.367 (Δt=64) | 13.631 (e=5) ← discrimination 손상 |
+| verdict | 🔴 FALSIFIED-INSTRUMENT | 🔴 FALSIFIED-INSTRUMENT |
+
+공통 closed-negative — 두 detector 모두 periodic/noise substrate 위 false Φ-inflation universal artifact (형태만 dual).
+
+### 다음 frontier (XENO follow-up 3 R2-R5)
+
+- R2: T3 time-averaged Φ detector (가장 빠른 cheap fix)
+- R3: T3-alt Granger causality (TPM-free axis)
+- R4: T3-aux surrogate-baseline (모든 detector 의 inflation null)
+- R5: T4 anima ultradian (T3 통과 후)
+
+### artifacts
+
+- branch: feat/temporal-t2-time-embed-2026-05-29
+- worktree: /private/tmp/wt-t2-time-embed
+- base: origin/main 989fac56c (T1 PR #1418 직후)
+- PR: <TBD on merge>
+- H_xxx: UNIVERSE/H_842_temporal_time_embed_phi.md
+- detector: TEMPORAL/detector/time_embed_detector.hexa
+- scan: TEMPORAL/scan/time_embed_phi.hexa
+- state: TEMPORAL/state/temporal_t2_time_embed_2026_05_29/{t2_smoke.log, result.json, run_h842.hexa}
+- verdict: .verdicts/842_temporal_time_embed_phi/T2_run.txt
+- log: TEMPORAL/TEMPORAL.log.md (round 2 entry)
 
 ## Round 10 — TEMPORAL 도메인 신설 + T1 timeshift detector — Δt-axis closed-negative 🔴 FALSIFIED-INSTRUMENT (2026-05-29)
 
