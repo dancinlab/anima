@@ -85,3 +85,8 @@
 - B5.1 귀뒤 정맥동 endovascular 🟠 grounded 분석(합성toy 안만듦, B4 교훈): 해부경로 실재(가로/S자정맥동·유양도수정맥)+B3 grounding(혈관내≈ECoG 측두/후두)+깊이사다리(귀뒤 1지점 비침습①→정맥동②최소침습 sweet-spot→관통③). hypothesis(Synchron=SSS, 귀뒤정맥동 실측0)
 - B5.3 demiurge 환류 → handoff filed: demiurge [844fd61c] (cross-repo, g58 직접편집금지)
 - B5.2 α 다피험자 = deferred(network). round-2 인라인 lane 소진 → 나머지(A11/B5.2: 다피험자·pod·intracortical) 전부 external-blocked
+
+## 2026-05-30 — /all-fg-go 3 branches
+- ▶1 다피험자 α(PR#1480) 🔴 NULL: N=3 download 성공, B4.1 awake>sed 복제실패(EAR0/3·MID1/3) → 단일피험자 인공물. awake-EO α억제 confound
+- ▶2 pod n=8 ⚠ SKIP(scope-check): 단일창 big-Φ 비신뢰 확정+B6 다피험자 null → n=8 비정보적, value-bar 미달(override 가능)
+- ▶3 intracortical ceiling(B7): relocate-N1 직접답은 proxy(scalp/혈관내)로 본질 불가(해상도µm·심부·인과자극 3장벽). proxy-scope 닫힘, intracortical은 동물/임상(lane밖 frontier, done아닌 ceiling)
