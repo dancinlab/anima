@@ -574,3 +574,45 @@ artifacts: `state/m5_prodaux_fire_2026_05_29/{BUILD_BLOCKER.md, shims.h, trainer
 **verdict**: 🟠 **SWEEP-OUT-OF-RANGE** — V 축 ⊥ 확정. H_686/H_687 의 escape efficacy 는 toy 우회 불가, production fire 직접 측정 외 경로 없음 — PR #1395 결론 ("production fire = 유일 valid test") V-axis sweep 으로 재확인.
 
 artifacts: `CORE/DECODER/h686_h687_v_scale.hexa`, `CORE/DECODER/H686_H687_V_SCALE_RESULT.md`, `state/h686_h687_v_scale_2026_05_29/{MANIFEST.txt, run_sweep.hexa, V{V}_{cell}.out × 20}`.
+
+### 2026-05-29 (15) — H_686/H_687 3-AXIS (corpus·d·n_layer) toy sweep — 🟠 SWEEP-OUT-OF-RANGE (4-axis total ⊥)
+
+**목적**: PR #1409 (entry 14) V-axis ⊥ 확정 후 — toy harness 의 다른 3 축 (corpus distribution · d head-dim · n_layer depth-proxy) 을 sweep 해서 collapse 재현 가능한 OFFENDING-LEVER 식별.
+
+**harness**: `CORE/DECODER/h686_h687_axis_sweep.hexa`. PR #1395/#1409 verbatim base + 3 axis 매개변수:
+- AXIS_CORPUS ∈ {uniform, mild_skew (4×), current_skewed (20×), zipf_strong (60·30·20·15·12·10)}
+- AXIS_D ∈ {6, 24, 64}
+- AXIS_NLAYER ∈ {1, 2, 4} (depth proxy via shared-weight silu stack on W_top[:d,:d])
+
+sanity gate: corpus=current_skewed, d=6, n_layer=1, cell=none → LZ=0.0360459 distinct=4 byte-eq vs PR #1395 ✓ (F-AXSW-1 PASS).
+
+**측정** (20/20 cell):
+
+| axis | value | none LZ / dT | both LZ / dT | collapse? |
+|------|-------|--------------|--------------|-----------|
+| corpus | uniform | 0.121596 / 6 | 0.121596 / 6 | no |
+| corpus | mild_skew | 0.0864801 / 6 | 0.0864801 / 6 | no |
+| corpus | current_skewed | 0.0360459 / 6 | 0.0360459 / 6 | no |
+| corpus | zipf_strong | **0.0101055** / 6 | 0.0101055 / 6 | no (cusp) |
+| d | 6 | 0.0360459 / 6 | 0.0360459 / 6 | no |
+| d | 24 | 0.0360459 / 6 | 0.0360459 / 6 | no |
+| d | 64 | 0.0360459 / 6 | 0.0360459 / 6 | no |
+| n_layer | 1 | 0.0360459 / 6 | 0.0360459 / 6 | no |
+| n_layer | 2 | 0.0360459 / 6 | 0.0360459 / 6 | no |
+| n_layer | 4 | 0.0360459 / 5 | 0.0360459 / 4 | no (cusp) |
+
+collapse 정의 = `distinct_tok ≤ 2 OR LZ_norm < 0.01`.
+
+**결과**:
+- (1) **3축 모두 ⊥** — baseline (cell=none) 어떤 (axis, value) 에서도 collapse 임계 미충족. F-AXSW-3 FAIL (vacuous F-AXSW-4).
+- (2) **zipf_strong 이 임계 근접** — LZ=0.0101055 (~임계 0.01) 그러나 distinct_tok=6 유지 → token 다양성 보존된 압축 (skew↑ → c0 토큰 반복↑ → LZ 압축↑) 이지 collapse 아님.
+- (3) **n_layer=4 미 수렴** — final CE ~1.97 (lr=0.5 600 step 부족), distinct_tok 약간 감소 (5/4) 했으나 임계 위.
+- (4) **d 축 완전 무영향** — d ∈ {6, 24, 64} 모두 byte-eq LZ/distinct.
+
+**진단**: V-axis (PR #1409) + corpus/d/n_layer (현 PR) **총 4-axis sweep 모두 ⊥**. M4b production collapse 는 (a) scale-coupled multi-axis interaction, (b) AdamW + warmup 의 trajectory 의존, (c) router init bias mid-train state, (d) soft top-k routing dynamics 중 하나 이상에 의함 — 단축 sweep 분해 불가. **production fire 단독 단정 path 잔존**.
+
+**cost / wall**: $0 mac-local, sweep 총 wall ~20s, 20/20 rc=0.
+
+**verdict**: 🟠 **SWEEP-OUT-OF-RANGE (4-axis total)** — toy harness 가 production collapse mechanism 의 expressivity 범위 밖. H_686/H_687 본선 단정은 production fire 직접 단정 경로 유일.
+
+artifacts: `CORE/DECODER/h686_h687_axis_sweep.hexa`, `CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md`.
