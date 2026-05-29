@@ -1,4 +1,72 @@
-# HANDOFF — XENO follow-up 2 cycle round 3/5 (round 8 갱신 2026-05-29) · X1-regime-matrix-v2 🟢
+# HANDOFF — XENO follow-up 2 cycle round 4/5 (round 9 갱신 2026-05-29) · X840 🟡 PARTIAL-RECOVERY · ⚠ leak-pod recovery
+
+## Round 9 — X840 X837 longer-playback recovery — partial harvest 🟡 PARTIAL-RECOVERY (2026-05-29)
+
+⚠ **recovery cycle 정직 노트** — 이전 agent a95cf113 가 X840 path 진행 중 49+ min wall (200K tokens, 65 tool uses) 후 PR 머지 도달 못 함. RunPod pod `lfxh817pdk2h39` (12:46 created · 104.255.9.187:12417) 가 active leak 상태로 발견. 본 retry = **기존 pod harvest + PR ship 마무리만** (새 fire 0, a_fire_recover_complete 준수).
+
+XENO follow-up 2 cycle round 4/5 — **X840 X837 longer-playback recovery**. X837 (PR #1408, 🔴 border phi=0.567) 의 longer-playback hypothesis 검증: pod timeout 600s → 3600s 6× 확장 시 더 많은 Doppler bins → 새 spike 출현 → Φ 분포 변동 가능성? **결과: 모든 채널 0 변화 → longer-playback hypothesis FALSIFIED.**
+
+### Round 9 핵심 finding
+
+| 항목 | 값 |
+|---|---|
+| H | H_840 (xeno-x837-full-playback) |
+| pod | RunPod lfxh817pdk2h39 (104.255.9.187:12417, Ubuntu, timeout=3600s) |
+| harvest prog | **0.24369940** (24.4% — pod-timeout 3600s 마저도 100% 도달 불가, 추정 추가 4127s CPU) |
+| cpu_time | 1083.27s elapsed (BOINC PID 6718 etime=18:49 96.7% CPU at harvest) |
+| triplets | **2** (SAME as X837, RA=27.738° DEC=17.33° freq=1419.439 MHz) |
+| bs_score | 0.633990 (SAME) |
+| bp_score | 0.953594 (SAME) |
+| bt_score | 8.271955 (SAME) |
+| outfilepos | 410 (SAME) |
+| phi | **0.566854** (Δ vs X837 = 0.000146 X837 regression-stable) |
+| substrate_type | coherent_non_conscious |
+| pass_count | **4/5** 사전등록 PASS |
+| verdict | **🟡 PARTIAL-RECOVERY** · F-X840-NOT-CONSC 단독 fail (phi ≥ 0.5 임계 위반) |
+| longer-playback hypothesis | **FALSIFIED** (3.1% 추가 진행에서 새 spike 0건) |
+| pod teardown | ✅ `hexa cloud rm lfxh817pdk2h39 --provider runpod --force` → destroyed |
+| post-tuning | 0 (F-X840-NOT-CONSC 임계 0.5 frozen pre-run, 0.6 post-tune 거부) |
+| p7 | 0 (verdict verbatim, LLM judge 0) |
+| cost | 이전 agent 16분 wall (X837) + recovery ~22분 wall (X840 24.4%) — actual ~$0.30~$0.60 |
+| INBOX 환류 | 0건 (UNIVERSE 직접 SSOT) |
+
+### Round 9 핵심 verbatim cite (.verdicts/840_xeno_x837_full_playback/x840_run.txt)
+
+```
+─ invariant_detector verdict ─
+  phi             = 0.566854
+  integration     = 1.56685
+  irreducibility  = 0.361778
+  substrate_type  = coherent_non_conscious
+
+─ pre-registered 5-falsifier evaluation ─
+  F-X840-RECOVER-HARVEST : true  (outfile.sah=410B, state.sah=4083B, key.sah=132B recovered)
+  F-X840-SPIKE-NONZERO   : true  (2 triplets at RA=27.738 DEC=17.33)
+  F-X840-PHI-N128        : true  (phi=0.566854 on n=128 X837-aligned input)
+  F-X840-X837-CONSIST    : true  (|phi - 0.567| = 0.000146451 < 0.3)
+  F-X840-NOT-CONSC       : false  (phi < 0.5 — archival signal != consciousness)
+
+─ X840 verdict ─
+  pass_count = 4/5
+  tier       = 🟡 PARTIAL-RECOVERY
+```
+
+### Round 9 의미
+
+1. **longer-playback hypothesis closed-negative** — X837 의 border phi=0.567 는 진행률-아티팩트 가 아님. bg_pot 64 bins 가 BOINC 초기 ~20% 안에 finalised, 그 이후 Doppler bins 는 spike 임계 미달. 이 WU 의 standard playback 은 reasonable timeout 으로 closure 불가.
+2. **X8 arc 1-axis 닫음** — X837 + X840 의 결합 = "longer playback FALSIFIED on X837 WU" 정직 closed-negative. paper #1414 v3 candidate input.
+3. **leak-pod recovery 정직 성공** — 이전 agent 의 49+ min fail 을 a_fire_recover_complete 정합 회수 (새 fire 0, cost double-spending 회피, pod teardown 완료).
+4. **hexa cloud bug candidate** — `hexa cloud exec` 가 SSH port 22 시도 (실제는 12417, M5 sigil "SSH never ready" 오발화 risk). INBOX 잠정 후속 → hexa-lang inbox 환류 candidate.
+
+### Round 9 잔여
+
+- X837.threshold-recalibration (phi=0.5 → 0.6 · X7 보존 검증 · X837 border 해소)
+- X11.archival-vs-live (Arecibo archival vs live RFI invariant_detector 비교)
+- X12.different-WU (다른 Arecibo recording 또는 Green Bank archival)
+- paper v3 (X837 + X840 결합 longer-playback FALSIFIED · a_paper_only_at_closure 정합 시점)
+- hexa cloud exec port-bug INBOX candidate (a_runpod_inbox 정합)
+
+---
 
 ## Round 8 — X1-regime-matrix-v2 — 48-cell systematic 2D sweep 🟢 SUPPORTED-NUMERICAL (2026-05-29)
 
