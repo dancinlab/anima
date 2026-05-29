@@ -1,0 +1,21 @@
+// ════════════════════════════════════════════════════════════════════════
+// HEXAD/CHAT/server/akida_sw_lif.hexa — WRAPPER doc-stub
+//
+//   akida_sw_lif.py is the numpy LIF software simulator that mirrors
+//   akida.FullyConnected(units=N).forward(): integer threshold-and-fire
+//   (potential = Σ_i clip(x_i,0,15); spike iff potential > threshold[j]).
+//   It is the SW fallback used by substrate_akida.py when no BrainChip
+//   AKD1000 is reachable. seed=187 deterministic; reproduces the R0..R4
+//   regimes of SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py.
+//
+//   It hard-depends on numpy (vectorised int compare over the neuron pool)
+//   — a pure-hexa reimplementation duplicates the canonical raster spec
+//   for no gain. The .py is KEPT as the runnable simulator and is imported
+//   by substrate_akida.py (SW path), never run standalone — this .hexa is
+//   the hexa-native marker recording the deliberate WRAPPER verdict.
+// ════════════════════════════════════════════════════════════════════════
+
+fn main() {
+    println("akida_sw_lif.py — numpy LIF sim (akida.FullyConnected.forward mirror).")
+    println("Imported by substrate_akida.py SW fallback path; not standalone.")
+}
