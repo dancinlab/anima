@@ -1,0 +1,21 @@
+{
+  "id": "ketamine-slot -> Farnes eyes-open/closed (dataset mismatch)",
+  "dataset": "Zenodo 4245091 = Farnes et al PLOS ONE (Dryad), spontaneous EEGLAB .set",
+  "critical_finding": "Zenodo 4245091 is NOT the Sarasso ketamine TMS-EEG the spec named. It is the Farnes resting-state dataset with ONLY eyes-open / eyes-closed labels — no ketamine/wake contrast exists. The original S20/ketamine hypothesis is UNTESTABLE from this DOI.",
+  "method": "LZ76 median-binarize, 16 ch, central 60s, downsample to ~128 Hz, n=5 EO + 5 EC subjects",
+  "hypothesis_substituted": "LZ_eyesOpen != LZ_eyesClosed (eyes-closed alpha -> expected lower complexity)",
+  "falsifier": "no difference",
+  "measured": {
+    "eyesOpen_mean": 0.6370,
+    "eyesOpen_per_subj": [0.6063, 0.6485, 0.5895, 0.6843, 0.6562],
+    "eyesClosed_mean": 0.6552,
+    "eyesClosed_per_subj": [0.6063, 0.6315, 0.7170, 0.6562, 0.6650],
+    "delta_EO_minus_EC": -0.0182,
+    "welch_t": 0.626,
+    "n_per_group": 5
+  },
+  "verdict": "NULL (no significant EO/EC difference, |t|=0.63 < 2)",
+  "note": "No significant eyes-open vs eyes-closed LZ76 difference at toy scale (t=0.63, n=5/5). EC trends slightly HIGHER, opposite the naive alpha->lower-complexity expectation, but not significant. Dataset is wrong for the intended ketamine hypothesis anyway. Honest null.",
+  "honest": true,
+  "cost": "$0 local"
+}
