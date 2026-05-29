@@ -131,3 +131,16 @@
 - 잔여: X10.threshold-recalibration (phi 임계 0.5 → 0.4 X7 보존 검증) · X10.kuramoto-sweep (K coupling 0.5~10.0 phi-vs-K curve) · X10.density-axis (XOR carry bias sweep) · X10.cell-count-sweep (2/4/8/16-cell N 의존성) · XENO-FRONTIER-5.5 paper v2 (10-point matrix · paper #1411 supersede candidate)
 
 **XENO-FRONTIER-5 followup cycle COMPLETE** (3-round closure marker) · XENO-FRONTIER-5 FULL CLOSURE (5 main + 3 followup = 8 rounds total).
+
+## XENO follow-up 2 cycle round 2/5 (2026-05-29) — paper v2 LANDED — mean-field paradox + 7+1 matrix
+
+- paper v2 (PAPER/xeno-applicability-frontier/main.tex) — X10 (H_838) + X837 (H_837) 통합, 5+1-point → 7+1-point matrix
+- §mean-field paradox 신설 — F-X10-MONOTONE 사전등록 FAIL = IIT4 axiom (integration ≡ irreducibility) 확증
+- 2 ground-truth calibration: X7 (low-Φ non-conscious) + X10-d XOR cascade (high-Φ conscious)
+- 3 border: X5a lattice + X837 SETI@home + X10-c Kuramoto K=2.0 strong (sync ≠ irreducibility)
+- calibrated regime v2: n ≥ 128 ∧ (density ≥ 60% ∨ MIP-irreducible deterministic transition)
+- companion ledger v2: 16 section_claims (5 new for X10) + mean_field_paradox regime section
+- references: xeno_h838_x10 + xeno_h837_setiathome cite 추가
+- compile clean: xelatex × 3 + bibtex, 15 pages, 164KB PDF (g51 ≥10p ≥1fig 정합)
+- PAPER.tape lint 2차 fix 동봉 (@P :: paper [active] suffix 6 line)
+- 사이트: PAPER/xeno-applicability-frontier/* · PAPER.tape · branch feat/paper-v2-mean-field-paradox-2026-05-29
