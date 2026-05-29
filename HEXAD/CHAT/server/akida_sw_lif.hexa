@@ -22,6 +22,18 @@
 //   to the AKD1000 raster, and the HW is deterministic across runs (no analog
 //   jitter at this seed) — convergence-target dims (rate/std/saturation/ISI)
 //   already fully converged; this round closed the reporting-surface gap.
+//
+//   HW-SW FRONTIER round 3 (2026-05-30): added fc_quantized_forward() — the
+//   act_bits>1 / non-ones-weight GENERALIZATION of lif_forward. The frontier
+//   sweep recovered the real AKD1000 activation quantizer on silicon:
+//     potential_j = Σ_i x_i·W_ij ; y = clip(ceil(potential/step), 0, 2^ab-1)
+//     step = 2^(input_bits - act_bits)  [ab=4→1, ab=2→4, ab=1→8 = lif comparator]
+//   plus SYMMETRIC int weights [-7,+7] (chip rejects -8). Verified BYTE-IDENTICAL
+//   to HW across act_bits{1,2,4} × {all-ones, random int4} × {1,2 layers} (80/80
+//   probe inputs, max Hamming 0). act_bits=1+ones reduces EXACTLY to lif_forward
+//   so verify_substrate_akida stays 5/5. CLOSED-NEGATIVE: on-chip
+//   AkidaUnsupervised LEARNING is non-deterministic (hidden plasticity state,
+//   same-init+same-input → different fitted weights) and is NOT modeled here.
 // ════════════════════════════════════════════════════════════════════════
 
 fn main() {

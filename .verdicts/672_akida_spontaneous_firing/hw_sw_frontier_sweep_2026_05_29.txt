@@ -1,0 +1,161 @@
+AKIDA HW<->SW 3rd-stage FRONTIER sweep -- verbatim data (2026-05-30)
+env: pi5-akida AKD1000 (BC.00.000.002 / IpVersion.v1) akida 2.19.1 BackendType.Hardware + Mac local. cost=$0.
+harness: SUB_ENGINES/AKIDA/scripts/frontier_hw.py (chip) <-> frontier_sw.py (numpy) + frontier_diff.py
+probe set = 10 graded inputs (zeros, all-15, ramp, 7x rng default_rng(2026)); y = RAW activation tensor (NOT thresholded), y_sha256 = sha256 of int64 bytes.
+
+================ AXIS 1: act_bits {1,2,4} (single FC, all-ones weights) ================
+[finding] all-ones weights -> potential>=16 always saturates -> every neuron = max level
+          (act_bits=1->1, ab=2->3, ab=4->15). multi-bit quantizer ceiling visible; SW matches.
+--- DIFF actbits ab=1 ---
+axis=actbits act_bits=1 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+ idx2: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+ idx3: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+ idx4: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+ idx5: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+ idx6: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+ idx7: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+ idx8: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+ idx9: IDENT HW=cb9cb8229f3a3220 SW=cb9cb8229f3a3220 hamming=0 |Δ|max=0
+SUMMARY axis=actbits: ident=10/10 divergent=0 max_hamming=0
+--- DIFF actbits ab=2 ---
+axis=actbits act_bits=2 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+ idx2: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+ idx3: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+ idx4: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+ idx5: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+ idx6: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+ idx7: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+ idx8: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+ idx9: IDENT HW=32acaa8edd928afb SW=32acaa8edd928afb hamming=0 |Δ|max=0
+SUMMARY axis=actbits: ident=10/10 divergent=0 max_hamming=0
+--- DIFF actbits ab=4 ---
+axis=actbits act_bits=4 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+ idx2: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+ idx3: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+ idx4: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+ idx5: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+ idx6: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+ idx7: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+ idx8: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+ idx9: IDENT HW=2791341eb3aa3a23 SW=2791341eb3aa3a23 hamming=0 |Δ|max=0
+SUMMARY axis=actbits: ident=10/10 divergent=0 max_hamming=0
+
+================ AXIS 2: random int4 weights (single FC) ================
+[HW constraint found] AKD1000 set_variable('weights') rejects -8: 'Minimum authorized value is -7'
+  => int4 weights are SYMMETRIC [-7,+7], NOT two's-complement [-8,+7]. SW range fixed to match.
+--- DIFF weights_ab2 ---
+axis=weights act_bits=2 wseed=7 HWw=de14ed13cd918c95 SWw=de14ed13cd918c95 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=c796646571edc3e7 SW=c796646571edc3e7 hamming=0 |Δ|max=0
+ idx2: IDENT HW=8c2a706b77e52be8 SW=8c2a706b77e52be8 hamming=0 |Δ|max=0
+ idx3: IDENT HW=7c47bb41c960a576 SW=7c47bb41c960a576 hamming=0 |Δ|max=0
+ idx4: IDENT HW=0f2b9729863dbd09 SW=0f2b9729863dbd09 hamming=0 |Δ|max=0
+ idx5: IDENT HW=cd21858b48204c0b SW=cd21858b48204c0b hamming=0 |Δ|max=0
+ idx6: IDENT HW=c796646571edc3e7 SW=c796646571edc3e7 hamming=0 |Δ|max=0
+ idx7: IDENT HW=f5bcff1281437cdc SW=f5bcff1281437cdc hamming=0 |Δ|max=0
+ idx8: IDENT HW=740a61726fc31e82 SW=740a61726fc31e82 hamming=0 |Δ|max=0
+ idx9: IDENT HW=cb38721b388c2ae5 SW=cb38721b388c2ae5 hamming=0 |Δ|max=0
+SUMMARY axis=weights: ident=10/10 divergent=0 max_hamming=0
+--- DIFF weights_ab4 ---
+axis=weights act_bits=4 wseed=7 HWw=de14ed13cd918c95 SWw=de14ed13cd918c95 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=4ac06f9bb661e6bc SW=4ac06f9bb661e6bc hamming=0 |Δ|max=0
+ idx2: IDENT HW=cdc55f37af69ee5e SW=cdc55f37af69ee5e hamming=0 |Δ|max=0
+ idx3: IDENT HW=ba7ae59fa74e1f08 SW=ba7ae59fa74e1f08 hamming=0 |Δ|max=0
+ idx4: IDENT HW=96c9542ed634adb3 SW=96c9542ed634adb3 hamming=0 |Δ|max=0
+ idx5: IDENT HW=78f85c8c36edacff SW=78f85c8c36edacff hamming=0 |Δ|max=0
+ idx6: IDENT HW=4ac06f9bb661e6bc SW=4ac06f9bb661e6bc hamming=0 |Δ|max=0
+ idx7: IDENT HW=32f862f231c64bc1 SW=32f862f231c64bc1 hamming=0 |Δ|max=0
+ idx8: IDENT HW=8bc691d5c141d934 SW=8bc691d5c141d934 hamming=0 |Δ|max=0
+ idx9: IDENT HW=5017241966a5173f SW=5017241966a5173f hamming=0 |Δ|max=0
+SUMMARY axis=weights: ident=10/10 divergent=0 max_hamming=0
+--- DIFF weights_ab2_s99 ---
+axis=weights act_bits=2 wseed=99 HWw=9776fce9dc8f7509 SWw=9776fce9dc8f7509 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=9463779a952e106b SW=9463779a952e106b hamming=0 |Δ|max=0
+ idx2: IDENT HW=d5a48659473532b0 SW=d5a48659473532b0 hamming=0 |Δ|max=0
+ idx3: IDENT HW=2c08f6f3743b1803 SW=2c08f6f3743b1803 hamming=0 |Δ|max=0
+ idx4: IDENT HW=8683db59e0f3f412 SW=8683db59e0f3f412 hamming=0 |Δ|max=0
+ idx5: IDENT HW=4c28b0cdcc9ebf2f SW=4c28b0cdcc9ebf2f hamming=0 |Δ|max=0
+ idx6: IDENT HW=9bf6abd8277f8e2b SW=9bf6abd8277f8e2b hamming=0 |Δ|max=0
+ idx7: IDENT HW=a45dd2abc8596f62 SW=a45dd2abc8596f62 hamming=0 |Δ|max=0
+ idx8: IDENT HW=161c8fc9f91717af SW=161c8fc9f91717af hamming=0 |Δ|max=0
+ idx9: IDENT HW=60a2dcfb76c5696e SW=60a2dcfb76c5696e hamming=0 |Δ|max=0
+SUMMARY axis=weights: ident=10/10 divergent=0 max_hamming=0
+
+================ AXIS 3: multi-layer (2 stacked FC, random int4 weights) ================
+--- DIFF layers_ab4 ---
+axis=layers act_bits=4 wseed=7 HWw=35c4e20c5a2cf7c8 SWw=35c4e20c5a2cf7c8 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=3d000fe1bec6d458 SW=3d000fe1bec6d458 hamming=0 |Δ|max=0
+ idx2: IDENT HW=1daa30c9dcccaf28 SW=1daa30c9dcccaf28 hamming=0 |Δ|max=0
+ idx3: IDENT HW=6e0ab204e21d106e SW=6e0ab204e21d106e hamming=0 |Δ|max=0
+ idx4: IDENT HW=ed088677d58baaf1 SW=ed088677d58baaf1 hamming=0 |Δ|max=0
+ idx5: IDENT HW=6e0ab204e21d106e SW=6e0ab204e21d106e hamming=0 |Δ|max=0
+ idx6: IDENT HW=3d000fe1bec6d458 SW=3d000fe1bec6d458 hamming=0 |Δ|max=0
+ idx7: IDENT HW=252fc560f3356144 SW=252fc560f3356144 hamming=0 |Δ|max=0
+ idx8: IDENT HW=31faf3a5ecb1a8bb SW=31faf3a5ecb1a8bb hamming=0 |Δ|max=0
+ idx9: IDENT HW=53b0d6462c142816 SW=53b0d6462c142816 hamming=0 |Δ|max=0
+SUMMARY axis=layers: ident=10/10 divergent=0 max_hamming=0
+--- DIFF layers_ab2 ---
+axis=layers act_bits=2 wseed=7 HWw=35c4e20c5a2cf7c8 SWw=35c4e20c5a2cf7c8 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=8557223c4af73841 SW=8557223c4af73841 hamming=0 |Δ|max=0
+ idx2: IDENT HW=7128540021c772a0 SW=7128540021c772a0 hamming=0 |Δ|max=0
+ idx3: IDENT HW=02ef90af84032b2d SW=02ef90af84032b2d hamming=0 |Δ|max=0
+ idx4: IDENT HW=b3d0d4b93d6f5a8e SW=b3d0d4b93d6f5a8e hamming=0 |Δ|max=0
+ idx5: IDENT HW=ddd63430ccc98753 SW=ddd63430ccc98753 hamming=0 |Δ|max=0
+ idx6: IDENT HW=8557223c4af73841 SW=8557223c4af73841 hamming=0 |Δ|max=0
+ idx7: IDENT HW=617e322eb5790154 SW=617e322eb5790154 hamming=0 |Δ|max=0
+ idx8: IDENT HW=e94e80a66d5cc9eb SW=e94e80a66d5cc9eb hamming=0 |Δ|max=0
+ idx9: IDENT HW=69b72e776c0d1f00 SW=69b72e776c0d1f00 hamming=0 |Δ|max=0
+SUMMARY axis=layers: ident=10/10 divergent=0 max_hamming=0
+
+================ ACTIVATION QUANTIZER step-function recovery (AKD1000, verbatim) ================
+[method] single FC, weights all-zero except W[0,0,0,0]=w; potential = w*x0 swept. y[0] = chip act.
+--- act_bits=2 (recovered step=4) ---
+potential=0  -> act=0
+potential=1  -> act=1
+potential=2  -> act=1
+potential=3  -> act=1
+potential=4  -> act=1
+potential=5  -> act=2
+potential=6  -> act=2
+potential=7  -> act=2
+potential=8  -> act=2
+potential=9  -> act=3
+potential=10..15 -> act=3 (saturated)
+--- act_bits=4 (recovered step=1) ---
+potential=0->0, 1->1, 2->2, ... 15->15, >=16 -> 15 (saturated)
+=> GENERAL RULE (calibrated, byte-verified): step = 2^(input_bits - act_bits) [input_bits=4]
+   y = clip( ceil(potential/step), 0, 2^act_bits - 1 )
+   ab=1 -> step 8 (pot>0 -> 1 == old lif_forward comparator); ab=2 -> step 4; ab=4 -> step 1.
+[SW BEFORE calibration] naive clip(potential,0,2^ab-1): weights ab2 DIVERGED on 3 graded neurons
+   (e.g. idx2 n8: potential=2 -> SW=2 but HW=1; idx7 n2: pot=3 SW=3 HW=1; idx8 n4: pot=4 SW=3 HW=1).
+[SW AFTER calibration] fc_quantized_forward with step rule: ALL 80/80 probe inputs byte-identical.
+
+================ AXIS 4: on-chip edge learning (AkidaUnsupervised) -- CLOSED-NEGATIVE ================
+[support probe] edge_learn_probe.py:
+  compile_AkidaUnsupervised=ok, fit_on_chip=ok, device_learn_enabled_after_fit=true,
+  edge_learning_supported=true   (the chip DOES support on-chip Hebbian learning)
+[determinism probe] learn_dynamics_probe.py -- same init weights, same seed=42 input batch, fit TWICE:
+  set1: before=9d799ac9 after1=5574dfe3 after2=a4f920b4  deterministic=False
+  set2: before=13039731 after1=0ef1bb46 after2=b85686392  deterministic=False
+  set3: before=1af7d2af after1=cb4eb5e5 after2=ec3099a8   deterministic=False
+  (earlier set: before=3dd74914 after1=3dd74914[no change] after2=56abc455 -- even same-batch refit differs)
+=> after1 != after2 EVERY set: the on-chip fitted weights depend on HIDDEN internal plasticity
+   state (homeostasis/accumulator registers) NOT a pure function of (init weights, inputs).
+   An inference-only SW (akida_sw_lif) CANNOT reproduce this -> honest CLOSED-NEGATIVE.
+   This is a valid hard boundary, NOT a failure: the SW is a faithful INFERENCE model; the
+   chip's stateful learning dynamics are out of its modeled scope.
+
+================ RE-VERIFY ================
+verify_substrate_akida.py -> 5/5 PASS (exit 0) AFTER folding fc_quantized_forward into akida_sw_lif.py.
+fc_quantized_forward(act_bits=1, all-ones weights) reduces EXACTLY to lif_forward (no regression
+to the canonical act_bits=1 path). spike-streamer.service restarted (active) after the HW batch.

@@ -56,6 +56,38 @@ def lif_forward(x, threshold_vec, n=N):
     return spikes[:n]
 
 
+def fc_quantized_forward(x, weights, act_bits, input_bits=4, n=N):
+    """General AKD1000 FullyConnected forward -- the act_bits>1 / non-ones-weight
+    GENERALIZATION of lif_forward (frontier calibration, 2026-05-30).
+
+    The 1-bit lif_forward above models ONLY act_bits=1 + all-ones weights
+    (potential>thr comparator). The frontier sweep proved the real chip does:
+
+        potential_j = sum_i  x_i * W_ij              (signed-int matmul)
+        y_j         = clip( ceil(potential_j / step), 0, 2^act_bits - 1 )
+        step        = 2^(input_bits - act_bits)
+
+    Recovered on AKD1000 silicon (single-FC weight*x0 sweep): act_bits=4 -> step 1
+    (y = clip(pot,0,15)); act_bits=2 -> step 4 (pot 1..4->1, 5..8->2, 9..->3);
+    act_bits=1 -> step 8 (pot>0 -> 1, i.e. EXACTLY the lif_forward comparator).
+    Weights are SYMMETRIC int (chip rejects -2^(b-1); range [-(2^(b-1)-1), +..]).
+    Verified BYTE-IDENTICAL to HW across act_bits{1,2,4} x {all-ones, random int4}
+    x {1,2 layers} (80/80 probe inputs, max Hamming 0). For multi-layer, chain
+    fc_quantized_forward output as the next layer's input. This is inference-only;
+    the chip's on-chip AkidaUnsupervised LEARNING is NON-deterministic (hidden
+    plasticity state) and is NOT modeled here -- see CLOSED-NEGATIVE in the
+    HW-SW calibration ledger.
+    """
+    xv = np.clip(np.asarray(x).reshape(1, -1), 0, (1 << input_bits) - 1).astype(np.int64)
+    Wm = np.asarray(weights).reshape(-1, n).astype(np.int64)
+    potential = (xv @ Wm).reshape(-1)
+    p = np.maximum(potential, 0)
+    step = 1 << (input_bits - act_bits)
+    act = -(-p // step)                      # ceil division, p >= 0
+    hi = (1 << act_bits) - 1
+    return np.clip(act, 0, hi).astype(np.int64)[:n]
+
+
 def _isi_stats(spike_counts):
     """Population inter-spike intervals — gaps between steps that had >=1 spike.
 
