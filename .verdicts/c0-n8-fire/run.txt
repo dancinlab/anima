@@ -1,0 +1,41 @@
+AURA C0 — n=8 exact big-Phi multi-window position test (FRONTAL8 vs MOTOR8), ds005620 sub-1010 awake.
+GOAL: extend A10.1 (n=4, 10-window, FRONTAL-vs-MOTOR null 5:5) to n=8 exact (2^16 MIP) multi-window.
+PRE-REGISTERED FALSIFIER: at n=8 higher resolution, does the n=4 null HOLD (no position effect) or CHANGE (effect emerges)?
+
+=== COMPUTE OUTCOME: n=8 single-window COMPUTE-WALL CONFIRMED + QUANTIFIED (not resolved) ===
+
+Harnesses: c0_n8_{frontal,motor}.hexa, 10 windows each (raw offsets 0..1260000, A10 grid),
+  FRONTAL8(F3,Fz,F4,AFz,F7,F8,FC1,FC2) / MOTOR8(C3,Cz,C4,C2,C1,C5,C6,CPz), eeg_big_phi(D,8,1000,255).
+  Window-0 data byte-identical to the A9.1 a9_n8_frontal harness (preprocessing verified consistent:
+  BrainVision IEEE_FLOAT_32 65ch MULTIPLEXED, stride-20 -> 250Hz, 1000 samp, channel-major flat).
+
+TOOLCHAIN AUDIT (3 hosts, only Mac usable, and Mac is compute-bound):
+  - ubu-1 (pool, 12 core, hexa 0.1.0-dispatch): build/hexa_v2 transpiler SEGFAULTS on ANY harness
+    importing stdlib/consciousness/iit4_bigphi.hexa -- even a tiny n=3 toy (NOT a size issue). BLOCKED.
+  - runpod CPU pod (rented qa3iu2rjwwvnhk, 64 vCPU): fresh hexa-lang clone prebuilt hexa.real needs
+    GLIBC_2.38; runpod/base ubuntu has GLIBC 2.31 -> version-not-found. build/hexa_linux (stage1)
+    needs hexa_stage0 (install.sh module_loader build failed). BLOCKED. Pod torn down (~7min, ~$0.05).
+  - Mac (hexat + clang -> native): TRANSPILES + RUNS n=8 fine (no crash). ONLY working host.
+
+WALL (native Mac, Apple silicon 8 logical / 4 performance cores, batch-of-4, one window per perf-core):
+  Single n=8 window CPU time exceeded 11 MINUTES and was STILL NOT COMPLETE at ~20 min wall
+  (f_w0..f_w3 all ~11:18 CPU / 19:35 wall, ~0.3-0.6 core under 4-way contention + thermal throttle).
+  Extrapolated full 20-window (FRONTAL10 + MOTOR10) sweep: ~90-150 min wall minimum. INTRACTABLE
+  within a single session. cf A9.1: Mac interpreter walled at 290s EXIT124 -- native compile does NOT
+  rescue n=8; the 2^16-state exact MIP is fundamentally O(2^2n) and ~12-18 min CPU/window here.
+
+=== VERDICT: n=8 multi-window NOT-MEASURED (compute-wall). LARGEST-N WITH A VERDICT = n=4. ===
+  - A9.1's n=8 single-run compute-wall is CONFIRMED and now QUANTIFIED (>11 min CPU/window native,
+    unfinished at 20 min wall) -- native compilation does not break the wall; only a many-core host
+    with a WORKING hexa toolchain would (all 3 available hosts are either blocked or compute-bound).
+  - The standing highest-resolution position-effect verdict remains A10.1 (n=4 exact, 10 windows):
+    FRONTAL vs MOTOR = 5:5, paired t(9)=+0.28 n.s., sign p=1.0, mean diff +0.26 (~5%). NULL.
+  - The C0 pre-registered question (does n=8 change the n=4 null?) is UNRESOLVED -- no n=8 window
+    completed. Honest NOT-MEASURED, not a fabricated number (p7, a_claim_verify).
+
+HONEST SCOPE: single-subject (sub-1010), scalp-EEG proxy (NOT intracortical N1 depth). The n=8
+  harnesses + extractor are persisted; a future fix to the Linux hexa toolchain (handoff filed to
+  hexa-lang) would unlock the 64-core pod path and make the n=8 sweep ~minutes, not hours.
+
+batch driver (build/c0/, batch-of-4 native) left RUNNING in background; if windows complete later
+  the numbers append to build/c0/out_*.txt for a follow-up harvest.

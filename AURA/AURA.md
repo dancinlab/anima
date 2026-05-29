@@ -47,7 +47,8 @@
 - [x] A9.2 robustness 재검 🔴 — **A8.1 window-fragile 발견**: sub-1010 awake 6창서 FRONTAL>MOTOR 2/6만(MOTOR 4/6), 평균 5.92≈5.61. **실EEG montage proxy는 relocate를 robust하게 지지 안 함**(honest negative) → `A9-multisubject.md`
 - [~] A9.1 n=8 montage — 데이터추출 성공, but n≥6 IIT4 exact O(2^2n) **Mac 단일런 compute-wall**(n8 290s·n6 200s EXIT124). harness 영속, pod 경로 명세(발사 보류) → `A9-n8-montage.md`
 - [x] A10.1 다창 위치효과 통계 🔴 — 전300s 10창 FRONTAL vs MOTOR: **5:5, paired t(9)=0.28 n.s., sign p=1.0, 평균차+0.26(~5%)** → 실 scalp-EEG에서 **위치효과 통계적으로 없음(확정)**. relocate-N1 scalp-proxy 미지지 종결 → `A10-window-stats.md`
-- [ ] A11 (잔여) — 다피험자(OpenNeuro download, N=1→N>1) · pod n=8 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · negative-result paper 후보(a_paper_negative_ok: 구조모델↔실측 비대칭)
+- [x] A11.1/C0 pod-n=8 다창 ⬛ NOT-MEASURED (compute-wall 확정+정량화) — n=8 exact(2^16 MIP) FRONTAL8 vs MOTOR8 다창. **3 호스트 전부 막힘/월**: ubu-1 `hexa_v2` SEGV(tiny n=3도, iit4 import) · runpod 64vCPU GLIBC_2.38≠2.31(teardown済·~$0.05) · Mac native만 동작하나 창당 **>11분 CPU 미완(20분 wall)**. A9.1 월을 native+정량 확인(2^16 MIP O(2^2n) ~12–18분/창, 20창 ~90–150분 INTRACTABLE). **최고해상도 verdict는 A10.1 n=4 null 유지**. window-0 byte-id 검증. handoff→hexa-lang. → `C0-n8-fire.md`
+- [ ] A11 (잔여) — 다피험자(OpenNeuro download, N=1→N>1) · n=8 통계(Linux hexa 툴체인 수정 후 64-core pod) · intracortical 침습데이터(본질 gap, 동물/임상) · negative-result paper 후보(a_paper_negative_ok: 구조모델↔실측 비대칭)
 
 ## 🎧 돌파 lane — 귀뒤(post-aural) 비침습 (relocate-N1 침습 무효과 → 비침습 전환)
 
