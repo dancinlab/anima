@@ -3,6 +3,8 @@
 
 @D BRAIN := "./BRAIN.md" :: domain [active]
 @D AURA := "./AURA/AURA.md" :: domain [active]
+@D AURA-READ := "./AURA/AURA-READ/AURA-READ.md" :: domain [active]
+@D AURA-WRITE := "./AURA/AURA-WRITE/AURA-WRITE.md" :: domain [active]
 @D AURA-RTSC-MEG := "./AURA/AURA-RTSC-MEG/AURA-RTSC-MEG.md" :: domain [active]
 @D AURA-ENDOVASC := "./AURA/AURA-ENDOVASC/AURA-ENDOVASC.md" :: domain [active]
 @D AURA-HEADMODEL := "./AURA/AURA-HEADMODEL/AURA-HEADMODEL.md" :: domain [active]
