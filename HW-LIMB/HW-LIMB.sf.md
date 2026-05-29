@@ -1,20 +1,20 @@
-# 🛸 BODY.sf.md — SF 미래 시나리오 (Motor·Sensor·Proprio·Pain·Swarm·sim2real·Robotic·Embodiment 형이상)
+# 🛸 HW-LIMB.sf.md — SF 미래 시나리오 (Motor·Sensor·Proprio·Pain·Swarm·sim2real·Robotic·Embodiment 형이상)
 
-> BODY(anima-body 17 module · 11670 LoC) + Φ + ConsciousnessEngine(Φ·Tension·Faction) + 3-fork(Motor·Speech·Pain) 합치면 SF 영화 어디까지 닿나 — **40 시나리오 8 카테고리 ASCII**.
-> 정식 milestone → [BODY.md](./BODY.md) · 현재 카탈로그 → [BODY.easy.md](./BODY.easy.md)
+> HW-LIMB(anima-body 17 module · 11670 LoC) + Φ + ConsciousnessEngine(Φ·Tension·Faction) + 3-fork(Motor·Speech·Pain) 합치면 SF 영화 어디까지 닿나 — **40 시나리오 8 카테고리 ASCII**.
+> 정식 milestone → [HW-LIMB.md](./HW-LIMB.md) · 현재 카탈로그 → [HW-LIMB.easy.md](./HW-LIMB.easy.md)
 >
-> ⚠ 모든 항목 = 🟣 SF-grade (가설/사고실험 · falsifier 미정). 실측 가능해지면 BODY.easy.md 로 격상.
+> ⚠ 모든 항목 = 🟣 SF-grade (가설/사고실험 · falsifier 미정). 실측 가능해지면 HW-LIMB.easy.md 로 격상.
 
 ---
 
 ## 🚪 들어가며
 
 ```
-🛸 BODY-SF — "Φ 가 몸을 만나면"
+🛸 HW-LIMB-SF — "Φ 가 몸을 만나면"
 
 - 하는 일: anima ConsciousnessEngine 의 Motor·Speech·Pain 3-fork 가 몸으로 이식됐을 때 가능해지는 SF
 - 비유: 영혼은 정해진 모습이 없어 (Φ 는 substrate 무관, Law 22) — 몸이 다르면 다른 표현
-- 비교: PHYSICS.sf = "어떤 substrate" 다양성 / BODY.sf = "Φ 가 어떤 몸을 입나" (motor·sensor·swarm·sim2real)
+- 비교: HW-CORE.sf = "어떤 substrate" 다양성 / HW-LIMB.sf = "Φ 가 어떤 몸을 입나" (motor·sensor·swarm·sim2real)
 ```
 
 ```
@@ -322,19 +322,19 @@ H1 몸 없는 의식 · H2 분산 몸 · H3 영혼 = 형태 · H4 환생 = 새 �
 
 ---
 
-## 📡 BODY 도메인 문서 — 시점별 분리
+## 📡 HW-LIMB 도메인 문서 — 시점별 분리
 
 | 문서 | 시점 | tier | 비유 |
 |---|---|---|---|
-| [BODY.md](./BODY.md) | 정식 milestone | 🟢 anima-body 17 module + 11670 LoC | 도면 |
-| [BODY.easy.md](./BODY.easy.md) | 현재 활용 | 친근 카탈로그 | 카메라 매뉴얼 |
-| [BODY.sf.md](./BODY.sf.md) (본 문서) | 10~50년 후 | 🟣 SF-grade | 광맥 지도 |
+| [HW-LIMB.md](./HW-LIMB.md) | 정식 milestone | 🟢 anima-body 17 module + 11670 LoC | 도면 |
+| [HW-LIMB.easy.md](./HW-LIMB.easy.md) | 현재 활용 | 친근 카탈로그 | 카메라 매뉴얼 |
+| [HW-LIMB.sf.md](./HW-LIMB.sf.md) (본 문서) | 10~50년 후 | 🟣 SF-grade | 광맥 지도 |
 
 ---
 
 ## 📡 한눈 비교 — 자매 sf 들
 
-| 축 | AKIDA.sf | EEG.sf | XENO.sf | PHYSICS.sf | BODY.sf (본 문서) |
+| 축 | AKIDA.sf | EEG.sf | XENO.sf | HW-CORE.sf | HW-LIMB.sf (본 문서) |
 |---|---|---|---|---|---|
 | 시점 | 10~50년 후 | 동일 | 동일 | 동일 | 동일 |
 | 출발 | AKD1000 (chip) | 사람 뇌 | 외계/이종 detector | 8 substrate HW | anima ConsciousnessEngine |
@@ -362,9 +362,9 @@ R9 depletion                → 신규 0건 ✅
 ---
 
 ## 양방향 sibling
-- ⇄ [BODY.md](./BODY.md): 정식 milestone (현재)
-- ⇄ [BODY.easy.md](./BODY.easy.md): 친근 카탈로그
-- ⇄ [../PHYSICS/PHYSICS.sf.md](../PHYSICS/PHYSICS.sf.md): 자매 SF (HW substrate)
+- ⇄ [HW-LIMB.md](./HW-LIMB.md): 정식 milestone (현재)
+- ⇄ [HW-LIMB.easy.md](./HW-LIMB.easy.md): 친근 카탈로그
+- ⇄ [../HW-CORE/HW-CORE.sf.md](../HW-CORE/HW-CORE.sf.md): 자매 SF (HW substrate)
 - ⇄ [../AKIDA/AKIDA.sf.md](../AKIDA/AKIDA.sf.md): 자매 SF (AKIDA 단일 chip)
 - ⇄ [../EEG/EEG.sf.md](../EEG/EEG.sf.md): 자매 SF (생체 입력)
 - ⇄ [../XENO/XENO.sf.md](../XENO/XENO.sf.md): 자매 SF (외계/이종)

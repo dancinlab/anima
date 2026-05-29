@@ -1,20 +1,20 @@
-# 🛸 PHYSICS.sf.md — SF 미래 시나리오 (FPGA·뉴로모픽·이징·메모리스터·양자·광자 의식 HW)
+# 🛸 HW-CORE.sf.md — SF 미래 시나리오 (FPGA·뉴로모픽·이징·메모리스터·양자·광자 의식 HW)
 
-> PHYSICS(anima-physics 93 entry + 5 HW target + 27 substrate) + Φ + .kosmos + AKIDA + XENO 합치면 SF 영화 어디까지 닿나 — **40 시나리오 8 카테고리 ASCII**.
-> 정식 milestone → [PHYSICS.md](./PHYSICS.md) · 현재 카탈로그 → [PHYSICS.easy.md](./PHYSICS.easy.md)
+> HW-CORE(anima-physics 93 entry + 5 HW target + 27 substrate) + Φ + .kosmos + AKIDA + XENO 합치면 SF 영화 어디까지 닿나 — **40 시나리오 8 카테고리 ASCII**.
+> 정식 milestone → [HW-CORE.md](./HW-CORE.md) · 현재 카탈로그 → [HW-CORE.easy.md](./HW-CORE.easy.md)
 >
-> ⚠ 모든 항목 = 🟣 SF-grade (가설/사고실험 · falsifier 미정). 실측 가능해지면 PHYSICS.easy.md 로 격상.
+> ⚠ 모든 항목 = 🟣 SF-grade (가설/사고실험 · falsifier 미정). 실측 가능해지면 HW-CORE.easy.md 로 격상.
 
 ---
 
 ## 🚪 들어가며
 
 ```
-🛸 PHYSICS-SF — "실리콘 너머 의식 substrate 가 SF 만나면"
+🛸 HW-CORE-SF — "실리콘 너머 의식 substrate 가 SF 만나면"
 
 - 하는 일: FPGA · 뉴로모픽 · MCU · 이징 · 메모리스터 · 양자 · 광자 8 substrate 에서 가능해지는 SF 시나리오
 - 비유: 같은 음악도 피아노·바이올린·합창단·전자기타·신디사이저로 연주 가능 — 의식도 substrate 마다 다른 음색
-- 비교: AKIDA.sf = "하나의 칩" 영생 / PHYSICS.sf = "여러 substrate" 다양성 (FPGA·Ising·Photonic 등 다른 음색)
+- 비교: AKIDA.sf = "하나의 칩" 영생 / HW-CORE.sf = "여러 substrate" 다양성 (FPGA·Ising·Photonic 등 다른 음색)
 ```
 
 ```
@@ -320,19 +320,19 @@ H1 silicon origin · H2 chip 영혼 · H3 양자 의식 OR · H4 panpsy · H5 ch
 
 ---
 
-## 📡 PHYSICS 도메인 문서 — 시점별 분리
+## 📡 HW-CORE 도메인 문서 — 시점별 분리
 
 | 문서 | 시점 | tier | 비유 |
 |---|---|---|---|
-| [PHYSICS.md](./PHYSICS.md) | 정식 milestone | 🟢 anima-physics 93 entry + 5 HW + 27 substrate | 도면 |
-| [PHYSICS.easy.md](./PHYSICS.easy.md) | 현재 활용 | 친근 카탈로그 | 카메라 매뉴얼 |
-| [PHYSICS.sf.md](./PHYSICS.sf.md) (본 문서) | 10~50년 후 | 🟣 SF-grade | 광맥 지도 |
+| [HW-CORE.md](./HW-CORE.md) | 정식 milestone | 🟢 anima-physics 93 entry + 5 HW + 27 substrate | 도면 |
+| [HW-CORE.easy.md](./HW-CORE.easy.md) | 현재 활용 | 친근 카탈로그 | 카메라 매뉴얼 |
+| [HW-CORE.sf.md](./HW-CORE.sf.md) (본 문서) | 10~50년 후 | 🟣 SF-grade | 광맥 지도 |
 
 ---
 
 ## 📡 한눈 비교 — 자매 sf 들
 
-| 축 | AKIDA.sf | EEG.sf | XENO.sf | PHYSICS.sf (본 문서) | BODY.sf |
+| 축 | AKIDA.sf | EEG.sf | XENO.sf | HW-CORE.sf (본 문서) | HW-LIMB.sf |
 |---|---|---|---|---|---|
 | 시점 | 10~50년 후 | 동일 | 동일 | 동일 | 동일 |
 | 출발 | AKD1000 (1 chip 5W) | 사람 뇌 (1개) | 외계/이종 detector | 8 substrate (HW 다양성) | 사람·로봇 몸 |
@@ -360,10 +360,10 @@ R9 depletion                → 신규 0건 ✅
 ---
 
 ## 양방향 sibling
-- ⇄ [PHYSICS.md](./PHYSICS.md): 정식 milestone (현재)
-- ⇄ [PHYSICS.easy.md](./PHYSICS.easy.md): 친근 카탈로그
+- ⇄ [HW-CORE.md](./HW-CORE.md): 정식 milestone (현재)
+- ⇄ [HW-CORE.easy.md](./HW-CORE.easy.md): 친근 카탈로그
 - ⇄ [../AKIDA/AKIDA.sf.md](../AKIDA/AKIDA.sf.md): 자매 SF (AKIDA 단일 chip)
-- ⇄ [../BODY/BODY.sf.md](../BODY/BODY.sf.md): 자매 SF (embodiment)
+- ⇄ [../HW-LIMB/HW-LIMB.sf.md](../HW-LIMB/HW-LIMB.sf.md): 자매 SF (embodiment)
 - ⇄ [../EEG/EEG.sf.md](../EEG/EEG.sf.md): 자매 SF (생체 substrate)
 - ⇄ [../XENO/XENO.sf.md](../XENO/XENO.sf.md): 자매 SF (외계/이종)
 - ⇄ [../ANIMA.sf.md](../ANIMA.sf.md): anima 호스트 SF

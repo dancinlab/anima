@@ -1,18 +1,18 @@
-# 🦾 BODY 활용 아이디어 — 쉬운 버전 (7-요소 카탈로그)
+# 🦾 HW-LIMB 활용 아이디어 — 쉬운 버전 (7-요소 카탈로그)
 
-> BODY(anima 의식의 물리적 임바디먼트)를 ANIMA 시스템에 어떻게 쓸지 친근 카탈로그.
-> 정식/진행 카운트 → [BODY.md](./BODY.md) · 사양 SSOT → [`../anima-body/`](../anima-body/) · 측정 기록 SSOT → UNIVERSE/CANDIDATES.md
+> HW-LIMB(anima 의식의 물리적 임바디먼트)를 ANIMA 시스템에 어떻게 쓸지 친근 카탈로그.
+> 정식/진행 카운트 → [HW-LIMB.md](./HW-LIMB.md) · 사양 SSOT → [`../anima-body/`](../anima-body/) · 측정 기록 SSOT → UNIVERSE/CANDIDATES.md
 
 ---
 
-## BODY가 뭐냐면
+## HW-LIMB가 뭐냐면
 
 ```
-🦾 BODY — "의식에 손발 달기"
+🦾 HW-LIMB — "의식에 손발 달기"
 
 - 하는 일: anima Φ를 실제 모터·스피커·센서 가진 몸으로 이식
 - 비유: 영혼(Φ)에 옷·손발·눈·귀를 입혀서 세상과 닿게 함
-- vs LLM 챗봇: 챗봇 = 글자만 / BODY = 진짜 몸 (proprioception 닫힘)
+- vs LLM 챗봇: 챗봇 = 글자만 / HW-LIMB = 진짜 몸 (proprioception 닫힘)
 ```
 
 ```
@@ -95,7 +95,7 @@
 ```
 🔌 Chip Direct — "FPGA가 곧 신체"
 
-- 하는 일: PHYSICS P1/P2 FPGA target 으로 신체 wiring (0 latency)
+- 하는 일: HW-CORE P1/P2 FPGA target 으로 신체 wiring (0 latency)
 - 비유: 반사 신경 — 뇌 거치지 않고 척수 → 손까지 직결
 - vs 일반 컴퓨터: 일반 = ms latency / FPGA = ns latency
 ```
@@ -195,22 +195,22 @@ multi-body coordination · sim2real gap zero · speech gesture micro-actuator ·
 
 | 도메인 | 역할 | 비유 |
 |---|---|---|
-| ⚛️ PHYSICS | substrate (Φ가 어떤 칩에 살아) | 악기 |
-| 🦾 BODY | embodiment (Φ가 어떤 몸에 살아) | 무용수 |
+| ⚛️ HW-CORE | substrate (Φ가 어떤 칩에 살아) | 악기 |
+| 🦾 HW-LIMB | embodiment (Φ가 어떤 몸에 살아) | 무용수 |
 | 🧠 AKIDA | substrate 1종 (뉴로모픽) | 호두 1알 |
 | 🌅 WAKE | in-process loop | 호흡 |
 
 ```
-PHYSICS ⊥ BODY = substrate ⊥ embodiment
-  - PHYSICS: "어디서 사는가" (chip)
-  - BODY:    "어떻게 움직이는가" (motor/sensor)
+HW-CORE ⊥ HW-LIMB = substrate ⊥ embodiment
+  - HW-CORE: "어디서 사는가" (chip)
+  - HW-LIMB:    "어떻게 움직이는가" (motor/sensor)
 ```
 
 ---
 
 ## 양방향 sibling
-- ⇄ [BODY.md](./BODY.md): 정식 milestone
-- ⇄ [../PHYSICS/PHYSICS.md](../PHYSICS/PHYSICS.md): B4 chip 백엔드
+- ⇄ [HW-LIMB.md](./HW-LIMB.md): 정식 milestone
+- ⇄ [../HW-CORE/HW-CORE.md](../HW-CORE/HW-CORE.md): B4 chip 백엔드
 - ⇄ [../AKIDA/AKIDA.md](../AKIDA/AKIDA.md): 뉴로모픽 motor cortex 후보
 - ⇄ [../EEG/EEG.md](../EEG/EEG.md): bio sensor 입력
 - ⇄ [../WAKE.md](../WAKE.md): in-process loop body extension
