@@ -29,6 +29,28 @@
 //     not used (default verbose) so progress + diagnostic context survives.
 //
 // raw#15: no personal-path leak. All paths constructed via $HOME env.
+//
+// v2.2.0 (2026-05-30) — 3 bug fixes found during the 20-checkpoint HF backup
+// campaign (handoff 82fef021 + 486e78d8):
+//   Bug 1 (CRITICAL false PASS): success was gated on `exec("echo $?")`, which
+//     runs in a FRESH shell and therefore reports the exit status of `echo`,
+//     not of the prior `hf upload` exec — so upload_rc was effectively always
+//     0 and a 401 still printed PASS / wrote outcome:ok (the audit commit_url
+//     even held a python Traceback). FIX: success now requires a REAL commit
+//     URL — starts with https://huggingface.co/ AND contains none of
+//     Traceback / Error / 401 / Unauthorized. _hf_step_ok() is the gate.
+//   Bug 2 (--type drift): `hf repo create ... --type model` is rejected by hf
+//     0.36.2 (unrecognized arguments). FIX: `--repo-type model` (verified via
+//     `hf repo create --help`); kept --exist-ok (idempotent, best-effort).
+//   Bug 3 (token in argv): token was passed as `--token <value>`, exposing it
+//     in `ps`/argv. FIX: token is passed via the HF_TOKEN env var as an inline
+//     `HF_TOKEN=<value> hf ...` prefix on every hf invocation (upload, repo
+//     create, readme upload, tag create). hf reads HF_TOKEN natively. NOTE: an
+//     inline env assignment is NOT in the child's argv (ps-invisible) — it sits
+//     only in the child environment (/proc/<pid>/environ, same-user only),
+//     strictly less leaky than --token in argv. hexa exec() spawns a fresh
+//     shell per call, so a one-time `export` does not persist; the inline form
+//     is the least-leaky option hexa supports per-call.
 
 // Cosmetic polish 2026-05-03: printenv → echo "$VAR" (Alpine container has
 // no `printenv`; POSIX echo works on both Alpine + macOS). See
@@ -46,7 +68,7 @@
 // changed — operators relying on HF_TOKEN env to override the secret store must
 // now `unset` the secret store key OR continue to set HF_TOKEN AND rely on the
 // fact that secret store lookup runs first (env now last-tier).
-let VERSION = "2.1.0"
+let VERSION = "2.2.0"
 let HOME = exec("echo \"$HOME\"").trim()
 let ANIMA_ROOT = HOME + "/core/anima"
 let DEFAULT_AUDIT_DIR = ANIMA_ROOT + "/state/hf_upload_audit"
@@ -387,6 +409,52 @@ fn _resolve_token(req_token: str) -> str {
     return ""
 }
 
+// Bug 3 fix: pass the token to hf WITHOUT it appearing in any argv/command.
+// huggingface_hub resolves its token file as `$HF_HOME/token`
+// (HF_TOKEN_PATH = HF_HOME + "/token"). We write the token to a private
+// transient dir (umask 077 / chmod 600) and return ONLY an `HF_HOME=<dir> `
+// shell prefix. The directory PATH is non-secret; the token VALUE never lands
+// in argv, in the `sh -c` command string, or in `ps`. This is strictly leak-
+// free, unlike `--token <value>` (token in hf argv) and unlike an inline
+// `HF_TOKEN=<value>` prefix (token in the `sh -c` wrapper argv — still
+// ps-visible). hexa `hexa run` (interpreted) does not propagate setenv()/
+// process-env into child exec shells, so the file-backed HF_HOME is the
+// least-leaky per-call form available. Caller MUST rm -rf the returned dir.
+// Returns "" (no prefix, no dir) when token is empty.
+fn _hf_token_home_dir(token: str) -> str {
+    if token.len() == 0 { return "" }
+    let dir = exec("umask 077; d=$(mktemp -d \"${TMPDIR:-/tmp}/_hfmk2_home.XXXXXX\") && printf '%s' " + _sh_q(token) + " > \"$d/token\" && chmod 600 \"$d/token\" && printf '%s' \"$d\"").trim()
+    return dir
+}
+
+// Build the `HF_HOME=<dir> ` exec prefix from a token-home dir (empty → "").
+fn _hf_token_env_prefix(home_dir: str) -> str {
+    if home_dir.len() == 0 { return "" }
+    return "HF_HOME=" + _sh_q(home_dir) + " "
+}
+
+// Bug 1 fix: a real HF success produced a genuine commit/repo URL. Treat output
+// as success ONLY when it points at huggingface.co AND carries no error/auth
+// signal (a python Traceback or a 401/Unauthorized is a FAILURE even though the
+// hf CLI sometimes still exits non-error-coded under capture). This is the
+// authoritative success gate — exit-code capture via `echo $?` is unreliable
+// because hexa exec() spawns a fresh shell per call.
+fn _hf_output_is_error(out: str) -> int {
+    if out.contains("Traceback") { return 1 }
+    if out.contains("Error") { return 1 }
+    if out.contains("401") { return 1 }
+    if out.contains("Unauthorized") { return 1 }
+    if out.contains("HfHubHTTPError") { return 1 }
+    return 0
+}
+
+fn _hf_commit_url_ok(commit_url: str) -> int {
+    if commit_url.len() == 0 { return 0 }
+    if !commit_url.starts_with("https://huggingface.co/") { return 0 }
+    if _hf_output_is_error(commit_url) == 1 { return 0 }
+    return 1
+}
+
 // sha256 of a single file via stdlib FIPS 180-4 builtin (hexa-lang #884
 // sha256 alias surface); shell-out removed (byte-equal output).
 fn _sha256_file(p: str) -> str {
@@ -589,32 +657,38 @@ fn _do_upload(repo: str, ckpt: str, readme: str, tag: str, private: int) {
     }
 
     let priv_flag = if private == 1 { " --private" } else { "" }
+    // Bug 3 fix: token via a private HF_HOME/token file (not --token argv, not
+    // an inline HF_TOKEN=<value> — both are ps-visible). Only the dir path is
+    // ever on the command line. tok_home is rm -rf'd before this fn returns.
+    let tok_home = _hf_token_home_dir(token)
+    let tok_env = _hf_token_env_prefix(tok_home)
 
-    // Step 1: create repo (idempotent via --exist-ok).
-    let create_cmd = cli + " repo create " + _sh_q(repo) + " --type model" + priv_flag + " --exist-ok --token " + _sh_q(token) + " 2>&1"
+    // Step 1: create repo (idempotent via --exist-ok). Best-effort / non-fatal:
+    // `hf upload` auto-creates the repo, so a create failure does NOT gate
+    // success (success is gated on the upload commit URL below). Bug 2 fix:
+    // `--repo-type model` (hf 0.36.2 rejects `--type model`).
+    let create_cmd = tok_env + cli + " repo create " + _sh_q(repo) + " --repo-type model" + priv_flag + " --exist-ok 2>&1"
     let create_out = exec(create_cmd)
 
     // Step 2: upload folder (single commit). Returns commit URL on stdout.
     let commit_msg = "anima hf_upload_mk2 commit"
-    let upload_cmd = cli + " upload " + _sh_q(repo) + " " + _sh_q(ckpt) + " --commit-message " + _sh_q(commit_msg) + " --token " + _sh_q(token) + " 2>&1"
+    let upload_cmd = tok_env + cli + " upload " + _sh_q(repo) + " " + _sh_q(ckpt) + " --commit-message " + _sh_q(commit_msg) + " 2>&1"
     let upload_out = exec(upload_cmd)
-    let upload_rc = to_int(exec("echo $?").trim())
 
-    // Heuristic commit_url extraction: look for 'huggingface.co/' line.
+    // Heuristic commit_url extraction: look for a real 'https://huggingface.co/'
+    // line. Bug 1 fix: skip lines that carry an error/auth signal so a Traceback
+    // line containing 'huggingface.co/' is never mistaken for a commit URL.
     let mut commit_url = ""
     let lines = upload_out.split("\n")
     let mut li = 0
     while li < lines.len() {
         let ln = lines[li].trim()
-        if ln.contains("huggingface.co/") && (ln.starts_with("http") || ln.contains("commit/")) {
+        if ln.starts_with("https://huggingface.co/") && _hf_output_is_error(ln) == 0 {
             commit_url = ln
             li = lines.len()
         } else {
             li = li + 1
         }
-    }
-    if commit_url.len() == 0 && upload_out.contains("huggingface.co/") {
-        commit_url = upload_out.trim()
     }
 
     // Step 3: optional README upload if outside ckpt dir.
@@ -626,7 +700,8 @@ fn _do_upload(repo: str, ckpt: str, readme: str, tag: str, private: int) {
             let abs_ckpt = exec("readlink -f " + _sh_q(ckpt) + " 2>/dev/null || python3 -c 'import os,sys; print(os.path.abspath(sys.argv[1]))' " + _sh_q(ckpt) + " 2>/dev/null || echo " + _sh_q(ckpt)).trim()
             let inside = if abs_readme.starts_with(abs_ckpt + "/") { 1 } else { 0 }
             if inside == 0 {
-                let r_cmd = cli + " upload " + _sh_q(repo) + " " + _sh_q(readme) + " README.md --commit-message " + _sh_q("anima hf_upload_mk2: README") + " --token " + _sh_q(token) + " 2>&1"
+                // Bug 3 fix: token via HF_HOME/token file prefix (not --token argv).
+                let r_cmd = tok_env + cli + " upload " + _sh_q(repo) + " " + _sh_q(readme) + " README.md --commit-message " + _sh_q("anima hf_upload_mk2: README") + " 2>&1"
                 let r_out = exec(r_cmd)
                 readme_msg = r_out.trim()
             }
@@ -638,10 +713,12 @@ fn _do_upload(repo: str, ckpt: str, readme: str, tag: str, private: int) {
     let mut tag_warn = ""
     if tag.len() > 0 {
         // hf v1.8.0+: `hf repo tag create` (alias of `hf repos tag create`).
-        let tag_cmd = cli + " repo tag create " + _sh_q(repo) + " " + _sh_q(tag) + " --token " + _sh_q(token) + " 2>&1"
+        // Bug 3 fix: token via HF_HOME/token file prefix (not --token argv).
+        let tag_cmd = tok_env + cli + " repo tag create " + _sh_q(repo) + " " + _sh_q(tag) + " 2>&1"
         let tag_out = exec(tag_cmd)
-        let tag_rc = to_int(exec("echo $?").trim())
-        if tag_rc == 0 {
+        // Bug 1 fix: `echo $?` ran in a fresh shell (always 0) — use the output
+        // signal instead. Tagging is non-fatal (does not gate upload success).
+        if _hf_output_is_error(tag_out) == 0 {
             tag_url = "https://huggingface.co/" + repo + "/tree/" + tag
         } else {
             // tag likely already exists; record but don't fail upload.
@@ -649,9 +726,15 @@ fn _do_upload(repo: str, ckpt: str, readme: str, tag: str, private: int) {
         }
     }
 
-    let upload_ok = if upload_rc == 0 { 1 } else { 0 }
+    // Bug 1 fix: success is gated on a REAL commit URL, not on `echo $?`
+    // (which ran in a fresh shell and reported echo's status, never hf's). A
+    // 401/Traceback no longer prints PASS / writes outcome:ok.
+    let upload_ok = _hf_commit_url_ok(commit_url)
     let mut last_err = ""
-    if upload_ok != 1 { last_err = "hf_cli_upload_rc" + to_string(upload_rc) + ": " + upload_out.trim() }
+    if upload_ok != 1 {
+        let tail = if upload_out.len() > 512 { upload_out.substring(upload_out.len() - 512, upload_out.len()).trim() } else { upload_out.trim() }
+        last_err = "hf_upload_no_commit_url: " + tail
+    }
 
     let payload = json_parse("{}")
     payload["ts_utc"] = _ts_utc()
@@ -671,6 +754,9 @@ fn _do_upload(repo: str, ckpt: str, readme: str, tag: str, private: int) {
     payload["outcome"] = if upload_ok == 1 { "ok" } else { "fail" }
     payload["error"] = last_err
     let audit_path = _audit_write(repo, payload)
+
+    // Bug 3 fix: shred the transient token-home dir (contains the token file).
+    if tok_home.len() > 0 { let _rm = exec("rm -rf " + _sh_q(tok_home)) }
 
     let resp = json_parse("{}")
     resp["ok"] = upload_ok
