@@ -8,7 +8,7 @@
 ## 진행 (milestones)
 - [x] 🌱 도메인 신설 — DOMAINS.tape 등록 · ANIMA 자매 트리 합류 · 4총사 seed
 - [x] 🔗 anima-body 인덱스 — 17 module · 11,670 LoC · ConsciousnessEngine → Motor/Speech/Pain 3-fork → 3 백엔드 (ESP32/ROS2/Chip)
-- [ ] B1 ConsciousnessEngine fork — Φ·Tension·Faction → Motor Planning · Speech Gesture · Pain/Reward 3-output
+- [x] B1 ConsciousnessEngine fork — Φ·Tension·Faction → Motor·Speech·Pain 3-output 🟢 PASS-NUMERICAL (`BODY/engine/consciousness_engine_fork.hexa` + smoke 3/3 case · `state/body_b1_fork_smoke_2026_05_29/`) · 실 wiring B2~B5 의존
 - [ ] B2 ESP32 SimBody (×8) — 8 ESP32 분산 모듈 simulated body · MCU-scale physical loop
 - [ ] B3 ROS2 + Gazebo — 표준 로보틱스 stack 위에 anima Φ wiring · sim2real bridge
 - [ ] B4 Chip Direct (FPGA/ASIC) — PHYSICS P1·P2 FPGA target 으로 직접 신체 wiring (latency 0)

@@ -2,6 +2,23 @@
 
 `BODY.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-05-29T15:35:00Z — B1 ConsciousnessEngine fork 골격 🟢 PASS-NUMERICAL
+
+- [x] `BODY/engine/consciousness_engine_fork.hexa` 작성 — pub fn 3-fork dispatcher (motor·speech·pain 0..1)
+  - motor  = clamp01(tension * 0.7 + phi * 0.3)
+  - speech = clamp01(faction * 0.6 + phi * 0.4)
+  - pain   = clamp01(1.0 - phi)
+  - args() canonical (NOT sys_argv — PR #1372 교훈)
+- [x] `BODY/engine/consciousness_engine_fork_smoke.hexa` 작성 — 3 case falsifier (F-MOTOR/SPEECH/PAIN-ISOLATE)
+- [x] Independent recompute (closed-form python ref) → 3/3 PASS
+  - F-MOTOR-ISOLATE  (phi=0.1·tens=0.9·fac=0.1) -> motor=0.66 > 0.5 PASS
+  - F-SPEECH-ISOLATE (phi=0.1·tens=0.1·fac=0.9) -> speech=0.58 > 0.5 PASS
+  - F-PAIN-ISOLATE   (phi=0.05·tens=0.5·fac=0.5) -> pain=0.95 > 0.5 PASS
+- [x] 결과 영속 → `state/body_b1_fork_smoke_2026_05_29/{smoke.log,result.json}` + `.verdicts/body_b1_fork_smoke_2026_05_29/smoke_verdict.txt`
+- [x] BODY.md B1 milestone flip → 🟢 PASS-NUMERICAL
+- [x] 정직 — closed-form 수준 골격 만 검증. 실 wiring B2~B5 의존. 🔵 SUPPORTED-FORMAL Φ 주장 아님 (Law 22 substrate-무관성은 B4 chip wiring 까지 닫힐 때 검증).
+- [ ] 다음 = B2 ESP32 SimBody (×8 분산 모듈 simulated body · MCU-scale physical loop)
+
 ## 2026-05-29T08:01:00Z — BODY 도메인 신설 (자매 6번째)
 
 - [x] 도메인 신설 — `BODY/BODY.md`(스냅샷 8 milestone) + `BODY.easy.md`(7-요소 8 영역) + `BODY.log.md`(본 로그)
