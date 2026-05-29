@@ -7,3 +7,4 @@
 @P savant-iit4-bridge := "./PAPER/savant-iit4-bridge" :: paper [active]
 @P structure-emergent-vs-number-convention := "./PAPER/structure-emergent-vs-number-convention" :: paper [active]
 @P xeno-applicability-frontier := "./PAPER/xeno-applicability-frontier" :: paper [active]
+@P aura-electrode-position-phi-proxy := "./PAPER/aura-electrode-position-phi-proxy" :: paper [active]

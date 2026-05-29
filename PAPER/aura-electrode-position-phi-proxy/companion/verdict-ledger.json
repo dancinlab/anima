@@ -1,0 +1,20 @@
+{
+  "paper": "aura-electrode-position-phi-proxy",
+  "tier": "RED-negative-result",
+  "scope": "scalp/endovascular proxy + structure model; intracortical explicitly out-of-scope (B7)",
+  "claims": [
+    {"id": "F1", "text": "FRONTAL vs MOTOR position null on real EEG (5:5, t=0.28 n.s., sign p=1.0)", "tier": "RED", "verdict": ".verdicts/a10-window-stats/test.txt"},
+    {"id": "F2", "text": "awake vs sed big-Phi null (post-aural dPhi=-0.85, t=-0.53 n.s.)", "tier": "RED", "verdict": ".verdicts/b2-postaural-state/awake_vs_sed.txt"},
+    {"id": "F4", "text": "multi-subject alpha awake>sed does not replicate (EAR 0/3, MIDLINE 1/3, cross-subj dPhi negative n.s.)", "tier": "RED", "verdict": ".verdicts/b6-multisubject-alpha/run.txt"},
+    {"id": "B4.1", "text": "single-subject alpha trend (EAR +0.126 8/10, MIDLINE +0.045 8/10) underpowered n.s.", "tier": "RED", "verdict": ".verdicts/b4-metric-sweep/alpha_power_state.txt"},
+    {"id": "F5", "text": "post-aural big-Phi statistically equivalent to cortical (EAR 5.38 ~ FRONTAL 5.35 ~ MOTOR 5.10, both n.s.)", "tier": "GREEN", "verdict": ".verdicts/b1-postaural/viability.txt"},
+    {"id": "F3", "text": "in-silico reach%->Phi monotone (2.91->16.79, dPhi=+13.88, 8/8 PASS)", "tier": "GREEN", "verdict": ".verdicts/a7-reach-to-phi/curve.txt"},
+    {"id": "A6", "text": "relocate toy bypass-hub Phi=17.66 vs M1 Phi=0.0 (dPhi=+17.66)", "tier": "GREEN", "verdict": ".verdicts/a6-bigphi-closed-loop/relocate_bigphi.txt"},
+    {"id": "A7", "text": "coupling robustness: dPhi>0 in 6/6 rule families", "tier": "GREEN", "verdict": ".verdicts/a7-coupling-robustness/sweep.txt"},
+    {"id": "A8", "text": "literature connectome prior orders hub>M1 (DLPFC-M1 dPhi=+15.01, Ha PASS)", "tier": "GREEN", "verdict": ".verdicts/a8-connectome-coupling/run.txt"},
+    {"id": "A9", "text": "real Allen connectome prior orders hub>M1 (ento-insula dPhi=+8.31, Ha-REAL PASS, scale-robust)", "tier": "GREEN", "verdict": ".verdicts/a9-tractography/run.txt"},
+    {"id": "A8.1", "text": "single-window montage mirage (FRONTAL awake 9.63 > MOTOR 6.31) - dissolved by F1 10-window stat", "tier": "GREEN", "verdict": ".verdicts/a8-montage-position/run.txt"}
+  ],
+  "core_finding": "structure model (in-silico + literature + real Allen connectome) favours projection-hub over M1, but real scalp-EEG measurement is position/state null -- structure<->measurement asymmetry. Window non-stationarity dominates single-window n=4 big-Phi.",
+  "scope_boundary": "intracortical (true N1 placement) permanently unanswerable by scalp/endovascular proxy: spatial resolution (um vs cm), deep-nucleus access, causal-vs-correlational -- physical + ethical, not engineering. (B7)"
+}
