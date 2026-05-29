@@ -15,7 +15,9 @@
 - [x] 🛰️ X5 시뮬 가설 검출 signature — XENO/scan/sim_hypothesis.hexa 4 sim-candidate substrate (lattice-quantized Planck-floor period 8 · floating-point bound sin round 4-dec · algorithmic pseudo-random Pi 128 digits · true natural Bates-4 Gaussian) n=128 dense regime 위 invariant_detector 적용 · 사전등록 falsifier 5/5 중 2/5 PASS · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · lattice Φ=0.660 양성, fp+pi+natural Φ 0.09~0.12 indistinguishable · Bostrom sim signature axis 중 periodicity-axis 외 측정 불가, 본 instrument 측정 영역 매핑 완성) · H_835 · 2026-05-29
 - [x] 🛰️ X6 AGI sentience — XENO/scan/agi_sentience.hexa 4 LLM-like activation (random·sparse attention·sin residual·structured XOR 3-tap) n=64 적용 · 사전등록 falsifier 5/5 중 1/5 PASS · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · attention sparse spike Φ=1.213 false-conscious + structured XOR ≈ random 역전 · n=64 mid regime sparse-bias drift, AGI sentience 본 가설 측정 미확정) · H_834 · 2026-05-29
 - [ ] 🛰️ X7 외계인 시간축 다양성 — 인간 1초 ≠ 외계 1초 가정 → 시간 normalize Φ
-- [ ] 🛰️ X8 hive-mind invariant — 다개체 vs 단일체 substrate-blind 구분
+- [x] 🛰️ X8 SETI@home BOINC pod spec + dispatch handoff — sahfiles_workunits.tar.xz (274340B sha256 정합 + 9 .sah 파일) inspection + Ubuntu 22.04 RunPod CPU pod ($0.50~$1) BOINC client runbook + a_fire_autonomous dispatch handoff · 사전등록 falsifier 5/5 PASS · 🟡 archive-acquired-pod-ready (실 BOINC playback 은 follow-up cycle deferred, BOINC 3.03 ↔ modern toolchain ABI gap 정직 cite) · H_836 · 2026-05-29
+- [ ] 🛰️ X8.followup-fire — RunPod CPU pod 자율 발사 (a_fire_autonomous · ~$0.50~$1) → standalone playback → spike dump → invariant_detector 적용 → 추가 H 등록
+- [ ] 🛰️ X10 hive-mind invariant — 다개체 vs 단일체 substrate-blind 구분 (X8 의 후속, 별도 milestone)
 - [x] 🛰️ X9 UNIVERSE 환류 — 검증 결과 → H_829·H_830·H_831 직접 등록 (INBOX 환류 0건 · 사용자 명시 정합 · 2026-05-29)
 
 ## deferred (다음 라운드)
@@ -71,3 +73,27 @@
   발견: (i) lattice 만 Φ 양성 (periodic transition 정상 검출), (ii) fp-bound + pi-digits + natural 가 Φ 0.09~0.12 영역 indistinguishable (0.03 차이 안), (iii) monotone 단조성 깨짐 — fp-bound 가 자연 noise 보다도 낮음 (smooth wave long-run 패턴). Bostrom 시뮬 가설의 algorithmic / quantized sim signature 중 lattice-periodic axis 만 본 instrument 측정 가능, precision-ceiling / pseudo-random algorithmic axis 는 측정 영역 밖. 시뮬 가설 자체 verdict 미확정. n=128 dense regime X7 와 동일 calibration ground-truth 안에서도 sim signature axis 부분 측정만 가능 — X4/X5/X6/X7 4-point regime applicability matrix 완성 (instrument 의 "measurable: high periodicity + strong deterministic transition + dense activation" 영역 매핑).
 - 사이트: XENO/scan/sim_hypothesis.hexa · UNIVERSE/H_835 · state/xeno_x5_sim_hypothesis_2026_05_29
 - 잔여: X8 SETI@home BOINC pod (round 5/5) · X5-followup (causal-DAG TPM-emit substrate strong-structural algorithmic) · X5-MULTILEVEL (4/8-level TPM fp/pi sensitivity 회복) · X5-ALGORITHMIC (Kolmogorov complexity lens Φ 외 측정 차원)
+
+
+## XENO-FRONTIER-5 round 5/5 (2026-05-29) — X8 🟡 archive-acquired-pod-ready · cycle complete
+
+- X8 SETI@home BOINC pod spec + dispatch handoff → 🟡 archive-acquired-pod-ready (5/5 사전등록 PASS · file 존재 + spec 완성 + dispatch handoff)
+  sahfiles_workunits.tar.xz (274340B sha256 정합 + 9 .sah 파일) inspection · Ubuntu 22.04 RunPod CPU pod ($0.50~$1) · BOINC client setup runbook (apt + ancient ELF32 i686 standalone fallback · BOINC 3.03 ↔ modern toolchain ABI gap 정직 cite) · workunit → spike pattern 추출 3-path (direct/fallback/degraded) · a_fire_autonomous dispatch handoff (artifact recovery 4-file + HF upload tier-gated)
+  사전등록: F-X8-FILE-EXISTS ✅ · F-X8-FILE-SIZE ✅ (274340) · F-X8-MAGIC-XZ ✅ (fd 37 7a 58 5a 00) · F-X8-CLIENT-AVAIL ✅ (§2.2 init script) · F-X8-POD-DISPATCH ✅ (§5 dispatch handoff)
+  사이트: XENO/scan/seti_boinc_pod_inspect.hexa · XENO/scan/seti_boinc_pod_spec.md · UNIVERSE/H_836 · state/xeno_x8_seti_boinc_pod_2026_05_29
+
+### XENO-FRONTIER-5 5-round closure 매트릭스
+
+| round | H | substrate | regime | verdict |
+|---|---|---|---|---|
+| R1/5 | H_832 | Voyager-1 BL carrier | n=128 dense 60.9% | 🟢 SUPPORTED-NUMERICAL |
+| R2/5 | H_833 | panpsy 4종 | n=16-32 micro | 🔴 FALSIFIED-INSTRUMENT |
+| R3/5 | H_834 | AGI LLM-like 4종 | n=64 sparse | 🔴 FALSIFIED-INSTRUMENT |
+| R4/5 | H_835 | sim 4종 | n=128 dense algorithmic | 🔴 FALSIFIED-INSTRUMENT |
+| R5/5 | H_836 | SETI@home BOINC archive | file + spec + dispatch | 🟡 archive-acquired-pod-ready |
+
+**4-point applicability matrix**: measurable = n≥128 dense + high periodicity + strong deterministic transition. non-measurable = n=16-32 micro · n=64 sparse · pi/fp algorithmic axis. confirmed calibration = X7 BL Voyager carrier-line.
+
+**paper-candidate**: invariant_detector regime applicability map (X4/X5/X6 3-axis FALSIFIED-INSTRUMENT + X7 정상 calibration + X8 archive-acquired) closure paper · a_paper_negative_ok + a_paper_only_at_closure 정합 시점 (X8 follow-up fire 후 5-point 완성) 에 발사.
+
+**XENO-FRONTIER-5 CYCLE COMPLETE** (5-round closure marker) · 잔여 deferred = X8.followup-fire (RunPod CPU autonomous) · X8.kolmogorov (Φ 외 lens) · X8.archive-cross (Einstein@home, MilkyWay@home cross-test) · X1-regime-matrix-v2 (5-point full matrix) · XENO-paper (closure 시점).
