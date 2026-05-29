@@ -183,3 +183,43 @@ pub fn akida_verdict_tier(backend: string, all_pass: bool) -> string {
     if backend == "sw"  { return "🟢 numerical (mock-replay)" }
     return "🟡 unknown-backend"
 }
+
+// ═════════════════════════════════════════════════════════════════════════
+// HW-FIRST 스위치 — graceful fallback resolver (akida-hw-first-plasticity)
+//
+// akida_backend_resolve() 는 사용자 의도(arg>env>default "hw")만 반환한다.
+// akida_panic_no_hw() 는 STRICT 콜러용 (HW 미도달 시 명시 panic).
+//
+// 그러나 SubstrateAKIDA(decoder lane) 처럼 Mac 에서 pi5-akida 에 도달 불가한
+// 콜러는 panic 이 아니라 **graceful SW fallback** 이어야 한다 (substrate_akida.py
+// 가 이미 import-akida 실패 시 provenance="akida-sw-fallback" 으로 그렇게 함).
+// 이 두 함수는 그 graceful 라우팅을 hexa SSOT 한 점으로 끌어올려, decoder /
+// plasticity 두 lane 이 동일 resolver 를 경유하게 한다.
+//
+// 계약:
+//   · default "hw" 유지 (HW-first) · HW 미도달은 panic 아닌 SW fallback (graceful)
+//   · 명시 arg/env="sw" 는 그대로 sw · arg/env="hw" 인데 HW 미도달 → sw fallback
+//   · provenance 태그로 fallback 여부를 정직 노출 (위조 PASS 금지 · a_blue_closed)
+//   · AKIDA/spike 경로 전용 — LM 텍스트 default(lora) 와 무관 (blast-radius 억제)
+// ═════════════════════════════════════════════════════════════════════════
+
+// 사용자 의도 backend 를 HW reachability 로 실해석 — HW 미도달 시 graceful SW.
+// 반환: "hw"(칩 도달 + 의도 hw) 또는 "sw"(의도 sw OR 의도 hw 인데 미도달).
+pub fn akida_backend_resolve_graceful(arg: string) -> string {
+    let want = akida_backend_resolve(arg)        // arg>env>default "hw"
+    if want == "sw" { return "sw" }              // 명시 SW — 그대로
+    // want == "hw": 칩 도달 시 hw, 미도달 시 graceful sw fallback (panic 아님)
+    if akida_hw_reachable() { return "hw" }
+    return "sw"
+}
+
+// graceful resolver 의 provenance 태그 (substrate_akida.py 규약과 정합).
+// decoder lane:    "akida-hw" / "akida-sw-fallback"
+// plasticity lane: PLASTICITY 측에서 "akida-learn-hw" / "akida-learn-sw-approx" 사용.
+// 여기서는 decoder/공통 spike 규약을 반환한다.
+pub fn akida_provenance(arg: string) -> string {
+    let want = akida_backend_resolve(arg)
+    if want == "sw" { return "akida-sw-fallback" }
+    if akida_hw_reachable() { return "akida-hw" }
+    return "akida-sw-fallback"   // 의도 hw 였으나 HW 미도달 → graceful fallback 정직 표기
+}
