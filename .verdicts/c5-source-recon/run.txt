@@ -1,0 +1,18 @@
+C5 non-invasive ceiling — scalp→cortical source recovery R² (in-silico forward/inverse toy)
+host=ubu-1 numpy · seed=42 deterministic · 1D-ring lead-field(toy) · ridge min-norm inverse · SNR 20dB
+
+sigma=0.25 sharp:
+  M=   8 R2=0.1578
+  M=  16 R2=0.3153
+  M=  64 R2=0.4186
+  M= 256 R2=0.4902
+  M=1024 R2=0.5423
+sigma=0.50 blur(realistic scalp):
+  M=   8 R2=0.1697
+  M=  16 R2=0.2051
+  M=  64 R2=0.2431
+  M= 256 R2=0.2651
+  M=1024 R2=0.2794
+CEILING(M=1024): sharp=0.5431 blur=0.2794
+
+VERDICT 🟡 SUPPORTED-NUMERICAL(toy): (1) electrode count SATURATES (256→1024: +0.01~0.05 R²) → more electrodes ≠ more recovery past Nyquist; (2) skull blur(σ0.50 realistic) caps recovery at ~28% of cortical variance (sharp σ0.25 ~54%) even at M=1024 → 두개골 LPF = 비침습 물리천장. 정성(포화+blur천장) robust; 절대% toy-specific. NOVEL goal '비침습으로 침습급'의 천장 = 28~54% of ECoG(이 toy).
