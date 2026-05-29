@@ -6,7 +6,7 @@
 
 ## 진행 (milestones)
 
-- [ ] tFUS 심부 자극 모델 — 음향 focal write, 심부 도달 + FDA tFUS 강도 한계
+- [x] (app ✅) tFUS 심부 자극 모델 — 음향 focal write, 심부 도달 + FDA tFUS 강도 한계
 - [ ] 읽기 벽 vs 쓰기 가능 — 비침습 심부 폐루프 불가, open-loop 자극만
 - [ ] 성인 비침습 음향-imaging 성숙도 문헌 — fUS read는 신생아/동물 주력 (honest gap)
 - [ ] 안전성·심부 심도 한계 — 음향 감쇠·열(Pennes) 문헌
@@ -17,3 +17,10 @@
 ## 양방향 sibling
 - 부모: AURA(`./AURA/AURA.md`) · 그룹: 🧬 심부(🔴침습)
 - 자매: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-HEADMODEL · AURA-CORTEX · AURA-NAV · AURA-DEEP · AURA-WEARABLE · AURA-MED
+
+## 세부분류 (app 세부트리)
+
+- `app/spec.md` — 앱 명세(일반인+기술)
+- `app/acoustic_write.py` — 실동작 toy (검증됨)
+- `verify/acoustic_write.txt` — verdict
+- 다음: real head-model 검증 · hexa-native 포팅 · 실데이터

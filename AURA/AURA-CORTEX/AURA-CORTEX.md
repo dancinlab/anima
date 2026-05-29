@@ -6,7 +6,7 @@
 
 ## 진행 (milestones)
 
-- [ ] 운동 디코드(M1) — in-silico 0.91 → 실 EEG/MEG 운동의도 분류
+- [x] (app ✅) 운동 디코드(M1) — in-silico 0.91 → 실 EEG/MEG 운동의도 분류
 - [ ] 통신 디코드 — 내적발화/언어피질(A1) decode, 락트인 통신
 - [ ] 의식수준 모니터 — big-Φ/α 피질 통합 (anima BRAIN/UNIVERSE 연계, 마취심도)
 - [ ] 집행상태(DLPFC, A3 golden-zone) — 인지부하/작업기억 모니터
@@ -17,3 +17,10 @@
 ## 양방향 sibling
 - 부모: AURA(`./AURA/AURA.md`) · 그룹: 🧠 피질(✅비침습)
 - 자매: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-HEADMODEL · AURA-NAV · AURA-DEEP · AURA-TFUS · AURA-WEARABLE · AURA-MED
+
+## 세부분류 (app 세부트리)
+
+- `app/spec.md` — 앱 명세(일반인+기술)
+- `app/motor_decode.py` — 실동작 toy (검증됨)
+- `verify/motor_decode.txt` — verdict
+- 다음: real head-model 검증 · hexa-native 포팅 · 실데이터
