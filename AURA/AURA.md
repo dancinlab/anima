@@ -37,8 +37,8 @@
 - [x] A7.2 도달%↔Φ 결합 — f(reach)→coupling→Φ 단조: reach{.10→.55}서 Φ 2.91→16.79 monotone 🟢 (가정된 링크) → `A7-reach-to-phi.md`
 - [x] A7.4 n≤8 region분리 — per-region big-Φ: M1-region 0.0 vs bypass-region 17.66, region평균=0.0(coupling 소거 확증) 🟢 → `A7-region-split.md`
 - [x] A7.5 PID 폐루프 sim — bypass setpoint 도달(|err|0.0008) vs M1 정상상태오차 영구(|err|6.32) 🟢 → `A7-pid-loop.md`
-- [~] A7.3 실EEG 투입 — eeg_estimate_tpm 1줄 스왑점 + ds005620(awake/sed) n=4 추출 + harness 배선완료, **run만 sign게이트 보류**(`! sidecar sign local` 후 즉시 두 숫자) → `A7-real-eeg.md` + `.verdicts/a7-real-eeg/RUN_BLOCKED.txt`
-- [ ] A8 (잔여) — A7.3 실EEG run(sign 후) · brainwire src 실행검증 · A6 substrate↔7-verb dossier 연결도 · 도달%→coupling 실측(connectome)
+- [x] A7.3 실EEG 투입 — ✅ **실측완료**: ds005620 sub-1010 n=4 정중선, awake Φ=7.5956 > sed Φ=6.84285 Δ=+0.753 (의식수준 awake>sed 부합) 🟢 SUPPORTED-NUMERICAL → `A7-real-eeg.md` + `.verdicts/a7-real-eeg/real_run.txt`. ⚠ 파이프라인 sanity 검증(전극위치 명제 직접검증 아님)
+- [ ] A8 (잔여) — 실EEG로 relocate-N1 직접검증(전극위치별 montage Φ) · brainwire src 실행검증 · A6↔7-verb dossier 연결도 · 도달%→coupling connectome 실측 · n=8 region분리 실EEG
 
 
 ## 양방향 sibling

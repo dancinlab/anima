@@ -26,3 +26,11 @@
 - A7.5 PID폐루프: Φ*=14.13 setpoint, bypass c→0.45 도달(|err|0.0008) vs M1 c→ceiling0.25 멈춤 Φ=7.81(|err|6.32 영구) 🟢. falsifier 미반증. toy plant·latency/safety 미모델
 - A7.3 실EEG: 스왑점=eeg_estimate_tpm(samples,n_ch,n_samp) 1줄(engine⊥adapter g61). ds005620 sub-1010(awake-EO/sed) n=4 정중선 250Hz 4s 추출+harness 배선완료. run만 `! sidecar sign local` 게이트 보류(데이터/코드 결함 아님). raw 744M는 DATASET/ 로컬, 커밋제외
 - 마일스톤 A7.1/.2/.4/.5 done · A7.3 [~]보류 · A8(실EEG run·brainwire src 검증·7-verb 연결도·connectome) 신설
+
+## 2026-05-30 — A7.3 실EEG 실측 완료 (sign local 후)
+
+- 사용자 `! sidecar sign local` → 게이트 해제. ds005620 sub-1010 (BrainVision IEEE_FLOAT_32, 65ch@5000Hz 300s) n=4 정중선(Fz,Cz,Pz,Oz) 5000→250Hz decimate 4s=1000samp
+- HEXA_LANG=... hexa run AURA/toy/a7_real_eeg_bigphi.hexa → **awake big-Φ=7.5956 (total 10.10) > sed big-Φ=6.84285 (total 9.85), Δ=+0.75275**, 결정론적(re-run identical)
+- IIT4 의식수준 예측(깨어있음>진정) 부합. hexa verify --verifier-cmd --expect "Delta(awake - sed) = 0.75275" → 🟢 SUPPORTED-NUMERICAL. verdict `.verdicts/a7-real-eeg/real_run.txt` verbatim (RUN_BLOCKED.txt 병존)
+- ⚠ honest: 이건 파이프라인 sanity(synthetic과 같은 부호방향 awake>sed)이지 relocate-N1 전극위치 명제 직접검증 아님 → A8(montage별 위치 Φ)로 이관. single-subject n=4, toy≠production
+- A7.3 [~]→[x]. A8 갱신(실EEG montage 위치검증 추가)
