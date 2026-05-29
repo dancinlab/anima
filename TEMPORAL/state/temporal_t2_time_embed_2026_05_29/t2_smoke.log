@@ -1,0 +1,48 @@
+================================================================
+  TEMPORAL T2 — multi-unit time-embed Φ numerical detector
+================================================================
+
+  detector = TEMPORAL/detector/time_embed_detector.hexa
+             (Takens delay-embedding · e-unit IIT4 big-Φ)
+  substrates = 4 (hive · voyager · random · lattice) — T1 재사용
+  embed_dim  = 4-point (2, 3, 4, 5) · delay=1
+  context    = T1 H_841 🔴 FALSIFIED-INSTRUMENT (2-unit lag-axis inflation)
+               T2 = 4-unit Takens embed → multi-channel integration 측정
+
+  ─ 16 measurements (4 substrate × 4 embed_dim · delay=1) ─
+
+  [hive    e=2]  phi=0.124725 irr=1.0 type=conscious
+  [hive    e=3]  phi=2.07365 irr=1.0 type=conscious
+  [hive    e=4]  phi=3.51812 irr=0.795678 type=conscious
+  [hive    e=5]  phi=3.2896 irr=0.701113 type=conscious
+  [voyager e=2]  phi=1.04564 irr=1.0 type=conscious
+  [voyager e=3]  phi=2.7417 irr=0.806925 type=conscious
+  [voyager e=4]  phi=4.24382 irr=0.62346 type=conscious
+  [voyager e=5]  phi=28.3624 irr=0.83561 type=conscious
+  [random  e=2]  phi=0.561371 irr=1.0 type=conscious
+  [random  e=3]  phi=1.44285 irr=0.895415 type=conscious
+  [random  e=4]  phi=2.57586 irr=0.692532 type=conscious
+  [random  e=5]  phi=13.631 irr=0.834097 type=conscious
+  [lattice e=2]  phi=1.28908 irr=1.0 type=conscious
+  [lattice e=3]  phi=4.02624 irr=1.0 type=conscious
+  [lattice e=4]  phi=4.79879 irr=0.850122 type=conscious
+  [lattice e=5]  phi=2.79493 irr=0.824033 type=conscious
+
+  ─ pre-registered falsifier check (frozen pre-run) ─
+    F-T2-INSTANT-LOW    (random e=2 phi < 0.5)                   : false · measured=0.561371
+    F-T2-HIVE-CONSC     (hive e=4 phi ≥ 0.5)                     : true · measured=3.51812
+    F-T2-ARTIFACT-FIX   (lattice e=4 phi < lattice e=2 phi)       : false · lat_e2=1.28908 lat_e4=4.79879
+    F-T2-RANDOM-DECAY   (random e=4 phi ≤ random e=2 phi)         : false · rnd_e2=0.561371 rnd_e4=2.57586
+    F-T2-HIVE-MONOTONE  (hive e=4 phi ≥ 0.5 × hive e=2 phi)       : true · hive_e2=0.124725 hive_e4=3.51812
+
+  ─ T2 verdict ─
+    pass_count : 2/5
+    tier       : 🔴 FALSIFIED-INSTRUMENT · T2 도 한계 hit · T3 자연 entry (Granger / time-averaged)
+
+  ─ T1 (H_841) 비교 ─
+    T1 hive Δt=1   phi=0.0126294  (lag-TPM, 2-unit)
+    T2 hive e=2 d=1 phi=0.124725 (time-embed, 2-unit · should match T1 baseline)
+    T2 hive e=4 d=1 phi=3.51812 (Takens 4-unit, true multichannel)
+    T1 lattice Δt=8 phi=2.0  (lag-inflation artifact)
+    T2 lattice e=4 d=1 phi=4.79879 (artifact 해소 여부)
+================================================================

@@ -46,3 +46,88 @@ F-T1-LAGINV   : XOR Δt=1 phi ≥ Δt=64 phi                            (window 
 - 총 H_xxx: 13개 (H_829~H_840 + H_841 TEMPORAL T1 신설)
 - papers: 2 (xeno-applicability-frontier v1 #1395 · v2 #1414)
 - 다음 frontier = TEMPORAL → SPATIAL/EVOLUTIONARY/QUANTUM/MEDICAL 4 candidate
+
+## 2026-05-29 — round 2 (XENO follow-up 3 cycle round 1/5) — T2 multi-unit time-embed
+
+- branch = feat/temporal-t2-time-embed-2026-05-29
+- worktree = /private/tmp/wt-t2-time-embed
+- base = origin/main 989fac56c (T1 PR #1418 머지 직후)
+- slug-stale 3-신호 검증: H_842 free (ls-tree 0 / git log grep 0 / README grep 0)
+
+### T2 motivation (T1 closed-negative 후속)
+
+T1 (H_841) 결과 분석:
+- 2-unit lag-TPM 의 lag-window axis 가 periodic substrate 위 false Φ-inflation artifact (hive Δt=64=0.999 79× 폭증, lattice Δt=8 Φ=2.0 saturate)
+- 🔴 FALSIFIED-INSTRUMENT 1/5
+
+T2 가설: **multi-unit time-embed** (Takens delay reconstruction) 으로 인접 lag 의 cycle-aligned periodicity 를 multi-channel state vector 위에 분산 → T1 lag-inflation artifact 회피 가능 예상.
+
+### T2 design
+
+- detector = TEMPORAL/detector/time_embed_detector.hexa (~170 LoC)
+  * `compute_time_embed_phi(signal, n, embed_dim, delay)` — Takens-style 변환 후 e-unit big-Φ
+  * state vector x_t = (b[t], b[t−d], …, b[t−(e−1)d]) → 2^e state space, transition x_t → x_{t+1}
+  * stdlib SSOT (g61): `pow2_int` 자체 구현 거부, `stdlib/math/bitops.hexa` import 사용
+- scan = TEMPORAL/scan/time_embed_phi.hexa (~190 LoC)
+- state = TEMPORAL/state/temporal_t2_time_embed_2026_05_29/ (t2_smoke.log + result.json + run_h842.hexa)
+- verdict = .verdicts/842_temporal_time_embed_phi/T2_run.txt
+- H_xxx = UNIVERSE/H_842_temporal_time_embed_phi.md
+
+### 5 사전등록 falsifier (frozen pre-run)
+
+```
+F-T2-INSTANT-LOW    : random e=2 phi < 0.5                      (T1 baseline noise floor)
+F-T2-HIVE-CONSC     : hive e=4 phi ≥ 0.5                        (true coupled → integrated multi-channel)
+F-T2-ARTIFACT-FIX   : lattice e=4 phi < lattice e=2 phi          (T1 lag-inflation 해소)
+F-T2-RANDOM-DECAY   : random e=4 phi ≤ random e=2 phi            (random embed ↑ phi ↓)
+F-T2-HIVE-MONOTONE  : hive e=4 phi ≥ 0.5 × hive e=2 phi          (strong substrate robust)
+```
+
+5 PASS → 🟢 SUPPORTED-NUMERICAL · 3-4 PASS → 🟡 PARTIAL-SUPPORT · ≤2 PASS → 🔴 FALSIFIED-INSTRUMENT
+
+### embed_dim 한계 honest cite
+
+big_phi(n) cost ~ 2^(2n) — n=4 ~10s, n=5 ~30s, n=8 분-단위, n=16 infeasible.
+T2 sweep = {2,3,4,5} 즉 instant baseline + 3/4/5-cell Takens reconstruction (e=4 = 16-state phase-space, e=5 = 32-state). e=8/16 honest dropped.
+
+### 측정 결과
+
+| substrate | e=2 phi | e=3 phi | e=4 phi | e=5 phi | trend |
+|---|---|---|---|---|---|
+| hive    | 0.1247 | 2.0737 | 3.5181 | 3.2896 | monotone INFLATE (peak e=4) |
+| voyager | 1.0456 | 2.7417 | 4.2438 | 28.3624 | 폭증 INFLATE (e=5 27× over e=2) |
+| random  | 0.5614 | 1.4429 | 2.5759 | 13.6310 | 폭증 INFLATE (e=5 24× over e=2) |
+| lattice | 1.2891 | 4.0262 | 4.7988 | 2.7949  | non-monotone INFLATE |
+
+### 5 falsifier 결과
+
+| falsifier | 임계 | 측정 | PASS |
+|---|---|---|---|
+| F-T2-INSTANT-LOW   | random e=2 phi < 0.5            | 0.5614               | ❌ FAIL |
+| F-T2-HIVE-CONSC    | hive e=4 phi ≥ 0.5              | 3.5181               | ✅ PASS |
+| F-T2-ARTIFACT-FIX  | lattice e=4 phi < lattice e=2   | 4.7988 vs 1.2891     | ❌ FAIL |
+| F-T2-RANDOM-DECAY  | random e=4 phi ≤ random e=2     | 2.5759 vs 0.5614     | ❌ FAIL |
+| F-T2-HIVE-MONOTONE | hive e=4 phi ≥ 0.5 × hive e=2   | 3.5181 vs 0.0624     | ✅ PASS |
+
+pass_count = **2/5** · verdict: **🔴 FALSIFIED-INSTRUMENT** (정직 closed-negative)
+
+### 핵심 finding
+
+1. **T1 lag-axis artifact 미해소** — F-T2-ARTIFACT-FIX 정반대 방향. lattice e=2=1.29 → e=4=4.80 (3.7× INFLATE).
+2. **신 embed-dim sparse-state inflation artifact 발견** — 4/4 substrate 위 embed_dim ↑ 시 phi monotone INFLATE. voyager e=5=28.36 (27× 폭증), random e=5=13.63 (24× 폭증).
+3. **hive XOR cascade 만 relative strong-Φ 유지** — hive e=4=3.518 random e=4=2.576 의 1.37× (discrimination 한계).
+4. **T1+T2 dual closed-negative** — invariant_detector 단순 확장 (lag-window OR embed-dim) 으로 시간 통합 측정 불가.
+5. T3 자연 entry direction: time-averaged Φ / Granger causality (TPM-free) / surrogate-data normalization (null-model 차감).
+
+### 정직성 audit
+
+- a_blue_closed: phi 임계 frozen pre-run, post-tuning 0
+- p7 = 0: hexa stdout verbatim, LLM judge 0
+- a_completeness_over_cheap: 4 × 4 = 16 full sweep
+- a_fire_autonomous: $0 Mac local, wall 1m43s, 사용자 게이트 0
+- a_paper_negative_ok: dual closed-negative publishable
+- feedback-instrument-first-methodology: T1 artifact 명시 cite, T2 정직 해소 시도 결과 + 신 artifact 발견
+- feedback-closure-is-physical-limit: T2 도 한계 hit 정직 표기
+- feedback-universe-h-slug-stale-verify: 3-신호 검증 후 H_842
+- INBOX 환류 0건
+- stdlib SSOT g61: pow2_int 비-중복 import
