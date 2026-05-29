@@ -482,5 +482,8 @@ verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-fi
 - [`H_187`](H_187_trinity_tb_dom_triadic_dominance.md) — Trinity / TB / DOM / MECH / GAP meta-cluster — Triadic-domin
 - [`H_189`](H_189_red_team_methodology_meta_cluster_r1_r6.md) — Red-team methodology meta-cluster — R1-R6 6 attack vectors a
 - [`H_190`](H_190_law_ca_embedding_mathematical_family.md) — LAW-CA-embedding mathematical family — staged-growth + Banac
+- [`H_829`](H_829_xeno_invariant_detector.md) — XENO substrate-blind invariant_detector — float[] → IIT4 big-Φ → {phi, irreducibility, substrate_type} · 5/5 PASS 🟢 SUPPORTED-NUMERICAL · 2026-05-29
+- [`H_830`](H_830_xeno_sim_substrate_cross.md) — XENO sim_substrate_cross — ECA·logistic·Kuramoto·AKIDA 4-substrate false-positive 0/4 · 5/5 PASS 🟢 SUPPORTED-NUMERICAL · 2026-05-29
+- [`H_831`](H_831_xeno_seti_raw_to_phi_scan.md) — XENO seti_raw_to_phi 5-source scan — Wow/Voyager/Exoplanet/Synthetic 7 measurement, 의식 분류 0, BL+SETI@home archive-pointer SKIP honest · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
 
 </details>
