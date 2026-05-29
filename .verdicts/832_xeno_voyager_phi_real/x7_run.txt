@@ -1,0 +1,23 @@
+================================================================
+  XENO X7 — BL Voyager-1 invariant_detector 실 실행
+================================================================
+
+  source = DATASET/breakthrough_listen/Voyager1_block1.npy
+         = (64, 1000, 2) complex64, BL Green Bank Voyager-1 baseband
+         = real-part flatten first 128 samples, [0,1] normalized
+
+  ─ invariant_detector verdict ─
+    phi             = 0.114099
+    integration     = 1.26083
+    irreducibility  = 0.0904946
+    substrate_type  = coherent_non_conscious
+
+  ─ pre-registered prediction check ─
+    pred: phi ≈ 0 (narrow-band carrier ≠ irreducible)
+    pred: type = 'noise' or 'coherent_non_conscious'
+
+  ─ X7 verdict ─
+    pre-reg phi < 0.5    : true
+    pre-reg type match   : true
+    tier                 : 🟢 SUPPORTED-NUMERICAL
+================================================================
