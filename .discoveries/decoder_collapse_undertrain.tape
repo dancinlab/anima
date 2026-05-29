@@ -212,3 +212,14 @@
   verdict      = "🟠 CODE-LANDED-UNVERIFIED — mirror code land (syntax PASS), build/fire/measurement 미검증. cost-leak 차단. measurement 본선 4 attempt 모두 미도달."
   cost         = "≤$2 (runpod 2 pod 15min idle), HF=0, ckpt=0."
   artifacts    = "STEP_RATE_LOG.md entry 18, train_v3_moe_{prodaux,longtrain}.hexa 3-fn mirror."
+
+@N dec_m5_attempt5_transport_2026_05_30 := "M5 attempt #5 — foreground inline, vast SSH DARK + cross-session key-401 차단" :: transport-incident
+  context      = "attempt #4 mirror code (PR #1434) origin/main 보유. (c) parallel 의 (b) foreground inline 재시도 — bg agent 3연속 사망(entry 16/18) 회피."
+  blockers     = "(a) runpod H100 capacity=0 (rent × 2 no-id) (b) vast H100 fallback pod 38424527 READY 후 persistent Permission-denied-publickey (DARK pod, 40 tries 0-stable, reboot 무효) (c) teardown 시 vast API 401 Invalid-user-key"
+  key_clobber  = "★ root cause: ~/.config/vastai/vast_api_key (mtime 00:44 today) 를 다른 세션이 invalid key (98d048fc…) 로 덮어씀 → 모든 vast API 401 (RTSC 세션 포함 전체). keychain SSOT (secret get vast.api_key = 2f3bad9f…) 가 canonical. 파일 재기록으로 복원 → net fix (다른 RTSC 세션 401 도 해소)."
+  teardown     = "key resync 후 hexa cloud rm 38424527 → destroyed (confirmed). RTSC 5 vast (anima project-tagged) 무접촉. runpod 0."
+  saga_summary = "M5 production fire 5-attempt 전부 인프라 차단: #1 API500 twin · #2 API500 recovery · #3 hexa-lang #1527 trim build · #4 API rate-limit · #5 runpod-cap0 + vast-DARK + key-401. measurement 5/5 미도달. science (collapse mechanism) 무관, 매번 다른 인프라 layer (API/build/provider-transport)."
+  followup     = "진짜 unblock = hexa-lang #1527 fix (handoff 2eddb92a, build 의존 제거) 또는 dedicated Linux GPU 호스트 (pool ubu GPU?) — vast/runpod transport 우회. vast key SSOT cross-session clobber 방어 필요 (hexa-lang inbox 후보)."
+  verdict      = "🟠 BLOCKED-AT-TRANSPORT — H_686+H_687 production UNMEASURED 유지. cost-leak 차단, ≤$1. mirror code (attempt #4) 는 build 미검증 상태로 main 에 잔존."
+  cost         = "≤$1 (vast pod ~10min idle), runpod=0, HF=0, ckpt=0."
+  artifacts    = "STEP_RATE_LOG.md entry 19."
