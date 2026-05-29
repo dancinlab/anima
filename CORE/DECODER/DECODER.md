@@ -174,6 +174,27 @@
 - expert 분화 verdict ← **TE** (router→expert 방향성, H_290 정렬) + scale-free 위상(H_289). 본 세션 M4b-diff(a) top-1 의 gate 97/3 분화가 분화-측 verdict, TE 가 신호 흐름 측 verdict.
 - 정보 통합 통합 verdict (M4 종합) ← faithful big-Φ small-N exact (H_278 PR #515 · `HEXAD/IIT4/lib`). bounded large-N($0)도 가능 (H_002 C2 cycle#16, n=8 도달).
 
+## UNIVERSE H 가설 sync — Cycle #24 decoder-collapse mechanism+escape (2026-05-29)
+
+> M5 closure (PR #1379 dec_capfloor 🔵 + PR #1381 dec_undertrain 🔴 INFEASIBLE + PR #1384) 직후 UNIVERSE 도메인 cycle #24 가 register collapse 의 **메커니즘(M-D/F/G) 3개 + 탈출경로(E-B/C/D) 3개** 를 분리 attest. 6/6 ⚪ SPECULATION-FENCED (production attribution 외부 hw 의존) + closed-form numerical band 모두 PASS.
+
+| H | 역할 | seed | closed-form 결과 | DECODER 함의 |
+|---|---|---|---|---|
+| [H_683](../../UNIVERSE/H_683_token_zero_dominant_prior.md) | M-D mechanism | token-0 marginal × greedy attractor | CE_floor = -ln(p₀) ∈ [2.30, 3.00] PASS | M4b ce_final 9.02 ≫ 3.0 → token-0 alone 으로 explain 불가, 추가 mechanism (H_684/H_685) 존재 |
+| [H_684](../../UNIVERSE/H_684_bf16_precision_attractor_drift.md) | M-F mechanism | bf16 underflow drift | normal min 1.18e-38, σ=4 정상 mode rare PASS | primary 아님 — collapse persistence amplifier (post-attractor) 후보 |
+| [H_685](../../UNIVERSE/H_685_ce_argmax_distribution_shift.md) | M-G mechanism | train CE / decode argmax shift | synthetic CE 0.828 nats 분기 PASS | escape lever 2개: H_687 (train-time) + H_688 (decode-time) sibling |
+| [H_686](../../UNIVERSE/H_686_router_entropy_regularization.md) | E-B escape | router entropy reg H(p)≥ln(K)/2 | K=2/4/8: 0.347/0.693/1.040 nats PASS | M4 MoE-fresh 본선의 aux-loss 정량 sufficient-condition · 본선 1순위 fundamental |
+| [H_687](../../UNIVERSE/H_687_kl_to_uniform_output_reg.md) | E-C escape | KL(p ‖ uniform_V) reg | ln(V=151643)=11.93 nats 정의-수준 PASS | train-time token-분포 diversity 강제 · M4 본선 결합 fire 권장 |
+| [H_688](../../UNIVERSE/H_688_decode_top_p_temperature_lever.md) | E-D escape | decode-time top-k/top-p/τ | k=2→1 bit, k=5→2.32 bit PASS | post-train weight 무변경 · $0 Mac probe 가능 (ckpt 있을 시) · 1순위 cheap |
+
+**본선 후보 우선순위 (a_completeness_over_cheap 정합)**:
+1. **H_686 + H_687 결합** (train-time fundamental) — M4 MoE-fresh 본선 fire 시 aux-loss 두 축 모두 켜고 ablation (cost-bearing)
+2. H_688 (post-train cheap) — M4b #1296 ckpt 부재 확인 후 production fire 결합 (별 sampling schedule)
+3. H_683 (mechanism 동기) — H_686+H_687 의 사전등록 메커니즘 attestation
+
+**P7 정합**: 6 H 모두 perplexity 아닌 entropy/distinct/TTR/LZ_norm 측정자 사용 (simple-stack).
+**P8 정합**: train-time aux-loss 는 weight 학습 path (continuous cell-division) 의 substrate-level modulation.
+
 ## M1 hook 지점 (M0 인계 노트)
 
 - **축 D freeze / 축 A curriculum** — AdamW 호출(`nn_decoder_adamw_step(M, Mg_acc, ..., m_size, ...)`) 직전. freeze=slot별 grad masking · curriculum=window 선택부.
