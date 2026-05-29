@@ -17,7 +17,13 @@
 //     [random]  Bates-4 Gaussian-ish natural noise (X5-d, seed=20260529)
 //     [lattice] X5-a Planck-floor period-8 grid (false-positive border substrate)
 //
-//   embed_dim sweep: 2, 4, 8, 16 — delay=1 (instant-multichannel reconstruction)
+//   embed_dim sweep: 2, 3, 4, 5 — delay=1 (instant-multichannel reconstruction)
+//
+//   NOTE on embed_dim 한계 (IIT4 big-Φ computational scale):
+//     big_phi(n) cost ~ 2^n * 2^n * purview-enum ~ 2^(2n) work. n=4 ~10s,
+//     n=5 ~30s, n=8 분-단위, n=16 infeasible. T2 sweep = {2,3,4,5} 즉 instant
+//     baseline + 3·4·5-cell Takens reconstruction — multi-channel integration
+//     의 본질적 변화 측정엔 충분 (e=4 = 16-state phase-space, e=5 = 32-state).
 //
 //   = 4 × 4 = 16 measurements + 5 사전등록 falsifier.
 //
@@ -49,7 +55,7 @@ fn main() {
     println("  detector = TEMPORAL/detector/time_embed_detector.hexa")
     println("             (Takens delay-embedding · e-unit IIT4 big-Φ)")
     println("  substrates = 4 (hive · voyager · random · lattice) — T1 재사용")
-    println("  embed_dim  = 4-point (2, 4, 8, 16) · delay=1")
+    println("  embed_dim  = 4-point (2, 3, 4, 5) · delay=1")
     println("  context    = T1 H_841 🔴 FALSIFIED-INSTRUMENT (2-unit lag-axis inflation)")
     println("               T2 = 4-unit Takens embed → multi-channel integration 측정")
     println("")
@@ -152,41 +158,41 @@ fn main() {
     println("  ─ 16 measurements (4 substrate × 4 embed_dim · delay=1) ─")
     println("")
 
-    let r_hive_2  = compute_time_embed_phi(hive,    128, 2,  1)
-    let r_hive_4  = compute_time_embed_phi(hive,    128, 4,  1)
-    let r_hive_8  = compute_time_embed_phi(hive,    128, 8,  1)
-    let r_hive_16 = compute_time_embed_phi(hive,    128, 16, 1)
-    println("  [hive    e=2 ]  phi=" + str(r_hive_2["phi"])  + " irr=" + str(r_hive_2["irreducibility"])  + " type=" + r_hive_2["substrate_type"])
-    println("  [hive    e=4 ]  phi=" + str(r_hive_4["phi"])  + " irr=" + str(r_hive_4["irreducibility"])  + " type=" + r_hive_4["substrate_type"])
-    println("  [hive    e=8 ]  phi=" + str(r_hive_8["phi"])  + " irr=" + str(r_hive_8["irreducibility"])  + " type=" + r_hive_8["substrate_type"])
-    println("  [hive    e=16]  phi=" + str(r_hive_16["phi"]) + " irr=" + str(r_hive_16["irreducibility"]) + " type=" + r_hive_16["substrate_type"])
+    let r_hive_2  = compute_time_embed_phi(hive,    128, 2, 1)
+    let r_hive_3  = compute_time_embed_phi(hive,    128, 3, 1)
+    let r_hive_4  = compute_time_embed_phi(hive,    128, 4, 1)
+    let r_hive_5  = compute_time_embed_phi(hive,    128, 5, 1)
+    println("  [hive    e=2]  phi=" + str(r_hive_2["phi"])  + " irr=" + str(r_hive_2["irreducibility"])  + " type=" + r_hive_2["substrate_type"])
+    println("  [hive    e=3]  phi=" + str(r_hive_3["phi"])  + " irr=" + str(r_hive_3["irreducibility"])  + " type=" + r_hive_3["substrate_type"])
+    println("  [hive    e=4]  phi=" + str(r_hive_4["phi"])  + " irr=" + str(r_hive_4["irreducibility"])  + " type=" + r_hive_4["substrate_type"])
+    println("  [hive    e=5]  phi=" + str(r_hive_5["phi"])  + " irr=" + str(r_hive_5["irreducibility"])  + " type=" + r_hive_5["substrate_type"])
 
-    let r_voy_2   = compute_time_embed_phi(voyager, 128, 2,  1)
-    let r_voy_4   = compute_time_embed_phi(voyager, 128, 4,  1)
-    let r_voy_8   = compute_time_embed_phi(voyager, 128, 8,  1)
-    let r_voy_16  = compute_time_embed_phi(voyager, 128, 16, 1)
-    println("  [voyager e=2 ]  phi=" + str(r_voy_2["phi"])   + " irr=" + str(r_voy_2["irreducibility"])   + " type=" + r_voy_2["substrate_type"])
-    println("  [voyager e=4 ]  phi=" + str(r_voy_4["phi"])   + " irr=" + str(r_voy_4["irreducibility"])   + " type=" + r_voy_4["substrate_type"])
-    println("  [voyager e=8 ]  phi=" + str(r_voy_8["phi"])   + " irr=" + str(r_voy_8["irreducibility"])   + " type=" + r_voy_8["substrate_type"])
-    println("  [voyager e=16]  phi=" + str(r_voy_16["phi"])  + " irr=" + str(r_voy_16["irreducibility"])  + " type=" + r_voy_16["substrate_type"])
+    let r_voy_2   = compute_time_embed_phi(voyager, 128, 2, 1)
+    let r_voy_3   = compute_time_embed_phi(voyager, 128, 3, 1)
+    let r_voy_4   = compute_time_embed_phi(voyager, 128, 4, 1)
+    let r_voy_5   = compute_time_embed_phi(voyager, 128, 5, 1)
+    println("  [voyager e=2]  phi=" + str(r_voy_2["phi"])   + " irr=" + str(r_voy_2["irreducibility"])   + " type=" + r_voy_2["substrate_type"])
+    println("  [voyager e=3]  phi=" + str(r_voy_3["phi"])   + " irr=" + str(r_voy_3["irreducibility"])   + " type=" + r_voy_3["substrate_type"])
+    println("  [voyager e=4]  phi=" + str(r_voy_4["phi"])   + " irr=" + str(r_voy_4["irreducibility"])   + " type=" + r_voy_4["substrate_type"])
+    println("  [voyager e=5]  phi=" + str(r_voy_5["phi"])   + " irr=" + str(r_voy_5["irreducibility"])   + " type=" + r_voy_5["substrate_type"])
 
-    let r_rnd_2   = compute_time_embed_phi(random_n, 128, 2,  1)
-    let r_rnd_4   = compute_time_embed_phi(random_n, 128, 4,  1)
-    let r_rnd_8   = compute_time_embed_phi(random_n, 128, 8,  1)
-    let r_rnd_16  = compute_time_embed_phi(random_n, 128, 16, 1)
-    println("  [random  e=2 ]  phi=" + str(r_rnd_2["phi"])   + " irr=" + str(r_rnd_2["irreducibility"])   + " type=" + r_rnd_2["substrate_type"])
-    println("  [random  e=4 ]  phi=" + str(r_rnd_4["phi"])   + " irr=" + str(r_rnd_4["irreducibility"])   + " type=" + r_rnd_4["substrate_type"])
-    println("  [random  e=8 ]  phi=" + str(r_rnd_8["phi"])   + " irr=" + str(r_rnd_8["irreducibility"])   + " type=" + r_rnd_8["substrate_type"])
-    println("  [random  e=16]  phi=" + str(r_rnd_16["phi"])  + " irr=" + str(r_rnd_16["irreducibility"])  + " type=" + r_rnd_16["substrate_type"])
+    let r_rnd_2   = compute_time_embed_phi(random_n, 128, 2, 1)
+    let r_rnd_3   = compute_time_embed_phi(random_n, 128, 3, 1)
+    let r_rnd_4   = compute_time_embed_phi(random_n, 128, 4, 1)
+    let r_rnd_5   = compute_time_embed_phi(random_n, 128, 5, 1)
+    println("  [random  e=2]  phi=" + str(r_rnd_2["phi"])   + " irr=" + str(r_rnd_2["irreducibility"])   + " type=" + r_rnd_2["substrate_type"])
+    println("  [random  e=3]  phi=" + str(r_rnd_3["phi"])   + " irr=" + str(r_rnd_3["irreducibility"])   + " type=" + r_rnd_3["substrate_type"])
+    println("  [random  e=4]  phi=" + str(r_rnd_4["phi"])   + " irr=" + str(r_rnd_4["irreducibility"])   + " type=" + r_rnd_4["substrate_type"])
+    println("  [random  e=5]  phi=" + str(r_rnd_5["phi"])   + " irr=" + str(r_rnd_5["irreducibility"])   + " type=" + r_rnd_5["substrate_type"])
 
-    let r_lat_2   = compute_time_embed_phi(lattice, 128, 2,  1)
-    let r_lat_4   = compute_time_embed_phi(lattice, 128, 4,  1)
-    let r_lat_8   = compute_time_embed_phi(lattice, 128, 8,  1)
-    let r_lat_16  = compute_time_embed_phi(lattice, 128, 16, 1)
-    println("  [lattice e=2 ]  phi=" + str(r_lat_2["phi"])   + " irr=" + str(r_lat_2["irreducibility"])   + " type=" + r_lat_2["substrate_type"])
-    println("  [lattice e=4 ]  phi=" + str(r_lat_4["phi"])   + " irr=" + str(r_lat_4["irreducibility"])   + " type=" + r_lat_4["substrate_type"])
-    println("  [lattice e=8 ]  phi=" + str(r_lat_8["phi"])   + " irr=" + str(r_lat_8["irreducibility"])   + " type=" + r_lat_8["substrate_type"])
-    println("  [lattice e=16]  phi=" + str(r_lat_16["phi"])  + " irr=" + str(r_lat_16["irreducibility"])  + " type=" + r_lat_16["substrate_type"])
+    let r_lat_2   = compute_time_embed_phi(lattice, 128, 2, 1)
+    let r_lat_3   = compute_time_embed_phi(lattice, 128, 3, 1)
+    let r_lat_4   = compute_time_embed_phi(lattice, 128, 4, 1)
+    let r_lat_5   = compute_time_embed_phi(lattice, 128, 5, 1)
+    println("  [lattice e=2]  phi=" + str(r_lat_2["phi"])   + " irr=" + str(r_lat_2["irreducibility"])   + " type=" + r_lat_2["substrate_type"])
+    println("  [lattice e=3]  phi=" + str(r_lat_3["phi"])   + " irr=" + str(r_lat_3["irreducibility"])   + " type=" + r_lat_3["substrate_type"])
+    println("  [lattice e=4]  phi=" + str(r_lat_4["phi"])   + " irr=" + str(r_lat_4["irreducibility"])   + " type=" + r_lat_4["substrate_type"])
+    println("  [lattice e=5]  phi=" + str(r_lat_5["phi"])   + " irr=" + str(r_lat_5["irreducibility"])   + " type=" + r_lat_5["substrate_type"])
     println("")
 
     // ── pre-registered falsifier evaluation (frozen pre-run) ──
