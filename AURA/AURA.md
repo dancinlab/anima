@@ -78,6 +78,8 @@
 - [x] C13 🧲 RTSC 상온SQUID-MEG 🟡 — EEG+RTSC 0.854·풀스택+tFUS 0.903(침습급근접). RTSC 본질=채널밀도(+.166, cryo비용장벽 제거)>근접(+.076)>저잡음(+.017). ⚠상온초전도 실재 conditional
 - [x] C15 🧱 깊이 벽 (terminal) 🟡 — 복원율 깊이서 전모달 붕괴: 풀스택 피질 0.82→심부 0.098. RTSC-MEG 표면지배(0.999) 심부 역전(1/r², 0.110), tFUS 심부최선(0.153). 비침습 돌파=피질 표면한정, 전뇌통제 심부핵 불가 → B7 intracortical-ceiling 수렴 → `C15-depth-wall-terminal.md`
 - [x] C15b 동적시간 lever 🟡 — joint-support 시간구조 static 0.302→0.487(+0.185)=C9 부활(C9 null은 출력평활 오test). 단 이득 깊이서 소멸(+.184→+.014). L1/압축센싱·K희소성은 dead-end/평탄
+- [x] C16 🗺️ 피질 도달 역량지도 🟡 — C15 envelope에 기능타깃 매핑: M1/V1/S1/A1/DLPFC ✅도달(0.82~0.91 침습급근접, A3 golden 정합) · 대상/섬엽 🟡부분 · 피질하 🔴벽. 비침습 실현권=운동·통신·시각·집행·의식모니터 → `C16-cortical-capability-map.md`
+- [x] C17 🧬 심부핵 도달 역량지도 🟡 — 심부=보상(VTA)·각성(LC)·기분(raphe)·의식(시상)·기억(해마)=relocate-N1 "전뇌통제" 본질=침습필요(DBS확립=파킨슨STN뿐). 유일 비침습 심부=tFUS *자극*(읽기는 C15 벽) → `C17-deep-nuclei-capability-map.md`
 - [ ] C14 (잔여·external) — real head-model(MNE/OpenMEEG) 다중커널 fwd(깊이감쇠 실측·C10/A3 결정적) · 실 OPM-MEG 심부 데이터 · 상온초전도 실증시 RTSC-MEG 재평가 (in-silico lever 공간 고갈)
 
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)

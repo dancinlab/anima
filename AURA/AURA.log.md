@@ -123,3 +123,8 @@
 - B3 동적시간 부활 +0.185(C9 출력평활 오test) · B1 L1/CS dead-end · B2 K평탄
 - C1 시간이득 깊이서 소멸(+.184→+.014) · C2 best envelope 피질0.82→심부0.10
 - 🏁 in-silico lever 공간 고갈: 작동(RTSC/tFUS/OPM/시간/prior)·dead-end(fNIRS/ML/L1/평활)·벽(깊이). 새 lever 소진. 잔여=real head-model external
+
+## 2026-05-30 — C16/C17 깊이→역량 지도 쌍 (honest pivot)
+- C16 피질 역량: M1/V1/S1/A1/DLPFC ✅도달(0.82~0.91). 운동·통신·시각·집행·의식모니터 비침습 실현권. A3 golden 정합
+- C17 심부핵 역량: 보상/각성/기분/의식/기억=전뇌통제 본질=침습. DBS확립=파킨슨STN. 비침습 실낱=tFUS 자극(읽기는 벽)
+- 종합: 읽기는 피질까지 비침습/심부 침습 · 쓰기는 tFUS로 심부도 비침습. relocate-N1 전뇌통제=심부 상태제어=침습 본질
