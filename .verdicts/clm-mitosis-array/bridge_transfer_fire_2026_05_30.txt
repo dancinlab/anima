@@ -1,0 +1,22 @@
+F-CLM-BRIDGE-XFER -- teacher escape -> student distill -> transfer Delta
+========================================================================
+FROZEN (pre-run, @L8 no tampering):
+  teacher = E=32 d=128 (valid measure scale)
+  student = E=8 d=64 (chip-fit deploy scale)
+  kd = Hinton alpha=0.7 T=3.0 soft-target
+  metric = dispatch-entropy z vs Dirichlet(1) uniform null
+  seeds = [42, 43, 44]
+  xfer_tol = 3.0
+  falsifier = F-CLM-BRIDGE-XFER: z_student & z_teacher SAME SIGN AND |z_student - z_teacher| <= xfer_tol AND student chip-fit
+ seed  teacher_z  student_z     Delta  sameSign  chipFit
+   42    -2.2177     0.9946    3.2123     False     True
+   43    -4.5780     1.1261    5.7042     False     True
+   44    -4.4311    -0.3327    4.0984      True     True
+mean teacher_z      : -3.74227
+mean student_z      : 0.59602
+mean transfer Delta : 4.33829 (|Delta|<=3.0)
+all same sign       : False
+all Delta bounded   : False
+all student chip-fit: True
+scale scope         : toy teacher(E32/d128)->student(E8/d64), toy two-lane -- a_scale_honest_scope
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE
