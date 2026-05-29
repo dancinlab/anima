@@ -29,6 +29,7 @@
 - ~~hexa-native 학습 throughput INFEASIBLE(M5)~~ → ✅ **해결**(2026-05-30, hexa-lang측). P2 병목 제거 — hexa-native(g1) 학습 가능, `/dojo` job 생성. anima P2 fire에서 재측정 확인.
 - **"학습도 AKIDA"** (LAUNCHPAD AKIDA-first 복원) — 학습은 GPU only 가 아니다. ① pretrain = AKIDA-향 QAT(GPU backprop 이되 AKIDA int4 envelope 향해, P0 §9) · ② 맥락적응 = AKIDA-위 PLASTICITY on-chip edge-learn. 두 단계 모두 AKIDA-bound · 발화결정도 AKIDA(LAUNCHPAD).
 - **칩 위 full-backprop 만 물리 불가** = AKD1000=추론칩 → pretrain backprop 그 한 단계만 GPU honest carve-out. 추론은 순수 AKIDA-int4.
+- **⚠ P2 verdict scope 한정 (a_scale_honest_scope)** — F-CLM-MONO/SCALE 🔴 는 **측정 scale = tiny~small(2.70M) 한정**. routing-diversity 는 scale-의존 측정량 → 이 🔴 를 3B/7B 일반 주장으로 격상 금지 (toy→production transfer 비보장). 사다리가 tiny→small(둘 다 toy)만 밟아 F-CLM-SCALE 도 toy 구간 내 측정. **측정 타당성(대형) vs AKIDA 온칩(소형 강제 ~1.2M 노드)** 정면충돌 = 돌파엔진 탐색 대상(별도 lane). 측정용 GPU rung ⊥ 배포용 chip-fit rung 분리가 honest 경로.
 
 ## 양방향 sibling
 
