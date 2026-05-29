@@ -30,6 +30,7 @@
 - ⇄ [BRAIN](../BRAIN.md): EEG adapter 인벤토리 · OpenBCI LSL stream
 - ⇄ [AKIDA](../AKIDA/AKIDA.md): 생체↔실리콘 다리 + 3-substrate Φ 삼각측정
 - ⇄ [CHANNEL](../CHANNEL.md): EEG → tension-link 5-ch
+- ⇄ [PLASTICITY](../PLASTICITY/PLASTICITY.md): 생체 EEG spike → on-chip 학습 입력 (AKIDA edge-learn). AKIDA HW-first 스위치 경유 HW akida-learn / SW numpy 근사(🔴 비동치).
 - ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (live big-Φ 등)
 
 ## 쉬운 버전
