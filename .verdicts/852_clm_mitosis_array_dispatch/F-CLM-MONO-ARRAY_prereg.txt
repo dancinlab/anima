@@ -1,0 +1,36 @@
+F-CLM-MONO-ARRAY — pre-registered FROZEN falsifier (DISSOLVE expert-count sweep)
+================================================================================
+frozen_at : 2026-05-30 (BEFORE the run; no post-hoc tampering, @L7 / d6)
+source    : CLM/P0_ARCHITECTURE.md §11.6 (MITOSIS-ARRAY, DISSOLVE)
+           CLM/CLM.breakthrough.mining.md DISSOLVE (depleted-both)
+harness   : CLM/model/run_array_sweep.py (extends CLM/model/array_moe.py)
+
+CLAIM (DISSOLVE):
+  When scale = expert-COUNT (not d_model), the measurement/AKIDA conflict
+  dissolves: as E grows (each expert chip-fit <= 1.2M nodes), inter-expert
+  dispatch entropy escapes monopoly RELATIVE TO a uniform null — i.e. the
+  dispatch-entropy z-score vs a Dirichlet(1) uniform-simplex null RISES with E.
+
+FROZEN measurement spec:
+  null        = Dirichlet(alpha=1) uniform-simplex dispatch entropy
+  null_samples= 4000
+  axis        = E in [4, 8, 16, 32, 64]   (each expert chip-fit)
+  seeds       = {42, 43, 44} (multi-seed reproducibility, d6)
+  train_steps = 120 (short train so router DYNAMICS, not random init, are read)
+  z(E)        = (H_obs(E) - mu_null(E)) / sigma_null(E), mean over seeds
+
+FROZEN falsifier:
+  PASS (🟢 DISSOLVE supported) iff
+     (1) dispatch-entropy z monotone NON-DECREASING across the E sweep
+         (z(E_{i+1}) >= z(E_i) - MONO_TOL,  MONO_TOL = 0.50), AND
+     (2) z(64) - z(4) >= MIN_RISE   (MIN_RISE = 1.0), AND
+     (3) every expert chip-fit (expert_param_count <= 1,200,000).
+  FAIL (🔴 CLOSED-NEGATIVE) otherwise.
+
+A 🔴 (z does NOT rise / not monotone) is a VALID honest result (g63, p7,
+a_paper_negative_ok). The frozen thresholds are NOT to be moved post-run.
+
+scale scope (a_scale_honest_scope): toy expert-count sweep (d64/L2, toy two-
+lane corpus). The reframe makes the AXIS (expert-count) deploy-relevant, but
+the per-unit d_model / corpus here remain toy (H_666 caveat) — verdict scoped
+to the measured toy sweep, NOT a 3B claim.

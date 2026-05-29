@@ -1,0 +1,26 @@
+F-CLM-MONO-ARRAY -- DISSOLVE expert-count dispatch-entropy sweep
+====================================================================
+FROZEN (pre-run, @L7 no tampering):
+  null = Dirichlet(alpha=1) uniform-simplex dispatch entropy
+  null_samples = 4000
+  axis = [4, 8, 16, 32, 64]
+  seeds = [42, 43, 44]
+  train_steps = 120
+  mono_tol = 0.5
+  min_rise = 1.0
+  falsifier = F-CLM-MONO-ARRAY: dispatch-entropy z monotone non-decreasing (within mono_tol) over E sweep AND z(64)-z(4) >= min_rise
+
+   E    mean_z     min_z     max_z    mean_H  chip_fit
+   4    0.5261    0.1576    0.8994    1.1859      True
+   8    0.0716   -0.1373    0.4793    1.7261      True
+  16   -0.8842   -2.5316    0.8165    2.2588      True
+  32   -2.0398   -3.1540   -1.0091    2.8459      True
+  64   -7.6137   -8.9301   -5.9638    3.1710      True
+
+mean_z sweep        : [0.52605, 0.07155, -0.88425, -2.03984, -7.61375]
+monotone non-decr   : False
+z rise (E64 - E4)   : -8.1398 (threshold >= 1.0)
+all experts chip-fit: True
+scale scope         : toy expert-count sweep (d64/L2, toy two-lane) -- a_scale_honest_scope
+
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE
