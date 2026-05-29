@@ -1,0 +1,15 @@
+{
+  "id": "s5",
+  "name": "AI sentience — feedforward Phi~0 vs recurrent",
+  "substrate": "ECA n=4, I=0.21232 (1-I TPM scale); feedforward proxy SHIFT(r170)+IDENTITY(r204), recurrent rule110 ring",
+  "falsifier": "feedforward big-Phi >= recurrent big-Phi (feedforward AI as integrated as a recurrent brain)",
+  "phi": {
+    "feedforward_shift_r170": 2.36304,
+    "feedforward_identity_r204": 0.0,
+    "feedforward_best": 2.36304,
+    "recurrent_rule110": 14.1492
+  },
+  "verdict": "SUPPORTED-NUMERICAL",
+  "verdict_ref": ".verdicts/s5/run.txt",
+  "note": "Feedforward best Phi=2.36 << recurrent Phi=14.1492 (6.0x). Supports the majority IIT view that a purely feedforward computer (transformer-like, acyclic) carries far less integrated Phi than a recurrent coupled substrate. Honest caveat: ECA SHIFT/IDENTITY are the closest feedforward analogues the ECA toolkit allows; SHIFT(r170) is not strictly zero-feedback (ring wrap), so the >0 residual is expected — the gap, not absolute zero, is the result."
+}
