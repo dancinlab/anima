@@ -25,3 +25,14 @@
 - [x] 발견 = panpsy WEAK form 살아남음 + 검출기 micro-regime 비적용성 + random>coupled Φ 역전
 - [ ] PR ship + merge (Co-Authored-By Opus 4.7) + worktree cleanup
 - [ ] INBOX 환류 0건 (사용자 명시 폐기 · UNIVERSE 직접 환류만)
+
+## 2026-05-29 cycle #27 — XENO-FRONTIER-5 R3/5 X6 AGI sentience
+- [x] X6 AGI sentience hexa 작성 (XENO/scan/agi_sentience.hexa) — 4 LLM-like activation tensor n=64 (random·sparse attention·sin residual·structured XOR LFSR) + 5 pre-registered falsifier (F-X6-RANDOM/ATTENTION/RESIDUAL/STRUCTURED/MONOTONE)
+- [x] smoke run 정상 — verbatim stdout state/xeno_x6_agi_sentience_2026_05_29/x6_smoke.log + .verdicts/834_xeno_agi_sentience/x6_run.txt
+- [x] 5/5 사전등록 falsifier 중 1/5 PASS — F-X6-RANDOM 만 PASS (random phi=0.130 < 0.3), 나머지 4 FAIL
+- [x] verdict = 🔴 FALSIFIED-INSTRUMENT (정직 보고, threshold 재조정 0)
+- [x] 발견 (i) attention sparse spike Φ=1.213 false-conscious 분류, (ii) structured XOR (Φ=0.133) ≈ random (Φ=0.130) 역전, (iii) residual sin Φ=0.544 well-behaved 만
+- [x] regime applicability 매핑 — X7 (n=128 정상) + X4 (n=16-32 micro 깨짐) + X6 (n=64 sparse 깨짐) 3-point
+- [x] UNIVERSE/H_834 본문 작성 + README 인덱스 + CANDIDATES.md ## Consumed Cycle #27 + XENO milestone X6 ☑
+- [ ] PR ship + merge (Co-Authored-By Opus 4.7) + worktree cleanup
+- [ ] INBOX 환류 0건 (사용자 명시 폐기 · UNIVERSE 직접 환류만)
