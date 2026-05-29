@@ -391,6 +391,25 @@ SW(akida_sw_lif)가 이제 **충실히 재현하는 영역** (HW byte-identical 
 | 1 max pool | Conv+MaxPool 2×2 s2 ab4 F8 K3 (fused, on_hw) | 10/10 IDENT (max Hamming 0) | **EXTENDED+verified** (pool2d max) |
 | 1 avg/global pool | Conv+GlobalAvgPool ab4 (akida SW backend) | 결정론적이나 활성맵 함수 아님 (ch5 non-monotone) | **CLOSED-NEGATIVE** (opaque per-ch rescale) |
 
+### axis 2 (separable conv) — SeparableConvolutional EXTENDED + verified
+- **HW 구조**: SeparableConv vars = `weights` (K,K,Cin,1) depthwise + `weights_pw`
+  (1,1,Cin,F) pointwise. InputConv(F1=4)→SeparableConv(F2=8), on_hardware=true.
+- **MECHANISM 복원 (flip/fusion sweep)**: naive(depthwise-activate THEN pointwise-
+  activate = 2 quantizer)는 >100 Hamming **DIVERGE**. 칩은 depthwise+pointwise 를
+  **FUSE** — depthwise 가 **TRUE conv (180° flip)** 로 **RAW potential** 계산
+  (중간 activation 없음) → pointwise 1×1 accumulation → **단일 최종 activation
+  quantize**. 즉 칩은 quantize 를 **한 번만** 한다. FUSED + dw_flip=True 가 정답.
+- **SW 일반화 확장**: `sepconv2d_quantized_forward(x, Wdw, Wpw, act_bits, flip=True)`
+  — conv2d 의 flip/quantizer/pad geometry 재사용, depthwise raw → pointwise →
+  single quantize. **20/20 byte-identical (ab4+ab2 × 10 probe, max Hamming 0)**.
+- **결론**: separable conv 는 modelable — 핵심은 **fusion (단일 quantizer)**.
+  SW 실제 성장 (sepconv op 추가). verify_substrate_akida 5/5 무회귀.
+- verdict 원문: 동일 파일 `hw_sw_frontier3_sweep_2026_05_30.txt` (AXIS 2 sepconv).
+
+| 축 | 설정 | HW vs SW | 결론 |
+|---|---|---|---|
+| 2 separable conv | InputConv→SeparableConv (dw K3 Cin4 + pw 1×1 F8) ab{2,4} | naive 2-quantizer >100 Hamming → FUSED+dw_flip 후 20/20 IDENT | **EXTENDED+verified** (fusion = single quantizer 복원) |
+
 ---
 
 ## 최종 FAITHFUL-ENVELOPE (4-stage 누적, 2026-05-30)

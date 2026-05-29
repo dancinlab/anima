@@ -67,6 +67,16 @@
 //   per-channel rescale that is NOT a function of the public activation-map mean
 //   (per-channel sweep: non-monotone, smaller act-sum -> larger pooled output);
 //   not recoverable from weights+activation -> refused (raises NotImplementedError).
+//
+//   HW-SW FRONTIER round 5 sepconv (2026-05-30): added sepconv2d_quantized_forward()
+//   for SeparableConvolutional (depthwise then pointwise). RECOVERED on silicon:
+//   the chip FUSES depthwise + pointwise -- depthwise is a TRUE convolution
+//   (180deg flip) over RAW potentials with NO intermediate activation, fed
+//   straight into the pointwise 1x1 accumulation, with a SINGLE activation
+//   quantizer at the end. A naive two-quantizer (dw-act then pw-act) diverges by
+//   >100 Hamming; the chip quantizes ONCE. Verified BYTE-IDENTICAL to AKD1000
+//   InputConv->SeparableConv (act_bits {2,4}, sym int4, Cin=4 F=8 K=3, SAME),
+//   20/20 probes, max Hamming 0.
 // ════════════════════════════════════════════════════════════════════════
 
 fn main() {

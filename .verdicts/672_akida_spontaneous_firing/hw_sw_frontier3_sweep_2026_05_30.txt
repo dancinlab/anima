@@ -111,3 +111,48 @@ Per-channel (activation_sum -> HW_avg_out) sweep, channel 5 (NON-MONOTONE):
 MECHANISM: akida SW-backend GlobalAveragePool applies a hidden per-channel
   output rescale (sub-additive, channel-dependent) -> opaque to the model.
 VERDICT: CLOSED-NEGATIVE (deterministic-but-opaque). pool2d raises on average.
+
+================================================================================
+### AXIS 2 — separable / depthwise convolution (SeparableConvolutional)  EXTENDED+verified
+SeparableConv vars: weights (K,K,Cin,1) depthwise + weights_pw (1,1,Cin,F) pointwise.
+InputConv(F1=4)->SeparableConv(F2=8), on_hardware=true.
+SW op: sepconv2d_quantized_forward(x, Wdw, Wpw, act_bits, flip=True).
+
+MECHANISM RECOVERED (flip/fusion sweep vs chip):
+  - naive (depthwise-activate THEN pointwise-activate, two quantizers): >100 Hamming DIVERGE.
+  - FUSED + dw_flip=True (depthwise TRUE-conv RAW potentials -> pointwise 1x1 accum
+    -> SINGLE activation quantize, no mid-activation): 10/10 byte-identical (ab4 AND ab2).
+  Flip/fusion sweep (ab4):
+    dw_flip=False/True pw_flip=False/True with mid-activation: all 1/10 (max_h 116-200)
+    FUSED dw_flip=True (no mid-act): 10/10 max_h=0
+
+--- frontier_diff sepconv ab=4 ---
+axis=sepconv act_bits=4 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=ad7facb2586fc6e9 SW=ad7facb2586fc6e9 hamming=0 |Δ|max=0
+ idx1: IDENT HW=ac1e21ddaf407c24 SW=ac1e21ddaf407c24 hamming=0 |Δ|max=0
+ idx2: IDENT HW=1a5680cce65eadee SW=1a5680cce65eadee hamming=0 |Δ|max=0
+ idx3: IDENT HW=759da7bbb466c00d SW=759da7bbb466c00d hamming=0 |Δ|max=0
+ idx4: IDENT HW=6d3823a8307c7637 SW=6d3823a8307c7637 hamming=0 |Δ|max=0
+ idx5: IDENT HW=604adabcbb33a69f SW=604adabcbb33a69f hamming=0 |Δ|max=0
+ idx6: IDENT HW=4e21cd911832c7e6 SW=4e21cd911832c7e6 hamming=0 |Δ|max=0
+ idx7: IDENT HW=ddb7ccaa41e1bf6e SW=ddb7ccaa41e1bf6e hamming=0 |Δ|max=0
+ idx8: IDENT HW=b685be7ccc5b0d0d SW=b685be7ccc5b0d0d hamming=0 |Δ|max=0
+ idx9: IDENT HW=18efae0ff90ae585 SW=18efae0ff90ae585 hamming=0 |Δ|max=0
+SUMMARY axis=sepconv: ident=10/10 divergent=0 max_hamming=0
+
+--- frontier_diff sepconv ab=2 ---
+axis=sepconv act_bits=2 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=ad7facb2586fc6e9 SW=ad7facb2586fc6e9 hamming=0 |Δ|max=0
+ idx1: IDENT HW=051769c12c59e9fd SW=051769c12c59e9fd hamming=0 |Δ|max=0
+ idx2: IDENT HW=7897ca4e0d89fe9e SW=7897ca4e0d89fe9e hamming=0 |Δ|max=0
+ idx3: IDENT HW=46b507157d782ea4 SW=46b507157d782ea4 hamming=0 |Δ|max=0
+ idx4: IDENT HW=5dbcc33ec490abe5 SW=5dbcc33ec490abe5 hamming=0 |Δ|max=0
+ idx5: IDENT HW=7bdff1f9730d7282 SW=7bdff1f9730d7282 hamming=0 |Δ|max=0
+ idx6: IDENT HW=d9666b2486a0ffdd SW=d9666b2486a0ffdd hamming=0 |Δ|max=0
+ idx7: IDENT HW=dc58833031f7d3f3 SW=dc58833031f7d3f3 hamming=0 |Δ|max=0
+ idx8: IDENT HW=5a58ad15a116b7bc SW=5a58ad15a116b7bc hamming=0 |Δ|max=0
+ idx9: IDENT HW=047ba5ce03b86a75 SW=047ba5ce03b86a75 hamming=0 |Δ|max=0
+SUMMARY axis=sepconv: ident=10/10 divergent=0 max_hamming=0
+
+RESULT axis2 sepconv: 20/20 byte-identical (ab4+ab2 x 10 probes), max Hamming 0. EXTENDED+verified.
+  KEY: depthwise+pointwise are FUSED with a SINGLE final quantizer (chip quantizes once).
