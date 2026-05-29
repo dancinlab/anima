@@ -72,7 +72,11 @@
 - [x] C7 prior-injection 지렛대 🟡 — ridge 0.243→sparse 0.289(+0.046)→**oracle-prior 0.798**(+0.555). 천장은 prior-정보 한계도 됨(소스위치 알면 80% 복원) → `C7-prior-stack-levers.md`
 - [x] C8 stack 🟡 — 異種모달(C6)⊕prior(C7): EEG 0.243→+tFUS 0.481→+둘다 **0.676**(≈침습급 근접). 하드웨어·算法 독립 stack
 - [x] C9 temporal-smooth ❌ null — 시간평활 0.243→0.235(무효). 공간손실은 시간회수 불가(falsified lever)
-- [ ] C10 (잔여·external) — real head-model(MNE) 다중모달 fwd · 실 MRI-prior 복원율 · 성인 비침습 fUS 영상 문헌 · 실 EEG+fNIRS 동시데이터 (cloud/실데이터, in-silico toy lane 고갈)
+- [x] C10 strawman-LF 검증 🟡 — 3커널(가우시안/지수/멱법칙)×8seed: "sharp 이김" 생존(+.19~.48) BUT "전극포화"는 가우시안 전용 인공물(지수커널 M256 +.21 미포화) → C5 전극포화 부분반증 → `C10-gap-closure-levers.md`
+- [x] C11 oracle→현실 prior 🟡 — degraded p=.3+위양성=0.356≈blind 0.332. 헤드라인 80%는 oracle 전적의존, 정직수치 0.36~0.52(C7 순환 닫음)
+- [x] C12 OPM-MEG+ML디코더 🟡 — OPM-MEG=진짜lever(+.172, fNIRS+.016중복과 대조). ML/딥디코더=dead-end(ridge 0.287>Wiener 0.239>MLP 0.120, 정직 negative)
+- [x] C13 🧲 RTSC 상온SQUID-MEG 🟡 — EEG+RTSC 0.854·풀스택+tFUS 0.903(침습급근접). RTSC 본질=채널밀도(+.166, cryo비용장벽 제거)>근접(+.076)>저잡음(+.017). ⚠상온초전도 실재 conditional
+- [ ] C14 (잔여·external) — real head-model(MNE/OpenMEEG) 다중커널 fwd(C10 결정적) · 실 OPM-MEG 데이터 · 상온초전도 실증시 RTSC-MEG 재평가
 
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)
 - ~~A11/B5 다피험자 ds005620 download~~ ✅ B6서 해소(N=3, aws s3 가능) → 🔴 NULL · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)
