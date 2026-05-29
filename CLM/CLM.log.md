@@ -2,6 +2,17 @@
 
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
+## 2026-05-30 — P2 custom QAT 트레이너 작성 + dry-run smoke ($0 local · GPU 풀파이어 대기)
+
+- [x] **dojo 템플릿 폐기**: `/dojo` 가 뽑은 generic HF-Trainer(`AutoModelForCausalLM`/`AutoTokenizer`/wikitext, `exports/llm/dojo/clm-p2-akida-qat/train.py`)는 CLM(byte conv-MoE·tokenizer 0·.kosmos corpus·QAT)에 틀려 버림. **dispatch 글루**(job.hexa `hexa cloud nohup` + run.sh d16 dry-run)만 재사용해 페이로드 교체.
+- [x] **custom QAT 트레이너 작성** `CLM/train/` — `train_clm.py`(페이로드: torch autograd QAT) + `train_clm.hexa`(d5 1순위 hexa-native 드라이버, parse clean) + `job.hexa`(dispatch, parse clean) + `run.sh`(dryrun/local/fire 글루) + `README.md`(korean).
+- [x] **QAT 구현(P0 §9)**: 가중치 symmetric int4 `[-7,+7]` per-channel STE(`_WeightQuantSTE`, `scale=max|w|/7`) · 활성 AKIDA envelope STE(`step=2^(input_bits−act_bits)`·`y=clip(round(pot/step),0,2^act_bits−1)`·act_bits∈{1,2,4}) · router(out=n_e)·readout(out=V) conv 는 logit 이라 act-quant 제외(softmax/CE 보호, 정직) · 손실=next-byte CE(V=256)+MoE aux+선택 envelope-KL(fp shadow logit, `--envelope-lambda`).
+- [x] **3-arm(A/B/AB) + scale-ladder(tiny d64/L2/E4 · small d256/L4/E8)** 토글 — CLMConvMoE(CLM/model) 로드 + `.kosmos` @corpus(clm_p1) byte stream 읽기(member ref 파싱).
+- [x] **dry-run smoke $0 local Mac CPU(torch 2.10.0, p7 정직)**: forward+QAT-loss+backward 1-step 전 arm/rung/act_bits 정상 — A·tiny ce=5.572 ~3.8 step/s · B ~6.4 · AB ~5.1 · AB act_bits=1 ~5.6 · AB·small(2.70M params) ce=5.768 ~0.9 step/s. first_ce≈ln256=5.545(무학습 기대치). **trainability**: AB·tiny 100-step CE 5.572→3.493 = STE gradient 가 int4-sym weight + act envelope 통과해 흐름(실학습 확인).
+- [x] CLM.md P2 milestone 갱신(trainer+smoke done) · 추론 AKIDA-int4-only 불변.
+- [ ] **GPU 풀파이어 = 다음 명시 step**(cost-bearing, 이번 run 미실행 $0 only): `./run.sh fire` 3-arm×ladder full-fire → F-CLM-MONO/F-CLM-SCALE 판정 + production step-rate 재측정(d5 최종). step-rate 는 toy Mac CPU 실측 = production 아님.
+- [ ] **미완**: .clm 직렬화(P3, 이 트레이너는 학습 루프까지) · hexa-native payload 흡수(torch→hexa autograd, g1-pure 닫힌 뒤) · .kosmos emit 영속(P5 통합).
+
 ## 2026-05-30 — d4 drift 교정: "학습도 AKIDA" 복원 (QAT + PLASTICITY)
 
 - [x] **drift 진단**: P0 d4 가 "추론 AKIDA ONLY · 학습 GPU(fp16)" 로 drift — 원계획(LAUNCHPAD L11 "학습·디코더·발화결정=AKIDA HW-first" + PLASTICITY 도메인 "AKIDA on-chip 학습 lane")의 **학습도 AKIDA** 를 잃음.

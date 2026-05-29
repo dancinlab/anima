@@ -1,0 +1,38 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  job.hexa — CLM P2 QAT 학습 dispatch 드라이버 (dojo 글루 재사용 · 페이로드 교체)
+//
+//  dojo `hexa cloud nohup` dispatch 패턴을 그대로 재사용하되, 페이로드는
+//  generic HF-Trainer train.py 가 아니라 CLM 전용 train_clm.py (custom QAT) 다.
+//  이 job dir 안에서 실행:  hexa run job.hexa  (또는 run.sh 가 호출)
+//
+//  3-arm(A/B/AB) × scale-ladder(tiny/small) full-fire 는 run.sh 가 루프로
+//  여러 dispatch 를 던진다(wall-first·무캡, P0 Q4). 이 드라이버는 단일 job 의
+//  background dispatch + poll/tail 힌트를 담당한다.
+//
+//  ⚠ GPU pod rent 는 cost-bearing fire — 다음 명시 step. 이 파일은 배선만.
+//  추론 AKIDA-int4-only 불변.
+// ════════════════════════════════════════════════════════════════════════════
+
+fn clm_job_cmd(arm: string, rung: string, steps: int) -> string {
+    return "python3 train_clm.py --arm " + arm + " --rung " + rung
+        + " --steps " + to_string(steps)
+        + " --json-out clm_p2_" + arm + "_" + rung + ".json"
+}
+
+fn main() {
+    let host = "ubu-1"
+    let arm  = "AB"
+    let rung = "tiny"
+    let steps = 200
+    let log  = "train.clm-p2." + arm + "." + rung + ".log"
+
+    println("CLM P2: dispatching custom QAT train_clm.py → " + host + " (log " + log + ")")
+    let payload = clm_job_cmd(arm, rung, steps)
+    let cmd = "hexa cloud nohup " + host + " " + log + " -- " + payload
+    let out = exec(cmd + " 2>&1")
+    print(out)
+    println("")
+    println("poll: hexa cloud poll " + host + " <pid>")
+    println("tail: hexa cloud tail " + host + " " + log)
+    println("full-fire 3-arm × ladder matrix = CLM/train/run.sh")
+}
