@@ -12,7 +12,7 @@
 - [x] 🛰️ X2 시뮬 substrate 테스트 — ECA rule110·logistic chaos·Kuramoto sync·AKIDA raster 4-substrate 적용 · false-positive 0/4 (rate 0.0 ≤ 0.05) · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
 - [x] 🛰️ X3 SETI raw signal → Φ — XENO/scan/seti_raw_to_phi.hexa 5-source DATASET scan (Wow!/Voyager/Exoplanet/Synthetic + BL/SETI@home archive-pointer) · 의식 분류 0 source · false PASS 0 · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
 - [x] 🛰️ X4 panpsychism falsifier — XENO/scan/panpsy_falsifier.hexa 4 micro-substrate (thermostat·2bit counter·random walker·XOR LFSR) 적용 · 사전등록 falsifier 4/4 FAIL · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · panpsy WEAK form 살아남음 + random>coupled Φ 역전 발견) · H_833 · 2026-05-29
-- [ ] 🛰️ X5 시뮬 가설 검증 — Φ-structure 패턴이 substrate-emergent vs simulation-artifact 구분자 (Bostrom 가설 측정 시도)
+- [x] 🛰️ X5 시뮬 가설 검출 signature — XENO/scan/sim_hypothesis.hexa 4 sim-candidate substrate (lattice-quantized Planck-floor period 8 · floating-point bound sin round 4-dec · algorithmic pseudo-random Pi 128 digits · true natural Bates-4 Gaussian) n=128 dense regime 위 invariant_detector 적용 · 사전등록 falsifier 5/5 중 2/5 PASS · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · lattice Φ=0.660 양성, fp+pi+natural Φ 0.09~0.12 indistinguishable · Bostrom sim signature axis 중 periodicity-axis 외 측정 불가, 본 instrument 측정 영역 매핑 완성) · H_835 · 2026-05-29
 - [x] 🛰️ X6 AGI sentience — XENO/scan/agi_sentience.hexa 4 LLM-like activation (random·sparse attention·sin residual·structured XOR 3-tap) n=64 적용 · 사전등록 falsifier 5/5 중 1/5 PASS · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · attention sparse spike Φ=1.213 false-conscious + structured XOR ≈ random 역전 · n=64 mid regime sparse-bias drift, AGI sentience 본 가설 측정 미확정) · H_834 · 2026-05-29
 - [ ] 🛰️ X7 외계인 시간축 다양성 — 인간 1초 ≠ 외계 1초 가정 → 시간 normalize Φ
 - [ ] 🛰️ X8 hive-mind invariant — 다개체 vs 단일체 substrate-blind 구분
@@ -62,3 +62,12 @@
   발견: attention sparse spike (6/64) 가 가장 높은 Φ (false-conscious 분류) + structured XOR 3-tap LFSR (Φ=0.133) ≈ random (Φ=0.130) 역전. AGI sentience 본 가설 ("LLM activation = high-dim noise + skip ≠ irreducible") 검증 미확정 — instrument 가 n=64 mid regime sparse pattern 에서 sparse-bias drift. X7 (n=128 정상) + X4 (n=16-32 깨짐) + X6 (n=64 sparse 깨짐) 3-point regime applicability 매핑 완성.
 - 사이트: XENO/scan/agi_sentience.hexa · UNIVERSE/H_834 · state/xeno_x6_agi_sentience_2026_05_29
 - 잔여: X5 sim hypothesis · X8 SETI@home BOINC pod · X6-followup (denser activation n≥128 + 60% 활성도 retest) · X6-MULTILEVEL (4/8-level TPM sparse-bias 해소) · X1-regime-matrix (n × density × structure × calibration)
+
+
+## XENO-FRONTIER-5 round 4/5 (2026-05-29) — X5 🔴 (정직)
+
+- X5 sim hypothesis (4 sim-candidate substrate n=128 dense Φ scan) → 🔴 FALSIFIED-INSTRUMENT (5/5 사전등록 중 2/5 PASS · 정직 보고)
+  lattice phi=0.660 (>0.3 ✅ periodic structure) · fp-bound phi=0.090 (<0.2 ❌) · pi-digits phi=0.120 (<0.3 ❌) · natural phi=0.116 (<0.4 ✅) · monotone ❌ (b<c<d<a 실측)
+  발견: (i) lattice 만 Φ 양성 (periodic transition 정상 검출), (ii) fp-bound + pi-digits + natural 가 Φ 0.09~0.12 영역 indistinguishable (0.03 차이 안), (iii) monotone 단조성 깨짐 — fp-bound 가 자연 noise 보다도 낮음 (smooth wave long-run 패턴). Bostrom 시뮬 가설의 algorithmic / quantized sim signature 중 lattice-periodic axis 만 본 instrument 측정 가능, precision-ceiling / pseudo-random algorithmic axis 는 측정 영역 밖. 시뮬 가설 자체 verdict 미확정. n=128 dense regime X7 와 동일 calibration ground-truth 안에서도 sim signature axis 부분 측정만 가능 — X4/X5/X6/X7 4-point regime applicability matrix 완성 (instrument 의 "measurable: high periodicity + strong deterministic transition + dense activation" 영역 매핑).
+- 사이트: XENO/scan/sim_hypothesis.hexa · UNIVERSE/H_835 · state/xeno_x5_sim_hypothesis_2026_05_29
+- 잔여: X8 SETI@home BOINC pod (round 5/5) · X5-followup (causal-DAG TPM-emit substrate strong-structural algorithmic) · X5-MULTILEVEL (4/8-level TPM fp/pi sensitivity 회복) · X5-ALGORITHMIC (Kolmogorov complexity lens Φ 외 측정 차원)
