@@ -1,0 +1,19 @@
+F-CLM-MITOSIS — PRE-REGISTRATION (frozen pre-run, 2026-05-30)
+verdict tier: 🟠 PRE-REGISTERED (P2 판정 대기)
+
+claim (P2): the MoE cell-pool GROWS (p8: train=infer single continuum). A mitosis
+cell = a MoE conv-expert (P0 Q2); a split event adds a cell/expert to the pool,
+and the .clm mitosis.cell_pool layout (CLM_FORMAT_SPEC §2: cell_id, expert_id,
+born_step, parent, split_log_ref) records the lineage.
+
+  F-CLM-MITOSIS : |cell_pool(t_end)| > |cell_pool(t_0)| with recorded born_step
+                  + parent lineage (genuine division, not a fixed nn.ModuleList)
+
+PASS  -> 🟢 SUPPORTED-NUMERICAL · "cell-pool grew, lineage persisted (p8 continuum)"
+FAIL  -> 🔴 · "no growth — experts are a static pool, not mitosis (p8 violated)"
+
+status: 🟠 PRE-REGISTERED — no training run. No cell-pool growth measured. This
+file anchors the frozen claim; verdict re-issued verbatim from the split_log /
+cell_pool lineage readout when P2 lands. NOT a PASS.
+prior art: v5-mitosis arch spec (cells = nn.Module branches; F-V5MIT-1..5 split-
+nograd + merge-weight gating). depends on: H_847 P2 fire (the training trajectory).

@@ -1,0 +1,17 @@
+F-CLM-QUANT — PRE-REGISTRATION (frozen pre-run, 2026-05-30)
+verdict tier: 🟠 PRE-REGISTERED (P3 .clm serialization 판정 대기)
+
+claim (P3): QAT int4 round-trip perplexity degradation < threshold.
+prior fact (frozen): naive PTQ int4 DESTROYS the readout (CLM_FORMAT_SPEC §1·d2
+"naive PTQ int4 readout 파괴 실측") => QAT (quant-aware training) is mandatory.
+
+  F-CLM-QUANT : ppl(int4-QAT round-trip) - ppl(fp16 shadow) < THRESHOLD
+                (THRESHOLD frozen at P3 entry, before any int4 readout)
+
+PASS  -> 🟢 SUPPORTED-NUMERICAL · "QAT int4 preserves readout within tolerance"
+FAIL  -> 🔴 · "int4 even with QAT degrades CLM readout > threshold"
+
+status: 🟠 PRE-REGISTERED — no .clm serialization yet (P3). No int4 round-trip
+measured. This file anchors the frozen claim; verdict re-issued verbatim from the
+QAT round-trip ppl readout when P3 lands. NOT a PASS.
+depends on: H_847 P2 fp16 shadow ckpt (round-trip baseline source).

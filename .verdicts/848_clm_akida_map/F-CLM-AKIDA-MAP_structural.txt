@@ -1,0 +1,68 @@
+F-CLM-AKIDA-MAP — STRUCTURAL OP-MEMBERSHIP CHECK (P0 now, 2026-05-30)
+claim: CLM P0 inference path operators ⊆ AKD1000 byte-identical op envelope
+       (conv/FC/sepconv/pool · int4-sym · step=2^(input_bits-act_bits)).
+
+method: real structural subset check (NOT assertion). Each CLM inference op is
+matched against the AKD1000 op envelope recovered + verified BYTE-IDENTICAL on
+real silicon, documented in HEXAD/CHAT/server/akida_sw_lif.py (HW-SW calibration
+loop, 2026-05-30, all "max Hamming 0" vs AKD1000). Sources:
+  - HEXAD/CHAT/server/akida_sw_lif.py  (op envelope, HW-verified byte-identical)
+  - AKIDA/HW_SW_WIRING_2026_05_29.md   (HW live 8/8 on-chip checks, H_672)
+  - CLM/P0_ARCHITECTURE.md §0·§2       (CLM inference path SSOT)
+  - CLM/CLM_FORMAT_SPEC.md §2          (HEADER arch: conv/moe/readout/act_bits)
+
+================ ENVELOPE quantizer invariant (numerical probe) ================
+$ ./akmap_probe
+step_ib4_ab4=1   step_ib4_ab2=4   step_ib4_ab1=8   ENVELOPE_STEP_FORMULA_MATCH=true
+
+  step = 2^(input_bits - act_bits) reproduces the silicon-recovered values
+  (act_bits=4->1, act_bits=2->4, act_bits=1->8 = the lif comparator). The same
+  quantizer is shared by fc_/conv2d_/sepconv2d_/pool2d_quantized_forward.
+
+==================== OP-BY-OP MAPPING TABLE (CLM -> AKIDA) =====================
+CLM inference op (P0 §0)        | AKIDA envelope primitive            | status
+-------------------------------+-------------------------------------+--------
+dilated conv embed (byte->d)   | conv2d_quantized_forward            | ⊆ ✅ byte-identical (act_bits{2,4}, sym int4, SAME/VALID, stride{1,2})
+dilated conv trunk stack       | conv2d_quantized_forward (chain)    | ⊆ ✅ true-conv flip=True for on-chip Conv (180deg recovered on silicon)
+conv-expert (MoE expert body)  | conv2d / sepconv2d_quantized_forward| ⊆ ✅ sepconv FUSED single-quantizer byte-identical (10/10 probes)
+[optional spatial pool]        | pool2d_quantized_forward (max)      | ⊆ ✅ max-pool byte-identical (monotone quantizer); ⚠ AVERAGE pool = CLOSED-NEGATIVE
+readout (d->next byte, FC)     | fc_quantized_forward                | ⊆ ✅ byte-identical (80/80 probes, max Hamming 0)
+deep N-layer compose           | cascade_forward                    | ⊆ ✅ L in {3,4} byte-identical, no depth drift
+int4 weight quant + act_bits   | step=2^(input_bits-act_bits)        | ⊆ ✅ probe MATCH=true (above); int4-sym [-7,+7] (-8 rejected on chip)
+-------------------------------+-------------------------------------+--------
+MoE ROUTER softmax (logits->p) | (none)                              | ⊠ NOT IN ENVELOPE  *** HONEST GAP ***
+MoE top-K argmax / gating mul  | (none)                              | ⊠ NOT IN ENVELOPE  *** HONEST GAP ***
+
+================================ HONEST GAP ===================================
+The verified AKD1000 envelope contains ONLY: signed-int matmul (FC/conv/sepconv),
+ReLU clip (max(p,0)), the ceil-div quantizer (step formula), max-pool, and the
+180deg true-conv. A grep of akida_sw_lif.py for {softmax, exp, argmax, sigmoid,
+tanh, normalize, divide-by-sum, gating, router} returns ZERO primitives — none
+were recovered on silicon. Therefore:
+
+  - The CLM conv trunk + conv/sepconv experts + max-pool + byte readout (FC) +
+    int4 quantizer are FORMALLY ⊆ the HW-byte-identical envelope  -> 🔵 for that subset.
+  - The MoE router's softmax normalization + top-K argmax gating multiply is
+    NOT in the envelope. The full inference path is therefore NOT entirely ⊆
+    the verified envelope as stated by the bare falsifier.
+
+This is a genuine partial result, NOT a faked full PASS (p7 · g5 · g63).
+
+============================== RESOLUTION PATHS ===============================
+Two honest options for P0/P4 (recorded, not asserted-as-done):
+  (a) ARGMAX-ONLY HARD ROUTING: drop softmax; route by argmax of the router FC
+      logits (an int comparator, already in-envelope as the >thr compare). Top-1
+      hard routing => the ENTIRE path becomes ⊆ envelope. (P0 §1 already lists
+      "hard top-K" for monopoly-escape — argmax top-1 is the in-envelope case.)
+  (b) OFF-CHIP ROUTER: compute the softmax gate off-chip (host) and stream the
+      selected expert id to the chip; only the selected conv-expert runs on-chip.
+      Keeps d4 (inference conv-body AKIDA-only) for the heavy compute; router is
+      a tiny host op. Honest: this is NOT "100% on-chip".
+
+============================== VERDICT (this round) ===========================
+🔵 SUPPORTED-FORMAL for the conv/FC/sepconv/pool/int4-quantizer SUBSET
+   (every such CLM inference op is byte-identical-verified ⊆ AKD1000 envelope).
+⚠ HONEST GAP: MoE router softmax + top-K argmax gating is OUTSIDE the verified
+   envelope. The bare falsifier ("full inference path ⊆ envelope") is therefore
+   NOT a clean PASS until routing is reduced to argmax-hard (option a) or moved
+   off-chip (option b). No fake full-PASS issued (a_blue_closed · honest residual).

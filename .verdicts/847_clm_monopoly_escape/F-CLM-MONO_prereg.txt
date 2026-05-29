@@ -1,0 +1,23 @@
+F-CLM-MONO — PRE-REGISTRATION (frozen pre-run, 2026-05-30)
+verdict tier: 🟠 PRE-REGISTERED (P2 full-fire 판정 대기)
+
+This falsifier is NOT yet measured. No ckpt / sim run exists. The four
+thresholds below are FROZEN before any P2 fire (d6 multi-seed gate), so a
+post-fire result cannot be tuned to fit (a_completeness_over_cheap · W2).
+
+  F-CLM-MONO-EXPERTS  : distinct_experts > 1
+  F-CLM-MONO-ROUTE    : routing diversity z > 3.0
+  F-CLM-MONO-CONTENT  : content separation z > 3.0
+  F-CLM-MONO-SEED     : seed{base,43,44} all reproduce
+
+PASS gate  = all four simultaneously  -> 🟢 SUPPORTED-NUMERICAL
+FAIL gate  = any one fails             -> 🔴 CLOSED-NEGATIVE (byte-vocab axis ⊥ register isolation)
+
+prior art frozen into the threshold choice:
+  - H_666  MoE collapse  toy🟢 / scale🔴  (scale-up re-falsified the toy escape)
+  - v5-mitosis v1..v7    v7 routing z=2.75 single-seed marginal + content regression
+    => d6 raises the bar to z>3.0 on BOTH axes + multi-seed reproduction.
+
+status: 🟠 PRE-REGISTERED — no measurement. This file is the audit anchor for the
+frozen thresholds, NOT a PASS. Verdict will be re-issued verbatim from the P2
+full-fire closure_auto_judge stdout when the 3-arm × ladder fire lands.
