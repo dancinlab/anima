@@ -1,0 +1,57 @@
+H_672 AKIDA spontaneous-firing — LIVE HARDWARE confirmation
+============================================================
+date_utc      : 2026-05-29
+host          : pi5-akida (Raspberry Pi 5 + BrainChip AKD1000)
+sdk           : akida 2.19.1 (MetaTF, aarch64, venv ~/.venv/anima-akida)
+device        : BC.00.000.002 · IpVersion.v1 · akida.devices() = [HardwareDevice] (count=1)
+mapped_backend: BackendType.Hardware
+mapped_on_hardware = True
+script        : SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py (seed=187, n=16, window=200 steps)
+method        : W5 substrate-grounded — ON-CHIP threshold-and-fire, NOT a SW simulation
+note          : INA power sensor unavailable (i3c bus -4) → power_measurement_supported=false;
+                does NOT affect inference / spikes.
+
+REGIME SWEEP (R0..R4, all on the SAME on-chip model, per-unit threshold the only knob)
+---------------------------------------------------------------------------------------
+regime                       rate     total  std     step_varies  wall_ms/step
+R0_driven                    1.0000    3200  0.000   False        13.7009
+R1_weak_silent               0.0000       0  0.000   False        13.7039
+R2_zero_noise                0.4750    1520  7.990   True         13.7363
+R3_tonic_zero_input          0.5000    1600  0.000   False        13.7096
+R4_recurrent_selfsustained   1.0000    3200  0.000   False        13.7190
+
+onchip_clock_cycles_mean = 793.4 · wall_ms_per_step_mean = 13.7139
+
+ON-CHIP CHECKS (all True)
+-------------------------
+driven_fires                  : true
+weak_is_silent                : true
+tonic_zero_input_fires        : true
+tonic_partial_pool            : true
+noise_emits                   : true
+noise_event_driven            : true
+recurrent_sustains            : true
+recurrent_post_seed_sustains  : true
+hw_native_spontaneous_emission   = True
+stochastic_spontaneous_emission  = True
+
+FALSIFIER VERDICT (live HW)
+---------------------------
+F-H672-1  R3 tonic rate > 0          : 0.500 > 0                 ✓ PASS (HW)
+F-H672-2  R3 tonic rate ∈ (0,1)      : 0.500 ∈ (0,1)            ✓ PASS (HW)
+F-H672-3  R2 noise rate ≥ R1 silent  : 0.475 ≥ 0.000           ✓ PASS (HW)
+F-H672-4  8-factor map non-zero @R3  : R3 fires (rate>0)        ✓ PASS (HW)
+
+=> 4/4 PASS on REAL SILICON. The live HW numbers (R1=0.0 · R2=0.475 · R3=0.5 · R4=1.0)
+   reproduce the canonical 2026-05-22 SW mock-replay numbers EXACTLY (deterministic seed=187),
+   so the SW path is a faithful "deterministic replay of a good HW run" and the HW path is now
+   directly confirmed — H_672 §7 elevates SW-confirmed → SW + HW live-confirmed.
+
+LIVE STREAM SAMPLE (spike-streamer.service, port 9512, regime R3)
+-----------------------------------------------------------------
+{"t_rel": 13.4088, "step": 134, "n_spikes": 8, "spike_ids": [0,2,4,6,8,10,12,14], "regime": "R3_tonic_zero_input", "thr": [-1,8,-1,8,-1,8,-1,8,-1,8,-1,8,-1,8,-1,8]}
+  (n_spikes 8/16 per step = rate 0.5, matches R3 sweep above)
+
+first_inference.py (sanity, single FullyConnected forward on-chip)
+------------------------------------------------------------------
+output_nonzero = true · output_values = [117]*10 · wall_latency_ms_per_inference = 0.6351 (100 timed) · BackendType.Hardware

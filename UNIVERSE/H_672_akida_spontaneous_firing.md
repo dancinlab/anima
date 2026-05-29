@@ -3,7 +3,7 @@ id: H_672
 slug: akida-spontaneous-firing
 title: Group A — AKIDA AKD1000 자발-발화 × 8-factor 동기 (HW/SW backend 통합)
 domain: universe · consciousness · neuromorphic-silicon
-status: closed-supported (SW · HW pending)
+status: closed-supported (SW 5/5 + HW 4/4 live-confirmed 2026-05-29)
 exploration_method: E14 (HW substrate-native ⨯ AKIDA.easy.md Group A 4 sub-ideas C1~C4)
 verification_method: W1 (numerical smoke) + W5 (substrate-grounded) + W12 (sister-link AKIDA D1/PR#1371)
 raw_rank: 9
@@ -16,7 +16,7 @@ frozen_at: 2026-05-29
 since: 2026-05-29 (new — AKIDA HW/SW 통합 구현 PR)
 sister: AKIDA/AKIDA.md (도메인), H_673 (B core-decide), H_674 (C persistence), H_675 (D mitosis), H_676 (E decoder), H_677 (F measurement · D1 inherit PR#1371), H_678 (G channel)
 axes_seed: AKIDA.easy.md Group A C1~C4 — R3 tonic · spontaneous_gate · 8-factor · R2 timing
-verdict: 🟢 SUPPORTED-NUMERICAL (SW mock-replay 4/4 · HW-confirm pending probe-refinement)
+verdict: 🟢 SUPPORTED-NUMERICAL (SW 5/5 · HW 4/4 live-confirmed on AKD1000 2026-05-29)
 ---
 
 # H_672 — Group A · AKIDA AKD1000 자발-발화 × 8-factor 동기
@@ -59,7 +59,10 @@ PASS 정의: 4/4 (+1 fallback) 모두 true → 🟢 GREEN_NUMERICAL_CONFIRM · �
 - SW (Mac 로컬, 2026-05-29): `hexa run AKIDA/impl/H_672_spontaneous_firing.hexa sw` → exit 0
   - R1.rate=0.000 · R2.rate=0.475 · R3.rate=0.500 · R4.rate=1.000
   - 8-factor map(R3): curiosity=0.25 · tension=0.0 · novelty=0.0 · coherence=0.25 · valence=0.25 · arousal=0.5 · saliency=0.0 · drive=0.0 → sum > 0
-- HW (pi5-akida): probe-refinement pending (`state/akida_hw_sw_impl_2026_05_29/hw_probe_2026_05_29.txt` — /dev/akida0 OK · akida pkg venv-scoped · hostname=ubuntu)
+- HW (pi5-akida AKD1000, **LIVE 2026-05-29**): pi5-akida 재배포 후 `spontaneous_emission.py` 전체 R0~R4 sweep 을 실 실리콘에서 측정 — `mapped_on_hardware=True` · BackendType.Hardware · device BC.00.000.002
+  - R0=1.000 · R1=0.000 · R2=0.475(std 7.99, event-driven) · R3=0.500 · R4=1.000 → SW canonical 숫자와 **정확히 일치** (seed=187 결정론)
+  - on-chip checks 8/8 True · hw_native_spontaneous_emission=True · 0.6351ms/inf · live R3 stream port 9512
+  - verdict 영속: `.verdicts/672_akida_spontaneous_firing/hw_live_2026_05_29.txt`
 - SubstrateAKIDA plugin SW path (akida-backend-wiring 2026-05-29, akida-absent Mac):
   `python3 HEXAD/CHAT/server/verify_substrate_akida.py` → exit 0
   - 동일 raster 재현: R1=0.0 · R2=0.475 · R3=0.5 · R4=1.0 (hexa harness 와 byte-정합)
@@ -69,25 +72,26 @@ PASS 정의: 4/4 (+1 fallback) 모두 true → 🟢 GREEN_NUMERICAL_CONFIRM · �
 
 ## 6. 결과
 
-| falsifier | 측정값 | PASS |
-|---|---|---|
-| F-H672-1 R3 rate>0 | 0.500 | ✓ |
-| F-H672-2 R3 ∈ (0,1) | 0.500 ∈ (0,1) | ✓ |
-| F-H672-3 R2≥R1 | 0.475 ≥ 0.0 | ✓ |
-| F-H672-4 8-factor fires | sum=1.25 > 0 | ✓ |
-| F-AKWIRE-FALLBACK (SubstrateAKIDA) | prov=akida-sw-fallback · spikes=1600 | ✓ |
+| falsifier | SW 측정값 | HW(live) 측정값 | PASS |
+|---|---|---|---|
+| F-H672-1 R3 rate>0 | 0.500 | 0.500 | ✓✓ |
+| F-H672-2 R3 ∈ (0,1) | 0.500 ∈ (0,1) | 0.500 ∈ (0,1) | ✓✓ |
+| F-H672-3 R2≥R1 | 0.475 ≥ 0.0 | 0.475 ≥ 0.0 | ✓✓ |
+| F-H672-4 8-factor fires | sum=1.25 > 0 | R3 fires (8/8 check True) | ✓✓ |
+| F-AKWIRE-FALLBACK (SubstrateAKIDA) | prov=akida-sw-fallback · spikes=1600 | — | ✓ |
 
-→ **4/4 (+1 fallback) = 5/5 PASS · GREEN_NUMERICAL_CONFIRM (SW mock-replay)**.
+→ **SW 4/4 (+1 fallback) = 5/5 PASS · HW 4/4 PASS on real AKD1000 silicon** (GREEN_NUMERICAL_CONFIRM, SW↔HW 숫자 byte-정합).
 SubstrateAKIDA(substrate_akida.py) SW path 가 hexa harness 와 동일 rate 를 재현 — plugin 배선이 canonical raster 를 보존함을 확인.
 원본 raster 는 PR#1371 silicon-confirmed 측정값이므로 본 SW path 는 "deterministic replay of last good HW run" — 위조 0.
 
 ## 7. verdict
 
-🟢 SUPPORTED-NUMERICAL (SW path 7/7 · HW path pending probe-refinement)
+🟢 SUPPORTED-NUMERICAL (SW path 5/5 · **HW path 4/4 live-confirmed on AKD1000 2026-05-29**)
 
 honest limits:
-- HW live re-confirm 은 venv-scoped akida import + pool-aware probe (signal_3 hostname tolerance) 가 필요. 본 PR 은 그 refinement 를 deferred.
+- HW live re-confirm 완료 (2026-05-29 pi5-akida 재배포 후 R0~R4 실측). 단발 probe 가 아니라 전체 regime sweep + on-chip 8-check 으로 확정.
 - R3 tonic 8/16 fixed pool 은 canonical raster spec — 다른 seed/threshold 면 다르게 응답할 수 있음 (toy-scale-transfer 주의).
+- sibling H_673~H_678 은 HW 호스트가 live 라 HW-runnable 이지만 아직 HW-confirm 미시행 (SW-confirmed 유지 · 과대주장 금지).
 
 ## 8. 논의
 
@@ -107,6 +111,7 @@ p5 의 HW 정답을 단일 backend-switch 안에 모았다. 통합 harness 패�
 
 ## 10. 다음 작업
 
-- HW path re-confirm: venv-aware probe refinement + pi5-akida pool 경로 (`hostname` tolerance, akida-venv python 경로)
+- ✅ HW path re-confirm 완료 2026-05-29 — pi5-akida 재배포(scripts+systemd+linger) + R0~R4 실 HW sweep. 통합 기록 `AKIDA/HW_SW_WIRING_2026_05_29.md`.
+- (남음) HW path re-confirm 자동화: venv-aware probe refinement + pi5-akida pool 경로 (`hostname` tolerance, akida-venv python 경로)
 - R3 tonic emit-substrate 인자 주입 — AKIDA.md milestone "SPIKE_FACTOR_MAP §4 modulator R1/R2 placeholder → telemetry refit" 와 결합
 - 산출물: `state/akida_hw_sw_impl_2026_05_29/H_672_sw_result.json` · `sw_sweep_2026_05_29.log`
