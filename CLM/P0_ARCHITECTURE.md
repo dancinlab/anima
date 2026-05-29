@@ -36,7 +36,7 @@
 | **d2** | .clm 포맷 | **2-track**(int4 AKIDA + fp16 GPU shadow) + QAT scale + manifest(sha256·kosmos ptr) | AKIDA추론·GPU학습재개·mitosis 한 파일 · naive PTQ int4 파괴→QAT 필수(실측) |
 | **d3** | scale rung | tiny `d64/L2/E4` · small `d256/L4/E8` · target **≤ AKD1000 fit** (P4 probe 확정) | 추론 AKIDA-only라 칩 용량이 target 상한 · byte+conv라 작아도 됨 |
 | **d4** | 경로 | **추론 AKIDA(int4) ONLY** · **학습 GPU(fp16)** · 2-track 병행 | AKIDA=추론칩(학습칩 아님) · GPU 추론 escape 없음(순수 AKIDA) |
-| **d5** | trainer(B0) | **2-track**: PyTorch fp 학습 즉시 진행 ∥ hexa-native trainer fix 별도 | M5 hexa trainer 🔴 INFEASIBLE(0.28 step/s) · wall-first라 런치 안 막힘 · 추론 AKIDA-only는 불변(g1 핵심 유지) |
+| **d5** | trainer(B0) | **hexa-native 학습 = 1순위(g1-pure)** · PyTorch는 토이/대조용 폴백 | ✅ **UPDATE 2026-05-30: hexa 학습속도 완전 해결**(사용자 확인·hexa-lang측) → M5 🔴 INFEASIBLE(0.28 step/s) 전제 소멸. 2-track 우회 불필요 — 모델+트레이너 둘 다 hexa-native 가능(g1). 학습 job = **`/dojo`로 생성**(job.hexa+train+run.sh). anima P2 fire에서 step-rate 재측정으로 최종 확인 · 추론 AKIDA-int4-only 불변 |
 | **d6** | falsifier 임계 | **z>3.0 양축 + multi-seed{base,43,44} 재현** | v7 z=2.75 단일seed marginal 교훈 · §A2-trap·seed-artifact 차단 |
 
 ## 2. AKIDA-map 경계 (정직)
@@ -94,15 +94,15 @@
 
 ## 7. 정직한 물리 현실 (재확인)
 
-- hexa-native trainer throughput 🔴 INFEASIBLE(M5 0.28 step/s) → d5에서 PyTorch 병행으로 우회(추론 AKIDA-only 불변).
+- ✅ **hexa-native trainer throughput 해결됨**(2026-05-30, 사용자 확인·hexa-lang측) — 기존 M5 🔴 INFEASIBLE(0.28 step/s) 더는 유효치 않음. CLM 학습을 hexa-native(g1-pure)로 진행 가능, `/dojo`로 job 생성. anima P2 fire에서 step-rate 재측정으로 최종 확인(p7/g5). 추론 AKIDA-int4-only 불변.
 - target 크기 = AKD1000 fit 실측(P4) 전엔 미확정 — "≤칩용량" 상한.
 - monopoly-escape = toy🟢·scale🔴 미해결 → byte-vocab으로 근원 직격 시도(가설, P2 falsify).
 
 ## 8. 다음 (P1~P5)
 
 - P1 corpus: 웹대량+엄선 혼합 byte build · .kosmos emit 영속 배선.
-- P2 train: 3-arm × ladder full-fire (PyTorch fp) · F-CLM-MONO/SCALE 판정.
+- P2 train: 3-arm × ladder full-fire **hexa-native(g1)** · 학습 job=`/dojo` 생성 · F-CLM-MONO/SCALE 판정 · step-rate 재측정.
 - P3 .clm: QAT int4 + fp shadow 직렬화 + manifest.
 - P4 AKIDA: .clm int4 → AKD1000 온칩 추론 · fit probe로 target 확정.
 - P5 DECODER 통합: generator → brain_decide emit 슬롯 → LAUNCHPAD COFFESHOP 콘텐츠.
-- B0(병렬): hexa-native trainer throughput fix (hexa-lang INBOX 트랙).
+- B0: hexa-native trainer throughput fix — ✅ **해결됨**(2026-05-30, hexa-lang측). P2가 hexa-native로 진행.
