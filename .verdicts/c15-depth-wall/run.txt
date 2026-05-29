@@ -1,0 +1,70 @@
+AURA hexa-loop rounds A/B/C — depth wall + temporal revival + best envelope (ubu-1 numpy, 3D, 8-seed)
+=====================================================================================================
+
+=== round A1: DEPTH per modality (subcortical-reach test, 8-seed) ===
+depth      EEG-64  RTSC-MEG256  tFUS-64  full-stack
+0.5         0.627        0.999    0.519    0.999
+1.5         0.329        0.764    0.376    0.703
+3.0         0.175        0.341    0.264    0.284
+5.0         0.085        0.191    0.197    0.145
+8.0         0.044        0.110    0.153    0.049
+
+=== round A2: modality-COUNT saturation (depth=1.5) ===
+EEG                 0.329
++tFUS               0.364
++RTSC-MEG           0.703
++2nd-tFUS(diffpos)  0.715
++2nd-MEG(diffpos)   0.764
+
+=== round A3: active deconv (known transfer-fn vs blind wrong-depth, depth=1.5 EEG64) ===
+known transfer-fn (calibrated)  0.329
+blind (wrong depth 3.0 assumed) -0.120
+
+=== round B1: compressed-sensing L1 (ISTA) vs ridge — depth sweep EEG-64 K=6 8-seed ===
+depth       ridge  L1-ISTA
+0.5         0.617    0.496
+1.5         0.322    0.186
+3.0         0.178    0.080
+5.0         0.092    0.036
+
+=== round B2: source-sparsity K sweep (depth=1.5 EEG-64) ===
+K         ridge       L1
+1         0.227    0.159
+3         0.313    0.184
+6         0.322    0.186
+12        0.287    0.186
+24        0.262    0.169
+48        0.266    0.130
+
+=== round B3: dynamic temporal (joint support over T frames) vs static — depth=1.5 EEG-64 ===
+static per-frame ridge          0.302
+dynamic (joint temporal support)0.487
+
+=== round C1: does DYNAMIC-TEMPORAL crack the DEPTH wall? (EEG-64, 8-seed) ===
+depth      static  dynamic  gain
+1.5         0.302    0.487   +0.184
+3.0         0.149    0.222   +0.073
+5.0         0.074    0.103   +0.029
+8.0         0.038    0.052   +0.014
+
+=== round C2: full-stack + dynamic-temporal — best achievable envelope @ depth ===
+depth     full-static  full-dynamic
+1.5             0.604         0.820
+3.0             0.262         0.417
+5.0             0.139         0.196
+8.0             0.072         0.098
+
+VERDICT (honest, 🟡 toy — 3D synthetic, ridge/weighted/ISTA inverse, 8-seed):
+- A1 DEPTH WALL (terminal): recovery collapses with depth for ALL modalities. RTSC-MEG superficial
+  dominance (0.999@0.5) REVERSES at depth (1/r^2 steep falloff) → tFUS least-bad deep (0.153@8.0 vs
+  MEG 0.110 vs EEG 0.044). Non-invasive breakthrough is a CORTICAL-SURFACE phenomenon; subcortical
+  (whole-brain-control target) is non-invasively unreachable. Ties to B7 intracortical-ceiling.
+- A2: modality-count saturates — physics-DIVERSITY is the lever, not array count.
+- A3: active deconv GATED on calibration — wrong forward model → NEGATIVE R2 (real head-model critical).
+- B1: L1/compressed-sensing = DEAD-END (underperforms ridge every depth; LF coherence too high).
+- B2: recovery flat over K=1..48 — ceiling is NOT a source-sparsity artifact.
+- B3: dynamic-temporal REVIVES C9 (+0.185) — C9's null tested OUTPUT-SMOOTHING (wrong); temporal
+  STRUCTURE (joint support across frames) IS a real lever. /gap F7 temporal-hierarchy gap confirmed.
+- C1: temporal gain DECAYS with depth (+0.184@1.5 -> +0.014@8.0) — temporal cannot crack the depth wall.
+- C2: BEST achievable envelope (all levers + temporal) = 0.820 cortical -> 0.098 subcortical.
+  The non-invasive ceiling is depth-stratified: ~0.82 surface, ~0.10 deep. DEPTH is the terminal boundary.
