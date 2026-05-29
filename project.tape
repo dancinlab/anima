@@ -24,6 +24,15 @@
   dont = "gate HF upload on user · ask 'may I upload?' · skip HF before teardown"
   dont = "publish a FAIL / WIP ckpt as PUBLIC"
 
+@D a_hf_registry := "ckpt↔HF backup registry — /HF.jsonl is the SSOT" :: governance [required active]
+  do   = "track every gitignored local-only ckpt in root /HF.jsonl — one row per run"
+  do   = "row keys: run, local_path, hf_repo_id, base_model, lineage, size, status"
+  do   = "repo_id per docs/anima_hf_naming_convention_mk2_spec_2026_05_03.md"
+  do   = "upload via tool/hf_upload_mk2.hexa · ledger state/hf_upload_audit/"
+  do   = "prune a local ckpt ONLY after status=uploaded AND audit confirms its sha256"
+  dont = "delete a gitignored ckpt while status=pending_upload or needs_verify"
+  dont = "assign an off-spec repo_id · let HF.jsonl drift from disk"
+
 @D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
   do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously · parallel · bg"
   do   = "NO user gate — fire needs no user consult / approval / confirm · provider = runpod"
