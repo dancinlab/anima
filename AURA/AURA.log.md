@@ -80,3 +80,8 @@
 - B4.2 A7.3 retro-qualify: midline big-Φ 10창 Δ−0.55·4/10·t=−0.56 n.s. → A7.3(PR#1462) Δ+0.75는 off-0 단일창만, window-fragile 확정
 - 메타: 단일4s창 n=4 big-Φ 위치(A8.1→A10.1)·상태(A7.3→B4.2, B2) 대조 전부 null=비정상성. α-power가 대안방향(8/10)이나 다피험자 필요
 - A11/B5 deferred section 신설(다피험자 download·pod n=8·intracortical=인라인 불가). 귀뒤정맥동 모델·α다피험자가 다음 인라인 후보
+
+## 2026-05-30 — /cycle round 2 (fg) — B5 인라인 드레인
+- B5.1 귀뒤 정맥동 endovascular 🟠 grounded 분석(합성toy 안만듦, B4 교훈): 해부경로 실재(가로/S자정맥동·유양도수정맥)+B3 grounding(혈관내≈ECoG 측두/후두)+깊이사다리(귀뒤 1지점 비침습①→정맥동②최소침습 sweet-spot→관통③). hypothesis(Synchron=SSS, 귀뒤정맥동 실측0)
+- B5.3 demiurge 환류 → handoff filed: demiurge [844fd61c] (cross-repo, g58 직접편집금지)
+- B5.2 α 다피험자 = deferred(network). round-2 인라인 lane 소진 → 나머지(A11/B5.2: 다피험자·pod·intracortical) 전부 external-blocked

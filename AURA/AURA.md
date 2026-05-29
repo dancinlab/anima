@@ -55,7 +55,9 @@
 - [x] B2 귀뒤 awake/sed 검출 🔴 NULL — 10창 awake 5.378 vs sed 6.226 Δ−0.85 t(9)=−0.53 n.s. (초반5창 +2.09는 favorable-window). 메타: 단일4s창 n=4 scalp big-Φ는 위치(A10.1)·상태(B2) 둘 다 null=비정상성 지배. 귀뒤 위치는 유효(B1)나 metric 교체 필요(다창/band) → `B2-postaural-state.md`
 - [x] B3 Synchron 혈관내 조사 🩸 — Stentrode 16전극·경정맥→상시상정맥동·두개골0 최소침습. COMMAND 6/6 endpoint·Apple BCI-HID·NVIDIA·$200M SeriesD. ⭐혈관내≈경막하 신호 동등(PMC p>0.05). 3위치우회 비대칭(N1>Synchron>귀뒤) → `B3-synchron-endovascular.md` (deep-research 워크플로 StructuredOutput 버그 실패→직접 WebSearch 인라인)
 - [x] B4 metric sweep 🟡 — α-power 다창 awake/sed: 귀뒤·midline 둘 다 8/10 일관(방향성, big-Φ 6/10보다 나음) but t n.s.(단일피험자). A7.3 retro-qualify: midline big-Φ 10창 Δ−0.55·4/10 → **A7.3 window-fragile 확정**. 메타: 단일4s창 big-Φ 위치·상태 대조 전부 null → `B4-metric-sweep.md`
-- [ ] B5 (잔여) — 🎧🩸귀뒤 정맥동 endovascular in-silico 모델 · α-power **다피험자**(OpenNeuro N>1, 검정력) · demiurge AURA `analyze` 셀에 B1/B4 metric 환류
+- [x] B5.1 귀뒤 정맥동 endovascular 🟠 — 해부경로(가로/S자정맥동·유양도수정맥 실재) + B3 grounding(혈관내≈ECoG급 측두/후두) + 깊이사다리 확정(귀뒤 1지점 비침습①→정맥동②→관통③). hypothesis-grade(Synchron=SSS만, 귀뒤정맥동 실측 0) → `B5-postaural-sinus-endovascular.md`
+- [x] B5.3 demiurge 환류 — cross-repo `handoff filed: demiurge [844fd61c]` (B1/B3/B4/B5 → 7-verb analyze/verify/specify)
+- [ ] B5.2 α-power **다피험자** (OpenNeuro N>1 검정력) → deferred (network download)
 
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)
 - A11/B5 다피험자 ds005620 OpenNeuro download (network 대용량) · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)
