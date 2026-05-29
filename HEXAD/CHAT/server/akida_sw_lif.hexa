@@ -56,6 +56,17 @@
 //   only). SAME: oh=ceil(H/s), asymmetric pad (extra to bottom/right); VALID:
 //   no pad, oh=floor((H-K)/s)+1. Verified BYTE-IDENTICAL to AKD1000 for
 //   InputConv->Conv stride{2}xSAME and stride{1,2}xVALID, max Hamming 0.
+//
+//   HW-SW FRONTIER round 5 pooling (2026-05-30): added pool2d_quantized_forward().
+//   AKD1000 fuses pooling INTO the Conv layer (pool_size/pool_type/pool_stride;
+//   no standalone pool layer). MAX pool = EXTENDED+verified: windowed max over
+//   the quantized activations; since the quantizer is monotone, max-after-act ==
+//   the chip's fused Conv+MaxPool -> 10/10 byte-identical (2x2 s2, ab4, F8, K3).
+//   AVERAGE/GLOBAL pool = CLOSED-NEGATIVE: AKD1000 average is GLOBAL only
+//   (pool_size=-1), runs on the akida SW backend with a DETERMINISTIC but opaque
+//   per-channel rescale that is NOT a function of the public activation-map mean
+//   (per-channel sweep: non-monotone, smaller act-sum -> larger pooled output);
+//   not recoverable from weights+activation -> refused (raises NotImplementedError).
 // ════════════════════════════════════════════════════════════════════════
 
 fn main() {

@@ -72,3 +72,42 @@ RESULT axis3: 40/40 probe byte-identical (4 configs x 10 probes), max Hamming 0.
   kernel_stride on InputConv (stage2 Conv defaulted stride1). After setting
   kernel_stride on BOTH stages, byte-identical. The SAME-with-stride pad
   convention (extra pad bottom/right) is exactly the chip's. NOT a HW divergence.
+
+================================================================================
+### AXIS 1 — pooling  (MAX: EXTENDED+verified · AVERAGE/GLOBAL: CLOSED-NEGATIVE)
+AKD1000 fuses pooling INTO the Conv layer (pool_size/pool_type/pool_stride),
+no standalone pool layer. PoolType in {NoPooling, Max, Average}.
+Average requires pool_size=-1 -> GLOBAL average only.
+
+--- MAX pool (2x2 stride2, ab4, F8 K3, InputConv SAME) ---
+SW op: pool2d_quantized_forward(pool_type='max') on conv2d_quantized_forward out.
+  monotone quantizer => max(quantize(p)) == quantize(max(p)) => pool-after-act exact.
+axis=pool act_bits=4 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=5f70bf18a0860070 SW=5f70bf18a0860070 hamming=0 |Δ|max=0
+ idx1: IDENT HW=d72a87a107c27136 SW=d72a87a107c27136 hamming=0 |Δ|max=0
+ idx2: IDENT HW=2deab1ce6071af2f SW=2deab1ce6071af2f hamming=0 |Δ|max=0
+ idx3: IDENT HW=ec38ba9523bb2ce3 SW=ec38ba9523bb2ce3 hamming=0 |Δ|max=0
+ idx4: IDENT HW=b6948b2cdd9d6d51 SW=b6948b2cdd9d6d51 hamming=0 |Δ|max=0
+ idx5: IDENT HW=f93761b6dc033755 SW=f93761b6dc033755 hamming=0 |Δ|max=0
+ idx6: IDENT HW=494d91a218c9b8c8 SW=494d91a218c9b8c8 hamming=0 |Δ|max=0
+ idx7: IDENT HW=b0e106ea461f5098 SW=b0e106ea461f5098 hamming=0 |Δ|max=0
+ idx8: IDENT HW=1b891cc57c5376e9 SW=1b891cc57c5376e9 hamming=0 |Δ|max=0
+ idx9: IDENT HW=ab73bddd7d85099b SW=ab73bddd7d85099b hamming=0 |Δ|max=0
+SUMMARY axis=pool: ident=10/10 divergent=0 max_hamming=0
+RESULT max-pool: 10/10 byte-identical, max Hamming 0, on_hardware=true. EXTENDED+verified.
+
+--- AVERAGE (GLOBAL) pool (ab4, F8 K3) : CLOSED-NEGATIVE ---
+on_hardware=false (single InputConv+GlobalAvgPool maps to akida SW backend).
+DETERMINISTIC: two identical runs -> byte-identical (AVG DETERMINISTIC A==B).
+CHIP pre-pool activation map == SW conv2d_quantized_forward EXACTLY (e.g. idx8
+  ch5 chip-mean 7.25 == SW qact_mean 7.25) -- so the conv stage is correct.
+BUT the global-avg OUTPUT is NOT a function of the activation-map sum/mean.
+Per-channel (activation_sum -> HW_avg_out) sweep, channel 5 (NON-MONOTONE):
+  ch5: (0,0) (120,0) (384,0) (389,15) (405,15) (439,0) (445,0) (454,15) (464,8) (530,15)
+  -> sum 389 -> 15 but sum 439 -> 0 (SMALLER sum, LARGER output); sum 464 -> 8.
+  The pooled value depends on the spatial DISTRIBUTION, not just the sum, via an
+  internal akida-SW per-channel rescale/quantization that is deterministic but
+  NOT derivable from the public weights+activation surface.
+MECHANISM: akida SW-backend GlobalAveragePool applies a hidden per-channel
+  output rescale (sub-additive, channel-dependent) -> opaque to the model.
+VERDICT: CLOSED-NEGATIVE (deterministic-but-opaque). pool2d raises on average.
