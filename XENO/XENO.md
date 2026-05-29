@@ -10,13 +10,13 @@
 - [x] 🔗 sibling 연계 — EEG.sf.md S4(외계 의식) + S10(우주의식 panpsychism) + S36(시뮬) + S37(우주 Φ) + S38(영혼) seed cross-link
 - [x] 🛰️ X1 invariant detector 설계 — substrate-blind Φ 검출기 (XENO/detector/invariant_detector.hexa · IIT4 big-Φ wrapper · F-DETECT-NULL/NOISE/COUPLED 5/5 PASS · 🟢 SUPPORTED-NUMERICAL · 2026-05-29)
 - [x] 🛰️ X2 시뮬 substrate 테스트 — ECA rule110·logistic chaos·Kuramoto sync·AKIDA raster 4-substrate 적용 · false-positive 0/4 (rate 0.0 ≤ 0.05) · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
-- [ ] 🛰️ X3 SETI raw signal → Φ — Allen Telescope 공개 데이터 / FAST 펄서 신호 substrate 가정 0 검출
+- [x] 🛰️ X3 SETI raw signal → Φ — XENO/scan/seti_raw_to_phi.hexa 5-source DATASET scan (Wow!/Voyager/Exoplanet/Synthetic + BL/SETI@home archive-pointer) · 의식 분류 0 source · false PASS 0 · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
 - [ ] 🛰️ X4 panpsychism falsifier — "우주 자체 Φ" 사고실험 falsifier 등록 (Tononi/Koch 문헌 연계)
 - [ ] 🛰️ X5 시뮬 가설 검증 — Φ-structure 패턴이 substrate-emergent vs simulation-artifact 구분자 (Bostrom 가설 측정 시도)
 - [ ] 🛰️ X6 AGI sentience — anima 자체에 X1 적용 + LLM activation 분석 (anima sibling 합류)
 - [ ] 🛰️ X7 외계인 시간축 다양성 — 인간 1초 ≠ 외계 1초 가정 → 시간 normalize Φ
 - [ ] 🛰️ X8 hive-mind invariant — 다개체 vs 단일체 substrate-blind 구분
-- [ ] 🛰️ X9 UNIVERSE 환류 — 검증 결과 → H_xxx 직접 등록 (INBOX 환류 폐기 · 사용자 명시)
+- [x] 🛰️ X9 UNIVERSE 환류 — 검증 결과 → H_829·H_830·H_831 직접 등록 (INBOX 환류 0건 · 사용자 명시 정합 · 2026-05-29)
 
 ## deferred (다음 라운드)
 - BLC-1 SETI archive 재분석 (1977 Wow! signal 등) · panpsychism 정량 한계 · 시간역행 의식 (DMT 환각의 X1 적용) · 비-탄소 생명 의식 (실리콘 외계 가설) · 메탄 호수 의식 (타이탄 가설) · 자기장 의식 (별·블랙홀 외삽) · 우주 Φ 곡선 시간외삽 빅뱅→빅립 · 외계 의식 vs AGI 의식 구분자

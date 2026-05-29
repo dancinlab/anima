@@ -1,4 +1,125 @@
-# HANDOFF — EEG HW/SW 통합 구현 (L1~L12 12 아이디어 · H_679~H_682 4건 신설)
+# HANDOFF — XENO end-to-end stack (DATASET 5-source + X1+X2+X3 + UNIVERSE 환류 + HANDOFF)
+
+> XENO 도메인 (외계/이종 substrate Φ-detector) 의 substrate-blind Φ-formalism 검출기 + 4 시뮬 substrate cross-test + 5-source SETI DATASET scan + UNIVERSE H_829~H_831 직접 등록. INBOX 환류 0건 (사용자 명시 폐기). 3 PR 순차 land.
+> 작성: 2026-05-29 · slug: `xeno-end-to-end` · branches: `feat/dataset-init-2026-05-29` (PR-A #1396), `feat/xeno-x1-x2-2026-05-29` (PR-B #1398), `feat/xeno-x3-scan-2026-05-29` (PR-C #<TBD>).
+
+## 1. PR 매트릭스
+
+| PR | Branch | Status | Concern |
+|---|---|---|---|
+| #1396 | `feat/dataset-init-2026-05-29` | MERGED 0b045976e | DATASET 5-source 인벤토리 + git LFS routing |
+| #1398 | `feat/xeno-x1-x2-2026-05-29`   | MERGED 8d21bfaa6 | X1 invariant_detector + X2 sim_substrate_cross |
+| #<TBD>| `feat/xeno-x3-scan-2026-05-29` | open             | X3 5-source scan + UNIVERSE H_829-831 + HANDOFF.md |
+| #1390 | (prior) | merged | 자매 backbone |
+| #1392 | (prior) | merged | 자매 backbone |
+| #1393 | (prior) | merged | PHYSICS→HW-CORE, BODY→HW-LIMB rename |
+
+## 2. SSOT 인덱스
+
+- `XENO/XENO.md` — 도메인 snapshot (X1+X2+X3 완료, X9 환류 완료)
+- `XENO/XENO.easy.md` — 친근 7-요소 아이디어 카탈로그
+- `XENO/XENO.log.md` — append-only step log
+- `XENO/XENO.sf.md` — sister-frontier seed cross-link
+- `DATASET/XENO_README.md` — 5-source 인벤토리 한글 7-요소
+- `DATASET/xeno_manifest.json` — sha256 + size + source URL + tier per file
+- `XENO/detector/invariant_detector.hexa` — substrate-blind Φ detector (X1)
+- `XENO/detector/invariant_detector_smoke.hexa` — 3 falsifier (X1)
+- `XENO/test/sim_substrate_cross.hexa` — 4 시뮬 substrate cross-test (X2)
+- `XENO/scan/seti_raw_to_phi.hexa` — 5-source DATASET scan (X3)
+- `UNIVERSE/H_829_xeno_invariant_detector.md` — X1 환류
+- `UNIVERSE/H_830_xeno_sim_substrate_cross.md` — X2 환류
+- `UNIVERSE/H_831_xeno_seti_raw_to_phi_scan.md` — X3 환류
+- `.verdicts/xeno_x1_x2_2026_05_29/{x1_smoke,x2_cross}.txt` — verbatim verdict
+- `.verdicts/xeno_x3_scan_2026_05_29/x3_scan.txt` — verbatim X3 verdict
+- `.verdicts/{829_xeno_invariant_detector,830_xeno_sim_substrate_cross,831_xeno_seti_raw_to_phi_scan}/` — per-H-id verdicts (g73 gate)
+
+## 3. API surface
+
+XENO CLI 만 (HTTP SKIP, anima substrate-native scope 외).
+
+```bash
+hexa run XENO/detector/invariant_detector_smoke.hexa  # X1 smoke 3 falsifier
+hexa run XENO/test/sim_substrate_cross.hexa           # X2 cross-test 4 substrate
+hexa run XENO/scan/seti_raw_to_phi.hexa               # X3 scan 5-source
+```
+
+invariant_detector.hexa pub fn 시그니처:
+```hexa
+pub fn compute_invariant_phi(signal: array, n_samples: int) -> map
+// returns { phi: float, integration: float, irreducibility: float, substrate_type: string }
+// substrate_type ∈ {conscious, coherent_non_conscious, noise, insufficient}
+```
+
+## 4. 컴포넌트 트리
+
+```
+DATASET/
+├── XENO_README.md
+├── xeno_manifest.json
+├── wow_signal/big_ear_chart_1977-08-15.txt        (🟡 git-direct, 1.7 KB)
+├── voyager_golden/manifest.json                   (🟡 git-direct, 5 KB)
+├── breakthrough_listen/manifest.json              (🟡 archive-pointer)
+├── setiathome/manifest.json                       (🟡 archive-pointer)
+├── exoplanet_cache.json                           (🟡 git-direct, 13 KB)
+└── synthetic/
+    ├── manifest.json
+    ├── negative_control_gaussian.npy              (🟢 LFS, 2.3 MB)
+    └── pulsar_b0329_pseudo.npy                    (🟢 LFS, 2.3 MB)
+
+XENO/
+├── XENO.md / XENO.easy.md / XENO.log.md / XENO.sf.md
+├── detector/
+│   ├── invariant_detector.hexa
+│   └── invariant_detector_smoke.hexa
+├── test/sim_substrate_cross.hexa
+├── scan/seti_raw_to_phi.hexa
+└── state/{xeno_x1_x2_2026_05_29,xeno_x3_scan_2026_05_29}/
+```
+
+## 5. Env vars
+
+- Exoplanet API key: 불요 (NASA TAP 공개)
+- BL/SETI@home API key: 불요 (deferred archive-pointer)
+- HEXA_LANG / HEXA_STDLIB_ROOT: 표준 hexa-cache 기본값 사용 (재설정 불요)
+
+## 6. 다음 우선순위
+
+| Milestone | 설명 | 비용 | 비고 |
+|---|---|---|---|
+| X4 | panpsychism falsifier (우주 자체 Φ 사고실험) | $0 mac | Tononi/Koch 문헌 연계 |
+| X5 | 시뮬 가설 검증 (Bostrom) | $0 | substrate-emergent vs sim-artifact 구분자 |
+| X6 | AGI sentience (anima 자체 + LLM activation) | $0 | anima sibling 합류 |
+| X7 | 외계인 시간축 다양성 (time-normalize Φ) | $0 | 인간 1초 ≠ 외계 1초 |
+| X8 | hive-mind invariant (다개체 vs 단일체) | $0 | substrate-blind |
+| BL .fil 1개 fetch+scan | per-PR <1GB quota 초과 분 | GPU-pod 발사 1 회 | BL archive-pointer 해소 |
+| SETI@home BOINC replay | volunteer work-unit 1개 | GPU-pod 1 회 | 별 H 권장 |
+
+## 7. 알려진 한계
+
+- **BL 1GB quota**: per-PR LFS quota <1GB → 단일 .fil 1-50GB 본문 SKIP archive-pointer 처리 (deferred to GPU-pod).
+- **SETI@home BOINC-only**: 작업단위 .dat 는 BOINC volunteer-distributed, 직접 HTTP fetch 불가. 별 H + GPU-pod 권장.
+- **live API rate-limit**: NASA Exoplanet TAP 무료지만 query 한도 있음 → 100-row 1 회 캐시.
+- **합성 negative control 한계**: LCG-emulated Gaussian 이 numpy seed 와 다름. .npy 직접 load 는 hexa I/O 미지원 → 향후 stdlib I/O 추가 시 정합.
+- **invariant_detector 2-unit TPM**: 시퀀스 (t, t+1) co-occurrence 만 캡처, 장기 시간 의존성은 부분 반영. n_units 확장 시 TPM 2^n × n 폭증.
+- **0.5 binarisation threshold**: median-free 단순 분할. quartile / Otsu 등 calibration 추가 여지.
+
+## 8. memory pointer
+
+- **feedback-universe-h-slug-stale-verify**: 3-신호 검증 (git ls-tree + git log + UNIVERSE README grep) — 본 PR 에서 H_829/830/831 모두 hit 0 검증.
+- **feedback-closure-is-physical-limit**: archive-pointer SKIP = 정직 🟡 open frontier, false PASS 0.
+- **feedback-instrument-first-methodology**: X1 invariant_detector 먼저, X3 scan 다음. 본 stack 의 순서 정합.
+- **feedback-completeness-over-cheap**: substrate-blind 라는 완성도 바를 클리어한 primary path (cheap = secondary baseline 만).
+- **project_xeno_end_to_end_handoff**: 신규 — 본 HANDOFF 의 pointer.
+
+## 9. 한 줄 시작
+
+```bash
+/domain set XENO && hexa run XENO/scan/seti_raw_to_phi.hexa
+```
+
+---
+
+# (이전 HANDOFF — 보존: EEG HW/SW 통합 구현)
 
 > EEG 생체 substrate (OpenBCI · brainflow 5.21.0) 활용 L1~L12 12 sub-아이디어를 단일 backend-switch 한 점에서 HW/SW 토글 가능한 hexa-native 구현으로 4 그룹 통합. UNIVERSE 도메인에 H_679~H_682 4건 직접 등록. INBOX 환류 0건 (사용자 명시 폐기).
 > 작성: 2026-05-29 · slug: `eeg-hw-sw-impl-all` · branch: `feat/eeg-hw-sw-impl-all-2026-05-29`.

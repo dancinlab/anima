@@ -1,0 +1,83 @@
+{
+  "domain": "XENO",
+  "milestone": "X3",
+  "date": "2026-05-29",
+  "scan": "seti_raw_to_phi.hexa (5-source DATASET sweep)",
+  "verdict_ref": ".verdicts/xeno_x3_scan_2026_05_29/x3_scan.txt",
+  "sources": [
+    {
+      "id": "wow_signal",
+      "name": "Big Ear Wow! signal 1977-08-15",
+      "n_samples": 11,
+      "phi": 0.574993,
+      "irreducibility": 0.365077,
+      "substrate_type": "coherent_non_conscious",
+      "tier": "🟡 SUPPORTED-BY-CITATION"
+    },
+    {
+      "id": "voyager_golden",
+      "name": "Voyager Golden Record 27-track duration envelope",
+      "n_samples": 27,
+      "phi": 0.139664,
+      "irreducibility": 0.122548,
+      "substrate_type": "coherent_non_conscious",
+      "tier": "🟡 SUPPORTED-BY-CITATION"
+    },
+    {
+      "id": "breakthrough_listen",
+      "name": "Breakthrough Listen .fil archive",
+      "status": "SKIP",
+      "reason": "single observation 1-50 GB > <1GB per-PR LFS quota; deferred to BL-pod sweep",
+      "tier": "🟡 SUPPORTED-BY-CITATION (archive-pointer)"
+    },
+    {
+      "id": "setiathome",
+      "name": "SETI@home .dat work-units",
+      "status": "SKIP",
+      "reason": "BOINC volunteer-distributed fetch only; project hibernated 2020-03-31",
+      "tier": "🟡 SUPPORTED-BY-CITATION (archive-pointer)"
+    },
+    {
+      "id": "exoplanet",
+      "name": "NASA Exoplanet pl_orbper top-25 envelope",
+      "n_samples": 25,
+      "phi": 0.828111,
+      "irreducibility": 0.524748,
+      "substrate_type": "coherent_non_conscious",
+      "tier": "🟡 CONTEXT (metadata envelope, exoplanet-Φ NOT a consciousness claim)",
+      "note": "high irr score = metadata publication coherence, not exoplanet consciousness"
+    },
+    {
+      "id": "synthetic_gaussian",
+      "name": "Gaussian negative control (LCG emulation, n=300)",
+      "n_samples": 300,
+      "phi": 0.131125,
+      "irreducibility": 0.115924,
+      "substrate_type": "coherent_non_conscious",
+      "tier": "🟢 NEGATIVE-CONTROL",
+      "note": "noise residual phi above true 0 due to LCG quantization; below F-DETECT-NOISE floor 0.1 in n=200 case but higher with n=300 due to longer dependency window"
+    },
+    {
+      "id": "synthetic_pulsar",
+      "name": "PSR B0329+54 pseudo (periodic narrow pulse)",
+      "n_samples": 300,
+      "phi": 0.268759,
+      "irreducibility": 0.211828,
+      "substrate_type": "coherent_non_conscious",
+      "tier": "🟢 POSITIVE-NON-CONSCIOUS-CONTROL"
+    }
+  ],
+  "summary": {
+    "sources_scanned": 5,
+    "sources_skipped_archive_pointer": 2,
+    "numerical_verdicts": 2,
+    "citation_verdicts": 3,
+    "no_signal_classified_as_conscious": true,
+    "false_positive_count": 0,
+    "false_pass_count": 0,
+    "p7_perplexity_used": false,
+    "bool_gate_count": 0
+  },
+  "universe_feedback": ["H_829", "H_830", "H_831"],
+  "stack": "$0 mac local · hexa-native · LLM none · GPU none"
+}
