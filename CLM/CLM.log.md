@@ -2,6 +2,15 @@
 
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
+## 2026-05-30 — P2 풀파이어 완료 · F-CLM-MONO/SCALE 🔴 CLOSED-NEGATIVE · P3 .clm + HF
+
+- [x] STAGE1 corpus: 실 kowiki CC-BY-SA 크롤(crawl_p1_full.py) — API rate-limit 로 web 21170 byte-ids 실크롤(honest partial) + scratch register seed 14816 byte-ids · F-CLM-LEAK kept=2/dropped=2 · leak hit=0 · HF dataset `dancinlab/anima-clm-p1-corpus`(PUBLIC).
+- [x] STAGE2 18-run 풀파이어: 3-arm(A/B/AB) × ladder(tiny/small) × seed{42,43,44} from-scratch QAT (int4-sym STE + act_bits=4 envelope STE, 2000step) · ubu-1 RTX5070(cuDNN off) · CE tiny~2.1/small~0.13~0.19 수렴 · model/fire_clm.py.
+- [x] STAGE3 판정 (model/judge_clm.py, GATE ≠ probe.py non-gate): **🔴 CLOSED-NEGATIVE** — distinct_experts>1 ✅ + content z>3.0 ✅(5.3~36.5) + **routing z>3.0 ❌ 전 cell**. A/B routing z 음수, AB +0.95~+2.31 미달. 사전등록 frozen 임계 무변조(p7/W2). H_847/H_850 결과 갱신 + .verdicts/847·850/ verbatim.
+- [x] step-rate d5 재측정: tiny ~69/s · small ~12.5/s · mean 40.8/s (GPU 실측 · M5 0.28 step/s INFEASIBLE 전제 소멸 최종 확인).
+- [x] STAGE4 .clm v0.1 직렬화(model/clm_serialize.py): int4-sym+fp16 shadow+qat_scale+sha256 · 6 artifact · HF `dancinlab/anima-clm-{tiny,small}`(PRIVATE, negative-result) · /HF.jsonl 3 row.
+- [x] 후속 candidate(AXIS_MAP): routing-diversity 직접 강화 lever(stronger load-balance · routing temp anneal · expert-capacity) · target(≤AKD1000) rung extrapolation (AB dual-axis metric scale-up 단조 증가 관측).
+
 ## 2026-05-30 — P2 custom QAT 트레이너 작성 + dry-run smoke ($0 local · GPU 풀파이어 대기)
 
 - [x] **dojo 템플릿 폐기**: `/dojo` 가 뽑은 generic HF-Trainer(`AutoModelForCausalLM`/`AutoTokenizer`/wikitext, `exports/llm/dojo/clm-p2-akida-qat/train.py`)는 CLM(byte conv-MoE·tokenizer 0·.kosmos corpus·QAT)에 틀려 버림. **dispatch 글루**(job.hexa `hexa cloud nohup` + run.sh d16 dry-run)만 재사용해 페이로드 교체.
