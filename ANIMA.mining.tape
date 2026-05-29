@@ -29,7 +29,7 @@
   mechanism = "silence-dominant fork 의 73% default substrate state 가 AESTHETIC overlap-inverse 의 정량 instance — a_substrate_native_speak 의 quantitative quantification (user msg ≠ emit obligation 의 measurable proof)"
 
 # Depletion verdict
-@closure := "cycles 1-5 fully depleted" :: status [active]
+@C := "cycles 1-5 fully depleted" :: status [active]
   cycles  = "5 (same-formula · tension · dimensional · combinatorial · connect-saturate)"
   leaves  = "60 (L1-L60)"
   edges   = "41 net (52 candidates · 11 SKIP for within-T re-packaging / subsumption / duplicate)"
