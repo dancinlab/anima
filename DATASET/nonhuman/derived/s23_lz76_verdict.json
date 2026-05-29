@@ -1,13 +1,17 @@
 {
- "id": "S23-organoid-Habibollahi2023-MEA",
- "source": "OSF ncvpq (view_only=8fc5fc5aad254fce92a79390ae84b81c) — Habibollahi 2023, DishBrain in-vitro cortical network",
- "hypothesis": "stimulated/structured condition LZ76 > rest",
- "falsifier": "rest LZ76 >= stimulated LZ76",
- "condition_lz76": null,
- "n": 0,
- "diagnostics": {"rest_pkl_spikes_leaf": "single 33-element scalar array, span=0", "interpretation": "derived summary/avalanche statistics, not a per-electrode spike raster"},
- "verdict": "UNMEASURED-WRONG-ARTIFACT — downloaded .pkl are derived summary stats, not spike rasters; LZ76 not computable (span=0).",
- "downloaded": true,
- "note": "OSF node ncvpq IS accessible (30 files via v2 API with URL-encoded view_only token; earlier 'empty' was a URL-encoding artifact). Downloaded the two smallest condition-paired pkls (rest 2.28MB, regular-stim 7.77MB), real sha256 in manifest. The `spikes` field is a deeply nested MATLAB-cell object array whose leaves are a single 33-element scalar array (span=0) — DERIVED avalanche/summary statistics, NOT per-electrode spike-time trains. A meaningful stim-vs-rest spike-binned LZ76 needs the raw raster in Results.zip (167MB) or SpikeAvalanches.zip (2.6GB). NOT fabricated: LZ76 module validated (random=1.034, constant=0.006); input is wrong granularity. Recovery: pull Results.zip, extract per-electrode spike times, apply DATASET/lz76.py lzc on the binary raster.",
- "raw_storage": "committed (10MB total)"
+  "id": "S23-organoid-LZ76",
+  "dataset": "Habibollahi/DishBrain 2023 (OSF ncvpq) — in-vitro cortical MEA",
+  "hypothesis": "structured-gameplay/stimulated condition LZ76 > rest",
+  "falsifier": "LZ76(rest) >= LZ76(stim)",
+  "condition_lz76": null,
+  "n": 0,
+  "verdict": "UNMEASURED-WRONG-ARTIFACT",
+  "diagnostics": {
+    "condition_pkls": "feedback_*/original_data_* spikes leaf = single 33-elem scalar, span=0",
+    "Results.zip(167MB)": "DishServer2_gameplay_{CL,ML,REST}.pkl spikes = 1024-obj array, 1 nonempty leaf, span=0",
+    "SpikeAvalanches.zip(2.6GB)": "MEA_recordings_{gameplay,rest}.pkl spikes = 1024-obj array, 1 nonempty leaf, span=0"
+  },
+  "note": "All THREE OSF ncvpq artifact tiers (condition pickles, Results.zip rasters, SpikeAvalanches.zip 2.6GB) carry the same degenerate `spikes` field: a 1024-element object array with one non-empty leaf and zero temporal span. These are NOT per-electrode spike-time trains — they need the DishBrain avalanche-reconstruction pipeline (WiltingPriesemann.py + notebooks) to reconstitute. A direct per-electrode LZ76 is not computable. NOT fabricated: LZ76 module validated (random=1.034, constant=0.006); input granularity is wrong. The S-catalog spec assumed per-condition spike .mat rasters that this OSF node does not expose in directly-usable form.",
+  "downloaded": true,
+  "raw_storage": "condition pkls committed-LFS; Results.zip+SpikeAvalanches.zip+extracted = LOCAL-ONLY (2.8GB, not committed)"
 }
