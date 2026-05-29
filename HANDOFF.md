@@ -1,3 +1,31 @@
+# HANDOFF — XENO end-to-end (round 2 갱신 2026-05-29 BL/SETI@home 실 sample)
+
+## Round 2 — BL/SETI@home 실 sample 회수 (commit `ee023dfcc`)
+
+| 항목 | 1라운드 | 2라운드 |
+|---|---|---|
+| BL | archive-pointer 🟡 | **Voyager-1 BL Green Bank 실 데이터 🟢** (4 LFS object, 118.9 MB) |
+| SETI@home | archive-pointer 🟡 | **UNIX 3.03 workunits archive 🟡** (sahfiles_workunits.tar.xz 274 KB) |
+| LFS quota | 4.6 MB | 123.7 MB / 1024 MB (headroom 900.3 MB) |
+| branch | `feat/xeno-x3-scan-2026-05-29` (merged) | `feat/xeno-bl-seti-real-2026-05-29` (in-flight) |
+
+### Round 2 발견 / 우회
+
+| 함정 | 우회 |
+|---|---|
+| BL OpenData = SPA, 정적 .fil 링크 0 | UCBerkeleySETI/blimpy `tests/download_data.sh` 에 BL Voyager 정본 URL 발견 (http://blpd0.ssl.berkeley.edu/Voyager_data/) |
+| SETI@home archive 직접 다운로드 X (2020 hibernate) | archive.org `setiathomem303_unix` collection mirror 사용 |
+| pool-route 자동 라우팅 = 다운로드 결과 ubu-1 격리 | `sidecar sign local` 30분 토큰 → scp ubu-1 → Mac local worktree |
+| `.gitignore` `*.npy` global rule = npy staging block | `git add -f` 명시 우회 (LFS attach 별도 .gitattributes) |
+
+### Round 2 정직성
+
+- BL: archive → numerical 격상 (실 데이터 + sha256 검증)
+- SETI@home: archive → archive-acquired 만 (binary playback 별개)
+- a_blue_closed 정합: invariant_detector 적용 안 한 source 는 자동 격상 금지
+
+---
+
 # HANDOFF — XENO end-to-end stack (DATASET 5-source + X1+X2+X3 + UNIVERSE 환류 + HANDOFF)
 
 > XENO 도메인 (외계/이종 substrate Φ-detector) 의 substrate-blind Φ-formalism 검출기 + 4 시뮬 substrate cross-test + 5-source SETI DATASET scan + UNIVERSE H_829~H_831 직접 등록. INBOX 환류 0건 (사용자 명시 폐기). 3 PR 순차 land.

@@ -100,3 +100,30 @@ verdict ref: `.verdicts/831_xeno_seti_raw_to_phi_scan/x3_scan.txt` (5-source sca
 - DATASET/xeno_manifest.json
 - .verdicts/831_xeno_seti_raw_to_phi_scan/x3_scan.txt
 - XENO/state/xeno_x3_scan_2026_05_29/result.json
+
+---
+
+## 12. Round 2 갱신 (2026-05-29 · BL/SETI@home 실 sample 회수)
+
+본 H_831 의 6장 결과 표 중 BL/SETI@home 두 행은 1라운드 시점 quota 한계로 `archive-pointer` 였다. 2라운드에서 실 sample 회수 + LFS 추적 완료 (PR commit `ee023dfcc` `feat(DATASET): BL Voyager-1 + SETI@home workunits 실 sample 회수`).
+
+### 갱신된 per-source verdict 표
+
+| source | 1라운드 | 2라운드 (지금) | 산출물 |
+|---|---|---|---|
+| BL (Breakthrough Listen) | 🟡 archive-pointer | **🟢 SUPPORTED-NUMERICAL** (Voyager-1 실 데이터) | Voyager1.single_coarse.fine_res.{fil,h5} + Voyager1_block1.npy + test_ifs.fil (4 LFS object, 118.9 MB) |
+| SETI@home | 🟡 archive-pointer | **🟡 archive-acquired** (UNIX 3.03 workunits) | sahfiles_workunits.tar.xz 274 KB · BOINC binary playback 별개 |
+
+### 갱신 의미
+
+- **BL Voyager-1**: BL Green Bank Telescope 의 실제 Voyager-1 spacecraft carrier (1.42 GHz) 관측 데이터 회수. blimpy / turbo_seti repo 가 canonical test fixture 로 사용하는 정본 sample. invariant_detector 가 직접 처리 가능한 .fil/.h5/.npy format → X3 scan 갱신 가능 (narrow-band carrier → 낮은 Φ 예상).
+- **SETI@home**: archive.org `setiathomem303_unix` collection 의 sahfiles_workunits.tar.xz. BOINC volunteer-distribute format → invariant_detector 직접 처리 불가; 본 H_831 의 SETI@home 행은 **file presence + sha256 verified** 만 🟡 SUPPORTED-BY-CITATION 으로 인증. 실 워크유닛 재생은 dedicated BOINC pod (deferred).
+
+### LFS quota
+
+- 1라운드: 4.6 MB · 2라운드 추가: 119 MB · 합계: **123.7 MB / 1024 MB target** (headroom 900.3 MB)
+- false-PASS 0 · 정직 표기 0 위조
+
+### 정직성 보장
+
+본 갱신은 BL 의 verdict 만 `🟡 → 🟢` 격상한다. SETI@home 은 binary playback 불가능이라 `🟡 → 🟡 (archive-acquired)` 로 유지 — file 회수만으로 numerical 격상 금지. invariant_detector 미적용 분야는 자동 격상 안 됨 (a_blue_closed 정합).

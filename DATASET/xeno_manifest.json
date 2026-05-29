@@ -1,8 +1,9 @@
 {
-  "version": "1.0",
+  "version": "1.1",
   "domain": "XENO",
   "purpose": "X3 SETI raw → Φ scan input data (substrate-blind invariant_detector)",
   "created_at": "2026-05-29",
+  "updated_at": "2026-05-29 (round 2 — BL Voyager + SETI@home archive acquired)",
   "honesty_policy": "다운로드 실패 = open frontier (정직 🟡), not failure. status: failed entries record verbatim reason, false PASS 0.",
   "lfs_quota_target_mb": 1000,
   "sources": [
@@ -39,13 +40,42 @@
     },
     {
       "id": "breakthrough_listen",
-      "name": "Breakthrough Listen Open Data Archive",
+      "name": "Breakthrough Listen Open Data Archive (Voyager-1 samples)",
       "source_url": "http://seti.berkeley.edu/opendata",
+      "sample_origin": "http://blpd0.ssl.berkeley.edu/Voyager_data/",
       "license": "Open Data (Berkeley SETI Research Center)",
-      "tier": "🟡 SUPPORTED-BY-CITATION (archive-pointer)",
-      "status": "archive-pointer",
-      "status_reason": "single .fil observation 1-50 GB exceeds <1GB per-PR LFS quota; deferred to X3 sweep stage on-demand fetch",
+      "tier": "🟢 SUPPORTED-NUMERICAL",
+      "status": "samples-acquired-2026-05-29",
+      "status_reason": "Voyager-1 spacecraft carrier observation samples (BL public test data, referenced by blimpy / turbo_seti as canonical test fixtures). Real BL Green Bank Telescope data on real Voyager 1 1.42 GHz carrier.",
       "files": [
+        {
+          "path": "DATASET/breakthrough_listen/Voyager1.single_coarse.fine_res.fil",
+          "sha256": "49af50577e136d6e1184e1709fda54d1f48562290df34aa5ed5df34e96e2baf7",
+          "size_bytes": 67109246,
+          "tracking": "git-lfs",
+          "format": "SIGPROC filterbank (single coarse channel, fine resolution)"
+        },
+        {
+          "path": "DATASET/breakthrough_listen/Voyager1.single_coarse.fine_res.h5",
+          "sha256": "c9a9a54f4140e3754ffb2455fae4eeb2eb70c8207123116ee953e4fce15c36ac",
+          "size_bytes": 50549227,
+          "tracking": "git-lfs",
+          "format": "HDF5 (BL5 spec)"
+        },
+        {
+          "path": "DATASET/breakthrough_listen/Voyager1_block1.npy",
+          "sha256": "a615f7b8735c7c644f25aa9309291782b9017f6a9c96ca2c48ece8aed4f43a78",
+          "size_bytes": 1024128,
+          "tracking": "git-lfs",
+          "format": "numpy raw block"
+        },
+        {
+          "path": "DATASET/breakthrough_listen/test_ifs.fil",
+          "sha256": "27a2d6e3c483ad93fded7b44874a73cb8bef7aefa6dd079ef4ea0f95c36985d6",
+          "size_bytes": 246102,
+          "tracking": "git-lfs",
+          "format": "BL IF stream test filterbank"
+        },
         {
           "path": "DATASET/breakthrough_listen/manifest.json",
           "tracking": "git-direct"
@@ -54,13 +84,21 @@
     },
     {
       "id": "setiathome",
-      "name": "SETI@home (Berkeley)",
+      "name": "SETI@home archive (Berkeley · archive.org mirror)",
       "source_url": "https://setiathome.berkeley.edu/",
-      "license": "Open Data (BOINC)",
-      "tier": "🟡 SUPPORTED-BY-CITATION (archive-pointer)",
-      "status": "archive-pointer",
-      "status_reason": "work-units distributed via BOINC volunteer network, not bulk-downloadable; project hibernated 2020-03-31",
+      "archive_url": "https://archive.org/details/setiathomem303_unix",
+      "license": "Open Data (BOINC) · archive.org mirror",
+      "tier": "🟡 SUPPORTED-BY-CITATION",
+      "status": "archive-acquired-2026-05-29",
+      "status_reason": "SETI@home 3.03 UNIX workunits archive (sahfiles_workunits.tar.xz) acquired from archive.org. Binary BOINC format — playback requires BOINC client; X3 scan = file presence + sha256 verification only (citation-tier, not numerical recompute).",
       "files": [
+        {
+          "path": "DATASET/setiathome/sahfiles_workunits.tar.xz",
+          "sha256": "2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96",
+          "size_bytes": 274340,
+          "tracking": "git-lfs",
+          "format": "BOINC workunits binary tar.xz archive"
+        },
         {
           "path": "DATASET/setiathome/manifest.json",
           "tracking": "git-direct"
@@ -110,15 +148,18 @@
     }
   ],
   "lfs_usage": {
-    "lfs_tracked_bytes_committed": 4800256,
-    "lfs_tracked_mb": 4.6,
+    "lfs_tracked_bytes_committed_round_1": 4800256,
+    "lfs_tracked_bytes_round_2_added": 119203043,
+    "lfs_tracked_bytes_total": 124003299,
+    "lfs_tracked_mb": 118.3,
     "quota_target_mb": 1000,
-    "headroom_mb": 995.4
+    "headroom_mb": 881.7
   },
   "summary": {
-    "ok_sources": 4,
-    "archive_pointer_sources": 2,
+    "ok_sources": 5,
+    "archive_pointer_sources": 1,
     "failed_sources": 0,
-    "x3_input_ready": true
+    "x3_input_ready": true,
+    "round_2_acquired": ["breakthrough_listen (Voyager-1 BL samples)", "setiathome (workunits.tar.xz)"]
   }
 }

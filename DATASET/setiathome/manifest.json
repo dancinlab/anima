@@ -1,22 +1,35 @@
 {
   "source": "SETI@home Project (Berkeley)",
   "url": "https://setiathome.berkeley.edu/",
-  "status_note": "Project hibernated 2020-03-31; archive of past observations remains accessible",
-  "license": "Open Data (BOINC volunteer-distributed)",
+  "archive_url": "https://archive.org/details/setiathomem303_unix",
+  "status_note": "Project hibernated 2020-03-31; UNIX 3.03 distribution + workunits archived to archive.org",
+  "license": "Open Data (BOINC volunteer-distributed) · archive.org mirror",
   "instrument": "Arecibo Observatory (1420 MHz hydrogen line, 2.5 MHz bandwidth, retired 2020)",
   "frequencies_GHz": "1.418 - 1.422",
-  "format": "BOINC work-unit .dat (~365 KB each, 107s recording @ 0.6 Hz bins)",
-  "typical_file_size": "365 KB per work-unit",
+  "format": "BOINC work-unit (~365 KB each, 107s recording @ 0.6 Hz bins)",
   "scope": "1999-2020, 16 billion+ work-units distributed",
-  "quota_decision": {
-    "status": "archive-pointer-only",
-    "reason": "work-unit files distributed via BOINC volunteer-compute network, not bulk-downloadable from public HTTP. Direct re-analysis requires BOINC client; deferred to X3 sweep stage.",
-    "tier": "🟡 SUPPORTED-BY-CITATION"
+  "round_2_status": {
+    "status": "archive-acquired",
+    "tier": "🟡 SUPPORTED-BY-CITATION",
+    "acquired_2026_05_29": "SETI@home 3.03 UNIX workunits archive (sahfiles_workunits.tar.xz) from archive.org. Binary BOINC format — playback requires BOINC client; X3 scan reads file metadata + sha256 verification only (citation-tier, not numerical recompute)."
   },
-  "files_in_repo": {
-    "manifest.json": "this archive-pointer (no raw .dat committed)"
-  },
-  "x3_use_plan": "use SETI@home best-candidate list (Top 6, e.g. SHGb02+14a 2004) coordinates as Φ-scan targets; raw work-unit playback deferred to dedicated BOINC pod",
+  "files_in_repo": [
+    {
+      "name": "sahfiles_workunits.tar.xz",
+      "sha256": "2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96",
+      "size_bytes": 274340,
+      "tracking": "git-lfs",
+      "source_url": "https://archive.org/download/setiathomem303_unix/sahfiles_workunits.tar.xz",
+      "contents": "SETI@home 3.03 UNIX workunits archive (BOINC binary format)",
+      "x3_tier": "🟡 SUPPORTED-BY-CITATION (binary playback deferred; file presence + sha256 verified)"
+    },
+    {
+      "name": "manifest.json",
+      "tracking": "git-direct",
+      "purpose": "this metadata"
+    }
+  ],
+  "x3_use_plan": "binary archive — invariant_detector cannot process BOINC opaque format; X3 records file presence + sha256 verification + best-candidate list reference (SHGb02+14a 2004 etc.) as 🟡 citation. Raw workunit playback requires BOINC client (deferred to dedicated pod).",
   "best_candidates": [
     {"name": "SHGb02+14a", "year": 2004, "RA": "01h 31m 12s", "Dec": "+27d 30m", "freq_MHz": 1420.0344, "snr": 19, "note": "between Pisces/Aries; ruled inconclusive after re-observation"},
     {"name": "Wow! signal (1977)", "note": "pre-SETI@home, cross-referenced for comparison"}
