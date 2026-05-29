@@ -2,6 +2,7 @@
 @V := "domains" :: index
 
 @D BRAIN := "./BRAIN.md" :: domain [active]
+@D AURA := "./AURA/AURA.md" :: domain [active]
 @D AGENT := "./AGENT/AGENT.md" :: domain [active]
 @D CORE := "CORE/CORE.md" :: domain [active]
 @D DECODER := "CORE/DECODER/DECODER.md" :: domain [active]
