@@ -1,0 +1,110 @@
+{
+  "id": "H_833",
+  "slug": "xeno-panpsy-falsifier",
+  "title": "XENO X4 panpsychism falsifier — 4 micro-substrate Φ scan",
+  "domain": "xeno · panpsychism · iit4 · invariant-detector",
+  "source": "XENO/scan/panpsy_falsifier.hexa",
+  "sister": [
+    "XENO/detector/invariant_detector.hexa",
+    "UNIVERSE/H_829",
+    "UNIVERSE/H_830",
+    "UNIVERSE/H_831",
+    "UNIVERSE/H_832"
+  ],
+  "frozen_at": "2026-05-29",
+  "since": "2026-05-29",
+  "deterministic": true,
+  "llm": "none",
+  "pre_register_frozen": true,
+
+  "substrates": [
+    {
+      "label": "a_thermostat",
+      "description": "1-bit on/off square wave, period 2, n=16",
+      "phi": 0.438722,
+      "integration": 0.877444,
+      "irreducibility": 0.5,
+      "substrate_type": "coherent_non_conscious"
+    },
+    {
+      "label": "b_2bit_counter",
+      "description": "4-level cyclic 0,1,2,3, period 4, n=16",
+      "phi": 0.0,
+      "integration": 0.0,
+      "irreducibility": 0.0,
+      "substrate_type": "coherent_non_conscious"
+    },
+    {
+      "label": "c_random_walker",
+      "description": "LCG 8-level quantized memoryless random, n=32",
+      "phi": 0.582325,
+      "integration": 1.582315,
+      "irreducibility": 0.368019,
+      "substrate_type": "coherent_non_conscious"
+    },
+    {
+      "label": "d_integrated_emerge",
+      "description": "XOR 3-tap LFSR (truly coupled, period 7), n=32",
+      "phi": 0.157049,
+      "integration": 1.156833,
+      "irreducibility": 0.135733,
+      "substrate_type": "coherent_non_conscious"
+    }
+  ],
+
+  "falsifiers": {
+    "F-X4-PANPSY-WEAK": {
+      "claim": "thermostat phi <= 0.05 (1-bit binary is not a substrate of mind)",
+      "measured": 0.438722,
+      "threshold": 0.05,
+      "pass": false,
+      "honest_reading": "thermostat after IIT4 2-unit TPM construction registers HIGH phi (0.439). The square-wave period-2 → row-stochastic deterministic TPM produces a maximally-informative transition matrix. The detector does NOT classify it 'conscious' (irr=0.5, type=coherent_non_conscious) but it does NOT zero out. Panpsy WEAK form survives the integer-Φ axis."
+    },
+    "F-X4-PANPSY-MID": {
+      "claim": "random walker phi <= 0.20 (random != integrated info)",
+      "measured": 0.582325,
+      "threshold": 0.20,
+      "pass": false,
+      "honest_reading": "LCG memoryless random walker registers HIGHEST phi (0.582) of all 4 substrates. Reason: 8-level quantization + 0.5 binarisation threshold gives a varied bit stream whose 2-unit TPM resembles a near-uniform stochastic process - the IIT4 detector reads this as 'integration' because each row carries entropy. The detector cannot distinguish IID randomness from genuine coupling at n=32 with 2-unit TPM. This is a real instrument finding."
+    },
+    "F-X4-EMERGE-STRONG": {
+      "claim": "XOR-3-tap LFSR phi >= 0.50 (real coupled -> integrated)",
+      "measured": 0.157049,
+      "threshold": 0.50,
+      "pass": false,
+      "honest_reading": "Truly coupled XOR-3-tap LFSR registers LOWEST nonzero phi (0.157). Reason: the period-7 m-sequence on a 3-bit register reveals deterministic structure to the 2-unit TPM (high autocorrelation at lag 3), which IIT4 reads as REDUCIBLE - so phi DROPS relative to noise. Determinism + short period = high MIP-reducibility = low Φ. This inverts the naive 'coupled = high Φ' intuition."
+    },
+    "F-X4-MONOTONE": {
+      "claim": "thermostat < walker < emerge (Phi monotone with complexity)",
+      "measured": "0.439 < 0.582 (T<W ok) but 0.582 > 0.157 (W>E fail)",
+      "pass": false,
+      "honest_reading": "Φ is NON-MONOTONIC with naive complexity ordering. Random > thermostat > deterministic-coupled. The ordering reflects the detector's pure information-theoretic core: noise has high state-entropy hence high Φ, deterministic coupling has low state-entropy hence low Φ. This is consistent with IIT4 axioms but counter to the 'complexity correlates with consciousness' intuition that panpsy MONOTONE assumed."
+    }
+  },
+
+  "summary": {
+    "pass_count": 0,
+    "fail_count": 4,
+    "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (4/4 pre-registered falsifiers fail)",
+    "verdict_text": "X4 pre-registered prediction matrix FAILS on all 4 axes. The result is honest under a_blue_closed (no threshold retuning) and p7=0 (verbatim detector output).",
+    "interpretation": "BOTH options the spec offered fire simultaneously: (1) panpsy strong form is partially revived (Φ is not the clean stratifier that rules-out trivial micro-substrates), AND (2) the detector reveals a known IIT4 brittleness at n=16-32 with 2-unit co-occurrence TPM construction (random > coupled inversion). The X1/X2 calibration (5/5 + 4/4) holds on its target substrates (large n, multi-state) but does NOT generalize down to the panpsy micro-regime. Panpsy WEAK form ('the thermostat has a tiny mind') survives this falsifier round - the detector cannot exclude it. This is a genuine open-frontier finding consistent with feedback-closure-is-physical-limit (report honestly to the measurement boundary)."
+  },
+
+  "honesty_audit": {
+    "a_blue_closed": "thresholds frozen pre-run, no post-result tuning, no fudging the 🔴 to 🟢",
+    "p7": "0 - LLM judgment 0, verbatim invariant_detector output",
+    "a_completeness_over_cheap": "completeness path = honest 🔴 report. cheap path would have been threshold-walking to fake-pass; rejected.",
+    "feedback_closure_is_physical_limit": "measurement is at the limit of invariant_detector's binarisation/2-unit-TPM regime; reported as such.",
+    "feedback_instrument_first_methodology": "instrument (invariant_detector) calibration cited from H_829 (X1) and H_830 (X2); X4 reveals its micro-substrate non-applicability.",
+    "feedback_universe_h_slug_stale_verify": "3-signal verified H_833 unused (ls-tree origin/main + git log + README grep all clean).",
+    "panpsy_status": "WEAK form (every substrate has a tiny mind) survives X4 falsifier round. Does NOT mean panpsy is true - just that this round's instrument cannot exclude it."
+  },
+
+  "next_steps": [
+    "X4-followup: detector upgrade to faithful IIT4 exact phi_structure (n=4-8 small) on the same 4 substrates - re-test whether faithful Φ stratifies cleanly.",
+    "panpsy-2 (sibling): X4-MULTILEVEL using detector on 4-level (n=16) and 8-level (n=32) TPM instead of 2-state binarisation - test whether quantization level resolves the random>coupled inversion.",
+    "X5 simulation hypothesis - sibling axis (sim-artifact pattern).",
+    "X6 AGI sentience - apply X1 to anima activation.",
+    "X8 SETI@home BOINC pod."
+  ]
+}
