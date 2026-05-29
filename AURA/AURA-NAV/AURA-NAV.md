@@ -6,7 +6,7 @@
 
 ## 진행 (milestones)
 
-- [ ] V5/V6 AR 네비 오버레이 — 시각 운동/공간영역 write, V1 보존 (비침습 ✅)
+- [x] V5/V6 AR 네비 오버레이 앱 🟡 — app/ 실동작 toy: 8방향 화살표 write fidelity. 거친 방향 분류 100%(전모달), 지각충실도 R² focal-graded(EEG 0.766→RTSC 0.980). app/spec.md+app/nav_overlay.{py,hexa}+verify/nav_write_fidelity.txt
 - [ ] 공간 항법 인지지도 — 내후각·격자세포·장소세포 (심부 침습, A9.3 내후각 최강 coupling)
 - [ ] 시각 디코드(V1~V4) — 보는 이미지 재구성, 시각 BCI
 - [ ] 깊이 양다리 정량 — V5/V6(표면) vs 격자세포(심부) 도달 비대칭
