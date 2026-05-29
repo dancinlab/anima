@@ -1,0 +1,28 @@
+{
+  "corpus": "clm_p1_full",
+  "encoding": "byte-utf8",
+  "vocab": 256,
+  "lane_mix_target": "web=0.8, register=0.2",
+  "web": {
+    "file": "web.bytes",
+    "bytes": 21170,
+    "sha256": "a8df345779976e1c9160471ff2bf89ae068d9960cbfa3ce7ac471188c727c795",
+    "source": "kowiki REST API random articles plaintext",
+    "license": "CC-BY-SA 4.0"
+  },
+  "register": {
+    "file": "register.bytes",
+    "bytes": 14816,
+    "sha256": "5fa036d4ef958921a6445aad459d2de9d33e5df4103d35609817e2c6e155adc5",
+    "source": "curated consciousness/philosophy seed (scratch, no external LLM)",
+    "leak_dropped": 0,
+    "leak_hits_in_output": 0
+  },
+  "leak_selftest": {
+    "kept": 2,
+    "dropped": 2
+  },
+  "total_bytes": 35986,
+  "actual_byte_ratio": "web=0.588, register=0.412",
+  "crawl_note": "kowiki API rate-limited this host during bulk crawl; harvested real CC-BY-SA volume at throttle cap (honest partial). register lane = scratch curated seed (no external LLM)."
+}
