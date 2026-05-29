@@ -108,15 +108,16 @@ def cascade_forward(x, weights_list, act_bits, input_bits=4, n=N):
 
 
 def conv2d_quantized_forward(x, kernel, act_bits, input_bits=4, flip=False,
-                             padding="same"):
+                             padding="same", stride=1):
     """AKD1000 quantized 2-D convolution forward -- the CONVOLUTIONAL extension of
-    the FC quantizer (frontier round-4 conv axis, 2026-05-30).
+    the FC quantizer (frontier round-4 conv axis, 2026-05-30; stride/VALID added
+    round-5, 2026-05-30).
 
       x      : (H, W, Cin) integer activation map (input quantized to input_bits)
       kernel : (K, K, Cin, F) symmetric int weights (akida conv layout)
-      out    : (H, W, F)  -- SAME padding, stride 1, then per-channel quantize_relu
+      out    : (oh, ow, F)  -- then per-channel quantize_relu
 
-        potential[i,j,f] = sum_{di,dj,c} xpad[i+di, j+dj, c] * Wk[di,dj,c,f]
+        potential[i,j,f] = sum_{di,dj,c} xpad[i*s+di, j*s+dj, c] * Wk[di,dj,c,f]
         y[i,j,f]         = clip( ceil(potential / step), 0, 2^act_bits - 1 )
         step             = 2^(input_bits - act_bits)     (same quantizer as FC)
 
@@ -128,8 +129,16 @@ def conv2d_quantized_forward(x, kernel, act_bits, input_bits=4, flip=False,
         (flip=True) -- the kernel is rotated 180deg before the windowed sum.
     Same-pad impulse test: center impulse + corner-only kernel -> output lands at
     the OPPOSITE corner for the HW Conv (flip), confirming the 180deg rotation.
+
+    stride / padding (round-5 frontier): akida uses TensorFlow SAME/VALID geometry.
+      SAME  : oh = ceil(H / stride); total_pad = max((oh-1)*stride + K - H, 0);
+              pad_before = total_pad // 2, pad_after = total_pad - pad_before
+              (TF asymmetric padding -- extra pad goes to the BOTTOM/RIGHT).
+      VALID : no pad; oh = floor((H - K) / stride) + 1; windows that fall off the
+              edge are simply dropped.
     Verified BYTE-IDENTICAL to AKD1000 for InputConv(flip=False)->Conv(flip=True)
-    cascades (act_bits 4, symmetric int4, F up to 8, K=3, SAME pad), max Hamming 0.
+    cascades (act_bits {2,4}, symmetric int4, F up to 8, K=3); SAME-pad stride1
+    (round-4) AND stride{2}xSAME / stride{1,2}xVALID (round-5), max Hamming 0.
     """
     xa = np.maximum(np.asarray(x, dtype=np.int64), 0)
     if xa.ndim == 2:
@@ -140,14 +149,24 @@ def conv2d_quantized_forward(x, kernel, act_bits, input_bits=4, flip=False,
     F = Wk.shape[3]
     if flip:
         Wk = Wk[::-1, ::-1, :, :]
-    pad = K // 2 if padding == "same" else 0
-    xp = np.zeros((H + 2 * pad, W + 2 * pad, Cin), dtype=np.int64)
-    xp[pad:pad + H, pad:pad + W, :] = xa
-    oh, ow = (H, W) if padding == "same" else (H - K + 1, W - K + 1)
+    s = int(stride)
+    if padding == "same":
+        oh = -(-H // s)                              # ceil(H / s)
+        ow = -(-W // s)
+        pad_h = max((oh - 1) * s + K - H, 0)
+        pad_w = max((ow - 1) * s + K - W, 0)
+        pt, pb = pad_h // 2, pad_h - pad_h // 2      # TF: extra pad bottom/right
+        pl, pr = pad_w // 2, pad_w - pad_w // 2
+    else:                                            # VALID
+        oh = (H - K) // s + 1
+        ow = (W - K) // s + 1
+        pt = pb = pl = pr = 0
+    xp = np.zeros((H + pt + pb, W + pl + pr, Cin), dtype=np.int64)
+    xp[pt:pt + H, pl:pl + W, :] = xa
     pot = np.zeros((oh, ow, F), dtype=np.int64)
     for i in range(oh):
         for j in range(ow):
-            patch = xp[i:i + K, j:j + K, :]          # (K, K, Cin)
+            patch = xp[i * s:i * s + K, j * s:j * s + K, :]   # (K, K, Cin)
             for f in range(F):
                 pot[i, j, f] = int((patch * Wk[:, :, :, f]).sum())
     p = np.maximum(pot, 0)
