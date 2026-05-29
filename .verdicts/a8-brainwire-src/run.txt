@@ -1,0 +1,34 @@
+=== A8.2 brainwire source execution-validation ===
+host: Mac  date: Sat May 30 02:37:07 KST 2026  python: Python 3.9.6
+deps: numpy=2.0.2 scipy=1.13.1 pytest=8.4.2
+
+=== [1] pytest tests/ -q ===
+........................................................................ [ 36%]
+........................................................................ [ 72%]
+........................................................                 [100%]
+200 passed in 6.40s
+
+=== [2] python -m brainwire.shannon_calc ===
+
+============================================================
+  Shannon Charge Density Safety Calculator
+============================================================
+
+  Config               I(uA)  pw(us)      q_eff      k  margin  Safe
+  ------------------ ------- ------- ---------- ------ ------- -----
+  N1 max                 600     200     30.0 -11.44  13.29   YES
+  N1 typical             300     200     15.0 -12.05  13.90   YES
+  N1 conservative        100     100      2.5 -13.60  15.45   YES
+  RNS typical           3000     250    125.0 -10.03  11.88   YES
+  DBS typical           3000      90     45.0 -10.92  12.77   YES
+
+=== [3] Shannon N1 max @ roughness 100 vs 200 (24 vs 30 uC/cm2 reproduction) ===
+  N1max rough=100 : Q=0.120 uC, q_geo=6000, q_eff=60.0 uC/cm2, safe=True
+  N1max rough=200 : Q=0.120 uC, q_geo=6000, q_eff=30.0 uC/cm2, safe=True
+  paper textbook-Shannon log10(q[uC/cm2])+log10(Q[uC]) @ q_eff=30,Q=0.12 -> 0.556 (<= k=1.85 SATISFIED)
+  NOTE: doc 24 uC/cm2 implies A_geo~5000um2 (q_geo=2400/100); code module uses A_geo=2000um2 -> q_eff=30(r200)/60(r100). doc internally inconsistent on electrode area; safe verdict robust either way.
+
+=== [4] 12-var transfer engine self-consistency ===
+  baseline vector all==1.0 : True
+  12 vars (sigma(6)=12) all have coefficients : True | n= 12
+  tier3 THC: DA=2.700 eCB=3.000 5HT=1.900 | DA>2:True eCB>1.5:True | all12returned:True
