@@ -51,3 +51,11 @@
 - A9.1 [~] n=8: python3로 8ch/6ch BrainVision 추출 성공+harness inline. but n≥6 IIT4 exact O(2^2n) Mac 단일런 wall(n8 EXIT124@290s·n6@200s). n4(2^8)만 로컬 가능. pod 경로 명세, 발사 보류(마진 낮음)
 - A9.2 🔴 ⭐핵심 정직 수정: A8.1 단일창(window-0) FRONTAL9.63>MOTOR6.31이 **6창 재검서 robust 아님** — FRONTAL>MOTOR 2/6창(MOTOR 4/6), 평균 FRONTAL5.92≈MOTOR5.61. A8.1은 favorable-window cherry. 실EEG scalp-montage proxy는 relocate를 robust 지지 안 함(p7·a_paper_negative_ok). 단 in-silico/connectome 구조축은 불변, A7.3 awake>sed도 불변
 - 종합: relocate-N1은 **구조축(A6/A7/A8.4/A9.3) 일관 지지 ⊥ 실 scalp-EEG proxy(A8.1) robust 미지지** 비대칭. A10=다창×다피험자 통계 선결
+
+## 2026-05-30 — A10.1 다창 위치통계 (실EEG 축 종결)
+
+- A9.2 6창(0-100k clustered 2/6)을 전-스팬 10창으로 확장(인라인, n=4): FRONTAL 5승/MOTOR 5승 정확히 5:5
+- paired t(9)=+0.280 n.s. · sign-test 5/10 p=1.0 · 평균 FRONTAL5.353≈MOTOR5.097 차+0.26(~5% 노이즈) → **위치효과 통계적으로 없음 확정**. verdict .verdicts/a10-window-stats/test.txt
+- A8.1 단일창 FRONTAL≫MOTOR는 favorable-window cherry 확정. 실 scalp-EEG proxy는 relocate-N1 미지지(종결)
+- AURA 최종 비대칭 재확인: 구조모델(A6/A7/A8.4/A9.3) 일관지지 ⊥ 실 scalp-EEG(A8.1→A9.2→A10.1) 위치효과 부재
+- A11 잔여: 다피험자(N=1→N>1) · pod n=8 통계 · intracortical 침습(본질gap) · negative paper 후보

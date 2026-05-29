@@ -1,0 +1,24 @@
+A10.1 multi-window position test — ds005620 sub-1010 awake, n=4 exact, 10 windows spanning full 300s.
+FRONTAL(F3,Fz,F4,AFz) vs MOTOR(C3,Cz,C4,C2). real eeg_big_phi.
+
+off        F        M        F-M
+       0    9.633    6.307   +3.326
+  140000   10.630    6.489   +4.141
+  280000    4.348    3.424   +0.924
+  420000    5.788    5.422   +0.366
+  560000    2.809    4.388   -1.579
+  700000    6.609    9.192   -2.583
+  840000    5.670    2.270   +3.400
+  980000    2.268    2.543   -0.275
+ 1120000    2.844    2.991   -0.147
+ 1260000    2.927    7.947   -5.020
+---
+mean       5.353    5.097    +0.255
+FRONTAL>MOTOR: 5/10   MOTOR>FRONTAL: 5/10
+paired diff mean=+0.2553  sd=2.8783  t(9)=+0.280  (|t|<2.26 → NOT sig at .05)
+sign test: 5/10 positive → p=1.0 (binomial, no direction)
+
+VERDICT: NO significant FRONTAL>MOTOR position effect on real scalp EEG.
+  Win split 5/5, mean diff +0.26 (~5%, within noise), t=0.28 n.s., sign-test p=1.0.
+  Confirms+strengthens A9.2: relocate-N1 NOT supported by scalp-EEG n=4 proxy.
+  Note: earlier 6-window (clustered 0-100k) showed 2/6 — full-span 10-window is the honest estimate (5/5).
