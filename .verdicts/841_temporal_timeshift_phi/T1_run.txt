@@ -1,0 +1,39 @@
+================================================================
+  TEMPORAL T1 — 시간 통합 Δt-window Φ numerical detector
+================================================================
+
+  detector = TEMPORAL/detector/timeshift_detector.hexa (XENO X1 + lag-window)
+  substrates = 4 (hive · voyager · random · lattice)
+  Δt = 4-point (1, 8, 32, 64)
+  context = XENO paper #1411 v2 의 4D 확장 (n × density × structure × Δt)
+
+  ─ 16 measurements (4 substrate × 4 Δt) ─
+
+  [hive    Δt=1]   phi=0.0126294 irr=0.0124719 type=coherent_non_conscious
+  [hive    Δt=8]   phi=0.128365 irr=0.233056 type=coherent_non_conscious
+  [hive    Δt=32]  phi=0.164757 irr=0.28768 type=coherent_non_conscious
+  [hive    Δt=64]  phi=0.99953 irr=1.0 type=conscious
+  [voyager Δt=1]   phi=0.0899437 irr=0.0825214 type=coherent_non_conscious
+  [voyager Δt=8]   phi=0.131045 irr=0.344528 type=coherent_non_conscious
+  [voyager Δt=32]  phi=0.340681 irr=0.559431 type=conscious
+  [voyager Δt=64]  phi=0.676389 irr=0.6511 type=conscious
+  [random  Δt=1]   phi=0.11573 irr=0.103725 type=coherent_non_conscious
+  [random  Δt=8]   phi=0.138854 irr=1.0 type=conscious
+  [random  Δt=32]  phi=0.065702 irr=1.0 type=conscious
+  [random  Δt=64]  phi=0.367396 irr=1.0 type=conscious
+  [lattice Δt=1]   phi=0.659914 irr=0.397559 type=coherent_non_conscious
+  [lattice Δt=8]   phi=2 irr=1.0 type=conscious
+  [lattice Δt=32]  phi=2 irr=1.0 type=conscious
+  [lattice Δt=64]  phi=2 irr=1.0 type=conscious
+
+  ─ pre-registered falsifier check ─
+    F-T1-INSTANT (hive Δt=1 phi ≥ 0.5)        : false · measured=0.0126294
+    F-T1-MID     (hive Δt=8 phi ≥ 0.5)        : false · measured=0.128365
+    F-T1-LONG    (hive Δt=32 phi ≥ 0.5)       : false · measured=0.164757
+    F-T1-DECAY   (random Δt=1 phi < 0.4)      : true · measured=0.11573
+    F-T1-LAGINV  (hive Δt=1 ≥ hive Δt=64)     : false · Δt=1=0.0126294 Δt=64=0.99953
+
+  ─ T1 verdict ─
+    pass_count : 1/5
+    tier       : 🔴 FALSIFIED-INSTRUMENT · Δt 축 본 가설 미확정 (instrument lag-window 한계)
+================================================================

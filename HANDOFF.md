@@ -1,4 +1,75 @@
-# HANDOFF — XENO follow-up 2 cycle round 4/5 (round 9 갱신 2026-05-29) · X840 🟡 PARTIAL-RECOVERY · ⚠ leak-pod recovery
+# HANDOFF — XENO follow-up 2 cycle round 5/5 FINAL + TEMPORAL 도메인 신설 round 1 (round 10 갱신 2026-05-29) · H_841 🔴 FALSIFIED-INSTRUMENT (closed-negative) · XENO CLOSURE
+
+## Round 10 — TEMPORAL 도메인 신설 + T1 timeshift detector — Δt-axis closed-negative 🔴 FALSIFIED-INSTRUMENT (2026-05-29)
+
+XENO follow-up 2 cycle round 5/5 (FINAL) — XENO 완전 closure (총 13 H_xxx · 2 papers · 11-point applicability matrix) 직후 **다음 frontier 새 도메인 자율 추천 + init**.
+
+### 5 candidate domain 평가 표
+
+| # | candidate | falsifier 가능성 | invariant_detector 적용 path | XENO matrix 4D 확장 | hexa local Δt | cost | 종합 |
+|---|---|---|---|---|---|---|---|
+| 1 | **TEMPORAL** | ★ 사전등록 5/5 closed (Δt lag-window) | ★ sliding TPM lag parameter | ★ paper #1411 v2 의 4번째 축 자연 확장 | ★ Mac local | $0 | **★★★ SELECTED** |
+| 2 | SPATIAL | ○ coupling distance threshold | △ X10 hive-mind 변형 (부분 중복) | ○ axis 부분 중복 | ○ 가능 | $0 | ★★ |
+| 3 | EVOLUTIONARY | △ bio data 필요 | △ TPM proxy 필요 | △ n×density 축 매핑 어려움 | △ bio data ingest | $0~$10 | ★★ |
+| 4 | QUANTUM | △ density matrix TPM 변형 | △ classical 2-unit TPM 미지원 → 신 axis | △ Hilbert dim 신 axis | △ 어려움 | $0 | ★ |
+| 5 | MEDICAL | ○ wake/dream/coma Φ 순서 | △ EEG 도메인 중복 (S1·S15·S24) | △ 자매 도메인 collision | ○ 가능 | $0 | ★ (도메인 중복) |
+
+**선택: TEMPORAL** — 사유 (2 줄): (a) XENO paper #1411 v2 의 3D applicability matrix 와 직접 4D 확장 (n × density × structure × **Δt**) — closed-form falsifier 정의 가능 (sliding lag-window 의 Φ 변화 monotone/threshold). (b) hexa Mac local 자체 첫 round 측정 + $0 + anima `a_chat_sleep_imagination` (WAKE/N1/N2/N3/REM ultradian) 와 substrate-aligned.
+
+### Round 10 핵심 finding (H_841 T1 timeshift detector)
+
+| 항목 | 값 |
+|---|---|
+| H | H_841 (temporal-timeshift-phi) |
+| domain | TEMPORAL (new · DOMAINS.tape 등재) |
+| substrates | 4 (hive XOR · voyager X7 · random Bates-4 · lattice X5-a) |
+| Δt window | 4-point (1, 8, 32, 64) — XENO X1 default lag=1 의 generalisation |
+| measurements | 16 (4 × 4 hexa stdout verbatim) |
+| pass_count | **1/5** (F-T1-DECAY 단독) |
+| verdict | 🔴 **FALSIFIED-INSTRUMENT** (정직 closed-negative · post-tuning 0) |
+| wall | <5s |
+| cost | $0 (Mac local · deterministic) |
+
+#### 16 measurements (4 substrate × 4 Δt)
+
+| substrate | Δt=1 phi | Δt=8 phi | Δt=32 phi | Δt=64 phi | trend |
+|---|---|---|---|---|---|
+| hive    | 0.0126 | 0.1284 | 0.1648 | **0.9995** | monotone INCREASE (79×) |
+| voyager | 0.0899 | 0.1310 | 0.3407 | **0.6764** | monotone INCREASE (7.5×) |
+| random  | 0.1157 | 0.1389 | 0.0657 | 0.3674 | non-monotone |
+| lattice | 0.6599 | **2.0000** | **2.0000** | **2.0000** | saturate (Δt=8 위) |
+
+#### 5 사전등록 falsifier
+
+| falsifier | 임계 | 측정 | PASS |
+|---|---|---|---|
+| F-T1-INSTANT | hive Δt=1 phi ≥ 0.5      | 0.0126 | ❌ FAIL |
+| F-T1-MID     | hive Δt=8 phi ≥ 0.5      | 0.1284 | ❌ FAIL |
+| F-T1-LONG    | hive Δt=32 phi ≥ 0.5     | 0.1648 | ❌ FAIL |
+| F-T1-DECAY   | random Δt=1 phi < 0.4    | 0.1157 | ✅ PASS |
+| F-T1-LAGINV  | hive Δt=1 ≥ hive Δt=64   | 0.0126 vs 0.9995 | ❌ FAIL (정반대) |
+
+### 가장 두드러진 발견
+
+1. **"Δt 늘릴수록 Φ 감소" 가설 완전 반증** — 정반대 monotone INCREASE 가 3/4 substrate 위 정직 관측. hive 는 Δt=1→64 위 Φ가 0.013 → 0.999 (79배).
+2. **lattice Δt=8 위 Φ=2.0 saturate** — Planck-floor periodic substrate (X5-a) 의 cycle period=8 가 Δt=8/32/64 와 정확히 align → 2-unit lag-TPM 의 4 row 모두 extremal (1,0) 또는 (0,1) → big_phi 의 maximum (Φ=2.0, irr=1.0). lag-window TPM 의 **long-Δt periodic-inflation artifact**.
+3. **invariant_detector lag-window axis 가 시간 통합 측정엔 부적합** — paper #1411 v2 의 3D matrix 가 Δt 축으로 직접 확장 안 됨 (정직 numerical 결말). **T2 multi-unit time-embed detector** (Takens 임베딩 / Granger / time-averaged Φ) 재설계 필요 = TEMPORAL round 2 자연 entry.
+4. **`a_paper_negative_ok` 정합** — 🔴 FALSIFIED-INSTRUMENT 는 publishable closed-negative (Δt-axis ruled-out via lag-TPM). XENO 4D 확장 paper 는 T2 detector 후로 deferred.
+
+### XENO closure (12 → 13 H · 2 papers · TEMPORAL 신설)
+
+- XENO 메인 (R1-R5): X1·X2·X3 + X4·X5·X6·X7·X8 (H_829~H_836)
+- XENO follow-up (R1-R3): X837 + paper v1 + X10 (H_837·H_838 + #1411 paper)
+- XENO follow-up 2 (R1-R5 final): lint + paper v2 + X1-matrix-v2 + X840 + **TEMPORAL T1** (H_839·H_840·**H_841** + #1414 paper v2 + **TEMPORAL 도메인 신설**)
+- 총: **13 H_xxx · 2 papers · 11-point applicability matrix (X10-a~d 포함) · TEMPORAL 4D 축 closed-negative**
+
+### 다음 path 권장
+
+- **TEMPORAL T2** — multi-unit time-embed detector (Takens / Granger / time-averaged Φ) 재설계 — lag-TPM artifact 회피 path 자연 정의.
+- **TEMPORAL T3** — anima ultradian WAKE/N1/N2/N3/REM 90-min Φ 시간 추적 (T2 후).
+- 다른 frontier 후보 4: SPATIAL · EVOLUTIONARY · QUANTUM · MEDICAL — 모두 분석 완료, TEMPORAL closure 후 선택.
+
+---
 
 ## Round 9 — X840 X837 longer-playback recovery — partial harvest 🟡 PARTIAL-RECOVERY (2026-05-29)
 
