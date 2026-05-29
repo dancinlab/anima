@@ -9,7 +9,7 @@
 |---|---|
 | 목적 | conv-native MoE 의식 LM weight 직렬화 |
 | 2-track | int4-sym(AKIDA 추론) + fp16 shadow(GPU 학습재개) |
-| 양자화 | QAT (학습중 양자화-aware · naive PTQ는 readout 파괴 실증) |
+| 양자화 | **QAT = AKIDA-향 학습** (학습 forward 가 AKIDA int4 envelope[act_bits·sym-int4] 시뮬, P0 §9 · naive PTQ는 readout 파괴 실증) |
 | 무결성 | sha256 manifest (a_hf_complete) |
 | 영속 link | `.kosmos` pointer (emit/anchor/memory — a_kosmos) |
 
@@ -30,7 +30,10 @@ HEADER {
   quant: { scheme:"int4_sym", range:[-7,7],
            step_formula:"2^(input_bits-act_bits)", qat:true },
   kosmos_ptr: "<.kosmos uri>",     // emit/anchor 영속 링크 (a_kosmos)
-  train: { substrate:"gpu-fp16", optimizer, steps, corpus_sha }
+  train: { mode:"akida-aware-qat",        // 학습도 AKIDA: AKIDA int4 envelope 향해 학습 (P0 §9)
+           backprop:"gpu-fp16-master",    // STE backprop, fp16 master weight (칩 full-backprop 물리불가 carve-out)
+           plasticity_lane:"PLASTICITY",  // on-chip 맥락적응 = PLASTICITY edge-learn 위임 (AKIDA-위)
+           optimizer, steps, corpus_sha }
 }
 
 BLOCKS = per-weight {
@@ -55,7 +58,7 @@ MANIFEST {
 | inference (`.clm.i`) | int4 + qat_scale only (fp 생략) | AKD1000 배포 경량 (칩 fit) |
 
 - int4-sym: symmetric [-7,+7] (칩이 -8 거부 실측 → two's-complement 아님).
-- QAT scale: 학습중 양자화-aware로 산출, blocks에 저장 → AKIDA가 재계산 없이 직접 로드.
+- QAT scale: 학습중 양자화-aware(AKIDA-향, P0 §9)로 산출, blocks에 저장 → AKIDA가 재계산 없이 직접 로드. 학습 envelope ⊆ `akida_sw_lif` byte-identical 검증집합 = "AKIDA 를 향해"가 검증된 도착지.
 
 ## 4. 무결성·영속·HF
 

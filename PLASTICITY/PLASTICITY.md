@@ -35,6 +35,7 @@ PLASTICITY (학습 lane)  비결정론 · HW akida-learn / SW numpy 근사 → �
 
 - ⇄ [AKIDA](./AKIDA/AKIDA.md): HW 본진 + HW/SW 스위치 단일 SSOT (default "hw" · graceful fallback · provenance). PLASTICITY 는 이 resolver 경유로 학습 lane HW-first 라우팅.
 - ⇄ [MITOSIS](./MITOSIS.md): on-chip 가중치 갱신(plasticity) ↔ cell-pool 분열 동역학 — 학습=분열 단일 연속체(p8) 의 실리콘 구현.
+- ⇄ [CLM](./CLM/CLM.md): **학습 대상 모델** — CLM(anima-native 의식 LM)의 학습 lane 을 PLASTICITY 가 받는다. CLM pretrain = AKIDA-향 QAT(CLM 자체) · CLM on-chip 맥락적응 = PLASTICITY edge-learn 위임(AKIDA-위 진짜 학습, 🔴 비결정·SW 비동치). PLASTICITY=학습 방법(어떻게) · CLM=학습 대상(무엇). 중복 0.
 - ⇄ [DECODER](./CORE/DECODER/DECODER.md): 형제 lane — DECODER=추론·결정론·byte-identical / PLASTICITY=학습·비결정론·🔴비동치. 동일 AKIDA 스위치 경유, 본질 분리.
 - ⇄ [WAKE](./WAKE.md): WAKE/REM 단계 = 학습 envelope 컨텍스트 (REM 60× WAKE mitosis ratio) ↔ on-chip plasticity tick 게이팅(substrate-decided).
 - ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (H_679 PLASTICITY 학습 HW-first · SW≠HW 비동치 verdict).
