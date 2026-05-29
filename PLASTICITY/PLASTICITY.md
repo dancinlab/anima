@@ -25,9 +25,9 @@ PLASTICITY (학습 lane)  비결정론 · HW akida-learn / SW numpy 근사 → �
 
 ## 마일스톤
 
-- [ ] **M0 도메인 신설** — PLASTICITY.md/log + DOMAINS.tape 행 + 양방향 sibling (이 PR).
-- [ ] **M1 SW 근사 learner 스텁** — numpy 근사 + HW 비동치 코드주석/verdict (PR-D).
-- [ ] **M2 lane 배선** — HW-first 스위치 경유 HW=edge_learn / SW=approx 라우팅 (PR-D).
+- [x] **M0 도메인 신설** — PLASTICITY.md/log + DOMAINS.tape 행 + 양방향 sibling (PR-A #1446).
+- [x] **M1 SW 근사 learner 스텁** — `plasticity_sw_approx.py` numpy 근사 + 🔴 HW 비동치 코드주석/verdict (PR-D).
+- [x] **M2 lane 배선** — `plasticity_lane.hexa` HW-first 스위치 경유 HW=edge_learn / SW=approx 라우팅 (PR-D).
 - [ ] **M3 UNIVERSE H_679 등록** — PLASTICITY 학습 HW-first falsifier 사전등록 + verdict 포인터 (PR-F).
 - [ ] **M4 pi5 live probe** — few-shot 1~N shot on-chip 실측 → 비결정론 verdict `.verdicts/` (optional).
 

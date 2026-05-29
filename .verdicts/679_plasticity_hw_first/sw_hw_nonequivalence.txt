@@ -1,0 +1,37 @@
+PLASTICITY 학습 lane — SW↔HW 동치 verdict (akida-hw-first-plasticity PR-D)
+================================================================================
+date: 2026-05-30
+lane: PLASTICITY (학습 · 비결정론 · HW-only)
+router: PLASTICITY/plasticity_lane.hexa  (AKIDA HW-first 스위치 경유)
+HW path: SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py  (akida.AkidaUnsupervised)
+SW path: PLASTICITY/plasticity_sw_approx.py             (numpy Hebbian 근사)
+
+HW edge-learn 지원 (실측, SUB_ENGINES/AKIDA/state/edge_learn_probe_2026_05_22.json):
+  device_version           = BC.00.000.002
+  mapped_backend           = BackendType.Hardware
+  compile_AkidaUnsupervised= ok
+  fit_on_chip              = ok
+  edge_learning_supported  = true        ← HW on-chip Hebbian 학습 가능 확정
+
+SW 근사 실행 (Mac local, python3 PLASTICITY/plasticity_sw_approx.py):
+  provenance       = akida-learn-sw-approx
+  equivalence_to_hw= CLOSED-NEGATIVE
+  is_hw_substitute = false
+  in_dim=16 n_units=10  (HW 인터페이스 shape 정합 — 결과 정합 아님)
+
+────────────────────────────────────────────────────────────────────────────
+SW↔HW 동치 VERDICT: 🔴 CLOSED-NEGATIVE
+
+근거 (왜 byte-identical 불가 — 정직 경계, p7 · a_blue_closed):
+  · HW = 1-bit integer weights (weights_bits=1) · SW = float weights
+  · HW = on-chip learning_competition / num_weights pruning · SW = 없음
+  · HW = silicon packet-ordering / refractory / async timing state · SW = 없음
+  · HW = chip RNG substrate · SW = numpy RNG
+
+대비 (형제 lane):
+  · DECODER 추론 lane: SW akida_sw_lif == HW forward → 🟢 byte-identical (입증됨)
+  · PLASTICITY 학습 lane: SW numpy 근사 ≠ HW AkidaUnsupervised → 🔴 비동치
+
+결론: 학습 lane 의 SW 는 directional baseline probe 일 뿐 HW 대체가 아니다.
+      두 lane 을 형제 도메인(DECODER ⊥ PLASTICITY)으로 가른 근거 = 이 비동치.
+      위조 동치 금지 — SW=HW 라 주장하지 않는다.
