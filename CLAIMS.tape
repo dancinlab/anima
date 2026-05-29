@@ -101,6 +101,13 @@
   src    = "UNIVERSE/H_851_clm_mitosis_growth.md · CLM/CLM_FORMAT_SPEC.md §2 · p8 · v5-mitosis"
   status = "🟠 PRE-REGISTERED — P2 미실행 · growth+lineage threshold frozen. NOT terminal."
 
+@C clm_mitosis_array_dispatch := "MITOSIS-ARRAY DISSOLVE: scale=expert-COUNT 시 inter-expert dispatch entropy z(E) 단조 상승 ∧ z(64)−z(4)≥1.0 ∧ 전 expert chip-fit" :: hypothesis [slug=clm-mitosis-array-dispatch group=CLM]
+  method = "run"
+  cmd    = "python3 CLM/model/run_array_sweep.py (E∈{4,8,16,32,64} × seed{42,43,44} · Dirichlet(1) null z-score)"
+  raw    = ".verdicts/852_clm_mitosis_array_dispatch/F-CLM-MONO-ARRAY_p_array_2026_05_30.txt"
+  src    = "UNIVERSE/H_852_clm_mitosis_array_dispatch.md · CLM/P0_ARCHITECTURE.md §11 · CLM.breakthrough.mining.md DISSOLVE"
+  status = "🔴 CLOSED-NEGATIVE — P-ARRAY 완료. raw H 는 E 로 상승(1.19→3.17 nats) 하나 uniform-null 대비 z 급락(+0.53→−7.61) · monotone+z-rise FAIL · chip-fit PASS. 사전등록 frozen 임계 무변조(a_paper_negative_ok). TERMINAL."
+
 # ───────────────────────────────────────────────────────────────────────
 # LIFE — open slot (group=LIFE · paper-track)
 # Candidate canonical claim — NOT yet verdict-persisted. List here so the
