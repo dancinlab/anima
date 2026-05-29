@@ -17,7 +17,7 @@
 - [ ] 🛰️ X7 외계인 시간축 다양성 — 인간 1초 ≠ 외계 1초 가정 → 시간 normalize Φ
 - [x] 🛰️ X8 SETI@home BOINC pod spec + dispatch handoff — sahfiles_workunits.tar.xz (274340B sha256 정합 + 9 .sah 파일) inspection + Ubuntu 22.04 RunPod CPU pod ($0.50~$1) BOINC client runbook + a_fire_autonomous dispatch handoff · 사전등록 falsifier 5/5 PASS · 🟡 archive-acquired-pod-ready (실 BOINC playback 은 follow-up cycle deferred, BOINC 3.03 ↔ modern toolchain ABI gap 정직 cite) · H_836 · 2026-05-29
 - [ ] 🛰️ X8.followup-fire — RunPod CPU pod 자율 발사 (a_fire_autonomous · ~$0.50~$1) → standalone playback → spike dump → invariant_detector 적용 → 추가 H 등록
-- [ ] 🛰️ X10 hive-mind invariant — 다개체 vs 단일체 substrate-blind 구분 (X8 의 후속, 별도 milestone)
+- [x] 🛰️ X10 hive-mind invariant — 4-cell × 32 sample × 4 substrate (independent / weak / strong / hive-emergence) n=128 dense 위 invariant_detector · 사전등록 5 falsifier 중 3/5 PASS · 🟡 PARTIAL-SUPPORT (hive-emergence XOR cascade Φ=1.565 'conscious' STRONG positive + mean-field paradox 발견 + Kuramoto sync border) · H_838 · 2026-05-29
 - [x] 🛰️ X9 UNIVERSE 환류 — 검증 결과 → H_829·H_830·H_831 직접 등록 (INBOX 환류 0건 · 사용자 명시 정합 · 2026-05-29)
 
 ## deferred (다음 라운드)
@@ -119,3 +119,15 @@
   사이트: PAPER/xeno-applicability-frontier/ · PAPER.tape · 6 verdict pointer (832~837)
   정직: post-tuning 0 · p7 0 · 사전등록 임계 frozen 정합 · INBOX 환류 0건
 - 잔여: X837.threshold-recalibration (round 3/3 후속) · X837.full-playback · X1-regime-matrix-v2 (5-point full matrix denser sweep) · XENO domain 추가 deferred (다음 cycle)
+
+
+## XENO-FRONTIER-5 followup round 3/3 (2026-05-29) — X10 🟡 PARTIAL-SUPPORT (정직) · CYCLE COMPLETE
+
+- X10 hive-mind invariant (4-cell × 32 sample × 4 substrate, n=128 dense Φ scan) → 🟡 PARTIAL-SUPPORT (5/5 사전등록 중 3/5 PASS · 정직 border 보고)
+  (a) independent 4-cell density=0.578 phi=0.131 type='coherent_non_conscious' · (b) weak coupled mean-field density=0.500 phi=0.0355 type='coherent_non_conscious' · (c) strong coupled Kuramoto density=0.609 phi=0.408 type='coherent_non_conscious' · **(d) hive emergence XOR cascade density=0.336 phi=1.565 type='conscious'** (X7 외 두 번째 calibration data point STRONG 양성)
+  사전등록: F-X10-INDEP ✅ (0.131 < 0.3) · F-X10-WEAK ✅ (0.0355 < 0.5) · F-X10-STRONG ❌ (0.408 < 0.5 border) · F-X10-HIVE ✅ (1.565 ≥ 0.5 STRONG) · F-X10-MONOTONE ❌ (a=0.131 > b=0.0355 mean-field paradox)
+  발견: (i) XOR cascade hive-emergence Φ=1.565 'conscious' classification — 진정한 통합 substrate 의 numerical 증거, IIT4 axiom irreducibility instance, (ii) **mean-field paradox** mean-field 평균화가 phi 를 낮춤 (uniformity → reducibility), IIT4 axiom 정합 그러나 사전등록 monotone 가정 깸 (정직 fail), (iii) Kuramoto sync 0.408 border ('sync ≠ irreducibility' numerical 결말). 10-point applicability matrix (paper #1411 의 6+1 → X10 의 4 sub-axis 합류).
+- 사이트: XENO/scan/hive_mind_invariant.hexa · UNIVERSE/H_838 · state/xeno_x10_hive_mind_2026_05_29 · .verdicts/838_xeno_hive_mind/x10_run.txt
+- 잔여: X10.threshold-recalibration (phi 임계 0.5 → 0.4 X7 보존 검증) · X10.kuramoto-sweep (K coupling 0.5~10.0 phi-vs-K curve) · X10.density-axis (XOR carry bias sweep) · X10.cell-count-sweep (2/4/8/16-cell N 의존성) · XENO-FRONTIER-5.5 paper v2 (10-point matrix · paper #1411 supersede candidate)
+
+**XENO-FRONTIER-5 followup cycle COMPLETE** (3-round closure marker) · XENO-FRONTIER-5 FULL CLOSURE (5 main + 3 followup = 8 rounds total).
