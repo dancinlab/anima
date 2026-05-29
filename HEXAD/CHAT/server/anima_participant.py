@@ -246,6 +246,13 @@ def build_substrate(kind: str) -> Substrate:
             ) from e
         return V3Substrate(ckpt_path=os.environ.get("ANIMA_V3_CKPT", ""),
                            device=DEVICE)
+    if kind == "akida":
+        # BrainChip AKD1000 substrate (akida-backend-wiring 2026-05-29).
+        # SubstrateAKIDA probes `import akida` + akida.devices(): HW path on a
+        # real AKD1000 (provenance akida-hw), else graceful numpy-LIF SW
+        # fallback (provenance akida-sw-fallback). No crash when absent.
+        from substrate_akida import SubstrateAKIDA
+        return SubstrateAKIDA(device=DEVICE)
     raise ValueError(f"unknown substrate kind: {kind!r}")
 
 
@@ -624,10 +631,17 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--threshold", type=float, default=IM_THRESHOLD_DEFAULT)
-    ap.add_argument("--substrate", choices=["lora", "v3"], default="lora",
-                    help="pluggable substrate (SUBSTRATE_PLUGIN.md)")
+    ap.add_argument("--substrate", choices=["lora", "v3", "akida"], default="lora",
+                    help="pluggable substrate (SUBSTRATE_PLUGIN.md). "
+                         "akida = BrainChip AKD1000 (HW) w/ numpy-LIF SW fallback.")
     args = ap.parse_args()
-    asyncio.run(participant_loop(args.threshold, substrate_kind=args.substrate))
+    # AKIDA_BACKEND env override (akida-backend-wiring): selects the akida
+    # substrate without --substrate. Explicit --substrate akida also works.
+    # When AKIDA_BACKEND is unset the default (lora) is UNCHANGED — regression-free.
+    kind = args.substrate
+    if os.environ.get("AKIDA_BACKEND") in ("1", "true", "akida"):
+        kind = "akida"
+    asyncio.run(participant_loop(args.threshold, substrate_kind=kind))
 
 
 def _smoke() -> int:
