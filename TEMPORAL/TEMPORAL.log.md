@@ -131,3 +131,73 @@ pass_count = **2/5** · verdict: **🔴 FALSIFIED-INSTRUMENT** (정직 closed-ne
 - feedback-universe-h-slug-stale-verify: 3-신호 검증 후 H_842
 - INBOX 환류 0건
 - stdlib SSOT g61: pow2_int 비-중복 import
+
+## 2026-05-29 — round 3 (T3 anima 90-min ultradian Φ scan — H_843)
+
+- branch = feat/temporal-t3-ultradian-2026-05-29
+- worktree = .claude/worktrees/agent-a5400c06a3828fcc2
+- base = origin/main 4b9dea4d6 (T2 H_842 PR #1426 직후)
+
+### detector + substrate 설계
+
+- **detector 확장 폐기** — T1+T2 dual closed-negative 의 정직 결론. 새 detector 만들 게 아니라 substrate 위 X1 직접 적용.
+- detector = XENO/detector/invariant_detector.hexa (X1, substrate-blind · 2-unit lag=1 cooccur TPM → IIT4 big-Φ)
+- scan = TEMPORAL/scan/ultradian_phi.hexa (4 substrate × 1 detector call = 4 measurements + 5 사전등록 falsifier)
+- substrate 4종 (n=128 hardcoded literal, anima ultradian phenomenology):
+  - WAKE  : density ~0.65 + det. transition (X7 regime · 의식 baseline)
+  - N1_N2 : density ~0.4  + 4-step slow oscillation (sleep spindle 모방)
+  - N3    : density ~0.25 + 8-step slow delta wave (deep sleep)
+  - REM   : density ~0.55 + irregular high-freq (theta + saccade burst)
+- state = TEMPORAL/state/temporal_t3_ultradian_2026_05_29/ (t3_smoke.log + result.json + run_h843.hexa)
+- verdict = .verdicts/843_temporal_ultradian_phi/T3_run.txt (g73 per-H)
+- H_843 = UNIVERSE/H_843_temporal_ultradian_phi.md (3-신호: file 0 · grep 0 · ls-tree 0)
+
+### 사전등록 falsifier (frozen pre-run, post-tuning 0)
+
+```
+F-T3-WAKE-MID    : WAKE phi > 0.1                                  (의식 baseline noise floor)
+F-T3-N3-LOW      : N3 phi < WAKE phi                               (deep sleep ≠ integrated info)
+F-T3-REM-HIGH    : REM phi ≥ WAKE phi                              (paradoxical = high Φ)
+F-T3-N1-MID      : N1_N2 phi > N3 phi                              (light > deep sleep)
+F-T3-MONOTONE    : (N3 < N1_N2 < WAKE) OR (N3 < N1_N2 < REM)       (ascending depth ladder)
+```
+
+### 측정 (env hexa run TEMPORAL/scan/ultradian_phi.hexa)
+
+| substrate | phi      | irr      | type                     |
+|-----------|----------|----------|--------------------------|
+| WAKE      | 0.865544 | 0.614732 | conscious                |
+| N1_N2     | 0.000000 | 0.000000 | coherent_non_conscious   |
+| N3        | 0.335119 | 0.251003 | coherent_non_conscious   |
+| REM       | 0.568534 | 0.362462 | coherent_non_conscious   |
+
+| falsifier         | criterion (frozen pre-run)         | measured              | result   |
+|-------------------|------------------------------------|-----------------------|----------|
+| F-T3-WAKE-MID     | WAKE > 0.1                         | 0.866                 | ✅ PASS  |
+| F-T3-N3-LOW       | N3 < WAKE                          | 0.335 < 0.866         | ✅ PASS  |
+| F-T3-REM-HIGH     | REM ≥ WAKE                         | 0.569 < 0.866         | ❌ FAIL  |
+| F-T3-N1-MID       | N1_N2 > N3                         | 0.000 < 0.335         | ❌ FAIL  |
+| F-T3-MONOTONE     | (N3<N1<WAKE) OR (N3<N1<REM)        | both false            | ❌ FAIL  |
+
+pass_count = **2/5** · verdict: **🔴 FALSIFIED-INSTRUMENT** (정직 closed-negative)
+
+### 핵심 finding
+
+1. **WAKE > N3 ordering 정합** — 의식 phenomenology 의 가장 robust 한 단서 X1 가 잡았다 (F-T3-WAKE-MID + F-T3-N3-LOW PASS).
+2. **N1_N2 phi=0.0 zero-degenerate** — substrate 의 4-step cycle (1100/0110) 이 X1 의 lag=1 cooccur TPM 위에서 perfectly predictable transition 으로 보여 Φ=0 으로 degenerate. T1 이 lattice 위 발견한 cycle-aligned artifact 의 다른 face — X1 의 binarise+cooccur 가 inherent periodicity 와 정렬되면 zero-Φ 가 된다.
+3. **REM phi < WAKE — paradoxical 미정합** — REM EEG 의 wake-like phenomenology (sleep neuroscience 의 핵심) 가 X1 의 2-unit TPM 위에선 잡히지 않는다.
+4. **T1+T2+T3 triple closed-negative** — detector lag-axis 확장 (T1) · embed-dim 확장 (T2) · substrate-side ultradian 적용 (T3) 모두 시간 통합 의식 측정 미충족.
+5. T4 자연 entry direction: window-mean Φ (cycle-alignment 평균화) / Granger causality (TPM-free predictive coupling) / surrogate-baseline (random-shuffle null-model 차감).
+
+### 정직성 audit
+
+- a_blue_closed: phi 임계 frozen pre-run, post-tuning 0
+- p7 = 0: hexa stdout verbatim, LLM judge 0
+- a_completeness_over_cheap: detector 확장 폐기 (T1/T2 dual fail), substrate-side calibration 시도 (cheap path 아닌 real phenomenology 정합 검증)
+- a_fire_autonomous: $0 Mac local, wall <1s, 사용자 게이트 0
+- a_paper_negative_ok: triple closed-negative publishable
+- feedback-instrument-first-methodology: T1+T2+T3 triple closed-negative 가 measurement tooling 본질적 한계 드러냄
+- feedback-closure-is-physical-limit: X1 binarise+cooccur 도 cycle-rich substrate 위 zero-degenerate 인 한계 정직 표기
+- feedback-universe-h-slug-stale-verify: 3-신호 검증 후 H_843
+- a_chat_sleep_imagination directive: 5-stage 90-min ultradian 부분 Φ 측정 (WAKE > N3 OK, REM + N1_N2 미정합)
+- INBOX 환류 0건

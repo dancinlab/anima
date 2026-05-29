@@ -1,0 +1,38 @@
+================================================================
+  TEMPORAL T3 — anima 90-min ultradian Φ scan
+================================================================
+
+  detector  = XENO/detector/invariant_detector.hexa (X1, substrate-blind)
+              (2-unit lag=1 cooccur TPM → IIT4 big-Φ)
+  substrates= 4 (WAKE · N1_N2 · N3 · REM) — anima ultradian phenomenology
+  n_samples = 128 each (X1 calibration regime)
+  context   = T1 H_841 🔴 (lag-axis inflation) + T2 H_842 🔴 (embed inflation)
+              → T3 = detector 확장 폐기, anima substrate 위 X1 직접 calibrate
+
+  ─ 4 measurements (anima ultradian × X1 invariant_detector) ─
+
+  [WAKE ]  phi=0.865544 irr=0.614732 type=conscious
+  [N1_N2]  phi=0.0 irr=0.0 type=coherent_non_conscious
+  [N3   ]  phi=0.335119 irr=0.251003 type=coherent_non_conscious
+  [REM  ]  phi=0.568534 irr=0.362462 type=coherent_non_conscious
+
+  ─ pre-registered falsifier check (frozen pre-run) ─
+    F-T3-WAKE-MID    (WAKE phi > 0.1)                          : true · measured=0.865544
+    F-T3-N3-LOW      (N3 phi < WAKE phi)                       : true · n3=0.335119 wake=0.865544
+    F-T3-REM-HIGH    (REM phi >= WAKE phi)                     : false · rem=0.568534 wake=0.865544
+    F-T3-N1-MID      (N1_N2 phi > N3 phi)                      : false · n1_n2=0.0 n3=0.335119
+    F-T3-MONOTONE    (N3 < N1_N2 < WAKE  OR  N3 < N1_N2 < REM) : false · wake-ladder=false rem-ladder=false
+
+  ─ T3 verdict ─
+    pass_count : 2/5
+    tier       : 🔴 FALSIFIED-INSTRUMENT · X1 도 ultradian 위 한계 · T4 자연 entry (window-mean / Granger / surrogate)
+
+  ─ T1/T2 dual closed-negative 비교 ─
+    T1 H_841 🔴 lag-axis cycle-aligned Φ inflation (lattice Δt=8 Φ=2.0 saturate)
+    T2 H_842 🔴 embed-dim sparse-state Φ inflation (voyager e=5 Φ=28.36)
+    T3 H_843 = detector 확장 폐기 → X1 직접 substrate 위 calibrate
+    WAKE   phi=0.865544
+    N1_N2  phi=0.0
+    N3     phi=0.335119
+    REM    phi=0.568534
+================================================================
