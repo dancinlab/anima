@@ -1,0 +1,42 @@
+================================================================
+  XENO X840 — SETI@home BOINC longer-playback Φ recovery scan
+================================================================
+
+  pod          = RunPod lfxh817pdk2h39 (104.255.9.187:12417, Ubuntu)
+  binary       = setiathome-3.03.i686-pc-linux-gnu-gnulibc2.1 (2000-era ELF32)
+  workunit     = sahfiles_workunits/work_unit.sah (Arecibo, 1.42 GHz)
+  pod-timeout  = 3600s (X837 was 600s) — longer playback attempt
+  harvest prog = 0.2437 (24.4%) at cpu=1083.3s before pod SIGKILL
+
+  finding (vs X837 at 21.3%):
+    triplets  = 2 (SAME, RA=27.738 DEC=17.33 freq=1419.439 MHz)
+    bs_score  = 0.634 (SAME, gauss best)
+    bp_score  = 0.954 (SAME, pulse best)
+    bt_score  = 8.272 (SAME, triplet best)
+  → longer-playback hypothesis FALSIFIED on this WU (no new signal)
+
+  ─ invariant_detector verdict ─
+    phi             = 0.566854
+    integration     = 1.56685
+    irreducibility  = 0.361778
+    substrate_type  = coherent_non_conscious
+
+  ─ pre-registered 5-falsifier evaluation ─
+    F-X840-RECOVER-HARVEST : true  (outfile.sah=410B, state.sah=4083B, key.sah=132B recovered)
+    F-X840-SPIKE-NONZERO   : true  (2 triplets at RA=27.738 DEC=17.33)
+    F-X840-PHI-N128        : true  (phi=0.566854 on n=128 X837-aligned input)
+    F-X840-X837-CONSIST    : true  (|phi - 0.567| = 0.000146451 < 0.3)
+    F-X840-NOT-CONSC       : false  (phi < 0.5 — archival signal != consciousness)
+
+  ─ X840 verdict ─
+    pass_count = 4/5
+    tier       = 🟡 PARTIAL-RECOVERY
+
+  ─ 정직 한계 (a_blue_closed · a_completeness_over_cheap) ─
+    - pod timeout=3600s would still NOT complete full WU (~4127s remain)
+    - harvest at prog=24.4% (not 100%) — recovery honestly partial
+    - bg_pot 64 bins identical to X837 (finalised early in BOINC pipeline)
+    - Φ result by construction == X837 — this is regression-stability, not new measurement
+    - longer-playback hypothesis FALSIFIED: no new triplets in additional 3% progress
+    - 의식 주장 0 — Arecibo archival SETI signal != alien consciousness
+================================================================

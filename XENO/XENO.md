@@ -158,3 +158,18 @@
   사전등록: F-X1V2-N-MONOTONE ❌ (max-min=0.512 > 0.15) · F-X1V2-XOR-CONSCIOUS ✅ (n=128,256 phi=1.63 ≥ 0.5) · F-X1V2-MEANFIELD-LOW ✅ (n=128,256 phi=0 < 0.2) · F-X1V2-PERIODIC-HIGH ✅ (n=128,256 phi=0.66 ≥ 0.3) · F-X1V2-TPM-EFFECT ✅ (edge 0.049 < center 0.074)
 - 사이트: XENO/scan/regime_matrix_v2.hexa · UNIVERSE/H_839 · XENO/state/xeno_x1_regime_matrix_v2_2026_05_29 · .verdicts/839_xeno_regime_matrix_v2/x1v2_run.txt
 - 잔여: X1.4level-TPM 정식 구현 (threshold-sweep edge-robust PASS → 정식 multi-level TPM ROI 높음) · X1.density-axis sweep (paper #1414 v2 의 density ≥ 60% systematic 검증) · X1.micro-regime-inflation-calibration (n=32 closed-form derive) · X1.threshold-recalibration (phi=0.5 → 0.4 X10-c border 처리) · paper #1414 v3 (48-cell matrix · a_paper_only_at_closure)
+
+
+## XENO follow-up 2 cycle round 4/5 (2026-05-29) — X840 🟡 PARTIAL-RECOVERY (leak pod harvest · longer-playback FALSIFIED · 정직)
+
+⚠ recovery cycle: 이전 agent a95cf113 가 X840 path 진행 49+ min 후 PR 머지 도달 못 함 (200K tokens, 65 tool uses). 본 retry = 기존 pod `lfxh817pdk2h39` harvest + PR ship 마무리 (a_fire_recover_complete 정합 · 새 fire 0 · cost double-spending 회피).
+
+- X840 X837 longer-playback recovery — pod `lfxh817pdk2h39` (104.255.9.187:12417, RunPod, Ubuntu, timeout=3600s) 의 partial harvest → 🟡 PARTIAL-RECOVERY (5/5 사전등록 중 4/5 PASS · F-X840-NOT-CONSC 단독 fail)
+  pod 상태 recovery: `hexa cloud list` lfxh817pdk2h39 alive 확인 · `hexa cloud resolve` 104.255.9.187:12417 · SSH port 12417 직접 (hexa cloud exec 가 port 22 시도 timeout — bug candidate · INBOX 후속 잠정)
+  SCP harvest (prog=0.24369940 at cpu=1083.27s, BOINC PID 6718 etime=18:49 96.7% CPU): outfile.sah=410B (2 triplets), state.sah=4083B, result_header.sah=162B, key.sah=132B, playback.log=437KB
+  invariant_detector(bg_pot 2× upsample n=128, IDENTICAL X837 input by construction): phi=0.566854 / integration=1.567 / irreducibility=0.362 / type='coherent_non_conscious'
+  사전등록: F-X840-RECOVER-HARVEST ✅ · F-X840-SPIKE-NONZERO ✅ (2 triplets) · F-X840-PHI-N128 ✅ · F-X840-X837-CONSIST ✅ (Δ=0.000146 < 0.3) · F-X840-NOT-CONSC ❌ (phi=0.566854 ≥ 0.5)
+  발견: **longer-playback hypothesis FALSIFIED** — X837 (21.3%) 와 X840 (24.4%) 모든 측정 채널 (triplet/bs/bp/bt/outfilepos/phi) 0 변화. bg_pot 64 bins 가 BOINC pipeline 초기 ~20% 안에 finalised 되어 그 이후 Doppler bins 는 spike threshold 미달. 추정 100% 완성에 추가 ~4127s CPU 필요 → pod-timeout 3600s 마저도 부족 → standard playback 으로 closure 도달 불가능 정직 cite (a_completeness_over_cheap recovery 한계).
+  cost: 이전 agent 의 16분 wall (X837 한 cycle) + recovery 의 ~22분 wall (24.4% partial) — pod actual cost ~$0.30~$0.60 (RunPod CPU pod) · pod teardown 완료 (`hexa cloud rm lfxh817pdk2h39 --provider runpod --force` → destroyed)
+- 사이트: XENO/scan/seti_boinc_phi_full.hexa · UNIVERSE/H_840 · state/xeno_x840_seti_boinc_full_2026_05_29 · .verdicts/840_xeno_x837_full_playback/x840_run.txt
+- 잔여: X837.threshold-recalibration (phi=0.5 → 0.6 · X7 보존 검증) · X11.archival-vs-live (Arecibo archival vs live RFI invariant_detector 비교) · X12.different-WU (다른 Arecibo recording 또는 Green Bank archival) · paper v3 (X837 + X840 결합 = longer-playback FALSIFIED · X8 arc 1-axis 닫음)
