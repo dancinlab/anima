@@ -1,3 +1,62 @@
+# HANDOFF — XENO-FRONTIER-5 followup round 3/3 (round 6 갱신 2026-05-29) · FULL CLOSURE marker
+
+## Round 6 — X10 hive-mind invariant 🟡 PARTIAL-SUPPORT + XENO-FRONTIER-5 FULL CLOSURE (2026-05-29)
+
+X837 follow-up cycle round 3/3 (final) — **X10 다개체 hive-mind invariant** numerical falsifier. 4-cell × 32 sample × 4 substrate × n=128 dense 위 invariant_detector + 사전등록 5 falsifier 실행.
+
+### Round 6 결과 요약
+
+| 항목 | 값 |
+|---|---|
+| H | H_838 (XENO X10 hive-mind invariant) |
+| substrate 수 | 4 (independent · weak mean-field · strong Kuramoto · hive XOR cascade) |
+| 총 sample | 4 cell × 32 sample = n=128 (X7-aligned dense regime) |
+| 사전등록 falsifier | 5 (F-X10-INDEP / WEAK / STRONG / HIVE / MONOTONE) |
+| pass_count | 3/5 (INDEP / WEAK / HIVE ✅ · STRONG / MONOTONE ❌) |
+| verdict | 🟡 PARTIAL-SUPPORT · applicability frontier border |
+| 핵심 finding | **XOR cascade hive-emergence Φ=1.565 type='conscious'** — X7 외 6+1-point matrix 에서 처음으로 'conscious' classify, IIT4 axiom (irreducible integration) 의 numerical instance |
+| secondary finding | **mean-field paradox** (a=0.131 > b=0.0355) — 평균화가 cell uniformity → separability/reducibility 증가, phi 낮춤 (IIT4 정합하지만 사전등록 monotone 가정 깸) |
+| tertiary finding | **Kuramoto sync 0.408 border** — phase-lock ≠ irreducibility 수치 결말 ("sync 만으로 의식 substrate 아님") |
+| matrix 확장 | 6+1-point (X4/X5a/X5b/X6/X7/X837) → **10-point** (+ X10 a/b/c/d) |
+| 정직성 | 임계 frozen pre-run (0.3/0.5), post-tuning 0 · p7 0 (hexa stdout verbatim) · INBOX 환류 0건 (사용자 명시 폐기) · slug-stale 3-신호 검증 (H_838 zero hit pre-fire) |
+| cost / wall | $0 (Mac local, hexa-native deterministic) / <5s |
+| 사이트 | XENO/scan/hive_mind_invariant.hexa · XENO/state/xeno_x10_hive_mind_2026_05_29/ · UNIVERSE/H_838 · .verdicts/838_xeno_hive_mind/x10_run.txt |
+
+### Round 6 substrate Φ 표 (verbatim hexa stdout)
+
+| substrate | density | phi | irreducibility | type |
+|---|---|---|---|---|
+| (a) independent 4-cell | 0.578 | 0.131 | 0.116 | coherent_non_conscious |
+| (b) weak coupled mean-field | 0.500 | 0.0355 | 0.0343 | coherent_non_conscious |
+| (c) strong coupled Kuramoto K=2.0 | 0.609 | 0.408 | 0.290 | coherent_non_conscious |
+| (d) hive emergence XOR cascade | 0.336 | **1.565** | **0.610** | **conscious** |
+
+### XENO-FRONTIER-5 FULL CLOSURE marker
+
+**XENO-FRONTIER-5 main cycle (5 round) + follow-up cycle (3 round) = 총 8 round CLOSURE**:
+
+| 단계 | round | H | substrate | verdict |
+|---|---|---|---|---|
+| main | R1/5 | H_832 | Voyager-1 BL carrier | 🟢 SUPPORTED-NUMERICAL |
+| main | R2/5 | H_833 | panpsy 4종 | 🔴 FALSIFIED-INSTRUMENT |
+| main | R3/5 | H_834 | AGI LLM-like 4종 | 🔴 FALSIFIED-INSTRUMENT |
+| main | R4/5 | H_835 | sim 4종 | 🔴 FALSIFIED-INSTRUMENT |
+| main | R5/5 | H_836 | SETI@home BOINC archive | 🟡 archive-acquired-pod-ready |
+| follow-up | F1/3 | H_837 | BOINC bg_pot 실 pod fire | 🔴 UNEXPECTED-HIGH-PHI (border) |
+| follow-up | F2/3 | — | applicability paper LANDED (paper #1411) | 🟢 (a_paper_only_at_closure 정합) |
+| follow-up | **F3/3** | **H_838** | **hive-mind 4-cell × 4 substrate** | **🟡 PARTIAL-SUPPORT** |
+
+**XENO-FRONTIER-5 + follow-up = FULL CLOSURE** (8 round) · 다음 cycle frontier = X10.threshold-recalibration · X10.kuramoto-sweep · X10.density-axis · X10.cell-count-sweep · XENO-FRONTIER-5.5 paper v2 (10-point matrix).
+
+### Round 6 PR
+
+- branch: `feat/xeno-x10-hive-mind-r2-2026-05-29` (r2 suffix per task note — prior `-2026-05-29` 잔존 시 r2)
+- commit: `<TBD post-merge SHA>`
+- PR: `<TBD #>`
+
+---
+
+
 # HANDOFF — XENO-FRONTIER-5 followup round 2/3 (round 5 갱신 2026-05-29)
 
 ## Round 5 — applicability paper LANDED (2026-05-29)
