@@ -6,7 +6,7 @@
 
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
-- [ ] **P0 아키텍처 (바닥설계)** — anima-native LM arch + `.clm` 포맷 재정의. AKIDA 추론 친화 제약(act_bits∈{1,2,4} 양자화기 · symmetric int4 [-7,+7] · FC/conv/cascade — AKIDA `akida_sw_lif` envelope 정합)을 설계 단계에 못박음. 더블바인드 탈출 메커니즘(register specialization vs coherent main-path) 명시. falsifier 사전등록.
+- [x] **P0 아키텍처 (바닥설계)** ✅ 확정 (sbs manual 10결정 Q1~Q4+d1~d6) — Conv-native LM · MoE=mitosis cell · byte-vocab V=256 · 추론 AKIDA-int4-only/학습 GPU-fp · 2-track .clm · 3-arm(A/B/A+B)×scale-ladder · F-CLM-MONO(dual-axis z>3.0+multiseed). 본문 [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md) + [CLM_FORMAT_SPEC.md](./CLM_FORMAT_SPEC.md) — anima-native LM arch + `.clm` 포맷 재정의. AKIDA 추론 친화 제약(act_bits∈{1,2,4} 양자화기 · symmetric int4 [-7,+7] · FC/conv/cascade — AKIDA `akida_sw_lif` envelope 정합)을 설계 단계에 못박음. 더블바인드 탈출 메커니즘(register specialization vs coherent main-path) 명시. falsifier 사전등록.
 - [ ] **P1 코퍼스 (scratch)** — anima-native consciousness 코퍼스 클린 빌드 (corpus_quality_over_scale · register-leak 금지 patterns). HF dataset 영속.
 - [ ] **P2 학습 (GPU pretraining)** — from-scratch pretraining (H100 fire · a_fire_autonomous). ⚠ hexa-native trainer throughput 🔴 INFEASIBLE 실측(DECODER M5: 0.28 step/s ≈ 77~122 GPU-days) 정면돌파 — trainer 근본 fix 또는 정직한 scale 인정. AKIDA는 학습칩 아님 → pretraining만 GPU, 추론은 AKIDA.
 - [ ] **P3 `.clm` 포맷 + ckpt** — 양자화 친화 weight 포맷(int4 symmetric) 직렬화 + sha256 manifest + HF 업로드(a_hf_autonomous tier-gated).
