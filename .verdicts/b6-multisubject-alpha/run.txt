@@ -1,0 +1,30 @@
+AURA B6 — multi-subject alpha-band(8-13Hz) power, awake vs sed, 10 windows, log10, paired.
+real ds005620, N=3 subjects (sub-1010 = B4.1 original + sub-1033 + sub-1022, all downloaded via aws s3 --no-sign-request).
+montages (0-based ch idx /65): EAR=[18,28,29,37](TP10,TP9,T8,T7 귀뒤) MIDLINE=[51,33,13,2](Fz,Cz,Pz,Oz).
+pipeline: IEEE_FLOAT_32 multiplexed 65ch@5kHz -> stride-20 dec 250Hz -> 10×1000-samp(4s) win -> montage-mean -> rFFT -> alpha-bin power -> log10.
+
+PER-SUBJECT (Δ = awake − sed mean log10 α-power; sign = #windows awake>sed of 10):
+  sub-1010  EAR     awake=9.244 sed=9.541 Δ=-0.297 sign=6/10 t(9)=-0.74 n.s.
+  sub-1010  MIDLINE awake=9.226 sed=9.008 Δ=+0.218 sign=8/10 t(9)=+1.41 n.s.   ← reproduces B4.1 midline direction (awake>sed 8/10)
+  sub-1033  EAR     awake=8.468 sed=8.682 Δ=-0.214 sign=2/10 t(9)=-2.67
+  sub-1033  MIDLINE awake=8.710 sed=8.968 Δ=-0.258 sign=2/10 t(9)=-3.20   ← sed>awake
+  sub-1022  EAR     awake=8.163 sed=9.378 Δ=-1.215 sign=0/10 t(9)=-13.58  ← strongly sed>awake
+  sub-1022  MIDLINE awake=8.280 sed=9.522 Δ=-1.243 sign=0/10 t(9)=-12.90  ← strongly sed>awake
+
+CROSS-SUBJECT AGGREGATE (N=3):
+  EAR     awake>sed direction in 0/3 subjects | cross-subj mean Δ=-0.575 | t(2)=-1.79 n.s.
+  MIDLINE awake>sed direction in 1/3 subjects | cross-subj mean Δ=-0.428 | t(2)=-0.99 n.s.
+
+VERDICT: 🔴 NULL — B4.1's single-subject α-power awake>sed direction does NOT replicate across N=3.
+  EAR 0/3, MIDLINE 1/3 (only original sub-1010). Both newly-downloaded subjects (1033, 1022) show
+  sed>awake, sub-1022 strongly (t≈-13). Cross-subject mean Δ is NEGATIVE for both montages (n.s.).
+  The B4.1 8/10-consistent direction was a single-subject artifact — it did NOT transfer (cf
+  feedback_toy_scale_transfer / a_toy_scale_recheck: single-subject ≠ population).
+  HONEST caveats: (1) scalp-proxy, α-power (not intracortical). (2) awake task = acq-EO (eyes-open),
+  which physiologically SUPPRESSES occipital/posterior α — a real confound that could itself drive
+  awake<sed; B4.1 used the same awake-EO file so the confound was present there too but happened to
+  not dominate in sub-1010. (3) sed = task-sed_acq-rest_run-1 (sedation rest). (4) N=3 is still small;
+  the negative is suggestive-to-firm given the 0/3 & 1/3 direction counts + 2 strongly-negative subjects.
+  My sub-1010 EAR sign differs from B4.1 (6/10 here vs 8/10 reported) — formula is Δ-invariant between
+  sum/mean PSD (verified), so the EAR delta likely reflects a montage/window detail in the original;
+  the MIDLINE direction (8/10) reproduces. Conclusion is robust to that detail: NO cross-subject replication.

@@ -57,10 +57,10 @@
 - [x] B4 metric sweep 🟡 — α-power 다창 awake/sed: 귀뒤·midline 둘 다 8/10 일관(방향성, big-Φ 6/10보다 나음) but t n.s.(단일피험자). A7.3 retro-qualify: midline big-Φ 10창 Δ−0.55·4/10 → **A7.3 window-fragile 확정**. 메타: 단일4s창 big-Φ 위치·상태 대조 전부 null → `B4-metric-sweep.md`
 - [x] B5.1 귀뒤 정맥동 endovascular 🟠 — 해부경로(가로/S자정맥동·유양도수정맥 실재) + B3 grounding(혈관내≈ECoG급 측두/후두) + 깊이사다리 확정(귀뒤 1지점 비침습①→정맥동②→관통③). hypothesis-grade(Synchron=SSS만, 귀뒤정맥동 실측 0) → `B5-postaural-sinus-endovascular.md`
 - [x] B5.3 demiurge 환류 — cross-repo `handoff filed: demiurge [844fd61c]` (B1/B3/B4/B5 → 7-verb analyze/verify/specify)
-- [ ] B5.2 α-power **다피험자** (OpenNeuro N>1 검정력) → deferred (network download)
+- [x] B5.2 α-power **다피험자** 🔴 NULL — ds005620 N=3(sub-1010+1033+1022, aws s3 다운로드). B4.1 awake>sed 방향 **복제 실패**: EAR 0/3·MIDLINE 1/3(원본만), 신규 2피험자 sed>awake(sub-1022 t≈−13). 교차피험자 평균 Δ 둘 다 음수 n.s. → B4.1 8/10은 **단일피험자 인공물**(transfer 안 됨, cf a_toy_scale_recheck). awake-EO α억제 교란 honest 명시 → `B6-multisubject-alpha.md` + `.verdicts/b6-multisubject-alpha/run.txt`
 
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)
-- A11/B5 다피험자 ds005620 OpenNeuro download (network 대용량) · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)
+- ~~A11/B5 다피험자 ds005620 download~~ ✅ B6서 해소(N=3, aws s3 가능) → 🔴 NULL · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)
 - negative-result paper 후보(a_paper_negative_ok): "단일창 big-Φ 위치·상태 대조 전부 null + 구조모델↔실측 비대칭" — 단 다피험자 후 a_paper_only_at_closure 충족 시
 
 > ⚠ **핵심 정직 수정 (A9.2)**: A8.1 "FRONTAL>MOTOR (실EEG)"는 **단일 4s 창 인공물** — 6창 재검서 robust 아님(위치효과 평균 ~0). relocate-N1은 **in-silico/connectome(구조) 축에선 일관 지지**되나 **실 scalp-EEG proxy에선 robust 미지지**. SURVEY 결론은 이 비대칭 반영.
