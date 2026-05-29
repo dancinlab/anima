@@ -195,6 +195,12 @@
 **P7 정합**: 6 H 모두 perplexity 아닌 entropy/distinct/TTR/LZ_norm 측정자 사용 (simple-stack).
 **P8 정합**: train-time aux-loss 는 weight 학습 path (continuous cell-division) 의 substrate-level modulation.
 
+### 후속: H_686 + H_687 toy 검증 saga (2026-05-29)
+
+- PR #1395 H_686+H_687 V=8 aux ablation toy → ⚪ TOY-NULL · INDETERMINATE (`CORE/DECODER/h686_h687_aux_ablation.hexa`, V=8 baseline 이미 4/4 distinct escape)
+- PR #1397 prodaux production trainer + STEP_RATE_LOG entry (13) → 🟠 BUILD-BLOCKER (Linux cross-module link, anima patch scope 외, hexa-lang inbox)
+- **V-scale escape boundary sweep 2026-05-29** (현 PR) → 🟠 SWEEP-OUT-OF-RANGE — V ∈ {8, 64, 256, 1024, 4096} × {none, ent, kl, both} 20 cell baseline 전부 4/4 distinct escape, V*_collapse 미발견. V 축 단독은 OFFENDING-LEVER 아님 ⊥ 확정. 잔여 OFFENDING-AXIS 후보 = d / E / n_layer / stochastic / corpus-distribution / M-init-seed 분포 (별 H 후속 sweep 대상). 상세: `CORE/DECODER/H686_H687_V_SCALE_RESULT.md`, STEP_RATE_LOG entry (14).
+
 ## M1 hook 지점 (M0 인계 노트)
 
 - **축 D freeze / 축 A curriculum** — AdamW 호출(`nn_decoder_adamw_step(M, Mg_acc, ..., m_size, ...)`) 직전. freeze=slot별 grad masking · curriculum=window 선택부.

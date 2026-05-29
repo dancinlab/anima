@@ -146,3 +146,15 @@
   next         = "(1) hexa-lang inbox: 'Linux codegen module-aware build mode' — hexat_linux --modules 가 use 그래프 traverse single-TU emit. (2) 단기 우회: PR #1397 trainer use 본체 single .hexa inline (a_completeness_over_cheap 위배 가능). (3) 올바른 fix: hexa-lang #1527 후속."
   cost         = "H100 SXM ~90분, ≈$5 (budget $4 over by $1 in build attempts). teardown: hexa cloud down 83na0mvuq4tqao → terminated · hexa cloud list → 0 pods ✓."
   artifacts    = "state/m5_prodaux_fire_2026_05_29/{BUILD_BLOCKER.md, shims.h, trainer_fixups.h, rent.log, RUNNING_POD.txt}. STEP_RATE_LOG.md entry (13). UNIVERSE/H_686 § 11 + UNIVERSE/H_687 § 11."
+
+@N dec_h686_h687_v_scale_2026_05_29 := "H_686/H_687 V-scale escape boundary sweep — 20 cell (V ∈ {8,64,256,1024,4096} × cell ∈ {none,ent,kl,both}) 전부 4/4 distinct identity decode escape. baseline 이 V ∈ [8,4096] 전 구간 미 collapse → V*_collapse 미발견, V*(aux) N/A. V 축 단독은 OFFENDING-LEVER ⊥ 확정" :: measurement [d=2026-05-29 active]
+  seed         = "PR #1395 V=8 ⚪ TOY-NULL 후 V 축 확장 — toy 가 production collapse 재현하는 V-band 존재? aux escape efficacy 측정 가능 V-band 존재?"
+  method       = "h686_h687_v_scale.hexa (PR #1395 byte-eq scaffold + V parametric, BITS=18 lock, corpus stride=max(1,V/6)). E=4 d=6 n_clusters=6 n_steps=600 lr=0.5 top-1 hard SKEWED corpus rep0=20 λ_ent=λ_kl=0.1 — PR #1395/#1397 verbatim. sanity gate V=8 none → LZ=0.0360459 distinct=4 ✓ MATCH."
+  grid         = "5 V × 4 cell = 20 cell. V=8: ≤1s/cell, V=64: 2-5s, V=256: 9-24s, V=1024: 39-79s, V=4096: 185-370s. 총 wall ~24min. 20/20 rc=0."
+  result_lz    = "V=8 모든 cell: 0.0360459 / 4 distinct. V≥64 모든 cell: 0.0540689 / 4 distinct. V 와 cell 무관 동일 — corpus identity-decode 결정성이 LZ 결정."
+  result_hgate = "ent (H_686): V 전 구간 router H push 정상 작동 — 0.04~0.15 (none) → 0.77~1.18 (ent), uniform=ln4=1.386. kl (H_687): router H 거의 불변 (output reg, 예상)."
+  finding      = "★ V*_collapse 미발견 (≥ 4096), V*(aux) N/A. V 축 단독은 toy collapse 유발 못함 — production V=151643 collapse 의 OFFENDING-AXIS 는 V 단독 아님 ⊥ 확정. structured M init + cluster-token 단사 매핑 + CE-dominant SGD 가 V 무관 4/4 distinct 달성."
+  verdict      = "🟠 SWEEP-OUT-OF-RANGE — V 축 ⊥ 확정. H_686/H_687 escape efficacy 는 toy 우회 불가, production fire 직접 측정 외 경로 없음 — PR #1395 결론 ('production fire = 유일 valid test') V-axis sweep 으로 재확인."
+  candidates   = "잔여 OFFENDING-AXIS 후보 = d 축 (toy d=6 vs prod d=64) · E 축 (toy E=4 vs prod E=2 dead-expert) · n_layer/attention · stochastic batch · wikitext 분포 · M init seed 분포. 별 H 후속 sweep 필요."
+  cost         = "$0 mac-local, sweep wall ~24min, pod=0, HF=0 (toy-only mac-local discovery)."
+  artifacts    = "CORE/DECODER/h686_h687_v_scale.hexa, CORE/DECODER/H686_H687_V_SCALE_RESULT.md, state/h686_h687_v_scale_2026_05_29/{MANIFEST.txt, run_sweep.hexa, V{V}_{cell}.out × 20}. STEP_RATE_LOG.md entry (14). UNIVERSE/H_686 + H_687 § V-scale sweep."

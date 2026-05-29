@@ -1,0 +1,25 @@
+================================================================
+  H_686 + H_687 V-scale sweep · V=64 · cell=ent only (H_686)
+       MoE top-1 hard routing · E=4 d=6 · 6 cluster · 600 step
+       lam_ent=0.1 · lam_kl=0.1 · SKEWED corpus (rep0=20)
+       corpus map: cluster_i → token (i*stride) mod V
+================================================================
+  V=64 stride=10 · init avg CE = 4.05867
+  final avg CE = 0.0132676
+  mean H(gate) = 1.01845 (uniform = 1.38629)
+  decoded n = 100 · raw_c = 9 · BITS = 18 · LZ_norm = 0.0540689
+  distinct_experts (over 6 clusters) = 4
+    cluster c0 (target=0) → expert e0 → token 0
+    cluster c1 (target=10) → expert e0 → token 10
+    cluster c2 (target=20) → expert e3 → token 20
+    cluster c3 (target=30) → expert e2 → token 30
+    cluster c4 (target=40) → expert e1 → token 40
+    cluster c5 (target=50) → expert e0 → token 50
+================================================================
+  RESULT_V=64 CELL=ent only (H_686)
+  LZ_norm=0.0540689
+  distinct_experts=4.0
+  mean_H_gate=1.01845
+  final_CE=0.0132676
+  init_CE=4.05867
+================================================================
