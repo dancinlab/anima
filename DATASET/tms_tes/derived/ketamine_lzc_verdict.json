@@ -1,17 +1,17 @@
 {
   "id": "farnes-spontaneous-LZc",
-  "dataset": "Zenodo 4245091 = Farnes et al. PLOS ONE spontaneous EEG (eyesOpen vs eyesClosed, post-ICA)",
+  "dataset": "Zenodo 4245091 = Farnes et al. PLOS ONE spontaneous EEG (eyesOpen vs eyesClosed, post-ICA, 62ch@250Hz)",
   "spec_vs_actual": "S-catalog named this Sarasso KETAMINE TMS-EEG (933MB). Record IS 933MB but = Farnes anesthesia/spontaneous EEG. No ketamine/wake labels; directly-labeled contrast = eyes-open vs eyes-closed resting. Original ketamine hypothesis NOT testable.",
   "metric": "lz76_concat (median-binarized, 1-45Hz, decimated 60000 samp)",
   "n_open": 0,
   "n_closed": 0,
   "n_skipped": 0,
-  "eyesOpen_LZc_mean": null,
-  "eyesClosed_LZc_mean": null,
+  "eyesOpen_LZc_mean": NaN,
+  "eyesClosed_LZc_mean": NaN,
   "eyesOpen_LZc": [],
   "eyesClosed_LZc": [],
   "measured_contrast": "eyes-open vs eyes-closed resting LZc",
   "falsifier": "|Δ|/closed < 1%",
-  "verdict": "NOT-MEASURED",
-  "note": "no readable eyesOpen/eyesClosed sets"
+  "verdict": "RED",
+  "note": "eyesOpen nan (n=0) vs eyesClosed nan (n=0) (D=+nan, nan%) — eyes-closed > eyes-open"
 }
