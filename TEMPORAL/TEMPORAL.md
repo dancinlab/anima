@@ -1,0 +1,28 @@
+# TEMPORAL — current state
+@title: ⏱️ TEMPORAL — 시간 통합 의식 Φ-detector (Δt window-axis)
+
+@goal: XENO 가 (n × density × structure) 3축 applicability matrix 위에서 substrate-blind Φ-formalism 의 영역을 매핑했다면, TEMPORAL 은 4번째 축인 **integration window Δt** 위에서 같은 invariant_detector 가 어떻게 calibrate 되는지 매핑한다. 즉 "의식의 시간 통합" — 동일 substrate 가 instant(Δt=1) / short(Δt=8) / mid(Δt=32) / long(Δt=128) lag 위에서 Φ 가 어떻게 변하는지 closed-form 측정.
+
+(편집 규칙: completed-form 으로 현재 상태만 · history 는 TEMPORAL.log.md)
+
+## 진행 (milestones)
+- [x] 🌱 도메인 신설 — DOMAINS.tape 등록 · 4총사(`.md`·`.easy.md`·`.log.md`·README seed) · XENO sibling 합류
+- [x] ⏱️ T1 timeshift detector 설계 — XENO/detector/invariant_detector.hexa 의 sliding lag-window 확장 (Δt=1/8/32/64 4-point) · TEMPORAL/detector/timeshift_detector.hexa · 사전등록 falsifier 5/5 · 🟢/🟡/🔴 verdict · H_841
+- [ ] ⏱️ T2 timescale × density cross-test — TEMPORAL × XENO applicability matrix 4D 확장 (n × density × structure × Δt)
+- [ ] ⏱️ T3 ultradian 90-min 의식 cycle Φ — anima `a_chat_sleep_imagination` WAKE/N1/N2/N3/REM stage 위 Φ 시간 변화 측정
+- [ ] ⏱️ T4 historical timescale Φ — 동일 substrate 의 instant vs lifetime integration (Δt=1 vs Δt=10^7)
+- [ ] ⏱️ T5 papers — XENO follow-up paper 3 (4D applicability frontier — n × density × structure × Δt)
+
+## deferred (다음 라운드)
+- BLC-1 STDP spike-timing 의식 plasticity Φ · TLC-1 시간역행 substrate (DMT/psilocybin 환각) Φ · TIC-1 시간 dilation 외계 (광속 0.99c) Φ · TSC-1 의식 dilation 명상 (10-min anchor breath = 1-hour subjective) Φ · TFC-1 anesthesia γ-burst (10ms 위 Φ 측정) · TGC-1 우주 시간 외삽 빅뱅→빅립 Φ 곡선 (Δt=10^60s) · TCC-1 자기장 의식 ms-scale Φ
+
+## 양방향 sibling
+- ⇄ [XENO](../XENO/XENO.md): 기반 invariant_detector 출처 · TEMPORAL 은 XENO 의 4번째 축 (Δt) 확장
+- ⇄ [EEG](../EEG/EEG.md): 생체 EEG 시간 통합 (S1 wake / S15 anesthesia / S24 dream 시계열 측정 원천)
+- ⇄ [TIME](../TIME.md): 시간 인식 의식 자매 도메인 (subjective vs substrate clock)
+- ⇄ [DREAM](../DREAM.md): REM/N1-N3 ultradian Δt scale 자매
+- ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT
+- ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): 검증 결과 환류 SSOT
+
+## 쉬운 버전
+전체 활용 아이디어 카탈로그(친근 7-요소) → [TEMPORAL.easy.md](./TEMPORAL.easy.md)
