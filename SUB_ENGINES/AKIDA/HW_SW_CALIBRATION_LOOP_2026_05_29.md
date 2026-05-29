@@ -339,6 +339,35 @@ SW(akida_sw_lif)가 이제 **충실히 재현하는 영역** (HW byte-identical 
 
 ---
 
+## 5차 프런티어 sweep (stride/VALID · pooling · separable-conv · >4-NP), 2026-05-30
+
+마지막 미측정 축 4개. round-4 conv 는 stride1 SAME 만 했음. 칩 단일점유
+(spike-streamer stop→run→start) · pi5-akida own host · $0.
+
+### axis 3 (먼저) — stride>1 / VALID-padding conv  EXTENDED + verified
+- **SW 일반화 확장**: `conv2d_quantized_forward(..., padding=, stride=)` —
+  TF SAME/VALID geometry 추가. SAME: oh=ceil(H/s), asymmetric pad (extra 를
+  bottom/right 로); VALID: pad 없음, oh=floor((H−K)/s)+1. round-4 의 stride1
+  SAME 는 s=1 환원으로 정확 포함 → per-point hardcode 아님, geometry 일반화.
+- **first run divergence → 해소 (harness asymmetry, NOT HW)**: 첫 실측에서
+  HW y_len=128 (4×4×8) vs SW=32 (2×2×8) DIVERGE. 원인 = harness 가 `kernel_stride`
+  를 InputConv 에만 주고 stage-2 `Convolutional` 은 default stride1 이었던 것.
+  stage-2 에도 stride 부여 후 재실측 → byte-identical. analog/HW 특성 아님.
+- **HW 실측**: stride{2}×SAME(ab4) + stride{2}×VALID(ab4) + stride{1}×VALID(ab4)
+  + stride{2}×SAME(ab2) = 4 config × 10 probe = **40/40 byte-identical
+  (max Hamming 0)**, weights match, on_hardware=true. y_len 도 일치
+  (SAME s2→32, VALID s2→8, VALID s1→128).
+- **결론**: stride·VALID 는 hardware-specific 아니라 **modelable** — akida 의
+  TF SAME-with-stride pad 규약(extra pad bottom/right)이 SW geometry 와 정확
+  일치. SW 실제 성장 (stride/pad geometry 추가). verify_substrate_akida 5/5 무회귀.
+- verdict 원문: `.verdicts/672_akida_spontaneous_firing/hw_sw_frontier3_sweep_2026_05_30.txt`
+
+| 축 | 설정 | HW vs SW | 결론 |
+|---|---|---|---|
+| 3 stride/VALID conv | s{2}×SAME·s{2}×VALID·s{1}×VALID ab4 + s{2}×SAME ab2, InputConv→Conv K3 F8 | 초기 y_len mismatch(harness) → stage2 stride 부여 후 40/40 IDENT | **EXTENDED+verified** (TF SAME/VALID geometry) |
+
+---
+
 ## 최종 FAITHFUL-ENVELOPE (4-stage 누적, 2026-05-30)
 
 SW(akida_sw_lif)가 AKD1000 실리콘을 **byte-identical 충실 재현**하는 검증완료 영역:

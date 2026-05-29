@@ -1,0 +1,74 @@
+================================================================================
+AKIDA HW-SW 5차 프런티어 sweep — verdict (verbatim)
+  axes: stride/VALID-conv · pooling · separable-conv · >4-NP
+  date: 2026-05-30 · chip: AKD1000 (BC.00.000.002) · pi5-akida · SW: numpy
+================================================================================
+
+### AXIS 3 — stride>1 / VALID-padding conv  (EXTENDED + verified)
+SW op extended: conv2d_quantized_forward(..., padding=, stride=)
+  SAME : oh=ceil(H/s), TF asymmetric pad (extra to bottom/right)
+  VALID: no pad, oh=floor((H-K)/s)+1
+harness: stride_hw.py / stride_sw.py (stride applied to BOTH InputConv+Conv stages)
+configs: InputConv(flip=F)->Conv(flip=T), F1=F2=8, K=3, hw=8, wseed=7
+
+--- frontier_diff s2_same_ab4 ---
+axis=stride act_bits=4 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=5341e6b2646979a7 SW=5341e6b2646979a7 hamming=0 |Δ|max=0
+ idx1: IDENT HW=f1d340587f08875e SW=f1d340587f08875e hamming=0 |Δ|max=0
+ idx2: IDENT HW=4aad79d2882e99b3 SW=4aad79d2882e99b3 hamming=0 |Δ|max=0
+ idx3: IDENT HW=df7648e11a24c558 SW=df7648e11a24c558 hamming=0 |Δ|max=0
+ idx4: IDENT HW=8feab7469323415c SW=8feab7469323415c hamming=0 |Δ|max=0
+ idx5: IDENT HW=e3a87f680ed3b0f5 SW=e3a87f680ed3b0f5 hamming=0 |Δ|max=0
+ idx6: IDENT HW=1fb93c4edc8a2294 SW=1fb93c4edc8a2294 hamming=0 |Δ|max=0
+ idx7: IDENT HW=283faf5e9e8fd927 SW=283faf5e9e8fd927 hamming=0 |Δ|max=0
+ idx8: IDENT HW=a3c255ea4b616758 SW=a3c255ea4b616758 hamming=0 |Δ|max=0
+ idx9: IDENT HW=98b133b47c6fbf2c SW=98b133b47c6fbf2c hamming=0 |Δ|max=0
+SUMMARY axis=stride: ident=10/10 divergent=0 max_hamming=0
+
+--- frontier_diff s2_valid_ab4 ---
+axis=stride act_bits=4 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=f5a5fd42d16a2030 SW=f5a5fd42d16a2030 hamming=0 |Δ|max=0
+ idx1: IDENT HW=2444e7ace48654cc SW=2444e7ace48654cc hamming=0 |Δ|max=0
+ idx2: IDENT HW=c98fc8434123544a SW=c98fc8434123544a hamming=0 |Δ|max=0
+ idx3: IDENT HW=2539601917bf07ee SW=2539601917bf07ee hamming=0 |Δ|max=0
+ idx4: IDENT HW=a81d6c261ab4e7e7 SW=a81d6c261ab4e7e7 hamming=0 |Δ|max=0
+ idx5: IDENT HW=e6393e018706f0cf SW=e6393e018706f0cf hamming=0 |Δ|max=0
+ idx6: IDENT HW=54aa266d0fa2cb6c SW=54aa266d0fa2cb6c hamming=0 |Δ|max=0
+ idx7: IDENT HW=1e3cbfcc7cdab7cf SW=1e3cbfcc7cdab7cf hamming=0 |Δ|max=0
+ idx8: IDENT HW=e75506c5b79d4314 SW=e75506c5b79d4314 hamming=0 |Δ|max=0
+ idx9: IDENT HW=5486158424b1ae95 SW=5486158424b1ae95 hamming=0 |Δ|max=0
+SUMMARY axis=stride: ident=10/10 divergent=0 max_hamming=0
+
+--- frontier_diff s1_valid_ab4 ---
+axis=stride act_bits=4 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=5f70bf18a0860070 SW=5f70bf18a0860070 hamming=0 |Δ|max=0
+ idx1: IDENT HW=6d96c513b599a765 SW=6d96c513b599a765 hamming=0 |Δ|max=0
+ idx2: IDENT HW=1cc2ab99bec17e41 SW=1cc2ab99bec17e41 hamming=0 |Δ|max=0
+ idx3: IDENT HW=4c62b9e4e45509e4 SW=4c62b9e4e45509e4 hamming=0 |Δ|max=0
+ idx4: IDENT HW=cb880557fea71dea SW=cb880557fea71dea hamming=0 |Δ|max=0
+ idx5: IDENT HW=b10ad5ca7b652095 SW=b10ad5ca7b652095 hamming=0 |Δ|max=0
+ idx6: IDENT HW=b7e0a0f05766d65e SW=b7e0a0f05766d65e hamming=0 |Δ|max=0
+ idx7: IDENT HW=a1b034160fd3a537 SW=a1b034160fd3a537 hamming=0 |Δ|max=0
+ idx8: IDENT HW=030b270324381fae SW=030b270324381fae hamming=0 |Δ|max=0
+ idx9: IDENT HW=5ef4473560ee140b SW=5ef4473560ee140b hamming=0 |Δ|max=0
+SUMMARY axis=stride: ident=10/10 divergent=0 max_hamming=0
+
+--- frontier_diff s2_same_ab2 ---
+axis=stride act_bits=2 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=5341e6b2646979a7 SW=5341e6b2646979a7 hamming=0 |Δ|max=0
+ idx1: IDENT HW=0eadce863e962d53 SW=0eadce863e962d53 hamming=0 |Δ|max=0
+ idx2: IDENT HW=063ddac2d4dbafda SW=063ddac2d4dbafda hamming=0 |Δ|max=0
+ idx3: IDENT HW=970ca3c3d033d166 SW=970ca3c3d033d166 hamming=0 |Δ|max=0
+ idx4: IDENT HW=78a5d4cc6b51a9c1 SW=78a5d4cc6b51a9c1 hamming=0 |Δ|max=0
+ idx5: IDENT HW=caed320cb6a67c4b SW=caed320cb6a67c4b hamming=0 |Δ|max=0
+ idx6: IDENT HW=de7713c70067acb1 SW=de7713c70067acb1 hamming=0 |Δ|max=0
+ idx7: IDENT HW=9dca8d12483c8740 SW=9dca8d12483c8740 hamming=0 |Δ|max=0
+ idx8: IDENT HW=8df34efc74c95cd5 SW=8df34efc74c95cd5 hamming=0 |Δ|max=0
+ idx9: IDENT HW=9ac2f52c905b6238 SW=9ac2f52c905b6238 hamming=0 |Δ|max=0
+SUMMARY axis=stride: ident=10/10 divergent=0 max_hamming=0
+
+RESULT axis3: 40/40 probe byte-identical (4 configs x 10 probes), max Hamming 0.
+  NOTE: first run showed y_len mismatch (HW 4x4 vs SW 2x2) — harness only set
+  kernel_stride on InputConv (stage2 Conv defaulted stride1). After setting
+  kernel_stride on BOTH stages, byte-identical. The SAME-with-stride pad
+  convention (extra pad bottom/right) is exactly the chip's. NOT a HW divergence.

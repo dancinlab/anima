@@ -49,7 +49,8 @@ def main():
         filters=a.f1, padding=pad, kernel_stride=(a.stride, a.stride),
         weights_bits=a.weights_bits, activation=True, act_bits=a.act_bits, name="c1"))
     m.add(akida.Convolutional(kernel_size=(a.k, a.k), filters=a.f2,
-        padding=pad, weights_bits=a.weights_bits,
+        padding=pad, kernel_stride=(a.stride, a.stride),
+        weights_bits=a.weights_bits,
         activation=True, act_bits=a.act_bits, name="c2"))
     m.map(dev)
     rng = np.random.default_rng(a.wseed)
