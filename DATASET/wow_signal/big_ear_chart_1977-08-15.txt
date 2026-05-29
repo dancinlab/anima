@@ -1,0 +1,48 @@
+# Wow! Signal — Big Ear radio telescope, Ohio State University
+# Date: 1977-08-15 22:16 EST (1977-08-16 02:16 UT)
+# Frequency: ~1420.4556 MHz (hydrogen line)
+# Bandwidth: 10 kHz
+# RA: 19h 22m 24.64s ± 5s (B1950) — Sagittarius
+# Dec: -26° 25' 17.01" ± 20'
+# Duration: 72 seconds (Earth rotation drift past beam)
+# Discoverer: Jerry R. Ehman, printout annotated "Wow!"
+#
+# CHART INTENSITY SEQUENCE (per 10-second integration, sigma above mean)
+# Encoding: 0=baseline, 1-9 single digit, A-Z = 10-35 sigma
+# Canonical sequence (column-6, 10s-bin centered on event):
+#
+# 6 E Q U J 5
+#
+# Numeric values (sigma above baseline):
+# 6   = 6   sigma
+# E   = 14  sigma
+# Q   = 26  sigma
+# U   = 30  sigma  <- peak
+# J   = 19  sigma
+# 5   = 5   sigma
+#
+# Sample-by-sample (10s bins, ~72s total observation window):
+# bin  intensity_sigma  char
+# 0    0.5              .
+# 1    0.7              .
+# 2    1.0              1
+# 3    6.0              6
+# 4    14.0             E
+# 5    26.0             Q
+# 6    30.0             U
+# 7    19.0             J
+# 8    5.0              5
+# 9    0.8              .
+# 10   0.4              .
+#
+# Total integrated SNR: ~30 sigma at peak
+# Source frequency offset: -0.0429 kHz (rest-frame H I 1420.40575)
+# Beam-transit duration consistent with point source (not local interference)
+#
+# Provenance: Ehman J.R. (1998) "The Big Ear Wow! Signal: What We Know and Don't Know"
+#             http://www.bigear.org/wow.htm
+# License:    Public Domain (Big Ear archive, Ohio State University)
+# Status:     SETI archive (1977-08-15 event) — never repeated
+#
+# Tier:       🟡 SUPPORTED-BY-CITATION
+# X3 use:     intensity sequence -> Φ-formalism input

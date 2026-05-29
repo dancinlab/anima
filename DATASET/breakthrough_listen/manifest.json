@@ -1,0 +1,24 @@
+{
+  "source": "Breakthrough Listen Open Data Archive",
+  "url": "http://seti.berkeley.edu/opendata",
+  "api_docs": "https://github.com/ggroode/bl-opendata",
+  "license": "Open Data (BL · Berkeley SETI Research Center)",
+  "instruments": ["GBT (Green Bank Telescope)", "Parkes", "MeerKAT", "Apertif", "FAST", "VLA"],
+  "frequencies_GHz": "1.0 - 11.6 (multi-band)",
+  "format": "SIGPROC .fil (filterbank) + .h5 HDF5",
+  "typical_file_size": "1-50 GB per observation",
+  "quota_decision": {
+    "status": "archive-pointer-only",
+    "reason": "single observation file 1-50 GB exceeds <1GB LFS per-PR quota; bulk fetch deferred to X3 sweep stage where 1 sample is rented + processed on-demand",
+    "tier": "🟡 SUPPORTED-BY-CITATION"
+  },
+  "files_in_repo": {
+    "manifest.json": "this archive-pointer (no raw .fil committed)"
+  },
+  "x3_use_plan": "rent 1 sample .fil via API at scan time, process via invariant_detector.hexa, discard after Φ extraction (no LFS bloat)",
+  "ssot_signal_targets": [
+    "HIP110395 (BLC1 candidate, 982 MHz Proxima Centauri 2019, ruled out as RFI)",
+    "Voyager 1 spacecraft carrier (telemetry verification target)",
+    "GJ 273 (Luyten's Star, 8.3 ly, METI target)"
+  ]
+}
