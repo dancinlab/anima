@@ -38,7 +38,11 @@
 - [x] A7.4 n≤8 region분리 — per-region big-Φ: M1-region 0.0 vs bypass-region 17.66, region평균=0.0(coupling 소거 확증) 🟢 → `A7-region-split.md`
 - [x] A7.5 PID 폐루프 sim — bypass setpoint 도달(|err|0.0008) vs M1 정상상태오차 영구(|err|6.32) 🟢 → `A7-pid-loop.md`
 - [x] A7.3 실EEG 투입 — ✅ **실측완료**: ds005620 sub-1010 n=4 정중선, awake Φ=7.5956 > sed Φ=6.84285 Δ=+0.753 (의식수준 awake>sed 부합) 🟢 SUPPORTED-NUMERICAL → `A7-real-eeg.md` + `.verdicts/a7-real-eeg/real_run.txt`. ⚠ 파이프라인 sanity 검증(전극위치 명제 직접검증 아님)
-- [ ] A8 (잔여) — 실EEG로 relocate-N1 직접검증(전극위치별 montage Φ) · brainwire src 실행검증 · A6↔7-verb dossier 연결도 · 도달%→coupling connectome 실측 · n=8 region분리 실EEG
+- [x] A8.1 실EEG montage位置 직접검증 — ⭐ds005620 awake: **FRONTAL-HUB Φ=9.633 > TEMPORAL 6.631 > MOTOR 6.307**, frontal Δ(awake−sed)=+5.17(의식민감) vs MOTOR 둔감(6.31→6.20). falsifier "HUB>MOTOR" 생존, relocate 명제 부호정합 🟢 → `A8-montage-position.md`. ⚠scalp montage≠intracortical N1위치(proxy)·single-subject
+- [x] A8.2 brainwire src 실행검증 — pytest **200/200 pass** + Shannon 전하밀도·12변수·전달계수 재현. 문서 불일치 발견(인용 24 vs 코드 30 µC/cm², 안전결론 불변) 🟢 → `A8-brainwire-src.md`
+- [x] A8.3 A6↔7-verb dossier 연결도 — verb↔연구 매핑 + 공유 Sim4Life gap + Class II(demiurge 비침습) vs Class III/PMA(anima implant) 규제 fork → `A8-dossier-link.md`
+- [x] A8.4 connectome coupling — 문헌 투사강도 prior로 A7.2 identity 대체: DLPFC 17.91≈ento 17.97 > insula 13.57 > M1 2.91. Ha(dense>weak) PASS · Hb 포화역전 closed-negative 🟢 → `A8-connectome-coupling.md`
+- [ ] A9 (잔여) — n=8 실EEG montage(256-state MIP wall, pod/cloud 필요) · multi-subject ds005620(sub-1010 외) · 도달%→coupling subject tractography(DWI/Allen) · A6 paper closure 판정(a_paper_only_at_closure)
 
 
 ## 양방향 sibling

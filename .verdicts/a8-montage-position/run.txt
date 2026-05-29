@@ -1,0 +1,14 @@
+verify --verifier-cmd  (VERIFY-KIT V8 — pluggable external verifier, phanes tenant-verifier model)
+  claim    = 
+  verifier = HEXA_LANG=/Users/ghost/.hx/packages/hexa-lang hexa run /Users/ghost/core/anima/AURA/toy/a8_montage_position.hexa
+  ext rc   = 0
+  ext out  = A8 MONTAGE-POSITION ds005620 sub-1010 n=4 @250Hz 4s sys=1111
+MOTOR    (C3,Cz,C4,C2)  awake=6.30717 sed=6.20408
+FRONTAL  (F3,Fz,F4,AFz) awake=9.63284 sed=4.46209
+TEMPORAL (F7,T7,FT7,T8) awake=6.6311 sed=1.06946
+falsifier FRONTAL_awake > MOTOR_awake : 9.63284 vs 6.30717
+[HUB>MOTOR] frontal-hub position carries higher big-Phi (awake) -- relocate-consistent
+[PASS] determinism: frontal awake re-run identical
+RESULT: A8 montage-position big-Phi ran on n=4 exact engine
+  expect = matched ("[HUB>MOTOR] frontal-hub position carries higher big-Phi (awake) -- relocate-consistent")
+  tier   = 🟢 SUPPORTED-NUMERICAL  (external verifier passed AND stdout matches --expect — delegated, deterministic)

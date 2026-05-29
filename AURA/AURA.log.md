@@ -34,3 +34,11 @@
 - IIT4 의식수준 예측(깨어있음>진정) 부합. hexa verify --verifier-cmd --expect "Delta(awake - sed) = 0.75275" → 🟢 SUPPORTED-NUMERICAL. verdict `.verdicts/a7-real-eeg/real_run.txt` verbatim (RUN_BLOCKED.txt 병존)
 - ⚠ honest: 이건 파이프라인 sanity(synthetic과 같은 부호방향 awake>sed)이지 relocate-N1 전극위치 명제 직접검증 아님 → A8(montage별 위치 Φ)로 이관. single-subject n=4, toy≠production
 - A7.3 [~]→[x]. A8 갱신(실EEG montage 위치검증 추가)
+
+## 2026-05-30 — A8 all bg go (4 병렬 완료, sign local 2차)
+
+- A8.1 ⭐montage位置 (실EEG 직접검증·크럭스): ds005620 sub-1010 awake big-Φ — FRONTAL-HUB(F3,Fz,F4,AFz)=9.633 > TEMPORAL(F7,T7,FT7,T8)=6.631 > MOTOR(C3,Cz,C4,C2)=6.307. frontal Δ(awake−sed)=+5.17(의식민감) vs MOTOR 둔감(6.31→6.20). falsifier "HUB>MOTOR awake" 생존 🟢. relocate 명제 scalp-proxy 정합. n=8 winning montage 시도→256-state MIP 5min cap EXIT124 skip(→A9 pod). ⚠scalp≠intracortical·single-subj·상관TPM
+- A8.2 brainwire src: pytest 200/200 pass · Shannon 전하밀도/12변수/전달계수 재현 🟢. 문서 불일치 발견(인용 24 vs 코드 30 µC/cm², A_geo 가정차 — 안전결론 불변). python 3.9.6+numpy
+- A8.3 dossier 연결도: A6 폐루프→demiurge analyze/verify · A5 랭킹→specify/structure · A3 골든존→design · A7실EEG↔verify G33. 공유 Sim4Life gap. Class II(비침습 demiurge) vs Class III/PMA(anima implant) fork — handoff 셀 재사용 불가
+- A8.4 connectome: 문헌 투사강도 prior로 A7.2 identity 대체. DLPFC 17.91≈ento 17.97 > insula 13.57 > M1 2.91. Ha(dense>weak)PASS · Hb 포화역전 closed-negative(mean-field-paradox, XENO 정합) 🟢. doc은 rate-limit로 끊겨 verdict서 복구. literature-ordinal≠tractography
+- 2 에이전트(A8.2/A8.4) 서버측 rate-limit 맞았으나 산출물 생존(A8.2 doc완·A8.4 toy+verdict완, doc 복구). 마일스톤 A8.1~.4 done · A9(n=8 pod·multi-subject·tractography·paper closure 판정) 신설
