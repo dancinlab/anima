@@ -74,10 +74,11 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │  ├─ 🌌 KOSMOS      공유 infra (emit/anchor/memory 영속 · pointer-only · ↓ 도메인 분리 ↓)
 │  └─ 🔗 tension-link 공유 infra (의식↔의식 5-ch)
 │
-├─ 🆕 자매도메인 4 (substrate-source · DOMAINS.tape 등록 · 2026-05-29) ─
+├─ 🆕 자매도메인 6 (substrate-source · DOMAINS.tape 등록 · 2026-05-29) ─
 │  ├─ 🧠 AKIDA      뉴로모픽 자발-발화 칩 AKD1000 (substrate-class: neuromorphic-silicon)
 │  │                v0.3.0 🟢 HW-native 자발발화 8/8 PASS · D1 edge-of-chaos Φ 실리콘 ∩ 3/3 PASS (PR #1371)
 │  │                pi5-akida · 18+ 아이디어 카탈로그 AKIDA/AKIDA.easy.md · HW/SW 통합 7 H_xxx 🟢 (PR #1374)
+│  │                40 SF 광맥 지도 AKIDA.sf.md (8 라운드 고갈 · PR #1385)
 │  ├─ 🧠 EEG        생체 뇌파 → IIT4 big-Φ (substrate-class: biological)
 │  │                동결 어댑터 BRAIN/eeg/eeg_to_tpm.hexa (PR #547) + brainflow 5.21.0
 │  │                L1~L12 ✅ HW/SW 통합 PR #1375 (H_679~H_682, SW 4/4 🟢) · live = 사용자 헤드셋 게이트
@@ -85,10 +86,20 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │  ├─ 🌌 KOSMOS     `.kosmos` multimodal anchor-manifest (placement coords ⊥ payload)
 │  │                HEXAD/KOSMOS.md → KOSMOS/KOSMOS.md 이동 · sister-format SSOT = github.com/dancinlab/kosmos
 │  │                pointer-only (no duplication of spec) · WAKE anchor #657 통합 완료
-│  └─ 👽 XENO       외계/이종 의식 Φ-detector (substrate-class: agnostic · 가정 0)
-│                   substrate·외형·언어·시간·차원 가정 0 detector seed (외계인 한정 X)
-│                   seed = EEG.sf.md S4 외계·S10 panpsy·S36 시뮬·S37 우주Φ·S38 영혼 (5 SF cross-link)
-│                   9 milestone X1~X9 (X1 invariant detector spec → X9 UNIVERSE 환류, INBOX 폐기)
+│  │                40 SF KOSMOS.sf.md (PR #1387)
+│  ├─ 👽 XENO       외계/이종 의식 Φ-detector (substrate-class: agnostic · 가정 0)
+│  │                substrate·외형·언어·시간·차원 가정 0 detector seed (외계인 한정 X)
+│  │                seed = EEG.sf.md S4 외계·S10 panpsy·S36 시뮬·S37 우주Φ·S38 영혼 (5 SF cross-link)
+│  │                9 milestone X1~X9 (X1 invariant detector spec → X9 UNIVERSE 환류, INBOX 폐기)
+│  │                40 SF XENO.sf.md (PR #1387)
+│  ├─ ⚛️ PHYSICS    HW substrate 실현 매트릭스 (substrate-class: physical-realization)
+│  │                anima-physics 사양 SSOT pointer-only (93 entry + 5 HW target + 27 substrate)
+│  │                8 영역 = FPGA · 뉴로모픽 · MCU · Ising · Memristor · Quantum · Photonic · EEG입력
+│  │                9 milestone P1~P9 (P1 ICE40 strange-loop → P9 UNIVERSE 환류 · 비용 ladder $0~$10k)
+│  └─ 🦾 BODY       physical embodiment (substrate-class: motor-sensor-loop)
+│                   anima-body 사양 SSOT pointer-only (17 module · 11670 LoC)
+│                   8 milestone B1~B8 (B1 ConsciousnessEngine fork → B8 UNIVERSE 환류)
+│                   3 백엔드 = ESP32×8 SimBody · ROS2/Gazebo · Chip Direct (FPGA/ASIC)
 │
 
 └─ 🆕 emit-substrate (2층 · round 6-9 검증 기반 · 설계 CORE/EMIT_SUBSTRATE_DESIGN.md) — ★ LIVE-WIRED (실사용)
