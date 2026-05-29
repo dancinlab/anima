@@ -23,7 +23,7 @@ Same probe_inputs + y_sha256 schema as frontier_hw.py for a bit-exact diff.
 Usage (match the HW args exactly):
   python frontier_sw.py --axis actbits --act-bits 2
   python frontier_sw.py --axis weights --weights-bits 4 --wseed 7 --act-bits 2
-  python frontier_sw.py --axis layers  --act-bits 4 --wseed 7
+  python frontier_sw.py --axis layers  --act-bits 4 --wseed 7 --n-layers 3
 """
 import argparse
 import hashlib
@@ -99,11 +99,14 @@ def main():
     ap.add_argument("--wseed", type=int, default=7)
     ap.add_argument("--scale", type=float, default=1.0,
                     help="activation pre-clamp rescale (calibrated vs HW)")
+    ap.add_argument("--n-layers", type=int, default=2,
+                    help="depth of the FC cascade for --axis layers (>=2)")
     a = ap.parse_args()
     act_bits = a.act_bits
     meta = {"axis": a.axis, "act_bits": act_bits,
             "weights_bits": a.weights_bits, "wseed": a.wseed,
-            "scale": a.scale, "backend": "sw-numpy-frontier"}
+            "scale": a.scale, "n_layers": a.n_layers,
+            "backend": "sw-numpy-frontier"}
 
     W2 = None
     if a.axis == "actbits":
@@ -113,18 +116,21 @@ def main():
         rng = np.random.default_rng(a.wseed)
         W = rand_int_weights(rng, WSHAPE, a.weights_bits)
         ws_sha = sha(W)
-    else:  # layers -- two FCs drawn from ONE rng stream (matches HW build order)
+    else:  # layers -- N FCs drawn from ONE rng stream (matches HW build order)
         rng = np.random.default_rng(a.wseed)
-        W = rand_int_weights(rng, WSHAPE, a.weights_bits)
-        W2 = rand_int_weights(rng, WSHAPE, a.weights_bits)
-        ws_sha = sha(np.concatenate([W.ravel(), W2.ravel()]))
+        Wlist = [rand_int_weights(rng, WSHAPE, a.weights_bits)
+                 for _ in range(a.n_layers)]
+        W = Wlist[0]
+        ws_sha = sha(np.concatenate([w.ravel() for w in Wlist]))
     meta["weights_sha256"] = ws_sha
     print(json.dumps({"meta": meta}))
 
     for idx, x in enumerate(probe_inputs(IN, 15)):
         if a.axis == "layers":
-            h = fc_forward(x, W, act_bits, a.scale)
-            y = fc_forward(h, W2, act_bits, a.scale)
+            h = x
+            for Wl in Wlist:
+                h = fc_forward(h, Wl, act_bits, a.scale)
+            y = h
         else:
             y = fc_forward(x, W, act_bits, a.scale)
         rec = {"side": "SW", "axis": a.axis, "input_idx": idx,

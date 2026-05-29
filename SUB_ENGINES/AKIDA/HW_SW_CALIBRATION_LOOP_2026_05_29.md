@@ -270,3 +270,96 @@ SW(akida_sw_lif)가 이제 **충실히 재현하는 영역** (HW byte-identical 
 - **on-chip learning (AkidaUnsupervised)** — CLOSED-NEGATIVE (비결정성·hidden plasticity state).
 - 미측정: ≥3-layer 깊이·멀티-NP 매핑·convolutional layer·다른 AKD1000 die·>64°C.
   (inference forward 양자화 모델은 위 검증 범위로 한정; 학습 동역학은 모델 범위 외로 확정.)
+
+---
+
+## 4차 프런티어 sweep (deep / conv / multi-NP, 2026-05-30)
+
+> 3차는 act_bits·random int4·2-layer 양자화 경계를 닫았고 on-chip learning 을
+> CLOSED-NEGATIVE 했다. 4차는 3차 "미측정" 영역의 LAST frontier 3축을 친다:
+> **≥3-layer 깊은 cascade · convolutional layer · multi-NP 매핑.** axis 별로
+> MATCH(이미 커버) / EXTENDED+verified(SW 일반화) / CLOSED-NEGATIVE(SW 모델 불가)
+> 를 정직 판정한다. 하니스: `scripts/frontier_{hw,sw,diff}.py` (--n-layers 추가),
+> probe = 동일 10 graded input, y_sha256 byte-diff (exit 0 ⟺ max Hamming 0).
+> 단일칩이라 HW batch 전후 spike-streamer stop/start (배치 후 active 재가동 확인).
+
+### 축별 결과
+
+| 축 | 설정 | HW vs SW | 결론 |
+|---|---|---|---|
+| 1 deep cascade | L∈{3,4} stacked FC, random int4, act_bits{2,4} | 40/40 IDENT (max Hamming 0) | **MATCH** — `cascade_forward` 일반화, per-layer quantizer 깊이-무관 정확 합성 |
+
+### axis 1 — deep cascade (≥3-layer) MATCH
+- **SW 일반화 추가**: `akida_sw_lif.cascade_forward(x, [W1..WL], act_bits)` —
+  `fc_quantized_forward` 를 weight 리스트에 L회 체이닝 (각 층이 [0,2^ab-1] 로 재양자화한
+  출력을 다음 층 입력으로). L=1/2 는 round-3 single/2-layer 체인으로 정확 환원 → per-point
+  hardcode 아님, depth 일반화.
+- **HW 실측**: L∈{3,4} × act_bits∈{2,4} = 4 config × 10 probe = **40/40 byte-identical
+  (max Hamming 0)**, weight tensor sha 양쪽 일치. `on_hardware=true` (BackendType.Hardware).
+- **왜 깊이가 깨지 않는가**: 각 FC 가 출력을 [0,2^ab-1] 로 재양자화 → 층간 신호가 항상 다음
+  층이 기대하는 input 양자화 range 안에 머문다. 누적 drift 진입점 없음 → quantizer 가 깊이에
+  대해 정확히 합성. SW chain 이 동일 정수 연산을 수행 → byte-identical.
+- verify_substrate_akida.py = **5/5 PASS** (cascade L=1 == fc_quantized 환원 확인, 무회귀).
+- verdict 원문: `.verdicts/672_akida_spontaneous_firing/hw_sw_frontier2_sweep_2026_05_30.txt`
+
+### axis 2 — convolutional layer EXTENDED + verified (라운드 main event)
+- **HW 특성 (conv_map_diag)**: AKD1000(IP v1)에서 `InputConvolutional` 은 **항상 akida
+  SOFTWARE backend** 로 매핑 (v1 픽셀 front-end). 진짜 `Convolutional` 층은 **on-chip CNP
+  (genuine HW, "HW/c2 (Hardware) - 8 CNP1")** 로 매핑. 2-layer InputConv→Conv =
+  seq backends [Software, Hardware], on_hw=True.
+- **first divergence (conv_hw_capture)**: naive SW cross-correlation 이 stage-1(InputConv)
+  4/4 일치하나 stage-2(HW Conv) 3/4 **DIVERGE** — analog 아닌 modelable gap.
+- **mechanism 복원 (conv_isolate impulse probe)**: center(2,2) 임펄스 + corner[0,0] 커널
+  → 출력이 **반대 corner (1,1)** 에 등장 (cross-corr 면 (3,3)). 즉 on-chip `Convolutional`
+  은 **180° kernel flip = TRUE CONVOLUTION**, SW `InputConvolutional` front-end 은
+  cross-correlation. 두 layer type 가 silicon 에서 conv 방향이 다름.
+- **SW 일반화 확장**: `akida_sw_lif.conv2d_quantized_forward(x, kernel, act_bits, flip=)` —
+  quantized 2-D conv (SAME pad·stride1) + FC 와 동일 quantizer (step=2^(input_bits−act_bits)).
+  flip=False(InputConv) / flip=True(on-chip Conv). 재실행 → **30/30 probe byte-identical**
+  (wseed 7/99 ab4 + wseed7 ab2, max Hamming 0).
+- **결론**: conv 축은 hardware-specific 가 아니라 **modelable** (deterministic conv-orientation).
+  SW 실제 성장 (conv op 추가). verify_substrate_akida 5/5 무회귀.
+
+| 축 | 설정 | HW vs SW | 결론 |
+|---|---|---|---|
+| 2 conv | InputConv(SW xcorr)→Conv(HW true-conv), F1=F2=8 K3 ab{2,4} wseed{7,99} | 초기 3/4 DIVERGE → flip 보정 후 30/30 IDENT | **EXTENDED+verified** (180° flip 복원) |
+
+### axis 3 — multi-NP mapping MATCH (placement-invariant)
+- **config**: deep/wide FC stack 을 ≥2 neural processor 에 매핑. (a) L4·units512·ab4·wseed7
+  → **4 NP** (fc1 FNP3 + fc2/3/4 FNP2); (b) L3·units1024·ab2·wseed99 → **3 NP**.
+  둘 다 on_hardware=True, multi_np=True (NP count = model.summary() 파싱).
+- **HW vs SW**: SW = 동일 `fc_quantized_forward` cascade (n=units full-length, NP 배치 무지).
+  **20/20 probe byte-identical** (4-NP + 3-NP, weights match, 512/1024 길이).
+- **결론**: multi-NP 배치는 **transparent** — 칩이 층을 ≥2 NP 에 분산해도 결과는 단일 SW
+  compute 와 byte-for-byte 일치. 같은 math, 다른 placement.
+
+| 축 | 설정 | HW vs SW | 결론 |
+|---|---|---|---|
+| 3 multi-NP | FC stack → 3 NP / 4 NP (FNP2/FNP3) | 20/20 IDENT (placement-invariant) | **MATCH** — 동일 math 다른 배치 |
+
+---
+
+## 최종 FAITHFUL-ENVELOPE (4-stage 누적, 2026-05-30)
+
+SW(akida_sw_lif)가 AKD1000 실리콘을 **byte-identical 충실 재현**하는 검증완료 영역:
+- act_bits ∈ {1,2,4} 활성 양자화 (step=2^(input_bits−act_bits)).
+- weights: all-ones AND random SYMMETRIC int4 [-7,+7].
+- FullyConnected: 단일·2-layer·**DEEP cascade (3·4 layer)** [4차 axis-1].
+- **CONVOLUTION**: InputConvolutional (akida SW front-end, cross-correlation) AND
+  on-chip Convolutional (HW CNP, TRUE convolution = 180° kernel flip), SAME pad —
+  `conv2d_quantized_forward(flip=)` [4차 axis-2 EXTENDED].
+- **MULTI-NP 배치**: 3·4 neural processor 분산 모델 placement-invariant [4차 axis-3].
+- 기존 1·2차: R0~R4 regime · seed 0~int32max · threshold −16~64 · window ≤5000 · 60~64°C.
+
+**환원 불가 잔여 boundary** (SW 주장 안 함, 정직):
+- on-chip AkidaUnsupervised **LEARNING** — CLOSED-NEGATIVE (3차): 비결정성 (hidden
+  plasticity state; same init+input → different fitted weight). SW 는 충실한 INFERENCE
+  모델이고 stateful on-chip learning 은 모델 범위 밖.
+- 미측정: pooling·separable conv·>4-NP/cross-pass DMA 경계·stride>1/VALID-pad conv·
+  다른 die·>64°C·>5000-step. (inference forward 양자화 모델 = FC+conv+multi-NP 는 위
+  검증 range 에서 충실; learning 동역학은 모델 외로 확정.)
+
+### 4차 종합 판정
+deep-cascade **MATCH** · conv **EXTENDED+verified** (180° flip 복원) · multi-NP **MATCH**.
+inference forward 양자화 모델의 LAST frontier 3축 전부 covered-or-extended. 유일한
+hard boundary = on-chip learning (3차 CLOSED-NEGATIVE). LOOP honest-stop (3R, 4R cap 전).

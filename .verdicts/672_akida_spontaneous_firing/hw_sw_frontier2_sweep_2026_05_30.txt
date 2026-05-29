@@ -1,0 +1,340 @@
+================================================================================
+HW↔SW FRONTIER2 SWEEP (deep cascade / convolutional / multi-NP) — 2026-05-30
+verdict slug: 672_akida_spontaneous_firing
+device: AKD1000 (BC.00.000.002), akida 2.19.1, pi5-akida, on_hardware=true
+HW batch rule: spike-streamer.service stopped before / restarted after each batch.
+================================================================================
+
+This file is VERBATIM stdout of frontier_hw.py (AKD1000 silicon) vs frontier_sw.py
+(numpy quantized model) diffed by frontier_diff.py (y_sha256 byte-compare per
+probe input; exit 0 ⟺ every input byte-identical, max Hamming 0).
+
+────────────────────────────────────────────────────────────────────────────────
+AXIS 1 — DEEP CASCADE (>=3-layer stacked FullyConnected)  → MATCH
+────────────────────────────────────────────────────────────────────────────────
+config: --axis layers, random symmetric int4 weights (wseed 7), threshold 0,
+        n_layers ∈ {3,4} × act_bits ∈ {2,4} = 4 configs × 10 probe inputs = 40.
+SW op added: akida_sw_lif.cascade_forward(x, [W1..WL], act_bits) — chains
+        fc_quantized_forward over L weight tensors (per-layer re-quantize).
+        L=1/2 reduce to round-3 single/2-layer chain (verify 5/5 preserved).
+
+--- diff L=3 ab=2 ---
+axis=layers act_bits=2 wseed=7 HWw=dbe89e2479034781 SWw=dbe89e2479034781 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=2a7f4e4afbc34d7a SW=2a7f4e4afbc34d7a hamming=0 |Δ|max=0
+ idx2: IDENT HW=9b4c70dc6f88a47a SW=9b4c70dc6f88a47a hamming=0 |Δ|max=0
+ idx3: IDENT HW=5ced199abd181a9a SW=5ced199abd181a9a hamming=0 |Δ|max=0
+ idx4: IDENT HW=c59b912f4c73a0c7 SW=c59b912f4c73a0c7 hamming=0 |Δ|max=0
+ idx5: IDENT HW=2e7271b3c6a4509b SW=2e7271b3c6a4509b hamming=0 |Δ|max=0
+ idx6: IDENT HW=2a7f4e4afbc34d7a SW=2a7f4e4afbc34d7a hamming=0 |Δ|max=0
+ idx7: IDENT HW=47d91513513350f3 SW=47d91513513350f3 hamming=0 |Δ|max=0
+ idx8: IDENT HW=798d9ba744df719e SW=798d9ba744df719e hamming=0 |Δ|max=0
+ idx9: IDENT HW=9b8256699673204a SW=9b8256699673204a hamming=0 |Δ|max=0
+SUMMARY axis=layers: ident=10/10 divergent=0 max_hamming=0
+--- diff L=3 ab=4 ---
+axis=layers act_bits=4 wseed=7 HWw=dbe89e2479034781 SWw=dbe89e2479034781 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=ebc32e9b762212bd SW=ebc32e9b762212bd hamming=0 |Δ|max=0
+ idx2: IDENT HW=ebc32e9b762212bd SW=ebc32e9b762212bd hamming=0 |Δ|max=0
+ idx3: IDENT HW=b5832b918bb3defb SW=b5832b918bb3defb hamming=0 |Δ|max=0
+ idx4: IDENT HW=f96734de633d616b SW=f96734de633d616b hamming=0 |Δ|max=0
+ idx5: IDENT HW=b5832b918bb3defb SW=b5832b918bb3defb hamming=0 |Δ|max=0
+ idx6: IDENT HW=ebc32e9b762212bd SW=ebc32e9b762212bd hamming=0 |Δ|max=0
+ idx7: IDENT HW=144a8bb0afd46cb3 SW=144a8bb0afd46cb3 hamming=0 |Δ|max=0
+ idx8: IDENT HW=4da6d50d08d0328b SW=4da6d50d08d0328b hamming=0 |Δ|max=0
+ idx9: IDENT HW=144a8bb0afd46cb3 SW=144a8bb0afd46cb3 hamming=0 |Δ|max=0
+SUMMARY axis=layers: ident=10/10 divergent=0 max_hamming=0
+--- diff L=4 ab=2 ---
+axis=layers act_bits=2 wseed=7 HWw=dfc789b8f23569c1 SWw=dfc789b8f23569c1 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=b5473fe33ebd3c90 SW=b5473fe33ebd3c90 hamming=0 |Δ|max=0
+ idx2: IDENT HW=ec9e417fafaf045b SW=ec9e417fafaf045b hamming=0 |Δ|max=0
+ idx3: IDENT HW=b70be41ddaea70af SW=b70be41ddaea70af hamming=0 |Δ|max=0
+ idx4: IDENT HW=b65b26992a71f672 SW=b65b26992a71f672 hamming=0 |Δ|max=0
+ idx5: IDENT HW=ad3b113b20a0e856 SW=ad3b113b20a0e856 hamming=0 |Δ|max=0
+ idx6: IDENT HW=b5473fe33ebd3c90 SW=b5473fe33ebd3c90 hamming=0 |Δ|max=0
+ idx7: IDENT HW=2603957d89317d85 SW=2603957d89317d85 hamming=0 |Δ|max=0
+ idx8: IDENT HW=7d13278199b62212 SW=7d13278199b62212 hamming=0 |Δ|max=0
+ idx9: IDENT HW=7c9cca405a1250d6 SW=7c9cca405a1250d6 hamming=0 |Δ|max=0
+SUMMARY axis=layers: ident=10/10 divergent=0 max_hamming=0
+--- diff L=4 ab=4 ---
+axis=layers act_bits=4 wseed=7 HWw=dfc789b8f23569c1 SWw=dfc789b8f23569c1 weights_match=True
+ idx0: IDENT HW=38723a2e5e8a17aa SW=38723a2e5e8a17aa hamming=0 |Δ|max=0
+ idx1: IDENT HW=cb47bd360859132d SW=cb47bd360859132d hamming=0 |Δ|max=0
+ idx2: IDENT HW=cb47bd360859132d SW=cb47bd360859132d hamming=0 |Δ|max=0
+ idx3: IDENT HW=77e94a01dc4d95d4 SW=77e94a01dc4d95d4 hamming=0 |Δ|max=0
+ idx4: IDENT HW=f0841dca20e3378a SW=f0841dca20e3378a hamming=0 |Δ|max=0
+ idx5: IDENT HW=77e94a01dc4d95d4 SW=77e94a01dc4d95d4 hamming=0 |Δ|max=0
+ idx6: IDENT HW=cb47bd360859132d SW=cb47bd360859132d hamming=0 |Δ|max=0
+ idx7: IDENT HW=19e9692a9df16ea9 SW=19e9692a9df16ea9 hamming=0 |Δ|max=0
+ idx8: IDENT HW=00ab05bc8b0362ef SW=00ab05bc8b0362ef hamming=0 |Δ|max=0
+ idx9: IDENT HW=19e9692a9df16ea9 SW=19e9692a9df16ea9 hamming=0 |Δ|max=0
+SUMMARY axis=layers: ident=10/10 divergent=0 max_hamming=0
+
+
+RESULT: 40/40 probe inputs byte-identical, max Hamming 0, weights byte-match.
+The per-layer activation quantizer composes EXACTLY at depth 3 and 4 — no
+depth-dependent HW drift (each FC re-quantizes its output to [0,2^ab-1], keeping
+the inter-layer signal inside the input quantization range the next layer
+expects). cascade_forward is a faithful >=3-layer SW model. AXIS 1 = MATCH.
+
+RAW HW+SW JSONL (deep cascade):
+##### HW L=3 ab=2 #####
+{"meta": {"axis": "layers", "act_bits": 2, "weights_bits": 4, "wseed": 7, "n_layers": 3, "device": "BC.00.000.002", "weights_sha256": "dbe89e2479034781", "backend": "BackendType.Hardware", "on_hardware": true}}
+{"side": "HW", "axis": "layers", "input_idx": 0, "input_sha": "38723a2e5e8a17aa", "y": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "y_sha256": "38723a2e5e8a17aa", "y_max": 0, "y_min": 0, "n_levels": 1}
+{"side": "HW", "axis": "layers", "input_idx": 1, "input_sha": "2791341eb3aa3a23", "y": [3, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 3, 0, 3, 0], "y_sha256": "2a7f4e4afbc34d7a", "y_max": 3, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 2, "input_sha": "f23d672bb9b341f9", "y": [3, 0, 0, 0, 0, 3, 3, 2, 3, 0, 0, 1, 3, 0, 3, 0], "y_sha256": "9b4c70dc6f88a47a", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "HW", "axis": "layers", "input_idx": 3, "input_sha": "01dc6efcd278c885", "y": [3, 1, 0, 0, 0, 0, 2, 0, 3, 0, 3, 3, 0, 0, 3, 0], "y_sha256": "5ced199abd181a9a", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "HW", "axis": "layers", "input_idx": 4, "input_sha": "137044ce7afb0223", "y": [3, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 2, 3, 0, 3, 0], "y_sha256": "c59b912f4c73a0c7", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "HW", "axis": "layers", "input_idx": 5, "input_sha": "d48a0dbca4855130", "y": [3, 3, 0, 0, 0, 0, 3, 0, 3, 0, 3, 3, 0, 0, 3, 3], "y_sha256": "2e7271b3c6a4509b", "y_max": 3, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 6, "input_sha": "dd5ffe68ee78aad9", "y": [3, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 3, 0, 3, 0], "y_sha256": "2a7f4e4afbc34d7a", "y_max": 3, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 7, "input_sha": "4b642854351a691a", "y": [3, 3, 0, 0, 0, 0, 3, 0, 3, 3, 3, 0, 2, 0, 3, 3], "y_sha256": "47d91513513350f3", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "HW", "axis": "layers", "input_idx": 8, "input_sha": "cb59610c380501c2", "y": [3, 3, 0, 0, 0, 3, 3, 0, 2, 0, 0, 0, 3, 2, 3, 2], "y_sha256": "798d9ba744df719e", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "HW", "axis": "layers", "input_idx": 9, "input_sha": "6642014dfe67e77c", "y": [3, 3, 0, 0, 0, 0, 3, 0, 3, 3, 3, 0, 0, 0, 3, 3], "y_sha256": "9b8256699673204a", "y_max": 3, "y_min": 0, "n_levels": 2}
+##### SW L=3 ab=2 #####
+{"meta": {"axis": "layers", "act_bits": 2, "weights_bits": 4, "wseed": 7, "scale": 1.0, "n_layers": 3, "backend": "sw-numpy-frontier", "weights_sha256": "dbe89e2479034781"}}
+{"side": "SW", "axis": "layers", "input_idx": 0, "input_sha": "38723a2e5e8a17aa", "y": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "y_sha256": "38723a2e5e8a17aa", "y_max": 0, "y_min": 0, "n_levels": 1}
+{"side": "SW", "axis": "layers", "input_idx": 1, "input_sha": "2791341eb3aa3a23", "y": [3, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 3, 0, 3, 0], "y_sha256": "2a7f4e4afbc34d7a", "y_max": 3, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 2, "input_sha": "f23d672bb9b341f9", "y": [3, 0, 0, 0, 0, 3, 3, 2, 3, 0, 0, 1, 3, 0, 3, 0], "y_sha256": "9b4c70dc6f88a47a", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "SW", "axis": "layers", "input_idx": 3, "input_sha": "01dc6efcd278c885", "y": [3, 1, 0, 0, 0, 0, 2, 0, 3, 0, 3, 3, 0, 0, 3, 0], "y_sha256": "5ced199abd181a9a", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "SW", "axis": "layers", "input_idx": 4, "input_sha": "137044ce7afb0223", "y": [3, 0, 0, 0, 3, 0, 3, 0, 0, 0, 0, 2, 3, 0, 3, 0], "y_sha256": "c59b912f4c73a0c7", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "SW", "axis": "layers", "input_idx": 5, "input_sha": "d48a0dbca4855130", "y": [3, 3, 0, 0, 0, 0, 3, 0, 3, 0, 3, 3, 0, 0, 3, 3], "y_sha256": "2e7271b3c6a4509b", "y_max": 3, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 6, "input_sha": "dd5ffe68ee78aad9", "y": [3, 0, 0, 0, 0, 3, 3, 3, 3, 0, 0, 0, 3, 0, 3, 0], "y_sha256": "2a7f4e4afbc34d7a", "y_max": 3, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 7, "input_sha": "4b642854351a691a", "y": [3, 3, 0, 0, 0, 0, 3, 0, 3, 3, 3, 0, 2, 0, 3, 3], "y_sha256": "47d91513513350f3", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "SW", "axis": "layers", "input_idx": 8, "input_sha": "cb59610c380501c2", "y": [3, 3, 0, 0, 0, 3, 3, 0, 2, 0, 0, 0, 3, 2, 3, 2], "y_sha256": "798d9ba744df719e", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "SW", "axis": "layers", "input_idx": 9, "input_sha": "6642014dfe67e77c", "y": [3, 3, 0, 0, 0, 0, 3, 0, 3, 3, 3, 0, 0, 0, 3, 3], "y_sha256": "9b8256699673204a", "y_max": 3, "y_min": 0, "n_levels": 2}
+##### HW L=3 ab=4 #####
+{"meta": {"axis": "layers", "act_bits": 4, "weights_bits": 4, "wseed": 7, "n_layers": 3, "device": "BC.00.000.002", "weights_sha256": "dbe89e2479034781", "backend": "BackendType.Hardware", "on_hardware": true}}
+{"side": "HW", "axis": "layers", "input_idx": 0, "input_sha": "38723a2e5e8a17aa", "y": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "y_sha256": "38723a2e5e8a17aa", "y_max": 0, "y_min": 0, "n_levels": 1}
+{"side": "HW", "axis": "layers", "input_idx": 1, "input_sha": "2791341eb3aa3a23", "y": [15, 0, 0, 0, 0, 15, 15, 15, 15, 0, 0, 0, 15, 0, 15, 0], "y_sha256": "ebc32e9b762212bd", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 2, "input_sha": "f23d672bb9b341f9", "y": [15, 0, 0, 0, 0, 15, 15, 15, 15, 0, 0, 0, 15, 0, 15, 0], "y_sha256": "ebc32e9b762212bd", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 3, "input_sha": "01dc6efcd278c885", "y": [15, 15, 0, 0, 0, 0, 15, 0, 15, 0, 15, 15, 0, 0, 15, 15], "y_sha256": "b5832b918bb3defb", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 4, "input_sha": "137044ce7afb0223", "y": [15, 0, 0, 0, 15, 0, 15, 0, 0, 0, 0, 15, 15, 0, 15, 0], "y_sha256": "f96734de633d616b", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 5, "input_sha": "d48a0dbca4855130", "y": [15, 15, 0, 0, 0, 0, 15, 0, 15, 0, 15, 15, 0, 0, 15, 15], "y_sha256": "b5832b918bb3defb", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 6, "input_sha": "dd5ffe68ee78aad9", "y": [15, 0, 0, 0, 0, 15, 15, 15, 15, 0, 0, 0, 15, 0, 15, 0], "y_sha256": "ebc32e9b762212bd", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 7, "input_sha": "4b642854351a691a", "y": [15, 15, 0, 0, 0, 0, 15, 0, 15, 15, 15, 0, 15, 0, 15, 15], "y_sha256": "144a8bb0afd46cb3", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 8, "input_sha": "cb59610c380501c2", "y": [15, 15, 0, 0, 0, 15, 15, 0, 15, 0, 0, 0, 15, 15, 15, 0], "y_sha256": "4da6d50d08d0328b", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 9, "input_sha": "6642014dfe67e77c", "y": [15, 15, 0, 0, 0, 0, 15, 0, 15, 15, 15, 0, 15, 0, 15, 15], "y_sha256": "144a8bb0afd46cb3", "y_max": 15, "y_min": 0, "n_levels": 2}
+##### SW L=3 ab=4 #####
+{"meta": {"axis": "layers", "act_bits": 4, "weights_bits": 4, "wseed": 7, "scale": 1.0, "n_layers": 3, "backend": "sw-numpy-frontier", "weights_sha256": "dbe89e2479034781"}}
+{"side": "SW", "axis": "layers", "input_idx": 0, "input_sha": "38723a2e5e8a17aa", "y": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "y_sha256": "38723a2e5e8a17aa", "y_max": 0, "y_min": 0, "n_levels": 1}
+{"side": "SW", "axis": "layers", "input_idx": 1, "input_sha": "2791341eb3aa3a23", "y": [15, 0, 0, 0, 0, 15, 15, 15, 15, 0, 0, 0, 15, 0, 15, 0], "y_sha256": "ebc32e9b762212bd", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 2, "input_sha": "f23d672bb9b341f9", "y": [15, 0, 0, 0, 0, 15, 15, 15, 15, 0, 0, 0, 15, 0, 15, 0], "y_sha256": "ebc32e9b762212bd", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 3, "input_sha": "01dc6efcd278c885", "y": [15, 15, 0, 0, 0, 0, 15, 0, 15, 0, 15, 15, 0, 0, 15, 15], "y_sha256": "b5832b918bb3defb", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 4, "input_sha": "137044ce7afb0223", "y": [15, 0, 0, 0, 15, 0, 15, 0, 0, 0, 0, 15, 15, 0, 15, 0], "y_sha256": "f96734de633d616b", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 5, "input_sha": "d48a0dbca4855130", "y": [15, 15, 0, 0, 0, 0, 15, 0, 15, 0, 15, 15, 0, 0, 15, 15], "y_sha256": "b5832b918bb3defb", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 6, "input_sha": "dd5ffe68ee78aad9", "y": [15, 0, 0, 0, 0, 15, 15, 15, 15, 0, 0, 0, 15, 0, 15, 0], "y_sha256": "ebc32e9b762212bd", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 7, "input_sha": "4b642854351a691a", "y": [15, 15, 0, 0, 0, 0, 15, 0, 15, 15, 15, 0, 15, 0, 15, 15], "y_sha256": "144a8bb0afd46cb3", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 8, "input_sha": "cb59610c380501c2", "y": [15, 15, 0, 0, 0, 15, 15, 0, 15, 0, 0, 0, 15, 15, 15, 0], "y_sha256": "4da6d50d08d0328b", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 9, "input_sha": "6642014dfe67e77c", "y": [15, 15, 0, 0, 0, 0, 15, 0, 15, 15, 15, 0, 15, 0, 15, 15], "y_sha256": "144a8bb0afd46cb3", "y_max": 15, "y_min": 0, "n_levels": 2}
+##### HW L=4 ab=2 #####
+{"meta": {"axis": "layers", "act_bits": 2, "weights_bits": 4, "wseed": 7, "n_layers": 4, "device": "BC.00.000.002", "weights_sha256": "dfc789b8f23569c1", "backend": "BackendType.Hardware", "on_hardware": true}}
+{"side": "HW", "axis": "layers", "input_idx": 0, "input_sha": "38723a2e5e8a17aa", "y": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "y_sha256": "38723a2e5e8a17aa", "y_max": 0, "y_min": 0, "n_levels": 1}
+{"side": "HW", "axis": "layers", "input_idx": 1, "input_sha": "2791341eb3aa3a23", "y": [3, 0, 1, 2, 0, 3, 0, 3, 3, 3, 0, 3, 3, 3, 3, 0], "y_sha256": "b5473fe33ebd3c90", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "HW", "axis": "layers", "input_idx": 2, "input_sha": "f23d672bb9b341f9", "y": [3, 0, 1, 3, 0, 3, 0, 3, 3, 3, 0, 3, 3, 3, 0, 0], "y_sha256": "ec9e417fafaf045b", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "HW", "axis": "layers", "input_idx": 3, "input_sha": "01dc6efcd278c885", "y": [0, 3, 3, 2, 0, 3, 0, 1, 3, 3, 0, 3, 3, 3, 0, 0], "y_sha256": "b70be41ddaea70af", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "HW", "axis": "layers", "input_idx": 4, "input_sha": "137044ce7afb0223", "y": [1, 3, 3, 0, 0, 3, 0, 0, 3, 3, 0, 3, 0, 0, 0, 0], "y_sha256": "b65b26992a71f672", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "HW", "axis": "layers", "input_idx": 5, "input_sha": "d48a0dbca4855130", "y": [3, 3, 3, 3, 0, 3, 0, 0, 3, 3, 0, 3, 2, 3, 2, 0], "y_sha256": "ad3b113b20a0e856", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "HW", "axis": "layers", "input_idx": 6, "input_sha": "dd5ffe68ee78aad9", "y": [3, 0, 1, 2, 0, 3, 0, 3, 3, 3, 0, 3, 3, 3, 3, 0], "y_sha256": "b5473fe33ebd3c90", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "HW", "axis": "layers", "input_idx": 7, "input_sha": "4b642854351a691a", "y": [0, 3, 3, 0, 0, 3, 0, 0, 3, 3, 0, 3, 3, 3, 0, 0], "y_sha256": "2603957d89317d85", "y_max": 3, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 8, "input_sha": "cb59610c380501c2", "y": [3, 3, 3, 3, 1, 3, 0, 0, 0, 3, 0, 3, 3, 3, 2, 0], "y_sha256": "7d13278199b62212", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "HW", "axis": "layers", "input_idx": 9, "input_sha": "6642014dfe67e77c", "y": [0, 3, 3, 1, 0, 3, 0, 0, 3, 3, 0, 3, 3, 3, 1, 0], "y_sha256": "7c9cca405a1250d6", "y_max": 3, "y_min": 0, "n_levels": 3}
+##### SW L=4 ab=2 #####
+{"meta": {"axis": "layers", "act_bits": 2, "weights_bits": 4, "wseed": 7, "scale": 1.0, "n_layers": 4, "backend": "sw-numpy-frontier", "weights_sha256": "dfc789b8f23569c1"}}
+{"side": "SW", "axis": "layers", "input_idx": 0, "input_sha": "38723a2e5e8a17aa", "y": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "y_sha256": "38723a2e5e8a17aa", "y_max": 0, "y_min": 0, "n_levels": 1}
+{"side": "SW", "axis": "layers", "input_idx": 1, "input_sha": "2791341eb3aa3a23", "y": [3, 0, 1, 2, 0, 3, 0, 3, 3, 3, 0, 3, 3, 3, 3, 0], "y_sha256": "b5473fe33ebd3c90", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "SW", "axis": "layers", "input_idx": 2, "input_sha": "f23d672bb9b341f9", "y": [3, 0, 1, 3, 0, 3, 0, 3, 3, 3, 0, 3, 3, 3, 0, 0], "y_sha256": "ec9e417fafaf045b", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "SW", "axis": "layers", "input_idx": 3, "input_sha": "01dc6efcd278c885", "y": [0, 3, 3, 2, 0, 3, 0, 1, 3, 3, 0, 3, 3, 3, 0, 0], "y_sha256": "b70be41ddaea70af", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "SW", "axis": "layers", "input_idx": 4, "input_sha": "137044ce7afb0223", "y": [1, 3, 3, 0, 0, 3, 0, 0, 3, 3, 0, 3, 0, 0, 0, 0], "y_sha256": "b65b26992a71f672", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "SW", "axis": "layers", "input_idx": 5, "input_sha": "d48a0dbca4855130", "y": [3, 3, 3, 3, 0, 3, 0, 0, 3, 3, 0, 3, 2, 3, 2, 0], "y_sha256": "ad3b113b20a0e856", "y_max": 3, "y_min": 0, "n_levels": 3}
+{"side": "SW", "axis": "layers", "input_idx": 6, "input_sha": "dd5ffe68ee78aad9", "y": [3, 0, 1, 2, 0, 3, 0, 3, 3, 3, 0, 3, 3, 3, 3, 0], "y_sha256": "b5473fe33ebd3c90", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "SW", "axis": "layers", "input_idx": 7, "input_sha": "4b642854351a691a", "y": [0, 3, 3, 0, 0, 3, 0, 0, 3, 3, 0, 3, 3, 3, 0, 0], "y_sha256": "2603957d89317d85", "y_max": 3, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 8, "input_sha": "cb59610c380501c2", "y": [3, 3, 3, 3, 1, 3, 0, 0, 0, 3, 0, 3, 3, 3, 2, 0], "y_sha256": "7d13278199b62212", "y_max": 3, "y_min": 0, "n_levels": 4}
+{"side": "SW", "axis": "layers", "input_idx": 9, "input_sha": "6642014dfe67e77c", "y": [0, 3, 3, 1, 0, 3, 0, 0, 3, 3, 0, 3, 3, 3, 1, 0], "y_sha256": "7c9cca405a1250d6", "y_max": 3, "y_min": 0, "n_levels": 3}
+##### HW L=4 ab=4 #####
+{"meta": {"axis": "layers", "act_bits": 4, "weights_bits": 4, "wseed": 7, "n_layers": 4, "device": "BC.00.000.002", "weights_sha256": "dfc789b8f23569c1", "backend": "BackendType.Hardware", "on_hardware": true}}
+{"side": "HW", "axis": "layers", "input_idx": 0, "input_sha": "38723a2e5e8a17aa", "y": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "y_sha256": "38723a2e5e8a17aa", "y_max": 0, "y_min": 0, "n_levels": 1}
+{"side": "HW", "axis": "layers", "input_idx": 1, "input_sha": "2791341eb3aa3a23", "y": [15, 0, 15, 15, 0, 15, 0, 15, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "cb47bd360859132d", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 2, "input_sha": "f23d672bb9b341f9", "y": [15, 0, 15, 15, 0, 15, 0, 15, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "cb47bd360859132d", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 3, "input_sha": "01dc6efcd278c885", "y": [15, 15, 15, 15, 0, 15, 0, 0, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "77e94a01dc4d95d4", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 4, "input_sha": "137044ce7afb0223", "y": [15, 15, 15, 0, 0, 15, 0, 0, 15, 15, 0, 15, 0, 0, 0, 0], "y_sha256": "f0841dca20e3378a", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 5, "input_sha": "d48a0dbca4855130", "y": [15, 15, 15, 15, 0, 15, 0, 0, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "77e94a01dc4d95d4", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 6, "input_sha": "dd5ffe68ee78aad9", "y": [15, 0, 15, 15, 0, 15, 0, 15, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "cb47bd360859132d", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 7, "input_sha": "4b642854351a691a", "y": [0, 15, 15, 0, 0, 15, 0, 0, 15, 15, 0, 15, 15, 15, 0, 0], "y_sha256": "19e9692a9df16ea9", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 8, "input_sha": "cb59610c380501c2", "y": [15, 15, 15, 15, 0, 15, 0, 0, 0, 15, 0, 15, 15, 15, 0, 0], "y_sha256": "00ab05bc8b0362ef", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "HW", "axis": "layers", "input_idx": 9, "input_sha": "6642014dfe67e77c", "y": [0, 15, 15, 0, 0, 15, 0, 0, 15, 15, 0, 15, 15, 15, 0, 0], "y_sha256": "19e9692a9df16ea9", "y_max": 15, "y_min": 0, "n_levels": 2}
+##### SW L=4 ab=4 #####
+{"meta": {"axis": "layers", "act_bits": 4, "weights_bits": 4, "wseed": 7, "scale": 1.0, "n_layers": 4, "backend": "sw-numpy-frontier", "weights_sha256": "dfc789b8f23569c1"}}
+{"side": "SW", "axis": "layers", "input_idx": 0, "input_sha": "38723a2e5e8a17aa", "y": [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], "y_sha256": "38723a2e5e8a17aa", "y_max": 0, "y_min": 0, "n_levels": 1}
+{"side": "SW", "axis": "layers", "input_idx": 1, "input_sha": "2791341eb3aa3a23", "y": [15, 0, 15, 15, 0, 15, 0, 15, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "cb47bd360859132d", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 2, "input_sha": "f23d672bb9b341f9", "y": [15, 0, 15, 15, 0, 15, 0, 15, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "cb47bd360859132d", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 3, "input_sha": "01dc6efcd278c885", "y": [15, 15, 15, 15, 0, 15, 0, 0, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "77e94a01dc4d95d4", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 4, "input_sha": "137044ce7afb0223", "y": [15, 15, 15, 0, 0, 15, 0, 0, 15, 15, 0, 15, 0, 0, 0, 0], "y_sha256": "f0841dca20e3378a", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 5, "input_sha": "d48a0dbca4855130", "y": [15, 15, 15, 15, 0, 15, 0, 0, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "77e94a01dc4d95d4", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 6, "input_sha": "dd5ffe68ee78aad9", "y": [15, 0, 15, 15, 0, 15, 0, 15, 15, 15, 0, 15, 15, 15, 15, 0], "y_sha256": "cb47bd360859132d", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 7, "input_sha": "4b642854351a691a", "y": [0, 15, 15, 0, 0, 15, 0, 0, 15, 15, 0, 15, 15, 15, 0, 0], "y_sha256": "19e9692a9df16ea9", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 8, "input_sha": "cb59610c380501c2", "y": [15, 15, 15, 15, 0, 15, 0, 0, 0, 15, 0, 15, 15, 15, 0, 0], "y_sha256": "00ab05bc8b0362ef", "y_max": 15, "y_min": 0, "n_levels": 2}
+{"side": "SW", "axis": "layers", "input_idx": 9, "input_sha": "6642014dfe67e77c", "y": [0, 15, 15, 0, 0, 15, 0, 0, 15, 15, 0, 15, 15, 15, 0, 0], "y_sha256": "19e9692a9df16ea9", "y_max": 15, "y_min": 0, "n_levels": 2}
+
+
+────────────────────────────────────────────────────────────────────────────────
+AXIS 2 — CONVOLUTIONAL LAYERS  → EXTENDED + verified  (round's main event)
+────────────────────────────────────────────────────────────────────────────────
+HW CHARACTERIZATION (conv_map_diag.py on AKD1000, IP v1 / NSoC_v2):
+  - InputConvolutional ALWAYS maps to the akida SOFTWARE backend (v1 pixel
+    front-end) -- summary literally "SW/c (Software)" for wb4, wb1, 3-channel.
+  - Convolutional (non-input) maps to the on-chip CNP -> "HW/c2 (Hardware) - 8
+    CNP1" (genuine hardware convolutional neural processors).
+  - 2-layer InputConv->Conv: seq backends = [Software, Hardware], on_hw=True.
+
+FIRST DIVERGENCE (conv_hw_capture.py): naive SW cross-correlation matched stage-1
+(InputConv) 4/4 byte-identical but DIVERGED on stage-2 (HW Conv) 3/4 -- a real,
+modelable gap (NOT analog).
+
+MECHANISM RECOVERED (conv_isolate.py impulse probe, VERBATIM):
+{"backends": ["BackendType.Software", "BackendType.Hardware"], "W2_nonzero_at": "[0,0,0,0]=1 (top-left corner)", "impulse_center_input": [2, 2], "output_grid": [[0, 0, 0, 0, 0], [0, 15, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0], [0, 0, 0, 0, 0]], "nonzero_positions": [[1, 1]]}
+
+  Impulse at center (2,2), kernel nonzero ONLY at corner [0,0], output lands at
+  (1,1) = the OPPOSITE corner. Cross-correlation would put it at (3,3). Output at
+  (1,1) proves the on-chip Convolutional applies a 180-degree KERNEL FLIP =
+  TRUE CONVOLUTION, while the SW InputConvolutional front-end is cross-correlation.
+
+SW EXTENSION: akida_sw_lif.conv2d_quantized_forward(x, kernel, act_bits, flip=) --
+quantized 2-D conv (SAME pad, stride 1) + the SAME activation quantizer as FC
+(step = 2^(input_bits-act_bits)). flip=False for InputConv (cross-corr), flip=True
+for the on-chip Conv (true convolution). Re-ran -> ALL byte-identical:
+
+--- conv diff ws=7 ab=4 ---
+axis=conv act_bits=4 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=ad7facb2586fc6e9 SW=ad7facb2586fc6e9 hamming=0 |Δ|max=0
+ idx1: IDENT HW=8a128ba0faa2a226 SW=8a128ba0faa2a226 hamming=0 |Δ|max=0
+ idx2: IDENT HW=7c8d0449ab88d93a SW=7c8d0449ab88d93a hamming=0 |Δ|max=0
+ idx3: IDENT HW=bc71c7053c79ad82 SW=bc71c7053c79ad82 hamming=0 |Δ|max=0
+ idx4: IDENT HW=2636bfce5667bc67 SW=2636bfce5667bc67 hamming=0 |Δ|max=0
+ idx5: IDENT HW=ce02521a761611e0 SW=ce02521a761611e0 hamming=0 |Δ|max=0
+ idx6: IDENT HW=b1448258bd89d035 SW=b1448258bd89d035 hamming=0 |Δ|max=0
+ idx7: IDENT HW=2d741a494ebd443d SW=2d741a494ebd443d hamming=0 |Δ|max=0
+ idx8: IDENT HW=4c683248cb6a7067 SW=4c683248cb6a7067 hamming=0 |Δ|max=0
+ idx9: IDENT HW=e9b1c4093fa2d5d4 SW=e9b1c4093fa2d5d4 hamming=0 |Δ|max=0
+SUMMARY axis=conv: ident=10/10 divergent=0 max_hamming=0
+--- conv diff ws=99 ab=4 ---
+axis=conv act_bits=4 wseed=99 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=ad7facb2586fc6e9 SW=ad7facb2586fc6e9 hamming=0 |Δ|max=0
+ idx1: IDENT HW=4ebc60bda2f6af2f SW=4ebc60bda2f6af2f hamming=0 |Δ|max=0
+ idx2: IDENT HW=526e2c6b85c69efb SW=526e2c6b85c69efb hamming=0 |Δ|max=0
+ idx3: IDENT HW=1344b6f3b097d8ae SW=1344b6f3b097d8ae hamming=0 |Δ|max=0
+ idx4: IDENT HW=e0220d05edacfc64 SW=e0220d05edacfc64 hamming=0 |Δ|max=0
+ idx5: IDENT HW=0f65cb80b645e8b1 SW=0f65cb80b645e8b1 hamming=0 |Δ|max=0
+ idx6: IDENT HW=9cf78792c45fb0e5 SW=9cf78792c45fb0e5 hamming=0 |Δ|max=0
+ idx7: IDENT HW=531f7734b236efea SW=531f7734b236efea hamming=0 |Δ|max=0
+ idx8: IDENT HW=36cc7af7d43c018b SW=36cc7af7d43c018b hamming=0 |Δ|max=0
+ idx9: IDENT HW=872d2054b797ff54 SW=872d2054b797ff54 hamming=0 |Δ|max=0
+SUMMARY axis=conv: ident=10/10 divergent=0 max_hamming=0
+--- conv diff ws=7 ab=2 ---
+axis=conv act_bits=2 wseed=7 HWw=None SWw=None weights_match=True
+ idx0: IDENT HW=ad7facb2586fc6e9 SW=ad7facb2586fc6e9 hamming=0 |Δ|max=0
+ idx1: IDENT HW=34799c830a14882a SW=34799c830a14882a hamming=0 |Δ|max=0
+ idx2: IDENT HW=bde1d205da959e7b SW=bde1d205da959e7b hamming=0 |Δ|max=0
+ idx3: IDENT HW=99d68236a86ef609 SW=99d68236a86ef609 hamming=0 |Δ|max=0
+ idx4: IDENT HW=9e39b30aabcb94a4 SW=9e39b30aabcb94a4 hamming=0 |Δ|max=0
+ idx5: IDENT HW=4cc0a8b5b5ab460f SW=4cc0a8b5b5ab460f hamming=0 |Δ|max=0
+ idx6: IDENT HW=92df31670e5db88b SW=92df31670e5db88b hamming=0 |Δ|max=0
+ idx7: IDENT HW=f404f8ac3dfbf74b SW=f404f8ac3dfbf74b hamming=0 |Δ|max=0
+ idx8: IDENT HW=abdb77ac0cdf874a SW=abdb77ac0cdf874a hamming=0 |Δ|max=0
+ idx9: IDENT HW=4c408d4641b68b8d SW=4c408d4641b68b8d hamming=0 |Δ|max=0
+SUMMARY axis=conv: ident=10/10 divergent=0 max_hamming=0
+
+
+RESULT: 30/30 probe inputs byte-identical (wseed 7/99 act_bits 4 + wseed 7
+act_bits 2), max Hamming 0. The conv axis is MODELABLE; the divergence was a
+deterministic cross-correlation-vs-convolution kernel orientation, recovered and
+folded into the SW model. AXIS 2 = EXTENDED + verified.
+
+────────────────────────────────────────────────────────────────────────────────
+AXIS 3 — MULTI-NP MAPPING  → MATCH (placement-invariant)
+────────────────────────────────────────────────────────────────────────────────
+config: deep/wide FC stack mapped across MULTIPLE neural processors. Two configs:
+  (a) layers=4, units=512, act_bits=4, wseed=7  -> 4 NPs (fc1 FNP3 + fc2/3/4 FNP2)
+  (b) layers=3, units=1024, act_bits=2, wseed=99 -> 3 NPs
+Both on_hardware=True, multi_np=True (NP count parsed from model.summary()).
+SW = the SAME akida_sw_lif.fc_quantized_forward cascade (n=units, full-length),
+single numpy compute -- no awareness of NP placement.
+
+--- multinp diff L4u512 ab4 wseed7 (4 NPs) ---
+axis=multinp layers=4 units=512 act_bits=4 on_hw=True np_total=4 multi_np=True n_seq=1 weights_match=True
+ idx0: IDENT HW=ad7facb2586fc6e9(512) SW=ad7facb2586fc6e9(512)
+ idx1: IDENT HW=249c76ae6890eeaf(512) SW=249c76ae6890eeaf(512)
+ idx2: IDENT HW=dda1d8ce3a5976df(512) SW=dda1d8ce3a5976df(512)
+ idx3: IDENT HW=6c8adf426f8fc5e4(512) SW=6c8adf426f8fc5e4(512)
+ idx4: IDENT HW=131ced8d5e76975c(512) SW=131ced8d5e76975c(512)
+ idx5: IDENT HW=ef79e2ccd975a622(512) SW=ef79e2ccd975a622(512)
+ idx6: IDENT HW=549c175845827076(512) SW=549c175845827076(512)
+ idx7: IDENT HW=4bbf3da86ecbc65d(512) SW=4bbf3da86ecbc65d(512)
+ idx8: IDENT HW=0dbdcf3dbcb6f569(512) SW=0dbdcf3dbcb6f569(512)
+ idx9: IDENT HW=1287781e68831f53(512) SW=1287781e68831f53(512)
+SUMMARY axis=multinp: ident=10/10 divergent=0 weights_match=True np_total=4 -> PLACEMENT-INVARIANT
+
+--- multinp diff L3u1024 ab2 wseed99 (3 NPs) ---
+axis=multinp layers=3 units=1024 act_bits=2 on_hw=True np_total=3 multi_np=True n_seq=1 weights_match=True
+ idx0: IDENT HW=9f1dcbc35c350d60(1024) SW=9f1dcbc35c350d60(1024)
+ idx1: IDENT HW=7e5536a7501ab968(1024) SW=7e5536a7501ab968(1024)
+ idx2: IDENT HW=d5ea7b156fe9d6fd(1024) SW=d5ea7b156fe9d6fd(1024)
+ idx3: IDENT HW=2c8924f49dfaf434(1024) SW=2c8924f49dfaf434(1024)
+ idx4: IDENT HW=4efe97517d00d3a0(1024) SW=4efe97517d00d3a0(1024)
+ idx5: IDENT HW=03eaf32690c48680(1024) SW=03eaf32690c48680(1024)
+ idx6: IDENT HW=be8b966e2100cbab(1024) SW=be8b966e2100cbab(1024)
+ idx7: IDENT HW=34dc34cea6617d99(1024) SW=34dc34cea6617d99(1024)
+ idx8: IDENT HW=8b9d5930d0f919f5(1024) SW=8b9d5930d0f919f5(1024)
+ idx9: IDENT HW=7fce5e7e669c2fb7(1024) SW=7fce5e7e669c2fb7(1024)
+SUMMARY axis=multinp: ident=10/10 divergent=0 weights_match=True np_total=3 -> PLACEMENT-INVARIANT
+
+--- HW mapping summary (L4u512, NP placement evidence) ---
+                 
+_______________________________________
+
+__________________________________________________________
+Layer (type)  Output shape  Kernel shape      Components
+
+======= HW/fc1-fc4 (Hardware) - size: 636472 bytes =======
+
+fc1 (Fully.)  [1, 1, 512]   (1, 1, 16, 512)   1 FNP3    
+__________________________________________________________
+fc2 (Fully.)  [1, 1, 512]   (1, 1, 512, 512)  1 FNP2    
+__________________________________________________________
+fc3 (Fully.)  [1, 1, 512]   (1, 1, 512, 512)  1 FNP2    
+__________________________________________________________
+fc4 (Fully.)  [1, 1, 512]   (1, 1, 512, 512)  1 FNP2    
+__________________________________________________________
+
+
+
+RESULT: 20/20 probe inputs byte-identical (4-NP + 3-NP placements), weights match,
+full-length output (512 / 1024). Multi-NP placement is TRANSPARENT: the chip
+distributes layers across >=2 neural processors but the result equals the single
+SW compute byte-for-byte. Same math, different placement. AXIS 3 = MATCH
+(placement-invariant).
+
+================================================================================
+FINAL FAITHFUL-ENVELOPE (cumulative across all 4 stages, 2026-05-30)
+================================================================================
+SW (akida_sw_lif) now faithfully reproduces the AKD1000 silicon (byte-identical,
+verified) over:
+  - activation quantization act_bits in {1,2,4} (step = 2^(input_bits-act_bits))
+  - weights: all-ones AND random SYMMETRIC int4 [-7,+7]
+  - FullyConnected: single, 2-layer, and DEEP cascade (3 and 4 layers) [round-4 ax1]
+  - CONVOLUTION: InputConvolutional (akida SW front-end, cross-correlation) AND the
+    on-chip Convolutional (HW CNP, TRUE convolution = 180deg kernel flip), SAME pad,
+    via conv2d_quantized_forward(flip=) [round-4 ax2 -- EXTENDED]
+  - MULTI-NP placement: models spanning 3 and 4 neural processors are placement-
+    invariant -- identical to the single SW compute [round-4 ax3]
+  - prior 1/2 envelope: R0..R4 regimes, seed 0..int32max, threshold -16..64,
+    window <=5000, 60..64 C.
+
+IRREDUCIBLE REMAINING BOUNDARY (SW does NOT claim, honest):
+  - on-chip AkidaUnsupervised LEARNING -- CLOSED-NEGATIVE (round-3): non-deterministic
+    (hidden plasticity state; same init + same input -> different fitted weights).
+    The SW is a faithful INFERENCE model; stateful on-chip learning is out of scope.
+  - unmeasured: pooling layers, separable conv, >4-NP / cross-pass DMA boundaries,
+    stride>1 / VALID-pad conv variants, other AKD1000 die, >64 C, >5000-step window.
+    (The inference forward quantized model -- FC + conv + multi-NP -- is faithful
+    over the verified ranges above; learning dynamics are confirmed out of model.)
