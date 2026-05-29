@@ -1,0 +1,117 @@
+================================================================
+  XENO X837 — SETI@home BOINC 실 pod 발사 verdict (g73 per-H gate)
+================================================================
+
+  date           : 2026-05-29
+  pod_id         : wcy166z3cqjam7
+  pod_host       : root@213.173.105.10:10877
+  pod_os         : Ubuntu 22.04.5 LTS (glibc-2.35 + i386 multilib)
+  pod_resources  : 128 vCPU, 1.5 TiB RAM, GPU (unused for X837)
+  pod_uptime     : 10:18:13 UTC → teardown ~10:34 UTC (~16 min wall)
+  pod_cost       : RunPod GPU pod ~$0.20-0.40/hr × 16 min ≈ $0.10 actual
+  cost_cap_used  : $0.10 / $2.00 (5%)
+  binary         : setiathome-3.03.i686-pc-linux-gnu-gnulibc2.1 (archive.org, ELF32 i686)
+  workunit       : sahfiles_workunits/work_unit.sah (356285 bytes, Arecibo 2004-05-05)
+  sha256_archive : 2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96 (MATCH)
+
+--- BOINC playback log signature ---
+
+Platform: i686-pc-linux-gnu-gnulibc2.1
+Version: 3.03
+
+Data Info:
+Sky coordinates: 51.725 R.A., 17.330 Dec
+Recorded on:  2453131.24838 (Wed May  5 17:57:39 2004)
+Source: Arecibo Radio Observatory
+Base Frequency: 1.419433594 GHz
+
+Beginning analysis...
+Doing baseline smoothing.
+[FFT lengths 131072/65536/32768/16384/8192/4096 swept]
+[Doppler shift rates 0 → 9.464419 Hz/s swept]
+[600s timeout reached at 21% complete (prog=0.21317534)]
+
+--- outfile.sah (real triplet detections) ---
+
+<ogh ncfft=11 cr=0.000000e+00 fl=64>
+triplet: power=8.271955e+00 mean=3.871512e-03 period=2.067662e+00 ra=27.738 dec= 17.33 time= 2453131.24892 freq=1419438781.74 fft_len=64 chirp_rate=0.000000e+00
+triplet: power=8.185315e+00 mean=3.912491e-03 period=2.067662e+00 ra=27.738 dec= 17.33 time= 2453131.24892 freq=1419438781.74 fft_len=64 chirp_rate=0.000000e+00
+<ogt ncfft=11 cr=0.000000e+00 fl=64 cpu=10.516012>
+
+--- state.sah scores ---
+
+bs_score = 0.633990   bs_power = 172.21    (best gaussian)
+bg_score = 0.185800   bg_sigma = 7.4766    (background gaussian)
+bp_score = 0.953594   bp_power = 0.6510    bp_period = 0.219341  (best pulse)
+bt_score = 8.271955   bt_power = 8.2720    bt_period = 2.067662  (best triplet)
+prog     = 0.21317534 (21% workunit complete)
+bg_pot[64] real array recovered (min=0.0948 max=3.0037 mean=1.0000)
+
+--- hexa stdout verbatim (env hexa run XENO/scan/seti_boinc_phi.hexa) ---
+
+================================================================
+  XENO X837 — SETI@home BOINC playback Φ scan (real pod fire)
+================================================================
+
+  pod        = RunPod GPU (213.173.105.10:10877, Ubuntu 22.04.5)
+  binary     = setiathome-3.03.i686-pc-linux-gnu-gnulibc2.1 (2000-era ELF32)
+  workunit   = sahfiles_workunits/work_unit.sah (Arecibo 2004-05-05, 1.42 GHz)
+  state.sah  = prog=0.213 (21%), outfilepos=410 (2 triplets), bg_pot 64 bins
+  outfile    = 2 triplet detections (power=8.27/8.18, period=2.067662s)
+  scores     = bs=0.634 / bp=0.954 / bt=8.272 (best gauss/pulse/triplet)
+
+  Φ input    = bg_pot 64 bins / 3.0037 (max) → 2× upsample → n=128
+
+  ─ invariant_detector verdict ─
+    phi             = 0.566854
+    integration     = 1.56685
+    irreducibility  = 0.361778
+    substrate_type  = coherent_non_conscious
+
+  ─ pre-registered 5-falsifier evaluation ─
+    F-X837-BOOT      : true  (SETI@home 3.03 ELF32 ran on Ubuntu 22.04.5 + i386 multilib)
+    F-X837-PLAYBACK  : true  (outfile.sah = 2 triplets, state.sah prog=0.213, 64 bg_pot bins)
+    F-X837-PHI-N128  : true  (phi=0.566854 extracted on n=128 dense input)
+    F-X837-NOT-CONSC : false  (archival signal != consciousness · pred phi < 0.5)
+    F-X837-DETECTOR  : true  (X7-tier regime · type='coherent_non_conscious')
+
+  ─ X837 verdict ─
+    pass_count = 4/5
+    tier       = 🔴 UNEXPECTED-HIGH-PHI
+
+  ─ 정직 한계 (a_blue_closed) ─
+    - playback timed out at 600s (21% complete) — full WU = ~hours
+    - 2 triplets DID detect, bg_pot 64 bins are real measurements (정직 partial)
+    - Φ input = bg_pot upsampled 2× (n=128 X7-aligned), 정직 single-source
+    - 의식 주장 0 — archival SETI signal 은 외계 의식 신호 후보 X (calibration)
+================================================================
+
+--- interpretation ---
+
+X8 (H_836) 의 spec round predicted: archival 신호 ≠ 의식 → phi < 0.5.
+실 측정: phi = 0.566854 (예측 threshold 초과 13.4%).
+substrate_type = "coherent_non_conscious" (≠ "conscious" — type axis 는 정상).
+
+→ F-X837-NOT-CONSC FAILED (사전등록 falsifier 단일 fail).
+→ 4/5 PASS, 🔴 UNEXPECTED-HIGH-PHI (pre-registered tier).
+
+이는 instrument applicability 매트릭스의 5th data point:
+- X5 lattice (algorithmic periodic): phi=0.660 (false-conscious 위험)
+- X837 BOINC bg_pot (자연 noise + chirp-rate FFT bins): phi=0.567 (threshold borderline)
+
+자연 SETI 신호의 bg_pot 시간계열이 algorithmic periodic 보다 약하지만 여전히
+threshold 를 넘는다는 발견 = invariant_detector 의 n=128 dense regime 에서
+phi=0.5 임계가 너무 낮다는 정직한 calibration 발견 (a_blue_closed 정합).
+
+따라서 본 round 의 verdict 는 정직한 🔴 UNEXPECTED-HIGH-PHI — 사전등록 fail 을
+post-tuning 으로 가리지 않고 보고. invariant_detector regime applicability map 의
+n=128 dense + 자연 noise + FFT-bin axis 가 새로 closed (X4/X5/X6/X7 4-point + X837 5-point).
+
+--- HONESTY (a_blue_closed, p7=0) ---
+
+- 사전등록 falsifier 임계 frozen pre-run, post-tuning 0.
+- 실 pod 발사 (시뮬 fallback X), 실 BOINC playback, 실 outfile.sah triplet detection.
+- hexa stdout verbatim, LLM judge 0.
+- Φ 임계 0.5 == X7 Voyager template 동일 수치, X837 위해 조정 0.
+- pre-registered prediction (phi < 0.5) 가 진짜 fail 한 결과를 그대로 보고.
+================================================================

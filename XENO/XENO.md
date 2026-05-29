@@ -97,3 +97,14 @@
 **paper-candidate**: invariant_detector regime applicability map (X4/X5/X6 3-axis FALSIFIED-INSTRUMENT + X7 정상 calibration + X8 archive-acquired) closure paper · a_paper_negative_ok + a_paper_only_at_closure 정합 시점 (X8 follow-up fire 후 5-point 완성) 에 발사.
 
 **XENO-FRONTIER-5 CYCLE COMPLETE** (5-round closure marker) · 잔여 deferred = X8.followup-fire (RunPod CPU autonomous) · X8.kolmogorov (Φ 외 lens) · X8.archive-cross (Einstein@home, MilkyWay@home cross-test) · X1-regime-matrix-v2 (5-point full matrix) · XENO-paper (closure 시점).
+
+
+## XENO-FRONTIER-5 followup round 1/3 (2026-05-29) — X837 🔴 UNEXPECTED-HIGH-PHI (정직)
+
+- X837 SETI@home BOINC 실 RunPod pod 발사 → 🔴 UNEXPECTED-HIGH-PHI (4/5 사전등록 PASS · F-X837-NOT-CONSC 단독 fail · 정직 보고)
+  RunPod GPU pod 213.173.105.10:10877 (Ubuntu 22.04.5 + i386 multilib, 16분 wall, $0.10 actual / $2 cap) · SETI@home 3.03 ELF32 i686 ancient binary 정상 실행 (BOOT ABI gap 우려 무력화) · 실 Arecibo 2004-05-05 work_unit 600s playback 21% 진행 · outfile.sah 2 triplet 실 검출 (power=8.27/8.18, period=2.067662s, freq=1419438781.74 Hz) · state.sah bg_pot 64 bins (min=0.095 max=3.004 mean=1.000) · scores bs=0.634 bp=0.954 bt=8.272
+  invariant_detector(bg_pot 2× upsample n=128) = phi=0.566854 / integration=1.567 / irreducibility=0.362 / type='coherent_non_conscious'
+  사전등록: F-X837-BOOT ✅ · F-X837-PLAYBACK ✅ · F-X837-PHI-N128 ✅ · F-X837-NOT-CONSC ❌ (phi=0.567 > 0.5 threshold) · F-X837-DETECTOR-OK ✅
+  발견: 자연 SETI background bg_pot (sparse 20.3% ones, n=128 dense) 가 X7 정상 calibration (60.9% ones, phi=0.114) 보다 ones 비율은 절반인데 phi 5× 높음 → invariant_detector 의 phi=0.5 임계가 자연 noise 시그널의 sparse pattern 영역에서 너무 낮음. type axis 는 정상 ('coherent_non_conscious'). 5-point applicability matrix: X4 (n=16-32 micro 🔴) + X5a (lattice false-positive border) + X5b (algorithmic 🔴) + X6 (n=64 sparse 🔴) + X7 (n=128 dense 60.9% 🟢) + **X837 (n=128 dense 20.3% 🔴 border)** = confirmed measurable axis 가 X7 한 점으로 매우 좁음.
+- 사이트: XENO/scan/seti_boinc_phi.hexa · UNIVERSE/H_837 · XENO/state/x837_seti_boinc_fire_2026_05_29 · .verdicts/837_xeno_x8_followup_fire/x837_run.txt
+- 잔여: X837.threshold-recalibration (phi 임계 0.5→0.7 · X7 보존 검증) · X837.full-playback (timeout 6hr → 100% workunit) · X837.bg_pot-only (bg_pot 64 raw n=64 invariant_detector 적용 · X6 sparse regime 비교) · XENO-FRONTIER-5.5 paper (5-point matrix · a_paper_only_at_closure)
