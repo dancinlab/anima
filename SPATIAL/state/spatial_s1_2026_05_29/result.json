@@ -1,0 +1,69 @@
+{
+  "domain": "SPATIAL",
+  "round": "S1",
+  "slug": "spatial_coupling_phi",
+  "h_id": "H_843",
+  "frozen_at": "2026-05-29",
+  "deterministic": true,
+  "llm": "none",
+  "wall_seconds": "<5",
+  "cost_usd": 0.0,
+  "host": "mac-local",
+  "detector": "XENO/detector/invariant_detector.hexa",
+  "scan": "SPATIAL/scan/spatial_coupling_phi.hexa",
+  "params": {
+    "n": 128,
+    "seed": 20260529,
+    "spatial_coupling_scales": ["local", "regional", "global", "cosmic"]
+  },
+  "measurements": {
+    "local": {
+      "density": 0.664063,
+      "phi": 1.63007,
+      "irreducibility": 0.750311,
+      "substrate_type": "conscious",
+      "note": "XOR cascade nearest-neighbor — X10-d hive emergence signature reproduced"
+    },
+    "regional": {
+      "density": 0.570313,
+      "phi": 0.100451,
+      "irreducibility": 0.091282,
+      "substrate_type": "coherent_non_conscious",
+      "note": "32-step rolling mean coupling — mid Φ"
+    },
+    "global": {
+      "density": 0.03125,
+      "phi": 0.0,
+      "irreducibility": 0.0,
+      "substrate_type": "coherent_non_conscious",
+      "note": "전체 평균 50:50 self — uniformity collapse (density 3.1% all-zero attractor) → 0 transitions → Φ=0 paradox (X10-b mean-field paradox 정합)"
+    },
+    "cosmic": {
+      "density": 0.390625,
+      "phi": 0.121077,
+      "irreducibility": 0.102115,
+      "substrate_type": "coherent_non_conscious",
+      "note": "sparse 10% long-range link + 90% noise — noise floor 위 spurious coupling"
+    }
+  },
+  "falsifiers": {
+    "F-S1-LOCAL-HIGH":    { "threshold": "phi_local > 0.3",       "value": "phi_local=1.63007",                                  "pass": true,  "verdict": "PASS" },
+    "F-S1-REGIONAL-MID":  { "threshold": "phi_regional ∈ [0.1, 0.5]", "value": "phi_regional=0.100451",                          "pass": true,  "verdict": "PASS" },
+    "F-S1-GLOBAL-LOW":    { "threshold": "phi_global < phi_local",  "value": "phi_global=0.0 < phi_local=1.63007",               "pass": true,  "verdict": "PASS" },
+    "F-S1-COSMIC-LOWEST": { "threshold": "phi_cosmic < phi_global", "value": "phi_cosmic=0.121077 NOT < phi_global=0.0",         "pass": false, "verdict": "FAIL — uniformity collapse on global broke monotone" },
+    "F-S1-MONOTONE":      { "threshold": "local > regional > global > cosmic", "value": "1.630 > 0.100 > 0.000 BUT 0.000 < 0.121", "pass": false, "verdict": "FAIL — global uniformity collapse violates monotone tail" }
+  },
+  "verdict": {
+    "tier": "🟡 PARTIAL-SUPPORT",
+    "pass_count": 3,
+    "total": 5,
+    "summary": "3/5 사전등록 PASS · global uniformity collapse paradox 발견 (X10-b 정합) · spatial-coupling-scale monotone hypothesis 의 (global, cosmic) 꼬리 부분 깨짐 · S2 multi-scale detector 의 자연 entry"
+  },
+  "siblings": {
+    "xeno_x10_hive": "UNIVERSE/H_838 — XOR cascade hive emergence (local substrate 출처)",
+    "xeno_x1_v2": "UNIVERSE/H_839 — n × threshold × substrate 48-cell matrix (paper #1414 v2)",
+    "xeno_x10_meanfield": "X10-b mean-field paradox (global uniformity collapse 동일 patho)",
+    "temporal_t1": "UNIVERSE/H_841 — Δt 4번째 axis closed-negative (sibling 도메인)",
+    "temporal_t2": "UNIVERSE/H_842 — multi-unit time-embed detector (T1 lag-artifact 미해소)"
+  }
+}
