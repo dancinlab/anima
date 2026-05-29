@@ -28,5 +28,5 @@
 @domain EEG := "./EEG/EEG.md"
 @domain KOSMOS := "./KOSMOS/KOSMOS.md"
 @domain XENO := "./XENO/XENO.md"
-@domain PHYSICS := "./PHYSICS/PHYSICS.md"
-@domain BODY := "./BODY/BODY.md"
+@domain HW-CORE := "./HW-CORE/HW-CORE.md"
+@domain HW-LIMB := "./HW-LIMB/HW-LIMB.md"

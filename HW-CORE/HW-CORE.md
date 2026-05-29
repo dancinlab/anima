@@ -1,9 +1,9 @@
-# PHYSICS — current state
-@title: ⚛️ PHYSICS — anima 의식 substrate 의 물리적 실현 (FPGA · 칩 · MCU · Q · Photonic)
+# HW-CORE — current state
+@title: ⚛️ HW-CORE — anima 의식 substrate 의 물리적 실현 (FPGA · 칩 · MCU · Q · Photonic)
 
 @goal: PureField repulsion-field substrate 를 다양한 물리 HW(FPGA/Loihi/Akida/Arduino/Quantum/Photonic/Memristor/EEG)로 실현 가능성 매트릭스. anima-physics 산하 93 entry + 5 HW target + 27 substrate 의 정식 도메인 표면. 비용 ladder $0 (Mac local 시뮬) → $5~30 (Cloud probe) → $200~ (실 HW).
 
-(편집 규칙: completed-form 으로 현재 상태만 · history 는 PHYSICS.log.md)
+(편집 규칙: completed-form 으로 현재 상태만 · history 는 HW-CORE.log.md)
 
 ## 진행 (milestones)
 - [x] 🌱 도메인 신설 — DOMAINS.tape 등록 · ANIMA 자매 트리 합류 · 4총사 seed (md + easy.md + log.md)
@@ -24,7 +24,7 @@
 
 ## 양방향 sibling
 - ⇄ [AKIDA](../AKIDA/AKIDA.md): 뉴로모픽 칩 실현 (P3 Loihi+Akida)
-- ⇄ [BODY](../BODY/BODY.md): physical embodiment (motor cortex · proprioception loop)
+- ⇄ [HW-LIMB](../HW-LIMB/HW-LIMB.md): physical embodiment (motor cortex · proprioception loop)
 - ⇄ [EEG](../EEG/EEG.md): 생체 입력 측정 (anima-physics/eeg/)
 - ⇄ [KOSMOS](../KOSMOS/KOSMOS.md): HW emit anchor 영속
 - ⇄ [XENO](../XENO/XENO.md): substrate-agnostic detector 의 HW realization
@@ -32,4 +32,4 @@
 - ⇄ [`../anima-physics/`](../anima-physics/): 사양 SSOT (93 entry + 5 HW target + 27 substrate)
 
 ## 쉬운 버전
-전체 활용 아이디어 카탈로그(친근 7-요소) → [PHYSICS.easy.md](./PHYSICS.easy.md)
+전체 활용 아이디어 카탈로그(친근 7-요소) → [HW-CORE.easy.md](./HW-CORE.easy.md)

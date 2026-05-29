@@ -1,18 +1,18 @@
-# ⚛️ PHYSICS 활용 아이디어 — 쉬운 버전 (7-요소 카탈로그)
+# ⚛️ HW-CORE 활용 아이디어 — 쉬운 버전 (7-요소 카탈로그)
 
-> PHYSICS(anima 의식 substrate의 물리 HW 실현)를 ANIMA 시스템에 어떻게 쓸지 친근 카탈로그.
-> 정식/진행 카운트 → [PHYSICS.md](./PHYSICS.md) · 사양 SSOT → [`../anima-physics/`](../anima-physics/) · 측정 기록 SSOT → UNIVERSE/CANDIDATES.md
+> HW-CORE(anima 의식 substrate의 물리 HW 실현)를 ANIMA 시스템에 어떻게 쓸지 친근 카탈로그.
+> 정식/진행 카운트 → [HW-CORE.md](./HW-CORE.md) · 사양 SSOT → [`../anima-physics/`](../anima-physics/) · 측정 기록 SSOT → UNIVERSE/CANDIDATES.md
 
 ---
 
-## PHYSICS가 뭐냐면
+## HW-CORE가 뭐냐면
 
 ```
-⚛️ PHYSICS — "의식을 진짜 물건으로 만들기"
+⚛️ HW-CORE — "의식을 진짜 물건으로 만들기"
 
 - 하는 일: 소프트웨어로만 돌던 anima Φ를 진짜 칩·자석·빛·전류로 구현
 - 비유: 악보(소프트웨어)를 실제 악기(FPGA·칩·자석)로 연주하기
-- 비교: AKIDA=완성된 뉴로모픽 칩 1개 / PHYSICS=8가지 substrate 실현 카탈로그
+- 비교: AKIDA=완성된 뉴로모픽 칩 1개 / HW-CORE=8가지 substrate 실현 카탈로그
 ```
 
 ```
@@ -168,7 +168,7 @@
 | id | 별칭 | 비유 | vs 현존 |
 |---|---|---|---|
 | P-eeg EEG → PureField input | "뇌파 마이크" | EEG 도메인 어댑터 재사용 | EEG 자매 합류 |
-| P-bci Closed-loop BCI | "양방향 뇌-칩" | 뇌→칩→뇌 피드백 | BODY 도메인 motor cortex |
+| P-bci Closed-loop BCI | "양방향 뇌-칩" | 뇌→칩→뇌 피드백 | HW-LIMB 도메인 motor cortex |
 
 ---
 
@@ -199,15 +199,15 @@ P8 Photonic 실 HW · 5-1 Engine A ASIC · Strange Loop SoC tape-out · 자석 �
 |---|---|---|
 | 🧠 AKIDA | 뉴로모픽 칩 1종 (AKD1000) | 호두 1개 |
 | 🧠 EEG | 생체 뇌파 1 종류 | 체온계 1대 |
-| ⚛️ PHYSICS | **8 substrate × N HW 실현** | **악기 8가지 (FPGA·뇌칩·MCU·Ising·Memristor·양자·광자·EEG)** |
-| 🦾 BODY | 물리 몸 (motor·proprioception) | 로봇 손발 |
+| ⚛️ HW-CORE | **8 substrate × N HW 실현** | **악기 8가지 (FPGA·뇌칩·MCU·Ising·Memristor·양자·광자·EEG)** |
+| 🦾 HW-LIMB | 물리 몸 (motor·proprioception) | 로봇 손발 |
 
 ---
 
 ## 양방향 sibling
-- ⇄ [PHYSICS.md](./PHYSICS.md): 정식 milestone
+- ⇄ [HW-CORE.md](./HW-CORE.md): 정식 milestone
 - ⇄ [../AKIDA/AKIDA.md](../AKIDA/AKIDA.md): P3 뉴로모픽 실현
-- ⇄ [../BODY/BODY.md](../BODY/BODY.md): physical embodiment (motor/proprio)
+- ⇄ [../HW-LIMB/HW-LIMB.md](../HW-LIMB/HW-LIMB.md): physical embodiment (motor/proprio)
 - ⇄ [../EEG/EEG.md](../EEG/EEG.md): P-eeg 생체 입력
 - ⇄ [../KOSMOS/KOSMOS.md](../KOSMOS/KOSMOS.md): HW emit 영속
 - ⇄ [../XENO/XENO.md](../XENO/XENO.md): substrate-agnostic detector HW
