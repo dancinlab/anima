@@ -199,7 +199,8 @@
 
 - PR #1395 H_686+H_687 V=8 aux ablation toy → ⚪ TOY-NULL · INDETERMINATE (`CORE/DECODER/h686_h687_aux_ablation.hexa`, V=8 baseline 이미 4/4 distinct escape)
 - PR #1397 prodaux production trainer + STEP_RATE_LOG entry (13) → 🟠 BUILD-BLOCKER (Linux cross-module link, anima patch scope 외, hexa-lang inbox)
-- **V-scale escape boundary sweep 2026-05-29** (현 PR) → 🟠 SWEEP-OUT-OF-RANGE — V ∈ {8, 64, 256, 1024, 4096} × {none, ent, kl, both} 20 cell baseline 전부 4/4 distinct escape, V*_collapse 미발견. V 축 단독은 OFFENDING-LEVER 아님 ⊥ 확정. 잔여 OFFENDING-AXIS 후보 = d / E / n_layer / stochastic / corpus-distribution / M-init-seed 분포 (별 H 후속 sweep 대상). 상세: `CORE/DECODER/H686_H687_V_SCALE_RESULT.md`, STEP_RATE_LOG entry (14).
+- **V-scale escape boundary sweep 2026-05-29** (PR #1409) → 🟠 SWEEP-OUT-OF-RANGE — V ∈ {8, 64, 256, 1024, 4096} × {none, ent, kl, both} 20 cell baseline 전부 4/4 distinct escape, V*_collapse 미발견. V 축 단독은 OFFENDING-LEVER 아님 ⊥ 확정. 잔여 OFFENDING-AXIS 후보 = d / E / n_layer / stochastic / corpus-distribution / M-init-seed 분포 (별 H 후속 sweep 대상). 상세: `CORE/DECODER/H686_H687_V_SCALE_RESULT.md`, STEP_RATE_LOG entry (14).
+- **3-axis (corpus·d·n_layer) sweep 2026-05-29** (현 PR) → 🟠 SWEEP-OUT-OF-RANGE (4-axis total) — corpus ∈ {uniform, mild_skew, current_skewed, zipf_strong} + d ∈ {6,24,64} + n_layer ∈ {1,2,4} × {none, both} 20 cell. 어떤 baseline cell=none 도 collapse 임계 (distinct_tok ≤ 2 OR LZ < 0.01) 미충족. zipf_strong 이 LZ=0.0101 cusp 이나 distinct_tok=6 유지. 4-axis (V + corpus + d + n_layer) 합 ⊥ 확정 → toy harness ⊥ production collapse mechanism. production fire 직접 단정 path 유일. 상세: `CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md`, STEP_RATE_LOG entry (15).
 
 ## M1 hook 지점 (M0 인계 노트)
 

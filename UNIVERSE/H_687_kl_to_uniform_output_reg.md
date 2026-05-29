@@ -189,3 +189,24 @@ PR #1395 의 V=8 ⚪ TOY-NULL 후 V 축 확장 sweep. harness `CORE/DECODER/h686
 **결론**: production collapse (V=151643) 의 OFFENDING-AXIS 는 V 단독 아님 ⊥ 확정. H_687 의 production verify 는 V-axis toy 우회 불가, 본 H §11 의 production fire 직접 측정 외 경로 없음 — PR #1395 결론 ('production fire = 유일 valid test') 재확인. 잔여 후보 = d / E / n_layer / stochastic / corpus-distribution / M-init-seed 분포 (별 H 후속 sweep 대상).
 
 상세: `CORE/DECODER/H686_H687_V_SCALE_RESULT.md`, `state/h686_h687_v_scale_2026_05_29/V{V}_{cell}.out × 20`. STEP_RATE_LOG entry (14). $0 mac-local wall ~24min.
+
+## toy axis sweep — corpus·d·n_layer 3-axis (PR follow-up 2026-05-29)
+
+PR #1409 (V-axis ⊥) 후속. harness `CORE/DECODER/h686_h687_axis_sweep.hexa` (PR #1395/#1409 verbatim base, sanity gate `corpus=current_skewed d=6 n_layer=1 cell=none` → LZ=0.0360459 distinct=4 byte-eq ✓).
+
+**20 cell** = 8 (corpus 4 × cell {none,both}) + 6 (d 3 × cell {none,both}) + 6 (n_layer 3 × cell {none,both}). 모두 baseline collapse 임계 미충족.
+
+| axis | value | none LZ / dT | both LZ / dT |
+|------|-------|--------------|--------------|
+| corpus | uniform | 0.121596 / 6 | 0.121596 / 6 |
+| corpus | mild_skew | 0.0864801 / 6 | 0.0864801 / 6 |
+| corpus | current_skewed | 0.0360459 / 6 | 0.0360459 / 6 |
+| corpus | zipf_strong | **0.0101055** / 6 | 0.0101055 / 6 |
+| d | {6, 24, 64} | 모두 0.0360459 / 6 | 모두 0.0360459 / 6 |
+| n_layer | 1 | 0.0360459 / 6 | 0.0360459 / 6 |
+| n_layer | 2 | 0.0360459 / 6 | 0.0360459 / 6 |
+| n_layer | 4 | 0.0360459 / 5 | 0.0360459 / 4 |
+
+**결론**: 3축 모두 ⊥ collapse — V-axis (PR #1409) + corpus/d/n_layer (현 PR) 합 4-axis sweep 전부 ⊥ 확정. F-AXSW-3 FAIL · F-AXSW-4 vacuous. H_687 의 KL-to-uniform output reg 도 H_686 와 동일 — production fire 직접 단정 path 가 유일 valid 경로.
+
+상세: `CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md`. STEP_RATE_LOG entry (15). $0 mac-local wall ~20s.

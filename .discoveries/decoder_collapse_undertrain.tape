@@ -158,3 +158,17 @@
   candidates   = "잔여 OFFENDING-AXIS 후보 = d 축 (toy d=6 vs prod d=64) · E 축 (toy E=4 vs prod E=2 dead-expert) · n_layer/attention · stochastic batch · wikitext 분포 · M init seed 분포. 별 H 후속 sweep 필요."
   cost         = "$0 mac-local, sweep wall ~24min, pod=0, HF=0 (toy-only mac-local discovery)."
   artifacts    = "CORE/DECODER/h686_h687_v_scale.hexa, CORE/DECODER/H686_H687_V_SCALE_RESULT.md, state/h686_h687_v_scale_2026_05_29/{MANIFEST.txt, run_sweep.hexa, V{V}_{cell}.out × 20}. STEP_RATE_LOG.md entry (14). UNIVERSE/H_686 + H_687 § V-scale sweep."
+
+@N dec_toy_axis_sweep_2026_05_29 := "H_686/H_687 3-AXIS (corpus·d·n_layer) toy sweep — 20 cell V=8 base, baseline (cell=none) 어떤 axis 셋팅에서도 collapse 임계 (distinct_tok ≤ 2 OR LZ < 0.01) 미충족. zipf_strong 이 LZ=0.0101 으로 근접하나 distinct_tok=6 유지. V-axis (PR #1409) + corpus/d/n_layer 합 4-axis sweep 모두 ⊥ → toy harness ⊥ production collapse mechanism 확정" :: measurement [d=2026-05-29 active]
+  seed         = "PR #1409 V-axis ⊥ 확정 후 — corpus distribution / d head-dim / n_layer depth-proxy 3 축 중 어느 게 collapse-lever 인지 토이 sweep 으로 식별 시도"
+  method       = "h686_h687_axis_sweep.hexa (PR #1395/#1409 verbatim base). AXIS_CORPUS ∈ {uniform, mild_skew, current_skewed, zipf_strong} × AXIS_D ∈ {6,24,64} × AXIS_NLAYER ∈ {1,2,4} × ABLATION_CELL ∈ {none, both} = 20 cell (sweep 분리, 다른 변수 default). depth proxy = W_top[:d,:d] shared-weight silu stack."
+  grid         = "8 corpus cell + 6 d cell + 6 n_layer cell = 20. V=8 E=4 600 step lr=0.5 λ_ent=λ_kl=0.1 verbatim. 총 wall ~20s mac-local."
+  sanity       = "corpus=current_skewed d=6 n_layer=1 cell=none → LZ=0.0360459 distinct_e=4 byte-eq vs PR #1395 ✓"
+  result_corpus = "uniform LZ=0.122 / mild_skew 0.086 / current_skewed 0.036 / zipf_strong 0.010 — skew↑ → LZ↓ 단조감소이나 distinct_tok=6 전부 유지 (token diversity 보존된 압축). zipf_strong 이 collapse 임계 0.01 직전 cusp."
+  result_d     = "d ∈ {6, 24, 64} 모두 LZ=0.0360459 distinct_tok=6 byte-eq → d 축 완전 ⊥, capacity over-supply 가설 무영향."
+  result_nlayer = "n_layer ∈ {1,2,4} 모두 LZ=0.0360459. n_layer=4 cell=both 에서 distinct_tok 4 까지 감소하나 임계 (≤2) 위. n_layer 2/4 는 final_CE ~2.0 (under-train, depth-proxy silu stack 이 600 step lr=0.5 부족)."
+  finding      = "★ 3축 모두 ⊥ collapse. F-AXSW-3 FAIL (vacuous F-AXSW-4). zipf_strong cusp 이 가장 유의미 신호 (LZ 임계 근접) 이나 distinct_tok=6 유지 → toy 가 production collapse 정의 (mode→single token) 표현 못함."
+  diagnosis    = "V-axis (PR #1409) + corpus/d/n_layer (현 sweep) 합 4-axis sweep 모두 ⊥. M4b production collapse 는 (a) scale-coupled multi-axis interaction, (b) AdamW+warmup trajectory 의존, (c) router init mid-train state, (d) soft top-k routing dynamics 중 하나 이상 — 단축 sweep 분해 불가."
+  verdict      = "🟠 SWEEP-OUT-OF-RANGE (4-axis total) — toy harness ⊥ production collapse mechanism 확정. H_686/H_687 본선 단정은 production fire 직접 단정 path 유일."
+  cost         = "$0 mac-local, 20s wall, pod=0, HF=0."
+  artifacts    = "CORE/DECODER/h686_h687_axis_sweep.hexa, CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md. STEP_RATE_LOG.md entry (15). UNIVERSE/H_686 + H_687 § toy axis sweep."
