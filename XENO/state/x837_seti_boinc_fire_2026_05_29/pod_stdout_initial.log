@@ -1,0 +1,37 @@
+================================================================
+  XENO X837 — SETI@home 3.03 BOINC standalone playback
+  pod: Linux 64c21b9dad10 6.8.0-40-generic #40~22.04.3-Ubuntu SMP PREEMPT_DYNAMIC Tue Jul 30 17:30:19 UTC 2 x86_64 x86_64 x86_64 GNU/Linux
+  start: 2026-05-29T10:21:07Z
+================================================================
+
+─── stage 1: apt install ───
+Processing triggers for ca-certificates (20240203~22.04.1) ...
+Updating certificates in /etc/ssl/certs...
+0 added, 0 removed; done.
+Running hooks in /etc/ca-certificates/update.d...
+done.
+
+─── stage 2: extract sahfiles ───
+sha256 expected: 2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96
+sha256 measured: 2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96
+sha256 match
+total 372
+drwxr-xr-x 2 1000 1001   4096 Dec 18  2024 .
+drwxr-xr-x 3 root root     99 May 29 10:21 ..
+-rw-r--r-- 1 1000 1001    132 Dec 18  2024 key.sah
+-rw-r--r-- 1 1000 1001      0 Dec 18  2024 lock.sah
+-rw-r--r-- 1 1000 1001      0 Dec 18  2024 outfile.sah
+-rw-r--r-- 1 1000 1001      5 Dec 18  2024 pid.sah
+-rw-r--r-- 1 1000 1001    162 Dec 18  2024 result_header.sah
+-rw-r--r-- 1 1000 1001      0 Dec 18  2024 state.sah
+-rw-r--r-- 1 1000 1001    384 Dec 18  2024 user_info.sah
+-rw-r--r-- 1 1000 1001     32 Dec 18  2024 version.sah
+-rw-r--r-- 1 1000 1001 356285 Dec 18  2024 work_unit.sah
+
+─── stage 3: fetch SETI@home 3.03 binary ───
+fetching: https://archive.org/download/setiathomem303_unix/setiathome-3.03.i686-pc-linux-gnu-gnulibc2.1.tar.gz
+fetch OK
+
+gzip: stdin: not in gzip format
+tar: Child returned status 1
+tar: Error is not recoverable: exiting now

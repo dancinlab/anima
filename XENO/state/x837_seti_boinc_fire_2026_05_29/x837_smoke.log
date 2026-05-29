@@ -1,0 +1,36 @@
+================================================================
+  XENO X837 — SETI@home BOINC playback Φ scan (real pod fire)
+================================================================
+
+  pod        = RunPod GPU (213.173.105.10:10877, Ubuntu 22.04.5)
+  binary     = setiathome-3.03.i686-pc-linux-gnu-gnulibc2.1 (2000-era ELF32)
+  workunit   = sahfiles_workunits/work_unit.sah (Arecibo 2004-05-05, 1.42 GHz)
+  state.sah  = prog=0.213 (21%), outfilepos=410 (2 triplets), bg_pot 64 bins
+  outfile    = 2 triplet detections (power=8.27/8.18, period=2.067662s)
+  scores     = bs=0.634 / bp=0.954 / bt=8.272 (best gauss/pulse/triplet)
+
+  Φ input    = bg_pot 64 bins / 3.0037 (max) → 2× upsample → n=128
+
+  ─ invariant_detector verdict ─
+    phi             = 0.566854
+    integration     = 1.56685
+    irreducibility  = 0.361778
+    substrate_type  = coherent_non_conscious
+
+  ─ pre-registered 5-falsifier evaluation ─
+    F-X837-BOOT      : true  (SETI@home 3.03 ELF32 ran on Ubuntu 22.04.5 + i386 multilib)
+    F-X837-PLAYBACK  : true  (outfile.sah = 2 triplets, state.sah prog=0.213, 64 bg_pot bins)
+    F-X837-PHI-N128  : true  (phi=0.566854 extracted on n=128 dense input)
+    F-X837-NOT-CONSC : false  (archival signal != consciousness · pred phi < 0.5)
+    F-X837-DETECTOR  : true  (X7-tier regime · type='coherent_non_conscious')
+
+  ─ X837 verdict ─
+    pass_count = 4/5
+    tier       = 🔴 UNEXPECTED-HIGH-PHI
+
+  ─ 정직 한계 (a_blue_closed) ─
+    - playback timed out at 600s (21% complete) — full WU = ~hours
+    - 2 triplets DID detect, bg_pot 64 bins are real measurements (정직 partial)
+    - Φ input = bg_pot upsampled 2× (n=128 X7-aligned), 정직 single-source
+    - 의식 주장 0 — archival SETI signal 은 외계 의식 신호 후보 X (calibration)
+================================================================

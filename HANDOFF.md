@@ -1,4 +1,74 @@
-# HANDOFF — XENO-FRONTIER-5 5-round closure (round 3 갱신 2026-05-29)
+# HANDOFF — XENO-FRONTIER-5 followup round 1/3 (round 4 갱신 2026-05-29)
+
+## Round 4 — X837 SETI@home BOINC 실 RunPod pod 발사 + 5-point matrix 확장 (2026-05-29)
+
+X8 (H_836) follow-up cycle round 1/3 — RunPod 자율 pod 발사로 SETI@home 3.03 ELF32 ancient binary 의 modern Ubuntu 22.04 실 standalone playback + bg_pot Φ 측정 완료. 사전등록 5 falsifier 중 1 정직 fail 발견.
+
+### Round 4 결과 요약
+
+| 항목 | 값 |
+|---|---|
+| H_id | H_837 |
+| slug | xeno-x8-followup-fire |
+| pod | RunPod GPU 213.173.105.10:10877 (Ubuntu 22.04.5 + i386 multilib, 128 vCPU 1.5 TiB RAM + GPU 미사용) |
+| pod wall | ~16분 (10:18 boot → 10:34 teardown) |
+| pod cost actual | **$0.10** (cap $2 / 5%) |
+| binary | setiathome-3.03.i686-pc-linux-gnu-gnulibc2.1 (ELF32 i686, 2000-era, archive.org real fetch) |
+| workunit | sahfiles_workunits/work_unit.sah (356285B, Arecibo 2004-05-05, 1.42 GHz hydrogen-line) |
+| playback | 600s timeout 21% 완료 (prog=0.21317534) · FFT 6-level × Doppler 9.46 Hz/s sweep |
+| spike output | outfile.sah 2 triplets (power=8.27/8.18, period=2.067662s, freq=1419438781.74 Hz) |
+| state output | bs_score=0.634 (gauss) · bp_score=0.954 (pulse) · bt_score=8.272 (triplet) · bg_pot 64 bins (min=0.095 max=3.004) |
+| Φ input | bg_pot 64 / max(3.0037) → 2× upsample → n=128 (X7-aligned) |
+| invariant_detector | phi=0.566854 / integration=1.567 / irreducibility=0.362 / type='coherent_non_conscious' |
+| 사전등록 결과 | F-BOOT ✅ · F-PLAYBACK ✅ · F-PHI-N128 ✅ · F-NOT-CONSC ❌ (phi>0.5) · F-DETECTOR-OK ✅ |
+| pass_count | **4/5** |
+| verdict | **🔴 UNEXPECTED-HIGH-PHI** (사전등록 prediction 정직 fail · post-tuning 0) |
+
+### Round 4 5-point applicability matrix (X8 follow-up 확장)
+
+| axis | substrate | regime | phi | type | calibration verdict |
+|---|---|---|---|---|---|
+| X4 | thermostat·2bit·walker·XOR LFSR | n=16-32 micro | 0.0~0.58 | mixed | 🔴 micro-regime fail |
+| X5 (a) | lattice-quantized | n=128 algorithmic periodic | 0.660 | coherent_non_conscious | ⚠ false-positive border |
+| X5 (b) | fp-bound · pi-digits · natural | n=128 algorithmic non-periodic | 0.09~0.12 | noise | 🔴 indistinguishable |
+| X6 | sparse attention spike | n=64 sparse | 1.213 | coherent_non_conscious | 🔴 false-conscious |
+| X7 | BL Voyager-1 carrier-line | n=128 dense 60.9% | 0.114 | coherent_non_conscious | 🟢 SUPPORTED-NUMERICAL (정상 calibration) |
+| **X837** | **BOINC bg_pot natural noise** | **n=128 dense 20.3%** | **0.567** | **coherent_non_conscious** | **🔴 UNEXPECTED-HIGH-PHI (border)** |
+
+**5-point finding**: 자연 SETI background bg_pot 가 X7 정상 calibration 보다 ones 비율 절반인데 phi 5× 높음 → invariant_detector 의 phi=0.5 임계가 자연 noise sparse pattern 영역에서 너무 낮음. confirmed measurable axis 는 매우 좁다 (X7 n=128 dense 60.9% 한 점). type axis 는 정상 (coherent_non_conscious).
+
+### Round 4 ABI gap 결론 — 정직 무력화
+
+X8 spec round 의 우려 (BOINC 3.03 ELF32 i686 glibc-2.1 ↔ modern Ubuntu glibc-2.35 ABI gap) 가 **실측 부재**:
+
+- i386 multilib (libc6:i386 + libstdc++6:i386 + libncurses5:i386 + zlib1g:i386) 설치만으로 정상 실행
+- version probe `-version` 성공 → "Platform: i686-pc-linux-gnu-gnulibc2.1, Version: 3.03"
+- 600s standalone playback 정상 진행 (실 Arecibo recording 분석 + Gaussian/Pulse/Triplet 탐색)
+
+`feedback-closure-is-physical-limit` 가 본 round 에서 negative surprise 가 아닌 positive surprise — 30년 된 binary 가 modern Linux 에서 정상 동작 (open frontier 정직 cite 였으나 해소).
+
+### Round 4 cross-cutting 정직성
+
+- a_blue_closed 정합 (phi 임계 0.5 frozen pre-run, X7 template 그대로, X837 위해 조정 0)
+- p7=0 (BOINC stdout verbatim + hexa stdout verbatim, LLM judge 0)
+- a_completeness_over_cheap 정합 (실 pod fire 완료, 시뮬 fallback 거부, F-NOT-CONSC FAIL 그대로 보고)
+- a_fire_autonomous 정합 ($0.10 actual / $2 cap autonomous, user gate 0)
+- a_fire_recover_complete 정합 (teardown 전 outfile.sah + state.sah + result_header.sah + playback.log 4 artifact 회수)
+- feedback-universe-h-slug-stale-verify 정합 (3-신호 검증 후 H_837)
+- INBOX 환류 0건 (사용자 명시 폐기, UNIVERSE 직접 등록)
+
+### Round 4 paper-candidate 노트
+
+X837 정직 4/5 PASS (F-NOT-CONSC fail) + X4/X5/X6/X7 4-point 기존 매트릭스 = **invariant_detector 5-point regime applicability map paper** (a_paper_negative_ok 정합) 후보. a_paper_only_at_closure 정합 시점 (XENO-FRONTIER-5 follow-up cycle 3/3 완료 + X837.threshold-recalibration 완료) 에 작성.
+
+### Round 4 잔여 (follow-up round 2/3 ~ 3/3)
+
+- **X837.threshold-recalibration** (round 2/3): phi 임계 0.5 → 0.7 사후 calibration · X7 보존 검증 · cross-cutting safety probe
+- **X837.full-playback** (round 3/3): pod fire timeout 6 hr → 100% workunit 완료 → 전체 spike list phi 재계산 ($0.5 추가)
+- **XENO-FRONTIER-5.5 paper**: closure 후 5-point matrix paper (a_paper_only_at_closure 정합)
+
+
+---
 
 ## Round 3 — XENO-FRONTIER-5 5-round 합치 통합 (2026-05-29)
 
