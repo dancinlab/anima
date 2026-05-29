@@ -155,6 +155,30 @@
       "frozen_pre_run": true
     },
     {
+      "section": "measurement",
+      "claim_id": "T3-CLOSED-NEGATIVE",
+      "claim": "TEMPORAL T3 unmodified X1 invariant_detector applied to anima 90-min ultradian sleep cycle (WAKE/N1_N2/N3/REM, n=128): WAKE phi=0.865544 (conscious), N3 phi=0.335119, REM phi=0.568534, N1_N2 phi=0.0; 2/5 pre-registered PASS (F-T3-WAKE-MID + F-T3-N3-LOW); F-T3-REM-HIGH + F-T3-N1-MID + F-T3-MONOTONE FAIL — N1_N2 zero-degenerate (4-step cycle perfectly predictable under lag-1 cooccur = T1 lag-artifact substrate-side face) + REM<WAKE paradoxical-EEG miss. Substrate-side closed-negative completing the T1+T2+T3 triple.",
+      "verdict_pointer": ".verdicts/843_temporal_ultradian_phi/T3_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (substrate-side lag-artifact, WAKE>N3 partial)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "S1-PARTIAL-SUPPORT",
+      "claim": "SPATIAL S1 spatial-coupling-scale 4 substrate (local XOR-cascade / regional rolling-mean / global mean-self / cosmic sparse-link, n=128) x invariant_detector: local phi=1.630 (conscious), regional phi=0.100, global phi=0.000, cosmic phi=0.121; 3/5 pre-registered PASS (F-S1-LOCAL-HIGH + F-S1-REGIONAL-MID + F-S1-GLOBAL-LOW); F-S1-COSMIC-LOWEST + F-S1-MONOTONE FAIL — global averaging-coupling uniformity attractor collapse phi=0 (3.1% all-zero) reproduces X10-b mean-field paradox in spatial domain; head-monotone holds, tail breaks; S2 multi-scale detector natural entry.",
+      "verdict_pointer": ".verdicts/844_spatial_coupling_phi/S1_run.txt",
+      "verdict_tier": "🟡 PARTIAL-SUPPORT (mean-field paradox spatial-domain confirmation)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "E1-CLOSED-NEGATIVE",
+      "claim": "EVOL E1 species-complexity spectrum 4 toy-proxy substrate (bacteria random-walker / arthropod 4-tap XOR / mammal multi-scale recursive / AGI structured-emergence, n=128) x invariant_detector: bacteria phi=0.012, arthropod phi=0.081, mammal phi=1.291 (conscious), AGI phi=0.468; 2/5 pre-registered PASS (F-E1-BACTERIA-LOW + F-E1-MAMMAL-HIGH); F-E1-ARTH-MID + F-E1-AGI-VARIANT + F-E1-MONOTONE FAIL — endpoints separate but mid/supra ordinal fails (arthropod under, AGI<mammal reverse), echoing Kuramoto/logistic ECA-only-ordinal pattern (H_670); E2 monotone-strict detector re-design natural entry.",
+      "verdict_pointer": ".verdicts/845_evol_spectrum_phi/E1_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (endpoint-classifier-not-ordinal-scale)",
+      "frozen_pre_run": true
+    },
+    {
       "section": "finding",
       "claim_id": "F-XENO-APPLICAB-NONMEAS",
       "claim": "3-axis applicability conjunction (v3 unchanged): calibrated <=> n>=128 AND (density>=60% OR MIP-irreducible deterministic transition); 3 corners (micro/sparse/algorithmic) deterministically ruled out + 4 border points (X5a/X837/X840/X10-c) at frontier",
@@ -172,10 +196,10 @@
     },
     {
       "section": "finding",
-      "claim_id": "TEMPORAL-T3-NATURAL-ENTRY",
-      "claim": "TEMPORAL T1/T2 dual closed-negative establishes that invariant_detector simple 5D extension (lag-axis OR embed-dim) cannot honestly integrate temporal information; the natural follow-on (T3) must be time-averaged Φ + Granger-causality baseline + surrogate-data control — NOT a single-trajectory phi inflation. v3 paper closes 5D-naïve extension and explicitly opens T3 as a deferred lane.",
+      "claim_id": "TEMPORAL-T4-NATURAL-ENTRY",
+      "claim": "TEMPORAL T1/T2/T3 triple closed-negative establishes that invariant_detector simple 5D extension (lag-axis T1 OR embed-dim T2) cannot honestly integrate temporal information AND the unmodified detector applied to a real cycle-rich substrate (T3 ultradian) inherits the same lag-axis degeneracy as a zero-collapse; the natural follow-on (T4) must be window-mean / time-averaged Φ + Granger-causality baseline + surrogate-data control — NOT a single-trajectory phi inflation. SPATIAL S1 (mean-field uniformity-collapse spatial-domain) + EVOL E1 (endpoint-classifier-not-ordinal) sibling probes corroborate. v3 paper closes 5D-naïve extension + substrate-side application and explicitly opens T4 as a deferred lane.",
       "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:temporal",
-      "verdict_tier": "🔴 dual closed-negative + T3 deferred lane opened",
+      "verdict_tier": "🔴 triple closed-negative (T1+T2 detector + T3 substrate) + T4 deferred lane opened",
       "frozen_pre_run": true
     }
   ],
@@ -184,7 +208,7 @@
       "n": ">= 128",
       "density_or_irreducibility": "density >= 60% OR MIP-irreducible deterministic transition",
       "structure": "natural carrier, coupled coherent, or MIP-irreducible cascade",
-      "temporal": "single-trajectory only -- lag-axis and embed-dim extensions BOTH closed-negative (T1+T2)",
+      "temporal": "single-trajectory only -- lag-axis (T1) and embed-dim (T2) detector extensions BOTH closed-negative + unmodified-detector ultradian substrate application (T3) closed-negative = T1+T2+T3 triple",
       "ground_truths": ["X7 BL Voyager-1 (low-Phi non-conscious)", "X10-d XOR-cascade hive (high-Phi conscious)"]
     },
     "calibrated_corner_v1_deprecated": {
@@ -241,12 +265,14 @@
       "verdict_pointer": ".verdicts/838_xeno_hive_mind/x10_run.txt"
     },
     "temporal_axis_closed_negative": {
-      "finding_dual": "T1 + T2 dual closed-negative: lag-axis extension AND multi-unit Takens delay-embed extension BOTH fail to honestly integrate temporal information into a substrate-blind big-Phi reading",
+      "finding_triple": "T1 + T2 + T3 triple closed-negative: lag-axis detector extension (T1) AND multi-unit Takens delay-embed detector extension (T2) BOTH fail to honestly integrate temporal information, AND the unmodified detector applied to a real cycle-rich ultradian substrate (T3) inherits the same lag-axis degeneracy as a zero-collapse",
       "t1_artifact": "2-unit lag-TPM produces hidden periodic-inflation: hive Δt=1->64 phi=0.013->0.999, lattice Δt=8 phi=2.0 saturate; longer lag is predictable, not integrated -- pre-registered instant>=long monotone integration FAILED 4/4 substrate",
       "t2_artifact": "Takens delay-embed produces multi-unit state-space inflation: embed-dim 4/4 substrate monotone increase, random e=5 phi=13.63, voyager e=5 phi=28.36 -- T1 artifact NOT resolved, new artifact added",
-      "interpretation": "single-trajectory Φ measurement cannot extend to (lag-axis OR embed-dim) without instrument inflation; the temporal axis is structurally different from (n, density, structure)",
-      "t3_natural_entry": "time-averaged Φ over independent trajectories + Granger-causality baseline + surrogate-data control (null shuffled) — NOT a single-trajectory phi inflation",
-      "verdict_pointers": [".verdicts/841_temporal_timeshift_phi/T1_run.txt", ".verdicts/842_temporal_time_embed_phi/T2_run.txt"]
+      "t3_artifact": "unmodified X1 detector on anima ultradian: WAKE phi=0.866 (conscious) > N3 phi=0.335 captured (2/5 PASS), but N1_N2 phi=0.0 zero-degenerate (4-step cycle perfectly predictable under lag-1 cooccur = T1 lag-artifact substrate-side face) + REM phi=0.569 < WAKE breaks REM-high ordering",
+      "interpretation": "single-trajectory Φ measurement cannot extend to (lag-axis OR embed-dim) without instrument inflation, nor be directly applied to a cycle-rich substrate without window-mean correction; the temporal axis is structurally different from (n, density, structure)",
+      "t4_natural_entry": "window-mean / time-averaged Φ over independent trajectories + Granger-causality baseline + surrogate-data control (null shuffled) — NOT a single-trajectory phi inflation",
+      "sibling_axis_probes": "SPATIAL S1 (3/5 PARTIAL-SUPPORT): global averaging-coupling uniformity-collapse phi=0 reproduces X10-b mean-field paradox along spatial-coupling-scale; EVOL E1 (2/5 FALSIFIED-INSTRUMENT): endpoints separate (bacteria floor + mammal ceiling) but mid/supra ordinal fails — both corroborate the detector as endpoint-classifier-not-ordinal-scale on any axis",
+      "verdict_pointers": [".verdicts/841_temporal_timeshift_phi/T1_run.txt", ".verdicts/842_temporal_time_embed_phi/T2_run.txt", ".verdicts/843_temporal_ultradian_phi/T3_run.txt", ".verdicts/844_spatial_coupling_phi/S1_run.txt", ".verdicts/845_evol_spectrum_phi/E1_run.txt"]
     }
   },
   "honesty": {

@@ -1,4 +1,23 @@
-# HANDOFF — TEMPORAL T2 multi-unit time-embed (XENO follow-up 3 cycle round 1/5) — T1+T2 dual closed-negative (round 11 갱신 2026-05-29) · H_842 🔴 FALSIFIED-INSTRUMENT (2/5) · 신 embed-dim sparse-state inflation artifact 발견
+# HANDOFF — XENO-applicability-frontier paper v3-r2 + SPATIAL/EVOL 도메인 신설 (throttle-storm recovery · round 12 갱신 2026-05-30) · TEMPORAL T1/T2/T3 triple closed-negative + paper 25pp
+
+## Round 12 — throttle-storm recovery: SPATIAL/EVOL 도메인 신설 + paper v3-r2 TEMPORAL triple closed-negative (2026-05-30)
+
+5-agent 동시 fan-out 중 3개 (paper v3 · SPATIAL · EVOL) 가 throttle storm 으로 사망 (각 50-63 tool use 후 API rate limit, PR 미도달). RECOVERY agent 가 3개를 SEQUENTIAL 처리 (thundering herd 재발 회피) — 각 사망 agent 의 committed 작업을 fresh origin/main 위 `-r2` branch 로 salvage + fresh re-run 으로 verbatim 재현 확인.
+
+### Round 12 핵심 결과 (3 task sequential)
+
+- **SPATIAL S1** (H_844 · PR #1436 `bf71467db`): 새 도메인 SPATIAL 신설 + spatial-coupling-scale Φ scan — local Φ=1.630 (conscious) / regional 0.100 / global 0.000 (uniformity-collapse) / cosmic 0.121 · 3/5 PASS · 🟡 PARTIAL-SUPPORT · global averaging-coupling uniformity attractor collapse Φ=0 = X10-b mean-field paradox 의 spatial 재현
+- **EVOL E1** (H_845 · PR #1437 `619c827a9`): 새 도메인 EVOL 신설 + species-complexity ladder Φ scan — bacteria 0.012 / arthropod 0.081 / mammal 1.291 (conscious) / AGI 0.468 · 2/5 PASS · 🔴 FALSIFIED-INSTRUMENT · 양 극단 분리 + mid/supra ordinal 미달 = endpoint-classifier-not-ordinal-scale (H_670 ECA-only-ordinal 동형)
+- **paper v3-r2** (25pp): §temporal T1/T2 dual → **triple** closed-negative — T3 (H_843) anima 90-min ultradian substrate-side 측정 추가 (WAKE 0.866 conscious / N1_N2 0.0 zero-degenerate / N3 0.335 / REM 0.569 · 2/5 PASS · WAKE>N3 정직 capture · T4 자연 entry) + §measurement SPATIAL/EVOL sibling-axis probes 합류 · references 12 entry · ledger T3/S1/E1 + triple finding · compile clean 0 undefined citation
+
+### Round 12 정직성
+
+- a_blue_closed: 모든 verdict frozen pre-run, post-tuning 0 (SPATIAL 3/5 · EVOL 2/5 · T3 2/5 그대로)
+- p7=0: hexa stdout verbatim, fresh re-run 으로 SPATIAL/EVOL 둘 다 재현 확인 (salvaged stdout 와 byte-match)
+- a_paper_negative_ok: T1/T2/T3 triple + EVOL E1 closed-negative = publishable
+- feedback-domain-bidirectional-sibling: SPATIAL/EVOL .md sibling section + TEMPORAL/XENO cross-link 양방향
+- feedback-universe-h-slug-stale-verify: H_844/H_845 각 3-신호 검증 (사망 agent 가 H_843 collision 으로 둘 다 H_843 점유 → T3 가 H_843 land 후 H_844/H_845 로 재배정)
+- DOMAINS.tape format 정정: 사망 agent 의 `@domain X` (lint 위반) → `@D X := "..." :: domain [active]`
 
 ## Round 11 — T2 multi-unit time-embed detector — T1 lag-axis artifact 해소 실패 + 신 inflation artifact 발견 🔴 FALSIFIED-INSTRUMENT (2026-05-29)
 

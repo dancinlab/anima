@@ -48,6 +48,7 @@
 - follow-up 2 R1-R5: lint + paper #1414 v2 + H_839 (X1-matrix-v2 48-cell) + H_840 (X840 longer-playback partial-recovery) + **TEMPORAL 도메인 신설 + H_841 (T1 timeshift 🔴 closed-negative)**
 - 총 **13 H_xxx · 2 papers · 11-point applicability matrix (X10-a~d 포함)** · 새 도메인 [TEMPORAL](../TEMPORAL/TEMPORAL.md) 4D 축 (n × density × structure × Δt) closed-negative finding
 - frontier 이양: TEMPORAL T2 (multi-unit time-embed detector — Takens / Granger / time-averaged Φ) → [TEMPORAL/TEMPORAL.md](../TEMPORAL/TEMPORAL.md)
+- paper v3-r2 (2026-05-29): [PAPER/xeno-applicability-frontier](../PAPER/xeno-applicability-frontier/PAPER.md) **25-page** 갱신 — TEMPORAL T1/T2/T3 **triple** closed-negative (T3 H_843 anima ultradian substrate-side) + SPATIAL S1 (H_844 · [SPATIAL](../SPATIAL/SPATIAL.md)) + EVOL E1 (H_845 · [EVOL](../EVOL/EVOL.md)) sibling-axis probes 합류 — detector 가 모든 축에서 endpoint-classifier-not-ordinal-scale 임을 corroborate
 
 
 ## XENO-FRONTIER-5 round 1/5 (2026-05-29) — X7 ✅

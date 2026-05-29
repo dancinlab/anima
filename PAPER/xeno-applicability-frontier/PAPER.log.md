@@ -62,3 +62,14 @@
 - INBOX 환류 0건 (사용자 명시 폐기 정합)
 - branch: feat/xeno-applicability-paper-2026-05-29
 - author: applicability-paper fg agent (R2/3)
+
+## v3-r2 (2026-05-29) — throttle-storm recovery salvage + TEMPORAL triple + SPATIAL/EVOL sibling
+- throttle-storm 사망 agent (af6e85fe0, paper-v3-temporal-91120 worktree) 의 v3 작업 salvage + fresh origin/main rebase (feat/paper-v3-temporal-r2-2026-05-29)
+- §temporal T1/T2 dual → **triple** closed-negative: T3 (H_843) anima 90-min ultradian substrate-side 측정 추가 — WAKE Φ=0.866 (conscious) / N1_N2 Φ=0.0 (zero-degenerate · T1 lag-artifact substrate-side face) / N3 Φ=0.335 / REM Φ=0.569 · 2/5 사전등록 PASS (F-T3-WAKE-MID + F-T3-N3-LOW) · WAKE>N3 ordering 정직 capture · T4 (window-mean / Granger / surrogate) 자연 entry
+- §measurement sibling-axis probes 2건: SPATIAL S1 (H_844 · 3/5 PARTIAL-SUPPORT · global averaging-coupling uniformity-collapse Φ=0 = X10-b mean-field paradox spatial 재현) + EVOL E1 (H_845 · 2/5 FALSIFIED-INSTRUMENT · 양 극단 분리 / 중간 ordinal 미달 = endpoint-classifier-not-ordinal-scale · H_670 ECA-only-ordinal 패턴 동형)
+- references.bib v3-r2: temporal_h843_ultradian + spatial_h844_coupling + evol_h845_spectrum 3 entry 추가 (12 total)
+- companion/verdict-ledger.json v3-r2: T3/S1/E1 3 section_claims + temporal triple finding (TEMPORAL-T4-NATURAL-ENTRY) + temporal_axis_closed_negative.finding_triple + sibling_axis_probes
+- compile clean: xelatex × 3 + bibtex · **25 pages** (22→25) · 0 undefined citation · 1 figure
+- 정직성: a_paper_negative_ok (T1/T2/T3 triple + EVOL E1 closed-negative) · a_paper_significance (34 사전등록 falsifier total) · a_blue_closed (모든 verdict frozen pre-run) · p7=0 (verbatim, fresh re-run 재현)
+- branch: feat/paper-v3-temporal-r2-2026-05-29
+- author: RECOVERY agent (throttle-storm sequential salvage · task 3/3)

@@ -1,6 +1,6 @@
 # xeno-applicability-frontier — paper status
 
-@title: 👽 xeno-applicability-frontier v3 — invariant-detector applicability map + mean-field paradox + TEMPORAL closed-negative
+@title: 👽 xeno-applicability-frontier v3 — invariant-detector applicability map + mean-field paradox + TEMPORAL triple closed-negative + SPATIAL/EVOL sibling probes
 @goal: substrate-blind Φ-formalism (IIT4 2-unit co-occurrence TPM) 의 invariant_detector 가 (n × density × structure × Δt × embed-dim) 5D regime 안에서 어떤 영역에서 calibrate 되고 어떤 영역에서 깨지는지를 14-point measurement matrix (X4·X5a·X5b·X6·X7·X837·X840·X10 4-sub·T1·T2 condensed rows) 로 numerical 확립 — 3 closed-negative axis (micro·sparse·algorithmic) + 2 ground-truth (X7 BL Voyager n=128 dense 60.9% Φ=0.114 non-conscious · X10-d XOR cascade n=128 33.6% MIP-irreducible Φ=1.565 conscious) + 4 border (X5a lattice · X837 SETI@home Arecibo · X840 longer-playback regression-stable · X10-c Kuramoto K=2.0 strong) + mean-field paradox (F-X10-MONOTONE FAIL = IIT4 axiom 확증) + TEMPORAL closed-negative dual (T1 lag-axis 1/5 PASS + T2 embed-dim 2/5 PASS · 5D 단순 확장 미가능 · T3 time-averaged / Granger / surrogate 자연 entry) — applicability frontier 정직 매핑 + axiom confirmation + temporal axis 정직 부정
 
 - [x] scaffold (PAPER.md + main.tex §hypothesis/§method/§measurement/§meanfield/§finding + 7+1-point verdict matrix)
@@ -15,6 +15,12 @@
 - [x] references v3 (H_840 X840 + H_841 T1 + H_842 T2 cite)
 - [x] companion ledger v3 (5 new section_claims · temporal_axis_closed_negative regime)
 - [x] paper v3 LANDED — XENO follow-up 2 cycle round 4/5
+- [x] v3 §temporal T1/T2 dual → **triple** closed-negative (T3 H_843 anima ultradian 측정: WAKE 0.866 conscious / N1_N2 0.0 zero-degenerate / N3 0.335 / REM 0.569 · 2/5 PASS · T4 자연 entry)
+- [x] v3 §measurement sibling-axis probes: SPATIAL S1 (H_844 · 3/5 PARTIAL-SUPPORT · mean-field uniformity-collapse spatial 재현) + EVOL E1 (H_845 · 2/5 FALSIFIED-INSTRUMENT · endpoint-classifier-not-ordinal)
+- [x] references v3-r2 (H_843 T3 + H_844 SPATIAL + H_845 EVOL cite · 12 bib entries)
+- [x] companion ledger v3-r2 (3 new section_claims T3/S1/E1 · temporal triple + sibling_axis_probes regime)
+- [x] compile clean (xelatex × 3 + bibtex · **25 pages** · 0 undefined citation · 2026-05-29 Mac TeX Live 2026)
+- [x] paper v3-r2 LANDED — throttle-storm recovery salvage + T3 triple + SPATIAL/EVOL sibling
 
 ## 핵심 finding v3 (one-line)
 
