@@ -1,0 +1,40 @@
+=== verify_substrate_akida.py — DECODER lane SW byte-identical (H_680 F-H680-2/3) ===
+date: 2026-05-30 · host: Mac (akida-absent → SW fallback path)
+cmd: python3 HEXAD/CHAT/server/verify_substrate_akida.py
+--- verbatim stdout ---
+{
+  "substrate": "SubstrateAKIDA(SW path)",
+  "provenance": "akida-sw-fallback",
+  "measured": {
+    "R1": 0.0,
+    "R2": 0.475,
+    "R3": 0.5,
+    "R3_total_spikes": 1600,
+    "R3_factor_sum": 1.25
+  },
+  "falsifiers": {
+    "F-H672-1 (R3 rate>0)": {
+      "pass": true,
+      "detail": "0.5 > 0"
+    },
+    "F-H672-2 (R3 in (0,1))": {
+      "pass": true,
+      "detail": "0.5 in (0,1)"
+    },
+    "F-H672-3 (R2>=R1)": {
+      "pass": true,
+      "detail": "0.475 >= 0.0"
+    },
+    "F-H672-4 (8-factor>0)": {
+      "pass": true,
+      "detail": "sum=1.25 > 0"
+    },
+    "F-AKWIRE-FALLBACK": {
+      "pass": true,
+      "detail": "prov=akida-sw-fallback spikes=1600"
+    }
+  },
+  "verdict": "5/5 PASS",
+  "all_pass": true
+}
+--- exit: 0 ---
