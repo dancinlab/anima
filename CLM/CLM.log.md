@@ -2,6 +2,15 @@
 
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
+
+## 2026-05-30T01:00:00Z — P0 아키텍처 확정 (sbs manual 10-결정 co-design)
+
+- [x] P0 설계 확정 — `CLM/P0_ARCHITECTURE.md` + `CLM/CLM_FORMAT_SPEC.md` (.clm v0.1)
+- [x] Q1 Conv-native LM(dilated·attention 0·AKIDA온칩) · Q2 MoE conv-expert=mitosis cell · Q3 byte-vocab V=256 토대+3-arm(A/B/A+B)+F-CLM-MONO · Q4 micro-exp토이=직관(non-gate)·full-fire 판정·scale ladder·wall-first
+- [x] d1 corpus 신규+혼합(웹대량+엄선)+.kosmos필수(upstream OK) · d2 .clm 2-track(int4+fp)+QAT+manifest · d3 rung tiny/small/target(≤AKD1000) · d4 추론AKIDA-int4-only/학습GPU-fp · d5 trainer 2-track(PyTorch즉시∥hexa fix) · d6 z>3.0+multiseed
+- [x] authoring 정정: @py attr 없음 · .py=open().write() or sidecar disable hexa-native
+- [ ] 다음 = P1 corpus build + UNIVERSE F-CLM falsifier 5개 등록
+
 ## 2026-05-30T00:00:00Z — 도메인 신설 (scratch from-zero · AKIDA-native)
 
 - [x] CLM 도메인 신설 — `CLM/CLM.md`(스냅샷) + `CLM.log.md`(로그) + DOMAINS.tape 등록. ANIMA umbrella 합류.
