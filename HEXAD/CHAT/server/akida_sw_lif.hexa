@@ -34,6 +34,22 @@
 //   so verify_substrate_akida stays 5/5. CLOSED-NEGATIVE: on-chip
 //   AkidaUnsupervised LEARNING is non-deterministic (hidden plasticity state,
 //   same-init+same-input → different fitted weights) and is NOT modeled here.
+//
+//   HW-SW FRONTIER round 4 (2026-05-30): added cascade_forward() — the >=3-layer
+//   GENERALIZATION of chaining fc_quantized_forward over a list of weight
+//   tensors (each layer's quantized output feeds the next). Verified
+//   BYTE-IDENTICAL to the AKD1000 N-stacked FullyConnected for L in {3,4},
+//   act_bits {2,4}, random symmetric int4 (max Hamming 0) — the per-layer
+//   quantizer composes exactly with no depth-dependent HW drift. L=1/2 reduce
+//   to the round-3 single/2-layer chain so verify_substrate_akida stays 5/5.
+//
+//   HW-SW FRONTIER round 4 conv (2026-05-30): added conv2d_quantized_forward() —
+//   quantized 2-D conv (SAME pad, stride 1) + the SAME activation quantizer as FC.
+//   AKD1000 splits conv into TWO layer types (recovered by impulse probe on
+//   silicon): InputConvolutional = akida SW front-end, CROSS-CORRELATION
+//   (flip=False); Convolutional = on-chip CNP (genuine HW), TRUE CONVOLUTION =
+//   180deg kernel flip (flip=True). Verified BYTE-IDENTICAL to AKD1000 for
+//   InputConv->Conv cascades (act_bits 4, sym int4, F<=8, K=3), max Hamming 0.
 // ════════════════════════════════════════════════════════════════════════
 
 fn main() {

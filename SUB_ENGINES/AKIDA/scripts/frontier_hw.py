@@ -10,8 +10,9 @@ already proven byte-identical (adv_sweep). This script deliberately enters the
                     quantization behaviour is visible.
   --axis weights  : single FC, weights_bits=4, RANDOM int4 weight matrix
                     (seed-fixed), graded inputs -> quantized weighted sum.
-  --axis layers   : 2 stacked FullyConnected, random int4 weights, act_bits=4
-                    -> cascade quantization across layers.
+  --axis layers   : N stacked FullyConnected (--n-layers, default 2; round-4
+                    deep cascade probes 3 and 4), random int4 weights, act_bits
+                    -> cascade quantization across an arbitrary-depth FC stack.
 
 Emits the FULL raw activation tensor per probe-input + a sha256 so HW vs SW can
 be diffed exactly. Mirrors first_inference.py model-build style. One JSON line
@@ -96,17 +97,24 @@ def build_weights(dev, weights_bits, wseed, act_bits):
     return m, Wr
 
 
-def build_layers(dev, weights_bits, wseed, act_bits):
+def build_layers(dev, weights_bits, wseed, act_bits, n_layers=2):
+    """N stacked FullyConnected, weights drawn IN ORDER from one rng stream.
+
+    n_layers >= 2; round-4 deep-cascade probes n_layers in {3,4}. The SW side
+    (frontier_sw / akida_sw_lif.cascade_forward) draws from the SAME stream in
+    the SAME fc1..fcN order so the per-layer weight tensors are byte-identical
+    for a fixed wseed.
+    """
     m = akida.Model()
     m.add(akida.InputData(input_shape=(1, 1, IN), input_bits=4, name="in"))
-    m.add(akida.FullyConnected(units=N, weights_bits=weights_bits,
-                               activation=True, act_bits=act_bits, name="fc1"))
-    m.add(akida.FullyConnected(units=N, weights_bits=weights_bits,
-                               activation=True, act_bits=act_bits, name="fc2"))
+    names = [f"fc{i+1}" for i in range(n_layers)]
+    for nm in names:
+        m.add(akida.FullyConnected(units=N, weights_bits=weights_bits,
+                                   activation=True, act_bits=act_bits, name=nm))
     m.map(dev)
     rng = np.random.default_rng(wseed)
     ws = {}
-    for nm in ("fc1", "fc2"):
+    for nm in names:
         fc = m.get_layer(nm)
         W = fc.get_variable("weights")
         Wr = rand_int_weights(rng, W.shape, weights_bits, W.dtype)
@@ -125,11 +133,13 @@ def main():
     ap.add_argument("--act-bits", type=int, default=2)
     ap.add_argument("--weights-bits", type=int, default=4)
     ap.add_argument("--wseed", type=int, default=7)
+    ap.add_argument("--n-layers", type=int, default=2,
+                    help="depth of the FC cascade for --axis layers (>=2)")
     a = ap.parse_args()
     dev = akida.devices()[0]
     meta = {"axis": a.axis, "act_bits": a.act_bits,
             "weights_bits": a.weights_bits, "wseed": a.wseed,
-            "device": str(dev.version)}
+            "n_layers": a.n_layers, "device": str(dev.version)}
 
     if a.axis == "actbits":
         m = build_actbits(dev, a.act_bits)
@@ -138,8 +148,9 @@ def main():
         m, Wr = build_weights(dev, a.weights_bits, a.wseed, a.act_bits)
         ws_sha = sha(Wr)
     else:
-        m, ws = build_layers(dev, a.weights_bits, a.wseed, a.act_bits)
-        ws_sha = sha(np.concatenate([ws["fc1"].ravel(), ws["fc2"].ravel()]))
+        m, ws = build_layers(dev, a.weights_bits, a.wseed, a.act_bits,
+                             n_layers=a.n_layers)
+        ws_sha = sha(np.concatenate([ws[k].ravel() for k in sorted(ws)]))
     meta["weights_sha256"] = ws_sha
     meta["backend"] = str(m.sequences[0].backend)
     meta["on_hardware"] = "Hardware" in meta["backend"]

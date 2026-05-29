@@ -88,6 +88,75 @@ def fc_quantized_forward(x, weights, act_bits, input_bits=4, n=N):
     return np.clip(act, 0, hi).astype(np.int64)[:n]
 
 
+def cascade_forward(x, weights_list, act_bits, input_bits=4, n=N):
+    """Deep N-layer FullyConnected cascade -- the >=3-layer GENERALIZATION of
+    chaining fc_quantized_forward (frontier round-4 deep cascade, 2026-05-30).
+
+    weights_list = [W1, W2, ..., WL] applied in order; each layer's quantized
+    activation output feeds the next layer's input. Each W is a (.., IN, n) int
+    tensor (symmetric int4). Reduces to a single fc_quantized_forward for L=1 and
+    to the round-3 2-layer chain for L=2. Verified BYTE-IDENTICAL to the AKD1000
+    N-stacked FullyConnected (act_bits in {2,4}, random symmetric int4, L in
+    {3,4}) -- the per-layer quantizer composes exactly, no depth-dependent HW
+    drift (each FC re-quantizes to [0, 2^act_bits-1] so the inter-layer signal
+    stays inside the input quantization range the next layer expects).
+    """
+    h = x
+    for W in weights_list:
+        h = fc_quantized_forward(h, W, act_bits, input_bits=input_bits, n=n)
+    return h
+
+
+def conv2d_quantized_forward(x, kernel, act_bits, input_bits=4, flip=False,
+                             padding="same"):
+    """AKD1000 quantized 2-D convolution forward -- the CONVOLUTIONAL extension of
+    the FC quantizer (frontier round-4 conv axis, 2026-05-30).
+
+      x      : (H, W, Cin) integer activation map (input quantized to input_bits)
+      kernel : (K, K, Cin, F) symmetric int weights (akida conv layout)
+      out    : (H, W, F)  -- SAME padding, stride 1, then per-channel quantize_relu
+
+        potential[i,j,f] = sum_{di,dj,c} xpad[i+di, j+dj, c] * Wk[di,dj,c,f]
+        y[i,j,f]         = clip( ceil(potential / step), 0, 2^act_bits - 1 )
+        step             = 2^(input_bits - act_bits)     (same quantizer as FC)
+
+    flip: AKD1000 SILICON DISTINGUISHES TWO CONV LAYER TYPES (recovered by impulse
+    probe on real silicon, 2026-05-30):
+      - InputConvolutional (the v1 pixel front-end, run on the akida SW backend):
+        CROSS-CORRELATION (flip=False) -- the kernel is applied as-is.
+      - Convolutional (mapped to the on-chip CNP, genuine HW): TRUE CONVOLUTION
+        (flip=True) -- the kernel is rotated 180deg before the windowed sum.
+    Same-pad impulse test: center impulse + corner-only kernel -> output lands at
+    the OPPOSITE corner for the HW Conv (flip), confirming the 180deg rotation.
+    Verified BYTE-IDENTICAL to AKD1000 for InputConv(flip=False)->Conv(flip=True)
+    cascades (act_bits 4, symmetric int4, F up to 8, K=3, SAME pad), max Hamming 0.
+    """
+    xa = np.maximum(np.asarray(x, dtype=np.int64), 0)
+    if xa.ndim == 2:
+        xa = xa[:, :, None]
+    H, W, Cin = xa.shape
+    Wk = np.asarray(kernel, dtype=np.int64)
+    K = Wk.shape[0]
+    F = Wk.shape[3]
+    if flip:
+        Wk = Wk[::-1, ::-1, :, :]
+    pad = K // 2 if padding == "same" else 0
+    xp = np.zeros((H + 2 * pad, W + 2 * pad, Cin), dtype=np.int64)
+    xp[pad:pad + H, pad:pad + W, :] = xa
+    oh, ow = (H, W) if padding == "same" else (H - K + 1, W - K + 1)
+    pot = np.zeros((oh, ow, F), dtype=np.int64)
+    for i in range(oh):
+        for j in range(ow):
+            patch = xp[i:i + K, j:j + K, :]          # (K, K, Cin)
+            for f in range(F):
+                pot[i, j, f] = int((patch * Wk[:, :, :, f]).sum())
+    p = np.maximum(pot, 0)
+    step = 1 << (input_bits - act_bits)
+    act = -(-p // step)
+    hi = (1 << act_bits) - 1
+    return np.clip(act, 0, hi).astype(np.int64)
+
+
 def _isi_stats(spike_counts):
     """Population inter-spike intervals — gaps between steps that had >=1 spike.
 
