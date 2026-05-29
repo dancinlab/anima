@@ -200,3 +200,15 @@
   artifact_recovery = "0 — build 사망, ckpt/log 없음"
   verdict      = "🟠 BLOCKED-AT-BUILD-EXTERNAL — F-PRODAUX-1 측정 불가, distinct_top/LZ_norm/gate_entropy 0, prodaux vs longtrain 비교 0. plan completion criteria 미충족, handoff 2eddb92a 처리 의존."
   artifacts    = "STEP_RATE_LOG.md entry 17, M5_FIRE_PROGRESS.md."
+
+@N dec_m5_mirror_attempt4_2026_05_29 := "M5 attempt #4 — anima-side mirror workaround code landed, build/fire 미검증" :: code-landed-unverified
+  context      = "attempt #3 (entry 17) hexa-lang #1527 Linux free-fn trim 회귀 BLOCKED. (c) parallel 선택 — (a) hexa-lang fix wait (handoff 2eddb92a) + (b) anima-side mirror."
+  mirror_code  = "bg agent a3a7a1c7 가 v3_moe_fwd_local/v3_moe_bwd_local/layer_block_bwd_local 3-fn main-TU mirror 작성 (moe_aux_bwd_local 패턴 확장 → 4-fn 전부). train_v3_moe_prodaux.hexa + train_v3_moe_longtrain.hexa, 300+/16-, commit fac9ec8f1 push 완료. hexa parse 양쪽 clean."
+  death_mode   = "agent 155 tool_uses 후 API rate-limit 사망 — build 검증/fire/measurement 도달 전. runpod 2 pod (4824z55uf9hto1 + mnrs2accaae9nu) READY 생성."
+  recovery     = "foreground 회수 4방법 (exec/run/copy-from × 2) 전부 SSH 실패 (key 미등록). artifact 0. hexa cloud rm × 2 → runpod=0. 5 vast RTSC 무접촉."
+  bg_agent_lesson = "★ bg agent 가 fire-류 장기 cost-bearing 작업에서 API transient 에 3연속 사망 (entry 16 500 twin + entry 18 rate-limit). bg agent ⊥ 장기 fire 확정. attempt #5 는 foreground inline 필수."
+  salvage      = "mirror code (fac9ec8f1) 는 사망 전 push 되어 salvage. workaround infrastructure 로 land. 단 Linux pod build trim 회피 검증 미완."
+  followup     = "attempt #5 = mirror code 로 foreground inline Linux pod build → trim 회피 확인 → fire. 또는 hexa-lang #1527 fix land 시 mirror 불필요."
+  verdict      = "🟠 CODE-LANDED-UNVERIFIED — mirror code land (syntax PASS), build/fire/measurement 미검증. cost-leak 차단. measurement 본선 4 attempt 모두 미도달."
+  cost         = "≤$2 (runpod 2 pod 15min idle), HF=0, ckpt=0."
+  artifacts    = "STEP_RATE_LOG.md entry 18, train_v3_moe_{prodaux,longtrain}.hexa 3-fn mirror."
