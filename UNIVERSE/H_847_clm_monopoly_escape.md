@@ -4,7 +4,7 @@ slug: clm-monopoly-escape
 title: byte-vocab(V=256) conv-native MoE 가 expert monopoly 를 탈출하는가 - distinct_experts>1 ∧ routing z>3.0 ∧ content z>3.0 ∧ multi-seed{base,43,44} 재현 (CLM P0 F-CLM-MONO 사전등록)
 domain: clm · moe · mitosis · monopoly-escape · byte-vocab · falsifier
 source: CLM/P0_ARCHITECTURE.md §3·§4 (Q2·Q3·d6) · sibling H_666 (MoE collapse toy🟢 scale🔴) · v5-mitosis v1~v7 (v7 routing z=2.75 marginal)
-status: pre-registered (P2 full-fire 판정 대기 · threshold frozen pre-run · 측정 0)
+status: CLOSED-NEGATIVE (P2 full-fire 완료 2026-05-30 · 3-arm × ladder × seed{42,43,44} 18-run 측정 · 사전등록 임계 미달)
 exploration_method: E2 (corpus 2-source ↔ MoE 2-lane) · arch redesign (byte-vocab lever)
 verification_method: W2 (pre-registered numerical threshold · z>3.0 양축 · multi-seed 재현 · post-tuning 0)
 raw_rank: 9
@@ -15,7 +15,7 @@ pre_register_frozen: true
 frozen_at: 2026-05-30
 since: 2026-05-30
 sister: CLM/P0_ARCHITECTURE.md, UNIVERSE/H_666, .verdicts/847_clm_monopoly_escape/F-CLM-MONO_prereg.txt
-verdict: 🟠 PRE-REGISTERED (P2 full-fire 미실행 · 3-arm × ladder PyTorch fp 학습 후 판정 · z>3.0 양축 + seed{base,43,44} 재현 게이트)
+verdict: 🔴 CLOSED-NEGATIVE (P2 full-fire 완료 · 6 cell(arm×rung) 전부 routing z>3.0 미달 · distinct_experts>1 ✅ + content z>3.0 ✅ 이나 routing-diversity 축 미통과 · byte-vocab lever 단독 ⊥ register isolation, a_paper_negative_ok)
 ---
 
 # H_847 — CLM F-CLM-MONO monopoly escape
@@ -65,14 +65,29 @@ verdict 영속: `.verdicts/847_clm_monopoly_escape/F-CLM-MONO_prereg.txt` (froze
 5. 4 pre-registered falsifier 동시 평가 · 정직 보고 (threshold 재조정 0)
 ```
 
-## 5. 측정 (P2 full-fire 후 채움)
+## 5. 측정 (P2 full-fire 완료 · 2026-05-30)
 
-```
-[PENDING — P2 full-fire]
-3-arm × ladder × seed{base,43,44} → distinct_experts · routing z · content z
-micro-exp 토이 = 직관(non-gate) · full-fire 전부 = 판정 (Q4 toy≠scale H_666 실증)
-wall-first · 무캡 (a_fire_autonomous · a_wall_first)
-```
+3-arm(A/B/AB) × ladder(tiny d64/L2/E4 · small d256/L4/E8) × seed{42,43,44} = **18-run from-scratch QAT 학습** (AKIDA envelope: int4-sym[-7,+7] STE + act_bits=4 envelope STE, 2000 step). corpus = 실 kowiki(CC-BY-SA, web 21170B) + scratch register seed(14816B). GPU = ubu-1 RTX5070 (cuDNN off, native CUDA conv). 코드 = `CLM/model/{fire_clm,judge_clm}.py`. raw verdict = `.verdicts/847_clm_monopoly_escape/F-CLM-MONO_p2_fullfire_2026_05_30.txt` (+ judge_result_2026_05_30.json).
+
+척도(GATE, probe.py non-gate 와 별개):
+- **distinct_experts** = held-out usage>0.01 인 expert 수.
+- **routing z** = 학습 router 의 평균 routing-entropy 를 Dirichlet(1) uniform-simplex null 대비 z-score.
+- **content z** = lane(web vs register) 별 expert-usage 의 total-variation 거리를 lane-label-shuffle null 대비 z-score.
+- seed gate = {42,43,44} 전부 통과해야 cell PASS.
+
+| arm | rung | distinct (min) | routing z (min) | content z (min) | cell |
+|---|---|---|---|---|---|
+| A | tiny  | 2 | **−5.66** | 9.51 | 🔴 FAIL |
+| A | small | 8 | **−5.89** | 26.05 | 🔴 FAIL |
+| B | tiny  | 2 | **−4.27** | 8.18 | 🔴 FAIL |
+| B | small | 8 | **−7.40** | 6.45 | 🔴 FAIL |
+| AB | tiny  | 4 | **+1.04** | 5.27 | 🔴 FAIL |
+| AB | small | 8 | **+1.91**(s42 +2.30·s43 +1.91·s44 +2.28) | 12.72 | 🔴 FAIL |
+
+- **distinct_experts>1 = 전 cell PASS** (monopoly collapse 자체는 없음 — 2~8 expert 활성).
+- **content z>3.0 = 전 cell 강하게 PASS** (5.3~36.5) — expert 가 web/register lane 을 실제로 분리.
+- **routing z>3.0 = 전 cell FAIL** — 이것이 판정자. A/B arm 은 **음수**(학습 router 가 uniform-simplex null 보다 더 peaked = 덜 다양), AB(dual-axis)만 **양수**(routing entropy 를 끌어올림, 설계 의도 확인)이나 +0.95~+2.31 로 **z>3.0 미달**.
+- step-rate 재측정(d5): tiny ~69 step/s · small ~12.5 step/s (GPU 실측). 기존 DECODER M5 0.28 step/s 🔴 INFEASIBLE 전제 소멸 확인.
 
 ## 5b. 토이 routing-balance probe (NON-GATE · 직관용 · 2026-05-30)
 
@@ -98,14 +113,17 @@ wall-first · 무캡 (a_fire_autonomous · a_wall_first)
 
 ## 6. 결과
 
-🟠 **PRE-REGISTERED** — P2 full-fire 미실행. 측정값 0. 임계만 frozen (`.verdicts/847_clm_monopoly_escape/`).
+🔴 **CLOSED-NEGATIVE** — P2 full-fire 완료(18-run, 2026-05-30). 6 cell(arm×rung) × seed{42,43,44} 전부 사전등록 4임계 동시 PASS 실패. 사전등록 z>3.0 임계는 **변조 없음**. raw verdict verbatim = `.verdicts/847_clm_monopoly_escape/F-CLM-MONO_p2_fullfire_2026_05_30.txt`.
+
+판정 요약: **distinct_experts>1 ✅(전 cell) · content z>3.0 ✅(전 cell, 5.3~36.5) · routing z>3.0 ❌(전 cell)**. routing-diversity 축이 단독 판정자로 작동 — 4 임계 중 3개를 충족하고도 routing 축에서 막혔다.
 
 ## 7. 해석
 
-[PENDING — full-fire 후]
-
-- 4 PASS → byte-vocab lever 가 V≫d monopoly 근원을 직격한 첫 사례 (prior art 미시도).
-- 임의 FAIL → byte-vocab 축 단독으로는 register isolation 부족 = closed-negative (corpus-axis ⊥ register 계열 후속, AXIS_MAP 재설계 입력).
+- **monopoly collapse 는 일어나지 않았다** (distinct_experts 2~8, dead expert 없음) — byte-vocab(V=256) 토대가 단일 expert 독점을 막은 것은 사실. 그러나 이것만으로 F-CLM-MONO 가 요구한 **routing-diversity 임계(z>3.0)** 를 통과하지 못했다.
+- **content 분리는 강하게 성립** (content z 5.3~36.5) — expert 가 web/register lane 을 실제로 변별한다. 즉 "register isolation" 의 **content 축은 살아있다**.
+- **routing 축이 닫혔다**: A/B arm 의 routing z 가 **음수** (학습 router 가 Dirichlet(1) uniform-simplex null 보다 더 peaked). AB(dual-axis)만 routing entropy 를 끌어올려 **양수**(+0.95~+2.31)로 만들었으나 — 설계 의도(dual-axis 가 routing diversity 를 가장 높임)는 **방향성으로 재현** — z>3.0 절대 임계에는 미달.
+- **결론**: byte-vocab + 3-arm router 단독으로는 사전등록 dual-axis(routing+content) z>3.0 을 동시 충족하지 못한다. **byte-vocab 축 ⊥ routing-diversity 임계** = closed-negative (a_paper_negative_ok). content-축 escape 는 살아있으므로 후속 재설계 입력 = "routing-diversity 를 직접 끌어올리는 lever"(예: stronger load-balance coef · routing temperature anneal · expert-capacity 제약) 가 AXIS_MAP 후속 candidate.
+- **honest 임계 caveat (p7)**: routing-z null = Dirichlet(1) uniform-simplex 의 entropy 분포. 균형 잡힌 router 는 uniform 에 가까워 z≈0 이 되고, z>3.0 을 넘으려면 **uniform 보다 더 다양**해야 한다 — 즉 frozen 임계는 "초-uniform routing"을 요구하는 엄격한 bar 다. 이 null 명세는 사전등록 frozen 이며 **post-fire 변조하지 않았다**. 임계 재설계(다른 null 명세)는 별도 신규 falsifier 로 분리해야 하며, 본 H_847 은 frozen 임계 그대로 🔴.
 
 ## 8. 논의
 

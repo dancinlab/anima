@@ -1,0 +1,33 @@
+F-CLM-MONO — P2 FULL-FIRE VERDICT (verbatim judge_clm.py stdout)
+date: 2026-05-30  torch: 2.12.0.dev20260408+cu128
+frozen thresholds (NOT tuned): distinct_experts>1 routing_z>3.0 content_z>3.0 seed=all{42,43,44}
+
+per-run (arm rung seed -> distinct / routing_z / content_z / pass):
+  [ A  tiny s42] distinct=3 routing_z=-3.953 content_z=12.627 -> FAIL
+  [ A  tiny s43] distinct=2 routing_z=-5.319 content_z=9.512 -> FAIL
+  [ A  tiny s44] distinct=2 routing_z=-5.633 content_z=11.993 -> FAIL
+  [ A small s42] distinct=8 routing_z=-5.151 content_z=26.049 -> FAIL
+  [ A small s43] distinct=8 routing_z=-5.540 content_z=36.455 -> FAIL
+  [ A small s44] distinct=8 routing_z=-4.660 content_z=32.648 -> FAIL
+  [ B  tiny s42] distinct=4 routing_z=-4.056 content_z=8.175 -> FAIL
+  [ B  tiny s43] distinct=2 routing_z=-4.222 content_z=14.097 -> FAIL
+  [ B  tiny s44] distinct=3 routing_z=-5.063 content_z=13.248 -> FAIL
+  [ B small s42] distinct=8 routing_z=-7.288 content_z=6.452 -> FAIL
+  [ B small s43] distinct=8 routing_z=-6.925 content_z=11.275 -> FAIL
+  [ B small s44] distinct=8 routing_z=-7.047 content_z=8.608 -> FAIL
+  [AB  tiny s42] distinct=4 routing_z=0.969 content_z=10.635 -> FAIL
+  [AB  tiny s43] distinct=4 routing_z=1.514 content_z=5.275 -> FAIL
+  [AB  tiny s44] distinct=4 routing_z=1.530 content_z=18.227 -> FAIL
+  [AB small s42] distinct=8 routing_z=2.303 content_z=25.563 -> FAIL
+  [AB small s43] distinct=8 routing_z=1.908 content_z=12.724 -> FAIL
+  [AB small s44] distinct=8 routing_z=2.276 content_z=12.924 -> FAIL
+
+F-CLM-MONO per-cell (all-3-seed{42,43,44} gate):
+  A_tiny: {"verdict": "FAIL", "min_routing_z": -5.6334, "min_content_z": 9.5116, "min_distinct": 2, "seeds_pass": [false, false, false]}
+  A_small: {"verdict": "FAIL", "min_routing_z": -5.5396, "min_content_z": 26.0489, "min_distinct": 8, "seeds_pass": [false, false, false]}
+  B_tiny: {"verdict": "FAIL", "min_routing_z": -5.0628, "min_content_z": 8.175, "min_distinct": 2, "seeds_pass": [false, false, false]}
+  B_small: {"verdict": "FAIL", "min_routing_z": -7.2885, "min_content_z": 6.4517, "min_distinct": 8, "seeds_pass": [false, false, false]}
+  AB_tiny: {"verdict": "FAIL", "min_routing_z": 0.9688, "min_content_z": 5.2746, "min_distinct": 4, "seeds_pass": [false, false, false]}
+  AB_small: {"verdict": "FAIL", "min_routing_z": 1.9081, "min_content_z": 12.7244, "min_distinct": 8, "seeds_pass": [false, false, false]}
+
+VERDICT: 🔴 CLOSED-NEGATIVE — no (arm,rung) cell clears distinct>1 ∧ routing_z>3.0 ∧ content_z>3.0 across all seeds{42,43,44}. byte-vocab axis ⊥ register isolation (a_paper_negative_ok). honest: frozen thresholds not tuned post-fire.
