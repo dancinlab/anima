@@ -30,3 +30,9 @@
 
 ## 쉬운 버전
 전체 활용 아이디어 카탈로그(친근 7-요소) → [XENO.easy.md](./XENO.easy.md)
+
+
+## Round 2 (2026-05-29) — BL/SETI@home 실 sample 회수
+- BL: archive-pointer 🟡 → 🟢 (Voyager-1 BL Green Bank, blimpy/turbo_seti canonical)
+- SETI@home: archive-pointer 🟡 → 🟡 archive-acquired (archive.org mirror)
+- LFS: 4.6 → 123.7 MB · branch feat/xeno-bl-seti-real-2026-05-29 · commit ee023dfcc
