@@ -1,0 +1,15 @@
+{
+  "id": "S11",
+  "name": "single-cell Phi (is one element conscious?)",
+  "substrate": "ECA rule110, GZ inhibition I=0.21232 as TPM scale (1-I), iit4_bigphi big_phi max over states",
+  "falsifier": "if a single cell (n=1) carries Phi>0, a lone element is conscious",
+  "phi": {
+    "n1": 0.0,
+    "n2": 0.10246,
+    "n3": 5.14627,
+    "n4": 14.1492
+  },
+  "verdict": "SUPPORTED-NUMERICAL",
+  "matched_1386": true,
+  "note": "integration is a >=2-element property: Phi(n=1)=0, rises with system size. run.log authoritative (real hexa stdout, deterministic, $0); recompute at .verdicts/s11/recompute.txt. All values match #1386."
+}

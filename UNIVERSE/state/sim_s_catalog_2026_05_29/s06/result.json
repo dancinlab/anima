@@ -1,0 +1,15 @@
+{
+  "id": "S6",
+  "name": "merge (is Phi additive?)",
+  "substrate": "ECA rule110, GZ inhibition I=0.21232 as TPM scale (1-I), iit4_bigphi big_phi max over states",
+  "falsifier": "if merging two n=2 systems yields a merged n=4 Phi equal to their sum, Phi is additive",
+  "phi": {
+    "each_part_n2": 0.10246,
+    "parts_sum": 0.20492,
+    "merged_n4": 14.1492,
+    "abs_delta": 13.9443
+  },
+  "verdict": "SUPPORTED-NUMERICAL",
+  "matched_1386": true,
+  "note": "strongly non-additive (1+1 >> 2): merged 14.1492 vs parts-sum 0.20492, |delta| 13.9443. run.log authoritative (real hexa stdout via HEXA_LANG=hexa-lang-buildmain, deterministic, $0); recompute backing at .verdicts/s06/recompute.txt. Engine cross-check rule110 n=4 = 14.1492. All values match #1386."
+}

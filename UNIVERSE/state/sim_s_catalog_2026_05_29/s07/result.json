@@ -1,0 +1,14 @@
+{
+  "id": "S7",
+  "name": "split (is Phi conserved?)",
+  "substrate": "ECA rule110, GZ inhibition I=0.21232 as TPM scale (1-I), iit4_bigphi big_phi max over states",
+  "falsifier": "if splitting a whole n=4 into two n=2 halves conserves Phi, the halves' sum equals the whole",
+  "phi": {
+    "whole_n4": 14.1492,
+    "each_half_n2": 0.10246,
+    "pieces_sum": 0.20492
+  },
+  "verdict": "SUPPORTED-NUMERICAL",
+  "matched_1386": true,
+  "note": "Phi not conserved under splitting: whole 14.1492 vs pieces-sum 0.20492. run.log authoritative (real hexa stdout, deterministic, $0); recompute at .verdicts/s07/recompute.txt. All values match #1386."
+}

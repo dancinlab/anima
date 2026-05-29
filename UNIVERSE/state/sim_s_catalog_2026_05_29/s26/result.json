@@ -1,0 +1,14 @@
+{
+  "id": "S26",
+  "name": "hive mind (does collective Phi rise with coupling?)",
+  "substrate": "ECA rule110 n=4; coupling strength = (1-I) TPM scale, stronger coupling = smaller inhibition I",
+  "falsifier": "if collective Phi is independent of inter-agent coupling, a hive mind gains nothing from tighter binding",
+  "phi": {
+    "I_0_05_strong": 19.0933,
+    "I_0_21232_ref": 14.1492,
+    "I_0_45_weak": 9.50722
+  },
+  "verdict": "SUPPORTED-NUMERICAL",
+  "matched_1386": true,
+  "note": "collective Phi is a monotone function of coupling strength (rises as coupling rises). run.log authoritative (real hexa stdout, deterministic, $0); recompute at .verdicts/s26/recompute.txt. All values match #1386."
+}
