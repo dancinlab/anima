@@ -37,3 +37,4 @@
 @D PLASTICITY := "./PLASTICITY/PLASTICITY.md" :: domain [active]
 @D LAUNCHPAD := "./LAUNCHPAD/LAUNCHPAD.md" :: domain [active]
 @D CLM := "./CLM/CLM.md" :: domain [active]
+@D ENCODER := "./ENCODER/ENCODER.md" :: domain [active]
