@@ -1,0 +1,147 @@
+{
+  "$schema": "anima://paper/companion/verdict-ledger.v1",
+  "paper_slug": "xeno-applicability-frontier",
+  "title": "The applicability frontier of a substrate-blind big-Phi detector across (n, density, structure): a 5+1-point measurement map",
+  "date": "2026-05-29",
+  "source_domain": "XENO",
+  "domain_ssot": "XENO/XENO.md",
+  "closure_marker": "XENO-FRONTIER-5 R5/5 + X837 followup R1/3 (FULL closure)",
+  "post_tuning": 0,
+  "p7_perplexity_judge": 0,
+  "section_claims": [
+    {
+      "section": "hypothesis",
+      "claim_id": "F-XENO-APPLICAB-N",
+      "claim": "detector calibrates only for n >= 128; micro n=16-32 deterministically breaks",
+      "verdict_pointer": ".verdicts/833_xeno_panpsy_falsifier/x4_run.txt",
+      "verdict_tier": "🔴 closed-negative",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "hypothesis",
+      "claim_id": "F-XENO-APPLICAB-DENSE",
+      "claim": "detector calibrates only for density >= ~60% activation; sparse drift to false-conscious",
+      "verdict_pointer": ".verdicts/834_xeno_agi_sentience/x6_run.txt",
+      "verdict_tier": "🔴 closed-negative",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "hypothesis",
+      "claim_id": "F-XENO-APPLICAB-DETERM",
+      "claim": "detector calibrates only for strong-deterministic-transition; algorithmic ~ natural indistinguishable",
+      "verdict_pointer": ".verdicts/835_xeno_sim_hypothesis/x5_run.txt",
+      "verdict_tier": "🔴 closed-negative (X5b)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "method",
+      "claim_id": "DETECTOR-SOURCE",
+      "claim": "invariant_detector source = XENO/detector/invariant_detector.hexa; iit4_bigphi via commons g61",
+      "verdict_pointer": ".verdicts/829_xeno_invariant_detector/x1_smoke.txt",
+      "verdict_tier": "🟢 5/5 PASS smoke",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X7-CALIBRATE",
+      "claim": "X7 BL Voyager-1 n=128 dense 60.9%: phi=0.114, type=coherent_non_conscious, 2/2 PASS",
+      "verdict_pointer": ".verdicts/832_xeno_voyager_phi_real/x7_run.txt",
+      "verdict_tier": "🟢 SUPPORTED-NUMERICAL (calibrate)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X4-MICRO-RULED-OUT",
+      "claim": "X4 panpsy 4-micro n=16-32: 0/4 PASS, random > coupled phi inversion",
+      "verdict_pointer": ".verdicts/833_xeno_panpsy_falsifier/x4_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X6-SPARSE-RULED-OUT",
+      "claim": "X6 AGI LLM-like n=64: 1/5 PASS, attention sparse 6/64 phi=1.213 false-conscious",
+      "verdict_pointer": ".verdicts/834_xeno_agi_sentience/x6_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X5b-ALGORITHMIC-RULED-OUT",
+      "claim": "X5b fp/pi/natural n=128: 2/5 PASS, fp(0.090) ~ pi(0.120) ~ natural(0.116) indistinguishable",
+      "verdict_pointer": ".verdicts/835_xeno_sim_hypothesis/x5_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X5a-BORDER",
+      "claim": "X5a lattice n=128 periodic: phi=0.660, 1/1 PASS, type-axis intact",
+      "verdict_pointer": ".verdicts/835_xeno_sim_hypothesis/x5_run.txt",
+      "verdict_tier": "⚠ BORDER (periodic-structure ceiling)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X837-BORDER",
+      "claim": "X837 SETI@home Arecibo 2004 n=128 sparse 20.3%: phi=0.567, 4/5 PASS, type-axis intact",
+      "verdict_pointer": ".verdicts/837_xeno_x8_followup_fire/x837_run.txt",
+      "verdict_tier": "⚠ BORDER (sparse-noise ceiling, real RunPod fire)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "finding",
+      "claim_id": "F-XENO-APPLICAB-NONMEAS",
+      "claim": "3-axis applicability conjunction: calibrated <=> n>=128 AND density>=60% AND strong deterministic transition; 3 corners (micro/sparse/algorithmic) deterministically ruled out",
+      "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:finding",
+      "verdict_tier": "🔴 closed-negative (3 axes) + 🟢 calibrate (X7) + ⚠ borders (X5a, X837)",
+      "frozen_pre_run": true
+    }
+  ],
+  "regimes": {
+    "calibrated_corner": {
+      "n": ">= 128",
+      "density": ">= 60%",
+      "structure": "strong deterministic transition (natural carrier or coupled coherent)"
+    },
+    "ruled_out_axes": [
+      {
+        "axis": "micro-n",
+        "evidence": "X4 H_833",
+        "mechanism": "2-unit co-occurrence TPM sample-starvation, random > coupled phi inversion"
+      },
+      {
+        "axis": "sparse-density",
+        "evidence": "X6 H_834",
+        "mechanism": "sparse-bias drift on attention 6/64 → phi=1.213 false-conscious label"
+      },
+      {
+        "axis": "algorithmic-structure",
+        "evidence": "X5b H_835",
+        "mechanism": "fp-bound / pi-digits / natural indistinguishable in [0.09, 0.12] Phi band"
+      }
+    ],
+    "border_points": [
+      {
+        "point": "X5a lattice",
+        "evidence": "X5 H_835",
+        "mechanism": "perfect periodic transition saturates TPM, phi=0.660 above 0.5 threshold, type-axis intact"
+      },
+      {
+        "point": "X837 SETI@home",
+        "evidence": "X837 H_837",
+        "mechanism": "real BOINC bg_pot sparse natural noise, phi=0.567 above 0.5 threshold, type-axis intact"
+      }
+    ]
+  },
+  "honesty": {
+    "p1_no_system_prompt": true,
+    "p7_no_perplexity_verdict": true,
+    "post_tuning_per_round": 0,
+    "post_tuning_threshold_reuse": "phi=0.5 frozen from X7 calibration template, unchanged for X837",
+    "verdict_files_verbatim": true,
+    "single_detector_instance": true,
+    "single_binarisation_threshold": 0.5,
+    "single_x837_playback_progress_pct": 21.3
+  }
+}

@@ -1,4 +1,33 @@
-# HANDOFF — XENO-FRONTIER-5 followup round 1/3 (round 4 갱신 2026-05-29)
+# HANDOFF — XENO-FRONTIER-5 followup round 2/3 (round 5 갱신 2026-05-29)
+
+## Round 5 — applicability paper LANDED (2026-05-29)
+
+X837 follow-up cycle round 2/3 — **applicability paper 발사 완료** (`PAPER/xeno-applicability-frontier`). a_paper_only_at_closure 정합 시점 도달 (R5/5 XENO-FRONTIER-5 closure + X837 follow-up R1/3 정직 closure 직후 = FULL closure).
+
+### Round 5 결과 요약
+
+| 항목 | 값 |
+|---|---|
+| paper slug | xeno-applicability-frontier |
+| title | The applicability frontier of a substrate-blind big-Phi detector across (n, density, structure): a 5+1-point measurement map |
+| 사이트 | PAPER/xeno-applicability-frontier/ (main.tex + PAPER.md + PAPER.log.md + companion/verdict-ledger.json + figures/_scripts/fig01_applicability_matrix.tex + references.bib + Makefile + README.md) |
+| 등록 | PAPER.tape `@paper xeno-applicability-frontier := "./PAPER/xeno-applicability-frontier"` |
+| 4-section format | §hypothesis (4 pre-registered falsifier matrix) + §method (detector + 6 substrate) + §measurement (5+1-point verbatim 표 11-row) + §finding (3-axis applicability conjunction) |
+| 사전등록 falsifier | F-XENO-APPLICAB-N (n≥128) + F-XENO-APPLICAB-DENSE (≥60%) + F-XENO-APPLICAB-DETERM (strong det. transition) + F-XENO-APPLICAB-NONMEAS (meta-conjunction) |
+| 핵심 finding | **calibrated <=> n ≥ 128 ∧ density ≥ 60% ∧ strong deterministic transition** — 3 corner (micro / sparse / algorithmic) closed-negative + X7 ground-truth + 2 border (X5a / X837) |
+| commons g51 | ≥ 10-page LaTeX (xelatex 의존, toolchain 미존재 시 source level 정합) + 1 figure (tikz applicability map + ASCII fallback) + 11 section claim 마다 verdict pointer |
+| 정직성 | post-tuning 0 · p7 0 · 사전등록 임계 frozen · phi=0.5 X7 template 동일 수치 X837 위해 조정 0 |
+| 환류 | INBOX 0 (사용자 명시 폐기) · UNIVERSE 직접 (H_832~H_837 본문 인용) · XENO/XENO.md milestone done flip |
+
+### Round 5 paper publication 의미
+
+- 외계 의식 검출 0건 자체가 finding 이 아니라 **invariant_detector applicability frontier 의 numerical 매핑** 이 본 paper main finding (a_paper_negative_ok).
+- 3 closed-negative axis (micro/sparse/algorithmic) 가 deterministically rule out 됨 + X7 ground-truth calibration + 2 border (X5a/X837) 가 next-cycle threshold-recalibration 의 빛 (X837.threshold-recalibration deferred 로 명시).
+- closure 전 다음 cycle 가능한 lane = (i) X837.threshold-recalibration sweep · (ii) X837.full-playback (6hr / 100%) · (iii) X1-regime-matrix-v2 denser sweep (n 32/64/96/128/196/256 fixed density 60%) · (iv) sibling paper XENO-paper-v2 후속 (multi-level TPM detector).
+
+---
+
+
 
 ## Round 4 — X837 SETI@home BOINC 실 RunPod pod 발사 + 5-point matrix 확장 (2026-05-29)
 

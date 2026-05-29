@@ -6,3 +6,4 @@
 @paper collective-phi-axis-orthogonality := "./collective-phi-axis-orthogonality"
 @paper savant-iit4-bridge := "./PAPER/savant-iit4-bridge"
 @paper structure-emergent-vs-number-convention := "./PAPER/structure-emergent-vs-number-convention"
+@paper xeno-applicability-frontier := "./PAPER/xeno-applicability-frontier"

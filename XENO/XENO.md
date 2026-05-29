@@ -108,3 +108,14 @@
   발견: 자연 SETI background bg_pot (sparse 20.3% ones, n=128 dense) 가 X7 정상 calibration (60.9% ones, phi=0.114) 보다 ones 비율은 절반인데 phi 5× 높음 → invariant_detector 의 phi=0.5 임계가 자연 noise 시그널의 sparse pattern 영역에서 너무 낮음. type axis 는 정상 ('coherent_non_conscious'). 5-point applicability matrix: X4 (n=16-32 micro 🔴) + X5a (lattice false-positive border) + X5b (algorithmic 🔴) + X6 (n=64 sparse 🔴) + X7 (n=128 dense 60.9% 🟢) + **X837 (n=128 dense 20.3% 🔴 border)** = confirmed measurable axis 가 X7 한 점으로 매우 좁음.
 - 사이트: XENO/scan/seti_boinc_phi.hexa · UNIVERSE/H_837 · XENO/state/x837_seti_boinc_fire_2026_05_29 · .verdicts/837_xeno_x8_followup_fire/x837_run.txt
 - 잔여: X837.threshold-recalibration (phi 임계 0.5→0.7 · X7 보존 검증) · X837.full-playback (timeout 6hr → 100% workunit) · X837.bg_pot-only (bg_pot 64 raw n=64 invariant_detector 적용 · X6 sparse regime 비교) · XENO-FRONTIER-5.5 paper (5-point matrix · a_paper_only_at_closure)
+
+
+## XENO-FRONTIER-5 followup round 2/3 (2026-05-29) — applicability paper ✅ LANDED
+
+- PAPER/xeno-applicability-frontier 발사 (a_paper_only_at_closure 정합 시점 도달) → invariant_detector regime applicability map 본격 paper 출시
+  4-section LaTeX (§hypothesis / §method / §measurement / §finding) + 5+1-point matrix verbatim 표 + companion/verdict-ledger.json (11 section claim 마다 .verdicts/<id>.txt verbatim pointer) + tikz 5+1-point applicability map figure + 8-entry references.bib
+  사전등록 falsifier: F-XENO-APPLICAB-N (n ≥ 128 calibrate) + F-XENO-APPLICAB-DENSE (≥ 60% activation) + F-XENO-APPLICAB-DETERM (strong deterministic transition) + F-XENO-APPLICAB-NONMEAS (meta-conjunction)
+  핵심 finding: detector calibrated <=> n ≥ 128 ∧ density ≥ 60% ∧ strong deterministic transition. 3 corner (micro·sparse·algorithmic) 모두 closed-negative.
+  사이트: PAPER/xeno-applicability-frontier/ · PAPER.tape · 6 verdict pointer (832~837)
+  정직: post-tuning 0 · p7 0 · 사전등록 임계 frozen 정합 · INBOX 환류 0건
+- 잔여: X837.threshold-recalibration (round 3/3 후속) · X837.full-playback · X1-regime-matrix-v2 (5-point full matrix denser sweep) · XENO domain 추가 deferred (다음 cycle)
