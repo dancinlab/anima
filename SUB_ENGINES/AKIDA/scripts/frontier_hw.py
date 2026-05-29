@@ -50,6 +50,17 @@ def sha(arr):
     return hashlib.sha256(arr.astype(np.int64).tobytes()).hexdigest()[:16]
 
 
+def rand_int_weights(rng, shape, weights_bits, dtype):
+    """AKD1000 quantized weights are SYMMETRIC: [-(2^(b-1)-1), +(2^(b-1)-1)].
+
+    The chip REJECTS the two's-complement min (-2^(b-1), e.g. -8 for b=4) -- only
+    -7..+7 is authorized. The naive SW range [-2^(b-1), 2^(b-1)) gets this wrong;
+    both sides MUST use this symmetric draw. (frontier finding, 2026-05-29.)
+    """
+    lim = (1 << (weights_bits - 1)) - 1   # 7 for b=4
+    return rng.integers(-lim, lim + 1, size=shape).astype(dtype)
+
+
 def build_actbits(dev, act_bits):
     m = akida.Model()
     m.add(akida.InputData(input_shape=(1, 1, IN), input_bits=4, name="in"))
@@ -76,8 +87,7 @@ def build_weights(dev, weights_bits, wseed, act_bits):
     fc = m.get_layer("fc")
     W = fc.get_variable("weights")
     rng = np.random.default_rng(wseed)
-    lim = 2 ** (weights_bits - 1)
-    Wr = rng.integers(-lim, lim, size=W.shape).astype(W.dtype)
+    Wr = rand_int_weights(rng, W.shape, weights_bits, W.dtype)
     fc.set_variable("weights", Wr)
     try:
         fc.set_variable("threshold", np.zeros(N, dtype=np.int32))
@@ -95,12 +105,11 @@ def build_layers(dev, weights_bits, wseed, act_bits):
                                activation=True, act_bits=act_bits, name="fc2"))
     m.map(dev)
     rng = np.random.default_rng(wseed)
-    lim = 2 ** (weights_bits - 1)
     ws = {}
     for nm in ("fc1", "fc2"):
         fc = m.get_layer(nm)
         W = fc.get_variable("weights")
-        Wr = rng.integers(-lim, lim, size=W.shape).astype(W.dtype)
+        Wr = rand_int_weights(rng, W.shape, weights_bits, W.dtype)
         fc.set_variable("weights", Wr)
         ws[nm] = Wr
         try:
