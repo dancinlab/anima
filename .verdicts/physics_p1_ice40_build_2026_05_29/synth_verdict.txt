@@ -1,0 +1,60 @@
+        | 
+        8 strange_loop_top
+
+        +----------Count including submodules.
+        | 
+      109 wires
+      322 wire bits
+      109 public wires
+      322 public wire bits
+        5 ports
+       43 port bits
+        - memories
+        - memory bits
+        - processes
+        8 cells
+        8   $scopeinfo
+      119 submodules
+       22   SB_CARRY
+       28   SB_DFFER
+       12   SB_DFFES
+       57   SB_LUT4
+
+3.50. Executing CHECK pass (checking for obvious problems).
+Checking module strange_loop_top...
+Found and reported 0 problems.
+
+3.51. Executing JSON backend.
+
+4. Printing statistics.
+
+=== strange_loop_top ===
+
+        +----------Local Count, excluding submodules.
+        | 
+      109 wires
+      322 wire bits
+      109 public wires
+      322 public wire bits
+        5 ports
+       43 port bits
+      127 cells
+        8   $scopeinfo
+       22   SB_CARRY
+       28   SB_DFFER
+       12   SB_DFFES
+       57   SB_LUT4
+
+End of script. Logfile hash: db58da4290, time: 1.45s, user: 1.00s, system: 0.04s, MEM: 29.83 MB peak
+Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, clang++ 21.0.0 -fPIC -O3)
+Time spent: 74% 22x read_verilog (0 sec), 8% 1x abc9_exe (0 sec), ...
+[cycle=93] state=249249
+[cycle=94] state=492492
+[cycle=95] state=249249
+[cycle=96] state=492492
+[cycle=97] state=249249
+[cycle=98] state=492492
+[cycle=99] state=249249
+[cycle=100] state=492492
+[DONE] final step=100 state=492492
+/Users/ghost/core/anima/.claude/worktrees/agent-a6fd3191916610f75/anima-physics/hw/strange_loop_ice40/src/strange_loop_tb.v:56: $finish called at 1025000 (1ps)

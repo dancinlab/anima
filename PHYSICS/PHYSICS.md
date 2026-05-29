@@ -8,7 +8,7 @@
 ## 진행 (milestones)
 - [x] 🌱 도메인 신설 — DOMAINS.tape 등록 · ANIMA 자매 트리 합류 · 4총사 seed (md + easy.md + log.md)
 - [x] 🔗 anima-physics 인덱스 — 93 entry (루트 11 + docs 19 + substrate 60 + recovered 3) · 41 ✅ · 36 🟡 · 16 ❌
-- [ ] P1 ICE40 strange-loop FPGA — Lattice iCE40UP5K · `hw/strange_loop_ice40/` Mac iverilog+yosys 빌드 ✅ · synthesis pending
+- [x] P1 ICE40 strange-loop FPGA — Lattice iCE40UP5K · `hw/strange_loop_ice40/` Mac iverilog+yosys 🟢 PASS-BUILD (sim 100 cycle attractor + synth 127 cell · `state/physics_p1_ice40_build_2026_05_29/`) · Phase 1b nextpnr+iceprog 별도 milestone
 - [ ] P2 ECP5 nested-lattice FPGA — Lattice ECP5-EVN · `hw/nested_lattice_ecp5/` synth_ecp5
 - [ ] P3 Loihi 2 + Akida kuramoto — Intel Loihi 2 · BrainChip Akida cloud-only (AKIDA 자매 도메인 합류)
 - [ ] P4 Arduino sleep oscillator — Arduino + AD9833 DDS · `hw/sleep_oscillator_arduino/`

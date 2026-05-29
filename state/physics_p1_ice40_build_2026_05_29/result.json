@@ -1,0 +1,52 @@
+{
+  "id": "physics_p1_ice40_build_2026_05_29",
+  "domain": "PHYSICS",
+  "milestone": "P1 ICE40 strange-loop FPGA — Mac iverilog+yosys 빌드",
+  "date": "2026-05-29",
+  "verdict": "🟢 PASS-BUILD",
+  "host": "mac (darwin 25.5.0 arm64)",
+  "tools": {
+    "iverilog": "/opt/homebrew/bin/iverilog (Icarus Verilog)",
+    "yosys": "Yosys 0.65 (git sha1 aec814bdf3071f7e0fd0fbe43f7f711e99d01e24, clang++ 21.0.0 -fPIC -O3)"
+  },
+  "pipeline": [
+    "iverilog -o state/strange_loop_sim src/mix4.v src/strange_loop_top.v src/strange_loop_tb.v",
+    "vvp state/strange_loop_sim",
+    "yosys synth_ice40 -top strange_loop_top -json state/strange_loop.json"
+  ],
+  "sim": {
+    "status": "PASS",
+    "cycles_simulated": 100,
+    "final_state": "492492 (alternating with 249249 each cycle = mix4 strange-loop attractor)",
+    "vcd_emitted": true,
+    "log": "sim.log"
+  },
+  "synth": {
+    "status": "PASS",
+    "top_module": "strange_loop_top",
+    "wires": 109,
+    "wire_bits": 322,
+    "ports": 5,
+    "port_bits": 43,
+    "cells_total": 127,
+    "ice40_cells": {
+      "SB_CARRY": 22,
+      "SB_DFFER": 28,
+      "SB_DFFES": 12,
+      "SB_LUT4": 57,
+      "scopeinfo": 8
+    },
+    "check_problems": 0,
+    "wall_time_sec": 1.45,
+    "peak_mem_mb": 29.83,
+    "json_emitted": true,
+    "log": "synth.log"
+  },
+  "verdict_reason": "Both iverilog sim (100 cycles, alternating attractor) and yosys synth_ice40 (127 cells, 0 check problems) completed cleanly on Mac local. P1 milestone clears the build bar at Phase 1a ($0 Mac local).",
+  "verbatim_evidence": ".verdicts/physics_p1_ice40_build_2026_05_29/synth_verdict.txt",
+  "honesty_notes": [
+    "Phase 1a = sim + synth only. Phase 1b (nextpnr → bitstream → iceprog) requires UP5K board + brew install icestorm nextpnr-ice40 (separate cost-bearing milestone, not asserted here).",
+    "Build verdict scoped to Mac toolchain. Linux GHA build = separate verification axis (not run here).",
+    "This is a PASS-BUILD verdict (toolchain pipeline green), NOT a 🔵 SUPPORTED-FORMAL claim about consciousness — no Phi formalism asserted at this layer."
+  ]
+}
