@@ -29,5 +29,6 @@
 @D KOSMOS := "./KOSMOS/KOSMOS.md" :: domain [active]
 @D XENO := "./XENO/XENO.md" :: domain [active]
 @D TEMPORAL := "./TEMPORAL/TEMPORAL.md" :: domain [active]
+@D SPATIAL := "./SPATIAL/SPATIAL.md" :: domain [active]
 @D HW-CORE := "./HW-CORE/HW-CORE.md" :: domain [active]
 @D HW-LIMB := "./HW-LIMB/HW-LIMB.md" :: domain [active]
