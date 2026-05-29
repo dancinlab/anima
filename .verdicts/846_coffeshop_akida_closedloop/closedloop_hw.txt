@@ -1,0 +1,52 @@
+COFFESHOP-on-AKIDA 폐루프 — 라이브 HW verdict (verbatim 캡처)
+==============================================================
+date     : 2026-05-30
+host     : pi5-akida (192.168.50.155)
+device   : BC.00.000.002  BackendType.Hardware (AKD1000)
+streamer : spike_streamer.py --regime M --allow-ctrl --step-ms 200 --n 16
+method   : spike-streamer service stop → 자체 M-regime streamer(--allow-ctrl) 기동
+           → coffeshop_akida_launch.py hw 가 9513(set_threshold)→on-chip
+           threshold-and-fire→9512(spike) 폐루프 구동 → service restart.
+
+폐루프 체인 (실 silicon):
+  motivation_score (spontaneous_lib closed-form)
+    → set_threshold(thr_vec = linspace(2,18,16)+(1−score)·20)  [port 9513]
+    → AKD1000 on-chip threshold-and-fire (M regime · V=16 · unit fires iff V>thr_j)
+    → n_spikes  [port 9512]
+    → should_interrupt = n_spikes ≥ quorum(6)
+
+=== COFFESHOP launch on AKIDA (akida-hw) ===   ← provenance = HW (chip)
+n_windows: 15 (90min / 6min tick) · quorum: 6 (<=> should_interrupt 0.60)
+window  stim_type         score     n_spk  emit  lang
+------  ----------------  --------  -----  ----  ----
+     1  indirect_topic    0.53877      5  ----  —
+     2  silence           0.55361      5  ----  —
+     3  silence           0.75104      8  EMIT  ko
+     4  silence           0.37954      2  ----  —
+     5  silence           0.54230      5  ----  —
+     6  direct_mention    0.48031      3  ----  —
+     7  direct_mention    0.53206      4  ----  —
+     8  private_prompt    0.48263      3  ----  —
+     9  private_prompt    0.28821      0  ----  —
+    10  direct_mention    0.75706      9  EMIT  ko
+    11  silence           0.32029      0  ----  —
+    12  group_drift       0.51573      4  ----  —
+    13  silence           0.48504      4  ----  —
+    14  direct_mention    0.63525      6  EMIT  ko
+    15  indirect_topic    0.61417      6  EMIT  en
+
+=== aggregate ===
+emit_count:    4 / 15
+silence_count: 11 / 15
+emit windows:  [3, 10, 14, 15]
+known emit:    [3, 10, 14, 15]  (COFFESHOP.md §5)
+trajectory reproduced (HW/SW): True
+provenance:    akida-hw
+
+RESULT_JSON {"backend_provenance": "akida-hw", "emit_windows": [3, 10, 14, 15], "trajectory_match": true}
+[pi5] launch rc=0
+[pi5] spike-streamer service active? -> active   ← 종료 시 streamer 복원 확인
+
+VERDICT: 🟢 PASS — 라이브 AKD1000 폐루프가 COFFESHOP 알려진 trajectory
+(emit window 3·10·14·15 · silence 11 · should_interrupt 0.60) 완전 재현.
+motivation→9513→on-chip→9512→emit 폐루프가 실 silicon 에서 닫힘 (brokenless).

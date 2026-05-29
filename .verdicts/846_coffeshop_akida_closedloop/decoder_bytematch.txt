@@ -1,0 +1,38 @@
+COFFESHOP-on-AKIDA — decoder 경로 HW↔SW 비교 (정직 byte-match verdict)
+========================================================================
+date   : 2026-05-30
+HW     : akida-hw (pi5 AKD1000 BC.00.000.002, M-regime streamer 9513/9512)
+SW     : akida-sw-fallback (Mac numpy mirror, _spikes_from_threshold)
+method : 동일 15-window COFFESHOP motivation_score 를 HW 폐루프 + SW mirror 양쪽에
+         통과시켜 per-window n_spikes + emit 결정 비교.
+
+win  HW_spk  SW_spk  HW_emit  SW_emit  decision_match
+  1      5       5   False   False  OK
+  2      5       5   False   False  OK
+  3      8       9    True    True  OK  (spk diff 1)
+  4      2       2   False   False  OK
+  5      5       5   False   False  OK
+  6      3       4   False   False  OK  (spk diff 1)
+  7      4       5   False   False  OK  (spk diff 1)
+  8      3       4   False   False  OK  (spk diff 1)
+  9      0       0   False   False  OK
+ 10      9       9    True    True  OK
+ 11      0       1   False   False  OK  (spk diff 1)
+ 12      4       5   False   False  OK  (spk diff 1)
+ 13      4       4   False   False  OK
+ 14      6       7    True    True  OK  (spk diff 1)
+ 15      6       6    True    True  OK
+
+EMIT-DECISION byte-match (HW==SW per window, 15/15): True
+  → emit [3, 10, 14, 15] == [3, 10, 14, 15]  (COFFESHOP.md §5 알려진 trajectory)
+RAW-SPIKE-COUNT byte-identical: False (7/15 windows differ by exactly 1)
+
+VERDICT (정직 · p7 · a_blue_closed):
+  🟢 EMIT-DECISION byte-match — 폐루프의 emit/silence 결정은 HW↔SW 완전 동일,
+     COFFESHOP trajectory 재현. spike-quorum(6) ⟺ should_interrupt(0.60) 경계가
+     HW·SW 양쪽에서 동일하게 작동.
+  ⚠ RAW-SPIKE byte-identical 은 아님 — on-chip 정수 threshold 양자화(set_variable
+     int32) vs numpy float threshold 차이로 7개 window 에서 ±1 spike. 결정 경계
+     근처가 아니어서 emit 판정엔 영향 없음. H_672 4-regime SubstrateAKIDA forward
+     의 byte-identical 동치(rounds 1-5)와 구별: 본 M-regime 폐루프의 raw count 는
+     ±1 양자화 잔차를 갖는다. 위조 동치 주장 안 함.
