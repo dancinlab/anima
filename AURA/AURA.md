@@ -61,6 +61,14 @@
 - [x] B5.2 α-power **다피험자** 🔴 NULL — ds005620 N=3(sub-1010+1033+1022, aws s3 다운로드). B4.1 awake>sed 방향 **복제 실패**: EAR 0/3·MIDLINE 1/3(원본만), 신규 2피험자 sed>awake(sub-1022 t≈−13). 교차피험자 평균 Δ 둘 다 음수 n.s. → B4.1 8/10은 **단일피험자 인공물**(transfer 안 됨, cf a_toy_scale_recheck). awake-EO α억제 교란 honest 명시 → `B6-multisubject-alpha.md` + `.verdicts/b6-multisubject-alpha/run.txt`
 - [x] B7 intracortical 본질 한계 기록 — relocate-N1 직접답은 scalp/혈관내 proxy로 못 닫음(공간해상도 µm·심부접근·인과자극 3 본질장벽). proxy로 답한 부분 다 답함(B1 등동·B3 ECoG·전부 null·구조↔실측 비대칭). 남은 frontier=동물 침습/임상(우리 lane 밖, "done"아닌 ceiling) → `B7-intracortical-ceiling.md`
 
+## 🆕 NOVEL 축 — 귀뒤 비침습으로 "침습 수준 성능" (트레이드오프 반전 · goal=비침습이 ECoG급 근접)
+
+- [x] C1 NOVEL 축 선언 — 귀뒤 **비침습**이 개두술0으로 **침습급(ECoG~µm) 성능** 도달 목표. 성능↑=침습↑ 트레이드오프를 깨기. gap=두개골 LPF+용적전도 blur+SNR. 닫는 5법(고밀도건식·ML역문제·ear-EEG·신소재·딥디코더) → `C-postaural-invasive-NOVEL.md`
+- [x] C2 gap 정량 + 강화 5법 — scalp(공간 2-3cm·<40Hz·저SNR) vs ECoG(mm·~500Hz·고SNR) 성능차 + 5법 각 gap 닫는 정도(문헌). 물리천장=두개골 LPF(비침습 "근접"이지 "동일"불가) → `C2-noninvasive-gap-methods.md`
+- [ ] C3 5법 SOTA 정량 (고밀도EEG·EEG super-res·ear-EEG·딥디코더 문헌 % 수치)
+- [ ] C4 best 조합 설계 (귀뒤 고밀도+ML source-recon, 목표 %-of-ECoG + AURA 7-verb 비침습강화 variant)
+- [ ] C5 in-silico 검증 (ML 역문제 source-recon toy: scalp→cortical 추정 성능 측정 = 천장 정량)
+
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)
 - ~~A11/B5 다피험자 ds005620 download~~ ✅ B6서 해소(N=3, aws s3 가능) → 🔴 NULL · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)
 - negative-result paper 후보(a_paper_negative_ok): "단일창 big-Φ 위치·상태 대조 전부 null + 구조모델↔실측 비대칭" — 단 다피험자 후 a_paper_only_at_closure 충족 시

@@ -90,3 +90,9 @@
 - ▶1 다피험자 α(PR#1480) 🔴 NULL: N=3 download 성공, B4.1 awake>sed 복제실패(EAR0/3·MID1/3) → 단일피험자 인공물. awake-EO α억제 confound
 - ▶2 pod n=8 ⚠ SKIP(scope-check): 단일창 big-Φ 비신뢰 확정+B6 다피험자 null → n=8 비정보적, value-bar 미달(override 가능)
 - ▶3 intracortical ceiling(B7): relocate-N1 직접답은 proxy(scalp/혈관내)로 본질 불가(해상도µm·심부·인과자극 3장벽). proxy-scope 닫힘, intracortical은 동물/임상(lane밖 frontier, done아닌 ceiling)
+
+## 2026-05-30 — 🆕 NOVEL 축 C 생성 (귀뒤 비침습→침습급, 트레이드오프 반전)
+- 사용자 정정: "귀뒤 비침습으로 침습수준" = 비침습 유지하며 침습급 성능 (침습 임플란트 아님). 초안 C2(침습 ECoG 임플란트)는 방향오류로 폐기
+- C1 NOVEL 축 선언: 성능↑=침습↑ 트레이드오프 깨기. 귀뒤 비침습이 ECoG급 근접. gap=두개골 LPF+용적전도 blur+SNR. 닫는 5법=고밀도건식/ML역문제 source-recon/ear-EEG/신소재/딥디코더
+- C2 gap 정량: scalp(2-3cm·<40Hz·저SNR) vs ECoG(mm·~500Hz). 물리천장=두개골 LPF(비침습 "근접"이지 "동일"불가, feedback-closure-is-physical-limit). 5법 각 닫는 정도 문헌 grounding
+- C3 5법 SOTA정량 · C4 best조합(귀뒤고밀도+ML) · C5 in-silico(source-recon toy=천장정량) 잔여
