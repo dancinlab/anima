@@ -2,6 +2,18 @@
 
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
+## 2026-05-30 — d4 drift 교정: "학습도 AKIDA" 복원 (QAT + PLASTICITY)
+
+- [x] **drift 진단**: P0 d4 가 "추론 AKIDA ONLY · 학습 GPU(fp16)" 로 drift — 원계획(LAUNCHPAD L11 "학습·디코더·발화결정=AKIDA HW-first" + PLASTICITY 도메인 "AKIDA on-chip 학습 lane")의 **학습도 AKIDA** 를 잃음.
+- [x] **물리현실 화해(honest)**: "학습도 AKIDA"를 2-phase 로 둘 다 진실로 복원 — ① pretrain = **AKIDA-향 QAT**(GPU backprop 이되 AKIDA int4 envelope[act_bits∈{1,2,4}·sym-int4[-7,+7]·`akida_sw_lif` byte-identical 집합] 향해 학습) · ② 맥락적응 = **AKIDA-위 PLASTICITY** on-chip edge-learn(AKD1000, 🔴 비결정·SW 비동치). **칩 위 full-backprop 만 물리 불가** = pretrain backprop 그 한 단계만 GPU honest carve-out.
+- [x] **P0 d4 교정**: "학습 GPU(fp16)" → "학습도 AKIDA = AKIDA-향 QAT + AKIDA-위 PLASTICITY". §0 다이어그램·§2 AKIDA-map 경계 table(학습 2-phase 행 + full-backprop carve-out 행)·§7 §8 정합.
+- [x] **P0 d5 보강**: trainer = hexa-native(해결됨) + **AKIDA-향 QAT envelope 시뮬 손실**(§9 신설) + 적응 lane = PLASTICITY 위임.
+- [x] **§9 QAT 설계 신설**: envelope(act_bits·sym-int4·conv/FC/pool/sepconv) + STE forward/backward + 학습손실(CE + envelope 정합항 옵션) + 도착지 검증(학습 envelope ⊆ akida_sw_lif byte-identical) + 경계 honest. **설계만 · 코드는 모델(T4) 선행 후속**.
+- [x] **CLM_FORMAT_SPEC 정합**: HEADER.train = `mode:"akida-aware-qat"·backprop:"gpu-fp16-master"·plasticity_lane:"PLASTICITY"` · QAT 행 AKIDA-향 명시.
+- [x] **CLM.md**: P0/P2 milestone + 무엇/왜 학습 행 + 정직한 물리현실 → "학습도 AKIDA" 로 교정.
+- [x] **CLM↔PLASTICITY 양방향 sibling 배선**: CLM.md `## 양방향 sibling` ⇄ PLASTICITY(학습 lane 위임) 추가 · PLASTICITY.md ⇄ CLM(학습 대상 모델) 추가. CLM=학습 대상(무엇) · PLASTICITY=학습 방법(어떻게) · 중복 0.
+- [x] 불변: **추론 AKIDA-int4-only 회귀 0** · hexa 학습속도 해결 반영 유지. 타 에이전트 영역(CLM/model·UNIVERSE/H_847·.verdicts·AKIDA·project.tape·CLAUDE.md) 미접촉.
+
 ## 2026-05-30 — hexa 학습속도 해결 → 트레이너 g1-pure 전환 (d5 pivot)
 
 - [x] **hexa-native 학습 throughput 완전 해결**(사용자 확인·hexa-lang측) — 기존 DECODER M5 0.28 step/s 🔴 INFEASIBLE 전제 소멸.
