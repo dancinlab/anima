@@ -564,6 +564,53 @@ proxy + structure-model questions are closed; intracortical placement is
 negative-result paper.
 
 % =========================================================================
+\section{Discussion}\label{sec:discussion}
+
+\subsection{Why window non-stationarity dominates}
+The recurring pattern across F1, F2, and F5 is that a \emph{favourable} early
+window subset is overturned by the full-span paired statistic. This is not a
+single noisy outlier: in F1 the per-window FRONTAL$-$MOTOR difference ranges
+from $+4.14$ to $-5.02$ and changes sign six times across the 10 windows
+(Fig.~\ref{fig:ladder}B); in F2 the first-5-window awake$>$sed edge
+($\Delta{+}2.09$, $4/5$) flips to $\Delta{-}0.85$ on the full 10. A single
+$4\,$s EEG window at $n{=}4$ is simply too short and too low-dimensional for an
+IIT-4.0 structure-cut to resolve a $\sim$5\% mean position difference against
+the within-recording variability of the binarised co-occurrence TPM. The
+estimator's variance, not the position contrast, is what the single-window
+number reports. This is a property of the \emph{estimator at this scale}
+($n{=}4$, single window, scalp), and it is precisely why the paper's claim is
+scoped to ``single-window $n{=}4$ scalp big-$\Phi$,'' not to big-$\Phi$ in
+general: a higher-$n$, multi-window-averaged, or intracortical estimator could
+behave differently --- a direction we explicitly cannot test under the local
+compute-wall and proxy-scope (Sections~\ref{sec:method},~\ref{sec:ceiling}).
+
+\subsection{Metric matters: big-$\Phi$ vs.\ band power}
+The two metrics we ran on the same recordings behave differently, and the
+difference is itself informative. Single-window big-$\Phi$ gives an essentially
+random direction for the awake/sed contrast ($6/10$, no trend), whereas
+$\alpha$-band power gives a \emph{consistent} per-window direction within one
+subject ($8/10$, both montages; \texttt{b4-metric-sweep}). One might have read
+that as ``band power is the better consciousness-state read-out.'' The
+multi-subject test (F4) is the corrective: that consistency was a
+\emph{single-subject} property and did not transfer ($0/3$ at the ear). So the
+honest ranking is not ``band power $>$ big-$\Phi$'' but rather: at the
+single-subject scalp scale, \emph{neither} single-window big-$\Phi$ nor
+$\alpha$-power supports a robust position/state claim once you demand
+replication. The eyes-open awake confound (posterior $\alpha$ suppression)
+further cautions against reading any $\alpha$ direction as a state marker.
+
+\subsection{What would change the verdict}
+We are explicit about the conditions under which the negative could be revised
+within the proxy lane: (i) a higher-$n$ exact big-$\Phi$ (requires breaking the
+$2^{2n}$ compute-wall, e.g.\ off-device); (ii) a multi-window-averaged or
+sliding big-$\Phi$ estimator that integrates over the non-stationarity rather
+than sampling one $4\,$s slice; (iii) a substantially larger subject cohort for
+the $\alpha$ replication; (iv) a within-subject eyes-closed awake baseline to
+remove the $\alpha$-suppression confound. None of these touch the intracortical
+ceiling (Section~\ref{sec:ceiling}); they would only sharpen the scalp-proxy
+estimate. We did not run them here, and we do not claim them.
+
+% =========================================================================
 \section{Verdict matrix}\label{sec:verdicts}
 
 \begin{table}[h]
@@ -605,6 +652,25 @@ A8.1 single-window montage mirage & \tierGreen & \ref{sub:f3} &
 
 % =========================================================================
 \section{Related positions and limitations}\label{sec:limits}
+
+\paragraph{The device/position spectrum (context).}
+The relocate thesis is one cell of a broader BCI position/invasiveness
+catalogue (\texttt{AURA/SURVEY.md} \S1,\S4). N1 (1024 ch, penetrating,
+$3$--$6\,$mm, wireless) and Blackrock Utah (96--128 ch, the 20-year clinical
+gold standard) are the high-invasiveness penetrating end; Precision Layer\,7
+(1024 ch, non-penetrating cortical \emph{surface}) and epidural ECoG are an
+intermediate surface tier; Synchron Stentrode (7--16 ch, endovascular in the
+superior sagittal sinus, no craniotomy) is the minimally-invasive midpoint
+clinically validated to ECoG grade \citep{john2018endovascular,
+synchron2025command}; and behind-the-ear / ear-EEG / scalp-EEG are the
+non-invasive floor. Our three measured/cited positions (N1, Synchron,
+post-aural) are representative samples of this spectrum, chosen to span the
+invasiveness axis (Fig.~\ref{fig:ladder}A) rather than to enumerate every
+device. Non-invasive \emph{stimulation} modalities that reach deep targets
+without an implant --- tFUS, multipolar temporal interference
+\citep{grossman2017ti}, taVNS --- are the dual ``move the location to outside
+the skull'' bypass, but they are stimulation rather than the integrated-info
+read-out studied here.
 
 \paragraph{Limitations (honest).}
 (1) All real-EEG big-$\Phi$ is $n{=}4$ \emph{scalp-proxy} --- not intracortical,

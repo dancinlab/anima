@@ -17,4 +17,10 @@
   by main.tex (\input) and standalone wrapper. (Self-contained vector figure;
   no fal.ai call needed — TikZ is the reproducible/auditable choice for a
   data plot of the verdict numbers.)
-- 2026-05-30 compile: see PR/build notes for page count + engine.
+- 2026-05-30 compile: xelatex -> bibtex -> xelatex x2, all passes rc=0.
+  Added §Discussion (window non-stationarity mechanism, big-Phi vs band-power
+  metric, what-would-change-the-verdict) + device/position spectrum context
+  paragraph to clear the >=10-page bar honestly (no padding; all grounded in
+  verdicts/SURVEY). Final: main.pdf = 11 pages. Figure (fig01, 2-panel TikZ)
+  embedded. Bibliography resolved (6 refs). Only Overfull-hbox warnings (URLs
+  in mono), no errors.
