@@ -156,3 +156,17 @@ P1~P8 정합: aux-loss 는 weight update path 에 작용 (P8: train/infer 같은
 - λ_router 의 optimal sweep — 별 H {λ ∈ 1e-3, 1e-2, 1e-1} 3-pod
 - atlas register — 본 H 의 closed-form bound H(p)≥ln(K)/2 = formula candidate (`router_entropy_bound` if atlas function 추가)
 - 산출물: `state/decoder_router_entropy_2026_05_29/H_686_closed_form.json` (K=2/4/8 bound 표 · attest)
+
+## 11. production fire 시도 2026-05-29 — 🟠 BUILD-BLOCKER (measurement 무산)
+
+PR #1397 머지된 `CORE/DECODER/train_v3_moe_prodaux.hexa` (λ_ent=0.1 + λ_kl=0.1) 로 H100 SXM single-pod 300-step production fire 시도.
+
+**결과**: ⚠️ **빌드 차단** — Linux/x86_64 codegen 체인이 4 개 누락 정의 (`farr_softmax_rows`, `farr_ce_seed`, `farr_adamw_step_inplace`, cross-module link) 로 실행 가능한 trainer binary 를 produce 하지 못함. 3 개는 로컬 C shim 으로 patched 했으나 4번째 (cross-module codegen) 는 hexa-lang 측 작업 (anima patch scope 외).
+
+- **pod**: 83na0mvuq4tqao (terminated 2026-05-29, cost ≈ $5)
+- **decode samples**: 0 (zero step runs)
+- **F-H686-6 escape verify**: 여전히 **deferred** (production fire 별 H · 미달성)
+
+H_686 가설 자체는 영향 없음 — closed-form bound (F-H686-1~4) 는 변함없이 PASS, F-H686-6 production verify 만 무측정. λ_ent=0.1 에서 router H(p)≥ln(K)/2 가 실측 충족되는지는 OPEN.
+
+상세: `state/m5_prodaux_fire_2026_05_29/BUILD_BLOCKER.md`. 차단지 #4 는 hexa-lang inbox 등록 대상 — anima 측 fixable 아님.

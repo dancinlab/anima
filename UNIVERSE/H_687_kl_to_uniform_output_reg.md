@@ -157,3 +157,17 @@ P1~P8 정합: aux-loss 추가는 weight 학습 path 에 작용 (P8: continuous m
 - label smoothing literature citation tier 별 H
 - atlas register — `kl_uniform_v_bound` formula candidate (KL = ln(V) - H 의 정의-수준 identity)
 - 산출물: `state/decoder_kl_uniform_2026_05_29/H_687_closed_form.json` (V=151643 KL band 표 · attest)
+
+## 11. production fire 시도 2026-05-29 — 🟠 BUILD-BLOCKER (measurement 무산)
+
+PR #1397 머지된 `CORE/DECODER/train_v3_moe_prodaux.hexa` (λ_ent=0.1 + λ_kl=0.1) 로 H100 SXM single-pod 300-step production fire 시도.
+
+**결과**: ⚠️ **빌드 차단** — H_686 의 § 11 과 동일 (`farr_softmax_rows` / `farr_ce_seed` / `farr_adamw_step_inplace` / cross-module link 차단). 3 개는 로컬 C shim patched, 4번째는 hexa-lang 측 작업.
+
+- **pod**: 83na0mvuq4tqao (terminated 2026-05-29, cost ≈ $5)
+- **decode samples**: 0 (zero step runs)
+- F-H687 의 production escape verify (별 H) 는 여전히 **deferred** · 미달성
+
+H_687 가설 자체는 영향 없음 — closed-form KL band (F-H687-1~4) 는 변함없이 PASS, production verify 만 무측정. λ_kl=0.1 에서 KL(q||uniform) 이 실측 band 내에 들어가는지는 OPEN.
+
+상세: `state/m5_prodaux_fire_2026_05_29/BUILD_BLOCKER.md`. 차단지 #4 는 hexa-lang inbox 등록 대상 — anima 측 fixable 아님.
