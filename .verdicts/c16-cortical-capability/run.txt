@@ -1,0 +1,24 @@
+AURA C16 — cortical-reachable capability map (C15 best-envelope interpolation, 🟡 toy)
+=====================================================================================
+envelope (C15 round-C2 full-stack+dynamic): depth[0.5,1.5,3.0,5.0,8.0] -> R2[0.999,0.820,0.417,0.196,0.098]
+
+target                                     depth  reach R2   tier
+M1 운동피질 (gyral crown)                        1.0      0.91   ✅ 도달  — 운동 의도·커서/의수 제어
+V1/시각피질 (후두 표면)                              1.2      0.87   ✅ 도달  — 시각 디코드·이미지 재구성
+A1/청각·언어 (측두 표면)                             1.5      0.82   ✅ 도달  — 내적발화·언어 디코드 (락트인 통신)
+DLPFC 집행피질 (전두 표면,A3 golden)                 1.5      0.82   ✅ 도달  — 주의·작업기억·인지부하·집행상태
+S1 체감각피질                                     1.3      0.86   ✅ 도달  — 촉각 피드백·BCI 폐루프
+대상피질 (sulcal 깊음)                             2.8      0.47   🟡 부분  — 정서·갈등 모니터(부분)
+섬엽 insula (sulcal 깊음)                        3.2      0.39   🟡 부분  — 내수용·각성(부분)
+시상 thalamus (심부)                             5.5      0.18   🔴 벽  — 중계핵·의식 게이트
+기저핵 basal ganglia (심부)                       5.8      0.17   🔴 벽  — 운동 게이팅·습관
+해마 hippocampus (심부)                          6.0      0.16   🔴 벽  — 기억 형성
+VTA/LC/raphe 신경조절핵 (심부)                      7.0      0.13   🔴 벽  — 보상·각성·기분 (N1-relocate 원타깃)
+
+VERDICT (🟡 toy — depth units toy-specific, tiers are relative not absolute):
+- ✅ 도달 (R2>=0.6): 표면 피질 5종 — 운동/시각/청각언어/집행(DLPFC)/체감각. 비침습 RTSC-MEG+異種모달
+  스택으로 침습급 근접(0.82~0.91). 실현 가능 BCI 응용군.
+- 🟡 부분 (0.3~0.6): sulcal 깊은 피질 (대상/섬엽) — 정서/내수용 부분 모니터.
+- 🔴 벽 (R2<0.3): 모든 피질하 (시상/기저핵/해마/신경조절핵) — N1-relocate 원타깃 VTA/LC가 여기.
+- 결론: relocate-N1 "전뇌통제"는 비침습 불가, but 표면 피질 기반 역량(운동/통신/인지상태/의식모니터)은
+  실현권. A3 golden-zone(DLPFC 집행피질)이 도달권 안 = AURA 카탈로그와 정합.
