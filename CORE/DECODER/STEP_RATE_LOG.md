@@ -545,3 +545,32 @@ PR #1397 머지된 `train_v3_moe_prodaux.hexa` (1037 LoC, λ_ent=0.1 + λ_kl=0.1
 artifacts: `state/m5_prodaux_fire_2026_05_29/{BUILD_BLOCKER.md, shims.h, trainer_fixups.h, rent.log, RUNNING_POD.txt}`.
 
 **verdict**: 🟠 **무측정 (untested at production)** — 빌드 차단지 #4 는 anima patch scope 외. 본 round 는 cost 발생 했으나 verdict 생산 못함 — 정직성 우선, 거짓 결과 거부.
+
+### 2026-05-29 (14) — H_686/H_687 V-scale escape boundary sweep — 🟠 SWEEP-OUT-OF-RANGE (V 축 단독은 OFFENDING-LEVER 아님 ⊥ 확정)
+
+**목적**: PR #1395 의 V=8 ⚪ TOY-NULL 후 V 축 확장 — V ∈ {8, 64, 256, 1024, 4096} × cell ∈ {none, ent, kl, both} 20 cell. baseline 이 collapse 하는 최소 V (V*_collapse) 와 aux 가 escape 하는 최소 V (V*(aux)) 를 측정해서 H_686/H_687 의 toy↔production transfer band 식별 시도.
+
+**harness**: `CORE/DECODER/h686_h687_v_scale.hexa` (PR #1395 byte-eq, V parametric, BITS=18 lock, corpus stride=max(1,V/6)). sanity gate: V=8 none → LZ=0.0360459 distinct=4 ✓ MATCH PR #1395.
+
+**측정** (`state/h686_h687_v_scale_2026_05_29/`, 20 .out 파일):
+
+| V | none LZ/de | ent LZ/de | kl LZ/de | both LZ/de |
+|---|---|---|---|---|
+| 8 | 0.0360459 / 4 | 0.0360459 / 4 | 0.0360459 / 4 | 0.0360459 / 4 |
+| 64 | 0.0540689 / 4 | 0.0540689 / 4 | 0.0540689 / 4 | 0.0540689 / 4 |
+| 256 | 0.0540689 / 4 | 0.0540689 / 4 | 0.0540689 / 4 | 0.0540689 / 4 |
+| 1024 | 0.0540689 / 4 | 0.0540689 / 4 | 0.0540689 / 4 | 0.0540689 / 4 |
+| 4096 | 0.0540689 / 4 | 0.0540689 / 4 | 0.0540689 / 4 | 0.0540689 / 4 |
+
+**결과**:
+- (1) **V*_collapse 미발견** — baseline (none) 이 V ∈ [8, 4096] 전 구간에서 4/4 distinct identity decode escape. V 축 단독으로 collapse 유발 못함.
+- (2) **V*(aux) N/A** — escape 할 collapse 가 없음. aux 의 'escape work' 측정 불가.
+- (3) **mean H(gate)**: H_686 ent aux 가 V 전 구간에서 router H 를 0.04~0.15 → 0.77~1.18 (uniform=ln4=1.386) 로 정상 push (메커니즘 sanity ✓). H_687 kl 은 router H 거의 불변 (output reg, 예상).
+
+**진단**: production collapse (V=151643 single-expert) 의 OFFENDING-AXIS 는 V 단독 아님 (⊥ 확정). 후보 잔여 = d 축 (toy d=6 vs prod d=64, 10x) · E 축 (toy E=4 vs prod E=2 dead-expert) · n_layer · stochastic batch · wikitext 분포. M init seed 다중 분포는 미측정.
+
+**cost / wall**: $0 mac-local, V=8 ≤1s/cell, V=4096 185~370s/cell, sweep 총 ~24min. 20/20 rc=0.
+
+**verdict**: 🟠 **SWEEP-OUT-OF-RANGE** — V 축 ⊥ 확정. H_686/H_687 의 escape efficacy 는 toy 우회 불가, production fire 직접 측정 외 경로 없음 — PR #1395 결론 ("production fire = 유일 valid test") V-axis sweep 으로 재확인.
+
+artifacts: `CORE/DECODER/h686_h687_v_scale.hexa`, `CORE/DECODER/H686_H687_V_SCALE_RESULT.md`, `state/h686_h687_v_scale_2026_05_29/{MANIFEST.txt, run_sweep.hexa, V{V}_{cell}.out × 20}`.

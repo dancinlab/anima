@@ -170,3 +170,21 @@ PR #1397 머지된 `CORE/DECODER/train_v3_moe_prodaux.hexa` (λ_ent=0.1 + λ_kl=
 H_686 가설 자체는 영향 없음 — closed-form bound (F-H686-1~4) 는 변함없이 PASS, F-H686-6 production verify 만 무측정. λ_ent=0.1 에서 router H(p)≥ln(K)/2 가 실측 충족되는지는 OPEN.
 
 상세: `state/m5_prodaux_fire_2026_05_29/BUILD_BLOCKER.md`. 차단지 #4 는 hexa-lang inbox 등록 대상 — anima 측 fixable 아님.
+
+## 12. V-scale sweep 2026-05-29 — 🟠 SWEEP-OUT-OF-RANGE (V 축 단독은 OFFENDING-LEVER 아님 ⊥ 확정)
+
+PR #1395 의 V=8 ⚪ TOY-NULL 후 V 축 확장 sweep. harness `CORE/DECODER/h686_h687_v_scale.hexa` (PR #1395 byte-eq scaffold + V parametric, sanity gate V=8 none → LZ=0.0360459 distinct=4 ✓ MATCH).
+
+**20 cell**: V ∈ {8, 64, 256, 1024, 4096} × cell ∈ {none, ent, kl, both}. 모든 cell 에서 baseline (none) 이 4/4 distinct identity-decode escape, V*_collapse 미발견. aux gradient injection 은 V 전 구간 정상 작동 (H_686 ent → mean H(gate) 0.04~0.15 → 0.77~1.18, uniform=ln4=1.386) 그러나 escape 할 collapse 부재로 efficacy 측정 불가.
+
+| V | none de | ent de | kl de | both de | LZ_norm |
+|---|---|---|---|---|---|
+| 8 | 4 | 4 | 4 | 4 | 0.0360459 |
+| 64 | 4 | 4 | 4 | 4 | 0.0540689 |
+| 256 | 4 | 4 | 4 | 4 | 0.0540689 |
+| 1024 | 4 | 4 | 4 | 4 | 0.0540689 |
+| 4096 | 4 | 4 | 4 | 4 | 0.0540689 |
+
+**결론**: production collapse (V=151643) 의 OFFENDING-AXIS 는 V 단독 아님 ⊥ 확정. H_686 의 F-H686-6 production verify 는 V-axis toy 우회 불가, 본 H §11 의 production fire 직접 측정 외 경로 없음 — PR #1395 결론 ('production fire = 유일 valid test') 재확인. 잔여 후보 = d / E / n_layer / stochastic / corpus-distribution / M-init-seed 분포 (별 H 후속 sweep 대상).
+
+상세: `CORE/DECODER/H686_H687_V_SCALE_RESULT.md`, `state/h686_h687_v_scale_2026_05_29/V{V}_{cell}.out × 20`. STEP_RATE_LOG entry (14). $0 mac-local wall ~24min.
