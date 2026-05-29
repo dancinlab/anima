@@ -58,6 +58,7 @@
 - [x] B5.1 귀뒤 정맥동 endovascular 🟠 — 해부경로(가로/S자정맥동·유양도수정맥 실재) + B3 grounding(혈관내≈ECoG급 측두/후두) + 깊이사다리 확정(귀뒤 1지점 비침습①→정맥동②→관통③). hypothesis-grade(Synchron=SSS만, 귀뒤정맥동 실측 0) → `B5-postaural-sinus-endovascular.md`
 - [x] B5.3 demiurge 환류 — cross-repo `handoff filed: demiurge [844fd61c]` (B1/B3/B4/B5 → 7-verb analyze/verify/specify)
 - [x] B5.2 α-power **다피험자** 🔴 NULL — ds005620 N=3(sub-1010+1033+1022, aws s3 다운로드). B4.1 awake>sed 방향 **복제 실패**: EAR 0/3·MIDLINE 1/3(원본만), 신규 2피험자 sed>awake(sub-1022 t≈−13). 교차피험자 평균 Δ 둘 다 음수 n.s. → B4.1 8/10은 **단일피험자 인공물**(transfer 안 됨, cf a_toy_scale_recheck). awake-EO α억제 교란 honest 명시 → `B6-multisubject-alpha.md` + `.verdicts/b6-multisubject-alpha/run.txt`
+- [x] B7 intracortical 본질 한계 기록 — relocate-N1 직접답은 scalp/혈관내 proxy로 못 닫음(공간해상도 µm·심부접근·인과자극 3 본질장벽). proxy로 답한 부분 다 답함(B1 등동·B3 ECoG·전부 null·구조↔실측 비대칭). 남은 frontier=동물 침습/임상(우리 lane 밖, "done"아닌 ceiling) → `B7-intracortical-ceiling.md`
 
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)
 - ~~A11/B5 다피험자 ds005620 download~~ ✅ B6서 해소(N=3, aws s3 가능) → 🔴 NULL · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)
