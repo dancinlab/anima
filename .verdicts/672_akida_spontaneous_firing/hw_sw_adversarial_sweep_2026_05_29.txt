@@ -1,0 +1,40 @@
+AKIDA 2nd-stage ADVERSARIAL HW<->SW divergence sweep — Round 2 — 2026-05-29
+pi5-akida AKD1000 (akida 2.19.1, BackendType.Hardware) vs numpy-LIF (akida_sw_lif generalized)
+temp: TEMP_BEFORE=temp=60.9'C -> TEMP_AFTER=temp=62.0'C
+n=16 neurons, 16 inputs, window=200. raster_sha256 = sha256 of full per-step spike_counts (byte-identity probe).
+
+SWEEP AXES round 2:
+  seed   {0,1,42,187,2026,999983}  (R2 stochastic regime — jitter probe)
+  thr    {-2,0,4,8,16,24,32,48,64} (R2 seed187 — quantization+saturation edges)
+  struct {R0,R1,R3,R4} seed187 thr24
+  run-to-run: R2 seed187 thr24 x3 (analog jitter)
+
+=== HW vs SW DIVERGENCE TABLE ===
+regime    seed  thr            HWsha            SWsha ident   dRate  HWrate  SWrate isiDiff
+R0       187   24 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f  True  0.0000  1.0000  1.0000   exact
+R1       187   24 252e46b4d22a0070 252e46b4d22a0070  True  0.0000  0.0000  0.0000   exact
+R2         0   24 05130afad0ad00e5 05130afad0ad00e5  True  0.0000  0.5250  0.5250   exact
+R2         1   24 819c648a5e03946d 819c648a5e03946d  True  0.0000  0.4850  0.4850   exact
+R2        42   24 26739705d65bc2f1 26739705d65bc2f1  True  0.0000  0.4500  0.4500   exact
+R2       187   -2 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f  True  0.0000  1.0000  1.0000   exact
+R2       187    0 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f  True  0.0000  1.0000  1.0000   exact
+R2       187    4 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f  True  0.0000  1.0000  1.0000   exact
+R2       187    8 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f  True  0.0000  1.0000  1.0000   exact
+R2       187   16 42fa8088051c4f59 42fa8088051c4f59  True  0.0000  0.9650  0.9650   exact
+R2       187   24 9da20269582bfa7b 9da20269582bfa7b  True  0.0000  0.4750  0.4750   exact
+R2       187   32 77140f642e629352 77140f642e629352  True  0.0000  0.0350  0.0350   exact
+R2       187   48 252e46b4d22a0070 252e46b4d22a0070  True  0.0000  0.0000  0.0000   exact
+R2       187   64 252e46b4d22a0070 252e46b4d22a0070  True  0.0000  0.0000  0.0000   exact
+R2      2026   24 3572210d1ecb4398 3572210d1ecb4398  True  0.0000  0.4950  0.4950   exact
+R2    999983   24 077dc5c0e836e451 077dc5c0e836e451  True  0.0000  0.4800  0.4800   exact
+R3       187   24 da83df95d94ffe04 da83df95d94ffe04  True  0.0000  0.5000  0.5000   exact
+R4       187   24 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f  True  0.0000  1.0000  1.0000   exact
+
+DIVERGENT POINTS (raster sha mismatch): 0 / 18
+
+=== RUN-TO-RUN HW VARIANCE (R2 seed187 thr24 x3) ===
+repeat shas: ['9da20269582bfa7b', '9da20269582bfa7b', '9da20269582bfa7b', '9da20269582bfa7b', '9da20269582bfa7b'] -> ALL IDENTICAL
+
+=== verify_substrate_akida.py ===
+  "verdict": "5/5 PASS",
+  "all_pass": true
