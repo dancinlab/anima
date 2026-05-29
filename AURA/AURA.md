@@ -49,6 +49,11 @@
 - [x] A10.1 다창 위치효과 통계 🔴 — 전300s 10창 FRONTAL vs MOTOR: **5:5, paired t(9)=0.28 n.s., sign p=1.0, 평균차+0.26(~5%)** → 실 scalp-EEG에서 **위치효과 통계적으로 없음(확정)**. relocate-N1 scalp-proxy 미지지 종결 → `A10-window-stats.md`
 - [ ] A11 (잔여) — 다피험자(OpenNeuro download, N=1→N>1) · pod n=8 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · negative-result paper 후보(a_paper_negative_ok: 구조모델↔실측 비대칭)
 
+## 🎧 돌파 lane — 귀뒤(post-aural) 비침습 (relocate-N1 침습 무효과 → 비침습 전환)
+
+- [x] B1 귀뒤 돌파 🟢 — ds005620 awake 10창: **EAR(귀뒤 TP9,TP10,T7,T8) big-Φ 5.378 ≈ FRONTAL 5.353 ≈ MOTOR 5.097** (둘 다 paired t n.s.). **귀뒤 비침습이 피질과 동등한 통합정보** → 개두술 0·두피캡 0 돌파. demiurge AURA 7-verb substrate 정당화 → `B1-postaural-breakthrough.md`
+- [ ] B2 (잔여) — 귀뒤 montage로 awake/sed 의식수준 대조(A7.3 귀뒤판, 다창) · 귀뒤 다피험자 · demiurge AURA `analyze`/`verify` 셀에 B1 근거 환류
+
 > ⚠ **핵심 정직 수정 (A9.2)**: A8.1 "FRONTAL>MOTOR (실EEG)"는 **단일 4s 창 인공물** — 6창 재검서 robust 아님(위치효과 평균 ~0). relocate-N1은 **in-silico/connectome(구조) 축에선 일관 지지**되나 **실 scalp-EEG proxy에선 robust 미지지**. SURVEY 결론은 이 비대칭 반영.
 
 

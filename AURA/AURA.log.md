@@ -59,3 +59,11 @@
 - A8.1 단일창 FRONTAL≫MOTOR는 favorable-window cherry 확정. 실 scalp-EEG proxy는 relocate-N1 미지지(종결)
 - AURA 최종 비대칭 재확인: 구조모델(A6/A7/A8.4/A9.3) 일관지지 ⊥ 실 scalp-EEG(A8.1→A9.2→A10.1) 위치효과 부재
 - A11 잔여: 다피험자(N=1→N>1) · pod n=8 통계 · intracortical 침습(본질gap) · negative paper 후보
+
+## 2026-05-30 — B1 귀뒤(post-aural) 돌파 (사용자 피벗: "일단 귀뒤로 돌파")
+
+- A10.1(침습 위치 무차별) 받아 비침습 귀뒤로 전환. ds005620 awake 10창, n=4, 귀뒤 montage(TP9,TP10,T7,T8) big-Φ 측정
+- 결과: EAR 평균 5.378 ≈ FRONTAL 5.353 ≈ MOTOR 5.097. paired EAR-vs-FR t(9)=0.02 n.s. · EAR-vs-MO t(9)=0.25 n.s. → 귀뒤 비침습이 피질과 통계적 동등(오히려 평균 최고, 최고값 11.48@420k도 귀뒤) 🟢
+- 돌파 논리: 침습 relocate 무이득(A10.1) + 귀뒤 동등(B1) → 실용 bypass=개두술0·두피캡0 귀뒤 클립 = demiurge AURA 본 thesis substrate 정당화
+- B1-postaural-breakthrough.md + .verdicts/b1-postaural/viability.txt. demiurge 7-verb(specify/analyze/verify) 연결도 첨부
+- honest: scalp-proxy·single-subj·n=4·절대Φ 낮음(~5 셋다)·Φ=통합정보지 task-decode 아님. B2=귀뒤 awake/sed 대조+다피험자
