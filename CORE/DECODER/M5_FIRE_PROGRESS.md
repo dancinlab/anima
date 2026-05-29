@@ -1,7 +1,7 @@
-# M5 production fire — in-flight progress (attempt #3, foreground inline)
+# M5 production fire — attempt #3 final outcome (foreground inline)
 
-**날짜**: 2026-05-29 (UTC ~12:40 시작)
-**상태**: 🚀 IN-PROGRESS — 2 vast pods 임대 + SSH 확인 + bootstrap 진행 중
+**날짜**: 2026-05-29 (UTC ~12:40 시작 → ~13:50 종료)
+**상태**: 🟠 BLOCKED-AT-BUILD-EXTERNAL — 본선 fire 미진행, hexa-lang Linux codegen-trim 회귀 차단
 
 ## context
 
@@ -28,15 +28,29 @@ H100 filter not 실제로 honored (Blackwell 떨어짐), Blackwell 96GB는 produ
 - prodaux: M4B_LAMBDA_ENT=0.1 M4B_LAMBDA_KL=0.1
 - longtrain: aux=off (그러나 longtrain trainer 자체에 aux 라인 없음 → baseline pure)
 
-## next
+## final outcome
 
-- toolchain bootstrap on both pods (hexa-lang clone + hexat_linux build)
-- copy anima sources via hexa cloud copy-to
-- 동시 fire (a_wall_first parallel)
-- monitor + harvest + HF tier-gated upload
+- toolchain bootstrap PASS (양 pod hexat + runtime.c/runtime_core.c + stdlib/flame 설치 완료)
+- anima source upload PASS (양 pod 에 prodaux/longtrain/v3_moe_arch/v3_moe_bwd_lib/flame_mm 5개 hexa 모두 풀림)
+- **`hexa build` FAIL**: `[1/2] hexat transpile OK · [2/2] clang link FAIL` — v3_moe_fwd + v3_moe_bwd + layer_block_bwd pub fn body 누락 (Linux hexat free-fn trim 회귀)
+- 양 pod cleanly teardown (`hexa cloud rm --force` → destroyed · 0 leak)
+- handoff `2eddb92a` → hexa-lang (Linux hexat free-fn trim 회귀)
 
-## SSH access pattern
+## verdict
+
+🟠 **BLOCKED-AT-BUILD-EXTERNAL** — F-PRODAUX-1 측정 불가, prodaux vs longtrain 비교 0. plan completion criteria 미충족.
+
+- ckpt/log/HF upload: skip (build 사망)
+- 본선 fire wall: 0 (no train run)
+- cost: ≤$2 추정 (2 pods × ~25min bootstrap)
+
+## SSH access pattern (참고)
 
 ```
 hexa cloud exec ssh5.vast.ai 10086 --port 10086 --insecure --identity /Users/ghost/.ssh/id_vast_anima -- <cmd>
 ```
+
+## handoff next steps
+
+(a) hexa-lang 측 Linux hexat free-fn trim 회귀 수정 후 anima M5 재시도
+(b) trainer .hexa 측에서 v3_moe_fwd/bwd/layer_block_bwd 3-fn main-TU mirror 추가 (anima-side 자율 우회 — moe_aux_bwd_local 패턴 확장)

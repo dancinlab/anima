@@ -184,3 +184,19 @@
   followup     = "foreground inline 또는 짧은 단발 (V=151643 n_steps=200 ~10min) 재시도 · API 안정화 시점 · bg agent 보다 foreground 권고"
   verdict      = "⚠ INCIDENT-CLOSED — pod teardown PASS, cost-leak 차단됨. measurement 본선 미진행 (재시도 잔존)."
   artifacts    = "STEP_RATE_LOG.md entry 16."
+
+
+@N dec_m5_fire_codegen_trim_regression_2026_05_29 :: build-chain-regression
+  date         = "2026-05-29"
+  context      = "M5 production fire attempt #3 (foreground inline, 사용자 권고대로 bg agent 회피). 2 vast H100-class pods rent + bootstrap + 본선 fire 차단."
+  rent         = "vast 38410086 ssh5.vast.ai:10086 + 38410087 ssh2.vast.ai:10086 — 둘 다 RTX PRO 6000 Blackwell 96GB (--gpu H100 필터 fallthrough). runpod H100 capacity unavailable (no id in response)."
+  bootstrap    = "build-essential + gcc + clang 설치 → hexa-lang clone → dist/linux-x86_64/hexat 5,580,408b 를 self/native/hexa_v2 로 심볼릭. Github clone 에 self/runtime.c + self/runtime_core.c + stdlib/flame 누락 → Mac ~/.hx/packages/hexa-lang 전체 tar+scp 로 복구."
+  blocker      = "hexa build prodaux.hexa → [1/2] hexat transpile OK · [2/2] clang link FAIL: v3_moe_fwd + v3_moe_bwd + layer_block_bwd pub fn body 누락 (line 907/931/975/1202 'incompatible type int' + 'implicit-function-declaration')"
+  root_cause   = "Linux hexat free-fn trim 회귀 (memory hexa cross-backend codegen gap; #1527 supposedly fixed). anima 의 prodaux 가 moe_aux_bwd_local 1개 mirror 만 가지고 있고 v3_moe_fwd/bwd/layer_block_bwd 3개 mirror 없음."
+  teardown     = "hexa cloud rm 38410086 38410087 --provider vast --force → destroyed · 0 leak · 5 RTSC vast pods 무접촉"
+  handoff      = "sidecar handoff add hexa-lang [2eddb92a]: Linux hexat free-fn trim 회귀 보고 (anima M5 차단)"
+  followup     = "(a) hexa-lang 측 Linux hexat free-fn trim 수정 후 anima M5 재시도 (b) trainer .hexa 측에서 v3_moe_fwd/bwd/layer_block_bwd 3-fn main-TU mirror 추가 (prodaux + longtrain) — anima-side 자율 우회"
+  cost_leak    = "≤$2 추정 (2 pods × ~25min × ~$1.5-2.2/hr × 2)"
+  artifact_recovery = "0 — build 사망, ckpt/log 없음"
+  verdict      = "🟠 BLOCKED-AT-BUILD-EXTERNAL — F-PRODAUX-1 측정 불가, distinct_top/LZ_norm/gate_entropy 0, prodaux vs longtrain 비교 0. plan completion criteria 미충족, handoff 2eddb92a 처리 의존."
+  artifacts    = "STEP_RATE_LOG.md entry 17, M5_FIRE_PROGRESS.md."
