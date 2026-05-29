@@ -14,8 +14,23 @@ by SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py:
 This is a deterministic replay of the same on-chip decision (potential > thr),
 NOT a learned model — seed=187 fixes the noise regimes so SW results are
 byte-stable and match the canonical HW raster regime structure (R0..R4).
+
+CALIBRATION (HW-SW loop round 1, 2026-05-29): the per-regime record now reports
+the SAME derived statistics the on-chip script emits (isi_min/isi_max +
+first10/last10 step-count rasters + wall_ms_per_step), so HW-vs-SW can be diffed
+on the FULL distribution surface (ISI tails + raster head/tail), not just the
+summary rate/std. The added fields are computed by the SAME formula as
+spontaneous_emission.py — derived measurements, NOT hardcoded HW numbers. A
+step-by-step replay against live AKD1000 silicon (seed=187, n=16, 200 steps)
+showed the SW R2 raster is BYTE-IDENTICAL to the HW raster (first10/last10/
+fire-step count all exact), and the HW is fully deterministic across separate
+invocations (no analog jitter at this seed) — so the model fidelity was already
+complete; this round closes the REPORTING-surface gap that prevented the ISI-tail
+and raster diffs from being computed at all.
 """
 from __future__ import annotations
+
+import time
 
 import numpy as np
 
@@ -42,24 +57,42 @@ def lif_forward(x, threshold_vec, n=N):
 
 
 def _isi_stats(spike_counts):
+    """Population inter-spike intervals — gaps between steps that had >=1 spike.
+
+    Mirrors spontaneous_emission._isi_stats EXACTLY (same fire-step list, same
+    consecutive-difference ISI, same min/mean/max) so HW and SW ISI distributions
+    are diffable on the tails (isi_min / isi_max), not only the mean.
+    """
     fire_steps = [i for i, c in enumerate(spike_counts) if c > 0]
     isis = [fire_steps[i + 1] - fire_steps[i] for i in range(len(fire_steps) - 1)]
     if not isis:
-        return {"n_fire_steps": len(fire_steps), "isi_mean": None}
+        return {"n_fire_steps": len(fire_steps), "isi_mean": None,
+                "isi_min": None, "isi_max": None}
     return {"n_fire_steps": len(fire_steps),
-            "isi_mean": round(float(np.mean(isis)), 3)}
+            "isi_mean": round(float(np.mean(isis)), 3),
+            "isi_min": int(min(isis)), "isi_max": int(max(isis))}
 
 
 def run_regime(name, threshold_const, input_fn,
                recurrent=False, threshold_vec=None,
                recur_gain=3.0, recur_seed_steps=2, t=T):
-    """Run T steps of one regime — mirrors spontaneous_emission.run_regime()."""
+    """Run T steps of one regime — mirrors spontaneous_emission.run_regime().
+
+    The returned record carries the SAME keys the on-chip script emits so a HW-vs-
+    SW diff covers the full distribution surface:
+      - first10_step_counts / last10_step_counts : raster head/tail (event-driven
+        evidence; for R2 these are the stochastic 0/16 all-or-nothing steps).
+      - wall_ms_per_step : SW pure-compute time (INFORMATIONAL — it will NOT match
+        the HW ~13.7 ms/step which includes chip I/O; recorded for completeness,
+        never a convergence target).
+    """
     if threshold_vec is not None:
         thr = np.asarray(threshold_vec, dtype=np.int32)
     else:
         thr = np.full(N, threshold_const, dtype=np.int32)
     spike_counts = []
     last_spikes = np.zeros(N, dtype=np.int8)
+    t0 = time.perf_counter()
     for step in range(t):
         if recurrent:
             fb = last_spikes.astype(np.float32)
@@ -74,6 +107,7 @@ def run_regime(name, threshold_const, input_fn,
         sp = lif_forward(inp, thr)
         spike_counts.append(int(sp.sum()))
         last_spikes = sp
+    t1 = time.perf_counter()
     total = int(sum(spike_counts))
     rate = total / float(N * t)
     return {
@@ -85,7 +119,10 @@ def run_regime(name, threshold_const, input_fn,
         "spike_count_max": int(max(spike_counts)),
         "spike_count_std": round(float(np.std(spike_counts)), 4),
         "step_varies": bool(np.std(spike_counts) > 1e-9),
+        "first10_step_counts": spike_counts[:10],
+        "last10_step_counts": spike_counts[-10:],
         "isi": _isi_stats(spike_counts),
+        "wall_ms_per_step": round((t1 - t0) / t * 1000.0, 4),
     }
 
 

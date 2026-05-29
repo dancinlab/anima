@@ -13,6 +13,15 @@
 //   for no gain. The .py is KEPT as the runnable simulator and is imported
 //   by substrate_akida.py (SW path), never run standalone — this .hexa is
 //   the hexa-native marker recording the deliberate WRAPPER verdict.
+//
+//   HW-SW calibration loop round 1 (2026-05-29): the .py per-regime record was
+//   extended to emit the SAME derived statistics as the on-chip script
+//   (isi_min/isi_max + first10/last10 rasters + wall_ms_per_step), so HW-vs-SW
+//   is now diffable on the FULL distribution surface. A live-silicon step-by-step
+//   replay (seed=187, n=16, 200 steps) showed the SW R2 raster is BYTE-IDENTICAL
+//   to the AKD1000 raster, and the HW is deterministic across runs (no analog
+//   jitter at this seed) — convergence-target dims (rate/std/saturation/ISI)
+//   already fully converged; this round closed the reporting-surface gap.
 // ════════════════════════════════════════════════════════════════════════
 
 fn main() {
