@@ -109,3 +109,10 @@
 - C9 temporal-smooth: null(0.243→0.235). 공간손실 시간회수불가=falsified lever(정직 negative)
 - MAP: 비침습침습급=異種모달(C6)⊕prior(C7) ~68%(toy). 전극수·시간평활=헛다리. 공간정보회복이 본질
 - C9 null=in-silico toy lever lane 고갈 신호. 남은 frontier=real head-model/실MRI-prior/성인fUS문헌/실EEG+fNIRS=external(cloud). lane-pause
+
+## 2026-05-30 — /gap full top-3 closure (C10-C12) + RTSC 돌파 (C13)
+- C10 strawman: 3커널×8seed. sharp>blur 생존(+.19~.48). 전극포화=가우시안 전용(지수 M256 +.21) → C5 부분반증
+- C11 현실prior: degraded p.3+FP=0.356≈blind 0.332. oracle 0.88은 순환. 정직 0.36~0.52
+- C12 OPM-MEG(+.172 진짜lever)·fNIRS(+.016 중복)·ML디코더(ridge 미달 dead-end negative)
+- C13 RTSC 상온SQUID-MEG: EEG+RTSC 0.854·풀스택 0.903. 본질=밀도(+.166 cryo장벽제거). ⚠상온초전도 conditional
+- MAP v2: 비침습 침습급=異種물리 고밀도(RTSC-MEG 자기·tFUS 음향). 算법(prior)보조·ML/시간/전극 헛다리

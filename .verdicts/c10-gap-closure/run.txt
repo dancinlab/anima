@@ -1,0 +1,52 @@
+AURA C10-C13 — /gap full top-3 closure + RTSC breakthrough (ubu-1 numpy, 2D 8x8 sheet, 8-seed mean±std)
+======================================================================================================
+
+=== C10: strawman-LF test (8-seed mean+/-std) ===
+kernel       EEG_M64     EEG_M256     tFUS_M64  sat(256-64)  sharp-blur
+gauss    0.332+-0.10  0.400+-0.11  0.809+-0.07   sat=+0.068  sw=+0.476
+exp      0.626+-0.09  0.832+-0.05  0.817+-0.07   sat=+0.206  sw=+0.191
+power    0.485+-0.07  0.651+-0.04  0.814+-0.07   sat=+0.166  sw=+0.329
+
+=== C11: realistic prior (M=64 EEG gauss s1.6, 8-seed) ===
+blind ridge (C5)        0.332
+sparse-blind p=0        0.332+-0.10
+degraded p=0.3 +4FP     0.356+-0.24
+degraded p=0.6 +2FP     0.523+-0.22
+oracle p=1.0 (C7)       0.883+-0.09
+
+=== C12a: OPM-MEG vs fNIRS as fusion lever (32ch each, 8-seed) ===
+EEG-only                  0.285+-0.14
+EEG+fNIRS (same blur 1.9) 0.301+-0.14
+EEG+OPM-MEG (diff phys 1.1)0.457+-0.10
+EEG+tFUS (acoustic 0.7)   0.602+-0.10
+
+=== C12b: learned decoder vs analytic ridge (M=64 EEG s1.6, ntrain=2000, 8 test, mean) ===
+EEG-blur     analytic-ridge=0.287  learned-Wiener=0.239  learned-MLP=0.120
+tFUS-sharp   analytic-ridge=0.691  learned-Wiener=0.664  learned-MLP=0.539
+
+=== C13: RTSC room-temp SQUID-MEG as breakthrough lever (8-seed) ===
+modality stack                          R2
+EEG-only (64ch s1.6 20dB)               0.331+-0.14
+EEG+OPM-MEG (32ch s1.1 20dB) [C12a]     0.483+-0.10
+EEG+RTSC-SQUID (256ch s0.9 35dB)        0.854+-0.04
+RTSC-SQUID alone (256ch s0.9 35dB)      0.869+-0.04
+EEG+RTSC+tFUS (full stack)              0.903+-0.03
+--- RTSC advantage decomposition (which RTSC feature is the lever?) ---
+EEG+MEG baseline (32ch s1.1 20dB)       0.483
+  + RTSC density (256ch s1.1 20dB)      0.649
+  + RTSC low-noise (32ch s1.1 35dB)     0.500
+  + RTSC scalp-proximity (32ch s0.9 20dB)0.559
+
+VERDICT (honest, 🟡 toy — 2D-sheet synthetic, ridge/weighted-ridge/learned inverse, 8-seed):
+- C10: "sharp>blur" SURVIVES all 3 kernel shapes (sw +0.19~+0.48) — tFUS-thesis robust to LF shape.
+       BUT "electrode saturation" is GAUSSIAN-SPECIFIC: exp/power kernels gain +0.17~+0.21 at M256
+       (NOT saturated). C5's electrode-saturation claim was a Gaussian-kernel artifact. PARTIAL-FALSIFY C5.
+- C11: oracle-prior 0.88 confirmed high, BUT realistic degraded prior (p=0.3+4FP) = 0.356 ~= blind 0.332.
+       Headline "80% with prior" depends entirely on oracle. Honest realistic-prior R² = 0.36~0.52, high var.
+       C7 oracle 0.798 was near-circular (leaks source support). CLOSE bayesian-circularity gap.
+- C12a: OPM-MEG is a REAL lever (+0.172), unlike fNIRS (+0.016 redundant) — generalizes heterogeneous-modality
+        thesis beyond tFUS. C12b: learned ML decoder (Wiener/MLP) UNDERPERFORMS analytic ridge for linear
+        forward — "deep decoder" lever (orig 5법) is a DEAD-END here (honest negative).
+- C13: RTSC room-temp SQUID-MEG = STRONGEST non-invasive lever — EEG+RTSC 0.854, full stack +tFUS 0.903
+       (approaching ECoG ~1.0). Dominant RTSC sub-lever = CHANNEL DENSITY (256ch: +0.166), not noise floor
+       (+0.017). RTSC's value = removing cryogenic cost barrier that caps magnetic-sensor count today.
