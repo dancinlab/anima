@@ -196,3 +196,77 @@ AKD1000 의 FullyConnected act_bits=1 활성은 **정수 threshold comparator** 
 "실리콘이 SW 와 갈라지는 operating point 가 측정 envelope 내에 존재한다" 가설을 30-point
 적대 sweep 으로 **반증** → 해당 envelope 내 divergence-axis 부재 확정. SW 보정(A) 불필요.
 LOOP 4R cap 전 R3 에서 honest-stop (broad sweep 후에도 0 divergence = FAITHFUL-ENVELOPE).
+
+---
+
+## 3차 프런티어 sweep (FRONTIER — incomplete-envelope 진입, 2026-05-30)
+
+> 1·2차는 act_bits=1 envelope(1-bit comparator·all-ones·단일 FC) 안에서만 byte-identity
+> 를 증명했다. 3차는 **SW 가 실제로 INCOMPLETE 한 4축**(multi-bit 활성·random int4 weight·
+> multi-layer·on-chip learning)에 의도적으로 진입해 first divergence 를 찾고, modelable 한
+> 양자화/matmul gap 이면 SW 를 일반화 확장(A), analog/state 동역학이면 honest CLOSED-NEGATIVE(b).
+> 하니스: `scripts/frontier_hw.py` (AKD1000 RAW 활성 tensor) ⇄ `frontier_sw.py` (general
+> quantized matmul) + `frontier_diff.py` (y_sha256 byte-diff). probe = 10 graded input.
+> 단일칩이라 HW batch 전후 spike-streamer stop/start (배치 후 active 재가동 확인).
+
+### 축별 결과
+
+| 축 | 설정 | HW vs SW | 결론 |
+|---|---|---|---|
+| 1 act_bits {1,2,4} | 단일 FC, all-ones weight | 80/80 IDENT (max Hamming 0) | **MATCH** — all-ones→potential≥16 항상 saturate → 모든 neuron 최대레벨(ab1→1·ab2→3·ab4→15). multi-bit ceiling 가시·SW 일치 |
+| 2 random int4 weight | 단일 FC, weights_bits=4, wseed{7,99} | 초기 DIVERGE → 보정 후 30/30 IDENT | **EXTENDED+verified** (아래 §개선) |
+| 3 multi-layer | 2× FC cascade, random int4, ab{2,4} | 20/20 IDENT | **MATCH** — fc_quantized 체인 = HW 2-layer cascade 정확 일치 |
+| 4 on-chip learning | AkidaUnsupervised fit | 비결정성 | **CLOSED-NEGATIVE** (아래 §axis4) |
+
+→ 전 axis 종합 **80/80 probe input byte-identical (max Hamming 0)** for axes 1-3 (보정 후).
+
+### 첫 divergence + SW 개선 (axis 2, case A)
+- **HW 제약 발견 1**: `set_variable("weights")` 가 -8 거부 (`Minimum authorized value is -7`).
+  → AKD1000 int4 weight 는 SYMMETRIC `[-7,+7]`, two's-complement `[-8,+7]` 아님. naive SW
+  range 가 이 점에서 틀림 → `rand_int_weights` 양쪽 symmetric draw 로 수정. (akida weight
+  layout = (1,1,IN,N) 확인, SW 동일 size+order draw 로 wseed 고정 시 weight tensor byte-동일.)
+- **HW 제약 발견 2 (핵심)**: graded potential 에서 naive `clip(potential,0,2^ab-1)` 발산.
+  예) weights ab2 idx2 n8: potential=2 → SW=2 인데 **HW=1**; idx7 n2: pot=3 SW=3 HW=1;
+  idx8 n4: pot=4 SW=3 HW=1. 실리콘이 raw potential 을 그대로 clip 하지 않고 **활성 quantizer**
+  를 적용. 단일-FC `weight*x0` sweep 으로 step 함수 실측 복원:
+  - act_bits=2: pot 0→0, 1..4→1, 5..8→2, 9..→3 (**step=4**)
+  - act_bits=4: pot p→p (1:1), ≥16 saturate (**step=1**)
+  - 일반식: **`step = 2^(input_bits - act_bits)` · `y = clip(ceil(potential/step), 0, 2^ab-1)`**
+    (ab=1 → step 8 → pot>0?1:0 = 기존 lif_forward comparator로 정확 환원)
+- **SW 일반화 확장**: `akida_sw_lif.py` 에 `fc_quantized_forward()` 추가 — 위 보정 quantizer +
+  symmetric weight + signed-int matmul (per-point hardcode 아님, param 일반화). 재실행 →
+  axis 2/3 전 점 byte-identical. **gap 닫힘.**
+
+### axis 4 — on-chip edge learning CLOSED-NEGATIVE (case b)
+- `edge_learn_probe.py`: compile_AkidaUnsupervised=ok · fit_on_chip=ok ·
+  device_learn_enabled_after_fit=**true** → 칩은 on-chip Hebbian learning 을 지원.
+- `learn_dynamics_probe.py`: **동일 init weight + 동일 seed=42 input batch 로 fit 2회 반복** →
+  적합 weight 가 매번 상이 (after1≠after2, 3 set 전부 deterministic=False; 한 set 은 같은 batch
+  refit 인데도 변함). → 적합 결과가 (init, input) 의 순수 함수가 아님 = **숨은 내부 plasticity
+  state(homeostasis/accumulator register) 의존.** inference-only SW(akida_sw_lif)가 재현 불가.
+- **CLOSED-NEGATIVE 판정**: "on-chip learning 동역학을 SW 로 모델링 가능" 가설을 비결정성으로
+  반증. 이는 실패가 아니라 **유효한 hard boundary** — SW 는 충실한 INFERENCE 모델이고, 칩의
+  stateful learning 은 모델 범위 밖 (memory §95 inference-only 제약과 정합).
+
+### RE-VERIFY
+- `verify_substrate_akida.py` → **5/5 PASS** (exit 0). `fc_quantized_forward(act_bits=1, all-ones)`
+  = `lif_forward` 정확 환원 확인 → canonical act_bits=1 path 무회귀.
+- `spike-streamer.service` (systemd --user) HW batch 후 재가동 = **active**.
+- verdict 원문: `.verdicts/672_akida_spontaneous_firing/hw_sw_frontier_sweep_2026_05_29.txt`
+  (축별 diff + quantizer step 복원 + learning 비결정성 데이터 verbatim)
+  · raw: `.verdicts/672_akida_spontaneous_firing/frontier_weights_ab2_raw.txt`
+
+---
+
+## 갱신 FAITHFUL-ENVELOPE (3차 후, 2026-05-30)
+
+SW(akida_sw_lif)가 이제 **충실히 재현하는 영역** (HW byte-identical 검증 완료):
+- act_bits ∈ {1,2,4} 활성 양자화 (step=2^(input_bits−act_bits) quantizer).
+- weights: all-ones AND random signed int4 (SYMMETRIC [-7,+7]).
+- layers: 단일 + 2-layer cascade FullyConnected.
+- 기존 1·2차 bounds (R0~R4 regime · seed 0~int32max · threshold −16~64 · window ≤5000 · 60~64°C).
+
+**남은 정직한 boundary** (SW 가 주장하지 않음):
+- **on-chip learning (AkidaUnsupervised)** — CLOSED-NEGATIVE (비결정성·hidden plasticity state).
+- 미측정: ≥3-layer 깊이·멀티-NP 매핑·convolutional layer·다른 AKD1000 die·>64°C.
+  (inference forward 양자화 모델은 위 검증 범위로 한정; 학습 동역학은 모델 범위 외로 확정.)
