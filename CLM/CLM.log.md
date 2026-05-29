@@ -3,6 +3,18 @@
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
 
+## 2026-05-30T02:00:00Z — P1 코퍼스 파이프라인 + 소량 sample (혼합 byte-corpus)
+
+- [x] P1 구현 — `CLM/corpus/build_p1_corpus.hexa` (혼합 byte-corpus 빌드) + `CLM/P1_CORPUS.md` 스펙
+- [x] 혼합 corpus: lane A(web/coherence=kowiki·CC-BY-SA clean) + lane B(register/엄선 의식·철학·대화) · MoE 2-lane↔2-source 1:1
+- [x] byte 인코딩 V=256 UTF-8(tokenizer 없음) · 줄별 byte id 0..255 · round-trip 디코드 검증(한글 멀티바이트 보존)
+- [x] register-leak 8패턴 필터(universe_brain_map·hexad_module·nonce·Mk.VIII·gen1 commit·corpus_generator.hexa·jy_chat_template·universe_extended) — lane B 한정
+- [x] F-CLM-LEAK 🟢 — self-test poison 입력 kept=2/dropped=2 + register.bytes 출력 leak hit=0 (실측). corpus_consciousness_v1.jsonl=100% leak(240/240) 제외 확인
+- [x] sample build 실측: web 837B(8줄)/register 819B(8줄·leak_dropped=0)/total 1,656B · sha256 manifest · 혼합비 sample 50:49 / full target 80:20
+- [x] full crawl=재현 스크립트만(kowiki 1.28GiB streaming + register 확장) · 대용량 git 미커밋 → HF/R2, manifest 커밋
+- [x] .kosmos: anchor(점 payload) 모델이 byte-stream corpus 못 받침 → `sidecar handoff add kosmos` 등록(얽매이지 않고 진행, P0 d1 단서). manifest.json(sha256) 이 무결성 영속
+- [ ] handoff: `.gitignore CLM/corpus/full/ + **/*.bytes`(sign-gated 미반영) · full crawl pod fire · F-CLM-LEAK UNIVERSE 등록
+
 ## 2026-05-30T01:00:00Z — P0 아키텍처 확정 (sbs manual 10-결정 co-design)
 
 - [x] P0 설계 확정 — `CLM/P0_ARCHITECTURE.md` + `CLM/CLM_FORMAT_SPEC.md` (.clm v0.1)
