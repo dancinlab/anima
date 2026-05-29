@@ -694,3 +694,50 @@ artifacts: `CORE/DECODER/h686_h687_axis_sweep.hexa`, `CORE/DECODER/H686_H687_AXI
 - `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_fire_codegen_trim_regression_2026_05_29 :: build-chain-regression`
 
 **verdict**: 🟠 **BLOCKED-AT-BUILD-EXTERNAL** — anima 측 자율 path 막힘 (hexa-lang codegen-trim 회귀). 정직: prodaux 측 measurement 0, longtrain measurement 0, distinct_top/LZ_norm/gate_entropy 0. **F-PRODAUX-1 측정 불가** (build 사망). pod teardown PASS, cost 추정 ≤$2. plan completion criteria 미충족 — handoff 2eddb92a 처리 의존.
+
+---
+
+## entry 18 — M5 production fire attempt #4 (anima-side mirror workaround) — bg agent rate-limit 사망
+
+**날짜**: 2026-05-29 (UTC ~14:30)
+**상태**: 🟠 CODE-LANDED-UNVERIFIED — mirror workaround 코드 작성+커밋됨 · build/fire/measurement 미검증 (bg agent API rate-limit 사망)
+
+**배경**: attempt #3 (entry 17) 가 hexa-lang #1527 Linux free-fn trim 회귀로 BLOCKED-AT-BUILD. follow-up (b) = anima-side main-TU mirror workaround. (c) parallel 선택 — (a) hexa-lang #1527 fix wait (handoff 2eddb92a) + (b) 본 mirror 동시.
+
+**경과**:
+- bg agent `a3a7a1c7` 발사 (attempt #4): 3 missing fn (`v3_moe_fwd`/`v3_moe_bwd`/`layer_block_bwd`) main-TU mirror → build → fire → measure
+- agent **mirror code 작성 + commit + push 완료** (branch `m5-mirror-fire-2026-05-29`, commit fac9ec8f1):
+  - `train_v3_moe_prodaux.hexa` + `train_v3_moe_longtrain.hexa` 양쪽에 `v3_moe_fwd_local`/`v3_moe_bwd_local`/`layer_block_bwd_local` 3-fn mirror 추가 (기존 `moe_aux_bwd_local` 패턴 확장 → 4-fn 전부 mirror)
+  - 각 mirror 에 `// workaround: hexa-lang #1527 Linux trim regression` 주석
+  - 300 insertions, 16 deletions (call site rewiring)
+  - `hexa parse` 양 파일 cleanly ✓ (Mac syntax)
+- agent 155 tool_uses 후 **API rate-limit ("Server is temporarily limiting requests") 사망** — build 검증/fire/measurement 도달 전
+- runpod pod 2개 (`4824z55uf9hto1` 103.207.149.173:16012 + `mnrs2accaae9nu` 64.247.201.57:14282) READY 생성됨 → cost-leak 위험
+
+**foreground recovery (이 세션)**:
+- 회수 4방법 시도 (`hexa cloud exec`/`run`/`copy-from` × 2 pod) — 전부 SSH 실패 (agent 가 key 등록 전 사망, `ghost@`/`root@` 인증 거부)
+- 회수 artifact 0 (build 완료 전 사망 추정)
+- `hexa cloud rm 4824z55uf9hto1 mnrs2accaae9nu --provider runpod --force` → 양 pod destroyed · `hexa cloud list` runpod=0 confirm
+- 5 vast RTSC pods (다른 세션) 무접촉
+
+**원인 분석**:
+- bg agent 가 fire-류 장기 작업에서 API transient (500 / rate-limit) 에 **3연속 사망** (entry 16 twin-death 500 + entry 18 rate-limit). bg agent ⊥ 장기 cost-bearing fire 패턴 확정.
+- mirror code 자체는 살아남음 (사망 전 commit+push) — salvage 가치 있음
+
+**salvage (본 PR)**:
+- mirror branch `m5-mirror-fire-2026-05-29` 의 fac9ec8f1 코드를 본선에 land (workaround infrastructure)
+- **단 build PASS / fire / measurement 는 미검증** — Linux pod build 가 실제로 trim 회피하는지 다음 attempt 에서 확인 필요
+
+**잔여 작업 (follow-up)**:
+- attempt #5 = 본 mirror code 로 Linux pod build 재시도 → trim 회피 검증 → fire. **foreground inline 강력 권고** (bg agent 3연속 사망 — 더 이상 bg fire 금지)
+- 또는 (a) hexa-lang #1527 fix 가 먼저 land 되면 mirror 불필요 (handoff 2eddb92a)
+- baseline (none) vs prodaux (both) production V=151643 measurement 가 critical-path 잔존 (4 attempt 모두 미도달)
+
+**cost / wall**: runpod 2 pod ~15분 idle, ≤$2 추정 (build 전 사망). 본선 fire 산출 0.
+
+**land (본 PR)**:
+- mirror code (`train_v3_moe_prodaux.hexa` + `train_v3_moe_longtrain.hexa` 3-fn mirror) ← fac9ec8f1 salvage
+- 본 entry 18 (이 파일)
+- `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_mirror_attempt4_2026_05_29 :: code-landed-unverified`
+
+**verdict**: 🟠 **CODE-LANDED-UNVERIFIED** — mirror workaround 코드 land (syntax PASS), build/fire/measurement 미검증. pod teardown PASS, cost-leak 차단. bg agent fire 3연속 사망 → attempt #5 는 foreground inline 필수.
