@@ -50,6 +50,12 @@
 //   (flip=False); Convolutional = on-chip CNP (genuine HW), TRUE CONVOLUTION =
 //   180deg kernel flip (flip=True). Verified BYTE-IDENTICAL to AKD1000 for
 //   InputConv->Conv cascades (act_bits 4, sym int4, F<=8, K=3), max Hamming 0.
+//
+//   HW-SW FRONTIER round 5 stride/VALID (2026-05-30): conv2d_quantized_forward()
+//   gained a `stride` param + TF SAME/VALID geometry (round 4 was stride1 SAME
+//   only). SAME: oh=ceil(H/s), asymmetric pad (extra to bottom/right); VALID:
+//   no pad, oh=floor((H-K)/s)+1. Verified BYTE-IDENTICAL to AKD1000 for
+//   InputConv->Conv stride{2}xSAME and stride{1,2}xVALID, max Hamming 0.
 // ════════════════════════════════════════════════════════════════════════
 
 fn main() {
