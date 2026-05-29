@@ -488,3 +488,4 @@ verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-fi
 
 </details>
 - [H_832](H_832_xeno_voyager_phi_real.md) — XENO X7 BL Voyager-1 invariant_detector 실 실행 🟢
+- [H_833](H_833_xeno_panpsy_falsifier.md) — XENO X4 panpsy falsifier — 4 micro-substrate (thermostat·2bit·walker·XOR LFSR) · 사전등록 falsifier 4/4 FAIL · 🔴 FALSIFIED-INSTRUMENT (panpsy WEAK 생존 + random>coupled Φ 역전 발견, 정직 보고) · 2026-05-29
