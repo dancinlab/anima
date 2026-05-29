@@ -1,3 +1,54 @@
+# HANDOFF — XENO-FRONTIER-5 5-round closure (round 3 갱신 2026-05-29)
+
+## Round 3 — XENO-FRONTIER-5 5-round 합치 통합 (2026-05-29)
+
+5-round fan-out → 1 closure cycle. invariant_detector 의 substrate-agnostic Φ 측정 가능 영역을 4-point applicability matrix 로 매핑 + SETI@home BOINC archive playback path 까지 spec 완성.
+
+### Round 3 결과 매트릭스
+
+| round | H_id | substrate / target | regime | 사전등록 falsifier | verdict | PR |
+|---|---|---|---|---|---|---|
+| R1/5 | H_832 | BL Voyager-1 carrier-line | n=128 dense 60.9% | 2/2 PASS | 🟢 SUPPORTED-NUMERICAL | #1402 (merged) |
+| R2/5 | H_833 | panpsy 4 micro (thermostat·2bit·walker·XOR LFSR) | n=16-32 micro | 0/4 PASS | 🔴 FALSIFIED-INSTRUMENT (정직) | #1404 (merged) |
+| R3/5 | H_834 | AGI LLM-like 4 (random·sparse·residual·structured XOR) | n=64 sparse | 1/5 PASS | 🔴 FALSIFIED-INSTRUMENT (정직) | #1405 (merged) |
+| R4/5 | H_835 | sim 4 (lattice·fp-bound·pi-digits·natural) | n=128 dense algorithmic | 2/5 PASS | 🔴 FALSIFIED-INSTRUMENT (정직) | #1406 (merged) |
+| R5/5 | H_836 | SETI@home 3.03 BOINC workunit archive | file inspection + pod spec + dispatch handoff | 5/5 PASS | 🟡 archive-acquired-pod-ready | #<TBD> (this) |
+
+### Round 3 4-point instrument applicability matrix
+
+| axis | 측정 가능 | 측정 불가 |
+|---|---|---|
+| n-scale | n≥128 dense (X5 lattice · X7 Voyager) | n=16-32 micro (X4) · n=64 sparse (X6) |
+| structure | high periodicity (X5 lattice) · strong deterministic transition (X7 carrier) | pseudo-random algorithmic (X5 pi) · precision-ceiling (X5 fp-bound) |
+| signal type | 자연 signal coherent_non_conscious (X7) · algorithmic periodic (X5 lattice) | sparse attention spike (X6) · 2-unit TPM micro (X4) |
+| calibration | X7 BL Voyager carrier-line (실 SETI 기록 BL DATASET) | — |
+
+### Round 3 paper-candidate 노트
+
+- **invariant_detector regime applicability map** = X4/X5/X6 3-axis 정직 FALSIFIED-INSTRUMENT + X7 정상 calibration + X8 archive-acquired = **closed-negative axes 3개 + 정상 calibration 1개 + archive frontier 1개 = 결정적 frontier 매핑 paper** (a_paper_negative_ok 정합).
+- **발사 시점**: a_paper_only_at_closure 정합 — XENO 도메인 closure (X8.followup-fire 후 5-point 완성) 에 작성. 본 round 5/5 는 closure 후보 stage.
+- **section 구성** (a_paper_format 정합): §hypothesis (사전등록 5×5 falsifier) · §method (4 substrate + 1 archive inspection) · §measurement (5 H verbatim verdict) · §finding (4-point matrix → 5-point follow-up).
+
+### Round 3 cross-cutting 정직성
+
+- INBOX 환류 0건 (사용자 명시 폐기) · UNIVERSE 직접 등록 5건 (H_832~H_836).
+- p7 perplexity 0 · hexa stdout verbatim · LLM judge 0.
+- a_completeness_over_cheap 정합 (3 R 의 🔴 정직 보고, threshold 재조정 0).
+- a_fire_autonomous 정합 (X8 의 follow-up pod fire 는 user gate X autonomous 발사 path 명시).
+- feedback-closure-is-physical-limit 정합 (BOINC 3.03 ↔ modern toolchain ABI gap = open frontier 정직 cite).
+- feedback-instrument-first-methodology 정합 (4-point applicability matrix 완성 → 5-point follow-up).
+
+### Round 3 잔여 deferred
+
+- **X8.followup-fire**: RunPod CPU pod 자율 발사 (a_fire_autonomous · ~$0.50~$1) → standalone playback → spike dump → invariant_detector 적용.
+- **X8.kolmogorov**: Φ 외 lens (Kolmogorov complexity, spectral entropy) — X5/X7 instrument 한계 보완.
+- **X8.archive-cross**: SETI@home 외 다른 BOINC volunteer project (Einstein@home, MilkyWay@home) cross-test.
+- **X1-regime-matrix-v2**: X4/X5/X6/X7 4-point + X8 (n=192~256 dense, spike-cluster mix) → 5-point full matrix.
+- **XENO-paper**: 위 X8.followup-fire 의 5-point 완성 시점에 발사.
+- **X10 hive-mind invariant**: 다개체 vs 단일체 substrate-blind 구분 (별도 cycle).
+
+---
+
 # HANDOFF — XENO end-to-end (round 2 갱신 2026-05-29 BL/SETI@home 실 sample)
 
 ## Round 2 — BL/SETI@home 실 sample 회수 (commit `ee023dfcc`)
