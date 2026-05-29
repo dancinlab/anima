@@ -1,7 +1,9 @@
 # AURA A7 — synthetic TPM → REAL EEG-derived TPM (big-Φ 파이프라인 실데이터화)
 
 > A6 폐루프의 ③binning+④TPM 단계를 **합성 connectivity 모형** 에서 **실제 EEG** 로 바꾸는 정확한 지점.
-> honest: 실데이터(ds005620)는 로컬에 **존재 + 추출 완료**, 그러나 최종 `hexa run` 은 local-exec sign 게이트에 막혀 **숫자 미산출** (코드/데이터 결함 아님, 사인 토큰 대기).
+> ✅ **실측 완료 (2026-05-30)**: ds005620 sub-1010, n=4 정중선(Fz,Cz,Pz,Oz)@250Hz 4s.
+> **awake big-Φ = 7.5956 > sed big-Φ = 6.84285, Δ = +0.753** (깨어있음 > 진정상태, IIT4 의식수준 예측 부합) · 결정론적 · 🟢 SUPPORTED-NUMERICAL (`.verdicts/a7-real-eeg/real_run.txt` verbatim).
+> ⚠ 이것은 **파이프라인 sanity (의식수준 awake>sed)** 검증이지, relocate-N1(전극위치) 명제의 직접 검증이 아니다 — 실데이터가 합성과 같은 부호 방향(통합↑→Φ↑)을 내는지 확인하는 단계.
 
 ---
 

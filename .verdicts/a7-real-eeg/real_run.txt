@@ -1,0 +1,12 @@
+verify --verifier-cmd  (VERIFY-KIT V8 — pluggable external verifier, phanes tenant-verifier model)
+  claim    = 
+  verifier = HEXA_LANG=/Users/ghost/.hx/packages/hexa-lang hexa run AURA/toy/a7_real_eeg_bigphi.hexa
+  ext rc   = 0
+  ext out  = A7 REAL-EEG ds005620 sub-1010 n=4(Fz,Cz,Pz,Oz)@250Hz 4s sys=1111
+awake big-Phi = 7.5956 (total 10.1026)
+sed   big-Phi = 6.84285 (total 9.84888)
+Delta(awake - sed) = 0.75275
+[PASS] determinism: awake re-run identical
+RESULT: real-EEG pipeline ran on n=4 exact engine
+  expect = matched ("Delta(awake - sed) = 0.75275")
+  tier   = 🟢 SUPPORTED-NUMERICAL  (external verifier passed AND stdout matches --expect — delegated, deterministic)
