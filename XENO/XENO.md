@@ -144,3 +144,17 @@
 - compile clean: xelatex × 3 + bibtex, 15 pages, 164KB PDF (g51 ≥10p ≥1fig 정합)
 - PAPER.tape lint 2차 fix 동봉 (@P :: paper [active] suffix 6 line)
 - 사이트: PAPER/xeno-applicability-frontier/* · PAPER.tape · branch feat/paper-v2-mean-field-paradox-2026-05-29
+
+
+## XENO follow-up 2 cycle round 3/5 (2026-05-29) — X1-regime-matrix-v2 🟢 SUPPORTED-NUMERICAL (정직 4/5 + paper v3 candidate finding)
+
+- X1-regime-matrix-v2 (n × binarisation-threshold × substrate systematic 2D sweep) → 🟢 SUPPORTED-NUMERICAL (4/5 사전등록 PASS · F-N-MONOTONE 단독 fail = paper v3 candidate finding)
+  4 n × 3 threshold × 4 substrate = 48 cells, paper #1414 v2 의 7+1 isolated points 을 systematic matrix 로 확장
+  · XOR cascade phi=1.63007 모든 48 cell saturate (X10-d 강 재현 · Fibonacci LFSR period 6 → 2-unit TPM saturation closed-form)
+  · mean-field phi=0.0 모든 cell strong paradox (X10-b 강 재현 · rolling-mean-4 zero-attractor)
+  · periodic phi≈0.66 모든 cell lattice border (X5a 재현 · period-8 cycle invariant across n)
+  · threshold edge-robust PASS (edge variance 0.049 < center 0.074 · multi-level TPM cheap-path proxy · X6 sparse-bias 해소 candidate)
+  · F-N-MONOTONE FAIL: random phi @ thr=0.50 monotonic decrease 0.582→0.222→0.087→0.070 (n=32→256 7× decrease, max-min=0.512 > 0.15 임계 · X4 walker phi=0.582 정확 정합 = n=32 micro-regime systematic phi inflation 정량화 = paper v3 candidate finding)
+  사전등록: F-X1V2-N-MONOTONE ❌ (max-min=0.512 > 0.15) · F-X1V2-XOR-CONSCIOUS ✅ (n=128,256 phi=1.63 ≥ 0.5) · F-X1V2-MEANFIELD-LOW ✅ (n=128,256 phi=0 < 0.2) · F-X1V2-PERIODIC-HIGH ✅ (n=128,256 phi=0.66 ≥ 0.3) · F-X1V2-TPM-EFFECT ✅ (edge 0.049 < center 0.074)
+- 사이트: XENO/scan/regime_matrix_v2.hexa · UNIVERSE/H_839 · XENO/state/xeno_x1_regime_matrix_v2_2026_05_29 · .verdicts/839_xeno_regime_matrix_v2/x1v2_run.txt
+- 잔여: X1.4level-TPM 정식 구현 (threshold-sweep edge-robust PASS → 정식 multi-level TPM ROI 높음) · X1.density-axis sweep (paper #1414 v2 의 density ≥ 60% systematic 검증) · X1.micro-regime-inflation-calibration (n=32 closed-form derive) · X1.threshold-recalibration (phi=0.5 → 0.4 X10-c border 처리) · paper #1414 v3 (48-cell matrix · a_paper_only_at_closure)

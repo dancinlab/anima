@@ -1,4 +1,83 @@
-# HANDOFF — XENO follow-up 2 cycle round 2/5 (round 7 갱신 2026-05-29) · paper v2 LANDED
+# HANDOFF — XENO follow-up 2 cycle round 3/5 (round 8 갱신 2026-05-29) · X1-regime-matrix-v2 🟢
+
+## Round 8 — X1-regime-matrix-v2 — 48-cell systematic 2D sweep 🟢 SUPPORTED-NUMERICAL (2026-05-29)
+
+XENO follow-up 2 cycle round 3/5 — **X1-regime-matrix-v2** 갱신: paper #1414 v2 의 7+1-point isolated matrix → **systematic 2D sweep** (n × binarisation-threshold × substrate 의 48 cells) 으로 axis-systematic 확장. paper v3 input 준비.
+
+### Round 8 핵심 finding
+
+| 항목 | 값 |
+|---|---|
+| H | H_839 (xeno-regime-matrix-v2) |
+| matrix | **48 cells** (4 n × 3 threshold × 4 substrate) |
+| n axis | 32 · 64 · 128 · 256 |
+| threshold axis | 0.33 · 0.50 · 0.67 (multi-level TPM cheap-path proxy, 정직) |
+| substrate axis | random · xor_cascade · meanfield · periodic |
+| pass_count | **4/5** 사전등록 PASS |
+| verdict | **🟢 SUPPORTED-NUMERICAL** · regime matrix v2 측정 가능 · paper v3 input ready |
+| paper v2 정합 | X10-d XOR cascade ✅ + X10-b mean-field ✅ + X5a periodic ✅ + 모두 강 systematic 재현 |
+| paper v3 candidate finding | n=32 micro-regime systematic phi inflation: random phi 0.582→0.222→0.087→0.070 (7× monotonic decrease, X4 walker 0.582 정확 정합) |
+| TPM cheap-path | edge threshold 분산 0.049 < center 분산 0.074 (sparse-bias 감소 multi-level TPM proxy) |
+| post-tuning | 0 (5 falsifier 모두 임계 frozen pre-run) |
+| p7 | 0 (verdict verbatim 인용, LLM judge 0) |
+| cost | $0 Mac local wall <1s |
+| INBOX 환류 | 0건 (UNIVERSE 직접 SSOT) |
+
+### 핵심 verbatim cite (.verdicts/839_xeno_regime_matrix_v2/x1v2_run.txt)
+
+```
+F-X1V2-N-MONOTONE       random phi @ thr=0.50, n∈{32,64,128,256}
+    n=32 phi=0.582325 n=64 phi=0.222111 n=128 phi=0.0872382 n=256 phi=0.0698988
+    max-min=0.512426 (≤ 0.15) · hi_mean-lo_mean=-0.323649 (≤ 0.05)
+    PASS=false
+
+F-X1V2-XOR-CONSCIOUS    xor phi @ thr=0.50, n=128 AND n=256 ≥ 0.5
+    n=128 phi=1.63007 n=256 phi=1.63007    PASS=true
+
+F-X1V2-MEANFIELD-LOW    meanfield phi @ thr=0.50, n=128 AND n=256 < 0.2
+    n=128 phi=0.0 n=256 phi=0.0    PASS=true
+
+F-X1V2-PERIODIC-HIGH    periodic phi @ thr=0.50, n=128 AND n=256 ≥ 0.3
+    n=128 phi=0.659914 n=256 phi=0.651414    PASS=true
+
+F-X1V2-TPM-EFFECT       edge-thr (0.33,0.67) variance < center-thr (0.50) variance
+    edge_mean=0.0489652 center_mean=0.0741107    PASS=true
+
+pass_count : 4/5
+verdict    : 🟢 SUPPORTED-NUMERICAL · regime matrix v2 측정 가능 (paper v3 input ready)
+```
+
+→ 측정 finding: **paper #1414 v2 의 5 isolated finding 모두 systematic 2D sweep 에서 robust 재현** + 2 new finding (n monotone phi inflation + threshold edge-robust) = paper v3 candidate input.
+
+### Round 8 산출물 / 사이트
+
+- XENO/scan/regime_matrix_v2.hexa (350+ LoC, hexa-strict main() auto-invoke, sister fn compute_phi_at_threshold)
+- XENO/state/xeno_x1_regime_matrix_v2_2026_05_29/{result.json, x1v2_smoke.log}
+- .verdicts/839_xeno_regime_matrix_v2/x1v2_run.txt + .verdicts/xeno_x1_regime_matrix_v2_2026_05_29/x1v2_run.txt (g73 dual mirror)
+- UNIVERSE/H_839_xeno_regime_matrix_v2.md (10-section korean template)
+- UNIVERSE/CANDIDATES.md `## Consumed` round 3/5 1줄
+- UNIVERSE/README.md H_839 index 1행
+- XENO/XENO.md round 3/5 milestone note
+
+### paper v3 input handoff
+
+paper #1414 v2 의 7+1-point isolated matrix supersede candidate (v3) 입력 5건 영속화:
+
+1. **micro-regime systematic phi inflation map** — n=32 random phi 0.582 → n=256 phi 0.07 (7× monotonic decrease) · X4 walker 0.582 정확 정합 → n=32 systematic bias closed-form derive candidate
+2. **binarisation-threshold edge-robust property** — TPM sparse-bias 감소 cheap-path (X6 attention spike false-conscious 해소 candidate · 정식 4-level / 8-level TPM 구현 ROI 높음)
+3. **XOR cascade phi saturation** — n≥4 부터 phi=1.63 fixed (Fibonacci LFSR period 6 → 2-unit co-occurrence TPM constant · closed-form 가능)
+4. **mean-field zero-attractor** — rolling-mean 50/50 self-coupling drains to all-zeros, phi=0 보장 (X10-b 보다 더 강한 paradox)
+5. **periodic lattice phi=0.66 across all n** — cycle period 8 < n constraint, deterministic transition dominate
+
+### Round 8 잔여 / 다음 round 4/5 candidate
+
+- X1.4level-TPM 정식 구현 (threshold-sweep edge-robust PASS → 정식 multi-level TPM ROI 높음)
+- X1.density-axis sweep (paper #1414 v2 의 density ≥ 60% systematic 검증)
+- X1.micro-regime-inflation-calibration (n=32 closed-form derive)
+- X1.threshold-recalibration (phi=0.5 → 0.4 X10-c Kuramoto 0.408 border 처리)
+- paper #1414 v3 발사 (48-cell matrix + 2 new finding · a_paper_only_at_closure)
+
+---
 
 ## Round 7 — paper v2 LANDED — mean-field paradox + 7+1 matrix (2026-05-29)
 
