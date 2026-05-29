@@ -649,3 +649,48 @@ artifacts: `CORE/DECODER/h686_h687_axis_sweep.hexa`, `CORE/DECODER/H686_H687_AXI
 - `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_fire_incident_2026_05_29 :: recovery-incident`
 
 **verdict**: ⚠ INCIDENT-CLOSED — pod teardown PASS, cost-leak 차단됨. measurement 본선 미진행 (재시도 잔존).
+
+---
+
+## entry 17 — M5 production fire attempt #3 (foreground inline) — hexa-lang Linux codegen-trim regression
+
+**날짜**: 2026-05-29 (UTC ~13:50)
+**상태**: 🟠 BLOCKED-AT-BUILD — toolchain bootstrap PASS · 2 pods rented + clean teardown · 본선 fire 미진행 · 외부의존 hexa-lang `#1527` 회귀
+
+**경과**:
+- runpod H100 capacity unavailable (rent attempt × 2 모두 `no id in response (no capacity)`)
+- vast fallback rent → `38410086` (ssh5.vast.ai:10086) + `38410087` (ssh2.vast.ai:10086), 둘 다 RTX PRO 6000 Blackwell 96GB (`--gpu H100` 필터 미준수 fallthrough). prodaux vs longtrain 역할 2-pod 병렬 계획.
+- ssh ready 확인 후 toolchain bootstrap:
+  1. `apt-get install -y build-essential gcc git clang` 양 pod
+  2. `git clone https://github.com/dancinlab/hexa-lang.git`
+  3. `dist/linux-x86_64/hexat` (5,580,408 bytes) → `/root/hexa-lang/self/native/hexa_v2` 심볼릭 + `cp /root/hexa-lang/build/{hexa,hexat,hx}_linux /usr/local/bin/{hexa,hexat_linux,hx}`
+  4. **누락 발견**: hexa-lang Github 클론에 `self/runtime.c` + `self/runtime_core.c` + `stdlib/flame/flame_bpe_corpus_lib.hexa` 부재 (.gitignore 짐작) → Mac local `/Users/ghost/.hx/packages/hexa-lang/{self,stdlib}` 전체 tar+scp upload + 양 pod 에 풀어 self/stdlib 교체
+  5. `ln -sf /root/hexa-lang/self /usr/local/bin/self` (include-path)
+
+- `hexa build CORE/DECODER/train_v3_moe_prodaux.hexa -o /root/prodaux` 실행 결과:
+  - `[1/2] hexat → prodaux.c OK` ✓
+  - `[2/2] clang link` ✗ — `error: initializing 'HexaVal' with an expression of incompatible type 'int'` × 4 (line 907 + 931 + 975 + 1202)
+  - root cause: `v3_moe_fwd`, `v3_moe_bwd`, `layer_block_bwd` pub fn 의 body 가 Linux x86_64 `hexat` 출력에서 누락 (use 는 resolve 되었으나 free-fn trim 으로 함수 정의 빠짐)
+  - hexa-lang `#1527` (memory `hexa cross-backend codegen gap`: "arm64_darwin vs gen2 C 별도 builtin 테이블; Mac compile≠Linux hexa run. free-fn trim gap=#1527 fix") 회귀 패턴 — anima 의 prodaux trainer 가 `moe_aux_bwd_local` 1개 mirror 워크어라운드는 가지고 있으나 v3_moe_fwd/v3_moe_bwd/layer_block_bwd 3개는 mirror 없음
+
+- 양 pod cleanly teardown (`hexa cloud rm 38410086 38410087 --provider vast --force` → destroyed), `hexa cloud list --provider vast` 검증 → 본 fire 의 pod=0 (RTSC 5 pods 무접촉)
+
+**handoff**:
+- `sidecar handoff add hexa-lang …` id `2eddb92a` — Linux hexat free-fn trim 회귀 보고 (anima 본선 차단)
+
+**잔여 작업 (follow-up)**:
+- hexa-lang 측 Linux hexat free-fn-trim 수정 후 anima M5 production fire 재시도
+- 또는 trainer .hexa 측에서 v3_moe_fwd/v3_moe_bwd/layer_block_bwd 도 main-TU 로 mirror 추가 (4-fn 모두 inline 패턴, prodaux 만 적용, longtrain 도 검토)
+- baseline (none) vs prodaux (both) 비교 measurement 가 critical-path 잔존
+
+**cost / wall**:
+- 양 pod ~25 분 가동, RTX PRO 6000 Blackwell (vast.ai 평균 ~$1.50-2.20/hr) × 2 ≈ **$1.5-2 합계 추정**
+- 본선 fire 산출 0 — toolchain bootstrap 한정 진척
+- 5 vast RTSC pods (다른 세션) + runpod 0 → 0 leak 확인
+
+**land (본 PR)**:
+- 본 entry 17 (이 파일)
+- `CORE/DECODER/M5_FIRE_PROGRESS.md` (in-flight checkpoint)
+- `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_fire_codegen_trim_regression_2026_05_29 :: build-chain-regression`
+
+**verdict**: 🟠 **BLOCKED-AT-BUILD-EXTERNAL** — anima 측 자율 path 막힘 (hexa-lang codegen-trim 회귀). 정직: prodaux 측 measurement 0, longtrain measurement 0, distinct_top/LZ_norm/gate_entropy 0. **F-PRODAUX-1 측정 불가** (build 사망). pod teardown PASS, cost 추정 ≤$2. plan completion criteria 미충족 — handoff 2eddb92a 처리 의존.

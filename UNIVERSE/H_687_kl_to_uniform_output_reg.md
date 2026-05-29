@@ -209,4 +209,18 @@ PR #1409 (V-axis ⊥) 후속. harness `CORE/DECODER/h686_h687_axis_sweep.hexa` (
 
 **결론**: 3축 모두 ⊥ collapse — V-axis (PR #1409) + corpus/d/n_layer (현 PR) 합 4-axis sweep 전부 ⊥ 확정. F-AXSW-3 FAIL · F-AXSW-4 vacuous. H_687 의 KL-to-uniform output reg 도 H_686 와 동일 — production fire 직접 단정 path 가 유일 valid 경로.
 
+## 13. production fire attempt #3 result 2026-05-29 — 🟠 BLOCKED-AT-BUILD-EXTERNAL (sibling H_686 와 동일 발사)
+
+PR #1416 (M5 fire incident, bg agent twin-death) 후속 — foreground inline attempt #3. H_686 + H_687 는 단일 prodaux trainer 에서 두 aux 모두 동시 fire (λ_ent=λ_kl=0.1) 설계라 운명을 공유한다. 2 vast pods (38410086 prodaux + 38410087 longtrain, RTX PRO 6000 Blackwell 96GB) rent + toolchain bootstrap PASS, 그러나 `hexa build` clang link 단계에서 `v3_moe_fwd` + `v3_moe_bwd` + `layer_block_bwd` pub fn body 누락 (Linux hexat free-fn trim 회귀 = `#1527` regression).
+
+**F-PRODAUX-1 (H_686+H_687 결합) 측정 불가**. 양 pod cleanly teardown, 5 RTSC vast pods 무접촉, cost ≤$2 추정.
+
+handoff `2eddb92a` → hexa-lang. 다음 path:
+1. hexa-lang 측 Linux hexat fix 후 anima M5 재시도
+2. anima-side trainer 3-fn main-TU mirror 추가 (anima-side 자율 우회)
+
+H_687 의 KL-to-uniform output reg production 단정도 H_686 와 동일하게 본선 진입 미완. verdict = **🟠 BLOCKED-AT-BUILD-EXTERNAL**.
+
+상세: `CORE/DECODER/M5_FIRE_PROGRESS.md`, `CORE/DECODER/STEP_RATE_LOG.md` entry (17), `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_fire_codegen_trim_regression_2026_05_29`.
+
 상세: `CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md`. STEP_RATE_LOG entry (15). $0 mac-local wall ~20s.

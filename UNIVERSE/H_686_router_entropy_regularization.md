@@ -209,3 +209,22 @@ PR #1409 (V-axis ⊥) 후속 — V 외 3 축 (corpus 분포 · d head-dim · n_l
 **결론**: 3축 모두 ⊥ collapse — V-axis (PR #1409) + corpus/d/n_layer (현 PR) 합 4-axis sweep 전부 ⊥ 확정. F-AXSW-3 FAIL · F-AXSW-4 vacuous. H_686 의 production fire 단정 path 가 유일 valid 경로임을 4-axis 확장으로 재확인.
 
 상세: `CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md`. STEP_RATE_LOG entry (15). $0 mac-local wall ~20s.
+
+## 13. production fire attempt #3 result 2026-05-29 — 🟠 BLOCKED-AT-BUILD-EXTERNAL
+
+PR #1416 (M5 fire incident, bg agent twin-death) 후속 — foreground inline 으로 attempt #3 진행 (사용자 권고). 2 vast pods (38410086 prodaux + 38410087 longtrain, RTX PRO 6000 Blackwell 96GB) rent + toolchain bootstrap PASS, 그러나 `hexa build CORE/DECODER/train_v3_moe_prodaux.hexa`:
+
+- `[1/2]` hexat transpile prodaux.c ✓
+- `[2/2]` clang link ✗ — `v3_moe_fwd` + `v3_moe_bwd` + `layer_block_bwd` pub fn body 누락 (line 907/931/975/1202 `implicit-function-declaration` + `incompatible type int`)
+
+Root cause = Linux `dist/linux-x86_64/hexat` (5,580,408b) 의 **free-fn trim 회귀** — 메모리 노트 `hexa cross-backend codegen gap (#1527)` 의 supposedly-fixed regression. anima trainer 측에는 `moe_aux_bwd_local` 1개만 main-TU mirror 패턴 적용 (3개 더 필요).
+
+**F-PRODAUX-1 측정 불가** (distinct_top / LZ_norm / gate_entropy / CE 0). 양 pod cleanly teardown (`hexa cloud rm --force` → destroyed, 0 leak), 5 RTSC vast pods 무접촉. cost ≤$2 추정 (2 pods × ~25min bootstrap).
+
+handoff `2eddb92a` → hexa-lang (Linux hexat free-fn trim 회귀 보고). 다음 path:
+1. hexa-lang 측 Linux hexat fix 후 anima M5 재시도
+2. anima-side trainer .hexa 측에서 `v3_moe_fwd` / `v3_moe_bwd` / `layer_block_bwd` 3-fn main-TU mirror 추가 (prodaux + longtrain 모두, `moe_aux_bwd_local` 패턴 확장)
+
+H_686 의 production-scale aux escape 단정은 여전히 본선 진입 미완. 본 PR 의 verdict = **🟠 BLOCKED-AT-BUILD-EXTERNAL** — measurement 0, completion criteria 미충족.
+
+상세: `CORE/DECODER/M5_FIRE_PROGRESS.md`, `CORE/DECODER/STEP_RATE_LOG.md` entry (17), `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_fire_codegen_trim_regression_2026_05_29`.
