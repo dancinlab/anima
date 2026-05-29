@@ -6,7 +6,7 @@
 
 ## 진행 (milestones)
 
-- [ ] 정맥동 lead-field — SSS(운동)·가로/S자(귀뒤 측두·후두) 도달영역 + 깊이=피질표면 한정
+- [x] (app ✅) 정맥동 lead-field — SSS(운동)·가로/S자(귀뒤 측두·후두) 도달영역 + 깊이=피질표면 한정
 - [ ] B3/B5 grounding 재확인 — 혈관내≈ECoG급, 귀뒤정맥동 endovascular hypothesis
 - [ ] 3위치 침습 비대칭 정량 — N1(관통)>Synchron(혈관내)>귀뒤(비침습) read 해상도
 - [ ] 실 Synchron COMMAND 데이터 입수 시 재평가 (external)
@@ -17,3 +17,10 @@
 ## 양방향 sibling
 - 부모: AURA(`./AURA/AURA.md`) · 그룹: 📡 모달리티
 - 자매: AURA-RTSC-MEG · AURA-HEADMODEL · AURA-CORTEX · AURA-NAV · AURA-DEEP · AURA-TFUS · AURA-WEARABLE · AURA-MED
+
+## 세부분류 (app 세부트리)
+
+- `app/spec.md` — 앱 명세(일반인+기술)
+- `app/sinus_coverage.py` — 실동작 toy (검증됨)
+- `verify/sinus_coverage.txt` — verdict
+- 다음: real head-model 검증 · hexa-native 포팅 · 실데이터

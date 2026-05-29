@@ -6,7 +6,7 @@
 
 ## 진행 (milestones)
 
-- [ ] 18-wearable → 0 매트릭스 — 기기↔σ=12 zone↔read/write 완성 (demiurge 표 정량화)
+- [x] (app ✅) 18-wearable → 0 매트릭스 — 기기↔σ=12 zone↔read/write 완성 (demiurge 표 정량화)
 - [ ] AR/VR 안경 → V1~V6 write(48 px-class) — 디스플레이 없는 증강현실
 - [ ] 이어버드/보청기 → A1·A2 — 오디오 inject + 의도 read
 - [ ] 지각 대역폭 vs 기기 — 흡수 가능 경계(피질 도달 reach 기준)
@@ -17,3 +17,10 @@
 ## 양방향 sibling
 - 부모: AURA(`./AURA/AURA.md`) · 그룹: 🎯 응용
 - 자매: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-HEADMODEL · AURA-CORTEX · AURA-NAV · AURA-DEEP · AURA-TFUS · AURA-MED
+
+## 세부분류 (app 세부트리)
+
+- `app/spec.md` — 앱 명세(일반인+기술)
+- `app/wearable_collapse.py` — 실동작 toy (검증됨)
+- `verify/wearable_collapse.txt` — verdict
+- 다음: real head-model 검증 · hexa-native 포팅 · 실데이터

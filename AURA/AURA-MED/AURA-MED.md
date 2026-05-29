@@ -6,7 +6,7 @@
 
 ## 진행 (milestones)
 
-- [ ] 간질 — 발작 감지(N1 15× RNS)·억제(GABA·anti-phase·STDP anti-kindling)·5HT anti-epileptic
+- [x] (app ✅) 간질 — 발작 감지(N1 15× RNS)·억제(GABA·anti-phase·STDP anti-kindling)·5HT anti-epileptic
 - [ ] 신경조절 치료 — 우울(raphe)·파킨슨(STN-DBS)·중독(VTA) 타깃별
 - [ ] 재활/복원 — 마비 운동복원(M1)·시각복원(시각피질)·청각
 - [ ] 안전·규제 — FDA tFUS 한계·Pennes 열·Class II(비침습) vs III/PMA(침습) fork
@@ -17,3 +17,10 @@
 ## 양방향 sibling
 - 부모: AURA(`./AURA/AURA.md`) · 그룹: 🎯 응용
 - 자매: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-HEADMODEL · AURA-CORTEX · AURA-NAV · AURA-DEEP · AURA-TFUS · AURA-WEARABLE
+
+## 세부분류 (app 세부트리)
+
+- `app/spec.md` — 앱 명세(일반인+기술)
+- `app/seizure_detect.py` — 실동작 toy (검증됨)
+- `verify/seizure_detect.txt` — verdict
+- 다음: real head-model 검증 · hexa-native 포팅 · 실데이터
