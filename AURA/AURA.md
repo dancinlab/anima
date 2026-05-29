@@ -65,9 +65,10 @@
 
 - [x] C1 NOVEL 축 선언 — 귀뒤 **비침습**이 개두술0으로 **침습급(ECoG~µm) 성능** 도달 목표. 성능↑=침습↑ 트레이드오프를 깨기. gap=두개골 LPF+용적전도 blur+SNR. 닫는 5법(고밀도건식·ML역문제·ear-EEG·신소재·딥디코더) → `C-postaural-invasive-NOVEL.md`
 - [x] C2 gap 정량 + 강화 5법 — scalp(공간 2-3cm·<40Hz·저SNR) vs ECoG(mm·~500Hz·고SNR) 성능차 + 5법 각 gap 닫는 정도(문헌). 물리천장=두개골 LPF(비침습 "근접"이지 "동일"불가) → `C2-noninvasive-gap-methods.md`
-- [ ] C3 5법 SOTA 정량 (고밀도EEG·EEG super-res·ear-EEG·딥디코더 문헌 % 수치)
-- [ ] C4 best 조합 설계 (귀뒤 고밀도+ML source-recon, 목표 %-of-ECoG + AURA 7-verb 비침습강화 variant)
-- [ ] C5 in-silico 검증 (ML 역문제 source-recon toy: scalp→cortical 추정 성능 측정 = 천장 정량)
+- [x] C3 5법 SOTA 정량 — SNR·sampling(법1·3·4)=하드웨어로 거의 닫힘 · blur(법2 역문제)+정보량(법5)=진짜 천장(없는 정보 못 만듦) → `C3-noninvasive-methods-sota.md`
+- [x] C4 best 조합 설계 — 귀뒤256ch건식(법1·3·4)→ML역문제(법2)→딥디코더(법5) 직렬 스택 · AURA 7-verb 매핑 · 목표%는 C5 천장에 bound → `C4-best-stack-design.md`
+- [x] C5 in-silico 천장 측정 🟡 — scalp→cortical 복원 R²: 전극 포화(256→1024 +0.01~0.05) + blur 천장(현실 σ0.50서 ~28% 복원, 이상 σ0.25 ~54%) → **두개골 LPF=비침습 물리천장 정량**(28~54% of ECoG). ubu-1 numpy seed42 → `C5-source-recon-ceiling.md`
+- [ ] C6 (잔여) — real head-model lead-field(MNE/openMEEG)+deep-inverse(DeepSIF) 천장 정밀화 (cloud, toy→production)
 
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)
 - ~~A11/B5 다피험자 ds005620 download~~ ✅ B6서 해소(N=3, aws s3 가능) → 🔴 NULL · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)

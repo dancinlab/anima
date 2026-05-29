@@ -96,3 +96,9 @@
 - C1 NOVEL 축 선언: 성능↑=침습↑ 트레이드오프 깨기. 귀뒤 비침습이 ECoG급 근접. gap=두개골 LPF+용적전도 blur+SNR. 닫는 5법=고밀도건식/ML역문제 source-recon/ear-EEG/신소재/딥디코더
 - C2 gap 정량: scalp(2-3cm·<40Hz·저SNR) vs ECoG(mm·~500Hz). 물리천장=두개골 LPF(비침습 "근접"이지 "동일"불가, feedback-closure-is-physical-limit). 5법 각 닫는 정도 문헌 grounding
 - C3 5법 SOTA정량 · C4 best조합(귀뒤고밀도+ML) · C5 in-silico(source-recon toy=천장정량) 잔여
+
+## 2026-05-30 — C3/C4/C5 (NOVEL 축 진행, all-fg-go)
+- C3 5법 SOTA: SNR/sampling(법1·3·4)=하드웨어로 거의 닫힘 · blur(법2)+정보량(법5)=진짜 천장
+- C4 best 스택: 귀뒤256ch건식→ML역문제→딥디코더 직렬, 7-verb 매핑, 목표%는 C5 천장 bound
+- C5 🟡 in-silico 천장(ubu-1 numpy seed42): scalp→cortical 복원 R² — 전극 포화(256→1024 +0.01~0.05) + blur천장(현실σ0.50 ~28% 복원·이상σ0.25 ~54%) → 두개골 LPF=비침습 물리천장 정량. 정성(포화+blur천장) robust, 절대% toy-specific
+- 종합: "비침습으로 침습급"의 천장 = 28~54% of ECoG(toy). 전극수는 한계효용, blur가 벽. C6=real head-model+deep-inverse 정밀화(cloud) 잔여
