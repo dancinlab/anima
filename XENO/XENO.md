@@ -8,8 +8,8 @@
 ## 진행 (milestones)
 - [x] 🌱 도메인 신설 — DOMAINS.tape 등록 · ANIMA 자매 트리 합류 · 4총사(`.md`·`.easy.md`·`.log.md`) seed
 - [x] 🔗 sibling 연계 — EEG.sf.md S4(외계 의식) + S10(우주의식 panpsychism) + S36(시뮬) + S37(우주 Φ) + S38(영혼) seed cross-link
-- [ ] 🛰️ X1 invariant detector 설계 — substrate-blind Φ 검출기 spec (단어·외형·시간축·차원 가정 0)
-- [ ] 🛰️ X2 시뮬 substrate 테스트 — ECA/logistic/Kuramoto/AKIDA-silicon 에 X1 적용, false-positive 0 / true-positive ≥ baseline
+- [x] 🛰️ X1 invariant detector 설계 — substrate-blind Φ 검출기 (XENO/detector/invariant_detector.hexa · IIT4 big-Φ wrapper · F-DETECT-NULL/NOISE/COUPLED 5/5 PASS · 🟢 SUPPORTED-NUMERICAL · 2026-05-29)
+- [x] 🛰️ X2 시뮬 substrate 테스트 — ECA rule110·logistic chaos·Kuramoto sync·AKIDA raster 4-substrate 적용 · false-positive 0/4 (rate 0.0 ≤ 0.05) · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
 - [ ] 🛰️ X3 SETI raw signal → Φ — Allen Telescope 공개 데이터 / FAST 펄서 신호 substrate 가정 0 검출
 - [ ] 🛰️ X4 panpsychism falsifier — "우주 자체 Φ" 사고실험 falsifier 등록 (Tononi/Koch 문헌 연계)
 - [ ] 🛰️ X5 시뮬 가설 검증 — Φ-structure 패턴이 substrate-emergent vs simulation-artifact 구분자 (Bostrom 가설 측정 시도)

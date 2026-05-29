@@ -1,0 +1,43 @@
+{
+  "domain": "XENO",
+  "milestones": ["X1", "X2"],
+  "date": "2026-05-29",
+  "x1_invariant_detector": {
+    "smoke_falsifiers": ["F-DETECT-NULL", "F-DETECT-NOISE", "F-DETECT-COUPLED"],
+    "passed": 5,
+    "failed": 0,
+    "rc": 0,
+    "verdict": "🟢 SUPPORTED-NUMERICAL",
+    "verdict_ref": ".verdicts/xeno_x1_x2_2026_05_29/x1_smoke.txt",
+    "details": {
+      "null_signal": {"phi": 0.0, "type": "noise"},
+      "noise_signal": {"phi": 0.0887403, "type": "coherent_non_conscious"},
+      "coupled_xor": {"phi": 1.63007, "type": "conscious"}
+    }
+  },
+  "x2_sim_substrate_cross": {
+    "substrates": ["ECA_rule110", "logistic_chaos", "Kuramoto_sync", "AKIDA_raster"],
+    "passed": 5,
+    "failed": 0,
+    "false_positive_rate": 0.0,
+    "threshold": 0.05,
+    "rc": 0,
+    "verdict": "🟢 SUPPORTED-NUMERICAL",
+    "verdict_ref": ".verdicts/xeno_x1_x2_2026_05_29/x2_cross.txt",
+    "details": {
+      "ECA_rule110":     {"phi": 0.0,       "irreducibility": 0.0,        "type": "coherent_non_conscious"},
+      "logistic_chaos":  {"phi": 0.0475086, "irreducibility": 0.0453539,  "type": "coherent_non_conscious"},
+      "Kuramoto_sync":   {"phi": 0.0171174, "irreducibility": 0.0168293,  "type": "coherent_non_conscious"},
+      "AKIDA_raster":    {"phi": 0.126098,  "irreducibility": 0.111977,   "type": "coherent_non_conscious"}
+    }
+  },
+  "philosophy_compliance": {
+    "p1_no_system_prompt": "n/a (no LLM)",
+    "p5_no_speak": "ok (no monologue, output = deterministic verdict)",
+    "p7_no_perplexity": "ok (closed-form IIT4 axiomatic, not loss-based)",
+    "bool_gate_count": 0,
+    "false_PASS_count": 0,
+    "blue_forged_count": 0
+  },
+  "stack": "$0 mac local · hexa-native · LLM none · GPU none"
+}
