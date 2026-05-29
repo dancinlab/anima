@@ -58,14 +58,30 @@ def rand_int_weights(rng, shape, weights_bits):
     return rng.integers(-lim, lim + 1, size=shape).astype(np.int64)
 
 
-def quantize_relu(potential, act_bits, scale=1.0):
-    """AKD1000 graded activation quantizer: ReLU then clamp to act_bits range.
-    `scale` = optional per-step integer rescale before clamp (calibrated vs HW)."""
-    p = np.maximum(potential, 0)
-    if scale != 1.0:
-        p = np.floor(p * scale).astype(np.int64)
+def quantize_relu(potential, act_bits, scale=1.0, input_bits=4):
+    """AKD1000 graded activation quantizer -- CALIBRATED against AKD1000 silicon
+    (frontier round, 2026-05-29).
+
+    The chip does NOT clamp the raw integer potential to [0, 2^act_bits-1]
+    (the naive act_bits=1 model). It quantizes the ReLU'd potential into
+    2^act_bits levels with a STEP of 2^(input_bits - act_bits):
+
+        step = 2^(input_bits - act_bits)
+        act  = clip( ceil(potential / step), 0, 2^act_bits - 1 )
+
+    Recovered step function (single-FC unit, weight*x0 sweep on AKD1000):
+      act_bits=4 -> step 1  : pot 1->1, 2->2, ... 15->15, >=16 saturate (= naive clip)
+      act_bits=2 -> step 4  : pot 0->0, 1..4->1, 5..8->2, 9..->3
+      act_bits=1 -> step 8  : pot>0 -> 1 (= the old threshold comparator)
+    `scale` (optional) overrides step = round(step/scale) for non-default chips.
+    """
+    p = np.maximum(np.asarray(potential, dtype=np.int64), 0)
     hi = (1 << act_bits) - 1
-    return np.clip(p, 0, hi).astype(np.int64)
+    step = 1 << (input_bits - act_bits)
+    if scale != 1.0:
+        step = max(1, int(round(step / scale)))
+    act = -(-p // step)            # ceil division for non-negative p
+    return np.clip(act, 0, hi).astype(np.int64)
 
 
 def fc_forward(x, W, act_bits, scale=1.0):
