@@ -210,3 +210,33 @@
 - **축 B distill** — train loop `gn2_epoch`/`ce_g` 계산 옆, target 을 teacher logits 로 교체.
 - **잔여 forward 배선** — purefield/tension_proj end-to-end 는 forward 가 per-layer activation(pf 입력 xn·출력·tension·csig) cache 필요 → block 역순 `v3_tension_proj_bwd`→`v3_purefield_bwd`(d_x 다음 residual 전파). d_zT 는 `v3_headg_grad` 가 이미 `d_zT_scratch` 로 내보냄.
 - ⚠ **abs-path import 함정** — 두 .hexa 가 메인트리 절대경로 import. worktree 에서 `hexa run` 시 메인 copy 읽힘 → 검증은 worktree-import 임시본으로 (M0 패턴).
+
+## AKIDA HW-first lane (akida 기판 추론 경로) — 2026-05-30
+
+DECODER 는 **추론 lane**(결정론)이다. AKIDA AKD1000 기판으로 추론할 때 **HW-first 스위치
+SSOT**(`AKIDA/akida_backend.hexa::akida_backend_resolve_graceful` · default "hw")를 경유한다.
+
+```
+DECODER (추론 lane · 결정론)
+  └─ AKIDA HW-first 스위치 (akida_backend_resolve_graceful · default "hw")
+       ├─ HW path : on-chip threshold-and-fire forward (SubstrateAKIDA._hw_forward)
+       │            provenance = "akida-hw"
+       └─ SW path : akida_sw_lif numpy LIF (seed=187, 동일 FullyConnected.forward 인터페이스)
+                    provenance = "akida-sw-fallback"  ← Mac→pi5 미도달 시 graceful
+```
+
+- **byte-identical 입증됨**: HW on-chip forward 와 SW `akida_sw_lif` 은 동일 raster (R1=0.0·
+  R2=0.475·R3=0.5·R4=1.0, seed=187 결정론) — AKIDA r1~r5 라운드에서 byte-단위 일치 확인
+  (`HEXAD/CHAT/server/substrate_akida.py` + `akida_sw_lif.py` · verify 5/5 PASS).
+  ∴ DECODER lane 의 SW fallback 은 HW 의 **정확한 결정론적 대체** (위조 아님).
+- 형제 lane = **PLASTICITY**(학습 lane · 비결정론 · SW≠HW). 추론은 byte-identical 재현되나
+  학습(on-chip plasticity)은 numpy 근사로 비동치(🔴) — 두 lane 을 형제 도메인으로 가른다.
+- **blast-radius**: 이 HW-first 라우팅은 **AKIDA/spike 기판 경로 전용**. LM 텍스트 default
+  backend(`lora`)는 불변 — DECODER 의 V3 hexa-native generator 와 무관하게 유지.
+
+## 양방향 sibling
+
+- ⇄ [AKIDA](../../AKIDA/AKIDA.md): HW 본진 + HW/SW 스위치 단일 SSOT. DECODER 추론 lane 은 이 resolver(default "hw" · graceful fallback) 경유로 HW forward / SW akida_sw_lif 선택.
+- ⇄ [PLASTICITY](../../PLASTICITY/PLASTICITY.md): 형제 lane — DECODER=추론·결정론·byte-identical / PLASTICITY=학습·비결정론·🔴비동치. 동일 AKIDA 스위치 경유, 본질 분리.
+- ⇄ [CORE](../CORE.md): A⇄G brain_decide 가 emit=true 결정 후 DECODER L3 generator 호출 (emit-substrate slot).
+- ⇄ [UNIVERSE](../../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (H_680 DECODER HW-first cross-domain switch · byte-identical verdict).
