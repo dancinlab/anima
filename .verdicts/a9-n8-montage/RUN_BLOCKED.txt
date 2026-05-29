@@ -1,0 +1,8 @@
+A9.1 n=8 (and n=6) real-EEG montage big-Phi — COMPUTE-WALLED on Mac single-run (NOT data/code error).
+  n=8 FRONTAL8 (a9_n8_frontal.hexa): timeout EXIT124 @290s (108s user, still running).
+  n=6 FRONTAL6/MOTOR6 (a9_n6_*.hexa): timeout EXIT124 @200s each.
+  Cause: IIT4 exact big_phi ~O(2^2n) — n=4=2^8 ok(sec), n=6=2^12, n=8=2^16 exceed Mac+hexa single-run wall.
+  Data extraction WORKED (8ch/6ch from BrainVision, harnesses built + inlined). Only the MIP compute walls.
+  RECIPE (pod, a_fire_autonomous): rent CPU pod → copy a9_n8_{frontal,motor}.hexa + BRAIN/eeg adapter →
+    HEXA_LANG=... hexa run (no timeout) → harvest 2 numbers. Est ~10-30min/montage CPU, ~$0.5/hr.
+  Standing resolution = n=4 (A8.1), now known WINDOW-FRAGILE per A9.2 (FRONTAL>MOTOR only 2/6 windows).

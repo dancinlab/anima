@@ -42,7 +42,13 @@
 - [x] A8.2 brainwire src 실행검증 — pytest **200/200 pass** + Shannon 전하밀도·12변수·전달계수 재현. 문서 불일치 발견(인용 24 vs 코드 30 µC/cm², 안전결론 불변) 🟢 → `A8-brainwire-src.md`
 - [x] A8.3 A6↔7-verb dossier 연결도 — verb↔연구 매핑 + 공유 Sim4Life gap + Class II(demiurge 비침습) vs Class III/PMA(anima implant) 규제 fork → `A8-dossier-link.md`
 - [x] A8.4 connectome coupling — 문헌 투사강도 prior로 A7.2 identity 대체: DLPFC 17.91≈ento 17.97 > insula 13.57 > M1 2.91. Ha(dense>weak) PASS · Hb 포화역전 closed-negative 🟢 → `A8-connectome-coupling.md`
-- [ ] A9 (잔여) — n=8 실EEG montage(256-state MIP wall, pod/cloud 필요) · multi-subject ds005620(sub-1010 외) · 도달%→coupling subject tractography(DWI/Allen) · A6 paper closure 판정(a_paper_only_at_closure)
+- [x] A9.3 tractography — Allen Mouse Connectivity API 실 fetch(NPV): **entorhinal>DLPFC>M1>insula** 🟢. A8.4 cluster(dense>weak) 확증, 4-way 순서는 실측이 변경(ento 최강·insula 최약) → `A9-tractography.md`
+- [x] A9.4 paper closure 판정 — significance·terminal 게이트 통과, but **a_paper_only_at_closure 미충족(NOT-YET)**. scalp≠intracortical 본질 gap → scalp-proxy scope 한정 필요 → `A9-paper-closure.md`
+- [x] A9.2 robustness 재검 🔴 — **A8.1 window-fragile 발견**: sub-1010 awake 6창서 FRONTAL>MOTOR 2/6만(MOTOR 4/6), 평균 5.92≈5.61. **실EEG montage proxy는 relocate를 robust하게 지지 안 함**(honest negative) → `A9-multisubject.md`
+- [~] A9.1 n=8 montage — 데이터추출 성공, but n≥6 IIT4 exact O(2^2n) **Mac 단일런 compute-wall**(n8 290s·n6 200s EXIT124). harness 영속, pod 경로 명세(발사 보류) → `A9-n8-montage.md`
+- [ ] A10 (잔여) — **다창×다피험자 n=8 통계**(A9.2 교훈: 단일창 금지) · OpenNeuro 다피험자 download · human DWI tractography · pod n=8 fire
+
+> ⚠ **핵심 정직 수정 (A9.2)**: A8.1 "FRONTAL>MOTOR (실EEG)"는 **단일 4s 창 인공물** — 6창 재검서 robust 아님(위치효과 평균 ~0). relocate-N1은 **in-silico/connectome(구조) 축에선 일관 지지**되나 **실 scalp-EEG proxy에선 robust 미지지**. SURVEY 결론은 이 비대칭 반영.
 
 
 ## 양방향 sibling

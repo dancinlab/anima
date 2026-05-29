@@ -42,3 +42,12 @@
 - A8.3 dossier 연결도: A6 폐루프→demiurge analyze/verify · A5 랭킹→specify/structure · A3 골든존→design · A7실EEG↔verify G33. 공유 Sim4Life gap. Class II(비침습 demiurge) vs Class III/PMA(anima implant) fork — handoff 셀 재사용 불가
 - A8.4 connectome: 문헌 투사강도 prior로 A7.2 identity 대체. DLPFC 17.91≈ento 17.97 > insula 13.57 > M1 2.91. Ha(dense>weak)PASS · Hb 포화역전 closed-negative(mean-field-paradox, XENO 정합) 🟢. doc은 rate-limit로 끊겨 verdict서 복구. literature-ordinal≠tractography
 - 2 에이전트(A8.2/A8.4) 서버측 rate-limit 맞았으나 산출물 생존(A8.2 doc완·A8.4 toy+verdict완, doc 복구). 마일스톤 A8.1~.4 done · A9(n=8 pod·multi-subject·tractography·paper closure 판정) 신설
+
+## 2026-05-30 — A9 all bg go (throttle 속 인라인 처리) + 핵심 정직 수정
+
+- A9 4에이전트 서버측 rate-limit 즉사(burst 17+ 누적) → 재발사 대신 인라인 처리. A9.3만 에이전트가 회복해 완료
+- A9.3 ✅ Allen Mouse Connectivity API 실 fetch(NPV): ento→HIP 0.265 > DLPFC→VTA 0.108 > M1→VTA 0.013 > insula→NTS 0.0015. A8.4 cluster(dense>weak) 실측 확증, 4-way 순서 변경(ento 최강, insula 최약=taVNS 역산 과대평가 드러남) 🟢
+- A9.4 ✅ paper판정 인라인: significance(falsifier+실측+Δ/negative)·terminal(전 verdict 🟢/🔴) 통과 but a_paper_only_at_closure 미충족 → NOT-YET. scalp≠intracortical 본질 gap, scalp-proxy scope 한정 시 승격가능
+- A9.1 [~] n=8: python3로 8ch/6ch BrainVision 추출 성공+harness inline. but n≥6 IIT4 exact O(2^2n) Mac 단일런 wall(n8 EXIT124@290s·n6@200s). n4(2^8)만 로컬 가능. pod 경로 명세, 발사 보류(마진 낮음)
+- A9.2 🔴 ⭐핵심 정직 수정: A8.1 단일창(window-0) FRONTAL9.63>MOTOR6.31이 **6창 재검서 robust 아님** — FRONTAL>MOTOR 2/6창(MOTOR 4/6), 평균 FRONTAL5.92≈MOTOR5.61. A8.1은 favorable-window cherry. 실EEG scalp-montage proxy는 relocate를 robust 지지 안 함(p7·a_paper_negative_ok). 단 in-silico/connectome 구조축은 불변, A7.3 awake>sed도 불변
+- 종합: relocate-N1은 **구조축(A6/A7/A8.4/A9.3) 일관 지지 ⊥ 실 scalp-EEG proxy(A8.1) robust 미지지** 비대칭. A10=다창×다피험자 통계 선결

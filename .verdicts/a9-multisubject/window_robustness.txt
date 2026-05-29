@@ -1,0 +1,18 @@
+A9.2 within-subject window-robustness — ds005620 sub-1010 awake, n=4 exact, FRONTAL(F3,Fz,F4,AFz) vs MOTOR(C3,Cz,C4,C2)
+real eeg_big_phi via BRAIN/eeg adapter, 6 non-overlapping 4s windows @250Hz.
+
+window(raw-off)   FRONTAL    MOTOR    winner
+        0(A8.1)   9.63284    6.30717  FRONTAL
+        20000     3.65842    5.20390  MOTOR
+        40000     5.28396    6.46908  MOTOR
+        60000     5.75357    8.18526  MOTOR
+        80000     2.55170    2.94535  MOTOR
+        100000    8.64547    4.57126  FRONTAL
+        -----------------------------------------
+        mean      5.9213     5.6140   (FRONTAL ≈ MOTOR, +0.31 / ~5%)
+        FRONTAL>MOTOR: 2/6 windows  |  MOTOR>FRONTAL: 4/6
+
+VERDICT: A8.1 single-window FRONTAL>>MOTOR does NOT robustly replicate across time windows.
+  Averaged over 6 windows the position effect ~vanishes (5.92 vs 5.61). A8.1 window-0 was favorable-window.
+  → real-EEG scalp-montage proxy does NOT robustly support relocate-N1 (within-subject, single subject).
+  Honest negative (p7 · a_paper_negative_ok). Structural axes (A8.4 connectome, A7) unaffected.

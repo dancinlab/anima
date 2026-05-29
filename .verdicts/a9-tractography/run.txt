@@ -1,0 +1,27 @@
+================================================================
+  AURA A9 — REAL Allen connectome-prior coupling → IIT4 big-Φ
+================================================================
+  REAL connectome prior (Allen Mouse Connectivity, norm_proj_vol):
+  ----------------------------------------------------------------
+  position    hub pathway              w(real)   big-Φ (n=4 exact)
+  entorhinal  →HIP perforant           0.265    8.35615
+  DLPFC       →VTA mesocortical         0.108    3.14657
+  M1          →VTA (weak)               0.013    0.367514
+  insula      →NTS autonomic            0.00151  0.0424667
+  ----------------------------------------------------------------
+  Δ(entorhinal - insula) = 8.31368
+  [PASS] Φ finite >= 0 entorhinal
+  [PASS] Φ finite >= 0 DLPFC
+  [PASS] Φ finite >= 0 M1
+  [PASS] Φ finite >= 0 insula
+  [PASS] FALSIFIER Ha-REAL: strong{ento,DLPFC} > weak{M1,insula}
+  [Hb-CONFIRM] A8.4 top-pair DLPFC>=ento FLIPPED — REAL: entorhinal strongest (REVISES A8.4)
+  [Hb-CONFIRM] A8.4 insula>M1 FLIPPED — REAL: M1>insula (mouse insula→NTS weaker than taVNS estimate, REVISES A8.4)
+  mixed-position substrate (DLPFC|ento|insula|M1, real w) big-Φ = 0.773983
+  [PASS] Φ finite >= 0 mixed-position substrate
+  [SCALE-ROBUST] max-norm to 0.75: ento=17.9142 dlpfc=9.77759 m1=1.05023 insula=0.120343
+  [PASS] SCALE-ROBUST: ordering survives max-normalization
+  [PASS] determinism: entorhinal re-run identical
+================================================================
+  RESULT: 8 PASS / 0 FAIL
+================================================================
