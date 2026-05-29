@@ -18,9 +18,13 @@
 - 부모: AURA(`./AURA/AURA.md`) · 그룹: 🎯 응용
 - 자매: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-HEADMODEL · AURA-CORTEX · AURA-NAV · AURA-DEEP · AURA-TFUS · AURA-WEARABLE
 
-## 세부분류 (app 세부트리)
+## 세부분류 (sub-app 모음)
 
-- `app/spec.md` — 앱 명세(일반인+기술)
-- `app/seizure_detect.py` — 실동작 toy (검증됨)
-- `verify/seizure_detect.txt` — verdict
-- 다음: real head-model 검증 · hexa-native 포팅 · 실데이터
+- `app/epilepsy.py` — ⚡ 간질 (피질 focus 발작 감지/억제 — N1 고샘플링 빠른 검출+GABA/anti-phase 억제, R²=0.203)
+- `app/depression.py` — 🌊 우울증 (raphe 5HT 심부 신경조절 — 심부라 비침습 read 불가, DBS/tFUS stim, R²=0.076)
+- `app/parkinson.py` — 🎚️ 파킨슨 (STN 심부 운동게이팅 — DBS 확립 임상, 심부 침습, R²=0.092)
+- `app/paralysis_rehab.py` — 🦿 마비 재활 (M1 운동복원 — 피질 표면 read, 비침습 도달 높음, R²=0.428)
+- `app/blindness.py` — 👁️ 실명 복원 (V1 시각피질 write — 시각 복원, 피질 표면 도달, R²=0.393)
+- `app/chronic_pain.py` — 🩹 만성통증 (S1/대상피질 통증 modulate — sulcal 깊어 부분도달, R²=0.114)
+- `app/spec.md` 개요 · `verify/subapps.txt` verdict
+
