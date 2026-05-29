@@ -366,6 +366,31 @@ SW(akida_sw_lif)가 이제 **충실히 재현하는 영역** (HW byte-identical 
 |---|---|---|---|
 | 3 stride/VALID conv | s{2}×SAME·s{2}×VALID·s{1}×VALID ab4 + s{2}×SAME ab2, InputConv→Conv K3 F8 | 초기 y_len mismatch(harness) → stage2 stride 부여 후 40/40 IDENT | **EXTENDED+verified** (TF SAME/VALID geometry) |
 
+### axis 1 (pooling) — MAX EXTENDED+verified · AVERAGE/GLOBAL CLOSED-NEGATIVE
+- **HW 특성**: AKD1000 은 pooling 을 Conv layer 에 **융합** (pool_size/pool_type/
+  pool_stride param) — 독립 pool layer 없음. PoolType ∈ {NoPooling, Max, Average}.
+  Average 는 pool_size=-1 강제 → **GLOBAL average 만** 지원.
+- **MAX pool — EXTENDED+verified**: SW `pool2d_quantized_forward(pool_type="max")` —
+  conv2d_quantized_forward 출력에 windowed max. quantizer(ceil-div+clip)가 monotone
+  → max(quantize(p)) == quantize(max(p)) → pool-after-activation 이 정확. HW 실측
+  (2×2 stride2, ab4, F8, K3, on_hardware=true) **10/10 byte-identical (max Hamming 0)**.
+- **AVERAGE/GLOBAL pool — CLOSED-NEGATIVE**: on_hardware=**false** (InputConv+GlobalAvg
+  = akida SW backend). **결정론적** (동일 입력 2회 byte-identical). pre-pool 활성맵은
+  SW conv2d 와 **정확 일치** (idx8 ch5 chip-mean 7.25 == SW 7.25) → conv 단계는 정확.
+  그러나 global-avg **출력이 활성맵 sum/mean 의 함수가 아님**. 채널별 (act_sum→HW_out)
+  sweep 에서 채널 5 **non-monotone**: sum 389→15 인데 sum 439→0 (더 작은 sum 이 더 큰
+  출력), sum 464→8. pooled 값이 sum 이 아니라 **공간 분포**에 의존 — akida SW backend
+  의 hidden per-channel rescale (sub-additive, channel-dependent). weights+활성맵
+  public surface 로 환원 불가 → **CLOSED-NEGATIVE** (deterministic-but-opaque).
+  pool2d 는 average 호출 시 NotImplementedError raise (가짜 모델 거부).
+- verify_substrate_akida.py = **5/5 PASS** (무회귀).
+- verdict 원문: 동일 파일 `hw_sw_frontier3_sweep_2026_05_30.txt` (AXIS 1 pooling 섹션).
+
+| 축 | 설정 | HW vs SW | 결론 |
+|---|---|---|---|
+| 1 max pool | Conv+MaxPool 2×2 s2 ab4 F8 K3 (fused, on_hw) | 10/10 IDENT (max Hamming 0) | **EXTENDED+verified** (pool2d max) |
+| 1 avg/global pool | Conv+GlobalAvgPool ab4 (akida SW backend) | 결정론적이나 활성맵 함수 아님 (ch5 non-monotone) | **CLOSED-NEGATIVE** (opaque per-ch rescale) |
+
 ---
 
 ## 최종 FAITHFUL-ENVELOPE (4-stage 누적, 2026-05-30)

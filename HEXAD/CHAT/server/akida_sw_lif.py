@@ -176,6 +176,54 @@ def conv2d_quantized_forward(x, kernel, act_bits, input_bits=4, flip=False,
     return np.clip(act, 0, hi).astype(np.int64)
 
 
+def pool2d_quantized_forward(y, pool_size=2, pool_stride=2, pool_type="max"):
+    """AKD1000 spatial pooling on a quantized activation map (round-5 frontier).
+
+      y : (H, W, F) integer activation map (output of conv2d_quantized_forward,
+          i.e. already quantize_relu'd to [0, 2^act_bits-1])
+      out (max) : (oh, ow, F), oh = (H - pool_size)//pool_stride + 1
+
+    AKD1000 fuses pooling INTO the Convolutional layer (pool_size/pool_type/
+    pool_stride params; there is NO standalone pool layer in akida 2.19.1).
+    PoolType in {NoPooling, Max, Average}.
+
+    pool_type="max"  -- MODELED (EXTENDED+verified): windowed max over the
+      quantized activations. Because the activation quantizer (ceil-div + clip)
+      is monotone non-decreasing, max(quantize(p)) == quantize(max(p)), so pool-
+      before-activation and pool-after-activation are IDENTICAL -- the SW max-pool
+      on the conv2d_quantized_forward output is byte-exact. Verified BYTE-IDENTICAL
+      to the on-chip Conv with pool_type=Max (2x2 stride2, act_bits 4, sym int4,
+      F=8, K=3, SAME), 10/10 probes, max Hamming 0.
+
+    pool_type="average" / "global" -- NOT MODELED (CLOSED-NEGATIVE, see the HW-SW
+      calibration ledger 5차). On AKD1000 average pooling is GLOBAL only (pool_size
+      must be -1) and runs on the akida SW backend with an internal per-channel
+      rescale/quantization that is DETERMINISTIC but is NOT a function of the
+      public activation-map sum/mean: a per-channel sweep showed a non-monotone,
+      sub-additive mapping (smaller activation-sum -> larger pooled output on the
+      same channel), so the pooled value depends on the spatial distribution in a
+      way the weights+activation surface does not determine. Refusing to fake it.
+    """
+    ya = np.asarray(y, dtype=np.int64)
+    if ya.ndim == 2:
+        ya = ya[:, :, None]
+    if pool_type != "max":
+        raise NotImplementedError(
+            "AKD1000 average/global pooling is CLOSED-NEGATIVE (deterministic but "
+            "opaque internal rescale; not a function of the public activation map) "
+            "-- see HW_SW_CALIBRATION_LOOP_2026_05_29.md 5차. Only max is modeled.")
+    H, W, F = ya.shape
+    ps, st = int(pool_size), int(pool_stride)
+    oh = (H - ps) // st + 1
+    ow = (W - ps) // st + 1
+    out = np.zeros((oh, ow, F), dtype=np.int64)
+    for i in range(oh):
+        for j in range(ow):
+            win = ya[i * st:i * st + ps, j * st:j * st + ps, :].reshape(-1, F)
+            out[i, j, :] = win.max(axis=0)
+    return out
+
+
 def _isi_stats(spike_counts):
     """Population inter-spike intervals — gaps between steps that had >=1 spike.
 
