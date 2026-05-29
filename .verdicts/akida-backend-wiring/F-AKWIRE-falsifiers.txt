@@ -1,0 +1,33 @@
+akida-backend-wiring — SubstrateAKIDA SW-path falsifier verdicts
+================================================================
+date: 2026-05-29
+substrate: SubstrateAKIDA(provenance=akida-sw-fallback) — HEXAD/CHAT/server/substrate_akida.py
+SW source: HEXAD/CHAT/server/akida_sw_lif.py (numpy LIF, seed=187, deterministic)
+canonical cross-check: AKIDA/impl/H_672_spontaneous_firing.hexa (hexa-native harness)
+
+── hexa-native harness verbatim (g5 / a_claim_verify) ──────────────────────────
+$ hexa run AKIDA/impl/H_672_spontaneous_firing.hexa sw
+=== H_672 spontaneous-firing × AKIDA · backend=sw ===
+verdict: GREEN_NUMERICAL_CONFIRM · tier=🟢 numerical (mock-replay)
+n_pass=4/4
+R1.rate=0.0 R2.rate=0.475 R3.rate=0.5 R4.rate=1.0
+written: state/akida_hw_sw_impl_2026_05_29/H_672_sw_result.json
+
+── SubstrateAKIDA SW-path recompute (akida-absent Mac) ─────────────────────────
+measured: R1=0.0  R2=0.475  R3=0.5  R4=1.0  R3_total_spikes=1600  R3_factor_sum=1.25
+
+  F-H672-1 (R3 tonic rate>0)        : PASS   0.5 > 0
+  F-H672-2 (R3 rate ∈ (0,1))        : PASS   0.5 ∈ (0,1)
+  F-H672-3 (R2 noise ≥ R1 silent)   : PASS   0.475 ≥ 0.0
+  F-H672-4 (8-factor non-zero on R3): PASS   sum=1.25 > 0
+  F-AKWIRE-FALLBACK (prov+spikes)   : PASS   provenance=akida-sw-fallback ∧ spikes=1600 > 0
+
+verdict: 5/5 PASS · 🟢 SUPPORTED-NUMERICAL (SW mock-replay, deterministic seed=187)
+
+note (g5 honesty): the falsifiers are deterministic numerical inequalities on a
+fixed-seed simulator, NOT catalogued atlas atoms — `hexa verify --expr` has no
+path for binary_entropy/regime-rate, so the terminal verdict tier is
+🟢 SUPPORTED-NUMERICAL via the hexa-native harness recompute above (verbatim),
+which reproduces the PR#1371 silicon-confirmed canonical raster byte-for-byte.
+HW path (provenance=akida-hw) is code-verified only — live AKD1000 measurement is
+the user's manual pi5 re-deploy step (see HANDOFF.md §6).

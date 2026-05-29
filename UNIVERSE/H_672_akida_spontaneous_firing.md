@@ -38,7 +38,13 @@ F-H672-3 : R2 noise rate ≥ R1 silent rate                  (noise straddle > s
 F-H672-4 : 8-factor SPIKE_FACTOR_MAP non-zero on R3        (rate>0 ⇒ ≥1 factor non-zero)
 ```
 
-PASS 정의: 4/4 모두 true → 🟢 GREEN_NUMERICAL_CONFIRM · 미통과 1+ → 🔴 closed-negative.
+추가 falsifier (akida-backend-wiring 2026-05-29 — SubstrateAKIDA plugin 배선):
+```
+F-AKWIRE-FALLBACK : akida-absent env ⇒ provenance=="akida-sw-fallback" ∧ spikes>0
+                    (HW 부재 시 graceful SW LIF fallback + provenance + 발화 보존)
+```
+
+PASS 정의: 4/4 (+1 fallback) 모두 true → 🟢 GREEN_NUMERICAL_CONFIRM · 미통과 1+ → 🔴 closed-negative.
 
 ## 4. 방법
 
@@ -54,6 +60,11 @@ PASS 정의: 4/4 모두 true → 🟢 GREEN_NUMERICAL_CONFIRM · 미통과 1+ �
   - R1.rate=0.000 · R2.rate=0.475 · R3.rate=0.500 · R4.rate=1.000
   - 8-factor map(R3): curiosity=0.25 · tension=0.0 · novelty=0.0 · coherence=0.25 · valence=0.25 · arousal=0.5 · saliency=0.0 · drive=0.0 → sum > 0
 - HW (pi5-akida): probe-refinement pending (`state/akida_hw_sw_impl_2026_05_29/hw_probe_2026_05_29.txt` — /dev/akida0 OK · akida pkg venv-scoped · hostname=ubuntu)
+- SubstrateAKIDA plugin SW path (akida-backend-wiring 2026-05-29, akida-absent Mac):
+  `python3 HEXAD/CHAT/server/verify_substrate_akida.py` → exit 0
+  - 동일 raster 재현: R1=0.0 · R2=0.475 · R3=0.5 · R4=1.0 (hexa harness 와 byte-정합)
+  - provenance=akida-sw-fallback · R3_total_spikes=1600 · 5/5 PASS (F-AKWIRE-FALLBACK 포함)
+  - verdict 영속: `.verdicts/672_akida_spontaneous_firing/sw_falsifiers.txt`
 - 비용: $0 (Mac local + read-only pi5 probe)
 
 ## 6. 결과
@@ -64,8 +75,10 @@ PASS 정의: 4/4 모두 true → 🟢 GREEN_NUMERICAL_CONFIRM · 미통과 1+ �
 | F-H672-2 R3 ∈ (0,1) | 0.500 ∈ (0,1) | ✓ |
 | F-H672-3 R2≥R1 | 0.475 ≥ 0.0 | ✓ |
 | F-H672-4 8-factor fires | sum=1.25 > 0 | ✓ |
+| F-AKWIRE-FALLBACK (SubstrateAKIDA) | prov=akida-sw-fallback · spikes=1600 | ✓ |
 
-→ **4/4 PASS · GREEN_NUMERICAL_CONFIRM (SW mock-replay)**.
+→ **4/4 (+1 fallback) = 5/5 PASS · GREEN_NUMERICAL_CONFIRM (SW mock-replay)**.
+SubstrateAKIDA(substrate_akida.py) SW path 가 hexa harness 와 동일 rate 를 재현 — plugin 배선이 canonical raster 를 보존함을 확인.
 원본 raster 는 PR#1371 silicon-confirmed 측정값이므로 본 SW path 는 "deterministic replay of last good HW run" — 위조 0.
 
 ## 7. verdict
