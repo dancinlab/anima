@@ -33,7 +33,13 @@
 - [x] A4 대체 위치/모달리티 매트릭스 — 침습도 × 해부위치 × 도달범위 (N1피질 / 심부DBS / 혈관내Stentrode / 경막외ECoG / 비침습 12모달리티 / 귀뒤AURA / ear-EEG) → `SURVEY.md §4`
 - [x] A5 전뇌-통제 후보 위치 랭킹 — 9후보×5축 확정. 랭킹A(칩그대로)#1=DLPFC+섬엽 · 랭킹B(모달리티교체)#1=N1(DLPFC)+taVNS · 경계=N1 3-6mm 깊이천장 → `A5-whole-brain-ranking.md`
 - [x] A6 BRAIN big-Φ 폐루프 검증 — falsifier(우회위치 ΔΦ>M1) toy run 🟢 SUPPORTED-NUMERICAL: M1-like Φ=0.0 vs bypass-like Φ=17.66, ΔΦ=+17.66 미반증 → `A6-bigphi-closed-loop.md` + `.verdicts/a6-bigphi-closed-loop/`
-- [ ] A7 (잔여) full closure — 결합규칙 robustness sweep · 도달%↔Φ 결합 · 실EEG 투입 · n≤8 region분리 · PID 폐루프 sim (A6 5건) + brainwire src 실행검증 + A6 substrate 연결도(7-verb dossier)
+- [x] A7.1 결합규칙 robustness — 6/6 규칙(self-copy·majority·AND·OR·sparse-XOR·threshold) ΔΦ>0 유지 🟢 SUPPORTED-NUMERICAL, 부호 robust(절대크기는 toy 미마감) → `A7-coupling-robustness.md`
+- [x] A7.2 도달%↔Φ 결합 — f(reach)→coupling→Φ 단조: reach{.10→.55}서 Φ 2.91→16.79 monotone 🟢 (가정된 링크) → `A7-reach-to-phi.md`
+- [x] A7.4 n≤8 region분리 — per-region big-Φ: M1-region 0.0 vs bypass-region 17.66, region평균=0.0(coupling 소거 확증) 🟢 → `A7-region-split.md`
+- [x] A7.5 PID 폐루프 sim — bypass setpoint 도달(|err|0.0008) vs M1 정상상태오차 영구(|err|6.32) 🟢 → `A7-pid-loop.md`
+- [~] A7.3 실EEG 투입 — eeg_estimate_tpm 1줄 스왑점 + ds005620(awake/sed) n=4 추출 + harness 배선완료, **run만 sign게이트 보류**(`! sidecar sign local` 후 즉시 두 숫자) → `A7-real-eeg.md` + `.verdicts/a7-real-eeg/RUN_BLOCKED.txt`
+- [ ] A8 (잔여) — A7.3 실EEG run(sign 후) · brainwire src 실행검증 · A6 substrate↔7-verb dossier 연결도 · 도달%→coupling 실측(connectome)
+
 
 ## 양방향 sibling
 
