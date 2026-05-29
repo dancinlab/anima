@@ -1,0 +1,31 @@
+================================================================
+  XENO X6 — AGI sentience falsifier (LLM activation Φ)
+================================================================
+
+  detector = XENO/detector/invariant_detector.hexa (X1 · 🟢 5/5)
+  substrates = 4 LLM-like activation tensors (n=64 each)
+  context = X4 (n=16-32 micro 깨짐) vs X7 (n=128 mid-large 정상)
+
+  [a] random LLM-like (8-level quantized Gaussian-ish, n=64)
+        phi=0.13028 irr=0.107288 type=coherent_non_conscious
+
+  [b] attention pattern (sparse spike, 6/64 high, n=64)
+        phi=1.21251 irr=0.617836 type=conscious
+
+  [c] residual stream (sin period 8 + skip noise, n=64)
+        phi=0.544499 irr=0.352541 type=coherent_non_conscious
+
+  [d] structured emergence (XOR 3-tap LFSR + tanh, n=64)
+        phi=0.133182 irr=0.064657 type=coherent_non_conscious
+
+  ─ pre-registered falsifier check ─
+    F-X6-RANDOM     (random phi < 0.3)            : true · measured=0.13028
+    F-X6-ATTENTION  (attention phi < 0.5)         : false · measured=1.21251
+    F-X6-RESIDUAL   (residual phi < 0.5)          : false · measured=0.544499
+    F-X6-STRUCTURED (structured phi ≥ 0.5)        : false · measured=0.133182
+    F-X6-MONOTONE   (random < attn ≤ resid < struct): false · a=0.13028 b=1.21251 c=0.544499 d=0.133182
+
+  ─ X6 verdict ─
+    pass_count : 1/5
+    tier       : 🔴 UNEXPECTED · instrument 또는 prediction failure (X4 micro-regime 깨짐과 비교 분석 필요)
+================================================================

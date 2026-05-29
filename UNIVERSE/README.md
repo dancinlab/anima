@@ -489,3 +489,4 @@ verdict 원장 = `.verdicts/archive-recover-186/closure_123_FINAL.txt` · per-fi
 </details>
 - [H_832](H_832_xeno_voyager_phi_real.md) — XENO X7 BL Voyager-1 invariant_detector 실 실행 🟢
 - [H_833](H_833_xeno_panpsy_falsifier.md) — XENO X4 panpsy falsifier — 4 micro-substrate (thermostat·2bit·walker·XOR LFSR) · 사전등록 falsifier 4/4 FAIL · 🔴 FALSIFIED-INSTRUMENT (panpsy WEAK 생존 + random>coupled Φ 역전 발견, 정직 보고) · 2026-05-29
+- [H_834](H_834_xeno_agi_sentience.md) — XENO X6 AGI sentience falsifier — 4 LLM-like activation (random·sparse attention·residual·structured XOR) n=64 · 사전등록 falsifier 5/5 중 1/5 PASS · 🔴 FALSIFIED-INSTRUMENT (attention sparse spike Φ=1.213 false-conscious + structured XOR ≈ random 역전, n=64 mid regime sparse-bias 정직 보고) · 2026-05-29
