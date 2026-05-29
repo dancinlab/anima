@@ -506,3 +506,42 @@ mm_extract scalar-loop → memcpy 단일 호출의 dispatch 감소가 정말 측
 **비용**: H100 SXM `eddpgcy2sg4abw` ~36분 (rent → SSH ready → toolchain install → hexa-lang clone → SCP sources → nvcc build → clang link → 300-step train + 100-decode → harvest → teardown), ~$2.0. teardown 완료 (`runpodctl pod remove eddpgcy2sg4abw` → `"deleted": true` · `runpodctl pod list` → `[]`, **pods=0, leak 0**).
 
 **verdict**: 🔴 **dec_undertrain INFEASIBLE MAINTAINED + 누수원 잠금** — step-rate +21% 빨라졌으나 (94→77.5 GPU-days) baseline 44 GPU-days 도달은 여전히 불가. **★ 새 발견**: anima trainer 소스에 #2017 + #2031 정식 land 후 측정한 RSS slope 328 MB/step 이 (11) 의 331 MB/step 와 사실상 동일 → 잔여 누수원은 trainer-side alloc 이 아니라 hexa-lang runtime/CUDA-side 임을 **empirically 확정** (inbox #2030 + #2034 의 가설 confirmation). 다음 한 수 = hexa-lang INBOX 신규 진단요청 (`_CudaFarrSlot` mirror life-cycle audit · GPU device-resident scratch tally · hexat C 산출물의 hidden transient handle audit). artifacts: `state/m5_adopt_postlanding_2026_05_29/{trainer.out, rss_gpu.log}`.
+
+---
+
+### 2026-05-29 (13) — M5 PRODAUX (PR #1397) production fire 시도 — 🟠 BUILD-BLOCKER · NO MEASUREMENT
+
+PR #1397 머지된 `train_v3_moe_prodaux.hexa` (1037 LoC, λ_ent=0.1 + λ_kl=0.1 H_686+H_687 aux-loss wired) 로 H100 SXM single-pod 300-step fire 시도. **빌드 자체가 통과하지 못해 step-rate 측정 0**.
+
+**(A) 환경**: pod `83na0mvuq4tqao` H100 80GB HBM3 @ 213.181.105.248:13119, Ubuntu 22.04 + CUDA 12.4 + clang-14, owner `m5-prodaux-fire-2026-05-29`. SSH ready, hexa cloud rent + run + copy-to 정상 (SSH-key 막힘 없음).
+
+**(B) 차단지 4개**:
+
+| # | 위치 | 원인 | 패치 |
+|---|---|---|---|
+| #1 farr_softmax_rows undefined | trainer.c:913 `hexa_call4(farr_softmax_rows, ...)` | runtime 에 4-arg in-place variant 없음 (오직 `_gpu(x, R, C) → new_id` 3-arg) — BC-ANIMA M4 wiring gap | trainer_fixups.h 로컬 C shim + sed |
+| #2 farr_ce_seed undefined | trainer.c:915 직접 호출 | 동일 — runtime 에 6-arg `_gpu` 만 | 5-arg sm-onehot CPU shim |
+| #3 farr_adamw_step_inplace undefined | trainer.c:988 | runtime `adamw_step` 는 10-arg returns-new-W. in-place 11-arg variant 없음 | 11-arg in-place AdamW CPU shim |
+| **#4 (블로킹)** cross-module link | mod_v3_moe_bwd_lib.c 등 6 module C 산출물에 `mm_transpose`/`mm_scatter_add`/`mm_extract` extern 미생성 | hexat_linux single-file codegen 가 `use` 그래프 traverse 안 함 | **anima 측 unfixable — hexa-lang 측 작업** |
+
+**(C) 진행 단계**:
+1. ✅ pod rent · 2. ✅ toolchain (clang + nvcc detected) · 3. ✅ self_tree + hexat_linux + decoder_deps + qwen + corpus stagged via hexa cloud copy-to · 4. ✅ trainer.c 생성 (1425 lines) · 5. ✅ runtime_cuda.o (543KB) · 6. ✅ trainer.o (#1/#2/#3 patched) · 7. ❌ **링크 차단지 #4**.
+
+**(D) honest conclusion**:
+- decode 100 step: 측정 **0**
+- distinct_tokens: 측정 **0**
+- step-rate: 측정 **0** (vs (12) 0.2831 step/s baseline 비교 불가)
+- H_686+H_687 production verdict: **무측정**. λ=0.1 aux-loss escape 여부 **여전히 OPEN**.
+
+🔴 FALSIFIED 도 🟢 ESCAPE 도 아니다. 🟠 **무측정** 이 정확한 verdict.
+
+**(E) 비용 / teardown**: pod wall ~90 분, cost ≈ $5 ($4 budget over by $1 in build attempts). teardown: `hexa cloud down 83na0mvuq4tqao --provider runpod` → terminated · `hexa cloud list --provider runpod` → 0 pods ✓.
+
+**(F) 다음 한 수**:
+- (1) PR #1397 의 production trainer 는 Mac `hexa build` (single-TU all-modules-inlined) 에 의존. Linux 측에 등가 모드 부재.
+- (2) anima 단기 우회: 모든 use 본체를 single .hexa 파일로 inline (a_completeness_over_cheap 위배 가능성).
+- (3) 올바른 fix: hexa-lang #1527 cross-backend codegen 후속 round — `hexat_linux --modules` 옵션. **이번 라운드 = hexa-lang INBOX 신규 등록 candidate**.
+
+artifacts: `state/m5_prodaux_fire_2026_05_29/{BUILD_BLOCKER.md, shims.h, trainer_fixups.h, rent.log, RUNNING_POD.txt}`.
+
+**verdict**: 🟠 **무측정 (untested at production)** — 빌드 차단지 #4 는 anima patch scope 외. 본 round 는 cost 발생 했으나 verdict 생산 못함 — 정직성 우선, 거짓 결과 거부.
