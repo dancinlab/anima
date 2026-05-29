@@ -1,15 +1,418 @@
 {
-  "id": "ketamine-tms-eeg",
-  "source": "Sarasso et al. 2015 Consciousness&Complexity (Zenodo 4245091, CC0)",
+  "id": "ketamine-slot-RESOLVED-Farnes",
+  "source": "Zenodo 4245091 = Farnes et al. PLOS ONE",
   "url": "https://zenodo.org/records/4245091",
-  "subset_spec": "full Data.zip (6.6MB): EEG Wake(8)+Ketamine(8) spontaneous .mat + TMS Wake(8)+Ketamine(8) evoked .mat. NB task spec said 933MB .set; actual record = 6.6MB .mat (Sarasso PCI dataset).",
-  "downloaded_at": "2026-05-28T23:41:10Z",
-  "storage": "committed-LFS",
-  "files": [
+  "spec_vs_actual": "Spec named Sarasso ketamine TMS-EEG (933MB). Record IS 933MB = Farnes spontaneous(40 .set/.fdt eyesOpen/eyesClosed post-ICA)+evoked(20 .mat). Measured eyes-open vs eyes-closed LZc.",
+  "downloaded_at": "2026-05-29T00:10:59Z",
+  "storage": "Farnes_ketamine.zip(933MB)+.fdt(100-268MB) LOCAL-ONLY; small .set headers committed-LFS",
+  "n_committed_small": 80,
+  "n_local_only_big": 1,
+  "committed_files": [
     {
-      "path": "DATASET/tms_tes/raw/Data.zip",
-      "sha256": "7b5420affcd3b16ef5fba0a39891c22aac1af52052974b732ad2845c9075cbe4",
-      "bytes": 70
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/210_20161207_0002eyesOpen_afterICA.fdt",
+      "sha256": "da4ea23c2e85f1088d40e5d2d923ae0001383c2546809ecf5c85c984cd8dcf8c",
+      "bytes": 7440000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/210_20161207_0002eyesOpen_afterICA.set",
+      "sha256": "7913a2c76fdf01f372a3cf39b36ce730c4498d90ef0a5aa259e7e301ed046f8b",
+      "bytes": 275376
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/210_20161207_0003eyesClosed_afterICA.fdt",
+      "sha256": "0f9eb7e0248ec9234adb3a05df27f3039b588a3e4ab6ac6161113acc0d1f1985",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/210_20161207_0003eyesClosed_afterICA.set",
+      "sha256": "a552c6cb75be86706d1df1a725a0057b91364be9ddb71fcfdcb8cb9cd51f2d17",
+      "bytes": 274176
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/210_20161207_0006eyesOpen_afterICA.fdt",
+      "sha256": "a6a37e87a72515ab56802ecbb01ee24822acc1bea899c45f0a688730435f01f0",
+      "bytes": 4464000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/210_20161207_0006eyesOpen_afterICA.set",
+      "sha256": "3acb7346b712250339aca189d91ca7783e08194cd592ff9a8c9013320a2d7558",
+      "bytes": 260248
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/210_20161207_0007eyesCloed_afterICA.fdt",
+      "sha256": "49a2a16e13161e22c6ca21e216788eeb868c26c0f70627916540899ac8c68f0e",
+      "bytes": 5456000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/210_20161207_0007eyesCloed_afterICA.set",
+      "sha256": "417e60352fe2b81f1e0005a7fc83e91587ba04ed67e4bbbaea0de9d7c32d50fa",
+      "bytes": 265960
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/219_20161117_0002_eyespen_afterICA.fdt",
+      "sha256": "b9ed6463935a8b914239d496685628f49ae5ca6fe8bce859cbda0538af3a0e89",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/219_20161117_0002_eyespen_afterICA.set",
+      "sha256": "925872e0baa846fca1b9d1ded8707b2bde486567ca451015b175f815e2c506ce",
+      "bytes": 272168
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/219_20161117_0003_eyesClosed_afterICA.fdt",
+      "sha256": "482ec805a21fc12a3bd4e5e1497abc8d538cb78b5f0b9cfd0225ca735c8a802c",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/219_20161117_0003_eyesClosed_afterICA.set",
+      "sha256": "e4a08209696da05a40e08eda68b67909944e4ff145ff8ef0da9f9da9e3a8c1fc",
+      "bytes": 271232
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/219_20161117_0006_eyesopen_afterICA.fdt",
+      "sha256": "3144f4013cd88564b27a85c83e9e53417e8310c11c340187ac436098d8313c99",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/219_20161117_0006_eyesopen_afterICA.set",
+      "sha256": "2f123573e8eb4be6d20b443654385550dfaa6711e95476cced89ca47fd9d0521",
+      "bytes": 269200
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/219_20161117_0007_closedEyes_afterICA.fdt",
+      "sha256": "378fd10b846496acb1a3dbd1a3749d13806e9825b0098577694c270af48b06a1",
+      "bytes": 7936000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/219_20161117_0007_closedEyes_afterICA.set",
+      "sha256": "7b9e7e5dbd5f9f58f096015f941beee30c4385979b939d3a4c0e9963263acb06",
+      "bytes": 273824
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/249_20161208_0002eyesOpen_afterICA.fdt",
+      "sha256": "d8a78fecb56ecaa9ea678ec66ab3174d5dcf67cf6146f39e6a0c4f3361aed968",
+      "bytes": 7440000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/249_20161208_0002eyesOpen_afterICA.set",
+      "sha256": "6e906c35627880dc15607e2619323d27bb1edda1afa623c21913d5e5df618664",
+      "bytes": 274384
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/249_20161208_0003EyesClosed_afterICA.fdt",
+      "sha256": "291999f1908d2e5154b3d99cea81bf5c9b63946d712ad97836fd01e412406879",
+      "bytes": 7440000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/249_20161208_0003EyesClosed_afterICA.set",
+      "sha256": "7d065b583c303c2017daf1429ef151787dd4d5371707738e54e45c31acba4453",
+      "bytes": 273416
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/249_20161208_0006eyesOpen_afterICA.fdt",
+      "sha256": "c9e5cc0f801f6a22643f2dad9873ec28693fe161d28c708311d0359c86a3ac7b",
+      "bytes": 8432000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/249_20161208_0006eyesOpen_afterICA.set",
+      "sha256": "d58f40463f44a71bfbda02aa10612f38d4f173148be13e0c41b3d6957ca8da04",
+      "bytes": 276296
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/249_20161208_0007eyesClosed_afterICA.fdt",
+      "sha256": "f5a8b758ff85d15bca3deb975f30fc31240433ad4a171ab638890cf02b63c538",
+      "bytes": 8432000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/249_20161208_0007eyesClosed_afterICA.set",
+      "sha256": "8002d9cfb343f5b24e97324c52cc473a6d4be10ab28d78019f86b64cbdd0135a",
+      "bytes": 278840
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/251_20170124_0002eyesOpen_afterICA.fdt",
+      "sha256": "44e146406dd7134546af5f8646d3380d1dd2f9230b0e0c9b07438e1e714edec4",
+      "bytes": 5952000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/251_20170124_0002eyesOpen_afterICA.set",
+      "sha256": "2911d0f57c895a38ab8aad7128620b370ef93821ec540b14ea78b66e87c500aa",
+      "bytes": 269016
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/251_20170124_0003eyesClosed_afterICA.fdt",
+      "sha256": "c068f98f31f49d28ba604b9e5399195e567060879079fe6476ebcae31c8f06fe",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/251_20170124_0003eyesClosed_afterICA.set",
+      "sha256": "91b5686e6f1679e8cf6d1a60b4c1ab8ba1b2c8c807fca8f054107f87908d6718",
+      "bytes": 274176
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/251_20170124_0006eyesOpen_afterICA.fdt",
+      "sha256": "813a0fdd9900849227555bb951906acc0b4fcc044bd3e12d0468ee7ff417d739",
+      "bytes": 5952000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/251_20170124_0006eyesOpen_afterICA.set",
+      "sha256": "a57d31d91f59259edc3960f8ee3c34ddc6d1e9a13e48b3c158c2e941e4600860",
+      "bytes": 269384
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/251_20170124_0007eyesClosed_afterICA.fdt",
+      "sha256": "85106b041025c86f73215a1a6c44e3c130119514e5962c0e14a7535bcbb5e9ae",
+      "bytes": 6448000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/251_20170124_0007eyesClosed_afterICA.set",
+      "sha256": "6ff7d91f845245adc9b69093e55b746ac7e8f39663d3b28202c8969165cd0e5d",
+      "bytes": 271952
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/265_20170112_0002eyesOpen_afterICA.fdt",
+      "sha256": "b8b6be5fbf4a0b4e53305dc56bdd77322eef60d8df2e5cd9c6539c5d085a05ea",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/265_20170112_0002eyesOpen_afterICA.set",
+      "sha256": "e349f96b48f30d166a3b1ddcbde47629da2dae99e5a0531160cbd0f28d57ceb1",
+      "bytes": 272168
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/265_20170112_0004_eyes_closed_afterICA.fdt",
+      "sha256": "53c735201cbce1f68ee07828a5ea3293b41704922a186582e65a408bf6fdbb67",
+      "bytes": 6448000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/265_20170112_0004_eyes_closed_afterICA.set",
+      "sha256": "9030ae99473f12a1c013cb36696991113040d26c0d46c985388e6c14ea05fcac",
+      "bytes": 270168
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/265_20170112_0006eyesOpen_afterICA.fdt",
+      "sha256": "8976e31e24de1a35ad4b72e7ce22ec37014d764215f8c76eb7541813a492e261",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/265_20170112_0006eyesOpen_afterICA.set",
+      "sha256": "c703499cb4ddabc4d7299f22ee1707356c8f7fee570f557ddf7f17c2146d47c6",
+      "bytes": 274520
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/265_20170112_0007eyesClosed_afterICA.fdt",
+      "sha256": "4e53e015152c7ea15fa3f140916e56491fd3dd4b1ab9814eaa38424bf1cccb36",
+      "bytes": 5456000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/265_20170112_0007eyesClosed_afterICA.set",
+      "sha256": "1cff86ea6aba1dee71dca6eb257b2bc003ef55a42a958e2ac5fc589f9bb0070c",
+      "bytes": 266816
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/271_20170221_0002EyesOpen_afterICA.fdt",
+      "sha256": "c55ca4938d9c5c02451d01704e53efa4ff5afc72000e31d5a5e71598974656d9",
+      "bytes": 8432000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/271_20170221_0002EyesOpen_afterICA.set",
+      "sha256": "98292dc07dd6a770bcf1715dc73e83f6452f2e3a6fb29b985c0e42823ee8f870",
+      "bytes": 278816
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/271_20170221_0003eyesclosed_afterICA.fdt",
+      "sha256": "3094f18832523608e8b99e81072ff6ef54427ee48d235a304a5e6c8f8e50a969",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/271_20170221_0003eyesclosed_afterICA.set",
+      "sha256": "8445ac547a569aac12e984c022a78edbe899baf9301cefc29e16aa464fa12f2e",
+      "bytes": 270208
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/271_20170221_0006EyesOpen_afterICA.fdt",
+      "sha256": "e178844c8a5d5d8f1cb03127f091010dd00702cc36551feead20e2848769cfd9",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/271_20170221_0006EyesOpen_afterICA.set",
+      "sha256": "1bc4a41eb799f08e7ba857e29270e0a606c8ecb7b886e8dbf6df1ec596471a67",
+      "bytes": 274144
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/271_20170221_0007EyesClosed_afterICA.fdt",
+      "sha256": "f24dd142cfb1b52e06ee3a87efea82feb31b78767c7e3e2731876ecec72b75b2",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/271_20170221_0007EyesClosed_afterICA.set",
+      "sha256": "d786cc8c2a21bff69469c7e9645b4c19365ddfd8092948a11b45c7acb375c9e1",
+      "bytes": 273184
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/282_20161122_0002_eyesOpen_afterICA.fdt",
+      "sha256": "0c7e3f0efe1b7f2b6e2f053f2a124e944ea8ab5c392f169b4f6f2c51817ec9d4",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/282_20161122_0002_eyesOpen_afterICA.set",
+      "sha256": "318957e7d18b7d6f20f67b33c9682c7f259850f18fd9f8b28f74127d58695080",
+      "bytes": 271184
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/282_20161122_0003_eyesClosed_afterICA.fdt",
+      "sha256": "5feef0f66e07e125d073baf810589d48764450aae5dd0978b30d962a407f9164",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/282_20161122_0003_eyesClosed_afterICA.set",
+      "sha256": "17553b52cc22973c2a76c8961d28b9bc3966c0077eff1e7c90a45d2c11fc6270",
+      "bytes": 273216
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/282_20161122_0006_eyesOpen_afterICA.fdt",
+      "sha256": "69b6db67239a7831b3d4530bebd804c35c7c8beb8dcb5e6561fcc8b8fc1de085",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/282_20161122_0006_eyesOpen_afterICA.set",
+      "sha256": "d910480360e10ac033ce1fb3b2c24bb92f991aa71f698e41424a1c348530bdb5",
+      "bytes": 275864
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/282_20161122_0007_eyesClosed_afterICA.fdt",
+      "sha256": "9c06918ff1c8d077ef4a1205ae8bc570d2b1a8b8c3e7d58933bbc4aa0304b4a6",
+      "bytes": 5456000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/282_20161122_0007_eyesClosed_afterICA.set",
+      "sha256": "c0a352fde1e66672e46da5e3e9dded939fe5296e9ab4c6289491d352475568e4",
+      "bytes": 268704
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/300_20161214_0002eyesOpen_afterICA.fdt",
+      "sha256": "8183824e2cfa9e337797b831e5979644465ec04c942b38c83ccf416e644b6e6b",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/300_20161214_0002eyesOpen_afterICA.set",
+      "sha256": "3c9b0866e83e46f926eae660b51acaaa206076e40d7ef86762b703c895981e43",
+      "bytes": 273160
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/300_20161214_0003eyesClosed_afterICA.fdt",
+      "sha256": "1e26b8ea4c76c37fbdaba6b234fbbc71954bda67a5b6f35f1b3ba52a2bd91b0d",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/300_20161214_0003eyesClosed_afterICA.set",
+      "sha256": "e97c79b1fbffc2ecc82833bd0105fb9fc816b28d3ddbbd6c313348e88789d434",
+      "bytes": 273184
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/300_20161214_0006eyesOpen_afterICA.fdt",
+      "sha256": "66340bbb5a33fce48d4a72d975edf9ca939e98ed7fe9fd6ea603034d6e538603",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/300_20161214_0006eyesOpen_afterICA.set",
+      "sha256": "383a2aa264ebb715a60aac4cb792a74f9162be4da4e8bbfe79f1e010c00b7920",
+      "bytes": 274496
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/300_20161214_0007eyesClosed_afterICA.fdt",
+      "sha256": "95285c87470366d535b6981a36e68bfb8dccb260a4875a287b553aa0e702734a",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/300_20161214_0007eyesClosed_afterICA.set",
+      "sha256": "e950e8831e7716a89e9cf56521a85822d702d2d80c88482ac07d2f958950b7cf",
+      "bytes": 273328
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/313_20170116_0002eyesOpen_afterICA.fdt",
+      "sha256": "674cfb1b88c6c72eaae2a1f6e848cc033ca6cded999acd93bece85f7097fd952",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/313_20170116_0002eyesOpen_afterICA.set",
+      "sha256": "0cafed5ec9778ac23d4b229f6223c27abb9bd2a41a8452b372b35d6c78c94ff8",
+      "bytes": 273160
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/313_20170116_0003EyesClosed_afterICA.fdt",
+      "sha256": "856244681f222c9f8749e2a825aa1ab0a57019045106aa948359c9ac907f0c9c",
+      "bytes": 7440000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/313_20170116_0003EyesClosed_afterICA.set",
+      "sha256": "434ec9387679a75e786f8903056dc402a079125dd0f133f0e6e9933b64d867eb",
+      "bytes": 274408
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/313_20170116_0006eyesOpen_afterICA.fdt",
+      "sha256": "e8240cb13790d3d9adaea025f5609f67ea67718db2680c2f12d1c677dc6e1dea",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/313_20170116_0006eyesOpen_afterICA.set",
+      "sha256": "2d4c810d4c655e388644788e8961b50b3db2ce7e365d2d653b46dd4aac648b35",
+      "bytes": 272568
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/313_20170116_0007eyesClosed_afterICA.fdt",
+      "sha256": "cfaaffa7f011c17ee9d4b1b06249d7373bc78f5b873ed6d48fdb581c4845e91c",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/313_20170116_0007eyesClosed_afterICA.set",
+      "sha256": "c53a9bf6d798057dc26bd1163d8711d25493481122ac308338c3fc2129757361",
+      "bytes": 272192
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/318_20170206_0002EyesOpen_afterICA.fdt",
+      "sha256": "a1118fa78a37d1dfff6c0da3ed8ae86555660debe9bcaccee42e5e985d5182ec",
+      "bytes": 6448000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/318_20170206_0002EyesOpen_afterICA.set",
+      "sha256": "6092cb13e185734f21be6d025572cfa7a6eba5582cf539c59a8f1467d512e70b",
+      "bytes": 271088
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/318_20170206_0003EyesClosed_afterICA.fdt",
+      "sha256": "3106e84fb6ef20e12d695590ff2c407e5824c53de5145ef8c8c06531129723f5",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/318_20170206_0003EyesClosed_afterICA.set",
+      "sha256": "260912d6220761e49bffa0a1d04a5feb279d4e5949260632f6d561ddaca9f5e8",
+      "bytes": 272336
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/318_20170206_0007EyesOpen_afterICA.fdt",
+      "sha256": "4375c501b2f6839575b47270c53cf65e6c202fec0bedf06bab97aebe50f53cdd",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/318_20170206_0007EyesOpen_afterICA.set",
+      "sha256": "8726d970b401db2d4b621949e8edd1dae7839392d7904bcebc13c31fee4ebc4a",
+      "bytes": 273648
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/318_20170206_0008EyesClosed_afterICA.fdt",
+      "sha256": "58ace2a4ef30ebc1de849e69041651dd592e273c8954fa15b80ddfd52008356e",
+      "bytes": 6944000
+    },
+    {
+      "path": "DATASET/tms_tes/raw/farnes_extracted/Farnes_et_al_PLOS_ONE_Dryad/spontaneous/318_20170206_0008EyesClosed_afterICA.set",
+      "sha256": "c4a2821b3d03cbc3f396385d86440a801a72c193f72f4a5bada70938843c12d5",
+      "bytes": 274176
+    }
+  ],
+  "local_only_big": [
+    {
+      "path": "DATASET/tms_tes/raw/Farnes_ketamine.zip",
+      "bytes": 933721800
     }
   ]
 }
