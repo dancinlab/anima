@@ -1,0 +1,71 @@
+F-CLM-MONO — TOY ROUTING-BALANCE PROBE (NON-GATE, intuition only)
+date: 2026-05-30   torch: 2.11.0+cu130   host: ubu-2 (CPU, $0)
+slug: 847_clm_monopoly_escape   source: CLM/model/probe.py
+
+⚠ NON-GATE per CLM P0 Q4: this is the TOY intuition probe. It does NOT decide
+F-CLM-MONO. toy != scale (H_666: a toy MoE escape re-collapsed at scale). The
+real verdict is the full-scale 3-arm x ladder fire with the FROZEN thresholds
+(distinct_experts>1 ∧ routing z>3.0 ∧ content z>3.0 ∧ seed{base,43,44}). Those
+thresholds are NOT touched here.
+
+Metric: expert-usage entropy on a held-out eval stream (nats; max = ln(E)),
+balance_ratio = H / ln(E), dead = experts with usage fraction < 0.01.
+Variants: A = entropy-reg · B = top-k + load-balance aux · AB = both.
+Seeds: base=42, 43, 44.
+
+=========================== REGIME: tiny ===========================
+(E=4, train_steps=200, lr=0.003, two_lane=True; well-conditioned)
+arm  seed  usage                              H/maxH        ratio  dead  ce
+A    base  [0.198,0.275,0.227,0.301]          1.373/1.386   0.991  0     0.391
+A    43    [0.263,0.252,0.217,0.268]          1.383/1.386   0.998  0     0.345
+A    44    [0.235,0.235,0.230,0.300]          1.380/1.386   0.995  0     0.466
+B    base  [0.282,0.230,0.245,0.243]          1.383/1.386   0.998  0     0.447
+B    43    [0.236,0.249,0.251,0.264]          1.385/1.386   0.999  0     0.388
+B    44    [0.243,0.241,0.248,0.268]          1.385/1.386   0.999  0     0.566
+AB   base  [0.246,0.253,0.247,0.254]          1.386/1.386   1.000  0     0.484
+AB   43    [0.251,0.248,0.247,0.255]          1.386/1.386   1.000  0     0.430
+AB   44    [0.253,0.251,0.247,0.249]          1.386/1.386   1.000  0     0.579
+
+tiny aggregate (mean over seeds):
+  ARM A : meanH=1.379  ratio=0.995  meanDead=0.00  maxDead=0
+  ARM B : meanH=1.385  ratio=0.999  meanDead=0.00  maxDead=0
+  ARM AB: meanH=1.386  ratio=1.000  meanDead=0.00  maxDead=0
+  best-balanced (tiny, non-gate): ARM AB
+
+========================= REGIME: stress ==========================
+(E=8, train_steps=60, lr=0.01, two_lane=False; deliberately monopoly-prone:
+ more experts than the single low-diversity band needs, short training, high LR)
+arm  seed  usage (8 experts)                                       H/maxH        ratio  dead  ce
+A    base  [.175,.162,.120,.128,.124,.120,.094,.078]               2.051/2.079   0.986  0     0.128
+A    43    [.166,.187,.135,.090,.066,.092,.113,.151]               2.029/2.079   0.976  0     0.136
+A    44    [.125,.135,.059,.160,.079,.145,.149,.148]               2.038/2.079   0.980  0     0.161
+B    base  [.098,.115,.138,.134,.141,.112,.129,.133]               2.073/2.079   0.997  0     0.191
+B    43    [.106,.121,.147,.106,.128,.131,.157,.103]               2.069/2.079   0.995  0     0.229
+B    44    [.119,.137,.099,.158,.120,.134,.110,.123]               2.071/2.079   0.996  0     0.256
+AB   base  [.132,.135,.149,.125,.125,.109,.108,.117]               2.074/2.079   0.997  0     0.318
+AB   43    [.124,.120,.130,.115,.119,.122,.137,.134]               2.078/2.079   0.999  0     0.258
+AB   44    [.115,.112,.134,.130,.131,.126,.115,.136]               2.077/2.079   0.999  0     0.408
+
+stress aggregate (mean over seeds):
+  ARM A : meanH=2.039  ratio=0.981  meanDead=0.00  maxDead=0
+  ARM B : meanH=2.071  ratio=0.996  meanDead=0.00  maxDead=0
+  ARM AB: meanH=2.076  ratio=0.999  meanDead=0.00  maxDead=0
+  best-balanced (stress, non-gate): ARM AB
+
+=========================== TOY INTUITION ==========================
+- Consistent ordering across BOTH regimes and ALL seeds: AB >= B > A (by mean
+  balance_ratio). AB (top-k + load-balance + entropy bonus) is the most evenly
+  balanced; B (load-balance aux) is a close second; A (entropy-reg alone) is
+  marginally behind but still well-balanced.
+- ZERO dead experts in every run of every arm, including the stress regime.
+- HONEST LIMIT: the toy synthetic byte corpus does NOT induce monopoly. Even
+  the deliberately monopoly-prone stress regime (8 experts, 60 steps, single
+  low-diversity band) stayed at ratio >= 0.976 with 0 dead experts in all arms.
+  So this toy gives only WEAK discrimination: it shows a small, reproducible
+  AB >= B > A ordering, but it does NOT reproduce the collapse that the
+  full-scale fire must defeat. No arm "fails to balance" at toy scale — which
+  is itself the toy != scale lesson made concrete (H_666 / P0 Q4).
+- This probe therefore informs prioritization (AB first, B second) but is
+  EXPLICITLY NON-GATE for F-CLM-MONO. The frozen z>3.0 multi-seed thresholds
+  in F-CLM-MONO_prereg.txt remain the only judgment, decided by the P2
+  full-scale 3-arm x ladder fire.

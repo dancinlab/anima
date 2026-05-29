@@ -74,6 +74,28 @@ micro-exp 토이 = 직관(non-gate) · full-fire 전부 = 판정 (Q4 toy≠scale
 wall-first · 무캡 (a_fire_autonomous · a_wall_first)
 ```
 
+## 5b. 토이 routing-balance probe (NON-GATE · 직관용 · 2026-05-30)
+
+> ⚠ **NON-GATE (Q4)**: 아래는 **토이 직관** 측정이다. F-CLM-MONO 를 **판정하지 않는다**. toy≠scale (H_666 — 토이 MoE escape 가 scale 에서 재붕괴). 실제 판정은 frozen 임계(distinct_experts>1 ∧ routing z>3.0 ∧ content z>3.0 ∧ seed{base,43,44})를 건 **P2 full-fire** 다. 사전등록 임계는 여기서 **건드리지 않았다**.
+
+- 코드: `CLM/model/` (model.py = byte-embed → dilated conv trunk → MoE conv layer(router N experts) → byte readout · data.py = 토이 2-lane 합성 byte 코퍼스 · probe.py = 3-arm × 3-seed probe).
+- 환경: ubu-2 CPU · $0 · tiny(d64/L2) · torch 2.11.0. raw 수치 = `.verdicts/847_clm_monopoly_escape/toy_3arm_20260530.{txt,json}`.
+- 척도: held-out eval 의 expert-usage 엔트로피(nats · 최대 ln(E)) · balance_ratio = H/ln(E) · dead = usage<0.01 인 expert 수.
+- 3-arm: A = entropy-reg · B = top-k + load-balance aux · AB = 합본.
+
+| regime | arm | mean balance_ratio | mean dead | max dead |
+|---|---|---|---|---|
+| tiny (E=4·200step·2-lane) | A | 0.995 | 0 | 0 |
+| tiny | B | 0.999 | 0 | 0 |
+| tiny | **AB** | **1.000** | 0 | 0 |
+| stress (E=8·60step·단일저다양band) | A | 0.981 | 0 | 0 |
+| stress | B | 0.996 | 0 | 0 |
+| stress | **AB** | **0.999** | 0 | 0 |
+
+- **토이 직관**: 두 regime · 전 seed 에서 일관된 순서 **AB ≥ B > A** (balance_ratio 기준). AB(top-k+load-balance+entropy)가 가장 고르게 분산, B 가 근소 2위, A 단독은 약간 뒤지나 여전히 균형. **모든 arm 의 모든 run 에서 dead expert = 0** (stress 포함).
+- **정직한 한계**: 이 토이 합성 코퍼스는 **monopoly 를 유발하지 못한다**. 일부러 monopoly 가 잘 나도록 만든 stress regime(8 expert·60step·단일 저다양 band)에서도 ratio ≥ 0.976 · dead 0 으로 전 arm 이 붕괴 없이 균형. 즉 토이는 **약한 변별력**만 준다 — 재현 가능한 작은 AB≥B>A 순서는 보이지만, full-fire 가 깨야 할 collapse 자체를 재현하지 못한다. "어떤 arm 도 토이에서 균형에 실패하지 않았다"는 사실 자체가 toy≠scale 교훈의 구체적 발현(H_666 / P0 Q4).
+- **결론(non-gate)**: 이 probe 는 우선순위 직관(AB 우선 · B 차순)만 제공하며 F-CLM-MONO 에 대해 **명시적 NON-GATE**. frozen z>3.0 multi-seed 임계(`F-CLM-MONO_prereg.txt`)가 유일한 판정자로 남고, P2 full-scale 3-arm × ladder fire 가 이를 결정한다.
+
 ## 6. 결과
 
 🟠 **PRE-REGISTERED** — P2 full-fire 미실행. 측정값 0. 임계만 frozen (`.verdicts/847_clm_monopoly_escape/`).
