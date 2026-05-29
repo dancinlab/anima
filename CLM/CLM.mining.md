@@ -31,7 +31,7 @@
 ### cycle 4 — tension (상충 → 분기)
 @started: 2026-05-30
 @lens: tension
-- 2026-05-30 · [tension-A] (fidelity 우선) 샘플=앵커 유지하되 앵커를 VIRTUAL(packed .kanchors)로 → 충실도 유지, 파일폭발은 '패킹'으로 회피(앵커 수 안 줄임) (from L-fidelity ⊥ L-scale)
+- 2026-05-30 · [tension-A] (fidelity 우선) 샘플=앵커 유지하되 앵커를 VIRTUAL(packed .limen)로 → 충실도 유지, 파일폭발은 '패킹'으로 회피(앵커 수 안 줄임) (from L-fidelity ⊥ L-scale)
 - 2026-05-30 · [tension-B] (scale 우선) 클러스터=앵커, 샘플 정체성은 payload-stream에 → C7/C8 (from L-fidelity ⊥ L-scale)
 - 2026-05-30 · [tension-A2] (kosmos=corpus 우선) corpus=1-per-file 면제된 신 record(@corpus) → 다중앵커 명시 컨테이너 (from L-kosmos-is-corpus ⊥ L-1per-file §5.5)
 - 2026-05-30 · [tension-B2] (불변 우선) 1-per-file 유지, corpus=외부 roster(스펙 무변경) → 앵커는 물리 파일 (from L-kosmos-is-corpus ⊥ L-1per-file §5.5)
@@ -40,7 +40,7 @@
 ### cycle 5 — combinatorial ({입자} × {저장형식})
 @started: 2026-05-30
 @lens: combinatorial
-- 2026-05-30 · [① × packed] 샘플=앵커는 packed(.kanchors)로 저장하면 viable — 파일폭발은 입자 필연이 아니라 '저장(inline/file-per)' artifact였음 ⭐
+- 2026-05-30 · [① × packed] 샘플=앵커는 packed(.limen)로 저장하면 viable — 파일폭발은 입자 필연이 아니라 '저장(inline/file-per)' artifact였음 ⭐
 - 2026-05-30 · [C7 × inline] 토픽-앵커 소수를 corpus 1파일에 inline = 최단순 (소규모)
 - 2026-05-30 · [C8 × packed] 토픽-앵커 inline + 각 payload=packed 샘플 스트림 = 스케일+충실 동시
 - 2026-05-30 · [C7 × content-pool] 토픽-앵커가 dedup된 샘플 풀 참조 = corpus 간 중복샘플 1회 저장
@@ -86,12 +86,12 @@
 핵심 통찰 3개가 한 점으로 모임 (E1·E2·E6):
 
 1. **입자는 binary 선택이 아니다** (L4·L5·E1) — 앵커 granularity 는 scale-free zoom → corpus 가 `anchor_level` 을 **선언**하면 ①/C7/C8 이 같은 record 의 특수case.
-2. **①의 사형선고(파일폭발)는 저장 artifact였다** (L3·L11·E6) — packing(.kanchors)이 충실도와 파일수를 분리 → ① 도 packed 면 viable.
+2. **①의 사형선고(파일폭발)는 저장 artifact였다** (L3·L11·E6) — packing(.limen)이 충실도와 파일수를 분리 → ① 도 packed 면 viable.
 3. **C8 = VQ/filesystem 검증 구조** (L1·L3·L13·E3·E4) — 클러스터앵커+샘플스트림 = centroid+residual = inode+extent, K≪M 무손실-충실 입증.
 
 → **권고 입자 결정**: `@corpus` record 에 **`anchor_level = sample | topic | 2tier`** 선언 필드를 두고,
    **기본 = `2tier`(C8)** (carving 철학 = 골짜기=앵커·물=샘플 + VQ/FS 검증 + 스케일·충실 동시),
-   **`sample`(①)은 packed(.kanchors)로 viable, `topic`(C7)은 소규모 최단순** — 셋 다 같은 record 의 level 특수case.
+   **`sample`(①)은 packed(.limen)로 viable, `topic`(C7)은 소규모 최단순** — 셋 다 같은 record 의 level 특수case.
    즉 "①/C7/C8 중 택1"이 아니라 **셋을 포섭하는 1개 record + level 파라미터**가 답.
 
 @status: depleted-both
