@@ -69,7 +69,10 @@
 - [x] C4 best 조합 설계 — 귀뒤256ch건식(법1·3·4)→ML역문제(법2)→딥디코더(법5) 직렬 스택 · AURA 7-verb 매핑 · 목표%는 C5 천장에 bound → `C4-best-stack-design.md`
 - [x] C5 in-silico 천장 측정 🟡 — scalp→cortical 복원 R²: 전극 포화(256→1024 +0.01~0.05) + blur 천장(현실 σ0.50서 ~28% 복원, 이상 σ0.25 ~54%) → **두개골 LPF=비침습 물리천장 정량**(28~54% of ECoG). ubu-1 numpy seed42 → `C5-source-recon-ceiling.md`
 - [x] C6 🎯 hexa-loop 돌파 — 두개골 LPF 천장은 EEG 강화로 못 깸. in-silico: +fNIRS(같은 blur)=무의미(Δ+0.002) · **+tFUS(음향 sharp σ0.22)=천장 돌파 0.243→0.482(Δ+0.239)**. 지렛대=두개골 전기-LPF 우회하는 異種 transfer 모달(tFUS/fUS) 융합 🟡 → `C6-multimodal-breakthrough.md`
-- [ ] C7 (잔여) — prior-injection+temporal super-res in-silico · real head-model(MNE) 다중모달 fwd · 성인 fUS 비침습-영상 가능성 문헌(C6 honest gap)
+- [x] C7 prior-injection 지렛대 🟡 — ridge 0.243→sparse 0.289(+0.046)→**oracle-prior 0.798**(+0.555). 천장은 prior-정보 한계도 됨(소스위치 알면 80% 복원) → `C7-prior-stack-levers.md`
+- [x] C8 stack 🟡 — 異種모달(C6)⊕prior(C7): EEG 0.243→+tFUS 0.481→+둘다 **0.676**(≈침습급 근접). 하드웨어·算法 독립 stack
+- [x] C9 temporal-smooth ❌ null — 시간평활 0.243→0.235(무효). 공간손실은 시간회수 불가(falsified lever)
+- [ ] C10 (잔여·external) — real head-model(MNE) 다중모달 fwd · 실 MRI-prior 복원율 · 성인 비침습 fUS 영상 문헌 · 실 EEG+fNIRS 동시데이터 (cloud/실데이터, in-silico toy lane 고갈)
 
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)
 - ~~A11/B5 다피험자 ds005620 download~~ ✅ B6서 해소(N=3, aws s3 가능) → 🔴 NULL · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)

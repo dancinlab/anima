@@ -1,0 +1,21 @@
+C7/C8/C9 hexa-loop rounds 2-4 — non-invasive ceiling levers (ubu-1 numpy seed42, in-silico toy)
+
+[C7 prior-injection]
+ridge (C5 baseline)       R2=0.2429
+sparse-prior IRLS         R2=0.2887  Δ=+0.0458
+oracle-support (prior 상한) R2=0.7983  Δ=+0.5553
+prior가 EEG-단독 천장 미나? sparse: True oracle: True
+
+[C8 stack C6+C7]
+EEG ridge            R2=0.2429
+EEG +sparse(C7)      R2=0.2887
+EEG+tFUS ridge(C6)   R2=0.4813
+EEG+tFUS +sparse(C8) R2=0.6758
+
+[C9 temporal-smooth]
+EEG ridge            R2=0.2429
+  +temporal-smooth(win= 3) R2=0.2418
+  +temporal-smooth(win= 7) R2=0.2397
+  +temporal-smooth(win=15) R2=0.2351
+
+VERDICT 🟡(toy): 2 working spatial levers + 1 null. C7 prior-injection: ridge 0.243→sparse 0.289(+0.046)→oracle 0.798(+0.555, prior 품질이 지렛대). C8 stack: EEG 0.243→+tFUS 0.481→+tFUS&sparse 0.676 (hardware異種모달 ⊕ algorithmic prior STACK). C9 temporal-smooth: null(0.243→0.235, 공간손실 시간회수 불가=falsified lever). MAP: 비침습 침습급 = 異種모달(C6)+prior(C7) stack ~68%(toy). temporal 무효. 정성 robust·절대% toy. 남은 frontier=real head-model/real prior/adult-fUS=external.
