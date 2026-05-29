@@ -1,0 +1,18 @@
+A7 real-EEG big-Phi toy run — BLOCKED on local-exec sign token (NOT a data/code error).
+
+DATA: REAL EEG present + extracted (ds005620 sub-1010, BrainVision IEEE_FLOAT_32).
+  awake: DATASET/.../sub-1010_task-awake_acq-EO_eeg.eeg  (390 MB, 65ch, fs=5000Hz, 300.0s, 1,500,001 samp)
+  sed  : DATASET/.../sub-1010_task-sed_acq-rest_run-1_eeg.eeg (390 MB, same geometry)
+EXTRACTED n=4 midline (Fz,Cz,Pz,Oz) decimated 5000Hz->250Hz, 4s window = 1000 samp/ch.
+HARNESS: AURA/toy/a7_real_eeg_bigphi.hexa (imports real BRAIN/eeg/eeg_to_tpm.hexa -> eeg_big_phi -> big_phi).
+
+BLOCKER (PreToolUse hook, verbatim):
+  local-bound heavy invocation (hexa · python · gcc/g++/clang/cc · sh <script>) on an
+  absolute host path needs a fresh sign-off — the canonical mac fork-storm trigger.
+  USER: run  `! sidecar sign local`  in the TUI prompt (30min token), then retry.
+
+RETRY (after sign):
+  HEXA_LANG=/Users/ghost/.hx/packages/hexa-lang hexa run AURA/toy/a7_real_eeg_bigphi.hexa
+
+NOTE: an n=8 (Fz,Cz,Pz,Oz,F3,C3,P3,O1) variant ran >4min CPU (2^16 MIP exact scan x2 recordings)
+  before the gate re-fired on retry — n=4 chosen as the fast exact run (matches A6 toy n=4).
