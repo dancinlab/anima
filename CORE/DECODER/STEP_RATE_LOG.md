@@ -616,3 +616,36 @@ collapse 정의 = `distinct_tok ≤ 2 OR LZ_norm < 0.01`.
 **verdict**: 🟠 **SWEEP-OUT-OF-RANGE (4-axis total)** — toy harness 가 production collapse mechanism 의 expressivity 범위 밖. H_686/H_687 본선 단정은 production fire 직접 단정 경로 유일.
 
 artifacts: `CORE/DECODER/h686_h687_axis_sweep.hexa`, `CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md`.
+
+---
+
+## entry 16 — M5 production fire incident (post hexa-lang #2072·#2073)
+
+**날짜**: 2026-05-29 (UTC ~12:25)
+**상태**: 🛑 INCIDENT — agent twin-death (API 500 server-error) · pod recovered teardown · artifact 회수 0
+
+**경과**:
+- 11:10 hexa-lang `#2072·#2073` (hexat_linux module-aware build) MERGED — anima 측 M5 production fire 4번째 blocker 해소
+- 11:30 anima 측 자율 (B→production fire) bg agent `a37340fa` 발사 (a_fire_autonomous): H100 single-pod, V=151643 n_steps=500, prodaux vs longtrain 비교, λ_ent=λ_kl=0.1
+- agent 35 tool_uses 후 **API Error 500 Internal server error** 사망 (server-side, anima 통제 외)
+- runpod pod `ixc3y449cr4lpo` (ssh 31.24.80.42:15991) READY 상태로 생성됨 확인 → cost-leak 위험
+- 12:15 recovery bg agent `a20f714` 발사 (a_fire_recover_complete) → 12 tool_uses 후 **재차 API 500 사망**
+- 12:20 foreground 전환 — ssh 직접 probe → pod home **비어 있음** (build / train 0, 회수 artifact 0)
+- 12:25 `hexa cloud rm ixc3y449cr4lpo --provider runpod --force` → `destroyed (runpod terminated)` · `hexa cloud list` confirm: runpod 0
+- 5 vast pods (37868501, 38095989, 38367660, 38382692, 38384813) 무접촉 (다른 세션 소유)
+
+**원인 분석**:
+- 1차 사망: API Error 500 (transient server-side) — agent 가 build/train 시작 전 단계에서 다 막힘
+- 2차 사망: 같은 transient 가 recovery agent 도 강타 — bg agent 패턴 자체가 이 시점 위험
+- pod 자체는 H100 idle 로 ~15 분 leak (estimate ≤$1 — `cost_per_hr_usd: null` registry 라 정확 cost 추적 불가)
+
+**잔여 작업 (follow-up)**:
+- M5 production fire 재시도 — API 안정화 후. **foreground inline** 권고 (bg agent 가 server transient 에 취약)
+- 또는 더 작은 단발 — V=151643 n_steps=200 (~10min wall) 로 단축 시도
+- baseline (none) vs prodaux (both) 비교 measurement 가 critical-path 잔존
+
+**land**:
+- 본 entry 16 (이 파일)
+- `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_fire_incident_2026_05_29 :: recovery-incident`
+
+**verdict**: ⚠ INCIDENT-CLOSED — pod teardown PASS, cost-leak 차단됨. measurement 본선 미진행 (재시도 잔존).

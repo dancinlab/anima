@@ -172,3 +172,15 @@
   verdict      = "🟠 SWEEP-OUT-OF-RANGE (4-axis total) — toy harness ⊥ production collapse mechanism 확정. H_686/H_687 본선 단정은 production fire 직접 단정 path 유일."
   cost         = "$0 mac-local, 20s wall, pod=0, HF=0."
   artifacts    = "CORE/DECODER/h686_h687_axis_sweep.hexa, CORE/DECODER/H686_H687_AXIS_SWEEP_RESULT.md. STEP_RATE_LOG.md entry (15). UNIVERSE/H_686 + H_687 § toy axis sweep."
+
+@N dec_m5_fire_incident_2026_05_29 := "M5 production fire 1차 시도 — agent 사망 → pod recovery teardown" :: recovery-incident
+  context      = "hexa-lang #2072·#2073 hexat_linux module-aware build MERGED (anima 측 4번째 blocker 해소). a_fire_autonomous · a_completeness_over_cheap 자율 production fire."
+  fire_target  = "H100 single pod (≤$3) · V=151643 n_steps=500 · prodaux (H_686+H_687 both) vs longtrain (baseline) 비교 · λ_ent=λ_kl=0.1"
+  death_mode   = "agent a37340fa: 35 tool_uses 후 API Error 500 server-side · recovery agent a20f714: 12 tool_uses 후 동일 500 사망 · bg agent pattern 이 transient API 장애에 취약 확인"
+  pod_state    = "runpod ixc3y449cr4lpo READY 생성됨 (ssh 31.24.80.42:15991) · home 비어있음 (build/train 0) · foreground ssh probe 로 확인"
+  teardown     = "hexa cloud rm ixc3y449cr4lpo --provider runpod --force → destroyed · hexa cloud list confirm runpod=0 · 5 vast pods (다른 세션) 무접촉"
+  cost_leak    = "≤$1 추정 (15min idle H100, registry 의 cost_per_hr_usd=null 라 정확치 불명)"
+  artifact_recovery = "0 — build/train 시작 전 사망이라 ckpt/log 무"
+  followup     = "foreground inline 또는 짧은 단발 (V=151643 n_steps=200 ~10min) 재시도 · API 안정화 시점 · bg agent 보다 foreground 권고"
+  verdict      = "⚠ INCIDENT-CLOSED — pod teardown PASS, cost-leak 차단됨. measurement 본선 미진행 (재시도 잔존)."
+  artifacts    = "STEP_RATE_LOG.md entry 16."
