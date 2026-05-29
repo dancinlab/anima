@@ -1,0 +1,27 @@
+#!/usr/bin/env kosmos
+# clm_p1.corpus.kosmos — CLM P1 training dataset (kosmos/2.0 @corpus)
+# a_kosmos 영속: CLM 학습 corpus 를 .kosmos @corpus 로 영속한다 (d1 SKIP 금지).
+# 멤버 lane 은 현재 raw byte shard(web/register.bytes); .kanchors 패킹은 목표
+# 포맷(spec/kanchors.md) — full crawl 시 전환. sha256 = corpus/manifest.json.
+
+@corpus clm_p1 := "CLM P1 mixed byte-corpus" :: kosmos-corpus [tier=0 active]
+
+  # ── meta-anchor placement (dataset 의 Ψ centroid) ──
+  profile = "anima-consciousness-carving"
+  coord   = [0.0, 0.0]              # vacuum_psi centroid — design placeholder, measured later (ENCODER E2)
+  lane    = "clm_p1"                # cell_id partition
+  radius  = 1.0                     # basin_radius / spread — design placeholder, measured later
+
+  # ── corpus meta (§5.6.2) ──
+  anchor_level = 2tier              # 골짜기=앵커, 샘플=stream (carving-native 기본)
+  count    = 16                     # sample build: web 8 + register 8 (full crawl 시 갱신)
+  lane_mix = "web=0.8, register=0.2"   # full target (MoE 2-lane ↔ 2-source), Σ frac = 1.0
+  vocab    = 256                    # byte-vocab
+  encoding = "byte-utf8"
+  merkle   = 0000000000000000000000000000000000000000000000000000000000000000  # design placeholder (sha256 트리 root, spec/kanchors.md)
+
+  # ── members — ref form: lane shard (현 raw byte; .kanchors 목표) ──
+  member = ref "sample/web.bytes"      sha256=c02ab91eeaee313e3dae3fc59e490bde092c658bdf57594348e2dbd21e7c57e4 count=8 frac=0.8 lane="web"
+  member = ref "sample/register.bytes" sha256=2d32c08ff3ccce4bc393748d48f6dee48e38dd72759a7784579c9f07b620843a count=8 frac=0.2 lane="register"
+
+  closed_corpus = "Σ frac = 1.0 ∧ ∀ member sha256 = corpus/manifest.json ∧ (merkle present → root recomputes); cross-modal rule per member"

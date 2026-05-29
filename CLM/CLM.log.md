@@ -2,6 +2,14 @@
 
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
+## 2026-05-30 — P1 corpus .kosmos 영속 (d1 punt 해소)
+
+- [x] T2 가 d1 의 ".kosmos 영속"을 SKIP 하고 handoff 만 남긴 punt → d1 문장 SKIP-금지로 정정(PR #1466) 후 정면 해소.
+- [x] kosmos upstream 을 `kosmos/2.0` 으로 업그레이드 (sibling repo 6 PR #8~13): `@corpus` 데이터셋 entry(메타-앵커 coord·anchor_level 다이얼 기본 2tier·2-form member) + profile 바인딩 + `.kanchors` spec + example + LSP/tree-sitter + HF export. README badge 1.1→2.0, entry-types 2→3.
+- [x] `corpus/clm_p1.corpus.kosmos` 영속 — 2 lane(web 0.8/register 0.2) member ref + sha256(corpus/manifest.json) + vocab=256 + byte-utf8 + anchor_level=2tier. origin/main K5 validator `--check` EXIT=0 (clean).
+- [x] coord/radius/merkle = `# design placeholder` (정직 §4.3) — 실측 주체 = 신설 ENCODER 도메인 E2(corpus centroid). handoff 38777cb0 해소.
+- 설계 근거: 입자 축 mining(CLM.mining.md, depleted-both) — "샘플=앵커냐"는 binary 선택 아닌 anchor_level zoom 다이얼, 파일폭발=저장 artifact(packing). Q1=B(메타-앵커 coord)+Q2=2-form+Q3=풀옵션 (사용자 확정).
+
 
 ## 2026-05-30T02:00:00Z — P1 코퍼스 파이프라인 + 소량 sample (혼합 byte-corpus)
 
