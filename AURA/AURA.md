@@ -54,7 +54,12 @@
 - [x] B1 귀뒤 돌파 🟢 — ds005620 awake 10창: **EAR(귀뒤 TP9,TP10,T7,T8) big-Φ 5.378 ≈ FRONTAL 5.353 ≈ MOTOR 5.097** (둘 다 paired t n.s.). **귀뒤 비침습이 피질과 동등한 통합정보** → 개두술 0·두피캡 0 돌파. demiurge AURA 7-verb substrate 정당화 → `B1-postaural-breakthrough.md`
 - [x] B2 귀뒤 awake/sed 검출 🔴 NULL — 10창 awake 5.378 vs sed 6.226 Δ−0.85 t(9)=−0.53 n.s. (초반5창 +2.09는 favorable-window). 메타: 단일4s창 n=4 scalp big-Φ는 위치(A10.1)·상태(B2) 둘 다 null=비정상성 지배. 귀뒤 위치는 유효(B1)나 metric 교체 필요(다창/band) → `B2-postaural-state.md`
 - [x] B3 Synchron 혈관내 조사 🩸 — Stentrode 16전극·경정맥→상시상정맥동·두개골0 최소침습. COMMAND 6/6 endpoint·Apple BCI-HID·NVIDIA·$200M SeriesD. ⭐혈관내≈경막하 신호 동등(PMC p>0.05). 3위치우회 비대칭(N1>Synchron>귀뒤) → `B3-synchron-endovascular.md` (deep-research 워크플로 StructuredOutput 버그 실패→직접 WebSearch 인라인)
-- [ ] B4 (잔여) — 🎧🩸귀뒤 정맥동 endovascular lane(.discoveries/aura_postaural_endovascular_sinus) · 귀뒤 band-power 다창 의식수준(big-Φ 대체 metric) · A7.3 다창 retro-qualify · 다피험자
+- [x] B4 metric sweep 🟡 — α-power 다창 awake/sed: 귀뒤·midline 둘 다 8/10 일관(방향성, big-Φ 6/10보다 나음) but t n.s.(단일피험자). A7.3 retro-qualify: midline big-Φ 10창 Δ−0.55·4/10 → **A7.3 window-fragile 확정**. 메타: 단일4s창 big-Φ 위치·상태 대조 전부 null → `B4-metric-sweep.md`
+- [ ] B5 (잔여) — 🎧🩸귀뒤 정맥동 endovascular in-silico 모델 · α-power **다피험자**(OpenNeuro N>1, 검정력) · demiurge AURA `analyze` 셀에 B1/B4 metric 환류
+
+## deferred (인라인 불가 — pod/network/침습데이터 필요)
+- A11/B5 다피험자 ds005620 OpenNeuro download (network 대용량) · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)
+- negative-result paper 후보(a_paper_negative_ok): "단일창 big-Φ 위치·상태 대조 전부 null + 구조모델↔실측 비대칭" — 단 다피험자 후 a_paper_only_at_closure 충족 시
 
 > ⚠ **핵심 정직 수정 (A9.2)**: A8.1 "FRONTAL>MOTOR (실EEG)"는 **단일 4s 창 인공물** — 6창 재검서 robust 아님(위치효과 평균 ~0). relocate-N1은 **in-silico/connectome(구조) 축에선 일관 지지**되나 **실 scalp-EEG proxy에선 robust 미지지**. SURVEY 결론은 이 비대칭 반영.
 

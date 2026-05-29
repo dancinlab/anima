@@ -74,3 +74,9 @@
 - B2 🔴: 귀뒤 awake/sed — 초반5창 awake6.90>sed4.81(Δ+2.09)이 10창 확장서 awake5.378 vs sed6.226 Δ−0.85 t(9)=−0.53 n.s.로 뒤집힘(또 favorable-window). 메타교훈: 단일4s창 n=4 scalp big-Φ는 위치(A10.1)도 상태(B2)도 null=비정상성 지배. 자기검증(5→10확장)으로 거짓양성 차단. 귀뒤 위치는 유효(B1 분포평균)나 의식수준 metric은 다창/band 필요
 - B3 🩸 Synchron: deep-research 워크플로 StructuredOutput 하니스버그 실패(104agent·1.8M tok)→직접 WebSearch/WebFetch 인라인. Stentrode 16전극·경정맥→상시상정맥동·두개골0. COMMAND 6/6 endpoint(12mo)·Apple BCI-HID·NVIDIA Holoscan·$200M SeriesD(누적345M)·pivotal FDA협의. ⭐핵심: 혈관내≈경막하≈경막외 신호 동등(PMC5976775 p>0.05) = 우회축 정당화. 3위치(N1 침습>Synchron 최소침습>귀뒤 비침습) 비대칭. 출처 인용
 - B4 잔여: 귀뒤정맥동 endovascular lane · 귀뒤 band-power 다창(big-Φ 대체) · A7.3 다창 retro-qualify · 다피험자
+
+## 2026-05-30 — /cycle-fg-loop round 1 (B4 metric sweep)
+- B4.1 α-power(8-13Hz) 다창 awake/sed: 귀뒤 Δ+0.126·8/10, midline Δ+0.045·8/10, 둘다 t n.s.(sign p≈0.11). 방향 일관(big-Φ 6/10보다 나음)=metric 중요, 단 단일피험자 미유의
+- B4.2 A7.3 retro-qualify: midline big-Φ 10창 Δ−0.55·4/10·t=−0.56 n.s. → A7.3(PR#1462) Δ+0.75는 off-0 단일창만, window-fragile 확정
+- 메타: 단일4s창 n=4 big-Φ 위치(A8.1→A10.1)·상태(A7.3→B4.2, B2) 대조 전부 null=비정상성. α-power가 대안방향(8/10)이나 다피험자 필요
+- A11/B5 deferred section 신설(다피험자 download·pod n=8·intracortical=인라인 불가). 귀뒤정맥동 모델·α다피험자가 다음 인라인 후보
