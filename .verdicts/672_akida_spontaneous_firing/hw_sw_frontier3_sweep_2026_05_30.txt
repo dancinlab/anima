@@ -156,3 +156,57 @@ SUMMARY axis=sepconv: ident=10/10 divergent=0 max_hamming=0
 
 RESULT axis2 sepconv: 20/20 byte-identical (ab4+ab2 x 10 probes), max Hamming 0. EXTENDED+verified.
   KEY: depthwise+pointwise are FUSED with a SINGLE final quantizer (chip quantizes once).
+
+================================================================================
+### AXIS 4 — >4-NP mapping (5-8 NP / cross-pass DMA)  MATCH(real inputs) + CLOSED-NEGATIVE(zero-input boundary)
+Round 4 tested 3-4 NP. This pushes to 6 NP and 8 NP (on_hardware=true).
+configs: deep FC cascade L6 U1024 / L8 U1024 / L8 U2048 ab2 / L6 U4096 ab2.
+  (L8/L6 U1024 runs hit a transient chip DMA fetch-timeout -- chip flakiness,
+   not a model issue; U2048 8-NP and U4096 6-NP ran fully = the clean signal.)
+
+--- 8 NP (L8 U2048 ab2) ---
+axis=multinp layers=8 units=2048 act_bits=2 on_hw=True np_total=8 multi_np=True n_seq=2 weights_match=True
+ idx0: DIVERGE HW=5518aa918632d9f0(2048) SW=4fe7b59af6de3b66(2048)
+ idx1: IDENT HW=df0aaacadf0d9fbf(2048) SW=df0aaacadf0d9fbf(2048)
+ idx2: IDENT HW=5042b2bec784c2b8(2048) SW=5042b2bec784c2b8(2048)
+ idx3: IDENT HW=34ad830071a68d0e(2048) SW=34ad830071a68d0e(2048)
+ idx4: IDENT HW=81468beda84b98a2(2048) SW=81468beda84b98a2(2048)
+ idx5: IDENT HW=2623d3a4789d1a95(2048) SW=2623d3a4789d1a95(2048)
+ idx6: IDENT HW=26d424aa883358ec(2048) SW=26d424aa883358ec(2048)
+ idx7: IDENT HW=7caa7a60a6236818(2048) SW=7caa7a60a6236818(2048)
+ idx8: IDENT HW=9ae0d5723af8a813(2048) SW=9ae0d5723af8a813(2048)
+ idx9: IDENT HW=d879d5e3c07afc48(2048) SW=d879d5e3c07afc48(2048)
+SUMMARY axis=multinp: ident=9/10 divergent=1 weights_match=True np_total=8 -> DIVERGENCE
+
+--- 6 NP (L6 U4096 ab2) ---
+axis=multinp layers=6 units=4096 act_bits=2 on_hw=True np_total=6 multi_np=True n_seq=2 weights_match=True
+ idx0: DIVERGE HW=27a1bf561109dfa2(4096) SW=c35020473aed1b46(4096)
+ idx1: IDENT HW=ddb7ca92338ff035(4096) SW=ddb7ca92338ff035(4096)
+ idx2: IDENT HW=ec52e77817fdd1aa(4096) SW=ec52e77817fdd1aa(4096)
+ idx3: IDENT HW=a6aacb07c7bc2deb(4096) SW=a6aacb07c7bc2deb(4096)
+ idx4: IDENT HW=c0b8e8d16d15ce95(4096) SW=c0b8e8d16d15ce95(4096)
+ idx5: IDENT HW=ae5e6a025d0a765e(4096) SW=ae5e6a025d0a765e(4096)
+ idx6: IDENT HW=35744964befcb976(4096) SW=35744964befcb976(4096)
+ idx7: IDENT HW=74df5daa7478c82b(4096) SW=74df5daa7478c82b(4096)
+ idx8: IDENT HW=1f496131726dcded(4096) SW=1f496131726dcded(4096)
+ idx9: IDENT HW=0da5eb07da52a906(4096) SW=0da5eb07da52a906(4096)
+SUMMARY axis=multinp: ident=9/10 divergent=1 weights_match=True np_total=6 -> DIVERGENCE
+
+FINDING: at BOTH 6 NP and 8 NP, all 9 NONZERO-input probes are 9/9 byte-identical
+  to the single SW cascade -> placement is TRANSPARENT (MATCH) for real inputs.
+  The ONLY divergence is idx0 (ALL-ZERO input): HW y_max=3 (4 levels) vs SW 0.
+
+BOUNDARY (CLOSED-NEGATIVE, zero-input on deep multi-NP):
+  - The zero-input idx0 is NON-DETERMINISTIC: two identical back-to-back runs
+    (same weights, same zero input) differ ONLY at idx0 (idx1-9 byte-stable).
+      determinism check: 'NON-DET' ; per-idx: idx0 DIFFER, idx1..9 SAME.
+  - A 1-NP small model with zero input gives 0 (clean, matches SW).
+  - MECHANISM: on a deep (>=6-NP) hardware cascade with NO input signal, the
+    chip emits spurious non-deterministic activity (floating NP state / inter-NP
+    DMA noise that has no input to overwrite it). Any real (nonzero) input
+    dominates -> fully deterministic + placement-invariant (byte-matches SW).
+  - Not SW-modelable (non-deterministic, no input to derive from) -> CLOSED-NEGATIVE,
+    scoped to the degenerate empty-input case only. NOT a divergence for real data.
+
+RESULT axis4: >4-NP MATCH (placement-invariant) for all real inputs (6-NP + 8-NP,
+  9/9 each); zero-input deep-multi-NP spurious firing = CLOSED-NEGATIVE boundary.

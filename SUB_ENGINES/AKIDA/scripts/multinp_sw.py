@@ -6,6 +6,15 @@ akida_sw_lif.cascade_forward / fc_quantized_forward, with n=units (full-length
 output, no truncation to 16). If HW (multi-NP) == SW (single numpy compute)
 byte-for-byte, multi-NP placement is TRANSPARENT (placement-invariant).
 
+ROUND-5 (>4-NP, 2026-05-30): verified at 6 NP and 8 NP -- all NONZERO-input
+probes are byte-identical to this single SW cascade (placement transparent for
+real inputs). The ONLY boundary is the ALL-ZERO input (idx0): on a deep (>=6-NP)
+hardware cascade with no signal, the chip emits NON-DETERMINISTIC spurious
+activity (floating NP / inter-NP DMA state with nothing to overwrite it; HW
+y_max=3 vs SW 0, and two identical runs differ only at idx0). Not SW-modelable
+(non-deterministic) -> CLOSED-NEGATIVE, scoped to the degenerate empty input
+only -- see HW_SW_CALIBRATION_LOOP_2026_05_29.md 5차 axis 4.
+
 Mirrors multinp_hw.py exactly. Usage:
   python multinp_sw.py --layers 4 --units 512 --wseed 7 --act-bits 4
 """

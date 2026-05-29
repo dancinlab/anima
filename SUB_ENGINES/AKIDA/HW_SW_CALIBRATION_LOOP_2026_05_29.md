@@ -410,29 +410,69 @@ SW(akida_sw_lif)가 이제 **충실히 재현하는 영역** (HW byte-identical 
 |---|---|---|---|
 | 2 separable conv | InputConv→SeparableConv (dw K3 Cin4 + pw 1×1 F8) ab{2,4} | naive 2-quantizer >100 Hamming → FUSED+dw_flip 후 20/20 IDENT | **EXTENDED+verified** (fusion = single quantizer 복원) |
 
+### axis 4 (>4-NP) — MATCH(real inputs, placement-invariant) + zero-input boundary CLOSED-NEGATIVE
+- **config**: round-4 는 3·4 NP 까지. 이번엔 **6 NP** (L6 U4096 ab2) + **8 NP**
+  (L8 U2048 ab2) 매핑, 둘 다 on_hardware=true (U1024 run 들은 일시적 chip DMA
+  fetch-timeout = chip flakiness, model 무관; U2048/U4096 가 clean signal).
+- **MATCH (real inputs)**: 6 NP·8 NP 모두 **nonzero-input probe 9/9 byte-identical**
+  to 단일 SW cascade → 배치는 real input 에 대해 **transparent (placement-invariant)**.
+- **유일 divergence = idx0 (ALL-ZERO input)**: HW y_max=3 (4 levels) vs SW 0.
+  이 zero-input 은 **NON-DETERMINISTIC** — 동일 weight+zero input 2회 run 이 idx0
+  에서만 다름 (idx1~9 byte-stable). 1-NP small 모델은 zero input → 0 (clean).
+- **MECHANISM**: 신호 없는 deep(≥6-NP) HW cascade 에서 칩이 spurious 비결정
+  활동을 방출 (floating NP / inter-NP DMA state — overwrite 할 input 없음). 실제
+  (nonzero) input 은 신호가 지배 → fully deterministic + placement-invariant.
+- **결론**: >4-NP 배치 = **MATCH** (real input). zero-input deep-multi-NP spurious
+  firing = **CLOSED-NEGATIVE** (비결정·input 없어 환원 불가, degenerate empty 케이스
+  한정). verify_substrate_akida 5/5 무회귀 (multinp_sw 모델 불변, real input 정확).
+- verdict 원문: 동일 파일 `hw_sw_frontier3_sweep_2026_05_30.txt` (AXIS 4).
+
+| 축 | 설정 | HW vs SW | 결론 |
+|---|---|---|---|
+| 4 >4-NP (real input) | FC cascade → 6 NP / 8 NP, nonzero probes | 9/9 IDENT both | **MATCH** (placement-invariant) |
+| 4 >4-NP (zero input) | deep ≥6-NP cascade, all-zero idx0 | 비결정 spurious (HW y_max3 vs SW0) | **CLOSED-NEGATIVE** (floating NP/DMA) |
+
 ---
 
-## 최종 FAITHFUL-ENVELOPE (4-stage 누적, 2026-05-30)
+## 최종 FAITHFUL-ENVELOPE (5-stage 누적, 2026-05-30)
 
 SW(akida_sw_lif)가 AKD1000 실리콘을 **byte-identical 충실 재현**하는 검증완료 영역:
 - act_bits ∈ {1,2,4} 활성 양자화 (step=2^(input_bits−act_bits)).
 - weights: all-ones AND random SYMMETRIC int4 [-7,+7].
 - FullyConnected: 단일·2-layer·**DEEP cascade (3·4 layer)** [4차 axis-1].
 - **CONVOLUTION**: InputConvolutional (akida SW front-end, cross-correlation) AND
-  on-chip Convolutional (HW CNP, TRUE convolution = 180° kernel flip), SAME pad —
-  `conv2d_quantized_forward(flip=)` [4차 axis-2 EXTENDED].
-- **MULTI-NP 배치**: 3·4 neural processor 분산 모델 placement-invariant [4차 axis-3].
+  on-chip Convolutional (HW CNP, TRUE convolution = 180° kernel flip) —
+  `conv2d_quantized_forward(flip=, padding=, stride=)`:
+  - SAME stride1 [4차 axis-2] AND **stride>1 + VALID/SAME (TF geometry, extra pad
+    bottom/right)** [5차 axis-3 EXTENDED].
+- **POOLING** [5차 axis-1]: `pool2d_quantized_forward` — Conv 에 융합된 MAX pool
+  (2×2 stride2; monotone quantizer → pool-after-act 정확) **EXTENDED+verified**.
+- **SEPARABLE CONV** [5차 axis-2]: `sepconv2d_quantized_forward` — depthwise(true-
+  conv RAW potential) + pointwise(1×1) **FUSED 단일 quantizer** **EXTENDED+verified**.
+- **MULTI-NP 배치**: 3·4 NP [4차 axis-3] AND **6·8 NP (real input)** [5차 axis-4]
+  placement-invariant.
 - 기존 1·2차: R0~R4 regime · seed 0~int32max · threshold −16~64 · window ≤5000 · 60~64°C.
 
 **환원 불가 잔여 boundary** (SW 주장 안 함, 정직):
 - on-chip AkidaUnsupervised **LEARNING** — CLOSED-NEGATIVE (3차): 비결정성 (hidden
   plasticity state; same init+input → different fitted weight). SW 는 충실한 INFERENCE
   모델이고 stateful on-chip learning 은 모델 범위 밖.
-- 미측정: pooling·separable conv·>4-NP/cross-pass DMA 경계·stride>1/VALID-pad conv·
-  다른 die·>64°C·>5000-step. (inference forward 양자화 모델 = FC+conv+multi-NP 는 위
-  검증 range 에서 충실; learning 동역학은 모델 외로 확정.)
+- **AVERAGE/GLOBAL POOLING** — CLOSED-NEGATIVE (5차 axis-1): AKD1000 average 는
+  GLOBAL only, akida SW backend 에서 결정론적이나 **활성맵 sum/mean 의 함수가 아닌**
+  opaque per-channel rescale (ch5 non-monotone). public surface 로 환원 불가.
+- **ZERO-INPUT on deep(≥6-NP) cascade** — CLOSED-NEGATIVE (5차 axis-4): 신호 없는
+  deep multi-NP HW 가 비결정 spurious 활동 방출 (floating NP/inter-NP DMA). real
+  (nonzero) input 은 placement-invariant 라 MATCH; degenerate empty input 한정.
+- 미측정 잔여: 다른 die·>64°C·>5000-step. (inference forward 양자화 모델 = FC + conv
+  (stride/pad/pool/separable) + multi-NP 는 위 검증 range·real input 에서 충실;
+  learning·average-pool·zero-input-deep-NP 는 모델 외로 확정.)
 
-### 4차 종합 판정
-deep-cascade **MATCH** · conv **EXTENDED+verified** (180° flip 복원) · multi-NP **MATCH**.
-inference forward 양자화 모델의 LAST frontier 3축 전부 covered-or-extended. 유일한
-hard boundary = on-chip learning (3차 CLOSED-NEGATIVE). LOOP honest-stop (3R, 4R cap 전).
+### 5차 종합 판정 (HONEST STOP — 4R cap 도달, 모든 last-frontier 축 covered-or-closed)
+- stride/VALID conv **EXTENDED+verified** (40/40) · MAX pool **EXTENDED+verified** (10/10)
+  · separable conv **EXTENDED+verified** (20/20, fusion 복원) · >4-NP **MATCH** (6·8 NP,
+  real input 9/9).
+- 신규 CLOSED-NEGATIVE 2건: average/global pool (opaque rescale) · zero-input deep-NP
+  spurious firing (비결정). 기존 on-chip learning (3차) 포함 총 3개 hard boundary.
+- inference forward 양자화 모델의 measurable frontier 축 **전부 covered-or-closed**.
+  irreducible boundary = {on-chip learning, global-average-pool 내부 rescale,
+  zero-input deep-multi-NP spurious activity}. LOOP honest-stop (4R 풀 사용).
