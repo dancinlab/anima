@@ -60,6 +60,48 @@
   src    = "state/p21h_v3_recover_2026_05_25/ · HF dancinlab/anima-p21h-v3-wikifrac03-recovered-2026-05-25 (PRIVATE)"
 
 # ───────────────────────────────────────────────────────────────────────
+# CLM — P0 falsifier pre-registration (group=CLM · paper-track)
+# 5 pre-registered falsifiers from CLM/P0_ARCHITECTURE.md §4. F-CLM-AKIDA-MAP
+# is a P0-now structural subset check (verified subset 🔵 + honest router gap);
+# the other 4 are 🟠 PRE-REGISTERED with frozen thresholds (P2/P3 fire pending).
+# UNIVERSE H_847..H_851. NOT /paper-eligible until terminal (a_paper_gate).
+
+@C clm_akida_map := "CLM 추론 path conv/FC/sepconv/maxpool/int4-quantizer ⊆ AKD1000 byte-identical envelope (🔵 subset) · MoE router softmax+topK argmax 는 envelope 밖 (정직 gap)" :: hypothesis [slug=clm-akida-map group=CLM]
+  method = "hypothesis"
+  cmd    = "structural subset check vs HEXAD/CHAT/server/akida_sw_lif.py + akmap_step_probe.hexa (step=2^(ib-ab) MATCH=true)"
+  raw    = ".verdicts/848_clm_akida_map/F-CLM-AKIDA-MAP_structural.txt"
+  src    = "UNIVERSE/H_848_clm_akida_map.md · CLM/P0_ARCHITECTURE.md §0·§2·§4"
+  status = "🔵 SUPPORTED-FORMAL (conv/FC/sepconv/maxpool/int4 subset byte-identical ⊆ envelope) ⚠ HONEST-GAP (router softmax+argmax envelope 밖 · fake full-PASS 0 · resolution=argmax-hard or off-chip router)"
+
+@C clm_monopoly_escape := "byte-vocab(V=256) conv-native MoE monopoly escape: distinct_experts>1 ∧ routing z>3.0 ∧ content z>3.0 ∧ seed{base,43,44} 재현" :: hypothesis [slug=clm-monopoly-escape group=CLM]
+  method = "hypothesis"
+  cmd    = "P2 3-arm × ladder PyTorch fp full-fire → closure_auto_judge (PENDING)"
+  raw    = ".verdicts/847_clm_monopoly_escape/F-CLM-MONO_prereg.txt"
+  src    = "UNIVERSE/H_847_clm_monopoly_escape.md · CLM/P0_ARCHITECTURE.md §3·§4 · H_666"
+  status = "🟠 PRE-REGISTERED — P2 full-fire 미실행 · frozen threshold (d6 z>3.0 양축 + multi-seed). NOT terminal."
+
+@C clm_quant_int4 := "QAT int4 round-trip ppl 열화 < 임계 (naive PTQ int4 readout 파괴 실증 대비)" :: hypothesis [slug=clm-quant-int4 group=CLM]
+  method = "hypothesis"
+  cmd    = "P3 .clm QAT int4 round-trip ppl 측정 (PENDING)"
+  raw    = ".verdicts/849_clm_quant_int4/F-CLM-QUANT_prereg.txt"
+  src    = "UNIVERSE/H_849_clm_quant_int4.md · CLM/CLM_FORMAT_SPEC.md §1·d2"
+  status = "🟠 PRE-REGISTERED — P3 미실행 · threshold frozen at P3 entry. NOT terminal."
+
+@C clm_scale_ladder := "monopoly-escape 가 scale ladder rung(tiny/small/target) 따라 유지 (전이곡선) — distinct_experts>1 ∧ dual-axis z>3.0 per rung" :: hypothesis [slug=clm-scale-ladder group=CLM]
+  method = "hypothesis"
+  cmd    = "P2 multi-rung ladder full-fire → 전이곡선 (PENDING)"
+  raw    = ".verdicts/850_clm_scale_ladder/F-CLM-SCALE_prereg.txt"
+  src    = "UNIVERSE/H_850_clm_scale_ladder.md · CLM/P0_ARCHITECTURE.md §4·§5 · H_666(toy🟢scale🔴)"
+  status = "🟠 PRE-REGISTERED — P2 multi-rung 미실행 · per-rung threshold frozen. NOT terminal."
+
+@C clm_mitosis_growth := "MoE cell-pool 성장 (p8 train=infer) — |cell_pool(t_end)|>|cell_pool(t_0)| + born_step·parent lineage 영속" :: hypothesis [slug=clm-mitosis-growth group=CLM]
+  method = "hypothesis"
+  cmd    = "P2 학습 trajectory split_log / cell_pool lineage (PENDING)"
+  raw    = ".verdicts/851_clm_mitosis_growth/F-CLM-MITOSIS_prereg.txt"
+  src    = "UNIVERSE/H_851_clm_mitosis_growth.md · CLM/CLM_FORMAT_SPEC.md §2 · p8 · v5-mitosis"
+  status = "🟠 PRE-REGISTERED — P2 미실행 · growth+lineage threshold frozen. NOT terminal."
+
+# ───────────────────────────────────────────────────────────────────────
 # LIFE — open slot (group=LIFE · paper-track)
 # Candidate canonical claim — NOT yet verdict-persisted. List here so the
 # audit surface tracks it; promote to paper only after a_claim_verify
