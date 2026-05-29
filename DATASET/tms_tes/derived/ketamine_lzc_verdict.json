@@ -1,17 +1,12 @@
 {
   "id": "farnes-spontaneous-LZc",
-  "dataset": "Zenodo 4245091 = Farnes et al. PLOS ONE spontaneous EEG (eyesOpen vs eyesClosed, post-ICA, 62ch@250Hz)",
-  "spec_vs_actual": "S-catalog named this Sarasso KETAMINE TMS-EEG (933MB). Record IS 933MB but = Farnes anesthesia/spontaneous EEG. No ketamine/wake labels; directly-labeled contrast = eyes-open vs eyes-closed resting. Original ketamine hypothesis NOT testable.",
-  "metric": "lz76_concat (median-binarized, 1-45Hz, decimated 60000 samp)",
-  "n_open": 0,
-  "n_closed": 0,
-  "n_skipped": 0,
-  "eyesOpen_LZc_mean": NaN,
-  "eyesClosed_LZc_mean": NaN,
-  "eyesOpen_LZc": [],
-  "eyesClosed_LZc": [],
-  "measured_contrast": "eyes-open vs eyes-closed resting LZc",
-  "falsifier": "|Δ|/closed < 1%",
-  "verdict": "RED",
-  "note": "eyesOpen nan (n=0) vs eyesClosed nan (n=0) (D=+nan, nan%) — eyes-closed > eyes-open"
+  "dataset": "Zenodo 4245091 = Farnes et al. PLOS ONE spontaneous EEG (eyesOpen/eyesClosed, post-ICA, EPOCHED EEGLAB .set, 62ch)",
+  "spec_vs_actual": "S-catalog named this the Sarasso KETAMINE TMS-EEG (933MB). Record IS 933MB but content = Farnes anesthesia/spontaneous EEG — NO ketamine/wake labels. Original ketamine hypothesis is NOT testable from this DOI. The only directly-labeled contrast is eyes-open vs eyes-closed resting.",
+  "downloaded": true,
+  "raw_storage": "Farnes_ketamine.zip(933MB) + 40 extracted .set/.fdt LOCAL-ONLY",
+  "data_readable": "YES via mne.io.read_epochs_eeglab (.set are EPOCHED, ~15 trials each; read_raw_eeglab raises TypeError on them)",
+  "original_hypothesis": "ketamine spontaneous LZc > wake",
+  "measured_contrast": "eyes-open vs eyes-closed (re-scoped)",
+  "verdict": "NOT-MEASURED",
+  "note": "All 40 spontaneous .set downloaded and confirmed readable as epoched EEGLAB. LZ76 numeric run did NOT complete: every foreground python measurement in this environment hit the 124 timeout (mne load+1-45Hz filter of 62ch epoched data x40 files exceeds the wall budget) and every backgrounded run was killed (exit 144). NO fabricated value recorded. Recovery (one clean session, generous timeout): cd repo; mne.io.read_epochs_eeglab each spontaneous .set; pick eeg; concat epochs; median-binarize per ch; LZc=c(n)*log2(n)/n; mean over eyesOpen vs eyesClosed. LZ76 module (lz76.hexa / lz76.py) validated: random=1.034, constant=0.006."
 }

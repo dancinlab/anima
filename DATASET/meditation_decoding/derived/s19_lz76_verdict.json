@@ -1,14 +1,12 @@
 {
- "id": "S19-meditation-OpenNeuro-ds001787",
- "source": "s3://openneuro.org/ds001787 (Brandmeyer & Delorme focused-attention/breath meditation, BioSemi ActiveTwo)",
- "subject_subset_present_on_disk": "sub-001..sub-024 sidecars; .bdf present for sub-001/002/003 (ses-01+ses-02)",
- "acquisition": {"manufacturer": "BIOSEMI ActiveTwo", "n_eeg_ch": 64, "sampling_hz": 256, "duration_s_sub001ses01": 2721, "format": "BDF"},
- "hypothesis": "meditation-state LZ76 vs baseline LZ76 (direction reported)",
- "falsifier": "no LZ76 direction between conditions",
- "condition_lz76": null,
- "n": 0,
- "verdict": "RAW-DOWNLOADED, LZ76 NOT-CONFIRMED — sub-001 ses-01 BDF (159MB) loaded successfully via mne (sf=256, 64 EEG ch, 2721s), but the per-channel LZ76 computation could not be run-to-confirmation: the sandbox interpreter sign-gate (python execution requires `! sidecar sign local`, user-only) engaged mid-session and python jobs were nondeterministically routed to background, so no verified LZ76 numeric output was captured. No fabricated value is recorded.",
- "measurement_blocker": "interpreter sign-gate + nondeterministic background routing of python invocations",
- "note": "events.tsv contains only stimulus(experience-sampling probe)/response(button) markers, NO meditation-vs-rest block labels (Brandmeyer-Delorme breath-focus probe task), so a clean meditation-vs-rest contrast is not recoverable from this subset; the honest available contrast is first-half(early) vs second-half(settled) of the continuous recording. LZ76 module (DATASET/lz76.py) IS validated: random=1.034, constant=0.006, alternating=0.009. Recovery (one command, post sign-off): cd /tmp && python3 -c '<lz76 + mne.read_raw_bdf on the absolute path; median-binarize per ch; n/log2(n); first vs second half>'.",
- "raw_storage": "local-only (BDF files large; not staged to LFS by this agent)"
+  "id": "S19-meditation-LZ76",
+  "dataset": "OpenNeuro ds001787 (Brandmeyer-Delorme breath-focus meditation, BDF, BioSemi 64ch@256Hz)",
+  "spec_vs_actual": "events.tsv has only experience-sampling probe/response markers, NO meditation-vs-rest block labels. Honest available contrast = first-half(early) vs second-half(settled) of the continuous recording.",
+  "downloaded": true,
+  "raw_storage": "sub-001/002/003 x ses (6 BDF, 159MB) LOCAL-ONLY",
+  "data_readable": "YES via mne.io.read_raw_bdf (64ch@256Hz, ~2721s; verified load: ch=80 sfreq=256 dur=2721s)",
+  "hypothesis": "meditation-state LZ76 != baseline (first vs second half proxy)",
+  "falsifier": "|Δ|/first < 1% (null)",
+  "verdict": "NOT-MEASURED",
+  "note": "6 BDF downloaded and confirmed loadable. LZ76 run did NOT complete in this environment (foreground 124 timeout on filter+LZ of 6x64ch BDF; background 144 kill). NO fabricated value. A prior commit (e4175c8ec) reported a first/second-half null Δ=0.00063 but that numeric was not reproducible-to-confirmation here, so this verdict is set to NOT-MEASURED rather than assert an unverified number. Recovery: read_raw_bdf each, 1-45Hz, median-binarize, LZc first vs second half."
 }
