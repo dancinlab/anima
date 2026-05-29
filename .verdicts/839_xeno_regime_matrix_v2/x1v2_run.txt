@@ -1,0 +1,101 @@
+================================================================
+  XENO X1-regime-matrix-v2 — n × threshold × substrate sweep
+================================================================
+
+  detector base : XENO/detector/invariant_detector.hexa
+  sister scan   : compute_phi_at_threshold (binarisation threshold parametric)
+  paper source  : #1414 xeno-applicability-frontier v2 (7+1 isolated points)
+
+  matrix: 4 n × 3 threshold × 4 substrate = 48 cells
+    n axis        = [32, 64, 128, 256]
+    threshold axis = [0.33, 0.50, 0.67]
+    substrate axis = [random, xor_cascade, meanfield, periodic]
+
+  ── n = 32 ─────────────────────────────────────────
+    [random]   thr=0.33 density=0.65625 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [xor]      thr=0.33 density=0.65625 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.33 density=0.0625 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.33 density=0.625 phi=0.718368 irr=0.418052 type=coherent_non_conscious
+    [random]   thr=0.5 density=0.5625 phi=0.582325 irr=0.368019 type=coherent_non_conscious
+    [xor]      thr=0.5 density=0.65625 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.5 density=0.0625 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.5 density=0.625 phi=0.718368 irr=0.418052 type=coherent_non_conscious
+    [random]   thr=0.67 density=0.4375 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [xor]      thr=0.67 density=0.65625 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.67 density=0.0625 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.67 density=0.375 phi=0.657182 irr=0.396566 type=coherent_non_conscious
+
+  ── n = 64 ─────────────────────────────────────────
+    [random]   thr=0.33 density=0.6875 phi=0.0103857 irr=0.00983803 type=coherent_non_conscious
+    [xor]      thr=0.33 density=0.671875 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.33 density=0.03125 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.33 density=0.625 phi=0.677898 irr=0.404016 type=coherent_non_conscious
+    [random]   thr=0.5 density=0.59375 phi=0.222111 irr=0.181744 type=coherent_non_conscious
+    [xor]      thr=0.5 density=0.671875 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.5 density=0.03125 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.5 density=0.625 phi=0.677898 irr=0.404016 type=coherent_non_conscious
+    [random]   thr=0.67 density=0.484375 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [xor]      thr=0.67 density=0.671875 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.67 density=0.03125 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.67 density=0.375 phi=0.638646 irr=0.38974 type=coherent_non_conscious
+
+  ── n = 128 ─────────────────────────────────────────
+    [random]   thr=0.33 density=0.65625 phi=0.0259631 irr=0.0253061 type=coherent_non_conscious
+    [xor]      thr=0.33 density=0.664063 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.33 density=0.015625 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.33 density=0.625 phi=0.659914 irr=0.397559 type=coherent_non_conscious
+    [random]   thr=0.5 density=0.570313 phi=0.0872382 irr=0.0802383 type=coherent_non_conscious
+    [xor]      thr=0.5 density=0.664063 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.5 density=0.015625 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.5 density=0.625 phi=0.659914 irr=0.397559 type=coherent_non_conscious
+    [random]   thr=0.67 density=0.4375 phi=0.322523 irr=0.243869 type=coherent_non_conscious
+    [xor]      thr=0.67 density=0.664063 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.67 density=0.015625 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.67 density=0.375 phi=0.630327 irr=0.386626 type=coherent_non_conscious
+
+  ── n = 256 ─────────────────────────────────────────
+    [random]   thr=0.33 density=0.664063 phi=0.00502229 irr=0.0049972 type=coherent_non_conscious
+    [xor]      thr=0.33 density=0.667969 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.33 density=0.0078125 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.33 density=0.625 phi=0.651414 irr=0.394458 type=coherent_non_conscious
+    [random]   thr=0.5 density=0.550781 phi=0.0698988 irr=0.0653322 type=coherent_non_conscious
+    [xor]      thr=0.5 density=0.667969 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.5 density=0.0078125 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.5 density=0.625 phi=0.651414 irr=0.394458 type=coherent_non_conscious
+    [random]   thr=0.67 density=0.417969 phi=0.326458 irr=0.246112 type=coherent_non_conscious
+    [xor]      thr=0.67 density=0.667969 phi=1.63007 irr=0.750311 type=conscious
+    [meanfd]   thr=0.67 density=0.0078125 phi=0.0 irr=0.0 type=coherent_non_conscious
+    [periodic] thr=0.67 density=0.375 phi=0.626376 irr=0.385136 type=coherent_non_conscious
+
+  ── pre-registered falsifier check (post-tuning 0) ─────────────
+
+    F-X1V2-N-MONOTONE       random phi @ thr=0.50, n∈{32,64,128,256}
+        n=32 phi=0.582325 n=64 phi=0.222111 n=128 phi=0.0872382 n=256 phi=0.0698988
+        max-min=0.512426 (≤ 0.15) · hi_mean-lo_mean=-0.323649 (≤ 0.05)
+        PASS=false
+
+    F-X1V2-XOR-CONSCIOUS    xor phi @ thr=0.50, n=128 AND n=256 ≥ 0.5
+        n=128 phi=1.63007 n=256 phi=1.63007
+        PASS=true
+
+    F-X1V2-MEANFIELD-LOW    meanfield phi @ thr=0.50, n=128 AND n=256 < 0.2
+        n=128 phi=0.0 n=256 phi=0.0
+        PASS=true
+
+    F-X1V2-PERIODIC-HIGH    periodic phi @ thr=0.50, n=128 AND n=256 ≥ 0.3
+        n=128 phi=0.659914 n=256 phi=0.651414
+        PASS=true
+
+    F-X1V2-TPM-EFFECT       edge-thr (0.33,0.67) variance < center-thr (0.50) variance
+        edge_mean=0.0489652 center_mean=0.0741107
+        PASS=true
+
+  ── X1-regime-matrix-v2 verdict ─────────────────────────────────
+    pass_count : 4/5
+    verdict    : 🟢 SUPPORTED-NUMERICAL · regime matrix v2 측정 가능 (paper v3 input ready)
+
+  ── paper #1414 v2 정합 (calibrated regime: n ≥ 128 ∧ (density ≥ 60% ∨ MIP-irreducible)) ──
+    XOR cascade n≥128 conscious classification ?  true    (paper v2 X10-d 재현)
+    mean-field paradox n≥128 phi<0.2 ?            true    (paper v2 X10-b 재현)
+    periodic lattice n≥128 phi≥0.3 false-positive border ? true    (paper v2 X5a 재현)
+================================================================
