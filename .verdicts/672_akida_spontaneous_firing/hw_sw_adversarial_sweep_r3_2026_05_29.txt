@@ -1,0 +1,39 @@
+AKIDA 2nd-stage ADVERSARIAL HW<->SW sweep — Round 3 (WIDEN) — 2026-05-29
+pi5-akida AKD1000 akida 2.19.1 BackendType.Hardware vs numpy-LIF
+TEMP_BEFORE=temp=60.4'C -> TEMP_AFTER=temp=63.7'C
+
+WIDEN axes: long window{1000,5000} · extreme seed{11,123456789,2147483647} ·
+  fine threshold{-16,1,2,3,17,33} · long recurrent R4 win1000 · run-to-run win5000 x3
+
+regime        seed  thr   win            HWsha            SWsha  id   dRate   isi
+R2            11   24   200 67ae5da4d0a086c5 67ae5da4d0a086c5   T  0.0000 exact
+R2           187  -16   200 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f   T  0.0000 exact
+R2           187    1   200 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f   T  0.0000 exact
+R2           187    2   200 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f   T  0.0000 exact
+R2           187    3   200 13a0b1c6d4fefa3f 13a0b1c6d4fefa3f   T  0.0000 exact
+R2           187   17   200 70367f0e0f242458 70367f0e0f242458   T  0.0000 exact
+R2           187   33   200 db5aee8b9f1c66dd db5aee8b9f1c66dd   T  0.0000 exact
+R2     123456789   24   200 f54695b8b1e2d9be f54695b8b1e2d9be   T  0.0000 exact
+R2    2147483647   24   200 1e56fcd435634f40 1e56fcd435634f40   T  0.0000 exact
+R2           187   24  1000 47f0bda8ca78b188 47f0bda8ca78b188   T  0.0000 exact
+R4           187    0  1000 e8813886743da938 e8813886743da938   T  0.0000 exact
+R2           187   24  5000 40fce679b9df5b33 40fce679b9df5b33   T  0.0000 exact
+
+DIVERGENT: 0 / 12
+run-to-run R2 s187 thr24 win5000: ['40fce679b9df5b33', '40fce679b9df5b33', '40fce679b9df5b33'] -> IDENTICAL
+
+=== verify_substrate_akida.py ===
+  "verdict": "5/5 PASS",
+  "all_pass": true
+
+=== FINAL VERDICT: FAITHFUL-ENVELOPE ===
+R2+R3 combined: 30 operating points, 0 divergent (raster sha byte-identical everywhere).
+SW numpy-LIF faithfully reproduces AKD1000 silicon across the TESTED bounds:
+  model = 1-NP n=16 in=16 all-ones-weights act_bits=1 FullyConnected (akida 2.19.1)
+  regimes R0..R4 | seeds {0,1,11,42,187,2026,123456789,999983,2147483647}
+  thresholds {-16,-2,0,1,2,3,4,8,16,17,24,32,33,48,64} | windows {200,1000,5000}
+  temp 60.4-63.7C | run-to-run determinism win200x3 + win5000x3 both identical
+Cause: 1-bit digital integer threshold comparator + shared default_rng(seed) noise
+  stream => no analog/quantization DOF enters the spike decision.
+NOT claimed beyond bounds: multi-layer, act_bits>1, learned weights, on-chip learning,
+  >5000 steps, >63.7C, other die. CLOSED-NEGATIVE: no divergence-axis in tested envelope.
