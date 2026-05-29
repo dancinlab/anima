@@ -52,7 +52,9 @@
 ## 🎧 돌파 lane — 귀뒤(post-aural) 비침습 (relocate-N1 침습 무효과 → 비침습 전환)
 
 - [x] B1 귀뒤 돌파 🟢 — ds005620 awake 10창: **EAR(귀뒤 TP9,TP10,T7,T8) big-Φ 5.378 ≈ FRONTAL 5.353 ≈ MOTOR 5.097** (둘 다 paired t n.s.). **귀뒤 비침습이 피질과 동등한 통합정보** → 개두술 0·두피캡 0 돌파. demiurge AURA 7-verb substrate 정당화 → `B1-postaural-breakthrough.md`
-- [ ] B2 (잔여) — 귀뒤 montage로 awake/sed 의식수준 대조(A7.3 귀뒤판, 다창) · 귀뒤 다피험자 · demiurge AURA `analyze`/`verify` 셀에 B1 근거 환류
+- [x] B2 귀뒤 awake/sed 검출 🔴 NULL — 10창 awake 5.378 vs sed 6.226 Δ−0.85 t(9)=−0.53 n.s. (초반5창 +2.09는 favorable-window). 메타: 단일4s창 n=4 scalp big-Φ는 위치(A10.1)·상태(B2) 둘 다 null=비정상성 지배. 귀뒤 위치는 유효(B1)나 metric 교체 필요(다창/band) → `B2-postaural-state.md`
+- [x] B3 Synchron 혈관내 조사 🩸 — Stentrode 16전극·경정맥→상시상정맥동·두개골0 최소침습. COMMAND 6/6 endpoint·Apple BCI-HID·NVIDIA·$200M SeriesD. ⭐혈관내≈경막하 신호 동등(PMC p>0.05). 3위치우회 비대칭(N1>Synchron>귀뒤) → `B3-synchron-endovascular.md` (deep-research 워크플로 StructuredOutput 버그 실패→직접 WebSearch 인라인)
+- [ ] B4 (잔여) — 🎧🩸귀뒤 정맥동 endovascular lane(.discoveries/aura_postaural_endovascular_sinus) · 귀뒤 band-power 다창 의식수준(big-Φ 대체 metric) · A7.3 다창 retro-qualify · 다피험자
 
 > ⚠ **핵심 정직 수정 (A9.2)**: A8.1 "FRONTAL>MOTOR (실EEG)"는 **단일 4s 창 인공물** — 6창 재검서 robust 아님(위치효과 평균 ~0). relocate-N1은 **in-silico/connectome(구조) 축에선 일관 지지**되나 **실 scalp-EEG proxy에선 robust 미지지**. SURVEY 결론은 이 비대칭 반영.
 

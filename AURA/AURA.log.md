@@ -67,3 +67,10 @@
 - 돌파 논리: 침습 relocate 무이득(A10.1) + 귀뒤 동등(B1) → 실용 bypass=개두술0·두피캡0 귀뒤 클립 = demiurge AURA 본 thesis substrate 정당화
 - B1-postaural-breakthrough.md + .verdicts/b1-postaural/viability.txt. demiurge 7-verb(specify/analyze/verify) 연결도 첨부
 - honest: scalp-proxy·single-subj·n=4·절대Φ 낮음(~5 셋다)·Φ=통합정보지 task-decode 아님. B2=귀뒤 awake/sed 대조+다피험자
+
+## 2026-05-30 — B2 귀뒤 상태 null + B3 Synchron 조사 + 귀뒤정맥동 discovery
+
+- 귀뒤 정맥동 endovascular discovery 기록(.discoveries/aura_postaural_endovascular_sinus.tape): AURA 귀뒤위치 × Synchron 혈관내방식 교차, S자정맥동+유양도수정맥 경로 실재
+- B2 🔴: 귀뒤 awake/sed — 초반5창 awake6.90>sed4.81(Δ+2.09)이 10창 확장서 awake5.378 vs sed6.226 Δ−0.85 t(9)=−0.53 n.s.로 뒤집힘(또 favorable-window). 메타교훈: 단일4s창 n=4 scalp big-Φ는 위치(A10.1)도 상태(B2)도 null=비정상성 지배. 자기검증(5→10확장)으로 거짓양성 차단. 귀뒤 위치는 유효(B1 분포평균)나 의식수준 metric은 다창/band 필요
+- B3 🩸 Synchron: deep-research 워크플로 StructuredOutput 하니스버그 실패(104agent·1.8M tok)→직접 WebSearch/WebFetch 인라인. Stentrode 16전극·경정맥→상시상정맥동·두개골0. COMMAND 6/6 endpoint(12mo)·Apple BCI-HID·NVIDIA Holoscan·$200M SeriesD(누적345M)·pivotal FDA협의. ⭐핵심: 혈관내≈경막하≈경막외 신호 동등(PMC5976775 p>0.05) = 우회축 정당화. 3위치(N1 침습>Synchron 최소침습>귀뒤 비침습) 비대칭. 출처 인용
+- B4 잔여: 귀뒤정맥동 endovascular lane · 귀뒤 band-power 다창(big-Φ 대체) · A7.3 다창 retro-qualify · 다피험자
