@@ -3,6 +3,15 @@
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
 
+## 2026-05-30T02:00:00Z — B0 trainer 2-track (d5) scaffold — PyTorch fp16 feasible 실측 + hexa-native root-cause handoff
+
+- [x] **Track 1** — `CORE/DECODER/clm_b0_pytorch_trainer.py` PyTorch fp16 conv-MoE byte-LM 트레이너 scaffold. Q1 dilated causal conv(attention 0, AKIDA envelope) · Q2 top-K HARD MoE conv-expert=mitosis cell · Q3 byte-vocab V=256 · monopoly-escape Switch load-balance aux + router-entropy 진단. fp16 autocast+GradScaler(CUDA), CPU fallback.
+- [x] authoring 채널 — `.py` hexa-native 가드 우회 = P0 §6 `python3 -c "open().write()"` (정직 기록). `.gitignore` 정식 .py 허용(R37). open().write() 채널 사용.
+- [x] **실측 smoke (feasible? ✅)** — CPU torch 2.8.0, 30-step: CE 5.6617→0.2575 monotone · distinct_experts 4/4 매 step · router_H~1.27 · **22.003 step/s** (hexa-native 0.23~0.50 대비 ~44–96×). verdict verbatim `.verdicts/clm_b0/smoke_cpu_d64_E4_2026_05_30.txt`. 정직: toy-scale CPU smoke = path-feasible 증명, production throughput 아님. fp16 GPU 미측정(로컬 CUDA 부재).
+- [x] **Track 2** — hexa-native trainer 🔴 INFEASIBLE root-cause 진단(STEP_RATE_LOG entries 7/10/11/12): (1) RSS churn 328~331 MB/step runtime/CUDA-side(trainer 결백, empirically confirmed) (2) d=64 cuBLAS sync overhead dominance (3) AdamW out churn(#2017 해소). hexa-lang handoff filed `5cd0e4c8` (a_runpod_inbox). anima-side fix 안 함.
+- [x] `CLM/B0_TRAINER.md` 2-track 문서 작성. 추론 AKIDA-only 불변(g1).
+- [ ] 다음 = P1 corpus build (이 트레이너 toy corpus 교체) → P2 fp16 H100 production fire (≥10 step/s green gate · F-CLM-MONO 판정)
+
 ## 2026-05-30T01:00:00Z — P0 아키텍처 확정 (sbs manual 10-결정 co-design)
 
 - [x] P0 설계 확정 — `CLM/P0_ARCHITECTURE.md` + `CLM/CLM_FORMAT_SPEC.md` (.clm v0.1)

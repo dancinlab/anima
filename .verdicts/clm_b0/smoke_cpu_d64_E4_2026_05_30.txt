@@ -1,0 +1,32 @@
+# CLM B0 — PyTorch fp16 conv-MoE trainer SMOKE verdict (verbatim)
+
+scaffold: CORE/DECODER/clm_b0_pytorch_trainer.py
+date: 2026-05-30  ·  host: Mac local (CPU)  ·  torch 2.8.0  ·  cuda available=False
+cmd: python3 clm_b0_pytorch_trainer.py --steps 30 --d 64 --layers 2 --experts 4 --top-k 1 --print-every 5
+
+FEASIBLE? ✅ YES (measured). PyTorch conv-MoE byte-LM smoke runs end-to-end:
+  - CE descends 5.6617 → 0.2575 (학습 정상, monotone)
+  - distinct_experts = 4/4 every step (no single-expert monopoly at toy scale)
+  - router_H ~1.27 (near-uniform ln4=1.386 → balanced routing, load-balance aux engaged)
+  - measured 22.003 step/s (CPU, steps 2..30)
+
+CONTRAST vs hexa-native trainer (STEP_RATE_LOG M5): 0.23-0.50 step/s production-scale 🔴
+  → PyTorch CPU toy = ~44-96× faster even on CPU. fp16 GPU path (--fp16) untested here
+    (no local CUDA); H100 fp16 smoke = optional follow-up, scaffold proven on CPU.
+
+HONESTY (p7): measured step/s is for a toy-scale (d64/L2/E4/byte-vocab) CPU smoke — it
+proves the PyTorch *path is feasible and the conv-MoE forward/backward is correct*, NOT a
+production-scale (V=151643 / real corpus) throughput number. Production-scale fp16 GPU
+measurement is P2 (a_fire_autonomous).
+
+────────────────────── verbatim trainer stdout ──────────────────────
+[clm-b0] device=cpu fp16=False params=0.134M d=64 L=2 E=4 topK=1 B=8 T=64
+[clm-b0] step=   1 ce=5.6617 aux=2.1348 router_H=1.2789 distinct_experts=4/4
+[clm-b0] step=   5 ce=4.0086 aux=2.0054 router_H=1.2907 distinct_experts=4/4
+[clm-b0] step=  10 ce=2.4446 aux=2.0382 router_H=1.2871 distinct_experts=4/4
+[clm-b0] step=  15 ce=1.3474 aux=1.9965 router_H=1.2820 distinct_experts=4/4
+[clm-b0] step=  20 ce=0.7519 aux=2.0073 router_H=1.2748 distinct_experts=4/4
+[clm-b0] step=  25 ce=0.4300 aux=2.0111 router_H=1.2671 distinct_experts=4/4
+[clm-b0] step=  30 ce=0.2575 aux=2.0144 router_H=1.2581 distinct_experts=4/4
+[clm-b0] STEP_RATE measured=22.003 step/s (steps 2..30, device=cpu, fp16=False)
+[clm-b0] total_wall=1.394s

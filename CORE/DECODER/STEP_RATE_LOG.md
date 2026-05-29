@@ -792,3 +792,24 @@ artifacts: `CORE/DECODER/h686_h687_axis_sweep.hexa`, `CORE/DECODER/H686_H687_AXI
 - `.discoveries/decoder_collapse_undertrain.tape` @N `dec_m5_attempt5_transport_2026_05_30 :: transport-incident`
 
 **verdict**: 🟠 **BLOCKED-AT-TRANSPORT** — vast SSH DARK + cross-session key-401. pod teardown PASS (key resync 후), cost-leak 차단, RTSC 5 무접촉. measurement 본선 5/5 미도달 (전부 인프라). H_686+H_687 production UNMEASURED 유지. 진짜 unblock = hexa-lang #1527 fix 또는 dedicated Linux GPU 호스트.
+
+---
+
+## entry 20 — CLM B0 trainer 2-track (d5) — PyTorch fp16 fork (런치 unblock) + root-cause handoff
+
+**날짜**: 2026-05-30
+**상태**: ✅ Track 1 scaffold feasible (실측) · ✅ Track 2 root-cause + hexa-lang handoff `5cd0e4c8`
+
+CLM P0_ARCHITECTURE.md **d5** ("trainer 2-track: PyTorch fp 학습 즉시 ∥ hexa-native fix 별도") 실행. 이 STEP_RATE_LOG 의 M5 measurements(entries 7/10/11/12)가 hexa-native trainer 의 production-scale 🔴 INFEASIBLE 을 6+ independent H100 fire 로 확정했으므로, P2 학습을 막지 않게 PyTorch fp16 baseline 으로 분기.
+
+**Track 1** — `CORE/DECODER/clm_b0_pytorch_trainer.py` (conv-native MoE byte-LM, fp16 autocast). smoke 실측 (CPU torch 2.8.0, 30-step): CE 5.6617→0.2575 · distinct_experts 4/4 · router_H~1.27 · **22.003 step/s** (M5 hexa-native 0.23~0.50 step/s 대비 ~44–96× — CPU 임에도). verdict verbatim `.verdicts/clm_b0/smoke_cpu_d64_E4_2026_05_30.txt`. 정직: toy-scale (d64/L2/E4/byte-vocab) CPU smoke = PyTorch path feasible + conv-MoE fwd/bwd correct 증명, production throughput 수치 아님. fp16 GPU 미측정 (로컬 CUDA 부재, `--fp16` 준비됨).
+
+**Track 2** — entries 7/10/11/12 의 root-cause 3건(① RSS churn 328~331 MB/step runtime/CUDA-side · ② d=64 cuBLAS GPU↔CPU sync overhead dominance · ③ AdamW out churn #2017 해소)를 hexa-lang handoff `5cd0e4c8` (a_runpod_inbox) 로 filing. anima-side fix 안 함 (builtin 내부 alloc, a_completeness_over_cheap). cf inbox #2030 #2034.
+
+추론은 변함없이 AKIDA-int4-only (CLM d4) — 두 트랙 모두 *학습* 만 다룸, g1 순수성 불변.
+
+**문서**: `CLM/B0_TRAINER.md` (2-track plan + M5 root-cause + throughput target + handoff id).
+
+**비용**: $0 (Mac-local CPU smoke). 옵션 H100 fp16 단발은 P2 production fire 로 이연.
+
+**verdict**: ✅ **B0 DELIVERED** — Track 1 PyTorch fp16 트레이너 scaffold feasible (22 step/s CPU 실측) · Track 2 root-cause + handoff `5cd0e4c8`. P2 는 이 트레이너로 런치 (hexa-native fix 비차단). cf `CLM/B0_TRAINER.md`.
