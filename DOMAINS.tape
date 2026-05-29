@@ -35,3 +35,4 @@
 @D HW-LIMB := "./HW-LIMB/HW-LIMB.md" :: domain [active]
 @D PLASTICITY := "./PLASTICITY/PLASTICITY.md" :: domain [active]
 @D LAUNCHPAD := "./LAUNCHPAD/LAUNCHPAD.md" :: domain [active]
+@D CLM := "./CLM/CLM.md" :: domain [active]
