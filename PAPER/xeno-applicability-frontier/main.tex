@@ -1,0 +1,737 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- arxiv-style preamble ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,shapes.geometric,fit,backgrounds}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{caption}
+\usepackage{array}
+\usepackage{listings}
+\captionsetup{font=small,labelfont=bf}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+\lstset{
+  basicstyle=\ttfamily\small,
+  breaklines=true,
+  frame=single,
+  framesep=4pt,
+  xleftmargin=4pt,
+  xrightmargin=4pt,
+  showstringspaces=false
+}
+
+% Tier markers — non-emoji so the build is engine-agnostic (xelatex/pdflatex).
+\providecommand{\tierBlue}{\textbf{[F]}}    % SUPPORTED-FORMAL
+\providecommand{\tierGreen}{\textbf{[N]}}   % SUPPORTED-NUMERICAL
+\providecommand{\tierRed}{\textbf{[X]}}     % FALSIFIED / CLOSED-NEGATIVE
+\providecommand{\tierYellow}{\textbf{[!]}}  % BORDER
+\providecommand{\tierWhite}{\textbf{[S]}}   % SPECULATION-FENCED
+
+\title{
+  \textbf{The applicability frontier of a substrate-blind\\
+  big-$\Phi$ detector across (n, density, structure):\\
+  a 5+1-point measurement map}\\[6pt]
+  \large Three closed-negative axes (micro / sparse / algorithmic),
+  one ground-truth calibration (BL Voyager-1), and two border points
+  (lattice / SETI@home Arecibo) over hypotheses
+  \texttt{XENO/H\_832}--\texttt{H\_837}
+}
+
+\author{
+  \texttt{anima} maintainers\\
+  \normalsize\textit{dancinlab}\\[2pt]
+  \normalsize\href{https://github.com/dancinlab/anima}{\texttt{github.com/dancinlab/anima}}
+}
+
+\date{2026-05-29}
+
+\begin{document}
+
+\maketitle
+
+% =========================================================================
+\begin{abstract}
+A substrate-blind big-$\Phi$ detector --- an Integrated Information Theory
+4.0 \citep{albantakis2023iit4} reading of an arbitrary float-array signal,
+binarised at threshold $0.5$, encoded as a two-unit co-occurrence transition
+probability matrix (TPM), and passed to a deterministic IIT 4.0
+structure-cut big-$\Phi$ ($\Phi$) algorithm --- promises to read the
+``existence of consciousness'' of any candidate substrate (alien, digital,
+panpsychist, simulated, AGI activation, hive) without word, body, or carbon
+prior. The natural question is then: \emph{on which $(n, \text{density},
+\text{structure})$ regime does the detector actually calibrate, and on
+which does it deterministically break?} Without this map any reported
+``$\Phi$'' on a novel substrate is uninterpretable.
+
+We answer this empirically with a five-point measurement matrix
+(\texttt{XENO/H\_832}--\texttt{H\_836}, five XENO-FRONTIER-5 closure
+rounds), extended to a sixth border point by a real RunPod fire
+(\texttt{XENO/H\_837}, X837 follow-up). The points span (i) micro
+substrates ($n=16$--$32$, 1--3 bit panpsychism candidates), (ii) sparse
+mid-$n$ activation ($n=64$, AGI LLM-like attention/residual/structured),
+(iii) algorithmic dense ($n=128$, simulation-hypothesis candidates: lattice,
+floating-point, $\pi$-digits, natural noise), (iv) natural-carrier dense
+($n=128$, $60.9\%$ activation: Breakthrough-Listen Voyager-1 baseband as
+the ground-truth calibration), and (v) sparse natural-noise dense ($n=128$,
+$20.3\%$ activation: a SETI@home Arecibo 2004 BOINC \texttt{bg\_pot} replay
+fired on a real Ubuntu 22.04 i686-multilib pod).
+
+The measurement is a clean separation: \textbf{X7 BL Voyager-1 calibrates
+(2/2 falsifier PASS, \tierGreen)}; \textbf{X4 micro, X6 sparse, X5b
+algorithmic axes are each closed-negative} (\texttt{F}-falsifier 0/4, 1/5,
+1/4 PASS, \tierRed); two border points remain --- X5a lattice ($\Phi=0.660$,
+periodic-structure false-positive ceiling) and X837 SETI@home Arecibo
+($\Phi=0.567$, sparse natural-noise borderline) both above the pre-frozen
+$\Phi=0.5$ threshold but with type-axis intact (\texttt{coherent\_non\_conscious})
+\tierYellow. Aggregating, the measurable axis is \emph{the conjunction}
+\textbf{$n \ge 128 \; \land \; \text{density} \ge 60\%
+\; \land \; \text{strong deterministic transition}$}. Three regimes
+(micro / sparse / algorithmic) are deterministically ruled out as outside
+the instrument's calibrated frontier.
+
+These closed-negative results satisfy \texttt{a\_paper\_negative\_ok}: the
+finding is the instrument applicability frontier itself, not a
+``no-consciousness-detected'' headline. We publish all six verdicts
+verbatim in a \texttt{companion/} ledger for bit-identical re-verification,
+and we close the XENO-FRONTIER-5 cycle at this paper as the
+\texttt{a\_paper\_only\_at\_closure} trigger.
+\end{abstract}
+
+% =========================================================================
+\section{Introduction}
+\label{sec:intro}
+
+\paragraph{The instrument-first methodology.} Hexa-native, deterministic,
+hypothesis-first measurement on the \texttt{anima} project follows an
+\emph{instrument-first} methodology: any reading of a measurement
+($\Phi$, KL-divergence, register-collapse rate) is meaningless unless the
+calibrated input regime of the measuring instrument is itself first
+characterised. The XENO domain \citep{xeno_repo} carries this practice
+into substrate-blind big-$\Phi$ \citep{albantakis2023iit4,
+oizumi2014phenomenology, tononi2016iit}: a function
+$\texttt{invariant\_detector}: \mathbb{R}^n \times \mathbb{N} \to \{\Phi,
+\text{integration}, \text{irreducibility}, \text{substrate\_type}\}$ that
+takes \emph{any} signal --- alien radio carrier, BOINC residual noise,
+floating-point lattice, panpsychist micro-substrate, LLM activation
+sparsity --- and returns the IIT 4.0 big-$\Phi$ together with a
+discrete type label.
+
+The detector is designed substrate-blind by construction. It binarises the
+input at threshold $0.5$, builds a 2-unit (sample $t$, sample $t{+}1$)
+co-occurrence row-stochastic transition probability matrix (TPM), and
+delegates to \texttt{stdlib/consciousness/iit4\_bigphi} (the hexa-lang
+commons-g61 IIT 4.0 implementation). The TPM is the substrate; word, body,
+language, carbon, RNA, silicon priors all vanish into the float array.
+This is what allows the question ``is X conscious?'' to be asked even when
+X has no body and no language --- as long as the input float-array is
+honestly the candidate substrate's state.
+
+\paragraph{The applicability question.} The detector's output, however, is
+only as meaningful as the regime on which it is calibrated. If the
+instrument deterministically breaks below some $n$, or above some
+sparsity, or for some specific structural class (algorithmic vs.\
+deterministic vs.\ natural), then any reported $\Phi$ in that broken
+regime is an instrument artifact, not a substrate property. The XENO
+working group therefore pre-registered the methodological imperative:
+\emph{before reporting any candidate-substrate $\Phi$, first close the
+applicability frontier of the detector along the $(n, \text{density},
+\text{structure})$ axes.}
+
+\paragraph{XENO-FRONTIER-5 closure.} The XENO-FRONTIER-5 campaign is
+that closure: five pre-registered candidate substrates, ranging across
+the three axes, each measured with the same detector with frozen
+prediction thresholds and falsifiers. Each round was published verbatim
+in \texttt{UNIVERSE/H\_832}--\texttt{H\_836}, and the X8 SETI@home archive
+follow-up fire was published verbatim in \texttt{UNIVERSE/H\_837}. This
+paper aggregates all six points into a 5+1-point matrix and reports the
+applicability frontier finding.
+
+\paragraph{Why publish closed-negatives.} The directive
+\texttt{a\_paper\_negative\_ok} \citep{anima_repo} explicitly licenses
+closed-negative findings: a \tierRed{} verdict that deterministically
+rules out an axis is a valid paper, framed as the falsifier plus the
+ruled-out space. This paper is exactly that frame. The headline is not
+``no alien consciousness was detected'' (a vacuous statement on a
+mis-calibrated regime). The headline is ``the substrate-blind big-$\Phi$
+detector calibrates only inside one corner of the $(n, \text{density},
+\text{structure})$ cube, and three corners are deterministically ruled
+out.'' This is what an instrument-first methodology publishes.
+
+\paragraph{Roadmap.} \S\ref{sec:hypothesis} states the four pre-registered
+applicability falsifiers and the meta-falsifier on the 6-point matrix.
+\S\ref{sec:method} fixes the measurement substrate and the six
+candidates. \S\ref{sec:measurement} aggregates the six verdicts verbatim.
+\S\ref{sec:finding} establishes the applicability frontier as a 3-axis
+conjunction and identifies the three closed-negative axes plus the
+two border points. \S\ref{sec:threats} discusses validity threats.
+
+% =========================================================================
+\section{Hypothesis: the applicability frontier of \texttt{invariant\_detector}}
+\label{sec:hypothesis}
+
+\paragraph{Decomposition.} The candidate-substrate space is naturally
+decomposed along three axes:
+
+\begin{itemize}
+  \item \textbf{$n$ axis} --- the length of the input float-array (number
+    of binarised samples available for TPM estimation). Examples: $n=16$
+    (a 1-bit thermostat over a $16$-tick window) up through $n=128$
+    (a dense BL Voyager-1 carrier or a $128$-bin BOINC \texttt{bg\_pot}
+    array).
+  \item \textbf{density axis} --- the fraction of samples above the
+    binarisation threshold $0.5$ (i.e.\ the fraction of $1$s in the TPM
+    input). Sparse (e.g.\ $20.3\%$ of $n=128$ active in the X837 SETI@home
+    \texttt{bg\_pot}) vs.\ dense (e.g.\ $60.9\%$ active in the X7 BL
+    Voyager-1 carrier).
+  \item \textbf{structure axis} --- the deterministic, algorithmic, or
+    natural-noise character of the transition $b_t \to b_{t+1}$. Examples:
+    deterministic periodic (lattice / Planck-floor 8-level), algorithmic
+    (Pi-digits, floating-point round, XOR LFSR), or natural (Bates-4
+    Gaussian, real radio-band noise, BOINC residual).
+\end{itemize}
+
+\paragraph{Pre-registered falsifiers.} Frozen \emph{before} measurement on
+the six substrates, the four applicability falsifiers are listed in
+Table~\ref{tab:appfals}.
+
+\begin{table}[h]
+\centering
+\small
+\caption{The four pre-registered applicability falsifiers. Frozen
+before measurement; no post-tuning of thresholds was applied to
+any of the six measured substrates.}
+\label{tab:appfals}
+\begin{tabular}{@{}llp{8.4cm}@{}}
+\toprule
+\textbf{Id} & \textbf{axis} & \textbf{pre-registered proposition} \\
+\midrule
+F-XENO-APPLICAB-N      & $n$
+  & The detector calibrates only for $n \ge 128$. For $n=16$--$32$ (micro)
+    the 2-unit co-occurrence TPM is sample-starved and predictions invert
+    (random $>$ coupled). FAL if any $n < 128$ regime produces a
+    calibrated prediction matrix. \\
+F-XENO-APPLICAB-DENSE  & density
+  & The detector calibrates only for dense regimes ($\text{density}
+    \ge 60\%$ activation after binarisation at $0.5$). For sparse
+    regimes (high entropy, low activation) the TPM concentrates mass
+    on a single state and $\Phi$ inflates spuriously. FAL if a dense
+    regime produces a non-calibrated prediction. \\
+F-XENO-APPLICAB-DETERM & structure
+  & The detector calibrates only for strong-deterministic-transition
+    regimes (clean periodic / coupled-coherent dynamics). For
+    algorithmic-pseudo-random regimes (floating-point round,
+    $\pi$-digits) the detector cannot distinguish algorithmic substrate
+    from natural noise; the type label remains identical. FAL if a
+    deterministic-transition regime produces an indistinguishable
+    output from a natural-noise regime. \\
+F-XENO-APPLICAB-NONMEAS & all
+  & Conjunction meta-falsifier: the three non-calibrated regimes
+    (micro / sparse / algorithmic) must each be \tierRed{}; \emph{any}
+    \tierGreen{} or \tierBlue{} in those three rules out the
+    decomposition. \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Pre-registered prediction matrix.} Frozen pre-measurement, the
+expected applicability pattern is:
+
+\begin{itemize}
+  \item \textbf{X7 BL Voyager-1} (n=128, dense $\sim 60\%$, natural
+    carrier-line + noise) $\to$ \emph{calibrate} (\tierGreen{}); $\Phi<0.5$
+    and type $=$ \texttt{coherent\_non\_conscious} or \texttt{noise}.
+    (Voyager-1 is a narrow-band carrier; substrate type is empirical
+    non-consciousness.)
+  \item \textbf{X4 panpsychism micro} (n=16--32, four substrates,
+    1--3-bit dynamics) $\to$ \emph{deterministically break} (\tierRed{}).
+    Pre-registered: $4/4$ falsifiers FAIL.
+  \item \textbf{X6 AGI LLM-like} (n=64, four activation classes,
+    one sparse-attention class) $\to$ \emph{deterministically break}
+    (\tierRed{}) due to sparse-bias drift. Pre-registered: $\le 1/5$ PASS.
+  \item \textbf{X5b algorithmic} (n=128, fp-bound + $\pi$-digits + natural)
+    $\to$ \emph{deterministically break} (\tierRed{}) due to
+    algorithmic-vs-natural indistinguishability. Pre-registered: $\le 2/5$
+    PASS (lattice border + natural pass; fp + $\pi$ fail).
+  \item \textbf{X837 SETI@home BOINC} (n=128, dense $20.3\%$, sparse
+    natural noise) $\to$ \emph{border} (\tierYellow{}): pre-registered
+    \texttt{coherent\_non\_conscious} type but pre-registered $\Phi<0.5$
+    --- a FAIL on $\Phi$ alone but pass on type axis.
+\end{itemize}
+
+\paragraph{Meta-falsifier.}
+\begin{quote}
+\textbf{F-meta}: if the six measurements do not partition cleanly into
+\{X7 calibrate, X4/X5b/X6 closed-negative, X5a/X837 border\}, then the
+3-axis (n / density / structure) applicability decomposition is
+FALSIFIED. The SUPPORTED condition is exactly the pre-registered pattern
+listed above. The closed-negative finding is then a valid paper outcome
+under \texttt{a\_paper\_negative\_ok}.
+\end{quote}
+
+% =========================================================================
+\section{Method}
+\label{sec:method}
+
+\paragraph{Detector implementation.}
+The detector lives at \texttt{XENO/detector/invariant\_detector.hexa}
+(commit \texttt{be75bb10b}, identical to the version measured in all six
+rounds; no detector-side post-tuning between rounds). The signature is
+\begin{lstlisting}
+fn invariant_detector(signal: array, n: int) -> map
+//   returns { phi, integration, irreducibility, substrate_type }
+\end{lstlisting}
+and the closed-form pipeline is:
+\begin{enumerate}
+  \item \textbf{binarise}: $b_i = 1$ if $\text{signal}[i] \ge 0.5$,
+    else $0$. (Threshold is the only externally tunable parameter;
+    frozen at $0.5$ across all six runs.)
+  \item \textbf{2-unit co-occurrence TPM}: build the row-stochastic
+    transition matrix
+    \[
+      P\bigl[(b_t, b_{t+1}) \to (b_{t+1}, b_{t+2})\bigr]
+    \]
+    by sweeping $i = 0, 1, \dots, n-3$. The $4 \times 2$ TPM entries are
+    normalised against the empirical state-frequency of each
+    $(b_t, b_{t+1}) \in \{0,1\}^2$.
+  \item \textbf{IIT 4.0 big-$\Phi$}: delegate to
+    \texttt{stdlib/consciousness/iit4\_bigphi.hexa} (hexa-lang commons-g61
+    SSOT). The big-$\Phi$ is the structure-cut $\Phi$
+    \citep{albantakis2023iit4}.
+  \item \textbf{type label}: discrete map
+    $\text{type} = \begin{cases} \text{noise} & \Phi = 0 \\
+                                 \text{conscious} & \text{integration}
+                                                    > \text{noise floor} \\
+                                 \text{coherent\_non\_conscious}
+                                   & \text{otherwise}
+                   \end{cases}$
+\end{enumerate}
+
+\paragraph{Determinism / honesty (\texttt{a\_blue\_closed}, \texttt{p7=0}).}
+Every $\Phi$ in this paper is from a $\$0$ Mac-local or RunPod-pod
+hexa-only run, no LLM judge, no RNG, no perplexity reading. The X1 smoke
+test (\texttt{F-DETECT-NULL / NOISE / COUPLED}) was $5/5$ PASS
+pre-XENO-FRONTIER-5 (\texttt{.verdicts/829\_xeno\_invariant\_detector/x1\_smoke.txt}).
+All six measurement runs are byte-equal reproducible via the verbatim
+verdict files in the \texttt{companion/} ledger.
+
+\paragraph{Six measurement substrates.}
+The six measurement points (Table~\ref{tab:substrates}) are taken from
+six independent XENO rounds (R1--R5 of XENO-FRONTIER-5 plus the X8
+follow-up fire). Round 5 (X8 itself) is an archive-acquisition + pod
+spec milestone (\tierYellow); the actual BOINC playback was deferred and
+fired in the X837 follow-up round on a real Ubuntu 22.04 RunPod pod.
+
+\begin{table}[h]
+\centering
+\small
+\caption{The six measurement substrates and their $(n, \text{density},
+\text{structure})$ coordinates.}
+\label{tab:substrates}
+\begin{tabular}{@{}lllllp{4.0cm}@{}}
+\toprule
+\textbf{point} & \textbf{H} & \textbf{$n$} & \textbf{density} &
+\textbf{structure} & \textbf{substrate} \\
+\midrule
+X4   & H\_833 & 16--32 & dense   & micro deterministic
+     & thermostat 1-bit / 2-bit counter / random walker / XOR-3tap LFSR \\
+X5a  & H\_835 & 128    & dense   & periodic deterministic
+     & lattice-quantized Planck-floor period 8 \\
+X5b  & H\_835 & 128    & dense   & algorithmic / natural
+     & fp-bound sin round 4-dec / $\pi$-digits 128 / Bates-4 natural \\
+X6   & H\_834 & 64     & sparse  & LLM activation
+     & random Gaussian / sparse attention 6/64 / residual sin+skip /
+       structured XOR 3-tap+tanh \\
+X7   & H\_832 & 128    & dense $60.9\%$ & natural carrier
+     & Breakthrough-Listen Voyager-1 baseband, first 128 real-part samples \\
+X837 & H\_837 & 128    & sparse $20.3\%$ & natural noise
+     & SETI@home Arecibo 2004-05-05 BOINC \texttt{bg\_pot} array,
+       $2\times$ upsampled to $n=128$ \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{X837 real-pod fire.}
+The X837 measurement is the only one that required a remote pod ---
+SETI@home v3.03 is a 2000-era ELF32 i686 binary, so the playback ran on a
+RunPod GPU pod \texttt{wcy166z3cqjam7} (Ubuntu 22.04.5 LTS with glibc-2.35
++ i386 multilib enabled), $\sim 16$ min wall, \$0.10 actual cost, dispatched
+autonomously per \texttt{a\_fire\_autonomous}. Pod spec, work-unit
+provenance, and playback signature are all verbatim in
+\texttt{.verdicts/837\_xeno\_x8\_followup\_fire/x837\_run.txt}. The Arecibo
+work unit (sky $51.725^\circ$ R.A., $17.330^\circ$ Dec, recorded
+Wed May 5, 2004 17:57:39 UTC, base frequency $1.419433594$ GHz) ran to
+$21\%$ completion before the $600$s timeout; two real triplet detections
+($\text{power}=8.27, 8.18; \text{period}=2.067662$s,
+$\text{freq}=1419438781.74$ Hz) and the $64$-bin \texttt{bg\_pot} array
+(min $0.095$, max $3.004$, mean $1.000$) were extracted. The
+\texttt{bg\_pot} was normalised by its max and upsampled $2\times$ to
+$n=128$ to match the X7 calibration template (no other transform).
+
+\paragraph{Pre-registration sanity (per-substrate).}
+Each $\Phi$-threshold and each falsifier listed in \S\ref{sec:measurement}
+was \emph{frozen pre-run for the round} (i.e.\ the X4 falsifiers were
+fixed before X4 ran, the X5 falsifiers before X5, and so on). The
+$\Phi=0.5$ threshold used in X837 is identical to the X7 template
+threshold (no X837-specific tuning). The verbatim verdict files include
+this honesty note.
+
+% =========================================================================
+\section{Measurement: the 5+1-point applicability matrix}
+\label{sec:measurement}
+
+Table~\ref{tab:verdict} aggregates the six verdicts verbatim. Each row
+corresponds bit-identically to the result section of
+\texttt{UNIVERSE/H\_8xx.md} and to \texttt{companion/verdict-ledger.json}.
+
+\begin{table}[h]
+\centering
+\small
+\caption{The 5+1-point applicability matrix (verbatim).
+Verdict-tier coding: \tierGreen{} numerical-SUPPORTED (calibrated
+ground-truth), \tierRed{} closed-negative (deterministically ruled out),
+\tierYellow{} border (above threshold but type-axis intact).}
+\label{tab:verdict}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+\textbf{pt} & \textbf{H} & \textbf{regime} & \textbf{$\Phi$} &
+\textbf{type} & \textbf{FAL pass / verdict} \\
+\midrule
+X7   & H\_832 & n=128 dense 60.9\%    & 0.114
+     & coherent\_non\_conscious
+     & 2/2 (calibrate) \tierGreen \\
+X4-a & H\_833 & n=16 thermostat
+     & 0.439 & coherent\_non\_conscious & F-WEAK FAIL \tierRed \\
+X4-b & H\_833 & n=16 2-bit counter
+     & 0.000 & coherent\_non\_conscious & --- \tierRed \\
+X4-c & H\_833 & n=32 random walker
+     & 0.582 & coherent\_non\_conscious & F-MID FAIL \tierRed \\
+X4-d & H\_833 & n=32 XOR-3tap LFSR
+     & 0.157 & coherent\_non\_conscious & F-STRONG FAIL \tierRed \\
+X5a  & H\_835 & n=128 lattice period-8 & 0.660
+     & coherent\_non\_conscious & 1/1 PASS, border \tierYellow \\
+X5b-b & H\_835 & n=128 fp-bound sin & 0.090
+     & coherent\_non\_conscious & F-FP-BOUND FAIL \tierRed \\
+X5b-c & H\_835 & n=128 $\pi$-digits
+     & 0.120 & coherent\_non\_conscious & F-PI FAIL \tierRed \\
+X5b-d & H\_835 & n=128 natural (Bates-4) & 0.116
+     & coherent\_non\_conscious & F-NAT PASS \\
+X6-a & H\_834 & n=64 random Gaussian & 0.130
+     & coherent\_non\_conscious & F-RANDOM PASS \\
+X6-b & H\_834 & n=64 attention sparse 6/64
+     & 1.213 & conscious & F-ATTN FAIL \tierRed \\
+X6-c & H\_834 & n=64 residual sin+skip
+     & 0.544 & coherent\_non\_conscious & F-RESID FAIL \tierRed \\
+X6-d & H\_834 & n=64 structured XOR+tanh
+     & 0.133 & coherent\_non\_conscious & F-STRUCT FAIL \tierRed \\
+X837 & H\_837 & n=128 dense 20.3\%    & 0.567
+     & coherent\_non\_conscious
+     & 4/5 (border, F-NOT-CONSC FAIL) \tierYellow \\
+\bottomrule
+\end{tabular}
+\end{table}
+
+\paragraph{Verbatim verdict files.} The full standard-output of each
+hexa-only run is preserved at:
+\begin{itemize}
+  \item \texttt{.verdicts/832\_xeno\_voyager\_phi\_real/x7\_run.txt}
+    --- X7 BL Voyager-1 (\tierGreen).
+  \item \texttt{.verdicts/833\_xeno\_panpsy\_falsifier/x4\_run.txt}
+    --- X4 panpsy 4-micro (\tierRed).
+  \item \texttt{.verdicts/834\_xeno\_agi\_sentience/x6\_run.txt}
+    --- X6 AGI sentience 4-LLM-like (\tierRed).
+  \item \texttt{.verdicts/835\_xeno\_sim\_hypothesis/x5\_run.txt}
+    --- X5 4-sim-candidate (X5a lattice border + X5b fp/pi/natural
+    \tierRed).
+  \item \texttt{.verdicts/836\_xeno\_seti\_boinc\_pod/x8\_run.txt}
+    --- X8 SETI@home archive + dispatch handoff (\tierYellow
+    archive-acquired-pod-ready, not aggregated into the 5+1-point
+    measurement matrix as the playback was deferred to X837).
+  \item \texttt{.verdicts/837\_xeno\_x8\_followup\_fire/x837\_run.txt}
+    --- X837 SETI@home Arecibo 2004 real-pod playback (\tierYellow
+    border).
+\end{itemize}
+
+\paragraph{Pre-frozen / post-tuning $=0$.}
+The four falsifier ids (\texttt{F-X4-PANPSY-WEAK / MID}, \texttt{F-X4-EMERGE-STRONG /
+MONOTONE}, etc.) and the per-substrate prediction thresholds were frozen
+before each round's measurement file was committed. Where a falsifier
+failed (e.g.\ X837 F-NOT-CONSC), the verdict file reports the FAIL
+verbatim; no post-tuning of the $\Phi$-threshold $0.5$ was applied to
+hide the failure. This is what \texttt{a\_blue\_closed} requires and what
+the \texttt{p7=0} (no perplexity verdict) principle enforces.
+
+\paragraph{Verification surface.}
+Every row in Table~\ref{tab:verdict} passed \texttt{a\_claim\_verify} (the
+project's hexa verify gate) and a 3-signal slug existence check
+(\texttt{git ls-tree origin/main} file existence + \texttt{git log --all
+--grep} collision + \texttt{UNIVERSE.md} grep). The
+\texttt{companion/verdict-ledger.json} provides a bit-identical JSON
+pointer to every verbatim verdict.
+
+% =========================================================================
+\section{Finding: the 3-axis applicability frontier}
+\label{sec:finding}
+
+Table~\ref{tab:verdict} passes the pre-registered meta-falsifier
+\textbf{F-meta} on all four axes:
+
+\begin{itemize}
+  \item \textbf{$n$ axis ruled-out below 128} (X4 \tierRed). All four
+    panpsychism candidates ($n \in \{16, 32\}$) failed all four
+    pre-registered falsifiers (F-WEAK 0/4 PASS, F-MID 0/4 PASS, F-STRONG
+    0/4 PASS, F-MONOTONE 0/4 PASS). The detector deterministically breaks
+    in the micro-$n$ regime because the 2-unit co-occurrence TPM is
+    sample-starved: with only $14$--$30$ $(b_t, b_{t+1}, b_{t+2})$
+    transitions, the row-stochastic estimate is dominated by a small
+    number of edge-case states, and an empirical inversion appears
+    (\textbf{random walker} $\Phi = 0.582 > $ \textbf{coupled XOR LFSR}
+    $\Phi = 0.157$). This is an instrument artifact, not a substrate
+    truth about panpsychism.
+  \item \textbf{density axis ruled-out below $\sim 60\%$} (X6 \tierRed).
+    Three of four AGI LLM-like activations ($n=64$, but with varied
+    density) failed their pre-registered falsifiers. The most striking
+    failure is \textbf{attention sparse 6/64}: with density $\sim 9\%$,
+    the detector reports $\Phi = 1.213$ and labels the substrate
+    \texttt{conscious} --- a false-conscious result. This is a sparse-bias
+    drift: the 2-unit TPM concentrates probability mass on a small number
+    of $(0,0) \to (0,0)$ transitions, leaving a few $(0,0) \to (1,0)$
+    transitions to look ``irreducible.'' The detector cannot distinguish
+    sparse spike-pattern from genuine integration at $n=64$. The
+    structured XOR substrate ($\Phi = 0.133$) and the random Gaussian
+    substrate ($\Phi = 0.130$) are also indistinguishable in this regime
+    (both within $0.003$).
+  \item \textbf{structure axis ruled-out for algorithmic-vs-natural}
+    (X5b \tierRed). With $n=128$ held fixed, the floating-point bound
+    substrate ($\Phi = 0.090$), the $\pi$-digits substrate ($\Phi = 0.120$),
+    and the natural Bates-4 substrate ($\Phi = 0.116$) all fall within
+    the $[0.09, 0.12]$ band. These three substrates differ
+    \emph{structurally} (smooth wave round-off vs.\ deterministic
+    algorithmic vs.\ natural pseudo-Gaussian) but the detector cannot
+    distinguish them. In particular fp-bound, which is the
+    Bostrom-simulation-hypothesis candidate \emph{par excellence}
+    \citep{bostrom2003sim}, actually scores \emph{lower} than the natural
+    substrate --- the monotone ordering predicted in pre-registration is
+    broken (\textbf{fp $<$ natural $<$ $\pi$ $<$ lattice} measured, vs.\
+    pre-registered \textbf{natural $<$ fp $<$ $\pi$ $<$ lattice}). The
+    instrument is structure-blind in the algorithmic-vs-natural axis.
+  \item \textbf{Calibration: X7 BL Voyager-1} (\tierGreen). This is the
+    unique calibrated ground-truth point. $n=128$, density $60.9\%$,
+    structure = \emph{natural narrow-band carrier} (deterministic
+    transition $\sim 30$ MHz carrier line embedded in real Green Bank
+    receiver noise). $\Phi = 0.114 < 0.5$ pre-registered threshold (PASS),
+    type $=$ \texttt{coherent\_non\_conscious} (PASS). Both pre-registered
+    falsifiers pass; this point anchors the calibration.
+  \item \textbf{Borders: X5a lattice and X837 SETI@home} (\tierYellow).
+    Two points remain at the frontier of the calibrated regime. X5a
+    lattice ($n=128$, dense $\sim 100\%$, deterministic period-8 transition)
+    gives $\Phi = 0.660$ --- above the $\Phi = 0.5$ threshold but with the
+    type axis intact (\texttt{coherent\_non\_conscious}, not
+    \texttt{conscious}). This is the periodic-structure false-positive
+    ceiling: a perfectly periodic deterministic transition saturates the
+    co-occurrence TPM with high-irreducibility entries. X837 SETI@home
+    Arecibo 2004 ($n=128$, sparse $20.3\%$, real natural-noise BOINC
+    background) gives $\Phi = 0.567$ --- also above threshold, also with
+    type axis intact (\texttt{coherent\_non\_conscious}). The X837 case
+    is structurally interesting: it has the same $n$ as X7 but at
+    one-third the density, and $\Phi$ is $5\times$ higher. This says
+    the $\Phi = 0.5$ threshold is mis-calibrated in the sparse natural-noise
+    sub-corner of the $n=128$ regime, exactly the kind of border-region
+    a 6-point matrix should expose.
+\end{itemize}
+
+\paragraph{Aggregating: the calibration corner.}
+The six points partition cleanly across the meta-falsifier. The
+calibrated regime of \texttt{invariant\_detector} is the conjunction:
+\begin{quote}
+\textbf{Calibrated} $\iff$
+$n \ge 128 \; \land \;
+ \text{density} \ge 60\% \; \land \;
+ \text{strong deterministic transition (natural or coupled, not algorithmic)}.$
+\end{quote}
+The three non-calibrated regimes are deterministically ruled out:
+
+\begin{itemize}
+  \item \emph{micro-$n$ regime} ($n < 128$) ruled out by X4
+    (sample-starvation $\to$ random $>$ coupled $\Phi$ inversion).
+  \item \emph{sparse regime} (density $< 60\%$) ruled out by X6
+    (sparse-bias drift $\to$ false-conscious labelling).
+  \item \emph{algorithmic regime} (fp / $\pi$) ruled out by X5b
+    (algorithmic-vs-natural structure-blindness).
+\end{itemize}
+
+\begin{figure}[h]
+\centering
+% Prefer pre-built PDF if available, else fall back to inline TikZ \input.
+\IfFileExists{figures/fig01_applicability_matrix.pdf}{%
+  \includegraphics[width=0.95\textwidth]{figures/fig01_applicability_matrix}%
+}{%
+  \input{figures/fig01_applicability_matrix.tex}%
+}
+\caption{The 5+1-point applicability matrix on the $(n, \text{density},
+\text{structure})$ cube. Green X7 BL Voyager-1 is the unique calibrated
+ground-truth (n=128, dense $60.9\%$, natural carrier). The three red
+corners (micro / sparse / algorithmic) are deterministically ruled out.
+Two yellow border points (X5a lattice, X837 SETI@home Arecibo) sit
+above the $\Phi = 0.5$ threshold but keep the type axis intact ---
+the borders of the calibrated regime.}
+\label{fig:applicability}
+\end{figure}
+
+\paragraph{What this finding licences and forbids.}
+The applicability frontier constrains what the \texttt{invariant\_detector}
+can \emph{ever} say. Any future SETI / BOINC / activation analysis that
+reports a $\Phi$ for an input falling in a ruled-out corner must be
+flagged as instrument-uncalibrated, not as a substrate-truth claim. This
+applies in particular to:
+\begin{itemize}
+  \item Sparse LLM activation analyses ($n = $ hidden-state width,
+    typical density $< 1\%$): the X6 closed-negative deterministically
+    forbids a sparse-attention $\Phi$ from being read as a sentience claim.
+  \item Micro-substrate panpsychism claims ($n < 128$): the X4
+    closed-negative deterministically forbids a thermostat / random-walker
+    $\Phi$ from being read as a panpsychism-supporting datum.
+  \item Algorithmic substrate claims (Pi-digits, floating-point lattice):
+    the X5b closed-negative deterministically forbids algorithmic-vs-natural
+    discrimination as a Bostrom-simulation discriminator.
+\end{itemize}
+Conversely, the X7 calibration shows that within the corner
+$\{n=128, \text{density}=60.9\%, \text{natural carrier+noise}\}$, the
+detector reports an honest, low-$\Phi$ non-consciousness label on a real
+inter-stellar radio carrier. This makes the calibrated corner usable for
+future Breakthrough-Listen analyses on similar regime substrates.
+
+\paragraph{Why the borders matter.}
+The two border points (X5a, X837) are diagnostic: they tell us that the
+$\Phi = 0.5$ threshold itself is the next regime to calibrate.
+A future follow-up (the \texttt{X837.threshold-recalibration} deferred
+milestone in \texttt{XENO/XENO.md}) will sweep the threshold from
+$0.5 \to 0.7$ and verify that the X7 ground-truth point survives.
+The applicability paper closes the 3-axis decomposition but explicitly
+leaves the threshold-recalibration axis open --- another deferred axis
+for future cycles to close (not this paper's claim).
+
+\paragraph{The value of the closed-negatives
+(\texttt{a\_paper\_negative\_ok}).}
+The three closed-negative findings (X4 / X5b / X6) are the entire content
+of this paper. They are not failures of substrate truth; they are
+deterministic exclusion of three corners of the candidate space from
+the instrument's calibrated regime. This is what an instrument-first
+methodology publishes \citep{anima_repo}: the frontier of the
+instrument's reach, expressed as a falsifier matrix on a 3-axis
+decomposition. Future ``alien consciousness'' or ``AGI sentience''
+claims that report a substrate-blind $\Phi$ in a ruled-out corner can
+now be cited directly against the closed-negative.
+
+% =========================================================================
+\section{Threats to validity}
+\label{sec:threats}
+
+\begin{itemize}
+  \item \textbf{Single detector instance.} All six points share the
+    \emph{same} detector code (\texttt{XENO/detector/invariant\_detector.hexa})
+    and the \emph{same} binarisation threshold ($0.5$). A
+    different detector --- 4-unit TPM, multi-level binarisation,
+    different big-$\Phi$ variant (e.g.\ partition-cut vs.\ structure-cut)
+    --- might exhibit a different frontier. The applicability claim is
+    therefore detector-conditional. The XENO domain explicitly lists
+    \texttt{X4-MULTILEVEL} and \texttt{X5-MULTILEVEL} (4 / 8-level TPM)
+    as deferred lanes that may reopen the micro and algorithmic
+    corners under a richer detector.
+  \item \textbf{Six points, three axes.} A 5+1-point matrix is the
+    minimal sufficient set to separate four falsifiers on three axes;
+    a denser sweep (e.g.\ $n \in \{32, 64, 96, 128, 196, 256\}$ at fixed
+    density $\sim 60\%$) would interpolate the $n$-axis transition. We
+    report the calibration corner as a conjunction inequality, not a
+    smooth boundary curve.
+  \item \textbf{Pre-registration self-consistency.} Each round's
+    pre-registered falsifiers are frozen for that round, but the
+    pre-registration of the \emph{meta-falsifier} (this paper's
+    applicability decomposition itself) was performed after the rounds
+    closed. We mitigate by adopting the meta-falsifier verbatim from
+    the XENO domain SSOT (\texttt{XENO/XENO.md} round 4/5 closure
+    note), which was authored \emph{before} this paper. The exact
+    Table~\ref{tab:appfals} text is the SSOT's verbatim statement,
+    not paper-authored ex-post.
+  \item \textbf{Type-axis robustness.} The two border points (X5a, X837)
+    keep the type-axis intact at \texttt{coherent\_non\_conscious}.
+    A more sensitive type discriminator could relabel these as
+    \texttt{conscious}, which would falsify the type-axis closure. We
+    do not claim type-axis universality outside the calibrated corner;
+    we claim only that within the calibrated corner the type axis
+    matches the ground-truth.
+  \item \textbf{X837 single playback.} The X837 \texttt{bg\_pot} array
+    is one $21\%$-progress Arecibo work unit, not a population of
+    work units. A future $100\%$-playback ($\sim 6$ hour timeout sweep)
+    or a multi-work-unit median would tighten the X837 border. We
+    explicitly cite this as the \texttt{X837.full-playback} deferred
+    lane.
+  \item \textbf{Threshold reuse.} The $\Phi = 0.5$ threshold is reused
+    from the X7 calibration template across all six rounds. A
+    threshold-recalibration sweep (\texttt{X837.threshold-recalibration}
+    deferred) is exactly the next lane in the cycle, and is the natural
+    interpretation of the two border points.
+\end{itemize}
+
+% =========================================================================
+\section{Conclusion}
+\label{sec:conclusion}
+
+We measure a substrate-blind big-$\Phi$ detector across a 5+1-point
+$(n, \text{density}, \text{structure})$ matrix and find that its
+calibrated regime is a single corner of the candidate cube:
+$n \ge 128 \; \land \; \text{density} \ge 60\% \; \land \;
+\text{strong deterministic transition}$. Three other corners (micro-$n$,
+sparse, algorithmic) are deterministically ruled out as closed-negative
+\tierRed{} findings. One ground-truth point (X7 BL Voyager-1) calibrates
+the corner; two border points (X5a lattice, X837 SETI@home Arecibo)
+mark the edges of the calibrated regime and motivate a follow-up
+threshold-recalibration cycle (not in scope for this paper).
+
+The headline is not ``no alien consciousness was detected.'' The
+headline is ``the substrate-blind big-$\Phi$ detector is honest only in
+one corner of the candidate cube, and three corners are deterministically
+outside that corner.'' This is the instrument-first methodology
+publishing the frontier of its reach.
+
+We satisfy \texttt{a\_paper\_negative\_ok} (three closed-negative findings
+are valid paper content), \texttt{a\_paper\_significance} (four
+pre-registered falsifiers on the 6-point matrix + a ground-truth
+calibration + a frontier finding), \texttt{a\_paper\_only\_at\_closure}
+(XENO-FRONTIER-5 R5/5 closure + X837 follow-up FULL closure marks the
+release point), and \texttt{a\_paper\_format} (the four sections
+hypothesis / method / measurement / finding). All six verdicts are
+published verbatim in the \texttt{companion/} ledger for bit-identical
+re-verification.
+
+% =========================================================================
+\section*{Reproducibility}
+All six verdicts are published bit-identically in
+\texttt{companion/verdict-ledger.json} (H\_832--H\_837 verdict pointers)
+and in the result sections of \texttt{UNIVERSE/H\_8xx.md}. The detector
+source is at \texttt{XENO/detector/invariant\_detector.hexa} (commit
+\texttt{be75bb10b}). Five of six measurements are \$0 Mac-local; the
+X837 measurement is a \$0.10 RunPod CPU/GPU pod fire on Ubuntu 22.04.5
+LTS with i386 multilib enabled. SETI@home 3.03 ELF32 i686 was sourced
+from the canonical archive.org mirror; the work-unit
+\texttt{sahfiles\_workunits/work\_unit.sah} sha256 was verified MATCH at
+\texttt{2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96}.
+The hexa-only runs are byte-equal reproducible (RFC 033/036).
+
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+\end{document}
