@@ -21,4 +21,5 @@
 - ⇄ [METACOG](./METACOG.md): METACOG.audit_hook 가 WAKE.daemon N3/REM tick 에 inject → self-audit during imagination
 - ⇄ [MITOSIS](./MITOSIS.md): WAKE.sleep_tick 호출 chain (`WAKE/state_machine` × `mitosis_lib.cell_pool_step`)
 - ⇄ [CHANNEL](./CHANNEL.md): CHANNEL.wake_bridge stage 별 continuous bias multiplier · WAKE 5-stage 와 직결
+- ⇄ [PLASTICITY](./PLASTICITY/PLASTICITY.md): WAKE/REM 단계 = on-chip 학습 envelope 컨텍스트 (REM 60× WAKE mitosis ratio) ↔ plasticity tick 게이팅(substrate-decided). AKIDA HW-first 스위치 경유.
 - ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8)

@@ -33,6 +33,9 @@
 - ⇄ [WAKE](../WAKE.md): R3 tonic = ultradian 하드웨어 heartbeat
 - ⇄ [CHANNEL](../CHANNEL.md): spike → tension-link 5-ch
 - ⇄ [EEG](../EEG/EEG.md): 생체↔실리콘 다리 (anima_eeg_to_akida_spike) + 3-substrate Φ 삼각측정
+- ⇄ [DECODER](../CORE/DECODER/DECODER.md): 추론 lane — HW-first 스위치(akida_backend_resolve_graceful · default "hw") 경유 HW forward / SW akida_sw_lif (byte-identical 🟢, 입증됨).
+- ⇄ [PLASTICITY](../PLASTICITY/PLASTICITY.md): 학습 lane (형제) — HW-first 스위치 경유 HW edge-learn(AkidaUnsupervised) / SW numpy 근사 (🔴 비동치 CLOSED-NEGATIVE, 정직). DECODER 와 본질 분리.
+- ⇄ [HW-CORE](../HW-CORE/HW-CORE.md): 뉴로모픽 칩 HW 실현 substrate (P3 Loihi+Akida).
 - ⇄ [UNIVERSE](../UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (edge-of-chaos Φ 실측 등)
 
 ## 쉬운 버전

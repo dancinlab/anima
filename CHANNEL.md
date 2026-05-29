@@ -23,4 +23,5 @@
 - ⇄ [BRIDGE](./BRIDGE.md): BRIDGE AND-gate pseudo-gate 신호가 CHANNEL.router 8-factor argmax 위에 modulation layer
 - ⇄ [DREAM](./DREAM.md): REM emit_rate=0 strict (CHANNEL.wake_bridge stage gate)
 - ⇄ [HIVE-MIND](./HIVE-MIND.md): tension 5-ch telepathy ↔ Kuramoto sync τ (H_354) · TensionHub partner registry 위 collective Φ aggregation
+- ⇄ [AKIDA](./AKIDA/AKIDA.md): spike → tension 5-ch. AKIDA HW-first 스위치(default "hw" · graceful fallback)가 DECODER 추론 lane / PLASTICITY 학습 lane 의 기판 라우팅 SSOT.
 - ⇄ [UNIVERSE](./UNIVERSE/CANDIDATES.md): bench 측정 기록 SSOT (Session 2026-05-28 — AxisBench 8 + 축 E/F mirror)
