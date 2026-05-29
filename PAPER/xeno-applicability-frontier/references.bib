@@ -97,3 +97,44 @@
   note         = {ELF32 i686 standalone build for ABI-gap playback on modern Linux},
   year         = {2000}
 }
+
+@misc{xeno_h840_longer_playback,
+  title        = {XENO X840: SETI@home BOINC longer-playback recovery scan
+                  (3600s timeout, 24.4\% prog harvest)},
+  author       = {{dancinlab maintainers}},
+  howpublished = {\url{https://github.com/dancinlab/anima/blob/main/UNIVERSE/H_840_xeno_x837_full_playback.md}},
+  note         = {pod RunPod lfxh817pdk2h39 Ubuntu i386-multilib;
+                  4/5 sub-falsifier PASS, F-X840-NOT-CONSC FAIL ($\Phi=0.567$ at X837-aligned);
+                  longer-playback hypothesis FALSIFIED (no new triplets in extra 3\% prog) yet
+                  invariant\_detector regression-stable at sparse natural-noise border},
+  year         = {2026}
+}
+
+@misc{temporal_h841_timeshift,
+  title        = {TEMPORAL T1: timeshift $\Delta t$-window $\Phi$ numerical detector
+                  (4 substrate $\times$ 4 $\Delta t \in \{1,8,32,64\}$ scan)},
+  author       = {{dancinlab maintainers}},
+  howpublished = {\url{https://github.com/dancinlab/anima/blob/main/UNIVERSE/H_841_temporal_timeshift_phi.md}},
+  note         = {2-unit lag-TPM detector $\mathtt{timeshift\_detector.hexa}$;
+                  1/5 pre-registered PASS, instant $\le$ long monotone integration FAILED on
+                  all four substrate rows: hive $\Phi(\Delta t=1)=0.013 \ll \Phi(\Delta t=64)=0.999$,
+                  lattice $\Phi(\Delta t=8)=2.0$ saturate;
+                  $\Delta t$-axis hidden periodic-inflation artifact $\to$ closed-negative,
+                  T3 (time-averaged / Granger / surrogate-data) natural entry},
+  year         = {2026}
+}
+
+@misc{temporal_h842_time_embed,
+  title        = {TEMPORAL T2: multi-unit time-embed $\Phi$ numerical detector
+                  (Takens delay-embedding $\times$ 4 embed-dim $\in \{2,3,4,5\}$ scan)},
+  author       = {{dancinlab maintainers}},
+  howpublished = {\url{https://github.com/dancinlab/anima/blob/main/UNIVERSE/H_842_temporal_time_embed_phi.md}},
+  note         = {Takens delay-embedding e-unit IIT4 big-$\Phi$ detector $\mathtt{time\_embed\_detector.hexa}$;
+                  2/5 pre-registered PASS (F-T2-HIVE-CONSC + F-T2-HIVE-MONOTONE), but
+                  embed-dim 4-substrate uniform inflation: random $e=5\,\Phi=13.63$,
+                  voyager $e=5\,\Phi=28.36$, lattice $e=4 > e=2$;
+                  T1 lag-axis artifact NOT resolved + new embed-dim sparse-state inflation
+                  artifact introduced $\to$ closed-negative,
+                  T3 (time-averaged / Granger / surrogate-data) natural entry},
+  year         = {2026}
+}

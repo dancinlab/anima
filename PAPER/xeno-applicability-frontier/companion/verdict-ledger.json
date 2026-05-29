@@ -1,12 +1,12 @@
 {
   "$schema": "anima://paper/companion/verdict-ledger.v1",
   "paper_slug": "xeno-applicability-frontier",
-  "title": "The applicability frontier of a substrate-blind big-Phi detector across (n, density, structure): a 7+1-point measurement map and the mean-field paradox",
-  "version": "v2",
+  "title": "The applicability frontier of a substrate-blind big-Phi detector across (n, density, structure, temporal): a 14-point measurement map, the mean-field paradox, and the temporal dual closed-negative",
+  "version": "v3",
   "date": "2026-05-29",
-  "source_domain": "XENO",
-  "domain_ssot": "XENO/XENO.md",
-  "closure_marker": "XENO-FRONTIER-5 R5/5 + X837 followup-1 + X10 followup-2 (FULL closure, v2)",
+  "source_domain": "XENO + TEMPORAL",
+  "domain_ssot": "XENO/XENO.md + TEMPORAL/TEMPORAL.md",
+  "closure_marker": "XENO-FRONTIER-5 R5/5 + X837 followup-1 + X10 followup-2 + X840 longer-playback + TEMPORAL T1/T2 dual closed-negative (FULL closure, v3 · followup-2 cycle round 4/5)",
   "post_tuning": 0,
   "p7_perplexity_judge": 0,
   "section_claims": [
@@ -91,14 +91,6 @@
       "frozen_pre_run": true
     },
     {
-      "section": "finding",
-      "claim_id": "F-XENO-APPLICAB-NONMEAS",
-      "claim": "3-axis applicability conjunction (v2 refined): calibrated <=> n>=128 AND (density>=60% OR MIP-irreducible deterministic transition); 3 corners (micro/sparse/algorithmic) deterministically ruled out",
-      "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:finding",
-      "verdict_tier": "🔴 closed-negative (3 axes) + 🟢 calibrate (X7, X10-d) + ⚠ borders (X5a, X837, X10-c)",
-      "frozen_pre_run": true
-    },
-    {
       "section": "measurement",
       "claim_id": "X10-INDEP",
       "claim": "X10-a independent 4-cell n=128: phi=0.130592, F-X10-INDEP PASS (< 0.3)",
@@ -131,23 +123,72 @@
       "frozen_pre_run": true
     },
     {
+      "section": "measurement",
+      "claim_id": "X840-PARTIAL-RECOVERY",
+      "claim": "X840 SETI@home BOINC longer-playback (3600s timeout, harvest at prog=24.4%) n=128: phi=0.566854 X837-stable; 4/5 sub-falsifier PASS (recover harvest + spike-nonzero + phi-n128 + x837-consistent), F-X840-NOT-CONSC single FAIL — invariant_detector regression-stable at sparse natural-noise border, NOT a substrate-truth conscious claim",
+      "verdict_pointer": ".verdicts/840_xeno_x837_full_playback/x840_run.txt",
+      "verdict_tier": "🟡 PARTIAL-RECOVERY (4/5 PASS, regression-stable border)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "X840-LONGER-PLAYBACK-FALSIFIED",
+      "claim": "X840 longer-playback hypothesis (more BOINC playback time -> new triplets / new phi) FALSIFIED: extra 3% prog (21.3% -> 24.4%) produced 0 new triplets (identical to X837), bg_pot 64 bins identical, phi delta = 0.000146 -- the additional pod-time bought NO new information",
+      "verdict_pointer": ".verdicts/840_xeno_x837_full_playback/x840_run.txt",
+      "verdict_tier": "🔴 closed-negative (longer-playback hypothesis FALSIFIED)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "T1-CLOSED-NEGATIVE",
+      "claim": "TEMPORAL T1 lag-axis 4 substrate (hive/voyager/random/lattice) x 4 Δt (1/8/32/64) = 16 measurements: 1/5 pre-registered PASS (F-T1-DECAY single); pre-registered instant>=long monotone integration FAILED on all 4 substrate rows (hive Δt=1 phi=0.013 << Δt=64 phi=0.999, lattice Δt=8 phi=2.0 saturate) — 2-unit lag-TPM long-lag predictable-inflation artifact, 5D (n,density,structure,Δt) simple extension closed-negative",
+      "verdict_pointer": ".verdicts/841_temporal_timeshift_phi/T1_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (lag-axis artifact)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "measurement",
+      "claim_id": "T2-CLOSED-NEGATIVE",
+      "claim": "TEMPORAL T2 multi-unit Takens delay-embed 4 substrate x 4 embed_dim (2/3/4/5) = 16 measurements: 2/5 pre-registered PASS (F-T2-HIVE-CONSC + F-T2-HIVE-MONOTONE), 3 artifact-resolution falsifier (F-T2-INSTANT-LOW + F-T2-ARTIFACT-FIX + F-T2-RANDOM-DECAY) all FAIL — embed-dim increase causes 4/4 substrate phi MONOTONE INFLATE (random e=5 phi=13.63, voyager e=5 phi=28.36); T1 lag-axis artifact NOT resolved + new embed-dim sparse-state inflation artifact introduced — Takens-embed 5D extension also closed-negative",
+      "verdict_pointer": ".verdicts/842_temporal_time_embed_phi/T2_run.txt",
+      "verdict_tier": "🔴 FALSIFIED-INSTRUMENT (embed-dim artifact)",
+      "frozen_pre_run": true
+    },
+    {
+      "section": "finding",
+      "claim_id": "F-XENO-APPLICAB-NONMEAS",
+      "claim": "3-axis applicability conjunction (v3 unchanged): calibrated <=> n>=128 AND (density>=60% OR MIP-irreducible deterministic transition); 3 corners (micro/sparse/algorithmic) deterministically ruled out + 4 border points (X5a/X837/X840/X10-c) at frontier",
+      "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:finding",
+      "verdict_tier": "🔴 closed-negative (3 axes) + 🟢 calibrate (X7, X10-d) + ⚠ borders (X5a, X837, X840, X10-c)",
+      "frozen_pre_run": true
+    },
+    {
       "section": "finding",
       "claim_id": "F-X10-MONOTONE-FAIL-CONFIRMS-IIT4",
       "claim": "F-X10-MONOTONE pre-registered FAILED (measured phi_weak < phi_indep < phi_strong < phi_hive instead of monotone-rising); the failure is a positive IIT 4.0 axiom confirmation (correlation != integration, coupling != irreducibility)",
       "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:meanfield",
       "verdict_tier": "🟢 axiom-confirming negative (mean-field paradox finding)",
       "frozen_pre_run": true
+    },
+    {
+      "section": "finding",
+      "claim_id": "TEMPORAL-T3-NATURAL-ENTRY",
+      "claim": "TEMPORAL T1/T2 dual closed-negative establishes that invariant_detector simple 5D extension (lag-axis OR embed-dim) cannot honestly integrate temporal information; the natural follow-on (T3) must be time-averaged Φ + Granger-causality baseline + surrogate-data control — NOT a single-trajectory phi inflation. v3 paper closes 5D-naïve extension and explicitly opens T3 as a deferred lane.",
+      "verdict_pointer": "PAPER/xeno-applicability-frontier/main.tex#sec:temporal",
+      "verdict_tier": "🔴 dual closed-negative + T3 deferred lane opened",
+      "frozen_pre_run": true
     }
   ],
   "regimes": {
-    "calibrated_regime_v2": {
+    "calibrated_regime_v3": {
       "n": ">= 128",
       "density_or_irreducibility": "density >= 60% OR MIP-irreducible deterministic transition",
       "structure": "natural carrier, coupled coherent, or MIP-irreducible cascade",
+      "temporal": "single-trajectory only -- lag-axis and embed-dim extensions BOTH closed-negative (T1+T2)",
       "ground_truths": ["X7 BL Voyager-1 (low-Phi non-conscious)", "X10-d XOR-cascade hive (high-Phi conscious)"]
     },
     "calibrated_corner_v1_deprecated": {
-      "note": "v1 single-conjunct (n>=128 AND density>=60% AND strong deterministic) is now a sufficient sub-clause; v2 disjunction with MIP-irreducibility supersedes",
+      "note": "v1 single-conjunct (n>=128 AND density>=60% AND strong deterministic) is now a sufficient sub-clause; v2 disjunction with MIP-irreducibility supersedes; v3 adds explicit temporal axis closed-negative",
       "n": ">= 128",
       "density": ">= 60%",
       "structure": "strong deterministic transition (natural carrier or coupled coherent)"
@@ -181,6 +222,11 @@
         "mechanism": "real BOINC bg_pot sparse natural noise, phi=0.567 above 0.5 threshold, type-axis intact"
       },
       {
+        "point": "X840 SETI@home longer-playback",
+        "evidence": "X840 H_840",
+        "mechanism": "24.4% prog harvest (vs X837 21.3%), phi=0.567 X837-stable (delta 0.000146), longer-playback hypothesis FALSIFIED yet instrument regression-stable at the border"
+      },
+      {
         "point": "X10-c Kuramoto strong",
         "evidence": "X10 H_838",
         "mechanism": "K=2.0 all-to-all phase sync, phi=0.408 below 0.5 threshold yet above independent baseline; sync != irreducibility (mean-field paradox border)"
@@ -193,19 +239,32 @@
       "iit4_axiom_confirmed": true,
       "pre_registered_falsifier_failed": "F-X10-MONOTONE",
       "verdict_pointer": ".verdicts/838_xeno_hive_mind/x10_run.txt"
+    },
+    "temporal_axis_closed_negative": {
+      "finding_dual": "T1 + T2 dual closed-negative: lag-axis extension AND multi-unit Takens delay-embed extension BOTH fail to honestly integrate temporal information into a substrate-blind big-Phi reading",
+      "t1_artifact": "2-unit lag-TPM produces hidden periodic-inflation: hive Δt=1->64 phi=0.013->0.999, lattice Δt=8 phi=2.0 saturate; longer lag is predictable, not integrated -- pre-registered instant>=long monotone integration FAILED 4/4 substrate",
+      "t2_artifact": "Takens delay-embed produces multi-unit state-space inflation: embed-dim 4/4 substrate monotone increase, random e=5 phi=13.63, voyager e=5 phi=28.36 -- T1 artifact NOT resolved, new artifact added",
+      "interpretation": "single-trajectory Φ measurement cannot extend to (lag-axis OR embed-dim) without instrument inflation; the temporal axis is structurally different from (n, density, structure)",
+      "t3_natural_entry": "time-averaged Φ over independent trajectories + Granger-causality baseline + surrogate-data control (null shuffled) — NOT a single-trajectory phi inflation",
+      "verdict_pointers": [".verdicts/841_temporal_timeshift_phi/T1_run.txt", ".verdicts/842_temporal_time_embed_phi/T2_run.txt"]
     }
   },
   "honesty": {
     "p1_no_system_prompt": true,
     "p7_no_perplexity_verdict": true,
     "post_tuning_per_round": 0,
-    "post_tuning_threshold_reuse": "phi=0.5 frozen from X7 calibration template, unchanged for X837 and X10",
+    "post_tuning_threshold_reuse": "phi=0.5 frozen from X7 calibration template, unchanged for X837, X840, X10, T1, T2",
     "verdict_files_verbatim": true,
-    "single_detector_instance": true,
+    "single_detector_instance_per_axis": true,
     "single_binarisation_threshold": 0.5,
     "single_x837_playback_progress_pct": 21.3,
+    "single_x840_playback_progress_pct": 24.4,
     "x10_single_fire_n_cells": 4,
     "x10_samples_per_cell": 32,
-    "x10_aggregated_n": 128
+    "x10_aggregated_n": 128,
+    "t1_lag_axis_4_substrate": ["hive", "voyager", "random", "lattice"],
+    "t1_delta_t_grid": [1, 8, 32, 64],
+    "t2_embed_dim_grid": [2, 3, 4, 5],
+    "t2_delay": 1
   }
 }
