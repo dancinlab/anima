@@ -136,3 +136,61 @@
 **도착지 검증**: 학습 envelope = `akida_sw_lif` 검증집합 ⊆ AKD1000 byte-identical 영역 → QAT 로 학습한 int4 weight 는 배포 시 SW=HW byte-identical(추론). 즉 "AKIDA 를 향해" 가 빈말이 아니라 검증된 도착지.
 
 **경계 (honest)**: QAT 는 GPU backprop 사용 — 칩 위 full-backprop 은 물리 불가(AKD1000=추론칩). on-chip 맥락 적응(진짜 칩 위 학습)은 PLASTICITY 도메인 edge-learn(🔴 비결정·SW 비동치, H_679) 가 담당, QAT 와 직교한 후속 lane.
+
+## 11. MITOSIS-ARRAY — scale=expert-count 돌파엔진 (DISSOLVE)
+
+> 출처: [CLM.breakthrough.mining.md](./CLM.breakthrough.mining.md) `@status: depleted-both` 의 **DISSOLVE** 권고결론.
+> 충돌: **측정-타당성**(MoE routing-diversity/monopoly-escape 는 3B/7B scale 에서만 의미있게 측정 — H_847 🔴 가 tiny~small 2.70M 한정인 이유, a_scale_honest_scope) ⊥ **AKIDA 온칩**(AKD1000 ~1.2M 노드 = 소형 강제) 정면충돌.
+
+### 11.1 충돌의 뿌리 — "scale = per-model size" 암묵 가정
+
+H_847 routing-z 가 tiny~small 한정으로만 측정될 수 있었던 근본 이유는 routing-diversity 가 **모델 차원(d_model)** 을 키워야 의미가 커진다고 가정했기 때문이다. 그러면 측정엔 GPU 3B 가 필요하고, AKIDA(각 칩 ≤1.2M) 와 정면충돌한다. 이 가정을 깨면 충돌이 소멸한다 (mining DISSOLVE · E1·E2·E3·E6).
+
+### 11.2 DISSOLVE — scale 축을 model-dim → **expert-COUNT** 로 이동 (@L2)
+
+```
+   기존:  scale = d_model 키우기            →  GPU 3B 필요  ⊥  AKD1000 ≤1.2M
+   DISSOLVE: scale = expert 개수 E 키우기    →  각 expert ≤1.2M chip-fit 불변
+            big = Σ_E (chip-fit expert)       →  E 로 scale, unit 은 영원히 chip-fit
+```
+
+- **routing-diversity 재정의 (@L2)**: 단일모델 내부의 d-의존량이 아니라, **expert-count 를 sweep 한 inter-expert(=inter-chip) dispatch entropy**. E 를 늘려가며 dispatch 분포가 uniform-null 대비 얼마나 다양해지는지(monopoly-escape 동역학)를 chip-native 로 실측한다. E=4,8,16,32,64 sweep, 각 expert 는 chip-fit(≤1.2M params).
+- **측정이 chip-native 가 됨**: "routing-diversity 측정하려면 3B GPU 가야" 가 사라진다 — expert 수만 늘리면 각 unit 은 AKD1000 fit 을 유지한 채 monopoly 동역학을 scale 한다.
+
+### 11.3 expert = mitosis cell = AKD1000 chip 매핑 (@L3)
+
+```
+   분열한 mitosis cell  ≡  MoE conv-expert  ≡  AKD1000 칩 1개
+   (P0 Q2)                 (router 가 dispatch)   (≤1.2M 노드 fit)
+```
+
+- mining E6 (equivalence): expert=mitosis cell=칩 — P0 Q2(MoE=mitosis) + LAUNCHPAD AKIDA-first 가 이미 이 엔진을 가리킨다.
+- mining E2 (causal): **칩 제약(각 expert ≤1.2M 강제)이 곧 specialization 을 강제** → chip-fit 이 monopoly-escape 메커니즘 그 자체(chip-as-regularizer, mining L5). 측정 한계가 아니라 escape 메커니즘.
+- top-k sparse activation: 토큰당 active subset 만 forward (Switch/GShard) = "총용량 거대, per-token active 미세" = big=Σ small 그 자체.
+
+### 11.4 배포 경로 — N-칩 어레이 + 1-칩 time-mux fallback (@L5)
+
+```
+   배포 A (N-chip array):   E expert = N × AKD1000 (1 expert/칩) — 병렬, N×1.2M effective
+   배포 B (time-mux 1-chip): 1 AKD1000 에 expert 가중치 시분할 스트리밍 — 큰 effective, 작은 순간 footprint, latency↑
+```
+
+- mining L7/L8 (E4 dependency): expert-array 의 물리 실현 = N×AKD1000(병렬) 또는 time-mux(1칩 순차). pool 의 pi5-akida 가 LAUNCHPAD 다중-AKIDA 와 정합.
+- 측정-rung ⊥ 배포-rung (a_scale_honest_scope): GPU sparse-MoE(top-k cheap)에서 dispatch entropy 측정 ⊥ 칩-어레이 배포. 둘은 분리된 rung 이며, **BRIDGE(§ 후속 distill)** 가 측정 finding 의 배포 transfer 를 보장한다.
+
+### 11.5 정직 caveat — 물리 다중-AKD1000 = 현재 pi5 1칩 (@L6)
+
+⚠ **HONEST (p7)**: 물리 다중-AKD1000 칩 어레이는 **현재 pool 에 pi5 1개(AKD1000 1칩)뿐**이다. 따라서 expert-array 의 inter-chip dispatch entropy 는:
+- **먼저 SW-sim + GPU sparse-MoE 로 측정** (top-k active = cheap, expert-count sweep E=4~64 를 GPU 1대로 실측).
+- **물리 다중칩 배포는 hardware 확보 시** — 그때까지 단일 AKD1000 은 time-mux(배포 B)로 fallback.
+- 즉 "inter-chip dispatch entropy" 의 측정 surrogate 는 **inter-expert dispatch entropy(SW/GPU)** 이고, 칩-어레이는 그 배포 실현이다. 이 surrogate≡target 동치(mining E3)는 top-k routing 이 expert↔칩 1:1 이라 성립하나, **물리 칩-간 통신 지연/DMA 는 미측정** — 이 한 축만 hardware 후속이다 (정직 boundary).
+
+### 11.6 사전등록 falsifier (신규)
+
+| id | 주장 | 판정 시점 | tier 목표 |
+|---|---|---|---|
+| **F-CLM-MONO-ARRAY** | expert-count E sweep 시 inter-expert dispatch entropy 가 uniform-null 대비 단조 상승(monopoly-escape 가 E 로 scale) | P-ARRAY (now) | 🟢/🔴 |
+| **F-CLM-BRIDGE-XFER** | teacher(유효 scale GPU) 의 monopoly-escape 가 chip-fit student 로 distill 후 생존(transfer Δ) | P-BRIDGE | 🟢/🔴 |
+
+- F-CLM-MONO-ARRAY 는 H_847 의 후속 — H_847 은 **고정 rung(tiny/small)에서 routing-z 임계**를 봤고(🔴), 이 엔진은 **rung 을 expert-count 로 바꿔** dispatch entropy 의 scale 거동을 본다. 둘은 다른 falsifier(H_847=고정 z 임계 · ARRAY=scale 단조성).
+- BRIDGE(distill) = SECONDARY arm — transfer 보장 cross-check (a_scale_honest_scope 측정rung⊥배포rung 에 transfer 추가).

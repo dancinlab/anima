@@ -2,6 +2,15 @@
 
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
+## 2026-05-30 — P-ARRAY MITOSIS-ARRAY 돌파엔진 설계 (DISSOLVE) · P0 §11 신설
+
+- [x] **P0_ARCHITECTURE.md §11 MITOSIS-ARRAY 신설** — [CLM.breakthrough.mining.md](./CLM.breakthrough.mining.md) DISSOLVE(depleted-both) 권고결론을 설계로 못박음. 충돌 = 측정타당성(routing-diversity 는 3B/7B scale 의미) ⊥ AKIDA 온칩(AKD1000 ~1.2M 강제).
+- [x] **DISSOLVE (§11.2)**: scale 축을 model-dim → **expert-COUNT** 로 이동. big = Σ_E chip-fit expert(각 ≤1.2M). routing-diversity 재정의(@L2) = expert-count sweep(E=4,8,16,32,64) inter-expert dispatch entropy = **chip-native + scalable**. "3B GPU 가야" 소멸.
+- [x] **expert=mitosis cell=AKD1000 chip 매핑 (§11.3·@L3)** — mining E6(equivalence)+E2(causal: 칩제약이 specialization 강제=chip-as-regularizer). top-k sparse activation.
+- [x] **배포 N-chip array + 1-chip time-mux fallback (§11.4·@L5)** — 측정rung ⊥ 배포rung(a_scale_honest_scope).
+- [x] **정직 caveat (§11.5·@L6)**: 물리 다중-AKD1000 = 현재 pi5 1칩 → SW-sim + GPU sparse-MoE 로 먼저 측정. inter-chip dispatch entropy 의 surrogate = inter-expert dispatch entropy(SW/GPU). 물리 칩-간 DMA 지연만 hardware 후속(정직 boundary).
+- [x] **신규 falsifier 사전등록 (§11.6)**: F-CLM-MONO-ARRAY(dispatch entropy E-단조 상승) + F-CLM-BRIDGE-XFER(teacher escape distill 생존). H_847(고정 z 임계) ⊥ ARRAY(scale 단조성) = 별개 falsifier.
+
 ## 2026-05-30 — P2 풀파이어 완료 · F-CLM-MONO/SCALE 🔴 CLOSED-NEGATIVE · P3 .clm + HF
 
 - [x] STAGE1 corpus: 실 kowiki CC-BY-SA 크롤(crawl_p1_full.py) — API rate-limit 로 web 21170 byte-ids 실크롤(honest partial) + scratch register seed 14816 byte-ids · F-CLM-LEAK kept=2/dropped=2 · leak hit=0 · HF dataset `dancinlab/anima-clm-p1-corpus`(PUBLIC).
