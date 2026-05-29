@@ -191,6 +191,31 @@ verdict: **4/4 PASS · closure ACHIEVED · exit=0**
 7. **stim_type 분포 가정**: 0.20/0.25/0.30/0.10/0.15 mixture 는 채팅방 NPC 디자인 선택. 실 coffee-shop 변량 미측정.
 8. **threshold choice**: `should_interrupt` (0.60) 채택은 group-chat 적정 — 단일 채팅방 1:1 대화면 `should_emit` (0.30) 로 회귀 가능. 본 시나리오 한정 선택.
 
+## HW 런칭 (AKIDA 폐루프)
+
+§7-§8 의 SW sim (i.i.d. synthetic substrate) 을 **라이브 neuromorphic silicon (BrainChip AKD1000) 폐루프**로 닫았다 (LAUNCHPAD @goal · UNIVERSE H_846). emit/silence 결정이 SW sim 이 아니라 실 칩에서 발생한다.
+
+폐루프 (motivation → threshold → spike → emit):
+```
+spontaneous_lib 5+1 factor (closed-form B-SPONT) → motivation_score
+  │ set_threshold(thr_vec = linspace(2,18,16) + (1−score)·20)   → port 9513 (ctrl IN)
+  ▼
+AKD1000 on-chip threshold-and-fire (M regime · V=16 · unit fires iff V>thr_j)
+  │ spike raster
+  ▼ n_spikes  ← port 9512 (OUT broadcast)
+should_interrupt = n_spikes ≥ quorum(6)   → emit / silence
+```
+보정 (closed-form): base=linspace(2,18,16)·V=16·SPAN=20·QUORUM=6 ⇒ 모든 window 에서 `n_spikes≥6 ⟺ motivation_score>0.60` (spike-quorum == should_interrupt 0.60 결정 동치).
+
+**라이브 측정 (pi5-akida · BC.00.000.002 BackendType.Hardware · provenance=akida-hw)**: §5 알려진 trajectory 완전 재현 — emit window **3·10·14·15** · silence 11 · trajectory_match True. HW↔SW emit-decision byte-match (15/15) — 단 on-chip 정수 threshold 양자화로 raw spike count 는 7 window 에서 ±1 (decision 동치이나 raw byte-identical 아님, 정직표기).
+
+AKIDA-first EVERYWHERE: 학습·디코더·발화결정 전부 `akida_backend_resolve(default "hw")` 경유. 칩 도달→on-chip(akida-hw) · 미도달→numpy mirror fallback(akida-sw-fallback). PLASTICITY 학습 lane(emit-quorum stim_type 적응)은 SW≠HW 🔴 CLOSED-NEGATIVE (비결정론 · 위조 동치 금지).
+
+- 어댑터: `HEXAD/CHAT/coffeshop_akida.{hexa,py}`
+- 학습 lane: `LAUNCHPAD/coffeshop_quorum_learn.{hexa,py}`
+- 발사 엔트리: `LAUNCHPAD/coffeshop_akida_launch.{hexa,py}` (`[hw|sw] [--broker ws://…/ws/akida_ingest]`)
+- verdict: `.verdicts/coffeshop_akida/` (verbatim) · UNIVERSE `H_846_coffeshop_akida_closedloop.md`
+
 ## Cross-references
 
 - spec: `HEXAD/PURE/eval/spec_multilingual_probe_2026_05_23.md`

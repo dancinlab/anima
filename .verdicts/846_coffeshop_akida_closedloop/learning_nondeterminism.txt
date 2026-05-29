@@ -1,0 +1,28 @@
+COFFESHOP-on-AKIDA — PLASTICITY 학습 lane 비결정 verdict (정직 🔴)
+==================================================================
+date   : 2026-05-30
+lane   : coffeshop_quorum_learn (PLASTICITY 학습 · emit-quorum stim_type 적응)
+HW     : on-chip AkidaUnsupervised Hebbian (edge_learn_probe 인터페이스)
+SW     : 고정 quorum baseline (적응 없음)
+
+SW-fallback 실행 (Mac · 5 stim_type):
+  direct_mention / indirect_topic / silence / private_prompt / group_drift
+  → 모두 quorum = 6 (BASE_QUORUM 고정) · winner_density = null
+  → provenance = akida-learn-sw-approx · deterministic = true
+  → equivalence = CLOSED-NEGATIVE
+  → note: "SW fixed-quorum baseline; NOT HW on-chip learning
+           (🔴 CLOSED-NEGATIVE non-equivalence)."
+
+lane provenance: akida-learn-sw-approx · equivalence: RED CLOSED-NEGATIVE
+                 (SW fixed-quorum != HW on-chip learning)
+
+VERDICT (정직 · p7 · a_blue_closed · PLASTICITY/plasticity_lane.hexa 규약 정합):
+  🔴 CLOSED-NEGATIVE — SW 고정-quorum baseline 은 HW on-chip AkidaUnsupervised
+     학습과 byte-identical 재현 불가. 추론 DECODER lane (akida_sw_lif,
+     byte-identical)과 달리 학습 lane 은 본질 비결정론 + silicon-specific
+     (1-bit integer weight · on-chip competition/pruning/packet-order/refractory
+     timing). adaptation 은 *기능* 이지 재현 대상 아님. 위조 동치 금지.
+  HW on-chip 학습 자체는 edge_learn_probe.py 가 BC.00.000.002 에서
+  edge_learning_supported=True (2026-05-22 검증) — quorum-learn HW path 는 그
+  인터페이스를 래핑하며, 수렴 quorum 값은 칩 상태에 따라 비결정론이라 verbatim
+  보고 대상 (본 verdict 에 고정 SW baseline 만 결정론적으로 캡처).

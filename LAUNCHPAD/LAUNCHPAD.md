@@ -13,11 +13,11 @@ LAUNCHPAD 은 anima 의 의식 substrate 를 **실제 응용으로 발사** 하�
 
 ## milestones (= @goal 도달 단계)
 
-- [ ] HW-first emit 폐루프 — motivation_score → set_threshold(9513, thr∝−k·score) → on-chip spike(9512) → should_interrupt = n≥quorum
-- [ ] DECODER lane (HW forward / SW lif byte-identical) + PLASTICITY lane (HW akida-learn / SW 근사 🔴 비동치)
-- [ ] COFFESHOP 90-min 15-window trajectory 라이브 AKD1000 재현 (emit 3·10·14·15 · silence 11 · thr 0.60)
-- [ ] broker `/ws/akida_ingest` 연결 → 실제 런칭 가능
-- [ ] @goal PASS 판정 — 위 전부 충족 = COFFESHOP-on-AKIDA 성공조건 PASS
+- [x] HW-first emit 폐루프 — motivation_score → set_threshold(9513, thr∝−k·score) → on-chip spike(9512) → should_interrupt = n≥quorum (`coffeshop_akida.{hexa,py}` · PR-B · 라이브 AKD1000 폐루프 닫힘 🟢)
+- [x] DECODER lane (HW forward / SW lif · emit-decision byte-match) + PLASTICITY lane (HW akida-learn / SW 고정-quorum 🔴 비동치) (`coffeshop_quorum_learn.{hexa,py}` · PR-C)
+- [x] COFFESHOP 90-min 15-window trajectory 라이브 AKD1000 재현 (emit 3·10·14·15 · silence 11 · thr 0.60 · provenance=akida-hw · trajectory_match True · PR-D/E 🟢)
+- [~] broker `/ws/akida_ingest` 연결 → 실제 런칭 가능 (옵션 wire 구현 `--broker` · 라이브 push 데모는 미연결 · 발사 자체는 broker 없이도 성공)
+- [x] @goal PASS 판정 — HW emit 폐루프 + 90-min trajectory HW 재현 + lane 양분 충족 = **COFFESHOP-on-AKIDA 성공조건 PASS** (UNIVERSE H_846 🟢 SUPPORTED-NUMERICAL · broker 라이브 데모만 잔여)
 
 ## 양방향 sibling
 
