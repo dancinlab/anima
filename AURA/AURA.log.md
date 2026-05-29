@@ -103,8 +103,9 @@
 - C5 🟡 in-silico 천장(ubu-1 numpy seed42): scalp→cortical 복원 R² — 전극 포화(256→1024 +0.01~0.05) + blur천장(현실σ0.50 ~28% 복원·이상σ0.25 ~54%) → 두개골 LPF=비침습 물리천장 정량. 정성(포화+blur천장) robust, 절대% toy-specific
 - 종합: "비침습으로 침습급"의 천장 = 28~54% of ECoG(toy). 전극수는 한계효용, blur가 벽. C6=real head-model+deep-inverse 정밀화(cloud) 잔여
 
-## 2026-05-30 — /hexa-loop 돌파 (C6, 다중모달 천장 깨기)
-- discover: 다중모달 융합·prior-injection·temporal super-res·능동deconv 후보. verify=다중모달 in-silico(ubu-1)
-- 🎯 C6 verified: EEG-only R²0.243 · +fNIRS 0.245(Δ+0.002 무의미, 같은 두개골 blur=중복) · +tFUS 0.482(Δ+0.239 천장돌파, 음향 sharp σ0.22=전기-LPF 우회)
-- 돌파 명제: "비침습 침습급"은 EEG 강화 아니라 두개골 전기-LPF 우회하는 異種 transfer 모달(tFUS/fUS) 융합. C2/C3 5법이 막힌 이유=전부 전기 EEG계 같은 채널
-- honest: toy·tFUS는 주로 자극(성인 비침습 음향영상 미성숙). 정성(같은blur=중복·다른transfer=돌파) robust. C7=prior/temporal/real-head/fUS문헌. active-domain마커=CLM(타세션)이나 사용자 명시 AURA로 진행
+## 2026-05-30 — /hexa-loop rounds 2-4 (지렛대 map 완성, 고갈)
+- C7 prior-injection: ridge0.243→sparse0.289(+0.046)→oracle0.798(+0.555). 천장=prior정보 한계도. 소스위치 알면 80%
+- C8 stack: EEG0.243→+tFUS0.481→+둘다0.676. 異種모달⊕prior 독립 stack ≈침습급근접
+- C9 temporal-smooth: null(0.243→0.235). 공간손실 시간회수불가=falsified lever(정직 negative)
+- MAP: 비침습침습급=異種모달(C6)⊕prior(C7) ~68%(toy). 전극수·시간평활=헛다리. 공간정보회복이 본질
+- C9 null=in-silico toy lever lane 고갈 신호. 남은 frontier=real head-model/실MRI-prior/성인fUS문헌/실EEG+fNIRS=external(cloud). lane-pause
