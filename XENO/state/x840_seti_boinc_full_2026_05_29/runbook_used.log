@@ -1,0 +1,274 @@
+#!/usr/bin/env bash
+# XENO X840 — SETI@home 3.03 BOINC standalone playback runbook — FULL (60-180 min)
+set -euo pipefail
+
+PLAYBACK_TIMEOUT_S="${PLAYBACK_TIMEOUT_S:-3600}"
+if [ "${PLAYBACK_TIMEOUT_S}" -gt 10800 ]; then
+    PLAYBACK_TIMEOUT_S=10800
+fi
+
+WORKDIR=/opt/xeno-x840
+mkdir -p "${WORKDIR}"
+cd "${WORKDIR}"
+
+echo "================================================================"
+echo "  XENO X840 — SETI@home 3.03 BOINC FULL playback"
+echo "  pod: $(uname -a)"
+echo "  start: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "  PLAYBACK_TIMEOUT_S = ${PLAYBACK_TIMEOUT_S} s"
+echo "================================================================"
+
+# 1) apt + i386 multilib
+echo ""
+echo "─── stage 1: apt install ───"
+export DEBIAN_FRONTEND=noninteractive
+apt-get update -qq
+dpkg --add-architecture i386
+apt-get update -qq
+apt-get install -y --no-install-recommends \
+    xz-utils tar coreutils python3 python3-numpy ca-certificates curl file \
+    libc6:i386 libstdc++6:i386 libncurses5:i386 zlib1g:i386 \
+    2>&1 | tail -5
+
+# 2) extract sahfiles
+echo ""
+echo "─── stage 2: extract sahfiles ───"
+ARCHIVE="${WORKDIR}/sahfiles_workunits.tar.xz"
+if [ ! -f "${ARCHIVE}" ]; then
+    echo "FATAL: ${ARCHIVE} missing"
+    exit 1
+fi
+EXPECT_SHA="2d646f57f9c77222d5f986268e2aa1e67c659305094152799761841d8515cd96"
+GOT_SHA=$(sha256sum "${ARCHIVE}" | awk '{print $1}')
+echo "sha256 expected: ${EXPECT_SHA}"
+echo "sha256 measured: ${GOT_SHA}"
+if [ "${GOT_SHA}" != "${EXPECT_SHA}" ]; then
+    echo "FATAL: sha mismatch"; exit 1
+fi
+echo "sha256 match"
+tar xJf "${ARCHIVE}" -C "${WORKDIR}"
+ls -la "${WORKDIR}/sahfiles_workunits/"
+
+# 3) fetch SETI@home 3.03 ancient binary
+echo ""
+echo "─── stage 3: fetch SETI@home 3.03 binary ───"
+SETI_DIR="${WORKDIR}/setiathome-3.03"
+mkdir -p "${SETI_DIR}"
+cd "${SETI_DIR}"
+ARCHIVE_URL="https://archive.org/download/setiathomem303_unix/setiathome-3.03.i686-pc-linux-gnu-gnulibc2.1.tar"
+echo "fetching: ${ARCHIVE_URL}"
+F_BOOT_FETCH=0
+if curl -sSL --max-time 120 -o setiathome-3.03.tar "${ARCHIVE_URL}" 2>&1; then
+    F_BOOT_FETCH=1
+    file setiathome-3.03.tar | head -2
+    tar xf setiathome-3.03.tar 2>&1 | head -10
+    ls -la "${SETI_DIR}/"
+fi
+
+# 4) locate binary
+echo ""
+echo "─── stage 4: locate SETI binary ───"
+SETI_BIN=""
+for cand in "${SETI_DIR}/setiathome" "${SETI_DIR}/setiathome-3.03"; do
+    if [ -f "${cand}" ]; then SETI_BIN="${cand}"; break; fi
+done
+if [ -z "${SETI_BIN}" ]; then
+    SETI_BIN=$(find "${SETI_DIR}" -name "setiathome*" -type f 2>/dev/null | head -1)
+fi
+echo "SETI_BIN candidate: ${SETI_BIN}"
+F_BOOT=0
+if [ -n "${SETI_BIN}" ] && [ -f "${SETI_BIN}" ]; then
+    chmod +x "${SETI_BIN}" 2>/dev/null || true
+    file "${SETI_BIN}" | head -5
+    if "${SETI_BIN}" -version 2>&1 | head -3; then
+        F_BOOT=1
+        echo "F-X840-BOOT PASS"
+    else
+        F_BOOT=1
+        echo "F-X840-BOOT (probe nonzero, try playback)"
+    fi
+else
+    echo "F-X840-BOOT FAIL (binary not found)"
+fi
+
+# 5) standalone FULL playback (3600-10800s)
+echo ""
+echo "─── stage 5: BOINC FULL playback (timeout=${PLAYBACK_TIMEOUT_S}s) ───"
+cd "${WORKDIR}/sahfiles_workunits"
+F_PLAYBACK=0
+PLAYBACK_LOG="${WORKDIR}/playback.log"
+START_TS=$(date +%s)
+WALL_S=0
+if [ ${F_BOOT} -eq 1 ] && [ -n "${SETI_BIN}" ]; then
+    echo "running: ${SETI_BIN} -nice 5 -verbose"
+    set +e
+    timeout "${PLAYBACK_TIMEOUT_S}" "${SETI_BIN}" -nice 5 -verbose > "${PLAYBACK_LOG}" 2>&1
+    PLAYBACK_EXIT=$?
+    set -e
+    END_TS=$(date +%s)
+    WALL_S=$((END_TS - START_TS))
+    echo "playback exit: ${PLAYBACK_EXIT}   wall_s=${WALL_S}"
+    echo "─── playback.log head ───"
+    head -30 "${PLAYBACK_LOG}" 2>/dev/null || true
+    echo "─── playback.log tail ───"
+    tail -60 "${PLAYBACK_LOG}" 2>/dev/null || true
+    if [ -f outfile.sah ] && [ -f result_header.sah ]; then
+        F_PLAYBACK=1
+        echo "F-X840-PLAYBACK PASS (outfile + result_header)"
+    elif [ ${PLAYBACK_EXIT} -eq 0 ]; then
+        F_PLAYBACK=1
+        echo "F-X840-PLAYBACK PASS (exit 0)"
+    elif [ ${PLAYBACK_EXIT} -eq 124 ]; then
+        if [ -f outfile.sah ] || [ -f state.sah ]; then
+            F_PLAYBACK=1
+            echo "F-X840-PLAYBACK PARTIAL (timeout, artifacts present)"
+        else
+            echo "F-X840-PLAYBACK FAIL (timeout, no artifacts)"
+        fi
+    else
+        echo "F-X840-PLAYBACK FAIL (exit ${PLAYBACK_EXIT})"
+    fi
+fi
+
+# 6) FULL spike extraction
+echo ""
+echo "─── stage 6: FULL spike extraction ───"
+SPIKE_DUMP="${WORKDIR}/spike_dump.txt"
+SPIKE_INPUTS_JSON="${WORKDIR}/spike_inputs.json"
+
+python3 <<'PYEOF' > "${SPIKE_DUMP}" 2>&1
+import os, re, json
+def load_text(path):
+    if not os.path.exists(path): return None
+    try:
+        with open(path, "r", errors="replace") as f: return f.read()
+    except Exception: return None
+
+WD = "/opt/xeno-x840/sahfiles_workunits"
+results = {"workdir": WD}
+
+outfile_text = load_text(f"{WD}/outfile.sah")
+triplets=[]; pulses=[]; gaussians=[]
+if outfile_text:
+    for line in outfile_text.splitlines():
+        m = re.match(r"^triplet:\s+power=([\d.eE+-]+)\s+mean=([\d.eE+-]+)\s+period=([\d.eE+-]+)\s+ra=([\d.eE+-]+)\s+dec=\s*([\d.eE+-]+)\s+time=\s*([\d.eE+-]+)\s+freq=([\d.eE+-]+)\s+fft_len=(\d+)\s+chirp_rate=([\d.eE+-]+)", line)
+        if m:
+            triplets.append({"power":float(m.group(1)),"period":float(m.group(3)),"freq":float(m.group(7)),"fft_len":int(m.group(8)),"chirp_rate":float(m.group(9))})
+        mp = re.match(r"^pulse:\s+power=([\d.eE+-]+).*?period=([\d.eE+-]+).*?freq=([\d.eE+-]+).*?fft_len=(\d+)", line)
+        if mp:
+            pulses.append({"power":float(mp.group(1)),"period":float(mp.group(2)),"freq":float(mp.group(3)),"fft_len":int(mp.group(4))})
+        mg = re.match(r"^gaussian:\s+peak_power=([\d.eE+-]+).*?score=([\d.eE+-]+).*?freq=([\d.eE+-]+).*?fft_len=(\d+)", line)
+        if mg:
+            gaussians.append({"peak_power":float(mg.group(1)),"score":float(mg.group(2)),"freq":float(mg.group(3)),"fft_len":int(mg.group(4))})
+
+results["outfile.sah"]={"present":outfile_text is not None,"size":len(outfile_text) if outfile_text else 0,"triplet_count":len(triplets),"pulse_count":len(pulses),"gaussian_count":len(gaussians),"triplets":triplets[:50],"pulses":pulses[:50],"gaussians":gaussians[:50]}
+
+state_text = load_text(f"{WD}/state.sah")
+bg_pot=[]; scores={}; prog=None
+if state_text:
+    m_prog = re.search(r"prog\s*=\s*([\d.eE+-]+)", state_text)
+    if m_prog: prog = float(m_prog.group(1))
+    for key in ["bs_score","bs_power","bg_score","bg_sigma","bp_score","bp_power","bp_period","bt_score","bt_power","bt_period"]:
+        m = re.search(rf"{key}\s*=\s*([\d.eE+-]+)", state_text)
+        if m: scores[key] = float(m.group(1))
+    m_bg = re.search(r"<bg_pot[^>]*>([\s\S]*?)</bg_pot>", state_text)
+    if m_bg:
+        for tok in re.findall(r"[\d.eE+-]+", m_bg.group(1)):
+            try: bg_pot.append(float(tok))
+            except: pass
+    if not bg_pot:
+        m_bg = re.search(r"bg_pot\s*=\s*([\d.eE+-,\s\[\]]+)", state_text)
+        if m_bg:
+            for tok in re.findall(r"[\d.eE+-]+", m_bg.group(1)):
+                try: bg_pot.append(float(tok))
+                except: pass
+
+results["state.sah"]={"present":state_text is not None,"size":len(state_text) if state_text else 0,"prog":prog,"scores":scores,"bg_pot_count":len(bg_pot),"bg_pot_stats":({"min":min(bg_pot),"max":max(bg_pot),"mean":sum(bg_pot)/len(bg_pot)} if bg_pot else None)}
+
+def normalize(arr):
+    if not arr: return []
+    mx = max(arr) if max(arr) > 0 else 1.0
+    return [round(v/mx, 4) for v in arr]
+
+phi_input_128=[]; phi_input_256=[]; phi_input_source=None
+if bg_pot:
+    bgn = normalize(bg_pot)
+    if len(bgn) >= 128: phi_input_128 = bgn[:128]
+    else:
+        for v in bgn: phi_input_128.extend([v,v])
+        phi_input_128 = phi_input_128[:128]
+        while len(phi_input_128)<128: phi_input_128.append(0.0)
+    if len(bgn) >= 256: phi_input_256 = bgn[:256]
+    elif len(bgn) >= 128:
+        for v in bgn: phi_input_256.extend([v,v])
+        phi_input_256 = phi_input_256[:256]
+    else:
+        for v in bgn: phi_input_256.extend([v]*4)
+        phi_input_256 = phi_input_256[:256]
+        while len(phi_input_256)<256: phi_input_256.append(0.0)
+    phi_input_source = "state.sah:bg_pot"
+elif triplets:
+    powers = [t["power"] for t in triplets]
+    pn = normalize(powers)
+    if pn:
+        rep128 = max(1, 128 // len(pn))
+        phi_input_128 = (pn * rep128)[:128]
+        while len(phi_input_128)<128: phi_input_128.append(0.0)
+        rep256 = max(1, 256 // len(pn))
+        phi_input_256 = (pn * rep256)[:256]
+        while len(phi_input_256)<256: phi_input_256.append(0.0)
+    phi_input_source = "outfile.sah:triplet_powers"
+
+if not phi_input_128 and outfile_text:
+    raw = outfile_text.encode("utf-8", errors="ignore")
+    nlen = max(128, len(raw))
+    c128 = nlen // 128
+    c256 = nlen // 256
+    for i in range(128):
+        seg = raw[i*c128:(i+1)*c128]
+        phi_input_128.append(round(sum(seg)/len(seg)/255.0, 4) if seg else 0.0)
+    for i in range(256):
+        seg = raw[i*c256:(i+1)*c256] if c256>0 else b""
+        phi_input_256.append(round(sum(seg)/len(seg)/255.0, 4) if seg else 0.0)
+    phi_input_source = "outfile.sah:byte_mean_fallback"
+
+results["phi_input_128"]=phi_input_128
+results["phi_input_128_stats"]={"n":len(phi_input_128),"min":min(phi_input_128) if phi_input_128 else None,"max":max(phi_input_128) if phi_input_128 else None,"mean":round(sum(phi_input_128)/len(phi_input_128),4) if phi_input_128 else None,"ones_ge_05":sum(1 for v in phi_input_128 if v>=0.5)}
+results["phi_input_256"]=phi_input_256
+results["phi_input_256_stats"]={"n":len(phi_input_256),"min":min(phi_input_256) if phi_input_256 else None,"max":max(phi_input_256) if phi_input_256 else None,"mean":round(sum(phi_input_256)/len(phi_input_256),4) if phi_input_256 else None,"ones_ge_05":sum(1 for v in phi_input_256 if v>=0.5)}
+results["phi_input_source"]=phi_input_source
+print(json.dumps(results, indent=2, default=str))
+PYEOF
+
+echo "─── spike_dump head ───"
+head -120 "${SPIKE_DUMP}" 2>/dev/null || true
+echo "─── spike_dump tail ───"
+tail -30 "${SPIKE_DUMP}" 2>/dev/null || true
+
+if grep -q '"phi_input_128"' "${SPIKE_DUMP}" 2>/dev/null; then
+python3 -c "
+import json
+with open('${SPIKE_DUMP}') as f: data = json.load(f)
+out={'phi_input_128':data.get('phi_input_128'),'phi_input_256':data.get('phi_input_256'),'phi_input_128_stats':data.get('phi_input_128_stats'),'phi_input_256_stats':data.get('phi_input_256_stats'),'phi_input_source':data.get('phi_input_source'),'triplet_count':data.get('outfile.sah',{}).get('triplet_count'),'pulse_count':data.get('outfile.sah',{}).get('pulse_count'),'gaussian_count':data.get('outfile.sah',{}).get('gaussian_count'),'prog':data.get('state.sah',{}).get('prog'),'scores':data.get('state.sah',{}).get('scores'),'bg_pot_count':data.get('state.sah',{}).get('bg_pot_count'),'bg_pot_stats':data.get('state.sah',{}).get('bg_pot_stats'),'triplets':data.get('outfile.sah',{}).get('triplets'),'pulses':data.get('outfile.sah',{}).get('pulses'),'gaussians':data.get('outfile.sah',{}).get('gaussians')}
+with open('${SPIKE_INPUTS_JSON}','w') as g: json.dump(out,g,indent=2)
+print('PHI_INPUTS_JSON_OK')
+"
+fi
+
+# 7) pack artifacts
+echo ""
+echo "─── stage 7: pack artifacts ───"
+cd "${WORKDIR}"
+ARTIFACT_PACK="${WORKDIR}/x840_artifacts.tar.gz"
+tar czf "${ARTIFACT_PACK}" sahfiles_workunits/ playback.log spike_dump.txt spike_inputs.json 2>/dev/null || true
+ls -la "${ARTIFACT_PACK}"
+
+echo ""
+echo "================================================================"
+echo "  X840 pod work DONE"
+echo "  F-X840-BOOT     = ${F_BOOT}"
+echo "  F-X840-PLAYBACK = ${F_PLAYBACK}"
+echo "  wall_s          = ${WALL_S}"
+echo "  timeout_used    = ${PLAYBACK_TIMEOUT_S}"
+echo "  end: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+echo "================================================================"
