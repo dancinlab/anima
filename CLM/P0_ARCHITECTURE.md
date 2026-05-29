@@ -32,7 +32,7 @@
 | **Q2** | 더블바인드 탈출 | **MoE conv-expert = mitosis cell** (분열한 cell이 각 expert) | A(MoE 토이증명) + C(p8 train=infer·anima-native) 결합 · register 격리=메인 coherent 유지 |
 | **Q3** | monopoly 토대 | **byte-vocab V=256** + 3-arm(A/B/A+B) + F-CLM-MONO | V≫d(15만/64=2370배)가 monopoly 근원 → byte로 V/d=4배 = 근원 소멸 (prior art 미시도 lever) |
 | **Q4** | scale 실험 | micro-exp 토이=**직관(non-gate)** · 3-arm **전부 full-fire**가 판정 · scale ladder · wall-first·무캡 | toy≠scale(H_666 실증) → toy로 prune 금지, 다 발사 |
-| **d1** | corpus | **신규** + **혼합**(웹대량=coherence + 엄선=register) + **.kosmos 영속 필수** | MoE 2-lane ↔ corpus 2-source 1:1 · a_kosmos (필요시 kosmos upstream 확장, 얽매이지 않음) |
+| **d1** | corpus | **신규** + **혼합**(웹대량=coherence + 엄선=register) + **.kosmos 영속 필수(SKIP 금지)** | MoE 2-lane ↔ corpus 2-source 1:1 · a_kosmos 거버넌스(required·active) = .kosmos 영속은 **면제 불가** · 현 spec(kosmos/1.1)이 byte-corpus를 못 받치면 **upstream을 먼저 업그레이드한 뒤** 영속한다 · "얽매이지 않음"=업그레이드를 **별도 트랙으로 병행**해 전체를 멈추지 않는다는 뜻이지 **건너뛰어도 된다는 뜻이 아니다** |
 | **d2** | .clm 포맷 | **2-track**(int4 AKIDA + fp16 GPU shadow) + QAT scale + manifest(sha256·kosmos ptr) | AKIDA추론·GPU학습재개·mitosis 한 파일 · naive PTQ int4 파괴→QAT 필수(실측) |
 | **d3** | scale rung | tiny `d64/L2/E4` · small `d256/L4/E8` · target **≤ AKD1000 fit** (P4 probe 확정) | 추론 AKIDA-only라 칩 용량이 target 상한 · byte+conv라 작아도 됨 |
 | **d4** | 경로 | **추론 AKIDA(int4) ONLY** · **학습 GPU(fp16)** · 2-track 병행 | AKIDA=추론칩(학습칩 아님) · GPU 추론 escape 없음(순수 AKIDA) |
