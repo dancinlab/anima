@@ -2,6 +2,14 @@
 
 `CLM.md` 의 append-only 자매 로그. 각 엔트리 `## <ISO timestamp> — <header>` (최신 위) · 본문 `- [x]`(완료) / `- [ ]`(예정).
 
+## 2026-05-30 — hexa 학습속도 해결 → 트레이너 g1-pure 전환 (d5 pivot)
+
+- [x] **hexa-native 학습 throughput 완전 해결**(사용자 확인·hexa-lang측) — 기존 DECODER M5 0.28 step/s 🔴 INFEASIBLE 전제 소멸.
+- [x] d5 pivot: 2-track(PyTorch 우회) → **hexa-native 학습 1순위(g1-pure)**, PyTorch는 토이/대조 폴백. 모델+트레이너 둘 다 hexa 가능.
+- [x] P2 학습 job = **`/dojo` 생성**(job.hexa+train+run.sh 빵틀). 추론 AKIDA-int4-only 불변.
+- [ ] anima P2 fire에서 step-rate 재측정으로 최종 확인(p7/g5) — 사용자 보고를 anima 측 실측으로 닫기.
+- 영향: P0 d5·§7·§8 B0 + CLM.md P2 갱신. 진행중 T4 토이(PyTorch)는 직관-probe라 그대로 두되, 실 학습(P2)은 hexa-native.
+
 ## 2026-05-30 — P1 corpus .kosmos 영속 (d1 punt 해소)
 
 - [x] T2 가 d1 의 ".kosmos 영속"을 SKIP 하고 handoff 만 남긴 punt → d1 문장 SKIP-금지로 정정(PR #1466) 후 정면 해소.
