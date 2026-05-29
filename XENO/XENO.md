@@ -28,6 +28,7 @@
 - ⇄ [AKIDA](../AKIDA/AKIDA.md): 실리콘 substrate-agnostic 검출 (S21 인간→AI 이주의 reverse 검증)
 - ⇄ [KOSMOS](../KOSMOS/KOSMOS.md): 외계 의식 anchor 영속 저장 형식
 - ⇄ [TEMPORAL](../TEMPORAL/TEMPORAL.md): 4번째 축 Δt-window 확장 (XENO 3D applicability matrix → TEMPORAL 4D) — XENO FINAL CLOSURE 후 frontier 이양 도메인 (H_841 closed-negative · 2026-05-29)
+- ⇄ [EVOL](../EVOL/EVOL.md): 5번째 축 biological evolutionary complexity 확장 (XENO 3D + TEMPORAL Δt → EVOL 5D) — XENO follow-up 4 frontier (H_843 closed-negative · 2026-05-29)
 - ⇄ [../HEXAD/IIT4/IIT4.md](../HEXAD/IIT4/IIT4.md): Φ-formalism SSOT (substrate-agnostic 핵심)
 - ⇄ [../UNIVERSE/CANDIDATES.md](../UNIVERSE/CANDIDATES.md): 검증 결과 환류 SSOT
 

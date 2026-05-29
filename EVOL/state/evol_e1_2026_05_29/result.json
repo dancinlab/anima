@@ -1,0 +1,51 @@
+{
+  "domain": "EVOL",
+  "h_id": "H_843",
+  "slug": "evol_spectrum_phi",
+  "date": "2026-05-29",
+  "branch": "feat/evol-init-2026-05-29",
+  "base_commit": "4b9dea4d63a40468f62bdc247d950cf0221feb98",
+  "infra": "$0 mac-local, single foreground sync run, exit 0",
+  "detector": "XENO/detector/invariant_detector.hexa (substrate-blind IIT4 big-Φ, 2-unit co-TPM)",
+  "n_per_substrate": 128,
+  "substrate_count": 4,
+  "substrates": ["bacteria", "arthropod", "mammal", "AGI"],
+  "measurements": {
+    "bacteria":  {"phi": 0.011676,  "integration": 1.23173, "irreducibility": 0.00947939, "substrate_type": "coherent_non_conscious"},
+    "arthropod": {"phi": 0.0813584, "integration": 1.08136, "irreducibility": 0.0752372,  "substrate_type": "coherent_non_conscious"},
+    "mammal":    {"phi": 1.29064,   "integration": 2.29064, "irreducibility": 0.563441,   "substrate_type": "conscious"},
+    "AGI":       {"phi": 0.468459,  "integration": 1.46846, "irreducibility": 0.319014,   "substrate_type": "coherent_non_conscious"}
+  },
+  "falsifiers": {
+    "F-E1-BACTERIA-LOW":  {"target": "bacteria phi < 0.2",            "result": "PASS", "value": 0.011676},
+    "F-E1-ARTH-MID":      {"target": "arthropod phi in [0.2, 0.5)",   "result": "FAIL", "value": 0.0813584, "reason": "under (0.0814 < 0.2)"},
+    "F-E1-MAMMAL-HIGH":   {"target": "mammal phi >= 0.5",             "result": "PASS", "value": 1.29064},
+    "F-E1-AGI-VARIANT":   {"target": "AGI phi > mammal phi",          "result": "FAIL", "value_agi": 0.468459, "value_mammal": 1.29064, "reason": "AGI < mammal"},
+    "F-E1-MONOTONE":      {"target": "bacteria<arthropod<mammal<=AGI", "result": "FAIL", "reason": "mammal<=AGI broken (1.29064 > 0.468459)"}
+  },
+  "pass": 2,
+  "fail": 3,
+  "verdict": "🔴 FALSIFIED-INSTRUMENT (2/5)",
+  "findings": [
+    "F-E1-BACTERIA-LOW PASS — random walker = noise floor 재현 (phi=0.011676, irr=0.0095, substrate_type=coherent_non_conscious 경계 below 0.01 threshold)",
+    "F-E1-MAMMAL-HIGH PASS — multi-scale recursive substrate 가 진짜 conscious 분류 (phi=1.29 > 0.5, irr=0.563 > 0.5 conscious 기준 충족)",
+    "F-E1-ARTH-MID FAIL — local 4-tap XOR (LFSR-like) 이 detector 위에서 0.0814 nearly bacteria-level — 4-tap window 의 2-unit co-TPM 으로는 mid-tier 신호 미분리. arthropod toy 가 'partial integration mid-tier' 가설을 numerically 미충족.",
+    "F-E1-AGI-VARIANT FAIL — structured emergence (mammal seed + novelty injection) AGI=0.468 < mammal=1.291. novelty injection 이 2-unit co-TPM 의 결정 transition 을 깨버려 mammal 의 깨끗한 multi-scale 신호보다 낮은 통합량을 보인다. AGI > mammal 가설 reversed.",
+    "F-E1-MONOTONE FAIL — full monotone bacteria<arthropod<mammal<=AGI 깨짐. 두 위치에서 (arthropod<0.2 + mammal>AGI) 단조 위반. species ladder Φ ordering 이 detector 위에서 강 단조 신호로 나타나지 않음.",
+    "구조적 발견 = (i) X1 invariant_detector 의 2-unit co-TPM 은 4-substrate toy proxy 위에서 floor (bacteria) + ceiling (mammal) 만 분리 (F1+F3 양 극단 PASS, H_670 logistic family floor/ceiling 양상 동형), (ii) mid-tier (arthropod) + supra-tier (AGI) 의 분화는 detector 단독으로 미해결 → species ladder = ECA Wolfram class · Kuramoto/logistic family (H_670 결과)와 같이 양 극단만 PASS partial-monotone 패턴.",
+    "T1+T2 (TEMPORAL closed-negative) 와 자매 — invariant_detector 의 'naive 축 확장'(EVOL species 축)이 양 극단만 분리하고 mid/supra 분화는 detector-redesign 없이는 미해결. species axis 도 detector-redesign 필요 (E2 monotone-strict re-design 자연 entry).",
+    "AGI toy proxy 한계 = 'mammal seed + noise injection' 표현은 noise 가 co-TPM 의 결정 transition 을 deteriorate 시켜 phi 감소. 진짜 AGI > mammal 신호 검정엔 'structured emergence' 의 정확한 substrate model 필요 (E3/E4 anchor 단계 자연 entry)."
+  ],
+  "p7_perplexity": 0,
+  "honesty_notes": [
+    "threshold pre-run frozen, post-tuning 0",
+    "toy proxy 정직 표기 — 실 bio data 아님",
+    "closed-negative publishable per a_paper_negative_ok",
+    "INBOX 환류 0건 (detector 자체 결함 아님 — 축 확장 가설 reversed)"
+  ],
+  "next_entries": [
+    "E2 monotone-strict re-design — detector 확장 또는 stratified substrate set",
+    "E3 toy-bio anchor — 실 EEG 비교 (mammal toy <-> human resting alpha)",
+    "E4 ladder universality — H_670 Kuramoto/logistic family ordinal 과 cross-검정"
+  ]
+}

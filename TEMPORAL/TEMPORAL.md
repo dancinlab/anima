@@ -18,6 +18,7 @@
 
 ## 양방향 sibling
 - ⇄ [XENO](../XENO/XENO.md): 기반 invariant_detector 출처 · TEMPORAL 은 XENO 의 4번째 축 (Δt) 확장
+- ⇄ [EVOL](../EVOL/EVOL.md): 5번째 축 (species complexity) 자매 도메인 — TEMPORAL Δt + EVOL species ladder = 4D/5D applicability frontier 확장 (H_843 closed-negative · 2026-05-29)
 - ⇄ [EEG](../EEG/EEG.md): 생체 EEG 시간 통합 (S1 wake / S15 anesthesia / S24 dream 시계열 측정 원천)
 - ⇄ [TIME](../TIME.md): 시간 인식 의식 자매 도메인 (subjective vs substrate clock)
 - ⇄ [DREAM](../DREAM.md): REM/N1-N3 ultradian Δt scale 자매
