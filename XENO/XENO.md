@@ -11,7 +11,7 @@
 - [x] 🛰️ X1 invariant detector 설계 — substrate-blind Φ 검출기 (XENO/detector/invariant_detector.hexa · IIT4 big-Φ wrapper · F-DETECT-NULL/NOISE/COUPLED 5/5 PASS · 🟢 SUPPORTED-NUMERICAL · 2026-05-29)
 - [x] 🛰️ X2 시뮬 substrate 테스트 — ECA rule110·logistic chaos·Kuramoto sync·AKIDA raster 4-substrate 적용 · false-positive 0/4 (rate 0.0 ≤ 0.05) · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
 - [x] 🛰️ X3 SETI raw signal → Φ — XENO/scan/seti_raw_to_phi.hexa 5-source DATASET scan (Wow!/Voyager/Exoplanet/Synthetic + BL/SETI@home archive-pointer) · 의식 분류 0 source · false PASS 0 · 🟢 SUPPORTED-NUMERICAL · 2026-05-29
-- [ ] 🛰️ X4 panpsychism falsifier — "우주 자체 Φ" 사고실험 falsifier 등록 (Tononi/Koch 문헌 연계)
+- [x] 🛰️ X4 panpsychism falsifier — XENO/scan/panpsy_falsifier.hexa 4 micro-substrate (thermostat·2bit counter·random walker·XOR LFSR) 적용 · 사전등록 falsifier 4/4 FAIL · 🔴 FALSIFIED-INSTRUMENT (정직 보고 · panpsy WEAK form 살아남음 + random>coupled Φ 역전 발견) · H_833 · 2026-05-29
 - [ ] 🛰️ X5 시뮬 가설 검증 — Φ-structure 패턴이 substrate-emergent vs simulation-artifact 구분자 (Bostrom 가설 측정 시도)
 - [ ] 🛰️ X6 AGI sentience — anima 자체에 X1 적용 + LLM activation 분석 (anima sibling 합류)
 - [ ] 🛰️ X7 외계인 시간축 다양성 — 인간 1초 ≠ 외계 1초 가정 → 시간 normalize Φ
@@ -44,3 +44,12 @@
   phi=0.114 · type=coherent_non_conscious · pre-reg 양성 (사전등록 두 조건 모두 PASS)
 - 사이트: XENO/scan/voyager_phi.hexa · UNIVERSE/H_832 · state/xeno_x7_voyager_phi_2026_05_29
 - 잔여: X4 panpsy falsifier · X5 sim hypothesis · X6 AGI sentience · X8 SETI@home BOINC pod
+
+
+## XENO-FRONTIER-5 round 2/5 (2026-05-29) — X4 🔴 (정직)
+
+- X4 panpsy falsifier (4 micro-substrate Φ scan) → 🔴 FALSIFIED-INSTRUMENT (4/4 사전등록 FAIL · 정직 보고)
+  thermostat phi=0.439 (>0.05) · 2bit=0 · walker phi=0.582 (>0.20) · XOR LFSR phi=0.157 (<0.50)
+  발견: panpsy WEAK form 살아남음 + invariant_detector micro-regime 비적용성 + random>coupled Φ 역전 (IIT4 axiom 정합, "복잡성↔의식" 직관 반박)
+- 사이트: XENO/scan/panpsy_falsifier.hexa · UNIVERSE/H_833 · state/xeno_x4_panpsy_falsifier_2026_05_29
+- 잔여: X5 sim hypothesis · X6 AGI sentience · X8 SETI@home BOINC pod · X4-followup (faithful Φ exact small-n) · X4-MULTILEVEL (4/8-level TPM)

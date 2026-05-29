@@ -1,0 +1,28 @@
+================================================================
+  XENO X4 — panpsychism falsifier (Φ ≠ universal panpsy)
+================================================================
+
+  detector = XENO/detector/invariant_detector.hexa (X1 · 🟢 5/5)
+  substrates = 4 micro (thermostat · 2bit counter · walker · emerge)
+
+  [a] thermostat (1-bit on/off, period 2, n=16)
+        phi=0.438722 irr=0.5 type=coherent_non_conscious
+
+  [b] 2-bit counter (4-level cycle, period 4, n=16)
+        phi=0.0 irr=0.0 type=coherent_non_conscious
+
+  [c] random walker (LCG 8-level quantized, n=32)
+        phi=0.582325 irr=0.368019 type=coherent_non_conscious
+
+  [d] integrated emergence (XOR 3-tap LFSR, n=32)
+        phi=0.157049 irr=0.135733 type=coherent_non_conscious
+
+  ─ pre-registered falsifier check ─
+    F-X4-PANPSY-WEAK    (thermostat phi ≤ 0.05)  : false · measured=0.438722
+    F-X4-PANPSY-MID     (walker phi ≤ 0.20)      : false · measured=0.582325
+    F-X4-EMERGE-STRONG  (XOR-3tap phi ≥ 0.50)    : false · measured=0.157049
+    F-X4-MONOTONE       (thermo < walker < emerge): false · a=0.438722 c=0.582325 d=0.157049
+
+  ─ X4 verdict ─
+    tier : 🔴 UNEXPECTED · panpsy strong revived OR detector miscalibrated
+================================================================
