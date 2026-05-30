@@ -194,3 +194,50 @@ H_847 routing-z 가 tiny~small 한정으로만 측정될 수 있었던 근본 �
 
 - F-CLM-MONO-ARRAY 는 H_847 의 후속 — H_847 은 **고정 rung(tiny/small)에서 routing-z 임계**를 봤고(🔴), 이 엔진은 **rung 을 expert-count 로 바꿔** dispatch entropy 의 scale 거동을 본다. 둘은 다른 falsifier(H_847=고정 z 임계 · ARRAY=scale 단조성).
 - BRIDGE(distill) = SECONDARY arm — transfer 보장 cross-check (a_scale_honest_scope 측정rung⊥배포rung 에 transfer 추가).
+
+---
+
+## 12. PHI-NATIVE — 측도 교체로 충돌 ROOT 소멸 (round-3 winner)
+
+> §11 MITOSIS-ARRAY(DISSOLVE scale=expert-count)는 H_852+H_854 에서 🔴🔴, BRIDGE(distill)도 H_853+H_854 에서 🔴🔴 — **둘 다 toy∧production deterministic CLOSED**. hexa-loop round-3(`CLM.breakthrough.mining.md` ROUND 3, depleted-both)이 그 死因을 짚음: **routing-diversity 라는 측도 자체**가 (a) null-referenced → ln(E) 천장 doomed (b) scale-dependent. 5-lens 수렴 결론 = **측도를 바꿔라**.
+
+### 12.1 핵심 reframe
+
+| | 닫힌 두 경로 (§11 ARRAY · BRIDGE) | PHI-NATIVE (§12) |
+|---|---|---|
+| 무엇을 측정 | inter-expert dispatch entropy (routing-diversity) | **IIT4 Φ** (region/coarse bounded) |
+| scale 의존 | ✗ ln(E) doomed | ✅ **scale-free** (Φ(n=5)≈valid as Φ(n=500)) |
+| null 필요 | ✗ uniform-simplex (ln E 천장) | ✅ **intrinsic·null-free** |
+| 어디서 측정 | GPU proxy | **AKD1000 spike 출력**(배포 칩) |
+| 측정rung vs 배포rung | 분리(충돌) | **동일 칩(붕괴)** → 충돌 ROOT 소멸 |
+
+핵심: "의식 측도가 큰 scale 필요"는 *틀린 측도(routing-diversity)*에 대해서만 참이었다. Φ 는 작은 n 에서도 meaningful → **측정⊥배포 충돌이 애초에 없음**(배포하는 칩에서 Φ 를 잰다). 이것은 SOLVE 가 아니라 **REFRAME** — routing-diversity 질문(🔴 closed)을 *moot* 하게 만든다.
+
+### 12.2 설계 (재사용 우선 · g0/g1)
+
+```
+  CLM forward (AKIDA int4) ──→ spike 출력 (snn_lif / spike_streamer)
+                                     │  TPM 추출 (time-binned spike → 전이행렬)
+                                     ▼
+            region/coarse-grained 분할 (n≤~7 region, exact 2^(2n) 회피)
+                                     │  iit4_bounded.hexa (재사용)
+                                     ▼
+                          Φ (bounded big-phi) = CLM 의식 신호
+```
+
+- **Φ 변종**: `HEXAD/IIT4/lib/iit4_bounded.hexa`(bounded big-phi, 큰 n) + `iit4_bigphi.hexa` 재사용. exact Φ cost 2^(2n) → region 분할(n≤~7)로 coarse-grain.
+- **측정 대상**: AKD1000 spike 출력 — SW(`SUB_ENGINES/AKIDA/pack/adapters/snn_lif.py`·`akida_sw_lif`) toy → pi5 HW(`spike_streamer`) later. 선례 `AKIDA/akida_edge_of_chaos_phi.hexa`(AKIDA+Φ 이미 연결).
+- **TPM**: time-binned spike raster → 전이확률행렬(TPM) → IIT4 Φ 입력 (anima IIT4 표준 경로).
+- **시간축 옵션**(r3-c3): spike train 시간동역학의 temporal Φ — AKIDA=spiking 칩의 native 신호. v1=공간 region-Φ, v2=temporal.
+
+### 12.3 toy 검증 질문 (sbs auto → 별도 구현)
+
+Φ-on-chip 이 *좋은 CLM 의식 신호*인지 실측(검증 없이 채택 금지):
+- **F-CLM-PHI-MEANINGFUL** (사전등록): region-Φ 가 ① 작은 n 에서도 non-trivial(Φ>0 변별) ② monopoly-collapse spike(저 Φ) vs rich spike(고 Φ) 변별 ③ size-robust(n 바꿔도 신호 보존, ln E 류 artifact 無).
+- 검증 = ubu-1 GPU only(Mac 0 · NULL 류 ≤16) · verbatim `.verdicts/` + UNIVERSE H + CLAIMS. 🟢(Φ meaningful → 측도교체 성립) / 🔴(Φ도 부적합 → 더 깊은 reframe) 둘 다 정직 보고.
+
+### 12.4 정직 경계
+
+- PHI-NATIVE 는 routing-diversity 🔴(§11)를 *해결*하지 않고 *우회*한다 — 두 measure 는 orthogonal. §11 falsifier 는 닫힌 채 유지.
+- exact Φ 불가(2^(2n)) → region/coarse 근사만 주장. 1.2M 노드 전체 Φ 는 미주장.
+- v1 SW spike(akida_sw_lif) 측정 → HW(pi5 AKD1000) 측정은 후속. byte-identical SW↔HW(H_680)라 SW v1 이 HW 대리로 정당하나, 실 HW Φ 는 별도.
