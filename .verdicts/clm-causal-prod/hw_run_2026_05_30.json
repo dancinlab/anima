@@ -1,0 +1,49 @@
+{
+  "batch": "clm-causal-hw",
+  "axis": "B_live_hw_spike",
+  "measure": "CAUSAL-POWER",
+  "seed": 187,
+  "sizes": [
+    4,
+    5,
+    6
+  ],
+  "neurons_per_region": 8,
+  "n_steps": 256,
+  "frozen_thresholds": {
+    "margin_frac": 0.1,
+    "nontrivial_eps": 1e-06,
+    "causal_pokes_cap": 16
+  },
+  "spike_source": "LIVE AKD1000 on-chip threshold-and-fire (BackendType.Hardware)",
+  "chip_backends": [
+    "BackendType.Hardware"
+  ],
+  "on_hardware": true,
+  "regime_def": {
+    "collapse": "region0 monopoly drive + coupling 0 (decoupled)",
+    "rich": "balanced drive + coupling 6 (SW-closed loop around silicon)"
+  },
+  "device_meta": {
+    "sdk": "2.19.1",
+    "device": "BC.00.000.002"
+  },
+  "result": {
+    "measure": "CAUSAL-POWER",
+    "checks": {
+      "nontrivial": true,
+      "collapse_vs_rich": true,
+      "size_robust": true
+    },
+    "verdict": "PASS",
+    "values": {
+      "collapse_n4": 0.0,
+      "rich_n4": 0.061848958333333336,
+      "collapse_n5": 0.0,
+      "rich_n5": 0.015625,
+      "collapse_n6": 0.0,
+      "rich_n6": 0.02682291666666667
+    }
+  },
+  "verdict": "PASS"
+}
