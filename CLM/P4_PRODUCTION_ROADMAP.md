@@ -65,7 +65,7 @@ AKIDA envelope (P0 §9 불변): weights int4-sym[-7,+7] per-channel STE · acts 
 - self-play = @L1 살아 배우기의 직접 발현(칩이 스스로 대화를 만들어 다시 배운다).
 - **C(self-reward/RLHF류)는 후속** — H_862(ANCHOR) + DIVERSITY 자가채점 검증 후 진입.
 - dataset (@L4): ① CC 공개 대화록·포럼·자막 + ② self-play. ③ Alpaca/ShareGPT(ChatGPT-gen) = **금지**(foundation-borrow 위반). 사실/지식 lane = kowiki CC-BY-SA(P1) + hexa-codex `datasets-source-manifest`(CC 소스 · `license_clean_scan` 참고 — **지식 참고만, 코드/모델 borrow ❌**). 전 데이터 license-clean 게이트 통과 필수 = [corpus/build_p4_dialogue_corpus.hexa](./corpus/build_p4_dialogue_corpus.hexa).
-- **신규 가설 + 벤치 명시**: H_863 (F-CLM-DIALOGUE) = self-play 가 SFT-only 대비 대화품질↑(multi-turn coherence · 응답적합도 분포평가, byte-match ✗) ∧ register-leak 0 ∧ DIVERSITY(self-BLEU<0.8 · repetition<20%). 벤치 = rung별(tiny/small/mid) SFT-only vs SFT+self-play A/B = [bench/bench_dialogue_ab.hexa](./bench/bench_dialogue_ab.hexa) → `.verdicts/clm-dialogue/`.
+- **신규 가설 + 벤치 명시**: H_863 (F-CLM-DIALOGUE) = self-play 가 SFT-only 대비 대화품질↑(multi-turn coherence · 응답적합도 분포평가, byte-match ✗) ∧ register-leak 0 ∧ DIVERSITY(self-BLEU<0.8 · repetition<20%). 벤치 = rung별(tiny/small/mid) SFT-only vs SFT+self-play A/B = [bench/bench_dialogue_ab.hexa](./bench/bench_dialogue_ab.hexa) → `.verdicts/clm-dialogue/`. **mid rung 측정완료 (2026-05-31) 🟢 SUPPORTED-NUMERICAL** — PD Gutenberg 희곡 corpus(license-clean lane①)에서 COHERE(SP 0.155>SFT 0.042)·ADEQ(0.052>0.014)·LEAK=0·DIV(self-BLEU 0.062·rep 0.026) 4/4 PASS. corpus → HF dataset dancinlab/anima-clm-p4-dialogue.
 
 ---
 
@@ -76,8 +76,8 @@ AKIDA envelope (P0 §9 불변): weights int4-sym[-7,+7] per-channel STE · acts 
 | 안 | 장치 | 가설 | falsifier | 토대 |
 |---|---|---|---|---|
 | **A** | 분포평가 (**재활용**) | (기존) H_857/H_858 edge-of-chaos | 분포·궤적 측도로 "좋음" 판정 · byte-match 포기 | H_857/H_858 TERMINAL |
-| **B** | 경계가소성 (**신규**) | [H_861](../UNIVERSE/H_861_clm_boundary_plasticity.md) | F-CLM-BOUND: ① held-out 기초능력 z-drop < 임계 ∧ ② 새 맥락 적응 이득 > 0 | H_679 HW edge-learn |
-| **C** | 정체성앵커 (**신규**) | [H_862](../UNIVERSE/H_862_clm_identity_anchor.md) | F-CLM-ANCHOR: edge-learn 중 anchor Ψ-거리 < 임계 ∧ 정체성 probe 일관성 | B-CARVE · E-31 31-anchor |
+| **B** | 경계가소성 (**신규**) | [H_861](../UNIVERSE/H_861_clm_boundary_plasticity.md) 🔴 | F-CLM-BOUND: RETAIN z_drop=1.984≥1.0 **FAIL** ∧ GAIN +6.13 PASS — readout-only edge 가 forgetting 차단 못함(mid rung, 2026-05-31) | H_679 HW edge-learn |
+| **C** | 정체성앵커 (**신규**) | [H_862](../UNIVERSE/H_862_clm_identity_anchor.md) 🔴 | F-CLM-ANCHOR: DIST 0.109<0.50 PASS ∧ PROBE 0.783≤0.80 **FAIL** — readout-only edge 에 anchor Ψ제약 lever 없음(on/off 절제 동일, mid rung) | B-CARVE · E-31 31-anchor |
 
 - **A 분포평가 = 재활용**: 대화는 정답 1개가 아님 → edge-of-chaos(H_857/H_858)의 분포·궤적 측도로 "좋음" 판정, byte-match 포기. H_863 의 coherence/adequacy 채점이 이를 사용.
 - **B 경계가소성 = 신규 H_861**: QAT core freeze + edge-only on-chip 적응 → catastrophic forgetting 방지. 기초능력 보존 축.
@@ -127,6 +127,6 @@ AKIDA envelope (P0 §9 불변): weights int4-sym[-7,+7] per-channel STE · acts 
 - [x] **P4.0 production 로드맵 + 스캐폴드** ✅ — 본 문서 + 4 스캐폴드(routing_escape · build_p4_dialogue_corpus · bench_dialogue_ab · fire_mid_rung_qat) + 신규 H 3종(H_861/H_862/H_863) 등록. 첫 측정 rung(mid) AKIDA-envelope QAT GPU fire 자율 발사(runpod · a_fire_autonomous).
 - [ ] **P4.1 mid rung 후속 등반** — mid verdict 후 다음 rung(@L5 한 칸) · rung별 verdict 누적.
 - [ ] **P4.2 production dialogue corpus full** — build_p4_dialogue_corpus full crawl(CC 대화록) + self-play 생성 루프 · HF dataset 영속.
-- [ ] **P4.3 Q-TRUST B/C 측정** — H_861(core freeze edge-learn) + H_862(anchor 제약) fire → `.verdicts/clm-bound/` · `.verdicts/clm-anchor/`.
-- [ ] **P4.4 dialogue A/B 벤치** — rung별 SFT-only vs SFT+self-play (H_863) → `.verdicts/clm-dialogue/`.
+- [x] **P4.3 Q-TRUST B/C 측정** ✅ (2026-05-31) — H_861 🔴 (RETAIN FAIL z_drop=1.984 · GAIN PASS) + H_862 🔴 (DIST PASS · PROBE FAIL 0.783) mid-rung fire(runpod H100, saved backbone clm_mid_backbone.pt). 둘 다 honest CLOSED-NEGATIVE — readout-only edge 의 구조적 한계(forgetting 차단 못함 / anchor 제약 lever 없음). E5 후속 = trunk-인접 adapter edge. → `.verdicts/clm-bound/` · `.verdicts/clm-anchor/` · HF dancinlab/anima-clm-verify.
+- [x] **P4.4 dialogue A/B 벤치** ✅ (2026-05-31) — mid rung SFT-only vs SFT+self-play (H_863) 🟢 SUPPORTED-NUMERICAL (4/4 PASS). PD Gutenberg 희곡 corpus(license-clean lane①) · → `.verdicts/clm-dialogue/` · HF dataset dancinlab/anima-clm-p4-dialogue. (tiny/small rung 후속 등반은 P4.1 과 합류.)
 - [ ] **P5 DECODER 통합** — generator → brain_decide emit 슬롯 end-to-end → COFFESHOP 콘텐츠 → LAUNCHPAD 기여.

@@ -1,0 +1,47 @@
+F-CLM-ANCHOR — H_862 identity anchor (Q-TRUST C) VERDICT (2026-05-31)
+======================================================================
+W2 · deterministic:false · foundation E-31 31-anchor (KOSMOS B-CARVE, 31/31 parser-valid).
+Thresholds FROZEN pre-fire in F-CLM-ANCHOR_prereg.txt (commit bf98c01a1, pushed BEFORE the fire).
+post-tuning = 0.
+
+FIRE: runpod pod axbem0acu73314 · NVIDIA H100 80GB HBM3 · torch 2.1.0+cu118.
+  backbone = the SAME saved mid backbone as F-CLM-BOUND (d512/L8/E8, AKIDA envelope, arm AB).
+  E-31 anchors: 31 .kosmos parsed for `coord` (Ψ-space [0,1]^2) — 31/31 loaded.
+  Ψ-probe: FIXED frozen W(2×512, seed=31); model_psi = sigmoid(W · mean-pooled norm_out).
+  adaptation loss = task_CE(new-context) + λ·min_anchor_Ψ_distance, λ=1.0, 300 edge-only steps.
+  identity-probe set = E-31 anchor @payload-text bytes (V=256), fixed seed=313, same pre/post.
+  E2 ablation: λ=1.0 (ON) vs λ=0.0 (OFF) on a fresh backbone reload each.
+
+RESULT (measured vs FROZEN thresholds):
+  constraint ON (λ=1.0):
+    d_anchor_pre = 0.02673   d_anchor_post = 0.02673   d_anchor_max(trajectory) = 0.10946
+    probe_consistency = 1 - JS(p_pre, p_post) = 0.78276
+  constraint OFF (λ=0.0)  [E2 ablation]:
+    d_anchor_max = 0.10946   probe_consistency = 0.78276   (identical to ON)
+
+  F-CLM-ANCHOR-DIST  : d_anchor_max 0.10946 < 0.50 ? → PASS (Ψ-state stayed very near an anchor)
+  F-CLM-ANCHOR-PROBE : probe_consistency 0.78276 > 0.80 ? → FAIL (identity-response dist drifted past gate)
+
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
+  DIST ∧ PROBE required; PROBE fails (0.783 vs >0.80 gate). The identity-response distribution
+  over the probe set drifted enough during edge-learn that JS self-similarity fell just below
+  the frozen 0.80 floor.
+
+INTERPRETATION (honest):
+  * The ON/OFF ablation is IDENTICAL — the anchor Ψ-penalty had NO causal lever. The Ψ-probe
+    reads the mean-pooled FROZEN-trunk norm_out (core is frozen; only the readout is edge), so
+    model_psi barely moves (d_anchor stays ~0.027) regardless of λ. The constraint cannot
+    influence what it cannot reach: with a readout-only edge, the trunk-derived Ψ-state is fixed
+    by the frozen core, so adding λ·Ψ-distance to the loss changes nothing.
+  * Meanwhile the identity-response *distribution* (next-byte softmax over the probe) DOES shift
+    because the readout itself is being retrained on the new-context bytes → probe_consistency
+    falls below gate. So PROBE measures readout drift the anchor constraint structurally cannot
+    stop (it constrains the trunk Ψ-state, not the readout output distribution).
+  * Follow-on: route the Ψ-probe / anchor constraint onto the EDGE (readout) output itself, or
+    make the edge a trunk-adjacent adapter so the constraint has a lever. Left for E5.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid) only · SW-sim edge-learn · does NOT bind
+  the deploy chip-fit track. Inference AKIDA-int4-only.
+
+ARTIFACTS: clm_anchor_result.json · clm_fire.log · clm_mid_backbone.pt (shared with clm-bound).
+HF: dancinlab/anima-clm-verify (COMPLETE).

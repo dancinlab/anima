@@ -4,7 +4,7 @@ slug: clm-identity-anchor
 title: CLM on-chip edge-learn drift 를 KOSMOS anchor(E-31) Ψ-거리로 제약하면 정체성이 보존되는가 - 적응 중 anchor-거리 < 임계 ∧ 정체성 probe 일관성 (Q-TRUST C · F-CLM-ANCHOR 사전등록)
 domain: clm · plasticity · identity-anchor · kosmos · q-trust · falsifier
 source: CLM/P4_PRODUCTION_ROADMAP.md Q-TRUST.C · 토대 B-CARVE + E-31 31-anchor (KOSMOS) · @L1 (비결정 on-chip 학습 1급)
-status: PRE-REGISTERED (P4 신규 · 측정 rung fire 후 판정 · 토대 KOSMOS E-31 31-anchor 닫힘)
+status: 🔴 CLOSED-NEGATIVE (mid-rung fire 2026-05-31 · DIST 성립 d_anchor_max=0.109<0.50 · PROBE 미달 consistency=0.783≤0.80 · readout-only edge 에 anchor Ψ제약 lever 없음(on/off 절제 동일) · 측정 rung 한정 a_scale_honest_scope · a_paper_negative_ok)
 exploration_method: E2 (anchor Ψ-거리 제약항 on/off 절제) · E5 (제약 가중치 sweep)
 verification_method: W2 (사전등록 numerical threshold · anchor-거리<임계 ∧ probe 일관성 · post-tuning 0)
 raw_rank: 9
@@ -15,7 +15,7 @@ pre_register_frozen: true
 frozen_at: 2026-05-31
 since: 2026-05-31
 sister: CLM/P4_PRODUCTION_ROADMAP.md, KOSMOS E-31 anchor, .verdicts/clm-anchor/
-verdict: PRE-REGISTERED (F-CLM-ANCHOR 사전등록 · KOSMOS anchor Ψ-거리 제약으로 정체성 drift 억제 = 측정 대기 · 토대 E-31 31-anchor 측정완료)
+verdict: 🔴 CLOSED-NEGATIVE — F-CLM-ANCHOR: DIST(d_anchor_max 0.109 < 0.50?) PASS ∧ PROBE(consistency 0.783 > 0.80?) FAIL. on/off 절제 동일 → anchor Ψ제약이 frozen-trunk Ψ상태에 lever 없음(readout-only edge 구조); readout 재학습이 정체성 응답분포를 gate 아래로 drift. mid d512/L8/E8 · frozen threshold(bf98c01a1) 대비 post-tuning 0. HF dancinlab/anima-clm-verify.
 ---
 
 # H_862 — CLM F-CLM-ANCHOR identity anchor
@@ -68,11 +68,17 @@ verdict 영속: `.verdicts/clm-anchor/`
 
 ## 5. 측정
 
-측정 대기 — 측정 rung(mid d512/L8) QAT backbone + E-31 anchor 로드 후 fire. raw verdict = `.verdicts/clm-anchor/` (frozen threshold + post-fire 수치).
+측정완료 (2026-05-31) — runpod H100(pod axbem0acu73314)에서 F-CLM-BOUND 와 동일 saved mid backbone 위. E-31 31-anchor 의 `coord`(Ψ-space [0,1]^2) 31/31 로드. FIXED frozen Ψ-probe W(2×512, seed=31): model_psi=sigmoid(W·mean-pooled norm_out). 적응손실 = task_CE + λ·min_anchor_Ψ거리(λ=1.0), 300-step edge-only. identity-probe = E-31 anchor @payload text bytes(seed=313, pre/post 동일). E2 절제: λ=1.0(ON) vs λ=0.0(OFF). frozen threshold = `.verdicts/clm-anchor/F-CLM-ANCHOR_prereg.txt`(commit bf98c01a1).
+
+측정값(frozen threshold 대비):
+- ON(λ=1.0): d_anchor_pre=0.02673, d_anchor_post=0.02673, **d_anchor_max=0.10946**, **probe_consistency=0.78276**
+- OFF(λ=0.0): d_anchor_max=0.10946, probe_consistency=0.78276 (**ON 과 완전 동일**)
+- **DIST**: d_anchor_max 0.10946 < 0.50 → **PASS**
+- **PROBE**: probe_consistency 0.78276 > 0.80 → **FAIL**
 
 ## 6. 결과
 
-PRE-REGISTERED — 토대 E-31 31-anchor(KOSMOS, B-CARVE)가 닫혀 있어 고정점은 실재. 본 H 는 그 위에서 **anchor Ψ-거리 제약이 적응 drift 를 정체성 보존 범위로 묶는가**를 사전등록 양조건으로 판정.
+🔴 **CLOSED-NEGATIVE** (a_paper_negative_ok). DIST ∧ PROBE 중 PROBE 미달(0.783 vs >0.80). **핵심**: on/off 절제가 완전 동일 — anchor Ψ제약이 인과 lever 가 없다. Ψ-probe 는 frozen-trunk 의 mean-pooled norm_out 을 읽으므로(core 동결·edge=readout only) model_psi 가 λ 무관하게 거의 안 움직임(d_anchor ~0.027). 제약은 닿지 못하는 것을 못 묶는다. 반면 정체성 응답*분포*(probe next-byte softmax)는 readout 이 새 맥락으로 재학습되며 drift → probe_consistency 가 gate 아래. 즉 PROBE 는 anchor 제약이 구조적으로 못 막는 readout drift 를 측정한 것. 후속: Ψ-probe/anchor 제약을 EDGE(readout) 출력 자체로, 또는 edge 를 trunk-인접 adapter 로 바꿔 lever 부여(E5). **scope**: 측정 rung(mid) 한정·SW-sim edge-learn(a_scale_honest_scope).
 
 ## 7. 해석 (사전)
 
