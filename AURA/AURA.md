@@ -89,16 +89,19 @@
 - [x] C16 🗺️ 피질 도달 역량지도 🟡 — C15 envelope에 기능타깃 매핑: M1/V1/S1/A1/DLPFC ✅도달(0.82~0.91 침습급근접, A3 golden 정합) · 대상/섬엽 🟡부분 · 피질하 🔴벽. 비침습 실현권=운동·통신·시각·집행·의식모니터 → `C16-cortical-capability-map.md`
 - [x] C17 🧬 심부핵 도달 역량지도 🟡 — 심부=보상(VTA)·각성(LC)·기분(raphe)·의식(시상)·기억(해마)=relocate-N1 "전뇌통제" 본질=침습필요(DBS확립=파킨슨STN뿐). 유일 비침습 심부=tFUS *자극*(읽기는 C15 벽) → `C17-deep-nuclei-capability-map.md`
 - [x] C18 🗺️ 3-shell head-model 검증 🟡 — C14 잔여(real head-model)를 3-shell(Ary1981 radial-dipole)로 부분 닫음: 깊이 벽 = **실재 물리경계 확증**(3-shell ×15.4 > 가우시안 ×8.4, 부호 반전 — C15 가우시안은 벽을 *과소평가*). C16/C17 강화, 전극포화는 여전히 가우시안 인공물(C10 재확증). ⚠얕은-창 정정 이력 ↓ → `AURA-DEPTH/DEPTH-3SHELL-CORRECTION.md`·`AURA-HEADMODEL/SPHERE-VALIDATION.md`
-- [ ] C14 (잔여·external) — real head-model(MNE/OpenMEEG) 다중커널 fwd(C18서 3-shell로 부분해소; 비구형 실두상·tangential dipole 잔여) · 실 OPM-MEG 심부 데이터 · 상온초전도 실증시 RTSC-MEG 재평가 (in-silico lever 공간 고갈)
+- [x] C14 🗺️ real head-model 측정 🟡 — **실 MNE fsaverage 3-layer BEM forward**(가우시안도 구체도 아닌 삼각메시, gain 343×2052, standard_1005 343ch + 피질 oct5 + volume 1821voxel, $0 MNE 1.12.1 ubu-1 사전설치). 3대 toy 결론 실 두상 검증: 심부<피질 ✅ 방향확증(||G|| 신호크기 1.09e3→8.57e2 ×1.27 감소) · 전극포화=가우시안 인공물 ✅ **확정**(실 두상 미포화 R²·||G|| 256ch까지 단조↑, λ-robust) · ⚠ **toy R² 절대값 비전이 발견**(simple-ridge R²는 실 ill-conditioned BEM서 노이즈바닥 0.0~0.05/저-λ 음수 — toy 0.2~0.8은 매끄러운 합성커널 인공물). NOT-MEASURED #1 ground-truth 닫음 → `AURA-HEADMODEL/MNE-REAL-VALIDATION.md`·`verify/mne_real_leadfield.txt`. ⚠ 잔여=proper sparse/Bayesian inverse(절대 R² 의미화)·피험자별 개인 MRI(fsaverage=평균)·두개골 이방성·MNE dSPM PSF(MNE 1.12.1 버그)·실 OPM-MEG 심부
 
 ## 🗺️ 3-shell 검증 결과 — 깊이 벽은 실재 물리경계 (가우시안 인공물 아님)
 
 C15 깊이 벽이 **toy 가우시안 커널 인공물인지 실재 물리경계인지**를 3-shell(Ary 1981) 물리로 결판. 결과: **실재 물리경계 — 가우시안은 오히려 벽을 *과소평가*했다(부호 반전).**
 
-| 모델 | cortex→deep 감쇠 배율 | 판정 |
+| 모델 | cortex→deep 감쇠 | 판정 |
 |---|---|---|
-| **3-shell (물리)** | **×15.4** (R² 0.239→0.016) | 더 가파름 = 벽 실재 |
-| 가우시안 (C15 published) | ×8.4 (0.82→0.10) | — |
+| **실 MNE BEM (C14, 실 두상)** | **||G|| ×1.27** (1.09e3→8.57e2) | ⭐ 실 두상 = 가장 완만(toy가 과장) |
+| 3-shell (물리 구체) | R² ×15.4 (0.239→0.016) | 더 가파름(but 실 두상 대비 과장) |
+| 가우시안 (C15 published) | R² ×8.4 (0.82→0.10) | — |
+
+> ⭐ **C14 실 MNE 갱신**: 깊이 벽 방향(심부<피질)은 가우시안·3-shell·실 MNE(피질·volume) 전부 robust = **실재 물리경계 확증**. 단 실 두상 신호크기(||G||) 감쇠는 매우 완만(×1.27); toy R² 비(×8.4/×15.4)는 매끄러운 커널 inverse 행태이지 실 두상 신호물리 아님. 전극포화=가우시안 인공물은 실 BEM서 **확정**(미포화). ⚠ **toy R² 절대값은 실 BEM simple-ridge서 비전이**(노이즈바닥) — 정성만 transfer. 상세 [MNE-REAL-VALIDATION](AURA-HEADMODEL/MNE-REAL-VALIDATION.md).
 
 - 🧱 **C15 "가우시안 깊이벽" → 정정**: 깊이 벽은 가우시안 커널 인공물이 아니라 **3-shell로 확증된 실재 물리경계**(radial dipole g_n∝b^(2n), b→0서 두피 흔적 소멸). 가우시안 toy는 벽을 **과장한 게 아니라 오히려 과소평가**했다.
 - ✅ **C16/C17 결론 강화됨**: C16 피질 비침습 도달 ✅ / C17 심부핵 비침습 불가(침습 필요) 🔴 — 두 결론 모두 물리 모델로 **약화가 아니라 강화**. 심부<피질 방향은 가우시안·3-shell 둘 다 robust.
