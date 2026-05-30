@@ -1,0 +1,94 @@
+[init] rung=large params=44678668 device=cuda corpus_bytes=1668585 train=1390487 heldout=278098
+[sweep] step=2000 rep=0.03027 coh=0.02983 ce=3.51234 (228.9s)
+[sweep] NON-COLLAPSED at step=2000 (rep 0.03027 < 0.2) -- stop SFT sweep.
+[reflux] {'generated': 48, 'leak_dropped': 0, 'kept': 48, 'reflux_self_bleu': 0.07141, 'reflux_repetition': 0.00427, 'diversity_gate': 'PASS'}
+{
+  "hypothesis": "H_864r",
+  "change_vs_h864": "more training steps (step-sweep to non-collapsed regime); gates unchanged (bf98c01, post-tuning 0)",
+  "rung": "large",
+  "ladder": {
+    "d_model": 768,
+    "n_trunk_layers": 12,
+    "n_experts": 12
+  },
+  "params": 44678668,
+  "seed": 42,
+  "eval_seed": 863,
+  "act_bits": 4,
+  "weight_quant": "int4_sym[-7,7] per-channel STE",
+  "act_quant": "akida act_bits=4 step=2^(8-4)",
+  "corpus": "/workspace/dialogue_p4.bytes",
+  "corpus_bytes": 1668585,
+  "train_bytes": 1390487,
+  "heldout_bytes": 278098,
+  "seq_len": 128,
+  "batch_size": 32,
+  "lr": 0.002,
+  "rep_target": 0.2,
+  "step_repetition_curve": [
+    {
+      "step": 2000,
+      "ce_heldout": 3.51234,
+      "coherence": 0.02983,
+      "repetition": 0.03027,
+      "self_bleu": 0.24233,
+      "adequacy_f1": 0.03955,
+      "last_train_ce": 3.20611,
+      "wall_s": 228.9
+    }
+  ],
+  "converged_at_step": 2000,
+  "final_step": 2000,
+  "non_collapsed": true,
+  "reflux": {
+    "generated": 48,
+    "leak_dropped": 0,
+    "kept": 48,
+    "reflux_self_bleu": 0.07141,
+    "reflux_repetition": 0.00427,
+    "diversity_gate": "PASS"
+  },
+  "sp_reflux_continue_steps": 1000,
+  "arms": {
+    "SFT": {
+      "ce_heldout": 3.51234,
+      "coherence": 0.02983,
+      "adequacy_f1": 0.03955,
+      "leak": 0,
+      "self_bleu": 0.24233,
+      "repetition": 0.03027
+    },
+    "SP": {
+      "ce_heldout": 3.37958,
+      "coherence": 0.03406,
+      "adequacy_f1": 0.0226,
+      "leak": 0,
+      "self_bleu": 0.20074,
+      "repetition": 0.02386
+    }
+  },
+  "falsifiers_bf98c01": {
+    "F-CLM-DIALOGUE-COHERE": {
+      "pass": true,
+      "sp": 0.03406,
+      "sft": 0.02983
+    },
+    "F-CLM-DIALOGUE-ADEQ": {
+      "pass": false,
+      "sp": 0.0226,
+      "sft": 0.03955
+    },
+    "F-CLM-DIALOGUE-LEAK": {
+      "pass": true,
+      "sp": 0
+    },
+    "F-CLM-DIALOGUE-DIV": {
+      "pass": true,
+      "self_bleu": 0.20074,
+      "repetition": 0.02386
+    }
+  },
+  "verdict": "RED",
+  "torch": "2.4.1+cu124",
+  "device": "cuda"
+}
