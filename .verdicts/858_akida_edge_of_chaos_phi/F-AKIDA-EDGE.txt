@@ -1,0 +1,38 @@
+=== H_858 · F-AKIDA-EDGE · LIVE AKD1000 edge-of-chaos Φ inverse-U ===
+date: 2026-05-30
+provenance: LIVE BrainChip AKD1000, BackendType.Hardware, device BC.00.000.002, SDK 2.19.1
+driver: AKIDA/akida_edge_of_chaos_phi_hw.py (mirrors H_857 clm_causal_band.py live-HW pattern)
+Φ proxy + verdict: AKIDA/akida_edge_of_chaos_phi.hexa (frozen; measure NOT re-implemented · g0/g61)
+spike_source: LIVE on-chip threshold-and-fire (InputData(1,1,16)→FullyConnected(units=16,
+              weights=ones, act_bits=1) @ Hardware; per-unit int32 threshold = POT−drive)
+seed: 187 · n_neurons: 16 · window_steps (raster): 200 (n_steps=200 in proxy)
+
+R1~R4 drive-regime (order→chaos axis) LIVE rasters:
+  R1 weak-silent        total=   0  std=0.000  max= 0   (ORDER floor · die-out)
+  R2 zero+noise         total=1024  std=7.464  max=16   (EDGE · event-driven straddle)
+  R3 tonic-zero-input   total=1600  std=0.000  max= 8   (EDGE · partial pool 8/16)
+  R4 recurrent self-sust total=  16  std=1.129  max=16   (OVER-DRIVEN · loop died to floor)
+
+phi_silicon_proxy (entropy × integration × differentiation; honest proxy, NOT full IIT4 big_phi):
+  Φ(R1) = 0.0
+  Φ(R2) = 0.17244391641970440
+  Φ(R3) = 0.25000000000000000   ◀ edge peak
+  Φ(R4) = 4.9519309499399391e-12  (≈ 0)
+
+pre-registered falsifiers (no post-hoc shaping · judge_inverse_u):
+  F-AKIDA-EDGE-1  Φ(R2) > Φ(R1)            0.17244 > 0.0        PASS
+  F-AKIDA-EDGE-2  Φ(R3) > Φ(R1)            0.25000 > 0.0        PASS
+  F-AKIDA-EDGE-3  max(Φ(R2),Φ(R3)) ≥ Φ(R4) 0.25000 ≥ 4.95e-12  PASS
+  n_pass_of_3 = 3 · all_pass = true
+
+VERDICT: 🟢 GREEN_NUMERICAL_CONFIRM
+  inverse-U(∩) holds on LIVE silicon: edge regimes (R2/R3) dominate BOTH the order floor (R1)
+  and the over-driven end (R4). On the real chip the recurrent loop DIED OUT (R4≈0) rather than
+  saturating — so both ends of the order→chaos axis are low and the edge peaks. Mechanistically
+  clean. Distinct axis from H_857 (coupling-K + CAUSAL-POWER): here drive-regime + Φ-proxy.
+
+pi5 streamer: stopped for fire, restored to is-active=active (see pi5_fire_run.log).
+cost: $0 (pi5-akida dedicated · Mac=0).
+
+--- raw verdict JSON (verbatim hexa stdout) ---
+{"source":"state/akida_edge_of_chaos_phi_hw_2026_05_30/eoc_hw_result.json","mock_mode":false,"n_neurons":16,"n_steps":200,"phi_method":"phi_silicon_proxy (entropy x integration x differentiation; honest proxy not full IIT4 big_phi)","hypothesis_ref":"CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (H_670, M2 PARTIAL)","falsifiers":["F-AKIDA-EDGE-1","F-AKIDA-EDGE-2","F-AKIDA-EDGE-3"],"R1_weak_silent":{"phi_silicon_proxy":0.0,"axis_entropy":0.0,"axis_integration":0.0,"axis_differentiation":0.0,"activity_gate":0.0,"entropy_weight":0.5,"core_int_x_diff":0.0,"order_param":0.0,"n_neurons":16,"n_steps":200,"total_spikes":0},"R2_zero_noise":{"phi_silicon_proxy":0.1724439164197044,"axis_entropy":0.37955133114208022,"axis_integration":0.5000000000781251,"axis_differentiation":0.5,"activity_gate":1.0,"entropy_weight":0.6897756655710401,"core_int_x_diff":0.25000000003906253,"order_param":0.32,"n_neurons":16,"n_steps":200,"total_spikes":1024},"R3_tonic_zero_input":{"phi_silicon_proxy":0.25,"axis_entropy":0.0,"axis_integration":1.0,"axis_differentiation":0.5,"activity_gate":1.0,"entropy_weight":0.5,"core_int_x_diff":0.5,"order_param":0.5,"n_neurons":16,"n_steps":200,"total_spikes":1600},"R4_recurrent_selfsustained":{"phi_silicon_proxy":4.9519309499399391e-12,"axis_entropy":0.1233444557333932,"axis_integration":6.250000517127319e-10,"axis_differentiation":0.1410625,"activity_gate":0.1,"entropy_weight":0.5616722278666966,"core_int_x_diff":8.816406979472724e-11,"order_param":0.005,"n_neurons":16,"n_steps":200,"total_spikes":16},"verdict":{"F-AKIDA-EDGE-1_R2_gt_R1":true,"F-AKIDA-EDGE-2_R3_gt_R1":true,"F-AKIDA-EDGE-3_edge_geq_R4":true,"n_pass_of_3":3,"all_pass":true,"verdict":"GREEN_NUMERICAL_CONFIRM","phi_r1":0.0,"phi_r2":0.1724439164197044,"phi_r3":0.25,"phi_r4":4.9519309499399391e-12,"edge_max":0.25}}

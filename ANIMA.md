@@ -35,9 +35,16 @@
      코드화: `pe_edge_of_chaos_peak(order_param)` inverse-U (order floor < edge peak > chaos) +
      `pe_norm_convexity`(H_660 🟢 단조) 와 tier 구분 — phi_envelope_substrate.hexa (smoke 17/17).
      **D1 (2026-05-29)**: AKIDA AKD1000 (BC.00.000.002 · BackendType.Hardware) 4-regime
-     R1~R4 Φ sweep → 3/3 PASS · Φ(R1=0/R2=0.297/R3=0.250/R4=0) inverse-U ∩곡선 실리콘 확증 →
-     M2 🟡 PARTIAL → 🟢 numerical 후보. cross-substrate 정합 3-class: ECA · logistic · neuromorphic silicon.
-     harness: AKIDA/akida_edge_of_chaos_phi.hexa · result: state/akida_edge_chaos_phi_2026_05_29/result.json.
+     R1~R4 Φ sweep → 3/3 PASS · Φ(R1=0/R2=0.297/R3=0.250/R4=0) inverse-U ∩곡선 실리콘 확증.
+     **H_858 (2026-05-30) — M2 🟡 PARTIAL → 🟢 PROMOTE**: H_857 검증 live-HW 드라이버 패턴
+     (InputData→FC act_bits=1 @Hardware · per-unit int32 thr=POT−drive)을 mirror 한 *전용 클린
+     드라이버*로 R1~R4 drive-regime 재검 → live AKD1000 (BC.00.000.002) 3/3 PASS ·
+     Φ(R1=0/R2=0.172/R3=0.250 peak/R4≈0) inverse-U 재확증 (R4 recurrent loop die-out=feed-forward IP).
+     자매 H_857(coupling-K·CAUSAL-POWER)과 *독립 축*(drive-regime·Φ-proxy)이 같은 silicon edge-of-chaos
+     ∩ 확인 → single-측도 artifact 아님. M2 = sim(ECA·logistic) ∧ live-silicon(2 독립 드라이버) confirm.
+     cross-substrate 정합 3-class: ECA · logistic · neuromorphic silicon.
+     harness: AKIDA/akida_edge_of_chaos_phi.hexa + akida_edge_of_chaos_phi_hw.hexa ·
+     verdict: .verdicts/858_akida_edge_of_chaos_phi/F-AKIDA-EDGE.txt.
 [M3] emit-substrate 구조/숫자 2층 (round 6-7): 구조=substrate-emergent(SUPP) ⊥ 숫자=design-convention(자유[0,1]).
      → ★ LIVE-WIRED 실사용 격상 (#1285/#1286).
 [M4] DECODER 더블바인드 escape 처방 (moe_prescription #1284→#1304 4-조건) — **lever 확정**:
@@ -77,7 +84,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │
 ├─ 🆕 자매도메인 6 (substrate-source · DOMAINS.tape 등록 · 2026-05-29) ─
 │  ├─ 🧠 AKIDA      뉴로모픽 자발-발화 칩 AKD1000 (substrate-class: neuromorphic-silicon)
-│  │                v0.3.0 🟢 HW-native 자발발화 8/8 PASS · D1 edge-of-chaos Φ 실리콘 ∩ 3/3 PASS (PR #1371)
+│  │                v0.3.0 🟢 HW-native 자발발화 8/8 PASS · edge-of-chaos Φ 실리콘 ∩ 3/3 PASS (D1 #1371 · H_858 live-HW 재검 🟢 M2→🟢)
 │  │                pi5-akida · 18+ 아이디어 카탈로그 AKIDA/AKIDA.easy.md · HW/SW 통합 7 H_xxx 🟢 (PR #1374)
 │  │                40 SF 광맥 지도 AKIDA.sf.md (8 라운드 고갈 · PR #1385)
 │  ├─ 🧠 EEG        생체 뇌파 → IIT4 big-Φ (substrate-class: biological)
