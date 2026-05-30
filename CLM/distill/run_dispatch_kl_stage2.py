@@ -136,20 +136,24 @@ def _distill_student_real(teacher, cfg, steps, seed, beta):
     return student
 
 
-def _eval_batches(seed):
+def _eval_batches(seed, dev=DEVICE):
     web, reg = make_real_corpus(n_bytes_per_lane=CORPUS_BYTES, seed=seed)
     stream, _ = lane_tagged_stream(web, reg, block=64)
     eb = make_batches(stream, 64, 16, 16, seed=seed + 777)
-    return [(x.to(DEVICE), y.to(DEVICE)) for x, y in eb]
+    return [(x.to(dev), y.to(dev)) for x, y in eb]
 
 
 def one_seed(cfg, steps, seed, beta) -> Dict:
     teacher = _train_teacher_real(cfg, steps, seed)
-    tz = _dispatch_entropy_z(teacher, _eval_batches(seed), cfg.teacher_experts,
-                             seed, null_samples=NULL_SAMPLES)
     student = _distill_student_real(teacher, cfg, steps, seed, beta)
-    sz = _dispatch_entropy_z(student, _eval_batches(seed), cfg.student_experts,
-                             seed, null_samples=NULL_SAMPLES)
+    # measure on CPU: _dispatch_entropy_z (imported) builds acc on CPU; move
+    # model+batches to CPU so the 16-batch measure pass is device-consistent
+    # (training stayed on GPU). HOST-ENV fix (@L1), NOT a metric/threshold change.
+    teacher.cpu(); student.cpu()
+    tz = _dispatch_entropy_z(teacher, _eval_batches(seed, "cpu"),
+                             cfg.teacher_experts, seed, null_samples=NULL_SAMPLES)
+    sz = _dispatch_entropy_z(student, _eval_batches(seed, "cpu"),
+                             cfg.student_experts, seed, null_samples=NULL_SAMPLES)
     delta = sz["z"] - tz["z"]
     same_sign = (tz["z"] >= 0) == (sz["z"] >= 0)
     return {
