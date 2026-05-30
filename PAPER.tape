@@ -8,3 +8,4 @@
 @P structure-emergent-vs-number-convention := "./PAPER/structure-emergent-vs-number-convention" :: paper [active]
 @P xeno-applicability-frontier := "./PAPER/xeno-applicability-frontier" :: paper [active]
 @P aura-electrode-position-phi-proxy := "./PAPER/aura-electrode-position-phi-proxy" :: paper [active]
+@P aura-noninvasive-depth-wall := "./PAPER/aura-noninvasive-depth-wall" :: paper [active]

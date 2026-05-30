@@ -12,7 +12,6 @@
 \usepackage{hyperref}
 \hypersetup{colorlinks=true,linkcolor=blue,citecolor=blue,urlcolor=blue}
 \usepackage{caption}
-\usepackage{enumitem}
 
 \newcommand{\Rsq}{R^{2}}
 \newcommand{\redbox}[1]{\textcolor{red!70!black}{\textbf{#1}}}
@@ -93,7 +92,7 @@ mapping. It is \emph{not} a duplicate: the A-axis paper measured how electrode
 non-invasive interface can reach, and where the wall is.
 
 \paragraph{Three claims.} We make one negative claim and two positive complements:
-\begin{enumerate}[leftmargin=2em]
+\begin{enumerate}
   \item \redbox{Closed-negative:} non-invasive whole-brain (deep) control is
         physically walled. Active-source recovery collapses with depth, and the
         collapse is steeper, not gentler, when the head model is made physically
@@ -129,7 +128,7 @@ optionally augmented by trans-skull read/write modalities --- can reach
 
 \paragraph{Pre-registered falsifier $F$.} $H$ \emph{survives} (is corroborated) if
 \emph{either}:
-\begin{itemize}[leftmargin=2em]
+\begin{itemize}
   \item[\textbf{F1}] the active-source recovery rate $\Rsq(d)$ does \emph{not}
         collapse as depth $d$ increases --- operationally, the
         cortical-to-deep ratio stays within a small factor ($\lesssim 2\times$)
@@ -181,7 +180,7 @@ boundary-element / finite-element models~\cite{ary1981,nunez2006,darvas2004}.
 \subsection{Inverse solvers (sensor $\rightarrow$ source estimate)}
 Given the simulated sensor vector we recover a source estimate with a family of
 inverse operators, so that the depth wall cannot be blamed on a single weak solver:
-\begin{itemize}[leftmargin=2em]
+\begin{itemize}
   \item \textbf{Ridge / minimum-norm} --- the regularised least-squares
         $\hat{x} = L^{\!\top}(LL^{\!\top}+\lambda I)^{-1} y$ baseline;
   \item \textbf{ISTA / IRLS} --- a sparsity-leaning solver that should favour focal
@@ -440,7 +439,7 @@ The only non-invasive channel reaching deep structures is a \emph{write} channel
 \subsection{Primary: closed-negative on non-invasive deep control}
 The pre-registered falsifier $F$ is \redbox{not satisfied}; the optimistic
 hypothesis $H$ is \redbox{FALSIFIED (closed-negative)}. Neither escape clause holds:
-\begin{itemize}[leftmargin=2em]
+\begin{itemize}
   \item \textbf{F1 fails:} the cortex/deep recovery ratio is $\times 15.4$ under the
         physically faithful three-shell model --- far above the $\lesssim 2\times$
         survival threshold --- and it \emph{steepened} relative to the in-harness
