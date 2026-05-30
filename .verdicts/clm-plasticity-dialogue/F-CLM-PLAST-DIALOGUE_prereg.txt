@@ -1,0 +1,52 @@
+F-CLM-PLAST-DIALOGUE — pre-registered falsifier thresholds (W2 · post-tuning 0)
+================================================================================
+hypothesis : H_866 — on-chip PLASTICITY ↔ dialogue loop coupling (R2 launch rung)
+foundation : H_846 🟢 closed loop (motivation→set_threshold(9513)→on-chip fire(9512)→should_interrupt)
+             H_679 🟢 HW edge-learn supported (AkidaUnsupervised + binary in · edge_learning_supported=true)
+frozen_at  : 2026-05-31  (BEFORE the fire · separate commit · no post-tuning)
+measure_by : CODE (g5 · pure-stdlib sim, deterministic seed) — NOT LLM-judge
+provenance : declared at run time — "akida-hw" iff chip mapped, else "akida-edge-learn-sw-sim"
+scope      : measurement rung only (a_scale_honest_scope) · does NOT bind deploy chip-fit
+
+design constants (frozen — match H_846 §4 closed-form)
+------------------------------------------------------
+  N=16 LIF pool · V=16 weak-ones drive · QUORUM=4 (per F-LAUNCHPAD-LOOP verdict line 3)
+  EMIT_GATE=0.60 (motivation→emit boundary · akida_threshold_driver default)
+  THR_EMIT=8 · THR_SILENCE=24 (akida_threshold_driver defaults — observed live thr=8 on pi5)
+  edge-learn = Hebbian-style online weight adaptation on the LIF readout, learning-rate eta,
+               competition pruning (num_weights) — SW analogue of AkidaUnsupervised (H_679).
+  session = a sequence of dialogue turns; each turn carries (motivation_score, target_pattern).
+
+================================================================================
+the TWO pre-registered falsifier thresholds
+================================================================================
+
+F-CLM-PLAST-DIALOGUE-GAIN  (online adaptation gain > 0 over a session)
+----------------------------------------------------------------------
+  metric : next-turn FIT improvement attributable to on-chip edge-learn over a session.
+           fit(turn) = match between the chip's spike pattern and the turn's target
+           pattern, measured as normalized Hamming agreement in [0,1].
+           gain = mean(fit_late_window) − mean(fit_early_window),
+           early = first 25% of turns, late = last 25% of turns.
+  GATE   : gain > 0.0   (strictly positive — edge-learn measurably improves next-turn fit)
+  also   : gain must EXCEED a no-learn control's drift (control eta=0):
+           gain_learn − gain_control > 0.02   (the improvement is from learning, not noise)
+  PASS   : gain > 0.0  AND  (gain_learn − gain_control) > 0.02
+
+F-CLM-PLAST-DIALOGUE-LOOP  (closed emit/silence loop stays intact after edge-learn)
+-----------------------------------------------------------------------------------
+  metric : after edge-learn has run for a full session, the H_846 transition still holds —
+           should_interrupt tracks motivation monotonically through the EMIT_GATE.
+           thr↓ (high motivation, score≥0.60→THR_EMIT) ⇒ n_spikes≥QUORUM ⇒ should_interrupt=True
+           thr↑ (low motivation,  score<0.60→THR_SILENCE) ⇒ n_spikes<QUORUM ⇒ should_interrupt=False
+  GATE   : over a frozen 4-point probe {0.05, 0.50, 0.60, 0.95} evaluated AFTER edge-learn,
+           should_interrupt == expected_846 for ALL 4 points (no regression of the H_846 transition).
+           expected_846: score 0.05→False · 0.50→False · 0.60→True · 0.95→True
+  PASS   : 4/4 probe points match expected_846  (loop unbroken · zero regression)
+
+================================================================================
+verdict rule
+================================================================================
+  🟢 SUPPORTED  iff  GAIN PASS  AND  LOOP PASS
+  🔴 CLOSED-NEGATIVE  otherwise  (a_paper_negative_ok — publishable either way)
+  threshold re-adjustment after the fire = 0 (W2 discipline).

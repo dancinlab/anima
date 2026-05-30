@@ -1,0 +1,76 @@
+F-CLM-PLAST-DIALOGUE — H_866 on-chip PLASTICITY ↔ dialogue loop coupling (2026-05-31)
+================================================================================
+hypothesis  : H_866 (R2 launch rung) — couple the live edge-learn loop into the
+              COFFESHOP dialogue turn loop; can the chip adapt online during a
+              dialogue session WITHOUT breaking the closed emit/silence loop?
+foundation  : H_846 🟢 closed loop (motivation→9513→on-chip fire(9512)→should_interrupt)
+              H_679 🟢 HW edge-learn supported (AkidaUnsupervised · edge_learning_supported=true)
+prereg      : .verdicts/clm-plasticity-dialogue/F-CLM-PLAST-DIALOGUE_prereg.txt
+              frozen BEFORE fire · separate commit 272ee0ee3 · post-tuning 0 (W2)
+harness     : SUB_ENGINES/AKIDA/scripts/h866_plasticity_dialogue_loop.hexa (g5 · deterministic)
+measure_by  : CODE (not LLM-judge) · seed 866 · n_turns 200 · seed-sweep {866,42,123,7,2026}
+
+PROVENANCE (HW vs SW — stated verbatim · a_blue_closed honesty)
+--------------------------------------------------------------------------------
+  provenance = "akida-edge-learn-sw-sim"  (SW path)
+  WHY SW, not HW: the pi5 AKD1000 (BC.00.000.002) was probed NON-MUTATINGLY this
+  session — ports 9512/9513 OPEN, a LIVE M_modulated streamer is running
+  (observed step ~107288, t_rel ~10736s ≈ 3h uptime, thr=[8]×16, 16/16 firing —
+  another agent's R3/launch live loop). The AKD1000 is a single-chip file-lock
+  device: mapping an akida.AkidaUnsupervised learning model needs EXCLUSIVE chip
+  access → would DESTRUCTIVELY stop that live loop. Per task discipline (do NOT
+  disrupt a live loop; destructive pi5 mutation NOT pre-authorized) we did NOT
+  re-map the chip. We ONLY read 9512 passively (no writes, no ctrl commands).
+  HW edge-learn is the real foundation (H_679); SW is NOT a HW substitute
+  (H_679 SW↔HW = 🔴 CLOSED-NEGATIVE). The SW-sim measures the COUPLING TOPOLOGY
+  (does edge-learn break the closed loop?), not silicon byte-equivalence.
+  pi5 interaction this session: ping (2/2), nc -z 9512/9513 (port probe),
+  nc read 9512 for ~5s (passive observe). ZERO writes · live loop UNDISTURBED.
+
+================================================================================
+RESULT (vs frozen gates)
+================================================================================
+
+F-CLM-PLAST-DIALOGUE-GAIN  — gate: gain_learn>0.0 AND (gain_learn−gain_control)>0.02
+  seed 866: gain_learn=-0.03625 · gain_control=+0.03625 · diff=-0.0725 → FAIL
+  robustness (5 seeds, gate unchanged): diff ∈ {-0.0725,-0.0075,-0.04375,-0.02125,+0.01625}
+    — diff > 0.02 in 0/5 seeds.  GAIN = FAIL (robust).
+  → online edge-learn does NOT measurably improve next-turn fit over a
+    mixed-register dialogue session.
+
+F-CLM-PLAST-DIALOGUE-LOOP  — gate: 4/4 should_interrupt == expected_846 AFTER edge-learn
+  score 0.05 → thr 24 → 0 spikes → should_interrupt False (exp False) ✓
+  score 0.50 → thr 24 → 0 spikes → should_interrupt False (exp False) ✓
+  score 0.60 → thr  8 → 16 spikes → should_interrupt True  (exp True)  ✓
+  score 0.95 → thr  8 → 16 spikes → should_interrupt True  (exp True)  ✓
+  4/4 match in ALL 5 seeds.  LOOP = PASS (robust).
+  → the H_846 closed emit/silence loop stays INTACT after a full edge-learn
+    session; the threshold→quorum→should_interrupt decision still tracks
+    motivation through EMIT_GATE with zero regression. Levers are orthogonal.
+
+================================================================================
+VERDICT: 🔴 CLOSED-NEGATIVE   (LOOP PASS · GAIN FAIL)   [provenance akida-edge-learn-sw-sim]
+================================================================================
+  The two-lever coupling is SAFE (LOOP intact · no H_846 regression — the headline
+  safety result for R2) but the adaptation lever, as scaffolded, gives NO online
+  gain over a multi-register dialogue session → H_866's "adapt online WITHOUT
+  breaking the loop" is HALF-met: the loop is unbroken, but the adaptation does
+  not pay off in this regime.
+
+ROOT CAUSE (mechanism is sound — interference, not a dead lever):
+  control run with a SINGLE recurring target → fit 0.5→1.0 in ≤5 turns (edge_learn
+  WORKS). The 🔴 is multi-register INTERFERENCE: one shared 16-unit fixed-threshold
+  readout with NUM_WEIGHTS=4 capacity cannot simultaneously fit 4 conflicting
+  recurring dialogue patterns — Hebbian updates thrash between them, net session
+  gain ≤ 0. The single shared threshold-readout (inherited from H_846's all-ones
+  pool) is the bottleneck.
+
+LEVER for follow-on (does NOT change this frozen verdict):
+  per-register / context-gated readout · larger NUM_WEIGHTS capacity · or a thin
+  per-intent adapter (cf. H_865 trunk-adjacent adapter E5 fix). A capacity sweep
+  (repertoire-size vs NUM_WEIGHTS) would map where GAIN crosses 0.
+
+scope (a_scale_honest_scope): measurement rung only · SW coupling-topology sim ·
+  does NOT bind deploy chip-fit · HW on-chip AkidaUnsupervised dynamics differ
+  (H_679 SW≠HW 🔴). a_paper_negative_ok — this CLOSED-NEGATIVE is publishable:
+  it deterministically rules IN loop-safety and rules OUT naive-capacity online gain.
