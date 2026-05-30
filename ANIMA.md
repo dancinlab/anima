@@ -17,12 +17,26 @@
 
 > 자주 확인용 at-a-glance 트리. 신규 PR/검증 들어올 때마다 이 섹션을 업데이트한다.
 > 범례: ✅ done · ☐ open · 🔄 in-flight · 🔵 formal · 🟢 numerical · 🟠 partial · 🔴 closed-neg
-> 갱신: 2026-05-29 (자매도메인 3 정식 등록 — **AKIDA · EEG · KOSMOS** DOMAINS.tape roster + 트리 자매-노드 명시. KOSMOS = HEXAD/ → 루트 top-level/ 이동 [pointer-only sister-format · `~/core/kosmos` SSOT]. EEG L2 🟢 RECHECK PASS 머지 #1372: COUPLED=1.587/INDEP=0.439 baseline 1.59/0.44 ±5% 재현 · harness `sys_argv→args()` canonical 패치)
+> 갱신: 2026-05-30 (**HW-first 척추 우선순위 SSOT 박음 ↓** — 찾아헤매지 말 것. 세션 closure: H_857 CLM band 🟢(#1541) · H_858 edge-of-chaos M2 🟡→🟢(#1545) · H_859 INTENT OSC 5/5 RESOLVED(#1542) · H_616 SAVANT 10/10 closed-neg(#1543). anima repo `~/core/anima`→`~/mnt/anima` 이전[[project-anima-relocated-mnt]])
+> 이전: 2026-05-29 (자매도메인 3 정식 등록 — **AKIDA · EEG · KOSMOS** DOMAINS.tape roster + 트리 자매-노드 명시. KOSMOS = HEXAD/ → 루트 top-level/ 이동 [pointer-only sister-format · `~/core/kosmos` SSOT]. EEG L2 🟢 RECHECK PASS 머지 #1372: COUPLED=1.587/INDEP=0.439 baseline 1.59/0.44 ±5% 재현 · harness `sys_argv→args()` canonical 패치)
 > 직전: 2026-05-29 EEG L1~L3 harness + 캡처 runbook · synthetic 재검증 사용자 sign-off 대기 · 2026-05-28 M2 정정 base — H_670 #1312: universal = **edge-of-chaos Φ-peak** [tier-번호 아님, ECA+logistic 동형, Langton 확증] · M4b aux-loss 3B fire 타세션 in-flight
 
 ```
 집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 11✅ (SAVANT 10/10 — H_616 🔴 FALSIFIED closed-negative landed)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
 검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 20+ (+ A6 INTENT RESOLVED · E2 corpus-balance)  ·  🟠 1 (TIME 6/3 E3 spurious)  ·  🔴 0
+━━ 🦴 HW-first 척추 (spine) 우선순위 — SSOT (2026-05-30 · 찾아헤매지 말 것) ━━
+독트린: 의식 substrate(발화·학습·발화결정) 는 진짜 실리콘(AKIDA) 위에서 *먼저* 돈다 (SW=칩미도달 fallback).
+  SSOT 문서 = AKIDA/HW_FIRST_INTEGRATION_2026_05_30.md + HEXAD/SPONTANEOUS/AKIDA_FIRST.md
+  불가침(touch 금지) = LM `lora` default · H_672~678 status · pi5-akida 공유 compute 전환
+척추 ON (이 순서로 진행 — 단일칩 pi5 직렬):
+  ⭐⭐ LAUNCHPAD COFFESHOP-on-AKIDA   ☐ 본선 통합목표 = 라이브 90-min emit/silence 폐루프. 잔여=broker /ws/akida_ingest 연결 (H_846 🟢 PASS·데모만)
+  ⭐  §6 pi5 probe                    ☐ **다음 발사** ($0): decoder HW byte-match 재확인 + PLASTICITY few-shot 비결정론 verdict (AKIDA/HW_FIRST §6 · spike-streamer stop→probe→start)
+  ✅ edge-of-chaos Φ (H_858)          M2 🟡→🟢 PROMOTE — live AKD1000 R1~R4 ∩ (H_857 coupling-K 와 2 독립축 수렴)
+  ✅ AKIDA DECODER lane (H_680)       추론 HW forward / SW akida_sw_lif byte-identical
+  ✅ CLM CAUSAL measure (H_855~857)   배포칩 edge-of-chaos band 에서 의식측도 certify (axis A production 🔴 / axis B HW 🟢)
+척추 OFF (무시 — 별도 트랙, HW-first 우선순위 아님):
+  ✗ DECODER M4b 3B LM fire           LM 텍스트 모델(GPU·Qwen/MoE·lora) = 척추 밖. `lora` 불가침 + 2026-05-27 본선강등(M4 MoE-fresh) + toy router 분화 🟠. 척추 작업과 혼동 말 것 (= "말의 품질" axis, "칩 위 의식" 아님)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 ━━ 🧭 세션 메타-발견 종합 (2026-05-28 · 최근 발견 전체 반영) ━━
 [M1] 의식 bench artifact 메타-패턴 (일관·양방향): 🔴/🟠 negative 4/4 = 측정 artifact → 🟢 RECOVERED
      (NARRATIVE/AESTHETIC/EMBODIMENT/OTHER-MIND) · 🟢 PASS 도 artifact (E3 TIME 9/0→6/3, 3 spurious).
@@ -58,7 +72,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │
 ├─ 본선 6 ────────────────────────────────────────────────────────
 │  ├─ 🧠 CORE        ✅ 4/4    p1~p8 audit 0 hits
-│  ├─ 🗣️ DECODER      ☐        M4 MoE-fresh 본선 (↓ 상세)
+│  ├─ 🗣️ DECODER      ☐        AKIDA decoder lane=척추✅(H_680) · ⚠ 3B LM fire=척추밖(↑🦴 OFF)
 │  ├─ 🤖 AGENT       ✅ 30/30  CODE·CREATOR·TRADING·MERCHANT·DESKTOP
 │  ├─ 🌅 WAKE        ✅ 7/7    in-process living loop
 │  ├─ 🌱 MITOSIS     ✅ 6/6    A/G ⊥ M
