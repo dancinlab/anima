@@ -1,0 +1,58 @@
+F-CLM-FREEZE-DEPTH — PRE-REGISTERED frozen thresholds (H_872 freeze-depth sweep · BOUND E5)
+==========================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed).
+Thresholds REUSED VERBATIM from F-CLM-BOUND prereg (commit bf98c01). post-tuning = 0.
+The sweep VARIES freeze-depth ONLY; NO threshold may move to flip a verdict after fire.
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-freeze-depth/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, ~13.7M params) only.
+  A 🔴/🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+  toy/mid → prod NOT guaranteed. Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS
+  H_861 found the readout-only edge too SHALLOW to prevent catastrophic forgetting
+  (RETAIN z_drop 1.984 ≥ 1.0 FAIL). H_865 found a trunk-adjacent thin adapter FIXES
+  BOUND (z_drop -12.28 << 1.0, gain +7.37 > 0). H_872 maps the BOUNDARY: it SWEEPS the
+  core/edge freeze depth (how many trunk layers stay FROZEN vs become TRAINABLE) on top
+  of the same H_865 adapter edge and reports the full depth → (z_drop, gain) curve.
+  Falsifier: ∃ a freeze-depth with z_drop < 1.0 ∧ gain > 0.
+
+FREEZE-DEPTH PARAMETRIZATION (E5 variable-ablation)
+  depth = number of TOP trunk layers (highest indices, nearest the readout) made
+          TRAINABLE, from 0 .. n_trunk (=8 at mid rung).
+    depth = 0       → entire trunk + moe FROZEN, only the H_865 adapter trains
+                      (reproduces the H_865 BOUND 🟢 anchor).
+    depth = k       → the last k trunk layers (+ adapter) become trainable; everything
+                      below (embed, embed_conv, lower trunk, moe, norm_out) FROZEN.
+    depth = n_trunk → the WHOLE trunk is trainable (no-freeze / deep end).
+  The H_865 adapter (zero-init additive path) is ALWAYS the edge (depth=0 is a real lever,
+  not the dead readout-only edge H_861 RED'd).
+
+BACKBONE
+  mid rung d_model=512 / n_trunk_layers=8 / n_experts=8, AKIDA envelope.
+  Loaded FROZEN from clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — SAME backbone
+  H_861/H_865 used. Each sweep point re-instantiates a CLEAN frozen base from the original
+  state_dict (no adaptation carryover between depths).
+
+NEW-CONTEXT vs BASE-ABILITY BATCHES (frozen split, fixed seeds — same as bf98c01)
+  base-ability held-out : make_lane_bytes("web", BASE_SEED=101) — the "old skill".
+  new-context held-out   : make_lane_bytes("new", NEW_SEED=202) high-band cyclic motif.
+  Both: seq_len=64, batch_size=16, n_eval_batches=32, fixed seeds. lr_edge=3e-3, N_ADAPT=300.
+
+MEASUREMENT PROCEDURE (computed by code, g5 — no LLM judge)
+  For each depth d:
+    1. Re-instantiate frozen base; unfreeze the top d trunk layers; insert H_865 adapter.
+    2. ce_base_pre, sd_base_pre, ce_new_pre (pre-adapt).
+    3. N_ADAPT=300 steps of Adam over the TRAINABLE params (adapter + unfrozen trunk).
+    4. ce_base_post, ce_new_post (post-adapt).
+    5. z_drop = (ce_base_post - ce_base_pre) / max(sd_base_pre, 1e-6); gain = ce_new_pre - ce_new_post.
+
+FROZEN NUMERICAL THRESHOLDS (bf98c01 verbatim — NOT moved by this sweep)
+  F-CLM-BOUND-RETAIN  PASS iff   z_drop < 1.0
+  F-CLM-BOUND-GAIN    PASS iff   gain   > 0.0
+  A depth PASSES iff (z_drop < 1.0) AND (gain > 0.0).
+  SWEEP VERDICT 🟢 iff ∃ a passing depth. Else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+
+ARTIFACTS
+  .verdicts/clm-freeze-depth/clm_freeze_depth_result.json (full depth→(z_drop,gain) curve)
+  .verdicts/clm-freeze-depth/F-CLM-FREEZE-DEPTH.txt (verdict verbatim).
