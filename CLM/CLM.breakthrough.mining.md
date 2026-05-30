@@ -90,3 +90,59 @@
 
 @status: depleted-both
 @next: 이 결론(MITOSIS-ARRAY)을 /sbs auto 로 설계/구현 — scale=expert-count reframe + sparse-MoE routing 측정 harness
+
+---
+
+# ROUND 2 — 처방+scale (post-🔴, DISSOLVE/BRIDGE 둘 다 CLOSED-NEGATIVE 후)
+
+@round2-seed: "DISSOLVE 🔴 = z-metric이 uniform 천장 ln(E)로 자라 raw H↑인데 z↓(ruler artifact) · BRIDGE 🔴 = KD가 logit만 옮기고 dispatch분포 못옮김. 처방=ln(E) 정규화(Pielou J) + dispatch-KL distill + scale-up"
+@round2-result-context: H_852(DISSOLVE 🔴 monotone=false) · H_853(BRIDGE 🔴 transfer Δ=4.34) · 둘 다 toy(d≤128) 한정 a_scale_honest_scope
+
+## round 2 cycles
+
+### r2-c1 — same-formula
+@lens: same-formula
+- [Pielou-J] H/ln(E) = 생태학 evenness 지수(Pielou's J) — uniform 천장 ln(E) 성장을 직접 제거하는 정확한 invariant → DISSOLVE z-artifact 근본 처방
+- [load-balance-loss] Switch-Transformer aux loss = "dispatch를 uniform으로" — dispatch-KL distill은 구조적으로 그 loss인데 target이 uniform이 아니라 **teacher dispatch** (escape를 transfer)
+- [calibrated-null-within-E] per-E Monte-Carlo null은 이미 함 — 진짜 fix는 E-비교를 cross-E 대신 **within-E across-training**으로 (천장 고정)
+
+### r2-c2 — ouroboros ⭐
+@lens: ouroboros
+- [metric-self-apply] ⭐ "finding이 모델 얘기냐 자(ruler) 얘기냐?" 자기적용 ⇒ DISSOLVE 🔴는 model failure 아닌 **metric artifact**. ruler(ln E norm) 고치고 재측정하면 DISSOLVE 질문이 비로소 답가능 — **toy 데이터 그대로 $0 재측정만으로 🟢 flip 가능성** (fire 전 cheap precondition)
+- [distill-mirrors-metric] distill은 우리가 **측정하는 것**을 distill해야 함 ⇒ dispatch entropy를 측정하니 loss에 dispatch항 필수. metric↔loss 거울대칭
+
+### r2-c3 — dimensional
+@lens: dimensional
+- [scale-dim] d 128→512+ · E↑ · corpus toy→kowiki real(@corpus clm_p1) · steps brief→full → GPU fire
+- [training-time-dim] undertraining이 array가 uniform 아래 떨어진 이유 — 더 학습하면 specialization 발현. training budget = 숨은 축
+- [metric-dim] normalized-H(Pielou J) 축을 raw-z 옆에 병기 → 두 metric cross-check
+
+### r2-c4 — tension
+@lens: tension
+- [push-metric-only] ln E norm만 고치고 scale-up 안 함 → cheap($0), toy에서 즉시 DISSOLVE flip 가능하나 production 미검증
+- [push-scale-only] metric 안 고치고 scale-up → 여전히 붕괴하는 z 측정, fire 낭비
+- [synthesis] BOTH 순서대로: metric fix 먼저($0 toy 재측정, flip 확인) → THEN scale fire (보정 metric으로 production 검증). **순서가 핵심** — metric fix는 의미있는 fire의 precondition
+
+### r2-c5 — combinatorial
+@lens: combinatorial
+- [Pielou × dispatch-KL × scale-fire] full 처방: DISSOLVE metric 보정(H/ln E) + BRIDGE loss 보정(dispatch-KL) + production fire(d↑·real corpus·full steps)
+- [metric-fix-first × $0 toy re-measure] cheap precondition: 기존 toy sweep 데이터를 Pielou J로 재측정 — fire 전 DISSOLVE flip 여부 확인 ⭐
+
+## round 2 edges
+
+- rE1 r2-c2[metric-self-apply] ↔ r2-c1[Pielou-J] · causal: 🔴가 ruler artifact → Pielou J가 그 ruler 처방 (model 안 바꾸고 metric만)
+- rE2 r2-c2[distill-mirrors-metric] ↔ r2-c1[load-balance] · equivalence: dispatch-KL = teacher-target load-balance loss = metric을 loss로 거울
+- rE3 r2-c4[synthesis] ↔ r2-c5[metric-fix-first] · dependency: scale fire는 metric fix를 precondition으로 (순서 강제)
+- rE4 r2-c3[training-time] ↔ r2-c4[push-scale] · support: scale fire는 d뿐 아니라 steps↑도 (undertraining 해소)
+
+## round 2 convergence — 합성 결론 (depleted-both)
+
+핵심(rE1): **DISSOLVE 🔴는 모델 실패가 아니라 자(ruler) 결함**이었다 (z가 ln E 천장으로 붕괴). 그래서 처방은 staged:
+
+1. **STAGE-1 metric fix ($0, fire 전 precondition)** [r2-c1·r2-c2·r2-c5] — 기존 toy sweep 데이터를 **Pielou J = H/ln(E)** 정규화로 **재측정**. 모델 안 바꾸고 ruler만 교체 → DISSOLVE가 즉시 🟢 flip 하는지 확인. dispatch-KL distill 항을 BRIDGE loss에 추가해 toy 재학습 → transfer Δ 축소되는지 확인. **둘 다 $0 toy.**
+2. **STAGE-2 scale-up fire (STAGE-1 promising 시)** [r2-c3·r2-c4] — d 128→512+ · E↑ · corpus toy→kowiki real(@corpus) · steps full · GPU fire. 보정 metric(Pielou J) + dispatch-KL loss로 production 검증.
+
+→ **권고 진행**: STAGE-1 먼저 (cheap, ruler 결함이면 toy에서 바로 flip — fire 전 그게 보여야 fire가 의미). STAGE-1이 flip/축소 보이면 STAGE-2 production fire. 정직: STAGE-1 toy도 여전히 🔴면 가설(scale=expert-count·KD-transfer) 자체가 더 깊이 falsified — 그것도 valid finding.
+
+@round2-status: depleted-both
+@round2-next: STAGE-1 metric-fix $0 toy 재측정(Pielou J + dispatch-KL) → flip 확인 → STAGE-2 scale fire
