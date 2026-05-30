@@ -172,7 +172,7 @@ fn fit(fire: list, target: list) -> float {
         if fire[j] == target[j] { agree = agree + 1 }
         j = j + 1
     }
-    return (agree) / (n)
+    return (agree) / (n * 1.0)
 }
 
 
@@ -263,7 +263,7 @@ fn early_mean(xs: list) -> float {
     let mut s = 0.0
     let mut i = 0
     while i < k { s = s + xs[i]; i = i + 1 }
-    return s / (k)
+    return s / (k * 1.0)
 }
 
 fn late_mean(xs: list) -> float {
@@ -274,7 +274,7 @@ fn late_mean(xs: list) -> float {
     let mut s = 0.0
     let mut i = n - k
     while i < n { s = s + xs[i]; i = i + 1 }
-    return s / (k)
+    return s / (k * 1.0)
 }
 
 
