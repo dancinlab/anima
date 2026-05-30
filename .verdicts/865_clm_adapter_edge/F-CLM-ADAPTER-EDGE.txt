@@ -1,0 +1,59 @@
+F-CLM-ADAPTER-EDGE — H_865 trunk-adjacent adapter edge (the shared E5 fix for H_861 🔴 / H_862 🔴)
+====================================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed).
+Thresholds FROZEN VERBATIM from commit bf98c01 (F-CLM-BOUND_prereg.txt + F-CLM-ANCHOR_prereg.txt).
+Same falsifiers, NEW edge architecture (adapter, not readout-only). post-tuning = 0.
+fired_at: 2026-05-31 · rung: mid d512/L8/E8 (13,653,768 params) · backbone clm_mid_backbone.pt (HF dancinlab/anima-clm-verify).
+SW-sim of non-deterministic on-chip edge-learn (a_scale_honest_scope; H_679 HW edge-learn is the real foundation).
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung only. Does NOT bind the deploy chip-fit track
+  (≤~1.2M AKD1000 nodes). Inference stays AKIDA-int4-only (P0 d4).
+
+ROOT CAUSE BOTH H_861/H_862 NAMED — readout-only edge had NO lever on the FROZEN trunk:
+  H_861: the readout is SHARED across base + new byte bands; re-fitting it for the new band
+         STOLE probability mass from the base band -> catastrophic forgetting (z_drop 1.984 ≥ 1.0).
+  H_862: model_psi probe reads norm_out, a FROZEN quantity -> the anchor Ψ-penalty had ZERO grad
+         path -> lambda on/off produced IDENTICAL trajectories (constraint had no lever).
+
+FIX (this verdict): a THIN TRAINABLE ADAPTER between FROZEN norm_out and FROZEN base readout:
+  norm_out (FROZEN) -> h -> h' = h + adapter(h) -> readout (FROZEN) -> logits
+  adapter = Conv1d(d->rank=64) -> GELU -> Conv1d(rank->d), up-proj ZERO-init (identity at step 0).
+  Base readout mapping PRESERVED by construction; new-context capacity lives in the additive path.
+  model_psi now reads the ADAPTED h' (trainable) -> the Ψ-penalty has a real grad lever.
+
+========================== F-CLM-BOUND (re-run, adapter edge) ==========================
+MEASURED (vs frozen bf98c01 gates):
+  ce_base_pre  = 14.12505   sd_base_pre = 0.07783   ce_base_post = 13.16947
+  ce_new_pre   = 10.74535   ce_new_post = 3.37433
+  z_drop = (ce_base_post - ce_base_pre)/sd_base_pre = -12.27735   gate z_drop < 1.0   -> PASS 🟢
+  gain   = ce_new_pre - ce_new_post           = +7.37103          gate gain   > 0.0   -> PASS 🟢
+  F-CLM-BOUND VERDICT = 🟢 SUPPORTED-NUMERICAL (RETAIN ∧ GAIN both PASS).
+  Contrast H_861 (readout-only): z_drop=+1.984 (RETAIN FAIL). The adapter's additive path PROTECTS
+  the base readout — base-ability CE did not rise (it FELL) — closing H_861's RETAIN failure.
+
+========================== F-CLM-ANCHOR (re-run, adapter edge) ==========================
+MEASURED (vs frozen bf98c01 gates), lambda_on=1.0, n_anchors=31:
+  d_anchor_max (on)        = 0.17471    gate < 0.50  -> DIST  PASS 🟢
+  probe_consistency (on)   = 0.14286    gate > 0.80  -> PROBE FAIL 🔴
+  on/off ablation: on d_anchor_max=0.17471 vs off d_anchor_max=0.59492 -> NON-identical (lever PRESENT).
+    (Contrast H_862: on/off identical — NO lever. The adapter restored the grad lever: with the
+     constraint OFF the Ψ-state strays to 0.595 (>0.50); ON it stays at 0.175. Causal isolation holds.)
+  F-CLM-ANCHOR VERDICT = 🔴 CLOSED-NEGATIVE (DIST PASS ∧ lever PRESENT, but PROBE FAIL).
+  The anchor constraint now has a real lever and keeps the Ψ-state near the E-31 fixed-points (DIST),
+  but the identity-response next-byte distribution still drifts hard pre->post (consistency 0.143 ≪ 0.80):
+  300-step edge-learn reshapes the readout distribution over the identity probe more than the Ψ-distance
+  penalty alone can hold. The lever exists but is not yet strong enough on the DISTRIBUTIONAL axis.
+
+============================== HEADLINE ==============================
+Closed ONE of two: F-CLM-BOUND 🟢 (H_861 RETAIN failure CLOSED by the adapter edge) ·
+F-CLM-ANCHOR 🔴 (H_862 lever defect FIXED — DIST PASS + on/off NON-identical — but PROBE
+distributional consistency still below the frozen 0.80 gate). a_paper_negative_ok on the ANCHOR arm.
+
+NOTE (honest, a_scale_honest_scope): the adapter base band is the make_lane_bytes("web") proxy band,
+so absolute ce_base differs from H_861's pretrain-corpus slice; z_drop/gain are pre/post on the IDENTICAL
+batch so the RETAIN/GAIN verdict is self-consistent. Threshold re-tuning = 0 (frozen bf98c01).
+
+ARTIFACTS
+  .verdicts/clm-adapter-edge/clm_adapter_edge_result.json (all numbers + on/off ablation + pass flags)
+  CLM/model/h865_adapter_edge.py (adapter scaffold + falsifier harness)
+  adapted backbone -> HF dancinlab/anima-clm-adapter (a_hf_complete).
