@@ -1,0 +1,35 @@
+=== H_866 — on-chip PLASTICITY ↔ dialogue loop coupling ===
+provenance: akida-edge-learn-sw-sim  (SW-sim · H_679 SW≠HW 🔴 · coupling topology, not silicon)
+n_turns: 200  seed: 866
+constants: N=16 V=16 QUORUM=4 EMIT_GATE=0.60 THR_EMIT=8 THR_SILENCE=24 ETA=0.25 NUM_WEIGHTS=4
+
+--- F-CLM-PLAST-DIALOGUE-GAIN (online adaptation gain > 0) ---
+  learn  : fit_early=0.44125 fit_late=0.405 gain=-0.03625
+  control: fit_early=0.55875 fit_late=0.595 gain=0.03625
+  gain_learn - gain_control = -0.0725
+  gate: gain_learn>0.0 AND (gain_learn-gain_control)>0.02
+  GAIN pass: false
+
+--- F-CLM-PLAST-DIALOGUE-LOOP (H_846 transition intact after edge-learn) ---
+  score=0.05 thr=24.0 n_spikes=0 should_interrupt=false expected=False match=true
+  score=0.50 thr=24.0 n_spikes=0 should_interrupt=false expected=False match=true
+  score=0.60 thr=8.0 n_spikes=16 should_interrupt=true expected=True  match=true
+  score=0.95 thr=8.0 n_spikes=16 should_interrupt=true expected=True  match=true
+  gate: 4/4 should_interrupt == expected_846 AFTER edge-learn
+  LOOP pass: true
+
+VERDICT: 🔴 CLOSED-NEGATIVE
+
+=== seed-robustness sweep (gate UNCHANGED · honesty check, not retune) ===
+seed 866:   gain_learn - gain_control = -0.0725   GAIN pass: false   LOOP pass: true VERDICT: 🔴 CLOSED-NEGATIVE 
+seed 42:   gain_learn - gain_control = -0.0075   GAIN pass: false   LOOP pass: true VERDICT: 🔴 CLOSED-NEGATIVE 
+seed 123:   gain_learn - gain_control = -0.04375   GAIN pass: false   LOOP pass: true VERDICT: 🔴 CLOSED-NEGATIVE 
+seed 7:   gain_learn - gain_control = -0.02125   GAIN pass: false   LOOP pass: true VERDICT: 🔴 CLOSED-NEGATIVE 
+seed 2026:   gain_learn - gain_control = 0.01625   GAIN pass: false   LOOP pass: true VERDICT: 🔴 CLOSED-NEGATIVE 
+
+=== mechanism control: single recurring target (edge-learn DOES work in isolation) ===
+fit@0 = 0.5
+fit@5 = 1.0
+fit@15 = 1.0
+fit@30 = 1.0
+(fit 0.5→1.0 on a single pattern → mechanism is sound; the 🔴 is multi-register INTERFERENCE)
