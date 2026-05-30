@@ -1,0 +1,118 @@
+AURA-DEPTH — 3-shell 구체 깊이 envelope 재계산 verdict (🟡 toy)
+============================================================================
+RUN: pool ubu-1, python3 + numpy (Mac has no numpy → pool stdin exec, $0).
+COST: $0 (numpy on existing pool host). 8-seed mean, R2 active-source recovery.
+MODEL: 3-shell spherical head (Ary/Klein/Fender 1981 radial-dipole closed form)
+       — brain(r1=8.0cm,σ_b) / skull(r2=8.5cm,σ_sk=σ_b/40) / scalp(r3=9.2cm,σ_sc).
+       Legendre series Σ g_n P_n(cosθ); skull low-conductivity + source eccentricity
+       attenuate high-n = a PHYSICAL low-pass filter (NO gaussian assumption).
+PURPOSE: AURA-HEADMODEL(PR#1514) found the gaussian toy (C15) might OVERSTATE the
+       depth-wall steepness (gaussian x8 vs HEADMODEL 3-shell x1.5 over depth_frac
+       0→3). HERE we re-compute the DEPTH envelope with the same 3-shell physics
+       but sweep the FULL eccentricity range 0.95(cortex surf)→0.10(deep core,
+       VTA/LC/raphe regime) × 8-seed, alongside a C15-style steep gaussian in the
+       SAME harness. Question: does gaussian over-pessimize the deep wall?
+
+============================ STDOUT (verbatim) =============================
+========================================================================
+AURA-DEPTH  3-SHELL vs GAUSSIAN DEPTH ENVELOPE  (Ary 1981, $0 numpy, same harness)
+r1/r2/r3=8.0/8.5/9.2cm  skull 1/40  S=32 M=64 K=4 snr=20dB NMAX=80  8-seed
+========================================================================
+RAW R2 (same harness, absolute) + RELATIVE-to-cortex (shape, scale-free):
+  ecc   z~   R2_3shell        rel3    R2_gauss(C15-steep)  relg   gn_cut
+  0.95  0.5  0.239+/-0.046   1.000   0.119+/-0.052       1.000  n=19
+  0.70  1.5  0.107+/-0.053   0.447   0.094+/-0.049       0.790  n=8
+  0.50  3.0  0.068+/-0.043   0.283   0.064+/-0.041       0.539  n=6
+  0.30  5.0  0.051+/-0.035   0.214   0.052+/-0.039       0.433  n=4
+  0.10  8.0  0.016+/-0.009   0.065   0.038+/-0.031       0.314  n=3
+------------------------------------------------------------------------
+PUBLISHED C15 gaussian best-envelope (AURA/C15, full-stack, for context):
+  z0.5~surf 0.999 | z1.5 cortex 0.820 | z3.0 0.417 | z5.0 0.196 | z8.0 deep 0.098  (x8.4 wall)
+------------------------------------------------------------------------
+ATTENUATION cortex->deep (within-harness):
+  3-SHELL  x15.38  (0.239 -> 0.016)
+  GAUSSIAN x3.18  (0.119 -> 0.038)  [C15-published x8.4]
+  gaussian/3shell slope-steepness ratio = x0.21
+DIRECTION deep<cortex monotone:  3shell=YES  gaussian=YES
+========================================================================
+END RUN
+
+RECONCILE (second run, verbatim) — why HEADMODEL saw a GENTLE x1.5:
+RECONCILE: HEADMODEL-style MILD depth_frac mapping  b=F1*(1-0.05*depth)
+  depth_frac  b/R1      R2_3shell
+  0.0        1.000     0.325
+  0.5        0.975     0.273
+  1.0        0.950     0.239
+  2.0        0.900     0.195
+  3.0        0.850     0.163
+  => mild range (b 0.87->0.74 R1) gives gentle slope (the HEADMODEL x1.5 finding).
+  => DEEP range (ecc 0.95->0.10 R1) gives STEEP collapse (radial dipole vanishes).
+============================================================================
+
+VERDICT — 🟡 SUPPORTED-NUMERICAL (toy, sphere ≠ real head; physical > gaussian)
+
+① 3-SHELL DEPTH ENVELOPE (cortex% → deep%):
+   cortex-surf(ecc 0.95) R2=0.239  →  deep-core(ecc 0.10) R2=0.016.
+   Relative shape: 100% → 6.5% (rel-to-cortex). Monotone collapse over the full
+   cortex→deep eccentricity range. The Ary radial g_n spectrum cutoff drops
+   n=19(surf) → n=3(deep): the physical LPF gets HARSHER deep, not gentler.
+
+② GAUSSIAN "OVER-PESSIMISM" — FALSIFIED, sign REVERSED (honest correction):
+   The HEADMODEL hypothesis was that the gaussian toy OVERSTATES the depth wall
+   (gaussian steeper). Over the FULL deep range this is FALSE — REVERSED:
+     - 3-shell attenuation  x15.4  (steeper)
+     - gaussian attenuation x3.2   (gentler, within-harness) / x8.4 (C15-published)
+   The 3-shell physical wall is STEEPER than the in-harness gaussian and on par
+   with / steeper than C15's published x8.4. → The gaussian toy does NOT
+   over-pessimize the deep wall; if anything it UNDER-states it. The depth wall
+   is a REAL physical boundary, not a gaussian-kernel artifact.
+
+   WHY HEADMODEL saw x1.5 (reconciled): HEADMODEL swept depth_frac 0→3 with
+   b=F1*(1-0.05*depth), i.e. source radius stays 0.85–1.0×R1 — ALL cortical, a
+   SHALLOW window. In that shallow window the slope IS gentle (0.325→0.163, ~x2).
+   The gentleness was a SHALLOW-RANGE artifact, not a property of the deep wall.
+   When the source actually reaches deep-core eccentricity (b→0.1×R1, the
+   VTA/LC/raphe regime), the radial-dipole scalp signature vanishes as ~b^(2n)
+   and recovery collapses hard.
+
+③ DIRECTION deep < cortex — ROBUST (both models):
+   3-shell monotone cortex>deep = YES.  gaussian monotone cortex>deep = YES.
+   The C15/B7 conclusion (non-invasive breakthrough is a cortical-surface
+   phenomenon; deep nuclei unreachable) is CONFIRMED and STRENGTHENED by the
+   physical model — the deep wall direction never breaks.
+
+NOT-MEASURED (honest):
+  - real (non-spherical) head geometry — sphere ≠ skull foramina/anisotropy.
+  - tangential dipoles (only radial modeled; deep nuclei have mixed orientation).
+  - σ_skull anisotropy (radial≠tangential — known real effect).
+  - absolute R2 calibration vs a measured EEG/MEG inverse benchmark.
+  - C15's full multi-modal stack (RTSC-MEG + tFUS + temporal) re-run under 3-shell.
+  - the eccentricity↔physical-depth(cm) mapping is a toy proxy (ecc·r1), not a
+    calibrated VTA/LC/raphe coordinate.
+
+NOTE: this CORRECTS the HEADMODEL "gaussian overstates depth wall" suspicion.
+The honest finding is the opposite under the physical model over the full depth
+range. Per a_paper_negative_ok this sign-reversal is itself a clean finding.
+============================================================================
+PYTHON SOURCE (reference — ran via pool ubu-1 stdin; NOT committed as .py per
+PR#305 sidecar guard. Logic mirrored in app/sphere_depth_envelope.hexa companion):
+----------------------------------------------------------------------------
+# import numpy as np
+# R1,R2,R3=8.0,8.5,9.2 ; F1,F2=R1/R3,R2/R3 ; NMAX=80 ; S_FIX=32 ; M=64 ; K=4
+# SNR=20.0 ; XI=1/40 ; SEEDS=range(8)
+# def ary(n,xi,b):
+#     nn=float(n); d1=(nn+1)*xi+nn; d2=(1-xi)
+#     term=d1*(nn*xi+nn+1)+nn*(nn+1)*d2*d2*((F1/F2)**(2*nn+1)-(F2)**(2*nn+1))
+#     denom=2*term*(2*nn+1)
+#     return 0.0 if abs(denom)<1e-300 else (2*nn+1)**3*(b**(nn-1))/denom*(b**(nn+1))
+# def gn_shell_ecc(xi,ecc):   # source radius b = ecc*R1 (eccentricity of brain shell)
+#     b=(ecc*R1)/R3; g=np.array([ary(i+1,xi,b) for i in range(NMAX)])
+#     return g/(np.sqrt(np.sum(g**2))+1e-30)
+# def L_shell(M,S,gn): ...Legendre recurrence Σ g_n P_n(cos(θ_e-θ_s)) (same as HEADMODEL)...
+# def L_gauss_depth(M,S,sigma,depth):   # C15-faithful steep gaussian
+#     ...sig=sigma*(1+0.35*depth); amp=1/(1+depth)**2 (1/r^2 magnetic-like)...
+# def r2(L,x,snr,rng): y=L@x + noise(snr); min-norm ridge inverse; 1-SSE/SST ...
+# ECC=[0.95,0.70,0.50,0.30,0.10] ; GZ=[0.5,1.5,3.0,5.0,8.0]   # ecc↔z~ toy proxy
+# 8-seed mean, 3-shell vs gaussian per ecc point; ratio + monotone direction check.
+# RECONCILE run: HEADMODEL-style b=F1*(1-0.05*depth), depth_frac in [0,0.5,1,2,3].
+============================================================================
