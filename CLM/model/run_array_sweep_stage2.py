@@ -34,6 +34,12 @@ from typing import Dict, List
 
 import torch
 
+# HOST-ENV (@L1, ubu-1): the installed torch nightly + cuDNN raise
+# CUDNN_STATUS_SUBLIBRARY_VERSION_MISMATCH on conv1d. Disable the cuDNN backend
+# so conv falls back to the native CUDA kernel (numerically equivalent,
+# deterministic). HOST workaround, NOT a metric/threshold change (@L5).
+torch.backends.cudnn.enabled = False
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 if _HERE not in sys.path:
     sys.path.insert(0, _HERE)
