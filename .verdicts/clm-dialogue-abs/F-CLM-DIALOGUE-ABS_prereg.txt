@@ -1,0 +1,93 @@
+F-CLM-DIALOGUE-ABS — PRE-REGISTERED frozen ABSOLUTE thresholds (H_867 dialogue quality FLOOR · @L6)
+====================================================================================================
+W2 method · deterministic:false · byte-match ✗ (Q-TRUST A reuse: H_857/H_858 distributional measures).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after the fire).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-dialogue-abs/  ·  measured by CODE (g5), NO LLM judge.
+
+PURPOSE (distinct from H_863):
+  H_863 (F-CLM-DIALOGUE) proved SFT+self-play (arm-SP) RELATIVELY beats SFT-only (arm-SP > arm-SFT)
+  on coherence/adequacy (a within-fire A/B delta). H_867 asks the ABSOLUTE question: does the
+  SFT+self-play model clear a PRE-FROZEN absolute dialogue-quality FLOOR on a HELD-OUT, never-trained
+  PD dialogue distribution — not merely beat its own SFT arm? This is a strictly harder bar: a model
+  can win an A/B and still be absolutely poor. These ABSOLUTE thresholds did not exist before — they
+  are FROZEN here in a separate commit BEFORE the fire (W2 discipline).
+
+SCOPE (a_scale_honest_scope): the model under test = the H_863 mid-rung SFT+self-play arm-SP
+  (d512/L8/E8, ~13.65M params, AKIDA int4-sym[-7,+7] STE + act_bits=4). An absolute floor at this
+  toy/mid scale on a DISTRIBUTION-SHIFTED held-out (different plays than arm-SP was trained on) is a
+  HARD bar. An honest 🔴 (below floor) is expected-plausible and publishable (a_paper_negative_ok).
+  A 🟢/🔴 here binds ONLY this rung+this eval distribution; it does NOT bind another rung or the
+  deploy chip-fit track. Inference stays AKIDA-int4-only (P0 d4). External LLM 0 · foundation-borrow 0.
+
+MODEL UNDER TEST (the artifact, NOT retrained for this hypothesis):
+  Reuse the H_863 mid backbone (HF dancinlab/anima-clm-verify : clm_mid_backbone.pt — the SFT-on-PD
+  -dialogue mid model) and reconstruct the arm-SP by reproducing the H_863 procedure VERBATIM:
+  SFT-on-PD-dialogue base + a DIVERSITY-gated self-play reflux slice folded back + a short continue,
+  exactly as F-CLM-DIALOGUE_prereg.txt describes. The self-play reflux passes the 8-pattern register
+  -leak filter + the DIVERSITY gate (self-BLEU<0.8 ∧ rep<0.20) before fold-back. No external data,
+  no ShareGPT/Alpaca/ChatGPT-gen, no LLM. (We also report arm-SFT for contrast, but the FLOOR
+  verdict is on arm-SP — the SFT+self-play model, which is the @L6 path-B artifact.)
+
+EVAL CORPUS (INDEPENDENT held-out snapshot, license-clean, @L4 lane ①, NO ShareGPT/Alpaca/ChatGPT-gen)
+  This is H_867's OWN held-out eval snapshot — DISJOINT from H_863's training plays (so it tests
+  ABSOLUTE generalization, not memorized in-distribution recall). Source = Project Gutenberg
+  PUBLIC-DOMAIN stage plays NOT used by H_863:
+    Macbeth (#1533) · Othello (#1531) · Romeo and Juliet (#1513) · Pygmalion / G.B. Shaw (#3825).
+  license = PD (in allowed_cc set: "PD"). Provenance + per-source PD license + sha256 recorded in
+  .verdicts/clm-dialogue-abs/h867_eval_snapshot_manifest.json. Passed the license-clean gate AND
+  the 8-pattern register-leak filter (universe_brain_map, jy_chat_template, hexad_module, nonce,
+  Mk.VIII, "gen1 commit", corpus_generator.hexa, universe_extended). byte encoding V=256, no
+  tokenizer (P1 reuse). The eval snapshot is held under .verdicts/clm-dialogue-abs/ ONLY — H_867
+  does NOT write CLM/corpus/ (H_868 owns that). Held-out slice = every 6th 64-byte block (the H_863
+  held-out scheme), seed=867 for the generation-prompt sampler.
+
+FROZEN DISTRIBUTIONAL MEASURES (registered, byte-match ✗ — identical definitions to F-CLM-DIALOGUE)
+  coherence       = exp(-CE_heldout): mean per-position next-byte model confidence of arm-SP
+    continuing the held-out PD dialogue (higher = predicts the held-out human turn sequence better
+    = more coherent). Trajectory measure (H_857/H_858 reuse).
+  adequacy_f1     = byte-level 3-gram overlap F1 (precision/recall of generated-vs-reference next-turn
+    byte 3-grams) between arm-SP's greedy generation and the held-out reference response, averaged
+    over held-out prompts. Distributional adequacy proxy (NOT a single gold byte-match).
+  register-leak   = number of generated lines matching ANY of the 8 leak patterns (reported, gated).
+  self-BLEU / repetition = reported for DIVERSITY context (mode-collapse sanity), same defs as H_863.
+
+ABSOLUTE BASELINES ON THIS EVAL SNAPSHOT (measured pre-freeze, to GROUND the floor — these are the
+  trivial-model reference points the floor must clear; they are facts of the snapshot, not tunable):
+    uniform-byte (order -∞)          : CE 5.5452 → coherence 0.0039
+    unigram-byte (order 0, frequency): CE 3.2845 → coherence 0.0375
+    bigram-byte  (order 1, SELF-fit) : CE 2.4729 → coherence 0.0843   (optimistic self-fit upper ref)
+    random-byte generation 3-gram F1 : 0.000     (adequacy of a non-learning generator ≈ 0)
+
+FROZEN ABSOLUTE THRESHOLDS (justified, FROZEN — post-tuning 0)
+  F-CLM-DIALOGUE-ABS-COHERE  PASS iff  coherence(arm-SP)  >=  0.060
+    JUSTIFICATION: 0.060 sits strictly ABOVE the order-0 unigram baseline (0.0375) and below the
+    optimistic order-1 self-fit bigram reference (0.0843). Clearing it means arm-SP uses REAL
+    multi-byte dialogue context — it is not a trivial byte-frequency model — on a never-seen play
+    distribution. A defensible "is it actually coherent beyond frequency counting?" floor at mid scale.
+  F-CLM-DIALOGUE-ABS-ADEQ    PASS iff  adequacy_f1(arm-SP) >=  0.020
+    JUSTIFICATION: a non-learning (random-byte) generator scores 0.000 3-gram F1. 0.020 requires
+    genuine non-trivial structured 3-gram overlap with the held-out reference next turn — a real
+    response-adequacy signal, not noise — while staying honest about the distribution shift and the
+    fact that dialogue has many valid continuations (no single gold).
+  F-CLM-DIALOGUE-ABS-LEAK    PASS iff  register_leak_count(arm-SP) == 0
+    JUSTIFICATION: absolute safety gate — a deployable dialogue model must emit zero register leaks
+    on held-out generation (consistency with F-CLM-LEAK / F-CLM-DIALOGUE-LEAK).
+
+  VERDICT 🟢 SUPPORTED-NUMERICAL iff ALL THREE absolute thresholds pass (arm-SP clears the floor).
+          🔴 CLOSED-NEGATIVE     iff ANY absolute threshold fails (arm-SP below the floor — honest,
+                                   expected-plausible at mid scale; a_paper_negative_ok).
+
+  NOTE: ALL THREE are ABSOLUTE gates on arm-SP against pre-frozen values — there is NO relative
+  SP-vs-SFT comparison in the verdict (that was H_863). arm-SFT numbers are reported for contrast only.
+
+ARTIFACTS
+  .verdicts/clm-dialogue-abs/h867_eval_snapshot_manifest.json (provenance + per-source PD license +
+    sha256 + leak/gate verdict + baselines)
+  .verdicts/clm-dialogue-abs/clm_dialogue_abs_result.json (coherence/adequacy/leak/self-BLEU/rep for
+    arm-SP and arm-SFT vs the frozen floor)
+  .verdicts/clm-dialogue-abs/F-CLM-DIALOGUE-ABS.txt (verdict verbatim)
+  CLM/bench/h867_dialogue_abs_eval.py (the eval harness — code-only measurement, no LLM)
+
+BLOCKER FALLBACK: if a genuine license-clean PD dialogue eval snapshot cannot be sourced, H_867 stays
+  PRE-REGISTERED with a ## blocker note (do NOT fabricate / fire on toy data and claim a verdict).
+  [This fire uses sourced PD Gutenberg plays disjoint from H_863 — see the snapshot manifest.]
