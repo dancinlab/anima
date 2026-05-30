@@ -18,7 +18,7 @@
 
 - [x] (app ✅) read/write × 깊이 비대칭 toy — `app/write_depth.py` 실동작, verify
 - [x] 횡단 인덱스 — 다른 도메인의 write 앱 통합 대시보드 ✅ → [AURA-AXES-INDEX.md](../AURA-AXES-INDEX.md) (앱×방향×깊이×모달 SSOT)
-- [ ] real head-model 깊이감쇠 실측 (AURA-HEADMODEL 연계)
+- [x] real head-model 깊이감쇠 실측 (AURA-HEADMODEL 연계) — HEADMODEL 3-shell(Ary1981, PR#1514/1517) 깊이 envelope R² 0.239→0.016로 부분 해소 (3-shell 해소·실 MNE 비구형/tangential은 external 잔여)
 
 ## 세부분류 (횡단 인덱스)
 

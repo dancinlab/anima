@@ -7,8 +7,8 @@
 ## 진행 (milestones)
 
 - [x] (app ✅) 정맥동 lead-field — SSS(운동)·가로/S자(귀뒤 측두·후두) 도달영역 + 깊이=피질표면 한정
-- [ ] B3/B5 grounding 재확인 — 혈관내≈ECoG급, 귀뒤정맥동 endovascular hypothesis
-- [ ] 3위치 침습 비대칭 정량 — N1(관통)>Synchron(혈관내)>귀뒤(비침습) read 해상도
+- [x] B3/B5 grounding 재확인 — 혈관내≈ECoG급(B3 PMC5976775 대역폭 p=0.75·SNR p>0.05)·귀뒤정맥동 endovascular hypothesis(B5) 확인 + `app/sinus_coverage`(도달 3/6 zone: SSS/가로/S자)
+- [x] 3위치 침습 비대칭 정량 — B3 §6 침습 사다리: N1(피질관통, 1024ch)>Synchron(혈관내 정맥동, 16ch, 두개골0)>귀뒤(비침습 EEG) (PR#1502 sinus_coverage 도달맵 + B3 비대칭 종합)
 - [ ] 실 Synchron COMMAND 데이터 입수 시 재평가 (external)
 
 ## deferred (다음 라운드)

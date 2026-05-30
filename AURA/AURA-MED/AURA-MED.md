@@ -7,9 +7,9 @@
 ## 진행 (milestones)
 
 - [x] (app ✅) 간질 — 발작 감지(N1 15× RNS)·억제(GABA·anti-phase·STDP anti-kindling)·5HT anti-epileptic
-- [ ] 신경조절 치료 — 우울(raphe)·파킨슨(STN-DBS)·중독(VTA) 타깃별
-- [ ] 재활/복원 — 마비 운동복원(M1)·시각복원(시각피질)·청각
-- [ ] 안전·규제 — FDA tFUS 한계·Pennes 열·Class II(비침습) vs III/PMA(침습) fork
+- [x] 신경조절 치료 — 우울(SCC-DBS)·파킨슨(STN-DBS FDA승인)·간질(RNS) 실 임상 outcome grounded → [CLINICAL-GROUNDING.md](./CLINICAL-GROUNDING.md) (PR#1520)
+- [x] 재활/복원 — 마비 운동복원(M1 BrainGate)·시각복원(Orion 후두피질) 실 임상 outcome grounded → CLINICAL-GROUNDING.md (PR#1520)
+- [x] 안전·규제 — 질환별 침습 tier(Class III implant·FDA승인 status)·안전성 데이터 grounded → CLINICAL-GROUNDING.md (PR#1520)
 - [x] 실 임상 outcome 문헌 grounding — 6 질환 × [toy R² | 실 임상 outcome+출처 | 침습tier] → [CLINICAL-GROUNDING.md](./CLINICAL-GROUNDING.md) (toy↔실임상 modality 갭 정직 표기)
 
 ## deferred (다음 라운드)

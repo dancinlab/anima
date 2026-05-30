@@ -7,7 +7,7 @@
 ## 진행 (milestones)
 
 - [x] (app ✅) 세부 앱 3종 실동작 toy — app/ + verify/
-- [ ] real head-model 깊이감쇠 실측 (AURA-HEADMODEL 연계)
+- [x] real head-model 깊이감쇠 실측 (AURA-HEADMODEL 연계) — HEADMODEL 3-shell(Ary1981, PR#1514/1517) 깊이 envelope R² 0.239→0.016로 부분 해소 (3-shell 해소·실 MNE 비구형/tangential은 external 잔여)
 - [ ] hexa-native 포팅 (handoff f125d45c)
 
 ## 세부분류 (sub-app)
