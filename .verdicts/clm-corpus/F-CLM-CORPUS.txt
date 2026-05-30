@@ -1,0 +1,48 @@
+F-CLM-CORPUS - H_868 CC dialogue corpus EXPANSION VERDICT (2026-05-31)
+======================================================================
+W2 . deterministic:true (license-clean gate + 8-pattern leak filter = pure code, g5 - no LLM judge).
+Thresholds FROZEN pre-build in F-CLM-CORPUS_prereg.txt (pushed BEFORE the build). post-tuning = 0.
+This corpus = lane (1) CANONICAL SSOT future dialogue rungs (H_864/H_867/H_874) cite.
+
+BUILDER: CLM/corpus/expand_p4_dialogue.py (reproducible: fetch PD Gutenberg -> strip PG
+  boilerplate -> license-clean gate -> 8-pattern leak filter -> byte-encode V=256 -> manifest+sha256).
+  license_clean_ok() mirrors build_p4_dialogue_corpus.hexa; leak patterns reuse build_p1_corpus.hexa.
+
+SOURCES (license + provenance + byte count):
+  title                              gut_id  family         license        bytes  leak
+  Hamlet                             1524    gutenberg-pd   PD            178979     1  (baseline H_863)
+  The Importance of Being Earnest    844     gutenberg-pd   PD            117016     0  (baseline H_863)
+  A Doll's House                     2542    gutenberg-pd   PD            142720     0  (baseline H_863)
+  Julius Caesar                      1522    gutenberg-pd   PD            116695     0  (baseline H_863)
+  Romeo and Juliet                   1513    gutenberg-pd   PD            143269     0
+  Othello                            1531    gutenberg-pd   PD            154768     0
+  The Tragedy of Macbeth             1129    gutenberg-pd   PD            103347     0
+  The Tempest                        1135    gutenberg-pd   PD             99080     0
+  Much Ado about Nothing             2240    gutenberg-pd   PD            121955     0
+  King Henry V                       1119    gutenberg-pd   PD            150905     0
+  Mrs. Warren's Profession           1097    gutenberg-pd   PD            194359     0
+  The Winter's Tale                  1539    gutenberg-pd   PD            145492     0
+
+  all 12 sources = Project Gutenberg PUBLIC-DOMAIN stage plays (speaker-turn dialogue).
+  license = PD (in allowed_cc set). 0 REJECTED. 0 FORBIDDEN-family present.
+
+FROZEN ACCEPTANCE GATES (measured vs prereg):
+  G1 LICENSE-CLEAN : 12/12 ingested clean = 100%, 0 forbidden-family -> PASS
+  G2 REGISTER-LEAK : leak in final output = 0 (== 0), 1 leak line(s) dropped at build -> PASS
+  G3 SIZE          : corpus 1668585 bytes >= 3x baseline (1664475) = 3.007x -> PASS
+  G4 PROVENANCE    : per-source {title,id,family,license,bytes,sha256,leak} recorded 100% -> PASS
+
+VERDICT: [GREEN] SUPPORTED-NUMERICAL
+  ALL FOUR frozen gates PASS. The expanded corpus is 100%% license-clean PD, register-leak-free,
+  3.007x the H_863 baseline, with full per-source provenance. Shipped as the lane (1) SSOT.
+
+SCOPE (a_scale_honest_scope): DATA-ENGINEERING artifact only (no GPU / no training in this fire).
+  External LLM 0 . foundation-borrow 0 . ShareGPT/Alpaca/ChatGPT-gen 0.
+
+ARTIFACTS:
+  CLM/corpus/expand_p4_dialogue.py            (reproducible builder)
+  CLM/corpus/p4_dialogue/manifest.json        (per-source provenance + gate verdicts)
+  CLM/corpus/p4_dialogue/dialogue.bytes       (git-uncommitted; sha256 committed)
+  CLM/corpus/p4_dialogue/dialogue.bytes.sha256 = 2aa3d85de72c28f28aa0b2ee8a702a41894aae22fce52d326cecd7d43689febb
+HF: dataset dancinlab/anima-clm-p4-dialogue (PRIVATE, COMPLETE - dialogue.bytes + sha256 + manifest.json + README card
+    listing every source's license + provenance). corpus sha256 = 2aa3d85de72c28f28aa0b2ee8a702a41894aae22fce52d326cecd7d43689febb
