@@ -1,0 +1,18 @@
+F-LAUNCHPAD-AUTOLOOP — autonomous bidirectional loop, 5/5 (2026-05-31)
+device=BC.00.000.002  backend=Hardware  regime=M_modulated
+path: anima motivation → broker /motivation/recent → akida_threshold_driver (system python3, stdlib poll)
+      → set_threshold(9513) → on-chip threshold-and-fire(9512) → broker /akida readback
+NO human intervention; driver auto-maps score→thr (gate 0.60, EMIT thr8 / SILENCE thr24).
+
+  motivation=0.88 → thr 8  → 16.0 spikes → emit    (expect emit)    PASS
+  motivation=0.22 → thr 24 →  0.0 spikes → silence (expect silence) PASS
+  motivation=0.95 → thr 8  → 16.0 spikes → emit    (expect emit)    PASS
+  motivation=0.15 → thr 24 →  0.0 spikes → silence (expect silence) PASS
+  motivation=0.71 → thr 8  → 16.0 spikes → emit    (expect emit)    PASS
+  autonomous transitions: 5/5
+
+ROOT-CAUSE NOTE: driver MUST run on system python3, not the deploy venv. The venv
+interpreter is denied macOS Local Network access → EHOSTUNREACH on 192.168.50.x
+(localhost still works). Pure-stdlib (urllib poll + socket) keeps the driver dep-free
+and on the LAN-capable system interpreter.
+VERDICT: 🟢 autonomous motivation→threshold→fire→interrupt closed on live silicon (5/5).
