@@ -238,27 +238,52 @@ def m_tension_native(region_spike: np.ndarray) -> float:
 
 
 def m_free_energy(region_spike: np.ndarray) -> float:
+    """Active-inference free-energy proxy = REDUCIBLE prediction error: how much
+    a CROSS-REGION linear generative model beats a per-region marginal baseline
+    at predicting the next region state. Intensive (mean per region), scale-free.
+
+    F_reducible = MSE(marginal baseline) - MSE(cross-region model)  (>=0).
+    rich (coupled) -> next-state predictable from OTHER regions -> large reduction.
+    collapse (decoupled) -> other regions carry no info -> reduction ~ 0.
+
+    The OTHER-regions-only design (a region cannot use its own current state) is
+    what makes this measure read INTEGRATION, not autocorrelation — so it cannot
+    degenerate to zero by trivially copying the present (the v2 pathology).
+    """
     n, T = region_spike.shape
-    cur = region_spike[:, :-1].astype(float)
+    if n < 2 or T < 3:
+        return 0.0
+    cur = region_spike[:, :-1].astype(float)   # n x (T-1)
     nxt = region_spike[:, 1:].astype(float)
-    base_rate = region_spike.mean(axis=1, keepdims=True)
-    base_err = np.abs(nxt - base_rate)
-    pred = np.zeros_like(nxt)
+    base_mse = 0.0
+    model_mse = 0.0
     for r in range(n):
-        X = cur.T
         y = nxt[r]
-        w = np.linalg.lstsq(X.T @ X + 1e-3 * np.eye(n), X.T @ y, rcond=None)[0]
-        pred[r] = np.clip(X @ w, 0.0, 1.0)
-    model_err = np.abs(nxt - pred)
+        # baseline: marginal rate of region r
+        base_mse += float(((y - y.mean()) ** 2).mean())
+        # model: predict region r's next state from OTHER regions' current state
+        others = [j for j in range(n) if j != r]
+        X = cur[others].T                      # (T-1) x (n-1)
+        Xb = np.hstack([X, np.ones((X.shape[0], 1))])   # + bias
+        w = np.linalg.lstsq(Xb.T @ Xb + 1e-3 * np.eye(Xb.shape[1]),
+                            Xb.T @ y, rcond=None)[0]
+        pred = Xb @ w
+        model_mse += float(((y - pred) ** 2).mean())
+    base_mse /= n
+    model_mse /= n
+    return max(0.0, base_mse - model_mse)
 
-    def surprise(e: np.ndarray) -> float:
-        e = np.clip(e, 1e-6, 1 - 1e-6)
-        return float((-np.log2(1 - e)).mean())
-    return max(0.0, surprise(base_err) - surprise(model_err))
 
+def m_hill(raw_region_rates: np.ndarray, q: float = 1.0) -> float:
+    """Hill number ^qD of the RAW region firing-rate distribution (pre-binning).
 
-def m_hill(region_spike: np.ndarray, q: float = 1.0) -> float:
-    rates = region_spike.mean(axis=1)
+    Reads the raw per-region mean spike rate (the rate-monopoly signal that the
+    median self-binning would destroy). q=1 -> exp(Shannon); reported /n so it is
+    intensive: collapse (one hot region) -> <1, rich (balanced) -> ~1.
+    INTENT INVERSION NOTE: rich is MORE even, so Hill(rich) > Hill(collapse) — the
+    expected consciousness direction (integration = high effective diversity).
+    """
+    rates = np.asarray(raw_region_rates, dtype=float)
     n = len(rates)
     if rates.sum() <= 0:
         return 0.0
@@ -318,8 +343,16 @@ MEASURES = ["PHI-NATIVE", "TEMPORAL-PHI", "TENSION-NATIVE",
             "FREE-ENERGY", "HILL", "CAUSAL-POWER"]
 
 
-def compute_measure(name: str, region_spike: np.ndarray, n: int,
-                    regime: str, seed: int) -> float:
+def raw_region_rates(raster: np.ndarray, n_regions: int) -> np.ndarray:
+    """Mean per-region spike rate from the RAW neuron raster (pre-binning)."""
+    region_of = np.repeat(np.arange(n_regions), NEURONS_PER_REGION)
+    return np.array([raster[region_of == r].mean() for r in range(n_regions)])
+
+
+def compute_measure(name: str, region_spike: np.ndarray, raw_rates: np.ndarray,
+                    n: int, regime: str, seed: int) -> float:
+    # rate-based measures read RAW region rates (monopoly signal); transition-
+    # based measures read the median-binned region series (state trajectory).
     if name == "PHI-NATIVE":
         return m_phi_native(region_spike)
     if name == "TEMPORAL-PHI":
@@ -329,7 +362,7 @@ def compute_measure(name: str, region_spike: np.ndarray, n: int,
     if name == "FREE-ENERGY":
         return m_free_energy(region_spike)
     if name == "HILL":
-        return m_hill(region_spike, q=1.0)
+        return m_hill(raw_rates, q=1.0)
     if name == "CAUSAL-POWER":
         return m_causal_power(region_spike, n, regime, seed)
     raise ValueError(name)
@@ -337,17 +370,20 @@ def compute_measure(name: str, region_spike: np.ndarray, n: int,
 
 def run(seed: int = 187) -> Dict:
     region_spikes: Dict[Tuple[str, int], np.ndarray] = {}
+    raw_rates: Dict[Tuple[str, int], np.ndarray] = {}
     for n in N_SIZES:
         for regime in ("collapse", "rich"):
             raster = gen_spike(n, regime, seed + n)
             region_spikes[(regime, n)] = bin_to_regions(raster, n)
+            raw_rates[(regime, n)] = raw_region_rates(raster, n)
     per_measure: Dict[str, Dict] = {}
     for name in MEASURES:
         vals: Dict[Tuple[str, int], float] = {}
         for n in N_SIZES:
             for regime in ("collapse", "rich"):
                 vals[(regime, n)] = compute_measure(
-                    name, region_spikes[(regime, n)], n, regime, seed + n)
+                    name, region_spikes[(regime, n)], raw_rates[(regime, n)],
+                    n, regime, seed + n)
         per_measure[name] = evaluate(name, vals)
     passes = [m for m in MEASURES if per_measure[m]["verdict"] == "PASS"]
     ledger = {
