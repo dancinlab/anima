@@ -1,0 +1,22 @@
+F-LAUNCHPAD-LOOP — COFFESHOP-on-AKIDA closed loop on live silicon (2026-05-31)
+device=BC.00.000.002  backend=BackendType.Hardware  regime=M_modulated
+controller=mini(192.168.50.39)  chip=pi5(192.168.50.155, ubuntu)
+loop: motivation_score → set_threshold(9513) → on-chip threshold-and-fire(9512) → should_interrupt = n>=quorum(4)
+
+[1] broker /ws/akida_ingest — LIVE end-to-end (ingest + /ws/akida fanout); live spikes flow chip→broker→subscriber.
+
+[2] M-regime ctrl knee calibration (thr → mean spikes/step, quorum=4):
+    thr<=8  → 16.0 spikes  EMIT
+    thr>=16 →  0.0 spikes  SILENCE      (clean digital knee; thr 0.60 emit-gate maps score>=0.60→thr8, else thr24)
+
+[3] 90-min trajectory HW replay (emit 3·10·14·15 · silence 11 · thr 0.60):
+    min  3: score0.72 → thr 8 → 16.0 → emit    expect emit    OK
+    min 10: score0.81 → thr 8 → 16.0 → emit    expect emit    OK
+    min 11: score0.34 → thr24 →  0.0 → silence expect silence OK
+    min 14: score0.68 → thr 8 → 16.0 → emit    expect emit    OK
+    min 15: score0.90 → thr 8 → 16.0 → emit    expect emit    OK
+    trajectory match: 5/5
+
+VERDICT: 🟢 LAUNCHPAD @goal closed loop demonstrated on live AKD1000 hardware.
+  on-chip threshold rewritten in real time by host motivation (thr 99→0 spikes, 1→16 spikes);
+  emit/silence decision = chip's own threshold-and-fire; 90-min trajectory 5/5 reproduced.

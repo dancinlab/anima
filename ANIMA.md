@@ -29,7 +29,7 @@
   SSOT 문서 = AKIDA/HW_FIRST_INTEGRATION_2026_05_30.md + HEXAD/SPONTANEOUS/AKIDA_FIRST.md
   불가침(touch 금지) = LM `lora` default · H_672~678 status · pi5-akida 공유 compute 전환
 척추 ON (이 순서로 진행 — 단일칩 pi5 직렬):
-  ⭐⭐ LAUNCHPAD COFFESHOP-on-AKIDA   ☐ 본선 통합목표 = 라이브 90-min emit/silence 폐루프. 잔여=broker /ws/akida_ingest 연결 (H_846 🟢 PASS·데모만)
+  ⭐⭐ LAUNCHPAD COFFESHOP-on-AKIDA   ✅ 폐루프 SILICON 종결 (2026-05-31 · live AKD1000 BC.00.000.002): motivation→set_threshold(9513)→on-chip fire(9512)→should_interrupt 라이브 ∮. broker /ws/akida_ingest 연결 LIVE(ingest+fanout) · M-regime ctrl knee thr≤8 EMIT/≥16 SILENCE · 90-min trajectory(emit 3·10·14·15 · silence 11 · thr0.60) 5/5 HW 재현 · g73 verdict .verdicts/846
   ✅ §6 pi5 probe (H_860)             live AKD1000 종결 ($0): PART1 decoder HW byte-match 🟢 (total_hamming=0/16000bit) · PART2 PLASTICITY few-shot 비결정론 🔴 (run-to-run weight hamming>0 전 shot) · spike-streamer 복구 active · g73 verdict .verdicts/860
   ✅ edge-of-chaos Φ (H_858)          M2 🟡→🟢 PROMOTE — live AKD1000 R1~R4 ∩ (H_857 coupling-K 와 2 독립축 수렴)
   ✅ AKIDA DECODER lane (H_680)       추론 HW forward / SW akida_sw_lif byte-identical
