@@ -1,0 +1,155 @@
+{
+  "src": "dissolve_sweep_2026_05_30.json",
+  "metric": "Pielou J = H / ln(E) (ecological evenness, ln(E) ceiling divided out)",
+  "frozen": {
+    "axis": [
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "mono_tol": 0.02,
+    "min_rise": 0.0,
+    "falsifier": "F-CLM-PIELOU-DISSOLVE: Pielou J monotone non-decreasing (within mono_tol) over E AND J(E64) >= J(E4) (escape scales with chip count under the ln(E)-corrected ruler)"
+  },
+  "per_run": [
+    {
+      "n_experts": 4,
+      "seed": 42,
+      "H_obs": 1.18301,
+      "z_round1": 0.52119,
+      "pielou_J": 0.85336
+    },
+    {
+      "n_experts": 4,
+      "seed": 43,
+      "H_obs": 1.116,
+      "z_round1": 0.15759,
+      "pielou_J": 0.80502
+    },
+    {
+      "n_experts": 4,
+      "seed": 44,
+      "H_obs": 1.25855,
+      "z_round1": 0.89937,
+      "pielou_J": 0.90785
+    },
+    {
+      "n_experts": 8,
+      "seed": 42,
+      "H_obs": 1.6923,
+      "z_round1": -0.13732,
+      "pielou_J": 0.81382
+    },
+    {
+      "n_experts": 8,
+      "seed": 43,
+      "H_obs": 1.69425,
+      "z_round1": -0.12729,
+      "pielou_J": 0.81476
+    },
+    {
+      "n_experts": 8,
+      "seed": 44,
+      "H_obs": 1.79181,
+      "z_round1": 0.47926,
+      "pielou_J": 0.86168
+    },
+    {
+      "n_experts": 16,
+      "seed": 42,
+      "H_obs": 2.24908,
+      "z_round1": -0.93766,
+      "pielou_J": 0.81118
+    },
+    {
+      "n_experts": 16,
+      "seed": 43,
+      "H_obs": 2.05383,
+      "z_round1": -2.53156,
+      "pielou_J": 0.74076
+    },
+    {
+      "n_experts": 16,
+      "seed": 44,
+      "H_obs": 2.47359,
+      "z_round1": 0.81648,
+      "pielou_J": 0.89216
+    },
+    {
+      "n_experts": 32,
+      "seed": 42,
+      "H_obs": 2.94524,
+      "z_round1": -1.00914,
+      "pielou_J": 0.84982
+    },
+    {
+      "n_experts": 32,
+      "seed": 43,
+      "H_obs": 2.8513,
+      "z_round1": -1.95643,
+      "pielou_J": 0.82271
+    },
+    {
+      "n_experts": 32,
+      "seed": 44,
+      "H_obs": 2.74121,
+      "z_round1": -3.15396,
+      "pielou_J": 0.79095
+    },
+    {
+      "n_experts": 64,
+      "seed": 42,
+      "H_obs": 3.28661,
+      "z_round1": -5.9638,
+      "pielou_J": 0.79026
+    },
+    {
+      "n_experts": 64,
+      "seed": 43,
+      "H_obs": 3.14668,
+      "z_round1": -7.94734,
+      "pielou_J": 0.75662
+    },
+    {
+      "n_experts": 64,
+      "seed": 44,
+      "H_obs": 3.07982,
+      "z_round1": -8.93012,
+      "pielou_J": 0.74054
+    }
+  ],
+  "axis": [
+    4,
+    8,
+    16,
+    32,
+    64
+  ],
+  "mean_pielou_J": [
+    0.85541,
+    0.83009,
+    0.8147,
+    0.82116,
+    0.76247
+  ],
+  "mean_z_round1": [
+    0.52605,
+    0.07155,
+    -0.88425,
+    -2.03984,
+    -7.61375
+  ],
+  "J_monotone_non_decr": false,
+  "J_rise_E64_minus_E4": -0.09294,
+  "round1_z_monotone": false,
+  "verdict": "FAIL",
+  "verdict_tier": "\ud83d\udd34 CLOSED-NEGATIVE",
+  "scale_scope": "toy expert-count sweep (d64/L2, toy two-lane) re-measured from round-1 H_obs -- a_scale_honest_scope (toy != production)"
+}

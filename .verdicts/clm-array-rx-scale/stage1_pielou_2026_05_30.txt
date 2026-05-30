@@ -1,0 +1,44 @@
+F-CLM-PIELOU-DISSOLVE -- DISSOLVE re-measured with Pielou J = H/ln(E)
+========================================================================
+source        : dissolve_sweep_2026_05_30.json (round-1 raw H_obs, no re-run, $0)
+metric        : Pielou J = H / ln(E) (ecological evenness, ln(E) ceiling divided out)
+
+FROZEN (@L5, ruler swapped, thresholds not tampered):
+  axis = [4, 8, 16, 32, 64]
+  seeds = [42, 43, 44]
+  mono_tol = 0.02
+  min_rise = 0.0
+  falsifier = F-CLM-PIELOU-DISSOLVE: Pielou J monotone non-decreasing (within mono_tol) over E AND J(E64) >= J(E4) (escape scales with chip count under the ln(E)-corrected ruler)
+
+   E  seed     H_obs  z_round1  Pielou_J
+   4    42    1.1830    0.5212    0.8534
+   4    43    1.1160    0.1576    0.8050
+   4    44    1.2586    0.8994    0.9079
+   8    42    1.6923   -0.1373    0.8138
+   8    43    1.6943   -0.1273    0.8148
+   8    44    1.7918    0.4793    0.8617
+  16    42    2.2491   -0.9377    0.8112
+  16    43    2.0538   -2.5316    0.7408
+  16    44    2.4736    0.8165    0.8922
+  32    42    2.9452   -1.0091    0.8498
+  32    43    2.8513   -1.9564    0.8227
+  32    44    2.7412   -3.1540    0.7910
+  64    42    3.2866   -5.9638    0.7903
+  64    43    3.1467   -7.9473    0.7566
+  64    44    3.0798   -8.9301    0.7405
+
+axis (E)            : [4, 8, 16, 32, 64]
+mean Pielou J       : [0.85541, 0.83009, 0.8147, 0.82116, 0.76247]
+mean z (round-1)    : [0.52605, 0.07155, -0.88425, -2.03984, -7.61375]
+J monotone non-decr : False (tol 0.02)
+J rise (E64 - E4)   : -0.09294 (threshold >= 0.0)
+round-1 z monotone  : False (the artifact verdict)
+scale scope         : toy expert-count sweep (d64/L2, toy two-lane) re-measured from round-1 H_obs -- a_scale_honest_scope (toy != production)
+
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE
+
+READING: raw dispatch entropy H_obs RISES with E (1.19 -> 3.17 nats),
+but Pielou J (evenness) does NOT improve -- so the ln(E) ceiling was
+only PART of the round-1 z-collapse. The router's per-expert balance
+stays ~flat/slightly down as E grows: experts proliferate but evenness
+does not scale. See verdict tier for the honest ruling.
