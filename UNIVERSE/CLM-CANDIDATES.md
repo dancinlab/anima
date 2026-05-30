@@ -32,6 +32,7 @@ LLM-judge (g5) · measurement-rung scope only, does NOT bind deploy chip-fit
 
 - **P4.0 / Cycle (2026-05-31)** (PR #1553): H_861 (F-CLM-BOUND) · H_862 (F-CLM-ANCHOR) · H_863 (F-CLM-DIALOGUE) registered + first measurement rung (mid d512/L8/E8 13.65M) AKIDA-envelope QAT fire 🟠 MEASUREMENT-COMPLETE.
 - **P4.3/P4.4 verify (2026-05-31)** (PR #1555 · prereg freeze `bf98c01`): H_861 🔴 CLOSED-NEGATIVE (RETAIN z_drop 1.984≥1.0 FAIL · GAIN +6.13 PASS) · H_862 🔴 CLOSED-NEGATIVE (DIST 0.109<0.50 PASS · PROBE 0.783≤0.80 FAIL · on/off ablation identical) · H_863 🟢 SUPPORTED-NUMERICAL (4/4 PASS · SP>SFT coherence 3.7×·adequacy 3.6× · leak 0 · self-BLEU 0.062 · rep 0.026). Root cause of both 🔴 = readout-only edge has no lever on the frozen trunk → shared E5 fix (trunk-adjacent thin adapter).
+- **A-group 5-fire (2026-05-31)** (PR #1557–#1561): H_864 🔴 (large d768/L12/E12 44.68M · self-play DID NOT carry — large mode-collapsed at 2000 step rep 0.361, self-play reflux starved; undertrain confound) · H_865 🟢/🔴 (trunk-adjacent adapter edge: **F-CLM-BOUND 🟢 CLOSED — H_861 forgetting fixed, z_drop −12.28<1.0 ∧ gain +7.37**; F-CLM-ANCHOR 🔴 lever restored on/off 0.175≠0.595 but PROBE 0.143<0.80) · H_866 🔴 (PLASTICITY↔dialogue: **LOOP 🟢 R2-safe — edge-learn doesn't break the closed loop, 5/5 seed**; GAIN 🔴 readout capacity bottleneck; SW-sim) · H_867 🔴 (absolute floor: ABS-COHERE 0.058<0.060 by 0.002, ADEQ∧LEAK pass — A/B win ≠ absolute quality) · H_868 🟢 (corpus 12 PD plays 3.0× · license-clean 100% · leak 0). Theme: 4× 🔴 all = readout/edge capacity+reach; H_865 adapter closed BOUND, ANCHOR-PROBE residual → H_873.
 
 ---
 
@@ -39,11 +40,13 @@ LLM-judge (g5) · measurement-rung scope only, does NOT bind deploy chip-fit
 
 | ID | 주제 | direction | falsifier sketch | 토대 | tag |
 |----|------|-----------|------------------|------|-----|
-| H_864 | dialogue self-play scale-climb | climb H_863 one rung up (small→…) on a larger real CC corpus; same 4 frozen falsifiers per-rung | per-rung COHERE/ADEQ(SP>SFT) ∧ LEAK=0 ∧ DIV(self-BLEU<0.8·rep<0.2) | H_863 🟢 mid · @L5 ladder | ⭐ |
-| H_865 | trunk-adjacent adapter edge | re-run H_861+H_862 with a thin trainable adapter between norm_out and a FROZEN base readout (the shared E5 fix both 🔴 named) | RETAIN z_drop<thr ∧ GAIN>0 (BOUND) ∧ anchor-DIST<thr ∧ PROBE>thr (ANCHOR) with the adapter giving the constraint a lever | H_861/H_862 🔴 root cause | ⭐ |
-| H_866 | on-chip PLASTICITY ↔ dialogue loop | couple the live edge-learn loop into the COFFESHOP dialogue turn loop (R2); measure online adaptation without emit-loop regression | online adaptation gain>0 over a session ∧ closed-loop emit/silence (H_846) unbroken | H_846 🟢 loop · H_679 HW edge-learn | 🟢 |
-| H_867 | dialogue absolute quality (not just SP>SFT) | held-out human-readable dialogue eval — absolute coherence/adequacy floor, not only the relative A/B delta | absolute coherence ≥ frozen floor on held-out CC dialogue (distributional) | H_863 🟢 (relative only) | ⬜ |
-| H_868 | real CC dialogue corpus expansion | grow lane① beyond PD Gutenberg plays — PD/CC forums · subtitles · debate transcripts; license-clean gate per source | corpus license-clean 100% ∧ register-leak 0 ∧ size ≥ target ∧ provenance recorded | @L4 ①CC · existing license-clean gate | 🟢 |
+| ~~H_864~~ | dialogue self-play scale-climb | **CONSUMED 🔴 (PR #1557)** — self-play did NOT carry to large (44.68M mode-collapsed @2000 step) | — | — | ✅ |
+| ~~H_865~~ | trunk-adjacent adapter edge | **CONSUMED 🟢BOUND/🔴ANCHOR (PR #1561)** — H_861 forgetting CLOSED; ANCHOR-PROBE residual → H_873 | — | — | ✅ |
+| ~~H_866~~ | PLASTICITY ↔ dialogue loop | **CONSUMED 🔴 (PR #1558)** — LOOP 🟢 R2-safe; GAIN 🔴 readout capacity | — | — | ✅ |
+| ~~H_867~~ | dialogue absolute quality | **CONSUMED 🔴 (PR #1560)** — ABS-COHERE 0.058<0.060 floor (A/B win ≠ absolute) | — | — | ✅ |
+| ~~H_868~~ | real CC dialogue corpus expansion | **CONSUMED 🟢 (PR #1559)** — 12 PD plays 3.0× · license-clean 100% · leak 0 | — | — | ✅ |
+| **H_864r** | self-play climb · step-fair | re-run H_864 large with MORE steps (resolve the undertrain/mode-collapse confound — fair test of self-play scaling) | per-rung COHERE/ADEQ(SP>SFT) ∧ LEAK=0 ∧ DIV(rep<0.2) at convergence | H_864 🔴 (undertrain confound) | ⭐ |
+| **H_867r** | absolute quality · post-adapter/scale | re-run H_867 floor on the H_865 adapter model and/or a larger rung (the levers H_867 named) | ABS-COHERE ≥ frozen floor 0.060 | H_867 🔴 · H_865 adapter · H_864r | ⬜ |
 
 ## B. routing-escape (the toy-scoped 🔴 levers — deploy-scale re-check)
 
@@ -58,7 +61,7 @@ LLM-judge (g5) · measurement-rung scope only, does NOT bind deploy chip-fit
 | ID | 주제 | direction | falsifier sketch | 토대 | tag |
 |----|------|-----------|------------------|------|-----|
 | H_872 | freeze-depth sweep (BOUND E5) | sweep the core/edge freeze boundary depth (E5) — find the shallowest freeze that gives RETAIN∧GAIN | ∃ freeze-depth with z_drop<thr ∧ gain>0 | H_861 🔴 (readout-only too shallow) | 🟢 |
-| H_873 | anchor constraint on the edge output (ANCHOR E5) | route the Ψ-anchor penalty onto the readout output distribution itself (where drift happens), not the frozen trunk Ψ-state | PROBE consistency>thr ∧ on/off ablation NON-identical (constraint has a lever) | H_862 🔴 (lever-less on trunk) | 🟢 |
+| H_873 | anchor constraint on the edge output (ANCHOR E5 · **H_862 completion**) | route the Ψ-anchor penalty onto the readout output distribution itself (KL/JS to p_pre) — where drift happens, not the frozen trunk Ψ-state. **🔄 IN-FLIGHT (2026-05-31)** | PROBE consistency>0.80 ∧ DIST<0.50 ∧ on/off NON-identical ∧ no BOUND regression | H_862 🔴 · H_865 adapter | 🔄 |
 | H_874 | self-reward / RLHF-like dialogue (method C) | the @L6 follow-on after H_863 — self-scored reward loop gated by H_867 absolute floor + DIVERSITY | reward-trained > SFT+self-play on held-out ∧ leak 0 ∧ no DIVERSITY collapse | H_863 🟢 · @L6 method C | ⬜ |
 | H_875 | continual-learning forgetting curve | measure forgetting as a function of edge-learn steps — when does z_drop cross the RETAIN gate over a long session? | z_drop(steps) curve ∧ identify the step-budget before forgetting | H_861 🔴 · H_679 | ⬜ |
 
