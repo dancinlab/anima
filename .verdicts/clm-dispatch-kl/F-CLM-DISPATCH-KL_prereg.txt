@@ -1,0 +1,50 @@
+F-CLM-DISPATCH-KL — PRE-REGISTRATION (frozen pre-run, 2026-05-31)
+verdict tier: 🟠 PRE-REGISTERED (h869 dispatch-KL fire 판정 대기)
+H_869 · slug=clm-dispatch-kl · source=CLM/model/h869_dispatch_kl_routing.{hexa,py}
+
+This falsifier is NOT yet measured. No h869 result exists. The three thresholds
+below are FROZEN before any fire (W2 · post-tuning 0), so a post-fire result
+cannot be tuned to fit. routing-z is measured by CODE (g5) using the EXACT
+routing_z() definition reused VERBATIM from CLM/model/judge_clm.py (observed
+mean routing-usage entropy vs a Dirichlet(1) simplex null; same N_NULL, same
++11 seed offset) — no new metric is invented for this fire.
+
+  F-CLM-DISPATCH-KL-ROUTE : routing-z > 3.0   (the chip-array DEPLOY gate)
+  F-CLM-DISPATCH-KL-LOAD  : per-expert load-balance entropy ratio H/ln(E) >= 0.95
+                            (load floor; balance_ratio over the held-out eval
+                            stream, same balance_ratio as the toy 847 probe)
+  F-CLM-DISPATCH-KL-QUAL  : KL-arm held-out CE not worse than the AB no-routing-
+                            reg-distill baseline by > 0.50 nats
+                            (quality guard: CE_KL - CE_AB <= 0.50)
+
+measurement matrix (frozen):
+  arms   = {AB (baseline · top-k + load-balance + entropy), KL (AB + dispatch-KL
+           distill to a balanced/uniform dispatch target)}
+  rungs  = {tiny (d64/L2/E4), small (d256/L4/E8)}
+  seeds  = {42, 43, 44}    (multi-seed reproduction, d6, same as 847)
+  judge  = CLM/model/judge_clm.py routing_z()/content_z() reused verbatim
+  gate scope (a_scale_honest_scope): routing-z>3.0 is the chip-array (expert=chip)
+           DEPLOY gate ONLY — NOT the "can converse" gate. Conversation is already
+           carried by content-escape lever B (H_863 🟢). A 🔴 here closes the
+           DEPLOY gate at this measurement rung, not "can converse".
+
+PASS gate (per arm,rung, all-3-seed{42,43,44}):
+  ROUTE ∧ LOAD ∧ QUAL all simultaneously → 🟢 SUPPORTED-NUMERICAL (dispatch-KL
+  moves routing-z across the 3.0 deploy gate where the toy 847 AB arm stalled
+  at ~2.3, WITHOUT a quality regression)
+FAIL gate:
+  any one fails → 🔴 CLOSED-NEGATIVE (dispatch-KL ⊥ routing-z escape at this
+  measurement rung; consistent with the toy 847/852/853 routing-z 🔴 finding)
+  (a_paper_negative_ok — a closed negative is publishable)
+
+prior art frozen into the threshold choice:
+  - H_847 F-CLM-MONO 🔴  full-fire: AB arm min_routing_z = 0.97 (tiny) / 1.91
+    (small); A/B arms NEGATIVE routing-z. No arm cleared z>3.0 → routing-z 🔴.
+  - H_666  MoE collapse  toy🟢 / scale🔴  (a toy escape re-falsified at scale).
+  - routing_z>3.0 multi-seed gate inherited verbatim from F-CLM-MONO_prereg.txt
+    (847, commit-frozen). dispatch-KL is the 4th lever (@L3 lever A) added to
+    move that exact gate, re-tested under the SAME frozen z>3.0 bar.
+
+status: 🟠 PRE-REGISTERED — no measurement. This file is the audit anchor for the
+frozen thresholds, NOT a PASS. The verdict will be re-issued verbatim from the
+h869 harness stdout into F-CLM-DISPATCH-KL.txt when the fire lands.
