@@ -51,47 +51,73 @@ CAUSAL_POKES = 16
 
 
 def gen_spike(n_regions: int, regime: str, seed: int) -> np.ndarray:
+    """Return a (n_neurons x N_STEPS) binary spike raster — heterogeneous LIF.
+
+    regime == 'collapse' : region 0 monopolises drive; other regions sub-threshold
+                           and DECOUPLED -> their activity carries no shared
+                           structure (monopoly: one part dominates, no integration).
+    regime == 'rich'     : every region driven near threshold + strong inter-region
+                           coupling -> asynchronous, integrated cross-region dynamics.
+
+    Heterogeneous per-neuron drive + jittered thresholds break the period-4
+    refractory lockstep (the v1 degeneracy), so the raster has genuine dynamical
+    richness. Deterministic given seed (np.random.default_rng — NOT Math.random).
+    """
     rng = np.random.default_rng(seed)
     n_neurons = n_regions * NEURONS_PER_REGION
     region_of = np.repeat(np.arange(n_regions), NEURONS_PER_REGION)
     if regime == "collapse":
-        region_drive = np.full(n_regions, 0.04)
-        region_drive[0] = 0.95
-        coupling = 0.02
+        region_drive = np.full(n_regions, 0.30)
+        region_drive[0] = 0.85
+        coupling = 0.0          # decoupled -> no integration across regions
     elif regime == "rich":
         region_drive = np.full(n_regions, 0.55)
-        coupling = 0.35
+        coupling = 0.45         # strong integration across regions
     else:
         raise ValueError("unknown regime " + repr(regime))
-    v = rng.uniform(0.0, 0.3, n_neurons)
+    # heterogeneous neuron-level drive + threshold -> asynchronous firing
+    drive_n = region_drive[region_of] * (1.0 + rng.normal(0.0, 0.25, n_neurons))
+    v_threshold = 1.0 + rng.normal(0.0, 0.12, n_neurons)
+    v = rng.uniform(0.0, 0.5, n_neurons)
     refr = np.zeros(n_neurons, dtype=np.int32)
-    v_threshold = 1.0
-    tau = 20.0
+    tau = 8.0
     raster = np.zeros((n_neurons, N_STEPS), dtype=np.int8)
-    region_rate = np.zeros(n_regions)
+    region_act = np.zeros(n_regions)      # instantaneous region activity (EMA)
     for t in range(N_STEPS):
-        drive = region_drive[region_of]
-        other = (region_rate.sum() - region_rate) / max(1, n_regions - 1)
+        # each neuron pulled toward OTHER regions' activity (integration term)
+        other = (region_act.sum() - region_act) / max(1, n_regions - 1)
         coupled = coupling * other[region_of]
-        noise = rng.uniform(-0.05, 0.05, n_neurons)
-        v = v * (1.0 - 1.0 / tau) + drive + coupled + noise
+        noise = rng.normal(0.0, 0.18, n_neurons)
+        v = v * (1.0 - 1.0 / tau) + drive_n + coupled + noise
         v = np.where(refr > 0, 0.0, v)
         spikes = (v >= v_threshold).astype(np.int8)
         raster[:, t] = spikes
         v = np.where(spikes == 1, 0.0, v)
-        refr = np.where(spikes == 1, 2, np.maximum(0, refr - 1))
+        refr = np.where(spikes == 1, 1, np.maximum(0, refr - 1))
         for r in range(n_regions):
             rr = spikes[region_of == r].mean()
-            region_rate[r] = 0.9 * region_rate[r] + 0.1 * rr
+            region_act[r] = 0.7 * region_act[r] + 0.3 * rr
     return raster
 
 
 def bin_to_regions(raster: np.ndarray, n_regions: int) -> np.ndarray:
+    """Collapse neuron raster -> (n_regions x N_STEPS) binary region activity.
+
+    A region is 'on' at step t iff its instantaneous spike fraction exceeds the
+    region's OWN median over the run (self-referenced coarse-grain). This yields
+    a balanced, structured binary series per region (no all-0 / all-1 degeneracy)
+    so every measure has real transitions to read.
+    """
     region_of = np.repeat(np.arange(n_regions), NEURONS_PER_REGION)
     out = np.zeros((n_regions, raster.shape[1]), dtype=np.int8)
     for r in range(n_regions):
         frac = raster[region_of == r].mean(axis=0)
-        out[r] = (frac >= 0.5).astype(np.int8)
+        thr = np.median(frac)
+        if thr <= 0.0:
+            # silent region under its own median -> any spike marks 'on'
+            out[r] = (frac > 0.0).astype(np.int8)
+        else:
+            out[r] = (frac >= thr).astype(np.int8)
     return out
 
 
