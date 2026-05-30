@@ -17,12 +17,26 @@
 ## 진행 (milestones)
 
 - [x] (app ✅) read/write × 깊이 비대칭 toy — `app/read_depth.py` 실동작, verify
-- [ ] 횡단 인덱스 — 다른 도메인의 read 앱 통합 대시보드
+- [x] 횡단 인덱스 — 다른 도메인의 read 앱 통합 대시보드 ✅ → [AURA-AXES-INDEX.md](../AURA-AXES-INDEX.md) (앱×방향×깊이×모달 SSOT)
 - [ ] real head-model 깊이감쇠 실측 (AURA-HEADMODEL 연계)
 
 ## 세부분류 (횡단 인덱스)
 
-이 축에 속한 앱: motor_decode(CORTEX)·dbs_reach(DEEP)·의식모니터·통신디코드·nav decode·seizure 감지(MED)·endovasc read
+**read 방향 앱 전수** (응용 4 도메인 횡단 — 분류 SSOT = [AURA-AXES-INDEX.md](../AURA-AXES-INDEX.md)):
+
+| 앱 | 도메인 | 깊이 | 비고 |
+|---|---|---|---|
+| `motor_decode` | 🦾 MOTOR | 피질 (M1 d1.0) | 운동의도 5-class, 최고 도달 |
+| `cursor` | 🦾 MOTOR | 피질 (M1) | 커서/포인터 |
+| `exoskeleton` | 🦾 MOTOR | 피질 (M1+S1) | read/write 양방향 |
+| `consciousness_monitor` | 🧠 COGNITION | 피질 (전역) | big-Φ/α 의식수준 |
+| `subvocal` | 🧠 COGNITION | 피질 (A1/언어) | 내적발화/락트인 통신 |
+| `executive_dlpfc` | 🧠 COGNITION | 피질 (DLPFC) | 집행상태 |
+| `audio_io` | 👁️ SENSE | 피질 (A1) | read/write 양방향 |
+| `epilepsy` | ⚕️ MED | 피질 focus | 발작 감지(+억제 write) |
+| `paralysis_rehab` | ⚕️ MED | 피질 (M1) | 운동복원(read/write) |
+
+→ **read는 전부 피질 ✅** (15/17 응용 앱이 피질). **비침습 심부 read = 공집합** — 깊이 벽(C15·3-shell §확증)이 심부 read를 원천 차단(R²<0.07). write 축은 음향(tFUS)으로 심부 갈래 있음(AURA-WRITE 대조).
 
 - `app/read_depth.py` — read × 깊이 비대칭 실동작 toy
 - `verify/read_depth.txt` — verdict

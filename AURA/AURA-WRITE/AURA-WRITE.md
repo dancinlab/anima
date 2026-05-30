@@ -17,12 +17,30 @@
 ## 진행 (milestones)
 
 - [x] (app ✅) read/write × 깊이 비대칭 toy — `app/write_depth.py` 실동작, verify
-- [ ] 횡단 인덱스 — 다른 도메인의 write 앱 통합 대시보드
+- [x] 횡단 인덱스 — 다른 도메인의 write 앱 통합 대시보드 ✅ → [AURA-AXES-INDEX.md](../AURA-AXES-INDEX.md) (앱×방향×깊이×모달 SSOT)
 - [ ] real head-model 깊이감쇠 실측 (AURA-HEADMODEL 연계)
 
 ## 세부분류 (횡단 인덱스)
 
-이 축에 속한 앱: nav_overlay(NAV)·acoustic_write(TFUS)·wearable delivery 6종·blindness V1(MED)·depression/parkinson stim(MED)
+**write 방향 앱 전수** (응용 4 도메인 횡단 — 분류 SSOT = [AURA-AXES-INDEX.md](../AURA-AXES-INDEX.md)):
+
+| 앱 | 도메인 | 깊이 | 모달 | 비고 |
+|---|---|---|---|---|
+| `ar_nav` | 👁️ SENSE | 피질 (V1) | 시각 디스플레이 | AR 네비 |
+| `ar_display` | 👁️ SENSE | 피질 (V1) | 시각 디스플레이 | AR 디스플레이 |
+| `haptics` | 👁️ SENSE | 피질 (S1) | 촉각(e-skin) | 햅틱 피드백 |
+| `notify` | 👁️ SENSE | 피질 (S1/A1) | 촉각/음향 | 알림 |
+| `audio_io` | 👁️ SENSE | 피질 (A1) | 음향 | read/write 양방향 |
+| `exoskeleton` | 🦾 MOTOR | 피질 (M1+S1) | 전기+고유감각 | read/write 양방향 |
+| `blindness` | ⚕️ MED | 피질 (V1) | 전기 | 시각복원 write |
+| `epilepsy` | ⚕️ MED | 피질 focus | 전기 | 발작 억제(read/write) |
+| `paralysis_rehab` | ⚕️ MED | 피질 (M1) | 전기 | 운동복원(read/write) |
+| `chronic_pain` | ⚕️ MED | 피질→심부 (S1/대상) | 전기 | sulcal 부분 |
+| `depression` | ⚕️ MED | 🔴 심부 (raphe) | 전기(DBS) | 비침습 벽 → 음향(tFUS)만 |
+| `parkinson` | ⚕️ MED | 🔴 심부 (STN) | 전기(STN-DBS) | 비침습 벽 → 음향(tFUS)만 |
+| `acoustic_write` | 🔊 TFUS | 🔴 심부 | 음향 | **유일 비침습 심부 write** (d2.5+서 read 추월) |
+
+→ write는 read와 달리 **심부 갈래가 존재** — 단 전기로는 침습(DBS), 비침습은 음향(tFUS)만. 심부 벽은 C15·3-shell(§확증)로 실재 확정이나, write는 음향이 두개골 전기-LPF를 우회해 심부 자극을 뚫는다(open-loop만, 폐루프 read는 여전히 벽).
 
 - `app/write_depth.py` — write × 깊이 비대칭 실동작 toy
 - `verify/write_depth.txt` — verdict
