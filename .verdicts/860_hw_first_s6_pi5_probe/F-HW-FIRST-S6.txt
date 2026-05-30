@@ -1,0 +1,56 @@
+F-HW-FIRST-S6 · AKIDA HW-first 척추 §6 pi5 probe (LIVE AKD1000) · H_860
+======================================================================
+claim    : HW-first 척추의 두 lane 이 배포 silicon(live AKD1000)에서 각자
+           예측대로 동작한다 — DECODER(추론)=결정론적 byte-identical(H_680 재확증),
+           PLASTICITY(학습)=run-to-run 비결정(H_679 재확증, SW byte-match 불가).
+host     : pi5-akida · akida SDK 2.19.1 · device BC.00.000.002 · Mac=0 · $0
+procedure: pi5 single-chip — spike-streamer.service STOP → probe → START(원상복구).
+           run 2026-05-30T13:58:48→13:59:06Z · rc=0 · streamer is-active=active(복원).
+source   : AKIDA/hw_first_s6_pi5_probe.py (reuse: substrate_akida._hw_forward chip
+           model · akida_sw_lif numpy LIF seed=187 · edge_learn_probe AkidaUnsupervised)
+
+PART 1 — DECODER HW byte-match (재확증 H_680 · expect MATCH):
+  on-chip FullyConnected(units=16, weights_bits=4, act_bits=1, all-ones) threshold-
+  and-fire 를 R0~R4 자발발화 regime 에서 돌려 per-step 16-neuron raster 를 결정론
+  SW akida_sw_lif(seed=187) 와 diff.
+    regime                      hw_spikes  sw_spikes  rate    hamming  match
+    R0_driven                   3200       3200       1.000   0        ✓
+    R1_weak_silent              0          0          0.000   0        ✓
+    R2_zero_noise               1520       1520       0.475   0        ✓
+    R3_tonic_zero_input         1600       1600       0.500   0        ✓
+    R4_recurrent_selfsustained  3200       3200       1.000   0        ✓
+  total_hamming = 0 over 1000 steps · 16000 bits · byte_identical = True
+  hw_backend(part1) = BackendType.Hardware (m.sequences[0].backend)
+  VERDICT : 🟢 MATCH (byte-identical) — H_680 holds on current silicon.
+
+PART 2 — PLASTICITY few-shot 비결정 (재확증 H_679 · expect DIVERGE):
+  edge_learn_probe 모델(InputData input_bits=1 → FC units=10 weights_bits=1 +
+  AkidaUnsupervised, mm.map(dev) → 같은 칩)에서, few-shot N 마다 같은 init·같은
+  N-shot binary 입력(seed=42)으로 fit 을 TWICE(run A/B) → post-learn FC weights
+  run-to-run Hamming.
+    n_shot  weight_len  runA_sum  runB_sum  run_to_run_hamming  nondeterministic
+    1       160         20        20        36                  True
+    2       160         20        20        30                  True
+    4       160         20        20        36                  True
+    8       160         20        20        34                  True
+  any_nondeterministic = True · 4/4 shots nondeterministic · 0 deterministic
+  VERDICT : 🔴 NON-DETERMINISTIC — 같은 init+seed 에도 run A≠B (Hamming 30~36/160)
+            → on-chip 학습은 hidden plasticity/competition/timing state 보유 →
+            SW numpy approx 는 byte-identical 불가 (H_679 CLOSED-NEGATIVE 재확증).
+
+종합 VERDICT : 🟢/🔴 SUPPORTED — 두 lane 의 상반된 성질이 live silicon 에서 확인.
+  추론 lane = 결정론(SW 쌍둥이 OK) ⊥ 학습 lane = 비결정(SW 근사만). HW-first 척추의
+  DECODER⊥PLASTICITY 2-lane 분리(AKIDA/HW_FIRST_INTEGRATION §2)가 배포 칩에서 정합.
+
+정직 caveat:
+- JSON 최상위 `backend_hw: false` 는 *버그성 false-negative* (harness L38 이 device.version
+  문자열 "BC.00.000.002" 에 "Hardware" 단어 유무를 체크 → 칩 버전엔 그 단어가 없어 false).
+  실제 backend = HW: part1 sequences backend = BackendType.Hardware · part2 mm.map(dev)
+  로 동일 칩 매핑. provenance 는 live AKD1000(BC.00.000.002) 확정. (harness 필드 버그는
+  후속 정정 대상, 측정 provenance 와 무관.)
+- §6 는 H_680/H_679 를 *재확증 + few-shot 정량* (점→곡선). 신규 falsifier 아닌 척추
+  health re-check. region/coarse proxy 미사용(직접 raster/weight Hamming).
+
+THRESHOLDS/SEEDS frozen (akida_sw_lif seed=187 · lseed=42). hexa verify 불사용
+(toolchain 복구중) — verdict = raw python/akida harness stdout verbatim (a_claim_verify).
+🟢 decoder byte-match PASS · 🔴 plasticity non-determinism CONFIRMED.

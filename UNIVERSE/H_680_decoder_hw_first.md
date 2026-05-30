@@ -118,7 +118,9 @@ HW-first 스위치 SSOT 위에서 두 형제 lane 으로 가른 것이 핵심 �
 
 ## 10. 다음 작업
 
-- (optional) pi5-akida live probe — DECODER HW on-chip forward byte-match 재확인 (R0~R4).
-  단일-칩 점유: `spike-streamer stop → probe → start`. 비용 $0.
+- ✅ (DONE, H_860 2026-05-30) pi5-akida live probe — DECODER HW on-chip forward byte-match
+  재확인 (R0~R4) 완료. live AKD1000 raster == SW akida_sw_lif, total_hamming=0/16000 bit →
+  🟢 byte-identical 현 실리콘 재확인. verdict `.verdicts/860_hw_first_s6_pi5_probe/`.
+  단일-칩 점유: `spike-streamer stop → probe → start` (복구 active). 비용 $0.
 - HW-first 스위치를 다른 spike 소비 도메인(CHANNEL/MITOSIS adapter)으로 확장 시 동일 resolver 재사용.
 - 산출물: `AKIDA/akida_backend.hexa` (resolve_graceful) · `CORE/DECODER/DECODER.md` (AKIDA HW-first lane) · `.verdicts/680_decoder_hw_first/verify_substrate_akida.txt`

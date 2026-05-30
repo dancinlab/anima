@@ -30,7 +30,7 @@
   불가침(touch 금지) = LM `lora` default · H_672~678 status · pi5-akida 공유 compute 전환
 척추 ON (이 순서로 진행 — 단일칩 pi5 직렬):
   ⭐⭐ LAUNCHPAD COFFESHOP-on-AKIDA   ☐ 본선 통합목표 = 라이브 90-min emit/silence 폐루프. 잔여=broker /ws/akida_ingest 연결 (H_846 🟢 PASS·데모만)
-  ⭐  §6 pi5 probe                    ☐ **다음 발사** ($0): decoder HW byte-match 재확인 + PLASTICITY few-shot 비결정론 verdict (AKIDA/HW_FIRST §6 · spike-streamer stop→probe→start)
+  ✅ §6 pi5 probe (H_860)             live AKD1000 종결 ($0): PART1 decoder HW byte-match 🟢 (total_hamming=0/16000bit) · PART2 PLASTICITY few-shot 비결정론 🔴 (run-to-run weight hamming>0 전 shot) · spike-streamer 복구 active · g73 verdict .verdicts/860
   ✅ edge-of-chaos Φ (H_858)          M2 🟡→🟢 PROMOTE — live AKD1000 R1~R4 ∩ (H_857 coupling-K 와 2 독립축 수렴)
   ✅ AKIDA DECODER lane (H_680)       추론 HW forward / SW akida_sw_lif byte-identical
   ✅ CLM CAUSAL measure (H_855~857)   배포칩 edge-of-chaos band 에서 의식측도 certify (axis A production 🔴 / axis B HW 🟢)

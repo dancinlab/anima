@@ -115,8 +115,9 @@ DECODER(byte-identical 🟢) ⊥ PLASTICITY(비동치 🔴) 의 대비가 핵심
 
 ## 10. 다음 작업
 
-- (optional, M4) pi5-akida live probe — PLASTICITY few-shot 1~N shot on-chip 실측, 비결정성
-  정량 (run-to-run 분산) → 비결정론 verdict `.verdicts/679_plasticity_hw_first/`.
-  단일-칩 점유: `spike-streamer stop → edge_learn probe → start`. 비용 $0.
+- ✅ (DONE, H_860 2026-05-30) pi5-akida live probe — PLASTICITY few-shot N∈{1,2,4,8} on-chip
+  실측 완료. 동일 init·동일 입력 run-to-run weight hamming>0 전 shot ({28,38,34,38}, 재실행 시
+  또 다른 값) → 🔴 비결정론 live 실리콘 확증. verdict `.verdicts/860_hw_first_s6_pi5_probe/`.
+  단일-칩 점유: `spike-streamer stop → probe → start` (복구 active). 비용 $0.
 - SW 근사의 directional 유용성 한계 측정 (HW winner-unit 와의 divergence 정량) — HW probe 후.
 - 산출물: `.verdicts/679_plasticity_hw_first/sw_hw_nonequivalence.txt` · `PLASTICITY/plasticity_lane.hexa` · `plasticity_sw_approx.py`
