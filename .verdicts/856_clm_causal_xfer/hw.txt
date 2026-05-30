@@ -1,0 +1,39 @@
+F-CLM-CAUSAL-XFER · axis B (LIVE pi5 AKD1000 HW spike) · H_856
+==============================================================
+measure  : CAUSAL-POWER (frozen perturbation probe, ≤16 poke)
+source   : CLM/msweep/clm_causal_hw.py (reuses measure_sweep.py bin_to_regions
+           / region_rates / m_causal_power poke-logic / evaluate — FROZEN, NOT re-tuned)
+frozen   : MARGIN_FRAC=0.10 · NONTRIVIAL_EPS=1e-6 · N_SIZES=[4,5,6] · CAUSAL_POKES=16
+host     : pi5-akida · akida SDK 2.19.1 · device BC.00.000.002 · Mac=0 · $0
+spike    : LIVE AKD1000 on-chip threshold-and-fire
+           chip_backends = ['BackendType.Hardware']   on_hardware = True
+chip     : InputData(1,1,16) -> FullyConnected(N, weights=ones, act_bits=1)
+           mapped to BackendType.Hardware (spike_streamer.py pattern). potential =
+           Σ inputs; per-unit int32 threshold rewritten each step (drive encoded
+           as thr_j = POT - drive_j); the THRESHOLD-AND-FIRE runs ON THE CHIP.
+regime   : collapse = region0 monopoly drive + coupling 0 (decoupled) ·
+           rich = balanced drive + coupling 3 (SW-closed loop feeds the PREVIOUS
+           on-chip spike back into the drive -> edge-of-chaos partial fire band,
+           poke-responsive). collapse(decoupled)/rich(integrated) = toy semantics.
+procedure: pi5 single-chip file-lock — streamer service STOPPED (chip lock
+           released) -> live collection -> streamer RESTARTED identically
+           (--port 9512 --duration 86400 --regime R3; pi5 left as found).
+
+PRE-REGISTERED RUN (seed=187):
+  collapse_n4 = 0.0000  rich_n4 = 0.0618   Δ = +0.0618   (rich>collapse ✓)
+  collapse_n5 = 0.0000  rich_n5 = 0.0156   Δ = +0.0156   (rich>collapse ✓)
+  collapse_n6 = 0.0000  rich_n6 = 0.0268   Δ = +0.0268   (rich>collapse ✓)
+  checks : nontrivial=True  collapse_vs_rich=True  size_robust=True
+  VERDICT : 🟢 PASS
+
+INTERPRETATION
+  On REAL SILICON the frozen 3-check PASSES: poking a region in the coupled
+  (rich) regime propagates a measurable downstream effect across OTHER regions
+  (the chip's threshold-and-fire + SW coupling loop integrate), while in the
+  decoupled monopoly (collapse) regime the poke dies locally (causal power = 0,
+  the operational meaning of no integration). collapse=0 is the deterministic
+  silent-others floor on-chip. The measure reads monopoly vs integration on the
+  live AKD1000 exactly as the toy intended.
+
+THRESHOLDS FROZEN — NOT TAMPERED. on_hardware confirmed True (BackendType.Hardware).
+🟢 axis B PASS.
