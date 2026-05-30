@@ -1,0 +1,32 @@
+{
+  "hypothesis": "H_877",
+  "rung": {
+    "width_d": 512,
+    "depth_L": 8,
+    "act_bits_E": 4,
+    "input_bits": 4,
+    "n_probe": 64,
+    "seed": 877,
+    "int4_range": [
+      -7,
+      7
+    ]
+  },
+  "eval_byte_set_len": 32768,
+  "ref_sha256": "cf3739bf7fb33ee4de3260a94fdf7c398512494bb89c171c83f9f392a6246112",
+  "sw_in_process_total_hamming": 0,
+  "sw_cross_process_match": true,
+  "sw_cross_process_sha256": "cf3739bf7fb33ee4de3260a94fdf7c398512494bb89c171c83f9f392a6246112",
+  "hw_attempted": false,
+  "hw_total_hamming": null,
+  "hw_sha256": null,
+  "arm": "SW",
+  "falsifier": "F-CLM-DECODER-MID-SW",
+  "total_hamming": 0,
+  "all_pass": true,
+  "verdict": "HW-PENDING (SW determinism byte-identical)",
+  "claim": "SW int4 forward DETERMINISTIC byte-identical (in-proc+cross-proc) at mid; HW==SW HW-pending",
+  "scope": "mid rung d512/L8/E8 only (a_scale_honest_scope)",
+  "consumes": "HEXAD/CHAT/server/akida_sw_lif.cascade_forward (HW-verified toy byte-match)"
+}
+H877_BYTEMATCH_MID rc=0 dur_us=910421
