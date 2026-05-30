@@ -1,0 +1,44 @@
+{
+  "batch": "clm-causal-band",
+  "axis": "B_live_hw_band",
+  "measure": "CAUSAL-POWER",
+  "seed": 187,
+  "sizes": [4, 5, 6],
+  "neurons_per_region": 8,
+  "n_steps": 256,
+  "k_grid": [0.0, 1.0, 2.0, 3.0, 4.0, 6.0, 9.0, 13.0, 18.0, 24.0],
+  "frozen_thresholds": {
+    "margin_frac": 0.1,
+    "nontrivial_eps": 1e-06,
+    "causal_pokes_cap": 16
+  },
+  "spike_source": "LIVE AKD1000 on-chip threshold-and-fire (BackendType.Hardware)",
+  "chip_backends": ["BackendType.Hardware"],
+  "on_hardware": true,
+  "cp_collapse_floor": 0.0,
+  "sweep": [
+    {"K": 0.0,  "cp_rich": 0.039887152777777775, "delta": 0.039887152777777775, "fire_frac": 0.15585394965277777},
+    {"K": 1.0,  "cp_rich": 0.10214843750000001,  "delta": 0.10214843750000001,  "fire_frac": 0.21030544704861112},
+    {"K": 2.0,  "cp_rich": 0.0609375,            "delta": 0.0609375,            "fire_frac": 0.45927734375},
+    {"K": 3.0,  "cp_rich": 0.034765625,          "delta": 0.034765625,          "fire_frac": 0.9369384765625001},
+    {"K": 4.0,  "cp_rich": 0.012782118055555555, "delta": 0.012782118055555555, "fire_frac": 0.9773193359375},
+    {"K": 6.0,  "cp_rich": 0.005208333333333333, "delta": 0.005208333333333333, "fire_frac": 0.9864610460069444},
+    {"K": 9.0,  "cp_rich": 0.0033854166666666663,"delta": 0.0033854166666666663,"fire_frac": 0.9895968967013888},
+    {"K": 13.0, "cp_rich": 0.002170138888888889, "delta": 0.002170138888888889, "fire_frac": 0.9921305338541666},
+    {"K": 18.0, "cp_rich": 0.002105034722222222, "delta": 0.002105034722222222, "fire_frac": 0.9934543185763888},
+    {"K": 24.0, "cp_rich": 0.0017144097222222222,"delta": 0.0017144097222222222,"fire_frac": 0.9943874782986111}
+  ],
+  "band": {
+    "k_star": 1.0,
+    "k_star_idx": 1,
+    "peak_delta": 0.10214843750000001,
+    "interior_peak": true,
+    "band_exists": true,
+    "cold_rolloff": true,
+    "sat_rolloff": true,
+    "monotone": false,
+    "verdict": "PASS"
+  },
+  "device_meta": {"sdk": "2.19.1", "device": "BC.00.000.002"},
+  "verdict": "PASS"
+}
