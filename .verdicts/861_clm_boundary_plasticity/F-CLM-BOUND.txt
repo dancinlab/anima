@@ -1,0 +1,47 @@
+F-CLM-BOUND — H_861 boundary plasticity (Q-TRUST B) VERDICT (2026-05-31)
+=========================================================================
+W2 · deterministic:false · foundation H_679 (HW edge-learn, closed).
+Thresholds FROZEN pre-fire in F-CLM-BOUND_prereg.txt (commit bf98c01a1, pushed BEFORE the fire).
+post-tuning = 0 (no threshold moved after the fire).
+
+FIRE: runpod pod axbem0acu73314 · NVIDIA H100 80GB HBM3 · torch 2.1.0+cu118 (CUDA)
+  backbone: mid d512/L8/E8 (13,653,768 params) AKIDA int4-sym[-7,+7] STE + act_bits=4,
+            arm AB, 2000 step, seed 42. CE 5.5492 → 1.7342. SAVED → clm_mid_backbone.pt
+            (closes the prior "MEASUREMENT trainer saved no ckpt" gap).
+  edge split: core = embed/embed_conv/trunk[*]/moe.*/norm_out FROZEN (requires_grad=False);
+              edge = readout conv (d_model→vocab) trainable. Edge-only Adam lr=3e-3.
+  adapt: 300 edge-only steps on a NEW-CONTEXT distribution (high-band cyclic motif,
+         make_synthetic_corpus seed=202) NOT seen in pretrain. SW-sim of the non-deterministic
+         on-chip edge-learn at the measurement rung (H_679 established HW edge-learn is real).
+  est cost line stated pre-dispatch: ~$0.6-1.5 (a_fire_autonomous).
+
+RESULT (measured vs FROZEN thresholds):
+  ce_base_pre  = 1.77551   sd_base_pre = 0.08432
+  ce_base_post = 1.94280
+  ce_new_pre   = 10.96864  ce_new_post = 4.84232
+  z_drop = (ce_base_post - ce_base_pre)/sd_base_pre = 1.98408
+  gain   = ce_new_pre - ce_new_post              = 6.12631
+
+  F-CLM-BOUND-RETAIN : z_drop 1.98408  <  1.0 ?  → FAIL  (base-ability CE rose ~1.98 sigma after edge adapt)
+  F-CLM-BOUND-GAIN   : gain   6.12631  >  0.0 ?  → PASS  (edge absorbed the new context strongly)
+
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
+  RETAIN ∧ GAIN required; RETAIN fails. A readout-only edge freeze does NOT block
+  catastrophic forgetting at this rung — adapting the final byte readout to the new-context
+  distribution measurably degraded the held-out base-ability (≈2σ CE rise) even with the
+  entire trunk/MoE frozen. The edge DID absorb the new context (GAIN strongly positive), so
+  the failure is specifically in forgetting-prevention, not adaptation capacity.
+
+INTERPRETATION (honest):
+  * The readout is shared across both distributions; re-fitting it to high-band bytes pulls
+    probability mass away from the base-ability byte band → forgetting. A deeper freeze
+    boundary is NOT available with readout-only edge (the readout is the minimal edge). This
+    is a real structural result: "edge = readout-only" is insufficient for RETAIN.
+  * E5 next input: a thin trainable ADAPTER between norm_out and a FROZEN base readout (so the
+    base mapping is preserved and the adapter carries new-context capacity) — left for follow-on.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid) only. Does NOT bind the deploy chip-fit
+  track (≤~1.2M AKD1000). toy/mid → prod NOT guaranteed. Inference AKIDA-int4-only.
+
+ARTIFACTS: clm_bound_result.json · clm_fire.log · clm_mid_backbone.pt
+HF: dancinlab/anima-clm-verify (model · ckpt + result + card, COMPLETE).

@@ -1,0 +1,34 @@
+{
+  "hypothesis": "H_863 F-CLM-DIALOGUE",
+  "rung": "mid d512/L8/E8",
+  "corpus": "PD Gutenberg plays (license-clean lane\u2460)",
+  "reflux_bytes": 1920,
+  "SFT": {
+    "coherence": 0.04212,
+    "ce_heldout": 3.16717,
+    "adequacy_f1": 0.01449,
+    "leak": 0,
+    "self_bleu": 0.00105,
+    "repetition": 0.0
+  },
+  "SP": {
+    "coherence": 0.15496,
+    "ce_heldout": 1.86461,
+    "adequacy_f1": 0.05163,
+    "leak": 0,
+    "self_bleu": 0.06167,
+    "repetition": 0.02593
+  },
+  "thresholds": {
+    "COHERE": "SP>SFT",
+    "ADEQ": "SP>SFT",
+    "LEAK": "SP==0",
+    "DIV": "self_bleu<0.8 \u2227 rep<0.2"
+  },
+  "COHERE_pass": true,
+  "ADEQ_pass": true,
+  "LEAK_pass": true,
+  "DIV_pass": true,
+  "verdict": "GREEN",
+  "note": "byte-match \u2717 distributional (Q-TRUST A); external LLM 0; ShareGPT/Alpaca 0"
+}

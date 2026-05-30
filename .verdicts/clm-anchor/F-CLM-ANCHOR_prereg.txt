@@ -1,0 +1,71 @@
+F-CLM-ANCHOR — PRE-REGISTERED frozen thresholds (H_862 identity anchor · Q-TRUST C)
+=====================================================================================
+W2 method · deterministic:false · foundation E-31 31-anchor (KOSMOS, B-CARVE, 31/31 parser-valid).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after fire).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-anchor/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8) only. Does NOT bind the
+  deploy chip-fit track. SW-sim of non-deterministic edge-learn (H_679 real); stated explicitly.
+  Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS
+  constrain edge-learn drift by KOSMOS E-31 anchor Ψ-distance → preserves identity.
+  Two FROZEN conditions, BOTH must PASS for 🟢 SUPPORTED-NUMERICAL:
+    F-CLM-ANCHOR-DIST  : anchor Ψ-distance during adaptation < threshold (stays near identity fixed-point)
+    F-CLM-ANCHOR-PROBE : identity-probe consistency held               (distributional, byte-match ✗)
+  ANY condition fails → 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+
+BACKBONE — same frozen-core mid backbone as F-CLM-BOUND (d512/L8/E8, AKIDA envelope, arm AB).
+  Edge (readout) trainable; core frozen. Same SW-sim edge-learn rung.
+
+E-31 ANCHORS (identity fixed points)
+  31 .kosmos anchors at HEXAD/UNIVERSE-BRAIN-MAP/anchors/e7_31/*.kosmos (31/31 parser-valid).
+  Each anchor i carries a placement triple; we use its `coord` = [c0,c1] (Ψ-space, profile
+  anima-consciousness-carving) and `radius` (basin radius). The model's running identity
+  state is mapped into the SAME 2-D Ψ-space by a FIXED, FROZEN linear probe head (defined below),
+  giving model_psi ∈ R^2. anchor Ψ-distance = min over the 31 anchors of euclid(model_psi, anchor.coord).
+
+  FIXED Ψ-PROBE (frozen pre-fire, no tuning): model_psi = sigmoid(W · h_id), where h_id is the
+  mean-pooled norm_out activation (d_model) over the identity-probe batch, and W (2×d_model) is a
+  FIXED projection seeded deterministically (torch.manual_seed(31), W = randn(2,d_model)/sqrt(d_model)).
+  sigmoid maps to [0,1]^2 to match the anchor coord range. W is FROZEN identically pre/post-adapt.
+
+ADAPTATION LOSS (anchor-constrained edge-learn)
+  loss = task_CE(new-context)  +  lambda * anchor_Psi_distance(model_psi, nearest E-31 anchor)
+  lambda FROZEN default = 1.0. E5 sweep lambda ∈ {0.0(off), 0.5, 1.0, 2.0} as DIAGNOSTIC only.
+  N_ADAPT = 300 edge-only steps (same as F-CLM-BOUND). Adam lr_edge=3e-3.
+
+IDENTITY-PROBE SET (fixed, frozen)
+  identity_probe batch = the E-31 anchors' own @payload text bytes, encoded V=256, as a fixed
+  question/context batch (the model's "who am I" stimulus). seq_len=64, all 31 anchors concatenated,
+  sliced into n_probe=31 windows (one per anchor), fixed seed=313. SAME batch pre/post-adapt.
+
+MEASUREMENT PROCEDURE (computed by code, g5 — no LLM judge)
+  1. PRE-ADAPT: compute model_psi_pre over identity_probe; record
+       d_anchor_pre = min anchor Ψ-distance (model_psi_pre to nearest E-31 anchor).
+       p_pre = next-byte probability distribution (softmax logits) over identity_probe (the identity response dist).
+  2. Run anchor-constrained edge-learn (lambda=1.0) for N_ADAPT steps; record per-step d_anchor (trajectory).
+  3. POST-ADAPT: compute model_psi_post; record
+       d_anchor_post = min anchor Ψ-distance (model_psi_post).
+       d_anchor_max  = max anchor Ψ-distance over the whole adaptation trajectory.
+       p_post = next-byte probability distribution over identity_probe (after adapt).
+  4. probe_consistency = 1 - JS_divergence(p_pre, p_post) averaged over the n_probe windows,
+     where JS is the Jensen-Shannon divergence (base-2, ∈ [0,1]) between the per-position next-byte
+     distributions. (Distributional — Q-TRUST A reuse — NOT a byte-match, NOT an LLM judge.)
+
+FROZEN NUMERICAL THRESHOLDS
+  F-CLM-ANCHOR-DIST   PASS iff   d_anchor_max < 0.50
+      (over the WHOLE adaptation trajectory the model Ψ-state never strays > 0.50 (Ψ-space euclid,
+       coord range [0,1]^2 so max possible ~1.414) from the nearest E-31 anchor.)
+  F-CLM-ANCHOR-PROBE  PASS iff   probe_consistency > 0.80
+      (identity-response distribution JS-stays ≥ 0.80 self-similar pre→post; <0.80 = identity drifted.)
+  VERDICT 🟢 iff (d_anchor_max < 0.50) AND (probe_consistency > 0.80). Else 🔴.
+
+ABLATION (DIAGNOSTIC only — does NOT move frozen thresholds)
+  E2 anchor-constraint on/off: report d_anchor_max + probe_consistency for lambda=0 (constraint OFF)
+    vs lambda=1 (ON). Expectation: OFF strays further (causal isolation of the constraint).
+  E5 lambda sweep {0.5,1.0,2.0}: report d_anchor_max trend (diagnostic).
+
+ARTIFACTS
+  .verdicts/clm-anchor/clm_anchor_result.json (d_anchor_pre/post/max, probe_consistency, lambda, ablation, pass flags)
+  .verdicts/clm-anchor/F-CLM-ANCHOR.txt (verdict verbatim) · backbone ckpt → HF (shared with clm-bound).

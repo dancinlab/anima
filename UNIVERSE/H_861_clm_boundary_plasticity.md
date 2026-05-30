@@ -4,7 +4,7 @@ slug: clm-boundary-plasticity
 title: CLM on-chip edge-learn 이 core freeze + edge-only 적응으로 catastrophic forgetting 을 막는가 - held-out 기초능력 z-drop < 임계 ∧ 새 맥락 적응 이득 > 0 (Q-TRUST B · F-CLM-BOUND 사전등록)
 domain: clm · plasticity · boundary-plasticity · continual-learning · q-trust · falsifier
 source: CLM/P4_PRODUCTION_ROADMAP.md Q-TRUST.B · 토대 H_679 (PLASTICITY HW edge-learn 측정) · sibling H_313 (STDP causality) · @L1 (비결정 on-chip 학습 1급)
-status: PRE-REGISTERED (P4 신규 · 측정 rung fire 후 판정 · 토대 H_679 HW edge-learn 닫힘)
+status: 🔴 CLOSED-NEGATIVE (mid-rung fire 2026-05-31 · RETAIN 미달 z_drop=1.984≥1.0 · GAIN 성립 +6.13 · readout-only edge freeze 가 forgetting 차단 실패 · 측정 rung 한정 a_scale_honest_scope · a_paper_negative_ok)
 exploration_method: E5 (변수-절제: freeze 경계 깊이 sweep) · E2 (core/edge 파라미터 분할)
 verification_method: W2 (사전등록 numerical threshold · 양조건 z-drop<임계 ∧ gain>0 · post-tuning 0)
 raw_rank: 9
@@ -15,7 +15,7 @@ pre_register_frozen: true
 frozen_at: 2026-05-31
 since: 2026-05-31
 sister: CLM/P4_PRODUCTION_ROADMAP.md, UNIVERSE/H_679_plasticity_hw_first, .verdicts/clm-bound/
-verdict: PRE-REGISTERED (F-CLM-BOUND 사전등록 · core freeze + edge on-chip 적응의 forgetting 방지 = 측정 대기 · 토대 H_679 HW edge-learn 측정완료)
+verdict: 🔴 CLOSED-NEGATIVE — F-CLM-BOUND: RETAIN(z_drop 1.984 < 1.0?) FAIL ∧ GAIN(+6.126 > 0?) PASS. readout-only edge-only 적응이 기초능력을 ~2σ 잊게 함(forgetting 차단 실패); 적응 흡수는 강함. mid d512/L8/E8 · frozen threshold(bf98c01a1) 대비 post-tuning 0. HF dancinlab/anima-clm-verify.
 ---
 
 # H_861 — CLM F-CLM-BOUND boundary plasticity
@@ -68,11 +68,17 @@ verdict 영속: `.verdicts/clm-bound/`
 
 ## 5. 측정
 
-측정 대기 — 측정 rung(mid d512/L8) QAT backbone 확보 후 PLASTICITY edge-learn 위임으로 fire. raw verdict = `.verdicts/clm-bound/` (frozen threshold + post-fire 수치).
+측정완료 (2026-05-31) — runpod H100(pod axbem0acu73314, torch 2.1.0+cu118)에서 mid d512/L8/E8 backbone(13.65M, CE 5.55→1.73)을 학습+저장(`clm_mid_backbone.pt` — 기존 "ckpt 미저장" gap 해소). core(embed/trunk/MoE/norm_out) 동결, edge=readout 만 trainable. 새 맥락(고대역 cyclic motif, seed=202) 300-step edge-only 적응(SW-sim — H_679 HW edge-learn 실재). frozen threshold = `.verdicts/clm-bound/F-CLM-BOUND_prereg.txt`(commit bf98c01a1, fire 이전 push).
+
+측정값(frozen threshold 대비):
+- ce_base_pre=1.77551, sd_base_pre=0.08432, ce_base_post=1.94280
+- ce_new_pre=10.96864, ce_new_post=4.84232
+- **z_drop = 1.98408** (threshold <1.0 → **RETAIN FAIL**)
+- **gain = 6.12631** (threshold >0 → **GAIN PASS**)
 
 ## 6. 결과
 
-PRE-REGISTERED — 토대 H_679(HW edge-learn 측정완료)가 닫혀 있어 적응 메커니즘은 실재. 본 H 는 그 위에서 **core/edge 경계가 forgetting 을 막는가**를 사전등록 양조건으로 판정.
+🔴 **CLOSED-NEGATIVE** (a_paper_negative_ok). RETAIN ∧ GAIN 양조건 중 RETAIN 미달 — readout-only edge 동결로는 catastrophic forgetting 을 못 막는다(기초능력 CE 가 ~1.98σ 상승). edge 는 새 맥락을 강하게 흡수(GAIN +6.13)했으므로 실패는 적응능력이 아니라 forgetting-방지에 특정됨. readout 은 두 분포에 공유되어 고대역 byte 로 재적합하면 기초 byte band 확률질량을 빼앗김 → 구조적 forgetting. "edge=readout-only" 경계는 RETAIN 에 불충분(실재 결과). E5 후속 = norm_out↔FROZEN-readout 사이 얇은 adapter(base mapping 보존). **scope**: 측정 rung(mid) 한정 — 배포 chip-fit track 별개(a_scale_honest_scope).
 
 ## 7. 해석 (사전)
 

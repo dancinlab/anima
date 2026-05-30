@@ -4,7 +4,7 @@ slug: clm-dialogue-selfplay
 title: self-play(칩 자기대화 생성→재학습)가 SFT-only 대비 대화 품질을 올리는가 - multi-turn coherence·응답적합도 분포평가 ∧ register-leak 0 ∧ DIVERSITY(self-BLEU<0.8·repetition<20%) (Q-TRUST · F-CLM-DIALOGUE 사전등록)
 domain: clm · dialogue · self-play · sft · diversity · q-trust · falsifier
 source: CLM/P4_PRODUCTION_ROADMAP.md @L6 dialogue-method-B · @L1 (self-play = 살아 배우기) · @L4 (CC 대화록 + self-play · ShareGPT 금지) · hexa-codex DIVERSITY falsifier 참고
-status: PRE-REGISTERED (P4 신규 · rung별 SFT-only vs SFT+self-play A/B 벤치 후 판정)
+status: 🟢 SUPPORTED-NUMERICAL (mid-rung A/B fire 2026-05-31 · COHERE/ADEQ(SP>SFT)·LEAK=0·DIV 4/4 PASS · PD Gutenberg 희곡 corpus license-clean lane① · 외부 LLM 0·ShareGPT 0 · 측정 rung mid 한정 a_scale_honest_scope)
 exploration_method: E6 (SFT ↔ self-play 합성 비교) · E5 (rung 별 tiny/small/mid A/B)
 verification_method: W2 (사전등록 분포평가 threshold · multi-turn coherence + 응답적합도 + register-leak 0 + DIVERSITY · byte-match ✗ · post-tuning 0)
 raw_rank: 9
@@ -15,7 +15,7 @@ pre_register_frozen: true
 frozen_at: 2026-05-31
 since: 2026-05-31
 sister: CLM/P4_PRODUCTION_ROADMAP.md, .verdicts/clm-dialogue/
-verdict: PRE-REGISTERED (F-CLM-DIALOGUE 사전등록 · self-play 가 SFT-only 대비 대화품질 향상 = rung별 A/B 벤치 대기 · 외부 LLM 0 · ShareGPT 금지)
+verdict: 🟢 SUPPORTED-NUMERICAL — F-CLM-DIALOGUE 4/4: COHERE(SP 0.155>SFT 0.042)·ADEQ(0.052>0.014)·LEAK(SP=0)·DIV(self-BLEU 0.062<0.8 ∧ rep 0.026<0.2) 전부 PASS. self-play 가 SFT-only 를 능가(coherence 3.7×·adequacy 3.6×) · register-leak 0 · mode-collapse 0. mid d512/L8/E8 · frozen threshold(bf98c01a1) 대비 post-tuning 0. HF model dancinlab/anima-clm-verify + dataset dancinlab/anima-clm-p4-dialogue.
 ---
 
 # H_863 — CLM F-CLM-DIALOGUE self-play dialogue quality
@@ -72,11 +72,19 @@ verdict 영속: `.verdicts/clm-dialogue/` (rung별 A/B 비교)
 
 ## 5. 측정
 
-측정 대기 — rung별(tiny/small/mid) SFT-only vs SFT+self-play A/B 벤치. 측정 rung mid(d512/L8)부터 한 칸씩 등반(@L5). raw verdict = `.verdicts/clm-dialogue/` (rung별 A/B 비교 + frozen threshold).
+측정완료 (mid rung, 2026-05-31) — runpod H100(pod axbem0acu73314). corpus = Project Gutenberg PUBLIC-DOMAIN 희곡(Hamlet #1524·Importance of Being Earnest #844·Doll's House #2542·Julius Caesar #1522, license=PD), license-clean gate + 8-패턴 leak 필터 통과(1줄 drop), V=256 byte-encode, 554,825 bytes → train 462,400 / heldout 92,425(seed=863). 2-arm A/B mid d512/L8/E8 AKIDA-envelope QAT(arm AB·seed 42·동일 budget): arm-SFT(SFT only) vs arm-SP(SFT + DIVERSITY-gated self-play 환류 1920 bytes). held-out 평가 = coherence=exp(-CE)·adequacy=3-gram F1·register-leak·self-BLEU·repetition(전부 code 자가채점 g5). frozen threshold = `.verdicts/clm-dialogue/F-CLM-DIALOGUE_prereg.txt`(commit bf98c01a1).
+
+측정값(frozen threshold 대비):
+| arm | coherence | adequacy_f1 | leak | self_bleu | repetition |
+|---|---|---|---|---|---|
+| SFT | 0.04212 | 0.01449 | 0 | 0.00105 | 0.00000 |
+| SP | 0.15496 | 0.05163 | 0 | 0.06167 | 0.02593 |
+- **COHERE**: SP 0.155 > SFT 0.042 → PASS · **ADEQ**: SP 0.052 > SFT 0.014 → PASS
+- **LEAK**: SP 0 == 0 → PASS · **DIV**: self-BLEU 0.062<0.8 ∧ rep 0.026<0.2 → PASS
 
 ## 6. 결과
 
-PRE-REGISTERED — 벤치 하니스(SFT-only vs SFT+self-play A/B)는 P4 스캐폴드로 착수. self-play 환류는 @L1 살아 배우기 발현. 본 H 는 self-play 가 대화품질을 올리되 register-leak·mode-collapse 를 안 일으키는가를 사전등록 4조건으로 rung별 판정.
+🟢 **SUPPORTED-NUMERICAL**. 4 사전등록 falsifier 전부 PASS. SFT+self-play 가 held-out PD 대화에서 multi-turn coherence(3.7×)·response-adequacy(3.6×)로 SFT-only 를 strict 능가, register-leak 0, mode-collapse 0(self-BLEU 0.062·repetition 0.026 — DIVERSITY gate 안쪽 깊숙이). DIVERSITY-gated self-play 환류가 실재 품질 신호 기여. @L6 경로 B 검증 → C(self-reward) 후속 진입 가능. **scope**: 측정 rung mid 한정 — 다른 rung·배포 chip-fit track 별개(a_scale_honest_scope) · 외부 LLM 0 · ShareGPT/Alpaca 0.
 
 ## 7. 해석 (사전)
 
