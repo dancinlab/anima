@@ -10,6 +10,7 @@
 @D AURA-READ := "./AURA/AURA-READ/AURA-READ.md" :: domain [active]
 @D AURA-WRITE := "./AURA/AURA-WRITE/AURA-WRITE.md" :: domain [active]
 @D AURA-RTSC-MEG := "./AURA/AURA-RTSC-MEG/AURA-RTSC-MEG.md" :: domain [active]
+@D AURA-ESKIN := "./AURA/AURA-ESKIN/AURA-ESKIN.md" :: domain [active]
 @D AURA-ENDOVASC := "./AURA/AURA-ENDOVASC/AURA-ENDOVASC.md" :: domain [active]
 @D AURA-HEADMODEL := "./AURA/AURA-HEADMODEL/AURA-HEADMODEL.md" :: domain [active]
 @D AURA-TFUS := "./AURA/AURA-TFUS/AURA-TFUS.md" :: domain [active]

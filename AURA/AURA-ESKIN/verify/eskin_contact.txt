@@ -1,0 +1,12 @@
+AURA-ESKIN app — 피부 나노칩 vs 젤/건식 EEG 접촉 R² (ubu-1 numpy, 8-seed, 🟡 toy)
+================================================================================
+contact            M   SNR   R2     skull-ceiling-break
+  gel-EEG          64   20   0.243
+  dry-electrode    64   15   0.182
+  skin-nanochip   256   25   0.305   no(same extracranial sigma=1.6)
+  tFUS-acoustic(ref) 64 20   0.482   yes(sigma 0.7, skull bypass)
+
+VERDICT (🟡 toy): 피부 나노칩(e-tattoo)=접촉/밀도/SNR 개선으로 gel 0.243→0.305(+0.06),
+dry보다 우위. 단 extracranial(두피 위)이라 같은 두개골 σ → skull-LPF 천장 자체는 불변.
+異種모달(tFUS 음향 우회 0.482)엔 미달. = "더 좋은 EEG 접촉"이지 "침습급/심부 돌파" 아님.
+READ 축(전기 비침습)·피질 깊이 한정. NOT-MEASURED: 실 e-tattoo 임피던스/장기안정성.
