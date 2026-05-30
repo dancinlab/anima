@@ -1,0 +1,159 @@
+"""AKIDA edge-of-chaos Phi — LIVE AKD1000 R1~R4 regime sweep (H_858).
+
+Tests whether CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (M2, PARTIAL,
+inverse-U) holds on REAL silicon. The order->chaos axis is spanned by the AKD1000's
+native spontaneous-firing regimes via a DRIVE/NOISE preset (NOT the coupling-K axis
+of H_857 -- that characterized CAUSAL-POWER; this measures the Phi proxy):
+
+  R1 weak-silent       : strong sub-threshold deficit, no noise   -> ORDER floor (die-out)
+  R2 zero+noise        : drive ~ threshold + per-step noise        -> EDGE (event-driven straddle)
+  R3 tonic             : half pool intrinsically excitable (neg thr), zero input -> EDGE (partial pool)
+  R4 recurrent selfsust: ignition seed + spikes fed back as drive  -> OVER-DRIVEN (saturation)
+
+The on-chip threshold-and-fire is the SAME live silicon driver pattern verified by
+CLM/msweep/clm_causal_band.py (H_857): InputData(1,1,16) -> FullyConnected(units=N,
+weights=ones, act_bits=1) @ BackendType.Hardware, per-unit int32 threshold = POT - drive,
+comparison ON CHIP. Only the per-regime drive/noise/feedback preset changes.
+
+Output JSON matches the schema AKIDA/akida_edge_of_chaos_phi.hexa consumes
+(regimes.{R1_weak_silent,R2_zero_noise,R3_tonic_zero_input,R4_recurrent_selfsustained}
+with first10_step_counts / last10_step_counts / spike_count_std / spike_count_max /
+total_spikes). The .hexa side owns the Phi proxy + pre-registered verdict; this .py owns
+the live-silicon spike provenance only. NO measure re-implementation (g0/g61).
+
+Run ON pi5 (single-chip file-lock): stop the streamer service, run this, RESTART it
+identically. Mac=0; $0.
+"""
+from __future__ import annotations
+import argparse, json
+import numpy as np
+import akida
+
+SEED = 187
+N = 16          # neurons in the LIF pool (one NP)
+IN_LINES = 16   # input lines
+IN_LEVEL = 8    # per-line input level for the saturating drive
+T = 200         # steps per regime window
+POT = IN_LEVEL * IN_LINES   # max integrated potential with all-ones weights = 128
+
+
+def build_chip(device):
+    """InputData -> FullyConnected LIF pool, mapped to HARDWARE (same as clm_causal_band)."""
+    m = akida.Model()
+    m.add(akida.InputData(input_shape=(1, 1, IN_LINES), input_bits=4, name="in"))
+    m.add(akida.FullyConnected(units=N, weights_bits=4, activation=True,
+                               act_bits=1, name="lif"))
+    m.map(device)
+    lif = m.get_layer("lif")
+    W = lif.get_variable("weights")
+    lif.set_variable("weights", np.ones_like(W))   # all-ones: potential = sum(input)
+    backend = str(m.sequences[0].backend)
+    return m, lif, backend
+
+
+def _forward(m, lif, input_level, thr_vec):
+    """ONE on-chip forward pass. thr_vec per-unit int32; returns 0/1 spikes (N,)."""
+    lif.set_variable("threshold", np.clip(thr_vec, -32, 128).astype(np.int32))
+    x = np.clip(input_level, 0, 15).astype(np.uint8).reshape(1, 1, 1, IN_LINES)
+    y = m.forward(x)
+    yv = np.asarray(y).reshape(-1)
+    return (yv[:N] > 0).astype(np.int8)
+
+
+def run_regime(name, m, lif, seed):
+    """Drive the chip T steps under one regime preset. Returns the per-regime stat block
+    in the schema the .hexa harness reads."""
+    rng = np.random.default_rng(seed)
+    spike_counts = []
+    last_spikes = np.zeros(N, dtype=np.int8)
+
+    # per-regime drive preset -> per-unit threshold = POT - drive (so higher drive = easier fire)
+    if name == "R1_weak_silent":
+        # weak constant input well below threshold, NO noise -> silent floor (order)
+        thr = np.full(N, POT - (-40.0), dtype=np.int32)   # drive -40: deep sub-threshold
+        inp_const = np.full(IN_LINES, 1.0)
+    elif name == "R2_zero_noise":
+        # drive sits ~ at threshold; per-step input noise straddles the comparator (edge)
+        thr = np.full(N, POT, dtype=np.int32)             # drive 0 nominal: at threshold
+    elif name == "R3_tonic_zero_input":
+        # heterogeneous threshold: half the pool intrinsically fires at zero input
+        # (negative threshold = tonic), half quiescent -> partial pool (edge, deterministic)
+        thr = np.where(np.arange(N) < N // 2, -1, POT).astype(np.int32)
+        inp_zero = np.zeros(IN_LINES, dtype=np.float32)
+    elif name == "R4_recurrent_selfsustained":
+        # ignition seed then spikes fed back as drive -> self-sustained saturation (over-driven)
+        thr = np.full(N, POT - 24.0, dtype=np.int32)      # easy threshold once fed back
+        recur_gain = 6.0
+    else:
+        raise ValueError(name)
+
+    for t in range(T):
+        if name == "R1_weak_silent":
+            inp = inp_const
+        elif name == "R2_zero_noise":
+            # uniform noise per line, mean centred so ~half the steps cross threshold
+            inp = rng.integers(0, 16, size=IN_LINES).astype(np.float32)
+        elif name == "R3_tonic_zero_input":
+            inp = inp_zero
+        elif name == "R4_recurrent_selfsustained":
+            fb = last_spikes.astype(np.float32)
+            inp = np.zeros(IN_LINES, dtype=np.float32)
+            k = min(N, IN_LINES)
+            inp[:k] = fb[:k] * recur_gain
+            if t < 1:
+                inp[:k] += 12.0   # ignition seed
+        sp = _forward(m, lif, inp, thr)
+        spike_counts.append(int(sp.sum()))
+        last_spikes = sp
+
+    sc = np.asarray(spike_counts)
+    return {
+        "total_spikes": int(sc.sum()),
+        "mean_spike_rate_per_neuron_step": round(float(sc.sum()) / (N * T), 5),
+        "spike_count_min": int(sc.min()),
+        "spike_count_max": int(sc.max()),
+        "spike_count_std": round(float(sc.std()), 4),
+        "step_varies": bool(sc.std() > 1e-9),
+        "first10_step_counts": [int(v) for v in sc[:10]],
+        "last10_step_counts": [int(v) for v in sc[-10:]],
+    }
+
+
+def run(seed):
+    dev = akida.devices()[0]
+    m, lif, backend = build_chip(dev)
+    out = {
+        "seed": seed, "n_neurons": N, "n_inputs": IN_LINES, "window_steps": T,
+        "spike_source": "LIVE AKD1000 on-chip threshold-and-fire (BackendType.Hardware)",
+        "device_version": str(dev.version),
+        "mapped_backend": backend,
+        "on_hardware": ("Hardware" in backend),
+        "driver_ref": "mirrors CLM/msweep/clm_causal_band.py (H_857 live-HW pattern)",
+        "regimes": {},
+    }
+    for i, name in enumerate(["R1_weak_silent", "R2_zero_noise",
+                              "R3_tonic_zero_input", "R4_recurrent_selfsustained"]):
+        out["regimes"][name] = run_regime(name, m, lif, seed + i)
+    return out
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--seed", type=int, default=SEED)
+    ap.add_argument("--out", default="/tmp/eoc/eoc_hw_result.json")
+    a = ap.parse_args()
+    res = run(a.seed)
+    with open(a.out, "w") as f:
+        json.dump(res, f, indent=2)
+    print("=== AKIDA edge-of-chaos Phi LIVE R1~R4 raster ===")
+    print("on_hardware:", res["on_hardware"], "| backend:", res["mapped_backend"])
+    print("device:", res["device_version"])
+    for name, r in res["regimes"].items():
+        print("  %-28s total=%5d std=%6.3f max=%2d first10=%s" %
+              (name, r["total_spikes"], r["spike_count_std"], r["spike_count_max"],
+               r["first10_step_counts"]))
+    print("written:", a.out)
+
+
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,12 @@
 # INBOX — log
 
+## 2026-05-30 — UNIVERSE 핸드오프: H_858 edge-of-chaos Φ-peak LIVE AKD1000 재검 🟢 GREEN_NUMERICAL_CONFIRM (M2 🟢 promote)
+
+- [x] **실측 GREEN (a_blue_closed 정합)** — `AKIDA/akida_edge_of_chaos_phi_hw.{hexa,py}` (H_857 검증 live-HW 드라이버 패턴 mirror: `InputData(1,1,16)→FC(units=16,ones,act_bits=1)@BackendType.Hardware` · per-unit int32 thr=POT−drive) 로 *전용 클린 드라이버* 작성 → pi5-akida AKD1000 (BC.00.000.002 · on_hardware=True · SDK 2.19.1 · seed=187) 에서 R1~R4 drive-regime raster 수집 → frozen `akida_edge_of_chaos_phi.hexa` Φ-proxy + judge_inverse_u (재구현 0 · g0/g61): **3/3 PASS** · Φ(R1 silent=0 / R2 noise-edge=0.172 / R3 tonic-edge=0.250 peak / R4 recurrent≈0). F1 Φ(R2)>Φ(R1) ∧ F2 Φ(R3)>Φ(R1) ∧ F3 max(R2,R3)≥Φ(R4) all_pass. 실 칩 R4 recurrent loop **die-out**(포화 아님 · Akida feed-forward IP) → order/over-driven 양끝 low, edge peak.
+- [x] **`pe_edge_of_chaos_peak` M2 🟡 PARTIAL → 🟢 PROMOTE** — sim(ECA·logistic) ∧ live-silicon 양쪽 confirm. 자매 H_857(coupling-K·CAUSAL-POWER)과 *독립 축*(drive-regime·Φ-proxy)이 같은 silicon edge-of-chaos ∩ 확인 → single-측도 artifact 아님. ANIMA.md 🧭 M2 + AKIDA 트리 row 갱신.
+- [x] **verdict 영속 (g73)** — `.verdicts/858_akida_edge_of_chaos_phi/{F-AKIDA-EDGE.txt, hw_run_2026_05_30.json, eoc_hw_raster_2026_05_30.json, pi5_fire_run.log}` raw verbatim. CLAIMS.tape `akida_edge_of_chaos_phi_hw_green`. pi5 streamer stop→fire→restart 복귀 is-active=active 확인. $0 (pi5 dedicated · Mac=0).
+- [ ] **UNIVERSE 가설 seed (falsifiable for 다음 라운드)** — "두 독립 측도(Φ-proxy · CAUSAL-POWER)가 같은 silicon ∩ 을 보였다면, *제3 독립 측도*(예: transfer-entropy · Granger-causality on-chip raster)도 동일 edge-of-chaos peak 으로 수렴하는가, 아니면 측도-특이 artifact 가 드러나는가?" 사전등록 falsifier: 동일 R1~R4 live raster 에 제3 측도 적용 → inverse-U 3/3. PASS=🟢 measure-invariant edge-of-chaos · FAIL=🔴 측도-의존 (수렴은 2-측도 우연 ruled-out).
+
 ## 2026-05-29 — UNIVERSE 핸드오프: AKIDA edge-of-chaos Φ-peak 실리콘 검증 🟢 GREEN_NUMERICAL_CONFIRM
 
 - [x] **실측 GREEN_NUMERICAL_CONFIRM (a_blue_closed 정합)** — AKIDA D1 (`AKIDA/akida_edge_of_chaos_phi.hexa` · pi5-akida AKD1000 · BC.00.000.002 · `BackendType.Hardware` · n_neurons=16 · 200 step · seed=187): R1~R4 4-regime Φ sweep 3/3 PASS · F-AKIDA-EDGE-1/2/3 all_pass. order={0.000, 0.475, 0.500, 1.000} 축 위 Φ_proxy={0.000, 0.297, 0.250, 0.000} — 명시적 inverse-U(∩) 곡선 실리콘 확증.

@@ -207,3 +207,16 @@
   raw    = ".verdicts/857_clm_causal_band/F-CLM-CAUSAL-BAND.txt"
   src    = "UNIVERSE/H_857_clm_causal_band.md §5/§6 · CLM/P0_ARCHITECTURE.md §12.8 (HW-positive edge-of-chaos band)"
   status = "🟢 SUPPORTED-NUMERICAL — axis B(H_856) 🟢 의 regime 정밀화: 측도는 edge-of-chaos band(interior peak) 안에서만 통합 certify, 양끝(cold decoupled · saturate all-fire)에서 rolloff; axis-B 원래 rich(K=3)는 이미 포화 어깨(fire 0.94); axis A 🔴 불변; thresholds FROZEN (verdict persisted verbatim)"
+
+# UNIVERSE — akida-edge-of-chaos-phi (slug · group=UNIVERSE) · H_858
+# pe_edge_of_chaos_peak (M2 🟡 PARTIAL · sim ∩곡선)의 inverse-U 를 live AKD1000
+# drive-regime R1~R4 로 실리콘 검증. Φ-proxy frozen(akida_edge_of_chaos_phi.hexa)
+# 재사용·재구현 0, regime preset(drive/noise/feedback)만 사전등록. H_857(coupling-K·
+# CAUSAL-POWER)과 독립 축(drive-regime·Φ-proxy)이 같은 silicon ∩으로 수렴.
+
+@C akida_edge_of_chaos_phi_hw_green := "F-AKIDA-EDGE (live AKD1000 R1~R4 drive-regime): Φ-proxy inverse-U(∩) — Φ(R1 silent)=0 · Φ(R2 noise-edge)=0.172 · Φ(R3 tonic-edge)=0.250(peak) · Φ(R4 recurrent)=4.95e-12≈0; F1 Φ(R2)>Φ(R1) ∧ F2 Φ(R3)>Φ(R1) ∧ F3 max(R2,R3)≥Φ(R4) 3/3 PASS; 실 칩 R4 recurrent loop die-out(포화 아님)→order/over-driven 양끝 low, edge peak" :: run [slug=akida-edge-of-chaos-phi group=UNIVERSE]
+  method = "run"
+  cmd    = "akida_edge_of_chaos_phi_hw.py --seed 187 (pi5-akida, InputData(1,1,16)→FC(units=16,ones,act_bits=1) @BackendType.Hardware, per-unit int32 thr=POT−drive, R1~R4 preset 사전등록, streamer stop→sweep→restart) → akida_edge_of_chaos_phi.hexa --result <json> (frozen Φ-proxy + judge_inverse_u)"
+  raw    = ".verdicts/858_akida_edge_of_chaos_phi/F-AKIDA-EDGE.txt"
+  src    = "UNIVERSE/H_858_akida_edge_of_chaos_phi.md §5/§6 · CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (M2 promote) · AKIDA/akida_edge_of_chaos_phi_hw.hexa"
+  status = "🟢 SUPPORTED-NUMERICAL — sim ∩곡선이 live silicon 에서 성립(edge R2/R3 > order R1 ∧ edge ≥ over-driven R4); pe_edge_of_chaos_peak M2 🟡→🟢 promote; H_857(coupling-K·CAUSAL-POWER)과 독립 축이 같은 silicon edge-of-chaos ∩ 확인 — single-측도 artifact 아님; on_hardware=True·BC.00.000.002·streamer 복귀 active; Φ-proxy honest(full IIT4 big_phi 아님); thresholds/preset FROZEN (verdict verbatim)"
