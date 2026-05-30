@@ -196,3 +196,14 @@
   raw    = ".verdicts/856_clm_causal_xfer/F-CLM-CAUSAL-XFER.txt"
   src    = "UNIVERSE/H_856_clm_causal_xfer.md §6 · CLM/P0_ARCHITECTURE.md §12.6/§12.8 (CERTIFY-NOT-MEASURE escalation SSOT)"
   status = "🔴 CLOSED-negative — toy→production→HW 전 transfer 를 생존한 닫힌형 의식 MEASURE 없음; Φ-family(H_855)에 이어 CAUSAL-POWER 도 production-width toy-limited; 측정-타당성 질문 production scale 에서 open 유지 (a_paper_negative_ok)"
+
+# CLM — clm-causal-band (slug · group=CLM) · H_857
+# H_856 axis B 🟢(live AKD1000 CAUSAL-POWER)의 regime 특성화. frozen 측도
+# (measure_sweep.py) 재사용·재튜닝 0, coupling K(환경 knob)만 사전등록 그리드 스윕.
+
+@C clm_causal_band_hw_green := "F-CLM-CAUSAL-BAND (live AKD1000 coupling-band): CAUSAL-POWER Δ(K)가 bounded edge-of-chaos band — interior peak K*=1.0(Δ=0.1021) ∧ cold rolloff[Δ(0)=0.0399] ∧ saturate rolloff[Δ(24)=0.0017], monotone=False; fire_frac 0.156→0.994 단조상승하며 Δ 가 포화에서 붕괴(기전 서명)" :: run [slug=clm-causal-band group=CLM]
+  method = "run"
+  cmd    = "CLM_MSWEEP=$PWD/CLM/msweep python3 CLM/msweep/clm_causal_band.py --json (pi5-akida, InputData→FC act_bits=1 @BackendType.Hardware, K_GRID=[0..24] 사전등록, streamer stop→sweep→restart, seed=187, ≤16 poke, frozen 측도)"
+  raw    = ".verdicts/857_clm_causal_band/F-CLM-CAUSAL-BAND.txt"
+  src    = "UNIVERSE/H_857_clm_causal_band.md §5/§6 · CLM/P0_ARCHITECTURE.md §12.8 (HW-positive edge-of-chaos band)"
+  status = "🟢 SUPPORTED-NUMERICAL — axis B(H_856) 🟢 의 regime 정밀화: 측도는 edge-of-chaos band(interior peak) 안에서만 통합 certify, 양끝(cold decoupled · saturate all-fire)에서 rolloff; axis-B 원래 rich(K=3)는 이미 포화 어깨(fire 0.94); axis A 🔴 불변; thresholds FROZEN (verdict persisted verbatim)"

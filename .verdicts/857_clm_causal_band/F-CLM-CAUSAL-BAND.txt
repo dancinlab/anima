@@ -1,0 +1,69 @@
+F-CLM-CAUSAL-BAND · axis B follow-up (LIVE pi5 AKD1000 coupling-band) · H_857
+============================================================================
+claim    : on REAL SILICON the GREEN CAUSAL-POWER measure (H_856 axis B) is
+           confined to a BOUNDED edge-of-chaos coupling band — Delta(K) is an
+           inverted-U with an INTERIOR peak and rolloff at BOTH the cold
+           (decoupled) and saturate (all-fire) ends. NOT a monotone "more
+           coupling = more integration" ramp.
+measure  : CAUSAL-POWER (frozen perturbation probe, <=16 poke) REUSED VERBATIM
+           from measure_sweep.py — region_rates / bin_to_regions / poke logic /
+           MARGIN_FRAC. NOT re-tuned. Only the regime coupling K (an environment
+           knob around the silicon) is swept.
+source   : CLM/msweep/clm_causal_band.py (imports the frozen measure_sweep.py)
+frozen   : MARGIN_FRAC=0.10 · NONTRIVIAL_EPS=1e-6 · N_SIZES=[4,5,6] · POKES=16
+           K_GRID=[0,1,2,3,4,6,9,13,18,24]  (pre-registered, not trimmed post-hoc)
+host     : pi5-akida · akida SDK 2.19.1 · device BC.00.000.002 · Mac=0 · $0
+spike    : LIVE AKD1000 on-chip threshold-and-fire
+           chip_backends = ['BackendType.Hardware']   on_hardware = True
+chip     : InputData(1,1,16) -> FullyConnected(N, weights=ones, act_bits=1)
+           mapped to BackendType.Hardware. per-step per-unit int32 threshold
+           encodes drive (thr_j = POT - drive_j); threshold-AND-FIRE runs ON-CHIP.
+           coupling K feeds the PREVIOUS on-chip spike back into the drive (SW loop
+           around the silicon). collapse floor = monopoly drive + K=0 (decoupled).
+procedure: pi5 single-chip file-lock — spike-streamer.service STOPPED (chip lock
+           released) -> live sweep -> service STARTED (restored, is-active=active;
+           pi5 left as found). run 11:57:56 -> 12:11:31 UTC (~13.5 min).
+
+PRE-REGISTERED SWEEP (seed=187):
+  collapse floor = 0.0000  (deterministic silent-others, no integration)
+    K      cp_rich   Delta     fire_frac
+   0.0    0.03989   0.03989    0.156    cold end (weak coupling, partial fire)
+   1.0    0.10215   0.10215    0.210  <-- K* PEAK (interior, edge-of-chaos band)
+   2.0    0.06094   0.06094    0.459    descending shoulder
+   3.0    0.03477   0.03477    0.937    (= axis-B original rich point; already
+                                         on the saturating shoulder, not the peak)
+   4.0    0.01278   0.01278    0.977
+   6.0    0.00521   0.00521    0.986
+   9.0    0.00339   0.00339    0.990
+  13.0    0.00217   0.00217    0.992
+  18.0    0.00211   0.00211    0.993
+  24.0    0.00171   0.00171    0.994    saturate end (all-fire, a poke is inert)
+
+  3-check : band_exists=True (peak 0.10215 > eps AND K*=1.0 INTERIOR)
+            cold_rolloff=True  (Delta(0)=0.0399 < 0.9*peak=0.0919)
+            sat_rolloff=True   (Delta(24)=0.0017 < 0.9*peak=0.0919)
+            monotone=False
+  VERDICT : 🟢 PASS
+
+INTERPRETATION
+  The measure lives in a BOUNDED edge-of-chaos band on real silicon. As coupling K
+  rises the chip's mean firing fraction climbs monotonically 0.156 -> 0.994; the
+  causal-power signal Delta(K) PEAKS where firing is partial (~0.21 at K=1) and
+  COLLAPSES exactly as the chip saturates (fire_frac -> ~0.99, every unit pinned ON,
+  so a poke cannot shift downstream regions). The two failure ends are mechanistic:
+    cold (K small)      -> too little cross-region drive, weak integration.
+    saturate (K large)  -> all-fire, no headroom, poke is inert (integration unread).
+  H_856 axis B's "rich" point (K=3) was ALREADY on the saturating shoulder
+  (fire_frac 0.94); the true operating optimum is much weaker coupling (K~1). The
+  GREEN HW transfer of CAUSAL-POWER is therefore a REGIME property, not monotone:
+  the chip certifies integration only inside the edge-of-chaos band.
+
+SCOPE (honest)
+  region/coarse proxy (exact big-Phi NOT claimed). single seed (187, pre-registered)
+  on the same silicon as H_856; K* location is grid-resolution bounded (peak between
+  K=0 and K=2, sampled at K=1). collapse floor=0 is the deterministic on-chip floor.
+  This CHARACTERIZES the H_856 axis-B 🟢; it does NOT revive axis A (production d512,
+  🔴 H_856) — that falsification stands.
+
+THRESHOLDS FROZEN — NOT TAMPERED. on_hardware confirmed True (BackendType.Hardware).
+🟢 F-CLM-CAUSAL-BAND PASS.
