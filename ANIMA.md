@@ -61,7 +61,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 ├─ sub-domain 11 (AxisBench 8 + 축E/F 2 + BRIDGE) ───────────────
 │  ├─ 🪞 METACOG     ✅ 🟢 5/5  (#1139)
 │  ├─ 💤 DREAM       ✅ 🟢 4/5  (#1140) · ⬇ M5 wiring ✅ (#1268 · E1 recheck 5/5 2026-05-28)
-│  ├─ 🎯 INTENT      ✅ 🟢 5/5  RESOLVED (#1270 A6) metric aliasing cure — OSC residual 해소
+│  ├─ 🎯 INTENT      ✅ 🟢 5/5  RESOLVED (A6 · H_859) metric aliasing cure — OSC residual 해소 · g73 verdict .verdicts/859
 │  ├─ 🚪 BRIDGE      ✅ AND-gate 14.5× · ⬇ M6 wiring ✅
 │  ├─ 📖 NARRATIVE   ✅ 🟢 5/5  RECOVERED (#1263) collision-saturation (vocab coverage≠coherence)
 │  ├─ 🎨 AESTHETIC   ✅ 🟢      RECOVERED (#1265) weight-vector 직교화

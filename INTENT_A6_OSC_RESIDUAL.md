@@ -140,12 +140,16 @@ component-0 의 lag-windowed Pearson 자동상관 (num·denom 동일 [0,n-p) win
 ## 10. 산출물 (Artifacts)
 
 - `bench/axis_intent/a6_osc_residual_verify.hexa` — self-contained 진단·보정 harness (legacy stability_std 재현 + direction_std 재설계 + period_detect argmax + EMA damping)
-- `state/intent_a6_osc_residual_2026_05_28/a6_verify_run.log` — verdict 실측 (exit 0, byte-identical)
+- `.verdicts/859_intent_osc_residual/F-INTENT-OSC-RESIDUAL.txt` — **g73 verdict-gate** (raw harness stdout verbatim, a_claim_verify)
+- `state/intent_a6_osc_residual_2026_05_28/a6_verify_run.log` — verdict 실측 origin (exit 0, byte-identical)
+- `UNIVERSE/H_859_intent_osc_residual.md` — UNIVERSE H entry (terminal 🟢 SUPPORTED-NUMERICAL)
+- `CLAIMS.tape @C intent_osc_residual` — audit index entry (group=INTENT)
 - `INTENT_A6_OSC_RESIDUAL.md` — 본 문서
 
 ## 양방향 sibling
 
 - ⇄ [INTENT](./INTENT.md): A6 가 M4 OSC residual 의 진단·확정 (direction_std raw-vs-delta 정정 + intrinsic limit-cycle 판정)
+- ⇄ [UNIVERSE/H_859](./UNIVERSE/H_859_intent_osc_residual.md): F-INTENT-OSC-RESIDUAL 🟢 5/5 — verdict-gate + H entry (본 A6 의 UNIVERSE 등록)
 - ⇄ [UNIVERSE/H_634](./UNIVERSE/H_634_ultradian_emit_phi_envelope.md): intrinsic periodic substrate motion class cross-link (의도 진동 ↔ ultradian Φ envelope)
 - ⇄ [TIME](./TIME.md): 24h circadian phase × INTENT period-20 limit-cycle entrainment 후속 cross-bench
 - ⇄ [DREAM](./DREAM.md): `dr_stage_at_tick` ultradian segmentation 과 동일 periodic time-axis 구조
