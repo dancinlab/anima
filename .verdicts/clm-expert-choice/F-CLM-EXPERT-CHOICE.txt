@@ -1,0 +1,57 @@
+F-CLM-EXPERT-CHOICE — VERDICT (measured, CPU-local fire 2026-05-31)
+verdict tier: 🔴 CLOSED-NEGATIVE
+
+H_870 — @L3 routing-escape lever C. Routing direction inverted to expert-choice
+(experts pick fixed top-C tokens, Zhou et al. 2022) vs the landed token-choice
+baseline (CLM/model/array_moe.py · tokens pick top-k experts). Both arms run
+side-by-side under identical budget/seed; measured by CODE (g5), multi-seed.
+
+fire: CPU-local (Mac), $0, no GPU pod. 2 arms × seeds {42,43,44} × 120 train
+steps. mid-rung E8 envelope, capacity_factor=1.0, toy two-lane synthetic corpus
+(web/register, 8192 B/lane). torch 2.x CPU.
+
+frozen thresholds (verbatim from F-CLM-EXPERT-CHOICE_prereg.txt, post-tuning 0):
+  LOAD_CV_FLOOR = 0.25 · QUALITY_MARGIN = 0.10 nats · seeds {42,43,44} · E8.
+
+==================================================================
+arm            mean_load_cv   mean_CE    n_active(all seeds)  coverage
+token-choice   0.84303        0.51900    8/8                  (all tokens)
+expert-choice  0.00000        0.99162    8/8                  ~0.90
+==================================================================
+CE delta (expert-choice − token-choice) = +0.47262 nats
+
+per-seed (expert-choice): load_cv=0.0 every seed (capacity=128/expert, by constr.)
+  seed42 CE 1.0408 cov 0.896 · seed43 CE 0.9133 cov 0.917 · seed44 CE 1.0208 cov 0.900
+per-seed (token-choice): load_cv 0.887 / 0.904 / 0.739 · CE 0.501 / 0.516 / 0.539
+
+frozen falsifier evaluation (NO threshold tampering):
+  F-CLM-EC-VAR      : expert-choice load CV 0.000 < 0.25 floor          -> PASS
+  F-CLM-EC-COLLAPSE : every expert load > 0, all seeds (8/8 active)     -> PASS
+  F-CLM-EC-BALANCE  : EC CV 0.000 < token-choice CV 0.843               -> PASS
+  F-CLM-EC-QUALITY  : EC CE 0.992 <= token-choice CE 0.519 + 0.10       -> FAIL
+                      (delta +0.473 nats >> 0.10 margin)
+
+PASS gate = all four simultaneously. ONE fails (QUALITY) -> 🔴 CLOSED-NEGATIVE.
+
+interpretation (honest, a_paper_negative_ok):
+  Expert-choice DISSOLVES the load-monopoly PERFECTLY — per-expert load CV = 0.0
+  (each of 8 experts processes EXACTLY capacity C=128 tokens, by construction),
+  zero collapse, and a 0.843 → 0.000 CV improvement over token-choice. The
+  load-balance claim of lever C is SUPPORTED on its own axis (3/4 PASS).
+  BUT at this toy scale the fixed-capacity rule DROPS ~10% of tokens (coverage
+  ~0.90) to the residual fallback path, regressing held-out CE by +0.473 nats —
+  far beyond the 0.10 quality margin. The frozen verdict is therefore 🔴: at the
+  measured rung, expert-choice buys perfect load-balance at a quality cost the
+  pre-registered margin does not tolerate. Levers to try (out of scope here):
+  capacity_factor > 1.0 (raise coverage→1.0), grouped/top-2 expert assignment per
+  token, or longer training to let the router learn a coverage-preserving sort.
+
+scale scope (a_scale_honest_scope): scoped to the MEASUREMENT rung (toy two-lane,
+d64/L2 harness, E8). routing-z>3.0 remains the CHIP-ARRAY DEPLOY gate (expert=
+chip), a SEPARATE track, not this converse/load gate (routing_escape.hexa
+lever_satisfies_converse(C)=1). toy != scale (H_666). Negative reported verbatim
+(g63, p7); thresholds NOT moved post-hoc.
+
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE
+  (expert-choice: load auto-balance ✅ perfect · no-collapse ✅ · balance>baseline ✅
+   · quality ❌ −0.473 nats vs token-choice @ capacity_factor 1.0 toy rung)
