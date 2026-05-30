@@ -1,0 +1,56 @@
+F-CLM-DECODER-MID — PRE-REGISTRATION (frozen pre-run, 2026-05-31)
+verdict tier: 🟠 PRE-REGISTERED (mid-rung byte-match measurement pending)
+
+claim (H_877, extends H_680 🟢 toy byte-match to the mid rung d512/L8/E8):
+the AKIDA int4 inference path (the act_bits quantized FullyConnected cascade
+modeled by HEXAD/CHAT/server/akida_sw_lif.fc_quantized_forward / cascade_forward,
+already verified BYTE-IDENTICAL to AKD1000 silicon at toy scale n=16) stays
+byte-identical between the HW on-chip forward and the SW akida_sw_lif simulator
+at the MID rung (width d=512, depth L=8, act_bits/expert E=8). This underwrites
+@L2's "inference byte-identical -> chip transplant gives identical answers" at
+the production rung.
+
+PRIMARY falsifier (HW available):
+  F-CLM-DECODER-MID-HW : total_hamming(HW on-chip forward, SW akida_sw_lif) == 0
+                         over the stated eval byte set (mid rung d512/L8 cascade,
+                         act_bits=4, N_PROBE deterministic int4 input vectors,
+                         seed=877). PASS iff total_hamming == 0.
+
+REDUCED falsifier (HW UNREACHABLE — honest fallback, W2 reduced claim):
+  F-CLM-DECODER-MID-SW : the SW int4 forward path is DETERMINISTIC byte-identical
+                         across (a) repeated in-process runs and (b) independent
+                         cross-process subprocess runs, total_hamming == 0 over the
+                         SAME eval byte set. This is the prerequisite invariant for
+                         HW==SW (a non-deterministic SW path could never byte-match
+                         HW); it does NOT by itself confirm HW==SW at mid — that
+                         stays HW-pending (🟠 honest, a_scale_honest_scope).
+
+eval byte set (frozen, seed=877):
+  - rung   : MID  d512 (width=512) / L8 (depth=8 FC cascade) / E8 (act_bits=4 ·
+             E8 envelope = 8-expert/8-bit-class budget per the mid QAT envelope)
+  - weights: per-layer symmetric int4 in [-7,+7] (chip rejects -8), rng(seed=877)
+  - inputs : N_PROBE=64 deterministic int4 input vectors, rng(seed=877), clip[0,15]
+  - forward: cascade_forward(x, [W1..W8], act_bits=4, input_bits=4) per probe
+  - bytes  : the concatenated int output activations of all 64 probes (the full
+             eval byte set), hashed (sha256) + bit-level Hamming vs the reference.
+
+PASS  -> 🟢 SUPPORTED-NUMERICAL (HW path: HW==SW byte-identical at mid)
+         OR 🟠 HW-PENDING (SW path: SW determinism byte-identical at mid; HW
+         confirmation deferred to a non-disruptive pi5 probe — honest reduced).
+FAIL  -> 🔴 CLOSED-NEGATIVE (total_hamming > 0: the int4 forward path is NOT
+         byte-identical at the mid rung; chip transplant would diverge).
+
+discipline: post-tuning 0 (thresholds frozen here, BEFORE any mid forward run) ·
+measured by CODE (g5, AKIDA/h877/h877_decoder_bytematch_mid.py) · NOT an
+LLM-judge · measurement-rung scope only (mid), does NOT bind deploy chip-fit
+(a_scale_honest_scope · H_876 owns the shrink track).
+
+scope (a_scale_honest_scope): mid rung d512/L8/E8 only. toy (H_680 n=16) 🟢 was
+already byte-identical on live AKD1000 (H_860 total_hamming=0/16000); this row
+extends the invariant one rung up. Other rungs / the deploy shrink track are
+separate verdicts.
+
+pi5 (AKD1000 192.168.50.155): a live R3 edge-learn loop may be running. This row
+runs a NON-MUTATING probe only; if pi5 is unreachable with the provided creds the
+HW arm is reported HW-pending (honest) and the SW-determinism reduced claim is
+issued — NO destructive pi5 mutation is performed.
