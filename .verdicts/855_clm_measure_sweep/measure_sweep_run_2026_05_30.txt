@@ -1,0 +1,138 @@
+=== COMPACT ===
+measure          | nontrivial | coll<rich | size-robust | verdict
+----------------------------------------------------------------------
+PHI-NATIVE       |   True     |  False    |   False     | FAIL
+TEMPORAL-PHI     |   True     |  False    |   False     | FAIL
+TENSION-NATIVE   |   True     |  False    |   False     | FAIL
+FREE-ENERGY      |   True     |  False    |   False     | FAIL
+HILL             |   True     |  False    |   True      | FAIL
+CAUSAL-POWER     |   True     |  True     |   True      | PASS
+----------------------------------------------------------------------
+PASS: ['CAUSAL-POWER']
+=== JSON_BEGIN ===
+{
+  "batch": "clm-measure-sweep",
+  "seed": 187,
+  "sizes": [
+    4,
+    5,
+    6
+  ],
+  "neurons_per_region": 8,
+  "n_steps": 256,
+  "frozen_thresholds": {
+    "margin_frac": 0.1,
+    "nontrivial_eps": 1e-06,
+    "causal_pokes_cap": 16
+  },
+  "measures": {
+    "PHI-NATIVE": {
+      "measure": "PHI-NATIVE",
+      "checks": {
+        "nontrivial": true,
+        "collapse_vs_rich": false,
+        "size_robust": false
+      },
+      "verdict": "FAIL",
+      "values": {
+        "collapse_n4": 0.2681954372610873,
+        "rich_n4": 0.1924762820173136,
+        "collapse_n5": 0.5004936104022693,
+        "rich_n5": 0.5955330063006987,
+        "collapse_n6": 0.7036917914132861,
+        "rich_n6": 0.9163226120082408
+      }
+    },
+    "TEMPORAL-PHI": {
+      "measure": "TEMPORAL-PHI",
+      "checks": {
+        "nontrivial": true,
+        "collapse_vs_rich": false,
+        "size_robust": false
+      },
+      "verdict": "FAIL",
+      "values": {
+        "collapse_n4": 2.198752932202493,
+        "rich_n4": 2.0059834159218237,
+        "collapse_n5": 5.191668130754087,
+        "rich_n5": 7.705055311496223,
+        "collapse_n6": 10.091722850001688,
+        "rich_n6": 15.225409865801709
+      }
+    },
+    "TENSION-NATIVE": {
+      "measure": "TENSION-NATIVE",
+      "checks": {
+        "nontrivial": true,
+        "collapse_vs_rich": false,
+        "size_robust": false
+      },
+      "verdict": "FAIL",
+      "values": {
+        "collapse_n4": 0.1297430546972286,
+        "rich_n4": 0.17515067750857408,
+        "collapse_n5": 0.1008100717379339,
+        "rich_n5": 0.07165641405049045,
+        "collapse_n6": 0.2208456720421695,
+        "rich_n6": 0.13770818589734712
+      }
+    },
+    "FREE-ENERGY": {
+      "measure": "FREE-ENERGY",
+      "checks": {
+        "nontrivial": true,
+        "collapse_vs_rich": false,
+        "size_robust": false
+      },
+      "verdict": "FAIL",
+      "values": {
+        "collapse_n4": 0.0022624609224478343,
+        "rich_n4": 0.0022613158769752284,
+        "collapse_n5": 0.0024855645008216576,
+        "rich_n5": 0.006265687771347617,
+        "collapse_n6": 0.003038088293003699,
+        "rich_n6": 0.007956958618895588
+      }
+    },
+    "HILL": {
+      "measure": "HILL",
+      "checks": {
+        "nontrivial": true,
+        "collapse_vs_rich": false,
+        "size_robust": true
+      },
+      "verdict": "FAIL",
+      "values": {
+        "collapse_n4": 0.9262356306618377,
+        "rich_n4": 0.9995231269227569,
+        "collapse_n5": 0.9391796800623,
+        "rich_n5": 0.999767154242971,
+        "collapse_n6": 0.9308397375971191,
+        "rich_n6": 0.9993210943584115
+      }
+    },
+    "CAUSAL-POWER": {
+      "measure": "CAUSAL-POWER",
+      "checks": {
+        "nontrivial": true,
+        "collapse_vs_rich": true,
+        "size_robust": true
+      },
+      "verdict": "PASS",
+      "values": {
+        "collapse_n4": 0.045247395833333336,
+        "rich_n4": 0.13704427083333334,
+        "collapse_n5": 0.0634765625,
+        "rich_n5": 0.146484375,
+        "collapse_n6": 0.06549479166666666,
+        "rich_n6": 0.13684895833333333
+      }
+    }
+  },
+  "passes": [
+    "CAUSAL-POWER"
+  ],
+  "all_red": false,
+  "scope": "region/coarse proxy; SW spike (akida_sw_lif-style LIF); toy n<=6 (sec 12.4)"
+}
+=== JSON_END ===

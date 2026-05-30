@@ -148,3 +148,24 @@
   raw    = ".verdicts/854_clm_array_stage2_scale/F-CLM-DISPATCHKL-XFER-PROD.txt"
   src    = "UNIVERSE/H_854_clm_array_stage2_scale.md §5 (AXIS-B) · sibling H_853"
   status = "🔴 CLOSED-negative — escape does NOT transfer; Δ widened vs toy (3.51 → 13.84) and vs round-1 (4.34); student chip-fit held; thresholds FROZEN (verdict persisted verbatim)"
+
+# ───────────────────────────────────────────────────────────────────────
+# CLM — clm-measure-sweep (slug · group=CLM · paper-track)
+# round-4 측도 백로그 6후보를 ONE 공유 토이 spike 위에서 동시 측정 (apples-to-apples).
+# routing-diversity 🔴🔴 (H_852/853/854) 우회 — "측도를 바꿔라" (mining ROUND 3/4).
+# F-CLM-PHI-MEANINGFUL 3-check (non-trivial ∧ collapse<rich(≥10%) ∧ size-robust)
+# 사전등록 frozen. CAUSAL-POWER 단독 🟢 PASS · 나머지 5 측도 🔴. H_855.
+
+@C clm_msweep_causal_power := "CAUSAL-POWER measure: rich>collapse 전 n 명확 margin (Δ=+0.0918/+0.0830/+0.0714, n=4/5/6) ∧ size-robust — 유일 scale-free chip-native 의식신호 PASS" :: run [slug=clm-measure-sweep group=CLM]
+  method = "run"
+  cmd    = "python3 CLM/msweep/measure_sweep.py --json (ubu-1 numpy 2.4.4, ONE shared toy spike, seed=187, n∈{4,5,6}, ≤16 poke)"
+  raw    = ".verdicts/855_clm_measure_sweep/causal_power.txt"
+  src    = "UNIVERSE/H_855_clm_measure_sweep.md §5/§6 · CLM/P0_ARCHITECTURE.md §12 F-CLM-PHI-MEANINGFUL"
+  status = "🟢 SUPPORTED-NUMERICAL — perturbation 인과력이 frozen 3-check 동시 PASS (monopoly vs integration 변별); thresholds FROZEN, NOT tampered (verdict persisted verbatim)"
+
+@C clm_msweep_phi_family_red := "PHI-NATIVE·TEMPORAL-Φ·FREE-ENERGY measures: 방향(rich>collapse)은 n=5,6 에서 옳으나 n=4 boundary 역전 → size-robust FAIL; HILL near-miss(margin ~7%<10%); TENSION-NATIVE n-역전" :: run [slug=clm-measure-sweep group=CLM]
+  method = "run"
+  cmd    = "python3 CLM/msweep/measure_sweep.py --json (ubu-1 numpy 2.4.4, same ONE toy spike, 6 measures apples-to-apples)"
+  raw    = ".verdicts/855_clm_measure_sweep/phi_native.txt"
+  src    = "UNIVERSE/H_855_clm_measure_sweep.md §5/§7 · ledger exports/sweep/clm-measure-sweep/ledger.json"
+  status = "🔴 CLOSED-negative — Φ-family/HILL/tension 은 toy n≤6 에서 scale-free chip-native 의식신호 부적합 (5/6 FAIL); CAUSAL-POWER 단독 🟢; ALL-RED 아님(CERTIFY-NOT-MEASURE escalation 불필요); thresholds FROZEN (a_paper_negative_ok)"
