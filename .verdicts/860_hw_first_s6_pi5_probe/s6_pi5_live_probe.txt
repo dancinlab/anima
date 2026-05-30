@@ -1,0 +1,110 @@
+=== S6 PI5 PROBE START 2026-05-30T13:58:48Z ===
+[runner] stopping spike-streamer.service
+[runner] spike-streamer is-active: inactive
+[runner] running probe
+{
+  "part1_decoder": {
+    "hw_backend": "BackendType.Hardware",
+    "per_regime": {
+      "R0_driven": {
+        "hw_total_spikes": 3200,
+        "sw_total_spikes": 3200,
+        "hw_rate": 1.0,
+        "sw_rate": 1.0,
+        "hamming_distance": 0,
+        "match": true
+      },
+      "R1_weak_silent": {
+        "hw_total_spikes": 0,
+        "sw_total_spikes": 0,
+        "hw_rate": 0.0,
+        "sw_rate": 0.0,
+        "hamming_distance": 0,
+        "match": true
+      },
+      "R2_zero_noise": {
+        "hw_total_spikes": 1520,
+        "sw_total_spikes": 1520,
+        "hw_rate": 0.475,
+        "sw_rate": 0.475,
+        "hamming_distance": 0,
+        "match": true
+      },
+      "R3_tonic_zero_input": {
+        "hw_total_spikes": 1600,
+        "sw_total_spikes": 1600,
+        "hw_rate": 0.5,
+        "sw_rate": 0.5,
+        "hamming_distance": 0,
+        "match": true
+      },
+      "R4_recurrent_selfsustained": {
+        "hw_total_spikes": 3200,
+        "sw_total_spikes": 3200,
+        "hw_rate": 1.0,
+        "sw_rate": 1.0,
+        "hamming_distance": 0,
+        "match": true
+      }
+    },
+    "total_hamming": 0,
+    "total_steps_compared": 1000,
+    "total_bits_compared": 16000,
+    "byte_identical": true,
+    "verdict": "MATCH (byte-identical)"
+  },
+  "part2_plasticity": {
+    "shots": {
+      "1": {
+        "n_shot": 1,
+        "weight_len": 160,
+        "runA_sum": 20,
+        "runB_sum": 20,
+        "run_to_run_hamming": 36,
+        "deterministic": false,
+        "nondeterministic": true
+      },
+      "2": {
+        "n_shot": 2,
+        "weight_len": 160,
+        "runA_sum": 20,
+        "runB_sum": 20,
+        "run_to_run_hamming": 30,
+        "deterministic": false,
+        "nondeterministic": true
+      },
+      "4": {
+        "n_shot": 4,
+        "weight_len": 160,
+        "runA_sum": 20,
+        "runB_sum": 20,
+        "run_to_run_hamming": 36,
+        "deterministic": false,
+        "nondeterministic": true
+      },
+      "8": {
+        "n_shot": 8,
+        "weight_len": 160,
+        "runA_sum": 20,
+        "runB_sum": 20,
+        "run_to_run_hamming": 34,
+        "deterministic": false,
+        "nondeterministic": true
+      }
+    },
+    "lseed": 42,
+    "any_nondeterministic": true,
+    "all_deterministic": false,
+    "n_nondeterministic_shots": 4,
+    "n_deterministic_shots": 0,
+    "verdict": "NON-DETERMINISTIC (run-to-run weight divergence on >=1 shot -> SW numpy approx can NOT be byte-identical, H_679 confirmed)"
+  },
+  "device_version": "BC.00.000.002",
+  "backend_hw": false
+}
+DONE_S6_PROBE
+[runner] probe exit code: 0
+[runner] restarting spike-streamer.service
+[runner] spike-streamer is-active after restart: active
+=== S6 PI5 PROBE COMPLETE 2026-05-30T13:59:06Z rc=0 ===
+RUNNER_DONE

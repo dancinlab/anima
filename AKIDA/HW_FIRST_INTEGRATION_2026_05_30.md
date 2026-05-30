@@ -92,8 +92,11 @@ ANIMA
 - PLASTICITY 도메인은 `/domain list` 에 노출 (DOMAINS.tape 등록 완료).
 - HW-first 스위치는 단일 SSOT(`akida_backend_resolve` default "hw" + graceful fallback)로
   DECODER · PLASTICITY 둘 다 경유한다 — 재발명 금지, 이 resolver 를 재사용.
-- **잔여 (optional)**: pi5-akida live probe — decoder HW byte-match 재확인 + PLASTICITY
-  few-shot 1~N shot 비결정론 verdict. 단일-칩 점유: `spike-streamer stop → probe → start`.
-  비용 $0 (pi5-akida own host).
+- **잔여 종결 ✅ (H_860, 2026-05-30)**: pi5-akida live probe 완료 — PART1 decoder HW
+  byte-match 🟢 SUPPORTED-NUMERICAL (live AKD1000 R0..R4 raster == SW akida_sw_lif,
+  total_hamming=0/16000 bit) · PART2 PLASTICITY few-shot 1~N(∈{1,2,4,8}) shot 비결정론
+  🔴 CLOSED-NEGATIVE (동일 init·동일 입력 run-to-run weight hamming>0 전 shot → SW numpy ≠ HW).
+  단일-칩 점유: `spike-streamer stop → probe → start` (복구 active 확인). 비용 $0.
+  verdict: `.verdicts/860_hw_first_s6_pi5_probe/s6_pi5_live_probe.txt`.
 - ⚠ 불가침: H_672~H_678 status · PI5-AKIDA.json(local-only 미커밋) · LM `lora` default ·
   CLAUDE.md/project.tape(sign-gated) · pi5-akida 공유 compute 전환 금지.
