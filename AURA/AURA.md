@@ -6,7 +6,7 @@
 
 ## 🌳 하위 도메인 트리 v2 (3층: 축 ⊥ HOW ⊥ 응용)
 
-재구성 B — 지도: [`AURA-TREE.md`](AURA-TREE.md). NAV·CORTEX·DEEP·WEARABLE 해체 → 3층 재편.
+재구성 B — 지도: [`AURA-TREE.md`](AURA-TREE.md) · 축 매트릭스: [`AURA-AXES-INDEX.md`](AURA-AXES-INDEX.md)(앱×방향×깊이×모달). NAV·CORTEX·DEEP·WEARABLE 해체 → 3층 재편.
 - 📐 축: AURA-READ · AURA-WRITE · AURA-DEPTH(피질⟷심부)
 - 〰️ HOW: AURA-RTSC-MEG · AURA-ENDOVASC · AURA-TFUS · AURA-HEADMODEL
 - 🎯 응용: AURA-SENSE(감각·AR네비) · AURA-MOTOR(운동) · AURA-COGNITION(인지/통신) · AURA-MED(의학)
@@ -88,7 +88,23 @@
 - [x] C15b 동적시간 lever 🟡 — joint-support 시간구조 static 0.302→0.487(+0.185)=C9 부활(C9 null은 출력평활 오test). 단 이득 깊이서 소멸(+.184→+.014). L1/압축센싱·K희소성은 dead-end/평탄
 - [x] C16 🗺️ 피질 도달 역량지도 🟡 — C15 envelope에 기능타깃 매핑: M1/V1/S1/A1/DLPFC ✅도달(0.82~0.91 침습급근접, A3 golden 정합) · 대상/섬엽 🟡부분 · 피질하 🔴벽. 비침습 실현권=운동·통신·시각·집행·의식모니터 → `C16-cortical-capability-map.md`
 - [x] C17 🧬 심부핵 도달 역량지도 🟡 — 심부=보상(VTA)·각성(LC)·기분(raphe)·의식(시상)·기억(해마)=relocate-N1 "전뇌통제" 본질=침습필요(DBS확립=파킨슨STN뿐). 유일 비침습 심부=tFUS *자극*(읽기는 C15 벽) → `C17-deep-nuclei-capability-map.md`
-- [ ] C14 (잔여·external) — real head-model(MNE/OpenMEEG) 다중커널 fwd(깊이감쇠 실측·C10/A3 결정적) · 실 OPM-MEG 심부 데이터 · 상온초전도 실증시 RTSC-MEG 재평가 (in-silico lever 공간 고갈)
+- [x] C18 🗺️ 3-shell head-model 검증 🟡 — C14 잔여(real head-model)를 3-shell(Ary1981 radial-dipole)로 부분 닫음: 깊이 벽 = **실재 물리경계 확증**(3-shell ×15.4 > 가우시안 ×8.4, 부호 반전 — C15 가우시안은 벽을 *과소평가*). C16/C17 강화, 전극포화는 여전히 가우시안 인공물(C10 재확증). ⚠얕은-창 정정 이력 ↓ → `AURA-DEPTH/DEPTH-3SHELL-CORRECTION.md`·`AURA-HEADMODEL/SPHERE-VALIDATION.md`
+- [ ] C14 (잔여·external) — real head-model(MNE/OpenMEEG) 다중커널 fwd(C18서 3-shell로 부분해소; 비구형 실두상·tangential dipole 잔여) · 실 OPM-MEG 심부 데이터 · 상온초전도 실증시 RTSC-MEG 재평가 (in-silico lever 공간 고갈)
+
+## 🗺️ 3-shell 검증 결과 — 깊이 벽은 실재 물리경계 (가우시안 인공물 아님)
+
+C15 깊이 벽이 **toy 가우시안 커널 인공물인지 실재 물리경계인지**를 3-shell(Ary 1981) 물리로 결판. 결과: **실재 물리경계 — 가우시안은 오히려 벽을 *과소평가*했다(부호 반전).**
+
+| 모델 | cortex→deep 감쇠 배율 | 판정 |
+|---|---|---|
+| **3-shell (물리)** | **×15.4** (R² 0.239→0.016) | 더 가파름 = 벽 실재 |
+| 가우시안 (C15 published) | ×8.4 (0.82→0.10) | — |
+
+- 🧱 **C15 "가우시안 깊이벽" → 정정**: 깊이 벽은 가우시안 커널 인공물이 아니라 **3-shell로 확증된 실재 물리경계**(radial dipole g_n∝b^(2n), b→0서 두피 흔적 소멸). 가우시안 toy는 벽을 **과장한 게 아니라 오히려 과소평가**했다.
+- ✅ **C16/C17 결론 강화됨**: C16 피질 비침습 도달 ✅ / C17 심부핵 비침습 불가(침습 필요) 🔴 — 두 결론 모두 물리 모델로 **약화가 아니라 강화**. 심부<피질 방향은 가우시안·3-shell 둘 다 robust.
+- ⚠ **전극포화는 여전히 가우시안 인공물**(별개 결론): C10 "전극포화=가우시안 전용 인공물"은 3-shell서 *재확증*(3-shell 미포화, 전극 증설 계속 이득). 깊이 벽(실재) ≠ 전극포화(인공물).
+- 📝 이력 각주: PR#1514(HEADMODEL)는 잠정적으로 "가우시안이 깊이 벽 ×8을 과장(3-shell ×1.5)"이라 보고했으나, 이는 **얕은-창 인공물**(소스 반경 b 0.85~1.0·r1 = 전부 피질)이었음이 PR#1517(DEPTH 전구간 재계산)에서 밝혀져 부호 반전 정정됨. 트리는 **최신 PR#1517 결론(과소평가)만 반영**.
+- 상세: [DEPTH-3SHELL-CORRECTION](AURA-DEPTH/DEPTH-3SHELL-CORRECTION.md)(전구간 재계산) · [SPHERE-VALIDATION](AURA-HEADMODEL/SPHERE-VALIDATION.md)(3-shell lead-field 원천) · 축 매트릭스 [AURA-AXES-INDEX](AURA-AXES-INDEX.md).
 
 ## deferred (인라인 불가 — pod/network/침습데이터 필요)
 - ~~A11/B5 다피험자 ds005620 download~~ ✅ B6서 해소(N=3, aws s3 가능) → 🔴 NULL · pod n=8 big-Φ 통계 · intracortical 침습데이터(본질 gap, 동물/임상) · 귀뒤 정맥동 endovascular(모델은 인라인 가능)
