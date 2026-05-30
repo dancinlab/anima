@@ -7,7 +7,7 @@
 ## 진행 (milestones)
 
 - [x] (app ✅) RTSC 나노코일 lead-field 모델 — read(pick-up loop fT) + write(drive loop focal E) φ=2 시분할
-- [ ] C13 채널밀도 lever 재현 — 256ch 자기센서 복원율 0.85, cryo비용장벽 제거가 본질임을 정량
+- [x] C13 채널밀도 lever 재현 — C13 + `app/density_scaling`서 측정됨(32→512ch read R² 0.168→0.745, 256ch 0.663), cryo비용장벽 제거가 lever임을 정량 (PR#1502 app/density_scaling)
 - [ ] demiurge COIL pillar 환류 — verify/numerics_coil_*.hexa 정합 (Biot-Savart·TMS figure-8 parity)
 - [ ] 상온초전도 실재 conditional — RTSC el-ph 잡(pods) bridge, 물질 확증 시 재평가
 
