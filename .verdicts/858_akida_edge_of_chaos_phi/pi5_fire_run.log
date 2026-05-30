@@ -1,0 +1,16 @@
+=== EOC fire start 2026-05-30T12:40:25Z ===
+stopping spike-streamer.service...
+streamer is-active: inactive
+--- running R1~R4 raster sweep ---
+=== AKIDA edge-of-chaos Phi LIVE R1~R4 raster ===
+on_hardware: True | backend: BackendType.Hardware
+device: BC.00.000.002
+  R1_weak_silent               total=    0 std= 0.000 max= 0 first10=[0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+  R2_zero_noise                total= 1024 std= 7.464 max=16 first10=[16, 16, 0, 16, 0, 0, 16, 0, 0, 0]
+  R3_tonic_zero_input          total= 1600 std= 0.000 max= 8 first10=[8, 8, 8, 8, 8, 8, 8, 8, 8, 8]
+  R4_recurrent_selfsustained   total=   16 std= 1.129 max=16 first10=[16, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+written: /tmp/eoc/eoc_hw_result.json
+--- raster rc=0 ---
+restarting spike-streamer.service...
+streamer restored is-active: active
+=== EOC fire DONE rc=0 streamer=active 2026-05-30T12:40:42Z ===
