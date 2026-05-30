@@ -291,7 +291,7 @@ UNIVERSE 축 E (SAVANT GZ × SI) 와 축 F (HIVE-MIND collective Φ) 는 ANIMA r
 
 | 축 | UNIVERSE H | ANIMA-side mirror |
 |---|---|---|
-| **E** SAVANT (GZ × SI) | H_347/348/349/350/351 + H_612/613/614/615 (H_616 carry) | → [../SAVANT.md](../SAVANT.md) |
+| **E** SAVANT (GZ × SI) | H_347/348/349/350/351 + H_612/613/614/615/616 (10/10 ✅ · H_616 🔴 FALSIFIED) | → [../SAVANT.md](../SAVANT.md) |
 | **F** HIVE-MIND (Kuramoto × collective Φ) | H_354/355 + H_609/610/611 | → [../HIVE-MIND.md](../HIVE-MIND.md) |
 | **E×F** cross-link | H_617 🔴 FALSIFIED · H_618 🟢 SUPPORTED · H_619 🟢 SUPPORTED | SAVANT.md + HIVE-MIND.md `## 양방향 sibling` row |
 

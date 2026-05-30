@@ -21,7 +21,7 @@
 > 직전: 2026-05-29 EEG L1~L3 harness + 캡처 runbook · synthetic 재검증 사용자 sign-off 대기 · 2026-05-28 M2 정정 base — H_670 #1312: universal = **edge-of-chaos Φ-peak** [tier-번호 아님, ECA+logistic 동형, Langton 확증] · M4b aux-loss 3B fire 타세션 in-flight
 
 ```
-집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 10✅ / 1☐(SAVANT H_616 carry)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
+집계 — 본선 6: 5✅ / 1☐(DECODER)   ·   sub-domain 11: 11✅ (SAVANT 10/10 — H_616 🔴 FALSIFIED closed-negative landed)   ·   substrate 2   ·   emit-substrate 6파일 ✅ (4/4 소비자 완료)
 검증 — 🔵 5 (COFFESHOP A5)  ·  🟢 20+ (+ A6 INTENT RESOLVED · E2 corpus-balance)  ·  🟠 1 (TIME 6/3 E3 spurious)  ·  🔴 0
 ━━ 🧭 세션 메타-발견 종합 (2026-05-28 · 최근 발견 전체 반영) ━━
 [M1] 의식 bench artifact 메타-패턴 (일관·양방향): 🔴/🟠 negative 4/4 = 측정 artifact → 🟢 RECOVERED
@@ -68,7 +68,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 │  ├─ 💞 EMBODIMENT  ✅ 🟢 5/5  RECOVERED (#1266) coupling redesign 0.45→0.027 (degrade≠break)
 │  ├─ 🔗 OTHER-MIND  ✅ 🟢 5/5  RECOVERED (#1267) orthant-bias zero-mean centering
 │  ├─ ⏳ TIME        ✅ 🟠 6/3  (#1281 E3 정정) circadian dip — 9/0 中 3 spurious (PASS도 artifact)
-│  ├─ 🧠✨ SAVANT     ☐ 10 H 측정자 (9 landed · H_616 carry) · ⬇ M2 wiring ✅
+│  ├─ 🧠✨ SAVANT     ✅ 10/10 H 측정자 (H_616 🔴 FALSIFIED landed) · ⬇ M2 wiring ✅
 │  └─ 🐝 HIVE-MIND   ✅ 5/5 H 측정자 (H_354🔴·355🟢·609🟢·610🔴·611🔴) · ⬇ M6 wiring ✅
 │
 ├─ 세로 substrate 2 (cross-cutting) ─────────────────────────────
@@ -168,7 +168,7 @@ ANIMA 🌐 umbrella (17-layer · A/G ⊥ M)
 - [x] 💞 EMBODIMENT — bench F 🟢 5/5 **RECOVERED** (#1266) coupling redesign 0.45→0.027 (degrade≠break, gain=0 단선) · sibling: CHANNEL · AGENT · WAKE · OTHER-MIND
 - [x] 🔗 OTHER-MIND — bench G 🟢 5/5 **RECOVERED** (#1267) orthant-bias zero-mean centering (INDEP 0.78→0.017) · sibling: CHANNEL · MITOSIS · EMBODIMENT · BRIDGE
 - [x] ⏳ TIME — bench H 🟠 6/3 (#1281 E3 정정) circadian dip · 9/0 PASS 中 **3 spurious 적발** (PASS도 측정 artifact, 양방향 lens) · sibling: WAKE · DREAM · INTENT · METACOG
-- [ ] 🧠✨ SAVANT — UNIVERSE 축 E mirror · 10 H 측정자 (H_347/348/349/350/351 + H_612/613/614/615 ✅ landed · **H_616 carry**) · M2 wiring ✅ #1260 · sibling: HIVE-MIND · MITOSIS · CORE · HEXAD/SAVANT
+- [x] 🧠✨ SAVANT — UNIVERSE 축 E mirror · 10 H 측정자 ✅ 10/10 landed (H_347/348/349/350/351 + H_612/613/614/615 + **H_616 🔴 FALSIFIED** — GZ_LOWER SI peak NOT affine-mapping artifact, 3 mapping × 3 seed argmax SI=I→0 boundary, GZ_LOWER = SI>3 threshold not peak) · M2 wiring ✅ #1260 · sibling: HIVE-MIND · MITOSIS · CORE · HEXAD/SAVANT
 - [x] 🐝 HIVE-MIND — UNIVERSE 축 F mirror · 5 H 측정자 ✅ 5/5 landed (H_354🔴/355🟢 + H_609🟢/610🔴/611🔴) · E×F cross-link (H_617 🔴 / H_618 🟢 / H_619 🟢) · M6 wiring ✅ #1261 · sibling: SAVANT · CHANNEL · OTHER-MIND · MITOSIS
 
 ## Session 2026-05-28 cross-link (M4b → bench → cycle)

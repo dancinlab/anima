@@ -1,0 +1,111 @@
+[H_616] GZ_LOWER SI peak — non-linear inhibition->gain mapping recovery test
+  predecessor: H_348 (golden-zone-lower-bound-SI, PARTIAL: F-1 SI>3 PASS, F-2 peak FAIL under affine)
+  substrate  : HEXAD/SAVANT/savant_phi.hexa (SSOT) 4-domain d=6
+  SI metric  : max(domain_phi)/min(domain_phi)  (H_348 identical)
+  GZ_LOWER   = 0.21232 ; PASS window = [0.16232, 0.26232]
+  mappings   : AFFINE (H_348 baseline) | RECIPROCAL (1/I front-load) | SIGMOID (S-curve @ GZ_LOWER)
+  all mappings share endpoints gf(0)=10, gf(1)=1 (only curvature differs)
+  F-2 recovery falsifier (pre-registered):
+    SUPPORTED if >=1 NON-LINEAR mapping has argmax(SI) in GZ_LOWER window (on >=2/3 seeds)
+    FALSIFIED if ALL 3 mappings keep argmax(SI) at I->0 boundary (peak mapping-independent)
+
+=== seed 42424 ===
+  AFFINE     I=0.05 gf=9.55 SI_phi=7.82933
+  AFFINE     I=0.1 gf=9.1 SI_phi=6.18627
+  AFFINE     I=0.15 gf=8.65 SI_phi=5.12255
+  AFFINE     I=0.21232 gf=8.08912 SI_phi=4.22722   <- GZ_LOWER
+  AFFINE     I=0.25 gf=7.75 SI_phi=3.82558
+  AFFINE     I=0.36788 gf=6.68908 SI_phi=2.94439   <- GZ_CENTER
+  AFFINE     I=0.5 gf=5.5 SI_phi=2.30784
+  AFFINE     I=0.75 gf=3.25 SI_phi=1.45669
+  AFFINE     I=0.95 gf=1.45 SI_phi=1.70267
+  RECIPROCAL I=0.05 gf=7.10714 SI_phi=3.24093
+  RECIPROCAL I=0.1 gf=5.5 SI_phi=2.30784
+  RECIPROCAL I=0.15 gf=4.47727 SI_phi=1.89342
+  RECIPROCAL I=0.21232 gf=3.627 SI_phi=1.58853   <- GZ_LOWER
+  RECIPROCAL I=0.25 gf=3.25 SI_phi=1.45669
+  RECIPROCAL I=0.36788 gf=2.44282 SI_phi=1.29841   <- GZ_CENTER
+  RECIPROCAL I=0.5 gf=1.9 SI_phi=1.35748
+  RECIPROCAL I=0.75 gf=1.32143 SI_phi=1.84758
+  RECIPROCAL I=0.95 gf=1.05233 SI_phi=2.27849
+  SIGMOID    I=0.05 gf=9.49323 SI_phi=7.57464
+  SIGMOID    I=0.1 gf=8.7029 SI_phi=5.22768
+  SIGMOID    I=0.15 gf=7.58615 SI_phi=3.6578
+  SIGMOID    I=0.21232 gf=5.85178 SI_phi=2.47288   <- GZ_LOWER
+  SIGMOID    I=0.25 gf=4.77303 SI_phi=2.00578
+  SIGMOID    I=0.36788 gf=2.29896 SI_phi=1.29788   <- GZ_CENTER
+  SIGMOID    I=0.5 gf=1.29723 SI_phi=1.87835
+  SIGMOID    I=0.75 gf=1.01452 SI_phi=2.35956
+  SIGMOID    I=0.95 gf=1.00063 SI_phi=2.39108
+  argmax I: AFFINE=0.05 RECIPROCAL=0.05 SIGMOID=0.05
+  in GZ_LOWER window?  AFFINE=0 RECIPROCAL=0 SIGMOID=0
+
+=== seed 91919 ===
+  AFFINE     I=0.05 gf=9.55 SI_phi=7.53662
+  AFFINE     I=0.1 gf=9.1 SI_phi=6.01453
+  AFFINE     I=0.15 gf=8.65 SI_phi=5.02172
+  AFFINE     I=0.21232 gf=8.08912 SI_phi=4.17961   <- GZ_LOWER
+  AFFINE     I=0.25 gf=7.75 SI_phi=3.79939
+  AFFINE     I=0.36788 gf=6.68908 SI_phi=2.95863   <- GZ_CENTER
+  AFFINE     I=0.5 gf=5.5 SI_phi=2.34558
+  AFFINE     I=0.75 gf=3.25 SI_phi=1.52345
+  AFFINE     I=0.95 gf=1.45 SI_phi=1.37589
+  RECIPROCAL I=0.05 gf=7.10714 SI_phi=3.24264
+  RECIPROCAL I=0.1 gf=5.5 SI_phi=2.34558
+  RECIPROCAL I=0.15 gf=4.47727 SI_phi=1.94512
+  RECIPROCAL I=0.21232 gf=3.627 SI_phi=1.65071   <- GZ_LOWER
+  RECIPROCAL I=0.25 gf=3.25 SI_phi=1.52345
+  RECIPROCAL I=0.36788 gf=2.44282 SI_phi=1.24278   <- GZ_CENTER
+  RECIPROCAL I=0.5 gf=1.9 SI_phi=1.15869
+  RECIPROCAL I=0.75 gf=1.32143 SI_phi=1.48264
+  RECIPROCAL I=0.95 gf=1.05233 SI_phi=1.79761
+  SIGMOID    I=0.05 gf=9.49323 SI_phi=7.3014
+  SIGMOID    I=0.1 gf=8.7029 SI_phi=5.12017
+  SIGMOID    I=0.15 gf=7.58615 SI_phi=3.64004
+  SIGMOID    I=0.21232 gf=5.85178 SI_phi=2.50489   <- GZ_LOWER
+  SIGMOID    I=0.25 gf=4.77303 SI_phi=2.0537
+  SIGMOID    I=0.36788 gf=2.29896 SI_phi=1.18991   <- GZ_CENTER
+  SIGMOID    I=0.5 gf=1.29723 SI_phi=1.50524
+  SIGMOID    I=0.75 gf=1.01452 SI_phi=1.85656
+  SIGMOID    I=0.95 gf=1.00063 SI_phi=1.87946
+  argmax I: AFFINE=0.05 RECIPROCAL=0.05 SIGMOID=0.05
+  in GZ_LOWER window?  AFFINE=0 RECIPROCAL=0 SIGMOID=0
+
+=== seed 77777 ===
+  AFFINE     I=0.05 gf=9.55 SI_phi=9.84069
+  AFFINE     I=0.1 gf=9.1 SI_phi=7.74284
+  AFFINE     I=0.15 gf=8.65 SI_phi=6.38795
+  AFFINE     I=0.21232 gf=8.08912 SI_phi=5.25142   <- GZ_LOWER
+  AFFINE     I=0.25 gf=7.75 SI_phi=4.74358
+  AFFINE     I=0.36788 gf=6.68908 SI_phi=3.63758   <- GZ_CENTER
+  AFFINE     I=0.5 gf=5.5 SI_phi=2.85169
+  AFFINE     I=0.75 gf=3.25 SI_phi=1.82935
+  AFFINE     I=0.95 gf=1.45 SI_phi=1.49926
+  RECIPROCAL I=0.05 gf=7.10714 SI_phi=4.00809
+  RECIPROCAL I=0.1 gf=5.5 SI_phi=2.85169
+  RECIPROCAL I=0.15 gf=4.47727 SI_phi=2.34991
+  RECIPROCAL I=0.21232 gf=3.627 SI_phi=1.98595   <- GZ_LOWER
+  RECIPROCAL I=0.25 gf=3.25 SI_phi=1.82935
+  RECIPROCAL I=0.36788 gf=2.44282 SI_phi=1.51423   <- GZ_CENTER
+  RECIPROCAL I=0.5 gf=1.9 SI_phi=1.49765
+  RECIPROCAL I=0.75 gf=1.32143 SI_phi=1.61735
+  RECIPROCAL I=0.95 gf=1.05233 SI_phi=1.96901
+  SIGMOID    I=0.05 gf=9.49323 SI_phi=9.51523
+  SIGMOID    I=0.1 gf=8.7029 SI_phi=6.52168
+  SIGMOID    I=0.15 gf=7.58615 SI_phi=4.53198
+  SIGMOID    I=0.21232 gf=5.85178 SI_phi=3.0539   <- GZ_LOWER
+  SIGMOID    I=0.25 gf=4.77303 SI_phi=2.48509
+  SIGMOID    I=0.36788 gf=2.29896 SI_phi=1.50972   <- GZ_CENTER
+  SIGMOID    I=0.5 gf=1.29723 SI_phi=1.64243
+  SIGMOID    I=0.75 gf=1.01452 SI_phi=2.03523
+  SIGMOID    I=0.95 gf=1.00063 SI_phi=2.06098
+  argmax I: AFFINE=0.05 RECIPROCAL=0.05 SIGMOID=0.05
+  in GZ_LOWER window?  AFFINE=0 RECIPROCAL=0 SIGMOID=0
+
+=== VERDICT ===
+  RECIPROCAL argmax in GZ_LOWER window: 0/3 seeds
+  SIGMOID    argmax in GZ_LOWER window: 0/3 seeds
+VERDICT: FALSIFIED (SI peak at I->0 boundary is mapping-INDEPENDENT)
+  -> H_348 F-2 falsification is NOT a mapping artifact; the SI(I) monotone
+     decrease is intrinsic to the capacity-bounded savant_phi substrate.
+     GZ_LOWER is a SI>3 threshold boundary (H_348 F-1), not a SI peak location.
