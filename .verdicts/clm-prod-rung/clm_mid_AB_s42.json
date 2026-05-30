@@ -1,0 +1,23 @@
+{
+  "mode": "train",
+  "arm": "AB",
+  "rung": "mid",
+  "ladder": {
+    "d_model": 512,
+    "n_trunk_layers": 8,
+    "n_experts": 8
+  },
+  "params": 13653768,
+  "steps_run": 2000,
+  "act_bits": 4,
+  "envelope_lambda": 0.0,
+  "weight_quant": "int4_sym[-7,7] per-channel STE",
+  "act_quant": "akida act_bits=4 step=2^(8-4)",
+  "first_ce": 5.5444,
+  "last_ce": 2.2237,
+  "wall_s": 79.2504,
+  "step_rate_per_s": 25.2365,
+  "corpus": "/workspace/CLM/corpus/clm_p1.corpus.kosmos",
+  "corpus_bytes": 262144,
+  "torch": "2.1.0+cu118"
+}
