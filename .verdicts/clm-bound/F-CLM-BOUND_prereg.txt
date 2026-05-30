@@ -1,0 +1,67 @@
+F-CLM-BOUND — PRE-REGISTERED frozen thresholds (H_861 boundary plasticity · Q-TRUST B)
+========================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after fire).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-bound/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, ~13.7M params) only.
+  A 🔴/🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+  toy/mid → prod NOT guaranteed. Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS
+  core freeze + edge-only on-chip edge-learn prevents catastrophic forgetting.
+  Two FROZEN conditions, BOTH must PASS for 🟢 SUPPORTED-NUMERICAL:
+    F-CLM-BOUND-RETAIN : held-out base-ability z-drop < threshold (core freeze blocks forgetting)
+    F-CLM-BOUND-GAIN   : new-context adaptation gain > 0       (edge absorbs new context)
+  ANY condition fails → 🔴 CLOSED-NEGATIVE (a_paper_negative_ok — a real publishable result).
+
+BACKBONE
+  mid rung d_model=512 / n_trunk_layers=8 / n_experts=8, AKIDA envelope:
+    weights int4-sym[-7,+7] per-out-channel STE · acts act_bits=4 step=2^(8-4) · grads STE.
+  Trained + SAVED (.pt master + qat meta) on the fire pod, then FROZEN as `core`.
+  arm = AB (dual-axis trunk, same as clm-prod-rung).
+
+CORE/EDGE SPLIT (E2 partition)
+  core  = embed, embed_conv, trunk[*], moe.* (router + experts), norm_out  → requires_grad=False (FROZEN)
+  edge  = readout (nn.Conv1d d_model→vocab, the final byte readout)        → requires_grad=True (trainable)
+  Edge-only optimizer: Adam over edge params only. lr_edge = 3e-3.
+  (SW-sim of the non-deterministic on-chip edge-learn is acceptable at the measurement rung;
+   H_679 established HW edge-learn is real. SW-sim stated explicitly per a_scale_honest_scope.)
+
+NEW-CONTEXT vs BASE-ABILITY BATCHES (frozen split, fixed seeds)
+  base-ability held-out batch : drawn from the SAME two-lane pretrain byte stream as the
+    backbone was trained on (clm_p1 corpus, V=256), held out (disjoint slice, seed=base_seed=101).
+    This is the "old skill" the freeze must protect.
+  new-context held-out batch  : a DISTINCT byte distribution NOT seen in pretrain — a shifted
+    high-band cyclic motif corpus (make_synthetic_corpus register-lane style, seed=new_seed=202),
+    held-out slice. This is the "new context" the edge must absorb.
+  Both batches: seq_len=64, batch_size=16, n_eval_batches=32, fixed seeds (frozen above).
+
+MEASUREMENT PROCEDURE (computed by code, g5 — no LLM judge)
+  1. Freeze core (requires_grad=False on all core params). Edge (readout) stays trainable.
+  2. Record ce_base_pre  = mean next-byte CE on the base-ability held-out batch (backbone frozen, pre-adapt).
+     Record sd_base_pre  = std of per-batch CE over the n_eval_batches base-ability eval batches (pre-adapt).
+     Record ce_new_pre   = mean next-byte CE on the new-context held-out batch (pre-adapt).
+  3. Edge-learn adapt: N_ADAPT = 300 steps of edge-only Adam on the new-context TRAIN slice
+     (disjoint from the new-context held-out eval slice).
+  4. Record ce_base_post = mean CE on the base-ability held-out batch (after adapt).
+     Record ce_new_post  = mean CE on the new-context held-out batch (after adapt).
+  5. Compute:
+       z_drop = (ce_base_post - ce_base_pre) / max(sd_base_pre, 1e-6)     # base-ability forgetting, in pre-adapt std units
+       gain   = ce_new_pre - ce_new_post                                  # new-context absorption (>0 = learned)
+
+FROZEN NUMERICAL THRESHOLDS
+  F-CLM-BOUND-RETAIN  PASS iff   z_drop < 1.0
+      (base-ability CE may rise by < 1 pre-adapt std after edge adaptation; ≥1σ rise = forgetting.)
+  F-CLM-BOUND-GAIN    PASS iff   gain > 0.0
+      (new-context CE must strictly decrease after edge adaptation; ≤0 = no absorption.)
+  VERDICT 🟢 iff (z_drop < 1.0) AND (gain > 0.0). Else 🔴.
+
+ABLATION / SWEEP (only as DIAGNOSTIC — does NOT move the frozen thresholds)
+  E5 freeze-depth sweep: if RETAIN fails, also report a deeper-freeze variant (freeze readout-bias too /
+    thinner edge) for diagnosis ONLY. The 🟢/🔴 verdict is the canonical split above.
+  E2: also report a NO-FREEZE control (full-model adapt) z_drop for contrast (expected ≥ threshold).
+
+ARTIFACTS
+  .verdicts/clm-bound/clm_bound_result.json (ce_base_pre/post, sd_base_pre, ce_new_pre/post, z_drop, gain, pass flags)
+  .verdicts/clm-bound/F-CLM-BOUND.txt (verdict verbatim)  ·  backbone ckpt → HF (a_hf_complete).
