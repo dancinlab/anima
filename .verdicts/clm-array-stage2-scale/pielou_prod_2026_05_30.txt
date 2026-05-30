@@ -1,0 +1,24 @@
+F-CLM-PIELOU-DISSOLVE@PROD -- PRODUCTION-scale expert-count Pielou J sweep
+==========================================================================
+FROZEN (@L5, identical thresholds to STAGE-1, NOT tampered):
+  axis = [4, 8, 16, 32, 64]
+  seeds = [42, 43, 44]
+  mono_tol = 0.02
+  min_rise = 0.0
+  null_samples = 16
+  d_model = 512
+  train_steps = 600
+  corpus = REAL kowiki @corpus clm_p1 (CLM/corpus/sample/*.bytes)
+  falsifier = F-CLM-PIELOU-DISSOLVE@PROD: Pielou J=H/ln(E) monotone non-decreasing (within mono_tol) over E AND J(E64)>=J(E4) at PRODUCTION scale (d>=512, real corpus, full steps)
+   E    mean_J     min_J     max_J    mean_H  chip_fit
+   4    0.8058    0.6579    0.9664    1.1170      True
+   8    0.7284    0.6936    0.7521    1.5147      True
+  16    0.6096    0.4646    0.7493    1.6900      True
+  32    0.5841    0.5336    0.6345    2.0243      True
+  64    0.5321    0.4732    0.5813    2.2130      True
+mean Pielou J sweep : [0.80576, 0.72842, 0.60956, 0.58408, 0.53212]
+J monotone non-decr : False (tol 0.02)
+J rise (E64 - E4)   : -0.27364 (>= 0.0)
+device              : cuda
+scale scope         : PRODUCTION expert-count sweep (d_model=512, REAL kowiki corpus, 600 steps) -- a_scale_honest_scope; small real byte VOLUME stated honestly
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE

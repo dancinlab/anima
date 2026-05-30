@@ -1,0 +1,27 @@
+F-CLM-DISPATCHKL-XFER@PROD -- PRODUCTION-scale escape transfer
+========================================================================
+FROZEN (@L5, identical thresholds to STAGE-1, NOT tampered):
+  teacher = E=32 d=512 (production measure scale)
+  student = E=8 d=128 (chip-fit deploy scale)
+  kd = Hinton alpha=0.7 T=3.0 soft-target + dispatch-KL (beta=1)
+  metric = dispatch-entropy z vs Dirichlet(1) uniform null
+  corpus = REAL kowiki @corpus clm_p1 (CLM/corpus/sample/*.bytes)
+  seeds = [42, 43, 44]
+  xfer_tol = 3.0
+  null_samples = 16
+  steps = 600
+  round1_mean_delta = 4.33829
+  falsifier = F-CLM-DISPATCHKL-XFER@PROD: dispatch-KL distill shrinks transfer Delta vs round-1 (4.34) AND z_student/z_teacher same sign AND |Delta|<=xfer_tol AND student chip-fit, at PROD scale
+beta = 1.0 ; steps = 600 ; device = cuda
+ seed  teacher_z  student_z     Delta  sameSign  chipFit
+   42   -12.2619     1.3439   13.6058     False     True
+   43   -11.4616     1.9417   13.4033     False     True
+   44   -14.0086     0.5092   14.5178     False     True
+mean |transfer Delta| : 13.84232 (round-1 was 4.33829)
+mean signed Delta     : 13.84232
+Delta shrank vs r1    : False
+all same sign         : False
+all Delta bounded     : False (|Delta|<=3.0)
+all student chip-fit  : True
+scale scope           : PRODUCTION teacher(E32/d512)->student(E8/d128) + dispatch-KL, REAL kowiki corpus, 600 steps -- a_scale_honest_scope
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE

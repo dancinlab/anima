@@ -1,0 +1,65 @@
+{
+  "frozen": {
+    "teacher": "E=32 d=512 (production measure scale)",
+    "student": "E=8 d=128 (chip-fit deploy scale)",
+    "kd": "Hinton alpha=0.7 T=3.0 soft-target + dispatch-KL (beta=1)",
+    "metric": "dispatch-entropy z vs Dirichlet(1) uniform null",
+    "corpus": "REAL kowiki @corpus clm_p1 (CLM/corpus/sample/*.bytes)",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "xfer_tol": 3.0,
+    "null_samples": 16,
+    "steps": 600,
+    "round1_mean_delta": 4.33829,
+    "falsifier": "F-CLM-DISPATCHKL-XFER@PROD: dispatch-KL distill shrinks transfer Delta vs round-1 (4.34) AND z_student/z_teacher same sign AND |Delta|<=xfer_tol AND student chip-fit, at PROD scale"
+  },
+  "steps": 600,
+  "beta": 1.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "teacher_z": -12.26186,
+      "teacher_normH": 0.53579,
+      "student_z": 1.34395,
+      "student_normH": 0.92704,
+      "transfer_delta": 13.60581,
+      "same_sign": false,
+      "student_chip_fit": true
+    },
+    {
+      "seed": 43,
+      "teacher_z": -11.4616,
+      "teacher_normH": 0.63115,
+      "student_z": 1.94174,
+      "student_normH": 0.95,
+      "transfer_delta": 13.40334,
+      "same_sign": false,
+      "student_chip_fit": true
+    },
+    {
+      "seed": 44,
+      "teacher_z": -14.0086,
+      "teacher_normH": 0.58569,
+      "student_z": 0.5092,
+      "student_normH": 0.85379,
+      "transfer_delta": 14.5178,
+      "same_sign": false,
+      "student_chip_fit": true
+    }
+  ],
+  "mean_abs_transfer_delta": 13.84232,
+  "mean_signed_transfer_delta": 13.84232,
+  "round1_mean_delta": 4.33829,
+  "delta_shrank_vs_round1": false,
+  "all_same_sign": false,
+  "all_delta_bounded": false,
+  "all_student_chip_fit": true,
+  "verdict": "FAIL",
+  "verdict_tier": "\ud83d\udd34 CLOSED-NEGATIVE",
+  "device": "cuda",
+  "scale_scope": "PRODUCTION teacher(E32/d512)->student(E8/d128) + dispatch-KL, REAL kowiki corpus, 600 steps -- a_scale_honest_scope",
+  "torch": "2.12.0.dev20260408+cu128"
+}

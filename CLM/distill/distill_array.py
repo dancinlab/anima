@@ -90,11 +90,18 @@ def _dispatch_entropy_z(model: CLMArray, eval_batches, n_experts: int,
     Mirrors run_array_sweep's metric so teacher/student z are comparable.
     """
     model.eval()
-    acc = torch.zeros(n_experts)
+    # device-agnostic accumulation (@L1 host-fix): dispatch_counts live on the
+    # model's device (cuda at PRODUCTION scale); accumulate there then bring to
+    # CPU for the float/null math. Pure tensor-placement fix, NOT a metric change.
+    acc = None
     with torch.no_grad():
         for x, y in eval_batches:
             out = model(x, y)
-            acc = acc + out["dispatch_counts"]
+            dc = out["dispatch_counts"]
+            acc = dc.clone() if acc is None else acc + dc
+    if acc is None:
+        acc = torch.zeros(n_experts)
+    acc = acc.detach().to("cpu").float()
     frac = acc / acc.sum().clamp_min(1.0)
     nz = frac[frac > 0]
     H = float(-(nz * torch.log(nz)).sum())

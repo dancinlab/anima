@@ -126,3 +126,25 @@
 #   cmd    = "hexa verify <atom-id>   # or closure_auto_judge for empirical"
 #   raw    = ".verdicts/life-<slug>/<id>.txt"
 #   src    = "UNIVERSE/H_xxx_*.md §<verdict>"
+
+# ───────────────────────────────────────────────────────────────────────
+# CLM — clm-array-stage2-scale (slug · group=CLM · paper-track)
+# Closed-negative (a_paper_negative_ok): PRODUCTION scale (d>=512, real kowiki)
+# does NOT flip the toy 🔴🔴 — MITOSIS-ARRAY DISSOLVE (Pielou J) + BRIDGE
+# (dispatch-KL transfer) are falsified at production scale; both gaps WIDEN.
+# Hypothesis "scale=expert-count dissolves the measure⊥chip conflict" is now
+# deterministically CLOSED across toy AND production. H_854.
+
+@C clm_pielou_dissolve_prod := "PRODUCTION Pielou J=H/ln(E) FELL with E (0.806→0.532), J-rise −0.27364 < 0 — DISSOLVE falsified at d=512 real kowiki" :: run [slug=clm-array-stage2-scale group=CLM]
+  method = "run"
+  cmd    = "python3 CLM/model/run_array_sweep_stage2.py (ubu-1 RTX 5070, d_model=512, real kowiki @corpus clm_p1, NULL_SAMPLES=16)"
+  raw    = ".verdicts/854_clm_array_stage2_scale/F-CLM-PIELOU-DISSOLVE-PROD.txt"
+  src    = "UNIVERSE/H_854_clm_array_stage2_scale.md §5 (AXIS-A) · sibling H_852"
+  status = "🔴 CLOSED-negative — production scale amplifies the toy 🔴 (toy J-rise −0.093 → prod −0.27364); thresholds FROZEN, NOT tampered (verdict persisted verbatim)"
+
+@C clm_dispatchkl_xfer_prod := "PRODUCTION dispatch-KL escape transfer mean|Δ|=13.84 > 3.0, 3/3 seed sign-flip (teacher z≈−12 → student z≈+1) — BRIDGE transfer falsified at d=512" :: run [slug=clm-array-stage2-scale group=CLM]
+  method = "run"
+  cmd    = "python3 CLM/distill/run_dispatch_kl_stage2.py (ubu-1, teacher E32/d512 → student E8/d128, real kowiki, NULL_SAMPLES=16)"
+  raw    = ".verdicts/854_clm_array_stage2_scale/F-CLM-DISPATCHKL-XFER-PROD.txt"
+  src    = "UNIVERSE/H_854_clm_array_stage2_scale.md §5 (AXIS-B) · sibling H_853"
+  status = "🔴 CLOSED-negative — escape does NOT transfer; Δ widened vs toy (3.51 → 13.84) and vs round-1 (4.34); student chip-fit held; thresholds FROZEN (verdict persisted verbatim)"

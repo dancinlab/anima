@@ -1,0 +1,80 @@
+CLM MITOSIS-ARRAY DISSOLVE/BRIDGE — STAGE-2 PRODUCTION-scale re-measure
+========================================================================
+Fire host: ubu-1 (RTX 5070, torch 2.12 nightly cu128, cuDNN disabled per #1519)
+Date: 2026-05-30 KST · device=cuda · NULL_SAMPLES=16 (@L2 hard cap) · seeds {42,43,44}
+Scaffold PR #1518 · cuDNN workaround PR #1519 · this PR = STAGE-2 verdict harvest.
+
+PRE-REGISTERED FALSIFIERS (FROZEN, identical thresholds to STAGE-1, NOT tampered):
+  F-CLM-PIELOU-DISSOLVE@PROD : Pielou J = H/ln(E) monotone non-decreasing over E
+                               (mono_tol 0.02) AND J(E64) >= J(E4) (min_rise 0.0)
+  F-CLM-DISPATCHKL-XFER@PROD : transfer |Delta| shrinks vs round-1 (4.33829) AND
+                               z_student/z_teacher same sign AND |Delta| <= 3.0
+                               (xfer_tol) AND student chip-fit (<= 1.2M params)
+
+========================================================================
+AXIS A — Pielou J expert-count sweep (DISSOLVE recast of H_852)
+------------------------------------------------------------------------
+   E    mean_J    mean_H   chip_fit   (d_model=512, REAL kowiki, 600 steps)
+   4   0.8058    1.1170     True
+   8   0.7284    1.5147     True
+  16   0.6096    1.6900     True
+  32   0.5841    2.0243     True
+  64   0.5321    2.2130     True
+mean Pielou J sweep : [0.80576, 0.72842, 0.60956, 0.58408, 0.53212]
+J monotone non-decr : False (tol 0.02)
+J rise (E64 - E4)   : -0.27364 (>= 0.0 required)
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE
+
+AXIS B — dispatch-KL escape transfer (BRIDGE, H_853 production re-test)
+------------------------------------------------------------------------
+ seed  teacher_z  student_z     Delta  sameSign  chipFit  (teacher E32/d512, student E8/d128)
+   42   -12.2619     1.3439   13.6058     False     True
+   43   -11.4616     1.9417   13.4033     False     True
+   44   -14.0086     0.5092   14.5178     False     True
+mean |transfer Delta| : 13.84232 (round-1 was 4.33829)
+Delta shrank vs r1    : False
+all same sign         : False
+all Delta bounded     : False (|Delta| <= 3.0)
+all student chip-fit  : True
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE
+
+========================================================================
+TOY (STAGE-1) vs PRODUCTION (STAGE-2) COMPARISON
+------------------------------------------------------------------------
+                              STAGE-1 toy            STAGE-2 production    flipped?
+  Pielou config               d=64, synthetic LCG    d=512, REAL kowiki    --
+  J rise (E64-E4)             -0.093                 -0.27364              NO (worse)
+  J monotone                  False                  False                 NO
+  --
+  dispatch-KL config          teacher d128 / E32     teacher d512 / E32    --
+                              student d64 / E8       student d128 / E8
+  mean |transfer Delta|       3.51 (signed)          13.84232              NO (worse)
+  round-1 ref Delta           4.34                   4.34                  --
+  Delta shrank vs r1          False                  False                 NO
+  sign-flip (z teacher<0,     2/3 seeds              3/3 seeds             NO (worse)
+    student>0)
+  student chip-fit            True                   True                  (held)
+
+RULING: PRODUCTION SCALE DOES NOT FLIP THE TOY 🔴🔴 — it AMPLIFIES both gaps.
+  * Pielou J still falls with expert count (more steeply at d=512): adding chips
+    makes dispatch MORE monopolistic relative to a uniform null, not more even.
+  * dispatch-KL escape does NOT transfer: teacher z is strongly sub-uniform
+    (z ~ -12, monopoly), student regresses to near-uniform (z ~ +1) on ALL
+    3 seeds — the escape signature is destroyed by distillation. Adding the
+    dispatch-KL term + production width WIDENED the gap (Delta 3.5 -> 13.8).
+
+The hypothesis "scale = expert-count dissolves the measurement-validity ⊥
+AKD1000 on-chip conflict (and the BRIDGE distill preserves the escape)" is now
+DETERMINISTICALLY CLOSED across BOTH toy AND production (a_paper_negative_ok).
+The MITOSIS-ARRAY DISSOLVE + BRIDGE arms are falsified at production scale.
+
+HONEST SCOPE (g63/p7/d6, @L5): real kowiki byte VOLUME per lane is small
+(CORPUS_BYTES=8192, tiled); NULL_SAMPLES capped at 16. Thresholds are the
+STAGE-1 frozen falsifiers, NOT re-tuned. cuDNN disabled is a host-env
+workaround (native CUDA conv kernel, numerically equivalent), NOT a metric
+change. A device-placement bug in distill_array._dispatch_entropy_z
+(acc on CPU + dispatch_counts on cuda) was fixed before the AXIS-B run
+(pure tensor placement, metric unchanged); fix included in this PR.
+
+GPU cost: ubu-1 dedicated pool host (no rental). Wall: Pielou ~7.5 min
+(15 trains @ d512/600), dispatch-KL ~3 min. Total < 12 min compute.
