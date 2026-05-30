@@ -4,7 +4,7 @@ slug: clm-dialogue-scale-climb
 title: dialogue self-play scale-climb — H_863 mid(d512/L8/E8) 결과를 한 rung 위 large(d768/L12/E12)로 올려도 SFT+self-play 가 SFT-only 대비 대화품질을 유지/능가하는가 - 동일 4 frozen falsifier per-rung (COHERE/ADEQ(SP>SFT) ∧ LEAK=0 ∧ DIV(self-BLEU<0.8·rep<0.2)) (Q-TRUST · F-CLM-DIALOGUE-LARGE)
 domain: clm · dialogue · self-play · sft · diversity · scale-climb · q-trust · falsifier
 source: UNIVERSE/CLM-CANDIDATES.md group A H_864 · H_863 mid result · CLM/P4_PRODUCTION_ROADMAP.md @L5 ladder · @L6 dialogue-method-B · @L1 (self-play = 살아 배우기) · @L4 (CC 대화록 + self-play · ShareGPT 금지)
-status: PRE-REGISTERED (large-rung A/B fire 2026-05-31 · 4 frozen falsifier = bf98c01 scale-invariant relative gates, NO new freeze · post-tuning 0 · 측정 rung large 한정 a_scale_honest_scope)
+status: 🔴 CLOSED-NEGATIVE (large-rung A/B fire 2026-05-31 · 2/4 frozen falsifier FAIL — COHERE/ADEQ tie(SP==SFT)·DIV mode-collapse · 4 frozen falsifier = bf98c01 scale-invariant relative gates, NO new freeze · post-tuning 0 · 측정 rung large 한정 a_scale_honest_scope · a_paper_negative_ok)
 exploration_method: E5 (rung별 ladder climb tiny/small/mid→large A/B) · E6 (SFT ↔ self-play 합성 비교)
 verification_method: W2 (사전등록 분포평가 threshold = bf98c01 frozen, scale-invariant relative · multi-turn coherence + 응답적합도 + register-leak 0 + DIVERSITY · byte-match X · post-tuning 0)
 raw_rank: 9
@@ -15,7 +15,7 @@ pre_register_frozen: true
 frozen_at: 2026-05-31
 since: 2026-05-31
 sister: CLM/P4_PRODUCTION_ROADMAP.md, .verdicts/clm-dialogue-large/, UNIVERSE/H_863_clm_dialogue_selfplay.md
-verdict: PRE-REGISTERED — F-CLM-DIALOGUE-LARGE 4 frozen falsifier(bf98c01 scale-invariant relative gates) 대비 large rung d768/L12/E12 측정 대기. 측정 후 본 줄이 4/4 PASS verdict 또는 any-fail CLOSED-NEGATIVE(a_paper_negative_ok)로 flip.
+verdict: 🔴 CLOSED-NEGATIVE — F-CLM-DIALOGUE-LARGE 2/4 FAIL: COHERE(SP 0.03288 == SFT 0.03288, NOT strict>) FAIL · ADEQ(0.03750==0.03750) FAIL · LEAK(SP=0) PASS · DIV(self-BLEU 0.576<0.8 ∧ repetition 0.361 ≥ 0.2 → mode collapse) FAIL. self-play reflux DIVERSITY gate가 reflux batch(rep 0.335≥0.2)를 거부 → arm-SP가 pure SFT로 degenerate → COHERE/ADEQ tie. large rung(d768/L12/E12 · 44.68M) self-play 대화 이득이 H_863 mid PASS와 달리 carry 안 됨. frozen threshold(bf98c01) 대비 post-tuning 0. 측정 rung large 한정(a_scale_honest_scope) · a_paper_negative_ok. HF dataset dancinlab/anima-clm-large-dialogue.
 ---
 
 # H_864 — CLM F-CLM-DIALOGUE-LARGE self-play dialogue scale-climb
@@ -76,19 +76,20 @@ verdict 영속: `.verdicts/clm-dialogue-large/` (large rung A/B)
 
 측정 (large rung, 2026-05-31) — runpod A100 80GB PCIe(torch 2.4.1+cu124). corpus = Project Gutenberg PUBLIC-DOMAIN 희곡 9편(H_863 의 Hamlet #1524·Earnest #844·Doll's House #2542·Julius Caesar #1522 + Romeo and Juliet #1513·Macbeth #1531·Lady Windermere's Fan #1119·An Ideal Husband #4078·The Sea-Gull #2130, license=PD), license-clean gate + 8-패턴 leak 필터 통과(1줄 drop), V=256 byte-encode, **1,559,675 bytes**(H_863 의 554,825 대비 ~2.8×) → train 1,299,730 / heldout 259,945(seed=863). 2-arm A/B large d768/L12/E12(**44.68M params** · mid 13.65M 대비 3.27×) AKIDA-envelope QAT(arm AB·seed 42·동일 budget): arm-SFT(SFT only) vs arm-SP(SFT + DIVERSITY-gated self-play 환류 + 500 step continue). held-out 평가 = coherence=exp(-CE)·adequacy=3-gram F1·register-leak·self-BLEU·repetition(전부 CODE 자가채점 g5). frozen threshold = `.verdicts/clm-dialogue/F-CLM-DIALOGUE_prereg.txt`(commit bf98c01, scale-invariant relative gates · NO new freeze).
 
-측정값(frozen threshold 대비) — 측정 완료 후 채움:
+self-play reflux: 48 samples 생성 · 0 leak-drop · 48 kept · reflux self-BLEU 0.531(<0.8 OK) · **reflux repetition 0.335 ≥ 0.20 → DIVERSITY gate REJECT** → reflux 환류 0 → arm-SP가 pure SFT로 degenerate(동일 seed/budget).
 
-| arm | coherence | adequacy_f1 | leak | self_bleu | repetition |
-|---|---|---|---|---|---|
-| SFT | TBD | TBD | TBD | TBD | TBD |
-| SP | TBD | TBD | TBD | TBD | TBD |
+측정값(frozen threshold 대비):
 
-- **COHERE**: SP vs SFT → TBD · **ADEQ**: SP vs SFT → TBD
-- **LEAK**: SP vs 0 → TBD · **DIV**: self-BLEU vs 0.8 ∧ rep vs 0.2 → TBD
+| arm | coherence | ce_heldout | adequacy_f1 | leak | self_bleu | repetition |
+|---|---|---|---|---|---|---|
+| SFT | 0.03288 | 3.41504 | 0.03750 | 0 | 0.57582 | 0.36107 |
+| SP | 0.03288 | 3.41504 | 0.03750 | 0 | 0.57582 | 0.36107 |
+- **COHERE**: SP 0.03288 == SFT 0.03288 (NOT strict>) → **FAIL** · **ADEQ**: 0.03750==0.03750 → **FAIL**
+- **LEAK**: SP 0 == 0 → PASS · **DIV**: self-BLEU 0.576<0.8 ∧ repetition 0.361 ≥ 0.2 → **FAIL** (mode collapse)
 
 ## 6. 결과
 
-측정 대기 (PRE-REGISTERED). 4 frozen falsifier(bf98c01) 동시 PASS → 지지 verdict · 임의 미달 → CLOSED-NEGATIVE(a_paper_negative_ok). **scope**: 측정 rung large 한정 — 다른 rung·배포 chip-fit track 별개(a_scale_honest_scope) · 외부 LLM 0 · ShareGPT/Alpaca 0 · toy/large→prod 비보장.
+🔴 **CLOSED-NEGATIVE** (a_paper_negative_ok). 4 frozen falsifier 중 2 FAIL(COHERE·ADEQ tie · DIV mode-collapse), LEAK PASS. H_863 mid 에서 측정된 self-play 대화 이득이 large rung 으로 **carry 되지 않음**. 두 결합 메커니즘: (1) self-play reflux batch 가 per-batch DIVERSITY gate(repetition 0.335 ≥ 0.20)를 통과 못 함 → 환류 0 → arm-SP 가 arm-SFT 로 degenerate → COHERE/ADEQ 가 strict-greater relative gate 에서 정확히 tie 로 FAIL; (2) large rung 자체 held-out generation 이 mode-collapsed(repetition 0.361 ≥ 0.20) → SP 의 absolute DIVERSITY gate FAIL(환류 여부 무관). 정직: tuning artifact 가 아닌 실재 scale-dependent 현상 — 44.68M 모델이 2000 step 에서 반복 생성기로 과적합, self-play 는 자기 샘플이 너무 반복적이라 통과해야 할 gate 를 못 넘어 기여 0. **scope**: 측정 rung large 한정 — H_863 mid PASS·다른 rung·배포 chip-fit track 별개(a_scale_honest_scope) · 외부 LLM 0 · ShareGPT/Alpaca 0 · large→prod 비보장. **다음 lever**(별도 사전등록 fire 필요 · post-tuning 0): self-play 샘플링 온도↓ / repetition penalty / held-out DIVERSITY early-stop / rung별 budget 재조정.
 
 ## 7. 해석 (사전)
 

@@ -1,0 +1,75 @@
+F-CLM-DIALOGUE-LARGE — H_864 self-play dialogue SCALE-CLIMB (@L5 ladder · @L6) VERDICT (2026-05-31)
+==================================================================================================
+W2 · deterministic:false · byte-match X (Q-TRUST A reuse: distributional measures).
+Thresholds FROZEN in F-CLM-DIALOGUE_prereg.txt (commit bf98c01, pushed BEFORE the H_863 fire).
+These are SCALE-INVARIANT RELATIVE/ABSOLUTE gates (COHERE/ADEQ = SP strictly > SFT; LEAK/DIV =
+absolute gates on SP) — NONE depends on rung size, so they carry to the LARGE rung WITHOUT a new
+freeze. post-tuning = 0 (no threshold moved to flip a verdict after fire).
+
+SCALE-CLIMB: H_863 mid (d512/L8/E8 · 13.65M) was 4/4 PASS. H_864 climbs ONE rung up:
+  large = d768 / L12 / E12 = 44,678,668 params (3.27x mid). MEASUREMENT rung large ONLY.
+
+CORPUS (license-clean, @L4 lane ①, NO ShareGPT/Alpaca/ChatGPT-gen):
+  Project Gutenberg PUBLIC-DOMAIN stage plays, 9 sources (H_863's 4 + 5 more PD plays):
+    Hamlet (#1524), The Importance of Being Earnest (#844), A Doll's House (#2542),
+    Julius Caesar (#1522), Romeo and Juliet (#1513), Macbeth (#1531),
+    Lady Windermere's Fan (#1119), An Ideal Husband (#4078), The Sea-Gull (#2130).
+  license = PD (allowed_cc set). license-clean gate PASS (all PD; forbidden families rejected).
+  8-pattern register-leak filter applied per-line (1 leak line dropped — "nonce" in a PG header).
+  byte-encode V=256 (no tokenizer). total 1,559,675 bytes (~2.8x H_863's 554,825)
+  -> train 1,299,730 / heldout 259,945 (seed=863, disjoint).
+  manifest + per-source PD license + sha256 = .verdicts/clm-dialogue-large/dialogue_corpus_manifest.json.
+
+FIRE: runpod pod 8g5r7jup4lw35e · NVIDIA A100 80GB PCIe · torch 2.4.1+cu124.
+  2-arm A/B, large d768/L12/E12, AKIDA int4-sym[-7,+7] per-output-channel STE + act_bits=4,
+  arm AB trunk, seed 42, equal budget (2000 step):
+    arm-SFT = SFT only (CC/PD dialogue).
+    arm-SP  = SFT + self-play reflux (chip self-dialogue, 8-pattern leak filter + per-batch
+              DIVERSITY gate; +500 step continue IF reflux folded).
+  held-out eval (seed=863, disjoint): coherence=exp(-CE_heldout), adequacy=3-gram overlap F1,
+  register-leak count, self-BLEU (mean pairwise 4-gram), repetition (repeated-4-gram fraction).
+  All computed by code (g5 — no LLM judge).
+
+SELF-PLAY REFLUX (DIVERSITY gate · @L6 F-CLM-DIALOGUE-DIV):
+  48 chip self-dialogue samples generated, 0 leak-dropped, 48 kept.
+  reflux self-BLEU = 0.53142 (< 0.8 OK) · reflux repetition = 0.33504 (>= 0.20 → COLLAPSE).
+  -> DIVERSITY gate REJECTED the reflux batch. NO reflux was folded back into arm-SP.
+  CONSEQUENCE: at this rung/budget arm-SP collapses to pure SFT (identical seed/budget) ->
+  SP and SFT are byte-identical on every held-out metric.
+
+RESULT (measured vs FROZEN thresholds):
+  arm   coherence  ce_heldout  adequacy_f1  leak  self_bleu  repetition
+  SFT   0.03288    3.41504     0.03750      0     0.57582    0.36107
+  SP    0.03288    3.41504     0.03750      0     0.57582    0.36107
+
+  F-CLM-DIALOGUE-COHERE : coherence(SP) 0.03288 > coherence(SFT) 0.03288 ? → FAIL (tie, not strict)
+  F-CLM-DIALOGUE-ADEQ   : adequacy_f1(SP) 0.03750 > adequacy_f1(SFT) 0.03750 ? → FAIL (tie)
+  F-CLM-DIALOGUE-LEAK   : register_leak(SP) 0 == 0 ? → PASS (SFT also 0)
+  F-CLM-DIALOGUE-DIV    : self_bleu(SP) 0.57582 < 0.80 ∧ repetition(SP) 0.36107 < 0.20 ?
+                          → FAIL (repetition 0.36107 >= 0.20 = mode collapse)
+
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
+  2 of 4 frozen falsifiers FAIL. The self-play quality lift that H_863 measured at the mid rung
+  DOES NOT carry to the large rung under the SAME frozen gates. Two coupled mechanisms:
+    (1) the self-play reflux batch fails the per-batch DIVERSITY gate (repetition 0.335 >= 0.20),
+        so NO reflux is folded back — arm-SP degenerates to arm-SFT (COHERE/ADEQ become exact
+        ties, failing the STRICT-greater relative gates);
+    (2) the large rung's own held-out generation is mode-collapsed (repetition 0.361 >= 0.20),
+        failing the absolute DIVERSITY gate for SP regardless of reflux.
+  HONEST: this is a real scale-dependent finding, not a tuning artifact. The 44.68M model at
+  2000 steps on this corpus over-fits into a repetitive generator; self-play cannot help because
+  its own samples are too repetitive to survive the gate it must pass. A 🔴 is publishable
+  (a_paper_negative_ok): self-play dialogue lift ⊥ the large rung under bf98c01.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung large (d768/L12/E12) ONLY. This 🔴 does NOT bind
+  the H_863 mid 🟢, another rung, or the deploy chip-fit track. large → prod NOT guaranteed.
+  Inference AKIDA-int4-only. External LLM 0 · foundation-borrow 0 · ShareGPT/Alpaca/ChatGPT-gen 0.
+
+NEXT LEVERS (sibling H, NOT this verdict): lower self-play sampling temperature / add a repetition
+  penalty / fewer steps with early-stop on held-out DIVERSITY / per-rung budget re-tune — each
+  would need its OWN pre-registered fire (post-tuning 0 forbids moving these gates to flip 🔴→🟢).
+
+ARTIFACTS: clm_dialogue_large_AB.json · clm_fire.log · dialogue_corpus_manifest.json
+HF: dataset dancinlab/anima-clm-large-dialogue (corpus bytes + manifest + result + log + verdict).
+  No deploy ckpt persisted (RED measurement rung — weights not warranted for a negative result;
+  the fire is fully reproducible from h864_fire_large_rung_selfplay.hexa + the HF corpus + seed 42).
