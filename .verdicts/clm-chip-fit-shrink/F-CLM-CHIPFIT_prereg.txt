@@ -1,0 +1,54 @@
+F-CLM-CHIPFIT — PRE-REGISTERED FALSIFIER (frozen BEFORE measurement · post-tuning 0)
+H_876 — CLM deploy-track chip-fit shrink (<=~1.2M AKD1000 nodes) vs mid rung
+pre_register_frozen: true   frozen_at: 2026-05-31   measure_by: CODE (g5)
+
+────────────────────────────────────────────────────────────────────────────
+SCOPE (a_scale_honest_scope)
+  DEPLOY track (AKIDA chip-fit) ⊥ MEASUREMENT track (GPU AKIDA-envelope QAT).
+  A 🔴 here does NOT block measurement-rung work; a 🔴 measurement rung does
+  NOT block this deploy track. This verdict is a single-chip deploy-fit + CE
+  retention judgment ONLY — not a 3B/7B or routing-z claim.
+
+────────────────────────────────────────────────────────────────────────────
+NODE-BUDGET BASIS (exact)
+  AKD1000 deploy budget = <=~1.2M nodes per chip-fit unit.
+  Source: CLM/P0_ARCHITECTURE.md §10.2 ("AKD1000 ~1.2M 노드 = 소형 강제") and
+  §11.3 ("expert = mitosis cell = AKD1000 chip (<=1.2M 노드 fit)"). The deploy
+  unit is a SINGLE AKD1000 (time-mux deploy B / one-chip footprint); the array
+  vision (deploy A) scales by expert-count E, each unit staying chip-fit.
+  Concrete budget used here: total params <= 1,200,000 (single-chip footprint).
+
+────────────────────────────────────────────────────────────────────────────
+PRE-REGISTERED FALSIFIERS  (both must PASS for 🟢)
+
+  F-CLM-CHIPFIT-FIT   : chip-fit total node-count (params) <= 1,200,000
+                        (the AKD1000 single-chip node budget).
+
+  F-CLM-CHIPFIT-DROP  : quality-drop = chipfit_last_ce - mid_last_ce < 1.000 nat
+                        (next-byte cross-entropy, V=256; random init = ln(256)
+                        = 5.545 nats). I.e. the ~11x-shrunk chip-fit model loses
+                        LESS than 1.0 nat of CE vs the mid measurement rung,
+                        measured in the SAME run / identical steps·seed·corpus.
+
+  BOTH PASS  -> 🟢 SUPPORTED-NUMERICAL : the architecture FITS the AKD1000 node
+               budget AND retains acceptable quality (drop < 1.0 nat).
+  EITHER FAIL -> 🔴 : does not fit OR the quality drop is too big.
+               (a_paper_negative_ok: a big drop at 1.2M is an honest, expected-
+                plausible 11x-shrink result — reported, not hidden.)
+
+────────────────────────────────────────────────────────────────────────────
+CHIP-FIT CONFIG (frozen)
+  mid measurement rung : d_model=512 · n_trunk_layers=8 · n_experts=8 = 13,653,768
+  chip-fit deploy cfg  : d_model=148 · n_trunk_layers=8 · n_experts=8 =  1,199,508
+    (largest <=1.2M that PRESERVES the mid L8/E8 topology, shrinking only
+     d_model 512->148; shrink factor 13,653,768 / 1,199,508 = 11.38x.)
+  arm = AB · seed = 42 · act_bits = 4 · steps = 600 · seq_len = 64 · batch = 16
+  envelope : weights int4-sym[-7,+7] per-output-channel STE · acts act_bits=4
+             step=2^(8-4) · grads STE (fp32 master · quantized forward).
+  corpus : CLM/corpus/clm_p1.corpus.kosmos (same two-lane byte stream as the
+           mid prod-rung fire), V=256, no tokenizer. BOTH configs train on the
+           IDENTICAL corpus / step schedule / seed so node-count is the only var.
+
+  measure-by-CODE: CLM/train/h876_chip_fit_shrink.hexa driver shells out a
+  runtime-generated python measurement body (no new committed .py) that imports
+  the LANDED CLM/model/model.py skeleton + reuses train_clm.py's QAT functions.
