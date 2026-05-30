@@ -1,0 +1,41 @@
+{
+  "hypothesis": "H_867 F-CLM-DIALOGUE-ABS",
+  "rung": "mid d512/L8/E8 (~13.65M, AKIDA int4-sym[-7,7] STE act_bits=4)",
+  "model_under_test": "arm-SP (H_863 SFT+self-play, reconstructed from HF backbone)",
+  "eval_corpus": "H_867 INDEPENDENT held-out PD snapshot (Macbeth/Othello/RomeoJuliet/Pygmalion, disjoint from H_863)",
+  "reflux_bytes": 1920,
+  "reflux_div_gate_ok": true,
+  "SFT_contrast": {
+    "coherence": 0.05776,
+    "ce_heldout": 2.85148,
+    "adequacy_f1": 0.04384,
+    "leak": 0,
+    "self_bleu": 0.89457,
+    "repetition": 0.59593
+  },
+  "SP": {
+    "coherence": 0.05804,
+    "ce_heldout": 2.84663,
+    "adequacy_f1": 0.02138,
+    "leak": 0,
+    "self_bleu": 0.8913,
+    "repetition": 0.57519
+  },
+  "absolute_floor": {
+    "COHERE": ">=0.060",
+    "ADEQ": ">=0.020",
+    "LEAK": "==0"
+  },
+  "baselines": {
+    "uniform": 0.0039,
+    "unigram_order0": 0.0375,
+    "bigram_selffit": 0.0843
+  },
+  "COHERE_pass": false,
+  "ADEQ_pass": true,
+  "LEAK_pass": true,
+  "verdict": "RED",
+  "note": "byte-match ✗ distributional (Q-TRUST A); external LLM 0; ShareGPT/Alpaca/ChatGPT-gen 0; ABSOLUTE floor (not SP-vs-SFT)",
+  "wall_s": 452.2,
+  "torch": "2.8.0"
+}
