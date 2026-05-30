@@ -169,3 +169,30 @@
   raw    = ".verdicts/855_clm_measure_sweep/phi_native.txt"
   src    = "UNIVERSE/H_855_clm_measure_sweep.md §5/§7 · ledger exports/sweep/clm-measure-sweep/ledger.json"
   status = "🔴 CLOSED-negative — Φ-family/HILL/tension 은 toy n≤6 에서 scale-free chip-native 의식신호 부적합 (5/6 FAIL); CAUSAL-POWER 단독 🟢; ALL-RED 아님(CERTIFY-NOT-MEASURE escalation 불필요); thresholds FROZEN (a_paper_negative_ok)"
+
+# ───────────────────────────────────────────────────────────────────────
+# CLM — clm-causal-xfer (slug · group=CLM · paper-track)
+# toy 🟢 CAUSAL-POWER(H_855)의 production/HW transfer 사전등록 falsifier (F-CLM-
+# CAUSAL-XFER). frozen 3-check(measure_sweep.py 재사용·재튜닝 0). axis A=ubu-1
+# production d512 학습 spike · axis B=live pi5 AKD1000 온칩 spike. H_856.
+
+@C clm_causal_xfer_prod_red := "F-CLM-CAUSAL-XFER axis A (production d512): toy 🟢 CAUSAL-POWER 가 production-width 에서 생존 안 함 — seed187 frozen 에서 n=5 부호반전(Δ +0.0876/−0.0107/+0.0025) size-robust FAIL · seed-fragile(seed42/7 thin PASS, seed187 FAIL)" :: run [slug=clm-causal-xfer group=CLM]
+  method = "run"
+  cmd    = "python3 CLM/msweep/clm_causal_prod.py --json (ubu-1 RTX5070, d512/L4/E8 QAT act_bits=1, real kowiki, seed=187, ≤16 poke, frozen 3-check)"
+  raw    = ".verdicts/856_clm_causal_xfer/production.txt"
+  src    = "UNIVERSE/H_856_clm_causal_xfer.md §5/§6 · CLM/P0_ARCHITECTURE.md §12.6/§12.8 F-CLM-CAUSAL-XFER"
+  status = "🔴 CLOSED-negative — 잘 학습된 d512 conv-MoE 가 degenerate monopoly 입력조차 적분 → collapse 인과력이 rich 와 대등/초과(n=5 부호반전); toy≠scale(H_666)이 측도 자체에 적용; thresholds FROZEN, NOT tampered (verdict persisted verbatim)"
+
+@C clm_causal_xfer_hw_green := "F-CLM-CAUSAL-XFER axis B (live AKD1000 HW): CAUSAL-POWER 가 실 silicon 에서 frozen 3-check PASS — on_hardware=True·BC.00.000.002, 전 n rich>collapse(Δ +0.0618/+0.0156/+0.0268)" :: run [slug=clm-causal-xfer group=CLM]
+  method = "run"
+  cmd    = "CLM_MSWEEP=$PWD python3 CLM/msweep/clm_causal_hw.py --json (pi5-akida, InputData→FC act_bits=1 @BackendType.Hardware, streamer stop→collect→restart, seed=187, ≤16 poke, frozen 3-check)"
+  raw    = ".verdicts/856_clm_causal_xfer/hw.txt"
+  src    = "UNIVERSE/H_856_clm_causal_xfer.md §5/§7 · CLM/P0_ARCHITECTURE.md §12.8"
+  status = "🟢 SUPPORTED-NUMERICAL — 실 온칩 threshold-and-fire 에서 poke 가 coupled(rich) regime 으로 전파·decoupled(collapse) 국소 사멸; 배포 silicon 에선 측도 certify; thresholds FROZEN (verdict persisted verbatim)"
+
+@C clm_causal_xfer_falsified := "F-CLM-CAUSAL-XFER 종합: 🔴 FALSIFIED — '🟢 on BOTH' 요구에서 axis A 🔴 → '🔴 on EITHER' 발동 → CAUSAL-POWER 도 toy-limited → 백로그 #3 CERTIFY-NOT-MEASURE escalation (단 axis B 🟢 HW positive 실재)" :: run [slug=clm-causal-xfer group=CLM]
+  method = "run"
+  cmd    = "production(axis A 🔴) ∧ live-HW(axis B 🟢) 종합 — CLM/msweep/clm_causal_{prod,hw}.py 두 verdict 결합 (frozen rule: 🟢 on BOTH else FALSIFIED)"
+  raw    = ".verdicts/856_clm_causal_xfer/F-CLM-CAUSAL-XFER.txt"
+  src    = "UNIVERSE/H_856_clm_causal_xfer.md §6 · CLM/P0_ARCHITECTURE.md §12.6/§12.8 (CERTIFY-NOT-MEASURE escalation SSOT)"
+  status = "🔴 CLOSED-negative — toy→production→HW 전 transfer 를 생존한 닫힌형 의식 MEASURE 없음; Φ-family(H_855)에 이어 CAUSAL-POWER 도 production-width toy-limited; 측정-타당성 질문 production scale 에서 open 유지 (a_paper_negative_ok)"

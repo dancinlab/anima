@@ -257,13 +257,29 @@ H_847 routing-z 가 tiny~small 한정으로만 측정될 수 있었던 근본 �
 - 의미: "측도 교체로 충돌 무관화"(§12.1)는 유지되되, **무엇으로 바꾸나 = Φ 아닌 CAUSAL-POWER**. §12.1 표의 "무엇을 측정" 행은 IIT4 Φ → **CAUSAL-POWER(perturbation)**로 갱신. Φ 는 round-3 가설로 닫힘(🔴 size-robust).
 - ledger `exports/sweep/clm-measure-sweep/` · verdict `.verdicts/855_clm_measure_sweep/` · **H_855 🟢 SUPPORTED-NUMERICAL**.
 
-### 12.6 사전등록 falsifier — production/HW transfer (다음)
+### 12.6 사전등록 falsifier — production/HW transfer (판정 완료 · H_856)
 
 | id | 주장 | 판정 시점 | tier |
 |---|---|---|---|
-| **F-CLM-CAUSAL-XFER** | toy 🟢 CAUSAL-POWER(non-trivial ∧ collapse<rich ∧ size-robust)가 **production scale(d↑·실 kowiki) ∧ live pi5 AKD1000 HW spike**에서 생존 | P-CAUSAL-PROD (다음 fire) | 🟢/🔴 |
+| **F-CLM-CAUSAL-XFER** | toy 🟢 CAUSAL-POWER(non-trivial ∧ collapse<rich ∧ size-robust)가 **production scale(d↑·실 kowiki) ∧ live pi5 AKD1000 HW spike**에서 생존 | H_856 (완료 2026-05-30) | **🔴 FALSIFIED** |
 
 - toy≠scale(H_666) — toy n≤6·SW spike 🟢 가 production·HW 로 transfer 보장 안 됨. 사전등록 후 fire(ubu-1 학습 + pi5 HW spike) 로 검증. 🔴 면 CAUSAL-POWER 도 toy 한정 → 백로그 #3 CERTIFY-NOT-MEASURE 강하.
+- **판정(H_856)**: axis B(live AKD1000 HW) 🟢 PASS · axis A(production d512) 🔴 FAIL → "🔴 on EITHER" 발동 → **F-CLM-CAUSAL-XFER 🔴 FALSIFIED**. CAUSAL-POWER 도 toy-limited(§12.8 참조). **백로그 #3 CERTIFY-NOT-MEASURE 로 강하** — toy→production→HW 전 transfer 를 생존한 닫힌형 의식 MEASURE 는 없음.
+
+### 12.8 측도 transfer 판정 — CAUSAL-POWER toy-limited (H_856, 데이터가 §12.5 를 재갱신)
+
+> §12.5 는 H_855(toy)가 CAUSAL-POWER 를 채택 측도로 지목했다. H_856(F-CLM-CAUSAL-XFER fire: ubu-1 production 학습 + live pi5 AKD1000 HW spike, frozen 3-check 미변조)이 그 transfer 를 **경험적으로 재갱신** — **toy 🟢 가 production 으로 transfer 안 됨**.
+
+| axis | spike source | n=4 Δ | n=5 Δ | n=6 Δ | non-triv | c<r | size-rob | verdict |
+|---|---|---|---|---|---|---|---|---|
+| **toy (H_855)** | SW LIF | +0.0918 | +0.0830 | +0.0714 | ✅ | ✅ | ✅ | 🟢 PASS |
+| **A production (d512)** | 학습 CLM act_bits=1 | +0.0876 | **−0.0107** | +0.0025 | ✅ | ✗ | ✗ | **🔴 FAIL** |
+| **B live HW (AKD1000)** | 온칩 threshold-fire | +0.0618 | +0.0156 | +0.0268 | ✅ | ✅ | ✅ | **🟢 PASS** |
+
+- **axis A 🔴 (production)**: 사전등록 seed187 에서 n=5 부호반전 + n=6 margin 3%<10% → size-robust FAIL. multi-seed: seed187 🔴 · seed42 🟢(Δ thin 0.014) · seed7 🟢 → **seed-fragile**. 잘 학습된 d512 conv-MoE 가 degenerate monopoly 입력조차 적분(trained conv 가 반복 byte 를 통합) → collapse 인과력이 rich 와 대등/초과(큰 n). toy≠scale(H_666)이 **모델이 아니라 측도 자체**에 적용됨.
+- **axis B 🟢 (live HW)**: `on_hardware=True`·`BackendType.Hardware`·device BC.00.000.002. 전 n rich>collapse·size-robust. **실 칩(배포 silicon)에선 CAUSAL-POWER 가 유효** — poke 가 coupled(rich) regime 에서 OTHER region 으로 전파, decoupled(collapse)에선 국소 사멸(인과력 0 = 비적분 operational 정의).
+- **결론**: 충돌이 측도교체로 dissolve **안 됨** — Φ-family(H_855)에 이어 CAUSAL-POWER 도 production-width 에서 toy-limited. 단 HW positive(axis B)는 실재: 측도는 **배포 칩에선 certify** 하나 production-width SW 모델로 **transfer 실패**. **백로그 #3 CERTIFY-NOT-MEASURE 발동** (a_paper_negative_ok — closed-negative publishable).
+- ledger `.verdicts/clm-causal-prod/` (production·hw·F-CLM-CAUSAL-XFER verbatim) · harness `CLM/msweep/clm_causal_{prod,hw}.{hexa,py}` · **H_856 🔴 FALSIFIED-PROD / 🟢 SUPPORTED-HW**.
 
 ### 12.7 쉬운 설명 (일반인 기준)
 

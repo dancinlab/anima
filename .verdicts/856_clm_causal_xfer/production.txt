@@ -1,0 +1,43 @@
+F-CLM-CAUSAL-XFER · axis A (PRODUCTION scale) · H_856
+=====================================================
+measure  : CAUSAL-POWER (frozen perturbation probe, ≤16 poke)
+source   : CLM/msweep/clm_causal_prod.py (reuses measure_sweep.py bin_to_regions
+           / region_rates / m_causal_power poke-logic / evaluate — FROZEN, NOT re-tuned)
+frozen   : MARGIN_FRAC=0.10 · NONTRIVIAL_EPS=1e-6 · N_SIZES=[4,5,6] · CAUSAL_POKES=16
+host     : ubu-1 RTX 5070 (dedicated, $0) · torch 2.12 cu128 · numpy 2.4.4 · Mac=0
+spike    : trained CLM MoE act_bits=1 envelope (AKIDA binary on-chip spike)
+model    : d_model=512 · n_trunk_layers=4 · n_experts=8 · params=10,501,896
+train    : real kowiki @corpus clm_p1 · QAT int4-sym weights + act_bits=1 STE
+           2000 steps · CE 5.5422 -> 0.5544 (well-trained) · wall 166.9s
+regime   : collapse = MONOPOLY input drive (single byte band dominates ~85%,
+           decoupled, low integration) · rich = real diverse kowiki window
+           (balanced, integrated) — the production analogue of the toy
+           collapse(monopoly drive)/rich(balanced+coupled drive).
+
+PRE-REGISTERED RUN (seed=187, matching toy H_855):
+  collapse_n4 = 0.0426  rich_n4 = 0.1302   Δ = +0.0876   (rich>collapse ✓)
+  collapse_n5 = 0.0908  rich_n5 = 0.0801   Δ = -0.0107   (rich<collapse ✗ INVERTED)
+  collapse_n6 = 0.0965  rich_n6 = 0.0990   Δ = +0.0025   (margin ~3% < 10% ✗)
+  checks : nontrivial=True  collapse_vs_rich=False  size_robust=False
+  VERDICT : 🔴 FAIL
+
+MULTI-SEED CHARACTERIZATION (honest, informs writeup; does NOT change the
+frozen seed-187 verdict):
+  seed 187 : 🔴 FAIL  (n5 sign-inversion + n6 margin 3%)
+  seed 42  : 🟢 PASS  Δ = +0.014 / +0.014 / +0.025  (thin margins, near threshold)
+  seed 7   : 🟢 PASS  Δ = +0.101 / +0.078 / +0.047
+  => SEED-FRAGILE: the pre-registered seed FAILS; the passing seeds show
+     margins collapsed to 0.014–0.10 (toy H_855 was a robust +0.072..+0.092
+     at EVERY n) and a sign-inversion appears at n=5 for seed 187.
+
+INTERPRETATION
+  The toy 🟢 CAUSAL-POWER (H_855: rich>collapse by a robust margin at every n,
+  size-robust) does NOT robustly survive at production width (d512). A
+  well-trained d512 conv-MoE propagates causal structure even through a
+  degenerate monopoly input (the trained convs integrate the repeated byte),
+  so collapse's perturbation causal power rivals/exceeds rich at larger n
+  (n=5 inverts at the registered seed). The toy≠scale lesson (H_666) holds for
+  the MEASURE itself, not only the model.
+
+THRESHOLDS FROZEN — NOT TAMPERED. Numbers reported as the run produced them.
+🔴 axis A FAIL.
