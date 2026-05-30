@@ -1,0 +1,61 @@
+{
+  "frozen": {
+    "teacher": "E=32 d=128 (valid measure scale)",
+    "student": "E=8 d=64 (chip-fit deploy scale)",
+    "kd": "Hinton alpha=0.7 T=3.0 soft-target + dispatch-KL (beta) @L2",
+    "metric": "dispatch-entropy z vs Dirichlet(1) uniform null (same as H_852/853)",
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "xfer_tol": 3.0,
+    "round1_mean_delta": 4.33829,
+    "falsifier": "F-CLM-DISPATCHKL-XFER: dispatch-KL distill shrinks transfer Delta vs round-1 (4.34) AND z_student/z_teacher same sign AND |Delta| <= xfer_tol AND student chip-fit"
+  },
+  "steps": 120,
+  "beta": 1.0,
+  "per_seed": [
+    {
+      "seed": 42,
+      "teacher_z": -2.55025,
+      "teacher_normH": 0.80771,
+      "student_z": 0.11949,
+      "student_normH": 0.83321,
+      "transfer_delta": 2.66974,
+      "same_sign": false,
+      "student_chip_fit": true
+    },
+    {
+      "seed": 43,
+      "teacher_z": -4.29014,
+      "teacher_normH": 0.76648,
+      "student_z": 0.82357,
+      "student_normH": 0.88886,
+      "transfer_delta": 5.11371,
+      "same_sign": false,
+      "student_chip_fit": true
+    },
+    {
+      "seed": 44,
+      "teacher_z": -4.14863,
+      "teacher_normH": 0.76497,
+      "student_z": -1.40807,
+      "student_normH": 0.71549,
+      "transfer_delta": 2.74056,
+      "same_sign": true,
+      "student_chip_fit": true
+    }
+  ],
+  "mean_abs_transfer_delta": 3.508,
+  "mean_signed_transfer_delta": 3.508,
+  "round1_mean_delta": 4.33829,
+  "delta_shrank_vs_round1": true,
+  "all_same_sign": false,
+  "all_delta_bounded": false,
+  "all_student_chip_fit": true,
+  "verdict": "FAIL",
+  "verdict_tier": "\ud83d\udd34 CLOSED-NEGATIVE",
+  "scale_scope": "toy teacher(E32/d128)->student(E8/d64) + dispatch-KL, toy two-lane -- a_scale_honest_scope (toy != production)",
+  "torch": "2.12.0.dev20260408+cu128"
+}

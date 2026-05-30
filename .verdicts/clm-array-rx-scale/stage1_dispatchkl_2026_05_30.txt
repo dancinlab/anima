@@ -1,0 +1,24 @@
+F-CLM-DISPATCHKL-XFER -- teacher escape -> dispatch-KL distill -> Delta
+========================================================================
+FROZEN (@L5, dispatch-KL added, thresholds not tampered):
+  teacher = E=32 d=128 (valid measure scale)
+  student = E=8 d=64 (chip-fit deploy scale)
+  kd = Hinton alpha=0.7 T=3.0 soft-target + dispatch-KL (beta) @L2
+  metric = dispatch-entropy z vs Dirichlet(1) uniform null (same as H_852/853)
+  seeds = [42, 43, 44]
+  xfer_tol = 3.0
+  round1_mean_delta = 4.33829
+  falsifier = F-CLM-DISPATCHKL-XFER: dispatch-KL distill shrinks transfer Delta vs round-1 (4.34) AND z_student/z_teacher same sign AND |Delta| <= xfer_tol AND student chip-fit
+beta (dispatch-KL weight) = 1.0 ; steps = 120
+ seed  teacher_z  student_z     Delta  sameSign  chipFit
+   42    -2.5503     0.1195    2.6697     False     True
+   43    -4.2901     0.8236    5.1137     False     True
+   44    -4.1486    -1.4081    2.7406      True     True
+mean |transfer Delta| : 3.508 (round-1 was 4.33829)
+mean signed Delta     : 3.508
+Delta shrank vs r1    : True
+all same sign         : False
+all Delta bounded     : False (|Delta|<=3.0)
+all student chip-fit  : True
+scale scope           : toy teacher(E32/d128)->student(E8/d64) + dispatch-KL, toy two-lane -- a_scale_honest_scope (toy != production)
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE
