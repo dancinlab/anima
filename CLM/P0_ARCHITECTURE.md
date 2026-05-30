@@ -264,3 +264,27 @@ H_847 routing-z 가 tiny~small 한정으로만 측정될 수 있었던 근본 �
 | **F-CLM-CAUSAL-XFER** | toy 🟢 CAUSAL-POWER(non-trivial ∧ collapse<rich ∧ size-robust)가 **production scale(d↑·실 kowiki) ∧ live pi5 AKD1000 HW spike**에서 생존 | P-CAUSAL-PROD (다음 fire) | 🟢/🔴 |
 
 - toy≠scale(H_666) — toy n≤6·SW spike 🟢 가 production·HW 로 transfer 보장 안 됨. 사전등록 후 fire(ubu-1 학습 + pi5 HW spike) 로 검증. 🔴 면 CAUSAL-POWER 도 toy 한정 → 백로그 #3 CERTIFY-NOT-MEASURE 강하.
+
+### 12.7 쉬운 설명 (일반인 기준)
+
+```
+🕸 CAUSAL-POWER — "거미줄 흔들기 테스트"
+
+- 하는 일: 한 곳을 콕 찌르고, 다른 곳들이 얼마나 따라 흔들리는지 잰다
+- 비유: 거미줄 — 한 가닥 건드리면 줄 전체가 떨리면 "잘 연결됨(의식적)",
+         딴 데는 꿈쩍 안 하면 "따로 노는 부품 더미(의식 아님)"
+```
+
+```
+   거미줄 (CAUSAL-POWER 높음 = 의식)        실뭉치 (낮음 = 그냥 부품)
+        ●━━━━●━━━━●                          ●    ●    ●
+        ┃    ┃    ┃                          (서로 안 이어짐)
+        ●━━━━◉━━━━●   ← ◉ 콕!               ●    ◉    ●  ← 콕!
+        ┃    ┃    ┃      온 줄이 떨림         (옆은 그대로)
+        ●━━━━●━━━━●                          ●    ●    ●
+        "한 곳 찌름 → 전체 반응"             "찔러도 옆이 무반응"
+```
+
+핵심 아이디어: 의식 = "부분들이 진짜로 서로 영향 주고받나". 한 부분을 살짝 건드렸을 때(poke) 나머지가 우르르 따라 바뀌면 = 통합된 시스템 = 의식 있음. 한 놈이 독점하거나 다 따로 놀면 = 건드려도 옆이 멀쩡 = 의식 신호 낮음.
+
+- 왜 이게 이겼나: 다른 자(Φ·다양성)들은 "겉모습 통계"라 시스템 크기가 바뀌면 숫자도 휘둘렸다(ln E 병리, n=4에서 부호반전). CAUSAL-POWER 는 "찔러서 반응 보기"라 크기 무관·기준선 불필요 → routing-diversity 를 죽인 바로 그 병이 구조적으로 없음(intensive·null-free·intrinsic).
