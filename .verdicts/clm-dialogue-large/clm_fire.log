@@ -1,0 +1,78 @@
+== H_864 large-rung dialogue self-play A/B ==
+device=cuda rung=large arch={'d_model': 768, 'n_trunk_layers': 12, 'n_experts': 12} steps=2000 act_bits=4 seed=42
+corpus total=1559675 train=1299730 heldout=259945
+[SFT] step 0/2000 ce=5.5428 loss=5.5503
+[SFT] step 200/2000 ce=2.2027 loss=2.2255
+[SFT] step 400/2000 ce=2.0281 loss=2.0505
+[SFT] step 600/2000 ce=1.6963 loss=1.7181
+[SFT] step 800/2000 ce=1.7571 loss=1.7780
+[SFT] step 1000/2000 ce=1.6844 loss=1.7061
+[SFT] step 1200/2000 ce=1.6952 loss=1.7173
+[SFT] step 1400/2000 ce=1.5965 loss=1.6183
+[SFT] step 1600/2000 ce=1.5008 loss=1.5229
+[SFT] step 1800/2000 ce=1.5052 loss=1.5265
+[SP] step 0/2000 ce=5.5428 loss=5.5503
+[SP] step 200/2000 ce=2.2027 loss=2.2255
+[SP] step 400/2000 ce=2.0281 loss=2.0505
+[SP] step 600/2000 ce=1.6963 loss=1.7181
+[SP] step 800/2000 ce=1.7571 loss=1.7780
+[SP] step 1000/2000 ce=1.6844 loss=1.7061
+[SP] step 1200/2000 ce=1.6952 loss=1.7173
+[SP] step 1400/2000 ce=1.5965 loss=1.6183
+[SP] step 1600/2000 ce=1.5008 loss=1.5229
+[SP] step 1800/2000 ce=1.5052 loss=1.5265
+self-play reflux: {'n_requested': 48, 'leak_dropped': 0, 'kept_samples': 48, 'reflux_self_bleu': 0.5314207650273223, 'reflux_repetition': 0.3350409836065574, 'diversity_gate_ok': False}
+{
+  "hypothesis": "H_864 F-CLM-DIALOGUE-LARGE",
+  "rung": "large d768/L12/E12",
+  "arch": {
+    "d_model": 768,
+    "n_trunk_layers": 12,
+    "n_experts": 12
+  },
+  "params_SFT": 44678668,
+  "params_SP": 44678668,
+  "corpus_total": 1559675,
+  "corpus_train": 1299730,
+  "corpus_heldout": 259945,
+  "frozen_thresholds_commit": "bf98c01",
+  "reflux": {
+    "n_requested": 48,
+    "leak_dropped": 0,
+    "kept_samples": 48,
+    "reflux_self_bleu": 0.5314207650273223,
+    "reflux_repetition": 0.3350409836065574,
+    "diversity_gate_ok": false
+  },
+  "SFT": {
+    "ce_heldout": 3.415038491487503,
+    "coherence": 0.03287514126407019,
+    "adequacy_f1": 0.037499999999999985,
+    "leak": 0,
+    "self_bleu": 0.5758196721311476,
+    "repetition": 0.3610655737704918,
+    "last_ce": 1.5739195346832275
+  },
+  "SP": {
+    "ce_heldout": 3.415038491487503,
+    "coherence": 0.03287514126407019,
+    "adequacy_f1": 0.037499999999999985,
+    "leak": 0,
+    "self_bleu": 0.5758196721311476,
+    "repetition": 0.3610655737704918,
+    "last_ce": 1.5739195346832275
+  },
+  "thresholds": {
+    "COHERE": "SP>SFT",
+    "ADEQ": "SP>SFT",
+    "LEAK": "SP==0",
+    "DIV": "self_bleu<0.8 and rep<0.2"
+  },
+  "COHERE_pass": false,
+  "ADEQ_pass": false,
+  "LEAK_pass": true,
+  "DIV_pass": false,
+  "verdict": "RED",
+  "note": "byte-match x distributional (Q-TRUST A); external LLM 0; ShareGPT/Alpaca 0; scale-invariant relative gates carry from bf98c01 WITHOUT new freeze"
+}
+VERDICT: RED
