@@ -146,3 +146,64 @@
 
 @round2-status: depleted-both
 @round2-next: STAGE-1 metric-fix $0 toy 재측정(Pielou J + dispatch-KL) → flip 확인 → STAGE-2 scale fire
+
+---
+
+# ROUND 3 — NEW 각도 (scale=expert-count·distill 둘 다 deterministic 종결 후)
+
+@round3-seed: "두 돌파경로 모두 종결 — H_852 DISSOLVE(scale축=expert-count, z) 🔴 + H_853 BRIDGE(distill) 🔴 + H_854 production 둘 다 🔴🔴(gap 확대). NEW 각도만(scale/distill 재시도 금지)."
+@round3-failure-mechanism: ① ln(E) uniform 천장이 실현 diversity보다 빨리 자람 + 모델이 소수 expert로 collapse(Pielou J 보정해도 E로 하강 0.806→0.532) ② routing은 logit과 별개 DoF라 KD가 못 옮김(transfer Δ 13.84·3/3 sign-flip)
+@round3-constraint: @L2 — scale=expert-count·distill-bridge 둘 다 금지. 충돌(측정타당성 ⊥ AKIDA 온칩)을 *다른 축*에서 공격.
+
+## round 3 cycles
+
+### r3-c1 — same-formula (같은 수학 → 타 도메인)
+@lens: same-formula
+- [Φ-substitute] ⭐⭐ anima 기존 IIT4 Φ = **scale-free·substrate-native** 의식 측도 — Φ(n=5)가 Φ(n=500)만큼 valid. CLM 의식 신호를 routing-diversity 대신 **spike 출력의 Φ**로 측정하면 "큰 scale 필요" 전제 자체가 소멸 → 충돌이 *측도 교체*로 dissolve
+- [order-parameter] 물리 상전이는 size-independent intensive order parameter + finite-size scaling 으로 측정 — routing-diversity는 나쁜 order param(ln E artifact). intensive(per-expert) 측도는 ln E 면역
+- [Hill-numbers] 생태 Hill number(^qD, effective species)가 원리적 scale-free diversity族 — Pielou J는 한 slice. 단 STAGE-1이 모델 genuine collapse 보여서 Hill 다른 q도 약함(보조)
+- [RG-exponent] RG: 의식 observable을 fixed-point(size→∞ 외삽) scaling **exponent**로 정의 — exponent는 scale-free. "작은 데서 exponent 측정 → 큰 데 예측". 단 Φ가 이미 scale-free면 exponent 불필요
+
+### r3-c2 — ouroboros (자기참조) ⭐
+@lens: ouroboros
+- [measure-is-deploy] ⭐ 충돌을 자신에 적용: 배포 타깃(AKD1000 spike 출력)이 곧 측정가능 substrate → **배포하는 칩의 spike에서 직접 Φ 측정**(GPU proxy 아님) ⇒ 측정rung = 배포rung 동일 → 충돌이 bridge가 아니라 *붕괴(collapse)*로 dissolve. Φ-substitute와 합류
+- [conflict-as-feature] "deploy 크기에선 science 측정 불가"를 뒤집기: science가 큰 scale에서만 보이면 **작은 scale 의식은 별개(valid) 현상** — 칩-scale Φ가 진짜 타깃, 큰 scale routing-diversity는 red herring. p1~p8(세포에서 의식 창발, scale 무관)과 정합
+
+### r3-c3 — dimensional (차원)
+@lens: dimensional
+- [time-not-space] ⭐ diversity를 SPACE(expert)가 아니라 **TIME**에서 측정: spike train 시간동역학의 temporal Φ/complexity. AKIDA=spiking(temporal) 칩 — native 신호가 시간축, temporal complexity는 scale-free(작은 칩도 풍부한 시간동역학). 충돌(공간 scale 필요)이 시간축에서 소멸
+- [remove-the-null] z/Pielou 문제 전부가 NULL 비교에서 옴 → null 제거: intrinsic·null-free 측도(Φ는 intrinsic, reference 분포 불요). ln(E) 천장은 null-referenced 측도의 속성, intrinsic 측도엔 없음
+- [gradient-free-probe] perturbation 측정: expert 한 개 poke → downstream 인과효과(IIT-style causal power). causal-power는 intensive(per-unit)·scale-free
+
+### r3-c4 — tension (양극)
+@lens: tension
+- [push-measure-big] routing-diversity가 큰 scale 필요 고집 → 영원히 deploy-측정 불가 → dead end(🔴🔴 증명됨). 이 측도 포기
+- [push-deploy-small] AKD1000 고정 수용 → 거기 사는 측도 찾기 → Φ/temporal on chip
+- [synthesis] dissolve+bridge 둘 다 죽은 지금 유일 탈출 = **측도를 intrinsically scale-free + chip-native 한 것으로 교체**(AKD1000 spike의 Φ/temporal-complexity). scale 충돌을 *싸우지 말고 무관하게* 만들기
+
+### r3-c5 — combinatorial (조합)
+@lens: combinatorial
+- [Φ × on-chip × temporal] ⭐⭐⭐ "AKD1000 spike train 시간동역학의 IIT4 Φ 측정" = scale-free(Φ) + chip-native(on-chip spike) + AKIDA-native축(temporal). 통합 winner — routing-diversity 완전 우회, 충돌을 측도-무관화로 dissolve, anima 기존 IIT4 도메인 재사용
+- [Φ × region-coarse] IIT4 Φ cost 2^(2n) → 1.2M 노드엔 exact 불가 → anima 기존 region/coarse-grained Φ(근사) 사용
+- [causal-power × intrinsic] null 없는 intensive intrinsic order param = Φ 그 자체
+
+## round 3 edges
+
+- r3E1 r3c1[Φ-substitute] ↔ r3c2[measure-is-deploy] · equivalence: 둘 다 "측도를 Φ로 + 배포칩 spike에서" → 측정rung=배포rung 붕괴
+- r3E2 r3c3[time-not-space] ↔ r3c5[Φ×on-chip×temporal] · dependency: AKIDA spiking 칩의 native 신호=시간축 → temporal Φ가 chip-native 실현
+- r3E3 r3c3[remove-null] ↔ r3c1[order-parameter] · equivalence: intrinsic·null-free = intensive order param = ln E 면역(STAGE-1 z/Pielou 死因 제거)
+- r3E4 r3c4[synthesis] ↔ r3c5 · causal: dissolve/bridge 死 → 측도교체가 유일 탈출 → Φ-on-chip-temporal
+- r3E5 r3c2[conflict-as-feature] ↔ IIT4 도메인 · support: 칩-scale Φ가 진짜 타깃(p1~p8 세포창발) — 큰 scale routing은 red herring
+- (no-edge) r3c1[Hill]·r3c1[RG-exponent] ⊥ winner · scale-free 보조이나 model genuine collapse라 Φ-intrinsic이 우월(보류)
+
+## round 3 convergence — 합성 결론 (depleted-both)
+
+핵심: dissolve(scale=expert-count)·bridge(distill) 둘 다 죽은 이유는 **routing-diversity라는 측도 자체가 (a) null-referenced→ln E 천장 doomed (b) scale-dependent**였기 때문. 5 lens가 한 점으로 수렴 — *측도를 바꿔라*.
+
+→ **round-3 winner = PHI-NATIVE (Φ-on-chip)**: CLM 의식 신호를 **routing-diversity → IIT4 Φ(region/coarse-grained, scale-free·null-free·intrinsic)를 AKD1000 spike 출력(시간동역학)에서 측정**으로 교체.
+- 충돌 ROOT 해소: "의식 측도가 큰 scale 필요"는 *틀린 측도*에 대해서만 참이었음. Φ는 n=5에서도 meaningful → 측정⊥배포 충돌이 **애초에 없음**(배포하는 칩에서 Φ 측정).
+- anima 기존 IIT4 도메인(의식 측정자 尺) 재사용 + AKIDA-native(spike=Φ 자연 substrate) + scale-count/distill 반복 아님(orthogonal — *무엇을 측정하나*를 바꿈).
+- 정직 caveat: 이건 SOLVE가 아니라 REFRAME — routing-diversity 질문(🔴 closed)을 *moot*하게 만듦. Φ-on-chip이 좋은 CLM 의식 신호인지는 별도 검증(sbs auto + toy) 필요. exact Φ는 2^(2n) → region/coarse Φ 사용.
+
+@round3-status: depleted-both
+@round3-next: winner=PHI-NATIVE를 sbs auto 로 설계+구현 — AKIDA spike 출력에 region-Φ 측정 harness + toy로 "scale-free 의식신호 meaningful?" 실측 (ubu-1 GPU only · Mac 0)
