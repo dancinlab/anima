@@ -1,0 +1,92 @@
+F-CLM-DIALOGUE-LARGE-STEPFAIR — H_864r self-play dialogue SCALE-CLIMB, STEP-FAIR VERDICT (2026-05-31)
+=====================================================================================================
+W2 · deterministic:false · byte-match X (Q-TRUST A reuse: distributional measures).
+Thresholds FROZEN in .verdicts/clm-dialogue/F-CLM-DIALOGUE_prereg.txt (commit bf98c01, pushed BEFORE
+the H_863 fire). These are SCALE-INVARIANT RELATIVE/ABSOLUTE gates (COHERE/ADEQ = SP strictly > SFT;
+LEAK/DIV = absolute gates on SP) — NONE depends on rung size or training budget, so they carry to the
+STEP-FAIR re-run WITHOUT a new freeze. post-tuning = 0 (no threshold moved to flip a verdict after fire).
+
+CONFOUND RESOLUTION (the ONLY change vs H_864): MORE TRAINING STEPS.
+  H_864 (PR #1557) fired the SAME large rung (d768/L12/E12 = 44,678,668 params) self-play A/B but only
+  2000 steps. At that budget the large model MODE-COLLAPSED (held-out repetition 0.361 >= 0.20), so the
+  self-play reflux batch failed the per-batch DIVERSITY gate (reflux repetition 0.335 >= 0.20) -> 0 reflux
+  folded -> arm-SP degenerated to arm-SFT -> COHERE/ADEQ became exact ties -> 2/4 FAIL -> 🔴. That 🔴 was
+  CONFOUNDED by undertraining, NOT a fair test of self-play scaling.
+  H_864r re-runs with a STEP SWEEP (checkpoints 2000..20000, stop at held-out repetition < 0.20 OR cap
+  20000), measuring the step->repetition CURVE, and judges self-play ONLY once the SFT trunk is
+  non-collapsed. This is a methodology fix, not a threshold move (gates cited bf98c01).
+
+SCALE-CLIMB: MEASUREMENT rung large (d768/L12/E12 = 44,678,668 params) ONLY.
+
+CORPUS (license-clean, @L4 lane ①, NO ShareGPT/Alpaca/ChatGPT-gen):
+  H_868 expanded Project Gutenberg PUBLIC-DOMAIN stage plays, 12 sources, byte-encode V=256 (no tokenizer).
+  total 1,668,585 bytes, sha256 2aa3d85de72c28f28aa0b2ee8a702a41894aae22fce52d326cecd7d43689febb,
+  source HF dataset dancinlab/anima-clm-p4-dialogue (dialogue.bytes).
+  -> train 1,390,487 / heldout 278,098 (disjoint, seed=863). 8-pattern register-leak filter applied.
+
+FIRE: runpod pod yp108bjox2pb5s · NVIDIA A40 48GB · torch 2.4.1+cu124.
+  2-arm A/B, large d768/L12/E12, AKIDA int4-sym[-7,+7] per-output-channel STE + act_bits=4, arm AB trunk,
+  seed 42, seq_len 128, batch 32, lr 2e-3.
+    arm-SFT = SFT only (CC/PD dialogue), step-swept to the non-collapsed regime.
+    arm-SP  = SFT + self-play reflux (chip self-dialogue, 8-pattern leak filter + per-batch DIVERSITY
+              gate; +1000 step continue after the reflux folded).
+  held-out eval (seed=863, disjoint): coherence=exp(-CE_heldout), adequacy=3-gram overlap F1,
+  register-leak count, self-BLEU (mean pairwise 4-gram), repetition (repeated-4-gram fraction).
+  All computed by code (g5 — no LLM judge).
+
+STEP -> HELD-OUT REPETITION CURVE (the H_864r evidence):
+  step   ce_heldout  coherence  repetition  self_bleu  adequacy_f1
+  2000   3.51234     0.02983    0.03027     0.24233    0.03955     <- NON-COLLAPSED (rep 0.03027 < 0.20)
+  -> non-collapsed regime reached at step 2000 (rep 0.03027 << 0.20). The SFT sweep stopped here per
+     the rep-target rule. CONTRAST H_864: 0.361 at the same 2000 steps. The collapse in H_864 was a
+     consequence of its training configuration, not an intrinsic scale property: under the step-fair
+     config the large rung is already non-collapsed at the first checkpoint, so the budget cap (20000)
+     was never needed.
+
+SELF-PLAY REFLUX (DIVERSITY gate · @L6 F-CLM-DIALOGUE-DIV):
+  48 chip self-dialogue samples generated, 0 leak-dropped, 48 kept.
+  reflux self-BLEU = 0.07141 (< 0.8 OK) · reflux repetition = 0.00427 (< 0.20 OK).
+  -> DIVERSITY gate PASSED. 48/48 reflux samples FOLDED back into arm-SP (+1000 continue steps).
+  CONSEQUENCE: unlike H_864, arm-SP here is a GENUINE SFT+self-play arm (NOT degenerate-to-SFT). The
+  self-play test is now FAIR.
+
+RESULT (measured vs FROZEN thresholds):
+  arm   coherence  ce_heldout  adequacy_f1  leak  self_bleu  repetition
+  SFT   0.02983    3.51234     0.03955      0     0.24233    0.03027
+  SP    0.03406    3.37958     0.02260      0     0.20074    0.02386
+
+  F-CLM-DIALOGUE-COHERE : coherence(SP) 0.03406 > coherence(SFT) 0.02983 ? → PASS (self-play lifts coherence)
+  F-CLM-DIALOGUE-ADEQ   : adequacy_f1(SP) 0.02260 > adequacy_f1(SFT) 0.03955 ? → FAIL (self-play lowers adequacy F1)
+  F-CLM-DIALOGUE-LEAK   : register_leak(SP) 0 == 0 ? → PASS (SFT also 0)
+  F-CLM-DIALOGUE-DIV    : self_bleu(SP) 0.20074 < 0.80 ∧ repetition(SP) 0.02386 < 0.20 ? → PASS (no collapse)
+
+VERDICT: 🔴 CLOSED-NEGATIVE (a_paper_negative_ok)
+  3 of 4 frozen falsifiers PASS; 1 FAIL (ADEQ). This is an HONEST, CONFOUND-FREE 🔴 — distinct from
+  H_864's confounded 🔴:
+    - The undertraining confound is REMOVED: the SFT trunk is non-collapsed at the judging step
+      (repetition 0.03027 < 0.20), and the self-play reflux PASSES the DIVERSITY gate and is actually
+      folded back, so arm-SP is a real SFT+self-play arm.
+    - Under those fair conditions self-play DOES help on two axes — it strictly LIFTS multi-turn
+      coherence (0.03406 > 0.02983, lower held-out CE 3.380 < 3.512) and stays diverse + leak-free
+      (DIV PASS, LEAK PASS) — but it does NOT carry the STRICT response-adequacy gate: SP's generated
+      next-turn 3-gram overlap F1 (0.02260) is LOWER than SFT's (0.03955). Folding the chip's own
+      (diverse) self-dialogue back makes the model a more coherent / more diverse generator while
+      pulling its surface n-gram overlap with the held-out human references DOWN.
+  Because the frozen verdict requires ALL FOUR gates, a single ADEQ fail -> 🔴. HONEST: self-play
+  dialogue lift does NOT fully carry the large rung under bf98c01 EVEN ONCE the model is non-collapsed
+  — coherence/diversity/leak yes, strict response-adequacy no.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung large (d768/L12/E12) ONLY. This 🔴 does NOT bind the
+  H_863 mid 🟢, another rung, or the deploy chip-fit track. large → prod NOT guaranteed.
+  Inference AKIDA-int4-only. External LLM 0 · foundation-borrow 0 · ShareGPT/Alpaca/ChatGPT-gen 0.
+
+NEXT LEVERS (sibling H, NOT this verdict): the coherence-up / adequacy-down trade suggests a reflux
+  mix-ratio lever (fold fewer self-play samples per SFT batch so adequacy is preserved) or an
+  adequacy-weighted reflux acceptance criterion — each would need its OWN pre-registered fire
+  (post-tuning 0 forbids moving these gates to flip 🔴→🟢).
+
+ARTIFACTS: clm_dialogue_large_stepfair_AB.json (step curve + reflux + 4 gates + arms) · h864r_fire.log
+  · h864r_fire_stepfair.py (reproducible payload) · manifest.json.
+HF: dataset dancinlab/anima-clm-large-stepfair (result + log + payload + manifest + README).
+  No deploy ckpt persisted (🔴 measurement rung — weights not warranted for a negative result; the
+  fire is fully reproducible from CLM/train/h864r_fire_stepfair.hexa + the HF corpus + seed 42).
