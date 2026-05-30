@@ -1,0 +1,17 @@
+CLM-MEASURE-SWEEP — F-CLM-PHI-MEANINGFUL 3-check verdict (observation-only, local-pool ubu-1)
+measure: TENSION-NATIVE
+batch:   clm-measure-sweep   seed: 187   sizes: [4, 5, 6]   neurons/region: 8   n_steps: 256
+FROZEN thresholds (pre-registered, NEVER tampered): margin_frac=0.1  nontrivial_eps=1e-06  causal_pokes_cap=16
+scope: region/coarse proxy; SW spike (akida_sw_lif-style LIF); toy n<=6 (sec 12.4)
+
+observed values (measure × {collapse,rich} × n):
+  n=4   collapse=0.129743   rich=0.175151   Δ(rich−collapse)=+0.045408   [rich>collapse]
+  n=5   collapse=0.100810   rich=0.071656   Δ(rich−collapse)=-0.029154   [COLLAPSE>=RICH]
+  n=6   collapse=0.220846   rich=0.137708   Δ(rich−collapse)=-0.083137   [COLLAPSE>=RICH]
+
+frozen 3-check:
+  (1) non-trivial      : True   (measure>eps with discrimination at smallest n)
+  (2) collapse-vs-rich : False   (rich>collapse by >=0.1 margin at EVERY n)
+  (3) size-robust      : False   (rich>collapse ORDER preserved across all n)
+
+VERDICT: FAIL  ->  🔴 FAIL — does NOT satisfy the frozen 3-check

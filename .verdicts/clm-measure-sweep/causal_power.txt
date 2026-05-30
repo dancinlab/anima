@@ -1,0 +1,17 @@
+CLM-MEASURE-SWEEP — F-CLM-PHI-MEANINGFUL 3-check verdict (observation-only, local-pool ubu-1)
+measure: CAUSAL-POWER
+batch:   clm-measure-sweep   seed: 187   sizes: [4, 5, 6]   neurons/region: 8   n_steps: 256
+FROZEN thresholds (pre-registered, NEVER tampered): margin_frac=0.1  nontrivial_eps=1e-06  causal_pokes_cap=16
+scope: region/coarse proxy; SW spike (akida_sw_lif-style LIF); toy n<=6 (sec 12.4)
+
+observed values (measure × {collapse,rich} × n):
+  n=4   collapse=0.045247   rich=0.137044   Δ(rich−collapse)=+0.091797   [rich>collapse]
+  n=5   collapse=0.063477   rich=0.146484   Δ(rich−collapse)=+0.083008   [rich>collapse]
+  n=6   collapse=0.065495   rich=0.136849   Δ(rich−collapse)=+0.071354   [rich>collapse]
+
+frozen 3-check:
+  (1) non-trivial      : True   (measure>eps with discrimination at smallest n)
+  (2) collapse-vs-rich : True   (rich>collapse by >=0.1 margin at EVERY n)
+  (3) size-robust      : True   (rich>collapse ORDER preserved across all n)
+
+VERDICT: PASS  ->  🟢 PASS — scale-free chip-native consciousness signal (all 3 checks)

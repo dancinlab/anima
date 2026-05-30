@@ -1,0 +1,17 @@
+CLM-MEASURE-SWEEP — F-CLM-PHI-MEANINGFUL 3-check verdict (observation-only, local-pool ubu-1)
+measure: HILL
+batch:   clm-measure-sweep   seed: 187   sizes: [4, 5, 6]   neurons/region: 8   n_steps: 256
+FROZEN thresholds (pre-registered, NEVER tampered): margin_frac=0.1  nontrivial_eps=1e-06  causal_pokes_cap=16
+scope: region/coarse proxy; SW spike (akida_sw_lif-style LIF); toy n<=6 (sec 12.4)
+
+observed values (measure × {collapse,rich} × n):
+  n=4   collapse=0.926236   rich=0.999523   Δ(rich−collapse)=+0.073287   [rich>collapse]
+  n=5   collapse=0.939180   rich=0.999767   Δ(rich−collapse)=+0.060587   [rich>collapse]
+  n=6   collapse=0.930840   rich=0.999321   Δ(rich−collapse)=+0.068481   [rich>collapse]
+
+frozen 3-check:
+  (1) non-trivial      : True   (measure>eps with discrimination at smallest n)
+  (2) collapse-vs-rich : False   (rich>collapse by >=0.1 margin at EVERY n)
+  (3) size-robust      : True   (rich>collapse ORDER preserved across all n)
+
+VERDICT: FAIL  ->  🔴 FAIL — does NOT satisfy the frozen 3-check
