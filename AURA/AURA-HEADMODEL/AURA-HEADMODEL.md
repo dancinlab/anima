@@ -7,7 +7,7 @@
 ## 진행 (milestones)
 
 - [x] (app ✅) MNE/OpenMEEG 3-shell·FEM lead-field 구축 — 가우시안-blur 대체
-- [ ] C10 strawman 검증 — 실 커널서 전극포화 살아남나, sharp>blur 생존하나
+- [x] C10 strawman 검증 — **C10 SUPPORTED**: 3-shell 구체 lead-field(Ary1981, $0 numpy)서 전극 미포화(R² 0.19→0.40 계속 상승), 가우시안만 평탄 → "전극포화=가우시안 인공물" 확증. 깊이 방향 일치(가파름 과장 의심), 두개골비 1/20~1/80 평탄. → `SPHERE-VALIDATION.md`·`verify/sphere_leadfield.txt`
 - [ ] C15 깊이 벽 실측 — 실 두상서 피질→심부 복원율 감쇠곡선
 - [ ] C11 현실 prior 복원율 — 실 MRI 해부 prior 적용 (oracle 0.80 vs 현실)
 
