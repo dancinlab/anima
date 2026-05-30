@@ -13,8 +13,15 @@
 | 👁️ 실명 복원 | V1 시각피질 write — 시각 복원, 피질 표면 도달 | d1.2 | write | 0.393 |
 | 🩹 만성통증 | S1/대상피질 통증 modulate — sulcal 깊어 부분도달 | d2.5 | modulate | 0.114 |
 
+## 실 임상 현황 (침습 outcome — toy 비침습 R²와 modality 다름 ⚠)
+- ⚡ 간질: RNS System 9년 median 발작 75%↓ (FDA승인) · 🌊 우울: SCC-DBS TRD response ≥50% 2–8년 유지
+- 🎚️ 파킨슨: STN-DBS UPDRS 25–41%↑ (표준치료) · 🦿 마비: BrainGate Utah-array 커서/로봇팔 제어 (feasibility)
+- 👁️ 실명: Orion 피질보철 5/5 위치탐지 (early-feasibility) · 🩹 통증: MCS/DBS 장기 responder ~39%
+- 상세·출처·toy↔실임상 갭 = [CLINICAL-GROUNDING.md](../CLINICAL-GROUNDING.md)
+
 ## 패턴
 - 피질질환(간질·마비·실명)=비침습 ✅ / 심부질환(우울 raphe·파킨슨 STN)=침습 필요 🔴(0.08~0.09)
+- ⚠ 정직: 실 임상 효능은 거의 전부 **침습**(DBS·피질 implant) — toy R²(비침습)와 직교. toy 낮은 우울·파킨슨이 침습 임상선 오히려 강함.
 - 각 sub-app = `app/<이름>.py`(실동작) — `python3 app/<이름>.py` 실행
 
 ## sibling
