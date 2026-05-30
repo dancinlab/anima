@@ -241,3 +241,26 @@ H_847 routing-z 가 tiny~small 한정으로만 측정될 수 있었던 근본 �
 - PHI-NATIVE 는 routing-diversity 🔴(§11)를 *해결*하지 않고 *우회*한다 — 두 measure 는 orthogonal. §11 falsifier 는 닫힌 채 유지.
 - exact Φ 불가(2^(2n)) → region/coarse 근사만 주장. 1.2M 노드 전체 Φ 는 미주장.
 - v1 SW spike(akida_sw_lif) 측정 → HW(pi5 AKD1000) 측정은 후속. byte-identical SW↔HW(H_680)라 SW v1 이 HW 대리로 정당하나, 실 HW Φ 는 별도.
+
+### 12.5 측도 확정 — CAUSAL-POWER (H_855 micro-exp, 데이터가 설계를 갱신)
+
+> §12.1~12.4 는 round-3 가 PHI-NATIVE(Φ)를 *설계상* winner 로 지목했다. H_855 measure-sweep(6 측도 × 같은 collapse↔rich toy spike × n∈{4,5,6}, frozen F-CLM-PHI-MEANINGFUL 3-check)이 이를 **경험적으로 갱신**했다 — **Φ 는 size-robust FAIL**(n=4 부호반전), **CAUSAL-POWER 만 🟢**(1/6).
+
+**채택 측도 = CAUSAL-POWER** (perturbation probe): 한 region 을 poke(≤16) → 다른 region 들의 downstream 효과 크기를 측정. intensive · null-free · intrinsic → routing-diversity 를 죽인 ln(E)/null-천장 artifact 가 **구조적으로 없음**.
+
+| 측도 | non-trivial | collapse<rich | size-robust | 판정 |
+|---|---|---|---|---|
+| **CAUSAL-POWER** | ✅ | ✅ (전 n) | ✅ | **🟢 채택** |
+| PHI-NATIVE(Φ) | ✅ | ✗ | ✗ (n=4 반전) | 🔴 (extensive — 사전등록 체크가 가짜 PASS 차단) |
+| HILL · TEMPORAL-Φ · FREE-ENERGY · TENSION | … | ✗ | ✗ | 🔴 |
+
+- 의미: "측도 교체로 충돌 무관화"(§12.1)는 유지되되, **무엇으로 바꾸나 = Φ 아닌 CAUSAL-POWER**. §12.1 표의 "무엇을 측정" 행은 IIT4 Φ → **CAUSAL-POWER(perturbation)**로 갱신. Φ 는 round-3 가설로 닫힘(🔴 size-robust).
+- ledger `exports/sweep/clm-measure-sweep/` · verdict `.verdicts/855_clm_measure_sweep/` · **H_855 🟢 SUPPORTED-NUMERICAL**.
+
+### 12.6 사전등록 falsifier — production/HW transfer (다음)
+
+| id | 주장 | 판정 시점 | tier |
+|---|---|---|---|
+| **F-CLM-CAUSAL-XFER** | toy 🟢 CAUSAL-POWER(non-trivial ∧ collapse<rich ∧ size-robust)가 **production scale(d↑·실 kowiki) ∧ live pi5 AKD1000 HW spike**에서 생존 | P-CAUSAL-PROD (다음 fire) | 🟢/🔴 |
+
+- toy≠scale(H_666) — toy n≤6·SW spike 🟢 가 production·HW 로 transfer 보장 안 됨. 사전등록 후 fire(ubu-1 학습 + pi5 HW spike) 로 검증. 🔴 면 CAUSAL-POWER 도 toy 한정 → 백로그 #3 CERTIFY-NOT-MEASURE 강하.
