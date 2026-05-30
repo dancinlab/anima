@@ -1,0 +1,49 @@
+F-CLM-PROD-RUNG — CLM first production measurement-rung (mid d512/L8/E8) AKIDA-envelope QAT fire (2026-05-31)
+
+PURPOSE: P4_PRODUCTION_ROADMAP @L5/@L7 first measurement-rung quality proof.
+  Measurement track (GPU AKIDA-envelope QAT) is DECOUPLED from the deploy
+  chip-fit track (<=~1.2M AKD1000 nodes) — a_scale_honest_scope. This rung
+  proves the mid architecture TRAINS under the AKIDA int4 deployment envelope;
+  it is NOT a deploy artifact and NOT a routing-z falsifier judgment.
+
+FIRE: runpod pod 56sfl7gtcl5q1l · NVIDIA A40 (46GB) · torch 2.1.0+cu118 · pid 484
+  rung=mid (d_model=512 · n_trunk_layers=8 · n_experts=8) · params=13,653,768
+  envelope: weights int4-sym[-7,+7] per-output-channel STE (AKIDA rejects -8)
+            acts act_bits=4 envelope step=2^(8-4) · grads STE (fp32 master)
+  corpus: two-lane byte stream (V=256, no tokenizer) 262,144 bytes
+  3-arm (A / B / AB) × seed 42 × 2000 step
+  est cost stated pre-dispatch: $5~20 (a_fire_autonomous)
+
+RESULT (next-byte cross-entropy, V=256 · random init = ln(256) = 5.545 nats):
+
+  arm  rung  params      first_ce  last_ce  step_rate(/s)  wall(s)
+  A    mid   13,653,768  5.5444    2.2502   25.41          78.70
+  B    mid   13,653,768  5.5444    2.2205   25.44          (see log)
+  AB   mid   13,653,768  5.5444    2.2237   25.24          (see log)
+
+OBSERVATION (honest · measurement only):
+  * all 3 arms converge from random (5.5444) to ~2.22 nats under the AKIDA
+    int4-sym + act_bits=4 QAT envelope — the mid rung TRAINS under the
+    deployment-envelope constraint (no NaN/divergence; STE backprop stable).
+  * step-rate ~25/s on A40 at d512/L8/E8 13.7M params — the M5 0.28 step/s
+    "INFEASIBLE" premise is fully dissolved at the production rung too.
+  * arms tie within ~0.03 nats on this toy two-lane corpus (B 2.2205 <
+    AB 2.2237 < A 2.2502) — routing-arm separation is NOT resolved by this
+    corpus (consistent with H_847 toy-scoped routing-z finding; the
+    distributional separation needs a real dialogue corpus + the dialogue
+    A/B bench, NOT this convergence-proof rung).
+
+SCOPE (a_scale_honest_scope):
+  * MEASUREMENT rung only. A 🔴/🟢 here does NOT block the separate deploy
+    chip-fit track. Toy two-lane corpus → no production-quality or
+    routing-diversity claim is made from this rung.
+  * inference stays AKIDA-int4-ONLY (P0 d4) — byte-identical chip transplant.
+
+ARTIFACTS (this dir): clm_mid_{A,B,AB}_s42.json (raw result) + clm_fire.log (log)
+  no .pt/.clm ckpt: train_clm.py is the MEASUREMENT trainer (loss/step-rate
+  verdict), not a deploy-ckpt producer (P3 clm_serialize.py owns .clm).
+
+VERDICT: 🟠 MEASUREMENT-COMPLETE — mid rung (d512/L8/E8) trains under the AKIDA
+  int4-sym + act_bits=4 QAT envelope (CE 5.54 → ~2.22, step-rate ~25/s, 3 arms,
+  no divergence). Production-quality / routing-diversity judgments are DEFERRED
+  to the dialogue A/B bench on a real corpus (H_863) — NOT claimed here.
