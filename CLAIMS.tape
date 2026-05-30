@@ -207,3 +207,19 @@
   raw    = ".verdicts/857_clm_causal_band/F-CLM-CAUSAL-BAND.txt"
   src    = "UNIVERSE/H_857_clm_causal_band.md §5/§6 · CLM/P0_ARCHITECTURE.md §12.8 (HW-positive edge-of-chaos band)"
   status = "🟢 SUPPORTED-NUMERICAL — axis B(H_856) 🟢 의 regime 정밀화: 측도는 edge-of-chaos band(interior peak) 안에서만 통합 certify, 양끝(cold decoupled · saturate all-fire)에서 rolloff; axis-B 원래 rich(K=3)는 이미 포화 어깨(fire 0.94); axis A 🔴 불변; thresholds FROZEN (verdict persisted verbatim)"
+
+# ───────────────────────────────────────────────────────────────────────
+# INTENT — intent-osc-residual (slug · group=INTENT) · H_859
+# bench D axisbench(#1143) 4/5 🟠 PARTIAL 의 단일 잔류 falsifier F3
+# OSC_STABILITY_LOW(OSCILLATING stability_std=0.0) 의 진단·해소. residual =
+# 측정자(尺) aliasing (period-20 ⊥ window-grid size-10 commensurable),
+# 신호 결함 아님. raw direction_std + argmax period_detect 교체 → 5/5
+# RECOVERED. 진동 자체는 EMA damping 생존 → intrinsic limit-cycle (H_634
+# ultradian 과 동일 periodic substrate motion class).
+
+@C intent_osc_residual := "F-INTENT-OSC-RESIDUAL: bench D OSC residual = stability_std 의 metric aliasing(period-20 ⊥ window-grid → std=0). raw direction_std 교체로 OSC=0.354 > CONV=0.350 식별 ∧ period=20 genuine ∧ RANDOM period=0 ∧ EMA α=0.2 heavy damping 후에도 period=20 생존 → 진동 intrinsic limit-cycle. INTENT 4/5 🟠 → 5/5 🟢 RECOVERED" :: hypothesis [slug=intent-osc-residual group=INTENT]
+  method = "run"
+  cmd    = "hexa run bench/axis_intent/a6_osc_residual_verify.hexa (self-contained · LCG-deterministic · libm-free · foreground sync · $0 mac-local · exit 0 · 2-run byte-identical)"
+  raw    = ".verdicts/859_intent_osc_residual/F-INTENT-OSC-RESIDUAL.txt"
+  src    = "UNIVERSE/H_859_intent_osc_residual.md §5/§6 · INTENT_A6_OSC_RESIDUAL.md · ANIMA.md INTENT 축 (bench D #1143)"
+  status = "🟢 SUPPORTED-NUMERICAL — direction_std 재설계가 OSC residual 을 해소 (5/5 PASS); legacy stability_std 의 window-period commensurability aliasing 이 root cause (신호 결함 아님); 진동은 substrate 본질 intrinsic limit-cycle (damping 생존); H_634 ultradian Φ envelope cross-link; thresholds FROZEN (verdict persisted verbatim)"

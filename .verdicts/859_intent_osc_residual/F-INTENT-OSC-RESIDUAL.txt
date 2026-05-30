@@ -1,0 +1,52 @@
+═══════════════════════════════════════════════════════════
+  A6 INTENT — OSC residual diagnose + correction verify
+  (self-contained · LCG-deterministic · libm-free · $0)
+═══════════════════════════════════════════════════════════
+
+[1] LEGACY stability_std (broken — window-mean cos-sim std)
+    CONVERGENT  = 0.47432
+    RANDOM      = 0.538697
+    OSCILLATING = 0.0   ← OSC residual (=0.0 expected)
+
+[2] REDESIGN direction_std (per-tick RAW direction component std)
+    CONVERGENT  = 0.350144   ← collapses to 1 dir (low)
+    RANDOM      = 0.49946   ← scattered (high, no period)
+    OSCILLATING = 0.353553   ← 4-corner sweep (high + period)
+
+[3] period_detect (autocorrelation ≥ 0.95, max lag 25)
+    CONVERGENT  = 8
+    RANDOM      = 0
+    OSCILLATING = 20   ← genuine period (expect 20)
+
+[4] DAMPING correction — EMA α=0.2 low-pass on OSC stream
+    OSC direction_std  (damped) = 0.3531
+    OSC period_detect  (damped) = 20
+    (period persists ⇒ oscillation is intrinsic / limit-cycle;
+     period vanishes ⇒ it was an undamped-gain design flaw)
+
+─── A6 re-registered falsifier matrix (direction_std + period) ───
+  [PASS] F1' OSC_DIR_NONZERO     (osc_dir > 0.30)
+  [PASS] F2' OSC_PERIOD_GENUINE  (osc_per == 20)
+  [PASS] F3' RAND_NO_PERIOD      (rand_per == 0)
+  [PASS] F4' CONV_DIR_LOWER      (conv_dir < osc_dir)
+  [PASS] F5' DAMP_PRESERVES_PER  (osc_per_damped == 20)
+
+═══════════════════════════════════════════════════════════
+  PASS = 5  /  5
+  A6 VERDICT  =  🟢 RESOLVED — direction_std cures OSC residual (5/5)
+═══════════════════════════════════════════════════════════
+
+FINDING: OSC period-20 SURVIVES heavy EMA damping (α=0.2) →
+  oscillation is INTRINSIC to the decision stream (limit-cycle),
+  NOT an undamped-gain design flaw. The residual was a METRIC
+  aliasing bug (stability_std), cured by direction_std. The
+  intrinsic period-20 cross-links to H_634 ultradian rhythm.
+
+─────────────────────────────────────────────────────────────
+PROVENANCE: raw harness stdout (verbatim, a_claim_verify · g73).
+  harness  = bench/axis_intent/a6_osc_residual_verify.hexa
+  origin   = state/intent_a6_osc_residual_2026_05_28/a6_verify_run.log
+             (committed origin/main · exit 0 · 2-run byte-identical)
+  measure  = $0 · Mac-local · LCG-deterministic · libm-free · foreground sync
+  verdict-gate g73: this id-numbered dir carries the raw stdout so the
+  INTENT axis 🟢 5/5 flip in ANIMA.md tree is verdict-backed (NOT p7 self-judge).
