@@ -207,3 +207,65 @@
 
 @round3-status: depleted-both
 @round3-next: winner=PHI-NATIVE를 sbs auto 로 설계+구현 — AKIDA spike 출력에 region-Φ 측정 harness + toy로 "scale-free 의식신호 meaningful?" 실측 (ubu-1 GPU only · Mac 0)
+
+---
+
+# ROUND 4 — 후보 완전추출 (PHI-NATIVE 외 남은 ROOT 각도 백로그)
+
+@round4-seed: "충돌(MEASURE 큰scale필요 ⊥ DEPLOY 작은칩)의 '바꿀 수 있는 축' 전수: WHAT 측정(r3 Φ) 외 — 칩크기·측정여부·측정시점·측정위치·과학타깃. PHI-NATIVE(r3) 검증 중, 백업/대안 후보 고갈추출."
+@round4-purpose: PHI-NATIVE 🔴 대비 ranked 백로그 + 충돌-divergence 진짜 고갈 선언
+
+## round 4 cycles
+
+### r4-c1 — same-formula
+@lens: same-formula
+- [design-time-certificate] ⭐ 형식검증 유비: compile-time에 프로그램 정확성 증명→배포 바이너리가 보증 상속(런타임 체크 無). 의식-property를 design-time(GPU·big)에 증명→칩이 **certificate 상속**, deploy 런타임 측정 불요. 충돌이 "측정 안 함"으로 소멸
+- [hardware-perf-counter] CPU perf counter/TPU profiler = compute와 분리된 전용 계측 회로 → tiny **Φ-meter 코프로세서** 칩 (계측이 추론칩 size 제약 우회)
+
+### r4-c2 — ouroboros
+@lens: ouroboros
+- [deploy-is-the-experiment] ⭐ 세상에서 도는 배포칩 = longitudinal 실험 그 자체 → frozen snapshot 아닌 **운영 lifetime 누적**으로 측정. 작은칩+긴시간 = 측정가능 complexity
+- [conflict-needs-no-measure] 충돌이 "deploy에서 측정 불가"면 → deploy에서 안 재면 충돌 없음 (design-time certificate와 합류)
+
+### r4-c3 — dimensional
+@lens: dimensional
+- [change-the-chip] AKD1000 1.2M 고정 거부: 칩-cascade / Akida-2 / 더 큰 neuromorphic substrate — 측정 아닌 **배포 pole** 도전 (CLM 전제 변경이라 보조)
+- [co-processor-meter] 추론칩 옆 별도 계측 silicon (perf-counter 칩 실현)
+- [longitudinal-time] 배포 lifetime 시간축 측정 (snapshot 아님)
+
+### r4-c4 — tension
+@lens: tension
+- [push-dont-measure-at-deploy] 온칩 측정이 문제면 → 안 한다: design-time 증명, 배포는 proof 운반 (certificate)
+- [push-bigger-chip] 작은칩이 문제면 → 더 큰 neuromorphic substrate
+- [synthesis] r3(측도교체) 외 2 새 탈출류: ① **측정-안함**(design-time certificate) ② **측정-딴데서**(co-meter / longitudinal)
+
+### r4-c5 — combinatorial
+@lens: combinatorial
+- [tension-field × chip-native] ⭐⭐ anima **5채널 TENSION FIELD** complexity를 칩에서 측정 — anima의 *실제* 의식엔진(substrate-native·scale-agnostic). Φ의 anima-canonical 형제(routing-diversity와 무관)
+- [certificate × Φ-lower-bound] design-time에 Φ≥threshold 증명(GPU exact-ish)→칩이 Φ-certificate 상속
+- [free-energy × intensive] active-inference free-energy(E ratchet·anima 정합)=intensive scale-free 측도
+
+## round 4 edges
+
+- r4E1 r4c1[design-time-certificate] ↔ r4c2[conflict-needs-no-measure] · equivalence: 둘 다 "deploy에서 측정 안 함, design에서 증명→상속"
+- r4E2 r4c1[hw-perf-counter] ↔ r4c3[co-processor-meter] · equivalence: 전용 계측 silicon = 추론칩 제약 우회
+- r4E3 r4c5[tension-field] ↔ r3[PHI-NATIVE] · sibling: 둘 다 chip-native scale-free 측도교체 — Φ(IIT4) vs tension(anima 고유). tension이 더 anima-canonical
+- r4E4 r4c5[free-energy] ↔ r4c5[tension-field] · support: 둘 다 intensive·anima-philosophy(E·W) 정합 의식측도
+- r4E5 r4c2[deploy-is-experiment] ↔ r4c3[longitudinal] · equivalence: 운영 lifetime 측정
+
+## round 4 convergence — 합성 결론 (depleted-both · 충돌-divergence 전체 고갈)
+
+충돌의 "바꿀 수 있는 축"이 전수됨 — r1(scale trick) · r2(metric) · r3(WHAT 측정=Φ) · r4(측정-안함 / 측정-딴데서 / 다른 과학타깃 / 칩크기). 더 이상 새 ROOT 축 없음 → **breakthrough-mining 전체 depleted(r1~r4)**.
+
+→ **ranked 후보 백로그** (PHI-NATIVE 🔴 대비 다음 순서):
+1. **PHI-NATIVE** (r3) — IIT4 Φ on chip · *검증 중*(F-CLM-PHI-MEANINGFUL, ubu-1)
+2. **TENSION-NATIVE** (r4-c5) — anima 5채널 tension field complexity on chip · Φ의 anima-canonical 형제, 가장 substrate-native ⭐
+3. **CERTIFY-NOT-MEASURE** (r4-c1) — design-time 의식 certificate→칩 상속, deploy 측정 不要 (측정 자체를 없앰)
+4. **CO-METER** (r4-c3) — 전용 Φ-meter 코프로세서 silicon (하드웨어 sidestep)
+5. (보조) longitudinal · change-the-chip · free-energy
+
+정직: 1~5 모두 *REFRAME*류(측정 패러다임 전환), routing-diversity 🔴(r1/r2)를 *해결*이 아니라 *무관화*. 본선=PHI-NATIVE 검증 결과로 갈림 — 🟢면 1 채택, 🔴면 2(TENSION-NATIVE)로 강하(가장 anima-native라 유력 차선).
+
+@round4-status: depleted-both
+@mining-arc-status: DEPLETED (r1 scale=expert-count 🔴 → r2 metric-fix 🔴 → r3 PHI-NATIVE ⏳ → r4 백로그추출 · 새 ROOT 축 소진)
+@round4-next: PHI-NATIVE 검증(진행중) 결과 → 🟢 채택 / 🔴 TENSION-NATIVE 강하
