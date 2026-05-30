@@ -1,0 +1,57 @@
+{
+  "batch": "clm-causal-prod",
+  "axis": "A_production_scale",
+  "measure": "CAUSAL-POWER",
+  "seed": 187,
+  "sizes": [
+    4,
+    5,
+    6
+  ],
+  "neurons_per_region": 8,
+  "n_steps": 256,
+  "frozen_thresholds": {
+    "margin_frac": 0.1,
+    "nontrivial_eps": 1e-06,
+    "causal_pokes_cap": 16
+  },
+  "spike_source": "trained CLM MoE act_bits=1 envelope (real kowiki QAT)",
+  "regime_def": {
+    "collapse": "router forced single-expert monopoly",
+    "rich": "router balanced uniform mixture"
+  },
+  "train": {
+    "steps": 2000,
+    "first_ce": 5.5422,
+    "last_ce": 0.5544,
+    "wall_s": 166.895,
+    "params": 10501896,
+    "d_model": 512,
+    "n_experts": 8,
+    "n_trunk_layers": 4,
+    "act_bits": 1,
+    "corpus_bytes": 1656
+  },
+  "result": {
+    "measure": "CAUSAL-POWER",
+    "checks": {
+      "nontrivial": true,
+      "collapse_vs_rich": false,
+      "size_robust": false
+    },
+    "verdict": "FAIL",
+    "values": {
+      "collapse_n4": 0.042643229166666664,
+      "rich_n4": 0.13020833333333334,
+      "collapse_n5": 0.0908203125,
+      "rich_n5": 0.080078125,
+      "collapse_n6": 0.096484375,
+      "rich_n6": 0.09895833333333333
+    }
+  },
+  "verdict": "FAIL",
+  "torch": "2.12.0.dev20260408+cu128",
+  "numpy": "2.4.4",
+  "device": "cuda",
+  "scope": "production width d512/L4/E8; real kowiki; act_bits=1 SW spike (= AKIDA byte-identical H_680); live-HW = sibling clm_causal_hw.py"
+}

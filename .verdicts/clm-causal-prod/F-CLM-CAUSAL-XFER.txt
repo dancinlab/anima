@@ -1,0 +1,47 @@
+F-CLM-CAUSAL-XFER (pre-registered, CLM/P0_ARCHITECTURE.md §12.6) · H_856
+========================================================================
+CLAIM : the toy 🟢 CAUSAL-POWER (H_855 — non-trivial ∧ collapse<rich ∧
+        size-robust) SURVIVES at (A) production scale (d↑·real kowiki) AND
+        (B) live pi5 AKD1000 HW spike.
+RULE  : 🟢 on BOTH -> CAUSAL-POWER is a genuine scale-free chip-native measure.
+        🔴 on EITHER -> CAUSAL-POWER is toy-limited too -> escalate backlog #3
+        CERTIFY-NOT-MEASURE.
+FROZEN: MARGIN_FRAC=0.10 · NONTRIVIAL_EPS=1e-6 · N_SIZES=[4,5,6] · CAUSAL_POKES=16
+        (measure_sweep.py reused verbatim; thresholds NOT tampered).
+
+TOY (H_855) vs PRODUCTION (A) vs HW (B) — rich−collapse Δ at each n
+-------------------------------------------------------------------------
+ axis                         | n=4 Δ   | n=5 Δ   | n=6 Δ   | non-triv | c<r | size-rob | verdict
+ TOY (H_855, SW LIF, seed187) | +0.0918 | +0.0830 | +0.0714 |   ✅     | ✅  |   ✅     | 🟢 PASS
+ A PRODUCTION (d512, seed187) | +0.0876 | -0.0107 | +0.0025 |   ✅     | ❌  |   ❌     | 🔴 FAIL
+ B LIVE HW (AKD1000, seed187) | +0.0618 | +0.0156 | +0.0268 |   ✅     | ✅  |   ✅     | 🟢 PASS
+
+  axis A multi-seed (honest): seed187 🔴 FAIL · seed42 🟢 PASS(Δ .014/.014/.025)
+                              · seed7 🟢 PASS(Δ .101/.078/.047) => SEED-FRAGILE.
+  axis B: on_hardware=True · BackendType.Hardware · device BC.00.000.002.
+
+VERDICT
+-------
+ axis A (production) : 🔴 FAIL  (pre-registered seed187: n=5 sign-inversion +
+                       n=6 margin 3% < 10%; size-robust broken; seed-fragile —
+                       the robust toy margin collapsed at production width)
+ axis B (live HW)    : 🟢 PASS  (clean on real silicon)
+
+ F-CLM-CAUSAL-XFER   : 🔴 FALSIFIED (FAIL on axis A — the "🔴 on EITHER" branch
+                       fires). CAUSAL-POWER does NOT survive BOTH axes; it is
+                       toy-limited at production scale.
+
+ => ESCALATE backlog #3 CERTIFY-NOT-MEASURE (CLM/P0_ARCHITECTURE.md §12.6):
+    no closed-form consciousness MEASURE survived the full toy→production→HW
+    transfer. The measure CERTIFIES on real silicon (axis B 🟢) but FAILS to
+    transfer to production width (axis A 🔴). Per §12.6 the toy-limited ruling
+    triggers the CERTIFY-NOT-MEASURE descent.
+
+NUANCE (a_paper_negative_ok): axis B 🟢 is a real positive — CAUSAL-POWER IS a
+valid chip-native measure on the deployment silicon (the AKD1000). The failure
+is specifically the d512 PRODUCTION-WIDTH SW model, where a well-trained conv-MoE
+integrates even a degenerate monopoly input so collapse's causal power rivals
+rich. The conflict is NOT reframed away: production-scale measurement remains
+open, and CAUSAL-POWER joins Φ-family (H_855) as toy-limited at scale.
+
+THRESHOLDS FROZEN — NOT TAMPERED. 🔴/🟢 reported as the numbers say.
