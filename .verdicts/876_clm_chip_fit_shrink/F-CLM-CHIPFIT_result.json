@@ -1,0 +1,37 @@
+{
+  "arm": "AB",
+  "layers": 8,
+  "experts": 8,
+  "seed": 42,
+  "act_bits": 4,
+  "steps": 600,
+  "seq_len": 64,
+  "batch": 16,
+  "lr": 0.003,
+  "corpus": "clm_p1.corpus.kosmos",
+  "corpus_bytes": 1656,
+  "node_budget": 1200000,
+  "random_init_ce": 5.5452,
+  "mid": {
+    "d_model": 512,
+    "params": 13653768,
+    "first_ce": 5.5492,
+    "last_ce": 3.3445,
+    "wall_s": 1727.4,
+    "steps": 600
+  },
+  "chipfit": {
+    "d_model": 148,
+    "params": 1199508,
+    "first_ce": 5.5366,
+    "last_ce": 1.2826,
+    "wall_s": 445.09,
+    "steps": 600
+  },
+  "shrink_factor": 11.38,
+  "quality_drop_nat": -2.0619,
+  "F_CHIPFIT_FIT": true,
+  "F_CHIPFIT_DROP": true,
+  "verdict": "GREEN",
+  "torch": "2.8.0"
+}

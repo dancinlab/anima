@@ -1,0 +1,65 @@
+#!/usr/bin/env python3
+# H_876 chip-fit shrink — runtime-generated measurement body (NOT committed).
+# Imports the LANDED CLM/model/model.py + CLM/train/train_clm.py QAT functions.
+# Same-run A/B: mid (d512/L8/E8) vs chip-fit (d148/L8/E8), identical
+# steps/seq/batch/seed/envelope/corpus. quality-drop = chipfit_last_ce - mid_last_ce.
+import json, os, sys, time
+HERE = os.environ["WT"]
+sys.path.insert(0, os.path.join(HERE, "CLM", "model"))
+sys.path.insert(0, os.path.join(HERE, "CLM", "train"))
+import torch
+from model import CLMConfig, CLMConvMoE
+from data import make_batches
+import train_clm as T
+
+ARM="AB"; LAYERS=8; EXPERTS=8; SEED=42; ACT_BITS=4
+STEPS=int(os.environ.get("STEPS","600")); SEQ=64; BATCH=16; LR=3e-3
+CORPUS=os.path.join(HERE,"CLM","corpus","clm_p1.corpus.kosmos")
+NODE_BUDGET=1_200_000
+
+stream = T.load_corpus_byte_stream(CORPUS)
+
+def run_one(d_model):
+    torch.manual_seed(SEED)
+    qcfg = T.QATConfig(act_bits=ACT_BITS, envelope_lambda=0.0)
+    qcfg.validate()
+    cfg = CLMConfig(variant=ARM, d_model=d_model, n_trunk_layers=LAYERS, n_experts=EXPERTS)
+    model = CLMConvMoE(cfg)
+    T._install_functional_qat(model, qcfg)
+    aq = T.ConvQATHook(model, T.QATConfig(act_bits=ACT_BITS, quant_weights=False, quant_acts=True))
+    batches = make_batches(stream, SEQ, BATCH, STEPS, seed=SEED)
+    opt = torch.optim.Adam(model.parameters(), lr=LR)
+    model.train()
+    losses=[]; t0=time.time()
+    with aq:
+        for x,y in batches:
+            opt.zero_grad()
+            diag = T.qat_loss(model, x, y, qcfg)
+            diag["loss"].backward()
+            opt.step()
+            losses.append(float(diag["ce"]))
+    return dict(d_model=d_model, params=model.num_params(),
+                first_ce=round(losses[0],4), last_ce=round(losses[-1],4),
+                wall_s=round(time.time()-t0,2), steps=STEPS)
+
+mid = run_one(512)
+chip = run_one(148)
+drop = round(chip["last_ce"] - mid["last_ce"], 4)
+fit_pass = chip["params"] <= NODE_BUDGET
+drop_pass = drop < 1.0
+result = dict(
+    arm=ARM, layers=LAYERS, experts=EXPERTS, seed=SEED, act_bits=ACT_BITS,
+    steps=STEPS, seq_len=SEQ, batch=BATCH, lr=LR,
+    corpus=os.path.basename(CORPUS), corpus_bytes=len(stream),
+    node_budget=NODE_BUDGET, random_init_ce=round(__import__("math").log(256),4),
+    mid=mid, chipfit=chip,
+    shrink_factor=round(mid["params"]/chip["params"],2),
+    quality_drop_nat=drop,
+    F_CHIPFIT_FIT=fit_pass, F_CHIPFIT_DROP=drop_pass,
+    verdict="GREEN" if (fit_pass and drop_pass) else "RED",
+    torch=torch.__version__,
+)
+print(json.dumps(result, indent=2), flush=True)
+out=os.environ.get("JSON_OUT")
+if out:
+    with open(out,"w") as f: json.dump(result,f,indent=2)
