@@ -34,6 +34,7 @@ weak-panpsy threshold) 가 본 dir 의 cross-domain 운용 instance.
 | `UNIVERSE/` (본 dir) | LIFE 도메인 active hypothesis lane — cycle 진행 시 신규 H_XXX add + 기존 carry 가설 cycle 확장 |
 | `UNIVERSE/CANDIDATES.md` | 다음 cycle 후보 백로그 (forward-looking, 7-domain seed brainstorm 포함) — `/cycle` pick source |
 | [`UNIVERSE/AXES.md`](AXES.md) | **11-domain (확장 71-axis) scope catalog + 15-round H seed brainstorm** (~110 seeds, depletion sweep, 사용자 directive 2026-05-23) |
+| [`UNIVERSE/LAB-CANDIDATES.md`](LAB-CANDIDATES.md) | **hexa-codex `LAB/` consciousness-battery backlog** (cross-repo) — 25 experiments LAB-09..33, anima-hypothesis-grounded · `$0` deterministic falsifiable smoke lane (depletion brainstorm 2026-06-01) |
 | `HEXAD/LAB/` | ad-hoc 실험 instance (도메인 미분류 / 단발 measurement). LAB → LIFE promote 경로 존재 |
 | `HEXAD/CHECK/` | verification frontier (Φ / IIT / closed-form) — LIFE 가설의 verify 도구 |
 | `HEXAD/MITOSIS/` | 성장축 ⊥ HEXAD-6 (orthogonal). 세포 분열/병합 의 구조 anchor — LIFE/H_132 (frozen-cells) 와 cross-link |
