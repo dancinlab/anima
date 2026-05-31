@@ -1,0 +1,55 @@
+{
+  "hypothesis": "H_874",
+  "rung": "mid",
+  "cfg": {
+    "d": 512,
+    "L": 8,
+    "E": 8
+  },
+  "seed": 42,
+  "eval_seed": 863,
+  "candidates_k": 6,
+  "reward_weights": {
+    "w_coh": 1.0,
+    "w_adq": 1.0,
+    "w_div": 0.25
+  },
+  "arms": {
+    "SP": {
+      "coherence": 0.13633504554347473,
+      "ce_heldout": 1.9926398526877165,
+      "adequacy_f1": 0.0375,
+      "register_leak": 0,
+      "self_bleu": 0.02511244377811093,
+      "repetition": 0.028735632183908053
+    },
+    "SR": {
+      "coherence": 0.14434160349464745,
+      "ce_heldout": 1.9355725422501564,
+      "adequacy_f1": 0.03194444444444444,
+      "register_leak": 0,
+      "self_bleu": 0.02561219390304846,
+      "repetition": 0.01867816091954023
+    }
+  },
+  "reflux_stats": {
+    "SP": {
+      "accepted": 59
+    },
+    "SR": {
+      "candidates": 360,
+      "accepted": 60,
+      "rej_leak": 0,
+      "rej_div": 0,
+      "sum_reward": 32.95882151465011,
+      "mean_selected_reward": 0.5493136919108352
+    }
+  },
+  "falsifiers": {
+    "F-CLM-SR-COHERE": true,
+    "F-CLM-SR-ADEQ": false,
+    "F-CLM-SR-LEAK": true,
+    "F-CLM-SR-DIV": true
+  },
+  "verdict": "CLOSED-NEGATIVE"
+}
