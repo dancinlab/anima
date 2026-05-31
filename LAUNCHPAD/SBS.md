@@ -39,8 +39,8 @@
 | R0 | COFFESHOP-on-AKIDA closed loop on live silicon | [`LAUNCHPAD.md`](LAUNCHPAD.md) · `coffeshop_akida_launch.{hexa,py}` | `UNIVERSE/H_846` · `.verdicts/846_launchpad_coffeshop_on_akida/F-LAUNCHPAD-LOOP` | 🟢 **LANDED** (2026-05-31) |
 | R0.5 | broker `/ws/akida_ingest` live push demo | [`AGENT/CHAT/CHAT.md`](../AGENT/CHAT/CHAT.md) · `broker.py` | live end-to-end push | 🟡 wired, demo pending |
 | R1 | content generator wired to emit slot (CLM → words) | `CLM/P4_PRODUCTION_ROADMAP.md` · `.verdicts/clm-prod-rung/` | mid d512/L8/E8 QAT verdict | 🟠 **MEASUREMENT-COMPLETE** (mid trains under int4 envelope · PR #1553) |
-| R2 | live learning coupled to dialogue (on-chip PLASTICITY) | `UNIVERSE/H_861·H_865`(BOUND) · `H_862·H_873`(ANCHOR) · `H_866`(loop) | `F-CLM-BOUND` · `F-CLM-ANCHOR` · `F-CLM-PLAST-DIALOGUE` | 🟡 **partial** — BOUND 🟢 adapter (#1561) · LOOP 🟢 R2-safe (#1558) · ANCHOR-PROBE 🔄 H_873 · GAIN 🔴 capacity |
-| R3 | dialogue quality (SFT + self-play) benchmarked | `UNIVERSE/H_863·H_864·H_867·H_868` | `F-CLM-DIALOGUE` · `.verdicts/clm-dialogue*/` | 🟡 **partial** — mid 🟢 (#1555) · large 🔴 (#1557) · absolute 🔴 (#1560) · corpus 3× 🟢 (#1559) |
+| R2 | live learning coupled to dialogue (on-chip PLASTICITY) | `CLM/CLM_CAMPAIGN_26.md` · `H_865`(BOUND) · `H_873/884`(ANCHOR) · `H_872/879/881/883` | `F-CLM-BOUND` · `F-CLM-ANCHOR` · `F-CLM-PLAST-*` | 🟢 **SUPPORTED (mid)** — edge-learn stack closes: adapter(BOUND)🟢 + ANCHOR 🟢 H_873/884 + freeze 🟢 H_872/881 + per-layer 🟢 H_879 + replay 🟢 H_883. GAIN-capacity 🔴 H_866 (→ H_899 MITOSIS, deferred) |
+| R3 | dialogue quality (SFT + self-play) benchmarked | `UNIVERSE/H_863·H_867·H_868·H_886` | `F-CLM-DIALOGUE` · `F-CLM-DIALOGUE-FLOOR` · `.verdicts/clm-dialogue*/` | 🟢 **mid CLOSED** — self-play 🟢 (#1555) · corpus 3× 🟢 (#1559) · **absolute floor 🟢 H_886 curriculum (#1590)**. large transfer 🔴 (→ H_888, deferred) |
 | R4 | coffeeshop group-chat production launch | (launch doc — TBD on R1–R3) | end-to-end 90-min soak | ⏳ planned |
 
 R0 verdict (live AKD1000, device `BC.00.000.002`, `BackendType.Hardware`):
