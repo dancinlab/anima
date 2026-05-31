@@ -1,0 +1,20 @@
+LAB-09 phi-directionality smoke — n=5 T=120000 seed=42
+  FF  done
+  REC done
+  CTRL done
+LAB-09 — consciousness directionality proxy (1st smoke)
+seed=42 n_units=5 steps=120000
+
+arm                    phi      whole    parts    self_pred
+FF  (unidirectional)   0.005391   0.005467   7.5e-05   0.010796
+REC (bidirectional)    0.854292   2.22872   1.37443   2.32818
+REC_shuffled (control) 0.006289   0.006664   0.000375   0.01027
+
+delta_phi  (REC - FF)        = 0.848901 bits
+delta_self (REC - FF)        = 2.31738 bits
+shuffled_control_band        = 0.000898 bits
+
+falsifier phi_REC>FF (beyond control)  : true
+falsifier self_REC>FF                  : true
+falsifier shuffle_collapses_phi        : true
+VERDICT supported (all 3)              : true
