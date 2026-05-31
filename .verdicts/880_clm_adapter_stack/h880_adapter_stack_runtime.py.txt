@@ -1,0 +1,130 @@
+"""H_880 adapter-stack runtime harness (executed at runtime; repo source-of-truth is the .hexa contract).
+Stacks K H_865 thin adapters (one per context), switches per-context. Falsifiers:
+  F-STACK-NEW-GAIN     : min_k gain_k > 0.0
+  F-STACK-OLD-Z-DROP   : z_drop_old < 1.0   (BOUND cutoff bf98c01 verbatim)
+  F-STACK-INTERFERENCE : own-best-margin = max_{i!=j}(-interf) < 0.0  (own adapter strictly best)
+"""
+from __future__ import annotations
+import argparse, json, os, sys
+import torch, torch.nn as nn, torch.nn.functional as F
+
+CLM_MODEL_DIR = sys.argv[sys.argv.index("--clmdir")+1] if "--clmdir" in sys.argv else "."
+sys.path.insert(0, CLM_MODEL_DIR)
+from model import CLMConfig, CLMConvMoE  # noqa
+from h865_adapter_edge import (  # noqa
+    AdapterEdge, ADAPTER_RANK, LR_EDGE, N_ADAPT, SEQ_LEN, BATCH_SIZE, N_EVAL_BATCHES,
+    THR_Z_DROP, make_lane_bytes, batchify, infer_config_and_load,
+)
+
+CONTEXTS = [("web",401),("new",402),("new",403),("new",404)]  # ctx0 = oldest
+K = len(CONTEXTS)
+THR_INTERFERENCE = 0.0
+
+class StackedAdapterCLM(nn.Module):
+    def __init__(self, base, k):
+        super().__init__()
+        self.base = base
+        for p in self.base.parameters(): p.requires_grad_(False)
+        self.adapters = nn.ModuleList([AdapterEdge(base.cfg.d_model, ADAPTER_RANK) for _ in range(k)])
+        self.active = 0
+    def _hp(self, tokens, idx):
+        b = self.base
+        x = b.embed(tokens).transpose(1,2); x = b.embed_conv(x)
+        for layer in b.trunk: x = layer(x)
+        x,_ = b.moe(x); h = b.norm_out(x)
+        return h if idx is None else self.adapters[idx](h)
+    def forward(self, tokens, targets=None, adapter_idx="active"):
+        idx = self.active if adapter_idx=="active" else adapter_idx
+        logits = self.base.readout(self._hp(tokens, idx))
+        out = {"logits": logits}
+        if targets is not None:
+            out["ce_loss"] = F.cross_entropy(
+                logits.transpose(1,2).reshape(-1, self.base.cfg.vocab_size), targets.reshape(-1))
+        return out
+    def freeze_all(self):
+        for a in self.adapters:
+            for p in a.parameters(): p.requires_grad_(False)
+    def set_trainable(self, k):
+        self.freeze_all()
+        for p in self.adapters[k].parameters(): p.requires_grad_(True)
+
+def ce_with(model, batches, idx):
+    ces=[]
+    with torch.no_grad():
+        for toks,tgts in batches:
+            ces.append(model(toks,tgts,adapter_idx=idx)["ce_loss"].item())
+    t=torch.tensor(ces); return t.mean().item(), t.std(unbiased=False).item()
+
+def main():
+    ap=argparse.ArgumentParser()
+    ap.add_argument("--ckpt", required=True); ap.add_argument("--out", required=True)
+    ap.add_argument("--clmdir", required=True); ap.add_argument("--save-adapters", default=None)
+    args=ap.parse_args()
+    device="cuda" if torch.cuda.is_available() else "cpu"
+    torch.manual_seed(0); os.makedirs(args.out, exist_ok=True)
+    base,cfg,missing,unexpected,_=infer_config_and_load(args.ckpt); base=base.to(device)
+    print("[h880] backbone d=%d L=%d E=%d V=%d params=%d device=%s"%(cfg.d_model,cfg.n_trunk_layers,cfg.n_experts,cfg.vocab_size,base.num_params(),device))
+    print("[h880] missing=%s unexpected=%s"%(missing,unexpected))
+
+    train_b,eval_b=[],[]
+    for kind,seed in CONTEXTS:
+        b=make_lane_bytes(kind,30000,seed); half=len(b)//2
+        train_b.append(batchify(b[:half],SEQ_LEN,N_ADAPT,BATCH_SIZE,seed+10))
+        eval_b.append(batchify(b[half:],SEQ_LEN,N_EVAL_BATCHES,BATCH_SIZE,seed+20))
+
+    model=StackedAdapterCLM(base,K).to(device); model.eval()
+    ce_pre,sd_pre=[],[]
+    for k in range(K):
+        m,s=ce_with(model,eval_b[k],None); ce_pre.append(m); sd_pre.append(s)
+    sd_ctx0_pre=sd_pre[0]
+
+    gains,ce_post_own=[],[]
+    for k in range(K):
+        model.set_trainable(k); model.active=k
+        opt=torch.optim.Adam(model.adapters[k].parameters(), lr=LR_EDGE)
+        model.train()
+        for i in range(N_ADAPT):
+            toks,tgts=train_b[k][i]; toks,tgts=toks.to(device),tgts.to(device)
+            out=model(toks,tgts,adapter_idx=k); opt.zero_grad(); out["ce_loss"].backward(); opt.step()
+        model.eval(); model.freeze_all()
+        mp,_=ce_with(model,eval_b[k],k); ce_post_own.append(mp); gains.append(ce_pre[k]-mp)
+
+    ce_ctx0_after_full,_=ce_with(model,eval_b[0],0)
+    # prereg SSOT: z_drop_old = (ce_ctx0_after_full_stack - ce_ctx0_pre[base]) / sd_ctx0_pre (bf98c01 BOUND convention)
+    z_drop_old=(ce_ctx0_after_full-ce_pre[0])/max(sd_ctx0_pre,1e-6)
+
+    own_std=[ce_with(model,eval_b[i],i)[1] for i in range(K)]
+    ce_matrix=[[0.0]*K for _ in range(K)]; interf=[[0.0]*K for _ in range(K)]
+    for i in range(K):
+        ce_own_i,_=ce_with(model,eval_b[i],i)
+        for j in range(K):
+            ce_ij,_=ce_with(model,eval_b[i],j); ce_matrix[i][j]=round(ce_ij,5)
+            interf[i][j]=(ce_ij-ce_own_i)/max(own_std[i],1e-6)
+    neg=[-interf[i][j] for i in range(K) for j in range(K) if i!=j]
+    own_best_margin=max(neg)
+    worst=max(((i,j) for i in range(K) for j in range(K) if i!=j), key=lambda p:-interf[p[0]][p[1]])
+
+    min_gain=min(gains)
+    NEW=bool(min_gain>0.0); OLD=bool(z_drop_old<THR_Z_DROP); INT=bool(own_best_margin<THR_INTERFERENCE)
+    verdict="GREEN" if (NEW and OLD and INT) else "RED"
+    res={"hypothesis":"H_880 F-CLM-ADAPTER-STACK (stacked thin adapters, per-context switch)","rung":"mid d512/L8/E8",
+        "K":K,"contexts":[{"kind":c[0],"seed":c[1]} for c in CONTEXTS],"adapter_rank":ADAPTER_RANK,
+        "n_adapt_per_ctx":N_ADAPT,"lr_edge":LR_EDGE,
+        "ce_pre_base":[round(x,5) for x in ce_pre],"sd_pre_base":[round(x,5) for x in sd_pre],
+        "ce_post_own_adapter":[round(x,5) for x in ce_post_own],"gain_per_ctx":[round(g,5) for g in gains],
+        "min_gain":round(min_gain,5),"ce_ctx0_post_own":round(ce_post_own[0],5),
+        "ce_ctx0_after_full_stack":round(ce_ctx0_after_full,5),"sd_ctx0_pre":round(sd_ctx0_pre,5),
+        "z_drop_old":round(z_drop_old,5),"ce_matrix_i_with_adapter_j":ce_matrix,
+        "interference_matrix_signed":[[round(interf[i][j],5) for j in range(K)] for i in range(K)],
+        "own_best_margin":round(own_best_margin,5),"worst_interference_pair_i_j":list(worst),
+        "threshold_new_gain":">0.0","threshold_old_z_drop":"<1.0 (bf98c01 BOUND verbatim)",
+        "threshold_interference":"<0.0 (own adapter strictly best)",
+        "NEW_GAIN_pass":NEW,"OLD_Z_DROP_pass":OLD,"INTERFERENCE_pass":INT,"verdict":verdict,
+        "note":"SW-sim edge-learn (H_679 real); K adapters one-at-a-time param-isolation; per-context switch; frozen thr (NEW-GAIN/INTERFERENCE=H_880 prereg, OLD-Z-DROP=bf98c01); measurement rung only"}
+    print("[h880 STACK]", json.dumps(res))
+    with open(os.path.join(args.out,"clm_adapter_stack_result.json"),"w") as f: json.dump(res,f,indent=2)
+    if args.save_adapters:
+        torch.save({"adapters":[a.state_dict() for a in model.adapters],"K":K,"adapter_rank":ADAPTER_RANK,"contexts":CONTEXTS}, args.save_adapters)
+        print("[h880] saved adapters ->", args.save_adapters)
+
+if __name__=="__main__": main()
