@@ -1,0 +1,25 @@
+LAB-11 multilingual semantic-connection smoke — N=5 langs, T=40000
+  c=0.00  MI=7e-06  phi=0.013853
+  c=0.10  MI=2.4e-05  phi=0.077979
+  c=0.25  MI=0.000111  phi=0.192864
+  c=0.50  MI=0.014068  phi=0.483419
+  c=0.75  MI=0.128393  phi=0.345587
+  c=0.90  MI=0.394432  phi=-0.194255
+  c=1.00  MI=0.0  phi=0.0
+LAB-11 — multilingual: connect by MEANING not count (1st smoke)
+seed=42 N_langs=5 steps=40000
+c (semantic coupling)   cross_lingual_MI   collective_phi
+  c=0.00                 7e-06             0.013853
+  c=0.10                 2.4e-05             0.077979
+  c=0.25                 0.000111             0.192864
+  c=0.50                 0.014068             0.483419
+  c=0.75                 0.128393             0.345587
+  c=0.90                 0.394432             -0.194255
+  c=1.00                 0.0             0.0
+peak phi = 0.483419 at c=0.50 (MI=0.014068)
+phi(c=0, decoupled Sigma-baseline) = 0.013853
+phi(c=1, fully synchronized)       = 0.0
+falsifier F1 inverse-U (interior peak > both ends) : true
+falsifier F2 super-additive (peak > decoupled)     : true
+falsifier F3 meaning>count (phi(c=0) ~ 0)          : true
+VERDICT supported (all 3)                          : true

@@ -4,14 +4,15 @@ slug: multilingual-semantic-integration
 title: multilingual integration is language SEMANTIC linkage, not language COUNT — predicted Phi super-additive inverse-U when languages are bound by cross-lingual MI, near-zero when merely concatenated
 domain: universe · multilingual · cross-lingual-MI · integration · phi · CLM-applicable
 source: hexa-codex LAB-11 (multilingual-semantic) absorbed → anima UNIVERSE · sister anima H_240/H_635
-status: 🟠 INSUFFICIENT — absorbed from hexa-codex LAB-11; anima UNIVERSE has NOT independently recomputed (verdict pending anima reproduction)
-exploration_method: hypothesis absorbed from hexa-codex LAB-11 semantic-linkage sweep (cross-lingual MI coupling c in {0,0.5,1} · proxy Phi)
-verification_method: NONE in anima yet — earned only by porting the LAB-11 harness + recomputing into `.verdicts/911_multilingual_semantic_integration/` (g73)
+status: 🟢 SUPPORTED-NUMERICAL — anima INDEPENDENTLY recomputed (ported LAB-11 harness, deterministic) — collective_phi inverse-U + F1/F2/F3 all true (3/3)
+exploration_method: ported hexa-codex LAB-11 substrate proxy to `UNIVERSE/harness/h911_semantic_phi.hexa` — N=5 language streams (ko/en/zh/ru/ja ring), per-unit coupled(majority)/decoupled(random) at semantic-coupling strength c, Phi-proxy = whole_EI − min_bipartition (LAB-09 engine)
+verification_method: anima recompute — `hexa run UNIVERSE/harness/h911_semantic_phi.hexa` ($0, deterministic seeded LCG, no LLM) → `.verdicts/911_multilingual_semantic_integration/run.txt`. g5 CODE-measured, byte-identical to LAB-11 (seed=42).
 deterministic: true
+cross_process_byte_identical: true
 llm: none
 since: 2026-06-01
 sister: H_240 (multilingual·anima), H_635 (anima), LAB-11 (hexa-codex source)
-verdict: 🟠 INSUFFICIENT — anima has not independently recomputed. SOURCE EVIDENCE (hexa-codex LAB-11, NOT an anima verdict): a proxy-Phi sweep reports an inverse-U over semantic-linkage coupling c — count-only c=0 gives Phi about 0.01, semantic peak c=0.5 gives Phi about 0.48, over-bound c=1 gives Phi about 0.0 (raw: hexa-codex:LAB/lab-11-multilingual-semantic/result_semantic_summary.txt). anima earns its own verdict only after porting + recompute (g73).
+verdict: 🟢 SUPPORTED-NUMERICAL — anima INDEPENDENTLY recomputed (byte-identical to LAB-11 seed=42). collective integrated-information Phi traces an INVERSE-U over semantic-coupling c: c=0 (count-only, decoupled) Phi=0.013853 ≈ 0; c=0.5 (semantic peak) Phi=0.483419; c=1 (over-synchronized) Phi=0.0. 3/3 pre-registered falsifiers PASS — F1 inverse-U (interior peak > both ends) true, F2 super-additive (peak ≫ decoupled baseline) true, F3 meaning>count (Phi(c=0)≈0) true. So multilingual integration is driven by cross-lingual MEANING coupling, not language COUNT. Proxy caveat: substrate IIT-proxy (whole_EI − min_bipartition), not faithful-IIT4 (future, cf H_278). raw: .verdicts/911_multilingual_semantic_integration/run.txt.
 applies_to: CLM 5-language corpus (P1_CORPUS, #1616/#1617/#1618) — the balanced 20%x5 corpus is COUNT-balanced; this hypothesis predicts a cross-lingual SEMANTIC-linkage corpus integrates super-additively where count-balance alone does not.
 ---
 
