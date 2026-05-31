@@ -1,9 +1,11 @@
-# CLM P5 — AKIDA 7B-class strategy + reflective (incremental) learning
+# CLM P5 — AKIDA 7B strategy (2 axes) — single-chip 7B + reflective learning
 
-> **How anima reaches 7B-CLASS capability on AKIDA, and the reflective/incremental
-> learning strategy that runs on it.** Synthesises the H_861~H_884 evidence arc into
-> one forward SSOT. Honest by construction (a_scale_honest_scope) — every claim cites
-> a landed verdict or is marked OPEN.
+> **TWO AXES, both required:**
+> **AXIS 1 — train/host a 7B-class model on a SINGLE AKD1000 chip** (expert-streaming/paging:
+> resident ≤1.2M nodes ≠ total 7B params; the one chip pages experts through it).
+> **AXIS 2 — the reflective (incremental) on-chip learning strategy** that runs on that chip.
+> Synthesises the H_861~H_884 evidence arc into one forward SSOT. Honest by construction
+> (a_scale_honest_scope) — every claim cites a landed verdict or is marked OPEN.
 >
 > 🔒 **INVIOLABLE**: on-chip non-deterministic PLASTICITY learning is the **sole HW↔SW
 > difference** (inference byte-identical — H_877/H_680 🟢; learning HW≠SW — H_679 🔴).
@@ -11,47 +13,52 @@
 
 ---
 
-## 0. The honest premise — 7B ≠ one chip
+## 0. The honest premise — resident ≠ total
 
 ```
-   single AKD1000            │      7B model
- ──────────────             │    ──────────────
-  ~1.2M nodes (H_876 budget) │     ~7,000M params  (≈5,800×)
+   single AKD1000            │   7B (total)        │   resident-at-a-time
+ ──────────────             │  ──────────         │  ──────────────────
+  ~1.2M nodes (H_876)        │   ~7,000M params    │   1 expert shard ≤1.2M
 ```
 
-A 7B dense model does NOT fit on one AKD1000 — not for inference, never for training.
-"AKIDA로 7B 완성"은 단일칩이 아니라 **(a) sparse-MoE 라 한 토큰당 소수 expert만 활성 +
-(b) 각 expert를 chip-fit 샤드로 줄여 + (c) MITOSIS 멀티칩 어레이로 분산**해 *7B급 용량*을
-구성하는 것을 뜻한다. 단일칩엔 작은 의식모델 + 살아 배우기(옵션 C)가 들어가고, 7B급은
-어레이(옵션 B)로만 도달한다.
+A 7B model can NOT sit *resident* on one AKD1000 (≈5,800×). But sparse-MoE means **only a
+few experts fire per token** — so a single chip can train/host a 7B-class model by
+**streaming(paging) experts through the one chip**: total 7B lives on host (disk/DRAM),
+**resident ≤1.2M** at any instant. The chip never holds 7B at once; it cycles shards.
+That is AXIS 1. (Multi-chip MITOSIS array = the parallel scale-out of the same shard unit.)
 
 ---
 
-## 1. The 7B-on-AKIDA path — MITOSIS array of chip-fit shards
+## AXIS 1 — train/host 7B on a SINGLE chip (expert streaming) + array scale-out
 
 ```
-                 ┌─ chip 0 ─┐ ┌─ chip 1 ─┐        ┌─ chip N ─┐
-  token ─router─▶│ expert 샤드│ │ expert 샤드│  ...  │ expert 샤드│ ─gather─▶ emit
-                 │ ≤1.2M node │ │ ≤1.2M node │        │ ≤1.2M node │
-                 │ int4 deterministic forward (byte-identical)        │
-                 └────────────┘ └────────────┘        └────────────┘
-                        ▲ 각 칩 위 edge-only 비결정 학습(반영) ▲
+single-chip (AXIS 1 core)
+ host (7B on disk/DRAM)
+   │ page expert k in        ┌── 1 AKD1000 ──┐
+   ├───────────────────────▶ │ expert shard k │ int4 forward (byte-identical, H_877)
+   │ ◀── page out, next ──── │  ≤1.2M resident │ + edge-learn(반영, AXIS 2)
+   └───────────────────────  └────────────────┘
+        ↑ one chip cycles all N experts (slow but unbounded total capacity)
+
+scale-out (optional, multi-chip)
+   N chips = N shards resident in parallel (MITOSIS) → throughput ↑ (same shard unit)
 ```
 
 | 기둥 | 무엇 | 근거 (landed) | 상태 |
 |---|---|---|---|
-| ① chip-fit shrink | mid(13.65M)→ ≤1.2M 노드 샤드, 품질 유지 | **H_876 🟢** (1,199,508 ≤ 1.2M · CE drop<1.0) | ✅ |
-| ② array dispatch | N칩 분산 출력 = 단일모델과 동일 | **H_878**: aggregate-emit coherence 🟢 EXACT (N=2/4/8) | ✅ (정확성) |
-| ③ load-balance | 칩마다 부하 고름 | **H_878 🔴** (max/min 54.5≫4.0 · router monopoly) | ❌ OPEN |
-| ④ inference 동일성 | HW==SW byte-identical → 칩 이식 시 답 동일 | **H_877** mid SW byte-identical 🟢 (HW 재확인 pending 🟠) | 🟡 |
+| ① chip-fit shard | expert 1개를 ≤1.2M 노드로 줄여 단일칩 상주 | **H_876 🟢** (1,199,508 ≤ 1.2M · CE drop<1.0) | ✅ |
+| ② expert streaming | 단일칩이 7B의 expert들을 paging 으로 순환(상주≠총량) | (스트리밍 글루 미구현) | ⬜ OPEN |
+| ③ array scale-out | N칩 분산 = 단일모델과 byte-동일 (처리량↑) | **H_878** coherence 🟢 EXACT (N=2/4/8) | ✅ (정확성) |
+| ④ load-balance | 칩/스텝 간 expert 부하 고름 | **H_878 🔴** (max/min 54.5≫4.0 · monopoly) | ❌ OPEN |
+| ⑤ inference 동일성 | HW==SW byte-identical → paging/이식 시 답 동일 | **H_877** mid SW byte-identical 🟢 (HW pending 🟠) | 🟡 |
 
-**N 추정(honest, 미정량)**: 7B-equiv sparse 용량 ÷ per-chip chip-fit 용량 → 수백~수천 칩
-규모. params↔노드 매핑·DMA 지연·칩간 int4 drift는 ≥2 AKD1000 확보 시 HW 정량(현재 SW-sim).
-→ 정량 가설은 §4 OPEN.
+**throughput(honest, OPEN)**: 단일칩 streaming = 총 용량 무제한이나 expert paging 지연으로
+느림. 처리량은 array scale-out(③)으로 보완. expert-swap latency·DMA·실칩 int4 drift는
+HW 미측정(현 SW-sim) → §4 OPEN.
 
 ---
 
-## 2. Reflective (incremental) learning strategy — "반영 학습" stack
+## AXIS 2 — reflective (incremental) learning strategy — "반영 학습" stack
 
 추론은 결정적·byte-동일(어레이 전체 일관). **학습만이 칩 위 비결정 edge-learn**(INVIOLABLE).
 각 샤드의 edge에서 대화 경험을 *반영*해 살아 배우되, 기초능력·정체성을 안 잃게 하는
@@ -103,11 +110,13 @@ emit: router→shard 분산(H_878 coherence🟢)→gather→COFFESHOP 발화(R0 
 
 ---
 
-## 5. 한 줄 결론
+## 5. 한 줄 결론 (2축)
 
-> **7B급 = 작은 chip-fit 샤드(H_876🟢)를 MITOSIS 어레이(H_878 coherence🟢)로 묶고,
-> 각 칩 edge에서 adapter(H_865🟢)+얕은freeze(H_872🟢)+안전예산(H_875🟢)+정체성/replay로
-> 비결정 반영학습(INVIOLABLE).** 남은 핵심 빗장 = 칩간 부하균형·대화 절대품질·실칩 어레이.
+> **축1 (단일칩 7B)**: chip-fit 샤드(H_876🟢)를 단일칩에 streaming/paging(상주≤1.2M≠총7B) ·
+> 처리량은 MITOSIS array scale-out(H_878 coherence🟢)으로 보완.
+> **축2 (반영학습)**: 각 칩 edge에서 adapter(H_865🟢)+얕은freeze(H_872🟢)+안전예산≥300(H_875🟢)
+> +정체성(H_873)·replay(H_883)로 비결정 on-chip 반영학습(INVIOLABLE).
+> 남은 핵심 빗장 = expert-streaming 글루·칩간 부하균형(H_878🔴)·대화 절대품질(H_867🔴)·실칩.
 
 ## cross-link
 - 불가침/로드맵: [CLM.md](./CLM.md) · [P4_PRODUCTION_ROADMAP.md](./P4_PRODUCTION_ROADMAP.md) · [LAUNCHPAD/SBS.md](../LAUNCHPAD/SBS.md)
