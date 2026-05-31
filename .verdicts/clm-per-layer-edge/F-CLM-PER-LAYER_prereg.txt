@@ -1,0 +1,59 @@
+F-CLM-PER-LAYER — PRE-REGISTERED frozen thresholds (H_879 per-layer incremental edge-learn · 부분부분학습)
+========================================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed).
+Thresholds REUSED VERBATIM from F-CLM-BOUND prereg (commit bf98c01). post-tuning = 0.
+The probe VARIES WHICH SINGLE trunk layer is adapted ONLY; NO threshold may move to flip a verdict after fire.
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-per-layer-edge/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, ~13.7M params) only.
+  A 🔴/🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+  toy/mid → prod NOT guaranteed. Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS  (UNIVERSE/CLM-CANDIDATES.md §E · 부분부분학습)
+  H_872 (freeze-depth sweep) found that unfreezing a CONTIGUOUS BLOCK of the top-k
+  trunk layers (k together) on top of the H_865 adapter edge maps a (z_drop,gain)
+  curve; shallow freeze suffices to keep base ability while absorbing new context.
+  H_879 asks the ORTHOGONAL, finer question (부분부분학습 = piecewise learning):
+  adapt EXACTLY ONE trunk layer at a time — each of the n_trunk layers INDIVIDUALLY,
+  the rest of the trunk + moe + embed FROZEN — and report PER-LAYER (gain, z_drop).
+  Does per-layer piecewise edge-learn absorb new context WITHOUT a full retrain, and
+  WHICH single layer is the best incremental edge?
+    INVIOLABLE (@L1 · H_679): edge-only / piecewise; NO deterministic full-retrain.
+  Falsifier: ∃ a single trunk layer L_i with gain > 0 ∧ z_drop < 1.0.
+
+PER-LAYER PARAMETRIZATION (E5 single-variable ablation — distinct from H_872 block-k)
+  layer i ∈ {0 .. n_trunk-1}  (i = trunk layer index; 0 = nearest input, n_trunk-1 = nearest readout)
+    Adapt EXACTLY trunk[i] (that one layer's params become trainable); EVERY OTHER
+    trunk layer + embed + embed_conv + moe + norm_out + readout stays FROZEN.
+  The H_865 adapter (zero-init additive path, norm_out→adapter→FROZEN readout) is ALWAYS
+  the trainable edge so that the single-layer probe is never a dead-readout edge (H_861).
+  This is one-layer-at-a-time piecewise learning, NOT the H_872 contiguous top-k block.
+  Each probe re-instantiates a CLEAN frozen base from the original state_dict (no carryover).
+
+BACKBONE
+  mid rung d_model=512 / n_trunk_layers=8 / n_experts=8, AKIDA envelope.
+  Loaded FROZEN from clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — SAME backbone
+  H_861/H_865/H_872 used.
+
+NEW-CONTEXT vs BASE-ABILITY BATCHES (frozen split, fixed seeds — same as bf98c01)
+  base-ability held-out : make_lane_bytes("web", BASE_SEED=101) — the "old skill".
+  new-context held-out   : make_lane_bytes("new", NEW_SEED=202) high-band cyclic motif.
+  Both: seq_len=64, batch_size=16, n_eval_batches=32, fixed seeds. lr_edge=3e-3, N_ADAPT=300.
+
+MEASUREMENT PROCEDURE (computed by code, g5 — no LLM judge)
+  For each single trunk layer index i:
+    1. Re-instantiate frozen base; unfreeze ONLY trunk[i]; insert H_865 adapter (trainable).
+    2. ce_base_pre, sd_base_pre, ce_new_pre (pre-adapt).
+    3. N_ADAPT=300 steps of Adam over the TRAINABLE params (adapter + trunk[i] only).
+    4. ce_base_post, ce_new_post (post-adapt).
+    5. z_drop = (ce_base_post - ce_base_pre) / max(sd_base_pre, 1e-6); gain = ce_new_pre - ce_new_post.
+
+FROZEN NUMERICAL THRESHOLDS (bf98c01 verbatim — NOT moved by this probe)
+  F-CLM-BOUND-RETAIN  PASS iff   z_drop < 1.0
+  F-CLM-BOUND-GAIN    PASS iff   gain   > 0.0
+  A single layer PASSES iff (z_drop < 1.0) AND (gain > 0.0).
+  PER-LAYER VERDICT 🟢 iff ∃ a passing single layer. Else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+
+ARTIFACTS
+  .verdicts/clm-per-layer-edge/clm_per_layer_edge_result.json (full per-layer (z_drop,gain) table)
+  .verdicts/clm-per-layer-edge/F-CLM-PER-LAYER.txt (verdict verbatim).
