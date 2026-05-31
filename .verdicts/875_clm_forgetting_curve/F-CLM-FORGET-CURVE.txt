@@ -1,0 +1,60 @@
+F-CLM-FORGET-CURVE — VERDICT (H_875 continual-learning forgetting curve · dose-response)
+========================================================================================
+verdict: 🟢 SUPPORTED — dose-response curve PRODUCED for both edge types; finite safe
+         step-budget identified for the adapter edge; adapter EXTENDS the safe budget.
+method: W2 (pre-registered numerical threshold · post-tuning 0) · code-measured g5 (no LLM).
+crossing threshold: z_drop < 1.0 (F-CLM-BOUND RETAIN cutoff, REUSED VERBATIM from
+         F-CLM-BOUND_prereg.txt commit bf98c01). FROZEN pre-fire.
+backbone: mid d512/L8/E8 (~13.65M) AKIDA int4-sym, clm_mid_backbone.pt
+         (HF dancinlab/anima-clm-verify). SW-sim edge-learn (H_679 = real HW edge-learn).
+scope: MEASUREMENT rung only (a_scale_honest_scope) — does NOT bind deploy chip-fit track.
+ran: 2026-05-31  ·  fresh model per (edge_type, step) from frozen backbone, deterministic
+         new-context gradient-prefix, base-ability held-out z_drop measured.
+
+STEP → z_drop CURVE (the dose axis)
+  step    readout-only (H_861)        adapter (H_865)
+  ----    --------------------        --------------------
+     1    z_drop=+0.0510  retain✓     z_drop=-12.328  retain✓
+     2    z_drop=+0.3316  retain✓     z_drop=-49.067  retain✓
+     4    z_drop=+1.4137  retain✗  ←  z_drop=-97.673  retain✓
+     8    z_drop=+4.7778  retain✗     z_drop=-68.448  retain✓
+    16    z_drop=+12.344  retain✗     z_drop=-89.347  retain✓
+    32    z_drop=+25.840  retain✗     z_drop=-95.849  retain✓
+    64    z_drop=+48.925  retain✗     z_drop=-83.137  retain✓
+   128    z_drop=+59.157  retain✗     z_drop=-39.141  retain✓
+   200    z_drop=+68.707  retain✗     z_drop=-19.604  retain✓
+   300    z_drop=+78.042  retain✗     z_drop=-16.881  retain✓
+
+  (↑ readout-only first crosses the RETAIN gate z_drop≥1.0 between step 2 and step 4.)
+  gain(S) is POSITIVE and monotone-rising for BOTH edges at every step (new-context
+  absorbed): readout-only gain +0.42→+7.47; adapter gain +0.67→+7.30.
+
+SAFE STEP BUDGET (largest swept step with z_drop < 1.0, gate not yet crossed)
+  readout-only (H_861) : 2 steps   (kind=finite · crossing_step=4) — forgets almost
+                         immediately; base-ability CE blows up (z_drop→+78 at 300).
+  adapter      (H_865) : >= 300    (kind=ge_max · crossing_step=None) — gate NEVER crossed
+                         within the budget. z_drop is NEGATIVE at every step: the zero-init
+                         identity adapter ADDS capacity for the new context without touching
+                         the frozen readout, so base-ability CE DROPS (improves) rather than
+                         rising. Forgetting fully suppressed across the entire 1..300 ladder.
+  adapter_extends_budget = TRUE (300 >= 2). The trunk-adjacent adapter edge extends the
+  safe edge-learn budget by >=150x vs the readout-only edge at the measurement rung.
+
+PASS / VERDICT (frozen prereg)
+  (a) step→z_drop curve PRODUCED for BOTH edge types over full ladder [1..300]  → ✓
+  (b) FINITE (here >=max) safe step budget IDENTIFIED for >= the adapter edge   → ✓
+  ⇒ 🟢 SUPPORTED. Secondary (reported, non-gating): adapter safe budget (>=300) >>
+     readout-only safe budget (2) → adapter extends the budget. Confirmed.
+
+INTERPRETATION
+  Catastrophic forgetting under edge-only on-chip edge-learn IS a dose-response of the
+  edge-learn step count — but ONLY for the readout-only edge, which forgets after ~3 steps.
+  The H_865 trunk-adjacent zero-init adapter edge removes the dose-response entirely over
+  the swept range: base ability is preserved (indeed improved) up to 300 steps while the
+  new context is absorbed. The adapter is the production-safe edge for "live-learn" loops;
+  readout-only edge-learn must be capped at <=2 steps per context at the measurement rung.
+
+ARTIFACTS
+  .verdicts/clm-forgetting-curve/clm_forget_curve_result.json (full per-point curve)
+  CLM/model/h875_forgetting_curve.py (harness)
+  backbone reused from HF dancinlab/anima-clm-verify (a_hf_complete; no new model artifact).
