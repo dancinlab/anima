@@ -1,0 +1,1046 @@
+{
+  "campaign": "H_881 progressive freeze (BOUND E5 dynamic)",
+  "frozen_thresholds_commit": "bf98c01",
+  "threshold_z_drop": "<1.0 at every checkpoint",
+  "threshold_gain": ">0.0 at every checkpoint",
+  "rung": "mid d512/L8/E8",
+  "n_trunk_layers": 8,
+  "adapter_rank": 64,
+  "n_segments": 6,
+  "seg_steps": 50,
+  "n_adapt": 300,
+  "builds_on": "H_872 (static freeze-depth, END-only; best static depth=3; boundary non-monotone, static depth4 FAILS)",
+  "schedule_semantics": "depth_k = # of TOP trunk layers trainable in segment k; H_865 adapter always the edge; boundary MOVES between segments keeping learned values (no re-init), only requires_grad flips + opt rebuilt (edge-only piecewise, no full-retrain @L1/H_679)",
+  "edge_learn": "SW-sim (H_679 HW edge-learn real); measurement rung a_scale_honest_scope",
+  "schedules_tested": {
+    "S1_static0": [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    "S2_static3": [
+      3,
+      3,
+      3,
+      3,
+      3,
+      3
+    ],
+    "S3_deepen": [
+      0,
+      0,
+      1,
+      1,
+      2,
+      3
+    ],
+    "S4_shrink": [
+      3,
+      3,
+      2,
+      1,
+      1,
+      0
+    ],
+    "S5_anneal": [
+      3,
+      2,
+      1,
+      0,
+      0,
+      0
+    ],
+    "S6_cross4": [
+      3,
+      4,
+      3,
+      4,
+      3,
+      4
+    ],
+    "S7_grow_then_freeze": [
+      1,
+      2,
+      3,
+      2,
+      1,
+      0
+    ]
+  },
+  "results": [
+    {
+      "name": "S1_static0",
+      "schedule": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_new_pre": 10.74535,
+      "checkpoints": [
+        {
+          "segment": 0,
+          "step": 50,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 7.21965,
+          "ce_new_post": 4.91722,
+          "z_drop": -88.72091,
+          "gain": 5.82813,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 1,
+          "step": 100,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 9.52335,
+          "ce_new_post": 4.20839,
+          "z_drop": -59.12286,
+          "gain": 6.53697,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 2,
+          "step": 150,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 9.76095,
+          "ce_new_post": 4.01341,
+          "z_drop": -56.07011,
+          "gain": 6.73194,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 3,
+          "step": 200,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 10.17361,
+          "ce_new_post": 3.8549,
+          "z_drop": -50.76829,
+          "gain": 6.89045,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 4,
+          "step": 250,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 9.54949,
+          "ce_new_post": 3.81261,
+          "z_drop": -58.78707,
+          "gain": 6.93274,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 5,
+          "step": 300,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 10.33154,
+          "ce_new_post": 3.66314,
+          "z_drop": -48.73915,
+          "gain": 7.08221,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        }
+      ],
+      "min_gain_over_session": 5.82813,
+      "max_z_drop_over_session": -48.73915,
+      "n_checkpoints_passed": 6,
+      "sustains": true
+    },
+    {
+      "name": "S2_static3",
+      "schedule": [
+        3,
+        3,
+        3,
+        3,
+        3,
+        3
+      ],
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_new_pre": 10.74535,
+      "checkpoints": [
+        {
+          "segment": 0,
+          "step": 50,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 6.69284,
+          "ce_new_post": 4.61207,
+          "z_drop": -95.48941,
+          "gain": 6.13328,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 1,
+          "step": 100,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 7.57746,
+          "ce_new_post": 3.61225,
+          "z_drop": -84.1237,
+          "gain": 7.1331,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 2,
+          "step": 150,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 9.78699,
+          "ce_new_post": 2.63883,
+          "z_drop": -55.73556,
+          "gain": 8.10653,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 3,
+          "step": 200,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 9.8883,
+          "ce_new_post": 2.30181,
+          "z_drop": -54.43396,
+          "gain": 8.44354,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 4,
+          "step": 250,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 11.35023,
+          "ce_new_post": 1.8999,
+          "z_drop": -35.651,
+          "gain": 8.84545,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 5,
+          "step": 300,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 11.6716,
+          "ce_new_post": 1.79019,
+          "z_drop": -31.52206,
+          "gain": 8.95516,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        }
+      ],
+      "min_gain_over_session": 6.13328,
+      "max_z_drop_over_session": -31.52206,
+      "n_checkpoints_passed": 6,
+      "sustains": true
+    },
+    {
+      "name": "S3_deepen",
+      "schedule": [
+        0,
+        0,
+        1,
+        1,
+        2,
+        3
+      ],
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_new_pre": 10.74535,
+      "checkpoints": [
+        {
+          "segment": 0,
+          "step": 50,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 7.37358,
+          "ce_new_post": 4.75626,
+          "z_drop": -86.74313,
+          "gain": 5.9891,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 1,
+          "step": 100,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 8.9148,
+          "ce_new_post": 4.23647,
+          "z_drop": -66.94157,
+          "gain": 6.50888,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 2,
+          "step": 150,
+          "depth": 1,
+          "unfrozen_trunk_layers": [
+            7
+          ],
+          "n_trainable_params": 854080,
+          "ce_base_post": 9.67015,
+          "ce_new_post": 3.59815,
+          "z_drop": -57.23679,
+          "gain": 7.1472,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 3,
+          "step": 200,
+          "depth": 1,
+          "unfrozen_trunk_layers": [
+            7
+          ],
+          "n_trainable_params": 854080,
+          "ce_base_post": 9.51269,
+          "ce_new_post": 3.01364,
+          "z_drop": -59.2598,
+          "gain": 7.73172,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 4,
+          "step": 250,
+          "depth": 2,
+          "unfrozen_trunk_layers": [
+            6,
+            7
+          ],
+          "n_trainable_params": 1642048,
+          "ce_base_post": 10.48177,
+          "ce_new_post": 2.57129,
+          "z_drop": -46.80902,
+          "gain": 8.17406,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 5,
+          "step": 300,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 10.80455,
+          "ce_new_post": 2.2705,
+          "z_drop": -42.66199,
+          "gain": 8.47486,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        }
+      ],
+      "min_gain_over_session": 5.9891,
+      "max_z_drop_over_session": -42.66199,
+      "n_checkpoints_passed": 6,
+      "sustains": true
+    },
+    {
+      "name": "S4_shrink",
+      "schedule": [
+        3,
+        3,
+        2,
+        1,
+        1,
+        0
+      ],
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_new_pre": 10.74535,
+      "checkpoints": [
+        {
+          "segment": 0,
+          "step": 50,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 6.47124,
+          "ce_new_post": 4.65239,
+          "z_drop": -98.3365,
+          "gain": 6.09297,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 1,
+          "step": 100,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 8.02861,
+          "ce_new_post": 3.27557,
+          "z_drop": -78.32731,
+          "gain": 7.46979,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 2,
+          "step": 150,
+          "depth": 2,
+          "unfrozen_trunk_layers": [
+            6,
+            7
+          ],
+          "n_trainable_params": 1642048,
+          "ce_base_post": 8.57298,
+          "ce_new_post": 2.80935,
+          "z_drop": -71.33329,
+          "gain": 7.93601,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 3,
+          "step": 200,
+          "depth": 1,
+          "unfrozen_trunk_layers": [
+            7
+          ],
+          "n_trainable_params": 854080,
+          "ce_base_post": 9.29209,
+          "ce_new_post": 2.48028,
+          "z_drop": -62.09405,
+          "gain": 8.26507,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 4,
+          "step": 250,
+          "depth": 1,
+          "unfrozen_trunk_layers": [
+            7
+          ],
+          "n_trainable_params": 854080,
+          "ce_base_post": 10.99627,
+          "ce_new_post": 1.96859,
+          "z_drop": -40.19868,
+          "gain": 8.77677,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 5,
+          "step": 300,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 10.43108,
+          "ce_new_post": 1.91111,
+          "z_drop": -47.46029,
+          "gain": 8.83425,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        }
+      ],
+      "min_gain_over_session": 6.09297,
+      "max_z_drop_over_session": -40.19868,
+      "n_checkpoints_passed": 6,
+      "sustains": true
+    },
+    {
+      "name": "S5_anneal",
+      "schedule": [
+        3,
+        2,
+        1,
+        0,
+        0,
+        0
+      ],
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_new_pre": 10.74535,
+      "checkpoints": [
+        {
+          "segment": 0,
+          "step": 50,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 6.41709,
+          "ce_new_post": 4.74646,
+          "z_drop": -99.03225,
+          "gain": 5.9989,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 1,
+          "step": 100,
+          "depth": 2,
+          "unfrozen_trunk_layers": [
+            6,
+            7
+          ],
+          "n_trainable_params": 1642048,
+          "ce_base_post": 8.49029,
+          "ce_new_post": 3.53492,
+          "z_drop": -72.39566,
+          "gain": 7.21043,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 2,
+          "step": 150,
+          "depth": 1,
+          "unfrozen_trunk_layers": [
+            7
+          ],
+          "n_trainable_params": 854080,
+          "ce_base_post": 9.30227,
+          "ce_new_post": 2.86975,
+          "z_drop": -61.96333,
+          "gain": 7.87561,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 3,
+          "step": 200,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 9.80125,
+          "ce_new_post": 2.63483,
+          "z_drop": -55.55235,
+          "gain": 8.11053,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 4,
+          "step": 250,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 9.47851,
+          "ce_new_post": 2.49487,
+          "z_drop": -59.69891,
+          "gain": 8.25049,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 5,
+          "step": 300,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 10.48046,
+          "ce_new_post": 2.2658,
+          "z_drop": -46.82588,
+          "gain": 8.47955,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        }
+      ],
+      "min_gain_over_session": 5.9989,
+      "max_z_drop_over_session": -46.82588,
+      "n_checkpoints_passed": 6,
+      "sustains": true
+    },
+    {
+      "name": "S6_cross4",
+      "schedule": [
+        3,
+        4,
+        3,
+        4,
+        3,
+        4
+      ],
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_new_pre": 10.74535,
+      "checkpoints": [
+        {
+          "segment": 0,
+          "step": 50,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 6.79775,
+          "ce_new_post": 4.46221,
+          "z_drop": -94.14151,
+          "gain": 6.28315,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 1,
+          "step": 100,
+          "depth": 4,
+          "unfrozen_trunk_layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 3217984,
+          "ce_base_post": 8.74054,
+          "ce_new_post": 3.0651,
+          "z_drop": -69.18049,
+          "gain": 7.68025,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 2,
+          "step": 150,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 8.667,
+          "ce_new_post": 2.65959,
+          "z_drop": -70.12529,
+          "gain": 8.08576,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 3,
+          "step": 200,
+          "depth": 4,
+          "unfrozen_trunk_layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 3217984,
+          "ce_base_post": 9.71066,
+          "ce_new_post": 2.21725,
+          "z_drop": -56.71626,
+          "gain": 8.5281,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 4,
+          "step": 250,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 10.74152,
+          "ce_new_post": 1.86104,
+          "z_drop": -43.47174,
+          "gain": 8.88431,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 5,
+          "step": 300,
+          "depth": 4,
+          "unfrozen_trunk_layers": [
+            4,
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 3217984,
+          "ce_base_post": 10.3415,
+          "ce_new_post": 1.79279,
+          "z_drop": -48.6112,
+          "gain": 8.95256,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        }
+      ],
+      "min_gain_over_session": 6.28315,
+      "max_z_drop_over_session": -43.47174,
+      "n_checkpoints_passed": 6,
+      "sustains": true
+    },
+    {
+      "name": "S7_grow_then_freeze",
+      "schedule": [
+        1,
+        2,
+        3,
+        2,
+        1,
+        0
+      ],
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_new_pre": 10.74535,
+      "checkpoints": [
+        {
+          "segment": 0,
+          "step": 50,
+          "depth": 1,
+          "unfrozen_trunk_layers": [
+            7
+          ],
+          "n_trainable_params": 854080,
+          "ce_base_post": 6.54669,
+          "ce_new_post": 4.70517,
+          "z_drop": -97.36709,
+          "gain": 6.04019,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 1,
+          "step": 100,
+          "depth": 2,
+          "unfrozen_trunk_layers": [
+            6,
+            7
+          ],
+          "n_trainable_params": 1642048,
+          "ce_base_post": 7.69771,
+          "ce_new_post": 3.7618,
+          "z_drop": -82.57876,
+          "gain": 6.98355,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 2,
+          "step": 150,
+          "depth": 3,
+          "unfrozen_trunk_layers": [
+            5,
+            6,
+            7
+          ],
+          "n_trainable_params": 2430016,
+          "ce_base_post": 8.13984,
+          "ce_new_post": 3.17887,
+          "z_drop": -76.89828,
+          "gain": 7.56648,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 3,
+          "step": 200,
+          "depth": 2,
+          "unfrozen_trunk_layers": [
+            6,
+            7
+          ],
+          "n_trainable_params": 1642048,
+          "ce_base_post": 9.45517,
+          "ce_new_post": 2.57622,
+          "z_drop": -59.99884,
+          "gain": 8.16913,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 4,
+          "step": 250,
+          "depth": 1,
+          "unfrozen_trunk_layers": [
+            7
+          ],
+          "n_trainable_params": 854080,
+          "ce_base_post": 10.27967,
+          "ce_new_post": 2.20731,
+          "z_drop": -49.40557,
+          "gain": 8.53804,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        },
+        {
+          "segment": 5,
+          "step": 300,
+          "depth": 0,
+          "unfrozen_trunk_layers": [],
+          "n_trainable_params": 66112,
+          "ce_base_post": 9.58956,
+          "ce_new_post": 2.0685,
+          "z_drop": -58.27224,
+          "gain": 8.67685,
+          "RETAIN_pass": true,
+          "GAIN_pass": true,
+          "pass": true
+        }
+      ],
+      "min_gain_over_session": 6.04019,
+      "max_z_drop_over_session": -49.40557,
+      "n_checkpoints_passed": 6,
+      "sustains": true
+    }
+  ],
+  "sustaining_schedules": [
+    "S1_static0",
+    "S2_static3",
+    "S3_deepen",
+    "S4_shrink",
+    "S5_anneal",
+    "S6_cross4",
+    "S7_grow_then_freeze"
+  ],
+  "best_schedule": "S6_cross4",
+  "best": {
+    "name": "S6_cross4",
+    "schedule": [
+      3,
+      4,
+      3,
+      4,
+      3,
+      4
+    ],
+    "ce_base_pre": 14.12505,
+    "sd_base_pre": 0.07783,
+    "ce_new_pre": 10.74535,
+    "checkpoints": [
+      {
+        "segment": 0,
+        "step": 50,
+        "depth": 3,
+        "unfrozen_trunk_layers": [
+          5,
+          6,
+          7
+        ],
+        "n_trainable_params": 2430016,
+        "ce_base_post": 6.79775,
+        "ce_new_post": 4.46221,
+        "z_drop": -94.14151,
+        "gain": 6.28315,
+        "RETAIN_pass": true,
+        "GAIN_pass": true,
+        "pass": true
+      },
+      {
+        "segment": 1,
+        "step": 100,
+        "depth": 4,
+        "unfrozen_trunk_layers": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "n_trainable_params": 3217984,
+        "ce_base_post": 8.74054,
+        "ce_new_post": 3.0651,
+        "z_drop": -69.18049,
+        "gain": 7.68025,
+        "RETAIN_pass": true,
+        "GAIN_pass": true,
+        "pass": true
+      },
+      {
+        "segment": 2,
+        "step": 150,
+        "depth": 3,
+        "unfrozen_trunk_layers": [
+          5,
+          6,
+          7
+        ],
+        "n_trainable_params": 2430016,
+        "ce_base_post": 8.667,
+        "ce_new_post": 2.65959,
+        "z_drop": -70.12529,
+        "gain": 8.08576,
+        "RETAIN_pass": true,
+        "GAIN_pass": true,
+        "pass": true
+      },
+      {
+        "segment": 3,
+        "step": 200,
+        "depth": 4,
+        "unfrozen_trunk_layers": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "n_trainable_params": 3217984,
+        "ce_base_post": 9.71066,
+        "ce_new_post": 2.21725,
+        "z_drop": -56.71626,
+        "gain": 8.5281,
+        "RETAIN_pass": true,
+        "GAIN_pass": true,
+        "pass": true
+      },
+      {
+        "segment": 4,
+        "step": 250,
+        "depth": 3,
+        "unfrozen_trunk_layers": [
+          5,
+          6,
+          7
+        ],
+        "n_trainable_params": 2430016,
+        "ce_base_post": 10.74152,
+        "ce_new_post": 1.86104,
+        "z_drop": -43.47174,
+        "gain": 8.88431,
+        "RETAIN_pass": true,
+        "GAIN_pass": true,
+        "pass": true
+      },
+      {
+        "segment": 5,
+        "step": 300,
+        "depth": 4,
+        "unfrozen_trunk_layers": [
+          4,
+          5,
+          6,
+          7
+        ],
+        "n_trainable_params": 3217984,
+        "ce_base_post": 10.3415,
+        "ce_new_post": 1.79279,
+        "z_drop": -48.6112,
+        "gain": 8.95256,
+        "RETAIN_pass": true,
+        "GAIN_pass": true,
+        "pass": true
+      }
+    ],
+    "min_gain_over_session": 6.28315,
+    "max_z_drop_over_session": -43.47174,
+    "n_checkpoints_passed": 6,
+    "sustains": true
+  },
+  "verdict": "GREEN",
+  "note": "sweep VARIES the freeze SCHEDULE ONLY; thresholds bf98c01 verbatim, post-tuning 0; GREEN iff exists a schedule that SUSTAINS z_drop<1.0 ^ gain>0 at EVERY checkpoint, else RED (a_paper_negative_ok)"
+}
