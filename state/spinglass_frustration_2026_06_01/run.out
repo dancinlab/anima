@@ -1,0 +1,20 @@
+================================================================
+  UNIVERSE H_906 — spin-glass frustration ↔ landscape ruggedness
+================================================================
+  substrate = 3x3 periodic EA ±J Ising · N=9 · 512 configs (exact)
+  ruggedness R = # single-flip local minima · frustration f = frustrated plaquette frac
+  sweep P_neg ∈ {0, 0.25, 0.5} · 8 seeds each (24 instances)
+
+  P_neg=0.00 : mean f=0.0 mean R=32.0
+  P_neg=0.25 :            mean R=42.0
+  P_neg=0.50 : mean f=0.555556 mean R=54.75
+  low-f(<0.3) mean R=31.8 (n=10) · high-f(≥0.3) mean R=50.8571 (n=14)
+
+  F1 FERRO-2MIN    = 0
+  F2 FRUST-RUGGED  = 1
+  F3 MONOTONE      = 1
+  F4 FRUST-PRESENT = 1
+  F5 CORR          = 1
+
+  PASS = 4/5
+  VERDICT 🟢 SUPPORTED
