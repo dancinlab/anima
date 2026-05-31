@@ -1,0 +1,20 @@
+LAB-10 AKIDA edge-of-chaos SIM MIRROR — N=5 LIF ring, T=40000
+  R1_weak_silent  rate=0.0  phi=0.0
+  R2_noise_edge  rate=0.11244  phi=0.075347
+  R3_tonic_edge  rate=0.333195  phi=0.590696
+  R4_over_driven  rate=0.999975  phi=0.0
+LAB-10 — AKIDA edge-of-chaos Phi inverse-U · SIM MIRROR (1st smoke)
+seed=42 N=5 steps=40000 (LIF ring; NOT live silicon)
+
+regime           drive  gain  noise  mean_rate  phi_proxy
+R1_weak_silent   0.2  0.1  0.0   0.0    0.0
+R2_noise_edge   0.3  0.15  0.3   0.11244    0.075347
+R3_tonic_edge   0.35  0.25  0.55   0.333195    0.590696
+R4_over_driven   1.4  1.3  0.0   0.999975    0.0
+
+edge peak = 0.590696  (R1=0.0 R4=0.0)
+
+falsifier F1 phi(R2)>phi(R1)          : true
+falsifier F2 phi(R3)>phi(R1)          : true
+falsifier F3 max(R2,R3)>=phi(R4)      : true
+VERDICT supported (all 3 · F-AKIDA-EDGE mirror) : true
