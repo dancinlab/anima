@@ -4,6 +4,9 @@
 > the forge GPU substrate. This file is the navigation source: where the trainer
 > is, which stack to use, how to fire. Binding: `@D a_train_flame_forge` ·
 > `@D a_akida_native_train`.
+>
+> **Whole-picture map** (training · on-chip learning · road to 7B):
+> [`ANIMA_TRAINING_AND_7B_MAP.md`](./ANIMA_TRAINING_AND_7B_MAP.md).
 
 ## 🔒 measure ⊥ deploy (P6 §0 · @L2 · H_679/H_904)
 
