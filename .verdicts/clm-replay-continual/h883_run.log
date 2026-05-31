@@ -1,0 +1,11 @@
+[h883] backbone d=512 L=8 E=8 V=256 params=13653768 device=cpu threads=8
+[h883] load missing=[] unexpected=[]
+[h883 no_replay S=32] z_drop=-75.8908 gain=5.5144 (replay_steps=0 new_steps=32)
+[h883 replay S=32] z_drop=-94.1188 gain=5.2004 (replay_steps=8 new_steps=24)
+[h883 no_replay S=128] z_drop=-34.1470 gain=6.8105 (replay_steps=0 new_steps=128)
+[h883 replay S=128] z_drop=-117.3110 gain=5.7235 (replay_steps=32 new_steps=96)
+[h883 no_replay S=300] z_drop=-9.3192 gain=7.3720 (replay_steps=0 new_steps=300)
+[h883 replay S=300] z_drop=-125.5079 gain=6.5695 (replay_steps=75 new_steps=225)
+[h883] wrote /tmp/h883run/out/clm_replay_continual_result.json
+[h883 VERDICT] GREEN  (z_drop replay=-125.5079 vs no_replay=-9.3192 · gain replay=6.5695)
+=== H883 COMPLETE ===

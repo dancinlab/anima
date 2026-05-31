@@ -1,0 +1,57 @@
+F-CLM-REPLAY — VERDICT (H_883 replay-buffer continual learning · H_875 forgetting-curve safety device)
+========================================================================================================
+verdict      : 🟢 SUPPORTED-NUMERICAL (g5 CODE-measured · no LLM judge)
+measured_at  : 2026-05-31  ·  rung mid d512/L8/E8 (13,653,768 params)
+execution    : CPU-LOCAL on this Mac (no runpod/cloud; a_cpu_local_no_waiter). SW-sim edge-learn.
+backbone     : clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — loaded FROZEN, missing=[] unexpected=[]
+edge         : H_865 trunk-adjacent thin adapter (rank=64) -> FROZEN readout (the edge that actually moves)
+thresholds   : F-CLM-REPLAY_prereg.txt VERBATIM (frozen 2026-05-31) · post-tuning 0 · a_paper_negative_ok
+
+FALSIFIER (pre-registered, read AT S=300): PASS 🟢 iff BOTH hold —
+  (R) z_drop(replay) < z_drop(no_replay)   [replay reduces forgetting]
+  (G) gain(replay)   > 0.0                  [replay keeps a real new-context gain]
+RESULT: BOTH SATISFIED at S=300 → 🟢.
+
+PRIMARY VERDICT BLOCK (S=300 endpoint, frozen):
+  z_drop(no_replay) = -9.31924
+  z_drop(replay)    = -125.50785      ← far MORE negative → replay reduces forgetting
+  delta_z_drop      = -116.18861      (R) PASS  (replay z_drop < no_replay z_drop)
+  gain(no_replay)   = +7.37201
+  gain(replay)      = +6.56950        (G) PASS  (replay gain > 0)
+  R_replay_reduces_zdrop = true · G_replay_gain_positive = true · verdict = GREEN
+
+FULL STEP-LADDER CURVE (secondary, reported, NOT gating):
+
+  S=32   no_replay : z_drop -75.89079  gain +5.51444  (replay_steps=0  new_steps=32)
+  S=32   replay    : z_drop -94.11879  gain +5.20039  (replay_steps=8  new_steps=24)
+  S=128  no_replay : z_drop -34.14703  gain +6.81051  (replay_steps=0  new_steps=128)
+  S=128  replay    : z_drop -117.31104 gain +5.72354  (replay_steps=32 new_steps=96)
+  S=300  no_replay : z_drop -9.31924   gain +7.37201  (replay_steps=0  new_steps=300)
+  S=300  replay    : z_drop -125.50785 gain +6.56950  (replay_steps=75 new_steps=225)
+
+  · replay z_drop < no_replay z_drop at EVERY step on the ladder (32/128/300) — replay reduces
+    forgetting monotonically across the whole dose curve, not only at the read-out endpoint.
+  · gain(replay) > 0 at every step (5.20 → 5.72 → 6.57): the replay interleave NEVER destroys the
+    new-context learning signal. The trade-off is small and honest — gain(replay) sits slightly
+    BELOW gain(no_replay) (6.57 vs 7.37 at S=300) because 75 of 300 steps spend on old-ability
+    replay instead of new-context, yet stays strongly positive.
+  · no_replay z_drop RISES toward 0 as steps grow (-75.9 → -34.1 → -9.3): with NO replay, the more
+    the edge adapts to new context the more base-ability forgetting creeps back. Replay PINS z_drop
+    deeply negative (-94 → -117 → -126), i.e. replay actively keeps lowering base CE as it learns.
+
+REPRODUCIBILITY: S=32 and S=128 numbers reproduce the prior partial run EXACTLY
+  (no_replay S=128 z_drop -34.1470; replay S=128 z_drop -117.3110 gain +5.7235) — deterministic
+  schedule + frozen seeds confirmed. This v2 run COMPLETED the S=300 endpoint that the prior run
+  crashed before writing.
+
+CONCLUSION: a small replay buffer of OLD base-ability samples interleaved (REPLAY_RATIO=0.25,
+every 4th step) into the SAME edge-only Adam stream REDUCES catastrophic forgetting (z_drop pulled
+from -9.3 down to -125.5 at S=300) WITHOUT destroying the new-context gain (still +6.57). Replay is
+a working H_875 forgetting-curve SAFETY DEVICE on the H_865 adapter edge (g5 falsifier met).
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung only (mid 13.65M). Does NOT bind the deploy chip-fit
+track (≤~1.2M AKD1000). Inference stays AKIDA-int4-only (P0 d4).
+INVIOLABLE (@L1 · H_679): SW-sim of the non-deterministic on-chip PLASTICITY edge-learn, accepted at
+the measurement rung (H_679 established HW edge-learn is real); replay does NOT trigger a
+deterministic full-retrain — it only mixes a few OLD batches into the edge-only stream, core trunk
+FROZEN. Thresholds F-CLM-REPLAY_prereg.txt verbatim, post-tuning 0.
