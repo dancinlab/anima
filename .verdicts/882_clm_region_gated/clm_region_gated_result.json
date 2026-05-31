@@ -1,0 +1,198 @@
+{
+  "campaign": "H_882 region-gated plasticity (\uc601\uc5ed\ubcc4 \ud559\uc2b5 \uac8c\uc774\ud2b8 \u00b7 BOUND/interference E5)",
+  "prereg_commit": "54a2bae7d",
+  "rung": "mid d512/L8/E8",
+  "adapter_rank": 64,
+  "region_mass_coverage": 0.99,
+  "edge_learn": "SW-sim (H_679 HW edge-learn real); measurement rung a_scale_honest_scope",
+  "gate_def": "R_new = byte set covering >=99% of new-context TRAIN target mass; adapter logit-contribution masked to R_new; R_base = FROZEN-readout pass-through",
+  "falsifier": "RETAIN: z_drop_gated < z_drop_ungated  AND  GAIN: gain_gated >= gain_ungated",
+  "headline_seed": 882,
+  "headline": {
+    "seed": 882,
+    "region_R_new_size": 71,
+    "region_R_base_size": 185,
+    "ungated": {
+      "arm": "ungated",
+      "n_trainable_params": 66112,
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_base_post": 13.16505,
+      "ce_new_pre": 10.74535,
+      "ce_new_post": 3.36659,
+      "z_drop": -12.33409,
+      "gain": 7.37876
+    },
+    "gated": {
+      "arm": "gated",
+      "n_trainable_params": 66112,
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_base_post": 25.19544,
+      "ce_new_pre": 10.74535,
+      "ce_new_post": 3.31802,
+      "z_drop": 142.233,
+      "gain": 7.42733
+    },
+    "RETAIN_pass": false,
+    "GAIN_pass": true,
+    "verdict": "RED"
+  },
+  "runs": [
+    {
+      "seed": 882,
+      "region_R_new_size": 71,
+      "region_R_base_size": 185,
+      "ungated": {
+        "arm": "ungated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 13.16505,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.36659,
+        "z_drop": -12.33409,
+        "gain": 7.37876
+      },
+      "gated": {
+        "arm": "gated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 25.19544,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.31802,
+        "z_drop": 142.233,
+        "gain": 7.42733
+      },
+      "RETAIN_pass": false,
+      "GAIN_pass": true,
+      "verdict": "RED"
+    },
+    {
+      "seed": 42,
+      "region_R_new_size": 71,
+      "region_R_base_size": 185,
+      "ungated": {
+        "arm": "ungated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 13.19692,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.39837,
+        "z_drop": -11.92473,
+        "gain": 7.34698
+      },
+      "gated": {
+        "arm": "gated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 25.49607,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.30541,
+        "z_drop": 146.09547,
+        "gain": 7.43995
+      },
+      "RETAIN_pass": false,
+      "GAIN_pass": true,
+      "verdict": "RED"
+    },
+    {
+      "seed": 123,
+      "region_R_new_size": 71,
+      "region_R_base_size": 185,
+      "ungated": {
+        "arm": "ungated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 12.91893,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.36636,
+        "z_drop": -15.49633,
+        "gain": 7.379
+      },
+      "gated": {
+        "arm": "gated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 25.24218,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.30259,
+        "z_drop": 142.83354,
+        "gain": 7.44276
+      },
+      "RETAIN_pass": false,
+      "GAIN_pass": true,
+      "verdict": "RED"
+    },
+    {
+      "seed": 7,
+      "region_R_new_size": 71,
+      "region_R_base_size": 185,
+      "ungated": {
+        "arm": "ungated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 12.9572,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.39758,
+        "z_drop": -15.00466,
+        "gain": 7.34778
+      },
+      "gated": {
+        "arm": "gated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 25.81956,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.32659,
+        "z_drop": 150.25177,
+        "gain": 7.41876
+      },
+      "RETAIN_pass": false,
+      "GAIN_pass": true,
+      "verdict": "RED"
+    },
+    {
+      "seed": 2026,
+      "region_R_new_size": 71,
+      "region_R_base_size": 185,
+      "ungated": {
+        "arm": "ungated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 13.17728,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.39533,
+        "z_drop": -12.17698,
+        "gain": 7.35002
+      },
+      "gated": {
+        "arm": "gated",
+        "n_trainable_params": 66112,
+        "ce_base_pre": 14.12505,
+        "sd_base_pre": 0.07783,
+        "ce_base_post": 25.79761,
+        "ce_new_pre": 10.74535,
+        "ce_new_post": 3.32345,
+        "z_drop": 149.96978,
+        "gain": 7.42191
+      },
+      "RETAIN_pass": false,
+      "GAIN_pass": true,
+      "verdict": "RED"
+    }
+  ],
+  "n_green": 0,
+  "n_runs": 5,
+  "majority": "RED",
+  "verdict": "RED",
+  "note": "two arms identical except the region gate (E5); thresholds prereg 54a2bae7d verbatim, post-tuning 0; \ud83d\udfe2 iff both gates pass else \ud83d\udd34 (a_paper_negative_ok)"
+}

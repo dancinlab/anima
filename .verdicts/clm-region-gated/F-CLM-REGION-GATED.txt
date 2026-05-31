@@ -1,0 +1,57 @@
+F-CLM-REGION-GATED — VERDICT (H_882 region-gated plasticity · 영역별 학습 게이트 · Q-TRUST B)
+==========================================================================================
+verdict      : 🔴 CLOSED-NEGATIVE (g5 CODE-measured · no LLM judge · a_paper_negative_ok)
+measured_at  : 2026-05-31  ·  rung mid d512/L8/E8 (13,653,768 params) · arm AB
+execution    : GPU (RTX 5070, aiden 192.168.50.119) · device cuda · cuDNN disabled
+               (torch-nightly cuDNN sublibrary mismatch → native CUDA conv path, numerically identical)
+backbone     : clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — loaded FROZEN core
+edge         : H_865 trunk-adjacent additive adapter (rank=64, zero-init=identity@step0), shared by both arms
+thresholds   : F-CLM-REGION-GATED_prereg.txt VERBATIM (prereg commit 54a2bae7d) · post-tuning 0
+
+FALSIFIER (pre-registered · BOTH required for 🟢):
+  F-CLM-REGION-GATED-RETAIN : z_drop_gated <  z_drop_ungated     (gating reduces forgetting)
+  F-CLM-REGION-GATED-GAIN   : gain_gated   >= gain_ungated         (gating keeps adaptation)
+  🟢 iff RETAIN ∧ GAIN. else 🔴 CLOSED-NEGATIVE. seed-sweep {882,42,123,7,2026}, headline seed 882.
+
+REGION: R_new = 71 bytes (≥99% of new-context TRAIN target mass), R_base = 185 bytes (complement).
+GATED arm masks the adapter's OUTPUT-LOGIT contribution to R_new only; R_base logits = FROZEN-readout
+pass-through. UNGATED arm = H_865 (adapter affects all 256 logits). ONLY the region gate differs.
+
+PER-SEED RESULT (z_drop = base forgetting in pre-adapt std units · gain = new-context absorption):
+  seed   ungated z_drop   gated z_drop    ungated gain   gated gain   RETAIN   GAIN   verdict
+  882      -12.33409       +142.23300       7.37876       7.42733      FAIL    PASS    RED
+  42       -11.92473       +146.09547       7.34698       7.43995      FAIL    PASS    RED
+  123      -15.49633       +142.83354       7.37900       7.44276      FAIL    PASS    RED
+  7        -15.00466       +150.25177       7.34778       7.41876      FAIL    PASS    RED
+  2026     -12.17698       +149.96978       7.35002       7.42191      FAIL    PASS    RED
+  headline (seed 882): RETAIN FAIL ∧ GAIN PASS → RED.  n_green 0/5 · majority RED.
+
+GATES (headline seed 882):
+  F-CLM-REGION-GATED-RETAIN : FAIL  (z_drop_gated +142.233 is NOT < z_drop_ungated -12.334; the gate makes
+                                     forgetting MASSIVELY WORSE, not better. ce_base_post: ungated 13.165
+                                     (a small DROP from 14.125 pre) vs gated 25.195 (base CE more than
+                                     DOUBLES). Masking the adapter's R_base logit contribution to the
+                                     FROZEN-readout value does NOT protect the base band — it FREEZES the
+                                     base-band logits at their PRE-adapt values while the unmasked R_new
+                                     logits are driven up by adaptation, and softmax renormalization across
+                                     all 256 bytes then STARVES the (frozen) R_base mass → base CE explodes.)
+  F-CLM-REGION-GATED-GAIN   : PASS  (gain_gated +7.42733 >= gain_ungated +7.37876 — the gate keeps, even
+                                     slightly raises, new-context absorption; the lever is not inert, it is
+                                     actively harmful to RETAIN.)
+  VERDICT : RED (RETAIN fails on all 5 seeds; GAIN passes on all 5)
+
+CONCLUSION: region-gating the adapter's OUTPUT-LOGIT contribution (ON in R_new, frozen-readout pass-through
+in R_base) does NOT reduce catastrophic forgetting versus an ungated edge-learn of the same capacity — it
+makes forgetting dramatically WORSE (z_drop +142 vs -12 ungated, robust across 5 seeds). The output-logit
+region gate is a 🔴 CLOSED-NEGATIVE lever: it cannot protect the base band by construction because softmax
+couples the masked R_base logits to the adaptation-driven R_new logits. The UNGATED arm (= H_865) retains
+well (z_drop ~-13), confirming the additive-adapter edge is the right lever and the OUTPUT-LOGIT gate is the
+wrong place to gate. This rules region-gating-by-output-logit OUT and isolates the safe protection
+mechanisms to the input/representation side (H_865 additive adapter; H_879/H_872 freeze-region levers).
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung only (mid d512/L8/E8 ~13.7M). Does NOT bind the deploy
+chip-fit track (≤~1.2M AKD1000). Inference stays AKIDA-int4-only (P0 d4).
+INVIOLABLE (H_679): on-chip learning is the SOLE HW↔SW difference; SW-sim of the non-deterministic on-chip
+edge-learn at the measurement rung (H_679 established HW edge-learn is real); the SW-sim measures the
+REGION-GATING TOPOLOGY effect, not silicon byte-equivalence. Thresholds frozen verbatim from prereg
+(commit 54a2bae7d), post-tuning 0.
