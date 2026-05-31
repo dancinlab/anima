@@ -63,7 +63,7 @@
 
 | id | hypothesis | new lever | falsifier |
 |---|---|---|---|
-| ⬜ H_904 ★ | **on-chip plasticity measured on AKD1000** (closes H_877 🟠 / H_679 on real silicon) | actually run the edge-learn update on pi5-akida hardware, not SW-sim | on-chip learning measured live ∧ HW≠SW magnitude quantified (the capstone: confirms plasticity is the sole HW↔SW difference on silicon) |
+| 🟢 H_904 ★ | **on-chip plasticity measured on AKD1000** (closes H_877 🟠 / H_679 on real silicon) | actually run the edge-learn update on pi5-akida hardware, not SW-sim | **🟢 SUPPORTED** — AkidaUnsupervised on-chip learn ran LIVE on AKD1000 (BC.00.000.002, BackendType.Hardware) ∧ HW≠SW quantified vs byte-exact deterministic SW-sim: weight Δ 172/1024, out Δ 120/320 (hw_eq_sw=false). Inference byte-identical (H_877) but LEARNING HW≠SW → confirms H_679 on silicon. g5 CODE-measured · [H_904](H_904_clm_onchip_plasticity.md) · `.verdicts/904_clm_onchip_plasticity/` |
 | ⬜ H_905 ★ | **stochastic unlearning / privacy** — non-determinism makes a single sample unrecoverable | measure recoverability of one edge-learned sample after stochastic updates | post-noise membership-inference ≈ chance (non-determinism gives a forgetting/privacy guarantee a deterministic update cannot) |
 
 ---
