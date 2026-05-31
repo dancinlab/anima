@@ -1,0 +1,19 @@
+================================================================
+  UNIVERSE H_908 — topological invariant (Betti-1 · Euler χ) ↔ integration
+================================================================
+  substrate = undirected graph N=6 (15 edges) · exact b1=E-V+C · χ=V-E
+  Φ = within-component reachability density · sweep p {0.2,0.4,0.6} × 8 seed
+
+  p=0.2 : mean b1=0.125 χ=3.75 Φ=0.233333
+  p=0.6 : mean b1=3.875 χ=-2.75 Φ=0.958333
+  F3 controlled (p=0.4): high-b1 Φ=0.866667 (n=4) vs low-b1 Φ=0.616667 (n=4)
+  P6 tree: b1=0 χ=1 (expect b1=0 χ=1)
+
+  F1 B1-RISES   = 1
+  F2 PHI-RISES  = 1
+  F3 CONTROLLED = 1   (the real claim)
+  F4 EULER-NEG  = 1
+  F5 TREE-EXACT = 1
+
+  PASS = 5/5
+  VERDICT 🟢 SUPPORTED-NUMERICAL — topology(b1/χ)↔integration confirmed
