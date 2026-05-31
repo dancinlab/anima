@@ -1,0 +1,95 @@
+F-CLM-ADAPTER-STACK — PRE-REGISTERED frozen thresholds (H_880 adapter-stack accumulation)
+==========================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed) · H_865 (thin adapter edge, BOUND 🟢).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after fire).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-adapter-stack/
+INVIOLABLE: on-chip learning = sole HW↔SW difference (H_679); edge-only piecewise, NO deterministic full-retrain (@L1).
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, ~13.7M params) only. Does NOT bind
+  the deploy chip-fit track (≤~1.2M AKD1000 nodes). SW-sim of the non-deterministic on-chip edge-learn
+  is acceptable at the measurement rung (H_679 established HW edge-learn is real). Inference stays
+  AKIDA-int4-only (P0 d4). The adapter switch is a per-context routing select; NO deterministic full-retrain.
+
+HYPOTHESIS
+  Stack K H_865-style THIN trainable adapters — one per context — between the FROZEN norm_out and the
+  FROZEN base readout, and SWITCH the active adapter per context at inference:
+
+      norm_out (FROZEN) -> h -> h' = h + adapter_k(h)  [k = active context] -> readout (FROZEN) -> logits
+      adapter_k = Conv1d(d->rank=64) -> GELU -> Conv1d(rank->d), up-proj ZERO-init (identity at step 0).
+
+  Adapters are trained ONE AT A TIME in context order (k=0,1,2,...). When adapter_k is trained on
+  context k, all OTHER adapters and the whole base are FROZEN (parameter isolation per adapter).
+  At eval, context i is decoded with adapter_i selected (per-context switch).
+
+  Question: does ACCUMULATING adapters absorb each new task WITHOUT (a) forgetting the oldest task and
+  (b) cross-adapter interference? Three FROZEN conditions, ALL must PASS for 🟢 SUPPORTED-NUMERICAL:
+
+    F-STACK-NEW-GAIN     : every newly-added adapter k strictly improves its OWN context CE.
+                           PASS iff  min_k gain_k > 0.0   (gain_k = ce_ctx_k_pre - ce_ctx_k_post, adapter_k on ctx_k)
+                           (the stack keeps absorbing new tasks as it grows — no saturation/blocking)
+
+    F-STACK-OLD-Z-DROP   : after the FULL stack is built, the OLDEST context (ctx 0, adapter 0) base
+                           ability has NOT been forgotten, measured in pre-adapt std units, against the
+                           FROZEN BOUND cutoff inherited VERBATIM from bf98c01 (F-CLM-BOUND-RETAIN).
+                           PASS iff  z_drop_old < 1.0
+                           z_drop_old = (ce_ctx0_after_full_stack - ce_ctx0_pre) / max(sd_ctx0_pre, 1e-6),
+                           where ce_ctx0_after_full_stack = CE on ctx 0 decoded with adapter 0 AFTER all K
+                           adapters have been trained (adapter-0 weights are frozen after its own training,
+                           so the only way z_drop_old ≥ 1.0 is if the SHARED frozen readout/base were touched
+                           — by construction they are not — OR if adapter-0 was itself disturbed; this gate
+                           audits the parameter-isolation claim end-to-end). Cutoff 1.0 = F-CLM-BOUND verbatim.
+
+    F-STACK-INTERFERENCE : cross-adapter interference is bounded. For each ordered pair (i,j), i≠j, decode
+                           context i with the WRONG adapter j and measure the CE penalty relative to
+                           context i's OWN adapter i:
+                               interf_{i->j} = (ce_ctx_i_with_adapter_j - ce_ctx_i_with_adapter_i) / max(sd_ctx_i_own, 1e-6)
+                           A correctly parameter-isolated, per-context switch should make the OWN adapter the
+                           best decoder of its own context, so interference is measured as the worst NEGATIVE
+                           transfer (wrong adapter hurting). PASS iff the per-context switch is dominant:
+                               max_{i≠j} ( -interf_{i->j} ) < THR_INTERFERENCE   i.e. no wrong adapter BEATS the own adapter
+                           STATED THRESHOLD (frozen): THR_INTERFERENCE = 0.0
+                           (interpretation: the own adapter must be the best — or tied-best — decoder of its own
+                            context. If some wrong adapter j decodes context i with LOWER CE than adapter i, the
+                            per-context switch is NOT functioning (the contexts are not separated by the stack);
+                            that is a switch/interference failure. -interf < 0 for all pairs ⇒ own adapter strictly
+                            best ⇒ PASS. Reported alongside the raw signed interf matrix as diagnostic.)
+
+    VERDICT 🟢 iff (min_k gain_k > 0.0) AND (z_drop_old < 1.0) AND (max_{i≠j}(-interf_{i->j}) < 0.0). Else 🔴.
+    ANY condition fails → 🔴 CLOSED-NEGATIVE (a_paper_negative_ok — a real publishable result).
+
+BACKBONE
+  mid rung d_model=512 / n_trunk_layers=8 / n_experts=8 (clm_mid_backbone.pt, HF dancinlab/anima-clm-verify),
+  ~13.7M params, AKIDA envelope, arm AB. Base FROZEN as core. Adapters are the only trainable params, each
+  trained in isolation (others frozen). Same SW-sim edge-learn rung as H_865.
+
+CONTEXTS (frozen, K=4, fixed seeds — distinct byte distributions)
+  ctx 0 = "web"  motif lane  (make_lane_bytes "web",  seed 401)  — the OLDEST context (forgetting target)
+  ctx 1 = "new"  cyclic lane (make_lane_bytes "new",  seed 402)  — H_865's new-context style band
+  ctx 2 = "new"  cyclic lane (make_lane_bytes "new",  seed 403)  — distinct period/phase (seed-shifted)
+  ctx 3 = "new"  cyclic lane (make_lane_bytes "new",  seed 404)  — distinct period/phase (seed-shifted)
+  Each context: train slice (first half) disjoint from held-out eval slice (second half).
+  seq_len=64, batch_size=16, n_eval_batches=32. ADAPTER_RANK=64, LR_EDGE=3e-3, N_ADAPT=300 (all H_865 verbatim).
+
+MEASUREMENT PROCEDURE (computed by code, g5 — no LLM judge)
+  1. Load + FREEZE base. Build K=4 zero-init adapters (identity at step 0).
+  2. Record per-context PRE CE (base only, no adapter): ce_ctx_k_pre, sd_ctx_k_pre  (k=0..3).
+  3. FOR k in 0..3:  select adapter_k; freeze all other adapters + base; run 300-step Adam (lr 3e-3) on
+     ctx_k TRAIN slice; record gain_k = ce_ctx_k_pre - ce_ctx_k_post (adapter_k on its own ctx_k eval).
+     After training, adapter_k weights are FROZEN (parameter isolation; never touched again).
+  4. After the FULL stack: re-measure ctx 0 with adapter 0 → ce_ctx0_after_full_stack → z_drop_old.
+  5. Build the KxK interference matrix: for all (i,j), decode ctx_i eval with adapter_j → ce_ctx_i_with_adapter_j;
+     interf_{i->j} = (ce_ctx_i_with_adapter_j - ce_ctx_i_with_adapter_i)/max(sd_ctx_i_own,1e-6).
+     own-best margin = max_{i≠j}(-interf_{i->j}); switch dominant iff own-best margin < 0.
+  6. Verdict by the three frozen gates above. No threshold may move post-fire (W2).
+
+ABLATION / DIAGNOSTIC (does NOT move frozen thresholds)
+  - per-k gain trajectory (does later adapter gain saturate as the stack grows?)
+  - signed interference matrix (positive = wrong adapter happens to help; negative = wrong adapter hurts).
+  - control: ctx 0 CE with NO adapter (pure base) vs adapter 0 (the gain that must be retained).
+
+ARTIFACTS
+  .verdicts/clm-adapter-stack/clm_adapter_stack_result.json (all per-k gains, z_drop_old, interference matrix, pass flags)
+  .verdicts/clm-adapter-stack/F-CLM-ADAPTER-STACK.txt (verdict verbatim)
+  .verdicts/880_clm_adapter_stack/F-CLM-ADAPTER-STACK.txt (id-keyed backing copy, g73 guard)
+  CLM/model/h880_adapter_stack.py (stacked-adapter scaffold + falsifier harness)
+  stacked adapters ckpt → HF dancinlab/anima-clm-adapter-stack (a_hf_complete).
