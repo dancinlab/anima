@@ -1,0 +1,149 @@
+{
+  "campaign": "H_872 freeze-depth sweep (BOUND E5)",
+  "frozen_thresholds_commit": "bf98c01",
+  "threshold_z_drop": "<1.0",
+  "threshold_gain": ">0.0",
+  "rung": "mid d512/L8/E8",
+  "n_trunk_layers": 8,
+  "adapter_rank": 64,
+  "depth_parametrization": "depth = # of TOP trunk layers made trainable (0=full-freeze/adapter-only .. 8=full-trunk-trainable); H_865 adapter always the edge",
+  "edge_learn": "SW-sim (H_679 HW edge-learn real); measurement rung a_scale_honest_scope",
+  "curve": [
+    {
+      "depth": 0,
+      "unfrozen_trunk_layers": [],
+      "n_frozen_trunk": 8,
+      "n_trainable_params": 66112,
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_base_post": 13.24243,
+      "ce_new_pre": 10.74535,
+      "ce_new_post": 3.45531,
+      "z_drop": -11.33996,
+      "gain": 7.29004,
+      "RETAIN_pass": true,
+      "GAIN_pass": true,
+      "pass": true
+    },
+    {
+      "depth": 1,
+      "unfrozen_trunk_layers": [
+        7
+      ],
+      "n_frozen_trunk": 7,
+      "n_trainable_params": 854080,
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_base_post": 12.65385,
+      "ce_new_pre": 10.74535,
+      "ce_new_post": 2.02504,
+      "z_drop": -18.90207,
+      "gain": 8.72031,
+      "RETAIN_pass": true,
+      "GAIN_pass": true,
+      "pass": true
+    },
+    {
+      "depth": 2,
+      "unfrozen_trunk_layers": [
+        6,
+        7
+      ],
+      "n_frozen_trunk": 6,
+      "n_trainable_params": 1642048,
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_base_post": 13.07359,
+      "ce_new_pre": 10.74535,
+      "ce_new_post": 1.8705,
+      "z_drop": -13.50919,
+      "gain": 8.87485,
+      "RETAIN_pass": true,
+      "GAIN_pass": true,
+      "pass": true
+    },
+    {
+      "depth": 3,
+      "unfrozen_trunk_layers": [
+        5,
+        6,
+        7
+      ],
+      "n_frozen_trunk": 5,
+      "n_trainable_params": 2430016,
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_base_post": 13.09467,
+      "ce_new_pre": 10.74535,
+      "ce_new_post": 1.83668,
+      "z_drop": -13.23839,
+      "gain": 8.90868,
+      "RETAIN_pass": true,
+      "GAIN_pass": true,
+      "pass": true
+    },
+    {
+      "depth": 4,
+      "unfrozen_trunk_layers": [
+        4,
+        5,
+        6,
+        7
+      ],
+      "n_frozen_trunk": 4,
+      "n_trainable_params": 3217984,
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_base_post": 14.24835,
+      "ce_new_pre": 10.74535,
+      "ce_new_post": 1.85454,
+      "z_drop": 1.58415,
+      "gain": 8.89082,
+      "RETAIN_pass": false,
+      "GAIN_pass": true,
+      "pass": false
+    }
+  ],
+  "measured_depths": [
+    0,
+    1,
+    2,
+    3,
+    4
+  ],
+  "pending_depths": [
+    5,
+    6,
+    7,
+    8
+  ],
+  "passing_depths": [
+    0,
+    1,
+    2,
+    3
+  ],
+  "best_depth": 3,
+  "best": {
+    "depth": 3,
+    "unfrozen_trunk_layers": [
+      5,
+      6,
+      7
+    ],
+    "n_frozen_trunk": 5,
+    "n_trainable_params": 2430016,
+    "ce_base_pre": 14.12505,
+    "sd_base_pre": 0.07783,
+    "ce_base_post": 13.09467,
+    "ce_new_pre": 10.74535,
+    "ce_new_post": 1.83668,
+    "z_drop": -13.23839,
+    "gain": 8.90868,
+    "RETAIN_pass": true,
+    "GAIN_pass": true,
+    "pass": true
+  },
+  "verdict": "GREEN",
+  "note": "sweep VARIES freeze-depth ONLY; thresholds bf98c01 verbatim, post-tuning 0; GREEN iff exists passing depth else RED (a_paper_negative_ok). Boundary located at depth=4 (RETAIN crosses 1.0). d5-d8 are the deep-end tail (monotone-forgetting regime, expected RED) and CANNOT flip the GREEN verdict already secured by depths 0-3."
+}

@@ -1,0 +1,55 @@
+{
+  "campaign": "H_872 freeze-depth sweep (BOUND E5)",
+  "frozen_thresholds_commit": "bf98c01",
+  "threshold_z_drop": "<1.0",
+  "threshold_gain": ">0.0",
+  "rung": "mid d512/L8/E8",
+  "n_trunk_layers": 8,
+  "adapter_rank": 64,
+  "depth_parametrization": "depth = # of TOP trunk layers made trainable (0=full-freeze/adapter-only .. n_trunk=full-trunk-trainable); H_865 adapter always the edge",
+  "edge_learn": "SW-sim (H_679 HW edge-learn real); measurement rung a_scale_honest_scope",
+  "curve": [
+    {
+      "depth": 1,
+      "unfrozen_trunk_layers": [
+        7
+      ],
+      "n_frozen_trunk": 7,
+      "n_trainable_params": 854080,
+      "ce_base_pre": 14.12505,
+      "sd_base_pre": 0.07783,
+      "ce_base_post": 12.65385,
+      "ce_new_pre": 10.74535,
+      "ce_new_post": 2.02504,
+      "z_drop": -18.90207,
+      "gain": 8.72031,
+      "RETAIN_pass": true,
+      "GAIN_pass": true,
+      "pass": true
+    }
+  ],
+  "passing_depths": [
+    1
+  ],
+  "best_depth": 1,
+  "best": {
+    "depth": 1,
+    "unfrozen_trunk_layers": [
+      7
+    ],
+    "n_frozen_trunk": 7,
+    "n_trainable_params": 854080,
+    "ce_base_pre": 14.12505,
+    "sd_base_pre": 0.07783,
+    "ce_base_post": 12.65385,
+    "ce_new_pre": 10.74535,
+    "ce_new_post": 2.02504,
+    "z_drop": -18.90207,
+    "gain": 8.72031,
+    "RETAIN_pass": true,
+    "GAIN_pass": true,
+    "pass": true
+  },
+  "verdict": "GREEN",
+  "note": "sweep VARIES freeze-depth ONLY; thresholds bf98c01 verbatim, post-tuning 0; GREEN iff exists passing depth else RED (a_paper_negative_ok)"
+}

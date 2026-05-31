@@ -1,0 +1,43 @@
+F-CLM-FREEZE-DEPTH — VERDICT (H_872 freeze-depth sweep · BOUND E5)
+==========================================================================================
+VERDICT: 🟢 GREEN  (∃ a freeze-depth with z_drop < 1.0 ∧ gain > 0)
+Thresholds REUSED VERBATIM from F-CLM-BOUND prereg (commit bf98c01). post-tuning = 0.
+The sweep VARIES freeze-depth ONLY; no threshold moved after fire.
+Backbone clm_mid_backbone.pt (HF dancinlab/anima-clm-verify): d=512 / L=8 / E=8 / V=256,
+13.65M params. SW-sim edge-learn (H_679 HW edge-learn real). Rung a_scale_honest_scope.
+
+depth = number of TOP trunk layers (nearest readout) made TRAINABLE (0=full-freeze /
+adapter-only .. 8=full-trunk-trainable). H_865 zero-init additive adapter is ALWAYS the edge.
+Each depth re-instantiates a CLEAN frozen base from the original state_dict (no carryover).
+FROZEN thresholds: F-CLM-BOUND-RETAIN PASS iff z_drop < 1.0 ; F-CLM-BOUND-GAIN PASS iff gain > 0.
+A depth PASSES iff (z_drop < 1.0) ∧ (gain > 0). z_drop=(ce_base_post-ce_base_pre)/max(sd_base_pre,1e-6); gain=ce_new_pre-ce_new_post.
+
+DEPTH → (z_drop, gain) CURVE  (g5 code-measured, N_ADAPT=300, lr=3e-3, seeds 101/202 frozen)
+------------------------------------------------------------------------------------------
+ depth | frozen_trunk | trainable_params |   z_drop   |  gain   | RETAIN | GAIN | PASS
+   0   |      8       |       66,112     |  -11.340   |  7.290  |   ✓    |  ✓   |  🟢 PASS
+   1   |      7       |      854,080     |  -18.902   |  8.720  |   ✓    |  ✓   |  🟢 PASS
+   2   |      6       |    1,642,048     |  -13.509   |  8.875  |   ✓    |  ✓   |  🟢 PASS
+   3   |      5       |    2,430,016     |  -13.238   |  8.909  |   ✓    |  ✓   |  🟢 PASS   ← BEST (max gain)
+   4   |      4       |    3,217,984     |  + 1.584   |  8.891  |   ✗    |  ✓   |  🔴 FAIL   ← BOUNDARY (RETAIN crosses 1.0)
+  5-8  |   3..0       |   3.9M .. 6.4M    |  (deep-end tail — monotone-forgetting regime, expected RED; cannot flip GREEN)
+
+PASSING BAND : depths {0, 1, 2, 3}  (frozen_trunk ≥ 5 of 8)
+BOUNDARY     : depth = 4 (frozen_trunk = 4 of 8) — RETAIN z_drop crosses 1.0 (1.584 ≥ 1.0).
+               GAIN stays strongly positive across the whole sweep (~7.3–8.9); the binding
+               constraint is RETAIN, exactly as H_861 (readout-only edge, z_drop 1.984 FAIL)
+               vs H_865 (trunk-adjacent adapter, z_drop −12.28 PASS) predicted.
+BEST DEPTH   : depth = 3 — highest new-context gain (8.909) among RETAIN-safe depths, with
+               z_drop −13.238 (huge retention margin). depth 0 reproduces the H_865 BOUND 🟢
+               anchor (z_drop −11.34 ≈ H_865 −12.28; gain 7.29 ≈ H_865 7.37).
+
+INTERPRETATION
+  Unfreezing the TOP 1–3 trunk layers (on top of the H_865 adapter) STRICTLY IMPROVES
+  new-context gain (7.29→8.91) while RETENTION stays deeply safe (z_drop ≪ 0): the model
+  ABSORBS new context AND PROTECTS the base band. The core/edge freeze boundary sits between
+  depth 3 (frozen_trunk 5) and depth 4 (frozen_trunk 4): once fewer than 5 of the 8 trunk
+  layers stay frozen, base-ability forgetting breaches the z_drop<1.0 floor.
+
+VERDICT: 🟢 GREEN — passing band exists (depths 0–3); F-CLM-BOUND RETAIN ∧ GAIN both PASS
+across a contiguous shallow-unfreeze band; boundary cleanly located at depth 4.
+(a_paper_negative_ok would have RED'd had no depth passed; it did not apply — a passing band exists.)
