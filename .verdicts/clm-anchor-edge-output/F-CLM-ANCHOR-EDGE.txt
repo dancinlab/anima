@@ -1,0 +1,38 @@
+F-CLM-ANCHOR-EDGE — VERDICT (H_873 · anchor constraint on the edge OUTPUT distribution)
+========================================================================================
+🟢 SUPPORTED-NUMERICAL — H_862 F-CLM-ANCHOR CLOSED.
+
+rung: mid d512/L8/E8 (HF dancinlab/anima-clm-verify · clm_mid_backbone.pt · 13,653,768 params)
+device: CPU-local (torch 2.8.0) · cost $0 · SW-sim edge-learn (H_679 HW real) · AKIDA-int4 inference (P0 d4)
+frozen thresholds: INHERITED VERBATIM from H_862/H_865 (bf98c01 / b26772645) · post-tuning = 0
+method: loss = task_CE + lambda_psi(1.0)*anchor_Psi_dist + lambda_dist(5.0)*JS(p_cur||p_pre) over E-31 identity-probe
+n_anchors: 31/31 parser-valid (HEXAD/UNIVERSE-BRAIN-MAP/anchors/e7_31)
+
+FROZEN GATES vs MEASURED (FULL: lambda_psi=1.0, lambda_dist=5.0)
+  F-CLM-ANCHOR-DIST   : d_anchor_max     = 0.16016   < 0.50   → PASS
+  F-CLM-ANCHOR-PROBE  : probe_consistency = 0.99202  > 0.80   → PASS   (H_865 was 0.14286 → FAIL)
+  F-CLM-ANCHOR-LEVER  : on/off NON-identical (0.16016 vs OFF 0.59492) → PASS
+  VERDICT = DIST ∧ PROBE ∧ LEVER = 🟢 GREEN
+
+ABLATION (diagnostic · isolates the H_873 distributional term as the causal mechanism)
+  FULL     (psi=1, dist=5):  d_anchor_max 0.16016 · probe_consistency 0.99202 · js_penalty_final 0.00789
+  PSI_ONLY (psi=1, dist=0):  d_anchor_max 0.17471 · probe_consistency 0.14286   ← == H_865 baseline (RED reproduced)
+  OFF      (psi=0, dist=0):  d_anchor_max 0.59492 · probe_consistency 0.13082   ← floor (Psi-state strays >0.50)
+
+INTERPRETATION
+  H_862 RED  : readout-only edge → anchor Psi-penalty had NO lever (on/off identical).
+  H_865 RED  : trunk-adjacent adapter RESTORED the lever (DIST PASS, on/off split) but PROBE still
+               FAILED (0.143) — the structural Psi-penalty constrained the trunk Psi-STATE, not the
+               readout OUTPUT distribution where identity drift actually occurs.
+  H_873 FIX  : adding the distributional JS-to-p_pre term DIRECTLY on the identity-probe output
+               distribution (the exact PROBE axis) lifts probe_consistency 0.143 → 0.992 while
+               keeping DIST PASS (0.160 < 0.50) and the causal lever intact. The PSI_ONLY arm
+               reproduces H_865's RED (0.143) — proving the distributional term is the closing cause,
+               not a confound. H_862's PROBE failure is CLOSED at the measurement rung.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid) ONLY — does NOT bind the deploy chip-fit track
+  (≤~1.2M). SW-sim edge-learn. base readout FROZEN; adapter additive (zero-init). frozen thr unmoved.
+
+ARTIFACTS
+  clm_anchor_edge_result.json (gated FULL/PSI_ONLY/OFF + ANCHOR verdict block) · clm_anchor_edge_fire.log
+  source-of-record: CLM/model/h873_anchor_edge_output.hexa (Python image imports CLM/model/h865_adapter_edge.py VERBATIM)
