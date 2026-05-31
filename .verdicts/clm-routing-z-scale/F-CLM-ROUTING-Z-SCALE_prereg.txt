@@ -1,0 +1,62 @@
+F-CLM-ROUTING-Z-SCALE — PRE-REGISTRATION (frozen pre-run, 2026-05-31)
+=====================================================================
+verdict tier: 🟠 PRE-REGISTERED (H_871 M1 scale-ladder fire 판정 대기)
+W2 · deterministic:false · measured by CODE only (g5 — no LLM judge) · a_paper_negative_ok.
+
+CLAIM (roadmap @L3 / M1): the toy routing-z 🔴 (H_847 / H_850 / H_852 / H_853 —
+near-uniform / negative routing-diversity z, capped below the 3.0 chip-array
+gate) is a SCALE ARTIFACT, not a real toy-and-up ceiling. Direct test: measure
+the SAME routing-diversity z (CLM/model/judge_clm.routing_z) at MULTIPLE rung
+sizes on the REAL kowiki corpus and check whether z RISES monotonically with
+rung size (and by how much vs the 3.0 gate).
+
+routing-z metric (VERBATIM from CLM/model/judge_clm.routing_z, NOT re-tuned):
+  obs  = mean per-token router entropy (nats) over a held-out eval stream.
+  null = entropies of random usage vectors ~ Dirichlet(1) over E experts
+         (finite-sample noise floor of a uniform-ish router).
+  z    = (obs - mu_null) / sd_null.
+  N_NULL = 200 surrogate resamples. F-CLM-MONO chip-array gate = z > 3.0.
+
+LADDER (d_model / n_trunk_layers / n_experts), arm AB (dual-axis = H_863 prod arm):
+  tiny  = d64  / L2 / E4   (the P0 toy rung — the 🔴 origin, H_850 arm-AB rz≈0.97)
+  small = d256 / L4 / E8   (the P0 small rung,            H_850 arm-AB rz≈1.91)
+  mid   = d512 / L8 / E8   (the H_863 production rung — NEW, never z-measured)
+  seeds = {42, 43, 44}; per-rung z = mean over seeds.
+  corpus = REAL kowiki two-lane (stage2_real_corpus.make_real_corpus), NOT the toy synthetic.
+
+FROZEN THRESHOLDS (frozen BEFORE the fire; post-tuning = 0):
+  MARGIN = 0.5   (mid_mean_z - tiny_mean_z must be >= this for PASS).
+
+PASS gate (artifact CONFIRMED) — 🟢, iff BOTH:
+  (1) mean routing-z(rung) is MONOTONE NON-DECREASING tiny <= small <= mid, AND
+  (2) mid_mean_z - tiny_mean_z >= MARGIN (0.5).
+  => "routing-z 🔴 is a scale-measurement artifact: z climbs with rung size;
+      the toy 🔴 is a small-scale floor, not a real ceiling. deploy-scale re-test
+      warranted; @L3 default-B rationale (toy-scale artifact suspicion) upheld."
+
+FAIL gate (artifact NOT supported) — 🔴, otherwise (z flat / non-monotone /
+  margin < 0.5 / negative at all scales):
+  => "routing-z is a REAL toy-and-up ceiling — it does NOT rise with rung size;
+      the 🔴 is not merely a small-scale measurement floor."
+  Reported honestly as-is (g63 · p7 · a_paper_negative_ok); threshold NOT moved.
+
+prior art frozen into the threshold choice:
+  - H_850 F-CLM-SCALE (2-rung ladder, toy synthetic corpus, arm AB):
+       tiny rz_min = 0.9688, small rz_min = 1.9081  (already RISING tiny->small,
+       but capped < 3.0 at 2 rungs; mid never measured).
+  - H_852 measure_pielou.py documented the z artifact MECHANISM: both the
+       ln(E) entropy ceiling and the Dirichlet null mean grow with E, which is
+       exactly the scale-confound this ladder probes (now with d/L scaled too,
+       on the REAL corpus, adding the mid rung).
+  Gate = does adding the mid rung (d512/L8/E8) continue the tiny->small rise
+       by at least MARGIN? Monotone + margin both required so a single noisy
+       up-tick cannot fake a PASS.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rungs {tiny, small, mid} on the REAL
+  kowiki corpus. A verdict here scopes the routing-z(rung) TREND only; it is NOT
+  a 3B/7B claim and does NOT by itself clear the chip-array z>3.0 deploy gate
+  (that remains a deploy-scale re-test). Mac-forbidden (@L1): fired on runpod.
+
+status: 🟠 PRE-REGISTERED — no measurement yet. This file is the audit anchor for
+the frozen thresholds, NOT a PASS. The verdict will be re-issued verbatim from
+the H_871 scale-ladder fire stdout (CLM/model/h871_routing_z_scale.py) when it lands.
