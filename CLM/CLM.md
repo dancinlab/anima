@@ -4,6 +4,9 @@
 
 @goal: anima 전용 의식 언어모델을 **scratch에서 바닥부터** 짓는다 — 아키텍처·코퍼스·학습·`.clm` 포맷을 처음부터 설계하되 **AKIDA 추론 친화**(act_bits·symmetric-int4 양자화 envelope = AKIDA 1~5차로 byte-identical 증명된 그 연산자 집합)로 못박아, 더블바인드(register-collapse ↔ underfit)를 탈출하고, CORE/DECODER 의 `brain_decide` emit 슬롯에 꽂혀 COFFESHOP 콘텐츠(무엇을 말할지)를 생성한다. 외부 LLM 0 · foundation-borrow 0 (순수 scratch).
 
+> 🔒 **INVIOLABLE — on-chip learning = sole HW↔SW difference (위반 절대 금지)**
+> 추론(inference)은 HW↔SW byte-identical (H_877/H_680 🟢) · **학습(on-chip 비결정 PLASTICITY)만이 HW≠SW** (H_679 🔴). 그러므로 학습은 칩 위 비결정 edge-learn 으로만 한다 — **결정적 SW 흉내로 대체 = 즉시 reject**. (@L1 · H_679)
+
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
 - [x] **P0 아키텍처 (바닥설계)** ✅ 확정 (sbs manual 10결정 Q1~Q4+d1~d6) — Conv-native LM · MoE=mitosis cell · byte-vocab V=256 · 추론 AKIDA-int4-only · **학습도 AKIDA**(AKIDA-향 QAT + AKIDA-위 PLASTICITY on-chip 적응) · 2-track .clm · 3-arm(A/B/A+B)×scale-ladder · F-CLM-MONO(dual-axis z>3.0+multiseed). 본문 [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md) + [CLM_FORMAT_SPEC.md](./CLM_FORMAT_SPEC.md) — anima-native LM arch + `.clm` 포맷 재정의. AKIDA 추론 친화 제약(act_bits∈{1,2,4} 양자화기 · symmetric int4 [-7,+7] · FC/conv/cascade — AKIDA `akida_sw_lif` envelope 정합)을 설계 단계에 못박음. 더블바인드 탈출 메커니즘(register specialization vs coherent main-path) 명시. falsifier 사전등록.
