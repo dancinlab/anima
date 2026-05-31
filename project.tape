@@ -79,6 +79,14 @@
   do   = "before pod teardown: pull ckpt(s) + result + log + anchors, verify, HF upload — then teardown"
   dont = "pull only JSONs, leave ckpt on a doomed pod · teardown before HF · PULL_FAILED ≠ pod dead"
 
+@D a_cpu_local_no_waiter := "dispatched fire runs CPU-local + polls inline — never awaits a Monitor/waiter" :: governance [required active]
+  do   = "sub-agent runs CPU-local (nohup -u → /tmp log) · polls result inline (sleep 30) · commit-early"
+  dont = "await a runpod/vast Monitor/waiter (main loop only → stall) · say 'wait for Monitor'"
+
+@D a_dont_kill_live_compute := "prove stall before killing a bg agent — live CPU progress ≠ stall" :: governance [required active]
+  do   = "prove stall before kill · 'NN% CPU'/'k/N cells'=live (let finish) · harvest detached nohup JSON"
+  dont = "TaskStop an agent showing CPU progress · assume 'running'=='stalled' · double-spend a live nohup"
+
 @D a_runpod_inbox := "runpod trouble → hexa-lang inbox" :: governance [required active]
   do   = "file runpod findings to `hexa-lang/inbox/patches/<slug>.md` for hexa cloud"
   dont = "anima-side-only patches that lock the workaround in this repo"
