@@ -1,5 +1,5 @@
 // ═══════════════════════════════════════════════════════════════════════════
-//  HEXAD/CHAT/server/akida_bridge.hexa — pure-hexa AKIDA Pi → broker WS bridge
+//  AGENT/CHAT/akida_bridge.hexa — pure-hexa AKIDA Pi → broker WS bridge
 //
 //  Collapses 3 predecessors into one hexa-native daemon:
 //    · akida_ws_publisher.py — stdin → WS publisher (had wrong default path)
@@ -7,7 +7,7 @@
 //    · akida_bridge_pipeline.sh — `nc | python3 publisher` shell glue
 //
 //  THE BUG WE ELIMINATE
-//    Broker (HEXAD/CHAT/server/broker.py) exposes TWO akida endpoints:
+//    Broker (AGENT/CHAT/broker.py) exposes TWO akida endpoints:
 //      · `/ws/akida_ingest` (line 328) — Pi spike PUSH endpoint (this bridge)
 //      · `/ws/akida`        (line 359) — frontend subscriber READ endpoint
 //    The previous default of this bridge pointed the pusher at `/ws/akida`

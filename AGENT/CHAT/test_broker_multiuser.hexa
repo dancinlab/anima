@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════
-// HEXAD/CHAT/server/test_broker_multiuser.hexa — WRAPPER entry-point
+// AGENT/CHAT/test_broker_multiuser.hexa — WRAPPER entry-point
 //
 //   test_broker_multiuser.py is the FIRST-PACK Phase 3 falsifier: it opens
 //   2 concurrent user WebSocket clients against a running broker and
@@ -16,7 +16,7 @@
 // ════════════════════════════════════════════════════════════════════════
 
 fn main() {
-    let here = "/Users/ghost/core/anima/HEXAD/CHAT/server"
+    let here = "/Users/ghost/core/anima/AGENT/CHAT"
     let py = here + "/test_broker_multiuser.py"
     let exists = exec("[ -f '" + py + "' ] && printf yes || printf no")
     if exists != "yes" {

@@ -8,7 +8,7 @@ MUST append parsed frames to the SAME STATE.akida_history deque that
 /akida/recent serves. Source review already FALSIFIED hypotheses (a)/(b)/(c)/(d)
 at broker.py; this test makes that wiring a regression guard.
 
-Run:  python3 HEXAD/CHAT/server/test_broker_akida_ingest.py
+Run:  python3 AGENT/CHAT/test_broker_akida_ingest.py
 Needs: fastapi[testclient] (TestClient drives the WS + GET in-process, no live
        server / no network).
 """

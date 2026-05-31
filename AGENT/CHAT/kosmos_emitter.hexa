@@ -1,7 +1,7 @@
 // ════════════════════════════════════════════════════════════════════════════
 //  kosmos_emitter.hexa — production KOSMOS anchor emitter daemon
 //
-//  Activates HEXAD/CHAT/server/kosmos_anchor.hexa (PR #116) on LIVE production
+//  Activates AGENT/CHAT/kosmos_anchor.hexa (PR #116) on LIVE production
 //  anima emissions WITHOUT touching any .py. The production participant
 //  `anima_participant.py` is torch/transformers/peft-bound and FROZEN — the
 //  hexa-native guard forbids ALL .py edits. So this daemon is a separate,
@@ -47,7 +47,7 @@
 //    (dict literal `#{}`, missing key → `void`, `import` abs-path only).
 // ════════════════════════════════════════════════════════════════════════════
 
-import "/Users/ghost/core/anima/HEXAD/CHAT/server/kosmos_anchor.hexa"
+import "/Users/ghost/core/anima/AGENT/CHAT/kosmos_anchor.hexa"
 use "stdlib/net/http_client"
 
 

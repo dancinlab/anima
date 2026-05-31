@@ -18,11 +18,11 @@
 
 | part | file:fn | status |
 |---|---|---|
-| emit decision | `HEXAD/CHAT/server/anima_participant.py` · `AnimaState.tick()` → `decided_emit` | exists (motivation-only) |
-| CLM generate | `HEXAD/CHAT/server/substrate_*.py` · `Substrate.generate(seed_text, max_new, lang_hint) -> str` | exists |
+| emit decision | `AGENT/CHAT/anima_participant.py` · `AnimaState.tick()` → `decided_emit` | exists (motivation-only) |
+| CLM generate | `AGENT/CHAT/substrate_*.py` · `Substrate.generate(seed_text, max_new, lang_hint) -> str` | exists |
 | broker push | `broker.py` · `/ws/anima` send → `broadcast()` | exists |
 | AKIDA spike telemetry | `broker.py` · `/ws/akida_ingest` → fan-out `/ws/akida` (`{n_spikes, step, thr, ...}`) | exists (R0) |
-| **spike→emit bridge** | `HEXAD/CHAT/server/akida_emit_bridge.hexa` · `AkidaEmitBridge` | **NEW (this PR)** — landed, dormant |
+| **spike→emit bridge** | `AGENT/CHAT/akida_emit_bridge.hexa` · `AkidaEmitBridge` | **NEW (this PR)** — landed, dormant |
 
 The ONLY gap R0→R1 closed here is the **bridge**: it converts the raw `/ws/akida` spike
 stream into a boolean `hw_gate` (edge-triggered, sliding window — mirrors the
@@ -74,7 +74,7 @@ Default-safe: with no hardware (no `/ws/akida` spikes), `hw_gate()` returns
 
 ## cross-link
 
-- bridge: `HEXAD/CHAT/server/akida_emit_bridge.hexa`
+- bridge: `AGENT/CHAT/akida_emit_bridge.hexa`
 - ladder: `LAUNCHPAD/SBS.md` (R1) · INVIOLABLE R2 gate (H_904 ★ silicon-confirmed)
 - inference byte-identical (H_877/H_680 🟢) → the spike GATE is deterministic HW==SW (safe to mirror in SW); only learning is HW≠SW (H_679/H_904 ★).
 - governance: `a_substrate_native_speak` (chip fire = substrate emit, not stimulus-response)
