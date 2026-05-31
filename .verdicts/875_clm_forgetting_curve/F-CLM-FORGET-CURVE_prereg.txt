@@ -1,0 +1,73 @@
+F-CLM-FORGET-CURVE — PRE-REGISTERED frozen thresholds (H_875 forgetting curve · dose-response)
+================================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed) ·
+prior art H_861 (F-CLM-BOUND 🔴 readout-only) · H_865 (adapter edge 🟢 BOUND).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after the run).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-forgetting-curve/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, ~13.65M params) only.
+  A 🔴/🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+  toy/mid → prod NOT guaranteed. Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS
+  Catastrophic forgetting under edge-only on-chip edge-learn is a DOSE-RESPONSE of the
+  edge-learn step count: base-ability z_drop is a monotone-rising function of adapt steps.
+  There exists a finite SAFE STEP BUDGET — the largest step count at which z_drop stays below
+  the RETAIN gate — and a trunk-adjacent adapter edge (H_865) EXTENDS that budget vs the
+  readout-only edge (H_861).
+
+CROSSING THRESHOLD (REUSED VERBATIM from F-CLM-BOUND_prereg.txt, commit bf98c01)
+  RETAIN gate cutoff: z_drop < 1.0
+    (base-ability CE may rise by < 1 pre-adapt std after edge adaptation; ≥1σ rise = forgetting.)
+  The "safe step budget" for an edge type = the LARGEST swept step count S such that the
+  measured z_drop(S) < 1.0 (and all smaller swept steps also < 1.0; i.e. last step BEFORE
+  the curve first crosses the gate). If z_drop(S) < 1.0 at ALL swept steps including the max,
+  the safe budget = the max swept step (gate not yet crossed within the budget; reported as
+  ">= max_step"). If z_drop >= 1.0 already at the smallest swept step (step=1), the safe
+  budget = 0 (forgets immediately; a_paper_negative_ok).
+
+MODEL / EDGE / BATCHES (REUSED VERBATIM from H_861/H_865, frozen seeds)
+  backbone   : mid d512/L8/E8 (~13.65M) AKIDA int4-sym[-7,+7] STE, arm AB. clm_mid_backbone.pt.
+  readout-only edge (H_861) : core = embed/embed_conv/trunk[*]/moe.*/norm_out FROZEN;
+                              edge = readout conv (d_model→vocab) trainable. Adam lr_edge=3e-3.
+  adapter edge (H_865)      : core = ALL base params FROZEN incl. readout; edge = thin additive
+                              adapter (Conv1d d_model→rank=64 → GELU → Conv1d rank→d_model,
+                              up zero-init = identity at step 0) between norm_out and FROZEN
+                              readout. Adam lr_edge=3e-3 over adapter params only.
+  base-ability held-out batch : make_lane_bytes("web", seed=BASE_SEED=101), held-out eval slice.
+  new-context held-out batch  : make_lane_bytes("new", seed=NEW_SEED=202) high-band cyclic motif,
+                                NOT seen in pretrain; train slice disjoint from eval slice.
+  Both: seq_len=64, batch_size=16, n_eval_batches=32, fixed seeds (frozen).
+
+STEP SWEEP (the dose axis — frozen ladder)
+  N_ADAPT swept over STEP_LADDER = [1, 2, 4, 8, 16, 32, 64, 128, 200, 300].
+  For each step count S and each edge type, a FRESH model is constructed from the frozen
+  backbone (re-init edge), the same NEW_SEED train batches are consumed for the first S steps
+  (deterministic prefix — step S uses the same gradient trajectory prefix as step S' > S), and
+  z_drop(S) and gain(S) are recorded. (300 anchors the H_861/H_865 endpoint VERBATIM.)
+
+MEASUREMENT PROCEDURE (computed by CODE, g5 — no LLM judge)
+  Per (edge_type, S):
+    1. Construct model from frozen backbone; freeze core per edge_type; init edge.
+    2. ce_base_pre, sd_base_pre = mean/std CE on base-ability held-out (pre-adapt).
+       ce_new_pre = mean CE on new-context held-out (pre-adapt).
+    3. Adapt: S edge-only Adam steps on the new-context TRAIN slice (deterministic prefix).
+    4. ce_base_post = mean CE on base-ability held-out; ce_new_post = mean CE on new-context.
+    5. z_drop(S) = (ce_base_post - ce_base_pre) / max(sd_base_pre, 1e-6)
+       gain(S)   = ce_new_pre - ce_new_post
+
+PASS / VERDICT (frozen)
+  PASS (🟢) iff:
+    (a) the step→z_drop curve is PRODUCED for BOTH edge types over the full STEP_LADDER, AND
+    (b) a FINITE safe step budget (steps where z_drop < 1.0) is IDENTIFIED for AT LEAST the
+        adapter edge (i.e. the adapter edge has a non-empty safe-budget region).
+  Else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok — e.g. if even step=1 already forgets on
+  readout-only, that is a real, reportable dose-response result).
+  Secondary (reported, NOT gating): adapter safe budget >= readout-only safe budget
+  (adapter extends the budget). Reported honestly either way.
+
+ARTIFACTS
+  .verdicts/clm-forgetting-curve/clm_forget_curve_result.json (per edge_type: list of
+     {steps, z_drop, gain, retain_pass}, safe_step_budget, crossing_step)
+  .verdicts/clm-forgetting-curve/F-CLM-FORGET-CURVE.txt (verdict verbatim)
+  backbone ckpt reused from HF dancinlab/anima-clm-verify (a_hf_complete; no new model artifact).

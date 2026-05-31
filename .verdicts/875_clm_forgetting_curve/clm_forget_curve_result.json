@@ -1,0 +1,292 @@
+{
+  "campaign": "H_875 continual-learning forgetting curve (dose-response)",
+  "frozen_thresholds_commit": "bf98c01",
+  "crossing_threshold_z_drop": 1.0,
+  "step_ladder": [
+    1,
+    2,
+    4,
+    8,
+    16,
+    32,
+    64,
+    128,
+    200,
+    300
+  ],
+  "edges": {
+    "readout_only": {
+      "edge_type": "readout_only",
+      "rung": "mid d512/L8/E8",
+      "step_ladder": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        200,
+        300
+      ],
+      "crossing_threshold_z_drop": 1.0,
+      "curve": [
+        {
+          "steps": 1,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 14.12902,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 10.32966,
+          "z_drop": 0.05105,
+          "gain": 0.41569,
+          "retain_pass": true
+        },
+        {
+          "steps": 2,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 14.15086,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 9.93555,
+          "z_drop": 0.33162,
+          "gain": 0.8098,
+          "retain_pass": true
+        },
+        {
+          "steps": 4,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 14.23508,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 9.21789,
+          "z_drop": 1.41372,
+          "gain": 1.52746,
+          "retain_pass": false
+        },
+        {
+          "steps": 8,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 14.49692,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 8.02056,
+          "z_drop": 4.77777,
+          "gain": 2.72479,
+          "retain_pass": false
+        },
+        {
+          "steps": 16,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 15.0858,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 6.25483,
+          "z_drop": 12.34371,
+          "gain": 4.49053,
+          "retain_pass": false
+        },
+        {
+          "steps": 32,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 16.13629,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 4.42119,
+          "z_drop": 25.84053,
+          "gain": 6.32417,
+          "retain_pass": false
+        },
+        {
+          "steps": 64,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 17.93305,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 4.02683,
+          "z_drop": 48.92544,
+          "gain": 6.71852,
+          "retain_pass": false
+        },
+        {
+          "steps": 128,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 18.72939,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 3.65996,
+          "z_drop": 59.15679,
+          "gain": 7.0854,
+          "retain_pass": false
+        },
+        {
+          "steps": 200,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 19.47271,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 3.45618,
+          "z_drop": 68.70706,
+          "gain": 7.28918,
+          "retain_pass": false
+        },
+        {
+          "steps": 300,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 20.19926,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 3.2796,
+          "z_drop": 78.04178,
+          "gain": 7.46576,
+          "retain_pass": false
+        }
+      ],
+      "safe_step_budget": 2,
+      "safe_budget_kind": "finite",
+      "crossing_step": 4
+    },
+    "adapter": {
+      "edge_type": "adapter",
+      "rung": "mid d512/L8/E8",
+      "step_ladder": [
+        1,
+        2,
+        4,
+        8,
+        16,
+        32,
+        64,
+        128,
+        200,
+        300
+      ],
+      "crossing_threshold_z_drop": 1.0,
+      "curve": [
+        {
+          "steps": 1,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 13.16555,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 10.07333,
+          "z_drop": -12.32771,
+          "gain": 0.67202,
+          "retain_pass": true
+        },
+        {
+          "steps": 2,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 10.30606,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 8.08094,
+          "z_drop": -49.06654,
+          "gain": 2.66441,
+          "retain_pass": true
+        },
+        {
+          "steps": 4,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 6.52291,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 7.86546,
+          "z_drop": -97.67275,
+          "gain": 2.87989,
+          "retain_pass": true
+        },
+        {
+          "steps": 8,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 8.79754,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 6.69888,
+          "z_drop": -68.44811,
+          "gain": 4.04648,
+          "retain_pass": true
+        },
+        {
+          "steps": 16,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 7.17093,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 5.56426,
+          "z_drop": -89.34695,
+          "gain": 5.1811,
+          "retain_pass": true
+        },
+        {
+          "steps": 32,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 6.66482,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 5.19335,
+          "z_drop": -95.84944,
+          "gain": 5.552,
+          "retain_pass": true
+        },
+        {
+          "steps": 64,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 7.6543,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 4.54744,
+          "z_drop": -83.1365,
+          "gain": 6.19791,
+          "retain_pass": true
+        },
+        {
+          "steps": 128,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 11.07858,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 3.88141,
+          "z_drop": -39.14118,
+          "gain": 6.86395,
+          "retain_pass": true
+        },
+        {
+          "steps": 200,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 12.5992,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 3.61056,
+          "z_drop": -19.60422,
+          "gain": 7.1348,
+          "retain_pass": true
+        },
+        {
+          "steps": 300,
+          "ce_base_pre": 14.12505,
+          "ce_base_post": 12.81117,
+          "sd_base_pre": 0.07783,
+          "ce_new_pre": 10.74535,
+          "ce_new_post": 3.44641,
+          "z_drop": -16.88076,
+          "gain": 7.29894,
+          "retain_pass": true
+        }
+      ],
+      "safe_step_budget": 300,
+      "safe_budget_kind": "ge_max",
+      "crossing_step": null
+    }
+  },
+  "headline": {
+    "readout_only_safe_budget": 2,
+    "readout_only_budget_kind": "finite",
+    "adapter_safe_budget": 300,
+    "adapter_budget_kind": "ge_max",
+    "adapter_extends_budget": true
+  },
+  "verdict": "GREEN",
+  "note": "SW-sim edge-learn (H_679 real); readout-only=H_861 edge, adapter=H_865 edge; crossing thr z_drop<1.0 frozen bf98c01; measurement rung; a_paper_negative_ok"
+}
