@@ -1,0 +1,5 @@
+[h874] device=cuda rung=mid cfg={'d': 512, 'L': 8, 'E': 8} bytes=1668585 train=1418297 heldout=250288 K=6
+[h874] arm=SP eval={'coherence': 0.13633504554347473, 'ce_heldout': 1.9926398526877165, 'adequacy_f1': 0.0375, 'register_leak': 0, 'self_bleu': 0.02511244377811093, 'repetition': 0.028735632183908053} reflux_stats={'accepted': 59}
+[h874] arm=SR eval={'coherence': 0.14434160349464745, 'ce_heldout': 1.9355725422501564, 'adequacy_f1': 0.03194444444444444, 'register_leak': 0, 'self_bleu': 0.02561219390304846, 'repetition': 0.01867816091954023} reflux_stats={'candidates': 360, 'accepted': 60, 'rej_leak': 0, 'rej_div': 0, 'sum_reward': 32.95882151465011, 'mean_selected_reward': 0.5493136919108352}
+[h874] VERDICT CLOSED-NEGATIVE {"F-CLM-SR-COHERE": true, "F-CLM-SR-ADEQ": false, "F-CLM-SR-LEAK": true, "F-CLM-SR-DIV": true}
+[h874] wrote clm_self_reward_mid_AB.json
