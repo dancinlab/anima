@@ -1,0 +1,33 @@
+F-CLM-EDGE-IDENTITY — VERDICT STATUS (H_884 · edge-output identity constraint across partial-learn rows)
+=========================================================================================================
+STATUS: ⏳ MEASUREMENT LAUNCHED — CPU-LOCAL FIRE IN PROGRESS, DID NOT CONVERGE WITHIN SESSION WINDOW.
+        (NOT a pass, NOT a fail — honest pending. No threshold tuned. a_paper_negative_ok respected:
+         a RED would be reported honestly; this is neither — the numbers are simply not yet in.)
+
+WHAT WAS DONE (g5 CODE-measured plan, fully pre-registered + frozen BEFORE fire):
+  * prereg frozen (bf98c01 verbatim): DIST<0.50, PROBE>0.80; >=3 partial-learn rows
+    (adapter / per_layer / gated) — committed to .verdicts/clm-edge-output-identity/ BEFORE this file.
+  * harness CLM/model/h884_edge_output_identity.hexa: imports the committed H_865 adapter machinery
+    VERBATIM; applies the H_873 edge-output JS-to-p_pre identity constraint on top of each of the 3
+    partial-learn edges; computes d_anchor_max + probe_consistency by code (JS-divergence). No LLM judge.
+  * fire LAUNCHED CPU-LOCAL (torch 2.8.0, detached/unbuffered, NO runpod/Monitor per a_cpu_local_no_waiter):
+      mid d512/L8/E8 backbone, 13,653,768 params (HF dancinlab/anima-clm-verify · clm_mid_backbone.pt) — loaded OK.
+
+WHY NO NUMBERS YET (honest, environmental — NOT a code or hypothesis defect):
+  * Each mode runs 4 arms (full / js_only / psi_only / off) x 300 adapt steps, with a Psi-probe forward
+    + a JS-grad probe forward per step over all 31 identity-probe windows on the FULL 13.6M backbone.
+  * On THIS Mac CPU, under heavy contention from concurrently-running sibling-agent jobs (h879/h883/etc.),
+    the FIRST of the 3 modes alone did not complete within ~88 min wall (CPU-time accumulated steadily —
+    genuinely computing, verified not stalled). Projected full 3-mode run ~3-4 h under contention.
+  * a_dont_kill_live_compute: the fire was LEFT RUNNING (not killed) at session end; result.json will be
+    written to .verdicts/clm-edge-output-identity/clm_edge_identity_result.json when it converges.
+
+NEXT (to close): re-run on an uncontended CPU (or a single GPU pod — a_fire_autonomous; est ~$1, minutes)
+  with the SAME frozen harness + thresholds; the prereg is immutable so the verdict will be honest either way.
+  Falsifier g5 unchanged: PROBE > 0.80 across the 3 frozen rows -> 🟢; any row below -> 🔴 (a_paper_negative_ok).
+
+ARTIFACTS
+  prereg: .verdicts/clm-edge-output-identity/F-CLM-EDGE-IDENTITY_prereg.txt (frozen bf98c01)
+  harness: CLM/model/h884_edge_output_identity.hexa (h865 import VERBATIM; 3 partial-learn rows)
+  id-keyed backing: .verdicts/884_clm_edge_output_identity/README.txt
+  scope (a_scale_honest_scope): MEASUREMENT rung (mid) only; SW-sim edge-learn (H_679 HW real); AKIDA-int4 inference.
