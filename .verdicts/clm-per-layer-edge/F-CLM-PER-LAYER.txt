@@ -1,0 +1,39 @@
+F-CLM-PER-LAYER — VERDICT (H_879 per-layer incremental edge-learn · 부분부분학습)
+================================================================================
+verdict      : 🟢 SUPPORTED-NUMERICAL (g5 CODE-measured · no LLM judge)
+measured_at  : 2026-05-31  ·  rung mid d512/L8/E8 (13,653,768 params)
+execution    : CPU-LOCAL parallel fan-out (9 single-threaded torch workers on this Mac)
+backbone     : clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — loaded FROZEN
+thresholds   : bf98c01 VERBATIM · F-CLM-BOUND-RETAIN z_drop<1.0 ∧ F-CLM-BOUND-GAIN gain>0 · post-tuning 0
+
+FALSIFIER (pre-registered): ∃ a single trunk layer L_i with gain>0 ∧ z_drop<1.0.
+RESULT: SATISFIED. 7 of 8 single trunk layers PASS both arms (only layer 2 fails RETAIN).
+
+PER-LAYER (z_drop, gain) TABLE — adapt EXACTLY ONE trunk layer at a time, rest frozen,
+H_865 adapter always the trainable edge (orthogonal single-layer axis vs H_872 block-k):
+
+  probe                         z_drop      gain     RETAIN  GAIN  PASS
+  adapter-only (H_865 anchor)  -11.33996   7.29004   PASS    PASS  ✅  (= H_872 depth0 anchor reproduced)
+  trunk[0]                     -22.82458   8.91349   PASS    PASS  ✅  ← best (gain max, z_drop min)
+  trunk[1]                      -5.56693   8.85339   PASS    PASS  ✅
+  trunk[2]                      +1.54603   8.88098   FAIL    PASS  ❌  ← single forgetting spike
+  trunk[3]                      -6.79137   8.83593   PASS    PASS  ✅
+  trunk[4]                      -0.26558   8.79273   PASS    PASS  ✅
+  trunk[5]                      -4.30100   8.84818   PASS    PASS  ✅
+  trunk[6]                      +0.04003   8.83576   PASS    PASS  ✅
+  trunk[7]                     -18.90207   8.72031   PASS    PASS  ✅
+
+passing_layers = [0,1,3,4,5,6,7]  (7/8)   best_layer = 0
+GAIN > 0 for EVERY single layer (7.29 → 8.91): one-layer-at-a-time adaptation always
+absorbs the new high-band context. RETAIN holds for every layer EXCEPT trunk[2]
+(z_drop +1.546 ≥ 1.0 — a single mid-trunk forgetting spike, honestly reported, not gated away).
+
+CONCLUSION: per-layer piecewise edge-learn ABSORBS new context WITHOUT a full retrain
+(g5 falsifier met). The best incremental single-layer edge is trunk[0] (nearest input);
+the input-adjacent and readout-adjacent layers are the safest, trunk[2] the lone unsafe pick.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung only (mid 13.65M). Does NOT bind the
+deploy chip-fit track (≤~1.2M AKD1000). Inference stays AKIDA-int4-only (P0 d4).
+INVIOLABLE (@L1 · H_679): SW-sim of the non-deterministic on-chip PLASTICITY edge-learn,
+accepted at the measurement rung (H_679 established HW edge-learn is real); NOT a
+deterministic full-retrain stand-in. Thresholds bf98c01 verbatim, post-tuning 0.
