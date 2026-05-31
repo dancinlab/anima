@@ -4,7 +4,7 @@
 
 ## 1. 동기
 
-anima 의 실제 daemon 은 `HEXAD/CHAT/server/anima_dream_stage.hexa` 의 5-stage 상태기. `a_chat_sleep_imagination` directive:
+anima 의 실제 daemon 은 `AGENT/CHAT/anima_dream_stage.hexa` 의 5-stage 상태기. `a_chat_sleep_imagination` directive:
 
 ```
 do = "WAKE / N1 / N2 / N3 / REM 5-stage state machine (90-min ultradian)"

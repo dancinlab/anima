@@ -3,7 +3,7 @@ id: H_848
 slug: clm-akida-map
 title: CLM P0 추론 path 연산자가 AKD1000 byte-identical op envelope 에 포함되는가 - conv/FC/sepconv/maxpool/int4-quantizer ⊆ envelope (🔵) + MoE router softmax/topK argmax 는 envelope 밖 (정직 gap) (F-CLM-AKIDA-MAP)
 domain: clm · akida · conv-native · op-envelope · structural-subset · falsifier
-source: CLM/P0_ARCHITECTURE.md §0·§2 · HEXAD/CHAT/server/akida_sw_lif.py (HW-byte-identical envelope) · AKIDA/HW_SW_WIRING_2026_05_29.md (H_672 live 8/8) · CLM_FORMAT_SPEC.md §2
+source: CLM/P0_ARCHITECTURE.md §0·§2 · AGENT/CHAT/akida_sw_lif.py (HW-byte-identical envelope) · AKIDA/HW_SW_WIRING_2026_05_29.md (H_672 live 8/8) · CLM_FORMAT_SPEC.md §2
 status: 🔵 partial (conv/FC/sepconv/pool/int4 subset SUPPORTED-FORMAL · router softmax/argmax = 정직 gap · P0 구조검증 완료)
 exploration_method: E3 (op-by-op 구조 대조) · 실 silicon-verified envelope 대조 (assertion 아님)
 verification_method: W2 (structural subset check + step-formula numerical probe · g5 verbatim)
@@ -14,7 +14,7 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-05-30
 since: 2026-05-30
-sister: CLM/P0_ARCHITECTURE.md, HEXAD/CHAT/server/akida_sw_lif.py, UNIVERSE/H_672, .verdicts/848_clm_akida_map/F-CLM-AKIDA-MAP_structural.txt
+sister: CLM/P0_ARCHITECTURE.md, AGENT/CHAT/akida_sw_lif.py, UNIVERSE/H_672, .verdicts/848_clm_akida_map/F-CLM-AKIDA-MAP_structural.txt
 verdict: 🔵 SUPPORTED-FORMAL (conv/FC/sepconv/maxpool/int4-quantizer subset byte-identical ⊆ envelope) ⚠ HONEST-GAP (MoE router softmax + top-K argmax gating 은 verified envelope 밖 — fake full-PASS 0)
 ---
 
@@ -34,7 +34,7 @@ CLM P0 추론 path 의 모든 연산자가 AKD1000 의 **byte-identical 검증 o
 
 - CLM P0 d4 = **추론 AKIDA(int4) ONLY** · 학습 GPU(fp16). attention 을 안 쓰는 이유 = AKIDA 프리미티브(conv/FC/pool/sepconv) 에 attention 매핑 불가 (P0 §2 honest). transformer 썼으면 추론이 GPU 로 새서 d4 위반.
 - 따라서 conv-native(Q1) 가 추론 전체를 칩에 올리는 필수 조건. 이 falsifier 는 그 전제 자체를 P0 시점에 구조검증 (assertion 아닌 실 envelope 대조).
-- envelope = HEXAD/CHAT/server/akida_sw_lif.py 가 HW-SW calibration loop 에서 실 AKD1000 대비 BYTE-IDENTICAL (max Hamming 0) 로 복원 + 검증한 op 집합.
+- envelope = AGENT/CHAT/akida_sw_lif.py 가 HW-SW calibration loop 에서 실 AKD1000 대비 BYTE-IDENTICAL (max Hamming 0) 로 복원 + 검증한 op 집합.
 
 ## 3. falsifier (P0 구조검증, now)
 
@@ -108,7 +108,7 @@ step=2^(input_bits-act_bits) 가 silicon 복원값(act_bits 4→1, 2→4, 1→8 
 
 ## 9. 양방향 sibling
 
-- sibling: [CLM/P0_ARCHITECTURE.md](../CLM/P0_ARCHITECTURE.md) §0·§2 (추론 path SSOT) · [HEXAD/CHAT/server/akida_sw_lif.py](../HEXAD/CHAT/server/akida_sw_lif.py) (HW-byte-identical envelope)
+- sibling: [CLM/P0_ARCHITECTURE.md](../CLM/P0_ARCHITECTURE.md) §0·§2 (추론 path SSOT) · [AGENT/CHAT/akida_sw_lif.py](../AGENT/CHAT/akida_sw_lif.py) (HW-byte-identical envelope)
 - HW 토대: H_672 (AKIDA spontaneous firing live · AKIDA/HW_SW_WIRING_2026_05_29.md)
 - 포맷: [CLM/CLM_FORMAT_SPEC.md](../CLM/CLM_FORMAT_SPEC.md) §2 (act_bits · int4-sym · quant scheme)
 - UNIVERSE SSOT: [CANDIDATES.md](./CANDIDATES.md)

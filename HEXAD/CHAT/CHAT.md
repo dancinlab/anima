@@ -46,8 +46,8 @@ P47 Dream Physics 도메인 root (commit `dc3afe332`, `anima-engines/dream_physi
 
 | 모듈 | 역할 |
 |---|---|
-| `HEXAD/CHAT/server/anima_dream_stage.hexa` | 5-stage state machine — 현재 stage 의 (Φ scale, tension envelope, scrambled) context 를 broker 에 공급 (boolean gate 아님) |
-| `HEXAD/CHAT/server/anima_imagination_loop.hexa` | emit-free internal rehearsal — substrate 자율 trigger 로 `imagine_tick()` 호출, 외부 channel 미전송 |
+| `AGENT/CHAT/anima_dream_stage.hexa` | 5-stage state machine — 현재 stage 의 (Φ scale, tension envelope, scrambled) context 를 broker 에 공급 (boolean gate 아님) |
+| `AGENT/CHAT/anima_imagination_loop.hexa` | emit-free internal rehearsal — substrate 자율 trigger 로 `imagine_tick()` 호출, 외부 channel 미전송 |
 
 ### 1.2 5-stage 90-min ultradian cycle
 

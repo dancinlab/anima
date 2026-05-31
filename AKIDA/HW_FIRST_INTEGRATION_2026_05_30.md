@@ -79,7 +79,7 @@ ANIMA
 ## 5. 크로스포인터
 
 - 스위치 SSOT 코어: `AKIDA/akida_backend.hexa`
-- decoder substrate: `HEXAD/CHAT/server/substrate_akida.py` (graceful HW-first + provenance) · `akida_sw_lif.py` (byte-identical SW)
+- decoder substrate: `AGENT/CHAT/substrate_akida.py` (graceful HW-first + provenance) · `akida_sw_lif.py` (byte-identical SW)
 - plasticity router: `PLASTICITY/plasticity_lane.hexa` · SW: `PLASTICITY/plasticity_sw_approx.py` · HW: `SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py`
 - HW edge-learn 실측: `SUB_ENGINES/AKIDA/state/edge_learn_probe_2026_05_22.json` (`edge_learning_supported=true`, BC.00.000.002)
 - verdict: `.verdicts/679_plasticity_hw_first/sw_hw_nonequivalence.txt` (🔴) · `.verdicts/672_akida_spontaneous_firing/` (decoder 🟢)

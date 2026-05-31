@@ -14,21 +14,21 @@ graceful numpy-LIF SW fallback + provenance. 5 stacked PR (A~E) 모두 MERGED.
 
 | # | title | status | merged | core |
 |---|---|---|---|---|
-| PR-A #1419 | numpy LIF SW 시뮬레이터 (FullyConnected.forward 미러, seed=187) | MERGED | ✓ | `HEXAD/CHAT/server/akida_sw_lif.py` (+`.hexa` stub) |
-| PR-B #1420 | SubstrateAKIDA(Substrate) plugin (HW + SW fallback + provenance) | MERGED | ✓ | `HEXAD/CHAT/server/substrate_akida.py` (+`.hexa` stub) |
-| PR-C #1421 | substrate router 배선 (AKIDA_BACKEND env + --substrate akida) | MERGED | ✓ | `HEXAD/CHAT/server/anima_participant.py` (build_substrate + main) |
+| PR-A #1419 | numpy LIF SW 시뮬레이터 (FullyConnected.forward 미러, seed=187) | MERGED | ✓ | `AGENT/CHAT/akida_sw_lif.py` (+`.hexa` stub) |
+| PR-B #1420 | SubstrateAKIDA(Substrate) plugin (HW + SW fallback + provenance) | MERGED | ✓ | `AGENT/CHAT/substrate_akida.py` (+`.hexa` stub) |
+| PR-C #1421 | substrate router 배선 (AKIDA_BACKEND env + --substrate akida) | MERGED | ✓ | `AGENT/CHAT/anima_participant.py` (build_substrate + main) |
 | PR-D #1422 | dispatch.hexa probe --json provenance + argv offset 수정 | MERGED | ✓ | `scripts/akida/dispatch.hexa` |
-| PR-E #1423 | verify — SW falsifier 5/5 PASS + F-AKWIRE-FALLBACK | MERGED | ✓ | `HEXAD/CHAT/server/verify_substrate_akida.py` · `.verdicts/672_akida_spontaneous_firing/` · `UNIVERSE/H_672_*.md` |
+| PR-E #1423 | verify — SW falsifier 5/5 PASS + F-AKWIRE-FALLBACK | MERGED | ✓ | `AGENT/CHAT/verify_substrate_akida.py` · `.verdicts/672_akida_spontaneous_firing/` · `UNIVERSE/H_672_*.md` |
 
 g47 (commons) atomic create→merge 정책으로 PR 생성 즉시 `--squash --admin --delete-branch` 자동 머지됨.
 따라서 stack 은 prior-branch base 대신 매 PR fresh origin/main 재기준(worktree `git reset/checkout -B`)으로 진행.
 
 ## (2) 설계 SSOT 파일 인덱스 (read-first)
 
-- `HEXAD/CHAT/server/substrate_base.py:19-93` — Substrate ABC (generate / entropy_of_next / param_count). 모든 substrate 가 충족.
-- `HEXAD/CHAT/server/substrate_akida.py` — **SubstrateAKIDA(Substrate)** 신규 plugin. `__init__` 가 `_try_akida()` 로 `import akida` + `akida.devices()` 프로브 → HW/SW 경로 분기.
-- `HEXAD/CHAT/server/akida_sw_lif.py` — numpy LIF SW 시뮬레이터. `lif_forward(x, threshold_vec)` = akida FullyConnected.forward 미러. `simulate_regimes(seed=187)` = R0..R4.
-- `HEXAD/CHAT/server/anima_participant.py:227-258 (build_substrate)` + `:631-647 (main)` — router. `kind=="akida"` 분기 + `AKIDA_BACKEND` env override.
+- `AGENT/CHAT/substrate_base.py:19-93` — Substrate ABC (generate / entropy_of_next / param_count). 모든 substrate 가 충족.
+- `AGENT/CHAT/substrate_akida.py` — **SubstrateAKIDA(Substrate)** 신규 plugin. `__init__` 가 `_try_akida()` 로 `import akida` + `akida.devices()` 프로브 → HW/SW 경로 분기.
+- `AGENT/CHAT/akida_sw_lif.py` — numpy LIF SW 시뮬레이터. `lif_forward(x, threshold_vec)` = akida FullyConnected.forward 미러. `simulate_regimes(seed=187)` = R0..R4.
+- `AGENT/CHAT/anima_participant.py:227-258 (build_substrate)` + `:631-647 (main)` — router. `kind=="akida"` 분기 + `AKIDA_BACKEND` env override.
 - `scripts/akida/dispatch.hexa` — hexa-native probe/route. `probe --json` 가 `closed_loop_verify.py` 의 dangling 참조 충족.
 - `SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py:54-94` — 실 HW on-chip threshold-and-fire 정본 (SubstrateAKIDA HW 경로가 래핑).
 - `UNIVERSE/H_672_akida_spontaneous_firing.md` — falsifier SSOT (4 SW + F-AKWIRE-FALLBACK).
@@ -50,7 +50,7 @@ REST/WS 신규 endpoint 없음 (broker `/ws/akida_ingest` 는 기존, 무변경)
 ## (4) 신규 컴포넌트/lib 트리
 
 ```
-HEXAD/CHAT/server/
+AGENT/CHAT/
 ├── akida_sw_lif.py            # numpy LIF sim (FullyConnected.forward 미러, seed=187)
 ├── akida_sw_lif.hexa          # hexa-native WRAPPER doc-stub
 ├── substrate_akida.py         # SubstrateAKIDA(Substrate): HW path + SW fallback + provenance
@@ -76,7 +76,7 @@ scripts/akida/
 
 ## (6) 다음 우선순위
 
-1. **live HW falsifier** (이제 가능): pi5 재배포 완료(plan §70)로 `provenance=="akida-hw"` 경로 실측 가능. pi5 에서 `python3 HEXAD/CHAT/server/verify_substrate_akida.py` 를 akida venv 로 실행 → HW raster 로 F-H672-1..4 재확인 + H_672 §7 verdict 를 "HW path live-confirmed" 로 격상.
+1. **live HW falsifier** (이제 가능): pi5 재배포 완료(plan §70)로 `provenance=="akida-hw"` 경로 실측 가능. pi5 에서 `python3 AGENT/CHAT/verify_substrate_akida.py` 를 akida venv 로 실행 → HW raster 로 F-H672-1..4 재확인 + H_672 §7 verdict 를 "HW path live-confirmed" 로 격상.
 2. **(만약 pi5 재배포가 미완이라면) 수동 절차**:
    - `ssh ubuntu@192.168.50.155` (LAN 직결, governance-protected host)
    - `SUB_ENGINES/AKIDA/scripts/` 8파일 + systemd `spike-streamer.service` 복원
@@ -101,5 +101,5 @@ scripts/akida/
 ## (9) 다음 세션 시작 명령 (one-liner)
 
 ```
-cd /Users/ghost/core/anima && AKIDA_BACKEND=1 python3 HEXAD/CHAT/server/verify_substrate_akida.py   # SW 5/5 PASS 확인 후, pi5(192.168.50.155) akida venv 에서 동일 실행 → HW path live-confirm
+cd /Users/ghost/core/anima && AKIDA_BACKEND=1 python3 AGENT/CHAT/verify_substrate_akida.py   # SW 5/5 PASS 확인 후, pi5(192.168.50.155) akida venv 에서 동일 실행 → HW path live-confirm
 ```

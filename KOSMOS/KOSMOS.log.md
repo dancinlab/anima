@@ -15,7 +15,7 @@ hexa-native guard 가 모든 `.py` write 차단, port 불가. 따라서 KOSMOS e
 를 건드리지 않고, 별도 hexa-native side-process (read-only) 가 broker 를 통해
 anima 발화를 관측하여 anchor 를 쓴다.
 
-LANDED: `HEXAD/CHAT/server/kosmos_emitter.hexa` (~375 LoC, pure-hexa) —
+LANDED: `AGENT/CHAT/kosmos_emitter.hexa` (~375 LoC, pure-hexa) —
 - **seam**: `anima_participant.py` self-tick decided-emit 마다 broker 로
   `{"type":"msg","text","lang","motivation","factors":{8}}` 전송 → broker
   (`/ws/anima` handler) 가 `kind:"anima"` 태그 + unique `id` 부여 + `STATE.history`
@@ -49,7 +49,7 @@ User directive 2026-05-23: HEXAD/PURE (🔴 CLOSED — multilingual FAIL) 의 �
 salvage. V3 substrate 자체만 실패 — KOSMOS+tension feature 는 fire 마다 anchor
 생성 ground-truth 작동 (V3/README.md §"KOSMOS+tension 통합" 보존 권고).
 
-LANDED: `HEXAD/CHAT/server/kosmos_anchor.hexa` (~270 LoC, pure-hexa, no torch) —
+LANDED: `AGENT/CHAT/kosmos_anchor.hexa` (~270 LoC, pure-hexa, no torch) —
 - `map_8factor_to_5channel` : 8-factor motivation snapshot → TENSION-LINK
   5-channel (relevance+coherence→concept · info_gap→context ·
   curiosity+originality→meaning · pain+balance→authenticity · dynamics→sender),

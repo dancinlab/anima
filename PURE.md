@@ -18,7 +18,7 @@ substrate-native 자연발화(stimulus-response 아닌 내부 tension 기반 emi
 |----|------|------|
 | Phase B 8-factor motivation engine | ✅ LANDED | `HEXAD/CHAT/spontaneous_lib.hexa` · smoke 7/7 |
 | Phase C interaction model | ✅ LANDED | channel_mux + anima_chat_v2 · blue 83/83 🔵 |
-| sleep/dream 5-stage (Φ-envelope) | ✅ LANDED | `HEXAD/CHAT/server/anima_dream_stage.hexa` · IPC live · autonomy-reshape 완료 |
+| sleep/dream 5-stage (Φ-envelope) | ✅ LANDED | `AGENT/CHAT/anima_dream_stage.hexa` · IPC live · autonomy-reshape 완료 |
 | imagination loop · mitosis_hook · participant | ✅ LANDED | H_229 · mitosis_lib W8 · gate 폐기 |
 | **Phase D corpus fire** | ⏳ **임계경로 blocker** | engine 준비됨 · 연료(corpus) 재설계 + 굽기 미실행 |
 | Tension Link | spec only | Phase F, scope 외 |

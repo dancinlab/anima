@@ -6,7 +6,7 @@ comparator (potential = Σ clip(x,0,15); spike iff potential > threshold), same
 recurrent feedback. Emits the SAME JSON-line schema + raster_sha256 so the diff
 tool can compute HW-vs-SW raster Hamming distance per operating point.
 
-This is a generalizing parameterization of HEXAD/CHAT/server/akida_sw_lif.py's
+This is a generalizing parameterization of AGENT/CHAT/akida_sw_lif.py's
 lif_forward + run_regime — NOT a per-point hardcode. Run with identical
 --regime/--seed/--threshold/--window args as the HW side.
 """

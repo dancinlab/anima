@@ -10,7 +10,7 @@
 ## 구조
 
 ```
-HEXAD/CHAT/server/
+AGENT/CHAT/
   ├ broker.py                       # FastAPI + WebSocket (그대로)
   ├ anima_participant.py            # tick loop + motivation + broker conn (refactor: substrate import)
   ├ akida_bridge.py                 # Pi spike forward (그대로)
