@@ -1,0 +1,120 @@
+{
+  "hypothesis": "H_880 F-CLM-ADAPTER-STACK (stacked thin adapters, per-context switch)",
+  "rung": "mid d512/L8/E8",
+  "K": 4,
+  "contexts": [
+    {
+      "kind": "web",
+      "seed": 401
+    },
+    {
+      "kind": "new",
+      "seed": 402
+    },
+    {
+      "kind": "new",
+      "seed": 403
+    },
+    {
+      "kind": "new",
+      "seed": 404
+    }
+  ],
+  "adapter_rank": 64,
+  "n_adapt_per_ctx": 300,
+  "lr_edge": 0.003,
+  "ce_pre_base": [
+    14.13648,
+    10.28841,
+    10.19843,
+    10.48749
+  ],
+  "sd_pre_base": [
+    0.08606,
+    0.09098,
+    0.07807,
+    0.08722
+  ],
+  "ce_post_own_adapter": [
+    0.53456,
+    3.04499,
+    3.14846,
+    3.26784
+  ],
+  "gain_per_ctx": [
+    13.60192,
+    7.24341,
+    7.04997,
+    7.21965
+  ],
+  "min_gain": 7.04997,
+  "ce_ctx0_post_own": 0.53456,
+  "ce_ctx0_after_full_stack": 0.53456,
+  "sd_ctx0_pre": 0.08606,
+  "z_drop_old": -158.05775,
+  "ce_matrix_i_with_adapter_j": [
+    [
+      0.53456,
+      12.89107,
+      12.14462,
+      12.62612
+    ],
+    [
+      21.33853,
+      3.04499,
+      3.84703,
+      3.75802
+    ],
+    [
+      21.105,
+      4.17162,
+      3.14846,
+      3.744
+    ],
+    [
+      19.84152,
+      4.2027,
+      3.91658,
+      3.26784
+    ]
+  ],
+  "interference_matrix_signed": [
+    [
+      0.0,
+      234.47856,
+      220.31386,
+      229.45091
+    ],
+    [
+      402.2934,
+      0.0,
+      17.6377,
+      15.68029
+    ],
+    [
+      357.74231,
+      20.38409,
+      0.0,
+      11.86461
+    ],
+    [
+      336.52807,
+      18.98243,
+      13.17271,
+      0.0
+    ]
+  ],
+  "own_best_margin": -11.86461,
+  "worst_interference_pair_i_j": [
+    2,
+    3
+  ],
+  "threshold_new_gain": ">0.0",
+  "threshold_old_z_drop": "<1.0 (bf98c01 BOUND verbatim)",
+  "threshold_interference": "<0.0 (own adapter strictly best)",
+  "NEW_GAIN_pass": true,
+  "OLD_Z_DROP_pass": true,
+  "INTERFERENCE_pass": true,
+  "verdict": "GREEN",
+  "note": "SW-sim edge-learn (H_679 real); K adapters one-at-a-time param-isolation; per-context switch; frozen thr (NEW-GAIN/INTERFERENCE=H_880 prereg, OLD-Z-DROP=bf98c01); measurement rung only"
+}
