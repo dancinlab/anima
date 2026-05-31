@@ -1,0 +1,64 @@
+F-CLM-FREEZE-DEPTH — VERDICT (H_872 freeze-depth sweep · BOUND E5)
+=================================================================
+🟢 SUPPORTED-NUMERICAL — ∃ passing freeze-depth (8 of 9 depths PASS).
+
+W2 · deterministic:false · thresholds REUSED VERBATIM from F-CLM-BOUND prereg
+(commit bf98c01) · post-tuning = 0 · code-measured (g5, no LLM judge).
+The sweep VARIED freeze-depth ONLY; NO threshold moved.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, 13,653,768 params)
+only. A 🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+Inference stays AKIDA-int4-only (P0 d4). Edge-learn SW-sim (H_679 HW edge-learn
+real). Fire = RunPod A100 80GB PCIe (torch 2.4.1+cu124), ~45s, ~$0.50.
+Backbone clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — same backbone
+H_861/H_865 used. Each depth re-instantiated a CLEAN frozen base from the same
+state_dict (no adaptation carryover).
+
+FROZEN THRESHOLDS (bf98c01 verbatim)
+  F-CLM-BOUND-RETAIN  PASS iff  z_drop < 1.0
+  F-CLM-BOUND-GAIN    PASS iff  gain   > 0.0
+  A depth PASSES iff (z_drop < 1.0) AND (gain > 0.0).
+  Sweep 🟢 iff ∃ a passing depth. (8/9 pass → 🟢.)
+
+DEPTH → (z_drop, gain) CURVE
+  depth = # of TOP trunk layers (nearest readout) made TRAINABLE; rest FROZEN.
+  The H_865 zero-init adapter is ALWAYS the edge (depth=0 = adapter-only).
+
+  depth  frozen_trunk  trainable_params   z_drop      gain      RETAIN  GAIN  PASS
+  -----  ------------  ----------------  ---------  --------   ------  ----  ----
+    0         8              66,112      -11.32621   7.29007    PASS   PASS  ✅   (= H_865 BOUND 🟢 anchor)
+    1         7             854,080      -24.44786   8.86244    PASS   PASS  ✅
+    2         6           1,642,048      -25.08410   8.90810    PASS   PASS  ✅
+    3         5           2,430,016      -13.61302   8.91285    PASS   PASS  ✅   ← BEST (max gain)
+    4         4           3,217,984       +9.66758   8.87841    FAIL   PASS  ❌   ← sole forgetting spike
+    5         3           4,005,952      -13.82975   8.90190    PASS   PASS  ✅
+    6         2           4,793,920      -24.90343   8.76555    PASS   PASS  ✅
+    7         1           5,581,888      -27.21465   8.57707    PASS   PASS  ✅
+    8         0           6,369,856       -8.88140   8.57024    PASS   PASS  ✅   (whole trunk trainable)
+
+  passing_depths = [0, 1, 2, 3, 5, 6, 7, 8]   (8 / 9)
+  best_depth     = 3   (gain +8.91285, z_drop -13.61302)
+  verdict        = 🟢 GREEN
+
+READING
+  • GAIN is high & near-flat (7.29 → 8.91) across the WHOLE sweep — every regime
+    absorbs the new context strongly; adaptation is never the bottleneck.
+  • RETAIN (z_drop) is STRONGLY NEGATIVE (base CE drops, i.e. forgetting reversed,
+    not merely blocked) at all depths EXCEPT depth=4, where z_drop jumps to +9.67
+    (>>1.0) — a single sharp catastrophic-forgetting spike at exactly the MIDDLE
+    freeze boundary (4 of 8 trunk layers trainable). The boundary is therefore
+    NOT monotone: both shallow (0-3) and deep (5-8) freezes retain, but the
+    half-and-half split (depth=4) destabilizes the base band.
+  • The whole-trunk-trainable end (depth=8) still PASSES (z_drop -8.88) because the
+    zero-init H_865 adapter preserves the base readout mapping — confirming the
+    adapter (not freeze depth alone) is what closes H_861's readout-only failure.
+  • Practical answer to "how shallow can the freeze be?": depth=0 (adapter-only,
+    66K trainable params) already RETAINs∧GAINs — the SHALLOWEST regime passes;
+    deeper unfreezing buys marginally more gain (8.91 vs 7.29) at 36× the params.
+
+ARTIFACTS
+  .verdicts/clm-freeze-depth/clm_freeze_depth_result.json   (full machine-readable curve)
+  .verdicts/clm-freeze-depth/F-CLM-FREEZE-DEPTH_prereg.txt  (frozen thresholds, bf98c01 verbatim)
+  .verdicts/872_clm_freeze_depth_sweep/h872_fire_a100.log   (A100 fire log)
+  CLM/model/h872_freeze_depth_sweep.hexa                    (sweep harness)
+  UNIVERSE/H_872_clm_freeze_depth_sweep.md                  (hypothesis)
