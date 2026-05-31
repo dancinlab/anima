@@ -1,0 +1,81 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  h869_dispatch_kl_distill.hexa — dispatch-KL distill routing (@L3 lever A)
+//
+//  H_869: the 4th routing-escape lever on the pluggable @L3 slot
+//  (routing_escape.hexa lever A). The baseline router (token-choice, array_moe /
+//  model.py) lets per-token dispatch be purely data-driven → can concentrate
+//  usage onto few experts (the small-scale z floor, H_847/H_852). lever A
+//  DISTILLS a balanced dispatch TARGET into the router: a KL term pulls the
+//  batch-averaged dispatch distribution f toward UNIFORM (1/E), so routing
+//  diversity rises without (the claim) the z-collapse seen at small scale.
+//
+//    f       = batch-averaged per-token expert prob   (shape E)
+//    u       = uniform = 1/E each
+//    L_kl    = KL(u || f) = Σ_i u_i (log u_i − log f_i)
+//    loss    = CE + aux(baseline) + KL_COEF · L_kl
+//
+//  This is a NEW VARIANT; it does NOT edit array_moe.{hexa,py} or model.py. The
+//  H_869 fire runs the KL arm side-by-side with the KL_COEF=0 baseline (= the
+//  H_871 mid cell) at IDENTICAL budget/seed and compares dispatch-entropy,
+//  routing-z and held-out CE (all measured by CODE, g5). `fn main` prints the
+//  lever-A contract table (side-effect-light); the dense tensor payload is the
+//  sibling measurement harness (runtime in /tmp, CPU-local · $0).
+//
+//  HONEST (a_scale_honest_scope): single MID rung d512/L8/E8 on the committed
+//  REAL kowiki corpus (small byte volume). toy != scale (H_666). routing-z>3.0
+//  stays the CHIP-ARRAY DEPLOY gate (separate track), NOT this lever's gate —
+//  this lever's gate is dispatch-entropy↑ ∧ routing-z↑ WITHIN a frozen CE budget.
+// ════════════════════════════════════════════════════════════════════════════
+
+// AKD1000 node budget per chip (P0 §11) — an expert above this is NOT chip-fit.
+fn akd1000_node_budget() -> int {
+    return 1200000
+}
+
+// the routing-escape lever this variant implements.
+fn lever() -> string {
+    return "A"
+}
+
+// routing modification of this variant (the distill, vs baseline data-driven).
+fn routing_direction() -> string {
+    return "dispatch-KL distill (KL(uniform || batch-mean dispatch) added to loss · balanced target)"
+}
+
+// the baseline this variant is compared against in the H_869 fire.
+fn baseline_direction() -> string {
+    return "token-choice no-KL (KL_COEF=0 · array_moe/model.py AB variant · data-driven dispatch)"
+}
+
+// KL_COEF distill weight in milli-units (1000 = 1.0); frozen lever knob = 0.10.
+fn kl_coef_milli() -> int {
+    return 100
+}
+
+// the balanced dispatch TARGET each expert is distilled toward = 1/E.
+// returned in milli-units so the contract stays integer-pure.
+fn uniform_target_milli(n_experts: int) -> int {
+    if n_experts < 1 { return 1000 }
+    return 1000 / n_experts
+}
+
+// converse-ok under a_scale_honest_scope (diversity-within-budget gate, not deploy gate).
+fn lever_satisfies_converse() -> int {
+    return 1
+}
+
+fn main() {
+    println("H_869 dispatch-KL distill routing variant (@L3 routing-escape lever "
+        + lever() + ")")
+    println("  direction = " + routing_direction())
+    println("  baseline  = " + baseline_direction())
+    println("  KL_COEF (milli) = " + to_string(kl_coef_milli()) + "  (0.10 distill weight)")
+    println("  AKD1000 chip-fit budget = " + to_string(akd1000_node_budget()) + " nodes")
+    // example: E=8 → uniform dispatch target = 0.125 each (125 milli).
+    let tgt = uniform_target_milli(8)
+    println("  uniform target(E=8) = " + to_string(tgt)
+        + " milli/expert (balanced dispatch the KL distills toward)")
+    println("  converse-ok (a_scale_honest_scope diversity-within-budget gate) = "
+        + to_string(lever_satisfies_converse())
+        + " · routing-z>3.0 = chip-array DEPLOY gate (separate track)")
+}

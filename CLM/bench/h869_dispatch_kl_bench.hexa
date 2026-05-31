@@ -1,0 +1,62 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  h869_dispatch_kl_bench.hexa — F-CLM-DISPATCH-KL falsifier gate contract
+//
+//  Encodes the H_869 lever-A pre-registered falsifier (frozen pre-fire,
+//  .verdicts/clm-dispatch-kl-distill/F-CLM-DISPATCH-KL_prereg.txt). The actual
+//  measurement is the runtime tensor payload (CPU-local · $0 · g5 code-scored);
+//  this file is the pure-hexa CONTRACT surface of the three frozen gates so the
+//  verdict's PASS/FAIL is reproducible from committed source.
+//
+//  3 gates (ALL must PASS for 🟢 · ANY fail → 🔴 · a_paper_negative_ok):
+//    ENTROPY : kl_disp_entropy >= base_disp_entropy + ENT_MARGIN(0.10 nats)
+//    Z       : kl_routing_z     >= base_routing_z    + Z_MARGIN(0.20)
+//    BUDGET  : kl_heldout_ce     <= base_heldout_ce   + CE_BUDGET(0.10 nats)
+//
+//  All thresholds in milli-units (1000 = 1.0) to keep the contract integer-pure.
+// ════════════════════════════════════════════════════════════════════════════
+
+fn ent_margin_milli() -> int { return 100 }   // 0.10 nats dispatch-entropy rise
+fn z_margin_milli()   -> int { return 200 }   // 0.20 routing-z rise
+fn ce_budget_milli()  -> int { return 100 }   // 0.10 nats held-out CE budget
+
+// gate 1 — routing diversity rises (dispatch entropy ↑ by >= margin).
+fn gate_entropy(kl_ent_milli: int, base_ent_milli: int) -> int {
+    if kl_ent_milli >= base_ent_milli + ent_margin_milli() { return 1 }
+    return 0
+}
+
+// gate 2 — the diversity gain shows in routing-z too (z ↑ by >= margin).
+fn gate_z(kl_z_milli: int, base_z_milli: int) -> int {
+    if kl_z_milli >= base_z_milli + z_margin_milli() { return 1 }
+    return 0
+}
+
+// gate 3 — NO z-collapse: held-out CE stays inside the frozen budget.
+fn gate_budget(kl_ce_milli: int, base_ce_milli: int) -> int {
+    if kl_ce_milli <= base_ce_milli + ce_budget_milli() { return 1 }
+    return 0
+}
+
+// 🟢 iff all three gates PASS.
+fn verdict_supported(kl_ent: int, base_ent: int,
+                     kl_z: int, base_z: int,
+                     kl_ce: int, base_ce: int) -> int {
+    let g1 = gate_entropy(kl_ent, base_ent)
+    let g2 = gate_z(kl_z, base_z)
+    let g3 = gate_budget(kl_ce, base_ce)
+    if g1 == 1 { if g2 == 1 { if g3 == 1 { return 1 } } }
+    return 0
+}
+
+fn main() {
+    println("H_869 F-CLM-DISPATCH-KL falsifier gate contract (@L3 lever A)")
+    println("  ENT_MARGIN = " + to_string(ent_margin_milli()) + " milli (0.10 nats)")
+    println("  Z_MARGIN   = " + to_string(z_margin_milli())   + " milli (0.20)")
+    println("  CE_BUDGET  = " + to_string(ce_budget_milli())  + " milli (0.10 nats)")
+    println("  PASS(🟢) iff ENTROPY ∧ Z ∧ BUDGET — ANY fail → 🔴 (a_paper_negative_ok)")
+    // contract self-check on illustrative numbers (NOT the measured verdict):
+    //   kl_ent=2200 base_ent=2000 (+0.20 ok), kl_z=2400 base_z=2186 (+0.214 ok),
+    //   kl_ce=560 base_ce=519 (+0.041 within 0.10 budget) → SUPPORTED=1.
+    let v = verdict_supported(2200, 2000, 2400, 2186, 560, 519)
+    println("  self-check verdict_supported(illustrative) = " + to_string(v))
+}
