@@ -121,6 +121,27 @@ unblock-the-blocked (need an asset first):
 
 ---
 
+## §F — OPEN-gap round (post-26 closeout · H_885–H_888)
+
+The 26-hypothesis campaign (H_861–H_884) closed: AXIS2 (reflective learning) ✅,
+AXIS1 (single-chip 7B) half (chip-fit ✅ / multi-chip array 🔴). See
+[CLM/CLM_CAMPAIGN_26.md](../CLM/CLM_CAMPAIGN_26.md). These 4 rows target the four
+OPEN gaps it named. Fire on the GPU pool (summer/aiden RTX 5070). Reserved slots —
+author `UNIVERSE/H_<id>_*.md` at fire time; prereg-freeze (W2) before fire.
+
+| id | gap (blocking verdict) | new lever to test | falsifier (pre-register exact) |
+|---|---|---|---|
+| ⬜ H_885 | multi-chip array load-balance (H_878 🔴) | capacity-aware / learned dispatch re-partition across N chips instead of static hash | per-chip load CV < ungated ∧ aggregate-emit coherence ≥ single-chip baseline |
+| ⬜ H_886 | dialogue absolute coherence floor (H_867/867r 🔴) | a non-adapter lever (e.g. SFT-warm + self-play curriculum, or larger corpus rung) lifts arm-SP coherence | ABS-COHERE ≥ 0.060 floor ∧ ADEQ ≥ 0.020 ∧ LEAK == 0 (frozen d5103f21) |
+| ⬜ H_887 | routing diversity at scale (H_869 🔴 inert / H_871 = scale artifact) | re-test dispatch-KL / expert-choice at the LARGE rung where routing-z is non-degenerate | dispatch entropy ↑ ∧ held-out z-drop within budget AT large rung |
+| ⬜ H_888 | self-play/self-reward transfer to large (H_864/864r/874 🔴) | curriculum or corpus-anchored self-play that survives the mid→large jump | large-rung SP > SFT ∧ leak 0 ∧ no collapse (the H_864 falsifier, re-passed at large) |
+
+Priority: **H_885 first** (the AXIS1 7B scale-out blocker), then H_886 (product
+dialogue bar), then H_887/H_888 (large-rung re-tests, need the large backbone asset).
+`a_paper_negative_ok` — a 🔴 here is a valid closeout of that gap.
+
+---
+
 ## cross-link
 
 - roadmap: [CLM/P4_PRODUCTION_ROADMAP.md](../CLM/P4_PRODUCTION_ROADMAP.md) (P4.1 후속 등반 · Q-TRUST rows)
