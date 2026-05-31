@@ -116,7 +116,7 @@ session-2 결론: **1.5B router 가 단일 3B ckpt 보다 우수** → productio
 | **ko hot-swap** | mini `~/anima_chat_pack/kofl_adapter/` (KOFL) |
 | **ja hot-swap** | mini `~/anima_chat_pack/jafl_adapter/` (JAFL) |
 | **router** | `anima_participant.py` — per-emit `lang_hint` → `set_adapter()` |
-| **chat 서버** | mini broker.py + anima_participant.py (HEXAD/CHAT/server/) |
+| **chat 서버** | mini broker.py + anima_participant.py (AGENT/CHAT/) |
 | **AKIDA bridge** | mini akida_bridge.py (Pi spike → broker WS) |
 | 4 LaunchAgents | com.dancinlab.{broker, anima, cloudflared, akida_bridge} |
 

@@ -77,7 +77,7 @@ corpus_v5 = vP21 init 없이 fresh LoRA + strip-corpus → vP21 상속 끊어 ta
 | dispatch (3B fresh) | 같은 dir / dispatch_p21m_3b_runpod.sh |
 | 학습 코드 | 같은 dir / train_p21m_multilingual.py (fresh-init: --vp21-adapter-dir '') |
 | ckpt + 보고서 | 같은 dir / vP21M*/ + VP21M_*.md |
-| chat 서버 코드 | HEXAD/CHAT/server/{broker,anima_participant,substrate_base,substrate_lora,akida_bridge}.py |
+| chat 서버 코드 | AGENT/CHAT/{broker,anima_participant,substrate_base,substrate_lora,akida_bridge}.py |
 | 측정 도구 | 같은 dir / anima_emission_analyze.py, anima_temp_sweep.py |
 | 가장 쉬운 요약 | HEXAD/LORA/EASY.md |
 

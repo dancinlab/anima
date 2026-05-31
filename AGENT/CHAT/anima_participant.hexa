@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════
-// HEXAD/CHAT/server/anima_participant.hexa — WRAPPER entry-point
+// AGENT/CHAT/anima_participant.hexa — WRAPPER entry-point
 //
 //   anima_participant.py is FIRST-PACK Phase 5: anima as a substrate-native
 //   chat participant (8-factor Thinker-Talker + hot-swap router + substrate
@@ -33,7 +33,7 @@ fn _shq(s: string) -> string {
 }
 
 fn main() {
-    let here = "/Users/ghost/core/anima/HEXAD/CHAT/server"
+    let here = "/Users/ghost/core/anima/AGENT/CHAT"
     let py = here + "/anima_participant.py"
     let exists = exec("[ -f '" + py + "' ] && printf yes || printf no")
     if exists != "yes" {

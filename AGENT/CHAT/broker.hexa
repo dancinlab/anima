@@ -1,5 +1,5 @@
 // ════════════════════════════════════════════════════════════════════════
-// HEXAD/CHAT/server/broker.hexa — WRAPPER entry-point
+// AGENT/CHAT/broker.hexa — WRAPPER entry-point
 //
 //   broker.py is FIRST-PACK Phase 3: a FastAPI + WebSocket multi-user chat
 //   broker (chat.dancinlab.org deployment). It hard-depends on the FastAPI /
@@ -18,7 +18,7 @@
 // ════════════════════════════════════════════════════════════════════════
 
 fn main() {
-    let here = "/Users/ghost/core/anima/HEXAD/CHAT/server"
+    let here = "/Users/ghost/core/anima/AGENT/CHAT"
     let py = here + "/broker.py"
     let exists = exec("[ -f '" + py + "' ] && printf yes || printf no")
     if exists != "yes" {
