@@ -7,6 +7,8 @@
 > 🔒 **INVIOLABLE — on-chip learning = sole HW↔SW difference (위반 절대 금지)**
 > 추론(inference)은 HW↔SW byte-identical (H_877/H_680 🟢) · **학습(on-chip 비결정 PLASTICITY)만이 HW≠SW** (H_679 🔴). 그러므로 학습은 칩 위 비결정 edge-learn 으로만 한다 — **결정적 SW 흉내로 대체 = 즉시 reject**. (@L1 · H_679)
 
+> 🎯 **7B-class + 반영학습 전략 = [P5_AKIDA_7B_STRATEGY.md](./P5_AKIDA_7B_STRATEGY.md)** — 7B는 단일칩 불가(≈5,800×) → MITOSIS 멀티칩 어레이(chip-fit 샤드 H_876🟢 × array-coherence H_878🟢) + 각 칩 edge 비결정 반영학습(adapter H_865🟢·얕은freeze H_872🟢·안전예산 H_875🟢·정체성·replay).
+
 (edit me — describe current state in completed-form; no history, no changelog inside this file)
 
 - [x] **P0 아키텍처 (바닥설계)** ✅ 확정 (sbs manual 10결정 Q1~Q4+d1~d6) — Conv-native LM · MoE=mitosis cell · byte-vocab V=256 · 추론 AKIDA-int4-only · **학습도 AKIDA**(AKIDA-향 QAT + AKIDA-위 PLASTICITY on-chip 적응) · 2-track .clm · 3-arm(A/B/A+B)×scale-ladder · F-CLM-MONO(dual-axis z>3.0+multiseed). 본문 [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md) + [CLM_FORMAT_SPEC.md](./CLM_FORMAT_SPEC.md) — anima-native LM arch + `.clm` 포맷 재정의. AKIDA 추론 친화 제약(act_bits∈{1,2,4} 양자화기 · symmetric int4 [-7,+7] · FC/conv/cascade — AKIDA `akida_sw_lif` envelope 정합)을 설계 단계에 못박음. 더블바인드 탈출 메커니즘(register specialization vs coherent main-path) 명시. falsifier 사전등록.

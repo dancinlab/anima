@@ -6,6 +6,7 @@
 > **"커피숍 그룹챗에서 살아 배우며 대화하는" production 수준**으로 끌어올리는 로드맵 SSOT.
 > sbs manual co-design 8 locked decision(@L1~@L8) + Q-TRUST(비결정-학습 신뢰 시스템) 확정.
 > 다음 세션은 이 문서가 SSOT — 경로 재발명 금지.
+> **7B-class + 반영(점진)학습 전략 → [P5_AKIDA_7B_STRATEGY.md](./P5_AKIDA_7B_STRATEGY.md)** (MITOSIS 어레이 + edge 반영학습 스택).
 > sibling: [CLM.md](./CLM.md) · [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md) · [P1_CORPUS.md](./P1_CORPUS.md)
 > · [AKIDA](../AKIDA/AKIDA.md) · [PLASTICITY](../PLASTICITY/PLASTICITY.md) · [KOSMOS E-31] · [UNIVERSE/H_861~H_863](../UNIVERSE/)
 
