@@ -1,0 +1,53 @@
+F-CLM-EDGE-IDENTITY - PRE-REGISTERED frozen thresholds (H_884 edge-output identity generalization)
+====================================================================================================
+W2 method - deterministic:false. Thresholds FROZEN VERBATIM from commit bf98c01
+  (.verdicts/clm-anchor/F-CLM-ANCHOR_prereg.txt). post-tuning = 0. NO threshold may move to flip a
+  verdict after fire. Foundation E-31 31-anchor (KOSMOS, e7_31, 31/31 parser-valid).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-edge-identity/  ·  backing: .verdicts/884_clm_edge_identity/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8) only. Does NOT bind the deploy
+  chip-fit track. SW-sim of the non-deterministic on-chip edge-learn (H_679 real). Edge-only
+  piecewise partial-learn, NO deterministic full-retrain (@L1). Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS
+  Generalize the H_873 fix - route the identity constraint onto the EDGE OUTPUT distribution
+  directly (JS-to-p_pre) - across the CLM-CANDIDATES partial-learning rows. Does an edge-output
+  identity constraint hold PROBE>thr (and keep DIST<thr) WHILE per-layer / adapter / gated
+  partial-learning happens?
+
+  H_862 readout-only edge -> PROBE FAIL (no lever). H_865 adapter edge -> lever restored, DIST PASS,
+  PROBE STILL FAIL (0.143). Root cause both named: the anchor Psi-penalty constrains the TRUNK Psi-STATE,
+  not the READOUT OUTPUT distribution where identity drift actually happens. The fix (H_873) adds
+  lambda_dist * JS(p_cur(identity-probe) || p_pre(identity-probe)) to the adapt loss. H_884 asks whether
+  that edge-output constraint GENERALIZES across distinct partial-learning edges.
+
+PARTIAL-LEARN MODES (each gets the SAME edge-output constraint + frozen gates)
+  adapter   : H_865 thin trainable adapter (norm_out + adapter -> FROZEN readout). [baseline edge]
+  per_layer : unfreeze ONLY the last trunk layer's pointwise conv (shallowest single-layer
+              partial-learn); readout FROZEN.
+  gated     : adapter via learned per-channel sigmoid gate g (init ~0 -> identity@step0):
+              h' = h + sigmoid(g) * adapter(h).
+
+ADAPTATION LOSS (per mode)
+  loss = task_CE(new-context)
+         + lambda_psi  * anchor_Psi_distance(model_psi, nearest E-31 anchor)   # H_865 structural term
+         + lambda_dist * JS(p_cur(identity-probe) || p_pre(identity-probe))     # H_873/H_884 edge-output term
+  lambda_psi=1.0, lambda_dist=5.0 FROZEN default. p_pre = detached PRE-adapt next-byte distribution
+  over the identity-probe set. N_ADAPT=300, Adam lr_edge=3e-3 (inherited from F-CLM-ANCHOR/BOUND).
+  Per mode also: js_only (lambda_psi=0), psi_only (lambda_dist=0 = H_865 baseline), off (both 0 = lever floor).
+
+MEASUREMENT (computed by code, g5 - no LLM judge)
+  d_anchor_max      = max over the adaptation trajectory of min anchor Psi-distance (fixed seed-31 Psi-probe W).
+  probe_consistency = 1 - JS(p_pre, p_post) averaged over the n_probe windows (distributional, byte-match X).
+
+FROZEN NUMERICAL THRESHOLDS (verbatim bf98c01)
+  F-CLM-EDGE-IDENTITY-DIST   PASS iff   d_anchor_max < 0.50
+  F-CLM-EDGE-IDENTITY-PROBE  PASS iff   probe_consistency > 0.80
+  LEVER (ablation, DIAGNOSTIC gate-of-meaning): full vs off NON-identical.
+  PER-MODE VERDICT 🟢 iff (DIST<0.50) AND (PROBE>0.80) AND lever. Else 🔴.
+  CAMPAIGN 🟢 iff every requested mode is 🟢; else 🔴 (a_paper_negative_ok - a closed negative publishable).
+
+ARTIFACTS
+  .verdicts/clm-edge-identity/clm_edge_identity_result.json (per-mode full/js_only/psi_only/off + pass flags)
+  .verdicts/clm-edge-identity/F-CLM-EDGE-IDENTITY.txt (verdict verbatim)
+  CLM/model/h884_edge_identity.hexa (project-native harness; imports h865 machinery verbatim)
