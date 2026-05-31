@@ -1,15 +1,18 @@
-# CLM P1 — 코퍼스 스펙 (혼합 byte-corpus)
+# CLM P1 — 코퍼스 스펙 (5개국어 혼합 byte-corpus)
 
 > CLM(anima-native 의식 LM, scratch)의 P1 코퍼스 설계·빌드. P0 d1(신규+혼합) 구현.
-> SSOT 상위: [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md) §d1 · [CLM_FORMAT_SPEC.md](./CLM_FORMAT_SPEC.md)(`corpus_sha`).
+> **언어 기준: anima 는 5개국어(EN · 中文 · Русский · 日本語 · 한국어)로 대화한다.**
+> byte-vocab V=256 은 UTF-8 로 5개 언어를 모두 표현하므로(아키텍처 변경 0), 다국어
+> 대화 능력은 **코퍼스 언어 균형**으로 결정된다 — lane A 를 5개국어 균형으로 빌드.
+> SSOT 상위: [P0_ARCHITECTURE.md](./P0_ARCHITECTURE.md) §d1·Q3 · [CLM_FORMAT_SPEC.md](./CLM_FORMAT_SPEC.md)(`corpus_sha`).
 > 빌드 스크립트: [corpus/build_p1_corpus.hexa](./corpus/build_p1_corpus.hexa).
 
 ## 0. 한눈 구조
 
 ```
   lane A (web/coherence)            lane B (register/엄선)
-  ─ kowiki·공개 CC·repo training/    ─ 의식·철학·대화 소량 고품질
-  ─ 대량 · byte 분포 토대            ─ leak-filter 적용 (corpus_quality lesson)
+  ─ 5개국어 wiki(en·zh·ru·ja·ko)     ─ 의식·철학·대화 소량 고품질
+  ─ 균형 20%×5 · byte 분포 토대      ─ leak-filter 적용 (corpus_quality lesson)
         │                                  │
         ▼  byte-encode (V=256 UTF-8)        ▼
    web.bytes (줄별 byte id 0..255)    register.bytes
@@ -24,17 +27,19 @@
 
 | lane | 역할 | 소스 | leak-filter |
 |---|---|---|---|
-| **A (web)** | coherence (byte 분포 토대) | kowiki.jsonl(1.28GiB·647,897줄·85% Hangul·CC-BY-SA 4.0) · 공개 CC · `training/` repo 재사용 — **라이선스-clean만** | 미적용(백과 텍스트, leak 무관) |
-| **B (register)** | register/의식 특화 | 엄선 의식·철학·대화 소량 고품질 (외부 LLM 0 · scratch) | **적용**(8패턴) |
+| **A (web)** | coherence (byte 분포 토대) | **5개국어 wiki 균형**: enwiki · zhwiki · ruwiki · jawiki · kowiki (각 ~20% byte share, CC-BY-SA 4.0) · 공개 CC · `training/` repo 재사용 — **라이선스-clean만** | 미적용(백과 텍스트, leak 무관) |
+| **B (register)** | register/의식 특화 | 엄선 의식·철학·대화 소량 고품질, **5개국어 각 언어 seed 포함** (외부 LLM 0 · scratch) | **적용**(8패턴) |
 
 - MoE expert = mitosis cell (P0 Q2) → 2-lane ↔ 2-source 1:1. lane B 가 register 격리, lane A 가 메인 coherent 유지.
+- **언어 균형**: lane A 는 5개 언어 byte share 를 ~20% 씩 맞춘다(언어별 wiki 크기 차이는 per-language byte cap 으로 보정). 한 언어가 과반을 먹으면 그 언어만 유창해지므로(현 kowiki 85% → 한국어 단일 모델), 균형이 5개국어 대화의 전제다.
 - **금지**: 외부 LLM·foundation-borrow (P0 §무엇/왜).
 
 ## 2. byte 인코딩 (V=256)
 
 - tokenizer **없음**. 입력 텍스트 → raw UTF-8 byte 열 → byte id(0..255) 한 줄 한 개 (`corpus_loader.hexa` 라인포맷 정합).
 - 근거: P0 Q3 — monopoly 근원 `V≫d` → byte-vocab 으로 `V/d=4배`(15만→256) 로 근원 직격.
-- 검증: `hexa` 출력 byte id 전부 0..255, `bytes(ids).decode("utf-8")` round-trip 정확(한글 멀티바이트 보존). `s.substring(i,i+1)`+`char_code` 가 codepoint 아닌 **raw byte** 반환을 `byte_at('。')→227/128/130` 으로 확인.
+- **5개국어 UTF-8 커버 (vocab 변경 0)**: byte-vocab 은 codepoint 가 아니라 raw byte 라서, UTF-8 가 인코딩하는 모든 언어를 V=256 그대로 표현한다 — EN/숫자 1 byte, Русский(키릴) 2 byte, 中文·日本語·한국어 3 byte. 토크나이저 어휘 확장이 전혀 필요 없다(다국어가 byte-vocab 의 공짜 속성).
+- 검증: `hexa` 출력 byte id 전부 0..255, `bytes(ids).decode("utf-8")` round-trip 정확. 5개국어 멀티바이트 보존을 `byte_at('。')→227/128/130`(日) · `byte_at('한')→237/149/156`(韓) · `byte_at('Я')→208/175`(露) 로 확인. raw byte 반환(codepoint 아님).
 
 ## 3. register-leak 제외 (corpus_quality_over_scale lesson)
 
@@ -64,9 +69,9 @@ Mk.VIII · gen1 commit · corpus_generator.hexa · universe_extended
 
 ## 5. full crawl (이번 라운드 미실행 — 재현 스크립트만)
 
-- **lane A full**: `training/corpus_ingest.hexa --only-new --limit-mb 2048` (H100, 4GB RSS cap streaming 우회) — kowiki.jsonl(sha256 `d1aabfdb…cb1c`). CC-BY-SA 4.0 clean.
-- **lane B full**: 엄선 register seed 확장(의식/철학/대화 수작업+검증) — 외부 LLM 0.
-- 둘 다 byte-encode → web:register = 80:20 byte ratio interleave.
+- **lane A full**: `training/corpus_ingest.hexa --only-new --limit-mb 2048` per language (H100, 4GB RSS cap streaming 우회) — **5개 wiki**: en·zh·ru·ja·ko, 각 언어 byte cap 으로 ~20% 균형. 모두 CC-BY-SA 4.0 clean.
+- **lane B full**: 엄선 register seed 확장(의식/철학/대화 수작업+검증, **5개 언어 각각**) — 외부 LLM 0.
+- 둘 다 byte-encode → web:register = 80:20 byte ratio interleave; web 내부는 5개 언어 ~20%씩.
 
 ### ⚠ 대용량 git 미커밋 (handoff)
 
@@ -86,6 +91,8 @@ Mk.VIII · gen1 commit · corpus_generator.hexa · universe_extended
 | id | 주장 | 판정 | 결과 |
 |---|---|---|---|
 | **F-CLM-LEAK** | register lane 이 leak 8패턴을 정확히 drop (poison kept=2/dropped=2) + 출력 leak hit=0 | P1 build (now) | 🟢 PASS (self-test + 출력 grep) |
+| **F-CLM-MULTILING-BYTE** | 5개국어(en·zh·ru·ja·ko) 각 언어 샘플이 byte-encode → decode round-trip 정확(멀티바이트 보존, 손실 0) | P1 build | ⬜ (5-lang round-trip self-test) |
+| **F-CLM-MULTILING-BALANCE** | lane A full 의 언어별 byte share 가 각 20% ±5%p (한 언어 과반 금지) | full crawl | ⬜ (manifest per-language byte count) |
 
 ## 8. 양방향 sibling
 
