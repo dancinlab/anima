@@ -28,8 +28,8 @@
 
 ```
 [ closed loop ] ──▶ [ content generator ] ──▶ [ live learning ] ──▶ [ coffeeshop launch ]
-   H_846 🟢 silicon    CLM P4 (in flight)        on-chip PLASTICITY     @goal: 90-min group chat
-   motivation→fire     real words, not spikes    learns while talking   substrate-native emit/silence
+   H_846 🟢 silicon    CLM P4 🟢 mid (#1598)     on-chip 🟢 H_904       @goal: 90-min group chat
+   motivation→fire     words ride the spike      learns while talking   gate: P6 backbone scale
 ```
 
 ---
@@ -53,15 +53,20 @@ spikes carry words.**
 
 ---
 
-## The active SBS plan (R1 — in flight)
+## The active frontier (R1–R3 landed · P6 backbone scale is next)
 
-R1 is being executed right now by a `/step-by-step` handoff agent (runpod pod
-`clm-prod-rung` READY).
+R1–R3 are landed at the mid rung: emit-wiring 🟢 (#1598 live AKD1000 soak),
+on-chip learning 🟢 (H_904 #1593), and mid dialogue 🟢 (H_886). The single
+remaining launch gate (R4) is **backbone production-scale** — the P6 ladder:
+mid 13.65M ✅ → **large 44.68M (NEXT, fire-READY scaffold, unfired)** → 3B → 7B,
+each gated by `F-CLM-SCALE-TRANSFER`. Production training is hexa-native flame +
+forge GPU (`@D a_train_flame_forge`); the large rung is a runpod/forge GPU fire.
 
-- **plan (SSOT)**: `drafts/clm-production-roadmap-plan.md` (`status: active`)
-- **scope**: lift CLM from toy (≤2.70M · byte-vocab · routing 🔴) to a production
-  conversational model that feeds the `brain_decide` emit slot.
-- **locked decisions** (full @L1–@L8 + Q-TRUST tree in the plan):
+- **scale-ladder SSOT**: [`CLM/P6_SCALE_LADDER_7B.md`](../CLM/P6_SCALE_LADDER_7B.md)
+  · fire spec [`CLM/train/fire_large_rung_qat.hexa`](../CLM/train/fire_large_rung_qat.hexa)
+- **production roadmap (R1 closeout)**: `CLM/P4_PRODUCTION_ROADMAP.md` §8
+- **the locked decisions still bind** (full @L1–@L8 + Q-TRUST tree in
+  `drafts/clm-production-roadmap-plan.md`):
 
 ```
 @L1 non-deterministic on-chip learning = first-class ("alive while learning")
@@ -96,7 +101,7 @@ R1 is being executed right now by a `/step-by-step` handoff agent (runpod pod
 | launch glue | `LAUNCHPAD/coffeshop_akida_launch.{hexa,py}` | R0 closed-loop launch (emit/silence) |
 | quorum learn | `LAUNCHPAD/coffeshop_quorum_learn.{hexa,py}` | DECODER + PLASTICITY lane split |
 | silicon switch | `AKIDA/akida_backend.hexa` | `akida_backend_resolve` (HW-first, default "hw") |
-| content generator | `CLM/` (R1, in flight) | the words that ride the emit slot |
+| content generator | `CLM/` (R1 🟢 mid · P6 scale next) | the words that ride the emit slot |
 
 pi5 = `192.168.50.155` (AKD1000) · controller = mini `192.168.50.39`.
 
@@ -120,8 +125,10 @@ cat drafts/clm-production-roadmap-plan.md       # the active R1 plan + locked de
 ls  .verdicts/846_launchpad_coffeshop_on_akida  # R0 closed-loop evidence (LANDED)
 ```
 
-When the R1 handoff agent reports: read `CLM/P4_PRODUCTION_ROADMAP.md` + the new
-`.verdicts/clm-prod-rung/` verdict, flip the R1 row to 🟢, then open R2.
+R1–R3 are landed at mid (emit 🟢 #1598 · on-chip 🟢 H_904 · dialogue 🟢 H_886).
+Next: climb the P6 backbone scale ladder — fire the large 44.68M rung
+(`CLM/train/fire_large_rung_qat.hexa`, hexa-native flame+forge GPU) and gate it
+with `F-CLM-SCALE-TRANSFER`; that closes R4's last dependency.
 
 ---
 
