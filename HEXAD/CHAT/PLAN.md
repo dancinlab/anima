@@ -1932,3 +1932,10 @@ sequential no-dispatch orphan-0. north-star + §15/§51/§72 milestones
 UNCHANGED, GOAL 미도달. PHILOSOPHY.tape g6
 §verdict_lego_assembly_run_s117_2026_05_19 self-appended.
 state/lego_assembly_run_s117_2026_05_19/.
+
+## 📦 체크포인트 아카이브 (2026-05-31)
+
+HEXAD 실험 체크포인트·corpus(64파일·41GB)를 HF로 이관 — mini 디스크 정리.
+- HF: `dancinlab/anima-hexad-ckpts-2026-05` (private · dataset)
+- 매니페스트·실험별 매핑: [`HEXAD/ARCHIVE_MANIFEST.md`](../ARCHIVE_MANIFEST.md)
+- 각 `state/<exp>/ARCHIVED.txt` 에 폴더별 HF 경로 기재 (설계문서는 repo 유지)
