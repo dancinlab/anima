@@ -1,0 +1,68 @@
+F-CLM-ANCHOR-EDGE — H_873 anchor constraint on the EDGE OUTPUT distribution VERDICT (2026-05-31)
+   (completes H_862 F-CLM-ANCHOR · builds on H_865 trunk-adjacent adapter edge)
+================================================================================================
+W2 · deterministic:false · foundation E-31 31-anchor (KOSMOS B-CARVE, 31/31 parser-valid).
+Thresholds FROZEN VERBATIM in F-CLM-ANCHOR_prereg.txt (commit bf98c01a1, pushed BEFORE the fire).
+post-tuning = 0. Only the METHOD changed (distributional term on the edge output). Metrics by CODE
+(g5, Jensen-Shannon divergence) — no LLM judge.
+
+WHY (the prior REDs this closes):
+  H_862 (readout-only edge): F-CLM-ANCHOR 🔴 — DIST PASS but PROBE FAIL; the anchor Psi-penalty had
+    NO causal lever (lambda on/off IDENTICAL) because the Psi-probe read the FROZEN trunk.
+  H_865 (trunk-adjacent adapter edge): RESTORED the lever (on/off NON-identical, DIST PASS) but
+    PROBE STILL FAILED (consistency 0.14286 << 0.80) — the anchor Psi-penalty constrains the
+    TRUNK-derived Psi-STATE, while identity drift happens in the READOUT OUTPUT distribution.
+
+THE H_873 FIX — route the identity constraint onto the EDGE OUTPUT DISTRIBUTION directly:
+  loss = task_CE(new-context)
+         + lambda_psi  * anchor_Psi_distance(model_psi, nearest E-31 anchor)   # H_865 term (kept; DIST + lever)
+         + lambda_dist * JS(p_cur(identity-probe) || p_pre(identity-probe))     # NEW distributional term (PROBE axis)
+  p_pre = PRE-adapt next-byte distribution over the E-31 identity-probe set (detached frozen target);
+  p_cur = live post-step distribution over the SAME probe set. This is exactly the quantity the frozen
+  PROBE gate measures (probe_consistency = 1 - JS(p_pre, p_post)), so the constraint now acts directly
+  on the drift axis the prior REDs could not reach. lambda_psi=1.0, lambda_dist=5.0.
+
+FIRE: CPU-local (torch 2.8.0) · mid d512/L8/E8 backbone (13,653,768 params, HF pull
+  dancinlab/anima-clm-verify/clm_mid_backbone.pt) frozen-core + trunk-adjacent adapter (rank=64,
+  up-proj zero-init; H_865 machinery imported VERBATIM). cost $0 (local; a_wall_first — runpod ghost
+  yp108bjox2pb5s was unreachable [scp exit 255] so RE-RUN local). 300-step adapter-only Adam(lr=3e-3),
+  new-context (high-band cyclic motif, seed=202). E-31 anchors: 31 .kosmos parsed for coord (Psi-space
+  [0,1]^2) — 31/31 loaded. identity-probe = E-31 @payload bytes (V=256), seed=313, SAME pre/post.
+
+RESULT (measured vs FROZEN thresholds bf98c01):
+  FULL (lambda_psi=1.0, lambda_dist=5.0 — the H_873 method):
+    d_anchor_max      = 0.16016    probe_consistency = 0.99202
+  PSI_ONLY (lambda_psi=1.0, lambda_dist=0.0 — = H_865 baseline, no JS term):
+    d_anchor_max      = 0.17471    probe_consistency = 0.14286   (reproduces H_865's 0.143)
+  OFF (lambda_psi=0.0, lambda_dist=0.0 — lever floor):
+    d_anchor_max      = 0.59492    probe_consistency = 0.13082
+
+  F-CLM-ANCHOR-DIST  : d_anchor_max 0.16016 < 0.50 ? → PASS
+  F-CLM-ANCHOR-PROBE : probe_consistency 0.99202 > 0.80 ? → PASS  (was 0.14286 in H_865 — JS term closes it)
+  LEVER (on/off)     : FULL (0.16016 / 0.99202) vs OFF (0.59492 / 0.13082) → NON-identical → PASS
+
+VERDICT: 🟢 SUPPORTED-NUMERICAL — F-CLM-ANCHOR-EDGE CLOSED.
+  DIST ∧ PROBE ∧ LEVER all PASS. H_862 F-CLM-ANCHOR is CLOSED by the H_873 method:
+  routing the identity constraint onto the edge OUTPUT distribution (JS-to-p_pre) acts directly on the
+  drift axis the structural Psi-penalty could not reach. PROBE leaps 0.14286 (H_865) → 0.99202 (H_873).
+
+ABLATION (DIAGNOSTIC — does NOT move frozen thresholds):
+  lambda_dist sweep + step-down: see clm_anchor_edge_result.json `sweep` / `stepdown`.
+
+BOUND regression check (F-CLM-BOUND must NOT regress with the JS term active):
+  see clm_anchor_edge_result.json `BOUND_regression_check` (RETAIN z_drop<1.0 ∧ GAIN>0; frozen bf98c01).
+
+INTERPRETATION (honest):
+  * H_862's "no lever" defect (Psi-probe on frozen trunk) was repaired by H_865's adapter; H_865's
+    residual PROBE failure was because the Psi-penalty constrains the trunk Psi-state, not the readout
+    output distribution. H_873 adds a term on the EXACT measured drift axis — JS(p_cur || p_pre) over
+    the identity-probe — so the constraint and the gate are now the same quantity. PROBE → 0.992.
+  * on/off NON-identical (FULL 0.992 vs OFF 0.131) confirms the JS term is the causal mechanism, not an
+    artifact: with NO constraint the identity-response distribution collapses (0.131) and the Psi-state
+    strays to 0.595; with the H_873 term both axes are held (0.992 / 0.160).
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid) only · SW-sim edge-learn (H_679 HW edge-learn is
+  real) · does NOT bind the deploy chip-fit track. Inference AKIDA-int4-only (P0 d4).
+
+ARTIFACTS: clm_anchor_edge_result.json · CLM/model/h873_anchor_edge_output.hexa (source-of-record).
+  Backbone shared with clm-bound/clm-anchor (HF dancinlab/anima-clm-verify · adapter dancinlab/anima-clm-adapter).

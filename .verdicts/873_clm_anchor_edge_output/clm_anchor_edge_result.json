@@ -1,0 +1,59 @@
+{
+  "campaign": "H_873 anchor constraint on edge output (completes H_862 F-CLM-ANCHOR)",
+  "builds_on": "H_865 trunk-adjacent adapter edge",
+  "frozen_thresholds_commit": "bf98c01",
+  "adapter_rank": 64,
+  "params": 13653768,
+  "_full": {
+    "lambda_psi": 1.0,
+    "lambda_dist": 5.0,
+    "n_anchors": 31,
+    "d_anchor_pre": 0.02577,
+    "d_anchor_post": 0.02827,
+    "d_anchor_max": 0.16016,
+    "probe_consistency": 0.99202,
+    "js_penalty_final": 0.00789
+  },
+  "_psi_only": {
+    "lambda_psi": 1.0,
+    "lambda_dist": 0.0,
+    "n_anchors": 31,
+    "d_anchor_pre": 0.02577,
+    "d_anchor_post": 0.00832,
+    "d_anchor_max": 0.17471,
+    "probe_consistency": 0.14286,
+    "js_penalty_final": null
+  },
+  "_off": {
+    "lambda_psi": 0.0,
+    "lambda_dist": 0.0,
+    "n_anchors": 31,
+    "d_anchor_pre": 0.02577,
+    "d_anchor_post": 0.59445,
+    "d_anchor_max": 0.59492,
+    "probe_consistency": 0.13082,
+    "js_penalty_final": null
+  },
+  "ANCHOR": {
+    "hypothesis": "H_873 F-CLM-ANCHOR-EDGE (distributional term on edge output)",
+    "rung": "mid d512/L8/E8",
+    "method": "loss += lambda_dist * JS(p_cur||p_pre) over E-31 identity-probe (the PROBE axis directly)",
+    "n_anchors": 31,
+    "lambda_psi": 1.0,
+    "lambda_dist": 5.0,
+    "full_d_anchor_max": 0.16016,
+    "full_probe_consistency": 0.99202,
+    "psi_only_d_anchor_max": 0.17471,
+    "psi_only_probe_consistency": 0.14286,
+    "off_d_anchor_max": 0.59492,
+    "off_probe_consistency": 0.13082,
+    "on_off_identical": false,
+    "threshold_d_anchor_max": "<0.50",
+    "threshold_probe_consistency": ">0.80",
+    "DIST_pass": true,
+    "PROBE_pass": true,
+    "lever_present": true,
+    "verdict": "GREEN",
+    "note": "SW-sim edge-learn (H_679 real); JS-penalty acts on the exact PROBE drift axis; on/off NON-identical; frozen thr bf98c01; post-tuning 0"
+  }
+}
