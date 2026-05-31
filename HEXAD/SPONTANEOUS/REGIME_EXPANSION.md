@@ -113,7 +113,7 @@ def next_regime(schedule, idx, jitter, rng):
 
 ## §5 — Compatibility with downstream
 
-- [[akida_consumer]] (`HEXAD/CHAT/server/akida_consumer.hexa`) 는 record 의 `regime` 필드를 이미 추출해 feature dict 의 `regime` key 로 노출. [[SPIKE_FACTOR_MAP]] §1 의 `regime_change` 파생 feature 는 consumer 측에서 window-to-window mode 비교로 계산 (현재 미구현, 별도 cycle).
+- [[akida_consumer]] (`AGENT/CHAT/akida_consumer.hexa`) 는 record 의 `regime` 필드를 이미 추출해 feature dict 의 `regime` key 로 노출. [[SPIKE_FACTOR_MAP]] §1 의 `regime_change` 파생 feature 는 consumer 측에서 window-to-window mode 비교로 계산 (현재 미구현, 별도 cycle).
 - [[SPIKE_FACTOR_MAP]] §4 의 modulator 표는 R1 = 1.0 / R2 = 1.2 placeholder 보유. 실제 R1/R2 telemetry 누적 후 [[telemetry_harness]] 측 paired evidence (regime 별 emission rate / motivation_score 평균) 로 modulator 값 refit 예정.
 - broker schema 무변경 (regime field 는 처음부터 string, taxonomy 확장만으로 충분).
 - [[akida_bridge]] 는 record forwarder 로서 regime 변경에 transparent (forward 만 함).

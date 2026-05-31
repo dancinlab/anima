@@ -28,9 +28,9 @@ ssh -o ConnectTimeout=5 mini 'echo OK'
 
 ```bash
 cd <repo-root>
-scp HEXAD/CHAT/server/anima_participant.py mini:~/anima_chat_pack/
-scp HEXAD/CHAT/server/substrate_lora.py mini:~/anima_chat_pack/   # 변경 시
-shasum -a 256 HEXAD/CHAT/server/anima_participant.py
+scp AGENT/CHAT/anima_participant.py mini:~/anima_chat_pack/
+scp AGENT/CHAT/substrate_lora.py mini:~/anima_chat_pack/   # 변경 시
+shasum -a 256 AGENT/CHAT/anima_participant.py
 ssh mini 'shasum -a 256 ~/anima_chat_pack/anima_participant.py'
 # 두 sha 일치 확인
 ```
@@ -68,8 +68,8 @@ ssh mini 'tail -30 ~/anima_chat_pack/logs/anima.err | \
 
 ```bash
 cd <repo-root>
-git checkout origin/main~1 -- HEXAD/CHAT/server/anima_participant.py    # 직전 main
-scp HEXAD/CHAT/server/anima_participant.py mini:~/anima_chat_pack/
+git checkout origin/main~1 -- AGENT/CHAT/anima_participant.py    # 직전 main
+scp AGENT/CHAT/anima_participant.py mini:~/anima_chat_pack/
 # 단계 3 재기동
 ```
 
@@ -77,7 +77,7 @@ scp HEXAD/CHAT/server/anima_participant.py mini:~/anima_chat_pack/
 
 ## 알려진 제약
 
-- **mini sshd flapping** = intermittent. 진단 도구 = `HEXAD/CHAT/server/mini_sshd_diag.hexa` (사용자 mini 콘솔에서 실행)
+- **mini sshd flapping** = intermittent. 진단 도구 = `AGENT/CHAT/mini_sshd_diag.hexa` (사용자 mini 콘솔에서 실행)
 - **mini reboot 시 broker/participant 미기동** — 사용자 수동 재기동 필요 (user directive: plist 금지 + nohup 마이그레이션)
 - **broker + participant 같은 venv 공유** — Python 패키지 충돌 주의
 - **deploy 중 production 짧은 down (~5-10s)** — broker 재기동 사이 502
@@ -95,12 +95,12 @@ scp HEXAD/CHAT/server/anima_participant.py mini:~/anima_chat_pack/
 
 | 파일 | 용도 |
 |---|---|
-| `HEXAD/CHAT/server/anima_live_register_measure.hexa` | LIVE register/EN-share 측정 |
-| `HEXAD/CHAT/server/anima_monologue_sim.hexa` | monologue vs responsive 측정 (사용자 #1 목표 검증) |
-| `HEXAD/CHAT/server/mini_sshd_diag.hexa` | sshd flapping 진단 (mini 콘솔) |
-| `HEXAD/CHAT/server/telemetry_status.hexa` | Phase 2 gate observability |
-| `HEXAD/CHAT/server/anima_dream_stage.hexa` | 5-stage sleep state machine (P47 substrate-native, 2026-05-24) |
-| `HEXAD/CHAT/server/anima_imagination_loop.hexa` | emit-free internal rehearsal — N1/N2/N3 중 imagine_tick |
+| `AGENT/CHAT/anima_live_register_measure.hexa` | LIVE register/EN-share 측정 |
+| `AGENT/CHAT/anima_monologue_sim.hexa` | monologue vs responsive 측정 (사용자 #1 목표 검증) |
+| `AGENT/CHAT/mini_sshd_diag.hexa` | sshd flapping 진단 (mini 콘솔) |
+| `AGENT/CHAT/telemetry_status.hexa` | Phase 2 gate observability |
+| `AGENT/CHAT/anima_dream_stage.hexa` | 5-stage sleep state machine (P47 substrate-native, 2026-05-24) |
+| `AGENT/CHAT/anima_imagination_loop.hexa` | emit-free internal rehearsal — N1/N2/N3 중 imagine_tick |
 
 ## 6. 수면 + 상상 daemon (2026-05-24, P47 substrate-native)
 

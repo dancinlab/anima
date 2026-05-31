@@ -64,7 +64,7 @@ PASS 정의: 4/4 (+1 fallback) 모두 true → 🟢 GREEN_NUMERICAL_CONFIRM · �
   - on-chip checks 8/8 True · hw_native_spontaneous_emission=True · 0.6351ms/inf · live R3 stream port 9512
   - verdict 영속: `.verdicts/672_akida_spontaneous_firing/hw_live_2026_05_29.txt`
 - SubstrateAKIDA plugin SW path (akida-backend-wiring 2026-05-29, akida-absent Mac):
-  `python3 HEXAD/CHAT/server/verify_substrate_akida.py` → exit 0
+  `python3 AGENT/CHAT/verify_substrate_akida.py` → exit 0
   - 동일 raster 재현: R1=0.0 · R2=0.475 · R3=0.5 · R4=1.0 (hexa harness 와 byte-정합)
   - provenance=akida-sw-fallback · R3_total_spikes=1600 · 5/5 PASS (F-AKWIRE-FALLBACK 포함)
   - verdict 영속: `.verdicts/672_akida_spontaneous_firing/sw_falsifiers.txt`

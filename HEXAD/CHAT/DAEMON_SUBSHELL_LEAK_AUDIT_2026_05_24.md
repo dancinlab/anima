@@ -36,17 +36,17 @@ PID 추적·회수가 불완전)을 가졌는지 전수 확인한다.
 
 | daemon | spawn 패턴 | persistent? | looped? | reaped? | leak risk |
 |---|---|---|---|---|---|
-| `HEXAD/CHAT/server/akida_bridge.hexa` | `proc_spawn_supervised`(nc) + `ws_connect`→`sh -c websocat` | **예** | **예** (run_once 매 reconnect) | nc_close/ws_close 의존, 실패 경로서 누락 | **HIGH** (기준 사건) |
-| `HEXAD/CHAT/server/kosmos_emitter.hexa` | `http_get`(in-process) + `exec` printf/cat/mktemp/sleep | 아니오 | 예 (poll loop) | n/a (instant-exit) | LOW |
-| `HEXAD/CHAT/server/akida_consumer.hexa` | `http_get`(in-process) + sleep | 아니오 | 예 | n/a | LOW |
-| `HEXAD/CHAT/server/kosmos_anchor.hexa` | `exec` mkdir/printf/cat (라이브러리 호출) | 아니오 | 아니오 | n/a | LOW |
-| `HEXAD/CHAT/server/telemetry_harness.hexa` | `exec` mkdir/rm/wc/date | 아니오 | 일부(sleep) | n/a | LOW |
-| `HEXAD/CHAT/server/telemetry_status.hexa` | `exec` date/rm | 아니오 | 아니오 | n/a | LOW |
-| `HEXAD/CHAT/server/mini_sshd_diag.hexa` | `exec`(진단용 1회 명령) | 아니오 | 아니오 | n/a | LOW |
-| `HEXAD/CHAT/server/broker.py` | 순수 asyncio/websockets | 아니오 | n/a | n/a | NONE |
-| `HEXAD/CHAT/server/anima_participant.py` | `asyncio.create_task`(in-process coroutine, NOT subprocess) | 아니오 | n/a | n/a | NONE |
-| `HEXAD/CHAT/server/anima_participant.hexa` | `exec("python3 anima_participant.py")` (1회 dispatch) | 예(자식 py) | 아니오 | foreground(부모가 대기) | MEDIUM |
-| `HEXAD/CHAT/server/broker.hexa` | `exec("python3 broker.py")` (1회 dispatch) | 예(자식 py) | 아니오 | foreground | MEDIUM |
+| `AGENT/CHAT/akida_bridge.hexa` | `proc_spawn_supervised`(nc) + `ws_connect`→`sh -c websocat` | **예** | **예** (run_once 매 reconnect) | nc_close/ws_close 의존, 실패 경로서 누락 | **HIGH** (기준 사건) |
+| `AGENT/CHAT/kosmos_emitter.hexa` | `http_get`(in-process) + `exec` printf/cat/mktemp/sleep | 아니오 | 예 (poll loop) | n/a (instant-exit) | LOW |
+| `AGENT/CHAT/akida_consumer.hexa` | `http_get`(in-process) + sleep | 아니오 | 예 | n/a | LOW |
+| `AGENT/CHAT/kosmos_anchor.hexa` | `exec` mkdir/printf/cat (라이브러리 호출) | 아니오 | 아니오 | n/a | LOW |
+| `AGENT/CHAT/telemetry_harness.hexa` | `exec` mkdir/rm/wc/date | 아니오 | 일부(sleep) | n/a | LOW |
+| `AGENT/CHAT/telemetry_status.hexa` | `exec` date/rm | 아니오 | 아니오 | n/a | LOW |
+| `AGENT/CHAT/mini_sshd_diag.hexa` | `exec`(진단용 1회 명령) | 아니오 | 아니오 | n/a | LOW |
+| `AGENT/CHAT/broker.py` | 순수 asyncio/websockets | 아니오 | n/a | n/a | NONE |
+| `AGENT/CHAT/anima_participant.py` | `asyncio.create_task`(in-process coroutine, NOT subprocess) | 아니오 | n/a | n/a | NONE |
+| `AGENT/CHAT/anima_participant.hexa` | `exec("python3 anima_participant.py")` (1회 dispatch) | 예(자식 py) | 아니오 | foreground(부모가 대기) | MEDIUM |
+| `AGENT/CHAT/broker.hexa` | `exec("python3 broker.py")` (1회 dispatch) | 예(자식 py) | 아니오 | foreground | MEDIUM |
 | `HEXAD/CHAT/spontaneous_loop_vp21.hexa` | `exec("python3 spontaneous_loop_vp21.py")` (1회 dispatch) | 예(자식 py) | 아니오 | foreground | MEDIUM |
 | `HEXAD/CHAT/spontaneous_loop_vp21.py` | 순수 in-process loop | 아니오 | n/a | n/a | NONE |
 | `HEXAD/CHAT/integrated_loop_vp21_akida.py` | 순수 `socket`+`threading`(in-process) | 아니오 | n/a | n/a | NONE |

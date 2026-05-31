@@ -26,7 +26,7 @@ Usage:
                              [--seed 187] [--json]
 
 Interface mirrors SUB_ENGINES/AKIDA/scripts/first_inference.py (HW forward) and
-HEXAD/CHAT/server/akida_sw_lif.py (SW envelope). Code = English; the operator
+AGENT/CHAT/akida_sw_lif.py (SW envelope). Code = English; the operator
 README is Korean (CLM/bench/README.md).
 """
 from __future__ import annotations
@@ -88,7 +88,7 @@ def load_clm_int4(path: str):
 # SW envelope (numpy mirror of on-chip FullyConnected forward)
 # ---------------------------------------------------------------------------
 def _import_sw_lif():
-    """Import akida_sw_lif from HEXAD/CHAT/server (the calibrated SW envelope)."""
+    """Import akida_sw_lif from AGENT/CHAT (the calibrated SW envelope)."""
     here = os.path.dirname(os.path.abspath(__file__))
     repo = os.path.abspath(os.path.join(here, "..", ".."))
     sw_dir = os.path.join(repo, "HEXAD", "CHAT", "server")

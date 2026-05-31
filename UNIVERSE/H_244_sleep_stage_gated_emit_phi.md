@@ -101,7 +101,7 @@ emit 결정은 substrate 8-factor gate 의 autonomy — deep-sleep emit_rate 저
 ## Run Protocol
 
 - **smoke**: `UNIVERSE/state/h244_sleep_stage_gated_emit_phi_2026_05_24/run_h244.hexa`
-- **stage gate observation**: `HEXAD/CHAT/server/anima_dream_stage.hexa` →
+- **stage gate observation**: `AGENT/CHAT/anima_dream_stage.hexa` →
   `dream_phi(stage)` + `dream_context(stage).tension_envelope` (import READ-ONLY).
 - **emit primitive**: stage 별 `(substrate_tension × tension_envelope) ≥ τ` boolean →
   emit_count 누적. substrate_tension 은 H_222 substrate 의 phi_spatial 또는 W-tension
@@ -209,8 +209,8 @@ emit 결정은 substrate 8-factor gate 의 autonomy — deep-sleep emit_rate 저
   inert baseline · imagine-silent floor) · H_157 (Φ primitive lane) · H_202
   (self-ref edge-of-chaos Φ). (mission 이 sister 로 든 H_228 chat-sleep-5stage-phi ·
   H_231 tension-emit-vs-filler 는 **현 repo 에 파일 부재** — future-sister, honest.)
-- **module ref (READ-ONLY)**: `HEXAD/CHAT/server/anima_dream_stage.hexa` (5-stage SM +
-  dream_phi + dream_context, F-DREAM-1..5) · `HEXAD/CHAT/server/anima_imagination_loop.hexa`
+- **module ref (READ-ONLY)**: `AGENT/CHAT/anima_dream_stage.hexa` (5-stage SM +
+  dream_phi + dream_context, F-DREAM-1..5) · `AGENT/CHAT/anima_imagination_loop.hexa`
   (imagine_tick emit-free forward, F-IMAG-1) · `HEXAD/C/c_lib.hexa` (phi_spatial,
   H_222 와 공유).
 - **raw**: raw#10 (deterministic + hexa-only + ≥4 prediction + ≥5 falsifier + ≥5

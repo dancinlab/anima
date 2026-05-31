@@ -6,7 +6,7 @@
 
 ## PR #307 의 exec 패턴 (mkdir + printf per tick)
 
-`HEXAD/CHAT/server/anima_dream_stage.hexa` §6b 가 추가한 IPC bridge:
+`AGENT/CHAT/anima_dream_stage.hexa` §6b 가 추가한 IPC bridge:
 
 ```hexa
 fn _ds_publish_stage(stage: string) -> string {

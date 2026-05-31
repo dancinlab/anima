@@ -175,8 +175,8 @@ true live wiring (akida 유래 factor 가 실제로 `decision["score"] > thresho
 
 - [[apply_spike_features]] — `HEXAD/CHAT/spontaneous_lib.hexa § 10` (PR #143 squash `3bce310a1`, F-SPIKE-APPLY-1..4 4/4 PASS)
 - [[SPIKE_FACTOR_MAP]] — spec embedded in `spontaneous_lib.hexa § 10` (standalone .md 미존재; [[REGIME_EXPANSION]] §5 / §7(c) 가 modulator placeholder 참조)
-- [[akida_consumer]] — `HEXAD/CHAT/server/akida_consumer.hexa` (PR #138 squash `b97dbe4ff`, features JSONL writer)
-- [[telemetry_harness]] — `HEXAD/CHAT/server/telemetry_harness.hexa` (PR #139 squash `4095a5288`, evidence row builder — path D 의 extension target)
+- [[akida_consumer]] — `AGENT/CHAT/akida_consumer.hexa` (PR #138 squash `b97dbe4ff`, features JSONL writer)
+- [[telemetry_harness]] — `AGENT/CHAT/telemetry_harness.hexa` (PR #139 squash `4095a5288`, evidence row builder — path D 의 extension target)
 - [[AKIDA_FIRST]] — `HEXAD/SPONTANEOUS/AKIDA_FIRST.md` (Phase 1 HW-mandatory, Phase 2 SW-condition)
 - [[REGIME_EXPANSION]] — `HEXAD/SPONTANEOUS/REGIME_EXPANSION.md` (R1 / R2 / R3 schedule, [[SPIKE_FACTOR_MAP]] modulator refit 의 evidence source)
 - [[feedback-plist-forbidden-akida-endpoint]] — broker endpoint = `/ws/akida_ingest`, daemon = nohup (plist 금지)

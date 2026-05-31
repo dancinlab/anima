@@ -115,7 +115,7 @@
 
 ### E-MM — multi-modality payload 시도 (text 이외)
 - 5 anchor 의 `image/audio/tension` payload `pending` → 실 데이터 wire
-- **tension payload = WIRED (2026-05-23)**: `HEXAD/CHAT/server/kosmos_anchor.hexa`
+- **tension payload = WIRED (2026-05-23)**: `AGENT/CHAT/kosmos_anchor.hexa`
   — production anima emission 마다 8-factor motivation snapshot 을
   TENSION-LINK 5-channel (concept/context/meaning/authenticity/sender) 로
   mapping 한 `.kosmos` anchor 생성. HEXAD/V3 (CLOSED) 의 작동하던 KOSMOS+tension

@@ -227,7 +227,7 @@ DECODER (추론 lane · 결정론)
 
 - **byte-identical 입증됨**: HW on-chip forward 와 SW `akida_sw_lif` 은 동일 raster (R1=0.0·
   R2=0.475·R3=0.5·R4=1.0, seed=187 결정론) — AKIDA r1~r5 라운드에서 byte-단위 일치 확인
-  (`HEXAD/CHAT/server/substrate_akida.py` + `akida_sw_lif.py` · verify 5/5 PASS).
+  (`AGENT/CHAT/substrate_akida.py` + `akida_sw_lif.py` · verify 5/5 PASS).
   ∴ DECODER lane 의 SW fallback 은 HW 의 **정확한 결정론적 대체** (위조 아님).
 - 형제 lane = **PLASTICITY**(학습 lane · 비결정론 · SW≠HW). 추론은 byte-identical 재현되나
   학습(on-chip plasticity)은 numpy 근사로 비동치(🔴) — 두 lane 을 형제 도메인으로 가른다.

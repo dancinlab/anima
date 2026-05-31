@@ -16,17 +16,17 @@
 | pi5 spike_streamer.py       | NPU mesh → spike record emit     | LIVE (R3 only)     | pi5 host /home/ubuntu/anima/        | (ext)  | n/a (lives on pi5) |
 |                             | (R1/R2 pending inbox patch)      |                    |   SUB_ENGINES/AKIDA/scripts/        |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| akida_bridge.hexa           | pi5 WS subscribe → broker        | LIVE (mini PID up) | HEXAD/CHAT/server/akida_bridge.hexa | #121   | YES (predates arc) |
+| akida_bridge.hexa           | pi5 WS subscribe → broker        | LIVE (mini PID up) | AGENT/CHAT/akida_bridge.hexa | #121   | YES (predates arc) |
 |                             | /ws/akida_ingest forwarder       |                    |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| kosmos_anchor.hexa          | KOSMOS RF anchor emitter (adj.)  | LANDED (source)    | HEXAD/CHAT/server/kosmos_anchor.hexa| #116   | YES (predates arc) |
+| kosmos_anchor.hexa          | KOSMOS RF anchor emitter (adj.)  | LANDED (source)    | AGENT/CHAT/kosmos_anchor.hexa| #116   | YES (predates arc) |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| kosmos_emitter.hexa         | KOSMOS production emit daemon    | LANDED (source)    | HEXAD/CHAT/server/kosmos_emitter.hexa| #117 / #130 | YES (predates arc) |
+| kosmos_emitter.hexa         | KOSMOS production emit daemon    | LANDED (source)    | AGENT/CHAT/kosmos_emitter.hexa| #117 / #130 | YES (predates arc) |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| akida_consumer.hexa         | broker /akida/recent poll →      | LANDED (source)    | HEXAD/CHAT/server/akida_consumer.hexa| #138  | NO (sshd blocked)  |
+| akida_consumer.hexa         | broker /akida/recent poll →      | LANDED (source)    | AGENT/CHAT/akida_consumer.hexa| #138  | NO (sshd blocked)  |
 |                             | features JSONL stream (1 Hz)     | 7/7 selftest PASS  |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| telemetry_harness.hexa      | anima emit ⇄ spike window pair   | LANDED (source)    | HEXAD/CHAT/server/telemetry_harness.hexa | #139 | NO (sshd blocked) |
+| telemetry_harness.hexa      | anima emit ⇄ spike window pair   | LANDED (source)    | AGENT/CHAT/telemetry_harness.hexa | #139 | NO (sshd blocked) |
 |                             | → evidence JSONL                 | 9/9 selftest PASS  |                                     |        |                    |
 |                             | (modulated_factors extension =   | (extension on      |                                     |(branch:|                    |
 |                             | branch-only, not on main)        |  branch only)      |                                     | feat/  |                    |
@@ -34,7 +34,7 @@
 |                             |                                  |                    |                                     | modul- |                    |
 |                             |                                  |                    |                                     | factors)|                   |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| telemetry_status.hexa       | Phase 2 gate observability CLI   | LANDED (source)    | HEXAD/CHAT/server/telemetry_status.hexa | #144 | NO (sshd blocked)  |
+| telemetry_status.hexa       | Phase 2 gate observability CLI   | LANDED (source)    | AGENT/CHAT/telemetry_status.hexa | #144 | NO (sshd blocked)  |
 |                             | (spans / rows / regime dist /    | 11/11 selftest     |                                     |        |                    |
 |                             |  spike-rate hist / 4-cond gate)  | PASS               |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
@@ -71,13 +71,13 @@
 |   cloud-runpod-session-     | (4 items, 2026-05-23)            |                    |                                     | lang   |                    |
 |   findings-anima            |                                  |                    |                                     | `c07b426f` | n/a            |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| participant_spike_overlay.  | path B skeleton daemon —         | LANDED (source)    | HEXAD/CHAT/server/participant_spike_| #163   | NO (guard + sshd)  |
+| participant_spike_overlay.  | path B skeleton daemon —         | LANDED (source)    | AGENT/CHAT/participant_spike_| #163   | NO (guard + sshd)  |
 |   hexa (cycle 5/W)          | modulated_factors → overlay      | F-OVERLAY-1..3     |   overlay.hexa                      | MERGED |                    |
 |                             | (PARTICIPANT_OVERLAY_LIVE=0      | 10/10 selftest     |                                     | f336b850 |                  |
 |                             | default, awaits guard relax /    | PASS               |                                     |        |                    |
 |                             | anima_participant `.hexa` port)  |                    |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| telemetry_status.hexa       | modulation-health 섹션 extension | LANDED (source)    | HEXAD/CHAT/server/telemetry_status. | #164   | NO (sshd resp.,    |
+| telemetry_status.hexa       | modulation-health 섹션 extension | LANDED (source)    | AGENT/CHAT/telemetry_status. | #164   | NO (sshd resp.,    |
 |   modulation-health 확장    | (modulated_factors row coverage  | F-STATUS-12..14    |   hexa                              | MERGED |  deploy in flight) |
 |   (cycle 5/S)               |  + 0-event honest reporting)     | added → total      |                                     | 8defea28 |                  |
 |                             |                                  | 20/20 selftest     |                                     |        |                    |
@@ -95,20 +95,20 @@
 |   (cycle 6/AC)              | correlation analyzer spec        |                    |                                     | MERGED |                    |
 |                             |                                  |                    |                                     | 0479229f |                  |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| akida_consumer.hexa         | mean_spike_ids_count =           | LANDED (source)    | HEXAD/CHAT/server/akida_consumer.hexa | #172 | NO (sshd resp.,    |
+| akida_consumer.hexa         | mean_spike_ids_count =           | LANDED (source)    | AGENT/CHAT/akida_consumer.hexa | #172 | NO (sshd resp.,    |
 |   mean_spike_ids_count fix  | mean(len(spike_ids)) + F-4       | F-4 PASS, total   |                                     | MERGED |  deploy in flight) |
 |   (cycle 6/AD)              | selftest                         | 8/8                |                                     | a41c4192 |                  |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| telemetry_harness.hexa      | spike_window.mean_spike_ids_     | LANDED (source)    | HEXAD/CHAT/server/telemetry_harness.hexa | #175 | NO (sshd resp., |
+| telemetry_harness.hexa      | spike_window.mean_spike_ids_     | LANDED (source)    | AGENT/CHAT/telemetry_harness.hexa | #175 | NO (sshd resp., |
 |   mean_spike_ids_count fix  | count = mean(len(spike_ids))     | selftest update    |                                     | MERGED |  deploy in flight) |
 |   (cycle 7/BC)              | (stub → computed)                |                    |                                     | afd27e90 |                  |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| mini_sshd_diag.hexa         | sshd channel-reject 5-cause      | LANDED (source)    | HEXAD/CHAT/server/mini_sshd_diag.hexa | #153 | n/a (diag tool)    |
+| mini_sshd_diag.hexa         | sshd channel-reject 5-cause      | LANDED (source)    | AGENT/CHAT/mini_sshd_diag.hexa | #153 | n/a (diag tool)    |
 |   (cycle 6/sshd-diag)       | 진단 도구 (ssh_rc / sshd_config /| 301 LoC            |                                     | MERGED |                    |
 |                             | authorized_keys / sshd_log /     |                    |                                     | 472aa114 |                  |
 |                             | launchd)                         |                    |                                     |        |                    |
 +-----------------------------+----------------------------------+--------------------+------------------------------------+--------+--------------------+
-| MINI_SSHD_DIAGNOSIS.md      | cycle 7/BD all-clean baseline    | LANDED (doc)       | HEXAD/CHAT/server/MINI_SSHD_DIAGNOSIS.md | #173 | n/a (doc)       |
+| MINI_SSHD_DIAGNOSIS.md      | cycle 7/BD all-clean baseline    | LANDED (doc)       | AGENT/CHAT/MINI_SSHD_DIAGNOSIS.md | #173 | n/a (doc)       |
 |   (cycle 7/BD)              | — 3/3 ssh + 1/1 scp + 1/1 remote | supersedes §3      |                                     | MERGED |                    |
 |                             | hexa run all PASS, diag CLEAN    | blocker #1 status  |                                     | 4c1ec63c |                  |
 |                             | 5/5 categories                   |                    |                                     |        |                    |

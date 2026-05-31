@@ -8,7 +8,7 @@
 ## 0. 한눈에
 
 ```
-   anima substrate router (HEXAD/CHAT/server)
+   anima substrate router (AGENT/CHAT)
         │   AKIDA_BACKEND env  /  --substrate akida
         ▼
    SubstrateAKIDA  ──import akida + devices()?──┐
@@ -29,8 +29,8 @@
 
 | # | PR | 산출물 |
 |---|---|---|
-| #1419 | PR-A | `HEXAD/CHAT/server/akida_sw_lif.{py,hexa}` — numpy LIF SW 시뮬레이터 (akida FullyConnected forward() 정합 · seed=187) |
-| #1420 | PR-B | `HEXAD/CHAT/server/substrate_akida.{py,hexa}` — `SubstrateAKIDA(Substrate)` · `import akida`+`devices()` → HW, 실패 시 SW fallback · provenance |
+| #1419 | PR-A | `AGENT/CHAT/akida_sw_lif.{py,hexa}` — numpy LIF SW 시뮬레이터 (akida FullyConnected forward() 정합 · seed=187) |
+| #1420 | PR-B | `AGENT/CHAT/substrate_akida.{py,hexa}` — `SubstrateAKIDA(Substrate)` · `import akida`+`devices()` → HW, 실패 시 SW fallback · provenance |
 | #1421 | PR-C | `anima_participant.py` 배선 — `AKIDA_BACKEND` env + `--substrate akida` arg (default `lora` 불변) |
 | #1422 | PR-D | `scripts/akida/dispatch.hexa` — `--json` provenance probe + **argv-offset 버그 fix** (`a[2]`→`a[1]` = `closed_loop_verify.py` dangling 참조 근본원인) |
 | #1423 | PR-E | `.verdicts/akida-backend-wiring/F-AKWIRE-falsifiers.txt` — 5/5 PASS (F-AKWIRE-FALLBACK 포함) |
@@ -90,12 +90,12 @@ F-H672-4 (8-factor@R3 fires) ✓ → **4/4 PASS on real silicon**. SW mock-repla
 
 - 가설/verdict: `UNIVERSE/H_672_akida_spontaneous_firing.md` (Group A) · H_673~H_678 (B~G, HW-runnable now, HW-confirm 미시행)
 - 도메인: `AKIDA/AKIDA.md` · backend resolver `AKIDA/akida_backend.hexa`
-- substrate 배선: `HEXAD/CHAT/server/substrate_akida.{py,hexa}` · `akida_sw_lif.{py,hexa}` · `anima_participant.py`
+- substrate 배선: `AGENT/CHAT/substrate_akida.{py,hexa}` · `akida_sw_lif.{py,hexa}` · `anima_participant.py`
 - probe: `scripts/akida/dispatch.hexa` · `ready/experiments/closed_loop_verify.py`
 - 호스트 ledger: 루트 `PI5-AKIDA.json` (local-only) · 거버넌스 `project.tape a_pi5_akida_registry`
 - 코드배선 인계: `HANDOFF-akida-backend-wiring.md`
 - verdict 영속: `.verdicts/672_akida_spontaneous_firing/{sw_falsifiers,hw_live_2026_05_29}.txt`
-- bridge: `HEXAD/CHAT/server/akida_bridge.hexa` → broker `/ws/akida_ingest`
+- bridge: `AGENT/CHAT/akida_bridge.hexa` → broker `/ws/akida_ingest`
 
 ## 6. 알려진 한계 + guard
 

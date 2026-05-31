@@ -40,7 +40,7 @@ AKIDA 칩 추론/학습을 **하나의 HW-first 스위치 SSOT** 위에서 두 �
 ## SSOT 코어 (재발명 금지 — 재사용)
 
 - 스위치: `AKIDA/akida_backend.hexa` (`akida_backend_resolve` · `_graceful` · `akida_provenance`)
-- decoder substrate: `HEXAD/CHAT/server/substrate_akida.py` + `akida_sw_lif.py`
+- decoder substrate: `AGENT/CHAT/substrate_akida.py` + `akida_sw_lif.py`
 - plasticity: `PLASTICITY/plasticity_lane.hexa` + `plasticity_sw_approx.py` + `SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py`
 
 ## 잔여 (optional · $0)

@@ -176,7 +176,7 @@ none` (H_646/651 자유도 [0,1]). **realized as `.hexa` (not `.tape`)**: 소비
 | 🚪 **BRIDGE M6** | `envelope_multiscale` → AND-gate Φ 입력 | `emit_threshold` | H_636 closure-conjunction GZ |
 | 🧠✨ **SAVANT M2** | `envelope_multiscale` → 측정자 Φ context | `emit_threshold` | (E축 측정자, 발화 게이트 아님) |
 
-**DREAM M5** (`DREAM/dream_lib.hexa` + `HEXAD/CHAT/server/anima_dream_stage.hexa`):
+**DREAM M5** (`DREAM/dream_lib.hexa` + `AGENT/CHAT/anima_dream_stage.hexa`):
 - 5-stage 머신이 `envelope_multiscale` 로 stage Φ-envelope 산출.
 - stage = Φ scale + tension envelope **context** (boolean emit 게이트 아님 ·
   `a_chat_sleep_imagination`). N2 가 closure peak (H_644 정정).

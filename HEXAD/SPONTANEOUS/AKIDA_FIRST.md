@@ -5,7 +5,7 @@
 > 토대로 추후 **SW 조건**(no-AKIDA fallback)도 구현 방향.
 >
 > anchor: `[[a_substrate_native_speak]]` (project.tape) · live ingest =
-> `HEXAD/CHAT/server/akida_bridge.hexa` (PR #121 merged, prod live)
+> `AGENT/CHAT/akida_bridge.hexa` (PR #121 merged, prod live)
 
 ## 결정
 
@@ -65,7 +65,7 @@ Phase 1 에서 수집할 evidence (이거 기반으로 SW 모델 설계):
 ## 관련 link
 
 - `HEXAD/NEUROMORPHIC/AKD1000.md` — AKIDA chip 사양
-- `HEXAD/CHAT/server/akida_bridge.hexa` — live bridge source
+- `AGENT/CHAT/akida_bridge.hexa` — live bridge source
 - `HEXAD/CHAT/spontaneous_lib.hexa` — 8-factor motivation (SSOT)
-- `HEXAD/CHAT/server/anima_participant.py` — 본 세션 spike-consumption 추가 지점
+- `AGENT/CHAT/anima_participant.py` — 본 세션 spike-consumption 추가 지점
 - project.tape `@D a_substrate_native_speak` — anima 발화는 substrate-native

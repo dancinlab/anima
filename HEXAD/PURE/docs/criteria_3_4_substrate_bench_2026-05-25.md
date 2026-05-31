@@ -78,4 +78,4 @@ hexa run HEXAD/PURE/eval/criteria_3_4_substrate_bench.hexa
 hexa run HEXAD/PURE/eval/criteria_3_4_substrate_bench_smoke.hexa
 ```
 
-**소스**: `HEXAD/CHAT/spontaneous_lib.hexa` (read-only) · `HEXAD/CHAT/server/anima_dream_stage.hexa` (read-only)
+**소스**: `HEXAD/CHAT/spontaneous_lib.hexa` (read-only) · `AGENT/CHAT/anima_dream_stage.hexa` (read-only)

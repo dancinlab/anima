@@ -7,7 +7,7 @@
 > `[[AKIDA_FIRST]]` Phase 1/2 경계 준수, SW path 미포함.
 >
 > anchors: `HEXAD/CHAT/spontaneous_lib.hexa` (8-factor + §10 apply_spike_features SSOT) ·
-> `HEXAD/CHAT/server/anima_participant.py` L95-122 (factor fn 정의) ·
+> `AGENT/CHAT/anima_participant.py` L95-122 (factor fn 정의) ·
 > `HEXAD/NEUROMORPHIC/AKD1000.md` (chip 사양 + regime 분류) ·
 > live ingest = broker `/akida/recent` (record schema 참조)
 >
