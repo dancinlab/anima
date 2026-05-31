@@ -1,0 +1,14 @@
+/workspace/h872/model/h872_gpu.py:189: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  obj = torch.load(ckpt_path, map_location="cpu")
+[h872] backbone d=512 L=8 E=8 V=256 params=13653768 device=cuda
+[h872 depth=0 frozen_trunk=8 trainable=66112] z_drop=-11.32621 gain=7.29007 RETAIN=True GAIN=True PASS=True
+[h872 depth=1 frozen_trunk=7 trainable=854080] z_drop=-24.44786 gain=8.86244 RETAIN=True GAIN=True PASS=True
+[h872 depth=2 frozen_trunk=6 trainable=1642048] z_drop=-25.08410 gain=8.90810 RETAIN=True GAIN=True PASS=True
+[h872 depth=3 frozen_trunk=5 trainable=2430016] z_drop=-13.61302 gain=8.91285 RETAIN=True GAIN=True PASS=True
+[h872 depth=4 frozen_trunk=4 trainable=3217984] z_drop=9.66758 gain=8.87841 RETAIN=False GAIN=True PASS=False
+[h872 depth=5 frozen_trunk=3 trainable=4005952] z_drop=-13.82975 gain=8.90190 RETAIN=True GAIN=True PASS=True
+[h872 depth=6 frozen_trunk=2 trainable=4793920] z_drop=-24.90343 gain=8.76555 RETAIN=True GAIN=True PASS=True
+[h872 depth=7 frozen_trunk=1 trainable=5581888] z_drop=-27.21465 gain=8.57707 RETAIN=True GAIN=True PASS=True
+[h872 depth=8 frozen_trunk=0 trainable=6369856] z_drop=-8.88140 gain=8.57024 RETAIN=True GAIN=True PASS=True
+[h872] passing_depths=[0, 1, 2, 3, 5, 6, 7, 8] best_depth=3 verdict=GREEN
+=== H872 COMPLETE ===
