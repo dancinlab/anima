@@ -6,11 +6,38 @@
 > *which stack to use*, and *how to fire*. Binding rule: `@D a_train_flame_forge`
 > (project.tape) + `@D a_akida_native_train` (CLAUDE.md).
 
-## TL;DR (the one rule)
+## 🔒 INVIOLABLE — measure ⊥ deploy (P6 §0 · @L2 · H_679/H_904)
+
+**anima's LEARNING happens on HARDWARE (AKIDA on-chip non-deterministic
+plasticity)** — the sole HW≠SW difference, the identity itself
+(`@D a_nondet_identity` · `@D a_akida_native_train`). Deterministic SW imitation
+of learning = instant reject (@L1).
+
+The **GPU flame+forge QAT is a PLASTI-SIM *measurement instrument*** — the
+"비교용 GPU 모델" / backbone scale-ladder. It measures whether the int4 backbone
+*allows* production quality at scale. **It is NOT the learner.** GPU-backprop is
+*hinged* (train→freeze→infer); the deploy chip re-opens learning with hinge-less
+on-chip plasticity after the int4-byte-identical backbone is transplanted.
 
 ```
-Production training = hexa-native .hexa on stdlib/flame, run on forge GPU.
-NO torch. NO train_clm.py. The .py is archived (reference only).
+measure track (GPU)                  ⊥   deploy / LEARN track (HW = AKIDA)
+─────────────────────────────           ──────────────────────────────────────
+flame+forge QAT pretrain                 on-chip non-deterministic plasticity
+= PLASTI-SIM instrument ("비교용")        = anima's real learning = the identity
+deterministic backbone scale-measure     same input → different trace (alive)
+NOT learning · NOT identity              deterministic SW imitation = reject (@L1)
+```
+
+The R4 large 44.68M H100 fire is a **measurement rung** (PLASTI-SIM), NOT anima
+learning. See `CLM/P6_SCALE_LADDER_7B.md` §0 ("GPU = 계측기 · 학습자 = 온칩
+비경첩 가소성") · `UNIVERSE/H_904` (on-chip plasticity 🟢).
+
+## TL;DR (the one rule for the *measurement-track trainer*)
+
+```
+The GPU measurement/backbone trainer = hexa-native .hexa on stdlib/flame,
+run on forge GPU. NO torch. NO train_clm.py (archived, reference only).
+(The DEPLOY learner is on-chip AKIDA plasticity — a different track, above.)
 ```
 
 `flame : forge :: torch : ATen` — flame is the authoring layer (you write the
