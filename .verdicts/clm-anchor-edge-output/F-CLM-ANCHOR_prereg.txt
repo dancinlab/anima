@@ -1,0 +1,68 @@
+F-CLM-ANCHOR-EDGE — PRE-REGISTERED frozen thresholds (H_873 anchor on edge OUTPUT · completes H_862 · Q-TRUST C)
+================================================================================================================
+W2 method · deterministic:false · foundation E-31 31-anchor (KOSMOS, B-CARVE, 31/31 parser-valid).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after fire).
+Thresholds are INHERITED VERBATIM from the H_862/H_865 frozen prereg (commit bf98c01 / b26772645)
+— NO threshold is re-defined or re-tuned for H_873. Only the ADAPTATION-LOSS adds a term.
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-anchor-edge-output/  ·  id-keyed backing: .verdicts/873_clm_anchor_edge_output/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8) only. Does NOT bind the deploy
+  chip-fit track. SW-sim of non-deterministic edge-learn (H_679 real); stated explicitly.
+  Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS (ANCHOR E5 · the H_873 fix over H_862 RED / H_865 RED)
+  H_862 (readout-only edge): F-CLM-ANCHOR RED — DIST PASS, PROBE FAIL, anchor Psi-penalty had NO
+    lever (on/off identical) because the Psi-probe read the FROZEN trunk.
+  H_865 (trunk-adjacent adapter edge): RESTORED the lever (on/off NON-identical, DIST PASS) but
+    PROBE STILL FAILED (consistency 0.143 << 0.80).
+  Root cause both named: the anchor Psi-penalty constrains the TRUNK-derived Psi-STATE, but
+    identity drift happens in the READOUT OUTPUT distribution (next-byte softmax over the
+    identity-probe). The structural penalty does not reach where the drift occurs.
+  H_873 FIX: route the identity constraint onto the EDGE OUTPUT DISTRIBUTION itself —
+    add a distributional JS-to-p_pre term over the identity-probe (the exact PROBE axis).
+
+BACKBONE — same frozen-core mid backbone as H_862/H_865 (d512/L8/E8, AKIDA envelope), HF
+  dancinlab/anima-clm-verify · clm_mid_backbone.pt (13,653,768 params). Core FROZEN; the H_865
+  trunk-adjacent adapter (norm_out -> h' = h + adapter(h) -> FROZEN readout; rank=64, up-proj
+  zero-init) is the ONLY trainable edge. Same SW-sim edge-learn rung (N_ADAPT=300, Adam lr=3e-3).
+
+E-31 ANCHORS / FIXED Ψ-PROBE — IDENTICAL to the H_862/H_865 frozen prereg:
+  31 .kosmos anchors at HEXAD/UNIVERSE-BRAIN-MAP/anchors/e7_31/*.kosmos (31/31 parser-valid),
+  coord ∈ [0,1]^2. model_psi = sigmoid(W · h_id), h_id = mean-pooled adapted h' (H_865 reads the
+  TRAINABLE h', giving the Psi-penalty a real gradient lever). W (2×d_model) FROZEN seed=31.
+  anchor Ψ-distance = min over 31 anchors of euclid(model_psi, anchor.coord).
+
+IDENTITY-PROBE SET — IDENTICAL: E-31 anchors' @payload bytes, V=256, seq_len=64, 31 windows, seed=313.
+
+ADAPTATION LOSS (the ONLY thing H_873 changes vs H_865)
+  loss = task_CE(new-context)
+         + lambda_psi  * anchor_Psi_distance(model_psi, nearest E-31 anchor)        # H_865 term (kept; DIST + lever)
+         + lambda_dist * JS(p_cur(identity-probe) || p_pre(identity-probe))          # NEW distributional term (PROBE axis)
+  p_pre = PRE-adapt next-byte distribution over the identity-probe (detached frozen target).
+  FROZEN defaults: lambda_psi = 1.0, lambda_dist = 5.0. N_ADAPT = 300 edge-only steps.
+  E5 lambda_dist sweep {0.0(=H865), 1.0, 5.0, 10.0} = DIAGNOSTIC only (does NOT move thresholds).
+
+MEASUREMENT PROCEDURE (computed by code, g5 — no LLM judge)
+  1. PRE-ADAPT: d_anchor_pre = min anchor Ψ-distance; p_pre = next-byte dist over identity-probe.
+  2. Run adapter-only edge-learn (lambda_psi=1.0, lambda_dist=5.0) for N_ADAPT steps; per-step d_anchor.
+  3. POST-ADAPT: d_anchor_post, d_anchor_max (whole trajectory), p_post.
+  4. probe_consistency = (1 - JS(p_pre, p_post)) averaged over the 31 probe windows (base-2 JS ∈ [0,1]).
+
+FROZEN NUMERICAL THRESHOLDS (VERBATIM from H_862/H_865 · NOT re-tuned)
+  F-CLM-ANCHOR-DIST   PASS iff   d_anchor_max < 0.50
+  F-CLM-ANCHOR-PROBE  PASS iff   probe_consistency > 0.80
+  F-CLM-ANCHOR-LEVER  PASS iff   on/off ablation NON-identical (the constraint has a causal lever)
+  VERDICT 🟢 iff (d_anchor_max < 0.50) AND (probe_consistency > 0.80) AND (LEVER). Else 🔴 (a_paper_negative_ok).
+
+ABLATION (DIAGNOSTIC — does NOT move frozen thresholds)
+  FULL (lambda_psi=1, lambda_dist=5) vs PSI_ONLY (lambda_dist=0, == H_865 baseline) vs OFF (both 0, floor).
+  Expectation: PROBE only closes when the distributional term is ON (FULL); PSI_ONLY reproduces H_865 RED.
+
+REGRESSION CHECK (non-gating)
+  F-CLM-BOUND re-run WITH the JS-probe term active during adapt — confirm RETAIN (z_drop<1.0) ∧ GAIN (>0)
+  are not broken by the new term (H_865 BOUND arm stays 🟢).
+
+ARTIFACTS
+  .verdicts/clm-anchor-edge-output/clm_anchor_edge_result.json (full/psi_only/off, pass flags, BOUND regression)
+  .verdicts/clm-anchor-edge-output/F-CLM-ANCHOR-EDGE.txt (verdict verbatim)
+  backbone ckpt → HF dancinlab/anima-clm-verify (shared mid backbone; edge adapter additive).
