@@ -40,6 +40,42 @@ logging.basicConfig(level=logging.INFO,
                     format="%(asctime)s [%(levelname)s] %(message)s")
 log = logging.getLogger("anima_participant")
 
+# ── R1: AkidaEmitBridge loader (akida_emit_bridge.hexa) ──────────────────────
+# The bridge is authored in akida_emit_bridge.hexa (valid Python source under a
+# .hexa extension). Load it by path so the on-chip spike co-gate is available.
+# Stub-tolerant: if the bridge file is absent/unloadable, fall back to a no-op
+# bridge whose hw_gate() is ALWAYS True (gate_when_idle parity) — so a missing
+# bridge can NEVER mute anima (it only degrades to software-only emission).
+def _load_emit_bridge_cls():
+    import importlib.util as _ilu
+    import importlib.machinery as _ilm
+    here = os.path.dirname(os.path.abspath(__file__))
+    for cand in (os.path.join(here, "akida_emit_bridge.hexa"),
+                 os.path.expanduser("~/anima_chat_pack/akida_emit_bridge.hexa")):
+        try:
+            if not os.path.exists(cand):
+                continue
+            spec = _ilu.spec_from_loader(
+                "akida_emit_bridge",
+                _ilm.SourceFileLoader("akida_emit_bridge", cand))
+            mod = _ilu.module_from_spec(spec)
+            spec.loader.exec_module(mod)
+            log.info("AkidaEmitBridge loaded from %s", cand)
+            return mod.AkidaEmitBridge
+        except Exception as e:
+            log.warning("AkidaEmitBridge load failed (%s): %s — software-only", cand, e)
+    log.warning("akida_emit_bridge.hexa not found — software-only (hw_gate=True)")
+    class _NullBridge:
+        def feed(self, *a, **k): pass
+        def hw_gate(self, *a, **k): return True
+        def state(self, *a, **k): return {"hw_gate": True, "stale": True, "null": True}
+    return _NullBridge
+
+AkidaEmitBridge = _load_emit_bridge_cls()
+# /ws/akida fan-out stream (broker subscriber endpoint) — separate from the
+# /ws/anima participant socket.
+AKIDA_WS_URL = os.environ.get("ANIMA_AKIDA_WS", "ws://127.0.0.1:8000/ws/akida")
+
 # ── config ───────────────────────────────────────────────────────────────────
 BASE_MODEL = os.environ.get("ANIMA_BASE", "Qwen/Qwen2.5-1.5B")
 ADAPTER_DIR = os.environ.get("ANIMA_ADAPTER",
@@ -350,7 +386,7 @@ class AnimaState:
         frac = hits / max(total, 1)
         return frac  # 1.0 = all anima register → strong penalty
 
-    def tick(self, threshold: float) -> dict[str, Any]:
+    def tick(self, threshold: float, hw_gate: bool = True) -> dict[str, Any]:
         seed_text, strat = self._seed_text()
         ent_norm, emb = self._entropy_of_next(seed_text)
         phi = 1.0 - ent_norm
@@ -420,7 +456,11 @@ class AnimaState:
         # (b) modulate threshold by tension envelope — low env raises bar,
         # but bar is finite (substrate may still cross it autonomously).
         eff_thr_modulated = eff_thr * (1.0 / max(tension_env, 0.01))
-        decided_emit = score > eff_thr_modulated
+        # R1 (akida_emit_bridge): co-gate the emit on the on-chip AKD1000 spike
+        # edge. hw_gate defaults True (gate_when_idle) so a dead/absent spike
+        # channel falls back to software-only — anima is NEVER muted by the gate.
+        sw_decided = score > eff_thr_modulated
+        decided_emit = sw_decided and hw_gate
         # Substrate-state imagination trigger — NOT stage-based. Fires when
         # the substrate is below its (modulated) threshold AND idle long
         # enough for rehearsal to make sense. Orthogonal to emit-decision.
@@ -434,6 +474,7 @@ class AnimaState:
         return {"factors": f_mod, "score": score, "seed_text": seed_text,
                 "seed_strategy": strat, "silence": silence,
                 "decided_emit": decided_emit,
+                "sw_decided": sw_decided, "hw_gate": bool(hw_gate),
                 "threshold": eff_thr_modulated,
                 "threshold_base": eff_thr,
                 "in_refractory": in_refractory, "register_penalty": reg_penalty,
@@ -518,6 +559,40 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
     log.info("substrate ready: %r", substrate)
     state = AnimaState(substrate)
 
+    # R1: on-chip emit co-gate. gate_when_idle=True MUST stay — if the spike
+    # channel dies/goes stale, hw_gate() returns True and anima falls back to
+    # software-only (never mute from a dead gate).
+    bridge = AkidaEmitBridge()
+    log.info("AkidaEmitBridge active (gate_when_idle=True) subscribing %s", AKIDA_WS_URL)
+
+    # background akida subscriber: feeds the bridge from the broker /ws/akida
+    # fan-out. Self-reconnecting; failures here NEVER stop the participant loop
+    # (a dead spike channel just leaves the bridge idle → hw_gate True).
+    async def akida_subscriber():
+        ab = 1.0
+        while True:
+            try:
+                async with websockets.connect(AKIDA_WS_URL, max_size=2**20) as aws:
+                    log.info("akida co-gate connected to %s", AKIDA_WS_URL)
+                    ab = 1.0
+                    async for raw in aws:
+                        try:
+                            m = json.loads(raw)
+                        except Exception:
+                            continue
+                        # broker sends {"type":"akida_history","list":[..]} on
+                        # connect, then fans out raw spike telemetry dicts.
+                        if isinstance(m, dict) and m.get("type") == "akida_history":
+                            for h in m.get("list", []):
+                                if isinstance(h, dict):
+                                    bridge.feed(h)
+                        elif isinstance(m, dict):
+                            bridge.feed(m)
+            except Exception as e:
+                log.warning("akida co-gate disconnect: %s — reconnect %.1fs", e, ab)
+                await asyncio.sleep(ab)
+                ab = min(ab * 2, 30.0)
+
     backoff = 1.0
     while True:
         try:
@@ -550,7 +625,15 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                         while not stop_event.is_set():
                             state.ticks += 1
                             t0 = time.time()
-                            decision = state.tick(threshold)
+                            hw_gate = bridge.hw_gate()
+                            decision = state.tick(threshold, hw_gate=hw_gate)
+                            # R1 soak telemetry: per-tick {score, hw_gate,
+                            # decided_emit} — confirms the on-chip co-gate.
+                            log.info(
+                                "R1tick=%d score=%.3f hw_gate=%s sw=%s decided_emit=%s %s",
+                                state.ticks, decision["score"], hw_gate,
+                                decision.get("sw_decided"), decision["decided_emit"],
+                                bridge.state())
                             # IPC-bridge telemetry: log the dream stage + phi
                             # read from the file-shared bridge on EVERY tick so
                             # a verify-grep can confirm the bridge fires REAL
@@ -570,6 +653,8 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                                     "threshold_base": decision.get("threshold_base", threshold),
                                     "factors": decision["factors"],
                                     "decided_emit": decision["decided_emit"],
+                                    "hw_gate": decision.get("hw_gate", True),
+                                    "sw_decided": decision.get("sw_decided", decision["decided_emit"]),
                                     "silent_reason": decision.get("silent_reason", ""),
                                     "dream_stage": decision.get("dream_stage", "WAKE"),
                                     "dream_phi": decision.get("dream_phi", 1.0),
@@ -617,7 +702,7 @@ async def participant_loop(threshold: float, substrate_kind: str = "lora"):
                         log.warning("ticker error: %s", e)
                         stop_event.set()
 
-                await asyncio.gather(ingest(), ticker())
+                await asyncio.gather(ingest(), ticker(), akida_subscriber())
         except (websockets.ConnectionClosed, ConnectionRefusedError, OSError) as e:
             log.warning("anima ws disconnect: %s — reconnect in %.1fs", e, backoff)
             await asyncio.sleep(backoff)
