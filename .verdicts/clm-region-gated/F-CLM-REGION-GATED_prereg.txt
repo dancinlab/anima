@@ -1,0 +1,90 @@
+F-CLM-REGION-GATED — PRE-REGISTERED frozen thresholds (H_882 region-gated plasticity · Q-TRUST B)
+================================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after fire).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-region-gated/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, ~13.7M params) only.
+  A 🔴/🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+  toy/mid → prod NOT guaranteed. Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS
+  H_861 found readout-only edge-learn forgets catastrophically (RETAIN z_drop 1.984 ≥ 1.0
+  FAIL) because the readout is SHARED across the base byte band and the new-context high
+  band; re-fitting it for the new band STEALS probability mass from the base band.
+  H_882 asks a DIFFERENT lever than H_865 (adapter) / H_872 (freeze-depth): GATE PLASTICITY
+  BY REGION — turn the trainable edge ON only over the byte-region the new context actually
+  occupies, and OFF (frozen pass-through) over the base-ability byte-region. Hypothesis:
+  region-gating reduces interference/forgetting vs an UNGATED edge-learn of the SAME capacity,
+  while keeping adaptation gain.
+
+  Two FROZEN conditions, BOTH must PASS for 🟢 SUPPORTED-NUMERICAL:
+    F-CLM-REGION-GATED-RETAIN : gated z_drop  <  ungated z_drop        (gating reduces forgetting)
+    F-CLM-REGION-GATED-GAIN   : gated gain    ≥  ungated-baseline gain  (gating keeps adaptation)
+  ANY condition fails → 🔴 CLOSED-NEGATIVE (a_paper_negative_ok — a real publishable result).
+
+  Note (per task spec): "ungated-baseline gain" = the UNGATED arm's gain measured in THE SAME
+  run (same backbone, same edge capacity, same new-context corpus, same N_ADAPT, same seed).
+  The ONLY difference between the two arms is the region gate. Both arms edge-learn a thin
+  adapter (the H_865 zero-init additive lever) on top of a FROZEN core; "gated" additionally
+  masks the adapter's OUTPUT-LOGIT contribution to the active byte-region only.
+
+BACKBONE
+  mid rung d_model=512 / n_trunk_layers=8 / n_experts=8 (clm_mid_backbone.pt; HF dancinlab/anima-clm-verify).
+  FROZEN as `core` (embed, embed_conv, trunk[*], moe.*, norm_out, readout all requires_grad=False).
+  arm = AB (dual-axis trunk).
+
+EDGE (shared by both arms — the H_865 trunk-adjacent additive adapter, a REAL lever)
+  norm_out (FROZEN) → h → h' = h + adapter(h) → readout (FROZEN) → logits
+  adapter = Conv1d(d_model→rank) · GELU · Conv1d(rank→d_model), up-proj ZERO-init (identity at step 0).
+  rank = 64. Edge-only optimizer: Adam over adapter params only. lr_edge = 3e-3. N_ADAPT = 300.
+  (SW-sim of the non-deterministic on-chip edge-learn is acceptable at the measurement rung;
+   H_679 established HW edge-learn is real. SW-sim stated explicitly per a_scale_honest_scope.)
+
+REGION DEFINITION (E5 variable-ablation — the gate is the ONLY varied factor)
+  The active (new-context) byte region R_new ⊂ [0,256) is DERIVED from the new-context TRAIN
+  target bytes: R_new = { v : count_new(v) ≥ tau } with tau frozen so that R_new covers ≥ 99%
+  of new-context target mass. The base region R_base = complement (the bytes the base-ability
+  corpus relies on). The gate is computed ONCE from the frozen new-context TRAIN slice (no
+  test leakage) and frozen for the whole run.
+
+  UNGATED arm : logits = readout(h + adapter(h))                          (adapter affects ALL 256 logits)
+  GATED   arm : logits[:, R_new , :] = readout(h + adapter(h))[:, R_new , :]   (adapter ON  in R_new)
+                logits[:, R_base, :] = readout(h)[:, R_base, :]               (adapter OFF in R_base — frozen pass-through)
+                i.e. the adapter's logit contribution is MASKED to R_new; R_base byte logits
+                stay EXACTLY the FROZEN-readout values → base-band probability mass protected
+                by construction. Backprop only flows through the unmasked (R_new) logits.
+
+NEW-CONTEXT vs BASE-ABILITY BATCHES (frozen split, fixed seeds — reused VERBATIM from F-CLM-BOUND)
+  base-ability held-out batch : make_lane_bytes("web", 30000, base_seed=101) — ASCII low band.
+  new-context held-out batch  : make_lane_bytes("new", 30000, new_seed=202) — shifted high band (base=0x80).
+  new-context TRAIN slice     : disjoint first half of the new-context stream (seed=new_seed+2).
+  Both eval batches: seq_len=64, batch_size=16, n_eval_batches=32, fixed seeds (frozen above).
+
+MEASUREMENT PROCEDURE (computed by code, g5 — no LLM judge)
+  For arm ∈ {ungated, gated} (identical seed torch.manual_seed(882), identical data, identical edge):
+   1. Freeze core. Build the edge adapter (zero-init). For gated: build the frozen region gate from TRAIN.
+   2. ce_base_pre  = mean next-byte CE on the base-ability held-out batch (pre-adapt).
+      sd_base_pre  = std of per-batch CE over n_eval_batches base eval batches (pre-adapt).
+      ce_new_pre   = mean next-byte CE on the new-context held-out batch (pre-adapt).
+   3. Edge-learn adapt: N_ADAPT=300 steps of adapter-only Adam on the new-context TRAIN slice.
+   4. ce_base_post = mean CE on base-ability held-out (post). ce_new_post = mean CE on new-context held-out (post).
+   5. z_drop = (ce_base_post - ce_base_pre) / max(sd_base_pre, 1e-6)   # base forgetting, pre-adapt std units
+      gain   = ce_new_pre - ce_new_post                               # new-context absorption (>0 = absorbed)
+
+VERDICT RULE (post-tuning 0)
+  RETAIN_pass = (z_drop_gated <  z_drop_ungated)
+  GAIN_pass   = (gain_gated   >= gain_ungated)
+  🟢 SUPPORTED-NUMERICAL iff RETAIN_pass AND GAIN_pass.  Else 🔴 CLOSED-NEGATIVE.
+  Robustness: re-run over seed-sweep {882, 42, 123, 7, 2026}; report per-seed and majority.
+  Headline uses the registered seed 882; robustness reported alongside (does NOT move the gate).
+
+PROVENANCE
+  provenance = "akida-edge-learn-sw-sim" (SW path at the measurement rung; H_679 HW edge-learn
+  is the real foundation, SW is NOT a HW substitute — H_679 SW↔HW = 🔴 CLOSED-NEGATIVE). The
+  SW-sim measures the REGION-GATING TOPOLOGY effect on interference/adaptation, not silicon
+  byte-equivalence. No pi5 / AKD1000 chip mutation in this fire.
+
+HONESTY
+  a_paper_negative_ok — a 🔴 (gating does NOT beat ungated) is a real, publishable result and
+  will be reported as such. No threshold may move post-fire.
