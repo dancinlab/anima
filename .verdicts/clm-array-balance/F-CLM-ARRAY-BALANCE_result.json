@@ -1,0 +1,737 @@
+{
+  "frozen": {
+    "axis_n_chips": [
+      2,
+      4,
+      8
+    ],
+    "n_experts": 8,
+    "d_model/L": "d64/L2 (toy)",
+    "top_k": 2,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "train_steps": 120,
+    "eval_batches": 16,
+    "profile_batches": 16,
+    "load_metric": "per-chip dispatch-count CV = std/mean (population std)",
+    "coh_logit_atol": 0.0001,
+    "coh_hamming_max": 0.0,
+    "coh_ce_atol": 0.0001,
+    "arms": "S=static-hash (H_878 baseline) ; C=capacity-aware LPT bin-pack on disjoint profile split",
+    "falsifier": "F-CLM-ARRAY-BALANCE: for every N in {2,4,8} -- capacity-aware arm no chip starves AND CV(capacity-aware) < CV(static-hash) AND max|logit_capaware-logit_ref| <= coh_logit_atol AND argmax-hamming <= coh_hamming_max AND |CE_capaware-CE_ref| <= coh_ce_atol",
+    "scope": "SW-sim of @L2 deploy chip-fit track -- silicon NOT measured (1 AKD1000 today); a_scale_honest_scope; re-approach of H_878 (router)",
+    "device": "cuda"
+  },
+  "per_N": {
+    "2": {
+      "mean_cv_static": 0.240723,
+      "mean_cv_capaware": 0.02828,
+      "all_no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "max_hamming_capaware": 0.0,
+      "max_ce_delta_capaware": 0.0,
+      "chip_fit": true
+    },
+    "4": {
+      "mean_cv_static": 0.556908,
+      "mean_cv_capaware": 0.188907,
+      "all_no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "max_hamming_capaware": 0.0,
+      "max_ce_delta_capaware": 0.0,
+      "chip_fit": true
+    },
+    "8": {
+      "mean_cv_static": 0.84493,
+      "mean_cv_capaware": 0.84493,
+      "all_no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "max_hamming_capaware": 0.0,
+      "max_ce_delta_capaware": 0.0,
+      "chip_fit": true
+    }
+  },
+  "per_run": [
+    {
+      "n_chips": 2,
+      "seed": 42,
+      "expert_loads_profiled": [
+        3439,
+        1940,
+        164,
+        100,
+        2213,
+        5808,
+        1354,
+        1366
+      ],
+      "shards_static": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          5,
+          6,
+          7
+        ],
+        [
+          0,
+          1,
+          2,
+          3,
+          4
+        ]
+      ],
+      "chip_counts_static": [
+        5696,
+        10688
+      ],
+      "chip_counts_capaware": [
+        8588,
+        7796
+      ],
+      "cv_static": 0.304688,
+      "cv_capaware": 0.04834,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 2,
+      "seed": 43,
+      "expert_loads_profiled": [
+        2523,
+        187,
+        5727,
+        738,
+        493,
+        940,
+        4457,
+        1319
+      ],
+      "shards_static": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          2,
+          3,
+          4,
+          7
+        ],
+        [
+          0,
+          1,
+          5,
+          6
+        ]
+      ],
+      "chip_counts_static": [
+        9226,
+        7158
+      ],
+      "chip_counts_capaware": [
+        8305,
+        8079
+      ],
+      "cv_static": 0.126221,
+      "cv_capaware": 0.013794,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 2,
+      "seed": 44,
+      "expert_loads_profiled": [
+        4348,
+        874,
+        2669,
+        2692,
+        658,
+        302,
+        4136,
+        705
+      ],
+      "shards_static": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          0,
+          2,
+          5,
+          7
+        ],
+        [
+          1,
+          3,
+          4,
+          6
+        ]
+      ],
+      "chip_counts_static": [
+        10578,
+        5806
+      ],
+      "chip_counts_capaware": [
+        8006,
+        8378
+      ],
+      "cv_static": 0.29126,
+      "cv_capaware": 0.022705,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 4,
+      "seed": 42,
+      "expert_loads_profiled": [
+        3439,
+        1940,
+        164,
+        100,
+        2213,
+        5808,
+        1354,
+        1366
+      ],
+      "shards_static": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          5
+        ],
+        [
+          0,
+          3
+        ],
+        [
+          4,
+          6
+        ],
+        [
+          1,
+          2,
+          7
+        ]
+      ],
+      "chip_counts_static": [
+        5413,
+        283,
+        8147,
+        2541
+      ],
+      "chip_counts_capaware": [
+        6047,
+        3543,
+        3364,
+        3430
+      ],
+      "cv_static": 0.72323,
+      "cv_capaware": 0.275446,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 4,
+      "seed": 43,
+      "expert_loads_profiled": [
+        2523,
+        187,
+        5727,
+        738,
+        493,
+        940,
+        4457,
+        1319
+      ],
+      "shards_static": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          2
+        ],
+        [
+          6
+        ],
+        [
+          0,
+          4
+        ],
+        [
+          1,
+          3,
+          5,
+          7
+        ]
+      ],
+      "chip_counts_static": [
+        2791,
+        6435,
+        1416,
+        5742
+      ],
+      "chip_counts_capaware": [
+        5612,
+        4388,
+        3078,
+        3306
+      ],
+      "cv_static": 0.50428,
+      "cv_capaware": 0.245478,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 4,
+      "seed": 44,
+      "expert_loads_profiled": [
+        4348,
+        874,
+        2669,
+        2692,
+        658,
+        302,
+        4136,
+        705
+      ],
+      "shards_static": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          0
+        ],
+        [
+          6
+        ],
+        [
+          3,
+          4,
+          7
+        ],
+        [
+          1,
+          2,
+          5
+        ]
+      ],
+      "chip_counts_static": [
+        5222,
+        5356,
+        969,
+        4837
+      ],
+      "chip_counts_capaware": [
+        4349,
+        4128,
+        4086,
+        3821
+      ],
+      "cv_static": 0.443213,
+      "cv_capaware": 0.045798,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 8,
+      "seed": 42,
+      "expert_loads_profiled": [
+        3439,
+        1940,
+        164,
+        100,
+        2213,
+        5808,
+        1354,
+        1366
+      ],
+      "shards_static": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          5
+        ],
+        [
+          0
+        ],
+        [
+          4
+        ],
+        [
+          1
+        ],
+        [
+          7
+        ],
+        [
+          6
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ]
+      ],
+      "chip_counts_static": [
+        3432,
+        1981,
+        172,
+        111,
+        2100,
+        6047,
+        1264,
+        1277
+      ],
+      "chip_counts_capaware": [
+        6047,
+        3432,
+        2100,
+        1981,
+        1277,
+        1264,
+        172,
+        111
+      ],
+      "cv_static": 0.886924,
+      "cv_capaware": 0.886924,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 8,
+      "seed": 43,
+      "expert_loads_profiled": [
+        2523,
+        187,
+        5727,
+        738,
+        493,
+        940,
+        4457,
+        1319
+      ],
+      "shards_static": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          2
+        ],
+        [
+          6
+        ],
+        [
+          0
+        ],
+        [
+          7
+        ],
+        [
+          5
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          1
+        ]
+      ],
+      "chip_counts_static": [
+        2562,
+        229,
+        5612,
+        823,
+        516,
+        900,
+        4388,
+        1354
+      ],
+      "chip_counts_capaware": [
+        5612,
+        4388,
+        2562,
+        1354,
+        900,
+        823,
+        516,
+        229
+      ],
+      "cv_static": 0.903615,
+      "cv_capaware": 0.903615,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 8,
+      "seed": 44,
+      "expert_loads_profiled": [
+        4348,
+        874,
+        2669,
+        2692,
+        658,
+        302,
+        4136,
+        705
+      ],
+      "shards_static": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          7
+        ]
+      ],
+      "shards_capaware": [
+        [
+          0
+        ],
+        [
+          6
+        ],
+        [
+          3
+        ],
+        [
+          2
+        ],
+        [
+          1
+        ],
+        [
+          7
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ]
+      ],
+      "chip_counts_static": [
+        4349,
+        873,
+        2696,
+        2660,
+        717,
+        252,
+        4128,
+        709
+      ],
+      "chip_counts_capaware": [
+        4349,
+        4128,
+        2660,
+        2696,
+        873,
+        709,
+        717,
+        252
+      ],
+      "cv_static": 0.744252,
+      "cv_capaware": 0.744252,
+      "no_starve_capaware": true,
+      "max_logit_diff_capaware": 0.0,
+      "hamming_capaware": 0.0,
+      "ce_delta_capaware": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    }
+  ],
+  "cv_improved_capaware_lt_static": false,
+  "no_starve_capaware_ok": true,
+  "coherence_logit_ok": true,
+  "coherence_hamming_ok": true,
+  "coherence_ce_ok": true,
+  "all_chip_fit": true,
+  "verdict": "FAIL",
+  "verdict_tier": "\ud83d\udd34 CLOSED-NEGATIVE",
+  "akd1000_budget": 1200000,
+  "scale_scope": "SW-sim of @L2 deploy chip-fit track -- silicon NOT measured (1 AKD1000 today); a_scale_honest_scope; re-approach of H_878 (router)",
+  "torch": "2.12.0.dev20260408+cu128",
+  "device": "cuda"
+}
