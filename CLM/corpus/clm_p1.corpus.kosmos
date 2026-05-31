@@ -4,7 +4,7 @@
 # 멤버 lane 은 현재 raw byte shard(web/register.bytes); .limen 패킹은 목표
 # 포맷(spec/limen.md) — full crawl 시 전환. sha256 = corpus/manifest.json.
 
-@corpus clm_p1 := "CLM P1 mixed byte-corpus" :: kosmos-corpus [tier=0 active]
+@corpus clm_p1 := "CLM P1 5-language mixed byte-corpus (EN·中文·Русский·日本語·한국어)" :: kosmos-corpus [tier=0 active]
 
   # ── meta-anchor placement (dataset 의 Ψ centroid) ──
   profile = "anima-consciousness-carving"
@@ -18,10 +18,11 @@
   lane_mix = "web=0.8, register=0.2"   # full target (MoE 2-lane ↔ 2-source), Σ frac = 1.0
   vocab    = 256                    # byte-vocab
   encoding = "byte-utf8"
+  languages = "en, zh, ru, ja, ko"  # anima 5개국어 대화 기준 (P1_CORPUS §1); byte-vocab=UTF-8 raw byte 라 vocab 변경 0
   merkle   = 0000000000000000000000000000000000000000000000000000000000000000  # design placeholder (sha256 트리 root, spec/limen.md)
 
   # ── members — ref form: lane shard (현 raw byte; .limen 목표) ──
-  member = ref "sample/web.bytes"      sha256=c02ab91eeaee313e3dae3fc59e490bde092c658bdf57594348e2dbd21e7c57e4 count=8 frac=0.8 lane="web"
-  member = ref "sample/register.bytes" sha256=2d32c08ff3ccce4bc393748d48f6dee48e38dd72759a7784579c9f07b620843a count=8 frac=0.2 lane="register"
+  member = ref "sample/web.bytes"      sha256=6c2d6046e329dd3badc90d131aff3f08c69923d3f450a804835eff643ae162fa count=8 frac=0.8 lane="web"
+  member = ref "sample/register.bytes" sha256=0496b1698fa9a9059d1cf5a01d87adee91138d1949aae36ce4710abd3da28cd2 count=8 frac=0.2 lane="register"
 
   closed_corpus = "Σ frac = 1.0 ∧ ∀ member sha256 = corpus/manifest.json ∧ (merkle present → root recomputes); cross-modal rule per member"
