@@ -4,7 +4,7 @@
 # 멤버 lane 은 현재 raw byte shard(web/register.bytes); .limen 패킹은 목표
 # 포맷(spec/limen.md) — full crawl 시 전환. sha256 = corpus/manifest.json.
 
-@corpus clm_p1 := "CLM P1 5-language mixed byte-corpus (EN·中文·Русский·日本語·한국어)" :: kosmos-corpus [tier=0 active]
+@corpus clm_p1 := "CLM P1 5-language cross-lingual semantic-linkage byte-corpus (EN·中文·Русский·日本語·한국어, H_911)" :: kosmos-corpus [tier=0 active]
 
   # ── meta-anchor placement (dataset 의 Ψ centroid) ──
   profile = "anima-consciousness-carving"
@@ -14,15 +14,16 @@
 
   # ── corpus meta (§5.6.2) ──
   anchor_level = 2tier              # 골짜기=앵커, 샘플=stream (carving-native 기본)
-  count    = 16                     # sample build: web 8 + register 8 (full crawl 시 갱신)
+  count    = 50                     # sample build: web 25 + register 25 (5 concepts × 5 langs each)
   lane_mix = "web=0.8, register=0.2"   # full target (MoE 2-lane ↔ 2-source), Σ frac = 1.0
   vocab    = 256                    # byte-vocab
   encoding = "byte-utf8"
   languages = "en, zh, ru, ja, ko"  # anima 5개국어 대화 기준 (P1_CORPUS §1); byte-vocab=UTF-8 raw byte 라 vocab 변경 0
+  linkage  = "cross-lingual-semantic"  # H_911: same concept across 5 langs ADJACENT (5/concept) → cross-lingual MI > 0, not count-only concat
   merkle   = 0000000000000000000000000000000000000000000000000000000000000000  # design placeholder (sha256 트리 root, spec/limen.md)
 
   # ── members — ref form: lane shard (현 raw byte; .limen 목표) ──
-  member = ref "sample/web.bytes"      sha256=6c2d6046e329dd3badc90d131aff3f08c69923d3f450a804835eff643ae162fa count=8 frac=0.8 lane="web"
-  member = ref "sample/register.bytes" sha256=0496b1698fa9a9059d1cf5a01d87adee91138d1949aae36ce4710abd3da28cd2 count=8 frac=0.2 lane="register"
+  member = ref "sample/web.bytes"      sha256=800c154253ef18dbf4c8ee2e06d4bc1b3accdd53cdbdc8e0748f7a7c160ff0a7 count=25 frac=0.8 lane="web"
+  member = ref "sample/register.bytes" sha256=462293698133cabe2862d44af1d9ebecce11851be181af99dc87169475b267c3 count=25 frac=0.2 lane="register"
 
   closed_corpus = "Σ frac = 1.0 ∧ ∀ member sha256 = corpus/manifest.json ∧ (merkle present → root recomputes); cross-modal rule per member"

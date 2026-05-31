@@ -32,6 +32,7 @@
 
 - MoE expert = mitosis cell (P0 Q2) → 2-lane ↔ 2-source 1:1. lane B 가 register 격리, lane A 가 메인 coherent 유지.
 - **언어 균형**: lane A 는 5개 언어 byte share 를 ~20% 씩 맞춘다(언어별 wiki 크기 차이는 per-language byte cap 으로 보정). 한 언어가 과반을 먹으면 그 언어만 유창해지므로(현 kowiki 85% → 한국어 단일 모델), 균형이 5개국어 대화의 전제다.
+- **cross-lingual 의미연결 (H_911 🟢)**: 균형(갯수)만으로는 부족하다. UNIVERSE H_911(LAB-11 흡수·재현, anima#1620: collective Φ inverse-U c=0.5 peak 0.483, count-only c=0 Φ≈0)은 다국어 통합이 언어 **갯수**가 아니라 cross-lingual **의미연결**(같은 개념을 5언어로 정렬, 인접 배치)일 때 super-additive 함을 보인다. 그래서 sample 은 **같은 개념을 EN·中文·Русский·日本語·한국어 로 렌더해 인접 배치**(5/concept)한다 — 학습 윈도우가 언어 경계를 넘어 cross-lingual MI > 0 (count-only concat 의 c≈0 이 아니라). byte-level CLM 보완 증거: parallel(개념정렬) CE 1.982 < concat(언어블록) 2.054 (hexa-lang#2348).
 - **금지**: 외부 LLM·foundation-borrow (P0 §무엇/왜).
 
 ## 2. byte 인코딩 (V=256)
