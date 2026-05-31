@@ -1,0 +1,46 @@
+{
+  "hypothesis": "H_867r F-CLM-DIALOGUE-ABS-POSTADAPTER",
+  "model_under_test": "H_865 trunk-adjacent ADAPTER edge (frozen backbone + thin adapter rank=64) arm-SP",
+  "rung": "mid d512/L8/E8 (~13.65M, AKIDA int4-sym[-7,7] STE act_bits=4)",
+  "eval_corpus": "H_867 verified held-out PD snapshot (Macbeth/Othello/RomeoJuliet/Pygmalion, disjoint)",
+  "frozen_floor_commit": "d5103f21",
+  "reflux_bytes": 1920,
+  "reflux_div_gate_ok": false,
+  "SFT_contrast": {
+    "coherence": 0.04015,
+    "ce_heldout": 3.21525,
+    "adequacy_f1": 0.01312,
+    "leak": 0,
+    "self_bleu": 0.99322,
+    "repetition": 0.01407
+  },
+  "SP": {
+    "coherence": 0.04369,
+    "ce_heldout": 3.13062,
+    "adequacy_f1": 0.01762,
+    "leak": 0,
+    "self_bleu": 0.99948,
+    "repetition": 0.00313
+  },
+  "absolute_floor": {
+    "COHERE": ">=0.060",
+    "ADEQ": ">=0.020",
+    "LEAK": "==0"
+  },
+  "h867_reference": {
+    "SP_coherence": 0.05804,
+    "verdict": "RED (0.05804<0.060, missed by 0.002)"
+  },
+  "baselines": {
+    "uniform": 0.0039,
+    "unigram_order0": 0.0375,
+    "bigram_selffit": 0.0843
+  },
+  "COHERE_pass": false,
+  "ADEQ_pass": false,
+  "LEAK_pass": true,
+  "verdict": "RED",
+  "note": "ADAPTER-edge model (H_865 lever) vs SAME frozen H_867 floor; byte-match X distributional (Q-TRUST A); external LLM 0; ShareGPT/Alpaca/ChatGPT-gen 0; post-tuning 0; a_paper_negative_ok",
+  "wall_s": 1770.9,
+  "torch": "2.8.0"
+}

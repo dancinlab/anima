@@ -1,0 +1,42 @@
+{
+  "id": "H_867r",
+  "slug": "clm-dialogue-absolute-postadapter",
+  "title": "ABSOLUTE dialogue-quality FLOOR re-run on the H_865 trunk-adjacent ADAPTER edge (does the adapter lift absolute coherence over the 0.060 floor H_867 missed by 0.002?)",
+  "verdict_dir": ".verdicts/clm-dialogue-abs-postadapter",
+  "frozen_floor": "F-CLM-DIALOGUE-ABS_prereg.txt @ commit d5103f21 (REUSED VERBATIM \u00b7 post-tuning 0)",
+  "floor": {
+    "COHERE": ">=0.060",
+    "ADEQ": ">=0.020",
+    "LEAK": "==0"
+  },
+  "model_under_test": "H_865 adapter-edge arm-SP (frozen backbone clm_mid_backbone.pt + thin AdapterEdge rank=64 between frozen norm_out and frozen readout)",
+  "eval_snapshot": "H_867 verified held-out PD snapshot (Macbeth/Othello/RomeoJuliet/Pygmalion \u00b7 sha256 a79789623a6160e2 reuse \u00b7 disjoint from SFT plays)",
+  "sft_corpus": "4 H_863 PD plays (Hamlet#1524/Importance#844/DollsHouse#2542/Caesar#1522)",
+  "measured": {
+    "adapter_SP": {
+      "coherence": 0.04369,
+      "ce_heldout": 3.13062,
+      "adequacy_f1": 0.01762,
+      "leak": 0
+    },
+    "adapter_SFT_contrast": {
+      "coherence": 0.04015,
+      "adequacy_f1": 0.01312,
+      "leak": 0
+    }
+  },
+  "h867_reference_full_finetune_SP": {
+    "coherence": 0.05804,
+    "adequacy_f1": 0.02138,
+    "verdict": "RED missed 0.060 by 0.002"
+  },
+  "gates": {
+    "COHERE": "0.04369<0.060 FAIL",
+    "ADEQ": "0.01762<0.020 FAIL",
+    "LEAK": "0==0 PASS"
+  },
+  "verdict": "RED \u2014 CLOSED-NEGATIVE",
+  "adapter_lifts_coherence_over_floor": false,
+  "eval": "CPU/local \u00b7 GPU pod 0 \u00b7 est cost $0 \u00b7 wall 1770.9s \u00b7 torch 2.8.0",
+  "governance": "external LLM 0 \u00b7 ShareGPT/Alpaca/ChatGPT-gen 0 (@L4) \u00b7 a_paper_negative_ok \u00b7 a_scale_honest_scope (mid rung \u00b7 this eval distribution)"
+}
