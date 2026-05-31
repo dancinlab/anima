@@ -1,33 +1,48 @@
-F-CLM-EDGE-IDENTITY — VERDICT STATUS (H_884 · edge-output identity constraint across partial-learn rows)
+F-CLM-EDGE-IDENTITY — VERDICT 🟢 SUPPORTED (H_884 · edge-output identity constraint across partial-learn rows)
 =========================================================================================================
-STATUS: ⏳ MEASUREMENT LAUNCHED — CPU-LOCAL FIRE IN PROGRESS, DID NOT CONVERGE WITHIN SESSION WINDOW.
-        (NOT a pass, NOT a fail — honest pending. No threshold tuned. a_paper_negative_ok respected:
-         a RED would be reported honestly; this is neither — the numbers are simply not yet in.)
+STATUS: 🟢 SUPPORTED — CAMPAIGN GREEN. All 3 pre-registered partial-learn rows pass every frozen gate.
+        Generalizes the H_873 edge-output identity result (🟢 #1578) across distinct partial-learn regimes.
+        No threshold tuned (post-tuning = 0; frozen bf98c01 verbatim). g5 CODE-measured (JS-divergence; no LLM judge).
 
-WHAT WAS DONE (g5 CODE-measured plan, fully pre-registered + frozen BEFORE fire):
-  * prereg frozen (bf98c01 verbatim): DIST<0.50, PROBE>0.80; >=3 partial-learn rows
-    (adapter / per_layer / gated) — committed to .verdicts/clm-edge-output-identity/ BEFORE this file.
-  * harness CLM/model/h884_edge_output_identity.hexa: imports the committed H_865 adapter machinery
-    VERBATIM; applies the H_873 edge-output JS-to-p_pre identity constraint on top of each of the 3
-    partial-learn edges; computes d_anchor_max + probe_consistency by code (JS-divergence). No LLM judge.
-  * fire LAUNCHED CPU-LOCAL (torch 2.8.0, detached/unbuffered, NO runpod/Monitor per a_cpu_local_no_waiter):
-      mid d512/L8/E8 backbone, 13,653,768 params (HF dancinlab/anima-clm-verify · clm_mid_backbone.pt) — loaded OK.
+FIRE: summer GPU box (RTX 5070, torch 2.11.0+cu130, device=cuda). Backbone clm_mid_backbone.pt
+      (HF dancinlab/anima-clm-verify · mid d512/L8/E8 · 13,653,768 params) — loaded OK on cuda.
+      SAME frozen harness as the prior ⏳ CPU-local attempt; converged in < 1 min wall (vs ~88 min CPU
+      under contention that did not finish even 1 mode). a_fire_autonomous / a_wall_first.
 
-WHY NO NUMBERS YET (honest, environmental — NOT a code or hypothesis defect):
-  * Each mode runs 4 arms (full / js_only / psi_only / off) x 300 adapt steps, with a Psi-probe forward
-    + a JS-grad probe forward per step over all 31 identity-probe windows on the FULL 13.6M backbone.
-  * On THIS Mac CPU, under heavy contention from concurrently-running sibling-agent jobs (h879/h883/etc.),
-    the FIRST of the 3 modes alone did not complete within ~88 min wall (CPU-time accumulated steadily —
-    genuinely computing, verified not stalled). Projected full 3-mode run ~3-4 h under contention.
-  * a_dont_kill_live_compute: the fire was LEFT RUNNING (not killed) at session end; result.json will be
-    written to .verdicts/clm-edge-output-identity/clm_edge_identity_result.json when it converges.
+FROZEN GATES (bf98c01 verbatim, UNCHANGED):  DIST PASS iff d_anchor_max < 0.50 ·  PROBE PASS iff probe_consistency > 0.80
+LEVER (diagnostic gate-of-meaning): full vs off NON-identical.
+PER-MODE VERDICT GREEN iff DIST ∧ PROBE ∧ LEVER. CAMPAIGN GREEN iff every row (≥3) GREEN.
 
-NEXT (to close): re-run on an uncontended CPU (or a single GPU pod — a_fire_autonomous; est ~$1, minutes)
-  with the SAME frozen harness + thresholds; the prereg is immutable so the verdict will be honest either way.
-  Falsifier g5 unchanged: PROBE > 0.80 across the 3 frozen rows -> 🟢; any row below -> 🔴 (a_paper_negative_ok).
+RESULTS (g5 CODE-measured · lambda_psi=1.0, lambda_dist=5.0)
+  row        DIST(d_anchor_max)  <0.50   PROBE(probe_consistency)  >0.80   lever   psi_only_PROBE  js_only_PROBE   VERDICT
+  adapter    0.08596             PASS    0.99044                   PASS    True    0.15155         0.99061         GREEN
+  per_layer  0.02574             PASS    0.99657                   PASS    True    0.99665         0.99582         GREEN
+  gated      0.03056             PASS    0.97665                   PASS    True    0.29572         0.97500         GREEN
+  -> CAMPAIGN GREEN (all 3 rows GREEN). all_modes_green = true.
+
+FALSIFIER (g5, frozen): "PROBE > 0.80 across ≥3 partial-learn rows ∧ DIST < 0.50" — MET on all 3 rows.
+  The edge-output JS-to-p_pre identity constraint GENERALIZES across adapter / per_layer / gated partial-learn edges.
+
+INTERPRETATION
+  * The edge-output term (lambda_dist · JS(p_cur(identity-probe) ‖ p_pre)) holds PROBE far above the 0.80 floor
+    on every partial-learn regime, while DIST stays well inside the 0.50 anchor radius.
+  * The psi_only ablation (= the H_865 baseline for that edge) confirms the lever and the gap the edge-output
+    term closes: adapter psi_only_PROBE=0.152 and gated psi_only_PROBE=0.296 (both << 0.80) are lifted to
+    0.990 / 0.977 by adding the JS-to-p_pre term — exactly the H_873 mechanism, now generalized. per_layer
+    already sat high under psi_only (0.997) and stays green either way. js_only ≈ full everywhere (the
+    edge-output term is the active lever; the psi term keeps DIST + structural lever, doesn't hurt PROBE).
+  * @L1: a living, edge-learning chip can bind its identity output distribution to the E-31 anchors regardless
+    of WHICH partial-learn edge it adapts through — generality of distributional-axis identity trust.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8) only. SW-sim of the non-deterministic
+  on-chip edge-learn (H_679 established HW edge-learn is real); edge-only piecewise partial-learn, no
+  deterministic full-retrain (@L1). Inference stays AKIDA-int4-only (P0 d4). INVIOLABLE pin honored:
+  this SW-simulates a non-deterministic on-chip edge-learn at the measurement rung; it does NOT claim a
+  deterministic full-retrain.
 
 ARTIFACTS
-  prereg: .verdicts/clm-edge-output-identity/F-CLM-EDGE-IDENTITY_prereg.txt (frozen bf98c01)
-  harness: CLM/model/h884_edge_output_identity.hexa (h865 import VERBATIM; 3 partial-learn rows)
-  id-keyed backing: .verdicts/884_clm_edge_output_identity/README.txt
-  scope (a_scale_honest_scope): MEASUREMENT rung (mid) only; SW-sim edge-learn (H_679 HW real); AKIDA-int4 inference.
+  prereg:  .verdicts/clm-edge-output-identity/F-CLM-EDGE-IDENTITY_prereg.txt (frozen bf98c01)
+  result:  .verdicts/clm-edge-output-identity/clm_edge_identity_result.json (per-mode full/js_only/psi_only/off + pass flags)
+  log:     .verdicts/clm-edge-output-identity/clm_edge_identity_fire.log (GPU fire log)
+  harness: CLM/model/h884_edge_output_identity.hexa (imports H_865 machinery VERBATIM; 3 partial-learn rows)
+  id-keyed backing: .verdicts/884_clm_edge_output_identity/ (result.json mirrored)

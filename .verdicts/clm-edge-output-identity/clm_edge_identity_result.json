@@ -1,0 +1,201 @@
+{
+  "campaign": "H_884 edge-output identity constraint generalized across partial-learning modes",
+  "rung": "mid d512/L8/E8",
+  "frozen_thresholds_commit": "bf98c01",
+  "lambda_psi": 1.0,
+  "lambda_dist": 5.0,
+  "modes": [
+    "adapter",
+    "per_layer",
+    "gated"
+  ],
+  "rows": [
+    {
+      "mode": "adapter",
+      "full": {
+        "mode": "adapter",
+        "lam_psi": 1.0,
+        "lam_dist": 5.0,
+        "n_anchors": 31,
+        "n_learn_params": 66112,
+        "d_anchor_pre": 0.02571,
+        "d_anchor_post": 0.00617,
+        "d_anchor_max": 0.08596,
+        "probe_consistency": 0.99044
+      },
+      "js_only": {
+        "mode": "adapter",
+        "lam_psi": 0.0,
+        "lam_dist": 5.0,
+        "n_anchors": 31,
+        "n_learn_params": 66112,
+        "d_anchor_pre": 0.02571,
+        "d_anchor_post": 0.55201,
+        "d_anchor_max": 0.55178,
+        "probe_consistency": 0.99061
+      },
+      "psi_only": {
+        "mode": "adapter",
+        "lam_psi": 1.0,
+        "lam_dist": 0.0,
+        "n_anchors": 31,
+        "n_learn_params": 66112,
+        "d_anchor_pre": 0.02571,
+        "d_anchor_post": 0.00187,
+        "d_anchor_max": 0.17617,
+        "probe_consistency": 0.15155
+      },
+      "off": {
+        "mode": "adapter",
+        "lam_psi": 0.0,
+        "lam_dist": 0.0,
+        "n_anchors": 31,
+        "n_learn_params": 66112,
+        "d_anchor_pre": 0.02571,
+        "d_anchor_post": 0.59417,
+        "d_anchor_max": 0.59506,
+        "probe_consistency": 0.13693
+      },
+      "threshold_d_anchor_max": "<0.50",
+      "threshold_probe_consistency": ">0.80",
+      "DIST_pass": true,
+      "PROBE_pass": true,
+      "lever_present": true,
+      "verdict": "GREEN",
+      "psi_only_PROBE": 0.15155,
+      "js_only_PROBE": 0.99061,
+      "note": "edge-output JS-to-p_pre identity constraint over partial-learn mode 'adapter'; frozen thr bf98c01; SW-sim edge-learn (H_679 real); @L1 piecewise"
+    },
+    {
+      "mode": "per_layer",
+      "full": {
+        "mode": "per_layer",
+        "lam_psi": 1.0,
+        "lam_dist": 5.0,
+        "n_anchors": 31,
+        "n_learn_params": 512,
+        "d_anchor_pre": 0.02571,
+        "d_anchor_post": 0.02042,
+        "d_anchor_max": 0.02574,
+        "probe_consistency": 0.99657
+      },
+      "js_only": {
+        "mode": "per_layer",
+        "lam_psi": 0.0,
+        "lam_dist": 5.0,
+        "n_anchors": 31,
+        "n_learn_params": 512,
+        "d_anchor_pre": 0.02042,
+        "d_anchor_post": 0.01813,
+        "d_anchor_max": 0.02042,
+        "probe_consistency": 0.99582
+      },
+      "psi_only": {
+        "mode": "per_layer",
+        "lam_psi": 1.0,
+        "lam_dist": 0.0,
+        "n_anchors": 31,
+        "n_learn_params": 512,
+        "d_anchor_pre": 0.01813,
+        "d_anchor_post": 0.01777,
+        "d_anchor_max": 0.01813,
+        "probe_consistency": 0.99665
+      },
+      "off": {
+        "mode": "per_layer",
+        "lam_psi": 0.0,
+        "lam_dist": 0.0,
+        "n_anchors": 31,
+        "n_learn_params": 512,
+        "d_anchor_pre": 0.01777,
+        "d_anchor_post": 0.02047,
+        "d_anchor_max": 0.02048,
+        "probe_consistency": 0.99714
+      },
+      "threshold_d_anchor_max": "<0.50",
+      "threshold_probe_consistency": ">0.80",
+      "DIST_pass": true,
+      "PROBE_pass": true,
+      "lever_present": true,
+      "verdict": "GREEN",
+      "psi_only_PROBE": 0.99665,
+      "js_only_PROBE": 0.99582,
+      "note": "edge-output JS-to-p_pre identity constraint over partial-learn mode 'per_layer'; frozen thr bf98c01; SW-sim edge-learn (H_679 real); @L1 piecewise"
+    },
+    {
+      "mode": "gated",
+      "full": {
+        "mode": "gated",
+        "lam_psi": 1.0,
+        "lam_dist": 5.0,
+        "n_anchors": 31,
+        "n_learn_params": 66624,
+        "d_anchor_pre": 0.02047,
+        "d_anchor_post": 0.00239,
+        "d_anchor_max": 0.03056,
+        "probe_consistency": 0.97665
+      },
+      "js_only": {
+        "mode": "gated",
+        "lam_psi": 0.0,
+        "lam_dist": 5.0,
+        "n_anchors": 31,
+        "n_learn_params": 66624,
+        "d_anchor_pre": 0.02047,
+        "d_anchor_post": 0.41217,
+        "d_anchor_max": 0.41095,
+        "probe_consistency": 0.975
+      },
+      "psi_only": {
+        "mode": "gated",
+        "lam_psi": 1.0,
+        "lam_dist": 0.0,
+        "n_anchors": 31,
+        "n_learn_params": 66624,
+        "d_anchor_pre": 0.02047,
+        "d_anchor_post": 0.01602,
+        "d_anchor_max": 0.03325,
+        "probe_consistency": 0.29572
+      },
+      "off": {
+        "mode": "gated",
+        "lam_psi": 0.0,
+        "lam_dist": 0.0,
+        "n_anchors": 31,
+        "n_learn_params": 66624,
+        "d_anchor_pre": 0.02047,
+        "d_anchor_post": 0.50381,
+        "d_anchor_max": 0.5027,
+        "probe_consistency": 0.29588
+      },
+      "threshold_d_anchor_max": "<0.50",
+      "threshold_probe_consistency": ">0.80",
+      "DIST_pass": true,
+      "PROBE_pass": true,
+      "lever_present": true,
+      "verdict": "GREEN",
+      "psi_only_PROBE": 0.29572,
+      "js_only_PROBE": 0.975,
+      "note": "edge-output JS-to-p_pre identity constraint over partial-learn mode 'gated'; frozen thr bf98c01; SW-sim edge-learn (H_679 real); @L1 piecewise"
+    }
+  ],
+  "headline": {
+    "all_modes_green": true,
+    "per_mode_verdict": {
+      "adapter": "GREEN",
+      "per_layer": "GREEN",
+      "gated": "GREEN"
+    },
+    "per_mode_PROBE": {
+      "adapter": 0.99044,
+      "per_layer": 0.99657,
+      "gated": 0.97665
+    },
+    "per_mode_DIST": {
+      "adapter": 0.08596,
+      "per_layer": 0.02574,
+      "gated": 0.03056
+    }
+  },
+  "scope": "MEASUREMENT rung only (a_scale_honest_scope); SW-sim edge-learn (H_679 real); edge-only piecewise partial-learn, no deterministic full-retrain (@L1)."
+}

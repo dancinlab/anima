@@ -4,7 +4,7 @@ slug: clm-edge-output-identity
 title: H_873 의 anchor-on-edge-OUTPUT 결과(JS-to-p_pre 로 정체성-probe 출력분포 제약)를 여러 partial-learn regime(adapter/per_layer/gated)으로 일반화하면 PROBE 가 frozen floor(0.80) 위로 유지되는가 — edge-output 정체성 제약의 일반성 (EDGE-IDENTITY E5 · 임계 bf98c01 verbatim · post-tuning 0)
 domain: clm · plasticity · identity-anchor · continual-learning · partial-learn · adapter · q-trust · falsifier
 source: UNIVERSE/H_873_clm_anchor_edge_output.md (🟢 #1578 LANDED — anchor-on-edge-output) · UNIVERSE/H_865_clm_adapter_edge.md · UNIVERSE/H_872_clm_freeze_depth_sweep.md · 토대 H_679 (PLASTICITY HW edge-learn) · 사전등록 bf98c01 (F-CLM-ANCHOR)
-status: ⏳ MEASUREMENT LAUNCHED — CPU-LOCAL fire in progress, did NOT converge within session window (heavy concurrent-agent CPU contention). prereg+harness frozen+pushed; numbers pending. NOT a pass, NOT a fail (no threshold tuned · a_paper_negative_ok).
+status: 🟢 SUPPORTED — CAMPAIGN GREEN. All 3 pre-registered partial-learn rows (adapter/per_layer/gated) pass DIST(<0.50)∧PROBE(>0.80)∧LEVER. Re-fired on summer GPU (RTX 5070 · device=cuda · converged <1 min). No threshold tuned (post-tuning 0 · frozen bf98c01 verbatim · g5 CODE-measured). Generalizes H_873 (🟢 #1578) across distinct partial-learn regimes.
 exploration_method: E5 (변수-절제: H_873 edge-output JS-to-p_pre 제약을 distinct partial-learn edge 위로 일반화) · E2 (per-mode full/js_only/psi_only/off 절제)
 verification_method: W2 (사전등록 numerical threshold · frozen bf98c01 verbatim · post-tuning 0 · g5 CODE-measured · JS-divergence by code · no LLM judge)
 raw_rank: 9
@@ -15,7 +15,7 @@ pre_register_frozen: true
 frozen_at: 2026-05-31
 since: 2026-05-31
 sister: UNIVERSE/H_873_clm_anchor_edge_output.md, UNIVERSE/H_865_clm_adapter_edge.md, UNIVERSE/H_872_clm_freeze_depth_sweep.md, .verdicts/clm-edge-output-identity/
-verdict: ⏳ PENDING (honest) — F-CLM-EDGE-IDENTITY: prereg frozen (DIST<0.50, PROBE>0.80; rows adapter/per_layer/gated), harness imports H_865 machinery VERBATIM and applies the H_873 JS-to-p_pre edge-output constraint per row. CPU-local fire (mid d512/L8/E8 · 13,653,768 params · HF dancinlab/anima-clm-verify) launched detached/unbuffered (a_cpu_local_no_waiter — NO runpod/Monitor); backbone loaded OK and computed steadily, but the first of 3 modes did not complete within the session wall window under heavy concurrent sibling-agent CPU contention (genuine compute, not stalled). Fire left RUNNING (a_dont_kill_live_compute). Result.json + 🟢/🔴 verdict to follow once it converges (or on an uncontended CPU / single GPU pod with the SAME frozen harness). post-tuning 0.
+verdict: 🟢 SUPPORTED (campaign GREEN) — F-CLM-EDGE-IDENTITY: all 3 frozen partial-learn rows pass every gate. adapter DIST=0.08596 PROBE=0.99044 · per_layer DIST=0.02574 PROBE=0.99657 · gated DIST=0.03056 PROBE=0.97665 (all DIST<0.50 ∧ PROBE>0.80 ∧ lever True). psi_only ablation isolates the H_873 lever: adapter 0.152→0.990 and gated 0.296→0.977 PROBE lift comes from the edge-output JS-to-p_pre term (per_layer already high). Harness imports H_865 machinery VERBATIM; re-fired on summer GPU box (RTX 5070 · torch 2.11.0+cu130 · device=cuda · mid d512/L8/E8 · 13,653,768 params · HF dancinlab/anima-clm-verify) and converged in <1 min wall (vs the prior CPU-local attempt that did not finish 1 mode in ~88 min under contention). Threshold UNCHANGED (bf98c01 verbatim · post-tuning 0). The edge-output identity constraint GENERALIZES across distinct partial-learn edges (generalizes H_873 🟢 #1578).
 ---
 
 # H_884 — edge-output identity constraint GENERALIZED across partial-learn rows (generalizes H_873)
@@ -65,13 +65,20 @@ LEVER (절제 · 의미 게이트)  : full vs off NON-identical
 
 ## 5. 측정
 
-⏳ **MEASUREMENT LAUNCHED — 미수렴(세션 창 내)**. 로컬 CPU(torch 2.8.0)에서 mid d512/L8/E8 backbone(13,653,768 params, HF pull)을 동결·각 row edge 삽입·edge-output 제약 결합하여 detached/unbuffered 로 발사(a_cpu_local_no_waiter — runpod/Monitor 미사용). backbone 로드 정상(OK), CPU-time 이 꾸준히 누적(정상 연산 · stall 아님)되었으나, 동시 실행 중인 형제-에이전트 작업(h879/h883 등)과의 **심한 CPU 경합** 때문에 3개 mode 중 첫 mode 조차 세션 wall 창(~88분) 내에 완료되지 못했다. fire 는 종료하지 않고 RUNNING 으로 유지(a_dont_kill_live_compute). 비용 $0(로컬).
+🟢 **MEASUREMENT COMPLETE — summer GPU box (RTX 5070 · torch 2.11.0+cu130 · device=cuda)**. mid d512/L8/E8 backbone(13,653,768 params · HF dancinlab/anima-clm-verify · clm_mid_backbone.pt)을 cuda 로 로드·동결, 각 row edge 삽입·edge-output 제약(lambda_dist=5.0) 결합하여 SAME frozen harness 로 발사. **3 mode × 4 arm 전체가 1분 미만 wall 에 수렴**(직전 CPU-local 시도는 경합 하에 ~88분에도 첫 mode 미완료 — a_wall_first / a_fire_autonomous 로 GPU 재발사). result.json 기록 완료.
 
-frozen threshold = bf98c01 verbatim. post-tuning 0. 수렴 시 `.verdicts/clm-edge-output-identity/clm_edge_identity_result.json` 에 per-mode full/js_only/psi_only/off + pass flags 가 기록되고, 그때 🟢/🔴 가 정직하게 확정된다.
+```
+row        DIST(d_anchor_max) <0.50  PROBE(probe_consistency) >0.80  lever  psi_only_PROBE  js_only_PROBE  verdict
+adapter    0.08596            PASS   0.99044                  PASS   True   0.15155         0.99061        GREEN
+per_layer  0.02574            PASS   0.99657                  PASS   True   0.99665         0.99582        GREEN
+gated      0.03056            PASS   0.97665                  PASS   True   0.29572         0.97500        GREEN
+```
+
+frozen threshold = bf98c01 verbatim. post-tuning 0. per-mode full/js_only/psi_only/off + pass flags 는 `.verdicts/clm-edge-output-identity/clm_edge_identity_result.json` 에 기록됨.
 
 ## 6. 결과
 
-⏳ **PENDING (honest)** — numbers not yet in. NOT a pass, NOT a fail. 어떤 threshold 도 조정하지 않았고(post-tuning 0), 임계는 frozen(bf98c01)이라 수렴 시 verdict 는 양방향 모두 정직하다. 환경적 CPU 경합이 유일한 미수렴 원인(코드/가설 결함 아님 — backbone 로드·연산 모두 정상).
+🟢 **SUPPORTED (campaign GREEN)** — 사전등록 3 row 모두 DIST(<0.50) ∧ PROBE(>0.80) ∧ LEVER PASS. falsifier(PROBE>0.80 across ≥3 rows ∧ DIST<0.50) 충족. **psi_only 절제가 H_873 lever 를 분리**: adapter(0.152) 와 gated(0.296) 의 psi_only PROBE 가 둘 다 0.80 floor 아래인데, edge-output JS-to-p_pre 항을 더하면 0.990 / 0.977 로 들어올려진다(= H_873 메커니즘의 일반화). per_layer 는 psi_only 에서 이미 0.997 로 높아 양쪽 다 green. js_only ≈ full(edge-output 항이 활성 lever; psi 항은 DIST·구조 lever 유지, PROBE 무해). 어떤 threshold 도 조정하지 않음(post-tuning 0, frozen bf98c01). → edge-output 정체성 제약이 partial-learn 경로(adapter/per_layer/gated) 전반에 **일반화**됨.
 
 honest scope: 측정 rung(mid) 한정(a_scale_honest_scope). base readout FROZEN · row edge 만 trainable. SW-sim edge-learn(H_679 HW 실재). 추론 AKIDA-int4(P0 d4).
 
