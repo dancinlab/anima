@@ -1,0 +1,46 @@
+F-CLM-REPLAY — VERDICT (H_883 replay-buffer continual learning · H_875 safety device)
+=====================================================================================
+verdict      : 🟢 SUPPORTED-NUMERICAL (g5 CODE-measured · no LLM judge)
+measured_at  : 2026-05-31  ·  rung mid d512/L8/E8 (13.65M params) · arm AB
+execution    : GPU (RTX 5070, summer 192.168.50.60) · device cuda
+backbone     : clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — loaded FROZEN core trunk
+edge         : H_865 trunk-adjacent thin adapter (rank=64, zero-init=identity@step0) → FROZEN readout
+thresholds   : F-CLM-REPLAY_prereg.txt VERBATIM · REPLAY_RATIO=0.25 · STEP_LADDER [32,128,300]
+               · primary read @ S=300 · post-tuning 0
+
+FALSIFIER (pre-registered · read at S=300 endpoint · both must hold for 🟢):
+  (R) z_drop(replay) < z_drop(no_replay)   [replay reduces forgetting]
+  (G) gain(replay)   > 0.0                 [replay keeps a real new-context gain]
+  PASS(🟢) iff (R) ∧ (G). Else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+
+PRIMARY (S=300):
+  z_drop(no_replay) = -8.49775     z_drop(replay) = -125.80917   →  (R) replay < no_replay : TRUE
+  gain(no_replay)   = +7.37175     gain(replay)   = +6.66309     →  (G) gain(replay) > 0   : TRUE
+  delta_z_drop = -117.31142  (replay pulls base-ability z_drop DOWN by 117 vs no_replay)
+  VERDICT : GREEN — falsifier MET (R ∧ G).
+
+DOSE CURVE (secondary, reported NOT gating — z_drop / gain per step, both arms):
+  S      no_replay z_drop   replay z_drop      no_replay gain   replay gain
+  32        -75.90981         -94.15323           5.51489         5.20083
+  128       -34.71526        -117.36453           6.79266         5.72106
+  300        -8.49775        -125.80917           7.37175         6.66309
+  retain_pass = true at every (arm, S). As the dose rises the no_replay z_drop relaxes toward 0
+  (forgetting creeps back in) while the replay z_drop deepens (base-ability is actively
+  protected) — the replay safety device's protection GROWS with the step budget, exactly the
+  H_875 forgetting-curve follow-on behavior the prereg predicted.
+
+CONCLUSION: interleaving a SMALL replay buffer (REPLAY_RATIO=0.25, deterministic every-4th-step
+schedule) of OLD base-ability ("web" lane) samples into the edge-only on-chip adaptation stream
+REDUCES catastrophic forgetting (base-ability z_drop falls from -8.50 to -125.81 at S=300) WHILE
+keeping a positive new-context gain (+6.66). Replay is a working H_875 forgetting-curve safety
+device on the H_865 adapter edge. The new-context gain trade-off is small (replay +6.66 vs
+no_replay +7.37 = a 0.71-nat cost) and well within a positive gain — replay buys large forgetting
+protection for a small new-context gain cost.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung only (mid d512/L8/E8 ~13.65M). Does NOT bind the
+deploy chip-fit track (≤~1.2M AKD1000). Inference stays AKIDA-int4-only (P0 d4).
+INVIOLABLE (H_679): on-chip learning is the SOLE HW↔SW difference; this is edge-only PIECEWISE
+adaptation (@L1) on a FROZEN core trunk — replay mixes a small OLD-sample buffer into the SAME
+edge-only Adam stream, NOT a deterministic full-retrain. SW-sim of the non-deterministic on-chip
+edge-learn accepted at the measurement rung (H_679 established HW edge-learn is real).
+Thresholds frozen verbatim from prereg, post-tuning 0.

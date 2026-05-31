@@ -1,0 +1,115 @@
+{
+  "campaign": "H_883 replay-buffer continual learning (H_875 forgetting-curve safety device)",
+  "rung": "mid d512/L8/E8",
+  "edge": "H_865 trunk-adjacent thin adapter (rank=64) -> FROZEN readout",
+  "frozen_thresholds": "F-CLM-REPLAY_prereg.txt (frozen 2026-05-31)",
+  "replay_ratio": 0.25,
+  "step_ladder": [
+    32,
+    128,
+    300
+  ],
+  "primary_step": 300,
+  "curves": {
+    "no_replay": [
+      {
+        "condition": "no_replay",
+        "steps": 32,
+        "n_replay_steps": 0,
+        "n_new_steps": 32,
+        "ce_base_pre": 14.16134,
+        "sd_base_pre": 0.09847,
+        "ce_base_post": 6.68677,
+        "ce_new_pre": 10.7424,
+        "ce_new_post": 5.22751,
+        "z_drop": -75.90981,
+        "gain": 5.51489,
+        "retain_pass": true
+      },
+      {
+        "condition": "no_replay",
+        "steps": 128,
+        "n_replay_steps": 0,
+        "n_new_steps": 128,
+        "ce_base_pre": 14.16134,
+        "sd_base_pre": 0.09847,
+        "ce_base_post": 10.74306,
+        "ce_new_pre": 10.7424,
+        "ce_new_post": 3.94974,
+        "z_drop": -34.71526,
+        "gain": 6.79266,
+        "retain_pass": true
+      },
+      {
+        "condition": "no_replay",
+        "steps": 300,
+        "n_replay_steps": 0,
+        "n_new_steps": 300,
+        "ce_base_pre": 14.16134,
+        "sd_base_pre": 0.09847,
+        "ce_base_post": 13.3246,
+        "ce_new_pre": 10.7424,
+        "ce_new_post": 3.37065,
+        "z_drop": -8.49775,
+        "gain": 7.37175,
+        "retain_pass": true
+      }
+    ],
+    "replay": [
+      {
+        "condition": "replay",
+        "steps": 32,
+        "n_replay_steps": 8,
+        "n_new_steps": 24,
+        "ce_base_pre": 14.16134,
+        "sd_base_pre": 0.09847,
+        "ce_base_post": 4.89041,
+        "ce_new_pre": 10.7424,
+        "ce_new_post": 5.54157,
+        "z_drop": -94.15323,
+        "gain": 5.20083,
+        "retain_pass": true
+      },
+      {
+        "condition": "replay",
+        "steps": 128,
+        "n_replay_steps": 32,
+        "n_new_steps": 96,
+        "ce_base_pre": 14.16134,
+        "sd_base_pre": 0.09847,
+        "ce_base_post": 2.60487,
+        "ce_new_pre": 10.7424,
+        "ce_new_post": 5.02134,
+        "z_drop": -117.36453,
+        "gain": 5.72106,
+        "retain_pass": true
+      },
+      {
+        "condition": "replay",
+        "steps": 300,
+        "n_replay_steps": 75,
+        "n_new_steps": 225,
+        "ce_base_pre": 14.16134,
+        "sd_base_pre": 0.09847,
+        "ce_base_post": 1.77336,
+        "ce_new_pre": 10.7424,
+        "ce_new_post": 4.07931,
+        "z_drop": -125.80917,
+        "gain": 6.66309,
+        "retain_pass": true
+      }
+    ]
+  },
+  "verdict_block": {
+    "primary_step": 300,
+    "z_drop_no_replay": -8.49775,
+    "z_drop_replay": -125.80917,
+    "gain_no_replay": 7.37175,
+    "gain_replay": 6.66309,
+    "R_replay_reduces_zdrop": true,
+    "G_replay_gain_positive": true,
+    "delta_z_drop": -117.31142,
+    "verdict": "GREEN"
+  },
+  "note": "SW-sim edge-learn (H_679 real, sole HW<->SW diff); edge-only piecewise @L1, core trunk FROZEN; no deterministic full-retrain; no_replay arm = side-by-side H_875 baseline; measurement rung only (a_scale_honest_scope); a_paper_negative_ok"
+}
