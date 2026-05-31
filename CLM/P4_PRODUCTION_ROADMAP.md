@@ -79,8 +79,8 @@ AKIDA envelope (P0 §9 불변): weights int4-sym[-7,+7] per-channel STE · acts 
 | 안 | 장치 | 가설 | falsifier | 토대 |
 |---|---|---|---|---|
 | **A** | 분포평가 (**재활용**) | (기존) H_857/H_858 edge-of-chaos | 분포·궤적 측도로 "좋음" 판정 · byte-match 포기 | H_857/H_858 TERMINAL |
-| **B** | 경계가소성 (**신규**) | [H_861](../UNIVERSE/H_861_clm_boundary_plasticity.md) 🔴 | F-CLM-BOUND: RETAIN z_drop=1.984≥1.0 **FAIL** ∧ GAIN +6.13 PASS — readout-only edge 가 forgetting 차단 못함(mid rung, 2026-05-31) | H_679 HW edge-learn |
-| **C** | 정체성앵커 (**신규**) | [H_862](../UNIVERSE/H_862_clm_identity_anchor.md) 🔴 | F-CLM-ANCHOR: DIST 0.109<0.50 PASS ∧ PROBE 0.783≤0.80 **FAIL** — readout-only edge 에 anchor Ψ제약 lever 없음(on/off 절제 동일, mid rung) | B-CARVE · E-31 31-anchor |
+| **B** | 경계가소성 | H_861 🔴 → **[H_865](../UNIVERSE/H_865_clm_adapter_edge.md) 🟢 RESOLVED** | readout-only 🔴(z_drop 1.984)였으나 trunk-인접 **adapter edge** 가 F-CLM-BOUND RETAIN∧GAIN 닫음 (z_drop −12.28<1.0). 후속 freeze 🟢 H_872/881 · per-layer 🟢 H_879 · replay 🟢 H_883 | H_679 HW edge-learn |
+| **C** | 정체성앵커 | H_862 🔴 → **[H_873](../UNIVERSE/H_873_clm_anchor_edge_output.md) 🟢 RESOLVED** | readout-only PROBE 0.783🔴였으나 anchor를 **출력분포**에 라우팅 → PROBE 0.992>0.80 ∧ DIST 0.160<0.50. 3 partial-learn row 일반화 🟢 H_884 | B-CARVE · E-31 31-anchor |
 
 - **A 분포평가 = 재활용**: 대화는 정답 1개가 아님 → edge-of-chaos(H_857/H_858)의 분포·궤적 측도로 "좋음" 판정, byte-match 포기. H_863 의 coherence/adequacy 채점이 이를 사용.
 - **B 경계가소성 = 신규 H_861**: QAT core freeze + edge-only on-chip 적응 → catastrophic forgetting 방지. 기초능력 보존 축.
@@ -132,4 +132,5 @@ AKIDA envelope (P0 §9 불변): weights int4-sym[-7,+7] per-channel STE · acts 
 - [ ] **P4.2 production dialogue corpus full** — build_p4_dialogue_corpus full crawl(CC 대화록) + self-play 생성 루프 · HF dataset 영속.
 - [x] **P4.3 Q-TRUST B/C 측정** ✅ (2026-05-31) — H_861 🔴 (RETAIN FAIL z_drop=1.984 · GAIN PASS) + H_862 🔴 (DIST PASS · PROBE FAIL 0.783) mid-rung fire(runpod H100, saved backbone clm_mid_backbone.pt). 둘 다 honest CLOSED-NEGATIVE — readout-only edge 의 구조적 한계(forgetting 차단 못함 / anchor 제약 lever 없음). E5 후속 = trunk-인접 adapter edge. → `.verdicts/clm-bound/` · `.verdicts/clm-anchor/` · HF dancinlab/anima-clm-verify.
 - [x] **P4.4 dialogue A/B 벤치** ✅ (2026-05-31) — mid rung SFT-only vs SFT+self-play (H_863) 🟢 SUPPORTED-NUMERICAL (4/4 PASS). PD Gutenberg 희곡 corpus(license-clean lane①) · → `.verdicts/clm-dialogue/` · HF dataset dancinlab/anima-clm-p4-dialogue. (tiny/small rung 후속 등반은 P4.1 과 합류.)
-- [ ] **P5 DECODER 통합** — generator → brain_decide emit 슬롯 end-to-end → COFFESHOP 콘텐츠 → LAUNCHPAD 기여.
+- [x] **P4.5 26-가설 캠페인 closeout** ✅ (2026-05-31) — H_861–H_886 전수 terminal. 학습스택(R2) 닫힘: B 경계가소성 🟢 H_865(adapter) + freeze 🟢 H_872/881 + per-layer 🟢 H_879 + replay 🟢 H_883; C 정체성앵커 🟢 H_873/884(출력분포 anchor). 대화(R3) mid 닫힘: absolute floor 🟢 H_886(SFT-warm+self-play curriculum, ABS-COHERE 0.101≥0.060). OPEN: GAIN-capacity 🔴 H_866(→H_899) · array E=N 🔴 H_885(→H_887) · large 전이 🔴 H_864/874(→H_888). census = [CLM_CAMPAIGN_26.md](CLM_CAMPAIGN_26.md) · 비결정 가소성 backlog = [UNIVERSE/PLASTICITY-CANDIDATES.md](../UNIVERSE/PLASTICITY-CANDIDATES.md) H_889–H_905.
+- [ ] **P5 DECODER 통합** — generator → brain_decide emit 슬롯 end-to-end → COFFESHOP 콘텐츠 → LAUNCHPAD 기여. (R2 학습스택·R3 mid 대화 닫힘 → 통합 게이트는 on-silicon 학습 closure H_904★ + 백본 production scale.)
