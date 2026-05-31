@@ -1,0 +1,87 @@
+F-CLM-PROG-FREEZE — PRE-REGISTERED thresholds (H_881 progressive freeze · BOUND E5 dynamic)
+============================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed).
+Thresholds REUSED VERBATIM from F-CLM-BOUND prereg (commit bf98c01). post-tuning = 0.
+The sweep VARIES the freeze SCHEDULE ONLY; NO threshold may move to flip a verdict after fire.
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-progressive-freeze/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, ~13.7M params) only.
+  A 🔴/🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+  toy/mid → prod NOT guaranteed. Inference stays AKIDA-int4-only (P0 d4).
+
+HYPOTHESIS (the H_872 → H_881 step)
+  H_872 (🟢, 8/9 static depths pass; best static depth = 3; boundary NON-MONOTONE —
+  static depth 4 FAILS z_drop 9.67 while 3 and 5 pass) measured (z_drop, gain) ONLY at
+  the END of a 300-step session, holding the freeze depth FIXED for the whole session.
+  H_881 asks the dynamic question: instead of a STATIC freeze depth held all session, can
+  the freeze boundary be MOVED across the session (progressive freeze) such that the
+  RETAIN∧GAIN guarantee holds NOT just at the end but at EVERY checkpoint across the whole
+  session? A static depth that passes only at the end could still BREACH mid-session; a
+  good schedule must keep z_drop<1.0 ∧ gain>0 SUSTAINED.
+
+  Falsifier: ∃ a freeze SCHEDULE whose z_drop < 1.0 ∧ gain > 0 at EVERY checkpoint across
+  the session (sustained RETAIN∧GAIN), code-measured (g5).
+
+SESSION / CHECKPOINT PARAMETRIZATION (E5 dynamic-ablation)
+  A SESSION = N_ADAPT = 300 edge-learn steps, split into K = 6 equal SEGMENTS of 50 steps.
+  Checkpoints are taken at the END of each segment (steps 50,100,150,200,250,300) → 6
+  (z_drop, gain) measurements per schedule, each vs the SAME frozen base-ability / new-
+  context held-out evals as bf98c01.
+  A SCHEDULE = a length-K list of freeze-depths, depth_k applied during segment k.
+    depth_k = number of TOP trunk layers (highest indices, nearest readout) made TRAINABLE
+              during segment k (0 = adapter-only / full trunk frozen .. n_trunk = 8 full
+              trunk trainable). The H_865 adapter (zero-init additive path) is ALWAYS the
+              edge. depth-boundary semantics identical to H_872 (bf98c01-anchored).
+  When the boundary MOVES between segments, params crossing the boundary keep their LEARNED
+  values (no re-init); only requires_grad flips (this is the progressive-freeze mechanism —
+  edge-only piecewise, no deterministic full-retrain, @L1 / H_679 honored).
+
+PRE-REGISTERED SCHEDULES (fixed BEFORE fire; the only lever that varies)
+  S1 static0   : [0,0,0,0,0,0]              (H_872 depth=0 anchor, replayed checkpointed)
+  S2 static3   : [3,3,3,3,3,3]              (H_872 best static depth, replayed checkpointed)
+  S3 deepen    : [0,0,1,1,2,3]              progressive UN-freeze: shallow→deep over session
+  S4 shrink    : [3,3,2,1,1,0]              progressive RE-freeze: deep→shallow (anneal to edge)
+  S5 anneal    : [3,2,1,0,0,0]              fast anneal to adapter-only (freeze the trunk early)
+  S6 cross4    : [3,4,3,4,3,4]              oscillate ACROSS the H_872 non-monotone-FAIL depth 4
+  S7 grow_then_freeze : [1,2,3,2,1,0]       open then close (a "learn-then-consolidate" arc)
+  (S1/S2 are static controls measured the SAME checkpointed way so the dynamic schedules are
+   judged on equal footing — a static control may itself breach a mid-session checkpoint.)
+
+BACKBONE
+  mid rung d_model=512 / n_trunk_layers=8 / n_experts=8, AKIDA envelope.
+  Loaded FROZEN from clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — SAME backbone
+  H_861/H_865/H_872 used. Each SCHEDULE re-instantiates a CLEAN frozen base from the original
+  state_dict (no carryover between schedules); within a schedule the SAME model persists
+  across segments (that IS the session).
+
+NEW-CONTEXT vs BASE-ABILITY BATCHES (frozen split, fixed seeds — same as bf98c01 / H_872)
+  base-ability held-out : make_lane_bytes("web", BASE_SEED=101) — the "old skill".
+  new-context held-out   : make_lane_bytes("new", NEW_SEED=202) high-band cyclic motif.
+  Both: seq_len=64, batch_size=16, n_eval_batches=32, fixed seeds. lr_edge=3e-3.
+  N_ADAPT=300 total, 50 steps/segment. new-context train batches are drawn fresh per step
+  from the SAME fixed new-train pool (seed NEW_SEED+2), identical to H_872's adapt loop.
+
+MEASUREMENT PROCEDURE (computed by code, g5 — no LLM judge)
+  For each schedule S = [d_1..d_K]:
+    1. Re-instantiate frozen base; insert H_865 adapter (always trainable).
+    2. ce_base_pre, sd_base_pre, ce_new_pre (pre-adapt, depth set to d_1's mask).
+    3. For segment k = 1..K:
+         a. set trainable mask = top d_k trunk layers + adapter; rebuild optimizer over the
+            CURRENT trainable params (Adam, lr=3e-3). Params keep learned values across the
+            boundary move (no re-init).
+         b. 50 Adam steps on new-context train batches.
+         c. checkpoint: ce_base_post_k, ce_new_post_k.
+         d. z_drop_k = (ce_base_post_k - ce_base_pre)/max(sd_base_pre,1e-6);
+            gain_k   = ce_new_pre - ce_new_post_k.
+    4. schedule SUSTAINS iff for ALL k: z_drop_k < 1.0 AND gain_k > 0.0.
+
+FROZEN NUMERICAL THRESHOLDS (bf98c01 verbatim — NOT moved by this sweep)
+  F-CLM-BOUND-RETAIN  PASS iff   z_drop_k < 1.0     (at EVERY checkpoint k)
+  F-CLM-BOUND-GAIN    PASS iff   gain_k   > 0.0     (at EVERY checkpoint k)
+  A schedule SUSTAINS iff EVERY checkpoint passes BOTH.
+  SWEEP VERDICT 🟢 iff ∃ a SUSTAINING schedule. Else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+  Best sustaining schedule ranked by (min-over-k gain) desc, then (max-over-k z_drop) asc.
+
+ARTIFACTS
+  .verdicts/clm-progressive-freeze/clm_progressive_freeze_result.json (per-schedule per-checkpoint curve)
+  .verdicts/clm-progressive-freeze/F-CLM-PROG-FREEZE.txt (verdict verbatim).

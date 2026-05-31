@@ -1,0 +1,75 @@
+F-CLM-PROG-FREEZE — VERDICT (H_881 progressive freeze · BOUND E5 dynamic)
+=========================================================================
+🟢 SUPPORTED-NUMERICAL — ∃ sustaining schedule (7 of 7 schedules SUSTAIN; all 6
+checkpoints pass RETAIN∧GAIN for every schedule). best = S6_cross4.
+
+W2 · deterministic:false · thresholds REUSED VERBATIM from F-CLM-BOUND prereg
+(commit bf98c01) · post-tuning = 0 · code-measured (g5, no LLM judge).
+The sweep VARIED the freeze SCHEDULE ONLY; NO threshold moved. Judgement is taken at
+EVERY of the 6 checkpoints (sustained), not just at session end (vs H_872 END-only).
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, 13,653,768 params)
+only. A 🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+Inference stays AKIDA-int4-only (P0 d4). Edge-learn SW-sim (H_679 HW edge-learn
+real). Fire = local Apple-MPS, ~4min wall, ~$0 (CPU/MPS local, no GPU rental).
+Backbone clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — same backbone
+H_861/H_865/H_872 used. Each SCHEDULE re-instantiated a CLEAN frozen base from the
+same state_dict; within a schedule the same model persisted across the 6 segments
+(that is the "session"), the boundary moving between segments WITHOUT re-init.
+
+FROZEN THRESHOLDS (bf98c01 verbatim)
+  F-CLM-BOUND-RETAIN  PASS iff  z_drop < 1.0      (at EVERY checkpoint k)
+  F-CLM-BOUND-GAIN    PASS iff  gain   > 0.0      (at EVERY checkpoint k)
+  A schedule SUSTAINS iff EVERY checkpoint passes BOTH.
+  SWEEP 🟢 iff ∃ a sustaining schedule. else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+
+SESSION: N_ADAPT=300 split into K=6 segments of 50 steps. checkpoints at steps
+50/100/150/200/250/300. depth_k = # of TOP trunk layers trainable in segment k;
+H_865 adapter always the edge. boundary moves keep learned values (no re-init).
+
+SCHEDULE → SESSION CURVE (min-over-checkpoint gain · max-over-checkpoint z_drop)
+  schedule                segments              sustain  pass   min_gain   max_z_drop
+  S1_static0   (control)  [0,0,0,0,0,0]          YES      6/6    5.828      -48.739
+  S2_static3   (control)  [3,3,3,3,3,3]          YES      6/6    6.133      -31.522
+  S3_deepen               [0,0,1,1,2,3]          YES      6/6    5.989      -42.662
+  S4_shrink               [3,3,2,1,1,0]          YES      6/6    6.093      -40.199
+  S5_anneal               [3,2,1,0,0,0]          YES      6/6    5.999      -46.826
+  S6_cross4    ← best     [3,4,3,4,3,4]          YES      6/6    6.283      -43.472
+  S7_grow_then_freeze     [1,2,3,2,1,0]          YES      6/6    6.040      -49.406
+
+  sustaining_schedules = ALL 7 · best_schedule = S6_cross4 (max min-over-session gain
+  6.283, max-over-session z_drop -43.472 ≪ 1.0).
+
+KEY FINDINGS
+  1. ∃ sustaining schedule → 🟢. In fact ALL 7 pre-registered schedules sustain RETAIN∧GAIN
+     at every checkpoint — both static controls AND every dynamic schedule keep z_drop
+     strongly negative (base CE drops, i.e. forgetting is not merely blocked but reversed)
+     and gain > 5.8 at all 6 checkpoints. The H_865 zero-init adapter (always the edge) is
+     the load-bearing mechanism; the freeze schedule rides safely on top of it.
+  2. The H_872 NON-MONOTONE FAILURE depth (static depth 4: z_drop +9.67 ≥ 1.0) is HARMLESS
+     when visited DYNAMICALLY. S6_cross4 oscillates [3,4,3,4,3,4] — hitting depth 4 in three
+     of six segments — yet every checkpoint has z_drop ≤ -43 and is the BEST schedule by
+     min-gain. A transient visit to the dangerous depth, with learned values carried across
+     the boundary move, does not breach the band that the same depth held STATICALLY breaks.
+  3. The static controls (S1/S2) themselves SUSTAIN at every mid-session checkpoint — at this
+     rung "end-point PASS" did NOT hide a mid-session breach. (The prereg pre-committed to
+     checking that possibility; here it did not materialize.)
+
+INTERPRETATION
+  Dynamic progressive-freeze does not just match H_872's end-point guarantee — it extends it
+  to a SUSTAINED every-checkpoint guarantee and, more strongly, neutralizes H_872's single
+  non-monotone failure depth when that depth is traversed transiently. The deployment freeze
+  controller therefore has FULL schedule freedom (ramp-up, anneal-down, oscillate) without
+  losing the RETAIN∧GAIN band — provided the H_865 adapter edge is present. @L1 honored:
+  boundary moves are requires_grad flips + optimizer rebuild over the new trainable set with
+  learned values retained — edge-only piecewise, no deterministic full-retrain (H_679).
+
+a_paper_negative_ok: a 🔴 (no schedule sustains) would have been publishable as a strong
+negative; here the result is a positive (rich sustaining set + the cross-4 transient finding).
+W2 integrity: schedule was the only lever; thresholds bf98c01 verbatim; verdict won with NO
+gate movement.
+
+ARTIFACTS
+  .verdicts/clm-progressive-freeze/clm_progressive_freeze_result.json (per-schedule per-checkpoint curve)
+  scaffold CLM/model/h881_progressive_freeze.hexa · hypothesis UNIVERSE/H_881_clm_progressive_freeze.md
+  backing dir .verdicts/881_clm_progressive_freeze/
