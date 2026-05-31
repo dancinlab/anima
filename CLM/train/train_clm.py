@@ -278,9 +278,15 @@ def load_corpus_byte_stream(corpus_kosmos: str) -> List[int]:
 # Scale ladder
 # ========================================================================== #
 LADDER: Dict[str, Dict] = {
-    # P0 d3 rungs. target rung is left to the AKD1000 fit probe (P4).
-    "tiny":  dict(d_model=64,  n_trunk_layers=2, n_experts=4),
-    "small": dict(d_model=256, n_trunk_layers=4, n_experts=8),
+    # P0 d3 toy rungs. target rung is left to the AKD1000 fit probe (P4).
+    "tiny":  dict(d_model=64,  n_trunk_layers=2,  n_experts=4),
+    "small": dict(d_model=256, n_trunk_layers=4,  n_experts=8),
+    # P6 production measurement-rungs (1:1 sync with train_clm.hexa rung SSOT).
+    # GPU QAT here = PLASTI-SIM instrument measuring the backbone envelope, NOT
+    # the deploy learner (P6_SCALE_LADDER_7B 0/3 . H_679/H_904).
+    # param-counts verified against P6 1 formula:
+    "mid":   dict(d_model=512, n_trunk_layers=8,  n_experts=8),    # 13,653,768
+    "large": dict(d_model=768, n_trunk_layers=12, n_experts=12),   # 44,678,668
 }
 
 
