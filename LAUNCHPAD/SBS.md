@@ -6,6 +6,10 @@
 > holds the **current-state milestones**; this file is the **runbook** — which
 > rung is live, what its SSOT is, and what to do next. No spec duplication;
 > pointers only.
+>
+> 🔒 **INVIOLABLE (R2 gate)** — on-chip learning is the **sole HW↔SW difference**:
+> inference byte-identical (H_877/H_680 🟢), learning HW≠SW (H_679 🔴). On-chip
+> non-deterministic edge-learn only; deterministic SW imitation = instant reject (@L1).
 
 ---
 

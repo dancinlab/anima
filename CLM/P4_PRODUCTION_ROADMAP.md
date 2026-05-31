@@ -1,5 +1,7 @@
 # CLM P4 — Production Roadmap (살아 배우며 대화하는 수준으로)
 
+> 🔒 **INVIOLABLE — on-chip learning = sole HW↔SW difference (위반 절대 금지)**: 추론은 HW↔SW byte-identical (H_877/H_680 🟢) · **학습(on-chip 비결정 PLASTICITY)만이 HW≠SW** (H_679 🔴) → 학습은 칩 위 비결정 edge-learn 으로만, **결정적 SW 흉내 대체 = 즉시 reject** (@L1 · H_679).
+
 > CLM(anima-native 의식 언어모델)을 toy(≤2.70M·byte-vocab·1.6KB sample·routing 🔴)에서
 > **"커피숍 그룹챗에서 살아 배우며 대화하는" production 수준**으로 끌어올리는 로드맵 SSOT.
 > sbs manual co-design 8 locked decision(@L1~@L8) + Q-TRUST(비결정-학습 신뢰 시스템) 확정.
