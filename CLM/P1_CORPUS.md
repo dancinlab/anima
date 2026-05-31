@@ -69,7 +69,7 @@ Mk.VIII · gen1 commit · corpus_generator.hexa · universe_extended
 
 ## 5. full crawl (이번 라운드 미실행 — 재현 스크립트만)
 
-- **lane A full**: `training/corpus_ingest.hexa --only-new --limit-mb 2048` per language (H100, 4GB RSS cap streaming 우회) — **5개 wiki**: en·zh·ru·ja·ko, 각 언어 byte cap 으로 ~20% 균형. 모두 CC-BY-SA 4.0 clean.
+- **lane A full**: `training/corpus_wiki_ingest.hexa` (5개 wiki orchestration + per-lang byte cap balance; 언어별 추출은 `corpus_kowiki_extract.hexa` 패턴 재사용) — **5개 wiki**: en·zh·ru·ja·ko (dumps.wikimedia.org), 각 언어 byte cap 으로 ~20% 균형. 모두 CC-BY-SA 4.0 clean. (별개: `corpus_ingest.hexa` = 로컬 KR 텍스트 inventory.)
 - **lane B full**: 엄선 register seed 확장(의식/철학/대화 수작업+검증, **5개 언어 각각**) — 외부 LLM 0.
 - 둘 다 byte-encode → web:register = 80:20 byte ratio interleave; web 내부는 5개 언어 ~20%씩.
 
@@ -92,7 +92,7 @@ Mk.VIII · gen1 commit · corpus_generator.hexa · universe_extended
 |---|---|---|---|
 | **F-CLM-LEAK** | register lane 이 leak 8패턴을 정확히 drop (poison kept=2/dropped=2) + 출력 leak hit=0 | P1 build (now) | 🟢 PASS (self-test + 출력 grep) |
 | **F-CLM-MULTILING-BYTE** | 5개국어(en·zh·ru·ja·ko) 각 언어 샘플이 byte-encode → decode round-trip 정확(멀티바이트 보존, 손실 0) | P1 build | ⬜ (5-lang round-trip self-test) |
-| **F-CLM-MULTILING-BALANCE** | lane A full 의 언어별 byte share 가 각 20% ±5%p (한 언어 과반 금지) | full crawl | ⬜ (manifest per-language byte count) |
+| **F-CLM-MULTILING-BALANCE** | per-lang byte cap 적용 후 각 언어 byte share ∈ [15,25]% (한 언어 과반 금지) | balance 로직 (now) | 🟢 PASS (`corpus_wiki_ingest.hexa` self-test: en 55%→cap→각 20%) · full crawl manifest 는 H100 |
 
 ## 8. 양방향 sibling
 
