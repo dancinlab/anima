@@ -1,0 +1,487 @@
+{
+  "frozen": {
+    "axis_n_chips": [
+      1,
+      2,
+      4,
+      8
+    ],
+    "n_experts": 8,
+    "d_model/L": "d64/L2 (toy)",
+    "top_k": 2,
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "train_steps": 120,
+    "eval_batches": 16,
+    "loadbal_ratio_max": 4.0,
+    "coh_logit_atol": 0.0001,
+    "coh_hamming_max": 0.0,
+    "coh_ce_atol": 0.0001,
+    "falsifier": "F-CLM-MITOSIS-ARRAY: for every N in {2,4,8} -- no chip starves AND max/min per-chip dispatch ratio <= loadbal_ratio_max AND max|logit_array-logit_ref| <= coh_logit_atol AND argmax-hamming <= coh_hamming_max AND |CE_array-CE_ref| <= coh_ce_atol",
+    "scope": "SW-sim of @L2 deploy chip-fit track -- silicon NOT measured (1 AKD1000 today); a_scale_honest_scope"
+  },
+  "per_N": {
+    "1": {
+      "mean_loadbal_ratio": 1.0,
+      "max_loadbal_ratio": 1.0,
+      "all_no_starve": true,
+      "max_logit_diff": 0.0,
+      "max_hamming": 0.0,
+      "max_ce_delta": 0.0,
+      "chip_fit": true
+    },
+    "2": {
+      "mean_loadbal_ratio": 1.66484,
+      "max_loadbal_ratio": 1.8764,
+      "all_no_starve": true,
+      "max_logit_diff": 0.0,
+      "max_hamming": 0.0,
+      "max_ce_delta": 0.0,
+      "chip_fit": true
+    },
+    "4": {
+      "mean_loadbal_ratio": 12.91905,
+      "max_loadbal_ratio": 28.78799,
+      "all_no_starve": true,
+      "max_logit_diff": 0.0,
+      "max_hamming": 0.0,
+      "max_ce_delta": 0.0,
+      "chip_fit": true
+    },
+    "8": {
+      "mean_loadbal_ratio": 32.00906,
+      "max_loadbal_ratio": 54.47748,
+      "all_no_starve": true,
+      "max_logit_diff": 0.0,
+      "max_hamming": 0.0,
+      "max_ce_delta": 0.0,
+      "chip_fit": true
+    }
+  },
+  "per_run": [
+    {
+      "n_chips": 1,
+      "seed": 42,
+      "shards": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        16384
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 1.0,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 1,
+      "seed": 43,
+      "shards": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        16384
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 1.0,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 1,
+      "seed": 44,
+      "shards": [
+        [
+          0,
+          1,
+          2,
+          3,
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        16384
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 1.0,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 2,
+      "seed": 42,
+      "shards": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        5696,
+        10688
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 1.8764,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 2,
+      "seed": 43,
+      "shards": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        9226,
+        7158
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 1.28891,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 2,
+      "seed": 44,
+      "shards": [
+        [
+          0,
+          1,
+          2,
+          3
+        ],
+        [
+          4,
+          5,
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        10593,
+        5791
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 1.82922,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 4,
+      "seed": 42,
+      "shards": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        5413,
+        283,
+        8147,
+        2541
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 28.78799,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 4,
+      "seed": 43,
+      "shards": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        2791,
+        6435,
+        1416,
+        5742
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 4.54449,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 4,
+      "seed": 44,
+      "shards": [
+        [
+          0,
+          1
+        ],
+        [
+          2,
+          3
+        ],
+        [
+          4,
+          5
+        ],
+        [
+          6,
+          7
+        ]
+      ],
+      "chip_counts": [
+        5228,
+        5365,
+        989,
+        4802
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 5.42467,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 8,
+      "seed": 42,
+      "shards": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          7
+        ]
+      ],
+      "chip_counts": [
+        3432,
+        1981,
+        172,
+        111,
+        2100,
+        6047,
+        1264,
+        1277
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 54.47748,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 8,
+      "seed": 43,
+      "shards": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          7
+        ]
+      ],
+      "chip_counts": [
+        2562,
+        229,
+        5612,
+        823,
+        516,
+        900,
+        4388,
+        1354
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 24.50655,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "n_chips": 8,
+      "seed": 44,
+      "shards": [
+        [
+          0
+        ],
+        [
+          1
+        ],
+        [
+          2
+        ],
+        [
+          3
+        ],
+        [
+          4
+        ],
+        [
+          5
+        ],
+        [
+          6
+        ],
+        [
+          7
+        ]
+      ],
+      "chip_counts": [
+        4346,
+        882,
+        2651,
+        2714,
+        734,
+        255,
+        4084,
+        718
+      ],
+      "no_starve": true,
+      "loadbal_ratio": 17.04314,
+      "max_logit_diff": 0.0,
+      "hamming_mismatch": 0.0,
+      "ce_delta": 0.0,
+      "expert_params": 12352,
+      "chip_fit": true
+    }
+  ],
+  "loadbal_ok": false,
+  "coherence_logit_ok": true,
+  "coherence_hamming_ok": true,
+  "coherence_ce_ok": true,
+  "all_chip_fit": true,
+  "verdict": "FAIL",
+  "verdict_tier": "\ud83d\udd34 CLOSED-NEGATIVE",
+  "akd1000_budget": 1200000,
+  "scale_scope": "SW-sim of @L2 deploy chip-fit track -- silicon NOT measured (1 AKD1000 today); a_scale_honest_scope",
+  "torch": "2.8.0"
+}

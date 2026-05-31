@@ -1,0 +1,31 @@
+F-CLM-MITOSIS-ARRAY -- N-chip array dispatch SW-simulation
+====================================================================
+FROZEN (pre-run, @L7 no tampering):
+  axis_n_chips = [1, 2, 4, 8]
+  n_experts = 8
+  d_model/L = d64/L2 (toy)
+  top_k = 2
+  seeds = [42, 43, 44]
+  train_steps = 120
+  eval_batches = 16
+  loadbal_ratio_max = 4.0
+  coh_logit_atol = 0.0001
+  coh_hamming_max = 0.0
+  coh_ce_atol = 0.0001
+  falsifier = F-CLM-MITOSIS-ARRAY: for every N in {2,4,8} -- no chip starves AND max/min per-chip dispatch ratio <= loadbal_ratio_max AND max|logit_array-logit_ref| <= coh_logit_atol AND argmax-hamming <= coh_hamming_max AND |CE_array-CE_ref| <= coh_ce_atol
+  scope = SW-sim of @L2 deploy chip-fit track -- silicon NOT measured (1 AKD1000 today); a_scale_honest_scope
+
+  N  loadbal_ratio  no_starve   max_logit_d    hamming     ce_delta  chip_fit
+  1         1.0000       True      0.00e+00     0.0000     0.00e+00      True
+  2         1.8764       True      0.00e+00     0.0000     0.00e+00      True
+  4        28.7880       True      0.00e+00     0.0000     0.00e+00      True
+  8        54.4775       True      0.00e+00     0.0000     0.00e+00      True
+
+load-balance OK (N>=2, ratio<= 4.0, no starve): False
+coherence logit OK (atol 0.0001): True
+coherence hamming OK (<= 0.0): True
+coherence CE OK (atol 0.0001): True
+all chips chip-fit: True
+scale scope       : SW-sim of @L2 deploy chip-fit track -- silicon NOT measured (1 AKD1000 today); a_scale_honest_scope
+
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE
