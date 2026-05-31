@@ -7,6 +7,9 @@
 > rung is live, what its SSOT is, and what to do next. No spec duplication;
 > pointers only.
 >
+> **Whole-picture map** (training · on-chip learning · road to 7B):
+> [`../CLM/ANIMA_TRAINING_AND_7B_MAP.md`](../CLM/ANIMA_TRAINING_AND_7B_MAP.md).
+>
 > 🔒 **INVIOLABLE (R2 gate)** — on-chip learning is the **sole HW↔SW difference**:
 > inference byte-identical (H_877/H_680 🟢), learning HW≠SW (H_679 🔴). **SILICON-CONFIRMED
 > on AKD1000: H_904 ★ 🟢 (#1593)** — live on-chip learn diverged from byte-exact SW-sim
