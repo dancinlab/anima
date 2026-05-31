@@ -75,6 +75,28 @@ LLM-judge (g5) · measurement-rung scope only, does NOT bind deploy chip-fit
 
 ---
 
+## E. partial / incremental on-chip learning (부분부분학습 · edge-only)
+
+> **INVIOLABLE (re-pinned)**: on-chip non-deterministic PLASTICITY learning is the
+> **SOLE HW↔SW difference** (inference is byte-identical — H_877/H_680 🟢; learning is
+> HW≠SW — H_679 🔴). Replacing on-chip learning with a deterministic SW imitation is
+> **FORBIDDEN** (instant reject). Every row below learns the **anima-native, edge-only,
+> piecewise** way — never a full deterministic retrain. (@L1 · H_679 · 위반금지)
+
+| ID | 주제 | direction | falsifier sketch | 토대 | tag |
+|----|------|-----------|------------------|------|-----|
+| H_879 | per-layer incremental edge-learn | 한 층(또는 소수)씩만 적응 · 나머지 동결 — 부분 학습이 전체-retrain 없이 신맥락 흡수하나 | per-layer gain>0 ∧ held-out z-drop<thr | H_872 freeze-depth · H_679 | ⬜ |
+| H_880 | adapter 스택 누적 | H_865 adapter를 여러 개 쌓아 맥락별로 켜기 — 누적 adapter가 간섭 없이 부분학습 누적하나 | new-task gain>0 ∧ old-task z-drop<thr ∧ adapter간 간섭<thr | H_865 🟢 adapter | ⬜ |
+| H_881 | progressive freeze schedule | 학습하며 동결 경계를 동적으로 이동(점진 동결) — H_872 정적 sweep의 스케줄판 | ∃ schedule with RETAIN∧GAIN over a session | H_872 · H_875 | ⬜ |
+| H_882 | region-gated plasticity | 영역별 학습 게이트(필요 부분만 on/off) — 게이트가 간섭/망각을 줄이나 | gated z-drop < ungated z-drop ∧ gain≥baseline | H_866 capacity · H_679 | ⬜ |
+| H_883 | replay-buffer continual | 옛 샘플 리플레이로 망각 방지하며 부분학습 — H_875 forgetting 후속 안전장치 | z-drop(replay) < z-drop(no-replay) ∧ gain>0 | H_875 forgetting-curve | ⬜ |
+| H_884 | edge-output identity general | H_873(anchor-on-edge) 결과를 부분학습 전반의 정체성 보존으로 일반화 | PROBE>thr across partial-learn rows | H_873 (862 완성) | ⬜ |
+
+- 전부 **INVIOLABLE 준수**(비결정 on-chip 학습 1급) · W2 사전등록 · 측정⊥배포(a_scale_honest_scope) · g5 코드측정.
+- 의존: H_872(freeze깊이)·H_873(862완성)·H_875(forgetting) verdict 나온 뒤 임계가 정밀해짐 → **그 후 발사 권장** (지금은 목록만 · 미발사).
+
+---
+
 ## next-pick guide (a_wall_first — these run in parallel)
 
 ```
