@@ -2,6 +2,12 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02 — phi_proxy re-verification (post-#1671): H_911 RED is REAL, not a breakdown artifact
+The variance-partition Cholesky-logdet phi_proxy was BROKEN (Hc_1302: silent -2147483647 sentinel on composed input, read as lowest-Φ) and fixed in PR #1671. Re-verification sweep confirms **H_911's PHI-axis RED did NOT use the broken proxy** and therefore does NOT flip. Full sweep: `.verdicts/phi_proxy_reverify_1671/REVERIFY_SWEEP.md` · branch `reverify/phi-proxy-sweep`.
+- [x] H_911 PHI axis uses `UNIVERSE/harness/h911_semantic_phi.hexa` `phi_proxy` = **MI-bipartition** (`whole − min_bipartition`, `best` init 1e6, finite MI subsets) — NOT the broken Cholesky-logdet variance-partition proxy. No silent `-2147483647` sentinel is reachable → the N=25/100/250 RED-on-Φ is a REAL negative, now TRUSTWORTHY (was suspect-by-association, now CONFIRMED under audit).
+- [x] DISAMBIGUATION: the two `r=−0.277` in this log are UNRELATED — Lane-A scale-frontier line (concept-margin LIFT in Hamming bits, covered by Hc_1303-1306 resolver, SKIPPED) vs METROLOGY H_912 (phi_proxy⊥LZ76 emergence correlation). Only the latter is in the broken-proxy lineage; it already 🔴 REFUTED on-chip (#1652/#1653), tier HOLDS.
+- [x] The single metric-level FLIP is in METROLOGY: composed/low-rank input the broken proxy silently scored "most anti-integrated" → now explicit `phi_breakdown=1 → route to faithful big-Φ oracle` (oracle gives 17.66 on the n=4 integrated TPM). H_911/B2 negatives were never breakdown artifacts.
+
 ## 2026-06-01 — H_911 3-axis multimodal sweep HELD at N=250
 - [x] Built 3-axis harness (MEANING + CE + PHI) on real COCO-karpathy 5-caption data
 - [x] Rungs N=25/100/250 all TIER RED (green 0/3, 1/3, 0/3); N=100 Φ 🟢 did not survive to N=250
