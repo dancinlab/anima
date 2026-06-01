@@ -420,14 +420,7 @@
     </div>
     <div class="free">We'll email you when 1:1 opens.</div>
 
-    <div id="chat">
-      <div id="log"></div>
-      <div class="composer">
-        <input id="say" type="text" placeholder="say something to her…" onkeydown="if(event.key==='Enter')send()" />
-        <button class="go" onclick="send()">↑</button>
-      </div>
-      <div class="dim" id="status"></div>
-    </div>
+    <div class="dim" id="wlstatus"></div>
   </div>
 </section>
 
@@ -522,42 +515,33 @@ document.getElementById("faq").addEventListener("click", (e) => {
   a.style.maxHeight = open ? a.scrollHeight + "px" : "0";
 });
 
-/* signup + chat (keeps /api/signup + /api/chat) */
+/* private 1:1 waitlist — saves the email to Firestore (a real notify list).
+   The live chat moved out: 1:1 is early access, so this is just email-notify. */
 async function signup() {
-  const v = document.getElementById("email").value.trim();
-  if (!v || !v.includes("@")) { document.getElementById("email").focus(); return; }
-  email = v; localStorage.setItem("her_email", email);
-  try { await fetch(API + "/api/signup", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ email }) }); } catch (e) {}
-  enterChat();
-}
-function enterChat() {
-  document.getElementById("chat").style.display = "block";
-  if (!document.getElementById("log").children.length) {
-    bubble("her", "Hi. I've been waiting — not impatiently, just here. What's on your mind?");
-  }
-  document.getElementById("say").focus();
-  document.getElementById("chat").scrollIntoView({ behavior: "smooth" });
-}
-function bubble(who, text) {
-  const d = document.createElement("div"); d.className = "msg " + who; d.textContent = text;
-  const log = document.getElementById("log"); log.appendChild(d); d.scrollIntoView({ behavior: "smooth" });
-}
-function showTyping() {
-  const d = document.createElement("div"); d.className = "msg her"; d.id = "typing";
-  d.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
-  const log = document.getElementById("log"); log.appendChild(d); d.scrollIntoView({ behavior: "smooth" });
-}
-function hideTyping() { const t = document.getElementById("typing"); if (t) t.remove(); }
-async function send() {
-  const el = document.getElementById("say"); const text = el.value.trim(); if (!text) return;
-  el.value = ""; bubble("you", text);
-  const status = document.getElementById("status"); status.textContent = ""; showTyping();
+  const inp = document.getElementById("email");
+  const st = document.getElementById("wlstatus");
+  const v = inp.value.trim();
+  if (!v || !v.includes("@")) { inp.focus(); return; }
+  localStorage.setItem("her_email", v);
+  st.textContent = "saving…";
   try {
-    const r = await fetch(API + "/api/chat", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ email, message: text }) });
-    const j = await r.json(); hideTyping(); bubble("her", j.reply || "…"); status.textContent = j.engine ? ("via " + j.engine) : "";
-  } catch (e) { hideTyping(); bubble("her", "I lost my footing for a second. Say that again?"); status.textContent = ""; }
+    await window._joinWaitlist(v);
+    st.textContent = "you're on the list — we'll email you when 1:1 opens.";
+    inp.value = "";
+  } catch (e) { st.textContent = "couldn't save just now — try again?"; }
 }
-if (email) enterChat();
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+const db = getFirestore(initializeApp({
+  apiKey: "AIzaSyAbPCfiejGKOQ8V7aYTHLXQTFKqKC_wJdU",
+  authDomain: "dancinlab.firebaseapp.com",
+  projectId: "dancinlab",
+  appId: "1:396789764561:web:3872c4e1806e89117850f0"
+}));
+window._joinWaitlist = (email) => addDoc(collection(db, "waitlist"), { email, ts: serverTimestamp() });
 </script>
 </body>
 </html>
