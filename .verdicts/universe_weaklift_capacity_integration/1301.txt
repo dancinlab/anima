@@ -1,0 +1,30 @@
+### Hc_1301 F-1301-MONOTONE — circularity guard via H_278 frozen faithful-vs-proxy ledger
+### source (verbatim, deterministic prior $0 run): UNIVERSE/state/h278_faithful_phi_2026_05_25/result.json
+### PASS(non-circular)= rank-disagreement OR ratio-CV>=5%; FALSIFIED(circular)= rank-concordant & ratio-CV<5% -> OPEN-BLOCKED
+
+=== verbatim per_scale_ledger (phi_faithful, phi_proxy) ===
+    {"scale": "cosmic_web", "rule": 30, "couple": 0.000000, "phi_faithful": 0.134574, "phi_proxy": 0.163812},
+    {"scale": "galaxy_cluster", "rule": 110, "couple": 0.100000, "phi_faithful": 0.000011, "phi_proxy": 0.000005},
+    {"scale": "stellar", "rule": 90, "couple": 0.200000, "phi_faithful": 0.000011, "phi_proxy": 0.000005},
+    {"scale": "planetary", "rule": 54, "couple": 0.300000, "phi_faithful": 4.000011, "phi_proxy": 3.000005},
+    {"scale": "biological", "rule": 110, "couple": 0.450000, "phi_faithful": 0.000011, "phi_proxy": 0.000005},
+    {"scale": "neural", "rule": 110, "couple": 0.600000, "phi_faithful": 0.000011, "phi_proxy": 0.000005}
+  "faithful": {"mean": 0.689105, "min": 0.000011, "max": 4.000011, "cv": 2.149885},
+  "proxy": {"mean": 0.527306, "min": 0.000005, "max": 3.000005, "cv": 2.100186},
+  "faithful_scale_class": "SCALE_VARIANT",
+  "proxy_scale_class_n8": "SCALE_VARIANT",
+  "scale_variant_verdict": "HOLD",
+--- compute ratio CV + rank concordance (python3, reads frozen json) ---
+scale            faithful      proxy        ratio(f/p)
+cosmic_web         0.134574    0.163812     0.8215
+galaxy_cluster     0.000011    0.000005     2.2000
+stellar            0.000011    0.000005     2.2000
+planetary          4.000011    3.000005     1.3333
+biological         0.000011    0.000005     2.2000
+neural             0.000011    0.000005     2.2000
+
+ratio mean=1.8258 pstdev=0.5494 CV=0.3009 (30.1%)
+faithful rank order: ['planetary', 'cosmic_web', 'galaxy_cluster', 'stellar', 'biological', 'neural']
+proxy    rank order: ['planetary', 'cosmic_web', 'galaxy_cluster', 'stellar', 'biological', 'neural']
+rank concordant: True
+F-1301-MONOTONE: PASS_NON_CIRCULAR (ratio-CV=30.1% >=5%)

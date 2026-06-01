@@ -1,0 +1,17 @@
+### Hc_1302 F-1302-SENTINEL — composed/low-rank input breaks the proxy (Cholesky sentinel)
+### metric: phi_proxy_native.hexa  white(full-rank) vs structured(low-rank periodic)  CPU-local $0
+### PASS(ceiling real)= white FINITE & structured == -2147483647 (F_PHI_01)
+
+=== WHITE (full-rank, decomposable) ===
+[selftest] phi_x1000=-173702
+[selftest] white-noise sign OK: phi_x1000=-173702 < 0 (anti-integrated H3A)
+[selftest] structured phi_x1000 = -2147483647 (informational; no strict ordering asserted)
+__PHI_PROXY_NATIVE__ PASS -173702 abs_phi_x1000_le_1000000
+
+=== STRUCTURED (low-rank periodic, maximally composed) ===
+[selftest] structured phi_x1000 = -2147483647 (informational; no strict ordering asserted)
+           F_PHI_01: phi_x1000 == -2147483647        (helper / Cholesky failure)
+
+### white phi_x1000 = -173702 (FINITE); structured phi_x1000 = -2147483647 (F_PHI_01 Cholesky breakdown)
+### F-1302-SENTINEL PASS: the proxy CANNOT score a perfectly-composed (low-rank) representation;
+### 'absence of high Φ' is confounded with metric breakdown -> Lane A 'no lift' carries this ceiling caveat.

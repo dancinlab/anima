@@ -16,11 +16,11 @@
 
 @N wl_capacity_integration_law := "capacity-without-integration: local single-layer plasticity grows capacity, integration metric stays FLAT" :: discovery [d=2026-06-02 active]
   seed    = "G1 — does adding capacity move an integration metric at all?"
-  method  = "phi_proxy_native --selftest white, sample-count N (capacity proxy) sweep {8,16,32,64}; |Δphi_x1000| vs 5% band"
-  data    = "phi_x1000 = -173702 at N=8,16,32,64 — IDENTICAL (Δ=0%); integration metric FLAT under capacity-axis growth"
-  finding = "Hc_1300 F-1300-INVARIANCE PASS (law holds at measured scale): integration does not rise with capacity proxy"
-  verdict = "🟢 numerical (toy/proxy-scale): capacity ⊥ integration on the deterministic fixture"
-  caveat  = "N is a capacity PROXY (hid clamped, not unit-count); toy→prod transfer unverified (a_toy_scale_recheck); true unit-sweep DEFERRED (Hc_1303/1304)"
+  method  = "phi_proxy_native --selftest white, two accumulation-proxy axes: sample-count N {8,16,32,64} and K-partitions {2,4,8,16} at N=64; |Δphi_x1000| vs 5% band"
+  data    = "N-sweep: phi_x1000=-173702 IDENTICAL (Δ=0%). K-sweep: -170414/-173442/-173702/-173702 -> max |Δ|=3288/173702=1.9% < 5%. integration metric FLAT under both accumulation axes."
+  finding = "Hc_1300 F-1300-INVARIANCE PASS (law holds at measured scale): integration does not rise as accumulated evidence grows"
+  verdict = "🟢 numerical (toy/proxy-scale): integration metric ⊥ accumulation/capacity proxy on the deterministic fixture"
+  caveat  = "N and K are ACCUMULATION/evidence proxies (hid_trunc clamped to n_ch=16, NOT a unit-count axis); a true unit-count capacity sweep is the on-chip measurement DEFERRED (Hc_1303/1304); toy→prod transfer unverified (a_toy_scale_recheck)"
 
 @N wl_metric_ceiling := "the sample-partition Φ proxy returns a failure sentinel on low-rank (composed) input — built-in integration ceiling" :: discovery [d=2026-06-02 active]
   seed    = "SIGNAL axis — could the proxy even score a maximally-integrated representation?"

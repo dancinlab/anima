@@ -1,0 +1,47 @@
+### Hc_1300 F-1300-INVARIANCE — phi_proxy_native white fixture, capacity-axis (N) sweep
+### metric: BRAIN/tool/module/_metrics/phi_proxy_native.hexa  (hexa run, CPU-local, $0)
+### PASS(law holds)= |Δphi_x1000| <= 5% across N; FALSIFIED= integration moves with capacity
+
+--- N=8 ---
+[selftest] hid_trunc=16 k_eval=8/8
+[selftest] phi_x1000=-173702
+[selftest] white-noise sign OK: phi_x1000=-173702 < 0 (anti-integrated H3A)
+__PHI_PROXY_NATIVE__ PASS -173702 abs_phi_x1000_le_1000000
+--- N=16 ---
+[selftest] hid_trunc=16 k_eval=8/8
+[selftest] phi_x1000=-173702
+[selftest] white-noise sign OK: phi_x1000=-173702 < 0 (anti-integrated H3A)
+__PHI_PROXY_NATIVE__ PASS -173702 abs_phi_x1000_le_1000000
+--- N=32 ---
+[selftest] hid_trunc=16 k_eval=8/8
+[selftest] phi_x1000=-173702
+[selftest] white-noise sign OK: phi_x1000=-173702 < 0 (anti-integrated H3A)
+__PHI_PROXY_NATIVE__ PASS -173702 abs_phi_x1000_le_1000000
+--- N=64 ---
+[selftest] hid_trunc=16 k_eval=8/8
+[selftest] phi_x1000=-173702
+[selftest] white-noise sign OK: phi_x1000=-173702 < 0 (anti-integrated H3A)
+__PHI_PROXY_NATIVE__ PASS -173702 abs_phi_x1000_le_1000000
+
+### Hc_1300 SECOND capacity-proxy: K-partition (accumulation) sweep at fixed N=64
+### more partitions = more accumulated evidence; integration metric should stay flat if capacity⊥integration
+--- K=2 ---
+[selftest] hid_trunc=16 k_eval=2/2
+[selftest] phi_x1000=-170414
+[selftest] white-noise sign OK: phi_x1000=-170414 < 0 (anti-integrated H3A)
+--- K=4 ---
+[selftest] hid_trunc=16 k_eval=4/4
+[selftest] phi_x1000=-173442
+[selftest] white-noise sign OK: phi_x1000=-173442 < 0 (anti-integrated H3A)
+--- K=8 ---
+[selftest] hid_trunc=16 k_eval=8/8
+[selftest] phi_x1000=-173702
+[selftest] white-noise sign OK: phi_x1000=-173702 < 0 (anti-integrated H3A)
+--- K=16 ---
+[selftest] hid_trunc=16 k_eval=16/16
+[selftest] phi_x1000=-173702
+[selftest] white-noise sign OK: phi_x1000=-173702 < 0 (anti-integrated H3A)
+
+### HONEST CAVEAT: selftest path clamps hid_trunc=16 (=n_ch); N and K are accumulation/evidence
+### proxies, NOT a unit-count axis. True unit-count capacity sweep = on-chip (Hc_1303/1304 DEFERRED).
+### Result: integration metric phi_x1000 INVARIANT across both accumulation axes -> F-1300-INVARIANCE PASS at proxy scale.
