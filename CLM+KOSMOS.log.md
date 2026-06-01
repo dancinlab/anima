@@ -69,3 +69,16 @@ Diag agent a65461e tested the 3 non-corpus causes (H-A2/A3/A4) on live AKD1000, 
 | H-A4 native-init noise-floor | 🔴 FALSE | seed-FIXED chip run: |lift|/reinit_sd=1.16/1.97/3.10/1.22 (all>1), sign-stable across re-init → lift EXCEEDS the chip-noise band |
 - [x] H-A4 key correction: the big variance is backbone-SEED / corpus-encoding sensitivity, NOT chip non-determinism. The earlier "identity(non-det)↔lift-measurability TENSION" guess is FALSE — no such tension; the chip's re-init noise does not drown the lift.
 - [x] RULING: closed-negative on the LIFT CLAIM — paging CAPACITY 🟢 GREEN (all rungs learned on chip) but the 1-bit last-FC Hebbian primitive buys NO robust cross-lingual lift; not fixable by corpus/quant/depth, not a fundamental floor. A genuine lift needs a RICHER LEARNING RULE / different signal than 1-bit Hamming concept-margin — DEFERRED (P3', outside these 4 axes). Converges with P1 on the same closed-negative.
+
+## 2026-06-02 — UNIVERSE weak-lift hypothesis pipeline (Lane-A-seeded) — 7 generated · 3🟢 4🟠
+Brainstorm→generate→verify on the Lane A capacity↔representation gap. branch feat/universe-weaklift-hyp (fb2846797 generate · 4fab9ee12 verify). Brainstorm depleted at R6. Metric = canonical phi_proxy_native.hexa + frozen H_278 faithful-vs-proxy ledger (no invented metric, CPU-local, no chip/GPU fire).
+| Hc | tier | verbatim |
+|---|---|---|
+| 1300 capacity-without-integration general law | 🟢 | phi flat across N{8..64} Δ0%; K{2..16} max|Δ|=1.9%<5% → F-1300-INVARIANCE PASS (caveat: hid_trunc=16 → accumulation proxy not unit-count; true sweep = on-chip DEFERRED) |
+| 1301 proxy-Φ vs faithful-Φ NOT monotone reparam (G1 circularity guard) | 🟢 | H_278 ledger ratio mean 1.826, CV=30.1%(≥5%) → PASS_NON_CIRCULAR (G1 is a genuine 2nd axis, publishable) |
+| 1302 Φ-proxy has built-in ceiling (composed input breaks Cholesky) | 🟢 | white=-173702 finite, structured=-2147483647 (Cholesky breakdown) → F-1302-SENTINEL PASS — **sharpest result** |
+| 1303 Hebbian bit-depth gates lift | 🟠 DEFERRED | multi-bit AKD1000 fire / GPU sim |
+| 1304 lift gated by locus/recurrence (1 recurrent edge > local rule) | 🟠 DEFERRED | recurrent-edge ablation |
+| 1305 identity-in-encoding vs substrate (seed×chip factorial) | 🟠 DEFERRED | multi-seed trace collection |
+| 1306 1-bit Hamming composition-blind; richer signal reveals latent lift | 🟠 DEFERRED | re-score Lane-A trace tensor (richer signal) |
+- [x] KEY: Hc_1302 means the Lane A lift closed-negative carries a METRIC-CEILING confound — the Φ proxy is blind on maximally-composed inputs. Lift CLAIM (1-bit Hamming) = closed-negative; lift QUESTION reopens via Hc_1306 richer-signal re-score (DEFERRED). Hc_1301 clears the G1 circularity guard (capacity↔representation ≈ proxy↔faithful is a real 2nd axis).
