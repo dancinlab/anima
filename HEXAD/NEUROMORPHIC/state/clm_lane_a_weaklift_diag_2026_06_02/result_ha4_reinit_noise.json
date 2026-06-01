@@ -1,0 +1,209 @@
+{
+  "hypothesis": "H-A4-NATIVE-INIT-NOISE-FLOOR",
+  "ties": [
+    "H_679",
+    "H_904",
+    "a_nondet_identity",
+    "a_scale_honest_scope",
+    "F-CLM-ONCHIP-LAYERPAGE-LADDER"
+  ],
+  "method": "FIXED backbone seed (one corpus encoding) -> rerun the IDENTICAL paged ladder N{2,3,4,5} R=3 times, letting ONLY the chip native weight re-init vary. Per-rung lift = composed - frozen concept-margin (bits). Per-rung re-init noise band = sd of lift across the R re-init reps (pure: backbone held fixed). Compare |mean lift| vs re-init sd. This ISOLATES native-init noise from the backbone-seed noise that the prior robustness run conflated.",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-01T17:51:10Z",
+  "backbone_seed_FIXED": 20260602,
+  "backbone_int4_sha256": "d25e9f293cac2f643961fe50587a6d966a0dc29af09ac221bf528a376695edb8",
+  "input": "parallel",
+  "input_sha": "1990f87de250cb73",
+  "anchor_count": 25,
+  "inc": 256,
+  "unit_schedule": [
+    64,
+    32,
+    32,
+    32,
+    32
+  ],
+  "ladder_N": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "nreps": 3,
+  "reps": [
+    {
+      "rep": 0,
+      "rungs": [
+        {
+          "N": 2,
+          "composed_margin_bits": -1.3520000000000003,
+          "frozen_margin_bits": -0.6240000000000006,
+          "lift_bits": -0.7279999999999998,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 3,
+          "composed_margin_bits": -0.903999999999999,
+          "frozen_margin_bits": -1.0,
+          "lift_bits": 0.09600000000000097,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 4,
+          "composed_margin_bits": -0.7439999999999998,
+          "frozen_margin_bits": -0.16800000000000015,
+          "lift_bits": -0.5759999999999996,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 5,
+          "composed_margin_bits": -0.1599999999999997,
+          "frozen_margin_bits": -0.3119999999999994,
+          "lift_bits": 0.1519999999999997,
+          "composed_all_learned_hw": true
+        }
+      ],
+      "lifts": {
+        "2": -0.7279999999999998,
+        "3": 0.09600000000000097,
+        "4": -0.5759999999999996,
+        "5": 0.1519999999999997
+      }
+    },
+    {
+      "rep": 1,
+      "rungs": [
+        {
+          "N": 2,
+          "composed_margin_bits": -0.6799999999999997,
+          "frozen_margin_bits": -0.08800000000000097,
+          "lift_bits": -0.5919999999999987,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 3,
+          "composed_margin_bits": -0.1120000000000001,
+          "frozen_margin_bits": -0.3280000000000012,
+          "lift_bits": 0.21600000000000108,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 4,
+          "composed_margin_bits": -0.8159999999999998,
+          "frozen_margin_bits": -0.41600000000000037,
+          "lift_bits": -0.39999999999999947,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 5,
+          "composed_margin_bits": 0.2160000000000002,
+          "frozen_margin_bits": 0.16000000000000014,
+          "lift_bits": 0.05600000000000005,
+          "composed_all_learned_hw": true
+        }
+      ],
+      "lifts": {
+        "2": -0.5919999999999987,
+        "3": 0.21600000000000108,
+        "4": -0.39999999999999947,
+        "5": 0.05600000000000005
+      }
+    },
+    {
+      "rep": 2,
+      "rungs": [
+        {
+          "N": 2,
+          "composed_margin_bits": -0.8559999999999999,
+          "frozen_margin_bits": -0.847999999999999,
+          "lift_bits": -0.008000000000000895,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 3,
+          "composed_margin_bits": -0.5600000000000005,
+          "frozen_margin_bits": -0.863999999999999,
+          "lift_bits": 0.3039999999999985,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 4,
+          "composed_margin_bits": -0.7919999999999998,
+          "frozen_margin_bits": -0.016000000000000014,
+          "lift_bits": -0.7759999999999998,
+          "composed_all_learned_hw": true
+        },
+        {
+          "N": 5,
+          "composed_margin_bits": -0.2160000000000002,
+          "frozen_margin_bits": -0.5759999999999996,
+          "lift_bits": 0.35999999999999943,
+          "composed_all_learned_hw": true
+        }
+      ],
+      "lifts": {
+        "2": -0.008000000000000895,
+        "3": 0.3039999999999985,
+        "4": -0.7759999999999998,
+        "5": 0.35999999999999943
+      }
+    }
+  ],
+  "per_rung_analysis": {
+    "2": {
+      "lifts": [
+        -0.7279999999999998,
+        -0.5919999999999987,
+        -0.008000000000000895
+      ],
+      "mean_lift": -0.4426666666666665,
+      "reinit_sd": 0.38252494472038384,
+      "abs_mean_over_sd": 1.157223006698935,
+      "sign_stable_across_reinit": true,
+      "lift_below_reinit_band": false
+    },
+    "3": {
+      "lifts": [
+        0.09600000000000097,
+        0.21600000000000108,
+        0.3039999999999985
+      ],
+      "mean_lift": 0.2053333333333335,
+      "reinit_sd": 0.10440945040240893,
+      "abs_mean_over_sd": 1.9666163603193918,
+      "sign_stable_across_reinit": true,
+      "lift_below_reinit_band": false
+    },
+    "4": {
+      "lifts": [
+        -0.5759999999999996,
+        -0.39999999999999947,
+        -0.7759999999999998
+      ],
+      "mean_lift": -0.5839999999999996,
+      "reinit_sd": 0.1881276162608777,
+      "abs_mean_over_sd": 3.1042757656067,
+      "sign_stable_across_reinit": true,
+      "lift_below_reinit_band": false
+    },
+    "5": {
+      "lifts": [
+        0.1519999999999997,
+        0.05600000000000005,
+        0.35999999999999943
+      ],
+      "mean_lift": 0.18933333333333305,
+      "reinit_sd": 0.15540055769955666,
+      "abs_mean_over_sd": 1.2183568459218805,
+      "sign_stable_across_reinit": true,
+      "lift_below_reinit_band": false
+    }
+  },
+  "all_rungs_lift_below_reinit_band": false,
+  "any_rung_stable_exceeds_band": true,
+  "ha4_true": false,
+  "verdict": "H-A4-FALSIFIED (lift exceeds re-init band)",
+  "note": "If H-A4 TRUE: the non-determinism that IS the identity (a_nondet_identity) drowns the composed-lift; P1 corpus can never resolve it at this readout — profound identity vs measurability tension. If FALSIFIED: lift is real, look to H-A1/A2/A3."
+}
