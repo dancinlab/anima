@@ -1,4 +1,7 @@
 {
+  "firestore": {
+    "rules": "firestore.rules"
+  },
   "hosting": {
     "public": "web",
     "ignore": [
@@ -12,6 +15,7 @@
     "cleanUrls": true,
     "trailingSlash": false,
     "rewrites": [
+      { "source": "/room", "destination": "/room.html" },
       { "source": "**", "destination": "/index.html" }
     ],
     "headers": [

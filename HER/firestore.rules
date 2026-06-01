@@ -1,0 +1,24 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // HER public room — a shared, open lounge.
+    // read: anyone. create: anyone, with a validated message shape.
+    // (update/delete locked; 'her' kind is the spontaneous-speech feed from the
+    //  anima daemon — for launch it is open-create, to be locked to a service
+    //  account once the publisher runs under one.)
+    match /rooms/public/messages/{msg} {
+      allow read: if true;
+      allow create: if request.resource.data.text is string
+                    && request.resource.data.text.size() > 0
+                    && request.resource.data.text.size() <= 600
+                    && request.resource.data.kind in ['human', 'her'];
+      allow update, delete: if false;
+    }
+
+    // everything else: closed
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}
