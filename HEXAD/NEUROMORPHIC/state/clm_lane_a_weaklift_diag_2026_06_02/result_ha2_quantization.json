@@ -1,0 +1,231 @@
+{
+  "hypothesis": "H-A2-QUANTIZATION-FLOOR",
+  "ties": [
+    "F-CLM-ONCHIP-LAYERPAGE-LADDER",
+    "a_scale_honest_scope",
+    "H_904"
+  ],
+  "method": "FIXED 25 anchors + FIXED backbone seed + IDENTICAL on-chip paged ladder N{2,3,4,5}; ONLY the host readout quantization of the final paged unit's analog forward output varies: 1/2/3/4-bit per-feature quantile codes, L1 concept-margin (1-bit==Hamming). lift = composed - frozen; 95% bootstrap CI over the pair sets (n_boot=2000).",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-01T17:53:53Z",
+  "backbone_seed": 20260602,
+  "backbone_int4_sha256": "d25e9f293cac2f643961fe50587a6d966a0dc29af09ac221bf528a376695edb8",
+  "input": "parallel",
+  "input_sha": "1990f87de250cb73",
+  "anchor_count": 25,
+  "bit_depths": [
+    1,
+    2,
+    3,
+    4
+  ],
+  "n_boot": 2000,
+  "rungs": [
+    {
+      "N": 2,
+      "composed_all_learned_hw": true,
+      "by_bits": {
+        "1": {
+          "composed_margin": -0.5920000000000005,
+          "frozen_margin": -1.1920000000000002,
+          "lift": 0.5999999999999996,
+          "lift_ci95": [
+            -0.7320000000000011,
+            1.8322999999999992
+          ],
+          "lift_boot_mean": 0.5885699999999999,
+          "ci_lo_gt0": false
+        },
+        "2": {
+          "composed_margin": -1.7360000000000007,
+          "frozen_margin": -3.071999999999999,
+          "lift": 1.3359999999999985,
+          "lift_ci95": [
+            -1.796200000000003,
+            4.260299999999993
+          ],
+          "lift_boot_mean": 1.314548,
+          "ci_lo_gt0": false
+        },
+        "3": {
+          "composed_margin": -3.808,
+          "frozen_margin": -7.087999999999994,
+          "lift": 3.279999999999994,
+          "lift_ci95": [
+            -3.1217999999999972,
+            9.420099999999994
+          ],
+          "lift_boot_mean": 3.240046,
+          "ci_lo_gt0": false
+        },
+        "4": {
+          "composed_margin": -8.304000000000002,
+          "frozen_margin": -15.312000000000012,
+          "lift": 7.00800000000001,
+          "lift_ci95": [
+            -6.372899999999985,
+            19.721599999999963
+          ],
+          "lift_boot_mean": 6.903742,
+          "ci_lo_gt0": false
+        }
+      }
+    },
+    {
+      "N": 3,
+      "composed_all_learned_hw": true,
+      "by_bits": {
+        "1": {
+          "composed_margin": -0.6960000000000006,
+          "frozen_margin": -0.8639999999999999,
+          "lift": 0.16799999999999926,
+          "lift_ci95": [
+            -1.2280999999999997,
+            1.5244999999999982
+          ],
+          "lift_boot_mean": 0.142052,
+          "ci_lo_gt0": false
+        },
+        "2": {
+          "composed_margin": -1.7520000000000024,
+          "frozen_margin": -2.3759999999999977,
+          "lift": 0.6239999999999952,
+          "lift_ci95": [
+            -2.676100000000002,
+            3.8682000000000007
+          ],
+          "lift_boot_mean": 0.552984,
+          "ci_lo_gt0": false
+        },
+        "3": {
+          "composed_margin": -3.736000000000004,
+          "frozen_margin": -5.088000000000001,
+          "lift": 1.3519999999999968,
+          "lift_ci95": [
+            -5.461200000000001,
+            8.080399999999996
+          ],
+          "lift_boot_mean": 1.197578,
+          "ci_lo_gt0": false
+        },
+        "4": {
+          "composed_margin": -8.024000000000001,
+          "frozen_margin": -10.543999999999997,
+          "lift": 2.519999999999996,
+          "lift_ci95": [
+            -11.668299999999991,
+            16.480200000000004
+          ],
+          "lift_boot_mean": 2.2080980000000006,
+          "ci_lo_gt0": false
+        }
+      }
+    },
+    {
+      "N": 4,
+      "composed_all_learned_hw": true,
+      "by_bits": {
+        "1": {
+          "composed_margin": -0.6880000000000006,
+          "frozen_margin": -0.6159999999999997,
+          "lift": -0.07200000000000095,
+          "lift_ci95": [
+            -1.5481,
+            1.2560999999999989
+          ],
+          "lift_boot_mean": -0.07517,
+          "ci_lo_gt0": false
+        },
+        "2": {
+          "composed_margin": -2.039999999999999,
+          "frozen_margin": -1.4800000000000004,
+          "lift": -0.5599999999999987,
+          "lift_ci95": [
+            -3.912200000000001,
+            2.533299999999995
+          ],
+          "lift_boot_mean": -0.569296,
+          "ci_lo_gt0": false
+        },
+        "3": {
+          "composed_margin": -4.424000000000007,
+          "frozen_margin": -3.344000000000001,
+          "lift": -1.0800000000000054,
+          "lift_ci95": [
+            -8.313,
+            5.592299999999978
+          ],
+          "lift_boot_mean": -1.108382,
+          "ci_lo_gt0": false
+        },
+        "4": {
+          "composed_margin": -9.544000000000011,
+          "frozen_margin": -7.231999999999999,
+          "lift": -2.312000000000012,
+          "lift_ci95": [
+            -17.572100000000002,
+            11.72149999999999
+          ],
+          "lift_boot_mean": -2.381622,
+          "ci_lo_gt0": false
+        }
+      }
+    },
+    {
+      "N": 5,
+      "composed_all_learned_hw": true,
+      "by_bits": {
+        "1": {
+          "composed_margin": -0.4480000000000004,
+          "frozen_margin": -0.35999999999999943,
+          "lift": -0.08800000000000097,
+          "lift_ci95": [
+            -1.6201999999999992,
+            1.532199999999999
+          ],
+          "lift_boot_mean": -0.08700800000000002,
+          "ci_lo_gt0": false
+        },
+        "2": {
+          "composed_margin": -1.1920000000000002,
+          "frozen_margin": -0.8480000000000008,
+          "lift": -0.3439999999999994,
+          "lift_ci95": [
+            -4.1842,
+            3.7722999999999756
+          ],
+          "lift_boot_mean": -0.36121,
+          "ci_lo_gt0": false
+        },
+        "3": {
+          "composed_margin": -2.559999999999995,
+          "frozen_margin": -1.936,
+          "lift": -0.6239999999999952,
+          "lift_ci95": [
+            -8.993000000000004,
+            8.53379999999999
+          ],
+          "lift_boot_mean": -0.6720839999999999,
+          "ci_lo_gt0": false
+        },
+        "4": {
+          "composed_margin": -5.328000000000003,
+          "frozen_margin": -4.0719999999999885,
+          "lift": -1.2560000000000144,
+          "lift_ci95": [
+            -19.05239999999999,
+            18.309399999999986
+          ],
+          "lift_boot_mean": -1.3536419999999998,
+          "ci_lo_gt0": false
+        }
+      }
+    }
+  ],
+  "onebit_any_ci_lo_gt0": false,
+  "multibit_any_ci_lo_gt0": false,
+  "ha2_true": false,
+  "verdict": "H-A2-FALSIFIED (multi-bit lift also straddles 0 — not a quantization artifact)"
+}
