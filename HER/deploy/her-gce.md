@@ -72,12 +72,14 @@ WantedBy=multi-user.target
 
 ## voice + persistence
 
-- **voice** — when `GOOGLE_API_KEY` is present, each utterance is voiced by Gemini TTS
-  (memory: gemini-voice-not-mind — vocal cords, not the words). The ~170 KB base64 WAV exceeds
-  hexa's `exec()` output cap, so python builds the WHOLE Firestore body (text + `voice` field)
-  straight to `/tmp/her_say.json` — the audio never passes through a hexa string. `/room`
-  renders a `<audio>` data-URI player for any message with a `voice` field. (Upstream the
-  `exec()` cap was also fixed — hexa-lang `hexa_exec` growable buffer.)
+- **voice (toggle)** — `HER_VOICE_ON=1` **AND** `GOOGLE_API_KEY` present → each utterance is
+  voiced by Gemini TTS (memory: gemini-voice-not-mind — vocal cords, not the words). Default
+  **OFF** (`HER_VOICE_ON=0`): text-only, no TTS call, no ~170 KB inline audio (keeps `/room`
+  light + cost 0). Flip the env in the unit + `systemctl restart` to toggle. When on, the
+  ~170 KB base64 WAV exceeds hexa's `exec()` output cap, so python builds the WHOLE Firestore
+  body (text + `voice` field) straight to `/tmp/her_say.json` — audio never passes through a
+  hexa string. `/room` renders a `<audio>` data-URI player for any message with a `voice`
+  field. (Upstream the `exec()` cap was also fixed — hexa-lang `hexa_exec` growable buffer.)
 - **persistence** — `charge` lives at `/var/lib/her/charge` (env `HER_STATE`), not `/tmp`, so
   the self survives a VM reboot. Key in `/etc/her.env`; never baked into the binary.
 
