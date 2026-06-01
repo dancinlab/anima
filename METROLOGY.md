@@ -1,7 +1,15 @@
 # METROLOGY — current state
 
 @title: 📏 METROLOGY — 측정자(尺) 검증: do our Φ / integration measures actually measure the thing?
-@goal: Validate the MEASURING INSTRUMENTS themselves (canonical phi_proxy · faithful big-Φ · concept-margin signals) — establish where each metric is valid, where it is blind/pathological, and what a construct-valid consciousness/integration measure requires. Every claim earned by `hexa verify` recompute (g5), no self-judged tier.
+@goal: Validate the MEASURING INSTRUMENTS themselves (canonical phi_proxy · faithful big-Φ · concept-margin signals) — establish where each metric is valid, where it is blind/pathological, and what a construct-valid consciousness/integration measure requires. **Every validated flaw MUST feed back as a FIX/GUARD in the actual measurer stdlib — METROLOGY is not a catalog, it improves the real ruler.** Every claim earned by `hexa verify` recompute (g5), no self-judged tier.
+
+## ⚙ FEEDBACK MANDATE — findings → real stdlib (not just a catalog)
+Every 🟢/🔴 METROLOGY verdict about a metric flaw MUST produce a concrete patch (guard · floor · corrected formula · or a deprecation note routing callers to the faithful oracle) in the ACTUAL measurer stdlib, shipped as a hexa-lang/anima PR. The measurer files under test:
+- `BRAIN/tool/module/_metrics/phi_proxy_native.hexa` — the variance-partition phi_proxy (Hc_1302 Cholesky-breakdown sentinel lives HERE → needs a breakdown-floor guard)
+- `HEXAD/IIT4/lib/iit4_{bigphi,bounded,complex,distinction,tpm,eca,relation}.hexa` — faithful big-Φ (reference oracle)
+- hexa-lang `stdlib/consciousness/iit4_*.hexa` — the canonical mirror of the above (keep in lockstep)
+- hexa-lang `stdlib/info/lz_complexity.hexa` — LZ surrogate
+A METROLOGY hypothesis is only DONE when its flaw verdict is committed AND (for a confirmed flaw) the corresponding stdlib patch is shipped or an explicit "no-fix, deprecate proxy here" ruling is recorded.
 
 ## status (completed-form)
 
@@ -14,6 +22,8 @@ The session surfaced a recurring METROLOGY problem: the measuring tools, not the
 - [ ] characterize the phi_proxy ceiling: map WHICH input structures break it (Cholesky-breakdown sentinel boundary)
 - [ ] construct-validity battery: a measure passes only if it (a) finite on composed input, (b) tracks faithful big-Φ rank, (c) survives shuffle-NULL, (d) is not a pure variance artifact
 - [ ] propose/verify a breakdown-floor-guarded richer signal (feeds Lane A Hc_1306 re-score)
+- [ ] **STDLIB FIX (Hc_1302)** — patch `BRAIN/tool/module/_metrics/phi_proxy_native.hexa`: replace the silent -2147483647 Cholesky-breakdown sentinel with a breakdown-floor guard (ridge/clamp or explicit "composed-input → route to faithful big-Φ"), so the proxy never silently reports a failure as a low Φ. Mirror to hexa-lang `stdlib/consciousness/`. Ship as a PR.
+- [ ] **STDLIB FIX (lineage)** — for each confirmed proxy⊥Φ flaw, add a doc/guard at the proxy callsite warning it ⊥ faithful big-Φ (route integration claims to the oracle), per the FEEDBACK MANDATE
 
 ## key facts
 - A measure that self-breaks on the target input cannot be used to claim ABSENCE of the target (the Lane A weak-lift closed-negative inherits this caveat).
