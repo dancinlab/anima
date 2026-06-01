@@ -1,0 +1,25 @@
+// smoke: confirm eca_tpm + big_phi run end-to-end, lock API + anchor.
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_eca.hexa"
+
+fn phi_of(rule: int, n: int, state: int) -> float {
+    let t = eca_tpm(rule, n)
+    let bp = big_phi(t, n, state)
+    return bp[0]
+}
+
+fn main() {
+    let n = 4
+    // anchor: identity-ish rule 204 (centre passthrough, u_i'=u_i) -> Φ should be 0.
+    println("rule204 n=4 state=15 Phi=" + to_string(phi_of(204, n, 15)))
+    println("rule204 n=4 state=10 Phi=" + to_string(phi_of(204, n, 10)))
+    // rule110 (universal/complex)
+    println("rule110 n=4 state=15 Phi=" + to_string(phi_of(110, n, 15)))
+    println("rule110 n=4 state=10 Phi=" + to_string(phi_of(110, n, 10)))
+    // rule90 (Sierpinski self-similar) — H_288 over-prediction witness
+    println("rule90  n=4 state=10 Phi=" + to_string(phi_of(90, n, 10)))
+    // rule30 (chaos)
+    println("rule30  n=4 state=10 Phi=" + to_string(phi_of(30, n, 10)))
+    // determinism: rule110 twice
+    println("rule110 n=4 state=15 Phi(rerun)=" + to_string(phi_of(110, n, 15)))
+}

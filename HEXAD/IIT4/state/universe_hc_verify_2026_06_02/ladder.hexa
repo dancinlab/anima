@@ -1,0 +1,182 @@
+// ladder.hexa — Hc_1286 (proxy<->faithful agreement vs N) + Hc_1298 (r(Phi,LZ) vs N).
+// For each N in {4,5,6,7}, over the 10-rule panel, compute r(bigphi, lz) and
+// r(bigphi, proxy_var). Falsifiers:
+//   Hc_1298.F1: any rung r(phi,lz) < 0.5 OR |r_end - r_start| >= 0.2 -> scale-VARIANT
+//   Hc_1286.F1: r(proxy,faithful) monotone with |Δr|>=0.2 -> SUPPORTED, else flat/non-monotone -> FALSIFIED
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_eca.hexa"
+import "stdlib/info/lz_complexity.hexa"
+
+fn _dir() -> string {
+    return "/Users/mini/dancinlab/anima-wt-universe-verify/HEXAD/IIT4/state/universe_hc_verify_2026_06_02"
+}
+
+fn eca_step(rule: int, n: int, s: int) -> int {
+    let mut ns = 0
+    let mut i = 0
+    while i < n {
+        let l = iit4_bit(s, (i - 1 + n) % n)
+        let c = iit4_bit(s, i)
+        let r = iit4_bit(s, (i + 1) % n)
+        let idx = 4 * l + 2 * c + r
+        if iit4_bit(rule, idx) == 1 { ns = ns + iit4_pow2(i) }
+        i = i + 1
+    }
+    return ns
+}
+
+fn traj_lz(rule: int, n: int, seed: int, t: int) -> float {
+    let mut seq = []
+    let mut s = seed
+    let mut k = 0
+    while k <= t {
+        let mut i = 0
+        while i < n { seq = seq.push(iit4_bit(s, i)); i = i + 1 }
+        s = eca_step(rule, n, s)
+        k = k + 1
+    }
+    return lz_complexity(seq)
+}
+
+fn proxy_var(rule: int, n: int, seed: int, t: int) -> float {
+    let mut weights = []
+    let mut s = seed
+    let mut k = 0
+    while k <= t {
+        let mut pc = 0
+        let mut i = 0
+        while i < n { pc = pc + iit4_bit(s, i); i = i + 1 }
+        weights = weights.push(to_float(pc))
+        s = eca_step(rule, n, s)
+        k = k + 1
+    }
+    let tl = len(weights)
+    let mut m = 0.0
+    let mut r = 0
+    while r < tl { m = m + weights[r]; r = r + 1 }
+    m = m / to_float(tl)
+    let mut v = 0.0
+    r = 0
+    while r < tl { let d = weights[r] - m; v = v + d * d; r = r + 1 }
+    return v / to_float(tl)
+}
+
+fn sqrtf(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut g = x
+    let mut k = 0
+    while k < 40 { g = 0.5 * (g + x / g); k = k + 1 }
+    return g
+}
+
+fn pearson(xs: array, ys: array) -> float {
+    let nn = len(xs)
+    if nn < 2 { return 0.0 }
+    let mut mx = 0.0
+    let mut my = 0.0
+    let mut i = 0
+    while i < nn { mx = mx + xs[i]; my = my + ys[i]; i = i + 1 }
+    mx = mx / to_float(nn); my = my / to_float(nn)
+    let mut sxy = 0.0
+    let mut sxx = 0.0
+    let mut syy = 0.0
+    i = 0
+    while i < nn {
+        let dx = xs[i] - mx
+        let dy = ys[i] - my
+        sxy = sxy + dx * dy; sxx = sxx + dx * dx; syy = syy + dy * dy
+        i = i + 1
+    }
+    if sxx <= 0.0 || syy <= 0.0 { return 0.0 }
+    return sxy / sqrtf(sxx * syy)
+}
+
+fn fj(a: array) -> string {
+    let mut s = "["
+    let mut i = 0
+    while i < len(a) { if i > 0 { s = s + ", " }; s = s + to_string(a[i]); i = i + 1 }
+    return s + "]"
+}
+
+fn main() {
+    let rules = [0, 30, 51, 60, 90, 105, 110, 150, 204, 255]
+    let nr = len(rules)
+    let nlist = [4, 5, 6, 7]
+    let seed_bits = 1            // low-order seed; per-N expand
+    let mut r_phi_lz_byN = []
+    let mut r_phi_proxy_byN = []
+    let mut log = "N,r_phi_lz,r_phi_proxy\n"
+
+    let mut ni = 0
+    while ni < len(nlist) {
+        let n = nlist[ni]
+        let full = iit4_pow2(n)
+        let allon = full - 1
+        let seed = 5 % full        // fixed reproducible seed within range
+        let tsteps = 24
+        let mut bphi = []
+        let mut lz = []
+        let mut pv = []
+        let mut ri = 0
+        while ri < nr {
+            let rule = rules[ri]
+            let tpm = eca_tpm(rule, n)
+            let bp = big_phi(tpm, n, allon)
+            bphi = bphi.push(bp[0])
+            lz = lz.push(traj_lz(rule, n, seed, tsteps))
+            pv = pv.push(proxy_var(rule, n, seed, tsteps))
+            ri = ri + 1
+        }
+        let rpl = pearson(bphi, lz)
+        let rpp = pearson(bphi, pv)
+        r_phi_lz_byN = r_phi_lz_byN.push(rpl)
+        r_phi_proxy_byN = r_phi_proxy_byN.push(rpp)
+        log = log + to_string(n) + "," + to_string(rpl) + "," + to_string(rpp) + "\n"
+        write_file(_dir() + "/ladder.csv", log)
+        ni = ni + 1
+    }
+
+    // Hc_1298 verdict
+    let r0 = r_phi_lz_byN[0]
+    let rL = r_phi_lz_byN[len(r_phi_lz_byN) - 1]
+    let mut all_ge = true
+    let mut i = 0
+    while i < len(r_phi_lz_byN) { if r_phi_lz_byN[i] < 0.5 { all_ge = false }; i = i + 1 }
+    let mut dr = rL - r0
+    if dr < 0.0 { dr = 0.0 - dr }
+    let hc1298 = if all_ge && dr < 0.2 { "SUPPORTED-scale-stable" } else { "FALSIFIED-scale-variant" }
+
+    // Hc_1286 verdict: monotone proxy<->faithful agreement with |Δr|>=0.2 ?
+    let p0 = r_phi_proxy_byN[0]
+    let pL = r_phi_proxy_byN[len(r_phi_proxy_byN) - 1]
+    let mut mono_up = true
+    let mut mono_dn = true
+    i = 1
+    while i < len(r_phi_proxy_byN) {
+        if r_phi_proxy_byN[i] < r_phi_proxy_byN[i-1] { mono_up = false }
+        if r_phi_proxy_byN[i] > r_phi_proxy_byN[i-1] { mono_dn = false }
+        i = i + 1
+    }
+    let mut dp = pL - p0
+    if dp < 0.0 { dp = 0.0 - dp }
+    let hc1286 = if (mono_up || mono_dn) && dp >= 0.2 { "SUPPORTED-monotone" } else { "FALSIFIED-flat-or-nonmonotone" }
+
+    let mut out = "{\n"
+    out = out + "  \"id\": \"UNIVERSE-Hc1286-1298-ladder\",\n"
+    out = out + "  \"N\": [4,5,6,7], \"rules\": [0,30,51,60,90,105,110,150,204,255],\n"
+    out = out + "  \"deterministic\": true, \"hexa_only\": true, \"llm\": \"none\",\n"
+    out = out + "  \"r_phi_lz_byN\": " + fj(r_phi_lz_byN) + ",\n"
+    out = out + "  \"r_phi_proxy_byN\": " + fj(r_phi_proxy_byN) + ",\n"
+    out = out + "  \"hc1298_r_phi_lz_dr\": " + to_string(dr) + ",\n"
+    out = out + "  \"hc1298_verdict\": \"" + hc1298 + "\",\n"
+    out = out + "  \"hc1286_dp\": " + to_string(dp) + ",\n"
+    out = out + "  \"hc1286_verdict\": \"" + hc1286 + "\"\n"
+    out = out + "}\n"
+    write_file(_dir() + "/ladder.json", out)
+    println(log)
+    println("r(phi,lz) by N    = " + fj(r_phi_lz_byN))
+    println("r(phi,proxy) by N = " + fj(r_phi_proxy_byN))
+    println("Hc_1298 (r_phi_lz scale): |dr|=" + to_string(dr) + " -> " + hc1298)
+    println("Hc_1286 (proxy<->faithful vs N): |dp|=" + to_string(dp) + " -> " + hc1286)
+    println("=== ladder done ===")
+}
