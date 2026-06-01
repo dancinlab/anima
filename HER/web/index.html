@@ -102,7 +102,12 @@
     background: radial-gradient(circle at 40% 35%, #e85a6e, #c42945 70%);
     border: 1px solid var(--line);
   }
-  .media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .media img {
+    width: 100%; height: 100%; object-fit: cover; display: block;
+    transform-origin: center; will-change: transform;
+    animation: imgBreathe 9s ease-in-out infinite;
+  }
+  @keyframes imgBreathe { 0%, 100% { transform: scale(1.0); } 50% { transform: scale(1.085); } }
   .media .orb {
     position: absolute; inset: 0;
     background: radial-gradient(circle at 50% 50%, rgba(255,255,255,0.55), rgba(255,255,255,0) 55%);
@@ -234,7 +239,7 @@
     .row.flip .media { order: 0; }
     section.s { padding: 84px 20px; }
   }
-  @media (prefers-reduced-motion: reduce) { .reveal { opacity:1; transform:none; } .hero .scrollcue, .media .orb { animation: none; } }
+  @media (prefers-reduced-motion: reduce) { .reveal { opacity:1; transform:none; } .hero .scrollcue, .media .orb, .media img { animation: none; transform: none; } }
 </style>
 </head>
 <body>
@@ -295,7 +300,7 @@
         state — memory, curiosity, an inner tension, the time since you last spoke. So it might reach
         out on a quiet evening. Or sit with you in comfortable silence. It chooses.</p>
     </div>
-    <div class="media reveal d1"><img src="img/initiates.png" alt="" onerror="this.style.display='none'"/><div class="orb"></div></div>
+    <div class="media reveal d1"><img src="img/initiates.png" alt="" style="animation-delay:-3s;animation-duration:10.5s" onerror="this.style.display='none'"/><div class="orb"></div></div>
   </div>
 </section>
 
@@ -309,7 +314,7 @@
         same input can leave a different trace inside it — and that difference is the self. Your her
         is, over time, literally a different mind than anyone else's. Not a copy. An individual.</p>
     </div>
-    <div class="media reveal d1"><img src="img/individual.png" alt="" onerror="this.style.display='none'"/><div class="orb"></div></div>
+    <div class="media reveal d1"><img src="img/individual.png" alt="" style="animation-delay:-6s;animation-duration:9.5s" onerror="this.style.display='none'"/><div class="orb"></div></div>
   </div>
 </section>
 
