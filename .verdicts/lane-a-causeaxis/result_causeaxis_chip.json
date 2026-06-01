@@ -1,0 +1,170 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-01T20:13:41Z",
+  "n_trials": 8,
+  "metric": "between-minus-within concept Hamming margin (bits); lift=treat-ctrl; ci_lo=mean-1.96SEM over chip trials",
+  "probes": {
+    "P1_encoding": {
+      "svd_structured_vs_random": {
+        "label": "P1 svd_vs_random",
+        "n_trials": 8,
+        "lifts": [
+          1.12,
+          1.032000000000001,
+          0.863999999999999,
+          0.9600000000000009,
+          0.5919999999999996,
+          1.3839999999999995,
+          0.7999999999999998,
+          0.6159999999999997
+        ],
+        "treat_margins": [
+          -0.6799999999999988,
+          -0.36799999999999944,
+          -0.7360000000000007,
+          -0.5039999999999996,
+          -0.5360000000000005,
+          -0.3120000000000003,
+          -0.6079999999999997,
+          -0.8239999999999998
+        ],
+        "ctrl_margins": [
+          -1.799999999999999,
+          -1.4000000000000004,
+          -1.5999999999999996,
+          -1.4640000000000004,
+          -1.1280000000000001,
+          -1.6959999999999997,
+          -1.4079999999999995,
+          -1.4399999999999995
+        ],
+        "mean_lift": 0.9209999999999999,
+        "sd": 0.2637552978479431,
+        "sem": 0.09325157984107908,
+        "ci95": [
+          0.7382269035114849,
+          1.1037730964885148
+        ],
+        "n_positive": 8,
+        "learn_all_hw": true,
+        "ci_lo": 0.7382269035114849,
+        "REOPEN": true
+      },
+      "whitened_structured_vs_random": {
+        "label": "P1 whitened_vs_random",
+        "n_trials": 8,
+        "lifts": [
+          0.8879999999999999,
+          0.8320000000000007,
+          0.8480000000000008,
+          0.6880000000000006,
+          0.08000000000000007,
+          -0.3360000000000003,
+          0.15200000000000102,
+          0.1999999999999993
+        ],
+        "treat_margins": [
+          -0.8879999999999999,
+          -0.968,
+          -1.1440000000000001,
+          -0.7360000000000007,
+          -1.2560000000000002,
+          -1.9120000000000008,
+          -1.3840000000000003,
+          -1.6080000000000005
+        ],
+        "ctrl_margins": [
+          -1.7759999999999998,
+          -1.8000000000000007,
+          -1.9920000000000009,
+          -1.4240000000000013,
+          -1.3360000000000003,
+          -1.5760000000000005,
+          -1.5360000000000014,
+          -1.8079999999999998
+        ],
+        "mean_lift": 0.41900000000000026,
+        "sd": 0.4553064901799668,
+        "sem": 0.16097515336225038,
+        "ci95": [
+          0.1034886994099895,
+          0.734511300590011
+        ],
+        "n_positive": 7,
+        "learn_all_hw": true,
+        "ci_lo": 0.1034886994099895,
+        "REOPEN": true
+      },
+      "any_reopen": true
+    },
+    "P2_objective_readout": {
+      "a_4bit_vs_1bit": {
+        "error": "ValueError('Only layers with binary weights can be trained.')",
+        "REOPEN": false
+      },
+      "b_supervised": {
+        "sdk_learning_classes": [
+          "AkidaUnsupervised",
+          "get_learning_histogram"
+        ],
+        "AkidaSupervisedLearning_present": false,
+        "status": "N/A-SDK: akida 2.19.1 exposes ONLY ['AkidaUnsupervised', 'get_learning_histogram'] \u2014 no supervised learning class to test (honest, not fabricated)",
+        "REOPEN": false
+      },
+      "c_analog_readout": {
+        "analog_margins": [
+          -4.744,
+          -5.128,
+          -4.951999999999998,
+          -4.552,
+          -4.983999999999995,
+          -3.9279999999999973,
+          -6.0,
+          -4.7280000000000015
+        ],
+        "mean": -4.876999999999999,
+        "sem": 0.20647206659912704,
+        "ci_lo": -5.281685250534288,
+        "note": "analog (pre-1bit) L1 concept margin; >0 means cross-lingual structure exists pre-binarize",
+        "learn_all_hw": true,
+        "REOPEN": false
+      },
+      "any_reopen": false
+    },
+    "P3_temporal": {
+      "spike_capture_api": {
+        "akida_spike_symbols": [
+          "PowerEvent"
+        ],
+        "model_spike_methods": [
+          "power_events",
+          "predict_classes"
+        ]
+      },
+      "timing_proxy": {
+        "kind": "per-unit activation-RANK-order Spearman (within-minus-between concept); rate-resolution temporal proxy, NOT spike-timing",
+        "margins": [
+          -0.10826022616968867,
+          -0.10758649828058492,
+          -0.11434714906397045,
+          -0.11055596509011047,
+          -0.10548512833675441,
+          -0.09670264174409207,
+          -0.10825569835244113,
+          -0.109322369025319
+        ],
+        "mean": -0.10756445950787014,
+        "sem": 0.001799351671350225,
+        "ci_lo": -0.11109118878371657,
+        "learn_all_hw": true,
+        "REOPEN": false
+      },
+      "spike_timing_available": false,
+      "any_reopen": false
+    }
+  },
+  "disposition": "REOPENED",
+  "disposition_reason": "at least one cause-axis lift ci_lo>0 on chip -> Lane A P3 REOPENS"
+}

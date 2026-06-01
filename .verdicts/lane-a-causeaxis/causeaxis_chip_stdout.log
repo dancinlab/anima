@@ -1,0 +1,51 @@
+[cause] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1  N=8 trials  units=32
+
+[cause] ========== PROBE 1 — INPUT ENCODING ==========
+[cause] P1 svd_vs_random                 trial 0: treat=-0.6800 ctrl=-1.8000 lift=+1.1200 learn=True
+[cause] P1 svd_vs_random                 trial 1: treat=-0.3680 ctrl=-1.4000 lift=+1.0320 learn=True
+[cause] P1 svd_vs_random                 trial 2: treat=-0.7360 ctrl=-1.6000 lift=+0.8640 learn=True
+[cause] P1 svd_vs_random                 trial 3: treat=-0.5040 ctrl=-1.4640 lift=+0.9600 learn=True
+[cause] P1 svd_vs_random                 trial 4: treat=-0.5360 ctrl=-1.1280 lift=+0.5920 learn=True
+[cause] P1 svd_vs_random                 trial 5: treat=-0.3120 ctrl=-1.6960 lift=+1.3840 learn=True
+[cause] P1 svd_vs_random                 trial 6: treat=-0.6080 ctrl=-1.4080 lift=+0.8000 learn=True
+[cause] P1 svd_vs_random                 trial 7: treat=-0.8240 ctrl=-1.4400 lift=+0.6160 learn=True
+[cause] P1 whitened_vs_random            trial 0: treat=-0.8880 ctrl=-1.7760 lift=+0.8880 learn=True
+[cause] P1 whitened_vs_random            trial 1: treat=-0.9680 ctrl=-1.8000 lift=+0.8320 learn=True
+[cause] P1 whitened_vs_random            trial 2: treat=-1.1440 ctrl=-1.9920 lift=+0.8480 learn=True
+[cause] P1 whitened_vs_random            trial 3: treat=-0.7360 ctrl=-1.4240 lift=+0.6880 learn=True
+[cause] P1 whitened_vs_random            trial 4: treat=-1.2560 ctrl=-1.3360 lift=+0.0800 learn=True
+[cause] P1 whitened_vs_random            trial 5: treat=-1.9120 ctrl=-1.5760 lift=-0.3360 learn=True
+[cause] P1 whitened_vs_random            trial 6: treat=-1.3840 ctrl=-1.5360 lift=+0.1520 learn=True
+[cause] P1 whitened_vs_random            trial 7: treat=-1.6080 ctrl=-1.8080 lift=+0.2000 learn=True
+
+[cause] ========== PROBE 2 — OBJECTIVE + READOUT ==========
+[cause] P2a 4bit error: ValueError('Only layers with binary weights can be trained.')
+[cause] P2b supervised: N/A-SDK: akida 2.19.1 exposes ONLY ['AkidaUnsupervised', 'get_learning_histogram'] — no supervised learning class to test (honest, not fabricated)
+[cause] P2c analog vs post-1bit readout (same chip fwd, two margin fns)
+[cause] P2c trial 0: analog_margin=-4.784 post1bit_margin=-1.3600 (analog space is L1, scale differs)
+[cause] P2c trial 1: analog_margin=-4.584 post1bit_margin=-1.6080 (analog space is L1, scale differs)
+[cause] P2c trial 2: analog_margin=-4.464 post1bit_margin=-1.1840 (analog space is L1, scale differs)
+[cause] P2c trial 3: analog_margin=-4.552 post1bit_margin=-1.6080 (analog space is L1, scale differs)
+[cause] P2c trial 4: analog_margin=-4.864 post1bit_margin=-1.1120 (analog space is L1, scale differs)
+[cause] P2c trial 5: analog_margin=-5.432 post1bit_margin=-1.7040 (analog space is L1, scale differs)
+[cause] P2c trial 6: analog_margin=-5.208 post1bit_margin=-1.3280 (analog space is L1, scale differs)
+[cause] P2c trial 7: analog_margin=-4.832 post1bit_margin=-1.3760 (analog space is L1, scale differs)
+[cause] P2c analog margin mean=-4.877 ci_lo=-5.282 REOPEN=False
+
+[cause] ========== PROBE 3 — TEMPORAL CODE ==========
+[cause] P3 spike API: akida=['PowerEvent'] model=['power_events', 'predict_classes']
+[cause] P3 trial 0: timing_proxy_margin(within-between rankcorr)=-0.1083
+[cause] P3 trial 1: timing_proxy_margin(within-between rankcorr)=-0.1076
+[cause] P3 trial 2: timing_proxy_margin(within-between rankcorr)=-0.1143
+[cause] P3 trial 3: timing_proxy_margin(within-between rankcorr)=-0.1106
+[cause] P3 trial 4: timing_proxy_margin(within-between rankcorr)=-0.1055
+[cause] P3 trial 5: timing_proxy_margin(within-between rankcorr)=-0.0967
+[cause] P3 trial 6: timing_proxy_margin(within-between rankcorr)=-0.1083
+[cause] P3 trial 7: timing_proxy_margin(within-between rankcorr)=-0.1093
+[cause] P3 timing-proxy margin mean=-0.1076 ci_lo=-0.1111 REOPEN=False
+
+[cause] ========== DISPOSITION ==========
+[cause] P1 encoding any_reopen=True | P2 objective any_reopen=False | P3 timing any_reopen=False
+[cause] DISPOSITION: REOPENED
+[cause] at least one cause-axis lift ci_lo>0 on chip -> Lane A P3 REOPENS
+[cause] wrote /home/ubuntu/clm_kosmos_akida/out/result_causeaxis.json

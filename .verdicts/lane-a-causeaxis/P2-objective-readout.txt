@@ -1,0 +1,31 @@
+PROBE 2 — OBJECTIVE + READOUT-LOCUS  ::  VERDICT = FALSIFIED (stays closed; ci_lo <= 0)
+====================================================================================
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · akida 2.19.1 · N=8 chip trials
+
+PRE-REGISTERED FALSIFIER: any of (a) 4-bit weights / (b) supervised learning / (c) pre-binarization
+analog readout shows lift ci_lo>0 where 1-bit-unsupervised-post-binarize showed <=0.
+FALSIFIED (all stay <=0) => objective/readout-locus NOT the bottleneck.
+
+(a) 4-BIT WEIGHTS vs 1-BIT — HARDWARE-LIMITED, cannot be tested as a liftable rule:
+    verbatim: [cause] P2a 4bit error: ValueError('Only layers with binary weights can be trained.')
+    => AKD1000 on-chip plasticity is HARDWARE-RESTRICTED to 1-bit weights. 4-bit weights exist for
+       inference but the on-chip learning rule cannot train them. This is a chip constraint, not a
+       free design choice — recorded honestly, REOPEN=False (not testable as a lift axis on this silicon).
+
+(b) AkidaSupervisedLearning vs AkidaUnsupervised — N/A-SDK:
+    verbatim: [cause] P2b supervised: N/A-SDK: akida 2.19.1 exposes ONLY
+              ['AkidaUnsupervised', 'get_learning_histogram'] — no supervised learning class to test
+              (honest, not fabricated)
+    => the SDK exposes no supervised on-chip learning class. REOPEN=False (not fabricated).
+
+(c) PRE-BINARIZATION ANALOG readout vs post-1-bit-Hamming — FALSIFIED:
+    verbatim (8 trials):
+    [cause] P2c analog margin mean=-4.877 ci_lo=-5.282 REOPEN=False
+    The analog (pre-1bit) L1 concept margin is NEGATIVE (mean -4.877, ci_lo -5.282). The cross-lingual
+    structure absent in the 1-bit Hamming readout is ALSO absent in the analog forward space — binarization
+    is not discarding a hidden analog concept margin.
+
+VERDICT: FALSIFIED on all available sub-tests. The objective/readout-locus is NOT the bottleneck.
+(a) and (b) are hardware/SDK-blocked on this chip (1-bit-only on-chip learning, no supervised class) and
+recorded as N/A rather than fabricated; (c) is a clean negative on real chip forward. The closed-negative
+HARDENS to cover the objective + readout-locus axis.

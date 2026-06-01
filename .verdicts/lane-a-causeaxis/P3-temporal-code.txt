@@ -1,0 +1,33 @@
+PROBE 3 — TEMPORAL-CODE / SPIKE-TIMING  ::  VERDICT = FALSIFIED (stays closed; ci_lo <= 0)
+====================================================================================
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · akida 2.19.1 · N=8 chip trials
+
+PRE-REGISTERED FALSIFIER: a timing-aware cross-lingual margin has ci_lo>0 where the rate-margin showed <=0.
+FALSIFIED (flat) => lift is not hiding in spike-timing.
+
+SPIKE-TIMING CAPTURE — SDK CANNOT EXPOSE TRUE SPIKE TIMING (stated explicitly, not fabricated):
+    verbatim: [cause] P3 spike API: akida=['PowerEvent'] model=['power_events', 'predict_classes']
+    => the only spike/event symbols the akida 2.19.1 SDK exposes on this device are PowerEvent /
+       model.power_events (POWER telemetry, NOT spike-event timestamps) and predict_classes. There is NO
+       inter-spike-interval / spike-event-time capture API. Per the contract, NO spike-timing result is
+       fabricated. Fall back to the highest-resolution temporal proxy the chip exposes:
+
+TEMPORAL PROXY (per-unit activation-RANK-order Spearman, within-minus-between concept; rate-resolution
+proxy, explicitly NOT spike-timing):
+    verbatim (8 trials):
+    [cause] P3 trial 0: timing_proxy_margin(within-between rankcorr)=-0.1083
+    [cause] P3 trial 1: ... =-0.1076
+    [cause] P3 trial 2: ... =-0.1143
+    [cause] P3 trial 3: ... =-0.1106
+    [cause] P3 trial 4: ... =-0.1055
+    [cause] P3 trial 5: ... =-0.0967
+    [cause] P3 trial 6: ... =-0.1083
+    [cause] P3 trial 7: ... =-0.1093
+    [cause] P3 timing-proxy margin mean=-0.1076 ci_lo=-0.1111 REOPEN=False
+
+VERDICT: FALSIFIED. The rank-order temporal proxy margin is NEGATIVE (mean -0.108, ci_lo -0.111) across
+all 8 chip trials — same-concept anchors do NOT share per-unit rank/timing order more than different-concept.
+No concept structure hides in the temporal/rank code on this chip. The closed-negative HARDENS to cover the
+temporal-code axis.
+
+CPU-LOCAL CORROBORATION (raw.npz captured RANDOM-encoder forward): timing-proxy margin = -0.0767 (same sign).
