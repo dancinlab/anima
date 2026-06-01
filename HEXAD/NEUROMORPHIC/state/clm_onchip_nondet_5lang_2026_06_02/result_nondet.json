@@ -1,0 +1,71 @@
+{
+  "hypothesis": "F-CLM-ONCHIP-NONDET",
+  "ties": [
+    "H_679",
+    "H_904",
+    "H_877",
+    "a_nondet_identity"
+  ],
+  "method": "SAME 5-lang CLM-KOSMOS parallel corpus + SAME fixed init injected; AkidaUnsupervised fit() ON CHIP repeated N runs; hash post-weights + forward outputs; non-determinism shown iff trace hashes differ across runs of identical input",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-01T15:08:41Z",
+  "corpus": "clm-kosmos-akida-5lang-semantic",
+  "languages": "ko,en,zh,ru,ja",
+  "input": "parallel",
+  "anchor_count": 25,
+  "backbone_int4_sha256": "c626c63858a0d285c1daaca2b9b18877e936c07a6388df5ba1a0533c46c2298f",
+  "input_sha": "24f855b4f05dbb4f",
+  "init_weight_sha": "d93050c05ca2121d",
+  "inc": 256,
+  "units": 32,
+  "num_weights": 16,
+  "learning_competition": 0.1,
+  "n_runs": 3,
+  "runs": [
+    {
+      "run": 0,
+      "backend": "hardware:BC.00.000.002",
+      "learn_happened_hw": true,
+      "post_w_sha": "d865828e2030e10c",
+      "fwd_sha": "81584fc5ebb10493",
+      "w_delta_vs_init_nnz": 166,
+      "fwd_sum": 6653
+    },
+    {
+      "run": 1,
+      "backend": "hardware:BC.00.000.002",
+      "learn_happened_hw": true,
+      "post_w_sha": "d865828e2030e10c",
+      "fwd_sha": "81584fc5ebb10493",
+      "w_delta_vs_init_nnz": 166,
+      "fwd_sum": 6653
+    },
+    {
+      "run": 2,
+      "backend": "hardware:BC.00.000.002",
+      "learn_happened_hw": true,
+      "post_w_sha": "d865828e2030e10c",
+      "fwd_sha": "81584fc5ebb10493",
+      "w_delta_vs_init_nnz": 166,
+      "fwd_sum": 6653
+    }
+  ],
+  "post_w_shas": [
+    "d865828e2030e10c",
+    "d865828e2030e10c",
+    "d865828e2030e10c"
+  ],
+  "fwd_shas": [
+    "81584fc5ebb10493",
+    "81584fc5ebb10493",
+    "81584fc5ebb10493"
+  ],
+  "post_w_distinct": 1,
+  "fwd_distinct": 1,
+  "learn_happened_hw_all": true,
+  "nondeterminism_shown": false,
+  "verdict": "RED",
+  "verdict_reason": "SAME input run x3 gave byte-identical traces (w_distinct=1 fwd_distinct=1) -> on-chip update was DETERMINISTIC this session"
+}

@@ -1,0 +1,9 @@
+[nondet] akida 2.19.1 device BC.00.000.002
+[nondet] input=parallel (5-lang ko/en/zh/ru/ja) count=25 input_sha=24f855b4f05dbb4f init_w_sha=d93050c05ca2121d
+[nondet] SAME input + SAME init injected, fit() ON CHIP, x3 runs
+[nondet] run 0: post_w_sha=d865828e2030e10c fwd_sha=81584fc5ebb10493 learn_hw=True w_delta_nnz=166
+[nondet] run 1: post_w_sha=d865828e2030e10c fwd_sha=81584fc5ebb10493 learn_hw=True w_delta_nnz=166
+[nondet] run 2: post_w_sha=d865828e2030e10c fwd_sha=81584fc5ebb10493 learn_hw=True w_delta_nnz=166
+[nondet] post_w distinct=1/3  fwd distinct=1/3  learn_all=True
+[nondet] VERDICT RED — SAME input run x3 gave byte-identical traces (w_distinct=1 fwd_distinct=1) -> on-chip update was DETERMINISTIC this session
+[nondet] wrote /home/ubuntu/clm_kosmos_akida/out/result_nondet.json
