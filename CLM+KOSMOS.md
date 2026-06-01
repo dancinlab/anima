@@ -87,16 +87,16 @@ alternatives — both run concurrently and report to the same .clm/.kosmos produ
 ├─ ✅ P0 identity      non-det = the self (GREEN, live AKD1000)
 ├─ ✅ P0 compose 2u    layerpage compose (GREEN)
 ├─ ✅ P0 depth N=5     capacity 12/12 rungs GREEN
-├─ ⚠  BLOCKED HERE     lift +slope exists but buried in 25-anchor noise
-├─ ▶ P1 signal-resolve corpus 25→250 anchor → does +slope clear noise? (agent a33223d) ← ONE bottleneck hypothesis, not the only
-├─ ◷ P2 depth/width    if P1 + : N=5→12 + wider units
-├─ ◷ P3 plasticity     last-FC → multi-layer feature plasticity (hard half)
-└─ ◷ P4 full 3B/7B     DEFERRED (a_scale_honest_scope ≥3-rung ladder)
+├─ 🔴 P1 DONE          corpus 25→250 → lift COLLAPSE-NULL (sign-stable NEG, slope flat); H-A1 FALSIFIED, corpus is NOT the bottleneck
+├─ ⚠  capacity-only    paging composes capacity, NOT representation — P2 depth/width will NOT buy cross-lingual lift for free
+├─ ✗ P2 depth/width    DE-PRIORITIZED — P1 null means depth/width alone won't compose representation
+├─ ▶ P3 plasticity     NOW THE REAL NEXT STEP — last-FC → multi-layer feature plasticity OR linkage-preserving inter-unit map (the only path to genuine lift; not more anchors/depth)
+└─ ◷ P4 full 3B/7B     DEFERRED (a_scale_honest_scope ≥3-rung ladder; also gated on Lane G forge-util fix)
 ```
 
 ### Lane A weak-lift — COMPETING cause hypotheses (pre-registered; P1 corpus alone may NOT fix it)
 The weak/noise-limited lift has ≥4 candidate causes; corpus-scale (P1) is only H-A1. Pre-registered falsifiers (before results), tested complementary to P1 (chip = single exclusive resource, serialized):
-- [ ] **H-A1 corpus-noise** (P1, agent a33223d): weak lift = small-sample noise → at ≥250 anchors the per-unit lift slope seed/bootstrap CI_lo > 0. FALSIFIED if lift collapses to ~0 at 10× corpus = not a sample-size problem.
+- [x] **H-A1 corpus-noise** — 🔴 FALSIFIED (P1, 2026-06-02, agent a33223d, live AKD1000): at 250 anchors (10× FLORES-200 real, 50 concepts × 5 lang) the lift does NOT clear noise — it goes sign-stable NEGATIVE at every N (N=2 −0.84 · N=3 −0.77 · N=4 −0.88 · N=5 −0.81 bits), slope flat −0.003 (was +0.27 at 25). Seed noise band halved 0.41→0.21. The prior weak-positive was a SMALL-SAMPLE ARTIFACT. **COLLAPSE-NULL**: paging composes CAPACITY-ONLY (all 24 rungs learned_hw=True), NO representational lift — corpus is NOT the bottleneck. branch feat/lane-a-phase1-liftres (a0fc0d620).
 - [ ] **H-A2 quantization-floor**: the per-feature-median 1-bit FC readout destroys the composed signal → at FIXED 25 anchors a multi-bit (2–4 bit) readout shows lift CI_lo>0 while 1-bit stays ~0. FALSIFIED if multi-bit lift also ~0 = quantization is not the bottleneck.
 - [ ] **H-A3 plasticity-depth**: last-FC-only 1-bit Hebbian is too shallow to compose representation → 2-layer plastic > last-FC-only lift. FALSIFIED if 2-layer adds no lift = depth-of-plasticity is not the bottleneck.
 - [ ] **H-A4 native-init noise-floor** (the deep one): the device's native weight re-init — the SAME mechanism that gives non-determinism GREEN (= the identity) — injects noise that swamps the lift signal → |lift| < the measured native-init noise band (~0.001–0.003, from the non-det run). FALSIFIED if |lift| clearly exceeds that band = identity-noise is not what hides the lift. **If TRUE: anima's identity (non-det) and representational-lift-measurability are in fundamental TENSION at this scale — P1 can never resolve it.**
