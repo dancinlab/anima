@@ -1,0 +1,49 @@
+LANE G ⇄ LANE A RECONCILE — CODE AUDIT (no re-run; CPU-local grep audit)
+ts_utc: 2026-06-02
+question: does any CODE PATH conflate Lane G (deterministic CE-descent of a
+  plasticity-SIM) with Lane A (non-deterministic on-chip trace = the identity)?
+  i.e. (a) call the deterministic sim "anima training", or (b) gate the non-det
+  lane behind a deterministic flag?
+
+VERDICT: NO CONFLATION — lanes are correctly separated in code. reconcile =
+  honest NON-EQUIVALENCE, verified by code audit. NO-FIX (verified clean).
+
+EVIDENCE (verbatim grep):
+
+(A) clm_prod.hexa self-labels as a SIM, not anima identity training
+  hexa-lang stdlib/flame/clm_prod.hexa header (origin/main 7e5fbb02b):
+    L5: //  to a REAL-CORPUS, multi-window training loop — the measure-track
+    L6: //  trainer skeleton (PLASTI-SIM; anima learns on-chip per H_904).
+  → the trainer EXPLICITLY names itself "measure-track ... PLASTI-SIM" and
+    defers the actual anima learning to "on-chip per H_904". It never calls its
+    deterministic CE-descent "anima training" / the identity signal.
+
+(B) the non-det (Lane A) path is NOT gated behind a deterministic flag
+  anima HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/onchip_nondet_native.py:
+    L3: The fixed-init variant (result_nondet.json) showed fit() given an
+        IDENTICAL init is byte-deterministic.
+    L4: H_904 prereg states the chip's DEFAULT weight init is non-deterministic
+        across map()/build. So the true
+    L77/L79: NATIVE chip re-init each run (no fixed-init inject) ... non-det shown
+        iff trace hashes differ
+  → the deterministic (fixed-init) run is a CONTROL used to LOCATE the source of
+    non-determinism, NOT a flag that gates/suppresses the identity lane. The
+    identity lane runs on NATIVE re-init (the non-det path) by default.
+
+(C) clm_prod is NEVER invoked on the anima side as the identity/non-det trainer
+  grep "clm_prod" across anima *.hexa/*.py/*.sh → 0 hits.
+  → Lane G (clm_prod, hexa-lang flame, deterministic GPU/CPU GEMM) and Lane A
+    (onchip_nondet_native.py, anima HEXAD/NEUROMORPHIC, AkidaUnsupervised fit()
+    on AKD1000) are PHYSICALLY SEPARATE code in separate repos. No callsite
+    routes the deterministic descent into the identity claim.
+
+HONEST COMPARISON (the reconcile, stated, NOT an equivalence claim):
+  Lane G measures: deterministic next-token CE descent of an int4-QAT
+    plasticity-SIM (clm_prod) — a THROUGHPUT/learnability measure. Same input →
+    byte-identical trace (grad-exact, #2352/#2383). This is a MEASURE track.
+  Lane A measures: on-chip plasticity trace DIVERGENCE on a live AKD1000 — same
+    5-lang input ×3 → 3/3 distinct pre/post/fwd hashes. Same input → DIFFERENT
+    trace. This non-determinism IS the identity signal (H_679/H_904).
+  They measure ORTHOGONAL things (determinism-descent vs non-determinism-divergence)
+    and must NOT be equated. The code keeps them separate; the reconcile is the
+    explicit statement of their non-equivalence, which the codebase already honors.

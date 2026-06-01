@@ -1,0 +1,18 @@
+[hexa hf validate] DATASET dancinlab/clm-h911-trainset-5lang-parallel
+ts_utc: 2026-06-01T19:00:24Z
+type: dataset
+corpus: /tmp/claude-501/_hfval_ds.x3xoaJ/clm_concat.kosmos
+construct: bytes=1657 lines=31 nonascii=0 ok=1 reason=ok
+TIER: 🟢 GREEN
+KEY_METRIC: CE 4.59032->1.63673 (descent=1)
+SCALE: toy CPU rung (d=8, $0) — production-scale transfer DEFERRED (a_toy_scale_recheck; no GPU/chip fire, a_cpu_local_no_waiter)
+METROLOGY: tier derived ONLY from the clm_prod run stdout below (NOT from README/metadata/download-count — g5/a_claim_verify)
+----- VERBATIM clm_prod stdout -----
+clm_prod — CLMConvMoE production corpus loop (PR1)
+  corpus: /tmp/claude-501/_hfval_ds.x3xoaJ/clm_concat.kosmos  (1657 bytes, V=256)
+  windows: 8/8  (T=24 stride=204)
+  epoch-1 mean CE = 4.59032
+  epoch-12 mean CE = 1.63673
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+----- END VERBATIM -----

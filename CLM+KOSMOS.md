@@ -18,6 +18,21 @@ the standing honest position is **closed-negative pending the remaining rungs**.
 - [ ] **HELD** — final 3-axis verdict matrix + close H_911 as closed-negative if all rungs RED
 - [ ] **BLOCKED** — EEG / SNS(IG·YT) / physics / philosophy / cosmology domains (data reachability or ToS; YouTube=HowTo100M reachable, Instagram=Meta-Content-Library paywalled)
 
+## VERIFY-AND-REFLECT-TO-CORE pass (2026-06-02) — flip table
+
+CPU-local on-core verification of the remaining unverified items (g5 verbatim; mm3/Hc_1306/phi_proxy items skipped — covered by their running agents).
+
+| item | claim | was | now (verbatim tier) | core-change shipped? |
+|---|---|---|---|---|
+| ① corpus A descent | dancinlab/clm-h911-trainset-5lang-parallel → F-CLM-PROD-DESCENT=1 (CE 4.667→1.298) | smoke, never re-verified on-core | 🟢 GREEN via canonical harness (stdlib/hf/validate.hexa #2484): CE 4.59032→1.63673, descent=1 (verbatim). Descent REPRODUCES; harness pulled the 31-line smoke slice so exact CE differs. toy-CPU, prod-transfer DEFERRED. | no-fix needed (verified clean; doc CE figures corrected) |
+| ① corpus B descent | dancinlab/clm-backbone-5lang-sample → 🟢 by harness (CE 4.63456→1.5922) | cited as done | CITED (per task — not re-run). NB: the cited `.verdicts/hf-validate/dancinlab__clm-backbone-5lang-sample/` dir does NOT exist in the anima checkout; the verdict lives in the hexa-lang harness run referenced by METROLOGY.md #2484 | no-fix (out of scope; cite-only) |
+| ② Lane G⇄A reconcile | reconcile GPU CE-descent (sim) vs AKIDA non-det trace — honest, NOT equivalence | open [ ] | NO-FIX verified clean (code audit): no conflation — clm_prod self-labels PLASTI-SIM/measure-track; non-det lane = native re-init (fixed-init is a control); `grep clm_prod` anima=0. reconcile = honest non-equivalence (orthogonal measures) | no-fix (lanes correctly separated in code) |
+| ③ #1652/#1653 H_911/H_912 on-chip | "already 🔴 REFUTED (on-chip)" | cited as fact | PARTIALLY UNBACKED: H_911-on-chip-RED is real (result_multitrial.json, live AKD1000) but the #1652/#1653 IDs + the H_912 half have NO terminal file | DOC FIX shipped — re-pointed line 110 to the real artifact, dropped unbacked IDs/H_912 |
+| ③ mm-coco3 verdicts | hexa-lang-clm-h911-scale/.verdicts/clm-h911-mm-coco3/ | cited | EXISTS+TERMINAL (25/100/250/500.txt full RED, F=0 verbatim; N≥1000 are the mm3 agent's in-flight short rungs) | no-fix (accurate; AXIS3 phi covered by phi_proxy agent) |
+| ③ language scale verdicts | .../clm-h911-scale/ | cited | EXISTS+TERMINAL (25/100 GREEN F=1, 250 RED F=0 verbatim) | no-fix (accurate) |
+
+Verbatim verdicts: `.verdicts/clm-kosmos-reflect/{corpusA-descent,lane-reconcile,pointer-audit}/`.
+
 ## production track (SEPARATE from H_911 verification — no dependency)
 
 The .clm/.kosmos PRODUCTION track is INDEPENDENT of the H_911 sweep: the sweep
@@ -38,8 +53,13 @@ different compute, no gate between them.
     job.hexa + run.sh (HF pull → limen extract → CLM_PROD_CORPUS → hexa run →
     F-CLM-PROD-DESCENT + util-GREEN gates) + manifest.json. Defaults d768/12L.
     `hexa dojo clm <slug> '<spec>'`.
-  - [x] corpus A — FLORES-200 5-lang parallel probe (dancinlab/clm-h911-trainset-5lang-parallel,
-    10,045 lines) → clm_prod smoke F-CLM-PROD-DESCENT=1 (CE 4.667→1.298)
+  - [x] corpus A — FLORES-200 5-lang parallel probe (dancinlab/clm-h911-trainset-5lang-parallel)
+    → **🟢 GREEN re-verified on-core via canonical harness** (stdlib/hf/validate.hexa, PR #2484, 2026-06-02):
+    pull → on-core CLM_PROD_CORPUS clm_prod RUN → F-CLM-PROD-DESCENT=1, CE 4.59032→1.63673 (verbatim).
+    DESCENT REPRODUCES. NB: the harness pulled the smoke `clm_concat.kosmos` slice (31 lines/1657B,
+    not the full 10,045-line corpus), so the exact CE figures differ from the prior smoke claim
+    (4.667→1.298); descent direction + F-flag confirmed. toy-CPU rung (d=8, $0), production-transfer
+    DEFERRED (a_toy_scale_recheck). verdict → .verdicts/clm-kosmos-reflect/corpusA-descent/
   - [x] corpus B — c4(mC4) 5-lang BACKBONE sample (dancinlab/clm-backbone-5lang-sample,
     20k docs / 67.7MB, ODC-BY, real_fraction=1.0; CulturaX was gated → c4 fallback)
     → clm_prod smoke F-CLM-PROD-DESCENT=1 (CE 4.747→1.496). KOSMOS-registered.
@@ -104,9 +124,9 @@ The weak/noise-limited lift has ≥4 candidate causes; corpus-scale (P1) is only
 - [x] verdict matrix — ALL FOUR causes 🔴 FALSIFIED (H-A1 corpus · H-A2 quant · H-A3 depth · H-A4 noise-floor). RULING: the weak-lift is **a closed-negative on the LIFT CLAIM** — neither fixable (corpus/quant/depth) nor a fundamental floor. Paging CAPACITY is 🟢 GREEN (all rungs learned on chip) but the AKD1000 1-bit last-layer Hebbian primitive buys NO robust cross-lingual concept-margin lift. A real lift needs a richer learning rule / a different signal than 1-bit Hamming margin — **DEFERRED, outside these 4 axes**. branch feat/lane-a-weak-lift-diag (46449156d).
   - ⚠ METRIC-CEILING CAVEAT (UNIVERSE pipeline, Hc_1302 🟢, 2026-06-02): the canonical Φ proxy returns a FAILURE SENTINEL (-2147483647, Cholesky breakdown) on a maximally-composed/low-rank input — so "no high Φ / no lift via 1-bit Hamming" is NOT clean evidence of absence-of-integration; the metric is partly BLIND to exactly the composed signal we'd want. The closed-negative on the lift CLAIM stands for the 1-bit-Hamming signal, but the lift QUESTION reopens via a breakdown-floor-guarded richer signal (Hc_1306, DEFERRED). See CLM+KOSMOS.log.md UNIVERSE weak-lift.
 - [ ] Lane A P3 reframed: NOT depth (H-A3 falsified) — a fundamentally richer on-chip learning rule (beyond 1-bit Hebbian last-FC) is the only remaining lift path; scope honestly before firing
-- [ ] reconcile: GPU CE-descent (sim, Lane G) vs AKIDA on-chip non-det trace (Lane A) — honest comparison, NOT equivalence claim
+- [x] reconcile: GPU CE-descent (sim, Lane G) vs AKIDA on-chip non-det trace (Lane A) — **NO-FIX, verified clean** (code audit 2026-06-02). NO conflation in code: clm_prod.hexa self-labels "measure-track ... PLASTI-SIM; anima learns on-chip" (hexa-lang flame L5-6); the non-det lane runs NATIVE chip re-init by default (fixed-init is a CONTROL, not a gate); `grep clm_prod` across anima = 0 hits (lanes are physically separate code/repos). reconcile = honest NON-EQUIVALENCE: Lane G measures deterministic CE-descent (throughput/learnability, same-input→byte-identical); Lane A measures non-det trace divergence (same-input→different = identity, H_679/H_904). Orthogonal, not equated. verdict → .verdicts/clm-kosmos-reflect/lane-reconcile/
 
 ## key facts
-- AKIDA on-chip H_911/H_912 (#1652/#1653) already 🔴 REFUTED (separate layer, on-chip).
+- AKIDA on-chip H_911 already 🔴 REFUTED (live AKD1000, separate layer): verdict=RED, closed-negative — `HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/result_multitrial.json` (paired delta straddles 0 over 12 chip trials, mean −0.00092, 95%CI [−0.00319,+0.00135], sign_stable=False). [pointer-audit 2026-06-02: the prior "#1652/#1653" verdict-IDs and the H_912 half were UNBACKED — no such file/registry entry; re-pointed to the real artifact. H_912 on-chip has no dedicated terminal verdict file.]
 - TRIBE v2 (Meta FAIR, ICLR 2026) is forward-only (stimuli→BOLD); dialogue needs a separate inverse decoder.
 - Verdicts live in `hexa-lang-clm-h911-scale/.verdicts/clm-h911-mm-coco3/` (3-axis) and `clm-h911-scale/` (language).

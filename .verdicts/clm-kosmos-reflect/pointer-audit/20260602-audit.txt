@@ -1,0 +1,16 @@
+VERDICT-POINTER AUDIT — CLM+KOSMOS.md key facts (lines 110-112)
+ts_utc: 2026-06-02
+method: confirm each cited verdict FILE exists and is terminal (🔵/🟢/🔴, not 🟠/empty).
+  AUDIT only — chip-gated items NOT re-run (a_scale_honest_scope).
+
+| cited pointer | file exists? | terminal? | finding |
+|---|---|---|---|
+| "#1652/#1653 H_911/H_912 already 🔴 REFUTED (on-chip)" | NO file named 1652/1653 anywhere (anima/.verdicts, HEXAD, scale worktree); the grep hits for "1652/1653" are unrelated PTD/DATA-REGIME data rows. NO hypothesis-registry entry numbered 1652/1653. | n/a | UNBACKED ID. The UNDERLYING on-chip H_911 refute IS real & terminal — HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/result_multitrial.json verdict=RED, closed-negative (paired delta straddles 0, 12 chip trials, mean=-0.00092, CI=[-0.00319,0.00135], sign_stable=False, live AKD1000). But H_912 has NO dedicated on-chip terminal file (only H_911 in multitrial). → DOC-INTEGRITY GAP: the "#1652/#1653" numbers + the H_912 half are not backed; H_911-on-chip-RED is backed by result_multitrial.json. FIX: re-point the doc to the real artifact, drop/qualify the unbacked #-IDs and the H_912 claim. |
+| mm-coco3 3-axis verdicts in hexa-lang-clm-h911-scale/.verdicts/clm-h911-mm-coco3/ | YES — 25/100/250/500/1000/2000/5000.txt all present | TERMINAL for 25/100/250 (F-CLM-H911-SCALE3=0, TIER RED, green 0/3·1/3·0/3 verbatim); 500.txt also full RED. N=1000/2000/5000.txt are SHORT (232-233 bytes, 03:27-03:50 today) = the LIVE mm3 agent's in-flight rungs → covered by mm3 agent, not re-audited here. | EXISTS+TERMINAL (the cited 25/100/250 rungs). NOTE: AXIS3 PHI depends on phi_proxy → that axis covered by phi_proxy agent; the FILES exist + are terminal, which is what this pointer audit checks. |
+| language scale verdicts in .../clm-h911-scale/ | YES — 25/100/250.txt + MATRIX.md present | TERMINAL — 25.txt TIER GREEN (F=1, NULL PASS), 100.txt TIER GREEN (F=1), 250.txt TIER RED (F=0, closed-negative) verbatim | EXISTS+TERMINAL. Matches doc claim "N=25/100 🟢 → N=250 🔴". |
+
+RULING:
+- mm-coco3 + language scale pointers: EXISTS + TERMINAL — doc claims accurate.
+- "#1652/#1653 H_911/H_912" pointer: PARTIALLY UNBACKED — H_911 on-chip RED is real
+  (result_multitrial.json) but the #1652/#1653 IDs and the H_912 half have no terminal
+  file. DOC-INTEGRITY GAP → fix CLM+KOSMOS.md line 110 to cite the real artifact.
