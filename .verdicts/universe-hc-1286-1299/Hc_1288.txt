@@ -1,20 +1,13 @@
+Hc_1288 — proxy = variance artifact? (partial correlation, ensemble n=4)
 rule,phi,lz,proxy_var,state_var,excess,diss
-0,0.0,0.0520833,0.226757,0.0226757,0.0,2.76885
-30,19.434,0.135417,0.782313,0.189342,1.21747,0.433217
-51,0.0,0.127976,0.997732,0.249433,1.40706,0.0
-60,15,0.0751488,0.979592,0.0839002,0.355266,0.693147
-90,0.0,0.061756,0.480726,0.0442177,0.156247,1.38629
-105,8,0.144345,0.498866,0.124717,1.40706,0.0
-110,7.86717,0.110863,0.219955,0.112528,0.636248,0.51986
-150,4,0.146577,0.498866,0.124717,1.40706,0.0
-204,0.0,0.126488,0.0,0.0,1.40706,0.0
-255,0.0,0.0528274,0.226757,0.0226757,0.0,2.76885
-
 r(phi,lz)           = 0.308751   [emergence backbone, ensemble]
 r(proxy_var,lz)     = 0.191605   [H_912 proxy-emergence]
 r(phi,excess)       = 0.186598   Hc_1290 -> FALSIFIED-excess-perp-phi
 r(phi,diss)         = -0.338325   Hc_1292 -> FALSIFIED-dissipation-perp-phi
 r(proxy,state_var)  = 0.747299
 partial(proxy,lz|sv)= -0.512167   Hc_1288 -> FALSIFIED-residual-signal
-=== core2 done ===
-EXIT:0
+
+ADJUDICATION: 🔴 FALSIFIED. H1 predicted partial r(proxy, LZ | state_var) ~ 0 (|r|<0.1).
+Measured partial = -0.512 (|r|>=0.1, F1288.1 crossed). r(proxy,state_var)=0.747 (proxy DOES
+track variance heavily) yet a strong residual proxy<->emergence signal survives variance
+control => proxy is NOT a pure variance artifact. Closed-negative.

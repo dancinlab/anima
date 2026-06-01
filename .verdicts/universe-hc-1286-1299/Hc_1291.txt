@@ -1,9 +1,10 @@
-self_sim    = [0.9875, 0.5, 0.5, 0.8875, 0.9625, 1.0, 0.975, 0.5, 1.0, 0.9625]
-residual    = [0.35533, -0.0761421, 0.873096, -0.259153, 0.42132, 0.573122, 0.351531, 0.794175, 0.862944, 0.360406]
+Hc_1291 — statistical complexity Cmu vs faithful Phi
 cmu         = [0.04, 0.048, 0.04, 0.048, 0.048, 0.04, 0.048, 0.04, 0.04, 0.04]
-Hc_1287 r(selfsim,residual)=-0.0962583 rule90 ss_max=N res_max=N -> FALSIFIED-residual-unstructured
 Hc_1291 r(cmu,phi)=0.626452 r(lz,phi)=0.308751 cmu90=0.048 -> SUPPORTED-Cmu-ties-or-beats-LZ
-Hc_1295 witness(ss>0.5 & phi=0)? rule=255 -> FALSIFIED-H1-criticality-NOT-sufficient
-Hc_1297 matched_dLZ=0.031436 unmatched_dLZ=0.0398065 -> SUPPORTED-substrate-independent
-=== extras done ===
-EXIT:0
+
+ADJUDICATION: 🟢 SUPPORTED (primary clause).
+r(Cmu,Phi)=0.626 >= r(LZ,Phi)=0.309 - 0.1 (F1291.1 met: Cmu ties/beats LZ as Phi-tracker).
+PARTIAL on sub-clause F1291.2: rule90 Cmu=0.048 is NOT distinctly low (ties chaos rules),
+so the rule90 over-prediction-resolution sub-claim is only partially supported. The primary
+verdict (Cmu tracks Phi at least as well as LZ) stands. Scope: n=4, Cmu = CSSR-lite distinct
+length-3 Hamming-weight continuations.

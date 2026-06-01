@@ -1,9 +1,13 @@
+Hc_1295 — criticality necessary-not-sufficient (witness: structure but Phi=0)
+extras.hexa self_similarity + bigphi (verbatim):
 self_sim    = [0.9875, 0.5, 0.5, 0.8875, 0.9625, 1.0, 0.975, 0.5, 1.0, 0.9625]
-residual    = [0.35533, -0.0761421, 0.873096, -0.259153, 0.42132, 0.573122, 0.351531, 0.794175, 0.862944, 0.360406]
-cmu         = [0.04, 0.048, 0.04, 0.048, 0.048, 0.04, 0.048, 0.04, 0.04, 0.04]
-Hc_1287 r(selfsim,residual)=-0.0962583 rule90 ss_max=N res_max=N -> FALSIFIED-residual-unstructured
-Hc_1291 r(cmu,phi)=0.626452 r(lz,phi)=0.308751 cmu90=0.048 -> SUPPORTED-Cmu-ties-or-beats-LZ
 Hc_1295 witness(ss>0.5 & phi=0)? rule=255 -> FALSIFIED-H1-criticality-NOT-sufficient
-Hc_1297 matched_dLZ=0.031436 unmatched_dLZ=0.0398065 -> SUPPORTED-substrate-independent
-=== extras done ===
-EXIT:0
+
+ADJUDICATION: 🟠 INSUFFICIENT.
+A self-similarity>0.5 & Phi=0 candidate exists (rule255), BUT the pre-registered
+gate F1295.2 requires the witness's avalanche-size distribution to PASS a real
+power-law fit (KS / exponent ~ -1.5). The self_similarity proxy used here is a
+spacetime translational-overlap measure, NOT a validated power-law avalanche test.
+rule255 (constant-ON) is dynamically trivial, not a critical/avalanching system.
+Therefore the criticality-witness cannot be honestly asserted; down-rated to 🟠
+INSUFFICIENT (toolchain gap: no avalanche-distribution power-law fitter wired).

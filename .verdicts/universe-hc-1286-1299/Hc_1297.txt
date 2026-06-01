@@ -1,9 +1,8 @@
-self_sim    = [0.9875, 0.5, 0.5, 0.8875, 0.9625, 1.0, 0.975, 0.5, 1.0, 0.9625]
-residual    = [0.35533, -0.0761421, 0.873096, -0.259153, 0.42132, 0.573122, 0.351531, 0.794175, 0.862944, 0.360406]
-cmu         = [0.04, 0.048, 0.04, 0.048, 0.048, 0.04, 0.048, 0.04, 0.04, 0.04]
-Hc_1287 r(selfsim,residual)=-0.0962583 rule90 ss_max=N res_max=N -> FALSIFIED-residual-unstructured
-Hc_1291 r(cmu,phi)=0.626452 r(lz,phi)=0.308751 cmu90=0.048 -> SUPPORTED-Cmu-ties-or-beats-LZ
-Hc_1295 witness(ss>0.5 & phi=0)? rule=255 -> FALSIFIED-H1-criticality-NOT-sufficient
+Hc_1297 — Phi->emergence substrate-independence (ECA vs random Boolean network)
 Hc_1297 matched_dLZ=0.031436 unmatched_dLZ=0.0398065 -> SUPPORTED-substrate-independent
-=== extras done ===
-EXIT:0
+
+ADJUDICATION: 🟢 SUPPORTED (WEAK MARGIN).
+matched-Phi pairs mean |dLZ| = 0.0314 < unmatched mean |dLZ| = 0.0398 (F1297.1 met:
+matched < unmatched). >=2 substrate families (ECA + RBN) satisfies F1297.3.
+CAVEAT: margin is small (0.031 vs 0.040) on a 4-net RBN panel; directional pass
+only, not a strong effect. Scope: n=4 exact.
