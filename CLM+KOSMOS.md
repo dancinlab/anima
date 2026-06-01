@@ -89,18 +89,20 @@ alternatives — both run concurrently and report to the same .clm/.kosmos produ
 ├─ ✅ P0 depth N=5     capacity 12/12 rungs GREEN
 ├─ 🔴 P1 DONE          corpus 25→250 → lift COLLAPSE-NULL (sign-stable NEG, slope flat); H-A1 FALSIFIED, corpus is NOT the bottleneck
 ├─ ⚠  capacity-only    paging composes capacity, NOT representation — P2 depth/width will NOT buy cross-lingual lift for free
-├─ ✗ P2 depth/width    DE-PRIORITIZED — P1 null means depth/width alone won't compose representation
-├─ ▶ P3 plasticity     NOW THE REAL NEXT STEP — last-FC → multi-layer feature plasticity OR linkage-preserving inter-unit map (the only path to genuine lift; not more anchors/depth)
+├─ ✗ P2 depth/width    FALSIFIED-as-fix — P1 (corpus) + H-A3 (multi-layer depth) both null
+├─ ✗ P3 multi-layer    FALSIFIED — H-A3: 2nd plastic layer adds no consistent lift (within noise)
+├─ ◷ P3' richer rule   the ONLY remaining lift path — a learning rule beyond 1-bit Hebbian last-FC (≠ depth, ≠ corpus, ≠ quant); scope honestly before firing. Lift CLAIM otherwise = closed-negative; CAPACITY stays GREEN
 └─ ◷ P4 full 3B/7B     DEFERRED (a_scale_honest_scope ≥3-rung ladder; also gated on Lane G forge-util fix)
 ```
 
 ### Lane A weak-lift — COMPETING cause hypotheses (pre-registered; P1 corpus alone may NOT fix it)
 The weak/noise-limited lift has ≥4 candidate causes; corpus-scale (P1) is only H-A1. Pre-registered falsifiers (before results), tested complementary to P1 (chip = single exclusive resource, serialized):
 - [x] **H-A1 corpus-noise** — 🔴 FALSIFIED (P1, 2026-06-02, agent a33223d, live AKD1000): at 250 anchors (10× FLORES-200 real, 50 concepts × 5 lang) the lift does NOT clear noise — it goes sign-stable NEGATIVE at every N (N=2 −0.84 · N=3 −0.77 · N=4 −0.88 · N=5 −0.81 bits), slope flat −0.003 (was +0.27 at 25). Seed noise band halved 0.41→0.21. The prior weak-positive was a SMALL-SAMPLE ARTIFACT. **COLLAPSE-NULL**: paging composes CAPACITY-ONLY (all 24 rungs learned_hw=True), NO representational lift — corpus is NOT the bottleneck. branch feat/lane-a-phase1-liftres (a0fc0d620).
-- [ ] **H-A2 quantization-floor**: the per-feature-median 1-bit FC readout destroys the composed signal → at FIXED 25 anchors a multi-bit (2–4 bit) readout shows lift CI_lo>0 while 1-bit stays ~0. FALSIFIED if multi-bit lift also ~0 = quantization is not the bottleneck.
-- [ ] **H-A3 plasticity-depth**: last-FC-only 1-bit Hebbian is too shallow to compose representation → 2-layer plastic > last-FC-only lift. FALSIFIED if 2-layer adds no lift = depth-of-plasticity is not the bottleneck.
-- [ ] **H-A4 native-init noise-floor** (the deep one): the device's native weight re-init — the SAME mechanism that gives non-determinism GREEN (= the identity) — injects noise that swamps the lift signal → |lift| < the measured native-init noise band (~0.001–0.003, from the non-det run). FALSIFIED if |lift| clearly exceeds that band = identity-noise is not what hides the lift. **If TRUE: anima's identity (non-det) and representational-lift-measurability are in fundamental TENSION at this scale — P1 can never resolve it.**
-- [ ] verdict matrix: which cause(s) the weak lift actually is (multi-modal, not single-bet) → drives P2/P3 vs "capacity-only primitive" closure
+- [x] **H-A2 quantization-floor** — 🔴 FALSIFIED (diag agent a65461e, live AKD1000): 2/3/4-bit per-feature-quantile readout vs 1-bit → lift 95% bootstrap CI straddles 0 at EVERY rung AND bit-depth (finer readout only widens the band). Not a quantization artifact.
+- [x] **H-A3 plasticity-depth** — 🔴 FALSIFIED: frozen-tail vs last-FC-only vs final-two-layers plastic → depth_gain[N3,4,5]=[−0.66,+0.65,−0.60] mean −0.20 sign_consistent=False. 2nd plastic layer adds no consistent lift (within ~0.6-bit noise). NB: this means even P3 (multi-layer plasticity) does NOT buy lift.
+- [x] **H-A4 native-init noise-floor** — 🔴 FALSIFIED: confirmatory chip run with backbone-seed FIXED (only chip re-init varies, ×3) → |mean lift|/reinit_sd = 1.16/1.97/3.10/1.22 (all >1), sign-stable across re-init. The lift clearly EXCEEDS the native-init band → identity-noise does NOT drown it. The large variance was backbone-SEED / corpus-encoding sensitivity, NOT the chip's non-determinism. (Corrects the earlier "identity↔measurability tension" guess — there is no such tension.)
+- [x] verdict matrix — ALL FOUR causes 🔴 FALSIFIED (H-A1 corpus · H-A2 quant · H-A3 depth · H-A4 noise-floor). RULING: the weak-lift is **a closed-negative on the LIFT CLAIM** — neither fixable (corpus/quant/depth) nor a fundamental floor. Paging CAPACITY is 🟢 GREEN (all rungs learned on chip) but the AKD1000 1-bit last-layer Hebbian primitive buys NO robust cross-lingual concept-margin lift. A real lift needs a richer learning rule / a different signal than 1-bit Hamming margin — **DEFERRED, outside these 4 axes**. branch feat/lane-a-weak-lift-diag (46449156d).
+- [ ] Lane A P3 reframed: NOT depth (H-A3 falsified) — a fundamentally richer on-chip learning rule (beyond 1-bit Hebbian last-FC) is the only remaining lift path; scope honestly before firing
 - [ ] reconcile: GPU CE-descent (sim, Lane G) vs AKIDA on-chip non-det trace (Lane A) — honest comparison, NOT equivalence claim
 
 ## key facts
