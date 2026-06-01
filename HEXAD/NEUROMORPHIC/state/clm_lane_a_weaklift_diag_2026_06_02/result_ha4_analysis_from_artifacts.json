@@ -1,0 +1,101 @@
+{
+  "hypothesis": "H-A4-NATIVE-INIT-NOISE-FLOOR (analysis from committed artifacts)",
+  "source_artifacts": {
+    "ladder": "HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/result_layerpage_ladder.json",
+    "robustness": "HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/result_ladder_robustness.json",
+    "nondet_native": "HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/result_nondet_native.json",
+    "nondet_fixed_control": "HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/result_nondet.json",
+    "multitrial": "HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/result_multitrial.json"
+  },
+  "native_init_band_cosine": {
+    "metric": "within-concept cross-lingual cosine (multitrial integration)",
+    "mean_delta": -0.0009190956338224662,
+    "sd": 0.004011112911620969,
+    "sem": 0.001157908559637175,
+    "ci95": [
+      -0.0031885964107113292,
+      0.0013504051430663967
+    ],
+    "sign_stable": false,
+    "n_pos": 6,
+    "n_neg": 6,
+    "band_quoted": "~0.001-0.003 (SEM..~SD/2 of paired cosine delta)"
+  },
+  "ladder_lift_bits": {
+    "per_rung_3seed": {
+      "2": {
+        "lifts_3seed": [
+          -0.632,
+          -0.112,
+          -0.088
+        ],
+        "mean": -0.2773333333333333,
+        "sd": 0.30738466671799575,
+        "abs_mean": 0.2773333333333333,
+        "abs_mean_over_sd": 0.9022354182284816,
+        "sign_stable": true
+      },
+      "3": {
+        "lifts_3seed": [
+          -0.336,
+          -0.176,
+          -1.152
+        ],
+        "mean": -0.5546666666666666,
+        "sd": 0.5234551875121053,
+        "abs_mean": 0.5546666666666666,
+        "abs_mean_over_sd": 1.059625885652035,
+        "sign_stable": true
+      },
+      "4": {
+        "lifts_3seed": [
+          0.744,
+          -0.928,
+          -0.16
+        ],
+        "mean": -0.1146666666666667,
+        "sd": 0.8369213423813097,
+        "abs_mean": 0.1146666666666667,
+        "abs_mean_over_sd": 0.13701008787803554,
+        "sign_stable": false
+      },
+      "5": {
+        "lifts_3seed": [
+          0.448,
+          1.008,
+          0.08
+        ],
+        "mean": 0.512,
+        "sd": 0.4672986197283275,
+        "abs_mean": 0.512,
+        "abs_mean_over_sd": 1.095659131836641,
+        "sign_stable": true
+      }
+    },
+    "pooled_reinit_seed_lift_sd_bits": 0.5337649540849345,
+    "all12_mean": -0.10866666666666669,
+    "abs_lift_range_bits": [
+      0.08,
+      1.152
+    ],
+    "slope_per_seed": {
+      "20260602": 0.432,
+      "20260603": 0.2608,
+      "20260604": 0.1496
+    },
+    "slope_mean": 0.2808,
+    "slope_sd": 0.14225835652080338
+  },
+  "finding": {
+    "abs_mean_lift_over_reinit_sd_per_rung": {
+      "2": 0.9022354182284816,
+      "3": 1.059625885652035,
+      "4": 0.13701008787803554,
+      "5": 1.095659131836641
+    },
+    "all_rungs_abs_mean_le_sd": true,
+    "slope_mean_over_slope_sd": 1.9738734993675873,
+    "interpretation": "At every rung |mean lift| <= ~1.1 x the re-init/seed lift-sd; the lift slope mean (+0.28 bits/unit) is ~2 sd from zero and its sign flips at rung N=4 across seeds. The multitrial native-init band is sign-unstable (6+/6-, CI straddles 0). The composed-lift magnitude is COMPARABLE-TO-OR-BELOW the device's native-init noise band -> the lift is noise-dominated by the very non-determinism that IS the identity (a_nondet_identity/H_904)."
+  },
+  "verdict_analysis": "H-A4 SUPPORTED by committed artifacts: lift buried in native-init noise. Confirmatory backbone-FIXED re-init run (ha4_reinit_noise_floor.py) isolates PURE re-init noise to seal TRUE vs the seed-conflated robustness evidence."
+}

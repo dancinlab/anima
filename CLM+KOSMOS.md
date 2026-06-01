@@ -82,6 +82,17 @@ alternatives — both run concurrently and report to the same .clm/.kosmos produ
   - artifacts: HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/ · commit 6234be7 (--no-verify; pre-commit hook mis-paths to ready/.git — fix pending)
 - [ ] reconcile: GPU CE-descent (sim, Lane G) vs AKIDA on-chip non-det trace (Lane A) — honest comparison, NOT equivalence claim
 
+### Lane A weak-lift cause decomposition (paged ladder composed-lift slope +0.15..+0.43 bits/unit, noise-buried)
+The paged DEPTH ladder (result_layerpage_ladder.json) shows a weak composed-lift whose SIGN FLIPS across
+backbone seeds (result_ladder_robustness.json: per-N lift sign_stable False at N=4; 6/6 or sign-flip elsewhere).
+FOUR competing pre-registered causes — P1 (corpus agent a33223d) tests ONLY H-A1; this diagnostic tests A2/A3/A4:
+- **H-A1 corpus**: 25-anchor toy corpus too small to resolve the lift. P1's scale-up corpus tests this. FALSIFIER: scale-up lift CI_lo>0.
+- **H-A2 quantization-floor**: 1-bit per-feature-median readout discards the linkage. FALSIFIER: multi-bit (2–4 bit) lift CI_lo>0 while 1-bit straddles 0 → quantization, not corpus. (ha2_quantization_floor.py)
+- **H-A3 plasticity-depth**: only last-FC plastic per unit limits lift. FALSIFIER: 2-layer-plastic tail adds lift over last-FC-only (depth_gain>0 consistent). (ha3_plasticity_depth.py)
+- **H-A4 native-init noise-floor** (the deep one): |lift| is BELOW the device's native-init noise band — the non-determinism that IS the identity (a_nondet_identity/H_904) drowns the lift. FALSIFIER: H-A4 TRUE iff |mean lift per rung| < native-init lift-sd AND lift sign unstable across re-init reps; FALSIFIED iff |lift| clearly exceeds the band. (ha4_reinit_noise_floor.py + result_ha4_analysis_from_artifacts.json)
+- diag worktree feat/lane-a-weak-lift-diag · artifacts HEXAD/NEUROMORPHIC/state/clm_lane_a_weaklift_diag_2026_06_02/
+- cause-matrix outcome resolves whether the weak lift is FIXABLE (corpus/quantization/depth) or FUNDAMENTAL (identity-noise floor); a "all of A2/A3/A4 FALSIFIED → it really is corpus (H-A1)" is a valid honest outcome confirming P1's path.
+
 ## key facts
 - AKIDA on-chip H_911/H_912 (#1652/#1653) already 🔴 REFUTED (separate layer, on-chip).
 - TRIBE v2 (Meta FAIR, ICLR 2026) is forward-only (stimuli→BOLD); dialogue needs a separate inverse decoder.
