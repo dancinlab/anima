@@ -250,3 +250,9 @@
   raw    = ".verdicts/clm-akida-multiling-semantic/result.txt"
   src    = "domains/CLM-KOSMOS.md (PR #1651) C1·C2·C3·C4·C5 · UNIVERSE/H_911 (substrate-proxy 🟢) · .verdicts/904_clm_onchip_plasticity (H_904 stochastic plasticity) · hexa-lang stdlib/flame/testdata/clm_semantic_{parallel,concat}.txt (corpus seed)"
   status = "🔴 REFUTED (closed-negative · publishable) — H_911 cross-lingual semantic-linkage 우위가 AKD1000 last-layer Hebbian edge-learn 에 전이 안 됨; per-ordering 통합 gap 이 칩 자체 stochastic-plasticity noise(H_904) 안에 묻힘; C1 on-chip learn 은 12/12 trial live (실 silicon 확인), C4 .kosmos 구조(limen·merkle·profile·closed_corpus·coord⊥text) 완전 준수; 단일-run cherry-pick(🟢 draw) 거부 → g63 honest; model NOT uploaded (🔴 earns no .clm); thresholds/falsifier FROZEN (verdict verbatim)"
+
+@C clm_akida_semantic_signal_lift := "H_912 — all-4-lever AKIDA on-chip signal-lift for H_911" :: claim [d=2026-06-01 closed]
+  text   = "Even with all 4 HW-feasible levers (200-anchor 5-lang corpus · 3-exposure accumulation · dual measure {last-layer-sep, Phi-proxy} · learn-while-infer streaming), H_911 cross-lingual semantic-linkage does NOT transfer to AKD1000 last-layer Hebbian on-chip edge-learn."
+  method = "N=20 paired on-chip trials (real AKD1000 BC.00.000.002), both axes 95% CI straddle 0; learn_happened_hw 20/20."
+  verdict = "🔴 REFUTED (closed-negative · publishable) — .verdicts/clm-akida-semantic-signal-lift/result.txt"
+  group  = "CLM-KOSMOS"

@@ -1,0 +1,29 @@
+[4lever] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1
+[4lever] N=20 paired trials  EXPOSURES=3 (learn-while-infer streaming online)
+[4lever] corpus: parallel=200 anchors  concat=200 anchors  (concepts=40)
+[4lever] trial  0: SEP par=0.92807 con=0.93888 d=-0.01081 | PHI par=4.33741 con=3.99169 d=+0.34572 | learn_hw=True
+[4lever] trial  1: SEP par=0.91958 con=0.92043 d=-0.00086 | PHI par=4.31267 con=4.01019 d=+0.30248 | learn_hw=True
+[4lever] trial  2: SEP par=0.91796 con=0.92185 d=-0.00388 | PHI par=4.78982 con=4.83763 d=-0.04781 | learn_hw=True
+[4lever] trial  3: SEP par=0.93270 con=0.93147 d=+0.00122 | PHI par=4.36823 con=3.92621 d=+0.44202 | learn_hw=True
+[4lever] trial  4: SEP par=0.93460 con=0.93236 d=+0.00224 | PHI par=4.25206 con=4.47538 d=-0.22333 | learn_hw=True
+[4lever] trial  5: SEP par=0.91486 con=0.92269 d=-0.00783 | PHI par=4.31981 con=5.13998 d=-0.82017 | learn_hw=True
+[4lever] trial  6: SEP par=0.92865 con=0.93096 d=-0.00231 | PHI par=4.53054 con=4.63522 d=-0.10469 | learn_hw=True
+[4lever] trial  7: SEP par=0.92560 con=0.92309 d=+0.00250 | PHI par=3.55984 con=3.19398 d=+0.36587 | learn_hw=True
+[4lever] trial  8: SEP par=0.92432 con=0.92580 d=-0.00148 | PHI par=4.37630 con=3.79174 d=+0.58455 | learn_hw=True
+[4lever] trial  9: SEP par=0.93647 con=0.92327 d=+0.01320 | PHI par=4.19856 con=4.21781 d=-0.01924 | learn_hw=True
+[4lever] trial 10: SEP par=0.93829 con=0.94096 d=-0.00268 | PHI par=4.19248 con=4.42703 d=-0.23455 | learn_hw=True
+[4lever] trial 11: SEP par=0.93074 con=0.92873 d=+0.00201 | PHI par=4.63198 con=4.21435 d=+0.41763 | learn_hw=True
+[4lever] trial 12: SEP par=0.93152 con=0.93108 d=+0.00044 | PHI par=4.30967 con=4.78172 d=-0.47205 | learn_hw=True
+[4lever] trial 13: SEP par=0.92975 con=0.93043 d=-0.00067 | PHI par=3.82054 con=4.01202 d=-0.19148 | learn_hw=True
+[4lever] trial 14: SEP par=0.92257 con=0.92548 d=-0.00291 | PHI par=4.04680 con=4.60828 d=-0.56148 | learn_hw=True
+[4lever] trial 15: SEP par=0.94002 con=0.93132 d=+0.00869 | PHI par=2.55412 con=4.41657 d=-1.86244 | learn_hw=True
+[4lever] trial 16: SEP par=0.92737 con=0.92742 d=-0.00005 | PHI par=3.14630 con=4.49655 d=-1.35025 | learn_hw=True
+[4lever] trial 17: SEP par=0.92053 con=0.92745 d=-0.00692 | PHI par=4.17523 con=4.35086 d=-0.17562 | learn_hw=True
+[4lever] trial 18: SEP par=0.92401 con=0.92453 d=-0.00052 | PHI par=4.35717 con=4.25118 d=+0.10599 | learn_hw=True
+[4lever] trial 19: SEP par=0.92264 con=0.93298 d=-0.01034 | PHI par=4.58669 con=4.80573 d=-0.21904 | learn_hw=True
+
+[4lever] AXIS-A last-layer-sep : mean=-0.00105 95%CI=[-0.00355,+0.00145] 7pos/13neg green=False
+[4lever] AXIS-B phi-proxy      : mean=-0.18589 95%CI=[-0.45405,+0.08227] 7pos/13neg green=False
+[4lever] learn_happened_hw(all)=True  green_axis=None
+[4lever] VERDICT RED -- REFUTED: BOTH measure axes' 95% CI include 0 across 20 chip trials with all-4-levers (200-anchor 5-lang corpus + 3x learn-while-infer streaming online accumulation). SEP mean=-0.00105 95%CI=[np.float64(-0.0035454291220012135), np.float64(0.001450942672698545)] (7pos/13neg); PHI mean=-0.18589 95%CI=[np.float64(-0.4540541292425512), np.float64(0.08226509291438419)] (7pos/13neg). STRONGEST closed-negative: H_911's cross-lingual semantic-linkage advantage does NOT transfer to AKD1000 last-layer Hebbian edge-learn EVEN WITH ALL FOUR SIGNAL-LIFT LEVERS -- the per-ordering gap stays within the chip's stochastic-plasticity noise floor (H_904) on BOTH axes. Supersedes #1652.
+[4lever] wrote /home/ubuntu/clm_kosmos_akida_large/out/result_4lever.json
