@@ -25,8 +25,8 @@
 //   bootstrap + vast.ai 자율 dispatch (별개). 본 파일은 WIRE 가 동작함을
 //   증명 (d_train5 가 실 corpus token 을 forward/grad/descent).
 // ════════════════════════════════════════════════════════════════════════
-import "/Users/ghost/core/anima/HEXAD/D/corpus_loader_lib.hexa"
-import "/Users/ghost/core/anima/HEXAD/D/d_train5_lib.hexa"
+import "HEXAD/D/corpus_loader_lib.hexa"
+import "HEXAD/D/d_train5_lib.hexa"
 
 // 실 corpus → d5 dataset shape [IDS, YS] (d5_make_dataset 등가, 실 corpus).
 //   IDS[s] = T-token 윈도우, YS[s] = 다음 토큰 (next-token target).
