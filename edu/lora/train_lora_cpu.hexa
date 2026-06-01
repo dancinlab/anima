@@ -41,9 +41,27 @@
 //    state/edu_lora_3_real_artifacts_20260421.json
 // ════════════════════════════════════════════════════════════════════════════
 
-let CORPUS_PATH = "/Users/ghost/core/anima/experiments/alm_r13/seed_corpus_10mb/corpus.jsonl"
-let ART_DIR     = "/Users/ghost/core/anima/edu/lora/artifacts"
-let CERT_PATH   = "/Users/ghost/core/anima/state/edu_lora_3_real_artifacts_20260421.json"
+// ── Portable path resolution — never emit a foreign author literal. ──
+// Repo root: $ANIMA → git rev-parse --show-toplevel → $HOME/core/anima.
+// Each path is also individually overridable via its own env var.
+fn lora_root() -> string {
+    let a = env("ANIMA")
+    if a != "" { return a }
+    let gt = exec("git rev-parse --show-toplevel 2>/dev/null").trim()
+    if gt != "" { return gt }
+    let home = env("HOME")
+    return home + "/core/anima"
+}
+fn env_or(key: string, default_v: string) -> string {
+    let v = env(key)
+    if v == "" { return default_v }
+    return v
+}
+
+let _ANIMA_ROOT = lora_root()
+let CORPUS_PATH = env_or("LORA_CORPUS_PATH", _ANIMA_ROOT + "/experiments/alm_r13/seed_corpus_10mb/corpus.jsonl")
+let ART_DIR     = env_or("LORA_ART_DIR",     _ANIMA_ROOT + "/edu/lora/artifacts")
+let CERT_PATH   = env_or("LORA_CERT_PATH",   _ANIMA_ROOT + "/state/edu_lora_3_real_artifacts_20260421.json")
 
 // Model dims — MICRO scale for pure-hexa interpreter.
 // hexa_stage0 array index-assignment triggers copy-on-write; with O(steps·
