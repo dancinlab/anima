@@ -1,0 +1,77 @@
+F-CLM-AKIDA-SEMANTIC-SIGNAL-LIFT (H_912) — VERDICT (verbatim on-chip run)
+=========================================================================
+
+VERDICT: 🔴 REFUTED (closed-negative · publishable per a_paper_negative_ok)
+         STRONGEST closed-negative — SUPERSEDES #1652 (clm-akida-multiling-semantic).
+
+All FOUR signal-lift levers applied together did NOT lift the H_911 parallel>concat
+cross-lingual semantic-linkage advantage above the AKD1000 stochastic-plasticity noise
+floor (H_904), on EITHER measure axis. H_911 does NOT transfer to AKD1000 last-layer
+Hebbian on-chip edge-learn — even with maximal HW-feasible signal.
+
+DEVICE (REAL silicon, BackendType.Hardware):
+  akida SDK 2.19.1 · device BC.00.000.002 · NSoC_v2 · IpVersion.v1 · host pi5-akida
+  Stage-0 gate PASSED: akida.devices() returned a real HardwareDevice; /dev/akida0 free
+  (prior PID 33981 confirmed dead before launch). No SW-sim ever substituted (g63).
+
+ALL-4-LEVERS (every one applied in this single run):
+  (1) LARGER corpus     : 200 anchors = 40 concepts x 5 langs (ko·en·zh·ru·ja),
+                          C4-compliant .kosmos @corpus (limen-packed + merkle + profile
+                          + closed_corpus + placement(coord) PERP text). byte-identical payload
+                          multiset both arms (only @corpus member ORDER differs).
+  (2) N-EXPOSURE        : EXPOSURES=3 repeated on-chip exposures per anchor per arm, accumulated.
+  (3) DUAL MEASURE AXIS : paired (parallel-concat) gap on BOTH
+                            (a) last-layer separation = mean within-concept cross-lingual cosine
+                            (b) Phi-proxy integration = 1/2·log(det C_A·det C_B / det C)
+                                (Gaussian cross-partition total correlation of learned chip
+                                 readout; whole_EI - min_bipartition form, faithful to H_911/LAB-09).
+  (4) LEARN-WHILE-INFER : exposures STREAMED ONLINE (ONCHIP-PARADIGM sub2 lane) — per anchor,
+                          fit() THEN forward() the same anchor on chip, accumulating online
+                          (NOT one batched fit).
+
+ON-CHIP PARAMS:
+  AkidaUnsupervised(num_weights=16, learning_competition=0.1)
+  InputData(1,1,256, input_bits=1) -> FullyConnected(units=32, weights_bits=1, activation=False)
+  model.fit() ON CHIP per anchor in @corpus member order; model.forward() learned readout.
+  Last-layer Hebbian ONLY (multi-layer on-chip learning is HW-impossible — not attempted).
+  int4 backbone (H_877 inference lane): deterministic int4-sym projection 256x256,
+    sha256 = c626c63858a0d285c1daaca2b9b18877e936c07a6388df5ba1a0533c46c2298f (byte-identical both arms)
+
+CORPUS PROVENANCE (C4 .kosmos):
+  200 anchors = 40 concepts x 5 langs (ko·en·zh·ru·ja), cross-lingual ALIGNED meaning (c>0).
+  parallel.limen sha256 = 09eb83d7efb5e428ad7c868f6aad76d8c727df4cd14c8545566676740a924996
+                 merkle = 6400045f5077b036f64349ac124d44b84665abd27509b5342164726f1c821904
+  concat.limen   sha256 = 3c0982f98fa368e7ac7e3b05f47567124cb7d276105bd14e111b0a94b846ffd4
+                 merkle = d24a85dd7e83a6c0555a80ad4151ea7170367f03878358e98a09b99569e2d8ac
+  byte-identical payload multiset across orderings: True (parallel concept-major vs concat lang-major).
+
+RESULT (N=20 PAIRED on-chip trials · shared per-trial init · BOTH axes):
+  learn_happened_hw = True on ALL 20 trials  (C1 on-chip learn LIVE on real silicon, verified)
+
+  AXIS (a) last-layer separation  (parallel - concat):
+    7 positive / 13 negative
+    mean = -0.00105   sd = 0.00570   sem = 0.00127
+    95% CI = [-0.00355, +0.00145]   (straddles 0)   sign_stable = False
+  AXIS (b) Phi-proxy integration    (parallel - concat):
+    7 positive / 13 negative
+    mean = -0.18589   sd = 0.61186   sem = 0.13682
+    95% CI = [-0.45405, +0.08227]   (straddles 0)   sign_stable = False
+
+  BOTH axes 95% CI include 0  ->  green_axis = None  ->  🔴 REFUTED.
+
+WHY THIS IS THE HONEST CALL (g63):
+  Decided on the PAIRED N=20 distribution per axis, NOT a single draw. A tiny-N smoke (N=2)
+  briefly showed the SEP axis 2/2-positive ("GREEN") — exactly the lucky stochastic draw the
+  frozen prereg forbids; the full N=20 distribution erases it (7/13, CI straddles 0). The
+  AKD1000 re-inits/updates weights non-deterministically (H_904), so per-ordering integration
+  gaps live INSIDE the chip's own plasticity noise on both the last-layer-separation AND the
+  Phi-proxy integration axes. Cherry-picking would have FABRICATED a result. CLOSED-NEGATIVE.
+
+C-conditions: C1 on-chip fit live 20/20 · C2 last-layer Hebbian + ONCHIP-PARADIGM sub2
+  learn-while-infer streaming · C3 int4 backbone front-end (no model uploaded — earns no
+  .clm artifact on 🔴) · C4 .kosmos @corpus limen·merkle·profile·closed_corpus·coord-PERP-text ·
+  C5 TESTED -> 🔴 (H_911 does NOT transfer, all-4-levers) · C6 this added pre-registered H_912 ·
+  C7 this verdict + CLAIMS.tape + domain log.
+
+raw: result_4lever.json (machine) · run.log (verbatim stdout) · prereg.txt (frozen pre-registration)
+     · corpus/ (the C4 .kosmos @corpus + limen shards both arms) · scripts/onchip_4lever_lift.py

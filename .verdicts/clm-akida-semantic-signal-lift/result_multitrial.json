@@ -1,0 +1,53 @@
+{
+  "hypothesis": "F-CLM-AKIDA-SEMANTIC-SIGNAL-LIFT",
+  "ties": [
+    "H_912",
+    "H_911",
+    "H_877",
+    "H_904",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C6"
+  ],
+  "method": "N=1 paired on-chip trials; per-trial shared init; AkidaUnsupervised fit() ON CHIP; 3x N-exposure accumulation per anchor per arm; larger 200-anchor 5-lang corpus; integration=mean within-concept cross-lingual cosine of learned readout",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-01T04:31:25Z",
+  "backbone_int4_sha256": "c626c63858a0d285c1daaca2b9b18877e936c07a6388df5ba1a0533c46c2298f",
+  "inc": 256,
+  "units": 32,
+  "num_weights": 16,
+  "learning_competition": 0.1,
+  "exposures": 3,
+  "n_concepts": 40,
+  "corpus_anchors": 200,
+  "parallel_shard_sha256": "09eb83d7efb5e428ad7c868f6aad76d8c727df4cd14c8545566676740a924996",
+  "concat_shard_sha256": "3c0982f98fa368e7ac7e3b05f47567124cb7d276105bd14e111b0a94b846ffd4",
+  "n_trials": 1,
+  "deltas": [
+    0.004709570815067843
+  ],
+  "par_means": [
+    0.9291966293357227
+  ],
+  "con_means": [
+    0.9244870585206548
+  ],
+  "mean_delta": 0.004709570815067843,
+  "delta_sd": NaN,
+  "delta_sem": NaN,
+  "ci95": [
+    NaN,
+    NaN
+  ],
+  "n_positive": 1,
+  "n_negative": 0,
+  "sign_stable": true,
+  "learn_happened_hw": true,
+  "robust_parallel_better": false,
+  "verdict": "RED",
+  "verdict_reason": "REFUTED: paired delta CI still includes 0 across 1 chip trials with 200-anchor corpus + 3x exposure accumulation (mean=0.00471, 95%CI=[nan,nan], 1 pos / 0 neg, sign_stable=True). STRONGER closed-negative: H_911's cross-lingual semantic-linkage advantage does NOT transfer to AKD1000 last-layer Hebbian edge-learn EVEN WITH MORE SIGNAL -- the per-ordering gap stays within the chip's stochastic-plasticity noise floor (H_904). Supersedes/strengthens #1652."
+}

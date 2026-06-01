@@ -27,3 +27,7 @@ Sibling of [[CLM-KOSMOS]]. Each entry: date · what moved · verdict ptr.
 - **Stage 4 (C5)**: paired delta(parallel−concat 통합) = **6 pos / 6 neg · mean −0.00092 · 95%CI [−0.00319,+0.00135] (straddle 0)**. ⚠ 단일 run 은 H_904 stochastic-plasticity 로 🟢(+0.0072)↔🔴(−0.0042) flip → cherry-pick 거부, multi-trial 必. **H_911 의 semantic-linkage 우위가 AKD1000 last-layer Hebbian edge-learn 엔 전이 안 됨** — per-ordering gap 이 칩 noise 안에 묻힘. **closed-negative, publishable** (a_paper_negative_ok).
 
 verdict → `.verdicts/clm-akida-multiling-semantic/` (result.txt · result.json · run.log · prereg.txt · corpus/ · scripts/). claim → CLAIMS.tape `clm_akida_multiling_semantic`. 🔴 이므로 HF 모델 업로드 없음.
+
+## 2026-06-01 — e004 H_912 all-4-lever signal-lift → 🔴 REFUTED
+
+C6 추가가설 H_912: 4 레버 전부(큰 corpus 200앵커/40개념 · 3-노출 누적 · 이중 측정축 last-layer-sep+Φ-proxy · learn-while-infer 스트리밍) 적용. 실칩 N=20 paired, learn_hw 20/20. **두 축 모두 95%CI 0 포함 → 🔴 REFUTED.** H_911이 AKD1000 last-layer Hebbian on-chip edge-learn엔 전이 안 됨 (4 레버 다 써도). closed-negative · publishable. tiny-N smoke가 잠깐 GREEN 보였으나 N=20이 지움(cherry-pick 금지). verdict: `.verdicts/clm-akida-semantic-signal-lift/`. HF 업로드 없음(🔴). #1652 supersede/강화.

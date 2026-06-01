@@ -1,0 +1,27 @@
+#!/usr/bin/env kosmos
+# clm_concat.kosmos -- CLM-KOSMOS AKIDA 5-lang LARGER semantic corpus (kosmos/2.0 @corpus . C6/H_912)
+# C4-compliant: @corpus + ref .limen packed shard + profile + closed_corpus + placement PERP text.
+# Provenance: 200 anchors = 40 concepts x 5 langs (ko en zh ru ja), hand-authored
+# cross-lingual ALIGNED meaning (each concept = same proposition in all 5 langs, c>0).
+# Honest scope: 200 anchors (40 concepts) -- LARGER than the 25-anchor #1652 fixture.
+
+@corpus clm_kosmos_concat := "CLM-KOSMOS AKIDA 5-language cross-lingual semantic-linkage corpus (concat ordering, H_912 larger)" :: kosmos-corpus [tier=0 active]
+
+  profile = "anima-consciousness-carving"
+  coord   = [0.0, 0.0]
+  lane    = "clm_kosmos_concat"
+  radius  = 1.0
+
+  anchor_level = sample
+  count    = 200
+  lane_mix = "en=0.2, zh=0.2, ru=0.2, ja=0.2, ko=0.2"
+  vocab    = 256
+  encoding = "byte-utf8"
+  languages = "ko, en, zh, ru, ja"
+  ordering = "concat"
+  linkage  = "count-only (language-major: all of one lang then next, c~0)"
+  merkle   = d24a85dd7e83a6c0555a80ad4151ea7170367f03878358e98a09b99569e2d8ac
+
+  member = ref "concat.limen" sha256=3c0982f98fa368e7ac7e3b05f47567124cb7d276105bd14e111b0a94b846ffd4 count=200 frac=1.0 lane="all" format="limen/2"
+
+  closed_corpus = "Sigma frac = 1.0 AND member sha256 verifies AND merkle root recomputes from @anchor payloads; placement(coord) PERP text(payload)"
