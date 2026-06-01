@@ -1,0 +1,67 @@
+// census256.hexa — Hc_1299: full 256-rule big-Φ density census (n=4 exact, sys_state=all-ON).
+// Falsifier F1299.1: frac(Phi_mean > 0.5*max) >= 0.5 -> FALSIFIED (integration common).
+//                    < 0.25 -> SUPPORTED (sparse/fine-tuned). 0.25-0.5 partial.
+// F1299.3 class sanity: identity-ish rule 204 must be Phi=0 (low). chaos rule30 high.
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_eca.hexa"
+
+fn _dir() -> string {
+    return "/Users/mini/dancinlab/anima-wt-universe-verify/HEXAD/IIT4/state/universe_hc_verify_2026_06_02"
+}
+
+fn main() {
+    let n = 4
+    let full = iit4_pow2(n)
+    let allon = full - 1
+    let mut phis = []
+    let mut mx = 0.0
+    let mut rule = 0
+    let mut log = "rule,phi\n"
+    while rule < 256 {
+        let tpm = eca_tpm(rule, n)
+        let bp = big_phi(tpm, n, allon)
+        let p = bp[0]
+        phis = phis.push(p)
+        if p > mx { mx = p }
+        log = log + to_string(rule) + "," + to_string(p) + "\n"
+        if rule % 32 == 0 { write_file(_dir() + "/census256.csv", log) }
+        rule = rule + 1
+    }
+    write_file(_dir() + "/census256.csv", log)
+
+    let thr = 0.5 * mx
+    let mut hi = 0
+    let mut nz = 0
+    let mut i = 0
+    while i < 256 {
+        if phis[i] > thr { hi = hi + 1 }
+        if phis[i] > 1.0e-9 { nz = nz + 1 }
+        i = i + 1
+    }
+    let frac_hi = to_float(hi) / 256.0
+    let frac_nz = to_float(nz) / 256.0
+    let verdict = if frac_hi >= 0.5 { "FALSIFIED-common" } else { if frac_hi < 0.25 { "SUPPORTED-sparse-finetuned" } else { "PARTIAL-intermediate" } }
+
+    // class sanity
+    let p204 = phis[204]
+    let p30 = phis[30]
+    let sanity = if p204 < 1.0e-9 && p30 > thr { "PASS" } else { "CHECK" }
+
+    let mut out = "{\n"
+    out = out + "  \"id\": \"UNIVERSE-Hc1299-census256\", \"n\": 4, \"sys_state\": \"all-ON\",\n"
+    out = out + "  \"deterministic\": true, \"hexa_only\": true, \"llm\": \"none\",\n"
+    out = out + "  \"phi_max\": " + to_string(mx) + ", \"threshold_0.5max\": " + to_string(thr) + ",\n"
+    out = out + "  \"n_high_phi\": " + to_string(hi) + ", \"frac_high_phi\": " + to_string(frac_hi) + ",\n"
+    out = out + "  \"n_nonzero_phi\": " + to_string(nz) + ", \"frac_nonzero\": " + to_string(frac_nz) + ",\n"
+    out = out + "  \"phi_rule204\": " + to_string(p204) + ", \"phi_rule30\": " + to_string(p30) + ",\n"
+    out = out + "  \"class_sanity\": \"" + sanity + "\",\n"
+    out = out + "  \"verdict\": \"" + verdict + "\"\n"
+    out = out + "}\n"
+    write_file(_dir() + "/census256.json", out)
+    println("phi_max=" + to_string(mx) + " thr=" + to_string(thr))
+    println("high-phi rules=" + to_string(hi) + "/256 frac=" + to_string(frac_hi))
+    println("nonzero-phi rules=" + to_string(nz) + "/256 frac=" + to_string(frac_nz))
+    println("rule204 phi=" + to_string(p204) + " rule30 phi=" + to_string(p30) + " sanity=" + sanity)
+    println("Hc_1299 verdict: " + verdict)
+    println("=== census done ===")
+}

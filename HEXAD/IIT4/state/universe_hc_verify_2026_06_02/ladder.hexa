@@ -61,7 +61,7 @@ fn proxy_var(rule: int, n: int, seed: int, t: int) -> float {
     return v / to_float(tl)
 }
 
-fn sqrtf(x: float) -> float {
+fn sqrt_a(x: float) -> float {
     if x <= 0.0 { return 0.0 }
     let mut g = x
     let mut k = 0
@@ -88,7 +88,7 @@ fn pearson(xs: array, ys: array) -> float {
         i = i + 1
     }
     if sxx <= 0.0 || syy <= 0.0 { return 0.0 }
-    return sxy / sqrtf(sxx * syy)
+    return sxy / sqrt_a(sxx * syy)
 }
 
 fn fj(a: array) -> string {

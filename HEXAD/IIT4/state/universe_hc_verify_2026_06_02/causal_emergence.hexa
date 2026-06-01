@@ -1,0 +1,231 @@
+// causal_emergence.hexa — Hc_1289: Hoel causal emergence (EI_macro vs EI_micro).
+// EI(TPM) = effective information = mutual info between do-uniform interventions on
+// the input state and the output state = average over states of KL(out_dist(s) || avg_out).
+// For deterministic ECA, out_dist(s) is a point mass at next(s).
+//   EI_micro: over 2^n micro states (next-state map).
+//   EI_macro: coarse-grain micro states by Hamming weight -> macro states (n+1 classes),
+//     macro TPM = averaged transitions; EI of that.
+// F1289.1: if EI_macro <= EI_micro for ALL rules -> causal emergence ABSENT (closed-neg).
+// F1289.2: where EI_macro>EI_micro exists, r(EI_gain, big_phi) >= 0.5 ?
+// F1289.3 anchor: identity rule 204 EI_gain ~ 0.
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_eca.hexa"
+
+fn _dir() -> string {
+    return "/Users/mini/dancinlab/anima-wt-universe-verify/HEXAD/IIT4/state/universe_hc_verify_2026_06_02"
+}
+
+fn eca_step(rule: int, n: int, s: int) -> int {
+    let mut ns = 0
+    let mut i = 0
+    while i < n {
+        let l = iit4_bit(s, (i - 1 + n) % n)
+        let c = iit4_bit(s, i)
+        let r = iit4_bit(s, (i + 1) % n)
+        if iit4_bit(rule, 4 * l + 2 * c + r) == 1 { ns = ns + iit4_pow2(i) }
+        i = i + 1
+    }
+    return ns
+}
+
+fn ln_a(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let y = (x - 1.0) / (x + 1.0)
+    let y2 = y * y
+    let mut term = y
+    let mut sum = 0.0
+    let mut k = 0
+    while k < 18 { sum = sum + term / to_float(2 * k + 1); term = term * y2; k = k + 1 }
+    return 2.0 * sum
+}
+
+// EI of a discrete TPM given by row distributions rows[s] (each an array over M outputs),
+// with uniform input intervention. EI = (1/S) sum_s sum_o p(o|s) log( p(o|s) / pbar(o) ).
+fn ei_from_rows(rows: array, ns_in: int, m_out: int) -> float {
+    // average output distribution pbar
+    let mut pbar = []
+    let mut o = 0
+    while o < m_out { pbar = pbar.push(0.0); o = o + 1 }
+    let mut s = 0
+    while s < ns_in {
+        let row = rows[s]
+        o = 0
+        while o < m_out { pbar[o] = pbar[o] + row[o] / to_float(ns_in); o = o + 1 }
+        s = s + 1
+    }
+    let mut ei = 0.0
+    s = 0
+    while s < ns_in {
+        let row = rows[s]
+        o = 0
+        while o < m_out {
+            let p = row[o]
+            if p > 1.0e-12 && pbar[o] > 1.0e-12 {
+                ei = ei + (1.0 / to_float(ns_in)) * p * ln_a(p / pbar[o])
+            }
+            o = o + 1
+        }
+        s = s + 1
+    }
+    return ei
+}
+
+// micro rows: deterministic, point mass at next(s).
+fn micro_rows(rule: int, n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut rows = []
+    let mut s = 0
+    while s < full {
+        let mut row = []
+        let mut o = 0
+        while o < full { row = row.push(0.0); o = o + 1 }
+        row[eca_step(rule, n, s)] = 1.0
+        rows = rows.push(row)
+        s = s + 1
+    }
+    return rows
+}
+
+fn hamming(s: int, n: int) -> int {
+    let mut w = 0
+    let mut i = 0
+    while i < n { w = w + iit4_bit(s, i); i = i + 1 }
+    return w
+}
+
+// macro rows: group micro states by Hamming weight (n+1 macro states). macro TPM row for
+// macro class A = average over micro s in A of the macro distribution of next(s)'s class.
+fn macro_rows(rule: int, n: int) -> array {
+    let full = iit4_pow2(n)
+    let m = n + 1
+    // count micro per class
+    let mut cnt = []
+    let mut c = 0
+    while c < m { cnt = cnt.push(0); c = c + 1 }
+    let mut s = 0
+    while s < full { cnt[hamming(s, n)] = cnt[hamming(s, n)] + 1; s = s + 1 }
+    // accumulate macro transition counts
+    let mut rows = []
+    c = 0
+    while c < m {
+        let mut row = []
+        let mut o = 0
+        while o < m { row = row.push(0.0); o = o + 1 }
+        rows = rows.push(row)
+        c = c + 1
+    }
+    s = 0
+    while s < full {
+        let a = hamming(s, n)
+        let b = hamming(eca_step(rule, n, s), n)
+        let rowa = rows[a]
+        rowa[b] = rowa[b] + 1.0
+        s = s + 1
+    }
+    // normalize each macro row by its class count
+    c = 0
+    while c < m {
+        if cnt[c] > 0 {
+            let row = rows[c]
+            let mut o = 0
+            while o < m { row[o] = row[o] / to_float(cnt[c]); o = o + 1 }
+        }
+        c = c + 1
+    }
+    return rows
+}
+
+fn sqrt_a(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut g = x
+    let mut k = 0
+    while k < 40 { g = 0.5 * (g + x / g); k = k + 1 }
+    return g
+}
+
+fn pearson(xs: array, ys: array) -> float {
+    let nn = len(xs)
+    if nn < 2 { return 0.0 }
+    let mut mx = 0.0
+    let mut my = 0.0
+    let mut i = 0
+    while i < nn { mx = mx + xs[i]; my = my + ys[i]; i = i + 1 }
+    mx = mx / to_float(nn); my = my / to_float(nn)
+    let mut sxy = 0.0
+    let mut sxx = 0.0
+    let mut syy = 0.0
+    i = 0
+    while i < nn {
+        let dx = xs[i] - mx
+        let dy = ys[i] - my
+        sxy = sxy + dx * dy; sxx = sxx + dx * dx; syy = syy + dy * dy
+        i = i + 1
+    }
+    if sxx <= 0.0 || syy <= 0.0 { return 0.0 }
+    return sxy / sqrt_a(sxx * syy)
+}
+
+fn fj(a: array) -> string {
+    let mut s = "["
+    let mut i = 0
+    while i < len(a) { if i > 0 { s = s + ", " }; s = s + to_string(a[i]); i = i + 1 }
+    return s + "]"
+}
+
+fn main() {
+    let n = 4
+    let allon = iit4_pow2(n) - 1
+    let rules = [0, 30, 51, 60, 90, 105, 110, 150, 204, 255]
+    let nr = len(rules)
+    let mut ei_mic = []
+    let mut ei_mac = []
+    let mut ei_gain = []
+    let mut bphi = []
+    let mut any_emergence = false
+    let mut log = "rule,ei_micro,ei_macro,ei_gain,phi\n"
+    let mut ri = 0
+    while ri < nr {
+        let rule = rules[ri]
+        let emi = ei_from_rows(micro_rows(rule, n), iit4_pow2(n), iit4_pow2(n))
+        let ema = ei_from_rows(macro_rows(rule, n), n + 1, n + 1)
+        let g = ema - emi
+        if g > 1.0e-9 { any_emergence = true }
+        let phi = big_phi(eca_tpm(rule, n), n, allon)[0]
+        ei_mic = ei_mic.push(emi); ei_mac = ei_mac.push(ema)
+        ei_gain = ei_gain.push(g); bphi = bphi.push(phi)
+        log = log + to_string(rule) + "," + to_string(emi) + "," + to_string(ema)
+            + "," + to_string(g) + "," + to_string(phi) + "\n"
+        write_file(_dir() + "/causal_emergence.csv", log)
+        ri = ri + 1
+    }
+    let r_gain_phi = pearson(ei_gain, bphi)
+    // anchor check: rule 204 (identity) gain ~ 0
+    let g204 = ei_gain[8]
+    let mut ag = g204
+    if ag < 0.0 { ag = 0.0 - ag }
+    let anchor_ok = ag < 0.05
+
+    let hc1289 = if !any_emergence { "FALSIFIED-no-causal-emergence" } else { if r_gain_phi >= 0.5 { "SUPPORTED-EIgain-aligns-phi" } else { "PARTIAL-emergence-exists-but-perp-phi" } }
+
+    let mut out = "{\n"
+    out = out + "  \"id\": \"UNIVERSE-Hc1289-causal-emergence\", \"n\": 4,\n"
+    out = out + "  \"coarse_grain\": \"Hamming-weight macro states (n+1 classes)\",\n"
+    out = out + "  \"deterministic\": true, \"hexa_only\": true, \"llm\": \"none\",\n"
+    out = out + "  \"rules\": [0,30,51,60,90,105,110,150,204,255],\n"
+    out = out + "  \"ei_micro\": " + fj(ei_mic) + ",\n"
+    out = out + "  \"ei_macro\": " + fj(ei_mac) + ",\n"
+    out = out + "  \"ei_gain\": " + fj(ei_gain) + ",\n"
+    out = out + "  \"bigphi\": " + fj(bphi) + ",\n"
+    out = out + "  \"any_emergence\": " + (if any_emergence { "true" } else { "false" }) + ",\n"
+    out = out + "  \"r_eigain_phi\": " + to_string(r_gain_phi) + ",\n"
+    out = out + "  \"anchor_rule204_gain\": " + to_string(g204) + ", \"anchor_ok\": " + (if anchor_ok { "true" } else { "false" }) + ",\n"
+    out = out + "  \"verdict\": \"" + hc1289 + "\"\n"
+    out = out + "}\n"
+    write_file(_dir() + "/causal_emergence.json", out)
+    println(log)
+    println("any causal emergence (EI_macro>EI_micro)? " + (if any_emergence { "YES" } else { "NO" }))
+    println("r(EI_gain, phi) = " + to_string(r_gain_phi))
+    println("anchor rule204 gain = " + to_string(g204) + " ok=" + (if anchor_ok { "true" } else { "false" }))
+    println("Hc_1289 verdict: " + hc1289)
+    println("=== causal_emergence done ===")
+}

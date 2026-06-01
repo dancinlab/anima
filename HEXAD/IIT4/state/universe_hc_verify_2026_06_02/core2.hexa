@@ -1,0 +1,304 @@
+// core2.hexa — improved backbone: ENSEMBLE metrics over ALL 2^n initial states
+// (proper spacetime emergence, not single-seed transient). Adjudicates:
+//   Hc_1288 (proxy variance-artifact partial corr), Hc_1290 (excess entropy ~ Phi),
+//   Hc_1292 (dissipation ~ Phi), plus context for Hc_1286/1298/1287.
+// All deterministic, $0 mac-local. Reuses eca_tpm + big_phi + lz_complexity.
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_eca.hexa"
+import "stdlib/info/lz_complexity.hexa"
+
+fn _dir() -> string {
+    return "/Users/mini/dancinlab/anima-wt-universe-verify/HEXAD/IIT4/state/universe_hc_verify_2026_06_02"
+}
+
+fn eca_step(rule: int, n: int, s: int) -> int {
+    let mut ns = 0
+    let mut i = 0
+    while i < n {
+        let l = iit4_bit(s, (i - 1 + n) % n)
+        let c = iit4_bit(s, i)
+        let r = iit4_bit(s, (i + 1) % n)
+        let idx = 4 * l + 2 * c + r
+        if iit4_bit(rule, idx) == 1 { ns = ns + iit4_pow2(i) }
+        i = i + 1
+    }
+    return ns
+}
+
+// ENSEMBLE LZ: concatenate the bit-stream of T steps from EVERY initial state.
+fn ensemble_lz(rule: int, n: int, t: int) -> float {
+    let full = iit4_pow2(n)
+    let mut seq = []
+    let mut s0 = 0
+    while s0 < full {
+        let mut s = s0
+        let mut k = 0
+        while k <= t {
+            let mut i = 0
+            while i < n { seq = seq.push(iit4_bit(s, i)); i = i + 1 }
+            s = eca_step(rule, n, s)
+            k = k + 1
+        }
+        s0 = s0 + 1
+    }
+    return lz_complexity(seq)
+}
+
+// ENSEMBLE phi_proxy (H_912 cheap variance): mean over initial states of the
+// Hamming-weight temporal variance of each trajectory.
+fn ensemble_proxy_var(rule: int, n: int, t: int) -> float {
+    let full = iit4_pow2(n)
+    let mut acc = 0.0
+    let mut s0 = 0
+    while s0 < full {
+        let mut weights = []
+        let mut s = s0
+        let mut k = 0
+        while k <= t {
+            let mut pc = 0
+            let mut i = 0
+            while i < n { pc = pc + iit4_bit(s, i); i = i + 1 }
+            weights = weights.push(to_float(pc))
+            s = eca_step(rule, n, s)
+            k = k + 1
+        }
+        let tl = len(weights)
+        let mut m = 0.0
+        let mut r = 0
+        while r < tl { m = m + weights[r]; r = r + 1 }
+        m = m / to_float(tl)
+        let mut v = 0.0
+        r = 0
+        while r < tl { let d = weights[r] - m; v = v + d * d; r = r + 1 }
+        acc = acc + v / to_float(tl)
+        s0 = s0 + 1
+    }
+    return acc / to_float(full)
+}
+
+// ENSEMBLE state_var: mean over cells & initial states of per-cell temporal variance.
+fn ensemble_state_var(rule: int, n: int, t: int) -> float {
+    let full = iit4_pow2(n)
+    let mut acc = 0.0
+    let mut cnt = 0
+    let mut s0 = 0
+    while s0 < full {
+        // collect trajectory states
+        let mut traj = []
+        let mut s = s0
+        let mut k = 0
+        while k <= t { traj = traj.push(s); s = eca_step(rule, n, s); k = k + 1 }
+        let tl = len(traj)
+        let mut i = 0
+        while i < n {
+            let mut m = 0.0
+            let mut r = 0
+            while r < tl { m = m + to_float(iit4_bit(traj[r], i)); r = r + 1 }
+            m = m / to_float(tl)
+            let mut v = 0.0
+            r = 0
+            while r < tl { let d = to_float(iit4_bit(traj[r], i)) - m; v = v + d * d; r = r + 1 }
+            acc = acc + v / to_float(tl)
+            cnt = cnt + 1
+            i = i + 1
+        }
+        s0 = s0 + 1
+    }
+    return acc / to_float(cnt)
+}
+
+fn ln_a(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let y = (x - 1.0) / (x + 1.0)
+    let y2 = y * y
+    let mut term = y
+    let mut sum = 0.0
+    let mut k = 0
+    while k < 16 { sum = sum + term / to_float(2 * k + 1); term = term * y2; k = k + 1 }
+    return 2.0 * sum
+}
+
+// ENSEMBLE excess entropy E = MI(past_weight; future_weight) pooled over all trajectories.
+fn ensemble_excess(rule: int, n: int, t: int) -> float {
+    let full = iit4_pow2(n)
+    let m = n + 1
+    let mut cp = []
+    let mut cf = []
+    let mut k = 0
+    while k < m { cp = cp.push(0); cf = cf.push(0); k = k + 1 }
+    let mut cj = []
+    k = 0
+    while k < m * m { cj = cj.push(0); k = k + 1 }
+    let mut tot = 0
+    let mut s0 = 0
+    while s0 < full {
+        let mut s = s0
+        let mut prevw = -1
+        let mut step = 0
+        while step <= t {
+            let mut w = 0
+            let mut i = 0
+            while i < n { w = w + iit4_bit(s, i); i = i + 1 }
+            if prevw >= 0 {
+                cp[prevw] = cp[prevw] + 1
+                cf[w] = cf[w] + 1
+                cj[prevw * m + w] = cj[prevw * m + w] + 1
+                tot = tot + 1
+            }
+            prevw = w
+            s = eca_step(rule, n, s)
+            step = step + 1
+        }
+        s0 = s0 + 1
+    }
+    if tot < 2 { return 0.0 }
+    let ft = to_float(tot)
+    let mut hp = 0.0
+    let mut hf = 0.0
+    let mut hj = 0.0
+    k = 0
+    while k < m {
+        if cp[k] > 0 { let pr = to_float(cp[k]) / ft; hp = hp - pr * ln_a(pr) }
+        if cf[k] > 0 { let pr = to_float(cf[k]) / ft; hf = hf - pr * ln_a(pr) }
+        k = k + 1
+    }
+    k = 0
+    while k < m * m { if cj[k] > 0 { let pr = to_float(cj[k]) / ft; hj = hj - pr * ln_a(pr) }; k = k + 1 }
+    let mi = hp + hf - hj
+    if mi < 0.0 { return 0.0 }
+    return mi
+}
+
+// dissipation: mean ln(in-degree of image) over states (forward/backward irreversibility).
+fn dissipation(rule: int, n: int) -> float {
+    let full = iit4_pow2(n)
+    let mut f = []
+    let mut a = 0
+    while a < full { f = f.push(eca_step(rule, n, a)); a = a + 1 }
+    let mut indeg = []
+    let mut b = 0
+    while b < full { indeg = indeg.push(0); b = b + 1 }
+    a = 0
+    while a < full { indeg[f[a]] = indeg[f[a]] + 1; a = a + 1 }
+    let mut sig = 0.0
+    a = 0
+    while a < full { sig = sig + ln_a(to_float(indeg[f[a]])); a = a + 1 }
+    return sig / to_float(full)
+}
+
+fn sqrt_a(x: float) -> float {
+    if x <= 0.0 { return 0.0 }
+    let mut g = x
+    let mut k = 0
+    while k < 40 { g = 0.5 * (g + x / g); k = k + 1 }
+    return g
+}
+
+fn pearson(xs: array, ys: array) -> float {
+    let nn = len(xs)
+    if nn < 2 { return 0.0 }
+    let mut mx = 0.0
+    let mut my = 0.0
+    let mut i = 0
+    while i < nn { mx = mx + xs[i]; my = my + ys[i]; i = i + 1 }
+    mx = mx / to_float(nn); my = my / to_float(nn)
+    let mut sxy = 0.0
+    let mut sxx = 0.0
+    let mut syy = 0.0
+    i = 0
+    while i < nn {
+        let dx = xs[i] - mx
+        let dy = ys[i] - my
+        sxy = sxy + dx * dy; sxx = sxx + dx * dx; syy = syy + dy * dy
+        i = i + 1
+    }
+    if sxx <= 0.0 || syy <= 0.0 { return 0.0 }
+    return sxy / sqrt_a(sxx * syy)
+}
+
+fn partial(xs: array, ys: array, zs: array) -> float {
+    let rxy = pearson(xs, ys)
+    let rxz = pearson(xs, zs)
+    let ryz = pearson(ys, zs)
+    let den = sqrt_a((1.0 - rxz * rxz) * (1.0 - ryz * ryz))
+    if den <= 0.0 { return 0.0 }
+    return (rxy - rxz * ryz) / den
+}
+
+fn fj(a: array) -> string {
+    let mut s = "["
+    let mut i = 0
+    while i < len(a) { if i > 0 { s = s + ", " }; s = s + to_string(a[i]); i = i + 1 }
+    return s + "]"
+}
+
+fn main() {
+    let n = 4
+    let allon = iit4_pow2(n) - 1
+    let t = 20
+    let rules = [0, 30, 51, 60, 90, 105, 110, 150, 204, 255]
+    let nr = len(rules)
+    let mut bphi = []
+    let mut lz = []
+    let mut pv = []
+    let mut sv = []
+    let mut ee = []
+    let mut dr = []
+    let mut log = "rule,phi,lz,proxy_var,state_var,excess,diss\n"
+    let mut ri = 0
+    while ri < nr {
+        let rule = rules[ri]
+        let bp = big_phi(eca_tpm(rule, n), n, allon)
+        let phi = bp[0]
+        let l = ensemble_lz(rule, n, t)
+        let p = ensemble_proxy_var(rule, n, t)
+        let s = ensemble_state_var(rule, n, t)
+        let e = ensemble_excess(rule, n, t)
+        let d = dissipation(rule, n)
+        bphi = bphi.push(phi); lz = lz.push(l); pv = pv.push(p)
+        sv = sv.push(s); ee = ee.push(e); dr = dr.push(d)
+        log = log + to_string(rule) + "," + to_string(phi) + "," + to_string(l)
+            + "," + to_string(p) + "," + to_string(s) + "," + to_string(e) + "," + to_string(d) + "\n"
+        write_file(_dir() + "/core2.csv", log)
+        ri = ri + 1
+    }
+
+    let r_phi_lz   = pearson(bphi, lz)
+    let r_proxy_lz = pearson(pv, lz)
+    let r_phi_excess = pearson(bphi, ee)
+    let r_phi_diss = pearson(bphi, dr)
+    let r_proxy_sv = pearson(pv, sv)
+    let pc_proxy_emerg_sv = partial(pv, lz, sv)   // Hc_1288: r(proxy, emergence | state_var)
+
+    // verdicts
+    let hc1290 = if r_phi_excess >= 0.5 { "SUPPORTED" } else { "FALSIFIED-excess-perp-phi" }
+    let hc1292 = if r_phi_diss >= 0.5 { "SUPPORTED" } else { "FALSIFIED-dissipation-perp-phi" }
+    // Hc_1288: H1 predicts partial |r| < 0.1 (proxy emergence signal all explained by variance).
+    let mut ap = pc_proxy_emerg_sv
+    if ap < 0.0 { ap = 0.0 - ap }
+    let hc1288 = if ap < 0.1 { "SUPPORTED-variance-confound" } else { "FALSIFIED-residual-signal" }
+
+    let mut out = "{\n"
+    out = out + "  \"id\": \"UNIVERSE-Hc-core2-ensemble\", \"n\": 4, \"t\": 20, \"ensemble\": \"all 2^n initial states\",\n"
+    out = out + "  \"rules\": [0,30,51,60,90,105,110,150,204,255],\n"
+    out = out + "  \"deterministic\": true, \"hexa_only\": true, \"llm\": \"none\",\n"
+    out = out + "  \"bigphi\": " + fj(bphi) + ", \"lz\": " + fj(lz) + ",\n"
+    out = out + "  \"proxy_var\": " + fj(pv) + ", \"state_var\": " + fj(sv) + ",\n"
+    out = out + "  \"excess\": " + fj(ee) + ", \"diss\": " + fj(dr) + ",\n"
+    out = out + "  \"r_phi_lz\": " + to_string(r_phi_lz) + ",\n"
+    out = out + "  \"r_proxy_lz\": " + to_string(r_proxy_lz) + ",\n"
+    out = out + "  \"r_phi_excess\": " + to_string(r_phi_excess) + ", \"hc1290_verdict\": \"" + hc1290 + "\",\n"
+    out = out + "  \"r_phi_diss\": " + to_string(r_phi_diss) + ", \"hc1292_verdict\": \"" + hc1292 + "\",\n"
+    out = out + "  \"r_proxy_statevar\": " + to_string(r_proxy_sv) + ",\n"
+    out = out + "  \"partial_proxy_lz_given_statevar\": " + to_string(pc_proxy_emerg_sv) + ", \"hc1288_verdict\": \"" + hc1288 + "\"\n"
+    out = out + "}\n"
+    write_file(_dir() + "/core2.json", out)
+    println(log)
+    println("r(phi,lz)           = " + to_string(r_phi_lz) + "   [emergence backbone, ensemble]")
+    println("r(proxy_var,lz)     = " + to_string(r_proxy_lz) + "   [H_912 proxy-emergence]")
+    println("r(phi,excess)       = " + to_string(r_phi_excess) + "   Hc_1290 -> " + hc1290)
+    println("r(phi,diss)         = " + to_string(r_phi_diss) + "   Hc_1292 -> " + hc1292)
+    println("r(proxy,state_var)  = " + to_string(r_proxy_sv))
+    println("partial(proxy,lz|sv)= " + to_string(pc_proxy_emerg_sv) + "   Hc_1288 -> " + hc1288)
+    println("=== core2 done ===")
+}

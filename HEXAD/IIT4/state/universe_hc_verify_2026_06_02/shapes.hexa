@@ -1,0 +1,183 @@
+// shapes.hexa — Hc_1293 (drive-gradient inverse-U), Hc_1294 (branching sigma peak),
+// Hc_1296 (combination problem: Phi vs unit-count N).
+// All build a parametric state-by-node float TPM and call faithful big_phi.
+//
+// Hc_1293: take an integrative base rule (110), perturb its forward TPM toward a
+//   global ON-bias of strength g in [0,1]: TPM_g[s,i] = (1-g)*base + g*1.0 (drive
+//   pushes every cell ON = saturation). g=0 = base dynamics, g=1 = dead all-ON.
+//   F1293.1 inverse-U: Phi(g) unimodal with interior peak.
+// Hc_1294: branching-process ring — each cell next = OR of sigma-weighted neighbour
+//   activity. We model a probabilistic TPM where P(cell i ON next) = clamp(sigma *
+//   (neighbour activity)/N_neighbours). sigma sweep around 1.0.
+//   F1294.1 peak at sigma~1.
+// Hc_1296: coupling-density / unit-count — SWAP-chain of N cells (u_i'=u_{i+1}),
+//   measure big_phi(N) for N=2..7. continuous accumulation vs threshold jump.
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_eca.hexa"
+
+fn _dir() -> string {
+    return "/Users/mini/dancinlab/anima-wt-universe-verify/HEXAD/IIT4/state/universe_hc_verify_2026_06_02"
+}
+
+fn clampf(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+// ── Hc_1293: drive-biased TPM from a base ECA rule ───────────────────────────
+fn drive_tpm(rule: int, n: int, g: float) -> array {
+    let base = eca_tpm(rule, n)
+    let mut t = []
+    let mut k = 0
+    while k < len(base) {
+        t = t.push(clampf((1.0 - g) * base[k] + g * 1.0))
+        k = k + 1
+    }
+    return t
+}
+
+// ── Hc_1294: branching-ring probabilistic TPM ────────────────────────────────
+// P(cell i ON next) = clamp( sigma * (#ON neighbours among {i-1,i,i+1}) / 3 ).
+fn branch_tpm(n: int, sigma: float) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let l = iit4_bit(s, (i - 1 + n) % n)
+            let c = iit4_bit(s, i)
+            let r = iit4_bit(s, (i + 1) % n)
+            let act = to_float(l + c + r) / 3.0
+            t = t.push(clampf(sigma * act))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+// ── Hc_1296: SWAP-chain TPM of N cells (u_i' = u_{(i+1) mod N}) ───────────────
+fn swapchain_tpm(n: int) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let nxt = iit4_bit(s, (i + 1) % n)
+            t = t.push(to_float(nxt))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+fn fj(a: array) -> string {
+    let mut s = "["
+    let mut i = 0
+    while i < len(a) { if i > 0 { s = s + ", " }; s = s + to_string(a[i]); i = i + 1 }
+    return s + "]"
+}
+
+// is curve unimodal with interior peak? returns argmax index.
+fn argmax(a: array) -> int {
+    let mut mi = 0
+    let mut mv = a[0]
+    let mut i = 1
+    while i < len(a) { if a[i] > mv { mv = a[i]; mi = i }; i = i + 1 }
+    return mi
+}
+
+fn range_of(a: array) -> float {
+    let mut lo = a[0]
+    let mut hi = a[0]
+    let mut i = 1
+    while i < len(a) { if a[i] < lo { lo = a[i] }; if a[i] > hi { hi = a[i] }; i = i + 1 }
+    return hi - lo
+}
+
+fn main() {
+    let n = 5
+
+    // ── Hc_1293 drive sweep g = 0,0.15,..,0.9 (7 pts) ───────────────────────
+    let gs = [0.0, 0.15, 0.3, 0.45, 0.6, 0.75, 0.9]
+    let mut phi_g = []
+    let mut i = 0
+    while i < len(gs) {
+        let tpm = drive_tpm(110, n, gs[i])
+        let bp = big_phi(tpm, n, iit4_pow2(n) - 1)
+        phi_g = phi_g.push(bp[0])
+        write_file(_dir() + "/shapes_1293.csv", "g_idx," + to_string(i) + ",phi," + to_string(bp[0]) + "\n")
+        i = i + 1
+    }
+    let am_g = argmax(phi_g)
+    let interior_g = (am_g > 0) && (am_g < len(gs) - 1)
+    let rg_g = range_of(phi_g)
+    let hc1293 = if interior_g && rg_g > 0.2 { "SUPPORTED-inverse-U" } else { "FALSIFIED-no-interior-peak" }
+
+    // ── Hc_1294 branching sigma sweep 0.4..1.6 (7 pts) ──────────────────────
+    let sigs = [0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6]
+    let mut phi_s = []
+    i = 0
+    while i < len(sigs) {
+        let tpm = branch_tpm(n, sigs[i])
+        let bp = big_phi(tpm, n, iit4_pow2(n) - 1)
+        phi_s = phi_s.push(bp[0])
+        i = i + 1
+    }
+    let am_s = argmax(phi_s)
+    // sigma at argmax: sigs[am_s]; peak-at-critical = |sigs[am_s]-1.0|<=0.15+grid
+    let sig_peak = sigs[am_s]
+    let mut dsig = sig_peak - 1.0
+    if dsig < 0.0 { dsig = 0.0 - dsig }
+    let hc1294 = if dsig <= 0.25 { "SUPPORTED-peak-near-critical" } else { "FALSIFIED-peak-off-critical" }
+
+    // ── Hc_1296 unit-count N sweep, SWAP-chain N=2..7 ───────────────────────
+    let mut phi_N = []
+    let mut nn = 2
+    while nn <= 7 {
+        let tpm = swapchain_tpm(nn)
+        let bp = big_phi(tpm, nn, iit4_pow2(nn) - 1)
+        phi_N = phi_N.push(bp[0])
+        nn = nn + 1
+    }
+    // continuity vs threshold: max single-step delta vs range; all >0 ?
+    let rg_N = range_of(phi_N)
+    let mut max_step = 0.0
+    let mut all_pos = true
+    i = 1
+    while i < len(phi_N) {
+        let mut d = phi_N[i] - phi_N[i-1]
+        if d < 0.0 { d = 0.0 - d }
+        if d > max_step { max_step = d }
+        if phi_N[i] <= 1.0e-9 { all_pos = false }
+        i = i + 1
+    }
+    if phi_N[0] <= 1.0e-9 { all_pos = false }
+    let step_frac = if rg_N > 0.0 { max_step / rg_N } else { 0.0 }
+    let hc1296 = if all_pos && step_frac < 0.3 { "SUPPORTED-panpsychist-continuous" } else { if step_frac >= 0.5 { "SUPPORTED-emergentist-threshold" } else { "PARTIAL-intermediate" } }
+
+    let mut out = "{\n"
+    out = out + "  \"id\": \"UNIVERSE-Hc1293-1294-1296-shapes\", \"n\": " + to_string(n) + ",\n"
+    out = out + "  \"deterministic\": true, \"hexa_only\": true, \"llm\": \"none\",\n"
+    out = out + "  \"hc1293_g\": [0.0,0.15,0.3,0.45,0.6,0.75,0.9],\n"
+    out = out + "  \"hc1293_phi_g\": " + fj(phi_g) + ", \"hc1293_argmax_idx\": " + to_string(am_g)
+              + ", \"hc1293_range\": " + to_string(rg_g) + ", \"hc1293_verdict\": \"" + hc1293 + "\",\n"
+    out = out + "  \"hc1294_sigma\": [0.4,0.6,0.8,1.0,1.2,1.4,1.6],\n"
+    out = out + "  \"hc1294_phi_sigma\": " + fj(phi_s) + ", \"hc1294_peak_sigma\": " + to_string(sig_peak)
+              + ", \"hc1294_verdict\": \"" + hc1294 + "\",\n"
+    out = out + "  \"hc1296_N\": [2,3,4,5,6,7],\n"
+    out = out + "  \"hc1296_phi_N\": " + fj(phi_N) + ", \"hc1296_max_step_frac\": " + to_string(step_frac)
+              + ", \"hc1296_all_positive\": " + (if all_pos { "true" } else { "false" })
+              + ", \"hc1296_verdict\": \"" + hc1296 + "\"\n"
+    out = out + "}\n"
+    write_file(_dir() + "/shapes.json", out)
+
+    println("Hc_1293 drive Phi(g) = " + fj(phi_g) + " argmax=" + to_string(am_g) + " -> " + hc1293)
+    println("Hc_1294 branch Phi(sigma) = " + fj(phi_s) + " peak_sigma=" + to_string(sig_peak) + " -> " + hc1294)
+    println("Hc_1296 Phi(N) = " + fj(phi_N) + " max_step_frac=" + to_string(step_frac) + " -> " + hc1296)
+    println("=== shapes done ===")
+}
