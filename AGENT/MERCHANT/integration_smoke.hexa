@@ -17,13 +17,13 @@
 //   - native_adapter() 가 amazon_adapter() 와 byte-identical surface (5 verb)
 //   - zero modification to types.hexa / adapter.hexa / order_pipeline.hexa
 
-import "/Users/ghost/core/anima/AGENT/MERCHANT/types.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/adapter.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/order_pipeline.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/ops.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/adapters/amazon.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/adapters/coupang.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/adapters/native.hexa"
+import "AGENT/MERCHANT/types.hexa"
+import "AGENT/MERCHANT/adapter.hexa"
+import "AGENT/MERCHANT/order_pipeline.hexa"
+import "AGENT/MERCHANT/ops.hexa"
+import "AGENT/MERCHANT/adapters/amazon.hexa"
+import "AGENT/MERCHANT/adapters/coupang.hexa"
+import "AGENT/MERCHANT/adapters/native.hexa"
 
 // C1 — L1 ARBITRAGE round-trip: amazon → coupang
 pub fn smoke_case_arbitrage() -> map {
