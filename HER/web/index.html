@@ -370,6 +370,28 @@
 const API = "";
 let email = localStorage.getItem("her_email") || "";
 
+/* unify the brand name: render every standalone lowercase "her" in the wordmark
+   font (.hn) across static copy. Skips chat/inputs/already-styled wordmarks, and
+   \bher\b word-boundary leaves "here/there/other" untouched. */
+(function brandHer() {
+  const skip = ".hn,.wm,.wordmark,script,style,input,textarea,#chat,nav";
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT);
+  const targets = []; let node;
+  while ((node = walker.nextNode())) {
+    if (!node.nodeValue || !/\bher\b/.test(node.nodeValue)) continue;
+    if (node.parentElement && node.parentElement.closest(skip)) continue;
+    targets.push(node);
+  }
+  targets.forEach((n) => {
+    const frag = document.createDocumentFragment();
+    n.nodeValue.split(/(\bher\b)/).forEach((p) => {
+      if (p === "her") { const s = document.createElement("span"); s.className = "hn"; s.textContent = "her"; frag.appendChild(s); }
+      else if (p) frag.appendChild(document.createTextNode(p));
+    });
+    n.parentNode.replaceChild(frag, n);
+  });
+})();
+
 /* nav state on scroll */
 const nav = document.getElementById("nav");
 addEventListener("scroll", () => {
