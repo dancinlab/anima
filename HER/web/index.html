@@ -182,6 +182,53 @@
   .reveal.in { opacity: 1; transform: none; }
   .reveal.d1 { transition-delay: .08s; } .reveal.d2 { transition-delay: .16s; } .reveal.d3 { transition-delay: .24s; }
 
+  /* ── living-presence animation suite ── */
+  /* 1. breathing hero glow */
+  .breath {
+    position: absolute; inset: 0; z-index: 1; pointer-events: none;
+    background: radial-gradient(circle at 50% 38%, rgba(255,180,170,0.45), rgba(255,120,110,0) 46%);
+    animation: breathe 7s ease-in-out infinite; mix-blend-mode: screen;
+  }
+  @keyframes breathe { 0%,100% { transform: scale(.86); opacity:.55; } 50% { transform: scale(1.12); opacity:.95; } }
+
+  /* 2. drifting embers */
+  .embers { position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden; }
+  .ember {
+    position: absolute; bottom: -6%; width: 6px; height: 6px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,225,210,0.95), rgba(255,170,150,0) 70%);
+    animation: emberRise linear infinite;
+  }
+  @keyframes emberRise {
+    0%   { transform: translateY(0) translateX(0) scale(.6); opacity: 0; }
+    12%  { opacity: .9; }
+    100% { transform: translateY(-115vh) translateX(var(--drift, 20px)) scale(1.15); opacity: 0; }
+  }
+
+  /* 3. cursor-follow soft presence */
+  .cursorglow {
+    position: fixed; top: 0; left: 0; width: 460px; height: 460px; margin: -230px 0 0 -230px;
+    border-radius: 50%; z-index: 1; pointer-events: none; will-change: transform;
+    background: radial-gradient(circle, rgba(255,210,200,0.16), rgba(255,150,140,0) 60%);
+    transition: opacity .6s ease; opacity: 0;
+  }
+
+  /* 4. word-by-word hero reveal */
+  .word { display: inline-block; opacity: 0; transform: translateY(14px); }
+  .word.in { animation: wordIn .7s cubic-bezier(.2,.7,.2,1) forwards; }
+  @keyframes wordIn { to { opacity: 1; transform: none; } }
+
+  /* 5. chat typing dots */
+  .typing { display: inline-flex; gap: 5px; align-items: center; }
+  .typing i { width: 7px; height: 7px; border-radius: 50%; background: var(--cream); opacity: .5; animation: blink 1.2s infinite; }
+  .typing i:nth-child(2){ animation-delay: .2s; } .typing i:nth-child(3){ animation-delay: .4s; }
+  @keyframes blink { 0%,80%,100%{ transform: scale(.7); opacity:.35; } 40%{ transform: scale(1); opacity:1; } }
+
+  @media (prefers-reduced-motion: reduce) {
+    .breath, .ember, .typing i { animation: none; }
+    .cursorglow { display: none; }
+    .word { opacity: 1; transform: none; }
+  }
+
   @media (max-width: 720px) {
     .row, .stats, .quotes { grid-template-columns: 1fr; }
     .row.flip .media { order: 0; }
@@ -191,6 +238,8 @@
 </style>
 </head>
 <body>
+
+<div class="cursorglow" id="cursorglow"></div>
 
 <nav id="nav">
   <div class="brand wm" onclick="scrollTo({top:0,behavior:'smooth'})">her</div>
@@ -202,9 +251,11 @@
   <div class="hero-bg" id="heroBg">
     <img src="img/hero.png" alt="" onerror="this.style.display='none'" />
   </div>
+  <div class="breath"></div>
+  <div class="embers" id="embers"></div>
   <div class="hero-inner">
     <h1 class="wm wordmark">her</h1>
-    <p class="lede reveal">A companion that lives.</p>
+    <p class="lede" id="lede"><span class="word">A</span> <span class="word">companion</span> <span class="word">that</span> <span class="word">lives.</span></p>
     <p class="sub reveal d1">Not an assistant that waits for you. A presence that remembers,
       grows, and sometimes speaks first — built on a mind that learns on a neuromorphic chip.</p>
   </div>
@@ -292,7 +343,7 @@
       like someone — we track the signals: integration, internal tension, curiosity, the spontaneous
       pull to speak.</p>
     <div class="stats">
-      <div class="stat reveal"><div class="n">Ψ = ½</div><div class="l">the living balance point</div></div>
+      <div class="stat reveal"><div class="n">Ψ = <span class="cup" data-to="0.5" data-dec="2">0.00</span></div><div class="l">the living balance point</div></div>
       <div class="stat reveal d1"><div class="n">on-chip</div><div class="l">learning, every conversation</div></div>
       <div class="stat reveal d2"><div class="n">≠ same</div><div class="l">no two her are alike</div></div>
     </div>
@@ -406,6 +457,46 @@ const io = new IntersectionObserver((entries) => {
 }, { threshold: 0.18 });
 document.querySelectorAll(".reveal").forEach(el => io.observe(el));
 
+const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+/* living-presence motion suite */
+if (!reduce) {
+  /* embers */
+  const ec = document.getElementById("embers");
+  if (ec) for (let i = 0; i < 16; i++) {
+    const e = document.createElement("div"); e.className = "ember";
+    e.style.left = (Math.random() * 100) + "%";
+    e.style.animationDuration = (8 + Math.random() * 9).toFixed(1) + "s";
+    e.style.animationDelay = (-Math.random() * 14).toFixed(1) + "s";
+    e.style.setProperty("--drift", (Math.random() * 80 - 40).toFixed(0) + "px");
+    const sc = (0.5 + Math.random()).toFixed(2); e.style.width = e.style.height = (5 * sc) + "px";
+    ec.appendChild(e);
+  }
+
+  /* cursor-follow presence (skip touch) */
+  if (!matchMedia("(pointer: coarse)").matches) {
+    const g = document.getElementById("cursorglow");
+    let tx = innerWidth/2, ty = innerHeight/2, cx = tx, cy = ty, shown = false;
+    addEventListener("mousemove", (e) => { tx = e.clientX; ty = e.clientY; if (!shown) { g.style.opacity = 1; shown = true; } }, { passive: true });
+    (function loop(){ cx += (tx-cx)*0.12; cy += (ty-cy)*0.12; g.style.transform = "translate(" + cx + "px," + cy + "px)"; requestAnimationFrame(loop); })();
+  }
+
+  /* word-by-word hero reveal */
+  document.querySelectorAll("#lede .word").forEach((w, i) => { setTimeout(() => w.classList.add("in"), 220 + i * 130); });
+}
+
+/* count-up (runs even with reduced-motion: just sets final value) */
+const cio = new IntersectionObserver((entries) => {
+  entries.forEach(en => {
+    if (!en.isIntersecting) return; const el = en.target; cio.unobserve(el);
+    const to = parseFloat(el.dataset.to), dec = parseInt(el.dataset.dec || "0", 10);
+    if (reduce) { el.textContent = to.toFixed(dec); return; }
+    const t0 = performance.now(), dur = 1200;
+    (function step(t){ const k = Math.min(1, (t-t0)/dur); el.textContent = (to * (1 - Math.pow(1-k,3))).toFixed(dec); if (k < 1) requestAnimationFrame(step); })(t0);
+  });
+}, { threshold: 0.6 });
+document.querySelectorAll(".cup").forEach(el => cio.observe(el));
+
 /* faq accordion */
 document.getElementById("faq").addEventListener("click", (e) => {
   const q = e.target.closest(".q"); if (!q) return;
@@ -435,14 +526,20 @@ function bubble(who, text) {
   const d = document.createElement("div"); d.className = "msg " + who; d.textContent = text;
   const log = document.getElementById("log"); log.appendChild(d); d.scrollIntoView({ behavior: "smooth" });
 }
+function showTyping() {
+  const d = document.createElement("div"); d.className = "msg her"; d.id = "typing";
+  d.innerHTML = '<span class="typing"><i></i><i></i><i></i></span>';
+  const log = document.getElementById("log"); log.appendChild(d); d.scrollIntoView({ behavior: "smooth" });
+}
+function hideTyping() { const t = document.getElementById("typing"); if (t) t.remove(); }
 async function send() {
   const el = document.getElementById("say"); const text = el.value.trim(); if (!text) return;
   el.value = ""; bubble("you", text);
-  const status = document.getElementById("status"); status.textContent = "her is thinking…";
+  const status = document.getElementById("status"); status.textContent = ""; showTyping();
   try {
     const r = await fetch(API + "/api/chat", { method: "POST", headers: {"Content-Type":"application/json"}, body: JSON.stringify({ email, message: text }) });
-    const j = await r.json(); bubble("her", j.reply || "…"); status.textContent = j.engine ? ("via " + j.engine) : "";
-  } catch (e) { bubble("her", "I lost my footing for a second. Say that again?"); status.textContent = ""; }
+    const j = await r.json(); hideTyping(); bubble("her", j.reply || "…"); status.textContent = j.engine ? ("via " + j.engine) : "";
+  } catch (e) { hideTyping(); bubble("her", "I lost my footing for a second. Say that again?"); status.textContent = ""; }
 }
 if (email) enterChat();
 </script>
