@@ -16,6 +16,15 @@ service cloud.firestore {
       allow update, delete: if false;
     }
 
+    // 1:1 early-access waitlist — write-only (privacy): anyone may add their email,
+    // but nobody can read/list the collection (only the project owner via console/admin).
+    match /waitlist/{entry} {
+      allow create: if request.resource.data.email is string
+                    && request.resource.data.email.size() > 3
+                    && request.resource.data.email.size() < 200;
+      allow read, update, delete: if false;
+    }
+
     // everything else: closed
     match /{document=**} {
       allow read, write: if false;
