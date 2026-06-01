@@ -1,0 +1,58 @@
+{
+  "hypothesis": "F-CLM-ONCHIP-LAYERPAGE-LADDER-ROBUSTNESS",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "akida": "2.19.1",
+  "seeds": [
+    "20260602",
+    "20260603",
+    "20260604"
+  ],
+  "method": "3 backbone seeds x paged depth ladder N{2,3,4,5} on live AKD1000; per-rung lift = composed - frozen cross-lingual concept-margin (bits). robustness = sign-stability of lift across seeds.",
+  "note": "ALL 12 rungs GREEN (every paged unit fit_on_chip=True learned_hw=True). Depth-paging COMPOSITION primitive scales to N=5 on hardware. But per-rung LIFT sign is UNSTABLE across seeds -> the 'does deep on-chip plasticity buy representational lift' question is NOT resolvable at 25-anchor toy scale (signal noise-dominated). Honest INCONCLUSIVE on lift; GREEN on the paging/composition capacity claim.",
+  "all_12_rungs_green_hw": true,
+  "slopes_per_seed": {
+    "20260602": 0.432,
+    "20260603": 0.2608,
+    "20260604": 0.1496
+  },
+  "per_N_lift_across_seeds": {
+    "2": [
+      -0.632,
+      -0.112,
+      -0.088
+    ],
+    "3": [
+      -0.336,
+      -0.176,
+      -1.152
+    ],
+    "4": [
+      0.744,
+      -0.928,
+      -0.16
+    ],
+    "5": [
+      0.448,
+      1.008,
+      0.08
+    ]
+  },
+  "per_N_mean_lift": {
+    "2": -0.2773,
+    "3": -0.5547,
+    "4": -0.1147,
+    "5": 0.512
+  },
+  "per_N_sign_stable": {
+    "2": true,
+    "3": true,
+    "4": false,
+    "5": true
+  },
+  "deferred": [
+    "lift resolution needs >>25 anchors (scale-up corpus, a_toy_scale_recheck)",
+    "full feature-plasticity beyond last-FC (only last-FC plastic per paged unit)",
+    "full 3B/7B LM training"
+  ]
+}
