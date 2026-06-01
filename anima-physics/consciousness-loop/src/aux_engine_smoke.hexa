@@ -15,7 +15,7 @@
 // 본 smoke 는 deterministic seed 가정 (rand_f32 stub OR rng_seed 고정).
 // 8-factor + persistence 의 full sim 은 2차 cycle.
 
-import "/Users/ghost/core/anima/anima-physics/consciousness-loop/src/aux_engine_lib.hexa"
+import "anima-physics/consciousness-loop/src/aux_engine_lib.hexa"
 
 fn smoke_check_finite(v: [float]) -> bool {
     for i in 0..v.len() {
