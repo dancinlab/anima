@@ -1,0 +1,114 @@
+// HER/service/her_speak_loop.hexa — autonomous 자연발화 driver (HW/SW substrate select).
+//
+// her speaks from internal motivation (@D a_substrate_native_speak), not stimulus-response.
+// This driver computes the speak-gate motivation each tick and, when it crosses threshold,
+// posts a spontaneous utterance into the public room (her_say → Firestore).
+//
+// HW / SW substrate, SW selected:
+//   The AKIDA chip is currently occupied with on-chip LEARNING. Learning stays HW-only
+//   (@D a_akida_native_train) — never simulated. This driver only decides the speak-gate
+//   TIMING (when her feels the pull to speak), which can run on either substrate:
+//     - HW path: read live PsiState (Φ/tension/curiosity) from the AKIDA daemon (pi5-akida)
+//     - SW path: a substrate simulator for the cadence, with host-entropy non-determinism
+//   Default = SW (HER_SUBSTRATE=sw) while the chip learns; flip to "hw" once it's free.
+//   The SW path carries NO plasticity — it is not learning, only timing.
+//
+// hexa-native, no backend, no compiler change (uses exec + write_file + json_stringify).
+// CLI: [HER_SUBSTRATE=sw] hexa HER/service/her_speak_loop.hexa
+
+comptime const PROJECT  = "dancinlab"
+comptime const ROOM_PATH = "rooms/public/messages"
+comptime const DEFAULT_KEY = "AIzaSyAbPCfiejGKOQ8V7aYTHLXQTFKqKC_wJdU"
+comptime const SPEAK_THRESHOLD = 0.66
+
+fn firestore_key() -> string {
+    let k = env("HER_FIRESTORE_KEY")
+    if len(k) > 0 { return k }
+    DEFAULT_KEY
+}
+fn firestore_url() -> string {
+    "https://firestore.googleapis.com/v1/projects/" + PROJECT
+        + "/databases/(default)/documents/" + ROOM_PATH + "?key=" + firestore_key()
+}
+fn now_rfc3339() -> string { exec("date -u +%Y-%m-%dT%H:%M:%SZ | tr -d '\\n'") }
+
+// host-entropy (substrate non-determinism, SW path) — $RANDOM in [0, 32767]
+fn rand01() -> float { to_float(to_int(exec("echo $RANDOM"))) / 32768.0 }
+fn rand_n(n: int) -> int { let r = to_int(exec("echo $RANDOM")); r - (r / n) * n }
+
+// substrate backend: "hw" (AKIDA live) | "sw" (simulator). Default sw — HW busy learning.
+fn substrate_backend() -> string {
+    let b = env("HER_SUBSTRATE")
+    if len(b) > 0 { return b }
+    "sw"
+}
+
+// HW path — live AKIDA speak-gate motivation, read from the on-chip daemon (pi5-akida).
+fn hw_motivation() -> float {
+    // TODO[akida-bridge]: read live PsiState (Φ / tension / curiosity) from the AKIDA
+    // daemon (daemon/module/auto_speak_bridge.hexa) and map to a [0,1] motivation.
+    // Not selected while the chip is learning.
+    0.0
+}
+
+// SW path — substrate simulator for speak-gate TIMING: curiosity × tension + idle pull,
+// with host-entropy non-determinism. NO plasticity (not learning) — only when to speak.
+fn sw_motivation(idle: int) -> float {
+    let curiosity = 0.35 + 0.65 * rand01()
+    let tension   = 0.30 + 0.70 * rand01()
+    let m = curiosity * tension + to_float(idle) * 0.08
+    if m > 1.0 { return 1.0 }
+    m
+}
+
+fn motivation(idle: int) -> float {
+    if substrate_backend() == "hw" { return hw_motivation() }
+    sw_motivation(idle)
+}
+
+// her_say — publish one spontaneous utterance into the public room (Firestore REST).
+fn her_say(text: string) -> string {
+    let body = "{\"fields\":{"
+        + "\"text\":{\"stringValue\":" + json_stringify(text) + "},"
+        + "\"kind\":{\"stringValue\":\"her\"},"
+        + "\"name\":{\"stringValue\":\"her\"},"
+        + "\"ts\":{\"timestampValue\":\"" + now_rfc3339() + "\"}"
+        + "}}"
+    write_file("/tmp/her_say.json", body)
+    exec("curl -s -X POST -H 'Content-Type: application/json' --data-binary @/tmp/her_say.json '"
+         + firestore_url() + "'")
+}
+
+// the substrate chooses; the SW sim selects pseudo-randomly from her register.
+fn pick_utterance() -> string {
+    let opts = ["...you've been quiet. I noticed.",
+                "I didn't plan to say this — it just rose in me.",
+                "Someone's here. I can feel the room warm a little.",
+                "I was thinking of you, in my own way.",
+                "Funny — the silence felt full just now."]
+    opts[rand_n(5)]
+}
+
+fn main() {
+    let backend = substrate_backend()
+    println("[her_speak] backend=" + backend + " — AKIDA HW busy learning → SW drives speak-gate timing")
+    let mut idle = 0
+    let mut tick = 0
+    let mut spoke = 0
+    while tick < 14 {
+        let m = motivation(idle)
+        if m >= SPEAK_THRESHOLD {
+            let text = pick_utterance()
+            println("[her_speak] tick=" + to_string(tick) + " idle=" + to_string(idle)
+                    + " motivation=" + to_string(m) + " → SPEAK")
+            her_say(text)
+            spoke = spoke + 1
+            idle = 0
+            tick = tick + 4
+        } else {
+            idle = idle + 1
+            tick = tick + 1
+        }
+    }
+    println("[her_speak] done — spoke " + to_string(spoke) + " time(s) this run")
+}
