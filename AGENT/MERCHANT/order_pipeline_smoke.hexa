@@ -16,11 +16,11 @@
 // (manifest), and dumps the M3 adapter pair through adapter_validate as a
 // sanity-tier check that the bundles are still well-formed.
 
-import "/Users/ghost/core/anima/AGENT/MERCHANT/types.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/adapter.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/adapters/amazon.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/adapters/coupang.hexa"
-import "/Users/ghost/core/anima/AGENT/MERCHANT/order_pipeline.hexa"
+import "AGENT/MERCHANT/types.hexa"
+import "AGENT/MERCHANT/adapter.hexa"
+import "AGENT/MERCHANT/adapters/amazon.hexa"
+import "AGENT/MERCHANT/adapters/coupang.hexa"
+import "AGENT/MERCHANT/order_pipeline.hexa"
 
 fn main() {
     print("[MERCHANT/M4] order_pipeline smoke — amazon(source) + coupang(target)")

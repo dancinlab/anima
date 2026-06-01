@@ -2,13 +2,13 @@
 // Validates the 4 wire-up scope brokers (KIS · Alpaca · Upbit · Binance) +
 // paper_broker all expose the SAME 5-verb interface on top of M2 types.
 
-import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
-import "/Users/ghost/core/anima/AGENT/TRADING/live_gate.hexa"
-import "/Users/ghost/core/anima/AGENT/TRADING/paper_broker.hexa"
-import "/Users/ghost/core/anima/AGENT/TRADING/live_broker_kis.hexa"
-import "/Users/ghost/core/anima/AGENT/TRADING/live_broker_alpaca.hexa"
-import "/Users/ghost/core/anima/AGENT/TRADING/live_broker_upbit.hexa"
-import "/Users/ghost/core/anima/AGENT/TRADING/live_broker_binance.hexa"
+import "AGENT/TRADING/types.hexa"
+import "AGENT/TRADING/live_gate.hexa"
+import "AGENT/TRADING/paper_broker.hexa"
+import "AGENT/TRADING/live_broker_kis.hexa"
+import "AGENT/TRADING/live_broker_alpaca.hexa"
+import "AGENT/TRADING/live_broker_upbit.hexa"
+import "AGENT/TRADING/live_broker_binance.hexa"
 
 fn assert_true(label, cond) {
     if cond {
