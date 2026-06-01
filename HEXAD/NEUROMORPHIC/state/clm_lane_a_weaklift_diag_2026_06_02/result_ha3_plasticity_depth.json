@@ -1,0 +1,67 @@
+{
+  "hypothesis": "H-A3-PLASTICITY-DEPTH",
+  "ties": [
+    "F-CLM-ONCHIP-LAYERPAGE-LADDER",
+    "a_scale_honest_scope",
+    "H_904",
+    "a_akida_native_train"
+  ],
+  "method": "FIXED 25 anchors + FIXED backbone seed; 3 arms/rung N{3,4,5} on live AKD1000: frozen_tail (L1 only), last_fc (L1+final unit), two_layer (L1+final two units). lift vs frozen_tail; depth_gain = lift_twolayer - lift_lastfc. one FC resident at a time.",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-01T17:56:25Z",
+  "backbone_seed": 20260602,
+  "backbone_int4_sha256": "d25e9f293cac2f643961fe50587a6d966a0dc29af09ac221bf528a376695edb8",
+  "input": "parallel",
+  "input_sha": "1990f87de250cb73",
+  "anchor_count": 25,
+  "ladder_N": [
+    3,
+    4,
+    5
+  ],
+  "rungs": [
+    {
+      "N": 3,
+      "frozen_margin": -0.6079999999999988,
+      "lastfc_margin": -0.40800000000000036,
+      "twolayer_margin": -1.064,
+      "lift_lastfc": 0.1999999999999984,
+      "lift_twolayer": -0.4560000000000013,
+      "depth_gain": -0.6559999999999997,
+      "all_learned_hw": true
+    },
+    {
+      "N": 4,
+      "frozen_margin": -0.016000000000000014,
+      "lastfc_margin": -0.6960000000000006,
+      "twolayer_margin": -0.04800000000000004,
+      "lift_lastfc": -0.6800000000000006,
+      "lift_twolayer": -0.03200000000000003,
+      "depth_gain": 0.6480000000000006,
+      "all_learned_hw": true
+    },
+    {
+      "N": 5,
+      "frozen_margin": -0.5760000000000005,
+      "lastfc_margin": 0.19199999999999928,
+      "twolayer_margin": -0.4079999999999995,
+      "lift_lastfc": 0.7679999999999998,
+      "lift_twolayer": 0.16800000000000104,
+      "depth_gain": -0.5999999999999988,
+      "all_learned_hw": true
+    }
+  ],
+  "depth_gains": [
+    -0.6559999999999997,
+    0.6480000000000006,
+    -0.5999999999999988
+  ],
+  "n_pos": 1,
+  "n_neg": 2,
+  "mean_depth_gain": -0.20266666666666597,
+  "sign_consistent": false,
+  "ha3_true": false,
+  "verdict": "H-A3-FALSIFIED (2-layer plastic adds no consistent lift over last-FC — depth not the cause)"
+}
