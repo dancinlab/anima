@@ -1,0 +1,84 @@
+// branch_small.hexa — Hc_1294: branching-ratio sigma sweep, Phi(sigma) peak at sigma~1.
+// Probabilistic branching ring at n=4 (exact big_phi, 15 mechanisms tractable).
+// P(cell i ON next) = clamp(sigma * (#ON in {i-1,i,i+1})/3).
+// F1294.1: argmax sigma within 1.0 +/- 0.25 -> SUPPORTED.
+import "stdlib/consciousness/iit4_bigphi.hexa"
+import "stdlib/consciousness/iit4_eca.hexa"
+
+fn _dir() -> string {
+    return "/Users/mini/dancinlab/anima-wt-universe-verify/HEXAD/IIT4/state/universe_hc_verify_2026_06_02"
+}
+
+fn clampf(x: float) -> float {
+    if x < 0.0 { return 0.0 }
+    if x > 1.0 { return 1.0 }
+    return x
+}
+
+fn branch_tpm(n: int, sigma: float) -> array {
+    let full = iit4_pow2(n)
+    let mut t = []
+    let mut s = 0
+    while s < full {
+        let mut i = 0
+        while i < n {
+            let l = iit4_bit(s, (i - 1 + n) % n)
+            let c = iit4_bit(s, i)
+            let r = iit4_bit(s, (i + 1) % n)
+            let act = to_float(l + c + r) / 3.0
+            t = t.push(clampf(sigma * act))
+            i = i + 1
+        }
+        s = s + 1
+    }
+    return t
+}
+
+fn fj(a: array) -> string {
+    let mut s = "["
+    let mut i = 0
+    while i < len(a) { if i > 0 { s = s + ", " }; s = s + to_string(a[i]); i = i + 1 }
+    return s + "]"
+}
+
+fn argmax(a: array) -> int {
+    let mut mi = 0
+    let mut mv = a[0]
+    let mut i = 1
+    while i < len(a) { if a[i] > mv { mv = a[i]; mi = i }; i = i + 1 }
+    return mi
+}
+
+fn main() {
+    let n = 4
+    let allon = iit4_pow2(n) - 1
+    let sigs = [0.4, 0.6, 0.8, 1.0, 1.2, 1.4, 1.6]
+    let mut phi_s = []
+    let mut csv = "sigma,phi\n"
+    let mut i = 0
+    while i < len(sigs) {
+        let bp = big_phi(branch_tpm(n, sigs[i]), n, allon)
+        phi_s = phi_s.push(bp[0])
+        csv = csv + to_string(sigs[i]) + "," + to_string(bp[0]) + "\n"
+        write_file(_dir() + "/branch_small.csv", csv)
+        i = i + 1
+    }
+    let am = argmax(phi_s)
+    let sig_peak = sigs[am]
+    let mut dsig = sig_peak - 1.0
+    if dsig < 0.0 { dsig = 0.0 - dsig }
+    let interior = (am > 0) && (am < len(sigs) - 1)
+    let hc1294 = if dsig <= 0.25 && interior { "SUPPORTED-peak-near-critical" } else { "FALSIFIED-peak-off-critical" }
+
+    let mut out = "{\n"
+    out = out + "  \"id\": \"UNIVERSE-Hc1294-branch\", \"n\": 4,\n"
+    out = out + "  \"deterministic\": true, \"hexa_only\": true, \"llm\": \"none\",\n"
+    out = out + "  \"sigma\": [0.4,0.6,0.8,1.0,1.2,1.4,1.6],\n"
+    out = out + "  \"phi_sigma\": " + fj(phi_s) + ", \"peak_sigma\": " + to_string(sig_peak)
+              + ", \"argmax_idx\": " + to_string(am) + ", \"interior\": " + (if interior { "true" } else { "false" })
+              + ", \"verdict\": \"" + hc1294 + "\"\n"
+    out = out + "}\n"
+    write_file(_dir() + "/branch_small.json", out)
+    println("Hc_1294 Phi(sigma)=" + fj(phi_s) + " peak_sigma=" + to_string(sig_peak) + " interior=" + (if interior {"Y"} else {"N"}) + " -> " + hc1294)
+    println("=== branch_small done ===")
+}
