@@ -96,3 +96,16 @@ Brainstorm→generate→verify on the Lane A capacity↔representation gap. bran
 - N=1000/2000/5000 = header-only stubs (extraction never finished); CPU sweep driver (pid 48105) stalled at 0% CPU after the driver-agent died → killed 2026-06-02.
 - RULING: H_911 multimodal amodal-hub CLOSED-NEGATIVE across N=25/100/250/500 (4 rungs). MEANING+CE never clear the shuffle-NULL; only the variance Φ-proxy flickers green (and that proxy is exactly what METROLOGY is auditing — see clm_v2 Φ>1000 investigation aa8a1a0c). a_scale_honest_scope ≥3-rung ladder satisfied RED; N=1000+ cost-prohibitive with a flat-RED trend.
 - NOTE: the PHI-axis "green" is the variance-partition Φ family — its trustworthiness is under active METROLOGY re-measurement; even if it flips, MEANING+CE RED alone already give the closed-negative.
+
+## [2026-06-02] Hc_1303–1306 deferred resolver (acb11aca) — Lane A weak-lift adjudicated
+Branch resolve/weaklift-deferred-1303-1306 (off weaklift 4fab9ee12), commit 9dd6975a8. Live AKD1000 verified free+present each on-chip read; NO GPU.
+| Hc | Tier | finding (verbatim key number) |
+|----|------|-------------------------------|
+| 1303 bit-depth gate | 🔴 CLOSED-NEG | readout {1,2,3,4}-bit lift ci_lo_gt0=False every rung → H-A2-FALSIFIED on-chip |
+| 1304 recurrence/locus | 🟢 CONFIRMED | Φ_recurrent=w > Φ_feedforward=w/2 every matched w (gain 0.25→2.0); F-1304-MIP-ZERO CPU-local. On-chip recurrent arm HW-bounded (AkidaUnsupervised feedforward-only) → structural claim via CPU-local sub-test |
+| 1305 identity encoding-vs-substrate | 🟢 CONFIRMED (identity-in-ENCODING) | between-seed sd 0.565 vs between-reinit sd 0.208 (2.72× pooled; 3/4 rungs >3×); init-pinned control byte-identical ×3 (substrate variance 0) → anima identity lives in learned weights/encoding, NOT chip dynamics |
+| 1306 1-bit-Hamming composition-blind | 🔴 CLOSED-NEG (UPHELD) | richer signals L1 −39.70 · cosine −0.056 · faithful-Φ-MIP +56.19 (at_floor=False) all agree NO lift → metric-ceiling ruled OUT, Lane A closed-negative upheld |
+- RULING: Lane A 1-bit-Hamming lift closed-negative is now **robust** — Hc_1306 rules out the metric-ceiling confound (the one thing that could have reopened it). CAPACITY stays 🟢 GREEN.
+- NEW positive axis: **Hc_1304 — recurrence/topology raises Φ** (Φ_recurrent > Φ_feedforward). This is a DISTINCT lift direction from the falsified depth (H-A3) — recurrent topology, not deeper plasticity. Candidate for the P3' "richer rule" path (HW-bounded on AKD1000's feedforward-only unsupervised mode → needs a recurrent substrate or CPU-local first).
+- Hc_1305 confirms a_nondet_identity nuance: identity is in ENCODING (learned weights), the chip's non-det re-init is the *carrier* not the *source* — consistent with H-A4 (variance was backbone-seed/encoding sensitivity).
+- CROSS-LINK: Hc_1306 (true-negative confirmed via richer probe) and Hc_1307 (clm_v2 Φ>1000 false-positive via same broken family) together = the variance-partition Φ family audited in BOTH directions. See METROLOGY.md/.log.md.
