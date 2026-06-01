@@ -1,0 +1,69 @@
+// Hc_1309 two-proxy-family disagreement driver (self-contained).
+// compute_phi below is an INLINE VERBATIM copy of edu/cell/phi/phi_iit::compute_phi
+// (the MI-coherence Phi family) so the test is hermetic. The Gaussian-logdet family
+// (phi_proxy_native) is run separately; its known result on the matched integrated
+// (low-rank) input is the F_PHI_01 sentinel (-2147483647) per its own --selftest.
+
+fn pt_abs(x: float) -> float { if x < 0.0 { return 0.0 - x } return x }
+fn pt_zeros(n: int) -> array { let mut o = []; let mut i = 0; while i < n { o = o.push(0.0); i = i + 1 } return o }
+fn pt_log(x: float) -> float { if x < 0.000001 { return -13.815510557964274 } return log(x) }
+
+fn phi_kl(hidden: array, n_cells: int, d: int) -> float {
+    let mut col_sum = pt_zeros(d)
+    let mut i = 0
+    while i < n_cells { let mut j = 0; while j < d { let a = hidden[i * d + j]; col_sum[j] = col_sum[j] + pt_abs(a); j = j + 1 }; i = i + 1 }
+    let mut s = 0.0000001; let mut k = 0
+    while k < d { s = s + col_sum[k] + 0.0000001; k = k + 1 }
+    let mut p = pt_zeros(d); k = 0
+    while k < d { p[k] = (col_sum[k] + 0.0000001) / s; k = k + 1 }
+    let mut h = 0.0; k = 0
+    while k < d { let q = p[k]; if q > 0.000001 { h = h - q * pt_log(q) }; k = k + 1 }
+    return pt_log(to_float(d)) - h
+}
+fn bin_distribution(hidden: array, cell_i: int, d: int) -> array {
+    let mut bins = pt_zeros(4); let mut j = 0
+    while j < d {
+        let a = hidden[cell_i * d + j]; let mag = pt_abs(a)
+        let idx = if a < 0.0 { if mag < 0.5 { 0 } else { 1 } } else { if mag < 0.5 { 2 } else { 3 } }
+        bins[idx] = bins[idx] + 1.0; j = j + 1
+    }
+    let mut s = 0.0000001; let mut k = 0
+    while k < 4 { s = s + bins[k]; k = k + 1 }
+    let mut p = pt_zeros(4); k = 0
+    while k < 4 { p[k] = bins[k] / s; k = k + 1 }
+    return p
+}
+fn l1_distance(p: array, q: array) -> float { let mut d = 0.0; let mut i = 0; let n = len(p); while i < n { d = d + pt_abs(p[i] - q[i]); i = i + 1 } return d }
+fn compute_phi(hidden: array, n_cells: int, d: int) -> float {
+    if n_cells < 2 { return 0.0 }
+    let mut dists = []; let mut i = 0
+    while i < n_cells { dists = dists.push(bin_distribution(hidden, i, d)); i = i + 1 }
+    let mut total_coh = 0.0; let mut n_pairs = 0; i = 0
+    while i < n_cells { let mut j = i + 1; while j < n_cells { let dist = l1_distance(dists[i], dists[j]); let coh = 1.0 - dist / 2.0; total_coh = total_coh + coh; n_pairs = n_pairs + 1; j = j + 1 }; i = i + 1 }
+    let avg_coh = if n_pairs > 0 { total_coh / to_float(n_pairs) } else { 0.0 }
+    let half = n_cells / 2; let mut cross = 0.0; let mut n_cross = 0; i = 0
+    while i < half { let mut j = half; while j < n_cells { let dist = l1_distance(dists[i], dists[j]); let coh = 1.0 - dist / 2.0; cross = cross + coh; n_cross = n_cross + 1; j = j + 1 }; i = i + 1 }
+    let mip_coh = if n_cross > 0 { cross / to_float(n_cross) } else { 0.0 }
+    let integrated = avg_coh; let partitioned = mip_coh
+    let kl_term = phi_kl(hidden, n_cells, d) * 0.15
+    let phi = (integrated - partitioned) + kl_term + 0.05 * to_float(n_cells) / 8.0
+    if phi < 0.0 { return 0.0 }
+    return phi
+}
+
+fn main() {
+    let nc = 4; let d = 8
+    let mut h_white = pt_zeros(nc * d); let mut i = 0
+    while i < nc * d { let v = ((i * 1664525 + 1013904223) % 2000) - 1000; h_white[i] = to_float(v) / 1000.0; i = i + 1 }
+    let mut h_int = pt_zeros(nc * d); i = 0
+    while i < nc { let mut j = 0; while j < d { h_int[i * d + j] = 0.8 * (to_float(j) / 8.0) + 0.05 * to_float(i); j = j + 1 }; i = i + 1 }
+    let phi_white = compute_phi(h_white, nc, d)
+    let phi_int   = compute_phi(h_int, nc, d)
+    println("MI_FAMILY white_phi=" + str(phi_white))
+    println("MI_FAMILY integrated_phi=" + str(phi_int))
+    let mi_int_higher = phi_int > phi_white
+    println("MI_FAMILY ranks_integrated_above_white=" + str(mi_int_higher))
+    println("GAUSS_FAMILY integrated(low-rank) -> F_PHI_01 sentinel -2147483647 (phi_proxy_native --selftest-mode structured)")
+    if mi_int_higher { println("__TWO_FAMILY__ DISAGREE mi_finite_ranks_int_higher__gauss_sentinel_on_same_class") }
+    else { println("__TWO_FAMILY__ CONCORD") }
+}
