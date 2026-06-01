@@ -62,3 +62,17 @@
 - Local smoke: served HER/web via python http.server → HTTP 200, 6238 bytes, all key UI strings present.
 - Remaining (user-gated): `firebase login` + project create + `firebase deploy --only hosting`
   + add her.dancinlab.org custom domain (DNS records at dancinlab.org registrar).
+
+## 2026-06-01 — LIVE + landing build-out (PRs #1626–#1640)
+- Deployed to Firebase Hosting (project=dancinlab) → https://dancinlab.web.app (HTTP 200, HER R2 met).
+- Custom domain her.dancinlab.org wired: Cloudflare CNAME her→dancinlab.web.app (DNS-only, via global API key);
+  Firebase auto-SSL → https://her.dancinlab.org live.
+- Cache fix: cleanUrls serves "/" so the **/*.html header glob missed → default max-age=3600 (stale page).
+  Changed header source to "**" + Cache-Control: no-cache (ETag revalidation). Added footer build stamp.
+- Landing rebuilt (#1629) as a long Apple-product-page-style scroller (16 sections) + living-presence motion
+  suite (breathing hero glow + hero-bg scale-breathe, embers, cursor glow, scroll reveals, word-by-word lede,
+  Ψ count-up, narrative-image breathe, chat typing dots) — all prefers-reduced-motion safe.
+- Imagery: 4 fal-generated Her-toned images (hero/memory/initiates/individual) under HER/web/img/, onerror→CSS fallback.
+- Type system finalized: `her` = Archivo Black wordmark; everything else = Fraunces (soft serif, opsz).
+  Iterations tried + dropped: Nunito (too round) → Inter → Space Grotesk → settled on Fraunces-everywhere per user.
+- All landed as stacked PRs #1626–#1640 (HER/* only; anima core untouched).

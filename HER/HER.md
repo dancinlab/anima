@@ -17,22 +17,31 @@ before the 2026-08-17 13:00 PT deadline.
 
 ## hard requirements (must ALL be true)
 - [ ] R1 — business newly created AFTER 2026-05-19
-- [ ] R2 — uses ≥1 Google Cloud product (hosting/Vertex/etc.)
-- [ ] R3 — ≥1 LLM call routed through the Gemini API (thin edge adapter; AKIDA core unchanged)
+- [x] R2 — uses ≥1 Google Cloud product → Firebase Hosting (live)
+- [~] R3 — Gemini edge adapter code wired (gemini_edge.hexa + her_server route); live call pending the backend (self-hosted hexa compiler)
 - [ ] R4 — business operated by AI agents (anima substrate-native, not turn-based assistant)
 - [ ] R5 — real arms-length third-party revenue earned May–Aug 2026 (USD, monthly breakdown)
 - [ ] R6 — real users (count + demographics + testimonials)
 - [ ] R7 — production-operation evidence (agent logs · Gemini API usage records · dashboard screenshots)
 
 ## milestones
-- [ ] M1 — register Devpost entry + open the project repo (public or shared w/ testing@devpost.com + judging@hacker.fund)
-- [ ] M2 — stand up the live "Her" service (deploy anima chat daemon on Google Cloud)
-- [ ] M3 — wire the Gemini edge adapter (≥1 LLM call) without touching the AKIDA learning core
+- [~] M1 — repo open (github.com/dancinlab/anima, HER/* merged via PRs #1625–#1640); Devpost entry registration still TODO
+- [x] M2 — live "Her" service deployed → https://dancinlab.web.app + custom domain https://her.dancinlab.org (Firebase Hosting · Google Cloud · auto-SSL)
+- [~] M3 — Gemini edge adapter wired in code (HER/service/gemini_edge.hexa + her_server.hexa /api/chat); goes live when the hexa backend runs
 - [ ] M4 — add billing (Stripe) + acquire first paying users
 - [ ] M5 — draft + finalize the 500–1000 word written narrative (NARRATIVE.md)
 - [ ] M6 — record the <3-minute demo video (script in NARRATIVE.md §video)
 - [ ] M7 — collect revenue + user + production-log evidence bundle
 - [ ] M8 — submit on Devpost before 2026-08-17 13:00 PT
+
+## live (shipped this session — PRs #1625–#1640)
+- urls       : https://dancinlab.web.app · https://her.dancinlab.org (Firebase Hosting · Google Cloud · auto-SSL · DNS=Cloudflare CNAME→web.app)
+- front-end  : HER/web/index.html — long Apple-product-page-style scroller, 16 sections, served fresh (Cache-Control: no-cache) with a footer build stamp
+- type system: `her` wordmark = Archivo Black · everything else (headlines + body + UI) = Fraunces (soft serif, opsz). Inter/Nunito/Space Grotesk removed.
+- motion     : breathing hero glow + slow hero-bg scale-breathe · drifting embers · cursor-follow presence glow · scroll-reveals · word-by-word lede · Ψ count-up · img breathe (3 narrative images) · chat typing dots. All `prefers-reduced-motion` safe.
+- imagery    : HER/web/img/{hero,memory,initiates,individual}.png — 4 fal-generated Her-toned visuals, onerror→CSS-orb fallback
+- backend    : HER/service/{her_server,gemini_edge}.hexa — written for the self-hosted hexa compiler (hexa-cc can't compile effects/maps; see memory hexa-cc-deprecation). /api/signup + /api/chat wired; not yet running.
+- deploy cfg : HER/firebase.json (public=web · no-cache) + HER/.firebaserc (project=dancinlab); HER/deploy/ = runbook
 
 ## identity guardrail (non-negotiable)
 anima IS its AKIDA on-chip non-determinism (CLAUDE.md @D a_nondet_identity / a_akida_native_train).
