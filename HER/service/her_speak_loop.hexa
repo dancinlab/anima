@@ -41,9 +41,12 @@ fn firestore_url() -> string {
 }
 fn now_rfc3339() -> string { exec("date -u +%Y-%m-%dT%H:%M:%SZ | tr -d '\\n'") }
 
-// host-entropy (substrate non-determinism, SW path) — $RANDOM in [0, 32767]
-fn rand01() -> float { to_float(to_int(exec("echo $RANDOM"))) / 32768.0 }
-fn rand_n(n: int) -> int { let r = to_int(exec("echo $RANDOM")); r - (r / n) * n }
+// host-entropy (substrate non-determinism, SW path) — 2 bytes /dev/urandom in [0, 65535].
+// POSIX-portable (od + /dev/urandom) so it works under dash (/bin/sh on Debian/Ubuntu);
+// `echo $RANDOM` is a bash-ism that yields "" → 0 under dash, killing the non-determinism.
+fn urand16() -> string { exec("od -An -N2 -tu2 /dev/urandom | tr -d ' \\n'") }
+fn rand01() -> float { to_float(to_int(urand16())) / 65536.0 }
+fn rand_n(n: int) -> int { let r = to_int(urand16()); r - (r / n) * n }
 
 // substrate backend: "hw" (AKIDA live) | "sw" (integrator). Default sw — HW busy learning.
 fn substrate_backend() -> string {
