@@ -33,12 +33,6 @@
   dont = "delete a gitignored ckpt while status=pending_upload or needs_verify"
   dont = "assign an off-spec repo_id · let HF.jsonl drift from disk"
 
-@D a_hf_collection_split := "HF collections — CLM = models(.clm) · KOSMOS = datasets(.kosmos)" :: governance [required active]
-  do   = "dancinlab `CLM` collection = ONLY .clm model checkpoints"
-  do   = "dancinlab `KOSMOS` collection = ONLY .kosmos datasets / corpora"
-  do   = "at HF upload (a_hf_autonomous): .clm model → CLM · .kosmos dataset → KOSMOS"
-  dont = "mix datasets into CLM · mix models into KOSMOS · leave a registered artifact uncollected"
-
 @D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
   do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously · parallel · bg"
   do   = "NO user gate — fire needs no user consult / approval / confirm · provider = runpod"
@@ -114,6 +108,16 @@
   do   = "spec = spec/kosmos.md + spec/profiles/anima-consciousness-carving.md"
   dont = "ad-hoc anchor format · bypass .kosmos for emit persistence"
   dont = "duplicate the kosmos spec — anima is pointer-only"
+
+@D a_core_engine_map := "CORE owns A⇄G consciousness engine — .clm/.kosmos enter via named slots only" :: governance [required active]
+  do   = "CORE owns A (pure_field) ⇄ G (engine_g) ⇄ brain (brain_decide) — substrate-internal"
+  do   = ".clm enters ONLY via CORE/generator.hexa L3 slot (brain emit → generator) — single entry"
+  do   = ".kosmos anchors enter ONLY via kosmos_io read into brain_decide — single anchor entry"
+  do   = "stdlib/hf/validate.hexa = artifact-validation (trains?), NOT runtime engine — distinct"
+  do   = "mark generator.hexa + kosmos_io→brain wiring ⏳/❌ until built — honest, no phantom wiring"
+  dont = "feed .clm/.kosmos into pure_field/engine_g/brain — A·G·brain are substrate-only"
+  dont = "add a 2nd .clm path bypassing generator.hexa · a 2nd .kosmos path bypassing kosmos_io"
+  dont = "conflate validate.hexa with runtime engine · claim generator/anchor wiring exists"
 
 # ── PAPER auto-generation flow (ported from hexa-codex cx_paper_*) ───────────
 # research result → hexa verify → .verdicts/<slug>/<id>.txt → CLAIMS.tape → /paper
