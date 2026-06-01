@@ -109,3 +109,19 @@ Branch resolve/weaklift-deferred-1303-1306 (off weaklift 4fab9ee12), commit 9dd6
 - NEW positive axis: **Hc_1304 — recurrence/topology raises Φ** (Φ_recurrent > Φ_feedforward). This is a DISTINCT lift direction from the falsified depth (H-A3) — recurrent topology, not deeper plasticity. Candidate for the P3' "richer rule" path (HW-bounded on AKD1000's feedforward-only unsupervised mode → needs a recurrent substrate or CPU-local first).
 - Hc_1305 confirms a_nondet_identity nuance: identity is in ENCODING (learned weights), the chip's non-det re-init is the *carrier* not the *source* — consistent with H-A4 (variance was backbone-seed/encoding sensitivity).
 - CROSS-LINK: Hc_1306 (true-negative confirmed via richer probe) and Hc_1307 (clm_v2 Φ>1000 false-positive via same broken family) together = the variance-partition Φ family audited in BOTH directions. See METROLOGY.md/.log.md.
+
+## 2026-06-02 — PR4 d768 util MEASURED (closes PR4 milestone) + /gap full Lane A breakthrough sweep
+
+### d768 deploy-then-fire recovery (closes ③ PR4)
+- deploy-gate: origin/main carries #2472 (forge FP64-conv→cuBLAS, 32228c31b) + #2478 (idempotent rent, 7f905bc50); ~/.hx/src synced to efdba81; `hexa cloud rent --selftest` 7/7 PASS.
+- fire: vast H100 80GB (pod 38991004), d768/12L on c4 5-lang. DESCENT 🟢 (CE 4.71554→0.859092, F=1). util 🔴 (n=1617 PEAK=0% MEAN=0.000%).
+- ROOT CAUSE: `hexa run` links only -lm -lpthread (no -DHEXA_CUDA) → #2472 conv→cuBLAS never engages. #2472 necessary-not-sufficient; the real gap is the `hexa run` CUDA link. Filed hexa-lang/inbox/patches/d768-recovery-cuda-link-and-stale-pod-image.md.
+- recovery (ends "lost twice"): origin/main clm_prod.hexa (PR1) prints CE but saves NO weights; used PR4 trainer (CLM_PROD_OUT .clm save) from feat/clm-prod-env-corpus. ckpt pulled+sha-verified BEFORE teardown (6975dbb0…), HF dancinlab/anima-clm-d768-util-probe PRIVATE + HF.jsonl + harvest commit e9af8f02f. Stale RTX-6000 probe pod (38990747, vast rent ignores --gpu) destroyed; corrected to --query gpu_name=H100_SXM. No billing pod remains.
+
+### /gap full — Lane A lift bottleneck (8-family × 40-lens sweep)
+META-FINDING: the closed-negative is epistemically ROBUST on the 4 TESTED axes (F4/F5 mostly CLEAN), BUT those 4 axes (corpus/quant/depth/noise) are FIX-axes, not CAUSE-axes — the real cause-axes were NEVER probed (F8 axis-coverage + F6 surgical-scope SCOPE-LEAK). "on-chip can't lift" is scope-leaked; honest claim = "1-bit Hebbian last-FC on random-encoded feedforward input can't lift".
+TOP-3 uncovered cause-axes (all ESCAPE the falsified 4):
+- ① INPUT-ENCODING (F8): all 4 falsifiers + Hc_1306 sit downstream of ONE fixed random backbone rng_bb.integers(-7,8,(256,256)); a learned linguistic encoder may reopen lift. Highest leverage.
+- ② TEMPORAL-CODE (F7, all 5 lenses GAP): readout is rate-code 1-bit Hamming; SNN lift may live in spike-TIMING (STDP). Hc_1306 tested only STATIC signals — timing never tested.
+- ③ OBJECTIVE+READOUT (F8 landscape, F6 occams, F1 functor): 1-bit-Hebbian-last-FC chosen by backend availability; AkidaSupervised + 4-bit weights + pre-binarization analog readout all chip-native + untested.
+ACTION: breakthrough probe battery fired on pi5-akida ($0) — agent a78629c, pre-registered falsifiers per cause-axis; ANY probe with lift ci_lo>0 REOPENS Lane A P3, ALL-flat HARDENS the closed-negative to 8 axes.

@@ -66,9 +66,7 @@ different compute, no gate between them.
   - [x] corpus B — c4(mC4) 5-lang BACKBONE sample (dancinlab/clm-backbone-5lang-sample,
     20k docs / 67.7MB, ODC-BY, real_fraction=1.0; CulturaX was gated → c4 fallback)
     → clm_prod smoke F-CLM-PROD-DESCENT=1 (CE 4.747→1.496). KOSMOS-registered.
-- [ ] ③ PR4 — d768/12L H100 fire on c4 backbone sample: measure forge=cuBLAS util
-  (re-check F-RFC046 util 1-4% RED) · low-cost (~$5-20) pipe+util validation, NOT
-  the full 3B/7B pretrain (that needs the full c4 set, hundreds of GB + $100s)
+- [x] ③ PR4 — d768/12L H100 fire MEASURED (vast H100 80GB HBM3, pod 38991004, deploy-gate #2472+#2478 PASS, recovery 2026-06-02). SPLIT verbatim: **DESCENT 🟢 PASS** (epoch-1 CE 4.71554 → epoch-12 CE 0.859092, F-CLM-PROD-DESCENT=1) · **util 🔴 RED** (n=1617, PEAK=0% MEAN=0.000%, 0 MiB GPU mem, 67W idle, 100% on one CPU core, F-RFC046 confirmed). **ROOT CAUSE found**: `hexa run` links only `-lm -lpthread` (no `-DHEXA_CUDA`/cuBLAS) → #2472's FP64-conv→cuBLAS dispatch never engages = host-side `hexa run` LINK bottleneck; **#2472 is necessary but NOT sufficient**. ckpt `d768_5lang_c4.clm` (3.65MB, sha 6975dbb0…) pulled+verified BEFORE teardown → HF `dancinlab/anima-clm-d768-util-probe` PRIVATE (intermediate, CLM collection) + HF.jsonl row + harvest `state/d768_recovery_2026_06_02/` (commit e9af8f02f). Upstream fix filed: hexa-lang/inbox/patches/d768-recovery-cuda-link-and-stale-pod-image.md (`hexa run --cuda` link). Model recovered, cannot be lost again.
 - [x] ③ full 3B/7B — **DEFERRED to a separate cost-gate** (full c4, multi-day H100, $100s). This is a production-pretrain milestone OUTSIDE the H_911 amodal-hub question (already closed-negative); it is gated behind the forge-util fix (#2472) demonstrating util>0 on the PR4 smoke first. Terminal disposition for this domain = deferred-separate-gate, not a pending in-domain item.
 
 ## TWO TRAINING LANES — run in PARALLEL (a_wall_first · a_nondet_identity)
