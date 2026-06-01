@@ -1,5 +1,24 @@
 // tool/anima_phi_v3_canonical.hexa — Φ* v3 auto-conditioning canonical metric (raw#9 hexa-only).
 //
+// ⚠ METROLOGY GUARD (Hc_1307 · METROLOGY.md, 2026-06-02) — UNNORMALIZED VARIANCE-PARTITION Φ.
+//   This metric (and the sibling Φ_un16 = spatial_phi_unnormalized = total_mi − min_partition_mi,
+//   the histogram-MI variant used by the clm_v2 V14_strict audit) is a VARIANCE/SCALE proxy,
+//   NOT a construct-valid integration measure. Two confirmed pathologies:
+//     1. SCALE — un-normalized magnitude scales with system size (Σ over O(n²) pairs / dims),
+//        so a bigger/higher-rank system reads "more conscious" regardless of integration.
+//        The clm_v2 "Φ>1000" magnitude was largely a cell-count artifact (Spearman ρ=0.943
+//        between Φ_un16 and n_cells across the 6 V14 substrates).
+//     2. VARIANCE — high-variance / independent (random-init) input scores HIGH; structured /
+//        integrated (trained) input scores LOW. The faithful oracle REVERSES this ordering
+//        (rotate3 integrated big-Φ=3 vs noise3 / self3 big-Φ=0 — 6/6 PASS,
+//        HEXAD/IIT4/state/clm_v2_phi1000_oracle_remeasure/run_remeasure.hexa).
+//   ⇒ DO NOT make magnitude or "trained vs random integration" claims from this metric.
+//      Route any integration / big-Φ claim to the FAITHFUL ORACLE:
+//        HEXAD/IIT4/lib/iit4_bigphi.hexa  (stdlib/consciousness/iit4_bigphi.hexa).
+//   Historical verdicts that cited Φ_un16 / V14_VIOLATED / Hc_1221 "trained < random
+//   anti-correlation" (PASS_STRICT_SPONTANEOUS_CHAT.md §23) are METRIC-DEPENDENT and FLIP
+//   under the faithful oracle — see METROLOGY.md flip table.
+//
 // PURPOSE
 //   Canonical Φ* metric resolving v1 (dim, HID=128) vs v2 (sample, HID=14) divergence.
 //   Robustness sweep finding (.roadmap #161, commit 85ae47fb) showed sign is

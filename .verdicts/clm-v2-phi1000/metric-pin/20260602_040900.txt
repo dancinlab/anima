@@ -1,0 +1,35 @@
+=== CLM_V2 Φ_un16 METRIC PIN (g5, verbatim source trace) ===
+
+CALL CHAIN (V14 strict audit, §23 of PASS_STRICT_SPONTANEOUS_CHAT.md):
+  v14_strict_source.py
+    -> import run_max256 as M
+    -> M.fire_substrate_engine_ag(...)        [run_max256.py:185]
+  run_max256.py:39   from iit_phi_port import compute_iit_phi
+  run_max256.py:155  phi_iit = compute_iit_phi(torch.tensor(cp, float32), n_bins=16)
+  run_max256.py:160  "iit_phi_unnorm_b16": phi_iit["spatial_phi_unnormalized"]
+  run_max256.py:356  rand_phi = [m.snapshots[-1]["iit_phi_unnorm_b16"] ...]
+  run_max256.py:378  metric_primary = "iit_phi_unnorm_b16"
+  run_max256.py:358  n_beats = sum(trained_un16 > r for r in rand_phi)
+  run_max256.py:365  verdict = "V14_VIOLATED" (n_beats < len-1)
+
+FORMULA SOURCE (THE ACTUAL Φ):
+  archive/state_legacy/anima_clm_v5_iit_phi_remetric_2026_05_10/iit_phi_port.py
+
+  iit_phi_port.py:204  total_mi = mi_matrix.sum() / 2.0
+        where mi_matrix[i,j] = _mutual_information(cells[i], cells[j], n_bins=16)
+        = histogram MI, 16-bin (lines 59-86), Σ over n(n-1)/2 pairs
+  iit_phi_port.py:207  min_partition_mi = _minimum_partition(mi_matrix)
+        = MIN-cut bipartition MI (exhaustive N<=8 / Fiedler N>8, lines 91-139)
+  iit_phi_port.py:210  spatial_phi_unnormalized = max(0.0, total_mi - min_partition_mi)
+  iit_phi_port.py:211  spatial_phi              = spatial_phi_unnormalized / max(n-1, 1)
+
+CLASSIFICATION:
+  Φ_un16 = spatial_phi_unnormalized = max(0, total_mi - min_partition_mi)
+  = UNNORMALIZED variance-partition Φ (whole-system histogram-MI integration
+    minus the minimum-information-partition cut), with NO /(n-1) normalization.
+  -> YES: this is the unnormalized variance-partition family flagged BROKEN
+     post-#1671 (scores high-variance noise as "most integrated"; magnitude
+     scales with n_cells because total_mi sums O(n^2) pairwise MI terms).
+  iit_phi_port.py:42-44 (author's own C3): "divides spatial_phi by (n-1),
+     which makes Φ scale ~O(MI/N)" -> the UNNORM variant they reported as the
+     PRIMARY metric therefore scales ~O(MI*N), i.e. with cell count.
