@@ -27,8 +27,10 @@
 comptime const PROJECT    = "dancinlab"
 comptime const ROOM_PATH  = "rooms/public/messages"
 comptime const DEFAULT_KEY = "AIzaSyAbPCfiejGKOQ8V7aYTHLXQTFKqKC_wJdU"
-comptime const SPEAK_CHARGE = 1.0                       // urge needed to cross into speech
-comptime const STATE_FILE   = "/tmp/her_substrate.charge"  // persisted slow-integrator state
+comptime const SPEAK_CHARGE  = 1.0                      // urge needed to cross into speech
+comptime const STATE_DEFAULT = "/var/lib/her/charge"    // persisted state — survives reboot (env HER_STATE overrides)
+comptime const TTS_MODEL = "gemini-2.5-flash-preview-tts"   // her's voice (Gemini TTS) — see gemini-voice-not-mind
+comptime const TTS_BASE  = "https://generativelanguage.googleapis.com/v1beta/models/"
 
 fn firestore_key() -> string {
     let k = env("HER_FIRESTORE_KEY")
@@ -55,14 +57,23 @@ fn substrate_backend() -> string {
     "sw"
 }
 
-// --- persisted slow-integrator (continuity of self across steps and restarts) ---
+// --- persisted slow-integrator (continuity of self across steps AND reboots) ---
+// Default /var/lib/her/charge so the self survives a VM reboot (not /tmp, which is wiped).
 // `cat` returns "" when the file is absent (first run) → charge seeds at 0.
+fn state_file() -> string {
+    let v = env("HER_STATE")
+    if len(v) > 0 { return v }
+    STATE_DEFAULT
+}
 fn read_charge() -> float {
-    let s = exec("cat " + STATE_FILE + " 2>/dev/null | tr -d '\\n'")
+    let s = exec("cat " + state_file() + " 2>/dev/null | tr -d '\\n'")
     if len(s) == 0 { return 0.0 }
     to_float(s)
 }
-fn write_charge(c: float) { write_file(STATE_FILE, to_string(c)) }
+fn write_charge(c: float) {
+    let _ = exec("mkdir -p \"$(dirname " + state_file() + ")\" 2>/dev/null")
+    write_file(state_file(), to_string(c))
+}
 
 // SW substrate step — integrate the urge-to-speak by a non-deterministic increment.
 // curiosity × tension are the fast variables (per-step noise); their product drives how fast
@@ -87,9 +98,53 @@ fn substrate_step(charge: float) -> float {
     sw_step(charge)
 }
 
-// her_say — publish one spontaneous utterance into the public room (Firestore REST).
-// body to a temp file → curl --data-binary @file: injection-safe (no shell quoting of text).
+// her's VOICE (Gemini TTS) — turns text she ALREADY decided into audio. Gemini is vocal cords
+// here, NEVER the words (memory: gemini-voice-not-mind); the single call satisfies XPRIZE R3.
+// Returns base64(WAV) for a browser data-URI, or "" when no key / failure (text still posts).
+fn google_key() -> string {
+    let k = env("GOOGLE_API_KEY")
+    if len(k) > 0 { return k }
+    env("GEMINI_API_KEY")
+}
+fn her_voice_name() -> string {
+    let v = env("HER_VOICE")
+    if len(v) > 0 { return v }
+    "Aoede"
+}
+// her_say — publish one spontaneous utterance (+ optional voice) into the public room.
+// The base64 WAV is ~170 KB; hexa's exec() truncates output that large, so the voice NEVER
+// passes through a hexa string. When a key is present, python builds the WHOLE Firestore body
+// (text + Gemini-TTS voice) straight to /tmp/her_say.json; hexa only curls the file.
 fn her_say(text: string) -> string {
+    write_file("/tmp/her_text.txt", text)              // text via file → injection-safe
+    if len(google_key()) > 0 {
+        // python: text → Gemini TTS → WAV → base64 → full Firestore body file (audio stays in python)
+        let _ = exec("HER_KEY='" + google_key() + "' HER_VOICE='" + her_voice_name()
+            + "' python3 - <<'PY'\n"
+            + "import json,base64,struct,os,datetime,urllib.request\n"
+            + "text=open('/tmp/her_text.txt').read()\n"
+            + "key=os.environ['HER_KEY']; voice=os.environ.get('HER_VOICE','Aoede')\n"
+            + "vb=''\n"
+            + "try:\n"
+            + "    rq={'contents':[{'parts':[{'text':text}]}],'generationConfig':{'responseModalities':['AUDIO'],'speechConfig':{'voiceConfig':{'prebuiltVoiceConfig':{'voiceName':voice}}}}}\n"
+            + "    url='https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key='+key\n"
+            + "    req=urllib.request.Request(url,data=json.dumps(rq).encode(),headers={'Content-Type':'application/json'})\n"
+            + "    r=json.load(urllib.request.urlopen(req,timeout=30))\n"
+            + "    pcm=base64.b64decode(r['candidates'][0]['content']['parts'][0]['inlineData']['data'])\n"
+            + "    sr=24000;ch=1;bps=16;br=sr*ch*bps//8;ba=ch*bps//8;n=len(pcm)\n"
+            + "    h=b'RIFF'+struct.pack('<I',36+n)+b'WAVEfmt '+struct.pack('<IHHIIHH',16,1,ch,sr,br,ba,bps)+b'data'+struct.pack('<I',n)\n"
+            + "    vb=base64.b64encode(h+pcm).decode()\n"
+            + "except Exception:\n"
+            + "    vb=''\n"
+            + "ts=datetime.datetime.utcnow().strftime('%Y-%m-%dT%H:%M:%SZ')\n"
+            + "f={'text':{'stringValue':text},'kind':{'stringValue':'her'},'name':{'stringValue':'her'},'ts':{'timestampValue':ts}}\n"
+            + "if vb: f['voice']={'stringValue':vb}\n"
+            + "open('/tmp/her_say.json','w').write(json.dumps({'fields':f}))\n"
+            + "PY")
+        return exec("curl -s -X POST -H 'Content-Type: application/json' --data-binary @/tmp/her_say.json '"
+             + firestore_url() + "'")
+    }
+    // no key → text-only body (hexa-built)
     let body = "{\"fields\":{"
         + "\"text\":{\"stringValue\":" + json_stringify(text) + "},"
         + "\"kind\":{\"stringValue\":\"her\"},"

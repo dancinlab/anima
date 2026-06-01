@@ -61,7 +61,7 @@
     <input id="say" type="text" placeholder="say something to the room…" maxlength="560" onkeydown="if(event.key==='Enter')send()" />
     <button onclick="send()">↑</button>
   </div>
-  <div class="dim">A shared room. Be kind. <span class="build">build 260601</span></div>
+  <div class="dim">A shared room. Be kind. <span class="build">build 260601-1535 · voice</span></div>
 </div>
 
 <script type="module">
@@ -90,6 +90,13 @@ function bubble(d) {
     el.className = "msg her";
     el.innerHTML = '<span class="tag">her</span>';
     el.appendChild(document.createTextNode(d.text || ""));
+    if (d.voice) {                       // her's voice (Gemini TTS) — base64 WAV data-URI
+      const a = document.createElement("audio");
+      a.controls = true; a.preload = "none";
+      a.style.cssText = "display:block;margin:8px auto 0;height:30px;filter:invert(.85) sepia(.4) hue-rotate(310deg)";
+      a.src = "data:audio/wav;base64," + d.voice;
+      el.appendChild(a);
+    }
   } else {
     const mine = d.name && d.name === myName;
     el.className = "msg " + (mine ? "me" : "human");

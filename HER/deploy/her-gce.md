@@ -61,13 +61,25 @@ NOT `StartInterval`/cron re-firing the speak gate (that would be clock-triggered
 ```ini
 [Service]
 Type=simple
-Environment=HER_LOOP=1 HER_SUBSTRATE=sw HER_INTERVAL=60
+EnvironmentFile=/etc/her.env          # GOOGLE_API_KEY (Gemini TTS voice) — chmod 600
+Environment=HER_LOOP=1 HER_SUBSTRATE=sw HER_INTERVAL=60 HER_VOICE=Aoede
 ExecStart=/opt/her/her_speak
 Restart=always
 RestartSec=15
 [Install]
 WantedBy=multi-user.target
 ```
+
+## voice + persistence
+
+- **voice** — when `GOOGLE_API_KEY` is present, each utterance is voiced by Gemini TTS
+  (memory: gemini-voice-not-mind — vocal cords, not the words). The ~170 KB base64 WAV exceeds
+  hexa's `exec()` output cap, so python builds the WHOLE Firestore body (text + `voice` field)
+  straight to `/tmp/her_say.json` — the audio never passes through a hexa string. `/room`
+  renders a `<audio>` data-URI player for any message with a `voice` field. (Upstream the
+  `exec()` cap was also fixed — hexa-lang `hexa_exec` growable buffer.)
+- **persistence** — `charge` lives at `/var/lib/her/charge` (env `HER_STATE`), not `/tmp`, so
+  the self survives a VM reboot. Key in `/etc/her.env`; never baked into the binary.
 
 ## operate
 
