@@ -12,10 +12,25 @@
 //   - hexa run serving/style_switch.hexa 의 stdout 에 5/5 PASS 마커 발견
 //   - 라인 단위 ALL 5/5 PASS 패턴 검출
 
+// Resolve the anima repo root portably — never emit a foreign author path.
+//   1. $ANIMA (canonical repo-root env, matches edu/lora/*.hexa)
+//   2. git rev-parse --show-toplevel (works from any checkout)
+//   3. $HOME/core/anima fallback
+fn anima_root() -> string {
+    let a = env("ANIMA")
+    if a != "" { return a }
+    let gt = exec("git rev-parse --show-toplevel 2>/dev/null").trim()
+    if gt != "" { return gt }
+    let home = env("HOME")
+    return home + "/core/anima"
+}
+
 fn run_target() -> string {
     // R10/R14: hexa run 직접 호출 — local cache 사용을 위해 HEXA_LOCAL=1 설정.
-    let cmd = "HEXA_LOCAL=1 " + "/Users/ghost/Dev/anima/shared/bin/hexa run "
-            + "/Users/ghost/Dev/anima/serving/style_switch.hexa 2>&1"
+    // `hexa` 는 PATH 에서 찾는다 (호스트 독립). target 은 repo-root 상대.
+    let root = anima_root()
+    let cmd = "HEXA_LOCAL=1 hexa run "
+            + root + "/serving/style_switch.hexa 2>&1"
     return exec(cmd).trim()
 }
 
