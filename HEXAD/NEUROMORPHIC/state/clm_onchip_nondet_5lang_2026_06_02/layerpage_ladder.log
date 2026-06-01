@@ -1,0 +1,19 @@
+[ladder] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1
+[ladder] input=parallel count=25 input_sha=1990f87de250cb73 sched=[64, 32, 32, 32, 32]
+[ladder] ===== RUNG N=2 =====
+[ladder] N=2 composed_margin=-1.6960 frozen_margin=-1.0640 LIFT=-0.6320 all_learned_hw=True verdict=GREEN
+[ladder] ===== RUNG N=3 =====
+[ladder] N=3 composed_margin=-0.9120 frozen_margin=-0.5760 LIFT=-0.3360 all_learned_hw=True verdict=GREEN
+[ladder] ===== RUNG N=4 =====
+[ladder] N=4 composed_margin=-0.2800 frozen_margin=-1.0240 LIFT=+0.7440 all_learned_hw=True verdict=GREEN
+[ladder] ===== RUNG N=5 =====
+[ladder] N=5 composed_margin=-0.1200 frozen_margin=-0.5680 LIFT=+0.4480 all_learned_hw=True verdict=GREEN
+[ladder] ===== LADDER TABLE =====
+[ladder]  N | composed | frozen  |  lift   | learned_hw
+[ladder]  2 |  -1.6960 | -1.0640 | -0.6320 | True
+[ladder]  3 |  -0.9120 | -0.5760 | -0.3360 | True
+[ladder]  4 |  -0.2800 | -1.0240 | +0.7440 | True
+[ladder]  5 |  -0.1200 | -0.5680 | +0.4480 | True
+[ladder] lift slope = +0.4320 bits/unit -> TREND SATURATE (composed lift FLAT vs paged depth (slope +0.432 bits/unit))
+[ladder] all_rungs_green_hw=True
+[ladder] wrote /home/ubuntu/clm_kosmos_akida/out/result_layerpage_ladder.json
