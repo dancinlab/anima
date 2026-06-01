@@ -9,6 +9,11 @@ daemon whose learning runs on AKIDA on-chip non-deterministic plasticity, not on
 deterministic cloud model. The XPRIZE's Gemini requirement is satisfied by a thin edge
 adapter; anima's AKIDA core is the mind and stays untouched.
 
+## live
+
+- 🌐 **https://dancinlab.web.app** · **https://her.dancinlab.org** (Firebase Hosting · Google Cloud · auto-SSL)
+- type: `her` = Archivo Black wordmark · everything else = Fraunces soft serif · living-presence motion suite
+
 ## what's here
 
 | file | role |
@@ -19,6 +24,9 @@ adapter; anima's AKIDA core is the mind and stays untouched.
 | `ARCHITECTURE.md` | how anima (AKIDA core) ⇄ Gemini edge adapter satisfies the rules without identity loss |
 | `NARRATIVE.md` | the 500–1000 word written case study + the <3-minute demo video script |
 | `GO_TO_MARKET.md` | the 90-day real-business plan (users + revenue + evidence) |
+| `web/` | the live front-end (index.html long scroller + img/ Her-toned visuals) |
+| `service/` | her_server.hexa + gemini_edge.hexa (backend, targets the self-hosted hexa compiler) |
+| `deploy/` | Firebase Hosting deploy runbook |
 
 ## the one tension, resolved
 
