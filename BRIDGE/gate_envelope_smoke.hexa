@@ -6,7 +6,7 @@
 //   W2 gate output = m·c·w·softstep(phi, θ)  — AND multiplicative structure kept
 //   W3 threshold comes from emit_policy (ep_emit_threshold), not a hardcode
 
-import "/Users/ghost/core/anima/BRIDGE/gate_envelope.hexa"
+import "BRIDGE/gate_envelope.hexa"
 
 fn abs_f(x: float) -> float {
     return if x < 0.0 { -x } else { x }

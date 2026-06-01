@@ -6,8 +6,8 @@
 //   I2 context 가 실수 (boolean 아님 — Φ-context 소비자, emit 게이트 아님)
 //   I3 시간에 따라 context 가 변동 (정적 상수 아님 — envelope 동역학 살아있음)
 
-import "/Users/ghost/core/anima/SAVANT/savant_phi_context.hexa"
-import "/Users/ghost/core/anima/CORE/emit_policy.hexa"
+import "SAVANT/savant_phi_context.hexa"
+import "CORE/emit_policy.hexa"
 
 fn abs_f(x: float) -> float {
     return if x < 0.0 { -x } else { x }
