@@ -1,0 +1,57 @@
+F-CLM-AKIDA-MULTILING-SEMANTIC — VERDICT (verbatim on-chip run)
+================================================================
+
+VERDICT: 🔴 REFUTED (closed-negative · publishable per a_paper_negative_ok)
+
+H_911's parallel-vs-concat cross-lingual semantic-linkage advantage does NOT
+robustly transfer to AKD1000 last-layer Hebbian on-chip edge-learn. The per-ordering
+integration gap is within the chip's own stochastic-plasticity noise (H_904).
+
+DEVICE (REAL silicon, BackendType.Hardware):
+  akida SDK 2.19.1 · device BC.00.000.002 · NSoC_v2 · IpVersion.v1 · host pi5-akida
+  Stage-0 gate PASSED: cleared a stale spike_streamer (PID 18439) holding /dev/akida0
+  (the "ERROR (file lock): 11" / devices:[] cause) → akida.devices() returned a real
+  HardwareDevice. No SW-sim was ever substituted for the chip (g63).
+
+ON-CHIP PARAMS:
+  AkidaUnsupervised(num_weights=16, learning_competition=0.1)
+  InputData(1,1,256, input_bits=1) → FullyConnected(units=32, weights_bits=1, activation=False)
+  model.fit() ON CHIP (per anchor, in @corpus member order); model.forward() learned readout
+  int4 backbone (H_877 inference lane): deterministic int4-sym projection 256×256,
+    sha256 = c626c63858a0d285c1daaca2b9b18877e936c07a6388df5ba1a0533c46c2298f (byte-identical both arms)
+
+CORPUS PROVENANCE (C4 .kosmos):
+  25 anchors = 5 concepts × 5 langs (ko·en·zh·ru·ja), seeded VERBATIM from
+  hexa-lang stdlib/flame/testdata/clm_semantic_{parallel,concat}.txt
+  parallel.limen sha256 = cca21b21cf945326be0a2aadb8153dbcb25b1c84856eea9ea89d951545596b73
+                 merkle = 69f9a2b1f8cbd9c66548784240a606872c27a62dc0ec1c5481c077f31b7a1fa1
+  concat.limen   sha256 = 02699eeb0ebecf76642b07a5a8ec72155b8ded908c4d8fa816eece7828d0193d
+                 merkle = 2e1b404283d57e12e1c8d773e34f9bcfee4c72f43f47639264c2164c5afba876
+  byte-identical payload multiset across orderings: True (only @corpus member ORDER differs)
+
+RESULT (N=12 PAIRED on-chip trials · shared per-trial init):
+  learn_happened_hw = True on ALL 12 trials  (C1 on-chip learn LIVE on real silicon ✓)
+  paired delta (parallel − concat integration):
+    6 positive / 6 negative
+    mean_delta = -0.00092
+    95% CI     = [-0.00319, +0.00135]   (straddles 0)
+    sign_stable = False
+  per-trial deltas: -0.00799 -0.00109 +0.00429 +0.00194 -0.00426 -0.00561
+                    +0.00008 +0.00077 +0.00498 -0.00258 -0.00371 +0.00213
+
+  robust_parallel_better = False → 🔴 REFUTED.
+
+WHY THIS IS THE HONEST CALL (g63):
+  A single naive run flipped between 🟢 (delta +0.0072) and 🔴 (delta -0.0042) on
+  consecutive executions because the AKD1000 re-inits/updates weights non-deterministically
+  (H_904 stochastic plasticity). Cherry-picking the 🟢 draw would have FABRICATED a result.
+  The frozen falsifier required a PAIRED multi-trial distribution test; that test shows the
+  parallel advantage is indistinguishable from chip noise. CLOSED-NEGATIVE.
+
+C-conditions satisfied: C1✓(on-chip fit live) C2✓(last-layer Hebbian plasticity lane)
+  C3~(int4 backbone front-end; no model uploaded — earns no .clm artifact on 🔴)
+  C4✓(.kosmos @corpus · limen shards · merkle · profile · closed_corpus · coord⊥text)
+  C5 TESTED→🔴 (H_911 does NOT transfer) · C7✓(this verdict + CLAIMS.tape + log)
+
+raw: result.json (machine) · run.log (verbatim stdout) · result_singlerun_nondeterministic.json
+     + run_singlerun.log (the run-to-run flip that motivated the multi-trial test)

@@ -1,0 +1,18 @@
+[multi] akida 2.19.1 device BC.00.000.002  N=12 paired trials
+[multi] trial  0: par=0.92263 con=0.93062 delta=-0.00799 learn_hw=True
+[multi] trial  1: par=0.93731 con=0.93840 delta=-0.00109 learn_hw=True
+[multi] trial  2: par=0.94115 con=0.93686 delta=+0.00429 learn_hw=True
+[multi] trial  3: par=0.92775 con=0.92581 delta=+0.00194 learn_hw=True
+[multi] trial  4: par=0.93417 con=0.93843 delta=-0.00426 learn_hw=True
+[multi] trial  5: par=0.92983 con=0.93543 delta=-0.00561 learn_hw=True
+[multi] trial  6: par=0.93132 con=0.93124 delta=+0.00008 learn_hw=True
+[multi] trial  7: par=0.93684 con=0.93606 delta=+0.00077 learn_hw=True
+[multi] trial  8: par=0.92677 con=0.92179 delta=+0.00498 learn_hw=True
+[multi] trial  9: par=0.93275 con=0.93533 delta=-0.00258 learn_hw=True
+[multi] trial 10: par=0.92997 con=0.93367 delta=-0.00371 learn_hw=True
+[multi] trial 11: par=0.93589 con=0.93376 delta=+0.00213 learn_hw=True
+
+[multi] mean_delta=-0.00092  95%CI=[-0.00319,+0.00135]  6 pos / 6 neg  sign_stable=False
+[multi] learn_happened_hw(all)=True  robust_parallel_better=False
+[multi] VERDICT RED — parallel == concat on AKD1000: paired delta straddles 0 across 12 chip trials (mean=-0.00092, 95%CI=[-0.00319,0.00135], 6 pos / 6 neg, sign_stable=False). Closed-negative: H_911 semantic-linkage advantage does NOT robustly transfer to AKD1000 last-layer Hebbian edge-learn — the per-ordering integration gap is within the chip's own stochastic-plasticity noise (H_904).
+[multi] wrote /home/ubuntu/clm_kosmos_akida/out/result_multitrial.json

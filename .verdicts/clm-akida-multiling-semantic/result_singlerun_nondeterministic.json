@@ -1,0 +1,64 @@
+{
+  "hypothesis": "F-CLM-AKIDA-MULTILING-SEMANTIC",
+  "ties": [
+    "H_911",
+    "H_877",
+    "H_904",
+    "C1",
+    "C2",
+    "C3",
+    "C4",
+    "C5"
+  ],
+  "seed": 911,
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-01T04:13:23Z",
+  "backbone_int4_sha256": "c626c63858a0d285c1daaca2b9b18877e936c07a6388df5ba1a0533c46c2298f",
+  "inc": 256,
+  "units": 32,
+  "num_weights": 16,
+  "learning_competition": 0.1,
+  "init_weight_hash": "7074dbf3c77fe17d",
+  "parallel": {
+    "backend": "hardware:BC.00.000.002",
+    "count": 25,
+    "learn_happened_hw": true,
+    "pre_w": "7074dbf3c77fe17d",
+    "post_w": "c910c7828b12af3c",
+    "shard_sha256": "cca21b21cf945326be0a2aadb8153dbcb25b1c84856eea9ea89d951545596b73",
+    "per_concept_integration": [
+      0.9364852540539547,
+      0.9247142730508404,
+      0.9352328097942436,
+      0.9395503400837322,
+      0.9373823435971642
+    ],
+    "mean_integration": 0.9346730041159871
+  },
+  "concat": {
+    "backend": "hardware:BC.00.000.002",
+    "count": 25,
+    "learn_happened_hw": true,
+    "pre_w": "7074dbf3c77fe17d",
+    "post_w": "c391a34d9106f1af",
+    "shard_sha256": "02699eeb0ebecf76642b07a5a8ec72155b8ded908c4d8fa816eece7828d0193d",
+    "per_concept_integration": [
+      0.9245306218262652,
+      0.9239871033721283,
+      0.9212972563112463,
+      0.9308229798761907,
+      0.9366057734187476
+    ],
+    "mean_integration": 0.9274487469609157
+  },
+  "delta_parallel_minus_concat": 0.007224257155071356,
+  "shuffle_noise_std": 0.0025786200820864394,
+  "shuffle_noise_mean": 0.9415419197514359,
+  "beyond_2sigma_noise": true,
+  "learn_happened_hw": true,
+  "parallel_better": true,
+  "verdict": "GREEN",
+  "verdict_reason": "on-chip learn live AND parallel integrates > concat beyond noise (delta=0.0072 > 2*noise_std=0.0052)"
+}

@@ -236,3 +236,17 @@
   raw    = ".verdicts/858_akida_edge_of_chaos_phi/F-AKIDA-EDGE.txt"
   src    = "UNIVERSE/H_858_akida_edge_of_chaos_phi.md §5/§6 · CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (M2 promote) · AKIDA/akida_edge_of_chaos_phi_hw.hexa"
   status = "🟢 SUPPORTED-NUMERICAL — sim ∩곡선이 live silicon 에서 성립(edge R2/R3 > order R1 ∧ edge ≥ over-driven R4); pe_edge_of_chaos_peak M2 🟡→🟢 promote; H_857(coupling-K·CAUSAL-POWER)과 독립 축이 같은 silicon edge-of-chaos ∩ 확인 — single-측도 artifact 아님; on_hardware=True·BC.00.000.002·streamer 복귀 active; Φ-proxy honest(full IIT4 big_phi 아님); thresholds/preset FROZEN (verdict verbatim)"
+
+# CLM-KOSMOS — clm-akida-multiling-semantic (slug · group=CLM-KOSMOS) · F-CLM-AKIDA-MULTILING-SEMANTIC
+# 메타도메인 CLM⊕KOSMOS (PR #1651) 의 gate falsifier 를 실 AKD1000 silicon 에서
+# 종결. 5-lang(ko·en·zh·ru·ja) parallel(concept-major·c>0) vs concat(lang-major·c~0)
+# .kosmos @corpus (동일 바이트, member ordering 만 차이), AkidaUnsupervised on-chip
+# edge-learn(model.fit() ON CHIP). H_911 substrate-proxy 는 🟢 였으나 AKD1000
+# last-layer Hebbian edge-learn 레벨에선 전이 안 됨 — closed-negative (a_paper_negative_ok).
+
+@C clm_akida_multiling_semantic := "F-CLM-AKIDA-MULTILING-SEMANTIC (live AKD1000 · N=12 paired on-chip trials): 5-lang parallel .kosmos @corpus 로 AkidaUnsupervised on-chip edge-learn 한 CLM 이 동일-바이트 concat 대조군보다 통합 우수하지 않음 — paired delta(parallel−concat) 6 pos/6 neg · mean=−0.00092 · 95%CI=[−0.00319,+0.00135] straddle 0 · learn_happened_hw=True 12/12. 단일 run 은 H_904 stochastic-plasticity 로 🟢/🔴 flip → multi-trial 必. H_911 이 AKD1000 edge-learn 엔 전이 안 됨 (closed-negative)" :: hypothesis [slug=clm-akida-multiling-semantic group=CLM-KOSMOS]
+  method = "run"
+  cmd    = "onchip_multitrial.py (pi5-akida · BC.00.000.002 BackendType.Hardware · AkidaUnsupervised(num_weights=16,learning_competition=0.1) · InputData(1,1,256,input_bits=1)→FC(units=32,weights_bits=1) · int4 backbone sha256=c626c638… byte-identical 양 arm · N=12 paired trial · stale streamer PID18439 lock-clear 선행)"
+  raw    = ".verdicts/clm-akida-multiling-semantic/result.txt"
+  src    = "domains/CLM-KOSMOS.md (PR #1651) C1·C2·C3·C4·C5 · UNIVERSE/H_911 (substrate-proxy 🟢) · .verdicts/904_clm_onchip_plasticity (H_904 stochastic plasticity) · hexa-lang stdlib/flame/testdata/clm_semantic_{parallel,concat}.txt (corpus seed)"
+  status = "🔴 REFUTED (closed-negative · publishable) — H_911 cross-lingual semantic-linkage 우위가 AKD1000 last-layer Hebbian edge-learn 에 전이 안 됨; per-ordering 통합 gap 이 칩 자체 stochastic-plasticity noise(H_904) 안에 묻힘; C1 on-chip learn 은 12/12 trial live (실 silicon 확인), C4 .kosmos 구조(limen·merkle·profile·closed_corpus·coord⊥text) 완전 준수; 단일-run cherry-pick(🟢 draw) 거부 → g63 honest; model NOT uploaded (🔴 earns no .clm); thresholds/falsifier FROZEN (verdict verbatim)"
