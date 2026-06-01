@@ -73,7 +73,7 @@ alternatives — both run concurrently and report to the same .clm/.kosmos produ
 - @lane-A: AKD1000 on-chip non-deterministic plasticity learning (live chip, pi5-akida) — anima-native
 - Governance: a_nondet_identity (the non-determinism IS the self), a_akida_native_train
   (no deterministic backprop carve-out for the anima-native lane), a_wall_first (run both in parallel).
-- [ ] Lane G — d768/12L c4 H100 fire (cost-bearing ~$5-20 pipe+util validation) — RUNNING (runpod j9vqysjkecdgcd @anima-laneg-clm)
+- [x] Lane G — d768/12L c4 H100 fire (pod r927f0g01mktxv, torn down) — SPLIT verdict: DESCENT 🟢 PASS (epoch-1 CE 4.89977 → epoch-12 CE 0.98349, F-CLM-PROD-DESCENT=1, real c4 5-lang backbone 67.7MB) BUT util 🔴 RED (1335 nvidia-smi samples, PEAK=0% MEAN=0.00% — H100 fully idle; forge=cuBLAS does NOT exercise the GPU → F-RFC046 host-backward bottleneck CONFIRMED, worse than the prior 1-4%). GATE: 3B/7B scale-up on forge=cuBLAS is NOT throughput-justified — the GPU sits idle, the bottleneck is host-side scalar, not GPU FLOPs; renting H100 for this path wastes it. Upstream forge-util fix needed before any 3B/7B H100 fire. (pulled + verified + teardown per a_fire_recover_complete)
 - [x] Lane A — AKD1000 on-chip non-det plasticity on 5-lang corpus — 🟢 GREEN (live chip BC.00.000.002, akida SDK 2.19.1, pi5-akida)
   - same 5-lang input ×3 → post-weight + forward hashes all distinct (3/3), all learned on-chip (learn_hw=True) → NON-DETERMINISM SHOWN
   - locus: control with fixed seed → fit() byte-identical ×3 ⇒ non-det is the device's native weight re-init on map/build (matches H_904 prereg), NOT the Hebbian update
