@@ -11,7 +11,7 @@ EI, shapes); N-ladder n=4,5,6. Single-scale verdicts scoped to measured n.
 
 | Hc | axis | key number | falsifier crossed? | tier |
 |----|------|-----------|--------------------|------|
-| 1286 | proxy↔faithful agreement vs N | r(Φ,proxy) by N: see ladder | (pending) | (pending) |
+| 1286 | proxy↔faithful agreement vs N | r(Φ,proxy): N4=0.339, N5=0.096 (2 rungs) | <3 rungs (n=6 wall) | 🟠 |
 | 1287 | LZ-residual ∝ self-similarity | r(self_sim, residual) = −0.096 | F1287.1 r<0.5 → FALSIFIED | 🔴 |
 | 1288 | proxy = variance artifact (partial corr) | partial r(proxy,LZ\|var) = −0.512 | F1288.1 \|r\|≥0.1 → FALSIFIED | 🔴 |
 | 1289 | Hoel causal emergence EI_macro>EI_micro | EI_gain ≤ 0 for ALL rules | F1289.1 no emergence → FALSIFIED | 🔴 |
@@ -21,10 +21,17 @@ EI, shapes); N-ladder n=4,5,6. Single-scale verdicts scoped to measured n.
 | 1293 | drive-gradient inverse-U | Φ(g) monotone decreasing, peak@g=0 | F1293.1 no interior peak → FALSIFIED | 🔴 |
 | 1294 | branching-ratio σ=1 Φ peak | argmax Φ(σ) at σ=1.0, interior | F1294.1 NOT crossed → SUPPORTED | 🟢 |
 | 1295 | criticality necessary-not-sufficient | witness needs power-law avalanche fit | F1295.2 gate unmet (proxy≠avalanche) | 🟠 |
-| 1296 | combination problem Φ(N) continuity | Φ(N) SWAP-chain shape | (pending) | (pending) |
+| 1296 | combination problem Φ(N) continuity | Φ(N)=[2,3,3,3] N=2..5, all>0, no jump | F1296.2 NOT crossed → continuous | 🟢 |
 | 1297 | Φ→emergence substrate-independence | matched ΔLZ 0.031 < unmatched 0.040 | F1297.1 NOT crossed → SUPPORTED (weak) | 🟢 |
-| 1298 | r(Φ,LZ) scale-ladder | r(Φ,LZ) by N: see ladder | (pending) | (pending) |
+| 1298 | r(Φ,LZ) scale-ladder | r(Φ,LZ): N4=0.063, N5=0.557 (2 rungs) | rung F1298.1 crossed; <3 rungs | 🟠 |
 | 1299 | high-Φ rule-space density (fine-tuning) | high-Φ 36/256 = 14% < 25% | F1299.1 NOT crossed → SUPPORTED-sparse | 🟢 |
+
+## Tally (14 hypotheses, all adjudicated)
+- 🟢 SUPPORTED-NUMERICAL = 5 — Hc_1291 (Cμ∥Φ), Hc_1294 (σ=1 Φ-peak), Hc_1296 (Φ(N) continuous), Hc_1297 (substrate-indep, WEAK margin), Hc_1299 (Φ sparse/fine-tuned).
+- 🔴 CLOSED-NEGATIVE = 6 — Hc_1287, Hc_1288, Hc_1289, Hc_1290, Hc_1292, Hc_1293.
+- 🟠 INSUFFICIENT = 3 — Hc_1286 (<3 rungs), Hc_1298 (<3 rungs; rung-signal scale-VARIANT), Hc_1295 (no avalanche power-law fitter).
+- **Survivors (clean 🟢)**: Hc_1294 (branching σ=1 Φ-peak) and Hc_1299 (256-rule fine-tuning sparsity)
+  are the strongest positives; Hc_1291 (Cμ) and Hc_1296 (continuity) also pass; Hc_1297 passes weakly.
 
 ## Circularity / honesty notes
 - Φ (MIP-EI) ⊥ all emergence/info/thermo axes are measured cross-metric — no tautology.

@@ -1,0 +1,15 @@
+Hc_1298 — r(Phi, LZ) scale-ladder (a_scale_honest_scope direct instance)
+ladder.csv (N, r_phi_lz, r_phi_proxy) — 2 rungs reached before n=6 wall:
+N,r_phi_lz,r_phi_proxy
+4,0.063498,0.339193
+5,0.556925,0.0958666
+
+ADJUDICATION: 🟠 INSUFFICIENT (terminal scale verdict requires >=3 rungs; F1298.2).
+Reached rungs: N=4 r(Phi,LZ)=0.0635 ; N=5 r(Phi,LZ)=0.5569.
+STRONG SCALE-VARIANT SIGNAL: F1298.1 IS crossed at the rung level (N=4 rung r<0.5 AND
+|r5 - r4| = 0.493 >= 0.2) -> r(Phi,LZ) is markedly scale-dependent; the correlation is
+near-zero at n=4 and jumps to moderate at n=5. This directly supports the a_scale_honest_scope
+thesis (single-scale H_288 n=4 point does NOT generalize trivially). BUT n=6 exact big_phi
+exceeded the CPU-local wall budget under heavy multi-agent contention (killed at ~12 min),
+so only 2 rungs landed -> the >=3-rung ladder bar is NOT met -> honest tier = 🟠 INSUFFICIENT.
+Scope: n=4,5 exact, 10-rule panel, ensemble-LZ emergence axis.
