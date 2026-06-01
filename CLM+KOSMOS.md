@@ -113,7 +113,9 @@ alternatives — both run concurrently and report to the same .clm/.kosmos produ
 ├─ ✗ P2 depth/width    FALSIFIED-as-fix — P1 (corpus) + H-A3 (multi-layer depth) both null
 ├─ ✗ P3 multi-layer    FALSIFIED — H-A3: 2nd plastic layer adds no consistent lift (within noise)
 ├─ 🟢 P3' ENCODER      REOPENED 2026-06-02 (cause-axis battery, live AKD1000): the INPUT ENCODER is a real lift axis — a structured (SVD) cross-lingual encoder beats the fixed random int4 backbone by +0.92 bits (95%CI [+0.74,+1.10], 8/8 trials, ci_lo>0, on-chip learn live). The prior 4 falsified axes were FIX-axes downstream of the random encoder; the encoder is the CAUSE-axis. CAPACITY stays GREEN. (objective/readout + spike-timing axes FALSIFIED same battery → see P3 disposition)
-└─ ◷ P4 full 3B/7B     DEFERRED (a_scale_honest_scope ≥3-rung ladder; also gated on Lane G forge-util fix)
+└─ ◷ P4 full 3B/7B     DEFERRED (a_scale_honest_scope ≥3-rung ladder; gated on Lane G forge-util — see 2026-06-02 forge-GPU fire below)
+
+NOTE 2026-06-02 — Lane G forge-GPU fire (CUDA-devel H100_SXM, pod 39000300, torn down): the forge GPU path is now PROVEN to reach the H100 (binary links cuBLAS+cudart+libcuda; 132W, 1980MHz SM, ~2GB allocated during the d768 run) — the prior "forge=cuBLAS does NOT exercise the GPU" verdict is REFUTED. DESCENT 🟢 (CE 4.69893→3.32540, F=1) · util 🔴 RED (PEAK=5% MEAN=0.145% n=352). The 3B GATE bottleneck MOVED: from "forge can't reach the GPU" (architectural) → "forge reaches the GPU but the host-backward feed starves it" (perf — micro-GEMM M=24 latency-bound + host im2col/adam/interpreted loop pegs 1 CPU core). 3B unblocks once host feed saturates the H100 (batch/fuse the per-step GEMMs, device-side im2col+adam, raise M), NOT before. Required env recipe: CUDA-devel image + self-host hexa rebuild (cuda_link_decision absent from prebuilt) + runtime_cuda/bf16 seeds + -lcuda relink. HF `dancinlab/clm-v1-dev-d768-forge-gpu` PRIVATE. Upstream fixes filed (prebuilt must carry cuda_link_decision; ldflags need -lcuda; emit heredoc 169KB; ship runtime seeds).
 ```
 
 ### Lane A weak-lift — COMPETING cause hypotheses (pre-registered; P1 corpus alone may NOT fix it)
