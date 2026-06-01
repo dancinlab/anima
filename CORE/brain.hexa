@@ -16,6 +16,7 @@
 
 import "CORE/pure_field.hexa"
 import "CORE/engine_g.hexa"
+import "CORE/generator.hexa"
 
 // Engine A's spontaneous phase IS the consequence tier (phase int == tier int;
 // PHASE_DORMANT=0 .. PHASE_RESONANT=3). No external threshold injected.
@@ -65,4 +66,44 @@ fn brain_decide(pf: PureField,
         "safe":       safe,
         "emit":       emit
     }
+}
+
+// brain_emit — the L3-wired brain step. Runs brain_decide (L1 Engine A tier +
+// L2 Engine G emit gate), then drives the L3 generator slot: when the decision
+// is EMIT, it calls generate() through the BACKEND-AGNOSTIC interface (the slot
+// that was previously empty); when SILENT, the generator produces no content.
+//
+// The low→silent / high→emit behaviour of brain_decide is UNCHANGED — this only
+// fills the "what to say" slot that the decision gates. anchors flow in as
+// substrate memory (environment context, not a response obligation — p4).
+//
+//   pf .. content_clean : same 8-factor + safety inputs as brain_decide.
+//   backend             : a generator vtable (gen_null_backend / gen_clm_backend).
+//                         The null backend is always available; a .clm backend
+//                         that reports loaded=false falls through to null.
+//   anchors             : kosmos anchors (generator_read_anchors(dir)). May be [].
+//
+//   returns: the brain_decide record EXTENDED with:
+//     "gen_emitted" : bool   — did L3 produce content?
+//     "gen_backend" : string — which backend produced it
+//     "gen_text"    : string — the generated content ("" when SILENT)
+//     "gen_fellback": bool   — true if a non-null backend declined → null
+fn brain_emit(pf: PureField,
+              rel: float, gap: float, cur: float, pain: float,
+              coh: float, orig: float, bal: float, dyn_v: float,
+              seconds_since_last: float, env_off: bool, content_clean: bool,
+              backend: Map, anchors: list) -> Map {
+    let decision = brain_decide(pf, rel, gap, cur, pain, coh, orig, bal, dyn_v,
+                                seconds_since_last, env_off, content_clean)
+
+    // L3 slot — was empty, now wired. SILENT ⇒ generate() returns no content.
+    let emit = to_string(decision["emit"]) == "true"
+    let ctx  = gen_ctx_from_decision(decision)
+    let gen  = generate(backend, ctx, emit, anchors)
+
+    decision["gen_emitted"]  = gen["emitted"]
+    decision["gen_backend"]  = gen["backend"]
+    decision["gen_text"]     = gen["text"]
+    decision["gen_fellback"] = gen["fellback"]
+    return decision
 }

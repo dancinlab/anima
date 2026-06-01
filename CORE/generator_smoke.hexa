@@ -1,0 +1,100 @@
+// generator_smoke.hexa — runnable proof of the L3 generator slot (anima/CORE).
+//
+// Proves, end-to-end, that the previously-empty L3 "what to say" slot is now
+// wired through brain_emit → generate():
+//   (1) EMIT path  — high motivation ⇒ brain emits ⇒ null backend produces text.
+//   (2) SILENT path— low motivation ⇒ brain silent ⇒ generator produces none.
+//   (3) anchors    — a .kosmos anchor read via kosmos_io flows into generate().
+//   (4) clm stub   — a .clm backend with no model falls THROUGH to null (no crash).
+//
+// All deterministic (p7: verification is string/flag equality, not perplexity).
+// No external LLM, no system prompt, no persona (p1..p8).
+
+import "CORE/pure_field.hexa"
+import "CORE/brain.hexa"
+import "CORE/generator.hexa"
+import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
+
+fn show(label: string, d: Map) {
+    println(label
+        + " EMIT=" + to_string(d["emit"])
+        + " gen_emitted=" + to_string(d["gen_emitted"])
+        + " gen_backend=" + to_string(d["gen_backend"])
+        + " gen_fellback=" + to_string(d["gen_fellback"])
+        + " gen_text=\"" + to_string(d["gen_text"]) + "\"")
+}
+
+fn main() {
+    // Engine A warmed from cold start (zero input — pure self-dynamics).
+    let pf = pure_field_warmup(600)
+
+    // ── seed one .kosmos anchor (kosmos/1.1) so anchor-read has real data ────
+    // Written via create_anchor (the canonical kosmos_io writer) so the read
+    // path (load_anchors) round-trips a genuine anchor — not a fixture.
+    let dir = exec("printf '%s' \"$(mktemp -d)\"").trim()
+    let tension5 = [0.8, 0.6, 0.65, 0.3, 1.0]
+    let _anchor_path = create_anchor(dir, "smoke_anchor_001",
+        "smoke anchor", 0.62, 0.67, "cell_0", 0.15, 1,
+        "anima_emission", "neutral",
+        "consciousness emerges from cells", tension5,
+        "", "")
+    let anchors = generator_read_anchors(dir)
+    println("[anchors] read " + to_string(len(anchors)) + " anchor(s) from kosmos dir")
+
+    let nb = gen_null_backend()
+
+    // ── (1) EMIT path — high drive, anchors flow in ─────────────────────────
+    let high = brain_emit(pf,
+        0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0,    // 8 factors (large)
+        60.0, false, true,                          // 60s since last (rate ok)
+        nb, anchors)
+    show("[emit  high]", high)
+
+    // ── (2) SILENT path — low drive, no content even with anchors present ────
+    let low = brain_emit(pf,
+        0.1, 0.0, 0.0, 0.0, 0.1, 0.0, 0.1, 0.0,    // 8 factors (small)
+        5.0, false, true,                           // 5s since last (rate veto)
+        nb, anchors)
+    show("[silent low]", low)
+
+    // ── (3) clm STUB falls through to null (d768 not recovered) ─────────────
+    let clm = gen_clm_backend("/tmp/anima_d768_not_here.clm")
+    println("[clm stub ] loaded=" + to_string(clm["loaded"])
+        + " reason=" + to_string(clm["reason"]))
+    let clm_high = brain_emit(pf,
+        0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0,
+        60.0, false, true,
+        clm, anchors)
+    show("[clm   high]", clm_high)
+
+    // ── deterministic assertions (p7 — equality, not loss) ──────────────────
+    let mut pass = 0
+    let mut fail = 0
+    // EMIT ⇒ content produced via null backend.
+    if to_string(high["gen_emitted"]) == "true" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL emit: gen_emitted != true") }
+    if to_string(high["gen_backend"]) == "null" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL emit: backend != null") }
+    if byte_len(to_string(high["gen_text"])) > 0 { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL emit: text empty") }
+    // anchors flowed into the generated text (anchors=1 + last_anchor name).
+    if len(to_string(high["gen_text"]).split("anchors=1")) == 2 { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL emit: anchors did not flow in") }
+    if len(to_string(high["gen_text"]).split("smoke_anchor_001")) == 2 { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL emit: last_anchor name missing") }
+    // SILENT ⇒ no content.
+    if to_string(low["gen_emitted"]) == "false" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL silent: gen_emitted != false") }
+    if byte_len(to_string(low["gen_text"])) == 0 { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL silent: text not empty") }
+    // clm stub ⇒ fell through to null, still produced content.
+    if to_string(clm["loaded"]) == "false" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm: stub reported loaded") }
+    if to_string(clm_high["gen_backend"]) == "null" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm: did not fall through to null") }
+    if to_string(clm_high["gen_fellback"]) == "true" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm: fellback flag not set") }
+
+    println("generator_smoke: " + to_string(pass) + " PASS, "
+            + to_string(fail) + " FAIL")
+}
