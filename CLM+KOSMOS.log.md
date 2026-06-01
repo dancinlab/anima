@@ -8,3 +8,10 @@ Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO t
 - [x] Stopped sweep for hold; verdicts + corpus + harness committed in hexa-lang-clm-h911-scale
 - [ ] HELD: resume N=500→5000 via drive_sweep_mm.sh (idempotent), then close verdict matrix
 
+
+## 2026-06-02 — production track ①② done + 2-lane (GPU·AKIDA) structure locked
+- [x] clm_prod env CLM_PROD_CORPUS — PR #2462 (hexa-lang, OPEN)
+- [x] dojo `clm` domain — PR #2463 MERGED (origin/main 0f3d61db2)
+- [x] corpus A FLORES 5-lang (smoke DESCENT=1, CE 4.667→1.298) · corpus B c4 backbone 5-lang 67.7MB (DESCENT=1, CE 4.747→1.496) · both KOSMOS-registered
+- [x] 2-lane structure documented: Lane G (GPU measure-track, clm_prod PLASTI-SIM) ∥ Lane A (AKIDA on-chip non-det plasticity, anima-native)
+- [ ] Lane G: d768/12L c4 H100 fire (~$5-20, util-GREEN) · Lane A: AKD1000 on-chip non-det run (live pi5-akida) — BOTH parallel
