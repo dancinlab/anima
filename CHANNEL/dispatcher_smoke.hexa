@@ -11,8 +11,8 @@
 //
 // Each case asserts returned dict.channel matches expectation. Exit 0 if all 3 match.
 
-import "/Users/ghost/core/anima/CHANNEL/dispatcher.hexa"
-import "/Users/ghost/core/anima/CHANNEL/router.hexa"
+import "CHANNEL/dispatcher.hexa"
+import "CHANNEL/router.hexa"
 
 fn _expect(case_name: string, expected: string, got: string) -> bool {
     if got == expected {
