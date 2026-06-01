@@ -1,7 +1,7 @@
 // moe_router_smoke.hexa — DECODER M4a MoE router forward verify
 // Tiny synthetic: n_experts=2 · V=3 · d=2. Hand-built weights → known outputs.
 
-import "/Users/ghost/core/anima/CORE/DECODER/moe_router.hexa"
+import "CORE/DECODER/moe_router.hexa"
 
 fn approx(a: float, b: float) -> int {
     let mut diff = a - b
