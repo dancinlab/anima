@@ -1,0 +1,30 @@
+#!/usr/bin/env kosmos
+# clm_parallel.kosmos — CLM-KOSMOS AKIDA 5-lang semantic corpus (kosmos/2.0 @corpus)
+# C4-compliant: @corpus + ref .limen packed shard + profile + closed_corpus + placement PERP text.
+# Provenance: 25 anchors = 5 concepts x 5 langs (ko en zh ru ja), seeded VERBATIM from
+# hexa-lang stdlib/flame/testdata/clm_semantic_parallel.txt (byte-identical fixture).
+# Honest scope: SMALL (25 anchors) — stated; on-chip edge-learn probe, not a full crawl.
+
+@corpus clm_kosmos_parallel := "CLM-KOSMOS AKIDA 5-language cross-lingual semantic-linkage corpus (parallel ordering, H_911)" :: kosmos-corpus [tier=0 active]
+
+  # ── meta-anchor placement (Psi centroid) — structural, text-independent ──
+  profile = "anima-consciousness-carving"
+  coord   = [0.0, 0.0]
+  lane    = "clm_kosmos_parallel"
+  radius  = 1.0
+
+  # ── corpus meta ──
+  anchor_level = sample
+  count    = 25
+  lane_mix = "en=0.2, zh=0.2, ru=0.2, ja=0.2, ko=0.2"   # Sigma frac = 1.0
+  vocab    = 256
+  encoding = "byte-utf8"
+  languages = "ko, en, zh, ru, ja"
+  ordering = "parallel"
+  linkage  = "cross-lingual-semantic (concept-major: 5 langs of each concept adjacent, c>0)"
+  merkle   = 69f9a2b1f8cbd9c66548784240a606872c27a62dc0ec1c5481c077f31b7a1fa1
+
+  # ── member — ref form: .limen packed shard (magic LIMEN\0\0\0 + ver + count + len-prefixed @anchor recs + merkle root) ──
+  member = ref "parallel.limen" sha256=cca21b21cf945326be0a2aadb8153dbcb25b1c84856eea9ea89d951545596b73 count=25 frac=1.0 lane="all" format="limen/2"
+
+  closed_corpus = "Sigma frac = 1.0 AND member sha256 verifies AND merkle root recomputes from @anchor payloads; placement(coord) PERP text(payload)"

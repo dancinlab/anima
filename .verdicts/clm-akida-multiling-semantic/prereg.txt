@@ -1,0 +1,46 @@
+F-CLM-AKIDA-MULTILING-SEMANTIC — pre-registered falsifier (frozen before run · g5)
+====================================================================================
+
+domain : domains/CLM-KOSMOS.md (meta-domain CLM ⊕ KOSMOS · PR #1651)
+gate   : C5 / H_911 transfer to AKD1000 on-chip edge-learn
+device : pi5-akida · BrainChip AKD1000 · BC.00.000.002 · NSoC_v2 · IpVersion.v1 · akida SDK 2.19.1
+         BackendType.Hardware (akida.devices()[0] is a real HardwareDevice, NOT [])
+
+STATEMENT (frozen):
+  On AKD1000, a CLM whose trainable last layer is edge-learned (AkidaUnsupervised,
+  model.fit() ON CHIP) on a 5-language (ko·en·zh·ru·ja) PARALLEL .kosmos @corpus
+  (concept-major: the 5 langs of each concept ADJACENT — cross-lingual semantic
+  linkage, c>0) integrates measurably BETTER than the same model edge-learned on a
+  CONCAT control @corpus (language-major: all of one lang then the next — count-only,
+  c~0). Same bytes, same on-chip update, ONLY the @corpus member ordering differs.
+
+CONTROLLED VARIABLES (identical across the two arms):
+  - byte payloads: byte-identical multiset of 25 anchors (5 concepts × 5 langs),
+    seeded VERBATIM from hexa-lang stdlib/flame/testdata/clm_semantic_{parallel,concat}.txt
+  - int4 backbone (ported inference lane, H_877): deterministic int4-sym projection,
+    sha256-pinned, byte-identical for both arms
+  - per-trial chip init weight: shared within each parallel/concat pair
+  - on-chip optimizer: AkidaUnsupervised(num_weights=16, learning_competition=0.1)
+  ONLY the @corpus member ORDER fed into the on-chip fit differs.
+
+INTEGRATION MEASURE (on-chip):
+  mean within-concept cross-lingual cosine similarity of the LEARNED chip readout
+  (model.forward after on-chip fit) across the 5 langs of each concept. Higher =
+  the 5 langs of one concept bind together = cross-lingual semantic integration.
+
+VERDICT RULE (frozen):
+  Because AKD1000 on-chip plasticity is STOCHASTIC (H_904: the chip re-inits / updates
+  non-deterministically), the parallel−concat delta is itself a random variable. The
+  test is therefore N=12 PAIRED on-chip trials (shared per-trial init), and the verdict
+  is decided on the delta DISTRIBUTION — a single run is NOT admissible (g63 forbids
+  cherry-picking one favorable draw).
+
+  🟢 CONFIRMED iff (A) learn_happened_hw == True on EVERY trial (C1 on-chip learn live)
+     AND (B) the paired delta is robustly > 0: 95% CI excludes 0 AND ≥ N-1 trials positive.
+  🔴 REFUTED   iff the paired delta straddles 0 (sign unstable across trials / CI includes 0)
+     → closed-negative: H_911's semantic-linkage advantage does NOT robustly transfer to
+       AKD1000 last-layer Hebbian edge-learn (the per-ordering gap is within the chip's own
+       stochastic-plasticity noise). Publishable per a_paper_negative_ok.
+  BLOCKED iff no HW device visible → STOP, report, NO SW-sim labelled on-chip (g63).
+
+frozen: 2026-06-01 (before the on-chip run)

@@ -36,7 +36,7 @@ CLM(모델)과 KOSMOS(코퍼스/세계)는 따로 다뤄져 왔다. 이 메타�
 
 ## ── gate (falsifier) ──
 
-- [ ] **F-CLM-AKIDA-MULTILING-SEMANTIC** (pre-registered · frozen before run · g5): AKD1000에서 5-lang **parallel** `.kosmos @corpus`로 edge-learn(`AkidaUnsupervised`)한 CLM이 동일 **concat** 대조군보다 통합이 측정적으로 우수 — 동일 바이트 + 동일 on-chip update, `@corpus` member ordering만 다름. 🟢 CONFIRMED iff (A) on-chip 학습 live(`learn_happened_hw`) ∧ (B) parallel > concat 통합 측도(device noise 초과). 🔴 REFUTED iff parallel == concat on chip → closed-negative(H_911이 AKD1000 edge-learn엔 전이 안 됨 · a_paper_negative_ok publishable). verdict → `.verdicts/clm-akida-multiling-semantic/` verbatim.
+- [x] **F-CLM-AKIDA-MULTILING-SEMANTIC** (pre-registered · frozen before run · g5): AKD1000에서 5-lang **parallel** `.kosmos @corpus`로 edge-learn(`AkidaUnsupervised`)한 CLM이 동일 **concat** 대조군보다 통합이 측정적으로 우수 — 동일 바이트 + 동일 on-chip update, `@corpus` member ordering만 다름. 🟢 CONFIRMED iff (A) on-chip 학습 live(`learn_happened_hw`) ∧ (B) parallel > concat 통합 측도(device noise 초과). 🔴 REFUTED iff parallel == concat on chip → closed-negative(H_911이 AKD1000 edge-learn엔 전이 안 됨 · a_paper_negative_ok publishable). verdict → `.verdicts/clm-akida-multiling-semantic/` verbatim. → **🔴 REFUTED (2026-06-01 · live AKD1000 BC.00.000.002)**: N=12 paired on-chip trials, `learn_happened_hw=True` 12/12 (C1 live), paired delta(parallel−concat) 6 pos/6 neg · mean −0.00092 · 95%CI [−0.00319,+0.00135] straddle 0 → H_911 우위 AKD1000 last-layer Hebbian edge-learn 에 전이 안 됨, per-ordering gap 이 칩 stochastic-plasticity noise(H_904) 안에 묻힘. closed-negative (단일-run 은 H_904 로 🟢↔🔴 flip → multi-trial verdict). verbatim → `.verdicts/clm-akida-multiling-semantic/result.txt`.
 
 ## ── pipeline 산출 ──
 
