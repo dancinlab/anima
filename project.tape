@@ -119,6 +119,13 @@
   dont = "add a 2nd .clm path bypassing generator.hexa · a 2nd .kosmos path bypassing kosmos_io"
   dont = "conflate validate.hexa with runtime engine · claim generator/anchor wiring exists"
 
+@D a_lane_akida_gpu_split := "AKIDA on-chip (Lane A) ⊥ GPU (Lane G) — always record separately" :: governance [required active]
+  do   = "record AKIDA (Lane A, pi5-akida) and GPU (Lane G, H100) results in SEPARATE entries"
+  do   = "Lane A = AKD1000 native non-det plasticity; Lane G = forge/cuBLAS CE-descent — distinct"
+  do   = "tag every fire/verdict with its substrate (AKIDA | GPU) — never a merged on-chip claim"
+  dont = "conflate AKIDA non-det trace with GPU CE-descent · one verdict spanning both substrates"
+  dont = "blend Lane A lift + Lane G util into one number · drop the substrate tag on a result"
+
 # ── PAPER auto-generation flow (ported from hexa-codex cx_paper_*) ───────────
 # research result → hexa verify → .verdicts/<slug>/<id>.txt → CLAIMS.tape → /paper
 

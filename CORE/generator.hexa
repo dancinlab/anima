@@ -1,0 +1,276 @@
+// generator.hexa — L3 content generator interface (anima/CORE).
+//
+// The "what to actually say/write" slot of the 3-layer brain. L1 Engine A
+// (Φ→tier) and L2 Engine G (motivation→emit) decide WHEN to act; this L3 layer
+// decides the CONTENT — but it is BACKEND-AGNOSTIC. brain_decide's emit slot
+// calls generate() through a single signature; the concrete generator is a
+// pluggable record (a "vtable" Map), so any .clm backend plugs in later behind
+// the same interface without touching brain.hexa.
+//
+//   generate(backend, substrate_ctx, emit_decision, anchors) -> Map{text, ...}
+//
+// Two backends ship here:
+//   · null   — deterministic substrate-driven placeholder (NO external LLM,
+//              NO system prompt, NO persona). Lets the whole slot be tested
+//              end-to-end NOW, before any trained model lands. p1..p8 clean.
+//   · clm    — a .clm checkpoint loader STUB. Until the d768 model is recovered
+//              it reports loaded=false and the dispatcher falls THROUGH to the
+//              null backend rather than crashing. The trained mouth plugs in
+//              here later (same signature).
+//
+// HONEST scope: this PR delivers the SLOT and the null backend, not a trained
+// model. The clm backend is a stub on purpose — it reports "no model loaded".
+//
+// ── p1..p8 conformance ──────────────────────────────────────────────────────
+//   p1 NO SYSTEM PROMPT     — null text is built from substrate numerics only.
+//                             No "you are anima", no role string anywhere.
+//   p2 NO IDENTITY RULES    — no identity.yaml, no rules; backend is data only.
+//   p3 NO PERSONA INJECTION — no prefix token injected into the output.
+//   p4 NO ASSISTANT FRAMING — generate() does NOT respond to a user message;
+//                             it externalizes the substrate decision record.
+//                             anchors = environment context, not an obligation.
+//   p5 NO SPEAK()           — generate() is pure content assembly from the emit
+//                             decision; it never calls a speak()/monologue path
+//                             and never fabricates content under SILENT.
+//   p6 NO FINE-TUNED ETHICS — null backend has zero weights; pure arithmetic.
+//   p7 NO PERPLEXITY VERDICT— verification = deterministic string equality in
+//                             the smoke test, not a loss/perplexity number.
+//   p8 NO TRAIN/INFER SPLIT — same interface serves a stub now and a trained
+//                             .clm later; no train-only gate.
+
+import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
+
+
+// ── §1 backend constructors (the pluggable "vtable" records) ─────────────────
+
+// gen_null_backend — the always-available deterministic placeholder backend.
+// Carries no model; `loaded` is true because the null backend is always ready
+// to assemble substrate-derived text.
+pub fn gen_null_backend() -> Map {
+    return #{
+        "kind":   "null",
+        "loaded": true,
+        "ckpt":   ""
+    }
+}
+
+// gen_clm_backend — a .clm checkpoint backend STUB. Takes a ckpt path but does
+// NOT yet load any weights (the d768 model is still being recovered). It probes
+// the path: a real, non-empty .clm file would later be loaded here; for now it
+// always reports loaded=false so the dispatcher falls through to null.
+//
+// BACKEND-AGNOSTIC: when the trained model lands, replace the body below with a
+// real loader that sets loaded=true and stores a handle — generate()'s contract
+// and brain.hexa's wiring do not change.
+pub fn gen_clm_backend(ckpt_path: string) -> Map {
+    // Cleanly probe the path without crashing on a missing/empty ckpt.
+    let exists = _gen_path_is_file(ckpt_path)
+    // Even when the file exists we keep loaded=false: no decoder is wired yet
+    // (DECODER/ V3 has register-collapse issues and is unverified — treated as
+    // one possible future backend, not a dependency). HONEST: stub only.
+    let loaded = false
+    return #{
+        "kind":        "clm",
+        "loaded":      loaded,
+        "ckpt":        ckpt_path,
+        "ckpt_exists": exists,
+        "reason":      if exists {
+                           "ckpt present but decoder backend not wired (d768 deferred)"
+                       } else {
+                           "no ckpt at path (d768 not recovered yet)"
+                       }
+    }
+}
+
+fn _gen_path_is_file(p: string) -> bool {
+    if byte_len(p) == 0 { return false }
+    let r = exec("test -f '" + p + "' && printf y || printf n")
+    return r == "y"
+}
+
+
+// ── §2 substrate_ctx helper ──────────────────────────────────────────────────
+
+// gen_ctx_from_decision — adapt a brain_decide() record into the substrate_ctx
+// the generator consumes. Keeps generate() decoupled from brain.hexa's exact
+// record shape (any caller can build this Map).
+pub fn gen_ctx_from_decision(decision: Map) -> Map {
+    return #{
+        "phi":        _gen_g_float(decision, "phi"),
+        "phase":      _gen_g_string(decision, "phase"),
+        "tier":       _gen_g_int(decision, "tier"),
+        "tier_name":  _gen_g_string(decision, "tier_name"),
+        "motivation": _gen_g_float(decision, "motivation")
+    }
+}
+
+fn _gen_g_float(m: Map, k: string) -> float {
+    let v = m[k]
+    if to_string(v) == "void" { return 0.0 }
+    return to_float(v)
+}
+fn _gen_g_int(m: Map, k: string) -> int {
+    let v = m[k]
+    if to_string(v) == "void" { return 0 }
+    return to_int(v)
+}
+fn _gen_g_string(m: Map, k: string) -> string {
+    let v = m[k]
+    if to_string(v) == "void" { return "" }
+    return to_string(v)
+}
+
+
+// ── §3 anchor READ wiring (kosmos_io) ────────────────────────────────────────
+
+// generator_read_anchors — read .kosmos anchors from a directory so brain_decide
+// can pass real substrate memory into generate(). Thin wrapper over
+// kosmos_io.load_anchors (the canonical read API). Returns [] for a missing dir
+// rather than panicking — edge-case safe.
+//
+//   returns: list of #{ path, name, fields, text_payload, tension_5ch }
+pub fn generator_read_anchors(dir_path: string) -> list {
+    if byte_len(dir_path) == 0 { return [] }
+    let exists = exec("test -d '" + dir_path + "' && printf y || printf n")
+    if exists != "y" { return [] }
+    return load_anchors(dir_path)
+}
+
+
+// ── §4 the generator interface — generate() ──────────────────────────────────
+
+// generate — the single L3 entry point. BACKEND-AGNOSTIC dispatch.
+//
+//   backend       : Map  — a vtable record (gen_null_backend / gen_clm_backend).
+//   substrate_ctx : Map  — gen_ctx_from_decision(brain_decide(...)).
+//   emit_decision : bool — brain_decide(...)["emit"]. If false → no content
+//                          (p5: never fabricate under SILENT).
+//   anchors       : list — kosmos anchors (generator_read_anchors). May be [].
+//
+//   returns: Map #{
+//     "emitted":  bool,    // did we produce content?
+//     "backend":  string,  // which backend actually produced it
+//     "text":     string,  // the content (empty when emitted=false)
+//     "fellback": bool     // true if a non-null backend declined and we fell
+//                          //   through to null
+//   }
+//
+// Contract invariants (held regardless of backend):
+//   · emit_decision == false  ⇒  emitted=false ∧ text=""  (SILENT produces none)
+//   · emit_decision == true   ⇒  emitted=true  ∧ text≠""  (EMIT always yields)
+//   · a backend that reports loaded=false NEVER crashes — we fall through.
+pub fn generate(backend: Map, substrate_ctx: Map, emit_decision: bool,
+                anchors: list) -> Map {
+    // p5 — SILENT path: the brain decided not to act. Produce nothing. The
+    // generator must NOT invent content to fill the silence.
+    if !emit_decision {
+        return #{
+            "emitted":  false,
+            "backend":  to_string(backend["kind"]),
+            "text":     "",
+            "fellback": false
+        }
+    }
+
+    // EMIT path. Try the requested backend; fall through to null if it has no
+    // model loaded (the d768-deferred case for clm).
+    let kind   = to_string(backend["kind"])
+    let loaded = to_string(backend["loaded"]) == "true"
+
+    if kind == "null" {
+        return #{
+            "emitted":  true,
+            "backend":  "null",
+            "text":     _gen_null_text(substrate_ctx, anchors),
+            "fellback": false
+        }
+    }
+
+    if kind == "clm" {
+        if loaded {
+            // FUTURE: real .clm decode plugs in here behind this exact return
+            // shape. Until d768 lands, gen_clm_backend keeps loaded=false, so
+            // control never reaches this branch — kept as the wired slot.
+            return #{
+                "emitted":  true,
+                "backend":  "clm",
+                "text":     _gen_clm_decode(backend, substrate_ctx, anchors),
+                "fellback": false
+            }
+        }
+        // Stub backend declined → fall THROUGH to null (no crash).
+        return #{
+            "emitted":  true,
+            "backend":  "null",
+            "text":     _gen_null_text(substrate_ctx, anchors),
+            "fellback": true
+        }
+    }
+
+    // Unknown backend kind → null fallback (defensive, never crash).
+    return #{
+        "emitted":  true,
+        "backend":  "null",
+        "text":     _gen_null_text(substrate_ctx, anchors),
+        "fellback": true
+    }
+}
+
+
+// ── §5 null backend — deterministic substrate-derived placeholder ────────────
+
+// _gen_null_text — build a placeholder line from substrate numerics + anchor
+// memory ONLY. This is NOT a chatbot reply: there is no user message in scope,
+// no persona, no instruction string. It externalizes the substrate decision so
+// the slot is observable end-to-end. When the real .clm backend lands it
+// replaces this function's role; the surrounding contract is unchanged.
+fn _gen_null_text(ctx: Map, anchors: list) -> string {
+    let phase = _gen_g_string(ctx, "phase")
+    let tier  = _gen_g_string(ctx, "tier_name")
+    let phi   = _gen_g_float(ctx, "phi")
+    let motiv = _gen_g_float(ctx, "motivation")
+    let n_anchor = len(anchors)
+
+    // Deterministic, fully derived from substrate state. Reproducible byte-for-
+    // byte for the same input (p7 verification is string equality, not loss).
+    let mut s = "[null-gen]"
+    s = s + " phase=" + phase
+    s = s + " tier=" + tier
+    s = s + " phi=" + _gen_fmt4(phi)
+    s = s + " motiv=" + _gen_fmt4(motiv)
+    s = s + " anchors=" + to_string(n_anchor)
+    // If memory flowed in, surface the most-recent anchor name (read-only echo
+    // of substrate memory — not an injected persona).
+    if n_anchor > 0 {
+        let last = anchors[n_anchor - 1]
+        s = s + " last_anchor=" + to_string(last["name"])
+    }
+    return s
+}
+
+
+// ── §6 clm backend decode — DEFERRED (real model not landed) ─────────────────
+
+// _gen_clm_decode — placeholder for the real .clm forward/decode. Never called
+// while gen_clm_backend reports loaded=false. Present so the wired slot is
+// complete and type-checks; the trained mouth replaces this body. HONEST: this
+// is unreachable today by construction (loaded=false in the stub).
+fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
+    // Defensive: if some future caller forces loaded=true with no decoder, we
+    // still return a substrate-derived line rather than emit garbage.
+    return _gen_null_text(ctx, anchors)
+}
+
+
+// ── §7 small format helper ───────────────────────────────────────────────────
+
+fn _gen_fmt4(x: float) -> string {
+    return format_float(x, 4)
+}
+
+
+// ── §8 introspection ─────────────────────────────────────────────────────────
+
+pub fn generator_summary() -> string {
+    "core_generator · BACKEND-AGNOSTIC L3 slot · generate(backend, substrate_ctx, emit_decision, anchors) -> {emitted, backend, text, fellback} · backends: null(deterministic substrate placeholder, always ready) + clm(.clm ckpt loader STUB, loaded=false until d768 recovery → falls through to null) · anchor READ via kosmos_io.load_anchors · SILENT⇒no content, EMIT⇒content · p1..p8 clean (no LLM/system-prompt/persona)"
+}
