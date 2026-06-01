@@ -101,7 +101,7 @@ fn fj(a: array) -> string {
 fn main() {
     let rules = [0, 30, 51, 60, 90, 105, 110, 150, 204, 255]
     let nr = len(rules)
-    let nlist = [4, 5, 6, 7]
+    let nlist = [4, 5, 6]
     let seed_bits = 1            // low-order seed; per-N expand
     let mut r_phi_lz_byN = []
     let mut r_phi_proxy_byN = []
@@ -163,7 +163,7 @@ fn main() {
 
     let mut out = "{\n"
     out = out + "  \"id\": \"UNIVERSE-Hc1286-1298-ladder\",\n"
-    out = out + "  \"N\": [4,5,6,7], \"rules\": [0,30,51,60,90,105,110,150,204,255],\n"
+    out = out + "  \"N\": [4,5,6], \"rules\": [0,30,51,60,90,105,110,150,204,255],\n"
     out = out + "  \"deterministic\": true, \"hexa_only\": true, \"llm\": \"none\",\n"
     out = out + "  \"r_phi_lz_byN\": " + fj(r_phi_lz_byN) + ",\n"
     out = out + "  \"r_phi_proxy_byN\": " + fj(r_phi_proxy_byN) + ",\n"
