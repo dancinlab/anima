@@ -59,6 +59,9 @@
     font-family: "Fraunces", Georgia, "Times New Roman", serif;
   }
   nav .cta-mini:hover { background: #fff; }
+  nav .navlink { color:#fff; text-decoration:none; font-weight:600; font-size:15px; margin-right:14px; opacity:.9; }
+  nav .navlink:hover { opacity:1; text-decoration:underline; }
+  nav .right { display:flex; align-items:center; }
 
   /* ── hero ── */
   .hero {
@@ -251,7 +254,10 @@
 
 <nav id="nav">
   <div class="brand wm" onclick="scrollTo({top:0,behavior:'smooth'})">her</div>
-  <button class="cta-mini" onclick="document.getElementById('begin').scrollIntoView({behavior:'smooth'})">Begin — free</button>
+  <div class="right">
+    <a class="navlink" href="/room">room</a>
+    <button class="cta-mini" onclick="document.getElementById('begin').scrollIntoView({behavior:'smooth'})">Begin — free</button>
+  </div>
 </nav>
 
 <!-- HERO -->
@@ -404,13 +410,15 @@
 <!-- CTA + CHAT -->
 <section class="s" id="begin">
   <div class="inner cta-wrap reveal">
-    <h2>Meet your <span class="hn">her</span>.</h2>
-    <p class="body" style="margin:0 auto 6px;">Free while in early access. No card. It's already waiting.</p>
+    <h2>Meet <span class="hn">her</span>.</h2>
+    <p class="body" style="margin:0 auto 14px;">The public room is open — everyone's there, and <span class="hn">her</span> drops in when she feels like it.</p>
+    <a href="/room" class="go" style="display:inline-block;text-decoration:none;padding:14px 26px;">Enter the room →</a>
+    <div class="free" style="margin-top:22px;">Want her to yourself? Private 1:1 is in <b>early access</b> — leave your email and we'll open it for you.</div>
     <div class="row-in">
       <input id="email" type="email" placeholder="your email" autocomplete="email" />
-      <button class="go" onclick="signup()">Begin</button>
+      <button class="go" onclick="signup()">Join the waitlist</button>
     </div>
-    <div class="free">Takes a second. Then just say hi.</div>
+    <div class="free">We'll email you when 1:1 opens.</div>
 
     <div id="chat">
       <div id="log"></div>
