@@ -1,0 +1,60 @@
+F-CLM-AKIDA-SEMANTIC-SIGNAL-LIFT — pre-registered falsifier (frozen before any fit · g5)
+=========================================================================================
+
+domain : domains/CLM-KOSMOS.md (meta-domain CLM ⊕ KOSMOS · condition C6 follow-up)
+gate   : C6 / H_912 — sub-noise rescue probe for the H_911 cross-lingual semantic gap
+parent : F-CLM-AKIDA-MULTILING-SEMANTIC 🔴 (#1652) — N=12 paired par−con = 6+/6−,
+         mean −0.00092, 95%CI [−0.00319,+0.00135] straddled 0 at 25-anchor/single-exposure.
+device : pi5-akida · BrainChip AKD1000 · BC.00.000.002 · NSoC_v2 · IpVersion.v1 · akida SDK 2.19.1
+         BackendType.Hardware (akida.devices()[0] is a real HardwareDevice, NOT []).
+
+H_912 (next free anima id; UNIVERSE/ tops out at H_911, CANDIDATES has none above):
+  "The H_911 parallel>concat advantage is REAL but SUB-NOISE at 25-anchor / single-exposure
+   on AKD1000. With (a) a LARGER 5-lang cross-lingual corpus (many more concept×lang anchors
+   → stronger c>0 coupling signal) AND (b) N-exposure ACCUMULATION (repeat on-chip exposure /
+   average over repeats → reduce stochastic-plasticity noise), the paired (parallel−concat)
+   integration gap rises SIGNIFICANTLY POSITIVE above the chip's stochastic-plasticity noise floor."
+
+HARDWARE CONSTRAINT (honored — NOT violated):
+  AKD1000 on-chip learning is last-layer AkidaUnsupervised (Hebbian, binary-weight) ONLY.
+  Multi-layer on-chip learning is hardware-impossible and is NOT attempted. The two HW-feasible
+  signal-lift levers used here are exactly (a) larger cross-lingual corpus and (b) N-exposure
+  accumulation — no deeper on-chip plasticity.
+
+CONTROLLED VARIABLES (identical across the two arms, as in #1652):
+  - byte payloads: byte-identical multiset across orderings (only @corpus member ORDER differs:
+    parallel = concept-major, c>0 ; concat = language-major, c~0).
+  - int4 backbone (H_877 inference lane): deterministic int4-sym projection 256×256, sha256-pinned,
+    byte-identical for both arms.
+  - per-trial chip init weight: shared within each parallel/concat pair.
+  - on-chip optimizer: AkidaUnsupervised(num_weights=16, learning_competition=0.1).
+  - N-exposure E: each anchor presented E times per arm per trial (accumulation), SAME E both arms.
+  ONLY the @corpus member ORDER (and nothing else) differs into the on-chip fit.
+
+INTEGRATION MEASURE (on-chip):
+  mean within-concept cross-lingual cosine similarity of the LEARNED chip readout
+  (model.forward after on-chip fit) across the langs of each concept. Higher = the langs of one
+  concept bind together = cross-lingual semantic integration. Paired delta = parallel − concat.
+
+VERDICT RULE (frozen · paired multi-trial · anti-cherry-pick):
+  Run N ≥ 20 PAIRED on-chip trials (shared per-trial init), larger corpus + N-exposure accumulation.
+  Decide on the paired delta DISTRIBUTION (a single run is INADMISSIBLE — g63 forbids cherry-picking).
+
+  🟢 SUPPORTED iff
+       (A) learn_happened_hw == True on EVERY trial (C1 on-chip learn live on real silicon), AND
+       (B) paired-mean(parallel − concat) > 0 with 95% CI STRICTLY > 0 (lower bound > 0).
+     ⇒ H_911's semantic-linkage advantage WAS sub-noise and is RESCUED by more signal + accumulation.
+
+  🔴 REFUTED iff the 95% CI still INCLUDES 0 (lower bound ≤ 0).
+     ⇒ corpus expansion + N-exposure accumulation did NOT lift the gap above the chip noise floor.
+       H_911 does NOT transfer to AKD1000 last-layer Hebbian edge-learn EVEN WITH MORE SIGNAL —
+       a STRONGER closed-negative that supersedes/strengthens #1652. Publishable per paper_negative_ok.
+
+  BLOCKED iff no HW device visible → STOP, report, NO SW-sim ever labelled on-chip (g63).
+
+ANTI-FABRICATION (g63 / HONEST-SCOPE):
+  Every on-chip number comes from REAL AKD1000 silicon. No SW fallback is ever substituted.
+  The verdict is decided on the paired N≥20 delta distribution, never a single lucky stochastic draw.
+  A 🔴 (still sub-noise) is reported as SUCCESS — a stronger closed-negative — never faked to 🟢.
+
+frozen: 2026-06-01 (BEFORE the on-chip run · before corpus build feeds any fit)
