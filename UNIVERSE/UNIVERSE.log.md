@@ -425,3 +425,13 @@ Append-only history sister of `UNIVERSE.md` (도메인 LIFE→UNIVERSE 개명, P
 - [x] hexa-run 게이트 정정 memory 갱신: env-prefix 값은 literal `/Users/...` (변수형 `$HOME/.` harness 불안정)
 - [ ] **$0 frontier 종결** — 잔여는 전부 large-N intractable(GPU 무관) / full-IIT4 대형 spec / AXES depleted. lane 자연 종료.
 
+
+## 2026-06-02 — H_912 phi-emergence-correlate (의식↔창발 상관) 🔴 FALSIFIED 2/6
+
+- [x] H_912 (graded "higher consciousness → higher emergence") + Hc_912 (existence "Φ>0 ⇒ emergence>0") 동시 등록 — consciousness axis = canonical phi_proxy (phi_spatial, global_var−part_var integration; 새 metric 발명 금지) · emergence axis = normalised LZ76 (Kaspar-Schuster 1976 / PCI Casali 2013, 독립 표상·연산)
+- [x] pre-register-frozen falsifier BEFORE run (commit 083bb38b4) — 10-룰 ECA panel correlation + permutation NULL(K=2000) + paired-bootstrap CI(K=2000); 🟢-gate = CI_lo>0 ∧ perm-p<0.05 ∧ not-circular
+- [x] PILOT 실행 (`hexa run`, deterministic bit-identical 재현) → **🔴 FALSIFIED 2/6**: Pearson r=−0.277(음수) · Spearman ρ=0.08 · bootstrap 95% CI=[−0.638,+0.114] · permutation p=0.962 (NULL 붕괴 안 함) · existence Hc_912 8중 7만 통과(FAIL)
+- [x] **circularity guard PASS** (tautology=false, dissociation=true) — Φ≢E, 음의 결과는 circular artifact 아닌 진짜 dissociation. 주범 rule 51 period-2 blinker proxy pathology (variance-partition Φ=7 폭발 vs LZ floor 0.059)
+- [x] 핵심 발견: **cheap proxy Φ ↔ emergence(LZ) 정렬 안 함** — H_288 의 faithful big-Φ↔LZ(r=0.831)와 갈라짐. proxy vs faithful Φ 가 Φ↔emergence link 에서 상반된 답. "X⊥Φ" 서명(H_287/294) + proxy-fragility(H_268/269) 연장
+- [x] verbatim artifacts: `.verdicts/912_phi_emergence_correlate/{run_h912.txt,result.json}` + `.verdicts/h912-phi-emergence/` + `UNIVERSE/state/h912_phi_emergence_correlate_2026_06_02/`
+- [ ] Next (CANDIDATES): C1 rule51 outlier 제거 재상관 · C2 faithful big-Φ paired 비교 · C3 emergence→Hoel causal-EI 교체 · C4 Kuramoto/logistic cross-family

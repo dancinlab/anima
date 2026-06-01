@@ -1,0 +1,32 @@
+================================================================
+  H_912 — Φ_proxy (consciousness) vs LZ76 (emergence) — graded + existence
+  population = ECA panel · N=16 T=64 nbins=4 · Φ=phi_spatial(canonical proxy) · E=LZ76_norm
+  deterministic · LLM none · $0 mac-local
+================================================================
+  rule 0 : Phi_proxy=1.14443e-05   E_LZ=0.0390625
+  rule 255 : Phi_proxy=0.812814   E_LZ=0.0390625
+  rule 204 : Phi_proxy=1.14443e-05   E_LZ=0.0390625
+  rule 51 : Phi_proxy=7   E_LZ=0.0585938
+  rule 150 : Phi_proxy=1.1248   E_LZ=0.175781
+  rule 105 : Phi_proxy=1.56142   E_LZ=0.166016
+  rule 90 : Phi_proxy=0.2584   E_LZ=0.126953
+  rule 60 : Phi_proxy=0.699989   E_LZ=0.244141
+  rule 110 : Phi_proxy=0.208511   E_LZ=0.9375
+  rule 30 : Phi_proxy=0.0762825   E_LZ=1.01563
+  --
+  observed Pearson r(Phi, E)=-0.27731   Spearman rho=0.0800034
+  NULL(permutation K=2000) one-sided p=0.961519   null r 95% band=[-0.306892, 0.735725]
+  bootstrap r 95% CI = [-0.638472, 0.114319]
+  circularity: rule90 Phi=0.2584 E=0.126953 ; rule0 Phi=1.14443e-05 E=0.0390625 ; dissociation=true tautology=false
+  existence(Hc_912): #Phi>eps=8  #(Phi>eps & E>eps)=7  implication_holds=false
+================================================================
+  [FAIL] F912.1 POSITIVE: r_obs > 0
+  [FAIL] F912.2 CI: bootstrap CI_lo > 0
+  [FAIL] F912.3 NULL: permutation p < 0.05
+  [PASS] F912.4 NOT-CIRCULAR: Phi not identical to E
+  [FAIL] F912.5 EXISTENCE (Hc_912): Phi>eps => E>eps
+  [PASS] F912.6 BOUND: all Phi>=0 and E>=0
+  F912.1-6 2/6 PASS
+  VERDICT: FALSIFIED
+  result.json -> /Users/mini/dancinlab/anima-universe-phi/UNIVERSE/state/h912_phi_emergence_correlate_2026_06_02/result.json
+=== H_912 complete: FALSIFIED (2/6) ===
