@@ -19,7 +19,7 @@
 - [ ] CHAT SSOT 화해 — HEXAD/CHAT/spontaneous_lib 가 CORE/engine_g 를 re-export (포크 제거)
 - [ ] p1~p8 정합 verify — 외부 LLM 0 · system_prompt 0 · 게이트=기판 자기상태
 - [ ] CORE self-test — A·G·brain smoke 묶음 1-shot PASS
-- [ ] L3 결합 — DECODER 백엔드 확정 후 brain_decide emit 슬롯에 배선
+- [~] L3 결합 — `generator.hexa` BACKEND-AGNOSTIC 인터페이스 + null 백엔드 LANDED, `brain_emit` 가 brain_decide emit 슬롯에서 generate() 호출 (smoke 10/10 PASS). 실 .clm 백엔드(d768)는 stub(loaded=false → null fall-through) — 모델 회수 후 동일 인터페이스 뒤에 배선 (DECODER M4 잔여)
 
 ## 양방향 sibling
 
