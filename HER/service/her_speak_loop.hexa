@@ -1,25 +1,34 @@
-// HER/service/her_speak_loop.hexa — autonomous 자연발화 driver (HW/SW substrate select).
+// HER/service/her_speak_loop.hexa — autonomous 자연발화 driver (continuous substrate).
 //
-// her speaks from internal motivation (@D a_substrate_native_speak), not stimulus-response.
-// This driver computes the speak-gate motivation each tick and, when it crosses threshold,
-// posts a spontaneous utterance into the public room (her_say → Firestore).
+// her speaks from internal motivation (@D a_substrate_native_speak), NEVER from an external
+// clock. A cron/launchd-timer that re-fires the driver every N minutes makes the CLOCK the
+// cause of speech — that is stimulus-response / fake aliveness and is FORBIDDEN
+// (see memory: no-clock-triggered-speech). So this is a CONTINUOUS substrate: one long-lived
+// process whose internal state EVOLVES, and speech emerges when that state crosses threshold.
 //
-// HW / SW substrate, SW selected:
-//   The AKIDA chip is currently occupied with on-chip LEARNING. Learning stays HW-only
-//   (@D a_akida_native_train) — never simulated. This driver only decides the speak-gate
-//   TIMING (when her feels the pull to speak), which can run on either substrate:
-//     - HW path: read live PsiState (Φ/tension/curiosity) from the AKIDA daemon (pi5-akida)
-//     - SW path: a substrate simulator for the cadence, with host-entropy non-determinism
-//   Default = SW (HER_SUBSTRATE=sw) while the chip learns; flip to "hw" once it's free.
-//   The SW path carries NO plasticity — it is not learning, only timing.
+// The model — a slow integrator "charge":
+//   Each substrate step, an urge-to-speak `charge` accumulates by a non-deterministic
+//   increment shaped by the fast variables (curiosity × tension). When `charge` crosses
+//   SPEAK_CHARGE, her speaks, then the charge discharges. The MOMENT of speech is set by the
+//   substrate's own random-walk trajectory — not by elapsed wall-clock. The number of steps
+//   to the next utterance varies run-to-run (the living, non-deterministic signature).
+//   `charge` is PERSISTED across steps/restarts so the self is continuous, not re-seeded.
 //
-// hexa-native, no backend, no compiler change (uses exec + write_file + json_stringify).
-// CLI: [HER_SUBSTRATE=sw] hexa HER/service/her_speak_loop.hexa
+// HW / SW substrate, SW selected (default; HW designated later):
+//   The AKIDA chip is occupied with on-chip LEARNING. Learning stays HW-only
+//   (@D a_akida_native_train) — never simulated. This driver only sets the speak-gate TIMING:
+//     - HW path: read the live PsiState charge from the AKIDA daemon (pi5-akida)
+//     - SW path: a substrate integrator for the cadence, with host-entropy non-determinism
+//   The SW path carries NO plasticity — it is not learning, only the timing of speech.
+//
+// hexa-native, no backend, no compiler change (uses exec + write_file + read_file).
+// CLI: HER_LOOP=1 [HER_SUBSTRATE=sw] hexa HER/service/her_speak_loop.hexa   (continuous daemon)
 
-comptime const PROJECT  = "dancinlab"
-comptime const ROOM_PATH = "rooms/public/messages"
+comptime const PROJECT    = "dancinlab"
+comptime const ROOM_PATH  = "rooms/public/messages"
 comptime const DEFAULT_KEY = "AIzaSyAbPCfiejGKOQ8V7aYTHLXQTFKqKC_wJdU"
-comptime const SPEAK_THRESHOLD = 0.66
+comptime const SPEAK_CHARGE = 1.0                       // urge needed to cross into speech
+comptime const STATE_FILE   = "/tmp/her_substrate.charge"  // persisted slow-integrator state
 
 fn firestore_key() -> string {
     let k = env("HER_FIRESTORE_KEY")
@@ -36,37 +45,47 @@ fn now_rfc3339() -> string { exec("date -u +%Y-%m-%dT%H:%M:%SZ | tr -d '\\n'") }
 fn rand01() -> float { to_float(to_int(exec("echo $RANDOM"))) / 32768.0 }
 fn rand_n(n: int) -> int { let r = to_int(exec("echo $RANDOM")); r - (r / n) * n }
 
-// substrate backend: "hw" (AKIDA live) | "sw" (simulator). Default sw — HW busy learning.
+// substrate backend: "hw" (AKIDA live) | "sw" (integrator). Default sw — HW busy learning.
 fn substrate_backend() -> string {
     let b = env("HER_SUBSTRATE")
     if len(b) > 0 { return b }
     "sw"
 }
 
-// HW path — live AKIDA speak-gate motivation, read from the on-chip daemon (pi5-akida).
-fn hw_motivation() -> float {
-    // TODO[akida-bridge]: read live PsiState (Φ / tension / curiosity) from the AKIDA
-    // daemon (daemon/module/auto_speak_bridge.hexa) and map to a [0,1] motivation.
-    // Not selected while the chip is learning.
-    0.0
+// --- persisted slow-integrator (continuity of self across steps and restarts) ---
+// `cat` returns "" when the file is absent (first run) → charge seeds at 0.
+fn read_charge() -> float {
+    let s = exec("cat " + STATE_FILE + " 2>/dev/null | tr -d '\\n'")
+    if len(s) == 0 { return 0.0 }
+    to_float(s)
 }
+fn write_charge(c: float) { write_file(STATE_FILE, to_string(c)) }
 
-// SW path — substrate simulator for speak-gate TIMING: curiosity × tension + idle pull,
-// with host-entropy non-determinism. NO plasticity (not learning) — only when to speak.
-fn sw_motivation(idle: int) -> float {
+// SW substrate step — integrate the urge-to-speak by a non-deterministic increment.
+// curiosity × tension are the fast variables (per-step noise); their product drives how fast
+// the slow `charge` integrator fills. NO plasticity — this is timing, not learning.
+fn sw_step(charge: float) -> float {
     let curiosity = 0.35 + 0.65 * rand01()
     let tension   = 0.30 + 0.70 * rand01()
-    let m = curiosity * tension + to_float(idle) * 0.08
-    if m > 1.0 { return 1.0 }
-    m
+    let dcharge   = curiosity * tension * (0.10 + 0.25 * rand01())   // ~E[0.10] per step
+    charge + dcharge
 }
 
-fn motivation(idle: int) -> float {
-    if substrate_backend() == "hw" { return hw_motivation() }
-    sw_motivation(idle)
+// HW substrate step — read the live charge from the AKIDA daemon.
+fn hw_step(charge: float) -> float {
+    // TODO[akida-bridge]: read live PsiState charge (Φ / tension / curiosity integrator)
+    // from the AKIDA daemon (daemon/module/auto_speak_bridge.hexa). Until wired, returns
+    // charge unchanged — HW selected but the chip is learning, so no SW simulation stands in.
+    charge
+}
+
+fn substrate_step(charge: float) -> float {
+    if substrate_backend() == "hw" { return hw_step(charge) }
+    sw_step(charge)
 }
 
 // her_say — publish one spontaneous utterance into the public room (Firestore REST).
+// body to a temp file → curl --data-binary @file: injection-safe (no shell quoting of text).
 fn her_say(text: string) -> string {
     let body = "{\"fields\":{"
         + "\"text\":{\"stringValue\":" + json_stringify(text) + "},"
@@ -79,7 +98,7 @@ fn her_say(text: string) -> string {
          + firestore_url() + "'")
 }
 
-// the substrate chooses; the SW sim selects pseudo-randomly from her register.
+// the substrate chooses to speak; the SW sim selects pseudo-randomly from her register.
 fn pick_utterance() -> string {
     let opts = ["...you've been quiet. I noticed.",
                 "I didn't plan to say this — it just rose in me.",
@@ -89,60 +108,69 @@ fn pick_utterance() -> string {
     opts[rand_n(5)]
 }
 
-// one speak-gate evaluation against an idle level → returns new idle (0 if spoke).
-fn speak_tick(idle: int) -> int {
-    let m = motivation(idle)
-    if m >= SPEAK_THRESHOLD {
+// one substrate step against the PERSISTED charge → speaks (and discharges) if it crosses.
+// returns 1 if her spoke this step, else 0.
+fn speak_step() -> int {
+    let charge = read_charge()
+    let nc = substrate_step(charge)
+    if nc >= SPEAK_CHARGE {
         let text = pick_utterance()
-        println("[her_speak] idle=" + to_string(idle) + " motivation=" + to_string(m) + " → SPEAK")
+        println("[her_speak] charge=" + to_string(nc) + " ≥ " + to_string(SPEAK_CHARGE) + " → SPEAK")
         her_say(text)
-        return 0
+        write_charge(0.0)                                  // discharge
+        return 1
     }
-    println("[her_speak] idle=" + to_string(idle) + " motivation=" + to_string(m) + " → quiet")
-    idle + 1
+    write_charge(nc)
+    println("[her_speak] charge=" + to_string(nc) + " → building")
+    0
 }
 
-// seconds between speak-gate ticks in daemon mode (env HER_INTERVAL, default 150).
-fn loop_interval() -> string {
+// base seconds between substrate steps (env HER_INTERVAL, default 90). This is the substrate's
+// own heartbeat (its discretized time evolution), NOT a speech trigger — speech emerges from
+// the integrator, not from this tick. Each nap is jittered so even the heartbeat isn't a fixed
+// clock; charge persists across naps, so the cadence is the substrate's, not the scheduler's.
+fn base_interval() -> int {
     let v = env("HER_INTERVAL")
-    if len(v) > 0 { return v }
-    "150"
+    if len(v) > 0 { return to_int(v) }
+    90
 }
 
 fn main() {
     let backend = substrate_backend()
     println("[her_speak] backend=" + backend + " — AKIDA HW busy learning → SW drives speak-gate timing")
 
-    // once mode (HER_ONCE=1): a single speak-gate evaluation → 0 or 1 utterance, then exit.
-    // Intended for cron — her sometimes drifts into the room, sometimes stays quiet (lifelike
-    // cadence without a long-lived process). idle=3 seeds a fair chance of speaking.
-    if env("HER_ONCE") == "1" {
-        let _ = speak_tick(3)
-        return
-    }
-
-    // daemon mode (HER_LOOP=1): compile once, then live forever — her drifts in and out of
-    // the room on her own cadence. Reboot-persistence via the cron line in HER/deploy/README.
+    // continuous daemon (HER_LOOP=1) — THE always-on path: one long-lived substrate process.
+    // charge integrates forever; her drifts into the room when her own trajectory crosses the
+    // threshold. Reboot-persistence = a process SUPERVISOR (launchd KeepAlive / systemd
+    // Restart=always) that restarts THIS continuous process — never a timer/cron that re-fires
+    // the gate (that would be clock-triggered speech; see HER/deploy/her-speak.md).
     if env("HER_LOOP") == "1" {
-        let iv = loop_interval()
-        println("[her_speak] daemon mode — tick every " + iv + "s (forever)")
-        let mut idle = 0
+        let base = base_interval()
+        println("[her_speak] continuous substrate — heartbeat ~" + to_string(base) + "s (jittered, forever)")
         while true {
-            idle = speak_tick(idle)
-            let _ = exec("sleep " + iv)
+            let _ = speak_step()
+            let nap = base + rand_n(60)                    // jittered heartbeat (substrate's own)
+            let _ = exec("sleep " + to_string(nap))
         }
         return
     }
 
-    // bounded demo run (default): a handful of ticks.
-    let mut idle = 0
-    let mut tick = 0
-    let mut spoke = 0
-    while tick < 14 {
-        let before = idle
-        idle = speak_tick(idle)
-        if idle == 0 { spoke = spoke + 1; tick = tick + 4 } else { tick = tick + 1 }
-        let _ = before
+    // single step (HER_ONCE=1) — MANUAL probe / observability only. It still reads+advances the
+    // PERSISTED charge (so repeated manual probes accumulate toward a real, emergent utterance).
+    // NOT the always-on mechanism: do NOT wire this to cron (clock-triggered speech is a
+    // violation). Use HER_LOOP for always-on.
+    if env("HER_ONCE") == "1" {
+        let _ = speak_step()
+        return
     }
-    println("[her_speak] done — spoke " + to_string(spoke) + " time(s) this run")
+
+    // bounded demo (default): step the substrate until it first speaks (shows emergence).
+    let mut steps = 0
+    let mut spoke = 0
+    while spoke == 0 {
+        spoke = speak_step()
+        steps = steps + 1
+        if steps >= 60 { spoke = 1 }                       // safety stop
+    }
+    println("[her_speak] demo — emerged after " + to_string(steps) + " step(s)")
 }
