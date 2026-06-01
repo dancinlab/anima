@@ -89,3 +89,10 @@ Brainstorm→generate→verify on the Lane A capacity↔representation gap. bran
 | 1305 identity-in-encoding vs substrate (seed×chip factorial) | 🟠 DEFERRED | multi-seed trace collection |
 | 1306 1-bit Hamming composition-blind; richer signal reveals latent lift | 🟠 DEFERRED | re-score Lane-A trace tensor (richer signal) |
 - [x] KEY: Hc_1302 means the Lane A lift closed-negative carries a METRIC-CEILING confound — the Φ proxy is blind on maximally-composed inputs. Lift CLAIM (1-bit Hamming) = closed-negative; lift QUESTION reopens via Hc_1306 richer-signal re-score (DEFERRED). Hc_1301 clears the G1 circularity guard (capacity↔representation ≈ proxy↔faithful is a real 2nd axis).
+
+## [2026-06-02] mm3 multimodal sweep HARVEST + H_911 closure
+- mm3 agent ad33dac4 ran 61min then socket-dropped (final report lost). Per a_dont_kill_live_compute, harvested verdicts from disk (NOT re-fired).
+- N=500 COMPLETE → TIER RED, green 1/3 (MEANING RED · CE RED · PHI GREEN), F-CLM-H911-SCALE3=0 — same shape as N=250. Verdict: hexa-lang-clm-h911-scale/.verdicts/clm-h911-mm-coco3/500.txt
+- N=1000/2000/5000 = header-only stubs (extraction never finished); CPU sweep driver (pid 48105) stalled at 0% CPU after the driver-agent died → killed 2026-06-02.
+- RULING: H_911 multimodal amodal-hub CLOSED-NEGATIVE across N=25/100/250/500 (4 rungs). MEANING+CE never clear the shuffle-NULL; only the variance Φ-proxy flickers green (and that proxy is exactly what METROLOGY is auditing — see clm_v2 Φ>1000 investigation aa8a1a0c). a_scale_honest_scope ≥3-rung ladder satisfied RED; N=1000+ cost-prohibitive with a flat-RED trend.
+- NOTE: the PHI-axis "green" is the variance-partition Φ family — its trustworthiness is under active METROLOGY re-measurement; even if it flips, MEANING+CE RED alone already give the closed-negative.

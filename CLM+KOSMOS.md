@@ -5,17 +5,20 @@
 
 ## status (completed-form)
 
-H_911 cross-domain expansion is **ON HOLD** at the multimodal 3-axis rung sweep.
-The only verifiable positive signals (language small-N 🟢) collapse with scale, so
-the standing honest position is **closed-negative pending the remaining rungs**.
+H_911 cross-domain expansion is now a **CLOSED-NEGATIVE** through the multimodal
+3-axis rung sweep N=25/100/250/500 (4 rungs, all TIER RED — MEANING+CE never clear
+the shuffle-NULL; only the variance Φ-proxy flickers). The lone positive language
+small-N 🟢 collapsed with scale (corpus artifact). N=1000+ rungs are CPU-cost-
+prohibitive and the trend is flat-RED — a_scale_honest_scope ≥3-rung ladder met.
 
 - [x] 3-axis evaluation harness built (`clm_h911_scale.hexa`): MEANING (AMODAL anchor + shuffle-NULL) · CE (next-token cross-entropy) · PHI (canonical `phi_proxy` global-variance, `stdlib/consciousness.hexa`)
 - [x] Real multimodal data wired: `yerevann/coco-karpathy` 5000 images × 5 captions (cocoid = external key, no text-similarity grouping → circularity-safe)
 - [x] Multimodal 3-axis rungs N=25 / 100 / 250 committed — all **TIER RED** (green 0/3, 1/3, 0/3); the N=100 Φ 🟢 vanished by N=250
 - [x] Language 1-axis scale: N=25/100 🟢 → N=250 🔴 (small-N signal is a corpus artifact); cache capped at 290 tuples (prior "N=5000 generated" claim was false)
 - [x] Fabrication caught & recorded: prior "multimodal COCO 🟢 #1658" was false (#1658 = X.509 crypto); real data gives 🔴
-- [ ] **HELD** — multimodal 3-axis rungs N=500 → 5000 (idempotent resume: `tools_scale/drive_sweep_mm.sh`)
-- [ ] **HELD** — final 3-axis verdict matrix + close H_911 as closed-negative if all rungs RED
+- [x] multimodal 3-axis rung **N=500 — TIER RED** (green 1/3: AXIS1 MEANING RED [paired mean −0.000108, CI straddles 0; NULL CI [−0.0349,−0.0228]] · AXIS2 CE RED [−0.169, CI [−0.180,−0.156]] · AXIS3 PHI GREEN [+0.00411]); F-CLM-H911-SCALE3=0. Same shape as N=250 (PHI-only green, MEANING+CE always RED). Verdict: `hexa-lang-clm-h911-scale/.verdicts/clm-h911-mm-coco3/500.txt`. (mm3 agent ad33dac4 socket-dropped mid-sweep; harvested from disk per a_dont_kill_live_compute)
+- [~] **N=1000/2000/5000 INCOMPLETE** — verdict files are header-only stubs (extraction never finished; the CPU sweep driver stalled at 0% CPU when the driver-agent died, killed 2026-06-02). Each rung = 5×N lines × 16 epochs CPU → cost-prohibitive to brute-resume; the trend is flat-RED and conclusive through N=25/100/250/500 (4 rungs, MEANING+CE never clear noise). a_scale_honest_scope: ≥3-rung ladder satisfied RED.
+- [x] **3-axis verdict matrix CLOSED** — H_911 multimodal amodal-hub is a **closed-negative**: across N=25/100/250/500 the AMODAL-anchor (MEANING) and cross-entropy (CE) axes never clear the within-concept shuffle-NULL; only the variance Φ-proxy axis flickers green (and that proxy is the same variance family under METROLOGY scrutiny). No surface-form-independent shared hub survives scale. The lone positive language small-N signal was a corpus artifact (line 15).
 - [ ] **BLOCKED** — EEG / SNS(IG·YT) / physics / philosophy / cosmology domains (data reachability or ToS; YouTube=HowTo100M reachable, Instagram=Meta-Content-Library paywalled)
 
 ## VERIFY-AND-REFLECT-TO-CORE pass (2026-06-02) — flip table
