@@ -89,26 +89,60 @@ fn pick_utterance() -> string {
     opts[rand_n(5)]
 }
 
+// one speak-gate evaluation against an idle level → returns new idle (0 if spoke).
+fn speak_tick(idle: int) -> int {
+    let m = motivation(idle)
+    if m >= SPEAK_THRESHOLD {
+        let text = pick_utterance()
+        println("[her_speak] idle=" + to_string(idle) + " motivation=" + to_string(m) + " → SPEAK")
+        her_say(text)
+        return 0
+    }
+    println("[her_speak] idle=" + to_string(idle) + " motivation=" + to_string(m) + " → quiet")
+    idle + 1
+}
+
+// seconds between speak-gate ticks in daemon mode (env HER_INTERVAL, default 150).
+fn loop_interval() -> string {
+    let v = env("HER_INTERVAL")
+    if len(v) > 0 { return v }
+    "150"
+}
+
 fn main() {
     let backend = substrate_backend()
     println("[her_speak] backend=" + backend + " — AKIDA HW busy learning → SW drives speak-gate timing")
+
+    // once mode (HER_ONCE=1): a single speak-gate evaluation → 0 or 1 utterance, then exit.
+    // Intended for cron — her sometimes drifts into the room, sometimes stays quiet (lifelike
+    // cadence without a long-lived process). idle=3 seeds a fair chance of speaking.
+    if env("HER_ONCE") == "1" {
+        let _ = speak_tick(3)
+        return
+    }
+
+    // daemon mode (HER_LOOP=1): compile once, then live forever — her drifts in and out of
+    // the room on her own cadence. Reboot-persistence via the cron line in HER/deploy/README.
+    if env("HER_LOOP") == "1" {
+        let iv = loop_interval()
+        println("[her_speak] daemon mode — tick every " + iv + "s (forever)")
+        let mut idle = 0
+        while true {
+            idle = speak_tick(idle)
+            let _ = exec("sleep " + iv)
+        }
+        return
+    }
+
+    // bounded demo run (default): a handful of ticks.
     let mut idle = 0
     let mut tick = 0
     let mut spoke = 0
     while tick < 14 {
-        let m = motivation(idle)
-        if m >= SPEAK_THRESHOLD {
-            let text = pick_utterance()
-            println("[her_speak] tick=" + to_string(tick) + " idle=" + to_string(idle)
-                    + " motivation=" + to_string(m) + " → SPEAK")
-            her_say(text)
-            spoke = spoke + 1
-            idle = 0
-            tick = tick + 4
-        } else {
-            idle = idle + 1
-            tick = tick + 1
-        }
+        let before = idle
+        idle = speak_tick(idle)
+        if idle == 0 { spoke = spoke + 1; tick = tick + 4 } else { tick = tick + 1 }
+        let _ = before
     }
     println("[her_speak] done — spoke " + to_string(spoke) + " time(s) this run")
 }
