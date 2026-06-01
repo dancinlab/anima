@@ -111,13 +111,16 @@ fn her_voice_name() -> string {
     if len(v) > 0 { return v }
     "Aoede"
 }
+// voice toggle — env HER_VOICE_ON=1 enables Gemini-TTS voice; default OFF (text-only).
+// OFF = no TTS call, no ~170KB inline audio (keeps /room light + cost 0); flip to 1 to speak aloud.
+fn voice_enabled() -> bool { env("HER_VOICE_ON") == "1" }
 // her_say — publish one spontaneous utterance (+ optional voice) into the public room.
 // The base64 WAV is ~170 KB; hexa's exec() truncates output that large, so the voice NEVER
 // passes through a hexa string. When a key is present, python builds the WHOLE Firestore body
 // (text + Gemini-TTS voice) straight to /tmp/her_say.json; hexa only curls the file.
 fn her_say(text: string) -> string {
     write_file("/tmp/her_text.txt", text)              // text via file → injection-safe
-    if len(google_key()) > 0 {
+    if voice_enabled() && len(google_key()) > 0 {
         // python: text → Gemini TTS → WAV → base64 → full Firestore body file (audio stays in python)
         let _ = exec("HER_KEY='" + google_key() + "' HER_VOICE='" + her_voice_name()
             + "' python3 - <<'PY'\n"
