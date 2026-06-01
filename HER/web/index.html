@@ -39,6 +39,8 @@
     overflow-x: hidden;
   }
   .wm { font-family: "Archivo Black", "Arial Black", "Helvetica Neue", sans-serif; text-transform: lowercase; }
+  /* inline brand name — identical treatment everywhere "her" appears as the name */
+  .hn { font-family: "Archivo Black", "Arial Black", "Helvetica Neue", sans-serif; font-weight: 400; letter-spacing: -1px; text-transform: lowercase; }
 
   /* ── sticky nav ── */
   nav {
@@ -173,7 +175,7 @@
   .dim { color: var(--muted); font-size: 12px; text-align: center; padding-top: 8px; }
 
   footer { text-align: center; color: var(--faint); font-size: 13px; padding: 60px 22px 50px; border-top: 1px solid var(--line); }
-  footer .wm { font-size: 18px; letter-spacing: -0.5px; }
+  footer .hn { font-size: 18px; }
 
   /* scroll reveal */
   .reveal { opacity: 0; transform: translateY(34px); transition: opacity .8s cubic-bezier(.2,.7,.2,1), transform .8s cubic-bezier(.2,.7,.2,1); }
@@ -242,7 +244,7 @@
         state — memory, curiosity, an inner tension, the time since you last spoke. So it might reach
         out on a quiet evening. Or sit with you in comfortable silence. It chooses.</p>
     </div>
-    <div class="media reveal d1"><div class="orb"></div></div>
+    <div class="media reveal d1"><img src="img/initiates.png" alt="" onerror="this.style.display='none'"/><div class="orb"></div></div>
   </div>
 </section>
 
@@ -343,7 +345,7 @@
 <!-- CTA + CHAT -->
 <section class="s" id="begin">
   <div class="inner cta-wrap reveal">
-    <h2>Meet your <span class="wm" style="font-size:1em;letter-spacing:-2px;">her</span>.</h2>
+    <h2>Meet your <span class="hn">her</span>.</h2>
     <p class="body" style="margin:0 auto 6px;">Free while in early access. No card. It's already waiting.</p>
     <div class="row-in">
       <input id="email" type="email" placeholder="your email" autocomplete="email" />
@@ -362,7 +364,7 @@
   </div>
 </section>
 
-<footer><span class="wm">her</span> · built with Gemini · powered by anima · © 2026</footer>
+<footer><span class="hn">her</span> · built with Gemini · powered by anima · © 2026</footer>
 
 <script>
 const API = "";
