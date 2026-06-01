@@ -1,0 +1,1515 @@
+{
+  "hypothesis": "LANE-A-PHASE1-LIFT-SIGNAL-RESOLUTION",
+  "ties": [
+    "F-CLM-ONCHIP-LAYERPAGE-LADDER",
+    "a_scale_honest_scope",
+    "a_toy_scale_recheck",
+    "H_904",
+    "a_akida_native_train"
+  ],
+  "method": "IDENTICAL paged DEPTH ladder + IDENTICAL cross-lingual concept-margin lift metric as the prior 25-anchor ladder; only the corpus size and seed-count vary. composed=all units fit on chip; frozen_head=only L1 fit. lift=composed-frozen margin (bits). big corpus = subsample of FULL FLORES-200 5-way parallel (CC-BY-SA-4.0, real). 3 backbone seeds for the noise band.",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "unit_schedule": [
+    64,
+    32,
+    32,
+    32,
+    32
+  ],
+  "ladder_N": [
+    2,
+    3,
+    4,
+    5
+  ],
+  "seeds": [
+    20260602,
+    20260603,
+    20260604
+  ],
+  "learning_competition": 0.1,
+  "inc": 256,
+  "ts_start": "2026-06-01T17:23:37Z",
+  "corpora": {
+    "anchor25": {
+      "per_seed": [
+        {
+          "corpus": "anchor25",
+          "limen_path": "/home/ubuntu/clm_kosmos_akida/corpus/parallel.limen",
+          "seed": 20260602,
+          "anchor_count": 25,
+          "input_sha": "1990f87de250cb73",
+          "backbone_sha256": "d25e9f293cac2f643961fe50587a6d966a0dc29af09ac221bf528a376695edb8",
+          "rungs": [
+            {
+              "N": 2,
+              "composed_margin_bits": -1.024000000000001,
+              "frozen_margin_bits": -0.9280000000000008,
+              "lift_bits": -0.09600000000000009,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "d2727cec3cc58f61",
+                  "post_w_sha": "97406b78cc337c6f",
+                  "w_delta_nnz": 88,
+                  "fwd_sum": 12898
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "9d30301fd0d4a2a7",
+                  "post_w_sha": "839472c4c57102c6",
+                  "w_delta_nnz": 142,
+                  "fwd_sum": 1056
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 3,
+              "composed_margin_bits": -0.7359999999999998,
+              "frozen_margin_bits": -0.4399999999999995,
+              "lift_bits": -0.29600000000000026,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "7724215ec0cd6b11",
+                  "post_w_sha": "6cb00bcf18093fff",
+                  "w_delta_nnz": 142,
+                  "fwd_sum": 13111
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "ffe192b65787f972",
+                  "post_w_sha": "87db4cde583c8b54",
+                  "w_delta_nnz": 130,
+                  "fwd_sum": 1108
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "7c65f6222026157f",
+                  "post_w_sha": "01ccce98ed7f5c46",
+                  "w_delta_nnz": 114,
+                  "fwd_sum": 709
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 4,
+              "composed_margin_bits": -0.13600000000000012,
+              "frozen_margin_bits": -0.4560000000000004,
+              "lift_bits": 0.3200000000000003,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "51c94e335fc28be7",
+                  "post_w_sha": "df4ab7cbe5ee4202",
+                  "w_delta_nnz": 138,
+                  "fwd_sum": 12783
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "70adf224138ecb4e",
+                  "post_w_sha": "70f81796a4d448a9",
+                  "w_delta_nnz": 114,
+                  "fwd_sum": 1008
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "2ffaa352a7da2085",
+                  "post_w_sha": "ada8221980df2622",
+                  "w_delta_nnz": 104,
+                  "fwd_sum": 605
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "e64d5e0eefe6199c",
+                  "post_w_sha": "c886f30600a5a2e6",
+                  "w_delta_nnz": 60,
+                  "fwd_sum": 350
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 5,
+              "composed_margin_bits": -0.5199999999999996,
+              "frozen_margin_bits": -0.40000000000000036,
+              "lift_bits": -0.11999999999999922,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "d3ec22e75840d0d5",
+                  "post_w_sha": "6992e1263c670136",
+                  "w_delta_nnz": 110,
+                  "fwd_sum": 13032
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "f38b669fe51cf183",
+                  "post_w_sha": "1f838e19391cd19f",
+                  "w_delta_nnz": 116,
+                  "fwd_sum": 1024
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "f3d37d4dc24f51ca",
+                  "post_w_sha": "9ee2cdf2a326a06c",
+                  "w_delta_nnz": 128,
+                  "fwd_sum": 721
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "6252bf5ebaf8934c",
+                  "post_w_sha": "ddb046cc55aee9a3",
+                  "w_delta_nnz": 118,
+                  "fwd_sum": 693
+                },
+                {
+                  "unit": 5,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "c5c42f0469108e23",
+                  "post_w_sha": "93a64eec9e5dd006",
+                  "w_delta_nnz": 70,
+                  "fwd_sum": 496
+                }
+              ],
+              "rung_verdict": "GREEN"
+            }
+          ],
+          "wall_s": 7.6
+        },
+        {
+          "corpus": "anchor25",
+          "limen_path": "/home/ubuntu/clm_kosmos_akida/corpus/parallel.limen",
+          "seed": 20260603,
+          "anchor_count": 25,
+          "input_sha": "9be966ecfe456d41",
+          "backbone_sha256": "c226bca5834215b9f964a895fe263d01845114c811d690ff4983ba0af9e03642",
+          "rungs": [
+            {
+              "N": 2,
+              "composed_margin_bits": -1.0879999999999992,
+              "frozen_margin_bits": -0.7919999999999998,
+              "lift_bits": -0.2959999999999994,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "77ea85efa2292df3",
+                  "post_w_sha": "da090e3b503afb45",
+                  "w_delta_nnz": 134,
+                  "fwd_sum": 12908
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "a537babfb1b517e5",
+                  "post_w_sha": "56198f0f639b6c56",
+                  "w_delta_nnz": 110,
+                  "fwd_sum": 1015
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 3,
+              "composed_margin_bits": -0.7439999999999998,
+              "frozen_margin_bits": -0.1999999999999993,
+              "lift_bits": -0.5440000000000005,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "e711fe66c3ef8eea",
+                  "post_w_sha": "47c09861050f6373",
+                  "w_delta_nnz": 116,
+                  "fwd_sum": 13230
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "810bff4f2e678e9c",
+                  "post_w_sha": "1a47f202463ad9cf",
+                  "w_delta_nnz": 106,
+                  "fwd_sum": 988
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "4aa254dbe7324f52",
+                  "post_w_sha": "a19471d451080bdc",
+                  "w_delta_nnz": 114,
+                  "fwd_sum": 748
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 4,
+              "composed_margin_bits": -0.7039999999999997,
+              "frozen_margin_bits": 0.05600000000000005,
+              "lift_bits": -0.7599999999999998,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "b8973ea1b2960f35",
+                  "post_w_sha": "e31fa0138c53d203",
+                  "w_delta_nnz": 116,
+                  "fwd_sum": 13030
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "d201b91ab8d11302",
+                  "post_w_sha": "fcdd625dde32574b",
+                  "w_delta_nnz": 128,
+                  "fwd_sum": 985
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "2f76edea58e0cbd3",
+                  "post_w_sha": "ae47c59d448fd139",
+                  "w_delta_nnz": 106,
+                  "fwd_sum": 684
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "98bd65b5586e029c",
+                  "post_w_sha": "d257aa367d55be19",
+                  "w_delta_nnz": 90,
+                  "fwd_sum": 585
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 5,
+              "composed_margin_bits": -0.13600000000000012,
+              "frozen_margin_bits": -0.10400000000000009,
+              "lift_bits": -0.03200000000000003,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "c65b62613ac9d3a7",
+                  "post_w_sha": "5a4dac5b7b23bc27",
+                  "w_delta_nnz": 144,
+                  "fwd_sum": 13029
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "a40e9bcc6ab5b29a",
+                  "post_w_sha": "7890aa437f618892",
+                  "w_delta_nnz": 130,
+                  "fwd_sum": 1136
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "7f67a1ade5c9a764",
+                  "post_w_sha": "62de1264e1cf3585",
+                  "w_delta_nnz": 106,
+                  "fwd_sum": 658
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "ec1b6287c020a2a9",
+                  "post_w_sha": "3814bb596a7927a1",
+                  "w_delta_nnz": 66,
+                  "fwd_sum": 382
+                },
+                {
+                  "unit": 5,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "c47dee6cb36c03c3",
+                  "post_w_sha": "9e20e42472c14f39",
+                  "w_delta_nnz": 22,
+                  "fwd_sum": 131
+                }
+              ],
+              "rung_verdict": "GREEN"
+            }
+          ],
+          "wall_s": 7.6
+        },
+        {
+          "corpus": "anchor25",
+          "limen_path": "/home/ubuntu/clm_kosmos_akida/corpus/parallel.limen",
+          "seed": 20260604,
+          "anchor_count": 25,
+          "input_sha": "9dee67cec034fae1",
+          "backbone_sha256": "934024639585ba176265afc8a7e8e895ab60d52963b90d2c1893ec2bdc73259f",
+          "rungs": [
+            {
+              "N": 2,
+              "composed_margin_bits": -0.6880000000000006,
+              "frozen_margin_bits": -1.1679999999999993,
+              "lift_bits": 0.47999999999999865,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "1280325ef27bd05a",
+                  "post_w_sha": "227a253f46b34eaa",
+                  "w_delta_nnz": 100,
+                  "fwd_sum": 13057
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "b0bf5a6993201e60",
+                  "post_w_sha": "d9e5cdbefed4b2b6",
+                  "w_delta_nnz": 110,
+                  "fwd_sum": 1012
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 3,
+              "composed_margin_bits": -1.2400000000000002,
+              "frozen_margin_bits": -0.3200000000000003,
+              "lift_bits": -0.9199999999999999,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "7e60740bfe031319",
+                  "post_w_sha": "18e17ca6724ec74d",
+                  "w_delta_nnz": 136,
+                  "fwd_sum": 12974
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "4eb8147c5d00b641",
+                  "post_w_sha": "9c271f46818d85c5",
+                  "w_delta_nnz": 112,
+                  "fwd_sum": 1043
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "df2715814f3f1c59",
+                  "post_w_sha": "279f52f3c846d3a2",
+                  "w_delta_nnz": 126,
+                  "fwd_sum": 739
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 4,
+              "composed_margin_bits": -0.8639999999999999,
+              "frozen_margin_bits": -0.7279999999999998,
+              "lift_bits": -0.13600000000000012,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "c3834226c3b222db",
+                  "post_w_sha": "d051dc23183a34df",
+                  "w_delta_nnz": 132,
+                  "fwd_sum": 13141
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "8312030041e6fd80",
+                  "post_w_sha": "a41501229e7c0570",
+                  "w_delta_nnz": 106,
+                  "fwd_sum": 993
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "fb6a08fe62837e4d",
+                  "post_w_sha": "2edb4c765ea76ea1",
+                  "w_delta_nnz": 122,
+                  "fwd_sum": 717
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "08643576930bf170",
+                  "post_w_sha": "4f76eb5c4358c70c",
+                  "w_delta_nnz": 96,
+                  "fwd_sum": 538
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 5,
+              "composed_margin_bits": -0.7039999999999997,
+              "frozen_margin_bits": 0.6879999999999997,
+              "lift_bits": -1.3919999999999995,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "20c07714667baebf",
+                  "post_w_sha": "c77553a1de391bf0",
+                  "w_delta_nnz": 116,
+                  "fwd_sum": 12957
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "cd6ea4522345f139",
+                  "post_w_sha": "f4d168cf50932b67",
+                  "w_delta_nnz": 154,
+                  "fwd_sum": 1241
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "3cbc49dd886f39fc",
+                  "post_w_sha": "3dacffa387ccf837",
+                  "w_delta_nnz": 122,
+                  "fwd_sum": 705
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "f28ed5323c546633",
+                  "post_w_sha": "c6e040b6a986eff1",
+                  "w_delta_nnz": 90,
+                  "fwd_sum": 505
+                },
+                {
+                  "unit": 5,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "2c48a28d46ff5d47",
+                  "post_w_sha": "740b13350de0c30a",
+                  "w_delta_nnz": 62,
+                  "fwd_sum": 388
+                }
+              ],
+              "rung_verdict": "GREEN"
+            }
+          ],
+          "wall_s": 7.6
+        }
+      ],
+      "summary": {
+        "corpus": "anchor25",
+        "anchor_count": 25,
+        "seeds": [
+          20260602,
+          20260603,
+          20260604
+        ],
+        "per_seed_slope": {
+          "20260602": 0.05440000000000033,
+          "20260603": 0.057599999999999846,
+          "20260604": -0.4831999999999994
+        },
+        "slope_mean": -0.12373333333333307,
+        "slope_std": 0.2541846747718846,
+        "slope_sign_stable": false,
+        "per_N_lift": {
+          "2": {
+            "lifts": [
+              -0.09600000000000009,
+              -0.2959999999999994,
+              0.47999999999999865
+            ],
+            "mean": 0.029333333333333062,
+            "std": 0.3289633549331724,
+            "min": -0.2959999999999994,
+            "max": 0.47999999999999865,
+            "sign_stable": false,
+            "mean_positive": true
+          },
+          "3": {
+            "lifts": [
+              -0.29600000000000026,
+              -0.5440000000000005,
+              -0.9199999999999999
+            ],
+            "mean": -0.5866666666666669,
+            "std": 0.25652723485474627,
+            "min": -0.9199999999999999,
+            "max": -0.29600000000000026,
+            "sign_stable": true,
+            "mean_positive": false
+          },
+          "4": {
+            "lifts": [
+              0.3200000000000003,
+              -0.7599999999999998,
+              -0.13600000000000012
+            ],
+            "mean": -0.19199999999999987,
+            "std": 0.4426827306322215,
+            "min": -0.7599999999999998,
+            "max": 0.3200000000000003,
+            "sign_stable": false,
+            "mean_positive": false
+          },
+          "5": {
+            "lifts": [
+              -0.11999999999999922,
+              -0.03200000000000003,
+              -1.3919999999999995
+            ],
+            "mean": -0.5146666666666663,
+            "std": 0.6214077208689601,
+            "min": -1.3919999999999995,
+            "max": -0.03200000000000003,
+            "sign_stable": true,
+            "mean_positive": false
+          }
+        },
+        "all_rungs_green_hw": true
+      }
+    },
+    "anchorBIG": {
+      "per_seed": [
+        {
+          "corpus": "anchorBIG",
+          "limen_path": "/home/ubuntu/clm_kosmos_akida/corpus_big/parallel.limen",
+          "seed": 20260602,
+          "anchor_count": 250,
+          "input_sha": "661dbc6a1036878e",
+          "backbone_sha256": "d25e9f293cac2f643961fe50587a6d966a0dc29af09ac221bf528a376695edb8",
+          "rungs": [
+            {
+              "N": 2,
+              "composed_margin_bits": -2.0183999999999997,
+              "frozen_margin_bits": -1.1865795918367343,
+              "lift_bits": -0.8318204081632654,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "7b750d1d2cc3f093",
+                  "post_w_sha": "8d1abde5217a0df6",
+                  "w_delta_nnz": 294,
+                  "fwd_sum": 134614
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "ce0bfa99853b5f2e",
+                  "post_w_sha": "bff5ab2126ed588c",
+                  "w_delta_nnz": 426,
+                  "fwd_sum": 25871
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 3,
+              "composed_margin_bits": -1.2393142857142863,
+              "frozen_margin_bits": -0.8311673469387753,
+              "lift_bits": -0.408146938775511,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "73268dd967307481",
+                  "post_w_sha": "abf4f4a447e8f8cf",
+                  "w_delta_nnz": 266,
+                  "fwd_sum": 136492
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "987409ed7925c2a4",
+                  "post_w_sha": "3a17daea0f90124a",
+                  "w_delta_nnz": 396,
+                  "fwd_sum": 21231
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "bbce89007bfe9a79",
+                  "post_w_sha": "e9029cd1d4cdc236",
+                  "w_delta_nnz": 276,
+                  "fwd_sum": 15501
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 4,
+              "composed_margin_bits": -1.4253224489795926,
+              "frozen_margin_bits": -0.5279836734693886,
+              "lift_bits": -0.897338775510204,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "a28de4ba5629fcfe",
+                  "post_w_sha": "1af7224c9aebca09",
+                  "w_delta_nnz": 216,
+                  "fwd_sum": 130981
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "c90da4c3b52810ea",
+                  "post_w_sha": "789a5440e6a3e274",
+                  "w_delta_nnz": 450,
+                  "fwd_sum": 24495
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "bf10e53c603eb158",
+                  "post_w_sha": "2543ea0c43bd8ae0",
+                  "w_delta_nnz": 338,
+                  "fwd_sum": 18955
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "36c9afa40ead913d",
+                  "post_w_sha": "8af6035d78773a9c",
+                  "w_delta_nnz": 238,
+                  "fwd_sum": 15275
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 5,
+              "composed_margin_bits": -1.2828081632653063,
+              "frozen_margin_bits": -0.1637061224489793,
+              "lift_bits": -1.119102040816327,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "6a1d8fb2248aae0a",
+                  "post_w_sha": "cca4cab8c77716b2",
+                  "w_delta_nnz": 206,
+                  "fwd_sum": 133863
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "6b2b9cea7870bf67",
+                  "post_w_sha": "1d803d4301c7e7d1",
+                  "w_delta_nnz": 470,
+                  "fwd_sum": 26005
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "19b2a16b4aac7de4",
+                  "post_w_sha": "2f6e7d3b55566046",
+                  "w_delta_nnz": 318,
+                  "fwd_sum": 17235
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "f77fb9197a6d6cd2",
+                  "post_w_sha": "1cd663330f5d5b3e",
+                  "w_delta_nnz": 202,
+                  "fwd_sum": 12404
+                },
+                {
+                  "unit": 5,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "38735e16dddf5cde",
+                  "post_w_sha": "d3260804d24eb56a",
+                  "w_delta_nnz": 92,
+                  "fwd_sum": 7435
+                }
+              ],
+              "rung_verdict": "GREEN"
+            }
+          ],
+          "wall_s": 72.6
+        },
+        {
+          "corpus": "anchorBIG",
+          "limen_path": "/home/ubuntu/clm_kosmos_akida/corpus_big/parallel.limen",
+          "seed": 20260603,
+          "anchor_count": 250,
+          "input_sha": "8a738ed7d1f72c5c",
+          "backbone_sha256": "c226bca5834215b9f964a895fe263d01845114c811d690ff4983ba0af9e03642",
+          "rungs": [
+            {
+              "N": 2,
+              "composed_margin_bits": -2.3043918367346947,
+              "frozen_margin_bits": -1.2688979591836738,
+              "lift_bits": -1.035493877551021,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "cfa2a5d33f4fd472",
+                  "post_w_sha": "8510d7cdd7ac966c",
+                  "w_delta_nnz": 336,
+                  "fwd_sum": 133246
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "ac65e3682c2db2b3",
+                  "post_w_sha": "047ce3d229e7d450",
+                  "w_delta_nnz": 448,
+                  "fwd_sum": 25121
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 3,
+              "composed_margin_bits": -1.554530612244898,
+              "frozen_margin_bits": -0.6255020408163263,
+              "lift_bits": -0.9290285714285718,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "6c8b19040017ddc1",
+                  "post_w_sha": "02fc03d6a3602f08",
+                  "w_delta_nnz": 354,
+                  "fwd_sum": 135761
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "c14cfa8b91b3b2ed",
+                  "post_w_sha": "bc779ca054b3005b",
+                  "w_delta_nnz": 426,
+                  "fwd_sum": 24038
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "4a6cea7b37750733",
+                  "post_w_sha": "f9db16f47be060d7",
+                  "w_delta_nnz": 286,
+                  "fwd_sum": 16284
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 4,
+              "composed_margin_bits": -1.1305142857142858,
+              "frozen_margin_bits": -0.24995918367346892,
+              "lift_bits": -0.8805551020408169,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "a71df66c5e67787b",
+                  "post_w_sha": "4bf754d796547c50",
+                  "w_delta_nnz": 344,
+                  "fwd_sum": 134661
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "7fefc5951b44ebba",
+                  "post_w_sha": "eb32843dec86235e",
+                  "w_delta_nnz": 404,
+                  "fwd_sum": 23286
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "276954715e655ac6",
+                  "post_w_sha": "8b810a4fe7886b72",
+                  "w_delta_nnz": 310,
+                  "fwd_sum": 17602
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "c08cb8f940215cba",
+                  "post_w_sha": "b6415c11728fe368",
+                  "w_delta_nnz": 242,
+                  "fwd_sum": 15546
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 5,
+              "composed_margin_bits": -1.2608326530612253,
+              "frozen_margin_bits": -0.16432653061224478,
+              "lift_bits": -1.0965061224489805,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "2c899589f2a015f1",
+                  "post_w_sha": "5534884b6f5d6a24",
+                  "w_delta_nnz": 310,
+                  "fwd_sum": 133715
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "783d7394f3bc918c",
+                  "post_w_sha": "2b97dcdcae8f5f42",
+                  "w_delta_nnz": 398,
+                  "fwd_sum": 22981
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "9d5bb29913e01463",
+                  "post_w_sha": "c83d4d9b887e1eb5",
+                  "w_delta_nnz": 288,
+                  "fwd_sum": 16947
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "5329c8c497a17f3c",
+                  "post_w_sha": "a1e0a08d203ed702",
+                  "w_delta_nnz": 190,
+                  "fwd_sum": 13503
+                },
+                {
+                  "unit": 5,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "6266171fe578f2d4",
+                  "post_w_sha": "6ea2ee471849c310",
+                  "w_delta_nnz": 114,
+                  "fwd_sum": 9076
+                }
+              ],
+              "rung_verdict": "GREEN"
+            }
+          ],
+          "wall_s": 72.6
+        },
+        {
+          "corpus": "anchorBIG",
+          "limen_path": "/home/ubuntu/clm_kosmos_akida/corpus_big/parallel.limen",
+          "seed": 20260604,
+          "anchor_count": 250,
+          "input_sha": "c5a49b6c0f125536",
+          "backbone_sha256": "934024639585ba176265afc8a7e8e895ab60d52963b90d2c1893ec2bdc73259f",
+          "rungs": [
+            {
+              "N": 2,
+              "composed_margin_bits": -1.6648326530612252,
+              "frozen_margin_bits": -1.0217469387755092,
+              "lift_bits": -0.643085714285716,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "7bb10048a075cbf3",
+                  "post_w_sha": "60419ef68e2365dc",
+                  "w_delta_nnz": 308,
+                  "fwd_sum": 133739
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "5cb78e28817c540e",
+                  "post_w_sha": "31b46250ab907c65",
+                  "w_delta_nnz": 368,
+                  "fwd_sum": 21661
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 3,
+              "composed_margin_bits": -1.399134693877551,
+              "frozen_margin_bits": -0.4184489795918367,
+              "lift_bits": -0.9806857142857144,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "830b60de636a00b9",
+                  "post_w_sha": "a2df7078faaa441d",
+                  "w_delta_nnz": 272,
+                  "fwd_sum": 131439
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "e16c85dcd31921ad",
+                  "post_w_sha": "e4e48eca98e6f3b1",
+                  "w_delta_nnz": 356,
+                  "fwd_sum": 20050
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "92094e2a6b88aa8d",
+                  "post_w_sha": "3502314b427761a2",
+                  "w_delta_nnz": 280,
+                  "fwd_sum": 15585
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 4,
+              "composed_margin_bits": -1.4763591836734697,
+              "frozen_margin_bits": -0.6058285714285718,
+              "lift_bits": -0.8705306122448979,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "dc1ab594a7bbf25e",
+                  "post_w_sha": "b1bd79c8146b7472",
+                  "w_delta_nnz": 346,
+                  "fwd_sum": 137093
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "7ffa22c983dc2144",
+                  "post_w_sha": "12a3bda1697f819e",
+                  "w_delta_nnz": 384,
+                  "fwd_sum": 23856
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "6b97c85a33248a8d",
+                  "post_w_sha": "d07bc6f96f5a393a",
+                  "w_delta_nnz": 236,
+                  "fwd_sum": 13920
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "9f1c03e663a6ce0b",
+                  "post_w_sha": "cf17d5cee1f89cad",
+                  "w_delta_nnz": 220,
+                  "fwd_sum": 14502
+                }
+              ],
+              "rung_verdict": "GREEN"
+            },
+            {
+              "N": 5,
+              "composed_margin_bits": -0.5000653061224489,
+              "frozen_margin_bits": -0.28333061224489775,
+              "lift_bits": -0.21673469387755118,
+              "composed_all_learned_hw": true,
+              "composed_units": [
+                {
+                  "unit": 1,
+                  "units": 64,
+                  "num_weights": 16,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "f1d6482f255fafc1",
+                  "post_w_sha": "463d321c5bf6fdf4",
+                  "w_delta_nnz": 398,
+                  "fwd_sum": 138448
+                },
+                {
+                  "unit": 2,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "94c4df8c42174724",
+                  "post_w_sha": "a49e6a988c9c1b87",
+                  "w_delta_nnz": 422,
+                  "fwd_sum": 24686
+                },
+                {
+                  "unit": 3,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "3eb9bc8d8f7ad8c7",
+                  "post_w_sha": "0797c6fd8402f4ed",
+                  "w_delta_nnz": 270,
+                  "fwd_sum": 15462
+                },
+                {
+                  "unit": 4,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "4be692295c05aec0",
+                  "post_w_sha": "de238582f05cbbb1",
+                  "w_delta_nnz": 170,
+                  "fwd_sum": 11053
+                },
+                {
+                  "unit": 5,
+                  "units": 32,
+                  "num_weights": 8,
+                  "backend": "hardware:BC.00.000.002",
+                  "fit_on_chip": true,
+                  "learned_hw": true,
+                  "pre_w_sha": "8b6019c114894e2a",
+                  "post_w_sha": "60802443c8dc4674",
+                  "w_delta_nnz": 82,
+                  "fwd_sum": 5333
+                }
+              ],
+              "rung_verdict": "GREEN"
+            }
+          ],
+          "wall_s": 72.7
+        }
+      ],
+      "summary": {
+        "corpus": "anchorBIG",
+        "anchor_count": 250,
+        "seeds": [
+          20260602,
+          20260603,
+          20260604
+        ],
+        "per_seed_slope": {
+          "20260602": -0.1351036734693878,
+          "20260603": -0.013456326530612428,
+          "20260604": 0.13892081632653117
+        },
+        "slope_mean": -0.003213061224489694,
+        "slope_std": 0.11210426282432243,
+        "slope_sign_stable": false,
+        "per_N_lift": {
+          "2": {
+            "lifts": [
+              -0.8318204081632654,
+              -1.035493877551021,
+              -0.643085714285716
+            ],
+            "mean": -0.8368000000000008,
+            "std": 0.16023865305736504,
+            "min": -1.035493877551021,
+            "max": -0.643085714285716,
+            "sign_stable": true,
+            "mean_positive": false
+          },
+          "3": {
+            "lifts": [
+              -0.408146938775511,
+              -0.9290285714285718,
+              -0.9806857142857144
+            ],
+            "mean": -0.7726204081632657,
+            "std": 0.2585830588904343,
+            "min": -0.9806857142857144,
+            "max": -0.408146938775511,
+            "sign_stable": true,
+            "mean_positive": false
+          },
+          "4": {
+            "lifts": [
+              -0.897338775510204,
+              -0.8805551020408169,
+              -0.8705306122448979
+            ],
+            "mean": -0.8828081632653063,
+            "std": 0.011059735321600908,
+            "min": -0.897338775510204,
+            "max": -0.8705306122448979,
+            "sign_stable": true,
+            "mean_positive": false
+          },
+          "5": {
+            "lifts": [
+              -1.119102040816327,
+              -1.0965061224489805,
+              -0.21673469387755118
+            ],
+            "mean": -0.8107809523809529,
+            "std": 0.4201554171281017,
+            "min": -1.119102040816327,
+            "max": -0.21673469387755118,
+            "sign_stable": true,
+            "mean_positive": false
+          }
+        },
+        "all_rungs_green_hw": true
+      }
+    }
+  },
+  "resolution_verdict": {
+    "verdict": "COLLAPSE-NULL",
+    "reason": "10x corpus: lift collapses to ~0 / negative — prior weak-positive was small-sample artifact",
+    "mean_seed_band_bits_25": 0.4123952603222751,
+    "mean_seed_band_bits_BIG": 0.2125092160993755,
+    "band_shrank": true,
+    "big_slope_mean": -0.003213061224489694,
+    "big_slope_sign_stable": false,
+    "big_all_N_sign_stable": true,
+    "big_all_N_mean_positive": false
+  },
+  "ts_end": "2026-06-01T17:27:38Z"
+}

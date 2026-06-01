@@ -1,0 +1,51 @@
+[p1] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1
+[p1] corpus=anchor25 seed=20260602 count=25 input_sha=1990f87de250cb73 bb=d25e9f293cac2f64
+[p1]   N=2 comp=-1.0240 froz=-0.9280 LIFT=-0.0960 learned_hw=True
+[p1]   N=3 comp=-0.7360 froz=-0.4400 LIFT=-0.2960 learned_hw=True
+[p1]   N=4 comp=-0.1360 froz=-0.4560 LIFT=+0.3200 learned_hw=True
+[p1]   N=5 comp=-0.5200 froz=-0.4000 LIFT=-0.1200 learned_hw=True
+[p1] anchor25 seed=20260602 done in 7.6s (partial written)
+[p1] corpus=anchor25 seed=20260603 count=25 input_sha=9be966ecfe456d41 bb=c226bca5834215b9
+[p1]   N=2 comp=-1.0880 froz=-0.7920 LIFT=-0.2960 learned_hw=True
+[p1]   N=3 comp=-0.7440 froz=-0.2000 LIFT=-0.5440 learned_hw=True
+[p1]   N=4 comp=-0.7040 froz=0.0560 LIFT=-0.7600 learned_hw=True
+[p1]   N=5 comp=-0.1360 froz=-0.1040 LIFT=-0.0320 learned_hw=True
+[p1] anchor25 seed=20260603 done in 7.6s (partial written)
+[p1] corpus=anchor25 seed=20260604 count=25 input_sha=9dee67cec034fae1 bb=934024639585ba17
+[p1]   N=2 comp=-0.6880 froz=-1.1680 LIFT=+0.4800 learned_hw=True
+[p1]   N=3 comp=-1.2400 froz=-0.3200 LIFT=-0.9200 learned_hw=True
+[p1]   N=4 comp=-0.8640 froz=-0.7280 LIFT=-0.1360 learned_hw=True
+[p1]   N=5 comp=-0.7040 froz=0.6880 LIFT=-1.3920 learned_hw=True
+[p1] anchor25 seed=20260604 done in 7.6s (partial written)
+[p1] corpus=anchorBIG seed=20260602 count=250 input_sha=661dbc6a1036878e bb=d25e9f293cac2f64
+[p1]   N=2 comp=-2.0184 froz=-1.1866 LIFT=-0.8318 learned_hw=True
+[p1]   N=3 comp=-1.2393 froz=-0.8312 LIFT=-0.4081 learned_hw=True
+[p1]   N=4 comp=-1.4253 froz=-0.5280 LIFT=-0.8973 learned_hw=True
+[p1]   N=5 comp=-1.2828 froz=-0.1637 LIFT=-1.1191 learned_hw=True
+[p1] anchorBIG seed=20260602 done in 72.6s (partial written)
+[p1] corpus=anchorBIG seed=20260603 count=250 input_sha=8a738ed7d1f72c5c bb=c226bca5834215b9
+[p1]   N=2 comp=-2.3044 froz=-1.2689 LIFT=-1.0355 learned_hw=True
+[p1]   N=3 comp=-1.5545 froz=-0.6255 LIFT=-0.9290 learned_hw=True
+[p1]   N=4 comp=-1.1305 froz=-0.2500 LIFT=-0.8806 learned_hw=True
+[p1]   N=5 comp=-1.2608 froz=-0.1643 LIFT=-1.0965 learned_hw=True
+[p1] anchorBIG seed=20260603 done in 72.6s (partial written)
+[p1] corpus=anchorBIG seed=20260604 count=250 input_sha=c5a49b6c0f125536 bb=934024639585ba17
+[p1]   N=2 comp=-1.6648 froz=-1.0217 LIFT=-0.6431 learned_hw=True
+[p1]   N=3 comp=-1.3991 froz=-0.4184 LIFT=-0.9807 learned_hw=True
+[p1]   N=4 comp=-1.4764 froz=-0.6058 LIFT=-0.8705 learned_hw=True
+[p1]   N=5 comp=-0.5001 froz=-0.2833 LIFT=-0.2167 learned_hw=True
+[p1] anchorBIG seed=20260604 done in 72.7s (partial written)
+[p1] ===== PHASE-1 SUMMARY =====
+[p1] anchor25 (n=25): slope_mean=-0.1237 band_shrink_ref; green_hw=True
+[p1]   N=2 lift mean=+0.0293 [-0.2960..+0.4800] std=0.3290 signstable=False
+[p1]   N=3 lift mean=-0.5867 [-0.9200..-0.2960] std=0.2565 signstable=True
+[p1]   N=4 lift mean=-0.1920 [-0.7600..+0.3200] std=0.4427 signstable=False
+[p1]   N=5 lift mean=-0.5147 [-1.3920..-0.0320] std=0.6214 signstable=True
+[p1] anchorBIG (n=250): slope_mean=-0.0032 band_shrink_ref; green_hw=True
+[p1]   N=2 lift mean=-0.8368 [-1.0355..-0.6431] std=0.1602 signstable=True
+[p1]   N=3 lift mean=-0.7726 [-0.9807..-0.4081] std=0.2586 signstable=True
+[p1]   N=4 lift mean=-0.8828 [-0.8973..-0.8705] std=0.0111 signstable=True
+[p1]   N=5 lift mean=-0.8108 [-1.1191..-0.2167] std=0.4202 signstable=True
+[p1] RESOLUTION: COLLAPSE-NULL — 10x corpus: lift collapses to ~0 / negative — prior weak-positive was small-sample artifact
+[p1] seed band 25=0.4124 BIG=0.2125 shrank=True
+[p1] wrote /home/ubuntu/clm_kosmos_akida/out_phase1/result_phase1.json
