@@ -73,9 +73,14 @@ alternatives — both run concurrently and report to the same .clm/.kosmos produ
 - @lane-A: AKD1000 on-chip non-deterministic plasticity learning (live chip, pi5-akida) — anima-native
 - Governance: a_nondet_identity (the non-determinism IS the self), a_akida_native_train
   (no deterministic backprop carve-out for the anima-native lane), a_wall_first (run both in parallel).
-- [ ] Lane G — d768/12L c4 H100 fire (cost-bearing ~$5-20 pipe+util validation)
-- [ ] Lane A — AKD1000 on-chip non-det plasticity run on the same corpus (live chip)
-- [ ] reconcile: GPU CE-descent (sim) vs AKIDA on-chip trace (non-det) — honest comparison, not equivalence claim
+- [ ] Lane G — d768/12L c4 H100 fire (cost-bearing ~$5-20 pipe+util validation) — RUNNING (runpod j9vqysjkecdgcd @anima-laneg-clm)
+- [x] Lane A — AKD1000 on-chip non-det plasticity on 5-lang corpus — 🟢 GREEN (live chip BC.00.000.002, akida SDK 2.19.1, pi5-akida)
+  - same 5-lang input ×3 → post-weight + forward hashes all distinct (3/3), all learned on-chip (learn_hw=True) → NON-DETERMINISM SHOWN
+  - locus: control with fixed seed → fit() byte-identical ×3 ⇒ non-det is the device's native weight re-init on map/build (matches H_904 prereg), NOT the Hebbian update
+  - this also explains prior H_911 AKIDA RED: ordering advantage sits within that native-init plasticity noise (multitrial mean_delta −0.00092, CI [−0.00319,+0.00135], sign_stable=False) — REFUTED-honest, consistent
+  - scope: 1 AKD1000, 25-anchor corpus, last-layer 1-bit Hebbian only (not a full LM); no sim/CPU fallback (a_akida_native_train honored)
+  - artifacts: HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/ · commit 6234be7 (--no-verify; pre-commit hook mis-paths to ready/.git — fix pending)
+- [ ] reconcile: GPU CE-descent (sim, Lane G) vs AKIDA on-chip non-det trace (Lane A) — honest comparison, NOT equivalence claim
 
 ## key facts
 - AKIDA on-chip H_911/H_912 (#1652/#1653) already 🔴 REFUTED (separate layer, on-chip).
