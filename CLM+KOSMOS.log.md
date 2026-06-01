@@ -134,3 +134,9 @@ Pre-registered falsifiers → `.verdicts/lane-a-causeaxis/PREREGISTER.md`; chip 
 - **PROBE 3 SPIKE-TIMING → 🔴 FALSIFIED (hardens)**: SDK exposes NO spike-event-timing (only PowerEvent/power_events power telemetry + predict_classes — stated, not fabricated); rank-order temporal proxy margin −0.1076 ci_lo −0.1111 (8 trials). → `P3-temporal-code.txt`
 
 DISPOSITION: **REOPENED on the ENCODING axis** (1/3 cause-axes lit). Objective/readout + spike-timing axes now ALSO closed (closed-negative hardens over those two). The encoding lift path runs on the EXISTING AKD1000 — no new hardware (corrects prior "needs different hardware" deferral). Verbatim chip stdout: `.verdicts/lane-a-causeaxis/causeaxis_chip_stdout.log`; full JSON: `result_causeaxis_chip.json`; CPU re-score: `cpu_rescore_result.json`. agent run on branch feat/e31-anchor-authoring.
+
+## 2026-06-02 — @goal pivot: H_911 closed-negative → production CLM/KOSMOS
+- New @goal: PUBLIC-grade CLM on BOTH lanes (Lane A AKIDA · Lane G GPU flame+forge) → 3B → 7B; KOSMOS HF upload; UNIVERSE alongside as needed.
+- Canonical = flame+forge on forge GPU substrate (a_train_flame_forge, never silent CPU-fallback); Lane A ⊥ Lane G separate (a_lane_akida_gpu_split); HF PUBLIC only at closure-PASS (a_hf_autonomous).
+- In flight: Lane G flame+forge PUBLIC-grade fire (agent a4fa10a0) on a CUDA-devel H100_SXM (pod 39000300) — the gating step for the 3B/7B ladder. Prior d768 util-RED root cause = bare pod image (no nvcc/cublas) → forge .cu couldn't build → CPU fallback; fixed by CUDA-devel image (NOT a hexa-run link hack).
+- Prior H_911 amodal-hub 3-axis probe = CLOSED-NEGATIVE (4-rung flat-RED), kept in status as the completed prior arc.

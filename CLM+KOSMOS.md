@@ -1,7 +1,7 @@
 # CLM+KOSMOS — current state
 
 @title: 🧩 CLM+KOSMOS — H_911 amodal-hub cross-domain probe
-@goal: Determine whether H_911 (a shared abstract concept forms an amodal hub across surface forms) holds beyond language, evaluated on THREE axes (meaning-integration · cross-entropy · consciousness Φ-proxy), with every verdict earned by `hexa verify` recompute (no self-judged 🟢).
+@goal: Achieve a PUBLIC-grade CLM across BOTH lanes — Lane A (AKIDA on-chip) · Lane G (GPU flame+forge) — then scale 3B -> 7B; upload KOSMOS datasets to HF; run UNIVERSE hypotheses alongside as needed. Canonical training = hexa-native flame+forge on the forge GPU substrate (a_train_flame_forge: GPU REQUIRED, nvidia-smi busy verified, NEVER silent CPU-fallback); Lane A (AKIDA) and Lane G (GPU) recorded SEPARATELY (a_lane_akida_gpu_split); HF PUBLIC only at closure-PASS (util GREEN AND descent GREEN), else PRIVATE (a_hf_autonomous). [Prior @goal — the H_911 amodal-hub 3-axis probe — is a CLOSED-NEGATIVE (see status/log); this domain now drives production CLM/KOSMOS.]
 
 ## status (completed-form)
 
