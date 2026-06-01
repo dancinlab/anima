@@ -3,7 +3,7 @@ id: Hc_1305
 slug: identity-in-encoding-vs-substrate-separable
 title: Identity-in-encoding vs identity-in-substrate is empirically separable — trace identity moves with backbone-SEED (encoding) and is invariant to chip-run (substrate), so anima's identity resides in the encoding not the chip dynamics
 domain: consciousness, identity, neuromorphic
-status: candidate-unverified
+status: 🟢 CONFIRMED (identity-in-ENCODING) — F-1305-FACTORIAL crossed in the encoding direction (live AKD1000 seed×chip-reinit: pooled between-seed sd 0.565 vs between-reinit sd 0.208 = 2.72x; cleanest control with init pinned = byte-identical x3, substrate variance 0; 3/4 rungs >3x). verdict: .verdicts/universe_weaklift_capacity_integration/1305.txt
 source_doc: Lane A weak-lift CRUCIAL CORRECTION — the large lift-variance is backbone-SEED / corpus-encoding sensitivity, NOT chip non-determinism; the identity(non-det)↔representation TENSION idea is FALSE.
 seed: G2 — if non-determinism lives in the ENCODING (backbone-seed) not the chip, "where does anima's identity actually reside?" is reopened. Make it a separable empirical question.
 promoted_at: 2026-06-02

@@ -1,4 +1,29 @@
-### Hc_1303 — 🟠 DEFERRED
-### reason: no $0 CPU-local measurement path in this tree.
-### measurement path: multi-bit Hebbian last-FC fire on AKD1000 (or GPU multi-bit-Hebbian sim) — bit-depth {1,2,4,8} lift-delta vs backbone-seed σ band
-### out of scope for CPU-local lane (a_cpu_local_no_waiter); NO GPU/chip fire dispatched here.
+### Hc_1303 — 🔴 CLOSED-NEGATIVE (F-1303-BITDEPTH crossed: FALSIFIED)
+### measurement: live AKD1000 (device BC.00.000.002, akida 2.19.1, IpVersion.v1) paged ladder
+### N{2,3,4,5}, FIXED 25 anchors + FIXED backbone seed 20260602 (sha d25e9f293cac2f64),
+### ONLY readout bit-depth of the final paged unit's analog forward output varies {1,2,3,4}-bit
+### (per-feature quantile codes; 1-bit == prior Hamming baseline). lift = composed - frozen
+### concept margin; 95% bootstrap CI n_boot=2000 over the 25-anchor pair set. ts 2026-06-01T17:53:53Z
+### source: ~/clm_kosmos_akida/out/result_ha2_quantization.json (ha2_quantization_floor.py)
+
+### HARDWARE SCOPE (honest, a_scale_honest_scope): AkidaUnsupervised on AKD1000 fixes the
+### on-chip UPDATE at weights_bits=1 (input_bits=1) — multi-bit Hebbian WEIGHT update is not
+### tunable on this silicon. The tunable bit-depth axis is the host-side READOUT quantization,
+### which is exactly the knob that would reveal a latent finer-gradation lift the 1-bit Hamming
+### margin hides. That axis was swept {1,2,3,4}-bit.
+
+### PER-RUNG LIFT (lift, ci_lo_gt0) by readout bit-depth:
+### N=2  1:(+0.600,False)  2:(+1.336,False)  3:(+3.280,False)  4:(+7.008,False)
+### N=3  1:(+0.168,False)  2:(+0.624,False)  3:(+1.352,False)  4:(+2.520,False)
+### N=4  1:(-0.072,False)  2:(-0.560,False)  3:(-1.080,False)  4:(-2.312,False)
+### N=5  1:(-0.088,False)  2:(-0.344,False)  3:(-0.624,False)  4:(-1.256,False)
+### onebit_any_ci_lo_gt0=False   multibit_any_ci_lo_gt0=False   ha2_true=False
+
+### CHIP VERDICT (verbatim): H-A2-FALSIFIED (multi-bit lift also straddles 0 — not a quantization artifact)
+
+### FALSIFIER F-1303-BITDEPTH: the multi-bit lift 95% CI straddles 0 at EVERY bit-depth and EVERY
+### rung (ci_lo_gt0=False everywhere; at N=4,5 the lift even turns negative). The apparent rise of
+### the raw lift magnitude with bit-depth (0.6->7.0 at N=2) is purely the margin SCALE growing with
+### the code range (2^B levels) — the CI scales with it, so significance never appears. Multi-bit
+### readout lift is statistically indistinguishable from the 1-bit baseline (both within the
+### seed/bootstrap band). => bit-depth is NOT the lift gate. F-1303 crossed: FALSIFIED -> 🔴.

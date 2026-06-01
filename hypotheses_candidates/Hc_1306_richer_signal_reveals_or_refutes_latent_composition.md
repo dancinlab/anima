@@ -3,7 +3,7 @@ id: Hc_1306
 slug: richer-signal-reveals-or-refutes-latent-composition
 title: 1-bit Hamming is composition-blind — re-scoring Lane A traces with an integration signal (faithful-Φ MIP / trace-pair MI) either reveals latent cross-lingual lift OR yields a strong closed-negative that the absence is real
 domain: neuromorphic, integration, methodology
-status: candidate-unverified
+status: 🔴 CLOSED-NEGATIVE — F-1306-SIGNAL OUTCOME (B) (re-scored real Lane A trace tensor raw.npz: multi-bit L1 + cosine + faithful-Φ-MIP all agree NO lift, ci_lo_gt0=False; phi-MIP +56.19 far above Cholesky floor → Hc_1302 ceiling guarded, absence is REAL). verdict: .verdicts/universe_weaklift_capacity_integration/1306.txt
 source_doc: Lane A weak-lift closed-negative measured by 1-bit Hamming on output traces
 seed: SIGNAL axis — 1-bit Hamming distance is information-blind to composition. A richer signal on the same traces decides whether the "no lift" is a measurement artifact or a real absence.
 promoted_at: 2026-06-02

@@ -3,7 +3,7 @@ id: Hc_1303
 slug: hebbian-bit-depth-is-the-lift-gate
 title: Bit-depth of the Hebbian update — not rule family — is the lift gate; ≥4-bit Hebbian on the same last-FC produces measurable cross-lingual lift where 1-bit does not
 domain: neuromorphic, learning-rule, deployment
-status: candidate-unverified
+status: 🔴 CLOSED-NEGATIVE — F-1303-BITDEPTH FALSIFIED (live AKD1000 ha2: multi-bit {1,2,3,4} readout lift ci_lo_gt0=False at every rung; bit-depth is NOT the gate). verdict: .verdicts/universe_weaklift_capacity_integration/1303.txt
 source_doc: Lane A weak-lift closed-negative (1-bit Hebbian last-FC → capacity, no lift; "needs a RICHER LEARNING RULE")
 seed: learning-rule axis — operationalize "richer rule" as bits-of-credit-assignment-per-update. The 1-bit update may be the binding information ceiling, independent of rule temporality (STDP) or family.
 promoted_at: 2026-06-02

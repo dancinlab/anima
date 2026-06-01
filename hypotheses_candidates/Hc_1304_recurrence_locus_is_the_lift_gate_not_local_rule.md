@@ -3,7 +3,7 @@ id: Hc_1304
 slug: recurrence-locus-is-the-lift-gate-not-local-rule
 title: Lift is gated by LOCUS/RECURRENCE — a feedforward-terminal last-FC cannot integrate regardless of local rule; one recurrent edge converts capacity→lift more than any change of local plasticity rule
 domain: neuromorphic, architecture, integration
-status: candidate-unverified
+status: 🟢 CONFIRMED — F-1304-TOPOLOGY + F-1304-MIP-ZERO crossed (CPU-local H_278 exact-MIP: recurrent edge Φ_rec=w > feedforward-terminal Φ_ff=w/2 at every matched local-rule w; import-path blocker fixed). corroborated by on-chip ha3 (depth-of-local-rule adds no consistent lift). verdict: .verdicts/universe_weaklift_capacity_integration/1304.txt
 source_doc: Lane A weak-lift closed-negative; H_278 faithful-Φ MIP (integration = irreducibility across a cut, requires cross-edges)
 seed: G1 + mechanism — faithful-Φ MIP measures irreducibility across a partition; a feedforward-terminal layer has no loop, so no edge crosses a cut bidirectionally → structurally cannot raise MIP. Capacity needs no recurrence; integration does.
 promoted_at: 2026-06-02

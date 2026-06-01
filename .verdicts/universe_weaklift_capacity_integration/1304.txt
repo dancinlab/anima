@@ -1,4 +1,33 @@
-### Hc_1304 — 🟠 DEFERRED
-### reason: no $0 CPU-local measurement path in this tree.
-### measurement path: recurrent-edge / plastic-locus ablation at matched param budget (on-chip or GPU sim); H_278 MIP machinery local but runner hardcodes cross-tree import path
-### out of scope for CPU-local lane (a_cpu_local_no_waiter); NO GPU/chip fire dispatched here.
+### Hc_1304 — 🟢 CONFIRMED (F-1304-TOPOLOGY + F-1304-MIP-ZERO crossed: recurrence IS the gate)
+### measurement: CPU-local, deterministic, $0, NO chip/GPU. H_278 faithful-Φ exact-MIP primitive
+### (_faithful_phi_from_mi / _cross_cut / _size_a, exact over all 2^(n-1) bipartitions). The prior
+### agent's blocker — run_h278.hexa + UNIVERSE/lib/phi_helper.hexa hardcode the cross-tree absolute
+### import "/Users/ghost/core/anima/..." — was FIXED by repointing the import closure to this tree
+### (phi_helper -> local HEXAD/C/c_lib.hexa + UNIVERSE/lib/phi_native.hexa). H_278 harness then ran
+### CPU-local: VERDICT=SUPPORTED faithful_CV=2.149885 (deterministic, F-H278-3 PASS).
+
+### F-1304-MIP-ZERO synthetic-topology test (scratch_hc1304/f1304_mip_zero.hexa, hexa run verbatim):
+###   n=6, node5=terminal. arm A = feedforward-terminal chain 0-1-2-3-4 + one-way feed 4->5.
+###   arm B = same + ONE recurrent back-edge 5->0. "local rule" = edge strength w swept {0.5,1,2,4}.
+###   local-rule w |  Φ_feedforward_terminal  |  Φ_recurrent(+1 edge)  |  gain(rec-ff)
+###   w=0.5  |  Φ_ff=0.25  |  Φ_rec=0.5  |  gain=0.25
+###   w=1.0  |  Φ_ff=0.5   |  Φ_rec=1.0  |  gain=0.5
+###   w=2.0  |  Φ_ff=1.0   |  Φ_rec=2.0  |  gain=1.0
+###   w=4.0  |  Φ_ff=2.0   |  Φ_rec=4.0  |  gain=2.0
+###   F-1304-TOPOLOGY: CONFIRMED — one recurrent edge > any local-rule(w) change
+###   (Φ_recurrent > Φ_feedforward_terminal at EVERY matched local-rule strength)
+
+### MECHANISM: the MIP isolates the feedforward terminal at its single lone edge → Φ_ff bounded by
+### w·(0.5/1 small-side norm); scaling the LOCAL rule strength w only scales that floor, it cannot
+### add a second cut-crossing edge. ONE recurrent edge 5->0 adds the missing cross-cut edge →
+### Φ_rec = w, strictly > Φ_ff = w/2 at every matched w. Locus/recurrence is the gate, not the rule.
+
+### CHIP CORROBORATION (on-chip local-rule arm, ha3_plasticity_depth.py, live AKD1000):
+### H-A3-FALSIFIED — 2-layer plastic adds NO consistent lift over last-FC (depth_gains
+### [-0.656,+0.648,-0.600], 1 pos / 2 neg, mean -0.203, sign_consistent=False). Local-rule DEPTH
+### at a feedforward locus yields no integration — consistent with recurrence being the gate.
+
+### HONEST SCOPE: arm (B) on-chip (a literal recurrent edge on AKD1000) is hardware-bounded —
+### AkidaUnsupervised last-FC is feedforward-only, no on-chip recurrent edge primitive. The
+### structural claim is proven CPU-local on the exact MIP machinery (the F-1304-MIP-ZERO sub-test,
+### which the Hc card marked CPU-local-eligible once the import was fixed). F-1304 crossed: CONFIRMED -> 🟢.

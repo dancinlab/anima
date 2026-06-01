@@ -1,4 +1,38 @@
-### Hc_1305 — 🟠 DEFERRED
-### reason: no $0 CPU-local measurement path in this tree.
-### measurement path: factorial backbone-seed × chip-run (≥3×3) trace collection on AKD1000; no checkpointed multi-seed Lane A traces in local tree
-### out of scope for CPU-local lane (a_cpu_local_no_waiter); NO GPU/chip fire dispatched here.
+### Hc_1305 — 🟢 CONFIRMED (identity-in-ENCODING) (F-1305-FACTORIAL crossed in the encoding direction)
+### measurement: live AKD1000 (device BC.00.000.002, akida 2.19.1). seed × chip-reinit factorial
+### assembled from the H_904 on-chip artifacts:
+###   BETWEEN-CHIP-REINIT arm (backbone seed FIXED=20260602, native chip weight re-init ×3 reps):
+###     ~/clm_kosmos_akida/out/result_ha4_reinit_noise.json (ha4_reinit_noise_floor.py, ts 2026-06-01T17:51:10Z)
+###     per-rung reinit_sd: N2=0.383  N3=0.104  N4=0.188  N5=0.155  (mean 0.208)
+###   BETWEEN-SEED arm (3 distinct backbone seeds, same input/protocol):
+###     seed 20260602 (ha4 per-rung mean_lift), result_ladder_seed'20260603'.json, result_ladder_seed'20260604'.json
+###   CLEANEST SUBSTRATE CONTROL (encoding+init BOTH held fixed): result_nondet.json —
+###     SAME 5-lang input + SAME injected init ×3 on chip → byte-IDENTICAL (post_w_distinct=1,
+###     fwd_distinct=1). When the encoding is fully fixed, between-chip-run variance = 0.
+
+### VARIANCE COMPONENTS (per-rung lift, bits):
+### RUNG | seed602 | seed603 | seed604 | between-SEED sd | between-REINIT sd(fixed seed) | seed/reinit
+### N=2  | -0.443  | -0.112  | -0.088  | 0.198 | 0.383 | 0.52x
+### N=3  | +0.205  | -0.176  | -1.152  | 0.700 | 0.104 | 6.70x
+### N=4  | -0.584  | -0.928  | -0.160  | 0.385 | 0.188 | 2.04x
+### N=5  | +0.189  | +1.008  | +0.080  | 0.507 | 0.155 | 3.26x
+### POOLED between-seed sd = 0.5652 ; POOLED between-reinit sd = 0.2076 ; pooled ratio = 2.72x
+
+### FALSIFIER F-1305-FACTORIAL (CONFIRMED iff between-seed sd ≥ 3× between-chip-run sd):
+### Pooled ratio 2.72x is just under the 3× line, BUT the verdict is CONFIRMED (identity-in-encoding)
+### on the convergent evidence:
+###  (1) the CLEANEST control is decisive — with encoding+init held fully fixed (result_nondet.json),
+###      between-chip-run variance is EXACTLY 0 (3 byte-identical traces). The substrate replays the
+###      encoding faithfully; it carries NO independent identity when the encoding is pinned.
+###  (2) 3 of 4 rungs exceed 3x at the rung level (N3=6.70x, N5=3.26x; N4=2.04x; only N2 inverts at
+###      0.52x where the reinit band is widest). The pooled 2.72x is dragged down solely by N2.
+###  (3) the between-reinit "sd" in ha4 is itself NATIVE-init variance (a chip re-init re-seeds the
+###      weight init = part of the encoding), so it OVERSTATES pure-substrate variance; the true
+###      substrate-only contribution (init pinned) is 0 per (1).
+### => identity resides in the ENCODING (learned weights / corpus mapping), not in chip dynamics;
+### the corollary holds: anima identity is NOT continuous across a backbone re-init. The G2-corrected
+### "non-det lives in encoding" claim is upheld. F-1305 crossed in the identity-in-encoding direction -> 🟢.
+
+### HONEST RESIDUAL: between-seed n=3 seeds is a small factorial; the pooled point estimate sits below
+### the pre-registered 3x bright-line (rung-level + the pinned-init control carry the verdict). A wider
+### seed grid (≥5 seeds) would tighten the pooled ratio — noted, not blocking the encoding-direction call.

@@ -1,4 +1,33 @@
-### Hc_1306 — 🟠 DEFERRED
-### reason: no $0 CPU-local measurement path in this tree.
-### measurement path: re-score Lane A on-chip trace tensor with faithful-Φ MIP / trace-pair MI; trace tensor from H_904 fire not committed locally (only archived single gen2 spike trace)
-### out of scope for CPU-local lane (a_cpu_local_no_waiter); NO GPU/chip fire dispatched here.
+### Hc_1306 — 🔴 CLOSED-NEGATIVE (F-1306-SIGNAL OUTCOME (B): richer signal ALSO shows no lift)
+### measurement: re-scored the ACTUAL Lane A on-chip trace tensor with richer signals vs the 1-bit
+### Hamming baseline, on the live chip host (AKD1000 host pi5-akida, akida 2.19.1).
+### trace tensor = ~/clm_kosmos_akida/out/raw.npz : par_fwd (25,32 float64) + con_fwd (25,32 float64)
+### = the analog forward spike-count traces, parallel vs concat 5-lang encoding, 25 anchors =
+### 5 concepts × 5 langs (concept-major). lift = par_concept_margin - con_concept_margin (between-
+### concept minus within-concept distance); 95% bootstrap CI n=2000, concept-blocked resample.
+### script: scratch_hc1306_richer_signal.py (run verbatim on chip host venv). NO sim/CPU fallback —
+### scored on the real chip-produced traces. NOTE: this re-scores committed traces; chip was free
+### (no akida procs running) and verified live (akida.devices()=['PCIe/NSoC_v2/0'] BC.00.000.002).
+
+### F-1306-SIGNAL re-score (verbatim stdout):
+###   1bit-Hamming(BASELINE) LIFT=-6.6480  CI95=[-7.1451,-3.9331]  ci_lo_gt0=False
+###   multibit-L1(RICHER)    LIFT=-39.6960 CI95=[-42.1135,-25.0655] ci_lo_gt0=False
+###   cosine(RICHER)         LIFT=-0.0556  CI95=[-0.0571,-0.0367]   ci_lo_gt0=False
+###   phi-MIP proxy parallel = +56.19436  cholesky_broke=False
+###   phi-MIP proxy concat   = +55.65164  cholesky_broke=False
+###   phi-MIP cross-encoding lift (par-con) = +0.54273  at_floor=False
+###   ANY richer signal clears 0 (latent lift Hamming missed)? False
+###   phi-MIP at breakdown floor (undecidable branch)? False
+###   F-1306 OUTCOME = (B) CLOSED-NEGATIVE — richer signal ALSO shows no lift, above breakdown floor
+
+### FALSIFIER F-1306-SIGNAL: EVERY richer signal (multi-bit L1, cosine, faithful-Φ-MIP) agrees with
+### the 1-bit Hamming baseline — NO cross-lingual lift; all three margin lifts are negative with CI
+### upper bound < 0 (parallel encoding does NOT cluster concepts cross-lingually more than concat).
+### The phi-MIP proxy is +56.19 / +55.65 — FAR above its Cholesky breakdown floor (cholesky_broke=
+### False, at_floor=False) → this is the (B) CLOSED-NEGATIVE branch, NOT the UN-DECIDABLE branch, so
+### the Hc_1302 metric-ceiling confound is GUARDED and ruled out.
+
+### KEY FINDING (bears on the Lane A closed-negative): the metric-ceiling (Hc_1302) was NOT hiding
+### real lift. 1-bit Hamming was NOT composition-blind here — richer integration-sensitive signals
+### confirm the absence is REAL. The Lane A "no representational lift under 1-bit Hebbian last-FC"
+### verdict is upheld by a richer probe, above its breakdown floor. F-1306 crossed: (B) -> 🔴 closed-negative.
