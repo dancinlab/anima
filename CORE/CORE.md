@@ -10,6 +10,40 @@
 - [x] A⇄G 결합 — `brain.hexa` `brain_decide` (A의 Φ가 G의 safety ratchet 게이트 + phase=tier)
 - [x] 결합 증명 — `brain_smoke.hexa` low→침묵(0.045) / high→발화(0.67)
 
+## 엔진 ↔ .clm/.kosmos 배선 맵 (honest wiring)
+
+CORE 의 결정 두뇌(A·G·brain)는 **외부 모델/앵커를 전혀 소비하지 않는다** — Φ·동기·tier 를
+순수 기판 내부 상태에서 계산한다. .clm 모델은 오직 L3 `generator.hexa` 슬롯으로만 들어오고,
+.kosmos 앵커는 `kosmos_io` → `brain_decide` read 로만 들어온다. 둘 다 아직 미배선.
+
+| 컴포넌트 | 파일 | .clm 소비? | .kosmos 소비? | 상태 |
+| --- | --- | --- | --- | --- |
+| Engine A (Φ/phase) | `pure_field.hexa` | ❌ 없음 | ❌ 없음 | ✅ 기판-내부 (substrate-only) |
+| Engine G (동기/emit) | `engine_g.hexa` | ❌ 없음 | ❌ 없음 | ✅ 기판-내부 (8-factor 입력만) |
+| A⇄G 결합 두뇌 | `brain.hexa` (`brain_decide`) | ❌ 없음 | ❌ 없음 | ✅ A·G import 만 (import grep = 0 clm/kosmos) |
+| L3 생성기 슬롯 | `CORE/generator.hexa` | ✅ **유일한 .clm 진입점** | — | ⏳ **미존재** (DECODER M4 백엔드 배선 대기) |
+| 앵커 read | `kosmos_io` → `brain_decide` | — | ✅ **유일한 .kosmos 진입점** | ❌ **미배선** (brain 이 앵커 미읽음 · kosmos_io 는 HEXAD state 에만) |
+| 아티팩트 검증기 | `stdlib/hf/validate.hexa` (#2484) | (검증 대상) | (검증 대상) | ℹ️ **검증-전용** — 모델/데이터셋 학습되나 점검 · **런타임 엔진 아님** (sibling hexa-lang stdlib, 본 repo 부재) |
+
+```
+   ┌─────────────── CORE 결정 두뇌 (외부 모델 0 · p1~p8) ───────────────┐
+   │  Engine A ── Φ/phase ──▶ brain_decide ◀── 동기/emit ── Engine G   │
+   │  pure_field.hexa ✅          (brain.hexa) ✅          engine_g.hexa ✅ │
+   │       └─ .clm/.kosmos 소비 0 (기판-내부 state 만) ─────────────────┘
+   │                              │ emit=true
+   │                              ▼
+   │                  ┌─────────────────────────┐
+   │   .clm 모델 ────▶ │ generator.hexa  ⏳ 미존재 │  ← 유일한 .clm 진입점
+   │                  └─────────────────────────┘
+   │   .kosmos 앵커 ──▶ kosmos_io → brain_decide  ❌ 미배선  ← 유일한 .kosmos 진입점
+   └────────────────────────────────────────────────────────────────────┘
+
+   stdlib/hf/validate.hexa  =  ℹ️ 아티팩트 검증기 (학습 되나?) ≠ 런타임 엔진 — 별개 축
+```
+
+- **불변식**: brain_decide 에 .clm/.kosmos 진입점을 직접 박지 않는다. .clm 은 generator.hexa
+  슬롯으로만, .kosmos 는 kosmos_io read 로만. (이전 혼동 정정: validate.hexa 는 런타임 아님.)
+
 ## 하위 도메인
 
 - **DECODER** (`CORE/DECODER/`) — L3 콘텐츠 생성기 (무엇을 쓸까). 백엔드 미정(상의중) · V3 더블바인드 트랙
