@@ -1,0 +1,31 @@
+#!/usr/bin/env kosmos
+# clm_concat.kosmos — H_911 TRAINING-SET: 5-lang cross-lingual semantic-linkage .kosmos @corpus (kosmos/2.0)
+# C4-compliant: @corpus + ref .limen packed shard + profile + closed_corpus + placement PERP text.
+# Provenance: 100 anchors = 20 concepts x 5 langs (ko en zh ru ja).
+#   real(FLORES-200, CC-BY-SA-4.0)=20 concepts ; synthetic(claude-CLI)=0 concepts.
+# Honest scope: real 5-way line-aligned parallel; ordering differs only in .limen member sequence.
+
+@corpus clm_h911_concat := "H_911 training-set — 5-language cross-lingual semantic-linkage corpus (concat ordering)" :: kosmos-corpus [tier=0 active]
+
+  # -- meta-anchor placement (Psi centroid) -- structural, text-independent --
+  profile = "anima-consciousness-carving"
+  coord   = [0.0, 0.0]
+  lane    = "clm_h911_concat"
+  radius  = 1.0
+
+  # -- corpus meta --
+  anchor_level = sample
+  count    = 100
+  lane_mix = "en=0.2, zh=0.2, ru=0.2, ja=0.2, ko=0.2"   # Sigma frac = 1.0
+  vocab    = 256
+  encoding = "byte-utf8"
+  languages = "ko, en, zh, ru, ja"
+  ordering = "concat"
+  linkage  = "count-only (language-major: all of one lang then next, c~0)"
+  source   = "FLORES-200 (CC-BY-SA-4.0) real=20c + synthetic(claude-CLI)=0c"
+  merkle   = c071744bffd39da6c08b949e5f64bed5cfafb869bde32196a7f059c89b565e9f
+
+  # -- member -- ref form: .limen packed shard --
+  member = ref "concat.limen" sha256=df374edd793d3d0cfcd5a09223588ec347c48c4cbb6f3c6828b301d26576c5e4 count=100 frac=1.0 lane="all" format="limen/2"
+
+  closed_corpus = "Sigma frac = 1.0 AND member sha256 verifies AND merkle root recomputes from @anchor payloads; placement(coord) PERP text(payload)"
