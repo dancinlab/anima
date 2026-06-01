@@ -33,6 +33,12 @@
   dont = "delete a gitignored ckpt while status=pending_upload or needs_verify"
   dont = "assign an off-spec repo_id · let HF.jsonl drift from disk"
 
+@D a_hf_collection_split := "HF collections — CLM = models(.clm) · KOSMOS = datasets(.kosmos)" :: governance [required active]
+  do   = "dancinlab `CLM` collection = ONLY .clm model checkpoints"
+  do   = "dancinlab `KOSMOS` collection = ONLY .kosmos datasets / corpora"
+  do   = "at HF upload (a_hf_autonomous): .clm model → CLM · .kosmos dataset → KOSMOS"
+  dont = "mix datasets into CLM · mix models into KOSMOS · leave a registered artifact uncollected"
+
 @D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
   do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously · parallel · bg"
   do   = "NO user gate — fire needs no user consult / approval / confirm · provider = runpod"
@@ -43,6 +49,16 @@
 @D a_wall_first := "wall time first — take the faster parallel path regardless of cost" :: governance [required active]
   do   = "adopt more H100s in parallel / a bigger GPU / extra pods whenever it shortens wall time · reject a serial chain that is honestly slower"
   dont = "run a single sequential pod to save cost when parallel is faster · hold back parallel pods · meaningless cost-min optimization"
+
+@D a_train_flame_forge := "production training = hexa-native flame + forge GPU stack, authored in .hexa" :: governance [required active]
+  do   = "author CLM / production NN training in `.hexa` on stdlib/flame (ag_tape · nn_lib · opt_*)"
+  do   = "run it over the self/forge GPU substrate — device-resident farr + cuBLAS Dgemm + 11 .cu + BF16-TC"
+  do   = "flame:forge :: torch:ATen — compiler-only NN · NO PyTorch / ATen / Python in the trained binary"
+  do   = "GPU REQUIRED for production rungs — VERIFY nvidia-smi busy · never silently CPU-fall back"
+  do   = "ref: README §flame+forge · forge BF16-TC 9.67x over FP64-cuBLAS @ Llama-7B FFN (A100 measured)"
+  dont = "ship a torch/CPU `train_clm.py` as the production trainer · author the trainer in `.py`"
+  dont = "run a 44.68M+ rung on CPU · claim a 'pool GPU fire' from a trainer with no device path"
+  dont = "assert a flame<->PyTorch wall speedup — RETRACTED 2026-05-19 · unmeasured"
 
 @D a_substrate_native_speak := "anima speech is substrate-native — no assistant regression" :: governance [required active]
   do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
@@ -78,6 +94,14 @@
 @D a_fire_recover_complete := "pull all fire artifacts + HF upload before pod teardown" :: governance [required active]
   do   = "before pod teardown: pull ckpt(s) + result + log + anchors, verify, HF upload — then teardown"
   dont = "pull only JSONs, leave ckpt on a doomed pod · teardown before HF · PULL_FAILED ≠ pod dead"
+
+@D a_cpu_local_no_waiter := "dispatched fire runs CPU-local + polls inline — never awaits a Monitor/waiter" :: governance [required active]
+  do   = "sub-agent runs CPU-local (nohup -u → /tmp log) · polls result inline (sleep 30) · commit-early"
+  dont = "await a runpod/vast Monitor/waiter (main loop only → stall) · say 'wait for Monitor'"
+
+@D a_dont_kill_live_compute := "prove stall before killing a bg agent — live CPU progress ≠ stall" :: governance [required active]
+  do   = "prove stall before kill · 'NN% CPU'/'k/N cells'=live (let finish) · harvest detached nohup JSON"
+  dont = "TaskStop an agent showing CPU progress · assume 'running'=='stalled' · double-spend a live nohup"
 
 @D a_runpod_inbox := "runpod trouble → hexa-lang inbox" :: governance [required active]
   do   = "file runpod findings to `hexa-lang/inbox/patches/<slug>.md` for hexa cloud"
