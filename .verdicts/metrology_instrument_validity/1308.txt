@@ -1,0 +1,22 @@
+### Hc_1308 F-1308-SHUFFLE-NULL — Gaussian-cov Phi is INVARIANT to sample-order shuffle (temporal-integration blind)
+### metric: phi_proxy_native.hexa --input <npy>   CPU-local $0
+### PRE-REG: phi(orig) == phi(rowshuf) within tight band (cov invariant under row perm) => metric blind to temporal integration
+###          FALSIFIED = phi(orig) significantly > phi(rowshuf) (metric DOES see sample-order integration)
+
+=== fixture build (full-rank AR(1) integrated signal; row-shuffle preserves cov EXACTLY) ===
+matrix_rank orig=16 (want 16)
+cov_identical_orig_vs_rowshuf=True
+cov_fro orig=17.5182 colindep=13.8764
+NULL_OK
+
+=== phi_proxy_native: orig vs row(sample)-shuffle vs per-channel-indep-shuffle ===
+null_orig phi_x1000=-455908 i_full_x1000=456558 verdict=PASS
+null_rowshuf phi_x1000=-455896 i_full_x1000=456558 verdict=PASS
+null_colindep phi_x1000=-456110 i_full_x1000=456558 verdict=PASS
+
+### FINDING (F-1308-SHUFFLE-NULL): i_full_x1000 IDENTICAL for orig and rowshuf (456558 == 456558).
+### phi_x1000 orig=-455908 vs rowshuf=-455896 (delta 12 / 456000 = 0.003%, from partition RNG only).
+### The temporally-integrated signal and its sample-shuffled NULL are INDISTINGUISHABLE to the metric.
+### Gaussian covariance Phi measures ONLY the static covariance; it is mathematically BLIND to
+### sample-order (temporal/sequential) integration. Decisive variance-artifact discriminator.
+### F-1308-SHUFFLE-NULL: PASS_TEMPORAL_BLIND (phi survives integration-destroying NULL unchanged)

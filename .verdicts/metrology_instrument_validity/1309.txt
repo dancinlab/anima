@@ -1,0 +1,20 @@
+### Hc_1309 F-1309-TWO-FAMILY — MI-coherence Phi vs Gaussian-logdet Phi DISAGREE on composed input
+### metrics: edu/cell/phi/phi_iit (MI-coherence, inline) vs phi_proxy_native (Gaussian-logdet)   CPU-local $0
+### PRE-REG: on the SAME integrated/low-rank input class the two families rank-disagree (one finite-ranks-higher, the other breaks)
+###          FALSIFIED = both families concord (both finite AND rank integrated above white)
+
+=== MI-coherence family (phi_iit compute_phi, inline verbatim) ===
+MI_FAMILY white_phi=0.0394234
+MI_FAMILY integrated_phi=0.0910413
+MI_FAMILY ranks_integrated_above_white=true
+GAUSS_FAMILY integrated(low-rank) -> F_PHI_01 sentinel -2147483647 (phi_proxy_native --selftest-mode structured)
+__TWO_FAMILY__ DISAGREE mi_finite_ranks_int_higher__gauss_sentinel_on_same_class
+
+=== Gaussian-logdet family on matched low-rank/structured input (phi_proxy_native --selftest-mode structured) ===
+[selftest] white-noise sign OK: phi_x1000=-173702 < 0 (anti-integrated H3A)
+[selftest] structured phi_x1000 = -2147483647 (informational; no strict ordering asserted)
+
+### FINDING (F-1309-TWO-FAMILY): MI-coherence ranks integrated(0.0910) > white(0.0394) — sees integration, finite.
+### Gaussian-logdet on the same low-rank/structured class returns F_PHI_01 sentinel (-2147483647) — BREAKS.
+### Two canonical Phi 'rulers' give OPPOSITE verdicts on composed input: at most one is construct-valid there.
+### F-1309-TWO-FAMILY: PASS_DISAGREE (MI finite-ranks-higher; Gaussian-logdet sentinel on same input class)

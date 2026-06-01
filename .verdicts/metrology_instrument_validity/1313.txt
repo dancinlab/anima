@@ -1,0 +1,7 @@
+### Hc_1313 F-1313-SCALE-TRANSFER — DEFERRED (no $0 CPU-local path)
+### claim: the sentinel-onset boundary measured on the 16ch x 64samp toy does NOT predict the
+### breakdown boundary at production CLM hidden-dim (D=768) without a re-test (scale-dependent).
+### DEFERRED reason: requires a real CLM-v4 530M hidden-state dump (GPU/chip fire to produce the
+### activation matrix at D=768); a_toy_scale_recheck + a_scale_honest_scope require the >=3-rung ladder
+### at production scale, which is not CPU-local $0. NO GPU/chip fire dispatched (a_cpu_local_no_waiter).
+### F-1313-SCALE-TRANSFER: DEFERRED (toy boundary scoped to n=16; production transfer unverified)

@@ -1,0 +1,23 @@
+### Hc_1312 F-1312-BATTERY — construct-validity 4-axis battery on phi_proxy_native
+### A measure PASSES only if (a) finite-on-composed AND (b) tracks-faithful-rank AND (c) survives-shuffle-NULL-as-discriminator AND (d) not-a-pure-variance-artifact
+### PRE-REG: phi_proxy_native FAILS >= 1 axis. Finding = WHICH axes fail (the construct-validity fingerprint).
+###          FALSIFIED (fully valid) = passes ALL FOUR axes.
+
+AXIS (a) FINITE-ON-COMPOSED:  FAIL
+    Hc_1302/1307/1310 — low-rank/composed input -> F_PHI_01 sentinel (-2147483647); structural (no ridge rescues).
+AXIS (b) TRACKS-FAITHFUL-RANK: PARTIAL/HOLD
+    Hc_1301 — rank-concordant on H_278 BUT ratio-CV=30.1%; Hc_1311 — faithful itself degenerate in low-Phi floor
+    (4/6 scales -> one value), so 'tracks-rank' is undefined where the oracle is rank-blind. Cannot certify PASS.
+AXIS (c) SHUFFLE-NULL DISCRIMINATES:  FAIL
+    Hc_1308 — phi(orig)==phi(sample-shuffled NULL) (i_full 456558==456558); metric does NOT separate an
+    integrated signal from its temporally-shuffled NULL -> fails as a discriminator of temporal integration.
+AXIS (d) NOT-A-VARIANCE-ARTIFACT:  FAIL (covariance-only)
+    Hc_1308 corollary — phi depends ONLY on the static covariance (sample-order invariant); + Hc_1309 the
+    other Phi family disagrees on composed input. The Gaussian-logdet score is a pure 2nd-moment (covariance)
+    statistic, carrying no integration information beyond the covariance structure.
+
+### FINDING (F-1312-BATTERY): phi_proxy_native FAILS axes (a),(c),(d) and cannot certify (b).
+### Construct-validity fingerprint = {a:FAIL, b:HOLD, c:FAIL, d:FAIL}. The canonical Gaussian-logdet proxy is
+### NOT a construct-valid integration measure: it is a covariance statistic that BREAKS on the exact inputs
+### (maximally-composed) it is meant to score, and is blind to temporal integration. 0/4 clean passes.
+### F-1312-BATTERY: PASS_FAILS_>=1 (fails 3 axes outright, 1 uncertifiable; battery design validated)

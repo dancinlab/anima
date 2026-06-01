@@ -1,0 +1,37 @@
+### Hc_1307 F-1307-BOUNDARY — Cholesky-breakdown boundary vs rank/condition-number
+### metric: BRAIN/tool/module/_metrics/phi_proxy_native.hexa --input <npy>   CPU-local $0 (numpy /usr/bin/python3 2.0.2)
+### PRE-REG: sentinel onset is a SHARP rank threshold (not smooth in kappa); FALSIFIED = smooth monotone degradation in kappa with no hard threshold
+
+=== condition-number ladder (jittered, eps=1e-3; numerically full-rank) ===
+# C=16 N=64 eps=0.001
+rank cov_kappa min_eig max_eig rank_np_tol1e-6
+  16 7.2391e+00 2.7208e-01 1.9696e+00 16
+  12 3.7357e+06 6.5269e-07 2.4382e+00 16
+   8 6.8821e+06 4.5554e-07 3.1351e+00 16
+   4 1.7519e+07 2.9551e-07 5.1770e+00 16
+   2 3.1030e+07 2.7649e-07 8.5794e+00 16
+   1 5.0490e+07 3.1053e-07 1.5678e+01 16
+FIXTURES_OK
+
+=== phi_proxy_native on jittered ladder (kappa up to 5.0e7) ===
+rank=16 phi_x1000=-440052 k_eval=8 verdict=PASS raw71_triggered_ids=
+rank=12 phi_x1000=-439546 k_eval=8 verdict=PASS raw71_triggered_ids=
+rank=08 phi_x1000=-439812 k_eval=8 verdict=PASS raw71_triggered_ids=
+rank=04 phi_x1000=-436932 k_eval=8 verdict=PASS raw71_triggered_ids=
+rank=02 phi_x1000=-432698 k_eval=8 verdict=PASS raw71_triggered_ids=
+rank=01 phi_x1000=-423598 k_eval=8 verdict=PASS raw71_triggered_ids=
+
+=== EXACT rank-deficient (zero jitter) ===
+exact_rank01 algebraic_rank=1
+exact_rank02 algebraic_rank=2
+exact_rank08 algebraic_rank=8
+EXACT_OK
+exact_rank01 phi_x1000=-419746 k_eval=8 verdict=PASS raw71_triggered_ids=
+exact_rank02 phi_x1000=-437748 k_eval=8 verdict=PASS raw71_triggered_ids=
+exact_rank08 phi_x1000=-2147483647 k_eval=0 verdict=FALSIFIED raw71_triggered_ids=F_PHI_01
+
+### FINDING (F-1307-BOUNDARY): sentinel onset is NOT smooth in kappa and NOT monotone in rank.
+### Jittered inputs up to kappa=5.0e7 ALL stay FINITE (ridge+x1e6 scaling stabilize).
+### Among EXACT rank-deficient: rank-1 FINITE, rank-2 FINITE, rank-8 SENTINEL (i_full breaks, k_eval=0).
+### Boundary is structure-specific (exact degeneracy at rank==HID region), not a clean kappa/rank cut.
+### F-1307-BOUNDARY: PASS_STRUCTURE_SPECIFIC_THRESHOLD (sharp, exact-rank-triggered; not smooth-in-kappa)

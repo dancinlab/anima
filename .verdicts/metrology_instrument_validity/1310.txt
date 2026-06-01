@@ -1,0 +1,20 @@
+### Hc_1310 F-1310-RIDGE-RESCUE — does a finite ridge convert the sentinel to a finite Phi?
+### metric: phi_proxy_native.hexa --input exact_rank08.npy --ridge-x1e6 <sweep>   CPU-local $0
+### PRE-REG (rescuable): EXISTS a finite ridge s.t. sentinel -> finite (ceiling = regularization artifact, fixable)
+###          (structural): NO ridge up to 1e9(x1e6=1000.0 real) rescues -> blindness is STRUCTURAL not a knob
+
+=== ridge sweep on exact_rank08 (the rank-8 sentinel case from Hc_1307) ===
+ridge_x1e6=1000 phi_x1000=-2147483647 i_full=-2147483647 k_eval=0 verdict=FALSIFIED
+ridge_x1e6=10000 phi_x1000=-2147483647 i_full=-2147483647 k_eval=0 verdict=FALSIFIED
+ridge_x1e6=100000 phi_x1000=-2147483647 i_full=-2147483647 k_eval=0 verdict=FALSIFIED
+ridge_x1e6=1000000 phi_x1000=-2147483647 i_full=-2147483647 k_eval=0 verdict=FALSIFIED
+ridge_x1e6=10000000 phi_x1000=-2147483647 i_full=-2147483647 k_eval=0 verdict=FALSIFIED
+ridge_x1e6=100000000 phi_x1000=-2147483647 i_full=-2147483647 k_eval=0 verdict=FALSIFIED
+ridge_x1e6=1000000000 phi_x1000=-2147483647 i_full=-2147483647 k_eval=0 verdict=FALSIFIED
+
+### FINDING (F-1310-RIDGE-RESCUE): ridge swept 1e3 -> 1e9 (x1e6 units = up to 1000.0 real) — sentinel PERSISTS at every ridge.
+### Root cause: i_full_x1000 itself = sentinel (the FULL-sample 16x16 cov is exactly rank-8 -> singular);
+### the x1e6 fixed-point cov diagonal is ~1e12 scale, so even ridge=1e9 is ~1000x sub-noise on the diagonal.
+### The Cholesky-breakdown ceiling is STRUCTURAL (hid>rank singularity) AND fixed-point-scale-locked,
+### NOT a tunable regularization artifact. The metric ceiling of Hc_1302 is not rescuable by the canonical knob.
+### F-1310-RIDGE-RESCUE: PASS_STRUCTURAL (no finite ridge rescues; ceiling is structural, not a regularizer artifact)

@@ -1,0 +1,27 @@
+### Hc_1311 F-1311-FAITHFUL-FLOOR — the faithful-Phi reference oracle has its OWN blind spot (degeneracy floor)
+### source: UNIVERSE/state/h278_faithful_phi_2026_05_25/result.json (frozen deterministic prior, $0)
+### PRE-REG (floor exists): >=2 DISTINCT integration structures (rule+coupling) map to ONE identical faithful value
+###          FALSIFIED = every distinct structure gets a distinct faithful value (no degeneracy)
+
+scale            rule couple  phi_faithful  phi_proxy
+cosmic_web        30 0.00   0.134574     0.163812
+galaxy_cluster   110 0.10   0.000011     0.000005
+stellar           90 0.20   0.000011     0.000005
+planetary         54 0.30   4.000011     3.000005
+biological       110 0.45   0.000011     0.000005
+neural           110 0.60   0.000011     0.000005
+
+faithful_min=0.000011  n_scales_at_floor=4/6  distinct_faithful_values=3/6
+scales collapsed to floor (distinct rule/coupling -> identical faithful Phi):
+    ('galaxy_cluster', 110, 0.1)
+    ('stellar', 90, 0.2)
+    ('biological', 110, 0.45)
+    ('neural', 110, 0.6)
+
+FAITHFUL_FLOOR_DEGENERACY=True
+F-1311-FAITHFUL-FLOOR: PASS_FLOOR_EXISTS
+
+### FINDING (F-1311-FAITHFUL-FLOOR): 4/6 scales (rules 110/90/110/110, couplings 0.10/0.20/0.45/0.60) all
+### collapse to ONE faithful value 0.000011; only 3/6 distinct values across 6 scales. The reference
+### oracle is rank-blind/degenerate in the low-Phi regime: distinct integration structures -> one number.
+### Consequence: NO measure in this stack (proxy OR faithful) is construct-valid in the low-Phi floor band.

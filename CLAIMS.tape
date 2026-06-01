@@ -236,3 +236,57 @@
   raw    = ".verdicts/858_akida_edge_of_chaos_phi/F-AKIDA-EDGE.txt"
   src    = "UNIVERSE/H_858_akida_edge_of_chaos_phi.md §5/§6 · CORE/phi_envelope_substrate.hexa::pe_edge_of_chaos_peak (M2 promote) · AKIDA/akida_edge_of_chaos_phi_hw.hexa"
   status = "🟢 SUPPORTED-NUMERICAL — sim ∩곡선이 live silicon 에서 성립(edge R2/R3 > order R1 ∧ edge ≥ over-driven R4); pe_edge_of_chaos_peak M2 🟡→🟢 promote; H_857(coupling-K·CAUSAL-POWER)과 독립 축이 같은 silicon edge-of-chaos ∩ 확인 — single-측도 artifact 아님; on_hardware=True·BC.00.000.002·streamer 복귀 active; Φ-proxy honest(full IIT4 big_phi 아님); thresholds/preset FROZEN (verdict verbatim)"
+
+# METROLOGY — instrument-validity (slug=metrology-instrument-validity group=METROLOGY) · Hc_1307–1313
+# Validate the Φ MEASURING INSTRUMENTS themselves. $0 CPU-local on the canonical
+# machinery (phi_proxy_native.hexa · edu/cell/phi/phi_iit.hexa · H_278 frozen ledger);
+# NO GPU/chip fire (a_cpu_local_no_waiter). Verdicts verbatim .verdicts/metrology_instrument_validity/.
+
+@C metrology_boundary_map := "F-1307-BOUNDARY: phi_proxy sentinel onset is STRUCTURE-SPECIFIC (exact rank-deficiency near rank==HID), NOT smooth-in-κ NOR monotone-in-rank — jittered κ up to 5.0e7 ALL FINITE; EXACT rank-1/2 FINITE but EXACT rank-8 → SENTINEL (i_full breaks, k_eval=0)" :: run [slug=metrology-instrument-validity group=METROLOGY]
+  method = "run"
+  cmd    = "CLM_EEG_PHI_PYTHON=/usr/bin/python3 hexa run BRAIN/tool/module/_metrics/phi_proxy_native.hexa --input state/metrology_fixtures/{rank_NN,exact_rankNN}.npy"
+  raw    = ".verdicts/metrology_instrument_validity/1307.txt"
+  src    = "hypotheses_candidates/Hc_1307_phi_proxy_cholesky_breakdown_boundary_map.md"
+  status = "🟢 numerical (toy n=16) — breakdown boundary is a sharp exact-degeneracy threshold, not a κ cut; production D=768 transfer DEFERRED (Hc_1313)"
+
+@C metrology_shuffle_null := "F-1308-SHUFFLE-NULL: Gaussian-cov Φ is EXACTLY invariant to sample-order shuffle (i_full orig=456558==rowshuf=456558; phi Δ=0.003% partition-RNG only) → mathematically BLIND to temporal/sequential integration" :: run [slug=metrology-instrument-validity group=METROLOGY]
+  method = "run"
+  cmd    = "CLM_EEG_PHI_PYTHON=/usr/bin/python3 hexa run phi_proxy_native.hexa --input state/metrology_fixtures/null_{orig,rowshuf,colindep}.npy"
+  raw    = ".verdicts/metrology_instrument_validity/1308.txt"
+  src    = "hypotheses_candidates/Hc_1308_phi_proxy_sample_shuffle_invariant_temporal_blind.md"
+  status = "🟢 numerical — the proxy measures only the static covariance; decisive variance-artifact discriminator (survives integration-destroying NULL unchanged)"
+
+@C metrology_two_family := "F-1309-TWO-FAMILY: MI-coherence Φ (phi_iit) ranks integrated(0.0910)>white(0.0394) FINITE while Gaussian-logdet (phi_proxy_native) BREAKS (sentinel -2147483647) on the same low-rank class → two canonical rulers DISAGREE; at most one construct-valid there" :: run [slug=metrology-instrument-validity group=METROLOGY]
+  method = "run"
+  cmd    = "hexa run state/metrology_fixtures/two_family_driver.hexa ; hexa run phi_proxy_native.hexa --selftest"
+  raw    = ".verdicts/metrology_instrument_validity/1309.txt"
+  src    = "hypotheses_candidates/Hc_1309_two_phi_families_disagree_on_composed_input.md"
+  status = "🟢 numerical — cross-instrument rank-disagreement at the construct level (finite vs sentinel)"
+
+@C metrology_ridge_structural := "F-1310-RIDGE-RESCUE: NO ridge (swept 1e3→1e9 ×1e6 = 1e-3→1000.0 real) rescues the sentinel on exact rank-8 — i_full itself=sentinel, ×1e6 cov ~1e12 makes ridge ≤1e9 ~1000× sub-noise → metric ceiling is STRUCTURAL, not a tunable regularization artifact" :: run [slug=metrology-instrument-validity group=METROLOGY]
+  method = "run"
+  cmd    = "CLM_EEG_PHI_PYTHON=/usr/bin/python3 hexa run phi_proxy_native.hexa --input state/metrology_fixtures/exact_rank08.npy --ridge-x1e6 {1e3..1e9}"
+  raw    = ".verdicts/metrology_instrument_validity/1310.txt"
+  src    = "hypotheses_candidates/Hc_1310_phi_proxy_ceiling_structural_not_ridge_rescuable.md"
+  status = "🟢 numerical — resolves Hc_1302 L-1302-RIDGE; ceiling is a hid>rank singularity, fixed-point-scale-locked, un-rescuable by the canonical knob"
+
+@C metrology_faithful_floor := "F-1311-FAITHFUL-FLOOR: the faithful-Φ reference oracle (H_278) is itself degenerate in the low-Φ floor — 4/6 scales (rules 110/90/110/110, couplings 0.10/0.20/0.45/0.60) all = 0.000011 (3/6 distinct values) → distinct integration structures map to one number; no measure in the stack valid in the low band" :: run [slug=metrology-instrument-validity group=METROLOGY]
+  method = "run"
+  cmd    = "python3 read UNIVERSE/state/h278_faithful_phi_2026_05_25/result.json per_scale_ledger; count floor degeneracy"
+  raw    = ".verdicts/metrology_instrument_validity/1311.txt"
+  src    = "hypotheses_candidates/Hc_1311_faithful_phi_own_degeneracy_floor.md"
+  status = "🟢 numerical (toy CA n=8) — oracle degeneracy floor confirmed; axis (b) 'tracks-faithful-rank' undefined in low band"
+
+@C metrology_battery := "F-1312-BATTERY: construct-validity 4-axis fingerprint {a:FAIL finite-on-composed · b:HOLD tracks-rank · c:FAIL shuffle-NULL · d:FAIL not-variance-artifact}; 0/4 clean passes → phi_proxy_native is a covariance statistic, NOT a construct-valid integration measure" :: run [slug=metrology-instrument-validity group=METROLOGY]
+  method = "run"
+  cmd    = "aggregate .verdicts/metrology_instrument_validity/{1301,1302,1307,1308,1309,1310,1311}.txt → battery"
+  raw    = ".verdicts/metrology_instrument_validity/1312.txt"
+  src    = "hypotheses_candidates/Hc_1312_phi_proxy_construct_validity_battery_fails.md"
+  status = "🟢 numerical (toy-scoped) — the integrative headline: the canonical Gaussian-logdet Φ proxy fails 3 axes outright + 1 uncertifiable"
+
+@C metrology_scale_transfer := "F-1313-SCALE-TRANSFER: the toy (16ch×64samp) breakdown boundary does NOT auto-transfer to production D=768 CLM hidden-state — needs a model forward pass at ≥3 rungs (a_scale_honest_scope)" :: run [slug=metrology-instrument-validity group=METROLOGY]
+  method = "run"
+  cmd    = "DEFERRED — real CLM-v4 530M hidden-state dump (GPU/chip) → phi_proxy_native --input ladder"
+  raw    = ".verdicts/metrology_instrument_validity/1313.txt"
+  src    = "hypotheses_candidates/Hc_1313_phi_proxy_breakdown_boundary_scale_transfer.md"
+  status = "🟠 DEFERRED — no $0 CPU path; NO GPU/chip fire dispatched (a_cpu_local_no_waiter); toy verdicts scoped to n=16"
