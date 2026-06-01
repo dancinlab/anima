@@ -1,0 +1,48 @@
+{
+  "title": "Lane A weak-lift cause-matrix — H-A1..A4 resolution",
+  "device": "BC.00.000.002",
+  "akida": "2.19.1",
+  "ip": "IpVersion.v1",
+  "ts": "2026-06-02",
+  "signal": "paged DEPTH ladder cross-lingual concept-margin lift (composed - frozen, bits), 25 anchors, 5-lang parallel",
+  "prior_observation": "slope +0.15..+0.43 bits/unit at 25 anchors, sign-unstable across backbone seeds (noise-buried)",
+  "causes": {
+    "H-A1_corpus": {
+      "verdict": "FALSIFIED (closed-negative, strong)",
+      "tested_by": "P1 corpus agent a33223d (out_phase1/result_phase1.json, live AKD1000)",
+      "evidence": "10x corpus (250 anchors FLORES-200 5-way) -> lift uniformly NEGATIVE & sign-STABLE: per-N mean N2=-0.837 N3=-0.773 N4=-0.883 N5=-0.811 (N4 std 0.011). 25-anchor weak-positive was small-sample artifact. seed band shrank 0.412->0.213, big_slope_mean=-0.0032. resolution_verdict=COLLAPSE-NULL.",
+      "implication": "bigger corpus does NOT recover a positive lift; it COLLAPSES it. corpus is not the fix."
+    },
+    "H-A2_quantization": {
+      "verdict": "FALSIFIED",
+      "tested_by": "ha2_quantization_floor.py (live AKD1000, PID 49950)",
+      "evidence": "1/2/3/4-bit per-feature-quantile L1 readout on final paged unit; lift 95%-bootstrap CI straddles 0 at EVERY rung AND EVERY bit-depth. multibit_any_ci_lo_gt0=False. finer readout only widens the band.",
+      "implication": "the 1-bit readout is not hiding a real lift; quantization is not the bottleneck."
+    },
+    "H-A3_plasticity_depth": {
+      "verdict": "FALSIFIED",
+      "tested_by": "ha3_plasticity_depth.py (live AKD1000, PID 50396)",
+      "evidence": "depth_gain (lift_twolayer - lift_lastfc) = [-0.656,+0.648,-0.600] N{3,4,5}, mean -0.203, n_pos=1 n_neg=2, sign_consistent=False. 2nd plastic layer adds no consistent lift; gains within per-rung noise (~0.6 bits).",
+      "implication": "depth-of-plasticity is not the bottleneck."
+    },
+    "H-A4_native_init_noise_floor": {
+      "verdict": "FALSIFIED (the deep one)",
+      "tested_by": "ha4_reinit_noise_floor.py (live AKD1000, PID 49501, backbone seed FIXED) + result_ha4_analysis_from_artifacts.json",
+      "evidence": "backbone-FIXED re-init x3: |mean lift|/reinit_sd = 1.16/1.97/3.10/1.22 (ALL >1), sign_stable across reinit True at every rung. lift CLEARLY EXCEEDS the pure native-init noise band.",
+      "correction": "the from-artifacts analysis (|mean lift|/seed-sd ~0.9-1.1) CONFLATED backbone-seed noise with chip re-init noise (robustness run varied both). Isolating re-init shows the large variance came from BACKBONE-SEED (corpus-encoding) sensitivity, NOT the chip's identity-noise floor.",
+      "implication": "the non-determinism that IS the identity does NOT drown the lift. identity-noise is not the floor."
+    }
+  },
+  "combined_verdict": {
+    "matrix": {
+      "H-A1": "FALSE",
+      "H-A2": "FALSE",
+      "H-A3": "FALSE",
+      "H-A4": "FALSE"
+    },
+    "all_four_falsified": true,
+    "ruling": "ALL FOUR competing causes FALSIFIED on the live AKD1000. The weak/sign-unstable 25-anchor lift is NOT a fixable knob (not corpus-size, not readout-quantization, not plasticity-depth) and NOT a fundamental identity-noise floor (H-A4 shows the lift exceeds chip re-init noise). The dominant remaining axis is BACKBONE-SEED / corpus-ENCODING sensitivity: H-A4 isolated that the lift's instability tracks the backbone seed, and P1 showed that SCALING the corpus drives the lift NEGATIVE (collapse). So the on-chip last-layer Hebbian COMPOSITION does not carry a robust cross-lingual concept-alignment ADVANTAGE at this primitive scale — the paging/composition CAPACITY is GREEN (all rungs learned on chip) but the representational LIFT claim is a closed-negative.",
+    "fixable_or_fundamental": "NEITHER a simple fix NOR an identity-noise floor. It is a closed-negative on the lift CLAIM itself: at the AKD1000 1-bit last-layer Hebbian primitive, deep paged composition does not buy a robust cross-lingual margin, and more corpus makes it worse. Confirms P1's COLLAPSE-NULL: the path to a real lift is NOT in any of these four knobs but in a richer learning rule / multi-layer plasticity / different signal than 1-bit Hamming concept-margin (DEFERRED, out of these 4 axes).",
+    "honest_note": "This is the valid 'all FALSIFIED' outcome the mission pre-registered. It does NOT confirm P1's corpus path as a FIX (corpus FALSIFIED too); it CONVERGES with P1 on a closed-negative for the lift, isolating backbone/corpus-encoding sensitivity as the descriptive cause while ruling out the three actionable knobs."
+  }
+}

@@ -91,7 +91,17 @@ FOUR competing pre-registered causes — P1 (corpus agent a33223d) tests ONLY H-
 - **H-A3 plasticity-depth**: only last-FC plastic per unit limits lift. FALSIFIER: 2-layer-plastic tail adds lift over last-FC-only (depth_gain>0 consistent). (ha3_plasticity_depth.py)
 - **H-A4 native-init noise-floor** (the deep one): |lift| is BELOW the device's native-init noise band — the non-determinism that IS the identity (a_nondet_identity/H_904) drowns the lift. FALSIFIER: H-A4 TRUE iff |mean lift per rung| < native-init lift-sd AND lift sign unstable across re-init reps; FALSIFIED iff |lift| clearly exceeds the band. (ha4_reinit_noise_floor.py + result_ha4_analysis_from_artifacts.json)
 - diag worktree feat/lane-a-weak-lift-diag · artifacts HEXAD/NEUROMORPHIC/state/clm_lane_a_weaklift_diag_2026_06_02/
-- cause-matrix outcome resolves whether the weak lift is FIXABLE (corpus/quantization/depth) or FUNDAMENTAL (identity-noise floor); a "all of A2/A3/A4 FALSIFIED → it really is corpus (H-A1)" is a valid honest outcome confirming P1's path.
+
+#### RESOLVED cause-matrix (live AKD1000 BC.00.000.002 · 2026-06-02) — ALL FOUR FALSIFIED
+| cause | verdict | evidence (verbatim) |
+|---|---|---|
+| H-A1 corpus | 🔴 FALSE | P1 a33223d: 250-anchor 10× corpus → lift uniformly NEGATIVE & sign-STABLE (N2−0.837 N3−0.773 N4−0.883 N5−0.811, N4 std 0.011); band shrank 0.412→0.213; COLLAPSE-NULL. Bigger corpus collapses, not fixes. |
+| H-A2 quantization | 🔴 FALSE | 1/2/3/4-bit readout lift 95%-bootstrap CI straddles 0 at every rung AND depth (multibit_any_ci_lo_gt0=False). |
+| H-A3 plasticity-depth | 🔴 FALSE | depth_gain[N3,4,5]=[−0.656,+0.648,−0.600] mean −0.203, sign_consistent=False; 2nd plastic layer adds no consistent lift. |
+| H-A4 native-init noise-floor | 🔴 FALSE | backbone-FIXED re-init ×3: \|mean lift\|/reinit_sd=1.16/1.97/3.10/1.22 (all>1), sign_stable True → lift EXCEEDS the chip re-init noise band; identity-noise is NOT the floor. |
+- ruling: the weak lift is NEITHER a fixable knob NOR an identity-noise floor — it is a **closed-negative on the lift CLAIM**. The paging/composition CAPACITY is 🟢 GREEN (all rungs learned on chip), but on the AKD1000 1-bit last-layer Hebbian primitive deep paged composition buys NO robust cross-lingual concept-margin advantage, and more corpus makes it worse (P1 COLLAPSE-NULL).
+- descriptive cause isolated: BACKBONE-SEED / corpus-ENCODING sensitivity (H-A4 confirmatory shows the lift's instability tracks the backbone seed, not chip re-init). A real lift would need a richer learning rule / different signal than 1-bit Hamming concept-margin — DEFERRED, outside these 4 axes.
+- artifacts: result_cause_matrix.json · result_ha4_reinit_noise.json · result_ha2_quantization.json · result_ha3_plasticity_depth.json · result_ha4_analysis_from_artifacts.json
 
 ## key facts
 - AKIDA on-chip H_911/H_912 (#1652/#1653) already 🔴 REFUTED (separate layer, on-chip).
