@@ -30,13 +30,18 @@ echo "=== [1/7] toolchain + glibc shim check (linux hexa ELF needs >=2.38) ==="
 apt-get update -y >/dev/null 2>&1 || true
 apt-get install -y clang wget git python3 python3-pip >/dev/null 2>&1 || true
 command -v clang >/dev/null 2>&1 && clang --version | head -1 || echo "WARN no clang"
-GLIBC_VER="$(ldd --version 2>/dev/null | head -1 | grep -oE '[0-9]+\.[0-9]+$' || echo 0)"
-GMAJ="${GLIBC_VER%%.*}"; GMIN="${GLIBC_VER#*.}"
-echo "GLIBC_VER=$GLIBC_VER (maj=$GMAJ min=$GMIN)"
-# robust integer compare: need shim iff glibc < 2.38 (prebuilt hexa ELF needs 2.38+)
+# Extract glibc version robustly: grab the FIRST x.y on the ldd banner, strip any
+# stray whitespace/newlines (the `(Ubuntu GLIBC 2.35-...)` token is the version).
+GLIBC_RAW="$(ldd --version 2>/dev/null | head -1)"
+GMAJ="$(printf '%s' "$GLIBC_RAW" | grep -oE 'GLIBC [0-9]+' | grep -oE '[0-9]+' | head -1)"
+GMIN="$(printf '%s' "$GLIBC_RAW" | grep -oE 'GLIBC [0-9]+\.[0-9]+' | grep -oE '\.[0-9]+' | tr -d '.' | head -1)"
+[ -z "$GMAJ" ] && GMAJ=0; [ -z "$GMIN" ] && GMIN=0
+echo "GLIBC banner: $GLIBC_RAW"
+echo "GLIBC maj=$GMAJ min=$GMIN"
+# need shim iff glibc < 2.38 (prebuilt hexa ELF needs GLIBC_2.38+)
 NEED_SHIM=0
-if [ "$GMAJ" -lt 2 ] 2>/dev/null; then NEED_SHIM=1; fi
-if [ "$GMAJ" -eq 2 ] 2>/dev/null && [ "$GMIN" -lt 38 ] 2>/dev/null; then NEED_SHIM=1; fi
+if [ "$GMAJ" -lt 2 ]; then NEED_SHIM=1; fi
+if [ "$GMAJ" -eq 2 ] && [ "$GMIN" -lt 38 ]; then NEED_SHIM=1; fi
 echo "NEED_SHIM=$NEED_SHIM"
 SHIM_LD=""; SHIM_LIB=""
 if [ "$NEED_SHIM" = "1" ]; then
@@ -61,10 +66,13 @@ if [ "$NEED_SHIM" = "1" ]; then
 else
   echo "glibc OK (>=2.38) — no shim needed"
 fi
-# run_hexa wraps under the shim loader; --library-path includes the 2.39 libs FIRST,
-# then the system lib dirs so libcublas/libcudart/libstdc++ still resolve.
+# SYS_LIBS is baked into each hexa ELF's rpath by patchelf below, so once the
+# binaries are patched they run DIRECTLY (the patched interpreter + rpath carry
+# the 2.39 libc and cuBLAS/cudart). Do NOT re-wrap a patched ELF with an explicit
+# loader invocation — that yields "file too short" (the v4 RUN_RC=127). run_hexa
+# therefore just execs directly; the patch is the shim.
 SYS_LIBS="/usr/local/cuda/lib64:/usr/lib/x86_64-linux-gnu:/lib/x86_64-linux-gnu"
-run_hexa() { if [ -n "$SHIM_LD" ]; then "$SHIM_LD" --library-path "$SHIM_LIB:$SYS_LIBS" "$@"; else "$@"; fi; }
+run_hexa() { "$@"; }
 
 echo "=== [2/7] install hexa, checkout $BRANCH (cuda_link_decision + PR4 trainer) ==="
 if [ ! -x "$HOME/.hx/bin/hexa" ]; then
@@ -87,56 +95,120 @@ grep -c "CLM_PROD_OUT" "$HEXA_SRC/stdlib/flame/clm_prod.hexa" 2>/dev/null || ech
 # invocation — including hexa's self-spawned children (sub-hexa build/run during
 # the runtime_cuda emit + module_loader) — runs under 2.39 without a wrapper.
 # This is the proven prior-fire workaround (inbox d768-recovery Gap 2).
-if [ -n "$SHIM_LD" ]; then
-  echo "--- patchelf hexa ELFs -> glibc-2.39 loader (in-place, covers self-spawn) ---"
+patch_all_hexa_elfs() {
+  # patchelf EVERY hexa ELF (under ~/.hx and $HEXA_SRC) to the staged 2.39 loader.
+  # `hexa run` self-spawns child binaries (hexat transpiler, module_loader, sub
+  # hexa) at varied paths — patching ONLY a hand-listed few leaves a child on the
+  # system loader → GLIBC_2.38 error mid-run. So we discover them: any regular
+  # file whose `head -c4` is the ELF magic gets patched (no `file` cmd needed —
+  # it is NOT preinstalled on the CUDA image; that guard was the prior silent skip).
+  [ -z "$SHIM_LD" ] && return 0
   apt-get install -y patchelf >/dev/null 2>&1 || true
-  RPATH="$SHIM_LIB:$SYS_LIBS"
-  for f in "$HOME/.hx/bin/hexa.real" "$HOME/.hx/bin/hexa" "$HEXA_SRC/build/hexat" "$HEXA_SRC/build/hexa_module_loader" "$HOME/.hx/bin/hx"; do
-    if [ -f "$f" ] && file "$f" 2>/dev/null | grep -q ELF; then
-      patchelf --set-interpreter "$SHIM_LD" --set-rpath "$RPATH" "$f" 2>/dev/null && echo "  patched $f" || echo "  (skip $f)"
+  local RPATH="$SHIM_LIB:$SYS_LIBS" n=0
+  local f magic
+  for f in $(find "$HOME/.hx" "$HEXA_SRC/build" -type f \( -perm -u+x -o -name '*.real' -o -name 'hexat' -o -name 'hexa*' \) 2>/dev/null | sort -u); do
+    magic="$(head -c4 "$f" 2>/dev/null | od -An -tx1 2>/dev/null | tr -d ' \n')"
+    if [ "$magic" = "7f454c46" ]; then
+      patchelf --set-interpreter "$SHIM_LD" --set-rpath "$RPATH" "$f" 2>/dev/null && n=$((n+1))
     fi
   done
-  # if hexa is a wrapper script calling hexa.real, leave it; otherwise it's the ELF.
+  echo "  patchelf'd $n hexa ELF(s) -> 2.39 loader"
+  echo "  hexa.real interp = $(patchelf --print-interpreter "$HOME/.hx/bin/hexa.real" 2>/dev/null)"
+}
+if [ -n "$SHIM_LD" ]; then
+  echo "--- patchelf ALL hexa ELFs -> glibc-2.39 loader (discovered, covers self-spawn) ---"
+  patch_all_hexa_elfs
 fi
 
-# DO NOT re-run install.sh — it re-fetches the prebuilt glibc-2.38 ELF and
-# re-breaks the patch. The branch SOURCE is already checked out at $HEXA_SRC
-# (cuda_link_decision lives in self/main.hexa, interpreted from source by `hexa
-# run` — no binary rebuild needed for the trainer path). We only need the
-# module_loader (so stdlib `use` resolves) — rebuild it natively from source.
-echo "--- (re)build hexa_module_loader from source (native glibc, stdlib use) ---"
-if [ -x "$HEXA_SRC/tool/build_hexa_module_loader.sh" ]; then
-  ( cd "$HEXA_SRC" && bash tool/build_hexa_module_loader.sh 2>&1 | tail -6 ) || echo "WARN: module_loader build returned nonzero"
-  # patch the freshly built loader too (in case it linked an old libc somehow)
-  [ -n "$SHIM_LD" ] && [ -f "$HEXA_SRC/build/hexa_module_loader" ] && \
-    patchelf --set-interpreter "$SHIM_LD" --set-rpath "$SHIM_LIB:$SYS_LIBS" "$HEXA_SRC/build/hexa_module_loader" 2>/dev/null || true
+# ─── CRITICAL: rebuild hexa FROM SOURCE (cuda_link_decision is NOT in the
+# prebuilt release hexa.real — it lives only in self/main.hexa). Without this
+# the forge GPU link path can never engage; `hexa run`/`hexa build` execute the
+# stale prebuilt binary that links CPU-only. The patched prebuilt (above) only
+# bootstraps Stage-0; the fresh self-hosted binary links the system 2.35 libc
+# NATIVELY (no glibc shim for it) AND contains the CUDA link decision. ───
+# Need the gitignored seed .c (runtime.c + hexa_cc.c + native/*.c + forge/*.c);
+# the dispatcher scp's them as /workspace/hexa_seed_c.tgz (extracted to src/self).
+echo "--- extract seed .c (runtime.c + seeds) into src/self ---"
+if [ -f /workspace/hexa_seed_c.tgz ]; then
+  ( cd "$HEXA_SRC" && tar xzf /workspace/hexa_seed_c.tgz ) && echo "  seeds extracted" || echo "  WARN seed extract failed"
 fi
-echo "--- hexa --version smoke (must run under patched/shim loader) ---"
-"$HOME/.hx/bin/hexa" --version 2>&1 | head -3 || { echo "FATAL hexa broken"; exit 11; }
+echo "--- self-host rebuild hexa (Stage 0/1/2; cuda_link_decision baked in) ---"
+HEXA_FRESH="$WORK/hexa_fresh"
+if [ -f "$HEXA_SRC/self/runtime.c" ] && [ -x "$HEXA_SRC/tool/stage_build_hexa" ]; then
+  ( cd "$HEXA_SRC" && CC=clang LIBS="-lm -lpthread -ldl" OUT_HEXA="$HEXA_FRESH" \
+      timeout 1800 bash tool/stage_build_hexa 2>&1 | tail -8 ) || echo "WARN: self-host build returned nonzero"
+fi
+if [ -x "$HEXA_FRESH" ] && "$HEXA_FRESH" --version >/dev/null 2>&1; then
+  HAS_CUDA_FN="$(strings "$HEXA_FRESH" 2>/dev/null | grep -c 'CUDA link ENGAGED')"
+  echo "  fresh hexa built; 'CUDA link ENGAGED' string count = $HAS_CUDA_FN (>0 = fix present)"
+  # also build a fresh module_loader from the fresh hexa (stdlib use resolution)
+  ( cd "$HEXA_SRC" && "$HEXA_FRESH" build self/module_loader.hexa -o "$HEXA_SRC/build/hexa_module_loader" >/dev/null 2>&1 ) || true
+  # swap the fresh binary into the hexa entrypoint so `hexa run/build` use it
+  cp -f "$HEXA_FRESH" "$HOME/.hx/bin/hexa.real" 2>/dev/null || true
+  cp -f "$HEXA_FRESH" "$HOME/.hx/bin/hexa" 2>/dev/null || true
+  HEXABIN="$HEXA_FRESH"
+else
+  echo "  WARN: self-host build failed — falling back to patched prebuilt (cuda link will NOT engage)"
+  HEXABIN="$HOME/.hx/bin/hexa"
+fi
+echo "--- hexa --version smoke ---"
+HV="$("$HEXABIN" --version 2>&1 | head -1)"
+echo "  $HV"
+case "$HV" in hexa*) : ;; *) echo "FATAL hexa broken: $HV"; exit 11 ;; esac
 
 echo "=== [3/7] corpus — c4 5-lang backbone (in-repo fixture) ==="
 CORPUS="$HEXA_SRC/stdlib/flame/testdata/clm_semantic_parallel.txt"
 [ -s "$CORPUS" ] || { echo "FATAL: in-repo corpus fixture missing"; exit 12; }
 echo "corpus: $CORPUS ($(wc -c < "$CORPUS") bytes, 5-lang en zh ru ja ko)"
 
-echo "=== [4/7] FORGE GPU-PATH SMOKE (force cuda link on a tiny forge program) ==="
+echo "=== [4/7] BUILD clm_prod with HEXA_CUDA_LINK=1 (hexa build -> cuda_link_decision) ==="
+# Use `hexa build` (NOT `hexa run`) — cmd_build calls cuda_link_decision, while
+# cmd_run's binary cache key does NOT fold HEXA_CUDA_LINK (a CPU-cached binary
+# would be silently reused). Build → a real binary linked -DHEXA_CUDA + cuBLAS.
 export HEXA_CUDA_LINK=1
-( export HEXA_LANG="$HEXA_SRC"; cd "$HEXA_SRC" && HEXA_CUDA_LINK=1 run_hexa "$HOME/.hx/bin/hexa" run stdlib/flame/clm_prod.hexa ) >/dev/null 2>&1 &
-SMOKE=$!; sleep 8; kill "$SMOKE" 2>/dev/null; wait "$SMOKE" 2>/dev/null || true
-echo "(smoke dispatched; real run below carries the cuda-link log)"
+CLM_BIN="$WORK/clm_prod_d${DVAL}"
+( export HEXA_LANG="$HEXA_SRC"; cd "$HEXA_SRC" && HEXA_CUDA_LINK=1 "$HEXABIN" build stdlib/flame/clm_prod.hexa -o "$CLM_BIN" ) > "$WORK/build.log" 2>&1
+echo "  build rc=$?  bin=$CLM_BIN"
+echo "--- build.log cuda-link decision ---"
+grep -E "\[cuda\]|CUDA link ENGAGED|building CPU-only|nvcc|cublas|error|FAILED" "$WORK/build.log" | head -15 || tail -10 "$WORK/build.log"
+# cuda_link_decision links -lcublas -lcudart but NOT -lcuda (the CUDA *driver*
+# API: cuInit/cuModuleLoadData/cuLaunchKernel live in libcuda.so). On a CUDA
+# image that yields "undefined reference to cuInit". Manual relink fallback adds
+# -lcuda + the driver-lib dir; reuses the transpiled C + nvcc'd runtime_cuda.o.
+if [ ! -x "$CLM_BIN" ] && grep -q "undefined reference to .cu" "$WORK/build.log"; then
+  echo "  build hit undefined cuDriver symbols — relinking with -lcuda ..."
+  APPC="$(ls -t "$HEXA_SRC"/build/artifacts/*.c 2>/dev/null | head -1)"
+  RTCUDA_O="$(ls -t "$HEXA_SRC"/self/cuda/runtime_cuda.*.o 2>/dev/null | head -1)"
+  RTO="$(ls -t "$HOME"/.hexa-cache/runtime.*.cuda.o 2>/dev/null | head -1)"
+  CUDA_DRV_DIR="$(dirname "$(find / -name 'libcuda.so*' 2>/dev/null | head -1)")"
+  if [ -n "$APPC" ] && [ -n "$RTCUDA_O" ] && [ -n "$RTO" ]; then
+    clang -O2 -DHEXA_CUDA -I /usr/local/cuda/include -D_GNU_SOURCE -Wno-trigraphs \
+      -fbracket-depth=4096 -I "$HEXA_SRC/self" "$APPC" "$RTO" "$RTCUDA_O" -o "$CLM_BIN" \
+      -lm -lpthread -L/usr/local/cuda/lib64 -L"$CUDA_DRV_DIR" \
+      -lcublas -lcudart -lcuda -ldl -lrt -lstdc++ 2>&1 | tail -6
+    [ -x "$CLM_BIN" ] && echo "  relink OK -> $CLM_BIN  (links: $(ldd "$CLM_BIN" 2>/dev/null | grep -ciE 'cublas|cudart|libcuda') cuda libs)"
+  fi
+fi
+if [ ! -x "$CLM_BIN" ]; then
+  echo "  WARN: build produced no binary — falling back to hexa run"
+fi
 
-echo "=== [5/7] run clm_prod d=$DVAL E=$EVAL epochs=$EPOCHS, HEXA_CUDA_LINK=1, CONTINUOUS util sampling ==="
+echo "=== [5/7] run clm_prod d=$DVAL E=$EVAL epochs=$EPOCHS, CONTINUOUS util sampling ==="
 export CLM_PROD_CORPUS="$CORPUS"
 export CLM_PROD_D="$DVAL" CLM_PROD_E="$EVAL" CLM_PROD_EPOCHS="$EPOCHS" CLM_PROD_NSAMP="$NSAMP"
 export CLM_PROD_OUT="$WORK/d768_5lang_c4.clm"
-export HEXA_CUDA_LINK=1
 echo "CLM_PROD_D=$DVAL E=$EVAL EPOCHS=$EPOCHS NSAMP=$NSAMP  OUT=$CLM_PROD_OUT  HEXA_CUDA_LINK=1"
 UTIL_CSV="$WORK/util.csv"; : > "$UTIL_CSV"
 ( while :; do nvidia-smi --query-gpu=utilization.gpu,utilization.memory,power.draw,clocks.sm --format=csv,noheader,nounits >> "$UTIL_CSV" 2>/dev/null; sleep 0.2; done ) &
 SAMPLER=$!
 RUN_LOG="$WORK/train.log"
-( export HEXA_LANG="$HEXA_SRC"; cd "$HEXA_SRC" && HEXA_CUDA_LINK=1 run_hexa "$HOME/.hx/bin/hexa" run stdlib/flame/clm_prod.hexa ) 2>&1 | tee "$RUN_LOG"
-RUN_RC=${PIPESTATUS[0]}
+if [ -x "$CLM_BIN" ]; then
+  ( export HEXA_LANG="$HEXA_SRC"; cd "$HEXA_SRC" && "$CLM_BIN" ) 2>&1 | tee "$RUN_LOG"
+  RUN_RC=${PIPESTATUS[0]}
+else
+  ( export HEXA_LANG="$HEXA_SRC"; cd "$HEXA_SRC" && HEXA_CUDA_LINK=1 "$HEXABIN" run stdlib/flame/clm_prod.hexa ) 2>&1 | tee "$RUN_LOG"
+  RUN_RC=${PIPESTATUS[0]}
+fi
 kill "$SAMPLER" 2>/dev/null; wait "$SAMPLER" 2>/dev/null
 
 echo "=== [6/7] artifact + sha256 ==="
