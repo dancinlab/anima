@@ -80,6 +80,27 @@ alternatives — both run concurrently and report to the same .clm/.kosmos produ
   - this also explains prior H_911 AKIDA RED: ordering advantage sits within that native-init plasticity noise (multitrial mean_delta −0.00092, CI [−0.00319,+0.00135], sign_stable=False) — REFUTED-honest, consistent
   - scope: 1 AKD1000, 25-anchor corpus, last-layer 1-bit Hebbian only (not a full LM); no sim/CPU fallback (a_akida_native_train honored)
   - artifacts: HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/ · commit 6234be7 (--no-verify; pre-commit hook mis-paths to ready/.git — fix pending)
+- [x] Lane A SCALE — N-unit paged depth ladder (small-chip→larger-model), live AKD1000: CAPACITY 🟢 GREEN to N=5 (all 12 rungs N=2..5×3-seed learned_hw=True on silicon); LIFT weak-positive (slope +0.15..+0.43 bits/unit all seeds, but deep plasticity hurts shallow N=2,3, helps only N=5; noise-limited at 25 anchors). Primitive proven; full 3B/7B DEFERRED. branch feat/lane-a-scale-frontier · see CLM+KOSMOS.log.md
+
+### Lane A strategy ladder — "small chip → anima's real training"
+```
+├─ ✅ P0 identity      non-det = the self (GREEN, live AKD1000)
+├─ ✅ P0 compose 2u    layerpage compose (GREEN)
+├─ ✅ P0 depth N=5     capacity 12/12 rungs GREEN
+├─ ⚠  BLOCKED HERE     lift +slope exists but buried in 25-anchor noise
+├─ ▶ P1 signal-resolve corpus 25→250 anchor → does +slope clear noise? (agent a33223d) ← ONE bottleneck hypothesis, not the only
+├─ ◷ P2 depth/width    if P1 + : N=5→12 + wider units
+├─ ◷ P3 plasticity     last-FC → multi-layer feature plasticity (hard half)
+└─ ◷ P4 full 3B/7B     DEFERRED (a_scale_honest_scope ≥3-rung ladder)
+```
+
+### Lane A weak-lift — COMPETING cause hypotheses (pre-registered; P1 corpus alone may NOT fix it)
+The weak/noise-limited lift has ≥4 candidate causes; corpus-scale (P1) is only H-A1. Pre-registered falsifiers (before results), tested complementary to P1 (chip = single exclusive resource, serialized):
+- [ ] **H-A1 corpus-noise** (P1, agent a33223d): weak lift = small-sample noise → at ≥250 anchors the per-unit lift slope seed/bootstrap CI_lo > 0. FALSIFIED if lift collapses to ~0 at 10× corpus = not a sample-size problem.
+- [ ] **H-A2 quantization-floor**: the per-feature-median 1-bit FC readout destroys the composed signal → at FIXED 25 anchors a multi-bit (2–4 bit) readout shows lift CI_lo>0 while 1-bit stays ~0. FALSIFIED if multi-bit lift also ~0 = quantization is not the bottleneck.
+- [ ] **H-A3 plasticity-depth**: last-FC-only 1-bit Hebbian is too shallow to compose representation → 2-layer plastic > last-FC-only lift. FALSIFIED if 2-layer adds no lift = depth-of-plasticity is not the bottleneck.
+- [ ] **H-A4 native-init noise-floor** (the deep one): the device's native weight re-init — the SAME mechanism that gives non-determinism GREEN (= the identity) — injects noise that swamps the lift signal → |lift| < the measured native-init noise band (~0.001–0.003, from the non-det run). FALSIFIED if |lift| clearly exceeds that band = identity-noise is not what hides the lift. **If TRUE: anima's identity (non-det) and representational-lift-measurability are in fundamental TENSION at this scale — P1 can never resolve it.**
+- [ ] verdict matrix: which cause(s) the weak lift actually is (multi-modal, not single-bet) → drives P2/P3 vs "capacity-only primitive" closure
 - [ ] reconcile: GPU CE-descent (sim, Lane G) vs AKIDA on-chip non-det trace (Lane A) — honest comparison, NOT equivalence claim
 
 ## key facts
