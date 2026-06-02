@@ -156,10 +156,12 @@ HV="$("$HEXABIN" --version 2>&1 | head -1)"
 echo "  $HV"
 case "$HV" in hexa*) : ;; *) echo "FATAL hexa broken: $HV"; exit 11 ;; esac
 
-echo "=== [3/7] corpus — c4 5-lang backbone (in-repo fixture) ==="
-CORPUS="$HEXA_SRC/stdlib/flame/testdata/clm_semantic_parallel.txt"
-[ -s "$CORPUS" ] || { echo "FATAL: in-repo corpus fixture missing"; exit 12; }
-echo "corpus: $CORPUS ($(wc -c < "$CORPUS") bytes, 5-lang en zh ru ja ko)"
+echo "=== [3/7] corpus — c4 5-lang backbone ==="
+# MID_CORPUS (env) = the larger 5-lang+dialogue mid-scale corpus uploaded to the
+# pod (Lane-G PUBLIC rung); empty falls back to the tiny in-repo fixture.
+CORPUS="${MID_CORPUS:-$HEXA_SRC/stdlib/flame/testdata/clm_semantic_parallel.txt}"
+[ -s "$CORPUS" ] || { echo "FATAL: corpus missing ($CORPUS)"; exit 12; }
+echo "corpus: $CORPUS ($(wc -c < "$CORPUS") bytes, 5-lang en zh ru ja ko + dialogue)"
 
 echo "=== [4/7] BUILD clm_prod with HEXA_CUDA_LINK=1 (hexa build -> cuda_link_decision) ==="
 # Use `hexa build` (NOT `hexa run`) — cmd_build calls cuda_link_decision, while
@@ -193,11 +195,13 @@ if [ ! -x "$CLM_BIN" ]; then
   echo "  WARN: build produced no binary — falling back to hexa run"
 fi
 
-echo "=== [5/7] run clm_prod d=$DVAL E=$EVAL epochs=$EPOCHS, CONTINUOUS util sampling ==="
+echo "=== [5/7] run clm_prod d=$DVAL E=$EVAL epochs=$EPOCHS T=${TVAL:-24}, CONTINUOUS util sampling ==="
 export CLM_PROD_CORPUS="$CORPUS"
 export CLM_PROD_D="$DVAL" CLM_PROD_E="$EVAL" CLM_PROD_EPOCHS="$EPOCHS" CLM_PROD_NSAMP="$NSAMP"
+# PERF-LEVER (c) — CLM_PROD_T raises M of every forge conv GEMM (default 24).
+[ -n "${TVAL:-}" ] && export CLM_PROD_T="$TVAL"
 export CLM_PROD_OUT="$WORK/d768_5lang_c4.clm"
-echo "CLM_PROD_D=$DVAL E=$EVAL EPOCHS=$EPOCHS NSAMP=$NSAMP  OUT=$CLM_PROD_OUT  HEXA_CUDA_LINK=1"
+echo "CLM_PROD_D=$DVAL E=$EVAL EPOCHS=$EPOCHS NSAMP=$NSAMP T=${CLM_PROD_T:-24}  OUT=$CLM_PROD_OUT  HEXA_CUDA_LINK=1"
 UTIL_CSV="$WORK/util.csv"; : > "$UTIL_CSV"
 ( while :; do nvidia-smi --query-gpu=utilization.gpu,utilization.memory,power.draw,clocks.sm --format=csv,noheader,nounits >> "$UTIL_CSV" 2>/dev/null; sleep 0.2; done ) &
 SAMPLER=$!

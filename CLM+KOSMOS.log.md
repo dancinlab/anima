@@ -151,3 +151,24 @@ DISPOSITION: **REOPENED on the ENCODING axis** (1/3 cause-axes lit). Objective/r
 - Canonical = flame+forge on forge GPU substrate (a_train_flame_forge, never silent CPU-fallback); Lane A ⊥ Lane G separate (a_lane_akida_gpu_split); HF PUBLIC only at closure-PASS (a_hf_autonomous).
 - In flight: Lane G flame+forge PUBLIC-grade fire (agent a4fa10a0) on a CUDA-devel H100_SXM (pod 39000300) — the gating step for the 3B/7B ladder. Prior d768 util-RED root cause = bare pod image (no nvcc/cublas) → forge .cu couldn't build → CPU fallback; fixed by CUDA-devel image (NOT a hexa-run link hack).
 - Prior H_911 amodal-hub 3-axis probe = CLOSED-NEGATIVE (4-rung flat-RED), kept in status as the completed prior arc.
+
+## 2026-06-02 — Lane-G (substrate=GPU) mid-scale PUBLIC-grade fire — DESCENT 🟢 / util 🔴 RED (host-feed-bound, scale-invariant)
+
+**a_lane_akida_gpu_split — this entry is GPU / Lane-G ONLY, NEVER merged with the AKIDA / Lane-A on-chip track.**
+
+Drove Lane G from the prior d768 descent-GREEN/util-RED toward the util-GREEN PUBLIC gate via the two cheapest perf levers + a mid scale en route to 3B. Reused the proven forge-on-GPU recipe (CUDA-devel image · self-host hexa rebuild · cuda seeds · -lcuda relink).
+
+- **PERF LEVER implemented (c — raise effective M):** added `CLM_PROD_T` env override to `stdlib/flame/clm_prod.hexa` (hexa-lang `fix/hexa-run-cuda-link`, commit 1ac463d29). T is a pure causal-window-length parameter (flows identically through conv1d_via_forge / nn_ce_loss_allpos / clm_prod_bwd — GRAD-EXACT, no math change), so raising it 24→512 lifts M of EVERY forge conv GEMM ×21 AND amortizes the host im2col/col2im/adam over a longer sequence. CPU sanity: T=48 descends 4.77505→4.30104 F=1.
+- **SCALE:** d 768→1536, E=2, T=512, 5-lang(en·zh·ru·ja·ko)+dialogue 402 KB byte corpus (V=256). Big-run 6ep×32win + a completing-run 2ep×8win for the .clm artifact (util identical, step-independent).
+- **Recipe gaps fixed this fire (filed hexa-lang inbox forge-gpu patch Gap 5-7):** (5) seed set undercounted — runtime.c #includes runtime_core.c #includes runtime_hi_gen.c; shipped all 23 .c (3 root + 16 native + 1 forge + 2 cuda). (6) `tool/stage_build_hexa` `file` hard-dep + `set -e` aborted the stage build mid-Stage-0 → silent prebuilt(cuda-dead) fallback; `apt-get install file patchelf`. (7) dev-cc auto-detect read the B200's sm_100 but CUDA-12.4 nvcc maxes at sm_90 → nvcc FAILED → CPU fallback; **LANDED** a `HEXA_CUDA_ARCH` env override in self/main.hexa (commit 0706e8838), `HEXA_CUDA_ARCH=90` → sm_90 PTX runs on the B200 via driver JIT.
+- **forge PROVABLY on the GPU:** binary links 4 cuda libs (cublas+cudart+libcuda+); nvcc compiled runtime_cuda.90.o; `CUDA link ENGAGED — runtime built -DHEXA_CUDA, linking … + cuBLAS (sm_90)`; relink OK; GPU 196.69 W (vs 141 W idle), SM 1965 MHz, 66 GB device mem.
+
+**VERDICT (g5 verbatim):**
+- F-CLM-PROD-DESCENT 🟢 GREEN: `epoch-1 mean CE = 4.40933` → `epoch-2 mean CE = 4.02596` → `F-CLM-PROD-DESCENT = 1` / `PASS — real-corpus mean CE descends under int4 envelope`.
+- F-RFC046 util 🔴 RED: completing-run `UTIL: n=1102 max=6 mean=0.240 pct_gt20=0.00%`; big-run `n=6783 max=4 mean=0.240 pct_gt20=0.00%`. Does NOT clear the 20% gate.
+
+**HONEST lever impact:** perf-lever (T×21) + scale (d×2) moved util ESSENTIALLY FLAT — PEAK 5%→4-6%, MEAN 0.145%→0.240%. The residual is **HOST-FEED, NOT scale**: the cuBLAS GEMMs (even M=512/d=1536, 66 GB activations) finish in microseconds while host im2col/col2im+adam+the interpreted per-step loop peg one CPU core at 100%. Lever (c) alone is insufficient; the real unblock is lever (a) device-side backward feed + lever (b) FUSED/strided-batched per-step GEMMs — each an upstream forge/flame change, not attempted this rung.
+
+**CLOSURE = FAIL on util (descent GREEN, util RED) → PUBLIC NOT reached on Lane G.** Per a_hf_autonomous: pull .clm + sha-verify BEFORE teardown (a_fire_recover_complete) → HF `dancinlab/clm-v1-dev-mid-d1536-t512-util-probe` **PRIVATE** (.clm 14.4 MB, sha 3f62c53f3c216eca996e625aadff5c43955f7248025508a88712ffce89c96a1a, 6 int4 blocks CLM\x01) → added to dancinlab **CLM** collection → HF.jsonl row (substrate=GPU, lane=Lane-G) → recovery marker verified → pod vast 39007409 torn down (destroyed+confirmed). Artifacts: `exports/lane-g-mid-d1536/` (.clm + util_complete.csv + util_bigrun.csv + train_complete.log + build_cuda_link.log + README model card).
+
+**3B GATE:** NOT throughput-justified — a bigger model idles the GPU MORE until the host backward-feed is moved on-device. The next Lane-G rung must implement levers (a)+(b) in forge/flame BEFORE any 3B H100 fire.
