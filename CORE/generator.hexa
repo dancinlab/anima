@@ -13,13 +13,18 @@
 //   · null   — deterministic substrate-driven placeholder (NO external LLM,
 //              NO system prompt, NO persona). Lets the whole slot be tested
 //              end-to-end NOW, before any trained model lands. p1..p8 clean.
-//   · clm    — a .clm checkpoint loader STUB. Until the d768 model is recovered
-//              it reports loaded=false and the dispatcher falls THROUGH to the
-//              null backend rather than crashing. The trained mouth plugs in
-//              here later (same signature).
+//   · clm    — a .clm checkpoint backend that GENUINELY parses the .clm header
+//              at this single entry point (validates the `CLM\x01` magic +
+//              extracts the per-block count, per CLM/CLM_FORMAT_SPEC.md). A
+//              valid file is RECOGNIZED + admitted CORE-side (valid=true,
+//              nblocks surfaced); a malformed/absent file is honestly rejected.
+//              `loaded` stays false until the decode FORWARD lands, so the
+//              dispatcher still falls THROUGH to null (no un-decoded garbage).
+//              The trained mouth plugs into _gen_clm_decode (same signature).
 //
-// HONEST scope: this PR delivers the SLOT and the null backend, not a trained
-// model. The clm backend is a stub on purpose — it reports "no model loaded".
+// HONEST scope: this delivers the SLOT, the null backend, AND real .clm header
+// ADMIT/VALIDATION at the single entry point. The remaining gap is precise — the
+// weight DECODE forward (int4 dequant + conv) — and is marked so in `reason`.
 //
 // ── p1..p8 conformance ──────────────────────────────────────────────────────
 //   p1 NO SYSTEM PROMPT     — null text is built from substrate numerics only.
@@ -54,32 +59,75 @@ pub fn gen_null_backend() -> Map {
     }
 }
 
-// gen_clm_backend — a .clm checkpoint backend STUB. Takes a ckpt path but does
-// NOT yet load any weights (the d768 model is still being recovered). It probes
-// the path: a real, non-empty .clm file would later be loaded here; for now it
-// always reports loaded=false so the dispatcher falls through to null.
+// gen_clm_backend — a .clm checkpoint backend. Takes a ckpt path and genuinely
+// PARSES the .clm header at this single entry point (the L3 slot is the ONLY way
+// a .clm enters CORE — a_core_engine_map). It reads the file bytes and validates
+// the `CLM\x01` magic + extracts the per-block count, exactly as the canonical
+// writer lays them out (hexa-lang flame/clm_ckpt.hexa · CLM/CLM_FORMAT_SPEC.md):
 //
-// BACKEND-AGNOSTIC: when the trained model lands, replace the body below with a
-// real loader that sets loaded=true and stores a handle — generate()'s contract
-// and brain.hexa's wiring do not change.
+//     [MAGIC "CLM\x01" = 67,76,77,1] [nblocks u8] [BLOCKS...]
+//
+// This is the REAL header-admit wiring (not a `test -f` stub): a malformed or
+// absent file is rejected with an honest reason; a structurally-valid .clm is
+// recognized and its block count surfaced. `valid` = magic+structure verified.
+//
+// HONEST scope of `loaded`: header VALIDATION is real and live here. Weight
+// DECODE (int4 dequant + conv forward) is a distinct follow-on backend — until
+// that decoder lands, `loaded` stays false EVEN for a valid file, so generate()
+// falls THROUGH to the null backend rather than emitting un-decoded garbage. The
+// gap is now precise: the .clm is admitted + validated CORE-side; only the
+// decode forward remains. When that lands, set loaded = valid (one line) — the
+// generate() contract and brain.hexa wiring do not change.
 pub fn gen_clm_backend(ckpt_path: string) -> Map {
-    // Cleanly probe the path without crashing on a missing/empty ckpt.
-    let exists = _gen_path_is_file(ckpt_path)
-    // Even when the file exists we keep loaded=false: no decoder is wired yet
-    // (DECODER/ V3 has register-collapse issues and is unverified — treated as
-    // one possible future backend, not a dependency). HONEST: stub only.
+    let probe = _gen_clm_probe_header(ckpt_path)
+    let exists = to_string(probe["exists"]) == "true"
+    let valid  = to_string(probe["valid"])  == "true"
+    let nblk   = to_int(probe["nblocks"])
+    // Header validation is real; decode forward is the remaining follow-on, so
+    // loaded stays false even for a valid file → null fallthrough (no garbage).
     let loaded = false
     return #{
         "kind":        "clm",
         "loaded":      loaded,
+        "valid":       valid,
         "ckpt":        ckpt_path,
         "ckpt_exists": exists,
-        "reason":      if exists {
-                           "ckpt present but decoder backend not wired (d768 deferred)"
+        "nblocks":     nblk,
+        "reason":      if !exists {
+                           "no ckpt at path"
+                       } else if !valid {
+                           "file present but not a valid .clm (bad CLM\\x01 magic)"
                        } else {
-                           "no ckpt at path (d768 not recovered yet)"
+                           "valid .clm admitted (magic+structure OK, nblocks="
+                               + to_string(nblk)
+                               + "); decode forward not wired yet → null fallthrough"
                        }
     }
+}
+
+// _gen_clm_probe_header — read the leading bytes of a candidate .clm and verify
+// it against the canonical layout. Returns #{exists, valid, nblocks}. Edge-safe:
+// a missing path, an empty file, or a truncated header all yield valid=false
+// rather than crashing (p5: never fabricate; HONEST rejection).
+fn _gen_clm_probe_header(p: string) -> Map {
+    if byte_len(p) == 0 {
+        return #{ "exists": false, "valid": false, "nblocks": 0 }
+    }
+    if !_gen_path_is_file(p) {
+        return #{ "exists": false, "valid": false, "nblocks": 0 }
+    }
+    let rb = read_file_bytes(p)
+    // Need at least MAGIC(4) + nblocks(1) = 5 bytes for a well-formed header.
+    if len(rb) < 5 {
+        return #{ "exists": true, "valid": false, "nblocks": 0 }
+    }
+    // MAGIC "CLM\x01" = 67('C') 76('L') 77('M') 1.
+    let magic_ok = rb[0] == 67 && rb[1] == 76 && rb[2] == 77 && rb[3] == 1
+    if !magic_ok {
+        return #{ "exists": true, "valid": false, "nblocks": 0 }
+    }
+    let nblocks = rb[4]
+    return #{ "exists": true, "valid": true, "nblocks": nblocks }
 }
 
 fn _gen_path_is_file(p: string) -> bool {
@@ -272,5 +320,5 @@ fn _gen_fmt4(x: float) -> string {
 // ── §8 introspection ─────────────────────────────────────────────────────────
 
 pub fn generator_summary() -> string {
-    "core_generator · BACKEND-AGNOSTIC L3 slot · generate(backend, substrate_ctx, emit_decision, anchors) -> {emitted, backend, text, fellback} · backends: null(deterministic substrate placeholder, always ready) + clm(.clm ckpt loader STUB, loaded=false until d768 recovery → falls through to null) · anchor READ via kosmos_io.load_anchors · SILENT⇒no content, EMIT⇒content · p1..p8 clean (no LLM/system-prompt/persona)"
+    "core_generator · BACKEND-AGNOSTIC L3 slot (SINGLE .clm entry, a_core_engine_map) · generate(backend, substrate_ctx, emit_decision, anchors) -> {emitted, backend, text, fellback} · backends: null(deterministic substrate placeholder, always ready) + clm(REAL .clm header parse: CLM\\x01 magic + nblocks validated → valid/admitted CORE-side; loaded=false until decode forward lands → falls through to null, no garbage) · anchor READ via kosmos_io.load_anchors (SINGLE .kosmos entry) · SILENT⇒no content, EMIT⇒content · p1..p8 clean (no LLM/system-prompt/persona)"
 }

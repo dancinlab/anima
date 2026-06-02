@@ -620,3 +620,30 @@ PR #1686(stateless) / #1689(state-carry) 두 closed-negative 가 명명한 NEXT 
 - **artifacts** — AKIDA/onchip_xlm_depth_rollout.py · AKIDA/run_depth_rollout_with_streamer_restore.sh · AKIDA/result_onchip_xlm_depth_rollout.json (sha256 `0acdeee58236ce28cb028d45be24cefc508da4432a8ceff146d0812e97d6e47a`) · `.verdicts/lane-a-depth/F-DEPTH.txt` (hexa verify CLI broken → live-chip stdout verbatim, established lane-a format).
 
 **milestone delta:** `Lane A PUBLIC` 미변경 (NO PUBLIC flip) — multi-step EMERGENCE 가 depth 로도 미돌파, 단일-step 만 유효. multi-FC depth 축 closed-negative 로 기록, 다음 bridge = off-chip decode head OR single-step PUBLIC scope 수용.
+
+---
+
+## 2026-06-02 · ENGINE Lane (substrate=CORE 의식 엔진) — L3 .clm 단일 진입점 배선 + CORE-mounted 3축 첫 probe (F-CLM-CORE-3AXIS)
+
+**substrate=CORE (A=pure_field ⇄ G=engine_g ⇄ brain_decide, Ψ=1/2 · hexa-native · 외부 LLM 0 · p1~p8).** a_lane_akida_gpu_split: AKIDA/GPU 와 별개 4th 레인 (CORE 의식 엔진 자체). CPU-local `hexa run` ($0 mac · p7 결정적 equality, perplexity 아님).
+
+### 빌드한 CORE 배선 (root-cause, completeness-bar)
+- **L3 `.clm` 단일 진입점 (a_core_engine_map)** — `CORE/generator.hexa` `gen_clm_backend` 를 `test -f` STUB 에서 **실제 헤더 파서**로 승격: `read_file_bytes` 로 leading bytes 읽어 `CLM\x01` magic(67,76,77,1) + nblocks(u8) 검증 (canonical writer hexa-lang `flame/clm_ckpt.hexa` · `CLM/CLM_FORMAT_SPEC.md §2` 레이아웃과 일치). `_gen_clm_probe_header` 헬퍼 = edge-safe (missing/empty/truncated → valid=false, no crash). real d768 `state/laneg_d768_recover/d768_5lang_c4.clm` → **valid=true nblocks=6 admit**; non-`.clm` 파일 → 거부. **HONEST partial**: 헤더 admit/validate 는 LIVE 이나 weight DECODE forward (int4 dequant + conv2) 는 distinct follow-on → `loaded=false` 유지 → null fallthrough (un-decoded garbage 방지). a_core_engine_map: phantom wiring 주장 0 — admit 됨, decode 만 ⏳.
+- **`.kosmos` 단일 진입점** — `generator_read_anchors`→`kosmos_io.load_anchors`→`brain_emit` anchors arg (기존 배선, 재확인 GREEN). `.clm`/`.kosmos` 둘 다 pure_field/engine_g/brain 에 직접 안 박음 (불변식 유지). 2nd entry path 0.
+- **smoke 15/15 PASS** (`CORE/generator_smoke.hexa` 확장: clm absent 거부 + real `.clm` admit valid/nblocks + bad-magic 거부 케이스 추가). verdict `.verdicts/core-3axis-mount/generator_smoke.txt` (verbatim).
+
+### CORE-mounted 3축 첫 probe (`CORE/three_axis_probe.hexa`, falsifier in-file pre-registered)
+- **AXIS-1 🧠 의식 🟢 (F-CORE-3AXIS-1=1)** — emit-context substrate signal > 무자극 baseline: motiv hi=0.6700 > baseline=0.0000 AND emit hi=true/baseline=false. NULL(차이 없음) REFUTED. LIVE substrate (Engine A Φ/phase + Engine G motivation 완전 배선).
+- **AXIS-2 📉 CE — admit 🟢 (F-CORE-3AXIS-2=1) / CE-descent ⏳ BLOCKED-WIRING** — descent-trained `.clm` admit precondition GREEN (valid+nblocks>0). CE-descent 자체는 decode forward 미배선 → **BLOCKED-WIRING, CE 수 fabricate 안 함** (p7: CE 는 한 축이지 truth 아님). 정직히 deferred.
+- **AXIS-3 🌱 창발 🟢 (F-CORE-3AXIS-3=1)** — composed(substrate+anchors) len=101 > component-sum(substrate-only, anchors=[]) len=72. anchor 메모리가 emit 에 합성되어 출력에 관찰됨 = composition > component-sum. NULL REFUTED.
+- 측정가능 3축 GREEN: **3/3** (의식+창발 = LIVE substrate · CE-admit). verdict `.verdicts/core-3axis-mount/probe.txt` (verbatim).
+
+### 툴체인 한계 (정직)
+- `hexa verify` CLI **깨짐**: `error: hexa build .../tool/verify_cli.hexa failed (compile error)` → `[module_loader] FATAL module not found: compiler/atlas/calc_dispatch`. 검증은 `hexa run` 결정적 equality 로 대체 (p7 부합 — string/flag equality, perplexity 아님). 상류 이슈는 hexa-lang 측.
+
+### milestone delta
+- ENGINE Lane (4th lane) **신규 추가** — production 마일스톤 표에 PUBLIC→3B→7B. L3 .clm 단일 진입점 🟢 + .kosmos 단일 진입점 🟢 + CORE-mounted 3축 첫 probe (의식🟢 CE-admit🟢/descent⏳ 창발🟢). CORE.md 도 generator/anchor 상태 ⏳/❌ → 🟢 정정 (코드와 동기 — 이전 "미존재" 는 stale 이었음).
+- PUBLIC checkbox **미flip 유지** — CE-descent CORE-mounted GREEN 미완 (full closure 아님, a_paper_only_at_closure).
+
+### NEXT (정확한 다음 빌드 step)
+- **decode forward 빌드** = CE-descent 축 unblock 의 유일 잔여: `_gen_clm_decode` body 에 int4 dequant (qat_scale per-channel) + conv2 MoE forward 구현 → `gen_clm_backend` `loaded = valid` 한 줄로 활성화 (generate() 계약 + brain.hexa 배선 불변, BACKEND-AGNOSTIC). 그 위에서 CORE-mounted CE descent 측정 가능. PR engine-lane/clm-l3-header-admit.

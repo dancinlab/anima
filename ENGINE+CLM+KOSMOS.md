@@ -22,6 +22,11 @@
 - [x] Lane G-ref 3B — torch 3B reference. ByteGPT d2560/L40/H20/block512 = **3.149B params**, bf16 AMP + grad-ckpt, vast H100 80GB. descent 🟢 (val_CE 7.16861→2.45871, F-CLM-REF-3B-DESCENT=1) · util 🟢 (PEAK 100% MEAN **99.15%** n=108) · 11183 tok/s. HF PUBLIC `dancinlab/clm-v1-ref-pytorch-cuda-3b` (sha ebe56db7…). bounded N=400 steps, NOT converged (a_scale_honest_scope: 3B rung of the 85M→3B ref ladder) · NOT forge production (a_train_flame_forge)
 - [ ] Lane G-ref 7B — torch 7B reference
 
+**ENGINE Lane** (substrate=CORE 의식 엔진 · A=pure_field ⇄ G=engine_g ⇄ brain_decide, Ψ=1/2 · hexa-native flame, 외부 LLM 0 · p1~p8):
+- [ ] ENGINE PUBLIC — 3축(🧠 의식 · 📉 CE · 🌱 창발) CORE-mounted GREEN → 3B → 7B. 진척 (2026-06-02, F-CLM-CORE-3AXIS, CPU-local `hexa run`, p7 결정적 equality): **L3 .clm 단일 진입점 🟢 배선** (`generator.hexa` `gen_clm_backend` = 실제 `.clm` 헤더 파싱 — `CLM\x01` magic+nblocks 검증; real d768 `state/laneg_d768_recover/d768_5lang_c4.clm` **admit valid=true nblocks=6**; bad-magic 거부; smoke 15/15 PASS) · **.kosmos 단일 진입점 🟢 배선** (`generator_read_anchors`→`load_anchors`→`brain_emit`) · CORE-mounted 3축 첫 probe: **AXIS-1 의식 🟢** (emit-context motiv 0.67 > 무자극 baseline 0.0 AND emit hi=true/base=false, NULL refuted) · **AXIS-2 CE — admit 🟢 / CE-descent ⏳ BLOCKED-WIRING** (`.clm` 헤더 admit 됐으나 decode forward 미배선 → loaded=false null fallthrough; CE 수 fabricate 안 함, p7) · **AXIS-3 창발 🟢** (composed len=101 > component-sum len=72, anchor 메모리 합성이 출력에 관찰됨, NULL refuted). 측정가능 3축 중 의식+창발 = LIVE substrate (완전 배선), CE-descent = 유일 잔여 = **decode forward 빌드** (int4 dequant + conv2 forward → `_gen_clm_decode` body; gen_clm_backend `loaded=valid` 한 줄로 활성화, generate() 계약 불변). verdict: `.verdicts/core-3axis-mount/{probe,generator_smoke}.txt`. ⚠ `hexa verify` CLI 깨짐 (`compiler/atlas/calc_dispatch` module-not-found) → 검증은 `hexa run` 결정적 equality. PUBLIC closure 미완 (CE-descent CORE-mounted GREEN 남음)
+- [ ] ENGINE 3B — 3축 CORE-mounted GREEN 후 3B (decode forward + Lane-G util-GREEN 의존)
+- [ ] ENGINE 7B — 3B green 후
+
 ## status (completed-form)
 
 H_911 cross-domain expansion is now a **CLOSED-NEGATIVE** through the multimodal
