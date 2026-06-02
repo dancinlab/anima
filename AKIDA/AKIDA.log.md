@@ -2,6 +2,35 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T08:47Z — UNIVERSE 라이브-실리콘 측정 전원-교란 재검증 🟢 POWER-ROBUST (substrate=AKIDA · spontaneous-emission raster + D1 Φ 안정 PSU 재측정 · 8/8 + inverse-U 그대로 재현 · 문서 tier 변동 0)
+
+직전 PSU 교체(2026-06-02, under-voltage brownout 근본원인 — PI5-AKIDA.json `power_root_cause_2026_06_02`)로 호스트 전원 안정화 후, **PSU 결함이 이미 존재했을 수 있던 더 이른 시점(2026-05-22/05-29, throttled 미로깅)** 에 측정된 **라이브-AKD1000-실리콘** UNIVERSE 측정값들이 전원-교란(power-confounded)됐는지 재검증. SW-confirmed 결과는 전원-무관(out of scope). 안정 전원(throttled=0x0, EXT5V≈5.02V — pwr.log 입증)에서 spontaneous-emission raster 를 **live 칩 재측정** + D1 Φ 재유도.
+
+- [x] **재측정 절차** (single-chip 점유 wrapper `~/clm_kosmos_akida/run_spontaneous_reverify.sh` — restore 패턴): R3 spike-streamer(pid 3775) stop → 칩 lock 해제 → `spontaneous_emission.py` (canonical 생성기, seed=187 n=16 200step) live 발사 → fresh JSON 캡처 → R3 streamer **복원**(pid 4992, 복귀 확인). 칩 = BC.00.000.002, akida 2.19.1, BackendType.Hardware.
+- [x] **pwr.log throttled=0x0 입증** (재측정 08:44–08:48Z 윈도):
+  ```
+  2026-06-02T08:44:33Z throttled=0x0 EXT5V=5.02768000V 64.2'C
+  2026-06-02T08:46:33Z throttled=0x0 EXT5V=5.01294000V 63.7'C
+  2026-06-02T08:48:33Z throttled=0x0 EXT5V=5.02768000V 64.8'C
+  ```
+  wrapper 내부 샘플도 WRAP start/post-stop/generator-fire/exit 전부 throttled=0x0 (rc=0).
+- [x] **#1 Spontaneous-emission raster (THE load-bearing datum)** — 2026-05-22 canonical `SUB_ENGINES/AKIDA/state/spontaneous_emission_result_2026_05_22.json` vs fresh `~/clm_kosmos_akida/out/spontaneous_emission_reverify_2026_06_02.json`: **모든 스파이크 지표 byte-identical** — R0=3200 · R1=0 (silent) · R2=1520 (std=7.99, step_varies=true) · R3=1600 (8/16 partial pool, std=0) · R4=3200 · `checks` 8/8 모두 True · `hw_native_spontaneous_emission=true` · `stochastic_spontaneous_emission=true` · mapped_on_hardware=true. 유일 차이 = onchip_clock_cycles_mean 797.2→790.0 (타이밍 jitter, 발화 disposition 변화 아님). **→ 8/8 zero-input emit 안정 전원에서 그대로 재현 (FLIP 없음).**
+- [x] **#2 D1 edge-of-chaos Φ** — fresh raster 를 `AKIDA/akida_edge_of_chaos_phi.hexa` (frozen Φ-proxy)로 재유도 (g5 verbatim):
+  ```
+  R1 weak-silent  Φ=0.0                  (ORDER floor)
+  R2 zero+noise   Φ=0.2974093093367505   (EDGE peak)
+  R3 tonic        Φ=0.25                 (EDGE)
+  R4 recurrent    Φ=0.0                  (OVER-DRIVEN floor)
+  F-AKIDA-EDGE-1=true (0.297>0) · F-2=true (0.25>0) · F-3=true (0.297≥0) · n_pass=3 · all_pass=true · verdict=GREEN_NUMERICAL_CONFIRM
+  ```
+  → 2026-05-29 원본 Φ={0.000, 0.297, 0.250, 0.000} 와 **정확 일치**. inverse-U(∩) 모양 (edge R2/R3 > order R1 floor ∧ ≥ over-driven R4) 그대로 재현 (FLIP 없음).
+- [x] **#3 H_677 D3** — AKIDA arm Φ=0.297 = fresh Φ(R2) 와 일치 (D1 Φ 와 동일 raster 유도 → D3 triangulation AKIDA 입력 power-robust). EEG/ECA arm 은 silicon 아님(out of scope).
+- [x] **#4 HW path probe (2026-05-29)** — ssh-reachability/argv-probe (chip 측정 0, ssh-mutating 0) = power-confoundable 실리콘 측정 아님 → N/A. R2 QRNG std=7.99 + R3 partial-pool 8/16 둘 다 fresh raster 에 그대로 (포함됨, 별도 측정 아님).
+- [x] **분류 매트릭스**: #1 spontaneous raster = **POWER-ROBUST** (byte-eq 재현) · #2 D1 Φ = **POWER-ROBUST** (Φ 정확 일치) · #3 H_677 D3 AKIDA arm = **POWER-ROBUST** (상속) · #4 HW probe = N/A (실리콘 측정 아님). FLIP 0건. 비결정 substrate 기대치(replication, not byte-eq)를 **초과** — R3 tonic·R0/R1/R4 결정론적 raster 는 byte-identical, R2 stochastic 도 std/rate/event-driven 모두 일치.
+- [x] **해석** — 지속 under-voltage 가 칩 아날로그/스파이킹 dynamics(firing rate/regime)를 바꿨다면 R2 noise rate 나 R3 partial-pool fraction 이 drift 했을 것. 안정 전원에서 정확 재현 = **brownout 이 spontaneous-emission capture 를 교란하지 않았음**. D1 Φ inverse-U·H_677 D3 가 이 raster 에서 파생되므로 전부 power-robust 상속.
+- [x] **문서 tier 변동 0** — 모두 재현(POWER-ROBUST)이므로 H_672 (🟢 SW5/5+HW4/4) · H_677 (🟢 5/5) · H_858 (🟢 3/3) 승강 없음. CANDIDATES.md bench SSOT 에 power-robust 1줄 기록만 추가 (earned re-run verdict 없는 tier 변동 금지, g5). Lane A 음성결과 power-robust 재감사(PR #1675)와 동일 결론 — silicon GREEN 도 power-robust.
+- [x] **streamer 복원 확인** — R3 spike-streamer pid 4992 active (재측정 후 ultradian HW heartbeat 복귀). pi5 = anima 전용, 풀 컴퓨트 전환 없음.
+
 ## 2026-06-02T08:10Z — abs-margin on-chip 결단기 🟢 PASS-PUBLIC-GRADE-POSITIVE (substrate=AKIDA · 안정 PSU 위 완주)
 
 Lane-A pre-registered ABSOLUTE-margin decider (`~/clm_kosmos_akida/abs_margin_chip.py`, live AKD1000 BC.00.000.002, akida 2.19.1, N=8 trials × 32 units). 직전 세션엔 호스트 전원 brownout 으로 oracle-LDA arm 실행 전 mid-fire 사망 → terminal 없음. PSU 교체(2026-06-02) 후 안정 전원에서 **완주**(decider exit rc=0, throttled=0x0 부하검증 통과).
