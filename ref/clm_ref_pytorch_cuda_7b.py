@@ -161,6 +161,10 @@ def main():
     ap.add_argument("--warmup", type=int, default=20)
     ap.add_argument("--eval_every", type=int, default=25)
     ap.add_argument("--no_grad_ckpt", action="store_true")
+    ap.add_argument("--opt", choices=["adamw", "adamw8bit"], default="adamw8bit",
+                    help="adamw8bit (bitsandbytes) keeps optimizer states in 8-bit so a "
+                         "7B model + states fit a single 80GB GPU; adamw = fp32 states "
+                         "(needs >80GB / sharding at 7B).")
     ap.add_argument("--out", default="/root/laneg_ref_7b/clm_ref_pytorch_cuda_7b.pt")
     ap.add_argument("--log", default="/root/laneg_ref_7b/clm_ref_7b_train.log.json")
     args = ap.parse_args()
@@ -183,7 +187,14 @@ def main():
     print(f"[model] ByteGPT d={args.d} L={args.n_layer} H={args.n_head} block={args.block} "
           f"params={n_params} ({n_params/1e9:.3f}B) grad_ckpt={not args.no_grad_ckpt}", flush=True)
 
-    opt = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.95), weight_decay=0.1)
+    if args.opt == "adamw8bit":
+        import bitsandbytes as bnb
+        opt = bnb.optim.AdamW8bit(model.parameters(), lr=args.lr, betas=(0.9, 0.95),
+                                  weight_decay=0.1)
+        print("[opt] bitsandbytes AdamW8bit (8-bit optimizer states — fits 7B on 80GB)", flush=True)
+    else:
+        opt = torch.optim.AdamW(model.parameters(), lr=args.lr, betas=(0.9, 0.95), weight_decay=0.1)
+        print("[opt] torch AdamW (fp32 states)", flush=True)
 
     def lr_at(step):
         if step < args.warmup:
@@ -256,7 +267,7 @@ def main():
         "config": {"vocab": 256, "d": args.d, "n_layer": args.n_layer, "n_head": args.n_head,
                    "block": args.block, "batch": args.batch, "grad_accum": args.grad_accum,
                    "steps": args.steps, "n_params": n_params,
-                   "grad_ckpt": not args.no_grad_ckpt},
+                   "grad_ckpt": not args.no_grad_ckpt, "optimizer": args.opt},
         "descent": {"first_val_ce": first_ce, "last_val_ce": last_ce,
                     "F_CLM_REF_7B_DESCENT": 1 if descent else 0, "verdict": "PASS" if descent else "FAIL"},
         "util": usum,
