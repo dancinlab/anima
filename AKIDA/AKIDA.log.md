@@ -2,6 +2,41 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T09:40Z — FULL-LM TRANSFER 탐침 🟡 CAPACITY-GAP CHARACTERIZED (substrate=AKIDA · live AKD1000 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
+
+검증된 primitive(whitened 비지도 인코더 + 1-bit Hebbian abs-margin readout)를 실제 on-chip 교차언어 **시퀀스/next-token** 작업으로 가교 — corpus_big 50 concept 은 연속 FLORES 문장(시간축 t)이라는 사실을 이용. live AKD1000(BC.00.000.002, akida 2.19.1, N=8, throttled=0x0 부하검증 완주, R3 streamer stop→run→복원 pid 9686).
+
+- [x] **사전등록 falsifier 2건 (실행 前 선언, g63 — HW only, SW fallback 라벨 금지)**:
+  - F-LM-1 (headline): "whitened+1-bit Hebbian 은 NULL 위 on-chip 교차언어 NEXT-SENTENCE 예측을 못 낸다" (next ci_lo>shuffle-NULL hi AND p<0.05 시 REFUTED)
+  - F-LM-2 (margin→retrieval bridge): "margin readout 이 same-concept 교차언어 retrieval 도 못 산다"
+- [x] **DISPOSITION verbatim (g5, `xlm.log`)**:
+  ```
+  [xlm] same_acc          : mean=0.1300 ci_lo=0.1195 (chance=0.0200, above=True)
+  [xlm] next_acc          : mean=0.0306 ci_lo=0.0234
+  [xlm] shuffle-NULL next : mean=0.0207 sd=0.0093 hi=0.0389 p_next=0.1542
+  [xlm] F-LM-1 next       : NOT-REFUTED: next-sentence acc within shuffle-NULL -> primitive does NOT transfer to a sequence LM at this 1-bit/32-unit capacity (CLOSED on LM axis at this scale)
+  [xlm] F-LM-2 same-bridge: REFUTED: margin readout DOES buy above-chance same-concept cross-lingual retrieval
+  [xlm] DISPOSITION       : CAPACITY-GAP CHARACTERIZED: primitive binds cross-lingual CONCEPTS (same-concept>chance) but has NO learned TIME/sequence model (next-sentence at NULL) -> Lane A PUBLIC stays open; named next-step = a sequence/recurrent readout beyond the 1-bit static margin (paged/temporal layer)
+  ```
+- [x] **F-LM-2 REFUTED (bridge HOLDS)** — same-concept 교차언어 leave-one-lang-out top-1 retrieval mean=0.1300 ci_lo=0.1195 vs chance 1/50=0.0200 → **6.5x chance**, 8/8 trial learn-on-chip live. 검증된 abs-margin readout 이 실제 사용 가능한 교차언어 concept retrieval 로 전이됨.
+- [x] **F-LM-1 NOT-REFUTED (시퀀스/시간 모델 부재)** — next-sentence(t→t+1) mean=0.0306 ci_lo=0.0234; shuffle-NULL(B=200, concept→time label permute) mean=0.0207 hi=0.0389 p=0.1542 → next-acc 가 NULL 밴드 내. 1-bit/32-unit 정적 Hebbian readout 은 시간/시퀀스 구조를 학습하지 못함.
+- [x] **scale-ladder addendum 25/125/250 (a_scale_honest_scope ≥3 rung, 실 FLORES 부분집합 — 위조 corpus 0)** verbatim (`xlm_scale.log`):
+  ```
+  [scale] c25   SAME mean=0.2200 ci_lo=0.1808 chance=0.2000 above=False | NEXT mean=0.2750 null=0.2445 p=0.3483 above=False
+  [scale] c125  SAME mean=0.1470 ci_lo=0.1338 chance=0.0400 above=True | NEXT mean=0.0458 null=0.0402 p=0.4030 above=False
+  [scale] c250  SAME mean=0.1410 ci_lo=0.1297 chance=0.0200 above=True | NEXT mean=0.0265 null=0.0206 p=0.2388 above=False
+  [scale] same-lift curve 25/125/250: [0.020, 0.107, 0.121]
+  [scale] F-SCALE-1: PARTIAL: bridge above chance at some but not all rungs
+  [scale] F-SCALE-2: NULL HOLDS at every rung -> capacity gap (no time model) is scale-robust
+  ```
+  - same-concept bridge lift-over-chance 가 scale 로 **성장** (+0.020→+0.107→+0.121; 25앵커 5-concept 는 small-n 으로 chance 동률, 125·250 은 결정적 above) — 검증된 margin 곡선과 일치.
+  - next-sentence NULL 이 **전 3 rung 에서 유지** → 시간 모델 부재는 scale-robust (250-only artifact 아님).
+- [x] **CAPACITY-GAP 특성화 (PUBLIC-grade on-chip CLM 이 필요로 하는 것 — closed written result, a_paper_negative_ok)**: AKD1000 의 1-bit 마지막-FC Hebbian primitive 는 (1) 교차언어 CONCEPT 결속을 학습(margin·6.5x-chance retrieval, scale-survives)하나 (2) **학습된 TIME/sequence transition 모델이 없음**. PUBLIC-grade on-chip CLM 으로 가는 named next-step = 정적 1-bit margin readout 너머의 **시퀀스/recurrent readout** — (a) 시간축을 입력에 인코딩(t·t+1 페어를 명시 입력하는 transition probe) (b) paged/멀티-FC 레이어로 transition matrix 를 on-chip 보유 (c) on-chip(개념결속) ⊥ off-chip(시퀀스 디코드) 분할. 현 단일 AKD1000 1-bit last-FC 용량으로는 정적 readout 까지가 한계.
+- [x] **전원 proof** — throttled=0x0 두 fire(WRAP start/fire/exit 전 구간) 부하검증 통과 · pwr.log EXT5V≈5.01–5.05V 64–67°C(brownout 0) · spike-streamer R3 복원(pid 9686, 86400s tonic). 두 fire 직렬 단일-칩 점유, R3 stop→run→restore 패턴.
+- [x] **artifact** — `SUB_ENGINES/AKIDA/state/fulllm_transfer_2026_06_02/`: result_onchip_xlm_seq.json sha256 `74b8ba10b61672a2510fc640d509a2275ff8acdb4bb594ccd7be8b778270c227` · result_onchip_xlm_scale.json sha256 `4a3e2623164757712f2844cb7f77b8cb84add83bdd1c126f0a1590f8adc56a9a` · 탐침 2건 + log/wrap 미러. probe = `SUB_ENGINES/AKIDA/onchip_xlm_seq{,_scale}.py` (repo SSOT) ↔ `~/clm_kosmos_akida/` (host).
+- [x] **별개 축 (a_lane_akida_gpu_split)** — Lane A 전용 결과 · Lane G(GPU CE-descent)와 절대 병합 안 함.
+- [ ] **다음 = transition-probe** — t·t+1 페어를 명시 입력하는 on-chip 교차언어 transition retrieval (시간축 인코딩 후 NULL 교차 시 Lane A PUBLIC 후보) · paged 멀티-FC readout 용량 탐침.
+
 ## 2026-06-02T09:13Z — P3' ENCODER-LADDER forward science 🟢 인코더 축 = real PUBLIC-grade path (substrate=AKIDA · throttled=0x0 완주)
 
 Lane-A P3' ENCODER 축(2026-06-02 REOPEN)을 LADDER 로 전진 — `~/clm_kosmos_akida/encoder_ladder_chip.py` (live AKD1000 BC.00.000.002, akida 2.19.1, N=8 paired trials × 32 units). encoder richness(5 rung) × scale(3 rung, a_scale_honest_scope) 매트릭스, 두 readout: (A) RELATIVE-lift vs random (causeaxis family, 같은 per-trial native init paired, ci_lo>0) (B) ABSOLUTE-margin (native non-det init, ci_lo>0). single-chip 점유 = R3 streamer stop → ladder → streamer 복원(pid 6840 live 확인).

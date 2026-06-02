@@ -8,7 +8,7 @@
 세 레인은 substrate별로 분리 추적 (a_lane_akida_gpu_split + a_train_flame_forge). Lane G(forge)가 프로덕션 primary; Lane G-ref(PyTorch)는 baseline 참조(forge PUBLIC artifact 아님).
 
 **Lane A** (substrate=AKIDA · on-chip 1-bit Hebbian):
-- [ ] Lane A PUBLIC — PUBLIC-grade on-chip cross-lingual CLM (AKD1000). 진척: 인코더 축 open 🟢 (whitened 비지도+≥250앵커 → abs-margin ci_lo>0, scale-survives) · full-LM 전환 미검증
+- [ ] Lane A PUBLIC — PUBLIC-grade on-chip cross-lingual CLM (AKD1000). 진척: ① 인코더 축 open 🟢 (whitened 비지도+≥250앵커 → abs-margin ci_lo>0, scale-survives) · ② margin→retrieval bridge 🟢 (same-concept 교차언어 top-1 retrieval 6.5x chance, lift +0.020→+0.107→+0.121 scale-성장) · ③ full-LM(시퀀스/next-token) 🟡 CAPACITY-GAP CHARACTERIZED — next-sentence(t→t+1) shuffle-NULL 내(p=0.15) 전 3 rung, 1-bit/32-unit last-FC 은 CONCEPT 결속만 학습·학습된 TIME 모델 부재. named next-step = 정적 margin 너머 시퀀스/recurrent readout (t·t+1 transition 인코딩 / paged 멀티-FC / on-chip⊥off-chip 분할). 작동 on-chip CLM 신호 미달성 → PUBLIC open
 - [ ] Lane A 3B — AKIDA 3B (chip-fit/페이징 ladder ≥3 rung, a_scale_honest_scope)
 - [ ] Lane A 7B — AKIDA 7B (3B green 후)
 

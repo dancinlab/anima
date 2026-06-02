@@ -2,6 +2,17 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T09:40Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — FULL-LM TRANSFER 탐침 🟡 CAPACITY-GAP CHARACTERIZED
+
+검증된 primitive(whitened 비지도 인코더 + 1-bit Hebbian abs-margin readout)를 실제 on-chip 교차언어 시퀀스/next-token 작업으로 가교. corpus_big 50 concept = 연속 FLORES 문장(시간축 t) × 5언어. live AKD1000(BC.00.000.002, akida 2.19.1, N=8, throttled=0x0 완주).
+
+- [x] **사전등록 falsifier** — F-LM-1: whitened+1-bit Hebbian 은 NULL 위 교차언어 NEXT-SENTENCE 예측 불가 (shuffle-NULL B=200, ci_lo>NULL hi AND p<0.05 시 REFUTED) · F-LM-2: margin readout 은 same-concept 교차언어 retrieval 도 불가.
+- [x] **F-LM-2 REFUTED (bridge HOLDS)** — same-concept 교차언어 leave-one-lang-out top-1 retrieval mean=0.1300 ci_lo=0.1195 vs chance 0.0200 → **6.5x chance**. abs-margin readout 이 실사용 가능한 교차언어 concept retrieval 로 전이.
+- [x] **F-LM-1 NOT-REFUTED (시퀀스 모델 부재)** — next-sentence(t→t+1) mean=0.0306 ci_lo=0.0234; shuffle-NULL mean=0.0207 hi=0.0389 p=0.1542 → NULL 내. 1-bit/32-unit 정적 readout 은 시간/시퀀스 구조 미학습.
+- [x] **scale-ladder 25/125/250 (a_scale_honest_scope ≥3 rung, 실 FLORES)** — same-bridge lift +0.020→+0.107→+0.121 성장(125·250 결정적 above), next-sentence NULL 전 rung 유지 → 시간 모델 부재 scale-robust(250-only artifact 아님).
+- [x] **CAPACITY-GAP (closed written result, a_paper_negative_ok)** — AKD1000 1-bit last-FC Hebbian 은 교차언어 CONCEPT 결속은 학습(scale-survives)하나 학습된 TIME/sequence transition 모델 없음. PUBLIC-grade on-chip CLM named next-step = 정적 margin 너머 시퀀스/recurrent readout (t·t+1 transition 인코딩 / paged 멀티-FC / on-chip⊥off-chip 분할).
+- [x] **전원 proof** — throttled=0x0 두 fire 부하검증 · pwr.log EXT5V≈5.01–5.05V 64–67°C · R3 streamer 복원 pid 9686. artifact `SUB_ENGINES/AKIDA/state/fulllm_transfer_2026_06_02/` (xlm sha 74b8ba10… · scale sha 4a3e2623…). 상세 = AKIDA.log 동일 타임스탬프.
+
 ## 2026-06-02T18:30Z — Lane-G (substrate=GPU · pod vast 39082940 · a_lane_akida_gpu_split — NEVER merged with Lane A / AKIDA) — lever-2 transpose-aware GEMM util-verify fire CLOSED: DESCENT 🟢 GREEN / util 🔴 RED (PEAK 19% MEAN 0.4999% n=147863), lever-2 byte-eq PRESERVED, lever-3 (batched bt/atb) = the real unblock
 
 substrate=GPU · a_lane_akida_gpu_split (NEVER merged with Lane A / AKIDA). vast pod **39082940**. Trainer `stdlib/flame/clm_prod.hexa` on the c4 5-lang corpus (402270 B, V=256, 32 windows T=512). Built from hexa-lang branch `lane-g/rfc046-lever2-gemmfeed` `403735b29` (lever-2 transpose-aware GEMM bt/atb: host Wt/dW repack → device via cuBLAS CUBLAS_OP_T + `_hx_cuda_farr_matmul_bt_gpu`/`_atb_gpu`).
