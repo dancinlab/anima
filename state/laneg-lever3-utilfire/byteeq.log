@@ -1,0 +1,42 @@
+############ F-RFC046-GEMMFEED-EQ ############
+clm_gemmfeed_eq — LEVER (2): transpose-aware GEMM byte-eq oracle
+  BT  rc=0 max|Δ|=0.0
+  ATB rc=0 max|Δ|=0.0
+F-RFC046-GEMMFEED-EQ = 1
+PASS — transpose-aware GEMM (bt/atb) == host-transposed forge byte-eq (max|Δ|=0)
+############ F-RFC046-BATCHED-GEMMFEED-EQ ############
+clm_batched_gemmfeed_eq — LEVER (3): batched transpose-aware GEMM-feed byte-eq oracle
+  BT-BATCHED  rc=0 max|Δ|=0.0
+  ATB-BATCHED rc=0 max|Δ|=0.0
+  BT-BATCHED(per-problem) rc=0 max|Δ|=0.0
+F-RFC046-BATCHED-GEMMFEED-EQ = 1
+PASS — batched transpose-aware GEMM-feed (bt/atb, strideA=0 broadcast + per-problem) == host repack reference byte-eq (max|Δ|=0)
+############ F-CLM-DEVFEED-EQ (clm_conv_devfeed) ############
+clm_conv_devfeed — LEVER (a): device im2col/col2im + device AdamW (CPU oracle)
+  im2col dil=1 max|Δ|=0.0
+  im2col dil=2 max|Δ|=0.0
+F-CLM-DEVFEED-IM2COL-EQ = 1
+PASS — device im2col gather == host xcol byte-eq, dil∈{1,2}
+  fwd dil=1 max|Δ| devfeed-vs-forge = 0.0
+  fwd dil=2 max|Δ| devfeed-vs-forge = 0.0
+F-CLM-DEVFEED-FWD-EQ = 1
+PASS — devfeed fwd == forge conv1d byte-eq, dil∈{1,2}
+  bwd dil=1 max|Δ| dW=0.0 dX=5.55112e-17 db=0.0
+  bwd dil=2 max|Δ| dW=0.0 dX=5.55112e-17 db=0.0
+F-CLM-DEVFEED-BWD-EQ = 1
+PASS — devfeed bwd (dW/dX/db) == forge conv1d_bwd byte-eq, dil∈{1,2}
+  adam 5-step max|Δ| W=0.0
+F-CLM-DEVFEED-ADAM-EQ = 1
+PASS — AdamW oracle (opt_adamw_step) deterministic 5-step trajectory
+ALL-PASS — LEVER (a) device im2col/col2im + device AdamW oracle byte-eq to host feed
+############ F-CLM-CONV2-BATCHED-EQ (clm_conv_batched) ############
+clm_conv_batched — LEVER (b): fused 2-expert conv GEMMs (strided-batched)
+  fwd max|Δ| y0=0.0 y1=0.0
+F-CLM-CONV2-BATCHED-FWD-EQ = 1
+PASS — batched 2-expert fwd == 2× conv1d_via_forge byte-eq
+  bwd e0 max|Δ| dW=0.0 dX=0.0 db=0.0
+  bwd e1 max|Δ| dW=0.0 dX=0.0 db=0.0
+F-CLM-CONV2-BATCHED-BWD-EQ = 1
+PASS — batched 2-expert bwd (dW/dX/db) == 2× conv1d_bwd_via_forge byte-eq
+ALL-PASS — LEVER (b) fused 2-expert conv (fwd+bwd) byte-eq to un-batched forge
+############ BYTEEQ_DONE ############

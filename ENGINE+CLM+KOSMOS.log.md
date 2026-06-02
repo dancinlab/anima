@@ -538,3 +538,32 @@ live AKD1000 BC.00.000.002 · akida 2.19.1 · N=8 trials × 256-unit AkidaUnsupe
 **milestone delta:** Lane A PUBLIC 진척 = 인코더 🟢 + transition retrieval 🟢 + **full-LM GENERATION 🟢**. PUBLIC checkbox 는 **미flip 유지** (toy→프로덕션 전환 + multi-step autoregressive roll-out 미완 — full closure 아님, a_paper_only_at_closure).
 
 **NEXT (held):** 다단계 autoregressive roll-out(t→t+1→t+2 chained on-chip generation) · 또는 paged 다중-FC generator 로 스케일 ladder ≥3 rung(a_scale_honest_scope). PR lane-a/onchip-generation.
+
+## 2026-06-02 — Lane G (substrate=GPU · forge flame) lever-3 util-verify fire CLOSED 🔴 RED
+
+substrate = **GPU (Lane G, forge/flame)** — AKIDA(Lane A) 와 분리 기록 (a_lane_akida_gpu_split).
+FORGE-UTILGREEN lever 체인 hexa-lang 측 상세 = `hexa-lang/domains/FORGE-UTILGREEN.{md,log.md}` (PR #2542).
+
+lever-3 batched GEMM-feed 의 **util≥20% pod fire** 완주 (HELD 해제), 깨끗한 single-driver
+H100 sm_90 (adopted pod 38996679, 8×H100 80GB compute_cap 9.0, 충돌0, rent 0). NEVER silent
+CPU-fallback — nvidia-smi 실측 device-resident(6.3GB·119W) 확인 (a_train_flame_forge).
+
+- **3-gate PASS** (no CPU fire): ① CUDA-link ENGAGED — clm_prod 바이너리에
+  `_hx_cuda_farr_matmul_bt_gpu`/`_atb_gpu` + `cublasDgemmStridedBatched` 링크. ② `nvcc -x cu
+  -arch=sm_90` EXIT 0. ③ `ldd clm_prod` → libcublas/libcudart/libcuda/libcublasLt.
+- **pod byte-eq (g5 verbatim)**: 전 오라클 max|Δ|=0.0 — F-RFC046-{GEMMFEED,BATCHED-GEMMFEED}-EQ=1 ·
+  F-CLM-DEVFEED-{IM2COL,FWD,BWD,ADAM}-EQ=1 · F-CLM-CONV2-BATCHED-{FWD,BWD}-EQ=1.
+- **util fire** (CLM_PROD_DEVFEED=1 CLM_PROD_BATCHED=1 d=1536 T=512 E=4 epochs=3 nwin=8, GPU0):
+  - **DESCENT 🟢 GREEN**: CE epoch-1 4.2974 → epoch-3 3.79897, F-CLM-PROD-DESCENT=1, g5 verbatim.
+  - **util 🔴 RED**: `n=349 PEAK=21.0% MEAN=0.5616% busy_n=339 busy_mean=0.5782% pct≥20=2
+    mem_max=6331MiB` (GPU0, g5 verbatim).
+- **발견**: before(lever-2)=0.4999% → after(lever-3)=0.5616% flat. lever-3 가 batched 65% host
+  repack 을 device化(byte-eq GREEN 으로 증명)했어도 MEAN util 은 못 올림 ⇒ root residual = GEMM
+  repack 아님, **인터프리트 per-step 드라이버 루프(F-RFC046)**. ⇒ lever-4(fused on-device step
+  driver, `forge_dispatch_train_step` + `forge_dispatch_adamw_group`)가 confirmed next unblock.
+- **closure**: util RED → closure-FAIL → **.clm PRIVATE** (a_hf_autonomous, NOT PUBLIC). Lane G PUBLIC
+  / 3B / 7B = still gated (util-GREEN NOT-before guard). 아티팩트 회수 (recover-before-teardown):
+  `state/laneg-lever3-utilfire/` — laneg_l3_d1536_t512.clm (14381125B · sha256
+  `34982a31022264f8104d9d877a4c115f3ce9e69d7ab85830a79fe9a3b20a6f7a` byte-verified) +
+  utilfire_run.out + util_samples.csv(349) + byteeq.log. pod 38996679 = adopted candidate, idle 유지
+  (teardown 의무 없음 · 보호 pod 38704336/39106252/39115197 무접촉).

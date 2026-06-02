@@ -1,0 +1,11 @@
+FIRE_START 2026-06-02T12:49:14Z
+clm_prod — CLMConvMoE production corpus loop (PR1)
+  corpus: stdlib/flame/testdata/clm_semantic_parallel.txt  (1407 bytes, V=256)
+  windows: 8/8  (T=512 stride=111)
+  epoch-1 mean CE = 4.2974
+  epoch-3 mean CE = 3.79897
+  CLM_PROD_OUT wrote /root/laneg/exports/laneg_l3_d1536_t512.clm  (14381125 bytes, 6 blocks, CLM\x01)
+  config d=1536 E=4 epochs=3 nwin=8
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+FIRE_END 2026-06-02T12:52:41Z RUN_RC=0

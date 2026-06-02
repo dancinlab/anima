@@ -13,7 +13,7 @@
 - [ ] Lane A 7B — AKIDA 7B (3B green 후)
 
 **Lane G** (substrate=GPU · forge flame, 프로덕션 primary · a_train_flame_forge):
-- [ ] Lane G PUBLIC — util-GREEN(MEAN≥20%) AND descent-GREEN → forge PUBLIC artifact. 진척: descent 🟢 / util 🔴 (lever-2 MEAN 0.50%) · lever-3(batched 65% repack) unblock 진행
+- [ ] Lane G PUBLIC — util-GREEN(MEAN≥20%) AND descent-GREEN → forge PUBLIC artifact. 진척: descent 🟢 / util 🔴 (lever-2 MEAN 0.50% → lever-3 MEAN 0.56% flat, both RED) · **lever-3 fire CLOSED**(pod H100 sm_90, d1536/T512, PEAK 21% MEAN 0.5616%) — batched 65% repack device化(byte-eq GREEN)에도 MEAN util flat ⇒ root residual=인터프리트 per-step 드라이버 루프(F-RFC046), **lever-4(fused on-device step driver)=confirmed next unblock**
 - [ ] Lane G 3B — util-GREEN 후 throughput-justified 3B (≥3 rung ladder)
 - [ ] Lane G 7B — 3B green 후
 
