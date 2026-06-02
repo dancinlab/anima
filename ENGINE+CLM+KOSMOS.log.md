@@ -2,6 +2,21 @@
 
 Append-only history sister of `ENGINE+CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T15:55Z — Lane-G (substrate=GPU forge · clean single-driver H100 sm_90 pod vast 39139563 · a_lane_akida_gpu_split — NEVER merged with Lane A / AKIDA / Lane-G-ref) — F-RFC046 **lever-4** fused on-device per-step driver util-verify fire CLOSED: DESCENT 🟢 GREEN / util 🔴 RED (PEAK 41% · MEAN 0.6630% · n=9153), byte-eq PRESERVED max|Δ|=0.0, host-feed residual = lever-5 (fused step 내부 ~10 crossing → one device-resident dispatch)
+
+substrate=GPU (a_lane_akida_gpu_split, Lane A/AKIDA 무병합). fused per-step driver
+(`forge_dispatch_train_step` + `forge_dispatch_adamw_group`) self-host 빌드 후 clean
+single-driver H100 sm_90 pod 39139563 (`HEXA_CUDA_LINK=1`) 에서 util-verify fire 완주.
+
+- [x] **3-GATE PASS** (g5 verbatim) — GATE1 CUDA-link ENGAGED=1 · GATE2 nvcc -x cu EXIT 0 obj 664048B RELINK_RC=0 · GATE3 clm_prod ldd 4 cuda libs (cublas/cudart/libcuda/cublasLt)
+- [x] **BYTEEQ-PASS** (g5 verbatim, max|Δ|=0.0) — `F-CLM-DEVFEED-{FWD,BWD}-EQ`=1 · `F-CLM-CONV2-BATCHED-{FWD,BWD}-EQ`=1 · ON-DEVICE HEXA_CUDA `F-RFC046-FUSED-STEP-EQ`=1 + `F-RFC046-ADAMW-GROUP-EQ`=1 (grouped AdamW == per-tensor serial opt_adamw_step)
+- [x] **DESCENT 🟢 GREEN** (g5 verbatim) — epoch-1 CE 4.05535 → epoch-3 CE 2.99508, F-CLM-PROD-DESCENT=1, "PASS — real-corpus mean CE descends under int4 envelope"
+- [ ] **util 🔴 RED** (g5 verbatim) — `FIRE_RC=0  UTIL n=9153 PEAK=41% MEAN=0.6630% busy_ge20=80 pct_ge20=0.87%` — MEAN 0.6630% ≪ 20% gate. lever 라인: lever-1 0.811%(PEAK6%) → lever-2 0.4999%(PEAK19%) → lever-3 0.4879%(PEAK35%) → **lever-4 0.6630%(PEAK41%)** — PEAK 단조상승·MEAN flat sub-1%. forge PROVABLY on GPU (6.3GB device mem).
+- **CLOSED-NEGATIVE**: link·kernel·emit·scale·host GEMM-repack feed·**fused per-step driver** 전부 ruled-out. fused step 이 host↔device crossing 을 ~30→~2 로 줄였으나 util MEAN flat ⇒ 잔여 = fused step **안/사이 ~10 crossings/step** (token gather host→device · CE scalar glue · 매 step kernel-launch orchestration). **NAMED next = lever-5** (이 잔여 crossing 을 one device-resident train-step dispatch 로 추가 fuse).
+- **recover-before-teardown** (a_fire_recover_complete) — ckpt clm_lever4_d1536_t512.clm(14379581B, 6 blocks CLM\x01) + train_lever4.log + lever4_v2.log + util_samples_lever4.csv → host `.verdicts/lane-g-lever4/`. sha256 `11ef9300131b1a266dc05e2c5bb9c07d60b7cddf39042704828d71108f88e167` HOST-VERIFIED MATCH. pod 39139563 RUNNING 유지(sweep, teardown 안 함). 보호 pod(38704336/39106252) + orphan 39131850 무접촉. 재-rent 0. HF: closure-FAIL → PRIVATE (a_hf_autonomous; util-RED = WIP intermediate, PUBLIC 아님).
+- **PUBLIC checkbox 미flip** — util-GREEN 미달 = full closure 아님 (a_paper_only_at_closure). hexa-lang 도메인 FORGE-UTILGREEN lever-4 row flip + log 동기 (PR dancinlab/hexa-lang#2546).
+- **3B/7B chain LOCKED** — Lane G util RED 이므로 3B/7B fire 자격 미충족 (a_scale_honest_scope NOT-before-util-GREEN guard: host-feed-bound 트레이너로 3B 발사 시 더 큰 d 가 device mem 만 점유, SM 더 idle). util-GREEN(lever-5) 착지 후에만 UNLOCK.
+
 ## 2026-06-02T12:52Z — Lane-G (substrate=GPU forge · pod vast 38996679 H100 sm_90 · a_lane_akida_gpu_split — NEVER merged with Lane A / AKIDA / Lane-G-ref) — F-RFC046 **lever-3** batched-GEMM-feed util-verify fire CLOSED: DESCENT 🟢 GREEN / util 🔴 RED (PEAK 21% transient · MEAN 0.5616% · n=349), byte-eq PRESERVED max|Δ|=0.0, host-feed residual = lever-4 (fused per-step driver)
 
 hexa-lang FORGE-UTILGREEN 의 **HELD lever-3 util-verify fire** (별도 free pod 가 발사) 를 발사·하베스트·정직 종결. substrate = **GPU forge (hexa-native flame+forge, NOT PyTorch/ATen — a_train_flame_forge)**; Lane-G-ref PyTorch-CUDA 참조 rung(99% util) 과 **별개 레인** (a_lane_akida_gpu_split). prior agent 가 b0i48xdqy copy 를 띄운 채 SSH-key 가 끊겨 pod 가 reachable-but-publickey-denied 상태로 남았으나, pod-id alias(`Host 38996679`) 로 재접속 성공 → 12:52 완주 산출물(.clm + util CSV + run.out + byteeq) 전부 disk 에 intact 확인 → **fire ALREADY RAN, HARVEST 경로**.
