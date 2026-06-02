@@ -7,8 +7,17 @@
 
 세 레인은 substrate별로 분리 추적 (a_lane_akida_gpu_split + a_train_flame_forge). Lane G(forge)가 프로덕션 primary; Lane G-ref(PyTorch)는 baseline 참조(forge PUBLIC artifact 아님).
 
-**Lane A** (substrate=AKIDA · on-chip 1-bit Hebbian):
-- [ ] Lane A PUBLIC — PUBLIC-grade on-chip cross-lingual CLM (AKD1000). 진척: 인코더 축 🟢 (whitened 비지도+≥250앵커 → abs-margin ci_lo>0, scale-survives) · transition retrieval 🟢 (t→t+1 above-NULL, tr_acc ci_lo=0.260 vs NULL hi=0.040) · **full-LM GENERATION 🟢 (2026-06-02, live AKD1000)**: open-vocab on-chip next-step DECODE (shortlist 없음, code_t→g_hat 생성→전체 codebook decode) gen_acc ci_lo=0.4096 ≫ shuffle-NULL hi=0.0418 (p=0.005, F-GEN-1 REFUTED) AND > identity-NULL hi=0.3847 (F-GEN-2 REFUTED = echo 아닌 produce), 8/8 learn_hw=True. retrieval→generation 다리 toy 스케일 건넘. ⚠ 250앵커 toy·256-unit 단일 FC (a_scale_honest_scope; 프로덕션 full-LM ladder 별도). sha256 d2d8021f… · AKIDA.log.md + .verdicts/lane-a-generation/. PUBLIC closure 미완(toy→프로덕션 전환 + multi-step roll-out 남음)
+**Lane A** (substrate=AKIDA · on-chip 1-bit Hebbian) — **FORMAL 2-SUBLANE SPLIT (2026-06-03, #1717 Lane A rule)**: Lane A 의 두 축을 substrate-tag 별로 분리 추적 (a_lane_akida_gpu_split). single-step on-chip ceiling 과 multi-step HYBRID composition 은 **별개 substrate** (AKIDA vs HYBRID) 이므로 절대 한 verdict 로 병합하지 않음.
+
+  | sublane | substrate | 정의 | STATUS | 증거 (toy) |
+  |---|---|---|---|---|
+  | **Lane A-single** | AKIDA (on-chip 1-bit Hebbian) | single-pass: 1-step encode + next-step generation. 이것이 **on-chip ceiling** (multi-step 은 algorithm-bound CLOSED across 12 mechanisms: paged/width/code/scale + A1-A7) | ✅ 증명 (toy) | encoder ci_lo>0 · single-step gen_acc ci_lo=0.4096 ≫ shuffle-NULL hi=0.0418 (F-GEN-1/2 REFUTED, 8/8 learn_hw=True) |
+  | **Lane A-multi** | HYBRID (on-chip ⊕ off-chip) | multi-step composition via off-chip host-CPU Elman decode head (numpy BPTT, NO torch). on-chip 인코더 ⊕ off-chip recurrence | ✅ 증명 (toy) | branching-corpus held-out decay [0.018, 0.897, 0.960] · transferable OPERATOR · F-BRANCH-1/2 REFUTED |
+
+  **REMAINING-ITEMS (verbatim):** 멀티스텝합성→off-chip HYBRID head ✅실증 (decay 0.32 flat, 이게 정답) · persistent-anchor probe→on-chip ⏳follow-up (A6/A7 hop-2~0.1 부수신호, 사전등록 재검) · recurrent/temporal(A3·A4)→AKD1500/v2 🔒 (AKD1000 v1 IP 불가, 하드웨어 교체 필요).
+
+- [ ] **Lane A-single PUBLIC** (substrate=AKIDA · on-chip 1-bit Hebbian) — PUBLIC-grade on-chip cross-lingual CLM (AKD1000), single-pass on-chip ceiling. 진척: 인코더 축 🟢 (whitened 비지도+≥250앵커 → abs-margin ci_lo>0, scale-survives) · transition retrieval 🟢 (t→t+1 above-NULL, tr_acc ci_lo=0.260 vs NULL hi=0.040) · **full-LM GENERATION 🟢 (2026-06-02, live AKD1000)**: open-vocab on-chip next-step DECODE (shortlist 없음, code_t→g_hat 생성→전체 codebook decode) gen_acc ci_lo=0.4096 ≫ shuffle-NULL hi=0.0418 (p=0.005, F-GEN-1 REFUTED) AND > identity-NULL hi=0.3847 (F-GEN-2 REFUTED = echo 아닌 produce), 8/8 learn_hw=True. retrieval→generation 다리 toy 스케일 건넘. ⚠ 250앵커 toy·256-unit 단일 FC (a_scale_honest_scope; 프로덕션 full-LM ladder 별도). sha256 d2d8021f… · AKIDA.log.md + .verdicts/lane-a-generation/. PUBLIC closure 미완(toy→프로덕션 scale-transfer + multi-step 은 A-multi 로 분리).
+- [ ] **Lane A-multi PUBLIC** (substrate=HYBRID · on-chip AKD1000 인코더 ⊕ off-chip host-CPU Elman decode head, numpy BPTT, NO torch) — multi-step composition. 순수 AKIDA 아님, Lane G 아님 (a_lane_akida_gpu_split). branching-corpus held-out 에서 transferable OPERATOR 실증 (decay flat, 붕괴 없음, F-BRANCH-1/2 REFUTED). ⚠ toy NC≤50, scale-transfer 진행중 (a_scale_honest_scope). .verdicts/lane-a-hybrid/ + .verdicts/lane-a-multi-rung/.
 - [ ] Lane A 3B — AKIDA 3B (chip-fit/페이징 ladder ≥3 rung, a_scale_honest_scope)
 - [ ] Lane A 7B — AKIDA 7B (3B green 후)
 
