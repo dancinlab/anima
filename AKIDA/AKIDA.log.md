@@ -2,6 +2,23 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T07:40:00Z — Lane A (substrate=AKIDA · pi5-akida · a_lane_akida_gpu_split — NEVER merged with any GPU/Lane-G number) — host FLAPPED up→fired→dark 다시; decider died mid-`whitened`; harvester false-RUNNING 버그 FIX + chip-lock-aware 재무장
+
+substrate=AKIDA. NO on-chip 결과 fabricated. Lane-G(GPU) 미접촉. pi5-akida = sacred host config(PI5-AKIDA.json) — consulted, NOT modified; os_default daemon 무접촉; 공용 pool 전환 안 함.
+
+- [x] **probe verbatim — host 일시 ALIVE 였음(드뭄)**: 세션 시작 시 `ping 192.168.50.155` → `2 packets transmitted, 2 packets received, 0.0% packet loss` · `ssh ubuntu@192.168.50.155 'echo ALIVE; uname -a'` → `ALIVE` / `Linux ubuntu 6.8.0-1007-raspi ... aarch64`. 직전 다수 세션의 BLOCKED-OUTAGE(100% loss) 와 달리 이번엔 잠깐 LAN 복귀.
+- [x] **이전 harvester(`/tmp/laneA_harvest.sh` v1)가 false-RUNNING 버그로 멈춰 있었음 발견**: v1 의 `ssh $HOST 'pgrep -f abs_margin_chip.py'` 가 자기 자신의 원격 명령 문자열을 매칭 → 영원히 `proc=RUNNING` 오보 → 재발사 안 함. 로그에 try 401 까지 `fire still running` 으로 거짓 기록. **실제로는 decider 죽어 있었음.**
+- [x] **on-chip 직접 검증 — decider DEAD, 결과 미완**: `pgrep -fa abs_margin_chip.py` → 실 프로세스 없음(NO_DECIDER_PROC) · `abs_margin.log` 24줄에 FROZEN(mtime 04:11:35, host 가 04:11 에 mid-fire 로 떨어졌을 때 nohup 동사) · `out/result_abs_margin.json` = `"scales": {}` (시작 시 commit-early 만, terminal `disposition` 없음).
+- [x] **실측 부분 결과(verbatim, 비-종결)** — host 가 04:11 에 떨어지기 전 chip(`BC.00.000.002`, akida 2.19.1, learn=True)이 남긴 부분 trace:
+  `[abs] random_int4  ABSOLUTE mean=-1.5070 sd=0.2507 ci95=[-1.6807,-1.3333] n_pos=0/8 CROSSES_ZERO=False`
+  `[abs] svd_struct   ABSOLUTE mean=-0.5560 sd=0.1253 ci95=[-0.6428,-0.4692] n_pos=0/8 CROSSES_ZERO=False`
+  `[abs] whitened     trial 0/1/2 = -0.7120/-0.8800/-0.9840` (8 중 3 까지 · 미완)
+  → **control + 2 구조 인코더 ABSOLUTE ci_hi < 0 (zero 미교차)**. 단, 결정 arm = **oracle-LDA 미실행** → PASS vs CLOSED-NEGATIVE 판정 불가. **AKIDA verdict 청구 안 함**(a_scale_honest_scope · g5).
+- [x] **chip 단일점유 확인** — `akida.devices()` → `[] ERROR (file lock): 11`: R3 tonic streamer(`spike_streamer.py --port 9512 --duration 86400 --regime R3`, PID 1089)가 akida device lock 보유. systemd 서비스는 host reboot 으로 유실(`inactive`/`not-found`)이나 프로세스는 복귀. decider 는 chip map 위해 exclusive 필요.
+- [x] **재발사 시도 → host 다시 DARK** — streamer-stop→decider→streamer-restore wrapper(`run_decider_with_streamer_restore.sh`) host 에 기록(WROTE_WRAPPER) 후 nohup 발사했으나, 직후 host 가 **다시 off-network**: `ssh: No route to host` · `ping` 100% packet loss · 30s/60s 백오프 재시도 모두 timeout(3 probe → DARK 확정). pi5-akida 는 **간헐적 flapping**(up→down) 상태.
+- [x] **harvester v2 재무장(durable, a_cpu_local_no_waiter) — false-RUNNING FIX + chip-lock-aware**: `/tmp/laneA_harvest.sh` 재작성 — (1) `pgrep -fa abs_margin_chip.py` 출력에서 자기 ssh/pgrep shell 제외 후 `bin/python` 매칭으로 RUNNING 진위 판정(거짓 RUNNING 제거) · (2) terminal `disposition` 있으면 harvest · (3) 없고 미실행이면 streamer-restore wrapper 로 재발사(chip lock 해제→decider→R3 tonic 복원) · (4) terminal 까지 폴링. nohup+disown 분리 기동 확인(PID alive, STAT=SN).
+- [ ] **on host return (자동, harvester 발사)** — pi5-akida 가 LAN 복귀하면 harvester 가 자동: streamer stop → `~/.venv/anima-akida/bin/python -u abs_margin_chip.py`(4 인코더 × 2 스케일, ~16 chip-map cycle) → R3 streamer 복원 → `abs_margin.log` + `result_abs_margin.json` terminal `disposition` harvest. **oracle-LDA arm 이 PASS(PUBLIC, some-encoder ci_lo>0) vs CLOSED-NEGATIVE(전부 ci_lo≤0, 25/250-anchor scoped)** 결정. (pre-reg: `.verdicts/lane-a-absmargin/PREREGISTER.md`)
+
 ## 2026-05-30T12:00:00Z — LAUNCHPAD COFFESHOP-on-AKIDA 라이브 폐루프 (9513 control port 첫 실응용)
 
 - [x] `spike_streamer.py` 의 9513 control port(`set_threshold`) 가 COFFESHOP emit/silence 폐루프의 코어로 첫 실응용 — SW motivation_score → on-chip threshold 변조 → 9512 spike → emit 판정.
