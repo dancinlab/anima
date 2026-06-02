@@ -1,0 +1,6 @@
+@D la_microexp_a5_vsa_binding := "A5 VSA hypervector binding (1-bit XOR-bind/bundle/permute) on-chip vs 1-hop wall" :: discovery [d=2026-06-03 active]
+  seed = "substrate=AKIDA (live AKD1000 BC.00.000.002 IpVersion.v1 akida 2.19.1 pi5-akida; temp ~73C). 1-bit VSA algebra native to chip code domain: x=bind(permute(g_bin,hop), bundle_history); permute=roll(P*r) role-indexed, bundle=OR-superpose, bind=XOR-roll; on-chip trained 1-bit FC = cleanup memory; vs no-VSA stateless arm same chip/trial; K=3 rollout 8 trials all learn=True"
+  falsifier = "F-A5-1: hop-2 AND hop-3 vsa acc ci_lo > shuffle-NULL hi AND p<=0.01 AND mean>0.038. F-A5-2: vsa acc > no-vsa acc at BOTH hop-2/3"
+  claim = "CLOSED-NEGATIVE (F-A5-1 NOT-REFUTED, F-A5-2 NOT-REFUTED): decay VSA [0.4319,0.0218,0.0101] vs NOVSA [0.4319,0.0266,0.0144]. hop-1 p=0.0050 clears; hop-2 vsa=0.0218 ci_lo=0.0149 shufNULL_hi=0.0354 p=0.2886 IN-NULL; hop-3 p=0.8060. vsa delta NEGATIVE (hop-2 -0.0048, hop-3 -0.0043). 1-bit hypervector binding algebra + chip cleanup gives NO compositional multi-hop at 256-unit. EMERGENCE NULL. a_paper_negative_ok"
+  target = "closed-negative (terminal); verdict .verdicts/lane-a-microexp-vsa-binding/F-VSA-BINDING.txt"
+  scope = "toy 250-anchor / 50-concept / 256-unit (a_scale_honest_scope); Lane A on-chip NEVER merged with Lane G (a_lane_akida_gpu_split)"

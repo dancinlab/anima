@@ -1,0 +1,25 @@
+[A5] corpus NC=50 transitions=245 roll_starts=235 chance=0.0204
+[A5] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1
+[A5] trial 0: vsa=['0.4298', '0.0213', '0.0085'] novsa=['0.4298', '0.0170', '0.0128'] learn=True
+[A5] trial 1: vsa=['0.4043', '0.0170', '0.0043'] novsa=['0.4043', '0.0170', '0.0170'] learn=True
+[A5] trial 2: vsa=['0.4766', '0.0128', '0.0043'] novsa=['0.4766', '0.0213', '0.0213'] learn=True
+[A5] trial 3: vsa=['0.4255', '0.0213', '0.0043'] novsa=['0.4255', '0.0468', '0.0128'] learn=True
+[A5] trial 4: vsa=['0.4468', '0.0170', '0.0170'] novsa=['0.4468', '0.0213', '0.0085'] learn=True
+[A5] trial 5: vsa=['0.4043', '0.0426', '0.0170'] novsa=['0.4043', '0.0426', '0.0128'] learn=True
+[A5] trial 6: vsa=['0.4043', '0.0128', '0.0085'] novsa=['0.4043', '0.0213', '0.0255'] learn=True
+[A5] trial 7: vsa=['0.4638', '0.0298', '0.0170'] novsa=['0.4638', '0.0255', '0.0043'] learn=True
+[A5] per-hop shuffle-NULL (B=200) ...
+[A5] hop 1: vsa=0.4319 ci_lo=0.4124 | novsa=0.4319 delta=+0.0000 | shufNULL hi=0.0446 p=0.0050 | clears=True
+[A5] hop 2: vsa=0.0218 ci_lo=0.0149 | novsa=0.0266 delta=-0.0048 | shufNULL hi=0.0354 p=0.2886 | clears=False
+[A5] hop 3: vsa=0.0101 ci_lo=0.0060 | novsa=0.0144 delta=-0.0043 | shufNULL hi=0.0381 p=0.8060 | clears=False
+
+[A5] ========== DISPOSITION ==========
+[A5] learned_all_hw: True
+[A5] decay VSA   : [0.4319, 0.0218, 0.0101]
+[A5] decay NOVSA : [0.4319, 0.0266, 0.0144]
+[A5] hop 1 vsa=0.4319 ci_lo=0.4124 novsa=0.4319 delta=+0.0000 shufNULL_hi=0.0446 p=0.0050 clears=True
+[A5] hop 2 vsa=0.0218 ci_lo=0.0149 novsa=0.0266 delta=-0.0048 shufNULL_hi=0.0354 p=0.2886 clears=False
+[A5] hop 3 vsa=0.0101 ci_lo=0.0060 novsa=0.0144 delta=-0.0043 shufNULL_hi=0.0381 p=0.8060 clears=False
+[A5] F-A5-1 wall_broken: False  F-A5-2 beats_novsa: False
+[A5] DISPOSITION: A5 VSA-BINDING CLOSED-NEGATIVE (a_paper_negative_ok): 1-bit XOR-bind/bundle/permute hypervector algebra with on-chip cleanup does NOT lift hop-2/3 above shuffle-NULL by the material margin -> binding algebra gives no compositional multi-hop at 1-bit/256-unit. EMERGENCE NULL. Lane A on-chip, toy 250-anchor.
+[A5] RULING: closed-negative
