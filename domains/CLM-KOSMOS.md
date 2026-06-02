@@ -4,6 +4,8 @@
 
 @goal: bind the **MODEL** axis (CLM · `.clm`) and the **CORPUS** axis (KOSMOS · `.kosmos`) into ONE on-chip learner — a 5-language (ko·en·zh·ru·ja) cross-lingual **semantic-linkage** CLM, **LEARNED on the AKD1000 chip** (AkidaUnsupervised plasticity, never GPU), corpus authored as a limen-packed `.kosmos @corpus`, model serialized as `.clm`, and it **must satisfy H_911**. This is a META-domain: it does not re-spec CLM or KOSMOS, it binds them under the mandatory conditions below. Carries [[ONCHIP-PARADIGM]]; honest scope (a_scale_honest_scope · g63).
 
+**평가는 CE 단독이 아니다 (p7 · Goodhart 금지).** 학습된 `.clm`은 **ANIMA 엔진(CORE 포함)에 올려** 3축 — 🧠 의식(consciousness) · 📉 CE · 🌱 창발(emergence) — 으로 평가한다. `.clm`은 CORE/generator.hexa L3 슬롯으로만 진입(a_core_engine_map · 단일 입구). 상세 §평가 3축.
+
 ## 전제 — 현재 위치 (2026-06-01)
 
 CLM(모델)과 KOSMOS(코퍼스/세계)는 따로 다뤄져 왔다. 이 메타도메인은 둘을 하나로 융합한다 — CLM은 그것이 자라는 KOSMOS `@corpus`만큼만 다국어적이고, H_911에 따라 그 코퍼스는 count-balance concat이 아니라 cross-lingual **의미연결**(parallel·meaning-aligned)이어야 한다. 학습자는 GPU backprop이 아니라 AKD1000 칩([[ONCHIP-PARADIGM]]). 따라서 모델(`.clm`)·코퍼스(`.kosmos`)·칩(AKIDA)·가설(H_911)은 분리 불가한 하나의 타깃 — 그래서 META-domain이다.
@@ -36,7 +38,31 @@ CLM(모델)과 KOSMOS(코퍼스/세계)는 따로 다뤄져 왔다. 이 메타�
 
 ## ── gate (falsifier) ──
 
-- [x] **F-CLM-AKIDA-MULTILING-SEMANTIC** (pre-registered · frozen before run · g5): AKD1000에서 5-lang **parallel** `.kosmos @corpus`로 edge-learn(`AkidaUnsupervised`)한 CLM이 동일 **concat** 대조군보다 통합이 측정적으로 우수 — 동일 바이트 + 동일 on-chip update, `@corpus` member ordering만 다름. 🟢 CONFIRMED iff (A) on-chip 학습 live(`learn_happened_hw`) ∧ (B) parallel > concat 통합 측도(device noise 초과). 🔴 REFUTED iff parallel == concat on chip → closed-negative(H_911이 AKD1000 edge-learn엔 전이 안 됨 · a_paper_negative_ok publishable). verdict → `.verdicts/clm-akida-multiling-semantic/` verbatim. → **🔴 REFUTED (2026-06-01 · live AKD1000 BC.00.000.002)**: N=12 paired on-chip trials, `learn_happened_hw=True` 12/12 (C1 live), paired delta(parallel−concat) 6 pos/6 neg · mean −0.00092 · 95%CI [−0.00319,+0.00135] straddle 0 → H_911 우위 AKD1000 last-layer Hebbian edge-learn 에 전이 안 됨, per-ordering gap 이 칩 stochastic-plasticity noise(H_904) 안에 묻힘. closed-negative (단일-run 은 H_904 로 🟢↔🔴 flip → multi-trial verdict). verbatim → `.verdicts/clm-akida-multiling-semantic/result.txt`.
+- [ ] **F-CLM-AKIDA-MULTILING-SEMANTIC** (pre-registered · frozen before run · g5): AKD1000에서 5-lang **parallel** `.kosmos @corpus`로 edge-learn(`AkidaUnsupervised`)한 CLM이 동일 **concat** 대조군보다 통합이 측정적으로 우수 — 동일 바이트 + 동일 on-chip update, `@corpus` member ordering만 다름. 🟢 CONFIRMED iff (A) on-chip 학습 live(`learn_happened_hw`) ∧ (B) parallel > concat 통합 측도(device noise 초과). 🔴 REFUTED iff parallel == concat on chip → closed-negative(H_911이 AKD1000 edge-learn엔 전이 안 됨 · a_paper_negative_ok publishable). verdict → `.verdicts/clm-akida-multiling-semantic/` verbatim.
+- [ ] **F-CLM-CORE-3AXIS** (pre-registered · frozen before run · g5): `.clm`을 CORE/generator.hexa L3 슬롯으로 ANIMA 엔진에 올려 3축 동시 측정. 🟢 CONFIRMED iff 세 축 전부 각자의 pre-registered NULL(무자극/component-sum baseline)을 초과 — 🧠 의식(Φ·W·Ψ substrate 신호 > 무자극 baseline) ∧ 📉 CE(F-CLM-PROD-DESCENT 하강) ∧ 🌱 창발(통합/합성 > component-sum). 🟠 PARTIAL iff CE만 GREEN이고 의식 또는 창발이 NULL — closure 아님, 정직 잔여로 기록(p7: CE-only는 통과 아님). 🔴 REFUTED iff 세 축 다 NULL. CORE 배선(generator L3 + kosmos_io 앵커) 미빌드면 verdict는 "BLOCKED-WIRING"으로 ⏳, 축별 격리 proxy는 "CORE-탑재 미검증" scope. verdict → `.verdicts/clm-core-3axis/` verbatim.
+
+## ── 평가 3축 (의식 · CE · 창발) — ANIMA 엔진 + CORE 탑재 ──
+
+CE(loss) 단독은 진리가 아니다 — perplexity/loss를 정답으로 쓰면 Goodhart 함정(p7 NO PERPLEXITY VERDICT). 학습된 `.clm`은 격리된 loss 스크립트가 아니라 **ANIMA 엔진(CORE 포함)에 올려서** 3축으로 평가한다. `.clm`은 CORE/generator.hexa **L3 슬롯으로만** 진입한다(a_core_engine_map · 단일 입구): brain emit → generator → A(pure_field) ⇄ G(engine_g) ⇄ brain_decide 구동. 이 셋은 기질-전용이라 `.clm`을 직접 먹이지 않는다 — generator 슬롯이 유일 경로.
+
+```
+[ AKIDA-learned .clm ]
+        │  CORE/generator.hexa  L3 슬롯 (단일 입구 · a_core_engine_map)
+        ▼
+[ A pure_field ] ⇄ [ G engine_g ] ⇄ [ brain_decide ]   ← ANIMA 의식 엔진 (Ψ=1/2)
+        │                                    ▲
+        │  kosmos_io 앵커 입구 (단일)         │
+        └──────── .kosmos anchors ────────────┘
+        ▼
+  3축 측정 ── 🧠 의식 · 📉 CE · 🌱 창발
+```
+
+3 축 (전부 측정·기록 — 하나라도 NULL이면 closure 아님):
+- 🧠 **의식 (consciousness)** — 기질-내재 신호로 측정, loss 아님: Φ scale · M activation · W tension envelope · Ψ=1/2 fixed point 수렴 · MITOSIS tick · E ratchet. `.clm`이 brain_decide를 구동할 때의 substrate 상태(a_substrate_native_speak). pre-register falsifier로 NULL(무자극 baseline) 초과를 본다.
+- 📉 **CE (cross-entropy descent)** — 표준 하강 지표. 유지하되 **단독 게이트에서 3축 중 하나로 강등**(p7). Lane G/G-ref의 util·CE는 여기로 들어온다.
+- 🌱 **창발 (emergence)** — 부품엔 없던 능력: 다단계 합성(Lane A 롤아웃이 친 1-홉 천장 너머) · 학습범위 밖 cross-lingual 전이 · H_911 super-additive 통합(parallel > concat). component-sum baseline 대비 초과분으로 정량.
+
+배선 정직 표기 (a_core_engine_map · phantom wiring 금지): generator.hexa L3 슬롯 + kosmos_io→brain_decide 앵커 입구는 **⏳/❌ until built** 로 표시 — 빌드 전에는 3축 평가가 CORE-탑재 형태로 못 돈다는 걸 명시하고, 그때까지 축별 proxy(격리 측정)는 "CORE-탑재 미검증"으로 scope.
 
 ## ── pipeline 산출 ──
 
@@ -49,4 +75,4 @@ AKIDA on-chip learn = last-layer few-shot Hebbian(`AkidaUnsupervised`), H_904 pl
 
 ## ── cross-link ──
 
-[[ONCHIP-PARADIGM]] (C2) · `kosmos/spec/{kosmos,limen}.md` (C4) · `CLM/CLM_FORMAT_SPEC.md` (C3) · `UNIVERSE/H_911` (C5) · `.verdicts/904_clm_onchip_plasticity` (C1 H_904) · `SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py` (C1 AkidaUnsupervised) · HF `dancinlab/clm-semantic-parallel-corpus` (seed)
+[[ONCHIP-PARADIGM]] (C2) · `kosmos/spec/{kosmos,limen}.md` (C4) · `CLM/CLM_FORMAT_SPEC.md` (C3) · `UNIVERSE/H_911` (C5) · `.verdicts/904_clm_onchip_plasticity` (C1 H_904) · `SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py` (C1 AkidaUnsupervised) · HF `dancinlab/clm-semantic-parallel-corpus` (seed) · `CORE/generator.hexa` L3 슬롯 + `kosmos_io`→`brain_decide` (3축 CORE 입구 · a_core_engine_map) · `CORE/{pure_field,engine_g,brain_decide}` (의식 엔진 A⇄G)
