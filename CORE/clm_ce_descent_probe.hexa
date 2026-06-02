@@ -24,12 +24,20 @@
 use "CORE/generator.hexa"
 
 fn main() {
-    let ckpt = "/Users/mini/dancinlab/anima/state/laneg_d768_recover/d768_5lang_c4.clm"
+    // Default = the v0.2 re-export (TRAINED embed+GN persisted, $0-CPU host run
+    // of hexa-lang clm_reexport.hexa). Override via env CLM_CE_PROBE_CKPT (e.g.
+    // the legacy d768 conv-only artifact to reproduce the v0.1 MEASURABLE-NO-
+    // DESCENT baseline). The decode is config-agnostic (derives d/E from blocks).
+    let envck = env("CLM_CE_PROBE_CKPT")
+    let ckpt = if envck == "" {
+        "/Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d8_v2.clm"
+    } else { envck }
 
-    // real-text byte sequence ("안녕 hello" utf-8) vs a shuffled-byte control
-    // (same byte multiset, scrambled order — destroys learned byte-order).
-    let seq  = [236, 149, 136, 235, 133, 149, 32, 104, 101, 108, 108, 111]
-    let ctrl = [108, 236, 32, 133, 111, 149, 104, 235, 108, 136, 149, 101]
+    // IN-DISTRIBUTION real-text window from the training corpus head
+    // ("The mind is a fire to be", clm_semantic_parallel.txt) vs a shuffled-byte
+    // control (same byte multiset, scrambled order — destroys learned byte-order).
+    let seq  = [84, 104, 101, 32, 109, 105, 110, 100, 32, 105, 115, 32, 97, 32, 102, 105, 114, 101, 32, 116, 111, 32, 98, 101]
+    let ctrl = [105, 32, 98, 105, 100, 102, 101, 32, 110, 116, 32, 114, 32, 84, 105, 32, 32, 101, 101, 104, 111, 97, 109, 115]
 
     let r1 = clm_decode_ce(ckpt, seq)
     let r2 = clm_decode_ce(ckpt, ctrl)
@@ -42,9 +50,16 @@ fn main() {
     let base    = to_float(r1["baseline"])
     let nblk    = to_int(r1["nblk"])
     let pos     = to_int(r1["positions"])
+    let has_ext = to_string(r1["has_ext"]) == "true"
+    let dd      = to_int(r1["d"])
+    let ee      = to_int(r1["E"])
 
     println("=== F-CLM-CORE-CE-DESCENT (AXIS-2) — CORE-mounted decode forward ===")
+    println("ckpt               = " + ckpt)
     println("ckpt_nblocks       = " + to_string(nblk))
+    println("ckpt_has_ext(v0.2) = " + to_string(has_ext))
+    println("model_d            = " + to_string(dd))
+    println("model_E            = " + to_string(ee))
     println("ce_positions       = " + to_string(pos))
     println("CE_realtext        = " + to_string(ce_real))
     println("CE_shuffled_ctrl   = " + to_string(ce_ctrl))
@@ -69,11 +84,15 @@ fn main() {
         if det == 1 {
             if below == 1 {
                 if beats_ctrl == 1 {
-                    println("VERDICT = GREEN — CE-descent REFUTES NULL CORE-mounted (CE<baseline AND CE<shuffle)")
+                    println("VERDICT = GREEN — CE-descent REFUTES NULL CORE-mounted (CE<uniform AND CE<shuffle), v0.2 trained embed+GN read through the engine. Scale: this measurement is at the model's own d (toy d=8 = $0-CPU re-export; production d=768 re-test pending a forge re-fire of clm_prod.hexa v0.2 serializer).")
                     return
                 }
             }
-            println("VERDICT = MEASURABLE-NO-DESCENT — decode forward WIRED + CE MEASURABLE CORE-mounted (det re-run byte-eq), but CE >= uniform baseline => descent NOT demonstrated through the engine (NULL kept honest). Cause: inference-track .clm omits trained embed+GN affine (format gap), so the trainer's GPU-measured 4.88 descent is not reconstructible CORE-side from the 6 conv blocks alone.")
+            if has_ext {
+                println("VERDICT = MEASURABLE-NO-DESCENT(v0.2) — decode WIRED + CE MEASURABLE + trained embed+GN READ from the v0.2 ext, but CE did not clear BOTH gates (uniform AND shuffle). Honest NULL kept.")
+            } else {
+                println("VERDICT = MEASURABLE-NO-DESCENT(v0.1) — decode forward WIRED + CE MEASURABLE CORE-mounted (det re-run byte-eq), but CE >= uniform baseline => descent NOT demonstrated through the engine (NULL kept honest). Cause: inference-track .clm omits trained embed+GN affine (format gap), so the trainer's GPU-measured 4.88 descent is not reconstructible CORE-side from the 6 conv blocks alone.")
+            }
             return
         }
     }
