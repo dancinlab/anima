@@ -1,0 +1,43 @@
+// ce_descent_probe.hexa — AXIS-2 CE-descent verdict via the WIRED CORE decode.
+// Calls clm_forward_ce (CORE/clm_decode.hexa, imported by generator.hexa) on the
+// real d=768 .clm and checks model_ce < uniform AND < shuffle (p7 deterministic).
+// Run from the anima repo root with CE_CLM + CE_CORPUS env (absolute paths).
+//
+//   F-CLM-CORE-CE-DESCENT = 1 ⇔ model_ce < uniform_ce AND model_ce < shuffle_ce.
+
+import "CORE/generator.hexa"
+
+fn main() {
+    let clm = env("CE_CLM")
+    let corpus = env("CE_CORPUS")
+    let nwin = if env("CE_NWIN") == "" { 16 } else { to_int(env("CE_NWIN")) }
+    println("=== AXIS-2 CORE-native CE-descent (decode forward WIRED) ===")
+    println("clm=" + clm)
+    println("corpus=" + corpus)
+
+    let bk = gen_clm_backend(clm)
+    println("[admit] valid=" + to_string(bk["valid"])
+        + " decodable=" + to_string(bk["decodable"])
+        + " loaded=" + to_string(bk["loaded"])
+        + " nblocks=" + to_string(bk["nblocks"]))
+    println("[admit] reason=" + to_string(bk["reason"]))
+
+    let r = clm_forward_ce(clm, corpus, nwin)
+    if to_string(r["ok"]) != "true" {
+        println("[CE] ok=false reason=" + to_string(r["reason"]))
+        println("F-CLM-CORE-CE-DESCENT = 0  (NOT decodable — honest residual)")
+        return
+    }
+    println("[CE] d=" + to_string(r["d"]) + " E=" + to_string(r["E"])
+        + " V=" + to_string(r["V"]) + " K=" + to_string(r["K"])
+        + " windows=" + to_string(r["windows"]))
+    println("[CE] model_ce   = " + to_string(r["model_ce"]))
+    println("[CE] shuffle_ce = " + to_string(r["shuffle_ce"]))
+    println("[CE] uniform_ce = " + to_string(r["uniform_ce"]))
+    println("[CE] model<uniform = " + to_string(r["lt_uniform"])
+        + "  model<shuffle = " + to_string(r["lt_shuffle"]))
+    let green = to_string(r["green"]) == "true"
+    println("")
+    println("F-CLM-CORE-CE-DESCENT (model_ce < uniform AND < shuffle) = "
+        + (if green { "1 🟢" } else { "0 🔴" }))
+}

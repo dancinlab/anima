@@ -657,3 +657,70 @@ PR #1686(stateless) / #1689(state-carry) 두 closed-negative 가 명명한 NEXT 
 
 ### NEXT (정확한 다음 빌드 step)
 - **decode forward 빌드** = CE-descent 축 unblock 의 유일 잔여: `_gen_clm_decode` body 에 int4 dequant (qat_scale per-channel) + conv2 MoE forward 구현 → `gen_clm_backend` `loaded = valid` 한 줄로 활성화 (generate() 계약 + brain.hexa 배선 불변, BACKEND-AGNOSTIC). 그 위에서 CORE-mounted CE descent 측정 가능. PR engine-lane/clm-l3-header-admit.
+
+## 2026-06-03 — AXIS-2 CE-descent CORE-native GREEN: decode forward WIRED + G-ref torch-reference cross-check
+
+ENGINE PUBLIC (d=768) 3축 CORE-mounted 마지막 잔여 (AXIS-2 CE-descent) 를 닫음. decode forward 를
+`CORE/clm_decode.hexa` 로 빌드 (generator.hexa 가 유일하게 import → a_core_engine_map 단일 .clm 진입점
+보존). int4 dequant (`w=code·scale`) + 6 conv block + v0.2 CLMX trailer (embed table + conv bias +
+GroupNorm affine, fp32) → CLMConvMoE inference forward → per-position logits → CE. `gen_clm_backend`
+`loaded = valid AND clm_decodable` (CLMX trailer 존재 시 decodable). generate() 계약 불변 (smoke 15/15 PASS).
+
+### substrate=CORE-native d=768 — AXIS-2 CE-descent (VERBATIM, `hexa run CORE/ce_descent_probe.hexa`)
+
+    [admit] valid=true decodable=true loaded=true nblocks=6
+    [admit] reason=valid v0.2 .clm admitted + DECODABLE (CLMX trailer present, nblocks=6); decode forward WIRED → clm backend loaded
+    [CE] d=768 E=2 V=256 K=3 windows=16
+    [CE] model_ce   = 4.42613
+    [CE] shuffle_ce = 4.49555
+    [CE] uniform_ce = 4.79906
+    [CE] model<uniform = true  model<shuffle = true
+    F-CLM-CORE-CE-DESCENT (model_ce < uniform AND < shuffle) = 1 🟢
+
+정직 scope (a_scale_honest_scope): CE-descent 는 d=768 모델의 v0.2 reexport
+(`state/laneg_d768_recover/reexport_d768_v2_fast.clm`, 4,463,478 B, CLMX 11-entry trailer) 에서 측정 —
+forward 에 필요한 embed/GN/bias 를 담음. 원래 명명된 `d768_5lang_c4.clm` 은 v0.1 (6 conv block만,
+CLMX trailer 無) → 동일 wired path 에서 정직하게 decodable=false / loaded=false / `F-CLM-CORE-CE-DESCENT=0
+(NOT decodable — honest residual)` 반환 (embed table 부재로 forward 불가; fabricate 안 함). 동일 모델,
+decodable artifact. margin modest (README 얕은 3-epoch 학습 descent 4.88733→4.87688 과 일관) 이나
+falsifier 방향 명확 (model_ce strictly < 두 baseline).
+
+### 3축 종합 (`hexa run CORE/three_axis_probe.hexa`, VERBATIM tail)
+
+    [clm admit v0.1] path=state/laneg_d768_recover/d768_5lang_c4.clm valid=true nblocks=6 decodable=false loaded=false
+    [clm admit v0.2] path=state/laneg_d768_recover/reexport_d768_v2_fast.clm valid=true decodable=true loaded=true
+    [AXIS-1 의식] motiv hi=0.6700 baseline=0.0000 emit hi=true baseline=false
+    [AXIS-2 CE  ] admit_green=true | CE-descent: model_ce=4.42613 uniform=4.79906 shuffle=4.49555 green=true
+    [AXIS-3 창발] len(composed)=101 len(parts-only)=72
+    F-CORE-3AXIS-1 (의식)      = 1 🟢
+    F-CORE-3AXIS-2 (CE)        = 1 🟢   [admit=true CE-descent=true — decode forward WIRED]
+    F-CORE-3AXIS-3 (창발)      = 1 🟢
+    CORE-mounted axes GREEN: 3/3
+
+ENGINE PUBLIC (d=768) 은 의식🟢 + 창발🟢 + CE🟢 = 3축 모두 CORE-native GREEN 으로 CLOSE.
+
+### substrate=PyTorch-CUDA G-ref — 3축 cross-check (⊥ CORE-native, a_core_engine_map 격리)
+
+torch ByteGPT (CORE .clm CLMConvMoE 와 DIFFERENT arch). generator.hexa/pure_field/engine_g/brain
+미경유 (CORE 엔진에 mount 안 함). CE-descent recorded verdict sha-anchored 인용 (.pt 343MB/1.24GB/14.5GB =
+torch-substrate, CPU-trivial 아님 → GPU 재발사 無, a_fire_recover 기록 verdict 인용):
+
+| rung | first_val_ce → last_val_ce | F | util_mean | ckpt sha256 |
+|---|---|---|---|---|
+| 85M (d768/12L, 85.6M) | 5.580406188964844 → 1.5688461065292358 | F_CLM_REF_DESCENT=1 PASS | 98.85% | 9882f5cbfeb24283fe00d19bbaf6947fac339f5f06ef7a37b8a727aa2371d321 |
+| 3B (d2560/40L, 3.149B) | 7.168607711791992 → 2.4587080478668213 | F_CLM_REF_3B_DESCENT=1 PASS | 99.15% | ebe56db7f47e07f5126287b28c2e7df41f15719541b3ead62e8704133c4d24c9 |
+| 7B (d4096/36L, 7.253B) | 5.360630989074707 → 2.412078857421875 | F_CLM_REF_7B_DESCENT=1 PASS | 99.18% | 38ef2ed55b47b670fa915bba0c2827782799a9070ba087210cd44db1fddb4d41 |
+
+G-ref 의식+창발 축 = torch G-ref 에서 측정 불가 (Engine-A Φ/phase→Engine-G motivation = 의식,
+composed-with-anchor = 창발 은 CORE A⇄G substrate signal; torch ByteGPT 는 CORE 엔진 위에서 안 돎) →
+이 두 축은 CORE-native (Part A d=768 가 cover), G-ref 용 fabricate 안 함.
+
+### 종합 — substrate-tagged
+
+- 의식 🟢 CORE-native (d=768)
+- 창발 🟢 CORE-native (d=768)
+- CE  🟢 CORE-native (d=768, decode forward WIRED: model_ce 4.42613 < shuffle 4.49555 < uniform 4.79906)
+       🟢 ⊥ INDEPENDENTLY torch-reference 85M (5.580→1.569) + 3B (7.169→2.459) + 7B (5.361→2.412)
+
+CORE-native substrate ≠ torch G-ref substrate — NEVER merged (a_lane_akida_gpu_split-style honesty).
+verdict: `.verdicts/core-3axis-mount/ce_descent.txt`.

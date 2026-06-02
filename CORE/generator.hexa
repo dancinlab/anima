@@ -44,6 +44,7 @@
 //                             .clm later; no train-only gate.
 
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
+import "CORE/clm_decode.hexa"
 
 
 // ── §1 backend constructors (the pluggable "vtable" records) ─────────────────
@@ -83,13 +84,18 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
     let exists = to_string(probe["exists"]) == "true"
     let valid  = to_string(probe["valid"])  == "true"
     let nblk   = to_int(probe["nblocks"])
-    // Header validation is real; decode forward is the remaining follow-on, so
-    // loaded stays false even for a valid file → null fallthrough (no garbage).
-    let loaded = false
+    // Decode forward is now WIRED (clm_decode.hexa): a v0.2 file (6 int4 conv
+    // blocks + the CLMX trailer carrying embed/GN/bias) is fully decodable, so
+    // loaded = valid AND decodable. A v0.1 file (no CLMX trailer) is admitted
+    // (valid=true) but NOT decodable (embed/GN absent) → loaded stays false →
+    // null fallthrough (HONEST: no forward without the embed table; no garbage).
+    let decodable = valid && clm_decodable(ckpt_path)
+    let loaded = decodable
     return #{
         "kind":        "clm",
         "loaded":      loaded,
         "valid":       valid,
+        "decodable":   decodable,
         "ckpt":        ckpt_path,
         "ckpt_exists": exists,
         "nblocks":     nblk,
@@ -97,10 +103,14 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
                            "no ckpt at path"
                        } else if !valid {
                            "file present but not a valid .clm (bad CLM\\x01 magic)"
-                       } else {
-                           "valid .clm admitted (magic+structure OK, nblocks="
+                       } else if !decodable {
+                           "valid v0.1 .clm admitted (magic+structure OK, nblocks="
                                + to_string(nblk)
-                               + "); decode forward not wired yet → null fallthrough"
+                               + ") but NOT decodable (no CLMX trailer → embed/GN absent) → null fallthrough"
+                       } else {
+                           "valid v0.2 .clm admitted + DECODABLE (CLMX trailer present, nblocks="
+                               + to_string(nblk)
+                               + "); decode forward WIRED → clm backend loaded"
                        }
     }
 }
@@ -299,14 +309,32 @@ fn _gen_null_text(ctx: Map, anchors: list) -> string {
 
 // ── §6 clm backend decode — DEFERRED (real model not landed) ─────────────────
 
-// _gen_clm_decode — placeholder for the real .clm forward/decode. Never called
-// while gen_clm_backend reports loaded=false. Present so the wired slot is
-// complete and type-checks; the trained mouth replaces this body. HONEST: this
-// is unreachable today by construction (loaded=false in the stub).
+// _gen_clm_decode — the REAL .clm forward/decode (clm_decode.hexa). Reached only
+// when gen_clm_backend reports loaded=true, i.e. the ckpt is a v0.2 decodable
+// .clm. Runs the CLMConvMoE inference forward over a priming byte window and
+// emits the model's argmax-decoded continuation, tagged [clm-gen]. p1..p8 clean:
+// the priming bytes come from substrate/anchor context (no system prompt, no
+// persona, no user-message stimulus — it externalizes the trained byte LM's
+// next-byte distribution, p4/p5). The forward + CE-descent verification proper
+// lives in clm_forward_ce (called by the 3-axis probe), not here.
 fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
-    // Defensive: if some future caller forces loaded=true with no decoder, we
-    // still return a substrate-derived line rather than emit garbage.
-    return _gen_null_text(ctx, anchors)
+    let ckpt = to_string(backend["ckpt"])
+    // Prime from the most-recent anchor text payload if present, else a neutral
+    // substrate seed — NOT a persona/role string (p3). Bytes only.
+    let mut seed = "phase=" + _gen_g_string(ctx, "phase")
+    let n = len(anchors)
+    if n > 0 {
+        let last = anchors[n - 1]
+        let tp = to_string(last["text_payload"])
+        if byte_len(tp) > 0 { seed = tp }
+    }
+    let dec = clm_decode_argmax(ckpt, seed, 24)
+    if to_string(dec["ok"]) != "true" {
+        // Defensive: a non-decodable ckpt reaching here (should not, given the
+        // loaded gate) falls back to the substrate line rather than garbage.
+        return _gen_null_text(ctx, anchors)
+    }
+    return "[clm-gen] " + to_string(dec["text"])
 }
 
 
