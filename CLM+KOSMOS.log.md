@@ -382,3 +382,52 @@ pi5-akida (ubuntu@192.168.50.155 per PI5-AKIDA.json) is STILL fully off-network 
 **Harvester RE-ARMED (durable, a_cpu_local_no_waiter):** re-armed `/tmp/laneA_harvest.sh` as a background nohup (no 30-min cap; ~10-min heartbeat). On host return it (1) harvests `abs_margin.log` + `result_abs_margin.json` if a terminal `disposition` exists, else (2) auto-re-fires `~/.venv/anima-akida/bin/python -u abs_margin_chip.py` on-chip and keeps polling. CPU-local poll, no Monitor/waiter dependency.
 
 **Closure verdict:** BLOCKED-OUTAGE (unchanged) — not PUBLIC-grade, not closed-negative. The decider is correct, pre-registered, on-target; the ONLY gap is the external pi5-akida host being off-network. PI5-AKIDA.json consulted, NOT modified; no os_default daemon touched; pi5-akida NOT converted to pool compute. Next Lane-A step: when pi5-akida rejoins the LAN the armed harvester auto-fires + harvests the decider, with the LDA-oracle arm settling PASS (PUBLIC-positive, ci_lo>0) vs CLOSED-NEGATIVE scoped to 25/250-anchor.
+
+---
+
+## 2026-06-02 (Lane-G · substrate=GPU · a_lane_akida_gpu_split — NEVER merged with any AKIDA/Lane-A number) — F-RFC046 host per-step orchestration redesign LANDED (byte-eq PRESERVED) · util≥20% PENDING held GPU fire
+
+**Trigger:** today's CLEAN Lane-G GPU fire (all 5 build/link/compile/emit bugs fixed + merged; GPU **provably live** — 87W + GB-scale device memory) definitively pinned util RED — mean **0.811%**, peak 6%, n=987 at mid d~1536/T~512 — DESPITE both device-feed levers active (lever-a #2505, lever-b #2504). CE descent GREEN (F-CLM-PROD-DESCENT=1). One CPU core 100% pegged + GPU SM-starved. Root cause NOT link/kernel/emit/scale (all closed today) — the interpreted host-side per-step orchestration loop in flame/clm_prod dominates the hot path.
+
+**PROFILE-FIRST (@L1, verbatim — d=1536/T=512/K=3/E=2/V=256):**
+```
+measured hexa-interpreter throughput (warm, compile-cached, mac CPU):
+  empty (alloc+exit)        : 0.03 s
+  14,155,776-op host loop   : 0.22 s   →  ~13.4 ns / interpreted scalar op
+
+per-step HOST scalar-op count (runs host-interpreted EVEN with DEVFEED+BATCHED):
+  FWD TOTAL  41,422,848
+  BWD TOTAL  62,656,512
+  TOTAL     104,079,360  (+22 separate _adam dispatches)
+
+category breakdown:
+  expert batched-path host repack/im2col/col2im : 67,633,152  (65.0%)  ← DOMINANT
+  conv Wt-transpose + bias + db (4 convs ea way): 32,514,048  (31.2%)
+  residual/copy/sum glue                        :  3,932,160  ( 3.8%)
+
+wall-time: 104.08M × 13.4 ns ≈ 1.39 s host CPU/step (one core 100%) vs sub-ms GPU
+GEMM → util ≈ <1ms/1400ms ≈ 0.07–0.8%  ⇒ MATCHES the fire (mean 0.811%, peak 6%).
+```
+ROOT (pinned): the batched-expert path (`conv2_*_via_forge_batched`) carried INLINE host `t_set` im2col/im2col_t loops that BYPASSED lever-(a)'s device helpers — so the experts' gather never went device-resident.
+
+**REDESIGN (@L2):** route the batched-expert fwd/bwd im2col / im2col_t through the lever-(a) device helpers (`_clmp_im2col` / `_clmp_im2col_t`) — device-resident under CLM_PROD_DEVFEED so the gather leaves the host hot path and the batched GEMM reads it in place with no H2D roundtrip. Device math (levers a+b) intact. (hexa-lang stdlib/flame/clm_prod.hexa.)
+
+**BYTE-EQ (@L3, g5 verbatim — $0 mac CPU oracle stdlib/flame/clm_prod_hostfeed_eq.hexa):**
+```
+  fwd dil=1 max|Δ| y0=0.0 y1=0.0
+  fwd dil=2 max|Δ| y0=0.0 y1=0.0
+F-RFC046-HOSTFEED-FWD-EQ = 1
+  bwd dil=1 max|Δ| xcolT=0.0
+  bwd dil=2 max|Δ| xcolT=0.0
+F-RFC046-HOSTFEED-BWD-EQ = 1
+ALL-PASS — F-RFC046 batched-expert host-feed redesign byte-eq to the inline-host path
+```
+Existing oracles unchanged & re-green: F-CLM-DEVFEED-{IM2COL,FWD,BWD,ADAM}-EQ all max|Δ|=0.0 (dX 2.78e-17/5.55e-17 FP64-ULP), F-CLM-CONV2-BATCHED-{FWD,BWD}-EQ all 0.0. NO numeric drift → no revert.
+
+**HONEST residual:** im2col routing removes the expert GATHER from the host hot path, but the DOMINANT remaining host cost is the GEMM-feed REPACK (Wt transpose · a_all/b_all/c_all pack/unpack · dW unpack — the 14.16M-op loops) intrinsic to the matmul calling convention. Eliminating it needs a device repack / transpose-aware GEMM builtin (forge_dispatch_matmul has no transpose variant) → self/runtime.c + cuda-kernel signature change, pod self-host rebuild, NOT mac-byte-eq-testable. Distinct follow-on lever, out of scope for this byte-eq source PR.
+
+**SHIP:** hexa-lang PR #2515 (code + oracle, base main) + #2516 (docs: inbox patch + CHANGELOG; merged into the pr1 branch by the create→merge-atomic g47 hook, so #2515 now carries all 4 files). NO force-push; main untouched (HEAD a7f145cd). Auto-QA: conformance @L1–@L5 ↔ code 1:1 PASS · regression (all byte-eq oracles max|Δ|=0.0 + codegen clean) PASS.
+
+**@L5 — NO GPU FIRED this pass** (cost-discipline; source + byte-eq only). 
+
+**NEXT (HELD — gated for explicit user go):** util≥20% verify fire — clean single-driver H100 sm_90 (no collision), CLM_PROD_DEVFEED + CLM_PROD_BATCHED both set, HEXA_CUDA_ARCH=90, -lcuda. SUCCESS = util ≥20% AND descent GREEN; paste nvidia-smi PEAK/MEAN verbatim. The source redesign CANNOT confirm util≥20% without that fire — util-GREEN is NOT claimed from source work alone. ref fe2e43a35; hexa-lang inbox/patches/forge-rfc046-host-feed-residual-resolution.md.
