@@ -1,0 +1,25 @@
+[A1] corpus NC=50 langs=5 transitions=245 roll_starts=235 chance=0.0204
+[A1] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1
+[A1] trial 0: acc(k1..K)=['0.1957', '0.0426', '0.0298'] res_learn=False read_learn=True
+[A1] trial 1: acc(k1..K)=['0.2170', '0.0255', '0.0085'] res_learn=False read_learn=True
+[A1] trial 2: acc(k1..K)=['0.1915', '0.0426', '0.0255'] res_learn=False read_learn=True
+[A1] trial 3: acc(k1..K)=['0.1787', '0.0298', '0.0043'] res_learn=False read_learn=True
+[A1] trial 4: acc(k1..K)=['0.2043', '0.0128', '0.0085'] res_learn=False read_learn=True
+[A1] trial 5: acc(k1..K)=['0.1617', '0.0213', '0.0043'] res_learn=False read_learn=True
+[A1] trial 6: acc(k1..K)=['0.2043', '0.0255', '0.0170'] res_learn=False read_learn=True
+[A1] trial 7: acc(k1..K)=['0.1702', '0.0255', '0.0128'] res_learn=False read_learn=True
+[A1] computing per-hop shuffle-NULL (B=200) ...
+[A1] hop 1: acc=0.1904 ci_lo=0.1774 | shufNULL hi=0.0400 p=0.0050 | chance=0.0204 | clears=False
+[A1] hop 2: acc=0.0282 ci_lo=0.0212 | shufNULL hi=0.0357 p=0.1393 | chance=0.0204 | clears=False
+[A1] hop 3: acc=0.0138 ci_lo=0.0072 | shufNULL hi=0.0370 p=0.7463 | chance=0.0204 | clears=False
+
+[A1] ========== DISPOSITION ==========
+[A1] reservoir_learned_all: False  readout_learned_all: True
+[A1] decay curve (k1..K)  : [0.1904, 0.0282, 0.0138]
+[A1] pure-on-chip wall    : hop-2 ~0.028
+[A1] hop 1 acc=0.1904 ci_lo=0.1774 shufNULL_hi=0.0400 p=0.0050 clears=False
+[A1] hop 2 acc=0.0282 ci_lo=0.0212 shufNULL_hi=0.0357 p=0.1393 clears=False
+[A1] hop 3 acc=0.0138 ci_lo=0.0072 shufNULL_hi=0.0370 p=0.7463 clears=False
+[A1] F-A1-1 wall_broken   : False
+[A1] DISPOSITION          : A1 RESERVOIR/ECHO-STATE CLOSED-NEGATIVE (a_paper_negative_ok): fixed random on-chip reservoir + trained 1-bit readout does NOT lift hop-2/3 above the shuffle-NULL by the material margin at p<=0.01 -> echo-state recurrence on a 1-bit/256-unit AKD1000 does not break the 1-hop wall. EMERGENCE axis NULL. Lane A on-chip (a_lane_akida_gpu_split), toy 250-anchor (a_scale_honest_scope).
+[A1] RULING: closed-negative
