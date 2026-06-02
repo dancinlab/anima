@@ -1,0 +1,11 @@
+@discovery lane-a-scale := "μ3 multi-FC TILING — capacity-bound vs algorithm-bound" :: lane-a [substrate=AKIDA closed-negative]
+  id              = "F-SCALE-0"
+  seed            = "does multi-FC tiling (N independent on-chip FCs, paged through 1 chip, routed+voted) lift the multi-hop wall as N grows?"
+  substrate       = "AKIDA live AKD1000 BC.00.000.002 · akida 2.19.1 · pi5-akida · N=8 chip trials · learn_all_hw=True"
+  scale           = "toy 250-anchor / 50-concept × 5-lang · 256-unit 1-bit AkidaUnsupervised FC (a_scale_honest_scope)"
+  falsifier       = "F-SCALE-1 REFUTED(capacity-bound) iff hop-2 above-NULL scales monotonically with N(∈{1,2,4}) AND N=4 hop-2 ci_lo>shufNULL hi p≤0.01; else F-SCALE-0 (algorithm-bound)"
+  result          = "hop2 acc by N = [0.0261, 0.0261, 0.0266] · aboveNULL byN = [False,False,False] · N=4 hop2 p=0.1791 (NOT≤0.01) · hop1 lifts w/ N (0.2856→0.3394) but does NOT propagate"
+  verdict-tier    = "🔴 CLOSED-NEGATIVE (F-SCALE-0 algorithm-bound)"
+  finding         = "the multi-hop wall is ALGORITHMIC, not capacity-bound — paging N FCs through 1 chip (closed paged-WIDTH primitive) cannot manufacture cross-hop transition structure no single stateless FC has → multi-chip scale-out won't lift the EMERGENCE ceiling"
+  next-bridge     = "EMERGENCE axis TERMINAL under 1-bit Hebbian-FC + stateless feedback; only an architecturally-recurrent learnable surface (not width, not input-state) could move it"
+  verdict-pointer = ".verdicts/lane-a-microexp-scale/F-SCALE.txt"
