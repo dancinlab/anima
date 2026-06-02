@@ -13,7 +13,7 @@
 - [ ] Lane A 7B — AKIDA 7B (3B green 후)
 
 **Lane G** (substrate=GPU · forge flame, 프로덕션 primary · a_train_flame_forge):
-- [ ] Lane G PUBLIC — util-GREEN(MEAN≥20%) AND descent-GREEN → forge PUBLIC artifact. 진척: descent 🟢 / util 🔴 (lever-3 fire CLOSED 2026-06-02 pod 38996679: PEAK 21% transient · MEAN 0.5616% · n=349 · byte-eq PRESERVED max|Δ|=0.0) · lever a+b+1+2+3 가 GEMM repack 을 전부 device化했으나 util ~flat(0.50→0.56%) → 잔여 = 인터프리트 host per-step 드라이버 루프(NOT link/compile/emit/scale/device-math) · **lever-4(fused on-device per-step driver) = real unblock**
+- [ ] Lane G PUBLIC — util-GREEN(MEAN≥20%) AND descent-GREEN → forge PUBLIC artifact. 진척: descent 🟢 / util 🔴 (lever-3 fire CLOSED 2026-06-02 pod 38996679: PEAK 21% transient · MEAN 0.5616% · n=349 · byte-eq PRESERVED max|Δ|=0.0) · lever a+b+1+2+3 가 GEMM repack 을 전부 device化했으나 util ~flat(0.50→0.56%) → 잔여 = 인터프리트 host per-step 드라이버 루프(NOT link/compile/emit/scale/device-math) · **lever-4(fused on-device per-step driver) BUILT** (hexa-lang #2543 MERGED: `forge_dispatch_adamw_group` — 17× per-step `_adam` → 1 host crossing) · host byte-eq GREEN (`F-RFC046-ADAMW-GROUP-EQ=1`+`F-RFC046-FUSED-STEP-EQ=1` max|Δ|=0.0, mac $0) · **on-device 3-gate + util fire 🔴 BLOCKED-OUTAGE** (vast.ai SSH transport down: 39126604 lost mid-session + fresh-rent 39131850 sm_90 SSH-refused 전 backoff) — fire HELD, NO fabricated GREEN (a_scale_honest_scope)
 - [ ] Lane G 3B — util-GREEN 후 throughput-justified 3B (≥3 rung ladder)
 - [ ] Lane G 7B — 3B green 후
 
