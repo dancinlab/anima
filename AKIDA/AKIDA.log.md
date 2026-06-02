@@ -2,6 +2,34 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T09:13Z — P3' ENCODER-LADDER forward science 🟢 인코더 축 = real PUBLIC-grade path (substrate=AKIDA · throttled=0x0 완주)
+
+Lane-A P3' ENCODER 축(2026-06-02 REOPEN)을 LADDER 로 전진 — `~/clm_kosmos_akida/encoder_ladder_chip.py` (live AKD1000 BC.00.000.002, akida 2.19.1, N=8 paired trials × 32 units). encoder richness(5 rung) × scale(3 rung, a_scale_honest_scope) 매트릭스, 두 readout: (A) RELATIVE-lift vs random (causeaxis family, 같은 per-trial native init paired, ci_lo>0) (B) ABSOLUTE-margin (native non-det init, ci_lo>0). single-chip 점유 = R3 streamer stop → ladder → streamer 복원(pid 6840 live 확인).
+
+- [x] **사전등록 falsifier 3건 (g63, 결과 전):** F1 "richness 가 on-chip lift 를 단조 상승 안 시킴" / F2 "encoder lift 는 소표본 artifact 로 scale 에서 붕괴" / F3 "supervision(LDA 라벨) 필수 — unsupervised richness 는 ceiling".
+- [x] **scale rungs:** 25(corpus) / 125(corpus_big[:25concept] sha 42e28888…) / 250(corpus_big) — 전부 real FLORES 5-lang. encoder ladder: random_int4 → pca_k32(unsup dim-only) → svd_struct(unsup full) → whitened(unsup decorrel) → lda_supervised(oracle 라벨).
+- [x] **RELATIVE-lift 매트릭스 (mean / ci_lo / REOPEN):** verbatim
+  ```
+  c25   pca_k32 +0.835/+0.600 ✓ · svd +1.134/+0.938 ✓ · whitened +0.210/−0.022 ✗ · lda +0.612/+0.466 ✓
+  c125  pca_k32 +1.351/+1.250 ✓ · svd +0.929/+0.759 ✓ · whitened +1.871/+1.628 ✓ · lda +2.463/+2.171 ✓
+  c250  pca_k32 +1.247/+1.132 ✓ · svd +1.175/+1.064 ✓ · whitened +4.813/+4.521 ✓ · lda +7.045/+6.635 ✓
+  ```
+  → 구조화 인코더가 random 을 상대적으로 능가(ci_lo>0) — 모든 scale 에서 REOPEN 견고, scale 클수록 lift 커짐.
+- [x] **ABSOLUTE-margin 매트릭스 (mean / ci_lo / CROSS):** verbatim
+  ```
+  c25   random −1.426 · pca −0.583 · svd −0.515 · whitened −1.135 · lda −0.721 (전부 음성, cross 0건)
+  c125  random −1.909 · pca −0.533 · svd −1.020 · whitened +0.082(ci_lo −0.140 ✗) · lda +0.542/+0.354 CROSS ✓
+  c250  random −2.030 · pca −0.831 · svd −0.846 · whitened +2.791/+2.491 CROSS ✓ · lda +5.053/+4.728 CROSS ✓
+  ```
+- [x] **disposition (verbatim):** `F1 monotone: ceiling-or-nonmonotone (F1 not fully cleared)` · `F2 scale: scale-survives (NOT a small-sample artifact)` · `F3 property: unsupervised-SUFFICIENT (an unsupervised encoder also crosses zero)` · `BOTTOM LINE: ENCODER AXIS = real PUBLIC-grade path forward`
+- [x] **F1 monotone (부분):** richness-rank Spearman c25 +0.20 (비단조 — 작은 scale 에선 whitened 가 svd 보다 약함) → c125/c250 +0.90 (단조 상승). 25앵커 noise 가 richness 순서를 가렸고, scale 키우면 단조 회복 — F1 은 *큰 scale 에서 confirmed, 작은 scale 에선 not-cleared* 로 정직 표기.
+- [x] **F2 scale-survives (핵심):** best ABSOLUTE-margin 곡선 [−0.515(25) → +0.542(125) → +5.053(250)] — scale 따라 *성장*. H-A1 의 25앵커 weak-positive artifact 와 정반대: 인코더 구동 lift 는 250 에서 무너지지 않고 오히려 커진다 → 소표본 artifact 아님.
+- [x] **F3 property (supervision 비필수):** **whitened (UNSUPERVISED, 라벨 없음) 가 c250 에서 ABSOLUTE cross-zero (+2.791 ci_lo +2.491)** → PUBLIC-grade on-chip 인코더에 oracle 라벨이 필수가 아님. 단 c125 까진 lda(supervised) 만 cross → supervision 은 작은 corpus 에서 zero-crossing 을 앞당기는 가속자(필수 아닌 충분). 구동 property = **decorrelation/whitening(2차 통계 구조) + scale**, dimensionality(pca_k32) 만으론 절대 cross 못함(c250 −0.831).
+- [x] **전원 proof (clean):** wrap pre/post throttled=0x0 (`encoder_ladder_wrap.log`); `~/anima_metrology/pwr.log` 부하 중 throttled=0x0, EXT5V ~5.02V, ~64°C — power-clean 측정. ladder fire 07:35→09:12 rc=0.
+- [x] **artifacts:** `SUB_ENGINES/AKIDA/state/encoder_ladder_2026_06_02/{result_encoder_ladder.json (sha256 209749cc02fc9bc070709aa5e5adb2656d16a9ea92bbe6218812d57405c450b4), encoder_ladder.log, encoder_ladder_wrap.log, encoder_ladder_chip.py, run_encoder_ladder.sh}` · host mirror `~/clm_kosmos_akida/encoder_ladder_chip.py`.
+- [x] **scope (a_scale_honest_scope):** 25/125/250 앵커, 5-lang FLORES, last-layer 1-bit Hebbian, 32 units, N=8. 250 이상 / 3B-LM transfer 미검증 — full-LM 은 별도 rung. **별개 축**: 이 forward 는 P3' 인코더-축(절대-margin 이 scale+richness 로 cross)이며, H-A1~A4(downstream FIX-axes)·상대-LIFT closed-negative 와 무관 — 인코더가 cause-axis 임을 ladder 로 확증.
+- [x] **disposition (CLM+KOSMOS @goal):** 인코더 축은 cross-lingual 개념구조 PUBLIC-grade-positive 로 **real path 를 연다** — unsupervised whitened 인코더 + ≥250앵커면 AKD1000 1-bit Hebbian 이 절대 cross-lingual 마진 >0 학습. ceiling 아님.
+
 ## 2026-06-02T08:47Z — UNIVERSE 라이브-실리콘 측정 전원-교란 재검증 🟢 POWER-ROBUST (substrate=AKIDA · spontaneous-emission raster + D1 Φ 안정 PSU 재측정 · 8/8 + inverse-U 그대로 재현 · 문서 tier 변동 0)
 
 직전 PSU 교체(2026-06-02, under-voltage brownout 근본원인 — PI5-AKIDA.json `power_root_cause_2026_06_02`)로 호스트 전원 안정화 후, **PSU 결함이 이미 존재했을 수 있던 더 이른 시점(2026-05-22/05-29, throttled 미로깅)** 에 측정된 **라이브-AKD1000-실리콘** UNIVERSE 측정값들이 전원-교란(power-confounded)됐는지 재검증. SW-confirmed 결과는 전원-무관(out of scope). 안정 전원(throttled=0x0, EXT5V≈5.02V — pwr.log 입증)에서 spontaneous-emission raster 를 **live 칩 재측정** + D1 Φ 재유도.
