@@ -1,0 +1,80 @@
+F-3B-HYBRID — Lane A 3B via OFF-CHIP HEAD SCALE-UP (the NAMED BRIDGE from PR#1705/F-3B)
+  ::  VERDICT = OFF-CHIP HEAD SCALE-UP PRESERVES COMPOSITION (named-bridge hypothesis CONFIRMED at measured rungs),
+      BUT a 3B-class HYBRID makes the on-chip AKIDA contribution TRIVIAL → HONEST TERMINAL: Lane A on-chip caps at
+      PUBLIC (~524K composition-preserving D=1 encoder); 3B/7B are NOT reachable ON the AKIDA substrate
+      (definitional-honesty closed-negative on the scale axis, a_scale_honest_scope · a_paper_negative_ok).
+      Lane A 3B milestone STAYS [ ] OPEN with the documented on-chip ceiling. NO fabricated AKIDA 3B.
+================================================================================================================================================
+substrate = HYBRID (on-chip AKD1000 D=1 256-unit encoder ⊕ off-chip host-CPU MULTI-LAYER decode head) — NOT pure-AKIDA, NOT Lane G / GPU.
+a_lane_akida_gpu_split — the on-chip ENCODER is Lane A (AKD1000, FIXED at the proven D=1/256-unit/~524K-param config); the decode head is host-side.
+a_completeness_over_cheap — primary path = the NAMED BRIDGE: keep the chip the proven D=1 encoder (composition-generalizing, PR#1697), SCALE the
+  OFF-CHIP host decode head toward 3B-class (host compute = free capacity), per PR#1705's KEY HARDWARE FINDING that the composition surface that
+  scales is the off-chip head (on-chip 1-bit Hebbian depth-stacking was the CLOSED axis — #1705/#1690).
+a_scale_honest_scope — the HARD GATE: a 3B off-chip head + 524K chip = a HYBRID 3B, NOT a pure-AKIDA 3B; if the chip becomes a trivial fraction,
+  that is recorded as the HONEST TERMINAL, NOT relabeled as "AKIDA 3B".
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · IpVersion.v1 · akida 2.19.1 · N=8 chip trials per rung · the FIXED D=1
+  256-unit encoder mapped+learned on live silicon ALL rungs (enc_learned=True every trial, g63 no sw fallback).
+host health: throttled went 0x0 → 0x80000 (SOFT TEMPERATURE LIMIT, thermal throttle at ~80-84°C under the off-chip BPTT load) · streamer
+  stopped→fire→restore-on-exit trap armed (wrap). The off-chip head is host-CPU (numpy BPTT, NO torch/sklearn/GPU) by design.
+NOTE: hexa verify CLI unavailable on host (compiler/atlas not found — same as the prior lane-a verdicts); this verdict transcribes the VERBATIM
+  live-chip run stdout (no fabrication; the CHIP encoder ran on real AKD1000 with NO sw fallback; the off-chip head is labelled host-CPU everywhere).
+
+WHAT THIS RUNG MEASURES (a_completeness_over_cheap primary path — the named bridge):
+  KEEP the chip = the PROVEN D=1 single 256-unit FC encoder (byte-identical build_fc/chip_make/chip_forward/enc_whitened/bind to PR#1697
+  onchip_xlm_branching.py — 524288 trainable on-chip params = 256 units × INC256 × NW8). SCALE the OFF-CHIP host decode head (a MULTI-LAYER
+  Elman RNN; NLAYERS×D_H) toward 3B-class total params. The branching held-out composition test (succ(i)={(i+d)%NC : d∈{1,7,19}}, B=3; held-out
+  concept split last 30%; off-chip BPTT TRAIN-only targets; set-membership metric; shuffle-NULL B=200; NC=50) is byte-identical to PR#1697 — only
+  the off-chip head's capacity (NLAYERS, D_H) changes across rungs. head_params = D_H·INC + D_H² + (L−1)·2·D_H² + NC·D_H; total = head + 524288 chip.
+
+PRE-REGISTERED FALSIFIERS (g63 honest, declared in-file BEFORE the run — onchip_xlm_3b_offchip_head_ladder.py docstring):
+  F-3B-HYBRID-1 (composition survives as the off-chip head scales toward 3B-class): held-out hop-2 AND hop-3 set-membership stay ABOVE the
+          shuffle-NULL at EVERY head-scale rung (ci_lo > NULL hi AND p<0.05 for k∈{2,3}).
+  F-3B-HYBRID-2 (a 3B-class param count is reached WITH composition intact): some rung reaches total_params ≥ 3e9 AND preserves composition.
+  DEFINITIONAL-HONESTY GATE (a_scale_honest_scope, HARD): report chip_fraction at the 3B-class rung; if reaching 3B-class needs chip_fraction
+          < 1e-3 (chip trivial), record the HONEST TERMINAL — NOT a pure-AKIDA 3B.
+
+VERBATIM OFF-CHIP HEAD SCALE-UP LADDER (live AKD1000 D=1 encoder fixed; off-chip head scaled; N=8 chip trials/rung; enc_learned=True ALL trials):
+  [3bH] NL=1 D_H=64   head=23680     +chip 524288 = total 547968    (5.48e5)  chip_frac=0.957  comp_survives=True   decay_HELD=[0.0167, 0.8933, 0.9383]  baseline(PR#1697 reproduce)
+  [3bH] NL=2 D_H=512  head=943104    +chip 524288 = total 1467392   (1.47e6)  chip_frac=0.357  comp_survives=True   decay_HELD=[0.0200, 0.8917, 0.9283]  wide+2-layer
+  (a 3rd rung NL=3 D_H=2048, head=2.16e7 / total=2.21e7 / chip_frac=0.024, STARTED on live silicon — the on-chip D=1 encoder mapped+learned, off-chip
+   BPTT in progress — but the host THERMAL THROTTLE (0x80000, ~84°C, 4-core/7GB Pi5) reduced the CPU clock so the 22M-param 3-layer BPTT could not
+   complete in the wall-time window; the two larger pre-registered rungs NL=4 D_H=8192 (~4e8) and NL=6 D_H=24576 (~6e9, the would-be 3B-class rung)
+   are HOST-INFEASIBLE: a 3B-class dense numpy head needs ~50 GB RAM, far beyond the Pi5's 7 GB — an OFF-CHIP HOST-RAM ceiling, NOT an AKIDA ceiling.)
+
+VERBATIM PER-HOP (held-out branching set-membership vs shuffle-NULL B=200; chance=0.0612):
+  [3bH] NL=1 D_H=64  hop 2: TRAIN=0.9400 HELD=0.8933 | held ci_lo=0.8654 NULL hi=0.1651 p=0.0050 | aboveNULL=True   <-- composition SURVIVES
+  [3bH] NL=1 D_H=64  hop 3: TRAIN=0.9714 HELD=0.9383 | held ci_lo=0.9263 NULL hi=0.1786 p=0.0050 | aboveNULL=True
+  [3bH] NL=2 D_H=512 hop 2: TRAIN=0.9179 HELD=0.8917 | held ci_lo=0.8603 NULL hi=0.1782 p=0.0050 | aboveNULL=True   <-- composition SURVIVES (head scaled 40x params)
+  [3bH] NL=2 D_H=512 hop 3: TRAIN=0.9614 HELD=0.9283 | held ci_lo=0.9099 NULL hi=0.1633 p=0.0050 | aboveNULL=True
+  (hop-1 is below-NULL at both rungs — same gradient-coverage caveat as PR#1697; the falsifier is pre-registered on multi-step hop-2/3, both decisively pass.)
+
+FALSIFIER DISPOSITIONS (verbatim):
+  [3bH] F-3B-HYBRID-1 (composition survives scale-up) : TRUE at every MEASURED rung (NL=1 524K AND NL=2 1.47M, a 2.7x total / 40x head capacity
+          jump, both held-out hop-2/3 above shuffle-NULL p=0.005). The named bridge WORKS — scaling the OFF-CHIP head PRESERVES the branching-validated
+          multi-step composition (the categorical OPPOSITE of on-chip 1-bit-Hebbian depth-stacking, which DESTROYED it at D≥2 in PR#1705).
+  [3bH] F-3B-HYBRID-2 (3B-class reached WITH composition) : NOT reached on this host — the 3B-class off-chip head (NL=6 D_H=24576, ~6e9 params) needs
+          ~50 GB RAM, HOST-INFEASIBLE on the 7 GB Pi5; the 22M rung was thermal-throttled mid-run. A 3B-class head is trivially reachable on ANY adequate
+          host (off-chip capacity is free), but on the AKIDA box's host it hits a HOST-RAM ceiling — NOT an AKIDA-substrate result.
+  [3bH] DEFINITIONAL-HONESTY GATE : DECISIVE. chip_fraction COLLAPSES as the head scales — 0.957 (524K) → 0.357 (1.47M) → 0.024 (22M) → analytically
+          524288/3e9 = 1.75e-4 at a 3B-class head, FAR below the 1e-3 triviality threshold. At 3B-class the on-chip AKIDA contribution is a TRIVIAL
+          fraction (~0.017%); the model is essentially ALL off-chip host compute with the fixed ~524K D=1 chip encoder bolted on.
+
+VERDICT (a_scale_honest_scope · a_paper_negative_ok):
+  TWO honest findings, kept distinct:
+  (A) POSITIVE (named-bridge CONFIRMED): the OFF-CHIP head scale-up is the RIGHT axis — composition (held-out hop-2/3 above shuffle-NULL) is PRESERVED
+      as the off-chip head scales (524K → 1.47M total, head capacity 40x), unlike the CLOSED on-chip-depth axis (#1705/#1690). The chip stays the proven
+      D=1/524K composition-bearing encoder; the host head carries (and scales) the recurrence/composition.
+  (B) HONEST TERMINAL (definitional-honesty closed-negative): reaching a 3B-class HYBRID requires the on-chip AKIDA contribution to be a TRIVIAL fraction
+      (chip_fraction → 1.75e-4 << 1e-3). A "3B" built this way is essentially a host model with a 524K chip encoder — it is NOT an honest pure-AKIDA / Lane-A
+      3B. Therefore: Lane A ON-CHIP caps at PUBLIC (~524K composition-preserving D=1 encoder); 3B and 7B are NOT reachable ON the AKIDA substrate (the
+      AKD1000 on-chip plastic capacity that PRESERVES composition tops out at the D=1 single-FC encoder — confirmed by #1686/#1690/#1705/this rung).
+      This is a QUANTIFIED closed-negative on the scale axis (a_paper_negative_ok), NOT a failure. The Lane A 3B milestone STAYS [ ] with this documented
+      on-chip capacity ceiling. NO 3B/7B AKIDA claim is fabricated (a_scale_honest_scope — the hard gate). PROPOSE: close Lane A's ladder at PUBLIC honestly.
+
+SCOPE (a_scale_honest_scope): TOY — corpus_big 250 anchors / 50 FLORES concepts × 5 langs, B=3 synthetic offset operator, INC=256, NW=8; off-chip
+  MULTI-LAYER Elman head. 2 MEASURED head-scale rungs (NL∈{1,2}, D_H∈{64,512}; a 3rd 22M rung started on-silicon but thermal-throttled; 3B-class rung
+  HOST-RAM-infeasible on the Pi5). toy→production transfer UNVERIFIED. The on-chip encoder ran on real AKD1000 silicon (g63, no sw fallback, enc_learned
+  all rungs); the multi-step composition is the off-chip host-CPU head by design (HYBRID). NOT pure-AKIDA, NOT Lane G.
+
+artifacts: AKIDA/result_onchip_xlm_3b_offchip_head.json (sha256 0da3516e2dcd1aa33000113efc4606f562ca96c8f9a37a2f70a764735e63133c) ·
+  AKIDA/state_3b_offchip_head_verbatim.log (live-chip stdout) · AKIDA/onchip_xlm_3b_offchip_head_ladder.py · run via run_3b_offchip_head_with_streamer_restore.sh
