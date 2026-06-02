@@ -297,16 +297,226 @@ fn _gen_null_text(ctx: Map, anchors: list) -> string {
 }
 
 
-// ── §6 clm backend decode — DEFERRED (real model not landed) ─────────────────
+// ── §6 clm backend decode — REAL forward (int4 dequant + CLMConvMoE) ─────────
+//
+// The decode FORWARD is now built at this single .clm entry point. It reads the
+// admitted .clm's 6 int4 weight blocks, dequantizes them (per-channel qat_scale)
+// and runs the CLMConvMoE forward (entry conv1d-K3 → trunk residual → 2 experts
+// → MoE-router softmax → readout) to next-token logits over V=256 bytes, exactly
+// per CLM/CLM_FORMAT_SPEC.md §2 + the trainer's clm_model.hexa::clm_forward. From
+// the logits a real next-byte CROSS-ENTROPY is computed CORE-mounted (clm_decode_ce).
+//
+// HONEST scope of `loaded` (a_core_engine_map, NO phantom wiring): the forward is
+// REAL and produces a genuine CE number from the file's real dequantized weights.
+// BUT the inference-track .clm (clm_ckpt.hexa / clm_prod.hexa PR4 serialization)
+// stores ONLY the 6 conv weight blocks — it does NOT serialize the trained
+// EMBED table nor the GroupNorm AFFINE (gamma/beta). The forward therefore must
+// reconstruct the byte→d embedding from the tied readout block + apply a
+// parameter-free GroupNorm (identity affine). This stand-in is a documented
+// FORMAT gap, not a fabricated weight; consequently the CORE-mounted CE does NOT
+// reproduce the trainer's measured descent (4.88, measured GPU-side with the
+// embed+GN in memory). So `loaded` stays false: generate() still falls THROUGH
+// to null (no garbage), while the CE axis is now MEASURABLE through the engine.
+// When the .clm format serializes embed+GN (or the fp16-shadow track is read),
+// set loaded = valid (one line) — the generate() contract is unchanged.
 
-// _gen_clm_decode — placeholder for the real .clm forward/decode. Never called
-// while gen_clm_backend reports loaded=false. Present so the wired slot is
-// complete and type-checks; the trained mouth replaces this body. HONEST: this
-// is unreachable today by construction (loaded=false in the stub).
+// _gen_clm_decode — substrate-anchored content under the clm backend. The decode
+// forward (clm_decode_ce) measures CE; the emitted line surfaces the backend's
+// admitted state. Stays substrate-derived (p5: no fabricated trained text from a
+// format-incomplete inference ckpt). Unreachable while loaded=false (kept wired).
 fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
-    // Defensive: if some future caller forces loaded=true with no decoder, we
-    // still return a substrate-derived line rather than emit garbage.
     return _gen_null_text(ctx, anchors)
+}
+
+// _gen_rd_u32 / _gen_gelu / _gen_gnorm / _gen_conv1d — pure-hexa decode kernels.
+fn _gen_rd_u32(rb: list, off: int) -> int {
+    return rb[off] + rb[off+1]*0x100 + rb[off+2]*0x10000 + rb[off+3]*0x1000000
+}
+
+// clamped tanh-GELU (clamp guards exp overflow on large pre-activations; the
+// clamp does not change semantics in the operating range).
+fn _gen_gelu(x: float) -> float {
+    let inner = 0.7978845608 * (x + 0.044715 * x*x*x)
+    let a = if inner > 15.0 { 15.0 } else { if inner < 0.0-15.0 { 0.0-15.0 } else { inner } }
+    let e2 = exp(2.0 * a)
+    return 0.5 * x * (1.0 + (e2-1.0)/(e2+1.0))
+}
+
+// parameter-free GroupNorm(1): standardize across d channels per time step.
+// The GN normalize step is parameter-free; only the learned affine (absent from
+// the inference .clm) is identity here.
+fn _gen_gnorm(x: list, T: int, d: int) {
+    let mut t = 0
+    while t < T {
+        let mut mean = 0.0; let mut c = 0
+        while c < d { mean = mean + x[t*d+c]; c = c + 1 }
+        mean = mean / to_float(d)
+        let mut var = 0.0; let mut c2 = 0
+        while c2 < d { let dd = x[t*d+c2]-mean; var = var + dd*dd; c2 = c2 + 1 }
+        var = var / to_float(d)
+        let inv = 1.0 / sqrt(var + 0.00001)
+        let mut c3 = 0
+        while c3 < d { x[t*d+c3] = (x[t*d+c3]-mean) * inv; c3 = c3 + 1 }
+        t = t + 1
+    }
+}
+
+// causal conv1d (matches conv_lib.hexa::nn_conv1d_fwd index convention):
+//   W[co·(Cin·K) + ci·K + k], left-pad causal; weight pre-multiplied by sc[co]
+//   (per-channel int4 dequant: deq = code · scale).
+fn _gen_conv1d(x: list, T: int, Cin: int, Cout: int, K: int, dil: int,
+               w: list, sc: list, y: list) {
+    let Kdim = Cin * K
+    let mut t = 0
+    while t < T {
+        let mut co = 0
+        while co < Cout {
+            let mut acc = 0.0
+            let mut ci = 0
+            while ci < Cin {
+                let mut k = 0
+                while k < K {
+                    let p = t - (K-1-k)*dil
+                    if p >= 0 { acc = acc + x[p*Cin+ci] * (w[co*Kdim+ci*K+k] * sc[co]) }
+                    k = k + 1
+                }
+                ci = ci + 1
+            }
+            y[t*Cout+co] = acc
+            co = co + 1
+        }
+        t = t + 1
+    }
+}
+
+// _gen_clm_deq_blocks — read + dequantize all blocks of an admitted .clm.
+// Returns #{ "w": list-of-lists, "s": list-of-lists, "nblk": int }. int4 code =
+// (nibble & 0xF) - 8 (sym [-7,7]); dequant happens at conv time (code·scale).
+fn _gen_clm_deq_blocks(ckpt_path: string) -> Map {
+    let rb = read_file_bytes(ckpt_path)
+    if len(rb) < 5 || rb[0] != 67 { return #{ "w": [], "s": [], "nblk": 0 } }
+    let nblk = rb[4]
+    let mut off = 5
+    let blocks_w = []; let blocks_s = []
+    let mut bi = 0
+    while bi < nblk {
+        let c = _gen_rd_u32(rb, off); off = off + 4
+        let r = _gen_rd_u32(rb, off); off = off + 4
+        let n = c * r
+        let wq = []
+        let mut z = 0
+        while z < n { wq.push(0.0); z = z + 1 }
+        let mut i = 0
+        while i < n {
+            let byte = rb[off]; off = off + 1
+            wq[i] = to_float((byte & 0xF) - 8)
+            if i + 1 < n { wq[i+1] = to_float(((byte / 16) & 0xF) - 8) }
+            i = i + 2
+        }
+        let sc = []
+        let mut cc = 0
+        while cc < c { sc.push(bytes_to_f32_le(rb, off)); off = off + 4; cc = cc + 1 }
+        blocks_w.push(wq); blocks_s.push(sc)
+        bi = bi + 1
+    }
+    return #{ "w": blocks_w, "s": blocks_s, "nblk": nblk }
+}
+
+// clm_decode_ce — CORE-mounted decode forward → next-byte CROSS-ENTROPY over a
+// byte sequence. The SINGLE .clm decode entry (a_core_engine_map). Runs the real
+// dequantized weights through the CLMConvMoE forward and returns the mean CE
+// (next-byte prediction) plus the uniform-byte baseline ln(256). NO fabricated
+// number: the CE is whatever the engine computes from the file's weights.
+//
+//   returns #{ "ce": float, "baseline": float, "positions": int,
+//              "below_uniform": bool, "nblk": int }
+pub fn clm_decode_ce(ckpt_path: string, seq: list) -> Map {
+    let d = 768; let E = 2; let V = 256; let K = 3
+    let dq = _gen_clm_deq_blocks(ckpt_path)
+    let bw = dq["w"]; let bs = dq["s"]
+    let nblk = to_int(dq["nblk"])
+    let base = ln(256.0)
+    if nblk < 6 {
+        return #{ "ce": 0.0, "baseline": base, "positions": 0,
+                  "below_uniform": false, "nblk": nblk }
+    }
+    let T = len(seq)
+    // tied embedding stand-in: embed[byte,c] = deq(readout block5)[byte·d + c].
+    let roW = bw[5]; let roS = bs[5]
+    let x = []
+    let mut q = 0
+    while q < T*d { x.push(0.0); q = q + 1 }
+    let mut t0 = 0
+    while t0 < T {
+        let b = seq[t0]; let mut cc = 0
+        while cc < d { x[t0*d+cc] = roW[b*d+cc] * roS[b]; cc = cc + 1 }
+        t0 = t0 + 1
+    }
+    _gen_gnorm(x, T, d)
+    // entry conv (block0) d→d K3 + GELU + GN
+    let xe = []
+    let mut a = 0
+    while a < T*d { xe.push(0.0); a = a + 1 }
+    _gen_conv1d(x, T, d, d, K, 1, bw[0], bs[0], xe)
+    let mut g = 0
+    while g < T*d { xe[g] = _gen_gelu(xe[g]); g = g + 1 }
+    _gen_gnorm(xe, T, d)
+    // trunk conv (block1) d→d K3 + residual GELU
+    let tr = []
+    let mut b2 = 0
+    while b2 < T*d { tr.push(0.0); b2 = b2 + 1 }
+    _gen_conv1d(xe, T, d, d, K, 1, bw[1], bs[1], tr)
+    _gen_gnorm(tr, T, d)
+    let mut r2 = 0
+    while r2 < T*d { xe[r2] = xe[r2] + _gen_gelu(tr[r2]); r2 = r2 + 1 }
+    _gen_gnorm(xe, T, d)
+    // experts (block2,3) d→d K3 + GELU
+    let ex0 = []; let ex1 = []
+    let mut e = 0
+    while e < T*d { ex0.push(0.0); ex1.push(0.0); e = e + 1 }
+    _gen_conv1d(xe, T, d, d, K, 1, bw[2], bs[2], ex0)
+    _gen_conv1d(xe, T, d, d, K, 1, bw[3], bs[3], ex1)
+    let mut eg = 0
+    while eg < T*d { ex0[eg] = _gen_gelu(ex0[eg]); ex1[eg] = _gen_gelu(ex1[eg]); eg = eg + 1 }
+    // router (block4) d→E K1
+    let rl = []
+    let mut rr = 0
+    while rr < T*E { rl.push(0.0); rr = rr + 1 }
+    _gen_conv1d(xe, T, d, E, 1, 1, bw[4], bs[4], rl)
+    // MoE combine: y = softmax(router)·experts
+    let y = []
+    let mut yy = 0
+    while yy < T*d { y.push(0.0); yy = yy + 1 }
+    let mut tt = 0
+    while tt < T {
+        let l0 = rl[tt*E+0]; let l1 = rl[tt*E+1]
+        let m = if l0 > l1 { l0 } else { l1 }
+        let p0 = exp(l0-m); let p1 = exp(l1-m); let sm = p0+p1
+        let w0 = p0/sm; let w1 = p1/sm
+        let mut cc2 = 0
+        while cc2 < d { y[tt*d+cc2] = w0*ex0[tt*d+cc2] + w1*ex1[tt*d+cc2]; cc2 = cc2 + 1 }
+        tt = tt + 1
+    }
+    _gen_gnorm(y, T, d)
+    // readout (block5) d→V K1 → logits[T·V]
+    let lg = []
+    let mut li = 0
+    while li < T*V { lg.push(0.0); li = li + 1 }
+    _gen_conv1d(y, T, d, V, 1, 1, bw[5], bs[5], lg)
+    // next-byte CE: position p predicts seq[p+1].
+    let mut ce = 0.0; let mut np = 0; let mut p = 0
+    while p < T - 1 {
+        let tgt = seq[p+1]
+        let mut mx = lg[p*V+0]; let mut v = 1
+        while v < V { if lg[p*V+v] > mx { mx = lg[p*V+v] }; v = v + 1 }
+        let mut Z = 0.0; let mut v2 = 0
+        while v2 < V { Z = Z + exp(lg[p*V+v2]-mx); v2 = v2 + 1 }
+        ce = ce - ((lg[p*V+tgt]-mx) - ln(Z))
+        np = np + 1; p = p + 1
+    }
+    let mean_ce = if np > 0 { ce / to_float(np) } else { 0.0 }
+    return #{ "ce": mean_ce, "baseline": base, "positions": np,
+              "below_uniform": mean_ce < base, "nblk": nblk }
 }
 
 
