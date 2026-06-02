@@ -1,0 +1,21 @@
+[xlm] corpus_big count=250 concepts=50 langs=5
+[xlm] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1 N=8 trials units=32 B_shuffle=200
+[xlm] trial 0: same_acc=0.1320 next_acc=0.0122 learn=True
+[xlm] trial 1: same_acc=0.1160 next_acc=0.0245 learn=True
+[xlm] trial 2: same_acc=0.1360 next_acc=0.0367 learn=True
+[xlm] trial 3: same_acc=0.1240 next_acc=0.0408 learn=True
+[xlm] trial 4: same_acc=0.1480 next_acc=0.0327 learn=True
+[xlm] trial 5: same_acc=0.1040 next_acc=0.0245 learn=True
+[xlm] trial 6: same_acc=0.1320 next_acc=0.0286 learn=True
+[xlm] trial 7: same_acc=0.1480 next_acc=0.0449 learn=True
+[xlm] computing shuffle-NULL (B=200) on last-trial chip codes ...
+
+[xlm] ========== DISPOSITION ==========
+[xlm] learn_all_hw      : True
+[xlm] same_acc          : mean=0.1300 ci_lo=0.1195 (chance=0.0200, above=True)
+[xlm] next_acc          : mean=0.0306 ci_lo=0.0234
+[xlm] shuffle-NULL next : mean=0.0207 sd=0.0093 hi=0.0389 p_next=0.1542
+[xlm] F-LM-1 next       : NOT-REFUTED: next-sentence acc within shuffle-NULL -> primitive does NOT transfer to a sequence LM at this 1-bit/32-unit capacity (CLOSED on LM axis at this scale)
+[xlm] F-LM-2 same-bridge: REFUTED: margin readout DOES buy above-chance same-concept cross-lingual retrieval
+[xlm] DISPOSITION       : CAPACITY-GAP CHARACTERIZED: primitive binds cross-lingual CONCEPTS (same-concept>chance) but has NO learned TIME/sequence model (next-sentence at NULL) -> Lane A PUBLIC stays open; named next-step = a sequence/recurrent readout beyond the 1-bit static margin (paged/temporal layer)
+[xlm] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_seq.json

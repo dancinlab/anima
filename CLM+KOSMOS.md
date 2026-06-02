@@ -18,7 +18,7 @@
 - [ ] Lane G 7B — 3B green 후
 
 **Lane G-ref** (substrate=PyTorch-CUDA · baseline 참조 · a_completeness_over_cheap, NOT forge production):
-- [ ] Lane G-ref PUBLIC — torch+CUDA baseline CLM (reference·즉시 util>20%) · forge PUBLIC artifact 와 별도 태깅·혼동 금지
+- [x] Lane G-ref PUBLIC — ✅ 2026-06-02 `dancinlab/clm-v1-ref-pytorch-cuda` PUBLIC (ByteGPT 85.6M · descent🟢 CE 5.580→1.569 · util🟢 MEAN 98.85% 272k tok/s · sha 9882f5cb…) · substrate=PyTorch-CUDA, forge PUBLIC artifact 아님 (PR #1678)
 - [x] Lane G-ref 3B — torch 3B reference. ByteGPT d2560/L40/H20/block512 = **3.149B params**, bf16 AMP + grad-ckpt, vast H100 80GB. descent 🟢 (val_CE 7.16861→2.45871, F-CLM-REF-3B-DESCENT=1) · util 🟢 (PEAK 100% MEAN **99.15%** n=108) · 11183 tok/s. HF PUBLIC `dancinlab/clm-v1-ref-pytorch-cuda-3b` (sha ebe56db7…). bounded N=400 steps, NOT converged (a_scale_honest_scope: 3B rung of the 85M→3B ref ladder) · NOT forge production (a_train_flame_forge)
 - [ ] Lane G-ref 7B — torch 7B reference
 

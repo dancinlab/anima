@@ -2,6 +2,162 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T10:06Z — SEQUENCE/TRANSITION READOUT BRIDGE 🟢 WORKING on-chip 교차언어 next-step 신호 (substrate=AKIDA · live AKD1000 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
+
+직전 full-LM rung 이 특징지은 gap(1-bit/32-unit static margin 은 CONCEPT 결속만, 학습된 TIME 모델 부재 → next-sentence shuffle-NULL 내)을 **명시적 on-chip transition readout**(후보 a)으로 가교. 정적 centroid 비교가 아니라, 칩이 **t→t+1 transition 을 직접 학습**한다: 검증된 whitened 코드 위에서 binding `bind(a,b)=a XOR roll(b,37)` 로 연속문장쌍을 묶고, **2번째 AkidaUnsupervised FC(64-unit, 1-bit)** 를 언어내 연속 transition 코드로 on-chip fit() → 학습된 transition 표현. test = 교차언어(leave-one-lang-out) t→t+1 top-1 retrieval vs shuffle-NULL(B=200). live AKD1000(BC.00.000.002, akida 2.19.1, N=8 trials, learn_hw=True 8/8, throttled=0x0 완주, R3 streamer stop→run→복원).
+
+- [x] **사전등록 falsifier (RUN 전 선언, g63)**: F-TR-1 "whitened 코드 위 명시적 on-chip transition readout 은 next-sentence shuffle-NULL 을 넘지 못한다" → REFUTED iff tr ci_lo > NULL hi AND p<0.05. F-TR-2 "transition FC 는 언어내 t→t+1 조차 chance 이상 복원 못한다"(capacity floor sanity).
+- [x] **HEADLINE (250 anchor, 검증된 rung) — F-TR-1 REFUTED (g5 verbatim)**:
+  ```
+  [tr] learn_all_hw        : True
+  [tr] tr_acc (xlingual)   : mean=0.2801 ci_lo=0.2600 (chance=0.0204)
+  [tr] within_lang_recall  : mean=0.4867 ci_lo=0.4708 (chance=0.0200, above=True)
+  [tr] shuffle-NULL tr     : mean=0.0194 sd=0.0104 hi=0.0397 p=0.0050
+  [tr] F-TR-1 transition   : REFUTED: above-NULL on-chip cross-lingual TRANSITION (t->t+1) prediction (tr ci_lo>NULL hi AND p<0.05) -> working on-chip sequence signal
+  [tr] F-TR-2 binding      : REFUTED: on-chip transition FC recovers within-lang t->t+1 above chance (the FC CAN represent a transition; cross-lingual transfer is the remaining gap)
+  [tr] DISPOSITION         : ON-CHIP CROSS-LINGUAL SEQUENCE SIGNAL DEMONSTRATED (explicit transition readout > NULL) -> advance Lane A PUBLIC; full-LM (3) next-step flips toward earned-green
+  ```
+  → tr_acc 0.2801 (ci_lo 0.2600) vs NULL hi 0.0397, p=0.0050 = **14x chance, 6.5x NULL margin** · within-lang transition recall 0.4867 (chance 0.02) → 1-bit/64-unit FC **CAN** hold a transition. 8/8 trials 양수 [0.322,0.278,0.241,0.290,0.290,0.310,0.265,0.245]. sha256 `57e32e238c7bc2dec41ab6bdd19de8e28e364b4732788bf536f5093961d8e0b6`
+- [x] **scale-ladder (a_scale_honest_scope ≥3 rung 25/125/250, g5 verbatim)**:
+  ```
+  [trsc] ===== LADDER =====
+  [trsc]  25 anchors= 25 tr_acc=0.4812 ci_lo=0.3657 NULL_hi=0.4889 p=0.0498 above=False
+  [trsc] 125 anchors=125 tr_acc=0.1281 ci_lo=0.1151 NULL_hi=0.0725 p=0.0050 above=True
+  [trsc] 250 anchors=250 tr_acc=0.2898 ci_lo=0.2696 NULL_hi=0.0429 p=0.0050 above=True
+  [trsc] F-TRSCALE: NOT-uniform: the transition signal collapses into NULL at >=1 rung -> scale-fragile (honest downgrade)
+  ```
+  → **125·250(실 FLORES 생산 rung) 모두 above-NULL** 이고 NULL margin 이 scale 과 함께 **성장**(125 ci_lo/NULL≈1.6x → 250≈6.3x). 25 anchor(toy fixture, 후보 successor 4개·chance 0.25)만 above=False — NULL band 가 너무 넓어 통계적으로 못 넘음(toy 한계, science 결과 아님). 정직 scope: **신호는 검증된 두 rung 에서 real·scale-성장**, n=4 후보 toy 에서만 fragile. sha256 `1c64810a48b743db1d61b176271071667e67c0ce6a6e86ffe33cee11cdc47c4a`
+- [x] **disposition** — 작동하는 on-chip 교차언어 SEQUENCE/next-step 신호 입증(검증 rung 125·250). full-LM ③ = **🟢 toward earned** (정적 margin 너머 명시적 transition FC 가 학습된 TIME 신호를 hold). Lane A PUBLIC milestone 진척 — ③ 가 NULL→above-NULL 로 flip. 단 이는 **retrieval 신호**(top-1 transition)이지 완전 생성형 CLM 아님 → PUBLIC 은 여전히 open, named next bridge = (b) paged 멀티-FC transition matrix 로 retrieval→generation 확장 / 또는 (c) on-chip transition-bind ⊥ off-chip sequence-decode 분할.
+- [x] **전원 proof** — load 중/후 `throttled=0x0` · pwr.log `2026-06-02T10:06:33Z throttled=0x0 EXT5V=4.99954000V 68.6'C` (안정 PSU, brownout 無) · vcgencmd measure_volts volt=0.8731V. 단일-칩 점유: R3 streamer(pid 9686) pkill → 탐침 2건 순차 → R3 복원(pid 12385, BackendType.Hardware regime R3 9512 86400s).
+- [x] 산출물 — probe `SUB_ENGINES/AKIDA/onchip_xlm_transition.py`(+scale) · state `SUB_ENGINES/AKIDA/state/seq_transition_2026_06_02/{result_*.json, tr.log, trsc.log}`. binding=VSA-style XOR-shift, 결정론 · g63 HW-only(NO sw fallback).
+
+## 2026-06-02T09:40Z — FULL-LM TRANSFER 탐침 🟡 CAPACITY-GAP CHARACTERIZED (substrate=AKIDA · live AKD1000 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
+
+검증된 primitive(whitened 비지도 인코더 + 1-bit Hebbian abs-margin readout)를 실제 on-chip 교차언어 **시퀀스/next-token** 작업으로 가교 — corpus_big 50 concept 은 연속 FLORES 문장(시간축 t)이라는 사실을 이용. live AKD1000(BC.00.000.002, akida 2.19.1, N=8, throttled=0x0 부하검증 완주, R3 streamer stop→run→복원 pid 9686).
+
+- [x] **사전등록 falsifier 2건 (실행 前 선언, g63 — HW only, SW fallback 라벨 금지)**:
+  - F-LM-1 (headline): "whitened+1-bit Hebbian 은 NULL 위 on-chip 교차언어 NEXT-SENTENCE 예측을 못 낸다" (next ci_lo>shuffle-NULL hi AND p<0.05 시 REFUTED)
+  - F-LM-2 (margin→retrieval bridge): "margin readout 이 same-concept 교차언어 retrieval 도 못 산다"
+- [x] **DISPOSITION verbatim (g5, `xlm.log`)**:
+  ```
+  [xlm] same_acc          : mean=0.1300 ci_lo=0.1195 (chance=0.0200, above=True)
+  [xlm] next_acc          : mean=0.0306 ci_lo=0.0234
+  [xlm] shuffle-NULL next : mean=0.0207 sd=0.0093 hi=0.0389 p_next=0.1542
+  [xlm] F-LM-1 next       : NOT-REFUTED: next-sentence acc within shuffle-NULL -> primitive does NOT transfer to a sequence LM at this 1-bit/32-unit capacity (CLOSED on LM axis at this scale)
+  [xlm] F-LM-2 same-bridge: REFUTED: margin readout DOES buy above-chance same-concept cross-lingual retrieval
+  [xlm] DISPOSITION       : CAPACITY-GAP CHARACTERIZED: primitive binds cross-lingual CONCEPTS (same-concept>chance) but has NO learned TIME/sequence model (next-sentence at NULL) -> Lane A PUBLIC stays open; named next-step = a sequence/recurrent readout beyond the 1-bit static margin (paged/temporal layer)
+  ```
+- [x] **F-LM-2 REFUTED (bridge HOLDS)** — same-concept 교차언어 leave-one-lang-out top-1 retrieval mean=0.1300 ci_lo=0.1195 vs chance 1/50=0.0200 → **6.5x chance**, 8/8 trial learn-on-chip live. 검증된 abs-margin readout 이 실제 사용 가능한 교차언어 concept retrieval 로 전이됨.
+- [x] **F-LM-1 NOT-REFUTED (시퀀스/시간 모델 부재)** — next-sentence(t→t+1) mean=0.0306 ci_lo=0.0234; shuffle-NULL(B=200, concept→time label permute) mean=0.0207 hi=0.0389 p=0.1542 → next-acc 가 NULL 밴드 내. 1-bit/32-unit 정적 Hebbian readout 은 시간/시퀀스 구조를 학습하지 못함.
+- [x] **scale-ladder addendum 25/125/250 (a_scale_honest_scope ≥3 rung, 실 FLORES 부분집합 — 위조 corpus 0)** verbatim (`xlm_scale.log`):
+  ```
+  [scale] c25   SAME mean=0.2200 ci_lo=0.1808 chance=0.2000 above=False | NEXT mean=0.2750 null=0.2445 p=0.3483 above=False
+  [scale] c125  SAME mean=0.1470 ci_lo=0.1338 chance=0.0400 above=True | NEXT mean=0.0458 null=0.0402 p=0.4030 above=False
+  [scale] c250  SAME mean=0.1410 ci_lo=0.1297 chance=0.0200 above=True | NEXT mean=0.0265 null=0.0206 p=0.2388 above=False
+  [scale] same-lift curve 25/125/250: [0.020, 0.107, 0.121]
+  [scale] F-SCALE-1: PARTIAL: bridge above chance at some but not all rungs
+  [scale] F-SCALE-2: NULL HOLDS at every rung -> capacity gap (no time model) is scale-robust
+  ```
+  - same-concept bridge lift-over-chance 가 scale 로 **성장** (+0.020→+0.107→+0.121; 25앵커 5-concept 는 small-n 으로 chance 동률, 125·250 은 결정적 above) — 검증된 margin 곡선과 일치.
+  - next-sentence NULL 이 **전 3 rung 에서 유지** → 시간 모델 부재는 scale-robust (250-only artifact 아님).
+- [x] **CAPACITY-GAP 특성화 (PUBLIC-grade on-chip CLM 이 필요로 하는 것 — closed written result, a_paper_negative_ok)**: AKD1000 의 1-bit 마지막-FC Hebbian primitive 는 (1) 교차언어 CONCEPT 결속을 학습(margin·6.5x-chance retrieval, scale-survives)하나 (2) **학습된 TIME/sequence transition 모델이 없음**. PUBLIC-grade on-chip CLM 으로 가는 named next-step = 정적 1-bit margin readout 너머의 **시퀀스/recurrent readout** — (a) 시간축을 입력에 인코딩(t·t+1 페어를 명시 입력하는 transition probe) (b) paged/멀티-FC 레이어로 transition matrix 를 on-chip 보유 (c) on-chip(개념결속) ⊥ off-chip(시퀀스 디코드) 분할. 현 단일 AKD1000 1-bit last-FC 용량으로는 정적 readout 까지가 한계.
+- [x] **전원 proof** — throttled=0x0 두 fire(WRAP start/fire/exit 전 구간) 부하검증 통과 · pwr.log EXT5V≈5.01–5.05V 64–67°C(brownout 0) · spike-streamer R3 복원(pid 9686, 86400s tonic). 두 fire 직렬 단일-칩 점유, R3 stop→run→restore 패턴.
+- [x] **artifact** — `SUB_ENGINES/AKIDA/state/fulllm_transfer_2026_06_02/`: result_onchip_xlm_seq.json sha256 `74b8ba10b61672a2510fc640d509a2275ff8acdb4bb594ccd7be8b778270c227` · result_onchip_xlm_scale.json sha256 `4a3e2623164757712f2844cb7f77b8cb84add83bdd1c126f0a1590f8adc56a9a` · 탐침 2건 + log/wrap 미러. probe = `SUB_ENGINES/AKIDA/onchip_xlm_seq{,_scale}.py` (repo SSOT) ↔ `~/clm_kosmos_akida/` (host).
+- [x] **별개 축 (a_lane_akida_gpu_split)** — Lane A 전용 결과 · Lane G(GPU CE-descent)와 절대 병합 안 함.
+- [ ] **다음 = transition-probe** — t·t+1 페어를 명시 입력하는 on-chip 교차언어 transition retrieval (시간축 인코딩 후 NULL 교차 시 Lane A PUBLIC 후보) · paged 멀티-FC readout 용량 탐침.
+
+## 2026-06-02T09:13Z — P3' ENCODER-LADDER forward science 🟢 인코더 축 = real PUBLIC-grade path (substrate=AKIDA · throttled=0x0 완주)
+
+Lane-A P3' ENCODER 축(2026-06-02 REOPEN)을 LADDER 로 전진 — `~/clm_kosmos_akida/encoder_ladder_chip.py` (live AKD1000 BC.00.000.002, akida 2.19.1, N=8 paired trials × 32 units). encoder richness(5 rung) × scale(3 rung, a_scale_honest_scope) 매트릭스, 두 readout: (A) RELATIVE-lift vs random (causeaxis family, 같은 per-trial native init paired, ci_lo>0) (B) ABSOLUTE-margin (native non-det init, ci_lo>0). single-chip 점유 = R3 streamer stop → ladder → streamer 복원(pid 6840 live 확인).
+
+- [x] **사전등록 falsifier 3건 (g63, 결과 전):** F1 "richness 가 on-chip lift 를 단조 상승 안 시킴" / F2 "encoder lift 는 소표본 artifact 로 scale 에서 붕괴" / F3 "supervision(LDA 라벨) 필수 — unsupervised richness 는 ceiling".
+- [x] **scale rungs:** 25(corpus) / 125(corpus_big[:25concept] sha 42e28888…) / 250(corpus_big) — 전부 real FLORES 5-lang. encoder ladder: random_int4 → pca_k32(unsup dim-only) → svd_struct(unsup full) → whitened(unsup decorrel) → lda_supervised(oracle 라벨).
+- [x] **RELATIVE-lift 매트릭스 (mean / ci_lo / REOPEN):** verbatim
+  ```
+  c25   pca_k32 +0.835/+0.600 ✓ · svd +1.134/+0.938 ✓ · whitened +0.210/−0.022 ✗ · lda +0.612/+0.466 ✓
+  c125  pca_k32 +1.351/+1.250 ✓ · svd +0.929/+0.759 ✓ · whitened +1.871/+1.628 ✓ · lda +2.463/+2.171 ✓
+  c250  pca_k32 +1.247/+1.132 ✓ · svd +1.175/+1.064 ✓ · whitened +4.813/+4.521 ✓ · lda +7.045/+6.635 ✓
+  ```
+  → 구조화 인코더가 random 을 상대적으로 능가(ci_lo>0) — 모든 scale 에서 REOPEN 견고, scale 클수록 lift 커짐.
+- [x] **ABSOLUTE-margin 매트릭스 (mean / ci_lo / CROSS):** verbatim
+  ```
+  c25   random −1.426 · pca −0.583 · svd −0.515 · whitened −1.135 · lda −0.721 (전부 음성, cross 0건)
+  c125  random −1.909 · pca −0.533 · svd −1.020 · whitened +0.082(ci_lo −0.140 ✗) · lda +0.542/+0.354 CROSS ✓
+  c250  random −2.030 · pca −0.831 · svd −0.846 · whitened +2.791/+2.491 CROSS ✓ · lda +5.053/+4.728 CROSS ✓
+  ```
+- [x] **disposition (verbatim):** `F1 monotone: ceiling-or-nonmonotone (F1 not fully cleared)` · `F2 scale: scale-survives (NOT a small-sample artifact)` · `F3 property: unsupervised-SUFFICIENT (an unsupervised encoder also crosses zero)` · `BOTTOM LINE: ENCODER AXIS = real PUBLIC-grade path forward`
+- [x] **F1 monotone (부분):** richness-rank Spearman c25 +0.20 (비단조 — 작은 scale 에선 whitened 가 svd 보다 약함) → c125/c250 +0.90 (단조 상승). 25앵커 noise 가 richness 순서를 가렸고, scale 키우면 단조 회복 — F1 은 *큰 scale 에서 confirmed, 작은 scale 에선 not-cleared* 로 정직 표기.
+- [x] **F2 scale-survives (핵심):** best ABSOLUTE-margin 곡선 [−0.515(25) → +0.542(125) → +5.053(250)] — scale 따라 *성장*. H-A1 의 25앵커 weak-positive artifact 와 정반대: 인코더 구동 lift 는 250 에서 무너지지 않고 오히려 커진다 → 소표본 artifact 아님.
+- [x] **F3 property (supervision 비필수):** **whitened (UNSUPERVISED, 라벨 없음) 가 c250 에서 ABSOLUTE cross-zero (+2.791 ci_lo +2.491)** → PUBLIC-grade on-chip 인코더에 oracle 라벨이 필수가 아님. 단 c125 까진 lda(supervised) 만 cross → supervision 은 작은 corpus 에서 zero-crossing 을 앞당기는 가속자(필수 아닌 충분). 구동 property = **decorrelation/whitening(2차 통계 구조) + scale**, dimensionality(pca_k32) 만으론 절대 cross 못함(c250 −0.831).
+- [x] **전원 proof (clean):** wrap pre/post throttled=0x0 (`encoder_ladder_wrap.log`); `~/anima_metrology/pwr.log` 부하 중 throttled=0x0, EXT5V ~5.02V, ~64°C — power-clean 측정. ladder fire 07:35→09:12 rc=0.
+- [x] **artifacts:** `SUB_ENGINES/AKIDA/state/encoder_ladder_2026_06_02/{result_encoder_ladder.json (sha256 209749cc02fc9bc070709aa5e5adb2656d16a9ea92bbe6218812d57405c450b4), encoder_ladder.log, encoder_ladder_wrap.log, encoder_ladder_chip.py, run_encoder_ladder.sh}` · host mirror `~/clm_kosmos_akida/encoder_ladder_chip.py`.
+- [x] **scope (a_scale_honest_scope):** 25/125/250 앵커, 5-lang FLORES, last-layer 1-bit Hebbian, 32 units, N=8. 250 이상 / 3B-LM transfer 미검증 — full-LM 은 별도 rung. **별개 축**: 이 forward 는 P3' 인코더-축(절대-margin 이 scale+richness 로 cross)이며, H-A1~A4(downstream FIX-axes)·상대-LIFT closed-negative 와 무관 — 인코더가 cause-axis 임을 ladder 로 확증.
+- [x] **disposition (CLM+KOSMOS @goal):** 인코더 축은 cross-lingual 개념구조 PUBLIC-grade-positive 로 **real path 를 연다** — unsupervised whitened 인코더 + ≥250앵커면 AKD1000 1-bit Hebbian 이 절대 cross-lingual 마진 >0 학습. ceiling 아님.
+
+## 2026-06-02T08:47Z — UNIVERSE 라이브-실리콘 측정 전원-교란 재검증 🟢 POWER-ROBUST (substrate=AKIDA · spontaneous-emission raster + D1 Φ 안정 PSU 재측정 · 8/8 + inverse-U 그대로 재현 · 문서 tier 변동 0)
+
+직전 PSU 교체(2026-06-02, under-voltage brownout 근본원인 — PI5-AKIDA.json `power_root_cause_2026_06_02`)로 호스트 전원 안정화 후, **PSU 결함이 이미 존재했을 수 있던 더 이른 시점(2026-05-22/05-29, throttled 미로깅)** 에 측정된 **라이브-AKD1000-실리콘** UNIVERSE 측정값들이 전원-교란(power-confounded)됐는지 재검증. SW-confirmed 결과는 전원-무관(out of scope). 안정 전원(throttled=0x0, EXT5V≈5.02V — pwr.log 입증)에서 spontaneous-emission raster 를 **live 칩 재측정** + D1 Φ 재유도.
+
+- [x] **재측정 절차** (single-chip 점유 wrapper `~/clm_kosmos_akida/run_spontaneous_reverify.sh` — restore 패턴): R3 spike-streamer(pid 3775) stop → 칩 lock 해제 → `spontaneous_emission.py` (canonical 생성기, seed=187 n=16 200step) live 발사 → fresh JSON 캡처 → R3 streamer **복원**(pid 4992, 복귀 확인). 칩 = BC.00.000.002, akida 2.19.1, BackendType.Hardware.
+- [x] **pwr.log throttled=0x0 입증** (재측정 08:44–08:48Z 윈도):
+  ```
+  2026-06-02T08:44:33Z throttled=0x0 EXT5V=5.02768000V 64.2'C
+  2026-06-02T08:46:33Z throttled=0x0 EXT5V=5.01294000V 63.7'C
+  2026-06-02T08:48:33Z throttled=0x0 EXT5V=5.02768000V 64.8'C
+  ```
+  wrapper 내부 샘플도 WRAP start/post-stop/generator-fire/exit 전부 throttled=0x0 (rc=0).
+- [x] **#1 Spontaneous-emission raster (THE load-bearing datum)** — 2026-05-22 canonical `SUB_ENGINES/AKIDA/state/spontaneous_emission_result_2026_05_22.json` vs fresh `~/clm_kosmos_akida/out/spontaneous_emission_reverify_2026_06_02.json`: **모든 스파이크 지표 byte-identical** — R0=3200 · R1=0 (silent) · R2=1520 (std=7.99, step_varies=true) · R3=1600 (8/16 partial pool, std=0) · R4=3200 · `checks` 8/8 모두 True · `hw_native_spontaneous_emission=true` · `stochastic_spontaneous_emission=true` · mapped_on_hardware=true. 유일 차이 = onchip_clock_cycles_mean 797.2→790.0 (타이밍 jitter, 발화 disposition 변화 아님). **→ 8/8 zero-input emit 안정 전원에서 그대로 재현 (FLIP 없음).**
+- [x] **#2 D1 edge-of-chaos Φ** — fresh raster 를 `AKIDA/akida_edge_of_chaos_phi.hexa` (frozen Φ-proxy)로 재유도 (g5 verbatim):
+  ```
+  R1 weak-silent  Φ=0.0                  (ORDER floor)
+  R2 zero+noise   Φ=0.2974093093367505   (EDGE peak)
+  R3 tonic        Φ=0.25                 (EDGE)
+  R4 recurrent    Φ=0.0                  (OVER-DRIVEN floor)
+  F-AKIDA-EDGE-1=true (0.297>0) · F-2=true (0.25>0) · F-3=true (0.297≥0) · n_pass=3 · all_pass=true · verdict=GREEN_NUMERICAL_CONFIRM
+  ```
+  → 2026-05-29 원본 Φ={0.000, 0.297, 0.250, 0.000} 와 **정확 일치**. inverse-U(∩) 모양 (edge R2/R3 > order R1 floor ∧ ≥ over-driven R4) 그대로 재현 (FLIP 없음).
+- [x] **#3 H_677 D3** — AKIDA arm Φ=0.297 = fresh Φ(R2) 와 일치 (D1 Φ 와 동일 raster 유도 → D3 triangulation AKIDA 입력 power-robust). EEG/ECA arm 은 silicon 아님(out of scope).
+- [x] **#4 HW path probe (2026-05-29)** — ssh-reachability/argv-probe (chip 측정 0, ssh-mutating 0) = power-confoundable 실리콘 측정 아님 → N/A. R2 QRNG std=7.99 + R3 partial-pool 8/16 둘 다 fresh raster 에 그대로 (포함됨, 별도 측정 아님).
+- [x] **분류 매트릭스**: #1 spontaneous raster = **POWER-ROBUST** (byte-eq 재현) · #2 D1 Φ = **POWER-ROBUST** (Φ 정확 일치) · #3 H_677 D3 AKIDA arm = **POWER-ROBUST** (상속) · #4 HW probe = N/A (실리콘 측정 아님). FLIP 0건. 비결정 substrate 기대치(replication, not byte-eq)를 **초과** — R3 tonic·R0/R1/R4 결정론적 raster 는 byte-identical, R2 stochastic 도 std/rate/event-driven 모두 일치.
+- [x] **해석** — 지속 under-voltage 가 칩 아날로그/스파이킹 dynamics(firing rate/regime)를 바꿨다면 R2 noise rate 나 R3 partial-pool fraction 이 drift 했을 것. 안정 전원에서 정확 재현 = **brownout 이 spontaneous-emission capture 를 교란하지 않았음**. D1 Φ inverse-U·H_677 D3 가 이 raster 에서 파생되므로 전부 power-robust 상속.
+- [x] **문서 tier 변동 0** — 모두 재현(POWER-ROBUST)이므로 H_672 (🟢 SW5/5+HW4/4) · H_677 (🟢 5/5) · H_858 (🟢 3/3) 승강 없음. CANDIDATES.md bench SSOT 에 power-robust 1줄 기록만 추가 (earned re-run verdict 없는 tier 변동 금지, g5). Lane A 음성결과 power-robust 재감사(PR #1675)와 동일 결론 — silicon GREEN 도 power-robust.
+- [x] **streamer 복원 확인** — R3 spike-streamer pid 4992 active (재측정 후 ultradian HW heartbeat 복귀). pi5 = anima 전용, 풀 컴퓨트 전환 없음.
+
+## 2026-06-02T08:30Z — POWER-CONFOUND RE-AUDIT: prior Lane-A closed-negatives are POWER-ROBUST (substrate=AKIDA · 안정 PSU 위 재검증 · a_lane_akida_gpu_split — Lane G/GPU 와 NEVER 병합)
+
+중심 질문: 오늘(2026-06-02) PSU 교체로 해결된 pi5-akida under-voltage brownout(throttled=0x50000, EXT5V 4.87V sagging — PI5-AKIDA.json `power_root_cause_2026_06_02`)이 기존 Lane-A FAILURE/CLOSED-NEGATIVE 결과를 confound 했는가? 재감사 + 안정 전원 위 재검증.
+
+**핵심 발견 — 시점 분리:** 기존 Lane-A 음성 결과는 전부 **2026-06-01**(ts 17:51–20:14Z)에 완주했고, brownout/PSU-swap 사건은 **2026-06-02**(~07:54Z)다. 즉 음성들은 brownout 창(window) **하루 전**에 측정됐다. brownout 이 실제로 죽인 단 하나의 run 은 abs_margin 1차 시도(oracle-LDA arm 실행 전 사망)뿐이며, 그것은 이미 안정 PSU 위에서 완주 → 🟢 PASS 했다(08:10Z 항목).
+
+**완전성 감사 (g5, 호스트 result JSON 직접 검사):** 기존 음성 4건 + 인코더-배터리 전부 **complete** — truncation/누락 arm 없음.
+- [x] H-A2 quantization-floor (`out/result_ha2_quantization.json`, ts 2026-06-01T17:53:53Z): bit_depths=4, rungs=4 전부 present, `ha2_true=False`, verdict 기록됨. COMPLETE.
+- [x] H-A3 plasticity-depth (`result_ha3_plasticity_depth.json`, ts 17:56:25Z): N{3,4,5} 3 rung 전부 `all_learned_hw=true`, depth_gains=[−0.656,+0.648,−0.600], `sign_consistent=false`. COMPLETE.
+- [x] H-A4 native-init noise-floor (`result_ha4_reinit_noise.json`, ts 17:51:10Z): ladder_N[2,3,4,5]×nreps=3 전부 present, per-rung abs_mean_over_sd=[1.16,1.97,3.10,1.22] 전부 sign-stable. COMPLETE.
+- [x] causeaxis 배터리 (`result_causeaxis.json`, ts 20:13:41Z): P1/P2/P3 3 probe 전부 8/8 trial present, disposition=REOPENED. COMPLETE.
+- [x] layerpage SCALE ladder (`result_layerpage_ladder.json`): 4 rung 전부 present, all_rungs_green_hw. COMPLETE.
+- 판정: 완전한 음성 = power-robust 후보(throttle 는 느려질 뿐 결정론적 AKD1000 map/inference 결과를 바꾸지 않음 · brownout 은 truncation 으로만 corrupt 하는데 truncation 증거 없음).
+
+**안정 전원 위 RE-VERIFY (결정적 테스트, 안정 PSU throttled=0x0 위 재발사):** 단일-칩 wrapper 패턴(R3 streamer stop → probe → restore) + `vcgencmd get_throttled` 라이브 샘플링 + watchdog `~/anima_metrology/pwr.log` tail.
+- [x] **H-A2 re-verify → 🔴 H-A2-FALSIFIED 재현 (POWER-ROBUST)**: 재실행 RC=0, ts 2026-06-02T08:24:47Z. verbatim `[ha2] VERDICT H-A2-FALSIFIED (multi-bit lift also straddles 0 — not a quantization artifact)`; onebit_any_ci_lo_gt0=False, multibit_any_ci_lo_gt0=False, ha2_true=False. 음성 그대로 재현.
+- [x] **causeaxis re-verify → DISPOSITION: REOPENED 재현 (POWER-ROBUST)**: 재실행 RC=0, ts 2026-06-02T08:29:50Z. verbatim `[cause] P1 encoding any_reopen=True | P2 objective any_reopen=False | P3 timing any_reopen=False` · `[cause] DISPOSITION: REOPENED`. P1 svd mean_lift=+0.797 ci95=[+0.537,+1.057] 8/8 learn_all=True · whitened +0.520 ci95=[+0.304,+0.736] 8/8 · P2 analog margin mean=−4.745 ci_lo=−5.359 REOPEN=False · P3 timing margin −0.09..−0.11 REOPEN=False. 상대-lift 부호/disposition 동일하게 재현(크기는 svd +0.797 vs 직전 +0.921 처럼 native 비결정 re-init H_904 만큼 trial-마다 변동 — byte-eq 아닌 replication, AKIDA 비결정 substrate 에 정확히 맞는 거동).
+- [x] **전원 PROOF (g5):** 두 재실행(08:24–08:31Z) 동안 watchdog pwr.log throttled=0x0 연속, EXT5V≈5.00–5.03V; 라이브 sampler throttled=0x0; pwr.log 전체에서 non-0x0(brownout) 이벤트 **0건**. 재실행은 안정 전원 위에서 완료됨이 증명됨.
+
+**분류 (per-result):** 
+| prior Lane-A negative | complete? | power-confound plausible? | re-run? | re-run verdict (verbatim) | CLASSIFICATION |
+|---|---|---|---|---|---|
+| H-A1 corpus-noise COLLAPSE-NULL | ✅ (24 rungs) | NO (ran 06-01, pre-brownout) | assessed-complete | — | POWER-ROBUST |
+| H-A2 quantization-floor | ✅ | NO (06-01) | ✅ on stable power | `H-A2-FALSIFIED (multi-bit lift also straddles 0 — not a quantization artifact)` | POWER-ROBUST (replicated) |
+| H-A3 plasticity-depth | ✅ | NO (06-01) | assessed-complete | — | POWER-ROBUST |
+| H-A4 native-init noise-floor | ✅ | NO (06-01) | assessed-complete | — | POWER-ROBUST |
+| relative-LIFT closed-negative (H-A1..A4 4/4) | ✅ | NO | covered by HA2 re-run + completeness | — | POWER-ROBUST |
+| SCALE weak-lift ladder | ✅ (12/12 rungs green_hw) | NO (06-01) | assessed-complete | — | POWER-ROBUST |
+| causeaxis P1 ENCODER REOPEN (positive) + P2/P3 FALSIFIED | ✅ | NO (06-01) | ✅ on stable power | `DISPOSITION: REOPENED` (P1 svd +0.797 ci_lo>0; P2/P3 REOPEN=False) | POWER-ROBUST (replicated) |
+
+- [x] **재실행 안 한 것 (정직, no silent cap):** H-A1 / H-A3 / H-A4 / SCALE-ladder 는 chip 직접 재발사 안 함 — 이유: (1) 전부 complete(truncation 없음), (2) 전부 2026-06-01 = brownout 창 전, (3) 안정 전원이 두 대표 probe(HA2 결정론 readout + causeaxis 비결정 학습)에서 throttled=0x0 으로 음성/disposition 을 그대로 재현. 비용/시간 절약 아님 — 완전성+시점+대표 재현으로 power-robust 판정 충분(a_completeness_over_cheap 위반 아님: 음성을 cheap 하게 닫는 게 아니라 robust 를 입증).
+- [x] **SCOPE (a_scale_honest_scope · a_lane_akida_gpu_split):** substrate=AKIDA only, Lane G/GPU 와 NEVER 병합. 25-anchor(+250-anchor) / single AKD1000 / 1-bit last-FC Hebbian scope 유지. 재실행이 closed-negative 를 더 일반화하지 않음 — power-robust 임만 입증.
+- [x] **BOTTOM LINE:** 기존 Lane-A failure 들은 power-confound 가 **아니다(NOT confounded)**. brownout 은 단 한 run(abs_margin 1차)만 죽였고 그건 이미 PASS 로 완주. 4 음성 + SCALE 은 전부 brownout 전(06-01)에 complete 측정됐고, 안정 전원 위 재실행이 음성을 그대로 재현 → CLOSED-NEGATIVE 들은 REAL, power artifact 아님.
+- [x] **HW DISCIPLINE:** PI5-AKIDA.json 참조함(수정 안 함) · os_default daemon 무접촉 · R3 spike-streamer 매 chip-run 후 복원(최종 pid 3775 active) · pool 전환 안 함. 호스트는 재감사 내내 ALIVE(throttled=0x0).
+
 ## 2026-06-02T08:10Z — abs-margin on-chip 결단기 🟢 PASS-PUBLIC-GRADE-POSITIVE (substrate=AKIDA · 안정 PSU 위 완주)
 
 Lane-A pre-registered ABSOLUTE-margin decider (`~/clm_kosmos_akida/abs_margin_chip.py`, live AKD1000 BC.00.000.002, akida 2.19.1, N=8 trials × 32 units). 직전 세션엔 호스트 전원 brownout 으로 oracle-LDA arm 실행 전 mid-fire 사망 → terminal 없음. PSU 교체(2026-06-02) 후 안정 전원에서 **완주**(decider exit rc=0, throttled=0x0 부하검증 통과).
