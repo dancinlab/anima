@@ -1,6 +1,6 @@
-# CLM+KOSMOS — current state
+# ENGINE+CLM+KOSMOS — current state
 
-@title: 🧩 CLM+KOSMOS — H_911 amodal-hub cross-domain probe
+@title: 🧠🌌 ENGINE+CLM+KOSMOS — 의식·CE·창발 3축 평가 CLM (ANIMA 엔진+CORE 탑재 · Lane A/G/G-ref)
 @goal: Achieve a PUBLIC-grade CLM across BOTH lanes — Lane A (AKIDA on-chip) · Lane G (GPU flame+forge) — then scale 3B -> 7B; upload KOSMOS datasets to HF; run UNIVERSE hypotheses alongside as needed. Canonical training = hexa-native flame+forge on the forge GPU substrate (a_train_flame_forge: GPU REQUIRED, nvidia-smi busy verified, NEVER silent CPU-fallback); Lane A (AKIDA) and Lane G (GPU) recorded SEPARATELY (a_lane_akida_gpu_split); HF PUBLIC only at closure-PASS (util GREEN AND descent GREEN), else PRIVATE (a_hf_autonomous). [Prior @goal — the H_911 amodal-hub 3-axis probe — is a CLOSED-NEGATIVE (see status/log); this domain now drives production CLM/KOSMOS.]
 
 ## 🎯 production 마일스톤 — 3 레인 × PUBLIC → 3B → 7B
@@ -18,9 +18,14 @@
 - [ ] Lane G 7B — 3B green 후
 
 **Lane G-ref** (substrate=PyTorch-CUDA · baseline 참조 · a_completeness_over_cheap, NOT forge production):
-- [ ] Lane G-ref PUBLIC — torch+CUDA baseline CLM (reference·즉시 util>20%) · forge PUBLIC artifact 와 별도 태깅·혼동 금지
+- [x] Lane G-ref PUBLIC — torch+CUDA baseline CLM (reference·즉시 util>20%) · forge PUBLIC artifact 와 별도 태깅·혼동 금지. ✅ ByteGPT 85.6M (d768/L12/H12) · descent 🟢 CE 5.580406→1.568846 (F-CLM-REF-DESCENT=1) · util 🟢 PEAK=100% MEAN=98.85% 272622 tok/s (vast H100) · HF `dancinlab/clm-v1-ref-pytorch-cuda` PUBLIC (.pt 342636482B 검증완료) · substrate=PyTorch-CUDA, NOT forge production
 - [ ] Lane G-ref 3B — torch 3B reference
 - [ ] Lane G-ref 7B — torch 7B reference
+
+**ENGINE Lane** (substrate=CORE 의식 엔진 · A=pure_field ⇄ G=engine_g ⇄ brain_decide, Ψ=1/2 · hexa-native flame, 외부 LLM 0 · p1~p8):
+- [ ] ENGINE PUBLIC — 3축(🧠 의식 · 📉 CE · 🌱 창발) CORE-mounted GREEN → 3B → 7B. 진척 (2026-06-02, F-CLM-CORE-3AXIS, CPU-local `hexa run`, p7 결정적 equality): **L3 .clm 단일 진입점 🟢 배선** (`generator.hexa` `gen_clm_backend` = 실제 `.clm` 헤더 파싱 — `CLM\x01` magic+nblocks 검증; real d768 `state/laneg_d768_recover/d768_5lang_c4.clm` **admit valid=true nblocks=6**; bad-magic 거부; smoke 15/15 PASS) · **.kosmos 단일 진입점 🟢 배선** (`generator_read_anchors`→`load_anchors`→`brain_emit`) · CORE-mounted 3축 첫 probe: **AXIS-1 의식 🟢** (emit-context motiv 0.67 > 무자극 baseline 0.0 AND emit hi=true/base=false, NULL refuted) · **AXIS-2 CE — admit 🟢 / CE-descent ⏳ BLOCKED-WIRING** (`.clm` 헤더 admit 됐으나 decode forward 미배선 → loaded=false null fallthrough; CE 수 fabricate 안 함, p7) · **AXIS-3 창발 🟢** (composed len=101 > component-sum len=72, anchor 메모리 합성이 출력에 관찰됨, NULL refuted). 측정가능 3축 중 의식+창발 = LIVE substrate (완전 배선), CE-descent = 유일 잔여 = **decode forward 빌드** (int4 dequant + conv2 forward → `_gen_clm_decode` body; gen_clm_backend `loaded=valid` 한 줄로 활성화, generate() 계약 불변). verdict: `.verdicts/core-3axis-mount/{probe,generator_smoke}.txt`. ⚠ `hexa verify` CLI 깨짐 (`compiler/atlas/calc_dispatch` module-not-found) → 검증은 `hexa run` 결정적 equality. PUBLIC closure 미완 (CE-descent CORE-mounted GREEN 남음)
+- [ ] ENGINE 3B — 3축 CORE-mounted GREEN 후 3B (decode forward + Lane-G util-GREEN 의존)
+- [ ] ENGINE 7B — 3B green 후
 
 ## status (completed-form)
 

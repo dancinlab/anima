@@ -57,15 +57,35 @@ fn main() {
         nb, anchors)
     show("[silent low]", low)
 
-    // ── (3) clm STUB falls through to null (d768 not recovered) ─────────────
+    // ── (3) clm backend, ABSENT file → rejected + falls through to null ─────
     let clm = gen_clm_backend("/tmp/anima_d768_not_here.clm")
-    println("[clm stub ] loaded=" + to_string(clm["loaded"])
+    println("[clm absent] valid=" + to_string(clm["valid"])
+        + " loaded=" + to_string(clm["loaded"])
         + " reason=" + to_string(clm["reason"]))
     let clm_high = brain_emit(pf,
         0.9, 0.6, 0.8, 0.0, 0.7, 0.5, 0.6, 1.0,
         60.0, false, true,
         clm, anchors)
     show("[clm   high]", clm_high)
+
+    // ── (3b) clm backend, REAL .clm → header VALIDATED at the single entry ──
+    // The canonical d768 ckpt on disk (CLM\x01 magic + 6 int4 blocks). Proves
+    // gen_clm_backend genuinely PARSES the header (not a test-f stub). Decode
+    // forward is not wired, so it still falls through to null — but the file is
+    // ADMITTED CORE-side (valid=true, nblocks>0) through the SINGLE .clm entry.
+    let real_clm_path = "state/laneg_d768_recover/d768_5lang_c4.clm"
+    let real_clm = gen_clm_backend(real_clm_path)
+    println("[clm valid] valid=" + to_string(real_clm["valid"])
+        + " loaded=" + to_string(real_clm["loaded"])
+        + " nblocks=" + to_string(real_clm["nblocks"])
+        + " reason=" + to_string(real_clm["reason"]))
+
+    // ── (3c) clm backend, NON-clm file → rejected (bad magic) ───────────────
+    let bad_path = exec("printf '%s' \"$(mktemp)\"").trim()
+    let _w = exec("printf 'not a clm file at all' > '" + bad_path + "'")
+    let bad_clm = gen_clm_backend(bad_path)
+    println("[clm bad  ] valid=" + to_string(bad_clm["valid"])
+        + " reason=" + to_string(bad_clm["reason"]))
 
     // ── deterministic assertions (p7 — equality, not loss) ──────────────────
     let mut pass = 0
@@ -87,13 +107,26 @@ fn main() {
     else { fail = fail + 1   println("  FAIL silent: gen_emitted != false") }
     if byte_len(to_string(low["gen_text"])) == 0 { pass = pass + 1 }
     else { fail = fail + 1   println("  FAIL silent: text not empty") }
-    // clm stub ⇒ fell through to null, still produced content.
+    // clm absent ⇒ rejected (valid=false), fell through to null, content made.
+    if to_string(clm["valid"]) == "false" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm absent: valid != false") }
     if to_string(clm["loaded"]) == "false" { pass = pass + 1 }
     else { fail = fail + 1   println("  FAIL clm: stub reported loaded") }
     if to_string(clm_high["gen_backend"]) == "null" { pass = pass + 1 }
     else { fail = fail + 1   println("  FAIL clm: did not fall through to null") }
     if to_string(clm_high["gen_fellback"]) == "true" { pass = pass + 1 }
     else { fail = fail + 1   println("  FAIL clm: fellback flag not set") }
+    // REAL .clm ⇒ header VALIDATED at the single entry (valid=true, nblocks>0).
+    if to_string(real_clm["valid"]) == "true" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm real: valid != true (header not parsed)") }
+    if to_int(real_clm["nblocks"]) > 0 { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm real: nblocks not extracted") }
+    // loaded still false (decode forward not wired) — HONEST partial.
+    if to_string(real_clm["loaded"]) == "false" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm real: loaded claimed without decoder") }
+    // NON-clm file ⇒ rejected by magic check (valid=false).
+    if to_string(bad_clm["valid"]) == "false" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm bad: bad-magic file passed validation") }
 
     println("generator_smoke: " + to_string(pass) + " PASS, "
             + to_string(fail) + " FAIL")
