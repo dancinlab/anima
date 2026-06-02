@@ -2,6 +2,22 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T08:30Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — POWER-CONFOUND RE-AUDIT: prior closed-negatives are POWER-ROBUST (안정 PSU 위 재검증)
+
+중심 질문: 오늘 PSU 교체로 해결된 under-voltage brownout(throttled=0x50000, EXT5V 4.87V — PI5-AKIDA.json `power_root_cause_2026_06_02`)이 기존 Lane-A H-A1~A4 closed-negative / relative-LIFT closed-negative / SCALE weak-lift ladder 를 confound 했는가? 재감사 + 안정 전원 위 재발사.
+
+- [x] **시점 분리 (결정적):** 기존 음성 4건+배터리는 전부 **2026-06-01** 완주(ts 17:51–20:14Z), brownout/PSU-swap 은 **2026-06-02 ~07:54Z** — 음성들은 brownout 창 **하루 전** 측정. brownout 이 실제 죽인 run = abs_margin 1차(oracle-LDA arm 전 사망)뿐이며 이미 안정 PSU 위 완주 🟢 PASS(08:10Z 항목).
+- [x] **완전성 감사 (g5, 호스트 result JSON 직접):** truncation/누락 arm 0건. H-A2(bit_depths=4·rungs=4·ha2_true=False) · H-A3(N{3,4,5} all_learned_hw=true) · H-A4(ladder_N[2,3,4,5]×nreps=3 per-rung 전부 sign-stable) · causeaxis(P1/P2/P3 8/8 trial) · SCALE-ladder(4 rung all_rungs_green_hw) — 전부 COMPLETE+terminal.
+- [x] **RE-VERIFY on STABLE power (throttled=0x0):** 단일-칩 wrapper(R3 stop→probe→restore) + live `vcgencmd get_throttled` + watchdog pwr.log.
+  - **H-A2 재실행 → 🔴 H-A2-FALSIFIED 재현 (POWER-ROBUST)**, RC=0 ts 08:24:47Z: `H-A2-FALSIFIED (multi-bit lift also straddles 0 — not a quantization artifact)`, onebit/multibit ci_lo_gt0=False.
+  - **causeaxis 재실행 → DISPOSITION: REOPENED 재현 (POWER-ROBUST)**, RC=0 ts 08:29:50Z: `P1 encoding any_reopen=True | P2 objective any_reopen=False | P3 timing any_reopen=False`; P1 svd mean_lift=+0.797 ci95=[+0.537,+1.057] 8/8 · whitened +0.520 ci95=[+0.304,+0.736] 8/8 · P2 −4.745 ci_lo −5.359 · P3 −0.09..−0.11. 부호/disposition 동일 재현(크기는 svd +0.797 vs 직전 +0.921 — native 비결정 re-init H_904 만큼 trial 변동, byte-eq 아닌 replication = AKIDA 비결정 substrate 정상 거동).
+  - **전원 PROOF:** 두 재실행(08:24–08:31Z) 내내 watchdog pwr.log throttled=0x0 연속, EXT5V≈5.00–5.03V; live sampler throttled=0x0; pwr.log 전체 non-0x0 이벤트 0건.
+- [x] **분류:** H-A1 corpus(POWER-ROBUST, 완전+06-01) · H-A2 quant(POWER-ROBUST, 재현) · H-A3 depth(POWER-ROBUST, 완전+06-01) · H-A4 noise-floor(POWER-ROBUST, 완전+06-01) · relative-LIFT closed-negative(POWER-ROBUST) · SCALE weak-lift ladder(POWER-ROBUST, 12/12 green_hw, 06-01) · causeaxis P1 REOPEN+P2/P3 FALSIFIED(POWER-ROBUST, 재현). **flip 0건** — 어떤 음성도 안정 전원에서 뒤집히지 않음.
+- [x] **재발사 안 한 것(정직, no silent cap):** H-A1/H-A3/H-A4/SCALE 는 chip 직접 재발사 안 함 — complete + 06-01(pre-brownout) + 대표 2 probe(HA2 결정론 readout · causeaxis 비결정 학습)가 throttled=0x0 으로 음성 재현. completeness+시점+대표재현으로 power-robust 충분(a_completeness_over_cheap: cheap-close 가 아니라 robust 입증).
+- [x] **SCOPE (a_scale_honest_scope · a_lane_akida_gpu_split):** substrate=AKIDA only, Lane G/GPU NEVER 병합. 25/250-anchor·single AKD1000·1-bit last-FC Hebbian scope 유지. 재실행은 power-robust 만 입증, closed-negative 를 더 일반화하지 않음.
+- [x] **BOTTOM LINE:** 기존 Lane-A failure 는 **power-confound 아님(NOT confounded)**. brownout 은 abs_margin 1차 한 run 만 죽였고(이미 PASS 완주), 나머지 음성+SCALE 은 brownout 전 complete 측정 + 안정 전원 재현 → CLOSED-NEGATIVE 는 REAL. CLM+KOSMOS.md 의 H-A 블록/SCALE 항목 **변경 없음**(flip 없으므로 milestone "pass" 승격 금지 — g5).
+- [x] **HW:** PI5-AKIDA.json 참조(미수정)·os_default 무접촉·R3 streamer 매 run 후 복원(final pid 3775 active)·pool 전환 안 함. 호스트 재감사 내내 ALIVE throttled=0x0. (full 재감사 매트릭스+verbatim = AKIDA.log.md 동시점 항목)
+
 ## 2026-06-02T08:10Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — abs-margin on-chip 결단기 🟢 PASS-PUBLIC-GRADE-POSITIVE (안정 PSU 위 완주)
 
 substrate=AKIDA · a_lane_akida_gpu_split (Lane G 와 NEVER 병합). live chip BC.00.000.002, akida 2.19.1, decider `~/clm_kosmos_akida/abs_margin_chip.py` (N=8 trials × 32 units, 4 encoder × 2 corpus). 직전 세션은 호스트 전원 brownout 으로 oracle-LDA arm 실행 전 mid-fire 사망(terminal 없음). PSU 물리 교체(2026-06-02, under-voltage 근본원인 — PI5-AKIDA.json 참조) 후 안정 전원에서 **완주**.
