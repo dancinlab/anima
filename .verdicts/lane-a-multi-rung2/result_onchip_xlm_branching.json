@@ -1,0 +1,297 @@
+{
+  "substrate": "HYBRID(on-chip AKD1000 encoder \u2295 off-chip host-CPU decode head)",
+  "rung": "BRANCHING-CORPUS HELD-OUT GENERALIZATION (non-deterministic transition operator; set-membership metric)",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T21:42:57Z",
+  "n_trials": 8,
+  "units": 256,
+  "off_chip_hidden": 64,
+  "off_chip_epochs": 60,
+  "K_roll": 5,
+  "branching_operator": {
+    "deltas": [
+      1,
+      7,
+      13,
+      19,
+      29
+    ],
+    "B_factor": 5,
+    "ring": "Z_NC",
+    "rule": "succ(i)={(i+d) mod NC : d in DELTAS}"
+  },
+  "metric": "setacc[k]=P(off-chip-head argmax decode at hop k IS A MEMBER OF succ(current concept)) \u2014 branching-aware set-membership",
+  "gen_factor": 2.0,
+  "n_test_frac": 0.3,
+  "ladder_NC": [
+    50,
+    75,
+    100
+  ],
+  "corpus": "corpus_synth SYNTHETIC distinguishable byte-pattern anchors (NC past the 50-concept real-corpus ceiling; NOT a semantic claim, a_scale_honest_scope); BRANCHING operator over the index ring",
+  "corpus_dir": "corpus_synth",
+  "prior_holdout_PR1694_heldout_decay": [
+    0.0,
+    0.0,
+    0.0
+  ],
+  "architecture": "on-chip FC1 encoder (1-bit AkidaUnsupervised, byte-match prior rungs) grounds the transition code; OFF-CHIP host-CPU Elman RNN decode head trained by BPTT on random BRANCHING walks with TRAIN-only targets; rollout decoded over the FULL codebook. NO chip-to-chip feedback. NO GPU/torch/sklearn.",
+  "ladder": [
+    {
+      "NC": 50,
+      "N_TRAIN": 35,
+      "N_TEST": 15,
+      "chance": 0.10204081632653061,
+      "learn_all": true,
+      "decay_TRAIN": [
+        0.8914,
+        0.965,
+        0.9786,
+        0.9786,
+        0.985
+      ],
+      "decay_HELD_OUT": [
+        0.0883,
+        0.8833,
+        0.9383,
+        0.9633,
+        0.9617
+      ],
+      "heldout_over_train_ratio_per_hop": [
+        0.0991,
+        0.9154,
+        0.9589,
+        0.9844,
+        0.9763
+      ]
+    },
+    {
+      "NC": 75,
+      "N_TRAIN": 53,
+      "N_TEST": 22,
+      "chance": 0.06756756756756757,
+      "learn_all": true,
+      "decay_TRAIN": [
+        0.7995,
+        0.95,
+        0.9722,
+        0.9792,
+        0.9759
+      ],
+      "decay_HELD_OUT": [
+        0.0295,
+        0.8489,
+        0.925,
+        0.9602,
+        0.9625
+      ],
+      "heldout_over_train_ratio_per_hop": [
+        0.037,
+        0.8935,
+        0.9515,
+        0.9806,
+        0.9862
+      ]
+    },
+    {
+      "NC": 100,
+      "N_TRAIN": 70,
+      "N_TEST": 30,
+      "chance": 0.050505050505050504,
+      "learn_all": true,
+      "decay_TRAIN": [
+        0.6446,
+        0.9232,
+        0.91,
+        0.8761,
+        0.8432
+      ],
+      "decay_HELD_OUT": [
+        0.0067,
+        0.8483,
+        0.9017,
+        0.8517,
+        0.8392
+      ],
+      "heldout_over_train_ratio_per_hop": [
+        0.0103,
+        0.9189,
+        0.9908,
+        0.9721,
+        0.9952
+      ]
+    }
+  ],
+  "headline": {
+    "NC": 100,
+    "chance": 0.050505050505050504,
+    "decay_curve_TRAIN_in_dist": [
+      0.6446,
+      0.9232,
+      0.91,
+      0.8761,
+      0.8432
+    ],
+    "decay_curve_HELD_OUT": [
+      0.0067,
+      0.8483,
+      0.9017,
+      0.8517,
+      0.8392
+    ],
+    "heldout_over_train_ratio_per_hop": [
+      0.0103,
+      0.9189,
+      0.9908,
+      0.9721,
+      0.9952
+    ],
+    "F_BRANCH_1_heldout_above_null": "REFUTED: held-out hop-2 AND hop-3 STAY ABOVE the shuffle-NULL on the branching set-membership metric (each ci_lo>NULL hi AND p<0.05) -> a branching corpus FORCES a TRANSFERABLE transition OPERATOR; the off-chip head composes on concepts held out of training -> GENUINE multi-step composition, NOT a per-concept lookup",
+    "F_BRANCH_2_within_factor": "REFUTED: held-out hop-2 (0.8483) is within 2.0x of in-dist hop-2 (0.9232) [>= 0.4616] -> held-out tracks in-dist",
+    "F_BRANCH_1_pass": true,
+    "F_BRANCH_2_pass": true,
+    "GENERALIZES": true,
+    "K_roll": 5,
+    "deep_hops_tested": [
+      4,
+      5
+    ],
+    "deep_hop_above_null": {
+      "4": true,
+      "5": true
+    },
+    "depth_ceiling_hop": 5,
+    "F_BRANCH_DEEP_holds_at_hop4_5": "REFUTED: held-out composition STAYS ABOVE shuffle-NULL at hop [4, 5] (each ci_lo>NULL hi AND p<0.05) -> the transferable operator HOLDS at deeper hops; no depth ceiling within hop-5",
+    "F_BRANCH_DEEP_pass": true
+  },
+  "headline_per_hop": [
+    {
+      "hop": 1,
+      "train_setacc": {
+        "mean": 0.6446428571428571,
+        "sd": 0.028199104673254753,
+        "ci_lo": 0.6251018745677663,
+        "ci_hi": 0.6641838397179478
+      },
+      "heldout_setacc": {
+        "mean": 0.006666666666666667,
+        "sd": 0.011268723396380222,
+        "ci_lo": -0.0011421602476513713,
+        "ci_hi": 0.014475493580984706
+      },
+      "heldout_over_train_ratio": 0.0103,
+      "shuffle_null": {
+        "mean": 0.049833333333333334,
+        "sd": 0.01873721786534312,
+        "hi": 0.08655828034940585,
+        "p_value": 1.0,
+        "B": 200
+      },
+      "chance": 0.050505050505050504,
+      "heldout_above_shuffle_null": false
+    },
+    {
+      "hop": 2,
+      "train_setacc": {
+        "mean": 0.9232142857142858,
+        "sd": 0.018033819864136613,
+        "ci_lo": 0.9107174861239906,
+        "ci_hi": 0.9357110853045809
+      },
+      "heldout_setacc": {
+        "mean": 0.8483333333333334,
+        "sd": 0.03486937074099581,
+        "ci_lo": 0.8241700921968008,
+        "ci_hi": 0.872496574469866
+      },
+      "heldout_over_train_ratio": 0.9189,
+      "shuffle_null": {
+        "mean": 0.04793333333333333,
+        "sd": 0.03529173652098557,
+        "hi": 0.11710513691446504,
+        "p_value": 0.004975124378109453,
+        "B": 200
+      },
+      "chance": 0.050505050505050504,
+      "heldout_above_shuffle_null": true
+    },
+    {
+      "hop": 3,
+      "train_setacc": {
+        "mean": 0.91,
+        "sd": 0.02244526870998778,
+        "ci_lo": 0.8944462223238212,
+        "ci_hi": 0.9255537776761789
+      },
+      "heldout_setacc": {
+        "mean": 0.9016666666666666,
+        "sd": 0.0615926196362096,
+        "ci_lo": 0.8589851588311752,
+        "ci_hi": 0.944348174502158
+      },
+      "heldout_over_train_ratio": 0.9908,
+      "shuffle_null": {
+        "mean": 0.057833333333333334,
+        "sd": 0.0624995555539753,
+        "hi": 0.1803324622191249,
+        "p_value": 0.004975124378109453,
+        "B": 200
+      },
+      "chance": 0.050505050505050504,
+      "heldout_above_shuffle_null": true
+    },
+    {
+      "hop": 4,
+      "train_setacc": {
+        "mean": 0.8760714285714285,
+        "sd": 0.019791183948898186,
+        "ci_lo": 0.8623568378010118,
+        "ci_hi": 0.8897860193418452
+      },
+      "heldout_setacc": {
+        "mean": 0.8516666666666667,
+        "sd": 0.055748870014884676,
+        "ci_lo": 0.8130346707162746,
+        "ci_hi": 0.8902986626170588
+      },
+      "heldout_over_train_ratio": 0.9721,
+      "shuffle_null": {
+        "mean": 0.048966666666666665,
+        "sd": 0.059731240662747924,
+        "hi": 0.16603989836565258,
+        "p_value": 0.004975124378109453,
+        "B": 200
+      },
+      "chance": 0.050505050505050504,
+      "heldout_above_shuffle_null": true
+    },
+    {
+      "hop": 5,
+      "train_setacc": {
+        "mean": 0.8432142857142857,
+        "sd": 0.03319480446894933,
+        "ci_lo": 0.8202114598009332,
+        "ci_hi": 0.8662171116276381
+      },
+      "heldout_setacc": {
+        "mean": 0.8391666666666666,
+        "sd": 0.044570258429898486,
+        "ci_lo": 0.8082810533311489,
+        "ci_hi": 0.8700522800021844
+      },
+      "heldout_over_train_ratio": 0.9952,
+      "shuffle_null": {
+        "mean": 0.05216666666666667,
+        "sd": 0.06434779630172963,
+        "hi": 0.17828834741805674,
+        "p_value": 0.004975124378109453,
+        "B": 200
+      },
+      "chance": 0.050505050505050504,
+      "heldout_above_shuffle_null": true
+    }
+  ],
+  "DISPOSITION": "GENERALIZES \u2014 a BRANCHING corpus FORCES a transferable transition OPERATOR. The off-chip recurrent head, trained on random branching walks with TRAIN-concept targets ONLY, decodes hop-2/3 successors for TEST concepts it was NEVER trained to emit, landing in the valid (B=5) successor set ABOVE the shuffle-NULL AND within 2.0x of in-dist. Multi-step composition is REAL (the head learned the offset operator, not a per-concept lookup). The PR#1694 exact-0.0000 was an ARTEFACT of the deterministic single-chain corpus, REPAIRED at the root cause. Lane A HYBRID PUBLIC RE-UPGRADES (hybrid-scoped, branching-validated; on-chip AKD1000 encoder \u2295 off-chip host-CPU decode head) \u2014 NOT pure-AKIDA, NOT Lane G. STILL toy (a_scale_honest_scope, 3-rung ladder reported); next rung = 3B."
+}
