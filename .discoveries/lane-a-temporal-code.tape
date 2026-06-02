@@ -1,0 +1,6 @@
+@D la_microexp_a4_temporal_code := "A4 STDP / temporal-order spike code (akida.BufferTempConv) feasibility on AKD1000" :: discovery [d=2026-06-03 active]
+  seed = "substrate=AKIDA (live AKD1000 BC.00.000.002 IpVersion.v1 akida 2.19.1 pi5-akida). akida 2.19.1 exposes NO STDP class; only native temporal primitive = akida.BufferTempConv (FIFO spatiotemporal conv, fifo_size=K). STEP-1 feasibility = construct -> compile -> map -> temporal forward on silicon"
+  falsifier = "F-A4-FEASIBLE: BufferTempConv maps to AKD1000 + runs temporal forward on silicon (else infeasible-on-chip). F-A4-1 (if feasible): hop-2 AND hop-3 acc ci_lo > shuffle-NULL hi AND p<=0.01 AND mean>0.038"
+  claim = "INFEASIBLE-ON-CHIP (NOT a wall verdict): BufferTempConv constructs + adds to Model OK, but map() raises RuntimeError 'The IP version of the model and device must be identical' — BufferTempConv targets AKD1500/v2 TENNs, the live AKD1000 is IpVersion.v1. NO STDP/spike-timing-learn API exists for AKD1000 in any akida release (hardware-cannot, not sdk-not-installed). Temporal-order spike coding on-chip requires AKD1500-class silicon. NO SIM substitution (g63)"
+  target = "infeasible-on-chip (terminal, honest); verdict .verdicts/lane-a-microexp-temporal-code/F-TEMPORAL-CODE.txt"
+  scope = "AKD1000 hardware (IpVersion.v1); Lane A on-chip NEVER merged with Lane G (a_lane_akida_gpu_split)"

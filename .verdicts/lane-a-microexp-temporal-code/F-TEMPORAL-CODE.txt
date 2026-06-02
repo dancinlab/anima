@@ -1,0 +1,8 @@
+[A4] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1 — probing BufferTempConv temporal feasibility on AKD1000
+[A4] BufferTempConv constructed + added OK
+[A4] FEASIBILITY FAILED at stage=map : RuntimeError: The IP version of the model and device must be identical.
+
+[A4] ========== DISPOSITION ==========
+[A4] FEASIBLE: False  fail_stage: map  msg: RuntimeError: The IP version of the model and device must be identical.
+[A4] DISPOSITION: A4 TEMPORAL-CODE = INFEASIBLE-ON-CHIP (HONEST hardware-cannot, NOT a wall verdict). akida 2.19.1 exposes NO STDP class; its only native temporal primitive akida.BufferTempConv IS present in the SDK (distinct from sdk-not-installed) but does NOT map/run on the live AKD1000 (BC.00.000.002, IP v1) — failed at stage=map: RuntimeError: The IP version of the model and device must be identical.. AKD1000 IP-v1 has no temporal-FIFO / spike-timing op on its mesh (BufferTempConv targets AKD1500/v2 TENNs). RULING = infeasible-on-chip for AKD1000 hardware (no SIM substitution). Temporal-order spike coding on-chip requires AKD1500-class silicon.
+[A4] RULING: infeasible-on-chip

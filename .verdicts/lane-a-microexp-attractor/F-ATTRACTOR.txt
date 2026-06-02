@@ -1,0 +1,25 @@
+[A6] corpus NC=50 transitions=245 roll_starts=235 chance=0.0204 S_settle=4
+[A6] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1
+[A6] trial 0: attractor=['0.0511', '0.0213', '0.0213'] nosettle=['0.4596', '0.1617', '0.0936'] settle_steps=3.91 learn=True
+[A6] trial 1: attractor=['0.0298', '0.0213', '0.0255'] nosettle=['0.4043', '0.1106', '0.0681'] settle_steps=3.90 learn=True
+[A6] trial 2: attractor=['0.0085', '0.0213', '0.0213'] nosettle=['0.3574', '0.0638', '0.0426'] settle_steps=3.89 learn=True
+[A6] trial 3: attractor=['0.0085', '0.0213', '0.0213'] nosettle=['0.4085', '0.1106', '0.0638'] settle_steps=3.89 learn=True
+[A6] trial 4: attractor=['0.0298', '0.0213', '0.0213'] nosettle=['0.4298', '0.1234', '0.0468'] settle_steps=3.91 learn=True
+[A6] trial 5: attractor=['0.0298', '0.0000', '0.0213'] nosettle=['0.3447', '0.0596', '0.0170'] settle_steps=3.89 learn=True
+[A6] trial 6: attractor=['0.0511', '0.0213', '0.0213'] nosettle=['0.4426', '0.1064', '0.0468'] settle_steps=3.90 learn=True
+[A6] trial 7: attractor=['0.0298', '0.0000', '0.0213'] nosettle=['0.4298', '0.1106', '0.0596'] settle_steps=3.91 learn=True
+[A6] per-hop shuffle-NULL (B=200) ...
+[A6] hop 1: attractor=0.0298 ci_lo=0.0186 | nosettle=0.4096 delta=-0.3798 | shufNULL hi=0.0334 p=0.0448 | clears=False
+[A6] hop 2: attractor=0.0160 ci_lo=0.0091 | nosettle=0.1059 delta=-0.0899 | shufNULL hi=0.0331 p=0.9055 | clears=False
+[A6] hop 3: attractor=0.0218 ci_lo=0.0208 | nosettle=0.0548 delta=-0.0330 | shufNULL hi=0.0324 p=0.1940 | clears=False
+
+[A6] ========== DISPOSITION ==========
+[A6] learned_all_hw: True  mean_settle_steps=3.91
+[A6] decay ATTRACTOR: [0.0298, 0.016, 0.0218]
+[A6] decay NOSETTLE : [0.4096, 0.1059, 0.0548]
+[A6] hop 1 attractor=0.0298 ci_lo=0.0186 nosettle=0.4096 delta=-0.3798 shufNULL_hi=0.0334 p=0.0448 clears=False
+[A6] hop 2 attractor=0.0160 ci_lo=0.0091 nosettle=0.1059 delta=-0.0899 shufNULL_hi=0.0331 p=0.9055 clears=False
+[A6] hop 3 attractor=0.0218 ci_lo=0.0208 nosettle=0.0548 delta=-0.0330 shufNULL_hi=0.0324 p=0.1940 clears=False
+[A6] F-A6-1 wall_broken: False  F-A6-2 beats_nosettle: False
+[A6] DISPOSITION: A6 ATTRACTOR/HOPFIELD CLOSED-NEGATIVE (a_paper_negative_ok): on-chip recurrent attractor settling (S=4) does NOT lift hop-2/3 above shuffle-NULL by the material margin -> the 1-bit Hebbian FC has no usable energy-descent basin structure for successors at 256-unit. EMERGENCE NULL. Lane A on-chip, toy 250-anchor.
+[A6] RULING: closed-negative

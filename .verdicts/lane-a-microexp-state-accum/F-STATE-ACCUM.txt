@@ -1,0 +1,25 @@
+[A2] corpus NC=50 transitions=245 roll_starts=235 chance=0.0204
+[A2] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1
+[A2] trial 0: trace=['0.3702', '0.0426', '0.0170'] notrace=['0.3702', '0.0468', '0.0213'] learn=True
+[A2] trial 1: trace=['0.3489', '0.0213', '0.0085'] notrace=['0.3489', '0.0255', '0.0043'] learn=True
+[A2] trial 2: trace=['0.4170', '0.0255', '0.0213'] notrace=['0.4170', '0.0298', '0.0213'] learn=True
+[A2] trial 3: trace=['0.3957', '0.0213', '0.0170'] notrace=['0.3957', '0.0255', '0.0170'] learn=True
+[A2] trial 4: trace=['0.3702', '0.0298', '0.0128'] notrace=['0.3702', '0.0255', '0.0085'] learn=True
+[A2] trial 5: trace=['0.4340', '0.0298', '0.0043'] notrace=['0.4340', '0.0383', '0.0128'] learn=True
+[A2] trial 6: trace=['0.4085', '0.0170', '0.0043'] notrace=['0.4085', '0.0213', '0.0128'] learn=True
+[A2] trial 7: trace=['0.3915', '0.0383', '0.0128'] notrace=['0.3915', '0.0426', '0.0085'] learn=True
+[A2] per-hop shuffle-NULL (B=200) ...
+[A2] hop 1: trace=0.3920 ci_lo=0.3726 | notrace=0.3920 delta=+0.0000 | shufNULL hi=0.0456 p=0.0050 | clears=True
+[A2] hop 2: trace=0.0282 ci_lo=0.0221 | notrace=0.0319 delta=-0.0037 | shufNULL hi=0.0330 p=0.0697 | clears=False
+[A2] hop 3: trace=0.0122 ci_lo=0.0079 | notrace=0.0133 delta=-0.0011 | shufNULL hi=0.0371 p=0.8706 | clears=False
+
+[A2] ========== DISPOSITION ==========
+[A2] learned_all_hw: True
+[A2] decay TRACE   : [0.392, 0.0282, 0.0122]
+[A2] decay NOTRACE : [0.392, 0.0319, 0.0133]
+[A2] hop 1 trace=0.3920 ci_lo=0.3726 notrace=0.3920 delta=+0.0000 shufNULL_hi=0.0456 p=0.0050 clears=True
+[A2] hop 2 trace=0.0282 ci_lo=0.0221 notrace=0.0319 delta=-0.0037 shufNULL_hi=0.0330 p=0.0697 clears=False
+[A2] hop 3 trace=0.0122 ci_lo=0.0079 notrace=0.0133 delta=-0.0011 shufNULL_hi=0.0371 p=0.8706 clears=False
+[A2] F-A2-1 wall_broken: False  F-A2-2 beats_notrace: False
+[A2] DISPOSITION       : A2 STATE-ACCUMULATOR CLOSED-NEGATIVE (a_paper_negative_ok): running on-chip spike-count feedback trace does NOT lift hop-2/3 above shuffle-NULL by the material margin -> true on-chip state-accumulation does not break the 1-hop wall at 1-bit/256-unit. EMERGENCE NULL. Lane A on-chip, toy 250-anchor.
+[A2] RULING: closed-negative
