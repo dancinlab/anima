@@ -1,0 +1,68 @@
+F-SCALE — μ3 multi-FC TILING (capacity-bound vs algorithm-bound)  ::  VERDICT = F-SCALE-0 ALGORITHM-BOUND (CLOSED-NEGATIVE)
+=========================================================================================================================
+substrate = AKIDA (Lane A) · a_lane_akida_gpu_split — NEVER merged with Lane G / GPU
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · IpVersion.v1 · akida 2.19.1 · N=8 chip trials
+host health: temp 63-67C (≪82C guard) · throttled=0xe0000 (past-occurred bits only, NOT actively throttling) · streamer stopped→fire→restore
+toy scale (a_scale_honest_scope): corpus_big 250 anchors / 50 sequential FLORES concepts × 5 langs · 256-unit 1-bit AkidaUnsupervised FC
+NOTE: hexa verify CLI broken on host — this verdict is the VERBATIM live-chip run stdout (no fabrication, no sw fallback labelled on-chip, g63).
+
+DESIGN: N independent tiled on-chip FCs (distinct column-permutation random projection per tile, paged sequentially
+  through the SINGLE /dev/akida0 lock, never two at once), each trained on the same teacher-forced transitions, plurality-
+  voted open-vocab decode. STATELESS feedback (byte-match PR#1686) so any lift is attributable to WIDTH, not state.
+  N ∈ {1,2,4}. byte-identical primitives to onchip_xlm_state_rollout.py (enc_whitened, SHIFT=37, bind, AkidaUnsupervised(8,0.1),
+  successor-centroid codebook, frozen-median binarize, K_ROLL=3, shuffle-NULL B=200, bootstrap CI).
+  NOTE (pre-registered): paging N FCs through 1 chip = the closed paged-depth primitive applied to WIDTH.
+
+PRE-REGISTERED FALSIFIER (declared in the script docstring BEFORE the fire):
+  F-SCALE-1 (capacity-bound, multi-chip WOULD help) → REFUTED iff hop-2 above-NULL acc scales MONOTONICALLY with N
+    (N∈{1,2,4}) AND at N=4 hop-2 ci_lo > shuffle-NULL hi at p≤0.01.
+  ELSE F-SCALE-0 (algorithm-bound = multi-chip won't help, confirms TERMINAL).
+
+VERBATIM PER-TRIAL (8 chip trials · [hop1,hop2,hop3] voted acc per N · learn=True every trial):
+  trial 0: N1=['0.3106','0.0340','0.0085'] N2=['0.3106','0.0340','0.0085'] N4=['0.3362','0.0340','0.0085'] learn=True
+  trial 1: N1=['0.2340','0.0255','0.0128'] N2=['0.2340','0.0255','0.0128'] N4=['0.3489','0.0213','0.0043'] learn=True
+  trial 2: N1=['0.2894','0.0340','0.0043'] N2=['0.2894','0.0340','0.0043'] N4=['0.3532','0.0298','0.0085'] learn=True
+  trial 3: N1=['0.2723','0.0255','0.0043'] N2=['0.2723','0.0255','0.0043'] N4=['0.3362','0.0255','0.0000'] learn=True
+  trial 4: N1=['0.2638','0.0298','0.0085'] N2=['0.2638','0.0298','0.0085'] N4=['0.3319','0.0298','0.0043'] learn=True
+  trial 5: N1=['0.2894','0.0170','0.0085'] N2=['0.2894','0.0170','0.0085'] N4=['0.3277','0.0213','0.0043'] learn=True
+  trial 6: N1=['0.2979','0.0213','0.0298'] N2=['0.2979','0.0213','0.0298'] N4=['0.3277','0.0298','0.0128'] learn=True
+  trial 7: N1=['0.3277','0.0213','0.0043'] N2=['0.3277','0.0213','0.0043'] N4=['0.3532','0.0213','0.0000'] learn=True
+
+VERBATIM PER-(N,hop) (acc · ci_lo · shuffle-NULL hi · p · chance=0.0204):
+  N=1 hop 1: acc=0.2856 ci_lo=0.2655 | shufNULL hi=0.0424 p=0.0050 | aboveNULL(p≤.01)=True
+  N=1 hop 2: acc=0.0261 ci_lo=0.0218 | shufNULL hi=0.0353 p=0.1642 | aboveNULL(p≤.01)=False
+  N=1 hop 3: acc=0.0101 ci_lo=0.0042 | shufNULL hi=0.0383 p=0.8358 | aboveNULL(p≤.01)=False
+  N=2 hop 1: acc=0.2856 ci_lo=0.2655 | shufNULL hi=0.0424 p=0.0050 | aboveNULL(p≤.01)=True
+  N=2 hop 2: acc=0.0261 ci_lo=0.0218 | shufNULL hi=0.0353 p=0.1642 | aboveNULL(p≤.01)=False
+  N=2 hop 3: acc=0.0101 ci_lo=0.0042 | shufNULL hi=0.0383 p=0.8358 | aboveNULL(p≤.01)=False
+  N=4 hop 1: acc=0.3394 ci_lo=0.3318 | shufNULL hi=0.0437 p=0.0050 | aboveNULL(p≤.01)=True
+  N=4 hop 2: acc=0.0266 ci_lo=0.0232 | shufNULL hi=0.0371 p=0.1791 | aboveNULL(p≤.01)=False
+  N=4 hop 3: acc=0.0053 ci_lo=0.0023 | shufNULL hi=0.0360 p=0.9502 | aboveNULL(p≤.01)=False
+
+VERBATIM DISPOSITION:
+  learn_all_hw      : True
+  chance            : 0.0204
+  hop2 acc by N     : [0.0261, 0.0261, 0.0266]  N=[1,2,4]
+  hop2 aboveNULL byN: [False, False, False]
+  hop2 monotonic    : True  | N=4 clears NULL p≤.01: False
+  F-SCALE ruling    : F-SCALE-0 (algorithm-bound, TERMINAL confirmed): hop-2 acc does NOT scale monotonically with N
+    and/or N=4 does NOT clear the shuffle-NULL at p≤0.01 → the multi-hop wall is ALGORITHMIC, not capacity; tiling
+    (paging N FCs through 1 chip = the closed paged-WIDTH primitive) does NOT lift it → multi-chip won't help.
+    CLOSED-NEGATIVE (a_paper_negative_ok). Reduces to the closed paged-depth result applied to width: voting
+    independent stateless FCs cannot manufacture cross-hop transition structure that no single FC has.
+
+VERDICT: F-SCALE-0 ALGORITHM-BOUND — CLOSED-NEGATIVE (a_paper_negative_ok).
+  hop-2 is FLAT (0.0261 → 0.0261 → 0.0266) across N∈{1,2,4} and stays INSIDE the shuffle-NULL at every N (p=0.16-0.18);
+  N=4 hop-2 does NOT clear the NULL at p≤0.01. The technical monotonic flag is True only because hop-2 rises by a
+  trivial +0.0005 from N=1→N=4 (permille noise), but NONE of the N clear the NULL → F-SCALE-1 is NOT satisfied.
+  Hop-1 DOES lift with width (N=1 0.2856 → N=4 0.3394, all ≫ NULL, p=0.005) — width helps single-step retrieval —
+  but that lift does NOT propagate past hop-1. The multi-hop wall is ALGORITHMIC, not capacity-bound: adding parallel
+  on-chip FCs (the closed paged-WIDTH primitive) cannot manufacture cross-hop transition structure that no single
+  stateless FC possesses. Multi-chip scale-out would NOT lift the multi-hop ceiling → CONFIRMS the Lane-A EMERGENCE
+  axis is TERMINAL under the current 1-bit Hebbian-FC + stateless-feedback architecture. EMERGENCE/SCALE axis = NULL.
+  Retrieval + single-step generation rungs UNAFFECTED. Lane A on-chip (a_lane_akida_gpu_split), toy 250-anchor scale
+  (a_scale_honest_scope) — scale-transfer to a larger codebook UNVERIFIED.
+
+artifacts: AKIDA/microexp_scale_chip.py (script, falsifier pre-registered in docstring) ·
+           /home/ubuntu/clm_kosmos_akida/microexp_scale.log (verbatim chip stdout) ·
+           /home/ubuntu/clm_kosmos_akida/out/result_microexp_scale.json (full per-trial/per-(N,hop) JSON)

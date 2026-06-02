@@ -1,0 +1,11 @@
+@discovery lane-a-code := "μ2 k-WTA sparsity + temporal-T integration on the output code" :: lane-a [substrate=AKIDA mixed]
+  id              = "F-CODE"
+  seed            = "does k-WTA sparsity (s∈{4,8,16,32}) and/or temporal-T integration (T∈{2,4,8}) on the 256-unit output code lift transition retrieval above baseline 0.260?"
+  substrate       = "AKIDA live AKD1000 BC.00.000.002 · akida 2.19.1 · pi5-akida · N=8 chip trials · learn_all_hw=True"
+  scale           = "toy 250-anchor / 50-concept × 5-lang · 256-unit 1-bit AkidaUnsupervised FC (a_scale_honest_scope)"
+  falsifier       = "F-CODE-1 REFUTED iff best variant tr_acc ci_lo > baseline 0.260 by ≥+0.05 (ci_lo > 0.310)"
+  result          = "best=baseline tr_acc=0.8541 ci_lo=0.8432 (≫bar) · wta_s4-s32 = 0.66-0.73 (HURTS) · tint_T2/T4/T8 = 0.8541 (NO-OP, deterministic chip) · all clear shufNULL p=0.005"
+  verdict-tier    = "🟢 F-CODE-1 REFUTED (strong retrieval) — but NO shaping gain over baseline (honest caveat)"
+  finding         = "single-step transition retrieval is STRONG/saturated at the plain baseline (0.8541); k-WTA sparsity HURTS (discards discriminative bits), temporal-T is a NO-OP (chip is deterministic) → output-code shaping adds NO accuracy; the multi-hop wall is untouched by code shaping"
+  next-bridge     = "CODE axis saturated at baseline; shaping is not the lever; consistent w/ μ3 (algorithm-bound) + μ1 (width sub-threshold) — all single-step axes healthy, the DEPTH/EMERGENCE axis is the sole terminal wall"
+  verdict-pointer = ".verdicts/lane-a-microexp-code/F-CODE.txt"
