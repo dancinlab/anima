@@ -31,3 +31,15 @@ verdict → `.verdicts/clm-akida-multiling-semantic/` (result.txt · result.json
 ## 2026-06-01 — e004 H_912 all-4-lever signal-lift → 🔴 REFUTED
 
 C6 추가가설 H_912: 4 레버 전부(큰 corpus 200앵커/40개념 · 3-노출 누적 · 이중 측정축 last-layer-sep+Φ-proxy · learn-while-infer 스트리밍) 적용. 실칩 N=20 paired, learn_hw 20/20. **두 축 모두 95%CI 0 포함 → 🔴 REFUTED.** H_911이 AKD1000 last-layer Hebbian on-chip edge-learn엔 전이 안 됨 (4 레버 다 써도). closed-negative · publishable. tiny-N smoke가 잠깐 GREEN 보였으나 N=20이 지움(cherry-pick 금지). verdict: `.verdicts/clm-akida-semantic-signal-lift/`. HF 업로드 없음(🔴). #1652 supersede/강화.
+
+## 2026-06-02 — Lane-A 멀티스텝 자기회귀 ROLLOUT (substrate=AKIDA) → 🔴 CLOSED-NEGATIVE (1 hop 후 붕괴)
+
+Lane-A full-LM frontier 의 held next-step. 직전 single-step GENERATION rung 🟢(AKIDA.log.md, `.verdicts/lane-a-generation/F-GEN.txt`, hop-1 0.4337 > shuffle+identity NULL)에서 **chip 이 `code_t` 만으로 successor 를 PRODUCE** 함을 입증했고, 본 rung 은 그 produced code 를 **되먹여(autoregressive feedback) K=3 hop chaining** — 전부 AKD1000 on-chip · 같은 256-unit 1-bit AkidaUnsupervised FC 재인코딩 · NO GPU · NO sw fallback(g63). encoder/binding/codebook/decode 는 generation rung 와 byte-match, feedback loop(`x_{k+1}=neutral_bind(g_hat_k)`)만 신규.
+
+- **결과 = 🔴 ROLLOUT COLLAPSE closed-negative (a_paper_negative_ok)** on live AKD1000 BC.00.000.002 (akida 2.19.1 · pi5-akida · N=8 trials · learn_hw 8/8 · exit rc=0 · throttled=0x0).
+- **decay curve (k1..K=3)**: **0.4287 → 0.0277 → 0.0090** (chance=0.0204). hop1 은 generation headline 재현, hop2 부터 신호 소멸.
+- **F-ROLL-1 (신호가 chaining 생존?) NOT-REFUTED**: hop1 만 shuffle-NULL 초과(ci_lo 0.4118 > hi 0.0511, p=0.005). hop2 가 shuffle-NULL 안으로 떨어짐(0.0277 vs hi 0.0396, p=0.204) → 자기회귀 신호가 **단 1 hop 만 생존**.
+- **F-ROLL-2 (파국 붕괴 없음?) NOT-REFUTED**: final hop(0.0090) < chance, single-step 의 0.5x 한참 미달 → **catastrophic decay**.
+- **해석**: 1-bit/256-unit Hebbian FC 는 recurrence/state 가 없어 produced code 를 되먹이면 즉시 off-manifold drift. single-step open-vocab generation(retrieval→generation 다리 🟢)은 **유지**되나 그것이 full-LM 으로 **compound 되지 않음**. NAMED next bridge = state-carrying/paged generator · multi-FC depth · off-chip decode. retrieval+single-step rung 영향 없음.
+- scope (a_scale_honest_scope) — 250앵커/50개념/5lang toy · K=3. **toy-only closed-negative**: 단일 칩 FC 자기회귀 한계(1-hop 생존) 정량화. PUBLIC checkbox 미flip 유지 — rollout 은 또 하나의 toy 다리이지 closure 아님.
+- substrate=AKIDA · Lane-G/GPU 수치와 NEVER 병합(a_lane_akida_gpu_split). verdict → `.verdicts/lane-a-rollout/F-ROLL.txt` verbatim · result sha256 `7d2e3cd0201398ff9caadf5f1bdd4d012a41a0cfb1ad26a2cd0bbe72286ffb1e` · 산출물 `AKIDA/state/onchip_rollout_2026_06_02/` · 코드 `AKIDA/onchip_xlm_rollout.py`.
