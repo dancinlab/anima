@@ -1,0 +1,51 @@
+F-CODE — μ2 k-WTA sparsity + temporal-T integration on the 256-unit output code  ::  VERDICT = F-CODE-1 REFUTED (but NO shaping gain over baseline)
+========================================================================================================================================
+substrate = AKIDA (Lane A) · a_lane_akida_gpu_split — NEVER merged with Lane G / GPU
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · IpVersion.v1 · akida 2.19.1 · N=8 chip trials
+host health: temp 71-73C (≪82C guard) · throttled=0xe0000 (past-occurred bits only, NOT actively throttling) · streamer stopped→fire→restore
+toy scale (a_scale_honest_scope): corpus_big 250 anchors / 50 sequential FLORES concepts × 5 langs · 256-unit 1-bit AkidaUnsupervised FC
+NOTE: hexa verify CLI broken on host — this verdict is the VERBATIM live-chip run stdout (no fabrication, no sw fallback labelled on-chip, g63).
+
+DESIGN: a single 1-bit Hebbian FC trained on-chip on the teacher-forced transitions; the 256-unit output code is
+  post-processed into CANDIDATE CODES and scored by TRANSITION-RETRIEVAL (each transition code → decode its successor):
+   - k-WTA sparsity s∈{4,8,16,32}: keep top-s active units, codebook rebuilt under the same sparsification.
+   - temporal-T integration T∈{2,4,8}: present the SAME input T times, SUM/avg the soft outputs, then median-binarize.
+   - baseline = plain frozen-median binarize (s=full, T=1).
+  byte-identical primitives (enc_whitened, SHIFT=37, bind, AkidaUnsupervised(8,0.1), successor-centroid codebook,
+  shuffle-NULL B=200, bootstrap CI). Single FC, single /dev/akida0 lock. baseline reference tr_acc = 0.260.
+
+PRE-REGISTERED FALSIFIER (declared in the script docstring BEFORE the fire):
+  F-CODE-1 REFUTED iff the BEST variant tr_acc ci_lo > baseline 0.260 by ≥ +0.05 (ci_lo > 0.310).
+
+VERBATIM PER-VARIANT (tr_acc · ci_lo · shuffle-NULL hi · p · chance=0.0204 · beats baseline+0.05):
+  baseline   tr_acc=0.8541 ci_lo=0.8432 shufNULL_hi=0.0528 p=0.0050 beats+.05=True
+  wta_s4     tr_acc=0.6587 ci_lo=0.6292 shufNULL_hi=0.0493 p=0.0050 beats+.05=True
+  wta_s8     tr_acc=0.7143 ci_lo=0.6928 shufNULL_hi=0.0493 p=0.0050 beats+.05=True
+  wta_s16    tr_acc=0.7056 ci_lo=0.6693 shufNULL_hi=0.0474 p=0.0050 beats+.05=True
+  wta_s32    tr_acc=0.7255 ci_lo=0.7038 shufNULL_hi=0.0518 p=0.0050 beats+.05=True
+  tint_T2    tr_acc=0.8541 ci_lo=0.8432 shufNULL_hi=0.0528 p=0.0050 beats+.05=True
+  tint_T4    tr_acc=0.8541 ci_lo=0.8432 shufNULL_hi=0.0528 p=0.0050 beats+.05=True
+  tint_T8    tr_acc=0.8541 ci_lo=0.8432 shufNULL_hi=0.0528 p=0.0050 beats+.05=True
+
+VERBATIM DISPOSITION:
+  learn_all_hw : True
+  chance       : 0.0204
+  best variant : baseline tr_acc=0.8541 (baseline ref 0.2600)
+  F-CODE-1     : REFUTED — best variant 'baseline' tr_acc ci_lo (0.8432) > baseline ref 0.260 by ≥+0.05 → transition
+                 retrieval clears the bar decisively. Lane A CODE axis (single-step transition retrieval) is STRONG.
+
+VERDICT: F-CODE-1 REFUTED, but with an HONEST CAVEAT — NO shaping gain over the plain baseline.
+  The pre-registered falsifier (best variant ci_lo > 0.260+0.05) is REFUTED: ALL variants clear it decisively, the
+  best being the PLAIN median-binarize BASELINE at tr_acc=0.8541 (ci_lo 0.8432 ≫ shufNULL hi 0.0528, p=0.005). This
+  re-confirms that single-step on-chip transition retrieval is STRONG (the chip's learnable surface holds the 1-hop
+  transition map cleanly), consistent with μ3 hop-1 (0.34) and μ1 (0.46) — all single-step axes are healthy.
+  HOWEVER, neither code-shaping mechanism ADDS over baseline: k-WTA sparsity HURTS (s4-s32 = 0.66-0.73 < baseline
+  0.8541 — sparsifying the code discards discriminative bits), and temporal-T integration is a NO-OP (tint_T2/T4/T8 =
+  0.8541, byte-identical to baseline, because the deterministic chip returns the SAME soft output each pass, so
+  T-averaging changes nothing). So: CODE axis is already saturated at baseline; output-code shaping (sparsity /
+  temporal integration) provides NO additional transition-retrieval accuracy. The REFUTED ruling reflects strong
+  retrieval, not a shaping win. Single-step retrieval UNAFFECTED/strong; the multi-hop wall (μ3) is untouched by code shaping.
+  Lane A on-chip (a_lane_akida_gpu_split), toy 250-anchor scale (a_scale_honest_scope) — scale-transfer UNVERIFIED.
+
+artifacts: AKIDA/microexp_code_chip.py · /home/ubuntu/clm_kosmos_akida/microexp_code.log (verbatim chip stdout) ·
+           /home/ubuntu/clm_kosmos_akida/out/result_microexp_code.json

@@ -1,0 +1,95 @@
+[3bH] SUBSTRATE = HYBRID(on-chip AKD1000 D=1 256-unit encoder ⊕ off-chip host-CPU MULTI-LAYER decode head) — NOT pure AKIDA, NOT Lane G
+[3bH] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1  corpus concepts=50 langs=5 anchors=250  DELTAS=[1, 7, 19] B=3  NC=50
+[3bH] CHIP encoder FIXED at D=1/256-unit = 524288 params (5.243e+05). Scaling the OFF-CHIP head toward 3B-class.
+[3bH] ===== 3B OFF-CHIP HEAD SCALE-UP LADDER (a_scale_honest_scope, 5 rungs) =====
+[3bH] NC=50 N_TRAIN=35 (idx 0..34) N_TEST=15 (idx 35..49) on-chip enc transitions=750
+[3bH] --- RUNG NLAYERS=1 D_H=64 EPOCHS=60 : head_params=23680 (2.368e+04) +chip 524288 = total 547968 (5.48e+05) chip_frac=0.957 ---
+[3bH]   off-chip head BPTT epoch 1/60  CE=2.9846
+[3bH]   off-chip head BPTT epoch 21/60  CE=0.2860
+[3bH]   off-chip head BPTT epoch 41/60  CE=0.1969
+[3bH]   off-chip head BPTT epoch 60/60  CE=0.1809
+[3bH] RUNG NL=1 D_H=64 trial 0: TRAIN=['0.6857', '0.9657', '0.9486'] HELD=['0.0133', '0.9600', '0.9600'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/60  CE=3.0086
+[3bH]   off-chip head BPTT epoch 21/60  CE=0.3095
+[3bH]   off-chip head BPTT epoch 41/60  CE=0.2494
+[3bH]   off-chip head BPTT epoch 60/60  CE=0.2243
+[3bH] RUNG NL=1 D_H=64 trial 1: TRAIN=['0.6629', '0.9714', '0.9829'] HELD=['0.0133', '0.9200', '0.9200'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/60  CE=3.0294
+[3bH]   off-chip head BPTT epoch 21/60  CE=0.3499
+[3bH]   off-chip head BPTT epoch 41/60  CE=0.2403
+[3bH]   off-chip head BPTT epoch 60/60  CE=0.2073
+[3bH] RUNG NL=1 D_H=64 trial 2: TRAIN=['0.6743', '0.8914', '0.9771'] HELD=['0.0133', '0.8933', '0.9467'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/60  CE=3.1101
+[3bH]   off-chip head BPTT epoch 21/60  CE=0.2623
+[3bH]   off-chip head BPTT epoch 41/60  CE=0.1925
+[3bH]   off-chip head BPTT epoch 60/60  CE=0.1774
+[3bH] RUNG NL=1 D_H=64 trial 3: TRAIN=['0.7371', '0.9486', '0.9657'] HELD=['0.0000', '0.8667', '0.9467'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/60  CE=2.9903
+[3bH]   off-chip head BPTT epoch 21/60  CE=0.2622
+[3bH]   off-chip head BPTT epoch 41/60  CE=0.1904
+[3bH]   off-chip head BPTT epoch 60/60  CE=0.1793
+[3bH] RUNG NL=1 D_H=64 trial 4: TRAIN=['0.7086', '0.9429', '0.9829'] HELD=['0.0267', '0.9067', '0.9467'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/60  CE=2.9387
+[3bH]   off-chip head BPTT epoch 21/60  CE=0.3619
+[3bH]   off-chip head BPTT epoch 41/60  CE=0.2676
+[3bH]   off-chip head BPTT epoch 60/60  CE=0.2299
+[3bH] RUNG NL=1 D_H=64 trial 5: TRAIN=['0.6914', '0.9657', '0.9771'] HELD=['0.0267', '0.8267', '0.9067'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/60  CE=3.1877
+[3bH]   off-chip head BPTT epoch 21/60  CE=0.3402
+[3bH]   off-chip head BPTT epoch 41/60  CE=0.2793
+[3bH]   off-chip head BPTT epoch 60/60  CE=0.2388
+[3bH] RUNG NL=1 D_H=64 trial 6: TRAIN=['0.6800', '0.8857', '0.9486'] HELD=['0.0267', '0.8667', '0.9333'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/60  CE=2.9702
+[3bH]   off-chip head BPTT epoch 21/60  CE=0.3118
+[3bH]   off-chip head BPTT epoch 41/60  CE=0.2400
+[3bH]   off-chip head BPTT epoch 60/60  CE=0.2165
+[3bH] RUNG NL=1 D_H=64 trial 7: TRAIN=['0.6800', '0.9486', '0.9886'] HELD=['0.0133', '0.9067', '0.9467'] enc_learned=True
+[3bH] RUNG NL=1 D_H=64 hop 1: TRAIN=0.6900 HELD=0.0167 | held ci_lo=0.0101 NULL hi=0.1278 p=0.9154 | aboveNULL=False
+[3bH] RUNG NL=1 D_H=64 hop 2: TRAIN=0.9400 HELD=0.8933 | held ci_lo=0.8654 NULL hi=0.1651 p=0.0050 | aboveNULL=True
+[3bH] RUNG NL=1 D_H=64 hop 3: TRAIN=0.9714 HELD=0.9383 | held ci_lo=0.9263 NULL hi=0.1786 p=0.0050 | aboveNULL=True
+[3bH] --- RUNG NLAYERS=2 D_H=512 EPOCHS=40 : head_params=943104 (9.431e+05) +chip 524288 = total 1467392 (1.467e+06) chip_frac=0.357 ---
+[3bH]   off-chip head BPTT epoch 1/40  CE=3.0435
+[3bH]   off-chip head BPTT epoch 14/40  CE=0.4628
+[3bH]   off-chip head BPTT epoch 27/40  CE=0.3483
+[3bH]   off-chip head BPTT epoch 40/40  CE=0.3024
+[3bH] RUNG NL=2 D_H=512 trial 0: TRAIN=['0.6571', '0.9143', '0.9714'] HELD=['0.0267', '0.8800', '0.9333'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/40  CE=3.0479
+[3bH]   off-chip head BPTT epoch 14/40  CE=0.5167
+[3bH]   off-chip head BPTT epoch 27/40  CE=0.4204
+[3bH]   off-chip head BPTT epoch 40/40  CE=0.3826
+[3bH] RUNG NL=2 D_H=512 trial 1: TRAIN=['0.6571', '0.9429', '0.9714'] HELD=['0.0133', '0.8933', '0.9333'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/40  CE=2.9885
+[3bH]   off-chip head BPTT epoch 14/40  CE=0.6058
+[3bH]   off-chip head BPTT epoch 27/40  CE=0.4560
+[3bH]   off-chip head BPTT epoch 40/40  CE=0.3944
+[3bH] RUNG NL=2 D_H=512 trial 2: TRAIN=['0.6343', '0.8857', '0.9600'] HELD=['0.0267', '0.9067', '0.9733'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/40  CE=3.1432
+[3bH]   off-chip head BPTT epoch 14/40  CE=0.4302
+[3bH]   off-chip head BPTT epoch 27/40  CE=0.3155
+[3bH]   off-chip head BPTT epoch 40/40  CE=0.2966
+[3bH] RUNG NL=2 D_H=512 trial 3: TRAIN=['0.6686', '0.8857', '0.9429'] HELD=['0.0000', '0.9067', '0.8933'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/40  CE=2.9693
+[3bH]   off-chip head BPTT epoch 14/40  CE=0.4131
+[3bH]   off-chip head BPTT epoch 27/40  CE=0.3037
+[3bH]   off-chip head BPTT epoch 40/40  CE=0.3072
+[3bH] RUNG NL=2 D_H=512 trial 4: TRAIN=['0.6857', '0.8971', '0.9600'] HELD=['0.0267', '0.7867', '0.9200'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/40  CE=3.0393
+[3bH]   off-chip head BPTT epoch 14/40  CE=0.6219
+[3bH]   off-chip head BPTT epoch 27/40  CE=0.4296
+[3bH]   off-chip head BPTT epoch 40/40  CE=0.4454
+[3bH] RUNG NL=2 D_H=512 trial 5: TRAIN=['0.6229', '0.9600', '0.9600'] HELD=['0.0267', '0.9067', '0.9333'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/40  CE=3.0812
+[3bH]   off-chip head BPTT epoch 14/40  CE=0.5978
+[3bH]   off-chip head BPTT epoch 27/40  CE=0.4429
+[3bH]   off-chip head BPTT epoch 40/40  CE=0.4365
+[3bH] RUNG NL=2 D_H=512 trial 6: TRAIN=['0.6343', '0.9143', '0.9714'] HELD=['0.0400', '0.9200', '0.8933'] enc_learned=True
+[3bH]   off-chip head BPTT epoch 1/40  CE=3.1657
+[3bH]   off-chip head BPTT epoch 14/40  CE=0.5121
+[3bH]   off-chip head BPTT epoch 27/40  CE=0.3526
+[3bH]   off-chip head BPTT epoch 40/40  CE=0.3373
+[3bH] RUNG NL=2 D_H=512 trial 7: TRAIN=['0.6514', '0.9429', '0.9543'] HELD=['0.0000', '0.9333', '0.9467'] enc_learned=True
+[3bH] RUNG NL=2 D_H=512 hop 1: TRAIN=0.6514 HELD=0.0200 | held ci_lo=0.0101 NULL hi=0.1261 p=0.9104 | aboveNULL=False
+[3bH] RUNG NL=2 D_H=512 hop 2: TRAIN=0.9179 HELD=0.8917 | held ci_lo=0.8603 NULL hi=0.1782 p=0.0050 | aboveNULL=True
+[3bH] RUNG NL=2 D_H=512 hop 3: TRAIN=0.9614 HELD=0.9283 | held ci_lo=0.9099 NULL hi=0.1633 p=0.0050 | aboveNULL=True
+[3bH] --- RUNG NLAYERS=3 D_H=2048 EPOCHS=24 : head_params=21598208 (2.16e+07) +chip 524288 = total 22122496 (2.212e+07) chip_frac=0.0237 ---
+[3bH]   off-chip head BPTT epoch 1/24  CE=4.0298

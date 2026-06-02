@@ -1,0 +1,167 @@
+{
+  "substrate": "HYBRID(on-chip AKD1000 D=1 256-unit encoder \u2295 off-chip host-CPU multi-layer decode head)",
+  "milestone": "Lane A 3B \u2014 OFF-CHIP HEAD SCALE-UP ladder (the named bridge from PR#1705/F-3B; a_scale_honest_scope >=3 rungs)",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T13:49:03Z",
+  "n_trials": 8,
+  "INC": 256,
+  "NW": 8,
+  "chip_encoder_params": 524288,
+  "K_roll": 3,
+  "NC": 50,
+  "branching_operator": {
+    "deltas": [
+      1,
+      7,
+      19
+    ],
+    "B_factor": 3,
+    "rule": "succ(i)={(i+d) mod NC}"
+  },
+  "target_3b_params": 3000000000.0,
+  "n_anchors": 250,
+  "ladder_spec": [
+    {
+      "NLAYERS": 1,
+      "D_H": 64,
+      "EPOCHS": 60,
+      "tag": "baseline(branching PR#1697) NLAYERS=1 D_H=64"
+    },
+    {
+      "NLAYERS": 2,
+      "D_H": 512,
+      "EPOCHS": 40,
+      "tag": "wide+2-layer"
+    },
+    {
+      "NLAYERS": 3,
+      "D_H": 2048,
+      "EPOCHS": 24,
+      "tag": "deep+wide ~30M head"
+    },
+    {
+      "NLAYERS": 4,
+      "D_H": 8192,
+      "EPOCHS": 10,
+      "tag": "3B-class probe ~400M head"
+    },
+    {
+      "NLAYERS": 6,
+      "D_H": 24576,
+      "EPOCHS": 4,
+      "tag": "3B-class REACH probe (>3e9 head params)"
+    }
+  ],
+  "rungs": [
+    {
+      "NLAYERS": 1,
+      "D_H": 64,
+      "EPOCHS": 60,
+      "head_params": 23680,
+      "chip_encoder_params": 524288,
+      "total_params": 547968,
+      "chip_fraction": 0.9567857977108152,
+      "learn_all": true,
+      "per_hop": [
+        {
+          "hop": 1,
+          "train": 0.69,
+          "held": 0.0167,
+          "held_ci_lo": 0.0101,
+          "shuf_null_hi": 0.1278,
+          "p": 0.9154,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 2,
+          "train": 0.94,
+          "held": 0.8933,
+          "held_ci_lo": 0.8654,
+          "shuf_null_hi": 0.1651,
+          "p": 0.005,
+          "chance": 0.0612,
+          "held_above_null": true
+        },
+        {
+          "hop": 3,
+          "train": 0.9714,
+          "held": 0.9383,
+          "held_ci_lo": 0.9263,
+          "shuf_null_hi": 0.1786,
+          "p": 0.005,
+          "chance": 0.0612,
+          "held_above_null": true
+        }
+      ],
+      "comp_survives": true,
+      "decay_TRAIN": [
+        0.69,
+        0.94,
+        0.9714
+      ],
+      "decay_HELD": [
+        0.0167,
+        0.8933,
+        0.9383
+      ],
+      "tag": "baseline(branching PR#1697) NLAYERS=1 D_H=64"
+    },
+    {
+      "NLAYERS": 2,
+      "D_H": 512,
+      "EPOCHS": 40,
+      "head_params": 943104,
+      "chip_encoder_params": 524288,
+      "total_params": 1467392,
+      "chip_fraction": 0.3572923935799023,
+      "learn_all": true,
+      "per_hop": [
+        {
+          "hop": 1,
+          "train": 0.6514,
+          "held": 0.02,
+          "held_ci_lo": 0.0101,
+          "shuf_null_hi": 0.1261,
+          "p": 0.9104,
+          "chance": 0.0612,
+          "held_above_null": false
+        },
+        {
+          "hop": 2,
+          "train": 0.9179,
+          "held": 0.8917,
+          "held_ci_lo": 0.8603,
+          "shuf_null_hi": 0.1782,
+          "p": 0.005,
+          "chance": 0.0612,
+          "held_above_null": true
+        },
+        {
+          "hop": 3,
+          "train": 0.9614,
+          "held": 0.9283,
+          "held_ci_lo": 0.9099,
+          "shuf_null_hi": 0.1633,
+          "p": 0.005,
+          "chance": 0.0612,
+          "held_above_null": true
+        }
+      ],
+      "comp_survives": true,
+      "decay_TRAIN": [
+        0.6514,
+        0.9179,
+        0.9614
+      ],
+      "decay_HELD": [
+        0.02,
+        0.8917,
+        0.9283
+      ],
+      "tag": "wide+2-layer"
+    }
+  ]
+}

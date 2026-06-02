@@ -1,0 +1,87 @@
+F-GEN-HOLDOUT — HYBRID (on-chip encoder ⊕ off-chip decode head) HELD-OUT GENERALIZATION  ::  VERDICT = CHAIN-FITTING (COLLAPSES 🔴 closed-negative)
+================================================================================================================================================
+substrate = HYBRID (on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure on-chip, NOT Lane G / GPU.
+a_lane_akida_gpu_split — the on-chip ENCODER part is Lane A (AKD1000); the DECODE HEAD is explicitly host-side. NEVER merged with Lane G.
+a_completeness_over_cheap — consolidate the HYBRID PUBLIC before any 3B scale-up. a_paper_negative_ok — a clean collapse is a VALID finding.
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · IpVersion.v1 · akida 2.19.1 · N=8 chip trials · encoder_learned=True all 8 (live silicon)
+host health: throttled=0x0 (alive) · streamer stopped→run→restored (restore-on-exit trap, rc=0; spike-streamer service restarted active)
+toy scale (a_scale_honest_scope): corpus_big 250 anchors / 50 sequential FLORES concepts × 5 langs · 256-unit FC encoder + D_H=64 off-chip RNN head
+NOTE: hexa verify CLI unavailable on this host (compiler/atlas/calc_dispatch not found — same as F-HYBRID/F-STATE/F-ROLLOUT/F-DEPTH);
+      this verdict transcribes the VERBATIM live-chip run stdout (no fabrication; the CHIP encoder ran on real AKD1000 with NO sw fallback, g63;
+      the off-chip head is labelled host-CPU everywhere) per the established lane-a verdict format.
+
+THE HELD-OUT SPLIT (concept-level, DISJOINT train/test successors):
+  50 sequential FLORES concepts split into a contiguous TRAIN block (idx 0..34, N_TRAIN=35) and a contiguous
+  HELD-OUT TEST block (idx 35..49, N_TEST=15). The off-chip Elman RNN decode head (byte-match PR#1692 hybrid head:
+  D_H=64, 60-epoch numpy BPTT, no torch/sklearn/GPU) is trained on TRAIN-concept transitions ONLY — every training
+  target is a TRAIN concept; the head NEVER sees a TEST concept as a successor target. The on-chip 1-bit AkidaUnsupervised
+  FC encoder is fit on the full transition set (unsupervised — the shared grounding surface; the held-out axis is the
+  off-chip DECODE head's successor prediction, which is what could memorize the chain). Two decay curves, side by side:
+    (A) TRAIN-set rollout (in-distribution; 160 starts, all hop-1..K successors in TRAIN) — reproduces the PR#1692 regime.
+    (B) HELD-OUT rollout (65 starts, all hop-1..K successors in the held-out TEST block) — the composition-vs-memorization test.
+  Open-vocab argmax over the FULL 50-concept codebook (ban last emit) in BOTH curves — identical to PR#1692.
+
+PRE-REGISTERED FALSIFIERS (declared in the script docstring BEFORE the fire):
+  F-GEN-HOLDOUT-1 (held-out hops above shuffle-NULL): held-out hop-2 AND hop-3 acc stay ABOVE the shuffle-NULL (ci_lo>NULL hi AND p<0.05).
+  F-GEN-HOLDOUT-2 (held-out within stated factor of in-dist): held-out hop-2 acc ≥ in-dist(TRAIN) hop-2 acc / 2.0 (within 2× of ~0.32 regime).
+
+VERBATIM PER-TRIAL (8 chip trials; encoder_learned=True all 8; off-chip BPTT CE 3.8→0.002 each trial, TRAIN concepts only):
+  [holdout] trial 0: TRAIN(k1..K)=['0.2687', '0.2750', '0.2750']  HELD-OUT(k1..K)=['0.0000', '0.0000', '0.0000']  enc_learned=True
+  [holdout] trial 1: TRAIN(k1..K)=['0.2875', '0.2875', '0.2875']  HELD-OUT(k1..K)=['0.0000', '0.0000', '0.0000']  enc_learned=True
+  [holdout] trial 2: TRAIN(k1..K)=['0.2812', '0.2812', '0.2812']  HELD-OUT(k1..K)=['0.0000', '0.0000', '0.0000']  enc_learned=True
+  [holdout] trial 3: TRAIN(k1..K)=['0.2562', '0.2625', '0.2625']  HELD-OUT(k1..K)=['0.0000', '0.0000', '0.0000']  enc_learned=True
+  [holdout] trial 4: TRAIN(k1..K)=['0.2812', '0.2687', '0.2687']  HELD-OUT(k1..K)=['0.0000', '0.0000', '0.0000']  enc_learned=True
+  [holdout] trial 5: TRAIN(k1..K)=['0.2938', '0.2938', '0.2938']  HELD-OUT(k1..K)=['0.0000', '0.0000', '0.0000']  enc_learned=True
+  [holdout] trial 6: TRAIN(k1..K)=['0.2625', '0.2938', '0.2875']  HELD-OUT(k1..K)=['0.0000', '0.0000', '0.0000']  enc_learned=True
+  [holdout] trial 7: TRAIN(k1..K)=['0.2687', '0.2562', '0.2562']  HELD-OUT(k1..K)=['0.0000', '0.0000', '0.0000']  enc_learned=True
+
+VERBATIM PER-HOP (TRAIN in-dist decay vs HELD-OUT decay, side by side; chance=0.0204, B=200 shuffle-NULL):
+  [holdout] decay TRAIN  (in-dist)  : ['0.2750', '0.2773', '0.2766']   ← reproduces the PR#1692 ~0.32 regime on train concepts (FLAT, no collapse)
+  [holdout] decay HELD-OUT          : ['0.0000', '0.0000', '0.0000']   ← ZERO at EVERY hop, all 8 trials (collapses BELOW the shuffle-NULL)
+  [holdout] PR#1692 hybrid (full)   : [0.3160, 0.3202, 0.3207]         (the original full-chain hybrid — train==test concepts, the suspect ~0.32)
+  [holdout] hop 1  TRAIN=0.2750 HELD=0.0000 ratio=0.000 | held ci_lo=0.0000 shufNULL hi=0.0829 p=1.0000 | chance=0.0204 | heldAboveShuf=False
+  [holdout] hop 2  TRAIN=0.2773 HELD=0.0000 ratio=0.000 | held ci_lo=0.0000 shufNULL hi=0.0828 p=1.0000 | chance=0.0204 | heldAboveShuf=False
+  [holdout] hop 3  TRAIN=0.2766 HELD=0.0000 ratio=0.000 | held ci_lo=0.0000 shufNULL hi=0.0697 p=1.0000 | chance=0.0204 | heldAboveShuf=False
+
+FALSIFIER DISPOSITIONS (verbatim):
+  [holdout] F-GEN-HOLDOUT-1 (held>NULL)   : NOT-REFUTED — held-out hop-2 AND hop-3 (0.0000) DROP BELOW the shuffle-NULL (hi≈0.083)
+                                            → composition does NOT transfer to unseen concepts → the ~0.32 was CHAIN-MEMORIZATION.
+  [holdout] F-GEN-HOLDOUT-2 (within 2.0x) : NOT-REFUTED — held-out hop-2 (0.0000) is NOT within 2.0× of in-dist hop-2 (0.2773) [< 0.1387]
+                                            → held-out is INFINITELY below in-dist.
+
+VERDICT: CHAIN-FITTING — HYBRID composition does NOT generalize to held-out concepts (Lane A HYBRID PUBLIC DOWNGRADED).
+  Both pre-registered falsifiers are NOT-refuted. The in-distribution TRAIN-set curve reproduces the PR#1692 regime
+  ([0.275, 0.277, 0.277] ≈ the suspect ~0.32), but the HELD-OUT curve is EXACTLY 0.0000 at every hop across all 8 chip
+  trials. The off-chip head's BPTT drives CE→0.002 by MEMORIZING the deterministic train chain ("after TRAIN concept i,
+  emit TRAIN concept i+1") — a per-concept lookup, NOT a transferable transition rule. The ~0.32 of PR#1692 was
+  CHAIN-MEMORIZATION of the toy 250-anchor deterministic concept→successor chain, NOT genuine multi-step composition.
+
+  MECHANISM OF THE EXACT 0.0000 (honest, not over-read): the held-out successors are TEST-block concepts (idx 35..49).
+  Those output-layer rows (Wo) received NO positive CE gradient during training (never a target), so their logits sit at
+  near-init while the 35 TRAIN-concept logits are pushed up. The open-vocab argmax therefore essentially never selects a
+  TEST concept, so a held-out (whose every ground-truth successor IS a TEST concept) is never hit → structural 0.0000.
+  This zero IS the decisive memorization signature: a head that had learned a GENERALIZING transition operator (apply the
+  learned "successor" map to the on-chip code of ANY concept) would have ranked the correct unseen successor at least
+  above the shuffle-NULL via the chip code's structure; instead the head learned only WHICH train tokens to emit. The
+  on-chip encoder is honest live silicon (encoder_learned=True ×8) and is NOT the bottleneck — the failure is entirely the
+  off-chip head's lookup-vs-rule distinction, exposed precisely by holding the successor concepts out of training.
+
+  HONEST SCOPE / CONSEQUENCE:
+  • SUBSTRATE = HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head). NOT pure-AKIDA, NOT Lane G. a_lane_akida_gpu_split honored.
+  • Lane A HYBRID PUBLIC is DOWNGRADED: PR#1692's "multi-step composition recovered" closes only as IN-DISTRIBUTION
+    CHAIN-FITTING on the toy 250-anchor deterministic chain — it does NOT generalize. The [x] PUBLIC checkbox for the
+    HYBRID emergence claim is annotated as chain-fitting (not generalizing composition). a_paper_negative_ok: this is a
+    valid closed-negative, not a failure to hide.
+  • What the on-chip rungs established is UNAFFECTED: the pure-on-chip single-step 🟢 (hop-1 generation) stands; the
+    1-hop wall closed-negatives (#1686/#1689/#1690) stand. Only the HYBRID multi-step "emergence" interpretation is revised.
+
+  NEXT BRIDGE (a_paper_negative_ok names the ruled-out axis + the next path): the deterministic single-chain corpus makes
+  next-concept prediction a pure lookup, so it cannot distinguish a rule from memorization on UNSEEN tokens by construction.
+  The next rung needs a NON-DETERMINISTIC / BRANCHING corpus (each concept has MULTIPLE plausible successors drawn from a
+  shared relational structure) so the off-chip head must learn a transition OPERATOR over the on-chip code space rather than
+  memorize one chain — held-out then tests whether the operator transfers. Plus a ≥3-rung codebook-size ladder before any
+  general composition claim (a_scale_honest_scope). EMERGENCE axis (multi-step composition) returns to NULL until then.
+
+artifacts: AKIDA/onchip_xlm_holdout.py (script, F-GEN-HOLDOUT-1/2 pre-registered in docstring) ·
+           AKIDA/run_holdout_with_streamer_restore.sh (single-chip occupancy + restore-on-exit) ·
+           result_onchip_xlm_holdout.json (pulled to this verdict dir) · this verbatim live-chip stdout transcript.

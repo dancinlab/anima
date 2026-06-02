@@ -1,0 +1,8 @@
+[A3] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1 — probing StatefulRecurrent feasibility on AKD1000
+[A3] StatefulRecurrent constructed + added to Model OK
+[A3] FEASIBILITY FAILED at stage=map : RuntimeError: The IP version of the model and device must be identical.
+
+[A3] ========== DISPOSITION ==========
+[A3] FEASIBLE: False  fail_stage: map  msg: RuntimeError: The IP version of the model and device must be identical.
+[A3] DISPOSITION: A3 NATIVE-RECURRENT = INFEASIBLE-ON-CHIP (HONEST hardware-cannot, NOT a wall verdict). akida.StatefulRecurrent IS present in the installed akida 2.19.1 SDK (distinct from sdk-not-installed), but it does NOT map/run on the live AKD1000 (BC.00.000.002, IP v1) — failed at stage=map: RuntimeError: The IP version of the model and device must be identical.. The AKD1000 IP-v1 mesh does not support the StatefulRecurrent op (it targets newer AKD1500/v2 silicon). RULING = infeasible-on-chip for AKD1000 hardware (a_lane_akida_gpu_split, no SIM substitution). Lane A on-chip recurrence via a NATIVE recurrent layer requires AKD1500-class hardware.
+[A3] RULING: infeasible-on-chip
