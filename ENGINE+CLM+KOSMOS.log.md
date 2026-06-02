@@ -795,3 +795,32 @@ NOTE 2026-06-02 (Lane-G · substrate=GPU forge · a_lane_akida_gpu_split — NEV
 - **DEFINITIONAL-HONESTY GATE (a_scale_honest_scope, hard gate)**: chip_fraction 이 head scale 과 함께 붕괴 — 0.957 → 0.357 → 0.024 → (3B 해석값) 524288/3e9 = **1.75e-4 ≪ 1e-3 = TRIVIAL**.
 - **VERDICT (두 발견 분리)**: (A) POSITIVE — OFF-CHIP head scale-up 이 옳은 축; composition 이 head capacity scale 에도 PRESERVED (524K→1.47M). 칩은 proven D=1/524K composition-bearing 인코더 유지, host head 가 recurrence/composition 운반·scale. (B) **HONEST TERMINAL (definitional-honesty closed-negative, a_paper_negative_ok)**: 3B-class HYBRID 는 on-chip AKIDA 기여가 trivial fraction(~0.017%) 이라야 도달 → host 모델에 524K 칩 인코더 얹은 것 = 정직한 pure-AKIDA/Lane-A 3B 아님. **⇒ Lane A ON-CHIP 은 PUBLIC(~524K composition-preserving D=1 인코더)에서 cap; 3B·7B 는 AKIDA substrate 위에서 도달 불가** (composition 보존하는 AKD1000 on-chip plastic capacity 가 D=1 single-FC 에서 top-out — #1686/#1690/#1705/이 rung 합치). Lane A 3B 마일스톤 [ ] 유지 + on-chip capacity ceiling 문서화. Lane A ladder PUBLIC 종료 제안. NO fabricated AKIDA 3B.
 - 칩 인코더 축 🟢 + 분기 held-out composition 🟢(D=1) UNAFFECTED. substrate=HYBRID, NOT pure-AKIDA, NOT Lane G (a_lane_akida_gpu_split). result_onchip_xlm_3b_offchip_head.json (sha256 0da3516e2dcd1aa33000113efc4606f562ca96c8f9a37a2f70a764735e63133c) · AKIDA/state_3b_offchip_head_verbatim.log · AKIDA/onchip_xlm_3b_offchip_head_ladder.py · `.verdicts/lane-a-3b-hybrid/F-3B-HYBRID.txt` (hexa verify CLI broken on host → live-chip stdout verbatim).
+
+## 2026-06-02 — Lane-G lever-5 workload-bound SWEEP (substrate=GPU · host-feed util chain TERMINAL)
+substrate = GPU (Lane G) · pod vast 39139563 (H100 80GB HBM3, sm_90 / compute_cap 9.0) REUSED, no re-rent · a_lane_akida_gpu_split (Lane G only, NEVER merged with AKIDA/Lane A).
+
+lever-5 hypothesis: PEAK-rises-but-MEAN-flat (lever-4) 의 두 가능 root — (A) crossing-bound (잔여 ~11 host↔device crossing/step 이 SM-starve) vs (B) workload-bound (per-step GEMM 이 H100 엔 너무 작아 커널이 host feed 보다 빨리 끝남 → MEAN 은 workload-limited). 한 fire 로 둘 다 test = apples(=lever-4 정확 config) + LARGER per-step-work sweep.
+
+방법: lever-4 byte-identical clm_prod (adamw_group fused, 3-GATE PASS + BYTEEQ-PASS 상속 — SAME binary, no rebuild). nvidia-smi util@0.1s · devmem@0.5s · F-CLM-PROD-DESCENT per config. CLM_PROD_DEVFEED=1 BATCHED=1 HEXA_CUDA_LINK=1. 전 config FIRE_RC=0.
+
+util (g5 verbatim sampler line, /root/lever5_sweep.log → .verdicts/lane-g-lever5/):
+```
+UTIL[apples d1536/T512] n=9149  PEAK=38% MEAN=0.6619% busy_ge20=81  pct_ge20=0.89% pct_ge50=0.00%  DEVMEM 20447MiB
+UTIL[d3072  d3072/T512] n=11441 PEAK=78% MEAN=0.7152% busy_ge20=125 pct_ge20=1.09% pct_ge50=0.39%  DEVMEM 26405MiB  (~4× per-step GEMM work)
+UTIL[t1024  d1536/T1024]n=5892  PEAK=38% MEAN=0.5883% busy_ge20=35  pct_ge20=0.59% pct_ge50=0.00%  DEVMEM 15097MiB
+UTIL[big    d3072/T1024]n=8931  PEAK=75% MEAN=0.6838% busy_ge20=87  pct_ge20=0.97% pct_ge50=0.32%  DEVMEM 23215MiB  (~8× per-step work)
+```
+descent (전 config 🟢 GREEN, F-CLM-PROD-DESCENT=1, g5 verbatim): apples 4.05535→2.99508 · d3072 4.48673→3.96246 · t1024 4.20807→3.36669 · big 4.60325→4.22859.
+apples-to-apples: lever-4 PEAK41%/MEAN0.6630% vs lever-5 apples PEAK38%/MEAN0.6619% — 샘플링 노이즈 내 재현(byte-identical build). harness sound.
+
+A-vs-B RULING = (B) WORKLOAD-BOUND · host-feed axis CLOSED-NEGATIVE:
+- 8× per-step work sweep 에서 PEAK 38→78% 배증, MEAN 0.59-0.72% PINNED. bigger work 가 MEAN 못 올림.
+- (A) crossing-bound 배제: d3072 는 crossing 개수 = apples 와 동일, crossing 당 device compute ~4×. fixed-count per-crossing launch latency 가 binding 이었으면 4× 큰 커널을 같은 crossing 수에 amortize 해 busy fraction(MEAN) 상승했어야 함. 안 올랐음(+0.05pp). PEAK 78% = 커널이 SM 더 점유 확인하나 GPU wall-time ~99.3% idle.
+- root residual = 인터프리트 host per-step 드라이버 루프 wall-time (hexa-interpreted scalar fwd/CE/bwd ~13ns/op · ~104M op/step @ d1536 ≈ ~1.4s host/step per lever-3 profile · model 크기에 비례 → d3072 host gap 도 ~4× → busy fraction flat 유지). 잔여 ~11 host↔device crossing = constraint 아님, 인터프리터 = constraint.
+- lever chain util curve (MEAN flat · PEAK monotone = workload-bound 시그니처): l1 0.811%/6% → l2 0.4999%/19% → l3 0.4879%/35% → l4 0.6630%/41% → l5 0.59-0.72%/up to 78%.
+
+VERDICT = HONEST TERMINAL of host-feed util lever chain (levers a/b/1/2/3/4 + lever-5 sweep):
+util-GREEN(MEAN≥20%∧PEAK≥20%) 어떤 config 에서도 미도달, MEAN 천장 ~0.72%. host-feed/crossing-count axis CLOSED-NEGATIVE — 추가 host-feed lever 로 MEAN 불가. 治 = (i) 전체 device-resident model port (fwd+CE+bwd 그래프를 CUDA C 로 재작성해 hexa 인터프리터를 per-step hot path 에서 제거 — feed lever 가 아니라 production-scale model rewrite) 또는 (ii) 인터프리트 host gap 이 커널 시간 대비 작아질 만큼 큰 production scale (8× sweep 의 d3072/T1024 도 못 도달 → 필요 scale 은 d3072 훨씬 너머).
+a_scale_honest_scope: d1536 MEAN-util 은 workload-size + interpreter-wall artifact 이지 forge 결함 아님 — forge 는 provably device-resident (20-26GB device mem · PEAK 78% · byte-eq PRESERVED · descent GREEN 전 config).
+
+Lane G PUBLIC 미flip (util-GREEN 미달). Lane G 3B / 7B + ENGINE 3B / 7B chain = util-GREEN gate 미통과로 BLOCKED 유지 — production-scale device-resident model port 가 진짜 unblock (a host-feed lever 가 아님). .clm = util-RED/WIP → HF PRIVATE per a_hf_autonomous (closure-FAIL → PRIVATE). pod 39139563 RUNNING 유지 (no teardown). 날조 0 · g5 verbatim · recover-before-teardown (artifacts pulled + sha256 verified → .verdicts/lane-g-lever5/).
