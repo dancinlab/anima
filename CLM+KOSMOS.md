@@ -8,7 +8,7 @@
 세 레인은 substrate별로 분리 추적 (a_lane_akida_gpu_split + a_train_flame_forge). Lane G(forge)가 프로덕션 primary; Lane G-ref(PyTorch)는 baseline 참조(forge PUBLIC artifact 아님).
 
 **Lane A** (substrate=AKIDA · on-chip 1-bit Hebbian):
-- [ ] Lane A PUBLIC — PUBLIC-grade on-chip cross-lingual CLM (AKD1000). 진척: 인코더 축 open 🟢 (whitened 비지도+≥250앵커 → abs-margin ci_lo>0, scale-survives) · full-LM 전환 미검증
+- [ ] Lane A PUBLIC — PUBLIC-grade on-chip cross-lingual CLM (AKD1000). 진척: 인코더 축 🟢 (whitened 비지도+≥250앵커 → abs-margin ci_lo>0, scale-survives) · transition retrieval 🟢 (t→t+1 above-NULL, tr_acc ci_lo=0.260 vs NULL hi=0.040) · **full-LM GENERATION 🟢 (2026-06-02, live AKD1000)**: open-vocab on-chip next-step DECODE (shortlist 없음, code_t→g_hat 생성→전체 codebook decode) gen_acc ci_lo=0.4096 ≫ shuffle-NULL hi=0.0418 (p=0.005, F-GEN-1 REFUTED) AND > identity-NULL hi=0.3847 (F-GEN-2 REFUTED = echo 아닌 produce), 8/8 learn_hw=True. retrieval→generation 다리 toy 스케일 건넘. ⚠ 250앵커 toy·256-unit 단일 FC (a_scale_honest_scope; 프로덕션 full-LM ladder 별도). sha256 d2d8021f… · AKIDA.log.md + .verdicts/lane-a-generation/. PUBLIC closure 미완(toy→프로덕션 전환 + multi-step roll-out 남음)
 - [ ] Lane A 3B — AKIDA 3B (chip-fit/페이징 ladder ≥3 rung, a_scale_honest_scope)
 - [ ] Lane A 7B — AKIDA 7B (3B green 후)
 
