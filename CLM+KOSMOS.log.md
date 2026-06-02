@@ -2,6 +2,25 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T08:10Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — abs-margin on-chip 결단기 🟢 PASS-PUBLIC-GRADE-POSITIVE (안정 PSU 위 완주)
+
+substrate=AKIDA · a_lane_akida_gpu_split (Lane G 와 NEVER 병합). live chip BC.00.000.002, akida 2.19.1, decider `~/clm_kosmos_akida/abs_margin_chip.py` (N=8 trials × 32 units, 4 encoder × 2 corpus). 직전 세션은 호스트 전원 brownout 으로 oracle-LDA arm 실행 전 mid-fire 사망(terminal 없음). PSU 물리 교체(2026-06-02, under-voltage 근본원인 — PI5-AKIDA.json 참조) 후 안정 전원에서 **완주**.
+
+- [x] DISPOSITION verbatim (g5):
+  ```
+  [abs] corpus     any_crosses_zero=False best=svd_struct     mean=-0.5760 ci_lo=-0.6535
+  [abs] corpus_big any_crosses_zero=True  best=lda_supervised mean=+5.2396 ci_lo=+5.0609
+  [abs] DISPOSITION: PASS-PUBLIC-GRADE-POSITIVE
+  [abs] at least one encoder pushed the ABSOLUTE on-chip concept-margin ci_lo>0
+        -> the AKD1000 1-bit Hebbian learns positive cross-lingual concept structure (PUBLIC-grade positive)
+  ```
+- [x] lda_supervised (corpus_big) 8/8 trials 양수 mean=+5.2396 sd=0.258 ci95=[5.061,5.418] n_positive=8 learn_all_hw=true → ci_lo=+5.061>0 PASS · result sha256 `7612bedaca38b68f12528d641fa8bfc9e0e0dace6e23b28db7d13076c57b3c7f`
+- [x] scope (a_scale_honest_scope) — 작은 corpus(25앵커) any_crosses_zero=False; 약한 인코더(random_int4/svd_struct/whitened) 음성. 강한 인코더(lda_supervised)+큰 corpus만 PASS. 인코더-강도/스케일 의존, 정직.
+- [x] 별개 축 — 절대-margin PASS 는 상대-LIFT closed-negative(H-A1~A4 4/4)와 무관: 1-bit Hebbian 이 *상대 lift* 는 안 사지만 강한 인코더로 *절대* positive 개념구조는 학습. 두 축 분리(a_lane_akida_gpu_split 정신).
+- [x] 전원 — PSU 교체로 brownout 해소(throttled 0x50000→0x0, EXT5V 4.87→5.033V); decider 부하 중 throttled=0x0 부하검증 통과. anima-pwr-log watchdog(60s) 무장 + persistent journal — 재발 시 timestamp 포착. PI5-AKIDA.json 등록(commit 92c79172c).
+- [x] PUBLIC 판정 — disposition=PASS-PUBLIC-GRADE-POSITIVE (substrate=AKIDA). HF 업로드 대상은 metrology verdict(result JSON)로 모델 ckpt 아님 — 도메인 기록 + sha 보존, HF 모델 업로드는 해당 없음.
+- [x] HF — N/A (verdict-only artifact, not a trained ckpt). Lane G 의 GPU util-GREEN HF PUBLIC 게이트와 분리.
+
 ## 2026-06-02 — Lane-G (substrate=GPU · pod 39062745 vast RTX-PRO-6000-Blackwell · a_lane_akida_gpu_split — NEVER merged with AKIDA) — devfeed+batched util fire: THIRD root cause FIXED (emit recursion + write-fail), all 3 verify-before-fire PASS, DESCENT 🟢 GREEN / util 🔴 RED (host-feed bottleneck CONFIRMED with both levers)
 
 substrate=GPU · a_lane_akida_gpu_split (NEVER merged with Lane A / AKIDA). vast pod **39062745** "laneg-utilgreen", **NVIDIA RTX PRO 6000 Blackwell** (97887 MiB, CUDA 12.4 / nvcc 12.4 / cuBLAS, gcc 11.4, clang 14, glibc 2.35→2.39 shim). Trainer `stdlib/flame/clm_prod.hexa` (PR4) on the c4 5-lang corpus (`clm_mid_5lang_c4.txt`, 402270 B, V=256, 16 windows). Built from hexa-lang `laneg/devfeed-cudalink-integrated` (cuda_link + lever-a #2505 + lever-b #2504 + nvcc fwd-decl #2506 + the two fixes landed this session).

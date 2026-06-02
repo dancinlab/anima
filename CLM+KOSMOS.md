@@ -102,6 +102,7 @@ alternatives — both run concurrently and report to the same .clm/.kosmos produ
   - scope: 1 AKD1000, 25-anchor corpus, last-layer 1-bit Hebbian only (not a full LM); no sim/CPU fallback (a_akida_native_train honored)
   - artifacts: HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/ · commit 6234be7 (--no-verify; pre-commit hook mis-paths to ready/.git — fix pending)
 - [x] Lane A SCALE — N-unit paged depth ladder (small-chip→larger-model), live AKD1000: CAPACITY 🟢 GREEN to N=5 (all 12 rungs N=2..5×3-seed learned_hw=True on silicon); LIFT weak-positive (slope +0.15..+0.43 bits/unit all seeds, but deep plasticity hurts shallow N=2,3, helps only N=5; noise-limited at 25 anchors). Primitive proven; full 3B/7B DEFERRED. branch feat/lane-a-scale-frontier · see CLM+KOSMOS.log.md
+- [x] Lane A ABS-MARGIN decider — 🟢 **PASS-PUBLIC-GRADE-POSITIVE** (substrate=AKIDA · a_lane_akida_gpu_split, Lane G 와 NEVER 병합 · live AKD1000 BC.00.000.002, 2026-06-02 안정 PSU 위 완주): corpus_big · lda_supervised **ci_lo=+5.061>0** (8/8 trials 양수 mean=+5.240, ci95=[5.061,5.418]) → AKD1000 1-bit Hebbian 이 positive cross-lingual 개념구조를 *절대* 학습. ⚠ 작은 corpus(25앵커)·약한 인코더(random_int4/svd_struct/whitened)는 음성(svd_struct ci_lo=−0.654, any_crosses_zero=False) → 강한 인코더+큰 corpus만 PASS (a_scale_honest_scope). 상대-LIFT closed-negative(H-A1~A4 4/4 falsified)와 **별개 축**(절대-margin 은 존재). sha256 7612bed…b3c7f · see AKIDA.log.md + CLM+KOSMOS.log.md
 
 ### Lane A strategy ladder — "small chip → anima's real training"
 ```

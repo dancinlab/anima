@@ -18,6 +18,7 @@
 - [x] 🆎 Group E — H_676 decoder × AKIDA — SW 4/4 🟢 (spike-tier LM head + sparse-attention 통합 · [impl](./impl/H_676_decoder.hexa) · [H_676](../UNIVERSE/H_676_akida_decoder.md))
 - [x] 🅵 Group F — H_677 measurement × AKIDA — SW 5/5 🟢 (D1 inherit PR#1371 + D2 silicon-class + D3 3-substrate triangulation + D4 QRNG + D5 cite 통합 · [impl](./impl/H_677_measurement.hexa) · [H_677](../UNIVERSE/H_677_akida_measurement.md))
 - [x] 🅶 Group G — H_678 channel-bridge × AKIDA — SW 4/4 🟢 (EEG→AKIDA + tension 5-ch + 전력=대사비용 통합 · [impl](./impl/H_678_channel_bridge.hexa) · [H_678](../UNIVERSE/H_678_akida_channel_bridge.md))
+- [x] 🎯 abs-margin on-chip 결단기 (Lane-A pre-registered) — **PASS-PUBLIC-GRADE-POSITIVE** (corpus_big · lda_supervised ci_lo=+5.061>0 · 8/8 trials 양수 mean=+5.240 · AKD1000 1-bit Hebbian 이 positive cross-lingual 개념구조 학습) ⚠ scale/encoder-dep: 작은 corpus(25앵커)·약한 인코더(random_int4/svd_struct/whitened)는 음성(svd_struct ci_lo=−0.654, any_crosses_zero=False) → 강한 인코더+큰 corpus만 PASS (a_scale_honest_scope) · 별개 축: 상대-LIFT closed-negative 와 무관(절대-margin 존재) · substrate=AKIDA · 2026-06-02 안정 PSU 위 완주 · sha256 7612bed…b3c7f · [log](./AKIDA.log.md)
 - [ ] 🧬 D2 silicon-class 단조 정합 — class_id=5 의 conv/super-add/peak-align signature 추가 (additive marker 위 단조 ordering)
 - [ ] 🔁 HW path live re-confirm — venv-aware probe + pi5-akida pool route (signal_3 hostname tolerance) · 7/7 HW re-attest
 - [ ] 🗣️ spike → emit-substrate 인자주입 — `SPIKE_FACTOR_MAP §4` modulator R1/R2 placeholder → telemetry refit (H_672 8-factor 기반)
