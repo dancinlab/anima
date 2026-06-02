@@ -2,6 +2,16 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T10:06Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — SEQUENCE/TRANSITION READOUT BRIDGE 🟢 WORKING on-chip 교차언어 next-step 신호
+
+full-LM rung 이 특징지은 gap(static 1-bit margin = CONCEPT 결속만, TIME 모델 부재)을 **명시적 on-chip transition readout**(후보 a)으로 가교. binding `bind(a,b)=a XOR roll(b,37)` 로 연속 FLORES 문장쌍을 묶고 **2번째 64-unit AkidaUnsupervised FC** 를 언어내 transition 코드로 on-chip fit → 교차언어 t→t+1 top-1 retrieval. live AKD1000(BC.00.000.002, akida 2.19.1, N=8, learn_hw 8/8 True, throttled=0x0 완주).
+
+- [x] 사전등록 falsifier(RUN 전, g63): F-TR-1 "명시적 on-chip transition readout 은 next-sentence shuffle-NULL 을 넘지 못한다" → **REFUTED** (250 rung): tr_acc=0.2801 ci_lo=0.2600 vs NULL hi=0.0397, p=0.0050 (14x chance, 6.5x NULL). within-lang transition recall=0.4867(chance 0.02) → F-TR-2 REFUTED (1-bit FC **가** transition 을 hold).
+- [x] scale-ladder(a_scale_honest_scope 25/125/250): **125·250 실-FLORES rung 모두 above-NULL** (125: 0.128 ci_lo 0.115 vs NULL 0.073 p=0.005 · 250: 0.290 ci_lo 0.270 vs NULL 0.043 p=0.005), NULL margin scale-성장. 25-anchor toy(후보 4개 chance 0.25)만 above=False(NULL band 과대 → toy 한계, science 결과 아님). 정직 scope = 신호는 검증 rung 에서 real·scale-성장.
+- [x] disposition: full-LM ③ = next-sentence NULL → **above-NULL transition 신호로 flip(🟢 toward earned)**. retrieval 신호이지 full generative CLM 아님 → Lane A PUBLIC 여전히 open, named next bridge = (b) paged 멀티-FC transition matrix 로 retrieval→generation / (c) on-chip bind ⊥ off-chip decode 분할.
+- [x] 전원 proof: load 중/후 throttled=0x0 · pwr.log `2026-06-02T10:06:33Z throttled=0x0 EXT5V=4.99954V 68.6'C`. 단일-칩 점유: R3(pid9686) pkill→탐침2건→R3 복원(pid12385 HW R3 9512).
+- [x] 산출물: `SUB_ENGINES/AKIDA/onchip_xlm_transition.py`(+scale) · `state/seq_transition_2026_06_02/`. sha256 result `57e32e2…d8e0b6` / scale `1c64810…c47c4a`. g63 HW-only.
+
 ## 2026-06-02T09:40Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — FULL-LM TRANSFER 탐침 🟡 CAPACITY-GAP CHARACTERIZED
 
 검증된 primitive(whitened 비지도 인코더 + 1-bit Hebbian abs-margin readout)를 실제 on-chip 교차언어 시퀀스/next-token 작업으로 가교. corpus_big 50 concept = 연속 FLORES 문장(시간축 t) × 5언어. live AKD1000(BC.00.000.002, akida 2.19.1, N=8, throttled=0x0 완주).

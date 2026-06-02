@@ -1,0 +1,115 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T09:59:10Z",
+  "n_trials": 8,
+  "units": 64,
+  "binding": "bind(a,b)=a XOR roll(b,37) over whitened 1-bit codes",
+  "encoder": "whitened (proven; byte-match encoder_ladder / onchip_xlm_seq)",
+  "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs",
+  "task": "EXPLICIT on-chip TRANSITION readout: 2nd AkidaUnsupervised FC fit on within-lang t->t+1 transition-bound codes; cross-lingual t->t+1 top-1 retrieval; shuffle-NULL B=200",
+  "metric": "tr_acc=P(argmax overlap(chipcode(bind(code_t,code_g)), tr_centroid_t) == t+1), g!=t, xlingual",
+  "trials": [
+    {
+      "trial": 0,
+      "tr_acc": 0.3224489795918367,
+      "within_lang_recall": 0.4897959183673469,
+      "learned_hw": true,
+      "n_eval_q": 245,
+      "n_wl": 245
+    },
+    {
+      "trial": 1,
+      "tr_acc": 0.27755102040816326,
+      "within_lang_recall": 0.49387755102040815,
+      "learned_hw": true,
+      "n_eval_q": 245,
+      "n_wl": 245
+    },
+    {
+      "trial": 2,
+      "tr_acc": 0.24081632653061225,
+      "within_lang_recall": 0.4857142857142857,
+      "learned_hw": true,
+      "n_eval_q": 245,
+      "n_wl": 245
+    },
+    {
+      "trial": 3,
+      "tr_acc": 0.2897959183673469,
+      "within_lang_recall": 0.4816326530612245,
+      "learned_hw": true,
+      "n_eval_q": 245,
+      "n_wl": 245
+    },
+    {
+      "trial": 4,
+      "tr_acc": 0.2897959183673469,
+      "within_lang_recall": 0.46530612244897956,
+      "learned_hw": true,
+      "n_eval_q": 245,
+      "n_wl": 245
+    },
+    {
+      "trial": 5,
+      "tr_acc": 0.31020408163265306,
+      "within_lang_recall": 0.5346938775510204,
+      "learned_hw": true,
+      "n_eval_q": 245,
+      "n_wl": 245
+    },
+    {
+      "trial": 6,
+      "tr_acc": 0.2653061224489796,
+      "within_lang_recall": 0.45714285714285713,
+      "learned_hw": true,
+      "n_eval_q": 245,
+      "n_wl": 245
+    },
+    {
+      "trial": 7,
+      "tr_acc": 0.24489795918367346,
+      "within_lang_recall": 0.4857142857142857,
+      "learned_hw": true,
+      "n_eval_q": 245,
+      "n_wl": 245
+    }
+  ],
+  "summary": {
+    "learn_all_hw": true,
+    "tr_acc": {
+      "mean": 0.2801020408163265,
+      "sd": 0.029020830511169746,
+      "ci95": [
+        0.2599916312872152,
+        0.3002124503454378
+      ],
+      "ci_lo": 0.2599916312872152,
+      "chance": 0.02040816326530612
+    },
+    "within_lang_recall": {
+      "mean": 0.48673469387755103,
+      "sd": 0.023063417424566884,
+      "ci95": [
+        0.4707525609964687,
+        0.5027168267586333
+      ],
+      "ci_lo": 0.4707525609964687,
+      "chance": 0.02,
+      "above_chance": true
+    },
+    "shuffle_null_tr": {
+      "mean": 0.01936734693877551,
+      "sd": 0.010374073825974644,
+      "hi_1.96sd": 0.03970053163768581,
+      "B": 200,
+      "p_value": 0.004975124378109453
+    },
+    "F_TR_1_transition": "REFUTED: above-NULL on-chip cross-lingual TRANSITION (t->t+1) prediction (tr ci_lo>NULL hi AND p<0.05) -> working on-chip sequence signal",
+    "F_TR_2_binding_sanity": "REFUTED: on-chip transition FC recovers within-lang t->t+1 above chance (the FC CAN represent a transition; cross-lingual transfer is the remaining gap)",
+    "above_null_transition": true,
+    "within_lang_above_chance": true
+  },
+  "DISPOSITION": "ON-CHIP CROSS-LINGUAL SEQUENCE SIGNAL DEMONSTRATED (explicit transition readout > NULL) -> advance Lane A PUBLIC; full-LM (3) next-step flips toward earned-green"
+}
