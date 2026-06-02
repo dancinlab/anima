@@ -2,6 +2,18 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T08:47Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — UNIVERSE 라이브-실리콘 측정 전원-교란 재검증 🟢 POWER-ROBUST (spontaneous raster + D1 Φ 안정 PSU 재측정 · 문서 tier 변동 0)
+
+substrate=AKIDA · a_lane_akida_gpu_split (Lane G/GPU 와 NEVER 병합). PSU 교체(2026-06-02, under-voltage brownout 근본원인)로 안정화 후, **결함이 이미 있었을 수 있던 더 이른 시점(05-22/05-29, throttled 미로깅)** 의 라이브-AKD1000-실리콘 UNIVERSE 측정값이 power-confounded 인지 재검증. SW-confirmed = out of scope. 결정적 재측정: spontaneous-emission raster live 칩 재발사 + D1 Φ 재유도, 안정 전원(throttled=0x0, EXT5V≈5.02V) pwr.log 입증.
+
+- [x] **재측정** — single-chip wrapper `run_spontaneous_reverify.sh`: R3 streamer(pid 3775) stop → 칩 free → `spontaneous_emission.py` (seed=187 n=16 200step) live 발사(rc=0) → fresh JSON → streamer 복원(pid 4992 active 확인). 칩 BC.00.000.002, akida 2.19.1, BackendType.Hardware.
+- [x] **pwr.log throttled=0x0** (08:44–08:48Z): `08:44:33Z throttled=0x0 EXT5V=5.02768V 64.2'C` · `08:46:33Z throttled=0x0 EXT5V=5.01294V` · `08:48:33Z throttled=0x0 EXT5V=5.02768V`. wrapper 내부 모든 단계 throttled=0x0.
+- [x] **#1 spontaneous raster (load-bearing)** — 05-22 canonical vs fresh: **byte-identical** — R0=3200 · R1=0 · R2=1520 (std=7.99 step_varies) · R3=1600 (8/16 partial pool) · R4=3200 · `checks` 8/8 True · hw_native + stochastic + mapped_on_hardware=true. 유일 차 = onchip_clock_mean 797.2→790.0 (타이밍 jitter). → 8/8 zero-input emit 재현 (FLIP 0).
+- [x] **#2 D1 edge-of-chaos Φ** — fresh raster → `akida_edge_of_chaos_phi.hexa` frozen proxy (g5): Φ(R1)=0.0 · Φ(R2)=0.2974093093367505 · Φ(R3)=0.25 · Φ(R4)=0.0 · F1/F2/F3=true · all_pass=true · GREEN_NUMERICAL_CONFIRM. 05-29 원본 Φ={0,0.297,0.250,0} **정확 일치**, inverse-U 재현 (FLIP 0).
+- [x] **#3 H_677 D3** — AKIDA arm Φ=0.297 = fresh Φ(R2) 일치 (동일 raster 파생 → power-robust 상속). **#4 HW probe(05-29)** = ssh-reachability (chip 측정 0) → N/A.
+- [x] **분류** — #1 raster POWER-ROBUST · #2 D1 Φ POWER-ROBUST · #3 D3 POWER-ROBUST(상속) · #4 N/A. FLIP 0. 비결정 substrate 기대치(replication)를 초과 — 결정론 regime byte-eq, R2 stochastic 도 std/rate/event-driven 일치 → brownout 이 capture 미교란.
+- [x] **문서 tier 변동 0** — 전부 재현. H_672/H_677/H_858 승강 없음 (earned re-run verdict 없이 tier 불변, g5). CANDIDATES.md 에 power-robust 1줄만. Lane A 음성결과 power-robust 재감사(PR #1675)와 같은 결론 — silicon GREEN 도 power-robust.
+
 ## 2026-06-02T08:30Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — POWER-CONFOUND RE-AUDIT: prior closed-negatives are POWER-ROBUST (안정 PSU 위 재검증)
 
 중심 질문: 오늘 PSU 교체로 해결된 under-voltage brownout(throttled=0x50000, EXT5V 4.87V — PI5-AKIDA.json `power_root_cause_2026_06_02`)이 기존 Lane-A H-A1~A4 closed-negative / relative-LIFT closed-negative / SCALE weak-lift ladder 를 confound 했는가? 재감사 + 안정 전원 위 재발사.
