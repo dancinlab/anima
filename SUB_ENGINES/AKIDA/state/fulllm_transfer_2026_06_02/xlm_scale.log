@@ -1,0 +1,35 @@
+[scale] akida 2.19.1 device BC.00.000.002 rungs 25/125/250
+[scale] c25   trial 0 same=0.2400 next=0.2500 learn=True
+[scale] c25   trial 1 same=0.2400 next=0.3500 learn=True
+[scale] c25   trial 2 same=0.2400 next=0.3500 learn=True
+[scale] c25   trial 3 same=0.2000 next=0.2000 learn=True
+[scale] c25   trial 4 same=0.1200 next=0.2000 learn=True
+[scale] c25   trial 5 same=0.2000 next=0.3500 learn=True
+[scale] c25   trial 6 same=0.2000 next=0.3000 learn=True
+[scale] c25   trial 7 same=0.3200 next=0.2000 learn=True
+[scale] c25   SAME mean=0.2200 ci_lo=0.1808 chance=0.2000 above=False | NEXT mean=0.2750 null=0.2445 p=0.3483 above=False
+[scale] c125  trial 0 same=0.1520 next=0.0333 learn=True
+[scale] c125  trial 1 same=0.1360 next=0.0417 learn=True
+[scale] c125  trial 2 same=0.1440 next=0.0583 learn=True
+[scale] c125  trial 3 same=0.1520 next=0.0333 learn=True
+[scale] c125  trial 4 same=0.1760 next=0.0667 learn=True
+[scale] c125  trial 5 same=0.1680 next=0.0333 learn=True
+[scale] c125  trial 6 same=0.1280 next=0.0583 learn=True
+[scale] c125  trial 7 same=0.1200 next=0.0417 learn=True
+[scale] c125  SAME mean=0.1470 ci_lo=0.1338 chance=0.0400 above=True | NEXT mean=0.0458 null=0.0402 p=0.4030 above=False
+[scale] c250  trial 0 same=0.1240 next=0.0204 learn=True
+[scale] c250  trial 1 same=0.1200 next=0.0327 learn=True
+[scale] c250  trial 2 same=0.1640 next=0.0367 learn=True
+[scale] c250  trial 3 same=0.1320 next=0.0163 learn=True
+[scale] c250  trial 4 same=0.1400 next=0.0327 learn=True
+[scale] c250  trial 5 same=0.1520 next=0.0245 learn=True
+[scale] c250  trial 6 same=0.1600 next=0.0327 learn=True
+[scale] c250  trial 7 same=0.1360 next=0.0163 learn=True
+[scale] c250  SAME mean=0.1410 ci_lo=0.1297 chance=0.0200 above=True | NEXT mean=0.0265 null=0.0206 p=0.2388 above=False
+
+[scale] ===== DISPOSITION =====
+[scale] same-lift curve 25/125/250: [0.01999999999999999, 0.10700000000000001, 0.12100000000000001]
+[scale] F-SCALE-1: PARTIAL: bridge above chance at some but not all rungs
+[scale] F-SCALE-2: NULL HOLDS at every rung -> capacity gap (no time model) is scale-robust
+[scale] BOTTOM LINE: scale-robust: margin->concept-retrieval bridge holds; next-sentence/time model absent at 1-bit/32-unit
+[scale] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_scale.json
