@@ -1,6 +1,6 @@
-# CLM+KOSMOS — current state
+# ENGINE+CLM+KOSMOS — current state
 
-@title: 🧩 CLM+KOSMOS — H_911 amodal-hub cross-domain probe
+@title: 🧠🌌 ENGINE+CLM+KOSMOS — 의식·CE·창발 3축 평가 CLM (ANIMA 엔진+CORE 탑재 · Lane A/G/G-ref)
 @goal: Achieve a PUBLIC-grade CLM across BOTH lanes — Lane A (AKIDA on-chip) · Lane G (GPU flame+forge) — then scale 3B -> 7B; upload KOSMOS datasets to HF; run UNIVERSE hypotheses alongside as needed. Canonical training = hexa-native flame+forge on the forge GPU substrate (a_train_flame_forge: GPU REQUIRED, nvidia-smi busy verified, NEVER silent CPU-fallback); Lane A (AKIDA) and Lane G (GPU) recorded SEPARATELY (a_lane_akida_gpu_split); HF PUBLIC only at closure-PASS (util GREEN AND descent GREEN), else PRIVATE (a_hf_autonomous). [Prior @goal — the H_911 amodal-hub 3-axis probe — is a CLOSED-NEGATIVE (see status/log); this domain now drives production CLM/KOSMOS.]
 
 ## 🎯 production 마일스톤 — 3 레인 × PUBLIC → 3B → 7B
