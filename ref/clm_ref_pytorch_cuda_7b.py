@@ -161,6 +161,9 @@ def main():
     ap.add_argument("--warmup", type=int, default=20)
     ap.add_argument("--eval_every", type=int, default=25)
     ap.add_argument("--no_grad_ckpt", action="store_true")
+    ap.add_argument("--model_dtype", choices=["fp32", "bf16"], default="bf16",
+                    help="bf16 stores master weights+grads in bf16 so a 7B model fits a "
+                         "single 80GB GPU (fp32 weights+grads alone overflow 80GB at 7B).")
     ap.add_argument("--opt", choices=["adamw", "adamw8bit"], default="adamw8bit",
                     help="adamw8bit (bitsandbytes) keeps optimizer states in 8-bit so a "
                          "7B model + states fit a single 80GB GPU; adamw = fp32 states "
@@ -182,7 +185,14 @@ def main():
     print(f"[data] corpus bytes={n} train={n_train} val={n - n_train}", flush=True)
 
     model = ByteGPT(256, args.d, args.n_layer, args.n_head, args.block,
-                    grad_ckpt=not args.no_grad_ckpt).to(device)
+                    grad_ckpt=not args.no_grad_ckpt)
+    if args.model_dtype == "bf16":
+        # bf16 master weights — at 7B, fp32 weights(29GB)+grads(29GB) alone overflow an
+        # 80GB GPU before activations; bf16 weights+grads (~14.5GB each) + 8-bit Adam
+        # states (~14.5GB) leave headroom for activations. autocast still runs the
+        # matmuls in bf16; this just stores the params/grads in bf16 too.
+        model = model.bfloat16()
+    model = model.to(device)
     n_params = sum(p.numel() for p in model.parameters())
     print(f"[model] ByteGPT d={args.d} L={args.n_layer} H={args.n_head} block={args.block} "
           f"params={n_params} ({n_params/1e9:.3f}B) grad_ckpt={not args.no_grad_ckpt}", flush=True)
@@ -267,7 +277,8 @@ def main():
         "config": {"vocab": 256, "d": args.d, "n_layer": args.n_layer, "n_head": args.n_head,
                    "block": args.block, "batch": args.batch, "grad_accum": args.grad_accum,
                    "steps": args.steps, "n_params": n_params,
-                   "grad_ckpt": not args.no_grad_ckpt, "optimizer": args.opt},
+                   "grad_ckpt": not args.no_grad_ckpt, "optimizer": args.opt,
+                   "model_dtype": args.model_dtype},
         "descent": {"first_val_ce": first_ce, "last_val_ce": last_ce,
                     "F_CLM_REF_7B_DESCENT": 1 if descent else 0, "verdict": "PASS" if descent else "FAIL"},
         "util": usum,
