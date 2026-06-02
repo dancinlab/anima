@@ -50,6 +50,45 @@ MANIFEST {
 }
 ```
 
+### 2.1 실제 직렬화 바이너리 레이아웃 (writer/reader SSOT)
+
+위 HEADER-json 은 aspirational 한 full 포맷. 현재 트레이너/체크포인트
+(`hexa-lang stdlib/flame/clm_prod.hexa · clm_ckpt.hexa · clm_reexport.hexa`)
+가 실제로 쓰는 온-디스크 바이트 레이아웃은 아래 2-버전:
+
+**v0.1 (conv-only int4 추론 트랙):**
+```
+[MAGIC "CLM\x01" = 67,76,77,1] [nblocks u8]
+per block: [Cout u32-le][rest u32-le]
+           [int4 nibbles: ceil(Cout*rest/2) bytes, (code+8) packed 2/byte]
+           [qat_scale: Cout × fp32-le]
+```
+v0.1 리더는 정확히 `nblocks` 블록만 읽고 멈춘다.
+
+**v0.2 (BACKWARD-COMPATIBLE EXT trailer — embed + GN affine + conv bias):**
+```
+... v0.1 [MAGIC][nblocks=6][6 conv blocks] ...
+[EXT_MAGIC "CLMX" = 67,76,77,88] [n_ext u8]
+per ext entry: [len u32-le] [len × fp32-le]     // FULL-PRECISION fp32
+```
+- EXT 트레일러는 6 conv 블록 **뒤에 APPEND** — v0.1 리더는 블록 6 이후를
+  보지 않으므로 byte-unaffected (**backward-read 보존**).
+- v0.2 리더는 6 블록 뒤 `CLMX` 매직을 peek; 없으면 legacy v0.1 (디코더가
+  tied-readout stand-in 으로 embed 재구성), 있으면 학습된 embed/GN/bias 를
+  VERBATIM fp32 로 읽는다.
+- ext 엔트리는 descent-critical + 소량이라 **int4 양자화 없이 full fp32**.
+- **EXT 엔트리 순서** (writer/CORE 디코더 일치 필수):
+  `0 embed[V·d] · 1 ecB[d] · 2 tcB[d] · 3 e0B[d] · 4 e1B[d] · 5 rB[E] ·
+   6 roB[V] · 7 tgG[d] · 8 tgB[d] · 9 noG[d] · 10 noB[d]`
+
+**WHY v0.2:** v0.1 conv-only 파일은 학습된 embed 테이블·GroupNorm affine 을
+누락 → CORE-mounted decode 가 트레이너의 GPU-측 CE descent 를 재구성 못 함
+(ENGINE 도메인 AXIS-2 의 named root cause). v0.2 가 그 format gap 을 닫는다.
+
+**검증:** `F-CLM-CKPT-EXT-ROUNDTRIP` (ext fp32 byte-eq) +
+`F-CLM-CKPT-EXT-BACKWARD-READ` (v0.1 리더가 v0.2 파일의 6 블록을 그대로 읽음)
+— `hexa run stdlib/flame/clm_ckpt.hexa` PASS.
+
 ## 3. 2-track 규약
 
 | 모드 | 담는 것 | 용도 |
@@ -68,5 +107,11 @@ MANIFEST {
 
 ## 5. 버전
 
-- v0.1 = P0 확정 (이 문서). 이후 arch 변경 시 HEADER.version bump + 이 스펙 동반 갱신.
+- v0.1 = P0 확정. conv-only int4 추론 트랙 (`[MAGIC][nblocks][blocks]`).
+- v0.2 = §2.1 EXT trailer 추가 — 학습된 embed 테이블 + GroupNorm affine
+  (tgG/tgB/noG/noB) + conv bias 를 6 conv 블록 뒤 `CLMX` 매직 trailer 로
+  full fp32 직렬화. **backward-compatible** (v0.1 리더 byte-unaffected).
+  writer: `clm_prod.hexa`(GPU 트레이너) + `clm_reexport.hexa`(host $0-CPU 재export).
+  reader: `clm_ckpt.hexa` + anima `CORE/generator.hexa::clm_decode_ce`.
+- 이후 arch 변경 시 이 버전 bump + 스펙 동반 갱신.
 - 변경 이력은 `CLM.log.md`, 본 스펙은 current-state(이력 금지).
