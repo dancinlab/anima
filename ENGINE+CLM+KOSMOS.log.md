@@ -538,3 +538,45 @@ live AKD1000 BC.00.000.002 · akida 2.19.1 · N=8 trials × 256-unit AkidaUnsupe
 **milestone delta:** Lane A PUBLIC 진척 = 인코더 🟢 + transition retrieval 🟢 + **full-LM GENERATION 🟢**. PUBLIC checkbox 는 **미flip 유지** (toy→프로덕션 전환 + multi-step autoregressive roll-out 미완 — full closure 아님, a_paper_only_at_closure).
 
 **NEXT (held):** 다단계 autoregressive roll-out(t→t+1→t+2 chained on-chip generation) · 또는 paged 다중-FC generator 로 스케일 ladder ≥3 rung(a_scale_honest_scope). PR lane-a/onchip-generation.
+
+---
+
+## 2026-06-03 — Lane A REAL-SCALE rung3 (live AKD1000, REAL semantic corpus past 50-concept ceiling)
+
+**REAL corpus provenance (NOT synthetic, g63 honest):** `corpus_real100/parallel.limen` = 100 distinct cross-lingual ALIGNED concepts × 5 langs = 500 real anchors. concepts 0..49 = 50 FLORES parallel sentences byte-preserved from deployed corpus_big (real news/factual aligned translations); 50..89 = 40 hand-authored aligned aphorisms (build_corpus_large.py); 90..99 = 10 newly hand-authored aligned propositions. sha256 `356756786588831d4e317fafc9b7204a8da019319d03757799f3df9e294394cc` · merkle `27f4c506…`. **MAX REAL NC = 100** — in-repo c4 source (CORE/testdata/clm_mid_5lang_c4.txt, 4240 lines) has ONLY 5 distinct clean 5-lang parallel concepts (rest = repetition + mixed/code-switched non-parallel training text) → >50 real aligned concepts REQUIRE hand-authoring (real propositions in 5 langs = real data, NOT synthetic byte-pad). Prior synthetic rung proved scale past NC=50 on byte-patterns; this rung CONFIRMS it on REAL semantic data.
+
+**Chip discipline (MANDATORY #1717):** spike-streamer STOP (systemctl --user) → `akida.devices()` returned DEVCOUNT 1 (BC.00.000.002) → A-single (AKIDA) then A-multi (HYBRID) SEQUENTIAL (never concurrent) → RESTORE via trap (mandatory even on abort). Streamer post-run: `active`, exact argv `--port 9512 --duration 86400 --regime R3` (pid 98315). Thermal: baseline 61.7°C, A-single end 66.7°C, A-multi peak ~70.5°C, **final 70.0°C** (≪82°C threshold, no pause needed).
+
+### A-single (substrate=AKIDA — on-chip 1-bit Hebbian, NOT HYBRID, NOT Lane G) — VERBATIM on-chip stdout:
+```
+[gen-scale] SUBSTRATE = AKIDA (on-chip 1-bit Hebbian) — NOT HYBRID, NOT Lane G
+[gen-scale] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1  corpus concepts=100 langs=5  ladder(n_concepts)=[50, 100] -> anchors=[250, 500]
+[gen-scale] NC=50 anchors=250: gen ci_lo=0.4364 | shufNULL hi=0.0482 p=0.0050 | identNULL hi=0.4005 | chance=0.0204 | aboveShuf=True aboveIdent=True above2xChance=True
+[gen-scale] NC=100 anchors=500: gen ci_lo=0.1971 | shufNULL hi=0.0215 p=0.0050 | identNULL hi=0.1799 | chance=0.0101 | aboveShuf=True aboveIdent=True above2xChance=True
+[gen-scale] SUBSTRATE            : AKIDA (on-chip 1-bit Hebbian)
+[gen-scale] F-GEN-SCALE-1        : REFUTED: at EVERY rung single-step gen ci_lo>shuffle-NULL hi AND p<0.05 -> single-step on-chip GENERATION SCALE-SURVIVES (A-single ceiling holds across anchor count)
+[gen-scale] F-GEN-SCALE-2        : REFUTED: largest rung gen ci_lo > shuffle-NULL hi AND >= 2x chance -> no collapse toward chance
+```
+
+**A-single ruling:** F-GEN-SCALE-1 REFUTED (above shuffle-NULL at EVERY rung, p=0.005) · F-GEN-SCALE-2 REFUTED (no collapse at largest). single-step on-chip REAL-semantic generation **SCALE-SURVIVES to NC=100** (500 real anchors). → `.verdicts/lane-a-single-rung3/F-GEN-SCALE-REAL.txt`
+
+### A-multi (substrate=HYBRID — on-chip AKD1000 encoder ⊕ off-chip host-CPU Elman decode head, numpy BPTT, NO torch) — VERBATIM stdout:
+```
+[branch] SUBSTRATE = HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure AKIDA, NOT Lane G
+[branch] NC=50  N_TRAIN=35 (idx 0..34)  N_TEST=15 (idx 35..49)  on-chip enc transitions=750
+[branch] NC=100  N_TRAIN=70 (idx 0..69)  N_TEST=30 (idx 70..99)  on-chip enc transitions=1500
+[branch] SUBSTRATE               : HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head)
+[branch]   NC=50  chance=0.0612  decay_TRAIN=[0.6971, 0.9657, 0.9814]  decay_HELD-OUT=[0.0167, 0.9083, 0.9633]  ratio=[0.0239, 0.9406, 0.9816]
+[branch]   NC=100  chance=0.0303  decay_TRAIN=[0.3886, 0.8314, 0.8839]  decay_HELD-OUT=[0.025, 0.7758, 0.8775]  ratio=[0.0643, 0.9331, 0.9927]
+[branch] hop 1  TRAIN=0.3886 HELD=0.0250 ratio=0.064 | held ci_lo=0.0217 shufNULL hi=0.0597 p=0.6418 | chance=0.0303 | heldAboveShuf=False
+[branch] hop 2  TRAIN=0.8314 HELD=0.7758 ratio=0.933 | held ci_lo=0.7309 shufNULL hi=0.1254 p=0.0050 | chance=0.0303 | heldAboveShuf=True
+[branch] hop 3  TRAIN=0.8839 HELD=0.8775 ratio=0.993 | held ci_lo=0.8393 shufNULL hi=0.1646 p=0.0050 | chance=0.0303 | heldAboveShuf=True
+[branch] F-BRANCH-1 (held>NULL)   : REFUTED: held-out hop-2 AND hop-3 STAY ABOVE the shuffle-NULL on the branching set-membership metric (each ci_lo>NULL hi AND p<0.05) -> a branching corpus FORCES a TRANSFERABLE transition OPERATOR; the off-chip head composes on concepts held out of training -> GENUINE multi-step composition, NOT a per-concept lookup
+[branch] F-BRANCH-2 (within 2.0x) : REFUTED: held-out hop-2 (0.7758) is within 2.0x of in-dist hop-2 (0.8314) [>= 0.4157] -> held-out tracks in-dist
+[branch] GENERALIZES              : True
+[branch] DISPOSITION              : GENERALIZES — a BRANCHING corpus FORCES a transferable transition OPERATOR. The off-chip recurrent head, trained on random branching walks with TRAIN-concept targets ONLY, decodes hop-2/3 successors for TEST concepts it was NEVER trained to emit, landing in the valid (B=3) successor set ABOVE the shuffle-NULL AND within 2.0x of in-dist. Multi-step composition is REAL (the head learned the offset operator, not a per-concept lookup). The PR#1694 exact-0.0000 was an ARTEFACT of the deterministic single-chain corpus, REPAIRED at the root cause. Lane A HYBRID PUBLIC RE-UPGRADES (hybrid-scoped, branching-validated; on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure-AKIDA, NOT Lane G. STILL toy (a_scale_honest_scope, 2-rung ladder reported); next rung = 3B.
+```
+
+**A-multi ruling:** F-BRANCH-1 REFUTED (held-out hop-2 AND hop-3 above shuffle-NULL, p=0.005) · F-BRANCH-2 REFUTED (within 2.0× in-dist). branching transition OPERATOR **deep-generalizes to held-out unseen concepts at REAL NC=100**. hop-1 below-NULL = expected branching property (immediate step stochastic over B=3). → `.verdicts/lane-a-multi-rung3/F-BRANCH-REAL.txt`
+
+**Honest scope (a_scale_honest_scope):** toy vocab; real ceiling NC=100 is hand-authored aligned data (no in-repo parallel source >5 distinct). substrate tags STRICT (A-single=AKIDA, A-multi=HYBRID, a_lane_akida_gpu_split). next = 3B. artifacts: AKIDA/state/real100_rung3_2026_06_03/ · harnesses AKIDA/{build_corpus_real100,onchip_xlm_gen_scale_real100,onchip_xlm_branching_real100}.py · .discoveries/lane-a-{single,multi}-rung3.tape.

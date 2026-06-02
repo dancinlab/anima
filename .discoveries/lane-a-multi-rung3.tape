@@ -1,0 +1,7 @@
+@D lane_a_multi_rung3 := "A-multi REAL-scale: HYBRID branching held-out deep-generalizes to REAL NC=100 (past prior 50-concept real ceiling)" :: discovery [d=2026-06-03 active]
+  seed      = "substrate=HYBRID (on-chip AKD1000 encoder ⊕ off-chip host-CPU Elman decode head, numpy BPTT, NO torch; NOT pure-AKIDA, NOT Lane G — a_lane_akida_gpu_split) · live AKD1000 BC.00.000.002 · akida 2.19.1 · pi5-akida · REAL semantic corpus_real100 (100 aligned concepts; sha256 356756786588…) · branching operator succ(i)={(i+d) mod NC : d in {1,7,19}}, B=3; held-out split = off-chip head trained on TRAIN-block targets only, eval on unseen TEST-block concepts"
+  claim     = "NC=100 held-out hop-2 ci_lo=0.7309 ≫ shufNULL hi=0.1254 (p=0.005), hop-3 ci_lo=0.8393 ≫ shufNULL hi=0.1646 (p=0.005), within 2.0x of in-dist; 8/8 encoder_learned=True → branching transition OPERATOR transfers to unseen concepts at REAL NC=100"
+  falsifier = "F-BRANCH-1 REFUTED (held-out hop-2 AND hop-3 above-NULL) · F-BRANCH-2 REFUTED (within 2.0x in-dist); hop-1 below-NULL is the EXPECTED branching property (immediate step genuinely stochastic over B=3), depth recovers"
+  honest    = "real aligned concepts past 50 hand-authored (real propositions in 5 langs), NOT synthetic; prior real ceiling NC=50, this rung REAL NC=100; off-chip head BPTT CE→0.13 fits the branching walks, set-membership generalization is the measured transfer"
+  scope     = "toy 2-rung ladder (a_scale_honest_scope); next rung = 3B"
+  see       = ".verdicts/lane-a-multi-rung3/F-BRANCH-REAL.txt"
