@@ -24,13 +24,17 @@
 use "CORE/generator.hexa"
 
 fn main() {
-    // Default = the v0.2 re-export (TRAINED embed+GN persisted, $0-CPU host run
-    // of hexa-lang clm_reexport.hexa). Override via env CLM_CE_PROBE_CKPT (e.g.
-    // the legacy d768 conv-only artifact to reproduce the v0.1 MEASURABLE-NO-
-    // DESCENT baseline). The decode is config-agnostic (derives d/E from blocks).
+    // Default = the PRODUCTION-scale (d=768) v0.2 re-export (TRAINED embed+GN
+    // persisted, $0-CPU host run of hexa-lang clm_reexport.hexa CLM_PROD_D=768).
+    // This is the production-scale rung that resolves a_toy_scale_recheck — the
+    // SAME config-agnostic decode reads d=768 and the descent HOLDS (CE 3.25405
+    // < uniform 5.54518 AND < shuffle 5.30381). Override via env CLM_CE_PROBE_CKPT
+    // (e.g. reexport_d8_v2.clm for the toy d=8 rung, or the legacy conv-only
+    // d768_5lang_c4.clm for the v0.1 MEASURABLE-NO-DESCENT baseline). The decode
+    // is config-agnostic (derives d/E from block dims — serves d=8 and d=768).
     let envck = env("CLM_CE_PROBE_CKPT")
     let ckpt = if envck == "" {
-        "/Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d8_v2.clm"
+        "/Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d768_v2_fast.clm"
     } else { envck }
 
     // IN-DISTRIBUTION real-text window from the training corpus head

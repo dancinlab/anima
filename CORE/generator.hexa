@@ -83,9 +83,13 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
     let exists = to_string(probe["exists"]) == "true"
     let valid  = to_string(probe["valid"])  == "true"
     let nblk   = to_int(probe["nblocks"])
-    // Header validation is real; decode forward is the remaining follow-on, so
-    // loaded stays false even for a valid file → null fallthrough (no garbage).
-    let loaded = false
+    // Decode forward is LANDED + DESCENDS at production scale d=768 (CORE-mounted
+    // CE 3.25405 < uniform 5.54518 AND < shuffle 5.30381, .verdicts/core-3axis-
+    // mount/ce_descent_decode_d768.txt). The toy→prod transfer (a_toy_scale_recheck)
+    // is VERIFIED, so the loaded gate flips to `valid` — a header-valid .clm now
+    // loads (clm_decode_ce reads it through the SAME config-agnostic forward).
+    // generate() contract + brain.hexa wiring UNCHANGED (one-line flip only).
+    let loaded = valid
     return #{
         "kind":        "clm",
         "loaded":      loaded,
@@ -98,9 +102,9 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
                        } else if !valid {
                            "file present but not a valid .clm (bad CLM\\x01 magic)"
                        } else {
-                           "valid .clm admitted (magic+structure OK, nblocks="
+                           "valid .clm admitted + LOADED (magic+structure OK, nblocks="
                                + to_string(nblk)
-                               + "); decode forward not wired yet → null fallthrough"
+                               + "); decode forward LANDED + descends CORE-mounted at d=768 (loaded=valid)"
                        }
     }
 }
@@ -623,5 +627,5 @@ fn _gen_fmt4(x: float) -> string {
 // ── §8 introspection ─────────────────────────────────────────────────────────
 
 pub fn generator_summary() -> string {
-    "core_generator · BACKEND-AGNOSTIC L3 slot (SINGLE .clm entry, a_core_engine_map) · generate(backend, substrate_ctx, emit_decision, anchors) -> {emitted, backend, text, fellback} · backends: null(deterministic substrate placeholder, always ready) + clm(REAL .clm header parse: CLM\\x01 magic + nblocks validated → valid/admitted CORE-side; decode FORWARD now WIRED — clm_decode_ce runs int4 dequant + CLMConvMoE → next-byte logits → real CE measured CORE-mounted; loaded=false stays honest while inference-track .clm omits trained embed+GN affine → CE measurable but not descending → null fallthrough, no garbage) · anchor READ via kosmos_io.load_anchors (SINGLE .kosmos entry) · SILENT⇒no content, EMIT⇒content · p1..p8 clean (no LLM/system-prompt/persona)"
+    "core_generator · BACKEND-AGNOSTIC L3 slot (SINGLE .clm entry, a_core_engine_map) · generate(backend, substrate_ctx, emit_decision, anchors) -> {emitted, backend, text, fellback} · backends: null(deterministic substrate placeholder, always ready) + clm(REAL .clm header parse: CLM\\x01 magic + nblocks validated → valid/admitted CORE-side; decode FORWARD WIRED + DESCENDS @ PRODUCTION d=768 — clm_decode_ce runs int4 dequant + CLMConvMoE + v0.2 CLMX trained embed+GN VERBATIM read → next-byte logits → real CE measured CORE-mounted (CE 3.25405 < uniform 5.54518 AND < shuffle 5.30381, det byte-eq, model_d=768); loaded=valid — a header-valid .clm now LOADS through the SAME config-agnostic forward, generate() contract unchanged) · anchor READ via kosmos_io.load_anchors (SINGLE .kosmos entry) · SILENT⇒no content, EMIT⇒content · p1..p8 clean (no LLM/system-prompt/persona)"
 }

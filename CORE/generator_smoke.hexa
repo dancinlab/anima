@@ -68,12 +68,12 @@ fn main() {
         clm, anchors)
     show("[clm   high]", clm_high)
 
-    // ── (3b) clm backend, REAL .clm → header VALIDATED at the single entry ──
-    // The canonical d768 ckpt on disk (CLM\x01 magic + 6 int4 blocks). Proves
-    // gen_clm_backend genuinely PARSES the header (not a test-f stub). Decode
-    // forward is not wired, so it still falls through to null — but the file is
-    // ADMITTED CORE-side (valid=true, nblocks>0) through the SINGLE .clm entry.
-    let real_clm_path = "state/laneg_d768_recover/d768_5lang_c4.clm"
+    // ── (3b) clm backend, REAL .clm → header VALIDATED + LOADED at the entry ──
+    // The PRODUCTION-scale d=768 v0.2 re-export on disk (CLM\x01 magic + 6 int4
+    // blocks + CLMX ext). Proves gen_clm_backend genuinely PARSES the header AND
+    // — now that the decode forward LANDED + DESCENDS at d=768 (a_toy_scale_recheck
+    // VERIFIED) — reports loaded=valid=true through the SINGLE .clm entry.
+    let real_clm_path = "/Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d768_v2_fast.clm"
     let real_clm = gen_clm_backend(real_clm_path)
     println("[clm valid] valid=" + to_string(real_clm["valid"])
         + " loaded=" + to_string(real_clm["loaded"])
@@ -121,9 +121,10 @@ fn main() {
     else { fail = fail + 1   println("  FAIL clm real: valid != true (header not parsed)") }
     if to_int(real_clm["nblocks"]) > 0 { pass = pass + 1 }
     else { fail = fail + 1   println("  FAIL clm real: nblocks not extracted") }
-    // loaded still false (decode forward not wired) — HONEST partial.
-    if to_string(real_clm["loaded"]) == "false" { pass = pass + 1 }
-    else { fail = fail + 1   println("  FAIL clm real: loaded claimed without decoder") }
+    // loaded NOW true for a valid .clm — decode forward landed + descends at
+    // production scale d=768 (CE 3.25405 < uniform AND < shuffle, byte-eq re-run).
+    if to_string(real_clm["loaded"]) == "true" { pass = pass + 1 }
+    else { fail = fail + 1   println("  FAIL clm real: loaded != true after decode-forward landed") }
     // NON-clm file ⇒ rejected by magic check (valid=false).
     if to_string(bad_clm["valid"]) == "false" { pass = pass + 1 }
     else { fail = fail + 1   println("  FAIL clm bad: bad-magic file passed validation") }
