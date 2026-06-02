@@ -5,18 +5,26 @@
   "shared": false,
   "hardware": "Raspberry Pi 5 + BrainChip AKD1000 (Akida neuromorphic accelerator)",
   "schema_purpose": "provenance ledger — every component tagged user_authored vs os_default, each with remove/restore commands so it can be swapped / upgraded / removed cleanly later",
-  "last_checked_utc": "2026-05-29",
+  "last_checked_utc": "2026-06-02",
   "pool_roster": {
     "shared": false,
     "note": "registered in ~/.pool/pool.json but shared:false; pool load-balancer never routes generic compute here"
   },
   "health_snapshot": {
-    "checked_utc": "2026-05-29",
-    "uptime_days": 7,
-    "temp_c": 65.9,
-    "load_1m": 0.37,
+    "checked_utc": "2026-06-02",
+    "temp_c": 64.8,
+    "throttled": "0x0 (clean; was 0x50000 = under-voltage+throttling occurred, pre-PSU-swap)",
+    "ext5v_v": "5.033 (post-swap; was 4.87 sagging)",
+    "arm_clock": "2.40GHz full (not throttled)",
     "thermal_verdict": "normal (throttle threshold ~80C, well below)",
     "fan_cause": "spike-streamer.service (the only continuous-CPU user daemon)"
+  },
+  "power_root_cause_2026_06_02": {
+    "symptom": "host repeatedly went DARK / flapping (briefly ALIVE then 'No route to host'), needed MANUAL revival; killed a ~30min Lane-A abs_margin on-chip run mid-fire",
+    "false_lead": "unattended-upgrades auto-reboot — user disabled it (52anima-no-autoreboot drop-in) but deaths CONTINUED, because auto-reboot was never the cause (Automatic-Reboot already false).",
+    "actual_cause": "UNDER-VOLTAGE BROWNOUT. vcgencmd get_throttled=0x50000 (bit16 under-voltage occurred + bit18 throttling occurred); EXT5V rail sagging to 4.87V under AKD1000 (PCIe 0000:01:00.0) + spike-streamer load; abrupt power loss left no journal flush (=no clean-shutdown/panic log = power-cut signature).",
+    "fix": "PHYSICAL PSU SWAP (user, 2026-06-02). Post-swap reboot 07:54Z: throttled=0x0, EXT5V=5.033V even at higher core draw (1.88A vs prior 1.63A) = headroom. Root cause PROVEN.",
+    "instrumentation_added": "anima-pwr-log user timer (60s) logs throttled+EXT5V+temp to ~/anima_metrology/pwr.log so any recurrence is timestamped; persistent journal dir /var/log/journal present (Storage=auto) for next-death post-mortem."
   },
   "components": [
     {
@@ -107,6 +115,28 @@
       }
     },
     {
+      "id": "anima-pwr-log",
+      "owner": "user_authored",
+      "kind": "systemd --user timer + oneshot service + script",
+      "created_utc": "2026-06-02",
+      "files": [
+        "/home/ubuntu/anima_pwr_log.sh",
+        "/home/ubuntu/.config/systemd/user/anima-pwr-log.service",
+        "/home/ubuntu/.config/systemd/user/anima-pwr-log.timer"
+      ],
+      "log": "/home/ubuntu/anima_metrology/pwr.log",
+      "cadence": "every 60s (OnUnitActiveSec=60, OnBootSec=30, Persistent=true, linger=yes → runs at boot)",
+      "purpose": "power watchdog — logs vcgencmd get_throttled + EXT5V_V + temp so a future under-voltage/brownout (the 2026-06-02 death cause) is timestamped and provable. Read-only, vcgencmd needs no sudo.",
+      "sample": "2026-06-02T08:01:11Z throttled=0x0 EXT5V=5.03304000V 63.1'C",
+      "ops": {
+        "status": "systemctl --user status anima-pwr-log.timer",
+        "tail": "tail -f ~/anima_metrology/pwr.log",
+        "stop_now": "systemctl --user stop anima-pwr-log.timer",
+        "remove": "systemctl --user disable --now anima-pwr-log.timer && rm ~/.config/systemd/user/anima-pwr-log.{timer,service} ~/anima_pwr_log.sh && systemctl --user daemon-reload",
+        "restore": "re-deploy the 3 files then: systemctl --user daemon-reload && systemctl --user enable --now anima-pwr-log.timer"
+      }
+    },
+    {
       "id": "os-base-daemons",
       "owner": "os_default",
       "kind": "system daemons",
@@ -138,7 +168,7 @@
     "akida_ingest_endpoint": "/ws/akida_ingest",
     "project_tape_directive": "a_pi5_akida_registry (project.tape governance — this JSON is its SSOT)"
   },
-  "status": "ACTIVE 2026-06-02 — host back in service for Lane-A on-chip work: spike-streamer running + unattended-upgrades-no-autoreboot drop-in added (os_default daemons untouched). (Prior 2026-05-29 clean-Ubuntu reset preserved in removal_log below.)",
+  "status": "ACTIVE 2026-06-02 — host STABILIZED after PSU swap. Root cause of repeated DARK/flapping deaths = UNDER-VOLTAGE BROWNOUT (throttled 0x50000, EXT5V 4.87V), NOT unattended-upgrades auto-reboot (which was already disabled). New PSU → throttled=0x0, EXT5V=5.033V. anima-pwr-log watchdog armed. spike-streamer (PID 1093) running; Lane-A abs_margin decider can now run on stable power. (Prior 2026-05-29 clean-Ubuntu reset in removal_log.)",
   "removal_log": [
     {
       "date_utc": "2026-05-29",
