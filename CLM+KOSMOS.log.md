@@ -2,6 +2,24 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02 — Lane-G (substrate=GPU) DECISIVE devfeed+batched util fire — pod FAILED to provision (no measurement; gate UNCHANGED)
+
+**a_lane_akida_gpu_split — this entry is GPU / Lane-G ONLY, NEVER merged with the AKIDA / Lane-A on-chip track.**
+
+The decisive util-GREEN fire (BOTH levers active: `CLM_PROD_DEVFEED=1` lever-a + `CLM_PROD_BATCHED=1` lever-b, mid d1536/T512, c4 5-lang backbone) was dispatched to **vast pod 39038752** (`laneg-devfeed-fire`, @anima). **The pod FAILED to provision** — stuck in `RENTING` for ~40 min (11:18→11:58) with SSH transport unreachable (`transport 255` / `connect … Operation timed out`), and a `hexa cloud reboot` did NOT recover it. This is a dead vast host (container never came up / image-pull stall), NOT a hexa or trainer fault.
+
+**Actions taken (honest, no fabrication):**
+- Confirmed both levers ARE byte-eq CPU-local (re-verified from the prior pass): `F-CLM-CONV-BWD-FORGE-EQ=1`, `F-CLM-DEVFEED-{IM2COL,FWD,BWD,ADAM}-EQ=1`, all `max|Δ|=0.0` (dX FP64 ULP). The 23-seed `.c` tarball (runtime.c with all 5 `forge_dispatch_*` lever bodies + runtime_cuda.c with all 5 GPU kernels) was BUILT locally and staged ready to ship.
+- Pod never became SSH-able → **no build ran, no fire ran, no `.clm` written, no util sampled.** There is NO artifact to recover (the `a_fire_recover_complete` ckpt-loss scenario does not apply — nothing was ever trained on this pod).
+- Pod **torn down** (`hexa cloud rm 39038752` → "destroyed (confirmed)") to stop billing. Protected pods 38996679 (@anima-cudafix) + 38704336 (@demiurge) **untouched + intact**.
+- Did NOT silently re-rent a replacement (per the no-double-spend instruction).
+
+**util BEFORE/AFTER:** BEFORE = MEAN 0.240% (prior mid-d1536 fire, F-RFC046 RED). **AFTER = NOT MEASURED** — the devfeed+batched decisive measurement remains OPEN. No util number was produced; reporting GREEN or a new RED here would be fabrication.
+
+**CLOSURE = INCOMPLETE (provision failure, not a science result).** util-GREEN gate NEITHER passed nor failed this pass. PUBLIC-grade Lane-G NOT reached. The unblock levers remain landed + byte-eq; what's missing is a single successful pod self-host rebuild + util sample on a GPU that actually boots.
+
+**3B GATE:** UNCHANGED — still NOT throughput-justified. The post-(a)+(b) util measurement that would justify 3B was not obtained. Next Lane-G rung = re-dispatch the SAME `tool/laneg_devfeed_fire.sh` recipe to a fresh CUDA-DEVEL pod that provisions (the seed tarball + driver are already prepared); on util≥20%+descent-GREEN → util-GREEN → PUBLIC → 3B throughput-justified.
+
 ## 2026-06-02 — Lane-G (substrate=GPU) LEVER (b) LANDED — fused per-step conv GEMMs (strided-batched), byte-eq CPU-local · NO GPU fire (lever-a still needed)
 
 **a_lane_akida_gpu_split — this entry is GPU / Lane-G ONLY, NEVER merged with the AKIDA / Lane-A on-chip track.**
