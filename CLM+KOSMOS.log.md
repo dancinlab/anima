@@ -2,7 +2,61 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
-## 2026-06-02 — Lane-G (substrate=GPU) devfeed+batched util RE-FIRE — INFRA BLOCKER (3 dead provisions) + BUILD-RECIPE GAP FIXED (no util measurement; gate UNCHANGED)
+## 2026-06-02 — Lane-G (substrate=GPU · pod 39052854 vast H100 NVL · a_lane_akida_gpu_split — NEVER merged with AKIDA) — devfeed+batched util fire HARVESTED: CUDA LINK FIXED (ENGAGED=1) but GPU 0 MiB → ROOT CAUSE #2 = nvcc compile of runtime_cuda.c FAILS (missing fwd-decls) → CPU-only fallback. util-RED, link-fixed-but-not-on-GPU. NOT throughput-justified.
+
+**Pod / process:** vast H100 NVL pod `39052854` (@anima "laneg-devfeed-fire3"); detached fire `clm_prod_devfeed` PID 2248, R-state, **99.9% of ONE CPU core**, RSS ~48 GiB.
+
+**GPU util AFTER — 6 samples over ~2 min (verbatim, `nvidia-smi --query-gpu=utilization.gpu,memory.used --format=csv,noheader`):**
+```
+0 %, 0 MiB
+0 %, 0 MiB
+0 %, 0 MiB
+0 %, 0 MiB
+0 %, 0 MiB
+0 %, 0 MiB
+```
+Confirmed NOT a late-engaging setup phase — `util.csv` on the pod shows every in-run sample is `0, 0, <power>, <mem>` (util=0, gpu-mem-used=0) for the entire fire. **util AFTER ≈ 0% (GPU 0 MiB)**, vs **util BEFORE = 0.240% MEAN** (prior host-feed CPU peg). The recipe/link fix did NOT lift util — a second defect blocks it.
+
+**Build log (verbatim, `/workspace/laneg_fire.log`):**
+```
+  fresh hexa built; 'CUDA link ENGAGED' count = 1          ← LINK FIX LANDED (recipe success)
+=== [4b/7] BUILD clm_prod with HEXA_CUDA_LINK=1 -> forge GPU binary ===
+  build rc=0
+  [cuda] nvcc compiling runtime_cuda.c for sm_90 ...
+  [cuda] nvcc compile FAILED — building CPU-only:           ← ROOT CAUSE #2
+/root/.hx/src/self/cuda/runtime_cuda.c(903): error: identifier "_d2h_out" is undefined
+6 errors detected in the compilation of "/root/.hx/src/self/cuda/runtime_cuda.c".
+--- binary cuda libs ---
+(no binary / static)                                        ← clm_prod is CPU-ONLY
+```
+No `mean CE` / epoch / terminal `RUN_RC`/`DONE` emitted — the CPU fallback binary is still grinding (window 1/16 at d=1536, T=512); `train.log` stops at the corpus/window banner. Per the contract, with GPU confirmed 0 we do NOT wait for the slow CPU run.
+
+**ROOT CAUSE #2 — CONFIRMED against the pod source (corrects the prior "kernels not `__global__`" hypothesis):**
+- The 5 lever-(a) wrappers ARE correctly structured: `_hx_cuda_farr_{im2col,im2col_t,col2im,matmul_batched,adamw_step_inplace}_gpu` are HOST entry functions (`int … (…)`, `#ifdef __CUDACC__`) that LAUNCH real `__global__` kernels via `<<<grid,block>>>` (e.g. `_hx_k_col2im<<<…>>>`). The file has 37 `__global__` defs. **The `__global__` qualifier is NOT missing.**
+- The compile MODE is correct too: hexa builds this TU with **`nvcc -x cu`** (confirmed: build log `[cuda] nvcc compiling runtime_cuda.c for sm_90`; `self/cuda/PHASE_D_H100_EVIDENCE.md:38` = `nvcc -x cu -c runtime_cuda.c`). **NOT a `-x c` host-compile.**
+- The REAL defect is a **missing forward declaration / definition-ordering bug**. The im2col trio (`_hx_cuda_farr_im2col_gpu` @833, `_im2col_t_gpu` @862, `_col2im_gpu` @887) CALL two `static` helpers — `_ensure_dev_alloc_out` (defined @975) and `_d2h_out` (defined @1027) — that are defined LATER in the TU with NO prior prototype. In `-x cu` (C++/CUDA) mode an undeclared-before-use identifier is a hard error, so nvcc errors out:
+```
+runtime_cuda.c(844): error: identifier "_ensure_dev_alloc_out" is undefined   (im2col)
+runtime_cuda.c(854): error: identifier "_d2h_out" is undefined                (im2col)
+runtime_cuda.c(869): error: identifier "_ensure_dev_alloc_out" is undefined   (im2col_t)
+runtime_cuda.c(879): error: identifier "_d2h_out" is undefined                (im2col_t)
+runtime_cuda.c(893): error: identifier "_ensure_dev_alloc_out" is undefined   (col2im)
+runtime_cuda.c(903): error: identifier "_d2h_out" is undefined                (col2im)
+6 errors detected
+```
+→ whole TU fails → `clm_prod` silently rebuilds CPU-only → no GPU kernel ever launches → GPU 0 MiB. Other call sites of the same helpers (line 1631/1687/1738…) are AFTER the definitions, so only the spliced im2col trio is upstream of the defs.
+
+**VERDICT (honest, g5):** **util-RED on this run — GPU 0% / 0 MiB — DESPITE a correct CUDA link.** The recipe/link fix WORKED (CUDA link ENGAGED=1; no longer a CPU-only build like origin/main). But a SECOND, distinct defect remains: the lever-(a) device path does not compile (`nvcc -x cu` fails on the im2col trio's forward-undeclared static helpers `_ensure_dev_alloc_out`/`_d2h_out`), so the trainer falls back to a CPU-only binary and no GPU kernel launches. **NOT a `__global__`/compile-mode defect** (the prior hypothesis is RULED OUT — both are correct). before(0.240% mean) / after(~0%, GPU 0 MiB).
+
+**Recovery:** NONE — `find /workspace /root -name '*.clm'` = empty; the run wrote no checkpoint (nvcc fail → CPU fallback → still in window 1/16). No HF upload (nothing to upload, RED).
+
+**Gate status:** PUBLIC/3B gate **UNCHANGED** — NOT throughput-justified. Still requires a post-fix util fire to clear ≥20% AND descent GREEN. The remaining gap to util-GREEN is now ONE source fix (forward-declare the two static helpers before the im2col trio, re-confirm `nvcc -x cu` passes, keep byte-eq to the CPU oracle) + a re-fire. Inbox spec: `hexa-lang/inbox/patches/forge-devfeed-kernels-not-global-qualifier.md`.
+
+**Teardown:** pod 39052854 torn down after harvest (no artifact to keep). a_lane_akida_gpu_split: substrate=GPU, NEVER merged with any AKIDA/Lane-A number.
+
+---
+
+
 
 **a_lane_akida_gpu_split — this entry is GPU / Lane-G ONLY, NEVER merged with the AKIDA / Lane-A on-chip track.**
 
