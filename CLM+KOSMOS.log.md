@@ -2,6 +2,29 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02 — Lane-G (substrate=GPU) devfeed+batched util RE-FIRE — INFRA BLOCKER (3 dead provisions) + BUILD-RECIPE GAP FIXED (no util measurement; gate UNCHANGED)
+
+**a_lane_akida_gpu_split — this entry is GPU / Lane-G ONLY, NEVER merged with the AKIDA / Lane-A on-chip track.**
+
+Provision-failure RETRY of the decisive util-GREEN fire (BOTH levers: `CLM_PROD_DEVFEED=1` lever-a + `CLM_PROD_BATCHED=1` lever-b, mid d1536/T512, c4 5-lang backbone). The prepped 23-seed tarball (`/tmp/hexa_seed_c.tgz`, sha `f0c9a944…`, all 5 `forge_dispatch_*` lever bodies + 5 GPU kernels) + driver `tool/laneg_devfeed_fire.sh` were intact locally. **Outcome: NO util measurement — the run was blocked first by a build-recipe gap (caught + fixed) and then by a provider-wide provisioning outage (3 dead hosts, rotation budget exhausted).** util-GREEN gate NEITHER passed nor failed; reporting GREEN or a new RED would be fabrication.
+
+**BUILD-RECIPE GAP FOUND + FIXED (the real technical finding this pass):**
+- The driver's premise — "self-host rebuild of `origin/main` bakes in `cuda_link_decision`" — is FALSE. `origin/main` carries the two levers (#2504 lever-b + #2505 lever-a) but **NOT** the forge GPU-link path. `cuda_link_decision` / `CUDA link ENGAGED` is **0 occurrences** in `origin/main:self/main.hexa`; it lives only on `fix/hexa-run-cuda-link` (commit 346d68e8a), never merged to main.
+- CONSEQUENCE observed on the first live pod (vast 39046120, H200/sm_90, CUDA-devel): the self-host rebuild produced `hexa_fresh` with `'CUDA link ENGAGED' count = 0`, the clm_prod build linked `-lm -lpthread` only (`ldd` cuda libs = none), and the fire started **CPU-only** (GPU idle 76 W, 0 % util) — a FALSE util-RED. Aborted the CPU run before any `.clm` was written (verified `NO_CLM`).
+- FIX (durable, pushed): merged `origin/main` (levers + 23 seeds) with `origin/fix/hexa-run-cuda-link` (cuda link) → branch **`hexa-lang laneg/devfeed-cuda-link-merge`** (commit 8312a8cae). `self/main.hexa` conflict resolved so the runtime.o cache compile keeps main's `_hexa_clang_capped` hardening AND injects `_cuda_cflags` (the `-DHEXA_CUDA` that the prior build silently dropped). ALSO fixed Gap 2 at the source: `_cuda_ldflags` now adds `-lcuda` + `/usr/lib/x86_64-linux-gnu` (driver API was undefined-reference without it). Merge **transpiles + builds clean locally** (`TRANSPILE+BUILD OK`, CPU-only mac, 2.2 MB, benign warnings only — proves the merge is syntactically valid). NB: a pre-existing `laneg/devfeed-cudalink-integrated` (f8d6232f2) does the same integration minus the `-lcuda` Gap-2 fix; the merge branch is a superset. The fire driver was re-pointed at the merge branch (mawk-safe util awk retained for the pod's mawk).
+
+**INFRA BLOCKER — 3 dead provisions, rotation budget exhausted (NOT a science result):**
+- Provision #1: **runpod** `--gpu H100` → "no id in response (no capacity)" — clean no-op, no pod. Fell back to a pre-existing READY vast pod **39046120** (project=anima/laneg-devfeed-fire2) which DID pass the health gate initially (SSH + nvidia-smi live, H200/sm_90, nvcc 12.4 + cuBLAS + libcuda). Shipped seeds + driver, fired — but the CPU-only build (above) pegged 1 core and **starved sshd → SSH went persistently dark** (20 consecutive `transport 255`, trainer unkillable). Torn down (`rm --force` after `NO_CLM` verified + honest re-attribution; no ckpt at risk).
+- Rotation #2: **vast** 39050718 (H100_SXM, reliability>0.95 filter) → stuck **RENTING ~5 min, never exposed SSH** (health gate HEALTHY=0). Torn down.
+- Rotation #3: **runpod** 85mlcuh8se3mju (explicit "NVIDIA H100 80GB HBM3") → capacity available this time, but stuck **RENTING ~7 min, no SSH endpoint**. Torn down. (An earlier 20s-wait runpod rent self-destroyed before SSH; ghost row cleaned.)
+- Provider-wide slow/dark provisioning today on BOTH vast and runpod. This mirrors the predecessor entry's dead host 39038752. **All teardowns verified no-ckpt; protected pods 38996679 (@anima-cudafix) + 38704336 (@demiurge) untouched + intact; no orphan billing pod of mine remains** (16 vast instances flagged by reap are pre-existing other-session pods, NOT touched per a_dont_kill_live_compute).
+
+**util BEFORE/AFTER:** BEFORE = MEAN 0.240 % (prior mid-d1536 fire, F-RFC046 RED). **AFTER = NOT MEASURED** — the devfeed+batched decisive measurement remains OPEN. No HF upload (no ckpt). No HF.jsonl row added.
+
+**CLOSURE = INCOMPLETE (infra blocker + recipe-gap fixed, not a science verdict).** PUBLIC-grade Lane-G NOT reached. NET PROGRESS this pass: the build recipe is now CORRECT (merge branch `laneg/devfeed-cuda-link-merge` carries levers + cuda_link_decision + `-lcuda`, locally build-validated) so the next attempt no longer silently CPU-falls-back. What remains missing is purely a GPU host that boots SSH-able. Next Lane-G rung = re-dispatch `tool/laneg_devfeed_fire.sh` (BRANCH already updatable to the merge branch) to a CUDA-DEVEL pod that provisions; on util≥20 %+descent-GREEN → util-GREEN → PUBLIC → 3B throughput-justified.
+
+**3B GATE:** UNCHANGED — still NOT throughput-justified (no post-(a)+(b) util obtained).
+
 ## 2026-06-02 — Lane-G (substrate=GPU) DECISIVE devfeed+batched util fire — pod FAILED to provision (no measurement; gate UNCHANGED)
 
 **a_lane_akida_gpu_split — this entry is GPU / Lane-G ONLY, NEVER merged with the AKIDA / Lane-A on-chip track.**
