@@ -2,6 +2,16 @@
 
 Append-only history sister of `ENGINE+CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T22:30Z — Lane-G (substrate=GPU · H100 sm_90 vast 39126604 · a_lane_akida_gpu_split — NEVER merged with AKIDA) — FORGE-UTILGREEN lever-3 util-verify fire CLOSED: DESCENT 🟢 / util 🔴 RED
+
+- [x] **lever-3 batched GEMM-feed util fire landed** (forge GPU, NOT torch — `stdlib/flame/clm_prod.hexa` on flame+forge per a_train_flame_forge). branch `lane-g/rfc046-lever3-batched-gemmfeed` `a5d01f37f`, spliced `self/runtime.c` (levers a+b+2+3, byte-eq DELEGATE fix), self-host rebuild + `-lcuda` relink, `HEXA_CUDA_ARCH=90`, single-driver `CUDA_VISIBLE_DEVICES=0`.
+- [x] **3-GATE PASS** (g5 verbatim): CUDA link ENGAGED=1 · `nvcc -x cu` EXIT 0 (660952B `.90.o`, 0 err) · `clm_prod` ldd = 4 cuda libs (cublas+cudart+**libcuda.so.1**+cublasLt) + 10 lever symbols.
+- [x] **byte-eq ALL PASS** (g5 verbatim, hard gate max|Δ|=0.0): `F-RFC046-GEMMFEED-EQ`=1 · `F-RFC046-BATCHED-GEMMFEED-EQ`=1 · `F-CLM-DEVFEED-*` ALL-PASS (dX 5.55e-17 ULP) · `F-CLM-CONV2-BATCHED-*` ALL-PASS. drift→STOP 미발생.
+- [x] **util fire** (`CLM_PROD_DEVFEED=1 CLM_PROD_BATCHED=1` d1536/T512, c4 5-lang 402270B, E=2 ep=2 nwin=32): **DESCENT 🟢 GREEN** `F-CLM-PROD-DESCENT=1` CE 4.05535→3.45564. **util 🔴 RED** `PEAK=35% MEAN=0.4879% n=6868 busy_mean=5.3445% pct≥20%=0.1019%`. forge live on GPU (115W vs 70W idle). before(lever-2)=MEAN 0.4999%.
+- [x] **CLOSURE = FAIL on util → PUBLIC-grade Lane-G NOT reached.** lever-1 0.811%→lever-2 0.4999%(PEAK19%)→lever-3 0.4879%(**PEAK35%**): PEAK↑ MEAN flat ⇒ device-feed 체인(a+b+2+3) 필요·불충분. CLOSED-NEGATIVE: link/kernel/emit/scale/GEMM-feed 전부 ruled-out. 잔여 = 인터프리트 **per-step DRIVER LOOP** (`clm_prod.main` while-step + 20× 분리 AdamW ≈ 30 host↔dev crossings/step) → lever-4 (fused on-device per-step driver). inbox: `hexa-lang/inbox/patches/forge-rfc046-lever3-util-residual-lever4-driver-loop.md`.
+- [x] **recover-before-teardown** (a_fire_recover_complete): `.clm` (14379581B sha256 `06e2dcf4…`) pull+sha-verify → HF **PRIVATE** `dancinlab/clm-v1-dev-d1536-lever3-util-probe` (a_hf_autonomous: closure-FAIL→PRIVATE) → HF.jsonl row (substrate=GPU, Lane-G) → CLM collection → recovery marker verified → pod 39126604 destroyed (confirmed). g5 verbatim · 날조 0.
+- [ ] **lever-4 → util-GREEN → PUBLIC → 3B** (HELD): fused per-step driver, oracle `F-RFC046-FUSED-STEP-EQ` max|Δ|=0.0.
+
 ## 2026-06-02T11:54Z — Lane-A (substrate=**HYBRID(on-chip AKD1000 인코더 ⊕ off-chip host-CPU decode head)** · live AKD1000 pi5-akida · a_lane_akida_gpu_split — 순수 AKIDA 아님, NEVER merged with Lane G/GPU) — HYBRID DECODE HEAD ✅ **1-HOP WALL BROKEN** · 🌱 EMERGENCE axis LIFTS NULL→~0.32
 
 세 연속 순수-on-chip closed-negative(#1686 stateless / #1689 state-carry / #1690 multi-FC depth)가 명명한 마지막 가교 = **OFF-CHIP DECODE HEAD** 를 구현·검증. completeness-bar root-cause 재설계(a_completeness_over_cheap): "single-step 수용"(cheap give-up)이 아닌, recurrence 를 1-bit Hebbian surface 밖으로 옮기는 정공법.
