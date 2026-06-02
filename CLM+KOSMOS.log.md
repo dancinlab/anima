@@ -2,6 +2,20 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T09:13Z — Lane-A (substrate=AKIDA · live AKD1000 BC.00.000.002 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — P3' ENCODER-LADDER forward 🟢 인코더 축 = real PUBLIC-grade path (throttled=0x0 완주)
+
+P3' ENCODER 축을 forward LADDER 로 전진(`encoder_ladder_chip.py`, akida 2.19.1, N=8 paired × 32 units). encoder richness(random→pca_k32→svd→whitened→lda) × scale(25/125/250, real FLORES 5-lang, a_scale_honest_scope) × {RELATIVE-lift vs random paired ci, ABSOLUTE-margin native-init ci}. single-chip 점유 wrapper(R3 streamer stop→ladder→복원 pid 6840 live).
+
+- [x] **사전등록 falsifier (g63):** F1 monotone richness · F2 scale-artifact guard · F3 supervision-required.
+- [x] **ABSOLUTE best-margin scale 곡선 (verbatim):** `best_abs_margin_curve_25_125_250 = [-0.515, +0.542, +5.053]` → scale 따라 단조 성장 (F2 `scale-survives (NOT a small-sample artifact)`). H-A1 의 25앵커 weak-positive 가 250 에서 붕괴한 것과 정반대.
+- [x] **RELATIVE-lift (REOPEN ci_lo>0):** 모든 scale 에서 견고 — c250 whitened +4.813(ci_lo +4.521) · lda +7.045(ci_lo +6.635) · pca +1.247 · svd +1.175.
+- [x] **ABSOLUTE cross-zero:** c125 = lda 만(+0.542 ci_lo +0.354) · c250 = whitened(+2.791 ci_lo +2.491) **+** lda(+5.053 ci_lo +4.728). **UNSUPERVISED whitened 가 c250 에서 cross** → F3 `unsupervised-SUFFICIENT` (supervision 필수 아님; LDA 는 작은 corpus 에서 zero-crossing 가속자).
+- [x] **F1 (정직):** richness-rho c25 +0.20(비단조, toy noise) → c125/c250 +0.90(단조). 작은 scale 미달, 큰 scale confirmed.
+- [x] **driver property:** decorrelation/whitening(2차 통계) + scale 가 구동; dimensionality(pca_k32) 단독으론 c250 도 음성(−0.831) — PUBLIC-grade on-chip 인코더 최소조건 = whitened-class unsupervised + ≥250앵커.
+- [x] **전원 proof:** wrap pre/post throttled=0x0; pwr.log 부하 중 throttled=0x0 EXT5V ~5.02V ~64°C — power-clean.
+- [x] **artifacts:** `SUB_ENGINES/AKIDA/state/encoder_ladder_2026_06_02/result_encoder_ladder.json` sha256 `209749cc02fc9bc070709aa5e5adb2656d16a9ea92bbe6218812d57405c450b4` + log + chip src.
+- [x] **disposition (@goal):** 인코더 축은 cross-lingual 개념구조 PUBLIC-grade-positive 의 real path 를 연다 (ceiling 아님). 별개 축 — H-A1~A4 downstream FIX-axes·상대-LIFT closed-negative 와 무관(P3' 인코더 cause-axis 확증). full-LM/3B transfer 미검증(별도 rung).
+
 ## 2026-06-02T08:10Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — abs-margin on-chip 결단기 🟢 PASS-PUBLIC-GRADE-POSITIVE (안정 PSU 위 완주)
 
 substrate=AKIDA · a_lane_akida_gpu_split (Lane G 와 NEVER 병합). live chip BC.00.000.002, akida 2.19.1, decider `~/clm_kosmos_akida/abs_margin_chip.py` (N=8 trials × 32 units, 4 encoder × 2 corpus). 직전 세션은 호스트 전원 brownout 으로 oracle-LDA arm 실행 전 mid-fire 사망(terminal 없음). PSU 물리 교체(2026-06-02, under-voltage 근본원인 — PI5-AKIDA.json 참조) 후 안정 전원에서 **완주**.
