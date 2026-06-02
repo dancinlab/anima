@@ -1,4 +1,4 @@
-@discovery lane-a-code := "μ2 k-WTA sparsity + temporal-T integration on the output code" :: lane-a [substrate=AKIDA mixed]
+@D lane-a-code := "μ2 k-WTA sparsity + temporal-T integration on the output code · lane-a · substrate=AKIDA mixed" :: discovery [d=2026-06-03 active]
   id              = "F-CODE"
   seed            = "does k-WTA sparsity (s∈{4,8,16,32}) and/or temporal-T integration (T∈{2,4,8}) on the 256-unit output code lift transition retrieval above baseline 0.260?"
   substrate       = "AKIDA live AKD1000 BC.00.000.002 · akida 2.19.1 · pi5-akida · N=8 chip trials · learn_all_hw=True"

@@ -1,4 +1,4 @@
-@discovery lane-a-scale := "μ3 multi-FC TILING — capacity-bound vs algorithm-bound" :: lane-a [substrate=AKIDA closed-negative]
+@D lane-a-scale := "μ3 multi-FC TILING — capacity-bound vs algorithm-bound · lane-a · substrate=AKIDA closed-negative" :: discovery [d=2026-06-03 active]
   id              = "F-SCALE-0"
   seed            = "does multi-FC tiling (N independent on-chip FCs, paged through 1 chip, routed+voted) lift the multi-hop wall as N grows?"
   substrate       = "AKIDA live AKD1000 BC.00.000.002 · akida 2.19.1 · pi5-akida · N=8 chip trials · learn_all_hw=True"

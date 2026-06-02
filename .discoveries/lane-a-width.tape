@@ -1,4 +1,4 @@
-@discovery lane-a-width := "μ1 ENSEMBLE of K independent 1-bit Hebbian FCs (width)" :: lane-a [substrate=AKIDA closed-negative]
+@D lane-a-width := "μ1 ENSEMBLE of K independent 1-bit Hebbian FCs (width) · lane-a · substrate=AKIDA closed-negative" :: discovery [d=2026-06-03 active]
   id              = "F-WIDTH"
   seed            = "does a K-ensemble of independent 1-bit Hebbian FCs (distinct random projections, voted) lift held-out generation acc above single-FC headline 0.4234?"
   substrate       = "AKIDA live AKD1000 BC.00.000.002 · akida 2.19.1 · pi5-akida · N=8 chip trials · learn_all_hw=True"
