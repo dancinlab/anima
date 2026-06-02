@@ -587,3 +587,23 @@ live AKD1000 BC.00.000.002 · akida 2.19.1 · N=8 trials × 256-unit AkidaUnsupe
 - pod vast 39102044 (H100 80GB HBM3) — recover(ckpt+log+sha verify→HF) 후 teardown 완료.
 
 **milestone delta:** `Lane G-ref 3B` ✅ flipped — 3B 러그가 genuinely 학습(descent)+포화(util)되었고 PUBLIC HF 등록 완료 (bounded·NOT converged honest scope). forge Lane-G / FORGE-UTILGREEN 미변경.
+
+---
+
+## 2026-06-02 — Lane A (substrate=AKIDA) ON-CHIP MULTI-FC DEPTH rollout 🔴 CLOSED-NEGATIVE (1-hop wall HOLDS through depth; single-step도 DEGRADE)
+
+PR #1686(stateless) / #1689(state-carry) 두 closed-negative 가 명명한 NEXT BRIDGE = **ON-CHIP MULTI-FC DEPTH** (입력공학 아닌 2번째 learned FC) 를 live AKD1000 에서 구현·검증. substrate=AKIDA, a_lane_akida_gpu_split (Lane G 와 절대 병합 금지).
+
+- **mechanism (chip-native, 1-bit, NO GPU, g63 NO sw fallback)** — PAGED 2-FC stack, onchip_layerpage_compose 의 weight-paging primitive 를 autoregressive rollout 안으로 가져옴. 단일 8MB SRAM NPU 메시에 한 번에 1 FC 만 상주: FC1(256u,8w)=transition encoder(PR#1686/#1689 단일 FC 와 byte-identical) on-chip fit → weights 호스트로 page OFF → FC2(256u,8w)=composition/recurrence surface 를 FC1 의 on-chip binarized 출력으로 같은 메시에서 fit. per hop g1=FC1.forward(x)→g1_bin→g2=FC2.forward(g1_bin)→g_bin. PR#1689 의 input-side state-carry(ctx 3-vote majority + bind) 유지(이긴 것 KEEP, depth 만 ADD). codebook 은 FC2 의 depth-2 출력공간에서 구성. enc_whitened·SHIFT=37·decode·ban·K=3·NTRIALS=8·shuffle-NULL B=200 모두 byte-eq.
+- **chip health** — pi5-akida ubuntu@192.168.50.155, AKD1000 BC.00.000.002, akida 2.19.1, throttled=0x0 전 구간, streamer R3 stop→run→restore(trap, rc=0, pid 18635 복귀). 8/8 trial l1=l2=True (두 FC 모두 칩에서 학습).
+- **decay curve (verbatim)** — DEPTH-2 [0.1612, 0.0298, 0.0149] vs in-process 1-FC base [0.0314, 0.0207, 0.0138]. chance=0.0204.
+  - hop1 depth2=0.1612 ci_lo=0.1388 | shufNULL hi=0.0416 p=0.0050 aboveShuf=True
+  - hop2 depth2=0.0298 ci_lo=0.0224 | shufNULL hi=0.0382 p=0.2040 aboveShuf=False (delta vs 1FC +0.0090)
+  - hop3 depth2=0.0149 ci_lo=0.0114 | shufNULL hi=0.0359 p=0.6816 aboveShuf=False (delta vs 1FC +0.0011)
+- **falsifier dispositions** — **F-DEPTH-1 NOT-REFUTED** (hop-2 p=0.2040 · hop-3 p=0.6816, shuffle-NULL 내부 = 1-hop wall HOLD). **F-DEPTH-2 NOT-REFUTED** (hop-2/3 gain +0.0090/+0.0011 permille, 사전등록 material threshold >1%@hop2 / >0.5%@hop3 미달).
+- **SHARPER 부정 발견** — depth 가 작동하던 single-step 까지 DEGRADE: depth-2 hop-1(0.1612) ≪ single-step headline(0.4234 PR#1689 / 0.4287 PR#1686). 작동하는 transition code 를 2번째 1-bit Hebbian FC 로 라우팅 + FC2-space codebook 재투영 시 단일-step 신호 대부분 파괴 — composition surface 가 1-bit/256-unit 에서 recurrence carrier 가 아니라 noise.
+- **결론** — 1-hop wall 은 input/state 문제(PR#1689 가 배제)도 depth 문제도 아님. **AKD1000 1-bit edge-learn 은 256-unit 에서 깊이 무관하게 SINGLE-STEP 생성에서 cap**. 🌱 EMERGENCE axis(창발=multi-step composition) NULL 유지. retrieval+single-step 러그 UNAFFECTED(자기 공간에서 ~0.42 headline 불변). NAMED next bridge = **OFF-CHIP DECODE HEAD** (recurrence 를 1-bit Hebbian surface 밖으로) OR single-step 을 Lane-A on-chip PUBLIC scope 로 수용. multi-FC paged depth 는 이 질문에 닫힌 축.
+- **scope** — a_scale_honest_scope: toy 250-anchor / 2× 256-unit FC, scale-transfer(더 큰 codebook / 더 깊은 paged ladder) UNVERIFIED. a_paper_negative_ok: 깨끗한 closed-negative.
+- **artifacts** — AKIDA/onchip_xlm_depth_rollout.py · AKIDA/run_depth_rollout_with_streamer_restore.sh · AKIDA/result_onchip_xlm_depth_rollout.json (sha256 `0acdeee58236ce28cb028d45be24cefc508da4432a8ceff146d0812e97d6e47a`) · `.verdicts/lane-a-depth/F-DEPTH.txt` (hexa verify CLI broken → live-chip stdout verbatim, established lane-a format).
+
+**milestone delta:** `Lane A PUBLIC` 미변경 (NO PUBLIC flip) — multi-step EMERGENCE 가 depth 로도 미돌파, 단일-step 만 유효. multi-FC depth 축 closed-negative 로 기록, 다음 bridge = off-chip decode head OR single-step PUBLIC scope 수용.

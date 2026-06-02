@@ -263,3 +263,11 @@ Lane-A pre-registered ABSOLUTE-margin decider (`~/clm_kosmos_akida/abs_margin_ch
 - [x] sibling 양방향 엮음 — CORE · MITOSIS · WAKE · CHANNEL · EEG · UNIVERSE
 - [ ] 다음 = D1 edge-of-chaos Φ 실리콘 검증 (파킹된 plan `drafts/akida-edge-of-chaos-phi-plan.md`) · D2 substrate-class 등록
 - [ ] 환류 — 측정 결과는 UNIVERSE/CANDIDATES.md 에 기록 (bench SSOT)
+
+---
+
+## 2026-06-02 — ON-CHIP MULTI-FC DEPTH rollout 🔴 CLOSED-NEGATIVE (substrate=AKIDA, Lane A)
+
+named bridge(PR#1686 stateless / #1689 state-carry 가 명명) = 2번째 learned FC. live AKD1000 (BC.00.000.002, akida 2.19.1, throttled=0x0, streamer R3 restore rc=0) 에서 PAGED 2-FC stack 으로 구현: layerpage primitive(단일 8MB SRAM 메시에 1 FC 만 상주), FC1=transition encoder → page OFF → FC2=FC1 on-chip 출력으로 학습한 composition surface. per hop g1=FC1(x)→g2=FC2(g1_bin)→g_bin. 8/8 trial l1=l2=True.
+
+decay DEPTH-2 [0.1612, 0.0298, 0.0149] vs 1-FC [0.0314, 0.0207, 0.0138] (chance 0.0204). **F-DEPTH-1 NOT-REFUTED** (hop2 p=0.2040 · hop3 p=0.6816 shuffle-NULL 내부 = 1-hop wall HOLD) · **F-DEPTH-2 NOT-REFUTED** (permille gain, material threshold 미달). SHARPER: depth-2 hop-1(0.1612) ≪ single-step headline(0.42) — 2번째 1-bit FC 가 작동하던 single-step 까지 파괴. 결론: AKD1000 1-bit edge-learn 은 256-unit 에서 깊이 무관 SINGLE-STEP cap. next bridge = off-chip decode head OR single-step PUBLIC scope. a_lane_akida_gpu_split · a_scale_honest_scope toy 250/2×256u · a_paper_negative_ok. sha256 `0acdeee5…` · `.verdicts/lane-a-depth/F-DEPTH.txt`.
