@@ -3,6 +3,25 @@
 @title: 🧩 CLM+KOSMOS — H_911 amodal-hub cross-domain probe
 @goal: Achieve a PUBLIC-grade CLM across BOTH lanes — Lane A (AKIDA on-chip) · Lane G (GPU flame+forge) — then scale 3B -> 7B; upload KOSMOS datasets to HF; run UNIVERSE hypotheses alongside as needed. Canonical training = hexa-native flame+forge on the forge GPU substrate (a_train_flame_forge: GPU REQUIRED, nvidia-smi busy verified, NEVER silent CPU-fallback); Lane A (AKIDA) and Lane G (GPU) recorded SEPARATELY (a_lane_akida_gpu_split); HF PUBLIC only at closure-PASS (util GREEN AND descent GREEN), else PRIVATE (a_hf_autonomous). [Prior @goal — the H_911 amodal-hub 3-axis probe — is a CLOSED-NEGATIVE (see status/log); this domain now drives production CLM/KOSMOS.]
 
+## 🎯 production 마일스톤 — 3 레인 × PUBLIC → 3B → 7B
+
+세 레인은 substrate별로 분리 추적 (a_lane_akida_gpu_split + a_train_flame_forge). Lane G(forge)가 프로덕션 primary; Lane G-ref(PyTorch)는 baseline 참조(forge PUBLIC artifact 아님).
+
+**Lane A** (substrate=AKIDA · on-chip 1-bit Hebbian):
+- [ ] Lane A PUBLIC — PUBLIC-grade on-chip cross-lingual CLM (AKD1000). 진척: 인코더 축 open 🟢 (whitened 비지도+≥250앵커 → abs-margin ci_lo>0, scale-survives) · full-LM 전환 미검증
+- [ ] Lane A 3B — AKIDA 3B (chip-fit/페이징 ladder ≥3 rung, a_scale_honest_scope)
+- [ ] Lane A 7B — AKIDA 7B (3B green 후)
+
+**Lane G** (substrate=GPU · forge flame, 프로덕션 primary · a_train_flame_forge):
+- [ ] Lane G PUBLIC — util-GREEN(MEAN≥20%) AND descent-GREEN → forge PUBLIC artifact. 진척: descent 🟢 / util 🔴 (lever-2 MEAN 0.50%) · lever-3(batched 65% repack) unblock 진행
+- [ ] Lane G 3B — util-GREEN 후 throughput-justified 3B (≥3 rung ladder)
+- [ ] Lane G 7B — 3B green 후
+
+**Lane G-ref** (substrate=PyTorch-CUDA · baseline 참조 · a_completeness_over_cheap, NOT forge production):
+- [ ] Lane G-ref PUBLIC — torch+CUDA baseline CLM (reference·즉시 util>20%) · forge PUBLIC artifact 와 별도 태깅·혼동 금지
+- [ ] Lane G-ref 3B — torch 3B reference
+- [ ] Lane G-ref 7B — torch 7B reference
+
 ## status (completed-form)
 
 H_911 cross-domain expansion is now a **CLOSED-NEGATIVE** through the multimodal
