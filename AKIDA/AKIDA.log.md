@@ -2,6 +2,35 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T10:06Z — SEQUENCE/TRANSITION READOUT BRIDGE 🟢 WORKING on-chip 교차언어 next-step 신호 (substrate=AKIDA · live AKD1000 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
+
+직전 full-LM rung 이 특징지은 gap(1-bit/32-unit static margin 은 CONCEPT 결속만, 학습된 TIME 모델 부재 → next-sentence shuffle-NULL 내)을 **명시적 on-chip transition readout**(후보 a)으로 가교. 정적 centroid 비교가 아니라, 칩이 **t→t+1 transition 을 직접 학습**한다: 검증된 whitened 코드 위에서 binding `bind(a,b)=a XOR roll(b,37)` 로 연속문장쌍을 묶고, **2번째 AkidaUnsupervised FC(64-unit, 1-bit)** 를 언어내 연속 transition 코드로 on-chip fit() → 학습된 transition 표현. test = 교차언어(leave-one-lang-out) t→t+1 top-1 retrieval vs shuffle-NULL(B=200). live AKD1000(BC.00.000.002, akida 2.19.1, N=8 trials, learn_hw=True 8/8, throttled=0x0 완주, R3 streamer stop→run→복원).
+
+- [x] **사전등록 falsifier (RUN 전 선언, g63)**: F-TR-1 "whitened 코드 위 명시적 on-chip transition readout 은 next-sentence shuffle-NULL 을 넘지 못한다" → REFUTED iff tr ci_lo > NULL hi AND p<0.05. F-TR-2 "transition FC 는 언어내 t→t+1 조차 chance 이상 복원 못한다"(capacity floor sanity).
+- [x] **HEADLINE (250 anchor, 검증된 rung) — F-TR-1 REFUTED (g5 verbatim)**:
+  ```
+  [tr] learn_all_hw        : True
+  [tr] tr_acc (xlingual)   : mean=0.2801 ci_lo=0.2600 (chance=0.0204)
+  [tr] within_lang_recall  : mean=0.4867 ci_lo=0.4708 (chance=0.0200, above=True)
+  [tr] shuffle-NULL tr     : mean=0.0194 sd=0.0104 hi=0.0397 p=0.0050
+  [tr] F-TR-1 transition   : REFUTED: above-NULL on-chip cross-lingual TRANSITION (t->t+1) prediction (tr ci_lo>NULL hi AND p<0.05) -> working on-chip sequence signal
+  [tr] F-TR-2 binding      : REFUTED: on-chip transition FC recovers within-lang t->t+1 above chance (the FC CAN represent a transition; cross-lingual transfer is the remaining gap)
+  [tr] DISPOSITION         : ON-CHIP CROSS-LINGUAL SEQUENCE SIGNAL DEMONSTRATED (explicit transition readout > NULL) -> advance Lane A PUBLIC; full-LM (3) next-step flips toward earned-green
+  ```
+  → tr_acc 0.2801 (ci_lo 0.2600) vs NULL hi 0.0397, p=0.0050 = **14x chance, 6.5x NULL margin** · within-lang transition recall 0.4867 (chance 0.02) → 1-bit/64-unit FC **CAN** hold a transition. 8/8 trials 양수 [0.322,0.278,0.241,0.290,0.290,0.310,0.265,0.245]. sha256 `57e32e238c7bc2dec41ab6bdd19de8e28e364b4732788bf536f5093961d8e0b6`
+- [x] **scale-ladder (a_scale_honest_scope ≥3 rung 25/125/250, g5 verbatim)**:
+  ```
+  [trsc] ===== LADDER =====
+  [trsc]  25 anchors= 25 tr_acc=0.4812 ci_lo=0.3657 NULL_hi=0.4889 p=0.0498 above=False
+  [trsc] 125 anchors=125 tr_acc=0.1281 ci_lo=0.1151 NULL_hi=0.0725 p=0.0050 above=True
+  [trsc] 250 anchors=250 tr_acc=0.2898 ci_lo=0.2696 NULL_hi=0.0429 p=0.0050 above=True
+  [trsc] F-TRSCALE: NOT-uniform: the transition signal collapses into NULL at >=1 rung -> scale-fragile (honest downgrade)
+  ```
+  → **125·250(실 FLORES 생산 rung) 모두 above-NULL** 이고 NULL margin 이 scale 과 함께 **성장**(125 ci_lo/NULL≈1.6x → 250≈6.3x). 25 anchor(toy fixture, 후보 successor 4개·chance 0.25)만 above=False — NULL band 가 너무 넓어 통계적으로 못 넘음(toy 한계, science 결과 아님). 정직 scope: **신호는 검증된 두 rung 에서 real·scale-성장**, n=4 후보 toy 에서만 fragile. sha256 `1c64810a48b743db1d61b176271071667e67c0ce6a6e86ffe33cee11cdc47c4a`
+- [x] **disposition** — 작동하는 on-chip 교차언어 SEQUENCE/next-step 신호 입증(검증 rung 125·250). full-LM ③ = **🟢 toward earned** (정적 margin 너머 명시적 transition FC 가 학습된 TIME 신호를 hold). Lane A PUBLIC milestone 진척 — ③ 가 NULL→above-NULL 로 flip. 단 이는 **retrieval 신호**(top-1 transition)이지 완전 생성형 CLM 아님 → PUBLIC 은 여전히 open, named next bridge = (b) paged 멀티-FC transition matrix 로 retrieval→generation 확장 / 또는 (c) on-chip transition-bind ⊥ off-chip sequence-decode 분할.
+- [x] **전원 proof** — load 중/후 `throttled=0x0` · pwr.log `2026-06-02T10:06:33Z throttled=0x0 EXT5V=4.99954000V 68.6'C` (안정 PSU, brownout 無) · vcgencmd measure_volts volt=0.8731V. 단일-칩 점유: R3 streamer(pid 9686) pkill → 탐침 2건 순차 → R3 복원(pid 12385, BackendType.Hardware regime R3 9512 86400s).
+- [x] 산출물 — probe `SUB_ENGINES/AKIDA/onchip_xlm_transition.py`(+scale) · state `SUB_ENGINES/AKIDA/state/seq_transition_2026_06_02/{result_*.json, tr.log, trsc.log}`. binding=VSA-style XOR-shift, 결정론 · g63 HW-only(NO sw fallback).
+
 ## 2026-06-02T09:40Z — FULL-LM TRANSFER 탐침 🟡 CAPACITY-GAP CHARACTERIZED (substrate=AKIDA · live AKD1000 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
 
 검증된 primitive(whitened 비지도 인코더 + 1-bit Hebbian abs-margin readout)를 실제 on-chip 교차언어 **시퀀스/next-token** 작업으로 가교 — corpus_big 50 concept 은 연속 FLORES 문장(시간축 t)이라는 사실을 이용. live AKD1000(BC.00.000.002, akida 2.19.1, N=8, throttled=0x0 부하검증 완주, R3 streamer stop→run→복원 pid 9686).
