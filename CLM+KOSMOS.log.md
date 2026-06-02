@@ -346,3 +346,24 @@ On-chip learning live (learn=True) on the real AKD1000 (BC.00.000.002, akida 2.1
 **Closure verdict:** BLOCKED — not PUBLIC-grade, not closed-negative. Honest: chip was reachable + learning live, the rung is correctly pre-registered and on-target, but the host dropped mid-fire so no terminal on-chip measurement exists. Smallest unblock step: when pi5-akida returns to the LAN, re-run `~/.venv/anima-akida/bin/python -u ~/clm_kosmos_akida/abs_margin_chip.py` (idempotent, commit-early JSON) — ~16 encoder×scale chip-map cycles; the LDA-oracle treatment arm is what decides PASS vs closed-negative.
 
 **Lane G (substrate=GPU · NEVER merged):** still held on provider-wide provisioning outage (vast+runpod dark). Recipe is FIXED on hexa-lang `laneg/devfeed-cuda-link-merge` (verified present locally + origin); waits only on a live SSH-able GPU host.
+
+---
+
+## 2026-06-02 (later) — Lane A (substrate=AKIDA · pi5-akida · a_lane_akida_gpu_split — NEVER merged with any GPU/Lane-G number) — "all go" decider re-attempt → host STILL DARK, BLOCKED reconfirmed + harvester re-armed (durable)
+
+**Trigger:** user "all go" on the pre-registered absolute-margin decider (`.verdicts/lane-a-absmargin/PREREGISTER.md`). The test is built + pre-registered; only blocker was the pi5-akida host outage. Re-checked reachability this session before any fire.
+
+**Reachability (verbatim, this session):**
+```
+sidecar pool on pi5-akida → ssh: connect to host 192.168.50.155 port 22: Operation timed out
+ping -c2 192.168.50.155     → 2 packets transmitted, 0 received, 100.0% packet loss
+```
+pi5-akida (ubuntu@192.168.50.155 per PI5-AKIDA.json) is STILL fully off-network — the same external host outage. NOT remotely remediable. No `sidecar pool` route, no ICMP. Per a_lane_akida_gpu_split + a_fire_autonomous scope: Lane A is AKIDA-only, $0 — NO GPU/cloud pod substituted (substituting Lane-G for Lane-A is forbidden). "go" cannot force an external host back online.
+
+**Decider NOT run** — STEP 2/3 cannot execute on-chip while the host is dark. No on-chip abs_margin measured this session; **no result fabricated**. The oracle-LDA treatment arm (the decider for PASS vs closed-negative) remains UN-RUN, exactly as the prior entry.
+
+**Prior harvester had given up:** the earlier `/tmp/laneA_harvest.sh` ran ~30min, logged `HOST_STAYED_DARK`, and exited (90-try cap). No artifacts harvested (`/tmp/result_abs_margin.json.harvested` absent).
+
+**Harvester RE-ARMED (durable, a_cpu_local_no_waiter):** re-armed `/tmp/laneA_harvest.sh` as a background nohup (no 30-min cap; ~10-min heartbeat). On host return it (1) harvests `abs_margin.log` + `result_abs_margin.json` if a terminal `disposition` exists, else (2) auto-re-fires `~/.venv/anima-akida/bin/python -u abs_margin_chip.py` on-chip and keeps polling. CPU-local poll, no Monitor/waiter dependency.
+
+**Closure verdict:** BLOCKED-OUTAGE (unchanged) — not PUBLIC-grade, not closed-negative. The decider is correct, pre-registered, on-target; the ONLY gap is the external pi5-akida host being off-network. PI5-AKIDA.json consulted, NOT modified; no os_default daemon touched; pi5-akida NOT converted to pool compute. Next Lane-A step: when pi5-akida rejoins the LAN the armed harvester auto-fires + harvests the decider, with the LDA-oracle arm settling PASS (PUBLIC-positive, ci_lo>0) vs CLOSED-NEGATIVE scoped to 25/250-anchor.
