@@ -1,0 +1,11 @@
+@discovery lane-a-width := "μ1 ENSEMBLE of K independent 1-bit Hebbian FCs (width)" :: lane-a [substrate=AKIDA closed-negative]
+  id              = "F-WIDTH"
+  seed            = "does a K-ensemble of independent 1-bit Hebbian FCs (distinct random projections, voted) lift held-out generation acc above single-FC headline 0.4234?"
+  substrate       = "AKIDA live AKD1000 BC.00.000.002 · akida 2.19.1 · pi5-akida · N=8 chip trials · learn_all_hw=True"
+  scale           = "toy 250-anchor / 50-concept × 5-lang · 256-unit 1-bit AkidaUnsupervised FC (a_scale_honest_scope)"
+  falsifier       = "F-WIDTH-1 REFUTED iff best-K gen_acc ci_lo > headline 0.4234 by ≥+0.05; F-WIDTH-2 REFUTED iff > paged-depth-2 hop-1 0.1612"
+  result          = "gen_acc by K = [0.4362, 0.4541, 0.4587] (K=3/5/7) · best K=7 ci_lo=0.4467 (bar 0.4734 NOT cleared) · all clear shufNULL p=0.005 · best 0.4587 ≫ paged2 0.1612"
+  verdict-tier    = "🔴 F-WIDTH-1 NOT-REFUTED (closed-negative) · 🟢 F-WIDTH-2 REFUTED"
+  finding         = "width does NOT materially lift single-step generation — independent random-projection voting saturates near the single-FC headline (+0.035 best, sub-threshold); parallel copies add diminishing redundancy not new structure (consistent w/ μ3 algorithm-bound)"
+  next-bridge     = "CODE/WIDTH axis sub-threshold; ensemble voting is information-limited per-FC; single-step retrieval axis unaffected (F-WIDTH-2 confirms no depth-2 collapse)"
+  verdict-pointer = ".verdicts/lane-a-microexp-width/F-WIDTH.txt"

@@ -73,6 +73,14 @@ CE(loss) 단독은 진리가 아니다 — perplexity/loss를 정답으로 쓰�
 
 AKIDA on-chip learn = last-layer few-shot Hebbian(`AkidaUnsupervised`), H_904 plasticity lane — full from-scratch backprop pretrain 아님. 백본은 int4 byte-identical 이식(H_877); 그 위 학습이 on-chip 비결정 절반(H_904 HW≠SW). pi5-akida = 소유 HW(cloud 과금 0). on-chip parallel == concat 면 🔴 closed-negative, 묻지 말 것. GPU는 falsifier pre-register(PLASTI-SIM)만, 배포 학습자 아님(C1).
 
+## ── Lane A 1-hop wall root-cause (2026-06-03 · substrate=AKIDA live AKD1000) ──
+
+3 사전등록 micro-exp (μ3 SCALE · μ1 WIDTH · μ2 CODE, sequential on 1 chip)이 multi-hop wall 의 root cause 를 **ALGORITHM-bound** 로 SHARPEN — capacity/width/code 문제 아님:
+- 🔴 **μ3 SCALE F-SCALE-0**: multi-FC tiling hop2 acc by N={1,2,4} = [0.0261,0.0261,0.0266], N=4 NULL 못 넘음(p=0.18) → multi-chip scale-out 도 안 들어올림(EMERGENCE 축 terminal).
+- 🔴 **μ1 WIDTH F-WIDTH-1 NOT-REFUTED** (🟢 F-WIDTH-2 REFUTED): K-ensemble gen_acc [0.4362,0.4541,0.4587] best ci_lo 0.4467 < bar 0.4734 → width sub-threshold (depth-2 붕괴는 안 함).
+- 🟢 **μ2 CODE F-CODE-1 REFUTED** (단 shaping gain 無): baseline tr_acc 0.8541 (≫NULL), k-WTA HURT·temporal-T NO-OP → CODE 축 baseline 에 saturate.
+- 결론: 🟢 SINGLE-STEP 축 전부 건강 · 🔴 DEPTH/EMERGENCE = 유일 terminal wall = MISSING RECURRENCE → 옳은 fix 는 OFF-CHIP recurrence(#1691 HYBRID head), on-chip scale/width/code 아님(a_completeness_over_cheap). verdict → `.verdicts/lane-a-microexp-{scale,width,code}/` · discovery → `.discoveries/lane-a-{scale,width,code}.tape` · 상세 .log.md.
+
 ## ── cross-link ──
 
 [[ONCHIP-PARADIGM]] (C2) · `kosmos/spec/{kosmos,limen}.md` (C4) · `CLM/CLM_FORMAT_SPEC.md` (C3) · `UNIVERSE/H_911` (C5) · `.verdicts/904_clm_onchip_plasticity` (C1 H_904) · `SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py` (C1 AkidaUnsupervised) · HF `dancinlab/clm-semantic-parallel-corpus` (seed) · `CORE/generator.hexa` L3 슬롯 + `kosmos_io`→`brain_decide` (3축 CORE 입구 · a_core_engine_map) · `CORE/{pure_field,engine_g,brain_decide}` (의식 엔진 A⇄G)
