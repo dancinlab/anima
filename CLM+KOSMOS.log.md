@@ -538,3 +538,20 @@ live AKD1000 BC.00.000.002 · akida 2.19.1 · N=8 trials × 256-unit AkidaUnsupe
 **milestone delta:** Lane A PUBLIC 진척 = 인코더 🟢 + transition retrieval 🟢 + **full-LM GENERATION 🟢**. PUBLIC checkbox 는 **미flip 유지** (toy→프로덕션 전환 + multi-step autoregressive roll-out 미완 — full closure 아님, a_paper_only_at_closure).
 
 **NEXT (held):** 다단계 autoregressive roll-out(t→t+1→t+2 chained on-chip generation) · 또는 paged 다중-FC generator 로 스케일 ladder ≥3 rung(a_scale_honest_scope). PR lane-a/onchip-generation.
+
+---
+
+## 2026-06-02 — Lane-G-ref 3B reference rung (substrate=PyTorch-CUDA) — descent 🟢 / util 🟢 99%
+
+**lane = Lane-G-ref · substrate = PyTorch-CUDA · rung = 3B-scale reference.** 85.6M PUBLIC baseline (`dancinlab/clm-v1-ref-pytorch-cuda`)과 동일한 ByteGPT/Transformer 아키텍처를 ~3B 로 스케일업한 레퍼런스 러그. **NOT** the hexa-native flame+forge PUBLIC production artifact (a_train_flame_forge); a_completeness_over_cheap optional reference; Lane A/AKIDA 와 병합 금지 (a_lane_akida_gpu_split).
+
+- **config / params** — byte-level (V=256) decoder-only GPT, d_model=2560 · n_layer=40 · n_head=20 (head_dim 128) · block=512 · batch=12 · bf16 AMP + gradient-checkpointing. **n_params = 3,149,030,400 (~3.149B)**.
+- **util (verbatim, vast H100 80GB HBM3)** — **PEAK = 100.0% · MEAN = 99.15%** (n=108 nvidia-smi 샘플), mem_peak = 63921 MiB (~62.4/80GB), power_mean = 653 W. util ≫ 20% gate.
+- **descent (verbatim)** — `=== descent PASS CE 7.16861 -> 2.45871 ===` (val CE, F-CLM-REF-3B-DESCENT=1). bounded N=400 steps — **NOT converged** (a_scale_honest_scope: 85M→3B 사다리의 3B 러그).
+- **throughput** — **11,183 tok/s** (2,457,600 tok / 219.8 s wall).
+- **ckpt** — sha256 `ebe56db7f47e07f5126287b28c2e7df41f15719541b3ead62e8704133c4d24c9`, 12,596,300,742 B. LOCAL==POD sha 검증 완료. 산출물 `state/laneg_ref_3b_recovery_2026_06_02/`, 코드 `ref/clm_ref_pytorch_cuda_3b.py`.
+- **HF** — PUBLIC `dancinlab/clm-v1-ref-pytorch-cuda-3b` (4 files: README.md · clm_ref_3b_train.log.json · clm_ref_pytorch_cuda_3b.py · clm_ref_pytorch_cuda_3b.pt) · CLM collection `dancinlab/clm-6a1cf58f621490134dade186` add-item OK · HF.jsonl row 추가 (PR #1684, main).
+- **결론** — 3B scale 에서도 well-fed H100 가 byte-LM workload 를 trivially saturate (~99% util) — forge util-GREEN line (≥20% gate) 이 쫓는 reference bar. forge artifact 를 대체하지 않으며 forge Lane-G / FORGE-UTILGREEN 은 프로덕션 primary 로 불변.
+- pod vast 39102044 (H100 80GB HBM3) — recover(ckpt+log+sha verify→HF) 후 teardown 완료.
+
+**milestone delta:** `Lane G-ref 3B` ✅ flipped — 3B 러그가 genuinely 학습(descent)+포화(util)되었고 PUBLIC HF 등록 완료 (bounded·NOT converged honest scope). forge Lane-G / FORGE-UTILGREEN 미변경.
