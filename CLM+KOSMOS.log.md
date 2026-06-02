@@ -196,3 +196,33 @@ Drove Lane G from the prior d768 descent-GREEN/util-RED toward the util-GREEN PU
 **CLOSURE = FAIL on util (descent GREEN, util RED) → PUBLIC NOT reached on Lane G.** Per a_hf_autonomous: pull .clm + sha-verify BEFORE teardown (a_fire_recover_complete) → HF `dancinlab/clm-v1-dev-mid-d1536-t512-util-probe` **PRIVATE** (.clm 14.4 MB, sha 3f62c53f3c216eca996e625aadff5c43955f7248025508a88712ffce89c96a1a, 6 int4 blocks CLM\x01) → added to dancinlab **CLM** collection → HF.jsonl row (substrate=GPU, lane=Lane-G) → recovery marker verified → pod vast 39007409 torn down (destroyed+confirmed). Artifacts: `exports/lane-g-mid-d1536/` (.clm + util_complete.csv + util_bigrun.csv + train_complete.log + build_cuda_link.log + README model card).
 
 **3B GATE:** NOT throughput-justified — a bigger model idles the GPU MORE until the host backward-feed is moved on-device. The next Lane-G rung must implement levers (a)+(b) in forge/flame BEFORE any 3B H100 fire.
+
+---
+
+## 2026-06-02 · Lane-G · substrate=GPU · LEVER (a) device-feed LANDED (hexa-lang #2505)
+
+`a_lane_akida_gpu_split` — substrate=GPU, NEVER merged with AKIDA.
+
+The mid-d1536 fire above proved the util-RED is HOST-FEED, NOT scale: cuBLAS GEMMs finish in microseconds while host im2col/col2im + adam + the interpreted per-step loop peg one CPU core (PEAK 4-6%, MEAN 0.240%, scale-invariant d768→1536, T 24→512). Lever (b) (#2504) fused the per-step conv GEMMs but did not touch that dominant peg. **Lever (a) moves the backward feed ON-DEVICE — the real unblock — now LANDED to hexa-lang main (#2505, stacked on #2504).**
+
+**What landed (hexa-lang):**
+- **Device im2col / col2im** — `stdlib/flame/clm_conv_devfeed.hexa` (CPU byte-eq oracle + selftest) + `_hx_cuda_farr_{im2col,im2col_t,col2im}_gpu` kernels (`self/cuda/runtime_cuda_emit.hexa`). One thread per output cell; col2im uses the **transpose-gather** form (each dX[p,ci] sums its K dilated taps once) → NO atomicAdd, deterministic, byte-eq to the host scatter order. The im2col kernels write via `_d2h_out`, which under the RFC-056 `FORGE_OUT_DEVICE_KEEP` disposition KEEPS x_col FARR_DEVICE — the follow-up forge GEMM's `_h2d` sees DEVICE && !dirty_host and SKIPs the copy. **This is the residency piece the spec called out: x_col never round-trips host↔device.**
+- **Device AdamW** — `forge_dispatch_adamw` (11-arg builtin) routes to the existing byte-eq `_hx_cuda_farr_adamw_step_inplace_gpu` (W/m/v device-resident, optimizer step off the host scalar loop); no-CUDA → host `adamw_step` fallback.
+- **(a)+(b) wired** — `clm_prod.hexa` conv fwd/bwd via `_clmp_im2col`/`_im2col_t`/`_col2im` + `_adam` via `forge_dispatch_adamw`, all gated by env `CLM_PROD_DEVFEED` (composes with lever-b's `CLM_PROD_BATCHED`; env-gate keeps the prebuilt mac binary from link-referencing the new builtins under `hexa run`).
+- builtins: `self/codegen.hexa` lowering + `self/runtime.h` protos/seams + `self/runtime.c` (gitignored build seed) wrappers; the wrapper bodies are tracked as `inbox/patches/forge-devfeed-lever-a-runtime-c-fragment.c.txt` (SSOT for the pod build, since post-#2065 runtime.c is not regenerated from .hexa).
+
+**CPU-LOCAL byte-eq (`hexa run`, $0, mac — verbatim):**
+```
+F-CLM-DEVFEED-IM2COL-EQ = 1   im2col dil=1/2 max|Δ| = 0.0
+F-CLM-DEVFEED-FWD-EQ    = 1   fwd  dil=1/2 max|Δ| = 0.0
+F-CLM-DEVFEED-BWD-EQ    = 1   bwd dW=0.0 db=0.0 ; dX=2.78e-17 / 5.55e-17 (FP64 ULP, #2383 dX class, ≪ 1e-9)
+F-CLM-DEVFEED-ADAM-EQ   = 1   adam 5-step max|Δ| W = 0.0
+ALL-PASS — LEVER (a) device im2col/col2im + device AdamW oracle byte-eq to host feed
+```
+Plus: runtime.c wrappers `clang -fsyntax-only` OK (no-CUDA); runtime_cuda_emit emits valid C (kernels syntax-OK); codegen.hexa transpiles clean; single-file transpile of self/main.hexa OK.
+
+**NO GPU FIRED this pass** (cost-discipline, per the user contract). The full-trainer self-host byte-eq + nvidia-smi util are the SAME pod multi-TU self-host build the util fire uses (lever-b's `./build/hexa_devfeed` recipe; the single-`main.hexa` transpile here links only the core driver, not the CLI command-table TUs — so the full byte-eq is the pod build). Per cost-discipline the fire runs from the pod build once that byte-eq is confirmed there.
+
+**Gate status:** PUBLIC/3B gate UNCHANGED (still requires the post-(a) util fire to clear ≥20% AND descent GREEN). What changed: the REMAINING gap to util-GREEN is now ONE pod self-host rebuild + util measurement — both unblock levers are implemented + byte-eq CPU-local, no longer "unimplemented." If the post-(a) fire clears 20% → util-GREEN → PUBLIC-grade Lane-G reached → 3B becomes throughput-justified.
+
+**PRs:** hexa-lang #2505 (lever a, MERGED to main) stacked on #2504 (lever b, MERGED). Spec/recipe: hexa-lang `inbox/patches/forge-devfeed-lever-b-landed-lever-a-spec.md` (lever-a LANDED section + pod-rebuild recipe).
