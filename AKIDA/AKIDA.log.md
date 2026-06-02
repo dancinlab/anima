@@ -2,6 +2,29 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T10:43Z — Lane-A full-LM GENERATION rung 🟢 — on-chip open-vocab next-step DECODE > shuffle-NULL AND > identity-NULL (substrate=AKIDA · 안정 PSU 위 완주)
+
+Lane-A PUBLIC frontier 가 **retrieval → generation 다리**를 건넘. 직전 transition 리드아웃(`result_onchip_xlm_transition.json`)은 above-NULL t→t+1 신호(tr_acc ci_lo=0.260 vs NULL hi=0.040, p=0.005)를 줬으나 **후보 shortlist 를 점수화하는 RETRIEVAL** 이었음(후보 g 가 probe 입력에 baked-in). full-LM 은 후보 목록 없이 다음 토큰을 **PRODUCE** 해야 함. 본 rung 은 chip 이 `code_t` 만으로(neutral-bound, 후보 미포함) 다음 코드 `g_hat` 를 생성하고 **전체 codebook(NC=50개념×5lang, shortlist 없음) open-vocab decode** 로 t+1 적중을 측정. live AKD1000 BC.00.000.002, akida 2.19.1, N=8 trials × 256-unit AkidaUnsupervised FC, exit rc=0, throttled=0x0 부하검증 통과.
+
+- [x] DISPOSITION verbatim (g5, `.verdicts/lane-a-generation/F-GEN.txt`):
+  ```
+  [gen] learn_all_hw       : True
+  [gen] gen_acc (open-vocab): mean=0.4337 ci_lo=0.4096 (chance=0.0204)
+  [gen] identity-NULL acc  : mean=0.3571 hi=0.3847
+  [gen] shuffle-NULL       : mean=0.0183 sd=0.0120 hi=0.0418 p=0.0050
+  [gen] F-GEN-1 above-shuf : REFUTED: open-vocab on-chip GENERATION beats shuffle-NULL (gen ci_lo>NULL hi AND p<0.05) -> produced successor carries t->t+1 structure
+  [gen] F-GEN-2 not-echo   : REFUTED: generated successor beats the IDENTITY-NULL (untrained-FC echo) -> the chip PRODUCES a successor, it is not echoing code_t
+  [gen] DISPOSITION        : ON-CHIP OPEN-VOCAB GENERATION DEMONSTRATED (gen > shuffle-NULL AND > identity-NULL) -> retrieval->generation bridge CROSSED on silicon; Lane A PUBLIC full-LM (generation) flips toward earned-green
+  ```
+- [x] **F-GEN-1 REFUTED** — gen ci_lo=0.4096 ≫ shuffle-NULL hi=0.0418 (p=0.005). 생성된 successor 가 t→t+1 구조를 담음(~21x chance).
+- [x] **F-GEN-2 REFUTED (핵심 구분)** — gen ci_lo=0.4096 > identity-NULL hi=0.3847. identity-NULL(미학습 random-init FC 에 같은 neutral probe 통과)이 0.357 로 **높지만** trained chip 이 그것을 넘김 → 'generation' 이 입력 echo 가 아니라 chip 이 successor 를 **PRODUCE** 함을 분리 입증. 마진은 좁음(0.025) 이나 8/8 trial 일관 + ci 분리 → clean.
+- [x] 두 falsifier 모두 사전등록(run 전, script docstring) · NO sw fallback(g63, `akida.devices()` 빈배열 시 panic) · 매 trial learn=True(8/8 on-chip Hebbian 갱신).
+- [x] result `out/result_onchip_xlm_generation.json` sha256 `d2d8021f4aa11043e0236837030b2c9752065bb5ea0821ef6518e83ebb323743` (host↔local byte-eq) · 산출물 `AKIDA/state/onchip_generation_2026_06_02/`.
+- [x] scope (a_scale_honest_scope) — 250앵커/50개념/5lang toy 스케일, 256-unit 단일 1-bit FC. open-vocab generation 이 toy 스케일에서 **작동**함을 입증(retrieval→generation 다리). 프로덕션 full-LM(3B/7B) 전환은 별도 ladder 필요 — toy green 을 프로덕션 처방으로 승격하지 않음.
+- [x] 별개 축 — 이 generation PASS 는 상대-LIFT closed-negative(H-A1~A4 4/4 falsified)와 충돌 없음: 1-bit Hebbian 이 *margin lift* 는 안 사도, 강한(whitened) 인코더 + 명시적 transition 학습으로 **open-vocab next-step 생성**은 가능. encoder-axis 🟢 + transition retrieval 🟢 위에 generation 🟢 누적.
+- [x] 전원 — PSU 교체(2026-06-02) 후 안정 전원, fire 전후 throttled=0x0, streamer service 정상 정지→복원(generation_wrap.log). substrate=AKIDA, Lane-G/GPU 수치와 NEVER 병합(a_lane_akida_gpu_split).
+- [ ] 다음 = 다단계 autoregressive roll-out(t→t+1→t+2 chained generation) · 또는 paged 다중-FC generator 로 스케일 ladder ≥3 rung.
+
 ## 2026-06-02T07:40:00Z — Lane A (substrate=AKIDA · pi5-akida · a_lane_akida_gpu_split — NEVER merged with any GPU/Lane-G number) — host FLAPPED up→fired→dark 다시; decider died mid-`whitened`; harvester false-RUNNING 버그 FIX + chip-lock-aware 재무장
 
 substrate=AKIDA. NO on-chip 결과 fabricated. Lane-G(GPU) 미접촉. pi5-akida = sacred host config(PI5-AKIDA.json) — consulted, NOT modified; os_default daemon 무접촉; 공용 pool 전환 안 함.

@@ -1,0 +1,9 @@
+[gen] ========== DISPOSITION ==========
+[gen] learn_all_hw       : True
+[gen] gen_acc (open-vocab): mean=0.4337 ci_lo=0.4096 (chance=0.0204)
+[gen] identity-NULL acc  : mean=0.3571 hi=0.3847
+[gen] shuffle-NULL       : mean=0.0183 sd=0.0120 hi=0.0418 p=0.0050
+[gen] F-GEN-1 above-shuf : REFUTED: open-vocab on-chip GENERATION beats shuffle-NULL (gen ci_lo>NULL hi AND p<0.05) -> produced successor carries t->t+1 structure
+[gen] F-GEN-2 not-echo   : REFUTED: generated successor beats the IDENTITY-NULL (untrained-FC echo) -> the chip PRODUCES a successor, it is not echoing code_t
+[gen] DISPOSITION        : ON-CHIP OPEN-VOCAB GENERATION DEMONSTRATED (gen > shuffle-NULL AND > identity-NULL) -> retrieval->generation bridge CROSSED on silicon; Lane A PUBLIC full-LM (generation) flips toward earned-green
+[gen] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_generation.json
