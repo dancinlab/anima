@@ -94,6 +94,19 @@
       }
     },
     {
+      "id": "unattended-upgrades-no-autoreboot",
+      "owner": "user_authored",
+      "kind": "apt config drop-in",
+      "file": "/etc/apt/apt.conf.d/52anima-no-autoreboot",
+      "created_utc": "2026-06-02",
+      "purpose": "disable unattended-upgrades AUTO-REBOOT — security updates still install, reboot becomes manual-only; prevents an OS auto-reboot from killing a long on-chip experiment (an auto-reboot lost a ~30min Lane-A abs_margin run on 2026-06-02)",
+      "note": "overrides os_default unattended-upgrades BEHAVIOR only; the daemon stays enabled+active (os_default untouched). Sets Automatic-Reboot \"false\" + Automatic-Reboot-WithUsers \"false\".",
+      "ops": {
+        "restore": "sudo rm /etc/apt/apt.conf.d/52anima-no-autoreboot   (re-enables Ubuntu default auto-reboot)",
+        "verify": "ssh ubuntu@192.168.50.155 'apt-config dump | grep -i automatic-reboot'  (expect \"false\")"
+      }
+    },
+    {
       "id": "os-base-daemons",
       "owner": "os_default",
       "kind": "system daemons",
@@ -125,7 +138,7 @@
     "akida_ingest_endpoint": "/ws/akida_ingest",
     "project_tape_directive": "a_pi5_akida_registry (project.tape governance — this JSON is its SSOT)"
   },
-  "status": "user_authored components REMOVED 2026-05-29 (host returned to clean Ubuntu; os_default untouched)",
+  "status": "ACTIVE 2026-06-02 — host back in service for Lane-A on-chip work: spike-streamer running + unattended-upgrades-no-autoreboot drop-in added (os_default daemons untouched). (Prior 2026-05-29 clean-Ubuntu reset preserved in removal_log below.)",
   "removal_log": [
     {
       "date_utc": "2026-05-29",
