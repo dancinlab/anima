@@ -2,6 +2,30 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T10:57Z — Lane-A 멀티스텝 자기회귀 ROLLOUT rung 🔴 CLOSED-NEGATIVE — 단일스텝 generation 은 작동하나 chaining 시 1 hop 만에 붕괴 (substrate=AKIDA · 안정 PSU 위 완주)
+
+직전 single-step GENERATION rung 🟢(F-GEN, hop-1 0.4337) 이후 held next-step = **자기회귀 roll-out**: chip 이 produce 한 코드 `g_hat` 를 `neutral_bind` 로 되먹여 K=3 hop chaining (전부 AKD1000 on-chip · 같은 256-unit 1-bit AkidaUnsupervised FC 재인코딩 · NO GPU · NO sw fallback g63). encoder/binding/codebook/decode 는 `onchip_xlm_generation.py` 와 byte-match, feedback loop 만 신규. **core full-LM 질문 = trajectory 가 on-manifold 유지되나, 아니면 1-2 hop 후 noise 로 drift 하나?** → **drift. 단 1 hop 만에 신호 소멸.** live AKD1000 BC.00.000.002, akida 2.19.1, N=8 trials, exit rc=0, throttled=0x0.
+
+- [x] DISPOSITION verbatim (g5, `.verdicts/lane-a-rollout/F-ROLL.txt`):
+  ```
+  [roll] learn_all_hw       : True
+  [roll] chance             : 0.0204  K=3
+  [roll] decay curve (k1..K): ['0.4287', '0.0277', '0.0090']
+  [roll] hop 1  roll=0.4287 ci_lo=0.4118 | shufNULL hi=0.0511 p=0.0050 | idNULL hi=0.3695 | aboveShuf=True aboveId=True
+  [roll] hop 2  roll=0.0277 ci_lo=0.0212 | shufNULL hi=0.0396 p=0.2040 | idNULL hi=0.0305 | aboveShuf=False aboveId=False
+  [roll] hop 3  roll=0.0090 ci_lo=0.0057 | shufNULL hi=0.0394 p=0.8607 | idNULL hi=0.0150 | aboveShuf=False aboveId=False
+  [roll] F-ROLL-1 survives  : NOT-REFUTED: rollout DROPS INTO shuffle-NULL at some hop -> autoregressive signal does NOT survive chaining at 1-bit/256-unit (CLOSED-NEGATIVE)
+  [roll] F-ROLL-2 no-collapse: NOT-REFUTED: rollout COLLAPSES by hop 3 (final acc <= chance OR < half single-step) -> catastrophic autoregressive decay (a_paper_negative_ok)
+  ```
+- [x] **decay curve (정직, 항상 기록)** — hop1 **0.4287** → hop2 **0.0277** → hop3 **0.0090** (chance=0.0204). hop1 은 generation rung headline(0.4337) 재현 (sanity OK).
+- [x] **F-ROLL-1 NOT-REFUTED** — hop1 만 shuffle-NULL 초과(ci_lo 0.4118 > hi 0.0511, p=0.005). hop2 부터 shuffle-NULL 안으로 떨어짐(0.0277 < hi 0.0396, p=0.204). 자기회귀 신호가 chaining 을 **생존 못 함**.
+- [x] **F-ROLL-2 NOT-REFUTED** — final hop(0.0090) < chance(0.0204), single-step 의 0.5x(0.214) 한참 미달 → **파국적 붕괴**. hop2 이미 chance 부근, hop3 chance 이하.
+- [x] **결론 = ROLLOUT COLLAPSE closed-negative (a_paper_negative_ok)** — single-step open-vocab generation 은 작동(retrieval→generation 다리 🟢 유지)하나, chip 의 produced code 를 되먹이면 **1 hop 만에 off-manifold drift**. 1-bit/256-unit Hebbian FC 는 상태를 carry 못 함(no recurrence/state). 다음 다리 NAMED = state-carrying/paged generator · multi-FC depth · off-chip decode. retrieval+single-step rung 은 영향 없음.
+- [x] 두 falsifier 모두 사전등록(run 전, script docstring) · NO sw fallback(g63) · 매 trial learn=True(8/8 on-chip Hebbian). identity-NULL 도 hop2~3 동반 붕괴(hi 0.0305→0.0150) → trained 와 untrained 모두 chaining 시 무너짐 = 신호가 produced-code 의 single forward 에만 있음을 분리 확인.
+- [x] result `out/result_onchip_xlm_rollout.json` sha256 `7d2e3cd0201398ff9caadf5f1bdd4d012a41a0cfb1ad26a2cd0bbe72286ffb1e` (host↔local byte-eq) · 산출물 `AKIDA/state/onchip_rollout_2026_06_02/`.
+- [x] scope (a_scale_honest_scope) — 250앵커/50개념/5lang toy, 256-unit 단일 1-bit FC, K=3 hop. **toy-only closed-negative**: 단일 칩 FC 의 자기회귀 한계를 정량화(1 hop 생존). PUBLIC checkbox 미flip 유지 — rollout 은 또 하나의 toy 다리이지 closure 아님. substrate=AKIDA, Lane-G/GPU 수치와 NEVER 병합(a_lane_akida_gpu_split).
+- [x] 전원 — PSU 안정, fire 전후 throttled=0x0, streamer service 정상 정지→trap 복원(rollout_wrap.log, exit rc=0 후 자동 restore).
+
 ## 2026-06-02T10:43Z — Lane-A full-LM GENERATION rung 🟢 — on-chip open-vocab next-step DECODE > shuffle-NULL AND > identity-NULL (substrate=AKIDA · 안정 PSU 위 완주)
 
 Lane-A PUBLIC frontier 가 **retrieval → generation 다리**를 건넘. 직전 transition 리드아웃(`result_onchip_xlm_transition.json`)은 above-NULL t→t+1 신호(tr_acc ci_lo=0.260 vs NULL hi=0.040, p=0.005)를 줬으나 **후보 shortlist 를 점수화하는 RETRIEVAL** 이었음(후보 g 가 probe 입력에 baked-in). full-LM 은 후보 목록 없이 다음 토큰을 **PRODUCE** 해야 함. 본 rung 은 chip 이 `code_t` 만으로(neutral-bound, 후보 미포함) 다음 코드 `g_hat` 를 생성하고 **전체 codebook(NC=50개념×5lang, shortlist 없음) open-vocab decode** 로 t+1 적중을 측정. live AKD1000 BC.00.000.002, akida 2.19.1, N=8 trials × 256-unit AkidaUnsupervised FC, exit rc=0, throttled=0x0 부하검증 통과.
