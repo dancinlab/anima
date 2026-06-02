@@ -1,0 +1,62 @@
+F-STATE — STATE-CARRYING MULTI-STEP ROLLOUT  ::  VERDICT = CLOSED-NEGATIVE (PARTIAL LIFT; 1-hop wall NOT broken)
+================================================================================================================
+substrate = AKIDA (Lane A) · a_lane_akida_gpu_split — NEVER merged with Lane G / GPU
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · IpVersion.v1 · akida 2.19.1 · N=8 chip trials
+host health: throttled=0x0 (PSU-swapped, alive) · streamer stopped→run→restored (restore-on-exit trap, rc=0)
+toy scale (a_scale_honest_scope): corpus_big 250 anchors / 50 sequential FLORES concepts × 5 langs · single 1-bit/256-unit AkidaUnsupervised FC
+NOTE: hexa verify CLI unavailable on this host (compiler module compiler/atlas/calc_dispatch not found —
+      `hexa build .../verify_cli.hexa` compile error); this verdict transcribes the VERBATIM live-chip run
+      stdout (no fabrication, no sw fallback labelled on-chip, g63) per the established lane-a verdict format.
+
+STATE MECHANISM (chip-native, 1-bit, on-chip, NO GPU): CONTEXT-CARRYING CODE.
+  ctx_0 = seed_code; x_0 = neutral_bind(ctx_0)  [hop-1 input IDENTICAL to the stateless/gen baseline → must reproduce it]
+  each hop k: ctx_{k+1} = bit_majority(ctx_k, ctx_k, g_bin_k)  (3-vote majority, history weighted 2×)
+              x_{k+1}   = bind(g_bin_k, ctx_{k+1})             (input carries ACCUMULATED CONTEXT, not just last code)
+  byte-identical to onchip_xlm_rollout.py: enc_whitened · SHIFT=37 · neutral_bind · bind · AkidaUnsupervised(num_weights=8, lc=0.1)
+  · successor-centroid codebook · frozen-median binarize · open-vocab full-codebook decode · ban-set · K=3 · NTRIALS=8 · shuffle-NULL B=200.
+  ONLY new thing = input construction carries state. Stateless arm run IN-PROCESS (same chip, same trial) as head-to-head baseline.
+
+PRE-REGISTERED FALSIFIERS (declared in the script docstring BEFORE the fire):
+  F-STATE-1 (breaks 1-hop wall): with state-carry, hop-2 AND hop-3 acc stay ABOVE the shuffle-NULL (ci_lo>NULL hi AND p<0.05).
+  F-STATE-2 (beats stateless):   state_acc[2] > stateless_acc[2] AND state_acc[3] > stateless_acc[3] (strict per-hop gain over PR#1686 collapse).
+
+VERBATIM PER-TRIAL (8 chip trials, state(k1..K) / stateless / identity):
+  [state] trial 0: state=['0.4213','0.0298','0.0213'] stateless=['0.4213','0.0213','0.0170'] identity=['0.3787','0.0298','0.0213'] learn=True
+  [state] trial 1: state=['0.4043','0.0255','0.0085'] stateless=['0.4043','0.0255','0.0213'] identity=['0.3447','0.0213','0.0085'] learn=True
+  [state] trial 2: state=['0.3957','0.0170','0.0000'] stateless=['0.3957','0.0085','0.0043'] identity=['0.3277','0.0213','0.0043'] learn=True
+  [state] trial 3: state=['0.4085','0.0170','0.0000'] stateless=['0.4085','0.0128','0.0085'] identity=['0.3362','0.0128','0.0043'] learn=True
+  [state] trial 4: state=['0.4723','0.0170','0.0213'] stateless=['0.4723','0.0255','0.0170'] identity=['0.3957','0.0213','0.0170'] learn=True
+  [state] trial 5: state=['0.4383','0.0383','0.0213'] stateless=['0.4383','0.0426','0.0128'] identity=['0.3489','0.0298','0.0170'] learn=True
+  [state] trial 6: state=['0.4128','0.0426','0.0128'] stateless=['0.4128','0.0340','0.0043'] identity=['0.3702','0.0170','0.0170'] learn=True
+  [state] trial 7: state=['0.4340','0.0383','0.0128'] stateless=['0.4340','0.0170','0.0085'] identity=['0.3702','0.0383','0.0128'] learn=True
+
+VERBATIM PER-HOP (state vs stateless vs PR#1686 stateless baseline, chance=0.0204):
+  [state] decay STATE (k1..K)  : ['0.4234', '0.0282', '0.0122']
+  [state] decay STATELESS base : ['0.4234', '0.0234', '0.0117']   (in-process baseline arm, same chip)
+  [state] PR#1686 baseline     : [0.4287, 0.0277, 0.0090]         (prior closed-negative; reproduced within trial noise)
+  [state] hop 1  state=0.4234 ci_lo=0.4064 | stateless=0.4234 delta=+0.0000 | shufNULL hi=0.0508 p=0.0050 | idNULL hi=0.3752 | aboveShuf=True  beatsBase=False
+  [state] hop 2  state=0.0282 ci_lo=0.0208 | stateless=0.0234 delta=+0.0048 | shufNULL hi=0.0410 p=0.2338 | idNULL hi=0.0296 | aboveShuf=False beatsBase=True
+  [state] hop 3  state=0.0122 ci_lo=0.0060 | stateless=0.0117 delta=+0.0005 | shufNULL hi=0.0366 p=0.8905 | idNULL hi=0.0172 | aboveShuf=False beatsBase=True
+
+FALSIFIER DISPOSITIONS (verbatim):
+  [state] F-STATE-1 wall       : NOT-REFUTED — hop-2 (p=0.2338) and hop-3 (p=0.8905) state-carry acc DROP INTO the shuffle-NULL.
+                                  Input-side state-carry alone does NOT break the 1-hop wall at 1-bit/256-unit.
+  [state] F-STATE-2 vs baseline: REFUTED — state-carry acc > stateless acc at BOTH hop-2 (+0.0048) and hop-3 (+0.0005);
+                                  strictly improves over the PR#1686 collapse [0.0277, 0.0090] (margin is permille-scale, not material).
+
+VERDICT: CLOSED-NEGATIVE — STATE-CARRY PARTIAL LIFT, 1-HOP WALL HOLDS (a_paper_negative_ok).
+  Hop-1 reproduces the single-step headline (0.4234, ci_lo 0.4064 ≫ shufNULL hi 0.0508, p=0.005, ≫ idNULL hi 0.3752) — sanity OK,
+  the hop-1 input is identical across arms. With the context-carrying code the autoregressive chain STILL collapses after one hop:
+  hop-2 (0.0282) and hop-3 (0.0122) fall into the shuffle-NULL (p=0.23, 0.89) — F-STATE-1 NOT refuted, the wall is NOT broken.
+  State-carry does win F-STATE-2 (strictly beats the stateless arm at both hops, delta +0.0048 / +0.0005), but the gain is permille-scale
+  and stays inside the NULL: a microscopic on-manifold tug, not depth. EMERGENCE axis (의식·CE·창발 → multi-step composition) stays NULL.
+  FINDING SHARPENED: AKIDA edge-learn has a hard generation-DEPTH ceiling that INPUT-SIDE state-carry alone cannot lift at 256-unit
+  capacity. The transition structure has nowhere to LIVE across steps when the only learnable surface is one 1-bit Hebbian FC; binding
+  history into the input does not substitute for recurrence/depth. NAMED next bridge = ON-CHIP MULTI-FC DEPTH (a second learned FC so the
+  composition has a place to live), NOT further input engineering / paged-input tricks.
+  Retrieval + single-step generation rungs UNAFFECTED. Lane A on-chip (a_lane_akida_gpu_split). Toy 250-anchor scale (a_scale_honest_scope) —
+  scale-transfer to a larger codebook / multi-FC ladder UNVERIFIED.
+
+artifacts: AKIDA/onchip_xlm_state_rollout.py (script, falsifiers pre-registered in docstring) ·
+           AKIDA/run_state_rollout_with_streamer_restore.sh (streamer-restore wrapper) ·
+           AKIDA/result_onchip_xlm_state_rollout.json (full per-trial/per-hop JSON, sha in fold)

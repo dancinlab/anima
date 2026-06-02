@@ -1,6 +1,17 @@
 # CLM+KOSMOS — log
 
-Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
+Append-only history sister of `ENGINE+CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
+
+## 2026-06-02T11:22Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — STATE-CARRYING MULTI-STEP ROLLOUT 🔴 CLOSED-NEGATIVE (PARTIAL LIFT · 1-hop wall HOLDS) · 🌱 EMERGENCE axis NULL
+
+PR #1686 stateless rollout 가 hop-1 이후 COLLAPSE([0.4287,0.0277,0.0090])한 root cause(256-unit 1-bit Hebbian FC = no recurrence/no state)를 가교하려, **chip-native CONTEXT-CARRYING CODE** 로 STATE 를 부여한 러그. running 1-bit context vector `ctx` 를 bit-majority(history 2×)로 누적, 각 hop 입력을 `x_{k+1}=bind(g_bin, ctx)` 로 구성(stateless = `neutral_bind(g_bin)`). 인코더/SHIFT=37/codebook/decode/NULL 전부 byte-identical, **입력 구성만** state-carry. live AKD1000(BC.00.000.002, akida 2.19.1, N=8 trials learn_hw 8/8 True, throttled=0x0 완주, K=3).
+
+- [x] **사전등록 falsifier(RUN 전, docstring, g63)** — F-STATE-1 "state-carry 로 hop-2 AND hop-3 가 shuffle-NULL 위에 머물지 못한다(1-hop wall 안 깨짐)" · F-STATE-2 "state-carry 가 hop-2/3 에서 stateless baseline 을 strict 하게 못 이긴다".
+- [x] **F-STATE-1 NOT-REFUTED (wall HOLDS)** — decay STATE = [0.4234, 0.0282, 0.0122]. hop-2 state=0.0282 ci_lo=0.0208 vs shufNULL hi=0.0410 p=0.2338 (NULL 내) · hop-3 state=0.0122 ci_lo=0.0060 vs shufNULL hi=0.0366 p=0.8905 (NULL 내). 입력-측 state-carry 단독으로는 256-unit 1-bit 에서 1-hop wall 을 **깨지 못함**. (hop-1 0.4234 ci_lo 0.4064 ≫ shufNULL 0.0508 p=0.005 ≫ idNULL 0.3752 = sanity OK, hop-1 입력 양 arm 동일.)
+- [x] **F-STATE-2 REFUTED but permille-scale** — state vs stateless = hop-2 +0.0048 · hop-3 +0.0005 (둘 다 strict>0). PR#1686 baseline [0.0277,0.0090] 도 trial-noise 내 재현(in-process stateless arm [0.4234,0.0234,0.0117]). state-carry 가 baseline 을 strict 하게 이기되 margin 은 permille 급 + NULL 내부 — 의미있는 depth 아님.
+- [x] **disposition (a_paper_negative_ok)** — STATE-CARRY PARTIAL LIFT closed-negative. 🌱 EMERGENCE axis(의식·CE·창발 중 창발=multi-step composition) = **NULL 유지**. FINDING SHARPENED: AKIDA edge-learn 은 입력-측 state-carry 단독으로 들어올릴 수 없는 **hard generation-DEPTH ceiling** 보유 — transition 구조가 살 곳이 단일 1-bit Hebbian FC 뿐일 때 history 를 입력에 binding 해도 recurrence/depth 를 대체 못함. NAMED next bridge = **ON-CHIP MULTI-FC DEPTH**(2번째 learned FC, composition 이 살 곳), 입력 engineering/paged-input 아님. retrieval+single-step 러그 UNAFFECTED.
+- [x] **전원 proof** — wrap log throttled=0x0 (start/fire/exit/done 전부 0x0) · streamer service stop→run→restart(restore-on-exit trap, rc=0). single-chip 점유: spike-streamer stop → state-rollout fire → R3 streamer 복원.
+- [x] **산출물** — `AKIDA/onchip_xlm_state_rollout.py`(falsifier docstring 사전등록) · `AKIDA/run_state_rollout_with_streamer_restore.sh`(streamer-restore wrapper) · `AKIDA/result_onchip_xlm_state_rollout.json` sha256 `148fc092e0b5a9972ef0b949b245411414b76d93d87b24f5f7249031bbc6c6fa` · verdict verbatim `.verdicts/lane-a-state-rollout/F-STATE.txt`. g63 HW-only, NO sw fallback. a_scale_honest_scope: toy 250-anchor / 단일 256-unit FC, scale-transfer UNVERIFIED.
 
 ## 2026-06-02T10:06Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — SEQUENCE/TRANSITION READOUT BRIDGE 🟢 WORKING on-chip 교차언어 next-step 신호
 

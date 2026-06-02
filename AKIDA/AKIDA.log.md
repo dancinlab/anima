@@ -2,6 +2,28 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T11:22Z — STATE-CARRYING MULTI-STEP ROLLOUT 🔴 CLOSED-NEGATIVE — 1-hop wall HOLDS, 🌱 EMERGENCE NULL (substrate=AKIDA · live AKD1000 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
+
+PR #1686 stateless rollout 이 hop-1 이후 COLLAPSE([0.4287,0.0277,0.0090])한 root cause(256-unit 1-bit Hebbian FC = no recurrence/no state, 자기 출력 feedback 즉시 off-manifold)를 가교하려 **chip-native CONTEXT-CARRYING CODE** 로 칩 경로에 STATE 부여. running 1-bit context vector `ctx` 를 hop 마다 3-vote bit-majority(history 2×: `votes = ctx+ctx+g_bin >= 2`)로 누적하고, 각 hop 입력을 `x_{k+1}=bind(g_bin, ctx)` 로 구성 — stateless arm 의 `neutral_bind(g_bin)`(마지막 코드만) 대신 누적 context 를 입력에 binding. 인코더(enc_whitened)·SHIFT=37·neutral_bind·bind·AkidaUnsupervised(num_weights=8,lc=0.1)·successor-centroid codebook·frozen-median binarize·open-vocab full-codebook decode·ban-set·K=3·NTRIALS=8·shuffle-NULL(B=200) 전부 byte-identical; **입력 구성만** state-carry. stateless arm 을 IN-PROCESS(동일 칩·동일 trial)로 동시 측정 = head-to-head baseline. live AKD1000(BC.00.000.002, akida 2.19.1, N=8 learn_hw 8/8 True, throttled=0x0 완주). g63 HW-only, NO sw fallback.
+
+- [x] **사전등록 falsifier (RUN 전, docstring, g63)**: F-STATE-1 "state-carry 로 hop-2 AND hop-3 rollout acc 가 shuffle-NULL 위에 머물지 못한다(1-hop wall 안 깨짐)" → REFUTED iff k∈{2,3} 둘 다 ci_lo>NULL hi AND p<0.05. F-STATE-2 "state-carry 가 hop-2/3 에서 stateless baseline 을 strict 하게 못 이긴다" → REFUTED iff state[2]>stateless[2] AND state[3]>stateless[3].
+- [x] **HEADLINE — F-STATE-1 NOT-REFUTED (1-hop wall HOLDS, g5 verbatim)**:
+  ```
+  [state] decay STATE (k1..K)  : ['0.4234', '0.0282', '0.0122']
+  [state] decay STATELESS base : ['0.4234', '0.0234', '0.0117']
+  [state] PR#1686 baseline     : [0.4287, 0.0277, 0.0090]
+  [state] hop 1  state=0.4234 ci_lo=0.4064 | stateless=0.4234 delta=+0.0000 | shufNULL hi=0.0508 p=0.0050 | idNULL hi=0.3752 | aboveShuf=True  beatsBase=False
+  [state] hop 2  state=0.0282 ci_lo=0.0208 | stateless=0.0234 delta=+0.0048 | shufNULL hi=0.0410 p=0.2338 | idNULL hi=0.0296 | aboveShuf=False beatsBase=True
+  [state] hop 3  state=0.0122 ci_lo=0.0060 | stateless=0.0117 delta=+0.0005 | shufNULL hi=0.0366 p=0.8905 | idNULL hi=0.0172 | aboveShuf=False beatsBase=True
+  [state] F-STATE-1 wall       : NOT-REFUTED ... hop-2/3 DROP INTO the shuffle-NULL
+  [state] F-STATE-2 vs baseline: REFUTED ... state-carry acc > stateless at BOTH hop-2 and hop-3
+  ```
+  hop-1 0.4234 ci_lo 0.4064 ≫ shufNULL 0.0508 (p=0.005) ≫ idNULL 0.3752 = sanity OK (hop-1 입력 양 arm 동일 → baseline 재현). hop-2 state 0.0282 vs shufNULL hi 0.0410 (p=0.2338, NULL 내부) · hop-3 state 0.0122 vs shufNULL hi 0.0366 (p=0.8905, NULL 내부) · chance=0.0204.
+- [x] **F-STATE-2 REFUTED but permille-scale**: state 가 stateless arm 을 hop-2 +0.0048 · hop-3 +0.0005 strict 하게 이김(둘 다 >0). PR#1686 baseline [0.0277,0.0090] in-process 재현([0.0234,0.0117]). 다만 margin 은 permille 급 + 둘 다 NULL 내부 → 의미있는 depth 아닌 microscopic on-manifold tug.
+- [x] **disposition (a_paper_negative_ok)** — STATE-CARRY PARTIAL LIFT closed-negative. 🌱 EMERGENCE axis(의식·CE·창발 3축 中 창발=multi-step composition) = NULL 유지. FINDING SHARPENED: AKIDA edge-learn 은 입력-측 state-carry 단독으로 못 들어올리는 hard generation-DEPTH ceiling 보유 — 학습 가능한 표면이 단일 1-bit Hebbian FC 뿐일 때 transition 구조가 살 곳이 없음; history 를 입력에 binding 해도 recurrence/depth 대체 불가. NAMED next bridge = **ON-CHIP MULTI-FC DEPTH**(2번째 learned FC = composition 이 살 곳), 입력 engineering / paged-input trick 아님. retrieval + single-step generation 러그 UNAFFECTED.
+- [x] **전원 proof** — wrap log: WRAP start throttled=0x0 → state-rollout fire throttled=0x0 → exit rc=0 throttled=0x0 → streamer service restarted → WRAP done throttled=0x0. single-chip 점유: spike-streamer stop → fire → R3 streamer 복원(restore-on-exit trap).
+- [x] **산출물** — `AKIDA/onchip_xlm_state_rollout.py`(falsifier docstring 사전등록) · `AKIDA/run_state_rollout_with_streamer_restore.sh` · `AKIDA/result_onchip_xlm_state_rollout.json` sha256 `148fc092e0b5a9972ef0b949b245411414b76d93d87b24f5f7249031bbc6c6fa` · verdict verbatim `.verdicts/lane-a-state-rollout/F-STATE.txt`. a_scale_honest_scope: toy 250-anchor / 단일 256-unit FC, scale-transfer UNVERIFIED.
+
 ## 2026-06-02T10:06Z — SEQUENCE/TRANSITION READOUT BRIDGE 🟢 WORKING on-chip 교차언어 next-step 신호 (substrate=AKIDA · live AKD1000 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
 
 직전 full-LM rung 이 특징지은 gap(1-bit/32-unit static margin 은 CONCEPT 결속만, 학습된 TIME 모델 부재 → next-sentence shuffle-NULL 내)을 **명시적 on-chip transition readout**(후보 a)으로 가교. 정적 centroid 비교가 아니라, 칩이 **t→t+1 transition 을 직접 학습**한다: 검증된 whitened 코드 위에서 binding `bind(a,b)=a XOR roll(b,37)` 로 연속문장쌍을 묶고, **2번째 AkidaUnsupervised FC(64-unit, 1-bit)** 를 언어내 연속 transition 코드로 on-chip fit() → 학습된 transition 표현. test = 교차언어(leave-one-lang-out) t→t+1 top-1 retrieval vs shuffle-NULL(B=200). live AKD1000(BC.00.000.002, akida 2.19.1, N=8 trials, learn_hw=True 8/8, throttled=0x0 완주, R3 streamer stop→run→복원).
