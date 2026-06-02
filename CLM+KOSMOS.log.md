@@ -267,3 +267,28 @@ Plus: runtime.c wrappers `clang -fsyntax-only` OK (no-CUDA); runtime_cuda_emit e
 **Gate status:** PUBLIC/3B gate UNCHANGED (still requires the post-(a) util fire to clear ≥20% AND descent GREEN). What changed: the REMAINING gap to util-GREEN is now ONE pod self-host rebuild + util measurement — both unblock levers are implemented + byte-eq CPU-local, no longer "unimplemented." If the post-(a) fire clears 20% → util-GREEN → PUBLIC-grade Lane-G reached → 3B becomes throughput-justified.
 
 **PRs:** hexa-lang #2505 (lever a, MERGED to main) stacked on #2504 (lever b, MERGED). Spec/recipe: hexa-lang `inbox/patches/forge-devfeed-lever-b-landed-lever-a-spec.md` (lever-a LANDED section + pod-rebuild recipe).
+
+---
+
+## 2026-06-02 — Lane A (substrate=AKIDA · pi5-akida · a_lane_akida_gpu_split — NEVER merged with any GPU/Lane-G number) — ABSOLUTE-MARGIN falsifier FIRED on live AKD1000, host went dark MID-FIRE → BLOCKED (honest, no fabricated result)
+
+**Rung picked (the decisive pre-registered next step):** the P3 ENCODER REOPEN verdict (`.verdicts/lane-a-causeaxis/P1-encoding.txt`) closed with an explicit pre-registered SCOPE caveat: the encoder lift is RELATIVE (structured beats random, +0.92 bits ci_lo>0) but BOTH arms' ABSOLUTE concept-margins stayed NEGATIVE at toy scale — "the next rung is whether a stronger structured/learned multilingual encoder pushes the absolute margin above 0, not just the relative lift." This is the PUBLIC-grade Lane-A question, so I fired exactly that.
+
+**Falsifier (pre-registered, `.verdicts/lane-a-absmargin/PREREGISTER.md`):** ABSOLUTE concept-margin (between-minus-within Hamming bits, per-feature-median binarized on-chip fwd, native non-det chip init per trial / H_904, N=8 trials, ci_lo=mean−1.96·SEM). Encoders of increasing LEARNED strength: random_int4 → svd_struct → whitened → **lda_supervised** (multi-class LDA maximizing between/within concept scatter using corpus concept labels = oracle-strength upper bound on a "stronger learned multilingual encoder"). Scales: corpus (25-anchor) AND corpus_big (250-anchor). PASS (PUBLIC-grade positive) iff some encoder ABSOLUTE ci_lo>0 (learn_all_hw); else CLOSED-NEGATIVE scoped to measured anchor scale (a_scale_honest_scope).
+
+**Reachability + chip CONFIRMED LIVE at fire start (verbatim chip stdout):**
+```
+[abs] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1  N=8 trials units=32
+[abs] ===== SCALE corpus : count=25 concepts=5 langs=5 =====
+[abs] random_int4            trial 0: abs_margin=-1.4400 learn=True
+[abs] random_int4            trial 1: abs_margin=-1.7120 learn=True
+```
+On-chip learning live (learn=True) on the real AKD1000 (BC.00.000.002, akida 2.19.1, anima-akida venv). Script `~/clm_kosmos_akida/abs_margin_chip.py` launched under nohup.
+
+**BLOCKER:** mid-fire (during the random_int4 trials) pi5-akida went fully OFF-NETWORK — `ssh: Host is down` / `ping: No route to host` / 100% packet loss, sustained for the rest of the session. This is a host-level outage (power/network/reboot of the Pi), NOT remediable remotely. The result file `out/result_abs_margin.json` therefore never reached a terminal `disposition` from this session's vantage. NO AKIDA verdict is claimed (the only thing measured before the drop is the random_int4 control going NEGATIVE at −1.44/−1.71, consistent with the prior closed-negative — but that is the CONTROL arm, not the falsifier; the oracle-LDA treatment arm never ran).
+
+**Armed harvester (a_cpu_local_no_waiter):** a durable local harvester (`/tmp/laneA_harvest.sh`) + log Monitor are running; they reconnect on host recovery and auto-harvest `abs_margin.log` + `result_abs_margin.json` IF the nohup survived (network-only blip) or report DIED if the host rebooted (nohup lost). pi5-akida is sacred host config (PI5-AKIDA.json) — NOT touched/swapped; the outage is external.
+
+**Closure verdict:** BLOCKED — not PUBLIC-grade, not closed-negative. Honest: chip was reachable + learning live, the rung is correctly pre-registered and on-target, but the host dropped mid-fire so no terminal on-chip measurement exists. Smallest unblock step: when pi5-akida returns to the LAN, re-run `~/.venv/anima-akida/bin/python -u ~/clm_kosmos_akida/abs_margin_chip.py` (idempotent, commit-early JSON) — ~16 encoder×scale chip-map cycles; the LDA-oracle treatment arm is what decides PASS vs closed-negative.
+
+**Lane G (substrate=GPU · NEVER merged):** still held on provider-wide provisioning outage (vast+runpod dark). Recipe is FIXED on hexa-lang `laneg/devfeed-cuda-link-merge` (verified present locally + origin); waits only on a live SSH-able GPU host.
