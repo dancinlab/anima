@@ -2,6 +2,16 @@
 
 `AKIDA.md` 의 append-only 자매 로그. 각 엔트리는 `## <ISO timestamp> — <header>` (최신 위) · 본문 = `- [x]`(완료) / `- [ ]`(예정) 체크박스.
 
+## 2026-06-02T11:54Z — HYBRID DECODE HEAD ✅ 1-HOP WALL BROKEN — 🌱 EMERGENCE LIFTS NULL→~0.32 (substrate=**HYBRID: on-chip AKD1000 인코더 ⊕ off-chip host-CPU decode head** · 순수 AKIDA 아님 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
+
+세 순수-on-chip closed-negative(#1686/#1689/#1690)가 명명한 마지막 가교 OFF-CHIP DECODE HEAD 를 구현·검증. chip 은 proven 🟢 단일-스텝 transition 인코더로 유지(FC1, byte-match 인코더/binarize, g63 NO sw fallback); recurrence 는 off-chip host-CPU Elman RNN(D_H=64, numpy BPTT, NO torch/GPU)로 운반. chip-to-chip feedback 없음(매 hop 예측 concept 칩 재인코딩). live AKD1000 BC.00.000.002 akida 2.19.1 N=8 encoder_learned=True 8/8, throttled=0x0, streamer restore-on-exit(R3 pid 19850).
+
+- [x] **decay HYBRID [0.3160, 0.3202, 0.3207] FLAT** — 3 hop 전부 shuffle-NULL hi~0.048 위(p=0.005, ~16× chance). **F-HYBRID-1 REFUTED**(wall 돌파) · **F-HYBRID-2 REFUTED**(hop-2 0.3202 vs best pure 0.0298, +29%).
+- [x] **🌱 EMERGENCE LIFT** — multi-step composition NULL→~0.32 sustained. 1-hop wall = MISSING RECURRENCE(on-chip code 는 충분히 rich), off-chip 이전이 옳은 root-cause fix(a_completeness_over_cheap).
+- [x] 정직 scope — substrate=HYBRID(순수 AKIDA 아님, Lane G 아님). off-chip head CE→0.002 toy chain fit; ~0.32(≠1.0) open-vocab argmax bound. a_scale_honest_scope toy 250앵커, scale-transfer 미검증.
+- [x] Lane A PUBLIC ✅ AS A HYBRID artifact(honestly scoped); 순수 on-chip 단일-스텝 rung UNAFFECTED.
+- 산출물: `onchip_xlm_hybrid_decode.py` · `run_hybrid_with_streamer_restore.sh` · `.verdicts/lane-a-hybrid/F-HYBRID.txt` + result JSON. sha256 ab4748bf…
+
 ## 2026-06-02T11:22Z — STATE-CARRYING MULTI-STEP ROLLOUT 🔴 CLOSED-NEGATIVE — 1-hop wall HOLDS, 🌱 EMERGENCE NULL (substrate=AKIDA · live AKD1000 · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU)
 
 PR #1686 stateless rollout 이 hop-1 이후 COLLAPSE([0.4287,0.0277,0.0090])한 root cause(256-unit 1-bit Hebbian FC = no recurrence/no state, 자기 출력 feedback 즉시 off-manifold)를 가교하려 **chip-native CONTEXT-CARRYING CODE** 로 칩 경로에 STATE 부여. running 1-bit context vector `ctx` 를 hop 마다 3-vote bit-majority(history 2×: `votes = ctx+ctx+g_bin >= 2`)로 누적하고, 각 hop 입력을 `x_{k+1}=bind(g_bin, ctx)` 로 구성 — stateless arm 의 `neutral_bind(g_bin)`(마지막 코드만) 대신 누적 context 를 입력에 binding. 인코더(enc_whitened)·SHIFT=37·neutral_bind·bind·AkidaUnsupervised(num_weights=8,lc=0.1)·successor-centroid codebook·frozen-median binarize·open-vocab full-codebook decode·ban-set·K=3·NTRIALS=8·shuffle-NULL(B=200) 전부 byte-identical; **입력 구성만** state-carry. stateless arm 을 IN-PROCESS(동일 칩·동일 trial)로 동시 측정 = head-to-head baseline. live AKD1000(BC.00.000.002, akida 2.19.1, N=8 learn_hw 8/8 True, throttled=0x0 완주). g63 HW-only, NO sw fallback.

@@ -2,6 +2,19 @@
 
 Append-only history sister of `ENGINE+CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02T11:54Z — Lane-A (substrate=**HYBRID(on-chip AKD1000 인코더 ⊕ off-chip host-CPU decode head)** · live AKD1000 pi5-akida · a_lane_akida_gpu_split — 순수 AKIDA 아님, NEVER merged with Lane G/GPU) — HYBRID DECODE HEAD ✅ **1-HOP WALL BROKEN** · 🌱 EMERGENCE axis LIFTS NULL→~0.32
+
+세 연속 순수-on-chip closed-negative(#1686 stateless / #1689 state-carry / #1690 multi-FC depth)가 명명한 마지막 가교 = **OFF-CHIP DECODE HEAD** 를 구현·검증. completeness-bar root-cause 재설계(a_completeness_over_cheap): "single-step 수용"(cheap give-up)이 아닌, recurrence 를 1-bit Hebbian surface 밖으로 옮기는 정공법.
+
+- [x] **아키텍처 HYBRID(on-chip⊕off-chip)** — chip 은 proven 🟢 단일-스텝 transition 인코더로 유지(FC1, 1-bit AkidaUnsupervised nw=8 lc=0.1, enc_whitened·SHIFT=37·frozen-median binarize byte-match state/depth rung, g63 NO sw fallback); recurrence/state 는 **off-chip host-CPU Elman RNN decode head**(D_H=64, `h=tanh(Wxh@c+Whh@h)`, `logits=Wo@h`, numpy 풀-BPTT 60ep lr0.05, NO torch/sklearn/GPU). **chip-to-chip feedback 없음**(3번 붕괴한 그것) — 매 hop 예측 concept 를 칩에서 재인코딩, off-chip RNN 이 hop 간 state 운반.
+- [x] **live AKD1000 발사** — pi5-akida ubuntu@192.168.50.155, BC.00.000.002, akida 2.19.1, N=8 chip trials **encoder_learned=True 8/8**(live silicon), throttled=0x0 완주, streamer stop→run→restore(trap rc=0, R3 pid 19850 복원). corpus_big 250앵커/50 concepts×5 langs(a_scale_honest_scope).
+- [x] **결과 ✅ WALL BROKEN** — **decay HYBRID [0.3160, 0.3202, 0.3207] FLAT(붕괴 없음)** vs 순수 on-chip hop2~3 ~0.03/~0.01. 3 hop 전부 shuffle-NULL hi~0.048 위(p=0.005, chance 0.0204 의 ~16×). **F-HYBRID-1 REFUTED**(hop-2/3 both above-NULL = 1-hop wall 돌파) · **F-HYBRID-2 REFUTED**(hop-2 0.3202 이 best pure-on-chip 0.0298 을 **+0.2904=+29%** 능가, 사전등록 >1% 훌쩍).
+- [x] **🌱 EMERGENCE axis LIFT** — multi-step composition NULL→~0.32 sustained. establish: 1-hop wall 은 on-chip code 정보량 문제 아님(칩 단일-스텝 code 가 off-chip rollout seed 할 만큼 rich) — 순수 붕괴는 MISSING RECURRENCE, off-chip 이전이 옳은 fix.
+- [x] **정직 scope (no over-claim)** — substrate=HYBRID(순수-AKIDA 아님, Lane G 아님). off-chip head CE→0.002 = toy chain fit; ~0.32(≠1.0)는 재인코딩 chip code 위 open-vocab argmax bound(pure lookup 아님)이나 toy 너머 generalization 미증명. a_scale_honest_scope: toy 250앵커, scale-transfer 미검증.
+- [x] **Lane A PUBLIC ✅ flips AS A HYBRID artifact** (honestly scoped) — 순수-AKIDA PUBLIC 아님; 순수 on-chip 단일-스텝 rung 들 UNAFFECTED.
+- [ ] next = held-out successor split(train/test concept disjoint) ≥3-rung ladder 로 composition-generalization ⊥ chain-fitting 분리.
+- 산출물: `AKIDA/onchip_xlm_hybrid_decode.py`(falsifier 사전등록 docstring) · `AKIDA/run_hybrid_with_streamer_restore.sh` · `.verdicts/lane-a-hybrid/F-HYBRID.txt`(verbatim live-chip) + `result_onchip_xlm_hybrid_decode.json`. sha256 ab4748bf…
+
 ## 2026-06-02T11:22Z — Lane-A (substrate=AKIDA · live AKD1000 pi5-akida · a_lane_akida_gpu_split — NEVER merged with Lane G/GPU) — STATE-CARRYING MULTI-STEP ROLLOUT 🔴 CLOSED-NEGATIVE (PARTIAL LIFT · 1-hop wall HOLDS) · 🌱 EMERGENCE axis NULL
 
 PR #1686 stateless rollout 가 hop-1 이후 COLLAPSE([0.4287,0.0277,0.0090])한 root cause(256-unit 1-bit Hebbian FC = no recurrence/no state)를 가교하려, **chip-native CONTEXT-CARRYING CODE** 로 STATE 를 부여한 러그. running 1-bit context vector `ctx` 를 bit-majority(history 2×)로 누적, 각 hop 입력을 `x_{k+1}=bind(g_bin, ctx)` 로 구성(stateless = `neutral_bind(g_bin)`). 인코더/SHIFT=37/codebook/decode/NULL 전부 byte-identical, **입력 구성만** state-carry. live AKD1000(BC.00.000.002, akida 2.19.1, N=8 trials learn_hw 8/8 True, throttled=0x0 완주, K=3).
