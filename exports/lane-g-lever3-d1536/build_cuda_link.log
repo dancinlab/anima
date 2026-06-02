@@ -1,0 +1,30 @@
+=== Building stdlib/flame/clm_prod.hexa -> /root/hexa-lang/clm_prod ===
+  [flat] module_loader → /tmp/.hexa-runtime/hexa_build_expanded.1036157661260924.tmp.hexa
+  [1/2] HEXA_MEM_CAP_MB=4096 ./build/hexat /tmp/.hexa-runtime/hexa_build_expanded.1036157661260924.tmp.hexa build/artifacts/clm_prod.c 2>&1
+    OK: build/artifacts/clm_prod.c
+
+  [cuda] nvcc compiling runtime_cuda.c for sm_90 ...
+  [cuda] CUDA link ENGAGED — runtime built -DHEXA_CUDA, linking /root/hexa-lang/self/cuda/runtime_cuda.90.o + cuBLAS (sm_90)
+  [2/2] clang -O2 -DHEXA_CUDA -I '/usr/local/cuda/include' -D_GNU_SOURCE -Wno-trigraphs -fbracket-depth=4096 -I '/root/hexa-lang/self' build/artifacts/clm_prod.c '/root/.hexa-cache/runtime.30fff157f99641b0f6449c6958d842401e6fe6ac.cuda.o' '/root/hexa-lang/self/cuda/runtime_cuda.90.o' -o '/root/hexa-lang/clm_prod.tmp.1414' -lm -lpthread -L'/usr/local/cuda/lib64' -lcublas -lcudart -ldl -lrt -lstdc++ 2>&1
+    In file included from build/artifacts/clm_prod.c:2:
+/root/hexa-lang/self/runtime.h:422:28: warning: '/*' within block comment [-Wcomment]
+/* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+                       ^
+/root/hexa-lang/self/runtime.h:423:36: warning: '/*' within block comment [-Wcomment]
+ * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+                                   ^
+2 warnings generated.
+/usr/bin/ld: /root/hexa-lang/self/cuda/runtime_cuda.90.o: in function `_hx_cuda_launch_kernel':
+tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xbd1): undefined reference to `cuInit'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xbf8): undefined reference to `cuModuleLoadData'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xc1b): undefined reference to `cuModuleGetFunction'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xcf0): undefined reference to `cuModuleUnload'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xd94): undefined reference to `cuModuleUnload'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xe5e): undefined reference to `cuLaunchKernel'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xe6f): undefined reference to `cuCtxSynchronize'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xeda): undefined reference to `cuModuleUnload'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xf16): undefined reference to `cuModuleUnload'
+/usr/bin/ld: tmpxft_0000058b_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xf59): undefined reference to `cuModuleUnload'
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+error: clang compile failed — binary not produced: /root/hexa-lang/clm_prod.tmp.1414
