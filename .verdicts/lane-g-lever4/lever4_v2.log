@@ -1,0 +1,124 @@
+=== LEVER-4 FRESH-POD DRIVER v2 START 2026-06-02T15:34:38Z ===
+=== v2 fixes: (1) plain forge_dispatch_matmul_batched body (GATE1) (2) emit runtime_bf16.c before nvcc (GATE2) ===
+=== [0] toolchain (cuda toolkit + clang) ===
+NVIDIA H100 80GB HBM3, 9.0
+  nvcc: Build cuda_12.4.r12.4/compiler.34097967_0
+  clang: /usr/bin/clang
+=== [1] clone lever-4 branch ===
+Cloning into '/root/hexa-lang'...
+Updating files:  89% (10281/11443)Updating files:  90% (10299/11443)Updating files:  91% (10414/11443)Updating files:  92% (10528/11443)Updating files:  93% (10642/11443)Updating files:  94% (10757/11443)Updating files:  95% (10871/11443)Updating files:  96% (10986/11443)Updating files:  97% (11100/11443)Updating files:  98% (11215/11443)Updating files:  99% (11329/11443)Updating files: 100% (11443/11443)Updating files: 100% (11443/11443), done.
+0904b97 inbox(F-RFC046 lever-4): util fire HELD (vast SSH outage) + 재현 키트 — host byte-eq GREEN, on-device fire BLOCKED-OUTAGE (#2545)
+=== [2] restore frozen seeds → base runtime.c ===
+[restore_frozen_seeds] restoring 21 bootstrap seeds from 151c52c82502e93d01735c58b43b017d102fee63
+[restore_frozen_seeds] 151c52c82502e93d01735c58b43b017d102fee63 absent (shallow checkout) — fetching on demand
+[restore_frozen_seeds] restored 21 seeds (working tree only; index unchanged)
+-rw-r--r-- 1 root root 691808 Jun  2 15:34 self/runtime.c
+=== [3] splice lever fragments (a + 2-unbatched + 3-batched + 4) after BF16 externs ===
+  spliced 5 fragment-blocks before BF16-externs (line 14343 )
+  runtime.c wrappers present: 9
+  (expect >= 9: im2col,col2im[,im2col_t],adamw,matmul_bt,matmul_atb,matmul_batched(plain),matmul_batched_bt,matmul_batched_atb,adamw_group)
+  plain forge_dispatch_matmul_batched body present: 1
+=== [4] self-host rebuild hexa ===
+STAGE_RC=0
+   78 | static struct termios _term_saved;
+      |                       ^~~~~~~~~~~
+/root/hexa-lang/build/hexa_fresh: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=61e3afedde38b06e3cb65a0354beb64866c69c1d, for GNU/Linux 3.2.0, not stripped
+::endgroup::
+  CUDA link ENGAGED baked: 1
+=== [5] pre-emit runtime_cuda.c (+ runtime_bf16.c sibling TU for GATE2) ===
+[runtime_cuda_emit] wrote self/cuda/runtime_cuda.c
+[runtime_bf16_emit] wrote self/cuda/runtime_bf16.c
+  runtime_bf16.c present: -rw-r--r-- 1 root root 37593 Jun  2 15:37 self/cuda/runtime_bf16.c
+  runtime_cuda.c adamw_group kernel: 1
+  runtime_cuda.c plain batched kernel: 2
+  runtime_cuda.c bt/atb/batched kernels: 8
+=== [GATE1] BUILD clm_prod HEXA_CUDA_LINK=1 ===
+BUILD_RC=1
+GATE1_CUDA_LINK_ENGAGED=1
+/usr/bin/ld: tmpxft_00001309_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xeda): undefined reference to `cuModuleUnload'
+/usr/bin/ld: tmpxft_00001309_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xf16): undefined reference to `cuModuleUnload'
+/usr/bin/ld: tmpxft_00001309_00000000-6_runtime_cuda.cudafe1.cpp:(.text+0xf59): undefined reference to `cuModuleUnload'
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+error: clang compile failed — binary not produced: /root/hexa-lang/clm_prod.tmp.4863
+=== [GATE2] nvcc -x cu runtime_cuda.c sm_90 ===
+GATE2_NVCC_EXIT=0  obj=664048B err=0
+=== [relink -lcuda if clm_prod absent] ===
+  UC=/root/hexa-lang/build/artifacts/clm_prod.c RTCUDA_O=/root/.hexa-cache/runtime.c521b0e9783feb0c2a78b634c1e08459d6d1e14e.cuda.o
+RELINK_RC=0
+/* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+                       ^
+/root/hexa-lang/self/runtime.h:423:36: warning: '/*' within block comment [-Wcomment]
+ * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+                                   ^
+2 warnings generated.
+=== [GATE3] clm_prod ldd + symbols ===
+GATE3_CUDA_LIBS=4
+	libcublas.so.12 => /usr/local/cuda/targets/x86_64-linux/lib/libcublas.so.12 (0x000072435ce00000)
+	libcudart.so.12 => /usr/local/cuda/targets/x86_64-linux/lib/libcudart.so.12 (0x000072435ca00000)
+	libcuda.so.1 => /lib/x86_64-linux-gnu/libcuda.so.1 (0x0000724356c00000)
+	libcublasLt.so.12 => /usr/local/cuda/targets/x86_64-linux/lib/libcublasLt.so.12 (0x0000724338800000)
+  clm_prod links adamw_group sym: 4
+3-GATE-PASS
+=== [byte-eq] g5 verbatim — STOP on any drift ===
+#### clm_gemmfeed_eq (HEXA_NO_CUDA host oracle) ####
+  BT  rc=0 max|Δ|=0.0
+  ATB rc=0 max|Δ|=0.0
+F-RFC046-GEMMFEED-EQ = 1
+PASS — transpose-aware GEMM (bt/atb) == host-transposed forge byte-eq (max|Δ|=0)
+#### clm_batched_gemmfeed_eq (HEXA_NO_CUDA host oracle) ####
+  BT-BATCHED  rc=0 max|Δ|=0.0
+  ATB-BATCHED rc=0 max|Δ|=0.0
+  BT-BATCHED(per-problem) rc=0 max|Δ|=0.0
+F-RFC046-BATCHED-GEMMFEED-EQ = 1
+PASS — batched transpose-aware GEMM-feed (bt/atb, strideA=0 broadcast + per-problem) == host repack reference byte-eq (max|Δ|=0)
+#### clm_conv_devfeed (HEXA_NO_CUDA host oracle) ####
+  im2col dil=1 max|Δ|=0.0
+  im2col dil=2 max|Δ|=0.0
+F-CLM-DEVFEED-IM2COL-EQ = 1
+PASS — device im2col gather == host xcol byte-eq, dil∈{1,2}
+  fwd dil=1 max|Δ| devfeed-vs-forge = 0.0
+  fwd dil=2 max|Δ| devfeed-vs-forge = 0.0
+F-CLM-DEVFEED-FWD-EQ = 1
+PASS — devfeed fwd == forge conv1d byte-eq, dil∈{1,2}
+  bwd dil=1 max|Δ| dW=0.0 dX=5.55112e-17 db=0.0
+  bwd dil=2 max|Δ| dW=0.0 dX=5.55112e-17 db=0.0
+F-CLM-DEVFEED-BWD-EQ = 1
+PASS — devfeed bwd (dW/dX/db) == forge conv1d_bwd byte-eq, dil∈{1,2}
+#### clm_conv_batched (HEXA_NO_CUDA host oracle) ####
+  fwd max|Δ| y0=0.0 y1=0.0
+F-CLM-CONV2-BATCHED-FWD-EQ = 1
+PASS — batched 2-expert fwd == 2× conv1d_via_forge byte-eq
+  bwd e0 max|Δ| dW=0.0 dX=0.0 db=0.0
+  bwd e1 max|Δ| dW=0.0 dX=0.0 db=0.0
+F-CLM-CONV2-BATCHED-BWD-EQ = 1
+PASS — batched 2-expert bwd (dW/dX/db) == 2× conv1d_bwd_via_forge byte-eq
+ALL-PASS — LEVER (b) fused 2-expert conv (fwd+bwd) byte-eq to un-batched forge
+#### clm_fused_step_eq (HEXA_NO_CUDA host oracle) ####
+clm_fused_step_eq — LEVER (4) F-RFC046 ROOT: fused AdamW group byte-eq oracle
+  max|Δ| (grouped vs per-tensor serial, final W+m+v) = 0.0
+F-RFC046-ADAMW-GROUP-EQ = 1
+F-RFC046-FUSED-STEP-EQ = 1
+PASS — fused AdamW group byte-eq to per-tensor serial opt_adamw_step (max|Δ| = 0.0)
+#### clm_fused_step_eq (ON-DEVICE HEXA_CUDA — real builtin) ####
+clm_fused_step_eq — LEVER (4) F-RFC046 ROOT: fused AdamW group byte-eq oracle
+  max|Δ| (grouped vs per-tensor serial, final W+m+v) = 0.0
+F-RFC046-ADAMW-GROUP-EQ = 1
+F-RFC046-FUSED-STEP-EQ = 1
+PASS — fused AdamW group byte-eq to per-tensor serial opt_adamw_step (max|Δ| = 0.0)
+BYTEEQ_OK=1
+BYTEEQ-PASS
+=== [FIRE] util fire — fused driver d~1536/T~512 ===
+FIRE_RC=0
+=== util stats ===
+UTIL n=9153 PEAK=41% MEAN=0.6630% busy_ge20=80 pct_ge20=0.87%
+=== train tail (descent) ===
+  epoch-1 mean CE = 4.05535
+  epoch-3 mean CE = 2.99508
+  config d=1536 E=2 epochs=3 nwin=32
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+=== clm artifact ===
+-rw-r--r-- 1 root root 14379581 Jun  2 15:55 /root/hexa-lang/exports/clm_lever4_d1536_t512.clm
+11ef9300131b1a266dc05e2c5bb9c07d60b7cddf39042704828d71108f88e167  /root/hexa-lang/exports/clm_lever4_d1536_t512.clm
+=== DRIVER-DONE 2026-06-02T15:55:34Z ===

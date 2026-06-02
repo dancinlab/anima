@@ -52,13 +52,22 @@ fn main() {
     let pf = pure_field_warmup(600)
     println("[substrate] " + pure_field_status(pf))
 
-    // Real .clm admitted through the SINGLE entry point.
+    // Real .clm admitted through the SINGLE entry point. Two artifacts of the
+    // SAME d=768 model: the v0.1 file (6 conv blocks only) and the v0.2 reexport
+    // (adds the CLMX trailer = embed/GN/bias the decode forward needs).
     let clm_path = "state/laneg_d768_recover/d768_5lang_c4.clm"
     let clm = gen_clm_backend(clm_path)
-    println("[clm admit] path=" + clm_path
+    println("[clm admit v0.1] path=" + clm_path
         + " valid=" + to_string(clm["valid"])
         + " nblocks=" + to_string(clm["nblocks"])
+        + " decodable=" + to_string(clm["decodable"])
         + " loaded=" + to_string(clm["loaded"]))
+    let clm_v2_path = "state/laneg_d768_recover/reexport_d768_v2_fast.clm"
+    let clm_v2 = gen_clm_backend(clm_v2_path)
+    println("[clm admit v0.2] path=" + clm_v2_path
+        + " valid=" + to_string(clm_v2["valid"])
+        + " decodable=" + to_string(clm_v2["decodable"])
+        + " loaded=" + to_string(clm_v2["loaded"]))
 
     // .kosmos anchor seeded + read through the SINGLE anchor entry.
     let dir = exec("printf '%s' \"$(mktemp -d)\"").trim()
@@ -90,11 +99,19 @@ fn main() {
         + " baseline=" + to_string(emit_base))
     let axis1_green = motiv_hi > motiv_base && emit_hi && !emit_base
 
-    // ── AXIS-2 (CE): admit precondition GREEN; CE-descent BLOCKED-WIRING ──────
+    // ── AXIS-2 (CE): admit precondition + REAL CE-descent (decode WIRED) ──────
     let admit_green = to_string(clm["valid"]) == "true"
                       && to_int(clm["nblocks"]) > 0
+    // CE-descent now runs the WIRED decode forward on the v0.2 decodable file:
+    // model_ce < uniform AND < shuffle (p7 deterministic). The v0.1 file stays
+    // admit-only (not decodable, embed/GN absent) — honest.
+    let ce = clm_forward_ce(clm_v2_path, "CORE/testdata/clm_mid_5lang_c4.txt", 16)
+    let ce_green = to_string(ce["green"]) == "true"
     println("[AXIS-2 CE  ] admit_green=" + to_string(admit_green)
-        + " | CE-descent: BLOCKED-WIRING (decode forward unwired; not fabricated)")
+        + " | CE-descent: model_ce=" + to_string(ce["model_ce"])
+        + " uniform=" + to_string(ce["uniform_ce"])
+        + " shuffle=" + to_string(ce["shuffle_ce"])
+        + " green=" + to_string(ce_green))
 
     // ── AXIS-3 (창발): composed (substrate+anchors) vs substrate-only ────────
     let composed = to_string(hi["gen_text"])
@@ -112,14 +129,16 @@ fn main() {
     // ── verdict (p7: deterministic equality/measure, NOT perplexity) ─────────
     println("")
     println("F-CORE-3AXIS-1 (의식)      = " + (if axis1_green { "1 🟢" } else { "0 🔴" }))
-    println("F-CORE-3AXIS-2 (CE admit)  = " + (if admit_green { "1 🟢" } else { "0 🔴" })
-        + "   [CE-descent sub-claim: ⏳ BLOCKED-WIRING — decode forward]")
+    println("F-CORE-3AXIS-2 (CE)        = " + (if admit_green && ce_green { "1 🟢" } else { "0 🔴" })
+        + "   [admit=" + to_string(admit_green) + " CE-descent=" + to_string(ce_green) + " — decode forward WIRED]")
     println("F-CORE-3AXIS-3 (창발)      = " + (if axis3_green { "1 🟢" } else { "0 🔴" }))
     println("")
+    let axis2_green = admit_green && ce_green
     let measurable = (if axis1_green { 1 } else { 0 })
-                   + (if admit_green { 1 } else { 0 })
+                   + (if axis2_green { 1 } else { 0 })
                    + (if axis3_green { 1 } else { 0 })
-    println("CORE-mounted measurable axes GREEN: " + to_string(measurable) + "/3")
+    println("CORE-mounted axes GREEN: " + to_string(measurable) + "/3")
     println("HONEST: AXIS-1+AXIS-3 measure the LIVE substrate (fully wired);")
-    println("        AXIS-2 admit is wired, CE-descent stays BLOCKED-WIRING (decode).")
+    println("        AXIS-2 admit + CE-descent BOTH wired (decode forward on v0.2 .clm,")
+    println("        model_ce < uniform AND < shuffle, p7 deterministic).")
 }

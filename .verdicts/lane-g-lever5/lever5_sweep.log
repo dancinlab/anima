@@ -1,0 +1,65 @@
+=== LEVER-5 SWEEP START 2026-06-02T16:17:42Z ===
+clm_prod=1210464B  corpus=/root/hexa-lang/stdlib/flame/testdata/clm_mid_5lang_c4.txt
+NVIDIA H100 80GB HBM3, 9.0
+
+############ CONFIG apples : d=1536 T=512 E=2 nsamp=32 epochs=3 ############
+FIRE_RC=0  tag=apples  wall=1096s
+UTIL[apples] n=9149 PEAK=38% MEAN=0.6619% busy_ge20=81 pct_ge20=0.89% pct_ge50=0.00%
+DEVMEM[apples] peak_used=20447MiB min=0MiB
+--- descent[apples] ---
+  epoch-1 mean CE = 4.05535
+  epoch-3 mean CE = 2.99508
+  CLM_PROD_OUT wrote /root/hexa-lang/exports/clm_lever5_apples.clm  (14379581 bytes, 6 blocks, CLM\x01)
+  config d=1536 E=2 epochs=3 nwin=32
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+--- ckpt[apples] ---
+-rw-r--r-- 1 root root 14379581 Jun  2 16:35 /root/hexa-lang/exports/clm_lever5_apples.clm
+11ef9300131b1a266dc05e2c5bb9c07d60b7cddf39042704828d71108f88e167  /root/hexa-lang/exports/clm_lever5_apples.clm
+
+############ CONFIG d3072 : d=3072 T=512 E=2 nsamp=12 epochs=3 ############
+FIRE_RC=0  tag=d3072  wall=1370s
+UTIL[d3072] n=11441 PEAK=78% MEAN=0.7152% busy_ge20=125 pct_ge20=1.09% pct_ge50=0.39%
+DEVMEM[d3072] peak_used=26405MiB min=0MiB
+--- descent[d3072] ---
+  epoch-1 mean CE = 4.48673
+  epoch-3 mean CE = 3.96246
+  CLM_PROD_OUT wrote /root/hexa-lang/exports/clm_lever5_d3072.clm  (57069629 bytes, 6 blocks, CLM\x01)
+  config d=3072 E=2 epochs=3 nwin=12
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+--- ckpt[d3072] ---
+-rw-r--r-- 1 root root 57069629 Jun  2 16:58 /root/hexa-lang/exports/clm_lever5_d3072.clm
+4579968bce9326d574d934343469b219d7f3ed7ab3388a1b5b805acf8412e4fa  /root/hexa-lang/exports/clm_lever5_d3072.clm
+
+############ CONFIG t1024 : d=1536 T=1024 E=2 nsamp=16 epochs=3 ############
+FIRE_RC=0  tag=t1024  wall=707s
+UTIL[t1024] n=5892 PEAK=38% MEAN=0.5883% busy_ge20=35 pct_ge20=0.59% pct_ge50=0.00%
+DEVMEM[t1024] peak_used=15097MiB min=0MiB
+--- descent[t1024] ---
+  epoch-1 mean CE = 4.20807
+  epoch-3 mean CE = 3.36669
+  CLM_PROD_OUT wrote /root/hexa-lang/exports/clm_lever5_t1024.clm  (14379581 bytes, 6 blocks, CLM\x01)
+  config d=1536 E=2 epochs=3 nwin=16
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+--- ckpt[t1024] ---
+-rw-r--r-- 1 root root 14379581 Jun  2 17:10 /root/hexa-lang/exports/clm_lever5_t1024.clm
+97e379efd659e11ae189cc449e0169756860fc06be091767983a717be42f4755  /root/hexa-lang/exports/clm_lever5_t1024.clm
+
+############ CONFIG big : d=3072 T=1024 E=2 nsamp=8 epochs=3 ############
+FIRE_RC=0  tag=big  wall=1069s
+UTIL[big] n=8931 PEAK=75% MEAN=0.6838% busy_ge20=87 pct_ge20=0.97% pct_ge50=0.32%
+DEVMEM[big] peak_used=23215MiB min=0MiB
+--- descent[big] ---
+  epoch-1 mean CE = 4.60325
+  epoch-3 mean CE = 4.22859
+  CLM_PROD_OUT wrote /root/hexa-lang/exports/clm_lever5_big.clm  (57069629 bytes, 6 blocks, CLM\x01)
+  config d=3072 E=2 epochs=3 nwin=8
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+--- ckpt[big] ---
+-rw-r--r-- 1 root root 57069629 Jun  2 17:28 /root/hexa-lang/exports/clm_lever5_big.clm
+d6cd48c553bfc1e90dfcf8d278df65d5762ece5c5e827c887bdf77a3aec5803e  /root/hexa-lang/exports/clm_lever5_big.clm
+
+=== LEVER-5 SWEEP DONE 2026-06-02T17:28:28Z ===
