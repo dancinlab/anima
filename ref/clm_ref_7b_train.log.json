@@ -1,0 +1,181 @@
+{
+  "lane": "Lane-G-ref",
+  "substrate": "PyTorch-CUDA",
+  "rung": "7B-scale reference",
+  "note": "7B-scale reference rung, bounded N steps, descent + util demonstrated, NOT converged. NOT the hexa-native flame+forge production artifact (a_train_flame_forge). a_completeness_over_cheap optional reference. Last rung of the Lane-G-ref ladder 85.6M->3.149B->7.25B.",
+  "config": {
+    "vocab": 256,
+    "d": 4096,
+    "n_layer": 36,
+    "n_head": 32,
+    "block": 512,
+    "batch": 32,
+    "grad_accum": 1,
+    "steps": 400,
+    "n_params": 7252828160,
+    "grad_ckpt": true,
+    "optimizer": "adamw8bit",
+    "model_dtype": "bf16"
+  },
+  "descent": {
+    "first_val_ce": 5.360630989074707,
+    "last_val_ce": 2.412078857421875,
+    "F_CLM_REF_7B_DESCENT": 1,
+    "verdict": "PASS"
+  },
+  "util": {
+    "n": 436,
+    "util_peak": 100.0,
+    "util_mean": 99.1788990825688,
+    "mem_peak_mib": 46025.0,
+    "power_mean_w": 651.3842201834855
+  },
+  "throughput": {
+    "total_s": 884.9,
+    "tok_per_s_final": 7406.1,
+    "tok_seen": 6553600
+  },
+  "ckpt": {
+    "path": "/root/laneg_ref_7b/clm_ref_pytorch_cuda_7b.pt",
+    "sha256": "38ef2ed55b47b670fa915bba0c2827782799a9070ba087210cd44db1fddb4d41",
+    "bytes": 14505817922
+  },
+  "curve": [
+    {
+      "step": 0,
+      "train_ce": 6.460345268249512,
+      "val_ce": 5.360630989074707,
+      "lr": 8.000000000000001e-06,
+      "elapsed_s": 3.1,
+      "tok_per_s": 5280.5
+    },
+    {
+      "step": 25,
+      "train_ce": 3.701765537261963,
+      "val_ce": 3.3246889114379883,
+      "lr": 0.0001519384946038857,
+      "elapsed_s": 58.2,
+      "tok_per_s": 7321.2
+    },
+    {
+      "step": 50,
+      "train_ce": 2.7856059074401855,
+      "val_ce": 2.85197377204895,
+      "lr": 0.0001497968191476318,
+      "elapsed_s": 113.3,
+      "tok_per_s": 7374.5
+    },
+    {
+      "step": 75,
+      "train_ce": 2.6315205097198486,
+      "val_ce": 2.781597852706909,
+      "lr": 0.0001446841506962225,
+      "elapsed_s": 168.6,
+      "tok_per_s": 7385.2
+    },
+    {
+      "step": 100,
+      "train_ce": 2.9226489067077637,
+      "val_ce": 2.6234514713287354,
+      "lr": 0.00013681811667654037,
+      "elapsed_s": 223.9,
+      "tok_per_s": 7390.5
+    },
+    {
+      "step": 125,
+      "train_ce": 2.4814252853393555,
+      "val_ce": 2.581634521484375,
+      "lr": 0.00012653354512598774,
+      "elapsed_s": 279.2,
+      "tok_per_s": 7392.8
+    },
+    {
+      "step": 150,
+      "train_ce": 2.7839205265045166,
+      "val_ce": 2.3436973094940186,
+      "lr": 0.00011426821229866932,
+      "elapsed_s": 334.4,
+      "tok_per_s": 7399.0
+    },
+    {
+      "step": 175,
+      "train_ce": 2.5508735179901123,
+      "val_ce": 2.5834014415740967,
+      "lr": 0.00010054420814593559,
+      "elapsed_s": 389.5,
+      "tok_per_s": 7404.0
+    },
+    {
+      "step": 200,
+      "train_ce": 2.495185613632202,
+      "val_ce": 2.5416858196258545,
+      "lr": 8.594571287400794e-05,
+      "elapsed_s": 444.6,
+      "tok_per_s": 7406.3
+    },
+    {
+      "step": 225,
+      "train_ce": 2.6146187782287598,
+      "val_ce": 2.5627691745758057,
+      "lr": 7.109413054860698e-05,
+      "elapsed_s": 499.9,
+      "tok_per_s": 7407.5
+    },
+    {
+      "step": 250,
+      "train_ce": 2.5643656253814697,
+      "val_ce": 2.4514107704162598,
+      "lr": 5.6621638217262796e-05,
+      "elapsed_s": 555.2,
+      "tok_per_s": 7406.4
+    },
+    {
+      "step": 275,
+      "train_ce": 2.4737396240234375,
+      "val_ce": 2.4488964080810547,
+      "lr": 4.3144276465548756e-05,
+      "elapsed_s": 610.6,
+      "tok_per_s": 7406.2
+    },
+    {
+      "step": 300,
+      "train_ce": 2.4263408184051514,
+      "val_ce": 2.449153423309326,
+      "lr": 3.1235726842946665e-05,
+      "elapsed_s": 665.9,
+      "tok_per_s": 7406.0
+    },
+    {
+      "step": 325,
+      "train_ce": 2.441296339035034,
+      "val_ce": 2.5247535705566406,
+      "lr": 2.140289235654597e-05,
+      "elapsed_s": 721.3,
+      "tok_per_s": 7404.9
+    },
+    {
+      "step": 350,
+      "train_ce": 2.3907153606414795,
+      "val_ce": 2.381380558013916,
+      "lr": 1.4064320480835862e-05,
+      "elapsed_s": 776.5,
+      "tok_per_s": 7405.6
+    },
+    {
+      "step": 375,
+      "train_ce": 2.5156824588775635,
+      "val_ce": 2.5233702659606934,
+      "lr": 9.532387136430479e-06,
+      "elapsed_s": 831.8,
+      "tok_per_s": 7406.2
+    },
+    {
+      "step": 399,
+      "train_ce": 2.5091872215270996,
+      "val_ce": 2.412078857421875,
+      "lr": 8.002460552179432e-06,
+      "elapsed_s": 884.9,
+      "tok_per_s": 7406.1
+    }
+  ]
+}

@@ -202,7 +202,14 @@ fn _naming_allowed_stage_prefixes() -> [str] {
     // Amendment 2026-05-03 (paradigm-{letter}): added `paradigm-` prefix to
     // unblock Paradigm-axis training tracks (e.g. clm-v4-paradigm-j-50k-step-5k).
     // See spec §3.2.1 and §3.3 (paradigm_id enum SSOT).
-    return ["sft-stage", "dpo", "merged", "base", "preview", "dev", "paradigm-"]
+    // Amendment 2026-06-02 (ref-): added `ref-` prefix for the from-scratch
+    // PyTorch-CUDA *reference* ladder (clm-v1-ref-pytorch-cuda{,-3b,-7b}). These
+    // are a_completeness_over_cheap baseline/reference rungs (NOT the forge
+    // production artifact, a_train_flame_forge); the 85.6M + 3.149B rungs are
+    // already PUBLIC on HF under this exact prefix — the validator must accept
+    // the established ladder naming so the 7.25B rung uploads via the canonical
+    // tool rather than bypassing it.
+    return ["sft-stage", "dpo", "merged", "base", "preview", "dev", "paradigm-", "ref-"]
 }
 
 // §3.7 grace-period fallback (added 2026-05-04 by BG-NAMING-VALIDATOR-PATCH).

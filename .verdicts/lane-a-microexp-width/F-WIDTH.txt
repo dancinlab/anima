@@ -1,0 +1,56 @@
+F-WIDTH — μ1 ENSEMBLE of K independent 1-bit Hebbian FCs (width)  ::  VERDICT = F-WIDTH-1 NOT-REFUTED (CLOSED-NEGATIVE) · F-WIDTH-2 REFUTED
+=================================================================================================================================
+substrate = AKIDA (Lane A) · a_lane_akida_gpu_split — NEVER merged with Lane G / GPU
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · IpVersion.v1 · akida 2.19.1 · N=8 chip trials
+host health: temp 65-67.5C (≪82C guard) · throttled=0xe0000 (past-occurred bits only, NOT actively throttling) · streamer stopped→fire→restore
+toy scale (a_scale_honest_scope): corpus_big 250 anchors / 50 sequential FLORES concepts × 5 langs · 256-unit 1-bit AkidaUnsupervised FC
+NOTE: hexa verify CLI broken on host — this verdict is the VERBATIM live-chip run stdout (no fabrication, no sw fallback labelled on-chip, g63).
+
+DESIGN: K independent 1-bit Hebbian FCs (each a distinct column-permutation random projection of the same 256-d transition
+  code), each trained on-chip SEQUENTIALLY (paged through the SINGLE /dev/akida0 lock), plurality-VOTED hop-1 open-vocab
+  generation acc (= held-out next-concept retrieval, the same metric as the single-FC headline). K ∈ {3,5,7}.
+  byte-identical primitives (enc_whitened, SHIFT=37, bind, AkidaUnsupervised(8,0.1), successor-centroid codebook,
+  frozen-median binarize, shuffle-NULL B=200, bootstrap CI).
+  references: single-FC headline = 0.4234 ; paged-depth-2 hop-1 = 0.1612.
+
+PRE-REGISTERED FALSIFIERS (declared in the script docstring BEFORE the fire):
+  F-WIDTH-1 REFUTED iff best-K ensemble gen_acc ci_lo > single-FC headline 0.4234 by ≥ +0.05 (ci_lo > 0.4734).
+  F-WIDTH-2 REFUTED iff best-K ensemble gen_acc > paged-depth-2 hop-1 0.1612.
+
+VERBATIM PER-TRIAL (8 chip trials · gen_acc per K · learn=True every trial):
+  trial 0: K3=0.4286 K5=0.4653 K7=0.4816 learn=True
+  trial 1: K3=0.4408 K5=0.4571 K7=0.4571 learn=True
+  trial 2: K3=0.4204 K5=0.4449 K7=0.4327 learn=True
+  trial 3: K3=0.4408 K5=0.4408 K7=0.4367 learn=True
+  trial 4: K3=0.4571 K5=0.4653 K7=0.4571 learn=True
+  trial 5: K3=0.4408 K5=0.4612 K7=0.4776 learn=True
+  trial 6: K3=0.4408 K5=0.4571 K7=0.4612 learn=True
+  trial 7: K3=0.4204 K5=0.4408 K7=0.4653 learn=True
+
+VERBATIM PER-K (gen_acc · ci_lo · ci_hi · shuffle-NULL hi · p · chance=0.0204):
+  K=3 gen_acc=0.4362 ci_lo=0.4276 ci_hi=0.4448 | shufNULL hi=0.0463 p=0.0050 | vs headline 0.4234(+.05=False) | vs paged2 0.1612(True)
+  K=5 gen_acc=0.4541 ci_lo=0.4469 ci_hi=0.4613 | shufNULL hi=0.0465 p=0.0050 | vs headline 0.4234(+.05=False) | vs paged2 0.1612(True)
+  K=7 gen_acc=0.4587 ci_lo=0.4467 ci_hi=0.4707 | shufNULL hi=0.0455 p=0.0050 | vs headline 0.4234(+.05=False) | vs paged2 0.1612(True)
+
+VERBATIM DISPOSITION:
+  learn_all_hw   : True
+  chance         : 0.0204
+  gen_acc by K   : [0.4362, 0.4541, 0.4587]  K=[3,5,7]  best_K=7
+  F-WIDTH-1      : NOT-REFUTED — K-ensemble gen_acc ci_lo (best K=7 = 0.4467) does NOT exceed headline 0.4234 by +0.05
+                   (bar = ci_lo > 0.4734) → voting independent random-projection FCs does NOT add generation accuracy
+                   beyond a single FC (CLOSED-NEGATIVE, a_paper_negative_ok).
+  F-WIDTH-2      : REFUTED — best-K ensemble gen_acc 0.4587 > paged-depth-2 hop-1 0.1612 → the ensemble at least
+                   matches the simple single-step regime (a width ensemble does not collapse to the depth-2 wall).
+
+VERDICT: F-WIDTH-1 NOT-REFUTED (CLOSED-NEGATIVE) · F-WIDTH-2 REFUTED (a_paper_negative_ok).
+  A K-ensemble of independent 1-bit Hebbian FCs lifts hop-1 generation only MARGINALLY (0.4234 single → 0.4587 at K=7,
+  +0.035 best) and the ci_lo (0.4467) does NOT clear the pre-registered +0.05 bar (0.4734). All K clear the shuffle-NULL
+  decisively (p=0.005), confirming the ensemble does real single-step retrieval (F-WIDTH-2 REFUTED, ≫ paged-depth-2 0.1612).
+  But width DOES NOT MATERIALLY LIFT single-step generation: independent random-projection voting saturates near the
+  single-FC headline. The lift trend with K (0.4362→0.4541→0.4587) is real but sub-threshold — consistent with μ3's
+  finding that the chip's learnable surface is information-limited per-FC and parallel copies add diminishing redundancy,
+  not new structure. CODE/WIDTH axis = sub-threshold (not green); single-step retrieval axis UNAFFECTED.
+  Lane A on-chip (a_lane_akida_gpu_split), toy 250-anchor scale (a_scale_honest_scope) — scale-transfer UNVERIFIED.
+
+artifacts: AKIDA/microexp_width_chip.py · /home/ubuntu/clm_kosmos_akida/microexp_width.log (verbatim chip stdout) ·
+           /home/ubuntu/clm_kosmos_akida/out/result_microexp_width.json

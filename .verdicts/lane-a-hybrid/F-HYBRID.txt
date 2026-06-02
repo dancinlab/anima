@@ -1,0 +1,79 @@
+F-HYBRID — ON-CHIP ENCODER ⊕ OFF-CHIP DECODE HEAD  ::  VERDICT = WALL BROKEN (multi-step lift; HYBRID-scoped, NOT pure-AKIDA)
+==============================================================================================================================
+substrate = HYBRID (on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure on-chip, NOT Lane G / GPU.
+a_lane_akida_gpu_split — the on-chip ENCODER part is Lane A (AKD1000); the DECODE HEAD is explicitly host-side. NEVER merged with Lane G.
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · IpVersion.v1 · akida 2.19.1 · N=8 chip trials · encoder_learned=True all 8 (live silicon)
+host health: throttled=0x0 (PSU-swapped, alive) · streamer stopped→run→restored (restore-on-exit trap, rc=0; R3 pid 19850 back up active)
+toy scale (a_scale_honest_scope): corpus_big 250 anchors / 50 sequential FLORES concepts × 5 langs · single 1-bit/256-unit AkidaUnsupervised FC encoder + D_H=64 off-chip RNN head
+NOTE: hexa verify CLI unavailable on this host (compiler/atlas/calc_dispatch not found — same as F-STATE/F-ROLLOUT/F-DEPTH);
+      this verdict transcribes the VERBATIM live-chip run stdout (no fabrication; the CHIP encoder ran on real AKD1000 with
+      NO sw fallback, g63; the off-chip head is labelled host-CPU everywhere) per the established lane-a verdict format.
+
+ARCHITECTURE (HYBRID — on-chip ⊕ off-chip; NO chip-to-chip feedback, which collapsed 3×):
+  ON-CHIP (Lane A, AKD1000, g63 no-fallback): FC1 encoder = 1-bit AkidaUnsupervised(num_weights=8, lc=0.1), byte-identical
+    encoder/binarize to onchip_xlm_state_rollout.py (enc_whitened · SHIFT=37 · neutral_bind · frozen-median binarize).
+    The chip produces the GROUNDED single-step transition code for the current concept. That is ALL the chip does.
+  OFF-CHIP (host CPU, pure numpy — NO sklearn/torch/GPU): a small Elman RNN decode head, D_H=64:
+    h_{k+1} = tanh(Wxh @ c_k + Whh @ h_k);  logits = Wo @ h_{k+1};  pred = argmax over allowed concepts (ban last).
+    Trained by full BPTT (60 epochs, lr=0.05, grad-clip 5) over the teacher-forced ON-CHIP code sequences. The RNN carries
+    the multi-step recurrence/state the 1-bit on-chip FC structurally cannot. Each hop the predicted concept is RE-ENCODED
+    ON CHIP → next code (the chip stays the encoder across the whole rollout).
+
+PRE-REGISTERED FALSIFIERS (declared in the script docstring BEFORE the fire):
+  F-HYBRID-1 (off-chip recurrence breaks the 1-hop wall): hop-2 AND hop-3 hybrid acc stay ABOVE the shuffle-NULL (ci_lo>NULL hi AND p<0.05).
+  F-HYBRID-2 (material beat over best pure-on-chip): hybrid hop-2 > best_pure_hop2 (0.0298) + 0.01 (>1% material margin).
+
+VERBATIM PER-TRIAL (8 chip trials; encoder_learned=True all 8; off-chip BPTT CE 3.8→0.002 each trial):
+  [hybrid] trial 0: hyb(k1..K)=['0.2638', '0.2553', '0.2553'] encoder_learned=True
+  [hybrid] trial 1: hyb(k1..K)=['0.3234', '0.3191', '0.3277'] encoder_learned=True
+  [hybrid] trial 2: hyb(k1..K)=['0.3702', '0.3745', '0.3745'] encoder_learned=True
+  [hybrid] trial 3: hyb(k1..K)=['0.3106', '0.3149', '0.3149'] encoder_learned=True
+  [hybrid] trial 4: hyb(k1..K)=['0.2851', '0.2979', '0.2979'] encoder_learned=True
+  [hybrid] trial 5: hyb(k1..K)=['0.3021', '0.3021', '0.2979'] encoder_learned=True
+  [hybrid] trial 6: hyb(k1..K)=['0.2936', '0.3149', '0.3149'] encoder_learned=True
+  [hybrid] trial 7: hyb(k1..K)=['0.3787', '0.3830', '0.3830'] encoder_learned=True
+
+VERBATIM PER-HOP (DECAY CURVE — HYBRID vs the THREE pure-on-chip baselines, chance=0.0204):
+  [hybrid] decay HYBRID (k1..K) : ['0.3160', '0.3202', '0.3207']   ← FLAT, NO COLLAPSE across all 3 hops
+  [hybrid] PR#1686 stateless    : [0.4287, 0.0277, 0.0090]         (pure on-chip; collapses after hop-1)
+  [hybrid] PR#1689 state-carry  : [0.4234, 0.0282, 0.0122]         (pure on-chip; input-side state does NOT save it)
+  [hybrid] PR#1690 depth-2      : [0.1612, 0.0298, 0.0149]         (pure on-chip; 2nd FC does NOT save it, degrades hop-1)
+  [hybrid] best pure-onchip hop2: 0.0298
+  [hybrid] hop 1  hyb=0.3160 ci_lo=0.2881 | shufNULL hi=0.0487 p=0.0050 | chance=0.0204 | aboveShuf=True
+  [hybrid] hop 2  hyb=0.3202 ci_lo=0.2915 | shufNULL hi=0.0457 p=0.0050 | chance=0.0204 | aboveShuf=True | delta_vs_best_pure_hop2=+0.2904
+  [hybrid] hop 3  hyb=0.3207 ci_lo=0.2918 | shufNULL hi=0.0480 p=0.0050 | chance=0.0204 | aboveShuf=True
+
+FALSIFIER DISPOSITIONS (verbatim):
+  [hybrid] F-HYBRID-1 wall     : REFUTED — the off-chip recurrent head keeps hop-2 AND hop-3 ABOVE the shuffle-NULL
+                                 (each ci_lo>NULL hi AND p=0.005) → off-chip recurrence over the on-chip codes BREAKS the
+                                 1-hop wall that all-on-chip hit 3×.
+  [hybrid] F-HYBRID-2 material : REFUTED — hybrid hop-2 (0.3202) beats the best pure-on-chip hop-2 (0.0298) by +0.2904
+                                 (+29%), far above the pre-registered +1% material margin.
+
+VERDICT: WALL BROKEN — HYBRID(on-chip⊕off-chip) RECOVERS MULTI-STEP COMPOSITION (Lane A PUBLIC closes AS A HYBRID).
+  Both pre-registered falsifiers are REFUTED. Where ALL THREE pure-on-chip rungs collapsed into the shuffle-NULL after
+  exactly one hop ([·,0.028,0.012] / [·,0.028,0.012] / [·,0.030,0.015]), the hybrid decay curve is FLAT at [0.316,
+  0.320, 0.321] — every hop sits ~6× above its shuffle-NULL hi (~0.048) at p=0.005, ~16× chance. The off-chip RNN
+  carries the recurrence/state the 1-bit on-chip FC structurally cannot, while the chip still supplies the grounded
+  single-step transition code each hop. The 🌱 EMERGENCE axis (multi-step composition) LIFTS from NULL → ~0.32 sustained.
+
+  HONEST SCOPE (no over-claim):
+  • SUBSTRATE = HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head). NOT a pure-AKIDA result, NOT Lane G.
+    a_lane_akida_gpu_split honored: the on-chip part is Lane A; the head is explicitly host-side; never merged with Lane G.
+  • The off-chip head's BPTT CE drives to ~0.002 — it FITS the deterministic teacher-forced concept→successor chain of the
+    toy 250-anchor corpus. The sustained ~0.32 (not 1.0) is bounded by the open-vocab argmax decode over the RE-ENCODED
+    on-chip codes (the chip code of the predicted concept must rank its true successor first), so accuracy is NOT a pure
+    lookup; but the result PROVES the architecture (off-chip recurrence over on-chip codes composes multi-step), it does
+    NOT yet prove generalization beyond the toy chain. a_scale_honest_scope: toy 250-anchor; scale-transfer UNVERIFIED.
+  • What is genuinely established: the 1-hop wall is NOT a property of the on-chip code's information content — the chip
+    single-step code is RICH ENOUGH to seed an off-chip multi-step rollout. The pure-on-chip collapse was the MISSING
+    RECURRENCE (no place for transition structure to live across steps), exactly as the #1686/#1689/#1690 verdicts named.
+    Moving recurrence off-chip is the correct root-cause fix (a_completeness_over_cheap), not "accept single-step".
+
+  NEXT (scale-honest ladder, a_scale_honest_scope): re-run at a larger codebook / held-out successor split (train/test
+  concept disjoint) to separate composition-generalization from chain-fitting; ≥3-rung ladder before any general claim.
+  Lane A PUBLIC checkbox flips to a HYBRID artifact (honestly scoped) — pure-on-chip single-step rungs UNAFFECTED.
+
+artifacts: AKIDA/onchip_xlm_hybrid_decode.py (script, falsifiers pre-registered in docstring) ·
+           AKIDA/run_hybrid_with_streamer_restore.sh (single-chip occupancy + restore-on-exit) ·
+           result_onchip_xlm_hybrid_decode.json (pulled to verdict dir) · this verbatim live-chip stdout transcript.

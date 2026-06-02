@@ -1,0 +1,25 @@
+=== F-CLM-CORE-CE-DESCENT (AXIS-2) — v0.1 LEGACY BASELINE (conv-only, pre-fix) ===
+(env CLM_CE_PROBE_CKPT=.../state/laneg_d768_recover/d768_5lang_c4.clm)
+verbatim hexa run stdout — same CORE engine + same in-distribution real-text as
+the v0.2 GREEN run, so v0.1-vs-v0.2 is a clean controlled comparison:
+
+ckpt               = /Users/mini/dancinlab/anima/state/laneg_d768_recover/d768_5lang_c4.clm
+ckpt_nblocks       = 6
+ckpt_has_ext(v0.2) = false
+model_d            = 768
+model_E            = 2
+ce_positions       = 23
+CE_realtext        = 9.05859
+CE_shuffled_ctrl   = 9.51535
+CE_uniform_baseline= 5.54518
+CE_realtext_rerun  = 9.05859
+DET_rerun_byte_eq  = 1
+CE_MEASURABLE_CORE = 1
+CE_BELOW_UNIFORM   = 0
+CE_BEATS_SHUFFLE   = 1
+VERDICT = MEASURABLE-NO-DESCENT(v0.1) — decode forward WIRED + CE MEASURABLE CORE-mounted (det re-run byte-eq), but CE >= uniform baseline => descent NOT demonstrated through the engine (NULL kept honest). Cause: inference-track .clm omits trained embed+GN affine (format gap), so the trainer's GPU-measured 4.88 descent is not reconstructible CORE-side from the 6 conv blocks alone.
+
+CONTROLLED COMPARISON (same engine, same real-text "The mind is a fire to be"):
+  v0.1 conv-only (has_ext=false):  CE_realtext = 9.0586  >= uniform 5.545  → NO descent
+  v0.2 embed+GN  (has_ext=true) :  CE_realtext = 2.0783  <  uniform 5.545  → DESCENT 🟢
+  → the serialized embed+GN (the named root cause) is the decisive variable.

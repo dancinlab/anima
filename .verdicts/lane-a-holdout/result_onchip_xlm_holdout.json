@@ -1,0 +1,334 @@
+{
+  "substrate": "HYBRID(on-chip AKD1000 encoder \u2295 off-chip host-CPU decode head)",
+  "rung": "HELD-OUT GENERALIZATION (concept-level disjoint train/test successor split)",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T12:08:56Z",
+  "n_trials": 8,
+  "units": 256,
+  "off_chip_hidden": 64,
+  "off_chip_epochs": 60,
+  "K_roll": 3,
+  "split": {
+    "NC": 50,
+    "N_TRAIN": 35,
+    "N_TEST": 15,
+    "train_idx": [
+      0,
+      34
+    ],
+    "test_idx": [
+      35,
+      49
+    ],
+    "gen_factor": 2.0
+  },
+  "architecture": "on-chip FC1 encoder (1-bit AkidaUnsupervised, byte-match hybrid rung) produces the grounded single-step transition code; OFF-CHIP host-CPU Elman RNN decode head trained by BPTT on TRAIN-CONCEPTS-ONLY transitions (never a TEST concept as a successor target); rollout decoded over the FULL codebook. NO chip-to-chip feedback. NO GPU/torch/sklearn.",
+  "encoder": "whitened (byte-match onchip_xlm_state_rollout.enc_whitened) ON CHIP",
+  "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs",
+  "prior_hybrid_PR1692_decay": [
+    0.316,
+    0.3202,
+    0.3207
+  ],
+  "task": "HYBRID autoregressive K-hop generation on a CONCEPT-LEVEL HELD-OUT split: TRAIN-set decay (A) vs HELD-OUT decay (B), reported side by side; open-vocab full-codebook argmax; per-hop shuffle-NULL",
+  "metric": "acc[k]=P(off-chip-head argmax decode at hop k == concept[ti+k]) over the relevant start set",
+  "trials": [
+    {
+      "trial": 0,
+      "learned_hw_encoder": true,
+      "train_acc": [
+        0.26875,
+        0.275,
+        0.275
+      ],
+      "heldout_acc": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_train": [
+        160,
+        160,
+        160
+      ],
+      "n_held": [
+        65,
+        65,
+        65
+      ]
+    },
+    {
+      "trial": 1,
+      "learned_hw_encoder": true,
+      "train_acc": [
+        0.2875,
+        0.2875,
+        0.2875
+      ],
+      "heldout_acc": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_train": [
+        160,
+        160,
+        160
+      ],
+      "n_held": [
+        65,
+        65,
+        65
+      ]
+    },
+    {
+      "trial": 2,
+      "learned_hw_encoder": true,
+      "train_acc": [
+        0.28125,
+        0.28125,
+        0.28125
+      ],
+      "heldout_acc": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_train": [
+        160,
+        160,
+        160
+      ],
+      "n_held": [
+        65,
+        65,
+        65
+      ]
+    },
+    {
+      "trial": 3,
+      "learned_hw_encoder": true,
+      "train_acc": [
+        0.25625,
+        0.2625,
+        0.2625
+      ],
+      "heldout_acc": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_train": [
+        160,
+        160,
+        160
+      ],
+      "n_held": [
+        65,
+        65,
+        65
+      ]
+    },
+    {
+      "trial": 4,
+      "learned_hw_encoder": true,
+      "train_acc": [
+        0.28125,
+        0.26875,
+        0.26875
+      ],
+      "heldout_acc": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_train": [
+        160,
+        160,
+        160
+      ],
+      "n_held": [
+        65,
+        65,
+        65
+      ]
+    },
+    {
+      "trial": 5,
+      "learned_hw_encoder": true,
+      "train_acc": [
+        0.29375,
+        0.29375,
+        0.29375
+      ],
+      "heldout_acc": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_train": [
+        160,
+        160,
+        160
+      ],
+      "n_held": [
+        65,
+        65,
+        65
+      ]
+    },
+    {
+      "trial": 6,
+      "learned_hw_encoder": true,
+      "train_acc": [
+        0.2625,
+        0.29375,
+        0.2875
+      ],
+      "heldout_acc": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_train": [
+        160,
+        160,
+        160
+      ],
+      "n_held": [
+        65,
+        65,
+        65
+      ]
+    },
+    {
+      "trial": 7,
+      "learned_hw_encoder": true,
+      "train_acc": [
+        0.26875,
+        0.25625,
+        0.25625
+      ],
+      "heldout_acc": [
+        0.0,
+        0.0,
+        0.0
+      ],
+      "n_train": [
+        160,
+        160,
+        160
+      ],
+      "n_held": [
+        65,
+        65,
+        65
+      ]
+    }
+  ],
+  "summary": {
+    "learn_all_hw_encoder": true,
+    "chance": 0.02040816326530612,
+    "K_roll": 3,
+    "decay_curve_TRAIN_in_dist": [
+      0.275,
+      0.2773,
+      0.2766
+    ],
+    "decay_curve_HELD_OUT": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "heldout_over_train_ratio_per_hop": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "per_hop": [
+      {
+        "hop": 1,
+        "train_acc": {
+          "mean": 0.275,
+          "sd": 0.012938729237669144,
+          "ci_lo": 0.2660339180797854,
+          "ci_hi": 0.28396608192021466
+        },
+        "heldout_acc": {
+          "mean": 0.0,
+          "sd": 0.0,
+          "ci_lo": 0.0,
+          "ci_hi": 0.0
+        },
+        "heldout_over_train_ratio": 0.0,
+        "shuffle_null": {
+          "mean": 0.021,
+          "sd": 0.03157324535877184,
+          "hi": 0.08288356090319281,
+          "p_value": 1.0,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "heldout_above_shuffle_null": false
+      },
+      {
+        "hop": 2,
+        "train_acc": {
+          "mean": 0.27734375,
+          "sd": 0.014149039278339718,
+          "ci_lo": 0.26753896601143096,
+          "ci_hi": 0.28714853398856904
+        },
+        "heldout_acc": {
+          "mean": 0.0,
+          "sd": 0.0,
+          "ci_lo": 0.0,
+          "ci_hi": 0.0
+        },
+        "heldout_over_train_ratio": 0.0,
+        "shuffle_null": {
+          "mean": 0.020076923076923076,
+          "sd": 0.032020610965864144,
+          "hi": 0.08283732057001679,
+          "p_value": 1.0,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "heldout_above_shuffle_null": false
+      },
+      {
+        "hop": 3,
+        "train_acc": {
+          "mean": 0.2765625,
+          "sd": 0.013258252147247768,
+          "ci_lo": 0.267375,
+          "ci_hi": 0.28575
+        },
+        "heldout_acc": {
+          "mean": 0.0,
+          "sd": 0.0,
+          "ci_lo": 0.0,
+          "ci_hi": 0.0
+        },
+        "heldout_over_train_ratio": 0.0,
+        "shuffle_null": {
+          "mean": 0.015538461538461541,
+          "sd": 0.027649111609255463,
+          "hi": 0.06973072029260224,
+          "p_value": 1.0,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "heldout_above_shuffle_null": false
+      }
+    ],
+    "F_GEN_HOLDOUT_1_heldout_above_null": "NOT-REFUTED: held-out hop-2 and/or hop-3 DROPS INTO the shuffle-NULL -> composition does NOT transfer to unseen concepts -> the ~0.32 was CHAIN-MEMORIZATION of the deterministic train chain (CLOSED-NEGATIVE, a_paper_negative_ok)",
+    "F_GEN_HOLDOUT_2_within_factor": "NOT-REFUTED: held-out hop-2 (0.0000) is NOT within 2.0x of in-dist hop-2 (0.2773) [< 0.1387] -> held-out far below in-dist",
+    "F_GEN_HOLDOUT_1_pass": false,
+    "F_GEN_HOLDOUT_2_pass": false,
+    "GENERALIZES": false
+  },
+  "DISPOSITION": "CHAIN-FITTING (a_paper_negative_ok, closed-negative) \u2014 HYBRID composition does NOT transfer to held-out concepts: with the off-chip head trained on TRAIN-concept transitions ONLY, the HELD-OUT decay FAILS the discriminators (F-GEN-HOLDOUT-1 NOT-refuted, F-GEN-HOLDOUT-2 NOT-refuted). The PR#1692 ~0.32 was CHAIN-MEMORIZATION of the deterministic train chain, NOT generalizing composition. The Lane A HYBRID PUBLIC must be DOWNGRADED honestly: it is in-distribution chain-fitting on the toy 250-anchor chain, not a generalizing composition result. NEXT BRIDGE: a non-deterministic / branching corpus (multiple plausible successors) so the head must learn a transition RULE rather than memorize a single chain, plus a larger codebook ladder before any general composition claim. Substrate = HYBRID(on-chip\u2295off-chip), NOT pure-AKIDA, NOT Lane G."
+}

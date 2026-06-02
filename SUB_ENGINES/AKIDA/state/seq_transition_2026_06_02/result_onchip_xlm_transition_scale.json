@@ -1,0 +1,93 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T10:04:42Z",
+  "n_trials": 8,
+  "units": 64,
+  "binding": "bind(a,b)=a XOR roll(b,37)",
+  "task": "scale-ladder of EXPLICIT on-chip cross-lingual t->t+1 transition readout (25/125/250)",
+  "pre_registered": "F-TRSCALE: above-NULL transition signal HOLDS at all 3 rungs",
+  "rungs": [
+    {
+      "rung": "25",
+      "n_anchors": 25,
+      "NC": 5,
+      "units": 64,
+      "tr_acc": {
+        "mean": 0.48124999999999996,
+        "sd": 0.16677080080157916,
+        "ci_lo": 0.36568373113230657,
+        "ci_hi": 0.5968162688676933,
+        "chance": 0.25
+      },
+      "within_lang_recall": {
+        "mean": 0.80625,
+        "ci_lo": 0.7464163765095244
+      },
+      "shuffle_null": {
+        "mean": 0.20674999999999996,
+        "sd": 0.14393379554503521,
+        "hi_1.96sd": 0.48886023926826894,
+        "B": 200,
+        "p_value": 0.04975124378109453
+      },
+      "learn_all_hw": true,
+      "above_null": false
+    },
+    {
+      "rung": "125",
+      "n_anchors": 125,
+      "NC": 25,
+      "units": 64,
+      "tr_acc": {
+        "mean": 0.128125,
+        "sd": 0.018865385704452953,
+        "ci_lo": 0.11505195468190792,
+        "ci_hi": 0.14119804531809205,
+        "chance": 0.041666666666666664
+      },
+      "within_lang_recall": {
+        "mean": 0.559375,
+        "ci_lo": 0.5126200054658446
+      },
+      "shuffle_null": {
+        "mean": 0.03900000000000001,
+        "sd": 0.017093696043993658,
+        "hi_1.96sd": 0.07250364424622757,
+        "B": 200,
+        "p_value": 0.004975124378109453
+      },
+      "learn_all_hw": true,
+      "above_null": true
+    },
+    {
+      "rung": "250",
+      "n_anchors": 250,
+      "NC": 50,
+      "units": 64,
+      "tr_acc": {
+        "mean": 0.28979591836734697,
+        "sd": 0.029189483407075972,
+        "ci_lo": 0.26956863834400085,
+        "ci_hi": 0.3100231983906931,
+        "chance": 0.02040816326530612
+      },
+      "within_lang_recall": {
+        "mean": 0.49387755102040815,
+        "ci_lo": 0.466454932618804
+      },
+      "shuffle_null": {
+        "mean": 0.020346938775510207,
+        "sd": 0.01151192272593853,
+        "hi_1.96sd": 0.04291030731834973,
+        "B": 200,
+        "p_value": 0.004975124378109453
+      },
+      "learn_all_hw": true,
+      "above_null": true
+    }
+  ],
+  "F_TRSCALE": "NOT-uniform: the transition signal collapses into NULL at >=1 rung -> scale-fragile (honest downgrade)",
+  "DISPOSITION": "scale-fragile transition signal \u2014 see per-rung above_null"
+}
