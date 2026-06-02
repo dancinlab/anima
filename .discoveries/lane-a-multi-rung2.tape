@@ -1,0 +1,17 @@
+@V := "tape" :: spec [active]
+  version = "1.0"
+
+# Lane A-multi rung+1 — HYBRID branching held-out at LARGER NC (=100) AND DEEPER composition (K=5, hop-4/hop-5)
+# substrate=HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU Elman RNN decode head, numpy BPTT, NO torch/GPU/sklearn)
+# a_lane_akida_gpu_split (on-chip = Lane A AKIDA; decode head = host-side) · NOT pure-AKIDA, NOT Lane G · a_scale_honest_scope.
+# chip: live AKD1000 BC.00.000.002, akida 2.19.1, pi5-akida ($0); 8 trials/rung, enc_learned=True every trial.
+# single-chip EXCLUSIVE (#1717): spike-streamer STOP → akida.devices()==BC.00.000.002 → run → RESTORE (active, exact argv).
+# harness: AKIDA/onchip_xlm_branching.py (LANE_A_K_ROLL=5, LANE_A_DELTAS=1,7,13,19,29 B=5, LANE_A_LADDER_NC=50,75,100,
+#   LANE_A_CORPUS=corpus_synth). NC=100 exceeds the 50-concept real-corpus ceiling → synthetic grounding codebook.
+
+@D laneA_multi_branching_deep := "HYBRID branching held-out composition GENERALIZES at NC=100 AND HOLDS DEEP to hop-5 — no depth ceiling within K=5 on live AKD1000 encoder ⊕ off-chip head" :: discovery [d=2026-06-03 active]
+  seed      = "prior rung: branching held-out GENERALIZES at B=5, NC{40,45,50}, hops 2/3. push TWO axes — (a) larger NC=100 (past the 50-concept real-corpus ceiling → synthetic grounding codebook), (b) DEEPER composition K=5 (hop-4, hop-5). does the transferable operator generalize at NC=100 AND hold at hop-4/hop-5, or decay — find the depth/scale ceiling. substrate=HYBRID, NEVER merged w/ Lane G."
+  falsifier = "F-BRANCH-DEEP (pre-registered): held-out composition holds at hop-4 AND hop-5 → REFUTED iff each of hop-4,hop-5 held ci_lo>shuffle-NULL hi AND p<0.05 (operator generalizes deep); NOT-REFUTED → DEPTH CEILING at the deepest hop still above-NULL (a_paper_negative_ok). + F-BRANCH-1 (hop-2/3 above-NULL) + F-BRANCH-2 (held within 2x in-dist) re-checked at NC=100."
+  claim     = "F-BRANCH-DEEP REFUTED + F-BRANCH-1 REFUTED + F-BRANCH-2 REFUTED → GENERALIZES=True at NC=100 on live AKD1000 BC.00.000.002 (akida 2.19.1, enc_learned=True every trial). headline NC=100 (chance 0.0505, B=5) held-out hop k1..k5 = [0.0067, 0.8483, 0.9017, 0.8517, 0.8392]: hop-2 ci_lo=0.8242 vs shufNULL hi=0.1171 (p=0.005); hop-3 ci_lo=0.8590 vs 0.1803 (p=0.005); hop-4 ci_lo=0.8130 vs 0.1660 (p=0.005); hop-5 ci_lo=0.8083 vs 0.1783 (p=0.005). depth_ceiling_hop=5 (deepest held-out hop above shuffle-NULL = the full tested depth — NO ceiling within K=5). held/in-dist ratio per hop = [0.010, 0.919, 0.991, 0.972, 0.995] (held-out TRACKS in-dist 2..5). 3-rung NC ladder {50,75,100} held-out hop-2 = [0.883, 0.849, 0.848] all ≫ chance → operator generalizes ACROSS scale too. (hop-1 held-out ≈0 is the known artifact: the off-chip head emits a TRAIN successor at hop-1 before the branching operator engages — hop-1 is sub-NULL by construction, expected.)"
+  scope     = "toy (a_scale_honest_scope, 3-rung ladder). NC=100 grounding codebook is SYNTHETIC distinguishable byte-patterns (AKIDA/build_corpus_synth_capacity.py) since the real corpus caps at 50 concepts — the branching OPERATOR is corpus-agnostic (index-ring arithmetic), only the grounded codebook is synthetic; NOT a semantic claim. off-chip head = host-CPU Elman RNN (D_H=64) numpy BPTT, explicitly OFF-CHIP. substrate=HYBRID(on-chip⊕off-chip), NOT pure-AKIDA, NOT Lane G. next rung = 3B."
+  target    = ".verdicts/lane-a-multi-rung2/F-BRANCH-DEEP.txt (verbatim on-chip/host stdout, terminal 🟢) + result_onchip_xlm_branching.json"

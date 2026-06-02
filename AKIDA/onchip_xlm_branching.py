@@ -89,7 +89,9 @@ UNITS, NW, LCOMP = 256, 8, 0.1     # ON-CHIP FC: byte-match generation/rollout/s
 SHIFT = 37                          # byte-match onchip_xlm_state_rollout encoder/bind
 NEUTRAL_ROLL = SHIFT
 B_SHUFFLE = 200
-K_ROLL = 3
+# K_ROLL = rollout depth. default 3 (proven hop-2/3). LANE_A_K_ROLL=5 pushes the DEEPER-composition axis (hop-4/5);
+# the F-BRANCH-DEEP falsifier (below) tests whether held-out composition holds at hop-4 AND hop-5 or decays.
+K_ROLL = int(os.environ.get("LANE_A_K_ROLL", "3"))
 SEED = 20260602
 # ---- OFF-CHIP decode head (host CPU, numpy) hyperparams — byte-match PR#1692/#1694 hybrid head ----
 D_H = 64           # off-chip hidden state width
@@ -101,7 +103,7 @@ GRAD_CLIP = 5.0
 #   LANE_A_LADDER_NC="40,45,50" -> larger codebook ladder. Defaults reproduce the proven B=3 / NC{30,40,50} rung.
 DELTAS = [int(x) for x in os.environ.get("LANE_A_DELTAS", "1,7,19").split(",")]  # offsets on the concept-index ring (branching factor B)
 B_FACTOR = len(DELTAS)
-WALK_LEN = 6                 # length of each random branching walk used to build training sequences
+WALK_LEN = max(6, K_ROLL + 1)  # length of each random branching walk; >= K_ROLL+1 so deep rollouts have targets
 WALKS_PER_LANG = 24          # number of random branching walks per language used for off-chip BPTT
 GEN_FACTOR = 2.0             # F-BRANCH-2: held-out hop-2 must be >= in-dist hop-2 / GEN_FACTOR
 N_TEST_FRAC = 0.30           # held-out TEST block = last 30% of the concept index axis
@@ -216,7 +218,10 @@ class OffChipHead:
         return logits, h2
 
 # ----------------------------------------------------------------------------
-count, recs = read_limen(os.path.join(ROOT, "corpus_big", "parallel.limen"))
+# default = corpus_big (real 50-concept FLORES). LANE_A_CORPUS overrides for the larger-NC frontier (e.g.
+# "corpus_synth" — distinguishable synthetic anchors past the 50-concept real ceiling; labelled synthetic below).
+CORPUS_DIR = os.environ.get("LANE_A_CORPUS", "corpus_big")
+count, recs = read_limen(os.path.join(ROOT, CORPUS_DIR, "parallel.limen"))
 concept = np.array([h["concept"] for (h, _) in recs])
 lang = np.array([h["lang"] for (h, _) in recs])
 H = np.stack([byte_hist(p) for (_, p) in recs])
@@ -400,7 +405,11 @@ RESULTS = {"substrate": "HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU de
            "branching_operator": {"deltas": DELTAS, "B_factor": B_FACTOR, "ring": "Z_NC", "rule": "succ(i)={(i+d) mod NC : d in DELTAS}"},
            "metric": "setacc[k]=P(off-chip-head argmax decode at hop k IS A MEMBER OF succ(current concept)) — branching-aware set-membership",
            "gen_factor": GEN_FACTOR, "n_test_frac": N_TEST_FRAC, "ladder_NC": LADDER_NC,
-           "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs; BRANCHING operator REPLACES the deterministic chain",
+           "corpus": (("corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs; BRANCHING operator REPLACES the deterministic chain"
+                       if CORPUS_DIR == "corpus_big" else
+                       "%s SYNTHETIC distinguishable byte-pattern anchors (NC past the 50-concept real-corpus ceiling; "
+                       "NOT a semantic claim, a_scale_honest_scope); BRANCHING operator over the index ring" % CORPUS_DIR)),
+           "corpus_dir": CORPUS_DIR,
            "prior_holdout_PR1694_heldout_decay": [0.0000, 0.0000, 0.0000],
            "architecture": "on-chip FC1 encoder (1-bit AkidaUnsupervised, byte-match prior rungs) grounds the transition code; "
                            "OFF-CHIP host-CPU Elman RNN decode head trained by BPTT on random BRANCHING walks with TRAIN-only "
@@ -420,6 +429,17 @@ F_BRANCH_1 = bool(ph[1]["heldout_above_shuffle_null"] and ph[2]["heldout_above_s
 train_hop2 = ph[1]["train_setacc"]["mean"]; held_hop2 = ph[1]["heldout_setacc"]["mean"]
 F_BRANCH_2 = bool(held_hop2 >= train_hop2 / GEN_FACTOR)
 GENERALIZES = bool(F_BRANCH_1 and F_BRANCH_2)
+# ---- F-BRANCH-DEEP (pre-registered, A-multi rung+1 DEEPER axis): does held-out composition HOLD at hop-4 AND hop-5? ----
+# REFUTED iff for every k in {4,5} (1-indexed) present in the rollout: heldout ci_lo>shuffle-NULL hi AND p<0.05.
+# NOT-REFUTED -> composition DECAYS at deeper hops; the per-hop curve names the DEPTH CEILING (a_paper_negative_ok).
+DEEP_HOPS = [h for h in (4, 5) if h <= K_ROLL]
+deep_above = {}
+for h in DEEP_HOPS:
+    deep_above[h] = bool(ph[h - 1]["heldout_above_shuffle_null"])
+F_BRANCH_DEEP = bool(DEEP_HOPS) and all(deep_above[h] for h in DEEP_HOPS)
+# depth ceiling = deepest hop that stays above shuffle-NULL (held-out), else the last sub-NULL hop
+depth_above_null = [h for h in range(1, K_ROLL + 1) if ph[h - 1]["heldout_above_shuffle_null"]]
+DEPTH_CEILING = max(depth_above_null) if depth_above_null else 0
 RESULTS["headline"] = {
     "NC": headline_NC, "chance": ph[0]["chance"],
     "decay_curve_TRAIN_in_dist": [round(ph[k]["train_setacc"]["mean"], 4) for k in range(K_ROLL)],
@@ -438,6 +458,16 @@ RESULTS["headline"] = {
         "NOT-REFUTED: held-out hop-2 (%.4f) is NOT within %.1fx of in-dist hop-2 (%.4f) [< %.4f]"
         % (held_hop2, GEN_FACTOR, train_hop2, train_hop2 / GEN_FACTOR)),
     "F_BRANCH_1_pass": F_BRANCH_1, "F_BRANCH_2_pass": F_BRANCH_2, "GENERALIZES": GENERALIZES,
+    "K_roll": K_ROLL, "deep_hops_tested": DEEP_HOPS, "deep_hop_above_null": deep_above,
+    "depth_ceiling_hop": DEPTH_CEILING,
+    "F_BRANCH_DEEP_holds_at_hop4_5": (
+        ("REFUTED: held-out composition STAYS ABOVE shuffle-NULL at hop %s (each ci_lo>NULL hi AND p<0.05) -> the "
+         "transferable operator HOLDS at deeper hops; no depth ceiling within hop-%d"
+         % (DEEP_HOPS, K_ROLL)) if F_BRANCH_DEEP else
+        ("NOT-REFUTED: held-out composition DECAYS INTO the shuffle-NULL at deeper hops -> DEPTH CEILING at hop-%d "
+         "(deepest hop still above-NULL); composition does NOT hold to hop-%s (CLOSED-NEGATIVE, a_paper_negative_ok)"
+         % (DEPTH_CEILING, DEEP_HOPS if DEEP_HOPS else "[none tested: K_ROLL<4]"))),
+    "F_BRANCH_DEEP_pass": F_BRANCH_DEEP,
 }
 if GENERALIZES:
     disp = ("GENERALIZES — a BRANCHING corpus FORCES a transferable transition OPERATOR. The off-chip recurrent head, "
@@ -479,6 +509,8 @@ for k0 in range(K_ROLL):
              h["heldout_above_shuffle_null"]))
 print("[branch] F-BRANCH-1 (held>NULL)   :", RESULTS["headline"]["F_BRANCH_1_heldout_above_null"])
 print("[branch] F-BRANCH-2 (within %.1fx) :" % GEN_FACTOR, RESULTS["headline"]["F_BRANCH_2_within_factor"])
+print("[branch] F-BRANCH-DEEP (hop4/5)   :", RESULTS["headline"]["F_BRANCH_DEEP_holds_at_hop4_5"])
+print("[branch] depth ceiling (hop)      :", DEPTH_CEILING, " (deepest held-out hop above shuffle-NULL; K_roll=%d)" % K_ROLL)
 print("[branch] GENERALIZES              :", GENERALIZES)
 print("[branch] DISPOSITION              :", RESULTS["DISPOSITION"])
 print("[branch] wrote " + os.path.join(OUT, "result_onchip_xlm_branching.json"))

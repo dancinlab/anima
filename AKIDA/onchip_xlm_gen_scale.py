@@ -118,8 +118,12 @@ def ci(arr):
     sem = sd/np.sqrt(len(arr)) if len(arr) > 1 else 0.0
     return mean, sd, sem, mean-1.96*sem, mean+1.96*sem
 
-# ---- load corpus_big once ----
-count, recs = read_limen(os.path.join(ROOT, "corpus_big", "parallel.limen"))
+# ---- load corpus once ----
+# default = corpus_big (real 50-concept FLORES cross-lingual, byte-eq prior rungs). LANE_A_CORPUS overrides the
+# corpus dir for the CHIP-CAPACITY frontier (e.g. "corpus_synth" — distinguishable synthetic anchors past the
+# 250-anchor real-corpus ceiling; labelled synthetic in RESULTS["corpus"], NOT a semantic claim).
+CORPUS_DIR = os.environ.get("LANE_A_CORPUS", "corpus_big")
+count, recs = read_limen(os.path.join(ROOT, CORPUS_DIR, "parallel.limen"))
 concept = np.array([h["concept"] for (h, _) in recs])
 lang = np.array([h["lang"] for (h, _) in recs])
 H = np.stack([byte_hist(p) for (_, p) in recs])
@@ -233,7 +237,12 @@ RESULTS = {"substrate": "AKIDA (on-chip 1-bit Hebbian)", "rung": "SINGLE-STEP op
            "ts": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()), "n_trials": NTRIALS, "units": UNITS,
            "encoder": "whitened (byte-match onchip_xlm_generation.enc_whitened)",
            "metric": "gen_acc=P(argmax_{c!=t} overlap(g_hat_t, codebook[c])==t+1), open-vocab cross-lingual; shuffle-NULL B=200",
-           "ladder_n_concepts": NCONCEPTS_LADDER, "corpus": "corpus_big 250 anchors / 50 FLORES concepts x 5 langs",
+           "ladder_n_concepts": NCONCEPTS_LADDER,
+           "corpus": ("corpus_big 250 anchors / 50 FLORES concepts x 5 langs (REAL cross-lingual semantic)"
+                      if CORPUS_DIR == "corpus_big" else
+                      "%s (SYNTHETIC distinguishable byte-pattern anchors — CHIP-CODE-CAPACITY probe past the "
+                      "250-anchor real-corpus ceiling; NOT a semantic/cross-lingual claim, a_scale_honest_scope)" % CORPUS_DIR),
+           "corpus_dir": CORPUS_DIR,
            "rungs": []}
 print("[gen-scale] ===== ANCHOR-COUNT LADDER (a_scale_honest_scope, %d rungs) =====" % len(NCONCEPTS_LADDER)); sys.stdout.flush()
 for NCONC in NCONCEPTS_LADDER:

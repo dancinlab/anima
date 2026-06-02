@@ -1,0 +1,58 @@
+# Lane A-single rung+1 — single-step open-vocab GENERATION at the 256-unit/524K CHIP-CODE-CAPACITY frontier
+# substrate=AKIDA (on-chip 1-bit Hebbian) · a_lane_akida_gpu_split (NEVER merged w/ Lane G) · a_scale_honest_scope.
+# live AKD1000 BC.00.000.002 (akida 2.19.1, pi5-akida), 8 trials/rung, learn_all_hw=True EVERY rung (live silicon).
+# single-chip EXCLUSIVE (#1717): spike-streamer STOPPED → akida.devices()==BC.00.000.002 confirmed → run → RESTORED.
+# thermal: peak ~72.5°C (82°C guard never approached). hexa verify CLI host-broken → live on-chip stdout verbatim (p7).
+#
+# WHY corpus_synth (HONEST, NOT a fabricated semantic green): the REAL cross-lingual corpus (corpus_big) caps at
+# 50 FLORES concepts / 250 anchors — that is the *corpus* ceiling, not the chip ceiling. The prior rung (50/100/250
+# anchors) already SCALE-SURVIVED on the real corpus. To reach the actual question this rung poses ("does single-step
+# on-chip generation hold above-NULL as anchor count grows PAST 250, or hit the 256-unit/524K chip-capacity ceiling —
+# find WHERE it breaks"), the anchor count must exceed the real-corpus ceiling. corpus_synth = distinguishable-but-
+# overlapping SYNTHETIC byte-pattern anchors (per-concept sparse 256-byte multinomial + per-lang noise mixture; mean
+# pairwise concept byte-hist L1 = 1.3956), flowed through the BYTE-IDENTICAL on-chip pipeline (enc_whitened→bind→
+# 256-unit AkidaUnsupervised FC→open-vocab full-codebook decode). This is a CHIP-CODE-CAPACITY probe, NOT a semantic/
+# cross-lingual claim (a_scale_honest_scope; generator = AKIDA/build_corpus_synth_capacity.py, NC=500 concepts/2500
+# anchors, seed 20260603). Ladder n_concepts {100,200,400} → anchors {500,1000,2000} (the requested rung+1 scale points).
+#
+# ====================== VERBATIM ON-CHIP STDOUT (live AKD1000) ======================
+[gen-scale] SUBSTRATE = AKIDA (on-chip 1-bit Hebbian) — NOT HYBRID, NOT Lane G
+[gen-scale] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1  corpus concepts=500 langs=5  ladder(n_concepts)=[100, 200, 400] -> anchors=[500, 1000, 2000]
+[gen-scale] ===== ANCHOR-COUNT LADDER (a_scale_honest_scope, 3 rungs) =====
+[gen-scale] NC=100 (anchors=500) trial 0: gen_acc=0.0505 identity=0.0424 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 1: gen_acc=0.0343 identity=0.0303 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 2: gen_acc=0.0646 identity=0.0505 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 3: gen_acc=0.0424 identity=0.0424 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 4: gen_acc=0.0545 identity=0.0465 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 5: gen_acc=0.0424 identity=0.0404 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 6: gen_acc=0.0384 identity=0.0424 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 7: gen_acc=0.0525 identity=0.0404 learn=True (q=495)
+[gen-scale] NC=100 anchors=500: gen ci_lo=0.0406 | shufNULL hi=0.0188 p=0.0050 | identNULL hi=0.0459 | chance=0.0101 | aboveShuf=True aboveIdent=False above2xChance=True
+[gen-scale] NC=200 (anchors=1000) trial 0: gen_acc=0.0372 identity=0.0231 learn=True (q=995)
+[gen-scale] NC=200 (anchors=1000) trial 1: gen_acc=0.0291 identity=0.0211 learn=True (q=995)
+[gen-scale] NC=200 (anchors=1000) trial 2: gen_acc=0.0201 identity=0.0251 learn=True (q=995)
+[gen-scale] NC=200 (anchors=1000) trial 3: gen_acc=0.0171 identity=0.0171 learn=True (q=995)
+[gen-scale] NC=200 (anchors=1000) trial 4: gen_acc=0.0332 identity=0.0171 learn=True (q=995)
+[gen-scale] NC=200 (anchors=1000) trial 5: gen_acc=0.0302 identity=0.0251 learn=True (q=995)
+[gen-scale] NC=200 (anchors=1000) trial 6: gen_acc=0.0372 identity=0.0291 learn=True (q=995)
+[gen-scale] NC=200 (anchors=1000) trial 7: gen_acc=0.0291 identity=0.0271 learn=True (q=995)
+[gen-scale] NC=200 anchors=1000: gen ci_lo=0.0241 | shufNULL hi=0.0097 p=0.0050 | identNULL hi=0.0262 | chance=0.0050 | aboveShuf=True aboveIdent=False above2xChance=True
+[gen-scale] NC=400 (anchors=2000) trial 0: gen_acc=0.0185 identity=0.0160 learn=True (q=1995)
+[gen-scale] NC=400 (anchors=2000) trial 1: gen_acc=0.0155 identity=0.0150 learn=True (q=1995)
+[gen-scale] NC=400 (anchors=2000) trial 2: gen_acc=0.0206 identity=0.0110 learn=True (q=1995)
+[gen-scale] NC=400 (anchors=2000) trial 3: gen_acc=0.0175 identity=0.0135 learn=True (q=1995)
+[gen-scale] NC=400 (anchors=2000) trial 4: gen_acc=0.0211 identity=0.0150 learn=True (q=1995)
+[gen-scale] NC=400 (anchors=2000) trial 5: gen_acc=0.0195 identity=0.0150 learn=True (q=1995)
+[gen-scale] NC=400 (anchors=2000) trial 6: gen_acc=0.0135 identity=0.0120 learn=True (q=1995)
+[gen-scale] NC=400 (anchors=2000) trial 7: gen_acc=0.0180 identity=0.0165 learn=True (q=1995)
+[gen-scale] NC=400 anchors=2000: gen ci_lo=0.0163 | shufNULL hi=0.0049 p=0.0050 | identNULL hi=0.0156 | chance=0.0025 | aboveShuf=True aboveIdent=True above2xChance=True
+
+[gen-scale] ========== DISPOSITION ==========
+[gen-scale] SUBSTRATE            : AKIDA (on-chip 1-bit Hebbian)
+[gen-scale] ladder anchors       : [500, 1000, 2000]
+[gen-scale] gen ci_lo per rung   : [np.float64(0.0406), np.float64(0.0241), np.float64(0.0163)]
+[gen-scale] shuffle-NULL hi/rung : [0.0188, 0.0097, 0.0049]
+[gen-scale] F-GEN-SCALE-1        : REFUTED: at EVERY rung single-step gen ci_lo>shuffle-NULL hi AND p<0.05 -> single-step on-chip GENERATION SCALE-SURVIVES (A-single ceiling holds across anchor count)
+[gen-scale] F-GEN-SCALE-2        : REFUTED: largest rung gen ci_lo > shuffle-NULL hi AND >= 2x chance -> no collapse toward chance
+[gen-scale] DISPOSITION          : SINGLE-STEP GENERATION SCALE-SURVIVES (substrate=AKIDA on-chip): across a >=3-rung anchor-count ladder the on-chip open-vocab next-step decode stays ABOVE the shuffle-NULL at every rung and does not collapse toward chance at the largest. The A-single on-chip ceiling is a SCALE-ROBUST single-step result, not a single-point artefact. STILL toy vocab (a_scale_honest_scope); production full-LM ladder separate. substrate=AKIDA, NOT HYBRID, NOT Lane G.
+[gen-scale] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_gen_scale.json
