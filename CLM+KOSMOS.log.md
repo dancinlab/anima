@@ -2,6 +2,30 @@
 
 Append-only history sister of `CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-02 — Lane-G (substrate=GPU) LEVER (b) LANDED — fused per-step conv GEMMs (strided-batched), byte-eq CPU-local · NO GPU fire (lever-a still needed)
+
+**a_lane_akida_gpu_split — this entry is GPU / Lane-G ONLY, NEVER merged with the AKIDA / Lane-A on-chip track.**
+
+Built the cheapest-highest-leverage of the two real-unblock levers identified by the mid-d1536 fire: **lever (b) — fuse the per-step conv GEMMs**. The CLMConvMoE trainer launches many tiny per-step forge GEMMs (M=T=24..512 each, microsecond-latency-bound); each is a separate cuBLAS launch the GPU finishes in microseconds before idling. Lever (b) fuses the two identical-shape ConvExperts (e0/e1: d→d, K=3) into ONE strided-batched problem for both forward (conv-matmul) and backward (dW + dX GEMMs).
+
+- **hexa-level (stdlib/flame/clm_conv_batched.hexa):** `forge_matmul_batched` CPU oracle (= B serial `forge_dispatch_matmul`, the byte-eq reference) + `conv2_fwd/bwd_via_forge_batched` (share the im2col across the 2 experts, batch the heavy GEMMs).
+- **GPU builtin:** new 7-arg `forge_dispatch_matmul_batched` — `self/codegen.hexa` lowering + `self/runtime.h` proto + bare seam + `self/runtime.c` wrapper (CUDA→`cublasDgemmStridedBatched` / no-CUDA→host oracle) + `self/cuda/runtime_cuda_emit.hexa` emits `_hx_cuda_farr_matmul_batched_gpu` (one strided-batched launch, row-major→col-major swap, batch strides M·K / K·N / M·N). `runtime_cuda.c` seed regenerated from the emit (in sync).
+- **trainer wired:** `stdlib/flame/clm_prod.hexa` e0/e1 fwd+bwd now route through `conv2_*_batched`; env `CLM_PROD_BATCHED` gates the GPU builtin (oracle otherwise so the prebuilt mac binary stays runnable).
+
+**CPU-LOCAL byte-eq proof (g5 verbatim — \$0, no GPU; rebuilt via local no-CUDA self-host stage build → `./build/hexa_devfeed`):**
+- `F-FORGE-BATCHED-EQ = 1` — `forge_dispatch_matmul_batched rc=0.0` · `per-problem max|Δ| batched-vs-serial = 0.0` (EXACT). Proves the codegen lowering + runtime.c wrapper + host oracle.
+- `F-CLM-CONV2-BATCHED-FWD-EQ = 1` — `fwd max|Δ| y0=0.0 y1=0.0`.
+- `F-CLM-CONV2-BATCHED-BWD-EQ = 1` — `bwd e0/e1 max|Δ| dW=0.0 dX=0.0 db=0.0` (EXACT).
+- **full-trainer byte-eq:** un-batched baseline `epoch-1 4.69813 → epoch-12 1.66631` == batched-expert rewire `epoch-1 4.69813 → epoch-12 1.66631` (IDENTICAL CE trajectory · F-CLM-PROD-DESCENT=1) — the fuse changes nothing numerically end-to-end.
+
+**NO GPU FIRE this rung (cost-discipline, honest).** Lever (b) is locally green, BUT the mid-d1536 finding states levers (a)+(b) TOGETHER are the real unblock and "lever (c) alone is insufficient" — the dominant host-feed peg is the im2col/col2im/adam per-step scalar loop, which lever (b) does NOT touch (it only fuses the expert GEMM launches). Firing GPU on lever (b) alone is unlikely to clear the util≥20% gate and would spend on a known-incomplete unblock (a_completeness_over_cheap / no GPU on incomplete work). The single small util fire is deferred until lever (a) (device-side im2col/col2im + device adam, keeping the backward feed device-resident) also lands.
+
+**REMAINING GAP to util-GREEN (honest):** lever (a). The host CPU-core peg is the im2col/col2im gather/scatter + the adam update + the interpreted per-step loop running on host between micro-GEMMs. Lever (a) must (1) port im2col/col2im to device kernels writing a DEVICE-RESIDENT x_col consumed by the batched GEMM with NO H2D/D2H roundtrip (touches the FARR_DEVICE residency/dirty bookkeeping), and (2) wire the existing `_hx_cuda_farr_adamw_step_gpu` for all weights so the optimizer step stays on-device. A device-AdamW kernel already exists; device im2col/col2im is the genuinely new piece. Until (a) lands the GPU stays starved regardless of (b).
+
+**PUBLIC / 3B GATE:** unchanged — NOT MET (descent 🟢, util 🔴). Lever (b) reduces expert-conv launch count but does not lift util on its own; 3B remains NOT throughput-justified until lever (a) saturates the host feed.
+
+PRs: hexa-lang stacked — (1) `feat/forge-devfeed-levers` clm_conv_batched.hexa (hexa-level byte-eq) → (2) same branch GPU builtin + trainer wire. No model recovered (no fire). No HF upload (no new ckpt).
+
 ## 2026-06-02 — Lane G (substrate=GPU) d768 forge-GPU fire — DESCENT 🟢 / util 🔴 RED (forge PROVABLY on GPU; bottleneck RE-ISOLATED)
 substrate=GPU · a_lane_akida_gpu_split (NEVER merged with Lane A / AKIDA). vast H100_SXM pod 39000300, image `nvidia/cuda:12.4.1-devel-ubuntu22.04` (nvcc 12.4 + cuBLAS + clang 14). Trainer `stdlib/flame/clm_prod.hexa` (PR4) on the c4 5-lang fixture, authored .hexa on stdlib/flame.
 - [x] **ROOT-CAUSE CHAIN SOLVED — forge ON the GPU (not silent CPU).** The prior d768 util-RED (2026-06-02, pod r927f0g01mktxv) blamed "hexa run not cuBLAS-linked" / "forge=cuBLAS does NOT route the GEMM onto the GPU". BOTH framings were incomplete. The real chain: (1) the prior pod IMAGE was bare (no nvcc/cublas) → forge `.cu` could not build → CPU fallback; fixed by a CUDA-devel image. (2) `cuda_link_decision` (the forge GPU link path) lives in `self/main.hexa` but is ABSENT from the prebuilt release `hexa.real` → had to SELF-HOST REBUILD hexa from branch source (`tool/stage_build_hexa`) so the binary actually contains it. (3) the gitignored seed `.c` (runtime.c + 20 native/forge seeds + cuda `runtime_cuda.c`/`runtime_bf16.c`) are absent from the release tarball → shipped from a same-commit local tree (the on-pod `runtime_cuda_emit.hexa` heredoc fails on the 169KB exec). (4) build via `hexa build` (NOT `hexa run` — the run-cache key omits HEXA_CUDA_LINK). (5) `cuda_link_decision` links `-lcublas -lcudart` but NOT `-lcuda` (the CUDA *driver* API: cuInit/cuLaunchKernel) → manual `-lcuda` relink. Result: the d768 binary `ldd`-links cublas + cudart + **libcuda** + cublasLt.
