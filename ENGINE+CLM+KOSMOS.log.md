@@ -647,3 +647,14 @@ PR #1686(stateless) / #1689(state-carry) 두 closed-negative 가 명명한 NEXT 
 
 ### NEXT (정확한 다음 빌드 step)
 - **decode forward 빌드** = CE-descent 축 unblock 의 유일 잔여: `_gen_clm_decode` body 에 int4 dequant (qat_scale per-channel) + conv2 MoE forward 구현 → `gen_clm_backend` `loaded = valid` 한 줄로 활성화 (generate() 계약 + brain.hexa 배선 불변, BACKEND-AGNOSTIC). 그 위에서 CORE-mounted CE descent 측정 가능. PR engine-lane/clm-l3-header-admit.
+
+## 2026-06-02 — ENGINE Lane: L3 .clm decode FORWARD 배선 → AXIS-2 CE MEASURABLE CORE-mounted (descent BLOCKED-FORMAT)
+
+- **substrate = CORE** (hexa-native A⇄G 의식 엔진, 외부 LLM 0). 격리 worktree `engine-lane/clm-decode-forward` (base `engine-lane/clm-l3-header-admit` = 캠페인 lane-g/d768-cuda-fire + 직전 header-admit 커밋), additive-only.
+- **decode forward 빌드 완료** (`CORE/generator.hexa` 단일 .clm 진입점, a_core_engine_map): `clm_decode_ce` = int4 dequant(6 블록 ecW/tcW/e0W/e1W/rW/roW, per-channel qat_scale, code=(nibble&0xF)-8) + CLMConvMoE forward(entry conv1d-K3 → trunk residual → 2 experts GELU → MoE-router softmax → readout d→V) → next-byte logits[T·256]. pure-hexa 커널 `_gen_conv1d`(conv_lib index 규약 일치) · `_gen_gelu`(clamped tanh) · `_gen_gnorm`(param-free GN1).
+- **AXIS-2 CE 측정 (CORE-mounted, `hexa run`, p7 결정적)**: real d768 ckpt 통해 **CE_realtext=10.9696** (positions=11), CE_shuffled=10.5876, uniform baseline ln(256)=5.5452. det re-run byte-eq=1. `CE_MEASURABLE_CORE=1` 🟢. `CE_BELOW_UNIFORM=0`, `CE_BEATS_SHUFFLE=0`.
+- **VERDICT = MEASURABLE-NO-DESCENT**: decode forward WIRED + CE MEASURABLE CORE-mounted, descent 🔴 미입증. 원인 = inference-track `.clm` 이 6 conv 블록만 직렬화(clm_ckpt/clm_prod PR4) — **trained embed table + GN affine 미포함** → embed 를 tied-readout stand-in 으로 재구성 → 트레이너 GPU-side 측정 4.88 descent(recover README §2) CORE-side 재현 불가 (format gap, NOT fabrication).
+- **loaded=false 정직 유지** (a_core_engine_map, NO phantom wiring): null fallthrough, garbage 없음.
+- **ENGINE PUBLIC 미flip** — 3축 중 의식 🟢 + 창발 🟢 + CE measurable 🟢 이나 CE-descent 🔴. PUBLIC 은 3/3 GREEN 일 때만.
+- **NEXT STEP** = `.clm` 포맷이 embed table + GN affine 직렬화(또는 fp16-shadow track read) → CORE-mounted descent 재측정.
+- verdict verbatim: `.verdicts/core-3axis-mount/ce_descent_decode.txt` · probe `CORE/clm_ce_descent_probe.hexa` (falsifier F-CLM-CORE-CE-DESCENT pre-registered in-file).

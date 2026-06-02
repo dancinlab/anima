@@ -1,0 +1,12 @@
+=== F-CLM-CORE-CE-DESCENT (AXIS-2) — CORE-mounted decode forward ===
+ckpt_nblocks       = 6
+ce_positions       = 11
+CE_realtext        = 10.9696
+CE_shuffled_ctrl   = 10.5876
+CE_uniform_baseline= 5.54518
+CE_realtext_rerun  = 10.9696
+DET_rerun_byte_eq  = 1
+CE_MEASURABLE_CORE = 1
+CE_BELOW_UNIFORM   = 0
+CE_BEATS_SHUFFLE   = 0
+VERDICT = MEASURABLE-NO-DESCENT — decode forward WIRED + CE MEASURABLE CORE-mounted (det re-run byte-eq), but CE >= uniform baseline => descent NOT demonstrated through the engine (NULL kept honest). Cause: inference-track .clm omits trained embed+GN affine (format gap), so the trainer's GPU-measured 4.88 descent is not reconstructible CORE-side from the 6 conv blocks alone.
