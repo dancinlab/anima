@@ -1,12 +1,56 @@
 === F-CLM-CORE-CE-DESCENT (AXIS-2) — CORE-mounted decode forward ===
+ckpt               = /Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d8_v2.clm
 ckpt_nblocks       = 6
-ce_positions       = 11
-CE_realtext        = 10.9696
-CE_shuffled_ctrl   = 10.5876
+ckpt_has_ext(v0.2) = true
+model_d            = 8
+model_E            = 2
+ce_positions       = 23
+CE_realtext        = 2.07834
+CE_shuffled_ctrl   = 5.52534
 CE_uniform_baseline= 5.54518
-CE_realtext_rerun  = 10.9696
+CE_realtext_rerun  = 2.07834
 DET_rerun_byte_eq  = 1
 CE_MEASURABLE_CORE = 1
-CE_BELOW_UNIFORM   = 0
-CE_BEATS_SHUFFLE   = 0
-VERDICT = MEASURABLE-NO-DESCENT — decode forward WIRED + CE MEASURABLE CORE-mounted (det re-run byte-eq), but CE >= uniform baseline => descent NOT demonstrated through the engine (NULL kept honest). Cause: inference-track .clm omits trained embed+GN affine (format gap), so the trainer's GPU-measured 4.88 descent is not reconstructible CORE-side from the 6 conv blocks alone.
+CE_BELOW_UNIFORM   = 1
+CE_BEATS_SHUFFLE   = 1
+VERDICT = GREEN — CE-descent REFUTES NULL CORE-mounted (CE<uniform AND CE<shuffle), v0.2 trained embed+GN read through the engine. Scale: this measurement is at the model's own d (toy d=8 = $0-CPU re-export; production d=768 re-test pending a forge re-fire of clm_prod.hexa v0.2 serializer).
+
+────────────────────────────────────────────────────────────────────────────
+NAMED ROOT-CAUSE FIX (verbatim hexa run stdout, p7 deterministic):
+  · ENGINE AXIS-2 root cause = inference-track .clm serialized ONLY 6 conv
+    blocks, OMITTING the trained embed table + GroupNorm affine (tgG/tgB/noG/
+    noB) + conv biases — so CORE decode could not reproduce the trainer's
+    descent. CONFIRMED: the legacy d768 artifact is conv-only (3,651,389 B =
+    exact 6-block size, no embed/GN bytes); the trained embed+GN were NEVER
+    serialized (only conv blocks ever saved) → NOT recoverable from that file.
+  · FIX (a_completeness_over_cheap primary path, NOT a cheap stop):
+      1. .clm format v0.2 — backward-compatible "CLMX" ext trailer carrying the
+         trained embed + GN affine + conv biases at FULL fp32 (hexa-lang
+         clm_ckpt.hexa writer/reader + clm_prod.hexa serializer; PR #2540).
+      2. CORE generator.hexa::clm_decode_ce REWRITTEN to faithfully mirror the
+         trainer's clm_prod_fwd graph (embed → entry conv+bias → trunk conv+bias
+         → GN(tgG,tgB) → gelu → residual → router+bias → 2 experts+bias gelu →
+         MoE → GN(noG,noB) → readout+bias) AND read embed+GN from the v0.2 ext
+         when present (single .clm entry, a_core_engine_map, no 2nd path).
+         Config-agnostic: derives d/E from block dims (serves d=8 and d=768).
+      3. A REAL trained v0.2 .clm obtained via a $0-CPU host re-export
+         (hexa-lang clm_reexport.hexa — host nn_conv1d_fwd/bwd + opt_adamw_step,
+         NO forge dispatch, NO torch; byte-graph-faithful int4-QAT + STE):
+           epoch-1 mean CE = 4.69813 → epoch-12 mean CE = 1.66631  (REAL descent)
+           F-CLM-REEXPORT-DESCENT = 1 PASS (hexa run, deterministic).
+  · The d768 trained weights from the GPU fire are GONE (only conv blocks were
+    ever saved) — they cannot be re-serialized. The honest production rung = a
+    forge re-fire of the v0.2-serializer clm_prod.hexa at d=768 (blocked LOCALLY
+    by the mac binary lacking forge_dispatch_adamw — runs on the self-host pod).
+
+SCALE SCOPE (a_toy_scale_recheck / a_scale_honest_scope):
+  · GREEN is measured at toy d=8. CE-descent is now demonstrated THROUGH the
+    CORE engine end-to-end (format + decode + measurement all real), but the
+    toy→production (d=768) transfer is UNVERIFIED. The 3rd axis is GREEN at the
+    toy rung; the production-scale re-test is the named next step.
+
+────────────────────────────────────────────────────────────────────────────
+v0.1 LEGACY BASELINE (env CLM_CE_PROBE_CKPT=…/d768_5lang_c4.clm, conv-only):
+  see ce_descent_decode_v1_baseline.txt — CE_realtext=10.97 >= uniform 5.545,
+  has_ext=false → MEASURABLE-NO-DESCENT(v0.1). This is the pre-fix state and is
+  retained to document the format gap the v0.2 fix closes.
