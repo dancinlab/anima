@@ -1,6 +1,6 @@
-# CLM-KOSMOS — meta-domain (CLM model ⊕ KOSMOS corpus)
+# ENGINE-CLM-KOSMOS — meta-domain (CLM model ⊕ KOSMOS corpus)
 
-@title: 🌌🧠 CLM-KOSMOS — AKIDA on-chip 5-language semantic-linkage CLM, grown on a .kosmos @corpus, gated by H_911
+@title: 🧠🌌 ENGINE-CLM-KOSMOS — AKIDA on-chip 5-language semantic-linkage CLM, grown on a .kosmos @corpus, gated by H_911
 
 @goal: bind the **MODEL** axis (CLM · `.clm`) and the **CORPUS** axis (KOSMOS · `.kosmos`) into ONE on-chip learner — a 5-language (ko·en·zh·ru·ja) cross-lingual **semantic-linkage** CLM, **LEARNED on the AKD1000 chip** (AkidaUnsupervised plasticity, never GPU), corpus authored as a limen-packed `.kosmos @corpus`, model serialized as `.clm`, and it **must satisfy H_911**. This is a META-domain: it does not re-spec CLM or KOSMOS, it binds them under the mandatory conditions below. Carries [[ONCHIP-PARADIGM]]; honest scope (a_scale_honest_scope · g63).
 
