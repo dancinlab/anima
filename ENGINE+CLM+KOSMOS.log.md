@@ -674,3 +674,18 @@ PR#1692 HYBRID 의 ~0.32 가 진짜 COMPOSITION 인지 chain-MEMORIZATION 인지
 - **ENGINE PUBLIC 미flip** — 3축 중 의식 🟢 + 창발 🟢 + CE measurable 🟢 이나 CE-descent 🔴. PUBLIC 은 3/3 GREEN 일 때만.
 - **NEXT STEP** = `.clm` 포맷이 embed table + GN affine 직렬화(또는 fp16-shadow track read) → CORE-mounted descent 재측정.
 - verdict verbatim: `.verdicts/core-3axis-mount/ce_descent_decode.txt` · probe `CORE/clm_ce_descent_probe.hexa` (falsifier F-CLM-CORE-CE-DESCENT pre-registered in-file).
+
+## 2026-06-02 — Lane G-ref 7B reference rung RECOVERED + HF PUBLIC (substrate=PyTorch-CUDA, lane=Lane-G-ref)
+
+- **트레인 완료 pod**: vast H100 80GB pod 39115197 (project=anima, purpose=laneg-ref-7b). GPU idle 0%/1MiB = done. RESUME (재학습 X, 재렌트 X).
+- **ckpt 회수**: detached scp (prior agent) → `state/laneg_ref_7b_recover/clm_ref_pytorch_cuda_7b.pt` · 14,505,817,922 bytes (100% landed, size stable).
+- **sha256 LOCAL==POD==HF (triple-match)**: `38ef2ed55b47b670fa915bba0c2827782799a9070ba087210cd44db1fddb4d41` — local `shasum -a 256`, pod-side `hexa cloud run 39115197 -- sha256sum`, HF `SHA256SUMS.txt` 3중 일치.
+- **7B config (verbatim `clm_ref_7b_train.log.json`)**: vocab=256 (byte-level) · d=4096 · n_layer=36 · n_head=32 (head_dim 128) · block=512 · batch=32 · grad_accum=1 · steps=400 · n_params=7,252,828,160 · grad_ckpt=true · optimizer=adamw8bit · model_dtype=bf16.
+- **descent 🟢 PASS**: first_val_CE 5.360630989074707 → last_val_CE 2.412078857421875 · F_CLM_REF_7B_DESCENT=1 · verdict=PASS.
+- **util 🟢 PASS (≫20%)**: n=436 · util_peak=100.0% · util_mean=99.1788990825688% · mem_peak=46025 MiB · power_mean=651.3842201834855 W.
+- **throughput**: total_s=884.9 · tok_per_s_final=7406.1 · tok_seen=6,553,600.
+- **closure = PASS** (descent 🟢 AND util 🟢) → **HF PUBLIC** (a_hf_autonomous).
+- **HF upload**: `dancinlab/clm-v1-ref-pytorch-cuda-7b` PUBLIC (private=False) · 6 files (clm_ref_pytorch_cuda_7b.pt · clm_ref_7b_train.log.json · clm_ref_pytorch_cuda_7b.py · prep_corpus_7b.py · README.md · SHA256SUMS.txt) · tag `step-400` · model card 5-H2 (Origin/Falsifiers/Substrate/Caveats/Composability) + sha256 manifest · added to CLM collection (dancinlab/clm-6a1cf58f… → 3 items: 85.6M/3.149B/7.25B 사다리). HF.jsonl row substrate=PyTorch-CUDA lane=Lane-G-ref.
+- **tool 수정**: `tool/hf_upload_mk2.hexa` `_naming_allowed_stage_prefixes` 에 `ref-` 추가 (§3.2.1 paradigm- amendment 선례) — ref ladder 명명이 canonical 도구 통과. NOTE: 도구가 commit-URL regex 가 `url=https://…` 접두 줄을 못 잡아 false-FAIL 출력했으나 업로드는 실제 성공 (HF repo_info 로 6 files+tag+collection 직접 검증). hf-tool inbox 후보.
+- **recover-before-teardown (a_fire_recover_complete)**: ckpt local + sha-verified(triple) + HF PUBLIC 완료 후에만 → `hexa cloud adopt 39115197 --project laneg-ref-7b-DONE` (anima 에서 off-tag) → `hexa cloud down 39115197 --force` = destroyed+forgotten. PROTECT 38704336/38996679/39106252 무손상 확인.
+- **scope 정직 (a_scale_honest_scope)**: bounded N=400 steps, NOT converged · 85M→3.149B→7.25B reference 사다리 7.25B 점. NOT forge production (a_train_flame_forge — reference/baseline a_completeness_over_cheap, primary 아님) · NEVER merged w/ Lane A (a_lane_akida_gpu_split). substrate=PyTorch-CUDA (NOT forge, NOT AKIDA).
