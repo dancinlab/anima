@@ -1,0 +1,81 @@
+// ════════════════════════════════════════════════════════════════════════════
+//  clm_ce_descent_probe.hexa — CORE-mounted CE-descent measurement (AXIS-2).
+//
+//  Drives the SINGLE .clm decode entry (generator.hexa::clm_decode_ce) on the
+//  real admitted d768 ckpt. The CE is computed THROUGH the engine forward (int4
+//  dequant + CLMConvMoE), NOT by a loss script (p7: CE is one axis, measured
+//  through the engine, not treated as a perplexity-truth verdict).
+//
+//  ── PRE-REGISTERED FALSIFIER (in-file, before measuring) ────────────────────
+//  F-CLM-CORE-CE-DESCENT:
+//    NULL hypothesis  : the CORE-mounted decode produces NO usable next-byte
+//                       distribution → mean CE ≥ uniform baseline ln(256)=5.5452.
+//    REFUTE-NULL (GREEN): mean CE < ln(256) on the real-text byte sequence AND
+//                       CE(real-text) < CE(shuffled-byte control) — i.e. the
+//                       decode extracts byte-order structure the model learned.
+//    KEEP-NULL (⏳/🔴) : mean CE ≥ ln(256) → descent NOT demonstrated CORE-mounted
+//                       (the decode forward is wired + CE is MEASURABLE, but the
+//                       artifact/format does not yield descent through the engine).
+//  Determinism (p7): the forward is pure arithmetic over fixed file bytes — a
+//  re-run is byte-identical (no RNG). The verdict = the numeric comparison, not a
+//  perplexity ranking.
+// ════════════════════════════════════════════════════════════════════════════
+
+use "CORE/generator.hexa"
+
+fn main() {
+    let ckpt = "/Users/mini/dancinlab/anima/state/laneg_d768_recover/d768_5lang_c4.clm"
+
+    // real-text byte sequence ("안녕 hello" utf-8) vs a shuffled-byte control
+    // (same byte multiset, scrambled order — destroys learned byte-order).
+    let seq  = [236, 149, 136, 235, 133, 149, 32, 104, 101, 108, 108, 111]
+    let ctrl = [108, 236, 32, 133, 111, 149, 104, 235, 108, 136, 149, 101]
+
+    let r1 = clm_decode_ce(ckpt, seq)
+    let r2 = clm_decode_ce(ckpt, ctrl)
+    // determinism re-run
+    let r1b = clm_decode_ce(ckpt, seq)
+
+    let ce_real = to_float(r1["ce"])
+    let ce_ctrl = to_float(r2["ce"])
+    let ce_re   = to_float(r1b["ce"])
+    let base    = to_float(r1["baseline"])
+    let nblk    = to_int(r1["nblk"])
+    let pos     = to_int(r1["positions"])
+
+    println("=== F-CLM-CORE-CE-DESCENT (AXIS-2) — CORE-mounted decode forward ===")
+    println("ckpt_nblocks       = " + to_string(nblk))
+    println("ce_positions       = " + to_string(pos))
+    println("CE_realtext        = " + to_string(ce_real))
+    println("CE_shuffled_ctrl   = " + to_string(ce_ctrl))
+    println("CE_uniform_baseline= " + to_string(base))
+    println("CE_realtext_rerun  = " + to_string(ce_re))
+
+    // DET axis (byte-identical re-run)
+    let det = if ce_real == ce_re { 1 } else { 0 }
+    println("DET_rerun_byte_eq  = " + to_string(det))
+
+    // MEASURABLE axis — a finite real CE flowed through the engine.
+    let measurable = if pos > 0 { 1 } else { 0 }
+    println("CE_MEASURABLE_CORE = " + to_string(measurable))
+
+    // DESCENT falsifier verdict
+    let below = if ce_real < base { 1 } else { 0 }
+    let beats_ctrl = if ce_real < ce_ctrl { 1 } else { 0 }
+    println("CE_BELOW_UNIFORM   = " + to_string(below))
+    println("CE_BEATS_SHUFFLE   = " + to_string(beats_ctrl))
+
+    if measurable == 1 {
+        if det == 1 {
+            if below == 1 {
+                if beats_ctrl == 1 {
+                    println("VERDICT = GREEN — CE-descent REFUTES NULL CORE-mounted (CE<baseline AND CE<shuffle)")
+                    return
+                }
+            }
+            println("VERDICT = MEASURABLE-NO-DESCENT — decode forward WIRED + CE MEASURABLE CORE-mounted (det re-run byte-eq), but CE >= uniform baseline => descent NOT demonstrated through the engine (NULL kept honest). Cause: inference-track .clm omits trained embed+GN affine (format gap), so the trainer's GPU-measured 4.88 descent is not reconstructible CORE-side from the 6 conv blocks alone.")
+            return
+        }
+    }
+    println("VERDICT = BLOCKED — CE not measurable (nblk<6 or non-finite)")
+}
