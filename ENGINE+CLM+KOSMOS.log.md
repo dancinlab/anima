@@ -2,6 +2,20 @@
 
 Append-only history sister of `ENGINE+CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-03T01:30Z — Lane-G 3B forge DESCENT rung A-1 FIRED (substrate=GPU · pod vast 39139563 H100 sm_90 · a_lane_akida_gpu_split — Lane A 와 NEVER 병합) — forge device-resident 증명 · util 🔴 WORKLOAD-BOUND · descent 정직-잔여
+
+캠페인 pivot-A 직후 첫 descent-축 rung. 따뜻한 lever-4/5 byte-identical clm_prod build 채택(a_wall_first, no rent). est ~$6-9 (a_fire_autonomous, no cost gate).
+
+- [x] **3-GATE PASS (NO CPU fire)** — GATE1 nvcc EXIT0 (`cuda_12.4.r12.4`) · GATE2 clm_prod links `libcublas.so.12 libcudart.so.12 libcuda.so.1 libcublasLt.so.12` (CUDA-link ENGAGED) · GATE3 `_forge_dispatch_matmul_fp64/bf16 + hexa_forge_dispatch_matmul_batched_bt`. GPU REQUIRED 충족, silent CPU fallback 없음 (a_train_flame_forge).
+- [x] **CLMConvMoE scale 분석** — params ≈ (2+E)·3·d² + 512·d. forge fp64 4-copy(W+grad+m+v) + per-expert qcache → 진짜 ~3B(d=15811,E=2) = ~169GB ≫ 80GB single-H100. max single-H100-80GB-feasible(fp64) ≈ 1.5B.
+- [x] **probe3B (d=15811 ~3.008B)** — `FIRE_RC=124 TIMED OUT(120s) UTIL n=985 PEAK=0% DEVMEM=0MiB`. INTERPRETED host weight-alloc/LCG-fill(14×fp64 conv tensor 각 ~6GB)이 wall — GPU 도달 못함(DEVMEM 0). host RAM 885GB(host-OOM 아님). **true-3B-dim = interpreter host-alloc-bound** → option-B CUDA-rewrite 필요성 재확인. forge GPU 결함 아님.
+- [x] **a1_1p5b (d3840 E32 ~1.506B, 256 step)** — `UTIL n=11698 PEAK=100% MEAN=6.4747% DEVMEM=64861MiB` (terminated, util-harvested; descent 256-step interpreted E32 >40min ≫ budget 미완). forge fully device-resident at 1.5B. **util 🔴 RED** MEAN 6.47%(<20%) — lever-5 d1536 0.66%의 ~10× (per-step work 큼) but WORKLOAD-BOUND 유지.
+- [x] **a1light (d3840 E32 ~1.506B, 16 step) — COMPLETED** — `FIRE_RC=0 wall=922s UTIL n=7591 PEAK=76% MEAN=0.6426% DEVMEM=18629MiB`. **epoch-1 CE 4.645 → epoch-2 CE 4.88455 → F-CLM-PROD-DESCENT=0 FAIL** (CE 상승, 16 step 은 1.5B descent 에 too few, HONEST). .clm 회수: `clm_3b_a1light.clm` 89089205B sha256 **15d7088ec94bd0a2284d36d921c0667eaf650c985160dca413ac617595108bd5** (local==pod 검증).
+- [x] **a1desc (d9216 E2 ~1.024B, 96 step) — INTERPRETER-WALL-BOUND** — `UTIL n=28523 PEAK=78% MEAN=0.6636%` (~47min @ ~20-30s/step host-loop O(d²), CE/ckpt 미도달, killed). E=2 high-d descend family 가 돌았으나 interpreted host conv loop 가 impractical.
+- [x] **VERDICT (정직, a_scale_honest_scope)** — (1) forge IS device-resident at 1-1.5B single-H100 (DEVMEM≤64.9GB PEAK 100% 3-GATE PASS). (2) util 🔴 RED 모든 config (MEAN 0.66-6.47%<20%) WORKLOAD-BOUND 확인 — EXPECTED, 안 쫓음. (3) **descent clean-PASS 미달**: bounded-N 가 too-few-steps(a1light F=0) 또는 interpreter-wall-impractical(a1desc d9216). clean ≥1B forge descent = deferred option-B device-resident CUDA-C rewrite(per-step wall 제거) OR proven d1536/d3072 E2 scale(lever-5 apples 4.05535→2.99508 GREEN) 필요. (4) true-3B-dim = host-alloc-bound + >80GB fp64.
+- [x] **recover-before-teardown** — 1.5B forge .clm + 모든 log + util CSV → `.verdicts/lane-g-3b-descent/`, sha256 검증. HF.jsonl row `dancinlab/clm-v1-dev-laneg-1p5b-a1-descent-probe` PRIVATE pending_upload (util-RED+descent-FAIL WIP, a_hf_autonomous · substrate=GPU). pod 39139563 NOT torn down (PROTECTED 38704336 untouched · orphan 39131850 sweep 대상).
+- [ ] **next-rung handoff** — ENGINE 3B mount = 아직 clean descent-PASS .clm 아님 (1.5B .clm 은 descent-FAIL@16step structure probe). real Lane G 3B/7B descent 는 lever-5 가 닫은 per-step interpreter wall 에 BLOCKED → ≥1B descent axis 는 deferred option-B device-resident CUDA-C rewrite 가 N-step 을 affordable 하게 만들어야 OR proven d1536/d3072 E2 scale 유지.
+
 ## 2026-06-03T00:00Z — CAMPAIGN PIVOT (user decision A) + 브랜치 reconcile + ENGINE PUBLIC 3/3 GREEN + lever-5 WORKLOAD-BOUND TERMINAL (substrate=GPU Lane-G + CORE ENGINE · a_lane_akida_gpu_split — Lane A 와 NEVER 병합)
 
 캠페인 원래 종료조건 = "Lane G util-GREEN 수렴". lever-5 가 그것을 레버로 도달 불가(workload-bound terminal)임을 증명. **USER DECISION A (2026-06-03): util-GREEN 을 honest workload-bound terminal 로 수용(forge 결함 아님), 캠페인 종료조건에서 DROP, 7B 목표를 DESCENT 축으로 추구.** real util-GREEN = 별도 deferred CUDA-rewrite 트랙(option B), blocker 아님.

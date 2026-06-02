@@ -1,0 +1,26 @@
+=== LANE-G 3B DESCENT FIRE START 2026-06-02T18:05:33Z ===
+clm_prod=1210464B  corpus=/root/clm_mid_5lang_c4.txt (402270B)
+NVIDIA H100 80GB HBM3, 9.0, 81559 MiB
+
+############ CONFIG probe3B : d=15811 T=8 E=2 nsamp=2 epochs=1 (~3.008B params) ############
+FIRE_RC=124  tag=probe3B  wall=121s
+UTIL[probe3B] n=985 PEAK=0% MEAN=0.0000% busy_ge20=0 pct_ge20=0.00% pct_ge50=0.00%
+DEVMEM[probe3B] peak_used=0MiB
+--- descent[probe3B] ---
+  corpus: /root/clm_mid_5lang_c4.txt  (402270 bytes, V=256)
+  windows: 2/2  (T=8 stride=201130)
+--- ckpt[probe3B] ---
+ls: cannot access '/root/clm_3b_probe3B.clm': No such file or directory
+
+############ CONFIG a1_1p5b : d=3840 T=256 E=32 nsamp=16 epochs=16 (~1.506B params) ############
+Terminated
+FIRE_RC=143  tag=a1_1p5b  wall=1403s
+UTIL[a1_1p5b] n=11698 PEAK=100% MEAN=6.4747% busy_ge20=812 pct_ge20=6.94% pct_ge50=6.27%
+DEVMEM[a1_1p5b] peak_used=64861MiB
+--- descent[a1_1p5b] ---
+  corpus: /root/clm_mid_5lang_c4.txt  (402270 bytes, V=256)
+  windows: 16/16  (T=256 stride=25125)
+--- ckpt[a1_1p5b] ---
+ls: cannot access '/root/clm_3b_a1_1p5b.clm': No such file or directory
+
+=== LANE-G 3B DESCENT FIRE DONE 2026-06-02T18:30:59Z ===
