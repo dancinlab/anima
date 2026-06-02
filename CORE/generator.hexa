@@ -389,12 +389,20 @@ fn _gen_conv1d(x: list, T: int, Cin: int, Cout: int, K: int, dil: int,
     }
 }
 
-// _gen_clm_deq_blocks — read + dequantize all blocks of an admitted .clm.
-// Returns #{ "w": list-of-lists, "s": list-of-lists, "nblk": int }. int4 code =
-// (nibble & 0xF) - 8 (sym [-7,7]); dequant happens at conv time (code·scale).
+// _gen_clm_deq_blocks — read + dequantize all blocks of an admitted .clm, AND
+// (v0.2) read the optional EXT trailer (trained embed + conv biases + GN affine).
+// Returns #{ "w","s","nblk","has_ext","ext" }. int4 code = (nibble&0xF)-8 (sym
+// [-7,7]); dequant happens at conv time (code·scale). The ext entries are stored
+// FULL-precision fp32 by clm_ckpt.hexa/clm_prod.hexa; a v0.1 file has no trailer
+// → has_ext=0 and the decoder uses the documented stand-in (no fabrication).
+//
+// EXT entry order (clm_ckpt.hexa header, MUST match):
+//   0 embed[V·d] 1 ecB 2 tcB 3 e0B 4 e1B 5 rB 6 roB 7 tgG 8 tgB 9 noG 10 noB
 fn _gen_clm_deq_blocks(ckpt_path: string) -> Map {
     let rb = read_file_bytes(ckpt_path)
-    if len(rb) < 5 || rb[0] != 67 { return #{ "w": [], "s": [], "nblk": 0 } }
+    if len(rb) < 5 || rb[0] != 67 {
+        return #{ "w": [], "s": [], "nblk": 0, "has_ext": false, "ext": [] }
+    }
     let nblk = rb[4]
     let mut off = 5
     let blocks_w = []; let blocks_s = []
@@ -419,7 +427,62 @@ fn _gen_clm_deq_blocks(ckpt_path: string) -> Map {
         blocks_w.push(wq); blocks_s.push(sc)
         bi = bi + 1
     }
-    return #{ "w": blocks_w, "s": blocks_s, "nblk": nblk }
+    // v0.2 EXT trailer — peek for "CLMX" (67,76,77,88) right after the conv blocks.
+    let mut has_ext = false
+    let ext = []
+    if off + 5 <= len(rb) && rb[off] == 67 && rb[off+1] == 76 && rb[off+2] == 77 && rb[off+3] == 88 {
+        let n_ext = rb[off+4]
+        off = off + 5
+        let mut ei = 0
+        while ei < n_ext {
+            let elen = _gen_rd_u32(rb, off); off = off + 4
+            let ev = []
+            let mut k = 0
+            while k < elen { ev.push(bytes_to_f32_le(rb, off)); off = off + 4; k = k + 1 }
+            ext.push(ev)
+            ei = ei + 1
+        }
+        has_ext = true
+    }
+    return #{ "w": blocks_w, "s": blocks_s, "nblk": nblk, "has_ext": has_ext, "ext": ext }
+}
+
+// _gen_conv1d_b — conv1d (same index convention as _gen_conv1d) + an additive
+// per-output-channel bias b[co]. b=[] (len 0) means no bias (legacy path).
+fn _gen_conv1d_b(x: list, T: int, Cin: int, Cout: int, K: int, dil: int,
+                 w: list, sc: list, b: list, y: list) {
+    _gen_conv1d(x, T, Cin, Cout, K, dil, w, sc, y)
+    if len(b) == Cout {
+        let mut t = 0
+        while t < T {
+            let mut co = 0
+            while co < Cout { y[t*Cout+co] = y[t*Cout+co] + b[co]; co = co + 1 }
+            t = t + 1
+        }
+    }
+}
+
+// _gen_gnorm_affine — GroupNorm(1) standardize across d channels, then the
+// learned affine y = g·xhat + b (g/b len d). Empty g/b → parameter-free (legacy).
+fn _gen_gnorm_affine(x: list, T: int, d: int, g: list, b: list) {
+    let aff = len(g) == d && len(b) == d
+    let mut t = 0
+    while t < T {
+        let mut mean = 0.0; let mut c = 0
+        while c < d { mean = mean + x[t*d+c]; c = c + 1 }
+        mean = mean / to_float(d)
+        let mut var = 0.0; let mut c2 = 0
+        while c2 < d { let dd = x[t*d+c2]-mean; var = var + dd*dd; c2 = c2 + 1 }
+        var = var / to_float(d)
+        let inv = 1.0 / sqrt(var + 0.00001)
+        let mut c3 = 0
+        while c3 < d {
+            let xh = (x[t*d+c3]-mean) * inv
+            x[t*d+c3] = if aff { g[c3]*xh + b[c3] } else { xh }
+            c3 = c3 + 1
+        }
+        t = t + 1
+    }
 }
 
 // clm_decode_ce — CORE-mounted decode forward → next-byte CROSS-ENTROPY over a
@@ -431,58 +494,86 @@ fn _gen_clm_deq_blocks(ckpt_path: string) -> Map {
 //   returns #{ "ce": float, "baseline": float, "positions": int,
 //              "below_uniform": bool, "nblk": int }
 pub fn clm_decode_ce(ckpt_path: string, seq: list) -> Map {
-    let d = 768; let E = 2; let V = 256; let K = 3
+    let V = 256; let K = 3
     let dq = _gen_clm_deq_blocks(ckpt_path)
     let bw = dq["w"]; let bs = dq["s"]
     let nblk = to_int(dq["nblk"])
+    let has_ext = to_string(dq["has_ext"]) == "true"
+    let ext = dq["ext"]
     let base = ln(256.0)
     if nblk < 6 {
         return #{ "ce": 0.0, "baseline": base, "positions": 0,
-                  "below_uniform": false, "nblk": nblk }
+                  "below_uniform": false, "nblk": nblk, "has_ext": has_ext,
+                  "d": 0, "E": 0 }
     }
+    // Derive (d, E) from the stored block dims — config-agnostic so the SAME
+    // forward serves d=8 ($0-CPU re-export) and d=768 (production fire). block0
+    // is [Cout=d][rest=d·K] ⇒ len(bw[0]) = d·d·K ⇒ d = round(sqrt(len/K)); the
+    // router block4 is [Cout=E][rest=d] ⇒ E = len(bw[4])/d.
+    let b0n = len(bw[0])
+    let d = to_int(sqrt(to_float(b0n) / to_float(K)) + 0.5)
+    let E = len(bw[4]) / d
     let T = len(seq)
-    // tied embedding stand-in: embed[byte,c] = deq(readout block5)[byte·d + c].
+    // ── embedding ────────────────────────────────────────────────────────────
+    // v0.2 ext present  → TRAINED embed table (ext[0], full fp32) — faithfully
+    //                      reproduces the trainer's nn_embedding_fwd.
+    // v0.1 legacy        → tied-readout stand-in (documented format gap, NOT a
+    //                      fabricated weight): embed[byte,c] = deq(roW)[byte·d+c].
+    let empty = []
+    let ecB = if has_ext { ext[1] } else { empty }
+    let tcB = if has_ext { ext[2] } else { empty }
+    let e0B = if has_ext { ext[3] } else { empty }
+    let e1B = if has_ext { ext[4] } else { empty }
+    let rB  = if has_ext { ext[5] } else { empty }
+    let roB = if has_ext { ext[6] } else { empty }
+    let tgG = if has_ext { ext[7] } else { empty }
+    let tgB = if has_ext { ext[8] } else { empty }
+    let noG = if has_ext { ext[9] } else { empty }
+    let noB = if has_ext { ext[10] } else { empty }
     let roW = bw[5]; let roS = bs[5]
-    let x = []
+    let xe = []
     let mut q = 0
-    while q < T*d { x.push(0.0); q = q + 1 }
+    while q < T*d { xe.push(0.0); q = q + 1 }
     let mut t0 = 0
     while t0 < T {
         let b = seq[t0]; let mut cc = 0
-        while cc < d { x[t0*d+cc] = roW[b*d+cc] * roS[b]; cc = cc + 1 }
+        if has_ext {
+            let emb = ext[0]
+            while cc < d { xe[t0*d+cc] = emb[b*d+cc]; cc = cc + 1 }
+        } else {
+            while cc < d { xe[t0*d+cc] = roW[b*d+cc] * roS[b]; cc = cc + 1 }
+        }
         t0 = t0 + 1
     }
-    _gen_gnorm(x, T, d)
-    // entry conv (block0) d→d K3 + GELU + GN
-    let xe = []
+    // ── forward — faithfully mirrors clm_prod.hexa::clm_prod_fwd (v0.2 path) ──
+    // legacy path keeps a parameter-free-GN stand-in graph (empty affine vecs).
+    // entry conv (block0) d→d K3 + ecB  (NO gelu/GN after entry — matches trainer)
+    let xec = []
     let mut a = 0
-    while a < T*d { xe.push(0.0); a = a + 1 }
-    _gen_conv1d(x, T, d, d, K, 1, bw[0], bs[0], xe)
-    let mut g = 0
-    while g < T*d { xe[g] = _gen_gelu(xe[g]); g = g + 1 }
-    _gen_gnorm(xe, T, d)
-    // trunk conv (block1) d→d K3 + residual GELU
-    let tr = []
+    while a < T*d { xec.push(0.0); a = a + 1 }
+    _gen_conv1d_b(xe, T, d, d, K, 1, bw[0], bs[0], ecB, xec)
+    // trunk conv (block1) d→d K3 + tcB → GN(tgG,tgB) → gelu → residual xt=xec+hg0
+    let h0 = []
     let mut b2 = 0
-    while b2 < T*d { tr.push(0.0); b2 = b2 + 1 }
-    _gen_conv1d(xe, T, d, d, K, 1, bw[1], bs[1], tr)
-    _gen_gnorm(tr, T, d)
+    while b2 < T*d { h0.push(0.0); b2 = b2 + 1 }
+    _gen_conv1d_b(xec, T, d, d, K, 1, bw[1], bs[1], tcB, h0)
+    _gen_gnorm_affine(h0, T, d, tgG, tgB)
+    let xt = []
     let mut r2 = 0
-    while r2 < T*d { xe[r2] = xe[r2] + _gen_gelu(tr[r2]); r2 = r2 + 1 }
-    _gen_gnorm(xe, T, d)
-    // experts (block2,3) d→d K3 + GELU
-    let ex0 = []; let ex1 = []
-    let mut e = 0
-    while e < T*d { ex0.push(0.0); ex1.push(0.0); e = e + 1 }
-    _gen_conv1d(xe, T, d, d, K, 1, bw[2], bs[2], ex0)
-    _gen_conv1d(xe, T, d, d, K, 1, bw[3], bs[3], ex1)
-    let mut eg = 0
-    while eg < T*d { ex0[eg] = _gen_gelu(ex0[eg]); ex1[eg] = _gen_gelu(ex1[eg]); eg = eg + 1 }
-    // router (block4) d→E K1
+    while r2 < T*d { xt.push(xec[r2] + _gen_gelu(h0[r2])); r2 = r2 + 1 }
+    // router (block4) d→E K1 + rB
     let rl = []
     let mut rr = 0
     while rr < T*E { rl.push(0.0); rr = rr + 1 }
-    _gen_conv1d(xe, T, d, E, 1, 1, bw[4], bs[4], rl)
+    _gen_conv1d_b(xt, T, d, E, 1, 1, bw[4], bs[4], rB, rl)
+    // experts (block2,3) d→d K3 + e0B/e1B → gelu
+    let ex0 = []; let ex1 = []
+    let mut e = 0
+    while e < T*d { ex0.push(0.0); ex1.push(0.0); e = e + 1 }
+    _gen_conv1d_b(xt, T, d, d, K, 1, bw[2], bs[2], e0B, ex0)
+    _gen_conv1d_b(xt, T, d, d, K, 1, bw[3], bs[3], e1B, ex1)
+    let mut eg = 0
+    while eg < T*d { ex0[eg] = _gen_gelu(ex0[eg]); ex1[eg] = _gen_gelu(ex1[eg]); eg = eg + 1 }
     // MoE combine: y = softmax(router)·experts
     let y = []
     let mut yy = 0
@@ -497,12 +588,13 @@ pub fn clm_decode_ce(ckpt_path: string, seq: list) -> Map {
         while cc2 < d { y[tt*d+cc2] = w0*ex0[tt*d+cc2] + w1*ex1[tt*d+cc2]; cc2 = cc2 + 1 }
         tt = tt + 1
     }
-    _gen_gnorm(y, T, d)
-    // readout (block5) d→V K1 → logits[T·V]
+    // norm_out GroupNorm(noG,noB)
+    _gen_gnorm_affine(y, T, d, noG, noB)
+    // readout (block5) d→V K1 + roB → logits[T·V]
     let lg = []
     let mut li = 0
     while li < T*V { lg.push(0.0); li = li + 1 }
-    _gen_conv1d(y, T, d, V, 1, 1, bw[5], bs[5], lg)
+    _gen_conv1d_b(y, T, d, V, 1, 1, bw[5], bs[5], roB, lg)
     // next-byte CE: position p predicts seq[p+1].
     let mut ce = 0.0; let mut np = 0; let mut p = 0
     while p < T - 1 {
@@ -516,7 +608,8 @@ pub fn clm_decode_ce(ckpt_path: string, seq: list) -> Map {
     }
     let mean_ce = if np > 0 { ce / to_float(np) } else { 0.0 }
     return #{ "ce": mean_ce, "baseline": base, "positions": np,
-              "below_uniform": mean_ce < base, "nblk": nblk }
+              "below_uniform": mean_ce < base, "nblk": nblk, "has_ext": has_ext,
+              "d": d, "E": E }
 }
 
 
