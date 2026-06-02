@@ -7,6 +7,17 @@
 
 세 레인은 substrate별로 분리 추적 (a_lane_akida_gpu_split + a_train_flame_forge). Lane G(forge)가 프로덕션 primary; Lane G-ref(PyTorch)는 baseline 참조(forge PUBLIC artifact 아님).
 
+**Lane A** (substrate=AKIDA · on-chip 1-bit Hebbian) — **FORMAL 2-SUBLANE SPLIT (2026-06-03, #1717 Lane A rule)**: Lane A 의 두 축을 substrate-tag 별로 분리 추적 (a_lane_akida_gpu_split). single-step on-chip ceiling 과 multi-step HYBRID composition 은 **별개 substrate** (AKIDA vs HYBRID) 이므로 절대 한 verdict 로 병합하지 않음.
+
+  | sublane | substrate | 정의 | STATUS | 증거 (toy) |
+  |---|---|---|---|---|
+  | **Lane A-single** | AKIDA (on-chip 1-bit Hebbian) | single-pass: 1-step encode + next-step generation. 이것이 **on-chip ceiling** (multi-step 은 algorithm-bound CLOSED across 12 mechanisms: paged/width/code/scale + A1-A7) | ✅ 증명 (toy) + **🟢 SCALE-SURVIVES (2026-06-03)** | encoder ci_lo>0 · single-step gen_acc ci_lo=0.4096 ≫ NULL (F-GEN-1/2 REFUTED) · **anchor-count ladder 50/100/250: gen ci_lo [0.6237, 0.4761, 0.4131] > shuffle-NULL hi [0.2794, 0.1228, 0.0431] 매 rung (p=0.005), F-GEN-SCALE-1/2 REFUTED, 8/8 learn_hw=True** |
+  | **Lane A-multi** | HYBRID (on-chip ⊕ off-chip) | multi-step composition via off-chip host-CPU Elman decode head (numpy BPTT, NO torch). on-chip 인코더 ⊕ off-chip recurrence | ✅ 증명 (toy) + **🟢 GENERALIZES @ B=5 (2026-06-03)** | branching-corpus held-out transferable OPERATOR, F-BRANCH-1/2 REFUTED · **wider branching B=5 (DELTAS 1,7,13,19,29) NC ladder 40/45/50: headline NC=50 held-out decay [0.0617, 0.8683, 0.9267], hop-2/3 ci_lo [0.8394, 0.9069] > shuffle-NULL hi [0.2213, 0.2234] (p=0.005), GENERALIZES=True, 8/8 enc_learned=True** |
+
+  **REMAINING-ITEMS (verbatim):** 멀티스텝합성→off-chip HYBRID head ✅실증 (decay 0.32 flat, 이게 정답) · persistent-anchor probe→on-chip ⏳follow-up (A6/A7 hop-2~0.1 부수신호, 사전등록 재검) · recurrent/temporal(A3·A4)→AKD1500/v2 🔒 (AKD1000 v1 IP 불가, 하드웨어 교체 필요).
+
+  **금일 rung 결과 (2026-06-03, real AKD1000 sequential):** **A-single (substrate=AKIDA) scale-transfer 🟢 SCALE-SURVIVES** — single-step open-vocab GENERATION anchor-count ladder 50/100/250: gen ci_lo [0.6237, 0.4761, 0.4131] > shuffle-NULL hi [0.2794, 0.1228, 0.0431] 매 rung (p=0.005), 8/8 learn_all_hw=True, F-GEN-SCALE-1/2 REFUTED (largest rung gen 0.4131 > identity-NULL 0.4009 = produces, no collapse); single-step ceiling 은 single-point artefact 아닌 SCALE-ROBUST. `.verdicts/lane-a-single-rung/F-GEN-SCALE.txt` + `.discoveries/lane-a-single-rung.tape` + `AKIDA/onchip_xlm_gen_scale.py`. **A-multi (substrate=HYBRID) larger rung 🟢 GENERALIZES @ wider branching B=5** — DELTAS=[1,7,13,19,29] (B=5) NC ladder {40,45,50}: headline NC=50 (chance 0.1020) held-out decay [0.0617, 0.8683, 0.9267] / in-dist TRAIN [0.7271, 0.9364, 0.9550], hop-2 ci_lo=0.8394 / hop-3 ci_lo=0.9069 > shuffle-NULL hi [0.2213, 0.2234] (p=0.005), 8/8 enc_learned=True, F-BRANCH-1/2 REFUTED, GENERALIZES=True (wider B=5 에서도 transferable offset operator). `.verdicts/lane-a-multi-rung/F-BRANCH-WIDE.txt` + `.discoveries/lane-a-multi-rung.tape` + `AKIDA/onchip_xlm_branching.py` (env override). 칩 프로토콜: streamer STOP → device confirm → 2 rung sequential → streamer RESTORED active exact-argv (`--port 9512 --duration 86400 --regime R3`, pid 78505), temp 62–73.6°C (<82°C), rc=0/0.
+
 **Lane A** (substrate=AKIDA · on-chip 1-bit Hebbian):
 
 > ⚠️ **Lane A 실행 규칙 (MUST · 2026-06-03 명시)** — a_lane_akida_gpu_split:

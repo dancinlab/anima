@@ -617,6 +617,29 @@ live AKD1000 BC.00.000.002 · akida 2.19.1 · N=8 trials × 256-unit AkidaUnsupe
 
 ---
 
+## 2026-06-03 — Lane A 정식 2-SUBLANE 분리 (#1717) + 양 sublane 각 1 rung 전진 (real AKD1000, sequential)
+
+**JOB 1 — RECORD (칩 런 전 commit/push):** ENGINE+CLM+KOSMOS.md Lane A 섹션을 두 named sublane 으로 정식 분리 (substrate-tag 별 분리추적, a_lane_akida_gpu_split). **Lane A-single** (substrate=AKIDA · on-chip 1-bit Hebbian, single-pass on-chip ceiling) ⊥ **Lane A-multi** (substrate=HYBRID · on-chip 인코더 ⊕ off-chip host-CPU Elman decode head). remaining-items 표 verbatim 기록 (멀티스텝합성→off-chip HYBRID head ✅실증 · persistent-anchor probe→on-chip ⏳A6/A7 · recurrent/temporal A3·A4→AKD1500/v2 🔒). commit 9dffff66b, branch lane-a/d768-2sublane-split (base lane-g/d768-cuda-fire), pushed BEFORE 칩 런.
+
+**칩 EXCLUSIVE 프로토콜 (single-chip):** `systemctl --user stop spike-streamer` → `akida.devices()` 가 HardwareDevice 반환 확인 (BC.00.000.002, akida 2.19.1, throttled=0xe0000 = under-voltage 비트 only, 정상) → 두 rung 을 ONE AT A TIME (trap 기반 streamer-restore wrapper, detached nohup, SSH flap 견딤) → `systemctl --user start spike-streamer` RESTORED active 확인 + exact argv `--port 9512 --duration 86400 --regime R3` (pid 78505). THERMAL: 전 구간 62.0–73.6°C (82°C pause threshold 아래), OOM 없음. WRAP: A-single exit rc=0 / A-multi exit rc=0 / streamer service restarted / WRAP done.
+
+**JOB 2 rung 1 — Lane A-single (substrate=AKIDA) scale-transfer 🟢 SCALE-SURVIVES:** single-step open-vocab GENERATION 의 anchor-count ladder (a_scale_honest_scope ≥3-rung). harness AKIDA/onchip_xlm_gen_scale.py (byte-match onchip_xlm_generation enc/bind/FC/decode; concept subset 만 변경), LANE_A_GEN_NCONCEPTS=10,20,50 → 50/100/250 앵커. live AKD1000, 8 trials/rung, learn_all_hw=True 매 rung. 결과 (verbatim, .verdicts/lane-a-single-rung/F-GEN-SCALE.txt):
+- NC=10/50anch  : gen ci_lo=0.6237 | shufNULL hi=0.2794 p=0.0050 | identNULL hi=0.6745 | chance=0.1111 | aboveShuf=True above2xChance=True
+- NC=20/100anch : gen ci_lo=0.4761 | shufNULL hi=0.1228 p=0.0050 | identNULL hi=0.5562 | chance=0.0526 | aboveShuf=True above2xChance=True
+- NC=50/250anch : gen ci_lo=0.4131 | shufNULL hi=0.0431 p=0.0050 | identNULL hi=0.4009 | chance=0.0204 | aboveShuf=True aboveIdent=True above2xChance=True
+- **F-GEN-SCALE-1 REFUTED** (매 rung gen ci_lo>shuffle-NULL hi AND p<0.05 = SCALE-SURVIVES) · **F-GEN-SCALE-2 REFUTED** (largest rung ci_lo>NULL hi AND ≥2× chance = no collapse). echo-vs-produce gap 가 scale 커질수록 produce 쪽으로 벌어짐 (NC=10/20 echo → NC=50 produces). substrate=AKIDA, NOT HYBRID, NOT Lane G.
+
+**JOB 2 rung 2 — Lane A-multi (substrate=HYBRID) larger rung 🟢 GENERALIZES @ B=5:** HYBRID branching-corpus held-out 을 WIDER branching 으로 확대. harness AKIDA/onchip_xlm_branching.py + env LANE_A_DELTAS="1,7,13,19,29" (B=5, proven B=3 보다 넓음) LANE_A_LADDER_NC="40,45,50". on-chip AKD1000 인코더 ⊕ off-chip host-CPU Elman head (numpy BPTT, NO torch). live AKD1000, 8 trials/rung, enc_learned=True 매 trial. ladder held-out decay (verbatim, .verdicts/lane-a-multi-rung/F-BRANCH-WIDE.txt):
+- NC=40: held [0.1187, 0.9229, 0.9208] / train [0.7705, 0.9384, 0.9616]
+- NC=45: held [0.1321, 0.8518, 0.8964] / train [0.7597, 0.9460, 0.9669]
+- NC=50 (headline, chance=0.1020): held [0.0617, 0.8683, 0.9267] / train [0.7271, 0.9364, 0.9550]; hop-2 ci_lo=0.8394>shufNULL hi=0.2213 (p=0.0050) · hop-3 ci_lo=0.9069>shufNULL hi=0.2234 (p=0.0050)
+- **F-BRANCH-1 REFUTED** (held-out hop-2 AND hop-3 above shuffle-NULL = transferable OPERATOR, TEST concept 들에서 compose) · **F-BRANCH-2 REFUTED** (held-out hop-2 0.8683 within 2× of in-dist 0.9364). **GENERALIZES=True** — wider B=5 에서도 off-chip head 가 offset operator 학습 (per-concept lookup 아님). substrate=HYBRID, NOT pure-AKIDA, NOT Lane G.
+
+**milestone delta:** Lane A-single = single-step generation **SCALE-ROBUST** (3-rung anchor ladder, single-point artefact 아님). Lane A-multi = transferable composition **wider-branching 에서도 GENERALIZES** (B=5). 두 sublane PUBLIC checkbox 미flip 유지 (toy→프로덕션 scale-transfer + 3B 미완, a_paper_only_at_closure). substrate tag 엄격 분리 (A-single=AKIDA, A-multi=HYBRID, Lane G 와 NEVER 병합).
+**NEXT:** A-single 프로덕션 full-LM ladder · A-multi 3B rung (a_scale_honest_scope). PR lane-a/d768-2sublane-split (base lane-g/d768-cuda-fire).
+
+---
+
 ## 2026-06-02 — Lane-G-ref 3B reference rung (substrate=PyTorch-CUDA) — descent 🟢 / util 🟢 99%
 
 **lane = Lane-G-ref · substrate = PyTorch-CUDA · rung = 3B-scale reference.** 85.6M PUBLIC baseline (`dancinlab/clm-v1-ref-pytorch-cuda`)과 동일한 ByteGPT/Transformer 아키텍처를 ~3B 로 스케일업한 레퍼런스 러그. **NOT** the hexa-native flame+forge PUBLIC production artifact (a_train_flame_forge); a_completeness_over_cheap optional reference; Lane A/AKIDA 와 병합 금지 (a_lane_akida_gpu_split).

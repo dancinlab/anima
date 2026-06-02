@@ -97,13 +97,15 @@ EPOCHS = 60        # BPTT epochs over teacher-forced on-chip-code sequences (hos
 LR = 0.05
 GRAD_CLIP = 5.0
 # ---- BRANCHING operator + held-out split hyperparams (pre-registered) ----
-DELTAS = [1, 7, 19]          # the transition operator offsets on the concept-index ring (branching factor B=3)
+# env overrides (Lane A-multi LARGER rung): LANE_A_DELTAS="1,7,13,19,29" -> wider branching B=5;
+#   LANE_A_LADDER_NC="40,45,50" -> larger codebook ladder. Defaults reproduce the proven B=3 / NC{30,40,50} rung.
+DELTAS = [int(x) for x in os.environ.get("LANE_A_DELTAS", "1,7,19").split(",")]  # offsets on the concept-index ring (branching factor B)
 B_FACTOR = len(DELTAS)
 WALK_LEN = 6                 # length of each random branching walk used to build training sequences
 WALKS_PER_LANG = 24          # number of random branching walks per language used for off-chip BPTT
 GEN_FACTOR = 2.0             # F-BRANCH-2: held-out hop-2 must be >= in-dist hop-2 / GEN_FACTOR
 N_TEST_FRAC = 0.30           # held-out TEST block = last 30% of the concept index axis
-LADDER_NC = [30, 40, 50]     # >=3-rung codebook-size ladder (a_scale_honest_scope)
+LADDER_NC = [int(x) for x in os.environ.get("LANE_A_LADDER_NC", "30,40,50").split(",")]  # >=3-rung codebook-size ladder (a_scale_honest_scope)
 
 def read_limen(path):
     blob = open(path, "rb").read(); assert blob[:8] == LIMEN_MAGIC
