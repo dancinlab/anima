@@ -1,0 +1,44 @@
+OMEGA bus-refine — SUMMARY: codify the #1793 6-wire finding into the coupling bus default
+==========================================================================================
+date 2026-06-04 · substrate=hexa+numpy · CPU · $0 · honest p7 / a_core_engine_map / a_toy_scale_recheck
+
+WHAT
+  #1793 (OMEGA-B) fit an all-6-wire learned gate on a real-but-toy n-gram substrate and found the
+  bus is structure-carrying on a SUBSET of wires (A primary + a temperature wire + a module-routing
+  wire) and inert/leaky on the rest (G, curiosity, Ψ, dF/dt). The naive full gate OVERFITS held-out
+  (TEST CE 4.81 > base 3.97); the carrier-only gate recovers a real gain (CE 2.895, Δ+1.079).
+  This round CODIFIES that finding into engines/omega/coupling_bus.hexa.
+
+H3 — carrier-only DEFAULT (engines/omega/coupling_bus.hexa)
+  + omega_bus_carrier() — RECOMMENDED default: carriers ON {w1 A⇄G, w2 W→temp, w5 module},
+    inert OFF {w3 curio, w4 Ψ, w6 dF/dt}. Each in/out choice documented with its #1793 verdict.
+  + omega_bus_on() (full) RETAINED for ablation. adapter.hexa manifest note: carrier-only is the
+    generation default.
+  + omega_bus_smoke asserts carrier-only ⊂ full (c1/c2) AND carrier-only changes the decode
+    (c5 L1>0) AND carrier ≠ full (c6). The #1793 split asserted (c3/c4).
+
+H2 — learned-dgain hook (engines/omega/coupling_bus.hexa)
+  The dF/dt wire's gain IS already a config field (cfg["dgain"], honored by omega_coupling_apply_dt).
+  Documented honestly: a FIXED dgain HURTS held-out CE (#1794) — so dF/dt is OFF in carrier-only;
+  the dgain=0.5 in omega_bus_on_dt() is labelled an ABLATION SEED, not a tuned default. A LEARNED
+  dgain is the open path. NEW omega_bus_dt_with_dgain(dgain) makes the knob first-class WITHOUT
+  fabricating a learned value (no invented number).
+
+VERIFY (deterministic · $0 · CPU)
+  engines/omega/omega_bus_smoke.hexa  : 13 pass / 0 fail   (was 7/0; +6 carrier-only assertions)
+  engines/omega/engine_swap_smoke.hexa: 27 pass / 0 fail   (unchanged — no regression, omega all-native)
+
+SCOPE (a_toy_scale_recheck · a_scale_honest_scope · p7)
+  The carrier in/out split is the TOY-scale ranking (400KB repo corpus, byte n-gram, CPU/$0, no
+  torch). NOT a production claim; a trained d384 transformer (#1791) may exercise the inert wires
+  differently. The config-level smoke invariants (subset / decode-change / n-wires) are scale-free.
+
+FILES
+  engines/omega/coupling_bus.hexa     — omega_bus_carrier() + dgain knob/doc + omega_bus_dt_with_dgain()
+  engines/omega/adapter.hexa          — manifest note: carrier-only = generation default
+  engines/omega/omega_bus_smoke.hexa  — +6 carrier-only assertions (13/13)
+  domains/OMEGA.md                    — stage 6 bus-refine line
+  .verdicts/omega-bus-refine/F-CARRIER.txt — the verdict
+  .discoveries/omega-bus-refine.tape  — discovery log
+
+VERDICT  🟢 carrier-only default codified · dgain honest knob · both smokes GREEN (13/13 · 27/27)
