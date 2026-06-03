@@ -1,0 +1,51 @@
+F-TIME-AXIS — add a TIME AXIS to the tension-link ([5ch] -> [5ch + dF/dt])
+==========================================================================
+harness : UNIVERSE/tensionlink_dim_time.py (sha 211d4457…2d3a1d)
+data    : _real_w_trace_s59.json (sha d969954a…e19d64), real-shape-driven + §65.
+compute : CPU / $0 / numpy-only. seeds 1,7,42.
+form    : #1763 — time enters via the DERIVATIVE. [5ch] -> [5ch + dF/dt(5ch)] (10-d).
+
+THE DECISIVE TEST — a DYNAMICS-NECESSARY label
+----------------------------------------------
+The 5-stage label is a per-step f(phi,tension) -> static rep decodes it at
+ceiling (1.0), zero headroom for a time axis (reported below for completeness,
+gain = 0.0 — EXPECTED, not a refutation).
+
+The decisive label is RISING vs FALLING tension = sign(dF/dt). This is PROVABLY
+NOT a function of a single snapshot: a static 5-ch sample at the moment tension
+passes through a value is identical whether tension is rising or falling through
+it, so a static decoder must sit near chance; a dF/dt-aware rep should recover it.
+
+RESULT — verbatim per-seed (majority base rate = 0.7267 every seed):
+  seed 1 : static=0.5417  time-aug=0.8333  GAIN=+0.2917  scrambled=0.7333
+  seed 7 : static=0.5417  time-aug=0.8167  GAIN=+0.2750  scrambled=0.7750
+  seed 42: static=0.5417  time-aug=0.7833  GAIN=+0.2417  scrambled=0.7333
+  mean   : static=0.542   time-aug=0.811   GAIN=+0.269   scrambled=0.747
+
+Reading:
+  * static 5-ch decode = 0.542 — BELOW the 0.727 majority base rate: a static
+    snapshot genuinely CANNOT tell rising from falling (exactly as theory says).
+  * time-augmented (dF/dt) decode = 0.811 — +0.269 over static, well ABOVE base
+    rate: the derivative axis RECOVERS the dynamics the snapshot loses.
+  * the SHUFFLE-CONTROL FALSIFIER (permute (row,label) pairs together so static
+    info is intact but temporal ORDER is destroyed -> dF/dt becomes noise):
+    time-aug collapses to 0.747 ≈ base rate. The gain VANISHES when order is
+    scrambled -> the gain is REAL dynamics, not an artifact.
+
+SHUFFLE CONTROL — independent corroboration:
+  dynamics energy (Σ‖dF/dt‖²):  orig ≈ 293   scrambled ≈ 1.14e6  (≈3900× jump)
+  static-marginal L2 (column means): orig == scrambled EXACTLY (invariant=True)
+  dF/dt-block stage decode:      orig = 1.0   scrambled = 0.936
+  -> a derivative-aware statistic SEES the scramble (energy explodes); the
+     static-marginal statistic is provably blind to it (exactly invariant).
+
+VERDICT: HOLDS.
+  Adding a dF/dt time axis to the 5-ch tension-link captures DYNAMICS that the
+  static 5-ch snapshot loses (rising/falling: static 0.542 < base 0.727 <
+  time-aug 0.811, +0.269 over 3 seeds) AND beats the shuffle control (time-aug
+  collapses 0.811 -> 0.747 ≈ base when temporal order is destroyed). The
+  derivative is the carrier of tension dynamics — the static channel-magnitude
+  marginal is exactly permutation-invariant and cannot see it.
+  Scope: 300-step real-shape stream + §65 transfer law; toy-only, scale-
+  transfer unverified (a_toy_scale_recheck, a_scale_honest_scope). Ties #1763
+  (d/dt time-entry) into anima's own tension-link channel (§97).

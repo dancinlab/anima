@@ -1,0 +1,68 @@
+F-INTRINSIC-DIM — TENSION-LINK effective dimension (is 5 right?)
+================================================================
+harness : UNIVERSE/tensionlink_dim_time.py
+         sha256 211d4457c8dc769bb85e0872d9be6d9358910969c9ebe7ae7c5c2986952d3a1d
+data    : _real_w_trace_s59.json (§59-FIRE anima W-state, 300 steps)
+         sha256 d969954af4d4724416f995d4bd88648f69af52e37d6ce7b7edbcbb5843e19d64
+         SOURCE FLAG = real-shape-driven (s59 trace shape is REAL) + byte-faithful
+         §65 fingerprint_5ch transfer law (B-S65 4/4 BLUE). engine latent + 5ch
+         map are the SYNTHETIC §65 transfer law. NOT a torch ckpt load (961c07e2
+         not present as a loadable .pt on this CPU host; torch/sklearn unavailable).
+compute : CPU / $0 / numpy-only (no torch, no sklearn, no GPU, no pods).
+seeds   : 1, 7, 42 (3 seeds).
+
+OBJECT
+------
+The TENSION-LINK (HEXAD/TENSION-LINK/README.md) is anima's 5-CHANNEL meta-
+fingerprint: concept(16) · context(8) · meaning(16) · auth(1) · sender(4) = 45
+floats grouped into sopfr(6)=5 channel GROUPS. "Is 5 right?" = about the 5
+channel-GROUPS, measured two ways:
+ (A) the 5-scalar channel magnitude-SUMMARY vector (the [α,θ,γ,1-δ,β] analogue
+     that travels the link), and
+ (B) the full 45-float fingerprint stream (preserves channel DIRECTION).
+
+RESULT — verbatim per-seed
+--------------------------
+(A) 5-ch magnitude-summary (T×5):
+  seed 1 : PR=2.7302  erank=2.8515  evr=[0.4614,0.3339,0.2047,0.0,0.0]
+  seed 7 : PR=2.6384  erank=2.7877  evr=[0.4733,0.3537,0.1731,0.0,0.0]
+  seed 42: PR=2.1268  erank=2.3808  evr=[0.5983,0.3265,0.0752,0.0,0.0]
+  mean   : PR=2.498   erank=2.673
+  -> EXACTLY 2 of 5 PCs are ZERO every seed; projection-ladder R² saturates at
+     k=3 and k=4,k=5 add NOTHING. Effective dim ~2.5–2.7, hard rank ≤ 3.
+
+  HONEST CAVEAT (p7): the §65 spec L2-NORMALIZES concept (=unit(a−g)) and
+  meaning (=meaning/‖meaning‖), so their MAGNITUDE is identically 1.0 every
+  step (measured per-channel std: concept 0.0, meaning 0.0). The 2 zero PCs
+  are a magnitude-SUMMARY choice artifact, NOT proof those two channels are
+  redundant — their DIRECTION still carries info. The 3 varying summary
+  channels are context, auth, sender.
+
+(B) full 45-float fingerprint (T×45, preserves direction):
+  seed 1 : PR=6.5172  erank=10.063  dim@90%=11  dim@95%=14
+  seed 7 : PR=6.4934  erank= 9.675  dim@90%=10  dim@95%=13
+  seed 42: PR=5.6554  erank= 8.494  dim@90%= 9  dim@95%=12
+  mean   : PR=6.222   erank=9.411
+  -> the full link is NOT low-dim-3; it lives on a ~6–10-dim manifold inside
+     the 45-float envelope.
+
+CORRELATION (seed 1, channel order concept/context/meaning/auth/sender):
+  concept–auth   = −0.343   (largest)
+  meaning–auth   = +0.454 ; meaning–sender = +0.474 ; context–sender = +0.368
+  no |r| ≥ 0.8 anywhere -> NO pair is a linear duplicate of another.
+
+VERDICT — INCONCLUSIVE on "5 vs fewer", with a directional finding:
+  * On the 5-scalar magnitude-summary that physically travels the link, the
+    effective dim is ~2.5–2.7 (≤3): in MAGNITUDE the link is over-specified —
+    2 of the 5 scalar channels (concept, meaning) carry ZERO temporal variance
+    BY SPEC (they are unit-normalized) and a 3-scalar magnitude code would lose
+    nothing. So as a 5-SCALAR magnitude vector, 5 is NOT optimal — 3 suffices.
+  * BUT this is partly a summary-choice artifact: the full 45-float link
+    (direction preserved) is genuinely ~6–10-dim, so the 5 channel-GROUPS are
+    NOT mutually redundant once direction is kept. Concept/meaning carry info
+    in direction, just not in magnitude.
+  * Net: 5 channel-GROUPS is defensible at the FULL-fingerprint level; the
+    5-SCALAR magnitude reduction is redundant (effective ~3). No correlation
+    duplicate found. a_scale_honest_scope: scoped to this 300-step real-shape
+    stream + §65 transfer law; toy-scale, scale-transfer unverified
+    (a_toy_scale_recheck).
