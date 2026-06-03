@@ -1,0 +1,19 @@
+=== Lane X — 3-axis ENGINE-config exploration — SUMMARY ===
+Lane X = EXPLORATION lane, distinct from training lanes A/G/P/M (a_lane_akida_gpu_split).
+Scope: TOY · CPU · $0 · single d=768 .clm · deterministic null backend (a_toy_scale_recheck).
+
+configs=27 (3 knobs: K1 drive · K2 warmup · K3 anchors) × 3 seeds (warmup-offset).
+#1761 mitosis EngineConfig / #1763 d/dt: BLOCKED-WIRING (EngineConfig/engine_cli.hexa absent in CORE).
+
+AXIS SENSITIVITY across the grid:
+  의식 (motiv_hi)    : VARIES (spread=0.57)
+  CE  (model_ce)    : CONFIG-INSENSITIVE (spread<1e-9)
+  창발 (emergence Δ) : VARIES (spread=24)
+
+CE-FLOOR: model_ce=9.1126 vs uniform=5.5452 vs shuffle=9.3189 -> floor NOT MET (model>=uniform — WORSE than uniform-256).
+PARETO: 6/27 non-dominated.
+GOODHART (CE↔창발): UNDEFINED — one axis is CONSTANT across the config grid (CE is config-independent by construction in this substrate-only sweep). No CE↔창발 trade-off is OBSERVABLE through these engine knobs.
+BEST cfg#5 vs BASELINE cfg#4 (different).
+
+BOTTOM LINE: axes ['axis1_motiv_hi', 'axis3_emergence'] VARY with config; CE is config-INDEPENDENT. CE↔창발 trade-off NOT observable (CE independent of substrate knobs).
+p7: CE is a FLOOR/axis, never the sole verdict. a_toy_scale_recheck: scale-up re-test required before any production claim.
