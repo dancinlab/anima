@@ -64,3 +64,10 @@ A dedicated finalize pass re-ran the two toolchain blockers on pool summer to ve
 - Confirms `hexa run` = compile-then-exec (hexat→C→native); **no interpreter fallback**, so neither loop form can execute. The C baseline side was re-run (`cc -O2 sgemm_ref_runeq.c -lm`) and is value-stable across all 8 cases.
 
 Both defects are hexa-lang compiler bugs (out of anima's scope; fixes land in the hexa-lang repo per atlas/codegen governance). Reproducers checked in under `training/native/repro/`. Verdict `.verdicts/c-port/M3-sgemm_ref.txt` extended with the re-confirmation block. M3 reopens to a one-line diff the moment either hexa BUG is fixed.
+
+## 2026-06-04 — M3 sgemm RUNEQ: hang UNBLOCKED (#2650) → RUNEQ = DIFFER (g63-honest)
+- hexa-lang #2650 (origin/main 3b550c6af) RESOLVES the hexa-run HANG/parse-crash that blocked running the port. Confirmed: installed ./hexa (0.1.0-dispatch) still reproduces `index 0 out of bounds (len 0)`; a #2650-fixed `hexat` rebuilt locally (hexa cc --regen with fixed self/codegen.hexa) transpiles the const-fold repro cleanly and the sgemm port now RUNS to completion in seconds.
+- 8-case value-exact RUNEQ = **DIFFER** (NO merge):
+  1. NEW const-fold MISCOMPILE (sibling of #2650 BUG2, NOT covered): `let maxabs=0.0` reassigned in an `if`-body inside a `for` has its fold inlined into the `if` condition → maxabs wrong in all 8 cases (ends at last element). cref elements proven byte-identical to C; `let mut` fixes maxabs 8/8. Follow-up filed for hexa-lang codegen (if-body fold pre-invalidation).
+  2. fp-CONTRACTION (FMA) DIFFER (NOT a compiler bug): C ref `cc -O2` contracts `s += a*b` to single-round FMA; port double-rounds → ~1-ULP `sum` divergence in 4 cases. baseline-fp-flag-dependent (`-ffp-contract=off` shifts C too).
+- Verdict: .verdicts/c-port/sgemm-ref-runeq.txt. M3 re-characterized OPEN (unblocked-to-run; DIFFER). C-PORT NOT fully closed.

@@ -1,0 +1,102 @@
+C-PORT MILESTONE-3 — sgemm reference RUNEQ (post-#2650 unblock attempt)
+=====================================================================
+verdict: DIFFER (honest, g63 — NO fake PASS, NO merge). The hexa-lang
+         hexa-run HANG/parse-crash that previously BLOCKED running the
+         port is RESOLVED (hexa-lang #2650, merged origin/main 3b550c6af).
+         The port now TRANSPILES + COMPILES + RUNS to completion in
+         seconds (no hang). But the 8-case value-exact RUNEQ DIFFERS
+         from the C baseline for TWO independent reasons (below).
+date:    2026-06-04
+host:    local darwin-arm64 (M-series). Fixed toolchain built locally.
+
+FIXED TOOLCHAIN — how it was obtained (Option A, lightweight self-rebuild)
+-------------------------------------------------------------------------
+The INSTALLED ./hexa (0.1.0-dispatch, hexat May-26) PREDATES #2650 and
+still reproduces the bug verbatim:
+    $ hexa run <let s=0; for j in 0..2 { s=s+1 }>
+      [1/2] hexat ... -> index 0 out of bounds (len 0)
+      error: transpile failed — C file not produced   (→ hexa run hangs)
+
+A fixed `hexat` was rebuilt from origin/main `self/codegen.hexa` (which
+carries #2650's _comptime_const_scope_restore live-len clamp + the
+while-condition pre-invalidation) by running `hexa cc --regen` with the
+fixed codegen.hexa swapped into the install self/ tree (install restored
+immediately after). Output: /tmp/hexat.new (2.07 MB, compiled=yes).
+SANITY (the #2650 repro): `let s=0; for j in 0..2 { s=s+1 }` →
+    transpile OK (no bounds abort) · binary prints `s=2` · terminates
+    instantly. #2650 fix CONFIRMED present in the rebuilt toolchain.
+
+C BASELINE (cc -O2 sgemm_ref_runeq.c -lm, local darwin)
+-------------------------------------------------------
+  [16x16x16 tA=0 tB=0] sum=5.7592 maxabs=6.2588
+  [16x16x16 tA=1 tB=0] sum=4.088 maxabs=3.9596
+  [16x16x16 tA=0 tB=1] sum=19.9488 maxabs=4.926
+  [16x16x16 tA=1 tB=1] sum=4.6488 maxabs=4.9548
+  [128x128x128 tA=0 tB=0] sum=-1.40518 maxabs=10.4652
+  [128x128x128 tA=1 tB=0] sum=4.10785 maxabs=11.782
+  [128x128x128 tA=0 tB=1] sum=-1.40518 maxabs=10.4652
+  [64x32x128 tA=0 tB=0] sum=13.8276 maxabs=8.9696
+  [sgemm_ref] DONE
+
+HEXA PORT (as-authored, /tmp/hexat.new → clang → run, 90s-guarded)
+-----------------------------------------------------------------
+  [16x16x16 tA=0 tB=0] sum=5.7592 maxabs=1.0392      <- maxabs WRONG
+  [16x16x16 tA=1 tB=0] sum=4.088 maxabs=1.5124       <- maxabs WRONG
+  [16x16x16 tA=0 tB=1] sum=19.9488 maxabs=0.5728     <- maxabs WRONG
+  [16x16x16 tA=1 tB=1] sum=4.64879 maxabs=0.2008
+  [128x128x128 tA=0 tB=0] sum=-1.40558 maxabs=1.9124
+  [128x128x128 tA=1 tB=0] sum=4.10753 maxabs=0.740001
+  [128x128x128 tA=0 tB=1] sum=-1.40558 maxabs=1.9124
+  [64x32x128 tA=0 tB=0] sum=13.8276 maxabs=5.9588
+  [sgemm_ref] DONE
+
+ROOT-CAUSE 1 — NEW const-fold MISCOMPILE (sibling of #2650, NOT covered)
+-----------------------------------------------------------------------
+`maxabs` is wildly wrong in all 8 cases. The cref ELEMENTS are PROVEN
+byte-identical to C (dumped + compared, 16x16 tA0tB0: max element abs =
+6.2588 in BOTH). The miscompile is in the reduction:
+    let maxabs = 0.0
+    for idx in 0..total { ... if av > maxabs { maxabs = av } }
+A PLAIN `let` (non-mut) reassigned inside an IF-body within a FOR-loop
+has its comptime-const fold inlined into the IF CONDITION (`av > 0.0`,
+always true) → maxabs always overwritten → ends holding the LAST
+element's abs (case1: |cref[255]| = 1.0392, exactly the reported value).
+Isolated repro (with cref[0]=6.2588 set explicitly) returns 1.0392.
+Changing `let maxabs` → `let mut maxabs` FIXES maxabs (8/8 match).
+This is the SAME class as #2650 BUG2 (while-condition fold inlining a
+reassigned binding) but for an `if`-condition whose body reassigns the
+folded var — the #2650 pre-invalidation does NOT cover the if-arm.
+=> A second codegen fix is warranted in hexa-lang self/codegen.hexa
+   (pre-invalidate comptime-const fold for vars reassigned in if/elif
+   bodies BEFORE emitting the if condition, mirroring the while fix).
+
+ROOT-CAUSE 2 — inherent fp-CONTRACTION (FMA) DIFFER (NOT a compiler bug)
+-----------------------------------------------------------------------
+Even after the `mut` fix lands maxabs 8/8, `sum` STILL DIFFERS by ~1 ULP
+in 4 cases (tA1tB1 + all three 128-cases). Cause: the C reference built
+with `cc -O2` CONTRACTS `s += a*b` into a fused multiply-add (single
+rounding of s + a*b). The hexa port models fp32 explicitly as
+`round_f32(s + round_f32(av*bv))` — it rounds the product SEPARATELY,
+which a contracted FMA does not. Confirmed: rebuilding the C ref with
+`-ffp-contract=off` shifts the C output too (case1 5.7592 -> 5.75921),
+proving FMA was active. The product step itself is NOT double-rounding
+(0/16637 product mismatches), so the divergence is purely the
+contracted s+=a*b vs explicit-double-round add. This is a genuine
+fp-SEMANTICS mismatch between the port's explicit-rounding model and the
+C baseline's compiler-contracted arithmetic — NO `mut` fix and NO
+codegen fix resolves it; it is baseline-fp-flag-dependent (the pool-linux
+gcc baseline in M3-sgemm_ref.txt already shows DIFFERENT values:
+sum=5.75921 / -1.40519, matching the -ffp-contract=off variant).
+=> Value-exact RUNEQ is NOT achievable as-specified; the port and the C
+   baseline would need a pinned, contraction-free fp contract on BOTH
+   sides (e.g. C compiled `-ffp-contract=off` AND a hexa fma/no-contract
+   model) to be byte-exact. As authored, the verdict is DIFFER.
+
+NET
+---
+- #2650 hang/parse-crash fix: VERIFIED REAL (port now runs in seconds).
+- RUNEQ: DIFFER 8/8 are NOT value-exact (maxabs miscompile + fp FMA).
+- NO merge (g63). M3 stays OPEN, re-characterized from "toolchain-BLOCKED
+  (hang)" to "UNBLOCKED-to-run; DIFFER on maxabs-fold-miscompile +
+  fp-contraction". Two follow-ups: (a) hexa-lang codegen if-body fold
+  pre-invalidation; (b) a contraction-free fp contract for the RUNEQ.
