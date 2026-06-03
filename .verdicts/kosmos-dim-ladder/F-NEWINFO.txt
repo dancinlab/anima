@@ -1,0 +1,43 @@
+F-NEWINFO — does each ADDED axis carry NEW independent information?
+====================================================================
+Harness: UNIVERSE/kosmos_dim_ladder.py  (STANDALONE, CPU, $0, 3 seeds [0,1,2])
+Metric : leave-one-out kNN (k=7) recovery accuracy of a HELD-OUT joint target
+         (mixed-radix product-code over the INDEPENDENT latent axes — 324 cells)
+         from the standardised D-dim coordinate. NOT cross-entropy/perplexity (p7).
+Test   : per-rung 2-SEM band. A rung HOLDS if dAcc(D) - 2*SEM > 0; SATURATED if
+         within +/- band; COLLAPSE if dAcc(D) + 2*SEM < 0. Nothing rounded.
+
+INCREMENTAL-GAIN-PER-D CURVE (target kNN recovery, mean +/- std, 3 seeds)
+  D  added   acc_mean   acc_std   dAcc_mean   dAcc_std   2SEMband    verdict
+  2     xy   0.006667  0.003600                                     BASELINE
+  3      t   0.010000  0.002722   +0.003333   0.001361   0.001571      HOLDS
+  4      e   0.018333  0.008498   +0.008333   0.006804   0.007857      HOLDS
+  5    tau   0.029444  0.001571   +0.011111   0.009061   0.010463      HOLDS
+  6      m   0.075000  0.014402   +0.045556   0.012862   0.014852      HOLDS
+  7      s   0.093889  0.028750   +0.018889   0.016906   0.019521  SATURATED
+  8    kap   0.095000  0.024533   +0.001111   0.005500   0.006351  SATURATED
+
+CUMULATIVE-INFO cross-check (acc(D) - acc(D=2 baseline), 2-SEM):
+  D=2   xy: cum_gain=+0.000000 +/- 0.000000 (2SEM=0.000000) -> ns
+  D=3    t: cum_gain=+0.003333 +/- 0.001361 (2SEM=0.001571) -> SIGNIFICANT
+  D=4    e: cum_gain=+0.011667 +/- 0.007577 (2SEM=0.008749) -> SIGNIFICANT
+  D=5  tau: cum_gain=+0.022778 +/- 0.005152 (2SEM=0.005949) -> SIGNIFICANT
+  D=6    m: cum_gain=+0.068333 +/- 0.018002 (2SEM=0.020787) -> SIGNIFICANT
+  D=7    s: cum_gain=+0.087222 +/- 0.032040 (2SEM=0.036996) -> SIGNIFICANT
+  D=8  kap: cum_gain=+0.088333 +/- 0.027622 (2SEM=0.031895) -> SIGNIFICANT
+
+VERDICT (F-NEWINFO):
+  D=3 (t / time)      HOLDS    — adds NEW info beyond 2D.
+  D=4 (e / emotion)   HOLDS    — adds NEW info.
+  D=5 (tau / tier)    HOLDS    — adds NEW info.
+  D=6 (m / modality)  HOLDS    — adds the LARGEST single-axis info (+0.0456, the
+                                 4-class modality channel carries the most).
+  D=7 (s / scale)     SATURATED— gain +0.0189 within its 2-SEM band 0.0195. s is
+                                 the deliberately-injected REDUNDANT axis (~0.85
+                                 correlated with t); it carries NO new joint info.
+  D=8 (kap / lane)    SATURATED— gain +0.0011 << band 0.0064. kappa is the second
+                                 injected REDUNDANT axis (~0.80 corr with e); flat.
+
+The four INDEPENDENT axes (t, e, tau, m) each carry NEW independent information
+above seed-noise; the two REDUNDANT axes (s, kappa) do NOT. The benchmark
+correctly recovered the planted ground-truth redundancy structure.

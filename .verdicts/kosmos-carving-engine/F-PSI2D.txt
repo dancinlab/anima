@@ -1,0 +1,30 @@
+F-PSI2D — Law-71 vacuum_psi 2D coordinate (the 우주뇌지도 map output) is produced
+=================================================================================
+method: UNIVERSE/carving_engine_reconstruct.py (CPU, $0, random init, seed=71)
+
+The Law-71 Psi-space coord = (psi_residual, psi_gate), read out by the model's
+psi_status() method (source lines 643-646, 728-754, 817-827). psi tracking
+updates only under .train(); the harness runs one train-mode forward, then
+reads the 2D coord. Determinism: same seed + same byte input -> identical coord.
+
+VERBATIM stdout:
+  Psi 2D coord (psi_residual, psi_gate) inputA run1 = (0.5155671260240606, 0.00099999)
+  Psi 2D coord                          inputA run2 = (0.5155671260240606, 0.00099999)  deterministic=True
+  Psi 2D coord                          inputB      = (0.5147875181096311, 0.00099999)
+  coord_dim=2 is_2d=True  full status keys=['psi_residual', 'psi_gate', 'H_p', 'step']
+
+readout:
+  - coord_dim = 2 -> the map IS drawn in 2D (matches KOSMOS anchor coord=[x,y]).
+  - deterministic: inputA run1 == inputA run2 (bit-identical) -> True.
+  - input-sensitive: inputB differs in psi_residual (0.51558 -> 0.51479).
+  - psi_gate sits at the gate floor 0.00099999 (Law-63 micro-gate, init 0.001
+    decayed one step by *0.99999); psi_residual is the EMA-tracked Psi=1/2 fixed
+    point (init 0.5, here 0.5156 after one step) — the 2 axes of the Psi-space.
+
+VERDICT: PASS — the Law-71 vacuum_psi 2D coordinate (the "우주뇌지도" generator
+readout) is produced, is exactly 2D, is deterministic for a given byte input,
+and is input-sensitive. The reverse-confirmed map generator runs.
+
+SCOPE (honest): random init, CPU/$0, one train-mode step (not a trained carve).
+The 2D coord here = the Psi=1/2 fixed-point tracker readout, not a learned
+placement. Confirms the map-output WIRING is reconstructable + runnable.

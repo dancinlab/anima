@@ -1,0 +1,417 @@
+==============================================================================
+KOSMOS DIMENSION-LADDER toy benchmark (STANDALONE, CPU, $0)
+N_ANCHORS=600  seeds=[0, 1, 2]  k=7
+injected redundancy: s~t=0.85  kappa~e=0.8
+axis ladder D=2..8: xy(2) t e tau m(4cls) s[redund t] kap[redund e]
+modalities (axis m): ['EEG', 'LiDAR', 'dolphin-acoustic', 'text']
+==============================================================================
+
+--- seed 0 ---
+  D=2 axes=['xy']  target_acc=0.01000  conc=2.94451
+  D=3 axes=['xy', 't']  target_acc=0.01333  conc=2.50408  dAcc=+0.00333
+  D=4 axes=['xy', 't', 'e']  target_acc=0.03000  conc=2.22922  dAcc=+0.01667
+  D=5 axes=['xy', 't', 'e', 'tau']  target_acc=0.02833  conc=2.25668  dAcc=-0.00167
+  D=6 axes=['xy', 't', 'e', 'tau', 'm']  target_acc=0.06167  conc=2.16773  dAcc=+0.03333
+  D=7 axes=['xy', 't', 'e', 'tau', 'm', 's']  target_acc=0.05667  conc=2.05717  dAcc=-0.00500
+  D=8 axes=['xy', 't', 'e', 'tau', 'm', 's', 'kap']  target_acc=0.06167  conc=1.86263  dAcc=+0.00500
+
+--- seed 1 ---
+  D=2 axes=['xy']  target_acc=0.00167  conc=3.46973
+  D=3 axes=['xy', 't']  target_acc=0.00667  conc=2.96555  dAcc=+0.00500
+  D=4 axes=['xy', 't', 'e']  target_acc=0.01500  conc=2.51517  dAcc=+0.00833
+  D=5 axes=['xy', 't', 'e', 'tau']  target_acc=0.03167  conc=2.20301  dAcc=+0.01667
+  D=6 axes=['xy', 't', 'e', 'tau', 'm']  target_acc=0.09500  conc=2.08035  dAcc=+0.06333
+  D=7 axes=['xy', 't', 'e', 'tau', 'm', 's']  target_acc=0.12667  conc=2.03120  dAcc=+0.03167
+  D=8 axes=['xy', 't', 'e', 'tau', 'm', 's', 'kap']  target_acc=0.12000  conc=1.91863  dAcc=-0.00667
+
+--- seed 2 ---
+  D=2 axes=['xy']  target_acc=0.00833  conc=2.85505
+  D=3 axes=['xy', 't']  target_acc=0.01000  conc=3.12730  dAcc=+0.00167
+  D=4 axes=['xy', 't', 'e']  target_acc=0.01000  conc=2.67322  dAcc=+0.00000
+  D=5 axes=['xy', 't', 'e', 'tau']  target_acc=0.02833  conc=2.43916  dAcc=+0.01833
+  D=6 axes=['xy', 't', 'e', 'tau', 'm']  target_acc=0.06833  conc=2.27785  dAcc=+0.04000
+  D=7 axes=['xy', 't', 'e', 'tau', 'm', 's']  target_acc=0.09833  conc=2.08837  dAcc=+0.03000
+  D=8 axes=['xy', 't', 'e', 'tau', 'm', 's', 'kap']  target_acc=0.10333  conc=2.03198  dAcc=+0.00500
+
+==============================================================================
+INCREMENTAL-GAIN-PER-D CURVE (target kNN recovery, mean +/- std, 3 seeds)
+==============================================================================
+  D  added   acc_mean   acc_std   dAcc_mean   dAcc_std   2SEMband    verdict
+  2     xy   0.006667  0.003600                                     BASELINE
+  3      t   0.010000  0.002722   +0.003333   0.001361   0.001571      HOLDS
+  4      e   0.018333  0.008498   +0.008333   0.006804   0.007857      HOLDS
+  5    tau   0.029444  0.001571   +0.011111   0.009061   0.010463      HOLDS
+  6      m   0.075000  0.014402   +0.045556   0.012862   0.014852      HOLDS
+  7      s   0.093889  0.028750   +0.018889   0.016906   0.019521  SATURATED
+  8    kap   0.095000  0.024533   +0.001111   0.005500   0.006351  SATURATED
+
+global noise_band (conservative 2-sigma cross-check) = 0.033811
+per-rung verdict uses per-rung 2-SEM band (col above).
+capacity knee D* = 6  (max D whose added axis still beats its 2-SEM noise band)
+
+CUMULATIVE-INFO cross-check (acc(D) - acc(D=2 baseline), 2-SEM):
+  D=2   xy: cum_gain=+0.000000 +/- 0.000000 (2SEM=0.000000) -> ns
+  D=3    t: cum_gain=+0.003333 +/- 0.001361 (2SEM=0.001571) -> SIGNIFICANT
+  D=4    e: cum_gain=+0.011667 +/- 0.007577 (2SEM=0.008749) -> SIGNIFICANT
+  D=5  tau: cum_gain=+0.022778 +/- 0.005152 (2SEM=0.005949) -> SIGNIFICANT
+  D=6    m: cum_gain=+0.068333 +/- 0.018002 (2SEM=0.020787) -> SIGNIFICANT
+  D=7    s: cum_gain=+0.087222 +/- 0.032040 (2SEM=0.036996) -> SIGNIFICANT
+  D=8  kap: cum_gain=+0.088333 +/- 0.027622 (2SEM=0.031895) -> SIGNIFICANT
+
+==============================================================================
+PER-AXIS SHUFFLE INDEPENDENCE (full D=8; mean +/- std, 3 seeds)
+shuffle axis-k alone -> own-attr recovery DROPS, OTHERS do NOT
+==============================================================================
+ axis      attr    redund         own_drop       cross_drop      target_drop
+   xy     lab_y         - +0.43778+/-0.17639 +0.00537+/-0.00560 +0.05333+/-0.00236
+    t     lab_t         - +0.11111+/-0.13260 +0.01343+/-0.01920 +0.01778+/-0.02833
+    e     lab_e         - +0.25000+/-0.12651 +0.03380+/-0.02142 +0.02889+/-0.00956
+  tau   lab_tau         - +0.23500+/-0.16028 +0.00713+/-0.00344 +0.03778+/-0.02986
+    m     lab_m         - +0.25944+/-0.01734 -0.00009+/-0.00804 +0.05389+/-0.01624
+    s     lab_s     lab_t +0.24278+/-0.13755 +0.02889+/-0.02717 +0.01722+/-0.02875
+  kap   lab_kap     lab_e +0.25333+/-0.10150 +0.02648+/-0.02385 +0.01889+/-0.01157
+
+==============================================================================
+DISTANCE CONCENTRATION (relative contrast; ->0 = collapse)
+==============================================================================
+  D=2  contrast=3.08976 +/- 0.27115
+  D=3  contrast=2.86564 +/- 0.26406
+  D=4  contrast=2.47254 +/- 0.18375
+  D=5  contrast=2.29962 +/- 0.10108
+  D=6  contrast=2.17531 +/- 0.08081
+  D=7  contrast=2.05891 +/- 0.02337
+  D=8  contrast=1.93775 +/- 0.07045
+
+NO-COLLAPSE: D=2 contrast=3.08976 -> D=8 contrast=1.93775 -> HOLDS (no degeneracy)
+
+==============================================================================
+HONEST BOTTOM LINE
+==============================================================================
+useful coordinate dimensionality before saturation: D* = 6
+axes carrying NEW independent info (beat noise): ['t', 'e', 'tau', 'm']
+saturated/redundant axes: ['s', 'kap']
+
+JSON_RESULTS_BEGIN
+{
+  "config": {
+    "n_anchors": 600,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "k_nn": 7,
+    "class_sep": 3.2,
+    "class_std": 1.0,
+    "redund_s_t": 0.85,
+    "redund_kap_e": 0.8,
+    "modalities": [
+      "EEG",
+      "LiDAR",
+      "dolphin-acoustic",
+      "text"
+    ],
+    "axis_ladder": [
+      {
+        "D": 2,
+        "added": "xy"
+      },
+      {
+        "D": 3,
+        "added": "t"
+      },
+      {
+        "D": 4,
+        "added": "e"
+      },
+      {
+        "D": 5,
+        "added": "tau"
+      },
+      {
+        "D": 6,
+        "added": "m"
+      },
+      {
+        "D": 7,
+        "added": "s"
+      },
+      {
+        "D": 8,
+        "added": "kap"
+      }
+    ]
+  },
+  "acc_mean_std": {
+    "2": [
+      0.006666666666666667,
+      0.0036004114991154777
+    ],
+    "3": [
+      0.01,
+      0.002721655269759087
+    ],
+    "4": [
+      0.018333333333333333,
+      0.008498365855987974
+    ],
+    "5": [
+      0.029444444444444443,
+      0.0015713484026367742
+    ],
+    "6": [
+      0.075,
+      0.014401645996461912
+    ],
+    "7": [
+      0.0938888888888889,
+      0.028749664517634697
+    ],
+    "8": [
+      0.09500000000000001,
+      0.024532669073132906
+    ]
+  },
+  "incremental_gain": {
+    "2": [
+      null,
+      null
+    ],
+    "3": [
+      0.003333333333333334,
+      0.0013608276348795433
+    ],
+    "4": [
+      0.008333333333333331,
+      0.006804138174397715
+    ],
+    "5": [
+      0.011111111111111113,
+      0.009060836905722272
+    ],
+    "6": [
+      0.04555555555555555,
+      0.012862041003100245
+    ],
+    "7": [
+      0.01888888888888889,
+      0.01690569339411438
+    ],
+    "8": [
+      0.001111111111111109,
+      0.005499719409228712
+    ]
+  },
+  "rung_2sem_band": {
+    "2": null,
+    "3": 0.0015713484026367722,
+    "4": 0.00785674201318386,
+    "5": 0.0104625532532041,
+    "6": 0.014851805670935862,
+    "7": 0.019521013263858432,
+    "8": 0.006350528962771213
+  },
+  "cumulative_gain_vs_baseline": {
+    "2": [
+      0.0,
+      0.0,
+      "ns"
+    ],
+    "3": [
+      0.003333333333333334,
+      0.0013608276348795433,
+      "SIGNIFICANT"
+    ],
+    "4": [
+      0.011666666666666664,
+      0.007576767609436585,
+      "SIGNIFICANT"
+    ],
+    "5": [
+      0.022777777777777775,
+      0.005152010275275392,
+      "SIGNIFICANT"
+    ],
+    "6": [
+      0.06833333333333334,
+      0.01800205749557739,
+      "SIGNIFICANT"
+    ],
+    "7": [
+      0.08722222222222221,
+      0.03203971301176937,
+      "SIGNIFICANT"
+    ],
+    "8": [
+      0.08833333333333333,
+      0.02762178421034679,
+      "SIGNIFICANT"
+    ]
+  },
+  "noise_band_2sigma_global": 0.03381138678822876,
+  "rung_verdict": {
+    "2": "BASELINE",
+    "3": "HOLDS",
+    "4": "HOLDS",
+    "5": "HOLDS",
+    "6": "HOLDS",
+    "7": "SATURATED",
+    "8": "SATURATED"
+  },
+  "capacity_knee_D_star": 6,
+  "useful_dims": 6,
+  "independent_axes": [
+    "t",
+    "e",
+    "tau",
+    "m"
+  ],
+  "per_axis_shuffle": {
+    "xy": {
+      "attribute": "lab_y",
+      "n_classes": 3,
+      "redundant_with": null,
+      "target_drop_mean": 0.05333333333333334,
+      "target_drop_std": 0.0023570226039551557,
+      "own_attr_drop_mean": 0.43777777777777777,
+      "own_attr_drop_std": 0.17638517056448294,
+      "cross_attr_drop_mean": 0.005370370370370368,
+      "cross_attr_drop_std": 0.005603190840891576
+    },
+    "t": {
+      "attribute": "lab_t",
+      "n_classes": 3,
+      "redundant_with": null,
+      "target_drop_mean": 0.017777777777777778,
+      "target_drop_std": 0.028327886186626575,
+      "own_attr_drop_mean": 0.11111111111111112,
+      "own_attr_drop_std": 0.13259750663354156,
+      "cross_attr_drop_mean": 0.01342592592592594,
+      "cross_attr_drop_std": 0.019199962134164777
+    },
+    "e": {
+      "attribute": "lab_e",
+      "n_classes": 3,
+      "redundant_with": null,
+      "target_drop_mean": 0.02888888888888889,
+      "target_drop_std": 0.009558139185602913,
+      "own_attr_drop_mean": 0.25,
+      "own_attr_drop_std": 0.12651306476232232,
+      "cross_attr_drop_mean": 0.03379629629629629,
+      "cross_attr_drop_std": 0.021421131702174842
+    },
+    "tau": {
+      "attribute": "lab_tau",
+      "n_classes": 3,
+      "redundant_with": null,
+      "target_drop_mean": 0.03777777777777777,
+      "target_drop_std": 0.02985561965009867,
+      "own_attr_drop_mean": 0.23499999999999996,
+      "own_attr_drop_std": 0.1602833139810278,
+      "cross_attr_drop_mean": 0.007129629629629639,
+      "cross_attr_drop_std": 0.0034421537584150273
+    },
+    "m": {
+      "attribute": "lab_m",
+      "n_classes": 4,
+      "redundant_with": null,
+      "target_drop_mean": 0.053888888888888896,
+      "target_drop_std": 0.016235154662447175,
+      "own_attr_drop_mean": 0.2594444444444444,
+      "own_attr_drop_std": 0.01733831837147471,
+      "cross_attr_drop_mean": -9.259259259259492e-05,
+      "cross_attr_drop_std": 0.008039042248573436
+    },
+    "s": {
+      "attribute": "lab_s",
+      "n_classes": 3,
+      "redundant_with": "lab_t",
+      "target_drop_mean": 0.01722222222222222,
+      "target_drop_std": 0.02874966451763469,
+      "own_attr_drop_mean": 0.24277777777777784,
+      "own_attr_drop_std": 0.13755358103052423,
+      "cross_attr_drop_mean": 0.02888888888888889,
+      "cross_attr_drop_std": 0.02716831396959733
+    },
+    "kap": {
+      "attribute": "lab_kap",
+      "n_classes": 3,
+      "redundant_with": "lab_e",
+      "target_drop_mean": 0.018888888888888886,
+      "target_drop_std": 0.011573703697777592,
+      "own_attr_drop_mean": 0.25333333333333335,
+      "own_attr_drop_std": 0.10149803866012311,
+      "cross_attr_drop_mean": 0.026481481481481477,
+      "cross_attr_drop_std": 0.02385045717109493
+    }
+  },
+  "distance_concentration": {
+    "2": [
+      3.0897625018601658,
+      0.2711469143448752
+    ],
+    "3": [
+      2.865644572074426,
+      0.26405508520495496
+    ],
+    "4": [
+      2.4725352393719082,
+      0.18375157475454343
+    ],
+    "5": [
+      2.2996173121515944,
+      0.1010761977439747
+    ],
+    "6": [
+      2.1753081328875497,
+      0.08080675295856089
+    ],
+    "7": [
+      2.0589147914412687,
+      0.023373059765000717
+    ],
+    "8": [
+      1.937749400143753,
+      0.07044616294736787
+    ]
+  },
+  "no_collapse": true,
+  "per_seed_acc": {
+    "2": [
+      0.01,
+      0.0016666666666666668,
+      0.008333333333333333
+    ],
+    "3": [
+      0.013333333333333334,
+      0.006666666666666667,
+      0.01
+    ],
+    "4": [
+      0.03,
+      0.015,
+      0.01
+    ],
+    "5": [
+      0.028333333333333332,
+      0.03166666666666667,
+      0.028333333333333332
+    ],
+    "6": [
+      0.06166666666666667,
+      0.095,
+      0.06833333333333333
+    ],
+    "7": [
+      0.056666666666666664,
+      0.12666666666666668,
+      0.09833333333333333
+    ],
+    "8": [
+      0.06166666666666667,
+      0.12,
+      0.10333333333333333
+    ]
+  }
+}
+JSON_RESULTS_END

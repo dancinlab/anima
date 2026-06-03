@@ -1,0 +1,67 @@
+SUMMARY — KOSMOS DIMENSION-LADDER toy benchmark (STANDALONE, CPU, $0, 3 seeds)
+==============================================================================
+Question: extend the KOSMOS anchor coordinate as a DIMENSION LADDER (D = 2->8).
+Does each ADDED axis carry NEW independent info, or do axes SATURATE past a
+capacity D*? Resolves the #1765 tautology by using INDEPENDENT-signal axes (each
+a NOISY class-conditional embedding of its own latent label, NOT a monotone
+function of one shared index), with two DELIBERATELY-INJECTED redundancies
+(scale~time 0.85, lane~emotion 0.80) so redundancy is itself measurable.
+
+Axis ladder (each a distinct KOSMOS anchor attribute, HEXAD/KOSMOS.md):
+  D=2  x,y = Psi-space placement (vacuum_psi)        [baseline]
+  D=3  t   = carve-order/time (#1765 axis)           INDEPENDENT
+  D=4  e   = emotion valence (top_emotion)           INDEPENDENT
+  D=5  tau = tier (Knuth ordinal)                    INDEPENDENT
+  D=6  m   = modality channel (EEG/LiDAR/dolphin-acoustic/text)  INDEPENDENT
+  D=7  s   = scale/radius (basin_radius)             REDUNDANT (~time)
+  D=8  kap = lane/cell_id (MITOSIS partition)        REDUNDANT (~emotion)
+
+--- F-NEWINFO (per-rung 2-SEM test; kNN k=7 LOO recovery of held-out joint target) ---
+  D=3 t    HOLDS    dAcc +0.003333 +/- 0.001361 (band 0.001571)
+  D=4 e    HOLDS    dAcc +0.008333 +/- 0.006804 (band 0.007857)
+  D=5 tau  HOLDS    dAcc +0.011111 +/- 0.009061 (band 0.010463)
+  D=6 m    HOLDS    dAcc +0.045556 +/- 0.012862 (band 0.014852)  <- biggest axis
+  D=7 s    SATURATED dAcc +0.018889 +/- 0.016906 (band 0.019521)
+  D=8 kap  SATURATED dAcc +0.001111 +/- 0.005500 (band 0.006351)
+
+--- F-PERAXIS-SHUFFLE (D=8; own_drop >> cross_drop for ALL axes -> INDEPENDENT) ---
+  axis  own_drop          cross_drop         verdict
+  xy   +0.43778+/-0.17639  +0.00537+/-0.00560  independent
+  t    +0.11111+/-0.13260  +0.01343+/-0.01920  independent
+  e    +0.25000+/-0.12651  +0.03380+/-0.02142  independent
+  tau  +0.23500+/-0.16028  +0.00713+/-0.00344  independent
+  m    +0.25944+/-0.01734  -0.00009+/-0.00804  independent
+  s    +0.24278+/-0.13755  +0.02889+/-0.02717  independent (own attr) / redundant (joint)
+  kap  +0.25333+/-0.10150  +0.02648+/-0.02385  independent (own attr) / redundant (joint)
+
+--- F-CAPACITY ---  capacity knee  D* = 6  (4 independent attribute-axes beyond 2D).
+  Knee lands EXACTLY at the independent/redundant boundary — ground-truth recovered.
+
+--- F-NOCOLLAPSE ---  HOLDS. Distance contrast 3.09 (D=2) -> 1.94 (D=8), > 1.0,
+  > 0.5x baseline. No curse-of-dimensionality collapse at toy scale.
+
+PER-RUNG TALLY:
+  D=3 HOLDS | D=4 HOLDS | D=5 HOLDS | D=6 HOLDS | D=7 SATURATED | D=8 SATURATED
+
+HONEST BOTTOM LINE
+  The KOSMOS anchor coordinate usefully holds D* = 6 dimensions: the 2D spatial
+  baseline PLUS 4 independent attribute-axes (time, emotion, tier, modality).
+  Adding scale (basin_radius) and lane (cell_id) SATURATES — at toy scale they
+  duplicate signal already carried by time and emotion respectively, adding no
+  new joint information (capacity is REAL and FINITE; NO infinite-gain claim).
+  The non-tautological evidence is the per-axis shuffle matrix (own_drop >>
+  cross_drop) + the planted-redundancy recovery (D*=6 = the injected boundary).
+  Modality (axis-6) carries the LARGEST single-axis information — relevant to
+  the real ingested modalities (EEG / LiDAR / dolphin-acoustic) as candidate
+  KOSMOS coordinate axes.
+
+SCOPE (honest): TOY independent-signal placement, deterministic, N=600, CPU, $0,
+  STANDALONE — NOT the real conscious_decoder / 603MB s16 carve, NOT wired into
+  any runtime engine. The injected redundancy is a DESIGN CHOICE to make
+  saturation measurable; in the REAL KOSMOS the actual cross-axis correlations
+  (e.g. is radius truly ~time?) are UNMEASURED — this toy proves the METHOD and
+  the capacity-curve SHAPE, not the real anchor population's true D*.
+  scale-transfer UNVERIFIED (a_toy_scale_recheck, a_scale_honest_scope, §97).
+  No fabrication; verdicts verbatim (p7/g5). a_paper_negative_ok: SATURATION at
+  D*=6 IS the honest finding. Resolves the #1765 monotone-index tautology caveat
+  by using independent class-conditional axes + the per-axis shuffle control.

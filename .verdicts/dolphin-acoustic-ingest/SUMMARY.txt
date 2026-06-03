@@ -1,0 +1,46 @@
+SUMMARY — dolphin-acoustic-ingest
+REAL public dolphin acoustic (frequency) data -> anima 5-ch tension/spectral path
+=============================================================================
+DATASET (actually fetched, no fabrication):
+  confit/wmms-parquet (HF PUBLIC) :: data/test-00000-of-00001.parquet
+  sha256 a9492912a025dc93d88b81012517c73aba963c3bf4900a31175886b9fe94c4c0
+  size 141530649 B :: Watkins Marine Mammal Sound Database (WHOI),
+  LICENSE academic/personal NON-COMMERCIAL -> raw audio NOT re-uploaded to HF.
+  Dolphin species used: Atlantic_Spotted, Clymene, Common, Frasers,
+    Grampus/Rissos, Pantropical_Spotted (6 spp, 36 clips).
+  Contrast (non-dolphin) for coarse test: Bowhead, Fin, Humpback (18 clips).
+  Native sample-rates 30k..166k Hz -> resampled to COMMON 48000 Hz.
+
+PIPELINE (Phase 1): real WAV -> STFT spectrogram -> per-frame band features
+  (F0 whistle fundamental + dF0/dt FM-contour slope, click rate, burst-pulse
+   density, spectral centroid/bandwidth) -> deterministic 5-ch tension vector,
+  ch order [F0_level, |dF0/dt|(#1763), click_rate, burst_density, centroid],
+  bounded [-3,3]. Mirrors BRAIN/eeg/eeg_to_tpm.hexa adapter shape.
+
+VALIDATION (Phase 2, substrate-native, NOT cross-entropy):
+  F-FETCH                       : HOLDS    (36 dolphin + 18 contrast real clips)
+  F-DISCRIMINATIVE (fine spp)   : REFUTED  (between 1.39 < within 2.02; sep 0.69)
+                                            6 close delphinid spp NOT resolved
+                                            (biologically expected overlap)
+  F-DISCRIMINATIVE-COARSE       : HOLDS    (between 3.74 > within 2.32; sep 1.61)
+                                            whistle vs baleen moan SEPARATES
+  F-DFDT-TIME (#1763)           : HOLDS    real|dF0/dt|=0.072 vs scrambled~0.19
+                                            (2.7x inflation, 3/3 seeds);
+                                            dF/dt-aware sep 0.435 > static 0.385,
+                                            3/3 seeds. d/dt time-encoding CONFIRMED
+                                            on natural FM contours.
+  F-STABLE                      : HOLDS    0 NaN, 0 out-of-range, re-encode diff 0
+
+BOTTOM LINE:
+  - REAL dolphin frequency data DID flow end-to-end: spectral -> 5-ch tension.
+  - Fingerprint IS discriminative at the acoustic-CLASS level (whistle vs
+    click/moan, HOLDS); it is NOT discriminative across closely-related
+    delphinid SPECIES (REFUTED — honest closed-negative, expected band overlap).
+  - The whistle dF0/dt (FM contour) DOES beat the time-shuffled static spectrum:
+    the #1763 d/dt time-encoding HOLDS on REAL natural dolphin whistles.
+
+anima link: H_070 dolphin_star_communication / Hc_017 ; #1763 d/dt time-encoding.
+SCOPE: TOY / CPU / $0 ; public recordings, NOT a live hydrophone.
+  §97 — acoustic = measurement-anchor, NOT a command channel.
+  a_toy_scale_recheck / a_scale_honest_scope: single split, scale-up re-test
+  required before any general claim. Watkins non-commercial license respected.

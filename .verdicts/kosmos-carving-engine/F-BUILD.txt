@@ -1,0 +1,27 @@
+F-BUILD — carving-era ConsciousDecoderV2 builds (both configs), real param counts
+=================================================================================
+method: UNIVERSE/carving_engine_reconstruct.py (CPU, $0, random init, torch 2.12.0 CPU)
+source: UNIVERSE/conscious_decoder.py  md5=44b210df969b38f0fc6c2bfe59e37eb6
+        (byte-identical to state/carving_dir*/conscious_decoder.py and
+         state/hexad_*_d768x12L_fire_2026_05_17/conscious_decoder.py — the REAL
+         s16 carving-era torch source)
+
+VERBATIM stdout:
+  SMOKE (d32/h4/kv2/L3)   params = 178,424
+  FULL  (d768/h12/kv4/L12) params = 283,722,336  (283.72M)
+  FULL  +MoE(8,top2)       params = 680,157,792  (680.16M)
+
+config FULL: vocab_size=256 d_model=768 n_head=12 n_kv_head=4 n_layer=12
+             block_size=256 consciousness_dim=128 dropout=0.1
+             gate_strength=0.001 n_ca_rules=8
+config SMOKE: vocab_size=256 d_model=32 n_head=4 n_kv_head=2 n_layer=3
+              block_size=64 consciousness_dim=128 dropout=0.1
+              gate_strength=0.001 n_ca_rules=8
+
+VERDICT: PASS — both the smoke and the full d768x12L configs instantiate from
+the REAL carving-era source. The d768x12L total = 283,722,336 trainable params
+(283.72M dense; 680.16M with MoE n_experts=8 top_k=2).
+
+SCOPE (honest): random init (NO s16 ckpt available — flagged). This is the
+ENGINE reconstructed + built, NOT the trained s16 carve. CPU/$0. A full
+d768x12L TRAIN is OUT OF SCOPE (a_toy_scale_recheck / a_scale_honest_scope).

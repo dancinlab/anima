@@ -54,3 +54,4 @@
 @D ENGINE+CLM+KOSMOS := "./domains/ENGINE+CLM+KOSMOS.md" :: domain [active]
 @D UNIVERSE := "./UNIVERSE/UNIVERSE.md" :: domain [active]
 @D C-PORT := "./domains/C-PORT.md" :: domain [active]
+@D KOSMOS-MAP := "./domains/KOSMOS-MAP.md" :: domain [active]

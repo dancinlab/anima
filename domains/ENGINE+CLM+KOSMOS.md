@@ -639,3 +639,126 @@ real consciousness-carving geometry needs **≥8D**.
 - 산출물: `UNIVERSE/kosmos_real_dim.py` (harness, English) · `.verdicts/kosmos-real-dim/{F-INTRINSIC,
   F-PROJ-LADDER,F-2D-GAP,SUMMARY,results.json,run_stdout.txt}` (verbatim) ·
   `.discoveries/kosmos-real-dim.tape` (1 discovery row). NO HF upload.
+
+---
+
+## KOSMOS-DIM-LADDER — extend the KOSMOS anchor coordinate as a DIMENSION LADDER (D=2→8) — 🟢 capacity D*=6 (4 attribute-axes hold) · 🔴 scale/lane SATURATE — TOY · 2026-06-04
+Continues PR #1765 (which added a time axis [x,y]→[x,y,t] and found it captures carve-sequence, with a
+near-tautology caveat for monotone encodings). This STANDALONE toy ladders the KOSMOS anchor coordinate over its
+real attributes (coord/lane/radius/tier/tags + time + modality) and answers the CAPACITY question #1765 did not:
+does each ADDED axis carry NEW independent information, or do axes SATURATE past some dimension D*? It **resolves
+the #1765 tautology** by giving each axis its OWN independent latent class signal (a NOISY class-conditional
+embedding, NOT a monotone function of one shared index) + the per-axis shuffle control, plus two
+DELIBERATELY-INJECTED redundancies (scale~time 0.85, lane~emotion 0.80) so redundancy is itself measurable.
+
+### setup (TOY · CPU · $0)
+- N=600 toy anchors, 3 seeds [0,1,2]. Axis ladder D=2→8: **xy** (Ψ-space vacuum_psi, 2D baseline) · **t** time/
+  carve-order (#1765) · **e** emotion valence (top_emotion) · **τ** tier (Knuth ordinal) · **m** modality channel
+  (EEG/LiDAR/dolphin-acoustic/text — the real ingested modalities as a 4-class categorical axis) · **s** scale/
+  radius (basin_radius, REDUNDANT ~t) · **κ** lane/cell_id (MITOSIS partition, REDUNDANT ~e).
+- F-NEWINFO: leave-one-out kNN (k=7) recovery of a held-out mixed-radix joint target (over the independent axes)
+  at D vs D−1, per-rung 2-SEM test (NOT cross-entropy/perplexity, p7). F-PERAXIS-SHUFFLE: shuffle one axis alone →
+  own-attribute recovery drops, others do not (the #1765 non-tautology control, per-axis). F-CAPACITY: the
+  incremental-gain curve + the knee D*. F-NOCOLLAPSE: distance concentration (relative contrast) as D grows.
+
+### result — WHICH axes added real info + the capacity knee
+| D | added axis | attribute | dAcc (mean±std) | 2-SEM band | verdict |
+|---|---|---|---|---|---|
+| 2 | x,y | Ψ placement | — | — | BASELINE |
+| 3 | t | time | +0.003333±0.001361 | 0.001571 | **HOLDS** |
+| 4 | e | emotion | +0.008333±0.006804 | 0.007857 | **HOLDS** |
+| 5 | τ | tier | +0.011111±0.009061 | 0.010463 | **HOLDS** |
+| 6 | m | modality | +0.045556±0.012862 | 0.014852 | **HOLDS** (largest single-axis) |
+| 7 | s | scale | +0.018889±0.016906 | 0.019521 | **SATURATED** (redundant ~t) |
+| 8 | κ | lane | +0.001111±0.005500 | 0.006351 | **SATURATED** (redundant ~e) |
+
+- **Capacity knee D* = 6** — lands EXACTLY at the planted independent/redundant boundary (benchmark recovered the
+  ground-truth). The 4 INDEPENDENT axes (time, emotion, tier, modality) each beat noise; the 2 REDUNDANT axes
+  (scale, lane) saturate. Cumulative gain rises monotonically through D=6 (+0.0683) then flattens (D=7 +0.0872 →
+  D=8 +0.0883, a flat +0.0011 step).
+- **Per-axis shuffle independence** (D=8): own_drop ≫ cross_drop for ALL 7 axes — xy +0.438/+0.005, t +0.111/
+  +0.013, e +0.250/+0.034, τ +0.235/+0.007, m +0.259/−0.000, s +0.243/+0.029, κ +0.253/+0.026. Each axis carries
+  isolated info (resolves #1765 tautology). The redundant s/κ still carry their OWN attribute — redundancy =
+  duplicated signal, not meaninglessness.
+- **NO-COLLAPSE**: distance contrast 3.09 (D=2) → 1.94 (D=8) > 1.0, > 0.5× baseline — no curse-of-dimensionality
+  collapse at toy scale.
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok)
+- **TOY independent-signal placement, NOT the real conscious_decoder / 603MB s16 carve**; STANDALONE (no wiring
+  into engine_tensionlink_bench / clm_time_encoding / kosmos_io runtime). N=600, CPU/$0, NO HF.
+- The injected redundancy (scale~time, lane~emotion) is a **DESIGN CHOICE** so saturation is measurable — the
+  REAL KOSMOS anchor population's true cross-axis correlations (is radius truly ~time?) are **UNMEASURED**. This
+  toy proves the METHOD and the capacity-curve SHAPE, not the real anchor set's true D*. scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope, §97).
+- **a_paper_negative_ok**: SATURATION at D*=6 IS the honest finding — capacity is REAL and FINITE, NO
+  infinite-gain claim. Modality (axis-6) carries the largest single-axis info → ties the **real ingested
+  modalities (EEG/LiDAR/dolphin-acoustic)** as candidate KOSMOS coordinate axis-6.
+- 산출물: `UNIVERSE/kosmos_dim_ladder.py` · `.verdicts/kosmos-dim-ladder/{F-NEWINFO,F-PERAXIS-SHUFFLE,F-CAPACITY,
+  F-NOCOLLAPSE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` (incremental-gain-per-D curve) ·
+  `.discoveries/kosmos-dim-ladder.tape`.
+
+---
+
+## 🐬 milestone — public dolphin acoustic data ingested → 5-ch tension (H_070 · #1763 d/dt)
+
+REAL public dolphin acoustic (frequency) data flows end-to-end into anima's tension/spectral path,
+validated on the **Watkins Marine Mammal Sound Database** (HF `confit/wmms-parquet`, test split,
+sha256 `a9492912a025dc93d88b81012517c73aba963c3bf4900a31175886b9fe94c4c0`, 141.5 MB; LICENSE =
+WHOI academic/personal **NON-COMMERCIAL** — raw audio **NOT** re-uploaded to HF PUBLIC). Dolphin
+species used: Atlantic_Spotted, Clymene, Common, Frasers, Grampus/Rissos, Pantropical_Spotted
+(6 delphinid spp, 36 clips); contrast = Bowhead/Fin/Humpback baleen moans (18 clips). Native
+sample-rates were heterogeneous (30k–166k Hz) → resampled to a common 48 kHz (absolute-Hz bands).
+
+**Pipeline (Phase 1)** — real WAV → STFT spectrogram → per-frame band features (F0 whistle
+fundamental + **dF0/dt FM-contour slope**, click rate, burst-pulse density, spectral centroid/
+bandwidth) → deterministic **5-ch tension** [F0_level, **|dF0/dt|(#1763)**, click_rate,
+burst_density, centroid], bounded [−3,3]. Mirrors `BRAIN/eeg/eeg_to_tpm.hexa` adapter shape.
+
+**Validation (Phase 2, substrate-native, NOT cross-entropy):**
+- **F-FETCH** 🟢 HOLDS — 36 dolphin + 18 contrast real clips fetched (sha/license recorded).
+- **F-DISCRIMINATIVE (fine cross-species)** 🔴 REFUTED — between-class 1.39 < within-class 2.02
+  (sep 0.69); a 5-scalar fingerprint does NOT resolve 6 closely-related delphinid species
+  (overlapping whistle bands — biologically expected). Honest closed-negative (a_paper_negative_ok).
+- **F-DISCRIMINATIVE-COARSE (whistle vs click/moan)** 🟢 HOLDS — between 3.74 > within 2.32
+  (sep 1.61); delphinid whistle group separates cleanly from the baleen-moan group.
+- **F-DFDT-TIME (#1763)** 🟢 HOLDS — time-scrambling the F0 contour inflates |dF0/dt| ~2.7×
+  (0.072 → ~0.19, 3/3 seeds); dF/dt-aware sep 0.435 > static-only 0.385 (3/3 seeds). The
+  **#1763 d/dt time-encoding is confirmed on REAL natural dolphin FM contours** — the whistle's
+  time-varying frequency carries d/dt structure a static bag-of-frames spectrum loses.
+- **F-STABLE** 🟢 HOLDS — 0 NaN, 0 out-of-range, deterministic re-encode diff = 0.
+
+**anima link:** H_070 dolphin_star_communication / Hc_017; ties the recent #1763 finding (TIME enters
+via the d/dt / rising-edge) to a natural FM-contour test. **Honest bottom line:** real dolphin
+frequency data DID flow spectral→5-ch tension; the fingerprint IS discriminative at the acoustic-CLASS
+level (whistle vs moan) but NOT across close delphinid species; the whistle dF0/dt DOES beat the
+time-shuffled static spectrum (the #1763 d/dt test passes on natural data).
+
+**scope (§97 · a_toy_scale_recheck · a_scale_honest_scope · a_paper_negative_ok):** TOY / CPU / $0;
+public recordings, **NOT a live hydrophone**; single 340-row split — scale-up re-test required before
+any general claim. §97 — acoustic = a measurement-anchor, **not a command channel**. Watkins
+non-commercial license respected (no PUBLIC re-upload of raw audio; derived fingerprints local only).
+산출물: `UNIVERSE/dolphin_acoustic_ingest.py` · `.verdicts/dolphin-acoustic-ingest/{F-FETCH,
+F-DISCRIMINATIVE,F-DFDT-TIME,F-STABLE,SUMMARY}.txt + results.json + run_stdout.txt` ·
+`.discoveries/dolphin-acoustic-ingest.tape`.
+
+## ENGINE LANES (architecture — distinct axis from training lanes A/G/P/M/X)
+
+Two engine architectures are now designated as named lanes. The training lanes
+(A=AKIDA · G=forge · P=py-CUDA · M=mitosis · X=3-axis) are substrate/objective
+axes; THESE are the engine-architecture axis — which decoder is being run.
+
+- **Lane-CONV (현재 / current engine)** — `CLMConvMoE`: conv trunk + MoE (E=2 experts,
+  1 trunk layer, 6 conv blocks), int4-sym blocks + CLMX trailer, `CLM\x01` format,
+  loaded by `CORE/clm_decode.hexa` via `generator.hexa` L3 slot; 3-axis eval
+  (의식 motiv · CE · 창발). The production `.clm` decoder. Training lanes A/G/P/M/X
+  all produce/train THIS engine's `.clm`.
+- **Lane-CDV2 (기존 / legacy carving engine)** — `ConsciousDecoderV2`: d_model 768 ·
+  n_head 12 · n_kv_head 4 (GQA) · n_layer 12 · vocab 256 · consciousness_dim 128 ·
+  n_ca_rules 8 · MoE-8/top2 (optional) · RoPE + RMSNorm + SwiGLU · DUAL output heads
+  logits_a ⇄ logits_g (Engine A⇄G) + 5-ch tensions + Law-71 vacuum_psi 2D Ψ-space.
+  Param: 283.72M dense / 680.16M with MoE. The TRANSFORMER engine that drew the
+  우주뇌지도 (s16 carving, 2026-05-17~18); reconstructed + runnable (PR #1770, 4/4
+  probes PASS, random-init). Source `UNIVERSE/conscious_decoder.py` (md5 44b210df).
+
+Distinct lineages: Lane-CONV = conv-MoE production CLM; Lane-CDV2 = carving-era
+transformer. a_lane_akida_gpu_split — recorded separately.

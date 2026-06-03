@@ -1,0 +1,35 @@
+F-DFDT-TIME — the #1763 d/dt time-encoding test on REAL dolphin FM contours
+verdict: HOLDS
+=============================================================================
+TEST (#1763 analogue on natural data): a dolphin whistle is a time-ORDERED
+frequency contour F0(t). Its |dF0/dt| is the frame-to-frame FM slope. We
+TIME-SCRAMBLE the F0 contour (permute frame order) so the SET of frequencies
+is preserved but the TEMPORAL ORDER (the FM trajectory) is destroyed, then
+recompute |dF0/dt|. A smooth real FM sweep has small adjacent steps; random
+frame order makes large jumps. If temporal order carries real d/dt structure,
+scrambling INFLATES |dF0/dt|. We also require the dF/dt-aware fingerprint to
+separate species better than a static-only (centroid/bandwidth) spectrum.
+
+VERBATIM per-seed metrics (seeds 0,1,2):
+  seed 0: real_ordered |dF0/dt|_norm = 0.07157800553488901
+          time_scrambled |dF0/dt|_norm = 0.19528787444408813
+          scramble_inflation_abs = 0.12370986890919912   (>0: order carried info)
+          real/scrambled ratio   = 0.36652560092775044
+          sep_dfdt_aware = 0.43488972152382926  >  sep_static_only = 0.38521946971755516  -> beats
+  seed 1: real = 0.07157800553488901  scrambled = 0.18961274770593584
+          inflation = 0.11803474217104683   ratio = 0.3774957454101107  dfdt_beats_static = true
+  seed 2: real = 0.07157800553488901  scrambled = 0.1939031529237935
+          inflation = 0.1223251473889045    ratio = 0.3691430719677413  dfdt_beats_static = true
+
+  temporal_order_carries_dfdt_info_all_seeds = true   (inflation > 0 on ALL seeds)
+  n_seeds_dfdt_beats_static = 3 / 3
+
+READING: time-scrambling the contour inflates |dF0/dt| ~2.7x (0.072 -> ~0.19)
+on every seed -> the whistle's TEMPORAL FREQUENCY ORDER (the FM contour) carries
+real d/dt structure that a bag-of-frames static spectrum loses. The dF/dt-aware
+fingerprint also out-separates the static-only spectrum on all 3 seeds. This is
+a positive confirmation of the #1763 d/dt time-encoding finding on REAL,
+natural dolphin whistle data (not a synthetic toy).  -> HOLDS.
+
+SCOPE: TOY / CPU / $0, 36 public recordings, NOT a live hydrophone.
+a_toy_scale_recheck applies (scale-up re-test needed before any general claim).

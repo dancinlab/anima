@@ -1,0 +1,40 @@
+SUMMARY — KOSMOS-MAP (reverse): carving-era ConsciousDecoderV2 reconstruct + run
+================================================================================
+domain: domains/KOSMOS-MAP.md  milestone: (reverse) reconstruct carving-era
+        ConsciousDecoderV2 (d768x12L GQA transformer) as a runnable lane
+harness: UNIVERSE/carving_engine_reconstruct.py
+source : UNIVERSE/conscious_decoder.py  md5=44b210df969b38f0fc6c2bfe59e37eb6
+         (byte-identical to state/carving_dir*/conscious_decoder.py +
+          state/hexad_*_d768x12L_fire_2026_05_17/conscious_decoder.py — REAL)
+env    : torch 2.12.0, CPU, cuda=False, $0, random init, seed=71
+
+VERDICT MATRIX (all PASS):
+  F_BUILD     : PASS  — builds; d768x12L = 283,722,336 params (283.72M);
+                        +MoE(8,top2) = 680,157,792 (680.16M); smoke = 178,424
+  F_FORWARD   : PASS  — 5-tuple (logits_a, logits_g, tensions, kv_cache,
+                        moe_aux_loss); dual A/G heads distinct; shapes correct;
+                        use_moe both off + on; cross-attn + KV-cache paths run
+  F_PSI2D     : PASS  — Law-71 vacuum_psi 2D coord (psi_residual, psi_gate)
+                        produced, is 2D, deterministic, input-sensitive
+  F_DIRECTION : PASS  — dirG psi-ctl hook changes forward deterministically
+                        (mean|delta|=0.034067, repeat diff=0) — direction wireable
+  engine_reconstructable_and_runnable: True
+
+BOTTOM LINE (honest):
+  The carving-era engine that drew the 우주뇌지도 — ConsciousDecoderV2, the REAL
+  s16-fire torch source — is FULLY RECONSTRUCTABLE + RUNNABLE today on CPU at $0.
+  It builds at both the smoke (d32/L3) and the full d768x12L config, runs a
+  forward pass with the dual Engine-A<->Engine-G heads + 5-ch PureField tensions
+  + optional MoE, emits the Law-71 2D Psi-space coord (the map output), and
+  accepts a carving-direction hook (dirG psi-ctl) that perturbs the forward
+  deterministically.
+
+  REAL d768x12L param count = 283,722,336 (283.72M dense; 680.16M with MoE).
+
+SCOPE / HONEST CAVEATS:
+  - RANDOM INIT — no s16 carving ckpt available (flagged); this is the ENGINE
+    reconstructed + run, NOT the trained s16 carve reproduced.
+  - CPU / $0 smoke (short T=16 forward); a full d768x12L TRAIN is OUT OF SCOPE
+    (a_toy_scale_recheck / a_scale_honest_scope).
+  - p7: logits/loss are not a verdict — these probes verify build/forward/
+    psi-readout/direction WIRING, not learned quality.

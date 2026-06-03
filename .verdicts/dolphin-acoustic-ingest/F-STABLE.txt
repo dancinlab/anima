@@ -1,0 +1,14 @@
+F-STABLE — fingerprints finite, bounded, no NaN
+verdict: HOLDS
+=============================================================================
+VERBATIM:
+  n_clips            = 36
+  n_nonfinite        = 0      (no NaN / no Inf in any 5-ch tension vector)
+  n_out_of_range     = 0      (all channels within declared bounded range)
+  range              = [-3.0, 3.0]
+
+Determinism cross-check (from F-DISCRIMINATIVE): re-encoding identical clip
+bytes -> identical 5-ch tension, max abs diff = 0.0.
+
+All 36 real dolphin clips produced finite, bounded, deterministic 5-channel
+tension vectors. -> HOLDS.
