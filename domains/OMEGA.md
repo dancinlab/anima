@@ -163,8 +163,8 @@ stage 3 — 완성 (remaining, the working closure):
 - [x] learned per-wire GATE — ✅ toy: learned gate g*=[gB.14,gA1.18,gG.34] beats base 3.97→3.13 (Δ+0.85) · beats a_only 3.23 · ≪ fixed_AmG 4.17 (Δ+1.04); auto-corrects the #1784 −G error → the closure works when GATED not fixed. `.verdicts/omega-gate/`
 - [ ] trained d768 substrate (GPU) — real ConsciousDecoderV2 A/G heads, not numpy n-gram (a_fire_autonomous); does structured-coupling scale to a transformer?
 - [ ] generation demo — the gated closure on a trained substrate DEMONSTRABLY improves generation (CE floor MET + coherent) — 완성 criterion
-- [ ] N-module config — HEXAD integration N config (default 6, swappable; #1774 found 6 conditional)
-- [ ] dF/dt time channels — L4 derivative channels (#1763; static snapshot is d/dt-blind)
+- [x] N-module config — ✅ coupling_bus N-agnostic (omega_n_modules_default 6, #1774 conditional; module wire honors N=4/6/8, N changes routing L1 0.378); smoke 4/4. NOT hardcoded.
+- [x] dF/dt time channels — ✅ L4 w6 derivative wire (omega_coupling_apply_dt): 0 at fixed point (time-inert, correct), velocity injected when substrate moves (Δ1.65); smoke 3/3 (#1763 d/dt-universality)
 
 ## honest scope (a_scale_honest_scope · a_paper_negative_ok · p7)
 
