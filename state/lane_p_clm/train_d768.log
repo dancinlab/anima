@@ -1,0 +1,42 @@
+DEVICE cuda name=NVIDIA RTX PRO 6000 Blackwell Server Edition cap=12.0 torch=2.11.0+cu128
+PARAMS n_params=7479042 (7.479M) d=768 E=2 L=1 K=3 V=256
+CORPUS path=/root/lanep/CORE/testdata/clm_mid_5lang_c4.txt bytes=402270
+/root/lanep/CLM/train/train_lane_p.py:131: UserWarning: Converting a tensor with requires_grad=True to a scalar may lead to unexpected behavior.
+Consider using tensor.detach() first. (Triggered internally at /pytorch/torch/csrc/autograd/generated/python_variable_methods.cpp:836.)
+  ce = float(out["ce_loss"])
+STEP      0 ce=5.74851 loss=5.75283 lr=3.00e-06 aux=0.0043 ent=0.6323
+STEP    200 ce=0.38389 loss=0.38702 lr=2.99e-04 aux=0.0031 ent=0.6874
+STEP    400 ce=0.22675 loss=0.22983 lr=2.97e-04 aux=0.0031 ent=0.6917
+STEP    600 ce=0.20290 loss=0.20598 lr=2.93e-04 aux=0.0031 ent=0.6924
+STEP    800 ce=0.17837 loss=0.18145 lr=2.87e-04 aux=0.0031 ent=0.6928
+STEP   1000 ce=0.16410 loss=0.16717 lr=2.80e-04 aux=0.0031 ent=0.6930
+STEP   1200 ce=0.16063 loss=0.16370 lr=2.71e-04 aux=0.0031 ent=0.6930
+STEP   1400 ce=0.16094 loss=0.16402 lr=2.61e-04 aux=0.0031 ent=0.6931
+STEP   1600 ce=0.15742 loss=0.16049 lr=2.50e-04 aux=0.0031 ent=0.6931
+STEP   1800 ce=0.13176 loss=0.13483 lr=2.38e-04 aux=0.0031 ent=0.6931
+STEP   2000 ce=0.13251 loss=0.13558 lr=2.25e-04 aux=0.0031 ent=0.6931
+STEP   2200 ce=0.13250 loss=0.13557 lr=2.11e-04 aux=0.0031 ent=0.6931
+STEP   2400 ce=0.12163 loss=0.12470 lr=1.96e-04 aux=0.0031 ent=0.6931
+STEP   2600 ce=0.11875 loss=0.12182 lr=1.81e-04 aux=0.0031 ent=0.6931
+STEP   2800 ce=0.12390 loss=0.12697 lr=1.66e-04 aux=0.0031 ent=0.6931
+STEP   3000 ce=0.12054 loss=0.12361 lr=1.50e-04 aux=0.0031 ent=0.6931
+STEP   3200 ce=0.11920 loss=0.12227 lr=1.34e-04 aux=0.0031 ent=0.6931
+STEP   3400 ce=0.11435 loss=0.11742 lr=1.19e-04 aux=0.0031 ent=0.6931
+STEP   3600 ce=0.11582 loss=0.11889 lr=1.04e-04 aux=0.0031 ent=0.6931
+STEP   3800 ce=0.10455 loss=0.10762 lr=8.89e-05 aux=0.0031 ent=0.6931
+STEP   4000 ce=0.11605 loss=0.11912 lr=7.49e-05 aux=0.0031 ent=0.6931
+STEP   4200 ce=0.10305 loss=0.10612 lr=6.18e-05 aux=0.0031 ent=0.6931
+STEP   4400 ce=0.11814 loss=0.12121 lr=4.96e-05 aux=0.0031 ent=0.6931
+STEP   4600 ce=0.10168 loss=0.10475 lr=3.85e-05 aux=0.0031 ent=0.6931
+STEP   4800 ce=0.10900 loss=0.11207 lr=2.86e-05 aux=0.0031 ent=0.6931
+STEP   5000 ce=0.10882 loss=0.11189 lr=2.01e-05 aux=0.0031 ent=0.6931
+STEP   5200 ce=0.10764 loss=0.11071 lr=1.29e-05 aux=0.0031 ent=0.6931
+STEP   5400 ce=0.10079 loss=0.10385 lr=7.32e-06 aux=0.0031 ent=0.6931
+STEP   5600 ce=0.10204 loss=0.10511 lr=3.26e-06 aux=0.0031 ent=0.6931
+STEP   5800 ce=0.10631 loss=0.10937 lr=8.14e-07 aux=0.0031 ent=0.6931
+STEP   5999 ce=0.09557 loss=0.09864 lr=0.00e+00 aux=0.0031 ent=0.6931
+FINAL_EVAL_CE 0.09862  (held-window mean over 40 batches)
+DESCENT first_ce=5.74851 last_logged_ce=0.09557 eval_ce=0.09862 uniform_ln256=5.54520
+CKPT saved /root/lanep/clm_d768_e2l1.pt (29922234 bytes)
+CLM serialized /root/lanep/clm_d768_e2l1.clm (4463478 bytes)
+RESULT {"substrate": "GPU-torch", "device": "NVIDIA RTX PRO 6000 Blackwell Server Edition", "compute_cap": "12.0", "torch": "2.11.0+cu128", "d_model": 768, "n_experts": 2, "n_trunk_layers": 1, "kernel_size": 3, "vocab": 256, "n_params": 7479042, "steps": 6000, "seq_len": 256, "batch_size": 64, "lr": 0.0003, "bf16": true, "wall_s": 45.03, "first_ce": 5.74851, "last_train_ce": 0.09557, "final_eval_ce": 0.09862, "uniform_ce_ln256": 5.5452, "descent": [[0, 5.74851], [200, 0.38389], [400, 0.22675], [600, 0.2029], [800, 0.17837], [1000, 0.1641], [1200, 0.16063], [1400, 0.16094], [1600, 0.15742], [1800, 0.13176], [2000, 0.13251], [2200, 0.1325], [2400, 0.12163], [2600, 0.11875], [2800, 0.1239], [3000, 0.12054], [3200, 0.1192], [3400, 0.11435], [3600, 0.11582], [3800, 0.10455], [4000, 0.11605], [4200, 0.10305], [4400, 0.11814], [4600, 0.10168], [4800, 0.109], [5000, 0.10882], [5200, 0.10764], [5400, 0.10079], [5600, 0.10204], [5800, 0.10631], [5999, 0.09557]], "corpus": "/root/lanep/CORE/testdata/clm_mid_5lang_c4.txt", "corpus_bytes": 402270, "clm_out": "/root/lanep/clm_d768_e2l1.clm", "clm_bytes": 4463478}
