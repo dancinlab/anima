@@ -1,0 +1,62 @@
+C-PORT M5 — ADJUDICATION of training/build/libhxnccl.c
+======================================================
+method:  g63-honest real inspection — git-tracking status, generated-marker
+         scan, header doc, full vendor-ABI call surface, and a body scan for
+         any pure-logic (non-vendor) kernel worth extracting.
+file:    training/build/libhxnccl.c  (211 LOC)
+base:    origin/main (worktree cport/m4-m5-close off d0e91b63f)
+date:    2026-06-04
+
+QUESTION (per M5)
+-----------------
+Is libhxnccl.c (a) a GENERATED build artifact, (b) AUTHORED-PORTABLE C with a
+pure-logic sliver worth a hexa-native port, or (c) AUTHORED vendor-irreducible
+FFI (NCCL = NVIDIA collective comms = vendor floor)?
+
+EVIDENCE
+--------
+1. AUTHORED, not generated:
+   - `git ls-files training/build/libhxnccl.c` → TRACKED in git.
+   - Generated-marker scan (`generated|do not edit|auto-gen|@generated`) → NONE.
+   - Header is a hand-written human design doc (PURPOSE / SCOPE / BUILD /
+     Mac-stub fallback rationale), citing alm_r11_fsdp_plan topology + the
+     feedback_no_quantization bf16 recipe. This is authored source, not a
+     codegen emission. (It happens to live under build/ — a path-based
+     exclusion in the inventory — but it is hand-authored C.)
+
+2. ENTIRELY a vendor-ABI bridge:
+   vendor ABI: NCCL — ncclCommInitAll×4, ncclCommInitRank×2, ncclCommDestroy×2,
+                      ncclAllReduce, ncclComm×8, ncclUniqueId, ncclSum,
+                      ncclBfloat16, ncclResult×3
+               CUDA — cudaGetDeviceCount×2, cudaSetDevice, cudaMalloc, cudaError
+   The three public symbols (hxnccl_init / hxnccl_allreduce_bf16 / hxnccl_free)
+   each terminate in an NCCL collective-comms call over CUDA device memory.
+
+3. NO portable pure-logic sliver:
+   The only non-vendor code is FFI guard scaffolding — opaque-handle magic
+   check (h->magic != HXNCCL_MAGIC), arg bounds (device_count 1..16, rank/
+   count/ptr validation), malloc of the comm array, and negative-rc mapping
+   (return -(100 + ncclResult_t)). This is defensive marshaling around the
+   vendor call, NOT an extractable kernel. There is no compute (the AllReduce
+   sum runs INSIDE NCCL on-device). The HXNCCL_STUB Mac branch is a no-op
+   fallback that returns negative rc so callers drop to single-GPU — still no
+   portable logic, just a degenerate stub.
+
+CLASSIFICATION
+--------------
+(c) AUTHORED vendor-irreducible FFI — TIER A.
+    libhxnccl.c is hand-authored C (not generated) whose entire reason-to-exist
+    is the NCCL collective-comms vendor ABI over CUDA. It is the C↔NCCL bridge
+    for 2-GPU FSDP bf16 grad AllReduce. Porting to hexa-native would mean
+    re-implementing NVIDIA NCCL — out of scope by the same rule as the other
+    tier-A files. It stays in C.
+
+DISPOSITION
+-----------
+- Out of the original in-scope LOC total (lives under excluded build/), but now
+  formally adjudicated and FOLDED INTO TIER A alongside the M4 vendor floor.
+- g63-honest future-leaf note: NONE. There is no tiny pure-logic sliver to
+  carve off — the handle-validation guard is inseparable FFI scaffolding, not a
+  standalone algorithm. No port is forced.
+
+VERDICT: vendor-irreducible (tier A). M5 closed.

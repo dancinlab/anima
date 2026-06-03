@@ -1,0 +1,71 @@
+C-PORT M4 — TIER-A VENDOR FLOOR (formal irreducible-FFI marking)
+================================================================
+method:  g63-honest real inspection — per-file `grep -oE '(cublas|cuda|cblas_|
+         vDSP_|vvexpf|nccl)...'` over the actual source, counts below are the
+         live vendor-ABI call surface in this checkout (NOT a paraphrase).
+scope:   training/*.c + training/native/*.c  (in-scope live authored C)
+base:    origin/main (worktree cport/m4-m5-close off d0e91b63f)
+date:    2026-06-04
+verdict: TIER-A IRREDUCIBLE — 4 in-scope files (+ 1 out-of-scope build/ file,
+         see M5) are formally marked the VENDOR-ABI FLOOR. NOT portable to
+         hexa-native: each file's reason-to-exist is a call into a vendor
+         BLAS/DSP/CUDA library that has NO pure-logic kernel to extract —
+         porting it would mean re-implementing the vendor library itself.
+
+PER-FILE — VENDOR ABI + WHY-IRREDUCIBLE
+---------------------------------------
+[A] training/native/train_step.c  (1054 LOC)
+    vendor ABI: cuBLAS  — cublasSgemm×5, cublasSaxpy×9, cublasSscal×3,
+                          cublasSnrm2×3, cublasCreate/Destroy, cublasHandle×13
+                CUDA    — cudaMalloc×25, cudaMemcpy×49, cudaFree×25,
+                          cudaMemset, cudaDeviceSynchronize×3
+    why irreducible: THE GPU training hot path (~50 cuBLAS calls/step). Every
+                     numeric op is dispatched to cuBLAS on device memory the
+                     file itself allocates/copies via the CUDA runtime. There
+                     is no host-side pure-logic kernel here — it IS the
+                     C↔cuBLAS/CUDA bridge. Re-implementing = writing a GPU BLAS.
+
+[A] training/hxblas_cuda_shim.c  (572 LOC)
+    vendor ABI: CUDA    — cudaMalloc×14, cudaFree×16, cudaMemcpyAsync×4,
+                          cudaStreamCreate×2, cudaSetDevice×2, cudaGetErrorString
+                cuBLAS  — cublasSgemm×5, cublasCreate, cublasSetMathMode,
+                          cublasSetStream, cublasSetWorkspace
+                Accelerate BLAS — cblas_sgemm×2, cblas_sscal, cblas_sdot
+    why irreducible: dual-backend bridge — routes sgemm to cuBLAS on device
+                     or to Accelerate cblas on host. Both arms terminate in a
+                     vendor BLAS ABI; the file is pure dispatch + device memory
+                     lifecycle. No extractable pure-logic compute.
+
+[A] training/hxblas_wrapper.c  (562 LOC)
+    vendor ABI: Accelerate BLAS — cblas_sgemm×4, cblas_sscal×2, cblas_sdot×2,
+                                  cblas_saxpy×2
+    why irreducible: host BLAS wrapper — every compute path is a cblas_* call.
+                     IS the C↔Accelerate-BLAS bridge; the surrounding code is
+                     arg validation + leading-dimension/transpose marshaling
+                     for the vendor ABI, with no standalone numeric kernel.
+
+[A] training/hxvdsp_wrapper.c  (186 LOC)
+    vendor ABI: Accelerate vDSP — vDSP_vmul×8, vDSP_vsmul×7, vDSP_vsadd×3,
+                                  vDSP_vsub×2, vDSP_vadd×2, vDSP_svesq,
+                                  vDSP_sve, vDSP_maxv, vDSP_dotpr; vvexpf×4
+    why irreducible: vDSP wrapper — every elementwise/reduction op delegates to
+                     the Accelerate vDSP ABI (and vvexpf for the exp). IS the
+                     C↔vDSP bridge; no pure-logic kernel to extract.
+
+AGGREGATE
+---------
+Tier-A vendor-floor files (in-scope) : 4   (2374 LOC)
+  cuBLAS/CUDA bridge ............. train_step.c, hxblas_cuda_shim.c
+  Accelerate-BLAS bridge ........ hxblas_wrapper.c, (hxblas_cuda_shim.c host arm)
+  vDSP bridge ................... hxvdsp_wrapper.c
+Plus 1 out-of-scope build/ file (NCCL) adjudicated tier-A in M5:
+  training/build/libhxnccl.c (211 LOC) — NCCL/CUDA collective-comms bridge.
+
+CONCLUSION
+----------
+The tier-A set is the IRREDUCIBLE FFI FLOOR of anima's training stack. These
+files are the C↔vendor boundary by construction (cuBLAS · CUDA runtime ·
+Accelerate cblas · Accelerate vDSP · NCCL). They are formally marked
+NON-PORTABLE and kept in C. The portable surface (tier-B train_ffi marshaling
+M2, tier-C smoke-ref logic M3) is already exhausted. g63-honest: no pure-logic
+sliver remains in any tier-A file — verified by call-surface inspection above.
