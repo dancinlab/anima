@@ -1,0 +1,59 @@
+F-CLOSURE-TRAINED — OMEGA decisive trained-leakfree closure rung
+================================================================
+substrate : Lane-G / GPU (RunPod H100) — a_lane_akida_gpu_split
+driver    : UNIVERSE/omega_trained_leakfree.py (sha256 83e76c570d7c6bd8...)
+date      : 2026-06-04
+
+PRE-REGISTERED FALSIFIER (verbatim from the driver):
+  closure HOLDS iff (GATED < base AND GATED <= a_only)
+  on the leak-free (causal_ca=True), WELL-GENERALIZING substrate (val_ce clearly < uniform=5.545).
+  If GATED >= base even when val_ce < uniform  ->  honest CLOSED-NEGATIVE.
+
+VERDICT : ⛔ HALT — NO MEASUREMENT (rate-limit-storm pod kill, not a science result)
+
+WHAT HAPPENED
+  A server-wide RunPod rate-limit storm aborted the H1 dispatch loop WITHOUT tearing
+  down the rented pods. FOUR H100 pods named `anima-omega-tlf` were left orphaned:
+    6ilc4ykv2yrrso (H100 SXM, $3.29/hr), l94a42gu4f13by (H100 SXM, $3.29/hr),
+    nzgdz5v7627858 (H100 NVL, $3.19/hr), stc7yrmo882n8i (H100 SXM, $3.29/hr).
+  RunPod ITSELF then force-exited all four (lastStatusChange "Exited by Runpod:
+  Wed Jun 03 2026 20:23-20:25 UTC").
+
+  (The orphan pod IDs cited in the recovery brief — e472ep0spb1opj / xjmfo9iim20hyy /
+   656rv9fnba3v4y — do NOT exist in the account; the real orphans were the 4
+   `anima-omega-tlf` pods above. Authoritative source: RunPod GraphQL myself.pods.)
+
+RECOVERY OUTCOME : IMPOSSIBLE
+  - desiredStatus = EXITED on all 4 (containers stopped; no SSH/exec endpoint).
+  - runtime = null on all 4 (no proxy ports — cannot reach the filesystem).
+  - volumeInGb = 0 on all 4 (NO persistent network volume; container disk only,
+    80GB ephemeral — wiped/unreachable once the pod exits).
+  - No artifact ever streamed back to the host (no ckpt / results.json / val-curve / log
+    found locally; the only local trace is the committed driver script).
+  => A trained ConsciousDecoderV2 ckpt + closure-eval result MAY have existed transiently
+     on a pod, but is UNRECOVERABLE: EXITED + ephemeral-disk + no-runtime + RunPod-initiated
+     exit. Restarting a pod to recover would (a) re-rent a GPU (forbidden: no new pod) and
+     (b) likely hit a wiped ephemeral disk anyway.
+
+CLOSURE STATUS
+  The pre-registered falsifier is NOT adjudicated — there is no val_ce, no base/a_only/
+  fixed_AmG/GATED CE, no structured A-wire-vs-shuffle measurement. Per g63/p7 we do NOT
+  fabricate a verdict. The decisive question (does the substrate->decode closure SURVIVE on
+  a WELL-TRAINED leak-free substrate?) REMAINS OPEN.
+
+  Prior leak-honest context (#1794, omega-cdv2-ca-leak, DO NOT mis-cite as this rung's result):
+  on an UNDERTRAINED leak-free substrate the closure did NOT hold (gated 3.594 > base 3.015,
+  val_ce ~= uniform) while the leak-INVARIANT structured coupling held at d384. #1791's GATED
+  0.345 absolute-CE "win" was LEAK-DRIVEN. This rung was meant to settle the COMPETENT-substrate
+  case (val_ce clearly < uniform) and did not get to run.
+
+BLEED STOPPED (no leak)
+  All 4 orphan pods TERMINATED via RunPod GraphQL podTerminate (each returned
+  {"data":{"podTerminate":null}}). Post-termination myself.pods = [] (GraphQL) and
+  runpodctl pod list = [] — account confirmed EMPTY. Zero pods alive. No new pod rented.
+
+NEXT (single fresh rung, user re-dispatch)
+  Re-run UNIVERSE/omega_trained_leakfree.py on ONE H100 with a PERSISTENT VOLUME (volumeInGb>0,
+  --ckpt/--out written under the mounted volume path) so an interrupted run survives a pod kill.
+  Default args: --steps 20000 --d_model 512 --n_layer 8 --block 256 --bs 48 --corpus_mb 400.
+  Then harvest ckpt + results.json + val-curve, adjudicate the falsifier, HF upload, teardown.
