@@ -1,0 +1,26 @@
+=== OMEGA coupling-analysis ④ — CLOSED-LOOP FEEDBACK (L5)  (corpus=400000B, N=600) ===
+
+--- STABILITY (does the closed loop diverge / collapse?) ---
+  finite (no NaN/inf)            : True
+  step-entropy bounded (0,ln256) : True  (min=0.148 max=3.373)
+  cell-count bounded             : True  (start=6.00 end=140.29 max=140.29)
+  => BOUNDED (no divergence)     : True
+  back-half distinct-byte frac   : 0.153  (>0.1 ⇒ not a fixed point)
+  top-byte share (back half)     : 0.173
+  => NOT collapsed to fixed point: True
+
+--- FEEDBACK EFFECT (closed-loop vs open-loop control, same RNG) ---
+  closed vs open Hamming frac    : 0.722  (>0.05 ⇒ feedback measurably alters trajectory)
+  closed-loop mean entropy       : 2.063   open-loop mean entropy: 1.975
+  cell count: start 6.00 → end 140.29  (mitosis growth under feedback)
+  => feedback MATTERS            : True
+
+=== SUMMARY ===
+🟢 LOOP CLOSES STABLY — the closed-loop feedback (emit → substrate update → next decode)
+   neither diverges (bounded entropy 0.15–3.37 + bounded cells) nor collapses
+   to a fixed point (distinct-byte frac 0.153 > 0.1), AND feedback measurably
+   alters the byte trajectory vs the open-loop control (Hamming 0.722 > 0.05). The L5
+   closure — substrate↔decode nerve + mitosis tick — runs as a stable dynamical loop.
+SCOPE (a_toy_scale_recheck): TOY n-gram substrate, 400000B repo corpus, CPU/$0, no torch.
+  open-loop control freezes the substrate context; same RNG stream isolates feedback. NEXT = the
+  closed loop on the trained d384 substrate (#1791) — does feedback stay stable on a real transformer.
