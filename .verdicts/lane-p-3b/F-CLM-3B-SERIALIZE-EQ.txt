@@ -1,0 +1,73 @@
+F-CLM-3B-SERIALIZE-EQ — Lane P 3B Stage 0: DECODER + SERIALIZER extension byte-eq gate
+substrate = local CPU (Lane P tooling) · $0 · 2026-06-04
+tools: hexa 0.1.0-dispatch · Python 3.14.5
+
+GATE (BLOCKING for Stage 1+2): round-trip byte-eq on (a) the existing d768/E2/L1
+golden ref (reexport stays exact_eof, NO regression) AND (b) a new larger config
+(multi-layer, more experts). Verdicts verbatim.
+
+DESIGN (v0.3 — general L trunk layers · E experts, BYTE-EXACT backward compatible):
+  The CLM\x01 v0.2 byte grammar was ALREADY self-describing — nblk (byte[4]),
+  each block (cout,rest), n_ext, each ext count fully determine the layout. v0.2
+  only HARDCODED the block-role assignment (L=1,E=2) + `let E=2` in clm_decode.hexa
+  (lines ~152,251). v0.3 generalizes that assignment with NO byte-grammar change
+  and NO magic bump, so a v0.3 file with L=1,E=2 is BYTE-IDENTICAL to a v0.2 file.
+
+  General block order  (nblk = L + E + 3):
+    ecW · tcW_0..tcW_{L-1} · e0W..e{E-1}W · rW(cout=E) · roW(cout=V)
+  General ext order    (n_ext = 2L + E + 6):
+    embed · ecB · tcB_0..tcB_{L-1} · e0B..e{E-1}B · rB · roB ·
+    tgG_0..tgG_{L-1} · tgB_0..tgB_{L-1} · noG · noB
+  (L,E,V) recovery at decode: E = cout of block[nblk-2] (router),
+    V = cout of block[nblk-1] (readout), d/K from block0, L = nblk - E - 3.
+  At L=1,E=2 this reduces EXACTLY to the v0.2 block/ext order.
+
+GOLDEN REF (no-regression):
+  path = state/laneg_d768_recover/reexport_d768_v2_fast.clm
+  sha256 = db7dc990ff31fb60a5677fd7fcf9a248c4306742d246bb99d8b5de861b751497
+
+── (A) Python serializer/verifier round-trip (CLM/model/verify_clm_v2.py) ──────
+F-CLM-V2-ROUNDTRIP=1
+F-CLM-V3-BYTEEQ-V2=1  (byte-identical (46742 bytes))
+F-CLM-V3-ROUNDTRIP-SMALL=1  (d=48 L=4 E=6: ok)
+F-CLM-V3-ROUNDTRIP-3BDIMS=1  (d=128 L=30 E=30 [3B block/ext topology, reduced d]: ok)
+GOLDEN path=/Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d768_v2_fast.clm
+GOLDEN decodable=true nblk=6 block0={cout:768,rest:2304} CLMX-found=true n_ext=11 ext_counts=[196608, 768, 768, 768, 768, 2, 256, 768, 768, 768, 768] exact_eof=True
+
+  Interpretation:
+   · F-CLM-V2-ROUNDTRIP=1 — the existing v0.2 L1/E2 synthetic round-trip is UNCHANGED.
+   · F-CLM-V3-BYTEEQ-V2=1 — serialize_v3(L=1,E=2) is BYTE-IDENTICAL to serialize_v2
+     on the same weights (46742 bytes, exact). NO regression on the existing format.
+   · F-CLM-V3-ROUNDTRIP-SMALL=1 — a NEW larger config (4 trunk layers, 6 experts)
+     round-trips byte-exactly (decodable + nblk=13 + per-block dims + n_ext=24 +
+     ext_counts + exact_eof + embed fp32 lossless).
+   · F-CLM-V3-ROUNDTRIP-3BDIMS=1 — the ACTUAL 3B block/ext topology (L=30,E=30,
+     nblk=63,n_ext=126; d reduced to 128 so the test is $0/instant) round-trips
+     byte-exactly. The 3B topology serializes & parses correctly.
+   · GOLDEN exact_eof=True — the real d768 golden ref parses with zero trailing
+     bytes through the (unchanged) byte grammar.
+
+── (B) ENGINE-side recovery — CORE/clm_decode.hexa clm_config (header-only) ─────
+hexa run CORE/_clm_config_probe.hexa:
+GOLDEN ok=true d=768 K=3 V=256 E=2 L=1 nblk=6
+SYNTH ok=true d=48 K=3 V=256 E=6 L=4 nblk=13
+  → the generalized ENGINE decoder recovers (d,K,V,E,L) correctly for BOTH the
+    legacy golden (E=2,L=1) and a general v0.3 file (E=6,L=4). No hardcoded E=2.
+
+── (C) ENGINE-side general forward — clm_forward_ce executes end-to-end ─────────
+hexa run CORE/_clm_fwd_probe.hexa  (general v0.3 L=4/E=6 synthetic):
+FWD ok=true windows=4 d=48 E=6 L=4 V=256 model_ce=4.80258 uniform_ce=4.79906
+  → the general L-trunk-loop + E-expert-loop forward runs; finite CE (≈uniform,
+    expected for RANDOM synthetic weights — this is a STRUCTURAL proof, not a CE
+    quality claim).
+hexa run CORE/_clm_golden_probe.hexa  (golden d768 L=1/E=2 — REGRESSION):
+GOLDEN_FWD ok=true windows=4 d=768 E=2 L=1 V=256 model_ce=4.54345 uniform_ce=4.79906 lt_uniform=true
+  → the TRAINED d768 golden, through the SAME generalized code path, still yields
+    model_ce=4.54345 < uniform_ce=4.79906 (lt_uniform=true). No forward regression.
+
+VERDICT: PASS — byte-eq holds on (a) the d768/E2/L1 golden ref (exact_eof, v3==v2
+  byte-identical, forward below-uniform) AND (b) larger configs (L4/E6 and the
+  full 3B L30/E30 topology). The decoder + serializer round-trip ANY (L,E,d)
+  byte-exactly. CLEARED to proceed to Stage 1 (3B config + corpus) and Stage 2 (GPU fire).
+
+p7/g63: all numbers above are verbatim stdout from hexa run / python3; no fabrication.

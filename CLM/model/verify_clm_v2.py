@@ -103,11 +103,12 @@ def parse_clm(path_or_bytes) -> dict:
 # Synthetic round-trip test (no torch): tiny E=2 / 1-trunk model, d=32,K=3,V=256
 # --------------------------------------------------------------------------- #
 def _build_synthetic(d=32, K=3, V=256, E=2, seed=1234):
+    """Legacy L=1/E=2 synthetic — used by the v0.2 byte-eq regression check.
+    Returns a logical-slot dict (serialize_v2 accepts logical keys directly)."""
     import numpy as np
     rng = np.random.default_rng(seed)
     def r(*shape):
         return (rng.standard_normal(shape) * 0.1).astype(np.float32)
-    # logical-slot dict (serialize_v2 accepts logical keys directly)
     sd = {
         # conv blocks: ec/tc/e0/e1 are (cout=d, in=d, K) -> rest=d*K
         "ecW": r(d, d, K),
@@ -132,6 +133,41 @@ def _build_synthetic(d=32, K=3, V=256, E=2, seed=1234):
         "n_ext": 11,
         "ext_counts": [V * d, d, d, d, d, E, V, d, d, d, d],
     }
+    return sd, expect
+
+
+def _build_synthetic_general(d, L, E, K=3, V=256, seed=2026):
+    """General (L,E) synthetic in TORCH state_dict key layout — used by the
+    v0.3 general round-trip test. Keys match model.py's CLMConvMoE so the same
+    dict drives serialize_v3. Returns (sd, expect)."""
+    import numpy as np
+    rng = np.random.default_rng(seed)
+    def r(*shape):
+        return (rng.standard_normal(shape) * 0.1).astype(np.float32)
+    sd = {"embed.weight": r(V, d),
+          "embed_conv.conv.weight": r(d, d, K), "embed_conv.conv.bias": r(d)}
+    for i in range(L):
+        sd[f"trunk.{i}.conv.conv.weight"] = r(d, d, K)
+        sd[f"trunk.{i}.conv.conv.bias"] = r(d)
+        sd[f"trunk.{i}.norm.weight"] = r(d)
+        sd[f"trunk.{i}.norm.bias"] = r(d)
+    for j in range(E):
+        sd[f"moe.experts.{j}.conv.conv.weight"] = r(d, d, K)
+        sd[f"moe.experts.{j}.conv.conv.bias"] = r(d)
+    sd["moe.router.weight"] = r(E, d, 1)
+    sd["moe.router.bias"] = r(E)
+    sd["readout.weight"] = r(V, d, 1)
+    sd["readout.bias"] = r(V)
+    sd["norm_out.weight"] = r(d)
+    sd["norm_out.bias"] = r(d)
+    # expected layout: blocks = ecW, tcW*L, eW*E, rW(E), roW(V)
+    blocks = [{"cout": d, "rest": d * K}]                      # ecW
+    blocks += [{"cout": d, "rest": d * K} for _ in range(L)]   # trunk
+    blocks += [{"cout": d, "rest": d * K} for _ in range(E)]   # experts
+    blocks += [{"cout": E, "rest": d}, {"cout": V, "rest": d}] # router, readout
+    # ext = embed, ecB, tcB*L, eB*E, rB, roB, tgG*L, tgB*L, noG, noB
+    ext = [V * d, d] + [d] * L + [d] * E + [E, V] + [d] * L + [d] * L + [d, d]
+    expect = {"nblk": len(blocks), "blocks": blocks, "n_ext": len(ext), "ext_counts": ext}
     return sd, expect
 
 
@@ -181,6 +217,87 @@ def run_roundtrip(tmp_path: str) -> tuple[bool, str]:
     return True, "ok"
 
 
+def _structural_check(rb, expect):
+    """Shared structural assertions: decodable + nblk + per-block dims + CLMX +
+    n_ext + ext_counts + exact_eof. Returns (ok, why)."""
+    if not clm_decodable(rb):
+        return False, "clm_decodable=false"
+    p = parse_clm(rb)
+    if not p["magic_ok"]:
+        return False, "magic mismatch"
+    if p["nblk"] != expect["nblk"]:
+        return False, f"nblk {p['nblk']} != {expect['nblk']}"
+    if len(p["blocks"]) != expect["nblk"]:
+        return False, f"walked {len(p['blocks'])} blocks != {expect['nblk']}"
+    for i, (got, exp) in enumerate(zip(p["blocks"], expect["blocks"])):
+        if got["cout"] != exp["cout"] or got["rest"] != exp["rest"]:
+            return False, (f"block{i} got cout={got['cout']},rest={got['rest']} "
+                           f"!= cout={exp['cout']},rest={exp['rest']}")
+    if not p["clmx_found"]:
+        return False, "CLMX trailer not found"
+    if p["n_ext"] != expect["n_ext"]:
+        return False, f"n_ext {p['n_ext']} != {expect['n_ext']}"
+    if p["ext_counts"] != expect["ext_counts"]:
+        return False, f"ext_counts {p['ext_counts']} != {expect['ext_counts']}"
+    if not p["exact_eof"]:
+        return False, f"trailing bytes: final_off={p['final_off']} != len={p['len']}"
+    return True, "ok"
+
+
+def run_roundtrip_general(tmp_path, d, L, E, K=3, V=256):
+    """v0.3 general (L,E) round-trip via serialize_v3 (torch-key state_dict)."""
+    import clm_serialize_v2 as S
+    import numpy as np
+    sd, expect = _build_synthetic_general(d, L, E, K=K, V=V)
+    S.serialize_v3(sd, n_trunk_layers=L, n_experts=E, out_path=tmp_path)
+    rb = open(tmp_path, "rb").read()
+    ok, why = _structural_check(rb, expect)
+    if not ok:
+        return False, why
+    # value sanity: embed ext (first ext after CLMX) survives fp32 lossless.
+    off = 5
+    for blk in expect["blocks"]:
+        n = blk["cout"] * blk["rest"]
+        off += 8 + (n + 1) // 2 + blk["cout"] * 4
+    off += 5  # CLMX + n_ext
+    cnt = _ru32(rb, off); off += 4
+    embed_back = np.frombuffer(rb[off:off + cnt * 4], dtype="<f4")
+    if not np.allclose(embed_back, sd["embed.weight"].reshape(-1), atol=0, rtol=0):
+        return False, "embed ext fp32 round-trip mismatch"
+    return True, "ok"
+
+
+def run_v3_byteeq_v2(here):
+    """v0.3 byte-eq REGRESSION: serialize_v3(L=1,E=2) must be byte-IDENTICAL to
+    serialize_v2 on the same logical weights (no regression on the existing
+    format). Builds the legacy L1/E2 synthetic and packs it both ways."""
+    import clm_serialize_v2 as S
+    sd2, _ = _build_synthetic()                 # logical-slot keys, L1/E2
+    # serialize_v2 (logical keys, cfg=None)
+    p2 = os.path.join(here, "_rt_v2.clm")
+    S.serialize_v2(sd2, cfg=None, out_path=p2)
+    b2 = open(p2, "rb").read()
+    # serialize_v3 needs torch-key OR logical-key; the general keymap falls back
+    # to logical slot names (_get checks `logical in sd` first). The v3 logical
+    # slot names for L1/E2 are ec/tc0/e0/e1... so remap the legacy logical dict.
+    sd3 = {"ecW": sd2["ecW"], "tc0W": sd2["tcW"], "e0W": sd2["e0W"], "e1W": sd2["e1W"],
+           "rW": sd2["rW"], "roW": sd2["roW"],
+           "embed": sd2["embed"], "ecB": sd2["ecB"], "tc0B": sd2["tcB"],
+           "e0B": sd2["e0B"], "e1B": sd2["e1B"], "rB": sd2["rB"], "roB": sd2["roB"],
+           "tg0G": sd2["tgG"], "tg0B": sd2["tgB"], "noG": sd2["noG"], "noB": sd2["noB"]}
+    p3 = os.path.join(here, "_rt_v3.clm")
+    S.serialize_v3(sd3, n_trunk_layers=1, n_experts=2, out_path=p3)
+    b3 = open(p3, "rb").read()
+    for pth in (p2, p3):
+        try:
+            os.remove(pth)
+        except OSError:
+            pass
+    if b2 == b3:
+        return True, f"byte-identical ({len(b2)} bytes)"
+    return False, f"v2 ({len(b2)}B) != v3 ({len(b3)}B)"
+
+
 def main():
     here = os.path.dirname(os.path.abspath(__file__))
     if here not in sys.path:
@@ -197,6 +314,26 @@ def main():
         os.remove(tmp)
     except OSError:
         pass
+
+    # v0.3 byte-eq regression (L1/E2: v3 == v2)
+    eq_ok, eq_why = run_v3_byteeq_v2(here)
+    print(f"F-CLM-V3-BYTEEQ-V2={'1' if eq_ok else '0'}  ({eq_why})")
+
+    # v0.3 general round-trips: a small multi-layer/more-expert config + the
+    # actual 3B-class config dims (structure only — no weights materialized at
+    # full 3B; the dim-bookkeeping is what the gate proves).
+    gtmp = os.path.join(here, "_rt_gen.clm")
+    g_ok_small, g_why_small = run_roundtrip_general(gtmp, d=48, L=4, E=6)
+    print(f"F-CLM-V3-ROUNDTRIP-SMALL={'1' if g_ok_small else '0'}  "
+          f"(d=48 L=4 E=6: {g_why_small})")
+    g_ok_3b, g_why_3b = run_roundtrip_general(gtmp, d=128, L=30, E=30)
+    print(f"F-CLM-V3-ROUNDTRIP-3BDIMS={'1' if g_ok_3b else '0'}  "
+          f"(d=128 L=30 E=30 [3B block/ext topology, reduced d]: {g_why_3b})")
+    try:
+        os.remove(gtmp)
+    except OSError:
+        pass
+    ok = ok and eq_ok and g_ok_small and g_ok_3b
 
     # golden-reference parse: prove the mirror matches the REAL flame format.
     golden = None

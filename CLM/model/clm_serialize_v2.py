@@ -91,6 +91,78 @@ _EXT_ORDER = ["embed", "ecB", "tcB", "e0B", "e1B", "rB", "roB",
               "tgG", "tgB", "noG", "noB"]
 
 
+# --------------------------------------------------------------------------- #
+# v0.3 — GENERAL (n_trunk_layers L, n_experts E) block/ext ordering.
+#
+# The CLM\x01 format is ALREADY self-describing: nblk (byte[4]) + each block's
+# (cout,rest) + n_ext + each ext count fully determine the layout. v0.2 only
+# *hardcoded* the block-role assignment (L=1,E=2). v0.3 generalizes that
+# assignment WITHOUT changing the byte grammar, so it is byte-exact backward
+# compatible — a v0.3 file with L=1,E=2 is byte-identical to a v0.2 file.
+#
+# General block order   (nblk = L + E + 3):
+#   ecW · tcW_0..tcW_{L-1} · e0W..e{E-1}W · rW(cout=E) · roW(cout=V)
+# General ext order      (n_ext = 2L + E + 6):
+#   embed · ecB · tcB_0..tcB_{L-1} · e0B..e{E-1}B · rB · roB ·
+#   tgG_0..tgG_{L-1} · tgB_0..tgB_{L-1} · noG · noB
+#
+# At L=1,E=2 this reduces EXACTLY to _BLOCK_ORDER / _EXT_ORDER above (the trunk
+# bias tcB_0, then expert biases e0B,e1B, then rB,roB, then trunk GN tgG_0,tgB_0,
+# then noG,noB) — byte-identical to v0.2.
+#
+# (L,E) recovery at decode time: E = cout of block[nblk-2] (router), V = cout of
+# block[nblk-1] (readout), L = nblk - E - 3.  No new bytes, no magic bump.
+# --------------------------------------------------------------------------- #
+
+# torch state_dict key templates for the general CLMConvMoE (model.py).
+#   embed.weight · embed_conv.conv.{weight,bias}
+#   trunk.{i}.conv.conv.{weight,bias} · trunk.{i}.norm.{weight,bias}
+#   moe.experts.{j}.conv.conv.{weight,bias} · moe.router.{weight,bias}
+#   norm_out.{weight,bias} · readout.{weight,bias}
+def _general_block_keymap(L: int, E: int):
+    """logical slot -> torch key, for the L*E general block order."""
+    km = {"ecW": "embed_conv.conv.weight"}
+    for i in range(L):
+        km[f"tc{i}W"] = f"trunk.{i}.conv.conv.weight"
+    for j in range(E):
+        km[f"e{j}W"] = f"moe.experts.{j}.conv.conv.weight"
+    km["rW"] = "moe.router.weight"
+    km["roW"] = "readout.weight"
+    return km
+
+
+def _general_ext_keymap(L: int, E: int):
+    km = {"embed": "embed.weight", "ecB": "embed_conv.conv.bias"}
+    for i in range(L):
+        km[f"tc{i}B"] = f"trunk.{i}.conv.conv.bias"
+    for j in range(E):
+        km[f"e{j}B"] = f"moe.experts.{j}.conv.conv.bias"
+    km["rB"] = "moe.router.bias"
+    km["roB"] = "readout.bias"
+    for i in range(L):
+        km[f"tg{i}G"] = f"trunk.{i}.norm.weight"
+    for i in range(L):
+        km[f"tg{i}B"] = f"trunk.{i}.norm.bias"
+    km["noG"] = "norm_out.weight"
+    km["noB"] = "norm_out.bias"
+    return km
+
+
+def _general_block_order(L: int, E: int):
+    return (["ecW"] + [f"tc{i}W" for i in range(L)]
+            + [f"e{j}W" for j in range(E)] + ["rW", "roW"])
+
+
+def _general_ext_order(L: int, E: int):
+    return (["embed", "ecB"]
+            + [f"tc{i}B" for i in range(L)]
+            + [f"e{j}B" for j in range(E)]
+            + ["rB", "roB"]
+            + [f"tg{i}G" for i in range(L)]
+            + [f"tg{i}B" for i in range(L)]
+            + ["noG", "noB"])
+
+
 def _to_np(x) -> "np.ndarray":
     """Coerce a torch.Tensor / numpy array / nested list to a float32 numpy array."""
     if np is None:
@@ -176,12 +248,14 @@ def _resolve_state_dict(state_dict_or_ckpt, cfg) -> Dict[str, "np.ndarray"]:
     return sd
 
 
-def _get(sd: Dict[str, Any], logical: str) -> "np.ndarray":
+def _get(sd: Dict[str, Any], logical: str, keymap=None) -> "np.ndarray":
     """Fetch a weight by logical slot name, accepting either logical keys or
-    torch state_dict keys in the source dict."""
+    torch state_dict keys in the source dict. `keymap` overrides _KEYMAP (used by
+    the general v0.3 path with per-(L,E) slot names)."""
+    km = keymap if keymap is not None else _KEYMAP
     if logical in sd:
         return _to_np(sd[logical])
-    tkey = _KEYMAP[logical]
+    tkey = km[logical]
     if tkey in sd:
         return _to_np(sd[tkey])
     raise KeyError(
@@ -237,6 +311,54 @@ def serialize_v2(state_dict_or_ckpt, cfg, out_path: str) -> str:
     with open(out_path, "wb") as f:
         f.write(blob)
     return out_path
+
+
+def serialize_v3(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
+                 out_path: str) -> str:
+    """Pack a GENERAL CLMConvMoE(n_trunk_layers=L, n_experts=E, d, K) to a
+    CLM\\x01 v0.3 .clm that CORE/clm_decode.hexa loads.
+
+    v0.3 == v0.2 byte grammar, generalized block/ext counts (see the v0.3 note
+    above). At L=1,E=2 the output is BYTE-IDENTICAL to serialize_v2 (verified by
+    the round-trip gate). d, K, V are read from the weight shapes — no width
+    hardcode. Returns out_path.
+    """
+    if np is None:
+        raise RuntimeError("numpy is required for serialize_v3")
+    L, E = int(n_trunk_layers), int(n_experts)
+    if L < 1 or E < 1:
+        raise ValueError(f"need L>=1 and E>=1, got L={L} E={E}")
+    sd = _resolve_state_dict(state_dict_or_ckpt, None)
+    bkm = _general_block_keymap(L, E)
+    ekm = _general_ext_keymap(L, E)
+    border = _general_block_order(L, E)
+    eorder = _general_ext_order(L, E)
+    nblk = len(border)            # = L + E + 3
+    n_ext = len(eorder)           # = 2L + E + 6
+
+    blob = bytearray()
+    blob += MAGIC
+    blob += struct.pack("<B", nblk)
+    for slot in border:
+        w = _get(sd, slot, bkm)
+        w2d = _conv_w_to_2d(w, slot)
+        blob += _pack_conv_block(w2d)
+    blob += CLMX
+    blob += struct.pack("<B", n_ext)
+    for slot in eorder:
+        blob += _pack_ext(_get(sd, slot, ekm))
+
+    with open(out_path, "wb") as f:
+        f.write(blob)
+    return out_path
+
+
+def serialize(state_dict_or_ckpt, n_trunk_layers: int, n_experts: int,
+              out_path: str) -> str:
+    """Unified entry: routes to serialize_v3 (general). For L=1,E=2 the v3 path
+    is byte-identical to serialize_v2, so this is the single serializer for ANY
+    (L,E,d). cfg-free — caller states (L,E) explicitly."""
+    return serialize_v3(state_dict_or_ckpt, n_trunk_layers, n_experts, out_path)
 
 
 if __name__ == "__main__":  # pragma: no cover

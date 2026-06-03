@@ -113,5 +113,22 @@ per ext entry: [len u32-le] [len × fp32-le]     // FULL-PRECISION fp32
   full fp32 직렬화. **backward-compatible** (v0.1 리더 byte-unaffected).
   writer: `clm_prod.hexa`(GPU 트레이너) + `clm_reexport.hexa`(host $0-CPU 재export).
   reader: `clm_ckpt.hexa` + anima `CORE/generator.hexa::clm_decode_ce`.
+- v0.3 = **general (L trunk layers · E experts)** — v0.2 는 block-role 배정을
+  L=1/E=2 로 HARDCODE 했을 뿐, 바이트 grammar(nblk·각 block (cout,rest)·n_ext·
+  각 ext count) 는 이미 self-describing. v0.3 은 byte grammar / magic 변경 **없이**
+  그 배정을 일반화 → **L=1,E=2 파일은 v0.2 와 byte-IDENTICAL** (no regression).
+  - block order (nblk = L+E+3):
+    `ecW · tcW_0..tcW_{L-1} · e0W..e{E-1}W · rW(cout=E) · roW(cout=V)`
+  - ext order (n_ext = 2L+E+6):
+    `embed · ecB · tcB_0..tcB_{L-1} · e0B..e{E-1}B · rB · roB ·
+     tgG_0..tgG_{L-1} · tgB_0..tgB_{L-1} · noG · noB`
+  - (L,E,V) 복원: E = block[nblk-2].cout (router), V = block[nblk-1].cout (readout),
+    d/K = block0, L = nblk − E − 3.  trunk dilation = 2^layer (model.py dilation_base=2).
+  - writer: `CLM/model/clm_serialize_v2.py::serialize_v3` (torch CLMConvMoE→.clm).
+  - reader: `CORE/clm_decode.hexa` (`clm_config`/`clm_forward_ce`/`_clmd_load`,
+    array-of-handle 일반 forward) + `clm_decodable` (불변).
+  - 검증: `CLM/model/verify_clm_v2.py` — F-CLM-V3-BYTEEQ-V2=1 (v3 L1/E2 == v2),
+    F-CLM-V3-ROUNDTRIP-{SMALL,3BDIMS}=1, GOLDEN exact_eof=True
+    (`.verdicts/lane-p-3b/F-CLM-3B-SERIALIZE-EQ.txt`).
 - 이후 arch 변경 시 이 버전 bump + 스펙 동반 갱신.
 - 변경 이력은 `CLM.log.md`, 본 스펙은 current-state(이력 금지).
