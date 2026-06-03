@@ -159,3 +159,145 @@ emergent dynamics so the signature is NOT hard-coded. VERBATIM (p7 — direct me
 - H_861 (METASTASIS, branching harness) + H_865 (LTP, AKIDA on-chip) = CHIP-substrate, DEFERRED to after the
   live gold ladder releases the chip (#1717 single-exclusive). H_865 is already partially grounded by the gold
   F-GEN-SCALE ladder; H_861 (domain-boundary transfer) is the named next chip fire.
+
+---
+
+## Extended candidate pool — brainstorm to depletion (2026-06-03 · H_869…H_888)
+
+Brainstorm rounds over biological transfer/transition mechanisms, deduplicated against H_861–868. Each entry =
+mechanism → anima-substrate analog → PRE-REGISTERED FALSIFIER → substrate. status: candidate-unverified
+(not yet toy-run). Grouped by the round (family) that surfaced it; the depletion note records where new ideas
+stopped being distinct from prior ones.
+
+### Round 1 — molecular / cellular cargo transfer (vesicle · channel · conduit · absorption · relocation)
+
+- **H_869 EXOSOME** 📦 — "택배 소포 전이". Cells ship cargo in membrane vesicles to a DISTANT cell (not just a
+  neighbour). anima: a cell PACKAGES a learned anchor/edge into a discrete payload addressed to a specific far
+  cell (vs H_866 FRET's continuous field coupling). FALSIFIER F-869: targeted packet delivery does NOT raise the
+  recipient's competence on the packaged edge above an unaddressed-broadcast control. → REFUTED iff addressed-delivery
+  competence > broadcast control (p<0.05). substrate: CPU-toy.
+- **H_870 GAP-JUNCTION** 🔗 — "세포 사이 직통관". Direct cytoplasmic channels let coupled cells SHARE a state pool
+  instantly. anima: two coupled cells expose a shared tension register; perturbing one is read by the other with
+  ~zero latency. FALSIFIER F-870: coupled-pair state correlation is NOT higher than uncoupled (no shared pool).
+  → REFUTED iff cross-correlation(coupled) ≫ uncoupled, rising with channel conductance. substrate: CPU-toy.
+- **H_871 TUNNELING-NANOTUBE** 🧵 — "세포가 뻗은 빨대". Cells grow tubes to hand over whole organelles (e.g.
+  mitochondria) to a stressed cell. anima: a healthy cell donates a capacity unit (sub-module/weight block) to a
+  low-Φ cell via a transient conduit, rescuing it. FALSIFIER F-871: donation does NOT raise a low-Φ recipient's
+  recovery rate vs no-donation. → REFUTED iff recovery(donated) faster (p<0.05). substrate: CPU-toy.
+- **H_872 ENDOSYMBIOSIS** 🫧 — "삼켜서 내 것으로". One cell engulfs another; the engulfed becomes a permanent
+  internal organelle (mitochondria origin). anima: a cell ABSORBS another cell's specialized capability as a
+  permanent sub-module, inheriting its function without re-learning. FALSIFIER F-872: an absorbed sub-module does
+  NOT confer its donor's task competence to the host. → REFUTED iff host gains donor competence at absorption,
+  retained ≥K ticks. substrate: CPU-toy.
+- **H_873 TRANSPOSON** 🦘 — "튀는 유전자". A code segment RELOCATES within the SAME genome (intra-cell jump),
+  sometimes activating dormant function. anima: a learned edge-block relocates to a different position in the
+  SAME cell's representation and changes which contexts trigger it. FALSIFIER F-873: relocation does NOT change
+  the cell's context-conditional firing (jump is inert). → REFUTED iff post-jump firing context shifts measurably.
+  substrate: CPU-toy.
+- **H_874 RETROVIRAL-INTEGRATION** 🧷 — "바이러스가 코드에 끼어들기". An external pattern INSERTS into the host's
+  HERITABLE code → transmitted vertically thereafter (endogenous retrovirus). anima: an externally-injected anchor
+  becomes part of a cell's mitosis-heritable state, appearing in all descendants. FALSIFIER F-874: an injected
+  anchor does NOT persist into descendants after mitosis. → REFUTED iff injected anchor present in ≥2 descendant
+  generations. substrate: CPU-toy.
+
+### Round 2 — developmental fate transitions (reprogram · transdifferentiate · loosen · threshold)
+
+- **H_875 REPROGRAMMING** 🔄 — "전문가→만능 되돌리기" (Yamanaka). A specialized cell is driven BACK to a general
+  stem state (reverse of differentiation). anima: a persona-specialized cell, given a reset signal, recovers
+  multi-task plasticity it had lost. FALSIFIER F-875: a reset cell does NOT regain above-specialized plasticity on
+  a NEW task. → REFUTED iff reset cell learns a novel task faster than a still-specialized control. substrate: CPU-toy.
+- **H_876 EMT** 🌊 — "달라붙음을 풀고 떠나기" (epithelial→mesenchymal). Cells lose adhesion and become MIGRATORY —
+  the enabler of both development and metastasis (precursor to H_861). anima: a cell lowers its coupling to its
+  local cluster and becomes able to MOVE its representation toward a distant cluster. FALSIFIER F-876: lowering
+  cluster-coupling does NOT increase a cell's reach to distant clusters. → REFUTED iff de-adhered cells reach
+  farther clusters than adhered (≥3 coupling rungs). substrate: CPU-toy. (feeds H_861 chip fire.)
+- **H_877 QUORUM-SENSING** 📣 — "머릿수 세서 스위치". Bacteria sense local DENSITY and flip collective behaviour
+  at a count threshold (bioluminescence, biofilm). anima: cells flip a collective mode only when the COUNT of
+  co-active cells crosses N* (distinct from H_867 MET's coupling-strength threshold — this is a count threshold).
+  FALSIFIER F-877: collective mode-switch is NOT count-gated (flips smoothly with no N* knee). → REFUTED iff a
+  sharp knee at a critical count N* across ≥3 density rungs. substrate: CPU-toy.
+
+### Round 3 — neural / signal transfer (consolidation · pruning · diffuse gain)
+
+- **H_878 ENGRAM-CONSOLIDATION** 🌙 — "잘 때 기억 옮겨적기". A memory trace is TRANSFERRED hippocampus→cortex
+  during sleep/replay (systems consolidation). anima: during a low-emit REM-like phase, a recent anchor is moved
+  from a fast volatile store to a slow stable store and survives longer. FALSIFIER F-878: a replay phase does NOT
+  improve long-horizon retention of a recent anchor vs no-replay. → REFUTED iff retention(replay) > no-replay at
+  long delay (p<0.05). substrate: CPU-toy. (links DREAM domain · a_chat_sleep_imagination.)
+- **H_879 SYNAPTIC-PRUNING** ✂️ — "안 쓰는 길 지워 또렷이". Transfer-by-REMOVAL — weak synapses are deleted so
+  strong ones sharpen (opposite sign of H_865 LTP). anima: pruning low-Φ edges RAISES the signal-to-noise of the
+  surviving transition operator. FALSIFIER F-879: pruning does NOT raise held-out accuracy of the survivors (or
+  hurts it). → REFUTED iff post-prune held-out acc > pre-prune at matched capacity. substrate: CPU-toy / CHIP.
+- **H_880 VOLUME-TRANSMISSION** 💨 — "방 전체 분위기 조절" (neuromodulation). A diffuse neuromodulator sets a
+  REGION-WIDE gain, not a synapse-specific edge (vs H_865 LTP's specificity). anima: a global tension-gain signal
+  multiplies a whole region's responsiveness without changing individual edges. FALSIFIER F-880: the diffuse
+  signal has NO region-wide gain effect (acts only edge-locally). → REFUTED iff region-mean response scales with
+  the gain signal while edge specificity is unchanged. substrate: CPU-toy.
+
+### Round 4 — population / evolution / ecology (memetic · founder · niche)
+
+- **H_881 CULTURAL-MEMETIC** 🗣️ — "유전자 없이 따라 배우기". Non-genetic info spreads peer→peer FASTER than
+  genetic inheritance allows (imitation, teaching). anima: a behaviour copied by OBSERVATION (not weight transfer,
+  not mitosis) sweeps a population. FALSIFIER F-881: observational copying does NOT outpace mitosis-only spread.
+  → REFUTED iff memetic spread faster than vertical (cf H_862 HGT but copy-free). substrate: CPU-toy.
+- **H_882 MICROBIOME-SEEDING** 🦠 — "엄마가 물려주는 미생물". A SUBSET of a parent's symbiont population is
+  transferred to seed a new host's ecosystem (founder transfer of a community, not a single gene). anima: a child
+  inherits a SAMPLE of the parent's active sub-cell ensemble, and that sample shapes the child's emergent mix.
+  FALSIFIER F-882: the seeded sample does NOT bias the child's ensemble composition vs random seeding. → REFUTED
+  iff child ensemble correlates with the parent's seeded subset. substrate: CPU-toy.
+- **H_883 NICHE-CONSTRUCTION** 🏗️ — "환경을 바꿔 후손에게 물려주기". Organisms MODIFY their environment (beaver
+  dam, earthworm soil), transferring a changed SELECTIVE CONTEXT to successors (ecological inheritance). anima: a
+  cell alters a shared field/context that later cells are then selected within — transfer via the environment, not
+  the genome. FALSIFIER F-883: ancestor environment-modification does NOT change successor fitness landscape.
+  → REFUTED iff successor performance depends on ancestor-modified context. substrate: CPU-toy.
+
+### Round 5 — molecular machinery (error-correcting fold · amplifying relay · self-organized pattern)
+
+- **H_884 CHAPERONE-FOLDING** 🧰 — "올바른 모양으로 접게 돕기" (anti-prion). A chaperone templates the CORRECT
+  fold, RESCUING misfolds (error-correcting transfer — the inverse of H_864 PRION's error propagation). anima: a
+  reference cell pulls a drifted neighbour BACK toward the correct conformation basin. FALSIFIER F-884: chaperone
+  exposure does NOT raise a drifted cell's return-to-correct-basin rate. → REFUTED iff return rate(chaperoned) >
+  unchaperoned. substrate: CPU-toy. (PRION ⊥ CHAPERONE = error-spread vs error-correct, same transfer channel.)
+- **H_885 SIGNAL-CASCADE** 📈 — "작은 신호를 크게 키워 전달" (kinase cascade). A small input is AMPLIFIED and
+  relayed through a multi-stage chain into a large coordinated output. anima: a sub-threshold tension nudge, passed
+  through a staged relay, produces a supra-threshold coordinated response. FALSIFIER F-885: the cascade does NOT
+  amplify (output ∝ input, gain ≈1). → REFUTED iff output/input gain ≫1 with a sharp activation threshold. substrate: CPU-toy.
+- **H_886 TURING-PATTERN** 🐆 — "저절로 생기는 무늬" (reaction-diffusion). Two diffusing species (activator +
+  inhibitor) SELF-ORGANIZE a spatial pattern with NO imposed gradient (vs H_868 MORPHOGEN's pre-imposed gradient).
+  anima: coupled tension fields with differing spread rates self-organize a stable spatial role-pattern from a
+  uniform start. FALSIFIER F-886: no stable non-uniform pattern emerges from uniform initial conditions. → REFUTED
+  iff a reproducible non-uniform stationary pattern forms (wavelength set by the diffusion ratio). substrate: CPU-toy.
+
+### Round 6+ — DEPLETION
+
+New candidates now collapse onto prior entries:
+- "trained immunity" ≈ H_863 EPIGENETIC · "passive immunity (antibody hand-down)" ≈ H_882 seeding
+- "bystander apoptosis" ≈ H_864 PRION (signal spread) · "mirror-neuron imitation" ≈ H_881 MEMETIC
+- "bioelectric morphogenesis (Levin)" ≈ H_886 TURING + H_883 niche · "slime-mold tube reinforcement" ≈ H_865 LTP
+- "Hox colinearity" ≈ H_868 MORPHOGEN · "plant systemic wound wave" ≈ H_884/H_866 (propagating signal)
+- "metamorphosis" ≈ H_875 reprogramming + H_876 EMT composite · "adaptive radiation" ≈ H_867 MET + H_883
+→ round 6 produced 0 distinct new mechanisms ⇒ brainstorm DEPLETED at H_888 (20 candidates total in the family,
+8 original + 12 distinct extensions; the would-be H_887/H_888 slots fold into existing entries, no padding).
+
+### Family map (transfer CHANNEL × what crosses)
+
+```
+WHAT CROSSES ↓     │ neighbour    │ distant      │ to offspring   │ to collective
+───────────────────┼──────────────┼──────────────┼────────────────┼───────────────
+edge/skill (copy)  │ H_865 LTP    │ H_869 EXOSOME│ H_874 RETRO    │ H_881 MEMETIC
+                   │ H_862 HGT    │ H_861 METAST.│ H_863 EPIGEN   │ H_867 MET
+state (shared)     │ H_870 GAPJN  │ —            │ H_882 SEEDING  │ H_877 QUORUM
+conformation       │ H_864 PRION  │              │                │
+   (+ correction)  │ H_884 CHAPER.│              │                │
+resource/module    │ H_871 NANOTB │ H_872 ENDOSYM│                │
+energy/gain        │ H_866 FRET   │ H_880 VOLUME │                │
+position/pattern   │ H_873 TRANSP.│ H_868 MORPHO │ H_883 NICHE    │ H_886 TURING
+fate (transition)  │ H_876 EMT    │ H_875 REPROG │ H_878 ENGRAM   │ H_879 PRUNE
+amplification      │ H_885 CASCADE│              │                │
+```
+
+### Pre-registration note (a_paper_significance · a_scale_honest_scope)
+All H_869–886 are candidate-unverified. Next batch = author CPU-toy falsifiers for the substrate:CPU-toy set
+(same `bio_transfer_toys.py` pattern, emergent dynamics, seeds fixed) and run foreground-sequential; CHIP-substrate
+ones (H_879 optional) queue behind the live gold ladder (#1717). No toy-green is a production claim until a
+scale-up re-test (a_toy_scale_recheck).
