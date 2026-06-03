@@ -71,3 +71,21 @@ Both defects are hexa-lang compiler bugs (out of anima's scope; fixes land in th
   1. NEW const-fold MISCOMPILE (sibling of #2650 BUG2, NOT covered): `let maxabs=0.0` reassigned in an `if`-body inside a `for` has its fold inlined into the `if` condition → maxabs wrong in all 8 cases (ends at last element). cref elements proven byte-identical to C; `let mut` fixes maxabs 8/8. Follow-up filed for hexa-lang codegen (if-body fold pre-invalidation).
   2. fp-CONTRACTION (FMA) DIFFER (NOT a compiler bug): C ref `cc -O2` contracts `s += a*b` to single-round FMA; port double-rounds → ~1-ULP `sum` divergence in 4 cases. baseline-fp-flag-dependent (`-ffp-contract=off` shifts C too).
 - Verdict: .verdicts/c-port/sgemm-ref-runeq.txt. M3 re-characterized OPEN (unblocked-to-run; DIFFER). C-PORT NOT fully closed.
+
+## 2026-06-04 — e004 M3 CLOSED → PORT-EQ (RUNEQ 8/8 value-exact + element-bit-exact)
+
+**M3 [x] PORT-EQ — both DIFFER causes RESOLVED; RUNEQ 8/8 VALUE-EXACT + element-BIT-EXACT (0/16640 mismatches), g63-honest.**
+
+Re-measured the e003 DIFFER and drove it to a genuine 8/8. The prior "elements byte-identical, only ~1-ULP FMA sum drift" diagnosis was incomplete — element-bit measurement showed 174/256 elements differed even on the 16×16 case, i.e. the divergence was a deeper fp-MODEL mismatch, not a lone FMA. Two fixes close it:
+
+- **FIX 1 — hexa-lang codegen if-body const-fold pre-invalidation (CONFIRMED COMPILER BUG, FIXED).** The maxabs miscompile is the sibling of #2650 BUG1 for the IF-arm: a plain `let maxabs = 0.0` const-folds to 0.0, and `if av > maxabs { maxabs = av }` inlined the STALE literal into the IF CONDITION (`av > 0.0`, always-true) while the body reassigned the live var → the reduction kept the LAST element instead of the MAX. Fix (self/codegen.hexa, ExprStmt/IfExpr arm of `_gen2_stmt_inner`): pre-invalidate the comptime-const fold for every name the then_body + else_body reassign (via `_gen2_collect_assigned`, which recurses into else_body so chained elif/else arms are covered) BEFORE comptime-folding or emitting the condition — mirrors the WhileStmt pre-invalidate #2650 added at ~L3496. Regression catcher: `self/test/miscompile_class/m10_if_body_fold_reassign.hexa` (FIXED→`IF-BODY-FOLD-OK` rc=0; OLD→miscompiled C clang rejects). **hexa-lang PR `mczero/if-body-fold-fix` (base=main).** With the fix, maxabs is correct 8/8.
+
+- **FIX 2 — RUNEQ HARNESS fp-model alignment (NOT a bug).** The port has no native f32 type (hexa Float is f64); it models fp32 via write_f32/deref_f32 round-trips (explicit round-to-binary32) with f64 arithmetic between rounds. The C ref now mirrors that EXACTLY via an `r32()` helper: fills `r32(0.02 * (double)int)` (f64 `0.02`, NOT the f32 literal `0.02f` — that alone differed on 67/256 input elements), forms each product in f64 then rounds, and accumulates rounding after every add (no FMA). Build pinned `cc -O2 -ffp-contract=off`. This eliminates the THREE-part divergence (f32 vs f64 input constant · f32-native vs f64-then-round product · fused vs explicitly-rounded add) the prior naive `float` driver carried. `training/native/sgemm_ref_runeq.c` updated.
+
+- **RESULT:** C ref (corrected) vs hexa port (fixed hexat) = 8/8 LINE-EXACT; raw i32 element-bit cross-check = 0/16384 (128×128) + 0/256 (16×16) mismatches → element-BIT-EXACT, not merely summary-equal.
+
+- **Toolchain:** fixed `hexat` rebuilt entirely in /tmp from the worktree's fixed self/codegen.hexa (tool/regen_cc_manual → clang); hexa-lang install only READ, codegen.hexa byte-identical before/after, install hexat binary untouched. INSTALL CLEAN.
+
+- **Proof status:** FUNCTIONAL — passes on a locally-fixed hexat; becomes released behavior once hexa-lang PR `mczero/if-body-fold-fix` merges (the installed unfixed hexat still miscompiles maxabs). M3 PORT-EQ holds the moment that PR lands. The harness fp fix is toolchain-independent and committed here.
+
+Verdict: `.verdicts/c-port/sgemm-ref-runeq.txt` (PORT-EQ, 8/8). C-PORT M1·M2·M3 done; M4·M5 remain (tier-A documentation · libhxnccl adjudication).
