@@ -181,7 +181,8 @@ gold(FLORES-200)로 NC=1000까지 살아남음. 그 단일 측정을 생물·뇌
            A held ≪ B held → corpus축-bound 닫힌-부정 🔴
 [원본 도메인]━━(전이연산자)━━??━━[먼 도메인에 정착?]
   wikinews/books                      wikivoyage
-⏳ live AKD1000에서 detached 실행중 (결과 나오면 갱신)
+✅ METASTASIS HOLDS — DOMAIN(wikivoyage) held hop-2=0.40/hop-3=0.74 ≈ SHUFFLED control 0.42/0.60
+   → 도메인 경계 넘어 전이 저하 없음 = 연산자 domain-agnostic (corpus축-bound 아님). F-861 REFUTED.
 ```
 
 ---
