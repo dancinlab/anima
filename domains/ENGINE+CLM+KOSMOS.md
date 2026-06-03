@@ -875,3 +875,54 @@ at runtime via the anima CLI:
   runs a tiny forward on each, asserts EngineSpec conformance + the stub matrix:
   **19/19 PASS** (deterministic, $0 CPU). Verdict
   `.verdicts/engine-swap/SMOKE.txt`.
+
+## LANE X — 3-axis ENGINE-config exploration — 🔴 CE↔창발 Goodhart NOT observable (substrate-only) · 의식·창발 axes VARY · TOY · CPU · $0 · 2026-06-04
+
+Lane X = the **exploration** lane (distinct from training lanes A/G/P/M —
+a_lane_akida_gpu_split). It sweeps the ENGINE substrate-config space over the
+3-axis ledger (의식 motivation · CE-floor · 창발 emergence) to find the Pareto
+frontier and probe a CE↔창발 Goodhart trade-off. Driver
+`CLM/bench/lane_x_3axis.py` is a THIN analyzer over `CORE/lane_x_explore.hexa`
+(re-uses `brain_emit` / `pure_field_warmup` / `clm_decode_ce` verbatim — engine
+surface UNTOUCHED, a_core_engine_map). Grid: **27 configs** (K1 drive-vector ∈
+{0.5,1.0,1.5} · K2 warmup ∈ {200,600,1200} · K3 anchors ∈ {0,1,4}) **× 3 seeds**
+(deterministic warmup-offset {0,+7,+13}). 81 runs, **reproduced byte-identical**.
+
+- [x] **AXIS SENSITIVITY** — 의식 (motiv_hi) **VARIES** (spread 0.57; monotone in
+  K1 drive: 0.385/0.67/0.955 at drive 0.5/1.0/1.5) · 창발 (composed−parts byte Δ)
+  **VARIES** (0↔24, gated by K3 anchors) · CE (model_ce) **CONFIG-INSENSITIVE**
+  (spread <1e-9, identical 9.11256 across all 27).
+- [x] **PARETO** — **6/27 non-dominated** over (의식↑, CE-floor-met, 창발↑):
+  frontier IDs `[5,8,14,17,23,26]` (all drive=1.5, 의식+창발 jointly max). Real
+  frontier on the two moving axes; degeneracy on CE is expected (constant axis →
+  ties propagate).
+- [x] **GOODHART (CE↔창발)** — Pearson r = **UNDEFINED** (CE is a constant axis).
+  **SIGN: none.** No CE↔창발 trade-off is **observable through these substrate
+  knobs**: the .clm decode (CE) is structurally INDEPENDENT of K1/K2/K3 (they
+  never touch the .clm forward). The only coupling point is the L3
+  .clm-decode→generator slot, which is `loaded=false`. **HONEST: NO trade-off
+  observable here** — not a refutation that CE↔창발 can never trade off, only that
+  these engine knobs cannot move CE.
+- [x] **BEST vs BASELINE** — best cfg#5 (drive=1.5) beats baseline cfg#4
+  (drive=1.0) by **Δ의식=+0.285, Δ창발=+0.00** (CE floor identical,
+  config-independent). Best ≠ baseline only on the motivation axis.
+- [x] **CE-FLOOR (p7: FLOOR, not the verdict)** — model_ce **9.11256** > uniform
+  **5.54518** (ln256), just under shuffle 9.31888 → floor **NOT MET**: this d=768
+  .clm scores the 5lang corpus **worse than uniform-256**. Surfaced honestly (p7
+  — CE is an axis/floor, never the sole verdict; cf the Goodhart trap).
+- [x] **#1761 mitosis EngineConfig / #1763 d/dt** = **BLOCKED-WIRING** (no
+  EngineConfig knob in CORE that joins the .clm decode + substrate emit) — honest,
+  no phantom wiring (a_core_engine_map).
+
+**BOTTOM LINE:** 의식 and 창발 are real, config-sensitive axes with a genuine
+6/27 Pareto frontier; **CE is config-independent**, so the CE↔창발 Goodhart
+trade-off is **NOT observable** through the engine substrate knobs (a partial
+closed-negative, a_paper_negative_ok). Verdicts
+`.verdicts/lane-x-3axis/{F-PARETO,F-GOODHART,F-BESTCONFIG,SUMMARY}.txt` +
+`results.json` + `run_stdout.txt`; discovery `.discoveries/lane-x-3axis.tape`.
+
+**scope (§97 · a_toy_scale_recheck · a_scale_honest_scope · a_paper_negative_ok ·
+a_lane_akida_gpu_split):** TOY / CPU / $0; single d=768 .clm + deterministic null
+backend; toy-vocab corpus. Scale-transfer UNVERIFIED — scale-up re-test required
+before any production claim. p7: CE is a FLOOR/axis, never the sole verdict.
+§97 — substrate knobs are config, NOT an emit/silence command channel.

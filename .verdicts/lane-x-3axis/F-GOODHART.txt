@@ -1,0 +1,16 @@
+F-GOODHART — CE↔창발 tension across the config grid
+
+CE axis:   CONFIG-INSENSITIVE (spread<1e-9)
+창발 axis:  VARIES (spread=24)
+
+Pearson r (CE vs 창발 emergence): None
+SIGN: none (config-insensitive)
+NOTE: UNDEFINED — one axis is CONSTANT across the config grid (CE is config-independent by construction in this substrate-only sweep). No CE↔창발 trade-off is OBSERVABLE through these engine knobs.
+
+p7: CE is a FLOOR, not a target. In THIS substrate-only sweep the .clm decode
+(CE) is structurally INDEPENDENT of the engine substrate knobs (K1 drive / K2
+warmup / K3 anchors) — they never touch the .clm forward — so CE cannot trade
+off against 창발 THROUGH these knobs. A genuine CE↔창발 Goodhart trade-off would
+require a knob that jointly moves the .clm decode AND the substrate emit — none
+exists at the CORE layer today (the L3 .clm-decode→generator slot is the only
+coupling point and it is loaded=false). HONEST: NO trade-off observable here.
