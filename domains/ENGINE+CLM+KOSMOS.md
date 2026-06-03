@@ -1067,3 +1067,37 @@ a_lane_akida_gpu_split):** TOY / CPU / $0; single d=768 .clm + deterministic nul
 backend; toy-vocab corpus. Scale-transfer UNVERIFIED — scale-up re-test required
 before any production claim. p7: CE is a FLOOR/axis, never the sole verdict.
 §97 — substrate knobs are config, NOT an emit/silence command channel.
+
+## OMEGA gen-cluster — LEAK-FREE substrate + 3 generation-side probes — 🟢 leak FIX VERIFIED / 🔴 #1791 절대-CE 승리 LEAK-DRIVEN 폭로 (GPU) — 2026-06-04
+
+> **질문**: #1791 오메가 완성의 단 하나 caveat (CDV2 CA-neighbor mixing이 next-byte head에 lookahead 누수
+> → 절대 CE leak-optimistic + free-run gen이 whitespace로 collapse)를 고치면, gated closure가 leak-honest로도
+> 이기나? **답**: 누수 수정은 VERIFIED 되고 whitespace-collapse는 SOLVED 되지만, #1791의 절대-CE 승리는
+> LEAK-DRIVEN이었고 leak-honest엔 不성립 — gated bus가 weak unigram base도 못 이김. RELATIVE structure만 leak-invariant.
+
+### setup (Lane-G / GPU H100 · ~$0.85 ~15min · a_lane_akida_gpu_split, NOT Lane A)
+- THE FIX: `ConsciousDecoderV2(..., causal_ca=True)` — CA-mixing의 RIGHT neighbor(`x[:, t+1]`)를 self(`x`)로 치환 →
+  head_a STRICTLY CAUSAL (자기 target 못 봄). default `causal_ca=False` = #1791 byte-eq 보존.
+- substrate: d384×6L GQA 35.93M, 6000 step · 120MB multilingual wiki (en/fr/de/es/ru, sha 0b232f8b, =#1791 recipe).
+- GPU=NVIDIA H100 80GB HBM3 torch 2.4.1+cu124 nvidia-smi **97% BUSY** (g63, NOT silent CPU). pod runpod `lu3agi1045g87y` torn down.
+
+### result (각 falsifier 사전등록 · a_paper_negative_ok)
+- **LEAK FIX VERIFIED (headline)**: leak self-test (마지막 byte만 flip → head_a의 earlier-position 최대변화) = **0.000e+00**
+  (d384 AND d768). → leak-honest val_ce 5.43(d384)/5.16(d768) ≈ uniform 5.545로 RISE = #1791 val_ce 0.86이 leak-inflated였음 확인.
+- **① F-LEAKFREE-GEN — PASS=FALSE**: whitespace-collapse SOLVED (gated gen entropy 2.97, distinct 0.172, ws 0.253 → coherent-ish,
+  가독 latin/숫자 조각) but leak-honest CE base 3.015 · a_only 2.857 · GATED 3.594 → **gated<base FALSE** → #1791 GATED 0.345≪base
+  승리는 LEAK-DRIVEN, leak 제거 후 不생존. structured는 leak-INVARIANT 유지 (real A-wire +0.158 ≫ shuf −0.509).
+- **③ F-DFDT-REAL — w6 NON-INERT but HURTS**: velocity wire가 real sequence 100% step nonzero (Δ +1.76 d384/+0.52 d768 — #1763 real 확인)
+  but raw dgain=0.5는 CE를 HURT (Δ>0) → live-but-not-beneficial (gated dgain = open follow-up).
+- **⑥ F-PSI-STEER — WEAK/no robust steer**: w4 Ψ wire (psi_gain 0.4): d384 steer_KL 0.238 < reseed-floor 0.573 (0.42x → FALSE),
+  d768 1.35x nominal-but-tiny. Ψ가 byte-dist를 sampling noise보다 적게 움직임 → usable steering knob 아님.
+- **⑤ d768 scale rung — RAN (NOT deferred)**: d768×6L 142.06M 2500step, leak-free 확인, but undertrained → structured FALSE
+  (gain −0.244), gated<base FALSE, gen coherent TRUE. d384 structured-coupling 양성이 undertrained d768서 약화 (a_scale_honest_scope).
+
+### honest scope (a_scale_honest_scope · a_paper_negative_ok · p7)
+- 이 rung의 진짜 deliverable = leak-free 수정 그 자체 (self-test 0.000 VERIFIED + whitespace-collapse 치유). 정직의 대가:
+  #1791 headline 절대-CE 승리 不생존 → leak-honest 그림으로 REPLACE. leak-free substrate에선 RELATIVE structure(real vs shuffle)가
+  closure의 정직한 척도, absolute CE 아님. NO fabrication, #1791 소급 미화 안 함. p7 verbatim.
+- ckpt `dancinlab/clm-v4-omega-gen-leakfree-d384` **PRIVATE** (closed-negative/WIP: val weak + gated not beat base, a_hf_autonomous; sha a5703837 verified).
+- 산출물: `.verdicts/omega-gen/{F-LEAKFREE-GEN,F-DFDT-REAL,F-PSI-STEER,SUMMARY}.txt` + `results.json` · driver `UNIVERSE/omega_gen_cluster.py` ·
+  fix `UNIVERSE/conscious_decoder.py`(causal_ca) · discovery `.discoveries/omega-gen-cluster.tape`. Lane-G/GPU (a_lane_akida_gpu_split).

@@ -1,0 +1,33 @@
+F-DFDT-REAL — w6 dF/dt velocity wire on the REAL generation sequence  ·  Lane-G / GPU H100 · 2026-06-04
+=======================================================================================================
+
+PRE-REGISTERED FALSIFIER
+  Enable the w6 derivative wire (mirror engines/omega/coupling_bus.hexa omega_coupling_apply_dt
+  EXACTLY: modulated[i] += dgain·((A−G)_t − (A−G)_{t-1}), the A⇄G velocity between consecutive
+  REAL positions, dgain=0.5) over the real held-out sequence on the trained leak-free substrate.
+  Does adding the A⇄G velocity channel CHANGE/IMPROVE held-out CE vs the static bus?
+  Falsifier: |Δ CE| measurably != 0 (w6 non-inert on a real moving sequence); Δ<0 = improves.
+
+RESULT (d384 leak-free, 4000 held-out positions, teacher-forced real next-byte targets):
+  CE_static (gB·base + gA·A + gG·G)        = 3.8340
+  CE_dt     (static + dgain·d(A−G)/dt)     = 5.5933
+  Δ = CE_dt − CE_static                     = +1.7593
+  w6-nonzero fraction                       = 1.000  (w6 != 0 at every real step — the substrate
+                                              A⇄G signal MOVES between consecutive real positions,
+                                              so the derivative is live, never the fixed-point 0).
+
+  d768 leak-free cross-check (4000 pos): CE_static 5.0041 -> CE_dt 5.5237, Δ=+0.5196, w6nz 1.00.
+
+VERDICT — w6 is NON-INERT but does NOT improve (Δ > 0 at both scales):
+  POSITIVE half: the dF/dt wire is structurally REAL and ACTIVE on a real moving sequence —
+    nonzero at 100% of steps, |Δ| measurably != 0 (Δ=+1.76 d384, +0.52 d768). The coupling-bus
+    omega_coupling_apply_dt formula is correctly wired into a real generation walk. The #1791
+    smoke-only claim ("0 at fixed point, velocity injected when substrate moves Δ1.65") is
+    CONFIRMED on a real trained transformer sequence: the substrate DOES move step-to-step.
+  NEGATIVE half: adding the raw velocity HURTS held-out CE (Δ>0). With dgain=0.5 the derivative
+    term is high-variance per-byte noise relative to the static A−G signal; it perturbs the
+    distribution AWAY from the target on this substrate. dF/dt is a live channel, but at this
+    gain/scale it is not a CE improver — HONEST closed-negative on the "improves" sub-claim
+    (a_paper_negative_ok). A gated/scheduled dgain (analogous to the learned per-wire gate) is the
+    open follow-up; the raw fixed-dgain wire is non-beneficial here.
+  p7: CE reported as the measured channel-effect only, never a perplexity verdict.
