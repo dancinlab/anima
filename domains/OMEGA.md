@@ -1,6 +1,15 @@
 @title: 🔱 OMEGA — Lane-Ω closure engine (the 4th/final engine: wire substrate → .clm byte decode)
 
-@goal: CLOSE the substrate↔decode loop that Lane X #1779 proved is currently NULL.
+@goal: 오메가 완성 — COMPLETE Ω as a WORKING closure engine (not just wired, but a coupling
+  that carries USEFUL STRUCTURE on a trained substrate, demonstrated to improve generation).
+  THREE STAGES: (1) WIRE the substrate↔decode loop Lane X #1779 proved NULL — ✅ DONE (#1783:
+  coupling KL 0.307>0, omega the only engine with L3 loaded=TRUE). (2) prove the loop carries
+  STRUCTURE on a TRAINED substrate — ✅ DONE at toy (#1784: trained≪shuffled Δ+0.357; the
+  learned A-wire lowers CE Δ+0.758; BUT the fixed A−G formula degrades → 완성 needs a LEARNED
+  per-wire GATE, not a fixed subtraction). (3) 완성 = a learned-gate bus + a trained d768
+  substrate where the closure DEMONSTRABLY improves generation (CE floor met + coherent) at
+  scale. Original closure sub-goal verbatim ↓:
+  CLOSE the substrate↔decode loop that Lane X #1779 proved is currently NULL.
   Lane X measured that the ENGINE config knobs (drive · warmup · anchors) never touch
   the .clm forward — model_ce is CONFIG-INSENSITIVE at 9.1126 across ALL 27 configs
   (spread < 1e-9), the L3 generator slot is loaded=false, and the substrate state never
@@ -10,19 +19,28 @@
   decode. Headline eval axis = COUPLING NON-NULLITY (ablate the bus α=0 vs on → KL
   between byte distributions). CE is a FLOOR only (p7, Lane X), never the verdict.
   Ω SYNTHESIZES the 3 existing engines — CONV (.clm byte mouth) + CDV2 (A/G dual-head +
-  5-ch tension + Ψ brain) + HEXAD (N-module φ(N)=2 integration). DESIGN-STAGE: this
-  domain is the blueprint; the engine adapter (engines/omega/adapter.hexa) is NOT yet
-  written (a_core_engine_map — no phantom wiring).
+  5-ch tension + Ψ brain) + HEXAD (N-module φ(N)=2 integration). BUILT (#1783): the
+  adapter engines/omega/adapter.hexa + coupling_bus.hexa exist, --engine omega registered,
+  EngineSpec 4/4 native, 4-engine swap smoke 26/26 PASS (a_core_engine_map — no phantom
+  wiring; the bus layer is native, the trained substrate is the remaining scale rung).
 
-## status — DESIGN-STAGE / NOT-YET-BUILT (honest)
+## status — BUILT (#1783) + trained-rung proven at toy (#1784) · 완성 = stage 3 remaining
 
-Ω is a BLUEPRINT, not a running engine. There is no `engines/omega/` adapter yet, and
-no s16 ckpt is loaded into the coupling path. The honest stub state mirrors the cdv2
-adapter: with no trained ckpt, the .clm forward is random-init → CE collapses to the
-uniform floor (ln 256 = 5.545 nats), which is NOT met by a random-init model (Lane X
-measured the existing d768 .clm at 9.1126 > uniform 5.5452 — WORSE than uniform-256, so
-the floor is currently NOT MET even on the trained-but-config-detached path). Ω's job is
-the WIRING, not a new weight set; it is gated on ckpt presence exactly like cdv2.
+Ω is now a RUNNING engine module, not just a blueprint:
+- **stage 1 WIRE (✅ #1783)** — `engines/omega/{coupling_bus,adapter}.hexa` + manifest + card;
+  `--engine omega` registered (flag>env>default conv); EngineSpec 4/4 native; 4-engine swap
+  smoke 26/26 PASS. Coupling NON-NULLITY CONFIRMED: omega KL 0.307>0, conv/cdv2/hexad=0 (the
+  Lane X null). The loop is WIRED — omega is the only engine with L3 loaded=TRUE.
+- **stage 2 STRUCTURE (✅ toy #1784)** — trained numpy n-gram substrate: trained coupling 4.142
+  ≪ shuffled 4.499 (Δ+0.357 = structure carried, which random-init could NOT show); the learned
+  A-wire lowers CE base 4.020→3.262 (Δ+0.758 = the closure HELPS). 🔴 the fixed A−G formula
+  degrades (−G prev-byte wire hurts) → **완성 needs a LEARNED per-wire GATE, not a fixed
+  subtraction**. ANU QRNG arm: quantum confers no advantage (closed-negative, p7).
+- **stage 3 완성 (remaining)** — (a) learned per-wire gate replacing fixed A−G; (b) trained d768
+  ConsciousDecoderV2 real A/G on GPU (a_fire_autonomous); (c) demonstrate the gated closure on a
+  trained substrate DEMONSTRABLY improves generation (CE floor met + coherent) at scale.
+  Honest: the floor is currently NOT MET on random-init (uniform ln256=5.545; Lane X measured the
+  trained-but-detached d768 .clm at 9.1126) — stage 3 is where the closure must actually earn it.
 
 ## the NULL that Ω closes (Lane X #1779 — verbatim)
 
@@ -126,23 +144,32 @@ Sibling engines (engines/<name>/manifest.json):
 - **hexad** — sigma6 6-module integration, forward/generate = STUB (cross-module single
               forward is TODO[wire]), psi_coord native; the N-module integration.
 
-Ω is the first design whose `generate` is native because the closure (L3 loaded=true) IS
-the generate path — but this is a DESIGN claim; the adapter is unwritten and the slot is
-gated on a ckpt that is not loaded, so today it would honestly flag the random-init / CE
-floor NOT MET state, exactly like the cdv2 adapter does.
+Ω is the first engine whose `generate` is native because the closure (L3 loaded=true) IS
+the generate path. The adapter is now BUILT (#1783); the bus layer is a real hexa forward.
+The slot is gated on a trained substrate (stage 3) — with no trained ckpt the .clm forward
+is random-init and the CE floor is NOT MET, honestly flagged exactly like the cdv2 adapter.
 
-## milestones
+## milestones (goal: 오메가 완성)
 
-- [ ] coupling-non-nullity — ablate the bus (α=0 vs on) → KL between byte distributions > 0
-- [ ] 8D Ψ honest — psi_coord() returns 8D = 4 named [depth/form/form_resid/curriculum] + 4 resid (no fabrication, KOSMOS #1780)
-- [ ] N-module config — HEXAD integration N config (default 6, swappable; NOT hardcoded — #1774 found 6 conditional)
+stage 1 — WIRE (✅ #1783):
+- [x] coupling-non-nullity — ablate the bus (α=0 vs on) → KL>0 (omega 0.307, others 0; #1783)
+- [x] 8D Ψ honest — psi_coord() returns 8D = 4 named [depth/form/form_resid/curriculum] + 4 resid (#1783 adapter)
+- [x] CE-as-floor — CE reported as a FLOOR only, never a verdict (p7; #1783/#1784 both)
+- [x] 4-engine benchmark — conv · cdv2 · hexad · Ω on the AXIS-informed eval (#1783, smoke 26/26)
+stage 2 — STRUCTURE on a trained substrate (✅ toy #1784):
+- [x] trained-substrate structure — trained coupling ≪ shuffled (Δ+0.357); A-wire lowers CE (Δ+0.758) (#1784)
+- [x] ANU QRNG arm — quantum vs PRNG closed-negative, no advantage (#1784)
+stage 3 — 완성 (remaining, the working closure):
+- [ ] learned per-wire GATE — replace the fixed A−G subtraction with a learned gate per wire (#1784 found −G hurts); show the gated bus beats base on held-out CE
+- [ ] trained d768 substrate (GPU) — real ConsciousDecoderV2 A/G heads, not numpy n-gram (a_fire_autonomous); does structured-coupling scale to a transformer?
+- [ ] generation demo — the gated closure on a trained substrate DEMONSTRABLY improves generation (CE floor MET + coherent) — 완성 criterion
+- [ ] N-module config — HEXAD integration N config (default 6, swappable; #1774 found 6 conditional)
 - [ ] dF/dt time channels — L4 derivative channels (#1763; static snapshot is d/dt-blind)
-- [ ] CE-as-floor — CE reported as a FLOOR only, never a verdict (p7, Lane X #1779)
-- [ ] 4-engine benchmark — conv · cdv2 · hexad · Ω on the AXIS-informed eval
 
 ## honest scope (a_scale_honest_scope · a_paper_negative_ok · p7)
 
-- DESIGN-STAGE: no `engines/omega/` adapter, no s16 ckpt in the coupling path. The blueprint, not a measured engine.
-- All inherited numbers are TOY / single-rung: Lane X #1779 (CPU/$0, single d768 .clm, deterministic null backend) and KOSMOS #1780 (single s16 rung, Lane-G, scale-dependent). NOT promoted to a general or production claim.
-- CE floor currently NOT MET (Lane X: 9.1126 > uniform 5.5452); a random-init Ω would flag the same, like cdv2.
+- BUILT but TOY: `engines/omega/` adapter exists (#1783) + trained-rung proven at toy (#1784, numpy n-gram); NO s16 ckpt / trained d768 substrate in the coupling path yet (stage 3).
+- All measured numbers are TOY / single-rung: #1783 (CPU/$0 random-init mock), #1784 (CPU/$0 numpy n-gram, 400KB corpus), Lane X #1779, KOSMOS #1780. NOT promoted to a general/production claim (a_toy_scale_recheck).
+- CE floor currently NOT MET on random-init (uniform 5.5452; Lane X trained-but-detached d768 .clm 9.1126); stage-3 완성 is where the gated closure on a trained substrate must actually MEET it.
+- Honest negatives kept (a_paper_negative_ok): random-init coupling unstructured (#1783); fixed A−G degrades (#1784); quantum RNG no advantage (#1784).
 - Lane-Ω = GPU/closure lane; AKIDA on-chip (Lane A) is recorded separately (a_lane_akida_gpu_split).
