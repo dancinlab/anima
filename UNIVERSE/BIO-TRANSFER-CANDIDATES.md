@@ -331,3 +331,16 @@ CPU-substrate falsifiers for the extended pool H_869–886 (emergent, NOT hard-c
 initially CONFIRMED under degenerate params (weak-bias / extinction regime) → corrected to the mechanism's valid
 regime (reference-coupling / Gierer-Meinhardt), both recorded (NOT p-hacking — the falsifier tests the mechanism,
 not a degenerate parameterization).
+
+
+## H_861 METASTASIS chip result (2026-06-03 · controlled · live AKD1000 · p7 verbatim)
+
+```
+DOMAIN  (TEST=wikivoyage distant): hop-2 held=0.4020 ci_lo=0.3728 / hop-3 held=0.7414 ci_lo=0.6716 >> NULL p=0.005
+SHUFFLED(within-dist control)      : hop-2 held=0.4188 ci_lo=0.3885 / hop-3 held=0.6033 ci_lo=0.5164 >> NULL p=0.005
+A-vs-B: hop-2 domain 0.402 ~= shuffled 0.419 (Δ−0.017, CIs overlap) ; hop-3 domain even higher
+F-861 REFUTED -> METASTASIS HOLDS: transition operator is DOMAIN-AGNOSTIC (crosses topical boundary w/o degradation).
+```
+Controlled (matched split geometry domain vs shuffled rules out structural-0 artefact). Answers corpus-axis ⊥ register:
+operator is NOT corpus-axis-bound. substrate=HYBRID. verdict `.verdicts/lane-a-metastasis/F-861-METASTASIS.txt`.
+H_865 LTP = grounded by gold F-GEN-SCALE ladder. **BIO-TRANSFER family now: all CPU toys HOLD + H_861/H_865 chip-grounded.**
