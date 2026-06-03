@@ -1,0 +1,106 @@
+{
+  "lane": "Lane-G",
+  "substrate": "GPU/CPU-frozen-forward",
+  "torch": "2.11.0+cu130",
+  "device": "cuda",
+  "question": "OH1: does min gate gB·base+gA·A match-or-beat a_only AND beat base?",
+  "falsifier": "OH1 HOLDS iff min_learned CE <= a_only CE AND min_learned CE < base CE",
+  "ckpt": {
+    "path": "/home/summer/omega-oh1/omega_cdv2_trained_leakfree.pt",
+    "sha256": "6f085c91d0392d66968aaebac447623a6c63a3a2cccde54d9b2a792eb9ed06a4"
+  },
+  "corpus": {
+    "path": "/home/summer/omega-oh1/omega_corpus_big.bin",
+    "sha256": "dc1754b27d63236d47d12f6621b2e3974dde34337e6a80f9e44b713e20236da3",
+    "bytes": 400000000
+  },
+  "config": {
+    "vocab_size": 256,
+    "d_model": 512,
+    "n_head": 8,
+    "n_layer": 8,
+    "block_size": 256,
+    "n_kv_head": 4,
+    "consciousness_dim": 128,
+    "causal_ca": true
+  },
+  "leak_self_test": 0.0,
+  "leak_free": true,
+  "params": 0,
+  "meta": {
+    "gate_N": 12000,
+    "test_N": 12000,
+    "uniform_floor": 5.545177444479562
+  },
+  "forms": {
+    "base": {
+      "gB": 1.0,
+      "gA": 0.0,
+      "gG": 0.0,
+      "ce": 3.097779103749307
+    },
+    "a_only": {
+      "gB": 1.0,
+      "gA": 0.6,
+      "gG": 0.0,
+      "ce": 1.1441805073263285
+    },
+    "fixed_AmG": {
+      "gB": 1.0,
+      "gA": 0.6,
+      "gG": -0.6,
+      "ce": 3.198604859974978
+    },
+    "full_AG": {
+      "gB": -0.1499431166659204,
+      "gA": 3.352150971079997,
+      "gG": -0.9970574924522952,
+      "ce": 3.6371592096405285
+    },
+    "min_learned": {
+      "gB": 0.04003569060842394,
+      "gA": 0.9012811092253878,
+      "gG": 0.0,
+      "ce": 0.8835246325056375
+    },
+    "min_fixed": {
+      "gB": 1.0,
+      "gA": 1.0,
+      "gG": 0.0,
+      "ce": 1.118279746169128
+    }
+  },
+  "cross_check": {
+    "tol": 0.02,
+    "checks": {
+      "base": {
+        "got": 3.097779103749307,
+        "ref": 3.097779103749306,
+        "abs_delta": 8.881784197001252e-16,
+        "ok": true
+      },
+      "a_only": {
+        "got": 1.1441805073263285,
+        "ref": 1.1446118787396342,
+        "abs_delta": 0.0004313714133057367,
+        "ok": true
+      },
+      "full_AG": {
+        "got": 3.6371592096405285,
+        "ref": 3.643507873708566,
+        "abs_delta": 0.006348664068037468,
+        "ok": true
+      }
+    },
+    "CROSS_CHECK_OK": true
+  },
+  "oh1": {
+    "min_learned_ce": 0.8835246325056375,
+    "a_only_ce": 1.1441805073263285,
+    "base_ce": 3.097779103749307,
+    "le_aonly": true,
+    "lt_base": true,
+    "OH1_HOLDS": true
+  },
+  "scope": "single d512 rung (a_scale_honest_scope); observation-only frozen forward (p7)."
+}

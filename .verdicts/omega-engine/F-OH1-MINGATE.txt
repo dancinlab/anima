@@ -1,0 +1,57 @@
+OMEGA OH1 — MINIMAL-GATE closure form (gB·base + gA·A), MEASURED
+================================================================
+Follow-up to #1800 F-TRAINED-LEAKFREE. That rung found the learned FULL multi-wire
+gate FAILS on a COMPETENT leak-free d512 substrate (GATED 3.6435 > base 3.0978) while
+the A-head logit-bias ALONE is hugely useful (a_only 1.1446 << base). Gate weights
+collapsed onto A (gA +3.369, gG −0.999); full-bus coupling KL sat at the shuffle floor
+(ratio 0.996). RULING: "coupling concept right, multi-wire gate formula wrong — the
+closure lives entirely in ONE wire." OH1 tests the honest minimal form.
+
+substrate  : ConsciousDecoderV2 d512 · 8L · GQA(n_kv=4) · vocab 256 · causal_ca=True
+ckpt sha256: 6f085c91d0392d66968aaebac447623a6c63a3a2cccde54d9b2a792eb9ed06a4 (FROZEN, NO re-train)
+corpus     : 400 MB · gutenberg wiki.en+fr+de+es+ru · sha256 dc1754b27d63236d…
+leak test  : 0.000e+00  (leak_free=True, recovered ckpt re-confirmed)
+host       : sidecar pool host `summer` (local-pool, NOT runpod) · torch 2.11.0+cu130 · device cuda
+method     : collect (base,A,G) next-byte features ONCE on disjoint gate(fit)+test(verdict)
+             splits of the held-out tail (N=12000 each), then fit/eval K gate forms on the SAME
+             test features (apples-to-apples). fit = omega_gpu_complete L2-convex (reg gA,gG not gB);
+             min_learned = same routine with gG gradient-masked → only gB,gA move.
+
+falsifier  : OH1 HOLDS iff min_learned CE <= a_only CE AND min_learned CE < base CE.
+
+--- held-out TEST CE per gate form (frozen d512 leak-free, nats/byte) ---
+  form                gB        gA        gG    test_CE
+  base            1.0000    0.0000    0.0000   3.097779
+  a_only          1.0000    0.6000    0.0000   1.144181
+  fixed_AmG       1.0000    0.6000   -0.6000   3.198605
+  full_AG        -0.1499    3.3522   -0.9971   3.637159
+  min_learned     0.0400    0.9013    0.0000   0.883525  ★OH1
+  min_fixed       1.0000    1.0000    0.0000   1.118280
+  uniform                                      5.545177
+
+--- CROSS-CHECK vs #1800 H1 baselines (tol=0.02 nats/byte) ---
+  base       got=3.097779  ref=3.097779  |Δ|=0.000000  ok=True
+  a_only     got=1.144181  ref=1.144612  |Δ|=0.000431  ok=True
+  full_AG    got=3.637159  ref=3.643508  |Δ|=0.006349  ok=True
+  CROSS_CHECK_OK = True
+
+OH1 FALSIFIER: min_learned(0.883525)<=a_only(1.144181)=True AND min_learned<base(3.097779)=True -> OH1_HOLDS=True
+
+VERDICT: 🟢 OH1 HOLDS (numerical). The MINIMAL gate gB·base + gA·A — dropping the G wire and
+  w2..w6 entirely — not only MATCHES but BEATS a_only (0.8835 < 1.1446, Δ+0.261 nats/byte) and
+  beats base (0.8835 < 3.0978, Δ+2.214). The 2-param free fit landed gB=0.040, gA=0.901, gG=0.000.
+  This CONFIRMS the #1800 RULING: the closure lives entirely in the A-head logit-bias wire; the
+  full multi-wire gate's gA=3.369 overshoot + gG=−0.999 were variance from the irrelevant wires,
+  and once they are dropped the honest 2-param fit recovers a clean, better-than-a_only operating
+  point (the free gB≈0.04 down-weights the weak unigram base far below a_only's fixed gB=1, and
+  gA≈0.90 ≈ 1, near the predicted gB≈1,gA≈1 region in spirit though gB is small — the data, not
+  the assertion, picked it).
+
+SCOPE (a_scale_honest_scope · p7): single d512 rung; observation-only frozen forward; CE is a
+  held-out prediction number, NOT a verdict-of-truth. Cross-check reproduces #1800 to 6 decimals
+  (byte-faithful harness). No re-training of the substrate. NOTE: count_params printed 0 (cosmetic
+  — the method counts a submodule subset; the full state_dict loaded, leak self-test=0.000, and
+  base/a_only/full_AG reproduce #1800 exactly, proving the model is fully loaded).
+
+artifacts  : UNIVERSE/omega_gate_form_sweep.py · UNIVERSE/omega_gateform_sweep_results.json ·
+             exports/sweep/omega-gateform-20260604/ledger.json

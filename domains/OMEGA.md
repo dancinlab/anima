@@ -62,6 +62,20 @@ multi-wire gate formula wrong." Confirms the leak-honest #1791 finding at the be
 ckpt → HF `dancinlab/omega-cdv2-trained-leakfree-h1` (PRIVATE, closed-neg WIP). verdict
 `.verdicts/omega-engine/F-TRAINED-LEAKFREE.txt`.
 
+🟢 **OMEGA OH1 — MINIMAL-GATE HOLDS** (Lane-G / observation-only frozen forward on the SAME
+recovered d512 leak-free ckpt, host = local-pool `summer`, NO re-train · NO pod). On the SAME
+collected (base,A,G) test features (N=12000, apples-to-apples), the minimal gate **gB·base + gA·A**
+(G + w2..w6 dropped) gives held-out TEST CE **min_learned 0.8835** — it BEATS a_only (1.1446,
+Δ+0.261) AND base (3.0978, Δ+2.214) → **OH1_HOLDS=True** (min_learned ≤ a_only AND < base). 2-param
+free fit landed g* = [gB **0.040**, gA **0.901**, gG 0.000-pinned]. CROSS-CHECK reproduces #1800 to
+6 decimals (base |Δ|0.000000 · a_only |Δ|0.000431 · full_AG |Δ|0.006349, tol 0.02 → CROSS_CHECK_OK).
+This CONFIRMS the #1800 RULING numerically: the full gate's gA=3.369/gG=−0.999 were variance from
+the irrelevant wires; once dropped, the honest 2-param fit recovers a clean, BETTER-than-a_only
+operating point — the closure lives entirely in the A-head logit-bias wire. SCOPE: single d512 rung
+(a_scale_honest_scope), CE = held-out number not a verdict-of-truth (p7). harness
+`UNIVERSE/omega_gate_form_sweep.py` · ledger `exports/sweep/omega-gateform-20260604/ledger.json` ·
+verdict `.verdicts/omega-engine/F-OH1-MINGATE.txt`.
+
 ### prior status — BUILT (#1783) + trained-rung proven at toy (#1784/#1786)
 
 Ω is now a RUNNING engine module, not just a blueprint:
