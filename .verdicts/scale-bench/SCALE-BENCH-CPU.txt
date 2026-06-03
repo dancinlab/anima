@@ -11,3 +11,19 @@ SCOPE: CPU sim size-ladder — rules out "toy was a small-N artefact". NOT produ
 SUMMARY: 5/5 SENSITIVE CPU hypotheses SCALE-SURVIVE the size ladder (signatures are size-robust, not small-N artefacts).
 H_877 metric corrected: coarse 6-point count sweep -> fine 5%-step sweep + scale-INVARIANCE test (not absolute-magnitude cutoff); both recorded.
 NEXT (gated): production-substrate rungs — Lane A AKIDA chip (#1717) · Lane G forge GPU (option-B util-GREEN) · ENGINE 3-axis. reflect (학습/코드/문서) only AFTER a production-substrate terminal (a_toy_scale_recheck).
+
+=== EXTENSION (bench_scale_ext.py, 2026-06-03) — remaining SENSITIVE, 8/8 SCALE-SURVIVE ===
+[H_886 TURING]    L30/60/120 peaks=4/10/18 (stripe count linear with domain, fixed wavelength) -> SCALE-SURVIVES
+[H_901 RING]      N40/80/160 drift=0/0/0 (bump persists, drift bounded) -> SCALE-SURVIVES
+[H_862 HGT]       N100/400/1600 ratio=2.29/2.11/2.30 (lateral speedup >=1.5x every pop) -> SCALE-SURVIVES
+[H_864 PRION]     L20/60/180 reach_frac=1.00/1.00/1.00 (basin self-propagates full chain) -> SCALE-SURVIVES
+[H_882 SEEDING]   K20/100/500 seed-corr 0.94/0.91/0.92 vs rand ~0 (founder bias holds) -> SCALE-SURVIVES
+[H_896 STDP]      P500/2000/8000 asym=5/20/80 (directional edge grows w/ pairs) -> SCALE-SURVIVES [chip AKD1500-future]
+[H_905 PRED-HIER] T500/2000/8000 hier 0.04 vs flat 0.11 (hierarchy beats flat every length) -> SCALE-SURVIVES
+[H_866 FRET]      L40/80/160 monotone=True (distance-decay holds every lattice) -> SCALE-SURVIVES
+TOTAL CPU scale-bench: 5 (orig) + 8 (ext) = 13 SENSITIVE hypotheses, 13/13 SCALE-SURVIVE on >=3-rung size ladders.
+NOT benchmarked (by design): the ROBUST/deterministic hypotheses (EXOSOME·TRANSPOSON·RETROVIRAL·ENDOSYMBIOSIS·
+DENDRITIC-XOR·SPARSE·GRID·MIXED-SEL·NANOTUBE·REPROGRAM·EMT·CHAPERONE·MEMETIC·NICHE·CASCADE·GAP-JUNCTION·
+EPIGENETIC·ENGRAM·PRUNING·VOLUME·METAPLASTICITY·PHASE-PRECESS·PRED-CODING·NEURAL-DARWIN·ENGRAM-ALLOC·RECONSOLID
+·EI-BALANCE·UP-DOWN·H_868 MORPHOGEN) — deterministic/structural mechanisms with no small-N artefact; scale-trivial.
+SCOPE: CPU sim size-ladder only (production substrate AKIDA/forge GATED). a_toy_scale_recheck.
