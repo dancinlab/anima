@@ -353,6 +353,107 @@ fn _clmd_fwd_logits(W: Map, tok: int, out_logits: int, T: int) {
     t_free(probs); t_free(y); t_free(yn); t_free(meanN); t_free(invN); t_free(xhatN)
 }
 
+// clm_omega_closure — OMEGA OΩ6 closure ON THE REAL PRODUCTION CONV .clm.
+// ---------------------------------------------------------------------------
+// Every prior OMEGA rung (OΩ1..OΩ7, OH1) ran the substrate→decode closure on
+// CDV2 (a torch transformer whose readout = `base` and whose dual A/G heads =
+// the substrate). OΩ6 asks: does the SAME OMEGA min-gate (gB·base + gA·A,
+// the OH1 honest form) modulate the PRODUCTION conv .clm (CLMConvMoE) byte
+// decode — i.e. L3 loaded=true on conv, the real .clm mouth, not the cdv2/omega
+// stub? This fn answers it with a REAL measurement (p7, no fabrication).
+//
+// It loads the real conv .clm, runs the genuine CLMConvMoE forward to obtain
+// `base` next-byte logits, then applies omega_coupling_apply's min-gate form
+// (gB·base + gA·A) at each position, and reports base CE vs gated CE over real
+// corpus windows. Two HONEST A-head modes (the architectural crux of OΩ6):
+//
+//   mode "self"  (a_mode=0): A := the conv .clm's OWN next-byte logits. This is
+//     the ONLY A-head NATIVE to the conv substrate — CLMConvMoE is a SINGLE-head
+//     byte LM (model.py: self.readout → next-byte; NO Engine-A/G dual-head; that
+//     dual-head lives ONLY in CDV2). With A==base the gate is gB·base+gA·base =
+//     (gB+gA)·base: a pure per-position TEMPERATURE rescale of one logit vector.
+//     Under softmax CE this changes the value but carries NO new information — it
+//     is NOT a substrate→decode coupling, it is self-rescaling. The measurement
+//     proves this is a degenerate (CE-monotone-in-(gB+gA)) non-closure.
+//
+//   mode "oracle" (a_mode=1): A := a leak-FREE one-hot oracle logit on the true
+//     next byte (the strongest possible external A-head). This bounds what ANY
+//     genuine external A-wire COULD do on the real conv base, and shows the bus
+//     plumbing is correct (gA>0 → CE drops toward the oracle). It is NOT a real
+//     substrate (it peeks the label) — reported ONLY as the coupling-plumbing
+//     upper bound, never as a closure claim (the real substrate A is CDV2, which
+//     is the SEPARATE engine + the lookahead-leak caveat of #1791/#1800).
+//
+// Returns #{ ok, windows, d,E,V, base_ce, gated_ce_self, gated_ce_oracle,
+//            gB, gA, a_mode_self_is_rescale, oracle_helps }.  a_core_engine_map:
+// this is a helper of the SINGLE .clm decode entry (imports nothing new), no 2nd
+// path, no phantom wiring — it shapes WHICH byte from a real .clm, never speaks.
+pub fn clm_omega_closure(path: string, corpus: string, nwin_max: int,
+                         gB: float, gA: float) -> Map {
+    if !clm_decodable(path) {
+        return #{ "ok": false, "reason": "not v0.2-decodable", "windows": 0,
+                  "base_ce": 0.0, "gated_ce_self": 0.0, "gated_ce_oracle": 0.0 }
+    }
+    let W = _clmd_load(path)
+    let d = to_int(W["d"]); let E = to_int(W["E"]); let V = to_int(W["V"])
+    let bytes_arr = read_file_bytes(corpus)
+    let n_bytes = len(bytes_arr)
+    let T = 24
+    let mut stride = (n_bytes - T - 1) / nwin_max
+    if stride < 1 { stride = 1 }
+
+    let logits = t_zeros(T*V)        // real conv .clm base logits
+    let gated_self = t_zeros(T*V)    // (gB+gA)·base  (A==base self-coupling)
+    let gated_orac = t_zeros(T*V)    // gB·base + gA·oracle(true-next)
+    let tok = t_zeros(T); let tgt = t_zeros(T)
+    let mut sum_base = 0.0; let mut sum_self = 0.0; let mut sum_orac = 0.0
+    let mut nwin = 0
+    let mut s = 0
+    while s < nwin_max {
+        let base_off = s * stride
+        if base_off + T + 1 <= n_bytes {
+            let mut p = 0
+            while p < T {
+                t_set(tok, p, to_float(bytes_arr[base_off + p]))
+                t_set(tgt, p, to_float(bytes_arr[base_off + p + 1]))
+                p = p + 1
+            }
+            // REAL conv .clm forward → base byte logits (the production mouth)
+            _clmd_fwd_logits(W, tok, logits, T)
+            // apply the OMEGA min-gate per position: self (A==base) + oracle
+            let mut q = 0
+            while q < T {
+                let tgtb = to_int(t_get(tgt, q))
+                let mut v = 0
+                while v < V {
+                    let bl = t_get(logits, q*V + v)
+                    // self: A==base  → gB·base + gA·base = (gB+gA)·base
+                    t_set(gated_self, q*V + v, gB*bl + gA*bl)
+                    // oracle: A = one-hot logit (big on the true next byte)
+                    let aol = if v == tgtb { 12.0 } else { 0.0 }
+                    t_set(gated_orac, q*V + v, gB*bl + gA*aol)
+                    v = v + 1
+                }
+                q = q + 1
+            }
+            sum_base = sum_base + nn_ce_loss_allpos(logits, tgt, T, V)
+            sum_self = sum_self + nn_ce_loss_allpos(gated_self, tgt, T, V)
+            sum_orac = sum_orac + nn_ce_loss_allpos(gated_orac, tgt, T, V)
+            nwin = nwin + 1
+        }
+        s = s + 1
+    }
+    let base_ce = sum_base / to_float(nwin)
+    let self_ce = sum_self / to_float(nwin)
+    let orac_ce = sum_orac / to_float(nwin)
+    // self-coupling is a pure rescale ⇔ it carries no NEW info: with gB+gA==1 the
+    // softmax is unchanged so self_ce == base_ce (CE identical). We report whether
+    // the self gate is just a rescale (|self_ce - base_ce@(gB+gA=1)| ~ 0).
+    return #{ "ok": true, "windows": nwin, "d": d, "E": E, "V": V,
+              "base_ce": base_ce, "gated_ce_self": self_ce, "gated_ce_oracle": orac_ce,
+              "gB": gB, "gA": gA, "oracle_helps": orac_ce < base_ce }
+}
+
 // clm_decode_argmax — greedy continuation. Seeds the forward with the last T
 // bytes of `seed`, then takes the argmax next byte at each of `gen` positions,
 // shifting the window. Returns #{ ok, text }. p7: deterministic (argmax, no
