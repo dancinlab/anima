@@ -1,0 +1,1000 @@
+{
+  "harness": "UNIVERSE/dolphin_acoustic_ingest.py",
+  "anima_link": "H_070 dolphin_star_communication / Hc_017 ; #1763 d/dt time-encoding",
+  "fetch": {
+    "hf_repo": "confit/wmms-parquet",
+    "hf_file": "data/test-00000-of-00001.parquet",
+    "sha256": "a9492912a025dc93d88b81012517c73aba963c3bf4900a31175886b9fe94c4c0",
+    "size_bytes": 141530649,
+    "license": "Watkins Marine Mammal Sound Database (WHOI) -- academic/personal, NON-COMMERCIAL",
+    "species_present": [
+      "Atlantic_Spotted_Dolphin",
+      "Bottlenose_Dolphin",
+      "Clymene_Dolphin",
+      "Common_Dolphin",
+      "Frasers_Dolphin",
+      "Grampus,_Rissos_Dolphin",
+      "Pantropical_Spotted_Dolphin",
+      "Rough-Toothed_Dolphin",
+      "Spinner_Dolphin",
+      "Striped_Dolphin",
+      "White-beaked_Dolphin",
+      "White-sided_Dolphin"
+    ],
+    "species_used": [
+      "Atlantic_Spotted_Dolphin",
+      "Clymene_Dolphin",
+      "Common_Dolphin",
+      "Frasers_Dolphin",
+      "Grampus,_Rissos_Dolphin",
+      "Pantropical_Spotted_Dolphin"
+    ],
+    "n_clips": 36,
+    "resampled_to_common_sr_hz": 48000,
+    "whistle_band_hz": [
+      2000.0,
+      24000.0
+    ]
+  },
+  "tension_channels": [
+    "F0_level",
+    "abs_dF0_dt_(#1763)",
+    "click_rate",
+    "burst_density",
+    "spectral_centroid"
+  ],
+  "contrast_fetch": {
+    "species_used": [
+      "Bowhead_Whale",
+      "Fin,_Finback_Whale",
+      "Humpback_Whale"
+    ],
+    "n_clips": 18
+  },
+  "F-FETCH": "HOLDS",
+  "F-DISCRIMINATIVE": {
+    "verdict": "REFUTED",
+    "detail": {
+      "n_species": 6,
+      "within_class_mean_l2": 2.016604819146691,
+      "between_class_mean_l2": 1.3868241113547082,
+      "separation_ratio": 0.6877024677813813,
+      "deterministic_reencode_max_abs_diff": 0.0
+    },
+    "note": "fine cross dolphin-species (hardest case)"
+  },
+  "F-DISCRIMINATIVE-COARSE": {
+    "verdict": "HOLDS",
+    "detail": {
+      "n_dolphin": 36,
+      "n_contrast": 18,
+      "within_dolphin_mean_l2": 2.374089835752692,
+      "within_contrast_mean_l2": 2.2604932152343635,
+      "within_group_mean_l2": 2.317291525493528,
+      "between_group_centroid_l2": 3.7418011930732136,
+      "separation_ratio": 1.614730451604085
+    },
+    "note": "dolphin whistle vs non-dolphin click/moan"
+  },
+  "F-DFDT-TIME": {
+    "verdict": "HOLDS",
+    "detail": {
+      "seeds": [
+        {
+          "seed": 0,
+          "real_ordered_abs_df0_norm_mean": 0.07157800553488901,
+          "time_scrambled_abs_df0_norm_mean": 0.19528787444408813,
+          "scramble_inflation_abs": 0.12370986890919912,
+          "real_over_scrambled_ratio": 0.36652560092775044,
+          "sep_dfdt_aware": 0.43488972152382926,
+          "sep_static_only": 0.38521946971755516,
+          "dfdt_beats_static": true
+        },
+        {
+          "seed": 1,
+          "real_ordered_abs_df0_norm_mean": 0.07157800553488901,
+          "time_scrambled_abs_df0_norm_mean": 0.18961274770593584,
+          "scramble_inflation_abs": 0.11803474217104683,
+          "real_over_scrambled_ratio": 0.3774957454101107,
+          "sep_dfdt_aware": 0.43488972152382926,
+          "sep_static_only": 0.38521946971755516,
+          "dfdt_beats_static": true
+        },
+        {
+          "seed": 2,
+          "real_ordered_abs_df0_norm_mean": 0.07157800553488901,
+          "time_scrambled_abs_df0_norm_mean": 0.1939031529237935,
+          "scramble_inflation_abs": 0.1223251473889045,
+          "real_over_scrambled_ratio": 0.3691430719677413,
+          "sep_dfdt_aware": 0.43488972152382926,
+          "sep_static_only": 0.38521946971755516,
+          "dfdt_beats_static": true
+        }
+      ],
+      "temporal_order_carries_dfdt_info_all_seeds": true,
+      "n_seeds_dfdt_beats_static": 3
+    }
+  },
+  "F-STABLE": {
+    "verdict": "HOLDS",
+    "detail": {
+      "n_clips": 36,
+      "n_nonfinite": 0,
+      "n_out_of_range": 0,
+      "range": [
+        -3.0,
+        3.0
+      ]
+    }
+  },
+  "scope": "TOY/CPU/$0; public recordings NOT live hydrophone; a_toy_scale_recheck",
+  "license_note": "Watkins non-commercial; raw audio NOT re-uploaded to HF PUBLIC",
+  "wall_s": 2.82,
+  "n_clips": 36,
+  "per_clip": [
+    {
+      "species": "Atlantic_Spotted_Dolphin",
+      "path": "6102500O.wav",
+      "native_sr": 60600,
+      "sr": 48000,
+      "tension": [
+        -0.211977066532258,
+        -2.697210273279352,
+        -0.9941985536491922,
+        -2.3661872261541794,
+        -0.2388310915103915
+      ],
+      "feat": {
+        "f0_mean_hz": 11152.091733870968,
+        "f0_norm": 0.4646704889112903,
+        "abs_df0_mean_hz": 1211.158906882591,
+        "abs_df0_norm": 0.05046495445344129,
+        "clickrate": 0.334300241058468,
+        "burst": 0.10563546230763675,
+        "centroid_norm": 0.46019481808160145,
+        "bandwidth_norm": 0.25863239200489513,
+        "n_frame": 248
+      }
+    },
+    {
+      "species": "Atlantic_Spotted_Dolphin",
+      "path": "6102500B.wav",
+      "native_sr": 60600,
+      "sr": 48000,
+      "tension": [
+        -0.05921052631578938,
+        -2.4266588656387666,
+        -0.865708945883072,
+        -2.0141970857378046,
+        -0.22626714912731627
+      ],
+      "feat": {
+        "f0_mean_hz": 11763.157894736842,
+        "f0_norm": 0.4901315789473684,
+        "abs_df0_mean_hz": 2293.364537444934,
+        "abs_df0_norm": 0.09555685572687224,
+        "clickrate": 0.3557151756861547,
+        "burst": 0.1643004857103659,
+        "centroid_norm": 0.4622888084787806,
+        "bandwidth_norm": 0.2666713986914297,
+        "n_frame": 228
+      }
+    },
+    {
+      "species": "Atlantic_Spotted_Dolphin",
+      "path": "61026004.wav",
+      "native_sr": 80000,
+      "sr": 48000,
+      "tension": [
+        -1.276448297342193,
+        -2.668359375,
+        -2.578300886675917,
+        0.6117482856373249,
+        -1.3838288630054898
+      ],
+      "feat": {
+        "f0_mean_hz": 6894.206810631229,
+        "f0_norm": 0.2872586171096345,
+        "abs_df0_mean_hz": 1326.5625,
+        "abs_df0_norm": 0.0552734375,
+        "clickrate": 0.07028318555401379,
+        "burst": 0.6019580476062208,
+        "centroid_norm": 0.2693618561657517,
+        "bandwidth_norm": 0.19802704449318234,
+        "n_frame": 301
+      }
+    },
+    {
+      "species": "Atlantic_Spotted_Dolphin",
+      "path": "6102500M.wav",
+      "native_sr": 60600,
+      "sr": 48000,
+      "tension": [
+        0.13358094262295062,
+        -2.3048592032967035,
+        -0.8555141290265467,
+        -1.8166592236386907,
+        -0.22315832518605072
+      ],
+      "feat": {
+        "f0_mean_hz": 12534.323770491803,
+        "f0_norm": 0.5222634904371585,
+        "abs_df0_mean_hz": 2780.563186813187,
+        "abs_df0_norm": 0.11585679945054946,
+        "clickrate": 0.35741431182890887,
+        "burst": 0.19722346272688487,
+        "centroid_norm": 0.4628069458023249,
+        "bandwidth_norm": 0.26995673949078125,
+        "n_frame": 183
+      }
+    },
+    {
+      "species": "Atlantic_Spotted_Dolphin",
+      "path": "6102603V.wav",
+      "native_sr": 80000,
+      "sr": 48000,
+      "tension": [
+        -1.0801556859205776,
+        -2.595023777173913,
+        -2.3506204917100075,
+        3.0,
+        -1.1421250816156725
+      ],
+      "feat": {
+        "f0_mean_hz": 7679.37725631769,
+        "f0_norm": 0.3199740523465704,
+        "abs_df0_mean_hz": 1619.9048913043478,
+        "abs_df0_norm": 0.06749603713768115,
+        "clickrate": 0.10822991804833208,
+        "burst": 1.0236334508702631,
+        "centroid_norm": 0.30964581973072125,
+        "bandwidth_norm": 0.21306369950541604,
+        "n_frame": 277
+      }
+    },
+    {
+      "species": "Atlantic_Spotted_Dolphin",
+      "path": "61025008.wav",
+      "native_sr": 43900,
+      "sr": 48000,
+      "tension": [
+        0.12357954545454586,
+        -2.7564491654021244,
+        -2.5530705554987687,
+        -0.996280815820437,
+        -1.6231220917098927
+      ],
+      "feat": {
+        "f0_mean_hz": 12494.318181818182,
+        "f0_norm": 0.5205965909090909,
+        "abs_df0_mean_hz": 974.2033383915023,
+        "abs_df0_norm": 0.04059180576631259,
+        "clickrate": 0.07448824075020521,
+        "burst": 0.3339531973632605,
+        "centroid_norm": 0.22947965138168455,
+        "bandwidth_norm": 0.24646141260230278,
+        "n_frame": 660
+      }
+    },
+    {
+      "species": "Clymene_Dolphin",
+      "path": "8300604E.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        0.1274255415162453,
+        -2.9020040760869565,
+        -1.5461909584148223,
+        -0.4548510006758528,
+        -0.5968131211034322
+      ],
+      "feat": {
+        "f0_mean_hz": 12509.702166064983,
+        "f0_norm": 0.5212375902527075,
+        "abs_df0_mean_hz": 391.98369565217394,
+        "abs_df0_norm": 0.016332653985507248,
+        "clickrate": 0.24230150693086294,
+        "burst": 0.4241914998873578,
+        "centroid_norm": 0.40053114648276134,
+        "bandwidth_norm": 0.2802578325005086,
+        "n_frame": 277
+      }
+    },
+    {
+      "species": "Clymene_Dolphin",
+      "path": "8303501W.wav",
+      "native_sr": 166600,
+      "sr": 48000,
+      "tension": [
+        -0.228457775035261,
+        -2.328720868644068,
+        -1.1017389031918285,
+        0.36952058116123343,
+        -0.49190169610268963
+      ],
+      "feat": {
+        "f0_mean_hz": 11086.168899858956,
+        "f0_norm": 0.4619237041607898,
+        "abs_df0_mean_hz": 2685.116525423729,
+        "abs_df0_norm": 0.1118798552259887,
+        "clickrate": 0.3163768494680286,
+        "burst": 0.5615867635268722,
+        "centroid_norm": 0.41801638398288504,
+        "bandwidth_norm": 0.2867379153689644,
+        "n_frame": 709
+      }
+    },
+    {
+      "species": "Clymene_Dolphin",
+      "path": "8300604S.wav",
+      "native_sr": 60600,
+      "sr": 48000,
+      "tension": [
+        -1.7203763492675406,
+        -2.672820935089974,
+        -2.5780166347794284,
+        -0.8013930738999369,
+        -2.0861946931478643
+      ],
+      "feat": {
+        "f0_mean_hz": 5118.494602929838,
+        "f0_norm": 0.2132706084554099,
+        "abs_df0_mean_hz": 1308.7162596401029,
+        "abs_df0_norm": 0.054529844151670954,
+        "clickrate": 0.07033056087009523,
+        "burst": 0.36643448768334386,
+        "centroid_norm": 0.15230088447535595,
+        "bandwidth_norm": 0.20539191208218532,
+        "n_frame": 3891
+      }
+    },
+    {
+      "species": "Clymene_Dolphin",
+      "path": "83006009.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        0.17791193181818166,
+        -2.900546577946768,
+        -1.5541980481265996,
+        -0.5111994215875497,
+        -0.5875153003631639
+      ],
+      "feat": {
+        "f0_mean_hz": 12711.647727272728,
+        "f0_norm": 0.5296519886363636,
+        "abs_df0_mean_hz": 397.81368821292773,
+        "abs_df0_norm": 0.01657557034220532,
+        "clickrate": 0.2409669919789001,
+        "burst": 0.41480009640207505,
+        "centroid_norm": 0.402080783272806,
+        "bandwidth_norm": 0.2798994486804927,
+        "n_frame": 264
+      }
+    },
+    {
+      "species": "Clymene_Dolphin",
+      "path": "8303503R.wav",
+      "native_sr": 166600,
+      "sr": 48000,
+      "tension": [
+        -0.5223214285714284,
+        -2.455397727272727,
+        -1.4761669917799876,
+        -1.4383346516124704,
+        -0.6575246915940567
+      ],
+      "feat": {
+        "f0_mean_hz": 9910.714285714286,
+        "f0_norm": 0.4129464285714286,
+        "abs_df0_mean_hz": 2178.409090909091,
+        "abs_df0_norm": 0.09076704545454546,
+        "clickrate": 0.2539721680366687,
+        "burst": 0.26027755806458824,
+        "centroid_norm": 0.39041255140099057,
+        "bandwidth_norm": 0.2857234948423484,
+        "n_frame": 56
+      }
+    },
+    {
+      "species": "Clymene_Dolphin",
+      "path": "8303503O.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -0.6369357638888888,
+        -2.2585426401869158,
+        -1.804057241588513,
+        -2.162435674668741,
+        -1.4721513830288622
+      ],
+      "feat": {
+        "f0_mean_hz": 9452.256944444445,
+        "f0_norm": 0.39384403935185186,
+        "abs_df0_mean_hz": 2965.8294392523367,
+        "abs_df0_norm": 0.12357622663551403,
+        "clickrate": 0.19932379306858117,
+        "burst": 0.13959405422187646,
+        "centroid_norm": 0.2546414361618563,
+        "bandwidth_norm": 0.2946564464116423,
+        "n_frame": 108
+      }
+    },
+    {
+      "species": "Common_Dolphin",
+      "path": "7500303Z.wav",
+      "native_sr": 81600,
+      "sr": 48000,
+      "tension": [
+        -0.12793508287292799,
+        -2.3236885387811634,
+        -2.128283719808337,
+        0.16625015776185892,
+        -1.1864488206260675
+      ],
+      "feat": {
+        "f0_mean_hz": 11488.259668508288,
+        "f0_norm": 0.47867748618784534,
+        "abs_df0_mean_hz": 2705.2458448753464,
+        "abs_df0_norm": 0.1127185768698061,
+        "clickrate": 0.14528604669861045,
+        "burst": 0.5277083596269765,
+        "centroid_norm": 0.30225852989565544,
+        "bandwidth_norm": 0.2573320361591961,
+        "n_frame": 362
+      }
+    },
+    {
+      "species": "Common_Dolphin",
+      "path": "58014036.wav",
+      "native_sr": 43900,
+      "sr": 48000,
+      "tension": [
+        -0.9945312500000001,
+        -2.6803523936170213,
+        -2.8194346547435707,
+        -2.8265010923229386,
+        -2.0496056319513665
+      ],
+      "feat": {
+        "f0_mean_hz": 8021.875,
+        "f0_norm": 0.33424479166666665,
+        "abs_df0_mean_hz": 1278.590425531915,
+        "abs_df0_norm": 0.053274601063829786,
+        "clickrate": 0.030094224209404854,
+        "burst": 0.028916484612843574,
+        "centroid_norm": 0.1583990613414389,
+        "bandwidth_norm": 0.20216817888027264,
+        "n_frame": 330
+      }
+    },
+    {
+      "species": "Common_Dolphin",
+      "path": "7500303R.wav",
+      "native_sr": 81600,
+      "sr": 48000,
+      "tension": [
+        0.23859719669117663,
+        -2.5696650552486187,
+        -2.2136954480305615,
+        1.422600905764348,
+        -0.5408427184523372
+      ],
+      "feat": {
+        "f0_mean_hz": 12954.388786764706,
+        "f0_norm": 0.5397661994485294,
+        "abs_df0_mean_hz": 1721.3397790055249,
+        "abs_df0_norm": 0.07172249079189687,
+        "clickrate": 0.1310507586615731,
+        "burst": 0.7371001509607247,
+        "centroid_norm": 0.40985954692461046,
+        "bandwidth_norm": 0.23109447150554793,
+        "n_frame": 544
+      }
+    },
+    {
+      "species": "Common_Dolphin",
+      "path": "7500303Y.wav",
+      "native_sr": 81600,
+      "sr": 48000,
+      "tension": [
+        -0.2678693181818179,
+        -2.6712762317518246,
+        -1.8935867390316994,
+        1.7055832118852319,
+        -0.9063060799295424
+      ],
+      "feat": {
+        "f0_mean_hz": 10928.522727272728,
+        "f0_norm": 0.45535511363636366,
+        "abs_df0_mean_hz": 1314.8950729927008,
+        "abs_df0_norm": 0.0547872947080292,
+        "clickrate": 0.18440221016138342,
+        "burst": 0.7842638686475387,
+        "centroid_norm": 0.3489489866784096,
+        "bandwidth_norm": 0.2615412401911763,
+        "n_frame": 275
+      }
+    },
+    {
+      "species": "Common_Dolphin",
+      "path": "7500304Q.wav",
+      "native_sr": 81600,
+      "sr": 48000,
+      "tension": [
+        -0.3380859374999998,
+        -2.168269230769231,
+        -2.294493311733824,
+        -2.1758603132037,
+        -1.2939880881209709
+      ],
+      "feat": {
+        "f0_mean_hz": 10647.65625,
+        "f0_norm": 0.44365234375,
+        "abs_df0_mean_hz": 3326.923076923077,
+        "abs_df0_norm": 0.13862179487179488,
+        "clickrate": 0.11758444804436263,
+        "burst": 0.13735661446605002,
+        "centroid_norm": 0.28433531864650485,
+        "bandwidth_norm": 0.2482936936597558,
+        "n_frame": 40
+      }
+    },
+    {
+      "species": "Common_Dolphin",
+      "path": "7500304L.wav",
+      "native_sr": 81600,
+      "sr": 48000,
+      "tension": [
+        -0.07271095152603246,
+        -2.7269699865107913,
+        -2.203528069143232,
+        0.4842218446801523,
+        -0.8013695619569998
+      ],
+      "feat": {
+        "f0_mean_hz": 11709.156193895871,
+        "f0_norm": 0.4878815080789946,
+        "abs_df0_mean_hz": 1092.1200539568345,
+        "abs_df0_norm": 0.045505002248201434,
+        "clickrate": 0.1327453218094613,
+        "burst": 0.5807036407800253,
+        "centroid_norm": 0.3664384063405,
+        "bandwidth_norm": 0.243925007056106,
+        "n_frame": 557
+      }
+    },
+    {
+      "species": "Frasers_Dolphin",
+      "path": "91010024.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -0.5611795774647885,
+        -2.4383311170212765,
+        -1.58560161177846,
+        -2.8805825169400436,
+        -0.7462637606323201
+      ],
+      "feat": {
+        "f0_mean_hz": 9755.281690140846,
+        "f0_norm": 0.40647007042253525,
+        "abs_df0_mean_hz": 2246.675531914894,
+        "abs_df0_norm": 0.0936114804964539,
+        "clickrate": 0.23573306470359,
+        "burst": 0.01990291384332605,
+        "centroid_norm": 0.37562270656128,
+        "bandwidth_norm": 0.26045429633064787,
+        "n_frame": 142
+      }
+    },
+    {
+      "species": "Frasers_Dolphin",
+      "path": "9101000H.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -1.0182881011315414,
+        -2.6974371458923514,
+        -1.542488762473136,
+        -2.8652126141030316,
+        -0.6650286678162955
+      ],
+      "feat": {
+        "f0_mean_hz": 7926.847595473833,
+        "f0_norm": 0.3302853164780764,
+        "abs_df0_mean_hz": 1210.2514164305949,
+        "abs_df0_norm": 0.05042714235127479,
+        "clickrate": 0.24291853958781065,
+        "burst": 0.022464564316161364,
+        "centroid_norm": 0.3891618886972841,
+        "bandwidth_norm": 0.25292988079134354,
+        "n_frame": 707
+      }
+    },
+    {
+      "species": "Frasers_Dolphin",
+      "path": "9101001T.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        0.17724609375,
+        -2.833660714285714,
+        -1.6187293823376885,
+        -2.8032117859802104,
+        -0.5711543164399249
+      ],
+      "feat": {
+        "f0_mean_hz": 12708.984375,
+        "f0_norm": 0.529541015625,
+        "abs_df0_mean_hz": 665.3571428571429,
+        "abs_df0_norm": 0.02772321428571429,
+        "clickrate": 0.23021176961038525,
+        "burst": 0.03279803566996491,
+        "centroid_norm": 0.4048076139266792,
+        "bandwidth_norm": 0.2429142951434144,
+        "n_frame": 176
+      }
+    },
+    {
+      "species": "Frasers_Dolphin",
+      "path": "9101000Y.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -0.17026166902404505,
+        -2.6598574716713883,
+        -1.5703932102254516,
+        -2.798012770043331,
+        -0.6390383909687225
+      ],
+      "feat": {
+        "f0_mean_hz": 11318.95332390382,
+        "f0_norm": 0.4716230551626591,
+        "abs_df0_mean_hz": 1360.5701133144476,
+        "abs_df0_norm": 0.05669042138810198,
+        "clickrate": 0.23826779829575806,
+        "burst": 0.033664538326111534,
+        "centroid_norm": 0.3934936015052129,
+        "bandwidth_norm": 0.25080249742408617,
+        "n_frame": 707
+      }
+    },
+    {
+      "species": "Frasers_Dolphin",
+      "path": "9101300K.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -0.21209777227722793,
+        -2.698599061614731,
+        -1.973703329582122,
+        -2.6859843531834695,
+        -0.6992820346440425
+      ],
+      "feat": {
+        "f0_mean_hz": 11151.60891089109,
+        "f0_norm": 0.4646503712871287,
+        "abs_df0_mean_hz": 1205.6037535410765,
+        "abs_df0_norm": 0.050233489730878184,
+        "clickrate": 0.1710494450696463,
+        "burst": 0.05233594113608844,
+        "centroid_norm": 0.3834529942259929,
+        "bandwidth_norm": 0.2309562931414494,
+        "n_frame": 707
+      }
+    },
+    {
+      "species": "Frasers_Dolphin",
+      "path": "9101301G.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -0.02128232758620685,
+        -2.8610007225433525,
+        -1.8025361206002686,
+        -2.5133862763499075,
+        -0.6286970781989929
+      ],
+      "feat": {
+        "f0_mean_hz": 11914.870689655172,
+        "f0_norm": 0.49645294540229884,
+        "abs_df0_mean_hz": 555.9971098265896,
+        "abs_df0_norm": 0.023166546242774567,
+        "clickrate": 0.19957731323328856,
+        "burst": 0.08110228727501542,
+        "centroid_norm": 0.3952171536335012,
+        "bandwidth_norm": 0.24892719032653193,
+        "n_frame": 174
+      }
+    },
+    {
+      "species": "Grampus,_Rissos_Dolphin",
+      "path": "5902900S.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -2.1724567819148937,
+        -2.7104334677419355,
+        -2.5931520971797672,
+        -1.5843302058822915,
+        -1.5007718253737412
+      ],
+      "feat": {
+        "f0_mean_hz": 3310.1728723404253,
+        "f0_norm": 0.13792386968085105,
+        "abs_df0_mean_hz": 1158.266129032258,
+        "abs_df0_norm": 0.04826108870967742,
+        "clickrate": 0.06780798380337212,
+        "burst": 0.23594496568628476,
+        "centroid_norm": 0.2498713624377098,
+        "bandwidth_norm": 0.1936408430186179,
+        "n_frame": 94
+      }
+    },
+    {
+      "species": "Grampus,_Rissos_Dolphin",
+      "path": "8500900P.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        0.9682377049180326,
+        -2.8234375,
+        -1.1070985383815384,
+        -1.7107821810296018,
+        -0.3513534885153846
+      ],
+      "feat": {
+        "f0_mean_hz": 15872.95081967213,
+        "f0_norm": 0.6613729508196721,
+        "abs_df0_mean_hz": 706.25,
+        "abs_df0_norm": 0.029427083333333333,
+        "clickrate": 0.31548357693641027,
+        "burst": 0.21486963649506638,
+        "centroid_norm": 0.4414410852474359,
+        "bandwidth_norm": 0.29711307054829855,
+        "n_frame": 61
+      }
+    },
+    {
+      "species": "Grampus,_Rissos_Dolphin",
+      "path": "8500900I.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        0.4752038043478257,
+        -2.6505055147058822,
+        -1.1489729403128097,
+        -0.16821918208826947,
+        -0.41746436411103405
+      ],
+      "feat": {
+        "f0_mean_hz": 13900.815217391304,
+        "f0_norm": 0.579200634057971,
+        "abs_df0_mean_hz": 1397.9779411764705,
+        "abs_df0_norm": 0.058249080882352935,
+        "clickrate": 0.30850450994786505,
+        "burst": 0.4719634696519551,
+        "centroid_norm": 0.43042260598149434,
+        "bandwidth_norm": 0.3019271534828459,
+        "n_frame": 69
+      }
+    },
+    {
+      "species": "Grampus,_Rissos_Dolphin",
+      "path": "8500900T.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -0.212918133802817,
+        -2.3815848214285715,
+        -1.2162184428632004,
+        -1.7256671266762653,
+        -0.5636926606738384
+      ],
+      "feat": {
+        "f0_mean_hz": 11148.327464788732,
+        "f0_norm": 0.4645136443661972,
+        "abs_df0_mean_hz": 2473.660714285714,
+        "abs_df0_norm": 0.10306919642857143,
+        "clickrate": 0.2972969261894666,
+        "burst": 0.21238881222062245,
+        "centroid_norm": 0.40605122322102694,
+        "bandwidth_norm": 0.2979070820167451,
+        "n_frame": 71
+      }
+    },
+    {
+      "species": "Grampus,_Rissos_Dolphin",
+      "path": "59029003.wav",
+      "native_sr": 30000,
+      "sr": 48000,
+      "tension": [
+        -1.4744426246830094,
+        -2.430183217005076,
+        -2.9776036943040594,
+        -2.665790682403137,
+        -2.0015925152549676
+      ],
+      "feat": {
+        "f0_mean_hz": 6102.229501267962,
+        "f0_norm": 0.2542595625528318,
+        "abs_df0_mean_hz": 2279.2671319796955,
+        "abs_df0_norm": 0.0949694638324873,
+        "clickrate": 0.003732717615990133,
+        "burst": 0.05570155293281051,
+        "centroid_norm": 0.1664012474575054,
+        "bandwidth_norm": 0.17919283413006748,
+        "n_frame": 1183
+      }
+    },
+    {
+      "species": "Grampus,_Rissos_Dolphin",
+      "path": "5902900M.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -2.1318993506493507,
+        -2.7181332236842106,
+        -2.5915917134807662,
+        -1.2464749499400376,
+        -1.5653920184393795
+      ],
+      "feat": {
+        "f0_mean_hz": 3472.4025974025976,
+        "f0_norm": 0.14468344155844157,
+        "abs_df0_mean_hz": 1127.467105263158,
+        "abs_df0_norm": 0.04697779605263158,
+        "clickrate": 0.06806804775320567,
+        "burst": 0.29225417500999373,
+        "centroid_norm": 0.23910133026010344,
+        "bandwidth_norm": 0.19782818046001177,
+        "n_frame": 77
+      }
+    },
+    {
+      "species": "Pantropical_Spotted_Dolphin",
+      "path": "6400500D.wav",
+      "native_sr": 55500,
+      "sr": 48000,
+      "tension": [
+        -1.267040687919463,
+        -2.534564393939394,
+        -2.477425195294825,
+        -2.0495212966049756,
+        -1.1510871330308259
+      ],
+      "feat": {
+        "f0_mean_hz": 6931.837248322147,
+        "f0_norm": 0.28882655201342283,
+        "abs_df0_mean_hz": 1861.7424242424242,
+        "abs_df0_norm": 0.07757260101010101,
+        "clickrate": 0.08709580078419579,
+        "burst": 0.15841311723250404,
+        "centroid_norm": 0.30815214449486233,
+        "bandwidth_norm": 0.1994146889051029,
+        "n_frame": 298
+      }
+    },
+    {
+      "species": "Pantropical_Spotted_Dolphin",
+      "path": "94008006.wav",
+      "native_sr": 80000,
+      "sr": 48000,
+      "tension": [
+        -0.2623411016949153,
+        -2.5357940051020407,
+        -1.5750355654804207,
+        -1.4804678652884373,
+        -0.8966270556191898
+      ],
+      "feat": {
+        "f0_mean_hz": 10950.635593220339,
+        "f0_norm": 0.45627648305084745,
+        "abs_df0_mean_hz": 1856.8239795918366,
+        "abs_df0_norm": 0.07736766581632652,
+        "clickrate": 0.2374940724199299,
+        "burst": 0.2532553557852604,
+        "centroid_norm": 0.3505621573968017,
+        "bandwidth_norm": 0.2722783635824325,
+        "n_frame": 295
+      }
+    },
+    {
+      "species": "Pantropical_Spotted_Dolphin",
+      "path": "6400501B.wav",
+      "native_sr": 55500,
+      "sr": 48000,
+      "tension": [
+        -0.6963948362720402,
+        -2.635994640605296,
+        -2.4387694231951556,
+        -2.27515804795854,
+        -0.9326354549054825
+      ],
+      "feat": {
+        "f0_mean_hz": 9214.420654911839,
+        "f0_norm": 0.38393419395465994,
+        "abs_df0_mean_hz": 1456.0214375788146,
+        "abs_df0_norm": 0.06066755989911728,
+        "clickrate": 0.09353842946747405,
+        "burst": 0.12080699200690997,
+        "centroid_norm": 0.3445607575157529,
+        "bandwidth_norm": 0.19576211926176054,
+        "n_frame": 794
+      }
+    },
+    {
+      "species": "Pantropical_Spotted_Dolphin",
+      "path": "90028009.wav",
+      "native_sr": 81920,
+      "sr": 48000,
+      "tension": [
+        -1.2166030534351147,
+        -1.9260216346153847,
+        -1.0031610045144985,
+        -2.8468870511281765,
+        -0.3716497807110408
+      ],
+      "feat": {
+        "f0_mean_hz": 7133.587786259542,
+        "f0_norm": 0.2972328244274809,
+        "abs_df0_mean_hz": 4295.913461538462,
+        "abs_df0_norm": 0.17899639423076924,
+        "clickrate": 0.3328064992475836,
+        "burst": 0.025518824811970552,
+        "centroid_norm": 0.4380583698814932,
+        "bandwidth_norm": 0.2838819387778033,
+        "n_frame": 131
+      }
+    },
+    {
+      "species": "Pantropical_Spotted_Dolphin",
+      "path": "9400805S.wav",
+      "native_sr": 148100,
+      "sr": 48000,
+      "tension": [
+        -1.0342512430216328,
+        -2.1900196335078537,
+        -1.649707363050793,
+        -1.5650667847866448,
+        -1.1886345879585989
+      ],
+      "feat": {
+        "f0_mean_hz": 7862.995027913468,
+        "f0_norm": 0.32762479282972784,
+        "abs_df0_mean_hz": 3239.9214659685863,
+        "abs_df0_norm": 0.1349967277486911,
+        "clickrate": 0.22504877282486782,
+        "burst": 0.23915553586889254,
+        "centroid_norm": 0.3018942353402335,
+        "bandwidth_norm": 0.28060606382637543,
+        "n_frame": 2866
+      }
+    },
+    {
+      "species": "Pantropical_Spotted_Dolphin",
+      "path": "9300100D.wav",
+      "native_sr": 60600,
+      "sr": 48000,
+      "tension": [
+        -2.1202855603448274,
+        -2.7067775974025974,
+        -2.439698475956579,
+        -2.8514170416053988,
+        -1.3485803753461978
+      ],
+      "feat": {
+        "f0_mean_hz": 3518.8577586206898,
+        "f0_norm": 0.14661907327586207,
+        "abs_df0_mean_hz": 1172.8896103896104,
+        "abs_df0_norm": 0.04887040043290043,
+        "clickrate": 0.09338358734057017,
+        "burst": 0.024763826399100176,
+        "centroid_norm": 0.27523660410896705,
+        "bandwidth_norm": 0.1959426954295785,
+        "n_frame": 232
+      }
+    }
+  ]
+}

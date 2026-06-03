@@ -1,0 +1,32 @@
+F-FETCH — public dolphin acoustic data fetch
+verdict: HOLDS
+=============================================================================
+DATASET ACTUALLY FETCHED (no fabrication):
+  hf_repo      : confit/wmms-parquet            (HuggingFace, PUBLIC dataset)
+  hf_file      : data/test-00000-of-00001.parquet   (smallest split, 340 rows)
+  sha256       : a9492912a025dc93d88b81012517c73aba963c3bf4900a31175886b9fe94c4c0
+  size_bytes   : 141530649
+  provenance   : Watkins Marine Mammal Sound Database (WMMS), WHOI cis.whoi.edu,
+                 repackaged as parquet (audio bytes + species + 32-class label)
+  LICENSE      : Watkins/WHOI = ACADEMIC & PERSONAL use only, NON-COMMERCIAL.
+                 -> ingest for research OK; raw audio NOT re-uploaded to HF PUBLIC.
+
+DOLPHIN (delphinid) species PRESENT in the test split:
+  Atlantic_Spotted_Dolphin, Bottlenose_Dolphin, Clymene_Dolphin, Common_Dolphin,
+  Frasers_Dolphin, Grampus,_Rissos_Dolphin, Pantropical_Spotted_Dolphin,
+  Rough-Toothed_Dolphin, Spinner_Dolphin, Striped_Dolphin,
+  White-beaked_Dolphin, White-sided_Dolphin   (12 dolphin species)
+
+DOLPHIN species USED (top-6 by clip count, deterministic):
+  Atlantic_Spotted_Dolphin, Clymene_Dolphin, Common_Dolphin, Frasers_Dolphin,
+  Grampus,_Rissos_Dolphin, Pantropical_Spotted_Dolphin    -> 36 clips
+
+CONTRAST (non-dolphin) species USED for the coarse acoustic-class test:
+  Bowhead_Whale, Fin,_Finback_Whale, Humpback_Whale       -> 18 clips
+  (baleen-whale low-frequency moans, acoustically distinct from delphinid whistles)
+
+AUDIO: real WAV, mono. Native sample-rates HETEROGENEOUS across clips
+  (30k..166k Hz). Resampled to a COMMON 48000 Hz (scipy resample_poly) so the
+  recorder's native rate is not a confound; absolute-Hz bands used thereafter.
+
+n_clips (dolphin) = 36  >= 2  -> HOLDS.  CPU / $0 / public download only.

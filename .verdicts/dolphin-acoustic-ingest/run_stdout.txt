@@ -1,0 +1,87 @@
+==============================================================================
+dolphin_acoustic_ingest -- REAL public dolphin acoustic data -> 5-ch tension
+==============================================================================
+[fetch] repo=confit/wmms-parquet file=data/test-00000-of-00001.parquet
+[fetch] sha256=a9492912a025dc93d88b81012517c73aba963c3bf4900a31175886b9fe94c4c0
+[fetch] size_bytes=141530649  license=Watkins Marine Mammal Sound Database (WHOI) -- academic/personal, NON-COMMERCIAL
+[fetch] dolphin species present: ['Atlantic_Spotted_Dolphin', 'Bottlenose_Dolphin', 'Clymene_Dolphin', 'Common_Dolphin', 'Frasers_Dolphin', 'Grampus,_Rissos_Dolphin', 'Pantropical_Spotted_Dolphin', 'Rough-Toothed_Dolphin', 'Spinner_Dolphin', 'Striped_Dolphin', 'White-beaked_Dolphin', 'White-sided_Dolphin']
+[fetch] dolphin species used: ['Atlantic_Spotted_Dolphin', 'Clymene_Dolphin', 'Common_Dolphin', 'Frasers_Dolphin', 'Grampus,_Rissos_Dolphin', 'Pantropical_Spotted_Dolphin']  n_clips=36
+[fetch] contrast (non-dolphin) species used: ['Bowhead_Whale', 'Fin,_Finback_Whale', 'Humpback_Whale']  n_clips=18
+[encode] 36 clips @ 48000Hz -> 5-ch tension (ch order: F0,|dF0/dt|,click,burst,centroid)
+   Atlantic_Spotted_Dolph 6102500O.wav   native_sr= 60600 t=[-0.212, -2.697, -0.994, -2.366, -0.239]
+   Atlantic_Spotted_Dolph 6102500B.wav   native_sr= 60600 t=[-0.059, -2.427, -0.866, -2.014, -0.226]
+   Atlantic_Spotted_Dolph 61026004.wav   native_sr= 80000 t=[-1.276, -2.668, -2.578, 0.612, -1.384]
+   Atlantic_Spotted_Dolph 6102500M.wav   native_sr= 60600 t=[0.134, -2.305, -0.856, -1.817, -0.223]
+   Atlantic_Spotted_Dolph 6102603V.wav   native_sr= 80000 t=[-1.08, -2.595, -2.351, 3.0, -1.142]
+   Atlantic_Spotted_Dolph 61025008.wav   native_sr= 43900 t=[0.124, -2.756, -2.553, -0.996, -1.623]
+
+--- F-DISCRIMINATIVE (fine: cross dolphin-species) --- REFUTED
+{
+  "n_species": 6,
+  "within_class_mean_l2": 2.016604819146691,
+  "between_class_mean_l2": 1.3868241113547082,
+  "separation_ratio": 0.6877024677813813,
+  "deterministic_reencode_max_abs_diff": 0.0
+}
+
+--- F-DISCRIMINATIVE-COARSE (dolphin whistle vs non-dolphin click/moan) --- HOLDS
+{
+  "n_dolphin": 36,
+  "n_contrast": 18,
+  "within_dolphin_mean_l2": 2.374089835752692,
+  "within_contrast_mean_l2": 2.2604932152343635,
+  "within_group_mean_l2": 2.317291525493528,
+  "between_group_centroid_l2": 3.7418011930732136,
+  "separation_ratio": 1.614730451604085
+}
+
+--- F-DFDT-TIME (#1763) --- HOLDS
+{
+  "seeds": [
+    {
+      "seed": 0,
+      "real_ordered_abs_df0_norm_mean": 0.07157800553488901,
+      "time_scrambled_abs_df0_norm_mean": 0.19528787444408813,
+      "scramble_inflation_abs": 0.12370986890919912,
+      "real_over_scrambled_ratio": 0.36652560092775044,
+      "sep_dfdt_aware": 0.43488972152382926,
+      "sep_static_only": 0.38521946971755516,
+      "dfdt_beats_static": true
+    },
+    {
+      "seed": 1,
+      "real_ordered_abs_df0_norm_mean": 0.07157800553488901,
+      "time_scrambled_abs_df0_norm_mean": 0.18961274770593584,
+      "scramble_inflation_abs": 0.11803474217104683,
+      "real_over_scrambled_ratio": 0.3774957454101107,
+      "sep_dfdt_aware": 0.43488972152382926,
+      "sep_static_only": 0.38521946971755516,
+      "dfdt_beats_static": true
+    },
+    {
+      "seed": 2,
+      "real_ordered_abs_df0_norm_mean": 0.07157800553488901,
+      "time_scrambled_abs_df0_norm_mean": 0.1939031529237935,
+      "scramble_inflation_abs": 0.1223251473889045,
+      "real_over_scrambled_ratio": 0.3691430719677413,
+      "sep_dfdt_aware": 0.43488972152382926,
+      "sep_static_only": 0.38521946971755516,
+      "dfdt_beats_static": true
+    }
+  ],
+  "temporal_order_carries_dfdt_info_all_seeds": true,
+  "n_seeds_dfdt_beats_static": 3
+}
+
+--- F-STABLE --- HOLDS
+{
+  "n_clips": 36,
+  "n_nonfinite": 0,
+  "n_out_of_range": 0,
+  "range": [
+    -3.0,
+    3.0
+  ]
+}
+
+[done] wall=2.82s  results.json written to .verdicts/dolphin-acoustic-ingest
