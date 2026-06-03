@@ -311,12 +311,17 @@ fn _clmd_fwd_logits(W: Map, tok: int, out_logits: int, T: int) {
     let xe = t_zeros(T*d); nn_embedding_fwd(tok, embed, xe, T, d)
     let xt = t_zeros(T*d); _clmd_conv1d(xe, to_int(W["ecW"]), to_int(W["ecB"]), xt, T, d, d, K, 1)
 
-    // L trunk layers: residual( GELU( GN( conv(x) ) ) ). dilation = 2^layer
-    // (CausalDilatedConv1d in model.py uses dilation_base**i).
+    // L trunk layers: residual( GELU( GN( conv(x) ) ) ). dilation = min(2^layer, 512)
+    // (CausalDilatedConv1d in model.py uses min(dilation_base**i, max_dilation=512)).
+    // The cap MUST match model.py exactly, else a deep-L .clm decodes differently than
+    // it trained. At L=1: min(2^0,512)=1 so the golden ref is byte-eq-unchanged.
+    let DIL_CAP = 512
     let mut li = 0
     let mut dil = 1
     while li < L {
-        let h = t_zeros(T*d); _clmd_conv1d(xt, to_int(tcW[li]), to_int(tcB[li]), h, T, d, d, K, dil)
+        let mut dil_eff = dil
+        if dil_eff > DIL_CAP { dil_eff = DIL_CAP }
+        let h = t_zeros(T*d); _clmd_conv1d(xt, to_int(tcW[li]), to_int(tcB[li]), h, T, d, d, K, dil_eff)
         let hn = t_zeros(T*d); let m1 = t_zeros(1); let iv1 = t_zeros(1); let xh1 = t_zeros(T*d)
         nn_groupnorm_fwd(h, to_int(tgG[li]), to_int(tgB[li]), hn, m1, iv1, xh1, T, d, 1)
         let hg = t_zeros(T*d); nn_gelu_fwd(hn, hg, T*d)
