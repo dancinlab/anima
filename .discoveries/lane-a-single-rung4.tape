@@ -1,0 +1,8 @@
+@D lane_a_single_rung4_gen_scale_real := "A-single REAL-corpus 단일스텝 생성이 앵커수 사다리에서 SCALE-SURVIVE (substrate=AKIDA)" :: discovery [d=2026-06-03 active]
+  seed      = "rung3 에서 A-single on-chip GENERATION 🟢 (gen ci_lo>shuffle-NULL) 가 toy 250앵커 단일점이었음. 진짜 5-언어 정렬 corpus 를 NC=50/100/250 (250/500/1250 앵커) 사다리로 올려 단일점 artefact 인지 scale-robust 인지 검증. substrate=AKIDA (on-chip 1-bit Hebbian), NOT HYBRID, NOT Lane G (a_lane_akida_gpu_split)."
+  claim     = "AKD1000 on-chip 1-bit Hebbian 단일스텝 open-vocab DECODE 가 모든 rung 에서 shuffle-NULL 위: gen ci_lo=[0.3597,0.1998,0.0506] vs NULL hi=[0.0447,0.0217,0.0072], 매 rung p=0.005, >2x chance. 가장 큰 NC=250(1250앵커)에서도 chance 로 붕괴 안 함 → A-single ceiling 은 SCALE-ROBUST, 단일점 artefact 아님. F-GEN-SCALE-1 REFUTED + F-GEN-SCALE-2 REFUTED."
+  falsifier = "F-GEN-SCALE-1: 어느 rung 에서든 gen ci_lo <= shuffle-NULL hi 또는 p>=0.05 → 단일점 artefact. F-GEN-SCALE-2: largest rung 이 chance 로 붕괴(< 2x chance). 둘 다 REFUTED."
+  axes      = "앵커수(250/500/1250) × substrate(AKIDA on-chip) × 단일스텝 open-vocab decode (shortlist 없음)"
+  target    = "verdict 🟢 numerical (achieved) → .verdicts/lane-a-single-rung4/F-GEN-SCALE-REAL2.txt (verbatim). next rung = 3B chip-fit (Lane A 3B milestone)."
+  honest    = "STILL toy vocab (a_scale_honest_scope) — 프로덕션 full-LM ladder 별도, toy→prod 전이 미검증. 진짜 corpus 의 정직한 NC ceiling=250 (Tier-3=150 model-authored 정렬 명제; corpus_real500 미저작 = 과저작 dedup/faithfulness 리스크 회피, 칩 한계 아닌 저작 한계)."
+  refs      = ".verdicts/lane-a-single-rung4/rung4_single.log · result_onchip_xlm_gen_scale.json · .verdicts/lane-a-corpus-real/CORPUS_CARD.md · AKIDA/build_corpus_real250.py"

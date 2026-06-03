@@ -1,0 +1,130 @@
+{
+  "substrate": "AKIDA (on-chip 1-bit Hebbian)",
+  "rung": "SINGLE-STEP open-vocab GENERATION ANCHOR-COUNT scale ladder",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-03T05:44:27Z",
+  "n_trials": 8,
+  "units": 256,
+  "encoder": "whitened (byte-match onchip_xlm_generation.enc_whitened)",
+  "metric": "gen_acc=P(argmax_{c!=t} overlap(g_hat_t, codebook[c])==t+1), open-vocab cross-lingual; shuffle-NULL B=200",
+  "ladder_n_concepts": [
+    50,
+    100,
+    250
+  ],
+  "corpus": "corpus_real250 1250 anchors / 250 REAL aligned concepts (Tier-1 50 FLORES-gold + Tier-2 50 authored + Tier-3 150 NEW model-authored aligned) x 5 langs",
+  "rungs": [
+    {
+      "n_concepts": 50,
+      "n_anchors": 250,
+      "learn_all_hw": true,
+      "chance": 0.02040816326530612,
+      "gen_acc": {
+        "mean": 0.38979591836734695,
+        "sd": 0.04341576785769396,
+        "ci95": [
+          0.35971032618200255,
+          0.41988151055269135
+        ],
+        "ci_lo": 0.35971032618200255
+      },
+      "identity_null": {
+        "mean": 0.3137755102040816,
+        "hi": 0.34947064792818705
+      },
+      "shuffle_null": {
+        "mean": 0.019591836734693877,
+        "sd": 0.012797073801298681,
+        "hi": 0.04467410138523929,
+        "p": 0.004975124378109453,
+        "B": 200
+      },
+      "above_shuffle_null": true,
+      "above_identity_null": true,
+      "above_2x_chance": true
+    },
+    {
+      "n_concepts": 100,
+      "n_anchors": 500,
+      "learn_all_hw": true,
+      "chance": 0.010101010101010102,
+      "gen_acc": {
+        "mean": 0.2196969696969697,
+        "sd": 0.028768252341146102,
+        "ci95": [
+          0.1997615879099257,
+          0.23963235148401368
+        ],
+        "ci_lo": 0.1997615879099257
+      },
+      "identity_null": {
+        "mean": 0.16843434343434344,
+        "hi": 0.19059365060759528
+      },
+      "shuffle_null": {
+        "mean": 0.010252525252525251,
+        "sd": 0.005844418607030006,
+        "hi": 0.021707585722304062,
+        "p": 0.004975124378109453,
+        "B": 200
+      },
+      "above_shuffle_null": true,
+      "above_identity_null": true,
+      "above_2x_chance": true
+    },
+    {
+      "n_concepts": 250,
+      "n_anchors": 1250,
+      "learn_all_hw": true,
+      "chance": 0.004016064257028112,
+      "gen_acc": {
+        "mean": 0.05592369477911646,
+        "sd": 0.007679433780502249,
+        "ci95": [
+          0.0506021186712876,
+          0.06124527088694532
+        ],
+        "ci_lo": 0.0506021186712876
+      },
+      "identity_null": {
+        "mean": 0.023594377510040163,
+        "hi": 0.02710122956314962
+      },
+      "shuffle_null": {
+        "mean": 0.003939759036144579,
+        "sd": 0.0016433458170536815,
+        "hi": 0.007160716837569794,
+        "p": 0.004975124378109453,
+        "B": 200
+      },
+      "above_shuffle_null": true,
+      "above_identity_null": true,
+      "above_2x_chance": true
+    }
+  ],
+  "headline": {
+    "F_GEN_SCALE_1_holds_above_null_across_scale": "REFUTED: at EVERY rung single-step gen ci_lo>shuffle-NULL hi AND p<0.05 -> single-step on-chip GENERATION SCALE-SURVIVES (A-single ceiling holds across anchor count)",
+    "F_GEN_SCALE_2_no_collapse_at_largest": "REFUTED: largest rung gen ci_lo > shuffle-NULL hi AND >= 2x chance -> no collapse toward chance",
+    "F_GEN_SCALE_1_pass": true,
+    "F_GEN_SCALE_2_pass": true,
+    "scale_survives": true,
+    "ladder_gen_ci_lo": [
+      0.35971032618200255,
+      0.1997615879099257,
+      0.0506021186712876
+    ],
+    "ladder_shuffle_null_hi": [
+      0.04467410138523929,
+      0.021707585722304062,
+      0.007160716837569794
+    ],
+    "ladder_anchors": [
+      250,
+      500,
+      1250
+    ]
+  },
+  "DISPOSITION": "SINGLE-STEP GENERATION SCALE-SURVIVES (substrate=AKIDA on-chip): across a >=3-rung anchor-count ladder the on-chip open-vocab next-step decode stays ABOVE the shuffle-NULL at every rung and does not collapse toward chance at the largest. The A-single on-chip ceiling is a SCALE-ROBUST single-step result, not a single-point artefact. STILL toy vocab (a_scale_honest_scope); production full-LM ladder separate. substrate=AKIDA, NOT HYBRID, NOT Lane G."
+}
