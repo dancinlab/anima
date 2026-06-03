@@ -55,3 +55,4 @@
 @D UNIVERSE := "./UNIVERSE/UNIVERSE.md" :: domain [active]
 @D C-PORT := "./domains/C-PORT.md" :: domain [active]
 @D KOSMOS-MAP := "./domains/KOSMOS-MAP.md" :: domain [active]
+@D AXIS := "./domains/AXIS.md" :: domain [active]
