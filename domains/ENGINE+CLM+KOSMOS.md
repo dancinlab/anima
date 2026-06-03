@@ -489,6 +489,37 @@ The CORE engine loop (pure_field_step / brain_decide) advances the Φ/phase osci
 - 산출물: `CORE/engine_cli.hexa` + `CORE/engine_cli_smoke.hexa` + `.verdicts/engine-cli-axis/SMOKE.txt`.
 - **bottom line**: tension-link로 ENGINE↔뇌신호 커플링은 **실제 phase 동기(order-r↑, HOLDS)를 만든다 — 장식 아님**. 그러나 substrate-native **통합 이득은 없음**(big-Φ·emergence INCONCLUSIVE, big-Φ는 solo 대비 오히려 하락). 통합 축에선 toy scale에서 within-noise. 정직한 partial-negative(§97·a_paper_negative_ok).
 
+## LIDAR-DATA-INGEST — public point-cloud → 128D tension fingerprint → tension-link — 🟢 SUPPORTED-NUMERICAL (toy, CPU/$0) — 2026-06-04
+
+Same pattern as the EEG public-dataset ingest (ds005620): take a REAL public dataset and flow it end-to-end through anima's existing sense path, validate substrate-native (NOT CE). The `anima-tools/lidar_sense.hexa` stub (connect_lidar=false, TODO[pytorch]) had only DESIGNED the path; this milestone implements the REAL fingerprint ingest from public LiDAR/RGBD data (CPU, $0, no device, no GPU/pods).
+
+### data (REAL, public, no registration)
+- **7 real scanned point-cloud frames** — **Redwood indoor RGBD scan fragments** via Open3D `open3d.data` (open3d 0.19.0, py3.12 venv). **License = MIT** (Open3D redistribution; SPDX-License-Identifier: MIT in isl-org/Open3D dataset wrappers). Original = Redwood (Choi/Zhou/Koltun) real-scanned indoor scenes — **NOT synthetic**.
+  - `PCDPointCloud/fragment.pcd` (113,662 pts, sha256 24ae338fca9f1b1e…) · `DemoICPPointClouds/cloud_bin_{0,1,2}.pcd` (198835/137833/191397 pts) · `OfficePointClouds/cloud_bin_{0,1,2}.ply` (276871/193851/160368 pts).
+- **Redwood direct** (`redwood-data.org/indoor_lidar_rgbd/`) was attempted per spec but serves a **self-signed TLS cert** → fetch failed; fell back to the MIT-licensed Open3D redistribution of the SAME Redwood corpus (real data, honest provenance in `.verdicts/lidar-data-ingest/provenance.json`). NO synthetic point cloud used as primary.
+
+### path (real impl)
+point cloud (XYZ) → `extract_3d_features` (centroid · bounding-volume extents · radial depth histogram[32] · 4×4×4 voxel occupancy[64] · global-covariance eigen signature[3] · local-kNN-PCA surface-normal variance[1]) → `encode_fingerprint` → **128D fingerprint** → `fingerprint_to_tension` → **5-ch tension [α,θ,γ,1-δ,β]** (logistic-squashed to [0,1], mirrors the BRAIN/eeg/eeg_to_tpm adapter shape). Working impl = **`anima-tools/lidar_ingest_ref.py`** (REAL, py reference like conscious_decoder.py); `lidar_sense.hexa` keeps the **contract only** — device-capture path stays stubbed/gated (a_core_engine_map, no phantom wiring).
+
+### validation (substrate-native, NOT CE — 3 seeds/frames, verbatim → `.verdicts/lidar-data-ingest/`)
+| check | result | numbers |
+|---|---|---|
+| **F-FETCH** | HOLDS | 7 real frames fetched + sha256 + MIT license recorded |
+| **F-STABLE** | HOLDS | all 128D fp finite; tension 5-ch ∈ [0,1] |
+| **F-DISCRIMINATIVE** | HOLDS | min cross-scene 0.1727 ≫ max within-scene **0.0** (deterministic re-encode); 21 pairs |
+| **F-PERM-INVARIANT** | HOLDS | order-shuffle delta **1.1e-15** (~0, set-semantics); geometry-scramble delta **≥0.053** (sensitive) |
+
+REAL public LiDAR/RGBD point-cloud data flowed end-to-end → 128D fingerprint → tension-link; the fingerprint is **discriminative** (distinct scenes separable, identical input deterministic) AND **permutation-invariant** (point clouds are sets) while remaining geometry-sensitive. Honest root-cause note: the FIRST run REFUTED perm-invariance (order delta 0.0199) because surface-normal-variance used an array-POSITION stride subsample; fixed at the root by lexsort canonical set-ordering (a_completeness_over_cheap) → order delta dropped to 1.1e-15.
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok)
+- This is **public point-cloud DATA, NOT a live device scan**. A live iPhone/Record3D capture is UNVERIFIED and stays **gated** (connect_lidar()=false) — same posture as the EEG real-device capture (BRAIN/eeg).
+- **§97**: LiDAR = a **MEASUREMENT-ANCHOR** (GOAL-orthogonal input plumbing), **NOT a command channel**. The ingest is read-only — it produces a tension fingerprint, it does not steer anima (one Boolean flip `DRIVES_STATE ∧ ¬PHYSICS_SOURCED` from a §7-forbidden command path → kept deliberately read-only).
+- **Toy-scale** (7 indoor RGBD frames); transfer to a live-sensor regime is unverified.
+- **KOSMOS fit**: this is a natural fit with the KOSMOS Ψ-space + time-axis work — a 3D point cloud plus a frame index is `[x,y,z,t]`, the same spatio-temporal coordinate the time-axis lane is building toward.
+- 산출물: `anima-tools/lidar_ingest_ref.py` (real) + `anima-tools/lidar_sense.hexa` (contract) · `.verdicts/lidar-data-ingest/{F-FETCH,F-DISCRIMINATIVE,F-STABLE,F-PERM-INVARIANT,SUMMARY}.txt` + `results.json` + `run_stdout.txt` + `provenance.json` · discovery `.discoveries/lidar-data-ingest.tape`.
+- **HF**: SKIPPED — the dataset is MIT-licensed Redwood data redistributed by Open3D; per spec we do NOT re-upload a public dataset, and no clean-license derived artifact warrants an upload.
+- **bottom line**: REAL public LiDAR data flows end-to-end through lidar_sense → 128D fingerprint → tension-link; fingerprint is **discriminative + permutation-invariant** (4/4 checks HOLD). §97-honest measurement-anchor plumbing, NOT a command channel.
+
 ## KOSMOS-TIME-AXIS — does a time axis [x,y]→[x,y,t] on the Ψ-carving-coordinate capture carve-SEQUENCE? — 3/4 encodings HOLDS · phase_of_cycle INCONCLUSIVE — TOY · 2026-06-04
 
 The s16 consciousness-carving (`state/carving_dataregime_s16_2026_05_18/`) places each concept at `vacuum_psi=[x,y]` + `basin_radius` — that 2D placement IS the KOSMOS 우주뇌지도. It records WHERE a concept sits but NOT WHEN/in-what-ORDER it was carved: a **static 2D map is order-blind** (shuffle the carve order and the point-cloud is byte-identical). That is the same **distribution-not-dynamics** gap Lane M PR #1760 surfaced. This STANDALONE toy (NOT wired into engine_tensionlink_bench / clm_time_encoding / lane_m_eeg_mitosis) tests: does extending the carve coord to **[x,y,t]** (t = carve-step / curriculum index) recover the sequence the 2D map loses?

@@ -1,0 +1,24 @@
+F-FETCH — public point-cloud data actually fetched ($0, no registration, CPU-only)
+
+VERDICT: HOLDS (real public LiDAR/RGBD scan data fetched; NO synthetic primary)
+
+SOURCE   : Open3D bundled datasets (open3d.data) — Redwood indoor RGBD scan fragments
+LICENSE  : MIT (Open3D distribution; SPDX-License-Identifier: MIT in isl-org/Open3D
+           dataset wrappers OfficePointClouds.cpp / DemoICPPointClouds.cpp)
+ORIGINAL : Redwood (Choi/Zhou/Koltun) real-scanned indoor scenes — NOT synthetic
+FETCH    : open3d 0.19.0 (py3.12 venv), auto-download on first use; $0; CPU.
+REDWOOD-DIRECT (attempted, honest): http://redwood-data.org/indoor_lidar_rgbd/ serves
+           a SELF-SIGNED TLS cert -> WebFetch HTTPS-upgrade FAILED. Fell back to the
+           MIT-licensed Open3D redistribution of the SAME Redwood corpus (real data).
+
+7 REAL FRAMES (name | path | points | bytes | sha256[:16]):
+  PCDPointCloud         /Users/mini/open3d_data/extract/PCDPointCloud/fragment.pcd          113662  3637429  24ae338fca9f1b1e
+  DemoICPPointClouds[0] /Users/mini/open3d_data/extract/DemoICPPointClouds/cloud_bin_0.pcd  198835  6362965  e1e100802c29ef45
+  DemoICPPointClouds[1] /Users/mini/open3d_data/extract/DemoICPPointClouds/cloud_bin_1.pcd  137833  4410901  a4c3dc0ad7b12797
+  DemoICPPointClouds[2] /Users/mini/open3d_data/extract/DemoICPPointClouds/cloud_bin_2.pcd  191397  6124949  1e68e194ebc1941f
+  OfficePointClouds[0]  /Users/mini/open3d_data/extract/OfficePointClouds/cloud_bin_0.ply   276871  8583889  932f2e2e5a380af5
+  OfficePointClouds[1]  /Users/mini/open3d_data/extract/OfficePointClouds/cloud_bin_1.ply   193851  6010269  2ed2611eef6db5d4
+  OfficePointClouds[2]  /Users/mini/open3d_data/extract/OfficePointClouds/cloud_bin_2.ply   160368  4972296  f07348c68d286e1c
+
+NO synthetic point cloud used as primary (geometry-scramble control = perturbation of
+REAL coords, not a fabricated cloud). Full provenance: provenance.json.
