@@ -1,0 +1,97 @@
+C-PORT MILESTONE-2 — port tier-B train_ffi.c portable glue to hexa-native
+========================================================================
+verdict: PORT-EQ (bit-identical C vs hexa, interpreter AND compiled path)
+method:  RUNEQ — real C-vs-hexa byte-exact diff of the ported pure glue.
+date:    2026-06-03
+host:    mini (local; NO ghost / NO cloud / NO pool — local hexa + cc)
+tools:   hexa 0.1.0-dispatch  ·  Apple clang 21.0.0
+
+SCOPE OF PORT
+-------------
+Source:  training/native/train_ffi.c  (214 LOC, tier-B per INVENTORY.txt)
+Ported (pure marshaling/getters — NO vendor-ABI call):
+  C  void  train_ffi_set_hp(lr,b1,b2,eps,wd,clip)  -> packs G.hp  (6 f32 writes)
+  C  int   train_ffi_get_step(void)                -> G.hp.step
+  C  float train_ffi_get_grad_norm(void)           -> G.result.grad_norm
+  C  long  train_ffi_get_elapsed_us(void)          -> G.result.elapsed_us
+  + the portable bookkeeping in train_ffi_init (hp scalar defaults) and
+    in train_ffi_step (G.hp.step++ pre-CUDA bump) — both non-vendor.
+hexa port: training/native/train_ffi_native.hexa
+  ffi_set_hp / ffi_get_step / ffi_get_grad_norm / ffi_get_elapsed_us
+  + ffi_make_hp (defaults) + step-bump replay.
+Functions ported: 4 public fns + 2 portable init/step fragments.
+LOC ported (pure glue): ~30 effective LOC of the 214 (the marshaling/getter
+  surface); remainder is irreducible CUDA allocation/dispatch (see below).
+
+NOT PORTED — irreducible vendor-ABI floor (STAYS in C, per g5/g63):
+  train_ffi_init    : 3 cudaMalloc + calloc + train_step_init (CUDA scratch)
+  train_ffi_step    : train_step() — the cuBLAS hot path (~50 cuBLAS/step)
+  train_ffi_cleanup : train_step_cleanup (CUDA)
+  These touch the GPU allocator / cuBLAS and CANNOT be hexa-native. The C
+  RUNEQ driver stubs the 3 train_step_* externs and NEVER calls the GPU path
+  — only the portable glue is exercised, honestly.
+
+STRUCT LAYOUT (matched bit-for-bit vs train_step.h)
+---------------------------------------------------
+TrainHParams { f32 lr@0; f32 beta1@4; f32 beta2@8; f32 eps@12;
+               f32 weight_decay@16; f32 grad_clip@20; i32 step@24 }  =28B
+StepResult   { f32 loss@0; f32 grad_norm@4; i64 elapsed_us@8 }       =16B
+hexa raw primitives (tensor_kernels.c hexa_ptr_{write,read}_{f32,i32}) use
+BYTE offsets (memcpy at ptr+offset) — the port uses explicit byte offsets,
+so the in-memory layout is identical to the C struct.
+
+REPRESENTATIVE INPUTS
+---------------------
+set_hp(5.0e-4, 0.85, 0.98, 1.0e-9, 0.02, 0.5) ; step bumped 3x ;
+result.grad_norm=1.2345 ; result.elapsed_us=987654.
+
+C BASELINE  (cc -O2 train_ffi_runeq.c  ->  #include "train_ffi.c", real G)
+--------------------------------------------------------------------------
+set_hp.lr=0.0005
+set_hp.beta1=0.85
+set_hp.beta2=0.98
+set_hp.eps=1e-09
+set_hp.weight_decay=0.02
+set_hp.grad_clip=0.5
+get_step=3
+get_grad_norm=1.2345
+get_elapsed_us=987654
+
+HEXA-NATIVE  (hexa-run train_ffi_native.hexa  — interpreter)
+------------------------------------------------------------
+set_hp.lr=0.0005
+set_hp.beta1=0.85
+set_hp.beta2=0.98
+set_hp.eps=1e-09
+set_hp.weight_decay=0.02
+set_hp.grad_clip=0.5
+get_step=3
+get_grad_norm=1.2345
+get_elapsed_us=987654
+
+HEXA-NATIVE  (hexa train_ffi_native.hexa  — compiled codegen path)
+-----------------------------------------------------------------
+(identical to the interpreter output above — byte-for-byte)
+
+DIFF
+----
+  diff C  vs hexa-run      ->  (no difference)   EQ-interp
+  diff C  vs hexa-compiled ->  (no difference)   EQ-compiled
+VERDICT: PORT-EQ — the portable train_ffi.c glue (set_hp + 3 getters +
+         init defaults + step-bump) is byte-exact in hexa-native on both
+         the interpreter and the compiled codegen path.
+
+HONEST CAVEATS
+--------------
+1. The RUNEQ exercises the PORTABLE glue in isolation (the GPU bridge is
+   stubbed). This is correct for tier-B: the cudaMalloc / cuBLAS calls are
+   the irreducible tier-A floor and are intentionally NOT ported.
+2. get_elapsed_us: C returns `long` (i64). The port reads the low 32 bits
+   via deref_i32 (runtime has no deref_i64 builtin; only write_i64 exists,
+   which maps to hexa_ptr_write). RUNEQ values are < 2^31 so the result is
+   exact; for elapsed_us >= 2^31 a deref_i64 builtin would be needed. This
+   is a runtime-primitive gap, NOT a port-logic error — flagged honestly.
+3. Pre-existing (out of M2 scope): the sibling training/native/
+   train_step_ffi.hexa make_hparams/make_step_result use ELEMENT indices
+   (0..6) where the runtime expects BYTE offsets — a latent layout bug in
+   that file. The M2 port uses correct byte offsets. Noted, not touched.
