@@ -1,0 +1,31 @@
+F-DISCRIMINATIVE — does the 5-ch tension fingerprint discriminate?
+=============================================================================
+Two axes were measured (fine cross-species + coarse acoustic-class), both on
+REAL data, deterministic. Verbatim metrics from results.json / run_stdout.txt.
+
+(A) FINE — cross dolphin-SPECIES (6 delphinid species, 36 clips)
+    verdict: REFUTED
+      within_class_mean_l2  = 2.016604819146691
+      between_class_mean_l2 = 1.3868241113547082
+      separation_ratio      = 0.6877024677813813   (between < within -> REFUTED)
+      deterministic_reencode_max_abs_diff = 0.0     (re-encode identical: PASS)
+    HONEST READING: the 5-ch fingerprint does NOT separate six CLOSELY-RELATED
+    delphinid species. This is biologically expected — these species whistle in
+    overlapping frequency bands; a 5-scalar reduction does not resolve them. This
+    is a closed-negative on the FINE axis (a_paper_negative_ok), NOT a pipeline
+    bug: the sample-rate confound was removed (48k resample), re-encode is exact.
+
+(B) COARSE — dolphin whistle vs non-dolphin click/moan (the task-named axis)
+    verdict: HOLDS
+      n_dolphin = 36, n_contrast = 18 (baleen moans)
+      within_dolphin_mean_l2   = 2.374089835752692
+      within_contrast_mean_l2  = 2.2604932152343635
+      within_group_mean_l2     = 2.317291525493528
+      between_group_centroid_l2= 3.7418011930732136
+      separation_ratio         = 1.614730451604085  (between > within -> HOLDS)
+    HONEST READING: at the COARSE acoustic-class level the fingerprint DOES
+    discriminate — delphinid whistle group separates cleanly from the baleen
+    moan group. Determinism: re-encode max abs diff = 0.0.
+
+OVERALL: discriminative AT THE ACOUSTIC-CLASS LEVEL (HOLDS), NOT at the
+fine cross-delphinid-species level (REFUTED). Both reported honestly.

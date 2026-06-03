@@ -554,3 +554,47 @@ is modelled-only (not physical entanglement), and QT7 (phase-clock estimates the
 - 산출물: `UNIVERSE/QUANTUM-TIME-CANDIDATES.md` (QT1…QT11 + falsifiers + per-toy results) ·
   `UNIVERSE/quantum_time_toys.py` (the emergent falsifiers) · `.verdicts/quantum-time/{SUMMARY,F-QT1..F-QT11,
   run_stdout}.txt` (verbatim) · `.discoveries/quantum-time.tape` (11 discovery rows).
+
+---
+
+## 🐬 milestone — public dolphin acoustic data ingested → 5-ch tension (H_070 · #1763 d/dt)
+
+REAL public dolphin acoustic (frequency) data flows end-to-end into anima's tension/spectral path,
+validated on the **Watkins Marine Mammal Sound Database** (HF `confit/wmms-parquet`, test split,
+sha256 `a9492912a025dc93d88b81012517c73aba963c3bf4900a31175886b9fe94c4c0`, 141.5 MB; LICENSE =
+WHOI academic/personal **NON-COMMERCIAL** — raw audio **NOT** re-uploaded to HF PUBLIC). Dolphin
+species used: Atlantic_Spotted, Clymene, Common, Frasers, Grampus/Rissos, Pantropical_Spotted
+(6 delphinid spp, 36 clips); contrast = Bowhead/Fin/Humpback baleen moans (18 clips). Native
+sample-rates were heterogeneous (30k–166k Hz) → resampled to a common 48 kHz (absolute-Hz bands).
+
+**Pipeline (Phase 1)** — real WAV → STFT spectrogram → per-frame band features (F0 whistle
+fundamental + **dF0/dt FM-contour slope**, click rate, burst-pulse density, spectral centroid/
+bandwidth) → deterministic **5-ch tension** [F0_level, **|dF0/dt|(#1763)**, click_rate,
+burst_density, centroid], bounded [−3,3]. Mirrors `BRAIN/eeg/eeg_to_tpm.hexa` adapter shape.
+
+**Validation (Phase 2, substrate-native, NOT cross-entropy):**
+- **F-FETCH** 🟢 HOLDS — 36 dolphin + 18 contrast real clips fetched (sha/license recorded).
+- **F-DISCRIMINATIVE (fine cross-species)** 🔴 REFUTED — between-class 1.39 < within-class 2.02
+  (sep 0.69); a 5-scalar fingerprint does NOT resolve 6 closely-related delphinid species
+  (overlapping whistle bands — biologically expected). Honest closed-negative (a_paper_negative_ok).
+- **F-DISCRIMINATIVE-COARSE (whistle vs click/moan)** 🟢 HOLDS — between 3.74 > within 2.32
+  (sep 1.61); delphinid whistle group separates cleanly from the baleen-moan group.
+- **F-DFDT-TIME (#1763)** 🟢 HOLDS — time-scrambling the F0 contour inflates |dF0/dt| ~2.7×
+  (0.072 → ~0.19, 3/3 seeds); dF/dt-aware sep 0.435 > static-only 0.385 (3/3 seeds). The
+  **#1763 d/dt time-encoding is confirmed on REAL natural dolphin FM contours** — the whistle's
+  time-varying frequency carries d/dt structure a static bag-of-frames spectrum loses.
+- **F-STABLE** 🟢 HOLDS — 0 NaN, 0 out-of-range, deterministic re-encode diff = 0.
+
+**anima link:** H_070 dolphin_star_communication / Hc_017; ties the recent #1763 finding (TIME enters
+via the d/dt / rising-edge) to a natural FM-contour test. **Honest bottom line:** real dolphin
+frequency data DID flow spectral→5-ch tension; the fingerprint IS discriminative at the acoustic-CLASS
+level (whistle vs moan) but NOT across close delphinid species; the whistle dF0/dt DOES beat the
+time-shuffled static spectrum (the #1763 d/dt test passes on natural data).
+
+**scope (§97 · a_toy_scale_recheck · a_scale_honest_scope · a_paper_negative_ok):** TOY / CPU / $0;
+public recordings, **NOT a live hydrophone**; single 340-row split — scale-up re-test required before
+any general claim. §97 — acoustic = a measurement-anchor, **not a command channel**. Watkins
+non-commercial license respected (no PUBLIC re-upload of raw audio; derived fingerprints local only).
+산출물: `UNIVERSE/dolphin_acoustic_ingest.py` · `.verdicts/dolphin-acoustic-ingest/{F-FETCH,
+F-DISCRIMINATIVE,F-DFDT-TIME,F-STABLE,SUMMARY}.txt + results.json + run_stdout.txt` ·
+`.discoveries/dolphin-acoustic-ingest.tape`.
