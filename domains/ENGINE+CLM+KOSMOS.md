@@ -684,4 +684,3 @@ non-commercial license respected (no PUBLIC re-upload of raw audio; derived fing
 산출물: `UNIVERSE/dolphin_acoustic_ingest.py` · `.verdicts/dolphin-acoustic-ingest/{F-FETCH,
 F-DISCRIMINATIVE,F-DFDT-TIME,F-STABLE,SUMMARY}.txt + results.json + run_stdout.txt` ·
 `.discoveries/dolphin-acoustic-ingest.tape`.
->>>>>>> origin/main
