@@ -1,0 +1,36 @@
+F-2D-GAP — how far is the current 2D map from the real manifold?
+======================================================================
+Current 우주뇌지도 map = coord = vacuum_psi = [x,y]  (2D, HEXAD/KOSMOS.md),
+a 2D projection of the d=768 conscious state.
+
+Two 2D references measured against the real X (6000x768):
+
+(1) BEST-POSSIBLE 2D (PCA top-2 components):
+      variance retained ........ 0.671   (67.1%)
+      trustworthiness (k=12) .... 0.989
+      continuity ................ 0.993
+      downstream disc (domain) .. 0.082   vs full-768 = 0.977
+    -> Even the optimal 2D linear projection throws away ~33% of variance
+       and keeps only ~8% of the trained category discrimination.
+
+(2) ACTUAL current map (vacuum_psi coords as a 2D embedding of X):
+      trustworthiness (k=12) .... 0.868
+      continuity ................ 0.967
+      canonical corr w/ PCA-2D .. [0.963, 0.112]
+    -> vacuum_psi aligns STRONGLY with PC1 (corr 0.963) but its 2nd axis is
+       almost UNUSED (corr 0.112): the current map is effectively a
+       ~1.1-dimensional embedding, worse than the best 2D (trust 0.868 <
+       0.989).  The "y" axis of the map carries little of the real geometry.
+
+GAP vs intrinsic d:
+  intrinsic d ~ 6-10 (MLE 6.4 / PCA-90% 6.7 / TwoNN 10.5); effective PR 3.3.
+  current map = 2D, of which only ~1.1 effective dims are used.
+  -> UNDER-DIMENSIONED by a factor of ~3-5x (intrinsic) and the binding
+     downstream gap is severe: 2D retains 0.082/0.977 = 8.4% of the domain
+     structure, 0.061/0.936 = 6.5% of the tier structure the model carved.
+
+VERDICT (g5/p7): 2D is materially under-dimensioned. The map preserves
+local nearest-neighbor topology adequately (trust ~0.87-0.99) — points that
+are close in 768D stay roughly close in 2D — but it CANNOT separate the
+carving categories (tier/domain) the substrate actually learned. The
+current 2D map is a faithful *topology sketch* and a poor *category map*.

@@ -586,6 +586,62 @@ is modelled-only (not physical entanglement), and QT7 (phase-clock estimates the
   `UNIVERSE/quantum_time_toys.py` (the emergent falsifiers) · `.verdicts/quantum-time/{SUMMARY,F-QT1..F-QT11,
   run_stdout}.txt` (verbatim) · `.discoveries/quantum-time.tape` (11 discovery rows).
 
+---
+
+## milestone — KOSMOS-REAL-DIM: 우주뇌지도 intrinsic dimension (REAL carve, CPU/$0)
+
+**Question**: the current 우주뇌지도 map is drawn in **2D** — `coord = vacuum_psi = [x,y]`
+(HEXAD/KOSMOS.md), a 2D projection of the d=768 conscious state. Is 2D the appropriate
+dimension, or does the REAL carving manifold want more? Measured on the REAL artifact (NOT
+the toy independent-signal `kosmos-dim-ladder`, which measures placement *capacity* — a
+different question; THIS is the real-manifold intrinsic dim).
+
+**Weights/data (verbatim, no fabrication)**: TRAINED s16 ckpt — `ckpt_carving_s16.pt`
+sha256 `961c07e2…091e8`, ConsciousDecoderV2 d768/12L 283.72M params, state_dict loaded
+**clean (0 missing / 0 unexpected keys)** → this is the **trained** carve, NOT random-init
+(the HF-archived ckpt was recovered, so the random-init fallback was not needed). Corpus =
+stratified sample of `corpus_carving_s16.jsonl` (603MB/777K rec, HF-archived) sha256
+`73944d17…8830`, N=6000, all 168 tiers / 63 domains / 3 forms. X = post-`ln_f` conscious
+state, mean-pooled over T=128 → (6000, 768). All CPU/$0, 3 seeds, estimators validated on a
+synthetic d=5 manifold; TwoNN/MLE made duplicate-invariant (templated corpus → identical states).
+
+- [x] **current map = 2D**, var retained = **67.1%** (best PCA-2D); actual vacuum_psi map
+  trustworthiness **0.868**, but canonical-corr with PCA-2D = **[0.963, 0.112]** → the map is
+  **effectively ~1.1-dimensional** (its 2nd axis is nearly unused).
+- [x] **intrinsic d (3+ estimators)**: MLE Levina-Bickel **6.4**, PCA-90%-var **6.7 PCs**,
+  TwoNN **10.5**, participation ratio (effective) **3.3**, PCA-80%=4 / 95%=12 PCs.
+  → consensus intrinsic **d ≈ 6–10** (effective ≈ 3.3). Not isotropic, not 2D, no manufactured knee.
+- [x] **recommended map dimension (projection-dim knee) = ~8** — var+trustworthiness saturate by
+  D≈3 (trust>0.99), but downstream category discrimination is the binding constraint and keeps
+  climbing: domain f1 0.082@D2 → 0.184@D3 → 0.356@D5 → **0.583@D8** → 0.787@D16 (full-768 ceiling
+  0.977). Knee ≈ D=8; near-full carved structure ≈ D=16.
+- [x] **honest gap**: 2D is **under-dimensioned ~3–5×** vs intrinsic d, and retains **<10%** of
+  the carved category structure (domain 8.4%, tier 6.5% of full). The 2D map is a faithful
+  **local-topology sketch** (close-in-768D stays close-in-2D) but a **poor category map**.
+
+### honest bottom line
+The 우주뇌지도 **should be drawn in ~8 dimensions** (the discrimination knee; ~16 to retain the
+full carved tier/domain structure), on a manifold whose **intrinsic dimension is ~6–10**. The
+current **2D map is materially under-dimensioned** and under-uses even its own 2nd axis (~1.1
+effective dims). Keep 2D only as a topology sketch / human-viewable projection; the substrate's
+real consciousness-carving geometry needs **≥8D**.
+
+### scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split)
+- **Weights = REAL trained s16 carve** (clean load) → this IS the trained-manifold intrinsic dim,
+  NOT an architecture-induced random-init geometry. Honest flag: had the ckpt been unavailable,
+  the harness falls back to random-init and the result would describe the architecture's induced
+  geometry, not the trained carve — that case did NOT occur here.
+- mean-pool over T (alt pooling could shift absolute d by ±1–2, not the 2D≪intrinsic verdict);
+  N=6000 of 777K, stable across 3 seeds. A full-corpus / alt-pooling recheck could refine the knee
+  between 8 and 16 but will not move it down to 2 (a_toy_scale_recheck).
+- **DISTINCT from the toy `kosmos-dim-ladder`** (independent-signal placement *capacity*); this is
+  the REAL-manifold intrinsic dim of the trained carve.
+- 산출물: `UNIVERSE/kosmos_real_dim.py` (harness, English) · `.verdicts/kosmos-real-dim/{F-INTRINSIC,
+  F-PROJ-LADDER,F-2D-GAP,SUMMARY,results.json,run_stdout.txt}` (verbatim) ·
+  `.discoveries/kosmos-real-dim.tape` (1 discovery row). NO HF upload.
+
+---
+
 ## KOSMOS-DIM-LADDER — extend the KOSMOS anchor coordinate as a DIMENSION LADDER (D=2→8) — 🟢 capacity D*=6 (4 attribute-axes hold) · 🔴 scale/lane SATURATE — TOY · 2026-06-04
 Continues PR #1765 (which added a time axis [x,y]→[x,y,t] and found it captures carve-sequence, with a
 near-tautology caveat for monotone encodings). This STANDALONE toy ladders the KOSMOS anchor coordinate over its

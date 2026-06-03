@@ -1,0 +1,34 @@
+F-PROJ-LADDER — projection-dim ladder D in {1,2,3,5,8,16,32}
+======================================================================
+PCA projection of X (6000x768) -> D, 3 seeds (n=2500), mean.
+Metrics: (a) variance retained, (b) trustworthiness & continuity (k=12 NN)
+vs full-768, (c) downstream discrimination (3-fold CV macro-F1) of the
+carving LABELS the trained model was carved on: tier (168), domain (63),
+carving_form (3).
+
+Full-d768 discrimination baseline (ceiling):
+  tier f1=0.936   domain f1=0.977   form f1=1.000
+
+ D    var_ret   trust   cont    disc_tier  disc_domain  disc_form
+ 1    0.506     0.958   0.982   0.038      0.045        0.286
+ 2    0.671     0.989   0.993   0.061      0.082        0.519
+ 3    0.760     0.991   0.996   0.116      0.184        0.693
+ 5    0.885     0.998   0.998   0.236      0.356        1.000
+ 8    0.923     0.999   0.999   0.417      0.583        1.000
+16    0.965     1.000   1.000   0.633      0.787        1.000
+32    0.989     1.000   1.000   0.742      0.878        1.000
+
+KNEE analysis (g5/p7, honest):
+  - Variance & trustworthiness saturate EARLY (trust>0.99 by D=3) — local
+    neighborhood structure is cheap to preserve.
+  - Downstream DISCRIMINATION is the binding constraint and keeps climbing:
+    domain f1 doubles D2->D3 (0.082->0.184), again D3->D5 (->0.356),
+    D5->D8 (->0.583).  The diminishing-returns KNEE is at D ~ 8 (first
+    rung where domain f1 > 0.5 and the per-step gain begins to shrink);
+    near-ceiling discrimination needs D ~ 16 (domain 0.79, tier 0.66).
+  - form (3-class, the coarsest label) is essentially solved by D=5
+    (1.000); tier/domain (fine labels) are what demand higher D.
+
+VERDICT: the appropriate MAP dimension = ~8 (knee) for a faithful carve,
+~16 to retain near-full category discrimination. 2D and 3D are below the
+knee on every discrimination axis.
