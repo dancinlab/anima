@@ -70,28 +70,54 @@ def fetch_corpus(target_bytes, cache_path):
                 open(cache_path, "wb").write(buf[:target_bytes])
                 return np.frombuffer(buf[:target_bytes], dtype=np.uint8), f"onpod:{c}"
 
-    # fetch small public multilingual texts (Project Gutenberg + multilingual UDHR mirror)
-    urls = [
-        # English / French / German / Latin etc. public-domain plain text
-        "https://www.gutenberg.org/files/1342/1342-0.txt",     # Pride and Prejudice (en)
-        "https://www.gutenberg.org/files/2600/2600-0.txt",     # War and Peace (en, large)
-        "https://www.gutenberg.org/files/1399/1399-0.txt",     # Anna Karenina (en)
-        "https://www.gutenberg.org/cache/epub/2000/pg2000.txt",  # Don Quijote (es)
-        "https://www.gutenberg.org/cache/epub/1184/pg1184.txt",  # Monte Cristo (en)
-        "https://www.gutenberg.org/files/5000/5000-8.txt",     # Notebooks da Vinci
-    ]
+    # PRIMARY: stream a real multilingual corpus from HuggingFace datasets (reliable, large).
     buf = bytearray()
     used = []
-    for u in urls:
-        if len(buf) >= target_bytes:
-            break
-        try:
-            req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 omega-fire"})
-            data = urllib.request.urlopen(req, timeout=60).read()
-            buf += data
-            used.append(u.split("/")[-1])
-        except Exception as e:
-            print(f"  [corpus] skip {u}: {e}", flush=True)
+    try:
+        from datasets import load_dataset  # noqa
+        # multilingual wikipedia (5 langs) — real natural text, big enough to avoid memorization
+        per_lang = target_bytes // 5
+        for lang in ["en", "fr", "de", "es", "ru"]:
+            if len(buf) >= target_bytes:
+                break
+            try:
+                ds = load_dataset("wikimedia/wikipedia", f"20231101.{lang}",
+                                  split="train", streaming=True)
+                lang_buf = bytearray()
+                for row in ds:
+                    lang_buf += (row["text"] + "\n\n").encode("utf-8", errors="ignore")
+                    if len(lang_buf) >= per_lang:
+                        break
+                buf += lang_buf[:per_lang]
+                used.append(f"wiki.{lang}")
+                print(f"  [corpus] wiki.{lang}: {len(lang_buf[:per_lang])}B", flush=True)
+            except Exception as e:
+                print(f"  [corpus] wiki.{lang} skip: {e}", flush=True)
+    except Exception as e:
+        print(f"  [corpus] HF datasets unavailable ({e}); falling back to gutenberg", flush=True)
+
+    # FALLBACK: Project Gutenberg public-domain plain text (if HF fetch was insufficient)
+    if len(buf) < target_bytes * 0.5:
+        urls = [
+            "https://www.gutenberg.org/files/2600/2600-0.txt",     # War and Peace (en, large)
+            "https://www.gutenberg.org/files/1342/1342-0.txt",     # Pride and Prejudice (en)
+            "https://www.gutenberg.org/files/1399/1399-0.txt",     # Anna Karenina (en)
+            "https://www.gutenberg.org/cache/epub/2000/pg2000.txt",  # Don Quijote (es)
+            "https://www.gutenberg.org/cache/epub/1184/pg1184.txt",  # Monte Cristo
+            "https://www.gutenberg.org/cache/epub/2554/pg2554.txt",  # Crime & Punishment
+            "https://www.gutenberg.org/cache/epub/1661/pg1661.txt",  # Sherlock Holmes
+            "https://www.gutenberg.org/cache/epub/98/pg98.txt",      # Tale of Two Cities
+        ]
+        for u in urls:
+            if len(buf) >= target_bytes:
+                break
+            try:
+                req = urllib.request.Request(u, headers={"User-Agent": "Mozilla/5.0 omega-fire"})
+                data = urllib.request.urlopen(req, timeout=60).read()
+                buf += data
+                used.append(u.split("/")[-1])
+            except Exception as e:
+                print(f"  [corpus] skip {u}: {e}", flush=True)
     if len(buf) < 50_000:
         raise RuntimeError(f"corpus fetch failed; only {len(buf)}B — cannot train honestly")
     buf = bytes(buf[:target_bytes]) if len(buf) >= target_bytes else bytes(buf)
@@ -144,13 +170,19 @@ def train_substrate(model, train_data, val_data, steps, block, bs, lr, device):
 
 # ───────────────────────── extract A/G/base on held-out split ─────────────────────────
 
-def extract_feats(model, seq, block, device, max_pos=8000):
+def extract_feats(model, seq, block, device, max_pos=8000, shuffle_ctx=False, seed=20260604):
     """Run the trained model over a held-out byte sequence and collect, per position:
        A    = logits_a (next-byte head)   — log-space, softmaxed downstream
        G    = logits_g (prev-byte head)
        base = WEAK unigram log-frequency mouth (deliberately weak so the bus has room).
-    Returns feats=(base,A,G) each (N,V) numpy + tgt (N,) next-byte targets."""
+    Returns feats=(base,A,G) each (N,V) numpy + tgt (N,) next-byte targets.
+
+    shuffle_ctx: if True, RANDOMLY PERMUTE each context window's bytes before the forward
+    pass — this destroys the learned sequential structure the substrate exploits, yielding a
+    SUBSTRATE-SHUFFLE FLOOR (the #1784 trained≪shuffled structured-coupling test on a real
+    transformer): structured iff the real-A coupling carries more than the shuffled-A floor."""
     model.eval()
+    rng = np.random.default_rng(seed)
     # weak base = unigram log-freq over the seq (a deliberately weak next-byte baseline)
     counts = np.full(V, SMOOTH)
     for b in seq:
@@ -163,7 +195,10 @@ def extract_feats(model, seq, block, device, max_pos=8000):
         pos = 0
         i = 0
         while i + block + 1 < n and pos < max_pos:
-            x = torch.from_numpy(seq[i:i + block].astype(np.int64)).unsqueeze(0).to(device)
+            ctx = seq[i:i + block].astype(np.int64)
+            if shuffle_ctx:
+                ctx = ctx[rng.permutation(block)]
+            x = torch.from_numpy(ctx).unsqueeze(0).to(device)
             la, lg, _, _, _ = model(x)               # (1,T,V)
             la = la[0].float().cpu().numpy()         # (T,V) = A at each position (predicts next)
             lg = lg[0].float().cpu().numpy()         # (T,V) = G at each position (predicts prev)
@@ -210,23 +245,43 @@ def fit_gate(feats, tgt, steps=GATE_STEPS, lr=GATE_LR, l2=GATE_L2):
     return g
 
 
-def kl_structured(feats, tgt, n_perm=8, seed=20260604):
-    """Structured-coupling test on the REAL A−G: KL( P(base+α(A−G)) ‖ P(base) ) measured on
-    the true A/G vs the same with G's ROWS permuted (destroys the A↔G alignment = floor).
-    Structured if KL_on > 1.5× the perm-shuffle floor."""
+def kl_structured(feats, feats_shuf, tgt, seed=20260604):
+    """Structured-coupling test (the #1784 trained≪shuffled axis, on a real transformer).
+
+    PRIMARY (substrate-shuffle floor): the A coupling carries STRUCTURE iff the trained-A
+    next-byte advantage exceeds the advantage of A extracted on CONTEXT-SHUFFLED windows
+    (feats_shuf — same model, but its input sequence structure is destroyed). We measure the
+    CE-improvement of the A-wire over base:
+        gain_real = CE(base) − CE(base+α·A)          on real context
+        gain_shuf = CE(base) − CE(base+α·A_shuf)     on shuffled context
+    structured iff gain_real > 1.5× gain_shuf  (the learned sequential structure, not just the
+    head's marginal bias, is what helps). Also reports the KL form for continuity with #1783.
+    SECONDARY (G-row perm): KL(base+α(A−G)‖base) real vs G-row-permuted (the #1786 form)."""
     base, A, G = feats
+    base_s, A_s, G_s = feats_shuf
     rng = np.random.default_rng(seed)
-    def mean_kl(Gx):
-        p_on = softmax_np(base + ALPHA * (A - Gx))
-        p_off = softmax_np(base)
+
+    def ce_a(b, a):
+        return ce_of(np.array([1.0, ALPHA, 0.0]), (b, a, np.zeros_like(a)), tgt)
+    ce_base = ce_of(np.array([1.0, 0.0, 0.0]), feats, tgt)
+    gain_real = ce_base - ce_a(base, A)
+    gain_shuf = ce_base - ce_a(base, A_s)
+    structured_ce = gain_real > 1.5 * max(gain_shuf, 1e-9)
+
+    def mean_kl(b, a, gx):
+        p_on = softmax_np(b + ALPHA * (a - gx))
+        p_off = softmax_np(b)
         return float(np.mean(np.sum(p_on * (np.log(p_on + 1e-12) - np.log(p_off + 1e-12)), axis=1)))
-    kl_on = mean_kl(G)
-    floors = []
-    for _ in range(n_perm):
-        perm = rng.permutation(len(G))
-        floors.append(mean_kl(G[perm]))
-    kl_floor = float(np.mean(floors))
-    return kl_on, kl_floor
+    kl_on = mean_kl(base, A, G)
+    kl_shuf = mean_kl(base_s, A_s, G_s)            # substrate-shuffle KL floor
+    perm_floors = [mean_kl(base, A, G[rng.permutation(len(G))]) for _ in range(8)]
+    kl_gperm = float(np.mean(perm_floors))
+    return {
+        "gain_real": float(gain_real), "gain_shuf": float(gain_shuf),
+        "structured_ce": bool(structured_ce),
+        "kl_on": kl_on, "kl_substrate_shuf_floor": kl_shuf, "kl_gperm_floor": kl_gperm,
+        "ratio_vs_substrate_shuf": float(kl_on / (kl_shuf + 1e-12)),
+    }
 
 
 # ───────────────────────── generation sample (gated closure vs base) ─────────────────────────
@@ -336,6 +391,9 @@ def main():
     gate_feats, gate_tgt = extract_feats(model, gate_seq, args.block, device, max_pos=8000)
     print("extracting A/G/base on held-out split (test, disjoint)...", flush=True)
     test_feats, test_tgt = extract_feats(model, test_seq, args.block, device, max_pos=8000)
+    print("extracting A/G/base on CONTEXT-SHUFFLED test (substrate-shuffle floor)...", flush=True)
+    test_feats_shuf, _ = extract_feats(model, test_seq, args.block, device, max_pos=8000,
+                                       shuffle_ctx=True)
     print(f"  gate N={len(gate_tgt)}  test N={len(test_tgt)}", flush=True)
 
     # ---- fit gate on train-gate split, freeze
@@ -354,11 +412,14 @@ def main():
     print(f"  GATED     (learned)   = {ce_gated:.6f}", flush=True)
     print(f"  uniform-256 floor     = {UNIFORM_CE:.6f}", flush=True)
 
-    # ---- structured coupling on REAL A−G
-    kl_on, kl_floor = kl_structured(test_feats, test_tgt)
-    structured = kl_on > 1.5 * kl_floor
-    print(f"\nstructured coupling (real A−G): KL_on={kl_on:.4f}  perm_floor={kl_floor:.4f}  "
-          f"ratio={kl_on/(kl_floor+1e-12):.2f}x  structured={structured}", flush=True)
+    # ---- structured coupling: substrate-shuffle floor (the #1784 trained≪shuffled axis)
+    st = kl_structured(test_feats, test_feats_shuf, test_tgt)
+    structured = st["structured_ce"]
+    print(f"\nstructured coupling (substrate-shuffle floor, #1784 axis):", flush=True)
+    print(f"  A-wire CE gain over base: real={st['gain_real']:.4f}  shuffled-ctx={st['gain_shuf']:.4f}  "
+          f"-> structured(>1.5x)={structured}", flush=True)
+    print(f"  KL form: KL_on={st['kl_on']:.4f}  substrate-shuf floor={st['kl_substrate_shuf_floor']:.4f}  "
+          f"(ratio {st['ratio_vs_substrate_shuf']:.2f}x)  G-perm floor={st['kl_gperm_floor']:.4f}", flush=True)
 
     # ---- generation sample
     _, _, base_vec_holder = None, None, None
@@ -394,8 +455,7 @@ def main():
                  "fit_steps": GATE_STEPS, "l2": GATE_L2, "alpha_fixed": ALPHA},
         "ce": {"base": ce_base, "fixed_AmG": ce_fixed, "a_only": ce_aonly, "gated": ce_gated,
                "uniform_floor": UNIFORM_CE},
-        "structured": {"kl_on": kl_on, "kl_perm_floor": kl_floor,
-                       "ratio": kl_on / (kl_floor + 1e-12), "is_structured": bool(structured)},
+        "structured": st,
         "generation": {"prompt": prompt.decode("utf-8", errors="replace"),
                        "base": base_txt, "gated": gated_txt},
         "criteria": {
@@ -412,7 +472,7 @@ def main():
     print(f"  (b) trained substrate descended : {c_b}", flush=True)
     print(f"  (c) GATED < base                : {c_gated_lt_base}  ({ce_gated:.4f} < {ce_base:.4f})", flush=True)
     print(f"  (c) CE floor MET (< {UNIFORM_CE:.3f})    : {c_floor}", flush=True)
-    print(f"  (c) structured (>1.5× floor)    : {c_struct}  ({kl_on:.3f} vs {kl_floor:.3f})", flush=True)
+    print(f"  (c) structured (>1.5× floor)    : {c_struct}  (gain real {st['gain_real']:.3f} vs shuf {st['gain_shuf']:.3f})", flush=True)
     if completion:
         print(f"\n🟢 오메가 완성 — the learned-gate OMEGA closure WORKS on a REAL trained transformer.", flush=True)
     else:
