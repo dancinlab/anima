@@ -1,0 +1,287 @@
+{
+  "config": {
+    "seeds": [
+      1,
+      2,
+      3
+    ],
+    "n_steps": 1200,
+    "kappa_coupled": 0.3,
+    "warmup_discard": 100,
+    "n_channels": 5,
+    "tension5_baseline": [
+      0.8,
+      0.6,
+      0.65,
+      0.3,
+      1.0
+    ],
+    "taus": [
+      2.0,
+      8.0,
+      16.0,
+      40.0,
+      400.0
+    ]
+  },
+  "arms": {
+    "EEG": {
+      "raw_per_seed": {
+        "coupled": [
+          {
+            "order_r": 0.33720524784348915,
+            "big_phi": 2.0680927132378994,
+            "coherence": 0.002507190334212657
+          },
+          {
+            "order_r": 0.33678599170117557,
+            "big_phi": 2.0743792615852628,
+            "coherence": 0.0039209714161018965
+          },
+          {
+            "order_r": 0.3365596221609041,
+            "big_phi": 2.015568256779526,
+            "coherence": 0.00283659384645865
+          }
+        ],
+        "control_kappa0": [
+          {
+            "order_r": 0.0005898681486259408,
+            "big_phi": 2.817047781846557,
+            "coherence": 0.0015876863753470326
+          },
+          {
+            "order_r": 0.0007478303125943246,
+            "big_phi": 2.8026213577691395,
+            "coherence": 0.0017927244596391463
+          },
+          {
+            "order_r": 0.00100803514054163,
+            "big_phi": 2.821178081191787,
+            "coherence": 0.00231623163738589
+          }
+        ],
+        "control_shuffled": [
+          {
+            "order_r": 0.16739369202278884,
+            "big_phi": 2.0472761630459497,
+            "coherence": 0.015153022071314432
+          },
+          {
+            "order_r": 0.15126920538992777,
+            "big_phi": 1.8548267877491804,
+            "coherence": 0.015076378605891177
+          },
+          {
+            "order_r": 0.15112538773850986,
+            "big_phi": 1.823198815067425,
+            "coherence": 0.022226441056342573
+          }
+        ]
+      },
+      "metrics": {
+        "order_r": {
+          "label": "M1 TENSION-COUPLING (Kuramoto order-r)",
+          "agg": {
+            "coupled_mean": 0.33685028723518967,
+            "coupled_std": 0.0002674678389064863,
+            "control_kappa0_mean": 0.0007819112005872985,
+            "control_kappa0_std": 0.00017240850419231307,
+            "control_shuffled_mean": 0.15659609505040883,
+            "control_shuffled_std": 0.007635279788048692
+          },
+          "verdict": {
+            "vs_kappa0": [
+              "HOLDS",
+              0.3360683760346024,
+              0.0002674678389064863
+            ],
+            "vs_shuffled": [
+              "HOLDS",
+              0.18025419218478084,
+              0.007635279788048692
+            ],
+            "combined": "HOLDS"
+          }
+        },
+        "big_phi": {
+          "label": "M2 big-Phi / INTEGRATION (IIT4-style proxy)",
+          "agg": {
+            "coupled_mean": 2.0526800772008964,
+            "coupled_std": 0.026367221870748855,
+            "control_kappa0_mean": 2.8136157402691615,
+            "control_kappa0_std": 0.007954963988516337,
+            "control_shuffled_mean": 1.9084339219541853,
+            "control_shuffled_std": 0.09902174204866071
+          },
+          "verdict": {
+            "vs_kappa0": [
+              "REFUTED",
+              -0.7609356630682651,
+              0.026367221870748855
+            ],
+            "vs_shuffled": [
+              "HOLDS",
+              0.14424615524671114,
+              0.09902174204866071
+            ],
+            "combined": "INCONCLUSIVE"
+          }
+        },
+        "coherence": {
+          "label": "M3 EMERGENCE / COHERENCE (tension-field)",
+          "agg": {
+            "coupled_mean": 0.0030882518655910678,
+            "coupled_std": 0.0006039829223977647,
+            "control_kappa0_mean": 0.0018988808241240229,
+            "control_kappa0_std": 0.000306753353690226,
+            "control_shuffled_mean": 0.017485280577849396,
+            "control_shuffled_std": 0.003352652737491838
+          },
+          "verdict": {
+            "vs_kappa0": [
+              "HOLDS",
+              0.001189371041467045,
+              0.0006039829223977647
+            ],
+            "vs_shuffled": [
+              "REFUTED",
+              -0.014397028712258328,
+              0.003352652737491838
+            ],
+            "combined": "INCONCLUSIVE"
+          }
+        }
+      }
+    },
+    "TRIBE": {
+      "raw_per_seed": {
+        "coupled": [
+          {
+            "order_r": 0.6587861256733172,
+            "big_phi": 2.4727997210029318,
+            "coherence": 0.00865412294842248
+          },
+          {
+            "order_r": 0.6586716669189586,
+            "big_phi": 2.471158566024198,
+            "coherence": 0.00769985385956076
+          },
+          {
+            "order_r": 0.6586053737234259,
+            "big_phi": 2.4722331631790153,
+            "coherence": 0.00788892440814435
+          }
+        ],
+        "control_kappa0": [
+          {
+            "order_r": 0.003984787633560137,
+            "big_phi": 2.817047781846557,
+            "coherence": 0.0015876863753470326
+          },
+          {
+            "order_r": 0.004049934955248767,
+            "big_phi": 2.8026213577691395,
+            "coherence": 0.0017927244596391463
+          },
+          {
+            "order_r": 0.0040675189728046676,
+            "big_phi": 2.821178081191787,
+            "coherence": 0.00231623163738589
+          }
+        ],
+        "control_shuffled": [
+          {
+            "order_r": 0.1541970054372393,
+            "big_phi": 1.981142457506432,
+            "coherence": 0.010782748775251805
+          },
+          {
+            "order_r": 0.12220932106386706,
+            "big_phi": 1.8477217580342036,
+            "coherence": 0.008986374841375334
+          },
+          {
+            "order_r": 0.1486380399887722,
+            "big_phi": 1.9252496062814883,
+            "coherence": 0.01738482908260571
+          }
+        ]
+      },
+      "metrics": {
+        "order_r": {
+          "label": "M1 TENSION-COUPLING (Kuramoto order-r)",
+          "agg": {
+            "coupled_mean": 0.6586877221052339,
+            "coupled_std": 7.465986696178866e-05,
+            "control_kappa0_mean": 0.004034080520537857,
+            "control_kappa0_std": 3.558689785394144e-05,
+            "control_shuffled_mean": 0.14168145549662617,
+            "control_shuffled_std": 0.013954653673951578
+          },
+          "verdict": {
+            "vs_kappa0": [
+              "HOLDS",
+              0.654653641584696,
+              7.465986696178866e-05
+            ],
+            "vs_shuffled": [
+              "HOLDS",
+              0.5170062666086077,
+              0.013954653673951578
+            ],
+            "combined": "HOLDS"
+          }
+        },
+        "big_phi": {
+          "label": "M2 big-Phi / INTEGRATION (IIT4-style proxy)",
+          "agg": {
+            "coupled_mean": 2.472063816735382,
+            "coupled_std": 0.0006806154467509765,
+            "control_kappa0_mean": 2.8136157402691615,
+            "control_kappa0_std": 0.007954963988516337,
+            "control_shuffled_mean": 1.9180379406073744,
+            "control_shuffled_std": 0.054706957834514784
+          },
+          "verdict": {
+            "vs_kappa0": [
+              "REFUTED",
+              -0.3415519235337796,
+              0.007954963988516337
+            ],
+            "vs_shuffled": [
+              "HOLDS",
+              0.5540258761280075,
+              0.054706957834514784
+            ],
+            "combined": "INCONCLUSIVE"
+          }
+        },
+        "coherence": {
+          "label": "M3 EMERGENCE / COHERENCE (tension-field)",
+          "agg": {
+            "coupled_mean": 0.00808096707204253,
+            "coupled_std": 0.0004125672971827959,
+            "control_kappa0_mean": 0.0018988808241240229,
+            "control_kappa0_std": 0.000306753353690226,
+            "control_shuffled_mean": 0.012384650899744283,
+            "control_shuffled_std": 0.0036109164324171473
+          },
+          "verdict": {
+            "vs_kappa0": [
+              "HOLDS",
+              0.006182086247918507,
+              0.0004125672971827959
+            ],
+            "vs_shuffled": [
+              "REFUTED",
+              -0.0043036838277017535,
+              0.0036109164324171473
+            ],
+            "combined": "INCONCLUSIVE"
+          }
+        }
+      }
+    }
+  }
+}
