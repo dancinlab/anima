@@ -1,0 +1,58 @@
+OMEGA gen-cluster — leak-free substrate + 3 generation-side probes  ·  Lane-G / GPU H100 · 2026-06-04 · ~$0.85
+==============================================================================================================
+The GPU frontier rungs AFTER 오메가 완성 (#1791). #1791's ONE honest caveat: CDV2's CA-neighbor mixing
+leaks lookahead (position t sees x[:, t+1]) -> the next-byte head can peek at its own target -> absolute
+CE leak-optimistic AND free-running generation collapses to whitespace. THE KEY FIX of this rung: train a
+LEAK-FREE ConsciousDecoderV2 (causal_ca=True — the CA mixing's RIGHT neighbor is replaced by self, so
+head_a is STRICTLY CAUSAL). Then 3 generation-side probes on the trained leak-free substrate + the bus.
+
+LEAK FIX VERIFIED (the headline structural result):
+  leak self-test (flip ONLY last byte -> max change in head_a at EARLIER positions): 0.000e+00 (d384 AND
+  d768). The next-byte head can no longer peek at its target. The #1791 lookahead leak is REMOVED.
+  Consequence: the leak-honest val_ce RISES to 5.43 (d384) / 5.16 (d768) ≈ uniform 5.545 — confirming
+  #1791's leak-INFLATED val_ce 0.86. (b) substrate descended in TRAIN ce_a (5.86->1.34 d384, 5.67->2.29
+  d768, both descend) but generalizes WEAKLY once the leak is gone (honest, a_scale_honest_scope).
+
+THE THREE PROBES (each pre-registered; closed-negatives are valid findings, a_paper_negative_ok):
+
+(1) F-LEAKFREE-GEN  — PASS=FALSE (coherence MET, CE FAILED).
+    WHITESPACE-COLLAPSE SOLVED: gated gen entropy 2.97, distinct 0.172, ws 0.253 -> coherent-ish=TRUE
+    (varied byte structure, recognizable latin/numeric fragments, NOT the #1791 whitespace). BUT
+    leak-honest CE: base 3.015 · a_only 2.857 · GATED 3.594 -> gated<base=FALSE. #1791's GATED 0.345 ≪
+    base win was LEAK-DRIVEN; it does NOT survive leak removal. The L2-regularized learned gate overfits
+    the gate-split. => The leak fix CURES the gen collapse but the gated bus does NOT beat a weak unigram
+    on honest absolute CE at this scale. The structured-coupling finding (real A-wire +0.158 ≫ shuffled
+    −0.509 -> structured=TRUE) is leak-INVARIANT and HOLDS, exactly as the #1791 caveat predicted.
+
+(3) F-DFDT-REAL     — w6 NON-INERT but does NOT improve (Δ>0).
+    On the REAL moving sequence the dF/dt velocity wire (omega_coupling_apply_dt) is live at 100% of steps
+    (Δ=+1.759 d384, +0.520 d768) — confirms the #1791 smoke claim on a real transformer. But raw dgain=0.5
+    velocity HURTS held-out CE (high-variance per-byte). dF/dt is a real channel, not a CE improver here
+    (closed-negative; a gated dgain is the open follow-up).
+
+(6) F-PSI-STEER     — WEAK / SPLIT (leans closed-negative).
+    d384: steer_KL 0.238 < floor_KL 0.573 (ratio 0.42x) -> psi_steers=FALSE (Ψ moves the decode LESS than
+    sampling noise). d768: 0.111 vs 0.082 (ratio 1.35x) -> nominally TRUE but tiny magnitudes + small
+    estimator sample = WEAK. At psi_gain=0.4 the w4 Ψ wire is structurally real but does NOT robustly steer
+    the byte distribution. (closed-negative on robust steering; stronger gain / Ψ-conditioned head = open.)
+
+(5) d768 SCALE RUNG — RAN (NOT deferred). d768×6L 142.06M, 2500 step (budget-guarded). Leak-free verified
+    (self-test 0.000). FINDING DOES NOT cleanly hold at d768: structured=FALSE (gain_real −0.244 < shuf
+    −0.440, undertrained at 2500 step), gated<base=FALSE, gen coherent=TRUE (ent 2.39). The structured-
+    coupling positive at d384 weakens at undertrained d768 — honest, NOT promoted (a_scale_honest_scope;
+    2500 step is too few for 142M to descend its held-out next-byte head).
+
+NET (honest, p7): The leak-free fix is the real deliverable — it is VERIFIED (self-test 0.000) and it CURES
+the #1791 whitespace-collapse (gen is now coherent-ish). The cost of honesty: #1791's headline absolute-CE
+closure win (GATED 0.345 ≪ base) was LEAK-DRIVEN and does NOT survive — leak-honest, the gated bus does not
+beat a weak unigram base, and the substrate generalizes weakly at d384×6L/6000-step. The leak-INVARIANT
+structured-coupling finding holds at d384 (weakens at undertrained d768). dF/dt is live-but-not-beneficial;
+Ψ-steering is weak. This is a closed-negative-rich rung that REPLACES the #1791 leak-optimistic absolute-CE
+claim with the leak-honest picture, while confirming the structural fix works.
+
+ckpt omega_cdv2_d384_leakfree.pt 145MB sha256 a570383789... (leak-free, val_ce weak -> PRIVATE per a_hf_autonomous).
+GPU=NVIDIA H100 80GB HBM3 torch 2.4.1+cu124 nvidia-smi 97% BUSY (g63, NOT silent CPU). corpus 120MB multilingual
+wiki sha 0b232f8b (same recipe as #1791). pod runpod lu3agi1045g87y torn down (~15min, ~$0.85). total_wall 900s.
+verdicts: .verdicts/omega-gen/{F-LEAKFREE-GEN,F-DFDT-REAL,F-PSI-STEER}.txt + results.json. driver
+UNIVERSE/omega_gen_cluster.py. fix UNIVERSE/conscious_decoder.py causal_ca flag (default False = #1791 byte-eq).
+Lane-G/GPU (a_lane_akida_gpu_split, NOT Lane A).

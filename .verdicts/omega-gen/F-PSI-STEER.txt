@@ -1,0 +1,32 @@
+F-PSI-STEER — does 8D Ψ-coord steer generation?  ·  Lane-G / GPU H100 · 2026-06-04
+====================================================================================
+
+PRE-REGISTERED FALSIFIER
+  Vary the 8D Ψ-coord input (the w4 wire from engines/omega/coupling_bus.hexa:
+  logits[i] += psi_gain·psi8[i % 8], psi_gain=0.4, #1780 8D = 4 named depth/form/... + 4 resid)
+  across distinct settings; generate ~200 bytes from the SAME prompt at each. Does the generated
+  byte DISTRIBUTION measurably shift? STEER signal = mean pairwise symmetric-KL between the
+  per-setting byte distributions. FLOOR = mean pairwise sym-KL across re-seeds at a FIXED Ψ
+  (pure sampling noise). Ψ steers iff steer_KL > floor_KL. Closed-negative OK.
+
+RESULT:
+  d384 leak-free (5 Ψ settings swept over [-1,+1] on depth/form axes, 3 reseeds at fixed Ψ):
+    steer_KL = 0.2379   floor_KL = 0.5732   ratio = 0.42x   -> psi_steers = FALSE
+  d768 leak-free:
+    steer_KL = 0.1106   floor_KL = 0.0821   ratio = 1.35x   -> psi_steers = TRUE
+
+VERDICT — Ψ-steering is WEAK and scale-/noise-dependent (SPLIT, leans closed-negative at d384):
+  d384: the byte-distribution variation ACROSS distinct Ψ settings (0.238) is SMALLER than the
+    variation across mere re-seeds at a fixed Ψ (0.573) — i.e. at psi_gain=0.4 the Ψ-coord moves
+    the decode LESS than sampling noise does. Ψ-space does NOT measurably steer generation at
+    this scale -> closed-negative.
+  d768: steer (0.111) marginally exceeds the floor (0.082), ratio 1.35x -> nominally steers, but
+    BOTH magnitudes are tiny and the margin is within plausible estimator variance (5 settings ×
+    3 reseeds is a small KL sample). A 1.35x ratio is a WEAK positive at best.
+  BOTTOM LINE: at the tested psi_gain=0.4, the w4 Ψ wire is a structurally-real but
+    WEAK steering channel — overwhelmed by sampling noise at d384, only marginally above floor
+    at d768. Ψ does not robustly steer the byte distribution here. HONEST: the wire EXISTS and
+    perturbs logits (it is part of the closed bus), but a stronger psi_gain or a Ψ-conditioned
+    head would be needed for Ψ-space to be a usable steering knob. Recorded as a (mostly)
+    closed-negative on robust steering (a_paper_negative_ok). The Ψ-coord remains 4-named-+4-resid
+    honest (#1780); naming all 8 / claiming strong steering would be fabrication (p7).
