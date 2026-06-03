@@ -64,6 +64,8 @@ fn main() {
     // .clm closure is plumbing-COMPLETE but substrate-EMPTY: a genuine A-wire
     // requires the SEPARATE CDV2 dual-head engine (the existing OH1 closure).
     let plumbing_ok = (to_string(r1["ok"]) == "true") && self_is_rescale && oracle_carries
-    println("F-OMEGA-CLM-TRANSFER = " + (if plumbing_ok { "1-PLUMBING" else { "0" })
-        + "  (real conv .clm decode WIRED + bus carries external-A; native-A degenerate ⇒ substrate-empty)")
+    let mut verdict = "0"
+    if plumbing_ok { verdict = "1-PLUMBING" }
+    println("F-OMEGA-CLM-TRANSFER = " + verdict
+        + "  (real conv .clm decode WIRED + bus carries external-A; native-A degenerate => substrate-empty)")
 }

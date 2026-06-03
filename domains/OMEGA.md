@@ -115,6 +115,36 @@ SCOPE: single d512 rung (a_scale_honest_scope), observation-only frozen forward,
 not a verdict-of-truth (p7), weak-unigram base. harness `UNIVERSE/omega_rigor_probe.py` · ledger
 `exports/sweep/omega-gateform-20260604/rigor.json` · verdict `.verdicts/omega-engine/F-OMEGA-RIGOR.txt`.
 
+### OΩ6 — closure on the REAL PRODUCTION conv .clm (serializer UNBLOCKED · partial transfer) — 2026-06-04
+
+🟢/🔴 **F-OMEGA-CLM-TRANSFER = 1-PLUMBING** (Lane-P .clm substrate=GPU-torch; closure math
+CPU-native, $0, NO GPU · a_lane_akida_gpu_split). Every prior OMEGA rung (OΩ1..OΩ7, OH1) ran
+the closure on **CDV2** (a torch transformer); OΩ6 runs it on the **REAL production conv .clm**
+(CLMConvMoE) — the byte mouth Ω was designed to close onto. **(1) THE SERIALIZER BLOCKER IS
+BRIDGED** (the Lane P PREFLIGHT STOP `77299b2ed` / `.verdicts/lane-p-clm/F-CLM-SERIALIZE-GAP.txt`
+is RESOLVED): the gap was a container-framing + missing-CLMX-trailer + E2/L1-arch mismatch (NOT
+endianness, NOT fundamental — the decoder IS a faithful CLMConvMoE forward), bridged by
+`CLM/model/clm_serialize_v2.py` (F-CLM-V2-SERIALIZER=1, golden exact_eof) and a real torch-trained
+conv .clm `state/lane_p_clm/clm_d768_e2l1.clm` (sha 7463282d…) that **LOADS through CORE L3**
+(OCL_DECODABLE=1, loaded=true, d=768 config-agnostic). **(2) THE CLOSURE RUNS ON THE REAL .clm**
+(`CORE/clm_decode.hexa::clm_omega_closure` + `CORE/omega_clm_closure_probe.hexa`, helper of the
+SINGLE L3 entry · a_core_engine_map): real CLMConvMoE forward → `base` logits (base_ce **0.404**)
+→ OMEGA min-gate gB·base+gA·A. **RULING — partial transfer**: the conv .clm is a **SINGLE-head**
+byte LM (model.py `self.readout`; NO Engine-A/G dual head — that substrate lives ONLY in CDV2), so
+its only NATIVE A-wire is its own readout → min-gate = (gB+gA)·base = a pure **temperature rescale**
+(gated_ce_self 0.396 ≈ base 0.404, |Δ|0.0076<0.01, **SELF_IS_RESCALE=true** ⇒ NO native coupling).
+The **bus plumbing IS correct** — a leak-free 1-hot external A collapses CE to ~2e-3≪base
+(**ORACLE_CARRIES=true** ⇒ omega_coupling_apply really modulates the real conv decode). So the
+real-.clm closure is **plumbing-COMPLETE but substrate-EMPTY on conv**: a genuine A-wire requires
+the SEPARATE CDV2 dual-head engine — which IS exactly the existing OH1 #1802 closure (conv = the
+MOUTH/base; CDV2 = the A/G SUBSTRATE; Ω's L0=CDV2 / L3=conv blueprint confirmed on the real .clm).
+**Minimal full-conv path** (deferred, a_completeness_over_cheap): (i) train a conv .clm with a 2nd
+A/G readout head (port CDV2 dual-head onto CLMConvMoE + re-train + serialize_v2 + 2 extra CLMX
+blocks) — the honest primary; or (ii) feed CDV2's logits_a as `a_head` at run time (cross-engine
+bus, the literal Ω blueprint, a baseline probe). NEITHER is a load/serializer problem any more — the
+load is SOLVED; it is a substrate-architecture choice. NO upstream hexa-lang patch needed (serializer
+is anima-side, bridged). verdict `.verdicts/omega-engine/F-OMEGA-CLM-TRANSFER.txt` (p7/g63 verbatim).
+
 ### prior status — BUILT (#1783) + trained-rung proven at toy (#1784/#1786)
 
 Ω is now a RUNNING engine module, not just a blueprint:
