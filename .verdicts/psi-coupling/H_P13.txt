@@ -1,0 +1,22 @@
+# H_P13 — SEANCE-IDEOMOTOR (weak shared coupling)
+# expected disposition (pre-registered): COUPLING(if-channel)
+# campaign: PSI-COUPLING (telepathy + anomalous-cognition family)
+# seeds=[1, 2, 3] n_steps=1200 kappa=0.3 mitosis=ON (p8 native growth; C3 grows a CellPop recording artifact)
+# controls: kappa0 (no coupling) / phase-shuffled / no-channel — mandatory
+# scope: TOY synthetic · CPU · $0 · scale-transfer UNVERIFIED (a_toy_scale_recheck)
+# --- VERBATIM harness output (UNIVERSE/psi_coupling_toys.py) ---
+[C1] tension-link only
+  signal_mean=0.302462 signal_std=0.009550
+  control_mean=0.048127 control_std=0.002982
+  diff=0.254335 noise_band=0.009550
+  VERDICT=HOLDS
+[C2] tension-link + synthetic EEG
+  signal_mean=0.060755 signal_std=0.002088
+  control_mean=0.053895 control_std=0.003932
+  diff=0.006861 noise_band=0.003932
+  VERDICT=HOLDS
+[C3] ENGINE + tension-link + EEG (mitosis ON)
+  signal_mean=0.837433 signal_std=0.023096
+  control_mean=0.566838 control_std=0.024578
+  diff=0.270596 noise_band=0.024578
+  VERDICT=HOLDS

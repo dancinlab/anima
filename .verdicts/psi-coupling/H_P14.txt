@@ -1,0 +1,22 @@
+# H_P14 — PRESENTIMENT (pre-stimulus arousal)
+# expected disposition (pre-registered): PARANORMAL
+# campaign: PSI-COUPLING (telepathy + anomalous-cognition family)
+# seeds=[1, 2, 3] n_steps=1200 kappa=0.3 mitosis=ON (p8 native growth; C3 grows a CellPop recording artifact)
+# controls: kappa0 (no coupling) / phase-shuffled / no-channel — mandatory
+# scope: TOY synthetic · CPU · $0 · scale-transfer UNVERIFIED (a_toy_scale_recheck)
+# --- VERBATIM harness output (UNIVERSE/psi_coupling_toys.py) ---
+[C1] tension-link only
+  signal_mean=0.494505 signal_std=0.007364
+  control_mean=0.516789 control_std=0.009643
+  diff=-0.022283 noise_band=0.009643
+  VERDICT=REFUTED
+[C2] tension-link + synthetic EEG
+  signal_mean=0.495421 signal_std=0.002590
+  control_mean=0.493590 control_std=0.005935
+  diff=0.001832 noise_band=0.005935
+  VERDICT=INCONCLUSIVE
+[C3] ENGINE + tension-link + EEG (mitosis ON)
+  signal_mean=0.489621 signal_std=0.002284
+  control_mean=0.493590 control_std=0.005935
+  diff=-0.003968 noise_band=0.005935
+  VERDICT=INCONCLUSIVE

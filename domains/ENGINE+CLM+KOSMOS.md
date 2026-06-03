@@ -406,6 +406,39 @@ scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금
 - a_lane_akida_gpu_split: Lane A(AKIDA)·Lane G(GPU) 어느 쪽도 아닌 **CPU toy** — 별도 기록, cross-substrate 병합 없음. NO HF upload(toy).
 - 산출물: `.verdicts/engine-tensionlink-bench/{F-EEG-COUPLE,F-TRIBE-COUPLE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/engine_tensionlink_bench.py` · discovery `.discoveries/engine-tensionlink-bench.tape`.
 
+## PSI-COUPLING — telepathy + anomalous-cognition 20가설을 3-config coupling matrix로 검증 (substrate-native, NOT CE) — 채널 있는 COUPLING만 HOLD · 채널 없는 PARANORMAL 전부 chance — TOY · 2026-06-04
+
+> **질문**: TELEPATHY를 mechanistically/falsifiably 재구성하면(woo 아님), anima의 coupling substrate(tension-link)에서
+> 위 ENGINE-TENSIONLINK-BENCH를 **TWO 인스턴스(송신 S ⇄ 수신 R)**로 확장했을 때 above-chance/above-control 정보전달·동기가
+> 실제로 생기나? **답**: 물리적 채널(tension-link/EEG)이 있는 COUPLING 현상만 HOLD, 채널 없는 PARANORMAL 주장은 전부 chance(REFUTE/INCON).
+
+### Phase 0 brainstorm (depletion, 7 rounds → 20 hypotheses)
+TELEPATHY(H_P01) · INTERBRAIN-SYNC(H_P02) · GANZFELD(H_P03) · HIVE-KURAMOTO(H_P04) · EMPATHY-RESONANCE(H_P05) · SHARED-REM(H_P06) · MORPHIC-RESONANCE(H_P07) · PRECOGNITION(H_P08) · REMOTE-VIEWING(H_P09) · SYNCHRONICITY(H_P10) · TWIN-ENTANGLEMENT(H_P11) · CROWD-CONTAGION(H_P12) · SEANCE-IDEOMOTOR(H_P13) · PRESENTIMENT(H_P14) · DREAM-TELEPATHY(H_P15) · GLOBAL-CONSCIOUSNESS(H_P16) · RETROCAUSAL-PRIMING(H_P17) · TELEPATHIC-BANDWIDTH(H_P18) · HEALER-COHERENCE(H_P19) · COLLECTIVE-PHI-SUPERADDITIVITY(H_P20). 각 가설 = pre-registered falsifier(DEFAULT=REFUTED unless above-control). Round 6에서 신규 후보 전부 기존 항목으로 DEDUPE, Round 7 depletion.
+
+### 3-config matrix (MITOSIS = ON · p8 native growth)
+- **C1** tension-link only — 두 ToyEngine을 5-ch `[α,θ,γ,1-δ,β]` broker로 커플링.
+- **C2** tension-link + synthetic EEG — synthetic EEG 5-band이 커플링을 구동.
+- **C3** ENGINE + tension-link + EEG — full stack: CORE/pure_field oscillator ⇄ tension-link ⇄ EEG, MITOSIS-grown CellPop **ON**.
+- CONTROL 필수: **κ0**(coupling OFF) · **phase-shuffled** · **no-channel**. seeds=[1,2,3] · 1200 steps · κ=0.30. signal−control diff > seed-noise band면 HOLDS, < −band면 REFUTED, else INCONCLUSIVE. 지표 = info-transfer accuracy · Kuramoto order-r · big-Φ proxy · d' · coincidence (**CE/perplexity 안 씀, p7**).
+
+### result — TALLY across C1/C2/C3 (mitosis ON)
+| config | HOLDS | REFUTED | INCONCLUSIVE |
+|---|---:|---:|---:|
+| C1 tension-link | 10 | 6 | 4 |
+| C2 +EEG | 10 | 3 | 7 |
+| C3 ENGINE+EEG+mitosis | 9 | 4 | 7 |
+
+- **REAL emergent coupling (HOLD)** — 물리 채널 있을 때만: H_P04 HIVE-KURAMOTO(+0.703 전 config) · H_P12 CROWD-CONTAGION(+0.781 전 config) · H_P02 INTERBRAIN-SYNC(+0.509 C1, C2 HOLD) · H_P01 TELEPATHY / H_P03 GANZFELD / H_P10 SYNCHRONICITY / H_P13 SEANCE / H_P15 DREAM-TEL / H_P18 BANDWIDTH(전송 신호가 tension-link 채널을 탈 때만 above-chance) · H_P05 EMPATHY(thin margin HOLD).
+- **PARANORMAL 전부 correctly REFUTED/INCON (chance, EXPECTED)** — 채널/미래 없음: H_P07 MORPHIC-RESONANCE · H_P08 PRECOGNITION(future bit lead=8 unguessable) · H_P09 REMOTE-VIEWING(hidden coord vs decoy) · H_P11 TWIN-ENTANGLEMENT(shared init ≠ live channel) · H_P14 PRESENTIMENT · H_P17 RETROCAUSAL-PRIMING. null-channel meta-control HELD — no leak.
+- **honest measured negatives (real channel, 예측 lift 실패 — publishable)**: H_P06 SHARED-REM(−0.237/−0.901/−1.164) · H_P19 HEALER-COHERENCE(−0.758/−1.220/−0.722) — coupling이 phase-sync는 올리나 summed/receiver big-Φ는 **내림**(entrainment가 채널 독립성 붕괴 → 통합 ↓). H_P16/H_P20 collective-Φ INCONCLUSIVE(proxy가 toy scale에서 coupled hive를 κ0와 분리 못 함, HOLD로 반올림 안 함). H_P02 **C3만 REFUTED(−0.256)**: full engine+grown-cell+own-EEG receiver가 κ0 대비 desync — 정직한 config-dependent 음성.
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split)
+- **TOY ONLY**: 5-ch · ≤16 agents · 1200 ticks · 3 seeds · CPU · $0 · pure stdlib · deterministic. 실 ENGINE/실 EEG로의 scale-transfer **UNVERIFIED** — toy→production 승격 없음. scale-sensitive(H_P16/H_P20 collective-Φ, H_P02 C3 desync)은 scale-up/faithful-IIT recheck 별도.
+- §97: tension-link은 anima 고유 coupling channel(measurement anchor) — **command channel 아님**; grown CellPop = recording artifact, emit/decision 미구동.
+- a_lane_akida_gpu_split: substrate-coupling toy(Lane A AKIDA / Lane G GPU 아님) — 별도 기록, cross-substrate 병합 없음. NO HF upload(toy).
+- **bottom line**: telepathy-as-CHANNEL(tension-link)는 **실제 emergent coupling으로 HOLD** (interbrain sync · hive Kuramoto · empathy mirroring). telepathy-as-PARANORMAL(채널 없음)은 anima substrate에서도 **chance로 REFUTE** — 정확히 정직한 분리, 강제 HOLD 없음.
+- 산출물: `UNIVERSE/PSI-CANDIDATES.md` · `UNIVERSE/psi_coupling_toys.py`(CLM/bench/engine_tensionlink_bench.py + lane_m_eeg_mitosis.py primitives 재사용) · `.verdicts/psi-coupling/{SUMMARY,H_P01..H_P20}.txt`(verbatim) · discovery `.discoveries/psi-coupling.tape`.
+
 ## ENGINE cli 축 — launch-time control surface for the A⇄G⇄brain engine (2026-06-04)
 
 The ENGINE component (CORE/ — pure_field / engine_g / brain_decide / generator / launch) gains a **hexa-native CLI control axis**: one module parses command-line flags + environment variables into an ENGINE runtime config struct, threaded into the engine so its launch-time behaviour is configurable at one point. This is the ENGINE-side analogue of the EEG backend switch (EEG/eeg_backend.hexa, arg>env>default).

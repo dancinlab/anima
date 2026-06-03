@@ -1,0 +1,22 @@
+# H_P01 — TELEPATHY (sender->receiver info transfer)
+# expected disposition (pre-registered): COUPLING(if-channel)
+# campaign: PSI-COUPLING (telepathy + anomalous-cognition family)
+# seeds=[1, 2, 3] n_steps=1200 kappa=0.3 mitosis=ON (p8 native growth; C3 grows a CellPop recording artifact)
+# controls: kappa0 (no coupling) / phase-shuffled / no-channel — mandatory
+# scope: TOY synthetic · CPU · $0 · scale-transfer UNVERIFIED (a_toy_scale_recheck)
+# --- VERBATIM harness output (UNIVERSE/psi_coupling_toys.py) ---
+[C1] tension-link only
+  signal_mean=0.538182 signal_std=0.006471
+  control_mean=0.486364 control_std=0.012264
+  diff=0.051818 noise_band=0.012264
+  VERDICT=HOLDS
+[C2] tension-link + synthetic EEG
+  signal_mean=0.537576 signal_std=0.006313
+  control_mean=0.497879 control_std=0.001134
+  diff=0.039697 noise_band=0.006313
+  VERDICT=HOLDS
+[C3] ENGINE + tension-link + EEG (mitosis ON)
+  signal_mean=0.513636 signal_std=0.008907
+  control_mean=0.497879 control_std=0.001134
+  diff=0.015758 noise_band=0.008907
+  VERDICT=HOLDS
