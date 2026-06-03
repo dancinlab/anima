@@ -1,0 +1,35 @@
+{
+  "name": "conv",
+  "lane": "Lane-CONV",
+  "title": "CLMConvMoE — conv trunk + MoE production .clm decoder (DEFAULT engine)",
+  "default": true,
+  "canonical_impl": "CORE/clm_decode.hexa",
+  "entry_slot": "CORE/generator.hexa::_gen_clm_decode (single .clm entry — a_core_engine_map)",
+  "adapter": "engines/conv/adapter.hexa",
+  "model_card": "engines/conv/MODEL_CARD.md",
+  "duplicates_code": false,
+  "engine_spec": {
+    "load": "native",
+    "forward": "native",
+    "generate": "native",
+    "psi_coord": "native"
+  },
+  "architecture": {
+    "kind": "CLMConvMoE",
+    "format": "CLM\\x01",
+    "experts": 2,
+    "trunk_layers": 1,
+    "conv_blocks": 6,
+    "quant": "int4-sym + CLMX fp32 trailer",
+    "vocab": 256,
+    "d_model_example": 768
+  },
+  "ckpt_pointer": {
+    "local": "exports/lane-g/d768/d768_5lang_c4.clm",
+    "hf_repo_id": "dancinlab/clm-v1-dev-d768-forge-gpu",
+    "size": "3.65MB",
+    "sha256": "6a2accd0824db72204f0c751de7399ddc4ad60ee657a94d5b586bb877ce6910c",
+    "duplicated_locally": false,
+    "registry": "HF.jsonl (a_hf_registry SSOT)"
+  }
+}

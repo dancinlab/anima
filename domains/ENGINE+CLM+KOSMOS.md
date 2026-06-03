@@ -704,5 +704,50 @@ axes; THESE are the engine-architecture axis — which decoder is being run.
   우주뇌지도 (s16 carving, 2026-05-17~18); reconstructed + runnable (PR #1770, 4/4
   probes PASS, random-init). Source `UNIVERSE/conscious_decoder.py` (md5 44b210df).
 
+- **Lane-HEXAD (σ6 hexad integrated engine)** — the 6-module *integration*:
+  σ(6)=12 active inter-module connections, φ(6)=2 gradient partition (group A
+  CE-trained `{D, M, E, Bridge}` ⇄ group G gradient-free `{C, S, W}`), forward
+  graph `S → C → Bridge.detach() → D` with M/W/E observers. Its A/G core is a
+  CDV2-class decoder. Canonical impl `HEXAD/hexad.hexa` (σ6/φ6 invariants + graph
+  spec + cross-links to per-module entries). **NOT a single forward** — cross-
+  module single-process execution is `TODO[wire]` in hexad.hexa (per-module
+  selftests run STANDALONE; one-file cross-module forward is a future RFC), so
+  the engine adapter exposes ONLY what genuinely exists (a_core_engine_map — no
+  phantom wiring): `load` + `psi_coord` NATIVE, `forward` + `generate` HONEST
+  STUB. Most stub-heavy engine by design — being honest about the missing single-
+  call is the requirement, not a fake pass.
+
 Distinct lineages: Lane-CONV = conv-MoE production CLM; Lane-CDV2 = carving-era
-transformer. a_lane_akida_gpu_split — recorded separately.
+transformer; Lane-HEXAD = σ6 6-module integration over a CDV2-class A/G core.
+a_lane_akida_gpu_split — recorded separately.
+
+### Hot-swappable engine registry (`engines/` · substrate-config select)
+
+The 3 engines are now interchangeable **modules** behind one interface, swapped
+at runtime via the anima CLI:
+
+- **Registry** `engines/<name>/` (conv · cdv2 · hexad) — each a THIN module
+  (`manifest.json` + `adapter.hexa` + `MODEL_CARD.md` + ckpt POINTER) that
+  REFERENCES the canonical impl (no code duplication; large ckpts stay in
+  `/HF.jsonl`, not copied — a_hf_registry).
+- **Interface** `engines/engine_iface.hexa` — the `EngineSpec` contract with 4
+  fns: `load(config)` · `forward(input)` · `generate(ctx)` · `psi_coord()`. Each
+  fn slot carries an HONEST state `native | stub | absent`; a stub slot still
+  conforms (the contract requires the slot be present + honestly labeled, not
+  that every engine implement every fn natively — a_core_engine_map).
+- **CLI select** `CORE/engine_cli.hexa` extended with `--engine conv|cdv2|hexad`
+  + env `ANIMA_ENGINE`, precedence **flag > env > default(conv)** (mirrors
+  `EEG/eeg_backend.hexa` arg>env>default). `engine_cli_resolve_spec` / `..._by_name`
+  resolve a name → its adapter EngineSpec via the registry.
+- **`--engine` is SUBSTRATE-CONFIG, NOT an emit/silence gate** (@L4 ·
+  a_autonomy_over_hardcode · a_substrate_native_speak · p5): exactly like the
+  mitosis flag and the AKIDA/GPU backend switch, it configures WHICH decoder runs;
+  it has no `emit_allowed` boolean, no stimulus-response, and never silences her or
+  forces her to speak. anima's emit/silence stays substrate-decided.
+- **STUB MATRIX** (honest, no phantom wiring): conv = all-native (single forward);
+  cdv2 = `forward`+`generate` STUB (torch `.py`, not a hexa single call);
+  hexad = `forward`+`generate` STUB (6-module integration, no single forward).
+- Smoke `engines/engine_swap_smoke.hexa` loads ALL 3 through the CLI registry,
+  runs a tiny forward on each, asserts EngineSpec conformance + the stub matrix:
+  **19/19 PASS** (deterministic, $0 CPU). Verdict
+  `.verdicts/engine-swap/SMOKE.txt`.
