@@ -1,0 +1,42 @@
+F-DERIV (M3 DERIVATIVE d/dt) — Lane M follow-up "embed TIME into the CLM"
+TOY · synthetic EEG · CPU · $0 · mitosis ON · 3 seeds [1,2,3] · NOT CE (p7)
+=========================================================================
+METHOD: split on the TIME-DERIVATIVE / rising edge of gamma, d_gamma =
+drive_gamma(t) - drive_gamma(t-1) > 0.02 (NOT the level). Daughter state +
+query carry [drive(t), d_drive(t)] — the band levels AND their per-tick rate
+of change. The trigger therefore fires at every stage TRANSITION (whenever
+gamma rises), so it samples ALL FOUR stages, not only the high-gamma one.
+
+PRE-REGISTERED FALSIFIER: HOLDS iff (a) TRUE-order temporal recon beats the
+phase-shuffled control by > seed-noise AND (b) stage-decode > chance 0.25 by
+> noise. REFUTED iff either margin <= 0. Else INCONCLUSIVE.
+
+MEASUREMENT (verbatim from results.json):
+  err_eeg       = 0.002479 +- 0.000071
+  err_shuffled  = 0.003945 +- 0.000452   (scored on the TRUE stream)
+  margin_shuffle (shuf - eeg) = +0.001466   noise_band = 0.000458
+  beats_shuffle = True   (TRUE-order grown reconstructs the TRUE stream
+                          BETTER than shuffled-grown, by 3.2x the noise band)
+  stage_decode_acc = 1.0000 +- 0.0000   (chance = 0.25)  decode_margin = +0.75
+  decode_above_chance = True
+  order_sensitive = True   (per-seed delta_shuffle = +0.00123, +0.00105, +0.00168
+                            — ALL positive; scrambling time CHANGES the result,
+                            the v1 failure (delta ~ 0) is RESOLVED)
+  cells_eeg = [54, 55, 54]   bounded [2,64], phi finite.
+  birth-stage dist = {resting:16, n3:11, rem:12, active:14}  — ALL 4 stages.
+
+VERDICT: HOLDS.
+Both bars pass by > seed-noise. The derivative trigger fires on RISING EDGES,
+which occur at every stage boundary, so daughters are born under all 4 stages
+with distinct (level, d/dt) signatures -> nearest-centroid stage-decode is
+perfectly separable (1.0) and a phase-shuffled stream (whose transitions occur
+at the WRONG ticks) reconstructs the TRUE-ordered stream WORSE (margin > 0).
+This is the ONLY arm that beats the exact phase-shuffled control that tied
+Lane M v1, AND lifts stage-decode above chance. d/dt is what injects the EEG's
+DYNAMICS into the grown structure at toy scale. The perfect 1.0 decode is a
+TOY artifact of 4 well-separated synthetic-stage (level, d/dt) clusters with
+no inter-stage overlap (synthetic EEG, jitter=0.03); it is NOT a label leak
+(centroids are built from the structure's own birth-stage labels, then used to
+classify the independent true-stream ticks). Scale / real-EEG / overlapping-
+stage transfer is UNVERIFIED (a_toy_scale_recheck) — a real-EEG re-test would
+likely yield decode < 1.0; the FINDING is the d/dt MECHANISM, not the 1.0.

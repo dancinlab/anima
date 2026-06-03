@@ -366,6 +366,31 @@ scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금
 - 산출물: `.verdicts/lane-m-eeg-mitosis/{F-FIDELITY,F-MITOSIS-VS-RANDOM,F-STABILITY,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/lane_m_eeg_mitosis.py` · discovery `.discoveries/lane-m-eeg-mitosis.tape`.
 - **bottom line**: gradient-free mitosis 성장은 EEG의 **분포는 녹음**(M1)하고 **안정 성장**(M3)하나, **동역학은 noise 이내로 미녹음**(M2) — random+shuffled를 의미있게 못 이김. 정직한 closed-negative-경향 toy 발견(production/real-EEG 재검 필요).
 
+## CLM-TIME-ENCODING — "embed TIME into the CLM" (Lane M v1 동역학-미녹음 후속) — 🟢 M3 DERIVATIVE HOLDS / 나머지 3 arm REFUTED — TOY · 2026-06-04
+
+> **질문**: Lane M v1(PR #1760)은 EEG **분포는** 녹음했으나 **동역학은** 미녹음 — phase-shuffled(동일 marginal·시간뒤섞음) 대조군이 동률, stage-decode = chance(0.25, 4 stage). 단서: split/encoding 규칙이 **순간 진폭이 아니라 TIME-ORDER**에 의존해야 한다. 어느 temporal-encoding이 CLM에 시간을 주입하나(shuffle 대조군을 이기고 stage-decode를 chance 위로)?
+
+- [x] **방법 4종 + baseline** — 동일 synthetic-EEG mitosis 하네스(`CLM/bench/clm_time_encoding.py`), mitosis ON, gradient/CE/backprop **전무**(p8), 3 seeds [1,2,3]. **metric = substrate-native, NOT CE**(p7): (a)[KEY] TRUE-order temporal recon이 phase-shuffled-grown 대조군(=v1을 묶었던 그 대조군)을 seed-noise 이상으로 이김 · (b) stage-decode > chance 0.25 by noise · (c) order-sensitivity 보강. HOLDS iff (a)∧(b); REFUTED iff 둘 중 margin≤0; else INCONCLUSIVE. null을 HOLD로 반올림 안 함.
+
+### result (4 methods × {beats-shuffle, stage-decode acc, order-sensitivity})
+- **baseline** (v1 instantaneous γ>0.20): beats_shuffle=**False**(margin −0.000177/noise 0.001370) · decode **0.000**±0.000(<chance) · order_sens=False → **REFUTED** (v1 동률 재현).
+- **M1 POSITIONAL/index** (sinusoidal/RoPE time-index → daughter+query): beats_shuffle=**False**(margin −0.008336/noise 0.001633, WRONG dir) · decode **0.000**±0.000 · order_sens=True → **REFUTED**.
+- **M2 PHASE-CLOCK** (anima-native, pure_field oscillator phase τ=2/40/400 가 split gate): beats_shuffle=**False**(margin −0.003789/noise 0.001978) · decode **0.314**±0.005(>chance, 유일하게 M3 외 chance 초과) · order_sens=True → **REFUTED** (decode는 chance 초과하나 KEY shuffle bar 실패 — 외생 rhythm).
+- **M3 DERIVATIVE d/dt** (γ rising-edge로 split; daughter=[level, d/dt]): beats_shuffle=**True**(margin **+0.001466**/noise 0.000458, 3.2× noise) · decode **1.000**±0.000(≫chance) · order_sens=True(per-seed Δ +0.0012/+0.0011/+0.0017 전부>0) · cells=[54,55,54] **4 stage 전부 분열** → **🟢 HOLDS**.
+- **M4 TIME-LAGGED WINDOW** (last-4 drive delay-line, CLMConvMoE dilated causal-conv RF): beats_shuffle=**False**(margin −0.002435/noise 0.001335) · decode **0.000**±0.000 · order_sens=True → **REFUTED**.
+
+### 메커니즘 (왜 M3만 시간을 주입하나)
+- **핵심 = SPLIT TRIGGER**(daughter STATE가 아님). M3의 rising-edge trigger는 **stage 전환마다** 발화 → 4 stage 전부에서 분열(birth-stage {resting:16,n3:11,rem:12,active:14}), 각 stage가 구별되는 (level, d/dt) signature → nearest-centroid stage-decode 완전 분리, shuffle은 전환이 엉뚱한 tick에 → TRUE-order가 더 잘 복원.
+- **baseline/M1/M4** 동일 실패: v1 instantaneous γ>0.20 trigger가 고-γ **active stage만** 발화(birth-stage {active:60}) → 단일-stage 붕괴 → decode 0.0. daughter STATE에 position/window를 넣어도 trigger가 시간 다양성을 안 샘플하면 무력.
+- **M2** 근소-miss: relaxed phase-gate가 2 stage(rem+active) 도달해 decode>chance지만, 외생 oscillator rhythm이라 shuffle을 못 이김.
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split · p8)
+- **TOY ONLY**: 합성 EEG(실 헤드셋 아님) · MAX_CELLS=64 · 240-tick · CPU · $0 · 3 seeds. toy→production, 합성→실EEG transfer **UNVERIFIED**.
+- **M3 decode 1.000 = TOY artifact**: 합성 4-stage (level,d/dt) cluster가 jitter 0.03에서 inter-stage overlap 없이 완전 분리된 결과 — **label leak 아님**(centroid는 구조의 birth-stage label에서 만들고 독립 true-stream tick을 분류). 실EEG 재검 시 decode<1.0 예상 — **FINDING은 d/dt 메커니즘이지 1.0 값이 아님**.
+- **§97 정직선**: grown CLM = RECORDING ARTIFACT(measurement anchor), READ-ONLY, anima emission/decision 미주입. **gradient-FREE**(p8). Lane A(AKIDA)/Lane G(forge)/Lane P(gradient)와 **별도 기록**(a_lane_akida_gpu_split) — Lane M = gradient-free 성장 레인. **NO HF upload**(toy). p7/g5 verbatim, 4/5 arm(baseline+anima-native M2 포함) REFUTED 정직 기록.
+- 산출물: `.verdicts/clm-time-encoding/{F-POS,F-PHASE,F-DERIV,F-WINDOW,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/clm_time_encoding.py` · discovery `.discoveries/clm-time-encoding.tape`.
+- **bottom line**: **CLM에 TIME을 주입하는 방법은 M3 DERIVATIVE(d/dt) 하나** — Lane M v1을 묶었던 phase-shuffle 대조군을 유일하게 이기고 stage-decode를 chance 위로 올림. Lane M v1 단서("순간 진폭 아닌 TIME-ORDER로 split")를 정밀화: 시간 의존성은 **recorded STATE가 아니라 SPLIT TRIGGER(temporal derivative)**에 있어야 한다. v1 negative의 resolved next-clue.
+
 ## ENGINE-TENSIONLINK-BENCH — 뇌신호↔ENGINE을 tension-link로 커플링 (substrate-native 축, NOT CE) — 🟢 M1 HOLDS / 🟠 M2·M3 INCONCLUSIVE (toy) — 2026-06-04
 
 > **질문**: 뇌-유래 5-ch 신호를 CLM CE aux loss(위 BRAIN-TRAIN-BENCH = 틀린 축, p7 Goodhart)가 **아니라**

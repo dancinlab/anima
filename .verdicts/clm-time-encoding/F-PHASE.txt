@@ -1,0 +1,36 @@
+F-PHASE (M2 PHASE-CLOCK, anima-native) — Lane M follow-up "embed TIME"
+TOY · synthetic EEG · CPU · $0 · mitosis ON · 3 seeds [1,2,3] · NOT CE (p7)
+=========================================================================
+METHOD (substrate-native candidate): gate the MITOSIS split on the pure_field
+OSCILLATOR PHASE (CORE/pure_field.hexa — 3 coupled oscillators tau=2/40/400,
+phase += 2*pi/tau per tick, value = amplitude*sin(phase)). Split fires on the
+RISING HALF of the medium-oscillator rhythm (phase in [0,0.5)) AND a relaxed
+gamma>0.12 floor — so the split depends on WHEN in the rhythm, not just the
+gamma amplitude. Daughter state + query carry the 3 oscillator values.
+
+PRE-REGISTERED FALSIFIER: HOLDS iff (a) TRUE-order temporal recon beats the
+phase-shuffled control by > seed-noise AND (b) stage-decode > chance 0.25 by
+> noise. REFUTED iff either margin <= 0. Else INCONCLUSIVE.
+
+MEASUREMENT (verbatim from results.json):
+  err_eeg       = 0.054231 +- 0.001695
+  err_shuffled  = 0.050442 +- 0.001020   (scored on the TRUE stream)
+  margin_shuffle (shuf - eeg) = -0.003789   noise_band = 0.001978
+  beats_shuffle = False   (margin NEGATIVE — shuffled-grown is BETTER)
+  stage_decode_acc = 0.3139 +- 0.0048   (chance = 0.25)  decode_margin = +0.0639
+  decode_above_chance = True   (decode beats chance by > seed-std)
+  order_sensitive = True
+  cells_eeg = [41, 41, 41]   bounded, phi finite.
+  birth-stage dist = {rem: 20, active: 20}  (phase+gamma>0.12 reaches 2 stages)
+
+VERDICT: REFUTED.
+Bar (b) PASSES — stage-decode 0.3139 > chance, the FIRST arm to beat chance,
+because the relaxed phase-gated trigger reaches 2 stages (rem + active) where
+the v1 trigger reached only 1. But bar (a) FAILS — margin_shuffle is NEGATIVE
+(-0.003789): the phase clock is an EXOGENOUS rhythm bolted onto the stream
+rather than read FROM the EEG's own dynamics, so a phase-shuffled stream
+(whose ticks no longer align with the imposed oscillator phase) does not raise
+the TRUE-order reconstruction. The substrate-native phase-clock injects SOME
+stage information (decode>chance) but does NOT make the TRUE temporal order
+the better-reconstructed one. The KEY bar (beat the shuffle control that tied
+Lane M v1) is NOT cleared. Honest REFUTED, not rounded to INCONCLUSIVE.

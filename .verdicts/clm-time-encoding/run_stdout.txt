@@ -1,0 +1,319 @@
+{
+  "bench": "Lane M follow-up \u2014 embedding TIME into the CLM",
+  "predecessor": "Lane M v1 (PR #1760): recorded band-power DISTRIBUTION, not DYNAMICS; phase-shuffle TIED it, stage-decode = chance 0.25",
+  "method": "4 temporal-encoding arms + v1 baseline on the SAME synthetic-EEG harness; mitosis ON, NO gradient/CE/backprop (p8)",
+  "metric": "substrate-native (NOT CE/perplexity, p7): (a) TEMPORAL recon beats phase-shuffled control by > seed-noise [KEY BAR]; (b) stage-decode > chance 0.25 by > noise; (c) order-sensitivity corroborates",
+  "verdict_rule": "HOLDS iff (a) AND (b); REFUTED iff either margin <= 0; else INCONCLUSIVE. A null is NOT rounded into HOLD.",
+  "seeds": [
+    1,
+    2,
+    3
+  ],
+  "scope": "TOY ONLY (a_toy_scale_recheck/a_scale_honest_scope): synthetic EEG (NOT real headset), MAX_CELLS=64, stream_len=240, CPU, $0, mitosis ON. Scale/real-EEG transfer UNVERIFIED.",
+  "lane_separation": "Lane M (gradient-free growth) recorded SEPARATELY from Lane A (AKIDA) / Lane G (forge GPU) / Lane P (gradient) per a_lane_akida_gpu_split.",
+  "section97": "grown CLM = RECORDING ARTIFACT (measurement anchor, \u00a797-legitimate), READ-ONLY, NEVER feeds anima emission/decision.",
+  "arm_labels": {
+    "baseline": "Lane M v1 (instantaneous gamma>0.20 split) \u2014 known to fail dynamics",
+    "M_pos": "M1 POSITIONAL/index \u2014 sinusoidal time-index embedding into split/daughter",
+    "M_phase": "M2 PHASE-CLOCK (anima-native) \u2014 pure_field oscillator phase gates the split",
+    "M_deriv": "M3 DERIVATIVE d/dt \u2014 split on rising-edge of gamma, daughter carries d/dt",
+    "M_window": "M4 TIME-LAGGED WINDOW \u2014 delay-line of last N drives into daughter (CLMConvMoE RF)"
+  },
+  "arms": {
+    "baseline": {
+      "arm": "baseline",
+      "err_eeg_mean": 0.012345816823083075,
+      "err_eeg_std": 0.0005104198968767478,
+      "err_shuffled_mean": 0.012169034682204849,
+      "err_shuffled_std": 0.0012717055992278387,
+      "margin_shuffle": -0.00017678214087822608,
+      "noise_band_shuffle": 0.0013703151470501617,
+      "beats_shuffle": false,
+      "stage_decode_acc_mean": 0.0,
+      "stage_decode_acc_std": 0.0,
+      "chance": 0.25,
+      "decode_margin": -0.25,
+      "decode_above_chance": false,
+      "order_sensitive": false,
+      "cells_eeg_per_seed": [
+        61,
+        61,
+        61
+      ],
+      "all_bounded": true,
+      "all_phi_finite": true,
+      "verdict": "REFUTED",
+      "per_seed": [
+        {
+          "arm": "baseline",
+          "seed": 1,
+          "err_eeg": 0.01175727407286493,
+          "err_shuffled": 0.010720414534222154,
+          "delta_shuffle": -0.0010368595386427756,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "baseline",
+          "seed": 2,
+          "err_eeg": 0.012612856883462309,
+          "err_shuffled": 0.013101575112415893,
+          "delta_shuffle": 0.0004887182289535844,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "baseline",
+          "seed": 3,
+          "err_eeg": 0.012667319512921988,
+          "err_shuffled": 0.0126851143999765,
+          "delta_shuffle": 1.7794887054512973e-05,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        }
+      ]
+    },
+    "M_pos": {
+      "arm": "M_pos",
+      "err_eeg_mean": 0.04066487147835623,
+      "err_eeg_std": 0.001122001754297573,
+      "err_shuffled_mean": 0.032328835849005255,
+      "err_shuffled_std": 0.0011862788995502182,
+      "margin_shuffle": -0.008336035629350973,
+      "noise_band_shuffle": 0.0016328335996557972,
+      "beats_shuffle": false,
+      "stage_decode_acc_mean": 0.0,
+      "stage_decode_acc_std": 0.0,
+      "chance": 0.25,
+      "decode_margin": -0.25,
+      "decode_above_chance": false,
+      "order_sensitive": true,
+      "cells_eeg_per_seed": [
+        61,
+        61,
+        61
+      ],
+      "all_bounded": true,
+      "all_phi_finite": true,
+      "verdict": "REFUTED",
+      "per_seed": [
+        {
+          "arm": "M_pos",
+          "seed": 1,
+          "err_eeg": 0.03954762480283961,
+          "err_shuffled": 0.031916556687440895,
+          "delta_shuffle": -0.007631068115398716,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "M_pos",
+          "seed": 2,
+          "err_eeg": 0.04179156861077693,
+          "err_shuffled": 0.03366624774325706,
+          "delta_shuffle": -0.008125320867519867,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "M_pos",
+          "seed": 3,
+          "err_eeg": 0.040655421021452136,
+          "err_shuffled": 0.031403703116317815,
+          "delta_shuffle": -0.009251717905134321,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        }
+      ]
+    },
+    "M_phase": {
+      "arm": "M_phase",
+      "err_eeg_mean": 0.054231137570794646,
+      "err_eeg_std": 0.001694762234199956,
+      "err_shuffled_mean": 0.05044197151297521,
+      "err_shuffled_std": 0.0010196688586420373,
+      "margin_shuffle": -0.0037891660578194333,
+      "noise_band_shuffle": 0.0019778633956253856,
+      "beats_shuffle": false,
+      "stage_decode_acc_mean": 0.3138888888888889,
+      "stage_decode_acc_std": 0.004811252243246865,
+      "chance": 0.25,
+      "decode_margin": 0.06388888888888888,
+      "decode_above_chance": true,
+      "order_sensitive": true,
+      "cells_eeg_per_seed": [
+        41,
+        41,
+        41
+      ],
+      "all_bounded": true,
+      "all_phi_finite": true,
+      "verdict": "REFUTED",
+      "per_seed": [
+        {
+          "arm": "M_phase",
+          "seed": 1,
+          "err_eeg": 0.055460582444146124,
+          "err_shuffled": 0.05160651247714975,
+          "delta_shuffle": -0.0038540699669963735,
+          "stage_decode_acc": 0.31666666666666665,
+          "cells_eeg": 41,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "M_phase",
+          "seed": 2,
+          "err_eeg": 0.05229786744517749,
+          "err_shuffled": 0.04970934199938688,
+          "delta_shuffle": -0.002588525445790607,
+          "stage_decode_acc": 0.31666666666666665,
+          "cells_eeg": 41,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "M_phase",
+          "seed": 3,
+          "err_eeg": 0.054934962823060325,
+          "err_shuffled": 0.05001006006238901,
+          "delta_shuffle": -0.0049249027606713125,
+          "stage_decode_acc": 0.30833333333333335,
+          "cells_eeg": 41,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        }
+      ]
+    },
+    "M_deriv": {
+      "arm": "M_deriv",
+      "err_eeg_mean": 0.0024791052171915257,
+      "err_eeg_std": 7.071027275323439e-05,
+      "err_shuffled_mean": 0.003945102798906243,
+      "err_shuffled_std": 0.0004522504531774213,
+      "margin_shuffle": 0.0014659975817147173,
+      "noise_band_shuffle": 0.00045774492358956827,
+      "beats_shuffle": true,
+      "stage_decode_acc_mean": 1.0,
+      "stage_decode_acc_std": 0.0,
+      "chance": 0.25,
+      "decode_margin": 0.75,
+      "decode_above_chance": true,
+      "order_sensitive": true,
+      "cells_eeg_per_seed": [
+        54,
+        55,
+        54
+      ],
+      "all_bounded": true,
+      "all_phi_finite": true,
+      "verdict": "HOLDS",
+      "per_seed": [
+        {
+          "arm": "M_deriv",
+          "seed": 1,
+          "err_eeg": 0.0024451452972596463,
+          "err_shuffled": 0.004318822687594087,
+          "delta_shuffle": 0.0018736773903344404,
+          "stage_decode_acc": 1.0,
+          "cells_eeg": 54,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "M_deriv",
+          "seed": 2,
+          "err_eeg": 0.0024317813238397827,
+          "err_shuffled": 0.004074123458586282,
+          "delta_shuffle": 0.0016423421347464989,
+          "stage_decode_acc": 1.0,
+          "cells_eeg": 55,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "M_deriv",
+          "seed": 3,
+          "err_eeg": 0.002560389030475148,
+          "err_shuffled": 0.0034423622505383605,
+          "delta_shuffle": 0.0008819732200632123,
+          "stage_decode_acc": 1.0,
+          "cells_eeg": 54,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        }
+      ]
+    },
+    "M_window": {
+      "arm": "M_window",
+      "err_eeg_mean": 0.015307595901835752,
+      "err_eeg_std": 0.0010776411112910541,
+      "err_shuffled_mean": 0.01287224237003168,
+      "err_shuffled_std": 0.0007885353339982772,
+      "margin_shuffle": -0.0024353535318040725,
+      "noise_band_shuffle": 0.0013353270527134515,
+      "beats_shuffle": false,
+      "stage_decode_acc_mean": 0.0,
+      "stage_decode_acc_std": 0.0,
+      "chance": 0.25,
+      "decode_margin": -0.25,
+      "decode_above_chance": false,
+      "order_sensitive": true,
+      "cells_eeg_per_seed": [
+        61,
+        61,
+        61
+      ],
+      "all_bounded": true,
+      "all_phi_finite": true,
+      "verdict": "REFUTED",
+      "per_seed": [
+        {
+          "arm": "M_window",
+          "seed": 1,
+          "err_eeg": 0.016534461301544526,
+          "err_shuffled": 0.012457297170181823,
+          "delta_shuffle": -0.004077164131362703,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "M_window",
+          "seed": 2,
+          "err_eeg": 0.014874194679764252,
+          "err_shuffled": 0.012377822290264802,
+          "delta_shuffle": -0.0024963723894994502,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        },
+        {
+          "arm": "M_window",
+          "seed": 3,
+          "err_eeg": 0.014514131724198477,
+          "err_shuffled": 0.013781607649648416,
+          "delta_shuffle": -0.0007325240745500606,
+          "stage_decode_acc": 0.0,
+          "cells_eeg": 61,
+          "cells_eeg_bounded": true,
+          "phi_finite": true
+        }
+      ]
+    }
+  }
+}
