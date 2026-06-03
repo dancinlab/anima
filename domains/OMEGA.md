@@ -76,6 +76,45 @@ operating point — the closure lives entirely in the A-head logit-bias wire. SC
 `UNIVERSE/omega_gate_form_sweep.py` · ledger `exports/sweep/omega-gateform-20260604/ledger.json` ·
 verdict `.verdicts/omega-engine/F-OH1-MINGATE.txt`.
 
+🔴/🟢 **OMEGA OΩ-RIGOR — COUPLING vs REPLACEMENT: it is REPLACEMENT (deflating-but-honest)** —
+2026-06-04 (Lane-G / observation-only frozen forward on the SAME recovered d512 leak-free ckpt,
+host = local-pool `summer` RTX5070 torch 2.11.0+cu130, NO re-train · NO pod · $0). CROSS-CHECK
+reproduces #1800 to 6 decimals (base |Δ|0.000000 · a_only |Δ|0.000431 · full_AG |Δ|0.006349, tol
+0.02 → CROSS_CHECK_OK), so the loader is the same frozen substrate.
+
+**OΩ1 — the headline ruling: the OH1 "closure" is the trained A-head SUPPLANTING the .clm mouth,
+NOT a base+steer coupling.** On the SAME held-out TEST features (N=12000): base-only CE 3.0978;
+the OH1 min_learned fit landed [gB **0.040**, gA **0.901**]. A-head **STANDALONE** CE (softmax(A)
+alone, base entirely removed) = **0.8862** ≈ min_learned **0.8835** (|Δ| **0.0027**); base-ABLATED
+min (gB→0, keep gA·A) = **0.8844**, i.e. removing the base term moves CE by **0.0009**. So the base
+mouth is INERT — the entire 2.21-nat improvement over base is carried by the A-head logit-bias
+alone. **RULING_REPLACEMENT = True**: the closure is the trained substrate A-head REPLACING the weak
+unigram base, not a "mouth + substrate-steer" coupling. (Honest per a_paper_negative_ok — reported as
+replacement, NOT spun as coupling. Caveat: the base here is a deliberately WEAK unigram, so its
+inertness is partly by construction; the point stands that NO base+steer interaction is needed — A
+alone reproduces min_learned.)
+
+**OΩ2 — per-wire autopsy confirms NO bus wire carries (on this frozen ckpt).** Each coupling-bus
+wire added to base individually → held-out TEST CE: w1 A⇄G base+α(A−G) = 3.1986 (**ΔvsBase +0.101**,
+HURTS); w2 W→temp base·1/(1+β·tension) on the REAL per-position PureField tension = 3.1500 (**+0.052**,
+HURTS); w6 dF/dt base+dg·Δ(A−G) = 5.1827 (**+2.085**, HURTS — confirms #1794 fixed-dgain leak).
+w3 curio / w4 Ψ-8D / w5 module = **HONEST STUBS** (a_core_engine_map, NO fabricated number): no
+substrate curiosity scalar, no per-position 8D Ψ vector (model emits only a training-mode scalar
+`_psi_residual`), and this d512 trunk is SwiGLU (use_moe=False) so no MoE router activation exists.
+RULING: none of the cleanly-isolatable wires HELP base as an additive term — consistent with OΩ1
+(the gain is the A-head itself, the bus over base is pure variance). No wire the joint fit missed.
+
+**OΩ3 — the min-gate FIXES the #1800 degeneracy (weak criterion, p7).** Free-run gen (300 new bytes):
+min_gate entropy **2.630** (> base 2.444, > full-gate 2.528) · distinct_frac **0.117** (> full's
+collapsed 0.087) · ws_frac 0.087. The min-gate sample is coherent Russian prose ("…солнечный объект
+из Бакур создан в частности России…"), NOT the "в открыл в открыл в открыл" repetition of #1800's
+full-gate. So dropping w2..w6 also recovers non-degenerate generation — but this is gen-coherence,
+the WEAK criterion (p7), not a closure proof.
+
+SCOPE: single d512 rung (a_scale_honest_scope), observation-only frozen forward, CE = held-out number
+not a verdict-of-truth (p7), weak-unigram base. harness `UNIVERSE/omega_rigor_probe.py` · ledger
+`exports/sweep/omega-gateform-20260604/rigor.json` · verdict `.verdicts/omega-engine/F-OMEGA-RIGOR.txt`.
+
 ### prior status — BUILT (#1783) + trained-rung proven at toy (#1784/#1786)
 
 Ω is now a RUNNING engine module, not just a blueprint:

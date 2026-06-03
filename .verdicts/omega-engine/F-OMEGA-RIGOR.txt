@@ -1,0 +1,38 @@
+=== OMEGA OΩ-RIGOR — OΩ1 (coupling vs replacement) + OΩ2 (per-wire) + OΩ3 (gen) ===
+device=cuda  torch=2.11.0+cu130
+corpus: 400000000B (400.0MB)  sha256=dc1754b27d63236d  held=40000000B
+ckpt: /home/summer/omega_rigor_stage/omega_cdv2_trained_leakfree.pt  sha256=6f085c91d0392d66  config={'vocab_size': 256, 'd_model': 512, 'n_head': 8, 'n_layer': 8, 'block_size': 256, 'n_kv_head': 4, 'consciousness_dim': 128, 'causal_ca': True}
+CDV2 loaded FROZEN: 0 (0.00M)  causal_ca=True
+leak self-test: 0.000e+00  (leak_free=True)
+[collect] gate N=12000  test N=12000  (4.5s)
+--- CROSS-CHECK vs #1800 H1 (tol=0.02) ---
+  base       got=3.097779 ref=3.097779 |Δ|=0.000000 ok=True
+  a_only     got=1.144181 ref=1.144612 |Δ|=0.000431 ok=True
+  full_AG    got=3.637159 ref=3.643508 |Δ|=0.006349 ok=True
+  CROSS_CHECK_OK = True
+=== OΩ1 — COUPLING vs REPLACEMENT ===
+  g_min = [gB=0.0400, gA=0.9013, gG=0.0000]
+  base-only CE          = 3.097779
+  A-STANDALONE CE       = 0.886220  (softmax(A) alone, no base)
+  min_learned CE        = 0.883525  (gB·base + gA·A)
+  min base-ABLATED CE   = 0.884377  (gB→0, keep gA·A)
+  |A_standalone − min|  = 0.002695  (≤0.05 ⇒ A≈min)
+  |base ablation Δ|     = 0.000852  (≤0.05 ⇒ base inert)
+  RULING_REPLACEMENT    = True
+  → REPLACEMENT — the trained A-head SUPPLANTS the .clm base mouth (A-standalone ≈ min_learned AND base term is inert)
+=== OΩ2 — PER-WIRE AUTOPSY (each wire added to base, held-out TEST CE) ===
+  base CE = 3.097779
+  w1_AmG     CE=3.198605  ΔvsBase=+0.100826  [base + alpha*(A-G), alpha=0.60]
+  w2_Wtemp   CE=3.150031  ΔvsBase=+0.052251  [base * 1/(1+beta*tension), beta=0.50; tension=mean per-layer PureField tension (real substrate W signal)]
+  w3_curio   HONEST-STUB (not isolatable): no substrate curiosity scalar at frozen inference (E-ratchet is a runtime daemon state, not emitted by the forward); the bus w3 is a fixed parity bias (structureless by construction, coupling_bus.hexa: |gain|<TAU). Not a substrate-derived CE delta.
+  w4_psi     HONEST-STUB (not isolatable): no per-position 8D Psi vector at frozen inference; the model emits only a scalar _psi_residual updated under self.training (eval=frozen -> no Psi8). #1793/#1794: toy psi8 INERT; F-REAL-PSI BLOCKED-DATA. Not a substrate-derived CE delta.
+  w5_module  HONEST-STUB (not isolatable): this d512 ckpt trunk is SwiGLU (use_moe=False) -> no MoE router expert-prob vector exists; module_act has no substrate source. Not a substrate-derived CE delta on this ckpt.
+  w6_dFdt    CE=5.182650  ΔvsBase=+2.084871  [base + dgain*((A-G)_t-(A-G)_{t-1}), dgain=0.50 (FIXED dgain seed; fixed dgain HURTS per #1794 — reported honestly, not a tuned carrier)]
+=== OΩ3 — GEN COHERENCE under min-gate (free-run, 300 new bytes) ===
+  base       entropy=2.4442  distinct_frac=0.1133  ws_frac=0.0733  n=300
+  min_gate   entropy=2.6300  distinct_frac=0.1167  ws_frac=0.0867  n=300
+  full_gate  entropy=2.5282  distinct_frac=0.0867  ws_frac=0.1067  n=300
+  [min-gate sample]
+�и и думало и обможно из события, а такий солнечный объект из Бакур создан в частности России. Три лет должностью в Октябре пара Омской источники сообщения Республи�
+  (#1800 ref: base ent 2.392 dist 0.121 ws 0.077 · full ent 2.506 dist 0.109 ws 0.113)
+results -> omega_rigor_results.json
