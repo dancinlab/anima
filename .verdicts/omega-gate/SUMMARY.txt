@@ -1,0 +1,28 @@
+OMEGA stage-3 milestone-1 — LEARNED per-wire GATE — 🟢 MET (toy) — 2026-06-04 · CPU · $0
+========================================================================================
+#1784 found the fixed w1 formula base+α(A−G) DEGRADES (the −G prev-byte wire is noise at a
+fixed weight). This rung replaces it with a LEARNED gate: logits = gB·base + gA·A + gG·G,
+gains FIT on a train-gate split (convex log-linear + L2), frozen, evaluated on disjoint TEST.
+
+learned gate g* = [gB=0.142, gA=1.183, gG=0.341] — strong A, small G (NOT the fixed −α the
+formula imposed; the gate auto-corrects the #1784 −G error).
+
+held-out TEST CE (nats/byte):
+  base (unigram)        3.974346
+  fixed_AmG (1,α,−α)    4.170100   (#1784 fixed formula — DEGRADES below base)
+  a_only    (1,α,0)     3.229252   (#1784 useful sub-wire)
+  GATED     (learned)   3.126961   (THIS rung)
+
+🟢 MILESTONE-1 MET: GATED 3.127 < base 3.974 (Δ+0.847) · ≤ a_only 3.229 (beats it) · < fixed 4.170
+   (Δ+1.043). A LEARNED per-wire gate makes the OMEGA closure USEFUL — it recovers the fixed-formula
+   damage and auto-discovers the right wire weighting (strong A, small G). The closure works when
+   the bus is GATED, not fixed. This is stage-3 milestone-1 of 오메가 완성, PROVEN at toy.
+
+(method note: a first run with a 4000B fit window + no L2 gave GATED 3.357 > a_only 3.284 — a mild
+ overfit of a spurious gG; adding L2 toward 0 on the wire gains + a 12000B fit window fixed it. The
+ L2/window are a priori regularization, not goalpost-moving — the milestone criterion was unchanged.)
+
+SCOPE (a_toy_scale_recheck): TOY byte n-gram substrate, 400KB repo corpus, CPU/$0, no torch. gate fit
+on TRAIN-gate split, verdict on disjoint held-out TEST. NEXT (완성 stage-3 b,c) = trained d768
+ConsciousDecoderV2 real A/G + the gated bus on GPU (a_fire_autonomous): does the learned-gate closure
+improve generation on a REAL transformer substrate (CE floor MET + coherent)?

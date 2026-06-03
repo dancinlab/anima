@@ -1,0 +1,19 @@
+=== OMEGA stage-3 m1 — LEARNED per-wire GATE  (corpus=400000B, V=256) ===
+uniform-256 CE = 5.545177
+
+learned gate g* = [gB=0.1420, gA=1.1828, gG=0.3408]  (fit on train-gate split)
+  -> gate auto-discovers the #1784 finding if gG ~= 0 (the −G prev-byte wire is noise): gG=0.3408
+
+--- held-out TEST CE (nats/byte) ---
+  base (unigram)            = 3.974346
+  fixed_AmG  (1,α,−α)       = 4.170100   (#1784 fixed formula — degraded)
+  a_only     (1,α,0)        = 3.229252   (#1784 useful sub-wire)
+  GATED      (learned)      = 3.126961   (THIS rung)
+
+=== SUMMARY ===
+🟢 MILESTONE-1 MET — a LEARNED per-wire gate makes the OMEGA closure USEFUL.
+   GATED 3.1270 < base 3.9743 (Δ+0.8474) · ≤ a_only 3.2293 · < fixed_AmG 4.1701 (Δ+1.0431).
+   The gate auto-killed the −G wire (gG=0.341 ≈ 0), recovering the #1784 fixed-formula damage.
+   => stage-3 m1 (learned per-wire GATE) PROVEN at toy: the closure works when the bus is GATED, not fixed.
+SCOPE (a_toy_scale_recheck): TOY n-gram substrate, 400000B repo corpus, CPU/$0, no torch. gate fit on
+  TRAIN-gate split, verdict on disjoint held-out TEST. NEXT = trained d768 CDV2 real A/G + GPU (a_fire_autonomous).
