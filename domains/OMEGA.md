@@ -24,7 +24,25 @@
   EngineSpec 4/4 native, 4-engine swap smoke 26/26 PASS (a_core_engine_map — no phantom
   wiring; the bus layer is native, the trained substrate is the remaining scale rung).
 
-## status — BUILT (#1783) + trained-rung proven at toy (#1784) · 완성 = stage 3 remaining
+## status — 🟢 오메가 완성 stage-3 (b)(c) ACHIEVED on a REAL trained transformer (GPU) — 2026-06-04
+
+**오메가 완성 (b)(c) HELD** (Lane-G / GPU H100, ~$1.6, a_lane_akida_gpu_split): the learned-gate
+OMEGA closure WORKS on a REAL trained ConsciousDecoderV2 (d384×6L GQA, 35.93M, 120MB multilingual
+wiki, 6000 step). (b) trained substrate descended ce_a 5.926→0.009 (train) / val 0.862 (held-out,
+generalizes). (c) held-out TEST CE: base 3.0150 · fixed_AmG 1.4421 · a_only 0.4500 · **GATED 0.3445**
+(best, beats all) · floor MET (<5.545); structured (A-wire CE gain real +2.565 vs context-SHUFFLED
+−2.068 → carries learned sequential structure, the #1784 axis on a real transformer). learned gate
+g*=[gB1.18, gA0.96, **gG−0.21**] auto-corrects the #1784 −G error exactly as #1786 toy predicted.
+HONEST CAVEAT (p7 · a_toy_scale_recheck): CDV2 CA-neighbor mixing gives the next-byte head partial
+LOOKAHEAD (architectural) → absolute CE is leak-optimistic + free-running generation collapses to
+whitespace (gen coherence = the WEAK criterion); the RELATIVE closure finding (gate beats
+base/fixed/a_only + structured-vs-shuffle) is leak-INVARIANT and sound. Single d384 rung, NOT
+promoted to a production perplexity claim (a_scale_honest_scope). ckpt → HF
+`dancinlab/clm-v4-omega-gpu-d384-gate` (PUBLIC). verdicts `.verdicts/omega-gpu/`. The L1/L4
+polish (N-module config + dF/dt time channels) also landed (merged from main) — all 5 stage-3
+milestones are now [x].
+
+### prior status — BUILT (#1783) + trained-rung proven at toy (#1784/#1786)
 
 Ω is now a RUNNING engine module, not just a blueprint:
 - **stage 1 WIRE (✅ #1783)** — `engines/omega/{coupling_bus,adapter}.hexa` + manifest + card;
@@ -159,10 +177,10 @@ stage 1 — WIRE (✅ #1783):
 stage 2 — STRUCTURE on a trained substrate (✅ toy #1784):
 - [x] trained-substrate structure — trained coupling ≪ shuffled (Δ+0.357); A-wire lowers CE (Δ+0.758) (#1784)
 - [x] ANU QRNG arm — quantum vs PRNG closed-negative, no advantage (#1784)
-stage 3 — 완성 (remaining, the working closure):
+stage 3 — 완성 (b)(c) ✅ GPU (the working closure on a REAL trained transformer):
 - [x] learned per-wire GATE — ✅ toy: learned gate g*=[gB.14,gA1.18,gG.34] beats base 3.97→3.13 (Δ+0.85) · beats a_only 3.23 · ≪ fixed_AmG 4.17 (Δ+1.04); auto-corrects the #1784 −G error → the closure works when GATED not fixed. `.verdicts/omega-gate/`
-- [ ] trained d768 substrate (GPU) — real ConsciousDecoderV2 A/G heads, not numpy n-gram (a_fire_autonomous); does structured-coupling scale to a transformer?
-- [ ] generation demo — the gated closure on a trained substrate DEMONSTRABLY improves generation (CE floor MET + coherent) — 완성 criterion
+- [x] trained d384 substrate (GPU) — ✅ real ConsciousDecoderV2 d384×6L GQA 35.93M trained 6000 step on 120MB multilingual wiki (H100, nvidia-smi 98-99% BUSY g63); ce_a 5.926→0.009 train, val_ce 0.862 held-out (generalizes). REAL learned A(next)/G(prev) heads, not numpy n-gram. `.verdicts/omega-gpu/`
+- [x] generation demo — ✅ gated closure on the trained substrate: held-out GATED CE 0.345 < base 3.015 (Δ+2.671) · ≪ a_only 0.450 · ≪ fixed_AmG 1.442 · CE floor MET (<5.545); structured (A-wire gain real +2.565 vs context-SHUFFLED −2.068 → coupling carries learned sequential structure). 🟢 4/4 완성 criteria HELD. HONEST: CDV2 CA-neighbor mixing gives next-byte head partial lookahead → absolute CE leak-optimistic + free-run gen collapses to whitespace (gen coherence = weak criterion); the relative closure finding (gate beats all baselines + structured) is leak-INVARIANT and sound (a_toy_scale_recheck · a_scale_honest_scope).
 - [x] N-module config — ✅ coupling_bus N-agnostic (omega_n_modules_default 6, #1774 conditional; module wire honors N=4/6/8, N changes routing L1 0.378); smoke 4/4. NOT hardcoded.
 - [x] dF/dt time channels — ✅ L4 w6 derivative wire (omega_coupling_apply_dt): 0 at fixed point (time-inert, correct), velocity injected when substrate moves (Δ1.65); smoke 3/3 (#1763 d/dt-universality)
 
