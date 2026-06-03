@@ -217,8 +217,8 @@ small-sample noise 와 emergent diversity 를 구별 못 함 — C2/C3 honest ca
   autonomy reshape — `_dream_context` dict 주입, strategy=substrate autonomous 의
   architectural 근거).
 - **module ref (READ-ONLY)**: `HEXAD/CHAT/CHAT_AUTONOMY_1HOUR_BASELINE_2026_05_24.md`
-  (PR #306 baseline SSOT) · `HEXAD/CHAT/server/anima_participant.py` (emit-motivation
-  8-factor gate caller) · `HEXAD/CHAT/server/anima_dream_stage.hexa` (cadence / stage
+  (PR #306 baseline SSOT) · `AGENT/CHAT/anima_participant.py` (emit-motivation
+  8-factor gate caller) · `AGENT/CHAT/anima_dream_stage.hexa` (cadence / stage
   context, L5 entrainment).
 - **raw**: raw#12 (≥5 falsifier + ≥5 honest limit + hexa-only + deterministic-analysis) ·
   raw#15 (additive baseline absorption, post-deploy trace 재분석) · raw#82 (no post-hoc

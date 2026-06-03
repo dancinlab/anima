@@ -52,3 +52,4 @@
 @D ENCODER := "./ENCODER/ENCODER.md" :: domain [active]
 @D METROLOGY := "./METROLOGY.md" :: domain [active]
 @D ENGINE+CLM+KOSMOS := "./ENGINE+CLM+KOSMOS.md" :: domain [active]
+@D UNIVERSE := "./UNIVERSE/UNIVERSE.md" :: domain [active]

@@ -1,0 +1,50 @@
+{
+  "campaign": "H_865 trunk-adjacent adapter edge (E5 fix for H_861/H_862)",
+  "frozen_thresholds_commit": "bf98c01",
+  "adapter_rank": 64,
+  "BOUND": {
+    "hypothesis": "H_865 F-CLM-BOUND (adapter edge)",
+    "rung": "mid d512/L8/E8",
+    "edge": "trunk-adjacent adapter (norm_out + adapter) -> FROZEN readout; rank=64",
+    "ce_base_pre": 14.12505,
+    "sd_base_pre": 0.07783,
+    "ce_base_post": 13.16947,
+    "ce_new_pre": 10.74535,
+    "ce_new_post": 3.37433,
+    "z_drop": -12.27735,
+    "gain": 7.37103,
+    "threshold_z_drop": "<1.0",
+    "threshold_gain": ">0.0",
+    "RETAIN_pass": true,
+    "GAIN_pass": true,
+    "verdict": "GREEN",
+    "note": "SW-sim edge-learn (H_679 real); adapter carries new-context in separate path, base readout FROZEN; measurement rung; frozen thr bf98c01"
+  },
+  "ANCHOR": {
+    "hypothesis": "H_865 F-CLM-ANCHOR (adapter edge)",
+    "rung": "mid d512/L8/E8",
+    "edge": "adapter gives Psi-penalty a grad lever (model_psi from ADAPTED norm_out)",
+    "n_anchors": 31,
+    "lambda_on": 1.0,
+    "on_d_anchor_pre": 0.02577,
+    "on_d_anchor_post": 0.00832,
+    "on_d_anchor_max": 0.17471,
+    "on_probe_consistency": 0.14286,
+    "off_d_anchor_pre": 0.02577,
+    "off_d_anchor_post": 0.59445,
+    "off_d_anchor_max": 0.59492,
+    "off_probe_consistency": 0.13082,
+    "on_off_identical": false,
+    "threshold_d_anchor_max": "<0.50",
+    "threshold_probe_consistency": ">0.80",
+    "DIST_pass": true,
+    "PROBE_pass": false,
+    "lever_present": true,
+    "verdict": "RED",
+    "note": "SW-sim edge-learn (H_679 real); adapter -> Psi-probe lever; E2 on/off ablation must be NON-identical; frozen thr bf98c01"
+  },
+  "headline": {
+    "BOUND_closed": true,
+    "ANCHOR_closed": false
+  }
+}

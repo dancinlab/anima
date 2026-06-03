@@ -1,0 +1,61 @@
+F-CLM-CHIPFIT — VERDICT (post-measurement)
+H_876 — CLM deploy-track chip-fit shrink (<=~1.2M AKD1000 nodes) vs mid rung
+measured_at: 2026-05-31   measure_by: CODE (g5)   est_cost: $0 (CPU-local)
+prereg: .verdicts/clm-chip-fit-shrink/F-CLM-CHIPFIT_prereg.txt (frozen 2026-05-31, post-tuning 0)
+backing: .verdicts/876_clm_chip_fit_shrink/F-CLM-CHIPFIT_result.json (raw)
+
+────────────────────────────────────────────────────────────────────────────
+SCOPE (a_scale_honest_scope)
+  DEPLOY track (AKIDA chip-fit) ⊥ MEASUREMENT track (GPU AKIDA-envelope QAT).
+  This 🟢 is a SINGLE-CHIP deploy-fit + CE-retention judgment ONLY — NOT a
+  3B/7B claim, NOT a routing-z claim. It does NOT gate measurement-rung work.
+
+────────────────────────────────────────────────────────────────────────────
+METHOD (apples-to-apples, code g5)
+  Same-run A/B. BOTH configs trained in the SAME process with IDENTICAL
+  steps/seq/batch/seed/envelope/corpus — node count is the ONLY variable.
+  driver  : CLM/train/h876_chip_fit_shrink.hexa (runtime-gen python body,
+            no new committed .py) imports the LANDED CLM/model/model.py
+            skeleton + reuses CLM/train/train_clm.py QAT functions verbatim.
+  arm=AB · seed=42 · act_bits=4 · steps=600 · seq_len=64 · batch=16 · lr=3e-3
+  envelope : weights int4-sym[-7,+7] per-output-channel STE · acts act_bits=4
+             step=2^(8-4) · grads STE (fp32 master · quantized forward).
+  corpus   : CLM/corpus/clm_p1.corpus.kosmos (committed sample @corpus,
+             1656 bytes, V=256, no tokenizer). random-init CE = ln(256) = 5.545.
+
+────────────────────────────────────────────────────────────────────────────
+RESULT (raw: F-CLM-CHIPFIT_result.json)
+  mid      d512/L8/E8 : params = 13,653,768 · last_ce = 3.3445 · wall 1727.4 s
+  chip-fit d148/L8/E8 : params =  1,199,508 · last_ce = 1.2826 · wall  445.1 s
+  shrink factor = 13,653,768 / 1,199,508 = 11.38x
+  quality_drop = chipfit_last_ce − mid_last_ce = 1.2826 − 3.3445 = −2.0619 nat
+
+  F-CLM-CHIPFIT-FIT  : 1,199,508 <= 1,200,000               → PASS
+  F-CLM-CHIPFIT-DROP : quality_drop = −2.0619 nat < 1.000   → PASS
+
+  ┌──────────────────────────────────────────────────────────────────────┐
+  │  VERDICT: 🟢 SUPPORTED-NUMERICAL  (deploy-track scope)                  │
+  │  The architecture FITS the AKD1000 single-chip node budget (≤1.2M)     │
+  │  at the mid L8/E8 topology (d_model 512→148, 11.38× shrink), AND        │
+  │  retains quality with drop −2.0619 nat (< 1.0 bound) vs the mid rung.   │
+  └──────────────────────────────────────────────────────────────────────┘
+
+────────────────────────────────────────────────────────────────────────────
+HONEST READING (a_paper_negative_ok · a_scale_honest_scope)
+  The drop is NEGATIVE (chip-fit < mid CE) on THIS micro-corpus/schedule. This
+  is NOT a claim that an 11×-smaller model is universally better — it is an
+  honest same-run artifact: on the tiny committed sample @corpus (1656 bytes)
+  with a short 600-step schedule, the 1.2M model converges/fits this micro
+  byte-stream FASTER than the 13.7M mid does in the same wall-controlled step
+  budget (larger model = more params to move per step under STE-QAT, slower to
+  reach low CE on a corpus this small). The PRE-REGISTERED predicates (fit AND
+  drop<1.0) both hold either way, so the deploy-fit + retention 🟢 stands.
+  CAVEAT for downstream: the original mid prod-rung fire (.verdicts/clm-prod-
+  rung/clm_mid_AB_s42.json) trained on a 262144-byte corpus for 2000 steps and
+  reached last_ce 2.2237; that is a DIFFERENT regime. The number that licenses
+  THIS deploy decision is the SAME-RUN relative drop measured here (all vars
+  held except node count), not a cross-run absolute-CE comparison.
+
+  DEPLOY-FIT CONCLUSION: d148/L8/E8 (1,199,508 params) is a valid AKD1000
+  single-chip-fit shrink of the mid topology with no measured CE penalty under
+  the frozen same-run protocol. 🟢

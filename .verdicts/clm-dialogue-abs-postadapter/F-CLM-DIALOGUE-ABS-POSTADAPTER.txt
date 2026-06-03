@@ -1,0 +1,68 @@
+F-CLM-DIALOGUE-ABS-POSTADAPTER — VERDICT (H_867r · ABSOLUTE dialogue FLOOR on the H_865 ADAPTER edge)
+====================================================================================================
+W2 method · deterministic:false · byte-match ✗ (Q-TRUST A reuse: H_857/H_858 distributional measures).
+measured 2026-05-31 · CPU/local eval (M-series, GPU pod 0, est cost $0, wall 1770.9s, torch 2.8.0).
+measured by CODE (g5), NO LLM judge. External LLM 0 · ShareGPT/Alpaca/ChatGPT-gen 0 (@L4).
+
+FROZEN FLOOR — REUSED VERBATIM (post-tuning 0):
+  Same pre-registered ABSOLUTE thresholds as H_867 — .verdicts/clm-dialogue-abs/F-CLM-DIALOGUE-ABS_prereg.txt
+  (frozen commit d5103f21). NO threshold moved. Copy held here as F-CLM-DIALOGUE-ABS_prereg_frozen_reuse.txt.
+    F-CLM-DIALOGUE-ABS-COHERE  PASS iff coherence(arm-SP)   >= 0.060
+    F-CLM-DIALOGUE-ABS-ADEQ    PASS iff adequacy_f1(arm-SP) >= 0.020
+    F-CLM-DIALOGUE-ABS-LEAK    PASS iff register_leak(arm-SP) == 0
+  🟢 SUPPORTED-NUMERICAL iff ALL THREE pass · 🔴 CLOSED-NEGATIVE iff ANY fails (a_paper_negative_ok).
+
+MODEL UNDER TEST — DIFFERENT from H_867 (this is the whole point):
+  H_867   measured the H_863 FULL-FINETUNE arm-SP and fell 0.002 short on COHERE (0.05804 < 0.060 · 🔴).
+  H_867r  measures the H_865 TRUNK-ADJACENT ADAPTER edge — FROZEN backbone (clm_mid_backbone.pt, mid
+          d512/L8/E8 ~13.65M, AKIDA int4-sym[-7,+7] STE act_bits=4) + a thin trainable adapter (rank=64,
+          AdapterEdge from CLM/model/h865_adapter_edge.py) inserted between FROZEN norm_out and FROZEN
+          readout (norm_out → h → h' = h + adapter(h) → readout). The adapter LIFTED the H_865 F-CLM-BOUND
+          retain-while-learn gate (🟢). Question: does the SAME lever lift ABSOLUTE held-out dialogue
+          COHERENCE over the 0.060 floor H_867 just missed?
+  arm-SP reconstructed by the H_863 procedure VERBATIM but training ONLY the adapter params: SFT continue
+  on the 4 H_863 PD plays (Hamlet#1524/Importance#844/DollsHouse#2542/Caesar#1522) + a DIVERSITY-gated
+  8-pattern-leak-filtered self-play reflux slice (1920 bytes) folded back + a short continue.
+
+EVAL SNAPSHOT — REUSED (H_867's OWN verified held-out PD snapshot · DISJOINT from the SFT plays):
+  .verdicts/clm-dialogue-abs/h867_eval_heldout.bytes — Macbeth(#1533)·Othello(#1531)·Romeo&Juliet(#1513)·
+  Pygmalion(#3825). Decoded held-out stream sha256 = a79789623a6160e2... matches the H_867 snapshot
+  manifest VERBATIM (98752 bytes). License-clean PD · 8-pattern leak-filtered (drop 0).
+
+MEASURED (frozen floor vs adapter arm-SP · adapter arm-SFT reported for contrast only):
+  | arm                     | coherence | CE_heldout | adequacy_f1 | leak | self_bleu | repetition |
+  | adapter-SFT (contrast)  |  0.04015  |  3.21525   |   0.01312   |  0   |  0.99322  |  0.01407   |
+  | adapter-SP  (UNDER TEST)|  0.04369  |  3.13062   |   0.01762   |  0   |  0.99948  |  0.00313   |
+  baselines (snapshot facts): uniform 0.0039 · unigram(order-0) 0.0375 · bigram(order-1 self-fit) 0.0843.
+  reflux: 1920 bytes · leak 0 · self_bleu 0.99166 · rep 0.00313 · DIV gate ok = False (greedy mode-collapse;
+    folded back regardless — H_867 reported the analogous reflux_div_gate_ok as context, not a verdict gate).
+
+GATE EVALUATION (adapter arm-SP vs FROZEN floor d5103f21):
+  F-CLM-DIALOGUE-ABS-COHERE : 0.04369 <  0.060  → FAIL   (BELOW even the H_867 full-finetune 0.05804;
+                                                          above order-0 unigram 0.0375 but below floor)
+  F-CLM-DIALOGUE-ABS-ADEQ   : 0.01762 <  0.020  → FAIL   (H_867 PASSED this at 0.02138; adapter below)
+  F-CLM-DIALOGUE-ABS-LEAK   : 0       == 0      → PASS
+
+VERDICT: 🔴 CLOSED-NEGATIVE.
+  The H_865 trunk-adjacent ADAPTER edge does NOT clear the frozen absolute dialogue-quality floor — it
+  is in fact WORSE on coherence than the H_867 full-finetune arm-SP (0.04369 < 0.05804), and unlike
+  H_867 it ALSO fails the adequacy gate (0.01762 < 0.020). The adapter lever that lifted F-CLM-BOUND
+  (retain base band while learning a new context band, in a separate additive path) does NOT add enough
+  ABSOLUTE dialogue-generation capacity on a distribution-shifted held-out: a thin rank-64 adapter on a
+  FROZEN backbone+readout has less expressive headroom than a full finetune for absolute coherence.
+  The adapter did NOT lift coherence over 0.060.
+
+  scope (a_scale_honest_scope): mid rung · this eval distribution only · post-tuning 0 vs d5103f21.
+  CPU/local eval $0. a_paper_negative_ok — an honest below-floor, expected-plausible at mid scale:
+  bounding the H_865 adapter's absolute dialogue quality is a publishable rule-out (the adapter helps
+  retain-while-learn, not absolute generation quality at this scale).
+
+  CONCLUSION re the H_867 question ("does the adapter lift absolute coherence over 0.060?"): NO — 🔴.
+  COHERE 0.04369 < 0.060 (and < H_867's 0.05804) · ADEQ 0.01762 < 0.020 · LEAK 0 PASS.
+
+ARTIFACTS
+  .verdicts/clm-dialogue-abs-postadapter/clm_dialogue_abs_postadapter_result.json (full numbers)
+  .verdicts/clm-dialogue-abs-postadapter/F-CLM-DIALOGUE-ABS_prereg_frozen_reuse.txt (frozen floor copy)
+  .verdicts/867r_clm_dialogue_absolute_postadapter/ (id-keyed backing dir · manifest + result mirror)
+  CLM/bench/h867r_dialogue_abs_postadapter_eval.hexa (eval scaffold; torch payload run-only, repo blocks new .py)
+  UNIVERSE/H_867r_clm_dialogue_absolute_postadapter.md (hypothesis writeup)

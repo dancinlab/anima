@@ -1,0 +1,23 @@
+H_871 routing-z scale-ladder — arm=AB seeds=[42, 43, 44] steps_mult=1.0 corpus=REAL(kowiki two-lane) device=cuda
+torch 2.1.0+cu118  N_NULL=200  MARGIN=0.5
+[ tiny s42] d=64 L=2 E=4 params=120132 H=1.386/1.386 null_mu=1.086 z=1.642 distinct=4 ce=0.279 gate3.0=N
+[ tiny s43] d=64 L=2 E=4 params=120132 H=1.386/1.386 null_mu=1.096 z=1.564 distinct=4 ce=0.305 gate3.0=N
+[ tiny s44] d=64 L=2 E=4 params=120132 H=1.386/1.386 null_mu=1.089 z=1.526 distinct=4 ce=0.300 gate3.0=N
+[small s42] d=256 L=4 E=8 params=2695176 H=2.070/2.079 null_mu=1.731 z=2.277 distinct=8 ce=0.204 gate3.0=N
+[small s43] d=256 L=4 E=8 params=2695176 H=2.063/2.079 null_mu=1.735 z=2.156 distinct=8 ce=0.209 gate3.0=N
+[small s44] d=256 L=4 E=8 params=2695176 H=2.065/2.079 null_mu=1.726 z=2.068 distinct=8 ce=0.212 gate3.0=N
+[  mid s42] d=512 L=8 E=8 params=13653768 H=2.049/2.079 null_mu=1.715 z=2.199 distinct=8 ce=0.212 gate3.0=N
+[  mid s43] d=512 L=8 E=8 params=13653768 H=2.043/2.079 null_mu=1.716 z=2.214 distinct=8 ce=0.216 gate3.0=N
+[  mid s44] d=512 L=8 E=8 params=13653768 H=2.044/2.079 null_mu=1.710 z=2.144 distinct=8 ce=0.194 gate3.0=N
+
+=== H_871 routing-z scale-ladder AGGREGATE (mean over seeds) ===
+   tiny: mean routing-z = +1.5771
+  small: mean routing-z = +2.1672
+    mid: mean routing-z = +2.1855
+  monotone non-decreasing tiny<=small<=mid : True
+  margin (mid - tiny) = +0.6084  (gate >= 0.5)
+  any cell crosses 3.0 gate : False
+  ARTIFACT CONFIRMED (monotone AND margin>=gate) : True
+  VERDICT : GREEN (artifact confirmed: z rises with scale)
+
+wrote JSON -> /workspace/h871/h871_routing_z_scale.json

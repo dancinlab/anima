@@ -1,0 +1,80 @@
+F-CLM-ARRAY-BALANCE — pre-registered FROZEN falsifier (capacity-aware re-partition vs static-hash)
+==================================================================================================
+frozen_at : 2026-05-31 (BEFORE the run; no post-hoc tampering, @L7 / d6 · post-tuning 0)
+source    : UNIVERSE/H_878_clm_mitosis_array.md (🔴 CLOSED-NEGATIVE · static hash partition → load imbalance)
+            UNIVERSE/CLM-CANDIDATES.md §F row H_885 (AXIS1 7B scale-out blocker)
+            CLM/P4_PRODUCTION_ROADMAP.md @L2 MITOSIS (expert=chip array deploy vision)
+            CLM/model/array_moe.py (landed sparse expert-array skeleton)
+harness   : CLM/model/h885_array_balance_sim.py (REUSES the H_878 array-sim harness;
+            adds ONLY a capacity-aware re-partition arm vs the static-hash arm)
+
+MOTIVATION (re-approach of H_878 🔴):
+  H_878 showed that a STATIC HASH partition of the E sparse experts across N
+  MITOSIS chips (even contiguous shards, expert -> fixed chip by index) leaves
+  the per-chip token load badly IMBALANCED, because the trained top-k router
+  monopolizes a few experts (max/min per-chip dispatch ratio 1.88 -> 28.8 ->
+  54.5 for N=2,4,8, far over its bound). H_885 tests whether a CAPACITY-AWARE
+  re-partition (assign experts to chips by MEASURED per-expert usage so each
+  chip's aggregate load is balanced — a longest-processing-time / greedy bin-pack
+  on a profiling split) FIXES the imbalance WITHOUT hurting aggregate output
+  quality (the gather is still a disjoint re-association of the SAME experts and
+  the SAME router weights, so coherence must be preserved exactly).
+
+SCOPE (a_scale_honest_scope · a_paper_negative_ok):
+  SW-SIMULATION ONLY of the deploy chip-fit track, identical scope to H_878. NO
+  silicon: exactly one physical AKD1000 today (rest is pi5/1-chip). We simulate
+  the N-chip array in software. The capacity-aware re-partition is computed from
+  a held-out PROFILING split (disjoint from the eval split) so the assignment
+  does NOT peek at the eval tokens it is scored on. NOT measured: chip-to-chip
+  DMA latency / silicon timing / real-chip int4 emit drift (HW follow-up).
+
+LOAD METRIC (chosen BEFORE run): per-chip dispatch-count COEFFICIENT OF VARIATION
+  CV = std(chip_counts) / mean(chip_counts)   (population std; over the N chips).
+  CV = 0 is perfectly balanced; CV grows with imbalance. CV is scale-free and the
+  metric named in the H_885 candidate row ("per-chip load CV"). Reported per N,
+  mean over seeds, for BOTH arms (static-hash = H_878 baseline; capacity-aware).
+
+ARMS:
+  (S) STATIC-HASH  — the H_878 partition: even contiguous shards, expert e -> chip
+                     e // shard_size. The frozen H_878 baseline.
+  (C) CAPACITY-AWARE — profile per-expert top-1 dispatch counts on the PROFILING
+                     split, then greedily assign experts (descending profiled load)
+                     to the currently-least-loaded chip (LPT bin-pack), so each
+                     chip's expected aggregate load is balanced.
+
+FROZEN measurement spec (mirrors H_878 unit exactly):
+  axis (N chips) = [2, 4, 8]         (N=1 degenerate omitted — CV undefined gain)
+  E experts      = 8                 (fixed; partitioned onto N chips by each arm)
+  d_model/L      = d64 / L2          (toy, mirrors H_852/H_878 unit)
+  top_k          = 2
+  seeds          = {42, 43, 44}      (multi-seed, d6)
+  train_steps    = 120               (short train so router DYNAMICS, not init, show)
+  eval_batches   = 16
+  profile_batches= 16                (DISJOINT split for capacity-aware assignment)
+  seq_len / batch= 64 / 16
+  corpus         = synthetic two-lane (make_synthetic_corpus, 8192 B/lane)
+
+FROZEN falsifier thresholds (NOT to be moved post-run):
+  PRIMARY (load):    CV(capacity-aware) < CV(static-hash)   for EVERY N in {2,4,8}
+                     (strict improvement; capacity-aware must beat the H_878 baseline).
+  GUARD (no starve): capacity-aware arm — every chip receives > 0 tokens.
+  COHERENCE (>= single-chip baseline): capacity-aware aggregate-emit must reproduce
+                     the single-model reference AT LEAST AS WELL as the single-chip
+                     (N=1) baseline, i.e. NOT WORSE:
+                       COH_LOGIT_ATOL  = 1e-4   max abs logit diff array-vs-reference
+                       COH_HAMMING_MAX = 0.0    next-byte argmax mismatch fraction (exact)
+                       COH_CE_ATOL     = 1e-4   abs cross-entropy delta array-vs-reference
+                     (single-chip baseline is 0 on all three; capacity-aware must
+                      stay within these tolerances = "coherence >= single-chip baseline").
+
+FROZEN verdict:
+  PASS (🟢 SUPPORTED-NUMERICAL) iff for EVERY N in {2,4,8} (mean over seeds):
+     (1) capacity-aware arm has NO starved chip, AND
+     (2) CV(capacity-aware) < CV(static-hash), AND
+     (3) max |logit_capaware - logit_ref| <= COH_LOGIT_ATOL, AND
+     (4) argmax hamming-mismatch fraction <= COH_HAMMING_MAX, AND
+     (5) |CE_capaware - CE_ref| <= COH_CE_ATOL.
+  FAIL (🔴 CLOSED-NEGATIVE) otherwise — a valid honest gap-closeout (a_paper_negative_ok).
+
+measure-by-CODE (g5): all quantities computed in CODE (no LLM judge). Frozen
+thresholds NOT to be moved post-run (post-tuning 0, @L7).

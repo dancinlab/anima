@@ -1,0 +1,60 @@
+F-CLM-MITOSIS-ARRAY — pre-registered FROZEN falsifier (N-chip array dispatch SW-sim)
+====================================================================================
+frozen_at : 2026-05-31 (BEFORE the run; no post-hoc tampering, @L7 / d6)
+source    : CLM/P4_PRODUCTION_ROADMAP.md @L2 MITOSIS (expert=chip array deploy vision)
+            UNIVERSE H_852 (F-CLM-MONO-ARRAY · expert-COUNT scale axis · DISSOLVE)
+            CLM/model/array_moe.py (landed sparse expert-array skeleton)
+harness   : CLM/model/h878_chip_array_sim.py (extends CLM/model/array_moe.py)
+
+SCOPE (a_scale_honest_scope · a_paper_negative_ok):
+  SW-SIMULATION ONLY of the deploy chip-fit track. NO silicon: exactly one
+  physical AKD1000 exists today (the rest is pi5/1-chip). We simulate an
+  N-chip array in software by PARTITIONING the E sparse experts onto N
+  disjoint "chips" (each chip = one AKD1000 = a disjoint expert shard), then
+  dispatch each token to its routed chip, let each chip emit independently,
+  and gather the per-chip emits back into one aggregate output. The single
+  monolithic CLMArray forward is the REFERENCE. This measures the SW dispatch
+  + gather contract, NOT chip-to-chip DMA latency / silicon timing (HW follow-up).
+
+CLAIM (chip-array deploy-fit):
+  (A) LOAD-BALANCE — when the router dispatches tokens across N chips, the
+      per-chip token load is BALANCED: no chip starves (0 tokens) and no chip
+      saturates (hogs the array). max/min per-chip dispatch ratio <= a stated bound.
+  (B) AGGREGATE-EMIT COHERENCE — the distributed N-chip array (per-chip emit,
+      then gather) reproduces the single-model reference output: aggregate
+      logits == single-model logits within a stated numerical tolerance, AND
+      next-byte argmax (hard emit) hamming-mismatch within a stated tolerance,
+      AND aggregate cross-entropy delta within a stated tolerance.
+
+FROZEN measurement spec:
+  axis (N chips) = [1, 2, 4, 8]      (1 = single-chip degenerate baseline)
+  E experts      = 8                 (fixed; partitioned evenly onto N chips)
+  d_model/L      = d64 / L2          (toy, mirrors H_852 unit)
+  top_k          = 2
+  seeds          = {42, 43, 44}      (multi-seed, d6)
+  train_steps    = 120               (short train so router DYNAMICS, not init, show)
+  eval_batches   = 16
+  seq_len / batch= 64 / 16
+  corpus         = synthetic two-lane (make_synthetic_corpus, 8192 B/lane)
+
+FROZEN falsifier thresholds (NOT to be moved post-run):
+  LOADBAL_RATIO_MAX = 4.0    (B) max/min per-chip dispatch ratio bound (N>=2);
+                              also NO chip with 0 dispatched tokens (no starve).
+  COH_LOGIT_ATOL    = 1e-4   (B) max abs logit diff array-vs-reference
+  COH_HAMMING_MAX   = 0.0    (B) fraction of next-byte argmax mismatches (exact)
+  COH_CE_ATOL       = 1e-4   (B) abs cross-entropy delta array-vs-reference
+
+FROZEN verdict (per N, then aggregate):
+  PASS (🟢 SUPPORTED-NUMERICAL) iff for EVERY N in {2,4,8} (mean over seeds):
+     (1) every chip receives > 0 tokens (no starve), AND
+     (2) max/min per-chip dispatch ratio <= LOADBAL_RATIO_MAX, AND
+     (3) max |logit_array - logit_ref| <= COH_LOGIT_ATOL, AND
+     (4) argmax hamming-mismatch fraction <= COH_HAMMING_MAX, AND
+     (5) |CE_array - CE_ref| <= COH_CE_ATOL.
+  FAIL (🔴 CLOSED-NEGATIVE) otherwise.
+
+A 🔴 (a chip starves/saturates, OR the gathered array output diverges from the
+single-model reference beyond tolerance) is a VALID honest result (g63, p7,
+a_paper_negative_ok). The frozen thresholds are NOT to be moved post-run.
+
+measure-by-CODE (g5): all five quantities computed in CODE (no LLM judge).

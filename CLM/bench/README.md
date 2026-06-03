@@ -52,7 +52,7 @@ python3 CLM/bench/clm_akida_bench.py --clm <PATH-TO-.clm> --n-iter 100 --json
 옵션: `--clm PATH` · `--n-iter N`(default 100) · `--units`/`--in-lines`(default 16) ·
 `--act-bits`(default 1, LIF) · `--input-bits`(default 4) · `--seed`(default 187) · `--json`.
 
-> 의존: numpy. SW envelope import = `HEXAD/CHAT/server/akida_sw_lif.py`(상대경로 자동 해석).
+> 의존: numpy. SW envelope import = `AGENT/CHAT/akida_sw_lif.py`(상대경로 자동 해석).
 
 ## pi5-akida 단일점유 — spike-streamer stop → bench → restart (복원 필수)
 

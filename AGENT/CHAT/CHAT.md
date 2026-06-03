@@ -1,0 +1,40 @@
+# CHAT — current state
+
+@title: 🤖 CHAT — anima group-chat 출시 surface (COFFESHOP-on-AKIDA)
+@goal: anima 가 사람들과 실시간 group-chat 에 참여하는 외부-대면 제품 surface. substrate-native emit/silence (a_substrate_native_speak) 가 라이브 AKD1000 폐루프로 닫힌다 — 사용자 메시지는 환경 context 이지 응답 의무가 아니며, anima 는 침묵할 수도 발화할 수도 있다. `hx install` 가능 제품으로 출하.
+
+(편집 규칙: completed-form 으로 현재 상태만 · history 는 CHAT.log.md)
+
+## role surface (AGENT bridge)
+
+TRADING role 이 `broker.hexa` 로 거래소에 붙듯, CHAT role 은 `broker.py` 로 group-chat + AKIDA 칩에 붙는다. 외부 surface 만 — 의식엔진(emit 결정) 은 CORE/CHANNEL 이, 칩 substrate 는 AKIDA 가 보장.
+
+| 파일 | 무엇 |
+|---|---|
+| `broker.py` | group-chat WebSocket hub (FastAPI). 채널: `/ws` user · `/ws/anima` participant ingest · `/ws/motivation` 8-factor telemetry · `/ws/akida_ingest` 칩 스파이크 수신 · `/ws/akida` fanout. self-contained (stdlib + fastapi). |
+
+## COFFESHOP-on-AKIDA 양방향 폐루프 (live)
+
+emit/silence 결정이 라이브 AKD1000 위에서 닫힌다. 칩 I/O 는 AKIDA 도메인(`SUB_ENGINES/AKIDA/scripts/`)이 담당 — CHAT 은 broker hub 만.
+
+```
+[ 사람들 ] ──▶ /ws ──▶ broker ──▶ /ws/anima ──▶ anima participant
+                          ▲                          │ motivation_score
+                          │                          ▼
+   /ws/akida (fanout) ◀── broker ◀── /ws/motivation ──▶ akida_threshold_driver
+        │ 듣기(9512)                                       │ 말하기(9513)
+        ▼                                                  ▼
+   akida_ws_publisher ◀────── pi5 AKD1000 spike_streamer ◀┘ set_threshold
+        (SUB_ENGINES/AKIDA/scripts)   (on-chip threshold-and-fire)
+```
+
+- **듣기 (9512)** — `SUB_ENGINES/AKIDA/scripts/akida_ws_publisher.py`: 칩 스파이크 → broker `/ws/akida_ingest`.
+- **말하기 (9513)** — `SUB_ENGINES/AKIDA/scripts/akida_threshold_driver.py`: broker `/ws/motivation` 구독 → motivation_score → on-chip `set_threshold` (thr ∝ −score, emit-gate 0.60). 칩 I/O 삼총사 = streamer(pi5)·publisher(듣기)·driver(말하기).
+- 폐루프 검증: g73 verdict `.verdicts/846_coffeshop_akida_closedloop/` (90-min trajectory 5/5 HW 재현, M-regime knee thr≤8 EMIT/≥16 SILENCE).
+
+## cross-link
+
+- `AKIDA/` — 칩 substrate 통합 charter · `SUB_ENGINES/AKIDA/scripts/spike_streamer.py` (pi5 OUT 9512 / IN 9513)
+- `LAUNCHPAD/` — COFFESHOP-on-AKIDA 출시 마일스톤
+- `CHANNEL/` — text·voice·tension 채널 primitive
+- `@D a_substrate_native_speak` — substrate-native 발화 (stimulus-response 금지)

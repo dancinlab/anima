@@ -110,12 +110,12 @@
 
 ### E-MM — multi-modality payload 시도 (text 이외)
 - 5 anchor 의 `image/audio/tension` payload `pending` → 실 데이터 wire
-- **tension payload = WIRED (2026-05-23)**: `HEXAD/CHAT/server/kosmos_anchor.hexa`
+- **tension payload = WIRED (2026-05-23)**: `AGENT/CHAT/kosmos_anchor.hexa`
   — production anima emission 마다 8-factor motivation snapshot 을
   TENSION-LINK 5-channel (concept/context/meaning/authenticity/sender) 로
   mapping 한 `.kosmos` anchor 생성. HEXAD/PURE (CLOSED) 의 작동하던 KOSMOS+tension
   wiring 회수 — V3 substrate 만 FAIL, anchor 생성 feature 는 ground-truth 작동.
-- **production 활성화 = WIRED (2026-05-23)**: `HEXAD/CHAT/server/kosmos_emitter.hexa`
+- **production 활성화 = WIRED (2026-05-23)**: `AGENT/CHAT/kosmos_emitter.hexa`
   — hexa-native side-process daemon 이 broker `GET /history` 를 poll 하여
   anima 의 live emission (`kind:"anima"`, broker-id dedup) 마다
   `emit_kosmos_from_factors` 호출 → `HEXAD/UNIVERSE-BRAIN-MAP/anchors/` 에

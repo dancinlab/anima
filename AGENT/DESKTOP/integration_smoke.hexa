@@ -24,11 +24,11 @@
 // trip needs interactive permissions (Accessibility + Screen Recording +
 // Automation) and is documented as a manual verification step.
 
-import "/Users/ghost/core/anima/AGENT/DESKTOP/native_ax.hexa"
-import "/Users/ghost/core/anima/AGENT/DESKTOP/screen_extract.hexa"
-import "/Users/ghost/core/anima/AGENT/DESKTOP/action.hexa"
-import "/Users/ghost/core/anima/AGENT/DESKTOP/window_ops.hexa"
-import "/Users/ghost/core/anima/AGENT/DESKTOP/task_primitives.hexa"
+import "AGENT/DESKTOP/native_ax.hexa"
+import "AGENT/DESKTOP/screen_extract.hexa"
+import "AGENT/DESKTOP/action.hexa"
+import "AGENT/DESKTOP/window_ops.hexa"
+import "AGENT/DESKTOP/task_primitives.hexa"
 
 // Strip trailing \n from a string.
 fn _strip_nl(s: string) -> string {

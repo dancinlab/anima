@@ -1,0 +1,107 @@
+{
+  "snapshot": "h867_dialogue_abs_eval",
+  "purpose": "H_867 INDEPENDENT held-out PD dialogue eval (DISJOINT from H_863 training plays)",
+  "lane": "CC/PD dialogue (@L4 lane 1)",
+  "encoding": "byte-utf8 V=256 (no tokenizer)",
+  "disjoint_from_h863": [
+    "gutenberg 1524 Hamlet",
+    "844 Earnest",
+    "2542 Dolls House",
+    "1522 Caesar"
+  ],
+  "sources": {
+    "macbeth_shakespeare": {
+      "family": "gutenberg-pd",
+      "license": "PD",
+      "url": "https://www.gutenberg.org/cache/epub/1533/pg1533.txt",
+      "lines_kept": 3246,
+      "leak_dropped": 0,
+      "license_clean": 1
+    },
+    "othello_shakespeare": {
+      "family": "gutenberg-pd",
+      "license": "PD",
+      "url": "https://www.gutenberg.org/cache/epub/1531/pg1531.txt",
+      "lines_kept": 4829,
+      "leak_dropped": 0,
+      "license_clean": 1
+    },
+    "romeojuliet_shakespeare": {
+      "family": "gutenberg-pd",
+      "license": "PD",
+      "url": "https://www.gutenberg.org/cache/epub/1513/pg1513.txt",
+      "lines_kept": 4136,
+      "leak_dropped": 0,
+      "license_clean": 1
+    },
+    "pygmalion_shaw": {
+      "family": "gutenberg-pd",
+      "license": "PD",
+      "url": "https://www.gutenberg.org/cache/epub/3825/pg3825.txt",
+      "lines_kept": 3197,
+      "leak_dropped": 0,
+      "license_clean": 1
+    }
+  },
+  "total_bytes": 592536,
+  "heldout_bytes": 98752,
+  "heldout_block_scheme": "every 6th 64-byte block",
+  "gen_prompt_seed": 867,
+  "leak_filter": {
+    "applied": true,
+    "patterns": 8,
+    "pattern_set": [
+      "universe_brain_map",
+      "jy_chat_template",
+      "hexad_module",
+      "nonce",
+      "Mk.VIII",
+      "gen1 commit",
+      "corpus_generator.hexa",
+      "universe_extended"
+    ],
+    "lines_dropped": 0
+  },
+  "license_clean_gate": {
+    "allowed_cc": [
+      "CC-BY",
+      "CC-BY-SA",
+      "CC0",
+      "PD",
+      "MIT-data",
+      "OPUS-subtitle-CC"
+    ],
+    "forbidden_families": [
+      "sharegpt",
+      "alpaca",
+      "chatgpt",
+      "gpt4",
+      "openai",
+      "claude-gen",
+      "wizardlm",
+      "oasst-gpt"
+    ],
+    "all_sources_clean": true,
+    "rejected": []
+  },
+  "absolute_baselines": {
+    "uniform_byte": {
+      "ce": 5.5452,
+      "coherence": 0.0039
+    },
+    "unigram_byte": {
+      "ce": 3.2845,
+      "coherence": 0.0375
+    },
+    "bigram_byte_selffit": {
+      "ce": 2.4729,
+      "coherence": 0.0843
+    },
+    "random_byte_gen_adequacy_f1": 0.0
+  },
+  "sha256_full": "dcab302f69dfe7aa63be3e216185e09988f7306176c95b0ccd60a2e1bbca0bd4",
+  "sha256_heldout": "a79789623a6160e23b0bf35bc813ebeb6c9ea524b810e08c16366727d8fb0df1",
+  "external_llm": 0,
+  "foundation_borrow": 0,
+  "sharegpt_alpaca_chatgpt": "FORBIDDEN (@L4) - 0 used"
+}

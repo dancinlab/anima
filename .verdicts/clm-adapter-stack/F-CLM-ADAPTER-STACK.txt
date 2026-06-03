@@ -1,0 +1,49 @@
+F-CLM-ADAPTER-STACK — VERDICT (H_880 adapter-stack accumulation · per-context switch)
+=====================================================================================
+verdict      : 🟢 SUPPORTED-NUMERICAL (g5 CODE-measured · no LLM judge)
+measured_at  : 2026-05-31  ·  rung mid d512/L8/E8 (13,653,768 params) · arm AB
+execution    : GPU (RTX 5070, aiden 192.168.50.119) · device cuda · cuDNN disabled
+               (torch-nightly cuDNN sublibrary mismatch → native CUDA conv path, numerically identical)
+backbone     : clm_mid_backbone.pt (HF dancinlab/anima-clm-verify) — loaded FROZEN core
+edge         : K=4 H_865-style thin adapters (rank=64, zero-init=identity@step0) between FROZEN
+               norm_out and FROZEN readout; trained ONE AT A TIME (param isolation); per-context switch.
+thresholds   : F-CLM-ADAPTER-STACK_prereg.txt VERBATIM · OLD-Z-DROP cutoff bf98c01 verbatim · post-tuning 0
+
+FALSIFIER (pre-registered · ALL THREE required for 🟢):
+  F-STACK-NEW-GAIN     : min_k gain_k > 0.0                       (stack keeps absorbing new tasks)
+  F-STACK-OLD-Z-DROP   : z_drop_old < 1.0  (bf98c01 BOUND cutoff)  (oldest ctx not forgotten)
+  F-STACK-INTERFERENCE : max_{i≠j}(-interf_{i→j}) < 0.0           (own adapter strictly best decoder)
+  🟢 iff all three. else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+
+CONTEXTS (K=4, frozen seeds): ctx0=web(401, OLDEST) · ctx1=new(402) · ctx2=new(403) · ctx3=new(404).
+
+RESULT:
+  per-context gain (gain_k = ce_ctx_k_pre - ce_ctx_k_post, adapter_k on own ctx_k):
+    ctx0 +13.60192   ctx1 +7.24341   ctx2 +7.04997   ctx3 +7.21965     → min_gain = +7.04997
+  F-STACK-NEW-GAIN     : PASS  (min_k gain_k = +7.04997 > 0.0 — every adapter absorbs its own context;
+                                no saturation as the stack grows to K=4.)
+  z_drop_old (ctx0 with adapter0 AFTER full stack, in pre-adapt std units) = -158.05775
+  F-STACK-OLD-Z-DROP   : PASS  (z_drop_old = -158.05775 ≪ 1.0 — the oldest context is not just retained
+                                but the base CE FELL; parameter isolation holds end-to-end, the shared
+                                FROZEN readout/base were never touched.)
+  own-best margin = max_{i≠j}(-interf_{i→j}) = -11.86461  (worst wrong-adapter pair i=2,j=3)
+  F-STACK-INTERFERENCE : PASS  (own-best margin = -11.86461 < 0.0 — the own adapter is STRICTLY the best
+                                decoder of its own context for every pair; the per-context switch separates
+                                the K contexts cleanly. signed interference matrix in result.json: every
+                                off-diagonal is large-positive = a wrong adapter always hurts.)
+  LEVER (all 3): true
+  VERDICT : GREEN
+
+CONCLUSION: stacking K=4 thin H_865 adapters (one per context, trained one-at-a-time with parameter
+isolation, switched per context at inference) ACCUMULATES new-task capacity WITHOUT (a) forgetting the
+oldest task (z_drop_old -158.06 ≪ 1.0) and (b) cross-adapter interference (own adapter strictly best by
+≥11.86 std units worst-case). The stack is a clean per-context continual-learning device on the FROZEN
+core trunk — each adapter absorbs its own context (gain ≥ +7.05) and the contexts stay separated.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung only (mid d512/L8/E8 ~13.7M). Does NOT bind the deploy
+chip-fit track (≤~1.2M AKD1000). Inference stays AKIDA-int4-only (P0 d4). The adapter switch is a
+per-context routing select, NOT a deterministic full-retrain.
+INVIOLABLE (H_679): on-chip learning is the SOLE HW↔SW difference; edge-only PIECEWISE adaptation (@L1),
+adapters trained in isolation, base FROZEN — NOT a deterministic full-retrain. SW-sim of the
+non-deterministic on-chip edge-learn accepted at the measurement rung (H_679 established HW edge-learn is
+real). Thresholds frozen verbatim from prereg (OLD-Z-DROP = bf98c01), post-tuning 0.

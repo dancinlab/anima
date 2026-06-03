@@ -1,0 +1,35 @@
+F-CLM-ARRAY-BALANCE -- capacity-aware re-partition vs static-hash (H_878 re-approach)
+====================================================================================
+FROZEN (pre-run, @L7 no tampering):
+  axis_n_chips = [2, 4, 8]
+  n_experts = 8
+  d_model/L = d64/L2 (toy)
+  top_k = 2
+  seeds = [42, 43, 44]
+  train_steps = 120
+  eval_batches = 16
+  profile_batches = 16
+  load_metric = per-chip dispatch-count CV = std/mean (population std)
+  coh_logit_atol = 0.0001
+  coh_hamming_max = 0.0
+  coh_ce_atol = 0.0001
+  arms = S=static-hash (H_878 baseline) ; C=capacity-aware LPT bin-pack on disjoint profile split
+  falsifier = F-CLM-ARRAY-BALANCE: for every N in {2,4,8} -- capacity-aware arm no chip starves AND CV(capacity-aware) < CV(static-hash) AND max|logit_capaware-logit_ref| <= coh_logit_atol AND argmax-hamming <= coh_hamming_max AND |CE_capaware-CE_ref| <= coh_ce_atol
+  scope = SW-sim of @L2 deploy chip-fit track -- silicon NOT measured (1 AKD1000 today); a_scale_honest_scope; re-approach of H_878 (router)
+  device = cuda
+
+  N   CV_static  CV_capaware  CV_improved  no_starve_C  max_logit_d   hamming    ce_delta
+  2      0.2407       0.0283         True         True     0.00e+00    0.0000    0.00e+00
+  4      0.5569       0.1889         True         True     0.00e+00    0.0000    0.00e+00
+  8      0.8449       0.8449        False         True     0.00e+00    0.0000    0.00e+00
+
+CV improved (capaware < static, all N): False
+no-starve capacity-aware (all N): True
+coherence logit OK (atol 0.0001): True
+coherence hamming OK (<= 0.0): True
+coherence CE OK (atol 0.0001): True
+all chips chip-fit: True
+scale scope       : SW-sim of @L2 deploy chip-fit track -- silicon NOT measured (1 AKD1000 today); a_scale_honest_scope; re-approach of H_878 (router)
+device            : cuda
+
+VERDICT: FAIL  🔴 CLOSED-NEGATIVE

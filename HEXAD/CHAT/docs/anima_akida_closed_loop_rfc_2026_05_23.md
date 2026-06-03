@@ -58,12 +58,12 @@
 | Layer | File | Role | SSOT / Notes |
 |---|---|---|---|
 | pi5 akida streamer | `pi5:/home/ubuntu/anima/SUB_ENGINES/AKIDA/scripts/spike_streamer.py` | hardware spike 발화 (regime ∈ {R3, R2, M}) | pi5 host 전용, anima repo 미동기 (`inbox/patches/pi5-spike-streamer-regime-schedule.md` §2) |
-| akida_bridge | `HEXAD/CHAT/server/akida_bridge.hexa:255,286,306-323` | pi5 UDP/TCP → broker WS text frame 전달 (one spike per send) | default `ws://localhost:8000/ws/akida_ingest` (line 312, F-AKIDA-BRIDGE-1) |
-| broker `/ws/akida_ingest` | `HEXAD/CHAT/server/broker.py:328-355` | WS accept, JSON parse, `STATE.akida_history.append()` | broker.py:69 `deque(maxlen=200)`; parse 실패 시 line 338 `log.warning("akida ingest json drop: %s raw=%r")` (#187) |
+| akida_bridge | `AGENT/CHAT/akida_bridge.hexa:255,286,306-323` | pi5 UDP/TCP → broker WS text frame 전달 (one spike per send) | default `ws://localhost:8000/ws/akida_ingest` (line 312, F-AKIDA-BRIDGE-1) |
+| broker `/ws/akida_ingest` | `AGENT/CHAT/broker.py:328-355` | WS accept, JSON parse, `STATE.akida_history.append()` | broker.py:69 `deque(maxlen=200)`; parse 실패 시 line 338 `log.warning("akida ingest json drop: %s raw=%r")` (#187) |
 | broker `/akida/recent` | `broker.py:163-165` | GET 동일 deque snapshot | `{"akida": list(STATE.akida_history)}` |
 | broker `/ws/akida` (subscriber) | `broker.py:359-374` | frontend 구독 (history + fan-out) | **PUSH 대상 아님** — bridge 가 이쪽 가리키면 silent drop |
-| akida_consumer | `HEXAD/CHAT/server/akida_consumer.hexa:143-201` | 1 Hz polling `/akida/recent` → JSONL feature stream | out: `~/.cache/anima/akida_features.jsonl` (line 194/302); `type_of(recs) != "array"` guard (line 150, #188/#192) |
-| motivation engine | `HEXAD/CHAT/server/anima_participant.py:281-318` | 8-factor motivation 합성 → `decided_emit = score > eff_thr` | telemetry push `STATE.motivation_history.append()` (broker.py:286, line 168-170 GET `/motivation/recent`); **AKIDA feature 직접 wiring 은 TBD** (현재 self-tick + 환경 message 기반) |
+| akida_consumer | `AGENT/CHAT/akida_consumer.hexa:143-201` | 1 Hz polling `/akida/recent` → JSONL feature stream | out: `~/.cache/anima/akida_features.jsonl` (line 194/302); `type_of(recs) != "array"` guard (line 150, #188/#192) |
+| motivation engine | `AGENT/CHAT/anima_participant.py:281-318` | 8-factor motivation 합성 → `decided_emit = score > eff_thr` | telemetry push `STATE.motivation_history.append()` (broker.py:286, line 168-170 GET `/motivation/recent`); **AKIDA feature 직접 wiring 은 TBD** (현재 self-tick + 환경 message 기반) |
 | anima emit gate | `anima_participant.py:307,340,448-452` | `decided_emit` true 일 때만 `state.emit()` 호출 → `/ws/anima` WS send | substrate-native per `a_substrate_native_speak`; `REFRACTORY_S=15.0` (line 83), `ADAPTIVE_THR_PEAK=0.7` (line 84) |
 
 honest C3: motivation engine 의 **AKIDA feature 흡수 경로** 는 현 anima_participant.py 에서 grep 으로 발견 불가 — `akida_features.jsonl` 을 읽는 코드가 anima repo 본체에 부재. 즉 §1 chain map 의 "motivation engine ingest" 화살표는 **architecturally intended yet not implemented** 으로 표기.

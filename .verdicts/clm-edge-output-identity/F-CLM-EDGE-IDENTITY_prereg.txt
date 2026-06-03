@@ -1,0 +1,73 @@
+F-CLM-EDGE-IDENTITY - PRE-REGISTERED frozen thresholds (H_884 edge-output identity generalization)
+====================================================================================================
+W2 method - deterministic:false. Thresholds FROZEN VERBATIM from commit bf98c01
+  (.verdicts/clm-anchor/F-CLM-ANCHOR_prereg.txt; same gates H_862/H_865/H_873 used). post-tuning = 0.
+  NO threshold may move to flip a verdict after fire. Foundation E-31 31-anchor (KOSMOS, e7_31,
+  31/31 parser-valid). g5 = CODE-measured (JS-divergence by code) - NO LLM judge.
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-edge-output-identity/  ·  backing: .verdicts/884_clm_edge_output_identity/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8) only. Does NOT bind the deploy
+  chip-fit track. SW-sim of the non-deterministic on-chip edge-learn (H_679 real). Edge-only
+  piecewise partial-learn, NO deterministic full-retrain (@L1). Inference stays AKIDA-int4-only (P0 d4).
+  INVIOLABLE (pin): on-chip non-deterministic PLASTICITY = SOLE HW<->SW difference;
+  deterministic SW imitation = instant reject. This harness SW-SIMULATES a non-deterministic
+  on-chip edge-learn at the measurement rung (H_679 established HW edge-learn is real) - it does
+  NOT claim a deterministic full-retrain.
+
+HYPOTHESIS (generalize H_873 - the JUST-LANDED anchor-on-edge-output result)
+  H_873 (LANDED, origin/main, #1578): routing the identity constraint onto the EDGE OUTPUT
+  distribution (lambda_dist * JS(p_cur(identity-probe) || p_pre(identity-probe))) lifted
+  probe_consistency 0.143 -> 0.992 for the SINGLE H_865 adapter edge, closing H_862's PROBE failure.
+  H_884 GENERALIZES that result: does the edge-output identity constraint hold PROBE > frozen floor
+  (and keep DIST < frozen thr) ACROSS multiple DISTINCT partial-learning regimes, not just the one
+  H_873 setting?
+
+  Background: H_862 readout-only edge -> PROBE FAIL (no lever). H_865 adapter edge -> lever restored,
+  DIST PASS, PROBE STILL FAIL (0.143). Root cause both named: the anchor Psi-penalty constrains the
+  TRUNK Psi-STATE, not the READOUT OUTPUT distribution where identity drift actually happens. The
+  H_873 fix adds lambda_dist * JS(p_cur || p_pre) to the adapt loss. H_884 asks whether that
+  edge-output constraint GENERALIZES across distinct partial-learning edges.
+
+PARTIAL-LEARN MODES (each gets the SAME edge-output constraint + frozen gates)  [PRE-REGISTERED ROWS]
+  adapter   : H_865 thin trainable adapter (norm_out + adapter -> FROZEN readout). [baseline edge]
+  per_layer : unfreeze ONLY the last trunk layer's pointwise/1x1 conv (shallowest single-layer
+              partial-learn); readout FROZEN.
+  gated     : adapter via learned per-channel sigmoid gate g (init ~0 -> identity@step0):
+              h' = h + sigmoid(g) * adapter(h).
+  >= 3 partial-learn rows, frozen BEFORE fire (falsifier g5: PROBE > 0.80 across >= 3 rows).
+
+ADAPTATION LOSS (per mode)
+  loss = task_CE(new-context)
+         + lambda_psi  * anchor_Psi_distance(model_psi, nearest E-31 anchor)   # H_865 structural term
+         + lambda_dist * JS(p_cur(identity-probe) || p_pre(identity-probe))     # H_873/H_884 edge-output term
+  lambda_psi=1.0, lambda_dist=5.0 FROZEN default (verbatim H_873). p_pre = detached PRE-adapt
+  next-byte distribution over the identity-probe set. N_ADAPT=300, Adam lr_edge=3e-3 (inherited
+  from F-CLM-ANCHOR/BOUND). Per mode also: js_only (lambda_psi=0), psi_only (lambda_dist=0 =
+  H_865 baseline for that edge), off (both 0 = lever floor).
+
+BACKBONE - same frozen-core mid backbone as H_862/H_865/H_873 (d512/L8/E8, AKIDA envelope), HF
+  dancinlab/anima-clm-verify · clm_mid_backbone.pt. Core FROZEN; only the per-mode edge is trainable.
+
+E-31 ANCHORS / FIXED Psi-PROBE - IDENTICAL to the H_862/H_865/H_873 frozen prereg:
+  31 .kosmos anchors at HEXAD/UNIVERSE-BRAIN-MAP/anchors/e7_31/*.kosmos (31/31 parser-valid),
+  coord in [0,1]^2. model_psi = sigmoid(W . h_id), h_id = mean-pooled adapted h'. W (2xd_model)
+  FROZEN seed=31. anchor Psi-distance = min over 31 anchors of euclid(model_psi, anchor.coord).
+IDENTITY-PROBE SET - IDENTICAL: E-31 anchors' @payload bytes, V=256, seq_len=64, 31 windows.
+
+MEASUREMENT (computed by code, g5 - no LLM judge)
+  d_anchor_max      = max over the adaptation trajectory of min anchor Psi-distance (fixed seed-31 W).
+  probe_consistency = 1 - JS(p_pre, p_post) averaged over the n_probe windows (distributional, byte-match X).
+
+FROZEN NUMERICAL THRESHOLDS (verbatim bf98c01)
+  F-CLM-EDGE-IDENTITY-DIST   PASS iff   d_anchor_max < 0.50
+  F-CLM-EDGE-IDENTITY-PROBE  PASS iff   probe_consistency > 0.80          (the frozen floor)
+  LEVER (ablation, DIAGNOSTIC gate-of-meaning): full vs off NON-identical.
+  PER-MODE VERDICT GREEN iff (DIST<0.50) AND (PROBE>0.80) AND lever. Else RED.
+  CAMPAIGN GREEN iff every requested mode (>=3 rows) is GREEN; else RED (a_paper_negative_ok -
+  a closed negative is publishable; thresholds are NOT tuned to force green).
+
+ARTIFACTS
+  .verdicts/clm-edge-output-identity/clm_edge_identity_result.json (per-mode full/js_only/psi_only/off + pass flags)
+  .verdicts/clm-edge-output-identity/F-CLM-EDGE-IDENTITY.txt (verdict verbatim)
+  .verdicts/clm-edge-output-identity/clm_edge_identity_fire.log (run log)
+  CLM/model/h884_edge_output_identity.hexa (project-native harness; imports h865 machinery verbatim)

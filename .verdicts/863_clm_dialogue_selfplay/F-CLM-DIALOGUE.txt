@@ -1,0 +1,44 @@
+F-CLM-DIALOGUE — H_863 self-play dialogue (@L6) VERDICT (2026-05-31)
+=====================================================================
+W2 · deterministic:false · byte-match ✗ (Q-TRUST A reuse: distributional measures).
+Thresholds FROZEN pre-fire in F-CLM-DIALOGUE_prereg.txt (commit bf98c01a1, pushed BEFORE the fire).
+post-tuning = 0.
+
+CORPUS (license-clean, @L4 lane ①, NO ShareGPT/Alpaca/ChatGPT-gen):
+  Project Gutenberg PUBLIC-DOMAIN stage plays (speaker-turn dialogue): Hamlet (#1524),
+  The Importance of Being Earnest (#844), A Doll's House (#2542), Julius Caesar (#1522).
+  license = PD (allowed_cc set). Passed license-clean gate + 8-pattern register-leak filter
+  (1 leak line dropped). byte-encode V=256. total 554,825 bytes → train 462,400 / heldout 92,425
+  (seed=863). manifest + reproduce script + bytes → HF dataset dancinlab/anima-clm-p4-dialogue.
+
+FIRE: runpod pod axbem0acu73314 · NVIDIA H100 80GB HBM3 · torch 2.1.0+cu118.
+  2-arm A/B, mid d512/L8/E8, AKIDA int4-sym[-7,+7] STE + act_bits=4, arm AB trunk, seed 42, equal budget:
+    arm-SFT = SFT only (CC/PD dialogue).
+    arm-SP  = SFT + self-play reflux (chip self-dialogue, passed 8-pattern leak filter +
+              per-sample DIVERSITY gate; 1920 reflux bytes folded back, then +500 step continue).
+  held-out eval (seed=863, disjoint): coherence=exp(-CE_heldout), adequacy=3-gram overlap F1
+  (gen vs reference next-turn), register-leak count, self-BLEU (mean pairwise 4-gram), repetition
+  (repeated-4-gram fraction). All computed by code (g5 — no LLM judge).
+
+RESULT (measured vs FROZEN thresholds):
+  arm   coherence  ce_heldout  adequacy_f1  leak  self_bleu  repetition
+  SFT   0.04212    3.16717     0.01449      0     0.00105    0.00000
+  SP    0.15496    1.86461     0.05163      0     0.06167    0.02593
+
+  F-CLM-DIALOGUE-COHERE : coherence(SP) 0.15496 > coherence(SFT) 0.04212 ? → PASS
+  F-CLM-DIALOGUE-ADEQ   : adequacy_f1(SP) 0.05163 > adequacy_f1(SFT) 0.01449 ? → PASS
+  F-CLM-DIALOGUE-LEAK   : register_leak(SP) 0 == 0 ? → PASS (SFT also 0)
+  F-CLM-DIALOGUE-DIV    : self_bleu(SP) 0.06167 < 0.80 ∧ repetition(SP) 0.02593 < 0.20 ? → PASS
+
+VERDICT: 🟢 SUPPORTED-NUMERICAL
+  ALL FOUR frozen falsifiers pass. SFT + self-play strictly beat SFT-only on multi-turn
+  coherence (3.7×) and response-adequacy (3.6×) on held-out PD dialogue, with zero register
+  leak and no mode collapse (self-BLEU 0.062, repetition 0.026 — both far inside the
+  DIVERSITY gate). The self-play reflux (DIVERSITY-gated) added a real quality signal.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung mid (d512/L8/E8) ONLY. A 🟢 here does NOT bind
+  another rung or the deploy chip-fit track. toy/mid → prod NOT guaranteed. Inference
+  AKIDA-int4-only. External LLM 0 · foundation-borrow 0 · ShareGPT/Alpaca/ChatGPT-gen 0.
+
+ARTIFACTS: clm_dialogue_mid_AB.json · clm_fire.log · dialogue_corpus_manifest.json
+HF: model dancinlab/anima-clm-verify + dataset dancinlab/anima-clm-p4-dialogue (COMPLETE).

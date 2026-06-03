@@ -7,7 +7,7 @@
 
 use "stdlib/flame/tensor_lib"
 use "stdlib/flame/flame_math"
-use "/Users/ghost/core/anima/CORE/DECODER/flame_mm"
+use "CORE/DECODER/flame_mm"
 
 // reference scalar matmul A[M×K] @ B[K×N] → C[M×N] (the pattern we are replacing)
 fn scalar_mm(A, M, K, B, N) -> int {

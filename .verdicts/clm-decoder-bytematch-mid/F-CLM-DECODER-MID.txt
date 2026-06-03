@@ -1,0 +1,47 @@
+F-CLM-DECODER-MID — VERDICT (2026-05-31)
+H_877 — DECODER byte-identical transplant @ mid (extends H_680 🟢 toy)
+
+ARM TAKEN: SW  (HW arm HW-pending — pi5 AKD1000 not reachable with provided creds;
+              NON-DISRUPTIVE: zero pi5 mutation, the live R3 loop was never touched)
+
+verdict: 🟠 HW-PENDING (SW determinism byte-identical at mid)
+         — the int4 SW forward path SUPPORTED-NUMERICAL byte-identical at mid;
+           HW==SW confirmation deferred to a non-disruptive pi5 probe (honest).
+
+eval byte set (frozen pre-run, seed=877, prereg verbatim):
+  rung      : MID  width d=512 · depth L=8 (FC cascade) · act_bits/E=8 envelope (act_bits=4)
+  weights   : per-layer symmetric int4 [-7,+7], rng(seed=877), 8 layers (512x512)
+  inputs    : N_PROBE=64 deterministic int4 vectors, rng(seed=877), clip[0,15]
+  forward   : akida_sw_lif.cascade_forward(x,[W1..W8],act_bits=4,input_bits=4)  (HW-verified toy primitive, REUSED — not re-implemented)
+  eval bytes: 32768 ints (64 x 512) → 131072 bits (act_bits=4 bit-expansion)
+  ref sha256: cf3739bf7fb33ee4de3260a94fdf7c398512494bb89c171c83f9f392a6246112
+
+measurement (by CODE · g5 · AKIDA/h877/h877_decoder_bytematch_mid.hexa):
+  F-CLM-DECODER-MID-SW (reduced claim, HW unreachable):
+    sw_in_process_total_hamming  : 0          (repeat run byte-identical)
+    sw_cross_process_match       : true       (independent subprocess, identical sha256)
+    sw_cross_process_sha256      : cf3739bf...6112  (== ref)
+    → total_hamming == 0  → SW int4 forward DETERMINISTIC byte-identical at mid → PASS
+
+  F-CLM-DECODER-MID-HW (primary claim):
+    hw_attempted                 : false      (no local AKD1000; pi5 creds denied)
+    → HW-PENDING (honest) — not measured, not faked.
+
+PASS basis: SW determinism byte-identity (total_hamming=0, in-proc + cross-proc) is
+the PREREQUISITE invariant for HW==SW — a non-deterministic SW path could never
+byte-match HW. H_680 🟢 (toy n=16, live AKD1000 total_hamming=0/16000 via H_860)
+already established HW==SW byte-identity at toy on the SAME cascade primitive; this
+row confirms that primitive stays byte-stable when scaled to the mid rung. The mid
+HW==SW silicon re-confirmation is the remaining stretch (pi5 probe when creds/quiet
+window allow), tracked as HW-pending.
+
+verdict tier: 🟠 HW-PENDING — SW determinism arm SUPPORTED-NUMERICAL (total_hamming=0);
+HW arm honestly deferred. NOT a 🔴 (nothing falsified) · NOT a full 🟢 (HW not yet
+re-measured at mid).
+
+scope (a_scale_honest_scope): mid rung d512/L8/E8 only. Does NOT bind the deploy
+chip-fit shrink track (H_876). toy rung 🟢 stands separately (H_680/H_860).
+
+verbatim run stdout: .verdicts/877_clm_decoder_bytematch_mid/h877_mid_bytematch_run.txt
+prereg (frozen)    : .verdicts/clm-decoder-bytematch-mid/F-CLM-DECODER-MID_prereg.txt
+cost: $0 (Mac local CPU + numpy; HW probe attempted, no spend).

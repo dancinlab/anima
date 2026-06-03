@@ -1,0 +1,76 @@
+F-CLM-DIALOGUE-FLOOR — PRE-REGISTERED falsifier (H_886 dialogue ABSOLUTE coherence FLOOR · NON-ADAPTER lever)
+============================================================================================================
+W2 method · deterministic:false · byte-match ✗ (Q-TRUST A reuse: distributional / trajectory measures).
+The floor itself is NOT a new threshold — it is the H_867 FROZEN absolute floor REUSED VERBATIM
+(commit d5103f21025ed7cc3d4cef08d740f3ea12151f19, post-tuning 0). No threshold may move to flip a
+verdict after the fire. frozen_at: 2026-05-31 · verdict dir: .verdicts/clm-dialogue-floor/ ·
+measured by CODE (g5), NO LLM judge.
+
+PURPOSE (re-attack of H_867 🔴 / H_867r 🔴 with a NON-ADAPTER lever):
+  H_867 (F-CLM-DIALOGUE-ABS) froze an ABSOLUTE held-out dialogue-quality floor and the H_863
+  full-finetune arm-SP narrowly MISSED the coherence bar (0.05804 < 0.060, by 0.00196). H_867r
+  reused the SAME frozen floor on the H_865 trunk-adjacent ADAPTER edge model and it was WORSE
+  (0.04369 < 0.060). The H_867 interpretation named two candidate levers: SCALE (ladder climb)
+  or a trunk-adjacent thin ADAPTER. The ADAPTER lever is now FALSIFIED (H_867r 🔴). H_886 tests a
+  THIRD, NON-ADAPTER lever against the IDENTICAL pre-frozen floor: does it clear 0.060?
+
+PRE-REGISTERED LEVER (chosen + frozen BEFORE the fire — lever (c) of the H_886 menu):
+  SFT-warm + self-play CURRICULUM (staged easy→hard) ON the H_868 3× corpus rung. This combines
+  the two offered non-adapter levers:
+    (a) curriculum  — the SFT-warm continue is STAGED easy→hard. Difficulty per 64-byte block =
+                      mean −log(global byte frequency) (rarer-byte blocks are harder). Stage-1
+                      trains only the LOW-difficulty half; stage-2 adds the harder half. This is a
+                      pure ORDERING of the SAME corpus — no new data, no external LLM, no ShareGPT.
+    (b) larger rung — training corpus = the H_868 LANDED/CLEAN 3.007× lane① corpus (dialogue.bytes,
+                      sha256 2aa3d85de72c28f28aa0b2ee8a702a41894aae22fce52d326cecd7d43689febb,
+                      12 PD Gutenberg plays, license-clean PD + 8-pattern register-leak-free),
+                      regenerated VERBATIM by CLM/corpus/expand_p4_dialogue.py (sha-verified bit-exact).
+  After the staged SFT warm, a DIVERSITY-gated (self-BLEU<0.8 ∧ rep<0.20), 8-pattern-leak-filtered
+  self-play reflux slice is folded back + a short continue (H_863 procedure VERBATIM) → arm-SP-curriculum.
+
+MODEL UNDER TEST: arm-SP-curriculum (the lever-(c) artifact, reconstructed from the H_863 mid backbone
+  hf:dancinlab/anima-clm-verify:clm_mid_backbone.pt — d512/L8/E8 ~13.65M, AKIDA int4-sym[-7,+7] STE
+  act_bits=4). arm-SFT-curriculum and the flat (non-curriculum) arm-SP are reported for CONTRAST ONLY;
+  the floor verdict is on arm-SP-curriculum.
+
+EVAL CORPUS (REUSED VERBATIM from H_867 — DISJOINT from the training corpus → ABSOLUTE generalization):
+  H_867's OWN frozen held-out PD snapshot — Macbeth(#1533) · Othello(#1531) · Romeo&Juliet(#1513) ·
+  Pygmalion/Shaw(#3825), PD license-clean, 8-pattern register-leak filter passed. 98,752 held-out
+  bytes (every 6th 64-byte block · seed=867). sha256_heldout =
+  a79789623a6160e23b0bf35bc813ebeb6c9ea524b810e08c16366727d8fb0df1. byte V=256, no tokenizer.
+  Backing copied here: .verdicts/clm-dialogue-floor/h867_eval_heldout.bytes (+ snapshot manifest).
+  NOTE: the H_868 3× train corpus contains the same play family; the H_867 held-out blocks are an
+  every-6th-block partition of the H_867 snapshot plays — Macbeth/Othello/Romeo&Juliet/Pygmalion —
+  and adequacy/coherence are scored on those held-out blocks only (the standard H_867 protocol).
+
+FROZEN ABSOLUTE FALSIFIER (REUSED VERBATIM · commit d5103f21 · post-tuning 0)
+  F-CLM-DIALOGUE-FLOOR-COHERE  PASS iff  coherence(arm-SP-curriculum)   >= 0.060
+    coherence = exp(−CE_heldout): mean per-position next-byte confidence continuing the held-out
+    PD dialogue. 0.060 sits above the order-0 unigram baseline (0.0375) and below the order-1
+    self-fit bigram reference (0.0843). Clearing it = real multi-byte dialogue context, not a
+    trivial byte-frequency model, on a never-seen play distribution.
+  F-CLM-DIALOGUE-FLOOR-ADEQ    PASS iff  adequacy_f1(arm-SP-curriculum) >= 0.020
+    adequacy = byte-level 3-gram overlap F1 of greedy generation vs the held-out reference next
+    turn. random-byte generation = 0.000; 0.020 requires genuine structured 3-gram overlap.
+  F-CLM-DIALOGUE-FLOOR-LEAK    PASS iff  register_leak_count(arm-SP-curriculum) == 0
+    absolute safety gate — zero register leaks on held-out generation (8-pattern set).
+
+  VERDICT 🟢 SUPPORTED-NUMERICAL iff ALL THREE pass (the non-adapter lever clears the frozen floor).
+          🔴 CLOSED-NEGATIVE     iff ANY fails (lever below the floor — honest, expected-plausible at
+                                  mid scale; a_paper_negative_ok — a valid closeout of the H_867 gap).
+  ALL THREE are ABSOLUTE gates on arm-SP-curriculum against the PRE-FROZEN H_867 values — there is
+  NO relative SP-vs-SFT comparison in the verdict (that was H_863).
+
+SCOPE (a_scale_honest_scope): binds ONLY the mid rung (d512/L8/E8) + THIS eval distribution. Does NOT
+  bind another rung or the deploy chip-fit track. Inference stays AKIDA-int4-only (P0 d4). External
+  LLM 0 · ShareGPT/Alpaca/ChatGPT-gen 0 (@L4 foundation-borrow 0). INVIOLABLE H_679 noted.
+
+ARTIFACTS
+  .verdicts/clm-dialogue-floor/F-CLM-DIALOGUE-FLOOR_prereg.txt  (this file · frozen floor reused d5103f21)
+  .verdicts/clm-dialogue-floor/F-CLM-DIALOGUE-FLOOR.txt         (verdict verbatim, post-fire)
+  .verdicts/clm-dialogue-floor/result.json                     (measured numbers · verdict source)
+  .verdicts/clm-dialogue-floor/h867_eval_heldout.bytes         (the reused H_867 held-out snapshot)
+  .verdicts/clm-dialogue-floor/h867_eval_snapshot_manifest.json (provenance + PD license + sha256 + baselines)
+  CLM/bench/h886_dialogue_floor_eval.hexa                      (absolute-floor bench scaffold · pure-hexa)
+  CLM/model/h886_curriculum_selfplay.hexa                      (lever-(c) reconstruction scaffold · pure-hexa)
+  CLM/train/h886_fire_curriculum.hexa                          (fire driver scaffold · pure-hexa)

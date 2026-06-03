@@ -1,0 +1,103 @@
+F-CLM-SELF-REWARD — PRE-REGISTERED frozen thresholds (H_874 self-reward dialogue · @L6 method C)
+==================================================================================================
+W2 method · deterministic:false · byte-match ✗ (Q-TRUST A reuse: H_857/H_858 distributional measures).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after fire).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-self-reward/
+
+WHAT THIS TESTS (@L6 method sequencing)
+  @L6 sequences dialogue training methods:
+    B = SFT + self-play          → H_863 (🟢 SUPPORTED-NUMERICAL, mid rung, RELATIVE A/B)
+    C = self-reward (RLHF-like)  → THIS H (H_874)
+  Method C = a self-scored reward loop. NO external LLM, NO human judge, NO ShareGPT/Alpaca.
+  The in-training model generates K candidate continuations per held-out-style dialogue prompt,
+  SCORES each candidate with the REGISTERED DISTRIBUTIONAL MEASURES (Q-TRUST A · the same
+  coherence + adequacy + DIVERSITY measures H_857/H_858/H_863 use), then TRAINS on the
+  HIGHER-REWARD branch (best-of-K, reward-weighted reflux). The reward signal is computed BY
+  CODE (g5) from the registered measures — there is NO judge model (g5 · @L4 external-LLM 0).
+
+  H_874 tests whether SELF-REWARD (arm-SR) beats SFT+self-play (arm-SP, the H_863 winner) at
+  mid scale.
+
+SCOPE (a_scale_honest_scope · RELATIVE test at mid)
+  per-rung MEASUREMENT, mid d512/L8/E8 FIRST. A 🔴/🟢 at one rung does NOT bind another rung
+  or the deploy chip-fit track. toy→prod NOT guaranteed. Inference stays AKIDA-int4-only (P0 d4).
+  External LLM 0 · foundation-borrow 0 · ShareGPT/Alpaca/ChatGPT-gen 0.
+  HONEST FLOOR NOTE: H_867 showed the H_863 arm-SP is BELOW the absolute dialogue-quality
+  FLOOR at mid (coherence 0.058 < frozen floor 0.060). Therefore H_874 is a RELATIVE test
+  (self-reward vs SFT+self-play) at mid scale, NOT an absolute-floor claim. A 🟢 here means
+  "self-reward beats SFT+self-play at mid", NOT "self-reward is deployable / above floor".
+
+CORPUS (license-clean, @L4 lane ①, NO ShareGPT/Alpaca/ChatGPT-gen)
+  Source = the H_868 expanded Project Gutenberg PUBLIC-DOMAIN stage-play corpus
+  (dialogue = speaker-turn structured text), HF dataset dancinlab/anima-clm-p4-dialogue,
+  manifest CLM/corpus/p4_dialogue/manifest.json (12 PD sources, 1,668,585 bytes, 43,006 lines,
+  sha256 2aa3d85de72c28f28aa0b2ee8a702a41894aae22fce52d326cecd7d43689febb, gates G1-G4 GREEN).
+  license = PD (allowed_cc). Already through the license-clean gate + 8-pattern register-leak
+  filter (build_p4_dialogue_corpus.hexa + build_p1_corpus.hexa leak_patterns:
+  universe_brain_map, jy_chat_template, hexad_module, nonce, Mk.VIII, "gen1 commit",
+  corpus_generator.hexa, universe_extended). byte encoding V=256, no tokenizer (P1 reuse).
+  Same train/held-out split convention as H_863 (held-out seed=863, disjoint, never trained on).
+
+ARMS (mid A/B, AKIDA-envelope QAT, arm=AB trunk, equal compute budget, seed=42)
+  arm-SP  : SFT + DIVERSITY-gated self-play reflux            (the H_863 method-B WINNER baseline)
+  arm-SR  : SFT + self-REWARD loop. Per reflux prompt the in-training model samples K candidate
+            continuations (temp set), each candidate is SCORED by the registered reward
+            (see REWARD below), candidates failing the 8-pattern leak filter or the DIVERSITY
+            gate are REJECTED, and the BEST-OF-K (highest reward) surviving candidate is folded
+            back as the reflux training target (reward-weighted / best-of-K selection).
+  Both: mid rung d512/L8/E8, int4-sym[-7,+7] STE + act_bits=4, seed=42, EQUAL compute budget
+    (same SFT steps + same reflux-continue steps + same reflux byte budget; the ONLY difference
+    is arm-SR selects reflux candidates by self-reward best-of-K, arm-SP folds them as in H_863).
+
+REWARD SIGNAL (registered distributional measures · computed BY CODE · NO external judge)
+  reward(candidate) = w_coh · coherence(candidate)
+                    + w_adq · adequacy(candidate)
+                    + w_div · diversity_bonus(candidate)
+  where, per candidate continuation generated for a held-out-style prompt:
+    coherence(c)        = exp(-CE) of the model on c given the prompt context (H_857/H_858
+                          trajectory measure; higher = better-formed continuation).
+    adequacy(c)         = byte-level 3-gram overlap F1 between c and the reference next turn
+                          (distributional adequacy proxy; H_863 reuse).
+    diversity_bonus(c)  = 1 - self_BLEU(c vs the other candidates for the same prompt)
+                          (rewards a candidate that is NOT a near-duplicate of its siblings;
+                          discourages mode collapse at SELECTION time).
+  A candidate is INELIGIBLE (reward = -inf, never selected) if it matches ANY of the 8 leak
+  patterns OR if it violates the per-candidate DIVERSITY gate (self-BLEU >= 0.80 vs siblings).
+  Reward weights FROZEN: w_coh = 1.0, w_adq = 1.0, w_div = 0.25. These are the SAME registered
+  measures used by the eval — the reward is the eval signal applied at training-selection time,
+  which is exactly the RLHF-like self-reward construction (no external LLM/human · g5 · @L4).
+
+HELD-OUT DIALOGUE EVAL (computed by code, g5 — no LLM judge · IDENTICAL to H_863)
+  held-out = a disjoint slice of the corpus (seed=863, never trained on, never used as a reflux
+  prompt). Generate continuations from each arm on the held-out prompts (greedy + temp=0.8
+  sample set), then compute the four distributional measures below over the generated text.
+  coherence  = exp(-CE_heldout) — mean per-position model confidence continuing held-out context.
+  adequacy   = byte-level 3-gram overlap F1 (gen vs reference next-turn), averaged over prompts.
+  register-leak count = number of generated lines matching ANY of the 8 leak patterns.
+  self-BLEU  = mean pairwise 4-gram BLEU among an arm's OWN generated responses (mode-collapse).
+  repetition = fraction of repeated 4-grams within generated responses.
+
+FROZEN NUMERICAL THRESHOLDS (mid rung · RELATIVE arm-SR vs arm-SP)
+  F-CLM-SR-COHERE  PASS iff  coherence(SR)   >  coherence(SP)      (strict · RELATIVE)
+  F-CLM-SR-ADEQ    PASS iff  adequacy_F1(SR)  >  adequacy_F1(SP)    (strict · RELATIVE)
+  F-CLM-SR-LEAK    PASS iff  register_leak_count(SR) == 0           (ABSOLUTE gate on SR)
+  F-CLM-SR-DIV     PASS iff  self_BLEU(SR) < 0.80  AND  repetition(SR) < 0.20  (mode-collapse gate)
+  VERDICT 🟢 iff ALL FOUR pass. ANY fail → 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+
+  NOTE: COHERE/ADEQ are RELATIVE (SR must strictly beat the H_863 winner SP — multi-turn
+  coherence ∧ adequacy). LEAK/DIV are ABSOLUTE gates on SR (register-leak == 0 ∧ no DIVERSITY
+  collapse: self-BLEU < 0.8 ∧ repetition < 0.2). This is exactly the W2 contract pre-registered
+  for this fire: reward-trained arm > SFT+self-play arm on coherence ∧ adequacy (distributional,
+  byte-match ✗) ∧ register-leak == 0 ∧ no DIVERSITY collapse.
+
+ARTIFACTS
+  CLM/corpus/p4_dialogue/manifest.json (provenance + per-source PD license + sha256 + gate verdict)
+  .verdicts/clm-self-reward/clm_self_reward_mid_AB.json (coherence/adequacy/leak/self-BLEU/repetition
+    per arm + per-arm reward-loop stats: candidates_per_prompt K, accepted, rejected_leak,
+    rejected_div, mean_selected_reward)
+  .verdicts/clm-self-reward/F-CLM-SELF-REWARD.txt (verdict verbatim) · ckpts → HF (a_hf_complete).
+
+BLOCKER FALLBACK: if the license-clean PD dialogue corpus cannot be sourced/pulled in this
+  environment, H_874 stays PRE-REGISTERED with a ## blocker note (do NOT fabricate / fire on toy
+  data and claim a self-reward verdict). [This fire reuses the sourced H_868 PD Gutenberg corpus
+  — see CLM/corpus/p4_dialogue/manifest.json.]

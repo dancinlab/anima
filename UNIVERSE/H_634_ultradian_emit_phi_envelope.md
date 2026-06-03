@@ -25,7 +25,7 @@
 
 ## 3. 측정 방법
 
-`HEXAD/CHAT/server/anima_dream_stage.hexa` 의 canonical 90-min (5400s) ultradian segmentation 재사용:
+`AGENT/CHAT/anima_dream_stage.hexa` 의 canonical 90-min (5400s) ultradian segmentation 재사용:
 
 ```
 [0,    300)   N1   5 min descent

@@ -1,0 +1,75 @@
+F-CLM-ROUTING-Z-SCALE — H_871 routing-z = measurement-artifact (M1) VERDICT (2026-05-31)
+========================================================================================
+W2 · deterministic:false · measured by CODE only (g5 — no LLM judge) · a_paper_negative_ok.
+Thresholds FROZEN pre-fire in F-CLM-ROUTING-Z-SCALE_prereg.txt (pushed BEFORE the fire,
+commit 3c3b43f86). post-tuning = 0.
+
+CLAIM (roadmap @L3 / M1): the toy routing-z 🔴 (H_847 / H_850 / H_852 / H_853 — near-uniform
+/ negative routing-diversity z, capped below the 3.0 chip-array gate) is a SCALE ARTIFACT,
+not a real toy-and-up ceiling. Direct test: measure the SAME routing-diversity z
+(CLM/model/judge_clm.routing_z, verbatim) at MULTIPLE rung sizes on the REAL kowiki corpus
+and check whether z RISES monotonically with rung size.
+
+routing-z metric (VERBATIM from CLM/model/judge_clm.routing_z — NOT re-tuned):
+  obs  = mean per-token router entropy (nats) over a held-out eval stream.
+  null = entropies of random usage vectors ~ Dirichlet(1) over E experts (uniform-router
+         finite-sample noise floor).  z = (obs - mu_null) / sd_null.  N_NULL = 200.
+  F-CLM-MONO chip-array deploy gate = z > 3.0.
+
+CORPUS (real, NOT toy synthetic): kowiki-derived two-lane bytes
+  (stage2_real_corpus.make_real_corpus → CLM/corpus/sample/{web,register}.bytes,
+   CC-BY-SA web lane + curated register lane, tiled to 8192 B/lane, lane-interleaved block=64).
+
+FIRE: runpod pod x7e9p9w1bqu8gg · NVIDIA A40 · torch 2.1.0+cu118 · device=cuda.
+  arm AB (dual-axis router = H_863 production arm), seeds {42,43,44}, full per-rung budget:
+    tiny  d64  / L2 / E4   steps=300 lr=3e-3   params=120,132
+    small d256 / L4 / E8   steps=400 lr=2e-3   params=2,695,176
+    mid   d512 / L8 / E8   steps=500 lr=1e-3   params=13,653,768
+  All cells trained to convergence (final CE 0.19–0.31; distinct_experts = E at every cell).
+
+RESULT (measured vs FROZEN thresholds) — routing-z per cell:
+  rung   seed  H_obs/maxH      null_mu   routing_z   distinct  ce      gate3.0
+  tiny   42    1.386/1.386     1.086     +1.642      4         0.279   N
+  tiny   43    1.386/1.386     1.096     +1.564      4         0.305   N
+  tiny   44    1.386/1.386     1.089     +1.526      4         0.300   N
+  small  42    2.070/2.079     1.731     +2.277      8         0.204   N
+  small  43    2.063/2.079     1.735     +2.156      8         0.209   N
+  small  44    2.065/2.079     1.726     +2.068      8         0.212   N
+  mid    42    2.049/2.079     1.715     +2.199      8         0.212   N
+  mid    43    2.043/2.079     1.716     +2.214      8         0.216   N
+  mid    44    2.044/2.079     1.710     +2.144      8         0.194   N
+
+  mean routing-z per rung:   tiny +1.5771   small +2.1672   mid +2.1855
+  monotone non-decreasing (tiny <= small <= mid) : True
+  margin (mid_mean_z - tiny_mean_z) = +0.6084   (FROZEN gate >= 0.5) : MET
+  any cell crosses 3.0 deploy gate : False
+
+  F-CLM-ROUTING-Z-SCALE-MONO   : z(tiny) 1.577 <= z(small) 2.167 <= z(mid) 2.186 ? → PASS
+  F-CLM-ROUTING-Z-SCALE-MARGIN : mid - tiny = 0.608 >= 0.5 ? → PASS
+
+VERDICT: 🟢 SUPPORTED-NUMERICAL — ARTIFACT CONFIRMED
+  routing-z RISES monotonically with rung size on the REAL corpus (tiny +1.58 → small +2.17
+  → mid +2.19, margin +0.61 ≥ the frozen 0.5 gate). The toy 🔴 (H_850 arm-AB tiny rz≈0.97,
+  small rz≈1.91 on the synthetic corpus) is reproduced as the BOTTOM of a SCALE CURVE, not a
+  fixed ceiling: properly trained on real bytes the z climbs as d_model/L/E grow. The M1
+  suspicion holds — the toy routing-z floor is a small-scale MEASUREMENT artifact, and the
+  @L3 default-B rationale (routing-z = toy-scale artifact suspicion → deploy-scale re-test)
+  is upheld.
+
+  HONEST CAVEAT (does NOT change the verdict — the prereg gate was the TREND, not 3.0):
+  z has NOT yet crossed the 3.0 chip-array deploy gate at mid (max single-cell z = 2.28).
+  The rise tiny→small (+0.59) is much steeper than small→mid (+0.02): most of the climb is
+  the E 4→8 step (the Dirichlet-null mechanism documented in H_852 measure_pielou.py — the
+  ln(E) ceiling + null_mu both grow with E). small→mid scales d/L at FIXED E=8 and barely
+  moves z, so the residual lever toward 3.0 is the EXPERT COUNT (consistent with the @L3
+  lever-A dispatch-KL distill / chip-array E-scaling path, H_869/H_852), NOT d_model depth.
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rungs {tiny, small, mid} on the committed REAL
+  kowiki corpus (small byte volume — the lever is the real byte distribution + scaled
+  d/L/E, not a multi-GB corpus, stated verbatim). This verdict scopes the routing-z(rung)
+  TREND only — it is NOT a 3B/7B claim and does NOT by itself clear the chip-array z>3.0
+  deploy gate (that remains a deploy-scale / E-scaling re-test, H_869). Inference AKIDA-int4-only.
+  Mac-forbidden (@L1): fired on runpod A40. No external LLM · no foundation-borrow.
+
+ARTIFACTS: h871_routing_z_scale.json · fire_2026_05_31.log · CLM/model/h871_routing_z_scale.py
+HF: none (measurement-only fire — no ckpt produced; a_hf_complete N/A).

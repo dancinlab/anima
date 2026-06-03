@@ -1,0 +1,55 @@
+F-CLM-EXPERT-CHOICE — PRE-REGISTRATION (frozen pre-run)
+verdict tier: 🟠 PRE-REGISTERED (CPU-local fire 판정 대기)
+
+H_870 — @L3 routing-escape lever C: invert the routing direction so EXPERTS pick
+tokens (expert-choice, Zhou et al. 2022) instead of tokens picking experts
+(token-choice, Switch/GShard). Under expert-choice each expert selects its own
+fixed CAPACITY of tokens, so per-expert LOAD auto-balances BY CONSTRUCTION — no
+auxiliary load-balance loss, no expert-collapse mode. We compare expert-choice
+vs the landed token-choice baseline (CLM/model/array_moe.py) on the mid-rung
+pluggable routing slot, measured by CODE (g5), multi-seed.
+
+The four thresholds below are FROZEN before any fire so a post-fire result
+cannot be tuned to fit (a_completeness_over_cheap · W2 · post-tuning 0).
+
+  F-CLM-EC-VAR      : expert-choice per-expert load CV (coeff. of variation,
+                      std/mean of per-expert token-load fraction) < 0.25,
+                      averaged over seeds {42,43,44}. (load auto-balance floor)
+  F-CLM-EC-COLLAPSE : NO expert-collapse — every expert receives load > 0 on
+                      every seed (n_active_experts == n_experts, all seeds).
+  F-CLM-EC-QUALITY  : expert-choice held-out CE <= token-choice baseline CE
+                      + QUALITY_MARGIN, where QUALITY_MARGIN = 0.10 nats
+                      (quality not worse than baseline beyond the stated margin).
+  F-CLM-EC-BALANCE  : expert-choice load CV < token-choice baseline load CV
+                      (the inversion genuinely improves balance vs token-choice).
+
+  frozen knobs:
+    seeds            = {42, 43, 44}     (multi-seed, per d6)
+    n_experts        = 8                (mid-rung E8 envelope)
+    capacity_factor  = 1.0              (expert capacity = ceil(C * T / E))
+    LOAD_CV_FLOOR    = 0.25
+    QUALITY_MARGIN   = 0.10 nats
+    train_steps      = 120              (router DYNAMICS, not init)
+    corpus           = toy two-lane synthetic (web/register), seed-paired
+    measure          = CODE self-score (g5): per-expert dispatch fraction,
+                       CV, n_active, held-out cross-entropy.
+
+PASS gate  = F-CLM-EC-VAR ∧ F-CLM-EC-COLLAPSE ∧ F-CLM-EC-QUALITY ∧ F-CLM-EC-BALANCE
+             (all four simultaneously)              -> 🟢 SUPPORTED-NUMERICAL
+FAIL gate  = any one fails                          -> 🔴 CLOSED-NEGATIVE
+             ("expert-choice ⊥ load-balance@quality" — a_paper_negative_ok)
+
+scale scope (a_scale_honest_scope): this verdict is scoped to the MEASUREMENT
+rung (toy two-lane corpus, d64/L2 forward harness, E8). routing-z>3.0 remains
+the CHIP-ARRAY DEPLOY gate (expert=chip), NOT this converse gate — the deploy
+gate is a separate track (routing_escape.hexa lever_satisfies_converse=1).
+toy != scale (H_666). A negative result is reported verbatim (g63, p7).
+
+prior art frozen into the threshold choice:
+  - Zhou et al. 2022 "Mixture-of-Experts with Expert Choice Routing" — experts
+    pick top-C tokens; perfect load balance by construction, no aux loss.
+  - H_847/H_852/H_853 token-choice routing-z 🔴 (toy-scoped) — the monopoly
+    that expert-choice is designed to dissolve at the LOAD axis.
+
+status: 🟠 PRE-REGISTERED — no measurement. This file is the audit anchor for the
+frozen thresholds, NOT a PASS. Verdict re-issued verbatim from the fire stdout.

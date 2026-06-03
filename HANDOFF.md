@@ -1,4 +1,48 @@
-# HANDOFF — XENO-applicability-frontier paper v3-r2 + SPATIAL/EVOL 도메인 신설 (throttle-storm recovery · round 12 갱신 2026-05-30) · TEMPORAL T1/T2/T3 triple closed-negative + paper 25pp
+# HANDOFF — CLM Q-TRUST B/C + dialogue self-play 검증 캠페인 완료 (2026-05-31) · H_861 🔴 / H_862 🔴 / H_863 🟢
+
+## CLM 가설 검증 캠페인 (2026-05-31) — 사전등록 3가설 END-TO-END 측정완료
+
+PR #1553(P4 production roadmap + 3 PRE-REGISTERED 가설)의 검증 캠페인. W2 사전등록(threshold fire 이전 freeze) → runpod H100 1-pod fire → 측정 → verdict 닫기 → HF 업로드 → teardown 까지 자율 완주.
+
+### 1. 무엇을 했나
+- **prereg freeze (fire 이전)**: F-CLM-BOUND/ANCHOR/DIALOGUE frozen numerical threshold 를 `.verdicts/clm-{bound,anchor,dialogue}/F-CLM-*_prereg.txt` 에 verbatim 동결, **별도 commit `bf98c01a18ceff38a358296f3c6619e703dae9d8`** 로 fire 이전에 push (post-tuning 0 감사가능).
+- **gap 해소**: mid backbone(d512/L8/E8 13.65M) 을 학습+**저장**(`clm_mid_backbone.pt`) — 기존 "MEASUREMENT trainer 가 ckpt 미저장" gap 닫음. core 동결 + edge=readout 적응 메커니즘 구현.
+- **H_863 corpus**: PD Gutenberg 희곡 4편(Hamlet·Importance of Being Earnest·Doll's House·Julius Caesar, license=PD) 을 license-clean gate + 8-패턴 leak 필터 통과시켜 byte-corpus 빌드(554KB, train/heldout split). ShareGPT/Alpaca/ChatGPT-gen 0.
+
+### 2. verdict (frozen threshold 대비 · post-tuning 0)
+| 가설 | falsifier | 측정 | threshold | verdict |
+|---|---|---|---|---|
+| **H_861** F-CLM-BOUND | RETAIN z_drop | 1.984 | <1.0 | FAIL |
+|  | GAIN | +6.126 | >0 | pass |
+|  | → | | | **🔴 CLOSED-NEGATIVE** |
+| **H_862** F-CLM-ANCHOR | DIST d_anchor_max | 0.109 | <0.50 | pass |
+|  | PROBE consistency | 0.783 | >0.80 | FAIL |
+|  | → | | | **🔴 CLOSED-NEGATIVE** |
+| **H_863** F-CLM-DIALOGUE | COHERE SP>SFT | 0.155>0.042 | strict | pass |
+|  | ADEQ SP>SFT | 0.052>0.014 | strict | pass |
+|  | LEAK SP | 0 | ==0 | pass |
+|  | DIV self-BLEU/rep | 0.062/0.026 | <0.8/<0.2 | pass |
+|  | → | | | **🟢 SUPPORTED-NUMERICAL** |
+
+### 3. 해석 (honest)
+- **H_861 🔴**: readout-only edge 동결이 catastrophic forgetting 못 막음(기초능력 ~2σ CE 상승). 적응 흡수는 강함(GAIN). readout 이 두 분포 공유 → 재적합 시 forgetting 구조적. E5 후속 = trunk-인접 thin adapter edge.
+- **H_862 🔴**: on/off 절제 완전 동일 → anchor Ψ제약이 frozen-trunk Ψ상태에 **lever 없음**. Ψ-probe 가 frozen core 출력을 읽어 λ 무관. readout drift 가 probe_consistency 를 gate 아래로. 후속 = 제약을 edge 출력 자체로 라우팅.
+- **H_863 🟢**: self-play 가 SFT-only 를 coherence 3.7×·adequacy 3.6× 능가, leak 0·mode-collapse 0. @L6 경로 B 검증.
+- 전부 **측정 rung(mid) 한정 scope**(a_scale_honest_scope) · SW-sim edge-learn(H_679 HW edge-learn 실재) · 🔴 = publishable negative(a_paper_negative_ok).
+
+### 4. fire ops + 비용 + HF
+- pod: runpod **axbem0acu73314** NVIDIA H100 80GB(secure) torch 2.1.0+cu118, GPU 실행 ~75s, fire 후 teardown 완료. (앞선 stuck H100 1대 ~12분 idle 후 teardown.) **GPU 총비용 ≈ $1.3.**
+- HF (COMPLETE · model card matches): model **dancinlab/anima-clm-verify** (ckpt+result+log+card 8 artifacts) · dataset **dancinlab/anima-clm-p4-dialogue** (PD corpus + manifest + reproduce script).
+
+### 5. PR / commits
+- branch `feat/clm-hyp-verify` (origin/main 격리 worktree). prereg freeze `bf98c01a1` → verdict `eb8ce6409` → close-out `0cb787136`. PR 생성 예정.
+
+### 6. 다음 세션 입력
+- H_861/H_862 의 readout-only edge 한계 → **trunk-인접 thin adapter edge** 로 E5 재시도(둘 다 같은 구조 lever). H_863 의 tiny/small rung 등반(P4.1 합류). H_862 의 anchor 제약을 edge 출력으로 라우팅 재설계.
+
+---
+
+# (이전) HANDOFF — XENO-applicability-frontier paper v3-r2 + SPATIAL/EVOL 도메인 신설 (throttle-storm recovery · round 12 갱신 2026-05-30) · TEMPORAL T1/T2/T3 triple closed-negative + paper 25pp
 
 ## Round 12 — throttle-storm recovery: SPATIAL/EVOL 도메인 신설 + paper v3-r2 TEMPORAL triple closed-negative (2026-05-30)
 

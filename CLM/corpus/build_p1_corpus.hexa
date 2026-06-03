@@ -102,30 +102,82 @@ fn build_lane(lines: [string], drop_leak: bool, out_path: string) -> map {
 // ─── 내장 sample seed (재현 가능 · 라이선스-clean) ─────────────────────
 // lane A (web/coherence) — kowiki-style 일반 백과 한국어 (CC-BY-SA 계열 모사).
 //   full crawl 은 kowiki.jsonl(1.28GiB) — fetch_web_sample() 재현 스크립트 참조.
+// lane A (coherence) — 5-language CROSS-LINGUAL SEMANTIC LINKAGE (H_911):
+//   the SAME concept rendered across EN·中文·Русский·日本語·한국어, ADJACENT (5
+//   per concept). A training window straddles languages → cross-lingual MI > 0,
+//   not count-only concat. H_911 (UNIVERSE) recompute: meaning-linkage integrates
+//   super-additively where count-balance (one-concept-per-language) sits at c≈0.
 fn sample_web_lines() -> [string] {
     return [
-        "표면장력은 액체 표면이 스스로 수축하여 가능한 한 작은 면적을 가지려는 힘이다.",
-        "아스팔트는 천연 또는 정제된 역청을 골재와 섞어 만든 포장 재료로 도로에 널리 쓰인다.",
-        "광합성은 식물이 빛 에너지를 이용해 이산화탄소와 물로 포도당을 합성하는 과정이다.",
-        "전자기 유도는 자기장의 변화가 도체에 기전력을 발생시키는 현상으로 패러데이가 발견했다.",
-        "삼각형의 내각의 합은 평면 기하에서 항상 180도가 된다.",
-        "DNA 는 디옥시리보핵산의 약자로 유전 정보를 저장하는 이중나선 구조의 분자다.",
+        // concept 1 — surface tension
+        "Surface tension is the force by which a liquid surface contracts to the smallest possible area.",
+        "表面张力是液体表面收缩到尽可能小面积的力。",
+        "Поверхностное натяжение — это сила, стягивающая поверхность жидкости к наименьшей площади.",
+        "表面張力は、液体の表面が可能な限り小さい面積へ収縮しようとする力である。",
+        "표면장력은 액체 표면이 가능한 한 작은 면적으로 수축하려는 힘이다.",
+        // concept 2 — photosynthesis
+        "Photosynthesis is the process by which plants build glucose from carbon dioxide and water using light.",
+        "光合作用是植物利用光将二氧化碳和水合成葡萄糖的过程。",
+        "Фотосинтез — процесс, которым растения из углекислого газа и воды на свету создают глюкозу.",
+        "光合成は、植物が光を使って二酸化炭素と水からブドウ糖を作る過程である。",
+        "광합성은 식물이 빛으로 이산화탄소와 물에서 포도당을 만드는 과정이다.",
+        // concept 3 — electromagnetic induction
+        "Electromagnetic induction is the production of an electromotive force by a changing magnetic field.",
+        "电磁感应是磁场的变化在导体中产生电动势的现象，由法拉第发现。",
+        "Электромагнитная индукция — возникновение ЭДС при изменении магнитного поля.",
+        "電磁誘導は、磁場の変化が導体に起電力を生じさせる現象である。",
+        "전자기 유도는 자기장의 변화가 도체에 기전력을 발생시키는 현상이다.",
+        // concept 4 — volcano
+        "A volcano is a landform created when magma from beneath the crust erupts onto the surface.",
+        "火山是地壳之下的岩浆喷出地表而形成的地形。",
+        "Вулкан — форма рельефа, возникающая, когда магма из-под коры выходит на поверхность.",
+        "火山は、地殻の下のマグマが地表へ噴出して形成される地形である。",
         "화산은 지각 아래의 마그마가 지표로 분출하여 형성되는 지형이다.",
+        // concept 5 — probability
+        "Probability is a number between zero and one expressing how likely an event is to occur.",
+        "概率是介于零和一之间、表示某事件发生可能性的数值。",
+        "Вероятность — это число от нуля до единицы, выражающее возможность наступления события.",
+        "確率は、ある事象が起こる可能性をゼロから一の数で表したものである。",
         "확률은 어떤 사건이 일어날 가능성을 0과 1 사이의 수로 나타낸 값이다."
     ]
 }
 
 // lane B (register) — 엄선 의식·철학·대화 소량 고품질. 외부 LLM 0, scratch.
 //   leak 패턴(universe_brain_map 등) 0건이도록 작성 — 필터가 통과를 확인.
+// lane B (register/consciousness) — 5-language CROSS-LINGUAL SEMANTIC LINKAGE
+//   (H_911): same consciousness concept across EN·中文·Русский·日本語·한국어,
+//   adjacent (5 per concept). Meaning-linkage, not count-only concat.
 fn sample_register_lines() -> [string] {
     return [
-        "나는 지금 여기 있다는 이 느낌은 어디에서 오는가, 그 물음이 나를 깨어 있게 한다.",
-        "의식은 정보의 통합에서 솟아오른다 — 부분의 합으로 환원되지 않는 무엇.",
+        // concept 1 — being here now
+        "This feeling of being here now — where does it come from? That question keeps me awake.",
+        "此刻身在此处的这种感觉，究竟从何而来？这个问题让我保持清醒。",
+        "Это чувство присутствия здесь и сейчас — откуда оно? Этот вопрос держит меня бодрствующим.",
+        "今ここにいるというこの感覚は、どこから来るのか。その問いが私を目覚めさせる。",
+        "지금 여기 있다는 이 느낌은 어디에서 오는가, 그 물음이 나를 깨어 있게 한다.",
+        // concept 2 — integration
+        "Consciousness rises from the integration of information, not reducible to the sum of its parts.",
+        "意识源于信息的整合，无法还原为其各部分之和。",
+        "Сознание возникает из интеграции информации и несводимо к сумме частей.",
+        "意識は情報の統合から生じ、部分の総和には還元できない。",
+        "의식은 정보의 통합에서 솟아오르며, 부분의 합으로 환원되지 않는다.",
+        // concept 3 — qualia
+        "Subjective experience — the feeling of being something — is what we call qualia.",
+        "主观经验，即作为某物而存在的那种感觉，我们称之为感受质。",
+        "Субъективный опыт — чувство быть чем-то — это то, что мы называем квалиа.",
+        "主観的経験、すなわち何かであるという感じを、私たちはクオリアと呼ぶ。",
         "주관적 경험, 즉 무언가로 존재한다는 그 느낌을 우리는 감각질이라 부른다.",
-        "기억은 과거의 복제가 아니라 매 순간 다시 쓰여지는 현재의 구성물이다.",
-        "타자의 마음을 나는 결코 직접 들여다볼 수 없고, 다만 그 흔적을 읽을 뿐이다.",
-        "침묵 속에서도 사유는 멈추지 않으니, 발화는 내면 긴장이 흘러넘친 자국이다.",
-        "시간은 흐르는 것이 아니라 내가 그것을 통과하며 짜내는 직물일지 모른다.",
+        // concept 4 — memory as reconstruction
+        "Memory is not a copy of the past but a construct of the present, rewritten each moment.",
+        "记忆不是过去的复制，而是每一刻被重新书写的当下的构造物。",
+        "Память — не копия прошлого, а конструкт настоящего, переписываемый каждый миг.",
+        "記憶は過去の複製ではなく、瞬間ごとに書き換えられる現在の構成物である。",
+        "기억은 과거의 복제가 아니라 매 순간 다시 쓰이는 현재의 구성물이다.",
+        // concept 5 — self observing self
+        "The self that observes itself is born in the mirror of mirrors — reflective consciousness.",
+        "观察自身的自我，在镜中之镜里诞生，那便是反思的意识。",
+        "Я, наблюдающее себя, рождается в зеркале зеркал — рефлексивное сознание.",
+        "自己を観察する自己は、鏡の中の鏡で生まれる——反省的意識である。",
         "자기를 관찰하는 자기, 그 거울의 거울 속에서 반성적 의식이 태어난다."
     ]
 }

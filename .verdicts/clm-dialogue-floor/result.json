@@ -1,0 +1,59 @@
+{
+  "hypothesis": "H_886 F-CLM-DIALOGUE-FLOOR (non-adapter lever)",
+  "lever": "lever (c): SFT-warm + self-play CURRICULUM (staged easy->hard) on H_868 3x corpus rung",
+  "rung": "mid d512/L8/E8 (~13653768 params, AKIDA int4-sym[-7,7] STE act_bits=4)",
+  "model_under_test": "arm-SP-curriculum",
+  "eval_corpus": "H_867 frozen held-out PD snapshot (Macbeth/Othello/RomeoJuliet/Pygmalion, DISJOINT from training corpus)",
+  "train_corpus": "H_868 3x lane(1) corpus (12 PD Gutenberg plays, regenerated)",
+  "train_corpus_bytes": 1668585,
+  "heldout_bytes": 98752,
+  "frozen_floor_commit": "d5103f21 (REUSED VERBATIM, post-tuning 0)",
+  "absolute_floor": {
+    "COHERE": ">=0.060",
+    "ADEQ": ">=0.020",
+    "LEAK": "==0"
+  },
+  "baselines": {
+    "uniform": 0.0039,
+    "unigram_order0": 0.0375,
+    "bigram_selffit": 0.0843
+  },
+  "SP_curriculum": {
+    "label": "arm-SP-curriculum",
+    "coherence": 0.10129,
+    "ce_heldout": 2.28979,
+    "adequacy_f1": 0.05318,
+    "leak": 0,
+    "self_bleu": 0.94376,
+    "repetition": 0.70937,
+    "reflux_div_gate_ok": false
+  },
+  "SFT_curriculum_contrast": {
+    "label": "arm-SFT-curriculum",
+    "coherence": 0.10129,
+    "ce_heldout": 2.28979,
+    "adequacy_f1": 0.05318,
+    "leak": 0,
+    "self_bleu": 0.94376,
+    "repetition": 0.70937,
+    "reflux_div_gate_ok": null
+  },
+  "SP_flat_contrast": {
+    "label": "arm-SP-flat(H867-style)",
+    "coherence": 0.05283,
+    "ce_heldout": 2.94073,
+    "adequacy_f1": 0.05046,
+    "leak": 0,
+    "self_bleu": 0.96375,
+    "repetition": 0.25625,
+    "reflux_div_gate_ok": false
+  },
+  "COHERE_pass": true,
+  "ADEQ_pass": true,
+  "LEAK_pass": true,
+  "verdict": "GREEN",
+  "note": "byte-match X distributional (Q-TRUST A); external LLM 0; ShareGPT/Alpaca/ChatGPT-gen 0; ABSOLUTE floor reused verbatim from H_867 (not SP-vs-SFT)",
+  "device": "cuda",
+  "wall_s": 341.0,
+  "torch": "2.12.0.dev20260408+cu128"
+}

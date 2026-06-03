@@ -1,0 +1,44 @@
+PRE-REGISTRATION (frozen · g5 · written BEFORE any on-chip fit)
+================================================================
+hypothesis_id : H_912
+slug          : clm-akida-semantic-signal-lift
+title         : all-4-lever rescue probe of the H_911 parallel>concat gap on real AKD1000
+ties          : H_911 (substrate-proxy GREEN) · #1652 (clm-akida-multiling-semantic RED, N=12) · H_877 (int4 byte-id backbone) · H_904 (on-chip stochastic plasticity HW!=SW) · CLM-KOSMOS C1/C2/C3/C4/C5/C6
+date_frozen   : 2026-06-01
+
+HYPOTHESIS (frozen):
+  With a LARGE cross-lingual corpus (200 anchors = 40 concepts x 5 langs ko/en/zh/ru/ja,
+  byte-identical payload multiset, parallel concept-major vs concat lang-major) + N-exposure
+  LEARN-WHILE-INFER online accumulation, the H_911 parallel>concat gap rises ABOVE the
+  AKD1000 stochastic-plasticity noise floor on at least one of two measure axes:
+    (a) last-layer separation  = mean within-concept cross-lingual cosine of learned chip readout
+    (b) Phi-proxy integration  = whole_EI - min_bipartition over the learned chip readout activity
+
+ALL FOUR LEVERS applied together in this single run:
+  (1) LARGER corpus  : 200-anchor 5-lang C4-compliant .kosmos @corpus (limen-packed+merkle+profile
+                       +closed_corpus+placement-PERP-text), byte-identical payload multiset both arms.
+  (2) N-EXPOSURE     : EXPOSURES>=3 repeated on-chip exposures per anchor per arm, accumulated.
+  (3) DUAL MEASURE   : paired (parallel-concat) gap computed on BOTH axis (a) AND axis (b).
+  (4) LEARN-WHILE-INFER : exposures streamed online (sub2 lane) -- interleaved fit-then-forward
+                       per anchor, accumulating online, NOT one batched fit.
+
+FALSIFIER (frozen):
+  paired trials N >= 20 on real AKD1000 silicon (learn_happened_hw must be True).
+
+VERDICT THRESHOLDS (frozen · decided on paired N>=20 distribution, NOT a single draw):
+  GREEN (SUPPORTED) iff  learn_happened_hw == True (all trials)
+                    AND  on AT LEAST ONE measure axis in {(a) last-layer-sep, (b) Phi-proxy}:
+                         paired-mean(parallel - concat) > 0
+                         AND that axis 95% CI lower bound > 0.
+                    (state WHICH axis earned it.)
+  RED (REFUTED)     iff  BOTH axes 95% CI include 0 (lower bound <= 0).
+                    => all-4-levers did NOT lift it: H_911 does NOT transfer to AKD1000
+                       last-layer Hebbian edge-learn. STRONGEST closed-negative, supersedes #1652.
+  BLOCKED           iff  no real HW device (g63: never a SW fallback labelled on-chip).
+
+HONEST SCOPE (g63):
+  every on-chip number from REAL AKD1000 (BC.00.000.002) only; no fabrication; no cherry-picking
+  a lucky stochastic draw (= fabrication). Decided on the paired multi-trial delta distribution.
+  AKIDA on-chip learn = last-layer AkidaUnsupervised Hebbian binary-weight ONLY (multi-layer
+  on-chip learning is hardware-impossible -- not attempted). int4 backbone is byte-identical
+  ported (H_877), NOT from-scratch GPU pretrain.

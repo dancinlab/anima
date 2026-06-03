@@ -1,0 +1,21 @@
+F-CLM-DECODER-MID — VERDICT (mirror · 2026-05-31)
+H_877 — DECODER byte-identical transplant @ mid (extends H_680 🟢 toy)
+
+SW-determinism arm: 🟢 SUPPORTED-NUMERICAL — int4 SW forward byte-identical at mid
+  (total_hamming = 0, in-process repeat ∧ independent cross-process; ref sha256
+   cf3739bf7fb33ee4de3260a94fdf7c398512494bb89c171c83f9f392a6246112).
+HW arm: 🟠 HW-PENDING — pi5 AKD1000 not reachable with provided creds; NON-DISRUPTIVE
+  (zero mutation, live R3 loop never touched). HW==SW mid re-confirmation deferred.
+
+overall verdict: 🟠 HW-PENDING (SW determinism byte-identical at mid).
+
+rung: MID d512 / L8 / E8 (act_bits=4) · seed=877 · N_PROBE=64 · int4 [-7,+7].
+eval byte set: 32768 ints → 131072 bits · total_hamming = 0.
+consumes (ADD-ONLY): HEXAD/CHAT/server/akida_sw_lif.cascade_forward (HW-verified toy byte-match).
+measured by CODE (g5): AKIDA/h877/h877_decoder_bytematch_mid.hexa.
+scope: mid only (a_scale_honest_scope) — does not bind deploy shrink (H_876).
+
+canonical verdict + prereg:
+  .verdicts/clm-decoder-bytematch-mid/F-CLM-DECODER-MID.txt
+  .verdicts/clm-decoder-bytematch-mid/F-CLM-DECODER-MID_prereg.txt
+verbatim run stdout: .verdicts/877_decoder_bytematch_mid/h877_mid_bytematch_run.txt

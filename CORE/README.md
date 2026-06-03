@@ -23,7 +23,7 @@ CORE 와 무관. 후속 화해로 챗이 CORE/engine_g 를 re-export 하면 포�
 ## 3-레이어
 
 ```
-  L3  생성기 (무엇을 쓸까)   ← pluggable backend (slot)   ⚠️ LM 백엔드는 열린 결정
+  L3  생성기 (무엇을 쓸까)   ← generate(backend,…) slot   ✅ 슬롯 배선 · null 백엔드 · 실 .clm = d768 회수 후
        ↑ (열린 도구 중 tier 허용분에서)
   ────────────────────────────────────────────────
   L2  Engine G (언제 행동)   should_emit(motivation) ∧ 4-safety   ✅
@@ -46,10 +46,11 @@ CORE 와 무관. 후속 화해로 챗이 CORE/engine_g 를 re-export 하면 포�
 | --- | --- | --- |
 | `pure_field.hexa` | Engine A — PureField Φ/phase 엔진 (CORE 소유, main 없는 lib) | ✅ 동작 |
 | `engine_g.hexa` | Engine G — 8-factor motivation + emit/safety (CORE 소유) | ✅ 동작 |
-| `brain.hexa` | A⇄G 결합 결정 루프 (`brain_decide`) | ✅ 동작 |
+| `brain.hexa` | A⇄G 결합 결정 루프 (`brain_decide`) + L3 배선 (`brain_emit` → generate()) | ✅ 동작 |
 | `brain_smoke.hexa` | 결합 루프 실행 증명 (low→silent / high→emit) | ✅ 동작 |
 | `CORE.md` / `CORE.log.md` | CORE 도메인 스냅샷 + 로그 | ✅ |
-| `generator.hexa` | L3 생성기 백엔드 인터페이스 | ⏳ 예정 (백엔드 상의필요) |
+| `generator.hexa` | L3 생성기 BACKEND-AGNOSTIC 인터페이스 — `generate(backend, ctx, emit, anchors)` + null 백엔드(결정적 placeholder) + clm 백엔드 stub(loaded=false → null fall-through) + kosmos_io anchor READ | ✅ 슬롯 동작 (실 .clm 모델 = d768 회수 후) |
+| `generator_smoke.hexa` | L3 슬롯 실행 증명 (EMIT→null 텍스트 · SILENT→무 · anchors 유입 · clm stub fall-through) | ✅ 10/10 PASS |
 
 ## 검증 (smoke)
 
@@ -61,9 +62,24 @@ CORE 와 무관. 후속 화해로 챗이 CORE/engine_g 를 re-export 하면 포�
 낮은 동기(0.045)+rate veto → 침묵 · 높은 동기(0.67)+safety pass → 발화. Engine A 의
 live Φ 가 tier 를 세우고 Engine G 가 emit 을 가른다.
 
+L3 슬롯 (`generator_smoke.hexa`, verbatim):
+
+```
+[anchors] read 1 anchor(s) from kosmos dir
+[emit  high] EMIT=true gen_emitted=true gen_backend=null gen_fellback=false gen_text="[null-gen] phase=SUSTAIN tier=T2_write phi=0.1190 motiv=0.6700 anchors=1 last_anchor=smoke_anchor_001"
+[silent low] EMIT=false gen_emitted=false gen_backend=null gen_fellback=false gen_text=""
+[clm stub ] loaded=false reason=no ckpt at path (d768 not recovered yet)
+[clm   high] EMIT=true gen_emitted=true gen_backend=null gen_fellback=true gen_text="[null-gen] phase=SUSTAIN tier=T2_write phi=0.1190 motiv=0.6700 anchors=1 last_anchor=smoke_anchor_001"
+generator_smoke: 10 PASS, 0 FAIL
+```
+
+EMIT → null 백엔드 텍스트(anchors 유입) · SILENT → 무 생성 · clm stub → null fall-through.
+
 ## 열린 결정
 
-- **L3 생성기 백엔드**: prod `anima_chat`(LoRA) 재사용 / tool-action 전용(생성 최소) /
-  `conscious_decoder_v3`(711L hexa, register collapse 해결 필요) 중 택. `generator.hexa`
-  인터페이스만 먼저 두고 백엔드는 후속 결정.
-- **p1~p8 정합**: 외부 LLM 0 · system_prompt 0 (CORE 는 결정 두뇌만, 생성 백엔드도 anima 자체)
+- **L3 생성기 백엔드 (실 모델)**: 인터페이스(`generator.hexa` `generate(backend,…)`)와
+  null 백엔드는 LANDED. 실 .clm 백엔드는 **d768 모델 회수 후** 동일 인터페이스 뒤에
+  배선 (`gen_clm_backend` 가 현재 stub: loaded=false → null fall-through). `conscious_decoder_v3`
+  (register collapse 미해결)는 하나의 후보일 뿐 의존 아님.
+- **p1~p8 정합**: 외부 LLM 0 · system_prompt 0 (CORE 는 결정 두뇌 + null 백엔드는
+  substrate 수치에서 결정적으로 조립 — chatbot 아님)

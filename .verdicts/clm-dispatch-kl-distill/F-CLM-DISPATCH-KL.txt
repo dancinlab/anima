@@ -1,0 +1,50 @@
+F-CLM-DISPATCH-KL — VERDICT (H_869 dispatch-KL distill routing · lever A)
+========================================================================
+verdict      : 🔴 CLOSED-NEGATIVE (g5 CODE-measured · no LLM judge · a_paper_negative_ok)
+measured_at  : 2026-05-31  ·  rung mid d512/L8/E8 (13,653,768 params) · arm AB
+execution    : GPU (RTX 5070, summer 192.168.50.60) · torch 2.11.0+cu130 · device cuda
+corpus       : REAL kowiki two-lane (stage2_real_corpus.make_real_corpus)
+seeds        : {42,43,44} · per-arm metric = mean over seeds
+thresholds   : F-CLM-DISPATCH-KL_prereg.txt VERBATIM · KL_COEF=0.10 ENT_MARGIN=0.10
+               Z_MARGIN=0.20 CE_BUDGET=0.10 steps=500 lr=1e-3 N_NULL=200 · post-tuning 0
+
+FALSIFIER (pre-registered, all three required for 🟢):
+  (1) F-CLM-DK-ENTROPY : kl mean dispatch-entropy >= baseline + ENT_MARGIN(0.10 nats)
+  (2) F-CLM-DK-Z       : kl mean routing-z       >= baseline + Z_MARGIN(0.20)
+  (3) F-CLM-DK-BUDGET  : kl mean held-out CE      <= baseline + CE_BUDGET(0.10 nats)
+  PASS(🟢) iff ENTROPY ∧ Z ∧ BUDGET ; ANY fail → 🔴 CLOSED-NEGATIVE.
+
+AGGREGATE (mean over seeds {42,43,44}):
+  dispatch-entropy : baseline +2.0789  kl +2.0790  delta +0.0001  (gate ≥ +0.10)  FAIL
+  routing-z        : baseline +2.1838  kl +2.0773  delta −0.1065  (gate ≥ +0.20)  FAIL
+  held-out CE      : baseline +0.2053  kl +0.2079  delta +0.0026  (budget ≤ +0.10) PASS
+
+GATES:
+  F-CLM-DK-ENTROPY : FAIL  (KL distill did NOT raise dispatch diversity — lever inert;
+                            both arms already sit at the entropy ceiling H(f)≈2.0790 nats,
+                            ≈ max_entropy log(8)=2.0794 — the dispatch was ALREADY balanced,
+                            so the balanced-target KL has no slack to add diversity.)
+  F-CLM-DK-Z       : FAIL  (routing-z actually FELL −0.1065 under the KL arm; the diversity
+                            gain the claim predicts did not appear in the z metric either.)
+  F-CLM-DK-BUDGET  : PASS  (held-out CE stayed +0.0026 nats, well inside the 0.10 budget —
+                            no z-collapse / quality wreck, but no diversity gain to pay for.)
+  LEVER-A SUPPORTED (all 3): false
+  VERDICT : RED (lever A fails a gate)
+
+CONCLUSION: dispatch-KL distill (the @L3 4th routing-escape lever — push the router's
+batch-averaged dispatch distribution toward uniform) is NOT a viable budget-free diversity
+lever at the MID rung d512/L8/E8. The mechanism is INERT here because the baseline dispatch
+is already at the uniform ceiling (H(f) 2.0789 of max 2.0794 nats; 8/8 distinct experts both
+arms) — there is no imbalance for the KL term to correct, so ENTROPY does not move (+0.0001
+≪ 0.10) and routing-z even drops (−0.1065). The CE budget gate passes only because the inert
+lever costs nothing. This RED rules dispatch-KL OUT as the 4th escape route at this rung and
+isolates the residual gate-A lever toward z>3.0 to something OTHER than dispatch balancing
+(consistent with H_871: expert COUNT E moved z, not dispatch uniformity at fixed E=8).
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung only (single MID rung d512/L8/E8 on the
+committed REAL kowiki corpus). A 🔴 here does NOT bind the deploy chip-array z>3.0 track;
+it scopes ONLY whether the dispatch-KL lever raises diversity inside the frozen CE budget at
+this rung. Inference stays AKIDA-int4-only (P0 d4).
+INVIOLABLE (H_679): on-chip learning is the SOLE HW↔SW difference; this is a SW-measured
+training-time loss-term ablation at the measurement rung (H_679 established HW edge-learn is
+real). Thresholds frozen verbatim from prereg, post-tuning 0.

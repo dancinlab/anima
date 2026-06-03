@@ -31,7 +31,7 @@
 |---|---|---|---|
 | **Q1** | arch family | **Conv-native LM** (dilated conv · attention 없음) | AKIDA conv byte-identical 증명(5-stage) · attention은 AKIDA 매핑 불가 → AKIDA 우선과 정합 · byte 긴 sequence가 conv엔 약(O(n·k)) |
 | **Q2** | 더블바인드 탈출 | **MoE conv-expert = mitosis cell** (분열한 cell이 각 expert) | A(MoE 토이증명) + C(p8 train=infer·anima-native) 결합 · register 격리=메인 coherent 유지 |
-| **Q3** | monopoly 토대 | **byte-vocab V=256** + 3-arm(A/B/A+B) + F-CLM-MONO | V≫d(15만/64=2370배)가 monopoly 근원 → byte로 V/d=4배 = 근원 소멸 (prior art 미시도 lever) |
+| **Q3** | monopoly 토대 | **byte-vocab V=256** + 3-arm(A/B/A+B) + F-CLM-MONO | V≫d(15만/64=2370배)가 monopoly 근원 → byte로 V/d=4배 = 근원 소멸 (prior art 미시도 lever) · **byte-vocab=raw UTF-8 byte 라 5개국어(EN·中文·Русский·日本語·한국어)를 vocab 변경 0 으로 표현** → 다국어 대화는 코퍼스 균형으로 결정([P1_CORPUS](./P1_CORPUS.md)) |
 | **Q4** | scale 실험 | micro-exp 토이=**직관(non-gate)** · 3-arm **전부 full-fire**가 판정 · scale ladder · wall-first·무캡 | toy≠scale(H_666 실증) → toy로 prune 금지, 다 발사 |
 | **d1** | corpus | **신규** + **혼합**(웹대량=coherence + 엄선=register) + **.kosmos 영속 필수(SKIP 금지)** | MoE 2-lane ↔ corpus 2-source 1:1 · a_kosmos 거버넌스(required·active) = .kosmos 영속은 **면제 불가** · 현 spec(kosmos/1.1)이 byte-corpus를 못 받치면 **upstream을 먼저 업그레이드한 뒤** 영속한다 · "얽매이지 않음"=업그레이드를 **별도 트랙으로 병행**해 전체를 멈추지 않는다는 뜻이지 **건너뛰어도 된다는 뜻이 아니다** · ✅ **실현**: kosmos/2.0 `@corpus`(6 PR #8~13) + `corpus/clm_p1.corpus.kosmos` 영속(lsp clean) · coord 실측=ENCODER 도메인 |
 | **d2** | .clm 포맷 | **2-track**(int4 AKIDA + fp16 GPU shadow) + QAT scale + manifest(sha256·kosmos ptr) | AKIDA추론·GPU학습재개·mitosis 한 파일 · naive PTQ int4 파괴→QAT 필수(실측) |

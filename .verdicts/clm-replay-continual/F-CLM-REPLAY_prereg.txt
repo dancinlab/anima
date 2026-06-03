@@ -1,0 +1,89 @@
+F-CLM-REPLAY — PRE-REGISTERED frozen thresholds (H_883 replay-buffer continual learning)
+=========================================================================================
+W2 method · deterministic:false · foundation H_679 (HW edge-learn measured, closed) ·
+prior art H_861 (F-CLM-BOUND 🔴 readout-only) · H_865 (adapter edge 🟢 BOUND) ·
+follow-on of H_875 (forgetting curve · dose-response; if its verdict is not landed at fire
+time this fire carries its OWN measured no-replay baseline, which it does by construction —
+the no-replay arm IS the baseline, measured side-by-side in the same run).
+FROZEN pre-fire. post-tuning = 0 (no threshold may move to flip a verdict after the run).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-replay-continual/
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung (mid d512/L8/E8, ~13.65M params) only.
+  A 🔴/🟢 here does NOT bind the deploy chip-fit track (≤~1.2M AKD1000 nodes).
+  toy/mid → prod NOT guaranteed. Inference stays AKIDA-int4-only (P0 d4).
+  INVIOLABLE (H_679): on-chip learning is the SOLE HW↔SW difference; this is edge-only
+  PIECEWISE adaptation (@L1) — NO deterministic full-retrain. Replay mixes a SMALL buffer
+  of OLD samples into the SAME edge-only Adam stream; the core trunk stays FROZEN.
+
+HYPOTHESIS
+  Catastrophic forgetting under edge-only on-chip adaptation (the base-ability z_drop the
+  H_861/H_865 BOUND falsifier measures) is REDUCED when a small replay buffer of OLD
+  (base-ability / "web" lane) samples is interleaved into the new-context edge-learn stream,
+  WITHOUT destroying the new-context learning signal. Replay is the H_875 forgetting-curve
+  follow-on SAFETY DEVICE: it should pull z_drop DOWN relative to a no-replay edge-learn run
+  on the identical backbone + edge + step budget, while new-context gain stays POSITIVE.
+
+PRIMARY FALSIFIER (the pre-registered crossing test — both must hold for 🟢)
+  (R) z_drop(replay) < z_drop(no_replay)            [replay reduces forgetting]
+  (G) gain(replay)   > 0.0                          [replay keeps a real new-context gain]
+  PASS (🟢) iff (R) ∧ (G). Else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok — e.g. replay that
+  destroys the new-context gain, or that fails to reduce z_drop, is a real reportable result).
+
+MODEL / EDGE / BATCHES (REUSED VERBATIM from H_865 adapter edge, frozen seeds)
+  backbone   : mid d512/L8/E8 (~13.65M) AKIDA int4-sym[-7,+7] STE, arm AB. clm_mid_backbone.pt
+               (HF dancinlab/anima-clm-verify; a_hf_complete — NO new model artifact).
+  edge       : trunk-adjacent thin adapter (H_865) — core = ALL base params FROZEN incl.
+               readout; edge = Conv1d d_model→rank=64 → GELU → Conv1d rank→d_model, up
+               zero-init = identity at step 0, inserted between norm_out and FROZEN readout.
+               Adam lr_edge=3e-3 over adapter params only. (The H_861 readout-only edge was
+               🔴 lever-less; the adapter edge is the verified working edge — replay is tested
+               on the edge that actually moves.)
+  base-ability ("old") held-out batch : make_lane_bytes("web", seed=BASE_SEED=101), eval slice.
+  base-ability REPLAY buffer (train)   : make_lane_bytes("web", seed=BASE_SEED=101), a slice
+               DISJOINT from the base eval slice (replay never sees the eval data).
+  new-context held-out batch           : make_lane_bytes("new", seed=NEW_SEED=202) high-band
+               cyclic motif NOT in pretrain; train slice disjoint from eval slice.
+  Both: seq_len=64, batch_size=16, n_eval_batches=16, fixed seeds (frozen).
+  (n_eval_batches reduced 32→16 vs H_865 for CPU wall-time; both arms use 16 — identical
+   eval budget across arms, so the replay-vs-no-replay COMPARISON is apples-to-apples.)
+
+CONDITIONS (the contrast — identical backbone/edge/seeds/step budget, ONLY the stream differs)
+  no_replay : every edge step consumes a NEW-context train batch (= H_865 BOUND replication).
+  replay    : with the SAME total step budget, a fraction REPLAY_RATIO=0.25 of the steps
+              consume a base-ability ("old") REPLAY-buffer batch instead of a new-context
+              batch; the schedule is DETERMINISTIC (every 1/REPLAY_RATIO-th step is a replay
+              step, frozen) so the run is reproducible. The remaining steps are new-context.
+              The new-context batches consumed are the SAME deterministic prefix in both arms
+              (replay steps are INSERTED, new-context batch cursor only advances on new steps),
+              so any z_drop / gain difference is attributable to the replay interleave alone.
+
+STEP BUDGET (the dose axis — frozen ladder; reduced for CPU wall-time, monotone subset)
+  N_ADAPT swept over STEP_LADDER = [32, 128, 300].
+  (300 anchors the H_861/H_865 endpoint VERBATIM. The primary verdict is read at the 300-step
+   endpoint; 32/128 are reported as the dose curve, NOT separately gating.)
+  For each step count S and each condition, a FRESH model is constructed from the frozen
+  backbone (re-init adapter), z_drop(S) and gain(S) recorded.
+
+MEASUREMENT PROCEDURE (computed by CODE, g5 — no LLM judge)
+  Per (condition, S):
+    1. Construct model from frozen backbone; freeze core; init adapter (identity at step 0).
+    2. ce_base_pre, sd_base_pre = mean/std CE on base-ability ("old") held-out (pre-adapt).
+       ce_new_pre = mean CE on new-context held-out (pre-adapt).
+    3. Adapt: S edge-only Adam steps. no_replay → all new-context. replay → deterministic
+       interleave (every 4th step a base-ability replay-buffer batch, else new-context).
+    4. ce_base_post = mean CE on base-ability held-out; ce_new_post = mean CE on new-context.
+    5. z_drop(S) = (ce_base_post - ce_base_pre) / max(sd_base_pre, 1e-6)
+       gain(S)   = ce_new_pre - ce_new_post
+
+PASS / VERDICT (frozen — read at the S=300 endpoint)
+  PASS (🟢) iff at S=300:  z_drop(replay) < z_drop(no_replay)  ∧  gain(replay) > 0.0.
+  Else 🔴 CLOSED-NEGATIVE (a_paper_negative_ok).
+  Secondary (reported, NOT gating): the full STEP_LADDER z_drop/gain curve for both arms;
+  whether the no_replay arm reproduces the H_865 BOUND endpoint; the gain trade-off
+  (gain(replay) vs gain(no_replay)). Reported honestly either way.
+
+ARTIFACTS
+  .verdicts/clm-replay-continual/clm_replay_continual_result.json (per condition: list of
+     {steps, z_drop, gain, ce_base_pre/post, ce_new_pre/post}, plus the S=300 verdict block)
+  .verdicts/clm-replay-continual/F-CLM-REPLAY.txt (verdict verbatim)
+  backbone ckpt reused from HF dancinlab/anima-clm-verify (a_hf_complete; no new model artifact).

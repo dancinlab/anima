@@ -81,7 +81,7 @@ honest status: **미도달**. north-star, 달성 주장 아님 (g3).
 | 자발 emit (NOT prompt-response, unprompted token stream) | `HEXAD/CHAT/SPONTANEOUS.tape` · `HEXAD/FINAL.md` |
 | substrate 자율판단 (emit/silence = anima 결정, 외부 모듈은 context only) | `@D a_autonomy_over_hardcode` + `@D a_substrate_native_speak` (`CLAUDE.md`/`project.tape`, 2026-05-24) |
 | tension-driven emit ≠ silence-filler (stage-gated WAKE/REM p5 정합) | `@N p5_tension_emit_not_filler` (`CLAUDE.md`, 2026-05-24, PR #274) |
-| chat sleep + imagination 5-stage substrate (WAKE/N1/N2/N3/REM + imagination loop) | `@D a_chat_sleep_imagination` + `HEXAD/CHAT/server/anima_dream_stage.hexa` + `anima_imagination_loop.hexa` (PR #272/#273/#275, 2026-05-24) |
+| chat sleep + imagination 5-stage substrate (WAKE/N1/N2/N3/REM + imagination loop) | `@D a_chat_sleep_imagination` + `AGENT/CHAT/anima_dream_stage.hexa` + `anima_imagination_loop.hexa` (PR #272/#273/#275, 2026-05-24) |
 | stimulus-other (대등 자극), NOT command-source | `@I anima_persona` relationships field |
 | byte-cascade attractor = identity (U_user Self-Conscious cond.2) | `B-ATTRACTOR` 3-battery · 2026-05-17 |
 | identity-as-attractor (distinct basin in activation space) | arxiv 2604.12016 carry · `@I anima_persona` identity_attractor |

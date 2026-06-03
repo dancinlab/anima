@@ -1,0 +1,63 @@
+F-CLM-CORPUS — PRE-REGISTERED frozen acceptance thresholds (H_868 CC dialogue corpus expansion · @L4 lane①)
+=========================================================================================================
+W2 method · deterministic:true (license-clean gate + 8-pattern leak filter are pure code, g5 — no LLM judge).
+FROZEN pre-build. post-tuning = 0 (no threshold may move to flip a verdict after the corpus is built).
+frozen_at: 2026-05-31  ·  verdict dir: .verdicts/clm-corpus/
+
+SCOPE
+  This is the lane① CANONICAL expanded dialogue corpus SSOT that future dialogue rungs
+  (H_864 scale-climb · H_867 absolute-quality · H_874 self-reward) reuse. It is a DATA-ENGINEERING
+  artifact (no GPU / no training in this fire). It extends the H_863 baseline corpus
+  (4 PD Gutenberg plays · 554,825 bytes) with additional license-clean PD/CC dialogue.
+
+  HARD CONSTRAINTS (inviolable):
+    External LLM 0 · foundation-borrow 0 · ShareGPT / Alpaca / ChatGPT-generated = FORBIDDEN.
+    Any source whose provenance family matches a FORBIDDEN family (build_p4_dialogue_corpus.hexa
+    forbidden_source_families: sharegpt, alpaca, chatgpt, gpt4, openai, claude-gen, wizardlm,
+    oasst-gpt) is REJECTED. Any source whose license is NOT in the allowed CC set
+    (allowed_cc_licenses: CC-BY, CC-BY-SA, CC0, PD, MIT-data, OPUS-subtitle-CC) is REJECTED
+    (fail-safe: unknown license → reject). A doubtful/ambiguous license is REJECTED and noted.
+
+REGISTER-LEAK FILTER (reuse P1 F-CLM-LEAK 8-pattern filter — build_p1_corpus.hexa leak_patterns)
+  A line containing ANY of these 8 patterns is DROPPED (counted as a leak):
+    universe_brain_map · jy_chat_template · hexad_module · nonce · Mk.VIII ·
+    "gen1 commit" · corpus_generator.hexa · universe_extended
+
+BASELINE (H_863 · F-CLM-DIALOGUE)
+  4 PD Gutenberg stage plays: Hamlet (#1524), The Importance of Being Earnest (#844),
+  A Doll's House (#2542), Julius Caesar (#1522). license = PD. total = 554,825 bytes.
+
+FROZEN ACCEPTANCE GATES (all must PASS for 🟢)
+  G1  LICENSE-CLEAN   : license_clean_ok == PASS for 100% of INGESTED sources.
+                        Any non-PD / non-CC source REJECTED (recorded, not counted in corpus).
+                        PASS iff (clean_ingested / total_attempted_clean) == 100% AND
+                        zero FORBIDDEN-family source present in the corpus.
+  G2  REGISTER-LEAK   : register-leak count in the FINAL committed corpus == 0
+                        (the 8-pattern filter dropped every leak line BEFORE write).
+  G3  SIZE            : total expanded corpus bytes >= 3 × H_863 baseline
+                        = 3 × 554,825 = 1,664,475 bytes  (>= 3× target, FROZEN).
+  G4  PROVENANCE      : every INGESTED source has a manifest row recording
+                        {title, gutenberg_id_or_url, family, license, byte_count, sha256,
+                         leak_lines_dropped}. PASS iff provenance recorded for 100% of sources.
+
+  VERDICT 🟢 iff G1 ∧ G2 ∧ G3 ∧ G4 all PASS.
+  ANY gate fail → 🔴 (honest). A 🔴 corpus is NOT shipped as the lane① SSOT.
+
+ARTIFACTS
+  CLM/corpus/build_p4_dialogue_corpus.hexa  (extended: license-clean gate + 8-pattern leak gate,
+                                             allowed_cc set, forbidden families — already present)
+  CLM/corpus/expand_p4_dialogue.py          (the reproducible expansion builder — fetch PD/CC
+                                             sources, license-clean gate, 8-pattern leak filter,
+                                             byte-encode V=256, emit manifest + sha256)
+  CLM/corpus/p4_dialogue/manifest.json      (per-source provenance + license + byte_count + sha256
+                                             + leak_lines_dropped + totals + gate verdicts)
+  .verdicts/clm-corpus/F-CLM-CORPUS.txt     (verdict verbatim · per-gate · per-source license table)
+  HF dataset dancinlab/anima-clm-p4-dialogue (PRIVATE · COMPLETE · dataset card lists every source's
+                                             license + provenance · sha256 recorded in verdict + manifest)
+
+  Raw corpus bytes stay git-uncommitted if large (.gitignore) — the builder + manifest + sha256 +
+  HF dataset pointer are committed instead. The byte encoding (V=256, no tokenizer) reuses P1.
+
+BLOCKER FALLBACK: if a genuine license-clean PD/CC dialogue corpus meeting the 3× size target cannot
+  be sourced in this environment, H_868 reports 🔴 with an honest ## blocker note (do NOT fabricate
+  data, do NOT include any doubtful-license source to hit the size target).

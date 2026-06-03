@@ -23,7 +23,7 @@
 | ko hot-swap | mini `~/anima_chat_pack/kofl_adapter/` (KOFL) |
 | ja hot-swap | mini `~/anima_chat_pack/jafl_adapter/` (JAFL) |
 | rollback | mini `~/anima_chat_pack/lora_adapter_vp21m_bak/` (이전 vP21M default) |
-| router code | `HEXAD/CHAT/server/anima_participant.py` — per-emit `lang_hint` → `set_adapter()` (default/ko/ja) |
+| router code | `AGENT/CHAT/anima_participant.py` — per-emit `lang_hint` → `set_adapter()` (default/ko/ja) |
 | **deployed** | mini 4 LaunchAgents → chat.dancinlab.org LIVE |
 | HF SSOT | `dancinlab/anima-vp21m-v5` PRIVATE |
 | reports | `VP21M_{MULTILINGUAL,WAVE2,WAVE3,WAVE4}_*.md` |

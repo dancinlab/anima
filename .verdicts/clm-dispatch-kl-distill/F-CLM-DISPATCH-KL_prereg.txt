@@ -1,0 +1,89 @@
+F-CLM-DISPATCH-KL — PRE-REGISTRATION (frozen pre-run, 2026-05-31)
+================================================================
+verdict tier: 🟠 PRE-REGISTERED (H_869 dispatch-KL distill fire 판정 대기)
+W2 · deterministic:false · measured by CODE only (g5 — no LLM judge) · a_paper_negative_ok.
+
+CLAIM (roadmap @L3 / lever A): the 4th routing-escape lever = DISTILL a balanced
+dispatch target INTO the router. Add a KL term to the loss pushing the router's
+batch-averaged per-token dispatch distribution toward the UNIFORM/balanced
+expert-usage distribution (1/E each). The hypothesis: routing diversity rises
+(router dispatch entropy ↑) WITHOUT the z-collapse / quality wreck seen at small
+scale — i.e. the held-out quality drop stays inside a frozen budget.
+
+This is the residual lever the H_871 routing-z scale-ladder verdict (🟢
+ARTIFACT CONFIRMED) explicitly named: tiny→small z rose +0.59 (the E 4→8 step),
+but small→mid was nearly flat (+0.02) at fixed E=8 — so depth (d/L) does NOT
+move z. The remaining gate-A lever toward z>3.0 is to push expert USAGE itself
+(this dispatch-KL distill), not d_model depth.
+
+dispatch-KL mechanism (NEW arm, does NOT edit array_moe / model.py):
+  router emits per-token expert probs P (softmax over E logits, per (B,T)).
+  let f = batch-averaged dispatch distribution = P.mean over (B,T)  (shape E).
+  let u = uniform = 1/E each.
+  L_kl = KL(u || f) = sum_i u_i * (log u_i - log f_i)  (balanced-target distill).
+  total loss = CE + aux(baseline) + KL_COEF * L_kl.
+  baseline arm = identical config with KL_COEF = 0 (the AB variant, untouched).
+
+routing-z / dispatch-entropy metric (CODE-measured, g5, NOT re-tuned):
+  obs       = mean per-token router entropy (nats), held-out eval stream.
+  null      = entropies of random usage ~ Dirichlet(1) over E (verbatim
+              CLM/model/judge_clm.routing_z), N_NULL = 200.
+  routing_z = (obs - mu_null) / sd_null.
+  dispatch_entropy = H(f) (nats) of the batch-averaged dispatch distribution f.
+  held-out CE = next-byte cross-entropy on a held-out eval stream (quality).
+
+RUNG (single production rung — the one where the lever must act): the H_863 /
+H_871 MID rung d512 / L8 / E8, arm AB, corpus = REAL kowiki two-lane
+(stage2_real_corpus.make_real_corpus). seeds = {42,43,44}; per-arm metric =
+mean over seeds. This is exactly the H_871 small→mid flat cell, isolating the
+lever to expert-usage (E fixed, d/L fixed).
+
+FROZEN THRESHOLDS (frozen BEFORE the fire; post-tuning = 0):
+  KL_COEF       = 0.10   (dispatch-KL distill weight, the lever knob).
+  ENT_MARGIN    = 0.10   (dispatch-entropy rise required, nats).
+  Z_MARGIN      = 0.20   (routing-z rise required vs baseline).
+  CE_BUDGET     = 0.10   (held-out CE regression budget, nats — the "no
+                          z-collapse within frozen budget" guard).
+  steps         = 500, lr = 1e-3 (= H_871 mid budget, frozen).
+  N_NULL        = 200.
+
+PASS gate (lever-A SUPPORTED) — 🟢, iff ALL THREE:
+  (1) F-CLM-DK-ENTROPY : KL-arm mean dispatch-entropy >= baseline mean
+                         dispatch-entropy + ENT_MARGIN (0.10 nats).
+                         => "routing diversity rises (dispatch entropy ↑)".
+  (2) F-CLM-DK-Z       : KL-arm mean routing-z >= baseline mean routing-z
+                         + Z_MARGIN (0.20).
+                         => "the diversity gain shows up in the z metric too".
+  (3) F-CLM-DK-BUDGET  : KL-arm mean held-out CE <= baseline mean held-out CE
+                         + CE_BUDGET (0.10 nats).
+                         => "NO z-collapse: quality stays inside frozen budget".
+  ALL THREE PASS => "lever A (dispatch-KL distill) raises routing diversity
+      without the small-scale z-collapse; @L3 routing-escape lever-A is a viable
+      4th escape route."
+
+FAIL gate (lever-A NOT supported) — 🔴, if ANY of the three FAILs:
+  - ENTROPY fail: KL did not raise dispatch diversity (lever inert).
+  - Z fail: dispatch entropy rose but routing-z did not follow (metric decouple).
+  - BUDGET fail: diversity bought at a CE cost exceeding the frozen budget
+      (the z-collapse the claim says it AVOIDS actually happened).
+  Reported honestly as-is (g63 · p7 · a_paper_negative_ok); threshold NOT moved.
+  A 🔴 here is a fully publishable negative — it rules dispatch-KL OUT as a
+  budget-free diversity lever at this rung.
+
+BASELINE TIE (H_871 routing-z = scale artifact): H_871 established routing-z
+  rises with rung but small→mid is FLAT at fixed E=8 (+0.02). H_869 holds the
+  rung FIXED at mid and asks whether the dispatch-KL lever (not scale) can move
+  z/dispatch-entropy at that frozen rung — isolating the lever from the scale
+  artifact. The baseline arm here IS the H_871 mid cell (KL_COEF=0).
+
+SCOPE (a_scale_honest_scope): single MID rung d512/L8/E8 on the committed REAL
+  kowiki corpus (small byte volume — the lever is the KL distill + REAL byte
+  distribution at the frozen rung, NOT a multi-GB corpus, NOT a 3B/7B claim).
+  A 🟢 here does NOT by itself clear the chip-array z>3.0 DEPLOY gate (separate
+  track); it scopes ONLY whether the dispatch-KL lever raises diversity inside
+  the frozen CE budget at this rung. CPU-LOCAL ($0, no GPU pod) — measurement
+  is deterministic-corpus + code-scored, no LLM.
+
+status: 🟠 PRE-REGISTERED — no measurement yet. This file is the audit anchor for
+the frozen thresholds, NOT a PASS. The verdict will be re-issued verbatim from
+the H_869 dispatch-KL fire stdout (the runtime payload) when it lands.

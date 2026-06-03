@@ -1,0 +1,58 @@
+F-CLM-DIALOGUE-ABS — VERDICT (H_867 dialogue ABSOLUTE quality FLOOR · @L6)
+==========================================================================
+verdict: 🔴 CLOSED-NEGATIVE (arm-SP below the absolute coherence floor — honest, a_paper_negative_ok)
+measured: 2026-05-31  ·  W2 · post-tuning 0  ·  prereg freeze commit d5103f210 (BEFORE fire)
+method: code-only (g5) distributional measurement · NO LLM judge · external LLM 0 · ShareGPT/Alpaca/ChatGPT-gen 0
+surface: CPU/local eval (M-series) · est cost $0 (no GPU pod) · wall 452.2s · torch 2.8.0
+
+MODEL UNDER TEST
+  arm-SP = H_863 mid-rung SFT+self-play (d512/L8/E8 ~13.65M · AKIDA int4-sym[-7,+7] STE act_bits=4),
+  reconstructed VERBATIM from the HF backbone dancinlab/anima-clm-verify:clm_mid_backbone.pt
+  (SFT-on-PD-dialogue mid trunk, CE 5.55→1.73) by: load backbone → SFT-only continue on the H_863
+  CC/PD dialogue corpus (hf:dancinlab/anima-clm-p4-dialogue:cc_dialogue.bytes) → fold back a 1920-byte
+  DIVERSITY-gated, 8-pattern-leak-filtered self-play reflux slice → short continue. reflux gate ok=True.
+  (arm-SFT reported for contrast only — the floor verdict is on arm-SP.)
+
+EVAL CORPUS (INDEPENDENT held-out, DISJOINT from H_863's training plays)
+  Macbeth(#1533) · Othello(#1531) · Romeo&Juliet(#1513) · Pygmalion/Shaw(#3825) — PD, license-clean,
+  8-pattern register-leak filter passed (drop 0). 592,536 total bytes / 98,752 held-out (every 6th
+  64-byte block · seed=867). sha256 in h867_eval_snapshot_manifest.json. byte V=256, no tokenizer.
+  Tests ABSOLUTE generalization (never-seen plays) — strictly harder than the H_863 in-distribution A/B.
+
+FROZEN ABSOLUTE FLOOR (post-tuning 0 — no threshold moved after the fire) vs MEASURED arm-SP
+  F-CLM-DIALOGUE-ABS-COHERE  coherence(arm-SP)   = 0.05804   floor >= 0.060   → FAIL  (miss by 0.00196)
+  F-CLM-DIALOGUE-ABS-ADEQ    adequacy_f1(arm-SP) = 0.02138   floor >= 0.020   → PASS
+  F-CLM-DIALOGUE-ABS-LEAK    register_leak(arm-SP) = 0       floor == 0       → PASS
+  → ANY fail ⇒ 🔴 CLOSED-NEGATIVE. arm-SP clears ADEQ + LEAK but falls 0.002 short of the COHERE floor.
+
+GROUNDING (snapshot baselines — facts, not tunable)
+  uniform-byte 0.0039 · unigram(order-0) 0.0375 · bigram(order-1 self-fit, optimistic) 0.0843.
+  arm-SP coherence 0.05804 sits ABOVE the order-0 unigram baseline (0.0375) — it is NOT a trivial
+  byte-frequency model — but BELOW the frozen 0.060 floor (which was set above unigram, below bigram).
+  So arm-SP uses real multi-byte context yet does not clear the "actually coherent beyond frequency"
+  bar on a DISTRIBUTION-SHIFTED held-out at this toy/mid scale.
+
+FULL MEASURED (clm_dialogue_abs_result.json)
+  arm-SP : coherence 0.05804 · CE_heldout 2.84663 · adequacy_f1 0.02138 · leak 0 · self_bleu 0.8913 · rep 0.57519
+  arm-SFT: coherence 0.05776 · CE_heldout 2.85148 · adequacy_f1 0.04384 · leak 0 · self_bleu 0.89457 · rep 0.59593
+  (self_bleu/rep reported for context — they are NOT in the H_867 floor verdict, which is COHERE∧ADEQ∧LEAK only.
+   The high values reflect the greedy-decoding scoring regime on out-of-distribution prompts, not a deploy gate.)
+
+SCOPE (a_scale_honest_scope)
+  This 🔴 binds ONLY the H_863 mid rung + THIS eval distribution. It does NOT bind another rung or the
+  deploy chip-fit track. An honest below-floor at mid scale on a never-seen play distribution was the
+  expected-plausible outcome stated in the prereg (a_paper_negative_ok). Inference stays AKIDA-int4-only (P0 d4).
+
+INTERPRETATION
+  H_863 (RELATIVE) showed arm-SP beats arm-SFT in-distribution. H_867 (ABSOLUTE) shows that the SAME
+  mid arm, evaluated on never-seen PD plays against a pre-frozen floor, narrowly fails the coherence
+  bar (0.058 < 0.060). Winning an A/B did not buy an absolute floor under distribution shift — exactly
+  the harder-bar distinction H_867 was designed to expose. Lever: scale (H_864 ladder climb) or a
+  trunk-adjacent thin adapter (shared E5 fix), not a readout-only edge.
+
+ARTIFACTS
+  .verdicts/clm-dialogue-abs/F-CLM-DIALOGUE-ABS_prereg.txt   (frozen thresholds · commit d5103f210)
+  .verdicts/clm-dialogue-abs/h867_eval_snapshot_manifest.json (provenance + PD license + sha256 + baselines)
+  .verdicts/clm-dialogue-abs/h867_eval_{full,heldout}.bytes  (the held-out PD snapshot)
+  .verdicts/clm-dialogue-abs/clm_dialogue_abs_result.json    (measured numbers · this verdict's source)
+  CLM/bench/h867_dialogue_abs_eval.hexa                      (absolute-floor bench scaffold · pure-hexa)

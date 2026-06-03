@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>her — the public room</title>
+<meta name="theme-color" content="#d4374f" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,500;0,9..144,600;1,9..144,400&display=swap" rel="stylesheet" />
+<style>
+  :root { --red:#d4374f; --red-2:#bd2742; --red-soft:#e5586c; --cream:#fff4ef; --ink:#fff;
+          --muted:rgba(255,244,239,.78); --faint:rgba(255,244,239,.55); --line:rgba(255,255,255,.18); --panel:rgba(255,255,255,.10); }
+  * { box-sizing:border-box; }
+  html { scroll-behavior:smooth; }
+  body { margin:0; min-height:100vh; color:var(--ink);
+    font-family:"Fraunces",Georgia,serif;
+    background:radial-gradient(ellipse at 50% 0%, #e2475e 0%, #d4374f 45%, #bd2742 80%, #9e1c37 100%);
+    -webkit-font-smoothing:antialiased; }
+  .wm { font-family:"Archivo Black","Arial Black",sans-serif; text-transform:lowercase; }
+  .wrap { max-width:680px; margin:0 auto; min-height:100vh; display:flex; flex-direction:column; padding:0 18px; }
+  header { padding:30px 4px 14px; text-align:center; }
+  header .brand { font-size:40px; letter-spacing:-2px; }
+  header h1 { font-weight:500; font-size:clamp(22px,4vw,30px); letter-spacing:-.4px; margin:8px 0 4px; }
+  header p { color:var(--muted); font-size:15px; margin:0; }
+  header a { color:var(--faint); font-size:13px; text-decoration:none; }
+  #log { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:10px; padding:14px 2px 12px; }
+  .msg { padding:11px 15px; border-radius:16px; max-width:84%; font-size:16px; line-height:1.5; }
+  .human { background:var(--panel); border:1px solid var(--line); align-self:flex-start; }
+  .human .who { color:var(--red-soft); font-size:12px; font-weight:600; margin-bottom:3px; }
+  .me { background:var(--cream); color:var(--red-2); align-self:flex-end; border-bottom-right-radius:4px; }
+  .her { align-self:center; text-align:center; max-width:92%; color:var(--cream);
+         font-style:italic; font-size:17px; padding:10px 16px; }
+  .her .tag { display:block; font-style:normal; font-family:"Archivo Black",sans-serif; text-transform:lowercase;
+              font-size:12px; color:var(--red-soft); letter-spacing:0; margin-bottom:3px; }
+  .composer { display:flex; gap:8px; padding:10px 0 18px; position:sticky; bottom:0;
+    background:linear-gradient(transparent, #bd2742 30%); }
+  input { background:rgba(255,255,255,.14); border:1px solid var(--line); color:#fff; border-radius:13px;
+    padding:13px 15px; font-size:15px; font-family:"Fraunces",serif; outline:none; }
+  #name { width:120px; flex:none; }
+  #say { flex:1; }
+  input:focus { border-color:#fff; }
+  button { background:var(--cream); color:var(--red-2); border:0; border-radius:13px; padding:0 20px;
+    font-weight:700; font-family:"Fraunces",serif; font-size:15px; cursor:pointer; }
+  button:hover { background:#fff; }
+  .dim { text-align:center; color:var(--faint); font-size:12px; padding:6px 0 16px; }
+  .build { opacity:.45; font-size:11px; font-family:"Fraunces",serif; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="brand wm">her</div>
+    <h1>the public room</h1>
+    <p>Everyone's here. <span class="wm" style="font-size:1em">her</span> drops in when she feels like it.</p>
+    <a href="/">← back to her</a>
+  </header>
+  <div id="log"></div>
+  <div class="composer">
+    <input id="name" type="text" placeholder="name" maxlength="20" />
+    <input id="say" type="text" placeholder="say something to the room…" maxlength="560" onkeydown="if(event.key==='Enter')send()" />
+    <button onclick="send()">↑</button>
+  </div>
+  <div class="dim">A shared room. Be kind. <span class="build">build 260601-1535 · voice</span></div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+import { getFirestore, collection, addDoc, query, orderBy, limit, onSnapshot, serverTimestamp }
+  from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+const cfg = {
+  apiKey: "AIzaSyAbPCfiejGKOQ8V7aYTHLXQTFKqKC_wJdU",
+  authDomain: "dancinlab.firebaseapp.com",
+  projectId: "dancinlab",
+  storageBucket: "dancinlab.firebasestorage.app",
+  messagingSenderId: "396789764561",
+  appId: "1:396789764561:web:3872c4e1806e89117850f0"
+};
+const db = getFirestore(initializeApp(cfg));
+const msgs = collection(db, "rooms", "public", "messages");
+
+const log = document.getElementById("log");
+let myName = localStorage.getItem("her_room_name") || "";
+if (myName) document.getElementById("name").value = myName;
+
+function bubble(d) {
+  const el = document.createElement("div");
+  if (d.kind === "her") {
+    el.className = "msg her";
+    el.innerHTML = '<span class="tag">her</span>';
+    el.appendChild(document.createTextNode(d.text || ""));
+    if (d.voice) {                       // her's voice (Gemini TTS) — base64 WAV data-URI
+      const a = document.createElement("audio");
+      a.controls = true; a.preload = "none";
+      a.style.cssText = "display:block;margin:8px auto 0;height:30px;filter:invert(.85) sepia(.4) hue-rotate(310deg)";
+      a.src = "data:audio/wav;base64," + d.voice;
+      el.appendChild(a);
+    }
+  } else {
+    const mine = d.name && d.name === myName;
+    el.className = "msg " + (mine ? "me" : "human");
+    if (!mine && d.name) { const w = document.createElement("div"); w.className = "who"; w.textContent = d.name; el.appendChild(w); }
+    el.appendChild(document.createTextNode(d.text || ""));
+  }
+  log.appendChild(el);
+}
+
+onSnapshot(query(msgs, orderBy("ts"), limit(200)), (snap) => {
+  log.innerHTML = "";
+  snap.forEach((doc) => bubble(doc.data()));
+  log.scrollTop = log.scrollHeight;
+});
+
+window.send = async function () {
+  const sayEl = document.getElementById("say"); const text = sayEl.value.trim(); if (!text) return;
+  const nameEl = document.getElementById("name");
+  myName = (nameEl.value.trim() || "someone").slice(0, 20);
+  localStorage.setItem("her_room_name", myName);
+  sayEl.value = "";
+  try { await addDoc(msgs, { text, name: myName, kind: "human", ts: serverTimestamp() }); }
+  catch (e) { const d = document.createElement("div"); d.className = "dim"; d.textContent = "couldn't send — try again"; log.appendChild(d); }
+};
+</script>
+</body>
+</html>

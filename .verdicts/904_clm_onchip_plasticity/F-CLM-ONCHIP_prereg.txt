@@ -1,0 +1,46 @@
+F-CLM-ONCHIP  (H_904 ★ — on-chip plasticity measured on AKD1000 silicon)
+================================================================================
+PRE-REGISTERED FALSIFIER — frozen BEFORE the run. post-tuning = 0.
+Repo SSOT: github.com/dancinlab/anima
+Hardware: pi5-akida — Raspberry Pi 5 + BrainChip AKD1000 (device BC.00.000.002,
+          NSoC_v2, BackendType.Hardware). akida SDK 2.19.1, venv ~/.venv/anima-akida.
+
+CLAIM (H_904):
+  AKD1000 native on-chip edge-learning (AkidaUnsupervised, last-layer few-shot
+  binary-weight update) runs LIVE on the silicon and measurably changes outputs;
+  the on-chip learned-weight / output result is compared against a bit-for-bit
+  deterministic SW-sim of the SAME update (identical fixed init weight + identical
+  deterministic spike inputs). This measures the LEARNING half of the substrate:
+  inference is byte-identical (H_877 🟠) but H_679 claims LEARNING is HW != SW.
+
+FALSIFIER (EXACT, frozen):
+  H_904 is CONFIRMED (🟢) iff BOTH hold, measured by code (g5):
+    (A) on-chip learning ran live on AKD1000 — the on-chip update measurably
+        changed the last-layer weights vs the pre-learn weights
+        (learn_happened_hw == True), AND
+    (B) HW != SW magnitude quantified — the on-chip learned post-weights OR the
+        per-sample outputs differ from the byte-identical SW-sim of the same
+        update beyond float noise (hw_eq_sw_weights == False OR
+        hw_eq_sw_outs == False).
+
+  H_904 is REFUTED (🔴) iff:
+    - on-chip learning ran but HW == SW byte-exact (both weights AND outputs
+      identical) — this REFUTES the H_679 "learning differs on hardware" claim
+      (a_paper_negative_ok — major finding either way), OR
+    - on-chip learning could not be run / did not change weights.
+
+EXPERIMENTAL CONTROL:
+  - Same fixed binary init weight injected into BOTH the HW and SW models post-compile
+    (default Akida init is non-deterministic across builds — verified — so a fixed
+    init is REQUIRED for a fair comparison).
+  - Same deterministic spike inputs (numpy seed=904, 20 samples, 1x1x64 binary).
+  - SW path = akida software backend (no device map) of the IDENTICAL model; verified
+    reproducible byte-exact across two SW runs with the fixed init.
+  - Model: InputData(1,1,64,1bit) -> FullyConnected(units=16, weights_bits=1,
+    activation=False), AkidaUnsupervised(num_weights=12).
+
+SCOPE (honest): 1 physical AKD1000 (a_scale_honest_scope). No teardown, no reflash.
+  anima spike_streamer (regime M, ports 9512/9513) is gracefully SIGTERM'd to release
+  the single-tenant device lock for the ~30s learn, then relaunched IDENTICALLY.
+
+g5 = CODE-measured. a_paper_negative_ok.

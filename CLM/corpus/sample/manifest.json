@@ -3,12 +3,12 @@
   "version": "0.1",
   "vocab": { "kind": "byte", "size": 256 },
   "lanes": {
-    "web":      { "role": "coherence", "lines": 8, "bytes": 837, "sha256": "c02ab91eeaee313e3dae3fc59e490bde092c658bdf57594348e2dbd21e7c57e4" },
-    "register": { "role": "register",  "lines": 8, "bytes": 819, "sha256": "2d32c08ff3ccce4bc393748d48f6dee48e38dd72759a7784579c9f07b620843a", "leak_dropped": 0 }
+    "web":      { "role": "coherence", "lines": 25, "bytes": 2628, "sha256": "800c154253ef18dbf4c8ee2e06d4bc1b3accdd53cdbdc8e0748f7a7c160ff0a7" },
+    "register": { "role": "register",  "lines": 25, "bytes": 2566, "sha256": "462293698133cabe2862d44af1d9ebecce11851be181af99dc87169475b267c3", "leak_dropped": 0 }
   },
   "mix_byte_sample": { "web_pct": 50, "register_pct": 49 },
   "mix_byte_target_full": { "web_pct": 80, "register_pct": 20 },
-  "total_bytes": 1656,
+  "total_bytes": 5194,
   "leak_filter": { "applied_to": "register", "patterns": 8 },
   "note": "sample build only; full crawl = kowiki.jsonl(web) + expanded register seed, .gitignore'd, HF/R2 dataset"
 }

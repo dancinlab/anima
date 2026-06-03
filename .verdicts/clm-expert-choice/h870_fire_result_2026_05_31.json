@@ -1,0 +1,145 @@
+{
+  "frozen": {
+    "seeds": [
+      42,
+      43,
+      44
+    ],
+    "n_experts": 8,
+    "capacity_factor": 1.0,
+    "load_cv_floor": 0.25,
+    "quality_margin": 0.1,
+    "train_steps": 120
+  },
+  "token_choice_per_seed": [
+    {
+      "seed": 42,
+      "load_cv": 0.8869245052337646,
+      "n_active": 8,
+      "ce": 0.501372940838337,
+      "load_frac": [
+        0.2095,
+        0.1209,
+        0.0105,
+        0.0068,
+        0.1282,
+        0.3691,
+        0.0771,
+        0.0779
+      ],
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "seed": 43,
+      "load_cv": 0.9036145806312561,
+      "n_active": 8,
+      "ce": 0.5164895262569189,
+      "load_frac": [
+        0.1564,
+        0.014,
+        0.3425,
+        0.0502,
+        0.0315,
+        0.0549,
+        0.2678,
+        0.0826
+      ],
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "seed": 44,
+      "load_cv": 0.7385640740394592,
+      "n_active": 8,
+      "ce": 0.5391439292579889,
+      "load_frac": [
+        0.2653,
+        0.0538,
+        0.1618,
+        0.1656,
+        0.0448,
+        0.0156,
+        0.2493,
+        0.0438
+      ],
+      "expert_params": 12352,
+      "chip_fit": true
+    }
+  ],
+  "expert_choice_per_seed": [
+    {
+      "seed": 42,
+      "load_cv": 0.0,
+      "n_active": 8,
+      "ce": 1.0407791286706924,
+      "load_frac": [
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125
+      ],
+      "capacity": 128,
+      "coverage": 0.8961,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "seed": 43,
+      "load_cv": 0.0,
+      "n_active": 8,
+      "ce": 0.9132509119808674,
+      "load_frac": [
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125
+      ],
+      "capacity": 128,
+      "coverage": 0.9174,
+      "expert_params": 12352,
+      "chip_fit": true
+    },
+    {
+      "seed": 44,
+      "load_cv": 0.0,
+      "n_active": 8,
+      "ce": 1.0208353027701378,
+      "load_frac": [
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125,
+        0.125
+      ],
+      "capacity": 128,
+      "coverage": 0.8997,
+      "expert_params": 12352,
+      "chip_fit": true
+    }
+  ],
+  "token_choice_mean_load_cv": 0.84303,
+  "expert_choice_mean_load_cv": 0.0,
+  "token_choice_mean_ce": 0.519,
+  "expert_choice_mean_ce": 0.99162,
+  "ce_delta_ec_minus_tc": 0.47262,
+  "F-CLM-EC-VAR": true,
+  "F-CLM-EC-COLLAPSE": true,
+  "F-CLM-EC-QUALITY": false,
+  "F-CLM-EC-BALANCE": true,
+  "verdict": "FAIL",
+  "verdict_tier": "\ud83d\udd34 CLOSED-NEGATIVE",
+  "scale_scope": "toy two-lane (d64/L2, E8) -- a_scale_honest_scope; routing-z>3.0 = chip-array deploy gate (separate)",
+  "torch": "2.8.0"
+}

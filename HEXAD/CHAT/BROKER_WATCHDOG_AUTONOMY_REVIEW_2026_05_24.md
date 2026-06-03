@@ -7,7 +7,7 @@
 
 ## PR #195 요약 (poll → detect → respawn)
 
-`HEXAD/CHAT/server/anima_broker_watchdog.hexa` (337 LoC, 단일 신규 파일, production daemon 코드 무수정).
+`AGENT/CHAT/anima_broker_watchdog.hexa` (337 LoC, 단일 신규 파일, production daemon 코드 무수정).
 
 - **poll** — `GET http://127.0.0.1:8000/health` 매 30s (`curl --max-time 5`)
 - **detect** — non-200 / timeout = DOWN (boolean), `_wd_health` 는 HTTP status code 첫 글자 `"2"` 만 확인

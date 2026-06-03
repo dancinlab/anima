@@ -4,11 +4,11 @@
 // Validates the whole CREATOR domain wire-up — all M1 types flow uniform
 // across all M3-M5 backends + M6 publish stub on all 3 platforms.
 
-import "/Users/ghost/core/anima/AGENT/CREATOR/types.hexa"
-import "/Users/ghost/core/anima/AGENT/CREATOR/still_backend_fal.hexa"
-import "/Users/ghost/core/anima/AGENT/CREATOR/prog_backend_remotion.hexa"
-import "/Users/ghost/core/anima/AGENT/CREATOR/clip_backend_fal.hexa"
-import "/Users/ghost/core/anima/AGENT/CREATOR/publish.hexa"
+import "AGENT/CREATOR/types.hexa"
+import "AGENT/CREATOR/still_backend_fal.hexa"
+import "AGENT/CREATOR/prog_backend_remotion.hexa"
+import "AGENT/CREATOR/clip_backend_fal.hexa"
+import "AGENT/CREATOR/publish.hexa"
 
 fn assert_true(label, cond) {
     if cond {

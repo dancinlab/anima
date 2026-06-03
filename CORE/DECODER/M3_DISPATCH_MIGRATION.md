@@ -110,7 +110,7 @@ Task 명시 2-option:
 **선택: Option 2** — 이유:
 
 1. CLAUDE.md `feedback-hexa-only-authoring` directive 정합 — 신규 .py/.sh 금지, 신규 .hexa 만 허용.
-2. `HEXAD/CHAT/server/anima_temp_sweep.hexa` 등 선례 — `.py` 백엔드 + `.hexa` thin-wrapper + `exec()` dispatch 패턴이 anima 표준.
+2. `AGENT/CHAT/anima_temp_sweep.hexa` 등 선례 — `.py` 백엔드 + `.hexa` thin-wrapper + `exec()` dispatch 패턴이 anima 표준.
 3. `runpodctl` 은 외부 binary, `.hexa` 의 `exec()` 로 호출하기에 충분 — lifecycle juggling 의 복잡도가 .py 영역에 없음 (runpodctl 自 ssh keypair · token mgmt 처리).
 4. 기존 `.sh` 은 carry — 본 PR scope 는 NEW dispatch surface 추가, 기존 .sh 비제거 (사용자가 외부 셸 외 다른 경로 검토할 여지 보존).
 

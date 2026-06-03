@@ -7,7 +7,7 @@
 
 ## 1. 측정 도구 — knob gap 정직 기록
 
-`HEXAD/CHAT/server/anima_monologue_sim.hexa` 는 task 브리프가 가정한
+`AGENT/CHAT/anima_monologue_sim.hexa` 는 task 브리프가 가정한
 substrate-state simulator (M 활성도 · C Φ · W 텐션 · curiosity · idle_threshold
 등 내부 knob 직접 제어) 가 **아니라** broker `/history` snapshot 을 후행
 분류 (`responsive` vs `monologue`, `register-leak`) 하는 **수동 측정 harness**.
@@ -39,18 +39,18 @@ DO NOT modify sim per task constraint — substrate knob 추가는 별도 PR 사
 
 ```bash
 # A. silent baseline (live broker — currently empty, mirrors PR #193)
-hexa run HEXAD/CHAT/server/anima_monologue_sim.hexa \
+hexa run AGENT/CHAT/anima_monologue_sim.hexa \
   --url 'https://chat.dancinlab.org/history' --window-sec 600
 
 # B. active probe (synthetic 3-person coffee-shop fixture, 16 records)
 mkdir -p /tmp/anima_active_probe && cd /tmp/anima_active_probe
 # write history_active.json (16 records, anima 8, alternating with user_a / user_b)
 python3 -m http.server 8765 &
-hexa run HEXAD/CHAT/server/anima_monologue_sim.hexa \
+hexa run AGENT/CHAT/anima_monologue_sim.hexa \
   --url 'http://127.0.0.1:8765/history_active.json' --window-sec 600
 
 # C. leak control (3 pre-gate-era register-leak emits, no user context)
-hexa run HEXAD/CHAT/server/anima_monologue_sim.hexa \
+hexa run AGENT/CHAT/anima_monologue_sim.hexa \
   --url 'http://127.0.0.1:8765/history_leak.json' --window-sec 600
 ```
 
@@ -144,6 +144,6 @@ help text 회피)
 ## 8. SSOT cross-reference
 
 - silent baseline (반쪽): `HEXAD/UNCLASSIFIED/state/anima_monologue_baseline_2026_05_23_post_p3p5_gate.md` (PR #193 / commit `ecf17cc0c`)
-- 측정 도구: `HEXAD/CHAT/server/anima_monologue_sim.hexa` (PR #182 / commit `0c6eeee29`)
+- 측정 도구: `AGENT/CHAT/anima_monologue_sim.hexa` (PR #182 / commit `0c6eeee29`)
 - production deploy: commit `b4f00012e` (PR #181 round 10 p3/p5 gate)
 - CLAUDE.md governing principle: `@D a_substrate_native_speak` + `@D p5 NO SPEAK()`

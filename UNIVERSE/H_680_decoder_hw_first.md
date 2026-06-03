@@ -56,8 +56,8 @@ PASS 정의: 4/4 PASS → 🟢 SUPPORTED-NUMERICAL. 1+ FAIL → 🔴 closed-nega
 ## 4. 방법
 
 - 스위치 SSOT: `AKIDA/akida_backend.hexa::akida_backend_resolve / akida_backend_resolve_graceful / akida_provenance`
-- DECODER substrate: `HEXAD/CHAT/server/substrate_akida.py` (HW `_hw_forward` / SW `akida_sw_lif`, provenance)
-- SW byte-identical 검증: `HEXAD/CHAT/server/verify_substrate_akida.py` (F-H672 4 + F-AKWIRE-FALLBACK)
+- DECODER substrate: `AGENT/CHAT/substrate_akida.py` (HW `_hw_forward` / SW `akida_sw_lif`, provenance)
+- SW byte-identical 검증: `AGENT/CHAT/verify_substrate_akida.py` (F-H672 4 + F-AKWIRE-FALLBACK)
 - cross-domain 명문화: `CORE/DECODER/DECODER.md` (## AKIDA HW-first lane + 양방향 sibling)
 - lora 불변 확인: LM 텍스트 default backend 미변경 (HW-first scope = AKIDA/spike only)
 - 비용: $0 (Mac local)
@@ -66,7 +66,7 @@ PASS 정의: 4/4 PASS → 🟢 SUPPORTED-NUMERICAL. 1+ FAIL → 🔴 closed-nega
 
 - F-H680-1: `akida_backend.hexa` — `akida_backend_resolve` default "hw" (기존) +
   `akida_backend_resolve_graceful` (PR-B #1447, origin/main 확인) → PASS
-- F-H680-2: `python3 HEXAD/CHAT/server/verify_substrate_akida.py` → exit 0, **5/5 PASS**
+- F-H680-2: `python3 AGENT/CHAT/verify_substrate_akida.py` → exit 0, **5/5 PASS**
   (verbatim: `.verdicts/680_decoder_hw_first/verify_substrate_akida.txt`)
   - R1=0.0 · R2=0.475 · R3=0.5 · R4=1.0 (seed=187, canonical raster byte-정합)
   - F-H672-1..4 + F-AKWIRE-FALLBACK 전부 true → PASS

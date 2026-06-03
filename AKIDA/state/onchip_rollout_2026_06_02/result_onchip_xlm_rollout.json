@@ -1,0 +1,255 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T10:56:46Z",
+  "n_trials": 8,
+  "units": 256,
+  "K_roll": 3,
+  "binding": "bind(a,b)=a XOR roll(b,37); neutral=a XOR roll(a,37); feedback x_{k+1}=neutral_bind(g_hat_k)",
+  "encoder": "whitened (byte-match onchip_xlm_generation.enc_whitened)",
+  "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs",
+  "task": "AUTOREGRESSIVE on-chip ROLLOUT: K-hop chained generation, chip's produced code fed back as next input; open-vocab decode (full codebook, NO shortlist) per hop; per-hop shuffle-NULL + identity-NULL",
+  "metric": "roll_acc[k]=P(open-vocab decode of autoregressive g_hat at hop k == concept[ti+k]), k=1..K",
+  "trials": [
+    {
+      "trial": 0,
+      "learned_hw": true,
+      "roll_acc": [
+        0.43829787234042555,
+        0.01276595744680851,
+        0.01702127659574468
+      ],
+      "identity_acc": [
+        0.3659574468085106,
+        0.02127659574468085,
+        0.00425531914893617
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 1,
+      "learned_hw": true,
+      "roll_acc": [
+        0.39574468085106385,
+        0.03829787234042553,
+        0.00425531914893617
+      ],
+      "identity_acc": [
+        0.3446808510638298,
+        0.03404255319148936,
+        0.01702127659574468
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 2,
+      "learned_hw": true,
+      "roll_acc": [
+        0.4425531914893617,
+        0.029787234042553193,
+        0.00851063829787234
+      ],
+      "identity_acc": [
+        0.3872340425531915,
+        0.02553191489361702,
+        0.02127659574468085
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 3,
+      "learned_hw": true,
+      "roll_acc": [
+        0.4127659574468085,
+        0.02553191489361702,
+        0.01276595744680851
+      ],
+      "identity_acc": [
+        0.3574468085106383,
+        0.029787234042553193,
+        0.0
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 4,
+      "learned_hw": true,
+      "roll_acc": [
+        0.4127659574468085,
+        0.03829787234042553,
+        0.00425531914893617
+      ],
+      "identity_acc": [
+        0.33191489361702126,
+        0.02553191489361702,
+        0.01276595744680851
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 5,
+      "learned_hw": true,
+      "roll_acc": [
+        0.425531914893617,
+        0.03404255319148936,
+        0.00851063829787234
+      ],
+      "identity_acc": [
+        0.35319148936170214,
+        0.01276595744680851,
+        0.0
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 6,
+      "learned_hw": true,
+      "roll_acc": [
+        0.425531914893617,
+        0.02553191489361702,
+        0.01276595744680851
+      ],
+      "identity_acc": [
+        0.3276595744680851,
+        0.03404255319148936,
+        0.01276595744680851
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 7,
+      "learned_hw": true,
+      "roll_acc": [
+        0.4765957446808511,
+        0.01702127659574468,
+        0.00425531914893617
+      ],
+      "identity_acc": [
+        0.37446808510638296,
+        0.02127659574468085,
+        0.00851063829787234
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    }
+  ],
+  "summary": {
+    "learn_all_hw": true,
+    "chance": 0.02040816326530612,
+    "K_roll": 3,
+    "decay_curve_roll_acc": [
+      0.4287,
+      0.0277,
+      0.009
+    ],
+    "per_hop": [
+      {
+        "hop": 1,
+        "roll_acc": {
+          "mean": 0.4287234042553192,
+          "sd": 0.02447138870257793,
+          "ci_lo": 0.41176559705660737,
+          "ci_hi": 0.445681211454031
+        },
+        "identity_null": {
+          "mean": 0.3553191489361702,
+          "hi": 0.36950487936996335
+        },
+        "shuffle_null": {
+          "mean": 0.020510638297872343,
+          "sd": 0.015587252048943777,
+          "hi": 0.05106165231380215,
+          "p_value": 0.004975124378109453,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": true,
+        "above_identity_null": true
+      },
+      {
+        "hop": 2,
+        "roll_acc": {
+          "mean": 0.027659574468085105,
+          "sd": 0.009378266638627059,
+          "ci_lo": 0.02116076725085532,
+          "ci_hi": 0.03415838168531489
+        },
+        "identity_null": {
+          "mean": 0.02553191489361702,
+          "hi": 0.030516272498500873
+        },
+        "shuffle_null": {
+          "mean": 0.02008510638297872,
+          "sd": 0.00997198429608007,
+          "hi": 0.039630195603295656,
+          "p_value": 0.20398009950248755,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": false,
+        "above_identity_null": false
+      },
+      {
+        "hop": 3,
+        "roll_acc": {
+          "mean": 0.009042553191489361,
+          "sd": 0.004791453729615333,
+          "ci_lo": 0.0057222451560158365,
+          "ci_hi": 0.012362861226962885
+        },
+        "identity_null": {
+          "mean": 0.009574468085106383,
+          "hi": 0.014977382980022099
+        },
+        "shuffle_null": {
+          "mean": 0.020936170212765958,
+          "sd": 0.009423010084808222,
+          "hi": 0.039405269978990076,
+          "p_value": 0.8606965174129353,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": false,
+        "above_identity_null": false
+      }
+    ],
+    "F_ROLL_1_signal_survives_chaining": "NOT-REFUTED: the K-step rollout DROPS INTO the shuffle-NULL at some hop -> autoregressive signal does NOT survive chaining at 1-bit/256-unit (CLOSED-NEGATIVE: single-step works, rollout drifts to noise)",
+    "F_ROLL_2_no_catastrophic_collapse": "NOT-REFUTED: rollout COLLAPSES by hop 3 (final acc <= chance OR < half the single-step acc) -> catastrophic autoregressive decay at this scale (a_paper_negative_ok)",
+    "F_ROLL_1_pass": false,
+    "F_ROLL_2_pass": false,
+    "rollout_holds": false
+  },
+  "DISPOSITION": "ROLLOUT COLLAPSE closed-negative (a_paper_negative_ok): single-step generation works (hop-1 above shuffle+identity NULL) but does NOT compound under autoregression at 1-bit/256-unit \u2014 the chained produced code drifts off-manifold. Decay curve QUANTIFIES the K at which signal is lost; NAMES next bridge = state-carrying/paged generator or off-chip decode. Retrieval+single-step rungs UNAFFECTED (a_lane_akida_gpu_split: Lane A on-chip)."
+}

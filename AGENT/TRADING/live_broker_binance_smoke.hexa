@@ -2,9 +2,9 @@
 // 7-case smoke: new TESTNET default · LIVE switch · configure · get_quote ·
 // L0 gate refused · L1 + DRYRUN no-fill · cancel/positions
 
-import "/Users/ghost/core/anima/AGENT/TRADING/types.hexa"
-import "/Users/ghost/core/anima/AGENT/TRADING/live_gate.hexa"
-import "/Users/ghost/core/anima/AGENT/TRADING/live_broker_binance.hexa"
+import "AGENT/TRADING/types.hexa"
+import "AGENT/TRADING/live_gate.hexa"
+import "AGENT/TRADING/live_broker_binance.hexa"
 
 fn assert_eq(label, got, want) {
     if got == want {

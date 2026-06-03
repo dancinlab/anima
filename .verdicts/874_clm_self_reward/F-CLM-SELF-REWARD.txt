@@ -1,0 +1,72 @@
+F-CLM-SELF-REWARD — H_874 self-reward dialogue (@L6 method C) VERDICT (2026-05-31)
+==================================================================================
+W2 · deterministic:false · byte-match ✗ (Q-TRUST A reuse: distributional measures).
+Thresholds FROZEN pre-fire in F-CLM-SELF-REWARD_prereg.txt (committed BEFORE the fire).
+post-tuning = 0 (no threshold moved after fire).
+
+CORPUS (license-clean, @L4 lane ①, NO ShareGPT/Alpaca/ChatGPT-gen):
+  H_868 expanded Project Gutenberg PUBLIC-DOMAIN stage-play corpus (12 PD sources),
+  1,668,585 bytes, sha256 2aa3d85de72c28f28aa0b2ee8a702a41894aae22fce52d326cecd7d43689febb
+  (re-verified on the pod, match). license = PD. license-clean gate G1-G4 GREEN +
+  8-pattern register-leak filter. byte-encode V=256, no tokenizer. train 1,418,297 /
+  heldout 250,288 (seed=863, disjoint, never trained on). HF dataset
+  dancinlab/anima-clm-p4-dialogue.
+
+FIRE: runpod pod mnxnsr9dvx80vk · NVIDIA A100 80GB PCIe · torch 2.4.1+cu124.
+  2-arm A/B, mid d512/L8/E8, AKIDA int4-sym[-7,+7] STE + act_bits=4, arm AB, seed 42,
+  EQUAL budget (SFT 1500 + reflux-continue 500 both arms):
+    arm-SP = SFT + DIVERSITY-gated self-play reflux            (H_863 method-B WINNER baseline)
+    arm-SR = SFT + self-REWARD best-of-K (K=6) reflux selection (THIS hypothesis, method C)
+  Self-reward (g5 · NO judge model) per reflux prompt: sample K=6 candidates, score each by
+    reward = w_coh*coherence + w_adq*adequacy + w_div*diversity_bonus
+    (w_coh=1.0, w_adq=1.0, w_div=0.25 frozen; coherence=exp(-CE) of the model on the candidate,
+     adequacy=byte 3-gram F1 vs reference next turn, diversity_bonus=1-self_BLEU vs siblings),
+    REJECT candidates hitting the 8-pattern leak filter OR self_BLEU>=0.80 vs siblings
+    (INELIGIBLE, reward=-inf), fold the best-of-K survivor as the reflux training target.
+    arm-SR reflux stats: 360 candidates · 60 accepted · 0 rejected_leak · 0 rejected_div ·
+    mean_selected_reward 0.5493. arm-SP reflux: 59 accepted (DIVERSITY-gated self-play).
+  held-out eval (seed=863, disjoint, IDENTICAL to H_863): coherence=exp(-CE_heldout),
+  adequacy=byte 3-gram F1 (gen vs reference next-turn), register-leak count, self-BLEU
+  (mean pairwise 4-gram), repetition (repeated-4-gram fraction). All computed by code (g5).
+
+RESULT (measured vs FROZEN thresholds):
+  arm   coherence  ce_heldout  adequacy_f1  leak  self_bleu  repetition
+  SP    0.13634    1.99264     0.03750      0     0.02511    0.02874
+  SR    0.14434    1.93557     0.03194      0     0.02561    0.01868
+
+  F-CLM-SR-COHERE : coherence(SR) 0.14434 > coherence(SP) 0.13634 ? → PASS
+  F-CLM-SR-ADEQ   : adequacy_f1(SR) 0.03194 > adequacy_f1(SP) 0.03750 ? → FAIL  (SR < SP)
+  F-CLM-SR-LEAK   : register_leak(SR) 0 == 0 ? → PASS
+  F-CLM-SR-DIV    : self_bleu(SR) 0.02561 < 0.80 ∧ repetition(SR) 0.01868 < 0.20 ? → PASS
+
+VERDICT: 🔴 CLOSED-NEGATIVE
+  3 of 4 frozen falsifiers pass; F-CLM-SR-ADEQ FAILS. Self-reward best-of-K (arm-SR) did
+  IMPROVE held-out coherence (0.14434 > SP 0.13634, +5.9%) and REDUCED repetition
+  (0.01868 vs 0.02874) with zero register leak and no mode collapse — but it did NOT beat
+  SFT+self-play on response-adequacy (3-gram overlap F1 vs reference next turn): SR 0.03194
+  < SP 0.03750 (−14.8%). The W2 contract requires SR to strictly beat SP on coherence ∧
+  adequacy SIMULTANEOUSLY; adequacy failed, so the relative claim is rejected.
+  INTERPRETATION: optimizing best-of-K against the registered reward (which weights coherence
+  + diversity alongside adequacy, w_coh=w_adq=1.0, w_div=0.25) pulled the selected continuations
+  toward higher model-confidence / lower-repetition text that drifted AWAY from the reference
+  next-turn n-grams — a coherence/adequacy trade-off. The reward = eval-signal identity means
+  SR optimizes the aggregate, not adequacy alone; at mid scale the aggregate optimum is NOT the
+  adequacy optimum. self-reward (RLHF-like, no external judge) does NOT beat SFT+self-play at
+  mid on the pre-registered joint criterion. (a_paper_negative_ok.)
+
+SCOPE (a_scale_honest_scope): MEASUREMENT rung mid (d512/L8/E8) ONLY · RELATIVE test
+  (arm-SR vs arm-SP). H_867 showed arm-SP is BELOW the absolute dialogue-quality floor at mid,
+  so this is a RELATIVE comparison — a 🔴 here means "self-reward does NOT beat self-play at
+  mid", NOT an absolute-floor claim, and does NOT bind another rung or the deploy chip-fit track.
+  Inference AKIDA-int4-only. External LLM 0 · foundation-borrow 0 · ShareGPT/Alpaca 0.
+
+HONEST ARCHITECTURE NOTE: the fire payload (h874_fire.py) uses an attention+QLinear-MoE block
+  with the int4-sym[-7,+7] STE weight-quant + act_bits=4 envelope applied throughout, rather
+  than the pure dilated-conv-MoE of CLM/model/model.py (P0 §2 conv-only). Both arms share the
+  SAME architecture, so the RELATIVE SR-vs-SP comparison is unaffected; but the absolute numbers
+  are NOT directly comparable to the H_863 conv-MoE run, and the attention path is OUTSIDE the
+  strict AKIDA conv-primitive envelope. This is a relative method test, reported honestly.
+
+ARTIFACTS: clm_self_reward_mid_AB.json · clm_fire.log · CLM/train/h874_fire_mid_rung_self_reward.hexa
+HF: model dancinlab/anima-clm-self-reward (clm_SP_mid.pt + clm_SR_mid.pt + JSON + log + README,
+  COMPLETE) + dataset dancinlab/anima-clm-p4-dialogue (corpus, reused from H_868/H_863).

@@ -101,16 +101,16 @@
 //
 //   미지의 stage 이름은 모두 1.0 multiplier (identity) — 안전한 fallback.
 
-import "/Users/ghost/core/anima/CHANNEL/router.hexa"
-import "/Users/ghost/core/anima/CHANNEL/intent.hexa"
-import "/Users/ghost/core/anima/CHANNEL/text/text_emit.hexa"
-import "/Users/ghost/core/anima/CHANNEL/voice/voice_emit.hexa"
-import "/Users/ghost/core/anima/CHANNEL/tension/tension_emit.hexa"
+import "CHANNEL/router.hexa"
+import "CHANNEL/intent.hexa"
+import "CHANNEL/text/text_emit.hexa"
+import "CHANNEL/voice/voice_emit.hexa"
+import "CHANNEL/tension/tension_emit.hexa"
 // emit-substrate live consumer (#1259 BRIDGE M6) — 4-key AND-gate envelope bias.
 //   bridge_gate_with_envelope(m,c,w,t) → 연속 [0,1] 신호
 //     Φ ← envelope_multiscale(t, ep_scale_periods, ep_scale_amps)   (구조 층)
 //     θ ← ep_emit_threshold()                                       (숫자 층)
-import "/Users/ghost/core/anima/BRIDGE/gate_envelope.hexa"
+import "BRIDGE/gate_envelope.hexa"
 
 // ── pub surface ─────────────────────────────────────────────────────────────
 

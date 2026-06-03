@@ -1,0 +1,39 @@
+F-CLM-PLAST-DIALOGUE — fire log (H_866 · 2026-05-31)
+================================================================================
+
+W2 discipline
+  1. prereg frozen FIRST (separate commit 272ee0ee3) BEFORE the fire — two gates
+     (GAIN · LOOP) + design constants, post-tuning 0.
+  2. coupling scaffold authored (h866_plasticity_dialogue_loop.hexa), measured by code.
+
+pi5 AKIDA interaction (NON-MUTATING · live loop preserved)
+  - ping 192.168.50.155 → 2/2 packets, ~2.8ms RTT (reachable).
+  - nc -z 9512 → OPEN · nc -z 9513 → OPEN (a live streamer is up with --allow-ctrl).
+  - nc read 9512 ~5s (PASSIVE observe, ZERO writes, ZERO ctrl commands):
+      {"step":107288, "n_spikes":16, "regime":"M_modulated", "thr":[8×16]} ...
+      → confirms a LIVE M_modulated loop (~3h uptime, thr=8, 16/16 firing) =
+        another agent's R3/launch closed loop. NOT disturbed.
+  - DECISION: AKD1000 single-chip file-lock — mapping an AkidaUnsupervised
+    learning model needs EXCLUSIVE access → would stop the live loop
+    (destructive · NOT pre-authorized). Did NOT re-map. Ran SW-sim instead.
+    No IRREVERSIBLE pi5 mutation attempted. No SSH session opened (read-only
+    LAN probe sufficed).
+
+harness note (g5 honesty — a code fix, NOT a gate retune)
+  - first run: fit() used int/int division (hexa truncates 7/16→0) → fit≡0 ⇒
+    spurious GAIN=0. Diagnosed via /tmp/divtest.hexa (int/int=0 vs float=0.4375).
+    Fixed (agree)/(n*1.0) + the two window-mean divisions. FROZEN GATES UNCHANGED.
+  - re-run gave real fit ∈ [0,1]. Verdict computed on the corrected harness.
+
+runs
+  - canonical seed 866 / n_turns 200 → GAIN FAIL · LOOP PASS · 🔴.
+  - seed sweep {866,42,123,7,2026} → GAIN FAIL 5/5 · LOOP PASS 5/5 · 🔴 5/5 (robust).
+  - mechanism control (single recurring target) → fit 0.5→1.0 ≤5 turns
+    (edge_learn works in isolation; the 🔴 is multi-register interference).
+
+artifacts
+  - prereg : F-CLM-PLAST-DIALOGUE_prereg.txt (frozen 272ee0ee3)
+  - verdict: F-CLM-PLAST-DIALOGUE.txt (🔴 CLOSED-NEGATIVE · LOOP PASS · GAIN FAIL)
+  - result : F-CLM-PLAST-DIALOGUE_result.txt (full run + sweep + mechanism control)
+  - scaffold: SUB_ENGINES/AKIDA/scripts/h866_plasticity_dialogue_loop.hexa
+  - H file : UNIVERSE/H_866_clm_plasticity_dialogue.md

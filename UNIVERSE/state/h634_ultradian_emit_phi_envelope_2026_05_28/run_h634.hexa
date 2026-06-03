@@ -43,7 +43,7 @@ fn check(name: string, cond: bool) {
 // ── canonical anima_dream_stage segmentation (90-min = 5400s) ────────────────
 let CYCLE_SEC = 5400
 
-// stage_at_offset — mirror HEXAD/CHAT/server/anima_dream_stage.hexa _ds_stage_at_offset
+// stage_at_offset — mirror AGENT/CHAT/anima_dream_stage.hexa _ds_stage_at_offset
 fn stage_at_offset(off_sec: int) -> string {
     let phase = off_sec % CYCLE_SEC
     if phase < 300    { return "N1" }
