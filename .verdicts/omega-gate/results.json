@@ -1,0 +1,10 @@
+{
+  "rung": "stage-3 m1 learned per-wire gate", "scale": "TOY/CPU/$0", "corpus_bytes": 400000, "V": 256,
+  "gate_gains": {"gB": 0.142, "gA": 1.183, "gG": 0.341},
+  "test_ce": {"base": 3.974346, "fixed_AmG": 4.170100, "a_only": 3.229252, "gated": 3.126961, "uniform": 5.545177},
+  "milestone_1_met": true,
+  "criteria": "GATED < base AND GATED <= a_only AND GATED < fixed_AmG",
+  "deltas": {"vs_base": 0.847, "vs_a_only": 0.102, "vs_fixed": 1.043},
+  "finding": "learned per-wire gate makes the OMEGA closure useful — recovers the #1784 fixed-A−G damage, auto-weights strong-A/small-G; closure works when GATED not fixed",
+  "next": "trained d768 CDV2 real A/G + gated bus on GPU (a_fire_autonomous) — generation demo (stage-3 b,c)"
+}

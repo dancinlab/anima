@@ -160,7 +160,7 @@ stage 2 — STRUCTURE on a trained substrate (✅ toy #1784):
 - [x] trained-substrate structure — trained coupling ≪ shuffled (Δ+0.357); A-wire lowers CE (Δ+0.758) (#1784)
 - [x] ANU QRNG arm — quantum vs PRNG closed-negative, no advantage (#1784)
 stage 3 — 완성 (remaining, the working closure):
-- [ ] learned per-wire GATE — replace the fixed A−G subtraction with a learned gate per wire (#1784 found −G hurts); show the gated bus beats base on held-out CE
+- [x] learned per-wire GATE — ✅ toy: learned gate g*=[gB.14,gA1.18,gG.34] beats base 3.97→3.13 (Δ+0.85) · beats a_only 3.23 · ≪ fixed_AmG 4.17 (Δ+1.04); auto-corrects the #1784 −G error → the closure works when GATED not fixed. `.verdicts/omega-gate/`
 - [ ] trained d768 substrate (GPU) — real ConsciousDecoderV2 A/G heads, not numpy n-gram (a_fire_autonomous); does structured-coupling scale to a transformer?
 - [ ] generation demo — the gated closure on a trained substrate DEMONSTRABLY improves generation (CE floor MET + coherent) — 완성 criterion
 - [ ] N-module config — HEXAD integration N config (default 6, swappable; #1774 found 6 conditional)
