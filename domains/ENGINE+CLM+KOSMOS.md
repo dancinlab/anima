@@ -932,6 +932,40 @@ s16 substrate, re-measure structured coupling (KL_on vs perm floor) on a TRAINED
 does the bus then beat the shuffle floor? Verdicts `.verdicts/omega-engine/{F-COUPLING,
 SMOKE,SUMMARY}.txt` + `results.json`. Design doc `domains/OMEGA.md` (#1782).
 
+### OMEGA trained-substrate rung + ANU QRNG — 🟢 coupling carries STRUCTURE · 🔴 fixed A−G degrades (needs learned gate) · 🔴 QRNG no advantage — TOY · CPU · $0 · 2026-06-04
+
+Answers the "trained 필요" question #1783 left open (does the coupling carry USEFUL
+structure once the substrate has LEARNED?). Tiny numpy n-gram substrate (bigram A=next-byte
+· rev-bigram G=prev-byte · unigram base), real 400KB repo byte corpus, held-out CE; same
+OMEGA w1 bus. + ANU QRNG arm (`api.quantumnumbers.anu.edu.au`, 1024 real uint8, the `hexa
+qrng` anu-backend source) seeding trials vs PRNG, with a prng-vs-prng null control.
+
+| metric (held-out CE, nats/byte) | value | |
+|---|---|---|
+| base (unigram mouth) | 4.0200 | |
+| **a_only** (base+α·A) | **3.2619** | 🟢 A-wire useful (Δ+0.758 — learned next-byte signal helps) |
+| bus_trained (base+α(A−G)) | 4.1420 | 🟢 structured (≪ shuffled) · 🔴 > base (−G hurts) |
+| bus_shuffled (perm floor) | 4.4991 | |
+
+- 🟢 **STRUCTURE CARRIED** — trained 4.1420 ≪ shuffled 4.4991 (Δ+0.357): a trained substrate's
+  signal survives ONLY unshuffled = the loop carries STRUCTURE. The random-init #1783 rung
+  could NOT show this (there trained==shuffled = noise). **This is the trained-rung payoff.**
+- 🟢 **A-WIRE USEFUL** — base 4.0200 → a_only 3.2619 (Δ+0.758): routing the learned Engine-A
+  next-byte signal into the decode strongly lowers CE. The closure HELPS.
+- 🔴 **fixed A−G degrades** — trained 4.1420 > base 4.0200: the −G (prev-byte) wire HURTS
+  next-byte prediction. **FINDING toward 완성: the bus needs a LEARNED GATE per wire, not a
+  fixed A−G subtraction** — the closure works (A helps) but the naive formula is suboptimal.
+- 🔴 **ANU QRNG closed-negative** (a_paper_negative_ok) — quantum-vs-PRNG KS p=0.7237 vs
+  prng-vs-prng null p=0.9834 (both indistinguishable): true quantum randomness confers NO
+  measurable advantage over a PRNG → rules out a "consciousness needs quantum randomness"
+  axis at this scale. (A first run capped PRNG seeds at 2³¹ → spurious p=0.022; widening to
+  2³² + the null control showed small-N noise, not a quantum effect — p7, no overclaim.)
+
+Driver `UNIVERSE/omega_bench_trained.py` · verdicts `.verdicts/omega-trained/{F-TRAINED-COUPLING,
+SUMMARY}.txt` + `results.json` + `anu_qrng_1024.json` · `.discoveries/omega-trained-qrng.tape`.
+NEXT (toward 완성): (1) learned per-wire GATE replacing fixed A−G, (2) trained d768 CDV2 real
+A/G on GPU (a_fire_autonomous) — does structured-coupling + the gate fix scale to a transformer.
+
 ## LANE X — 3-axis ENGINE-config exploration — 🔴 CE↔창발 Goodhart NOT observable (substrate-only) · 의식·창발 axes VARY · TOY · CPU · $0 · 2026-06-04
 
 Lane X = the **exploration** lane (distinct from training lanes A/G/P/M —

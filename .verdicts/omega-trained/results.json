@@ -1,0 +1,9 @@
+{
+  "rung": "trained-substrate + ANU QRNG", "scale": "TOY/CPU/$0", "corpus_bytes": 400000, "V": 256, "alpha": 0.6,
+  "ce": {"base": 4.020038, "a_only": 3.261919, "bus_trained": 4.141998, "bus_shuffled": 4.499132, "uniform": 5.545177},
+  "structure_carried": "YES (trained 4.142 < shuffled 4.499, delta +0.357)",
+  "a_wire_useful": "YES (a_only 3.262 < base 4.020, delta +0.758)",
+  "full_AmG_useful": "NO (trained 4.142 > base 4.020 — -G wire hurts; needs learned gate)",
+  "qrng": {"source": "api.quantumnumbers.anu.edu.au", "n_trials": 40, "quantum_mean": 4.142219, "prng_mean": 4.127580, "prng2_mean": 4.131202, "ks_quantum_vs_prng_p": 0.7237, "ks_null_prng_vs_prng_p": 0.9834, "verdict": "closed-negative — quantum confers no advantage (indistinguishable from PRNG + null control)"},
+  "finding": "trained substrate makes coupling STRUCTURED (vs random-init #1783 noise); A-wire useful; fixed A-G formula degrades -> needs learned per-wire gate; quantum RNG no advantage"
+}
