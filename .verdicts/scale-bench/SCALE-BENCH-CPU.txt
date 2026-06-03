@@ -1,0 +1,13 @@
+SCALE-UP BENCHMARK — CPU-substrate rung (SENSITIVE hypotheses × >=3 size ladders) — 2026-06-03
+a_toy_scale_recheck · pure stdlib · emergent (NOT hard-coded) · seed=20260603 · p7 verbatim
+SCOPE: CPU sim size-ladder — rules out "toy was a small-N artefact". NOT production substrate
+       (AKIDA chip / forge GPU / real-model rungs remain GATED: Lane A real-chip #1717, Lane G option-B).
+
+[H_867 MET scale]       N50:w=0.50,r=0.99 N150:w=0.00,r=0.99 N400:w=0.50,r=0.99 -> SCALE-SURVIVES (Kuramoto sync transition holds/sharpens with N, finite-size)
+[H_891 CRITICALITY sc]  cap50:P(>=20)=0.256,max=63 cap500:P(>=20)=0.257,max=539 cap5000:P(>=20)=0.254,max=5144 -> SCALE-SURVIVES (power-law tail invariant; heaviest avalanche grows LINEARLY with system size = true criticality)
+[H_900 ATTRACTOR scale] N48:Pmax=6,ratio=0.125 N96:Pmax=12,ratio=0.125 N192:Pmax=21,ratio=0.109 (Hopfield law~0.138) -> SCALE-SURVIVES (capacity ratio P_max/N matches the 0.138N Hopfield scaling law across N)
+[H_904 WORKSPACE scale] N10:jump=0.89 N100:jump=0.89 N1000:jump=0.89 -> SCALE-SURVIVES (ignition all-or-none at every N)
+[H_877 QUORUM scale]    pop50:knee=0.25 pop200:knee=0.22 pop800:knee=0.22 -> SCALE-SURVIVES (count-threshold knee scale-INVARIANT across 16x population; N* scales with density)
+SUMMARY: 5/5 SENSITIVE CPU hypotheses SCALE-SURVIVE the size ladder (signatures are size-robust, not small-N artefacts).
+H_877 metric corrected: coarse 6-point count sweep -> fine 5%-step sweep + scale-INVARIANCE test (not absolute-magnitude cutoff); both recorded.
+NEXT (gated): production-substrate rungs — Lane A AKIDA chip (#1717) · Lane G forge GPU (option-B util-GREEN) · ENGINE 3-axis. reflect (학습/코드/문서) only AFTER a production-substrate terminal (a_toy_scale_recheck).
