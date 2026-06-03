@@ -538,3 +538,41 @@ live AKD1000 BC.00.000.002 · akida 2.19.1 · N=8 trials × 256-unit AkidaUnsupe
 **milestone delta:** Lane A PUBLIC 진척 = 인코더 🟢 + transition retrieval 🟢 + **full-LM GENERATION 🟢**. PUBLIC checkbox 는 **미flip 유지** (toy→프로덕션 전환 + multi-step autoregressive roll-out 미완 — full closure 아님, a_paper_only_at_closure).
 
 **NEXT (held):** 다단계 autoregressive roll-out(t→t+1→t+2 chained on-chip generation) · 또는 paged 다중-FC generator 로 스케일 ladder ≥3 rung(a_scale_honest_scope). PR lane-a/onchip-generation.
+
+---
+
+## 2026-06-03 · Lane A rung4 — REAL-corpus scale-up (A-single AKIDA + A-multi HYBRID) — live AKD1000, detached chip wrapper harvest
+
+**substrate (a_lane_akida_gpu_split, strict):** A-single = AKIDA (on-chip 1-bit Hebbian). A-multi = HYBRID (on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure-AKIDA, NOT Lane G.
+
+**corpus (정직 provenance, a_scale_honest_scope):** `corpus_real250` = 250 distinct cross-lingual aligned concepts × 5 langs (en zh ru ja ko) = **1250 real anchors**. 3-tier: Tier-1 0..49 FLORES-gold(byte-preserved) · Tier-2 50..99 hand-authored(rung3 검증) · Tier-3 100..249 = **150 NEW model-authored aligned propositions (real-semantic, NOT FLORES-gold NOT synthetic — 정직 중간 tier)**. sha256(LIMEN) `175d7acca595…b56ec`, host-rebuild byte-identical(결정적). **정직 NC ceiling=250** — corpus_real500 미저작(과저작 dedup/faithfulness 리스크 회피; 칩 한계 아닌 저작 한계). CORPUS_CARD: `.verdicts/lane-a-corpus-real/CORPUS_CARD.md`. build: `AKIDA/build_corpus_real250.py`.
+
+**A-single (substrate=AKIDA) — F-GEN-SCALE-REAL2 (verbatim `rung4_single.log`):**
+```
+NC=50  (anchors=250)  gen ci_lo=0.3597 | shufNULL hi=0.0447 p=0.0050 | identNULL hi=0.3495 | chance=0.0204 | aboveShuf=True aboveIdent=True above2xChance=True
+NC=100 (anchors=500)  gen ci_lo=0.1998 | shufNULL hi=0.0217 p=0.0050 | identNULL hi=0.1906 | chance=0.0101 | aboveShuf=True aboveIdent=True above2xChance=True
+NC=250 (anchors=1250) gen ci_lo=0.0506 | shufNULL hi=0.0072 p=0.0050 | identNULL hi=0.0271 | chance=0.0040 | aboveShuf=True aboveIdent=True above2xChance=True
+F-GEN-SCALE-1 : REFUTED (매 rung gen ci_lo>shuffle-NULL hi AND p<0.05 → single-step SCALE-SURVIVES)
+F-GEN-SCALE-2 : REFUTED (largest rung gen ci_lo > NULL hi AND >= 2x chance → no chance-collapse)
+DISPOSITION   : SINGLE-STEP GENERATION SCALE-SURVIVES (substrate=AKIDA). STILL toy vocab.
+```
+→ A-single on-chip ceiling 은 SCALE-ROBUST (단일점 artefact 아님). verdict: `.verdicts/lane-a-single-rung4/F-GEN-SCALE-REAL2.txt` + `result_onchip_xlm_gen_scale.json`.
+
+**A-multi (substrate=HYBRID) — F-BRANCH-REAL2 (verbatim `rung4_multi.log`, DELTAS=[1,7,19] B=3 ladder=[100,175,250]):**
+```
+NC=250 hop 1  TRAIN=0.1741 HELD=0.0007 ratio=0.004 | held ci_lo=-0.0006 shufNULL hi=0.0227 p=0.9950 | chance=0.0120 | heldAboveShuf=False
+NC=250 hop 2  TRAIN=0.7793 HELD=0.7457 ratio=0.957 | held ci_lo=0.7186 shufNULL hi=0.0417 p=0.0050 | chance=0.0120 | heldAboveShuf=True
+NC=250 hop 3  TRAIN=0.8219 HELD=0.8067 ratio=0.982 | held ci_lo=0.7842 shufNULL hi=0.0428 p=0.0050 | chance=0.0120 | heldAboveShuf=True
+PR#1694 holdout (det) : [0.0000, 0.0000, 0.0000]  (the deterministic-chain collapse this rung repairs)
+F-BRANCH-1 (held>NULL)   : REFUTED (held-out hop-2 AND hop-3 above shuffle-NULL, ci_lo>NULL hi p<0.05 → transferable transition OPERATOR)
+F-BRANCH-2 (within 2.0x)  : REFUTED (held hop-2 0.7457 within 2.0x of in-dist 0.7793)
+GENERALIZES               : True
+DISPOSITION : GENERALIZES — branching corpus FORCES a transferable transition operator; multi-step composition REAL (offset operator, NOT per-concept lookup); PR#1694 exact-0.0000 = deterministic single-chain artefact, REPAIRED at root cause. Lane A HYBRID PUBLIC re-upgrade (hybrid-scoped). STILL toy.
+```
+→ hop-1 HELD exact-0 = 설계상(held concept 직접 1-hop successor 미학습; branching 은 hop>=2 에서 전이 강제). verdict: `.verdicts/lane-a-multi-rung4/F-BRANCH-REAL2.txt` + `result_onchip_xlm_branching.json`.
+
+**detached chip wrapper (a_dont_kill_live_compute — 재발사 안 함, harvest only):** `run_rung4_real250_with_streamer_restore.sh` (pid 103889) on pi5-akida self-completed. streamer STOPPED 05:44:23 → A-single(AKIDA) FIRE→exit rc=0 05:50:36 → A-multi(HYBRID) FIRE 05:50:44→exit rc=0 → `rung4 done RC_single=0 RC_multi=0` 06:11:05 → **streamer RESTORED 06:11:07 is-active=active argv=[spike_streamer.py --port 9512 --duration 86400 --regime R3]** 06:11:10. wrapper EXITED clean. final temp 69.2°C, throttled=0xf0000(under-volt flag만, active throttle 아님). wrap log: `.verdicts/lane-a-corpus-real/rung4_real250_wrap.log`.
+
+**milestone delta:** Lane A PUBLIC 진척 += rung4 REAL-corpus scale-up 🟢 (A-single scale-survives NC→250 · A-multi branching held-out 일반화 NC→250). PUBLIC checkbox **미flip 유지 [ ]** — bigger real corpus(NC=250>100) + both rungs landed 했으나 PUBLIC closure 는 toy→프로덕션 full-LM 전환 미완(full closure 아님, a_paper_only_at_closure). multi-step roll-out residual 은 branching 으로 해소됨.
+
+**NEXT (held):** Lane A 3B chip-fit ladder (a_scale_honest_scope ≥3 rung) · 또는 toy→prod full-LM 전환. discovery: `.discoveries/lane-a-{single,multi}-rung4.tape`.

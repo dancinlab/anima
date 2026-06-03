@@ -1,0 +1,40 @@
+[gen-scale] SUBSTRATE = AKIDA (on-chip 1-bit Hebbian) — NOT HYBRID, NOT Lane G
+[gen-scale] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1  corpus concepts=250 langs=5  ladder(n_concepts)=[50, 100, 250] -> anchors=[250, 500, 1250]
+[gen-scale] ===== ANCHOR-COUNT LADDER (a_scale_honest_scope, 3 rungs) =====
+[gen-scale] NC=50 (anchors=250) trial 0: gen_acc=0.4408 identity=0.3592 learn=True (q=245)
+[gen-scale] NC=50 (anchors=250) trial 1: gen_acc=0.3673 identity=0.3061 learn=True (q=245)
+[gen-scale] NC=50 (anchors=250) trial 2: gen_acc=0.3388 identity=0.2408 learn=True (q=245)
+[gen-scale] NC=50 (anchors=250) trial 3: gen_acc=0.3837 identity=0.2776 learn=True (q=245)
+[gen-scale] NC=50 (anchors=250) trial 4: gen_acc=0.3510 identity=0.2694 learn=True (q=245)
+[gen-scale] NC=50 (anchors=250) trial 5: gen_acc=0.4571 identity=0.3959 learn=True (q=245)
+[gen-scale] NC=50 (anchors=250) trial 6: gen_acc=0.4163 identity=0.3469 learn=True (q=245)
+[gen-scale] NC=50 (anchors=250) trial 7: gen_acc=0.3633 identity=0.3143 learn=True (q=245)
+[gen-scale] NC=50 anchors=250: gen ci_lo=0.3597 | shufNULL hi=0.0447 p=0.0050 | identNULL hi=0.3495 | chance=0.0204 | aboveShuf=True aboveIdent=True above2xChance=True
+[gen-scale] NC=100 (anchors=500) trial 0: gen_acc=0.2303 identity=0.1717 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 1: gen_acc=0.2444 identity=0.1899 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 2: gen_acc=0.1758 identity=0.1253 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 3: gen_acc=0.2101 identity=0.1434 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 4: gen_acc=0.2465 identity=0.2202 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 5: gen_acc=0.2465 identity=0.1636 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 6: gen_acc=0.1798 identity=0.1394 learn=True (q=495)
+[gen-scale] NC=100 (anchors=500) trial 7: gen_acc=0.2242 identity=0.1939 learn=True (q=495)
+[gen-scale] NC=100 anchors=500: gen ci_lo=0.1998 | shufNULL hi=0.0217 p=0.0050 | identNULL hi=0.1906 | chance=0.0101 | aboveShuf=True aboveIdent=True above2xChance=True
+[gen-scale] NC=250 (anchors=1250) trial 0: gen_acc=0.0562 identity=0.0265 learn=True (q=1245)
+[gen-scale] NC=250 (anchors=1250) trial 1: gen_acc=0.0594 identity=0.0249 learn=True (q=1245)
+[gen-scale] NC=250 (anchors=1250) trial 2: gen_acc=0.0651 identity=0.0241 learn=True (q=1245)
+[gen-scale] NC=250 (anchors=1250) trial 3: gen_acc=0.0394 identity=0.0137 learn=True (q=1245)
+[gen-scale] NC=250 (anchors=1250) trial 4: gen_acc=0.0570 identity=0.0201 learn=True (q=1245)
+[gen-scale] NC=250 (anchors=1250) trial 5: gen_acc=0.0538 identity=0.0305 learn=True (q=1245)
+[gen-scale] NC=250 (anchors=1250) trial 6: gen_acc=0.0618 identity=0.0265 learn=True (q=1245)
+[gen-scale] NC=250 (anchors=1250) trial 7: gen_acc=0.0546 identity=0.0225 learn=True (q=1245)
+[gen-scale] NC=250 anchors=1250: gen ci_lo=0.0506 | shufNULL hi=0.0072 p=0.0050 | identNULL hi=0.0271 | chance=0.0040 | aboveShuf=True aboveIdent=True above2xChance=True
+
+[gen-scale] ========== DISPOSITION ==========
+[gen-scale] SUBSTRATE            : AKIDA (on-chip 1-bit Hebbian)
+[gen-scale] ladder anchors       : [250, 500, 1250]
+[gen-scale] gen ci_lo per rung   : [np.float64(0.3597), np.float64(0.1998), np.float64(0.0506)]
+[gen-scale] shuffle-NULL hi/rung : [0.0447, 0.0217, 0.0072]
+[gen-scale] F-GEN-SCALE-1        : REFUTED: at EVERY rung single-step gen ci_lo>shuffle-NULL hi AND p<0.05 -> single-step on-chip GENERATION SCALE-SURVIVES (A-single ceiling holds across anchor count)
+[gen-scale] F-GEN-SCALE-2        : REFUTED: largest rung gen ci_lo > shuffle-NULL hi AND >= 2x chance -> no collapse toward chance
+[gen-scale] DISPOSITION          : SINGLE-STEP GENERATION SCALE-SURVIVES (substrate=AKIDA on-chip): across a >=3-rung anchor-count ladder the on-chip open-vocab next-step decode stays ABOVE the shuffle-NULL at every rung and does not collapse toward chance at the largest. The A-single on-chip ceiling is a SCALE-ROBUST single-step result, not a single-point artefact. STILL toy vocab (a_scale_honest_scope); production full-LM ladder separate. substrate=AKIDA, NOT HYBRID, NOT Lane G.
+[gen-scale] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_gen_scale.json

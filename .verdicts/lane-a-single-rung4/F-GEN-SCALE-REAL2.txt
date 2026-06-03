@@ -1,0 +1,25 @@
+F-GEN-SCALE-REAL2 — A-single REAL-corpus anchor-count ladder (substrate=AKIDA on-chip 1-bit Hebbian)
+verbatim live-chip stdout (hexa verify CLI broken → p7 live-chip stdout) · pi5-akida · 2026-06-03
+
+source : .verdicts/lane-a-single-rung4/rung4_single.log (full verbatim)
+result : .verdicts/lane-a-single-rung4/result_onchip_xlm_gen_scale.json
+corpus : corpus_real250 (250 distinct cross-lingual aligned concepts × 5 langs = 1250 real anchors;
+         3-tier honest provenance, NC ceiling = 250 — see .verdicts/lane-a-corpus-real/CORPUS_CARD.md)
+device : akida 2.19.1  BC.00.000.002  IpVersion.v1
+SUBSTRATE = AKIDA (on-chip 1-bit Hebbian) — NOT HYBRID, NOT Lane G
+
+===== ANCHOR-COUNT LADDER (a_scale_honest_scope, 3 rungs) — REAL corpus =====
+NC=50  (anchors=250)  gen ci_lo=0.3597 | shufNULL hi=0.0447 p=0.0050 | identNULL hi=0.3495 | chance=0.0204 | aboveShuf=True aboveIdent=True above2xChance=True
+NC=100 (anchors=500)  gen ci_lo=0.1998 | shufNULL hi=0.0217 p=0.0050 | identNULL hi=0.1906 | chance=0.0101 | aboveShuf=True aboveIdent=True above2xChance=True
+NC=250 (anchors=1250) gen ci_lo=0.0506 | shufNULL hi=0.0072 p=0.0050 | identNULL hi=0.0271 | chance=0.0040 | aboveShuf=True aboveIdent=True above2xChance=True
+
+ladder anchors       : [250, 500, 1250]
+gen ci_lo per rung   : [0.3597, 0.1998, 0.0506]
+shuffle-NULL hi/rung : [0.0447, 0.0217, 0.0072]
+
+F-GEN-SCALE-1 : REFUTED: at EVERY rung single-step gen ci_lo>shuffle-NULL hi AND p<0.05 -> single-step on-chip GENERATION SCALE-SURVIVES (A-single ceiling holds across anchor count)
+F-GEN-SCALE-2 : REFUTED: largest rung gen ci_lo > shuffle-NULL hi AND >= 2x chance -> no collapse toward chance
+
+DISPOSITION : SINGLE-STEP GENERATION SCALE-SURVIVES (substrate=AKIDA on-chip): across a >=3-rung anchor-count ladder on a REAL aligned corpus the on-chip open-vocab next-step decode stays ABOVE the shuffle-NULL at EVERY rung (NC=250, 1250 anchors: gen ci_lo 0.0506 vs shuffle-NULL hi 0.0072, p=0.005, >2x chance) and does not collapse toward chance at the largest. The A-single on-chip ceiling is a SCALE-ROBUST single-step result, not a single-point artefact. STILL toy vocab (a_scale_honest_scope); production full-LM ladder separate. substrate=AKIDA, NOT HYBRID, NOT Lane G.
+
+NC ceiling note (a_scale_honest_scope): NC=250 is the HONEST real-corpus ceiling — corpus_real500 was NOT authored (Tier-3 stops at 150 faithful model-authored aligned propositions rather than risk dedup/faithfulness degradation by over-authoring). The ceiling is the AUTHORING limit, not the chip.
