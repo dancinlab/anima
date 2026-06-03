@@ -1,0 +1,32 @@
+[source] conscious_decoder.py md5=44b210df969b38f0fc6c2bfe59e37eb6 torch=2.12.0 cuda=False
+
+=== F-BUILD ===
+  SMOKE (d32/h4/kv2/L3)   params = 178,424
+  FULL  (d768/h12/kv4/L12) params = 283,722,336  (283.72M)
+  FULL  +MoE(8,top2)       params = 680,157,792  (680.16M)
+
+=== F-FORWARD ===
+  [smoke moe=off] outputs=5 logits_a=[2, 16, 256] logits_g=[2, 16, 256] tensions=3x[2, 16] moe_aux=None A!=G mean|d|=0.1272 ok=True
+  [smoke moe=on] outputs=5 logits_a=[2, 16, 256] logits_g=[2, 16, 256] tensions=3x[2, 16] moe_aux=1.0060526132583618 A!=G mean|d|=0.1310 ok=True
+  [FULL  moe=off] outputs=5 logits_a=[2, 16, 256] logits_g=[2, 16, 256] tensions=12x[2, 16] moe_aux=None A!=G mean|d|=0.6393 ok=True
+  [FULL  moe=on] outputs=5 logits_a=[2, 16, 256] logits_g=[2, 16, 256] tensions=12x[2, 16] moe_aux=1.2205473184585571 A!=G mean|d|=0.6391 ok=True
+  consciousness_states path ok=True  kv_cache layers=3 layer0 K=[2, 2, 16, 8]
+
+=== F-PSI2D ===
+  Psi 2D coord (psi_residual, psi_gate) inputA run1 = (0.5155671260240606, 0.00099999)
+  Psi 2D coord                          inputA run2 = (0.5155671260240606, 0.00099999)  deterministic=True
+  Psi 2D coord                          inputB      = (0.5147875181096311, 0.00099999)
+  coord_dim=2 is_2d=True  full status keys=['psi_residual', 'psi_gate', 'H_p', 'step']
+
+=== F-DIRECTION (dirG psi-ctl) ===
+  dirG mean|delta| vs baseline = 0.034067  (changes_forward=True)
+  dirG repeat max diff         = 0.000000e+00  (deterministic=True)
+
+=== VERDICT ===
+  F_BUILD: PASS
+  F_FORWARD: PASS
+  F_PSI2D: PASS
+  F_DIRECTION: PASS
+  engine_reconstructable_and_runnable: True
+
+[results] /Users/mini/dancinlab/anima/.worktrees/lane-r-carving-engine/results.json

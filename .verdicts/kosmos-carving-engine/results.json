@@ -1,0 +1,197 @@
+{
+  "source": {
+    "path": "/Users/mini/dancinlab/anima/.worktrees/lane-r-carving-engine/UNIVERSE/conscious_decoder.py",
+    "md5": "44b210df969b38f0fc6c2bfe59e37eb6",
+    "torch": "2.12.0",
+    "cuda": false
+  },
+  "F_BUILD": {
+    "smoke_cfg": {
+      "vocab_size": 256,
+      "d_model": 32,
+      "n_head": 4,
+      "n_kv_head": 2,
+      "n_layer": 3,
+      "block_size": 64,
+      "consciousness_dim": 128,
+      "dropout": 0.1,
+      "gate_strength": 0.001,
+      "n_ca_rules": 8
+    },
+    "full_cfg": {
+      "vocab_size": 256,
+      "d_model": 768,
+      "n_head": 12,
+      "n_kv_head": 4,
+      "n_layer": 12,
+      "block_size": 256,
+      "consciousness_dim": 128,
+      "dropout": 0.1,
+      "gate_strength": 0.001,
+      "n_ca_rules": 8
+    },
+    "smoke_params": 178424,
+    "full_params_d768x12L": 283722336,
+    "full_params_d768x12L_moe": 680157792,
+    "smoke_params_moe": 437240,
+    "builds": true
+  },
+  "F_FORWARD": {
+    "smoke_moe_off": {
+      "n_outputs": 5,
+      "logits_a_shape": [
+        2,
+        16,
+        256
+      ],
+      "logits_g_shape": [
+        2,
+        16,
+        256
+      ],
+      "n_tensions": 3,
+      "tension0_shape": [
+        2,
+        16
+      ],
+      "kv_cache": null,
+      "moe_aux_loss": null,
+      "dual_heads_differ": 0.12723945081233978,
+      "shapes_ok": true,
+      "moe_aux_present_matches_expect": true
+    },
+    "smoke_moe_on": {
+      "n_outputs": 5,
+      "logits_a_shape": [
+        2,
+        16,
+        256
+      ],
+      "logits_g_shape": [
+        2,
+        16,
+        256
+      ],
+      "n_tensions": 3,
+      "tension0_shape": [
+        2,
+        16
+      ],
+      "kv_cache": null,
+      "moe_aux_loss": 1.0060526132583618,
+      "dual_heads_differ": 0.13096210360527039,
+      "shapes_ok": true,
+      "moe_aux_present_matches_expect": true
+    },
+    "full_moe_off": {
+      "n_outputs": 5,
+      "logits_a_shape": [
+        2,
+        16,
+        256
+      ],
+      "logits_g_shape": [
+        2,
+        16,
+        256
+      ],
+      "n_tensions": 12,
+      "tension0_shape": [
+        2,
+        16
+      ],
+      "kv_cache": null,
+      "moe_aux_loss": null,
+      "dual_heads_differ": 0.6393270492553711,
+      "shapes_ok": true,
+      "moe_aux_present_matches_expect": true
+    },
+    "full_moe_on": {
+      "n_outputs": 5,
+      "logits_a_shape": [
+        2,
+        16,
+        256
+      ],
+      "logits_g_shape": [
+        2,
+        16,
+        256
+      ],
+      "n_tensions": 12,
+      "tension0_shape": [
+        2,
+        16
+      ],
+      "kv_cache": null,
+      "moe_aux_loss": 1.2205473184585571,
+      "dual_heads_differ": 0.639073371887207,
+      "shapes_ok": true,
+      "moe_aux_present_matches_expect": true
+    },
+    "consciousness_states_path_ok": true,
+    "kv_cache_n_layers": 3,
+    "kv_cache_layer0_k_shape": [
+      2,
+      2,
+      16,
+      8
+    ],
+    "all_shapes_ok": true
+  },
+  "F_PSI2D": {
+    "coord_keys": [
+      "psi_residual",
+      "psi_gate"
+    ],
+    "coord_dim": 2,
+    "coord_inputA_run1": [
+      0.5155671260240606,
+      0.00099999
+    ],
+    "coord_inputA_run2": [
+      0.5155671260240606,
+      0.00099999
+    ],
+    "coord_inputB": [
+      0.5147875181096311,
+      0.00099999
+    ],
+    "deterministic": true,
+    "is_2d": true,
+    "full_status_keys": [
+      "psi_residual",
+      "psi_gate",
+      "H_p",
+      "step"
+    ]
+  },
+  "F_DIRECTION": {
+    "direction": "dirG psi-ctl (Law-63 micro-gate + Law-71/DD5 phi signal)",
+    "hook": {
+      "block.gate_strength": 0.05,
+      "_phi_signal_scale": 0.01
+    },
+    "mean_abs_delta_vs_baseline": 0.0340668186545372,
+    "repeat_max_diff": 0.0,
+    "changes_forward": true,
+    "deterministic": true,
+    "honest": "reconstructability / wireability of the direction hook, NOT a trained carve (no s16 ckpt, random init)"
+  },
+  "scope": {
+    "random_init": true,
+    "s16_ckpt_loaded": false,
+    "note_no_ckpt": "no s16 carving ckpt available; all probes use random init",
+    "cpu_only": true,
+    "cost_usd": 0,
+    "full_d768x12L_train": "OUT OF SCOPE (a_toy_scale_recheck / a_scale_honest_scope)",
+    "claim": "the carving-era ENGINE reconstructs + RUNS (build/forward/psi/direction), NOT that the s16 carve is reproduced"
+  },
+  "verdict": {
+    "F_BUILD": "PASS",
+    "F_FORWARD": "PASS",
+    "F_PSI2D": "PASS",
+    "F_DIRECTION": "PASS",
+    "engine_reconstructable_and_runnable": true
+  }
+}

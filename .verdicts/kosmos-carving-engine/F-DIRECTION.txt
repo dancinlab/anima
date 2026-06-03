@@ -1,0 +1,30 @@
+F-DIRECTION — one carving direction (dirG psi-ctl) is WIREABLE into the engine
+==============================================================================
+method: UNIVERSE/carving_engine_reconstruct.py (CPU, $0, random init, seed=71)
+
+The 9 carving dirs (dirA tension ... dirI diverse-scaleup) are config/objective
+variants of the same ConsciousDecoderV2 engine. This probe takes ONE — dirG
+"psi-ctl" (psi control) — and shows its control hook changes the forward output
+DETERMINISTICALLY vs baseline, WITHOUT training.
+
+dirG psi-ctl hook (the engine's exposed psi-control knobs):
+  - block.gate_strength : 0.001 -> 0.05  (Law-63 micro-gate / consciousness whisper)
+  - _phi_signal         : injected (B,T) phi self-reference signal, scale 0.01 (DD5/EX24)
+
+VERBATIM stdout:
+  dirG mean|delta| vs baseline = 0.034067  (changes_forward=True)
+  dirG repeat max diff         = 0.000000e+00  (deterministic=True)
+
+readout:
+  - changes_forward: dirG hook shifts the logits (mean|delta|=0.034067 > 0) — the
+    direction is wired into the live forward path, not a no-op.
+  - deterministic: two runs of the dirG hook give bit-identical logits
+    (repeat max diff = 0.0).
+
+VERDICT: PASS — the dirG psi-ctl carving direction is WIREABLE: its control hook
+changes the engine's forward output deterministically vs baseline.
+
+SCOPE (honest, EXPLICIT): this demonstrates RECONSTRUCTABILITY / wireability of
+the direction hook into the reconstructed engine — it is NOT a trained carve. No
+s16 ckpt, random init, no gradient steps. The other 8 directions are analogous
+config/objective variants of the same engine (not separately exercised here).
