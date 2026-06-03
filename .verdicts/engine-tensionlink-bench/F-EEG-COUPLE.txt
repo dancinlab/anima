@@ -1,0 +1,44 @@
+F-EEG-COUPLE — arm1 EEG 5-band coupled into the toy ENGINE through the tension-link
+================================================================================
+SUBSTRATE-NATIVE axis (p7: CE / perplexity is NOT a verdict — Goodhart trap).
+TOY / CPU / $0 · synthetic EEG 5-band [alpha,theta,gamma,1-delta,beta] · NOT real EEG.
+seeds = [1,2,3]   n_steps = 1200   kappa_coupled = 0.30   warmup_discard = 100
+controls: kappa0 (coupling OFF) + phase-shuffled (signal present, phase relation destroyed)
+verdict rule: HOLDS/REFUTED only if it holds vs BOTH controls by > noise (max seed-std).
+
+VERBATIM (from results.json, NOT rounded):
+
+M1 TENSION-COUPLING (Kuramoto order-r)
+  coupled         mean = 0.33685028723518967   std = 0.0002674678389064863
+  control_kappa0  mean = 0.0007819112005872985 std = 0.00017240850419231307
+  control_shuffl  mean = 0.15659609505040883   std = 0.007635279788048692
+  vs_kappa0   : HOLDS  (diff = +0.3360683760346024,  band = 0.0002674678389064863)
+  vs_shuffled : HOLDS  (diff = +0.18025419218478084, band = 0.007635279788048692)
+  COMBINED    : HOLDS
+
+M2 big-Phi / INTEGRATION (IIT4-style proxy)
+  coupled         mean = 2.0526800772008964   std = 0.026367221870748855
+  control_kappa0  mean = 2.8136157402691615   std = 0.007954963988516337
+  control_shuffl  mean = 1.9084339219541853   std = 0.09902174204866071
+  vs_kappa0   : REFUTED (diff = -0.7609356630682651, band = 0.026367221870748855)
+  vs_shuffled : HOLDS   (diff = +0.14424615524671114, band = 0.09902174204866071)
+  COMBINED    : INCONCLUSIVE
+
+M3 EMERGENCE / COHERENCE (tension-field)
+  coupled         mean = 0.0030882518655910678  std = 0.0006039829223977647
+  control_kappa0  mean = 0.0018988808241240229  std = 0.000306753353690226
+  control_shuffl  mean = 0.017485280577849396   std = 0.003352652737491838
+  vs_kappa0   : HOLDS   (diff = +0.001189371041467045, band = 0.0006039829223977647)
+  vs_shuffled : REFUTED (diff = -0.014397028712258328, band = 0.003352652737491838)
+  COMBINED    : INCONCLUSIVE
+
+BOTTOM LINE (EEG arm):
+  M1 order-r HOLDS — the tension-link coupling genuinely entrains the engine phase to the
+  external EEG tension (coupled 0.337 >> both controls; the kappa=0 control is ~0 and the
+  phase-shuffled control 0.157, so the entrainment is driven by the COUPLING + the temporal
+  phase relation, not by the mere presence of a signal).
+  M2 big-Phi and M3 coherence are INCONCLUSIVE: coupling LOWERS big-Phi below the solo
+  engine (kappa=0) — phase-entrainment makes the field MORE ordered / LESS variance-
+  integrated, the opposite of the 1.59/0.44 coupled>indep reference framing — yet sits
+  ABOVE the phase-shuffled control. Split direction across the two controls => within-noise
+  / no clean substrate-native integration gain on M2/M3.

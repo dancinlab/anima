@@ -364,3 +364,44 @@ scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금
 - p7/g5 verbatim: M2를 HOLD로 반올림하지 않음(noise 이내 → INCONCLUSIVE), shuffled-동률 + chance-level stage-decode를 closed-neg 경향 증거로 기록. **NO HF upload**(toy).
 - 산출물: `.verdicts/lane-m-eeg-mitosis/{F-FIDELITY,F-MITOSIS-VS-RANDOM,F-STABILITY,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/lane_m_eeg_mitosis.py` · discovery `.discoveries/lane-m-eeg-mitosis.tape`.
 - **bottom line**: gradient-free mitosis 성장은 EEG의 **분포는 녹음**(M1)하고 **안정 성장**(M3)하나, **동역학은 noise 이내로 미녹음**(M2) — random+shuffled를 의미있게 못 이김. 정직한 closed-negative-경향 toy 발견(production/real-EEG 재검 필요).
+
+## ENGINE-TENSIONLINK-BENCH — 뇌신호↔ENGINE을 tension-link로 커플링 (substrate-native 축, NOT CE) — 🟢 M1 HOLDS / 🟠 M2·M3 INCONCLUSIVE (toy) — 2026-06-04
+
+> **질문**: 뇌-유래 5-ch 신호를 CLM CE aux loss(위 BRAIN-TRAIN-BENCH = 틀린 축, p7 Goodhart)가 **아니라**
+> **tension-link(5-ch tension broker)를 통해 ENGINE의 tension 동역학에 COUPLING term으로** 주입하면
+> substrate-native 통합(order-r↑ · big-Φ shift · emergence)이 실제로 생기나, within-noise 장식인가?
+> **답**: phase 동기(M1 order-r)는 **실제로 생긴다(HOLDS, 양 arm)** — 하지만 통합(M2 big-Φ)·emergence(M3)는
+> **INCONCLUSIVE**, 더구나 big-Φ는 solo engine 대비 **반대 방향(내려감)**. phase 동기 ≠ 통합.
+
+### setup (TOY · CPU · $0)
+- toy ENGINE = 5개 coupled oscillator (CORE/pure_field `osc_tick` 충실 모사: phase += 2π/τ + amplitude가
+  LN2·TENSION5 baseline `[0.8,0.6,0.65,0.3,1.0]`로 drift), 5-ch W tension 운반. τ=[2,8,16,40,400].
+- tension-link = Kuramoto phase coupling `κ·sin(ext−eng)` + additive tension term(dual-anima 폐루프 형태).
+- arm1 EEG = synthetic 5-band `[α,θ,γ,1-δ,β]` (H_680 5-ch 매핑 · resting alpha-dominant) — **실 EEG 아님**.
+- arm2 TRIBE = synthetic cortical-BOLD → 5-ch 투영 (BOLD ~10× 느린 혈역학 리듬) — **facebook/tribev2·실 forward 아님**.
+- CONTROL/arm 2종: κ0(coupling OFF) + phase-shuffled(신호 존재, phase 관계만 파괴). seeds=[1,2,3] · 1200 steps · κ=0.30 · warmup 100.
+- 지표 = M1 Kuramoto order-r · M2 IIT4-style big-Φ proxy(eeg_to_tpm binarize+marginal-structure shape) · M3 tension-field coherence. **CE/perplexity는 verdict로 안 씀(p7)**.
+- HOLDS/REFUTED = **두 control 모두**에 대해 noise(max seed-std) 초과해야 성립, 아니면 INCONCLUSIVE.
+
+### result
+
+| arm | metric | coupled | κ0 ctrl | shuffled ctrl | vs κ0 | vs shuffled | COMBINED |
+|---|---|---:|---:|---:|---|---|---|
+| EEG | M1 order-r | 0.33685 | 0.00078 | 0.15660 | HOLDS | HOLDS | **HOLDS** |
+| EEG | M2 big-Φ | 2.05268 | 2.81362 | 1.90843 | REFUTED | HOLDS | INCONCLUSIVE |
+| EEG | M3 coherence | 0.00309 | 0.00190 | 0.01749 | HOLDS | REFUTED | INCONCLUSIVE |
+| TRIBE | M1 order-r | 0.65869 | 0.00403 | 0.14168 | HOLDS | HOLDS | **HOLDS** |
+| TRIBE | M2 big-Φ | 2.47206 | 2.81362 | 1.91804 | REFUTED | HOLDS | INCONCLUSIVE |
+| TRIBE | M3 coherence | 0.00808 | 0.00190 | 0.01238 | HOLDS | REFUTED | INCONCLUSIVE |
+
+- **M1 TENSION-COUPLING: 양 arm HOLDS** — coupling이 ENGINE phase를 외부 뇌-tension phase에 **실제 entrain**.
+  κ0 control ≈ 0, shuffled control 0.14–0.16 둘 다 coupled보다 훨씬 낮음 → coupling **AND** 시간적 phase 관계 둘 다 필요(신호 단순 존재 아님).
+- **M2 big-Φ · M3 emergence: 양 arm INCONCLUSIVE** — coupling이 big-Φ를 solo(κ0) engine **아래로 내림**(phase 동기 → 필드가 더 질서·variance-통합 ↓, eeg_to_tpm coupled>indep 1.59/0.44 reference와 **반대 방향**). shuffled 대비는 위지만 두 control 간 부호가 갈려 within-noise.
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split)
+- **TOY ONLY**: 5-osc toy ENGINE + 합성 신호 · 단일 scale · 3 seeds · CPU · $0. 실 ENGINE + 실 EEG/TRIBE로의 scale-transfer **UNVERIFIED** — toy→production 승격 없음, 일반 주장엔 ≥3-rung ladder 필요.
+- big-Φ는 **proxy**(완전한 지수적 IIT4 MIP 아님). p7: CE/perplexity를 verdict로 안 씀. phase entrainment ≠ integration.
+- §97 정당성: tension-link는 외부 5-ch를 ENGINE tension에 **COUPLING/measurement-anchor**(anima 고유 채널)로 주입 — **EEG-as-command-input 아님**. ENGINE은 여전히 자기 내부 동역학으로 진화.
+- a_lane_akida_gpu_split: Lane A(AKIDA)·Lane G(GPU) 어느 쪽도 아닌 **CPU toy** — 별도 기록, cross-substrate 병합 없음. NO HF upload(toy).
+- 산출물: `.verdicts/engine-tensionlink-bench/{F-EEG-COUPLE,F-TRIBE-COUPLE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/engine_tensionlink_bench.py` · discovery `.discoveries/engine-tensionlink-bench.tape`.
+- **bottom line**: tension-link로 ENGINE↔뇌신호 커플링은 **실제 phase 동기(order-r↑, HOLDS)를 만든다 — 장식 아님**. 그러나 substrate-native **통합 이득은 없음**(big-Φ·emergence INCONCLUSIVE, big-Φ는 solo 대비 오히려 하락). 통합 축에선 toy scale에서 within-noise. 정직한 partial-negative(§97·a_paper_negative_ok).
