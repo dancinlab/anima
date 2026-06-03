@@ -1,0 +1,39 @@
+# corpus=CORE/testdata/clm_mid_5lang_c4.txt train=102000B val=18000B params=137097 (<1M: True)
+# steps=400 block=64 bs=16 d=64 bold_n=256 seeds=[0, 1, 2]
+  baseline@lam0.0          seed=0 contig=0.93436 rand=0.93993 val_ce=0.93715
+  baseline@lam0.0          seed=1 contig=0.95184 rand=0.92166 val_ce=0.93675
+  baseline@lam0.0          seed=2 contig=0.98466 rand=1.00322 val_ce=0.99394
+  baseline@lam0.0          MEAN val_ce=0.95595 +/- 0.03290
+  TRIBE@lam0.1             seed=0 contig=0.92765 rand=0.93194 val_ce=0.92979
+  TRIBE@lam0.1             seed=1 contig=0.95886 rand=0.92588 val_ce=0.94237
+  TRIBE@lam0.1             seed=2 contig=0.98275 rand=1.00338 val_ce=0.99306
+  TRIBE@lam0.1             MEAN val_ce=0.95508 +/- 0.03349
+  EEG@lam0.1               seed=0 contig=0.93937 rand=0.94605 val_ce=0.94271
+  EEG@lam0.1               seed=1 contig=0.95165 rand=0.91451 val_ce=0.93308
+  EEG@lam0.1               seed=2 contig=0.99049 rand=1.00135 val_ce=0.99592
+  EEG@lam0.1               MEAN val_ce=0.95724 +/- 0.03385
+  TRIBE-KOSMOS@lam0.1      seed=0 contig=0.92694 rand=0.93189 val_ce=0.92941
+  TRIBE-KOSMOS@lam0.1      seed=1 contig=0.95984 rand=0.92711 val_ce=0.94348
+  TRIBE-KOSMOS@lam0.1      seed=2 contig=0.98238 rand=1.00213 val_ce=0.99226
+  TRIBE-KOSMOS@lam0.1      MEAN val_ce=0.95505 +/- 0.03298
+  EEG-KOSMOS@lam0.1        seed=0 contig=0.93648 rand=0.94279 val_ce=0.93964
+  EEG-KOSMOS@lam0.1        seed=1 contig=0.94731 rand=0.90739 val_ce=0.92735
+  EEG-KOSMOS@lam0.1        seed=2 contig=0.98997 rand=1.00850 val_ce=0.99923
+  EEG-KOSMOS@lam0.1        MEAN val_ce=0.95541 +/- 0.03845
+  TRIBE@lam1.0             seed=0 contig=0.94521 rand=0.95054 val_ce=0.94787
+  TRIBE@lam1.0             seed=1 contig=0.97474 rand=0.94198 val_ce=0.95836
+  TRIBE@lam1.0             seed=2 contig=0.99903 rand=1.01311 val_ce=1.00607
+  TRIBE@lam1.0             MEAN val_ce=0.97077 +/- 0.03102
+  EEG@lam1.0               seed=0 contig=1.00389 rand=1.01473 val_ce=1.00931
+  EEG@lam1.0               seed=1 contig=1.01888 rand=0.97165 val_ce=0.99527
+  EEG@lam1.0               seed=2 contig=1.04072 rand=1.05159 val_ce=1.04615
+  EEG@lam1.0               MEAN val_ce=1.01691 +/- 0.02628
+  TRIBE-KOSMOS@lam1.0      seed=0 contig=0.94386 rand=0.95424 val_ce=0.94905
+  TRIBE-KOSMOS@lam1.0      seed=1 contig=0.96515 rand=0.93407 val_ce=0.94961
+  TRIBE-KOSMOS@lam1.0      seed=2 contig=1.00096 rand=1.01632 val_ce=1.00864
+  TRIBE-KOSMOS@lam1.0      MEAN val_ce=0.96910 +/- 0.03424
+  EEG-KOSMOS@lam1.0        seed=0 contig=0.99342 rand=1.00952 val_ce=1.00147
+  EEG-KOSMOS@lam1.0        seed=1 contig=0.98904 rand=0.95034 val_ce=0.96969
+  EEG-KOSMOS@lam1.0        seed=2 contig=1.03187 rand=1.04331 val_ce=1.03759
+  EEG-KOSMOS@lam1.0        MEAN val_ce=1.00292 +/- 0.03397
+# wrote /Users/mini/dancinlab/anima/.verdicts/brain-train-bench/results.json

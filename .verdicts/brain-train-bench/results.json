@@ -1,0 +1,244 @@
+{
+  "meta": {
+    "corpus": "CORE/testdata/clm_mid_5lang_c4.txt",
+    "max_bytes": 120000,
+    "steps": 400,
+    "block": 64,
+    "bs": 16,
+    "d": 64,
+    "bold_n": 256,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "n_params": 137097
+  },
+  "results": {
+    "baseline@lam0.0": {
+      "arm": "baseline",
+      "lam": 0.0,
+      "aux": "none",
+      "kosmos": false,
+      "per_seed": [
+        {
+          "val_ce_contig": 0.9343598484992981,
+          "val_ce_rand": 0.9399342238903046,
+          "val_ce": 0.9371470361948013
+        },
+        {
+          "val_ce_contig": 0.9518386721611023,
+          "val_ce_rand": 0.9216599687933922,
+          "val_ce": 0.9367493204772472
+        },
+        {
+          "val_ce_contig": 0.9846575856208801,
+          "val_ce_rand": 1.0032221153378487,
+          "val_ce": 0.9939398504793644
+        }
+      ],
+      "val_ce_mean": 0.9559454023838043,
+      "val_ce_std": 0.03290475815155999
+    },
+    "TRIBE@lam0.1": {
+      "arm": "TRIBE",
+      "lam": 0.1,
+      "aux": "bold",
+      "kosmos": false,
+      "per_seed": [
+        {
+          "val_ce_contig": 0.9276518225669861,
+          "val_ce_rand": 0.931937575340271,
+          "val_ce": 0.9297946989536285
+        },
+        {
+          "val_ce_contig": 0.9588577151298523,
+          "val_ce_rand": 0.9258847907185555,
+          "val_ce": 0.9423712529242039
+        },
+        {
+          "val_ce_contig": 0.9827480316162109,
+          "val_ce_rand": 1.0033803507685661,
+          "val_ce": 0.9930641911923885
+        }
+      ],
+      "val_ce_mean": 0.9550767143567404,
+      "val_ce_std": 0.03349371171873731
+    },
+    "EEG@lam0.1": {
+      "arm": "EEG",
+      "lam": 0.1,
+      "aux": "eeg",
+      "kosmos": false,
+      "per_seed": [
+        {
+          "val_ce_contig": 0.9393692016601562,
+          "val_ce_rand": 0.9460479393601418,
+          "val_ce": 0.942708570510149
+        },
+        {
+          "val_ce_contig": 0.9516482353210449,
+          "val_ce_rand": 0.9145132005214691,
+          "val_ce": 0.933080717921257
+        },
+        {
+          "val_ce_contig": 0.9904909133911133,
+          "val_ce_rand": 1.0013490468263626,
+          "val_ce": 0.995919980108738
+        }
+      ],
+      "val_ce_mean": 0.9572364228467146,
+      "val_ce_std": 0.03384504525335333
+    },
+    "TRIBE-KOSMOS@lam0.1": {
+      "arm": "TRIBE-KOSMOS",
+      "lam": 0.1,
+      "aux": "bold",
+      "kosmos": true,
+      "per_seed": [
+        {
+          "val_ce_contig": 0.9269401431083679,
+          "val_ce_rand": 0.9318889304995537,
+          "val_ce": 0.9294145368039608
+        },
+        {
+          "val_ce_contig": 0.9598396420478821,
+          "val_ce_rand": 0.9271121546626091,
+          "val_ce": 0.9434758983552456
+        },
+        {
+          "val_ce_contig": 0.9823826551437378,
+          "val_ce_rand": 1.002134345471859,
+          "val_ce": 0.9922585003077984
+        }
+      ],
+      "val_ce_mean": 0.9550496451556683,
+      "val_ce_std": 0.032981883640388676
+    },
+    "EEG-KOSMOS@lam0.1": {
+      "arm": "EEG-KOSMOS",
+      "lam": 0.1,
+      "aux": "eeg",
+      "kosmos": true,
+      "per_seed": [
+        {
+          "val_ce_contig": 0.9364839196205139,
+          "val_ce_rand": 0.9427942112088203,
+          "val_ce": 0.9396390654146671
+        },
+        {
+          "val_ce_contig": 0.9473135471343994,
+          "val_ce_rand": 0.9073879569768906,
+          "val_ce": 0.927350752055645
+        },
+        {
+          "val_ce_contig": 0.9899666905403137,
+          "val_ce_rand": 1.0085029304027557,
+          "val_ce": 0.9992348104715347
+        }
+      ],
+      "val_ce_mean": 0.955408209313949,
+      "val_ce_std": 0.038449042745846804
+    },
+    "TRIBE@lam1.0": {
+      "arm": "TRIBE",
+      "lam": 1.0,
+      "aux": "bold",
+      "kosmos": false,
+      "per_seed": [
+        {
+          "val_ce_contig": 0.9452089071273804,
+          "val_ce_rand": 0.95053780823946,
+          "val_ce": 0.9478733576834202
+        },
+        {
+          "val_ce_contig": 0.974738597869873,
+          "val_ce_rand": 0.9419831708073616,
+          "val_ce": 0.9583608843386173
+        },
+        {
+          "val_ce_contig": 0.9990348219871521,
+          "val_ce_rand": 1.0131148844957352,
+          "val_ce": 1.0060748532414436
+        }
+      ],
+      "val_ce_mean": 0.9707696984211603,
+      "val_ce_std": 0.03102156542631263
+    },
+    "EEG@lam1.0": {
+      "arm": "EEG",
+      "lam": 1.0,
+      "aux": "eeg",
+      "kosmos": false,
+      "per_seed": [
+        {
+          "val_ce_contig": 1.0038931369781494,
+          "val_ce_rand": 1.0147296860814095,
+          "val_ce": 1.0093114115297794
+        },
+        {
+          "val_ce_contig": 1.0188816785812378,
+          "val_ce_rand": 0.97165197879076,
+          "val_ce": 0.9952668286859989
+        },
+        {
+          "val_ce_contig": 1.0407153367996216,
+          "val_ce_rand": 1.0515914857387543,
+          "val_ce": 1.046153411269188
+        }
+      ],
+      "val_ce_mean": 1.0169105504949887,
+      "val_ce_std": 0.026280625116392318
+    },
+    "TRIBE-KOSMOS@lam1.0": {
+      "arm": "TRIBE-KOSMOS",
+      "lam": 1.0,
+      "aux": "bold",
+      "kosmos": true,
+      "per_seed": [
+        {
+          "val_ce_contig": 0.9438626170158386,
+          "val_ce_rand": 0.9542361572384834,
+          "val_ce": 0.949049387127161
+        },
+        {
+          "val_ce_contig": 0.9651532769203186,
+          "val_ce_rand": 0.9340725317597389,
+          "val_ce": 0.9496129043400288
+        },
+        {
+          "val_ce_contig": 1.000956416130066,
+          "val_ce_rand": 1.0163161978125572,
+          "val_ce": 1.0086363069713116
+        }
+      ],
+      "val_ce_mean": 0.9690995328128338,
+      "val_ce_std": 0.034241010076458855
+    },
+    "EEG-KOSMOS@lam1.0": {
+      "arm": "EEG-KOSMOS",
+      "lam": 1.0,
+      "aux": "eeg",
+      "kosmos": true,
+      "per_seed": [
+        {
+          "val_ce_contig": 0.9934208989143372,
+          "val_ce_rand": 1.0095162093639374,
+          "val_ce": 1.0014685541391373
+        },
+        {
+          "val_ce_contig": 0.9890427589416504,
+          "val_ce_rand": 0.9503383040428162,
+          "val_ce": 0.9696905314922333
+        },
+        {
+          "val_ce_contig": 1.0318652391433716,
+          "val_ce_rand": 1.043307051062584,
+          "val_ce": 1.0375861451029778
+        }
+      ],
+      "val_ce_mean": 1.0029150769114494,
+      "val_ce_std": 0.03397091267530195
+    }
+  }
+}
