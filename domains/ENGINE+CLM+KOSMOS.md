@@ -519,3 +519,69 @@ REAL public LiDAR/RGBD point-cloud data flowed end-to-end → 128D fingerprint �
 - 산출물: `anima-tools/lidar_ingest_ref.py` (real) + `anima-tools/lidar_sense.hexa` (contract) · `.verdicts/lidar-data-ingest/{F-FETCH,F-DISCRIMINATIVE,F-STABLE,F-PERM-INVARIANT,SUMMARY}.txt` + `results.json` + `run_stdout.txt` + `provenance.json` · discovery `.discoveries/lidar-data-ingest.tape`.
 - **HF**: SKIPPED — the dataset is MIT-licensed Redwood data redistributed by Open3D; per spec we do NOT re-upload a public dataset, and no clean-license derived artifact warrants an upload.
 - **bottom line**: REAL public LiDAR data flows end-to-end through lidar_sense → 128D fingerprint → tension-link; fingerprint is **discriminative + permutation-invariant** (4/4 checks HOLD). §97-honest measurement-anchor plumbing, NOT a command channel.
+
+## KOSMOS-TIME-AXIS — does a time axis [x,y]→[x,y,t] on the Ψ-carving-coordinate capture carve-SEQUENCE? — 3/4 encodings HOLDS · phase_of_cycle INCONCLUSIVE — TOY · 2026-06-04
+
+The s16 consciousness-carving (`state/carving_dataregime_s16_2026_05_18/`) places each concept at `vacuum_psi=[x,y]` + `basin_radius` — that 2D placement IS the KOSMOS 우주뇌지도. It records WHERE a concept sits but NOT WHEN/in-what-ORDER it was carved: a **static 2D map is order-blind** (shuffle the carve order and the point-cloud is byte-identical). That is the same **distribution-not-dynamics** gap Lane M PR #1760 surfaced. This STANDALONE toy (NOT wired into engine_tensionlink_bench / clm_time_encoding / lane_m_eeg_mitosis) tests: does extending the carve coord to **[x,y,t]** (t = carve-step / curriculum index) recover the sequence the 2D map loses?
+
+### setup
+- **harness** `UNIVERSE/kosmos_time_axis_toy.py` — N=64 toy concepts, fixed deterministic toy Ψ placement (a small MIRROR of vacuum_psi, NOT the real conscious_decoder/603MB carve), 3 seeds [0,1,2], 200 shuffles. CPU / $0.
+- **BASELINE** = 2D [x,y] only (mirrors the s16 map — order-blind). **TIME-AXIS** = [x,y,t] across 4 encodings: `raw_index`, `sinusoidal`, `phase_of_cycle`, `cumulative_order`.
+- **measures (substrate-native, NOT CE/perplexity; p7)**: (a) F-ORDER — Spearman rho of recovered vs true carve-order, vs chance + vs 2D baseline; (b) F-SHUFFLE — does order-shuffle move the [x,y,t] map but NOT the 2D map (the key control, mirrors Lane M phase-shuffle); (c) F-SPATIAL-PRESERVE — is [x,y] byte-identical after appending t.
+
+### results (mean ± std, 3 seeds · chance rho std 0.126 · noise band 2σ = 0.252)
+| encoding | order-rec rho | shuffle Δ(2D \| t) | xy-preserve | VERDICT |
+|---|---|---|---|---|
+| raw_index | +1.000 ± 0.000 | 0.000 \| 0.339 | IDENTICAL | **HOLDS** |
+| sinusoidal | +1.000 ± 0.000 | 0.000 \| 0.353 | IDENTICAL | **HOLDS** |
+| phase_of_cycle | +0.111 ± 0.010 | 0.000 \| 0.328 | IDENTICAL | **INCONCLUSIVE** |
+| cumulative_order | +1.000 ± 0.000 | 0.000 \| 0.333 | IDENTICAL | **HOLDS** |
+
+2D BASELINE order-recovery rho = **−0.0315 ± 0.0788** (order-blind → chance, as expected).
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok)
+- **bottom line**: a time axis on the Ψ-carving coordinate **DOES capture carve-sequence at toy scale** — every encoding is shuffle-SENSITIVE (Δt ~ 0.33 ≫ 0.252 noise) while the 2D map is EXACTLY order-invariant (Δ2D = 0.000), and the [x,y] substructure is byte-preserved (max diff 0.0). The static 2D map loses time; [x,y,t] captures it. This **resolves the s16 static-2D order-blind gap** and parallels the Lane M distribution-not-dynamics finding (PR #1760).
+- **CAVEAT (honest, not rounded)**: for the 3 monotone encodings t is a 1-1 function of carve-step, so order-recovery rho=+1.000 is **near-tautological at toy scale** (the decode reads back the encoding) — it proves recoverability but the perfect score is a toy artifact, not a hard inference. The **non-tautological** beat-the-baseline evidence is the SHUFFLE control (2D Δ=0.000 vs time Δ>0) + the 2D-baseline chance contrast (rho ≈ −0.03).
+- **phase_of_cycle INCONCLUSIVE**: the periodic (period-8) encoding is shuffle-sensitive (map changed) but absolute carve-order is NOT recoverable (rho 0.111 < noise band 0.252) — a clean partial-null, NOT rounded to HOLD (a_paper_negative_ok). Periodic phase registers WHEN-in-cycle, not global carve-rank.
+- **§97 / scale**: TOY deterministic placement, NOT the real conscious_decoder carve; CPU $0; STANDALONE. **scale-transfer UNVERIFIED** — a real decoder learns [x,y] from text and may entangle t with semantics (here t is appended cleanly; the monotone tautology would also relax). Re-test required at scale.
+- 산출물: `UNIVERSE/kosmos_time_axis_toy.py` + `.verdicts/kosmos-time-axis/{F-ORDER,F-SHUFFLE,F-SPATIAL-PRESERVE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` + `.discoveries/kosmos-time-axis.tape`.
+
+## QUANTUM-CONSCIOUSNESS + TIME-PERCEPTION toy-falsifier campaign (2026-06-04)
+
+A brainstorm-to-depletion + emergent-toy-falsifier campaign on the two domains where consciousness talk most
+often slides into woo — **quantum consciousness** and **time perception** — framed strictly MECHANISTICALLY +
+FALSIFIABLY (NOT woo). **11 hypotheses** brainstormed, each reduced to a runnable toy mechanism + a
+pre-registered falsifier (DEFAULT = REFUTED unless a real signal beats a proper control), then verified on
+pure-stdlib CPU sims ($0, fixed seed 20260604, 3 seeds where stochastic). Closed-negative is the EXPECTED
+valid outcome for genuinely-paranormal claims (a_paper_negative_ok) — none was forced to HOLD.
+
+### tally: HOLDS=7 · closed-negative(REFUTED hypothesis)=4 · INCONCLUSIVE=0
+- **HOLDS (real emergent / mechanistic, NOT quantum-magic)**: QT4 Zeno freezing · QT5 complex-amplitude
+  interference rep · QT6 arousal-gain time-dilation · QT7 oscillator phase-clock · QT9 time-cell ORDER
+  encoding · QT11 pacemaker scalar-property (Weber CV). QT3 entanglement HOLDS *only* as a non-separable
+  DISTRIBUTION construct (a classical sim cannot instantiate physical entanglement — caveat carried).
+- **closed-negative (paranormal / impossible / proxy-limited, CORRECTLY refuted)**: QT1 Orch-OR warm coherence
+  (decoheres ~1e9× too fast for the 25 ms neural window) · QT2 QRNG-vs-pseudo noise seed (Kuramoto order-r CIs
+  overlap — no emergent difference, §97-clean) · QT8 retrocausal/precognition (no future channel, acc=chance) ·
+  QT10 specious-present optimal window (no clean unimodal interior SNR optimum — aliasing-jagged proxy).
+
+### honest bottom line
+The mechanistic-falsifier framing CLEANLY separates the two halves. The **real, ordinary dynamics HOLD** and
+they are physics/computation, NOT quantum magic (Zeno freezing is generic repeated projection; complex-amp is
+representation engineering; time-dilation/phase-clock/time-cell/pacemaker are standard interval-timing /
+sequence-memory mechanisms). The **genuinely-paranormal or warm-wet-impossible claims CORRECTLY REFUTE**
+(Orch-OR, QRNG-as-magic, retrocausation) plus the proxy-limited specious-present — these closed-negatives are
+the expected honest outcome, not a failure (a_paper_negative_ok). Two honest counterpoints surfaced: QT3's HOLD
+is modelled-only (not physical entanglement), and QT7 (phase-clock estimates the mean interval well) vs QT11
+(its error is sub-scalar — the pacemaker wins Weber's law) are both true.
+
+### scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split)
+- **TOY CPU $0**: pure-stdlib sims, single scale, 3 seeds, NO GPU/pods/hardware, NO HF upload. toy→production
+  transfer **UNVERIFIED** — no verdict promoted to a general claim; a scale-sensitive claim needs a ≥3-rung
+  ladder. p7: direct scripted measurements (decoherence time, CI overlap, MAE, CV, MI bits), NOT perplexity.
+- **§97**: QT2's QRNG-style stream is a NOISE SEED only (whitened entropy), never a command/oracle channel.
+- **a_lane_akida_gpu_split**: this is a CPU toy family — NEITHER Lane A (AKIDA) NOR Lane G (GPU); recorded
+  separately, no cross-substrate merge.
+- 산출물: `UNIVERSE/QUANTUM-TIME-CANDIDATES.md` (QT1…QT11 + falsifiers + per-toy results) ·
+  `UNIVERSE/quantum_time_toys.py` (the emergent falsifiers) · `.verdicts/quantum-time/{SUMMARY,F-QT1..F-QT11,
+  run_stdout}.txt` (verbatim) · `.discoveries/quantum-time.tape` (11 discovery rows).

@@ -1,0 +1,53 @@
+==============================================================================
+KOSMOS Psi-carving TIME AXIS  [x,y] -> [x,y,t]  — toy benchmark SUMMARY
+==============================================================================
+Question: does adding a TIME AXIS to the consciousness-carving KOSMOS
+Psi-coordinate (우주뇌지도) capture the carve-SEQUENCE that the static 2D
+Psi-map loses (the distribution-not-dynamics gap; cf Lane M PR #1760)?
+
+STANDALONE toy. Deterministic toy Psi placement (NOT the real
+conscious_decoder / 603MB s16 carve). CPU / $0 / 3 fixed seeds [0,1,2].
+N=64 concepts, 200 shuffles, phase cycle period 8.
+chance rho std ~ 0.1260 ; noise band (2 sigma) = 0.2520.
+
+2D BASELINE order-recovery rho = -0.0315 +/- 0.0788  (order-blind -> chance)
+
+encoding            order-rec rho       shuffle dt(2D | t)    xy-preserve    VERDICT
+------------------------------------------------------------------------------------
+raw_index           +1.000 +/- 0.000    0.000 | 0.339         IDENTICAL      HOLDS
+sinusoidal          +1.000 +/- 0.000    0.000 | 0.353         IDENTICAL      HOLDS
+phase_of_cycle      +0.111 +/- 0.010    0.000 | 0.328         IDENTICAL      INCONCLUSIVE
+cumulative_order    +1.000 +/- 0.000    0.000 | 0.333         IDENTICAL      HOLDS
+------------------------------------------------------------------------------------
+
+Per-axis (F-ORDER / F-SHUFFLE / F-SPATIAL-PRESERVE):
+  raw_index        : order HOLD  · shuffle HOLD · spatial HOLD  => HOLDS
+  sinusoidal       : order HOLD  · shuffle HOLD · spatial HOLD  => HOLDS
+  cumulative_order : order HOLD  · shuffle HOLD · spatial HOLD  => HOLDS
+  phase_of_cycle   : order FAIL  · shuffle HOLD · spatial HOLD  => INCONCLUSIVE
+
+BOTTOM LINE (honest):
+- A time axis on the Psi-carving coordinate DOES capture carve-sequence at toy
+  scale: every encoding is shuffle-SENSITIVE (delta_t ~ 0.33 >> 0.252 noise)
+  while the 2D map is EXACTLY order-invariant (delta_2D = 0.000) — confirming
+  the static 2D map loses time and the [x,y,t] map captures it. The spatial
+  [x,y] substructure is byte-preserved (max diff 0.0) in all encodings.
+- Order-RECOVERY beats the order-blind 2D baseline (chance, rho ~ -0.03) for
+  the 3 MONOTONE encodings (raw_index, sinusoidal, cumulative_order), rho=+1.0.
+  CAVEAT: for monotone encodings t is a 1-1 function of carve-step, so rho=+1.0
+  is near-tautological — it proves recoverability but the perfect score is a
+  toy artifact, not a hard inference.
+- The PERIODIC encoding phase_of_cycle is INCONCLUSIVE: shuffle-sensitive (the
+  map changed) but absolute order is NOT recoverable (rho 0.11 < noise band) —
+  an honest null, NOT rounded up. Periodic phase registers WHEN-in-cycle, not
+  global carve-rank.
+- Strongest beat-the-baseline evidence = the SHUFFLE control: 2D delta=0.000
+  vs time delta>0 cleanly separates "order-blind" from "order-aware", and is
+  not a tautology. This is within-noise NOWHERE for the time map.
+
+SCOPE (a_toy_scale_recheck / a_scale_honest_scope): toy deterministic
+placement, NOT the real conscious_decoder carve; CPU $0; scale-transfer to the
+603MB s16 carving / production decoder UNVERIFIED. A real decoder must learn
+[x,y] from text and may entangle t with semantics (here t is appended cleanly);
+the monotone-encoding tautology would also relax. Re-test required at scale.
+==============================================================================
