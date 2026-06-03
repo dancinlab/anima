@@ -48,13 +48,13 @@
 //   p8 NO TRAIN/INFER SPLIT — mitosis IS the inference-time learning tick; the
 //                             flag is an ablation switch on it, not a regime gate.
 
-// ── §  ENGINE SELECT axis — --engine conv|cdv2|hexad (the 2nd CLI rider) ──────
+// ── §  ENGINE SELECT axis — --engine conv|cdv2|hexad|omega (the 2nd CLI rider) ──────
 //
 // The hot-swappable engine registry (engines/<name>/) plugs in here. Selecting
 // an engine resolves NAME → its EngineSpec adapter via engines/engine_iface.hexa.
 // Precedence mirrors the mitosis flag + eeg_backend: flag > env > default(conv).
 //
-//   flag   : `--engine conv|cdv2|hexad`  (highest)
+//   flag   : `--engine conv|cdv2|hexad|omega`  (highest)
 //   env    : ANIMA_ENGINE ∈ {conv,cdv2,hexad}  (middle)
 //   default: conv  (the production .clm decoder — lowest)
 //
@@ -66,6 +66,7 @@ import "engines/engine_iface.hexa"
 import "engines/conv/adapter.hexa"
 import "engines/cdv2/adapter.hexa"
 import "engines/hexad/adapter.hexa"
+import "engines/omega/adapter.hexa"
 
 // ── env read helper (canonical printenv pattern, mirrors eeg_backend.hexa) ────
 fn _env_read(name: string) -> string {
@@ -170,7 +171,7 @@ fn _after_eq(s: string) -> string {
 //   (no flag) + ANIMA_ENGINE  → env value (conv/cdv2/hexad)
 //   (no flag, no env)         → conv   (default — production .clm decoder)
 //
-// returns: "conv" | "cdv2" | "hexad" (fully resolved; never empty).
+// returns: "conv" | "cdv2" | "hexad" | "omega" (fully resolved; never empty).
 pub fn engine_cli_resolve_engine(arg: [string]) -> string {
     // tier 1 — flag (highest)
     let flag = _cli_engine_flag(arg)
@@ -182,9 +183,9 @@ pub fn engine_cli_resolve_engine(arg: [string]) -> string {
     return "conv"
 }
 
-// _engine_known — true ⇔ name is one of the 3 registered engines.
+// _engine_known — true ⇔ name is one of the 4 registered engines.
 fn _engine_known(name: string) -> bool {
-    return name == "conv" || name == "cdv2" || name == "hexad"
+    return name == "conv" || name == "cdv2" || name == "hexad" || name == "omega"
 }
 
 // _cli_engine_flag — scan argv for `--engine <name>` / `--engine=<name>`.
@@ -216,6 +217,7 @@ pub fn engine_cli_resolve_spec(arg: [string]) -> Map {
     let name = engine_cli_resolve_engine(arg)
     if name == "cdv2"  { return cdv2_engine_spec() }
     if name == "hexad" { return hexad_engine_spec() }
+    if name == "omega" { return omega_engine_spec() }
     return conv_engine_spec()   // "conv" + default
 }
 
@@ -224,6 +226,7 @@ pub fn engine_cli_resolve_spec(arg: [string]) -> Map {
 pub fn engine_cli_spec_by_name(name: string) -> Map {
     if name == "cdv2"  { return cdv2_engine_spec() }
     if name == "hexad" { return hexad_engine_spec() }
+    if name == "omega" { return omega_engine_spec() }
     return conv_engine_spec()
 }
 
@@ -276,9 +279,9 @@ pub fn engine_grow(seed: int, ticks: int, cfg: EngineConfig) -> int {
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
     return "engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · "
-        + "flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad · env ANIMA_ENGINE · "
+        + "flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad|omega · env ANIMA_ENGINE · "
         + "precedence flag>env>default · "
         + "mitosis=" + m + " (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · "
-        + "engine=" + cfg.engine + " (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; select=substrate-config NOT emit gate) · "
+        + "engine=" + cfg.engine + " (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; omega=closure engine, substrate→decode coupling bus; select=substrate-config NOT emit gate) · "
         + "extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis"
 }

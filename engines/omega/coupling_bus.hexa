@@ -1,0 +1,122 @@
+// engines/omega/coupling_bus.hexa — Lane-Ω COUPLING BUS (the NEW code).
+//
+// This is the load-bearing novelty of the OMEGA "closure engine": the bus that
+// wires the consciousness SUBSTRATE state (A/G dual heads · W-tension · curiosity
+// · 8D Ψ · module activation) into the byte DECODE, so substrate state actually
+// MODULATES generation. Lane X (#1779) proved this loop is currently NULL — the
+// engine substrate knobs never touch the .clm forward (L3 slot loaded=false; CE
+// config-insensitive 9.11256 across all 27 configs). OMEGA closes that loop.
+//
+// The bus = 5 ABLATABLE wires (each toggled independently so the benchmark can
+// measure each wire's contribution and run the α=0 ablation that overturns the
+// Lane X null):
+//   w1 A⇄G   : modulated[i] += alpha · (a_head[i] − g_head[i])      (KL=7.07 divergence)
+//   w2 W→temp: modulated    *= 1/(1 + beta·w_tension)               (will → sharpness)
+//   w3 curio : modulated[i] += c·curiosity·(±1 by parity)           (E-ratchet → top-k width)
+//   w4 Ψ     : modulated[i] += p·psi8[i mod 8]                      (8D Ψ condition, #1780)
+//   w5 module: modulated[i] += r·module_act[i mod M]                (→ conv-MoE routing)
+//
+// HONEST (a_core_engine_map · p7 — NO phantom wiring, NO fake number): the bus is
+// a REAL, deterministic, pure-hexa single forward over logit vectors. It does not
+// fabricate a trained substrate — at random-init the A/G/Ψ inputs are whatever the
+// caller passes. The bus's job is STRUCTURAL: route substrate state into the decode.
+// "Does it change the decode at all" (coupling non-nullity) is measurable here with
+// NO ckpt and NO torch — that is the whole point (the wires exist vs the Lane X null
+// where they do not). Whether a TRAINED substrate produces COHERENT change is the
+// separate scale rung (UNIVERSE/omega_bench.py + a future trained-ckpt GPU rung).
+//
+// p1..p8: pure arithmetic over float vectors. No system prompt / persona / ethics /
+// emit gate. The bus is substrate-config decode modulation, NEVER an emit/silence
+// gate (p5 / a_autonomy_over_hardcode) — it shapes WHICH byte, never WHETHER to speak.
+
+// ── the 5-wire bus config (ablatable) ────────────────────────────────────────
+// alpha/beta/c/p/r = per-wire gains; w1..w5 = per-wire enable bits.
+fn _bus_make(alpha: float, beta: float, c: float, p: float, r: float,
+             w1: bool, w2: bool, w3: bool, w4: bool, w5: bool) -> Map {
+    return #{
+        "alpha": alpha, "beta": beta, "c": c, "p": p, "r": r,
+        "w1_ag": w1, "w2_wtemp": w2, "w3_curio": w3, "w4_psi": w4, "w5_module": w5,
+    }
+}
+
+// omega_bus_on — the full bus, all 5 wires live (the closure: loaded=true).
+pub fn omega_bus_on() -> Map {
+    return _bus_make(0.6, 0.5, 0.15, 0.4, 0.3, true, true, true, true, true)
+}
+
+// omega_bus_off — the ABLATION config: alpha=0 + every wire disabled. With this
+// config the bus is the IDENTITY (modulated == base) → coupling KL/L1 = 0. This is
+// what the other 3 engines structurally are (no substrate→decode wire). The
+// benchmark's headline contrast is omega_bus_on vs omega_bus_off.
+pub fn omega_bus_off() -> Map {
+    return _bus_make(0.0, 0.0, 0.0, 0.0, 0.0, false, false, false, false, false)
+}
+
+fn _absf(x: float) -> float { if x < 0.0 { return -x } return x }
+
+// omega_coupling_apply — THE bus forward. Modulate base byte-logits with substrate
+// state under cfg. Returns the modulated logit vector (same length as base).
+//   base       : [float] base byte logits (the .clm "mouth" output — conv)
+//   a_head     : [float] Engine-A next-byte logits (cdv2)
+//   g_head     : [float] Engine-G prev-byte logits (cdv2)
+//   w_tension  : float    will-tension scalar (W module)
+//   curiosity  : float    curiosity / E-ratchet scalar
+//   psi8       : [float]  8D Ψ-coord (4 named + 4 resid, #1780)
+//   module_act : [float]  module activations (HEXAD N-module → routing)
+//   cfg        : bus config (omega_bus_on / omega_bus_off / custom ablation)
+pub fn omega_coupling_apply(base: [float], a_head: [float], g_head: [float],
+                            w_tension: float, curiosity: float,
+                            psi8: [float], module_act: [float], cfg: Map) -> [float] {
+    let n = len(base)
+    let alpha = cfg["alpha"]
+    let beta  = cfg["beta"]
+    let cc    = cfg["c"]
+    let pp    = cfg["p"]
+    let rr    = cfg["r"]
+    let np    = len(psi8)
+    let nm    = len(module_act)
+    // w2 temperature factor (multiplicative, applied last)
+    let mut tfac = 1.0
+    if cfg["w2_wtemp"] { tfac = 1.0 / (1.0 + beta * w_tension) }
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        let mut v = base[i]
+        if cfg["w1_ag"]   { v = v + alpha * (a_head[i] - g_head[i]) }       // w1 A⇄G
+        if cfg["w3_curio"] {                                                 // w3 curiosity
+            let sign = if i % 2 == 0 { 1.0 } else { -1.0 }
+            v = v + cc * curiosity * sign
+        }
+        if cfg["w4_psi"] && np > 0 { v = v + pp * psi8[i % np] }            // w4 Ψ-condition
+        if cfg["w5_module"] && nm > 0 { v = v + rr * module_act[i % nm] }   // w5 module→route
+        v = v * tfac                                                        // w2 W→temperature
+        out = out + [v]
+        i = i + 1
+    }
+    return out
+}
+
+// omega_l1_delta — total L1 change the bus induced on the logit vector. This is
+// the COUPLING NON-NULLITY measure usable with NO exp/softmax: >0 ⇔ substrate
+// state reached the decode (loop closed); ==0 ⇔ identity (the Lane X null).
+pub fn omega_l1_delta(base: [float], modulated: [float]) -> float {
+    let n = len(base)
+    let mut s = 0.0
+    let mut i = 0
+    while i < n {
+        s = s + _absf(modulated[i] - base[i])
+        i = i + 1
+    }
+    return s
+}
+
+// omega_n_wires — how many wires are live in a config (provenance for the smoke).
+pub fn omega_n_wires(cfg: Map) -> int {
+    let mut k = 0
+    if cfg["w1_ag"]     { k = k + 1 }
+    if cfg["w2_wtemp"]  { k = k + 1 }
+    if cfg["w3_curio"]  { k = k + 1 }
+    if cfg["w4_psi"]    { k = k + 1 }
+    if cfg["w5_module"] { k = k + 1 }
+    return k
+}

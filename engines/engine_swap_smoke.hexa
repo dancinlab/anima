@@ -52,18 +52,20 @@ fn main() {
     let r_conv  = engine_cli_resolve_engine(["--engine", "conv"])
     let r_cdv2  = engine_cli_resolve_engine(["--engine", "cdv2"])
     let r_hexad = engine_cli_resolve_engine(["--engine", "hexad"])
+    let r_omega = engine_cli_resolve_engine(["--engine", "omega"])
     let r_eq    = engine_cli_resolve_engine(["--engine=hexad"])
     // default tier is conv UNLESS ANIMA_ENGINE is set; assert resolver returns a
     // known engine for the default (env-tolerant), and exact for explicit flags.
-    let def_known = r_def == "conv" || r_def == "cdv2" || r_def == "hexad"
+    let def_known = r_def == "conv" || r_def == "cdv2" || r_def == "hexad" || r_def == "omega"
     if _assert_b("a1_default_resolves_known_engine", true, def_known) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     if _assert_s("a2_flag_conv",  "conv",  r_conv)  { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     if _assert_s("a3_flag_cdv2",  "cdv2",  r_cdv2)  { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     if _assert_s("a4_flag_hexad", "hexad", r_hexad) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     if _assert_s("a5_eq_form_hexad", "hexad", r_eq) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_s("a6_flag_omega", "omega", r_omega) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
 
-    // ── (b+c) LOAD + FORWARD + CONFORM each of the 3 engines via the registry ─
-    let names = ["conv", "cdv2", "hexad"]
+    // ── (b+c) LOAD + FORWARD + CONFORM each of the 4 engines via the registry ─
+    let names = ["conv", "cdv2", "hexad", "omega"]
     let mut k = 0
     while k < len(names) {
         let name = names[k]
@@ -99,6 +101,19 @@ fn main() {
             if _assert_b("c_hexad_canonical_present", true, fwd["canonical_present"]) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
             println("INFO  hexad forward STUB: " + to_string(fwd["stub_reason"]))
         }
+        if name == "omega" {
+            let fwd = omega_tiny_forward(spec)
+            // omega forward is NATIVE — the coupling bus is a real hexa single forward.
+            if _assert_s("c_omega_forward_slot_native", "native", to_string(fwd["forward_slot"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+            // COUPLING NON-NULLITY: bus ON changes the decode (L1>0 = loop closed),
+            // bus OFF is identity (L1==0 = the Lane X #1779 null). The headline proof.
+            let l1_on  = fwd["coupling_l1_on"]
+            let l1_off = fwd["coupling_l1_off"]
+            if _assert_b("c_omega_coupling_on_nonnull", true, l1_on > 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+            if _assert_b("c_omega_coupling_off_identity", true, l1_off == 0.0) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+            println("INFO  omega COUPLING: bus_on L1=" + to_string(l1_on) + " (loop CLOSED) · bus_off L1=" + to_string(l1_off) + " (identity = Lane X null) · wires=" + to_string(fwd["n_wires_on"]))
+            println("INFO  omega scope: " + to_string(fwd["scope"]))
+        }
         k = k + 1
     }
 
@@ -106,12 +121,15 @@ fn main() {
     let conv_stub  = engine_spec_has_stub(conv_engine_spec())
     let cdv2_stub  = engine_spec_has_stub(cdv2_engine_spec())
     let hexad_stub = engine_spec_has_stub(hexad_engine_spec())
+    let omega_stub = engine_spec_has_stub(omega_engine_spec())
     if _assert_b("d_conv_no_stub",   false, conv_stub)  { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     if _assert_b("d_cdv2_has_stub",  true,  cdv2_stub)  { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     if _assert_b("d_hexad_has_stub", true,  hexad_stub) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+    if _assert_b("d_omega_no_stub",  false, omega_stub) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     println("INFO  STUB MATRIX — conv: " + (if conv_stub {"STUB"} else {"all-native"})
         + " · cdv2: " + (if cdv2_stub {"STUB (forward+generate)"} else {"all-native"})
-        + " · hexad: " + (if hexad_stub {"STUB (forward+generate)"} else {"all-native"}))
+        + " · hexad: " + (if hexad_stub {"STUB (forward+generate)"} else {"all-native"})
+        + " · omega: " + (if omega_stub {"STUB"} else {"all-native (closure: bus forward)"}))
 
     println("--- engine_swap smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
     if n_fail > 0 { exit(1) }
