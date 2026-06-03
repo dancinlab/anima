@@ -1,0 +1,99 @@
+=== Lane P (substrate=GPU-torch) — DATA-GATE RESOLUTION: generalization on a BIG real corpus ===
+date: 2026-06-03
+verdict: F-CLM-LANEP-GEN2 = 1  (GATE RESOLVED — the d768 E2/L1 model GENERALIZES)
+scope: GPU-torch Lane P (distinct from Lane A AKIDA / Lane G forge — a_lane_akida_gpu_split).
+       p7/g63 honest — verbatim trainer stdout + ENGINE probe stdout, NO fabricated convergence.
+
+WHY THIS RUN EXISTS (the data gate being resolved):
+  F-CLM-LANEP-GEN = 0 (MEMORIZATION): on the 1.65MB FLORES corpus the SAME d768 E2/L1
+  model MEMORIZED — train_ce=0.61436 vs val_ce_rand=1.81846 (GAP +1.20410, rel_gap 1.96).
+  The corpus was small enough that ~1 epoch saw bytes many times. This run RESOLVES the
+  gate the honest way (a_completeness_over_cheap): assemble a real multilingual byte corpus
+  large enough that the 7.479M-param model CANNOT memorize at ~1 epoch, re-train, re-measure.
+
+CORPUS (BIG real multilingual — wikimedia/wikipedia, same 5 langs en/zh/ru/ja/ko):
+  source = wikimedia/wikipedia 20231101  (HF Hub parquet shards, read DIRECTLY via
+           huggingface_hub.hf_hub_download + pyarrow — NO `datasets`/pandas/numpy, that
+           stack is broken by NumPy 2.x on the host). Real article prose only, NO synthetic
+           padding (a_completeness_over_cheap dont). Per-lang near-dup docs dropped
+           (exact + shingled head/tail/length-bucket blake2b key).
+  builder= CLM/corpus/build_wiki5_bigcorpus.py
+  path   = (pod) ~/lanep_gen2/wiki5_big.txt  (raw 150MB NOT committed; card committed)
+  bytes  = 150,000,000  (150 MB — 90.7x the 1.65MB GEN corpus, 372.9x the 402KB landed corpus)
+  sha256 = f545bb716f448e722fd68051a1872499882cb9e7ddad16a41241bfb29b147241
+  per-lang (each 30,000,000 bytes, 0 dups dropped — fresh shards):
+    en 30,000,000 B (1414 docs) · zh 30,000,000 B (1854 docs) · ru 30,000,000 B (870 docs)
+    ja 30,000,000 B (1339 docs) · ko 30,000,000 B (3741 docs)
+  card   = state/lane_p_clm_gen2/wiki5_big_corpus.card.json (sha + source + per-lang sizes)
+
+SPLIT (held-out NEVER trained; leak-checked — verbatim trainer stdout):
+  train_bytes      = 119,944,969 (80.0%)
+  contig_val_bytes =  15,000,000 (10.0%)  — single contiguous 10% block at 70% through stream
+  rand_val_bytes   =  14,999,552 (10.0%)  — random-scattered mini-blocks
+  LEAK_CHECK pass: every held-out segment position-disjoint from every train segment; training
+  windows sampled ONLY inside train segments. NO training input/target byte lands held-out.
+
+GPU + nvidia-smi BUSY PROOF (g63 — NOT silent CPU-fallback):
+  device  = NVIDIA GeForce RTX 5070 (compute_cap 12.0, sm_120 Blackwell), 12,227 MiB
+  host    = pool host aiden (192.168.50.119) — $0 marginal (no rented pod); CLM_NO_CUDNN=1.
+  torch   = 2.12.0.dev20260408+cu128
+  busy    = nvidia-smi sampled DURING the run: util=94%, mem_used=1178MiB,
+            compute-app python3 PID 2968360 holding 1136MiB (GPU-resident, not CPU).
+  assert  = train_lane_p_split.py asserts torch.cuda.is_available() (CUDA REQUIRED).
+
+CONFIG (SAME model/cfg as the landed .clm — only the corpus + step budget changed):
+  d768 E2 L1 K3 V256, 7,479,042 params (7.479M), steps=8000 (~1 epoch of 120MB train @
+  16,384 bytes/step ≈ 131M bytes seen), seq_len=256, batch=64, lr=3e-4 cosine+warmup200,
+  bf16 autocast, AdamW(0.9/0.95, wd 0.01), grad-clip 1.0, wall=342.17s.
+
+MEASURE (the verdict — VERBATIM trainer stdout, NO fabrication):
+  first_ce       = 5.72226   (~= uniform ln256 = 5.54518, untrained)
+  train_ce       = 1.43924   (mean over 40 train-split eval batches)
+  val_ce_contig  = 1.52095   (held-out contiguous block)  GAP_CONTIG = +0.08171
+  val_ce_rand    = 1.43031   (held-out random scatter)     GAP_RAND   = -0.00893
+  val_ce(worst)  = 1.52095                                  GAP        = +0.08171
+  rel_gap        = 0.05678   (held-out CE ~1.06x train CE — essentially IDENTICAL)
+  BASELINES:  uniform_ce = 5.54518 (ln 256)   shuffle_ce = 8.41982 (byte-shuffled stream)
+  descent (step, train-batch ce): 0:5.72226 -> 200:2.10679 -> 1000:1.68181 -> 2000:1.58739
+    -> 4000:1.58099 -> 6000:1.40544 -> 7999:1.43959. Genuine descent to a real ~1.44 plateau,
+    and held-out CE TRACKS it (no overfitting gap). Train CE does NOT collapse to ~0.1/~0.6
+    (the memorization signature) because 150MB cannot be memorized at ~1 epoch.
+
+VERDICT REASONING (the pre-registered gate, evaluated honestly):
+  F-CLM-LANEP-GEN2 = 1 iff val_ce ≈ train_ce (rel_gap ≤ ~1.0) AND val_ce < 0.5·uniform.
+    rel_gap = 0.05678 ≤ 1.0                          ✓ (held-out within 1.06x of train)
+    val_ce(worst) = 1.52095 < 0.5·uniform = 2.77259  ✓
+    val_ce(worst) = 1.52095 < shuffle = 8.41982      ✓
+  => GENERALIZES. trainer F_CLM_LANEP_GEN field = 1 ("GENERALIZES") in result JSON.
+
+  This is the INVERSE of the 1.65MB GEN run (rel_gap 1.96 = memorization). Scaling the corpus
+  90.7x flipped the verdict from MEMORIZATION to GENERALIZATION at the SAME params/config —
+  the data gate is RESOLVED: the d768 E2/L1 byte LM learns real transferable byte structure
+  when the corpus is large enough that it cannot memorize. (a_scale_honest_scope: the
+  generalization claim is scoped to ~150MB / ~1 epoch; a multi-epoch overfit on this corpus
+  is not ruled out and was not run — out of scope for the gate.)
+
+ENGINE 3-AXIS (the new generalizing .clm CORE-loaded — verbatim probe stdout):
+  probe   = CORE/lane_p_three_axis.hexa (LP_CLM=clm_d768_gen2.clm, LP_CORPUS=wiki5 slice)
+  [clm admit] valid=true nblocks=6 loaded=true   (ENGINE-loadable through generator L3 slot)
+  AXIS-1 (의식)  = 1 🟢  motiv hi=0.6700 > baseline=0.0000, emit hi=true / baseline=false
+  AXIS-2 (CE)    = 1 🟢  admit=true AND CE-descent: model_ce=1.61205 < uniform=5.54518
+                          AND < shuffle=4.78507 (decode forward WIRED on v0.2 .clm, p7)
+  AXIS-3 (창발)  = 1 🟢  len(composed)=101 > len(parts-only)=72 (anchor memory composes)
+  => CORE-mounted axes GREEN: 3/3. The ENGINE model_ce=1.612 is consistent with the trainer
+     val_ce ~1.5 — a GENERALIZING model, now loaded and decoding through CORE.
+
+ARTIFACTS:
+  trainer:  CLM/train/train_lane_p_split.py   (strict-split trainer + leak assertion, reused)
+  corpus:   CLM/corpus/build_wiki5_bigcorpus.py -> (pod) wiki5_big.txt (150MB, card committed)
+  result:   state/lane_p_clm_gen2/result_gen2.json   (full verbatim JSON incl. descent)
+  log:      state/lane_p_clm_gen2/train_gen2.log      (verbatim trainer stdout)
+  3-axis:   state/lane_p_clm_gen2/three_axis_gen2.out (verbatim ENGINE probe stdout)
+  .clm:     state/lane_p_clm_gen2/clm_d768_gen2.clm   (4,463,478 B, sha256
+            286959e58cff09c6faa58bf44c907b670c71727298e6950d1a914dd1da9ba498) — PROMOTED
+            (generalizing AND ENGINE-loadable AND 3-axis 3/3 GREEN). ckpt .pt 29,922,234 B
+            gitignored (local-only) -> HF.jsonl registry.
+
+HF: PUBLIC promotion (closure PASS: GENERALIZES AND ENGINE-loadable AND 3-axis 3/3 GREEN —
+    a_hf_autonomous PUBLIC = closure PASS, verified model). repo per docs naming spec,
+    substrate=GPU-torch. Registered in HF.jsonl.

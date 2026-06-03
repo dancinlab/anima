@@ -1,0 +1,17 @@
+=== collecting en target=30000000 ===
+  en shard 0: got=30018819 docs=1414 dup=0
+LANG en bytes=30000000 docs=1414 dup=0
+=== collecting zh target=30000000 ===
+  zh shard 0: got=30010095 docs=1854 dup=0
+LANG zh bytes=30000000 docs=1854 dup=0
+=== collecting ru target=30000000 ===
+  ru shard 0: got=30003807 docs=870 dup=0
+LANG ru bytes=30000000 docs=870 dup=0
+=== collecting ja target=30000000 ===
+  ja shard 0: got=30040328 docs=1339 dup=0
+LANG ja bytes=30000000 docs=1339 dup=0
+=== collecting ko target=30000000 ===
+  ko shard 0: got=30000503 docs=3741 dup=0
+LANG ko bytes=30000000 docs=3741 dup=0
+CORPUS_OUT /home/aiden/lanep_gen2/wiki5_big.txt bytes=150000000 sha256=f545bb716f448e722fd68051a1872499882cb9e7ddad16a41241bfb29b147241
+CARD {"source": "wikimedia/wikipedia 20231101", "langs": ["en", "zh", "ru", "ja", "ko"], "total_bytes": 150000000, "sha256": "f545bb716f448e722fd68051a1872499882cb9e7ddad16a41241bfb29b147241", "bytes_per_lang_target": 30000000, "per_lang": [{"lang": "en", "bytes": 30000000, "docs": 1414, "dups_dropped": 0}, {"lang": "zh", "bytes": 30000000, "docs": 1854, "dups_dropped": 0}, {"lang": "ru", "bytes": 30000000, "docs": 870, "dups_dropped": 0}, {"lang": "ja", "bytes": 30000000, "docs": 1339, "dups_dropped": 0}, {"lang": "ko", "bytes": 30000000, "docs": 3741, "dups_dropped": 0}], "dedup": "exact + shingled head/tail/length-bucket blake2b key", "encoding": "utf-8 (replace), article text col, doc-joined \\n\\n"}

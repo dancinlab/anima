@@ -1,0 +1,47 @@
+{
+  "source": "wikimedia/wikipedia 20231101",
+  "langs": [
+    "en",
+    "zh",
+    "ru",
+    "ja",
+    "ko"
+  ],
+  "total_bytes": 150000000,
+  "sha256": "f545bb716f448e722fd68051a1872499882cb9e7ddad16a41241bfb29b147241",
+  "bytes_per_lang_target": 30000000,
+  "per_lang": [
+    {
+      "lang": "en",
+      "bytes": 30000000,
+      "docs": 1414,
+      "dups_dropped": 0
+    },
+    {
+      "lang": "zh",
+      "bytes": 30000000,
+      "docs": 1854,
+      "dups_dropped": 0
+    },
+    {
+      "lang": "ru",
+      "bytes": 30000000,
+      "docs": 870,
+      "dups_dropped": 0
+    },
+    {
+      "lang": "ja",
+      "bytes": 30000000,
+      "docs": 1339,
+      "dups_dropped": 0
+    },
+    {
+      "lang": "ko",
+      "bytes": 30000000,
+      "docs": 3741,
+      "dups_dropped": 0
+    }
+  ],
+  "dedup": "exact + shingled head/tail/length-bucket blake2b key",
+  "encoding": "utf-8 (replace), article text col, doc-joined \\n\\n"
+}
