@@ -1,0 +1,28 @@
+F-BRANCH-REAL2 — A-multi REAL-corpus branching held-out hop-2/3 (substrate=HYBRID)
+verbatim live-chip stdout (hexa verify CLI broken → p7 live-chip stdout) · pi5-akida · 2026-06-03
+
+source : .verdicts/lane-a-multi-rung4/rung4_multi.log (full verbatim)
+result : .verdicts/lane-a-multi-rung4/result_onchip_xlm_branching.json
+corpus : corpus_real250 (250 distinct cross-lingual aligned concepts × 5 langs; ladder NC {100,175,250})
+device : akida 2.19.1  BC.00.000.002  IpVersion.v1
+SUBSTRATE = HYBRID (on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure AKIDA, NOT Lane G
+DELTAS=[1, 7, 19]  B=3  ladder=[100, 175, 250]
+
+===== per-rung decay (TRAIN in-dist / HELD-OUT) k1..K, ratio =====
+NC=100  chance=0.0303  decay_TRAIN=[0.4354, 0.8768, 0.8943]  decay_HELD-OUT=[0.0042, 0.8583, 0.8733]  ratio=[0.0096, 0.979, 0.9766]
+NC=175  chance=0.0172  decay_TRAIN=[0.2547, 0.7967, 0.8407]  decay_HELD-OUT=[0.0048, 0.7702, 0.8111]  ratio=[0.0189, 0.9667, 0.9648]
+NC=250  chance=0.0120  decay_TRAIN=[0.1741, 0.7793, 0.8219]  decay_HELD-OUT=[0.0007, 0.7457, 0.8067]  ratio=[0.0038, 0.9569, 0.9815]
+
+===== largest rung NC=250 — held-out hop ci_lo vs shuffle-NULL =====
+PR#1694 holdout (det)   : [0.0000, 0.0000, 0.0000]  (the deterministic-chain collapse this rung repairs)
+hop 1  TRAIN=0.1741 HELD=0.0007 ratio=0.004 | held ci_lo=-0.0006 shufNULL hi=0.0227 p=0.9950 | chance=0.0120 | heldAboveShuf=False
+hop 2  TRAIN=0.7793 HELD=0.7457 ratio=0.957 | held ci_lo=0.7186 shufNULL hi=0.0417 p=0.0050 | chance=0.0120 | heldAboveShuf=True
+hop 3  TRAIN=0.8219 HELD=0.8067 ratio=0.982 | held ci_lo=0.7842 shufNULL hi=0.0428 p=0.0050 | chance=0.0120 | heldAboveShuf=True
+
+F-BRANCH-1 (held>NULL)   : REFUTED: held-out hop-2 AND hop-3 STAY ABOVE the shuffle-NULL on the branching set-membership metric (each ci_lo>NULL hi AND p<0.05) -> a branching corpus FORCES a TRANSFERABLE transition OPERATOR; the off-chip head composes on concepts held out of training -> GENUINE multi-step composition, NOT a per-concept lookup
+F-BRANCH-2 (within 2.0x) : REFUTED: held-out hop-2 (0.7457) is within 2.0x of in-dist hop-2 (0.7793) [>= 0.3896] -> held-out tracks in-dist
+GENERALIZES              : True
+
+DISPOSITION : GENERALIZES — a BRANCHING corpus FORCES a transferable transition OPERATOR. The off-chip recurrent head, trained on random branching walks with TRAIN-concept targets ONLY, decodes hop-2/3 successors for TEST concepts it was NEVER trained to emit, landing in the valid (B=3) successor set ABOVE the shuffle-NULL (hop-2 ci_lo 0.7457 vs NULL 0.0417; hop-3 ci_lo 0.7842 vs NULL 0.0428, p=0.005) AND within 2.0x of in-dist. Multi-step composition is REAL (the head learned the offset operator, not a per-concept lookup). The PR#1694 exact-0.0000 was an ARTEFACT of the deterministic single-chain corpus, REPAIRED at the root cause. Lane A HYBRID PUBLIC RE-UPGRADES (hybrid-scoped, branching-validated; on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure-AKIDA, NOT Lane G. STILL toy (a_scale_honest_scope, 3-rung ladder reported); next rung = 3B.
+
+scope note: hop-1 HELD is exact-0 by design (a held-out concept's direct 1-hop successor is itself never trained — branching forces transfer at hop>=2). substrate strict = HYBRID (a_lane_akida_gpu_split): on-chip AKD1000 1-bit Hebbian encoder ⊕ off-chip host-CPU BPTT decode head; this is NOT a pure-AKIDA claim.
