@@ -1,0 +1,76 @@
+F-AXIS-PROBE — what does each REAL KOSMOS axis (PC) of the s16 carving manifold encode?
+================================================================================
+substrate = GPU-trained ckpt, probe = CPU/$0 (Lane-G artifact, not Lane-A)
+harness   = UNIVERSE/kosmos_axis_probe.py
+ckpt      = ckpt_carving_s16.pt  sha256=961c07e2242b194f7d7ddff9e827d2fbd798d658426d32edf4b981a8dd9091e8
+corpus    = /tmp/corpus_sample.json  sha256=e1bd84186b27d067520f8a6d769523ce27fb2e60afa3fe91e3ad2d5f82f90ff1
+X         = post-ln_f conscious state, N=5995, d=768 (mean-pooled over seq), TRAINED weights
+PCs       = top-16 of d=768; EVR = [0.492,0.170,0.081,0.066,0.051,0.019,0.017,0.011,0.010,
+            0.0077,0.0070,0.0065,0.0043,0.0041,0.0040,0.0035]
+
+METHOD (p7/g5 — measured, NOT assumed):
+  categorical attr (tier 168 / domain 63 / carving_form 3 / curriculum_stage 4):
+    omega^2  = bias-corrected variance-explained (Hays); ~0 on noise regardless of #classes
+    AUC-sep  = mean_class |AUC-0.5|*2 of the single PC as score; 0=chance, 1=perfect separation
+    eta^2    = raw variance-explained (CARDINALITY-BIASED — reported for transparency only)
+  continuous attr (curriculum_rank / curriculum_index / basin_radius / vacuum_psi_x / _y):
+    |Spearman rho| (monotone rank correlation)
+  noise floors (verbatim, run_stdout.txt):
+    eta2_cat 95pct   : tier 0.033  domain 0.014  form 0.001  stage 0.001
+    omega2_cat 95pct : tier 0.005  domain 0.003  form 0.001  stage 0.001
+    spearman 95pct   : ~0.026-0.028 for every continuous attr
+    AUC-sep null     : tier 0.075  domain 0.051  form 0.018  stage 0.007  (random score)
+
+PC x ATTRIBUTE MATRIX (verbatim from run_stdout.txt; w=omega^2, a=AUC-sep):
+  PC1  evr=0.492 | tier[w0.94/a0.50] doma[w0.70/a0.43] carv[w0.01/a0.10] | basin_r=0.91 psi_x=0.92 psi_y=0.92  -> carving-RADIUS/DEPTH (tier-correlated, vacuum_psi already 0.92)
+  PC2  evr=0.170 | carv[w0.61/a0.58] tier[w0.01/a0.17]                    -> carving_FORM (alpha/beta/gamma) CLEAN
+  PC3  evr=0.081 | carv[w0.37/a0.49] tier[w0.08]                          -> carving_form residual
+  PC4  evr=0.066 | tier[w0.46/a0.29] carv[w0.41/a0.56] cur_rank=0.37      -> ENTANGLED (tier+form+curriculum)
+  PC5  evr=0.051 | cur_index=0.67 cur_rank=0.67 tier[w0.47/a0.30]         -> CURRICULUM progression
+  PC6  evr=0.019 | tier[w0.84/a0.47] doma[w0.55]                          -> distributed tier/domain (weak sep)
+  PC7  evr=0.017 | tier[w0.75/a0.41] doma[w0.59]                          -> distributed tier/domain
+  PC8  evr=0.011 | tier[w0.48/a0.33]                                      -> distributed tier (weak)
+  PC9  evr=0.010 | tier[w0.69/a0.42]                                      -> distributed tier
+  PC10 evr=0.008 | tier[w0.79/a0.44] doma[w0.62]                          -> distributed tier/domain
+  PC11 evr=0.007 | tier[w0.77/a0.42]                                      -> distributed tier
+  PC12 evr=0.007 | tier[w0.78/a0.48]                                      -> distributed tier
+  PC13 evr=0.004 | tier[w0.52/a0.36]                                      -> distributed tier (weak)
+  PC14 evr=0.004 | tier[w0.66/a0.39]                                      -> distributed tier
+  PC15 evr=0.004 | tier[w0.78/a0.43]                                      -> distributed tier
+  PC16 evr=0.004 | tier[w0.65/a0.39]                                      -> distributed tier
+
+PER-AXIS LABELS (measured; honest):
+  PC1 = carving-radius / Ψ-depth axis   [INTERPRETABLE]  — |rho|≈0.92 to basin_radius AND
+        vacuum_psi_x AND vacuum_psi_y; tier's high omega^2 is a CONSEQUENCE (tier is radius-binned),
+        not categorical separation (AUC-sep 0.50 = partial). This is the axis the current 2D map
+        already captures (vacuum_psi canon-corr 0.96 to PCA-2D, from #1772).
+  PC2 = carving_form (alpha/beta/gamma) [INTERPRETABLE]  — omega^2 0.61, AUC-sep 0.58 vs null 0.018.
+        The single cleanly-separated CATEGORICAL axis. (Matches #1772: form is the only attribute
+        the 2D map discriminates at all, disc_form 0.52 at D2 -> 1.0 at D8.)
+  PC3 = carving_form residual           [INTERPRETABLE-weak] omega^2 0.37.
+  PC4 = ENTANGLED                       — tier+form+curriculum co-load, no single dominant attr.
+  PC5 = curriculum progression          [INTERPRETABLE]  — |rho| 0.67 to curriculum_index/rank
+        (null 0.026). A real training-order / difficulty axis NOT in the current 2D map.
+  PC6..PC16 = distributed tier/domain micro-structure [ENTANGLED / learned-residual]
+        — high tier omega^2 but AUC-sep only 0.39-0.48 (vs 0.075 null): real signal, but tier is
+        encoded as a DISTRIBUTED code across many low-variance PCs, NOT a single separable axis.
+        Domain (63-way) co-loads with tier throughout (domain nests inside tier in this corpus).
+
+HONEST CAVEATS:
+  - eta^2 over-reads high-cardinality tier (168 classes): a RANDOM PC scores eta^2=0.028 on tier.
+    omega^2 + AUC-sep + permutation floor correct this; we label on omega^2/|rho|, AUC-sep as a
+    separability check. eta^2 retained in matrix ONLY for transparency.
+  - tier and domain are NESTED corpus-design labels (domain -> tier), so they co-load; they are not
+    two independent semantic axes. The manifold has ~3 INTERPRETABLE named axes (radius/depth, form,
+    curriculum) + a distributed tier/domain code; it does NOT decompose into 8 clean named axes.
+  - vacuum_psi (current 2D map) ≈ PC1 + a weak 2nd axis; it captures DEPTH but drops form &
+    curriculum entirely (PC2/PC5 orthogonal to vacuum_psi: |rho|<=0.18).
+  - TOY/SCALE: s16 is a real but small carve (283.7M, vocab=256 byte-level, block=128). Axis
+    semantics are scale-DEPENDENT (a_toy_scale_recheck / a_scale_honest_scope) — a production-scale
+    re-carve may split or merge axes. Single ckpt = single rung; NOT a ladder.
+  - substrate = GPU-trained artifact (Lane-G); probe is CPU. Lane-A (AKIDA) untouched
+    (a_lane_akida_gpu_split).
+
+VERDICT: 🟢 MEASURED. The d=768 carving manifold has 3 INTERPRETABLE named axes
+  (PC1 radius/depth · PC2 form · PC5 curriculum) + a distributed, individually-ENTANGLED
+  tier/domain code (PC4, PC6-PC16). NOT 8 independent named axes. Reported per-axis, verbatim.

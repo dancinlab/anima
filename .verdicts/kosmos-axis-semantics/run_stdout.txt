@@ -1,0 +1,37 @@
+=== kosmos_axis_probe — what does each REAL KOSMOS axis encode? ===
+[data] corpus_sample=/tmp/corpus_sample.json sha256=e1bd84186b27d067520f8a6d769523ce27fb2e60afa3fe91e3ad2d5f82f90ff1
+[data] ckpt=/tmp/s16_ckpt_dl/HEXAD/DATA-REGIME/state/carving_dataregime_s16_2026_05_18/ckpt_carving_s16.pt sha256=961c07e2242b194f7d7ddff9e827d2fbd798d658426d32edf4b981a8dd9091e8
+[cache] reusing encoded X from /private/tmp/kap_X_cache.npz shape=(5995, 768)
+[encode] N=5995 conscious states, dim=768 (post-ln_f mean-pooled)
+[attrs] categorical={'tier': 168, 'domain': 63, 'carving_form': 3, 'curriculum_stage': 4}
+[attrs] continuous=['curriculum_rank', 'curriculum_index', 'basin_radius', 'vacuum_psi_x', 'vacuum_psi_y']
+[pca] top-16 EVR: [0.4924, 0.1704, 0.081, 0.0659, 0.0509, 0.0194, 0.0165, 0.0112, 0.0098, 0.0077, 0.007, 0.0065, 0.0043, 0.0041, 0.004, 0.0035]
+
+[floors] computing permutation noise floors (95th pct, 200 shuffles)...
+[floors] eta2_cat 95pct: {'tier': 0.0327, 'domain': 0.0137, 'carving_form': 0.001, 'curriculum_stage': 0.0013}
+[floors] spearman_cont 95pct: {'curriculum_rank': 0.0265, 'curriculum_index': 0.0265, 'basin_radius': 0.0265, 'vacuum_psi_x': 0.0257, 'vacuum_psi_y': 0.0281}
+
+[matrix] per-PC association (eta^2 / macro-AUC for cat; |Spearman| for cont)
+  (label decision = bias-corrected omega^2 [cat] + |Spearman| [cont];
+   eta^2 + AUC reported alongside; eta^2 is cardinality-biased.)
+[floors] omega2_cat 95pct: {'tier': 0.005, 'domain': 0.0033, 'carving_form': 0.0007, 'curriculum_stage': 0.0008}
+[floors] AUC-separability null (random score): {'tier': 0.075, 'domain': 0.051, 'carving_form': 0.018, 'curriculum_stage': 0.007}
+  (AUC-sep metric = mean_class |AUC-0.5|*2; 0=chance, 1=perfect separation)
+PC1  evr=0.492 | tier[w0.94/a0.50] doma[w0.70/a0.43] carv[w0.01/a0.10] curr[w0.01/a0.05] | cur_ran=0.04 cur_ind=0.04 basin_r=0.91 psi_x=0.92 psi_y=0.92 | -> tier (omega2=0.945, auc=0.504, eta2=0.95)
+PC2  evr=0.170 | tier[w0.01/a0.17] doma[w0.01/a0.14] carv[w0.61/a0.58] curr[w0.08/a0.21] | cur_ran=0.18 cur_ind=0.18 basin_r=0.14 psi_x=0.16 psi_y=0.14 | -> carving_form (omega2=0.606, auc=0.582, eta2=0.61)
+PC3  evr=0.081 | tier[w0.08/a0.15] doma[w0.05/a0.13] carv[w0.37/a0.49] curr[w0.04/a0.15] | cur_ran=0.09 cur_ind=0.09 basin_r=0.01 psi_x=0.01 psi_y=0.00 | -> carving_form (omega2=0.369, auc=0.491, eta2=0.37)
+PC4  evr=0.066 | tier[w0.46/a0.29] doma[w0.36/a0.28] carv[w0.41/a0.56] curr[w0.20/a0.31] | cur_ran=0.37 cur_ind=0.37 basin_r=0.12 psi_x=0.12 psi_y=0.10 | -> tier (omega2=0.462, auc=0.290, eta2=0.48)
+PC5  evr=0.051 | tier[w0.47/a0.30] doma[w0.34/a0.27] carv[w0.46/a0.53] curr[w0.41/a0.48] | cur_ran=0.67 cur_ind=0.67 basin_r=0.17 psi_x=0.18 psi_y=0.16 | -> curriculum_index (|rho|=0.674)
+PC6  evr=0.019 | tier[w0.84/a0.47] doma[w0.55/a0.38] carv[w0.01/a0.06] curr[w0.01/a0.07] | cur_ran=0.07 cur_ind=0.07 basin_r=0.10 psi_x=0.06 psi_y=0.10 | -> tier (omega2=0.842, auc=0.465, eta2=0.85)
+PC7  evr=0.017 | tier[w0.75/a0.41] doma[w0.59/a0.37] carv[w0.01/a0.08] curr[w0.11/a0.20] | cur_ran=0.21 cur_ind=0.21 basin_r=0.10 psi_x=0.06 psi_y=0.03 | -> tier (omega2=0.746, auc=0.406, eta2=0.75)
+PC8  evr=0.011 | tier[w0.48/a0.33] doma[w0.35/a0.30] carv[w0.03/a0.11] curr[w0.04/a0.10] | cur_ran=0.09 cur_ind=0.09 basin_r=0.01 psi_x=0.05 psi_y=0.02 | -> tier (omega2=0.478, auc=0.334, eta2=0.49)
+PC9  evr=0.010 | tier[w0.69/a0.42] doma[w0.44/a0.35] carv[w0.02/a0.08] curr[w0.02/a0.08] | cur_ran=0.04 cur_ind=0.04 basin_r=0.01 psi_x=0.05 psi_y=0.06 | -> tier (omega2=0.688, auc=0.422, eta2=0.70)
+PC10 evr=0.008 | tier[w0.79/a0.44] doma[w0.62/a0.39] carv[w0.01/a0.09] curr[w0.11/a0.21] | cur_ran=0.26 cur_ind=0.26 basin_r=0.03 psi_x=0.00 psi_y=0.00 | -> tier (omega2=0.787, auc=0.438, eta2=0.79)
+PC11 evr=0.007 | tier[w0.77/a0.42] doma[w0.51/a0.36] carv[w0.00/a0.05] curr[w0.01/a0.07] | cur_ran=0.04 cur_ind=0.04 basin_r=0.00 psi_x=0.03 psi_y=0.04 | -> tier (omega2=0.773, auc=0.420, eta2=0.78)
+PC12 evr=0.007 | tier[w0.78/a0.48] doma[w0.51/a0.36] carv[w0.01/a0.07] curr[w0.05/a0.13] | cur_ran=0.08 cur_ind=0.08 basin_r=0.04 psi_x=0.04 psi_y=0.00 | -> tier (omega2=0.783, auc=0.479, eta2=0.79)
+PC13 evr=0.004 | tier[w0.52/a0.36] doma[w0.38/a0.33] carv[w0.00/a0.04] curr[w0.01/a0.06] | cur_ran=0.09 cur_ind=0.09 basin_r=0.02 psi_x=0.06 psi_y=0.05 | -> tier (omega2=0.519, auc=0.359, eta2=0.53)
+PC14 evr=0.004 | tier[w0.66/a0.39] doma[w0.43/a0.32] carv[w0.00/a0.00] curr[w0.01/a0.06] | cur_ran=0.02 cur_ind=0.02 basin_r=0.07 psi_x=0.08 psi_y=0.04 | -> tier (omega2=0.656, auc=0.387, eta2=0.67)
+PC15 evr=0.004 | tier[w0.78/a0.43] doma[w0.46/a0.37] carv[w0.00/a0.05] curr[w0.01/a0.07] | cur_ran=0.06 cur_ind=0.06 basin_r=0.03 psi_x=0.05 psi_y=0.04 | -> tier (omega2=0.776, auc=0.435, eta2=0.78)
+PC16 evr=0.004 | tier[w0.65/a0.39] doma[w0.43/a0.31] carv[w0.00/a0.02] curr[w0.01/a0.05] | cur_ran=0.01 cur_ind=0.01 basin_r=0.02 psi_x=0.05 psi_y=0.05 | -> tier (omega2=0.650, auc=0.395, eta2=0.66)
+
+[done] wall=4.3s -> results.json

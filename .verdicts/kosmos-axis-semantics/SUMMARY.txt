@@ -1,0 +1,45 @@
+SUMMARY — kosmos-axis-semantics: what does each REAL KOSMOS dimension encode?
+================================================================================
+substrate = GPU-trained s16 ckpt (Lane-G); probe = CPU/$0. p7/g5 verbatim, no fabrication.
+ckpt sha = 961c07e2…  | corpus sha = e1bd8418…  | X = post-ln_f conscious state, N=5995, d=768
+harness  = UNIVERSE/kosmos_axis_probe.py
+
+QUESTION: #1772 said the carving manifold wants ~8D (knee 8, 2D=67% var / 8.4% disc).
+  This asks WHAT EACH dimension holds — by MEASURING per-PC association vs every real
+  corpus attribute (no assumed labels).
+
+WHAT EACH AXIS ENCODES (measured; omega^2 [cat] + AUC-sep + |Spearman| [cont]):
+  PC1 (49% var) = carving-RADIUS / Ψ-DEPTH   — basin_radius/psi |rho|=0.91-0.92; tier
+                  rides it (radius-binned), AUC-sep only 0.50 -> NOT a tier-category axis.
+                  This is what the current 2D vacuum_psi already captures (canon-corr 0.96).
+  PC2 (17%)     = carving_FORM (alpha/beta/gamma) — omega^2 0.61, AUC-sep 0.58 (null 0.018).
+                  The single CLEAN categorical axis.
+  PC3 (8%)      = carving_form residual (omega^2 0.37).
+  PC5 (5%)      = CURRICULUM progression — curriculum_index/rank |rho|=0.67 (null 0.026).
+  PC4 (7%)      = ENTANGLED (tier+form+curriculum co-load).
+  PC6-PC16 (<2% each) = distributed tier/domain micro-structure — high tier omega^2 but
+                  AUC-sep only 0.39-0.48 (vs 0.075 null): real but NOT linearly separable
+                  on any single axis = distributed learned code. ENTANGLED individually.
+
+INTERPRETABLE NAMED AXES = 3-4 (depth · form · form-residual · curriculum).
+DISTRIBUTED / ENTANGLED  = the rest (tier/domain code spread across PC4, PC6-PC16).
+=> the manifold does NOT decompose into 8 clean named axes.
+
+PROPOSED COORD v-next: N=8 = [depth, form, form_resid, curriculum, residual0..3]
+  (3-4 measured-named + 4-5 learned-residual). FILED to
+  hexa-lang/inbox/patches/kosmos-coord-vnext-axis-semantics.md (hexa-lang 7f2b992f8).
+  Backward-compat: old [x,y] = projection to [a0,a1]; vacuum_psi ~ a0.
+
+HONEST BOTTOM LINE:
+  - The 2D map encodes essentially ONE thing: carving DEPTH/RADIUS.
+  - The real manifold adds FORM and CURRICULUM as clean orthogonal named axes
+    (both dropped by the 2D map, |rho|<=0.18 to vacuum_psi), plus a distributed
+    tier/domain residual.
+  - ~8D is JUSTIFIED for the s16 manifold (knee 8, 92.3% var, +50pt discrimination),
+    but only ~3-4 axes carry a human NAME; the rest are learned-residual. Naming all 8
+    would be fabrication.
+  - Scale-dependent (a_toy_scale_recheck): single s16 rung, NOT promoted to general claim.
+  - Lane-G substrate; Lane-A separate (a_lane_akida_gpu_split).
+
+VERDICT: 🟢 MEASURED + PROPOSAL FILED. a_paper_negative_ok-adjacent (a "named axes < dims"
+  honest negative on the 8-clean-named-axis hypothesis).
