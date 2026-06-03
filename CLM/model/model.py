@@ -214,10 +214,12 @@ class MoEConvLayer(nn.Module):
             # Switch-Transformer load-balance: n_e * sum_i (f_i * P_i)
             # f_i = fraction of tokens dispatched to expert i (top-1 routing
             #       fraction), P_i = mean router prob for expert i.
-            top1 = probs.argmax(dim=1)                # (B, T)
-            f_i = torch.stack(
-                [(top1 == i).float().mean() for i in range(n_e)]
-            )                                          # (n_e,)
+            # VECTORIZED: a Python `[(top1==i).mean() for i in range(n_e)]` loop
+            # launches n_e separate reductions + GPU syncs per forward (the
+            # per-step bottleneck at n_e=30). one_hot+mean is a single fused op,
+            # mathematically identical (per-class fraction == one-hot mean).
+            top1 = probs.argmax(dim=1)                            # (B, T)
+            f_i = F.one_hot(top1, n_e).to(probs.dtype).mean(dim=(0, 1))  # (n_e,)
             p_i = usage
             lb = n_e * (f_i * p_i).sum()
             aux = aux + self.rc.load_balance_coef * lb
