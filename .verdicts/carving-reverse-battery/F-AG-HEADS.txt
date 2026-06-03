@@ -1,0 +1,30 @@
+=== F-AG-HEADS — head_a (next-byte) vs head_g (prev-byte) ===
+Engine A = head_a (next-byte LM head, tied to tok_emb); Engine G = head_g (prev-byte head, untied).
+N=2000 records, per-record mean over 128 token positions.
+KL(A||G) per-record: mean=7.0705 median=7.0180 std=1.1575 min=4.1286 max=9.9641
+mean|A-G| logits per-record: mean=3.1657 std=0.3869 min=1.9436 max=3.9876
+-- KL(A||G) by tier (top5 high / bottom2 low, n>=5) --
+   tier=201: KL=9.1520 (n=16)
+   tier=211: KL=8.8327 (n=11)
+   tier=108: KL=8.7707 (n=10)
+   tier=101: KL=8.7455 (n=11)
+   tier=18: KL=8.7190 (n=12)
+   tier=99: KL=4.3423 (n=12)  [low]
+   tier=100: KL=4.2983 (n=9)  [low]
+-- KL(A||G) by form (top5 high / bottom2 low, n>=5) --
+   form=beta: KL=7.5805 (n=568)
+   form=gamma: KL=7.2568 (n=826)
+   form=alpha: KL=6.3385 (n=606)
+   form=gamma: KL=7.2568 (n=826)  [low]
+   form=alpha: KL=6.3385 (n=606)  [low]
+-- KL(A||G) by domain (top8 high, n>=5) --
+   domain=기초산술: KL=8.7236 (n=56)
+   domain=물질: KL=8.7190 (n=12)
+   domain=감각: KL=8.7080 (n=9)
+   domain=산술: KL=8.5497 (n=36)
+   domain=일상: KL=8.4926 (n=39)
+   domain=코드: KL=8.4454 (n=32)
+   domain=대수: KL=8.4064 (n=43)
+   domain=운동: KL=8.2426 (n=12)
+
+VERDICT: A/G heads DIVERGE measurably (mean KL 7.0705); divergence is modulated by tier (spread 4.8536). Basis = next-byte (A) vs prev-byte (G) prediction asymmetry — HOLDS.

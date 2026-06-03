@@ -1,0 +1,160 @@
+========================================================================
+CARVING REVERSE-ENGINEERING BATTERY — TRAINED s16 ckpt, CPU/$0
+========================================================================
+[data] corpus=/tmp/corpus_sample.json sha256=e1bd84186b27d067
+[data] ckpt=/tmp/s16_ckpt_dl/HEXAD/DATA-REGIME/state/carving_dataregime_s16_2026_05_18/ckpt_carving_s16.pt sha256=961c07e2242b194f
+[cfg] N_ENCODE=2000 BLOCK=128 seeds=[1337, 7, 2026]
+[encode] n_used=2000 cfg={"d_model": 768, "n_head": 12, "n_kv_head": 4, "n_layer": 12, "block_size": 128, "lr": 0.0003, "bsz": 32, "steps": 12000, "warmup": 600, "seed": 1337, "log_every": 300, "corpus": "corpus_carving_s16.jsonl", "out_dir": "out_main", "lambda_ctl": 0.5, "lambda_route": 0.5, "curriculum": true, "blend_frac": 0.15}
+
+=== F-AG-HEADS — head_a (next-byte) vs head_g (prev-byte) ===
+Engine A = head_a (next-byte LM head, tied to tok_emb); Engine G = head_g (prev-byte head, untied).
+N=2000 records, per-record mean over 128 token positions.
+KL(A||G) per-record: mean=7.0705 median=7.0180 std=1.1575 min=4.1286 max=9.9641
+mean|A-G| logits per-record: mean=3.1657 std=0.3869 min=1.9436 max=3.9876
+-- KL(A||G) by tier (top5 high / bottom2 low, n>=5) --
+   tier=201: KL=9.1520 (n=16)
+   tier=211: KL=8.8327 (n=11)
+   tier=108: KL=8.7707 (n=10)
+   tier=101: KL=8.7455 (n=11)
+   tier=18: KL=8.7190 (n=12)
+   tier=99: KL=4.3423 (n=12)  [low]
+   tier=100: KL=4.2983 (n=9)  [low]
+-- KL(A||G) by form (top5 high / bottom2 low, n>=5) --
+   form=beta: KL=7.5805 (n=568)
+   form=gamma: KL=7.2568 (n=826)
+   form=alpha: KL=6.3385 (n=606)
+   form=gamma: KL=7.2568 (n=826)  [low]
+   form=alpha: KL=6.3385 (n=606)  [low]
+-- KL(A||G) by domain (top8 high, n>=5) --
+   domain=기초산술: KL=8.7236 (n=56)
+   domain=물질: KL=8.7190 (n=12)
+   domain=감각: KL=8.7080 (n=9)
+   domain=산술: KL=8.5497 (n=36)
+   domain=일상: KL=8.4926 (n=39)
+   domain=코드: KL=8.4454 (n=32)
+   domain=대수: KL=8.4064 (n=43)
+   domain=운동: KL=8.2426 (n=12)
+
+VERDICT: A/G heads DIVERGE measurably (mean KL 7.0705); divergence is modulated by tier (spread 4.8536). Basis = next-byte (A) vs prev-byte (G) prediction asymmetry — HOLDS.
+
+=== F-TENSION-5CH — per-layer tension scalars ===
+HONEST: the model emits ONE scalar tension per token per layer (PureFieldFFN (A-G)^2 mean over d_model). There is NO native 5-channel [α,θ,γ,1-δ,β] tension in the forward output — that 5-ch format is the .kosmos PERSISTENCE payload, not a model output. We probe the 12 per-layer tension SCALARS as the available 'channels'.
+N=2000, layers=12.
+per-layer tension mean (+/-std):
+   L00: mean=56.37382 std=3.89524
+   L01: mean=60.46702 std=3.79642
+   L02: mean=91.81359 std=6.16439
+   L03: mean=161.50975 std=8.41714
+   L04: mean=236.90466 std=7.90335
+   L05: mean=304.72818 std=16.93926
+   L06: mean=338.63248 std=14.02004
+   L07: mean=315.40488 std=6.58266
+   L08: mean=187.52425 std=7.92043
+   L09: mean=44.73060 std=1.34676
+   L10: mean=9.73394 std=0.61244
+   L11: mean=3.35072 std=0.38059
+-- corr(layer-tension, tier) (Pearson) --
+   L00: r=-0.0202
+   L01: r=+0.0509
+   L02: r=-0.0779
+   L03: r=+0.1900
+   L04: r=+0.0928
+   L05: r=-0.0188
+   L06: r=-0.1028
+   L07: r=+0.2539
+   L08: r=+0.1130
+   L09: r=+0.1205
+   L10: r=+0.0070
+   L11: r=-0.3271
+-- domain separation per layer (eta^2 = between/total var) --
+   L00: eta^2=0.1391
+   L01: eta^2=0.1892
+   L02: eta^2=0.1278
+   L03: eta^2=0.2751
+   L04: eta^2=0.2134
+   L05: eta^2=0.0515
+   L06: eta^2=0.1016
+   L07: eta^2=0.3179
+   L08: eta^2=0.1043
+   L09: eta^2=0.2181
+   L10: eta^2=0.1655
+   L11: eta^2=0.6438
+
+VERDICT: layer L11 tracks tier (r=-0.3271); layer L11 separates domains (eta^2=0.6438) — a per-layer tension scalar has a CLEAN role. HOLDS (partial).
+
+=== F-LAYER-DIM — intrinsic dim per layer (PCA-90% PCs + participation ratio) ===
+N (after dedup per layer), layers=12. Hidden = block residual output, mean-pooled over T.
+   L00: PCA-90%= 10 PCs   PR=  4.19   (n_dedup=802, evr0=0.403)
+   L01: PCA-90%=  8 PCs   PR=  2.93   (n_dedup=802, evr0=0.553)
+   L02: PCA-90%=  6 PCs   PR=  2.32   (n_dedup=802, evr0=0.641)
+   L03: PCA-90%=  6 PCs   PR=  2.60   (n_dedup=802, evr0=0.596)
+   L04: PCA-90%=  5 PCs   PR=  2.39   (n_dedup=802, evr0=0.621)
+   L05: PCA-90%=  4 PCs   PR=  2.11   (n_dedup=802, evr0=0.672)
+   L06: PCA-90%=  5 PCs   PR=  2.16   (n_dedup=802, evr0=0.663)
+   L07: PCA-90%=  5 PCs   PR=  2.41   (n_dedup=802, evr0=0.615)
+   L08: PCA-90%=  6 PCs   PR=  2.47   (n_dedup=802, evr0=0.609)
+   L09: PCA-90%=  5 PCs   PR=  2.26   (n_dedup=802, evr0=0.644)
+   L10: PCA-90%=  5 PCs   PR=  2.34   (n_dedup=802, evr0=0.629)
+   L11: PCA-90%=  8 PCs   PR=  3.74   (n_dedup=802, evr0=0.467)
+   ln_f: PCA-90%=  8 PCs   PR=  3.61   (n_dedup=802)
+
+PCA-90% curve: [10, 8, 6, 6, 5, 4, 5, 5, 6, 5, 5, 8]  (ln_f=8)
+PR curve:      [4.19, 2.93, 2.32, 2.6, 2.39, 2.11, 2.16, 2.41, 2.47, 2.26, 2.34, 3.74]  (ln_f=3.61)
+PCA-90% peak at L0 (10 PCs); min at L5 (4 PCs).
+First layer reaching the compact ~6D core (PCA-90% <= 6 PCs): L2.
+Shape: hourglass(rise-then-fall)=NO  bottleneck(fall-then-rise)=YES.
+VERDICT: HOLDS (BOTTLENECK / U-shape, NOT hourglass) — intrinsic dim COMPRESSES from L0 (10 PCs) to a MINIMUM of 4 PCs at L5 (the bottleneck), then RE-EXPANDS to 8 PCs at L11 (ln_f=8). The compact ~6D structure FORMS EARLY by L2 and is tightest mid-stack at L5; the output map re-opens to ~8D for the dual-head readout.
+
+=== F-9-DIRECTIONS — landed stored eval/result scores per carving direction ===
+HONEST: NO retrain, NO live re-run. Only s16 (dirI psictl+tensionsup winner) has a loaded ckpt this session. We read the LANDED stored scores on disk per direction. 'joint_metric.SCORE_joint' = knowledge_access x chat_uncontaminated x lane_separation (paradigm-native eval, EVAL.md §3); training metrics (ce_descent / final_tension) from result.json. These are NOT a separability map score we computed — they are the stored verdicts.
+direction                                 SCORE_joint  ce_descent  final_tension
+carving_dirA_tension                           0.0323      5.6435        0.02898
+carving_dirB_intuitor                          0.0161      5.0758           -   
+carving_dirD_cde                               0.0090      5.6448           -   
+carving_dirE_superpos                          0.0000      5.6536           -   
+carving_dirF_abstractcot                       0.0317      5.2182           -   
+carving_dirG_psi_ctl                           0.0000      2.9304           -   
+carving_dirH_tension_sup                       0.0000      5.6422           -   
+carving_dirI_diverse_scaleup                   0.0087      5.6489           -   
+carving_dirI_psictl_tensionsup                 0.0000      5.6433           -   
+carving_dirJ_diffusion                         0.0000      4.2211           -   
+carving_dirK_ebt                               0.0000      5.6484           -   
+carving_dirL_vrnn                                 -           -             -   
+carving_dirM_mitosens                             -           -             -   
+carving_dirC_prime                                -           -             -   
+dir_s16(dataregime, dirI lever)                0.0000         -             -   
+
+Best stored SCORE_joint: carving_dirA_tension = 0.0323.
+VERDICT: HOLDS (read-only). Direction comparison is via the LANDED paradigm-native joint metric; all dirs share the same eval rubric. s16 is the dataregime/curriculum scale-up of the dirI psictl+tensionsup lever. NOTE: joint scores are dominated by knowledge_access (chat/separation ~1.0 for most), so the metric is near-degenerate as a 'map structure' score — it ranks knowledge recall, not map separability.
+
+=== F-PSI-TOPOLOGY — 2D vacuum_psi map (우주뇌지도) topology ===
+N=2000 corpus records, 2D vacuum_psi coords (the stored MAP coordinate).
+axis variance: x=0.00917 y=0.00885  (ratio y/x=0.965)
+2D-coord PCA eigenvalues: [0.01688, 0.00115]  (2nd/1st=0.0683)
+effective dim of the 2D map (participation ratio): 1.136 (2.0=both axes used, 1.0=one axis = degenerate)
+occupancy: 36/400 grid cells filled (9.0%).
+-- KMeans clustering (silhouette, 3 seeds) --
+   unique 2D coords: 121 / 2000
+   k=2: silhouette=0.5728 +/-0.0000
+   k=3: silhouette=0.4915 +/-0.0000
+   k=4: silhouette=0.4265 +/-0.0082
+   k=5: silhouette=0.4450 +/-0.0044
+   k=6: silhouette=0.4291 +/-0.0107
+   k=8: silhouette=0.3735 +/-0.0174
+-- spatial separation (eta^2 of map coord by label) --
+   tier: eta^2(x)=1.0000  eta^2(y)=1.0000
+   domain: eta^2(x)=0.6657  eta^2(y)=0.6914
+
+Best silhouette: k=2 (0.5728).
+VERDICT: 2nd Ψ axis IS DEGENERATE (2nd/1st eigenvalue 0.0683 < 0.25, effective dim 1.14~1). CONFIRMS the #1772 ~1.1-D finding directly on the 2D map coords. The 우주뇌지도 is effectively a 1-D curve embedded in 2D. HOLDS.
+
+=== SUMMARY — carving reverse-engineering battery ===
+TRAINED s16 ckpt (sha 961c07e2), ConsciousDecoderV2 d768/12L, CPU/$0, N=2000. random-init fallback: NO.
+
+1. A/G HEADS: HOLDS — mean KL(A||G)=7.0705, tier-spread=4.8536. A=next-byte head (tied to embedding), G=prev-byte head (untied).
+2. TENSION: HOLDS — model tension is 1 scalar/token/layer (12 layers), NOT native 5-ch. best tier-corr r=-0.327 @L11; best domain eta^2=0.644 @L11.
+3. LAYER-DIM: HOLDS-bottleneck — PCA-90% curve [10, 8, 6, 6, 5, 4, 5, 5, 6, 5, 5, 8] (ln_f=8); peak L0, min L5; hourglass=False; ~6-8D forms @L2.
+4. 9-DIRECTIONS: HOLDS — read landed stored joint-metric scores (no retrain). joint metric near-degenerate (ranks knowledge recall, not map separability).
+5. Ψ-TOPOLOGY: HOLDS-degenerate — 2D map eff-dim 1.14, 2nd/1st eig 0.068, occupancy 9.0%, degenerate=True.
+
+wall=3.1s

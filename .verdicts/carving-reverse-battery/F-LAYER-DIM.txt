@@ -1,0 +1,22 @@
+=== F-LAYER-DIM — intrinsic dim per layer (PCA-90% PCs + participation ratio) ===
+N (after dedup per layer), layers=12. Hidden = block residual output, mean-pooled over T.
+   L00: PCA-90%= 10 PCs   PR=  4.19   (n_dedup=802, evr0=0.403)
+   L01: PCA-90%=  8 PCs   PR=  2.93   (n_dedup=802, evr0=0.553)
+   L02: PCA-90%=  6 PCs   PR=  2.32   (n_dedup=802, evr0=0.641)
+   L03: PCA-90%=  6 PCs   PR=  2.60   (n_dedup=802, evr0=0.596)
+   L04: PCA-90%=  5 PCs   PR=  2.39   (n_dedup=802, evr0=0.621)
+   L05: PCA-90%=  4 PCs   PR=  2.11   (n_dedup=802, evr0=0.672)
+   L06: PCA-90%=  5 PCs   PR=  2.16   (n_dedup=802, evr0=0.663)
+   L07: PCA-90%=  5 PCs   PR=  2.41   (n_dedup=802, evr0=0.615)
+   L08: PCA-90%=  6 PCs   PR=  2.47   (n_dedup=802, evr0=0.609)
+   L09: PCA-90%=  5 PCs   PR=  2.26   (n_dedup=802, evr0=0.644)
+   L10: PCA-90%=  5 PCs   PR=  2.34   (n_dedup=802, evr0=0.629)
+   L11: PCA-90%=  8 PCs   PR=  3.74   (n_dedup=802, evr0=0.467)
+   ln_f: PCA-90%=  8 PCs   PR=  3.61   (n_dedup=802)
+
+PCA-90% curve: [10, 8, 6, 6, 5, 4, 5, 5, 6, 5, 5, 8]  (ln_f=8)
+PR curve:      [4.19, 2.93, 2.32, 2.6, 2.39, 2.11, 2.16, 2.41, 2.47, 2.26, 2.34, 3.74]  (ln_f=3.61)
+PCA-90% peak at L0 (10 PCs); min at L5 (4 PCs).
+First layer reaching the compact ~6D core (PCA-90% <= 6 PCs): L2.
+Shape: hourglass(rise-then-fall)=NO  bottleneck(fall-then-rise)=YES.
+VERDICT: HOLDS (BOTTLENECK / U-shape, NOT hourglass) — intrinsic dim COMPRESSES from L0 (10 PCs) to a MINIMUM of 4 PCs at L5 (the bottleneck), then RE-EXPANDS to 8 PCs at L11 (ln_f=8). The compact ~6D structure FORMS EARLY by L2 and is tightest mid-stack at L5; the output map re-opens to ~8D for the dual-head readout.

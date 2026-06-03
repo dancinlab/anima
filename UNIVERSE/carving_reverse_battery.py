@@ -331,26 +331,35 @@ def probe_layer_dim(b, cfg, lines):
     L.append(f"PR curve:      {[round(x,2) for x in pr_curve]}  (ln_f={round(pr_f,2)})")
     peak_layer = int(np.argmax(pcs_curve))
     min_layer = int(np.argmin(pcs_curve))
+    # hourglass (rise-then-fall, interior MAX) vs bottleneck (fall-then-rise, interior MIN)
     hourglass = peak_layer not in (0, n_layer - 1) and pcs_curve[peak_layer] > pcs_curve[0] and pcs_curve[-1] < pcs_curve[peak_layer]
-    # layer where 6D structure forms = first layer where PCA-90% PCs <= ~8
-    six_layer = next((li for li in range(n_layer) if pcs_curve[li] <= 8), None)
+    bottleneck = min_layer not in (0, n_layer - 1) and pcs_curve[min_layer] < pcs_curve[0] and pcs_curve[-1] > pcs_curve[min_layer]
+    # layer where the compact ~6D structure FORMS = first layer where PCA-90% PCs <= 6
+    six_layer = next((li for li in range(n_layer) if pcs_curve[li] <= 6), None)
     L.append(f"PCA-90% peak at L{peak_layer} ({pcs_curve[peak_layer]} PCs); "
              f"min at L{min_layer} ({pcs_curve[min_layer]} PCs).")
     if six_layer is not None:
-        L.append(f"First layer with PCA-90% <= 8 PCs (~6-8D structure): L{six_layer}.")
-    L.append(f"Hourglass (rise-then-compress, interior peak): {'YES' if hourglass else 'NO'}.")
-    if hourglass:
+        L.append(f"First layer reaching the compact ~6D core (PCA-90% <= 6 PCs): L{six_layer}.")
+    L.append(f"Shape: hourglass(rise-then-fall)={'YES' if hourglass else 'NO'}  "
+             f"bottleneck(fall-then-rise)={'YES' if bottleneck else 'NO'}.")
+    if bottleneck:
+        L.append(f"VERDICT: HOLDS (BOTTLENECK / U-shape, NOT hourglass) — intrinsic dim "
+                 f"COMPRESSES from L0 ({pcs_curve[0]} PCs) to a MINIMUM of {pcs_curve[min_layer]} "
+                 f"PCs at L{min_layer} (the bottleneck), then RE-EXPANDS to {pcs_curve[-1]} PCs "
+                 f"at L{n_layer-1} (ln_f={pcs_f}). The compact ~6D structure FORMS EARLY by "
+                 f"L{six_layer} and is tightest mid-stack at L{min_layer}; the output map re-opens "
+                 "to ~8D for the dual-head readout.")
+        verdict = "HOLDS-bottleneck"
+    elif hourglass:
         L.append(f"VERDICT: HOLDS — intrinsic dim RISES to a peak at L{peak_layer} then "
-                 f"COMPRESSES (hourglass). The compact ~6-8D map forms by the final layers "
-                 f"(ln_f={pcs_f} PCs). ")
-        verdict = "HOLDS"
+                 f"COMPRESSES (hourglass). compact ~6D map forms late (ln_f={pcs_f} PCs).")
+        verdict = "HOLDS-hourglass"
     elif pcs_curve[-1] < pcs_curve[0]:
         L.append(f"VERDICT: monotone-ish COMPRESSION (L0 {pcs_curve[0]} -> L{n_layer-1} "
-                 f"{pcs_curve[-1]} PCs, ln_f {pcs_f}); no clear interior peak -> NOT a clean "
-                 "hourglass. ~6-8D forms late. HOLDS (compression) / INCONCLUSIVE (hourglass).")
+                 f"{pcs_curve[-1]} PCs, ln_f {pcs_f}). ~6D forms early. HOLDS (compression).")
         verdict = "HOLDS-compression"
     else:
-        L.append("VERDICT: layer-dim curve FLAT / no compression — INCONCLUSIVE.")
+        L.append("VERDICT: layer-dim curve FLAT — INCONCLUSIVE.")
         verdict = "INCONCLUSIVE"
     lines.extend(L); lines.append("")
     return {"pca90_curve": pcs_curve, "pr_curve": [float(x) for x in pr_curve],

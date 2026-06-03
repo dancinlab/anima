@@ -1,0 +1,21 @@
+=== F-9-DIRECTIONS — landed stored eval/result scores per carving direction ===
+HONEST: NO retrain, NO live re-run. Only s16 (dirI psictl+tensionsup winner) has a loaded ckpt this session. We read the LANDED stored scores on disk per direction. 'joint_metric.SCORE_joint' = knowledge_access x chat_uncontaminated x lane_separation (paradigm-native eval, EVAL.md §3); training metrics (ce_descent / final_tension) from result.json. These are NOT a separability map score we computed — they are the stored verdicts.
+direction                                 SCORE_joint  ce_descent  final_tension
+carving_dirA_tension                           0.0323      5.6435        0.02898
+carving_dirB_intuitor                          0.0161      5.0758           -   
+carving_dirD_cde                               0.0090      5.6448           -   
+carving_dirE_superpos                          0.0000      5.6536           -   
+carving_dirF_abstractcot                       0.0317      5.2182           -   
+carving_dirG_psi_ctl                           0.0000      2.9304           -   
+carving_dirH_tension_sup                       0.0000      5.6422           -   
+carving_dirI_diverse_scaleup                   0.0087      5.6489           -   
+carving_dirI_psictl_tensionsup                 0.0000      5.6433           -   
+carving_dirJ_diffusion                         0.0000      4.2211           -   
+carving_dirK_ebt                               0.0000      5.6484           -   
+carving_dirL_vrnn                                 -           -             -   
+carving_dirM_mitosens                             -           -             -   
+carving_dirC_prime                                -           -             -   
+dir_s16(dataregime, dirI lever)                0.0000         -             -   
+
+Best stored SCORE_joint: carving_dirA_tension = 0.0323.
+VERDICT: HOLDS (read-only). Direction comparison is via the LANDED paradigm-native joint metric; all dirs share the same eval rubric. s16 is the dataregime/curriculum scale-up of the dirI psictl+tensionsup lever. NOTE: joint scores are dominated by knowledge_access (chat/separation ~1.0 for most), so the metric is near-degenerate as a 'map structure' score — it ranks knowledge recall, not map separability.
