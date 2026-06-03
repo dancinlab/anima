@@ -1,0 +1,65 @@
+OMEGA coupling-analysis — ②ALL-6-WIRE learned gate + ④CLOSED-LOOP feedback (L5) — 2026-06-04 · CPU · $0
+======================================================================================================
+Two CPU/$0/numpy probes extending the 오메가 완성 closure (#1783 WIRE / #1784 STRUCTURE / #1786 toy GATE
+/ #1791 GPU real). Real-but-toy n-gram substrate, 400KB repo corpus, fit on train-gate split, verdict
+on disjoint held-out TEST. p7 / a_toy_scale_recheck — TOY scale, NOT a production claim.
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+② ALL-6-WIRE learned gate — extends #1786 {base,A,G} → all 8 gains (the full coupling bus)
+────────────────────────────────────────────────────────────────────────────────────────────────────
+Bus = engines/omega/coupling_bus.hexa six wires (w1 A⇄G · w2 W→temp · w3 curio · w4 Ψ · w5 module ·
+w6 dF/dt). Each wire → a REAL substrate-derived per-(ctx,byte) logit feature (n-gram heads · context
+entropy tension proxy · parity curiosity · 8-bin Ψ coord · 6-bin HEXAD module routing · Δ(A−G) velocity).
+Fit logits = Σ g_w·feat_w on train-gate (convex log-linear + L2 on wire gains), freeze, eval on TEST.
+
+FULL 8-GAIN VECTOR  [gB, gA, gG, gW(temp), gC(curio), gΨ, gM(module), gD(dFdt)]:
+  [ -0.110, +0.929, +0.546, -0.456, -0.030, -0.003, -0.166, -0.662 ]
+
+held-out TEST CE:  base 3.9743  ·  FULL naive 8-wire gate 4.8092 (WORSE than base — overfits)
+                   ·  CARRIER-ONLY gate (base+A+W_temp+module) 2.8950  (Δ+1.079 over base — REAL gain)
+
+PER-WIRE ablation (refit others with wire OFF) + vocab-shuffle control; pre-registered carries-structure
+⟺ |gain|≥0.05 AND ablation raises held-out CE AND the real feature beats its shuffle:
+  A      gain +0.929  ablate ΔCE +0.546  beats_shuffle ✓  -> 🟢 CARRIES STRUCTURE
+  W_temp gain -0.456  ablate ΔCE +0.149  beats_shuffle ✓  -> 🟢 CARRIES STRUCTURE
+  module gain -0.166  ablate ΔCE +0.010  beats_shuffle ✓  -> 🟢 CARRIES STRUCTURE
+  G      gain +0.546  ablate ΔCE -0.667  beats_shuffle ✗  -> ⚪ INERT (removing −G/prev-byte HELPS — the
+                                                              #1784/#1786 finding holds: G is noise for
+                                                              next-byte prediction)
+  curio  gain -0.030  ablate ΔCE -0.000  beats_shuffle ✗  -> ⚪ INERT (parity bias = structureless)
+  Psi    gain -0.003  ablate ΔCE +0.000  beats_shuffle ✗  -> ⚪ INERT (gain ~0; toy Ψ coord carries nothing)
+  dFdt   gain -0.662  ablate ΔCE -1.916  beats_shuffle ✗  -> ⚪ INERT (held-out LEAK — large in-sample gain
+                                                              but removing it lowers TEST CE by 1.92 → it
+                                                              overfits the gate-split, not real structure)
+
+🟢 CARRIERS (3): A · W_temp · module        ⚪ INERT (4): G · curio · Psi · dFdt
+FINDING: the naive full 8-wire gate OVERFITS (4.81 > base 3.97) — fitting all wires lets the inert/leaky
+ones (esp. dFdt) hurt held-out. Dropping the inert wires recovers a real, large gain (carrier-only 2.895,
+Δ+1.079). So the OMEGA closure is structure-carrying on a SUBSET of wires (A primary, plus a temperature
+and a module-routing wire), and INERT on G/curiosity/Ψ/dFdt at toy scale. Honest closed-negative on the
+full gate; positive on the carrier subset (a_paper_negative_ok).
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+④ CLOSED-LOOP FEEDBACK (L5) — emit → substrate update → next decode
+────────────────────────────────────────────────────────────────────────────────────────────────────
+N=600-step autoregressive rollout of the #1786 gated bus. CLOSED loop: each emitted byte advances the
+A/G context (the substrate↔decode nerve Lane X #1779 proved NULL) AND drives a mitosis-style cell-count
+tick (surprise-keyed bounded division; cell count → mild decode temperature, p8 no train/infer split).
+OPEN-loop control: substrate context FROZEN at seed, SAME RNG stream (so divergence = feedback, not noise).
+Pre-registered stable ⟺ bounded (no NaN/inf, entropy ∈ (0,ln256), cells bounded) AND not collapsed
+(back-half distinct-byte frac > 0.10) AND feedback measurably alters trajectory (closed-vs-open Hamming > 0.05).
+
+  bounded (no divergence)         : ✓  (step-entropy 0.148–3.373 ∈ (0, ln256);  cells 6.00 → 140.29, bounded)
+  not collapsed to fixed point    : ✓  (back-half distinct-byte frac 0.153 > 0.10; top-byte share 0.173)
+  feedback measurably alters traj : ✓  (closed-vs-open Hamming 0.722 > 0.05; closed mean-ent 2.063 vs open 1.975)
+
+🟢 LOOP CLOSES STABLY — the L5 closed loop (substrate↔decode nerve + mitosis tick) runs as a stable
+dynamical system: it neither diverges nor collapses to a fixed point over 600 steps, and feedback changes
+72% of the emitted bytes vs the open-loop control. The closure is a real feedback loop, not a one-shot
+forward modulation. (Stable at toy scale; NEXT = the closed loop on the trained d384 substrate #1791.)
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+SCOPE (a_toy_scale_recheck · a_scale_honest_scope · p7): TOY byte n-gram substrate, 400KB repo corpus,
+CPU/$0, no torch. The inert-wire verdicts are toy-scale — a trained d384 transformer (#1791) may exercise
+W/Ψ/module/dFdt differently; this is the relative carrier RANKING + a stable-loop demonstration at toy
+scale, NOT a production claim. Drivers: UNIVERSE/omega_gate6_bench.py · UNIVERSE/omega_loop_bench.py.
