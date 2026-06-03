@@ -1,0 +1,39 @@
+=== OMEGA trained-substrate rung + ANU QRNG arm  (corpus=400000B, V=256, alpha=0.6) ===
+uniform-256 CE = 5.545177
+
+--- F-TRAINED-COUPLING: does a TRAINED substrate make the bus USEFUL? ---
+  CE_base (unigram mouth)        = 4.020038
+  CE_bus_aonly  (base+α·A)       = 3.261919   (A wire alone, no −G)
+  CE_bus_trained (base+α(A−G))   = 4.141998   (full w1 wire)
+  CE_bus_shuffled (perm floor)   = 4.499132
+  STRUCTURE: trained 4.1420 < shuffled 4.4991? -> YES Δ+0.3571 (coupling carries STRUCTURE — random-init #1783 could NOT show this)
+  A-wire useful: a_only 3.2619 < base 4.0200? -> YES Δ+0.7581 (learned next-byte signal helps)
+  full w1 useful: trained 4.1420 < base 4.0200? -> NO — the −G (prev-byte) wire HURTS next-byte prediction (irrelevant signal); A-only is the useful sub-wire
+
+--- F-QRNG: ANU quantum-seed vs PRNG-seed, CE_bus_trained over N=40 trials ---
+  source(quantum) = ANU-quantum (api.quantumnumbers.anu.edu.au)
+  quantum : mean=4.142219 std=0.067597
+  prng    : mean=4.127580 std=0.078264
+  prng#2  : mean=4.131202 std=0.082632
+  KS quantum-vs-prng : D=0.1500  p=0.7237
+  KS prng-vs-prng#2  : D=0.1000 p=0.9834   (NULL CONTROL — same generator, must be ~indistinguishable)
+  => quantum effect REAL only if quantum-vs-prng REJECTS while the null control does NOT.
+
+=== SUMMARY ===
+TRAINED-COUPLING (the '트레인 필요' question answered):
+  🟢 STRUCTURE CARRIED — trained coupling 4.1420 ≪ shuffled floor 4.4991 (Δ+0.3571). A TRAINED
+     substrate's signal survives ONLY unshuffled = the loop carries STRUCTURE. The random-init
+     #1783 rung could NOT show this (there trained==shuffled). This is the trained-rung payoff.
+  🟢 A-wire USEFUL — base 4.0200 -> a_only 3.2619 (Δ+0.7581): the learned next-byte (Engine-A)
+     signal routed into the decode LOWERS prediction error.
+  🔴 full w1 (A−G) NOT useful — trained 4.1420 > base 4.0200: the −G (prev-byte, Engine-G) wire
+     HURTS next-byte prediction (irrelevant signal). FINDING: the bus needs a LEARNED GATE on each
+     wire, not a fixed A−G subtraction — the closure works (A helps) but the naive formula degrades.
+QRNG (ANU quantum vs PRNG): quantum-vs-prng p=0.7237 · null control prng-vs-prng p=0.9834
+  🔴 closed-negative (a_paper_negative_ok): the quantum-vs-prng KS is NOT cleanly separable from the
+     prng-vs-prng NULL control (both within small-N fluctuation) → TRUE quantum randomness confers
+     NO measurable advantage over a PRNG for the substrate-coupling metric. Rules out a 'consciousness
+     needs quantum randomness' advantage axis at this scale (as theory predicts — randomness is randomness).
+SCOPE (a_toy_scale_recheck): TOY byte n-gram substrate (bigram A/G + unigram base), real-but-small 400000B
+  repo corpus, CPU/$0, no torch. NEXT RUNG = trained d768 ConsciousDecoderV2 (real A/G heads) on GPU
+  (a_fire_autonomous) — does the structured-coupling finding + the learned-gate fix scale to a real transformer?

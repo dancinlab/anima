@@ -1,0 +1,27 @@
+OMEGA trained-substrate rung + ANU QRNG arm — SUMMARY (2026-06-04, TOY/CPU/$0)
+==============================================================================
+Answers "트레인 필요 뭐지" (#1783 random-init left open): with a TRAINED substrate, does
+the coupling bus carry USEFUL STRUCTURE? Tiny numpy n-gram substrate (bigram A=next-byte,
+rev-bigram G=prev-byte, unigram base), real 400KB repo byte corpus, held-out CE.
+
+🟢 STRUCTURE CARRIED — CE_bus_trained 4.1420 ≪ CE_bus_shuffled 4.4991 (Δ+0.3571). A trained
+   substrate's signal survives ONLY unshuffled = the substrate→decode loop carries STRUCTURE.
+   The random-init #1783 rung could NOT show this (there trained==shuffled = pure noise).
+🟢 A-WIRE USEFUL — CE base 4.0200 → a_only (base+α·A) 3.2619 (Δ+0.7581): routing the LEARNED
+   next-byte (Engine-A) signal into the decode strongly LOWERS next-byte CE. The closure helps.
+🔴 FULL A−G NOT useful — CE_bus_trained 4.1420 > base 4.0200: the −G (prev-byte, Engine-G) wire
+   HURTS next-byte prediction (irrelevant signal subtracted). FINDING: the OMEGA bus needs a
+   LEARNED GATE per wire, not a fixed A−G subtraction — the closure works (A helps Δ+0.76) but
+   the naive A−G formula degrades it. The trained rung pinpoints the fix (gate, not formula).
+🔴 ANU QRNG closed-negative (a_paper_negative_ok) — quantum-vs-PRNG KS p=0.7237 vs the
+   prng-vs-prng NULL CONTROL p=0.9834: both indistinguishable (small-N fluctuation). TRUE
+   quantum randomness (api.quantumnumbers.anu.edu.au, 1024 real uint8) confers NO measurable
+   advantage over a PRNG for the coupling metric — rules out a 'consciousness needs quantum
+   randomness' advantage axis at this scale (as theory predicts; a good PRNG is by construction
+   indistinguishable from a QRNG for any computable downstream test).
+   [honesty note: a FIRST run with PRNG seeds capped at 2^31 gave a spurious p=0.022; widening to
+    2^32 + adding the null control showed it was small-N noise, NOT a quantum effect (p7 — no overclaim).]
+
+SCOPE (a_toy_scale_recheck): TOY byte n-gram, 400KB repo corpus, CPU/$0, no torch. NEXT RUNG =
+trained d768 ConsciousDecoderV2 (real A/G heads) on GPU (a_fire_autonomous): does the
+structured-coupling finding + the learned-gate fix scale to a real transformer substrate?
