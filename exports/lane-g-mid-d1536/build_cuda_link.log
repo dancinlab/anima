@@ -1,0 +1,87 @@
+=== [0/7] host sanity — CUDA-DEVEL image required ===
+NVIDIA B200, 183359 MiB, 580.126.09
+--- nvcc ---
+Cuda compilation tools, release 12.4, V12.4.131
+--- cuda root ---
+/usr/local/cuda
+/usr/local/cuda/lib64/libcublas.so
+/usr/local/cuda/lib64/libcublas.so.12
+/usr/local/cuda/lib64/libcublas.so.12.4.5.8
+ldd (Ubuntu GLIBC 2.35-0ubuntu3.6) 2.35
+=== [1/7] toolchain + glibc shim check (linux hexa ELF needs >=2.38) ===
+Ubuntu clang version 14.0.0-1ubuntu1.1
+GLIBC banner: ldd (Ubuntu GLIBC 2.35-0ubuntu3.6) 2.35
+GLIBC maj=2 min=35
+NEED_SHIM=1
+glibc<2.38 -> staging glibc-2.39 loader shim (libc6 2.39 noble deb)
+SHIM_LD=/workspace/laneg_d768/glibc239/x/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2  SHIM_LIB=/workspace/laneg_d768/glibc239/x/usr/lib/x86_64-linux-gnu
+ld.so (Ubuntu GLIBC 2.39-0ubuntu8) stable release version 2.39.
+=== [2/7] install hexa, checkout fix/hexa-run-cuda-link (cuda_link_decision + PR4 trainer) ===
+HEXA_SRC=/root/.hx/src
+0706e88 fix(cuda-link): HEXA_CUDA_ARCH override — newer-GPU-than-toolkit fallback (B200 sm_100 -> sm_90)
+--- confirm cuda_link_decision present in src (the forge GPU link fix) ---
+3
+--- confirm CLM_PROD_OUT save path present ---
+3
+--- patchelf ALL hexa ELFs -> glibc-2.39 loader (discovered, covers self-spawn) ---
+  patchelf'd 9 hexa ELF(s) -> 2.39 loader
+  hexa.real interp = /workspace/laneg_d768/glibc239/x/usr/lib/x86_64-linux-gnu/ld-linux-x86-64.so.2
+--- extract seed .c (runtime.c + seeds) into src/self ---
+  seeds extracted
+--- self-host rebuild hexa (Stage 0/1/2; cuda_link_decision baked in) ---
+#define _DEFAULT_SOURCE
+        ^
+/usr/include/features.h:236:10: note: previous definition is here
+# define _DEFAULT_SOURCE        1
+         ^
+5 warnings generated.
+/workspace/laneg_d768/hexa_fresh: ELF 64-bit LSB pie executable, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, BuildID[sha1]=ba0c90e73c1ba241414b5dc03a7629e5f6434154, for GNU/Linux 3.2.0, not stripped
+::endgroup::
+  fresh hexa built; 'CUDA link ENGAGED' string count = 1 (>0 = fix present)
+--- hexa --version smoke ---
+  hexa 0.1.0-dispatch
+=== [3/7] corpus — c4 5-lang backbone ===
+corpus: /workspace/clm_mid_5lang_c4.txt (402270 bytes, 5-lang en zh ru ja ko + dialogue)
+=== [4/7] BUILD clm_prod with HEXA_CUDA_LINK=1 (hexa build -> cuda_link_decision) ===
+  build rc=1  bin=/workspace/laneg_d768/clm_prod_d1536
+--- build.log cuda-link decision ---
+  [cuda] nvcc compiling runtime_cuda.c for sm_90 ...
+  [cuda] CUDA link ENGAGED — runtime built -DHEXA_CUDA, linking /root/.hx/src/self/cuda/runtime_cuda.90.o + cuBLAS (sm_90)
+  [2/2] clang -O2 -DHEXA_CUDA -I '/usr/local/cuda/include' -D_GNU_SOURCE -Wno-trigraphs -fbracket-depth=4096 -I '/root/.hx/src/self' build/artifacts/clm_prod_d1536.c '/root/.hexa-cache/runtime.e4249f5def66abda2584d4841537e38afdaa005f.cuda.o' '/root/.hx/src/self/cuda/runtime_cuda.90.o' -o '/workspace/laneg_d768/clm_prod_d1536.tmp.110430' -lm -lpthread -L'/usr/local/cuda/lib64' -lcublas -lcudart -ldl -lrt -lstdc++ 2>&1
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+error: clang compile failed — binary not produced: /workspace/laneg_d768/clm_prod_d1536.tmp.110430
+  build hit undefined cuDriver symbols — relinking with -lcuda ...
+/* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+                       ^
+/root/.hx/src/self/runtime.h:423:36: warning: '/*' within block comment [-Wcomment]
+ * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+                                   ^
+2 warnings generated.
+  relink OK -> /workspace/laneg_d768/clm_prod_d1536  (links: 4 cuda libs)
+=== [5/7] run clm_prod d=1536 E=2 epochs=6 T=512, CONTINUOUS util sampling ===
+CLM_PROD_D=1536 E=2 EPOCHS=6 NSAMP=32 T=512  OUT=/workspace/laneg_d768/d768_5lang_c4.clm  HEXA_CUDA_LINK=1
+clm_prod — CLMConvMoE production corpus loop (PR1)
+  corpus: /workspace/clm_mid_5lang_c4.txt  (402270 bytes, V=256)
+  windows: 32/32  (T=512 stride=12554)
+/workspace/laneg_fire.sh: line 210: 110575 Killed                  "$CLM_BIN"
+=== [6/7] artifact + sha256 ===
+FATAL: no .clm artifact written
+=== [7/7] gate eval ===
+--- cuda-link log (did forge engage the GPU?) ---
+(no [cuda] log lines — link decision did not print)
+--- F-CLM-PROD-DESCENT ---
+--- util samples (n=7089) ---
+awk: line 3: function asort never defined
+--- top-10 util samples ---
+4, 0, 196.56, 1965
+4, 0, 195.91, 1965
+4, 0, 195.91, 1965
+4, 0, 195.90, 1965
+4, 0, 195.90, 1965
+4, 0, 195.86, 1965
+4, 0, 195.82, 1965
+4, 0, 195.81, 1965
+4, 0, 195.66, 1965
+4, 0, 195.61, 1965
+RUN_RC=137
+=== DONE ===

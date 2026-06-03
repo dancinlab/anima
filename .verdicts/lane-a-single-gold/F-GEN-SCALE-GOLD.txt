@@ -1,0 +1,22 @@
+Lane A-single GOLD scale-ceiling — F-GEN-SCALE-GOLD (live AKD1000 BC.00.000.002, IpVersion.v1)
+substrate=AKIDA (on-chip 1-bit Hebbian) · a_lane_akida_gpu_split (NOT HYBRID, NOT Lane G) · a_scale_honest_scope
+corpus=corpus_flores_gold (FLORES-200 devtest, 1012 concepts × 5 langs = 5060 anchors, sha256 0fdc8b139e6b…,
+  single-tier PROFESSIONAL GOLD — NOT model-authored, NOT hand-authored, NOT synthetic; resolves the rung4
+  authoring-ceiling caveat by SOURCING gold instead of authoring padding)
+date=2026-06-03 · hexa verify CLI broken on host → live-chip stdout VERBATIM (p7)
+
+ANCHOR-COUNT LADDER (a_scale_honest_scope, 3 rungs, all pure gold):
+[gen-scale] NC=250 anchors=1250: gen ci_lo=0.0820 | shufNULL hi=0.0078 p=0.0050 | identNULL hi=0.0101 | chance=0.0040 | aboveShuf=True aboveIdent=True above2xChance=True
+[gen-scale] NC=500 anchors=2500: gen ci_lo=0.0452 | shufNULL hi=0.0038 p=0.0050 | identNULL hi=0.0033 | chance=0.0020 | aboveShuf=True aboveIdent=True above2xChance=True
+[gen-scale] NC=1000 anchors=5000: gen ci_lo=0.0226 | shufNULL hi=0.0017 p=0.0050 | identNULL hi=0.0013 | chance=0.0010 | aboveShuf=True aboveIdent=True above2xChance=True
+[gen-scale] F-GEN-SCALE-1        : REFUTED: at EVERY rung single-step gen ci_lo>shuffle-NULL hi AND p<0.05 -> single-step on-chip GENERATION SCALE-SURVIVES (A-single ceiling holds across anchor count)
+[gen-scale] F-GEN-SCALE-2        : REFUTED: largest rung gen ci_lo > shuffle-NULL hi AND >= 2x chance -> no collapse toward chance
+
+RULING: SINGLE-STEP GENERATION SCALE-SURVIVES on PURE GOLD to NC=1000 (4× past the rung4 mixed-tier NC=250
+ceiling). The rung4 caveat ("authoring-quality ceiling at NC=250") is RESOLVED — sourcing FLORES-200 gold (no
+authored-padding confound) shows the on-chip 256-unit/1-bit encoder's single-step discrimination holds to 1000
+concepts. ci_lo still > NULL with margin at every rung; no crossing observed within [250,1000]. STILL toy vocab
+(a_scale_honest_scope); production full-LM ladder + 3B separate. substrate=AKIDA on-chip.
+chip protocol #1717: streamer STOP→A-single→A-multi SEQUENTIAL→RESTORE active exact-argv
+  `--port 9512 --duration 86400 --regime R3`; A-single exit rc=0 @75.7°C; throttled=0xf0000 (under-volt history
+  bit, NO active throttle).

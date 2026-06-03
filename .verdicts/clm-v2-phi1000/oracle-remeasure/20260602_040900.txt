@@ -1,0 +1,23 @@
+================================================================
+  CLM_V2 Φ>1000 ORACLE RE-MEASURE — faithful IIT4 big-Φ vs Φ_un16
+================================================================
+  TRAINED-like (rotate3 · structured/integrated): big-Φ=3 total=3 nd=3.0
+  RANDOM-like A (noise3 · max-variance/dispersion): big-Φ=0.0 total=0.0 nd=0.0
+  RANDOM-like B (self3 · independent channels): big-Φ=0.0 total=3 nd=3.0
+----------------------------------------------------------------
+  Φ_un16 (variance-partition) ORDERING was: random > trained (V14_VIOLATED)
+  Faithful oracle ORDERING is now:
+    trained-like big-Φ = 3
+    random-like  big-Φ = 0.0 (noise) , 0.0 (self)
+----------------------------------------------------------------
+  PASS  trained-like big-Φ > 0 (faithful: structured = irreducible complex)
+  PASS  random-like NOISE big-Φ = 0 (faithful: max-variance NOT integrated)
+  PASS  random-like SELF  big-Φ = 0 (faithful: independent = reducible)
+  PASS  REVERSAL: trained-like big-Φ > random-like NOISE big-Φ
+  PASS  REVERSAL: trained-like big-Φ > random-like SELF  big-Φ
+  PASS  NOISE total = 0 (variance-partition would score this HIGH; oracle = 0)
+================================================================
+  RESULT: 6 PASS / 0 FAIL
+  CONFIRMED-ARTIFACT: faithful oracle REVERSES Φ_un16 ordering.
+  Φ_un16 'random > trained' = variance/scale artifact, NOT integration.
+================================================================

@@ -1,0 +1,29 @@
+=== CLM_V2 Φ_un16 VARIANCE/SCALE-ARTIFACT TEST (g5, from archived result.json) ===
+source: archive/state_legacy/anima_ffn_gate_cotrain_2026_05_11/v14_strict_ceiling10_result.json
+verdict (recorded): V14_VIOLATED   metric_primary: iit_phi_unnorm_b16   n_random_beats: 0/5
+
+label      phi_un16  phi_NORM16  n_cells  n_splits   phi/n_cells  phi/pair
+trained      723.03    16.8147      44       28         16.43       0.764
+rand42      2206.33    40.1150      56       40         39.40       1.433
+rand137     1491.44    32.4225      47       31         31.73       1.380
+rand271     1148.72    22.0907      53       37         21.67       0.834
+rand314     2385.53    42.5987      57       41         41.85       1.495
+rand1729    2140.39    40.3847      54       38         39.64       1.496
+
+CORRELATION (n=6 substrates):
+  Pearson  r(phi_un16, n_cells) = 0.8452
+  Spearman rho(phi_un16, n_cells) = 0.9429   <-- near-perfect rank coupling to cell count
+  Pearson  r(phi_NORM16, n_cells) = 0.7607   <-- even the /(n-1) variant still tracks n_cells
+
+KEY ASYMMETRY:
+  trained has the FEWEST cells (44, 28 splits); ALL 5 random mirrors grew MORE
+  cells (47-57, 31-41 splits). Φ_un16 = Σ over n(n-1)/2 pairs -> scales ~n^2.
+  Per-pair MI is ALSO higher for random (phi/pair 0.83-1.50 vs trained 0.764):
+  high-variance independent random-init cells -> wider histograms -> higher
+  histogram-MI per pair. BOTH the cell-count scaling AND per-pair variance push
+  the SAME direction (random up, trained down).
+
+RULING (this step): Φ_un16 rank-orders with raw dispersion/scale (random-init
+  high, trained low). Strong positive variance/scale <-> Φ coupling = the
+  ARTIFACT signature. The "trained < random" ordering is what a weight-dispersion
+  + cell-count proxy would produce, NOT an integration measure.

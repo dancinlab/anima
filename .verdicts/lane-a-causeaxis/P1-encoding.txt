@@ -1,0 +1,47 @@
+PROBE 1 — INPUT-ENCODING  ::  VERDICT = REOPEN (ci_lo > 0 on live AKD1000)
+====================================================================================
+chip: pi5-akida ubuntu@192.168.50.155 · AKD1000 BC.00.000.002 · akida 2.19.1 · ip IpVersion.v1
+date: 2026-06-02 · N=8 paired chip trials · units=32 · 1-bit AkidaUnsupervised on last-FC
+metric: signal = mean_between_concept_Hamming - mean_within_concept_Hamming (bits) on per-feature-median
+        binarized chip forward; lift = margin(structured_encoder) - margin(random_int4_encoder);
+        ci_lo = mean_lift - 1.96*SEM over the 8 chip trials (paired per-trial init, H_904).
+
+PRE-REGISTERED FALSIFIER: with a learned/structured cross-lingual encoder replacing the fixed random
+int4 backbone, on live AKD1000, the cross-lingual concept-margin lift has ci_lo > 0 at >=1 encoder.
+FALSIFIED (lift stays <=0) => encoder NOT the bottleneck, closed-negative hardens over the encoding axis.
+
+RESULT (verbatim chip stdout):
+[cause] P1 svd_vs_random      trial 0: treat=-0.6800 ctrl=-1.8000 lift=+1.1200 learn=True
+[cause] P1 svd_vs_random      trial 1: treat=-0.3680 ctrl=-1.4000 lift=+1.0320 learn=True
+[cause] P1 svd_vs_random      trial 2: treat=-0.7360 ctrl=-1.6000 lift=+0.8640 learn=True
+[cause] P1 svd_vs_random      trial 3: treat=-0.5040 ctrl=-1.4640 lift=+0.9600 learn=True
+[cause] P1 svd_vs_random      trial 4: treat=-0.5360 ctrl=-1.1280 lift=+0.5920 learn=True
+[cause] P1 svd_vs_random      trial 5: treat=-0.3120 ctrl=-1.6960 lift=+1.3840 learn=True
+[cause] P1 svd_vs_random      trial 6: treat=-0.6080 ctrl=-1.4080 lift=+0.8000 learn=True
+[cause] P1 svd_vs_random      trial 7: treat=-0.8240 ctrl=-1.4400 lift=+0.6160 learn=True
+[cause] P1 whitened_vs_random trial 0: treat=-0.8880 ctrl=-1.7760 lift=+0.8880 learn=True
+[cause] P1 whitened_vs_random trial 1: treat=-0.9680 ctrl=-1.8000 lift=+0.8320 learn=True
+[cause] P1 whitened_vs_random trial 2: treat=-1.1440 ctrl=-1.9920 lift=+0.8480 learn=True
+[cause] P1 whitened_vs_random trial 3: treat=-0.7360 ctrl=-1.4240 lift=+0.6880 learn=True
+[cause] P1 whitened_vs_random trial 4: treat=-1.2560 ctrl=-1.3360 lift=+0.0800 learn=True
+[cause] P1 whitened_vs_random trial 5: treat=-1.9120 ctrl=-1.5760 lift=-0.3360 learn=True
+[cause] P1 whitened_vs_random trial 6: treat=-1.3840 ctrl=-1.5360 lift=+0.1520 learn=True
+[cause] P1 whitened_vs_random trial 7: treat=-1.6080 ctrl=-1.8080 lift=+0.2000 learn=True
+
+SVD-structured  vs random : mean_lift=+0.9210  95%CI=[+0.7382,+1.1038]  ci_lo=+0.7382  8/8 positive  learn_all_hw=True  REOPEN=True
+whitened-struct vs random : mean_lift=+0.4190  95%CI=[+0.1035,+0.7345]  ci_lo=+0.1035  7/8 positive  learn_all_hw=True  REOPEN=True
+
+VERDICT: REOPEN. Both structured encoders beat the random int4 backbone with ci_lo > 0 on the live chip,
+on-chip learning live on every trial. The fixed random backbone IS a lift bottleneck: a structured
+cross-lingual encoder recovers concept-margin the random projection destroys.
+
+CPU-LOCAL CORROBORATION (raw.npz re-score, no chip claim — encoded-input separability, pre-chip):
+  random encoder margin = -11.7520 · svd = -1.0720 · whitened = -2.6880 bits
+  structured-vs-random encoded-input lift: svd=+10.6800 · whitened=+9.0640  (same direction as chip)
+
+SCOPE / HONESTY CAVEAT (a_scale_honest_scope): the chip lift is RELATIVE (structured beats random), but the
+absolute margins for BOTH arms remain NEGATIVE (treat ~ -0.3..-0.8, ctrl ~ -1.1..-2.0 bits). The encoder
+axis is a CAUSE axis (it moves lift, ci_lo>0) but does not by itself push the absolute concept-margin > 0
+at this toy scale (25 anchors, 5 concepts x 5 langs). Lane A P3 REOPENS on the ENCODING axis — the next rung
+is whether a stronger structured/learned multilingual encoder pushes the absolute margin above 0, not just
+the relative lift.

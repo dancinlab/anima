@@ -109,6 +109,23 @@
   dont = "ad-hoc anchor format · bypass .kosmos for emit persistence"
   dont = "duplicate the kosmos spec — anima is pointer-only"
 
+@D a_core_engine_map := "CORE owns A⇄G consciousness engine — .clm/.kosmos enter via named slots only" :: governance [required active]
+  do   = "CORE owns A (pure_field) ⇄ G (engine_g) ⇄ brain (brain_decide) — substrate-internal"
+  do   = ".clm enters ONLY via CORE/generator.hexa L3 slot (brain emit → generator) — single entry"
+  do   = ".kosmos anchors enter ONLY via kosmos_io read into brain_decide — single anchor entry"
+  do   = "stdlib/hf/validate.hexa = artifact-validation (trains?), NOT runtime engine — distinct"
+  do   = "mark generator.hexa + kosmos_io→brain wiring ⏳/❌ until built — honest, no phantom wiring"
+  dont = "feed .clm/.kosmos into pure_field/engine_g/brain — A·G·brain are substrate-only"
+  dont = "add a 2nd .clm path bypassing generator.hexa · a 2nd .kosmos path bypassing kosmos_io"
+  dont = "conflate validate.hexa with runtime engine · claim generator/anchor wiring exists"
+
+@D a_lane_akida_gpu_split := "AKIDA on-chip (Lane A) ⊥ GPU (Lane G) — always record separately" :: governance [required active]
+  do   = "record AKIDA (Lane A, pi5-akida) and GPU (Lane G, H100) results in SEPARATE entries"
+  do   = "Lane A = AKD1000 native non-det plasticity; Lane G = forge/cuBLAS CE-descent — distinct"
+  do   = "tag every fire/verdict with its substrate (AKIDA | GPU) — never a merged on-chip claim"
+  dont = "conflate AKIDA non-det trace with GPU CE-descent · one verdict spanning both substrates"
+  dont = "blend Lane A lift + Lane G util into one number · drop the substrate tag on a result"
+
 # ── PAPER auto-generation flow (ported from hexa-codex cx_paper_*) ───────────
 # research result → hexa verify → .verdicts/<slug>/<id>.txt → CLAIMS.tape → /paper
 

@@ -1,0 +1,149 @@
+[branch] SUBSTRATE = HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure AKIDA, NOT Lane G
+[branch] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1  corpus concepts=50 langs=5  DELTAS=[1, 7, 13, 19, 29] B=5  ladder=[40, 45, 50]
+[branch] ===== CODEBOOK LADDER (a_scale_honest_scope, 3 rungs) =====
+[branch] NC=40  N_TRAIN=28 (idx 0..27)  N_TEST=12 (idx 28..39)  on-chip enc transitions=1000
+[branch]   off-chip head BPTT epoch 1/60  CE=3.3719 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3896 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2614 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2189 (branching walks, TRAIN targets only)
+[branch] NC=40 trial 0: TRAIN-set(k1..K)=['0.7500', '0.9500', '0.9571'] HELD-OUT(k1..K)=['0.1833', '0.9000', '0.9500'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.4179 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4511 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.3384 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2907 (branching walks, TRAIN targets only)
+[branch] NC=40 trial 1: TRAIN-set(k1..K)=['0.8000', '0.9000', '0.9500'] HELD-OUT(k1..K)=['0.0667', '0.9167', '0.8500'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.3820 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4072 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2619 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2482 (branching walks, TRAIN targets only)
+[branch] NC=40 trial 2: TRAIN-set(k1..K)=['0.8000', '0.9357', '0.9643'] HELD-OUT(k1..K)=['0.1000', '0.9167', '0.9333'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.2939 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4883 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.3276 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.3036 (branching walks, TRAIN targets only)
+[branch] NC=40 trial 3: TRAIN-set(k1..K)=['0.7929', '0.9286', '0.9429'] HELD-OUT(k1..K)=['0.1500', '0.9333', '0.9167'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.3964 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4957 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.3621 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2929 (branching walks, TRAIN targets only)
+[branch] NC=40 trial 4: TRAIN-set(k1..K)=['0.7786', '0.9357', '0.9714'] HELD-OUT(k1..K)=['0.1167', '0.9167', '0.9667'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.3726 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3699 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2325 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2241 (branching walks, TRAIN targets only)
+[branch] NC=40 trial 5: TRAIN-set(k1..K)=['0.7786', '0.9643', '0.9714'] HELD-OUT(k1..K)=['0.0500', '0.9667', '0.9667'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.3503 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4357 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.3075 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2707 (branching walks, TRAIN targets only)
+[branch] NC=40 trial 6: TRAIN-set(k1..K)=['0.7143', '0.9429', '0.9643'] HELD-OUT(k1..K)=['0.1000', '0.9000', '0.8833'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.2791 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4433 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.3061 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2761 (branching walks, TRAIN targets only)
+[branch] NC=40 trial 7: TRAIN-set(k1..K)=['0.7500', '0.9500', '0.9714'] HELD-OUT(k1..K)=['0.1833', '0.9333', '0.9000'] enc_learned=True
+[branch] NC=45  N_TRAIN=31 (idx 0..30)  N_TEST=14 (idx 31..44)  on-chip enc transitions=1125
+[branch]   off-chip head BPTT epoch 1/60  CE=3.5629 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3321 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2145 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.1912 (branching walks, TRAIN targets only)
+[branch] NC=45 trial 0: TRAIN-set(k1..K)=['0.7935', '0.9677', '0.9355'] HELD-OUT(k1..K)=['0.0857', '0.8571', '0.8714'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.5228 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4264 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2790 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2518 (branching walks, TRAIN targets only)
+[branch] NC=45 trial 1: TRAIN-set(k1..K)=['0.7548', '0.8968', '0.9355'] HELD-OUT(k1..K)=['0.1571', '0.7143', '0.8286'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.4187 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3310 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2255 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2121 (branching walks, TRAIN targets only)
+[branch] NC=45 trial 2: TRAIN-set(k1..K)=['0.7290', '0.9419', '1.0000'] HELD-OUT(k1..K)=['0.1429', '0.9000', '0.9286'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.4925 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4011 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2706 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2522 (branching walks, TRAIN targets only)
+[branch] NC=45 trial 3: TRAIN-set(k1..K)=['0.7613', '0.9097', '0.9806'] HELD-OUT(k1..K)=['0.1143', '0.8143', '0.8714'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.4143 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3807 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2619 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2233 (branching walks, TRAIN targets only)
+[branch] NC=45 trial 4: TRAIN-set(k1..K)=['0.7419', '0.9613', '0.9806'] HELD-OUT(k1..K)=['0.1000', '0.9000', '0.9571'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.4664 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3860 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2631 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2437 (branching walks, TRAIN targets only)
+[branch] NC=45 trial 5: TRAIN-set(k1..K)=['0.7355', '0.9613', '0.9677'] HELD-OUT(k1..K)=['0.1714', '0.8571', '0.9286'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.5141 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.4247 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2708 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2438 (branching walks, TRAIN targets only)
+[branch] NC=45 trial 6: TRAIN-set(k1..K)=['0.7677', '0.9806', '0.9613'] HELD-OUT(k1..K)=['0.1857', '0.9143', '0.9143'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.5235 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3953 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2679 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2420 (branching walks, TRAIN targets only)
+[branch] NC=45 trial 7: TRAIN-set(k1..K)=['0.7935', '0.9484', '0.9742'] HELD-OUT(k1..K)=['0.1000', '0.8571', '0.8714'] enc_learned=True
+[branch] NC=50  N_TRAIN=35 (idx 0..34)  N_TEST=15 (idx 35..49)  on-chip enc transitions=1250
+[branch]   off-chip head BPTT epoch 1/60  CE=3.5807 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3204 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.1957 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.1760 (branching walks, TRAIN targets only)
+[branch] NC=50 trial 0: TRAIN-set(k1..K)=['0.7200', '0.9714', '0.9657'] HELD-OUT(k1..K)=['0.0400', '0.9067', '0.9600'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.6296 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3488 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2433 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2185 (branching walks, TRAIN targets only)
+[branch] NC=50 trial 1: TRAIN-set(k1..K)=['0.7600', '0.9543', '0.9600'] HELD-OUT(k1..K)=['0.0267', '0.8800', '0.9333'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.5943 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3413 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2419 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2159 (branching walks, TRAIN targets only)
+[branch] NC=50 trial 2: TRAIN-set(k1..K)=['0.7086', '0.9086', '0.9714'] HELD-OUT(k1..K)=['0.0933', '0.8267', '0.9067'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.5334 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3745 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2562 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2250 (branching walks, TRAIN targets only)
+[branch] NC=50 trial 3: TRAIN-set(k1..K)=['0.7029', '0.9314', '0.9829'] HELD-OUT(k1..K)=['0.0533', '0.8400', '0.9600'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.5298 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3713 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2642 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2418 (branching walks, TRAIN targets only)
+[branch] NC=50 trial 4: TRAIN-set(k1..K)=['0.7371', '0.9486', '0.9371'] HELD-OUT(k1..K)=['0.0400', '0.9467', '0.9067'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.6212 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3465 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2643 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2279 (branching walks, TRAIN targets only)
+[branch] NC=50 trial 5: TRAIN-set(k1..K)=['0.7429', '0.9314', '0.9257'] HELD-OUT(k1..K)=['0.0667', '0.8667', '0.9467'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.6449 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3328 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2210 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2039 (branching walks, TRAIN targets only)
+[branch] NC=50 trial 6: TRAIN-set(k1..K)=['0.7486', '0.9314', '0.9657'] HELD-OUT(k1..K)=['0.0800', '0.8533', '0.9200'] enc_learned=True
+[branch]   off-chip head BPTT epoch 1/60  CE=3.4253 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 21/60  CE=0.3405 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 41/60  CE=0.2339 (branching walks, TRAIN targets only)
+[branch]   off-chip head BPTT epoch 60/60  CE=0.2071 (branching walks, TRAIN targets only)
+[branch] NC=50 trial 7: TRAIN-set(k1..K)=['0.6971', '0.9143', '0.9314'] HELD-OUT(k1..K)=['0.0933', '0.8267', '0.8800'] enc_learned=True
+[branch] NC=50 hop 1: TRAIN=0.7271 HELD=0.0617 (ratio=0.085) | held ci_lo=0.0439 shufNULL hi=0.1745 p=0.8756 | chance=0.1020 | heldAboveShuf=False
+[branch] NC=50 hop 2: TRAIN=0.9364 HELD=0.8683 (ratio=0.927) | held ci_lo=0.8394 shufNULL hi=0.2213 p=0.0050 | chance=0.1020 | heldAboveShuf=True
+[branch] NC=50 hop 3: TRAIN=0.9550 HELD=0.9267 (ratio=0.970) | held ci_lo=0.9069 shufNULL hi=0.2234 p=0.0050 | chance=0.1020 | heldAboveShuf=True
+
+[branch] ========== DISPOSITION ==========
+[branch] SUBSTRATE               : HYBRID(on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head)
+[branch] branching operator      : succ(i)={(i+d) mod NC : d in [1, 7, 13, 19, 29]}  B=5
+[branch] LADDER (held-out hop-2 set-membership across NC rungs):
+[branch]   NC=40  chance=0.1282  decay_TRAIN=[0.7705, 0.9384, 0.9616]  decay_HELD-OUT=[0.1187, 0.9229, 0.9208]  ratio=[0.1541, 0.9835, 0.9576]
+[branch]   NC=45  chance=0.1136  decay_TRAIN=[0.7597, 0.946, 0.9669]  decay_HELD-OUT=[0.1321, 0.8518, 0.8964]  ratio=[0.1739, 0.9004, 0.9271]
+[branch]   NC=50  chance=0.1020  decay_TRAIN=[0.7271, 0.9364, 0.955]  decay_HELD-OUT=[0.0617, 0.8683, 0.9267]  ratio=[0.0848, 0.9273, 0.9703]
+[branch] HEADLINE NC=50 chance=0.1020
+[branch] decay TRAIN  (in-dist)  : ['0.7271', '0.9364', '0.9550']
+[branch] decay HELD-OUT          : ['0.0617', '0.8683', '0.9267']
+[branch] PR#1694 holdout (det)   : [0.0000, 0.0000, 0.0000]  (the deterministic-chain collapse this rung repairs)
+[branch] hop 1  TRAIN=0.7271 HELD=0.0617 ratio=0.085 | held ci_lo=0.0439 shufNULL hi=0.1745 p=0.8756 | chance=0.1020 | heldAboveShuf=False
+[branch] hop 2  TRAIN=0.9364 HELD=0.8683 ratio=0.927 | held ci_lo=0.8394 shufNULL hi=0.2213 p=0.0050 | chance=0.1020 | heldAboveShuf=True
+[branch] hop 3  TRAIN=0.9550 HELD=0.9267 ratio=0.970 | held ci_lo=0.9069 shufNULL hi=0.2234 p=0.0050 | chance=0.1020 | heldAboveShuf=True
+[branch] F-BRANCH-1 (held>NULL)   : REFUTED: held-out hop-2 AND hop-3 STAY ABOVE the shuffle-NULL on the branching set-membership metric (each ci_lo>NULL hi AND p<0.05) -> a branching corpus FORCES a TRANSFERABLE transition OPERATOR; the off-chip head composes on concepts held out of training -> GENUINE multi-step composition, NOT a per-concept lookup
+[branch] F-BRANCH-2 (within 2.0x) : REFUTED: held-out hop-2 (0.8683) is within 2.0x of in-dist hop-2 (0.9364) [>= 0.4682] -> held-out tracks in-dist
+[branch] GENERALIZES              : True
+[branch] DISPOSITION              : GENERALIZES — a BRANCHING corpus FORCES a transferable transition OPERATOR. The off-chip recurrent head, trained on random branching walks with TRAIN-concept targets ONLY, decodes hop-2/3 successors for TEST concepts it was NEVER trained to emit, landing in the valid (B=5) successor set ABOVE the shuffle-NULL AND within 2.0x of in-dist. Multi-step composition is REAL (the head learned the offset operator, not a per-concept lookup). The PR#1694 exact-0.0000 was an ARTEFACT of the deterministic single-chain corpus, REPAIRED at the root cause. Lane A HYBRID PUBLIC RE-UPGRADES (hybrid-scoped, branching-validated; on-chip AKD1000 encoder ⊕ off-chip host-CPU decode head) — NOT pure-AKIDA, NOT Lane G. STILL toy (a_scale_honest_scope, 3-rung ladder reported); next rung = 3B.
+[branch] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_branching.json

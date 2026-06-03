@@ -1,0 +1,327 @@
+{
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T11:21:43Z",
+  "n_trials": 8,
+  "units": 256,
+  "K_roll": 3,
+  "state_mechanism": "context-carrying code: ctx_{k+1}=bit_majority(ctx,ctx,g_bin) (history 2x); x_{k+1}=bind(g_bin,ctx) [vs stateless x_{k+1}=neutral_bind(g_bin)]",
+  "binding": "bind(a,b)=a XOR roll(b,37); neutral=a XOR roll(a,37)",
+  "encoder": "whitened (byte-match onchip_xlm_rollout.enc_whitened)",
+  "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs",
+  "stateless_baseline_PR1686": [
+    0.4287,
+    0.0277,
+    0.009
+  ],
+  "task": "STATE-CARRYING autoregressive on-chip ROLLOUT: K-hop chained generation with a running 1-bit context code bound into each hop's input; open-vocab full-codebook decode; per-hop shuffle+identity NULL",
+  "metric": "state_acc[k]=P(open-vocab decode of state-carry g_hat at hop k == concept[ti+k]), k=1..K",
+  "trials": [
+    {
+      "trial": 0,
+      "learned_hw": true,
+      "state_acc": [
+        0.42127659574468085,
+        0.029787234042553193,
+        0.02127659574468085
+      ],
+      "stateless_acc": [
+        0.42127659574468085,
+        0.02127659574468085,
+        0.01702127659574468
+      ],
+      "identity_acc": [
+        0.37872340425531914,
+        0.029787234042553193,
+        0.02127659574468085
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 1,
+      "learned_hw": true,
+      "state_acc": [
+        0.40425531914893614,
+        0.02553191489361702,
+        0.00851063829787234
+      ],
+      "stateless_acc": [
+        0.40425531914893614,
+        0.02553191489361702,
+        0.02127659574468085
+      ],
+      "identity_acc": [
+        0.3446808510638298,
+        0.02127659574468085,
+        0.00851063829787234
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 2,
+      "learned_hw": true,
+      "state_acc": [
+        0.39574468085106385,
+        0.01702127659574468,
+        0.0
+      ],
+      "stateless_acc": [
+        0.39574468085106385,
+        0.00851063829787234,
+        0.00425531914893617
+      ],
+      "identity_acc": [
+        0.3276595744680851,
+        0.02127659574468085,
+        0.00425531914893617
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 3,
+      "learned_hw": true,
+      "state_acc": [
+        0.4085106382978723,
+        0.01702127659574468,
+        0.0
+      ],
+      "stateless_acc": [
+        0.4085106382978723,
+        0.01276595744680851,
+        0.00851063829787234
+      ],
+      "identity_acc": [
+        0.33617021276595743,
+        0.01276595744680851,
+        0.00425531914893617
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 4,
+      "learned_hw": true,
+      "state_acc": [
+        0.4723404255319149,
+        0.01702127659574468,
+        0.02127659574468085
+      ],
+      "stateless_acc": [
+        0.4723404255319149,
+        0.02553191489361702,
+        0.01702127659574468
+      ],
+      "identity_acc": [
+        0.39574468085106385,
+        0.02127659574468085,
+        0.01702127659574468
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 5,
+      "learned_hw": true,
+      "state_acc": [
+        0.43829787234042555,
+        0.03829787234042553,
+        0.02127659574468085
+      ],
+      "stateless_acc": [
+        0.43829787234042555,
+        0.0425531914893617,
+        0.01276595744680851
+      ],
+      "identity_acc": [
+        0.34893617021276596,
+        0.029787234042553193,
+        0.01702127659574468
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 6,
+      "learned_hw": true,
+      "state_acc": [
+        0.4127659574468085,
+        0.0425531914893617,
+        0.01276595744680851
+      ],
+      "stateless_acc": [
+        0.4127659574468085,
+        0.03404255319148936,
+        0.00425531914893617
+      ],
+      "identity_acc": [
+        0.3702127659574468,
+        0.01702127659574468,
+        0.01702127659574468
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 7,
+      "learned_hw": true,
+      "state_acc": [
+        0.4340425531914894,
+        0.03829787234042553,
+        0.01276595744680851
+      ],
+      "stateless_acc": [
+        0.4340425531914894,
+        0.01702127659574468,
+        0.00851063829787234
+      ],
+      "identity_acc": [
+        0.3702127659574468,
+        0.03829787234042553,
+        0.01276595744680851
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    }
+  ],
+  "summary": {
+    "learn_all_hw": true,
+    "chance": 0.02040816326530612,
+    "K_roll": 3,
+    "decay_curve_state": [
+      0.4234,
+      0.0282,
+      0.0122
+    ],
+    "decay_curve_stateless": [
+      0.4234,
+      0.0234,
+      0.0117
+    ],
+    "per_hop": [
+      {
+        "hop": 1,
+        "state_acc": {
+          "mean": 0.42340425531914894,
+          "sd": 0.024497801434176163,
+          "ci_lo": 0.4064281450312468,
+          "ci_hi": 0.44038036560705107
+        },
+        "stateless_acc": {
+          "mean": 0.42340425531914894,
+          "ci_lo": 0.4064281450312468,
+          "ci_hi": 0.44038036560705107
+        },
+        "delta_state_minus_stateless": 0.0,
+        "identity_null": {
+          "mean": 0.35904255319148937,
+          "hi": 0.3751889101744355
+        },
+        "shuffle_null": {
+          "mean": 0.020531914893617022,
+          "sd": 0.015451189227005993,
+          "hi": 0.05081624577854876,
+          "p_value": 0.004975124378109453,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": true,
+        "above_identity_null": true,
+        "beats_stateless": false
+      },
+      {
+        "hop": 2,
+        "state_acc": {
+          "mean": 0.028191489361702127,
+          "sd": 0.010653484600803577,
+          "ci_lo": 0.020809001181297353,
+          "ci_hi": 0.0355739775421069
+        },
+        "stateless_acc": {
+          "mean": 0.023404255319148935,
+          "ci_lo": 0.015682521721045957,
+          "ci_hi": 0.031125988917251914
+        },
+        "delta_state_minus_stateless": 0.0048,
+        "identity_null": {
+          "mean": 0.023936170212765957,
+          "hi": 0.02960553464573276
+        },
+        "shuffle_null": {
+          "mean": 0.020170212765957447,
+          "sd": 0.010606249599024767,
+          "hi": 0.04095846198004599,
+          "p_value": 0.23383084577114427,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": false,
+        "above_identity_null": false,
+        "beats_stateless": true
+      },
+      {
+        "hop": 3,
+        "state_acc": {
+          "mean": 0.01223404255319149,
+          "sd": 0.008936893877197056,
+          "ci_lo": 0.006041091055147127,
+          "ci_hi": 0.01842699405123585
+        },
+        "stateless_acc": {
+          "mean": 0.01170212765957447,
+          "ci_lo": 0.007314194083464102,
+          "ci_hi": 0.016090061235684835
+        },
+        "delta_state_minus_stateless": 0.0005,
+        "identity_null": {
+          "mean": 0.012765957446808512,
+          "hi": 0.017224102418283847
+        },
+        "shuffle_null": {
+          "mean": 0.020276595744680853,
+          "sd": 0.008316699862613687,
+          "hi": 0.03657732747540368,
+          "p_value": 0.8905472636815921,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": false,
+        "above_identity_null": false,
+        "beats_stateless": true
+      }
+    ],
+    "F_STATE_1_breaks_1hop_wall": "NOT-REFUTED: hop-2 and/or hop-3 state-carry acc DROPS INTO the shuffle-NULL -> input-side state-carry alone does NOT break the 1-hop wall at 1-bit/256-unit (CLOSED-NEGATIVE, a_paper_negative_ok)",
+    "F_STATE_2_beats_stateless": "REFUTED: state-carry acc > stateless acc at BOTH hop-2 and hop-3 -> state-carry strictly improves over the PR#1686 collapse [0.0277, 0.0090]",
+    "F_STATE_1_pass": false,
+    "F_STATE_2_pass": true,
+    "state_carry_breaks_wall": false
+  },
+  "DISPOSITION": "STATE-CARRY PARTIAL LIFT (a_paper_negative_ok): state beats the stateless baseline at hop-2/3 but does NOT fully clear the shuffle-NULL -> input-side context binding HELPS but is insufficient state at 1-bit/256-unit; decay curve quantifies the residual; names next bridge = ON-CHIP multi-FC depth / paged ladder. EMERGENCE axis partial. Lane A on-chip, toy scale."
+}

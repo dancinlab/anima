@@ -1,0 +1,15 @@
+=== GATE1+GATE3: hexa run clm_prod (cuda link engage) ===
+RUN_EXIT=0
+--- cuda/link lines ---
+--- tail of run ---
+clm_prod — CLMConvMoE production corpus loop (PR1)
+  corpus: stdlib/flame/testdata/clm_semantic_parallel.txt  (1407 bytes, V=256)
+  windows: 2/2  (T=32 stride=687)
+  epoch-1 mean CE = 4.82909
+  epoch-1 mean CE = 4.82909
+F-CLM-PROD-DESCENT = 0
+FAIL
+=== runtime_cuda.o (gate2 artifact) ===
+-rw-r--r-- 1 root root 552K Jun  2 11:58 /root/laneg/self/cuda/runtime_cuda.90.o
+=== clm_prod cached binary cuda libs (gate3) ===
+binary=

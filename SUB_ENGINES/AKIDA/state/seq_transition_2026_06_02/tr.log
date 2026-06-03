@@ -1,0 +1,23 @@
+[tr] corpus_big count=250 concepts=50 langs=5 shift=37 units=64
+[tr] transition train codes=245 (within-lang consecutive pairs)
+[tr] eval transition probes=12005 (cross-lingual t->g candidates)
+[tr] akida 2.19.1 device BC.00.000.002 ip IpVersion.v1 N=8 trials units=64
+[tr] trial 0: tr_acc=0.3224 within_lang_recall=0.4898 learn=True (q=245)
+[tr] trial 1: tr_acc=0.2776 within_lang_recall=0.4939 learn=True (q=245)
+[tr] trial 2: tr_acc=0.2408 within_lang_recall=0.4857 learn=True (q=245)
+[tr] trial 3: tr_acc=0.2898 within_lang_recall=0.4816 learn=True (q=245)
+[tr] trial 4: tr_acc=0.2898 within_lang_recall=0.4653 learn=True (q=245)
+[tr] trial 5: tr_acc=0.3102 within_lang_recall=0.5347 learn=True (q=245)
+[tr] trial 6: tr_acc=0.2653 within_lang_recall=0.4571 learn=True (q=245)
+[tr] trial 7: tr_acc=0.2449 within_lang_recall=0.4857 learn=True (q=245)
+[tr] computing shuffle-NULL (B=200) ...
+
+[tr] ========== DISPOSITION ==========
+[tr] learn_all_hw        : True
+[tr] tr_acc (xlingual)   : mean=0.2801 ci_lo=0.2600 (chance=0.0204)
+[tr] within_lang_recall  : mean=0.4867 ci_lo=0.4708 (chance=0.0200, above=True)
+[tr] shuffle-NULL tr     : mean=0.0194 sd=0.0104 hi=0.0397 p=0.0050
+[tr] F-TR-1 transition   : REFUTED: above-NULL on-chip cross-lingual TRANSITION (t->t+1) prediction (tr ci_lo>NULL hi AND p<0.05) -> working on-chip sequence signal
+[tr] F-TR-2 binding      : REFUTED: on-chip transition FC recovers within-lang t->t+1 above chance (the FC CAN represent a transition; cross-lingual transfer is the remaining gap)
+[tr] DISPOSITION         : ON-CHIP CROSS-LINGUAL SEQUENCE SIGNAL DEMONSTRATED (explicit transition readout > NULL) -> advance Lane A PUBLIC; full-LM (3) next-step flips toward earned-green
+[tr] wrote /home/ubuntu/clm_kosmos_akida/out/result_onchip_xlm_transition.json

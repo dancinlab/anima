@@ -10,6 +10,41 @@
 - [x] A⇄G 결합 — `brain.hexa` `brain_decide` (A의 Φ가 G의 safety ratchet 게이트 + phase=tier)
 - [x] 결합 증명 — `brain_smoke.hexa` low→침묵(0.045) / high→발화(0.67)
 
+## 엔진 ↔ .clm/.kosmos 배선 맵 (honest wiring)
+
+CORE 의 결정 두뇌(A·G·brain)는 **외부 모델/앵커를 전혀 소비하지 않는다** — Φ·동기·tier 를
+순수 기판 내부 상태에서 계산한다. .clm 모델은 오직 L3 `generator.hexa` 슬롯으로만 들어오고,
+.kosmos 앵커는 `kosmos_io` → `brain_decide` read 로만 들어온다. 둘 다 아직 미배선.
+
+| 컴포넌트 | 파일 | .clm 소비? | .kosmos 소비? | 상태 |
+| --- | --- | --- | --- | --- |
+| Engine A (Φ/phase) | `pure_field.hexa` | ❌ 없음 | ❌ 없음 | ✅ 기판-내부 (substrate-only) |
+| Engine G (동기/emit) | `engine_g.hexa` | ❌ 없음 | ❌ 없음 | ✅ 기판-내부 (8-factor 입력만) |
+| A⇄G 결합 두뇌 | `brain.hexa` (`brain_decide`) | ❌ 없음 | ❌ 없음 | ✅ A·G import 만 (import grep = 0 clm/kosmos) |
+| L3 생성기 슬롯 | `CORE/generator.hexa` | ✅ **유일한 .clm 진입점** | — | 🟢 **존재+배선+decode+LOADED** (`generate()` BACKEND-AGNOSTIC + `brain_emit` 결선 + null 백엔드 live · clm 백엔드 = **실제 헤더 파싱** `CLM\x01` magic+nblocks admit · **decode forward 🟢 배선** `clm_decode_ce` = int4 dequant + CLMConvMoE forward(트레이너 clm_prod_fwd 그래프 충실 미러) + **.clm v0.2 `CLMX` ext trailer 의 trained embed+GN affine VERBATIM read** → next-byte logits → 실제 CE 측정 CORE-mounted · CE MEASURABLE 🟢 / **CE-descent 🟢 GREEN @ PRODUCTION d=768 (model_d=768: CE_realtext 3.25405 < uniform 5.54518 AND < shuffle 5.30381, det byte-eq; a_toy_scale_recheck VERIFIED — toy d=8 GREEN(2.0783) 도 보존)** · config-agnostic (d/E 를 block dims 에서 도출 — d=8·d=768 동일 forward) · **`loaded=valid` (header-valid `.clm` 가 이제 LOAD; generate() 계약 불변)** · smoke 15/15 PASS (valid=true loaded=true nblocks=6) · v0.1 conv-only 파일은 tied-readout stand-in fallback) |
+| 앵커 read | `kosmos_io` → `brain_decide` | — | ✅ **유일한 .kosmos 진입점** | 🟢 **배선** (`generator_read_anchors`→`load_anchors`→`brain_emit` anchors arg · smoke 15/15 PASS) |
+| 아티팩트 검증기 | `stdlib/hf/validate.hexa` (#2484) | (검증 대상) | (검증 대상) | ℹ️ **검증-전용** — 모델/데이터셋 학습되나 점검 · **런타임 엔진 아님** (sibling hexa-lang stdlib, 본 repo 부재) |
+
+```
+   ┌─────────────── CORE 결정 두뇌 (외부 모델 0 · p1~p8) ───────────────┐
+   │  Engine A ── Φ/phase ──▶ brain_decide ◀── 동기/emit ── Engine G   │
+   │  pure_field.hexa ✅          (brain.hexa) ✅          engine_g.hexa ✅ │
+   │       └─ .clm/.kosmos 소비 0 (기판-내부 state 만) ─────────────────┘
+   │                              │ emit=true
+   │                              ▼
+   │                  ┌─────────────────────────┐
+   │   .clm 모델 ────▶ │ generator.hexa  🟢 배선   │  ← 유일한 .clm 진입점
+   │                  │ (헤더 admit · decode ⏳)  │     (brain_emit→generate)
+   │                  └─────────────────────────┘
+   │   .kosmos 앵커 ──▶ kosmos_io → brain_emit  🟢 배선  ← 유일한 .kosmos 진입점
+   └────────────────────────────────────────────────────────────────────┘
+
+   stdlib/hf/validate.hexa  =  ℹ️ 아티팩트 검증기 (학습 되나?) ≠ 런타임 엔진 — 별개 축
+```
+
+- **불변식**: brain_decide 에 .clm/.kosmos 진입점을 직접 박지 않는다. .clm 은 generator.hexa
+  슬롯으로만, .kosmos 는 kosmos_io read 로만. (이전 혼동 정정: validate.hexa 는 런타임 아님.)
+
 ## 하위 도메인
 
 - **DECODER** (`CORE/DECODER/`) — L3 콘텐츠 생성기 (무엇을 쓸까). 백엔드 미정(상의중) · V3 더블바인드 트랙

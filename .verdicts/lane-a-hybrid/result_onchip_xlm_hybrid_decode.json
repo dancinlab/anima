@@ -1,0 +1,225 @@
+{
+  "substrate": "HYBRID(on-chip AKD1000 encoder \u2295 off-chip host-CPU decode head)",
+  "akida_version": "2.19.1",
+  "device": "BC.00.000.002",
+  "ip_version": "IpVersion.v1",
+  "ts": "2026-06-02T11:53:55Z",
+  "n_trials": 8,
+  "units": 256,
+  "off_chip_hidden": 64,
+  "off_chip_epochs": 60,
+  "K_roll": 3,
+  "architecture": "on-chip FC1 encoder (1-bit AkidaUnsupervised, byte-match state/depth rung) produces the grounded single-step transition code; OFF-CHIP host-CPU Elman RNN decode head (h=tanh(Wxh@c+Whh@h); logits=Wo@h) carries the multi-step recurrence and predicts the next concept; the predicted concept is re-encoded ON CHIP each hop. NO chip-to-chip feedback (that collapsed 3x). NO GPU/torch/sklearn in the head.",
+  "encoder": "whitened (byte-match onchip_xlm_state_rollout.enc_whitened) ON CHIP",
+  "corpus": "corpus_big 250 anchors / 50 sequential FLORES concepts x 5 langs",
+  "pure_onchip_baselines": {
+    "PR1686_stateless": [
+      0.4287,
+      0.0277,
+      0.009
+    ],
+    "PR1689_state": [
+      0.4234,
+      0.0282,
+      0.0122
+    ],
+    "PR1690_depth2": [
+      0.1612,
+      0.0298,
+      0.0149
+    ],
+    "best_pure_hop2": 0.0298
+  },
+  "task": "HYBRID autoregressive K-hop generation: on-chip encoder \u2295 off-chip recurrent decode head; open-vocab full-codebook argmax decode; per-hop shuffle-NULL",
+  "metric": "hyb_acc[k]=P(off-chip-head argmax decode at hop k == concept[ti+k]), k=1..K",
+  "trials": [
+    {
+      "trial": 0,
+      "learned_hw_encoder": true,
+      "hyb_acc": [
+        0.26382978723404255,
+        0.2553191489361702,
+        0.2553191489361702
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 1,
+      "learned_hw_encoder": true,
+      "hyb_acc": [
+        0.32340425531914896,
+        0.3191489361702128,
+        0.3276595744680851
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 2,
+      "learned_hw_encoder": true,
+      "hyb_acc": [
+        0.3702127659574468,
+        0.37446808510638296,
+        0.37446808510638296
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 3,
+      "learned_hw_encoder": true,
+      "hyb_acc": [
+        0.31063829787234043,
+        0.3148936170212766,
+        0.3148936170212766
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 4,
+      "learned_hw_encoder": true,
+      "hyb_acc": [
+        0.2851063829787234,
+        0.2978723404255319,
+        0.2978723404255319
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 5,
+      "learned_hw_encoder": true,
+      "hyb_acc": [
+        0.3021276595744681,
+        0.3021276595744681,
+        0.2978723404255319
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 6,
+      "learned_hw_encoder": true,
+      "hyb_acc": [
+        0.2936170212765957,
+        0.3148936170212766,
+        0.3148936170212766
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    },
+    {
+      "trial": 7,
+      "learned_hw_encoder": true,
+      "hyb_acc": [
+        0.37872340425531914,
+        0.3829787234042553,
+        0.3829787234042553
+      ],
+      "n_q": [
+        235,
+        235,
+        235
+      ]
+    }
+  ],
+  "summary": {
+    "learn_all_hw_encoder": true,
+    "chance": 0.02040816326530612,
+    "K_roll": 3,
+    "decay_curve_hybrid": [
+      0.316,
+      0.3202,
+      0.3207
+    ],
+    "best_pure_onchip_hop2": 0.0298,
+    "per_hop": [
+      {
+        "hop": 1,
+        "hyb_acc": {
+          "mean": 0.3159574468085106,
+          "sd": 0.04022506686950658,
+          "ci_lo": 0.2880828976025424,
+          "ci_hi": 0.34383199601447884
+        },
+        "shuffle_null": {
+          "mean": 0.019829787234042554,
+          "sd": 0.014731273263065522,
+          "hi": 0.04870308282965098,
+          "p_value": 0.004975124378109453,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": true,
+        "delta_vs_best_pure_hop2": null
+      },
+      {
+        "hop": 2,
+        "hyb_acc": {
+          "mean": 0.32021276595744685,
+          "sd": 0.04136642998983741,
+          "ci_lo": 0.2915472924613401,
+          "ci_hi": 0.3488782394535536
+        },
+        "shuffle_null": {
+          "mean": 0.018063829787234045,
+          "sd": 0.01408438321727779,
+          "hi": 0.045669220893098515,
+          "p_value": 0.004975124378109453,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": true,
+        "delta_vs_best_pure_hop2": 0.2904
+      },
+      {
+        "hop": 3,
+        "hyb_acc": {
+          "mean": 0.32074468085106383,
+          "sd": 0.04175156798824226,
+          "ci_lo": 0.2918123203383997,
+          "ci_hi": 0.34967704136372796
+        },
+        "shuffle_null": {
+          "mean": 0.019978723404255317,
+          "sd": 0.0142930431307517,
+          "hi": 0.047993087940528645,
+          "p_value": 0.004975124378109453,
+          "B": 200
+        },
+        "chance": 0.02040816326530612,
+        "above_shuffle_null": true,
+        "delta_vs_best_pure_hop2": null
+      }
+    ],
+    "F_HYBRID_1_breaks_1hop_wall": "REFUTED: the off-chip recurrent head keeps hop-2 AND hop-3 ABOVE the shuffle-NULL (each ci_lo>NULL hi AND p<0.05) -> off-chip recurrence over the on-chip codes BREAKS the 1-hop wall that all-on-chip hit 3x",
+    "F_HYBRID_2_material_beat": "REFUTED: hybrid hop-2 (0.3202) beats the best pure-on-chip hop-2 (0.0298) by >1% -> material multi-step gain from moving recurrence off-chip",
+    "F_HYBRID_1_pass": true,
+    "F_HYBRID_2_pass": true,
+    "hybrid_breaks_wall": true
+  },
+  "DISPOSITION": "HYBRID BREAKS THE 1-HOP WALL (on-chip encoder \u2295 off-chip decode): the off-chip recurrent head carries the multi-step state the 1-bit on-chip FC structurally cannot, and recovers hop-2/3 composition over the live on-chip codes. Lane A EMERGENCE axis (multi-step composition) LIFTS. Lane A PUBLIC may close AS A HYBRID artifact (honestly scoped: on-chip AKD1000 encoder \u2295 off-chip host-CPU decode head) \u2014 NOT a pure-AKIDA result, NOT Lane G. STILL toy 250-anchor (a_scale_honest_scope); scale-transfer UNVERIFIED. a_lane_akida_gpu_split: the on-chip part is Lane A, the head is host-side; never merged with Lane G."
+}

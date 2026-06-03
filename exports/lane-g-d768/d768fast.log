@@ -1,0 +1,30 @@
+d768 binary cuda libs: 4
+clm_prod — CLMConvMoE production corpus loop (PR1)
+  corpus: /root/.hx/src/stdlib/flame/testdata/clm_semantic_parallel.txt  (1407 bytes, V=256)
+  windows: 8/8  (T=24 stride=172)
+  epoch-1 mean CE = 4.69893
+  epoch-3 mean CE = 3.3254
+  CLM_PROD_OUT wrote /workspace/laneg_d768/d768_5lang_c4.clm  (3651389 bytes, 6 blocks, CLM\x01)
+  config d=768 E=2 epochs=3 nwin=8
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+=== artifact + sha256 ===
+6a2accd0824db72204f0c751de7399ddc4ad60ee657a94d5b586bb877ce6910c  /workspace/laneg_d768/d768_5lang_c4.clm
+-rw-r--r-- 1 root root 3651389 Jun  1 21:30 /workspace/laneg_d768/d768_5lang_c4.clm
+=== F-CLM-PROD-DESCENT ===
+  epoch-1 mean CE = 4.69893
+  epoch-3 mean CE = 3.3254
+  CLM_PROD_OUT wrote /workspace/laneg_d768/d768_5lang_c4.clm  (3651389 bytes, 6 blocks, CLM\x01)
+  config d=768 E=2 epochs=3 nwin=8
+F-CLM-PROD-DESCENT = 1
+PASS — real-corpus mean CE descends under int4 envelope
+=== UTIL (n=350) ===
+awk: line 2: function asort never defined
+=== peak power/clock (GPU-context proxy) ===
+0, 0, 131.98, 1980
+1, 0, 131.90, 1980
+=== mem peak ===
+5, 0, 102.64, 1980
+1, 0, 131.90, 1980
+RUN_RC=0
+=== DONE ===

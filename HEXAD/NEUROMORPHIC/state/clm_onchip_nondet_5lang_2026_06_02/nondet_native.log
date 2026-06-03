@@ -1,0 +1,9 @@
+[native] akida 2.19.1 device BC.00.000.002
+[native] input=parallel (5-lang ko/en/zh/ru/ja) count=25 input_sha=24f855b4f05dbb4f
+[native] SAME input, NATIVE chip re-init each run (no fixed inject), fit() ON CHIP, x3 runs
+[native] run 0: pre_w_sha=b8fdc8a2144eee5c post_w_sha=c92fa563b9cddf77 fwd_sha=a716f78590ed463a learn_hw=True
+[native] run 1: pre_w_sha=a0eea3689ce32465 post_w_sha=cdd651a2c41c5228 fwd_sha=89b8054aa60186ab learn_hw=True
+[native] run 2: pre_w_sha=a87ce06b9f249e97 post_w_sha=4c973eba73db2df7 fwd_sha=a6f079f07af04904 learn_hw=True
+[native] pre_init distinct=3/3  post_w distinct=3/3  fwd distinct=3/3  learn_all=True
+[native] VERDICT GREEN — SAME 5-lang input run x3 on AKD1000 with native chip re-init produced 3 distinct pre-init / 3 distinct post-weight / 3 distinct forward traces -> on-chip plasticity is NON-DETERMINISTIC (the difference IS the identity, H_679/H_904/a_nondet_identity)
+[native] wrote /home/ubuntu/clm_kosmos_akida/out/result_nondet_native.json
