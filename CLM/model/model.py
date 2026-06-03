@@ -48,6 +48,12 @@ class CLMConfig:
     kernel_size: int = 3           # conv kernel (causal)
     expert_kernel_size: int = 3    # per-expert conv kernel
     dilation_base: int = 2         # trunk dilation grows as base**layer
+    max_dilation: int = 512        # CAP on trunk dilation (= dilation = min(base**i, max_dilation)).
+                                   # A dilation >= seq_len pads the sequence with ~base**i zeros and
+                                   # sees no real taps, so an uncapped base**i at deep L (e.g. L=30 ->
+                                   # 2**29) explodes the causal-pad buffer (OOM) for ZERO modeling gain.
+                                   # Capping at 512 keeps the receptive field >= a 512-token window and
+                                   # is byte-eq-neutral for the L=1 golden (min(2**0,512)=1, unchanged).
     top_k: int = 1                 # experts selected per position (variant B/AB)
 
     # router-variant knobs (see RouterConfig)
@@ -235,7 +241,11 @@ class CLMConvMoE(nn.Module):
         # dilated conv embed (P0 §0: "dilated conv embed")
         self.embed_conv = CausalDilatedConv1d(cfg.d_model, cfg.kernel_size, dilation=1)
 
-        dils = [cfg.dilation_base ** i for i in range(cfg.n_trunk_layers)]
+        # CAP dilation at cfg.max_dilation (WaveNet/TCN-style saturation). An
+        # uncapped base**i at deep L explodes the causal pad (L=30 -> 2**29 ~5e8
+        # left-pad) for no modeling benefit beyond a seq-length receptive field.
+        # min(2**0, cap)=1 so the L=1 golden is byte-eq-unchanged.
+        dils = [min(cfg.dilation_base ** i, cfg.max_dilation) for i in range(cfg.n_trunk_layers)]
         self.trunk = nn.ModuleList(TrunkLayer(cfg, d) for d in dils)
         self.moe = MoEConvLayer(cfg)
         self.norm_out = nn.GroupNorm(1, cfg.d_model)

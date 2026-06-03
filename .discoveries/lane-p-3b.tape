@@ -18,3 +18,9 @@
   finding= "clean-license wikipedia cannot reach 60GB; build LARGEST practical multilingual clean corpus (build_wiki_3b_corpus.py, 12-lang, configurable bytes/lang, NO synthetic padding) + STATE exact token/param ratio honestly (a_scale_honest_scope). undertrained 3B = honest negative."
   verdict= "builder committed; raw corpus built on-pod (Stage 2), sha256 + provenance card recorded with run"
   target = "corpus card + token/param ratio verbatim in Stage 2/3 verdicts"
+
+@d s2_dilation_cap := "Stage 2 — deep-L dilation explosion (OOM) + root-cause cap" [d=2026-06-04]
+  seed   = "first 3B fire OOM'd at EVERY batch size on an 80GB H100 (bs=1 tried a single 64GiB alloc)"
+  finding= "ARCHITECTURE defect: trunk dilation = dilation_base**i = 2**i reaches 2**29 (=5.4e8) at L=30; the causal left-pad (k-1)*dil pads a (1,4096,512) tensor by ~1e9 zeros that see NO real taps. d768 golden never hit it (L=1, max dil 1). FIX = cap dilation=min(2**i,512) IDENTICALLY in model.py + clm_decode.hexa → byte-eq PRESERVED (min(2**0,512)=1 at L=1; cap touches runtime dilation only, not serialized bytes). Post-fix probe: 3.073B trains on one H100, peak 61.5GB, bs=4/seq512 = 3.37 s/step."
+  verdict= "byte-eq re-PASS under cap (v3==v2 46742B, GOLDEN exact_eof, L30/E30 roundtrip); fire launched bs=4 accum=2 steps=4000 — .verdicts/lane-p-3b/F-CLM-3B-FIRE.txt"
+  target = "🟢 numerical (3-axis generalization result appended on fire completion)"
