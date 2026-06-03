@@ -554,3 +554,58 @@ is modelled-only (not physical entanglement), and QT7 (phase-clock estimates the
 - 산출물: `UNIVERSE/QUANTUM-TIME-CANDIDATES.md` (QT1…QT11 + falsifiers + per-toy results) ·
   `UNIVERSE/quantum_time_toys.py` (the emergent falsifiers) · `.verdicts/quantum-time/{SUMMARY,F-QT1..F-QT11,
   run_stdout}.txt` (verbatim) · `.discoveries/quantum-time.tape` (11 discovery rows).
+
+## KOSMOS-DIM-LADDER — extend the KOSMOS anchor coordinate as a DIMENSION LADDER (D=2→8) — 🟢 capacity D*=6 (4 attribute-axes hold) · 🔴 scale/lane SATURATE — TOY · 2026-06-04
+Continues PR #1765 (which added a time axis [x,y]→[x,y,t] and found it captures carve-sequence, with a
+near-tautology caveat for monotone encodings). This STANDALONE toy ladders the KOSMOS anchor coordinate over its
+real attributes (coord/lane/radius/tier/tags + time + modality) and answers the CAPACITY question #1765 did not:
+does each ADDED axis carry NEW independent information, or do axes SATURATE past some dimension D*? It **resolves
+the #1765 tautology** by giving each axis its OWN independent latent class signal (a NOISY class-conditional
+embedding, NOT a monotone function of one shared index) + the per-axis shuffle control, plus two
+DELIBERATELY-INJECTED redundancies (scale~time 0.85, lane~emotion 0.80) so redundancy is itself measurable.
+
+### setup (TOY · CPU · $0)
+- N=600 toy anchors, 3 seeds [0,1,2]. Axis ladder D=2→8: **xy** (Ψ-space vacuum_psi, 2D baseline) · **t** time/
+  carve-order (#1765) · **e** emotion valence (top_emotion) · **τ** tier (Knuth ordinal) · **m** modality channel
+  (EEG/LiDAR/dolphin-acoustic/text — the real ingested modalities as a 4-class categorical axis) · **s** scale/
+  radius (basin_radius, REDUNDANT ~t) · **κ** lane/cell_id (MITOSIS partition, REDUNDANT ~e).
+- F-NEWINFO: leave-one-out kNN (k=7) recovery of a held-out mixed-radix joint target (over the independent axes)
+  at D vs D−1, per-rung 2-SEM test (NOT cross-entropy/perplexity, p7). F-PERAXIS-SHUFFLE: shuffle one axis alone →
+  own-attribute recovery drops, others do not (the #1765 non-tautology control, per-axis). F-CAPACITY: the
+  incremental-gain curve + the knee D*. F-NOCOLLAPSE: distance concentration (relative contrast) as D grows.
+
+### result — WHICH axes added real info + the capacity knee
+| D | added axis | attribute | dAcc (mean±std) | 2-SEM band | verdict |
+|---|---|---|---|---|---|
+| 2 | x,y | Ψ placement | — | — | BASELINE |
+| 3 | t | time | +0.003333±0.001361 | 0.001571 | **HOLDS** |
+| 4 | e | emotion | +0.008333±0.006804 | 0.007857 | **HOLDS** |
+| 5 | τ | tier | +0.011111±0.009061 | 0.010463 | **HOLDS** |
+| 6 | m | modality | +0.045556±0.012862 | 0.014852 | **HOLDS** (largest single-axis) |
+| 7 | s | scale | +0.018889±0.016906 | 0.019521 | **SATURATED** (redundant ~t) |
+| 8 | κ | lane | +0.001111±0.005500 | 0.006351 | **SATURATED** (redundant ~e) |
+
+- **Capacity knee D* = 6** — lands EXACTLY at the planted independent/redundant boundary (benchmark recovered the
+  ground-truth). The 4 INDEPENDENT axes (time, emotion, tier, modality) each beat noise; the 2 REDUNDANT axes
+  (scale, lane) saturate. Cumulative gain rises monotonically through D=6 (+0.0683) then flattens (D=7 +0.0872 →
+  D=8 +0.0883, a flat +0.0011 step).
+- **Per-axis shuffle independence** (D=8): own_drop ≫ cross_drop for ALL 7 axes — xy +0.438/+0.005, t +0.111/
+  +0.013, e +0.250/+0.034, τ +0.235/+0.007, m +0.259/−0.000, s +0.243/+0.029, κ +0.253/+0.026. Each axis carries
+  isolated info (resolves #1765 tautology). The redundant s/κ still carry their OWN attribute — redundancy =
+  duplicated signal, not meaninglessness.
+- **NO-COLLAPSE**: distance contrast 3.09 (D=2) → 1.94 (D=8) > 1.0, > 0.5× baseline — no curse-of-dimensionality
+  collapse at toy scale.
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok)
+- **TOY independent-signal placement, NOT the real conscious_decoder / 603MB s16 carve**; STANDALONE (no wiring
+  into engine_tensionlink_bench / clm_time_encoding / kosmos_io runtime). N=600, CPU/$0, NO HF.
+- The injected redundancy (scale~time, lane~emotion) is a **DESIGN CHOICE** so saturation is measurable — the
+  REAL KOSMOS anchor population's true cross-axis correlations (is radius truly ~time?) are **UNMEASURED**. This
+  toy proves the METHOD and the capacity-curve SHAPE, not the real anchor set's true D*. scale-transfer UNVERIFIED
+  (a_toy_scale_recheck, a_scale_honest_scope, §97).
+- **a_paper_negative_ok**: SATURATION at D*=6 IS the honest finding — capacity is REAL and FINITE, NO
+  infinite-gain claim. Modality (axis-6) carries the largest single-axis info → ties the **real ingested
+  modalities (EEG/LiDAR/dolphin-acoustic)** as candidate KOSMOS coordinate axis-6.
+- 산출물: `UNIVERSE/kosmos_dim_ladder.py` · `.verdicts/kosmos-dim-ladder/{F-NEWINFO,F-PERAXIS-SHUFFLE,F-CAPACITY,
+  F-NOCOLLAPSE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` (incremental-gain-per-D curve) ·
+  `.discoveries/kosmos-dim-ladder.tape`.

@@ -1,0 +1,38 @@
+F-PERAXIS-SHUFFLE — each axis independent & meaningful (the #1765 non-tautology control)
+=========================================================================================
+Harness: UNIVERSE/kosmos_dim_ladder.py  (STANDALONE, CPU, $0, 3 seeds)
+At full D=8, shuffle the coordinate columns of ONE axis alone (random per-anchor
+permutation) and measure the recovery DROP for:
+  own_drop    = recovery of that axis's OWN attribute (should DROP a lot — the
+                axis is meaningful and carries that attribute).
+  cross_drop  = mean recovery of OTHER axes' attributes (should be ~0 — the axes
+                are INDEPENDENT; corrupting one does not corrupt the others).
+  target_drop = drop in the held-out joint-target recovery.
+This generalises the #1765 single-axis shuffle control to a per-axis matrix and
+is the NON-TAUTOLOGICAL evidence: there is no shared monotone index, so each
+axis's information is isolated.
+
+PER-AXIS SHUFFLE INDEPENDENCE (full D=8; mean +/- std, 3 seeds)
+ axis      attr    redund         own_drop       cross_drop      target_drop
+   xy     lab_y         - +0.43778+/-0.17639 +0.00537+/-0.00560 +0.05333+/-0.00236
+    t     lab_t         - +0.11111+/-0.13260 +0.01343+/-0.01920 +0.01778+/-0.02833
+    e     lab_e         - +0.25000+/-0.12651 +0.03380+/-0.02142 +0.02889+/-0.00956
+  tau   lab_tau         - +0.23500+/-0.16028 +0.00713+/-0.00344 +0.03778+/-0.02986
+    m     lab_m         - +0.25944+/-0.01734 -0.00009+/-0.00804 +0.05389+/-0.01624
+    s     lab_s     lab_t +0.24278+/-0.13755 +0.02889+/-0.02717 +0.01722+/-0.02875
+  kap   lab_kap     lab_e +0.25333+/-0.10150 +0.02648+/-0.02385 +0.01889+/-0.01157
+
+VERDICT (F-PERAXIS-SHUFFLE): INDEPENDENCE HOLDS for every axis.
+  For ALL 7 axes, own_drop (range +0.111 .. +0.438) >> cross_drop (range
+  -0.0001 .. +0.034). Shuffling axis-k degrades recovery of attribute-k (own)
+  but barely touches the other attributes (cross ~0). Each axis carries its OWN
+  isolated signal — NOT a monotone function of one shared index (resolves the
+  #1765 tautology caveat).
+
+  NOTE on the redundant axes: s and kappa DO carry their own attribute
+  (own_drop ~0.24-0.25, same as the independent axes) — their redundancy is NOT
+  that they are meaningless, but that their ATTRIBUTE duplicates another axis's
+  (s.lab_s ~= t.lab_t, kap.lab_kap ~= e.lab_e). That is exactly why they add
+  no NEW joint-target info (F-NEWINFO SATURATED) yet shuffle-degrade their own
+  attribute. Independence (isolated info) and redundancy (duplicated signal)
+  are distinct and both correctly measured.

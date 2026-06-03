@@ -1,0 +1,24 @@
+F-NOCOLLAPSE — axes stay separable as D grows (no curse-of-dimensionality collapse)
+====================================================================================
+Harness: UNIVERSE/kosmos_dim_ladder.py  (STANDALONE, CPU, $0, 3 seeds)
+Metric : distance concentration = relative contrast (d_max - d_min)/d_mean over
+         all pairwise distances of the standardised D-dim coordinate. High =
+         well separated; -> 0 = curse-of-dimensionality degeneracy/collapse.
+
+DISTANCE CONCENTRATION (relative contrast; mean +/- std, 3 seeds)
+  D=2  contrast=3.08976 +/- 0.27115
+  D=3  contrast=2.86564 +/- 0.26406
+  D=4  contrast=2.47254 +/- 0.18375
+  D=5  contrast=2.29962 +/- 0.10108
+  D=6  contrast=2.17531 +/- 0.08081
+  D=7  contrast=2.05891 +/- 0.02337
+  D=8  contrast=1.93775 +/- 0.07045
+
+VERDICT (F-NOCOLLAPSE): HOLDS (no degeneracy at toy scale).
+  Relative contrast DECLINES gently and monotonically with D (3.09 -> 1.94) as
+  expected from concentration theory, but at D=8 it is still 1.94 — well above
+  1.0 and 0.63x of the D=2 value (> the 0.5x collapse threshold). Pairwise
+  distances remain strongly differentiated; the axes stay separable. No
+  catastrophic distance-concentration collapse at toy scale (N=600, D<=8).
+  (a_toy_scale_recheck: at much higher D / N this contrast would eventually
+  fall toward 0 — UNVERIFIED beyond the measured D<=8 toy regime.)
