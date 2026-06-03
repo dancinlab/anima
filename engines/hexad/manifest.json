@@ -4,16 +4,17 @@
   "title": "sigma6 hexad integrated engine (6-module integration; A/G core = CDV2-class)",
   "default": false,
   "canonical_impl": "HEXAD/hexad.hexa",
+  "forward_impl": "HEXAD/hexad_forward.hexa",
   "adapter": "engines/hexad/adapter.hexa",
   "model_card": "engines/hexad/MODEL_CARD.md",
   "duplicates_code": false,
   "engine_spec": {
     "load": "native",
-    "forward": "stub",
+    "forward": "native",
     "generate": "stub",
     "psi_coord": "native"
   },
-  "honest_stub_reason": "hexad is a 6-module integration; cross-module single-process forward is TODO[wire] in hexad.hexa (per-module selftests run STANDALONE). No single-call forward/generate exists — a_core_engine_map, no phantom wiring.",
+  "honest_stub_reason": "hexad cross-module single-process forward is NOW WIRED (HEXAD/hexad_forward.hexa — TODO[wire] RESOLVED): the sigma6 graph S->C->Bridge.detach->D with M/W/E observers runs as one deterministic call producing a real N=6 module-activation vector (the OMEGA w5 source); every node uses its verified closed-form/native module core; the phi6=2 detach barrier is honored. forward = native. generate stays an honest STUB — the byte MOUTH (D decode) is ckpt-gated (570MB 24L, HEXAD/D d_forward), NOT one $0 call; the adapter exposes the deterministic signal D receives (d_input), not a fabricated decoder output. a_core_engine_map, no phantom wiring.",
   "architecture": {
     "kind": "sigma6 hexad integration",
     "sigma6_connections": 12,

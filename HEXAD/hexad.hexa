@@ -18,17 +18,25 @@
 //        hexa run HEXAD/C/c.hexa          (scaffold invariants)
 //        hexa run HEXAD/D/d.hexa          (scaffold invariants)
 //
-//    Single-process cross-module execution (one hexa file importing all 7) is
-//    TODO[wire] — requires module-name-prefix on private helpers to avoid
-//    namespace collisions (`_approx_eq` etc. currently shared across modules).
-//    Future RFC.
+//    Single-process cross-module execution is NOW WIRED (TODO[wire] RESOLVED):
+//    HEXAD/hexad_forward.hexa runs the σ6 graph S → C → Bridge.detach() → D
+//    (M/W/E observers) as ONE deterministic call → a real N=6 module-activation
+//    vector (the OMEGA w5 source). The namespace-collision blocker (`_approx_eq`
+//    etc. shared across the per-module ENTRY files) was removed by the
+//    `*_lib.hexa` split (module-prefixed private helpers). Honest carve-out
+//    (a_core_engine_map): the byte MOUTH (D byte-logits decode) stays ckpt-gated
+//    (570 MB 24L) — the engine `generate` slot is the honest STUB; the
+//    module-activation `forward` slot is NATIVE. Proof: HEXAD/hexad_forward_smoke.hexa
+//    12/12 + engines/engine_swap_smoke.hexa 27/27 (.verdicts/hexad-wire/).
 //
 //    Existing verified INTEGRATION evidence (Python tier):
 //      state/verify_hexad_integ_2026_05_16/integ_harness.py
 //      → F-INTEG-1..5  5/5 SUPPORTED-STRONG  (PR #77, fire_gate=true)
 //
 //  STATUS
-//    🔶 spec + invariant declaration (executable cross-module wire = TODO[wire]).
+//    🔵 spec + invariant declaration + executable σ6 cross-module forward
+//       (HEXAD/hexad_forward.hexa — module-activation `forward` NATIVE; byte
+//       MOUTH `generate` = honest ckpt-gated STUB, a_core_engine_map).
 //
 //  COMPLIANCE
 //    raw#11 snake_case · raw#9/10 honest impl (no false integration claim)

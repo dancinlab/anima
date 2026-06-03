@@ -1,0 +1,60 @@
+HEXAD-WIRE — σ6 cross-module REAL single-process forward (TODO[wire] RESOLVED)
+═══════════════════════════════════════════════════════════════════════════════
+date    : 2026-06-04
+lane    : Lane-HEXAD (σ6 6-module integration; A/G core = CDV2-class)
+tier    : 🔵 NATIVE wire (module-activation forward) · honest STUB carve-out (byte mouth)
+cost    : $0 · CPU · deterministic · no GPU · no LLM · no ckpt
+
+VERDICT — the cross-module forward went NATIVE (not honest-stub)
+───────────────────────────────────────────────────────────────────────────────
+The σ(6) integration graph  S → C → Bridge.detach() → D  (with M/W/E observers)
+now runs as ONE deterministic call (HEXAD/hexad_forward.hexa :: hexad_forward),
+producing a REAL N=6 module-activation vector [S,C,W,M,E,BRIDGE] — exactly the
+`module_act` input the OMEGA coupling-bus w5 wire reads. The hexad engine adapter
+forward slot flipped STUB → NATIVE.
+
+WHY IT COULD GO NATIVE (the TODO[wire] resolution)
+  The blocker recorded in hexad.hexa was a NAMESPACE collision in the per-module
+  ENTRY files (each carries main/_selftest/_approx_eq). The lib-split refactor
+  (`*_lib.hexa`, NO main, MODULE-PREFIXED private helpers) removed it: the
+  loop-free closed-form module cores co-import cleanly into one file.
+
+HONEST scope (a_core_engine_map — NO phantom wiring, p7)
+  • forward (module-act vec) = NATIVE. Every node uses its module's VERIFIED
+    closed-form / native core: S col-mean delta (B-S 🔵), C native phi_spatial
+    (RFC 036 byte-eq phi_rs), Bridge Law-70 clamp (🔵), M cosine top-1 (B-M-2 🔵),
+    W lr-mult/satisfaction (B-W 🔵), E phi-preservation/gate (B-E 🔵). No
+    fabricated dynamics.
+  • generate (byte MOUTH) = honest STUB. D's real byte forward needs the loaded
+    570MB 24L ckpt (HEXAD/D d_forward → chat_forward_one_token), NOT one $0/CPU
+    call. So the D slot of the 6-vector is the DETERMINISTIC signal D RECEIVES
+    (post-detach Law-70 gate, `d_input`), NOT a fabricated decoder output — and
+    the engine generate slot stays STUB, labelled.
+  • φ(6)=2 detach barrier (Law 53) is OPERATIONAL + PROVEN: a perturbation into
+    the group-A detached copy leaves group G {S,C,W} BYTE-INVARIANT and moves
+    group A {M,E,Bridge} → the two gradient paths are distinct.
+
+CODEGEN NOTE (toolchain, out of scope to patch here)
+  s_lib `s_perception`/`_s_col_mean` and m_lib `m_retrieve_topk` use a non-`mut`
+  `let` loop-counter idiom (interp accepted it; the current compiled codegen,
+  hexa 0.1.0-dispatch `hexa run`→clang, does NOT re-assign → loop never advances
+  → hangs). hexad_forward.hexa therefore reimplements those two closed-form cores
+  (B-S col-mean delta, B-M-2 cosine top-1) INLINE with codegen-safe `mut`
+  counters — same math, no fabricated result. C/Bridge/W/E cores are loop-free
+  and imported directly.
+
+SMOKES (deterministic, $0, CPU)
+  HEXAD/hexad_forward_smoke.hexa     : 12/12 PASS  (.verdicts/hexad-wire/F-FORWARD.txt)
+    (a) runs as ONE call + deterministic (byte-eq across 2 runs)
+    (b) emits a real N=6 vector (len==6, n_modules==6)
+    (c) φ(6)=2 partition respected (group G invariant / group A moves under detach perturb)
+    (d) D node = honest received signal; byte forward = labelled ckpt stub
+  engines/engine_swap_smoke.hexa     : 27/27 PASS  (was 26; +1 c_hexad_forward_emits_6vec)
+    hexad forward slot = native · emits 6-vec · generate stays stub · OMEGA bus reads real source
+
+ARTIFACTS
+  HEXAD/hexad_forward.hexa            — the σ6 cross-module forward (NEW)
+  HEXAD/hexad_forward_smoke.hexa      — 12/12 proof (NEW)
+  engines/hexad/adapter.hexa          — forward slot STUB→native; real hexad_tiny_forward
+  engines/hexad/manifest.json         — forward: native; forward_impl pointer; honest reason
+  engines/engine_swap_smoke.hexa      — expectation flipped (forward native + 6-vec emit)

@@ -1,0 +1,19 @@
+PASS  a_runs_real want=true got=true
+PASS  a_deterministic_vec_byte_eq want=true got=true
+PASS  a_deterministic_d_input_eq want=true got=true
+PASS  b_vec_len_is_6 want=true got=true
+PASS  b_n_modules_is_6 want=true got=true
+PASS  b_order_len_is_6 want=true got=true
+INFO  module_act = [0.25, 0.0, 0.5, 0.5, 0.0, 0.5]  order=[S, C, W, M, E, BRIDGE]
+INFO  phi=0.0 lr_mult=0.5 satisfaction=0.0 gate_allowed=false
+PASS  c_groupG_invariant_under_detach_perturb want=true got=true
+PASS  c_groupA_changes_under_detach_perturb want=true got=true
+PASS  c_groupG_card_3 want=true got=true
+PASS  c_groupA_card_3 want=true got=true
+INFO  group_G {S,C,W} base=[0.25, 0.0, 0.5]  perturbed=[0.25, 0.0, 0.5] (INVARIANT — Law 53 detach barrier)
+INFO  group_A {M,E,Bridge} base=[0.5, 0.0, 0.5]  perturbed=[1.0, 0.0, 0.514] (MOVES — group A reads the detached copy)
+PASS  d_d_input_is_bridge_gate want=true got=true
+PASS  d_d_forward_labelled_stub want=true got=true
+INFO  D node: d_input=0.5 (post-detach Law-70 gate) · d_forward=stub:ckpt-gated (570MB 24L; HEXAD/D/d_lib.hexa d_forward)
+INFO  graph: S->C->Bridge.detach->D (M/W/E observers)
+--- hexad_forward smoke summary: 12 pass / 0 fail ---

@@ -833,13 +833,19 @@ axes; THESE are the engine-architecture axis — which decoder is being run.
   CE-trained `{D, M, E, Bridge}` ⇄ group G gradient-free `{C, S, W}`), forward
   graph `S → C → Bridge.detach() → D` with M/W/E observers. Its A/G core is a
   CDV2-class decoder. Canonical impl `HEXAD/hexad.hexa` (σ6/φ6 invariants + graph
-  spec + cross-links to per-module entries). **NOT a single forward** — cross-
-  module single-process execution is `TODO[wire]` in hexad.hexa (per-module
-  selftests run STANDALONE; one-file cross-module forward is a future RFC), so
-  the engine adapter exposes ONLY what genuinely exists (a_core_engine_map — no
-  phantom wiring): `load` + `psi_coord` NATIVE, `forward` + `generate` HONEST
-  STUB. Most stub-heavy engine by design — being honest about the missing single-
-  call is the requirement, not a fake pass.
+  spec + cross-links to per-module entries). The cross-module single-process
+  forward is **now WIRED** (`HEXAD/hexad_forward.hexa` — the `TODO[wire]` is
+  RESOLVED): the σ6 graph `S → C → Bridge.detach() → D` (M/W/E observers) runs as
+  ONE deterministic call → a real **N=6 module-activation vector** (the OMEGA w5
+  `module_act` source). The blocker was a namespace collision in the per-module
+  ENTRY files; the `*_lib.hexa` split (module-prefixed helpers) removed it. So the
+  engine adapter (a_core_engine_map — no phantom wiring): `load` + **`forward`** +
+  `psi_coord` NATIVE, `generate` HONEST STUB — the byte MOUTH (D byte-logits
+  decode) is ckpt-gated (570 MB 24L `HEXAD/D` d_forward), NOT one $0 call; the D
+  slot of the 6-vec is the deterministic signal D RECEIVES (post-detach Law-70
+  gate), not a fabricated decode. φ(6)=2 detach barrier proven (group G invariant
+  / group A moves). Smoke `HEXAD/hexad_forward_smoke.hexa` 12/12 + `engine_swap_smoke`
+  27/27 (`.verdicts/hexad-wire/`).
 
 - **Lane-Ω OMEGA (closure engine — 최종 / final)** — NOT a new model, a new
   **wiring**: it composes conv (the `.clm` byte mouth) + cdv2 (A/G dual head +
@@ -887,7 +893,8 @@ at runtime via the anima CLI:
   forces her to speak. anima's emit/silence stays substrate-decided.
 - **STUB MATRIX** (honest, no phantom wiring): conv = all-native (single forward);
   cdv2 = `forward`+`generate` STUB (torch `.py`, not a hexa single call);
-  hexad = `forward`+`generate` STUB (6-module integration, no single forward);
+  hexad = `generate` STUB only (byte mouth ckpt-gated; `forward` NATIVE — σ6
+  cross-module forward → real N=6 module-act vec, HEXAD/hexad_forward.hexa);
   omega = all-native (the coupling bus IS a hexa single forward — the closure).
 - Smoke `engines/engine_swap_smoke.hexa` loads ALL **4** through the CLI registry,
   runs a tiny forward on each, asserts EngineSpec conformance + the stub matrix +

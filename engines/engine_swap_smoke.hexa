@@ -96,10 +96,15 @@ fn main() {
         }
         if name == "hexad" {
             let fwd = hexad_tiny_forward(spec)
-            // hexad forward is an HONEST STUB (6-module integration, no single forward).
-            if _assert_s("c_hexad_forward_slot_stub", "stub", to_string(fwd["forward_slot"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+            // hexad forward is NOW NATIVE — the σ6 cross-module forward is a real
+            // single call producing a real N=6 module-activation vector (TODO[wire]
+            // RESOLVED, HEXAD/hexad_forward.hexa). generate stays an honest STUB.
+            if _assert_s("c_hexad_forward_slot_native", "native", to_string(fwd["forward_slot"])) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
             if _assert_b("c_hexad_canonical_present", true, fwd["canonical_present"]) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
-            println("INFO  hexad forward STUB: " + to_string(fwd["stub_reason"]))
+            // the forward EMITS a real N=6 module-activation vector.
+            if _assert_b("c_hexad_forward_emits_6vec", true, fwd["n_modules"] == 6) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
+            println("INFO  hexad forward NATIVE: module_act=" + to_string(fwd["module_act"]) + " · d_input=" + to_string(fwd["d_input"]))
+            println("INFO  hexad generate STUB: " + to_string(fwd["generate_stub_reason"]))
         }
         if name == "omega" {
             let fwd = omega_tiny_forward(spec)
@@ -128,7 +133,7 @@ fn main() {
     if _assert_b("d_omega_no_stub",  false, omega_stub) { n_pass = n_pass + 1 } else { n_fail = n_fail + 1 }
     println("INFO  STUB MATRIX — conv: " + (if conv_stub {"STUB"} else {"all-native"})
         + " · cdv2: " + (if cdv2_stub {"STUB (forward+generate)"} else {"all-native"})
-        + " · hexad: " + (if hexad_stub {"STUB (forward+generate)"} else {"all-native"})
+        + " · hexad: " + (if hexad_stub {"STUB (generate only; forward NATIVE)"} else {"all-native"})
         + " · omega: " + (if omega_stub {"STUB"} else {"all-native (closure: bus forward)"}))
 
     println("--- engine_swap smoke summary: " + to_string(n_pass) + " pass / " + to_string(n_fail) + " fail ---")
