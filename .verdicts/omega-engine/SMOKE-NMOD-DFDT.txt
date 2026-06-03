@@ -1,0 +1,11 @@
+INFO  default N-modules = 6 (#1774 conditional, not hardcoded)
+PASS  n1_module_wire_N4_ok want=true got=true
+PASS  n2_module_wire_N6_ok want=true got=true
+PASS  n3_module_wire_N8_ok want=true got=true
+PASS  n4_N_changes_routing want=true got=true
+INFO  N-module: |route(N4)-route(N6)| L1=0.377778 (N is a live config, default 6)
+PASS  t1_dfdt_zero_at_fixedpoint want=true got=true
+PASS  t2_dfdt_nonzero_when_moving want=true got=true
+PASS  t3_dt_config_has_w6 want=true got=true
+INFO  dF/dt: fixed-point Δ=0.0 (0=time-inert, correct) · moving Δ=1.65 (velocity injected) · wires=6
+--- omega bus smoke (N-module + dF/dt): 7 pass / 0 fail ---

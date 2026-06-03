@@ -118,5 +118,60 @@ pub fn omega_n_wires(cfg: Map) -> int {
     if cfg["w3_curio"]  { k = k + 1 }
     if cfg["w4_psi"]    { k = k + 1 }
     if cfg["w5_module"] { k = k + 1 }
+    if cfg.contains_key("w6_dfdt") { if cfg["w6_dfdt"] { k = k + 1 } }
     return k
+}
+
+// ── L1 N-MODULE CONFIG — the HEXAD module count is a CONFIG, not hardcoded ─────
+//
+// The w5 module→MoE-routing wire reads `module_act` of length N. HEXAD ships N=6
+// (#1774 found 6 = the smallest φ(N)=2 with ≥6 faculties + ≥12 connections — a
+// CONDITIONAL minimum, NOT graph-modularity optimal). So Ω leaves N as a runtime
+// config: the bus honors a module-activation vector of ANY length (i % N indexing
+// in omega_coupling_apply is already length-agnostic). These helpers make the
+// choice EXPLICIT + checkable — the "why 6" question is a config knob, not a hardcode.
+pub fn omega_n_modules_default() -> int { return 6 }
+
+// omega_module_wire_ok — true ⇔ a module-activation vector of length n_modules is a
+// valid w5 input (n_modules >= 1). The bus is N-agnostic, so any N>=1 conforms.
+pub fn omega_module_wire_ok(n_modules: int) -> bool {
+    return n_modules >= 1
+}
+
+// ── L4 dF/dt TIME CHANNEL — the derivative wire (w6) ──────────────────────────
+//
+// The static bus modulates from a snapshot. d/dt-universality (#1763 CLM · #1765 Ψ
+// · #1767 dolphin · #1775 tension-link all HOLD) says time enters via the DERIVATIVE
+// on the substrate signals, not the static value (a snapshot is d/dt-blind). The w6
+// wire adds the per-byte CHANGE in the A⇄G coupling between this step and the last:
+//   w6 dF/dt : modulated[i] += dgain · ( (a_t[i]−g_t[i]) − (a_prev[i]−g_prev[i]) )
+// At a fixed point (state unchanged) the derivative is 0 → w6 inert (correct).
+pub fn omega_bus_on_dt() -> Map {
+    let mut cfg = omega_bus_on()
+    cfg["w6_dfdt"] = true
+    cfg["dgain"]   = 0.5
+    return cfg
+}
+
+// omega_coupling_apply_dt — the bus forward WITH the dF/dt time channel. Takes the
+// current heads (a_head/g_head at t) AND the previous step's heads (a_prev/g_prev);
+// applies the static bus then adds w6. state-unchanged ⇒ w6 term = 0 = static result.
+pub fn omega_coupling_apply_dt(base: [float], a_head: [float], g_head: [float],
+                               a_prev: [float], g_prev: [float],
+                               w_tension: float, curiosity: float,
+                               psi8: [float], module_act: [float], cfg: Map) -> [float] {
+    let stat = omega_coupling_apply(base, a_head, g_head, w_tension, curiosity, psi8, module_act, cfg)
+    let has_dt = cfg.contains_key("w6_dfdt") && cfg["w6_dfdt"]
+    if !has_dt { return stat }
+    let dg = if cfg.contains_key("dgain") { cfg["dgain"] } else { 0.5 }
+    let n = len(stat)
+    let mut out = []
+    let mut i = 0
+    while i < n {
+        let dnow  = a_head[i] - g_head[i]
+        let dprev = a_prev[i] - g_prev[i]
+        out = out + [stat[i] + dg * (dnow - dprev)]   // w6 dF/dt — velocity of A⇄G
+        i = i + 1
+    }
+    return out
 }
