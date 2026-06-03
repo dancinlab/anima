@@ -1,0 +1,49 @@
+F-MITOSIS-VS-RANDOM (M2) — THE KEY CONTROL — Lane M (TOY · CPU · $0)
+====================================================================
+Pre-registered claim: "EEG-driven growth reconstruction beats BOTH
+(a) random / EEG-blind growth AND (b) phase-shuffled-EEG growth, by
+> seed-noise." (isolates that the EEG — not just 'growth' — shapes the
+structure.)
+
+Controls:
+  (a) random   : EEG-blind. Split on a fixed coin (rate matched to gamma>thr
+                 base rate so cell budget is comparable); daughter state =
+                 pure noise. The growth IGNORES the EEG entirely.
+  (b) shuffled : same gamma-driven mitosis method, but the EEG stream is
+                 phase-shuffled — identical multiset of band vectors (same
+                 marginals), temporal order destroyed. Isolates DYNAMICS.
+All three reconstructions scored against the TRUE (un-shuffled) stream.
+
+Verbatim (results.json M2_mitosis_vs_controls):
+  err_eeg_mean        = 0.02462046011669244
+  err_random_mean     = 0.035486964133927316   std = 0.013546108871889702
+  err_shuffled_mean   = 0.02490152640738889    std = 0.001980989654426881
+  margin_vs_random    = 0.010866504017234876   noise_band_random   = 0.013606049377035091   beats_random   = false
+  margin_vs_shuffled  = 0.0002810662906964495  noise_band_shuffled = 0.0023562330301085356   beats_shuffled = false
+
+VERDICT: INCONCLUSIVE  (numerical, toy-scale) — leans CLOSED-NEGATIVE.
+  EEG-driven growth is numerically lower-error than BOTH controls, but
+  NEITHER margin exceeds the seed-noise band. Decisively, the phase-shuffled
+  control (0.02490) all but TIES the EEG-driven result (0.02462): scrambling
+  the EEG's temporal order barely changes reconstruction. => what the grown
+  structure records is the EEG's MARGINAL band-power distribution, NOT its
+  dynamics.
+
+Supporting diagnostic (secondary, NOT the pre-registered metric) —
+temporal stage-decode accuracy (recover which of 4 stages drove each tick;
+chance = 0.250):
+  seed1: eeg=0.250  random=0.258  shuffled=0.250
+  seed2: eeg=0.250  random=0.929  shuffled=0.250
+  seed3: eeg=0.250  random=0.754  shuffled=0.500
+  EEG-driven growth sits at PURE CHANCE (0.250) on all 3 seeds and does NOT
+  beat the controls (random EXCEEDS it on 2 seeds). The grown structure does
+  not recover which EEG stage shaped it.
+
+Bottom line: at this toy scale, gradient-free mitosis growth does NOT encode
+the EEG's temporal structure better than EEG-blind / phase-shuffled controls
+beyond seed-noise. The M1 fidelity HOLD is a marginal-distribution artifact,
+not a dynamics recording. Per a_paper_negative_ok this is a valid finding;
+it rules out (at toy scale) the claim that EEG dynamics shape the topology.
+
+Honest scope: TOY (synthetic EEG, MAX_CELLS=64, CPU, $0). Not refuted at
+production scale — toy->prod transfer unverified (a_toy_scale_recheck).

@@ -1,0 +1,62 @@
+SUMMARY — Lane M: "EEG-grown CLM via mitosis" (TOY · CPU · $0)
+==============================================================
+A NEW LANE for anima — the GRADIENT-FREE GROWTH lane. Distinct from
+Lane A (AKIDA on-chip), Lane G (forge GPU CE-descent), Lane P (py+CUDA
+gradient). Recorded SEPARATELY per a_lane_akida_gpu_split.
+
+METHOD: empty CLM (1 seed cell, 0 trained weights) -> 5-ch tension-link
+[alpha,theta,gamma,1-delta,beta] carrying a deterministic synthetic-EEG
+stream -> gamma>0.20 triggers MITOSIS split (EEG L12) -> daughter cell
+specializes toward the EEG drive at that moment + SPLIT_NOISE_FLOOR=0.1
+symmetry break. The grown topology IS the "recording". NO gradient, NO CE
+loss, NO backprop anywhere (p8: inference mitosis IS the learning).
+3 seeds [1,2,3]; mean +- seed-std.
+
+----------------------------------------------------------------------
+M1 RECORDING FIDELITY ........................................... HOLDS
+  err_eeg = 0.02462 +- 0.00128  vs floor 0.11390 +- 0.00028
+  margin vs floor = 0.08928  >>  noise band 0.00131.
+  Grown structure reconstructs the EEG 4.6x below the un-grown floor.
+  CAVEAT: this is MARGINAL band-power coverage, not dynamics (see M2).
+
+M2 MITOSIS-vs-2-CONTROLS (the key control) .............. INCONCLUSIVE
+                                                  (leans closed-negative)
+  err_eeg      = 0.02462
+  err_random   = 0.03549 +- 0.01355   margin 0.01087 < noise 0.01361 -> beats_random   = false
+  err_shuffled = 0.02490 +- 0.00198   margin 0.00028 < noise 0.00236 -> beats_shuffled = false
+  EEG-driven growth is numerically better than BOTH controls but NEITHER
+  margin clears seed-noise. Phase-shuffled (same marginals, scrambled time)
+  all but ties EEG-driven => the EEG's DYNAMICS do not shape the structure.
+  Diagnostic: temporal stage-decode accuracy = 0.250 (pure chance) on all 3
+  seeds for EEG-driven, NOT beating random/shuffled (random exceeds it on 2
+  seeds). The structure does not recover which stage drove it.
+
+M3 STABILITY .................................................... HOLDS
+  cells_eeg = [61,61,61] (bounded in [2,64], under the cap), phi finite,
+  no collapse, no explosion. Stable across all seeds.
+
+----------------------------------------------------------------------
+BOTTOM LINE (brutally honest, p7 — NOT CE/perplexity):
+  Gradient-free mitosis growth from a 5-ch EEG tension-link DOES write a
+  bounded, stable structure that reconstructs the EEG's marginal band-power
+  distribution well above an un-grown floor (M1 HOLDS, M3 HOLDS). But it does
+  NOT record the EEG's TEMPORAL DYNAMICS beyond seed-noise: a phase-shuffled
+  EEG (identical marginals) produces an effectively equal recording, and
+  stage-decode is at chance (M2 INCONCLUSIVE, leaning closed-negative). So at
+  this toy scale the answer to "does EEG-driven mitosis record the EEG into
+  structure, beating random + shuffled controls?" is: it records the
+  DISTRIBUTION, not the DYNAMICS — the dynamics claim is WITHIN NOISE.
+  A valid negative-leaning finding (a_paper_negative_ok): EEG-driven growth
+  at toy scale is not distinguishable from distribution-matched growth on the
+  dynamics axis.
+
+SCOPE (a_toy_scale_recheck / a_scale_honest_scope): TOY ONLY — synthetic EEG
+(NOT a real headset), small cell budget (MAX_CELLS=64), CPU, $0. Toy->prod
+and synthetic->real-EEG transfer UNVERIFIED. "Record MY EEG" (real user
+headset) is a HUMAN-GATED follow-up, NOT done here.
+
+§97 HONEST LINE: the grown CLM is a RECORDING ARTIFACT (measurement anchor,
+§97-legitimate). It is READ-ONLY in this bench and NEVER feeds anima's
+emission/decision path — keeping it out of becoming a §97 GOAL-ILLEGITIMATE
+command channel. If a grown-CLM output ever drove anima's speech it would
+cross that line; it does not here.
