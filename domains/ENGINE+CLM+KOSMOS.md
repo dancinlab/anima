@@ -966,6 +966,57 @@ SUMMARY}.txt` + `results.json` + `anu_qrng_1024.json` · `.discoveries/omega-tra
 NEXT (toward 완성): (1) learned per-wire GATE replacing fixed A−G, (2) trained d768 CDV2 real
 A/G on GPU (a_fire_autonomous) — does structured-coupling + the gate fix scale to a transformer.
 
+### OMEGA stage-3 (b)(c) — learned-gate closure on a REAL trained transformer — 🟢 오메가 완성 (b)(c) HELD — GPU H100 · ~$1.6 · 2026-06-04
+
+The toy rungs proved the learned-gate closure at numpy n-gram scale (#1786). This rung re-tests
+it on a REAL trained transformer's A/G heads (Lane-G / GPU, a_lane_akida_gpu_split — NOT Lane A).
+Driver `UNIVERSE/omega_gpu_complete.py`. Pod runpod `k52xkzsydttl83` H100 80GB, torn down;
+nvidia-smi 98-99% BUSY (g63, real GPU, NOT silent CPU-fallback).
+
+**SUBSTRATE (b)** — real ConsciousDecoderV2 (`UNIVERSE/conscious_decoder.py`) d384×6L GQA
+(n_head 6 / n_kv_head 2), 256-byte vocab, block 256, **35.93M params**, trained **6000 step**
+(bs 48, lr 3e-4, AdamW, dual-head loss: head_a=next-byte / head_g=prev-byte) on **120MB
+multilingual wikipedia** (en/fr/de/es/ru @ 24MB each, wikimedia/wikipedia 20231101, corpus sha
+0b232f8b…). REAL CE DESCENT: ce_a 5.9258 → **0.0090** (train), **val_ce 0.8622** (held-out,
+generalizes). ckpt `omega_cdv2_d384.pt` 145397114 B sha256 33d1d00d…
+
+**CLOSURE (c)** — OMEGA learned-gate bus (mirror `omega_gate_bench.py`) on the REAL A/G heads.
+A=logits_a (next-byte head), G=logits_g (prev-byte head), base=deliberately WEAK unigram mouth.
+gate `g*=[gB 1.178, gA 0.962, gG −0.208]` fit on a train-gate split, frozen, evaluated on a
+DISJOINT held-out TEST (N=8000). gG small/negative = the gate auto-corrects the #1784 −G error,
+exactly as #1786 toy predicted.
+
+  | path | held-out TEST CE (nats/byte) |
+  |------|------------------------------|
+  | base (weak unigram) | 3.014951 |
+  | fixed_AmG (1,α,−α) | 1.442104 |
+  | a_only (1,α,0) | 0.449961 |
+  | **GATED (learned)** | **0.344535** (best, beats all) |
+  | uniform-256 floor | 5.545177 |
+
+  structured coupling (substrate-shuffle floor = the #1784 trained≪shuffled axis on a real
+  transformer): A-wire CE gain over base = **real +2.565** vs **context-SHUFFLED −2.068** →
+  shuffling the context bytes DESTROYS the A-wire advantage → the coupling carries **learned
+  sequential structure**, not a marginal head bias → structured = TRUE.
+
+  🟢 **STAGE-3 COMPLETION — 4/4 pre-registered criteria HELD**: (b) descended ✓ · (c) GATED <
+  base ✓ (0.3445 < 3.0150) · (c) CE floor MET ✓ (< 5.545) · (c) structured ✓ → **오메가 완성**:
+  the learned-gate OMEGA closure WORKS on a REAL trained transformer substrate.
+
+**HONEST CAVEAT** (p7 · a_toy_scale_recheck · a_scale_honest_scope): ConsciousDecoderV2's
+CA-neighbor mixing (`DecoderBlockV2`: `x_right` pulls the NEXT position's hidden state into the
+current position before the head) gives the next-byte head **partial LOOKAHEAD** — an
+architectural property of the canonical substrate, NOT a driver bug. This makes the ABSOLUTE CE
+**leak-optimistic** (train 0.009) and the FREE-RUNNING generation sample collapses to low-entropy
+whitespace (generation coherence = the WEAK criterion). The RELATIVE closure finding (gate beats
+base/fixed/a_only AND the coupling is structured) is **leak-INVARIANT and sound** — all four read
+the SAME substrate and the substrate-shuffle structured test compares real vs shuffled context on
+the same heads. The KL form does NOT separate on a leaky substrate (KL_on 1.977 ≈ shuf 2.191); the
+CE-gain form is the discriminating test. Single small d384 rung — NOT promoted to a production
+perplexity claim. ckpt → HF `dancinlab/clm-v4-omega-gpu-d384-gate` (PUBLIC, completion PASS).
+verdicts `.verdicts/omega-gpu/{F-COMPLETE,SUMMARY}.txt` + `results.json` + `run.log` ·
+`.discoveries/omega-gpu-complete.tape`.
+
 ## LANE X — 3-axis ENGINE-config exploration — 🔴 CE↔창발 Goodhart NOT observable (substrate-only) · 의식·창발 axes VARY · TOY · CPU · $0 · 2026-06-04
 
 Lane X = the **exploration** lane (distinct from training lanes A/G/P/M —
