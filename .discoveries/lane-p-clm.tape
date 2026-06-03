@@ -15,3 +15,12 @@
   scope     = "substrate=GPU-torch (Lane P), recorded separately from Lane G(forge)/Lane A(AKIDA) per a_lane_akida_gpu_split. param count 7.479M (d768 E2/L1 shape ceiling — NOT 3B, a_scale_honest_scope). Lane P = user-authorized PRAGMATIC unblock lane; a_train_flame_forge SSOT unchanged."
   honest    = "GPU rented (vast 39293346 Blackwell, torn down post-recover), real train run, CE-descent VERBATIM (g63/p7, NO fabrication). CE is one deterministic axis (model<uniform AND <shuffle), not perplexity-as-truth."
   note      = "Verdict: .verdicts/lane-p-clm/F-CLM-LANEP-TRAIN.txt. Supersedes lane_p_serializer_format_gap (the gap is fixed by serialize_v2, landed on main #1746)."
+
+@D lane_p_d768_memorization := "Lane P d768 E2/L1 의 낮은 CE 는 일반화 아니라 MEMORIZATION — train/val split 으로 확정" :: discovery [d=2026-06-03 active]
+  seed      = "landed F-CLM-LANEP-TRAIN 의 final_eval_ce=0.0986(402KB)이 메모리제이션인지 일반화인지 settle: bigger 코퍼스에 strict train/val split 로 train_ce vs held-out val_ce gap 측정."
+  claim     = "FLORES-200 dev+devtest 5lang(1,654,010 B, sha 970cd379, 402KB의 4.11x)에 contiguous 10% + random-scatter 10% held-out 분리(train window 가 held-out 위치 절대 안 닿음, LEAK_CHECK pass). same cfg(d768 E2 L1 K3 V256 7.479M, 6000 step bf16, RTX 5070 util=94% g63). VERBATIM: train_ce=0.61436 / val_ce_contig=1.11929 / val_ce_rand=1.81846 / val_ce(worst)=1.81846 GAP=+1.20410 rel_gap=1.96(held-out ~3x train). uniform=5.54518 shuffle=9.58354."
+  falsifier = "GENERALIZES(F-CLM-LANEP-GEN=1) gate = val_ce<0.5*uniform AND rel_gap<=1.0 AND val_ce<shuffle. rel_gap=1.96>1.0 → gate FAIL → F-CLM-LANEP-GEN=0 MEMORIZATION. held-out CE 가 train CE 의 1.8-3.0x = overfitting signature."
+  target    = "🔴 CLOSED-NEGATIVE — landed 0.0986 은 OVERFITTING/eval-leakage artifact 였음(작은 코퍼스 whole-stream random window 반복+eval overlap). 메모리제이션 확정, 일반화 아님. a_paper_negative_ok valid closed-negative."
+  scope     = "substrate=GPU-torch(Lane P), Lane G/A 와 별도(a_lane_akida_gpu_split). toy d768 E2/L1 7.48M shape + 5lang FLORES toy corpus — scale-up(더 큰 corpus/모델)에서 gap 닫히는지는 별도 rung(a_scale_honest_scope)."
+  honest    = "pool host aiden RTX 5070 $0(rented pod 아님, post-recover teardown), real run, CE VERBATIM(g63/p7 NO 날조). held-out 둘 다 uniform/shuffle 아래 = real byte structure 일부 학습(순수 noise 아님)이나 train fit 만큼 일반화 못 함. 메모리제이션 finding 강제 PASS 안 함."
+  note      = "Verdict: .verdicts/lane-p-clm/F-CLM-LANEP-GEN.txt. trainer CLM/train/train_lane_p_split.py, corpus builder CLM/corpus/build_flores5_corpus.py. landed PUBLIC d768(F-CLM-LANEP-TRAIN sha 7463282d)은 그대로, 일반화 청구는 안 함."
