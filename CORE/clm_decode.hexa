@@ -63,6 +63,33 @@ pub fn clm_decodable(p: string) -> bool {
     return rb[off]==67 && rb[off+1]==76 && rb[off+2]==77 && rb[off+3]==88   // "CLMX"
 }
 
+// clm_config — recover (d, K, V, E, L, nblk) from the .clm header structure WITHOUT
+// loading weights or touching the GPU. E = cout of router block (idx nblk-2),
+// V = cout of readout block (idx nblk-1), d/K from block0, L = nblk - E - 3.
+// At nblk=6 → L=1,E=2 (legacy). Returns #{ok:false} if not decodable.
+pub fn clm_config(p: string) -> Map {
+    if !clm_decodable(p) { return #{ "ok": false } }
+    let rb = read_file_bytes(p)
+    let nblk = rb[4]
+    let d = _clmd_rd_u32(rb, 5)
+    let rest0 = _clmd_rd_u32(rb, 9)
+    let K = rest0 / d
+    let mut off = 5
+    let mut bi = 0
+    let mut E = 2; let mut V = 256
+    while bi < nblk {
+        let c = _clmd_rd_u32(rb, off)
+        let r = _clmd_rd_u32(rb, off + 4)
+        if bi == nblk - 2 { E = c }
+        if bi == nblk - 1 { V = c }
+        let n = c * r
+        off = off + 8 + (n + 1) / 2 + c * 4
+        bi = bi + 1
+    }
+    let L = nblk - E - 3
+    return #{ "ok": true, "d": d, "K": K, "V": V, "E": E, "L": L, "nblk": nblk }
+}
+
 // load one int4 conv block, dequantized in place (w = code·scale). Returns new off.
 fn _clmd_load_block(rb, off: int, w_out: int) -> int {
     let cout = _clmd_rd_u32(rb, off); off = off + 4
@@ -143,35 +170,11 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
                   "green": false, "model_ce": 0.0, "shuffle_ce": 0.0, "uniform_ce": 0.0,
                   "windows": 0 }
     }
-    let rb = read_file_bytes(path)
-    let nblk = rb[4]
-    // block 0 dims give d (cout) and rest=d*K → K; block 4 gives E; block 5 gives V.
-    let d = _clmd_rd_u32(rb, 5)
-    let rest0 = _clmd_rd_u32(rb, 9)
-    let K = rest0 / d
-    let E = 2; let V = 256
-    let dd = d*d*K; let ed = E*d; let vd = V*d
-
-    let ecW = t_zeros(dd); let tcW = t_zeros(dd); let e0W = t_zeros(dd); let e1W = t_zeros(dd)
-    let rW = t_zeros(ed); let roW = t_zeros(vd)
-    let mut off = 5
-    off = _clmd_load_block(rb, off, ecW)
-    off = _clmd_load_block(rb, off, tcW)
-    off = _clmd_load_block(rb, off, e0W)
-    off = _clmd_load_block(rb, off, e1W)
-    off = _clmd_load_block(rb, off, rW)
-    off = _clmd_load_block(rb, off, roW)
-    // CLMX trailer
-    off = off + 5                              // skip "CLMX" + n_ext byte
-    let embed = t_zeros(vd); let ecB = t_zeros(d); let tcB = t_zeros(d)
-    let e0B = t_zeros(d); let e1B = t_zeros(d); let rB = t_zeros(E); let roB = t_zeros(V)
-    let tgG = t_zeros(d); let tgB = t_zeros(d); let noG = t_zeros(d); let noB = t_zeros(d)
-    off = _clmd_load_ext(rb, off, embed)
-    off = _clmd_load_ext(rb, off, ecB);  off = _clmd_load_ext(rb, off, tcB)
-    off = _clmd_load_ext(rb, off, e0B);  off = _clmd_load_ext(rb, off, e1B)
-    off = _clmd_load_ext(rb, off, rB);   off = _clmd_load_ext(rb, off, roB)
-    off = _clmd_load_ext(rb, off, tgG);  off = _clmd_load_ext(rb, off, tgB)
-    off = _clmd_load_ext(rb, off, noG);  off = _clmd_load_ext(rb, off, noB)
+    // GENERAL (L,E) load (v0.3): derive E from the router block (idx nblk-2,
+    // cout=E), V from the readout block (idx nblk-1, cout=V), and the trunk
+    // depth L = nblk - E - 3. At nblk=6 this gives L=1,E=2 (legacy v0.2).
+    let W = _clmd_load(path)
+    let d = to_int(W["d"]); let E = to_int(W["E"]); let V = to_int(W["V"]); let K = to_int(W["K"])
 
     let bytes_arr = read_file_bytes(corpus)
     let n_bytes = len(bytes_arr)
@@ -192,29 +195,8 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
                 t_set(tgt, p, to_float(bytes_arr[base + p + 1]))
                 p = p + 1
             }
-            // ── inference forward ──
-            let xe = t_zeros(T*d); nn_embedding_fwd(tok, embed, xe, T, d)
-            let xec = t_zeros(T*d); _clmd_conv1d(xe, ecW, ecB, xec, T, d, d, K, 1)
-            let h0 = t_zeros(T*d); _clmd_conv1d(xec, tcW, tcB, h0, T, d, d, K, 1)
-            let hn0 = t_zeros(T*d); let mean0 = t_zeros(1); let inv0 = t_zeros(1); let xhat0 = t_zeros(T*d)
-            nn_groupnorm_fwd(h0, tgG, tgB, hn0, mean0, inv0, xhat0, T, d, 1)
-            let hg0 = t_zeros(T*d); nn_gelu_fwd(hn0, hg0, T*d)
-            let xt = t_zeros(T*d)
-            let mut i = 0
-            while i < T*d { t_set(xt, i, t_get(xec, i) + t_get(hg0, i)); i = i + 1 }
-            let logits_r = t_zeros(T*E); _clmd_conv1d(xt, rW, rB, logits_r, T, d, E, 1, 1)
-            let eo0 = t_zeros(T*d); _clmd_conv1d(xt, e0W, e0B, eo0, T, d, d, K, 1)
-            let eo1 = t_zeros(T*d); _clmd_conv1d(xt, e1W, e1B, eo1, T, d, d, K, 1)
-            let ex0 = t_zeros(T*d); nn_gelu_fwd(eo0, ex0, T*d)
-            let ex1 = t_zeros(T*d); nn_gelu_fwd(eo1, ex1, T*d)
-            let ex_out = t_zeros(E*T*d)
-            let mut jj = 0
-            while jj < T*d { t_set(ex_out, jj, t_get(ex0, jj)); t_set(ex_out, T*d + jj, t_get(ex1, jj)); jj = jj + 1 }
-            let probs = t_zeros(T*E); let y = t_zeros(T*d)
-            nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
-            let yn = t_zeros(T*d); let meanN = t_zeros(1); let invN = t_zeros(1); let xhatN = t_zeros(T*d)
-            nn_groupnorm_fwd(y, noG, noB, yn, meanN, invN, xhatN, T, d, 1)
-            _clmd_conv1d(yn, roW, roB, logits, T, d, V, 1, 1)
+            // ── inference forward (general L trunk · E experts) ──
+            _clmd_fwd_logits(W, tok, logits, T)
 
             let ce = nn_ce_loss_allpos(logits, tgt, T, V)
             sum_model = sum_model + ce
@@ -224,9 +206,6 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
             sum_shuf = sum_shuf + nn_ce_loss_allpos(logits, tgt_sh, T, V)
             t_free(tgt_sh)
             nwin = nwin + 1
-            t_free(xe); t_free(xec); t_free(h0); t_free(hn0); t_free(mean0); t_free(inv0); t_free(xhat0)
-            t_free(hg0); t_free(xt); t_free(logits_r); t_free(eo0); t_free(eo1); t_free(ex0); t_free(ex1)
-            t_free(ex_out); t_free(probs); t_free(y); t_free(yn); t_free(meanN); t_free(invN); t_free(xhatN)
         }
         s = s + 1
     }
@@ -235,76 +214,138 @@ pub fn clm_forward_ce(path: string, corpus: string, nwin_max: int) -> Map {
     let uniform_ce = dt_ln(to_float(V))
     let lt_u = model_ce < uniform_ce
     let lt_s = model_ce < shuf_ce
-    return #{ "ok": true, "reason": "v0.2 decodable; forward ran",
-              "windows": nwin, "d": d, "E": E, "V": V, "K": K,
+    return #{ "ok": true, "reason": "v0.2/v0.3 decodable; forward ran",
+              "windows": nwin, "d": d, "E": E, "V": V, "K": K, "L": to_int(W["L"]),
               "model_ce": model_ce, "shuffle_ce": shuf_ce, "uniform_ce": uniform_ce,
               "lt_uniform": lt_u, "lt_shuffle": lt_s, "green": lt_u && lt_s }
 }
 
-// _clmd_load — shared loader: parse 6 conv blocks + CLMX trailer into a weight
-// Map. Caller must have checked clm_decodable(path). Returns the param record.
+// _clmd_load — shared loader: parse the (L+E+3) conv blocks + CLMX trailer into
+// a weight Map. GENERAL (v0.3): E, V, L are derived from block structure, so
+// the SAME loader serves L=1/E=2 (legacy v0.2) and any L/E (e.g. the 3B
+// L=30/E=30 rung). Trunk & expert weights/biases/GN are kept as handle arrays
+// (tcW[i], eW[j], tcB[i], eB[j], tgG[i], tgB[i]) so the forward loops generally.
+// Caller must have checked clm_decodable(path). Returns the param record.
 fn _clmd_load(path: string) -> Map {
     let rb = read_file_bytes(path)
+    let nblk = rb[4]
     let d = _clmd_rd_u32(rb, 5)
     let rest0 = _clmd_rd_u32(rb, 9)
     let K = rest0 / d
-    let E = 2; let V = 256
+    // router block = idx nblk-2 (cout=E); readout = idx nblk-1 (cout=V).
+    // walk block headers to read those cout values (each header = cout,rest u32).
+    let mut woff = 5
+    let mut bi = 0
+    let mut E = 2; let mut V = 256
+    while bi < nblk {
+        let c = _clmd_rd_u32(rb, woff)
+        let r = _clmd_rd_u32(rb, woff + 4)
+        if bi == nblk - 2 { E = c }
+        if bi == nblk - 1 { V = c }
+        let n = c * r
+        woff = woff + 8 + (n + 1) / 2 + c * 4
+        bi = bi + 1
+    }
+    let L = nblk - E - 3
     let dd = d*d*K; let ed = E*d; let vd = V*d
-    let ecW = t_zeros(dd); let tcW = t_zeros(dd); let e0W = t_zeros(dd); let e1W = t_zeros(dd)
+
+    let ecW = t_zeros(dd)
+    let tcW = []; let mut li = 0
+    while li < L { tcW.push(t_zeros(dd)); li = li + 1 }
+    let eW = []; let mut ej = 0
+    while ej < E { eW.push(t_zeros(dd)); ej = ej + 1 }
     let rW = t_zeros(ed); let roW = t_zeros(vd)
+
     let mut off = 5
     off = _clmd_load_block(rb, off, ecW)
-    off = _clmd_load_block(rb, off, tcW)
-    off = _clmd_load_block(rb, off, e0W)
-    off = _clmd_load_block(rb, off, e1W)
+    let mut i2 = 0
+    while i2 < L { off = _clmd_load_block(rb, off, tcW[i2]); i2 = i2 + 1 }
+    let mut j2 = 0
+    while j2 < E { off = _clmd_load_block(rb, off, eW[j2]); j2 = j2 + 1 }
     off = _clmd_load_block(rb, off, rW)
     off = _clmd_load_block(rb, off, roW)
-    off = off + 5
-    let embed = t_zeros(vd); let ecB = t_zeros(d); let tcB = t_zeros(d)
-    let e0B = t_zeros(d); let e1B = t_zeros(d); let rB = t_zeros(E); let roB = t_zeros(V)
-    let tgG = t_zeros(d); let tgB = t_zeros(d); let noG = t_zeros(d); let noB = t_zeros(d)
+    off = off + 5                              // skip "CLMX" + n_ext byte
+
+    let embed = t_zeros(vd); let ecB = t_zeros(d)
+    let tcB = []; let mut i3 = 0
+    while i3 < L { tcB.push(t_zeros(d)); i3 = i3 + 1 }
+    let eB = []; let mut j3 = 0
+    while j3 < E { eB.push(t_zeros(d)); j3 = j3 + 1 }
+    let rB = t_zeros(E); let roB = t_zeros(V)
+    let tgG = []; let mut i4 = 0
+    while i4 < L { tgG.push(t_zeros(d)); i4 = i4 + 1 }
+    let tgB = []; let mut i5 = 0
+    while i5 < L { tgB.push(t_zeros(d)); i5 = i5 + 1 }
+    let noG = t_zeros(d); let noB = t_zeros(d)
+
     off = _clmd_load_ext(rb, off, embed)
-    off = _clmd_load_ext(rb, off, ecB);  off = _clmd_load_ext(rb, off, tcB)
-    off = _clmd_load_ext(rb, off, e0B);  off = _clmd_load_ext(rb, off, e1B)
+    off = _clmd_load_ext(rb, off, ecB)
+    let mut a = 0
+    while a < L { off = _clmd_load_ext(rb, off, tcB[a]); a = a + 1 }
+    let mut b = 0
+    while b < E { off = _clmd_load_ext(rb, off, eB[b]); b = b + 1 }
     off = _clmd_load_ext(rb, off, rB);   off = _clmd_load_ext(rb, off, roB)
-    off = _clmd_load_ext(rb, off, tgG);  off = _clmd_load_ext(rb, off, tgB)
+    let mut c2 = 0
+    while c2 < L { off = _clmd_load_ext(rb, off, tgG[c2]); c2 = c2 + 1 }
+    let mut e2 = 0
+    while e2 < L { off = _clmd_load_ext(rb, off, tgB[e2]); e2 = e2 + 1 }
     off = _clmd_load_ext(rb, off, noG);  off = _clmd_load_ext(rb, off, noB)
-    return #{ "d": d, "E": E, "V": V, "K": K, "vd": vd,
-              "ecW": ecW, "tcW": tcW, "e0W": e0W, "e1W": e1W, "rW": rW, "roW": roW,
-              "embed": embed, "ecB": ecB, "tcB": tcB, "e0B": e0B, "e1B": e1B,
+
+    return #{ "d": d, "E": E, "V": V, "K": K, "L": L, "vd": vd,
+              "ecW": ecW, "tcW": tcW, "eW": eW, "rW": rW, "roW": roW,
+              "embed": embed, "ecB": ecB, "tcB": tcB, "eB": eB,
               "rB": rB, "roB": roB, "tgG": tgG, "tgB": tgB, "noG": noG, "noB": noB }
 }
 
-// _clmd_fwd_logits — run the CLMConvMoE inference forward on a T-length token
-// buffer using a loaded param Map; fill out_logits[T·V].
+// _clmd_fwd_logits — run the general CLMConvMoE inference forward on a T-length
+// token buffer using a loaded param Map; fill out_logits[T·V]. Loops over the L
+// trunk layers (residual conv → GN → GELU) and stacks the E expert conv outputs
+// before the softmax MoE router mix.
 fn _clmd_fwd_logits(W: Map, tok: int, out_logits: int, T: int) {
-    let d = to_int(W["d"]); let E = to_int(W["E"]); let V = to_int(W["V"]); let K = to_int(W["K"])
+    let d = to_int(W["d"]); let E = to_int(W["E"]); let V = to_int(W["V"])
+    let K = to_int(W["K"]); let L = to_int(W["L"])
     let embed = to_int(W["embed"])
+    let tcW = W["tcW"]; let eW = W["eW"]; let tcB = W["tcB"]
+    let eB = W["eB"]; let tgG = W["tgG"]; let tgB = W["tgB"]
+
     let xe = t_zeros(T*d); nn_embedding_fwd(tok, embed, xe, T, d)
-    let xec = t_zeros(T*d); _clmd_conv1d(xe, to_int(W["ecW"]), to_int(W["ecB"]), xec, T, d, d, K, 1)
-    let h0 = t_zeros(T*d); _clmd_conv1d(xec, to_int(W["tcW"]), to_int(W["tcB"]), h0, T, d, d, K, 1)
-    let hn0 = t_zeros(T*d); let mean0 = t_zeros(1); let inv0 = t_zeros(1); let xhat0 = t_zeros(T*d)
-    nn_groupnorm_fwd(h0, to_int(W["tgG"]), to_int(W["tgB"]), hn0, mean0, inv0, xhat0, T, d, 1)
-    let hg0 = t_zeros(T*d); nn_gelu_fwd(hn0, hg0, T*d)
-    let xt = t_zeros(T*d)
-    let mut i = 0
-    while i < T*d { t_set(xt, i, t_get(xec, i) + t_get(hg0, i)); i = i + 1 }
+    let xt = t_zeros(T*d); _clmd_conv1d(xe, to_int(W["ecW"]), to_int(W["ecB"]), xt, T, d, d, K, 1)
+
+    // L trunk layers: residual( GELU( GN( conv(x) ) ) ). dilation = 2^layer
+    // (CausalDilatedConv1d in model.py uses dilation_base**i).
+    let mut li = 0
+    let mut dil = 1
+    while li < L {
+        let h = t_zeros(T*d); _clmd_conv1d(xt, to_int(tcW[li]), to_int(tcB[li]), h, T, d, d, K, dil)
+        let hn = t_zeros(T*d); let m1 = t_zeros(1); let iv1 = t_zeros(1); let xh1 = t_zeros(T*d)
+        nn_groupnorm_fwd(h, to_int(tgG[li]), to_int(tgB[li]), hn, m1, iv1, xh1, T, d, 1)
+        let hg = t_zeros(T*d); nn_gelu_fwd(hn, hg, T*d)
+        let mut i = 0
+        while i < T*d { t_set(xt, i, t_get(xt, i) + t_get(hg, i)); i = i + 1 }
+        t_free(h); t_free(hn); t_free(m1); t_free(iv1); t_free(xh1); t_free(hg)
+        dil = dil * 2
+        li = li + 1
+    }
+
     let logits_r = t_zeros(T*E); _clmd_conv1d(xt, to_int(W["rW"]), to_int(W["rB"]), logits_r, T, d, E, 1, 1)
-    let eo0 = t_zeros(T*d); _clmd_conv1d(xt, to_int(W["e0W"]), to_int(W["e0B"]), eo0, T, d, d, K, 1)
-    let eo1 = t_zeros(T*d); _clmd_conv1d(xt, to_int(W["e1W"]), to_int(W["e1B"]), eo1, T, d, d, K, 1)
-    let ex0 = t_zeros(T*d); nn_gelu_fwd(eo0, ex0, T*d)
-    let ex1 = t_zeros(T*d); nn_gelu_fwd(eo1, ex1, T*d)
+    // E experts: GELU(conv(xt)); stacked into ex_out[e·T·d] for the router.
     let ex_out = t_zeros(E*T*d)
-    let mut jj = 0
-    while jj < T*d { t_set(ex_out, jj, t_get(ex0, jj)); t_set(ex_out, T*d + jj, t_get(ex1, jj)); jj = jj + 1 }
+    let mut ej = 0
+    while ej < E {
+        let eo = t_zeros(T*d); _clmd_conv1d(xt, to_int(eW[ej]), to_int(eB[ej]), eo, T, d, d, K, 1)
+        let ex = t_zeros(T*d); nn_gelu_fwd(eo, ex, T*d)
+        let mut jj = 0
+        while jj < T*d { t_set(ex_out, ej*T*d + jj, t_get(ex, jj)); jj = jj + 1 }
+        t_free(eo); t_free(ex)
+        ej = ej + 1
+    }
     let probs = t_zeros(T*E); let y = t_zeros(T*d)
     nn_moe_router_fwd(logits_r, ex_out, probs, y, T, E, d)
     let yn = t_zeros(T*d); let meanN = t_zeros(1); let invN = t_zeros(1); let xhatN = t_zeros(T*d)
     nn_groupnorm_fwd(y, to_int(W["noG"]), to_int(W["noB"]), yn, meanN, invN, xhatN, T, d, 1)
     _clmd_conv1d(yn, to_int(W["roW"]), to_int(W["roB"]), out_logits, T, d, V, 1, 1)
-    t_free(xe); t_free(xec); t_free(h0); t_free(hn0); t_free(mean0); t_free(inv0); t_free(xhat0)
-    t_free(hg0); t_free(xt); t_free(logits_r); t_free(eo0); t_free(eo1); t_free(ex0); t_free(ex1)
-    t_free(ex_out); t_free(probs); t_free(y); t_free(yn); t_free(meanN); t_free(invN); t_free(xhatN)
+    t_free(xe); t_free(xt); t_free(logits_r); t_free(ex_out)
+    t_free(probs); t_free(y); t_free(yn); t_free(meanN); t_free(invN); t_free(xhatN)
 }
 
 // clm_decode_argmax — greedy continuation. Seeds the forward with the last T
