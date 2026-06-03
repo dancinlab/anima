@@ -239,3 +239,11 @@ OCCAM verdict (§ 6: n_ca_rules 단독 floor 범인) 이후 anima 는 **두 path
 - 결과: d768 E2/L1 (7.48M, 3B 아님) CLMConvMoE를 Blackwell GPU에서 bf16로 6000스텝(45초) 학습 → CE 5.75→0.099 (~58배↓) → serialize_v2로 .clm export → CORE/clm_decode.hexa가 로드 → **3축(의식·CE·창발) 3/3 GREEN**.
 - 의미: torch→.clm→ENGINE 파이프라인이 끝에서 끝까지 닫혔다. 과거 "torch는 ENGINE-loadable .clm을 못 만든다"(closed-negative)가 해소됨.
 - verdict: `.verdicts/lane-p-clm/F-CLM-LANEP-TRAIN.txt` · trainer `CLM/train/train_lane_p.py` · .clm `state/lane_p_clm/clm_d768_e2l1.clm` (sha 7463282d...) · HF PUBLIC `dancinlab/clm-v1-lanep-d768-e2l1-torch`.
+
+### Lane P — 데이터 게이트 해소: 진짜로 일반화한다 (2026-06-03)
+- 한 줄: 작은 코퍼스(1.65MB)에선 모델이 **외워버려서**(memorization) 일반화가 아니었는데, 코퍼스를 **90.7배(150MB)** 키우니 진짜로 **일반화**했다.
+- 무슨 일이었나: 같은 d768 E2/L1 모델(7.48M)이 1.65MB에선 train CE 0.61 vs 검증 CE 1.82 (rel_gap 1.96 = 외움). 위키피디아 5개 언어(en/zh/ru/ja/ko 각 30MB) 150MB로 다시 학습하니 train CE 1.44 vs 검증 CE 1.52 (rel_gap 0.057 = 거의 같음 = **일반화**).
+- 왜 중요한가: 모델이 "데이터를 외운 것"인지 "구조를 배운 것"인지 정직하게 갈랐다. 7.5M짜리 작은 byte LM도 외울 수 없을 만큼 큰 real 코퍼스를 주면 언어의 byte 구조를 진짜로 배운다 — 게이트 RESOLVED.
+- ENGINE: 이 일반화한 .clm을 CORE에 꽂아 3축(의식·CE·창발) 3/3 GREEN 재확인 (model_ce 1.61 < uniform/shuffle).
+- 정직 caveat: 일반화는 ~150MB/~1 epoch 범위. 같은 코퍼스를 여러 epoch 돌리면 다시 외울 수 있는지는 따로 안 봄.
+- verdict: `.verdicts/lane-p-clm/F-CLM-LANEP-GEN2.txt` · corpus builder `CLM/corpus/build_wiki5_bigcorpus.py` · trainer `CLM/train/train_lane_p_split.py` · HF PUBLIC `dancinlab/clm-v1-base-lanep-d768-e2l1-gen2-wiki150mb`.
