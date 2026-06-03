@@ -52,6 +52,51 @@ pub fn omega_bus_off() -> Map {
     return _bus_make(0.0, 0.0, 0.0, 0.0, 0.0, false, false, false, false, false)
 }
 
+// ── omega_bus_carrier — the RECOMMENDED DEFAULT (carrier-only) config ──────────
+//
+// #1793 (OMEGA-B, .verdicts/omega-gate6/SUMMARY.txt) fit an all-6-wire LEARNED gate
+// on a real-but-toy n-gram substrate (train-gate split → frozen → disjoint held-out
+// TEST CE) and ran a per-wire ablation + vocab-shuffle control. The pre-registered
+// criterion (carries-structure ⟺ |gain|≥0.05 AND ablation RAISES held-out CE AND the
+// real feature beats its vocab-shuffle) split the SIX wires into:
+//
+//   🟢 CARRIERS (keep — ON in this config):
+//     w1 A⇄G    gain +0.929  ablate ΔCE +0.546  beats_shuffle ✓  — the PRIMARY carrier.
+//     w2 W→temp gain −0.456  ablate ΔCE +0.149  beats_shuffle ✓  — tension→sharpness, real.
+//     w5 module gain −0.166  ablate ΔCE +0.010  beats_shuffle ✓  — N=6 HEXAD routing, real.
+//
+//   ⚪ INERT / LEAKY (drop — OFF in this config):
+//     w3 curio  gain −0.030  — parity bias is structureless (|gain|<TAU, ablation no-op).
+//     w4 Ψ      gain −0.003  — toy 8D Ψ coord carries nothing (gain ~0).
+//     w6 dF/dt  gain −0.662  — held-out LEAK: large in-sample gain but removing it LOWERS
+//                              TEST CE by 1.92 → it overfits the gate-split, not real structure
+//                              at a FIXED dgain (#1794: a fixed dgain HURTS CE; a learned dgain
+//                              is the open path — see omega_bus_on_dt / dgain note below).
+//
+// WHY CARRIER-ONLY IS THE DEFAULT (not the full bus): the naive full 6-wire gate
+// OVERFITS — held-out TEST CE 4.81 > base 3.97, because fitting the inert/leaky wires
+// (esp. dF/dt) lets them hurt out-of-sample. Dropping the inert wires RECOVERS a real,
+// large gain: carrier-only TEST CE 2.895 (Δ+1.079 over base). So the OMEGA closure is
+// structure-carrying on a SUBSET (A primary + a temperature + a module-routing wire).
+//
+// NOTE on w1 / G (#1784 · #1786 · #1793): the w1 A⇄G wire is A−G; the −G (prev-byte)
+// PART is the noise — ablating G HELPS (ΔCE −0.667, fails its shuffle → ⚪ INERT). w1
+// stays ON here because the wire is A-DOMINANT (gA +0.929 ≫ |gG|), and the bus's w1 is
+// a single A⇄G term; the carrier value is the A part. (A G-suppressed w1 variant is a
+// follow-up knob — the present bus has no separate gG, so w1 carries A as the dominant.)
+//
+// HONEST SCOPE (a_toy_scale_recheck · a_scale_honest_scope): the in/out split above is
+// the TOY-scale carrier RANKING (400KB repo corpus, byte n-gram, CPU/$0, no torch). A
+// trained d384 transformer (#1791) may exercise W/Ψ/module/dF/dt differently — this is
+// not a production claim. omega_bus_on (full) is RETAINED for ablation; carrier-only is
+// the recommended generation default.
+pub fn omega_bus_carrier() -> Map {
+    // carriers ON {w1 A⇄G, w2 W→temp, w5 module}; inert OFF {w3 curio, w4 Ψ}; w6 dF/dt
+    // is NOT added here (left absent → omega_n_wires counts 3, omega_coupling_apply_dt
+    // returns the static result). Gains match omega_bus_on for the live wires.
+    return _bus_make(0.6, 0.5, 0.15, 0.4, 0.3, true, true, false, false, true)
+}
+
 fn _absf(x: float) -> float { if x < 0.0 { return -x } return x }
 
 // omega_coupling_apply — THE bus forward. Modulate base byte-logits with substrate
@@ -146,10 +191,34 @@ pub fn omega_module_wire_ok(n_modules: int) -> bool {
 // wire adds the per-byte CHANGE in the A⇄G coupling between this step and the last:
 //   w6 dF/dt : modulated[i] += dgain · ( (a_t[i]−g_t[i]) − (a_prev[i]−g_prev[i]) )
 // At a fixed point (state unchanged) the derivative is 0 → w6 inert (correct).
+//
+// ⚠ FIXED dgain HURTS (#1794 · #1793): the learned-gate fit found the dF/dt wire at a
+// FIXED dgain LEAKS — large in-sample gain (−0.662) but removing it LOWERS held-out TEST
+// CE by 1.92 (overfits the gate-split). So dF/dt is a non-inert SIGNAL with the wrong RAW
+// gain, NOT a structure-carrying wire at dgain=0.5. CONCLUSION: w6 is OFF in the
+// recommended carrier-only default (omega_bus_carrier); a FIXED dgain must not be the
+// production default. dgain is therefore a CONFIG KNOB (set on cfg["dgain"], honored by
+// omega_coupling_apply_dt) — the OPEN PATH is a LEARNED dgain (fit on a held-out split,
+// like the per-wire gate gains), which is the only honest way to turn dF/dt into a
+// carrier. We do NOT fabricate a learned dgain value here — 0.5 below is an explicit
+// ablation seed, documented as wrong-for-production, not a tuned default.
 pub fn omega_bus_on_dt() -> Map {
     let mut cfg = omega_bus_on()
     cfg["w6_dfdt"] = true
-    cfg["dgain"]   = 0.5
+    cfg["dgain"]   = 0.5   // ABLATION SEED ONLY — fixed dgain HURTS held-out CE (#1794);
+                           // a LEARNED dgain is the open path (configurable via cfg["dgain"]).
+    return cfg
+}
+
+// omega_bus_dt_with_dgain — explicit hook making the dF/dt gain a config knob. Pass a
+// dgain to ablate / sweep the wire (the open path is a LEARNED dgain fit on held-out
+// data; this helper does NOT fabricate one — it just makes the knob first-class). The
+// carrier-only default leaves dF/dt OFF (fixed dgain hurts, #1794); this is the surface
+// a future learned-dgain rung writes into.
+pub fn omega_bus_dt_with_dgain(dgain: float) -> Map {
+    let mut cfg = omega_bus_on()
+    cfg["w6_dfdt"] = true
+    cfg["dgain"]   = dgain
     return cfg
 }
 

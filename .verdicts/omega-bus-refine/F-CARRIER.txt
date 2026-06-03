@@ -1,0 +1,52 @@
+OMEGA bus-refine — F-CARRIER: carrier-only bus default (#1793 6-wire finding codified)
+=======================================================================================
+date 2026-06-04 · substrate=hexa+numpy · CPU · $0 · honest p7 / a_core_engine_map / a_toy_scale_recheck
+
+CLAIM
+  The OMEGA coupling bus gains a CANONICAL carrier-only config, omega_bus_carrier(), as the
+  RECOMMENDED generation default. It enables only the #1793 structure-carrying wires
+  {w1 A⇄G, w2 W→temp, w5 module} and disables the inert wires {w3 curio, w4 Ψ, w6 dF/dt}.
+  omega_bus_on() (full 5/6-wire) is retained for ablation only. dF/dt's gain remains a config
+  knob (cfg["dgain"]); a FIXED dgain hurts held-out CE (#1794) so dF/dt is OFF in the default,
+  and a learned dgain is documented as the open path (no fabricated value).
+
+SOURCE FINDING (#1793 · .verdicts/omega-gate6/SUMMARY.txt — all-6-wire learned gate, toy n-gram)
+  FULL 8-gain vector [gB,gA,gG,gW,gC,gΨ,gM,gD] = [-0.110,+0.929,+0.546,-0.456,-0.030,-0.003,-0.166,-0.662]
+  per-wire ablation + vocab-shuffle, carries-structure ⟺ |gain|≥0.05 AND ablate ΔCE>0 AND beats shuffle:
+    A      gain +0.929  ablate ΔCE +0.546  beats_shuffle ✓  -> CARRIES STRUCTURE  (w1, primary)
+    W_temp gain -0.456  ablate ΔCE +0.149  beats_shuffle ✓  -> CARRIES STRUCTURE  (w2)
+    module gain -0.166  ablate ΔCE +0.010  beats_shuffle ✓  -> CARRIES STRUCTURE  (w5)
+    G      gain +0.546  ablate ΔCE -0.667  beats_shuffle ✗  -> INERT (−G/prev-byte is noise; w1 stays A-dominant)
+    curio  gain -0.030  ablate ΔCE -0.000  beats_shuffle ✗  -> INERT (w3, parity = structureless)
+    Psi    gain -0.003  ablate ΔCE +0.000  beats_shuffle ✗  -> INERT (w4, toy Ψ carries nothing)
+    dFdt   gain -0.662  ablate ΔCE -1.916  beats_shuffle ✗  -> INERT/LEAK (w6, fixed dgain overfits gate-split)
+  held-out TEST CE: base 3.9743 · FULL naive 6-wire gate 4.8092 (WORSE — overfits) ·
+                    CARRIER-ONLY gate (base+A+W_temp+module) 2.8950 (Δ+1.079 over base — REAL gain)
+
+IMPLEMENTATION (engines/omega/coupling_bus.hexa)
+  omega_bus_carrier() = _bus_make(0.6,0.5,0.15,0.4,0.3, w1=true, w2=true, w3=false, w4=false, w5=true)
+    w6 dF/dt NOT added (cfg has no "w6_dfdt" key) -> omega_n_wires == 3, omega_coupling_apply_dt
+    returns the static result. Live wires {w1,w2,w5}; off {w3,w4,w6}.
+  omega_bus_on() RETAINED (full, 5 wires) for ablation. omega_bus_on_dt() dgain=0.5 labelled an
+  ablation SEED (not a tuned default; fixed dgain hurts per #1794). NEW omega_bus_dt_with_dgain(dgain)
+  makes the dF/dt gain a first-class knob — the surface a future LEARNED-dgain rung writes into.
+  adapter.hexa manifest note records carrier-only as the generation default.
+
+VERIFICATION (deterministic, $0, CPU — no torch / no ckpt / no LLM)
+  engines/omega/omega_bus_smoke.hexa : 13 pass / 0 fail
+    c1_carrier_subset_of_full         PASS  (every carrier wire ON in carrier is ON in full)
+    c2_carrier_fewer_wires            PASS  (omega_n_wires(carrier)=3 < full=5)
+    c3_carrier_split_w1w2w5_on_w3w4_off PASS (the #1793 in/out split)
+    c4_carrier_three_live_wires       PASS  (omega_n_wires(carrier) == 3)
+    c5_carrier_changes_decode_L1      PASS  (carrier decode L1=1.73333 > 0 — loop CLOSED, not Lane X null)
+    c6_carrier_differs_from_full      PASS  (|carrier-full| L1=1.18519 > 0 — real config change)
+    (+ n1-n4 N-module, t1-t3 dF/dt unchanged GREEN)
+  engines/engine_swap_smoke.hexa     : 27 pass / 0 fail  (no regression; omega still all-native, no stub)
+
+SCOPE (a_toy_scale_recheck · a_scale_honest_scope · p7)
+  The in/out wire split is the TOY-scale carrier RANKING (400KB repo corpus, byte n-gram, CPU/$0,
+  no torch). A trained d384 transformer (#1791) may exercise W/Ψ/module/dF/dt differently — this is
+  NOT a production claim. The structural assertions here (subset, decode-change, n-wires) are
+  config-level invariants, verified deterministically and scale-independent.
+
+VERDICT  🟢 carrier-only default ADDED + verified · full retained for ablation · dgain knob documented honest
