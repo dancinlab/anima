@@ -89,3 +89,18 @@ Re-measured the e003 DIFFER and drove it to a genuine 8/8. The prior "elements b
 - **Proof status:** FUNCTIONAL — passes on a locally-fixed hexat; becomes released behavior once hexa-lang PR `mczero/if-body-fold-fix` merges (the installed unfixed hexat still miscompiles maxabs). M3 PORT-EQ holds the moment that PR lands. The harness fp fix is toolchain-independent and committed here.
 
 Verdict: `.verdicts/c-port/sgemm-ref-runeq.txt` (PORT-EQ, 8/8). C-PORT M1·M2·M3 done; M4·M5 remain (tier-A documentation · libhxnccl adjudication).
+
+## 2026-06-04 — e005 M4 + M5 CLOSED → DOMAIN TERMINAL (5/5 milestones [x])
+
+**M4 [x] — tier-A vendor floor formally marked. M5 [x] — build/libhxnccl.c adjudicated vendor-irreducible (tier A). C-PORT now TERMINAL: portable surface exhausted, only the irreducible vendor-ABI floor remains in C. g63-honest, real call-surface inspection, NO porting forced.**
+
+- **M4 (verdict `.verdicts/c-port/M4-vendor-floor.txt`).** Per-file vendor-ABI surface re-confirmed by `grep -oE '(cublas|cuda|cblas_|vDSP_|vvexpf|nccl)'` over the live source (counts in verdict, not paraphrased):
+  - `training/native/train_step.c` (1054) — cuBLAS (Sgemm×5/Saxpy×9/Sscal×3/Snrm2×3/Create/Destroy) + CUDA (Malloc×25/Memcpy×49/Free×25/Memset/DeviceSync). THE GPU training hot path; IS the C↔cuBLAS/CUDA bridge.
+  - `training/hxblas_cuda_shim.c` (572) — CUDA (Malloc×14/Free×16/MemcpyAsync×4/StreamCreate×2/SetDevice×2) + cuBLAS (Sgemm×5/SetMathMode/SetStream) + Accelerate cblas (sgemm×2/sscal/sdot). Dual-backend dispatch bridge.
+  - `training/hxblas_wrapper.c` (562) — Accelerate cblas_sgemm×4/sscal×2/sdot×2/saxpy×2. Host BLAS bridge.
+  - `training/hxvdsp_wrapper.c` (186) — Accelerate vDSP (vmul×8/vsmul×7/vsadd×3/vsub×2/vadd×2/svesq/sve/maxv/dotpr) + vvexpf×4. vDSP bridge.
+  - Each file's reason-to-exist IS a vendor library; no extractable pure-logic kernel. Formally marked NON-PORTABLE.
+
+- **M5 (verdict `.verdicts/c-port/M5-libhxnccl.txt`).** `training/build/libhxnccl.c` (211) classified **AUTHORED vendor-irreducible FFI → TIER A**. Evidence: git-tracked + NO generated/DO-NOT-EDIT marker + hand-written human design-doc header (cites alm_r11_fsdp_plan topology + feedback_no_quantization bf16) → authored, not generated. Entire surface = NCCL collective comms over CUDA (ncclCommInitAll×4/CommInitRank×2/CommDestroy×2/AllReduce + cudaGetDeviceCount/SetDevice/Malloc). The only non-vendor code is FFI guard scaffolding (handle-magic check, arg bounds, negative-rc mapping, comm-array malloc) — defensive marshaling, NOT an extractable kernel; the AllReduce sum runs inside NCCL on-device. **g63-honest future-leaf note: NONE — no pure-logic sliver to carve, no port forced.** Folded into tier A; stays in C (porting = re-implementing NVIDIA NCCL).
+
+- **TERMINAL.** All 5 milestones [x]: M1 inventory · M2 tier-B port (RUNEQ-EQ) · M3 tier-C ref port (PORT-EQ 8/8) · M4 tier-A vendor floor marked · M5 libhxnccl adjudicated tier-A. Remaining authored C = the irreducible vendor-ABI floor (cuBLAS · CUDA · Accelerate cblas/vDSP · NCCL). No portable C remains in anima's training stack.
