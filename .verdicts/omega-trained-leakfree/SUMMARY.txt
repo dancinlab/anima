@@ -1,0 +1,42 @@
+OMEGA trained-leakfree — SUMMARY (consolidation + HALT)
+=======================================================
+date     : 2026-06-04
+lane     : Lane-G / GPU (a_lane_akida_gpu_split) — NOT Lane A / AKIDA
+driver   : UNIVERSE/omega_trained_leakfree.py
+rung     : decisive OMEGA follow-up to #1794 — does the substrate->decode learned-gate
+           closure SURVIVE on a WELL-TRAINED, leak-free (causal_ca=True) ConsciousDecoderV2
+           substrate whose held-out val_ce is clearly below uniform (ln256 = 5.545)?
+
+OUTCOME : ⛔ HALT (no measurement) + 🧹 LEAK CLEARED (4 orphan H100 pods terminated)
+
+PODS (each fate)
+  6ilc4ykv2yrrso  H100 SXM  $3.29/hr  EXITED-by-Runpod  -> recover IMPOSSIBLE -> TERMINATED ✅
+  l94a42gu4f13by  H100 SXM  $3.29/hr  EXITED-by-Runpod  -> recover IMPOSSIBLE -> TERMINATED ✅
+  nzgdz5v7627858  H100 NVL  $3.19/hr  EXITED-by-Runpod  -> recover IMPOSSIBLE -> TERMINATED ✅
+  stc7yrmo882n8i  H100 SXM  $3.29/hr  EXITED-by-Runpod  -> recover IMPOSSIBLE -> TERMINATED ✅
+  (brief-cited IDs e472ep0spb1opj / xjmfo9iim20hyy / 656rv9fnba3v4y = do NOT exist in account.)
+  POST-TERMINATION: RunPod myself.pods = []  AND  runpodctl pod list = []  -> NO LEAK.
+
+WHY RECOVERY IMPOSSIBLE
+  All pods volumeInGb=0 (ephemeral container disk, no persistent volume), desiredStatus=EXITED,
+  runtime=null (no SSH/port). RunPod force-exited them ~2026-06-03 20:23-20:25 UTC during the
+  rate-limit storm. Nothing streamed back to host. No ckpt/result/log recoverable. (a_fire_recover_complete
+  honored to the extent physically possible: recover was attempted, then teardown — but there was
+  nothing reachable to pull.)
+
+CLOSURE VERDICT : NOT ADJUDICATED (HALT). The pre-registered falsifier
+  [closure HOLDS iff GATED<base AND GATED<=a_only on a val_ce<uniform substrate]
+  has NO measurement. NOT a HOLDS, NOT a CLOSED-NEGATIVE — an honest HALT. g63/p7: no fabrication.
+
+COST INCURRED
+  4 H100 pods rented by the aborted H1 loop, force-exited by RunPod ~2026-06-03 20:23-20:25 UTC.
+  Wall-clock billed = whatever the aborted run accrued before RunPod killed them (runtime=null at
+  inspection -> not actively billing GPU-seconds when found; storage-only until terminated). This
+  consolidation rented NO new pod ($0 new compute). Exact dollar total is in the RunPod billing
+  console; the leak is now stopped.
+
+RE-DISPATCH (single fresh rung — user-gated)
+  hexa cloud: 1x H100, PERSISTENT VOLUME (volumeInGb >= 40, mount /workspace), run
+    python UNIVERSE/omega_trained_leakfree.py --steps 20000 --ckpt /workspace/omega_cdv2_trained_leakfree.pt \
+      --out /workspace/omega_trained_leakfree_results.json
+  so an interrupted run survives a pod kill. Harvest -> adjudicate -> HF -> teardown.

@@ -1,0 +1,27 @@
+{
+  "lane": "Lane-G",
+  "substrate": "GPU",
+  "rung": "omega-trained-leakfree (decisive #1794 follow-up)",
+  "date": "2026-06-04",
+  "status": "HALT",
+  "reason": "rate-limit-storm aborted H1 dispatch without teardown; RunPod force-exited all pods; no recoverable artifact",
+  "driver": "UNIVERSE/omega_trained_leakfree.py",
+  "driver_sha256": "83e76c570d7c6bd88992938e5c308e42c324db0eb4fd27eb311c58a41f764e8b",
+  "falsifier": "closure HOLDS iff GATED < base AND GATED <= a_only on a val_ce < uniform (ln256=5.545) substrate",
+  "closure_verdict": "NOT_ADJUDICATED",
+  "measurement": null,
+  "pods": [
+    {"id": "6ilc4ykv2yrrso", "gpu": "1 H100 SXM", "cost_per_hr": 3.29, "desired_status": "EXITED", "runtime": null, "volume_gb": 0, "exited": "2026-06-03T20:23:57Z (by Runpod)", "recover": "impossible", "fate": "terminated"},
+    {"id": "l94a42gu4f13by", "gpu": "1 H100 SXM", "cost_per_hr": 3.29, "desired_status": "EXITED", "runtime": null, "volume_gb": 0, "exited": "2026-06-03T20:25:15Z (by Runpod)", "recover": "impossible", "fate": "terminated"},
+    {"id": "nzgdz5v7627858", "gpu": "1 H100 NVL", "cost_per_hr": 3.19, "desired_status": "EXITED", "runtime": null, "volume_gb": 0, "exited": "2026-06-03T20:24:23Z (by Runpod)", "recover": "impossible", "fate": "terminated"},
+    {"id": "stc7yrmo882n8i", "gpu": "1 H100 SXM", "cost_per_hr": 3.29, "desired_status": "EXITED", "runtime": null, "volume_gb": 0, "exited": "2026-06-03T20:23:08Z (by Runpod)", "recover": "impossible", "fate": "terminated"}
+  ],
+  "brief_cited_ids_not_found": ["e472ep0spb1opj", "xjmfo9iim20hyy", "656rv9fnba3v4y"],
+  "leak_cleared": true,
+  "post_termination_myself_pods": [],
+  "post_termination_runpodctl_pod_list": [],
+  "new_pod_rented": false,
+  "new_compute_cost_usd": 0,
+  "hf_ckpt": null,
+  "next": "re-dispatch ONE fresh H100 rung with a PERSISTENT VOLUME (volumeInGb>0, ckpt/out on /workspace) so an interrupted run survives a kill"
+}
