@@ -1,0 +1,30 @@
+OMEGA (Lane-Ω) closure engine — build + 4-engine benchmark SUMMARY
+==================================================================
+BUILD: engines/omega/ (coupling_bus.hexa + adapter.hexa + manifest + MODEL_CARD).
+  EngineSpec 4/4 NATIVE (first all-native engine). --engine omega registered
+  (flag>env>default conv). engine_swap_smoke 4 engines = 26/26 PASS.
+
+HEADLINE — coupling NON-NULLITY (F-COUPLING.txt, seed=20260604, V=256 T=512):
+  omega coupling_KL = 0.307477 > 0  (L3 loaded=true)
+  conv/cdv2/hexad   = 0.000000      (L3 loaded=false — the Lane X #1779 null)
+  => OMEGA is the ONLY engine that closes the substrate->decode loop. The 5-wire
+     bus (A⇄G·W→temp·curiosity·8D Ψ·module) routes substrate state into the byte
+     decode. CONFIRMED: overturns Lane X #1779 null FOR omega; confirms for other 3.
+
+HONEST closed-negative (a_paper_negative_ok): at RANDOM-INIT the coupling is
+  NOT-STRUCTURED — KL_on 0.307477 ~= perm_floor 0.303913 (shuffle the A-G wire
+  across vocab and KL barely moves). The WIRE EXISTS but a random substrate's
+  coupling is indistinguishable from a vocab-shuffle. STRUCTURE requires a TRAINED
+  substrate (next rung, a_toy_scale_recheck). The bench proves the LOOP IS WIRED,
+  not that a random substrate speaks coherently.
+
+per-wire ablation (KL alone): w1_AG=0.348 (dominant) · w4_psi=0.067 · w2_Wtemp=0.043
+  · w5_module=0.031 · w3_curio=0.012. A⇄G is the load-bearing wire.
+
+CE floor (p7 — FLOOR, not a verdict): all engines NOT-MET at random-init (>= uniform
+  5.5452). Expected (Lane X measured the trained-but-detached d768 .clm at 9.1126).
+
+SCOPE (a_toy_scale_recheck): toy V=256 T=512, random-init mock substrate, NO torch,
+  NO trained ckpt. scale-transfer + trained-substrate coherence UNVERIFIED. NEXT RUNG
+  = trained-ckpt GPU (a_fire_autonomous): load s16 substrate, re-measure structured
+  coupling (KL_on vs perm) on a TRAINED A/G — does the bus then beat the shuffle floor?

@@ -1,0 +1,29 @@
+=== OMEGA 4-engine bench  seed=20260604 V=256 T=512  (random-init mock substrate, no torch/ckpt) ===
+uniform-256 CE floor (LN256) = 5.545177
+
+--- F-COUPLING: coupling non-nullity  KL(softmax(modulated)||softmax(base)) ---
+[conv  ] L3 loaded=false  coupling_KL=0.000000  perm_floor=0.000000  -> NULL (loaded=false)
+[cdv2  ] L3 loaded=false  coupling_KL=0.000000  perm_floor=0.000000  -> NULL (loaded=false)
+[hexad ] L3 loaded=false  coupling_KL=0.000000  perm_floor=0.000000  -> NULL (loaded=false)
+[omega ] L3 loaded=true   coupling_KL=0.307477  perm_floor=0.303913  -> CLOSED
+
+--- omega per-wire ablation (each wire alone, KL vs base) ---
+  w1_AG      KL=0.348244
+  w2_Wtemp   KL=0.042748
+  w3_curio   KL=0.012030
+  w4_psi     KL=0.066630
+  w5_module  KL=0.031156
+
+--- F-CE-FLOOR: CE vs uniform-256 (p7 — FLOOR, NOT a verdict) ---
+[conv  ] model_ce=6.081215  uniform=5.545177  -> NOT-MET (>= uniform, random-init)
+[cdv2  ] model_ce=6.081215  uniform=5.545177  -> NOT-MET (>= uniform, random-init)
+[hexad ] model_ce=6.081215  uniform=5.545177  -> NOT-MET (>= uniform, random-init)
+[omega ] model_ce=6.121470  uniform=5.545177  -> NOT-MET (>= uniform, random-init)
+
+=== SUMMARY ===
+coupling NON-NULL: omega KL=0.307477 > 0  AND  conv/cdv2/hexad KL=0 (all null) -> CONFIRMED
+  => OMEGA is the ONLY engine that closes the substrate->decode loop (overturns Lane X #1779 null FOR omega; confirms it for the other 3).
+structured-vs-perm: omega KL_on=0.307477 vs perm_floor=0.303913 -> NOT-STRUCTURED at random-init (KL_on ~ perm floor)
+  => HONEST (a_paper_negative_ok): at RANDOM-INIT the wire EXISTS but its coupling is not distinguishable from a vocab-shuffle — STRUCTURE requires a TRAINED substrate (next rung, a_toy_scale_recheck). The bench proves the LOOP IS WIRED, not that a random substrate speaks coherently.
+CE floor (p7): random-init -> NOT-MET for all (>= uniform 5.5452) — expected, CE is a FLOOR not a verdict (Lane X #1779 measured the trained-but-detached d768 .clm at 9.1126).
+SCOPE: toy V=256 T=512, random-init mock substrate, no torch/ckpt. scale-transfer + trained-substrate coherence UNVERIFIED.

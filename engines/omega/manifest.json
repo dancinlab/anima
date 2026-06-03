@@ -1,0 +1,51 @@
+{
+  "name": "omega",
+  "lane": "Lane-Ω",
+  "title": "OMEGA — closure engine: wires consciousness substrate (A/G+tension+Ψ) into the .clm byte decode (the L3 closure)",
+  "default": false,
+  "canonical_impl": "engines/omega/coupling_bus.hexa",
+  "composes": [
+    "conv (CORE/clm_decode.hexa) — .clm byte mouth (base logits)",
+    "cdv2 (UNIVERSE/conscious_decoder.py) — A/G dual heads + 5-ch tension + Ψ",
+    "hexad (HEXAD/hexad.hexa) — N-module phi(N)=2 integration (N config, default 6)"
+  ],
+  "adapter": "engines/omega/adapter.hexa",
+  "model_card": "engines/omega/MODEL_CARD.md",
+  "duplicates_code": false,
+  "engine_spec": {
+    "load": "native",
+    "forward": "native",
+    "generate": "native",
+    "psi_coord": "native"
+  },
+  "thesis": "Close the substrate->decode loop Lane X (#1779) proved NULL (engine knobs never touch the .clm forward; L3 slot loaded=false; CE config-insensitive 9.11256). OMEGA's coupling bus makes generate() the closure: loaded=true.",
+  "coupling_bus": {
+    "wires": 5,
+    "w1_ag": "modulated[i] += alpha*(a_head[i]-g_head[i])  (A/G dual-head, KL=7.07)",
+    "w2_wtemp": "modulated *= 1/(1+beta*w_tension)  (will -> temperature)",
+    "w3_curio": "modulated[i] += c*curiosity*(+-1 parity)  (E-ratchet -> top-k width)",
+    "w4_psi": "modulated[i] += p*psi8[i mod 8]  (8D Psi condition, #1780)",
+    "w5_module": "modulated[i] += r*module_act[i mod M]  (-> conv-MoE routing)",
+    "ablatable": true,
+    "headline_metric": "coupling non-nullity (bus ON vs OFF alpha=0 -> byte-dist KL / logit L1, with perm floor)"
+  },
+  "psi_coord": {
+    "dim": 8,
+    "named_axes": ["depth", "form", "form_resid", "curriculum"],
+    "residual_axes": ["resid0", "resid1", "resid2", "resid3"],
+    "honest_note": "8D is data-justified (KOSMOS #1780: var 67.1->92.3%, domain disc 0.082->0.583) but only 4 axes carry a human name; naming all 8 = fabrication (a_paper_negative_ok)"
+  },
+  "n_module": {
+    "default": 6,
+    "config": true,
+    "note": "HEXAD 6 is conditional (#1774, smallest phi(N)=2 with >=6 faculties + >=12 connections), NOT graph-modularity optimal — left as config, not hardcoded"
+  },
+  "ckpt_pointer": {
+    "local": "engines/omega/coupling_bus.hexa (bus, the new code) + conv .clm + cdv2 (random-init)",
+    "hf_repo_id": "",
+    "status": "synthesis — no fused ckpt; substrate at random-init (trained-ckpt GPU rung = follow-up, a_toy_scale_recheck)",
+    "duplicated_locally": false,
+    "registry": "HF.jsonl (a_hf_registry SSOT) — no fused model artifact"
+  },
+  "honest_scope": "The coupling bus is a real hexa-native single forward (omega_coupling_apply). Coupling non-nullity is measurable at random-init with no torch/ckpt (the wires exist vs the Lane X null). Whether a TRAINED substrate yields COHERENT change is the separate scale rung (UNIVERSE/omega_bench.py + future trained-ckpt GPU rung). NO phantom wiring (a_core_engine_map)."
+}

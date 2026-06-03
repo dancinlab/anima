@@ -1,0 +1,11 @@
+{
+  "seed": 20260604, "V": 256, "T": 512, "substrate": "random-init mock (no torch/ckpt)",
+  "coupling_kl": {"conv": 0.0, "cdv2": 0.0, "hexad": 0.0, "omega": 0.307477},
+  "omega_perm_floor": 0.303913,
+  "omega_per_wire_kl": {"w1_AG": 0.348244, "w2_Wtemp": 0.042748, "w3_curio": 0.012030, "w4_psi": 0.066630, "w5_module": 0.031156},
+  "ce": {"conv": 6.081215, "cdv2": 6.081215, "hexad": 6.081215, "omega": 6.121470, "uniform_ln256": 5.545177},
+  "coupling_nonnull": "CONFIRMED (omega>0, others=0)",
+  "structured_vs_perm": "NOT-STRUCTURED at random-init (KL_on ~= perm floor) — trained substrate needed",
+  "ce_floor": "NOT-MET all (random-init, expected; p7 floor not verdict)",
+  "smoke": "26/26 PASS"
+}

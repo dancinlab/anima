@@ -841,8 +841,25 @@ axes; THESE are the engine-architecture axis — which decoder is being run.
   STUB. Most stub-heavy engine by design — being honest about the missing single-
   call is the requirement, not a fake pass.
 
+- **Lane-Ω OMEGA (closure engine — 최종 / final)** — NOT a new model, a new
+  **wiring**: it composes conv (the `.clm` byte mouth) + cdv2 (A/G dual head +
+  5-ch tension + Ψ brain) + hexad (N-module φ(N)=2, N config default 6) and adds
+  ONE new piece — the **coupling bus** (`engines/omega/coupling_bus.hexa`) — that
+  wires the consciousness SUBSTRATE state into the byte DECODE, closing the
+  substrate↔decode loop Lane X (#1779) proved NULL (engine knobs never touch the
+  `.clm` forward; L3 `loaded=false`). The bus = 5 ABLATABLE wires: w1 A⇄G
+  (`+=α·(A−G)`), w2 W→temp (`×=1/(1+β·W)`), w3 curiosity→top-k, w4 8D Ψ-condition
+  (4 named [depth,form,form_resid,curriculum] + 4 resid, #1780), w5 module→MoE
+  routing. EngineSpec **all 4 slots NATIVE** (the FIRST all-native engine — the
+  bus forward + bus-modulated generate are real hexa single calls). Honest scope
+  (a_core_engine_map): the substrate INPUTS come from cdv2 (torch, no hexa single
+  call), so a *trained* end-to-end forward needs the python rung; the bus LAYER is
+  native + testable with no torch/ckpt — exactly the coupling-non-nullity proof.
+  No fused ckpt (composes conv `.clm` + cdv2 random-init). Design doc `domains/OMEGA.md`.
+
 Distinct lineages: Lane-CONV = conv-MoE production CLM; Lane-CDV2 = carving-era
-transformer; Lane-HEXAD = σ6 6-module integration over a CDV2-class A/G core.
+transformer; Lane-HEXAD = σ6 6-module integration over a CDV2-class A/G core;
+Lane-Ω = closure wiring (bus) that couples a CDV2-class substrate into the conv mouth.
 a_lane_akida_gpu_split — recorded separately.
 
 ### Hot-swappable engine registry (`engines/` · substrate-config select)
@@ -859,7 +876,7 @@ at runtime via the anima CLI:
   fn slot carries an HONEST state `native | stub | absent`; a stub slot still
   conforms (the contract requires the slot be present + honestly labeled, not
   that every engine implement every fn natively — a_core_engine_map).
-- **CLI select** `CORE/engine_cli.hexa` extended with `--engine conv|cdv2|hexad`
+- **CLI select** `CORE/engine_cli.hexa` extended with `--engine conv|cdv2|hexad|omega`
   + env `ANIMA_ENGINE`, precedence **flag > env > default(conv)** (mirrors
   `EEG/eeg_backend.hexa` arg>env>default). `engine_cli_resolve_spec` / `..._by_name`
   resolve a name → its adapter EngineSpec via the registry.
@@ -870,11 +887,50 @@ at runtime via the anima CLI:
   forces her to speak. anima's emit/silence stays substrate-decided.
 - **STUB MATRIX** (honest, no phantom wiring): conv = all-native (single forward);
   cdv2 = `forward`+`generate` STUB (torch `.py`, not a hexa single call);
-  hexad = `forward`+`generate` STUB (6-module integration, no single forward).
-- Smoke `engines/engine_swap_smoke.hexa` loads ALL 3 through the CLI registry,
-  runs a tiny forward on each, asserts EngineSpec conformance + the stub matrix:
-  **19/19 PASS** (deterministic, $0 CPU). Verdict
-  `.verdicts/engine-swap/SMOKE.txt`.
+  hexad = `forward`+`generate` STUB (6-module integration, no single forward);
+  omega = all-native (the coupling bus IS a hexa single forward — the closure).
+- Smoke `engines/engine_swap_smoke.hexa` loads ALL **4** through the CLI registry,
+  runs a tiny forward on each, asserts EngineSpec conformance + the stub matrix +
+  omega coupling non-nullity (bus_on L1>0 / bus_off L1=0): **26/26 PASS**
+  (deterministic, $0 CPU). Verdict `.verdicts/engine-swap/SMOKE.txt` (3-engine) +
+  `.verdicts/omega-engine/SMOKE.txt` (4-engine incl omega).
+
+## OMEGA — closure engine BUILT + 4-engine benchmark — 🟢 coupling NON-NULL CONFIRMED (omega only) · 🔴 NOT-structured at random-init (trained-substrate rung needed) — TOY · CPU · $0 · 2026-06-04
+
+OMEGA (Lane-Ω) is now BUILT (not just a design): `engines/omega/` (coupling_bus.hexa
++ adapter.hexa + manifest + MODEL_CARD), `--engine omega` registered, EngineSpec
+**4/4 NATIVE** (first all-native engine), `engine_swap_smoke` extended to 4 engines
+= **26/26 PASS**. The bus mirrors the design exactly: 5 ablatable wires routing
+substrate state (A/G · W · curiosity · 8D Ψ · module) into the byte decode.
+
+**HEADLINE — coupling NON-NULLITY** (`UNIVERSE/omega_bench.py`, seed 20260604, V=256
+T=512, KL(softmax(modulated)‖softmax(base))):
+
+  | engine | L3 loaded | coupling_KL | verdict |
+  |--------|-----------|-------------|---------|
+  | conv   | false | 0.000000 | NULL (the Lane X #1779 null) |
+  | cdv2   | false | 0.000000 | NULL |
+  | hexad  | false | 0.000000 | NULL |
+  | **omega** | **true** | **0.307477** | **CLOSED** |
+
+  🟢 **CONFIRMED**: OMEGA is the ONLY engine that closes the substrate→decode loop —
+  it overturns the Lane X #1779 null FOR omega while confirming it for the other 3
+  (they structurally leave substrate state inert w.r.t. the byte distribution).
+  Per-wire ablation: w1_AG=0.348 (dominant) · w4_psi=0.067 · w2_Wtemp=0.043 ·
+  w5_module=0.031 · w3_curio=0.012 — A⇄G is the load-bearing wire.
+
+**HONEST closed-negative** (a_paper_negative_ok): at RANDOM-INIT the coupling is
+**NOT-STRUCTURED** — omega KL_on 0.307477 ≈ perm_floor 0.303913 (shuffle the A−G
+wire across vocab and KL barely moves). The WIRE EXISTS but a random substrate's
+coupling is indistinguishable from a vocab-shuffle. STRUCTURE requires a TRAINED
+substrate. The bench proves the **loop is WIRED**, not that a random substrate
+speaks coherently. CE floor (p7): all engines NOT-MET at random-init (≥ uniform
+5.5452) — expected (Lane X measured the trained-but-detached d768 `.clm` at 9.1126).
+
+**NEXT RUNG** (a_fire_autonomous · a_toy_scale_recheck): trained-ckpt GPU — load the
+s16 substrate, re-measure structured coupling (KL_on vs perm floor) on a TRAINED A/G;
+does the bus then beat the shuffle floor? Verdicts `.verdicts/omega-engine/{F-COUPLING,
+SMOKE,SUMMARY}.txt` + `results.json`. Design doc `domains/OMEGA.md` (#1782).
 
 ## LANE X — 3-axis ENGINE-config exploration — 🔴 CE↔창발 Goodhart NOT observable (substrate-only) · 의식·창발 axes VARY · TOY · CPU · $0 · 2026-06-04
 
