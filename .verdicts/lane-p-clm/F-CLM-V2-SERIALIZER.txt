@@ -1,0 +1,73 @@
+=== Lane P REMEDY (substrate=GPU-torch serializer; verify=local CPU, $0) ===
+date: 2026-06-03
+verdict: F-CLM-V2-SERIALIZER = 1  ✅ (byte-roundtrip PASS + golden-reference PASS)
+scope: pure-local byte serialization + format verify. NO GPU, NO chip rented.
+       The hard correctness gate = the golden flame .clm parse (real-format truth).
+       p7/g63 honest — verbatim tool output, no fabricated convergence.
+
+WHAT WAS BUILT (a_completeness_over_cheap — fresh re-design at the root cause):
+  CLM/model/clm_serialize_v2.py — serialize_v2(state_dict_or_ckpt, cfg, out_path)
+    packs a torch CLMConvMoE (E=2 / 1 trunk layer) state_dict into the EXACT
+    CLM\x01 v0.2 byte layout CORE/clm_decode.hexa loads:
+      [0:4] MAGIC 67,76,77,1
+      [4]   nblk u8 = 6
+      6 conv blocks (ecW,tcW,e0W,e1W,rW,roW), each:
+        u32 cout LE · u32 rest LE · int4 nibbles ((cout*rest+1)//2 B, 2/byte) ·
+        cout fp32 LE per-channel scale.  int4-sym: scale=max|w|/7 per out-channel,
+        code=round(w/scale) clamped [-7,7].
+      CLMX trailer: 67,76,77,88 · n_ext u8=11 · 11 ext arrays, EACH = u32 count LE
+        + count fp32 LE.
+    torch import is LAZY — the fn also accepts a plain dict of numpy/list arrays
+    (keyed by logical slot OR torch state_dict key), so it is testable w/o torch.
+  CLM/model/verify_clm_v2.py — pure-stdlib mirror of clm_decode.hexa::clm_decodable
+    (magic → walk nblk blocks via cout/rest → require "CLMX") + a fuller parse
+    (re-reads block dims + CLMX n_ext + each ext count + exact-EOF). Synthetic
+    round-trip (d=32,K=3,V=256,E=2,1-trunk, seed=1234) + golden-reference parse.
+
+EXACT EXT LAYOUT MATCHED (CLMX trailer, n_ext=11, in this ORDER):
+  embed (V*d) · ecB (d) · tcB (d) · e0B (d) · e1B (d) · rB (E) · roB (V) ·
+  tgG (d) · tgB (d) · noG (d) · noB (d)
+  Per-ext encoding = u32 element-count (LE) + count float32 (LE), full precision.
+  (tg* = trunk[0] GroupNorm affine; no* = norm_out GroupNorm affine.)
+  CONFIRMED against the real flame file: ext_counts on the d768 golden =
+  [196608, 768, 768, 768, 768, 2, 256, 768, 768, 768, 768] (=V*d, 4×d, E, V, 4×d).
+
+NIBBLE PACKING (verified byte-for-byte against the decoder's dequant reads):
+  decoder reads code[i]=(byte&0xF)-8 (LOW nibble = EVEN flat index),
+               code[i+1]=((byte>>4)&0xF)-8 (HIGH nibble = ODD flat index).
+  serializer: byte = ((code_odd+8)<<4) | (code_even+8); odd-length run pads the
+  trailing HIGH nibble with 0. Adversarial round-trip (distinct ±codes/channel,
+  both even & odd run lengths) → codes_match / scale_match / dequant_match all True.
+
+--- VERBATIM RUN (python3 CLM/model/verify_clm_v2.py, exit=0) -----------------
+F-CLM-V2-ROUNDTRIP=1
+GOLDEN path=/Users/mini/dancinlab/anima/state/laneg_d768_recover/reexport_d768_v2_fast.clm
+GOLDEN decodable=true nblk=6 block0={cout:768,rest:2304} CLMX-found=true n_ext=11 ext_counts=[196608, 768, 768, 768, 768, 2, 256, 768, 768, 768, 768] exact_eof=True
+-------------------------------------------------------------------------------
+Both gates PASS: F-CLM-V2-ROUNDTRIP=1 AND golden decodable=true. The golden parse
+also reports exact_eof=True — the pure-Python mirror consumes ALL 4,463,478 bytes
+of the real flame-written d768 .clm with zero residual ⇒ byte-exact format match.
+
+DECODER-vs-MODEL KEY-MAPPING CAVEATS (HONEST):
+  1. E=2 / 1-TRUNK CONSTRAINT (HARD). CORE/clm_decode.hexa hardcodes E=2 experts
+     and walks exactly 6 blocks (ecW,tcW,e0W,e1W,rW,roW) = 1 trunk layer. The
+     torch LADDER presets (tiny d64/L2/E4, small d256/L4/E8) DO NOT match. The
+     serializer ASSERTS cfg.n_experts==2 and cfg.n_trunk_layers==1 (raises with a
+     clear message otherwise). ⇒ Lane P training MUST use a CLMConfig(n_experts=2,
+     n_trunk_layers=1) preset to produce an ENGINE-loadable .clm.
+  2. KEY MAP (model.py → decoder slot): ecW=embed_conv.conv.weight,
+     tcW=trunk.0.conv.conv.weight, e0W/e1W=moe.experts.{0,1}.conv.conv.weight,
+     rW=moe.router.weight, roW=readout.weight; ext embed=embed.weight, biases =
+     the matching .bias, tgG/tgB=trunk.0.norm.{weight,bias}, noG/noB=norm_out.
+     {weight,bias}. nn.Conv1d (out,in,K) flattens C-order to co·(in*K)+ci*K+k,
+     which is exactly the decoder's w[co*rest+j], j=ci*K+k ⇒ a plain reshape is
+     byte-correct (no transpose needed).
+  3. The prior clm_serialize.py (v0.1 2-track JSON format) is UNTOUCHED and remains
+     INCOMPATIBLE (F-CLM-SERIALIZE-GAP.txt). clm_serialize_v2.py is the REMEDY.
+
+NEXT (not done here — this is the serializer remedy only):
+  E=2/L1 CUDA train (a_train_flame_forge / torch-ref) → serialize_v2 export →
+  ENGINE eval via CORE/clm_decode.hexa clm_forward_ce on the real 5-lang corpus.
+
+substrate: GPU-torch (Lane P serializer) — recorded SEPARATELY from Lane G(forge)/
+           Lane A(AKIDA) per a_lane_akida_gpu_split. No GPU rented; verify is CPU-local.
