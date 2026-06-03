@@ -1,0 +1,21 @@
+F-PERM-INVARIANT — point-ORDER shuffle invariant; GEOMETRY scramble sensitive
+
+VERDICT: HOLDS
+
+FALSIFIER (two-sided, a point cloud is a SET):
+  (a) shuffling point ORDER must NOT change the fingerprint  -> delta == 0
+  (b) scrambling the GEOMETRY (jitter coords) MUST change it  -> delta  > 0
+
+MEASUREMENT (3 seeds/frames):
+  (a) order-shuffle deltas = [2.99e-16, 1.14e-15, 9.04e-16]   max = 1.142054248530973e-15
+  (b) geom-scramble deltas = [0.10433594, 0.07392148, 0.05271224]  min = 0.052712243840513
+  permutation_invariant = True   (max order delta 1.1e-15 = float64 roundoff, ~0)
+  geometry_sensitive    = True   (min geom delta 0.053 > 0)
+
+HONEST NOTE — root-cause fix recorded: the FIRST run REFUTED this check
+  (max order-shuffle delta = 0.0199, NOT 0). Cause = the surface-normal-variance
+  feature used an array-POSITION stride subsample (xyz[::stride]) for cost, which
+  selects different physical points when the array is reordered. Fixed at the root
+  (a_completeness_over_cheap) by taking the subsample on a CANONICAL set-ordering
+  (lexsort by coordinate) -> the selection is now a function of the point SET, not
+  the array order. Re-run: max order delta dropped 0.0199 -> 1.1e-15. HOLDS.

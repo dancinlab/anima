@@ -1,0 +1,16 @@
+F-DISCRIMINATIVE — different scenes → different fingerprints; same scene → identical
+
+VERDICT: HOLDS
+
+FALSIFIER: cross-scene pairwise fingerprint distance must EXCEED within-scene
+           (re-encode) noise; same scene re-encoded must be IDENTICAL (deterministic).
+
+MEASUREMENT (7 real frames, 21 cross-scene pairs, 128D L2):
+  max_within_scene_dist (re-encode same frame twice) = 0.0          (EXACT, deterministic)
+  min_cross_scene_dist                                = 0.17267355491469083
+  mean_cross_scene_dist                               = 0.28997403480707884
+  n_pairs                                             = 21
+  determinism_within_scene_zero                       = True
+
+min_cross (0.1727) >> max_within (0.0) -> distinct scenes separable; identical input
+re-encodes to a byte-identical fingerprint. HOLDS.

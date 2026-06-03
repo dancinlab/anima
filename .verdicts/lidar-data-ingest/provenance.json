@@ -1,0 +1,64 @@
+{
+  "source": "Open3D bundled datasets (o3d.data) \u2014 Redwood indoor RGBD scan fragments",
+  "fetch_method": "open3d.data.{PCDPointCloud,DemoICPPointClouds,OfficePointClouds} (auto-download on first use)",
+  "download_servers": [
+    "www.open3d.org/.../DemoICPPointClouds.zip",
+    "Open3DDownloadsPrefix + redwood/office1-fragments-ply.zip",
+    "Open3DDownloadsPrefix + fragment.pcd (PCDPointCloud)"
+  ],
+  "license": "MIT (Open3D distribution; SPDX-License-Identifier: MIT in isl-org/Open3D dataset wrappers)",
+  "original_dataset": "Redwood (Choi/Zhou/Koltun indoor RGBD reconstruction); FARO/structured-light-scanned real indoor scenes",
+  "redwood_direct_note": "redwood-data.org/indoor_lidar_rgbd/ uses a self-signed TLS cert -> WebFetch HTTPS upgrade FAILED; used the MIT-licensed Open3D redistribution instead (real scanned data, not synthetic)",
+  "synthetic_control": "NONE used as primary; all 7 frames are REAL scanned point clouds",
+  "frames": [
+    {
+      "name": "PCDPointCloud",
+      "path": "/Users/mini/open3d_data/extract/PCDPointCloud/fragment.pcd",
+      "points": 113662,
+      "size": 3637429,
+      "sha256": "24ae338fca9f1b1e1e22a87077ee7c5f4f1e2681e2e014a927960b3761de3aa2"
+    },
+    {
+      "name": "DemoICPPointClouds[0]",
+      "path": "/Users/mini/open3d_data/extract/DemoICPPointClouds/cloud_bin_0.pcd",
+      "points": 198835,
+      "size": 6362965,
+      "sha256": "e1e100802c29ef454c6b523084668ee0e2f365ec52eaeebe79ae804c20447b15"
+    },
+    {
+      "name": "DemoICPPointClouds[1]",
+      "path": "/Users/mini/open3d_data/extract/DemoICPPointClouds/cloud_bin_1.pcd",
+      "points": 137833,
+      "size": 4410901,
+      "sha256": "a4c3dc0ad7b1279736491b9b2638991d4c808605997be4f9ab174c24a9fa6e52"
+    },
+    {
+      "name": "DemoICPPointClouds[2]",
+      "path": "/Users/mini/open3d_data/extract/DemoICPPointClouds/cloud_bin_2.pcd",
+      "points": 191397,
+      "size": 6124949,
+      "sha256": "1e68e194ebc1941f0f29764e4daf89340e69b224d2b80db5efbc1373a17f8b4a"
+    },
+    {
+      "name": "OfficePointClouds[0]",
+      "path": "/Users/mini/open3d_data/extract/OfficePointClouds/cloud_bin_0.ply",
+      "points": 276871,
+      "size": 8583889,
+      "sha256": "932f2e2e5a380af5fa444b2c1eac92e220ed45eaa03e5a915e0b0dc7ff23b232"
+    },
+    {
+      "name": "OfficePointClouds[1]",
+      "path": "/Users/mini/open3d_data/extract/OfficePointClouds/cloud_bin_1.ply",
+      "points": 193851,
+      "size": 6010269,
+      "sha256": "2ed2611eef6db5d47d2495d47717ed72b5b35381cd2080cb497e4f41219107ea"
+    },
+    {
+      "name": "OfficePointClouds[2]",
+      "path": "/Users/mini/open3d_data/extract/OfficePointClouds/cloud_bin_2.ply",
+      "points": 160368,
+      "size": 4972296,
+      "sha256": "f07348c68d286e1c9441e92ab14d9d3421730bd4a7893ca550ae62d514209ce2"
+    }
+  ]
+}
