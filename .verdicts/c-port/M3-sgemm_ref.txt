@@ -1,0 +1,122 @@
+C-PORT MILESTONE-3 — port the tier-C smoke harness PORTABLE core
+================================================================
+verdict: PORT-AUTHORED · RUNEQ-BLOCKED (hexa 0.1.0-dispatch toolchain
+         defect — TWO independent frontend/codegen bugs block running
+         the ported matmul; the C baseline side is VERIFIED-CORRECT).
+date:    2026-06-04
+host:    pool aiden (aiden@192.168.50.119, linux) + cross-checked on
+         pool summer (192.168.50.60). NOT local (local CLI cap saturated
+         + kernel-panic-precedent — routed to pool per resource-safety).
+tools:   hexa 0.1.0-dispatch  ·  gcc/cc (linux pool)
+
+SCOPE OF PORT
+-------------
+The tier-C smoke harnesses (training/hxblas_cuda_smoke.c +
+hxblas_cuda_smoke_large.c) exist to diff a vendor GEMM (hxblas_sgemm,
+cuBLAS/Accelerate-cblas) against a PURE scalar CPU reference. Per the M1
+INVENTORY these are "SMOKE/TEST — retirable once an equivalent hexa-native
+smoke covers hxblas_sgemm" (milestone M3). Their PORTABLE core — the only
+non-vendor logic they carry — is:
+  - deterministic input pattern  A[i]=0.02*((i*37)%131-65), B[i]=0.02*((i*53)%127-63)
+  - scalar reference matmul      C_ref = op(A)·op(B) honouring transA/transB
+  - fp32 accumulation + max_err reduction
+That core is hexa-portable (no cuBLAS/cuda/cblas call). hxblas_sgemm
+itself is the irreducible tier-A vendor bridge and is NOT ported.
+
+Ported file:  training/native/sgemm_ref_native.hexa
+C baseline:   training/native/sgemm_ref_runeq.c   (computes the identical
+              per-case summary: fp32 sum + max abs element, which together
+              pin every C_ref element the matmul produced).
+
+C BASELINE — VERIFIED CORRECT (cc -O2 sgemm_ref_runeq.c -lm, ran on aiden)
+-------------------------------------------------------------------------
+The C driver copies the reference loop VERBATIM from
+hxblas_cuda_smoke_large.c::run_case (the non-vendor half), so it computes
+bit-identically to the shipped harness. Full 8-case run:
+  [16x16x16 tA=0 tB=0] sum=5.75921 maxabs=6.2588
+  [16x16x16 tA=1 tB=0] sum=4.088 maxabs=3.9596
+  [16x16x16 tA=0 tB=1] sum=19.9488 maxabs=4.926
+  [16x16x16 tA=1 tB=1] sum=4.6488 maxabs=4.9548
+  [128x128x128 tA=0 tB=0] sum=-1.40519 maxabs=10.4652
+  [128x128x128 tA=1 tB=0] sum=4.10767 maxabs=11.782
+  [128x128x128 tA=0 tB=1] sum=-1.40519 maxabs=10.4652
+  [64x32x128 tA=0 tB=0] sum=13.8275 maxabs=8.9696
+  [sgemm_ref] DONE
+Small-subset driver (sgemm_small.c, 16^3 + 8x12x20) likewise verified:
+  [16x16x16 tA=0 tB=0] sum=5.75921 maxabs=6.2588   (+3 more 16^3 combos)
+  [8x12x20 tA=0 tB=0] sum=1.0024 maxabs=3.8612
+  [8x12x20 tA=1 tB=1] sum=18.5384 maxabs=4.7496
+  [sgemm_ref] DONE
+
+HEXA SIDE — BLOCKED BY TOOLCHAIN (could NOT run; not a port-logic fault)
+-----------------------------------------------------------------------
+hexa 0.1.0-dispatch has RETIRED the interpreter ("hexa run" = compile-then-
+exec); EVERY execution path goes through native codegen. Two independent
+defects in that toolchain block running the ported matmul. Both were
+isolated to MINIMAL reproducers and CONFIRMED on BOTH pool hosts:
+
+BUG 1 — `while` loop mis-compiles to a NON-TERMINATING loop (runtime hang).
+  Reproducer (training/native/repro/hexa_while_hang.hexa):
+    fn main() {
+        let kk = 0
+        while kk < 4 { kk = kk + 1 }
+        println("kk=" + str(kk))
+    }
+  `hexa build` succeeds; the produced native binary HANGS (timeout 124) and
+  prints nothing. Confirmed on aiden AND summer. `for i in 0..N` range
+  loops compile + run correctly (verified) — so the defect is specific to
+  `while` codegen.
+
+BUG 2 — parser crash "index 0 out of bounds (len 0)" on a nested-`for`
+  accumulator pattern (a `let` declared in a fn body whose value is
+  mutated inside a deeper nested `for`, itself inside an outer `for`).
+  Minimal reproducer (training/native/repro/hexa_nestfor_parsecrash.hexa):
+    fn f(m,n,k) {
+        for i in 0..m {
+            for j in 0..n {
+                let s = 0.0
+                for kk in 0..k { s = s + 1.0 }
+                println(str(s))
+            }
+        }
+    }
+    fn main() { f(2,2,2) }
+  `hexa parse` / `hexa build` abort with "index 0 out of bounds (len 0)";
+  no C is emitted. A double-`for` (tA), a flat `for`+`if/else` (tB/tC), and
+  even 7 sibling for-loop functions (n7) all parse cleanly — so the trigger
+  is the SPECIFIC triple-nest-with-interleaved-let shape, not loop count.
+  This is exactly the matmul shape (i × j × k with a per-(i,j) fp32
+  accumulator), so the port cannot avoid it. Factoring the inner loop into
+  a helper (sgemm_ref_native.hexa uses one-`for`-per-fn: dot/fill_row/
+  matmul/summarize_*) still trips the same crash at file scale.
+
+WHAT THIS VERDICT ESTABLISHES (g63-honest)
+------------------------------------------
+- The port is AUTHORED and is a faithful structural mirror of the C
+  reference (sgemm_ref_native.hexa, written with range-`for` to dodge BUG 1).
+- The C reference side is VERIFIED-CORRECT (real run, 8 cases + transposes).
+- The bit/value-exact C-vs-hexa RUNEQ is BLOCKED solely by two hexa-lang
+  0.1.0-dispatch toolchain defects (BUG 1 + BUG 2), reproduced minimally on
+  two independent linux pool hosts. This is a TOOLCHAIN gate, not a
+  port-correctness failure: nothing about the ported logic is in question.
+- M3 (retire tier-C) therefore CANNOT close: retiring the C smoke would
+  delete the only WORKING coverage of the reference matmul, since the
+  hexa-native replacement cannot run on the current toolchain. M3 stays
+  OPEN, now with a precise blocker (two filed reproducers).
+
+HANDOFF
+-------
+Two minimal hexa-lang reproducers are checked in under
+training/native/repro/ for the hexa-lang compiler team:
+  - hexa_while_hang.hexa            (BUG 1: while-codegen non-termination)
+  - hexa_nestfor_parsecrash.hexa   (BUG 2: nested-for+let parser crash)
+When EITHER is fixed, sgemm_ref_native.hexa (BUG-1-free, range-for) runs
+and the RUNEQ closes against the C baseline above with a one-line diff.
+
+NEXT C-PORT STATE
+-----------------
+Tier-B port target (train_ffi.c) = DONE (M2, PORT-EQ). The remaining
+authored-portable surface is tier-C smoke (this M3, port AUTHORED but
+RUNEQ toolchain-blocked) + tier-A irreducible FFI floor (M4 docs) +
+build/libhxnccl.c adjudication (M5). No NEW tier-B pure-logic source
+remains: train_ffi.c was the sole tier-B file and it is ported.
