@@ -284,3 +284,45 @@ scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금
 - `.clm` 포맷은 ENGINE 로더(clm_decode CLM\x01 v0.2)와 byte-호환 필수 — verify(1단계)가 hard gate.
 - 날조 수렴 금지(F-CLM-DESCENT verbatim). HF는 closure(수렴+ENGINE 3축) PASS만 PUBLIC, 아니면 PRIVATE (a_hf_autonomous).
 - a_train_flame_forge 완화는 이 lane에 한정 — production SSOT 경로 변경 아님(문서 명시).
+
+
+## BRAIN-TRAIN-BENCH — 뇌-유래 보조 학습신호 4-arm TOY 벤치 — 🔴 CLOSED-NEGATIVE (toy) — 2026-06-04
+
+> **질문**: 뇌-유래 신호(TRIBE pseudo-BOLD · EEG tension)를 toy CLM의 **보조 학습 손실**로 쓰면
+> held-out CE가 내려가나? KOSMOS 우주뇌지도로 그 타깃을 조직하면 plain 대비 이득이 있나?
+> **답**: 아니다 — 어떤 arm도 HELD 못함. §97(hardware/brain-coupling GOAL-ORTHOGONAL) 재확인.
+
+### setup (TOY · CPU · $0)
+- toy byte-CLM = CLMConvMoE 모양(dilated causal conv trunk + MoE conv layer), **137K params (<1M)**.
+- corpus = `CORE/testdata/clm_mid_5lang_c4.txt` 120KB 슬라이스(5-lang clean), 3 seeds, 400 steps, AdamW lr 3e-3.
+- BASELINE = CE-only(λ=0). 각 aux arm = CE + λ·MSE(proj(hidden), brain_target), λ∈{0.1, 1.0}.
+- **모든 뇌신호 = 합성·frozen surrogate** (바이트에서 생성): pseudo-BOLD = neighbor-correlated N=256 cortical-shaped map,
+  EEG = cross-channel-coupled 5ch tension [α,θ,γ,1-δ,β]. **실제 TRIBE forward 無 · 실/라이브 EEG 無 · GPU 無 · human gate 無**.
+- 1차 지표 = held-out val_ce (contig+rand 평균), gen2 스타일. noise band = baseline seed-std = ±0.03290 (1σ).
+  arms 1&2 vs baseline · arms 3&4 vs PLAIN counterpart. HOLDS iff Δ>+noise · REFUTED iff Δ<−noise · else INCONCLUSIVE.
+
+### result (baseline val_ce = 0.95595 ±0.03290)
+
+| arm | λ | val_ce | comparator | Δ (positive=helped) | verdict |
+|---|---:|---:|---|---:|---|
+| TRIBE | 0.1 | 0.95508 | baseline | +0.00087 | INCONCLUSIVE |
+| TRIBE | 1.0 | 0.97077 | baseline | −0.01482 | INCONCLUSIVE |
+| EEG | 0.1 | 0.95724 | baseline | −0.00129 | INCONCLUSIVE |
+| EEG | 1.0 | 1.01691 | baseline | **−0.06097** | **REFUTED (aux HURT)** |
+| TRIBE-KOSMOS | 0.1 | 0.95505 | plain TRIBE | +0.00003 | INCONCLUSIVE |
+| TRIBE-KOSMOS | 1.0 | 0.96910 | plain TRIBE | +0.00167 | INCONCLUSIVE |
+| EEG-KOSMOS | 0.1 | 0.95541 | plain EEG | +0.00183 | INCONCLUSIVE |
+| EEG-KOSMOS | 1.0 | 1.00292 | plain EEG | +0.01400 | INCONCLUSIVE |
+
+- **HELD: 0개. REFUTED: 1개(EEG@λ=1.0 — 고-λ에서 CE를 적극 해침). 나머지 6개 = seed noise 이내.**
+- KOSMOS 우주뇌지도 조직은 plain 대비 **이득 없음** (arms 3&4 둘 다 plain counterpart의 noise 이내).
+  EEG-KOSMOS@1.0(+0.01400)는 EEG@1.0의 손상을 일부 회복하나 여전히 noise 이내(HOLD 아님).
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok)
+- **TOY ONLY**: 137K toy CLM · 120KB corpus · 3 seeds · 400 CPU steps · $0. scale-transfer **UNVERIFIED**.
+- 뇌신호는 전부 **합성 surrogate** — synthetic pseudo-BOLD(facebook/tribev2 아님, 실제 TRIBE forward 아님) ·
+  synthetic 5ch EEG-tension(실/라이브 EEG 아님; §97 기준 **합성 TARGET = legitimate**, EEG-as-input-drive 아님).
+- toy REFUTE가 scale에서의 aux 이득을 단독으로 배제하진 않으나, 이득의 **증거는 전혀 없고** §97 prior와 일치.
+- p7/g5 verbatim: REFUTE를 HOLD로 반올림하지 않음. substrate = CPU-torch toy bench, Lane A(AKIDA)/Lane G(forge)와 별도 기록(a_lane_akida_gpu_split). NO HF upload(closure-PASS 모델 아님).
+- 산출물: `.verdicts/brain-train-bench/{F-TRIBE,F-EEG,F-TRIBE-KOSMOS,F-EEG-KOSMOS,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/brain_train_bench.py` + `analyze_brain_train.py` · discovery `.discoveries/brain-train-bench.tape`.
+- **bottom line**: 뇌-유래 보조 학습신호는 toy LM에 **도움 안 됨 — GOAL-orthogonal decoration**. 정직한 publishable closed-negative(§97 일치).

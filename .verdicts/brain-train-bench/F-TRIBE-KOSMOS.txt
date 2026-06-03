@@ -1,0 +1,33 @@
+=== F-TRIBE-KOSMOS — KOSMOS-organized brain target vs PLAIN TRIBE ===
+decision rule: Delta = comparator_val_ce - arm_val_ce (positive=helped); HOLDS iff Delta>+noise, REFUTED iff Delta<-noise, else INCONCLUSIVE. noise=baseline seed-std=0.03290 (1sigma). p7/g5 verbatim, no rounding a REFUTE into a HOLD.
+
+# corpus=CORE/testdata/clm_mid_5lang_c4.txt train=102000B val=18000B params=137097 (<1M: True)
+# steps=400 block=64 bs=16 d=64 bold_n=256 seeds=[0, 1, 2]
+  TRIBE@lam0.1             seed=0 contig=0.92765 rand=0.93194 val_ce=0.92979
+  TRIBE@lam0.1             seed=1 contig=0.95886 rand=0.92588 val_ce=0.94237
+  TRIBE@lam0.1             seed=2 contig=0.98275 rand=1.00338 val_ce=0.99306
+  TRIBE@lam0.1             MEAN val_ce=0.95508 +/- 0.03349
+  TRIBE-KOSMOS@lam0.1      seed=0 contig=0.92694 rand=0.93189 val_ce=0.92941
+  TRIBE-KOSMOS@lam0.1      seed=1 contig=0.95984 rand=0.92711 val_ce=0.94348
+  TRIBE-KOSMOS@lam0.1      seed=2 contig=0.98238 rand=1.00213 val_ce=0.99226
+  TRIBE-KOSMOS@lam0.1      MEAN val_ce=0.95505 +/- 0.03298
+  TRIBE@lam1.0             seed=0 contig=0.94521 rand=0.95054 val_ce=0.94787
+  TRIBE@lam1.0             seed=1 contig=0.97474 rand=0.94198 val_ce=0.95836
+  TRIBE@lam1.0             seed=2 contig=0.99903 rand=1.01311 val_ce=1.00607
+  TRIBE@lam1.0             MEAN val_ce=0.97077 +/- 0.03102
+  TRIBE-KOSMOS@lam1.0      seed=0 contig=0.94386 rand=0.95424 val_ce=0.94905
+  TRIBE-KOSMOS@lam1.0      seed=1 contig=0.96515 rand=0.93407 val_ce=0.94961
+  TRIBE-KOSMOS@lam1.0      seed=2 contig=1.00096 rand=1.01632 val_ce=1.00864
+  TRIBE-KOSMOS@lam1.0      MEAN val_ce=0.96910 +/- 0.03424
+# wrote /Users/mini/dancinlab/anima/.verdicts/brain-train-bench/results.json
+
+--- analysis (verbatim) ---
+baseline val_ce = 0.95595  (noise band = +/-0.03290, 1sigma seed std)
+arm             lam    val_ce   +/-std       comparator   comp_ce     Delta  verdict
+--------------------------------------------------------------------------------------------
+TRIBE           0.1   0.95508  0.03349         baseline   0.95595  +0.00087  INCONCLUSIVE
+TRIBE           1.0   0.97077  0.03102         baseline   0.95595  -0.01482  INCONCLUSIVE
+TRIBE-KOSMOS    0.1   0.95505  0.03298      plain TRIBE   0.95508  +0.00003  INCONCLUSIVE
+TRIBE-KOSMOS    1.0   0.96910  0.03424      plain TRIBE   0.97077  +0.00167  INCONCLUSIVE
+  TRIBE          best Delta=+0.00087 @lam0.1  both-lam: ['INCONCLUSIVE', 'INCONCLUSIVE']  -> INCONCLUSIVE
+  TRIBE-KOSMOS   best Delta=+0.00167 @lam1.0  both-lam: ['INCONCLUSIVE', 'INCONCLUSIVE']  -> INCONCLUSIVE

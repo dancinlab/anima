@@ -1,0 +1,17 @@
+baseline val_ce = 0.95595  (noise band = +/-0.03290, 1sigma seed std)
+arm             lam    val_ce   +/-std       comparator   comp_ce     Delta  verdict
+--------------------------------------------------------------------------------------------
+TRIBE           0.1   0.95508  0.03349         baseline   0.95595  +0.00087  INCONCLUSIVE
+TRIBE           1.0   0.97077  0.03102         baseline   0.95595  -0.01482  INCONCLUSIVE
+EEG             0.1   0.95724  0.03385         baseline   0.95595  -0.00129  INCONCLUSIVE
+EEG             1.0   1.01691  0.02628         baseline   0.95595  -0.06097  REFUTED
+TRIBE-KOSMOS    0.1   0.95505  0.03298      plain TRIBE   0.95508  +0.00003  INCONCLUSIVE
+TRIBE-KOSMOS    1.0   0.96910  0.03424      plain TRIBE   0.97077  +0.00167  INCONCLUSIVE
+EEG-KOSMOS      0.1   0.95541  0.03845        plain EEG   0.95724  +0.00183  INCONCLUSIVE
+EEG-KOSMOS      1.0   1.00292  0.03397        plain EEG   1.01691  +0.01400  INCONCLUSIVE
+
+# per-arm summary (best of the two lambda):
+  TRIBE          best Delta=+0.00087 @lam0.1  both-lam: ['INCONCLUSIVE', 'INCONCLUSIVE']  -> INCONCLUSIVE
+  EEG            best Delta=-0.00129 @lam0.1  both-lam: ['INCONCLUSIVE', 'REFUTED']  -> INCONCLUSIVE
+  TRIBE-KOSMOS   best Delta=+0.00167 @lam1.0  both-lam: ['INCONCLUSIVE', 'INCONCLUSIVE']  -> INCONCLUSIVE
+  EEG-KOSMOS     best Delta=+0.01400 @lam1.0  both-lam: ['INCONCLUSIVE', 'INCONCLUSIVE']  -> INCONCLUSIVE
