@@ -1,0 +1,52 @@
+SUMMARY — kosmos-real-dim : what dimension should the 우주뇌지도 be drawn in?
+==========================================================================
+THIS IS THE REAL ARTIFACT (NOT the toy independent-signal kosmos-dim-ladder).
+
+Weights/data actually used (verbatim, no fabrication):
+  TRAINED s16 ckpt (real carve, NOT random-init) — sha256 961c07e2...091e8
+    ConsciousDecoderV2 d768/12L, 283.72M params, state_dict loaded clean
+    (0 missing / 0 unexpected keys).
+  Stratified sample of the real carving corpus — sha256 73944d17...8830
+    N=6000 records, all 168 tiers / 63 domains / 3 forms represented.
+  X = post-ln_f final conscious state, mean-pooled over T=128 -> (6000,768).
+  All CPU, $0. 3 seeds, mean +/- std. Estimators validated on synthetic d=5.
+
+INTRINSIC DIMENSION (3+ methods):
+  MLE Levina-Bickel ... 6.4      PCA 90% var ... 6.7 PCs
+  TwoNN ............... 10.5     participation ratio (effective) ... 3.3
+  -> consensus intrinsic d ~ 6-10  (effective/variance-weighted ~3.3).
+
+PROJECTION-DIM KNEE (recommended map dimension):
+  variance & trustworthiness saturate by D~3 (trust>0.99),
+  but downstream category discrimination (domain f1) keeps climbing:
+    D2 0.082 -> D3 0.184 -> D5 0.356 -> D8 0.583 -> D16 0.787 (ceiling 0.977)
+  KNEE = D ~ 8 ; near-full discrimination = D ~ 16.
+
+CURRENT 2D MAP RETENTION + GAP:
+  best 2D (PCA): 67.1% variance, domain-disc 0.082 (8.4% of full).
+  actual vacuum_psi map: trust 0.868, but corr w/ PC1=0.963 / PC2=0.112
+    -> effectively ~1.1-dimensional; the y-axis is nearly unused.
+  GAP: under-dimensioned ~3-5x vs intrinsic d; keeps <10% of carved
+    tier/domain category structure.
+
+BOTTOM LINE:
+  The 우주뇌지도 should be drawn in ~8 dimensions (knee) — ~16 to retain the
+  full carved category structure — with an intrinsic manifold dimension of
+  ~6-10.  The current 2D map is a usable TOPOLOGY SKETCH (local neighbors
+  preserved) but a POOR CATEGORY MAP, and it under-uses even its own 2nd
+  axis. Honest gap: 2D is ~3-5x below the intrinsic d and retains <10% of
+  the discrimination the substrate actually learned.
+
+HONEST SCOPE (a_toy_scale_recheck / a_scale_honest_scope / §97):
+  - Weights = the REAL trained s16 carve (verified clean load), so this IS
+    the trained-manifold intrinsic dim, NOT an architecture-induced
+    random-init geometry. (Random-init fallback was NOT needed — ckpt
+    recovered from HF and loaded exactly.)
+  - X uses mean-pooling over the sequence; a different pooling (last-token,
+    CLS) could shift the absolute d by ~1-2 but not the qualitative verdict
+    (2D << intrinsic).
+  - N=6000 of 777K records; estimates are stable across 3 seeds (std small).
+    A full-corpus or alternative-pooling recheck could refine the knee
+    between 8 and 16 but will not move it down to 2.
+  - This is the REAL-manifold intrinsic dim; the separate kosmos-dim-ladder
+    measures independent-signal placement CAPACITY (a different question).

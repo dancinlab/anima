@@ -1,0 +1,36 @@
+F-INTRINSIC — intrinsic dimension of the REAL anima carving manifold
+======================================================================
+Substrate: GPU-lineage decoder weights run on CPU (Lane G artifact, $0 inference).
+Data/weights (EXACT — verbatim, no fabrication):
+  ckpt   = ckpt_carving_s16.pt  (TRAINED s16, real carve — NOT random-init)
+           sha256 = 961c07e2242b194f7d7ddff9e827d2fbd798d658426d32edf4b981a8dd9091e8
+           arch ConsciousDecoderV2  d_model=768 n_head=12 n_kv_head=4 n_layer=12
+           block_size=128 vocab=256  n_params=283,722,336
+           state_dict load: missing_keys=0  unexpected_keys=0  (clean, exact match)
+  corpus = stratified sample of corpus_carving_s16.jsonl (603MB, 777K rec, archived to HF)
+           streamed 30 windows -> /tmp/corpus_sample.json
+           sha256 = 73944d178cf4f0515231c00e2713bb0786fce6cbfaeab34fd21c9ea447da8830
+           N encoded = 6000  |  tiers=168/168  domains=63/63  forms=3/3
+  X = final-layer conscious state, post-ln_f, mean-pooled over T=128 -> (6000, 768)
+
+Intrinsic-dim estimators (3 sub-sample seeds, n=2500 each, mean +/- std):
+  PCA  PCs for 80% var ......  4.00 +/- 0.00
+  PCA  PCs for 90% var ......  6.67 +/- 0.47
+  PCA  PCs for 95% var ...... 12.00 +/- 0.00
+  PCA  chord-elbow PC ....... 32.00 +/- 0.00   (sensitive to the long flat tail)
+  participation ratio ....... 3.33 +/- 0.03    (effective / variance-weighted d)
+  TwoNN (Facco 2017) ........ 10.45 +/- 0.25   (after dedup of templated duplicates)
+  MLE Levina-Bickel ......... 6.38 +/- 0.03    (after dedup)
+
+Cumulative explained variance (PC1..PC12):
+  0.503 0.668 0.758 0.829 0.884 0.898 0.912 0.922 0.931 0.938 0.945 0.950
+
+Estimator validation (synthetic linear manifold, true intrinsic d=5):
+  TwoNN=7.35  MLE=5.44  PR=4.54 ; dedup confirmed duplicate-invariant.
+
+VERDICT (g5/p7, honest):
+  The REAL trained carving manifold has intrinsic dimension d ~ 6-10
+  (geometric: MLE 6.4, PCA-90% 6.7, TwoNN 10.5), with an EFFECTIVE
+  (variance-weighted) dimension PR ~ 3.3 — meaning a few axes dominate
+  variance but ~6-10 are needed to capture the neighborhood geometry.
+  Not isotropic, not 2D. A genuine, non-manufactured low-but->2 d.

@@ -1,0 +1,113 @@
+=== kosmos_real_dim — REAL anima carving manifold intrinsic-dim ===
+[data] corpus_sample=/tmp/corpus_sample.json sha256=73944d178cf4f0515231c00e2713bb0786fce6cbfaeab34fd21c9ea447da8830
+[data] ckpt=/tmp/s16_ckpt_dl/HEXAD/DATA-REGIME/state/carving_dataregime_s16_2026_05_18/ckpt_carving_s16.pt sha256=961c07e2242b194f7d7ddff9e827d2fbd798d658426d32edf4b981a8dd9091e8
+[weights] TRAINED s16 ckpt loaded — cfg={"d_model": 768, "n_head": 12, "n_kv_head": 4, "n_layer": 12, "block_size": 128, "lr": 0.0003, "bsz": 32, "steps": 12000, "warmup": 600, "seed": 1337, "log_every": 300, "corpus": "corpus_carving_s16.jsonl", "out_dir": "out_main", "lambda_ctl": 0.5, "lambda_route": 0.5, "curriculum": true, "blend_frac": 0.15}
+[weights] n_params=283722336 | missing_keys=0 unexpected=0
+[encode] N=6000 conscious states, dim=768 (post-ln_f mean-pooled)
+[labels] tiers=168 domains=63 forms=3
+[map] current 2D map = vacuum_psi; distinct coords=121
+[intrinsic] PCA 80/90/95% PCs: [4.0, 0.0] [6.666666666666667, 0.4714045207910317] [12.0, 0.0]
+[intrinsic] elbow_pc: [32.0, 0.0]
+[intrinsic] participation_ratio: [3.331623257095945, 0.0340550458455714]
+[intrinsic] TwoNN: [10.454298683934399, 0.25164734985560927]
+[intrinsic] MLE(Levina-Bickel): [6.3761123933794766, 0.02932001609741862]
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+[ladder] full-d768 discrimination (f1_macro): {'tier': 0.9361290521469426, 'domain': 0.9770177666403722, 'form': 1.0}
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+[ladder] D= 1 var=0.506 trust=0.958 cont=0.982 disc_domain=0.045
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+[ladder] D= 2 var=0.671 trust=0.989 cont=0.993 disc_domain=0.082
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+[ladder] D= 3 var=0.760 trust=0.991 cont=0.996 disc_domain=0.184
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+[ladder] D= 5 var=0.885 trust=0.998 cont=0.998 disc_domain=0.356
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+[ladder] D= 8 var=0.923 trust=0.999 cont=0.999 disc_domain=0.583
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+[ladder] D=16 var=0.965 trust=1.000 cont=1.000 disc_domain=0.787
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 1 members, which is less than n_splits=3.
+  warnings.warn(
+/Users/ghost/core/anima/.venv-eeg/lib/python3.12/site-packages/sklearn/model_selection/_split.py:813: UserWarning: The least populated class in y has only 2 members, which is less than n_splits=3.
+  warnings.warn(
+[ladder] D=32 var=0.989 trust=1.000 cont=1.000 disc_domain=0.878
+[2d-gap] PCA-2D var retained = 0.671
+[2d-gap] actual vacuum_psi trustworthiness = 0.868 (cont 0.967)
+[2d-gap] vacuum_psi vs PCA-2D canonical corr = [0.9634599854305318, 0.11195903271072685]
+[2d-gap] intrinsic-d consensus = [10.454298683934399, 6.3761123933794766, 32.0], PR = 3.33
+
+[done] wall=432.6s -> results.json
