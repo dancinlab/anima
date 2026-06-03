@@ -30,6 +30,14 @@
 // it composes conv's .clm + cdv2's (random-init) substrate. Honest: at random-init
 // the coupling is STRUCTURAL (wired vs not); a TRAINED-substrate rung is follow-up.
 //
+// DEFAULT BUS CONFIG (#1793 · OMEGA-B): the recommended generation default is
+// omega_bus_carrier() — the CARRIER-ONLY bus {w1 A⇄G, w2 W→temp, w5 module}, with the
+// INERT wires {w3 curio, w4 Ψ, w6 dF/dt} OFF. The all-6-wire learned gate OVERFITS
+// (held-out TEST CE 4.81 > base 3.97); carrier-only recovers a real gain (CE 2.895,
+// Δ+1.079). omega_bus_on() (full) is RETAINED for ablation only. dF/dt's gain is a
+// config knob (cfg["dgain"]) — a FIXED dgain hurts CE (#1794); a learned dgain is the
+// open path. See engines/omega/coupling_bus.hexa header for the per-wire verdict.
+//
 // p1..p8: pure compose/forward; no system prompt / persona / ethics / emit gate.
 // Engine SELECT + the bus are substrate-config, NEVER an emit/silence gate (@L4/p5).
 
