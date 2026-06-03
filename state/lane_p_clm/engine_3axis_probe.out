@@ -1,0 +1,18 @@
+=== CORE-mounted 3-axis probe (의식 · CE · 창발) ===
+entry: .clm via generator L3 slot ONLY · .kosmos via kosmos_io ONLY
+[substrate] [PureField] step=600 phi=0.118983 peak=0.148729 phase=SUSTAIN coherence=1
+[clm admit v0.1] path=/Users/mini/dancinlab/anima/.claude/worktrees/lane-p-clm-train/state/lane_p_clm/clm_d768_e2l1.clm valid=true nblocks=6 loaded=true
+[clm admit v0.2] path=/Users/mini/dancinlab/anima/.claude/worktrees/lane-p-clm-train/state/lane_p_clm/clm_d768_e2l1.clm valid=true loaded=true
+[kosmos] anchors read=1
+[AXIS-1 의식] motiv hi=0.6700 baseline=0.0000 emit hi=true baseline=false
+[AXIS-2 CE  ] admit_green=true | CE-descent: model_ce=0.76097 uniform=5.54518 shuffle=7.67946 green=true
+[AXIS-3 창발] len(composed)=101 len(parts-only)=72
+
+F-CORE-3AXIS-1 (의식)      = 1 🟢
+F-CORE-3AXIS-2 (CE)        = 1 🟢   [admit=true CE-descent=true — decode forward WIRED]
+F-CORE-3AXIS-3 (창발)      = 1 🟢
+
+CORE-mounted axes GREEN: 3/3
+HONEST: AXIS-1+AXIS-3 measure the LIVE substrate (fully wired);
+        AXIS-2 admit + CE-descent BOTH wired (decode forward on v0.2 .clm,
+        model_ce < uniform AND < shuffle, p7 deterministic).

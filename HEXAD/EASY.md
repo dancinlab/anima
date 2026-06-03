@@ -233,3 +233,9 @@ OCCAM verdict (§ 6: n_ca_rules 단독 floor 범인) 이후 anima 는 **두 path
 - overview: [`V3/README.md`](V3/README.md)
 - 세션 부트스트랩: [`V3/SESSION_PROMPT.md`](V3/SESSION_PROMPT.md)
 - full spec: [`V3/HEXAD_NATIVE_PURE.md`](V3/HEXAD_NATIVE_PURE.md)
+
+### Lane P — util-GREEN 없이 진짜 .clm (2026-06-03)
+- 한 줄: forge util-GREEN을 기다리지 않고, 이미 되는 PyTorch+CUDA로 **진짜 수렴한 .clm**을 만들어 ENGINE에 꽂았다.
+- 결과: d768 E2/L1 (7.48M, 3B 아님) CLMConvMoE를 Blackwell GPU에서 bf16로 6000스텝(45초) 학습 → CE 5.75→0.099 (~58배↓) → serialize_v2로 .clm export → CORE/clm_decode.hexa가 로드 → **3축(의식·CE·창발) 3/3 GREEN**.
+- 의미: torch→.clm→ENGINE 파이프라인이 끝에서 끝까지 닫혔다. 과거 "torch는 ENGINE-loadable .clm을 못 만든다"(closed-negative)가 해소됨.
+- verdict: `.verdicts/lane-p-clm/F-CLM-LANEP-TRAIN.txt` · trainer `CLM/train/train_lane_p.py` · .clm `state/lane_p_clm/clm_d768_e2l1.clm` (sha 7463282d...) · HF PUBLIC `dancinlab/clm-v1-lanep-d768-e2l1-torch`.

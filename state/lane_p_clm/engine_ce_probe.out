@@ -1,0 +1,12 @@
+=== Lane P (GPU-torch) ENGINE-load + CE ===
+clm=/Users/mini/dancinlab/anima/.claude/worktrees/lane-p-clm-train/state/lane_p_clm/clm_d768_e2l1.clm
+corpus=/Users/mini/dancinlab/anima/CORE/testdata/clm_mid_5lang_c4.txt
+[admit] valid=true loaded=true nblocks=6
+[clm_decodable(admit)] = true nblk=6
+[CE] windows=24 T=64 has_ext(v0.2)=true model_d=768
+[CE] model_ce   = 0.71329
+[CE] shuffle_ce = 7.59296
+[CE] uniform_ce = 5.54518
+[CE] model<uniform = true  model<shuffle = true
+
+F-CLM-LANEP-ENGINE (decodable AND model_ce<uniform AND <shuffle) = 1

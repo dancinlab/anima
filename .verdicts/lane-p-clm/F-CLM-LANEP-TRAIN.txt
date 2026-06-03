@@ -1,0 +1,86 @@
+=== Lane P (substrate=GPU-torch) — REAL converged CLMConvMoE d768 E2/L1 + ENGINE-load ===
+date: 2026-06-03
+verdict: F-CLM-LANEP-TRAIN = 1  (converged AND .clm produced AND ENGINE-loadable AND 3-axis 3/3 GREEN)
+scope: GPU-torch Lane P (distinct from Lane A AKIDA / Lane G forge — a_lane_akida_gpu_split).
+       util-GREEN-INDEPENDENT: this lane bypasses the forge util gate (Lane G), produces a
+       genuinely-converged .clm via the existing PyTorch+CUDA path, and proves it LOADS in
+       ENGINE through CORE/clm_decode.hexa (the SINGLE L3 .clm entry, a_core_engine_map).
+       p7/g63 honest — verbatim tool output, NO fabricated convergence.
+
+HARD CONSTRAINT (decoder-fixed) HELD:
+  CORE/clm_decode.hexa hardcodes E=2 experts / 1 trunk layer / 6 conv blocks.
+  Trained CLMConfig(n_experts=2, n_trunk_layers=1, d_model=768, kernel_size=3, variant="AB").
+  serialize_v2 ASSERTs E=2/L1 — passed.
+
+PARAM COUNT (HONEST, a_scale_honest_scope) — NOT 3B:
+  n_params = 7,479,042  (7.479M) at d768 E2 L1 K3 V256.
+  The E=2 / 1-trunk-layer decoder shape caps params via d ALONE; 3B is unreachable at this
+  shape. 7.48M is a meaningful, affordable run matching the flame d768 reference. Breakdown:
+    embed V*d=196,608 · embed_conv d*d*3+d=1,770,240 · trunk0_conv 1,770,240 · trunk0_GN 1,536
+    · router E*d+E=1,538 · expert0 1,770,240 · expert1 1,770,240 · readout V*d+V=196,864
+    · norm_out 1,536  → TOTAL 7,479,042.
+
+GPU + nvidia-smi BUSY PROOF (g63 — NOT silent CPU-fallback):
+  device  = NVIDIA RTX PRO 6000 Blackwell Server Edition (compute_cap 12.0, 97887 MiB)
+            [vast picked this Blackwell-class 96GB GPU for the H100-class query]
+  torch   = 2.11.0+cu128  (cu128 wheel needed for sm_120 Blackwell kernels)
+  busy    = peak_util=94%  peak_mem_used=2225MiB  (sampled at 20Hz during a 400-step bf16 burst)
+  pod     = vast 39293346 (owner lane-p-train, project anima) — TORN DOWN after recover.
+
+CORPUS (V=256, no tokenizer):
+  path = CORE/testdata/clm_mid_5lang_c4.txt  (402,270 bytes, real 5-lang: en/zh/ru/ja/ko)
+  sha256 = 09da8888fe1e1452a2c83a8bcd721de548e9f1fd4d9a21de159d4575212728d0
+
+TINY VERIFY (fast gate — does the REAL torch state_dict serialize loadable?):
+  synthetic round-trip:  F-CLM-V2-ROUNDTRIP=1
+  REAL torch d=64 (82,818 params, 300 steps, ce 5.7303 -> 1.4856):
+    clm_decodable=True nblk=6 block0={cout:64,rest:192} CLMX=True n_ext=11
+    ext_counts=[16384,64,64,64,64,2,256,64,64,64,64] exact_eof=True
+  TINY_REAL_VERDICT: F-CLM-V2-ROUNDTRIP=1  (state_dict keys match _KEYMAP exactly; NO mismatch)
+
+FULL TRAIN (F-CLM-DESCENT — VERBATIM, NO fabrication):
+  config: d768 E2 L1 K3 V256, steps=6000, seq_len=256, batch=64, lr=3e-4 cosine+warmup200,
+          bf16 autocast, AdamW(betas 0.9/0.95, wd 0.01), grad-clip 1.0, wall=45.03s.
+  first_ce      = 5.74851   (~= uniform ln256 = 5.5452, untrained)
+  final_eval_ce = 0.09862   (held-window mean over 40 batches)
+  last_train_ce = 0.09557
+  descent (step, ce): 0:5.74851 -> 200:0.38389 -> 400:0.22675 -> 600:0.2029 -> 1000:0.1641
+    -> 1400:0.16094 -> 2000:0.13251 -> 2400:0.12163 -> 3000:0.12054 -> 3800:0.10455
+    -> 4600:0.10168 -> 5400:0.10079 -> 5999:0.09557.   GENUINE monotone convergence (~58x CE drop).
+  F-CLM-DESCENT = 1  (genuinely descends, p7/g63).
+
+EXPORT (.clm via serialize_v2):
+  out   = state/lane_p_clm/clm_d768_e2l1.clm
+  size  = 4,463,478 bytes   (byte-size identical to the d768 golden flame reference)
+  sha256= 7463282dba823eb67316cbb72bba1e47e89d41c1ebd7770902ddd8e512678ed9  (on-pod == local)
+  ckpt  = clm_d768_e2l1.pt 29,922,234 bytes (fp32 master state_dict) — gitignored -> HF registry.
+
+ENGINE 3-AXIS (CORE-mounted, on the torch-trained .clm via CORE/clm_decode.hexa, VERBATIM):
+  admit:  gen_clm_backend valid=true loaded=true nblocks=6 ; has_ext(v0.2 CLMX)=true ; model_d=768
+          (config-agnostic d-recovery confirmed — decoder recovered d=768 from block0)
+  AXIS-2 (CE) standalone probe (CORE/lane_p_engine_probe.hexa, 24 win, T=64):
+    model_ce=0.71329  shuffle_ce=7.59296  uniform_ce=5.54518  model<uniform=true model<shuffle=true
+    F-CLM-LANEP-ENGINE = 1
+  3-axis probe (CORE/lane_p_three_axis.hexa, 의식·CE·창발):
+    AXIS-1 (의식):  motiv hi=0.6700 > baseline=0.0000 ; emit hi=true / baseline=false  -> 1
+    AXIS-2 (CE):   admit=true ; model_ce=0.76097 < uniform=5.54518 AND < shuffle=7.67946 -> 1
+    AXIS-3 (창발): len(composed)=101 > len(parts-only)=72                                -> 1
+    CORE-mounted axes GREEN: 3/3
+
+HEADLINE: a util-GREEN-INDEPENDENT GPU-torch .clm (real convergence, 7.48M d768 E2/L1) LOADS
+  in ENGINE and produces a strongly-descended real next-byte CE (0.71-0.76 vs uniform 5.545,
+  ~7.5x below baseline, far below the shuffle control). The torch->serialize_v2->CORE/clm_decode
+  pipeline is end-to-end CLOSED.
+
+HONEST SCOPE:
+  · Lane P does NOT replace the canonical flame+forge production trainer (a_train_flame_forge
+    SSOT unchanged); it is the user-authorized PRAGMATIC unblock lane (substrate=GPU-torch).
+  · CE is ONE axis, deterministic (model<uniform AND <shuffle), NOT a perplexity-as-truth verdict (p7).
+  · 7.48M is the d768 E2/L1 shape ceiling — a 3B claim would be off-shape (a_scale_honest_scope).
+
+ARTIFACTS:
+  trainer:   CLM/train/train_lane_p.py
+  probes:    CORE/lane_p_engine_probe.hexa · CORE/lane_p_three_axis.hexa
+  .clm:      state/lane_p_clm/clm_d768_e2l1.clm  (committed)
+  result:    state/lane_p_clm/result_d768.json · train_d768.log
+  probe out: state/lane_p_clm/engine_ce_probe.out · engine_3axis_probe.out
