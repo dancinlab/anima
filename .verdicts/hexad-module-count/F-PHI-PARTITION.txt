@@ -1,0 +1,16 @@
+[F-PHI-PARTITION] Euler phi(N) and clean-2-group (A/G) bipartition gate
+------------------------------------------------------------------------------
+  N | phi(N) |  coprime-classes | clean A/G bipartition?
+------------------------------------------------------------------------------
+  3 |      2 |                2 |            YES (phi=2)
+  4 |      2 |                2 |            YES (phi=2)
+  5 |      4 |                4 |    NO (phi=4>2, messy)
+  6 |      2 |                2 |            YES (phi=2)
+  7 |      6 |                6 |    NO (phi=6>2, messy)
+  8 |      4 |                4 |    NO (phi=4>2, messy)
+ 12 |      4 |                4 |    NO (phi=4>2, messy)
+------------------------------------------------------------------------------
+phi(N)=2 (clean A/G) holds for N in [3, 4, 6]
+  => 6 is NOT the unique phi=2 choice (3, 4 also qualify).
+phi(N)>2 (no clean bipartition) for N in [5, 7, 8, 12]
+

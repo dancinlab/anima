@@ -1,0 +1,564 @@
+{
+  "per_seed": [
+    {
+      "seed": 1,
+      "P1": {
+        "source": "real-shape-driven (s59 trace) + byte-faithful \u00a765 transfer",
+        "T_x_5_shape": [
+          300,
+          5
+        ],
+        "pca_eigs_desc": [
+          1.3886835224357816,
+          1.0051995006202594,
+          0.6161504217600059,
+          1.52626027907237e-16,
+          1.664071439834864e-33
+        ],
+        "explained_var_ratio_desc": [
+          0.46135152578699956,
+          0.33394961187273137,
+          0.20469886234026907,
+          5.070575816029329e-17,
+          5.528415116784727e-34
+        ],
+        "participation_ratio": 2.730232315041769,
+        "effective_rank": 2.851542307433384,
+        "corr_matrix": [
+          [
+            1.0,
+            -0.07509923716910992,
+            0.17407765595569785,
+            -0.3429679969280526,
+            0.17865987882645126
+          ],
+          [
+            -0.07509923716910992,
+            1.0,
+            0.1563435899509062,
+            0.0032996595043520535,
+            0.36806896275157724
+          ],
+          [
+            0.17407765595569785,
+            0.1563435899509062,
+            1.0,
+            0.4543371063446418,
+            0.4737202466075585
+          ],
+          [
+            -0.3429679969280526,
+            0.003299659504352053,
+            0.4543371063446418,
+            1.0,
+            -0.11280842731448255
+          ],
+          [
+            0.17865987882645126,
+            0.3680689627515773,
+            0.4737202466075585,
+            -0.11280842731448255,
+            1.0
+          ]
+        ],
+        "channel_order": [
+          "concept",
+          "context",
+          "meaning",
+          "auth",
+          "sender"
+        ],
+        "projection_ladder_recon_r2": {
+          "1": 0.2768109154721995,
+          "2": 0.47718068259583857,
+          "3": 0.6,
+          "4": 0.6,
+          "5": 0.6
+        },
+        "per_channel_shuffle": {
+          "concept": {
+            "predicts_others_r2": -1.4065264952733969e-08,
+            "predicts_others_r2_shuffled": -1.4065264286600154e-08,
+            "decode_acc_drop": 0.0
+          },
+          "context": {
+            "predicts_others_r2": 0.03364264238841527,
+            "predicts_others_r2_shuffled": 0.00019189198609809166,
+            "decode_acc_drop": 0.0
+          },
+          "meaning": {
+            "predicts_others_r2": -1.4065263731488642e-08,
+            "predicts_others_r2_shuffled": -1.4065264286600154e-08,
+            "decode_acc_drop": 0.0
+          },
+          "auth": {
+            "predicts_others_r2": 0.003162624448378365,
+            "predicts_others_r2_shuffled": 0.0005873533748118887,
+            "decode_acc_drop": 0.0
+          },
+          "sender": {
+            "predicts_others_r2": 0.03704991000079247,
+            "predicts_others_r2_shuffled": 0.0016217269422597602,
+            "decode_acc_drop": 0.0
+          },
+          "_base_decode_acc": 1.0
+        },
+        "sixth_channel_probe": {
+          "pr_base_5ch": 2.730232315041769,
+          "pr_with_independent_6th": 3.7115415017101903,
+          "pr_with_derivable_6th": 2.730232315041769,
+          "indep_gain": 0.9813091866684212,
+          "deriv_gain": 0.0
+        },
+        "full_fp_45dim": {
+          "note": "intrinsic dim of the full 45-float fingerprint (preserves concept/meaning DIRECTION; magnitude-summary degeneracy absent)",
+          "participation_ratio": 6.517154678145616,
+          "effective_rank": 10.06327275551718,
+          "dim_for_90pct_var": 11,
+          "dim_for_95pct_var": 14,
+          "top5_explained_var_ratio": [
+            0.2966405473253011,
+            0.19203257330165613,
+            0.11145296069833997,
+            0.07923964768791064,
+            0.055323361871283734
+          ]
+        }
+      },
+      "P2": {
+        "stage_label_decode": {
+          "note": "stage label = f(phi,tension) per-step -> static at ceiling, no headroom (expected). Reported for completeness.",
+          "decode_acc_static_5ch": 1.0,
+          "decode_acc_time_aug_10ch": 1.0,
+          "decode_acc_gain_from_time": 0.0
+        },
+        "rising_falling_decode": {
+          "note": "DYNAMICS-NECESSARY label = sign(dF/dt tension). NOT a function of a single snapshot -> the decisive time-axis test.",
+          "majority_base_rate": 0.7266666666666667,
+          "decode_acc_static_5ch": 0.5416666666666666,
+          "decode_acc_time_aug_10ch": 0.8333333333333334,
+          "decode_acc_gain_from_time": 0.29166666666666674,
+          "decode_acc_time_aug_scrambled": 0.7333333333333333
+        },
+        "shuffle_control": {
+          "dynamics_energy_orig": 291.21916754200333,
+          "dynamics_energy_scrambled": 1117835.5089149196,
+          "static_marginal_L2_orig": 74.21743095886929,
+          "static_marginal_L2_scrambled": 74.21743095886926,
+          "static_marginal_invariant": true,
+          "dF_dt_block_stage_decode_acc": 1.0,
+          "dF_dt_block_stage_decode_acc_scrambled": 0.95
+        }
+      },
+      "P1_synth": {
+        "diverse": {
+          "participation_ratio": 1.3157911530633437,
+          "effective_rank": 1.5473171043523775
+        },
+        "majority": {
+          "participation_ratio": 1.0573355253978391,
+          "effective_rank": 1.137745843623728
+        },
+        "flat": {
+          "participation_ratio": 0.0,
+          "effective_rank": 0.0
+        }
+      }
+    },
+    {
+      "seed": 7,
+      "P1": {
+        "source": "real-shape-driven (s59 trace) + byte-faithful \u00a765 transfer",
+        "T_x_5_shape": [
+          300,
+          5
+        ],
+        "pca_eigs_desc": [
+          1.4246215941289269,
+          1.0645003004279945,
+          0.5209115502591313,
+          2.7682537895793466e-16,
+          1.0861518369920127e-33
+        ],
+        "explained_var_ratio_desc": [
+          0.47329095182727693,
+          0.3536506553644116,
+          0.17305839280831142,
+          9.196754256491386e-17,
+          3.608437769562354e-34
+        ],
+        "participation_ratio": 2.6383670600424756,
+        "effective_rank": 2.787680331311671,
+        "corr_matrix": [
+          [
+            1.0,
+            -0.06675631414788138,
+            0.08813052984784635,
+            -0.4395544062698676,
+            0.3516575787678313
+          ],
+          [
+            -0.06675631414788138,
+            1.0,
+            0.05269546786310855,
+            0.3048479551427356,
+            0.3300433828606366
+          ],
+          [
+            0.08813052984784635,
+            0.052695467863108546,
+            1.0,
+            -0.11915233469095081,
+            0.22564264060377712
+          ],
+          [
+            -0.4395544062698676,
+            0.3048479551427356,
+            -0.11915233469095082,
+            0.9999999999999998,
+            -0.06115163666734326
+          ],
+          [
+            0.3516575787678314,
+            0.3300433828606366,
+            0.22564264060377712,
+            -0.061151636667343266,
+            1.0
+          ]
+        ],
+        "channel_order": [
+          "concept",
+          "context",
+          "meaning",
+          "auth",
+          "sender"
+        ],
+        "projection_ladder_recon_r2": {
+          "1": 0.2839745710963655,
+          "2": 0.49616496431501333,
+          "3": 0.6,
+          "4": 0.6,
+          "5": 0.6
+        },
+        "per_channel_shuffle": {
+          "concept": {
+            "predicts_others_r2": -1.0297284025462261e-08,
+            "predicts_others_r2_shuffled": -1.0297283470350749e-08,
+            "decode_acc_drop": 0.0
+          },
+          "context": {
+            "predicts_others_r2": 0.050356016871376724,
+            "predicts_others_r2_shuffled": 0.0006448621547811562,
+            "decode_acc_drop": 0.0
+          },
+          "meaning": {
+            "predicts_others_r2": -1.0297283470350749e-08,
+            "predicts_others_r2_shuffled": -1.0297283692395354e-08,
+            "decode_acc_drop": 0.0
+          },
+          "auth": {
+            "predicts_others_r2": 0.02415854968110967,
+            "predicts_others_r2_shuffled": 0.0004312178039296011,
+            "decode_acc_drop": 0.0
+          },
+          "sender": {
+            "predicts_others_r2": 0.028166881500717028,
+            "predicts_others_r2_shuffled": 0.0018705520450926771,
+            "decode_acc_drop": 0.0
+          },
+          "_base_decode_acc": 1.0
+        },
+        "sixth_channel_probe": {
+          "pr_base_5ch": 2.6383670600424756,
+          "pr_with_independent_6th": 3.612871451702139,
+          "pr_with_derivable_6th": 2.6383670600424747,
+          "indep_gain": 0.9745043916596634,
+          "deriv_gain": -8.881784197001252e-16
+        },
+        "full_fp_45dim": {
+          "note": "intrinsic dim of the full 45-float fingerprint (preserves concept/meaning DIRECTION; magnitude-summary degeneracy absent)",
+          "participation_ratio": 6.493393835702361,
+          "effective_rank": 9.675348752842794,
+          "dim_for_90pct_var": 10,
+          "dim_for_95pct_var": 13,
+          "top5_explained_var_ratio": [
+            0.29912589598896683,
+            0.16864369297513196,
+            0.12805941825921852,
+            0.08695569894436128,
+            0.07497135288510813
+          ]
+        }
+      },
+      "P2": {
+        "stage_label_decode": {
+          "note": "stage label = f(phi,tension) per-step -> static at ceiling, no headroom (expected). Reported for completeness.",
+          "decode_acc_static_5ch": 1.0,
+          "decode_acc_time_aug_10ch": 1.0,
+          "decode_acc_gain_from_time": 0.0
+        },
+        "rising_falling_decode": {
+          "note": "DYNAMICS-NECESSARY label = sign(dF/dt tension). NOT a function of a single snapshot -> the decisive time-axis test.",
+          "majority_base_rate": 0.7266666666666667,
+          "decode_acc_static_5ch": 0.5416666666666666,
+          "decode_acc_time_aug_10ch": 0.8166666666666667,
+          "decode_acc_gain_from_time": 0.275,
+          "decode_acc_time_aug_scrambled": 0.775
+        },
+        "shuffle_control": {
+          "dynamics_energy_orig": 295.9899568293564,
+          "dynamics_energy_scrambled": 1101588.1901731275,
+          "static_marginal_L2_orig": 74.22934178262456,
+          "static_marginal_L2_scrambled": 74.22934178262463,
+          "static_marginal_invariant": true,
+          "dF_dt_block_stage_decode_acc": 1.0,
+          "dF_dt_block_stage_decode_acc_scrambled": 0.9416666666666667
+        }
+      },
+      "P1_synth": {
+        "diverse": {
+          "participation_ratio": 1.1289851491642222,
+          "effective_rank": 1.291160539344876
+        },
+        "majority": {
+          "participation_ratio": 1.443792302576092,
+          "effective_rank": 1.6388742693581875
+        },
+        "flat": {
+          "participation_ratio": 0.0,
+          "effective_rank": 0.0
+        }
+      }
+    },
+    {
+      "seed": 42,
+      "P1": {
+        "source": "real-shape-driven (s59 trace) + byte-faithful \u00a765 transfer",
+        "T_x_5_shape": [
+          300,
+          5
+        ],
+        "pca_eigs_desc": [
+          1.8007829839310794,
+          0.9827988781924188,
+          0.22645158269254428,
+          2.358225016805853e-17,
+          7.143027939514022e-34
+        ],
+        "explained_var_ratio_desc": [
+          0.5982601246615497,
+          0.3265076273105937,
+          0.07523224802785665,
+          7.834547555832806e-18,
+          2.3730726154607783e-34
+        ],
+        "participation_ratio": 2.1268346404945757,
+        "effective_rank": 2.380816739291351,
+        "corr_matrix": [
+          [
+            1.0,
+            0.06217666963445712,
+            0.16395645894598823,
+            -0.26822187310686685,
+            0.4704464681406213
+          ],
+          [
+            0.06217666963445711,
+            0.9999999999999998,
+            0.3455265889794249,
+            -0.021711477473982395,
+            0.6402095103171881
+          ],
+          [
+            0.16395645894598823,
+            0.34552658897942495,
+            1.0,
+            -0.0063745232096039765,
+            0.41616282060952464
+          ],
+          [
+            -0.26822187310686685,
+            -0.021711477473982395,
+            -0.006374523209603977,
+            1.0,
+            -0.4532998326985049
+          ],
+          [
+            0.4704464681406213,
+            0.640209510317188,
+            0.41616282060952464,
+            -0.4532998326985048,
+            1.0
+          ]
+        ],
+        "channel_order": [
+          "concept",
+          "context",
+          "meaning",
+          "auth",
+          "sender"
+        ],
+        "projection_ladder_recon_r2": {
+          "1": 0.35895607479692926,
+          "2": 0.554860651183286,
+          "3": 0.6,
+          "4": 0.6,
+          "5": 0.6
+        },
+        "per_channel_shuffle": {
+          "concept": {
+            "predicts_others_r2": -7.87584952810505e-09,
+            "predicts_others_r2_shuffled": -7.87584952810505e-09,
+            "decode_acc_drop": 0.0
+          },
+          "context": {
+            "predicts_others_r2": 0.10235791731656074,
+            "predicts_others_r2_shuffled": 0.0009482928830867321,
+            "decode_acc_drop": 0.0
+          },
+          "meaning": {
+            "predicts_others_r2": -7.875848972993538e-09,
+            "predicts_others_r2_shuffled": -7.875849472593899e-09,
+            "decode_acc_drop": 0.0
+          },
+          "auth": {
+            "predicts_others_r2": 0.05148387054853337,
+            "predicts_others_r2_shuffled": 0.00036114451858981766,
+            "decode_acc_drop": 0.0
+          },
+          "sender": {
+            "predicts_others_r2": 0.1538371195166395,
+            "predicts_others_r2_shuffled": 0.00010527393908976723,
+            "decode_acc_drop": 0.0
+          },
+          "_base_decode_acc": 1.0
+        },
+        "sixth_channel_probe": {
+          "pr_base_5ch": 2.1268346404945757,
+          "pr_with_independent_6th": 3.057462257194528,
+          "pr_with_derivable_6th": 2.1268346404945753,
+          "indep_gain": 0.9306276166999523,
+          "deriv_gain": -4.440892098500626e-16
+        },
+        "full_fp_45dim": {
+          "note": "intrinsic dim of the full 45-float fingerprint (preserves concept/meaning DIRECTION; magnitude-summary degeneracy absent)",
+          "participation_ratio": 5.655449463392716,
+          "effective_rank": 8.494230561054746,
+          "dim_for_90pct_var": 9,
+          "dim_for_95pct_var": 12,
+          "top5_explained_var_ratio": [
+            0.3181007564427617,
+            0.1987985642992338,
+            0.15108709015226215,
+            0.07681609193243984,
+            0.05499405521210804
+          ]
+        }
+      },
+      "P2": {
+        "stage_label_decode": {
+          "note": "stage label = f(phi,tension) per-step -> static at ceiling, no headroom (expected). Reported for completeness.",
+          "decode_acc_static_5ch": 1.0,
+          "decode_acc_time_aug_10ch": 1.0,
+          "decode_acc_gain_from_time": 0.0
+        },
+        "rising_falling_decode": {
+          "note": "DYNAMICS-NECESSARY label = sign(dF/dt tension). NOT a function of a single snapshot -> the decisive time-axis test.",
+          "majority_base_rate": 0.7266666666666667,
+          "decode_acc_static_5ch": 0.5416666666666666,
+          "decode_acc_time_aug_10ch": 0.7833333333333333,
+          "decode_acc_gain_from_time": 0.2416666666666667,
+          "decode_acc_time_aug_scrambled": 0.7333333333333333
+        },
+        "shuffle_control": {
+          "dynamics_energy_orig": 292.8497875539706,
+          "dynamics_energy_scrambled": 1209144.5927679734,
+          "static_marginal_L2_orig": 73.98352701895796,
+          "static_marginal_L2_scrambled": 73.983527018958,
+          "static_marginal_invariant": true,
+          "dF_dt_block_stage_decode_acc": 1.0,
+          "dF_dt_block_stage_decode_acc_scrambled": 0.9166666666666666
+        }
+      },
+      "P1_synth": {
+        "diverse": {
+          "participation_ratio": 1.4465234700584335,
+          "effective_rank": 1.6666711281312776
+        },
+        "majority": {
+          "participation_ratio": 1.5573768484026878,
+          "effective_rank": 1.7424011928364185
+        },
+        "flat": {
+          "participation_ratio": 0.0,
+          "effective_rank": 0.0
+        }
+      }
+    }
+  ],
+  "summary": {
+    "n_seeds": 3,
+    "seeds": [
+      1,
+      7,
+      42
+    ],
+    "P1_magnitude_summary_5ch": {
+      "participation_ratio_mean": 2.49847800519294,
+      "participation_ratio_per_seed": [
+        2.730232315041769,
+        2.6383670600424756,
+        2.1268346404945757
+      ],
+      "effective_rank_mean": 2.6733464593454688,
+      "effective_rank_per_seed": [
+        2.851542307433384,
+        2.787680331311671,
+        2.380816739291351
+      ],
+      "top1_explained_var_mean": 0.5109675340919421,
+      "caveat": "concept+meaning magnitude is constant 1.0 by spec (L2-normalized) -> 2 of 5 PCs structurally zero; magnitude-summary effective dim ~2.5-3 is partly a summary-choice artifact, NOT proof those channels are redundant (their DIRECTION carries info; see full_fp)."
+    },
+    "P1_full_fp_45dim": {
+      "participation_ratio_mean": 6.221999325746897,
+      "participation_ratio_per_seed": [
+        6.517154678145616,
+        6.493393835702361,
+        5.655449463392716
+      ],
+      "effective_rank_mean": 9.410950689804908,
+      "dim_for_90pct_var_per_seed": [
+        11,
+        10,
+        9
+      ],
+      "dim_for_95pct_var_per_seed": [
+        14,
+        13,
+        12
+      ]
+    },
+    "P1_sixth_indep_gain_mean": 0.9621470650093457,
+    "P1_sixth_deriv_gain_mean": -4.440892098500626e-16,
+    "P2_rising_falling_static_acc_mean": 0.5416666666666666,
+    "P2_rising_falling_time_acc_mean": 0.811111111111111,
+    "P2_rising_falling_gain_mean": 0.2694444444444445,
+    "P2_rising_falling_gain_per_seed": [
+      0.29166666666666674,
+      0.275,
+      0.2416666666666667
+    ],
+    "P2_rising_falling_time_scrambled_acc_mean": 0.7472222222222222,
+    "P2_rising_falling_base_rate_mean": 0.7266666666666667,
+    "P2_dF_dt_block_stage_acc_mean": 1.0,
+    "P2_dF_dt_block_stage_acc_scrambled_mean": 0.936111111111111,
+    "P2_dynamics_energy_orig_mean": 293.3529706417768,
+    "P2_dynamics_energy_scrambled_mean": 1142856.0972853403
+  },
+  "data_source": {
+    "real_trace": "_real_w_trace_s59.json (\u00a759-FIRE anima W-state, 300 steps)",
+    "transfer_law": "byte-faithful \u00a765 fingerprint_5ch (B-S65 4/4 BLUE)",
+    "flag": "real-shape-driven; engine latent + 5ch map = synthetic transfer law",
+    "compute": "CPU / $0 / numpy-only (no torch, no sklearn, no GPU/pods)"
+  }
+}

@@ -1,0 +1,56 @@
+==============================================================================
+HEXAD MODULE-COUNT BENCHMARK — is N=6 optimal? (graph/number-theory, $0 CPU)
+==============================================================================
+
+[F-PHI-PARTITION] Euler phi(N) and clean-2-group (A/G) bipartition gate
+------------------------------------------------------------------------------
+  N | phi(N) |  coprime-classes | clean A/G bipartition?
+------------------------------------------------------------------------------
+  3 |      2 |                2 |            YES (phi=2)
+  4 |      2 |                2 |            YES (phi=2)
+  5 |      4 |                4 |    NO (phi=4>2, messy)
+  6 |      2 |                2 |            YES (phi=2)
+  7 |      6 |                6 |    NO (phi=6>2, messy)
+  8 |      4 |                4 |    NO (phi=4>2, messy)
+ 12 |      4 |                4 |    NO (phi=4>2, messy)
+------------------------------------------------------------------------------
+phi(N)=2 (clean A/G) holds for N in [3, 4, 6]
+  => 6 is NOT the unique phi=2 choice (3, 4 also qualify).
+phi(N)>2 (no clean bipartition) for N in [5, 7, 8, 12]
+
+[F-MODULARITY + F-INTEGRATION-TRADEOFF] scaled sigmaN graph, 3 seeds
+------------------------------------------------------------------------------
+  N | edges | poss | grps |   Q(A/G) |   integ |  crossD | J=integ*clean
+------------------------------------------------------------------------------
+  3 |     2 |    3 |    2 |  -0.1250 |  0.5000 |  0.5000 |        0.5000
+  4 |     5 |    6 |    3 |  -0.1000 |  0.6000 |  0.7500 |        0.6000
+  5 |     8 |   10 |    2 |  -0.0312 |  0.2500 |  0.5000 |        0.1250
+  6 |    12 |   15 |    4 |  -0.0035 |  0.4167 |  0.6250 |        0.4167
+  7 |    17 |   21 |    2 |  -0.0069 |  0.1176 |  0.3333 |        0.0588
+  8 |    22 |   28 |    4 |   0.0455 |  0.4545 |  0.6250 |        0.2273
+ 12 |    53 |   66 |    6 |   0.0554 |  0.3585 |  0.5938 |        0.1792
+------------------------------------------------------------------------------
+Q(A/G) = Newman modularity of the A/G partition (higher = more modular)
+integ  = fraction of edges crossing A<->G (Phi-like integration)
+crossD = cross edges / (|A|*|G|) (saturation of A<->G channel)
+J      = integ * clean_factor (clean_factor=1 if phi=2 else 0.5)
+
+[N* SELECTION]
+------------------------------------------------------------------------------
+clean (phi=2) candidates      : [3, 4, 6]
+max joint J (over all N)      : N=4  (J=0.6000)
+max modularity Q (over all N) : N=12  (Q=0.0554)
+smallest phi=2 with >=12 edges: N=6
+
+[VERDICT]
+------------------------------------------------------------------------------
+  N* (joint J)   : 4
+  Is 6 optimal?  : HOLDS-CONDITIONAL
+  Assumption     : N=6 is optimal ONLY under the assumption 'smallest N with phi(N)=2 AND >=12 integrating connections'. On raw joint J alone N=6 does NOT win: J6=0.4167, and the other phi=2 numbers [3, 4] score HIGHER (J3=0.5000, J4=0.6000); N=4 is the unconditional J-max. 6's edge is ONLY the capacity floor (>=12 connections to wire 6 faculties), not graph modularity.
+
+HONEST SCOPE: graph-theoretic + number-theoretic ONLY. NOT a trained-model
+comparison. The finding is about the DESIGN's phi(N) + connection-graph
+modularity, NOT measured task performance (a_toy_scale_recheck: any
+scale-sensitive / trained claim is UNVERIFIED here). Corroborates HEXAD
+README.md §98 (n=6 numerology-tainted in provenance, causally innocent).
+==============================================================================

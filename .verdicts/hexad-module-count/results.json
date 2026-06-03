@@ -1,0 +1,141 @@
+{
+  "ladder": [
+    3,
+    4,
+    5,
+    6,
+    7,
+    8,
+    12
+  ],
+  "seeds": [
+    0,
+    1,
+    2
+  ],
+  "active_density": 0.8,
+  "ground_truth_N6": {
+    "sigma": 12,
+    "possible": 15,
+    "phi": 2,
+    "groupA": [
+      "D",
+      "M",
+      "E",
+      "BRIDGE"
+    ],
+    "groupG": [
+      "C",
+      "S",
+      "W"
+    ]
+  },
+  "per_N": {
+    "3": {
+      "phi": 2,
+      "clean_bipartition": true,
+      "edges": 2,
+      "possible": 3,
+      "gcd_buckets": 2,
+      "Q_mean": -0.125,
+      "Q_std": 0.0,
+      "integration_mean": 0.5,
+      "cross_density_mean": 0.5,
+      "J_joint_mean": 0.5,
+      "clean_factor": 1.0
+    },
+    "4": {
+      "phi": 2,
+      "clean_bipartition": true,
+      "edges": 5,
+      "possible": 6,
+      "gcd_buckets": 3,
+      "Q_mean": -0.09999999999999998,
+      "Q_std": 0.0,
+      "integration_mean": 0.6,
+      "cross_density_mean": 0.75,
+      "J_joint_mean": 0.6,
+      "clean_factor": 1.0
+    },
+    "5": {
+      "phi": 4,
+      "clean_bipartition": false,
+      "edges": 8,
+      "possible": 10,
+      "gcd_buckets": 2,
+      "Q_mean": -0.03125,
+      "Q_std": 0.0,
+      "integration_mean": 0.25,
+      "cross_density_mean": 0.5,
+      "J_joint_mean": 0.125,
+      "clean_factor": 0.5
+    },
+    "6": {
+      "phi": 2,
+      "clean_bipartition": true,
+      "edges": 12,
+      "possible": 15,
+      "gcd_buckets": 4,
+      "Q_mean": -0.003472222222222293,
+      "Q_std": 0.0,
+      "integration_mean": 0.4166666666666667,
+      "cross_density_mean": 0.625,
+      "J_joint_mean": 0.4166666666666667,
+      "clean_factor": 1.0
+    },
+    "7": {
+      "phi": 6,
+      "clean_bipartition": false,
+      "edges": 17,
+      "possible": 21,
+      "gcd_buckets": 2,
+      "Q_mean": -0.006920415224913548,
+      "Q_std": 0.0,
+      "integration_mean": 0.1176470588235294,
+      "cross_density_mean": 0.3333333333333333,
+      "J_joint_mean": 0.0588235294117647,
+      "clean_factor": 0.5
+    },
+    "8": {
+      "phi": 4,
+      "clean_bipartition": false,
+      "edges": 22,
+      "possible": 28,
+      "gcd_buckets": 4,
+      "Q_mean": 0.045454545454545414,
+      "Q_std": 0.0,
+      "integration_mean": 0.45454545454545453,
+      "cross_density_mean": 0.625,
+      "J_joint_mean": 0.22727272727272727,
+      "clean_factor": 0.5
+    },
+    "12": {
+      "phi": 4,
+      "clean_bipartition": false,
+      "edges": 53,
+      "possible": 66,
+      "gcd_buckets": 6,
+      "Q_mean": 0.055357778568885824,
+      "Q_std": 0.0,
+      "integration_mean": 0.3584905660377358,
+      "cross_density_mean": 0.59375,
+      "J_joint_mean": 0.1792452830188679,
+      "clean_factor": 0.5
+    }
+  },
+  "Nstar": {
+    "best_J_N": 4,
+    "best_Q_N": 12,
+    "smallest_clean_ge12": 6,
+    "clean_candidates": [
+      3,
+      4,
+      6
+    ],
+    "six_is_unconditional_best": false,
+    "J6": 0.4166666666666667,
+    "J_best": 0.6,
+    "verdict": "HOLDS-CONDITIONAL",
+    "assumption": "N=6 is optimal ONLY under the assumption 'smallest N with phi(N)=2 AND >=12 integrating connections'. On raw joint J alone N=6 does NOT win: J6=0.4167, and the other phi=2 numbers [3, 4] score HIGHER (J3=0.5000, J4=0.6000); N=4 is the unconditional J-max. 6's edge is ONLY the capacity floor (>=12 connections to wire 6 faculties), not graph modularity."
+  }
+}

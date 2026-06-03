@@ -1,0 +1,17 @@
+[F-MODULARITY + F-INTEGRATION-TRADEOFF] scaled sigmaN graph, 3 seeds
+------------------------------------------------------------------------------
+  N | edges | poss | grps |   Q(A/G) |   integ |  crossD | J=integ*clean
+------------------------------------------------------------------------------
+  3 |     2 |    3 |    2 |  -0.1250 |  0.5000 |  0.5000 |        0.5000
+  4 |     5 |    6 |    3 |  -0.1000 |  0.6000 |  0.7500 |        0.6000
+  5 |     8 |   10 |    2 |  -0.0312 |  0.2500 |  0.5000 |        0.1250
+  6 |    12 |   15 |    4 |  -0.0035 |  0.4167 |  0.6250 |        0.4167
+  7 |    17 |   21 |    2 |  -0.0069 |  0.1176 |  0.3333 |        0.0588
+  8 |    22 |   28 |    4 |   0.0455 |  0.4545 |  0.6250 |        0.2273
+ 12 |    53 |   66 |    6 |   0.0554 |  0.3585 |  0.5938 |        0.1792
+------------------------------------------------------------------------------
+Q(A/G) = Newman modularity of the A/G partition (higher = more modular)
+integ  = fraction of edges crossing A<->G (Phi-like integration)
+crossD = cross edges / (|A|*|G|) (saturation of A<->G channel)
+J      = integ * clean_factor (clean_factor=1 if phi=2 else 0.5)
+

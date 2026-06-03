@@ -741,6 +741,74 @@ non-commercial license respected (no PUBLIC re-upload of raw audio; derived fing
 F-DISCRIMINATIVE,F-DFDT-TIME,F-STABLE,SUMMARY}.txt + results.json + run_stdout.txt` ·
 `.discoveries/dolphin-acoustic-ingest.tape`.
 
+## HEXAD-MODULE-COUNT — is anima's HEXAD really 6 modules? (module-count analog of KOSMOS-DIM-LADDER) — 🟡 HOLDS-CONDITIONAL · 6 is the SMALLEST viable φ=2, NOT a graph-modularity sweet spot — graph/number-theory · CPU/$0 · 2026-06-04
+
+The module-count sibling of `## KOSMOS-DIM-LADDER` (dimension-optimality). Same question on a
+different axis: **is the chosen N actually optimal, or numerology?** Here N = HEXAD's module count.
+
+`HEXAD/hexad.hexa` justifies "6" by **φ(6)=2** — a clean 2-group gradient partition: Group A
+(CE-trained 좌뇌: D, M, E, Bridge) ⇄ Group G (gradient-free 우뇌: C, S, W), with σ(6)=12 ACTIVE
+connections of C(6,2)=15 possible (3 INACTIVE for partition isolation). **But φ(3)=φ(4)=φ(6)=2 all
+equal 2** — so 6 is NOT the unique φ=2 choice. Benchmark ladders N ∈ {3,4,5,6,7,8,12}.
+
+**φ(N) table (number-theoretic bipartition gate):**
+
+| N | φ(N) | clean A/G bipartition? |
+|---|------|------------------------|
+| 3 | 2 | ✅ YES (φ=2) |
+| 4 | 2 | ✅ YES (φ=2) |
+| 5 | 4 | ❌ NO (φ>2, messy) |
+| 6 | 2 | ✅ YES (φ=2) |
+| 7 | 6 | ❌ NO (φ>2, messy) |
+| 8 | 4 | ❌ NO (φ>2, messy) |
+| 12 | 4 | ❌ NO (φ>2, messy) |
+
+φ(N)=2 (clean A/G) holds for **{3, 4, 6} only**; {5,7,8,12} give φ>2 (no clean bipartition).
+
+**Modularity-Q + integration ladder (scaled σN graph, active-density 0.8 = σ(6)/C(6,2), reproduces
+hexad.hexa at N=6 EXACTLY: 6 nodes / 12 of 15 edges / A={D,M,E,Bridge}/G={C,S,W}; 3 seeds):**
+
+| N | edges | poss | Q(A/G) | integ | crossD | J=integ·clean |
+|---|-------|------|--------|-------|--------|---------------|
+| 3 | 2 | 3 | −0.1250 | 0.5000 | 0.5000 | **0.5000** |
+| 4 | 5 | 6 | −0.1000 | 0.6000 | 0.7500 | **0.6000** |
+| 5 | 8 | 10 | −0.0312 | 0.2500 | 0.5000 | 0.1250 |
+| 6 | 12 | 15 | −0.0035 | 0.4167 | 0.6250 | **0.4167** |
+| 7 | 17 | 21 | −0.0069 | 0.1176 | 0.3333 | 0.0588 |
+| 8 | 22 | 28 | 0.0455 | 0.4545 | 0.6250 | 0.2273 |
+| 12 | 53 | 66 | 0.0554 | 0.3585 | 0.5938 | 0.1792 |
+
+J = integration × clean_factor (clean_factor=1 if φ=2, else 0.5). Q(A/G) is near-zero/negative for
+ALL clean-N — the HEXAD design is **integration-dominant, NOT modular** (it deliberately wires the two
+halves together for Φ-like integration; modularity is not its objective).
+
+**N\* + verdict (🟡 HOLDS-CONDITIONAL):**
+- N\* on the raw joint objective J = **4** (J=0.6000); N=6 = 0.4167 does NOT win.
+- On J alone, N=6 is **beaten by the other φ=2 numbers** (J3=0.5000, J4=0.6000).
+- N=6 IS optimal **ONLY under the explicit assumption**: *"smallest N with φ(N)=2 AND ≥12
+  integrating connections"* (the capacity floor to wire 6 distinct substrate faculties — C/D/S/W/M/E).
+  N=3 (C(3,2)=3 edges) and N=4 (C(4,2)=6 edges) physically cannot host 6 roles or reach 12 connections.
+- So **6 is the smallest VIABLE φ=2 module count — not a graph-modularity sweet spot.** Its only edge
+  over 3/4 is the capacity floor, not topology.
+
+**Honest bottom line:** HEXAD's "6" is **defensible but not decisively optimal**. It is one of three
+φ=2 choices {3,4,6}, and the only thing that singles out 6 is the assumption that you need ≥6 faculties
+and ≥12 connections. This **corroborates HEXAD/README.md §98** (n=6 provenance numerology-tainted —
+"count 12 chosen FIRST from σ(6), then 3 of 15 pruned to match" — but causally innocent of GOAL
+failures), now confirmed on the graph/number-theory axis: φ(N)=2 is a real gate (rules out 5/7/8/12),
+but it does NOT uniquely pick 6.
+
+**scope (§97 · a_toy_scale_recheck · a_scale_honest_scope · a_paper_negative_ok):** STRUCTURAL /
+NUMBER-THEORETIC / GRAPH-MODULARITY benchmark on the connection topology + φ(N) — **NOT a trained-model
+comparison** (training 7 HEXAD variants is out of scope). The finding is about the DESIGN's
+number-theoretic + graph optimality, NOT measured task performance; any scale-sensitive / trained
+claim is UNVERIFIED. N=4 winning J reflects the toy scaling rule, not a recommendation to use 4
+modules. a_paper_negative_ok: "6-not-uniquely-optimal" is a valid finding. Ties to the
+KOSMOS-DIM-LADDER dimension-optimality theme (same "is the chosen N numerology?" question, module-count
+axis instead of map-dimension axis). 산출물: `UNIVERSE/hexad_module_count.py` ·
+`.verdicts/hexad-module-count/{F-PHI-PARTITION,F-MODULARITY,F-INTEGRATION-TRADEOFF,SUMMARY}.txt +
+results.json + run_stdout.txt` · `.discoveries/hexad-module-count.tape`.
+
 ## ENGINE LANES (architecture — distinct axis from training lanes A/G/P/M/X)
 
 Two engine architectures are now designated as named lanes. The training lanes

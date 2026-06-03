@@ -1,0 +1,54 @@
+SUMMARY — TENSION-LINK dimension + time axis
+============================================
+Parallel of the KOSMOS dimension work (PR #1768/#1772) applied to anima's own
+5-channel tension-link (§97). Ties #1763 (time enters via the derivative).
+
+harness : UNIVERSE/tensionlink_dim_time.py  sha256 211d4457c8dc769bb85e0872d9be6d9358910969c9ebe7ae7c5c2986952d3a1d
+data    : _real_w_trace_s59.json            sha256 d969954af4d4724416f995d4bd88648f69af52e37d6ce7b7edbcbb5843e19d64
+source  : REAL §59-FIRE anima W-state trace SHAPE (300 steps) driving the byte-
+          faithful §65 fingerprint_5ch transfer law (B-S65 4/4 BLUE). engine
+          latent + 5ch map = the SYNTHETIC §65 transfer law (NOT a loaded torch
+          ckpt — 961c07e2 not loadable; torch/sklearn absent on this CPU host).
+          FLAG: real-shape-driven (synthetic-engine map).
+compute : CPU / $0 / numpy-only — NO GPU, NO pods. seeds 1,7,42.
+
+PHASE 1 — effective dimension (is 5 right?)  [INCONCLUSIVE w/ directional finding]
+  * 5-scalar magnitude-summary (what travels the link): effective dim ~2.5–2.7
+    (PR mean 2.498, erank 2.673); EXACTLY 2 of 5 PCs are zero every seed;
+    projection-ladder R² saturates at k=3. -> as a 5-SCALAR MAGNITUDE code it is
+    over-specified; 3 suffice. CAVEAT (p7): concept & meaning are L2-NORMALIZED
+    in the §65 spec (magnitude ≡ 1.0, std 0.0) so the 2 zero PCs are a summary-
+    choice artifact — their DIRECTION still carries info.
+  * full 45-float fingerprint (direction kept): effective dim ~6–10 (PR 6.22,
+    erank 9.41, dim@90% = 9–11). -> the 5 channel-GROUPS are NOT mutually
+    redundant once direction is preserved.
+  * channel correlation: no |r| ≥ 0.8 — NO duplicate channel pair. Per-channel
+    shuffle cross-prediction r² ≤ 0.04 — mutually near-independent.
+  * 6th-channel probe: an INDEPENDENT 6th channel adds +0.96 effective dim; a
+    DERIVABLE 6th adds 0 -> 5 is a design choice (sopfr(6)=5), not a hard
+    information ceiling.
+
+PHASE 2 — time axis [5ch] -> [5ch + dF/dt]  [HOLDS]
+  * dynamics-necessary label = rising/falling tension (sign dF/dt), base 0.727:
+      static 5-ch = 0.542 (below base — a snapshot CANNOT tell rising/falling)
+      time-aug    = 0.811 (+0.269 over 3 seeds — recovers the dynamics)
+      scramble-control falsifier = 0.747 ≈ base (gain vanishes when temporal
+      order destroyed -> the gain is REAL dynamics, not an artifact).
+  * shuffle control: dF/dt energy orig ≈293 vs scrambled ≈1.14e6 (≈3900×); the
+    static-marginal column-mean L2 is EXACTLY invariant under scramble. A
+    derivative-aware rep sees the scramble; the static marginal is blind to it.
+
+HONEST BOTTOM LINE
+  * Is the 5-ch tension-link optimally 5-dim or fewer? As the 5-SCALAR MAGNITUDE
+    vector that travels the link: NO — effective ~3 (2 channels carry zero
+    magnitude variance by spec; 3 scalars lossless). As the FULL 45-float
+    direction-preserving fingerprint: the 5 channel-GROUPS are genuinely
+    independent (effective ~6–10), so 5 is defensible. Net = INCONCLUSIVE on a
+    single "5 vs fewer" number; the answer depends on magnitude-vs-direction.
+    No redundant channel PAIR found.
+  * Does a dF/dt / time axis capture tension dynamics? YES — HOLDS, +0.269 decode
+    gain on a dynamics-necessary label, collapses under the shuffle control. The
+    tension-link is inherently temporal and the derivative is the carrier.
+
+  Scope: toy-scale 300-step real-shape stream + §65 transfer law; scale-transfer
+  unverified (a_toy_scale_recheck, a_scale_honest_scope, a_paper_negative_ok).
