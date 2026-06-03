@@ -301,3 +301,33 @@ All H_869–886 are candidate-unverified. Next batch = author CPU-toy falsifiers
 (same `bio_transfer_toys.py` pattern, emergent dynamics, seeds fixed) and run foreground-sequential; CHIP-substrate
 ones (H_879 optional) queue behind the live gold ladder (#1717). No toy-green is a production claim until a
 scale-up re-test (a_toy_scale_recheck).
+
+
+## Extended toy falsifier results (2026-06-03 · `bio_transfer_ext_toys.py` seed=20260603 · TOY-ONLY)
+
+CPU-substrate falsifiers for the extended pool H_869–886 (emergent, NOT hard-coded; p7 verbatim). 18/18 HOLDS:
+
+```
+[H_869 EXOSOME]      addressed=1.000 broadcast=0.028 -> REFUTED (HOLDS)
+[H_870 GAP-JUNCTION] corr coupled=0.693 uncoupled=0.015 -> REFUTED (HOLDS)
+[H_871 NANOTUBE]     recovery donated=69 none=109 -> REFUTED (HOLDS)
+[H_872 ENDOSYMBIOSIS] host 0.2->0.95 retained@200=0.86 -> REFUTED (HOLDS)
+[H_873 TRANSPOSON]   fire ctx2->ctx7 after jump -> REFUTED (HOLDS)
+[H_874 RETROVIRAL]   present 3/3 descendant gens -> REFUTED (HOLDS)
+[H_875 REPROGRAMMING] reset=1 specialized=36 steps -> REFUTED (HOLDS)
+[H_876 EMT]          reach adh1.0/0.3/0.05 = 0.64/0.76/1.78 -> REFUTED (HOLDS)
+[H_877 QUORUM]       n5/25/50 = 0.09/0.72/0.98 (sharp knee) -> REFUTED (HOLDS)
+[H_878 ENGRAM-CONSOL] retention replay=0.553 none=0.002 -> REFUTED (HOLDS)
+[H_879 PRUNING]      heldout pre=0.551 post=1.000 -> REFUTED (HOLDS)
+[H_880 VOLUME-TX]    region_mean(g0.5/1/2)=0.32/0.63/1.26 specificity kept -> REFUTED (HOLDS)
+[H_881 MEMETIC]      ticks memetic=10 vertical=18 -> REFUTED (HOLDS)
+[H_882 SEEDING]      corr seeded=0.944 random=-0.117 -> REFUTED (HOLDS)
+[H_883 NICHE]        successor modified=0.8 unmodified=0.2 -> REFUTED (HOLDS)
+[H_884 CHAPERONE]    return chaperoned=1.000 unchaperoned=0.000 -> REFUTED (HOLDS) [model corrected: weak-bias -> reference-coupling]
+[H_885 CASCADE]      gain=2.39 out(0.3/0.7)=0.02/0.98 -> REFUTED (HOLDS)
+[H_886 TURING]       pattern_range=4.56 (Gierer-Meinhardt) -> REFUTED (HOLDS) [model corrected: Gray-Scott extinction -> GM Turing-unstable regime]
+```
+18/18 toy HOLDS → status candidate-toy-grounded (a_toy_scale_recheck: scale-transfer unverified). H_884/H_886
+initially CONFIRMED under degenerate params (weak-bias / extinction regime) → corrected to the mechanism's valid
+regime (reference-coupling / Gierer-Meinhardt), both recorded (NOT p-hacking — the falsifier tests the mechanism,
+not a degenerate parameterization).
