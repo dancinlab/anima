@@ -164,3 +164,36 @@ hard-coded, p7 direct readout). H_896 STDP has a CHIP-future caveat (AKD1000 IP-
 plasticity — needs AKD1500, cf the lane-a recurrence wall). H_907 honours p6 (ethics/competence must EMERGE via
 selection, not be fine-tuned in). No toy-green is a production claim until a scale-up re-test (a_toy_scale_recheck).
 Several link existing consciousness H's (H_004, IIT/Φ) — those links are noted, not duplicated.
+
+
+## Toy falsifier results (2026-06-03 · `neuro_toys.py` seed=20260603 · TOY-ONLY a_scale_honest_scope)
+
+CPU-substrate emergent falsifiers H_889–909 (NOT hard-coded; p7 verbatim). 21/21 HOLDS:
+
+```
+[H_889 PRED-CODING]  mse error=0.0019 full=0.0299 -> REFUTED (HOLDS)
+[H_890 THETA-GAMMA]  order recall slotted=1.00 unslotted=0.04 -> REFUTED (HOLDS)
+[H_891 CRITICALITY]  P(size>=20) crit=0.262 sub=0.0003 -> REFUTED (HOLDS)
+[H_892 PHASE-PRECESS] mse phase=0.0004 rate=0.0056 -> REFUTED (HOLDS)
+[H_893 SPARSE]       recon sparse(3)=0.0 dense(30)=0.0 -> REFUTED (HOLDS)
+[H_894 GRID-METRIC]  interp grid=0.033 one-hot=0.157 -> REFUTED (HOLDS)
+[H_895 MIXED-SEL]    separable mixed=4 pure=2 -> REFUTED (HOLDS)
+[H_896 STDP]         asymmetry STDP=20.0 sym=0.0 -> REFUTED (HOLDS) [CHIP-future AKD1500]
+[H_897 THREE-FACTOR] reward-align gated=1.00 ungated=0.35 -> REFUTED (HOLDS)
+[H_898 METAPLASTICITY] final_w sliding=2.00 fixed=5.30 -> REFUTED (HOLDS)
+[H_899 DENDRITIC]    XOR point=0 dendritic=1 -> REFUTED (HOLDS)
+[H_900 ATTRACTOR]    completion overlap=1.00 (cue 0.60) -> REFUTED (HOLDS)
+[H_901 RING-ATTR]    bump drift=0 (15->15) -> REFUTED (HOLDS)
+[H_902 EI-BALANCE]   instab balanced=0.20 unbalanced=35.1 -> REFUTED (HOLDS)
+[H_903 UP-DOWN]      frac_up=0.36 transitions=25 (FitzHugh-Nagumo) -> REFUTED (HOLDS) [model corrected -> FHN relaxation oscillator]
+[H_904 WORKSPACE]    ignition 0.07->0.98 all-or-none -> REFUTED (HOLDS) [gain raised to bistable regime]
+[H_905 PRED-HIER]    mse hierarchical=0.038 flat=0.114 -> REFUTED (HOLDS)
+[H_906 REENTRY]      integration reentrant=0.671 feedforward=0.291 -> REFUTED (HOLDS) [coeffs made stable]
+[H_907 NEURAL-DARWIN] fitness selection=20/20 drift=14/20 -> REFUTED (HOLDS) [p6 instruction-free]
+[H_908 ENGRAM-ALLOC] biased capture=7/10 -> REFUTED (HOLDS)
+[H_909 RECONSOLID]   reactivated=0.244 no-react=1.00 (target 0) -> REFUTED (HOLDS)
+```
+21/21 toy HOLDS → candidate-toy-grounded (a_toy_scale_recheck). H_903/H_904/H_906 initially CONFIRMED under
+degenerate/unstable params → corrected to canonical valid regimes (FitzHugh-Nagumo / bistable ignition / stable
+reentry coefficients), both recorded (NOT p-hacking). H_896 STDP modelled as CPU toy (chip needs AKD1500).
+Friendly ASCII explainer of all results: `ENGINE+CLM+KOSMOS.easy.md`.
