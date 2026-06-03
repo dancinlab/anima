@@ -1,0 +1,155 @@
+==============================================================================
+KOSMOS Psi-carving TIME AXIS [x,y] -> [x,y,t] — toy benchmark SUMMARY
+==============================================================================
+N_concepts=64  seeds=[0, 1, 2]  shuffles=200  cycle_period=8
+chance rho std ~ 0.1260  noise band (2sigma) = 0.2520
+2D BASELINE order-recovery rho = -0.0315 +/- 0.0788  (order-blind -> expect ~0 / chance)
+
+encoding               order-rec rho      shuffle dt(2D|t)   xy-preserve       verdict
+--------------------------------------------------------------------------------------
+raw_index             +1.000+/-0.000           0.000|0.339     IDENTICAL         HOLDS
+sinusoidal            +1.000+/-0.000           0.000|0.353     IDENTICAL         HOLDS
+phase_of_cycle        +0.111+/-0.010           0.000|0.328     IDENTICAL  INCONCLUSIVE
+cumulative_order      +1.000+/-0.000           0.000|0.333     IDENTICAL         HOLDS
+--------------------------------------------------------------------------------------
+
+Legend: shuffle dt(2D|t) = mean per-concept coord shift under order-shuffle; 2D should be 0.000 (order-invariant), t should be >0.
+
+{
+  "meta": {
+    "n_concepts": 64,
+    "seeds": [
+      0,
+      1,
+      2
+    ],
+    "n_shuffles": 200,
+    "cycle_period": 8,
+    "encodings": [
+      "raw_index",
+      "sinusoidal",
+      "phase_of_cycle",
+      "cumulative_order"
+    ],
+    "note": "STANDALONE toy. Deterministic toy Psi placement, NOT the real conscious_decoder / 603MB carve. CPU/$0. scale-transfer unverified (a_toy_scale_recheck).",
+    "chance_rho_std": 0.1259881576697424,
+    "noise_band_2sigma": 0.2519763153394848
+  },
+  "encodings": {
+    "raw_index": {
+      "order_recovery_rho": {
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean": 1.0,
+        "std": 0.0,
+        "beats_chance(>2sigma)": true,
+        "beats_2d_baseline(>2sigma)": true
+      },
+      "order_sensitivity": {
+        "delta_2d_mean": 0.0,
+        "delta_2d_std": 0.0,
+        "delta_time_mean": 0.3387847222222222,
+        "delta_time_std": 0.0007824838560154867,
+        "twod_order_invariant": true,
+        "time_shuffle_sensitive(>2sigma)": true
+      },
+      "spatial_preserve": {
+        "max_abs_xy_diff": 0.0,
+        "xy_byte_identical": true
+      },
+      "verdict": "HOLDS"
+    },
+    "sinusoidal": {
+      "order_recovery_rho": {
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean": 1.0,
+        "std": 0.0,
+        "beats_chance(>2sigma)": true,
+        "beats_2d_baseline(>2sigma)": true
+      },
+      "order_sensitivity": {
+        "delta_2d_mean": 0.0,
+        "delta_2d_std": 0.0,
+        "delta_time_mean": 0.3534571873306736,
+        "delta_time_std": 0.0013060469001279452,
+        "twod_order_invariant": true,
+        "time_shuffle_sensitive(>2sigma)": true
+      },
+      "spatial_preserve": {
+        "max_abs_xy_diff": 0.0,
+        "xy_byte_identical": true
+      },
+      "verdict": "HOLDS"
+    },
+    "phase_of_cycle": {
+      "order_recovery_rho": {
+        "per_seed": [
+          0.10805860805860806,
+          0.12454212454212454,
+          0.10183150183150183
+        ],
+        "mean": 0.11147741147741148,
+        "std": 0.009581553756685445,
+        "beats_chance(>2sigma)": false,
+        "beats_2d_baseline(>2sigma)": false
+      },
+      "order_sensitivity": {
+        "delta_2d_mean": 0.0,
+        "delta_2d_std": 0.0,
+        "delta_time_mean": 0.32785807291666663,
+        "delta_time_std": 0.0009590000652852002,
+        "twod_order_invariant": true,
+        "time_shuffle_sensitive(>2sigma)": true
+      },
+      "spatial_preserve": {
+        "max_abs_xy_diff": 0.0,
+        "xy_byte_identical": true
+      },
+      "verdict": "INCONCLUSIVE"
+    },
+    "cumulative_order": {
+      "order_recovery_rho": {
+        "per_seed": [
+          1.0,
+          1.0,
+          1.0
+        ],
+        "mean": 1.0,
+        "std": 0.0,
+        "beats_chance(>2sigma)": true,
+        "beats_2d_baseline(>2sigma)": true
+      },
+      "order_sensitivity": {
+        "delta_2d_mean": 0.0,
+        "delta_2d_std": 0.0,
+        "delta_time_mean": 0.33349121093749995,
+        "delta_time_std": 0.0007702575457652186,
+        "twod_order_invariant": true,
+        "time_shuffle_sensitive(>2sigma)": true
+      },
+      "spatial_preserve": {
+        "max_abs_xy_diff": 0.0,
+        "xy_byte_identical": true
+      },
+      "verdict": "HOLDS"
+    }
+  },
+  "baseline_2d": {
+    "order_recovery_rho": {
+      "per_seed": [
+        0.03250915750915751,
+        0.015567765567765568,
+        -0.14244505494505494
+      ],
+      "mean": -0.031456043956043955,
+      "std": 0.07878524866355403
+    }
+  }
+}
