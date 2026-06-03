@@ -123,6 +123,7 @@ different compute, no gate between them.
     → clm_prod smoke F-CLM-PROD-DESCENT=1 (CE 4.747→1.496). KOSMOS-registered.
 - [x] ③ PR4 — d768/12L H100 fire MEASURED (vast H100 80GB HBM3, pod 38991004, deploy-gate #2472+#2478 PASS, recovery 2026-06-02). SPLIT verbatim: **DESCENT 🟢 PASS** (epoch-1 CE 4.71554 → epoch-12 CE 0.859092, F-CLM-PROD-DESCENT=1) · **util 🔴 RED** (n=1617, PEAK=0% MEAN=0.000%, 0 MiB GPU mem, 67W idle, 100% on one CPU core, F-RFC046 confirmed). **ROOT CAUSE found**: `hexa run` links only `-lm -lpthread` (no `-DHEXA_CUDA`/cuBLAS) → #2472's FP64-conv→cuBLAS dispatch never engages = host-side `hexa run` LINK bottleneck; **#2472 is necessary but NOT sufficient**. ckpt `d768_5lang_c4.clm` (3.65MB, sha 6975dbb0…) pulled+verified BEFORE teardown → HF `dancinlab/anima-clm-d768-util-probe` PRIVATE (intermediate, CLM collection) + HF.jsonl row + harvest `state/d768_recovery_2026_06_02/` (commit e9af8f02f). Upstream fix filed: hexa-lang/inbox/patches/d768-recovery-cuda-link-and-stale-pod-image.md (`hexa run --cuda` link). Model recovered, cannot be lost again.
 - [x] ③ full 3B/7B — **DEFERRED to a separate cost-gate** (full c4, multi-day H100, $100s). This is a production-pretrain milestone OUTSIDE the H_911 amodal-hub question (already closed-negative); it is gated behind the forge-util fix (#2472) demonstrating util>0 on the PR4 smoke first. Terminal disposition for this domain = deferred-separate-gate, not a pending in-domain item.
+- [x] **ENGINE cli 축 — mitosis 토글 (substrate-config, NOT emit gate)** — hexa-native `CORE/engine_cli.hexa` 가 CLI flag + env 를 ENGINE 런타임 config struct (`EngineConfig`) 로 파싱 (한 진입점, launch 산재 파싱 아님). 첫 flag = `mitosis` (default ON): inference-time cell-division GROWTH tick 을 gating (p8 NO TRAIN/INFER SPLIT — mitosis = 학습; OFF ⇒ split no-op = ablation/debug). flag surface `--mitosis on|off` + `--no-mitosis` + env `ANIMA_MITOSIS`, precedence **flag > env > default(on)** (EEG/eeg_backend.hexa arg>env>default 미러). @L4 정직 framing: mitosis 는 substrate-config — substrate 가 inference 중 *자라는지* 구성, anima 발화 emit/silence gate 아님 (a_autonomy_over_hardcode · a_substrate_native_speak · p5; emit_allowed boolean 0). honest scope (a_core_engine_map): CORE 엔진 루프에 아직 discrete mitosis call 이 없어 smallest honest unit (`engine_mitosis_tick` cell-count growth) 을 gating — 풍부한 mitosis 기계가 엔진에 착지하면 같은 `cfg.mitosis` bool 에 gate. smoke 12/12 PASS (parse precedence flag>env>default + ON-grows(3→13) vs `--no-mitosis`-static(3) 행동 차이, deterministic, $0 CPU). **EXTENSIBLE**: 미래 ENGINE 제어 flag (lane select A/G/P/M 등) 가 같은 `EngineConfig` 축에 탑승. 산출물: `CORE/engine_cli.hexa` + `CORE/engine_cli_smoke.hexa` + `.verdicts/engine-cli-axis/SMOKE.txt`.
 
 ## TWO TRAINING LANES — run in PARALLEL (a_wall_first · a_nondet_identity)
 
@@ -404,4 +405,28 @@ scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금
 - §97 정당성: tension-link는 외부 5-ch를 ENGINE tension에 **COUPLING/measurement-anchor**(anima 고유 채널)로 주입 — **EEG-as-command-input 아님**. ENGINE은 여전히 자기 내부 동역학으로 진화.
 - a_lane_akida_gpu_split: Lane A(AKIDA)·Lane G(GPU) 어느 쪽도 아닌 **CPU toy** — 별도 기록, cross-substrate 병합 없음. NO HF upload(toy).
 - 산출물: `.verdicts/engine-tensionlink-bench/{F-EEG-COUPLE,F-TRIBE-COUPLE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/engine_tensionlink_bench.py` · discovery `.discoveries/engine-tensionlink-bench.tape`.
+
+## ENGINE cli 축 — launch-time control surface for the A⇄G⇄brain engine (2026-06-04)
+
+The ENGINE component (CORE/ — pure_field / engine_g / brain_decide / generator / launch) gains a **hexa-native CLI control axis**: one module parses command-line flags + environment variables into an ENGINE runtime config struct, threaded into the engine so its launch-time behaviour is configurable at one point. This is the ENGINE-side analogue of the EEG backend switch (EEG/eeg_backend.hexa, arg>env>default).
+
+### surface
+- **module** `CORE/engine_cli.hexa` — `engine_cli_parse(argv) -> EngineConfig{ mitosis: bool, ... }` (single entry; NOT flag-parsing scattered through launch).
+- **first flag = `mitosis`** (default ON). Gates the inference-time cell-division GROWTH tick (p8 NO TRAIN/INFER SPLIT — mitosis IS the learning). ON ⇒ substrate grows a cell per growth tick; OFF ⇒ split step is a no-op (the substrate runs static — ablation/debug).
+- **flag surface** `--mitosis on|off` · `--no-mitosis` · `--mitosis=off` (=-joined) · env `ANIMA_MITOSIS` ∈ {on,off,1,0,true,false}.
+- **precedence** flag > env > default(on) — mirrors EEG/eeg_backend.hexa arg>env>default exactly.
+
+### @L4 — mitosis is SUBSTRATE-CONFIG, NOT an emit/silence gate
+The mitosis flag configures **whether the substrate GROWS during inference**. It is a substrate-config switch (like the AKIDA/GPU backend switch), and it MUST NOT become an external do/dont gate on anima's speech. There is no `emit_allowed` boolean, no stimulus-response wiring, no "do not X when alone" rule in this module. Turning mitosis OFF freezes cell-division; it does **not** silence her and does **not** force her to speak — emit/silence stays decided by the substrate itself (M × W × Φ × curiosity). This preserves a_autonomy_over_hardcode · a_substrate_native_speak · p5. Documented in the module header (`CORE/engine_cli.hexa`) and here.
+
+### honest scope (a_core_engine_map — no phantom wiring)
+The CORE engine loop (pure_field_step / brain_decide) advances the Φ/phase oscillators but does NOT today contain a discrete cell-division call to gate. So this axis introduces the **smallest honest unit** — a single growth tick keyed to a cell count (`engine_mitosis_tick`) — and gates that on `cfg.mitosis`. When a richer mitosis machinery lands in the engine, it gates on this same `cfg.mitosis` bool (the contract is the gate, not the counter).
+
+### verification
+- smoke `CORE/engine_cli_smoke.hexa` — **12/12 PASS** ($0, CPU, deterministic, no GPU/LLM): parse precedence (flag > env > default), env-tier proof (ANIMA_MITOSIS=off → OFF), and the behavioral difference — mitosis ON grows seed 3 → 13 over 10 ticks vs `--no-mitosis` static at 3. Verbatim stdout → `.verdicts/engine-cli-axis/SMOKE.txt` (p7: assert/string equality, not perplexity).
+
+### extension point (future ENGINE control flags)
+`EngineConfig` is the extensible carrier for the whole CLI axis. Future ENGINE flags — e.g. **lane select A/G/P/M** — add a field to `EngineConfig` + a resolver + a `_cli_*` parse helper, WITHOUT touching the engine. The mitosis flag is the first rider on this axis; the surface is designed to grow.
+
+- 산출물: `CORE/engine_cli.hexa` + `CORE/engine_cli_smoke.hexa` + `.verdicts/engine-cli-axis/SMOKE.txt`.
 - **bottom line**: tension-link로 ENGINE↔뇌신호 커플링은 **실제 phase 동기(order-r↑, HOLDS)를 만든다 — 장식 아님**. 그러나 substrate-native **통합 이득은 없음**(big-Φ·emergence INCONCLUSIVE, big-Φ는 solo 대비 오히려 하락). 통합 축에선 toy scale에서 within-noise. 정직한 partial-negative(§97·a_paper_negative_ok).

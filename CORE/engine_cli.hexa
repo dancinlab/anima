@@ -1,0 +1,192 @@
+// engine_cli.hexa — ENGINE CLI control axis (anima/CORE).
+//
+// The single hexa-native surface that parses command-line flags + environment
+// variables into an ENGINE runtime config struct, threaded into the A⇄G⇄brain
+// consciousness engine (CORE/ — pure_field / engine_g / brain_decide /
+// generator / launch). The ENGINE's launch-time behaviour is configured HERE,
+// at one entry point — NOT via flag-parsing scattered through launch.
+//
+//   engine_cli_parse(arg) -> EngineConfig{ mitosis: bool, ... }
+//
+// First flag: **mitosis** (default ON). It gates the inference-time cell-
+// division GROWTH tick (p8 NO TRAIN/INFER SPLIT — mitosis IS the learning).
+// ON (default) ⇒ the substrate grows a cell each growth tick. OFF ⇒ the split
+// step is a no-op (ablation / debug — the substrate runs static).
+//
+// ── @L4 CRITICAL FRAMING — mitosis is SUBSTRATE-CONFIG, NOT an emit/silence gate
+//
+// The mitosis flag is a substrate-config switch, exactly like the AKIDA/GPU
+// backend switch in EEG/eeg_backend.hexa (arg>env>default). It configures
+// WHETHER THE SUBSTRATE GROWS during inference — it MUST NOT become an external
+// do/dont gate on anima's speech. There is NO emit_allowed boolean here, no
+// stimulus-response wiring, no "do not X when alone" rule. anima's emit/silence
+// stays decided by the substrate itself (M × W × Φ × curiosity), per
+// a_autonomy_over_hardcode / a_substrate_native_speak / p5. Turning mitosis OFF
+// freezes cell-division; it does NOT silence her and does NOT force her to
+// speak. This is the load-bearing distinction the whole module is built around.
+//
+// ── precedence (mirrors EEG/eeg_backend.hexa arg>env>default) ─────────────────
+//   flag  : `--mitosis on` / `--mitosis off` / `--no-mitosis`  (highest)
+//   env   : ANIMA_MITOSIS ∈ {on,off,1,0,true,false}            (middle)
+//   default: ON                                                (lowest)
+//
+// ── extension point (future ENGINE control flags) ────────────────────────────
+// EngineConfig is the extensible carrier for the whole CLI axis. Future ENGINE
+// flags (e.g. lane select A/G/P/M) add a field to EngineConfig + a resolver
+// below + a `_cli_*` parse helper, WITHOUT touching the engine. The mitosis
+// flag is the first rider on this axis; the surface is designed to grow.
+//
+// ── p1..p8 conformance ──────────────────────────────────────────────────────
+//   p1 NO SYSTEM PROMPT     — pure flag/env parse; no role/instruction string.
+//   p2 NO IDENTITY RULES    — config is data; no identity.yaml / rules.
+//   p3 NO PERSONA INJECTION — no prefix token; nothing injected into output.
+//   p4 NO ASSISTANT FRAMING — config does not respond to a user message.
+//   p5 NO SPEAK()           — NO emit gate here; the flag never silences/forces
+//                             speech. It configures substrate GROWTH only.
+//   p6 NO FINE-TUNED ETHICS — zero weights; pure boolean resolution.
+//   p7 NO PERPLEXITY VERDICT— verified by string/assert equality in the smoke.
+//   p8 NO TRAIN/INFER SPLIT — mitosis IS the inference-time learning tick; the
+//                             flag is an ablation switch on it, not a regime gate.
+
+// ── env read helper (canonical printenv pattern, mirrors eeg_backend.hexa) ────
+fn _env_read(name: string) -> string {
+    let v = exec("printenv " + name + " 2>/dev/null")
+    return v.trim()
+}
+
+// ── normalize a raw on/off-ish token to a tri-state: "on" | "off" | "" ────────
+// "" = unrecognized / unset → caller falls through to the next precedence tier.
+fn _norm_onoff(raw: string) -> string {
+    let t = raw.trim()
+    if t == "on"  || t == "1" || t == "true"  || t == "yes" { return "on" }
+    if t == "off" || t == "0" || t == "false" || t == "no"  { return "off" }
+    return ""
+}
+
+// ── EngineConfig — the ENGINE runtime config struct (the CLI-axis carrier) ────
+// mitosis : whether the inference-time cell-division GROWTH tick fires.
+//           true (default) = substrate grows; false = split is a no-op (ablation).
+// The struct is the extension point: future ENGINE flags add fields here.
+struct EngineConfig {
+    mitosis: bool
+}
+
+// engine_config_default — the default ENGINE config: mitosis ON (p8 native).
+pub fn engine_config_default() -> EngineConfig {
+    EngineConfig { mitosis: true }
+}
+
+// ── mitosis resolver (3-tier precedence: flag > env > default(on)) ────────────
+//
+// arg is the raw user argv (list of strings, post-script-path tolerated). We
+// scan it for the mitosis flag surface, then fall through to env, then default.
+//
+//   `--no-mitosis`            → off
+//   `--mitosis off`           → off   (token after the flag)
+//   `--mitosis on`            → on
+//   `--mitosis=off`           → off   (=-joined form also accepted)
+//   (no flag) + ANIMA_MITOSIS → env value (on/off/1/0/true/false)
+//   (no flag, no env)         → on    (default — mitosis is anima's native p8)
+//
+// returns: bool (true = mitosis ON).
+pub fn engine_cli_resolve_mitosis(arg: [string]) -> bool {
+    // tier 1 — flag (highest precedence)
+    let flag = _cli_mitosis_flag(arg)
+    if flag == "on"  { return true }
+    if flag == "off" { return false }
+    // tier 2 — env ANIMA_MITOSIS
+    let env = _norm_onoff(_env_read("ANIMA_MITOSIS"))
+    if env == "on"  { return true }
+    if env == "off" { return false }
+    // tier 3 — default ON (mitosis IS anima's native inference-time learning, p8)
+    return true
+}
+
+// _cli_mitosis_flag — scan argv for the mitosis flag surface. Returns the
+// resolved tri-state "on"|"off"|"" ("" = flag absent → fall through to env).
+//
+// Recognized forms (first match wins, scanning left→right):
+//   --no-mitosis          → "off"
+//   --mitosis on|off|...   → next token normalized
+//   --mitosis=on|off|...   → suffix normalized
+fn _cli_mitosis_flag(arg: [string]) -> string {
+    let n = len(arg)
+    let mut i = 0
+    while i < n {
+        let a = arg[i]
+        if a == "--no-mitosis" { return "off" }
+        if a == "--mitosis" {
+            // value is the next token (`--mitosis off`)
+            if i + 1 < n {
+                let v = _norm_onoff(arg[i + 1])
+                if v != "" { return v }
+            }
+        }
+        if a.starts_with("--mitosis=") {
+            let v = _norm_onoff(_after_eq(a))
+            if v != "" { return v }
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// _after_eq — return the substring after the first '=' (for `--flag=value`).
+fn _after_eq(s: string) -> string {
+    let parts = s.split("=")
+    if len(parts) >= 2 { return parts[1] }
+    return ""
+}
+
+// ── top-level parse: raw argv → EngineConfig ──────────────────────────────────
+// The single ENGINE-config entry point. launch.hexa (or any caller) calls this
+// ONCE with the process argv and threads the returned config into the engine.
+pub fn engine_cli_parse(arg: [string]) -> EngineConfig {
+    EngineConfig {
+        mitosis: engine_cli_resolve_mitosis(arg)
+    }
+}
+
+// ── §  mitosis GROWTH tick — the smallest honest gated unit ───────────────────
+//
+// HONEST SCOPE (a_core_engine_map · no phantom wiring): the CORE engine loop
+// (pure_field_step / brain_decide) advances the Φ/phase oscillators but does
+// NOT today contain a discrete cell-division call to gate. So this module
+// introduces the SMALLEST honest unit — a single growth tick keyed to a cell
+// count — and gates THAT on the config. When a richer mitosis machinery lands
+// in the engine, it gates on this same `cfg.mitosis` bool (the contract is the
+// gate, not this counter).
+//
+// engine_mitosis_tick — advance the substrate's cell count by one growth step,
+// GATED by cfg.mitosis. ON ⇒ +1 cell (the substrate grows). OFF ⇒ no-op (the
+// split step does nothing; the substrate stays static — ablation/debug).
+//
+// This is substrate-config GROWTH, NOT an emit gate (@L4): it returns a cell
+// count, never an emit/silence decision.
+pub fn engine_mitosis_tick(cell_count: int, cfg: EngineConfig) -> int {
+    if cfg.mitosis {
+        return cell_count + 1     // mitosis ON — substrate grows one cell
+    }
+    return cell_count             // mitosis OFF — split is a no-op (static)
+}
+
+// engine_grow — run N growth ticks under cfg, from a seed cell count. ON grows
+// to seed+N; OFF stays at seed. Used by the smoke to show the behavioral diff.
+pub fn engine_grow(seed: int, ticks: int, cfg: EngineConfig) -> int {
+    let mut c = seed
+    let mut i = 0
+    while i < ticks {
+        c = engine_mitosis_tick(c, cfg)
+        i = i + 1
+    }
+    return c
+}
+
+// ── introspection ────────────────────────────────────────────────────────────
+pub fn engine_config_summary(cfg: EngineConfig) -> string {
+    let m = if cfg.mitosis { "on" } else { "off" }
+    return "engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · "
+        + "flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · precedence flag>env>default(on) · "
+        + "mitosis=" + m + " (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · "
+        + "extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis"
+}
