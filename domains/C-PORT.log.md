@@ -53,3 +53,14 @@ The tier-C smoke harnesses (`training/hxblas_cuda_smoke.c` + `hxblas_cuda_smoke_
 **Tier status:** tier-B (the sole pure-logic port target, `train_ffi.c`) = DONE (M2). NO new tier-B source remains. Remaining surface = tier-C smoke (this M3, port authored but RUNEQ toolchain-blocked) + tier-A irreducible FFI floor (M4 docs) + `build/libhxnccl.c` adjudication (M5). The portable-LOGIC tier is EXHAUSTED; what remains is irreducible-FFI marking + a toolchain-gated smoke.
 
 Next: M4 (formally mark tier-A vendor floor) · M5 (adjudicate `build/libhxnccl.c`). M3 reopens to a one-line diff the moment either hexa BUG is fixed.
+
+## 2026-06-04 — e003 M3 RUNEQ finalize pass — BLOCKED re-confirmed (g63)
+
+**M3 stays OPEN — RUNEQ value-exact comparison UNREACHABLE on hexa 0.1.0-dispatch (independently re-confirmed, NOT a port-logic fault).**
+
+A dedicated finalize pass re-ran the two toolchain blockers on pool summer to verify the prior BLOCKED verdict is real and not a premature give-up:
+- **BUG 1 (while-codegen non-termination):** `timeout 60 hexa run` of the minimal `while kk < 4 { kk = kk + 1 }` body → **RC=124 (hang), no output.** Re-confirmed.
+- **BUG 2 (nested-`for`+interleaved-`let` frontend crash):** `hexa run` of the minimal triple-nest-with-accumulator (the matmul i×j×k shape) → `hexat` aborts `index 0 out of bounds (len 0)`, no C emitted; the committed range-`for` `sgemm_ref_native.hexa` parses with the **same** crash (PARSE_RC=1). Re-confirmed.
+- Confirms `hexa run` = compile-then-exec (hexat→C→native); **no interpreter fallback**, so neither loop form can execute. The C baseline side was re-run (`cc -O2 sgemm_ref_runeq.c -lm`) and is value-stable across all 8 cases.
+
+Both defects are hexa-lang compiler bugs (out of anima's scope; fixes land in the hexa-lang repo per atlas/codegen governance). Reproducers checked in under `training/native/repro/`. Verdict `.verdicts/c-port/M3-sgemm_ref.txt` extended with the re-confirmation block. M3 reopens to a one-line diff the moment either hexa BUG is fixed.

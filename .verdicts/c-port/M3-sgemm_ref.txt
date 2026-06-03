@@ -113,6 +113,28 @@ training/native/repro/ for the hexa-lang compiler team:
 When EITHER is fixed, sgemm_ref_native.hexa (BUG-1-free, range-for) runs
 and the RUNEQ closes against the C baseline above with a one-line diff.
 
+INDEPENDENT RE-CONFIRMATION (2026-06-04, finalize pass, pool summer)
+-------------------------------------------------------------------
+A separate finalize pass independently re-ran both blockers on pool
+summer (summer@192.168.50.60) to confirm the BLOCKED verdict is a real
+toolchain gate and not a premature give-up:
+  - BUG 1: `timeout 60 hexa run /tmp/while_min.hexa` (the minimal
+    `while kk < 4 { kk = kk + 1 }` body) returned RC=124 (timeout) with
+    NO output — the while loop does not terminate. Re-confirmed.
+  - BUG 2: `hexa run /tmp/bug2.hexa` (the minimal nested-`for`+interleaved
+    -`let` matmul shape) aborted in the `hexat` frontend:
+        [1/2] .../hexat /tmp/bug2.hexa ...c
+          index 0 out of bounds (len 0)
+        error: transpile failed — C file not produced
+    and the committed for-version sgemm_ref_native.hexa parses with the
+    SAME `index 0 out of bounds (len 0)` (PARSE_RC=1). Re-confirmed.
+  - Also confirms hexa 0.1.0-dispatch `hexa run` = compile-then-exec
+    (hexat → C → native); there is NO interpreter fallback, so neither
+    loop form can execute. The RUNEQ value-exact comparison is therefore
+    UNREACHABLE on this toolchain — not a port-logic defect.
+The C baseline side was independently re-run (cc -O2 sgemm_ref_runeq.c
+-lm) and produces the stable 8-case summary above.
+
 NEXT C-PORT STATE
 -----------------
 Tier-B port target (train_ffi.c) = DONE (M2, PORT-EQ). The remaining
