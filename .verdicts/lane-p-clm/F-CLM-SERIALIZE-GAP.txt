@@ -1,0 +1,77 @@
+=== Lane P (substrate=GPU-torch) — PREFLIGHT HARD-GATE: STOP ===
+date: 2026-06-03
+verdict: F-CLM-LANEP-SERIALIZER-LOADABLE = 0  🔴 (STOP before big train, per spec STEP 3)
+scope: static byte-format analysis (no GPU rented — verify is the hard gate; it
+       fails statically, so STEP 4 full-train was NOT dispatched). p7/g63 honest.
+
+WHY (the exact serializer gap — two incompatible .clm byte layouts share the
+"CLM\x01" magic but NOTHING else):
+
+A) CORE ENGINE decoder format (what CORE/clm_decode.hexa actually loads — the
+   only ENGINE entry, via generator.hexa L3 slot, a_core_engine_map):
+     [4]  MAGIC "CLM\x01"  (67,76,77,1)
+     [1]  nblk  (single byte; =6 for the production CLMConvMoE)
+     [N]  6 raw binary conv blocks, each: u32 cout, u32 rest(=Cin*K),
+          int4 nibbles ((cout*rest+1)/2 bytes), fp32 per-channel scale (cout*4)
+     [..] "CLMX" v0.2 trailer: embed table + conv biases + GroupNorm affine (fp32)
+   Block layout is FIXED to E=2 experts + 1 trunk layer (decoder hardcodes E=2,
+   walks exactly ecW/tcW/e0W/e1W/rW/roW). Verified on the prior d768 artifact
+   state/laneg_d768_recover/reexport_d768_v2_fast.clm:
+     byte[4]=6, block0 cout=768 rest=2304(=768*3,K=3), ... CLMX trailer present.
+   This format is written by the hexa-native flame trainer (clm_prod / clm_ckpt /
+   clm_reexport .hexa in the hexa-lang sibling repo), NOT by any .py in anima.
+
+B) PyTorch pipeline format (what CLM/model/clm_serialize.py emits, fed by
+   CLM/model/fire_clm.py's torch.save state_dict):
+     [4]  MAGIC "CLM\x01"
+     [4]  struct.pack("<I", len(header_b))   <-- u32 JSON-header length
+     [..] header_b  (JSON dict, ~285 B)
+     [..] body: per-state_dict-key blocks (variable count = ALL weights; int4 +
+          fp32 scale + fp16 shadow), block boundaries described in JSON manifest
+     [4]  u32 manifest length
+     [..] manifest_b  (JSON)
+   Run through the CORE decoder's clm_decodable() parser, byte[4] is read as nblk
+   but is actually the LSB of the JSON-header length (e.g. header len 285 ->
+   byte[4]=29 -> "nblk"=29); bytes[5:] are JSON-header ASCII read as binary u32
+   block dims (cout=2063597569, rest=1919252002) -> wild offsets -> EOF ->
+   clm_decodable() returns false. NOT ENGINE-loadable. CONFIRMED by reconstructing
+   clm_serialize.py's exact byte layout (no torch needed) and feeding it through
+   the decoder parse logic.
+
+SECONDARY gaps (each independently blocks STEP 4 even if A/B were reconciled):
+  1. clm_serialize.py writes NO "CLMX" trailer -> embed table + GroupNorm affine +
+     conv biases are absent -> a forward CANNOT run -> clm_decodable()=false by
+     design (decoder line 62-63). This is the SAME named root cause already fixed
+     ONLY on the hexa side (.clm v0.2 / CLMX, ENGINE Lane item, line 47 of
+     ENGINE+CLM+KOSMOS.md). The PyTorch serializer was never updated to v0.2.
+  2. ARCH MISMATCH: train_clm.py LADDER = {tiny d64/L2/E4, small d256/L4/E8}. No
+     d768 preset. Largest torch preset = small (E=8, 4 trunk layers). The CORE
+     decoder hardcodes E=2 + single trunk -> even a CLMX-fixed torch .clm at
+     "small" would be un-decodable (E=8 != E=2, 4 trunk blocks != 1).
+  3. CKPT-FEED: train_clm.py.train() never writes a state_dict (only JSON). The
+     state_dict ckpt the serializer requires is produced by fire_clm.py
+     (torch.save, CUDA path present) — usable, but it feeds (B), not (A).
+  4. CORPUS: fire_clm.py reads newline-separated DECIMAL byte files
+     (CLM/corpus/sample/{web,register}.bytes, ~1654 B synthetic toy). The real
+     5-lang corpus CORE/testdata/clm_mid_5lang_c4.txt (402270 B, raw UTF-8 bytes,
+     V=256) is read RAW by the hexa trainer, not by fire_clm.py's decimal loader.
+
+CONCLUSION: the existing PyTorch+CUDA pipeline cannot produce an ENGINE-loadable
+.clm. The format the ENGINE reads is produced ONLY by the hexa-native flame
+trainer (which already lands d768 v0.2 CLMX .clm at $0-CPU host re-export, and is
+already 3-axis CORE-mounted GREEN @ d768 — ENGINE+CLM+KOSMOS.md line 47). Lane P
+as specified (torch pipeline -> .clm -> ENGINE) is BLOCKED at the serializer.
+
+REMEDY (a_completeness_over_cheap, named next steps — NONE attempted here, this is
+a STOP report):
+  - Author a v0.2-CLMX torch serializer that maps a torch CLMConvMoE state_dict to
+    the 6-block + CLMX layout AND constrains the torch preset to E=2 + 1 trunk
+    (or generalize CORE/clm_decode.hexa to variable E/trunk from block walk), then
+    re-run verify-smoke before any GPU fire; OR
+  - Treat the already-GREEN hexa-native d768 v0.2 .clm as the ENGINE artifact (it
+    already exists + loads + 3-axis GREEN) and scope Lane P to "torch CE-descent
+    reference only" (mirrors the existing Lane G-ref PyTorch ByteGPT 85M/3B/7B
+    track, which is HF-PUBLIC but explicitly NOT an ENGINE .clm).
+
+substrate: GPU-torch (Lane P) — recorded SEPARATELY from Lane G(forge)/Lane A(AKIDA)
+           per a_lane_akida_gpu_split. No GPU rented; no fabricated convergence.
