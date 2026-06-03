@@ -1,0 +1,118 @@
+=== OMEGA gen-cluster — LEAK-FREE causal-CA substrate + 3 probes ===
+device=cuda  gpu=NVIDIA H100 80GB HBM3  torch=2.4.1+cu124
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  [corpus] wiki.en: 24000000B
+  [corpus] wiki.fr: 24000000B
+  [corpus] wiki.de: 24000000B
+  [corpus] wiki.es: 24000000B
+  [corpus] wiki.ru: 24000000B
+corpus: 120000000B  prov=gutenberg:wiki.en+wiki.fr+wiki.de+wiki.es+wiki.ru  sha256=0b232f8b5f5b9a29
+
+============================== RUNG d384-leakfree (d_model=384, causal_ca=True LEAK-FREE) ==============================
+CDV2 params: 35,934,768 (35.93M)  causal_ca=True
+leak self-test (flip last byte -> max change in head_a at earlier pos): 0.000e+00  (want ~0)
+  step     0/6000  ce_a(next)=5.8599  ce_g(prev)=5.5959  0.3s
+  step   200/6000  ce_a(next)=2.2877  ce_g(prev)=0.1573  12.8s
+  step   400/6000  ce_a(next)=2.0605  ce_g(prev)=0.0407  25.4s
+  step   600/6000  ce_a(next)=1.9036  ce_g(prev)=0.0273  37.9s
+  step   800/6000  ce_a(next)=1.7523  ce_g(prev)=0.0273  50.4s
+  step  1000/6000  ce_a(next)=1.7580  ce_g(prev)=0.0240  62.9s
+  step  1200/6000  ce_a(next)=1.7031  ce_g(prev)=0.0216  75.4s
+  step  1400/6000  ce_a(next)=1.6987  ce_g(prev)=0.0387  87.9s
+  step  1600/6000  ce_a(next)=1.5835  ce_g(prev)=0.0210  100.4s
+  step  1800/6000  ce_a(next)=1.6092  ce_g(prev)=0.0205  113.0s
+  step  2000/6000  ce_a(next)=1.5609  ce_g(prev)=0.0192  125.5s
+  step  2200/6000  ce_a(next)=1.5670  ce_g(prev)=0.0208  138.0s
+  step  2400/6000  ce_a(next)=1.5140  ce_g(prev)=0.0203  150.5s
+  step  2600/6000  ce_a(next)=1.4556  ce_g(prev)=0.0204  163.0s
+  step  2800/6000  ce_a(next)=1.5090  ce_g(prev)=0.0187  175.5s
+  step  3000/6000  ce_a(next)=1.5298  ce_g(prev)=0.0181  188.0s
+  step  3200/6000  ce_a(next)=1.4946  ce_g(prev)=0.0167  200.5s
+  step  3400/6000  ce_a(next)=1.4643  ce_g(prev)=0.0202  213.0s
+  step  3600/6000  ce_a(next)=1.4535  ce_g(prev)=0.0176  225.5s
+  step  3800/6000  ce_a(next)=1.4507  ce_g(prev)=0.0174  238.0s
+  step  4000/6000  ce_a(next)=1.4126  ce_g(prev)=0.0170  250.5s
+  step  4200/6000  ce_a(next)=1.4015  ce_g(prev)=0.0163  263.0s
+  step  4400/6000  ce_a(next)=1.4708  ce_g(prev)=0.0203  275.5s
+  step  4600/6000  ce_a(next)=1.4555  ce_g(prev)=0.0187  288.0s
+  step  4800/6000  ce_a(next)=1.3584  ce_g(prev)=0.0180  300.4s
+  step  5000/6000  ce_a(next)=1.3749  ce_g(prev)=0.0173  312.8s
+  step  5200/6000  ce_a(next)=1.4024  ce_g(prev)=0.0166  325.3s
+  step  5400/6000  ce_a(next)=1.3252  ce_g(prev)=0.0176  337.8s
+  step  5600/6000  ce_a(next)=1.3896  ce_g(prev)=0.0152  350.3s
+  step  5800/6000  ce_a(next)=1.5041  ce_g(prev)=0.0243  362.8s
+  step  5999/6000  ce_a(next)=1.3384  ce_g(prev)=0.0203  375.2s
+(b) trained leak-free substrate: ce_a 5.8599 -> 1.3384  val_ce=5.4268  descended=True  wall=375.3s
+learned gate g* = [gB=0.8013, gA=1.3435, gG=-0.7191]
+--- held-out TEST CE (LEAK-FREE, nats/byte) ---
+  base 3.014951 | fixed_AmG 3.732671 | a_only 2.856719 | GATED 3.593779 | uniform 5.545177
+structured: A-wire gain real 0.1582 vs shuf -0.5094 -> structured(>1.5x)=True
+
+(1) F-LEAKFREE-GEN: gated gen entropy=2.973 distinct=0.172 ws=0.253  coherent=True  gated<base CE=False  -> PASS=False
+  [BASE]  '�Ќ���а� �� ��н�������\n����� а�� ����к�� ���Ѱ��пЂ��Џ������Ѐ т����л�������м�ѽЀ��ос���,Ѿпѻла�����и��1Ё�а��� �а�Ё��������Ё�� �� ����� н���а�и�вѽ��и�.�е�Д ���т  ѵ��Ђ'
+  [GATED] '01\xa0g)\n  ° -/  .\n  /-  \xa0 135 ()  sin  °  ,�  ° 4° (→ 2° 448844884488448844884488448844884488448844884488) -804\xa0t) -5 (55)\n O30 :3 0° 135 (3, DO9)\n  -7 %: The B10'
+
+(3) F-DFDT-REAL: CE_static=3.834022 CE_dt=5.593338 Delta=+1.759316  w6-nonzero-frac=1.000
+
+(6) F-PSI-STEER: steer_KL=0.23788 floor_KL=0.57319 ratio=0.42x  -> psi_steers=False
+
+ckpt saved: omega_cdv2_d384_leakfree.pt  sha256=a5703837891a7e3b
+
+[scale] budget OK (elapsed 410s < 1800s) — firing d768 quick rung
+
+============================== RUNG d768-leakfree (d_model=768, causal_ca=True LEAK-FREE) ==============================
+CDV2 params: 142,058,544 (142.06M)  causal_ca=True
+leak self-test (flip last byte -> max change in head_a at earlier pos): 0.000e+00  (want ~0)
+  step     0/2500  ce_a(next)=5.6653  ce_g(prev)=5.6809  0.2s
+  step    83/2500  ce_a(next)=3.2750  ce_g(prev)=3.2712  15.3s
+  step   166/2500  ce_a(next)=3.1686  ce_g(prev)=2.6515  30.5s
+  step   249/2500  ce_a(next)=3.1632  ce_g(prev)=2.5595  45.6s
+  step   332/2500  ce_a(next)=3.1740  ce_g(prev)=2.5278  60.8s
+  step   415/2500  ce_a(next)=3.1881  ce_g(prev)=2.5500  76.0s
+  step   498/2500  ce_a(next)=3.0333  ce_g(prev)=2.4120  91.2s
+  step   581/2500  ce_a(next)=3.0775  ce_g(prev)=2.4502  106.4s
+  step   664/2500  ce_a(next)=3.2323  ce_g(prev)=2.6041  121.6s
+  step   747/2500  ce_a(next)=3.0877  ce_g(prev)=2.4595  136.8s
+  step   830/2500  ce_a(next)=3.1985  ce_g(prev)=2.5676  152.0s
+  step   913/2500  ce_a(next)=3.0992  ce_g(prev)=2.4704  167.2s
+  step   996/2500  ce_a(next)=3.1611  ce_g(prev)=2.5384  182.4s
+  step  1079/2500  ce_a(next)=3.1111  ce_g(prev)=2.4745  197.6s
+  step  1162/2500  ce_a(next)=3.0392  ce_g(prev)=2.3928  212.7s
+  step  1245/2500  ce_a(next)=3.0837  ce_g(prev)=2.4256  227.9s
+  step  1328/2500  ce_a(next)=3.1167  ce_g(prev)=2.4374  243.1s
+  step  1411/2500  ce_a(next)=3.0077  ce_g(prev)=2.3436  258.3s
+  step  1494/2500  ce_a(next)=3.0442  ce_g(prev)=2.3471  273.5s
+  step  1577/2500  ce_a(next)=3.0933  ce_g(prev)=2.4127  288.7s
+  step  1660/2500  ce_a(next)=2.9925  ce_g(prev)=2.3101  303.9s
+  step  1743/2500  ce_a(next)=2.9830  ce_g(prev)=2.2985  319.1s
+  step  1826/2500  ce_a(next)=3.1520  ce_g(prev)=2.2848  334.3s
+  step  1909/2500  ce_a(next)=2.9363  ce_g(prev)=2.0001  349.5s
+  step  1992/2500  ce_a(next)=2.8530  ce_g(prev)=1.6430  364.7s
+  step  2075/2500  ce_a(next)=2.8436  ce_g(prev)=1.6373  379.9s
+  step  2158/2500  ce_a(next)=2.7334  ce_g(prev)=1.2092  395.1s
+  step  2241/2500  ce_a(next)=2.5238  ce_g(prev)=0.7075  410.3s
+  step  2324/2500  ce_a(next)=2.4938  ce_g(prev)=0.5907  425.5s
+  step  2407/2500  ce_a(next)=2.3573  ce_g(prev)=0.4624  440.7s
+  step  2490/2500  ce_a(next)=2.3874  ce_g(prev)=0.4335  456.0s
+  step  2499/2500  ce_a(next)=2.2889  ce_g(prev)=0.4128  457.6s
+(b) trained leak-free substrate: ce_a 5.6653 -> 2.2889  val_ce=5.1574  descended=True  wall=457.7s
+learned gate g* = [gB=1.1266, gA=-0.1917, gG=-0.7561]
+--- held-out TEST CE (LEAK-FREE, nats/byte) ---
+  base 3.014951 | fixed_AmG 4.050270 | a_only 3.258845 | GATED 4.677882 | uniform 5.545177
+structured: A-wire gain real -0.2439 vs shuf -0.4405 -> structured(>1.5x)=False
+
+(1) F-LEAKFREE-GEN: gated gen entropy=2.394 distinct=0.129 ws=0.197  coherent=True  gated<base CE=False  -> PASS=False
+  [BASE]  '����������ѵ� ���д0�н������и���ѵ��������дп�����Ђ�����о� ��ЌѺ���0Ѽл��Ѐ��� � �����д��а���Ѐ���Ѳи��Ѐ��Ѿн�1���с��� �����е��\n��о �����я�Ѻ����ѵ�� ����Ѐ������ѵ�о�ѵЌ����л'
+  [GATED] '� �� ��)  �Ї ѵ �� 1з�.��.�Ѐ�Ѳ .��,.Ѡ�р���� .��� Џ т .���Ѐ��� �� Ѹ ��� a�� ��i� �Џ ��� ,� Џ�ѻ�.�� ��ѻ� �� �� ��a�� �� t�Џ,�� о �я .�Џ .��� �� ��� ѝ .�ѻ� ю��� я �'
+
+(3) F-DFDT-REAL: CE_static=5.004142 CE_dt=5.523730 Delta=+0.519588  w6-nonzero-frac=1.000
+
+(6) F-PSI-STEER: steer_KL=0.11057 floor_KL=0.08207 ratio=1.35x  -> psi_steers=True
+
+=== GEN-CLUSTER SUMMARY ===
+  leak-free self-test (d384): 0.000e+00 (leak_free=True)
+  (1) F-LEAKFREE-GEN : PASS=False (coherent=True, gated<base=False)
+  (3) F-DFDT-REAL    : Delta=+1.759316 (w6-nonzero 1.00)
+  (6) F-PSI-STEER    : steers=False (ratio 0.42x)
+  (5) d768 rung      : gated<base=False structured=False (finding holds at d768)
+results -> omega_gen_results.json

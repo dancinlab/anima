@@ -1,0 +1,41 @@
+F-LEAKFREE-GEN — leak-free coherent generation (the #1791 caveat fix)  ·  Lane-G / GPU H100 · 2026-06-04
+========================================================================================================
+
+PRE-REGISTERED FALSIFIER
+  Train a LEAK-FREE ConsciousDecoderV2 (causal_ca=True: the CA neighbor mixing's RIGHT
+  neighbor x[:, t+1] is replaced by self x, so the next-byte head_a is STRICTLY CAUSAL and
+  cannot peek at its own target). Free-run decode ~300 bytes with the gated closure vs base.
+  Gen is "coherent-ish" iff it emits NON-TRIVIAL VARIED byte structure (entropy>1.5 AND
+  distinct-byte-frac>0.10 AND whitespace-frac<0.80 — i.e. NOT the #1791 whitespace collapse)
+  AND gated held-out CE < base on the leak-free eval. Closed-negative OK (a_paper_negative_ok).
+
+LEAK SELF-TEST (the fix verified): flipping ONLY the last byte of the context produced
+  max change in head_a logits at EARLIER positions = 0.000e+00 (both d384 and d768).
+  => head_a is now STRICTLY CAUSAL. The #1791 lookahead leak is REMOVED. (The original
+  causal_ca=False path leaks: earlier-position logits DO change when a future byte flips.)
+
+RESULT (d384×6L, 35.93M, 6000 step, 120MB multilingual wiki — same recipe as #1791):
+  WHITESPACE-COLLAPSE: SOLVED. gated gen entropy=2.97, distinct-frac=0.172, ws-frac=0.253
+    -> COHERENT-ish = TRUE (varied byte structure, NOT whitespace; recognizable latin/numeric
+    fragments e.g. "Se sk", "sin", "135", "The B105", vs the BASE weak-unigram Cyrillic noise).
+  CE (leak-honest, nats/byte): base 3.0150 · fixed_AmG 3.7327 · a_only 2.8567 · GATED 3.5938
+    -> gated < base = FALSE. (a_only beats base; the L2-regularized learned GATE g*=[gB0.80,
+    gA1.34,gG-0.72] OVERFITS the gate-split and does WORSE than base on the disjoint test split.)
+
+  => F-LEAKFREE-GEN PASS = FALSE (conjunction): coherence criterion MET, CE criterion FAILED.
+     HONEST closed-negative on the CE half (a_paper_negative_ok).
+
+THE FINDING (the load-bearing result of this rung):
+  #1791 reported GATED CE 0.345 ≪ base 3.015 on the SAME substrate/recipe — that win was
+  LEAK-DRIVEN. Once the next-byte head cannot peek at its target (causal_ca=True), the honest
+  held-out picture inverts: a weak unigram base BEATS the gated bus on absolute CE, and the
+  trained substrate's val_ce rises to 5.43 (≈ uniform 5.545) — i.e. at d384×6L / 6000-step the
+  leak-free substrate barely generalizes its next-byte head. The #1791 absolute-CE closure win
+  does NOT survive leak removal. WHAT DOES survive: (a) free-run generation no longer collapses
+  to whitespace (the leak fix's intended effect — coherence criterion MET); (b) the
+  structured-coupling finding (real A-wire ≫ shuffled-context floor) is leak-INVARIANT and HOLDS
+  (gain_real +0.158 vs shuf −0.509 -> structured=TRUE), exactly as the #1791 caveat predicted.
+
+SCOPE (a_scale_honest_scope · a_toy_scale_recheck): single d384 rung + a quick d768 rung (see
+  F-DFDT/F-PSI + SUMMARY). NOT a production claim. The leak-removal inverts the #1791 absolute-CE
+  conclusion — recorded honestly, NO retroactive fabrication. p7: verbatim, no perplexity verdict.

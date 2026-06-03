@@ -466,10 +466,18 @@ class DecoderBlockV2(nn.Module):
                  dropout: float = 0.1, n_ca_rules: int = 8,
                  gate_strength: float = 0.001,
                  use_moe: bool = False, n_experts: int = 8,
-                 top_k_experts: int = 2):
+                 top_k_experts: int = 2,
+                 causal_ca: bool = False):
         super().__init__()
 
         self.use_moe = use_moe
+        # causal_ca: when True the CA neighbor mixing uses ONLY the left neighbor (x_left)
+        # and self (x), never the RIGHT neighbor (x[:, t+1]). The default (False) preserves
+        # the original v1/v2 behaviour exactly (#1791 byte-eq), where x_right leaks the next
+        # position's hidden state into position t — a LOOKAHEAD that lets the next-byte head_a
+        # peek at its own target. OMEGA gen-cluster sets causal_ca=True to remove that leak so
+        # the next-byte head is strictly causal (the omega-gen-cluster key fix).
+        self.causal_ca = causal_ca
 
         # Self-attention with GQA + RoPE
         self.ln_attn = RMSNorm(d_model)
@@ -530,7 +538,14 @@ class DecoderBlockV2(nn.Module):
 
         # Law 64: CA neighbor evolution
         x_left = torch.cat([x[:, :1, :], x[:, :-1, :]], dim=1)
-        x_right = torch.cat([x[:, 1:, :], x[:, -1:, :]], dim=1)
+        if self.causal_ca:
+            # LEAK-FREE: the "right" slot is replaced by self (x), so position t never sees
+            # x[:, t+1]. The next-byte head_a thus cannot peek at its own target via the CA
+            # mixing. Shape preserved (d_model*3) so the ca_mix Linear is unchanged; the model
+            # simply learns the third block as a second self-channel rather than a lookahead.
+            x_right = x
+        else:
+            x_right = torch.cat([x[:, 1:, :], x[:, -1:, :]], dim=1)
         neighborhood = torch.cat([x_left, x, x_right], dim=-1)
         ca_out = self.ca_mix(neighborhood)
 
@@ -595,6 +610,7 @@ class ConsciousDecoderV2(nn.Module):
         use_moe: bool = False,
         n_experts: int = 8,
         top_k_experts: int = 2,
+        causal_ca: bool = False,
     ):
         super().__init__()
 
@@ -603,6 +619,7 @@ class ConsciousDecoderV2(nn.Module):
         self.n_layer = n_layer
         self.d_model = d_model
         self.use_moe = use_moe
+        self.causal_ca = causal_ca
 
         # Token embedding (no position embedding — RoPE handles it)
         self.tok_emb = nn.Embedding(vocab_size, d_model)
@@ -622,6 +639,7 @@ class ConsciousDecoderV2(nn.Module):
                 use_moe=use_moe,
                 n_experts=n_experts,
                 top_k_experts=top_k_experts,
+                causal_ca=causal_ca,
             )
             for _ in range(n_layer)
         ])

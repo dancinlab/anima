@@ -1,0 +1,34 @@
+=== OMEGA coupling-analysis ② — ALL-6-WIRE learned gate  (corpus=400000B, V=256) ===
+uniform-256 CE = 5.545177
+
+--- full 8-gain learned gate (fit on train-gate, frozen) ---
+  g[base   ] = -0.1102
+  g[A      ] = +0.9288
+  g[G      ] = +0.5457
+  g[W_temp ] = -0.4560
+  g[curio  ] = -0.0297
+  g[Psi    ] = -0.0031
+  g[module ] = -0.1656
+  g[dFdt   ] = -0.6617
+
+  held-out TEST CE: full gate = 4.809177   |   base-only = 3.974346   (Δ-0.8348)
+
+--- per-wire ablation (refit others with this wire OFF) + shuffle control ---
+  A      : gain=+0.9288 (material=True ) | ablate CE 5.3555 ΔCE+0.5463 | shuffle CE 5.2992 beats_shuf=True  -> CARRIES STRUCTURE
+  G      : gain=+0.5457 (material=True ) | ablate CE 4.1423 ΔCE-0.6669 | shuffle CE 4.1417 beats_shuf=False -> INERT
+  W_temp : gain=-0.4560 (material=True ) | ablate CE 4.9579 ΔCE+0.1487 | shuffle CE 4.9582 beats_shuf=True  -> CARRIES STRUCTURE
+  curio  : gain=-0.0297 (material=False) | ablate CE 4.8091 ΔCE-0.0001 | shuffle CE 4.7931 beats_shuf=False -> INERT
+  Psi    : gain=-0.0031 (material=False) | ablate CE 4.8092 ΔCE+0.0000 | shuffle CE 4.8083 beats_shuf=False -> INERT
+  module : gain=-0.1656 (material=True ) | ablate CE 4.8196 ΔCE+0.0104 | shuffle CE 4.8189 beats_shuf=True  -> CARRIES STRUCTURE
+  dFdt   : gain=-0.6617 (material=True ) | ablate CE 2.8935 ΔCE-1.9156 | shuffle CE 2.8935 beats_shuf=False -> INERT
+
+=== SUMMARY ===
+full 8-gain vector [gB,gA,gG,gW,gC,gΨ,gM,gD] = [-0.110, +0.929, +0.546, -0.456, -0.030, -0.003, -0.166, -0.662]
+full naive gate TEST CE 4.8092 WORSE THAN base 3.9743 -> the full 8-wire gate OVERFITS (inert/leaky wires hurt held-out)
+carrier-only gate (base+['A', 'W_temp', 'module']) TEST CE 2.8950 vs base 3.9743 (Δ+1.0794) -> dropping inert wires RECOVERS a real gain
+🟢 wires that CARRY STRUCTURE (3): ['A', 'W_temp', 'module']
+⚪ INERT wires (4): ['G', 'curio', 'Psi', 'dFdt']
+pre-registered: carries ⟺ |gain|≥0.05 AND ablation raises held-out CE AND beats its vocab-shuffle.
+SCOPE (a_toy_scale_recheck): TOY n-gram substrate, 400000B repo corpus, CPU/$0, no torch.
+  Honest closed-negative for inert wires — the toy substrate may not exercise W/curio/Ψ/module/dFdt
+  the way a trained d384 transformer (#1791) does; this is the relative carrier RANKING at toy scale.
