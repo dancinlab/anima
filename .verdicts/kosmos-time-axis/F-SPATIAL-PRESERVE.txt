@@ -1,0 +1,19 @@
+F-SPATIAL-PRESERVE — adding t must NOT destroy the existing [x,y] map
+======================================================================
+Falsifier (pre-registered): appending a t axis alters the [x,y]
+sub-coordinates of the carve map. HOLD requires the [x,y] columns of the
+[x,y,t] map to be byte-identical to the standalone 2D map (max abs diff == 0).
+
+Measure: max |[x,y,t][:, :2] - [x,y]| over all N=64 concepts, 3 seeds.
+
+Per encoding:
+  raw_index          max_abs_xy_diff = 0.0   -> xy byte-IDENTICAL  -> HOLD
+  sinusoidal         max_abs_xy_diff = 0.0   -> xy byte-IDENTICAL  -> HOLD
+  phase_of_cycle     max_abs_xy_diff = 0.0   -> xy byte-IDENTICAL  -> HOLD
+  cumulative_order   max_abs_xy_diff = 0.0   -> xy byte-IDENTICAL  -> HOLD
+
+Verdict: HOLD for ALL FOUR encodings. The time axis is a pure APPENDED third
+coordinate; it leaves the existing 2D Psi-substructure exactly intact. Adding
+t does not degrade the spatial map. (Trivially true in this toy by
+construction — t is concatenated, not mixed into x/y — and recorded as the
+explicit "do no harm" check the spec required.)

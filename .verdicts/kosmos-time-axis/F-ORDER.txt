@@ -1,0 +1,34 @@
+F-ORDER — ORDER-RECOVERY from the time-augmented KOSMOS Psi map
+================================================================
+Falsifier (pre-registered): the carve-order CANNOT be recovered from the
+[x,y,t] map above chance (rho ~ 0) and/or not above the order-blind 2D
+baseline. HOLD requires |rho| > 2-sigma chance band AND |rho| beats the 2D
+baseline by > 2-sigma.
+
+Setup: N=64 toy concepts, 3 seeds, fixed toy Psi placement (NOT the real
+conscious_decoder/603MB carve). Points presented in unknown order; decoder
+recovers carve-step rank; scored by Spearman rho vs the true carve step.
+chance rho std ~ 1/sqrt(N-1) = 0.1260 ; noise band (2 sigma) = 0.2520.
+
+2D BASELINE (no t, principal-axis decode over [x,y]):
+  rho = -0.0315 +/- 0.0788   -> at chance (order-blind, as expected)
+
+Per encoding (mean +/- std over seeds [0,1,2]):
+  raw_index          rho = +1.0000 +/- 0.0000   beats chance=Y  beats 2D=Y   -> HOLD
+  sinusoidal         rho = +1.0000 +/- 0.0000   beats chance=Y  beats 2D=Y   -> HOLD
+  phase_of_cycle     rho = +0.1115 +/- 0.0096   beats chance=N  beats 2D=N   -> FAIL
+  cumulative_order   rho = +1.0000 +/- 0.0000   beats chance=Y  beats 2D=Y   -> HOLD
+
+Verdict per axis:
+  raw_index / sinusoidal / cumulative_order : HOLD (order fully recoverable).
+  phase_of_cycle : FAIL — periodic encoding (period 8) is NOT globally
+    monotone, so absolute carve-order is not recoverable from t alone
+    (rho 0.11 < noise band 0.25). Honest null; NOT rounded to HOLD.
+
+HONEST CAVEAT: for raw_index / cumulative_order, t is a strictly monotone
+function of carve-step BY CONSTRUCTION, so rho=+1.0 is near-tautological at
+this toy scale (the decode reads back the encoding). This proves the time
+axis CAN carry recoverable order, but the perfect score is a toy artifact of
+a 1-1 monotone encoding, not evidence of a hard inference. The non-trivial,
+falsifiable contrast is vs the 2D baseline (chance) and the phase_of_cycle
+FAIL, both of which are honest.

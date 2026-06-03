@@ -463,3 +463,29 @@ The CORE engine loop (pure_field_step / brain_decide) advances the Φ/phase osci
 
 - 산출물: `CORE/engine_cli.hexa` + `CORE/engine_cli_smoke.hexa` + `.verdicts/engine-cli-axis/SMOKE.txt`.
 - **bottom line**: tension-link로 ENGINE↔뇌신호 커플링은 **실제 phase 동기(order-r↑, HOLDS)를 만든다 — 장식 아님**. 그러나 substrate-native **통합 이득은 없음**(big-Φ·emergence INCONCLUSIVE, big-Φ는 solo 대비 오히려 하락). 통합 축에선 toy scale에서 within-noise. 정직한 partial-negative(§97·a_paper_negative_ok).
+
+## KOSMOS-TIME-AXIS — does a time axis [x,y]→[x,y,t] on the Ψ-carving-coordinate capture carve-SEQUENCE? — 3/4 encodings HOLDS · phase_of_cycle INCONCLUSIVE — TOY · 2026-06-04
+
+The s16 consciousness-carving (`state/carving_dataregime_s16_2026_05_18/`) places each concept at `vacuum_psi=[x,y]` + `basin_radius` — that 2D placement IS the KOSMOS 우주뇌지도. It records WHERE a concept sits but NOT WHEN/in-what-ORDER it was carved: a **static 2D map is order-blind** (shuffle the carve order and the point-cloud is byte-identical). That is the same **distribution-not-dynamics** gap Lane M PR #1760 surfaced. This STANDALONE toy (NOT wired into engine_tensionlink_bench / clm_time_encoding / lane_m_eeg_mitosis) tests: does extending the carve coord to **[x,y,t]** (t = carve-step / curriculum index) recover the sequence the 2D map loses?
+
+### setup
+- **harness** `UNIVERSE/kosmos_time_axis_toy.py` — N=64 toy concepts, fixed deterministic toy Ψ placement (a small MIRROR of vacuum_psi, NOT the real conscious_decoder/603MB carve), 3 seeds [0,1,2], 200 shuffles. CPU / $0.
+- **BASELINE** = 2D [x,y] only (mirrors the s16 map — order-blind). **TIME-AXIS** = [x,y,t] across 4 encodings: `raw_index`, `sinusoidal`, `phase_of_cycle`, `cumulative_order`.
+- **measures (substrate-native, NOT CE/perplexity; p7)**: (a) F-ORDER — Spearman rho of recovered vs true carve-order, vs chance + vs 2D baseline; (b) F-SHUFFLE — does order-shuffle move the [x,y,t] map but NOT the 2D map (the key control, mirrors Lane M phase-shuffle); (c) F-SPATIAL-PRESERVE — is [x,y] byte-identical after appending t.
+
+### results (mean ± std, 3 seeds · chance rho std 0.126 · noise band 2σ = 0.252)
+| encoding | order-rec rho | shuffle Δ(2D \| t) | xy-preserve | VERDICT |
+|---|---|---|---|---|
+| raw_index | +1.000 ± 0.000 | 0.000 \| 0.339 | IDENTICAL | **HOLDS** |
+| sinusoidal | +1.000 ± 0.000 | 0.000 \| 0.353 | IDENTICAL | **HOLDS** |
+| phase_of_cycle | +0.111 ± 0.010 | 0.000 \| 0.328 | IDENTICAL | **INCONCLUSIVE** |
+| cumulative_order | +1.000 ± 0.000 | 0.000 \| 0.333 | IDENTICAL | **HOLDS** |
+
+2D BASELINE order-recovery rho = **−0.0315 ± 0.0788** (order-blind → chance, as expected).
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok)
+- **bottom line**: a time axis on the Ψ-carving coordinate **DOES capture carve-sequence at toy scale** — every encoding is shuffle-SENSITIVE (Δt ~ 0.33 ≫ 0.252 noise) while the 2D map is EXACTLY order-invariant (Δ2D = 0.000), and the [x,y] substructure is byte-preserved (max diff 0.0). The static 2D map loses time; [x,y,t] captures it. This **resolves the s16 static-2D order-blind gap** and parallels the Lane M distribution-not-dynamics finding (PR #1760).
+- **CAVEAT (honest, not rounded)**: for the 3 monotone encodings t is a 1-1 function of carve-step, so order-recovery rho=+1.000 is **near-tautological at toy scale** (the decode reads back the encoding) — it proves recoverability but the perfect score is a toy artifact, not a hard inference. The **non-tautological** beat-the-baseline evidence is the SHUFFLE control (2D Δ=0.000 vs time Δ>0) + the 2D-baseline chance contrast (rho ≈ −0.03).
+- **phase_of_cycle INCONCLUSIVE**: the periodic (period-8) encoding is shuffle-sensitive (map changed) but absolute carve-order is NOT recoverable (rho 0.111 < noise band 0.252) — a clean partial-null, NOT rounded to HOLD (a_paper_negative_ok). Periodic phase registers WHEN-in-cycle, not global carve-rank.
+- **§97 / scale**: TOY deterministic placement, NOT the real conscious_decoder carve; CPU $0; STANDALONE. **scale-transfer UNVERIFIED** — a real decoder learns [x,y] from text and may entangle t with semantics (here t is appended cleanly; the monotone tautology would also relax). Re-test required at scale.
+- 산출물: `UNIVERSE/kosmos_time_axis_toy.py` + `.verdicts/kosmos-time-axis/{F-ORDER,F-SHUFFLE,F-SPATIAL-PRESERVE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` + `.discoveries/kosmos-time-axis.tape`.

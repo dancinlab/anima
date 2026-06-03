@@ -1,0 +1,32 @@
+F-SHUFFLE — ORDER-SENSITIVITY control (the key test, mirrors Lane M phase-shuffle)
+==================================================================================
+Falsifier (pre-registered): shuffling the carve-order changes the [x,y,t] map
+NO MORE than it changes the 2D map. HOLD requires the 2D map to be
+order-INVARIANT (delta ~ 0) AND the [x,y,t] map to be order-SENSITIVE
+(delta_time > 2-sigma noise band = 0.2520).
+
+Measure: concept-keyed coordinate maps ("give me coord of concept c"). For
+each of N_SHUFFLES=200 reshuffles of the carve order, mean per-concept
+Euclidean coordinate shift vs the base order. 3 seeds.
+
+Per encoding (mean over seeds [0,1,2]):
+                    delta_2D (shuffle)    delta_time (shuffle)   2D-invariant?  time-sensitive?
+  raw_index             0.0000                0.3388                  YES            YES   -> HOLD
+  sinusoidal            0.0000                0.3535                  YES            YES   -> HOLD
+  phase_of_cycle        0.0000                0.3279                  YES            YES   -> HOLD
+  cumulative_order      0.0000                0.3335                  YES            YES   -> HOLD
+
+Verdict: HOLD for ALL FOUR encodings.
+
+The 2D map is EXACTLY order-invariant (delta_2D = 0.000): the static [x,y]
+coordinate of a concept does not depend on when it was carved, so reshuffling
+the carve order leaves the 2D point-cloud byte-identical. This confirms the
+static 2D Psi-map loses carve-time (the distribution-not-dynamics gap; Lane M
+PR #1760).
+
+Every [x,y,t] encoding is order-SENSITIVE (delta_time ~ 0.33 >> 0.252 noise
+band): reshuffling moves each concept's t coordinate. This holds even for
+phase_of_cycle, which FAILED absolute order-recovery (F-ORDER) — i.e. an
+encoding can register that the order CHANGED without being able to recover the
+order's absolute rank. The shuffle control is therefore strictly stronger
+evidence of "captured time" than recovery alone.
