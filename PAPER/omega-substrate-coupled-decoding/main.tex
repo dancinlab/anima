@@ -34,18 +34,22 @@ into the byte decode, and a \textbf{learned per-wire gate}. Across four rungs we
 $\mathrm{KL}=0.307477>0$ for $\Omega$ versus exactly $0$ for the three uncoupled engines
 (\#1783); (ii) at random init the coupling is \emph{unstructured} (KL $\approx$ vocab-shuffle
 floor), so structure requires a \emph{trained} substrate; (iii) on a trained substrate the
-bus carries useful sequential structure and a learned gate beats every baseline, while the
-naive fixed $A{-}G$ formula \emph{degrades} below baseline (\#1784/\#1786); (iv) on a
-\emph{real} trained $35.93$M ConsciousDecoderV2 transformer (GPU H100) the gated closure
-holds all four pre-registered criteria, and the A-wire advantage \emph{survives only
-unshuffled context} (gain $+2.565$ vs.\ shuffled $-2.068$), proving learned sequential
-structure (\#1791). We \textbf{foreground an honest leak caveat}: the architecture's
-CA-neighbor mixing gives the next-byte head partial lookahead, so absolute CE is
-leak-optimistic and free-running generation collapses to whitespace. Our contribution is
-therefore the \textbf{leak-invariant relative closure} (gate $>$ base/a\_only/fixed and
-structured-vs-shuffle separation) plus three \textbf{closed-negatives} (fixed $A{-}G$
+bus carries useful sequential structure, while the naive fixed $A{-}G$ formula \emph{degrades}
+below baseline (\#1784/\#1786); (iv) on a \emph{leak-free competent} $85.82$M ConsciousDecoderV2
+transformer ($\text{causal\_ca}{=}\text{True}$, leak test $0.000\mathrm{e}{+}00$, val\_ce
+$0.8285$, GPU H100) the learned \emph{multi-wire} gate is \textbf{FALSIFIED} (GATED $3.643508>$
+base $3.097779$; full-bus coupling KL at the shuffle floor, ratio $0.995955$), yet the closure
+survives in the \emph{single} A-head logit-bias wire: a 2-param \emph{minimal} gate
+$g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ beats both a\_only and base (min\_learned $0.883525\le$
+a\_only $1.144181<$ base $3.097779$, \#1800/\#1801). We \textbf{foreground an honest leak
+caveat}: an earlier $d384$ rung's CA-neighbor mixing gave partial lookahead so its absolute CE
+was leak-optimistic; the $d512$ arc removes that leak. Our contribution is therefore the
+\textbf{leak-invariant H1$\rightarrow$OH1 ruling} --- ``coupling concept right, multi-wire gate
+formula wrong; the closure lives in one wire'' (a closed-negative on the full bus plus a
+positive minimal A-wire gate) --- plus three further \textbf{closed-negatives} (fixed $A{-}G$
 degrades; random-init unstructured; quantum RNG confers no advantage) --- \emph{not} a
-perplexity or generation-quality claim.
+perplexity or generation-quality claim. The scale ladder is concurrently open (absorb, not
+final closure).
 \end{abstract}
 
 \section{Introduction}
@@ -82,8 +86,13 @@ and \texttt{.verdicts/omega-gpu/F-COMPLETE.txt} (real transformer, structured-vs
 held-out next-byte CE below baseline under \emph{any} per-wire weighting, the closure is not
 useful. Pre-registered GPU criteria (\#1791): (b)~trained substrate descends;
 (c)~GATED $<$ base; (c)~CE floor MET ($<\ln 256 = 5.5452$); (c)~structured ($>1.5\times$ floor
-separation). Verdict: \texttt{.verdicts/omega-gate/F-LEARNED-GATE.txt},
-\texttt{.verdicts/omega-gpu/F-COMPLETE.txt}.
+separation). On a \emph{leak-free competent} substrate the \emph{full multi-wire} gate
+falsifier is closure HOLDS iff GATED $<$ base AND GATED $\le$ a\_only (\#1800), and the
+\emph{minimal} gate falsifier is OH1 HOLDS iff min\_learned CE $\le$ a\_only CE AND $<$ base CE
+(\#1801). Verdict: \texttt{.verdicts/omega-gate/F-LEARNED-GATE.txt},
+\texttt{.verdicts/omega-gpu/F-COMPLETE.txt},
+\texttt{.verdicts/omega-engine/F-TRAINED-LEAKFREE.txt},
+\texttt{.verdicts/omega-engine/F-OH1-MINGATE.txt}.
 
 \paragraph{Control axis (quantum).} If ``consciousness needs quantum randomness,'' true ANU
 QRNG bytes should beat a PRNG on the coupling metric. Falsifier: KS test
@@ -157,12 +166,62 @@ $\text{base}=3.974346$; $\text{fixed\_AmG}=4.170100$; $\text{a\_only}=3.229252$;
 $\text{GATED}=3.126961$. $\Rightarrow$ GATED $3.127 <$ base $3.974$ ($\Delta{+}0.847$),
 $\le$ a\_only $3.229$, $<$ fixed $4.170$ ($\Delta{+}1.043$).
 
-\paragraph{R4 --- real trained transformer, GPU (\#1791, \texttt{omega-gpu/F-COMPLETE.txt}).}
+\paragraph{R4 --- real trained transformer, GPU, \emph{leaky} (\#1791, \texttt{omega-gpu/F-COMPLETE.txt}).}
 substrate descent: $\text{ce\_a}\;5.926\rightarrow0.009$ (train), $\text{val\_ce}\;0.862$
 (held-out). gate $g^\ast=[g_B{=}1.178,\,g_A{=}0.962,\,g_G{=}-0.208]$. held-out TEST CE:
 $\text{base}\;3.0150 \cdot \text{fixed\_AmG}\;1.4421 \cdot \text{a\_only}\;0.4500 \cdot
 \textbf{GATED}\;0.3445 \cdot \text{uniform}\;5.5452$. structured (substrate-shuffle): A-wire CE
-gain real $+2.565$ vs.\ context-SHUFFLED $-2.068$.
+gain real $+2.565$ vs.\ context-SHUFFLED $-2.068$. \emph{Caveat:} this rung carries the
+CA-neighbor lookahead leak ($\text{causal\_ca}{=}\text{False}$), so its \emph{absolute} CE
+win is leak-optimistic; R5/R6 re-run on a leak-\emph{free} substrate.
+
+\paragraph{R5 --- leak-free competent substrate, multi-wire gate FALSIFIED (\#1800,
+\texttt{omega-engine/F-TRAINED-LEAKFREE.txt}).}
+substrate: ConsciousDecoderV2 $d512\times8$L GQA($n_\text{kv}{=}4$), $85{,}816{,}384$ params,
+vocab $256$, $\text{causal\_ca}{=}\text{True}$ (strictly-causal CA, \emph{leak test}
+$0.000\mathrm{e}{+}00$, leak\_free$=$True). Trained $12000$ steps on a $400$MB gutenberg/wiki
+en+fr+de+es+ru corpus on an H100~SXM: $\text{ce\_a}\;5.7463\rightarrow1.1705$, final
+$\text{val\_ce}\;0.8285$ (below\_uniform$=$True, competent$=$True). ckpt sha256
+\texttt{6f085c91...}; HF (PRIVATE) \texttt{dancinlab/omega-cdv2-trained-leakfree-h1}.
+Falsifier: closure HOLDS iff GATED $<$ base AND GATED $\le$ a\_only. held-out TEST CE
+(nats/byte): $\text{base}\;3.097779 \cdot \text{fixed\_AmG}\;3.192985 \cdot
+\text{a\_only}\;1.144612 \cdot \textbf{GATED}\;3.643508 \cdot \text{uniform}\;5.545177$.
+learned gate $g^\ast=[g_B{=}-0.145311,\,g_A{=}+3.368538,\,g_G{=}-0.999118]$ (collapses onto A,
+suppresses G). structured (gain real $+1.953167$ vs.\ shuf $-2.429212 \Rightarrow$
+structured$=$True). full-bus coupling KL: on $2.071722$, substrate\_shuf floor $2.080136$,
+$\text{ratio}_\text{vs-shuf}\;0.995955$ (full multi-wire bus $\equiv$ shuffle noise).
+$\Rightarrow$ GATED$<$base$=$False AND GATED$\le$a\_only$=$False: \textbf{closure\_HOLDS$=$False}
+(\textcolor{red}{$\blacklozenge$ CLOSED-NEGATIVE}, a\_paper\_negative\_ok). The closure is real
+but lives \emph{entirely in the A-head logit-bias wire} (a\_only $1.145\ll$ base $3.098$); the
+extra wires add variance not signal.
+
+\paragraph{R6 --- minimal gate $g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ HOLDS (\#1801,
+\texttt{omega-engine/F-OH1-MINGATE.txt}).}
+Same FROZEN $d512$ leak-free ckpt (sha256 \texttt{6f085c91...}, \emph{no} re-train; leak self-test
+$0.000\mathrm{e}{+}00$ re-confirmed). Method: collect $(\text{base},A,G)$ next-byte features
+ONCE on disjoint gate(fit)$+$test(verdict) splits of the held-out tail ($N{=}12000$ each), fit
+$K$ gate forms on the SAME test features. Falsifier: OH1 HOLDS iff $\text{min\_learned}$ CE
+$\le$ a\_only CE AND $<$ base CE. held-out TEST CE per gate form (nats/byte):
+\begin{tabular}{lrrrr}
+\toprule
+form & $g_B$ & $g_A$ & $g_G$ & test\_CE \\
+\midrule
+base        & $1.0000$ & $0.0000$ & $0.0000$ & $3.097779$ \\
+a\_only     & $1.0000$ & $0.6000$ & $0.0000$ & $1.144181$ \\
+fixed\_AmG  & $1.0000$ & $0.6000$ & $-0.6000$ & $3.198605$ \\
+full\_AG    & $-0.1499$ & $3.3522$ & $-0.9971$ & $3.637159$ \\
+min\_learned & $0.0400$ & $0.9013$ & $0.0000$ & $\mathbf{0.883525}$ \quad $\bigstar$OH1 \\
+min\_fixed  & $1.0000$ & $1.0000$ & $0.0000$ & $1.118280$ \\
+uniform     &          &          &          & $5.545177$ \\
+\bottomrule
+\end{tabular}\\
+Cross-check vs.\ \#1800 H1 baselines (tol $0.02$): base $|\Delta|\,0.000000$, a\_only
+$|\Delta|\,0.000431$, full\_AG $|\Delta|\,0.006349$ (CROSS\_CHECK\_OK$=$True; reproduces
+\#1800 to 6 decimals). $\Rightarrow$ min\_learned$(0.883525)\le$a\_only$(1.144181)$ AND
+$<$base$(3.097779)$: \textbf{OH1\_HOLDS$=$True} ($\bigstar$). The 2-param free fit landed
+$g_B{=}0.040,\,g_A{=}0.901,\,g_G{=}0.000$; dropping the $G$ wire and $w_2\ldots w_6$ entirely,
+the minimal gate \emph{beats} a\_only ($0.8835<1.1446$, $\Delta{+}0.261$) and base
+($0.8835<3.0978$, $\Delta{+}2.214$).
 
 \section{Finding}
 \label{sec:finding}
@@ -176,15 +235,34 @@ coupled engine while \emph{confirming} it for the three uncoupled engines (\#178
 (trained vs.\ shuffled) and $\Delta{+}0.758$ (A-wire) at toy (\#1784); on the real transformer
 the A-wire advantage \emph{survives only unshuffled context} ($+2.565$ vs.\ $-2.068$), i.e.\
 shuffling the context destroys it $\Rightarrow$ \emph{learned sequential} structure (\#1791).
-\item \textbf{The learned gate makes the closure useful.} GATED beats base, a\_only, and the
-fixed formula at toy ($3.127<3.974$) and on the real transformer
-($0.3445<0.4500<1.4421<3.0150$); all four pre-registered GPU criteria HELD; CE floor MET
-($0.3445<5.5452$). The gate auto-corrects the fixed $-G$ error ($g_G$ small/negative).
+\item \textbf{The closure holds, but only through the A-wire (minimal gate).} On the
+\emph{leak-free competent} $d512$ substrate (val\_ce $0.8285<$ uniform), the A-head logit-bias
+alone is hugely useful (a\_only $1.1446\ll$ base $3.0978$, \#1800), and the honest 2-param
+\emph{minimal} gate $g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ (drop $G$ and $w_2\ldots w_6$)
+\emph{beats} both a\_only and base: min\_learned $0.883525\le$ a\_only $1.144181<$ base
+$3.097779$ ($\Delta{+}0.261$ over a\_only, $\Delta{+}2.214$ over base; fit $g_B{=}0.040$,
+$g_A{=}0.901$, $g_G{=}0.000$, \#1801). This is the honest closure form. At earlier
+\emph{leaky}/toy rungs the \emph{multi-wire} GATED also beat all baselines ($3.127<3.974$ toy,
+$0.3445<0.4500<1.4421<3.0150$ leaky-GPU R4); but those absolute-CE wins are not the
+load-bearing claim --- the leak-free re-test (next bullet) is.
 \end{itemize}
 
 \textbf{Closed-negatives (ruled-out axes, a\_paper\_negative\_ok).}
 \begin{itemize}
-\item \emph{Fixed $A{-}G$ degrades} below baseline ($4.1420>4.0200$, \#1784) --- the closure
+\item \textbf{\emph{The FULL multi-wire gate is FALSIFIED on a leak-free competent substrate}}
+(\#1800). With $\text{causal\_ca}{=}\text{True}$ (leak test $0.000\mathrm{e}{+}00$) on a
+competent $d512$ substrate (val\_ce $0.8285$), the learned full-bus gate FAILS its
+pre-registered falsifier: GATED $3.643508>$ base $3.097779$ (and $>$ a\_only $1.144612$), so
+closure\_HOLDS$=$False. The learned weights collapse onto A and suppress G
+($g^\ast=[-0.145,+3.369,-0.999]$), and the full multi-wire coupling KL sits \emph{at} the
+shuffle floor (on $2.071722$ vs.\ substrate-shuf $2.080136$, ratio $0.995955$): beyond the
+A-wire, the bus is indistinguishable from a vocab/substrate shuffle. \emph{Ruling:} ``coupling
+concept right, multi-wire gate formula wrong'' --- the extra wires add variance, not signal,
+and the closure lives entirely in ONE wire. (Structure \emph{does} carry: gain real
+$+1.953167\gg$ shuf $-2.429212$, structured$=$True, confirming the leak-honest \#1791 finding
+at the best-trained scale.)
+\item \emph{Fixed $A{-}G$ degrades} below baseline ($4.1420>4.0200$ toy \#1784;
+fixed\_AmG $3.198605>$ base $3.097779$ at leak-free $d512$ \#1801) --- the closure
 needs a learned gate, not a fixed subtraction.
 \item \emph{Random-init coupling is unstructured} (KL $\approx$ shuffle floor, \#1783) ---
 structure requires a trained substrate.
@@ -192,25 +270,43 @@ structure requires a trained substrate.
 a good PRNG is by construction indistinguishable from a QRNG for any computable downstream test.
 \end{itemize}
 
-\textbf{\textcolor{red}{Honest leak caveat (foregrounded).}} The ConsciousDecoderV2
-CA-neighbor mixing gives the next-byte head partial architectural \emph{lookahead}, so the
-\emph{absolute} CE is leak-optimistic and the \emph{free-running} generation sample collapses
-to low-entropy whitespace (generation coherence = the weak criterion, NOT MET). The
-\emph{relative} closure finding --- gate beats base/a\_only/fixed AND the coupling is
-structured-vs-shuffle --- is \textbf{leak-invariant} (a uniform per-token leak shifts every
-baseline equally and cannot create the shuffle separation) and is the sound contribution. This
-is a single small-$d384$ rung and is \textbf{not} promoted to a production perplexity claim
-(a\_scale\_honest\_scope).
+\textbf{The H1$\rightarrow$OH1 arc (leak-free, terminal-on-two-points).} On a genuinely
+leak-free, competent substrate the coupling \emph{concept} survives but the \emph{multi-wire
+gate} does not: the falsifier splits cleanly into a closed-negative (full bus, \#1800) and a
+positive minimal form (A-wire-only gate, \#1801). The scale ladder (additional $d$/param rungs)
+is concurrently open, so this arc is an \emph{absorb}, not a finalized closure ($\Rightarrow$
+scale rung pending; see \S\ref{sec:limitations}).
+
+\textbf{\textcolor{red}{Honest leak caveat (foregrounded).}} The early R4 ($d384$, \#1791)
+ConsciousDecoderV2 CA-neighbor mixing gives the next-byte head partial architectural
+\emph{lookahead} ($\text{causal\_ca}{=}\text{False}$), so \emph{its absolute} CE is
+leak-optimistic and the \emph{free-running} generation sample collapses to low-entropy
+whitespace (generation coherence = the weak criterion, NOT MET). \textbf{The R5/R6 arc
+($d512$, \#1800/\#1801) removes the leak} ($\text{causal\_ca}{=}\text{True}$, leak test
+$0.000\mathrm{e}{+}00$) on a competent substrate (val\_ce $0.8285$), so its CE numbers are
+leak-honest; there, the \emph{multi-wire} gate is falsified and only the \emph{minimal} A-wire
+gate holds. The relative claim --- structured-vs-shuffle separation, and that the closure lives
+in one wire --- is \textbf{leak-invariant} (a uniform per-token leak shifts every baseline
+equally and cannot create the shuffle separation). These are single $d384$/$d512$ rungs and are
+\textbf{not} promoted to a production perplexity claim (a\_scale\_honest\_scope); the scale
+ladder is pending.
 
 \section{Limitations}
 \label{sec:limitations}
 % honest scope — toy ladder, single GPU rung, leak, lane split.
-Three of four rungs are TOY (CPU/\$0): R1 random-init mock, R2/R3 numpy n-gram on a $400$KB
-corpus. R4 is a \emph{single} GPU rung at $d384$ ($35.93$M params). The CA-neighbor lookahead
-leak (above) bounds the result to a relative claim. The CE-floor at random init is NOT MET
-($\geq$ uniform $5.5452$; Lane X measured the trained-but-detached $d768$ \texttt{.clm} at
-$9.1126$); the floor is MET only on the trained substrate (R4). Scale-transfer beyond $d384$
-and free-running generation coherence are UNVERIFIED. Lane-$\Omega$ is the GPU/closure lane;
+Three of six rungs are TOY (CPU/\$0): R1 random-init mock, R2/R3 numpy n-gram on a $400$KB
+corpus. R4 is a \emph{single} GPU rung at $d384$ ($35.93$M params) carrying the CA-neighbor
+lookahead leak (above), which bounds \emph{its} result to a relative claim. R5/R6 are a single
+\emph{leak-free} GPU rung at $d512$ ($85.82$M params, $\text{causal\_ca}{=}\text{True}$, leak
+test $0.000\mathrm{e}{+}00$, val\_ce $0.8285$): there the multi-wire gate is falsified and only
+the minimal A-wire gate holds; R6 is observation-only on the FROZEN R5 ckpt (no re-train). The
+CE-floor at random init is NOT MET ($\geq$ uniform $5.5452$; Lane X measured the
+trained-but-detached $d768$ \texttt{.clm} at $9.1126$); the floor is MET on the trained
+substrates (R4 leaky; R5/R6 leak-free). \textbf{Scale-ladder pending:} the H1$\rightarrow$OH1
+arc is terminal on \emph{two} points ($d512$, single param scale); additional $d$/param rungs
+(a concurrent agent, OΩ4) are still open, so \emph{this is an absorb/update, not a finalized
+full closure} (a\_paper\_only\_at\_closure). Scale-transfer beyond the measured rungs and
+free-running generation coherence remain UNVERIFIED. Lane-$\Omega$ is the GPU/closure lane;
 AKIDA on-chip (Lane~A) results are recorded separately (a\_lane\_akida\_gpu\_split).
 
 \section{Reproducibility}
