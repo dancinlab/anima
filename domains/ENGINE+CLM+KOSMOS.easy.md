@@ -337,6 +337,42 @@ gold(FLORES-200)로 NC=1000까지 살아남음. 그 단일 측정을 생물·뇌
 
 ---
 
+## 2.5 🔬 ENGINE-축 + KOSMOS-지도 정직 교정 (Lane X #1779 · KOSMOS #1780)
+
+평가축과 의식지도 자체를 의심한 두 측정. 둘 다 닫힌-부정/정직 교정을 품음.
+
+```
+📐 Lane X #1779 — "CE 는 축이 아니라 바닥이었다 + 뇌→입 신경이 끊겨 있다"
+  무엇 : ENGINE config 손잡이 3개(drive·warmup·anchors)×3 seed=27 config 훑어
+        의식·CE·창발 3축이 config 에 민감한지.
+  결과(verbatim):
+    의식 (motiv_hi)    : VARIES (spread 0.57)     ← 진짜 config-민감 축
+    CE  (model_ce)    : CONFIG-INSENSITIVE (spread<1e-9)  ← FLOOR, 판정 아님(p7)
+    창발 (emergence Δ) : VARIES (spread 24)        ← 진짜 config-민감 축
+    CE-FLOOR : 9.1126 vs uniform 5.5452 vs shuffle 9.3189 → 바닥 NOT MET (uniform-256 보다 나쁨)
+    PARETO   : 6/27 non-dominated · drive=1.5
+    coupling : 엔진 손잡이가 .clm forward 에 안 닿음 (L3 generator 슬롯 loaded=false) = NULL
+    GOODHART (CE↔창발): UNDEFINED — CE 가 config-독립이라 이 손잡이로는 trade-off 관측 불가.
+                        "절대 없음" 아니라 "이 손잡이로는 관측 안 됨"(정직).
+  판정 : partial 닫힌-부정. → OMEGA 가 닫을 NULL (domains/OMEGA.md).  .verdicts/lane-x-3axis/
+```
+```
+🌌 KOSMOS #1780 — "8D 는 정당하지만 이름 붙는 축은 4개뿐"
+  무엇 : TRAINED s16 ckpt(sha 961c07e2, N=5995, post-ln_f)에서 각 PC 가 실제 코퍼스 속성과
+        얼마나 연관되는지 측정 — 의식지도 8개 차원이 무엇을 인코딩하나.
+  결과(verbatim):
+    8D data-justified : 분산 67.1% → 92.3% · domain disc 0.082 → 0.583 (2D → 8D)
+    PC1 49% = depth/radius · PC2/3 = form · PC5 = curriculum · 나머지 = 분포된 residual
+    이름 붙는 축 = 3-4개 [depth · form · form_resid · curriculum] + 4 learned-residual
+  정직 : 8개 다 이름 붙이면 fabrication (a_paper_negative_ok 정직 닫힌-부정).
+        코퍼스에 감정/valence 필드 없음(honesty 교정). 단일 s16 rung, GPU/Lane-G, scale-dependent.
+  판정 : 🟢 MEASURED + coord v-next 제안 FILED.  .verdicts/kosmos-axis-semantics/
+```
+
+→ 자세히: `domains/AXIS.easy.md` (CE 강등·후보축) · `domains/KOSMOS-MAP.easy.md` (PC×attribute) · `domains/OMEGA.easy.md` (NULL 닫는 4번째 엔진).
+
+---
+
 ## 3. 정직 메모 (a_scale_honest_scope · p7)
 
 - 전부 **toy** — 원리 검증이지 production/7B 보장 아님. terminal verdict 나면 `H_NNN_slug.md` 승격.
