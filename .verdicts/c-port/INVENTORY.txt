@@ -1,0 +1,44 @@
+C-PORT MILESTONE-1 INVENTORY — anima live authored-C training shims
+====================================================================
+method:  find training -name '*.c' -not -path '*/deploy/*'  +  grep of each
+         file's actual vendor-ABI call surface (cublas*/cuda*/nccl*/cblas_*/
+         vDSP_*/vvexpf). g63-honest — counts + classifications from real
+         file inspection, no fabrication.
+scope:   training/*.c + training/native/*.c
+exclude: training/deploy/holo_breakthrough_*/ (generated deploy snapshots),
+         .venv*, build/, .worktrees/, .claude/
+base:    origin/main @ ee8340b78  (LOC verified in this checkout)
+date:    2026-06-03
+
+PER-FILE CLASSIFICATION
+-----------------------
+TIER  LOC   FILE                              WHAT IT CALLS (vendor-ABI surface)
+A    1054   training/native/train_step.c      cuBLAS (cublasSgemm/Sscal/Saxpy/Snrm2) + CUDA (cudaMalloc/Memcpy*/Free/Memset/DeviceSynchronize). The GPU training hot path (~50 cuBLAS calls/step). IRREDUCIBLE — IS the C↔cuBLAS bridge.
+A     572   training/hxblas_cuda_shim.c       CUDA (cudaMalloc/MemcpyAsync/Free/StreamCreate/SetDevice) + cublasSgemm/SetMathMode + Accelerate cblas_sgemm/sscal/sdot/saxpy. Dual-backend (CUDA ⊕ host BLAS) bridge. IRREDUCIBLE.
+A     562   training/hxblas_wrapper.c         Accelerate cblas_sgemm/sscal/sdot/saxpy. Host BLAS wrapper. IRREDUCIBLE — IS the C↔Accelerate-BLAS bridge.
+A     186   training/hxvdsp_wrapper.c         Accelerate vDSP_vmul/vsmul/vsadd/vsub/vadd/svesq/sve/maxv/dotpr + vvexpf. vDSP wrapper. IRREDUCIBLE — IS the C↔vDSP bridge.
+B     214   training/native/train_ffi.c       PLAIN C glue: scalar->struct marshaling, persistent global FfiState, getters (train_ffi_get_*). Only 3 cudaMalloc (delegatable to the tier-A shim). PORTABLE-to-hexa.
+C      79   training/hxblas_cuda_smoke.c       main() test harness; calls extern hxblas_sgemm + asserts max_err. NO direct vendor calls. SMOKE/TEST — retirable.
+C      87   training/hxblas_cuda_smoke_large.c main() multi-shape sweep over extern hxblas_sgemm. NO direct vendor calls. SMOKE/TEST — retirable.
+
+AGGREGATE LOC PER TIER (in-scope; excludes build/libhxnccl.c)
+------------------------------------------------------------
+Tier A (irreducible FFI/vendor-ABI floor) : 2374 LOC  (4 files)
+Tier B (portable-to-hexa, port target)    :  214 LOC  (1 file)
+Tier C (smoke/test, retirable)            :  166 LOC  (2 files)
+TOTAL in-scope live authored C            : 2754 LOC  (7 files)
+
+OUT-OF-SCOPE EXTRA FOUND (honest note)
+--------------------------------------
+-     211   training/build/libhxnccl.c        NCCL ncclAllReduce/CommInitAll/CommInitRank/CommDestroy + cuda* (multi-GPU all-reduce). Lives under EXCLUDED build/ path -> NOT counted in the 2754 in-scope total. Recorded for completeness. If later ruled live authored-C (M5) it is tier A (irreducible NCCL bridge).
+
+NOTES
+-----
+- The 7 in-scope files + LOC match the prior C-ZERO inventory's expectation exactly.
+- Tier-A is the irreducible FFI floor: every tier-A file's reason-to-exist is a
+  vendor library (cuBLAS/CUDA/NCCL/Accelerate-BLAS/vDSP). Porting these to
+  hexa-native would mean re-implementing the vendor lib — out of scope by design.
+- Tier-B (train_ffi.c) is the only genuine hexa port target: its body is scalar
+  packing + struct marshaling + global-state lifecycle, with the GPU allocation
+  delegatable to the tier-A shim via extern. M2 ports it RUNEQ-gated.
+- Tier-C harnesses are retirable once a hexa-native smoke covers hxblas_sgemm.
