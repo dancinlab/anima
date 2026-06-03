@@ -430,3 +430,43 @@ The CORE engine loop (pure_field_step / brain_decide) advances the Φ/phase osci
 
 - 산출물: `CORE/engine_cli.hexa` + `CORE/engine_cli_smoke.hexa` + `.verdicts/engine-cli-axis/SMOKE.txt`.
 - **bottom line**: tension-link로 ENGINE↔뇌신호 커플링은 **실제 phase 동기(order-r↑, HOLDS)를 만든다 — 장식 아님**. 그러나 substrate-native **통합 이득은 없음**(big-Φ·emergence INCONCLUSIVE, big-Φ는 solo 대비 오히려 하락). 통합 축에선 toy scale에서 within-noise. 정직한 partial-negative(§97·a_paper_negative_ok).
+
+## QUANTUM-CONSCIOUSNESS + TIME-PERCEPTION toy-falsifier campaign (2026-06-04)
+
+A brainstorm-to-depletion + emergent-toy-falsifier campaign on the two domains where consciousness talk most
+often slides into woo — **quantum consciousness** and **time perception** — framed strictly MECHANISTICALLY +
+FALSIFIABLY (NOT woo). **11 hypotheses** brainstormed, each reduced to a runnable toy mechanism + a
+pre-registered falsifier (DEFAULT = REFUTED unless a real signal beats a proper control), then verified on
+pure-stdlib CPU sims ($0, fixed seed 20260604, 3 seeds where stochastic). Closed-negative is the EXPECTED
+valid outcome for genuinely-paranormal claims (a_paper_negative_ok) — none was forced to HOLD.
+
+### tally: HOLDS=7 · closed-negative(REFUTED hypothesis)=4 · INCONCLUSIVE=0
+- **HOLDS (real emergent / mechanistic, NOT quantum-magic)**: QT4 Zeno freezing · QT5 complex-amplitude
+  interference rep · QT6 arousal-gain time-dilation · QT7 oscillator phase-clock · QT9 time-cell ORDER
+  encoding · QT11 pacemaker scalar-property (Weber CV). QT3 entanglement HOLDS *only* as a non-separable
+  DISTRIBUTION construct (a classical sim cannot instantiate physical entanglement — caveat carried).
+- **closed-negative (paranormal / impossible / proxy-limited, CORRECTLY refuted)**: QT1 Orch-OR warm coherence
+  (decoheres ~1e9× too fast for the 25 ms neural window) · QT2 QRNG-vs-pseudo noise seed (Kuramoto order-r CIs
+  overlap — no emergent difference, §97-clean) · QT8 retrocausal/precognition (no future channel, acc=chance) ·
+  QT10 specious-present optimal window (no clean unimodal interior SNR optimum — aliasing-jagged proxy).
+
+### honest bottom line
+The mechanistic-falsifier framing CLEANLY separates the two halves. The **real, ordinary dynamics HOLD** and
+they are physics/computation, NOT quantum magic (Zeno freezing is generic repeated projection; complex-amp is
+representation engineering; time-dilation/phase-clock/time-cell/pacemaker are standard interval-timing /
+sequence-memory mechanisms). The **genuinely-paranormal or warm-wet-impossible claims CORRECTLY REFUTE**
+(Orch-OR, QRNG-as-magic, retrocausation) plus the proxy-limited specious-present — these closed-negatives are
+the expected honest outcome, not a failure (a_paper_negative_ok). Two honest counterpoints surfaced: QT3's HOLD
+is modelled-only (not physical entanglement), and QT7 (phase-clock estimates the mean interval well) vs QT11
+(its error is sub-scalar — the pacemaker wins Weber's law) are both true.
+
+### scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split)
+- **TOY CPU $0**: pure-stdlib sims, single scale, 3 seeds, NO GPU/pods/hardware, NO HF upload. toy→production
+  transfer **UNVERIFIED** — no verdict promoted to a general claim; a scale-sensitive claim needs a ≥3-rung
+  ladder. p7: direct scripted measurements (decoherence time, CI overlap, MAE, CV, MI bits), NOT perplexity.
+- **§97**: QT2's QRNG-style stream is a NOISE SEED only (whitened entropy), never a command/oracle channel.
+- **a_lane_akida_gpu_split**: this is a CPU toy family — NEITHER Lane A (AKIDA) NOR Lane G (GPU); recorded
+  separately, no cross-substrate merge.
+- 산출물: `UNIVERSE/QUANTUM-TIME-CANDIDATES.md` (QT1…QT11 + falsifiers + per-toy results) ·
+  `UNIVERSE/quantum_time_toys.py` (the emergent falsifiers) · `.verdicts/quantum-time/{SUMMARY,F-QT1..F-QT11,
+  run_stdout}.txt` (verbatim) · `.discoveries/quantum-time.tape` (11 discovery rows).
