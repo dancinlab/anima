@@ -1,0 +1,30 @@
+OMEGA-realsignal — REAL signal vs RANDOM in the OMEGA wires — 2026-06-04 · CPU · $0
+============================================================================================
+Extends #1793 (w5 module wire = CARRIER, but RANDOM vec) / #1794 (w4 Ψ steering INERT,
+RANDOM Ψ). Hypothesis: inertness may be a random-signal magnitude artifact, not content.
+#1795 made HEXAD's σ6 cross-module forward NATIVE (real 6-vec [S,C,W,M,E,BRIDGE]).
+
+────────────────────────────────────────────────────────────────────────────────────────────
+H5 — REAL hexad module wire vs RANDOM (the w5 wire under test)
+────────────────────────────────────────────────────────────────────────────────────────────
+module table = HEXAD/hexad_forward.hexa σ6 native forward (via `hexa run`)
+contexts parsed from `hexa run`: 256/256
+REAL-hexad:
+  module gain +0.0761 (material=True) | ablate ΔCE +0.0277 | beats_shuffle=True | module-only gate CE 3.9766 (Δ+0.0126 over base 3.9893) | carries=True
+RANDOM (matched mean/std — content-only difference):
+  module gain +0.0819 (material=True) | ablate ΔCE +0.0088 | beats_shuffle=False | module-only gate CE 3.9762 (Δ+0.0130 over base 3.9893) | carries=False
+
+Δ module-only held-out CE (real − random) = +0.0004  (real LOWER ⟹ real carries more structure)
+Δ |module gain| (real − random)           = -0.0058
+H5 VERDICT: CLOSED-NEGATIVE (real ≈ random — w5 carrier status was MAGNITUDE not CONTENT)
+
+────────────────────────────────────────────────────────────────────────────────────────────
+H4 — REAL Ψ steering (w4 wire)
+────────────────────────────────────────────────────────────────────────────────────────────
+VERDICT: BLOCKED-DATA
+real carving Ψ = s16 ckpt Law-71 vacuum_psi (2D coord, KOSMOS-MAP #1780); the .pt is on disk but vacuum_psi requires running the d768×12L 283.72M ConsciousDecoderV2 forward → needs torch, which is ABSENT on this CPU/$0 host. axis-probe persisted only the PC×attribute matrix, not per-sample Ψ coords. toy psi8 (bin-marginal of logA) is NOT a real Ψ source (and #1793 found it INERT). No real Ψ source reachable CPU-only — defer to a GPU rung.
+s16 ckpt on disk: True (/private/tmp/s16_ckpt_dl/HEXAD/DATA-REGIME/state/carving_dataregime_s16_2026_05_18/ckpt_carving_s16.pt)
+torch present: False  → real vacuum_psi forward NOT runnable here
+No Ψ source fabricated (per a_completeness_over_cheap / p7). Defer to a GPU rung.
+
+SCOPE: a_toy_scale_recheck: TOY n-gram substrate, 400KB repo corpus, CPU/$0, no torch. a_lane_akida_gpu_split: Lane-G analysis. real hexad table = native σ6 forward over verified module cores (#1795).

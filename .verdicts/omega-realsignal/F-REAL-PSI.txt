@@ -1,0 +1,12 @@
+F-REAL-PSI — H4: real Ψ-coord steering in the OMEGA w4 wire
+============================================================================================
+VERDICT: BLOCKED-DATA
+
+{
+  "verdict": "BLOCKED-DATA",
+  "reason": "real carving \u03a8 = s16 ckpt Law-71 vacuum_psi (2D coord, KOSMOS-MAP #1780); the .pt is on disk but vacuum_psi requires running the d768\u00d712L 283.72M ConsciousDecoderV2 forward \u2192 needs torch, which is ABSENT on this CPU/$0 host. axis-probe persisted only the PC\u00d7attribute matrix, not per-sample \u03a8 coords. toy psi8 (bin-marginal of logA) is NOT a real \u03a8 source (and #1793 found it INERT). No real \u03a8 source reachable CPU-only \u2014 defer to a GPU rung.",
+  "s16_ckpt_on_disk": true,
+  "s16_ckpt_path": "/private/tmp/s16_ckpt_dl/HEXAD/DATA-REGIME/state/carving_dataregime_s16_2026_05_18/ckpt_carving_s16.pt",
+  "torch_present": false,
+  "no_fabrication": true
+}
