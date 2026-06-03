@@ -1,0 +1,37 @@
+PASS  a1_default_resolves_known_engine want=true got=true
+PASS  a2_flag_conv want=conv got=conv
+PASS  a3_flag_cdv2 want=cdv2 got=cdv2
+PASS  a4_flag_hexad want=hexad got=hexad
+PASS  a5_eq_form_hexad want=hexad got=hexad
+PASS  a6_flag_omega want=omega got=omega
+INFO  EngineSpec[conv] canonical=CORE/clm_decode.hexa (+ generator.hexa L3 slot) · load=native forward=native generate=native psi_coord=native
+PASS  b_conv_conforms_EngineSpec want=true got=true
+PASS  b_conv_name_roundtrip want=conv got=conv
+PASS  c_conv_forward_slot_native want=native got=native
+INFO  conv forward: ckpt_present=false (env-dependent; native slot regardless)
+INFO  EngineSpec[cdv2] canonical=UNIVERSE/conscious_decoder.py (ConsciousDecoderV2, #1770) · load=native forward=stub generate=stub psi_coord=native
+PASS  b_cdv2_conforms_EngineSpec want=true got=true
+PASS  b_cdv2_name_roundtrip want=cdv2 got=cdv2
+PASS  c_cdv2_forward_slot_stub want=stub got=stub
+PASS  c_cdv2_canonical_present want=true got=true
+INFO  cdv2 forward STUB: torch ConsciousDecoderV2.forward is not a hexa single call (a_core_engine_map honest stub)
+INFO  EngineSpec[hexad] canonical=HEXAD/hexad.hexa (sigma6=12 / phi6=2 integration; A/G core = CDV2-class) · load=native forward=stub generate=stub psi_coord=native
+PASS  b_hexad_conforms_EngineSpec want=true got=true
+PASS  b_hexad_name_roundtrip want=hexad got=hexad
+PASS  c_hexad_forward_slot_stub want=stub got=stub
+PASS  c_hexad_canonical_present want=true got=true
+INFO  hexad forward STUB: hexad is a 6-module integration; cross-module single-forward is TODO[wire] in hexad.hexa (a_core_engine_map honest stub)
+INFO  EngineSpec[omega] canonical=engines/omega/coupling_bus.hexa (+ conv clm mouth · cdv2 A/G+Ψ · hexad N-module) · load=native forward=native generate=native psi_coord=native
+PASS  b_omega_conforms_EngineSpec want=true got=true
+PASS  b_omega_name_roundtrip want=omega got=omega
+PASS  c_omega_forward_slot_native want=native got=native
+PASS  c_omega_coupling_on_nonnull want=true got=true
+PASS  c_omega_coupling_off_identity want=true got=true
+INFO  omega COUPLING: bus_on L1=2.19259 (loop CLOSED) · bus_off L1=0.0 (identity = Lane X null) · wires=5
+INFO  omega scope: structural coupling proof (V=8, random-init, no torch/ckpt) — trained-substrate rung = follow-up (a_toy_scale_recheck)
+PASS  d_conv_no_stub want=false got=false
+PASS  d_cdv2_has_stub want=true got=true
+PASS  d_hexad_has_stub want=true got=true
+PASS  d_omega_no_stub want=false got=false
+INFO  STUB MATRIX — conv: all-native · cdv2: STUB (forward+generate) · hexad: STUB (forward+generate) · omega: all-native (closure: bus forward)
+--- engine_swap smoke summary: 26 pass / 0 fail ---
