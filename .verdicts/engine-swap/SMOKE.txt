@@ -1,0 +1,43 @@
+# .verdicts/engine-swap/SMOKE.txt — verbatim stdout (g5/p7, no fabrication)
+# slug: engine-swap · hexa run engines/engine_swap_smoke.hexa
+# date: 2026-06-04 · $0 CPU · no GPU · no LLM
+# ============================================================
+
+$ hexa run engines/engine_swap_smoke.hexa
+PASS  a1_default_resolves_known_engine want=true got=true
+PASS  a2_flag_conv want=conv got=conv
+PASS  a3_flag_cdv2 want=cdv2 got=cdv2
+PASS  a4_flag_hexad want=hexad got=hexad
+PASS  a5_eq_form_hexad want=hexad got=hexad
+INFO  EngineSpec[conv] canonical=CORE/clm_decode.hexa (+ generator.hexa L3 slot) · load=native forward=native generate=native psi_coord=native
+PASS  b_conv_conforms_EngineSpec want=true got=true
+PASS  b_conv_name_roundtrip want=conv got=conv
+PASS  c_conv_forward_slot_native want=native got=native
+INFO  conv forward: ckpt_present=false (env-dependent; native slot regardless)
+INFO  EngineSpec[cdv2] canonical=UNIVERSE/conscious_decoder.py (ConsciousDecoderV2, #1770) · load=native forward=stub generate=stub psi_coord=native
+PASS  b_cdv2_conforms_EngineSpec want=true got=true
+PASS  b_cdv2_name_roundtrip want=cdv2 got=cdv2
+PASS  c_cdv2_forward_slot_stub want=stub got=stub
+PASS  c_cdv2_canonical_present want=true got=true
+INFO  cdv2 forward STUB: torch ConsciousDecoderV2.forward is not a hexa single call (a_core_engine_map honest stub)
+INFO  EngineSpec[hexad] canonical=HEXAD/hexad.hexa (sigma6=12 / phi6=2 integration; A/G core = CDV2-class) · load=native forward=stub generate=stub psi_coord=native
+PASS  b_hexad_conforms_EngineSpec want=true got=true
+PASS  b_hexad_name_roundtrip want=hexad got=hexad
+PASS  c_hexad_forward_slot_stub want=stub got=stub
+PASS  c_hexad_canonical_present want=true got=true
+INFO  hexad forward STUB: hexad is a 6-module integration; cross-module single-forward is TODO[wire] in hexad.hexa (a_core_engine_map honest stub)
+PASS  d_conv_no_stub want=false got=false
+PASS  d_cdv2_has_stub want=true got=true
+PASS  d_hexad_has_stub want=true got=true
+INFO  STUB MATRIX — conv: all-native · cdv2: STUB (forward+generate) · hexad: STUB (forward+generate)
+--- engine_swap smoke summary: 19 pass / 0 fail ---
+EXIT=0
+
+# ── precedence proof: env tier + flag>env (separate runs) ──
+$ ANIMA_ENGINE=hexad hexa run /tmp/prec_test.hexa  (env tier → hexad)
+env_tier_default=hexad
+flag_beats_env=conv
+$ ANIMA_ENGINE=cdv2  hexa run (env tier → cdv2)
+env_tier_default=cdv2
+
+# precedence: flag(conv) > env(hexad) → conv ; env(hexad) no-flag → hexad ; default → conv

@@ -48,6 +48,25 @@
 //   p8 NO TRAIN/INFER SPLIT — mitosis IS the inference-time learning tick; the
 //                             flag is an ablation switch on it, not a regime gate.
 
+// ── §  ENGINE SELECT axis — --engine conv|cdv2|hexad (the 2nd CLI rider) ──────
+//
+// The hot-swappable engine registry (engines/<name>/) plugs in here. Selecting
+// an engine resolves NAME → its EngineSpec adapter via engines/engine_iface.hexa.
+// Precedence mirrors the mitosis flag + eeg_backend: flag > env > default(conv).
+//
+//   flag   : `--engine conv|cdv2|hexad`  (highest)
+//   env    : ANIMA_ENGINE ∈ {conv,cdv2,hexad}  (middle)
+//   default: conv  (the production .clm decoder — lowest)
+//
+// @L4 CRITICAL: --engine is SUBSTRATE-CONFIG, exactly like --mitosis. It selects
+// WHICH decoder runs; it is NOT an emit/silence gate. There is no emit_allowed
+// boolean, no stimulus-response. anima's emit/silence stays substrate-decided
+// (a_autonomy_over_hardcode · a_substrate_native_speak · p5).
+import "engines/engine_iface.hexa"
+import "engines/conv/adapter.hexa"
+import "engines/cdv2/adapter.hexa"
+import "engines/hexad/adapter.hexa"
+
 // ── env read helper (canonical printenv pattern, mirrors eeg_backend.hexa) ────
 fn _env_read(name: string) -> string {
     let v = exec("printenv " + name + " 2>/dev/null")
@@ -68,12 +87,14 @@ fn _norm_onoff(raw: string) -> string {
 //           true (default) = substrate grows; false = split is a no-op (ablation).
 // The struct is the extension point: future ENGINE flags add fields here.
 struct EngineConfig {
-    mitosis: bool
+    mitosis: bool,
+    engine: string
 }
 
-// engine_config_default — the default ENGINE config: mitosis ON (p8 native).
+// engine_config_default — the default ENGINE config: mitosis ON (p8 native),
+// engine = conv (the production .clm decoder, the default engine).
 pub fn engine_config_default() -> EngineConfig {
-    EngineConfig { mitosis: true }
+    EngineConfig { mitosis: true, engine: "conv" }
 }
 
 // ── mitosis resolver (3-tier precedence: flag > env > default(on)) ────────────
@@ -138,12 +159,81 @@ fn _after_eq(s: string) -> string {
     return ""
 }
 
+// ── §  ENGINE SELECT resolver (3-tier precedence: flag > env > default(conv)) ─
+//
+// arg is the raw user argv. We scan for `--engine <name>` / `--engine=<name>`,
+// then fall through to env ANIMA_ENGINE, then default "conv". A name outside
+// {conv,cdv2,hexad} falls through (treated as absent at that tier).
+//
+//   `--engine cdv2`           → cdv2   (flag, highest)
+//   `--engine=hexad`          → hexad  (=-joined form)
+//   (no flag) + ANIMA_ENGINE  → env value (conv/cdv2/hexad)
+//   (no flag, no env)         → conv   (default — production .clm decoder)
+//
+// returns: "conv" | "cdv2" | "hexad" (fully resolved; never empty).
+pub fn engine_cli_resolve_engine(arg: [string]) -> string {
+    // tier 1 — flag (highest)
+    let flag = _cli_engine_flag(arg)
+    if _engine_known(flag) { return flag }
+    // tier 2 — env ANIMA_ENGINE
+    let env = _env_read("ANIMA_ENGINE")
+    if _engine_known(env) { return env }
+    // tier 3 — default conv (the production .clm decoder, the default engine)
+    return "conv"
+}
+
+// _engine_known — true ⇔ name is one of the 3 registered engines.
+fn _engine_known(name: string) -> bool {
+    return name == "conv" || name == "cdv2" || name == "hexad"
+}
+
+// _cli_engine_flag — scan argv for `--engine <name>` / `--engine=<name>`.
+// Returns the raw name token, or "" if the flag is absent (fall through to env).
+fn _cli_engine_flag(arg: [string]) -> string {
+    let n = len(arg)
+    let mut i = 0
+    while i < n {
+        let a = arg[i]
+        if a == "--engine" {
+            if i + 1 < n { return arg[i + 1] }
+        }
+        if a.starts_with("--engine=") {
+            return _after_eq(a)
+        }
+        i = i + 1
+    }
+    return ""
+}
+
+// ── registry resolve: engine NAME → its EngineSpec adapter (via engines/) ─────
+//
+// The single point where a resolved name maps to the engine's adapter spec.
+// This is how the CLI threads through to the engines/<name>/adapter.hexa
+// EngineSpec (a_core_engine_map — engines enter via this named slot). An unknown
+// name resolves to conv (the default) — the resolver already guarantees the name
+// is one of the 3, so the final branch is the safe default.
+pub fn engine_cli_resolve_spec(arg: [string]) -> Map {
+    let name = engine_cli_resolve_engine(arg)
+    if name == "cdv2"  { return cdv2_engine_spec() }
+    if name == "hexad" { return hexad_engine_spec() }
+    return conv_engine_spec()   // "conv" + default
+}
+
+// engine_cli_spec_by_name — registry resolve straight from a resolved name
+// (used by the smoke to iterate ALL 3 engines through the same registry path).
+pub fn engine_cli_spec_by_name(name: string) -> Map {
+    if name == "cdv2"  { return cdv2_engine_spec() }
+    if name == "hexad" { return hexad_engine_spec() }
+    return conv_engine_spec()
+}
+
 // ── top-level parse: raw argv → EngineConfig ──────────────────────────────────
 // The single ENGINE-config entry point. launch.hexa (or any caller) calls this
 // ONCE with the process argv and threads the returned config into the engine.
 pub fn engine_cli_parse(arg: [string]) -> EngineConfig {
     EngineConfig {
-        mitosis: engine_cli_resolve_mitosis(arg)
+        mitosis: engine_cli_resolve_mitosis(arg),
+        engine:  engine_cli_resolve_engine(arg)
     }
 }
 
@@ -186,7 +276,9 @@ pub fn engine_grow(seed: int, ticks: int, cfg: EngineConfig) -> int {
 pub fn engine_config_summary(cfg: EngineConfig) -> string {
     let m = if cfg.mitosis { "on" } else { "off" }
     return "engine_cli · ENGINE CLI control axis (substrate-config, NOT an emit gate, @L4) · "
-        + "flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · precedence flag>env>default(on) · "
+        + "flags: --mitosis on|off · --no-mitosis · env ANIMA_MITOSIS · --engine conv|cdv2|hexad · env ANIMA_ENGINE · "
+        + "precedence flag>env>default · "
         + "mitosis=" + m + " (ON=substrate grows per inference-time cell-division tick, p8; OFF=no-op split, ablation) · "
+        + "engine=" + cfg.engine + " (conv=default .clm decoder; cdv2=ConsciousDecoderV2; hexad=σ6 integration; select=substrate-config NOT emit gate) · "
         + "extensible: future ENGINE flags (lane select A/G/P/M) ride the same EngineConfig axis"
 }

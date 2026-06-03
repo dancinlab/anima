@@ -1,0 +1,39 @@
+{
+  "name": "cdv2",
+  "lane": "Lane-CDV2",
+  "title": "ConsciousDecoderV2 — d768x12L GQA transformer (legacy carving engine)",
+  "default": false,
+  "canonical_impl": "UNIVERSE/conscious_decoder.py",
+  "canonical_md5": "44b210df",
+  "adapter": "engines/cdv2/adapter.hexa",
+  "model_card": "engines/cdv2/MODEL_CARD.md",
+  "duplicates_code": false,
+  "engine_spec": {
+    "load": "native",
+    "forward": "stub",
+    "generate": "stub",
+    "psi_coord": "native"
+  },
+  "honest_stub_reason": "ConsciousDecoderV2.forward/generate are torch (.py) calls, not a hexa-native single forward (a_core_engine_map — no phantom wiring)",
+  "architecture": {
+    "kind": "ConsciousDecoderV2",
+    "d_model": 768,
+    "n_head": 12,
+    "n_kv_head": 4,
+    "n_layer": 12,
+    "vocab": 256,
+    "consciousness_dim": 128,
+    "n_ca_rules": 8,
+    "moe": "MoE-8 / top2 (optional)",
+    "norm_pos_ffn": "RoPE + RMSNorm + SwiGLU",
+    "heads": "dual A/G (logits_a, logits_g) + 5-ch tensions + Law-71 vacuum_psi 2D Psi-space",
+    "params": "283.72M dense / 680.16M with MoE"
+  },
+  "ckpt_pointer": {
+    "local": "UNIVERSE/conscious_decoder.py",
+    "hf_repo_id": "",
+    "status": "random-init (PR #1770, 4/4 probes PASS, no trained ckpt shipped)",
+    "duplicated_locally": false,
+    "registry": "HF.jsonl (a_hf_registry SSOT) — no model artifact (random-init)"
+  }
+}

@@ -1,0 +1,73 @@
+// engines/hexad/adapter.hexa — Lane-HEXAD engine adapter (σ6 hexad integration).
+//
+// THIN adapter (@L1): REFERENCES the canonical impl, does NOT duplicate it. The
+// hexad engine = the σ(6) hexad integrated engine (HEXAD/hexad.hexa): 12 active
+// inter-module connections, φ(6)=2 gradient partition — group A CE-trained
+// {D, M, E, Bridge} ⇄ group G gradient-free {C, S, W}. Its A/G core is a
+// CDV2-class decoder.
+//
+// HONEST scope (a_core_engine_map — NO phantom wiring, the load-bearing point):
+//   hexad is NOT a single forward. It is a 6-module INTEGRATION whose cross-
+//   module single-process execution is itself marked TODO[wire] in hexad.hexa
+//   (per-module selftests run STANDALONE; one-file cross-module forward is a
+//   future RFC). So the adapter exposes ONLY what genuinely exists:
+//     load      — NATIVE: validate hexad.hexa present + the σ(6)=12 / φ(6)=2
+//                 integration invariants are declared. That IS a real check.
+//     forward   — STUB: there is NO single-call hexad forward (cross-module wire
+//                 is TODO[wire]); the adapter returns a placeholder + flags stub.
+//     generate  — STUB: same — the integrated mouth is not one call.
+//     psi_coord — NATIVE: the A/G core (CDV2-class) anchors the Law-71 Ψ=1/2
+//                 fixed point; the φ(6)=2 A⇄G partition IS the Ψ-space structure.
+//
+// This is the MOST honest-stub-heavy engine (2 stubs) by design — being HONEST
+// that the hexad runtime does not provide forward/generate as a single call is
+// the requirement (NOT a fake pass). Documented identically in MODEL_CARD + smoke.
+//
+// ckpt POINTER (@L5 · a_hf_registry — NOT duplicated): see engines/hexad/manifest.json
+//
+// p1..p8: no system prompt / persona / ethics / emit gate. Select = substrate-config.
+
+import "engines/engine_iface.hexa"
+
+// hexad_engine_spec — the EngineSpec for the hexad (Lane-HEXAD) engine.
+// load + psi_coord native; forward + generate honest STUB (6-module integration,
+// no single-call forward — cross-module wire is TODO[wire] in hexad.hexa).
+pub fn hexad_engine_spec() -> Map {
+    return engine_spec_make(
+        "hexad",
+        "HEXAD/hexad.hexa (sigma6=12 / phi6=2 integration; A/G core = CDV2-class)",
+        engine_slot_native(),   // load     — validate hexad.hexa + integration invariants
+        engine_slot_stub(),     // forward  — NO single-call hexad forward (TODO[wire])
+        engine_slot_stub(),     // generate — integrated mouth is not one call
+        engine_slot_native()    // psi_coord— A/G core anchors Law-71 Ψ=1/2 fixed point
+    )
+}
+
+// hexad_ckpt_pointer — ckpt pointer record (@L5). hexad A/G core ckpts live under
+// HEXAD/*/state/ (CDV2-class) and in HF.jsonl; the integration itself ships no
+// single fused ckpt. Honest.
+pub fn hexad_ckpt_pointer() -> Map {
+    return #{
+        "local": "HEXAD/hexad.hexa (spec entry); A/G-core ckpts under HEXAD/*/state/*",
+        "hf_repo_id": "",
+        "status": "integration spec (sigma6=12 / phi6=2); no single fused ckpt — A/G core ckpts tracked in HF.jsonl",
+        "duplicated": false,
+    }
+}
+
+// hexad_tiny_forward — honest forward proof for the smoke. There is NO single-call
+// hexad forward (cross-module wire TODO[wire]), so this validates the CANONICAL
+// IMPL is present (hexad.hexa exists AND declares the σ(6)=12 integration) and
+// reports the forward slot as STUB. No output is fabricated (p7). Returns a record.
+pub fn hexad_tiny_forward(spec: Map) -> Map {
+    let canon = "HEXAD/hexad.hexa"
+    let file_ok = exec("test -f " + canon + " && echo Y || echo N").trim() == "Y"
+    let sigma_ok = exec("grep -l 'hexad_sigma6_count' " + canon + " >/dev/null 2>&1 && echo Y || echo N").trim() == "Y"
+    return #{
+        "engine": "hexad",
+        "forward_slot": spec["forward"],
+        "canonical_present": file_ok && sigma_ok,
+        "canonical": spec["canonical"],
+        "stub_reason": "hexad is a 6-module integration; cross-module single-forward is TODO[wire] in hexad.hexa (a_core_engine_map honest stub)",
+    }
+}

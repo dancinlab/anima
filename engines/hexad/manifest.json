@@ -1,0 +1,33 @@
+{
+  "name": "hexad",
+  "lane": "Lane-HEXAD",
+  "title": "sigma6 hexad integrated engine (6-module integration; A/G core = CDV2-class)",
+  "default": false,
+  "canonical_impl": "HEXAD/hexad.hexa",
+  "adapter": "engines/hexad/adapter.hexa",
+  "model_card": "engines/hexad/MODEL_CARD.md",
+  "duplicates_code": false,
+  "engine_spec": {
+    "load": "native",
+    "forward": "stub",
+    "generate": "stub",
+    "psi_coord": "native"
+  },
+  "honest_stub_reason": "hexad is a 6-module integration; cross-module single-process forward is TODO[wire] in hexad.hexa (per-module selftests run STANDALONE). No single-call forward/generate exists — a_core_engine_map, no phantom wiring.",
+  "architecture": {
+    "kind": "sigma6 hexad integration",
+    "sigma6_connections": 12,
+    "phi6_partition": 2,
+    "group_a_ce_trained": ["D", "M", "E", "BRIDGE"],
+    "group_g_gradient_free": ["C", "S", "W"],
+    "forward_graph": "S -> C -> Bridge.detach -> D, with M/W/E observers",
+    "ag_core": "CDV2-class decoder (ConsciousDecoderV2)"
+  },
+  "ckpt_pointer": {
+    "local": "HEXAD/hexad.hexa (spec entry); A/G-core ckpts under HEXAD/*/state/*",
+    "hf_repo_id": "",
+    "status": "integration spec; no single fused ckpt — A/G core (CDV2-class) ckpts tracked in HF.jsonl",
+    "duplicated_locally": false,
+    "registry": "HF.jsonl (a_hf_registry SSOT)"
+  }
+}
