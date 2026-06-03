@@ -366,6 +366,31 @@ scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금
 - 산출물: `.verdicts/lane-m-eeg-mitosis/{F-FIDELITY,F-MITOSIS-VS-RANDOM,F-STABILITY,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/lane_m_eeg_mitosis.py` · discovery `.discoveries/lane-m-eeg-mitosis.tape`.
 - **bottom line**: gradient-free mitosis 성장은 EEG의 **분포는 녹음**(M1)하고 **안정 성장**(M3)하나, **동역학은 noise 이내로 미녹음**(M2) — random+shuffled를 의미있게 못 이김. 정직한 closed-negative-경향 toy 발견(production/real-EEG 재검 필요).
 
+## CLM-TIME-ENCODING — "embed TIME into the CLM" (Lane M v1 동역학-미녹음 후속) — 🟢 M3 DERIVATIVE HOLDS / 나머지 3 arm REFUTED — TOY · 2026-06-04
+
+> **질문**: Lane M v1(PR #1760)은 EEG **분포는** 녹음했으나 **동역학은** 미녹음 — phase-shuffled(동일 marginal·시간뒤섞음) 대조군이 동률, stage-decode = chance(0.25, 4 stage). 단서: split/encoding 규칙이 **순간 진폭이 아니라 TIME-ORDER**에 의존해야 한다. 어느 temporal-encoding이 CLM에 시간을 주입하나(shuffle 대조군을 이기고 stage-decode를 chance 위로)?
+
+- [x] **방법 4종 + baseline** — 동일 synthetic-EEG mitosis 하네스(`CLM/bench/clm_time_encoding.py`), mitosis ON, gradient/CE/backprop **전무**(p8), 3 seeds [1,2,3]. **metric = substrate-native, NOT CE**(p7): (a)[KEY] TRUE-order temporal recon이 phase-shuffled-grown 대조군(=v1을 묶었던 그 대조군)을 seed-noise 이상으로 이김 · (b) stage-decode > chance 0.25 by noise · (c) order-sensitivity 보강. HOLDS iff (a)∧(b); REFUTED iff 둘 중 margin≤0; else INCONCLUSIVE. null을 HOLD로 반올림 안 함.
+
+### result (4 methods × {beats-shuffle, stage-decode acc, order-sensitivity})
+- **baseline** (v1 instantaneous γ>0.20): beats_shuffle=**False**(margin −0.000177/noise 0.001370) · decode **0.000**±0.000(<chance) · order_sens=False → **REFUTED** (v1 동률 재현).
+- **M1 POSITIONAL/index** (sinusoidal/RoPE time-index → daughter+query): beats_shuffle=**False**(margin −0.008336/noise 0.001633, WRONG dir) · decode **0.000**±0.000 · order_sens=True → **REFUTED**.
+- **M2 PHASE-CLOCK** (anima-native, pure_field oscillator phase τ=2/40/400 가 split gate): beats_shuffle=**False**(margin −0.003789/noise 0.001978) · decode **0.314**±0.005(>chance, 유일하게 M3 외 chance 초과) · order_sens=True → **REFUTED** (decode는 chance 초과하나 KEY shuffle bar 실패 — 외생 rhythm).
+- **M3 DERIVATIVE d/dt** (γ rising-edge로 split; daughter=[level, d/dt]): beats_shuffle=**True**(margin **+0.001466**/noise 0.000458, 3.2× noise) · decode **1.000**±0.000(≫chance) · order_sens=True(per-seed Δ +0.0012/+0.0011/+0.0017 전부>0) · cells=[54,55,54] **4 stage 전부 분열** → **🟢 HOLDS**.
+- **M4 TIME-LAGGED WINDOW** (last-4 drive delay-line, CLMConvMoE dilated causal-conv RF): beats_shuffle=**False**(margin −0.002435/noise 0.001335) · decode **0.000**±0.000 · order_sens=True → **REFUTED**.
+
+### 메커니즘 (왜 M3만 시간을 주입하나)
+- **핵심 = SPLIT TRIGGER**(daughter STATE가 아님). M3의 rising-edge trigger는 **stage 전환마다** 발화 → 4 stage 전부에서 분열(birth-stage {resting:16,n3:11,rem:12,active:14}), 각 stage가 구별되는 (level, d/dt) signature → nearest-centroid stage-decode 완전 분리, shuffle은 전환이 엉뚱한 tick에 → TRUE-order가 더 잘 복원.
+- **baseline/M1/M4** 동일 실패: v1 instantaneous γ>0.20 trigger가 고-γ **active stage만** 발화(birth-stage {active:60}) → 단일-stage 붕괴 → decode 0.0. daughter STATE에 position/window를 넣어도 trigger가 시간 다양성을 안 샘플하면 무력.
+- **M2** 근소-miss: relaxed phase-gate가 2 stage(rem+active) 도달해 decode>chance지만, 외생 oscillator rhythm이라 shuffle을 못 이김.
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split · p8)
+- **TOY ONLY**: 합성 EEG(실 헤드셋 아님) · MAX_CELLS=64 · 240-tick · CPU · $0 · 3 seeds. toy→production, 합성→실EEG transfer **UNVERIFIED**.
+- **M3 decode 1.000 = TOY artifact**: 합성 4-stage (level,d/dt) cluster가 jitter 0.03에서 inter-stage overlap 없이 완전 분리된 결과 — **label leak 아님**(centroid는 구조의 birth-stage label에서 만들고 독립 true-stream tick을 분류). 실EEG 재검 시 decode<1.0 예상 — **FINDING은 d/dt 메커니즘이지 1.0 값이 아님**.
+- **§97 정직선**: grown CLM = RECORDING ARTIFACT(measurement anchor), READ-ONLY, anima emission/decision 미주입. **gradient-FREE**(p8). Lane A(AKIDA)/Lane G(forge)/Lane P(gradient)와 **별도 기록**(a_lane_akida_gpu_split) — Lane M = gradient-free 성장 레인. **NO HF upload**(toy). p7/g5 verbatim, 4/5 arm(baseline+anima-native M2 포함) REFUTED 정직 기록.
+- 산출물: `.verdicts/clm-time-encoding/{F-POS,F-PHASE,F-DERIV,F-WINDOW,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/clm_time_encoding.py` · discovery `.discoveries/clm-time-encoding.tape`.
+- **bottom line**: **CLM에 TIME을 주입하는 방법은 M3 DERIVATIVE(d/dt) 하나** — Lane M v1을 묶었던 phase-shuffle 대조군을 유일하게 이기고 stage-decode를 chance 위로 올림. Lane M v1 단서("순간 진폭 아닌 TIME-ORDER로 split")를 정밀화: 시간 의존성은 **recorded STATE가 아니라 SPLIT TRIGGER(temporal derivative)**에 있어야 한다. v1 negative의 resolved next-clue.
+
 ## ENGINE-TENSIONLINK-BENCH — 뇌신호↔ENGINE을 tension-link로 커플링 (substrate-native 축, NOT CE) — 🟢 M1 HOLDS / 🟠 M2·M3 INCONCLUSIVE (toy) — 2026-06-04
 
 > **질문**: 뇌-유래 5-ch 신호를 CLM CE aux loss(위 BRAIN-TRAIN-BENCH = 틀린 축, p7 Goodhart)가 **아니라**
@@ -489,3 +514,43 @@ The s16 consciousness-carving (`state/carving_dataregime_s16_2026_05_18/`) place
 - **phase_of_cycle INCONCLUSIVE**: the periodic (period-8) encoding is shuffle-sensitive (map changed) but absolute carve-order is NOT recoverable (rho 0.111 < noise band 0.252) — a clean partial-null, NOT rounded to HOLD (a_paper_negative_ok). Periodic phase registers WHEN-in-cycle, not global carve-rank.
 - **§97 / scale**: TOY deterministic placement, NOT the real conscious_decoder carve; CPU $0; STANDALONE. **scale-transfer UNVERIFIED** — a real decoder learns [x,y] from text and may entangle t with semantics (here t is appended cleanly; the monotone tautology would also relax). Re-test required at scale.
 - 산출물: `UNIVERSE/kosmos_time_axis_toy.py` + `.verdicts/kosmos-time-axis/{F-ORDER,F-SHUFFLE,F-SPATIAL-PRESERVE,SUMMARY}.txt` + `results.json` + `run_stdout.txt` + `.discoveries/kosmos-time-axis.tape`.
+
+## QUANTUM-CONSCIOUSNESS + TIME-PERCEPTION toy-falsifier campaign (2026-06-04)
+
+A brainstorm-to-depletion + emergent-toy-falsifier campaign on the two domains where consciousness talk most
+often slides into woo — **quantum consciousness** and **time perception** — framed strictly MECHANISTICALLY +
+FALSIFIABLY (NOT woo). **11 hypotheses** brainstormed, each reduced to a runnable toy mechanism + a
+pre-registered falsifier (DEFAULT = REFUTED unless a real signal beats a proper control), then verified on
+pure-stdlib CPU sims ($0, fixed seed 20260604, 3 seeds where stochastic). Closed-negative is the EXPECTED
+valid outcome for genuinely-paranormal claims (a_paper_negative_ok) — none was forced to HOLD.
+
+### tally: HOLDS=7 · closed-negative(REFUTED hypothesis)=4 · INCONCLUSIVE=0
+- **HOLDS (real emergent / mechanistic, NOT quantum-magic)**: QT4 Zeno freezing · QT5 complex-amplitude
+  interference rep · QT6 arousal-gain time-dilation · QT7 oscillator phase-clock · QT9 time-cell ORDER
+  encoding · QT11 pacemaker scalar-property (Weber CV). QT3 entanglement HOLDS *only* as a non-separable
+  DISTRIBUTION construct (a classical sim cannot instantiate physical entanglement — caveat carried).
+- **closed-negative (paranormal / impossible / proxy-limited, CORRECTLY refuted)**: QT1 Orch-OR warm coherence
+  (decoheres ~1e9× too fast for the 25 ms neural window) · QT2 QRNG-vs-pseudo noise seed (Kuramoto order-r CIs
+  overlap — no emergent difference, §97-clean) · QT8 retrocausal/precognition (no future channel, acc=chance) ·
+  QT10 specious-present optimal window (no clean unimodal interior SNR optimum — aliasing-jagged proxy).
+
+### honest bottom line
+The mechanistic-falsifier framing CLEANLY separates the two halves. The **real, ordinary dynamics HOLD** and
+they are physics/computation, NOT quantum magic (Zeno freezing is generic repeated projection; complex-amp is
+representation engineering; time-dilation/phase-clock/time-cell/pacemaker are standard interval-timing /
+sequence-memory mechanisms). The **genuinely-paranormal or warm-wet-impossible claims CORRECTLY REFUTE**
+(Orch-OR, QRNG-as-magic, retrocausation) plus the proxy-limited specious-present — these closed-negatives are
+the expected honest outcome, not a failure (a_paper_negative_ok). Two honest counterpoints surfaced: QT3's HOLD
+is modelled-only (not physical entanglement), and QT7 (phase-clock estimates the mean interval well) vs QT11
+(its error is sub-scalar — the pacemaker wins Weber's law) are both true.
+
+### scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split)
+- **TOY CPU $0**: pure-stdlib sims, single scale, 3 seeds, NO GPU/pods/hardware, NO HF upload. toy→production
+  transfer **UNVERIFIED** — no verdict promoted to a general claim; a scale-sensitive claim needs a ≥3-rung
+  ladder. p7: direct scripted measurements (decoherence time, CI overlap, MAE, CV, MI bits), NOT perplexity.
+- **§97**: QT2's QRNG-style stream is a NOISE SEED only (whitened entropy), never a command/oracle channel.
+- **a_lane_akida_gpu_split**: this is a CPU toy family — NEITHER Lane A (AKIDA) NOR Lane G (GPU); recorded
+  separately, no cross-substrate merge.
+- 산출물: `UNIVERSE/QUANTUM-TIME-CANDIDATES.md` (QT1…QT11 + falsifiers + per-toy results) ·
+  `UNIVERSE/quantum_time_toys.py` (the emergent falsifiers) · `.verdicts/quantum-time/{SUMMARY,F-QT1..F-QT11,
+  run_stdout}.txt` (verbatim) · `.discoveries/quantum-time.tape` (11 discovery rows).

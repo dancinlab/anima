@@ -1,0 +1,36 @@
+F-POS (M1 POSITIONAL/index) — Lane M follow-up "embed TIME into the CLM"
+TOY · synthetic EEG · CPU · $0 · mitosis ON · 3 seeds [1,2,3] · NOT CE (p7)
+=========================================================================
+METHOD: sinusoidal / RoPE-style time-index embedding (POS_DIM=4) appended to
+the daughter cell state AND the per-tick read-out query. Split TRIGGER is the
+v1 instantaneous gamma>0.20 (unchanged). So WHEN a cell was born (its time
+index) is carried in its state, but the split DECISION is still amplitude.
+
+PRE-REGISTERED FALSIFIER: HOLDS iff (a) TRUE-order temporal reconstruction
+beats the phase-shuffled-grown control by > seed-noise AND (b) stage-decode
+accuracy > chance (0.25, 4 stages) by > seed-noise. REFUTED iff either margin
+<= 0. Else INCONCLUSIVE.
+
+MEASUREMENT (verbatim from results.json):
+  err_eeg       = 0.040665 +- 0.001122
+  err_shuffled  = 0.032329 +- 0.001186   (scored on the TRUE stream)
+  margin_shuffle (shuf - eeg) = -0.008336   noise_band = 0.001633
+  beats_shuffle = False   (margin NEGATIVE — shuffled-grown reconstructs
+                           the TRUE stream BETTER than true-order-grown)
+  stage_decode_acc = 0.0000 +- 0.0000   (chance = 0.25)  decode_margin = -0.25
+  decode_above_chance = False
+  order_sensitive = True (|margin| > noise — order DOES change the number,
+                          but in the WRONG direction)
+  cells_eeg = [61, 61, 61]   bounded, phi finite.
+
+VERDICT: REFUTED.
+Both bars fail. (a) margin_shuffle < 0: the positional embedding makes the
+codebook key high-dimensional but, because the split TRIGGER still only fires
+in the high-gamma 'active' stage, ALL 60 daughters are born under 'active'
+(birth-stage dist = {active: 60}). The positional coordinate then merely adds
+a per-tick-varying term to every cell uniformly, so a time-mismatched
+(shuffled) structure happens to sit closer to the average query. (b) Only 1
+stage ever spawns cells -> stage-decode cannot separate stages -> 0.0 (NOT
+rounded up to chance; the structure literally has <2 stage groups). Tagging
+the daughter with its birth time does NOT inject usable temporal structure
+when the TRIGGER never samples the other stages.

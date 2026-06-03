@@ -1,0 +1,17 @@
+=== QUANTUM-CONSCIOUSNESS + TIME-PERCEPTION toy falsifiers (a_scale_honest_scope: TOY-ONLY) seed=20260604 ===
+--- QUANTUM CONSCIOUSNESS ---
+[QT1 ORCH-OR]      Gamma=4.059e+07/s  t_decoher=1.000e-11s  neural_window=2.500e-02s  window/t_decoher=2.500e+09 -> falsifier CONFIRMED (decoheres far too fast — closed-negative)
+[QT2 QRNG-SEED]    pseudo r=0.9834[0.9701,0.9967]  qrng r=0.9888[0.9744,1.0032]  CI_disjoint=False -> falsifier CONFIRMED (no measurable difference — closed-negative)
+[QT3 ENTANGLE]     MI_classical=0.0982bits  MI_entangled-proxy=1.0000bits -> falsifier REFUTED (non-separable coupling integrates more, HOLDS-as-modelled)  [caveat: classical sim, proxy not physical entanglement]
+[QT4 ZENO]         every0->10.122 every50->1.464 every10->0.281 every2->0.036  monotone=True frozen=True -> falsifier REFUTED (measurement freezes drift, HOLDS — mechanistic)
+[QT5 COMPLEX-AMP]  per-seed gain(complex-real)=[0.483, 0.43, 0.403] mean=0.439 (margin>=0.05) -> falsifier REFUTED (complex rep helps on interference, HOLDS)
+--- TIME PERCEPTION ---
+[QT6 TIME-DILATE]  g0.5->64ticks g1.0->91ticks g2.0->229ticks  monotone_up=True -> falsifier REFUTED (arousal scales internal clock, HOLDS)
+[QT7 PHASE-CLOCK]  MAE_phaseclock=1.696  MAE_constant=47.251 -> falsifier REFUTED (phase-counting estimates time, HOLDS)
+[QT8 RETROCAUSAL]  precog_acc=0.4991[0.4882,0.5100]  chance=0.5 -> falsifier CONFIRMED (no future channel, acc=chance — closed-negative, honest)
+[QT9 TIME-CELL]    order_acc=1.0000[1.0000,1.0000]  shuffle-NULL=0.1654[0.1654,0.1654] -> falsifier REFUTED (order recovered above NULL, HOLDS)
+[QT10 SPECIOUS]    clean-interior-peak seeds=0/3  taus=[1, 2, 4, 8, 16, 32, 64, 128] last_SNR=[0.17, 0.248, 0.225, 0.012, 0.138, 0.045, 0.025, 0.001] peak@tau=2 (period=20) -> falsifier CONFIRMED (no clean unimodal interior optimum — aliasing-jagged / monotone, closed-negative)
+[QT11 PACEMAKER]   pacemaker CV=[0.1078, 0.0948, 0.1037, 0.1039, 0.1046] var=1.88e-05 | oscillator CV=[0.034, 0.026, 0.0177, 0.0118, 0.0084] var=8.77e-05 -> falsifier REFUTED (pacemaker reproduces scalar property better, HOLDS)
+=== SUMMARY (toy) ===
+  hypothesis-HOLDS (falsifier REFUTED)        = ['QT3', 'QT4', 'QT5', 'QT6', 'QT7', 'QT9', 'QT11']
+  closed-negative (falsifier CONFIRMED)       = ['QT1', 'QT2', 'QT8', 'QT10']

@@ -1,0 +1,63 @@
+QUANTUM-CONSCIOUSNESS + TIME-PERCEPTION toy falsifier campaign — VERDICT SUMMARY
+================================================================================
+date_utc  : 2026-06-04
+substrate : CPU-local toy sims, pure stdlib (math/random/statistics), NO numpy, NO GPU, NO pods, $0
+harness   : UNIVERSE/quantum_time_toys.py (seed=20260604, 3 seeds where stochastic)
+scope     : a_scale_honest_scope TOY-ONLY — toy->production transfer UNVERIFIED. p7: no perplexity verdict.
+            a_lane_akida_gpu_split: this is CPU toy, NEITHER Lane A (AKIDA) NOR Lane G (GPU) — recorded separate.
+            a_paper_negative_ok: a CONFIRMED falsifier = a valid, publishable closed-negative.
+            §97: where a QRNG-style stream appears (QT2) it is a noise SEED only, NOT a command channel.
+convention: falsifier REFUTED => hypothesis signature HOLDS (toy). falsifier CONFIRMED => closed-negative.
+
+TALLY (11 hypotheses): HOLDS=7 · closed-negative(REFUTED hypothesis)=4 · INCONCLUSIVE=0
+
+--- QUANTUM CONSCIOUSNESS (5) ---
+QT1  ORCH-OR warm coherence       CONFIRMED  -> closed-negative. t_decoher ~1e-11 s vs 25 ms neural window
+                                              (window/t_decoher ~2.5e9). Penrose-Hameroff warm-coherence
+                                              REFUTED on the timescale, as physics predicts (Tegmark-style).
+QT2  QRNG-vs-pseudo noise seed     CONFIRMED  -> closed-negative. Kuramoto emergence order-r CIs OVERLAP
+                                              (pseudo 0.983 vs qrng 0.989). Quantum-style entropy carries NO
+                                              extra emergent structure as a noise seed. §97-clean.
+QT3  entanglement-binds-experience REFUTED    -> HOLDS-AS-MODELLED (honest caveat). A non-separable joint
+                                              distribution (Bell-like, MI=1.0 bit) integrates more than a
+                                              matched classical common-cause coupling (MI=0.098 bit). CAVEAT:
+                                              classical sim CANNOT instantiate physical entanglement — this is
+                                              a modelling-construct difference, not evidence of quantum binding.
+QT4  quantum-Zeno attention        REFUTED    -> HOLDS (mechanistic). Repeated projective snap freezes drift
+                                              monotonically (free 10.1 -> every-2 0.036). Real measurement
+                                              dynamics — NOT evidence of quantum consciousness.
+QT5  superposition-of-percepts     REFUTED    -> HOLDS. Complex-amplitude (interference) rep beats real-valued
+                                              rep on a phase-interference task by mean +0.439 acc (3 seeds).
+                                              Honest ablation — phase/complex features help when phase carries info.
+
+--- TIME PERCEPTION (6) ---
+QT6  subjective-time-dilation      REFUTED    -> HOLDS. Pacemaker tick-count scales monotonically with
+                                              arousal-gain (g0.5->64, g1->91, g2->229 ticks). Real rate-modulation.
+QT7  oscillator-phase clock        REFUTED    -> HOLDS. Phase-counting estimates elapsed interval far better
+                                              than best constant guess (MAE 1.70 vs 47.25). Genuine internal clock.
+QT8  retrocausal / precognition    CONFIRMED  -> closed-negative (honest paranormal). Precog accuracy
+                                              0.4991 [0.4882,0.5100], chance=0.5 — NO future channel, as it MUST.
+QT9  time-cell / sequence-order    REFUTED    -> HOLDS. Leaky-trace state recovers presentation ORDER perfectly
+                                              (acc 1.0) vs a temporally-destroyed shuffle-NULL at chance (0.165
+                                              ~ 1/6 for 6 items). Recurrent state genuinely encodes order.
+QT10 specious-present window       CONFIRMED  -> closed-negative. Matched-filter SNR vs integration window tau
+                                              shows NO clean unimodal interior optimum (0/3 seeds); the curve is
+                                              aliasing-jagged (peak@tau=2, secondary lobe at tau=16, period=20).
+                                              The toy does NOT cleanly demonstrate an optimal finite present.
+                                              (Links H_213 specious-present, which also stayed an analogy/proxy.)
+QT11 pacemaker vs oscillator       REFUTED    -> HOLDS (for pacemaker). Pacemaker-accumulator reproduces the
+                                              SCALAR PROPERTY (Weber's law, constant CV ~0.10 across 50..800)
+                                              far better than the oscillator (CV falls 0.034->0.008, var 4.7x
+                                              larger). Multiplicative-rate-noise accumulator wins the empirical
+                                              interval-timing signature.
+
+BOTTOM LINE (brutally honest, a_paper_negative_ok):
+  REAL EMERGENT (toy HOLDS, mechanistic — NOT a quantum/paranormal claim):
+    QT4 Zeno freezing, QT5 complex-amp interference, QT6 arousal time-dilation, QT7 phase-clock,
+    QT9 time-cell order, QT11 pacemaker scalar property. QT3 holds ONLY as a non-separable-distribution
+    modelling construct (NOT physical entanglement — flagged).
+  PARANORMAL / WARM-WET-IMPOSSIBLE — CORRECTLY REFUTED (closed-negative, the expected valid outcome):
+    QT1 Orch-OR warm microtubule coherence (decoheres ~1e9x too fast),
+    QT2 QRNG-as-special-noise (no measurable emergence difference vs pseudo),
+    QT8 retrocausal/precognition (no future channel),
+    QT10 specious-present optimal window (no clean optimum in this toy proxy).
