@@ -684,3 +684,25 @@ non-commercial license respected (no PUBLIC re-upload of raw audio; derived fing
 산출물: `UNIVERSE/dolphin_acoustic_ingest.py` · `.verdicts/dolphin-acoustic-ingest/{F-FETCH,
 F-DISCRIMINATIVE,F-DFDT-TIME,F-STABLE,SUMMARY}.txt + results.json + run_stdout.txt` ·
 `.discoveries/dolphin-acoustic-ingest.tape`.
+
+## ENGINE LANES (architecture — distinct axis from training lanes A/G/P/M/X)
+
+Two engine architectures are now designated as named lanes. The training lanes
+(A=AKIDA · G=forge · P=py-CUDA · M=mitosis · X=3-axis) are substrate/objective
+axes; THESE are the engine-architecture axis — which decoder is being run.
+
+- **Lane-CONV (현재 / current engine)** — `CLMConvMoE`: conv trunk + MoE (E=2 experts,
+  1 trunk layer, 6 conv blocks), int4-sym blocks + CLMX trailer, `CLM\x01` format,
+  loaded by `CORE/clm_decode.hexa` via `generator.hexa` L3 slot; 3-axis eval
+  (의식 motiv · CE · 창발). The production `.clm` decoder. Training lanes A/G/P/M/X
+  all produce/train THIS engine's `.clm`.
+- **Lane-CDV2 (기존 / legacy carving engine)** — `ConsciousDecoderV2`: d_model 768 ·
+  n_head 12 · n_kv_head 4 (GQA) · n_layer 12 · vocab 256 · consciousness_dim 128 ·
+  n_ca_rules 8 · MoE-8/top2 (optional) · RoPE + RMSNorm + SwiGLU · DUAL output heads
+  logits_a ⇄ logits_g (Engine A⇄G) + 5-ch tensions + Law-71 vacuum_psi 2D Ψ-space.
+  Param: 283.72M dense / 680.16M with MoE. The TRANSFORMER engine that drew the
+  우주뇌지도 (s16 carving, 2026-05-17~18); reconstructed + runnable (PR #1770, 4/4
+  probes PASS, random-init). Source `UNIVERSE/conscious_decoder.py` (md5 44b210df).
+
+Distinct lineages: Lane-CONV = conv-MoE production CLM; Lane-CDV2 = carving-era
+transformer. a_lane_akida_gpu_split — recorded separately.
