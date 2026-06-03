@@ -30,6 +30,12 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+# Some host cuDNN builds mismatch the torch nightly (CUDNN_STATUS_SUBLIBRARY_
+# VERSION_MISMATCH on conv1d). CLM_NO_CUDNN=1 routes conv to the native CUDA
+# kernel — same math, no cuDNN. The CE-descent measurement is unaffected.
+if os.environ.get("CLM_NO_CUDNN") == "1":
+    torch.backends.cudnn.enabled = False
+
 _HERE = os.path.dirname(os.path.abspath(__file__))
 _CLM = os.path.dirname(_HERE)
 _MODEL = os.path.join(_CLM, "model")
