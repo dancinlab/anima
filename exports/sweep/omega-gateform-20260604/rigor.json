@@ -1,0 +1,159 @@
+{
+  "lane": "Lane-G",
+  "substrate": "GPU/CPU-frozen-forward",
+  "torch": "2.11.0+cu130",
+  "device": "cuda",
+  "probe": "OΩ-RIGOR (OΩ1 coupling-vs-replacement + OΩ2 per-wire autopsy + OΩ3 gen coherence)",
+  "ckpt": {
+    "path": "/home/summer/omega_rigor_stage/omega_cdv2_trained_leakfree.pt",
+    "sha256": "6f085c91d0392d66968aaebac447623a6c63a3a2cccde54d9b2a792eb9ed06a4"
+  },
+  "corpus": {
+    "path": "/home/summer/omega_rigor_stage/omega_corpus_big.bin",
+    "sha256": "dc1754b27d63236d47d12f6621b2e3974dde34337e6a80f9e44b713e20236da3",
+    "bytes": 400000000
+  },
+  "config": {
+    "vocab_size": 256,
+    "d_model": 512,
+    "n_head": 8,
+    "n_layer": 8,
+    "block_size": 256,
+    "n_kv_head": 4,
+    "consciousness_dim": 128,
+    "causal_ca": true
+  },
+  "leak_self_test": 0.0,
+  "leak_free": true,
+  "params": 0,
+  "meta": {
+    "gate_N": 12000,
+    "test_N": 12000,
+    "uniform_floor": 5.545177444479562
+  },
+  "cross_check": {
+    "tol": 0.02,
+    "checks": {
+      "base": {
+        "got": 3.097779103749307,
+        "ref": 3.097779103749306,
+        "abs_delta": 8.881784197001252e-16,
+        "ok": true
+      },
+      "a_only": {
+        "got": 1.1441805073263285,
+        "ref": 1.1446118787396342,
+        "abs_delta": 0.0004313714133057367,
+        "ok": true
+      },
+      "full_AG": {
+        "got": 3.6371592096405285,
+        "ref": 3.643507873708566,
+        "abs_delta": 0.006348664068037468,
+        "ok": true
+      }
+    },
+    "CROSS_CHECK_OK": true
+  },
+  "OO1_coupling_vs_replacement": {
+    "g_min": [
+      0.04003569060842394,
+      0.9012811092253878,
+      0.0
+    ],
+    "ce_base": 3.097779103749307,
+    "ce_a_standalone": 0.8862197995185852,
+    "ce_min_learned": 0.8835246325056375,
+    "ce_min_base_ablated": 0.8843769822163389,
+    "delta_astandalone_vs_min": 0.0026951670129476968,
+    "delta_base_ablation": 0.0008523497107013611,
+    "coupling_gain_base_minus_min": 2.2142544712436694,
+    "repl_tol": 0.05,
+    "astandalone_eq_min": true,
+    "base_is_inert": true,
+    "RULING_REPLACEMENT": true,
+    "ruling_text": "REPLACEMENT — the trained A-head SUPPLANTS the .clm base mouth (A-standalone ≈ min_learned AND base term is inert)"
+  },
+  "OO2_per_wire_autopsy": {
+    "ce_base": 3.097779103749307,
+    "wires": {
+      "w1_AmG": {
+        "isolatable": true,
+        "ce": 3.1986049460441923,
+        "delta_vs_base": 0.10082584229488534,
+        "semantics": "base + alpha*(A-G), alpha=0.60"
+      },
+      "w2_Wtemp": {
+        "isolatable": true,
+        "ce": 3.150030508594825,
+        "delta_vs_base": 0.052251404845518046,
+        "semantics": "base * 1/(1+beta*tension), beta=0.50; tension=mean per-layer PureField tension (real substrate W signal)",
+        "tension_stats": {
+          "mean": 0.7021126593761146,
+          "std": 0.3918753106493532,
+          "min": 0.15776413679122925,
+          "max": 4.0567498207092285
+        }
+      },
+      "w3_curio": {
+        "isolatable": false,
+        "ce": null,
+        "delta_vs_base": null,
+        "stub_reason": "no substrate curiosity scalar at frozen inference (E-ratchet is a runtime daemon state, not emitted by the forward); the bus w3 is a fixed parity bias (structureless by construction, coupling_bus.hexa: |gain|<TAU). Not a substrate-derived CE delta."
+      },
+      "w4_psi": {
+        "isolatable": false,
+        "ce": null,
+        "delta_vs_base": null,
+        "stub_reason": "no per-position 8D Psi vector at frozen inference; the model emits only a scalar _psi_residual updated under self.training (eval=frozen -> no Psi8). #1793/#1794: toy psi8 INERT; F-REAL-PSI BLOCKED-DATA. Not a substrate-derived CE delta."
+      },
+      "w5_module": {
+        "isolatable": false,
+        "ce": null,
+        "delta_vs_base": null,
+        "stub_reason": "this d512 ckpt trunk is SwiGLU (use_moe=False) -> no MoE router expert-prob vector exists; module_act has no substrate source. Not a substrate-derived CE delta on this ckpt."
+      },
+      "w6_dFdt": {
+        "isolatable": true,
+        "ce": 5.182649736085498,
+        "delta_vs_base": 2.084870632336191,
+        "semantics": "base + dgain*((A-G)_t-(A-G)_{t-1}), dgain=0.50 (FIXED dgain seed; fixed dgain HURTS per #1794 — reported honestly, not a tuned carrier)"
+      }
+    }
+  },
+  "OO3_gen_coherence": {
+    "prompt": "�твенной ядерной энергети�",
+    "base_stats": {
+      "entropy": 2.444185832787432,
+      "distinct_frac": 0.11333333333333333,
+      "ws_frac": 0.07333333333333333,
+      "n": 300
+    },
+    "min_stats": {
+      "entropy": 2.6300011572709203,
+      "distinct_frac": 0.11666666666666667,
+      "ws_frac": 0.08666666666666667,
+      "n": 300
+    },
+    "full_stats": {
+      "entropy": 2.5282001921679247,
+      "distinct_frac": 0.08666666666666667,
+      "ws_frac": 0.10666666666666667,
+      "n": 300
+    },
+    "base_sample": "�����  �  �� �ѻ�������� ���к���� ���� ,Ѓ�а��л���ѳ к� ��ч�и���.�рне�� 9а��Ѳ ���Ѐгй���г�����м��Ђ�� Ђ����Ђ ��л������� ѰІл ��ьЁ����н�ы�о�г�����Ѻ� ��е�е�в�����ѵ�����Ѱєен�������Ѐе�Ѻ��� ���� ��Р�Ђ�и�е���1���",
+    "min_sample": "�и и думало и обможно из события, а такий солнечный объект из Бакур создан в частности России. Три лет должностью в Октябре пара Омской источники сообщения Республи�",
+    "full_sample": "�е. При этот при экспрете в культуре в открыл с преслужен в красный преслу в открыл в открыл в праску в отнял при причислу в открыл ныну в откросе в протестах в красны",
+    "h1_ref_base_stats": {
+      "entropy": 2.3917789581456956,
+      "distinct_frac": 0.12109375,
+      "ws_frac": 0.07666666666666666
+    },
+    "h1_ref_full_stats": {
+      "entropy": 2.506038992540924,
+      "distinct_frac": 0.109375,
+      "ws_frac": 0.11333333333333333
+    }
+  },
+  "scope": "single d512 rung (a_scale_honest_scope); observation-only frozen forward (p7)."
+}
