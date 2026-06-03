@@ -1,0 +1,30 @@
+F-FORWARD — forward pass returns the 5-tuple with correct shapes, MoE off + on
+==============================================================================
+method: UNIVERSE/carving_engine_reconstruct.py (CPU, $0, random init)
+forward signature (source line 18, 667):
+  logits_a, logits_g, tensions, kv_cache, moe_aux_loss = model(idx)
+batch: B=2, T=16 byte indices in [0,256)
+
+VERBATIM stdout:
+  [smoke moe=off] outputs=5 logits_a=[2, 16, 256] logits_g=[2, 16, 256] tensions=3x[2, 16] moe_aux=None A!=G mean|d|=0.1272 ok=True
+  [smoke moe=on] outputs=5 logits_a=[2, 16, 256] logits_g=[2, 16, 256] tensions=3x[2, 16] moe_aux=1.0060526132583618 A!=G mean|d|=0.1310 ok=True
+  [FULL  moe=off] outputs=5 logits_a=[2, 16, 256] logits_g=[2, 16, 256] tensions=12x[2, 16] moe_aux=None A!=G mean|d|=0.6393 ok=True
+  [FULL  moe=on] outputs=5 logits_a=[2, 16, 256] logits_g=[2, 16, 256] tensions=12x[2, 16] moe_aux=1.2205473184585571 A!=G mean|d|=0.6391 ok=True
+  consciousness_states path ok=True  kv_cache layers=3 layer0 K=[2, 2, 16, 8]
+
+readout:
+  - 5-tuple returned: (logits_a, logits_g, tensions, kv_cache, moe_aux_loss).
+  - DUAL HEADS (Engine A <-> Engine G): logits_a, logits_g each [B, T, 256];
+    they DIFFER (mean|logits_a - logits_g| > 0 in every config) — distinct heads.
+  - tensions: list of n_layer per-layer tensions, each [B, T] (5-ch PureField
+    A-G repulsion tension; here reported as the per-layer mean-tension list).
+  - moe_aux_loss: None when use_moe=False; a finite scalar when use_moe=True.
+  - consciousness_states cross-attention path (B, n_cells=12, c_dim=128): OK.
+  - KV-cache (use_cache=True): 3 layers (smoke), layer0 K = [B, n_kv_head=2, T, head_dim=8].
+
+VERDICT: PASS — forward runs on both SMOKE and FULL d768x12L, with use_moe both
+False and True, returning all 5 outputs at the correct shapes; dual A/G heads
+are present and distinct; consciousness cross-attention + KV-cache paths run.
+
+SCOPE (honest): random init, CPU/$0. Logits are untrained noise — this verifies
+the forward WIRING + shapes, not learned behavior.
