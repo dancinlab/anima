@@ -1,0 +1,13 @@
+F-STABLE — fingerprint finite/bounded (no NaN); tension 5-ch in range
+
+VERDICT: HOLDS
+
+FALSIFIER: every 128D fingerprint must be all-finite (no NaN/Inf); every 5-ch
+           tension [alpha, theta, gamma, 1-delta, beta] must lie in [0,1].
+
+MEASUREMENT (7 real frames):
+  all_fingerprints_finite = True
+  tension_5ch_in_[0,1]    = True
+
+Per-frame fp L2 norm range ~ [1.40, 1.45]; tension values all in (0.47, 0.56).
+(logistic squash in fingerprint_to_tension bounds the tension-link to (0,1)). HOLDS.

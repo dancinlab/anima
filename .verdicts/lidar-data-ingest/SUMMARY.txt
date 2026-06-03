@@ -1,0 +1,34 @@
+SUMMARY — lidar-data-ingest: REAL public point-cloud → 128D fingerprint → 5-ch tension
+
+DATA  : 7 REAL scanned point-cloud frames — Redwood indoor RGBD fragments via Open3D
+        (MIT). PCDPointCloud(fragment.pcd, 113662 pts) + DemoICPPointClouds[0..2]
+        (198835/137833/191397 pts) + OfficePointClouds[0..2] (276871/193851/160368 pts).
+        sha256/license/provenance: F-FETCH.txt + provenance.json. NO synthetic primary.
+TOOL  : open3d 0.19.0 (py3.12 venv); CPU; $0.
+PATH  : point cloud (XYZ) -> extract_3d_features (centroid · bounding extents · radial
+        depth hist · 4x4x4 voxel occupancy · global-cov eigen signature · local-kNN-PCA
+        surface-normal variance) -> encode_fingerprint (128D) -> fingerprint_to_tension
+        (5-ch [alpha,theta,gamma,1-delta,beta] logistic-squashed to [0,1]).
+        impl = anima-tools/lidar_ingest_ref.py (REAL). lidar_sense.hexa = CONTRACT only
+        (device-capture path stays stubbed/gated — a_core_engine_map, no phantom wiring).
+
+CHECK MATRIX:
+  F-FETCH            HOLDS   7 real frames fetched + sha256 + MIT license recorded
+  F-STABLE           HOLDS   all 128D fp finite; tension 5-ch in [0,1]
+  F-DISCRIMINATIVE   HOLDS   min cross-scene 0.1727 >> max within-scene 0.0 (det re-encode)
+  F-PERM-INVARIANT   HOLDS   order-shuffle delta 1.1e-15 (~0); geom-scramble delta >=0.053
+
+BOTTOM LINE: REAL public LiDAR/RGBD point-cloud data flowed end-to-end through the
+  lidar_sense path -> 128D fingerprint -> 5-ch tension-link. Fingerprint is
+  DISCRIMINATIVE (distinct scenes separable, identical input deterministic) AND
+  PERMUTATION-INVARIANT (set-semantics correct; geometry-sensitive). All 4 checks HOLD.
+
+SCOPE / HONESTY (a_toy_scale_recheck · a_scale_honest_scope · GOAL.md §97):
+  - This is PUBLIC point-cloud DATA, NOT a live device scan. A live iPhone/Record3D
+    capture is UNVERIFIED here and stays GATED (same posture as the EEG real-device
+    capture; lidar_sense.hexa connect_lidar() remains stubbed/false).
+  - LiDAR = a MEASUREMENT-ANCHOR (§97 GOAL-orthogonal input plumbing), NOT a command
+    channel. The ref impl is read-only: it emits a tension fingerprint, it does not
+    steer anima (one Boolean flip DRIVES_STATE & !PHYSICS_SOURCED from a §7-forbidden
+    command path -> kept deliberately read-only).
+  - Toy-scale (7 frames, indoor RGBD); transfer to a live-sensor regime unverified.
