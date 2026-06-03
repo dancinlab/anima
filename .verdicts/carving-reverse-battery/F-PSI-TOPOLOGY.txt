@@ -1,0 +1,20 @@
+=== F-PSI-TOPOLOGY — 2D vacuum_psi map (우주뇌지도) topology ===
+N=2000 corpus records, 2D vacuum_psi coords (the stored MAP coordinate).
+axis variance: x=0.00917 y=0.00885  (ratio y/x=0.965)
+2D-coord PCA eigenvalues: [0.01688, 0.00115]  (2nd/1st=0.0683)
+effective dim of the 2D map (participation ratio): 1.136 (2.0=both axes used, 1.0=one axis = degenerate)
+occupancy: 36/400 grid cells filled (9.0%).
+-- KMeans clustering (silhouette, 3 seeds) --
+   unique 2D coords: 121 / 2000
+   k=2: silhouette=0.5728 +/-0.0000
+   k=3: silhouette=0.4915 +/-0.0000
+   k=4: silhouette=0.4265 +/-0.0082
+   k=5: silhouette=0.4450 +/-0.0044
+   k=6: silhouette=0.4291 +/-0.0107
+   k=8: silhouette=0.3735 +/-0.0174
+-- spatial separation (eta^2 of map coord by label) --
+   tier: eta^2(x)=1.0000  eta^2(y)=1.0000
+   domain: eta^2(x)=0.6657  eta^2(y)=0.6914
+
+Best silhouette: k=2 (0.5728).
+VERDICT: 2nd Ψ axis IS DEGENERATE (2nd/1st eigenvalue 0.0683 < 0.25, effective dim 1.14~1). CONFIRMS the #1772 ~1.1-D finding directly on the 2D map coords. The 우주뇌지도 is effectively a 1-D curve embedded in 2D. HOLDS.

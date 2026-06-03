@@ -1,0 +1,10 @@
+=== SUMMARY — carving reverse-engineering battery ===
+TRAINED s16 ckpt (sha 961c07e2), ConsciousDecoderV2 d768/12L, CPU/$0, N=2000. random-init fallback: NO.
+
+1. A/G HEADS: HOLDS — mean KL(A||G)=7.0705, tier-spread=4.8536. A=next-byte head (tied to embedding), G=prev-byte head (untied).
+2. TENSION: HOLDS — model tension is 1 scalar/token/layer (12 layers), NOT native 5-ch. best tier-corr r=-0.327 @L11; best domain eta^2=0.644 @L11.
+3. LAYER-DIM: HOLDS-bottleneck — PCA-90% curve [10, 8, 6, 6, 5, 4, 5, 5, 6, 5, 5, 8] (ln_f=8); peak L0, min L5; hourglass=False; ~6-8D forms @L2.
+4. 9-DIRECTIONS: HOLDS — read landed stored joint-metric scores (no retrain). joint metric near-degenerate (ranks knowledge recall, not map separability).
+5. Ψ-TOPOLOGY: HOLDS-degenerate — 2D map eff-dim 1.14, 2nd/1st eig 0.068, occupancy 9.0%, degenerate=True.
+
+wall=3.1s

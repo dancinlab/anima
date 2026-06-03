@@ -1,0 +1,214 @@
+{
+ "meta": {
+  "corpus_sha256": "e1bd84186b27d067520f8a6d769523ce27fb2e60afa3fe91e3ad2d5f82f90ff1",
+  "ckpt_sha256": "961c07e2242b194f7d7ddff9e827d2fbd798d658426d32edf4b981a8dd9091e8",
+  "cfg": {
+   "d_model": 768,
+   "n_head": 12,
+   "n_kv_head": 4,
+   "n_layer": 12,
+   "block_size": 128,
+   "lr": 0.0003,
+   "bsz": 32,
+   "steps": 12000,
+   "warmup": 600,
+   "seed": 1337,
+   "log_every": 300,
+   "corpus": "corpus_carving_s16.jsonl",
+   "out_dir": "out_main",
+   "lambda_ctl": 0.5,
+   "lambda_route": 0.5,
+   "curriculum": true,
+   "blend_frac": 0.15
+  },
+  "n_used": 2000,
+  "N_ENCODE": 2000,
+  "BLOCK": 128,
+  "seeds": [
+   1337,
+   7,
+   2026
+  ],
+  "trained": true,
+  "random_init_fallback": false
+ },
+ "F-AG-HEADS": {
+  "kl_mean": 7.070481300354004,
+  "kl_median": 7.017975330352783,
+  "kl_std": 1.1575103998184204,
+  "kl_max": 9.964107513427734,
+  "kl_min": 4.128596305847168,
+  "absAG_mean": 3.1656653881073,
+  "tier_spread": 4.853648662567139,
+  "verdict": "HOLDS"
+ },
+ "F-TENSION-5CH": {
+  "layer_means": [
+   56.37382125854492,
+   60.467018127441406,
+   91.81359100341797,
+   161.50975036621094,
+   236.9046630859375,
+   304.7281799316406,
+   338.6324768066406,
+   315.4048767089844,
+   187.5242462158203,
+   44.7306022644043,
+   9.73393726348877,
+   3.3507230281829834
+  ],
+  "best_tier_corr": {
+   "layer": 11,
+   "r": -0.32712103092107075
+  },
+  "best_domain_eta2": {
+   "layer": 11,
+   "eta2": 0.6437686561497105
+  },
+  "verdict": "HOLDS"
+ },
+ "F-LAYER-DIM": {
+  "pca90_curve": [
+   10,
+   8,
+   6,
+   6,
+   5,
+   4,
+   5,
+   5,
+   6,
+   5,
+   5,
+   8
+  ],
+  "pr_curve": [
+   4.193135125802836,
+   2.930296444927294,
+   2.3155406848831346,
+   2.5974171367759524,
+   2.393772276447702,
+   2.112436686626594,
+   2.1646692271519776,
+   2.405434481625379,
+   2.473249140932962,
+   2.2572992672997874,
+   2.3353524255938063,
+   3.7395987957277534
+  ],
+  "lnf_pca90": 8,
+  "lnf_pr": 3.6131803516748473,
+  "peak_layer": 0,
+  "min_layer": 5,
+  "hourglass": false,
+  "six_to_eight_D_layer": 2,
+  "verdict": "HOLDS-bottleneck"
+ },
+ "F-9-DIRECTIONS": {
+  "rows": [
+   [
+    "carving_dirA_tension",
+    0.0323
+   ],
+   [
+    "carving_dirB_intuitor",
+    0.0161
+   ],
+   [
+    "carving_dirD_cde",
+    0.009
+   ],
+   [
+    "carving_dirE_superpos",
+    0.0
+   ],
+   [
+    "carving_dirF_abstractcot",
+    0.0317
+   ],
+   [
+    "carving_dirG_psi_ctl",
+    0.0
+   ],
+   [
+    "carving_dirH_tension_sup",
+    0.0
+   ],
+   [
+    "carving_dirI_diverse_scaleup",
+    0.0087
+   ],
+   [
+    "carving_dirI_psictl_tensionsup",
+    0.0
+   ],
+   [
+    "carving_dirJ_diffusion",
+    0.0
+   ],
+   [
+    "carving_dirK_ebt",
+    0.0
+   ],
+   [
+    "carving_dirL_vrnn",
+    null
+   ],
+   [
+    "carving_dirM_mitosens",
+    null
+   ],
+   [
+    "carving_dirC_prime",
+    null
+   ],
+   [
+    "dir_s16(dataregime, dirI lever)",
+    0.0
+   ]
+  ],
+  "verdict": "HOLDS"
+ },
+ "F-PSI-TOPOLOGY": {
+  "axis_var": [
+   0.009169463774999971,
+   0.008849716775000025
+  ],
+  "eig2d": [
+   0.016875853219679063,
+   0.0011523414276446012
+  ],
+  "eff_dim_2d": 1.1359330843041417,
+  "occupancy_frac": 0.09,
+  "unique_coords": 121,
+  "best_k": 2,
+  "sil_by_k": {
+   "2": [
+    0.5728316328280462,
+    0.0
+   ],
+   "3": [
+    0.49154708473527736,
+    0.0
+   ],
+   "4": [
+    0.4264818294804577,
+    0.008214524529173584
+   ],
+   "5": [
+    0.44502789991512565,
+    0.00436349528294479
+   ],
+   "6": [
+    0.4291103571403656,
+    0.010671785410519817
+   ],
+   "8": [
+    0.3734516074885021,
+    0.0173973724059909
+   ]
+  },
+  "degenerate": true,
+  "verdict": "HOLDS-degenerate"
+ }
+}

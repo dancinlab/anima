@@ -1,0 +1,44 @@
+=== F-TENSION-5CH — per-layer tension scalars ===
+HONEST: the model emits ONE scalar tension per token per layer (PureFieldFFN (A-G)^2 mean over d_model). There is NO native 5-channel [α,θ,γ,1-δ,β] tension in the forward output — that 5-ch format is the .kosmos PERSISTENCE payload, not a model output. We probe the 12 per-layer tension SCALARS as the available 'channels'.
+N=2000, layers=12.
+per-layer tension mean (+/-std):
+   L00: mean=56.37382 std=3.89524
+   L01: mean=60.46702 std=3.79642
+   L02: mean=91.81359 std=6.16439
+   L03: mean=161.50975 std=8.41714
+   L04: mean=236.90466 std=7.90335
+   L05: mean=304.72818 std=16.93926
+   L06: mean=338.63248 std=14.02004
+   L07: mean=315.40488 std=6.58266
+   L08: mean=187.52425 std=7.92043
+   L09: mean=44.73060 std=1.34676
+   L10: mean=9.73394 std=0.61244
+   L11: mean=3.35072 std=0.38059
+-- corr(layer-tension, tier) (Pearson) --
+   L00: r=-0.0202
+   L01: r=+0.0509
+   L02: r=-0.0779
+   L03: r=+0.1900
+   L04: r=+0.0928
+   L05: r=-0.0188
+   L06: r=-0.1028
+   L07: r=+0.2539
+   L08: r=+0.1130
+   L09: r=+0.1205
+   L10: r=+0.0070
+   L11: r=-0.3271
+-- domain separation per layer (eta^2 = between/total var) --
+   L00: eta^2=0.1391
+   L01: eta^2=0.1892
+   L02: eta^2=0.1278
+   L03: eta^2=0.2751
+   L04: eta^2=0.2134
+   L05: eta^2=0.0515
+   L06: eta^2=0.1016
+   L07: eta^2=0.3179
+   L08: eta^2=0.1043
+   L09: eta^2=0.2181
+   L10: eta^2=0.1655
+   L11: eta^2=0.6438
+
+VERDICT: layer L11 tracks tier (r=-0.3271); layer L11 separates domains (eta^2=0.6438) — a per-layer tension scalar has a CLEAN role. HOLDS (partial).
