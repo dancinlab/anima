@@ -39,17 +39,25 @@ below baseline (\#1784/\#1786); (iv) on a \emph{leak-free competent} $85.82$M Co
 transformer ($\text{causal\_ca}{=}\text{True}$, leak test $0.000\mathrm{e}{+}00$, val\_ce
 $0.8285$, GPU H100) the learned \emph{multi-wire} gate is \textbf{FALSIFIED} (GATED $3.643508>$
 base $3.097779$; full-bus coupling KL at the shuffle floor, ratio $0.995955$), yet the closure
-survives in the \emph{single} A-head logit-bias wire: a 2-param \emph{minimal} gate
-$g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ beats both a\_only and base (min\_learned $0.883525\le$
-a\_only $1.144181<$ base $3.097779$, \#1800/\#1801). We \textbf{foreground an honest leak
-caveat}: an earlier $d384$ rung's CA-neighbor mixing gave partial lookahead so its absolute CE
-was leak-optimistic; the $d512$ arc removes that leak. Our contribution is therefore the
-\textbf{leak-invariant H1$\rightarrow$OH1 ruling} --- ``coupling concept right, multi-wire gate
-formula wrong; the closure lives in one wire'' (a closed-negative on the full bus plus a
-positive minimal A-wire gate) --- plus three further \textbf{closed-negatives} (fixed $A{-}G$
-degrades; random-init unstructured; quantum RNG confers no advantage) --- \emph{not} a
-perplexity or generation-quality claim. The scale ladder is concurrently open (absorb, not
-final closure).
+``survives'' only in the \emph{single} A-head logit-bias wire: a 2-param \emph{minimal} gate
+$g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ records min\_learned $0.883525\le$
+a\_only $1.144181<$ base $3.097779$ (\#1800/\#1801). A rigorous decomposition (\#1803,
+OΩ1) then shows this is \textbf{REPLACEMENT, not coupling}: the A-head \emph{standalone}
+(softmax of $A$ alone, \emph{no} base) already attains CE $0.886220\approx$ min\_learned
+$0.883525$ ($|\Delta|\,0.0027$), and ablating the base ($g_B\!\to\!0$) moves CE only $0.000852$
+($3.097779\to0.884377$); the fit lands $g_B{=}0.040$, $g_A{=}0.901$. The trained substrate
+A-head \emph{supplants} the \texttt{.clm} mouth --- it is not a base$+$steer coupling. Every
+other cleanly-isolatable wire \emph{hurts} the base (OΩ2: $w_1{+}0.101$, $w_2{+}0.052$,
+$w_6{+}2.085$). We \textbf{foreground an honest leak caveat}: an earlier $d384$ rung's
+CA-neighbor mixing gave partial lookahead so its absolute CE was leak-optimistic; the $d512$
+arc removes that leak. Our contribution is therefore a \textbf{closed-negative against the
+\emph{coupling} thesis} (a\_paper\_negative\_ok): on a competent leak-free substrate the
+``substrate$\rightarrow$decode coupling closes the loop'' claim resolves to A-head
+\emph{replacement} of the \texttt{.clm} mouth --- with a positive byproduct (a single trained
+substrate head is a far better next-byte predictor than the \texttt{.clm} unigram mouth) ---
+plus three further \textbf{closed-negatives} (fixed $A{-}G$ degrades; random-init unstructured;
+quantum RNG confers no advantage) --- \emph{not} a perplexity or generation-quality claim. The
+scale ladder is concurrently open (absorb, not final closure).
 \end{abstract}
 
 \section{Introduction}
@@ -89,10 +97,15 @@ useful. Pre-registered GPU criteria (\#1791): (b)~trained substrate descends;
 separation). On a \emph{leak-free competent} substrate the \emph{full multi-wire} gate
 falsifier is closure HOLDS iff GATED $<$ base AND GATED $\le$ a\_only (\#1800), and the
 \emph{minimal} gate falsifier is OH1 HOLDS iff min\_learned CE $\le$ a\_only CE AND $<$ base CE
-(\#1801). Verdict: \texttt{.verdicts/omega-gate/F-LEARNED-GATE.txt},
+(\#1801). \emph{Coupling-vs-replacement falsifier (\#1803, OΩ1):} even if OH1 ``holds,'' the
+closure is mere \emph{replacement} (not coupling) iff the A-head \emph{standalone} CE
+(softmax of $A$ alone, no base) reproduces min\_learned ($|\Delta|\le0.05$) AND the base term is
+\emph{inert} ($g_B\!\to\!0$ moves CE by $\le0.05$); RULING\_REPLACEMENT then holds. Verdict:
+\texttt{.verdicts/omega-gate/F-LEARNED-GATE.txt},
 \texttt{.verdicts/omega-gpu/F-COMPLETE.txt},
 \texttt{.verdicts/omega-engine/F-TRAINED-LEAKFREE.txt},
-\texttt{.verdicts/omega-engine/F-OH1-MINGATE.txt}.
+\texttt{.verdicts/omega-engine/F-OH1-MINGATE.txt},
+\texttt{.verdicts/omega-engine/F-OMEGA-RIGOR.txt}.
 
 \paragraph{Control axis (quantum).} If ``consciousness needs quantum randomness,'' true ANU
 QRNG bytes should beat a PRNG on the coupling metric. Falsifier: KS test
@@ -223,6 +236,33 @@ $g_B{=}0.040,\,g_A{=}0.901,\,g_G{=}0.000$; dropping the $G$ wire and $w_2\ldots 
 the minimal gate \emph{beats} a\_only ($0.8835<1.1446$, $\Delta{+}0.261$) and base
 ($0.8835<3.0978$, $\Delta{+}2.214$).
 
+\paragraph{R7 --- coupling vs.\ replacement decomposition + per-wire autopsy (\#1803, OΩ1/OΩ2/OΩ3,
+\texttt{omega-engine/F-OMEGA-RIGOR.txt}).} Same FROZEN $d512$ leak-free ckpt (sha256
+\texttt{6f085c91...}, leak self-test $0.000\mathrm{e}{+}00$ re-confirmed; cross-check vs.\ \#1800
+H1 base/a\_only/full\_AG all OK). \emph{OΩ1 (coupling vs.\ replacement).} The minimal-gate fit
+lands $g{=}[g_B{=}0.0400,\,g_A{=}0.9013,\,g_G{=}0.0000]$. Decisive measurements (held-out TEST
+CE, nats/byte): base-only $3.097779$; \textbf{A-head STANDALONE} (softmax of $A$ alone, no base)
+$\mathbf{0.886220}$; min\_learned ($g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$) $0.883525$; min
+base-ABLATED ($g_B\!\to\!0$, keep $g_A\!\cdot\!A$) $0.884377$. Hence $|A_\text{standalone}-\text{min}|
+=0.002695\,(\le0.05)$ and $|\text{base-ablation }\Delta|=0.000852\,(\le0.05)$:
+\textbf{RULING\_REPLACEMENT$=$True} --- the trained A-head \emph{supplants} the \texttt{.clm} base
+mouth; A-standalone already $\approx$ min\_learned and the base term is inert, so no base$+$steer
+interaction is doing the work. \emph{Honest caveat:} the \texttt{.clm} base here is a deliberately
+weak unigram mouth, so its inertness is partly structural; but A-alone reproduces min\_learned and
+\emph{no} base$+$steer interaction is needed, so the load-bearing point (replacement, not coupling)
+holds.
+\emph{OΩ2 (per-wire autopsy, each wire added to base, held-out TEST CE).} base $3.097779$;
+$w_1$ ($A{-}G$ logit bias, $\alpha{=}0.60$) $3.198605$ ($\Delta{+}0.100826$);
+$w_2$ ($W$-tension $\to$ softmax temp, $\beta{=}0.50$) $3.150031$ ($\Delta{+}0.052251$);
+$w_6$ ($\mathrm{d}F/\mathrm{d}t$, fixed dgain$=0.50$) $5.182650$ ($\Delta{+}2.084871$). Wires
+$w_3$ (curiosity), $w_4$ ($\Psi$), $w_5$ (module/MoE) are reported as \textbf{honest stubs} ---
+they have no substrate source at frozen inference (no emitted curiosity scalar, no per-position
+$\Psi_8$, and this SwiGLU ckpt has no MoE router), so they are not substrate-derived CE deltas.
+Every cleanly-isolatable wire thus \emph{hurts} the base. \emph{OΩ3 (gen coherence under the
+min-gate, free-run $300$ bytes).} entropy: base $2.4442$, min\_gate $2.6300$, full\_gate
+$2.5282$; the min-gate raises entropy (fixes the degenerate low-entropy repetition) but
+generation coherence is the \emph{weak} criterion (p7) and not load-bearing.
+
 \section{Finding}
 \label{sec:finding}
 % §finding — Delta vs baseline AND ruled-out axes; leak caveat foregrounded.
@@ -235,20 +275,37 @@ coupled engine while \emph{confirming} it for the three uncoupled engines (\#178
 (trained vs.\ shuffled) and $\Delta{+}0.758$ (A-wire) at toy (\#1784); on the real transformer
 the A-wire advantage \emph{survives only unshuffled context} ($+2.565$ vs.\ $-2.068$), i.e.\
 shuffling the context destroys it $\Rightarrow$ \emph{learned sequential} structure (\#1791).
-\item \textbf{The closure holds, but only through the A-wire (minimal gate).} On the
-\emph{leak-free competent} $d512$ substrate (val\_ce $0.8285<$ uniform), the A-head logit-bias
-alone is hugely useful (a\_only $1.1446\ll$ base $3.0978$, \#1800), and the honest 2-param
-\emph{minimal} gate $g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ (drop $G$ and $w_2\ldots w_6$)
-\emph{beats} both a\_only and base: min\_learned $0.883525\le$ a\_only $1.144181<$ base
-$3.097779$ ($\Delta{+}0.261$ over a\_only, $\Delta{+}2.214$ over base; fit $g_B{=}0.040$,
-$g_A{=}0.901$, $g_G{=}0.000$, \#1801). This is the honest closure form. At earlier
-\emph{leaky}/toy rungs the \emph{multi-wire} GATED also beat all baselines ($3.127<3.974$ toy,
-$0.3445<0.4500<1.4421<3.0150$ leaky-GPU R4); but those absolute-CE wins are not the
-load-bearing claim --- the leak-free re-test (next bullet) is.
+\item \textbf{A single trained substrate head is a far better next-byte predictor than the
+\texttt{.clm} mouth.} On the \emph{leak-free competent} $d512$ substrate (val\_ce $0.8285<$
+uniform), the A-head logit-bias alone is hugely useful (a\_only $1.1446\ll$ base $3.0978$,
+\#1800), and the A-head \emph{standalone} (softmax of $A$, no base) attains CE $0.886220$
+(\#1803). This is a genuine positive \emph{byproduct} --- but it is a statement about the
+A-head as a predictor, \emph{not} about a substrate$\rightarrow$decode coupling (see the
+REPLACEMENT ruling below). At earlier \emph{leaky}/toy rungs the \emph{multi-wire} GATED also
+beat all baselines ($3.127<3.974$ toy, $0.3445<0.4500<1.4421<3.0150$ leaky-GPU R4); but those
+absolute-CE wins are not the load-bearing claim --- the leak-free re-test (closed-negatives
+below) is.
 \end{itemize}
 
 \textbf{Closed-negatives (ruled-out axes, a\_paper\_negative\_ok).}
 \begin{itemize}
+\item \textbf{\emph{The minimal-gate ``closure'' is REPLACEMENT, not coupling}} (\#1803, OΩ1) ---
+\textbf{this is the headline closed-negative against the \emph{coupling} thesis.} Even where the
+minimal gate $g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ ``holds'' numerically (\#1801), a rigorous
+decomposition on the same leak-free $d512$ ckpt shows the loop ``closes'' only because the
+trained A-head \emph{supplants} the \texttt{.clm} mouth, \emph{not} because base and substrate
+\emph{couple}: the A-head \emph{standalone} (softmax of $A$ alone, no base) already attains CE
+$0.886220\approx$ min\_learned $0.883525$ ($|\Delta|\,0.002695\le0.05$), and ablating the base
+($g_B\!\to\!0$) moves CE by only $0.000852$ ($3.097779\to0.884377$); the fit lands $g_B{=}0.040$,
+$g_A{=}0.901$. \textbf{RULING\_REPLACEMENT$=$True.} \emph{Honest caveat:} the \texttt{.clm} base
+is a deliberately weak unigram mouth, so its inertness is partly structural --- but A-alone
+\emph{reproduces} min\_learned and \emph{no} base$+$steer interaction is needed, so the
+load-bearing point (replacement) holds. Corroborating per-wire autopsy (\#1803, OΩ2): every
+cleanly-isolatable wire \emph{hurts} the base --- $w_1\,{+}0.100826$, $w_2\,{+}0.052251$,
+$w_6\,{+}2.084871$ ($w_3/w_4/w_5$ are honest stubs with no substrate source at frozen inference,
+not CE deltas). \emph{Ruling:} on a competent leak-free substrate the OMEGA
+``substrate$\rightarrow$decode coupling closes the loop'' thesis resolves to A-head
+\emph{replacement} of the \texttt{.clm} mouth (base contributes $\approx0$; no wire adds signal).
 \item \textbf{\emph{The FULL multi-wire gate is FALSIFIED on a leak-free competent substrate}}
 (\#1800). With $\text{causal\_ca}{=}\text{True}$ (leak test $0.000\mathrm{e}{+}00$) on a
 competent $d512$ substrate (val\_ce $0.8285$), the learned full-bus gate FAILS its
@@ -270,12 +327,16 @@ structure requires a trained substrate.
 a good PRNG is by construction indistinguishable from a QRNG for any computable downstream test.
 \end{itemize}
 
-\textbf{The H1$\rightarrow$OH1 arc (leak-free, terminal-on-two-points).} On a genuinely
-leak-free, competent substrate the coupling \emph{concept} survives but the \emph{multi-wire
-gate} does not: the falsifier splits cleanly into a closed-negative (full bus, \#1800) and a
-positive minimal form (A-wire-only gate, \#1801). The scale ladder (additional $d$/param rungs)
-is concurrently open, so this arc is an \emph{absorb}, not a finalized closure ($\Rightarrow$
-scale rung pending; see \S\ref{sec:limitations}).
+\textbf{The H1$\rightarrow$OH1$\rightarrow$OΩ1 arc (leak-free, terminal-on-two-points).} On a
+genuinely leak-free, competent substrate the OMEGA \emph{coupling} thesis does not survive:
+the full multi-wire gate is FALSIFIED (full bus, \#1800), and the surviving minimal A-wire gate
+(\#1801) is then shown by rigorous decomposition (\#1803, OΩ1) to be A-head \emph{replacement}
+of the \texttt{.clm} mouth, \emph{not} a base$+$substrate coupling (a\_only/min\_learned
+$\approx$ A-standalone; base inert; every other wire hurts). The net ruling is a
+\textbf{closed-negative against the \emph{coupling} claim}, with a positive byproduct (a single
+trained substrate head out-predicts the \texttt{.clm} unigram mouth). The scale ladder
+(additional $d$/param rungs, OΩ4) is concurrently open, so this arc is an \emph{absorb}, not a
+finalized closure ($\Rightarrow$ scale rung pending; see \S\ref{sec:limitations}).
 
 \textbf{\textcolor{red}{Honest leak caveat (foregrounded).}} The early R4 ($d384$, \#1791)
 ConsciousDecoderV2 CA-neighbor mixing gives the next-byte head partial architectural
@@ -296,10 +357,13 @@ ladder is pending.
 % honest scope — toy ladder, single GPU rung, leak, lane split.
 Three of six rungs are TOY (CPU/\$0): R1 random-init mock, R2/R3 numpy n-gram on a $400$KB
 corpus. R4 is a \emph{single} GPU rung at $d384$ ($35.93$M params) carrying the CA-neighbor
-lookahead leak (above), which bounds \emph{its} result to a relative claim. R5/R6 are a single
+lookahead leak (above), which bounds \emph{its} result to a relative claim. R5/R6/R7 are a single
 \emph{leak-free} GPU rung at $d512$ ($85.82$M params, $\text{causal\_ca}{=}\text{True}$, leak
-test $0.000\mathrm{e}{+}00$, val\_ce $0.8285$): there the multi-wire gate is falsified and only
-the minimal A-wire gate holds; R6 is observation-only on the FROZEN R5 ckpt (no re-train). The
+test $0.000\mathrm{e}{+}00$, val\_ce $0.8285$): there the multi-wire gate is falsified, the
+surviving minimal A-wire gate is REPLACEMENT not coupling (\#1803, OΩ1: A-standalone $\approx$
+min\_learned, base inert), and the \texttt{.clm} base is a deliberately weak unigram so its
+inertness is partly structural (a caveat that bounds the \emph{coupling} reading, not the
+A-head-as-predictor byproduct); R6/R7 are observation-only on the FROZEN R5 ckpt (no re-train). The
 CE-floor at random init is NOT MET ($\geq$ uniform $5.5452$; Lane X measured the
 trained-but-detached $d768$ \texttt{.clm} at $9.1126$); the floor is MET on the trained
 substrates (R4 leaky; R5/R6 leak-free). \textbf{Scale-ladder pending:} the H1$\rightarrow$OH1
@@ -320,13 +384,17 @@ sha256 \texttt{33d1d00d...}; registry \texttt{/HF.jsonl}). ANU QRNG sample:
 
 \section{Conclusion}
 \label{sec:conclusion}
-A learned per-wire gate over an ablatable coupling bus closes the
-substrate$\rightarrow$decode loop that Lane X \#1779 proved null, carries learned sequential
-structure on a real trained transformer, and beats every baseline on held-out next-byte CE ---
-\emph{leak-invariantly}. The closed-negatives (fixed $A{-}G$ degrades, random-init
-unstructured, quantum RNG no advantage) sharpen the result: the closure is real but requires a
-\emph{trained} substrate and a \emph{learned} gate, and needs no exotic randomness. We make no
-perplexity or generation-quality claim.
+An ablatable coupling bus is genuinely wired into the byte decode (KL$>0$ for $\Omega$ only,
+overturning the Lane X \#1779 \emph{wiring} null), but on a competent leak-free substrate the
+OMEGA \emph{coupling} thesis --- ``substrate$\rightarrow$decode coupling closes the loop'' ---
+is a \textbf{closed-negative}: the full multi-wire gate is falsified (\#1800), and the surviving
+minimal A-wire ``closure'' is A-head \emph{replacement} of the \texttt{.clm} mouth, not a
+base$+$substrate coupling (\#1803, OΩ1: A-standalone $0.886\approx$ min\_learned $0.884$, base
+ablation $\Delta\,0.0009$; every other wire hurts). The positive byproduct is that a single
+trained substrate head is a far better next-byte predictor than the \texttt{.clm} unigram mouth.
+The further closed-negatives (fixed $A{-}G$ degrades, random-init unstructured, quantum RNG no
+advantage) sharpen the result. We make no perplexity or generation-quality claim, and (the
+A-head being a strong predictor) no coupling claim.
 
 % references.bib pending (a_paper milestone): IIT 4.0 · transformer decoding · QRNG/PRNG
 % indistinguishability · 4 anima verdict ledger entries (>=10 total).

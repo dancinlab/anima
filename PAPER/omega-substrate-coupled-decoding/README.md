@@ -1,12 +1,15 @@
 # omega-substrate-coupled-decoding
 
-> A learned per-wire gate over an ablatable coupling bus closes the
-> consciousness-substrate → byte-decode loop that Lane X #1779 proved NULL,
-> carries learned sequential structure on a real trained transformer, and beats
-> every baseline on held-out next-byte CE — **leak-invariantly**. Contribution =
-> the leak-invariant RELATIVE closure + three closed-negatives, NOT a perplexity
-> or generation-quality claim.
-> Status: draft v1 scaffold (main.tex + verdict matrix). Target length: 10+ pages.
+> An ablatable coupling bus IS wired into the byte decode (KL>0 for Ω only,
+> overturning the Lane X #1779 WIRING null), but on a competent **leak-free** d512
+> substrate the OMEGA **coupling** thesis is a **CLOSED-NEGATIVE**: the full
+> multi-wire gate is falsified (#1800), and the surviving minimal A-wire "closure"
+> is A-head **REPLACEMENT** of the .clm mouth, not a base+substrate coupling
+> (#1803 OΩ1: A-standalone 0.886220 ≈ min_learned 0.883525; base ablation Δ 0.000852;
+> every other wire hurts). Positive byproduct: a single trained substrate A-head
+> out-predicts the .clm unigram mouth. Leak-INVARIANT relative framing + four
+> closed-negatives — NOT a perplexity/generation claim, and NOT a coupling claim.
+> Status: draft (main.tex + verdict matrix); scale ladder (OΩ4) ⏳ open. Target 10+ pages.
 
 ## The four rungs (all TERMINAL)
 

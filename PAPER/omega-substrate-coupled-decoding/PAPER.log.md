@@ -2,6 +2,16 @@
 
 Append-only history sister of `PAPER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-04 — OΩ1 REPLACEMENT correction folded: minimal-gate "closure" = REPLACEMENT not coupling (#1803)
+
+- [x] CORRECTION: paper (#1802) over-stated OH1 (#1801) as a "positive minimal-gate closure"; #1803 (OΩ1) measured it is REPLACEMENT, not coupling. Reframed OH1 from "positive minimal-gate closure" → "minimal gate = A-head replacement of the .clm mouth"
+- [x] OΩ1 decisive numbers (verbatim, F-OMEGA-RIGOR.txt): A-head STANDALONE CE 0.886220 ≈ min_learned 0.883525 (|Δ| 0.002695 ≤0.05); base-ABLATED (gB→0) CE 0.884377 → base ablation moves CE only 0.000852 (≤0.05); fit gB=0.040,gA=0.901; RULING_REPLACEMENT=True (trained A-head SUPPLANTS .clm base mouth)
+- [x] honest caveat carried: .clm base = deliberately weak unigram so inertness partly structural; but A-alone reproduces min_learned & no base+steer interaction needed → load-bearing replacement point holds
+- [x] OΩ2 folded (per-wire autopsy, every isolatable wire HURTS base): w1 +0.100826, w2 +0.052251, w6 +2.084871; w3/w4/w5 honest stubs (no substrate source at frozen inference, not CE deltas). OΩ3: min-gate entropy 2.6300 vs base 2.4442 — weak criterion (p7), not load-bearing
+- [x] §measurement: added R7 (#1803 OΩ1/OΩ2/OΩ3 F-OMEGA-RIGOR.txt verbatim). abstract + §finding (new headline closed-negative: REPLACEMENT vs coupling) + §hypothesis Falsifier-3 (replacement falsifier) + §limitations + §conclusion + @goal reframed. Net ruling = CLOSED-NEGATIVE against the COUPLING thesis (a_paper_negative_ok) + positive byproduct (single A-head out-predicts .clm unigram mouth)
+- [x] verdict matrix: added #1803 OΩ1/OΩ2/OΩ3 rows → `.verdicts/omega-engine/F-OMEGA-RIGOR.txt`; #1801 row annotated "re-read as replacement by #1803"
+- [x] HONEST GATE: every number traced to .verdicts/omega-engine/F-OMEGA-RIGOR.txt verbatim — NO un-sourced number, NO new claim beyond the verdict (g5/g63 · p7 · NO fabrication). Scale-ladder (OΩ4) ⏳ still pending — ABSORB not finalize (a_paper_only_at_closure)
+
 ## 2026-06-04 — OΩ7 ABSORB: H1→OH1 leak-free arc folded (#1800 closed-neg multi-wire → #1801 positive minimal-gate)
 
 - [x] §measurement: added R5 (#1800 F-TRAINED-LEAKFREE) + R6 (#1801 F-OH1-MINGATE) verbatim; R4 (#1791) re-labeled "leaky" (causal_ca=False) with explicit caveat
