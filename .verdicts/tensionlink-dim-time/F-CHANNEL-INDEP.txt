@@ -1,0 +1,44 @@
+F-CHANNEL-INDEP — per-channel independence + 6th-channel probe
+==============================================================
+harness : UNIVERSE/tensionlink_dim_time.py (sha 211d4457…2d3a1d)
+data    : _real_w_trace_s59.json (sha d969954a…e19d64), real-shape-driven + §65.
+compute : CPU / $0 / numpy-only. seeds 1,7,42.
+
+PER-CHANNEL SHUFFLE (shuffle each channel ALONE in time, measure (a) how well it
+linearly predicts the other 4, and (b) the drop in stage-decode accuracy):
+  seed 1, predicts_others_r2 (original):
+    concept = −0.0   context = 0.0336   meaning = −0.0   auth = 0.0032   sender = 0.0370
+  decode_acc_drop when each channel is shuffled: ALL = 0.0
+  base stage-decode acc = 1.0
+  -> NO single channel linearly predicts the others above r²≈0.04: the 5
+     channel-GROUPS are MUTUALLY (near-)INDEPENDENT in the linear sense — none
+     is a copy of another. (The stage label is a per-step f(phi,tension) so it
+     is already at decode ceiling 1.0 from the full set; shuffling one channel
+     doesn't drop it because the redundant remaining channels still pin it —
+     this is a ceiling artifact of the stage label, addressed in F-TIME-AXIS by
+     the rising/falling label that is NOT at ceiling.)
+
+6th-CHANNEL PROBE (would a 6th channel add independent info?):
+  Add a genuinely-INDEPENDENT gaussian 6th channel vs a DERIVABLE 6th channel
+  (concept×meaning, a product of existing channels), compare participation-ratio
+  gain:
+    seed 1 : indep_gain = +0.9813   deriv_gain = 0.0
+    seed 7 : indep_gain = +0.9745   deriv_gain = −0.0
+    seed 42: indep_gain = +0.9306   deriv_gain = −0.0
+    mean   : indep_gain = +0.962    deriv_gain ≈ 0
+  -> a truly independent 6th channel WOULD raise effective dim by ~+0.96 (the
+     manifold has room); a channel DERIVABLE from existing channels adds exactly
+     NOTHING. So "more channels" only helps if the new channel carries genuinely
+     orthogonal info — the protocol is not saturated at 5 in principle.
+
+VERDICT:
+  * Channel independence (linear): the 5 channel-GROUPS are mutually near-
+    independent (max cross-prediction r² ≈ 0.04). NO duplicative channel pair.
+  * Compressibility: in MAGNITUDE-summary form, concept & meaning are constant
+    (zero variance by spec) so a magnitude code compresses 5→3 losslessly; in
+    DIRECTION-preserving form they are independent and not droppable.
+  * Expandability: an independent 6th channel adds ~+0.96 effective dim; a
+    derivable one adds 0. The 5 is a design choice (sopfr(6)=5), not a hard
+    information ceiling.
+  Scope: 300-step real-shape stream + §65 transfer law; toy-only, scale-
+  transfer unverified (a_toy_scale_recheck, a_scale_honest_scope).
