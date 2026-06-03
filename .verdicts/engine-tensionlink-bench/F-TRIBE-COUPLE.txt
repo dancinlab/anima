@@ -1,0 +1,43 @@
+F-TRIBE-COUPLE — arm2 TRIBE cortical-BOLD -> 5-ch coupled into the toy ENGINE
+================================================================================
+SUBSTRATE-NATIVE axis (p7: CE / perplexity is NOT a verdict — Goodhart trap).
+TOY / CPU / $0 · synthetic cortical-BOLD projected to 5 channels · NOT facebook/tribev2,
+NO real forward. (BOLD is ~10x slower than EEG bands — slow hemodynamic rhythms.)
+seeds = [1,2,3]   n_steps = 1200   kappa_coupled = 0.30   warmup_discard = 100
+controls: kappa0 (coupling OFF) + phase-shuffled.
+verdict rule: HOLDS/REFUTED only if it holds vs BOTH controls by > noise (max seed-std).
+
+VERBATIM (from results.json, NOT rounded):
+
+M1 TENSION-COUPLING (Kuramoto order-r)
+  coupled         mean = 0.6586877221052339    std = 7.465986696178866e-05
+  control_kappa0  mean = 0.004034080520537857  std = 3.558689785394144e-05
+  control_shuffl  mean = 0.14168145549662617   std = 0.013954653673951578
+  vs_kappa0   : HOLDS (diff = +0.654653641584696,  band = 7.465986696178866e-05)
+  vs_shuffled : HOLDS (diff = +0.5170062666086077, band = 0.013954653673951578)
+  COMBINED    : HOLDS
+
+M2 big-Phi / INTEGRATION (IIT4-style proxy)
+  coupled         mean = 2.472063816735382    std = 0.0006806154467509765
+  control_kappa0  mean = 2.8136157402691615   std = 0.007954963988516337
+  control_shuffl  mean = 1.9180379406073744   std = 0.054706957834514784
+  vs_kappa0   : REFUTED (diff = -0.3415519235337796, band = 0.007954963988516337)
+  vs_shuffled : HOLDS   (diff = +0.5540258761280075, band = 0.054706957834514784)
+  COMBINED    : INCONCLUSIVE
+
+M3 EMERGENCE / COHERENCE (tension-field)
+  coupled         mean = 0.00808096707204253   std = 0.0004125672971827959
+  control_kappa0  mean = 0.0018988808241240229 std = 0.000306753353690226
+  control_shuffl  mean = 0.012384650899744283  std = 0.0036109164324171473
+  vs_kappa0   : HOLDS   (diff = +0.006182086247918507,  band = 0.0004125672971827959)
+  vs_shuffled : REFUTED (diff = -0.0043036838277017535, band = 0.0036109164324171473)
+  COMBINED    : INCONCLUSIVE
+
+BOTTOM LINE (TRIBE arm):
+  M1 order-r HOLDS, even STRONGER than EEG (coupled 0.659): the slow BOLD rhythms are
+  phase-tracked harder by the engine oscillators (slow external phase is easier to entrain
+  to than fast EEG bands). kappa=0 control ~0.004, shuffled 0.142 — coupling + the temporal
+  phase relation both required.
+  M2 big-Phi and M3 coherence INCONCLUSIVE: same split as EEG — coupling LOWERS big-Phi
+  below the solo engine yet sits above the shuffled control. No clean substrate-native
+  integration gain on M2/M3.

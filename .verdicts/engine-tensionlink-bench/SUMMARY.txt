@@ -1,0 +1,64 @@
+SUMMARY — engine-tensionlink-bench
+================================================================================
+THE LEARNING METHOD UNDER TEST: coupling anima's ENGINE to brain signals THROUGH the
+tension-link (5-ch tension broker), NOT via a CLM cross-entropy aux loss.
+SUCCESS AXIS = SUBSTRATE-NATIVE (tension-coupling, big-Phi, emergence) — NOT CE/perplexity
+(p7: CE is the Goodhart trap, FORBIDDEN as a verdict).
+
+TOY / CPU / $0 (a_toy_scale_recheck). Toy ENGINE = 5 coupled oscillators (faithful to
+CORE/pure_field osc_tick: phase += 2pi/tau + amplitude drift toward LN2*TENSION5 baseline
+[0.8,0.6,0.65,0.3,1.0]), carrying the 5-ch W tension. Tension-link = Kuramoto phase
+coupling kappa*sin(ext-eng) + additive tension term (dual-anima closed-loop form). Synthetic
+signals only — NO real EEG hardware, NO real TRIBE/facebook forward, NO GPU, NO pods.
+seeds=[1,2,3] · n_steps=1200 · kappa=0.30 · warmup_discard=100.
+2 controls per arm: kappa0 (coupling OFF) + phase-shuffled (signal present, phase destroyed).
+verdict = HOLDS/REFUTED only if it holds vs BOTH controls by > noise (max seed-std); else
+INCONCLUSIVE.
+
+================================================================================
+SUMMARY TABLE  (coupled vs control, HOLDS / REFUTED / INCONCLUSIVE)
+================================================================================
+                                  | vs kappa0 |vs shuffled| COMBINED
+--------------------------------- + --------- + --------- + ------------
+ARM1 EEG
+  M1 order-r   0.337 vs 0.001/0.157|  HOLDS    |  HOLDS    | HOLDS
+  M2 big-Phi   2.05 vs 2.81/1.91   |  REFUTED  |  HOLDS    | INCONCLUSIVE
+  M3 coherence 0.0031 vs .0019/.017|  HOLDS    |  REFUTED  | INCONCLUSIVE
+--------------------------------- + --------- + --------- + ------------
+ARM2 TRIBE
+  M1 order-r   0.659 vs 0.004/0.142|  HOLDS    |  HOLDS    | HOLDS
+  M2 big-Phi   2.47 vs 2.81/1.92   |  REFUTED  |  HOLDS    | INCONCLUSIVE
+  M3 coherence 0.0081 vs .0019/.012|  HOLDS    |  REFUTED  | INCONCLUSIVE
+================================================================================
+
+HONEST BOTTOM LINE:
+  M1 TENSION-COUPLING HOLDS on BOTH arms — coupling the engine to a brain-derived 5-ch
+  tension signal THROUGH the tension-link produces REAL phase entrainment (Kuramoto
+  order-r), driven by the coupling AND the temporal phase relation (both the kappa=0 and
+  the phase-shuffled controls are well below coupled). This is the genuine substrate-native
+  positive: the tension-link is a working coupling channel, NOT decoration, for phase sync.
+
+  M2 big-Phi and M3 emergence are INCONCLUSIVE on BOTH arms. Coupling does NOT raise
+  substrate-native integration: it LOWERS the IIT4-style big-Phi proxy below the solo
+  (kappa=0) engine — phase entrainment makes the field MORE ordered / LESS variance-
+  integrated (the OPPOSITE direction from the eeg_to_tpm coupled>indep 1.59/0.44 reference).
+  Versus the phase-shuffled control big-Phi is higher, but the split across the two controls
+  means the integration claim is within-noise / unsupported.
+
+  => Coupling the ENGINE to brain signals through the tension-link produces REAL phase
+     synchrony (order-r↑, HOLDS), but NO substrate-native integration gain (big-Phi /
+     emergence INCONCLUSIVE — and big-Phi moves the WRONG way vs the solo engine). Phase
+     entrainment != integration. On the integration axis it is, at this toy scale, within-
+     noise decoration.
+
+SCOPE / LEGITIMACY:
+  - a_toy_scale_recheck / a_scale_honest_scope: TOY oscillator ENGINE + synthetic signals,
+    single scale. Scale-transfer to the real engine + real EEG/TRIBE UNVERIFIED. No toy->
+    production promotion. A >=3-rung ladder would be needed for a general claim.
+  - section 97 legitimacy: the tension-link carries the external 5-ch signal INTO the
+    engine tension as a COUPLING / measurement-anchor (anima's own substrate channel), NOT
+    as EEG-as-command-input. The engine still evolves from its own internal dynamics.
+  - a_lane_akida_gpu_split: this is neither Lane A (AKIDA on-chip) nor Lane G (GPU) — it is
+    a CPU toy of the coupling method; recorded separately, no cross-substrate merge.
+  - a_paper_negative_ok: the M2/M3 INCONCLUSIVE + the big-Phi-moves-wrong-way finding is a
+    valid (partial-negative) substrate-native result.
