@@ -191,3 +191,7 @@ stage 3 — 완성 (b)(c) ✅ GPU (the working closure on a REAL trained transfo
 - CE floor currently NOT MET on random-init (uniform 5.5452; Lane X trained-but-detached d768 .clm 9.1126); stage-3 완성 is where the gated closure on a trained substrate must actually MEET it.
 - Honest negatives kept (a_paper_negative_ok): random-init coupling unstructured (#1783); fixed A−G degrades (#1784); quantum RNG no advantage (#1784).
 - Lane-Ω = GPU/closure lane; AKIDA on-chip (Lane A) is recorded separately (a_lane_akida_gpu_split).
+
+## ⑧ paper — ✅ scaffolded at FULL closure (a_paper_only_at_closure)
+
+- [x] `/paper` scaffold `PAPER/omega-substrate-coupled-decoding/` (PAPER.tape roster + PAPER.md/PAPER.log.md + main.tex 4-section a_paper_format + verdict matrix + README + references.bib stub). All 4 rungs (#1783/#1784/#1786/#1791) TERMINAL (🟢 numerical / 🔴 closed-negative) — NO 🟠/🟡 section (a_paper_gate). Contribution framed as the leak-INVARIANT relative closure + the three closed-negatives, NOT a perplexity/gen-quality claim (p7 · a_scale_honest_scope). Remaining = paper-production tasks only (figures · bib ≥10 · compile · arxiv-prep), NOT science verdicts.
