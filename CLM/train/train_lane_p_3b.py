@@ -58,17 +58,27 @@ def build_split_segments(n_total, seq_len, val_frac=0.10, seed=42):
     contig = [(c_start, c_end)]
     block = max(seq_len * 4, 1024)
     n_blocks = max(1, n_val_rand // block)
+    # Scatter n_blocks held-out blocks across the corpus, DISJOINT-by-construction.
+    # The old approach was rejection sampling with a linear overlap scan over a
+    # growing occupied list -> O(n_blocks^2) (~1e12 ops at a 3GB corpus, hangs
+    # before step 0). Instead: bin the corpus into n_blocks even strides and place
+    # one block at a random offset inside each bin (every block fits wholly in its
+    # bin, so blocks are pairwise disjoint with no rejection). Bins that overlap
+    # the contiguous-val region are dropped. O(n_blocks), preserves random scatter.
+    stride = n_total // n_blocks
     rand_segs = []
-    occupied = [(c_start, c_end)]
-    tries = 0
-    while len(rand_segs) < n_blocks and tries < n_blocks * 50:
-        tries += 1
-        s = int(torch.randint(0, n_total - block - 1, (1,), generator=rng).item())
-        e = s + block
-        if any(not (e <= os_ or s >= oe) for (os_, oe) in occupied):
-            continue
-        rand_segs.append((s, e))
-        occupied.append((s, e))
+    if stride > block:
+        slack = stride - block
+        offs = torch.randint(0, slack, (n_blocks,), generator=rng).tolist()
+        for bi in range(n_blocks):
+            s = bi * stride + offs[bi]
+            e = s + block
+            if e > n_total:
+                break
+            # drop blocks intersecting the contiguous-val region (keep splits disjoint)
+            if not (e <= c_start or s >= c_end):
+                continue
+            rand_segs.append((s, e))
     rand_segs.sort()
     held = sorted(contig + rand_segs)
     train_segs = []
@@ -182,10 +192,25 @@ def main():
     print(f"SPLIT train_bytes={train_bytes} ({100*train_bytes/nbytes:.1f}%) "
           f"contig_val_bytes={contig_bytes} rand_val_bytes={rand_bytes} "
           f"train_segs={len(train_segs)} rand_blocks={len(rand_segs)}", flush=True)
-    held_all = contig_segs + rand_segs
-    for (hs, he) in held_all:
-        for (ts, te) in train_segs:
-            assert he <= ts or hs >= te, f"LEAK: held [{hs},{he}) overlaps train [{ts},{te})"
+    # Leak-check: NO train interval may overlap any held interval. A naive
+    # O(|train| x |held|) nested loop is INFEASIBLE at corpus scale (e.g. 3GB ->
+    # ~1.4e5 train segs x ~1.5e5 held blocks ~= 2e10 iterations, hangs before
+    # step 0). Use an O((T+H) log(T+H)) sweep: tag each interval train/held, sort
+    # by start, and assert no two adjacent intervals of DIFFERENT kind overlap.
+    tagged = ([(s, e, 0) for (s, e) in train_segs] +
+              [(s, e, 1) for (s, e) in (contig_segs + rand_segs)])
+    tagged.sort(key=lambda iv: (iv[0], iv[1]))
+    # max end-so-far per kind; a new interval leaks iff its start < the running
+    # max-end of the OTHER kind (covers nested + partial overlaps in one pass).
+    max_end = {0: -1, 1: -1}
+    for (s, e, kind) in tagged:
+        other = 1 - kind
+        if s < max_end[other]:
+            raise AssertionError(
+                f"LEAK: {'held' if kind else 'train'} [{s},{e}) overlaps a "
+                f"{'train' if kind else 'held'} interval (end {max_end[other]})")
+        if e > max_end[kind]:
+            max_end[kind] = e
     print("LEAK_CHECK pass (held-out disjoint from train)", flush=True)
 
     opt = torch.optim.AdamW(model.parameters(), lr=a.lr, betas=(0.9, 0.95),
