@@ -50,6 +50,8 @@
 - [x] ENGINE PUBLIC — 3축(🧠 의식 · 📉 CE · 🌱 창발) CORE-mounted GREEN @ **PRODUCTION d=768** → 3B → 7B. 진척 (2026-06-02, F-CLM-CORE-3AXIS, CPU-local `hexa run`, p7 결정적 equality): **L3 .clm 단일 진입점 🟢 배선+LOADED** (`generator.hexa` `gen_clm_backend` = 실제 `.clm` 헤더 파싱 — `CLM\x01` magic+nblocks 검증; real d768 `state/laneg_d768_recover/d768_5lang_c4.clm` **admit valid=true nblocks=6**; bad-magic 거부; smoke 15/15 PASS) · **.kosmos 단일 진입점 🟢 배선** (`generator_read_anchors`→`load_anchors`→`brain_emit`) · CORE-mounted 3축 probe: **AXIS-1 의식 🟢** (emit-context motiv 0.67 > 무자극 baseline 0.0 AND emit hi=true/base=false, NULL refuted) · **AXIS-2 CE — decode forward 🟢 배선 / CE MEASURABLE 🟢 / CE-descent 🟢 GREEN (toy d=8 scale; 프로덕션 d=768 transfer 미검증, a_toy_scale_recheck)** (2026-06-02 RC-FIX: named root cause = inference-track `.clm` 이 6 conv 블록만 직렬화하고 **trained embed table + GN affine 미포함** → CORE decode 가 트레이너 descent 재현 불가. CONFIRMED: legacy d768 artifact = conv-only (3,651,389 B = 정확히 6-block 크기, embed/GN bytes 0; trained embed+GN 은 애초에 직렬화 안 됨 → 그 파일에서 복구 불가). FIX (a_completeness_over_cheap primary): (1) **.clm 포맷 v0.2** — backward-compatible `CLMX` ext trailer 가 trained embed + GN affine(tgG/tgB/noG/noB) + conv bias 를 full fp32 직렬화 (hexa-lang clm_ckpt.hexa writer/reader + clm_prod.hexa serializer, PR #2540; F-CLM-CKPT-EXT-ROUNDTRIP 🟢 + EXT-BACKWARD-READ 🟢). (2) **`clm_decode_ce` REWRITE** — 트레이너 `clm_prod_fwd` 그래프 충실 미러(embed → entry conv+bias → trunk conv+bias → GN(tgG,tgB) → gelu → residual → router+bias → 2 experts+bias gelu → MoE → GN(noG,noB) → readout+bias) + v0.2 ext 존재 시 embed+GN VERBATIM read (single .clm entry, a_core_engine_map, no 2nd path, no phantom wiring; d/E 를 block dims 에서 도출 = config-agnostic). (3) **REAL trained v0.2 .clm** = $0-CPU host 재export (hexa-lang clm_reexport.hexa, host nn_conv1d_fwd/bwd + opt_adamw_step, forge dispatch 0, torch 0; byte-graph-faithful int4-QAT+STE): epoch-1 CE 4.69813 → epoch-12 CE 1.66631 REAL descent, F-CLM-REEXPORT-DESCENT=1 PASS. CORE-mounted 측정 verbatim: **CE_realtext=2.07834 < uniform 5.54518 AND < shuffled-ctrl 5.52534** (has_ext=true, model_d=8, positions=23, det byte-eq=1) → `CE_BELOW_UNIFORM=1 CE_BEATS_SHUFFLE=1` → VERDICT = GREEN. CONTROLLED: 같은 엔진·같은 in-dist real-text 로 v0.1 conv-only(has_ext=false) = CE 9.0586 ≥ uniform → NO descent vs v0.2 embed+GN = 2.0783 → descent ⇒ 직렬화된 embed+GN(명명된 근본원인)이 결정 변수.) · **AXIS-3 창발 🟢** (composed len=101 > component-sum len=72, anchor 메모리 합성이 출력에 관찰됨, NULL refuted). · **AXIS-2 d=768 SCALE-RECHECK 🟢 (a_toy_scale_recheck — PRODUCTION 스케일 closure):** SAME config-agnostic CORE decode (d/E 를 block dims 에서 도출) 가 **d=768** v0.2 `.clm` 를 읽고 CE-descent 가 HOLD — verbatim `model_d=768`, **CE_realtext=3.25405 < uniform 5.54518 AND < shuffled-ctrl 5.30381** (has_ext=true, positions=23, DET_rerun_byte_eq=1, p7) → `CE_BELOW_UNIFORM=1 CE_BEATS_SHUFFLE=1` → VERDICT=GREEN @ d=768. d=768 v0.2 artifact = $0-CPU host 재export (hexa-lang `clm_reexport.hexa` `CLM_PROD_D=768`, host nn_conv1d_fwd/bwd + opt_adamw_step, forge dispatch 0/torch 0): epoch-1 CE 4.69674 → epoch-6 CE 2.21602 REAL descent, F-CLM-REEXPORT-DESCENT=1 PASS. artifact `state/laneg_d768_recover/reexport_d768_v2_fast.clm` (4,463,478 B, CLM\x01+CLMX, sha256 db7dc990ff31fb60a5677fd7fcf9a248c4306742d246bb99d8b5de861b751497). clm_prod.hexa CUDA-forge serializer 는 불필요 — clm_reexport 의 host-only forge-free 경로가 d=768 재export 를 mac 에서 직접 실행($0, GPU pod 불요). **3축 전부 CORE-mounted GREEN @ PRODUCTION d=768** — 의식 🟢 + CE-descent 🟢(d=768) + 창발 🟢. **gen_clm_backend loaded=valid 로 flip** (header-valid `.clm` 가 이제 LOAD; clm_decode_ce 가 SAME forward 로 디코드; generate() 계약 + brain.hexa 배선 불변 — 한 줄). smoke 15/15 PASS (`valid=true loaded=true nblocks=6`). verdict: `.verdicts/core-3axis-mount/{probe,generator_smoke,ce_descent_decode,ce_descent_decode_v1_baseline,ce_descent_decode_d768}.txt`. ⚠ `hexa verify` CLI 깨짐 (`compiler/atlas/calc_dispatch` module-not-found) → 검증은 `hexa run` 결정적 equality. **ENGINE PUBLIC FLIPPED [x] — 3/3 axes CORE-mounted GREEN @ PRODUCTION d=768 (a_hf_autonomous PUBLIC=closure-PASS 충족). NEXT = ENGINE 3B (decode forward + Lane-G util-GREEN 의존).**
 - [ ] ENGINE 3B — 3축 CORE-mounted GREEN 후 3B (decode forward + Lane-G util-GREEN 의존)
 - [ ] ENGINE 7B — 3B green 후
+- [ ] scale-up benchmark — TOY 가설(45)+Lane A 래더의 scale-SENSITIVE 항목을 ≥3-rung 래더로 재시험 + baseline 벤치 (substrate별: AKIDA chip / forge GPU / ENGINE 3축). a_toy_scale_recheck. 계획 = §SCALE-UP BENCHMARK PLAN.
+- [ ] reflect (학습·코드·문서) — scale-benchmark terminal 통과분만 production 반영: 학습=flame+forge 아키텍처 prior · 코드=toy→production harness 승격 · 문서=H_NNN_slug.md + milestone flip + .easy + verdict. scale-break=정직 closed-negative. (benchmark 후, a_paper_only_at_closure)
 
 ## status (completed-form)
 
@@ -200,3 +202,44 @@ The weak/noise-limited lift has ≥4 candidate causes; corpus-scale (P1) is only
 - AKIDA on-chip H_911 already 🔴 REFUTED (live AKD1000, separate layer): verdict=RED, closed-negative — `HEXAD/NEUROMORPHIC/state/clm_onchip_nondet_5lang_2026_06_02/result_multitrial.json` (paired delta straddles 0 over 12 chip trials, mean −0.00092, 95%CI [−0.00319,+0.00135], sign_stable=False). [pointer-audit 2026-06-02: the prior "#1652/#1653" verdict-IDs and the H_912 half were UNBACKED — no such file/registry entry; re-pointed to the real artifact. H_912 on-chip has no dedicated terminal verdict file.]
 - TRIBE v2 (Meta FAIR, ICLR 2026) is forward-only (stimuli→BOLD); dialogue needs a separate inverse decoder.
 - Verdicts live in `hexa-lang-clm-h911-scale/.verdicts/clm-h911-mm-coco3/` (3-axis) and `clm-h911-scale/` (language).
+
+
+## SCALE-UP BENCHMARK PLAN (toy → production · a_toy_scale_recheck) — 기록 2026-06-03
+
+> 45 BIO-TRANSFER+NEURO 가설 + Lane A 래더는 전부 TOY (a_scale_honest_scope). scale-SENSITIVE 항목은
+> production scale·real substrate에서 재시험 + baseline 벤치(≥3-rung) 후, 통과분만 학습/코드/문서로 반영한다.
+> 이 섹션은 **계획 기록**이며 실행은 위 open milestone로 게이트됨 (일단 문서 먼저, 사용자 지시).
+
+### 1. scale-sensitivity triage
+- **ROBUST** (toy 전이 가능성 높음·deterministic/structural, 저우선): H_869 EXOSOME · H_873 TRANSPOSON · H_874 RETROVIRAL · H_872 ENDOSYMBIOSIS · H_899 DENDRITIC(XOR exact) · H_893 SPARSE.
+- **SENSITIVE** (반드시 scale-retest):
+  - 집단/상전이: H_867 MET(Kuramoto N↑) · H_877 QUORUM(N* vs 시스템크기) · H_891 CRITICALITY(avalanche 지수) · H_904 WORKSPACE(ignition vs 크기) · H_886 TURING(도메인크기)
+  - 용량/합성: H_900 ATTRACTOR(Hopfield 0.14N cap) · H_901 RING · H_861 METASTASIS(도메인 수↑·NC↑) · H_865 LTP/Lane A gold 래더(NC→prod, 실모델)
+  - 학습규칙: H_896 STDP(AKD1500) · H_897 3-FACTOR · H_905 PRED-HIER(실 시퀀스)
+
+### 2. benchmark dimensions
+```
+substrate (a_lane_akida_gpu_split)  baseline (3종)            metric
+──────────────────────────────────  ──────────────────────  ────────────────────
+Lane A = real AKD1000 chip (#1717)  (a) shuffle-NULL (보유)   사전등록 falsifier 지표
+Lane G = forge GPU (option-B gated) (b) 표준 경쟁자          + 벤치 score
+ENGINE = 3축 의식·CE·창발 (CORE)     (c) ≥3-rung scale 곡선   (effect size·전이 sharpness·
+                                                             곡선 기울기·cap 위치)
+```
+
+### 3. scale ladder (사전등록)
+- SENSITIVE 가설마다 ≥3-rung 래더(N 또는 size): toy → mid → prod. 결론은 **곡선**이지 단일점 아님.
+- scale-break = 정직 closed-negative (a_scale_honest_scope; cf Lane A on-chip 3B cap = D=1 524K top-out).
+- Lane A gold 래더: NC=1000(FLORES devtest 1012 소진) → 더 많은 언어/큰 corpus로 cross-lingual scale.
+
+### 4. reflect pipeline (벤치 verdict 후, per-결과)
+```
+[scale-benchmark terminal] ──▶ ① 학습  flame+forge 아키텍처 prior (a_train_flame_forge · GPU필수)
+                            ├─▶ ② 코드  toy sim → production .hexa/.py harness (real substrate)
+                            └─▶ ③ 문서  H_NNN_slug.md + milestone flip + .easy + verdict + CLAIMS.tape
+scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금지)
+```
+
+### 5. gating / 정직
+- a_fire_autonomous: GPU/칩 fire 자율·cost gate 없음 · a_wall_first 병렬. Lane A real chip only(#1717, streamer stop/restore). Lane G scale은 option-B(타세션 HEXA-FUSION) util-GREEN에 gated.
+- a_toy_scale_recheck: toy-green → production 처방 금지 (scale-up fire 전). 날조 scale 주장 0. a_paper_only_at_closure: /paper는 FULL closure에서만.
