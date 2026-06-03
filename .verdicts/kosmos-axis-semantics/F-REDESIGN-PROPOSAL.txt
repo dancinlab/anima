@@ -1,0 +1,54 @@
+F-REDESIGN-PROPOSAL — KOSMOS coord v-next (2D -> N=8 measured-axis)
+================================================================================
+a_kosmos: anima is POINTER-ONLY. This is a CROSS-REPO proposal to the kosmos spec,
+NOT a unilateral anima edit.
+
+FILED AT (canonical home):
+  /Users/mini/dancinlab/hexa-lang/inbox/patches/kosmos-coord-vnext-axis-semantics.md
+  (hexa-lang inbox/patches handoff pattern; committed hexa-lang 7f2b992f8 §9 erratum,
+   base proposal 93336a606. Intended onward target = github.com/dancinlab/kosmos
+   spec/profiles/anima-consciousness-carving.md + spec/kosmos.md coord schema.)
+
+PROPOSAL CORE:
+  Current coord = vacuum_psi = [x,y] (2D). #1772 measured this is under-dimensioned:
+  intrinsic d ~ 6-10, knee ~ 8, PCA-2D retains 67.1% var, D8 retains 92.3%, and the
+  ACTUAL vacuum_psi is ~1.1-D (canon-corr 0.96 to PC1 but 0.11 to PC2).
+
+  This probe measured WHAT each axis holds. Recommendation: N = 8, with
+    a0 = depth/radius      NAMED   (PC1; basin_radius/psi |rho| 0.91-0.92; tier rides it)
+    a1 = carving_form      NAMED   (PC2; omega^2 0.61, AUC-sep 0.58, CLEAN)
+    a2 = form_residual     NAMED   (PC3; omega^2 0.37)
+    a3 = curriculum        NAMED   (PC5; curriculum_index/rank |rho| 0.67)
+    a4..a7 = learned-residual      (PC4, PC6-PC8; distributed tier/domain micro-code,
+                                    individually ENTANGLED — deliberately UNNAMED)
+
+  -> ~3-4 of 8 axes carry a human NAME; the rest are learned-residual. NOT 8 clean
+     named axes (that would be fabrication).
+
+2D-GAP NUMBERS (from #1772, reused):
+  variance:           D2 67.1%  ->  D8 92.3%
+  domain disc (f1):   D2 0.082  ->  D8 0.583   (full-d768 ceiling 0.977)
+  tier   disc (f1):   D2 0.061  ->  D8 0.417   (full-d768 ceiling 0.936)
+  form   disc (f1):   D2 0.519  ->  D8 1.000   (full-d768 ceiling 1.000)
+  NEW named signals the 2D map DROPS: carving_form (PC2) + curriculum (PC5),
+    both orthogonal to vacuum_psi (|rho| <= 0.18).
+
+BACKWARD-COMPAT:
+  old [x,y] = projection onto [a0, a1]; vacuum_psi ~ a0 (canon-corr 0.96 to PC1).
+  Legacy anchors lift by padding a1..a7 with the PCA projection (or 0). The 2D map
+  remains a faithful TOPOLOGY sketch (trustworthiness 0.87-0.99, #1772) but a poor
+  CATEGORY map — which v-next fixes. PCA basis is ckpt-specific -> pin axis_basis_id
+  to ckpt sha so the coordinate is reproducible.
+
+HONEST CAVEATS:
+  - only ~3-4 named axes; a4-a7 left UNNAMED (learned-residual). No phantom labels.
+  - eta^2 cardinality-biased (random PC -> 0.028 on 168-way tier); labels use
+    omega^2 + AUC-sep + permutation floor instead.
+  - tier ⊥ domain are NESTED corpus-design labels, not independent axes.
+  - scale-DEPENDENT (a_toy_scale_recheck / a_scale_honest_scope / §97): single s16 rung
+    (283.7M, byte-vocab 256). >=3-rung ladder required before promoting axis count/labels
+    to a general KOSMOS-format claim. AS MEASURED on s16 only.
+  - substrate = GPU artifact (Lane-G); Lane-A (AKIDA) is a separate manifold (a_lane_akida_gpu_split).
+
+VERDICT: 🟢 PROPOSAL FILED (cross-repo, pointer-only). N=8 redesign is data-justified for
+  the s16 manifold; ~3-4 axes named-by-measurement, 4-5 learned-residual.
