@@ -52,6 +52,7 @@
 - [ ] ENGINE 7B — 3B green 후
 - [ ] scale-up benchmark — TOY 가설(45)+Lane A 래더의 scale-SENSITIVE 항목을 ≥3-rung 래더로 재시험 + baseline 벤치 (substrate별: AKIDA chip / forge GPU / ENGINE 3축). a_toy_scale_recheck. 계획 = §SCALE-UP BENCHMARK PLAN. **[CPU rung DONE 2026-06-03, `neuro_bench_scale.py`, p7]**: 5 SENSITIVE 가설 size-래더 5/5 SCALE-SURVIVE — H_900 ATTRACTOR 용량비 P_max/N=0.125/0.125/0.109 ≈ Hopfield 0.138N law 재현 · H_891 CRITICALITY max-avalanche 63→539→5144 (system-size 선형=진짜 criticality) · H_867 MET 동기전이 sharp 유지 · H_904 WORKSPACE ignition all-or-none 전 N · H_877 QUORUM knee scale-invariant(0.25/0.22/0.22). verdict `.verdicts/scale-bench/SCALE-BENCH-CPU.txt`. **SCOPE: CPU sim size-래더 = small-N 아티팩트 배제일 뿐, production substrate 아님** — AKIDA chip(#1717)/forge GPU(option-B)/ENGINE 3축 rung은 GATED. milestone [ ] 유지(CPU rung만 완료). H_877 metric 교정(coarse→fine sweep + 불변성 기준, 둘 다 기록).
 - [ ] reflect (학습·코드·문서) — scale-benchmark terminal 통과분만 production 반영: 학습=flame+forge 아키텍처 prior · 코드=toy→production harness 승격 · 문서=H_NNN_slug.md + milestone flip + .easy + verdict. scale-break=정직 closed-negative. (benchmark 후, a_paper_only_at_closure)
+- [ ] Lane P (existing-method .clm) — util-GREEN 우회: 기존 torch+CUDA trainer로 진짜 수렴 .clm 생성 → ENGINE 3B 언락. **사용자 명시 인가(.py+CUDA 허용)로 a_train_flame_forge 완화한 PRAGMATIC lane** (canonical flame+forge production trainer와 별개 substrate=GPU-torch). 계획 = §LANE P.
 
 ## status (completed-form)
 
@@ -243,3 +244,39 @@ scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금
 ### 5. gating / 정직
 - a_fire_autonomous: GPU/칩 fire 자율·cost gate 없음 · a_wall_first 병렬. Lane A real chip only(#1717, streamer stop/restore). Lane G scale은 option-B(타세션 HEXA-FUSION) util-GREEN에 gated.
 - a_toy_scale_recheck: toy-green → production 처방 금지 (scale-up fire 전). 날조 scale 주장 0. a_paper_only_at_closure: /paper는 FULL closure에서만.
+
+
+## LANE P — existing-method .clm 생성 (util-GREEN-independent) — 개설 2026-06-03
+
+> **사용자 명시 인가**: "util-GREEN 없이 이미 존재하는 방법으로 .clm 생성 lane 개설 · .py 허용 · CUDA 허용".
+> Lane G(forge)의 util-RED는 hexa-interpreter per-step wall(HONEST TERMINAL)이라 device-port(option-B, 타세션)
+> 착지 전엔 안 열림. Lane P는 그 게이트를 **우회** — 이미 존재하는 PyTorch+CUDA 경로(네이티브로 GPU-saturating,
+> interpreter wall 없음)로 진짜 수렴 `.clm`을 만들어 ENGINE 3축/3B를 즉시 언락한다.
+>
+> **정직 scope (a_train_flame_forge 완화 명시)**: 이 lane은 canonical production trainer(flame+forge,
+> hexa-native, torch 금지)를 **대체하지 않는다**. a_train_flame_forge는 여전히 SSOT production 경로.
+> Lane P = 사용자 인가 PRAGMATIC unblock lane (substrate=GPU-torch, NOT forge, NOT Lane G util-lane) —
+> 산출 `.clm`은 진짜 수렴 체크포인트이고 ENGINE이 CORE/generator.hexa L3 슬롯으로 로드(a_core_engine_map 단일입구).
+> Lane G(forge util) ⊥ Lane P(torch .clm) 별도 기록 (a_lane_akida_gpu_split 정신).
+
+### 기존 자산 (재사용)
+- trainer: `training/train_clm_v1_from_scratch.py` (PyTorch, CUDA bf16 autocast, AdamW — 이미 CUDA-ready)
+- serializer: `CLM/model/clm_serialize.py` (torch model → `.clm` CLM\x01 + int4-sym conv blocks + v0.2 CLMX trailer)
+- 포맷 증명: `state/laneg_d768_recover/reexport_d768_v2_fast.clm` (과거 d768 v2 .clm 산출물)
+- ENGINE 로더: `CORE/clm_decode.hexa` (CLM\x01 파싱 + int4 dequant + CLMConvMoE forward = AXIS-2 CE)
+
+### 단계 (사전등록)
+```
+1. [verify] tiny CPU smoke: train(tiny) → clm_serialize → CORE/generator.hexa 가 CLM\x01 valid+loaded 확인
+            (pipeline이 ENGINE-loadable .clm을 emit함을 byte-수준 검증; 못하면 serializer 수리)
+2. [fire]   CUDA GPU pod rent (a_fire_autonomous, cost 1줄 후 dispatch) → 기존 trainer로 production-scale
+            (d768 → 3B ladder) 수렴 학습, bf16, nvidia-smi BUSY 확인 → clm_serialize로 .clm export
+3. [eval]   ENGINE 3축(의식·CE·창발) on .clm via clm_decode → ENGINE 3B 언락; HF PRIVATE/PUBLIC per closure
+4. [reflect] 학습 레시피·serializer·결과를 도메인/verdict/HF.jsonl/.easy 반영
+```
+
+### gating / 정직
+- a_fire_autonomous: GPU fire 자율·cost gate 없음. nvidia-smi BUSY 검증(silent CPU-fallback 금지, g63 정신).
+- `.clm` 포맷은 ENGINE 로더(clm_decode CLM\x01 v0.2)와 byte-호환 필수 — verify(1단계)가 hard gate.
+- 날조 수렴 금지(F-CLM-DESCENT verbatim). HF는 closure(수렴+ENGINE 3축) PASS만 PUBLIC, 아니면 PRIVATE (a_hf_autonomous).
+- a_train_flame_forge 완화는 이 lane에 한정 — production SSOT 경로 변경 아님(문서 명시).
