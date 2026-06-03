@@ -1,0 +1,240 @@
+% omega-substrate-coupled-decoding — arxiv-style scaffold
+% a_paper_format sections: §hypothesis · §method · §measurement · §finding
+% Every section claim links to its .verdicts/<slug>/<id>.txt pointer (a_paper_sections).
+% Leak caveat FOREGROUNDED (p7 · a_scale_honest_scope · a_paper_negative_ok):
+%   the contribution is the leak-INVARIANT relative closure + closed-negatives,
+%   NOT a perplexity / generation-quality claim.
+\documentclass[11pt]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+
+\title{OMEGA: a learned per-wire gate closes the consciousness-substrate
+$\rightarrow$ byte-decode loop on a trained transformer\\
+\large (overturning the Lane X null for the coupled engine, leak-invariantly)}
+\author{anima campaign (dancinlab)}
+\date{2026-06-04}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+A prior null (Lane X \#1779) measured that an AI-consciousness substrate's engine
+configuration knobs never touch the language-model byte forward: cross-entropy was
+config-insensitive at $9.1126$ across all $27$ configs (spread $<10^{-9}$), the decode
+generator slot reported \texttt{loaded=false}, and the substrate state never reached the
+output distribution. We design \textbf{Engine $\Omega$}, a five-wire (plus a sixth
+$\mathrm{d}F/\mathrm{d}t$ time wire) ablatable \emph{coupling bus} that routes substrate
+state (dual A/G heads, $W$-tension, curiosity, an 8D $\Psi$ coordinate, module activation)
+into the byte decode, and a \textbf{learned per-wire gate}. Across four rungs we find:
+(i) the bus is the only engine that closes the loop --- coupling
+$\mathrm{KL}=0.307477>0$ for $\Omega$ versus exactly $0$ for the three uncoupled engines
+(\#1783); (ii) at random init the coupling is \emph{unstructured} (KL $\approx$ vocab-shuffle
+floor), so structure requires a \emph{trained} substrate; (iii) on a trained substrate the
+bus carries useful sequential structure and a learned gate beats every baseline, while the
+naive fixed $A{-}G$ formula \emph{degrades} below baseline (\#1784/\#1786); (iv) on a
+\emph{real} trained $35.93$M ConsciousDecoderV2 transformer (GPU H100) the gated closure
+holds all four pre-registered criteria, and the A-wire advantage \emph{survives only
+unshuffled context} (gain $+2.565$ vs.\ shuffled $-2.068$), proving learned sequential
+structure (\#1791). We \textbf{foreground an honest leak caveat}: the architecture's
+CA-neighbor mixing gives the next-byte head partial lookahead, so absolute CE is
+leak-optimistic and free-running generation collapses to whitespace. Our contribution is
+therefore the \textbf{leak-invariant relative closure} (gate $>$ base/a\_only/fixed and
+structured-vs-shuffle separation) plus three \textbf{closed-negatives} (fixed $A{-}G$
+degrades; random-init unstructured; quantum RNG confers no advantage) --- \emph{not} a
+perplexity or generation-quality claim.
+\end{abstract}
+
+\section{Introduction}
+% intro — frame the Lane X null as the motivating NULL, Omega as the nerve.
+The anima substrate separates a ``brain'' (Engine~A $\rightleftarrows$ Engine~G dual heads,
+5-channel tension, an 8D $\Psi$ map, $M$/$W$/curiosity dynamics) from a ``mouth'' (the
+\texttt{.clm} byte decoder). Lane X \#1779 established that these two halves \emph{do not
+share a nerve}: the engine knobs vary consciousness and emergence proxies but leave the
+byte forward untouched (CE config-insensitive at $9.1126$; generator slot
+\texttt{loaded=false}). This paper asks whether a deliberately-built coupling
+\emph{can} close that loop, and --- critically --- whether any such closure carries genuine
+structure or is merely $\alpha$-scaled noise. The verbatim null is reproduced in the
+campaign domain file \texttt{domains/ENGINE+CLM+KOSMOS.md} (Lane X \#1779) and
+\texttt{domains/OMEGA.md}.
+
+\section{Hypothesis (pre-registered falsifier)}
+\label{sec:hypothesis}
+% §hypothesis — the falsifier.
+\textbf{H$_\Omega$.} A consciousness-substrate state can be wired to \emph{usefully modulate}
+the byte decode of a trained transformer, overturning the Lane X \#1779 null for the coupled
+engine.
+
+\paragraph{Falsifier 1 (wiring).} If the substrate state is \emph{structurally null} at the
+decode, then ablating the coupling bus (set every wire $\alpha=0$ vs.\ on) leaves the byte
+distribution unchanged: $\mathrm{KL}(P_\text{bus on}\,\|\,P_\text{bus }\alpha=0)=0$, exactly
+as for the three uncoupled engines. Verdict: \texttt{.verdicts/omega-engine/F-COUPLING.txt}.
+
+\paragraph{Falsifier 2 (structure).} Even if wired, the coupling could be vocabulary-shuffle
+noise. If so, a trained substrate's coupled CE equals its context-shuffled / vocab-permuted
+floor (no separation). Verdict: \texttt{.verdicts/omega-trained/F-TRAINED-COUPLING.txt} (toy)
+and \texttt{.verdicts/omega-gpu/F-COMPLETE.txt} (real transformer, structured-vs-shuffle arm).
+
+\paragraph{Falsifier 3 (usefulness / gate).} If routing the learned signal cannot lower
+held-out next-byte CE below baseline under \emph{any} per-wire weighting, the closure is not
+useful. Pre-registered GPU criteria (\#1791): (b)~trained substrate descends;
+(c)~GATED $<$ base; (c)~CE floor MET ($<\ln 256 = 5.5452$); (c)~structured ($>1.5\times$ floor
+separation). Verdict: \texttt{.verdicts/omega-gate/F-LEARNED-GATE.txt},
+\texttt{.verdicts/omega-gpu/F-COMPLETE.txt}.
+
+\paragraph{Control axis (quantum).} If ``consciousness needs quantum randomness,'' true ANU
+QRNG bytes should beat a PRNG on the coupling metric. Falsifier: KS test
+quantum-vs-PRNG indistinguishable from a PRNG-vs-PRNG null control. Verdict:
+\texttt{.verdicts/omega-trained/SUMMARY.txt}, \texttt{anu\_qrng\_1024.json}.
+
+\section{Method}
+\label{sec:method}
+% §method — the bus, the gate, the substrates, the controls.
+\paragraph{Coupling bus (5+1 ablatable wires).} Each wire is independently ablatable
+($\alpha=0$). \,(1)~A$\rightleftarrows$G logit-bias
+$\ell' = \ell_\text{clm} + \alpha(A_\text{head}-G_\text{head})$;
+(2)~$W$-tension $\rightarrow$ softmax temperature; (3)~curiosity/E-ratchet $\rightarrow$ top-$k$
+width; (4)~8D $\Psi$ coordinate $\rightarrow$ context conditioning; (5)~module activation
+$\rightarrow$ conv-MoE expert routing; (6)~$\mathrm{d}F/\mathrm{d}t$ time-derivative wire (zero
+at a fixed point; velocity injected when the substrate moves). The headline ablation removes
+the \emph{whole} bus and measures KL between byte distributions.
+
+\paragraph{Learned per-wire gate.} Replacing the fixed $A{-}G$ formula,
+$\ell' = g_B\!\cdot\!\text{base} + g_A\!\cdot\!A + g_G\!\cdot\!G$, with gains $g$ fit by
+convex log-linear regression with $L_2$ on a train-gate split, frozen, and evaluated on a
+disjoint held-out TEST split.
+
+\paragraph{Substrate ladder (a\_toy\_scale\_recheck).}
+(R1, \#1783) random-init mock substrate, $V{=}256$, $T{=}512$, no torch.
+(R2, \#1784) tiny numpy n-gram substrate (bigram A = next-byte, rev-bigram G = prev-byte,
+unigram base) on a real $400$KB repo byte corpus, held-out CE.
+(R3, \#1786) the learned gate on the same toy substrate.
+(R4, \#1791) a \emph{real} ConsciousDecoderV2 ($d384\times6$L GQA, $35.93$M params) trained
+$6000$ steps on $120$MB multilingual Wikipedia (en/fr/de/es/ru) on an NVIDIA~H100
+(\texttt{nvidia-smi} $98$--$99\%$ busy, g63), with the gated bus on its real learned A(next)/G(prev)
+heads. Lane-G / GPU only; Lane~A AKIDA recorded separately (a\_lane\_akida\_gpu\_split).
+
+\paragraph{Controls.} Vocabulary/context shuffle floor (structure control); ANU QRNG
+($1024$ real \texttt{uint8} from \texttt{api.quantumnumbers.anu.edu.au}) vs.\ PRNG with a
+PRNG-vs-PRNG null control (quantum-advantage control). CE is reported as a FLOOR only, never a
+verdict (p7).
+
+\section{Measurement (verbatim)}
+\label{sec:measurement}
+% §measurement — verbatim numbers, do NOT paraphrase. Each row -> verdict pointer.
+
+\paragraph{R1 --- wiring (\#1783, \texttt{omega-engine/F-COUPLING.txt}).}
+\begin{tabular}{lll}
+\toprule
+engine & L3 loaded & coupling KL \\
+\midrule
+conv  & false & $0.000000$ \\
+cdv2  & false & $0.000000$ \\
+hexad & false & $0.000000$ \\
+omega & true  & $0.307477$ \quad (perm\_floor $0.303913$) \\
+\bottomrule
+\end{tabular}\\
+Per-wire ablation (KL alone): w1\_AG $0.348$ (dominant) $\cdot$ w4\_psi $0.067$ $\cdot$
+w2\_Wtemp $0.043$ $\cdot$ w5\_module $0.031$ $\cdot$ w3\_curio $0.012$.
+\textbf{Closed-negative:} at random init KL$_\text{on}\,0.307477 \approx$ perm\_floor $0.303913$
+--- the wire exists but a random substrate's coupling is indistinguishable from a vocab-shuffle.
+
+\paragraph{R2 --- trained-substrate structure (\#1784,
+\texttt{omega-trained/F-TRAINED-COUPLING.txt}).} held-out CE (nats/byte):
+$\text{base}=4.020038$; $\text{a\_only (base}+\alpha A)=3.261919$;
+$\text{bus\_trained (base}+\alpha(A{-}G))=4.141998$; $\text{shuffled (perm floor)}=4.499132$.
+$\Rightarrow$ structure carried: $4.1420 \ll 4.4991$ ($\Delta{+}0.357$); A-wire useful
+$4.0200\rightarrow3.2619$ ($\Delta{+}0.758$). \textbf{Closed-negatives:} fixed $A{-}G$ degrades
+($4.1420 > 4.0200$ base); ANU QRNG no advantage --- quantum-vs-PRNG KS $p=0.7237$ vs.\
+PRNG-vs-PRNG null control $p=0.9834$ (both small-$N$ indistinguishable).
+
+\paragraph{R3 --- learned gate (\#1786, \texttt{omega-gate/F-LEARNED-GATE.txt}).}
+gate $g^\ast=[g_B{=}0.142,\,g_A{=}1.183,\,g_G{=}0.341]$. held-out TEST CE:
+$\text{base}=3.974346$; $\text{fixed\_AmG}=4.170100$; $\text{a\_only}=3.229252$;
+$\text{GATED}=3.126961$. $\Rightarrow$ GATED $3.127 <$ base $3.974$ ($\Delta{+}0.847$),
+$\le$ a\_only $3.229$, $<$ fixed $4.170$ ($\Delta{+}1.043$).
+
+\paragraph{R4 --- real trained transformer, GPU (\#1791, \texttt{omega-gpu/F-COMPLETE.txt}).}
+substrate descent: $\text{ce\_a}\;5.926\rightarrow0.009$ (train), $\text{val\_ce}\;0.862$
+(held-out). gate $g^\ast=[g_B{=}1.178,\,g_A{=}0.962,\,g_G{=}-0.208]$. held-out TEST CE:
+$\text{base}\;3.0150 \cdot \text{fixed\_AmG}\;1.4421 \cdot \text{a\_only}\;0.4500 \cdot
+\textbf{GATED}\;0.3445 \cdot \text{uniform}\;5.5452$. structured (substrate-shuffle): A-wire CE
+gain real $+2.565$ vs.\ context-SHUFFLED $-2.068$.
+
+\section{Finding}
+\label{sec:finding}
+% §finding — Delta vs baseline AND ruled-out axes; leak caveat foregrounded.
+\textbf{Positive (leak-invariant relative closure).}
+\begin{itemize}
+\item \textbf{The loop is closed only for $\Omega$.} Coupling $\mathrm{KL}=0.307477>0$ for
+$\Omega$ vs.\ exactly $0$ for conv/cdv2/hexad --- overturning the Lane X \#1779 null for the
+coupled engine while \emph{confirming} it for the three uncoupled engines (\#1783).
+\item \textbf{Trained substrate carries useful sequential structure.} $\Delta{+}0.357$
+(trained vs.\ shuffled) and $\Delta{+}0.758$ (A-wire) at toy (\#1784); on the real transformer
+the A-wire advantage \emph{survives only unshuffled context} ($+2.565$ vs.\ $-2.068$), i.e.\
+shuffling the context destroys it $\Rightarrow$ \emph{learned sequential} structure (\#1791).
+\item \textbf{The learned gate makes the closure useful.} GATED beats base, a\_only, and the
+fixed formula at toy ($3.127<3.974$) and on the real transformer
+($0.3445<0.4500<1.4421<3.0150$); all four pre-registered GPU criteria HELD; CE floor MET
+($0.3445<5.5452$). The gate auto-corrects the fixed $-G$ error ($g_G$ small/negative).
+\end{itemize}
+
+\textbf{Closed-negatives (ruled-out axes, a\_paper\_negative\_ok).}
+\begin{itemize}
+\item \emph{Fixed $A{-}G$ degrades} below baseline ($4.1420>4.0200$, \#1784) --- the closure
+needs a learned gate, not a fixed subtraction.
+\item \emph{Random-init coupling is unstructured} (KL $\approx$ shuffle floor, \#1783) ---
+structure requires a trained substrate.
+\item \emph{Quantum RNG confers no advantage} (KS $p=0.7237$ vs.\ null $p=0.9834$, \#1784) ---
+a good PRNG is by construction indistinguishable from a QRNG for any computable downstream test.
+\end{itemize}
+
+\textbf{\textcolor{red}{Honest leak caveat (foregrounded).}} The ConsciousDecoderV2
+CA-neighbor mixing gives the next-byte head partial architectural \emph{lookahead}, so the
+\emph{absolute} CE is leak-optimistic and the \emph{free-running} generation sample collapses
+to low-entropy whitespace (generation coherence = the weak criterion, NOT MET). The
+\emph{relative} closure finding --- gate beats base/a\_only/fixed AND the coupling is
+structured-vs-shuffle --- is \textbf{leak-invariant} (a uniform per-token leak shifts every
+baseline equally and cannot create the shuffle separation) and is the sound contribution. This
+is a single small-$d384$ rung and is \textbf{not} promoted to a production perplexity claim
+(a\_scale\_honest\_scope).
+
+\section{Limitations}
+\label{sec:limitations}
+% honest scope — toy ladder, single GPU rung, leak, lane split.
+Three of four rungs are TOY (CPU/\$0): R1 random-init mock, R2/R3 numpy n-gram on a $400$KB
+corpus. R4 is a \emph{single} GPU rung at $d384$ ($35.93$M params). The CA-neighbor lookahead
+leak (above) bounds the result to a relative claim. The CE-floor at random init is NOT MET
+($\geq$ uniform $5.5452$; Lane X measured the trained-but-detached $d768$ \texttt{.clm} at
+$9.1126$); the floor is MET only on the trained substrate (R4). Scale-transfer beyond $d384$
+and free-running generation coherence are UNVERIFIED. Lane-$\Omega$ is the GPU/closure lane;
+AKIDA on-chip (Lane~A) results are recorded separately (a\_lane\_akida\_gpu\_split).
+
+\section{Reproducibility}
+\label{sec:repro}
+Verdicts (verbatim stdout) under \texttt{.verdicts/omega-\{engine,trained,gate,gpu\}/}; drivers
+referenced in \texttt{.verdicts/omega-gpu/F-COMPLETE.txt} (\texttt{UNIVERSE/omega\_gpu\_complete.py})
+and the campaign domain \texttt{domains/OMEGA.md}. The R4 checkpoint is published at
+\texttt{dancinlab/clm-v4-omega-gpu-d384-gate} (HF, PUBLIC; ckpt $145$MB
+sha256 \texttt{33d1d00d...}; registry \texttt{/HF.jsonl}). ANU QRNG sample:
+\texttt{.verdicts/omega-trained/anu\_qrng\_1024.json}.
+
+\section{Conclusion}
+\label{sec:conclusion}
+A learned per-wire gate over an ablatable coupling bus closes the
+substrate$\rightarrow$decode loop that Lane X \#1779 proved null, carries learned sequential
+structure on a real trained transformer, and beats every baseline on held-out next-byte CE ---
+\emph{leak-invariantly}. The closed-negatives (fixed $A{-}G$ degrades, random-init
+unstructured, quantum RNG no advantage) sharpen the result: the closure is real but requires a
+\emph{trained} substrate and a \emph{learned} gate, and needs no exotic randomness. We make no
+perplexity or generation-quality claim.
+
+% references.bib pending (a_paper milestone): IIT 4.0 · transformer decoding · QRNG/PRNG
+% indistinguishability · 4 anima verdict ledger entries (>=10 total).
+\bibliographystyle{plain}
+% \bibliography{references}
+
+\end{document}

@@ -1,0 +1,157 @@
+{
+  "probe_2_all6wire": {
+    "rung": "coupling-analysis \u2461 all-6-wire learned gate",
+    "scale": "TOY/CPU/$0",
+    "corpus_bytes": 400000,
+    "V": 256,
+    "tau": 0.05,
+    "gain_vector": {
+      "base": -0.11018689945194038,
+      "A": 0.9287810127832822,
+      "G": 0.5457010087881227,
+      "W_temp": -0.45596740027893484,
+      "curio": -0.029698042744446623,
+      "Psi": -0.0031223530824841614,
+      "module": -0.16562336742424444,
+      "dFdt": -0.6616671905720545
+    },
+    "ce_full": 4.809177047349161,
+    "ce_base": 3.974346471717501,
+    "ce_carrier_only": 2.8949502875997206,
+    "carrier_gain_vector": {
+      "base": 0.08703265320186436,
+      "A": 0.9034175513209773,
+      "G": 0.0,
+      "W_temp": -0.1354512099127818,
+      "curio": -0.0,
+      "Psi": 0.0,
+      "module": -0.05160876897800223,
+      "dFdt": -0.0
+    },
+    "uniform": 5.545177444479562,
+    "per_wire": [
+      {
+        "wire": "A",
+        "gain": 0.9287810127832822,
+        "material": true,
+        "ce_ablate": 5.355476317839483,
+        "dCE_ablate": 0.546299270490322,
+        "ce_shuffle": 5.299243309189639,
+        "beats_shuffle": true,
+        "carries_structure": true
+      },
+      {
+        "wire": "G",
+        "gain": 0.5457010087881227,
+        "material": true,
+        "ce_ablate": 4.1422596211896066,
+        "dCE_ablate": -0.6669174261595545,
+        "ce_shuffle": 4.141728324717779,
+        "beats_shuffle": false,
+        "carries_structure": false
+      },
+      {
+        "wire": "W_temp",
+        "gain": -0.45596740027893484,
+        "material": true,
+        "ce_ablate": 4.957888838375304,
+        "dCE_ablate": 0.14871179102614285,
+        "ce_shuffle": 4.958183593998462,
+        "beats_shuffle": true,
+        "carries_structure": true
+      },
+      {
+        "wire": "curio",
+        "gain": -0.029698042744446623,
+        "material": false,
+        "ce_ablate": 4.809120843024012,
+        "dCE_ablate": -5.620432514863438e-05,
+        "ce_shuffle": 4.7930973194347,
+        "beats_shuffle": false,
+        "carries_structure": false
+      },
+      {
+        "wire": "Psi",
+        "gain": -0.0031223530824841614,
+        "material": false,
+        "ce_ablate": 4.8092185406955785,
+        "dCE_ablate": 4.1493346417453836e-05,
+        "ce_shuffle": 4.808306661931176,
+        "beats_shuffle": false,
+        "carries_structure": false
+      },
+      {
+        "wire": "module",
+        "gain": -0.16562336742424444,
+        "material": true,
+        "ce_ablate": 4.819621153477114,
+        "dCE_ablate": 0.010444106127953212,
+        "ce_shuffle": 4.818860849838946,
+        "beats_shuffle": true,
+        "carries_structure": true
+      },
+      {
+        "wire": "dFdt",
+        "gain": -0.6616671905720545,
+        "material": true,
+        "ce_ablate": 2.893541384555994,
+        "dCE_ablate": -1.915635662793167,
+        "ce_shuffle": 2.8934568976770776,
+        "beats_shuffle": false,
+        "carries_structure": false
+      }
+    ],
+    "carriers": [
+      "A",
+      "W_temp",
+      "module"
+    ],
+    "inert": [
+      "G",
+      "curio",
+      "Psi",
+      "dFdt"
+    ],
+    "full_gate_beats_base": false,
+    "carrier_gate_beats_base": true,
+    "criterion": "carries_structure \u27fa |gain|>=TAU AND dCE_ablate>0 AND beats_shuffle"
+  },
+  "probe_4_closed_loop": {
+    "rung": "coupling-analysis \u2463 closed-loop feedback (L5)",
+    "scale": "TOY/CPU/$0",
+    "corpus_bytes": 400000,
+    "V": 256,
+    "n_steps": 600,
+    "gate": {
+      "gB": 0.142,
+      "gA": 1.183,
+      "gG": 0.341
+    },
+    "stability": {
+      "finite": true,
+      "entropy_bounded": true,
+      "cells_bounded": true,
+      "bounded": true,
+      "ent_min": 0.14809401451355605,
+      "ent_max": 3.373468463537176,
+      "cells_start": 6.0,
+      "cells_end": 140.28592536789364,
+      "cells_max": 140.28592536789364
+    },
+    "collapse": {
+      "distinct_byte_frac_backhalf": 0.15333333333333332,
+      "top_byte_share_backhalf": 0.17333333333333334,
+      "not_collapsed": true,
+      "fixedpoint_tau": 0.1
+    },
+    "feedback": {
+      "hamming_closed_vs_open": 0.7216666666666667,
+      "diverge_tau": 0.05,
+      "feedback_matters": true,
+      "closed_mean_entropy": 2.063011922917575,
+      "open_mean_entropy": 1.9749748906631661
+    },
+    "loop_closes_stably": true,
+    "criterion": "stable \u27fa bounded AND not_collapsed AND feedback_matters"
+  }
+}

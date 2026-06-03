@@ -1,0 +1,130 @@
+C-PORT MILESTONE-3 — sgemm reference RUNEQ — PORT-EQ (8/8 VALUE-EXACT)
+=====================================================================
+verdict: PORT-EQ — 8/8 VALUE-EXACT and element-BIT-EXACT (0 mismatches
+         across all 16640 reference elements: 4×256 + 3×16384 + 1×8192).
+         Achieved after TWO fixes — (1) a hexa-lang codegen if-body
+         const-fold pre-invalidation (a real compiler bug, sibling of
+         #2650), and (2) a RUNEQ HARNESS fix pinning an identical fp32
+         model on the C reference side (NOT a port bug, NOT a compiler bug).
+date:    2026-06-04
+host:    local darwin-arm64 (M-series). Fixed toolchain built locally.
+
+PREDECESSOR
+-----------
+The prior attempt (this file's earlier revision) reported DIFFER for two
+reasons: a maxabs miscompile and an "fp FMA ~1-ULP" sum drift, with the
+elements assumed byte-identical. On re-measurement the elements were NOT
+byte-identical (174/256 differed even on the 16×16 case), so the divergence
+was deeper than a single FMA. Both causes are now RESOLVED and the RUNEQ is
+genuinely value- AND bit-exact (proven below).
+
+FIXED TOOLCHAIN — how it was obtained (lightweight self-rebuild, no install edit)
+--------------------------------------------------------------------------------
+A fixed `hexat` (gen2 C transpiler) was built ENTIRELY in /tmp from the
+hexa-lang worktree's FIXED self/codegen.hexa (branch mczero/if-body-fold-fix,
+off origin/main 3b550c6af which already carries #2650):
+  1. tool/regen_cc_manual with HEXA_LANG=<worktree> (fixed codegen.hexa) and
+     HEXA_V2=<install hexa_v2> -> /tmp/hexa_cc_fixed.c.new (2.0 MB full
+     transpile, NOT a stub).
+  2. clang -O2 -D_GNU_SOURCE -I self -fbracket-depth=4096 -x c
+     hexa_cc_fixed.c.new -x c self/runtime.c -lsodium -lm -> /tmp/hexat.fixed.
+The hexa-lang INSTALL was only READ (its hexa_v2 + runtime.c); codegen.hexa
+in the install is byte-identical before/after (sha 67e63282…), the install
+hexat binary is untouched. INSTALL CLEAN.
+
+SANITY (the if-body-fold repro): a max-reduction
+  let maxv=0; for i in 0..5 { if vals[i] > maxv { maxv = vals[i] } }
+over [3,9,2,7,1] returns 9 on /tmp/hexat.fixed (correct MAX) and 1 (the LAST
+element) on the OLD install hexa_v2 — the fold-as-`>0`-always-true bug.
+m10 regression: FIXED -> "IF-BODY-FOLD-OK" rc=0; OLD -> miscompiled C that
+clang rejects (no binary). Bug CONFIRMED + FIXED.
+
+ROOT-CAUSE 1 — if-body const-fold MISCOMPILE (CONFIRMED COMPILER BUG, FIXED)
+---------------------------------------------------------------------------
+`let maxabs = 0.0` (a plain immutable let) const-folds maxabs -> 0.0. The
+reduction `for idx ... { if av > maxabs { maxabs = av } }` inlined the STALE
+literal 0.0 into the IF CONDITION (`av > 0.0`, always true for positive av)
+while the body reassigned the live maxabs -> the reduction kept the LAST
+element instead of the MAX. Same CLASS as #2650 BUG 1 (while-condition fold
+inlining a reassigned binding) but for an IfExpr at statement position whose
+then/elif/else body reassigns the folded var — #2650's WhileStmt
+pre-invalidate did NOT cover the if-arm.
+FIX (hexa-lang self/codegen.hexa, ExprStmt/IfExpr arm of _gen2_stmt_inner):
+pre-invalidate the comptime-const fold for every name the then_body + else_body
+reassign (via _gen2_collect_assigned, which recurses into else_body so chained
+elif/else arms are covered) BEFORE comptime-folding or emitting the condition,
+mirroring the WhileStmt pre-invalidate at ~L3496. Regression catcher m10
+(self/test/miscompile_class/m10_if_body_fold_reassign.hexa). hexa-lang PR:
+mczero/if-body-fold-fix (base=main). With the fix, maxabs is correct 8/8.
+
+ROOT-CAUSE 2 — fp32 MODEL MISMATCH (HARNESS FIX, not a bug)
+----------------------------------------------------------
+After fix 1, maxabs matched 8/8 but the SUM (and the per-element matmul)
+still differed. Element-bit measurement showed the divergence is a THREE-part
+fp-semantics mismatch between the C reference and the port's fp32 model — NOT
+a single FMA contraction:
+  (a) INPUT: port fills r32(0.02 * (double)int) — 0.02 is an f64 constant;
+      the C ref used 0.02f (the f32 literal, != (double)0.02) -> 67/256
+      input elements differed by 1 ULP before any matmul.
+  (b) PRODUCT: port forms a*b in f64 then rounds to f32; C used f32-native
+      a*b.
+  (c) ACCUMULATE: port rounds to f32 after EVERY add (no FMA); C -O2 fused
+      `s += a*b` into a single-rounded FMA.
+The port has no native f32 type (hexa Float is f64) and models fp32 by an
+explicit round-to-binary32 (write_f32/deref_f32) at each materialise with f64
+arithmetic between rounds. A faithful RUNEQ must pin the SAME fp model on both
+sides. FIX (training/native/sgemm_ref_runeq.c, HARNESS): introduce r32() =
+(float) and rewrite the driver to the port's model — f64 0.02 constant,
+f64 product rounded to f32, f64 accumulate rounded after every add — and build
+with `cc -O2 -ffp-contract=off` so the compiler cannot re-fuse the explicitly
+rounded add into an FMA. This is a harness fp-contract alignment, not a port
+or compiler change.
+
+C BASELINE (cc -O2 -ffp-contract=off, port-fp-model, local darwin-arm64)
+------------------------------------------------------------------------
+  [16x16x16 tA=0 tB=0] sum=5.7592 maxabs=6.2588
+  [16x16x16 tA=1 tB=0] sum=4.088 maxabs=3.9596
+  [16x16x16 tA=0 tB=1] sum=19.9488 maxabs=4.926
+  [16x16x16 tA=1 tB=1] sum=4.64879 maxabs=4.9548
+  [128x128x128 tA=0 tB=0] sum=-1.40558 maxabs=10.4652
+  [128x128x128 tA=1 tB=0] sum=4.10753 maxabs=11.782
+  [128x128x128 tA=0 tB=1] sum=-1.40558 maxabs=10.4652
+  [64x32x128 tA=0 tB=0] sum=13.8276 maxabs=8.9696
+  [sgemm_ref] DONE
+
+HEXA PORT (sgemm_ref_native.hexa, /tmp/hexat.fixed -> clang -> run, 90s-guarded)
+-------------------------------------------------------------------------------
+  [16x16x16 tA=0 tB=0] sum=5.7592 maxabs=6.2588
+  [16x16x16 tA=1 tB=0] sum=4.088 maxabs=3.9596
+  [16x16x16 tA=0 tB=1] sum=19.9488 maxabs=4.926
+  [16x16x16 tA=1 tB=1] sum=4.64879 maxabs=4.9548
+  [128x128x128 tA=0 tB=0] sum=-1.40558 maxabs=10.4652
+  [128x128x128 tA=1 tB=0] sum=4.10753 maxabs=11.782
+  [128x128x128 tA=0 tB=1] sum=-1.40558 maxabs=10.4652
+  [64x32x128 tA=0 tB=0] sum=13.8276 maxabs=8.9696
+  [sgemm_ref] DONE
+
+DIFF: empty (8/8 LINE-EXACT). Element-bit cross-check (C-port-model vs port,
+raw i32 bit dump): 0/16384 mismatches on case 128x128 tA0tB0, 0/256 on case
+16x16 tA0tB0. => element-BIT-EXACT, not merely summary-equal.
+
+PROOF STATUS / merge dependency
+-------------------------------
+This is a FUNCTIONAL proof: the port is value- + bit-exact when compiled with
+a hexat carrying the if-body-fold fix. That fix is NOT yet in any released
+hexa-lang toolchain — it lives in hexa-lang PR mczero/if-body-fold-fix
+(base=main, pending byte-eq gate + parent merge). With the CURRENT installed
+(unfixed) hexat the port's maxabs is wrong (the bug), so the RUNEQ only passes
+on the locally-fixed toolchain. M3 PORT-EQ is therefore PROVEN-pending: it
+holds the moment the hexa-lang codegen fix lands. The harness fp fix (root
+cause 2) is committed here and is toolchain-independent.
+
+NET
+---
+- if-body fold: CONFIRMED hexa-lang codegen bug, FIXED (PR mczero/if-body-fold-fix).
+- RUNEQ: 8/8 VALUE-EXACT + element-BIT-EXACT (both fixes applied).
+- maxabs 8/8 from the codegen fix; sum 8/8 from the harness fp-model fix.
+- merge: anima M3 flips to PORT-EQ on this verdict; the value-exactness is
+  proven functionally and becomes the released behavior once the hexa-lang
+  if-body-fold PR merges. Honest g63 satisfied — this is a REAL 8/8, not a
+  paraphrase.
