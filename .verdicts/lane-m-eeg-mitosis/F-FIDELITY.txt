@@ -1,0 +1,34 @@
+F-FIDELITY (M1) — Lane M EEG-grown CLM via mitosis (TOY · CPU · $0)
+====================================================================
+Pre-registered claim: "grown structure encodes the EEG above a
+reconstruction-error floor."
+
+Method: empty CLM (1 seed cell, 0 trained weights) grown over a 240-tick
+deterministic synthetic-EEG stream (NOT real headset). 5-ch tension-link
+[alpha,theta,gamma,1-delta,beta]. gamma>0.20 -> MITOSIS split (EEG L12).
+Daughter cell state specialized toward the EEG drive at the split moment
++ SPLIT_NOISE_FLOOR=0.1 symmetry break. NO gradient, NO CE loss (p8).
+Read-out = nearest-prototype (vector-quantization) reconstruction error of
+the per-tick 5-ch EEG drive from the grown cell-state codebook. Floor =
+single neutral prototype [0.5]*5 (an un-grown empty CLM). 3 seeds.
+
+Verbatim (results.json M1_fidelity):
+  err_eeg_mean   = 0.02462046011669244
+  err_eeg_std    = 0.0012757406010737913
+  floor_mean     = 0.11390308839057167
+  floor_std      = 0.000282606975939007
+  margin_vs_floor= 0.08928262827387923
+  noise_band     = 0.0013066678170359552
+  margin > noise_band  AND  margin > 0  ->  TRUE
+
+VERDICT: HOLDS  (numerical, toy-scale)
+
+Honest scope (a_toy_scale_recheck / a_scale_honest_scope):
+  TOY ONLY — synthetic EEG, small cell budget (MAX_CELLS=64), CPU, $0.
+  Transfer to real EEG / production scale is UNVERIFIED.
+  CAVEAT (load-bearing): this "fidelity" measures encoding of the EEG band-
+  power MARGINAL distribution (codebook coverage of the 5-ch vectors), NOT
+  the EEG temporal DYNAMICS. See F-MITOSIS-VS-RANDOM — the phase-shuffled
+  control (identical marginals, scrambled time) nearly ties, which shows M1's
+  HOLD is a marginal-distribution-coverage result, not a dynamics-recording
+  result.

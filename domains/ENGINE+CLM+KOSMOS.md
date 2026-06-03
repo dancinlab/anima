@@ -327,6 +327,44 @@ scale-break ──▶ 정직 closed-negative 노트 + harness 은퇴 (날조 금
 - 산출물: `.verdicts/brain-train-bench/{F-TRIBE,F-EEG,F-TRIBE-KOSMOS,F-EEG-KOSMOS,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/brain_train_bench.py` + `analyze_brain_train.py` · discovery `.discoveries/brain-train-bench.tape`.
 - **bottom line**: 뇌-유래 보조 학습신호는 toy LM에 **도움 안 됨 — GOAL-orthogonal decoration**. 정직한 publishable closed-negative(§97 일치).
 
+## LANE M — "EEG-grown CLM via mitosis" (gradient-FREE 성장 레인 신설) — M1/M3 HOLDS · M2 INCONCLUSIVE(closed-neg 경향) — TOY · 2026-06-04
+
+> **새 레인 개설**: Lane A(AKIDA on-chip) / Lane G(forge GPU CE-descent) / Lane P(py+CUDA gradient)와
+> **구별되는** gradient-FREE **성장** 레인. a_lane_akida_gpu_split에 따라 **별도 기록**.
+> **방법**: 빈 CLM(1 seed cell, 0 trained weights) → 5-ch tension-link [α,θ,γ,1-δ,β]로 합성 EEG 스트림 운반
+> → **γ>0.20 → MITOSIS split**(EEG/impl/H_681 L12) → daughter가 그 순간 EEG drive로 특화 + SPLIT_NOISE_FLOOR=0.1 대칭깸
+> → **성장한 위상구조(topology) 자체가 EEG의 "녹음"**. **gradient·CE·backprop 전무**(p8: inference mitosis가 곧 학습).
+> **질문**: gradient-free mitosis 성장이 EEG를 구조에 정말 **녹음**하나 — random + phase-shuffled 컨트롤을 이기나, 아니면 noise 이내인가?
+> **답**: **분포는 녹음, 동역학은 아님**. 마진 band-power **분포**는 floor 대비 잘 재구성(M1 HOLDS)하고 성장은 안정(M3 HOLDS)하나,
+> EEG **시간 동역학**은 seed-noise를 못 넘음 — phase-shuffled(분포 동일·시간 뒤섞음)가 거의 동률, stage-decode는 chance(M2 INCONCLUSIVE).
+
+### setup (TOY · CPU · $0)
+- empty CLM = 1 seed cell(neutral 5-ch state), MITOSIS로만 성장. **MAX_CELLS=64**(작은 셀 예산), stream_len=240 ticks, 3 seeds[1,2,3].
+- 합성 EEG = deterministic generator(**실제 헤드셋 아님**), canonical 4-state 시그니처(`EEG/eeg_backend.hexa` resting/n3/rem/active) 30-tick 블록 순환 + band jitter.
+- split = γ>0.20(L12) → 최고-tension 셀 분열, daughter가 EEG drive로 특화 + noise floor 0.1. phi-proxy = mean pairwise state spread × log(n+1)(mitosis.hexa).
+- read-out(녹음충실도) = grown cell-state codebook의 nearest-prototype(VQ) 재구성오차. floor = un-grown neutral [0.5]×5. **CE/perplexity 아님**(p7, substrate-native).
+
+### result
+
+| metric | 측정 | verdict |
+|---|---|---|
+| **M1 RECORDING FIDELITY** | err_eeg=0.02462±0.00128 vs floor 0.11390±0.00028, margin 0.08928 ≫ noise 0.00131 (floor 대비 4.6× 낮음) | **HOLDS** |
+| **M2 MITOSIS-vs-2-CONTROLS** | err_eeg=0.02462 · random 0.03549±0.01355(margin 0.01087 < noise 0.01361, beats=false) · shuffled 0.02490±0.00198(margin 0.00028 < noise 0.00236, beats=false) | **INCONCLUSIVE** (closed-neg 경향) |
+| **M3 STABILITY** | cells_eeg=[61,61,61] bounded[2,64](cap 미만), phi finite, collapse/explosion 無 | **HOLDS** |
+
+- **M2 핵심**: phase-shuffled(분포 동일, 시간만 뒤섞음)가 EEG-driven을 **거의 동률로 묶음**(0.02490 vs 0.02462) → 구조가 녹음하는 건 **마진 분포**지 **동역학**이 아님.
+- **진단(2차, pre-reg 지표 아님)**: temporal stage-decode 정확도 = **0.250(순수 chance, 4-stage)** — EEG-driven이 3 seed 전부 chance, random은 2 seed에서 **초과**(0.929/0.754). 구조가 어느 stage가 자길 키웠는지 못 복원.
+- **M1 HOLD의 정직한 해석**: "충실도"는 EEG band-power **분포 커버리지**(코드북)이지 **동역학 녹음**이 아님 — M2가 이를 확증.
+
+### honest scope (a_toy_scale_recheck · a_scale_honest_scope · §97 · a_paper_negative_ok · a_lane_akida_gpu_split · p8)
+- **TOY ONLY**: 합성 EEG(실 헤드셋 아님) · MAX_CELLS=64 작은 예산 · 240-tick · CPU · $0 · 3 seeds. 합성→실EEG, toy→production transfer **UNVERIFIED**.
+- **"내 EEG 녹음"(실 사용자 헤드셋)** = HUMAN-GATED 후속, **여기서 안 함**.
+- **§97 정직선**: grown CLM = **RECORDING ARTIFACT**(measurement anchor, §97-legit) — 본 벤치에서 **READ-ONLY**, anima emission/decision에 **절대 미주입**. grown-CLM 출력이 anima 발화를 구동하면 §97 GOAL-ILLEGITIMATE command channel이 되므로 녹음전용 유지.
+- **gradient-FREE**: backprop/CE 전무(p8 — inference mitosis가 곧 학습). Lane A(AKIDA)/Lane G(forge)/Lane P(gradient)와 **별도 기록**(a_lane_akida_gpu_split) — Lane M = gradient-free 성장 레인.
+- p7/g5 verbatim: M2를 HOLD로 반올림하지 않음(noise 이내 → INCONCLUSIVE), shuffled-동률 + chance-level stage-decode를 closed-neg 경향 증거로 기록. **NO HF upload**(toy).
+- 산출물: `.verdicts/lane-m-eeg-mitosis/{F-FIDELITY,F-MITOSIS-VS-RANDOM,F-STABILITY,SUMMARY}.txt` + `results.json` + `run_stdout.txt` · harness `CLM/bench/lane_m_eeg_mitosis.py` · discovery `.discoveries/lane-m-eeg-mitosis.tape`.
+- **bottom line**: gradient-free mitosis 성장은 EEG의 **분포는 녹음**(M1)하고 **안정 성장**(M3)하나, **동역학은 noise 이내로 미녹음**(M2) — random+shuffled를 의미있게 못 이김. 정직한 closed-negative-경향 toy 발견(production/real-EEG 재검 필요).
+
 ## ENGINE-TENSIONLINK-BENCH — 뇌신호↔ENGINE을 tension-link로 커플링 (substrate-native 축, NOT CE) — 🟢 M1 HOLDS / 🟠 M2·M3 INCONCLUSIVE (toy) — 2026-06-04
 
 > **질문**: 뇌-유래 5-ch 신호를 CLM CE aux loss(위 BRAIN-TRAIN-BENCH = 틀린 축, p7 Goodhart)가 **아니라**

@@ -1,0 +1,28 @@
+F-STABILITY (M3) — Lane M EEG-grown CLM via mitosis (TOY · CPU · $0)
+====================================================================
+Pre-registered claim: "growth stays stable/bounded — cell count does not
+explode or collapse below MIN_CELLS, tension/phi-proxy stays finite — across
+the stream."
+
+Bounds: MIN_CELLS=2 (CB1), MAX_CELLS=64 (toy budget). phi-proxy = mean
+pairwise cell-state L2 distance * log(n+1) (mirrors mitosis.hexa PhiProxy).
+
+Verbatim (results.json M3_stability):
+  cells_eeg_per_seed = [61, 61, 61]
+  phi_final_per_seed = [0.8261078276133448, 0.846109706632383, 0.7881876549460776]
+  phi_min_per_seed   = [0.0, 0.0, 0.0]        (n=1 at stream start -> proxy 0, pre-first-split)
+  phi_max_per_seed   = [0.8261078276133448, 0.846109706632383, 0.9143564640465163]
+  all_bounded   = true   (MIN_CELLS <= cells <= MAX_CELLS on every seed)
+  all_finite    = true   (no NaN/inf in phi trace)
+  no_collapse   = true   (cells >= MIN_CELLS always)
+  no_explosion  = true   (cells <= MAX_CELLS always; saturated at 61, under cap)
+
+VERDICT: HOLDS  (numerical, toy-scale)
+  Growth is monotone-bounded: starts at 1 cell, grows under gamma>0.20 split
+  events, saturates at 61 cells (below the 64 cap — not pinned by the ceiling
+  alone), phi-proxy stays finite and positive after the first split. No
+  collapse to 0, no unbounded explosion. Stable across all 3 seeds.
+
+Honest scope: TOY (synthetic EEG, MAX_CELLS=64 cap present, CPU, $0).
+Stability is demonstrated at toy scale only; behaviour under a larger budget
+/ longer real-EEG stream is unverified (a_toy_scale_recheck).
