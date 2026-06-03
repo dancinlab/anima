@@ -32,7 +32,7 @@
 ## milestones
 
 - [x] **M1 — inventory + A/B/C classification** (g63 real-inspection · verdict `.verdicts/c-port/INVENTORY.txt`)
-- [ ] **M2 — port tier-B** (`train_ffi.c` marshaling → hexa-native; RUNEQ vs C baseline; cudaMalloc delegated to tier-A shim extern)
+- [x] **M2 — port tier-B** (`train_ffi.c` marshaling → hexa-native; RUNEQ vs C baseline = PORT-EQ bit-identical on interp + compiled path; cudaMalloc/cuBLAS stay in tier-A shim — verdict `.verdicts/c-port/M2-train_ffi.txt`)
 - [ ] **M3 — retire tier-C** (drop `hxblas_cuda_smoke*.c` once an equivalent hexa-native smoke covers `hxblas_sgemm`)
 - [ ] **M4 — formally mark tier-A** (document the irreducible vendor-ABI floor: each tier-A file = a C↔vendor bridge that CANNOT be hexa-native; record the exact vendor symbols)
 - [ ] **M5 — adjudicate build/libhxnccl.c** (decide whether the NCCL all-reduce shim is live authored-C in scope or a build artifact; if live → tier A)
