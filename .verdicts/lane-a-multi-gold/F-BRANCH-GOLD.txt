@@ -1,0 +1,25 @@
+Lane A-multi GOLD scale-ceiling — F-BRANCH-GOLD (live AKD1000 BC.00.000.002, IpVersion.v1)
+substrate=HYBRID (on-chip AKD1000 encoder ⊕ off-chip host-CPU Elman decode head, numpy BPTT, NO torch)
+  · a_lane_akida_gpu_split (NOT pure-AKIDA, NOT Lane G) · a_scale_honest_scope
+corpus=corpus_flores_gold (FLORES-200 devtest, 1012 concepts × 5 langs, sha256 0fdc8b139e6b…, single-tier
+  PROFESSIONAL GOLD — no authored-padding confound) · BRANCHING operator B=3
+date=2026-06-03 · hexa verify CLI broken on host → live-chip stdout VERBATIM (p7)
+
+CODEBOOK LADDER (held-out hop-2 set-membership across NC rungs, a_scale_honest_scope ≥3 rungs):
+[branch]   NC=250  chance=0.0120  decay_TRAIN=[0.2006, 0.5469, 0.8534]  decay_HELD-OUT=[0.0113, 0.5187, 0.82]  ratio=[0.0565, 0.9485, 0.9608]
+[branch]   NC=500  chance=0.0060  decay_TRAIN=[0.1086, 0.4949, 0.7557]  decay_HELD-OUT=[0.0108, 0.4468, 0.7752]  ratio=[0.0998, 0.903, 1.0257]
+[branch]   NC=1000 chance=0.0030  decay_TRAIN=[0.0423, 0.4346, 0.7674]  decay_HELD-OUT=[0.0053, 0.4042, 0.7749]  ratio=[0.1261, 0.93, 1.0099]
+
+HEADLINE NC=1000 (N_TRAIN=700 idx0..699, N_TEST=300 idx700..999, on-chip enc transitions=15000):
+[branch] hop 1  TRAIN=0.0423 HELD=0.0053 ratio=0.126 | held ci_lo=0.0053 shufNULL hi=0.0065 p=0.1343 | chance=0.0030 | heldAboveShuf=False (by design — branching forces transfer at hop≥2)
+[branch] hop 2  TRAIN=0.4346 HELD=0.4042 ratio=0.930 | held ci_lo=0.3690 shufNULL hi=0.0443 p=0.0050 | chance=0.0030 | heldAboveShuf=True
+[branch] hop 3  TRAIN=0.7674 HELD=0.7749 ratio=1.010 | held ci_lo=0.7088 shufNULL hi=0.0285 p=0.0050 | chance=0.0030 | heldAboveShuf=True
+[branch] F-BRANCH-1 (held>NULL)   : REFUTED: held-out hop-2 AND hop-3 STAY ABOVE the shuffle-NULL (each ci_lo>NULL hi AND p<0.05) -> branching corpus FORCES a TRANSFERABLE transition OPERATOR; off-chip head composes on concepts held out of training -> GENUINE multi-step composition, NOT per-concept lookup
+[branch] F-BRANCH-2 (within 2.0x) : REFUTED: held-out hop-2 (0.4042) within 2.0x of in-dist hop-2 (0.4346) -> held-out tracks in-dist
+[branch] DISPOSITION              : GENERALIZES — multi-step composition REAL on PURE GOLD to NC=1000. Lane A HYBRID PUBLIC RE-UPGRADES (hybrid-scoped, branching-validated; on-chip AKD1000 enc ⊕ off-chip host decode head). NOT pure-AKIDA, NOT Lane G. STILL toy (a_scale_honest_scope); next rung = 3B.
+
+RULING: A-multi transition-operator generalization SCALE-SURVIVES on PURE GOLD to NC=1000 (4× past rung4 NC=250
+mixed-tier). held hop-2/3 stay above NULL with margin AND within 2× of in-dist at every rung — the off-chip head
+learned the OFFSET OPERATOR, not a per-concept lookup, and it transfers to held-out gold concepts at NC=1000.
+chip protocol #1717: A-multi exit rc=0 @72.5°C; streamer RESTORE verify is-active=active argv
+  `--port 9512 --duration 86400 --regime R3`; WRAP done; throttled=0xf0000 (under-volt history, no active throttle).
