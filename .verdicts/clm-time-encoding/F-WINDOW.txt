@@ -1,0 +1,33 @@
+F-WINDOW (M4 TIME-LAGGED WINDOW) — Lane M follow-up "embed TIME into the CLM"
+TOY · synthetic EEG · CPU · $0 · mitosis ON · 3 seeds [1,2,3] · NOT CE (p7)
+=========================================================================
+METHOD: feed a DELAY-LINE window of the last N=WINDOW=4 drive vectors into the
+daughter specialization + read-out query (concatenation of the last 4 drives,
+oldest-first) — mirrors the CLMConvMoE dilated causal-conv receptive field.
+Split TRIGGER is the v1 instantaneous gamma>0.20 (unchanged).
+
+PRE-REGISTERED FALSIFIER: HOLDS iff (a) TRUE-order temporal recon beats the
+phase-shuffled control by > seed-noise AND (b) stage-decode > chance 0.25 by
+> noise. REFUTED iff either margin <= 0. Else INCONCLUSIVE.
+
+MEASUREMENT (verbatim from results.json):
+  err_eeg       = 0.015308 +- 0.001078
+  err_shuffled  = 0.012872 +- 0.000789   (scored on the TRUE stream)
+  margin_shuffle (shuf - eeg) = -0.002435   noise_band = 0.001335
+  beats_shuffle = False   (margin NEGATIVE — shuffled-grown is BETTER)
+  stage_decode_acc = 0.0000 +- 0.0000   (chance = 0.25)  decode_margin = -0.25
+  decode_above_chance = False
+  order_sensitive = True (|margin| > noise — but WRONG direction)
+  cells_eeg = [61, 61, 61]   bounded, phi finite.
+  birth-stage dist = {active: 60}   (v1 trigger -> only the high-gamma stage)
+
+VERDICT: REFUTED.
+Both bars fail. The delay-line gives every daughter a 20-D windowed key, but
+because the split TRIGGER is still the instantaneous gamma>0.20, all 60
+daughters are born under 'active' — same single-stage collapse as the baseline
+and M_pos. With only 1 stage group, stage-decode = 0.0 (NOT chance). And the
+windowed key, like the positional embedding, lets a shuffled-grown structure
+sit closer to the average windowed query, so margin_shuffle < 0. CONCLUSION
+mirrors M_pos: enriching the daughter STATE with temporal context is futile
+while the split TRIGGER never samples the temporal variety. The receptive
+field must be on the TRIGGER (cf M_deriv's rising-edge), not only the state.

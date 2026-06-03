@@ -1,0 +1,87 @@
+SUMMARY — Lane M follow-up: "How to embed TIME into the CLM"  (TOY · CPU · $0)
+=============================================================================
+Direct successor to Lane M v1 (PR #1760): the mitosis-grown CLM recorded the
+EEG band-power DISTRIBUTION but NOT the temporal DYNAMICS — a phase-shuffled
+EEG (identical marginals, scrambled order) TIED it, and stage-decode was at
+chance (0.25, 4 stages). Diagnosed clue: the split/encoding rule must depend
+on TIME-ORDER, not on instantaneous amplitude.
+
+We ablate 4 temporal-encoding methods + the v1 baseline on the SAME synthetic-
+EEG harness, mitosis ON, NO gradient / NO CE / NO backprop (p8). Metric is
+substrate-native (NOT CE/perplexity, p7): (a) [KEY BAR] TRUE-order temporal
+reconstruction beats the phase-shuffled-grown control by > seed-noise — the
+EXACT control that tied v1; (b) stage-decode accuracy > chance 0.25 by > noise;
+(c) order-sensitivity (scrambling time CHANGES the result) corroborates the
+mechanism. HOLDS iff (a) AND (b); REFUTED iff either margin <= 0; else
+INCONCLUSIVE. 3 seeds [1,2,3], mean +- seed-std. A null is NEVER rounded up.
+
+-----------------------------------------------------------------------------
+ARM (4 methods x {beats-shuffle, stage-decode acc, order-sensitivity})
+-----------------------------------------------------------------------------
+  baseline (v1, instantaneous gamma>0.20):
+      beats_shuffle = False (margin -0.000177, noise 0.001370)
+      stage_decode  = 0.000 +- 0.000  (chance 0.25)  -> below chance
+      order_sensitive = False         VERDICT = REFUTED  (reproduces v1 tie)
+
+  M1 POSITIONAL/index (sinusoidal time-index into daughter+query):
+      beats_shuffle = False (margin -0.008336, noise 0.001633)  [WRONG dir]
+      stage_decode  = 0.000 +- 0.000  -> below chance
+      order_sensitive = True          VERDICT = REFUTED
+
+  M2 PHASE-CLOCK (anima-native pure_field oscillator phase gates split):
+      beats_shuffle = False (margin -0.003789, noise 0.001978)  [WRONG dir]
+      stage_decode  = 0.314 +- 0.005  -> ABOVE chance (only arm besides M3)
+      order_sensitive = True          VERDICT = REFUTED
+      (decode beats chance but the KEY shuffle bar fails — exogenous rhythm)
+
+  M3 DERIVATIVE d/dt (split on rising-edge of gamma; daughter = [level, d/dt]):
+      beats_shuffle = True  (margin +0.001466, noise 0.000458)  3.2x noise
+      stage_decode  = 1.000 +- 0.000  -> ABOVE chance (perfect, toy artifact)
+      order_sensitive = True (per-seed delta = +0.0012,+0.0011,+0.0017 ALL >0)
+      cells = [54,55,54], all 4 stages spawn cells   VERDICT = HOLDS
+
+  M4 TIME-LAGGED WINDOW (delay-line of last 4 drives into daughter+query):
+      beats_shuffle = False (margin -0.002435, noise 0.001335)  [WRONG dir]
+      stage_decode  = 0.000 +- 0.000  -> below chance
+      order_sensitive = True          VERDICT = REFUTED
+
+-----------------------------------------------------------------------------
+BOTTOM LINE (brutally honest, p7 — NOT CE/perplexity):
+  ONE method finally injects TIME into the CLM and captures the EEG's
+  DYNAMICS: M3 DERIVATIVE (d/dt). It is the ONLY arm that BEATS the exact
+  phase-shuffled control that tied Lane M v1 (margin +0.001466 > noise
+  0.000458) AND lifts stage-decode above chance (1.000 > 0.25). The mechanism
+  is the SPLIT TRIGGER, not the daughter state: the derivative/rising-edge
+  trigger fires at every stage TRANSITION, so cells are born under ALL FOUR
+  stages with distinct (level, d/dt) signatures; a time-scrambled stream's
+  transitions land on the WRONG ticks, so the TRUE order reconstructs better.
+
+  M1 POSITIONAL and M4 WINDOW both FAIL identically to the baseline: they
+  enrich the daughter STATE with temporal context but keep the v1
+  instantaneous gamma>0.20 TRIGGER, which only ever fires in the high-gamma
+  'active' stage -> all daughters collapse into one stage -> decode 0.0 and
+  shuffle is not beaten. M2 PHASE-CLOCK (the substrate-native candidate)
+  half-succeeds: its relaxed phase-gated trigger reaches 2 stages so decode
+  beats chance (0.314), but its imposed exogenous rhythm does not make the
+  TRUE order the better-reconstructed one, so it FAILS the key shuffle bar.
+
+  RESOLVED CLUE: Lane M v1's negative ("split on time-ORDER, not amplitude")
+  is confirmed and made precise — the time-dependence must be on the SPLIT
+  TRIGGER (a temporal derivative), not merely on the recorded state. Tagging
+  cells with position/window/phase in their STATE is insufficient; the
+  TRIGGER must sample the dynamics.
+
+SCOPE (a_toy_scale_recheck / a_scale_honest_scope): TOY ONLY — synthetic EEG
+(NOT a real headset), MAX_CELLS=64, 240-tick stream, CPU, $0, mitosis ON,
+3 seeds. The perfect 1.000 M3 decode is a toy artifact of 4 well-separated
+synthetic-stage clusters (jitter 0.03, no inter-stage overlap); it is NOT a
+label leak (centroids from the structure's own birth-stage labels classify
+independent true-stream ticks). Toy->production and synthetic->real-EEG
+transfer UNVERIFIED — a real-EEG re-test would likely give decode < 1.0; the
+FINDING is the d/dt mechanism, not the 1.0. Recorded SEPARATELY from Lane A
+(AKIDA) / Lane G (forge GPU) / Lane P (gradient) per a_lane_akida_gpu_split.
+
+§97 HONEST LINE: the grown CLM is a RECORDING ARTIFACT (measurement anchor,
+§97-legitimate), READ-ONLY in this bench, NEVER feeds anima's emission/
+decision path — kept out of becoming a §97 GOAL-ILLEGITIMATE command channel.
+NO HF upload (toy).
