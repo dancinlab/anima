@@ -1,0 +1,22 @@
+# H_P05 — EMPATHY-RESONANCE (mirror tension coupling)
+# expected disposition (pre-registered): COUPLING
+# campaign: PSI-COUPLING (telepathy + anomalous-cognition family)
+# seeds=[1, 2, 3] n_steps=1200 kappa=0.3 mitosis=ON (p8 native growth; C3 grows a CellPop recording artifact)
+# controls: kappa0 (no coupling) / phase-shuffled / no-channel — mandatory
+# scope: TOY synthetic · CPU · $0 · scale-transfer UNVERIFIED (a_toy_scale_recheck)
+# --- VERBATIM harness output (UNIVERSE/psi_coupling_toys.py) ---
+[C1] tension-link only
+  signal_mean=0.005411 signal_std=0.001969
+  control_mean=0.002133 control_std=0.000447
+  diff=0.003278 noise_band=0.001969
+  VERDICT=HOLDS
+[C2] tension-link + synthetic EEG
+  signal_mean=0.022211 signal_std=0.001870
+  control_mean=0.002133 control_std=0.000447
+  diff=0.020077 noise_band=0.001870
+  VERDICT=HOLDS
+[C3] ENGINE + tension-link + EEG (mitosis ON)
+  signal_mean=0.011183 signal_std=0.001812
+  control_mean=0.002133 control_std=0.000447
+  diff=0.009050 noise_band=0.001812
+  VERDICT=HOLDS
