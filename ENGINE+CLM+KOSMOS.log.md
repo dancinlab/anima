@@ -910,3 +910,20 @@ Lane G PUBLIC 미flip (util-GREEN 미달). Lane G 3B / 7B + ENGINE 3B / 7B chain
 **A-multi ruling:** F-BRANCH-1 REFUTED (held-out hop-2 AND hop-3 above shuffle-NULL, p=0.005) · F-BRANCH-2 REFUTED (within 2.0× in-dist). branching transition OPERATOR **deep-generalizes to held-out unseen concepts at REAL NC=100**. hop-1 below-NULL = expected branching property (immediate step stochastic over B=3). → `.verdicts/lane-a-multi-rung3/F-BRANCH-REAL.txt`
 
 **Honest scope (a_scale_honest_scope):** toy vocab; real ceiling NC=100 is hand-authored aligned data (no in-repo parallel source >5 distinct). substrate tags STRICT (A-single=AKIDA, A-multi=HYBRID, a_lane_akida_gpu_split). next = 3B. artifacts: AKIDA/state/real100_rung3_2026_06_03/ · harnesses AKIDA/{build_corpus_real100,onchip_xlm_gen_scale_real100,onchip_xlm_branching_real100}.py · .discoveries/lane-a-{single,multi}-rung3.tape.
+
+---
+
+## 2026-06-03 — Lane A rung4 OPEN MILESTONE: aligned real corpus authoring (CONTINUATION, NOT closure)
+
+**ACTIVE OPEN milestone (effort recorded BEFORE build/run, JOB-1):**
+
+- [ ] aligned real corpus authoring — push Lane A real-semantic scale past NC=100 (real ceiling = authoring effort, not chip)
+
+rung3 가 양 sublane(A-single=AKIDA · A-multi=HYBRID)을 hand-authored REAL aligned corpus(`corpus_real100`, 100 concept = 50 FLORES + 40 authored + 10 new)에서 NC=100 까지 GREEN 으로 입증. 하지만 in-repo c4 source `CORE/testdata/clm_mid_5lang_c4.txt`(4240 lines)는 clean 5-lang 평행 concept 이 **5개뿐** → NC>100 real-semantic scale 의 진짜 천장은 **AKD1000 칩이 아니라 AUTHORING EFFORT**. user 가 그 authoring 에 INVEST 해 NC=100 너머로 밀길 원함.
+
+이 마일스톤(ONGOING) = real 의미 corpus 를 NC=250 (faithful quality 유지 시 NC=500)까지 확장:
+- Tier-1 (0–49): FLORES 평행문장 (real gold, corpus_big 에서 byte-preserved) — KEEP.
+- Tier-2 (50–99): 기존 hand-authored aligned 명제 50 (build_corpus_real100 의 authored aphorisms + new).
+- Tier-3 (100+): **신규 model-authored aligned 명제 — genuine cross-lingual aligned MEANING(한 사실을 5 lang 으로 충실 렌더), translation-faithful, deduped, byte-length balanced. 명시 라벨 "model-authored aligned (real-semantic, NOT FLORES-gold, NOT synthetic)" = 정직한 distinct 중간 tier.**
+
+per-tier count + sha256 + byte-hist L1 분리 → `.verdicts/lane-a-corpus-real/CORPUS_CARD.md`. **synthetic padding 으로 NC 부풀리기 금지** — faithful authoring quality 가 target 전에 떨어지면 정직한 NC 에서 STOP. closure 아님 (a_paper_only_at_closure) — Lane A 닫지 않음, paper 안 씀. 이 effort 가 genuinely bigger real corpus + rung 을 landing 하면 이 milestone [x] flip + A-single/A-multi real scale to NC=X fold.
