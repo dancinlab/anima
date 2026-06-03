@@ -58,8 +58,11 @@ import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 // as an honest finding, and report (ce, uniform, shuffle, axis2) on every CFG row.
 // p7: CE is a FLOOR (model_ce < uniform AND < shuffle), NEVER the sole verdict.
 fn measure_ce(clm_path: string, corpus: string) -> Map {
+    // nw kept SMALL (4) — each d=768 decode forward is expensive; the CE-floor
+    // is config-independent so a few windows suffice to land the real value
+    // (a larger nw under concurrent load risked a partial/degenerate read).
     let _rb = read_file_bytes(corpus)
-    let _n = len(_rb); let _T = 64; let _nw = 16
+    let _n = len(_rb); let _T = 64; let _nw = 4
     let mut _strd = (_n - _T - 1) / _nw
     if _strd < 1 { _strd = 1 }
     let mut _sm = 0.0; let mut _ss = 0.0; let mut _k = 0; let mut _s2 = 0
