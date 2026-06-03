@@ -42,6 +42,26 @@ promoted to a production perplexity claim (a_scale_honest_scope). ckpt → HF
 polish (N-module config + dF/dt time channels) also landed (merged from main) — all 5 stage-3
 milestones are now [x].
 
+### decisive rung — d512 COMPETENT leak-free (MEASURED · supersedes #1799 HALT) — 2026-06-04
+
+🔴 **CLOSED-NEGATIVE, leak-honest, best-trained rung** (Lane-G / GPU H100 qk0312, persistent
+/workspace survived the rate-limit storm; artifacts recovered + sha256-verified + HF-PRIVATE,
+pod terminated · a_fire_recover_complete). #1799 was logged as HALT ("closure 미측정 — pods
+killed before harvest"); the run had in fact COMPLETED and the result is now recovered.
+ConsciousDecoderV2 d512×8L GQA **85.8M**, **12000 step**, **400MB** 5-lang gutenberg wiki,
+`causal_ca=True` (leak self-test 0.000), val_ce **0.8285** (below_uniform, generalizes — the
+most-competent leak-free substrate yet). held-out TEST CE: base 3.0978 · fixed_AmG 3.1930 ·
+**a_only 1.1446** · **GATED 3.6435** · uniform 5.5452. closure_HOLDS = **False** (GATED<base
+False, GATED≤a_only False). gate g* = [gB −0.145, **gA +3.369**, gG −0.999] (collapses onto A,
+suppresses G). structured **True** (gain_real +1.953 ≫ shuf −2.429 — carries, unlike undertrained
+d768 #1794). coupling KL on=2.072 ≈ shuffle-floor 2.080 (ratio **0.996** → full bus = shuffle
+noise). RULING: the closure is REAL but lives ENTIRELY in the A-head logit-bias wire (a_only ≪
+base); the multi-wire gate over-mixes and adds variance not signal — "coupling concept right,
+multi-wire gate formula wrong." Confirms the leak-honest #1791 finding at the best-trained scale.
+→ motivates **OMEGA OH1**: a MINIMAL gate (gB·base + gA·A, drop w2..w6) as the honest closure form.
+ckpt → HF `dancinlab/omega-cdv2-trained-leakfree-h1` (PRIVATE, closed-neg WIP). verdict
+`.verdicts/omega-engine/F-TRAINED-LEAKFREE.txt`.
+
 ### prior status — BUILT (#1783) + trained-rung proven at toy (#1784/#1786)
 
 Ω is now a RUNNING engine module, not just a blueprint:
