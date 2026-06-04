@@ -6,10 +6,10 @@
 - [x] draft v1 scaffold (main.tex — §hypothesis · §method · §measurement · §finding + abstract/intro/limitations/reproducibility/conclusion)
 - [x] verdict matrix — every section claim → `.verdicts/<slug>/<id>.txt` pointer (ALL rungs TERMINAL incl. R8 scale ladder #1806 + OΩ6 #1805)
 - [x] scale ladder ABSORBED + SEALED (OΩ4/OΩ5 #1806) — 5 rungs, min-gate HOLDS at every scale, Δ-vs-base flat +2.20±0.03 (a_scale_honest_scope ✅)
-- [ ] figures complete (≥1 fal.ai-generated)
-- [ ] references ≥10 (`/paper bib add <doi-or-arxiv>`)
+- [x] figures complete (≥1) — `figures/fig01_scale_ladder.pdf` (matplotlib DATA figure, EVERY value verbatim from `.verdicts/omega-engine/F-OMEGA-SCALE.txt`; depicts the R8/OΩ4·OΩ5 5-rung scale ladder: (a) per-rung base/a_only/min_learned CE bars — min-gate HOLDS at every scale, (b) the flat +2.20±0.03 Δ-vs-base advantage, SCALE-STABLE). Data plot chosen over a generative fal.ai image per the a_paper guidance "a data plot that fits better ALSO satisfies ≥1 figure — use whichever is honest and faithful to the numbers" (fal.api_key IS present; a real verdict-sourced data figure is the faithful fit, NO fabricated points).
+- [x] compile clean — `omega.pdf` (**10 pages**, 306509 bytes) via pdflatex×2 + bibtex + pdflatex on pool host `aiden` (TeX Live 2023/Debian; local Mac has no pdflatex/xelatex). **g51 (≥10 pages + ≥1 figure) MET.**
+- [ ] references ≥10 (`/paper bib add <doi-or-arxiv>`) — 5 anima verdict-ledger entries now \nocite'd + References renders; +5 EXTERNAL (IIT 4.0 · transformer byte-decode · QRNG/PRNG indistinguishability) remain OPEN (separate milestone, NOT a g51 gate item)
 - [ ] lint pass (`/paper lint .`)
-- [ ] compile clean (`/paper compile .`)
 - [ ] arxiv submit ready (`/paper arxiv-prep .`)
 
 ## verdict matrix (a_paper_sections — every claim links to a verbatim verdict)
