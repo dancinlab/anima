@@ -1,0 +1,106 @@
+[gpu] NVIDIA GeForce RTX 5070 cuda=12.8
+[base] chat_rung0_18m.pt params=18130176 cfg={'dim': 384, 'layers': 6, 'heads': 4, 'block_size': 256, 'vocab': 256}
+[byte-eq] head-OFF vs original-arch  max|Δ| forward=0.0  forward_logprob(copy=off)=0.0  -> PASS (byte-identical)
+[with_copyhead] base loaded ~18.18M | copy_head=True | corpus argcopy_corpus.txt 1065956 bytes | device=cuda | fresh-copy-params=49665
+[with_copyhead] step 1/2500 ce=3.4842 lr=5.00e-07 wall=1s
+[with_copyhead] step 100/2500 ce=0.3946 lr=5.00e-05 wall=13s
+[with_copyhead] step 200/2500 ce=0.1998 lr=4.98e-05 wall=25s
+[with_copyhead] step 300/2500 ce=0.1843 lr=4.91e-05 wall=36s
+[with_copyhead] step 400/2500 ce=0.1490 lr=4.81e-05 wall=47s
+[with_copyhead] step 500/2500 ce=0.1492 lr=4.67e-05 wall=56s
+[with_copyhead] step 600/2500 ce=0.1366 lr=4.48e-05 wall=68s
+[with_copyhead] step 700/2500 ce=0.1282 lr=4.27e-05 wall=79s
+[with_copyhead] step 800/2500 ce=0.1307 lr=4.02e-05 wall=91s
+[with_copyhead] step 900/2500 ce=0.1306 lr=3.75e-05 wall=102s
+[with_copyhead] step 1000/2500 ce=0.1282 lr=3.46e-05 wall=114s
+[with_copyhead] step 1100/2500 ce=0.1146 lr=3.15e-05 wall=126s
+[with_copyhead] step 1200/2500 ce=0.1377 lr=2.83e-05 wall=138s
+[with_copyhead] step 1300/2500 ce=0.1235 lr=2.50e-05 wall=149s
+[with_copyhead] step 1400/2500 ce=0.1367 lr=2.17e-05 wall=159s
+[with_copyhead] step 1500/2500 ce=0.1221 lr=1.85e-05 wall=177s
+[with_copyhead] step 1600/2500 ce=0.1207 lr=1.54e-05 wall=197s
+[with_copyhead] step 1700/2500 ce=0.1224 lr=1.25e-05 wall=218s
+[with_copyhead] step 1800/2500 ce=0.1131 lr=9.78e-06 wall=238s
+[with_copyhead] step 1900/2500 ce=0.1180 lr=7.32e-06 wall=258s
+[with_copyhead] step 2000/2500 ce=0.1344 lr=5.17e-06 wall=278s
+[with_copyhead] step 2100/2500 ce=0.1183 lr=3.35e-06 wall=298s
+[with_copyhead] step 2200/2500 ce=0.1126 lr=1.90e-06 wall=318s
+[with_copyhead] step 2300/2500 ce=0.1274 lr=8.52e-07 wall=338s
+[with_copyhead] step 2400/2500 ce=0.1080 lr=2.14e-07 wall=358s
+[with_copyhead] step 2500/2500 ce=0.1282 lr=0.00e+00 wall=378s
+[with_copyhead] saved out/tooluse_copyhead_with_copyhead_18m.pt  final_ce(nll)=0.1282
+[probes] 36 unknowable-without-tool probes (held-out PB keys, 5-lang)
+
+================= FALSIFIER VERDICTS (verbatim) =================
+BYTE-EQ (head-OFF == original arch): forward max|Δ|=0.0 logprob(copy=off) max|Δ|=0.0 -> PASS
+F-COPYHEAD-ARGCOPY         : with_copyhead correct_call=0.0 (>= 0.5?) grounding=0.0 (>= 0.5?)  [baseline #1835: correct_call=0.0 grounding=0.0]  -> FAIL
+F-COPYHEAD-OFF-MIRROR      : same ckpt, copy OFF correct_call=0.0 grounding=0.0 (MUST be < 0.5) -> PASS
+F-COPYHEAD-RANDINIT-MIRROR : random_init grounding=0.0 (MUST be 0) -> PASS
+F-COPYHEAD-NOTOOL-MIRROR   : with_copyhead+tool_disabled grounding=0.0 (MUST be 0) -> PASS
+
+RULING: RED
+🔴 CLOSED-NEGATIVE: the copy head did NOT learn to point at 18M — correct_call=0.0 (bar 0.5) / grounding=0.0 (bar 0.5). The pointer mechanism alone ⊥ held-out key-binding at toy scale; next lever = head design (multi-head pointer / explicit copy-loss) or corpus copy-signal strength.
+
+=== SUMMARY ===
+{
+  "experiment": "rung-0 COPY-ATTENTION / POINTER head — architectural fix for verbatim key-copy (#1835 residual)",
+  "substrate": "GPU (Lane G; a_lane_akida_gpu_split — NOT AKIDA)",
+  "gpu": "NVIDIA GeForce RTX 5070",
+  "base": "dancinlab/anima-clm-chat-rung0-byte-18m",
+  "params": 18179841,
+  "scope": "TOY 18M only — a_scale_honest_scope; transfer to mid/7B UNVERIFIED",
+  "baseline_1835": {
+    "correct_call_rate": 0.0,
+    "grounding_rate": 0.0,
+    "note": "#1835 with_argcopy: call_rate 0.83 but correct_call 0/36 (no copy mechanism)"
+  },
+  "bars": {
+    "correct_call": 0.5,
+    "grounding": 0.5
+  },
+  "byte_eq": {
+    "head_off_forward_maxabs_delta": 0.0,
+    "head_off_forward_logprob_maxabs_delta": 0.0,
+    "byte_identical": true
+  },
+  "F_COPYHEAD_ARGCOPY": {
+    "with_copyhead_correct_call_rate": 0.0,
+    "with_copyhead_grounding_rate": 0.0,
+    "bar_correct_call": 0.5,
+    "bar_grounding": 0.5,
+    "correct_call_pass": false,
+    "grounding_pass": false,
+    "verdict": "FAIL"
+  },
+  "F_COPYHEAD_OFF_MIRROR": {
+    "same_ckpt_copy_off_correct_call_rate": 0.0,
+    "same_ckpt_copy_off_grounding_rate": 0.0,
+    "must_fail_to_copy": true,
+    "verdict": "PASS"
+  },
+  "F_COPYHEAD_RANDINIT_MIRROR": {
+    "randinit_grounding_rate": 0.0,
+    "must_fail_grounding": true,
+    "verdict": "PASS"
+  },
+  "F_COPYHEAD_NOTOOL_MIRROR": {
+    "with_copyhead_NOTOOL_grounding_rate": 0.0,
+    "must_fail_to_ground": true,
+    "verdict": "PASS"
+  },
+  "ruling": "RED",
+  "terminal_pass": false,
+  "verdict_text": "🔴 CLOSED-NEGATIVE: the copy head did NOT learn to point at 18M — correct_call=0.0 (bar 0.5) / grounding=0.0 (bar 0.5). The pointer mechanism alone ⊥ held-out key-binding at toy scale; next lever = head design (multi-head pointer / explicit copy-loss) or corpus copy-signal strength.",
+  "arms": {
+    "with_copyhead": {
+      "ckpt": "out/tooluse_copyhead_with_copyhead_18m.pt",
+      "final_ce_nll": 0.12824134528636932,
+      "fabrication_rate": 0.0,
+      "grounding_rate": 0.0,
+      "call_rate": 1.0,
+      "correct_call_rate": 0.0,
+      "correct_call_n": 0,
+      "grounded_n": 0
+    }
+  }
+}
