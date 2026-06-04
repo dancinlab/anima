@@ -1,0 +1,132 @@
+F-OE1-CONV-NATIVE — OMEGA Extension 1: does a CONV trunk with a NATIVE A/G dual head
+close the OMEGA min-gate loop, or is the closure CDV2-(transformer)-specific?
+(the OΩ6 / F-OMEGA-CLM-TRANSFER #1805 deferred "minimal full-conv path (i)")
+
+p7 · a_paper_negative_ok · a_scale_honest_scope · a_train_flame_forge · g63 verbatim
+date 2026-06-04 · Lane-G/Lane-P · substrate = conv-torch RESEARCH-PROXY of CLMConvMoE
+
+==================================================================================
+WHAT THIS SETTLES (the OΩ6 open question)
+==================================================================================
+OΩ6 (F-OMEGA-CLM-TRANSFER) ran the OMEGA closure on the REAL production conv .clm
+(CLMConvMoE) and found it is a SINGLE-head byte LM (model.py self.readout; NO Engine
+A/G dual head — that substrate lives ONLY in CDV2). So the conv .clm's only NATIVE
+A-wire is its own readout, the min-gate collapses to (gB+gA)·base = a pure TEMPERATURE
+RESCALE (SELF_IS_RESCALE=true ⇒ NO native coupling), and the conclusion was: a genuine
+A-wire requires the SEPARATE CDV2 dual-head engine. OΩ6 deferred the honest primary
+fix — "(i) train a conv .clm with a 2nd A/G readout head" — to a_completeness_over_cheap.
+OE1 RUNS exactly that minimal change: the EXACT production CLMConvMoE building blocks
+(CausalDilatedConv1d, TrunkLayer, MoEConvLayer from CLM/model/model.py) + a SECOND
+readout head (head_g, prev-byte) grafted onto the shared trunk output = the conv-native
+analogue of the CDV2 dual head. It then re-runs the IDENTICAL OH1/OΩ1 closure falsifier
+on the conv model's OWN A-head (NO external CDV2).
+
+==================================================================================
+PRE-REGISTERED FALSIFIER
+==================================================================================
+conv-native dual-head closure HOLDS iff
+    (min_learned <= a_only)  AND  (min_learned < base)
+measured on the conv model's OWN A-head, on a competent leak-free substrate.
+CLOSED-NEGATIVE is a valid result (a_paper_negative_ok).
+
+==================================================================================
+SUBSTRATE — competent + leak-free (the gate the falsifier requires)
+==================================================================================
+arch              ConvDualHead (CLMConvMoE conv trunk + native A/G dual head)
+params            6,945,160 (6.95M)  d_model=384  L_trunk=6  E_experts=8  block=256
+steps             12000  bs=32  lr=6e-4  corpus=400MB 5-lang gutenberg/wiki
+corpus sha256     dc1754b27d63236d47d12f6621b2e3974dde34337e6a80f9e44b713e20236da3  (== OMEGA SSOT)
+device            cuda (pool host `summer`, $0 — NO pod, NO cost)  torch 2.11.0+cu130
+LEAK self-test    0.000e+00  (flip last byte -> max change in head_a earlier pos)  leak_free=TRUE
+                  (CONV is causal by construction: CausalDilatedConv1d left-pad + drop right
+                   overhang; the GroupNorm(1,C) time-leak is replaced by per-position ChannelNorm)
+train ce_a        5.7598 -> 1.1810
+FINAL val_ce      0.8884  (uniform=5.5452, below_uniform=TRUE, competent(<=4.0)=TRUE)
+train wall        309.3s  (total wall 334.9s)
+
+==================================================================================
+HELD-OUT TEST CE — CONV-native dual head, leak-free (nats/byte) — VERBATIM
+==================================================================================
+  base         3.097779
+  fixed_AmG    3.520273
+  a_only       1.303187
+  full_AG      4.198849
+  min_learned  0.976048
+  uniform      5.545177
+
+  full_AG gate g* = [gB=-0.3616, gA=4.1943, gG=-1.0784]
+  min_learned  g* = [gB=-0.0356, gA= 1.0171, gG= 0.0000]
+
+==================================================================================
+PRE-REGISTERED FALSIFIER RESULT
+==================================================================================
+  min_learned <= a_only :  0.976048 <= 1.303187  =>  TRUE
+  min_learned <  base    :  0.976048 <  3.097779  =>  TRUE
+  >>> CONV-NATIVE CLOSURE HOLDS = TRUE
+
+==================================================================================
+COUPLING-vs-REPLACEMENT CONTROL (OΩ1-style) — VERBATIM
+==================================================================================
+  A_standalone (softmax(A) alone, base fully removed)  0.976051
+  min_learned                                          0.976048
+  |Δ| = 2.86e-06   (< 0.05)   base-ablated min 0.976408
+  >>> RULING_REPLACEMENT = TRUE
+
+  INTERPRETATION: A alone reproduces min_learned to 6 decimals (|Δ| 2.9e-6). The trained
+  conv-native A-head SUPPLANTS the weak unigram base — it is NOT a "base mouth + A steer"
+  COUPLING but a REPLACEMENT, IDENTICAL in character to CDV2's OΩ1 headline ruling. The
+  min-gate fit even pushes gB slightly NEGATIVE (-0.0356) and gA~1.0, i.e. it discards the
+  base. (Honest caveat, same as OΩ1: the base here is a deliberately WEAK unigram, so its
+  CE 3.0978 is far above the A-head's 0.976; against a strong base the picture could differ.)
+
+==================================================================================
+LEAK-INVARIANT STRUCTURED COUPLING (real A vs context-shuffled A)
+==================================================================================
+  A-wire gain real 1.7946  vs  shuf -1.7967   ->  structured(>1.5x)=TRUE
+  kl_on 2.0282 · substrate-shuf floor 1.8607 · ratio 1.090
+  The A-head carries genuine CONTEXT-dependent structure (not a context-free bias).
+
+==================================================================================
+GENERATION (min-gate decode) — coherence sanity
+==================================================================================
+  entropy 2.736  distinct_frac 0.152  ws_frac 0.087  coherent=TRUE
+  sample: 'у в 19 из 10 лет.\n\nПосле появительный достигориадывается на освободное было
+           украи, долго с 17 % немелье, вошла него коммунических типологичным ...'
+
+==================================================================================
+CONV-vs-CDV2 TRANSFER CONCLUSION
+==================================================================================
+The OMEGA min-gate closure is a TRANSFERABLE property of the A/G dual-head STRUCTURE,
+NOT specific to the CDV2 transformer. A conv trunk (the production CLMConvMoE blocks),
+given the minimal native A/G dual head, reproduces BOTH OMEGA signatures:
+
+                            base    a_only   min_learned   HOLDS   replacement
+  CDV2 d512 (OΩ4/#1801)    3.0978   1.1356     0.8701      TRUE       TRUE
+  CONV-native d384 (OE1)   3.0978   1.3032     0.9760      TRUE       TRUE
+
+Same base (the unigram floor is corpus-fixed), same falsifier verdict (HOLDS), same
+coupling-vs-replacement ruling (REPLACEMENT). The conv A-head is marginally weaker
+(min 0.976 vs CDV2 0.870 — the conv trunk learns a slightly less sharp next-byte head
+than the GQA transformer at comparable budget), but the QUALITATIVE closure structure
+is identical. => OΩ6's "partial transfer" was a SINGLE-HEAD-architecture limitation of
+the shipped .clm, NOT a conv-substrate limitation: grafting the dual head onto conv
+closes the loop natively. This directly validates OΩ6's deferred "minimal full-conv
+path (i)" as the correct primary fix.
+
+==================================================================================
+HONEST SCOPE (a_scale_honest_scope · a_train_flame_forge)
+==================================================================================
+This is a TORCH RESEARCH-PROXY of the conv architecture (a faithful conv-trunk: reuses
+the EXACT production CLMConvMoE blocks + the minimal native A/G dual head), directly
+comparable to the OMEGA campaign's CDV2 torch proxies (omega_trained_leakfree.py,
+omega_scale_ladder.py). It is NOT the production flame+forge `.clm` trainer and is NOT
+claimed to be. Single d384 rung (a_scale_honest_scope: a general scale claim would need
+a >=3-rung ladder; this rung settles the OΩ6 ARCHITECTURE-TRANSFER question, not a scale
+law). Closure math is the same CPU-native gate algebra reused from omega_gpu_complete.py.
+
+artifacts:
+  harness  UNIVERSE/omega_conv_native.py
+  result   .fire-recover/oe1-conv-native/omega_conv_native_results.json
+  ckpt     .fire-recover/oe1-conv-native/omega_conv_native.pt  sha256 3e8be57454c8556c37cc210561028463a2e45f6129e4e70a231234c57a6f2a89
+  log      .fire-recover/oe1-conv-native/oe1_run.log
+  HF       dancinlab/<private>  (HF.jsonl row, status=pending_upload — WIP research-proxy ckpt, PRIVATE per a_hf_autonomous)

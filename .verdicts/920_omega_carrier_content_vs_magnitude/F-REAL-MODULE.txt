@@ -1,0 +1,60 @@
+F-REAL-MODULE — H5: real HEXAD σ6 module vector vs random in the OMEGA w5 wire
+============================================================================================
+VERDICT: CLOSED-NEGATIVE (real ≈ random — w5 carrier status was MAGNITUDE not CONTENT)
+
+REAL-hexad module wire:
+{
+  "tag": "REAL-hexad",
+  "module_gain": 0.07609514621659554,
+  "material": true,
+  "ce_full": 4.699289813718122,
+  "ce_base": 3.9892513944828534,
+  "ce_ablate_module": 4.7269965452302465,
+  "dCE_ablate_module": 0.027706731512124882,
+  "ce_module_shuffle": 4.734221417124266,
+  "beats_shuffle": true,
+  "ce_module_only_gate": 3.9766026546270026,
+  "dCE_module_only_over_base": 0.012648739855850799,
+  "carries_structure": true,
+  "full_gain_vector": {
+    "base": -0.031876336742252896,
+    "A": 0.9603853630545676,
+    "G": 0.5199837408392767,
+    "W_temp": -0.3808522413718365,
+    "curio": -0.016224330863332793,
+    "Psi": -0.030011874803995326,
+    "module": 0.07609514621659554,
+    "dFdt": -0.6593271618474293
+  }
+}
+
+RANDOM module wire (matched mean/std):
+{
+  "tag": "RANDOM",
+  "module_gain": 0.08191678984261398,
+  "material": true,
+  "ce_full": 4.718193473752424,
+  "ce_base": 3.9892513944828534,
+  "ce_ablate_module": 4.7269965452302465,
+  "dCE_ablate_module": 0.008803071477822222,
+  "ce_module_shuffle": 4.71303821759025,
+  "beats_shuffle": false,
+  "ce_module_only_gate": 3.9762143389280866,
+  "dCE_module_only_over_base": 0.013037055554766752,
+  "carries_structure": false,
+  "full_gain_vector": {
+    "base": -0.04751342466336903,
+    "A": 0.9660438521993622,
+    "G": 0.5312508244641889,
+    "W_temp": -0.37752983227178144,
+    "curio": -0.03369752570476767,
+    "Psi": -0.028157722446688935,
+    "module": 0.08191678984261398,
+    "dFdt": -0.661070169742525
+  }
+}
+
+Δ module-only held-out CE (real − random) = +0.0004
+Δ |module gain| (real − random)           = -0.0058
+real_beats_random=False  approx_band=True
+criterion: real > random ⟺ |module gain|_real > |gain|_random AND module-only-gate held-out CE_real < CE_random; real ≈ random (|ΔCE|<0.02 & |Δgain|<0.02) ⟹ closed-negative (carrier status = magnitude not content).
