@@ -105,13 +105,24 @@ SCIENCE_TITLES = {
 
 # ── pillar (a) PD primary texts — Project Gutenberg ebook ids ──────────────────
 # PUBLIC DOMAIN. id → (label, author, lang). en strong; fr/de partial; es/ko absent.
+# HONEST source-availability note (a_scale_honest_scope): the four texts below have
+# a clean plain-text format on Gutenberg and ARE fetched. Two further named PD works,
+# Poincaré "Science and Hypothesis" (ebook 37157) and Boole "An Investigation of the
+# Laws of Thought" (ebook 15114), are PD but on Gutenberg ship ONLY as HTML / scanned
+# images with NO plain-text format (the files index is empty, the .txt 404s). They are
+# therefore NOT in the fetched bulk; their CONCEPT fields (probability, logic &
+# computation, self-reference) are instead covered by the CC-BY-SA Wikipedia titles
+# above. This is a recorded gap, NOT a fabrication.
 GUTENBERG = [
     (1228,  "On the Origin of Species",          "Charles Darwin",   "en"),
     (2300,  "The Descent of Man",                 "Charles Darwin",   "en"),
     (15491, "Theory of Heat",                     "James Clerk Maxwell","en"),
     (57628, "The Principles of Psychology, Vol. 1","William James",   "en"),
-    (37157, "Science and Hypothesis",             "Henri Poincaré",   "en"),
-    (15114, "An Investigation of the Laws of Thought","George Boole", "en"),
+]
+# Named PD works with NO plain-text format on Gutenberg (recorded, not fetched):
+GUTENBERG_NO_TXT = [
+    (37157, "Science and Hypothesis",                  "Henri Poincaré", "en"),
+    (15114, "An Investigation of the Laws of Thought", "George Boole",   "en"),
 ]
 
 
