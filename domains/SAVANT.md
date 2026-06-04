@@ -43,13 +43,20 @@ small slice; the 7B rung scales to ~400MB+ (80 MB/lang). The corpus card
 
 ## ladder (toy-first → 7B, a_scale_honest_scope)
 
-- [ ] rung0 — SMALL torch-cuda validation on the 5-lang corpus (proves recipe +
-      corpus + ckpt pipeline end-to-end, leak-free, clean descent). d=512 / 8L
-      shape (~85M), small corpus slice, bounded steps. Fast/cheap.
-- [ ] corpus — 5-lang euro pretrain corpus built on-pod (wikipedia, ~400MB).
-- [ ] rung-7B — the actual 7B (d4096/36L/32H/block512 = 7.25B) torch-cuda train,
-      DURABLE: ckpts every N steps under /workspace, detached nohup that survives,
-      harvested when training reaches a competent CE. LONG (multi-hour→day).
+- [x] rung0 — SMALL torch-cuda validation (d512/8L, 120 steps, 5-lang ~20 MB).
+      **DESCENT PASS** (F_CLM_REF_7B_DESCENT=1): val_ce 5.63565 → 2.15199,
+      182467 tok/s, ckpt 51261810 B sha256
+      `36f3a3ed59fc83930720dd275b00892f1c66c0cc6c7a7fe3d379d1e1edecc173`.
+      util peak 50% / mean 31% (n=3; small-model + sub-2s run, util not meaningful
+      at this scale — the 7B rung is the util-relevant one). Recipe + corpus +
+      ckpt pipeline PROVEN leak-free, clean descent.
+- [x] corpus — built on-pod: en·fr·de·es·ru wikimedia/wikipedia 20231101, CC-BY-SA-4.0,
+      **419430408 B (~400 MB)**, 80 MB/lang balanced, sha256
+      `9e6a0fd8289fc1ce895c34db44a7da3879946171d62b043d31deabdd61d731d0`.
+- [~] rung-7B — d4096/36L/32H/block512 = 7.25B torch-cuda, LAUNCHED & RUNNING
+      (pid 1804 on pod 39416669), DURABLE: --ckpt-every 200 under /workspace,
+      detached nohup, --resume-able. Harvested later by pod-id when it reaches a
+      competent CE. LONG (multi-hour→day). NOT babysat.
 
 ## fire state (LAUNCHED 2026-06-04 — leak-safe single pod)
 
