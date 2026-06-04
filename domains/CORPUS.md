@@ -13,6 +13,11 @@
 | `anima-corpus-5lang-unified` ✅ | 10.0 MB | ✅ **en/fr/de/es/ko** | ✅ ~50% | ✅ | ✅ IG/YT | ✅ 20-roster | wiki=CC-BY-SA real + persona=authored-synthetic (coverage, NOT native) |
 | `anima-corpus-5lang-unified-v2` ✅ **NEW** | 12.5 MB | ✅ **en/fr/de/es/ko** (+ko-en) | ✅ ~40% (8-band breadth) | ✅ | ✅ IG/YT | ✅ 20-roster | v1 + **enrichment 19.88%**: 의식-carving(real e7_31 seed CC-BY-SA) · dialogue-act · emotion-axis · code-switch · genre. wiki+carving=real, rest=authored-synthetic |
 
+## lanes
+
+- `lane default` = base chat corpus (wiki + persona/SNS + carving/enrichment) — no tools, `0xFE`/`0xFF` byte-frequency 0.
+- `lane agent` = `lane default` + tool-use demos (`serving/agent_lane_corpus_gen.py`, sentinel-grammar) — `lane agent ⊃ lane default`.
+
 ## coverage matrix — GAP CLOSED (2026-06-04)
 
 ```
