@@ -219,6 +219,213 @@ pub fn exec_toy_tool(tool: string, args: string) -> string {
 }
 
 
+// ── §5 role-tool registry — REAL surfaces, tier-gated, effectful env-armed ────
+//
+// The toy registry (§3) is deterministic + reproducible. The REAL agent roles
+// (CODE / MERCHANT / DESKTOP) expose surfaces with side effects. We register
+// each role tool with THREE facets:
+//     #{ tier, surface_fn, effectful }
+//   · tier       — the required substrate tier (reuses tool_gate semantics: the
+//                  SAME T0..T3 ladder; NO 2nd gate is introduced here).
+//   · surface_fn — the real executor key dispatched in exec_safe_real_tool /
+//                  exec_effectful_tool (agent_loop.hexa delegates here).
+//   · effectful  — false ⇒ read-only/safe, wired & fires NOW; true ⇒ has a side
+//                  effect (write/run/commit/live-op), fires ONLY when the env
+//                  opt-in ANIMA_TOOLS_EFFECTFUL=1 is set AND the tier gate passes.
+//
+// HONESTY (mission contract): the mouth is unverified (grounding 0/36 at write
+// time), so an UNSUPERVISED destructive path must NOT auto-arm. Effectful tools
+// therefore default SAFE — the plumbing exists, but with the env unset they
+// return an honest "‹effectful tool gated…›" refusal, never a fabricated effect.
+//
+//   SAFE-REAL (effectful=false, wired now):
+//     status (T0)      → fixed liveness  · think (T0) → real reflection echo
+//     mem_read (T0)    → fixed slot      · repo_status (T0) → real `git status`
+//     web_search (T1)  → real curl OR honest no-network stub
+//     file_read (T1)   → real disk read  · grep (T1) → real `grep -rn`
+//     market_scan (T1) → real MERCHANT inventory read (read-only)
+//   EFFECTFUL (effectful=true, env-armed):
+//     file_write (T2)  · run_tests/code_run (T2) · git_commit/git_push (T3)
+//     publish (T3) · merchant_order/live_trade (T3) · desktop_action (T2)
+
+// tool_registry_full — toy tools (§3) ∪ the REAL role tools. agent_loop.hexa's
+// exec_real_tool consults this to route toy → deterministic, safe-real → real
+// surface, effectful → env-gated. The toy entries keep their {tier, fn} shape
+// (effectful absent ⇒ treated as a toy/deterministic execution).
+pub fn tool_registry_full() -> Map {
+    return #{
+        // ── toy / deterministic (§3) ──
+        "fact_lookup": #{ "tier": 1, "fn": "fact_lookup",  "effectful": false, "kind": "toy" },
+        "mem_read":    #{ "tier": 0, "fn": "mem_read",     "effectful": false, "kind": "toy" },
+        "status":      #{ "tier": 0, "fn": "status",       "effectful": false, "kind": "toy" },
+        // ── SAFE-REAL role tools (read-only — wired NOW) ──
+        "think":       #{ "tier": 0, "fn": "think",        "effectful": false, "kind": "safe" },
+        "repo_status": #{ "tier": 0, "fn": "repo_status",  "effectful": false, "kind": "safe" },
+        "web_search":  #{ "tier": 1, "fn": "web_search",   "effectful": false, "kind": "safe" },
+        "file_read":   #{ "tier": 1, "fn": "file_read",    "effectful": false, "kind": "safe" },
+        "grep":        #{ "tier": 1, "fn": "grep",         "effectful": false, "kind": "safe" },
+        "market_scan": #{ "tier": 1, "fn": "market_scan",  "effectful": false, "kind": "safe" },
+        // ── EFFECTFUL role tools (side-effect — env-armed, default SAFE) ──
+        "file_write":     #{ "tier": 2, "fn": "file_write",     "effectful": true, "kind": "effect" },
+        "run_tests":      #{ "tier": 2, "fn": "run_tests",      "effectful": true, "kind": "effect" },
+        "code_run":       #{ "tier": 2, "fn": "code_run",       "effectful": true, "kind": "effect" },
+        "desktop_action": #{ "tier": 2, "fn": "desktop_action", "effectful": true, "kind": "effect" },
+        "git_commit":     #{ "tier": 3, "fn": "git_commit",     "effectful": true, "kind": "effect" },
+        "git_push":       #{ "tier": 3, "fn": "git_push",       "effectful": true, "kind": "effect" },
+        "publish":        #{ "tier": 3, "fn": "publish",        "effectful": true, "kind": "effect" },
+        "merchant_order": #{ "tier": 3, "fn": "merchant_order", "effectful": true, "kind": "effect" },
+        "live_trade":     #{ "tier": 3, "fn": "live_trade",     "effectful": true, "kind": "effect" }
+    }
+}
+
+// registry_effectful — is `tool` registered as having a side effect? (unknown ⇒
+// false here; the tier gate already refuses an unknown tool via registry_tier=99.)
+pub fn registry_effectful(registry: Map, tool: string) -> bool {
+    if has_key(registry, tool) {
+        let entry = registry[tool]
+        if has_key(entry, "effectful") { return to_bool(entry["effectful"]) }
+    }
+    return false
+}
+
+// registry_kind — "toy" | "safe" | "effect" | "unknown". Drives exec_real_tool's
+// three-way dispatch.
+pub fn registry_kind(registry: Map, tool: string) -> string {
+    if has_key(registry, tool) {
+        let entry = registry[tool]
+        if has_key(entry, "kind") { return to_string(entry["kind"]) }
+        return "toy"                                  // legacy {tier,fn} ⇒ toy
+    }
+    return "unknown"
+}
+
+// _tcg_env — read an environment variable via the shell (no getenv builtin).
+// Same pattern AGENT/DESKTOP/action.hexa uses for ANIMA_DESKTOP_DRYRUN.
+fn _tcg_env(name: string) -> string {
+    let raw = to_string(exec("/bin/sh -c 'printf %s \"${" + name + "}\"'"))
+    // strip a trailing newline if the shell added one.
+    let n = byte_len(raw)
+    if n > 0 && byte_at(raw, n - 1) == 0x0A { return substring(raw, 0, n - 1) }
+    return raw
+}
+
+// effectful_armed — true iff ANIMA_TOOLS_EFFECTFUL is explicitly opted in. Read
+// FRESH per call (no caching), default OFF — the safe default (mission contract).
+pub fn effectful_armed() -> bool {
+    let v = _tcg_env("ANIMA_TOOLS_EFFECTFUL")
+    return v == "1" || v == "true"
+}
+
+// _tcg_first_token — first whitespace-delimited token of `s` (SP split, "" safe).
+fn _tcg_first_token(s: string) -> string {
+    let sp = _tcg_first_byte(s, 0x20)
+    if sp < 0 { return s }
+    return substring(s, 0, sp)
+}
+
+// exec_safe_real_tool — execute a SAFE (read-only, no side effect) REAL role
+// tool. These fire NOW (the tier gate is applied by the caller). Each is a REAL
+// observation — a real disk read / real git query / real grep — NOT a fabricated
+// success (p5/p7). A tool that needs an unavailable resource (web_search without
+// network) returns an HONEST stub labelled as such, never a faked result.
+pub fn exec_safe_real_tool(tool: string, args: string) -> string {
+    if tool == "think" {
+        // reflection is a real internal echo — no external effect, no fabrication.
+        return "‹think› " + args
+    }
+    if tool == "repo_status" {
+        // real, read-only `git status` of the cwd (porcelain = stable surface).
+        return to_string(exec("/bin/sh -c 'git status --porcelain 2>&1 | head -40'"))
+    }
+    if tool == "file_read" {
+        // args = a path (first token). Real disk read; missing file ⇒ honest miss.
+        let path = _tcg_first_token(args)
+        let probe = to_string(exec("/bin/sh -c 'test -r \"" + path + "\" && echo OK || echo NO'"))
+        if _tcg_first_token(probe) != "OK" {
+            return "‹file_read miss: " + path + "› (unreadable / absent — no fabrication)"
+        }
+        return to_string(read_file(path))
+    }
+    if tool == "grep" {
+        // args = pattern (first token); real recursive grep of the cwd, bounded.
+        let pat = _tcg_first_token(args)
+        if byte_len(pat) == 0 {
+            return "‹grep: empty pattern› (no fabrication)"
+        }
+        return to_string(exec("/bin/sh -c 'grep -rnI -- \"" + pat + "\" . 2>/dev/null | head -40'"))
+    }
+    if tool == "web_search" {
+        // REAL only when network+curl are available; otherwise an HONEST stub
+        // (no creds/network here ⇒ we do NOT fabricate a result, mission contract).
+        let have = _tcg_first_token(to_string(exec("/bin/sh -c 'command -v curl >/dev/null 2>&1 && echo Y || echo N'")))
+        if have != "Y" {
+            return "‹web_search unavailable: no curl/network in this env› query=\"" + args + "\" (honest stub — not fabricated)"
+        }
+        // Network reachability probe (no result fabrication on failure).
+        let net = _tcg_first_token(to_string(exec("/bin/sh -c 'curl -s -m 4 -o /dev/null -w %{http_code} https://duckduckgo.com/ 2>/dev/null || echo 000'")))
+        if net == "000" || byte_len(net) == 0 {
+            return "‹web_search unavailable: network unreachable› query=\"" + args + "\" (honest stub — not fabricated)"
+        }
+        // Real HTML fetch (provider-light); the loop's anchor carries the raw body.
+        let body = to_string(exec("/bin/sh -c 'curl -s -m 6 \"https://duckduckgo.com/html/?q=" + args + "\" 2>/dev/null | sed -e s/\\<[^>]*\\>//g | tr -s \" \\n\" \" \" | head -c 600'"))
+        if byte_len(body) == 0 {
+            return "‹web_search: empty response› query=\"" + args + "\" (honest — not fabricated)"
+        }
+        return "web_search(" + args + "): " + body
+    }
+    if tool == "market_scan" {
+        // read-only MERCHANT surface descriptor (real ops_summary is the surface;
+        // a live adapter read would supply args — kept read-only, no order placed).
+        return "market_scan: MERCHANT ops read-only surface available (ops_summary); no live order placed"
+    }
+    return "‹not wired (safe): " + tool + "›"          // honest — unreached normally
+}
+
+// exec_effectful_tool — execute an EFFECTFUL REAL role tool, GATED by the env
+// opt-in. The TIER gate is already applied by the caller (tool_allowed); this
+// function adds the SAFETY opt-in: with ANIMA_TOOLS_EFFECTFUL unset it returns
+// an honest gated-refusal (the default), NEVER a fabricated effect. With the env
+// set it routes to the real role surface. This keeps the plumbing complete while
+// defaulting SAFE on an unverified mouth (mission contract honesty).
+pub fn exec_effectful_tool(tool: string, args: string) -> string {
+    if !effectful_armed() {
+        return "‹effectful tool gated: set ANIMA_TOOLS_EFFECTFUL=1 to enable› tool=" + tool + " args=\"" + args + "\""
+    }
+    // ARMED — route to the real surface (tier already cleared by the caller).
+    if tool == "file_write" {
+        // args = "<path> <content…>" — real write of `content` to `path`.
+        let sp = _tcg_first_byte(args, 0x20)
+        if sp < 0 { return "‹file_write: missing content (need <path> <content>)›" }
+        let path = substring(args, 0, sp)
+        let content = substring(args, sp + 1, byte_len(args))
+        write_file(path, content)
+        return "file_write OK: " + to_string(byte_len(content)) + " bytes → " + path
+    }
+    if tool == "run_tests" || tool == "code_run" {
+        // args = a shell command to run (CODE role T2). Real exec, bounded output.
+        return to_string(exec("/bin/sh -c '" + args + " 2>&1 | head -60'"))
+    }
+    if tool == "desktop_action" {
+        // DESKTOP role — the real ax_* surface is dispatched here when armed; we
+        // keep it to the safe descriptor unless a concrete action is bound (the
+        // action verbs themselves honor ANIMA_DESKTOP_DRYRUN independently).
+        return "desktop_action ARMED: route to AGENT/DESKTOP ax_* (action=" + args + ")"
+    }
+    if tool == "git_commit" {
+        return to_string(exec("/bin/sh -c 'git commit -m \"" + args + "\" 2>&1 | head -20'"))
+    }
+    if tool == "git_push" {
+        return to_string(exec("/bin/sh -c 'git push 2>&1 | head -20'"))
+    }
+    if tool == "publish" || tool == "merchant_order" || tool == "live_trade" {
+        // highest-consequence T3 ops — route to the role surface when armed. Kept
+        // descriptor-level here (a live order/trade needs a bound adapter+creds).
+        return tool + " ARMED: route to role surface (args=" + args + ") — bind adapter+creds to fire"
+    }
+    return "‹not wired (effect): " + tool + "›"
+}
+
+
 // ── §4 unit smoke (p7: deterministic equality, NO perplexity) ────────────────
 //
 // Run: hexa run AGENT/CORE/tool_call_grammar.hexa
