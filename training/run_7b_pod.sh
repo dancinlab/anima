@@ -3,7 +3,7 @@
 # Downloads base 7B ckpt + trainer + both corpora to /workspace, runs train+eval, then demo.
 # Requires: HF_TOKEN env (public repos, but authed re-download for sha-verify). CUDA GPU.
 set -euo pipefail
-WS=/workspace
+WS=${WS:-/workspace}
 OUT=$WS/out
 mkdir -p "$OUT"
 cd "$WS"
@@ -45,7 +45,7 @@ python3 chat_persona_7b_train_eval.py \
   --persona-corpus "$WS/persona_sns_corpus.txt" \
   --out-dir "$OUT" \
   --stage-a-steps "${STAGE_A_STEPS:-600}" --stage-b-steps "${STAGE_B_STEPS:-600}" \
-  --batch "${BATCH:-8}" --block 512 --lr "${LR:-2e-5}" --warmup 40 --opt adamw8bit --seed 42 \
+  --batch "${BATCH:-8}" --block 512 --lr "${LR:-2e-5}" --warmup 40 --opt "${OPT:-adamw}" --seed 42 \
   2>&1 | tee "$OUT/train_eval.log"
 
 echo "=== [pod] runnable demo transcript ==="
