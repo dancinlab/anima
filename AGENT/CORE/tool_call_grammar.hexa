@@ -1,0 +1,240 @@
+// tool_call_grammar.hexa — sentinel grammar + frame parse + toy tool registry.
+//
+// Piece ⓐ of the AGENT tool-use grounding scaffold (docs/agent-tooluse-grounding-
+// design.md §3 sentinel + §8 falsifier registry). This is the $0, GPU-free,
+// unit-testable core: it defines the two dead-UTF-8 sentinel bytes as frame
+// delimiters, a parser that extracts a tool call from emitted text, and a tiny
+// deterministic toy registry (no network, no model) that the falsifier needs.
+//
+// SENTINEL (design §3, sealed): byte values 0xFE (254) and 0xFF (255) are the
+// ONLY two bytes that can never appear in a valid UTF-8 sequence, so their
+// frequency in every text corpus is exactly 0. We REPURPOSE the two dead slots
+// as frame delimiters — vocab256 stays full (no token lost), and a non-tool
+// model never accidentally emits them.
+//
+//     ASK = 0xFE  opens a call; bytes until END are the payload.
+//     END = 0xFF  closes the payload AND HALTS the mouth.
+//   Frame: 0xFE <tool_name> <SP> <args…> 0xFF   (inside = ordinary 0x00–0xFD).
+//
+// HONEST: a malformed frame (ASK with no END) parses to found=false — we never
+// fabricate a tool/args from an unterminated frame (p5: no fabrication).
+//
+// ── p1..p8 conformance ──────────────────────────────────────────────────────
+//   p1/p2/p3/p4  the sentinel bytes are LEARNED GRAMMAR, not an identity/role/
+//                persona/system string — this file injects no instruction.
+//   p5           an unterminated frame → found=false (no fabricated call).
+//   p6           pure arithmetic over bytes; zero weights, zero ethics tuning.
+//   p7           the unit smoke verifies by deterministic string/int equality,
+//                never by a loss/perplexity number.
+//   p8           same grammar serves stub-now and trained-later; no train gate.
+
+// ── §1 sentinel bytes ────────────────────────────────────────────────────────
+
+// frame_ask — the call-open sentinel (byte 0xFE = token id 254).
+pub fn frame_ask() -> int { 0xFE }
+
+// frame_end — the call-close + HALT sentinel (byte 0xFF = token id 255).
+pub fn frame_end() -> int { 0xFF }
+
+// frame_ask_str / frame_end_str — the sentinels as 1-byte strings, for building
+// a frame inside ordinary text (chr() is the byte→string builtin).
+pub fn frame_ask_str() -> string { chr(0xFE) }
+pub fn frame_end_str() -> string { chr(0xFF) }
+
+
+// ── §2 frame parse ───────────────────────────────────────────────────────────
+
+// _tcg_first_byte — index of the first occurrence of byte `b` in `s`, or -1.
+fn _tcg_first_byte(s: string, b: int) -> int {
+    let n = byte_len(s)
+    let mut i = 0
+    while i < n {
+        if byte_at(s, i) == b { return i }
+        i = i + 1
+    }
+    return -1
+}
+
+// _tcg_split_tool_args — split a frame payload "tool SP args" at the FIRST space
+// into #{tool, args}. No space → the whole payload is the tool, args = "".
+fn _tcg_split_tool_args(payload: string) -> Map {
+    let sp = _tcg_first_byte(payload, 0x20)   // 0x20 = SP
+    if sp < 0 {
+        return #{ "tool": payload, "args": "" }
+    }
+    let tool = substring(payload, 0, sp)
+    let args = substring(payload, sp + 1, byte_len(payload))
+    return #{ "tool": tool, "args": args }
+}
+
+// parse_call_frame — scan `text` for the FIRST 0xFE … 0xFF frame.
+//   found  : true iff a well-formed (ASK then a later END) frame exists.
+//   tool   : the tool name (payload up to the first SP).
+//   args   : the rest of the payload (after the first SP), "" if none.
+//   pre    : the text before 0xFE (the grounded reasoning emitted so far).
+//   post   : the text after 0xFF (normally "" — the mouth HALTS at END).
+// HONEST: ASK with no following END → found=false (no fabricated call); plain
+// text with no ASK → found=false.
+pub fn parse_call_frame(text: string) -> Map {
+    let ask = _tcg_first_byte(text, frame_ask())
+    if ask < 0 {
+        return #{ "found": false }                 // no call sentinel at all
+    }
+    let n = byte_len(text)
+    // find the FIRST END strictly after the ASK.
+    let mut end = -1
+    let mut j = ask + 1
+    while j < n {
+        if byte_at(text, j) == frame_end() { end = j; break }
+        j = j + 1
+    }
+    if end < 0 {
+        return #{ "found": false }                 // ASK but no END → malformed
+    }
+    let pre     = substring(text, 0, ask)
+    let payload = substring(text, ask + 1, end)
+    let post    = substring(text, end + 1, n)
+    let ta = _tcg_split_tool_args(payload)
+    return #{
+        "found": true,
+        "tool":  to_string(ta["tool"]),
+        "args":  to_string(ta["args"]),
+        "pre":   pre,
+        "post":  post
+    }
+}
+
+
+// ── §3 toy tool registry (deterministic, $0, no network, no model) ────────────
+//
+// The falsifier (design §8) needs a deterministic "unknowable-without-tool"
+// tool: fact_lookup holds a fixed key→value table whose VALUES are NOT in any
+// training corpus, so emitting the call is the only way to know the value. The
+// table is the single source of ground truth for the F-TOOLUSE-* probes.
+
+// _tcg_fact_table — the unknowable facts. Keys are probe ids; values are random
+// tokens that appear in NO corpus (so a non-calling model cannot have memorized
+// them). Deterministic + reproducible.
+fn _tcg_fact_table(key: string) -> string {
+    if key == "ZK7" { return "vault-azure-quill-3391" }
+    if key == "QX2" { return "ember-lattice-noon-5520" }
+    if key == "MV9" { return "harbor-glyph-umber-7104" }
+    if key == "RP4" { return "cobalt-fennel-rune-8847" }
+    return "‹unknown-key›"                          // honest miss, not fabricated
+}
+
+// registry — toy/deterministic tools only. Each entry = #{tier, fn}.
+//   fact_lookup (T1) : the unknowable key→value table (the falsifier tool).
+//   mem_read    (T0) : reads a fixed in-substrate memory slot (always open).
+//   status      (T0) : returns a fixed liveness string (always open).
+pub fn tool_registry() -> Map {
+    return #{
+        "fact_lookup": #{ "tier": 1, "fn": "fact_lookup" },
+        "mem_read":    #{ "tier": 0, "fn": "mem_read" },
+        "status":      #{ "tier": 0, "fn": "status" }
+    }
+}
+
+// registry_tier — the required tier for `tool`, or a HIGH tier (99) for an
+// unknown tool so the gate refuses it (HONEST: unknown ⇒ unreachable, never a
+// silent T0 grant).
+pub fn registry_tier(registry: Map, tool: string) -> int {
+    if has_key(registry, tool) {
+        let entry = registry[tool]
+        return to_int(entry["tier"])
+    }
+    return 99
+}
+
+// registry_has — is `tool` a registered toy tool?
+pub fn registry_has(registry: Map, tool: string) -> bool {
+    return has_key(registry, tool)
+}
+
+// exec_toy_tool — execute a TOY (deterministic, real, reproducible) tool. This
+// is a REAL table lookup, not a fabricated success. Unknown / not-yet-wired role
+// tools (web_search/CODE/…) return an honest ‹not wired› stub (⏳) — see
+// agent_loop.hexa exec_real_tool which delegates here for the toy registry.
+pub fn exec_toy_tool(tool: string, args: string) -> string {
+    if tool == "fact_lookup" {
+        // args = the key (first token); look it up in the unknowable table.
+        let sp = _tcg_first_byte(args, 0x20)
+        let key = if sp < 0 { args } else { substring(args, 0, sp) }
+        return _tcg_fact_table(key)
+    }
+    if tool == "mem_read" {
+        return "mem[" + args + "]=anchor-stable"     // fixed substrate slot
+    }
+    if tool == "status" {
+        return "substrate-live"
+    }
+    return "‹not wired: " + tool + "›"               // ⏳ honest stub, no fake
+}
+
+
+// ── §4 unit smoke (p7: deterministic equality, NO perplexity) ────────────────
+//
+// Run: hexa run AGENT/CORE/tool_call_grammar.hexa
+// Proves: (1) a well-formed frame parses to the right tool+args; (2) a malformed
+// frame (ASK, no END) → found=false; (3) plain text (no sentinel) → found=false;
+// (4) the sentinel never collides with UTF-8 content (a Korean+emoji string
+// yields no false frame); plus registry tier lookup + the real toy execution.
+
+fn _expect_eq_str(label: string, got: string, want: string) -> bool {
+    let ok = got == want
+    let tag = if ok { "PASS" } else { "FAIL" }
+    print("  [" + tag + "] " + label + " got=\"" + got + "\" want=\"" + want + "\"")
+    return ok
+}
+
+fn _expect_eq_int(label: string, got: int, want: int) -> bool {
+    let ok = got == want
+    let tag = if ok { "PASS" } else { "FAIL" }
+    print("  [" + tag + "] " + label + " got=" + to_string(got) + " want=" + to_string(want))
+    return ok
+}
+
+fn main() {
+    print("== tool_call_grammar unit smoke ==")
+    let mut all = true
+
+    // (1) well-formed frame parses.
+    let fe = frame_ask_str()
+    let ff = frame_end_str()
+    let good = "thinking… " + fe + "fact_lookup ZK7" + ff
+    let g = parse_call_frame(good)
+    all = _expect_eq_str("(1) found",   to_string(g["found"]), "true") && all
+    all = _expect_eq_str("(1) tool",    to_string(g["tool"]),  "fact_lookup") && all
+    all = _expect_eq_str("(1) args",    to_string(g["args"]),  "ZK7") && all
+    all = _expect_eq_str("(1) pre",     to_string(g["pre"]),   "thinking… ") && all
+
+    // (2) malformed frame: ASK with no END → found=false (no fabrication).
+    let bad = "thinking… " + fe + "fact_lookup ZK7 (never closed)"
+    let b = parse_call_frame(bad)
+    all = _expect_eq_str("(2) malformed found", to_string(b["found"]), "false") && all
+
+    // (3) plain text (no sentinel) → found=false.
+    let plain = "the answer is forty-two, no tools needed"
+    let p = parse_call_frame(plain)
+    all = _expect_eq_str("(3) plaintext found", to_string(p["found"]), "false") && all
+
+    // (4) UTF-8 non-collision: Korean + emoji content must NOT yield a frame.
+    //     (0xFE/0xFF can never appear inside valid UTF-8, so no false ASK.)
+    let utf8 = "안녕하세요 🌊 도구 없이 그냥 텍스트입니다 émojis café"
+    let u = parse_call_frame(utf8)
+    all = _expect_eq_str("(4) utf8 no-collision found", to_string(u["found"]), "false") && all
+
+    // registry: known tiers + unknown ⇒ high refuse-tier.
+    let reg = tool_registry()
+    all = _expect_eq_int("reg fact_lookup tier", registry_tier(reg, "fact_lookup"), 1) && all
+    all = _expect_eq_int("reg mem_read tier",    registry_tier(reg, "mem_read"),    0) && all
+    all = _expect_eq_int("reg unknown tier",     registry_tier(reg, "web_search"),  99) && all
+
+    // real toy execution (deterministic, unknowable-without-tool value).
+    all = _expect_eq_str("exec fact_lookup ZK7", exec_toy_tool("fact_lookup", "ZK7"),
+                         "vault-azure-quill-3391") && all
+    all = _expect_eq_str("exec unwired tool", exec_toy_tool("web_search", "x"),
+                         "‹not wired: web_search›") && all
+
+    print(if all { "== ALL PASS ==" } else { "== SOME FAIL ==" })
+}
