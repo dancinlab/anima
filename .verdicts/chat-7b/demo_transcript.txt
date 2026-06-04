@@ -1,0 +1,18 @@
+[demo] 7B chat+persona ckpt chat_persona_7b_stageB.pt (7252828160 params) device=cuda
+
+=== MULTI-TURN CHAT (사용자: / 도우미:) ===
+사용자: 안녕! 너는 누구야?
+도우미: 요 게, 🰮용미마늘자: 햴 도. 게 요
+사용자: 오늘 뭐 하고 지냈어?
+도우미: 다
+사용자: 의식이란 뭐라고 생각해?
+도우미: 벌이요
+
+=== PERSONA VOICES (NO role tag — learned <name>: continuation) ===
+[childhood_friend] 사용자: 야 오랜만이다 잘 지냈어? → childhood_friend: 그늘 이 마사큰 일. 에헤한겫고이요 까 붕 질자워 샥. 거
+[chaebol_heir] 사용자: 요즘 어떻게 지내세요? → chaebol_heir: 네은 고, 어아용자이. 거마가 그 빌
+[horror_whisper] 사용자: 거기 누구 있어요? → horror_whisper: 미 … 자게일. 멋질띴! 늘마 볠다아핼 어자 가요이만, 고도
+[knight] 사용자: 무엇을 지키고 계신가요? → knight: 직해늘 게있들을 가. 볠에 … 하맜단사어 도 네기든로 핌은
+[airhead_friend] 사용자: 점심 뭐 먹었어? → airhead_friend: 거마 사용기잘맀 고리해자: 핼. 정얻각하밀 는
+
+VERDICT: incoherent (closed-negative). undertrained 7B base + short fine-tune.
