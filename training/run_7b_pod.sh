@@ -17,7 +17,7 @@ echo "=== [pod] download base 7B ckpt + corpora ==="
 python3 - <<'PY'
 from huggingface_hub import hf_hub_download
 import shutil, os
-WS="/workspace"
+WS=os.environ.get("WS","/workspace")
 # base 7B ckpt (14.5GB)
 p = hf_hub_download("dancinlab/clm-v1-ref-pytorch-cuda-7b", "clm_ref_pytorch_cuda_7b.pt", repo_type="model")
 shutil.copy(p, f"{WS}/clm_ref_pytorch_cuda_7b.pt")
