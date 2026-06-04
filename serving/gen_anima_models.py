@@ -116,14 +116,21 @@ WIRED_ARCH = {
 
 
 def _params_m_from_notes(row: dict) -> float | None:
-    """Best-effort param-count (M) parse from notes/base_model. Honest None if unknown."""
-    txt = f"{row.get('base_model','')} {row.get('notes','')}"
-    m = re.search(r"~?([0-9]+(?:\.[0-9]+)?)\s*B\b", txt)
-    if m:
-        return round(float(m.group(1)) * 1000, 1)
-    m = re.search(r"~?([0-9]+(?:\.[0-9]+)?)\s*M\b", txt)
-    if m:
-        return float(m.group(1))
+    """Best-effort param-count (M) parse — ONLY from explicit param-count phrasing
+    in base_model/notes (e.g. '7B', '~1.5B', '18.13M', '530M params'). Honest None
+    when no unambiguous param count is stated — never guess from byte sizes, step
+    counts, corpus mixes (70wiki), or hidden dims (d1536/t512)."""
+    # base_model is the authoritative arch string; notes is prose that mentions
+    # OTHER models (e.g. '7B comparison') → false matches. Read base_model only.
+    txt = row.get("base_model", "") or ""
+    for m in re.finditer(r"(?<![A-Za-z0-9])([0-9]+(?:\.[0-9]+)?)\s*B\b", txt):
+        val = float(m.group(1)) * 1000
+        if val <= 200000:  # <=200B sane ceiling; reject byte-count false matches
+            return round(val, 1)
+    for m in re.finditer(r"(?<![A-Za-z0-9])([0-9]+(?:\.[0-9]+)?)\s*M\b", txt):
+        val = float(m.group(1))
+        if val <= 200000:
+            return round(val, 1)
     return None
 
 
