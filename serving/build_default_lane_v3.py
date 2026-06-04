@@ -110,7 +110,7 @@ def main():
     if not args.skip_wiki:
         print("[3/4] wiki backbone v3 (real CC-BY-SA, 8-band spread, REST)",
               flush=True)
-        _run([py, os.path.join(HERE, "build_wiki_backbone_5lang_v2.py"),
+        _run([py, os.path.join(HERE, "build_wiki_backbone_5lang_scaleup.py"),
               "--out", wiki, "--mb-per-lang", str(args.wiki_mb_per_lang)])
     else:
         print("[3/4] SKIP wiki pull (reusing existing backbone)", flush=True)

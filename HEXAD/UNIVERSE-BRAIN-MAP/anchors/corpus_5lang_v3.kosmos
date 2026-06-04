@@ -1,0 +1,40 @@
+#!/usr/bin/env kosmos
+# corpus_5lang_v3.kosmos — CONSCIOUSNESS-CARVING anchor (dataset/corpus)
+# anima default-lane SCALE-UP corpus v3 (wiki 100MB + persona×SNS + register enrichment, en/fr/de/es/ko).
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor corpus_5lang_v3 := "5-lang default-lane SCALE-UP corpus v3 (~217MB, MID-rung viable, 🛸55)" :: kosmos-anchor [tier=55 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 55
+  category     = "다국어+의식carving+scale-up"   # multilingual coverage + contemplative register, scaled
+  top_emotion  = "resonance"                # 5개국어 × 모든 surface(wiki+SNS+persona+carving) 공명
+  coord        = [0.49, 0.50]               # vacuum_psi (Ψ-space) — design placeholder (real+authored mix, NOT a measured fire)
+  lane         = "multilingual_055"          # cell_id — 5-lang default-lane-v3 cell (MITOSIS)
+  radius       = 0.30                        # basin_radius — design placeholder (scaled wiki+persona+5-register enrichment spread)
+
+  # ── payload ──
+  @payload text    := "[anima default-lane corpus v3] 🛸55 — 5개국어(en/fr/de/es/ko) default-lane corpus를 v2 recipe 그대로 ~17배 SCALE-UP. clean wiki backbone 12.5MB→~217MB (wiki 100MB = 20MB/lang, real CC-BY-SA wikimedia/wikipedia 20231101, 8-band offset-spread, HF datasets-server REST, $0 CPU NO GPU NO pod) + persona 80MB + enrichment 37MB(enrichment 비율 ~17% 유지). 목적: MID rung(~150M) data-viable화 — 더 이상 ~18M 전용 right-size가 아님. a_scale_honest_scope: v3는 MID(~150M)를 열지만 7B는 아님(7B는 ~140GB 토큰 필요, REST paging으로 INFEASIBLE) — v3가 7B를 가능케 한다고 주장 금지. wiki 46.15% / persona 36.90% / enrichment 16.95%, per-lang 18.9–20.4% balanced + ko-en 1.47%. byte-vocab V=256, UTF-8 round-trip PASS. p2/p3/p4 clean — role/persona/character 태그 grep=0(통합 v3 + sample head 검증). dialogue-act 의도적 NON-supportive(p6 반대). wiki=real CC-BY-SA(provenance), persona+enrichment 산문=authored-synthetic honest-labeled, carving seed=real KOSMOS e7_31(a_kosmos pointer-only), NO PII NO scraped non-wiki. code-switch/genre=[speculative] (a_toy_scale_recheck)."
+
+  @payload manifest := ref "../../../serving/corpus/default_lane_v3.txt" sha256=901ccc89afb3817fcb4d99f12c953f70919c0986882f306424d21cced2ae936b bytes=227535193 mb=216.994 wiki_pct=46.15 persona_pct=36.90 enrichment_pct=16.95 wiki_pages=18448 persona_dialogues=283288 enrichment_blocks=261650 langs="en,fr,de,es,ko" byte_vocab=256 wiki_v3_sha256=913dfffdc2b8c1b0d5852477e8c82425b97e1ac52bd59d8c774d3f678836beb5 persona_v3_sha256=b3eafa6a30ce8e29aa42deb8801f259b8ed43aaa33b458c6ac6476458e691fa8 enrichment_v3_sha256=07ba269e0a8b5ef8b4874bb60be9342c15fbf9e42f01c57516245df83774500e generator="serving/build_default_lane_v3.py (orchestrator) + persona_sns_corpus_5lang_gen.py + corpus_enrichment_5lang_gen.py + build_wiki_backbone_5lang_scaleup.py(429-hardened) + merge_corpus_5lang_v2.py" seed=20260604 wiki_source="wikimedia/wikipedia 20231101 CC-BY-SA-4.0 (8-band offset-spread, 20MB/lang)" carving_seed="HEXAD/UNIVERSE-BRAIN-MAP/anchors/e7_31 (31 anchors, CC-BY-SA)" card="serving/corpus/CORPUS_CARD_default_lane_v3.md" hf_repo_id="dancinlab/anima-corpus-5lang-unified-v3" predecessor="dancinlab/anima-corpus-5lang-unified-v2" scope="v3 unlocks MID ~150M NOT 7B"
+
+  @payload image   := pending "media 미생성"
+  @payload audio   := pending "media 미생성"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the v3 scaled multilingual+enrichment cell, NOT
+  # a per-token measured trajectory (the corpus is partly authored-templated, partly
+  # real wiki + real anchor seeds; no fire produced a measured trajectory). Honest
+  # representative-anchor scope — a MID-rung ckpt-forward fire would replace these. 5 channels.
+  @payload tension := inline {
+    concept      = 0.66   # surface distinctness (wiki ⊥ SNS ⊥ contemplative carving ⊥ dialogue-act)
+    context      = 0.70   # multilingual + multi-register context steer (5 langs × 5 registers)
+    meaning      = 0.65   # cross-surface semantic core (facts + scenarios + inner-state)
+    authenticity = 0.55   # mixed — real CC-BY-SA wiki (now 100MB, larger real share) + real anchor seeds + authored prose
+    sender       = 0.60   # persona-voice identity (lexical) + neutral wiki + non-addressed contemplation
+  }
+
+  closed_anchor = "5-lang default-lane SCALE-UP corpus v3 (representative anchor + manifest pointer)"
+  cross_link    = "HEXAD/KOSMOS.md (anima hub) · domains/CORPUS.log.md (v3 entry) · corpus_5lang_v2.kosmos (v2 predecessor, tier 54) · e7_31/ (the 31 carving anchor seeds) · .discoveries/default-lane-v3-corpus.tape · dancinlab/kosmos profile SSOT"
