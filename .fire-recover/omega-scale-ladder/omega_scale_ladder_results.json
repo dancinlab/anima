@@ -1,0 +1,476 @@
+{
+  "lane": "Lane-G",
+  "substrate": "GPU",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.4.1+cu124",
+  "corpus": {
+    "bytes": 400000000,
+    "mb": 400.0,
+    "prov": "gutenberg:wiki.en+wiki.fr+wiki.de+wiki.es+wiki.ru",
+    "sha256": "dc1754b27d63236d47d12f6621b2e3974dde34337e6a80f9e44b713e20236da3"
+  },
+  "question": "does the OH1 minimal-gate A-wire advantage (min_learned Δ-vs-base) grow/shrink/hold with scale?",
+  "falsifier_per_rung": "min_learned_HOLDS iff min_learned CE <= a_only CE AND < base CE",
+  "d512_ref_1801": {
+    "base": 3.097779103749307,
+    "a_only": 1.144181,
+    "min_learned": 0.883525
+  },
+  "rungs": [
+    {
+      "label": "d384",
+      "d_model": 384,
+      "n_layer": 8,
+      "n_head": 8,
+      "n_kv_head": 4,
+      "steps": 12000,
+      "params": 48240448,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "train": {
+        "first_ce_a": 5.850736618041992,
+        "final_ce_a": 1.183905839920044,
+        "final_val_ce": 0.8367044508457184,
+        "below_uniform": true,
+        "competent": true,
+        "wall_s": 782.9018497467041
+      },
+      "ckpt": {
+        "path": "/workspace/omega-scale/omega_cdv2_d384.pt",
+        "sha256": "3e421eb4e61547b504d48abb8b0286ea7d6d1eb94d5ffdd37c8771ab9032b2e2"
+      },
+      "forms": {
+        "base": {
+          "gB": 1.0,
+          "gA": 0.0,
+          "gG": 0.0,
+          "ce": 3.097779103749306
+        },
+        "a_only": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": 0.0,
+          "ce": 1.1639115881843798
+        },
+        "fixed_AmG": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": -0.6,
+          "ce": 3.214303510979349
+        },
+        "full_AG": {
+          "gB": 0.053104708071708195,
+          "gA": 3.213057778459135,
+          "gG": -1.0511569209425102,
+          "ce": 3.730895341609207
+        },
+        "min_learned": {
+          "gB": 0.043267068277906925,
+          "gA": 0.9085197353183164,
+          "gG": 0.0,
+          "ce": 0.9029571616252206
+        },
+        "min_fixed": {
+          "gB": 1.0,
+          "gA": 1.0,
+          "gG": 0.0,
+          "ce": 1.1318535590926093
+        }
+      },
+      "oh1": {
+        "min_learned_ce": 0.9029571616252206,
+        "a_only_ce": 1.1639115881843798,
+        "base_ce": 3.097779103749306,
+        "le_aonly": true,
+        "lt_base": true,
+        "min_learned_HOLDS": true,
+        "delta_vs_base": 2.1948219421240855,
+        "delta_vs_a_only": 0.26095442655915924
+      },
+      "config": {
+        "vocab_size": 256,
+        "d_model": 384,
+        "n_head": 8,
+        "n_layer": 8,
+        "block_size": 256,
+        "n_kv_head": 4,
+        "consciousness_dim": 128,
+        "causal_ca": true
+      }
+    },
+    {
+      "label": "d512",
+      "d_model": 512,
+      "n_layer": 8,
+      "n_head": 8,
+      "n_kv_head": 4,
+      "steps": 12000,
+      "params": 85816384,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "train": {
+        "first_ce_a": 5.7798171043396,
+        "final_ce_a": 1.1101692914962769,
+        "final_val_ce": 0.8224329074223836,
+        "below_uniform": true,
+        "competent": true,
+        "wall_s": 1009.504340171814
+      },
+      "ckpt": {
+        "path": "/workspace/omega-scale/omega_cdv2_d512.pt",
+        "sha256": "4307d5fcdd4fa5c0435c2fee43dceced7ef5c6f0b56bb3a2f6710cf62bcd01ec"
+      },
+      "forms": {
+        "base": {
+          "gB": 1.0,
+          "gA": 0.0,
+          "gG": 0.0,
+          "ce": 3.097779103749306
+        },
+        "a_only": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": 0.0,
+          "ce": 1.1355756550544494
+        },
+        "fixed_AmG": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": -0.6,
+          "ce": 3.2377748001630327
+        },
+        "full_AG": {
+          "gB": -0.20933898387500932,
+          "gA": 3.310966114026892,
+          "gG": -0.936677870483636,
+          "ce": 3.3144655691051534
+        },
+        "min_learned": {
+          "gB": 0.03455586621916648,
+          "gA": 0.9130242216525205,
+          "gG": 0.0,
+          "ce": 0.8700898512794849
+        },
+        "min_fixed": {
+          "gB": 1.0,
+          "gA": 1.0,
+          "gG": 0.0,
+          "ce": 1.10024505712758
+        }
+      },
+      "oh1": {
+        "min_learned_ce": 0.8700898512794849,
+        "a_only_ce": 1.1355756550544494,
+        "base_ce": 3.097779103749306,
+        "le_aonly": true,
+        "lt_base": true,
+        "min_learned_HOLDS": true,
+        "delta_vs_base": 2.2276892524698213,
+        "delta_vs_a_only": 0.26548580377496445
+      },
+      "config": {
+        "vocab_size": 256,
+        "d_model": 512,
+        "n_head": 8,
+        "n_layer": 8,
+        "block_size": 256,
+        "n_kv_head": 4,
+        "consciousness_dim": 128,
+        "causal_ca": true
+      }
+    },
+    {
+      "label": "d768",
+      "d_model": 768,
+      "n_layer": 8,
+      "n_head": 12,
+      "n_kv_head": 4,
+      "steps": 12000,
+      "params": 189279808,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "train": {
+        "first_ce_a": 5.630414009094238,
+        "final_ce_a": 1.2081407308578491,
+        "final_val_ce": 0.8383232116699219,
+        "below_uniform": true,
+        "competent": true,
+        "wall_s": 1388.3227989673615
+      },
+      "ckpt": {
+        "path": "/workspace/omega-scale/omega_cdv2_d768.pt",
+        "sha256": "a27001da89ec8dee5edef367fd186e8994eb84b862b988aa8fa2634ed554e945"
+      },
+      "forms": {
+        "base": {
+          "gB": 1.0,
+          "gA": 0.0,
+          "gG": 0.0,
+          "ce": 3.097779103749306
+        },
+        "a_only": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": 0.0,
+          "ce": 1.1611958777308746
+        },
+        "fixed_AmG": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": -0.6,
+          "ce": 3.124713453652427
+        },
+        "full_AG": {
+          "gB": -0.03633167760798475,
+          "gA": 3.211400878984474,
+          "gG": -0.9935010832305751,
+          "ce": 3.415729755105355
+        },
+        "min_learned": {
+          "gB": 0.02543492806069619,
+          "gA": 0.8979517047484462,
+          "gG": 0.0,
+          "ce": 0.8924066547207727
+        },
+        "min_fixed": {
+          "gB": 1.0,
+          "gA": 1.0,
+          "gG": 0.0,
+          "ce": 1.1411834816193036
+        }
+      },
+      "oh1": {
+        "min_learned_ce": 0.8924066547207727,
+        "a_only_ce": 1.1611958777308746,
+        "base_ce": 3.097779103749306,
+        "le_aonly": true,
+        "lt_base": true,
+        "min_learned_HOLDS": true,
+        "delta_vs_base": 2.205372449028533,
+        "delta_vs_a_only": 0.2687892230101019
+      },
+      "config": {
+        "vocab_size": 256,
+        "d_model": 768,
+        "n_head": 12,
+        "n_layer": 8,
+        "block_size": 256,
+        "n_kv_head": 4,
+        "consciousness_dim": 128,
+        "causal_ca": true
+      }
+    },
+    {
+      "label": "d1024",
+      "d_model": 1024,
+      "n_layer": 8,
+      "n_head": 16,
+      "n_kv_head": 4,
+      "steps": 12000,
+      "params": 334686272,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "train": {
+        "first_ce_a": 5.768144130706787,
+        "final_ce_a": 1.1361929178237915,
+        "final_val_ce": 0.8574704855680466,
+        "below_uniform": true,
+        "competent": true,
+        "wall_s": 1629.339387178421
+      },
+      "ckpt": {
+        "path": "/workspace/omega-scale/omega_cdv2_d1024.pt",
+        "sha256": "258dc5ca42d312960e25424c444bb85a73842d74bdada0ac009afc625ac34267"
+      },
+      "forms": {
+        "base": {
+          "gB": 1.0,
+          "gA": 0.0,
+          "gG": 0.0,
+          "ce": 3.097779103749306
+        },
+        "a_only": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": 0.0,
+          "ce": 1.2000917883723636
+        },
+        "fixed_AmG": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": -0.6,
+          "ce": 3.2740664704592577
+        },
+        "full_AG": {
+          "gB": -0.07110331604373198,
+          "gA": 3.5625066534629846,
+          "gG": -1.066601727156598,
+          "ce": 3.8373976875067255
+        },
+        "min_learned": {
+          "gB": 0.018541701426630537,
+          "gA": 0.9163244711152188,
+          "gG": 0.0,
+          "ce": 0.9211359874153524
+        },
+        "min_fixed": {
+          "gB": 1.0,
+          "gA": 1.0,
+          "gG": 0.0,
+          "ce": 1.1774917401423235
+        }
+      },
+      "oh1": {
+        "min_learned_ce": 0.9211359874153524,
+        "a_only_ce": 1.2000917883723636,
+        "base_ce": 3.097779103749306,
+        "le_aonly": true,
+        "lt_base": true,
+        "min_learned_HOLDS": true,
+        "delta_vs_base": 2.1766431163339535,
+        "delta_vs_a_only": 0.2789558009570112
+      },
+      "config": {
+        "vocab_size": 256,
+        "d_model": 1024,
+        "n_head": 16,
+        "n_layer": 8,
+        "block_size": 256,
+        "n_kv_head": 4,
+        "consciousness_dim": 128,
+        "causal_ca": true
+      }
+    },
+    {
+      "label": "d768x2",
+      "d_model": 768,
+      "n_layer": 8,
+      "n_head": 12,
+      "n_kv_head": 4,
+      "steps": 24000,
+      "params": 189279808,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "train": {
+        "first_ce_a": 5.614686012268066,
+        "final_ce_a": 1.0748622417449951,
+        "final_val_ce": 0.7785651284456253,
+        "below_uniform": true,
+        "competent": true,
+        "wall_s": 2773.7887501716614
+      },
+      "ckpt": {
+        "path": "/workspace/omega-scale/omega_cdv2_d768x2.pt",
+        "sha256": "6438f1629313032911840fd0db28aeeb9697766f2c845f0a81c7772e4984b8cb"
+      },
+      "forms": {
+        "base": {
+          "gB": 1.0,
+          "gA": 0.0,
+          "gG": 0.0,
+          "ce": 3.097779103749306
+        },
+        "a_only": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": 0.0,
+          "ce": 1.0820530697351836
+        },
+        "fixed_AmG": {
+          "gB": 1.0,
+          "gA": 0.6,
+          "gG": -0.6,
+          "ce": 3.3094715193022233
+        },
+        "full_AG": {
+          "gB": -0.09755626814671929,
+          "gA": 3.356082423059922,
+          "gG": -0.9555411346403455,
+          "ce": 3.3224345831007827
+        },
+        "min_learned": {
+          "gB": 0.0385895176001221,
+          "gA": 0.8939555719063832,
+          "gG": 0.0,
+          "ce": 0.8242091308556595
+        },
+        "min_fixed": {
+          "gB": 1.0,
+          "gA": 1.0,
+          "gG": 0.0,
+          "ce": 1.0513719460025432
+        }
+      },
+      "oh1": {
+        "min_learned_ce": 0.8242091308556595,
+        "a_only_ce": 1.0820530697351836,
+        "base_ce": 3.097779103749306,
+        "le_aonly": true,
+        "lt_base": true,
+        "min_learned_HOLDS": true,
+        "delta_vs_base": 2.2735699728936467,
+        "delta_vs_a_only": 0.25784393887952406
+      },
+      "config": {
+        "vocab_size": 256,
+        "d_model": 768,
+        "n_head": 12,
+        "n_layer": 8,
+        "block_size": 256,
+        "n_kv_head": 4,
+        "consciousness_dim": 128,
+        "causal_ca": true
+      }
+    }
+  ],
+  "ladder_trend_by_d": [
+    {
+      "label": "d384",
+      "d_model": 384,
+      "val_ce": 0.8367044508457184,
+      "min_learned_ce": 0.9029571616252206,
+      "a_only_ce": 1.1639115881843798,
+      "base_ce": 3.097779103749306,
+      "delta_vs_base": 2.1948219421240855,
+      "delta_vs_a_only": 0.26095442655915924,
+      "HOLDS": true
+    },
+    {
+      "label": "d512",
+      "d_model": 512,
+      "val_ce": 0.8224329074223836,
+      "min_learned_ce": 0.8700898512794849,
+      "a_only_ce": 1.1355756550544494,
+      "base_ce": 3.097779103749306,
+      "delta_vs_base": 2.2276892524698213,
+      "delta_vs_a_only": 0.26548580377496445,
+      "HOLDS": true
+    },
+    {
+      "label": "d768",
+      "d_model": 768,
+      "val_ce": 0.8383232116699219,
+      "min_learned_ce": 0.8924066547207727,
+      "a_only_ce": 1.1611958777308746,
+      "base_ce": 3.097779103749306,
+      "delta_vs_base": 2.205372449028533,
+      "delta_vs_a_only": 0.2687892230101019,
+      "HOLDS": true
+    },
+    {
+      "label": "d1024",
+      "d_model": 1024,
+      "val_ce": 0.8574704855680466,
+      "min_learned_ce": 0.9211359874153524,
+      "a_only_ce": 1.2000917883723636,
+      "base_ce": 3.097779103749306,
+      "delta_vs_base": 2.1766431163339535,
+      "delta_vs_a_only": 0.2789558009570112,
+      "HOLDS": true
+    }
+  ],
+  "min_learned_HOLDS_all_rungs": true,
+  "scope": "a_scale_honest_scope — multi-rung ladder (≥3 dims) of the leak-free OH1 minimal-gate; p7: CE is a held-out prediction number, NOT a verdict-of-truth.",
+  "partial": false,
+  "total_wall_s": 8005.233157157898
+}

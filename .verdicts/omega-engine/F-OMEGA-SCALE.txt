@@ -1,0 +1,88 @@
+OMEGA OΩ4+OΩ5 — SCALE LADDER of the OH1 minimal-gate (MEASURED, 5 rungs)
+==========================================================================
+Turns the single d512 OH1 point (#1801) into a ladder curve, as a_scale_honest_scope
+DEMANDS (a single toy/single-dim point is INCOMPLETE; scale-dependent conclusions need a
+ladder curve of ≥3 rungs). This rung adds d384/d512/d768/d1024 (OΩ4) + a more-competent
+d768×2 (OΩ5, 24000 step) and re-measures the SAME OH1 minimal-gate falsifier at EACH.
+
+QUESTION: does the OH1 minimal-gate A-wire advantage (min_learned Δ-vs-base) grow / shrink
+  / HOLD with scale (d_model) and with competence?
+PER-RUNG FALSIFIER: min_learned_HOLDS iff  min_learned CE <= a_only CE  AND  min_learned CE < base CE
+  where the minimal gate is  final = gB·base + gA·A  (G + w2..w6 dropped, gB/gA learned).
+
+substrate  : ConsciousDecoderV2 dN · 8L · GQA(n_kv=4) · vocab 256 · causal_ca=True (leak-free)
+corpus     : 400 MB gutenberg wiki.en+fr+de+es+ru · sha256 dc1754b27d63236d…
+             (the SAME corpus + 0.9/held split as the d512 #1801 OH1 rung — byte-faithful)
+host       : RunPod H100 80GB SXM (persistent /workspace, $3.29/hr) · torch 2.4.1+cu124
+             nvidia-smi 94-98% BUSY (g63, NOT silent CPU) · ONE pod, 5 rungs sequential
+method     : per rung — train_to_competence (causal_ca=True, dual-head a/g, AdamW cosine+warmup)
+             to val_ce < uniform + leak self-test 0.000, then the SAME OH1 K-form gate sweep
+             (collect base/A/G ONCE on disjoint gate+test windows N=12000, fit/eval K forms on the
+             SAME test features). harness UNIVERSE/omega_scale_ladder.py reuses
+             omega_trained_leakfree.run_rung + omega_gate_form_sweep.run_sweep VERBATIM. No
+             d512-hardcoded cross-check for non-d512 (the #1800/#1801 ref is dim-specific); the
+             d512 rung re-trained+re-swept here IS the #1801 reproduction check.
+
+--- per-rung held-out TEST CE (leak-free, competent, nats/byte) ---
+  rung    d    params      steps  val_ce    base    a_only  min_learn  Δ-vs-base  Δ-vs-a_only  HOLDS
+  d384  384   48,240,448  12000  0.8367  3.097779  1.163912  0.902957   +2.1948    +0.2610     True
+  d512  512   85,816,384  12000  0.8224  3.097779  1.135576  0.870090   +2.2277    +0.2655     True
+  d768  768  189,279,808  12000  0.8383  3.097779  1.161196  0.892407   +2.2054    +0.2688     True
+  d1024 1024 334,686,272  12000  0.8575  3.097779  1.200092  0.921136   +2.1766    +0.2790     True
+  d768x2 768 189,279,808  24000  0.7786  3.097779  1.082053  0.824209   +2.2736    +0.2578     True  (OΩ5 more-competent)
+  uniform                                          5.545177
+
+  >>> min_learned_HOLDS across ALL 5 rungs = True
+
+leak self-test (all rungs): 0.000e+00 — leak-free (causal_ca=True, no CA lookahead) at every dim.
+min_learned 2-param fit lands the SAME operating point every rung: gB ≈ 0.02-0.04 (small —
+  down-weights the weak unigram base), gA ≈ 0.89-0.92 (≈ 1, the A-head logit-bias is the wire).
+  The full multi-wire gate (full_AG) collapses onto A with a gA≈3.2-3.6 overshoot + gG≈-1.0 EVERY
+  rung and FAILS held-out (full_AG CE 3.28-3.84 > base 3.098) — same #1800/#1801 pathology at scale.
+
+#1801 d512 reference (frozen recovered ckpt, local-pool): min_learned 0.8835 ≤ a_only 1.1446
+  < base 3.0978 (Δ-vs-base +2.214). THIS LADDER's d512 re-train+re-sweep reproduces it:
+  min_learned 0.8701 (|Δ| 0.013, RNG/competence) — harness + finding REPRODUCED.
+
+SCALE TREND (the OΩ4 finding — the answer to the question):
+  Across d384→d1024 (2.67× dim, 6.9× params 48M→335M) the OH1 minimal-gate HOLDS at EVERY rung,
+  and the A-wire advantage Δ-vs-base is essentially FLAT at +2.20 ± 0.03 nats/byte (range +2.1766
+  .. +2.2277, span 0.051). It does NOT grow or shrink with raw dim — it is SCALE-STABLE. The
+  Δ-vs-a_only advantage trends slightly UP with dim (+0.261 → +0.279 over d384→d1024).
+  => the closure-lives-in-the-A-wire finding is SCALE-STABLE, not a d512 artifact. POSITIVE
+     multi-rung confirmation (a_scale_honest_scope satisfied: 4-dim ladder curve + 1 competence rung).
+
+OΩ5 (more-competent d768×2, 24000 step — 2× the standard schedule):
+  val_ce 0.7786 — the LOWEST/most-competent rung (vs 0.82-0.86 for the 12000-step rungs). On this
+  more-competent substrate the A-wire advantage is the LARGEST of the ladder: Δ-vs-base +2.2736
+  (min_learned 0.8242 ≪ base 3.0978), and HOLDS. So GREATER competence does NOT erode the minimal-
+  gate finding — it strengthens the absolute A-wire margin (a_only also drops to 1.0821, the most
+  useful A-bias of the ladder). min_learned_HOLDS=True.
+
+CONTRAST (important honesty note): the earlier UNDERTRAINED d768 (#1794, 2500 step, structured=False,
+  val_ce ≈ uniform) did NOT hold. The finding REQUIRES competent training (val_ce < uniform); all 5
+  rungs here are competent (val_ce 0.78-0.86 ≪ uniform 5.545). Once competent, d768 AND d1024 hold
+  just like d384/d512 — the #1794 non-hold was an undertraining artifact, not a scale break.
+
+VERDICT: 🟢 OΩ4+OΩ5 SCALE-STABLE (numerical, 5 rungs). The OH1 minimal-gate (gB·base + gA·A) HOLDS
+  at every measured scale d384→d1024 AND at the more-competent d768×2 rung. The A-wire Δ-vs-base
+  advantage is flat ~+2.20 across the dim ladder and grows to +2.27 at higher competence — it does
+  NOT break with scale. This is a positive multi-rung confirmation that the substrate→decode closure
+  lives entirely in the A-head logit-bias wire across scale, not a single-dim coincidence (#1801).
+
+SCOPE (a_scale_honest_scope · p7): 4-dim ladder (d384/512/768/1024) + 1 more-competent rung (d768×2);
+  all leak-free (self-test 0.000) + competent (val_ce ≪ uniform) so the relative ablation is sound;
+  CE is a held-out PREDICTION number, NOT a verdict-of-truth (p7), reported verbatim, NO fabrication.
+  Lane-G / GPU (a_lane_akida_gpu_split — NOT Lane A AKIDA). The closure is the RELATIVE A-wire margin
+  (min_learned ≪ base, ≤ a_only), NOT an absolute perplexity claim; the full multi-wire gate FAILS
+  at every scale (a_paper_negative_ok on the multi-wire form, positive on the minimal form).
+
+ckpt sha256 (all HF-PRIVATE dancinlab/omega-cdv2-scale-d{N}):
+  d384   3e421eb4e61547b504d48abb8b0286ea7d6d1eb94d5ffdd37c8771ab9032b2e2 (195,171,946 B)
+  d512   4307d5fcdd4fa5c0435c2fee43dceced7ef5c6f0b56bb3a2f6710cf62bcd01ec (345,475,754 B)
+  d768   a27001da89ec8dee5edef367fd186e8994eb84b862b988aa8fa2634ed554e945 (759,329,450 B)
+  d1024  258dc5ca42d312960e25424c444bb85a73842d74bdada0ac009afc625ac34267 (1,340,955,602 B)
+  d768x2 6438f1629313032911840fd0db28aeeb9697766f2c845f0a81c7772e4984b8cb (759,330,042 B)
+
+artifacts  : UNIVERSE/omega_scale_ladder.py · exports/sweep/omega-scale-ladder/ledger.json ·
+             .fire-recover/omega-scale-ladder/{omega_scale_ladder_results.json, ladder.log}

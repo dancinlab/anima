@@ -1,0 +1,273 @@
+{
+  "slug": "omega-scale-ladder",
+  "lane": "Lane-G",
+  "substrate": "GPU",
+  "gpu": "NVIDIA H100 80GB HBM3",
+  "torch": "2.4.1+cu124",
+  "question": "does the OH1 minimal-gate A-wire advantage (min_learned Δ-vs-base) grow/shrink/hold with scale?",
+  "falsifier_per_rung": "min_learned_HOLDS iff min_learned CE <= a_only CE AND < base CE",
+  "corpus": {
+    "bytes": 400000000,
+    "mb": 400.0,
+    "prov": "gutenberg:wiki.en+wiki.fr+wiki.de+wiki.es+wiki.ru",
+    "sha256": "dc1754b27d63236d47d12f6621b2e3974dde34337e6a80f9e44b713e20236da3"
+  },
+  "d512_ref_1801": {
+    "base": 3.097779103749307,
+    "a_only": 1.144181,
+    "min_learned": 0.883525
+  },
+  "pod": {
+    "provider": "runpod",
+    "id": "zhu5svvsl20yhw",
+    "gpu": "H100 80GB SXM",
+    "persistent_workspace": true,
+    "cost_per_hr_usd": 3.29
+  },
+  "rungs": [
+    {
+      "label": "d384",
+      "d_model": 384,
+      "params": 48240448,
+      "steps": 12000,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "val_ce": 0.8367044508457184,
+      "below_uniform": true,
+      "competent": true,
+      "base_ce": 3.097779103749306,
+      "a_only_ce": 1.1639115881843798,
+      "min_learned_ce": 0.9029571616252206,
+      "delta_vs_base": 2.1948219421240855,
+      "delta_vs_a_only": 0.26095442655915924,
+      "min_learned_HOLDS": true,
+      "gate": {
+        "min_learned": {
+          "gB": 0.043267068277906925,
+          "gA": 0.9085197353183164
+        },
+        "full_AG": {
+          "gB": 0.053104708071708195,
+          "gA": 3.213057778459135,
+          "gG": -1.0511569209425102,
+          "ce": 3.730895341609207
+        }
+      },
+      "forms_ce": {
+        "base": 3.097779103749306,
+        "a_only": 1.1639115881843798,
+        "fixed_AmG": 3.214303510979349,
+        "full_AG": 3.730895341609207,
+        "min_learned": 0.9029571616252206,
+        "min_fixed": 1.1318535590926093
+      },
+      "ckpt_sha256": "3e421eb4e61547b504d48abb8b0286ea7d6d1eb94d5ffdd37c8771ab9032b2e2",
+      "hf_repo_id": "dancinlab/omega-cdv2-scale-d384"
+    },
+    {
+      "label": "d512",
+      "d_model": 512,
+      "params": 85816384,
+      "steps": 12000,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "val_ce": 0.8224329074223836,
+      "below_uniform": true,
+      "competent": true,
+      "base_ce": 3.097779103749306,
+      "a_only_ce": 1.1355756550544494,
+      "min_learned_ce": 0.8700898512794849,
+      "delta_vs_base": 2.2276892524698213,
+      "delta_vs_a_only": 0.26548580377496445,
+      "min_learned_HOLDS": true,
+      "gate": {
+        "min_learned": {
+          "gB": 0.03455586621916648,
+          "gA": 0.9130242216525205
+        },
+        "full_AG": {
+          "gB": -0.20933898387500932,
+          "gA": 3.310966114026892,
+          "gG": -0.936677870483636,
+          "ce": 3.3144655691051534
+        }
+      },
+      "forms_ce": {
+        "base": 3.097779103749306,
+        "a_only": 1.1355756550544494,
+        "fixed_AmG": 3.2377748001630327,
+        "full_AG": 3.3144655691051534,
+        "min_learned": 0.8700898512794849,
+        "min_fixed": 1.10024505712758
+      },
+      "ckpt_sha256": "4307d5fcdd4fa5c0435c2fee43dceced7ef5c6f0b56bb3a2f6710cf62bcd01ec",
+      "hf_repo_id": "dancinlab/omega-cdv2-scale-d512"
+    },
+    {
+      "label": "d768",
+      "d_model": 768,
+      "params": 189279808,
+      "steps": 12000,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "val_ce": 0.8383232116699219,
+      "below_uniform": true,
+      "competent": true,
+      "base_ce": 3.097779103749306,
+      "a_only_ce": 1.1611958777308746,
+      "min_learned_ce": 0.8924066547207727,
+      "delta_vs_base": 2.205372449028533,
+      "delta_vs_a_only": 0.2687892230101019,
+      "min_learned_HOLDS": true,
+      "gate": {
+        "min_learned": {
+          "gB": 0.02543492806069619,
+          "gA": 0.8979517047484462
+        },
+        "full_AG": {
+          "gB": -0.03633167760798475,
+          "gA": 3.211400878984474,
+          "gG": -0.9935010832305751,
+          "ce": 3.415729755105355
+        }
+      },
+      "forms_ce": {
+        "base": 3.097779103749306,
+        "a_only": 1.1611958777308746,
+        "fixed_AmG": 3.124713453652427,
+        "full_AG": 3.415729755105355,
+        "min_learned": 0.8924066547207727,
+        "min_fixed": 1.1411834816193036
+      },
+      "ckpt_sha256": "a27001da89ec8dee5edef367fd186e8994eb84b862b988aa8fa2634ed554e945",
+      "hf_repo_id": "dancinlab/omega-cdv2-scale-d768"
+    },
+    {
+      "label": "d1024",
+      "d_model": 1024,
+      "params": 334686272,
+      "steps": 12000,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "val_ce": 0.8574704855680466,
+      "below_uniform": true,
+      "competent": true,
+      "base_ce": 3.097779103749306,
+      "a_only_ce": 1.2000917883723636,
+      "min_learned_ce": 0.9211359874153524,
+      "delta_vs_base": 2.1766431163339535,
+      "delta_vs_a_only": 0.2789558009570112,
+      "min_learned_HOLDS": true,
+      "gate": {
+        "min_learned": {
+          "gB": 0.018541701426630537,
+          "gA": 0.9163244711152188
+        },
+        "full_AG": {
+          "gB": -0.07110331604373198,
+          "gA": 3.5625066534629846,
+          "gG": -1.066601727156598,
+          "ce": 3.8373976875067255
+        }
+      },
+      "forms_ce": {
+        "base": 3.097779103749306,
+        "a_only": 1.2000917883723636,
+        "fixed_AmG": 3.2740664704592577,
+        "full_AG": 3.8373976875067255,
+        "min_learned": 0.9211359874153524,
+        "min_fixed": 1.1774917401423235
+      },
+      "ckpt_sha256": "258dc5ca42d312960e25424c444bb85a73842d74bdada0ac009afc625ac34267",
+      "hf_repo_id": "dancinlab/omega-cdv2-scale-d1024"
+    },
+    {
+      "label": "d768x2",
+      "d_model": 768,
+      "params": 189279808,
+      "steps": 24000,
+      "leak_self_test": 0.0,
+      "leak_free": true,
+      "val_ce": 0.7785651284456253,
+      "below_uniform": true,
+      "competent": true,
+      "base_ce": 3.097779103749306,
+      "a_only_ce": 1.0820530697351836,
+      "min_learned_ce": 0.8242091308556595,
+      "delta_vs_base": 2.2735699728936467,
+      "delta_vs_a_only": 0.25784393887952406,
+      "min_learned_HOLDS": true,
+      "gate": {
+        "min_learned": {
+          "gB": 0.0385895176001221,
+          "gA": 0.8939555719063832
+        },
+        "full_AG": {
+          "gB": -0.09755626814671929,
+          "gA": 3.356082423059922,
+          "gG": -0.9555411346403455,
+          "ce": 3.3224345831007827
+        }
+      },
+      "forms_ce": {
+        "base": 3.097779103749306,
+        "a_only": 1.0820530697351836,
+        "fixed_AmG": 3.3094715193022233,
+        "full_AG": 3.3224345831007827,
+        "min_learned": 0.8242091308556595,
+        "min_fixed": 1.0513719460025432
+      },
+      "ckpt_sha256": "6438f1629313032911840fd0db28aeeb9697766f2c845f0a81c7772e4984b8cb",
+      "hf_repo_id": "dancinlab/omega-cdv2-scale-d768x2"
+    }
+  ],
+  "ladder_trend_by_d": [
+    {
+      "label": "d384",
+      "d_model": 384,
+      "val_ce": 0.8367044508457184,
+      "min_learned_ce": 0.9029571616252206,
+      "a_only_ce": 1.1639115881843798,
+      "base_ce": 3.097779103749306,
+      "delta_vs_base": 2.1948219421240855,
+      "delta_vs_a_only": 0.26095442655915924,
+      "HOLDS": true
+    },
+    {
+      "label": "d512",
+      "d_model": 512,
+      "val_ce": 0.8224329074223836,
+      "min_learned_ce": 0.8700898512794849,
+      "a_only_ce": 1.1355756550544494,
+      "base_ce": 3.097779103749306,
+      "delta_vs_base": 2.2276892524698213,
+      "delta_vs_a_only": 0.26548580377496445,
+      "HOLDS": true
+    },
+    {
+      "label": "d768",
+      "d_model": 768,
+      "val_ce": 0.8383232116699219,
+      "min_learned_ce": 0.8924066547207727,
+      "a_only_ce": 1.1611958777308746,
+      "base_ce": 3.097779103749306,
+      "delta_vs_base": 2.205372449028533,
+      "delta_vs_a_only": 0.2687892230101019,
+      "HOLDS": true
+    },
+    {
+      "label": "d1024",
+      "d_model": 1024,
+      "val_ce": 0.8574704855680466,
+      "min_learned_ce": 0.9211359874153524,
+      "a_only_ce": 1.2000917883723636,
+      "base_ce": 3.097779103749306,
+      "delta_vs_base": 2.1766431163339535,
+      "delta_vs_a_only": 0.2789558009570112,
+      "HOLDS": true
+    }
+  ],
+  "min_learned_HOLDS_all_rungs": true,
+  "scope": "a_scale_honest_scope — multi-rung ladder (≥3 dims) of the leak-free OH1 minimal-gate; p7: CE is a held-out prediction number, NOT a verdict-of-truth.",
+  "hf_repos": {}
+}
