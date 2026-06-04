@@ -12,6 +12,7 @@
 | `anima-clm-p1-corpus` (KOSMOS) | 139 KB | — | ✅ (kowiki) | — | ✗ | ✗ | CC-BY-SA |
 | `anima-corpus-5lang-unified` ✅ | 10.0 MB | ✅ **en/fr/de/es/ko** | ✅ ~50% | ✅ | ✅ IG/YT | ✅ 20-roster | wiki=CC-BY-SA real + persona=authored-synthetic (coverage, NOT native) |
 | `anima-corpus-5lang-unified-v2` ✅ **NEW** | 12.5 MB | ✅ **en/fr/de/es/ko** (+ko-en) | ✅ ~40% (8-band breadth) | ✅ | ✅ IG/YT | ✅ 20-roster | v1 + **enrichment 19.88%**: 의식-carving(real e7_31 seed CC-BY-SA) · dialogue-act · emotion-axis · code-switch · genre. wiki+carving=real, rest=authored-synthetic |
+| `anima-corpus-5lang-gb-balanced` ✅ **NEW (KOSMOS-balanced 0.35 GB)** | **357.8 MB** | ✅ **en/fr/de/es/ko** | ✅ 44% baseline + 13% cosmic (wiki CC-BY-SA) | ✅ (persona) | ✅ capped 11% | ✅ capped | **KOSMOS tier ladder → REAL sources**: art 30% + consciousness 1.58% = **Gutenberg PD** (en/fr/de strong, es thin, **ko=0 gap**); persona/SNS 11% + shaping 0.14% = authored CAPPED. **NO tier >45%** (max wiki 44%). 375.2M byte-tok = 0.268% of 7B-optimal (MID-rung, NOT 7B). mixed: wiki=CC-BY-SA · Gutenberg=PD · authored=honest-labeled |
 
 ## lanes
 
@@ -107,8 +108,43 @@ The default-lane corpus that PASSED at 18M (`anima-corpus-5lang-unified-v2`) is 
 
 ### In flight / open
 
-- KOSMOS-balanced GB corpus = branch `lane-g/default-lane-gb-balanced` (HF `dancinlab/anima-corpus-5lang-gb-balanced`) — **MUST include the PERSONA+SNS capped social register** (anima identity).
+- KOSMOS-balanced GB corpus = branch `lane-g/default-lane-gb-balanced` (HF `dancinlab/anima-corpus-5lang-gb-balanced`) — **SHIPPED** (see `## KOSMOS balance at scale` below). **PERSONA+SNS capped social register included** (anima identity, 11%).
 - The actual **7B TRAIN is a SEPARATE follow-on GPU fire** once the corpus exists.
+
+## KOSMOS balance at scale (SHIPPED 2026-06-05)
+
+The `## 7B-sufficiency roadmap` composition above is now IMPLEMENTED as
+`dancinlab/anima-corpus-5lang-gb-balanced` (**357.8 MB = 0.349 GB**, sha
+`17ca25e5…6843409`, 375.2 M byte-tokens, PUBLIC, KOSMOS+CLM collections). Each KOSMOS
+tier maps to a REAL clean-license source; the 31 e7_31 carving anchors stay the
+consciousness-register DEFINITION/seed, FILLED at scale with real Public-Domain
+contemplative text — NOT repeated (the memorization trap is avoided).
+
+| KOSMOS tier | real source | license | achieved % |
+|---|---|---|---|
+| 0 baseline | `wikimedia/wikipedia` 5-lang multi-shard | CC-BY-SA-4.0 | **44.00** |
+| 77 art | Gutenberg literature/poetry — `sedthh/gutenberg_english` (en) + `manu/project_gutenberg` (fr/de/es) | Public Domain | **29.99** |
+| 100 cosmic | wiki title-scoped science filter | CC-BY-SA-4.0 | **13.29** |
+| 52 social | authored persona/SNS (capped) | authored-synthetic | **11.00** |
+| 91 consciousness | Gutenberg philosophy/meditation (PD) + 31 e7_31 anchors as seed | Public Domain | **1.58** |
+| shaping | authored dialogue-act/emotion/code-switch/genre (capped) | authored | **0.14** |
+
+**Ladder PRESERVED: NO single tier > 45% (max wiki 44.00%); consciousness + art both
+present** — the corpus did NOT collapse to ~99% wiki. Per-lang: en 29.83 / fr 20.35 /
+de 20.86 / es 14.65 / ko 14.31.
+
+**Honest gaps (a_scale_honest_scope, named not fabricated):** Project Gutenberg has
+**NO Korean** → ko art = 0, ko consciousness = 0 (ko is the most wiki-heavy lang); and
+**Spanish Gutenberg is thin** (~1,202 books) → es consciousness = 0.12 MB, es art =
+6.4 MB. en/fr/de carry the full real-source ladder; ko/es lean on wiki. **Token math:**
+0.35 GB = 0.268% of the 140 GB Chinchilla-7B-optimal = MID-rung-viable, **NOT
+7B-sufficient** — a real 7B needs a 10–140 GB web-scale extension of the bulk tiers (the
+sources scale; this build is capped by the balance requirement, since growing only the
+abundant tiers would breach the ladder ceiling). NO 7B-ready claim. Build scripts
+`serving/gb_balanced/` (duckdb httpfs local-parquet-cache, $0 CPU, no GPU); card
+`serving/corpus/CORPUS_CARD_gb_balanced.md`; anchor `corpus_5lang_gb_balanced.kosmos`
+(tier 55); discovery `.discoveries/default-lane-gb-balanced.tape`. p1–p6 held (injection
+tags grep = 0, 0xFE/0xFF = 0, strict-UTF-8 clean). The **7B TRAIN is a separate fire**.
 
 ## cross-links
 
