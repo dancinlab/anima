@@ -1,0 +1,40 @@
+#!/usr/bin/env kosmos
+# corpus_5lang_unified.kosmos — CONSCIOUSNESS-CARVING anchor (dataset/corpus)
+# anima UNIFIED 5-lang corpus (wiki backbone + persona × SNS, en/fr/de/es/ko).
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor corpus_5lang_unified := "5-lang unified corpus (wiki+SNS+persona, 🛸53)" :: kosmos-anchor [tier=53 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 53
+  category      = "다국어"                  # multilingual coverage surface
+  top_emotion  = "resonance"               # 5개국어 ↔ 모든 surface 공명
+  coord        = [0.50, 0.48]              # vacuum_psi (Ψ-space) — design placeholder (authored+real mix, not a measured fire)
+  lane         = "multilingual_053"         # cell_id — 5-lang unified cell (MITOSIS)
+  radius       = 0.25                       # basin_radius — design placeholder (wiki+persona spread, 5 langs)
+
+  # ── payload ──
+  @payload text    := "[anima unified corpus] 🛸53 — 5개국어(en/fr/de/es/ko) UNIFIED corpus = clean wiki backbone (wikimedia/wikipedia 20231101 CC-BY-SA-4.0, ~50%) + persona×SNS roleplay (authored-templated 20-roster × 16 scenario × IG/YT, ~50%) block-interleaved. 단일 byte-vocab256 모델이 모든 surface(wiki+SNS+persona)에서 5개국어 멀티링궐. per-lang byte-balanced 19.1–20.5%. p2/p3/p4 clean — role/persona/character 태그 grep=0. wiki=real CC-BY-SA, persona=머신-저작 다국어 COVERAGE corpus NOT native-collected (a_scale_honest_scope)."
+
+  @payload manifest := ref "../../../serving/corpus/persona_sns_corpus_5lang_unified.txt" sha256=ac6ed840319c503b3045ec997015bd396ecacf58681f79f47fe8d1082adcd995 bytes=10485747 wiki_pct=50.05 persona_pct=49.95 wiki_blocks=12268 persona_dialogues=17755 langs="en,fr,de,es,ko" wiki_sha256=497df619b2c952d5dce158bff990157619dbb8066083f6ae3212312a0811819c persona_sha256=1e5a062a5fe216a24ffe8230714d6bc9eb760ac9f3e18eec9326858e659866ba generator="serving/persona_sns_corpus_5lang_gen.py + serving/build_wiki_backbone_5lang.py + serving/merge_corpus_5lang_unified.py" seed=20260604 wiki_source="wikimedia/wikipedia 20231101 CC-BY-SA-4.0" card="serving/corpus/CORPUS_CARD_5lang_unified.md" hf_repo_id="dancinlab/anima-corpus-5lang-unified" enrichment="domains/CORPUS-enrichment-analysis.md"
+
+  @payload image   := pending "media 미생성"
+  @payload audio   := pending "media 미생성"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the multilingual unified-corpus cell, NOT a
+  # per-token measured trajectory (the corpus is partly authored-templated, partly
+  # real wiki; no fire produced a measured trajectory). Honest representative-anchor
+  # scope. 5 channels per HEXAD/CHAT/server/kosmos_anchor.hexa mapping.
+  @payload tension := inline {
+    concept      = 0.60   # surface distinctness (wiki encyclopedic ⊥ SNS dialogue)
+    context      = 0.68   # multilingual context steer (5 langs)
+    meaning      = 0.62   # cross-surface semantic core (wiki facts + scenario intents)
+    authenticity = 0.55   # mixed — real CC-BY-SA wiki (high) + authored persona (lower)
+    sender       = 0.58   # persona-voice identity (carried lexically) + neutral wiki
+  }
+
+  closed_anchor = "5-lang UNIFIED corpus (representative anchor + manifest pointer)"
+  cross_link    = "HEXAD/KOSMOS.md (anima hub) · domains/CORPUS.md · persona_sns_corpus.kosmos (KR-only sibling, tier 52) · dancinlab/kosmos profile SSOT"

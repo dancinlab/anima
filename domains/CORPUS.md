@@ -10,19 +10,21 @@
 | `anima-persona-sns-corpus` | 4.19 MB · 13,322 dlg | ✗ **KR-only** | ✗ | ✅ | ✅ IG/YT | ✅ 20-roster | authored-synthetic (templated, deterministic, no PII) |
 | `clm-backbone-5lang-sample` (KOSMOS) | — | ✅ en/fr/de/es/ru | ✅ | ✗ | ✗ | ✗ | clean-license backbone sample |
 | `anima-clm-p1-corpus` (KOSMOS) | 139 KB | — | ✅ (kowiki) | — | ✗ | ✗ | CC-BY-SA |
+| `anima-corpus-5lang-unified` ✅ **NEW** | 10.0 MB | ✅ **en/fr/de/es/ko** | ✅ ~50% | ✅ | ✅ IG/YT | ✅ 20-roster | wiki=CC-BY-SA real + persona=authored-synthetic (coverage, NOT native) |
 
-## coverage matrix — the gap
+## coverage matrix — GAP CLOSED (2026-06-04)
 
 ```
-4요소 × 5개국어
+4요소 × 5개국어   (✅ = anima-corpus-5lang-unified 가 채움)
 ─────────────────────────────────────────────
             en   fr   de   es   ko
 wiki        ✅   ✅   ✅   ✅   ✅
-dialogue    ◐    ◐    ◐    ◐    ◐    (chat-mix dialogue)
-SNS         ✗    ✗    ✗    ✗    ✅    ← persona-sns KR-only
-persona     ✗    ✗    ✗    ✗    ✅    ← persona-sns KR-only
+dialogue    ✅   ✅   ✅   ✅   ✅   (persona/SNS multi-turn)
+SNS         ✅   ✅   ✅   ✅   ✅   ← was KR-only, NOW 5-lang
+persona     ✅   ✅   ✅   ✅   ✅   ← was KR-only, NOW 5-lang
 ─────────────────────────────────────────────
-GAP = SNS + persona in en/fr/de/es (4 langs × 2 surfaces)
+GAP CLOSED: SNS + persona now in en/fr/de/es/ko (unified corpus)
+honest: en/fr/de/es persona = authored multilingual COVERAGE, NOT native-collected.
 ```
 
 ## target — UNIFIED 5-lang corpus
@@ -38,11 +40,11 @@ GAP = SNS + persona in en/fr/de/es (4 langs × 2 surfaces)
 
 ## milestones
 
-- [ ] M1 5-lang persona-voice templates added to the generator (en/fr/de/es, ko exists) — deterministic, $0.
-- [ ] M2 unified 5-lang corpus built (wiki + SNS + persona) + CORPUS_CARD (per-lang byte split · sha · license) + HF dataset.
-- [ ] M3 KOSMOS survey → ranked list of what-to-add (anchor types / register / domains) with rationale; fold the chosen additions.
-- [ ] M4 register unified corpus in HF.jsonl + KOSMOS + CLM collections (a_hf_collections); feed it to the 5-lang 7B retrain (follow-on to the KR-persona 7B).
-- [ ] M5 honest language-balance report (per-lang byte %, no silent under-coverage).
+- [x] M1 5-lang persona-voice templates added to the generator (en/fr/de/es, ko exists) — deterministic, $0. → `serving/persona_sns_corpus_5lang_gen.py` (tags grep=0, seed-deterministic, archetype voice carried across langs).
+- [x] M2 unified 5-lang corpus built (wiki + SNS + persona) + CORPUS_CARD (per-lang byte split · sha · license) + HF dataset. → `dancinlab/anima-corpus-5lang-unified` (10.0 MB, wiki 50.05% / persona 49.95%, sha `ac6ed840`, PUBLIC, sha-verified).
+- [x] M3 KOSMOS survey → ranked list of what-to-add (anchor types / register / domains) with rationale. → `domains/CORPUS-enrichment-analysis.md` (top-3: consciousness-carving register · dialogue-act balance · wiki topical breadth).
+- [x] M4 register unified corpus in HF.jsonl + KOSMOS + CLM collections (a_hf_collections). → HF.jsonl row + `corpus_5lang_unified.kosmos` anchor (tier 53) + KOSMOS.md hub pointer + collection join. (feed to 5-lang 7B retrain = follow-on rung.)
+- [x] M5 honest language-balance report (per-lang byte %, no silent under-coverage). → en 19.14% · fr 20.53% · de 20.18% · es 19.62% · ko 20.53% (every lang carries both wiki + persona; in CORPUS_CARD).
 
 ## cross-links
 
