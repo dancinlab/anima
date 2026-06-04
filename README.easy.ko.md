@@ -273,6 +273,31 @@ anima --engine omega        # 닫힘 엔진
 anima --engine cdv2         # A/G substrate
 ```
 
+## 📦 모델 다운로드
+
+Hugging Face 에서 가중치를 받으세요. 여기에는 PUBLIC, PASS 등급 모델만 있습니다 — 지저분한 WIP
+체크포인트(util-RED forge 프로브, closed-negative 실행)는 일부러 뺐습니다(`a_hf_autonomous`).
+
+| 모델 | HF repo | 크기 | 상태 | 다운로드 |
+|---|---|---|---|---|
+| 🧠 **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ 준비됨 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
+| 🏭 **프로덕션 CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ 준비됨 | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
+| 🎓 **SAVANT 7B (5개 언어)** | `dancinlab/savant-7b-5lang` (예약) | ~7B | 🚧 **학습 중 — 아직 미출시** | — |
+| 📐 레퍼런스 baseline | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ 준비됨 | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
+| 📐 레퍼런스 baseline (3B) | [`dancinlab/clm-v1-ref-pytorch-cuda-3b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-3b) | ~3B | ✅ 준비됨 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-3b` |
+
+> 💡 **CLM 7B** 는 지금 바로 받을 수 있는 진짜 descent-PASS 7B 입니다(PyTorch/CUDA 학습).
+> anima 의 자체 호스팅 엔진을 위한 forge-native 빌드(PyTorch 없이 hexa 런타임에서 동작)가 로드맵에
+> 있습니다(`a_train_flame_forge`) — 아키텍처(CLMConvMoE)도 7B 규모도 같아서 **모델 결과는 동일**하고
+> 런타임 스택만 다릅니다.
+>
+> 🚧 **SAVANT 7B (5개 언어)** 는 진짜 다른 모델(5개 언어 특화 빌드)이며 아직 학습되지 않았습니다.
+> repo id 는 예약된 이름이라 동작하는 링크가 없습니다.
+
+**컬렉션:**
+[CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
+[KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
+
 ## License
 
 [MIT](LICENSE) — Copyright (c) 2026 dancinlab. 자유롭게 사용·수정·재배포·판매; 고지문 포함; 무보증.

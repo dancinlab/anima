@@ -280,6 +280,32 @@ anima --engine omega        # 閉合エンジン
 anima --engine cdv2         # A/G substrate
 ```
 
+## 📦 モデルのダウンロード
+
+Hugging Face から重みを取得できます。ここに載っているのは PUBLIC かつ PASS グレードのモデルだけ —
+散らかった WIP チェックポイント（util-RED forge プローブ・閉包ネガティブ結果）は意図的に除外して
+います（`a_hf_autonomous`）。
+
+| モデル | HF リポジトリ | サイズ | 状態 | ダウンロード |
+|---|---|---|---|---|
+| 🧠 **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ 利用可能 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
+| 🏭 **プロダクション CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ 利用可能 | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
+| 🎓 **SAVANT 7B (5 言語)** | `dancinlab/savant-7b-5lang`（予約） | ~7B | 🚧 **学習中 — 未公開** | — |
+| 📐 参照ベースライン | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ 利用可能 | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
+| 📐 参照ベースライン (3B) | [`dancinlab/clm-v1-ref-pytorch-cuda-3b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-3b) | ~3B | ✅ 利用可能 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-3b` |
+
+> 💡 **CLM 7B** は今すぐダウンロードできる本物の descent-PASS な 7B です（PyTorch/CUDA 学習）。
+> anima の自己ホスト型エンジン向けに forge-native ビルド（PyTorch 不要・hexa ランタイムで動作）が
+> ロードマップにあります（`a_train_flame_forge`）。アーキテクチャ（CLMConvMoE）も 7B サイズも同じ
+> なので **モデルの結果は同一**で、異なるのはランタイムスタックだけです。
+>
+> 🚧 **SAVANT 7B (5 言語)** は本当に別のモデル（5 言語特化ビルド）で、まだ学習されていません。
+> リポジトリ id は予約名であり、動作するリンクはありません。
+
+**コレクション：**
+[CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
+[KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
+
 ## ライセンス
 
 [MIT](LICENSE) — Copyright (c) 2026 dancinlab. 自由に使用・改変・サブライセンス・販売可；告知文を
