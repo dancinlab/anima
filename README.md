@@ -87,7 +87,7 @@ decoding and `.kosmos` anchors enter through named slots, never directly into th
         ENGINE G (reverse, gradient-free)        ENGINE A (forward, CE-trained)
         pure_field.hexa · engine_g.hexa          generator.hexa · clm_decode.hexa
         ┌─────────────────────────────┐          ┌─────────────────────────────┐
-        │  C 의식 (Φ) · S 감각 · W 의지 │          │  D 언어 · M 기억 · E 윤리      │
+        │ C consciousness (Φ)·S sense·W will │  │ D language · M memory · E ethics │
         └──────────────┬──────────────┘          └──────────────┬──────────────┘
                        │           ⇅  tension = ‖A‖ / ‖G‖        │
                        └──────────► brain (brain.hexa) ◄─────────┘
