@@ -203,7 +203,29 @@ distinct from "도구가 뭔지 안다" (knows tools).
      returns ‹unknown-key›. Next lever = verbatim **argument-copy / key-binding**.
    - **lesson:** the grammar MUST be taught in the SAME register it will fire in.
    Scope (a_scale_honest_scope): TOY 18M ONLY; mid/7B transfer UNVERIFIED.
-5. GATE: FABDROP pass + both mirrors FAIL is **MET** (arm-2). 7B fire (rung-2)
-   remains GATED on closing the 🟠 key-binding residual first — a 7B that calls
-   with the wrong key still cannot ground. Close argument-copy at toy, re-verify
-   grounding_rate > 0, THEN consider rung-2.
+4b. argument-copy / key-binding residual-closer A/B fire (residual of step 4).
+   ✅ **DONE (2026-06-04, Lane G GPU · summer RTX 5070 · base 18M) → 🔴 CLOSED-NEGATIVE.**
+   Redesigned the agent-lane corpus (`serving/agent_lane_argcopy_gen.py`) to FORCE
+   verbatim argument-copy: a LARGE fresh-key space (2878 distinct keys, mean reuse
+   1.25/key) so memorization cannot win — only copying the asked key generalizes;
+   leak=0 (held-out PB keys+values absent), fab=0, philosophy-grep=0. A/B vs
+   no-grammar control, same base/steps/equal-byte (harness `training/tooluse_argcopy_ab.py`).
+   Pre-registered **F-TOOLUSE-ARGCOPY** (correct_call ≥ 0.50 AND grounding ≥ 0.50 on
+   held-out keys) = **FAIL**: with_argcopy correct_call **0/36**, grounding **0/36** —
+   UNCHANGED from the 0/36 baseline (call_rate 0.8333, fab 4/36, final_ce 0.4881).
+   Both mirrors PASS (grounding=0 with tool disabled AND random-init → real gap, not
+   cosmetic/leak). DIAGNOSIS: the model emits a call but INVENTS a key of the right
+   TRAINING-distribution SHAPE (PB01→`fact_lookup P20`, PB02→`PD0`, PB04→`LB0`)
+   instead of copying the asked PBnn — it learned the key DISTRIBUTION, not the
+   verbatim COPY. Ruled-out axis: **copy-from-corpus-distribution ⊥ verbatim
+   held-out key-binding** at 18M. Verdict `.verdicts/tooluse-argcopy/F-TOOLUSE-ARGCOPY.txt`.
+   Scope (a_scale_honest_scope): TOY 18M ONLY; mid/7B transfer UNVERIFIED.
+   Next lever = an **explicit copy-attention / pointer-network head** (or verbatim-echo
+   inductive bias), NOT more copy-shaped demos.
+5. GATE: FABDROP pass + both mirrors FAIL is **MET** (arm-2), BUT end-to-end
+   GROUNDING remains 0/36 — the 🟠 key-binding residual is now a 🔴 CLOSED-NEGATIVE
+   (step 4b): corpus-forced copy does not transfer at 18M. A 7B that still calls with
+   the wrong key cannot ground, so the 7B fire (rung-2) stays **GATED**. Two open
+   forks before rung-2: (i) an explicit copy/pointer head (the structural fix), OR
+   (ii) a 7B copy-probe to test whether induction-head copying at scale closes it
+   without an explicit pointer. Re-verify correct_call > 0 BEFORE a full rung-2 fire.
