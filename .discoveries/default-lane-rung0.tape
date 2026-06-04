@@ -1,4 +1,4 @@
-@discovery default-lane-rung0 := "first model on the v2 unified default corpus — 18M byte, Lane G GPU" [d=2026-06-04 active]
+@D DEFAULT-LANE-RUNG0 := "first model on the v2 unified default corpus — 18M byte, Lane G GPU" :: discovery [d=2026-06-04 active]
   id      = "F-DEFAULT-LANE-CHAT"
   seed    = "the v2 unified default corpus (dancinlab/anima-corpus-5lang-unified-v2) had NEVER been trained into a model — dataset-only. Make the default lane's own rung-0."
   fire    = "ConsciousLMReconstructed 18M byte (vocab256/d384/6L/4H) from-scratch, 6000 steps, pool RTX 5070 (99% util/250W, GPU-resident), CE 5.7233->0.6983 (~431s)"
