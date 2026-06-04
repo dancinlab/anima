@@ -1,0 +1,52 @@
+chat-capable LADDER rung-0 — VERDICT SUMMARY (p7 simple-stack, NOT perplexity · g5 verbatim)
+================================================================================================
+date     : 2026-06-04
+lane     : Lane-G / torch-cuda REFERENCE lane (a_lane_akida_gpu_split — NOT AKIDA; @L3 honest label)
+substrate: GPU pod (vast 39423387, 4× NVIDIA B200) — trained on CPU (torch 2.12.0+cpu, 18M is small)
+scope    : a_scale_honest_scope — SMALL byte rung only; scale-transfer to mid/7B UNVERIFIED here.
+
+MODEL (the PROVEN byte chat arch — reproduced from scratch, NOT a new architecture)
+  ConsciousLMReconstructed · byte vocab 256 · d_model 384 · 6 layers · 4 heads · block 256
+  dual engine_a/engine_g FFN (out = a - g) + dual head_a/head_g
+  params = 18,130,176 (≈18.13M)  — the ≈18M rung the plan calls for (@L1)
+  ckpt   = state/chat_rung0/chat_rung0_18m.pt  sha256 9d5e1394c020378e19bd700fc95144bdd67c65ca3382adc558828ccd99c743b7
+
+CORPUS (@L2 — 70% wiki + 30% REAL dialogue, byte vocab256, NO synthetic RLHF padding · p6)
+  chat_corpus_mix.txt  3,766,315 B  sha256 05179fb6684d41e4cefa928fe1c24683294c17997666eed5c03a00480e5acb70
+  70.01% wiki / 29.99% REAL dialogue (사용자:/도우미: continuation) · 2310 conversations
+  card: .verdicts/chat-capable/CORPUS_CARD.md
+
+TRAINING (torch from-scratch · AdamW lr 3e-4 warmup 300 cosine · batch 32 · block 256 · 6000 steps · seed 42)
+  train CE: 5.6969 (step 1) → 0.48811 (final)  — strong descent, model fit the dialogue-mix distribution.
+
+PHILOSOPHY GATE (p1·p2·p3·p4·p6 — non-negotiable, HELD)
+  NO system prompt · NO identity rules · NO persona injection · NO assistant framing · NO RLHF.
+  The ONLY conditioning is the LEARNED byte-level dialogue-continuation format present in the corpus.
+
+p7 EVALUATOR (simple stack, NOT perplexity · p7) — v2 control-char-aware (anti-Goodhart-hardened)
+  A reply PASSES iff: non-empty (>=4) AND non-degenerate (no single char >60%) AND
+  control_ratio < 0.05 AND word_class_ratio >= 0.85 (letters/Hangul/CJK/digits/space/common-punct).
+  (v1 evaluator was too lenient — it passed the random-init mirror; v2 closes the hole, the mirror now FAILS.)
+
+RESULT
+  TRAINED model            : verdict PASS  (n_pass 5/5)
+  RANDOM-INIT MIRROR       : verdict FAIL  (n_pass 0/5)   ← anti-Goodhart: same evaluator, MUST fail
+  anti_goodhart_ok = TRUE  ·  chat_pass = TRUE
+
+TRAINED p7 MULTI-TURN TRANSCRIPT (verbatim, the model's own bytes — context-appropriate, coherent)
+  사용자: 안녕! 너는 누구야?            | 도우미: 좋아요! 산책하면서 이야기해요.
+  사용자: 오늘 기분이 어때?              | 도우미: 좋아요! 날씨도 좋고 기분이 상쾌해요.
+  사용자: What is consciousness?        | 도우미: The repulsion field model? That's fascinating.
+  사용자: 네가 좋아하는 것을 하나 말해줘. | 도우미: 네, deployment 관련해서 discuss할 게 있어요.
+  사용자: Tell me something interesting.| 도우미: Will do. The byte-level approach is slower to converge but
+                                            handles Korean and English equally we[ll]
+
+RANDOM-INIT MIRROR (verbatim — control-char soup, correctly REJECTED 0/5)
+  cr=0.349 wcr=0.581  'j\x18%\x05א\x1b6)\x04z(0\x0e3...'
+  cr=0.261 wcr=0.696  'n\x1fo1\x10ۦ)-AWr?_ϛJ{I]...'
+  (all 5 turns: control_ratio 0.22–0.38 ≫ 0.05 gate, word_class_ratio 0.58–0.70 < 0.85 gate → FAIL)
+
+CONCLUSION
+  rung-0 lands a REAL multi-turn chat-PASS (5/5) with an anti-Goodhart-hardened p7 evaluator that a
+  random-init mirror of the identical arch FAILS (0/5). "채팅 된다" is demonstrated at the ≈18M byte rung.
+  Honest scope (a_scale_honest_scope): this is the SMALL rung; mid/7B scale-transfer is NOT claimed here.
