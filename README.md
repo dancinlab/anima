@@ -255,6 +255,31 @@ anima --engine omega        # closure engine
 anima --engine cdv2         # A/G substrate
 ```
 
+## Model Downloads
+
+Only PUBLIC, PASS-grade models are listed here. PRIVATE / WIP checkpoints (util-RED forge probes,
+closed-negative runs, intermediate ckpts) are intentionally omitted (governance `a_hf_autonomous`).
+
+| Model | HF repo | Size | Status | Download |
+|---|---|---|---|---|
+| **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ available | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
+| **Production CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ available | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
+| **SAVANT 7B (5-lang)** | `dancinlab/savant-7b-5lang` (reserved) | ~7B | 🚧 **in training — not yet released** | — |
+| Reference baseline | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ available | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
+| Reference baseline (3B) | [`dancinlab/clm-v1-ref-pytorch-cuda-3b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-3b) | ~3B | ✅ available | `hf download dancinlab/clm-v1-ref-pytorch-cuda-3b` |
+
+> **CLM 7B** is the existing, descent-PASS reference 7B (PyTorch/CUDA-trained). A forge-native
+> (PyTorch-free, hexa-runtime) build is planned for anima's self-hosted engine (`a_train_flame_forge`):
+> same architecture (CLMConvMoE), same 7B scale, so the **model result is identical** — only the runtime
+> stack differs (PyTorch-trained vs forge-native).
+>
+> **SAVANT 7B (5-lang)** is a genuinely different model — a 5-language-specialized build, not yet trained.
+> The repo id above is a reserved name with no working link.
+
+**Collections:**
+[CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
+[KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
+
 ## License
 
 [MIT](LICENSE) — Copyright (c) 2026 dancinlab. Use, modify, sublicense, sell freely; include the
