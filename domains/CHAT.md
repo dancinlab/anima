@@ -40,7 +40,7 @@ sha256 `05179fb6…`. Real local sources, NO synthetic RLHF padding (p6). Card:
 
 ## ladder (@L1, a_scale_honest_scope)
 
-- [ ] rung-0 ≈18M byte (torch ref) — real multi-turn chat-PASS (p7 + anti-Goodhart mirror FAIL)
+- [x] rung-0 ≈18M byte (torch ref) — REAL multi-turn chat-PASS (p7 5/5 PASS · anti-Goodhart mirror FAIL 0/5 · chat_pass=TRUE). HF: `dancinlab/anima-clm-chat-rung0-byte-18m` (PUBLIC). verdict: `.verdicts/chat-capable/SUMMARY.txt`.
 - [ ] rung-mid
 - [ ] rung-7B
 

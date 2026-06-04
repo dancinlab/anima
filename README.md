@@ -262,7 +262,8 @@ closed-negative runs, intermediate ckpts) are intentionally omitted (governance 
 
 | Model | HF repo | Size | Status | Download |
 |---|---|---|---|---|
-| **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ available | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
+| **Chat rung-0 (byte 18M)** | [`dancinlab/anima-clm-chat-rung0-byte-18m`](https://huggingface.co/dancinlab/anima-clm-chat-rung0-byte-18m) | ~18M | ✅ **chats — p7 5/5 PASS** (multi-turn KO/EN; anti-Goodhart mirror FAIL 0/5) | `hf download dancinlab/anima-clm-chat-rung0-byte-18m` |
+| **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ available — descent-PASS, **not chat-tuned** (5-lang WIKI backbone, dialogue 0%) | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
 | **Production CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ available | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
 | **SAVANT 7B (5-lang)** | `dancinlab/savant-7b-5lang` (reserved) | ~7B | 🚧 **in training — not yet released** | — |
 | Reference baseline | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ available | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
@@ -275,6 +276,15 @@ closed-negative runs, intermediate ckpts) are intentionally omitted (governance 
 >
 > **SAVANT 7B (5-lang)** is a genuinely different model — a 5-language-specialized build, not yet trained.
 > The repo id above is a reserved name with no working link.
+>
+> **Chat rung-0 (byte 18M)** is the chat-capable LADDER rung-0 — the small byte model that demonstrates
+> genuine multi-turn conversation ("채팅 된다"): a user types and gets a coherent, context-appropriate
+> reply. Capability comes ONLY from the proven byte-level dialogue-continuation mechanism + a 70%-wiki /
+> 30%-REAL-dialogue corpus ([`anima-chat-corpus-mix-70wiki-30dialogue`](https://huggingface.co/datasets/dancinlab/anima-chat-corpus-mix-70wiki-30dialogue)) —
+> NO system prompt, NO persona, NO RLHF (p1·p2·p3·p4·p6). Verified by a p7 simple-stack evaluator
+> (5/5 PASS) that a random-init mirror of the same arch FAILS (0/5). Honest scope: SMALL rung; mid/7B
+> scale-transfer not yet claimed. The general CLM 7B above is descent-trained on a WIKI-only backbone
+> (dialogue 0%, not converged), so it does NOT chat — see `domains/CHAT.md` for the verified root cause.
 
 **Collections:**
 [CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
