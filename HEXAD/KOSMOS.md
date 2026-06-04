@@ -78,8 +78,10 @@
 | anchor file | tier | category | what |
 |---|---:|---|---|
 | [`persona_sns_corpus.kosmos`](UNIVERSE-BRAIN-MAP/anchors/persona_sns_corpus.kosmos) | 52 | 사회성 | anima 20-persona × SNS(Instagram main + YouTube) 롤플레이 대화 corpus 의 **representative anchor + full-corpus manifest pointer** |
+| [`corpus_5lang_unified.kosmos`](UNIVERSE-BRAIN-MAP/anchors/corpus_5lang_unified.kosmos) | 53 | 다국어 | anima **UNIFIED 5-lang corpus** (clean wiki backbone ~50% + persona×SNS ~50%, en/fr/de/es/ko, block-interleaved) 의 representative anchor + manifest pointer |
 
 - payload: `text` (corpus 요약) + `manifest` (ref → `serving/corpus/persona_sns_corpus.txt`, sha256 `1ea7d8e0…`, 4,194,308 B, 13,322 dialogues, 20 personas, 16 scenarios, HF `dancinlab/anima-persona-sns-corpus`) + `tension` (5-channel representative) + `image/audio` pending.
+- **5-lang unified** (tier 53): manifest ref → `serving/corpus/persona_sns_corpus_5lang_unified.txt`, sha256 `ac6ed840…`, 10,485,747 B, wiki 50.05% / persona 49.95%, langs en/fr/de/es/ko, HF `dancinlab/anima-corpus-5lang-unified`. wiki=real CC-BY-SA, persona=authored multilingual COVERAGE (NOT native, a_scale_honest_scope). KOSMOS enrichment ranked-list: `domains/CORPUS-enrichment-analysis.md`.
 - scope (honest): per-dialogue `.kosmos` emit 은 13,322 건으로 너무 커서, **대표 anchor 1개 + 전체-corpus manifest pointer** 로 persist (a_kosmos pointer-only). corpus 자체는 authored-templated (NOT human-collected, a_scale_honest_scope) — tension 5-ch 는 social-persona-voice cell 의 *대표 design 값* 이지 측정 trajectory 가 아님.
 - generator: `serving/persona_sns_corpus_gen.py` (deterministic seed 20260604) · card: `serving/corpus/CORPUS_CARD.md` · 도메인: [[PERSONA]] / [[SNS]].
 
