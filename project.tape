@@ -33,6 +33,15 @@
   dont = "delete a gitignored ckpt while status=pending_upload or needs_verify"
   dont = "assign an off-spec repo_id · let HF.jsonl drift from disk"
 
+@D a_hf_collections := "HF org collections — CLM + KOSMOS canonical buckets" :: governance [required active]
+  do   = "every PUBLIC anima HF repo joins its dancinlab collection — CLM=models, KOSMOS=anchors/datasets"
+  do   = "CLM slug = `dancinlab/clm-6a1cf58f621490134dade186` — PASS-grade production CLM models + corpora"
+  do   = "KOSMOS slug = `dancinlab/kosmos-6a1cf58db47a5dc3cb697e95` — anchors + carving/persona datasets"
+  do   = "add via `hf` CLI / collections REST after a PUBLIC upload — no user gate (cf a_hf_autonomous)"
+  do   = "a dataset MAY sit in both buckets when it serves both — note the dual membership"
+  dont = "leave a PUBLIC PASS-grade repo out of its collection · drift a collection from HF.jsonl"
+  dont = "file a PRIVATE/WIP/FAIL repo into a PUBLIC collection (cf a_hf_autonomous)"
+
 @D a_fire_autonomous := "cost-bearing fire — dispatch autonomously, in parallel, now" :: governance [required active]
   do   = "GPU / runpod work — state estimated cost in one line, then dispatch autonomously · parallel · bg"
   do   = "NO user gate — fire needs no user consult / approval / confirm · provider = runpod"
