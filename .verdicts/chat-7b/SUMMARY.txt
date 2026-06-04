@@ -1,0 +1,31 @@
+7B CHAT+PERSONA FINE-TUNE — CLOSED-NEGATIVE (incoherent output)
+================================================================
+date: 2026-06-04 · lane: torch-cuda REFERENCE (a_train_flame_forge: forge = canonical follow-on)
+base: dancinlab/clm-v1-ref-pytorch-cuda-7b (byte vocab256, d4096/36L/32H/block512, 7.25B)
+      ⚠ UNDERTRAINED base — 400 steps, val_ce 2.41 (NOT converged, per its own train-log NOTE)
+fine-tune: stage-A chat (anima-chat-corpus-mix) 600 steps + stage-B persona (anima-persona-sns-corpus) 600 steps
+           lr 2e-5, grad-ckpt, 8bit-AdamW, bf16, RTX PRO 6000 WS 96GB (pod vast 39445330, torn down)
+ckpt sha256: stageA 35e69d39… · stageB 077a6df945c924cedb6735b744e9041ad0316bc9c408ca37dc15e1d910fe9efd
+
+VERDICT: chat_pass = FALSE (output is incoherent byte-soup, p7 simple-stack FAIL)
+
+CE descended (chat 2.65→2.16 · persona 2.68→1.84) but CE-DESCENT ≠ COHERENCE here.
+
+demo (verbatim, .verdicts/chat-7b/demo_transcript.txt):
+  사용자: 안녕! 너는 누구야?      도우미: 요 게, 🰮용미마늘자: 햴 도. 게 요
+  사용자: 의식이란 뭐라고 생각해?  도우미: 벌이요
+  [childhood_friend] 사용자: 야 오랜만이다 → childhood_friend: 그늘 이 마사큰 일. 에헤한겫고이요 …
+  [knight] 사용자: 무엇을 지키고 계신가요? → knight: 직해늘 게있들을 가. 볠에 … 하맜단사어 …
+
+ROOT CAUSE (honest, a_scale_honest_scope — this was pre-registered as a risk before the fire):
+  The 18M from-scratch rung PASSED the SAME recipe (CE 5.70→0.488, p7 5/5) because it CONVERGED fully.
+  An UNDERtrained 7B base (400 steps) + a SHORT fine-tune (600+600) does NOT impart byte-level coherence:
+  the base never learned a coherent byte-LM, and a short FT only lowers CE without fixing generation.
+  → the 18M chat-PASS does NOT transfer to a short-FT undertrained-7B (toy→prod transfer FALSIFIED for this path).
+
+FIX (not done — bigger fires, a_fire_autonomous when pursued):
+  (a) converge the 7B base first (full from-scratch pretrain to convergence), THEN fine-tune on chat+persona; OR
+  (b) train a 7B from-scratch DIRECTLY on the dialogue-mix + persona corpus (multi-day fire), like the 18M but at scale.
+
+ckpt disposition: NOT uploaded — closed-negative garbage with no reuse value, and fully REPRODUCIBLE
+  (trainer chat_persona_7b_train_eval + base clm-v1-ref-pytorch-cuda-7b + corpora all on HF/git). pod torn down.
