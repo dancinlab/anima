@@ -221,11 +221,33 @@ distinct from "도구가 뭔지 안다" (knows tools).
    held-out key-binding** at 18M. Verdict `.verdicts/tooluse-argcopy/F-TOOLUSE-ARGCOPY.txt`.
    Scope (a_scale_honest_scope): TOY 18M ONLY; mid/7B transfer UNVERIFIED.
    Next lever = an **explicit copy-attention / pointer-network head** (or verbatim-echo
-   inductive bias), NOT more copy-shaped demos.
+   inductive bias), NOT more copy-shaped demos — OR (step 4c) a SCALE probe of fork (ii).
+4c. **SCALE-LADDER probe (Lever B / fork ii) — verbatim key-copy EMERGES with scale.**
+   ✅ **DONE (2026-06-05, Lane G GPU · POOL host aiden RTX 5070 · $0, NOT a pod) → 🟠 AMBER.**
+   Same argcopy corpus (sha256 ff137ad8) + same steps/batch/block/lr (compute-matched);
+   vary SIZE only, every rung trained FROM SCRATCH (the 18M base can't seed a larger
+   model). Driver `training/tooluse_copy_scale.py`. Pre-registered **F-COPY-SCALE** =
+   the {size → correct_call} curve on the SAME 36 held-out PBnn keys. **VERBATIM curve:**
+   5.52M=**0/36** · 18.13M=**0/36** · 42.54M=**0/36** · 82.69M=**2/36** (0.0556) ·
+   142.51M=**7/36** (0.1944). `rising_monotone=True`, `reaches_bar(≥0.5)=False`,
+   `randinit_all_zero=True` (every same-size random-init mirror scored 0 — real, not leak).
+   **FINDING:** verbatim held-out arg-copy is **SCALE-EMERGENT** — absent below ~80M
+   (the #1835 18M result was correct AND correctly scoped toy-only), first non-zero at
+   82.69M, ~3.5× rise 82.69M→142.51M. At 142.5M the model verbatim-copied 7 unseen keys
+   (PB01/02/05/07/17/31/32) → real value resolved end-to-end (grounding=0.1944), while
+   smaller rungs still invent a training-shaped key (PB31→`fact_lookup PB3`). call_rate
+   stays ~1.0 throughout — what scales is the COPY, not the calling.
+   Scope (a_scale_honest_scope): POOL ladder CAPS at consumer VRAM (r4 peak 10.54G under
+   the 11.0G cap; r5 d1024 would exceed it). A TRUE 7B was **NOT** run on the pool — 0.1944
+   is a 142.5M result, NOT a 7B result. Verdict `.verdicts/tooluse-copy-scale/F-COPY-SCALE.txt`.
+   **RECOMMENDATION: a true-7B-on-H100 confirm is the next rung** (rising-toward-0.5 trend);
+   if the H100-7B rung still falls short of the bar, the Lever-A copy/pointer head is the fix.
 5. GATE: FABDROP pass + both mirrors FAIL is **MET** (arm-2), BUT end-to-end
-   GROUNDING remains 0/36 — the 🟠 key-binding residual is now a 🔴 CLOSED-NEGATIVE
-   (step 4b): corpus-forced copy does not transfer at 18M. A 7B that still calls with
-   the wrong key cannot ground, so the 7B fire (rung-2) stays **GATED**. Two open
-   forks before rung-2: (i) an explicit copy/pointer head (the structural fix), OR
-   (ii) a 7B copy-probe to test whether induction-head copying at scale closes it
-   without an explicit pointer. Re-verify correct_call > 0 BEFORE a full rung-2 fire.
+   GROUNDING is below the bar — the key-binding residual was 🔴 at toy 18M (step 4b) but
+   is **🟠 SCALE-EMERGENT** (step 4c): copy rises 0→7/36 across a 5.52M→142.5M pool ladder.
+   A 7B that copies correctly CAN ground, so the GATED 7B fire (rung-2) is now **the
+   recommended confirm rung** (on an H100, where a true 7B fits — the pool cannot). Two
+   forks remain after the H100-7B rung: (i) if 7B clears the bar → scale alone closes the
+   residual (no pointer needed); (ii) if 7B still short → the explicit copy/pointer head
+   (Lever A) is the structural fix. Either way the toy-18M closed-negative is now a
+   scale-ladder finding, not a dead end.
