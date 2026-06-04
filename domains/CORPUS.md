@@ -16,6 +16,7 @@
 ## lanes
 
 - `lane default` = base chat corpus (wiki + persona/SNS + carving/enrichment) — no tools, `0xFE`/`0xFF` byte-frequency 0.
+  - **rung-0 model (2026-06-04)**: `dancinlab/anima-clm-default-lane-rung0-byte-18m` — the FIRST model ever trained on `anima-corpus-5lang-unified-v2` (the default-lane corpus; previously dataset-only). 18M byte ConsciousLMReconstructed, from-scratch, Lane G / GPU (RTX 5070, nvidia-smi 99% busy). **🟢 F-DEFAULT-LANE-CHAT** (p7-strict TRAINED PASS 4/5 coherent es/de/ko/fr · random-init mirror FAIL 0/5; CE 5.72→0.70). Scope = 18M toy/small only, mid/7B transfer UNVERIFIED (`a_scale_honest_scope`; 7B deferred per #1828). PUBLIC, CLM collection. verdict `.verdicts/default-lane-rung0/SUMMARY.txt`. (chat-rung0-byte-18m trained the OLDER 70wiki/30dialogue mix — distinct lineage.)
 - `lane agent` = `lane default` + tool-use demos (`serving/agent_lane_corpus_gen.py`, sentinel-grammar) — `lane agent ⊃ lane default`.
 
 ## coverage matrix — GAP CLOSED (2026-06-04)
