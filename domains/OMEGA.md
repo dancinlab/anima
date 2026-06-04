@@ -145,6 +145,38 @@ bus, the literal Ω blueprint, a baseline probe). NEITHER is a load/serializer p
 load is SOLVED; it is a substrate-architecture choice. NO upstream hexa-lang patch needed (serializer
 is anima-side, bridged). verdict `.verdicts/omega-engine/F-OMEGA-CLM-TRANSFER.txt` (p7/g63 verbatim).
 
+🟢 **OMEGA OΩ4+OΩ5 — OH1 SCALE LADDER, min-gate HOLDS at every scale** (Lane-G / GPU, one H100
+SXM, 5 rungs sequential). a_scale_honest_scope demanded a ladder curve (a single d512 point is
+INCOMPLETE). Trained leak-free (causal_ca=True, self-test 0.000 every rung) competent CDV2
+substrates at d384/d512/d768/d1024 (OΩ4) + a more-competent d768×2 (OΩ5, 24000 step), and re-ran
+the SAME OH1 minimal-gate sweep on each (same 400MB corpus sha dc1754b2 + held split as #1801).
+Per-rung held-out TEST CE (nats/byte):
+
+| rung | d | params | steps | val_ce | base | a_only | min_learned | Δ-vs-base | Δ-vs-a_only | HOLDS |
+|---|---|---|---|---|---|---|---|---|---|---|
+| d384 | 384 | 48.24M | 12000 | 0.8367 | 3.0978 | 1.1639 | **0.9030** | +2.1948 | +0.2610 | ✅ |
+| d512 | 512 | 85.82M | 12000 | 0.8224 | 3.0978 | 1.1356 | **0.8701** | +2.2277 | +0.2655 | ✅ |
+| d768 | 768 | 189.28M | 12000 | 0.8383 | 3.0978 | 1.1612 | **0.8924** | +2.2054 | +0.2688 | ✅ |
+| d1024 | 1024 | 334.69M | 12000 | 0.8575 | 3.0978 | 1.2001 | **0.9211** | +2.1766 | +0.2790 | ✅ |
+| d768×2 | 768 | 189.28M | 24000 | **0.7786** | 3.0978 | 1.0821 | **0.8242** | **+2.2736** | +0.2578 | ✅ |
+
+**min_learned_HOLDS across ALL 5 rungs = True.** SCALE TREND: the A-wire advantage Δ-vs-base is
+FLAT at +2.20 ± 0.03 across the d384→d1024 dim ladder (2.67× dim, 6.9× params) — it does NOT grow
+or shrink with raw dim (SCALE-STABLE). The more-competent OΩ5 rung (val_ce 0.7786, the lowest) has
+the LARGEST advantage (Δ-vs-base +2.2736) — greater competence STRENGTHENS the A-wire margin, does
+not erode it. The 2-param fit lands the SAME operating point every rung (gB ≈ 0.02-0.04, gA ≈ 0.89-
+0.92 ≈ 1); the full multi-wire gate collapses onto A (gA 3.2-3.6, gG ≈ -1.0) and FAILS held-out at
+every scale (full_AG 3.28-3.84 > base) — the same #1800/#1801 pathology, confirmed scale-invariant.
+HONEST CONTRAST: the earlier UNDERTRAINED d768 (#1794, 2500 step, val_ce≈uniform) did NOT hold — the
+finding REQUIRES competence (val_ce ≪ uniform), which all 5 rungs have; once competent, d768/d1024
+hold like d384/d512, so the #1794 non-hold was an undertraining artifact, not a scale break. The
+d512 rung re-trained+re-swept here reproduces #1801 (min_learned 0.8701, |Δ| 0.013). SCOPE
+(a_scale_honest_scope · p7): 4-dim ladder + 1 competence rung; CE = held-out prediction number, not a
+verdict-of-truth; the closure is the RELATIVE A-wire margin, not absolute perplexity (the multi-wire
+gate fails — a_paper_negative_ok on that form). ckpts → HF PRIVATE `dancinlab/omega-cdv2-scale-d{N}`.
+harness `UNIVERSE/omega_scale_ladder.py` · ledger `exports/sweep/omega-scale-ladder/ledger.json` ·
+verdict `.verdicts/omega-engine/F-OMEGA-SCALE.txt`.
+
 ### prior status — BUILT (#1783) + trained-rung proven at toy (#1784/#1786)
 
 Ω is now a RUNNING engine module, not just a blueprint:

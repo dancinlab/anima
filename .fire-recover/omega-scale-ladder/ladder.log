@@ -1,0 +1,549 @@
+=== OMEGA SCALE LADDER (OΩ4+OΩ5) — leak-free OH1 minimal-gate vs d_model ===
+device=cuda  gpu=NVIDIA H100 80GB HBM3  torch=2.4.1+cu124
+Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+  [corpus] wiki.en: 80000000B
+  [corpus] wiki.fr: 80000000B
+  [corpus] wiki.de: 80000000B
+  [corpus] wiki.es: 80000000B
+  [corpus] wiki.ru: 80000000B
+corpus: 400000000B (400.0MB)  prov=gutenberg:wiki.en+wiki.fr+wiki.de+wiki.es+wiki.ru  sha256=dc1754b27d63236d
+
+############################## LADDER RUNG d384 ##############################
+
+========================== TRAINED-LEAKFREE RUNG d384 (d_model=384, causal_ca=True) ==========================
+CDV2 params: 48,240,448 (48.24M)  causal_ca=True
+leak self-test (flip last byte -> max change in head_a earlier pos): 0.000e+00  (want ~0)
+  step      0/12000  ce_a(next)=5.8507  ce_g(prev)=5.5945  lr=3.00e-06  0.3s
+    [val] step      0  val_ce(head_a, multi-batch)=5.9746  (uniform=5.5452, below_uniform=False)
+  step    300/12000  ce_a(next)=1.9442  ce_g(prev)=0.0318  lr=6.00e-04  20.0s
+    [val] step    500  val_ce(head_a, multi-batch)=1.3992  (uniform=5.5452, below_uniform=True)
+  step    600/12000  ce_a(next)=1.6981  ce_g(prev)=0.0228  lr=5.98e-04  39.7s
+  step    900/12000  ce_a(next)=1.6897  ce_g(prev)=0.0230  lr=5.95e-04  58.9s
+    [val] step   1000  val_ce(head_a, multi-batch)=1.2620  (uniform=5.5452, below_uniform=True)
+  step   1200/12000  ce_a(next)=1.5357  ce_g(prev)=0.0202  lr=5.90e-04  78.6s
+  step   1500/12000  ce_a(next)=1.5367  ce_g(prev)=0.0199  lr=5.84e-04  97.6s
+    [val] step   1500  val_ce(head_a, multi-batch)=1.1733  (uniform=5.5452, below_uniform=True)
+  step   1800/12000  ce_a(next)=1.4271  ce_g(prev)=0.0197  lr=5.76e-04  117.4s
+    [val] step   2000  val_ce(head_a, multi-batch)=1.1201  (uniform=5.5452, below_uniform=True)
+  step   2100/12000  ce_a(next)=1.4465  ce_g(prev)=0.0216  lr=5.66e-04  137.4s
+  step   2400/12000  ce_a(next)=1.4246  ce_g(prev)=0.0190  lr=5.55e-04  156.4s
+    [val] step   2500  val_ce(head_a, multi-batch)=1.0667  (uniform=5.5452, below_uniform=True)
+  step   2700/12000  ce_a(next)=1.3613  ce_g(prev)=0.0163  lr=5.42e-04  176.1s
+  step   3000/12000  ce_a(next)=1.4250  ce_g(prev)=0.0193  lr=5.28e-04  195.3s
+    [val] step   3000  val_ce(head_a, multi-batch)=1.0426  (uniform=5.5452, below_uniform=True)
+  step   3300/12000  ce_a(next)=1.3668  ce_g(prev)=0.0178  lr=5.13e-04  215.0s
+    [val] step   3500  val_ce(head_a, multi-batch)=1.0179  (uniform=5.5452, below_uniform=True)
+  step   3600/12000  ce_a(next)=1.2823  ce_g(prev)=0.0170  lr=4.97e-04  234.7s
+  step   3900/12000  ce_a(next)=1.3966  ce_g(prev)=0.0191  lr=4.79e-04  254.0s
+    [val] step   4000  val_ce(head_a, multi-batch)=0.9894  (uniform=5.5452, below_uniform=True)
+  step   4200/12000  ce_a(next)=1.2902  ce_g(prev)=0.0171  lr=4.61e-04  273.7s
+  step   4500/12000  ce_a(next)=1.3182  ce_g(prev)=0.0180  lr=4.42e-04  292.8s
+    [val] step   4500  val_ce(head_a, multi-batch)=0.9752  (uniform=5.5452, below_uniform=True)
+  step   4800/12000  ce_a(next)=1.2475  ce_g(prev)=0.0176  lr=4.22e-04  312.7s
+    [val] step   5000  val_ce(head_a, multi-batch)=0.9530  (uniform=5.5452, below_uniform=True)
+  step   5100/12000  ce_a(next)=1.2840  ce_g(prev)=0.0154  lr=4.01e-04  332.5s
+  step   5400/12000  ce_a(next)=1.3016  ce_g(prev)=0.0166  lr=3.80e-04  351.5s
+    [val] step   5500  val_ce(head_a, multi-batch)=0.9356  (uniform=5.5452, below_uniform=True)
+  step   5700/12000  ce_a(next)=1.2128  ce_g(prev)=0.0176  lr=3.59e-04  371.3s
+  step   6000/12000  ce_a(next)=1.3094  ce_g(prev)=0.0152  lr=3.37e-04  390.4s
+    [val] step   6000  val_ce(head_a, multi-batch)=0.9228  (uniform=5.5452, below_uniform=True)
+  step   6300/12000  ce_a(next)=1.2458  ce_g(prev)=0.0153  lr=3.16e-04  410.2s
+    [val] step   6500  val_ce(head_a, multi-batch)=0.9094  (uniform=5.5452, below_uniform=True)
+  step   6600/12000  ce_a(next)=1.1885  ce_g(prev)=0.0168  lr=2.94e-04  430.0s
+  step   6900/12000  ce_a(next)=1.2391  ce_g(prev)=0.0154  lr=2.73e-04  449.2s
+    [val] step   7000  val_ce(head_a, multi-batch)=0.9001  (uniform=5.5452, below_uniform=True)
+  step   7200/12000  ce_a(next)=1.2223  ce_g(prev)=0.0170  lr=2.52e-04  468.9s
+  step   7500/12000  ce_a(next)=1.1695  ce_g(prev)=0.0165  lr=2.32e-04  488.0s
+    [val] step   7500  val_ce(head_a, multi-batch)=0.8884  (uniform=5.5452, below_uniform=True)
+  step   7800/12000  ce_a(next)=1.1857  ce_g(prev)=0.0163  lr=2.12e-04  507.8s
+    [val] step   8000  val_ce(head_a, multi-batch)=0.8768  (uniform=5.5452, below_uniform=True)
+  step   8100/12000  ce_a(next)=1.1248  ce_g(prev)=0.0135  lr=1.93e-04  527.6s
+  step   8400/12000  ce_a(next)=1.1641  ce_g(prev)=0.0144  lr=1.75e-04  546.6s
+    [val] step   8500  val_ce(head_a, multi-batch)=0.8704  (uniform=5.5452, below_uniform=True)
+  step   8700/12000  ce_a(next)=1.1955  ce_g(prev)=0.0145  lr=1.58e-04  566.2s
+  step   9000/12000  ce_a(next)=1.2477  ce_g(prev)=0.0148  lr=1.42e-04  585.5s
+    [val] step   9000  val_ce(head_a, multi-batch)=0.8601  (uniform=5.5452, below_uniform=True)
+  step   9300/12000  ce_a(next)=1.1906  ce_g(prev)=0.0143  lr=1.27e-04  605.3s
+    [val] step   9500  val_ce(head_a, multi-batch)=0.8556  (uniform=5.5452, below_uniform=True)
+  step   9600/12000  ce_a(next)=1.1852  ce_g(prev)=0.0149  lr=1.13e-04  625.1s
+  step   9900/12000  ce_a(next)=1.2019  ce_g(prev)=0.0140  lr=1.01e-04  644.2s
+    [val] step  10000  val_ce(head_a, multi-batch)=0.8481  (uniform=5.5452, below_uniform=True)
+  step  10200/12000  ce_a(next)=1.1061  ce_g(prev)=0.0156  lr=9.04e-05  663.9s
+  step  10500/12000  ce_a(next)=1.1580  ce_g(prev)=0.0141  lr=8.12e-05  683.0s
+    [val] step  10500  val_ce(head_a, multi-batch)=0.8445  (uniform=5.5452, below_uniform=True)
+  step  10800/12000  ce_a(next)=1.1879  ce_g(prev)=0.0149  lr=7.37e-05  702.9s
+    [val] step  11000  val_ce(head_a, multi-batch)=0.8398  (uniform=5.5452, below_uniform=True)
+  step  11100/12000  ce_a(next)=1.1553  ce_g(prev)=0.0154  lr=6.77e-05  722.7s
+  step  11400/12000  ce_a(next)=1.1435  ce_g(prev)=0.0152  lr=6.34e-05  741.7s
+    [val] step  11500  val_ce(head_a, multi-batch)=0.8364  (uniform=5.5452, below_uniform=True)
+  step  11700/12000  ce_a(next)=1.1582  ce_g(prev)=0.0135  lr=6.09e-05  761.6s
+  step  11999/12000  ce_a(next)=1.1839  ce_g(prev)=0.0141  lr=6.00e-05  780.8s
+    [val] step  11999  val_ce(head_a, multi-batch)=0.8355  (uniform=5.5452, below_uniform=True)
+
+(b) trained leak-free: ce_a 5.8507 -> 1.1839  FINAL val_ce=0.8367  below_uniform=True  competent(<=4.0)=True  wall=782.9s
+ckpt saved: /workspace/omega-scale/omega_cdv2_d384.pt  sha256=3e421eb4e61547b5
+learned gate g* = [gB=0.0855, gA=3.2125, gG=-1.0567]
+--- held-out TEST CE (LEAK-FREE, well-trained, nats/byte) ---
+  base 3.097779 | fixed_AmG 3.209853 | a_only 1.161865 | GATED 3.749427 | uniform 5.545177
+structured: A-wire gain real 1.9359 vs shuf -2.2744 -> structured(>1.5x)=True
+
+  >>> CLOSURE FALSIFIER: GATED<base=False  AND  GATED<=a_only=False  -> closure_HOLDS=False
+
+  gen: gated entropy=3.085 distinct=0.133 ws=0.173 coherent=True
+  [GATED] '45\xa0— в 1935 году в Брати Брат в 1935 году (с 1935 г.)\n 1945\xa0— в 1935 г. (1034 г.)\n 1945\xa0— в 1935 г. (1034—1338 г.)\n 1945\xa0— в 1935 г. (1034 м)\n 1945\xa0— кратк Брат'
+[collect] gate_seq=20000000B  test_seq=20000000B  max_pos=12000
+[collect] gate N=12000  test N=12000  (8.3s)
+[fit] full_AG  g* = [gB=0.0531, gA=3.2131, gG=-1.0512]
+[fit] min_learned g* = [gB=0.0433, gA=0.9085, gG=0.0000]  (gG pinned 0)
+
+=== RUNG d384 OH1 K-form sweep (frozen leak-free, nats/byte) ===
+  form                gB        gA        gG    test_CE
+  base            1.0000    0.0000    0.0000   3.097779
+  a_only          1.0000    0.6000    0.0000   1.163912
+  fixed_AmG       1.0000    0.6000   -0.6000   3.214304
+  full_AG         0.0531    3.2131   -1.0512   3.730895
+  min_learned     0.0433    0.9085    0.0000   0.902957  ★OH1
+  min_fixed       1.0000    1.0000    0.0000   1.131854
+  uniform                                      5.545177
+  OH1: min_learned(0.902957) <= a_only(1.163912)=True  AND  < base(3.097779)=True  ->  min_learned_HOLDS=True
+  Δ-vs-base=+2.1948  Δ-vs-a_only=+0.2610
+  [checkpoint] 1/5 rungs -> /workspace/omega-scale/omega_scale_ladder_results.json
+
+############################## LADDER RUNG d512 ##############################
+
+========================== TRAINED-LEAKFREE RUNG d512 (d_model=512, causal_ca=True) ==========================
+CDV2 params: 85,816,384 (85.82M)  causal_ca=True
+leak self-test (flip last byte -> max change in head_a earlier pos): 0.000e+00  (want ~0)
+  step      0/12000  ce_a(next)=5.7798  ce_g(prev)=5.6830  lr=3.00e-06  0.1s
+    [val] step      0  val_ce(head_a, multi-batch)=6.0237  (uniform=5.5452, below_uniform=False)
+  step    300/12000  ce_a(next)=1.9783  ce_g(prev)=0.0398  lr=6.00e-04  25.6s
+    [val] step    500  val_ce(head_a, multi-batch)=1.3762  (uniform=5.5452, below_uniform=True)
+  step    600/12000  ce_a(next)=1.7050  ce_g(prev)=0.0246  lr=5.98e-04  51.2s
+  step    900/12000  ce_a(next)=1.5357  ce_g(prev)=0.0218  lr=5.95e-04  75.8s
+    [val] step   1000  val_ce(head_a, multi-batch)=1.2375  (uniform=5.5452, below_uniform=True)
+  step   1200/12000  ce_a(next)=1.4942  ce_g(prev)=0.0198  lr=5.90e-04  101.5s
+  step   1500/12000  ce_a(next)=1.4943  ce_g(prev)=0.0217  lr=5.84e-04  126.1s
+    [val] step   1500  val_ce(head_a, multi-batch)=1.1443  (uniform=5.5452, below_uniform=True)
+  step   1800/12000  ce_a(next)=1.4671  ce_g(prev)=0.0206  lr=5.76e-04  151.6s
+    [val] step   2000  val_ce(head_a, multi-batch)=1.0876  (uniform=5.5452, below_uniform=True)
+  step   2100/12000  ce_a(next)=1.4782  ce_g(prev)=0.0282  lr=5.66e-04  177.0s
+  step   2400/12000  ce_a(next)=1.4263  ce_g(prev)=0.0192  lr=5.55e-04  201.7s
+    [val] step   2500  val_ce(head_a, multi-batch)=1.0465  (uniform=5.5452, below_uniform=True)
+  step   2700/12000  ce_a(next)=1.3848  ce_g(prev)=0.0208  lr=5.42e-04  227.2s
+  step   3000/12000  ce_a(next)=1.3724  ce_g(prev)=0.0173  lr=5.28e-04  251.8s
+    [val] step   3000  val_ce(head_a, multi-batch)=1.0194  (uniform=5.5452, below_uniform=True)
+  step   3300/12000  ce_a(next)=1.3199  ce_g(prev)=0.0171  lr=5.13e-04  277.3s
+    [val] step   3500  val_ce(head_a, multi-batch)=0.9904  (uniform=5.5452, below_uniform=True)
+  step   3600/12000  ce_a(next)=1.3397  ce_g(prev)=0.0162  lr=4.97e-04  303.0s
+  step   3900/12000  ce_a(next)=1.2945  ce_g(prev)=0.0180  lr=4.79e-04  327.7s
+    [val] step   4000  val_ce(head_a, multi-batch)=0.9691  (uniform=5.5452, below_uniform=True)
+  step   4200/12000  ce_a(next)=1.2665  ce_g(prev)=0.0171  lr=4.61e-04  353.2s
+  step   4500/12000  ce_a(next)=1.2773  ce_g(prev)=0.0161  lr=4.42e-04  377.9s
+    [val] step   4500  val_ce(head_a, multi-batch)=0.9617  (uniform=5.5452, below_uniform=True)
+  step   4800/12000  ce_a(next)=1.3233  ce_g(prev)=0.0166  lr=4.22e-04  403.5s
+    [val] step   5000  val_ce(head_a, multi-batch)=0.9379  (uniform=5.5452, below_uniform=True)
+  step   5100/12000  ce_a(next)=1.2215  ce_g(prev)=0.0166  lr=4.01e-04  428.9s
+  step   5400/12000  ce_a(next)=1.2790  ce_g(prev)=0.0172  lr=3.80e-04  453.5s
+    [val] step   5500  val_ce(head_a, multi-batch)=0.9209  (uniform=5.5452, below_uniform=True)
+  step   5700/12000  ce_a(next)=1.2231  ce_g(prev)=0.0159  lr=3.59e-04  479.0s
+  step   6000/12000  ce_a(next)=1.2422  ce_g(prev)=0.0149  lr=3.37e-04  504.0s
+    [val] step   6000  val_ce(head_a, multi-batch)=0.9135  (uniform=5.5452, below_uniform=True)
+  step   6300/12000  ce_a(next)=1.2253  ce_g(prev)=0.0145  lr=3.16e-04  529.6s
+    [val] step   6500  val_ce(head_a, multi-batch)=0.8955  (uniform=5.5452, below_uniform=True)
+  step   6600/12000  ce_a(next)=1.2395  ce_g(prev)=0.0158  lr=2.94e-04  555.2s
+  step   6900/12000  ce_a(next)=1.3044  ce_g(prev)=0.0157  lr=2.73e-04  579.8s
+    [val] step   7000  val_ce(head_a, multi-batch)=0.8840  (uniform=5.5452, below_uniform=True)
+  step   7200/12000  ce_a(next)=1.1857  ce_g(prev)=0.0158  lr=2.52e-04  605.3s
+  step   7500/12000  ce_a(next)=1.2573  ce_g(prev)=0.0145  lr=2.32e-04  630.0s
+    [val] step   7500  val_ce(head_a, multi-batch)=0.8782  (uniform=5.5452, below_uniform=True)
+  step   7800/12000  ce_a(next)=1.1907  ce_g(prev)=0.0157  lr=2.12e-04  655.5s
+    [val] step   8000  val_ce(head_a, multi-batch)=0.8677  (uniform=5.5452, below_uniform=True)
+  step   8100/12000  ce_a(next)=1.1611  ce_g(prev)=0.0172  lr=1.93e-04  680.9s
+  step   8400/12000  ce_a(next)=1.1611  ce_g(prev)=0.0141  lr=1.75e-04  705.5s
+    [val] step   8500  val_ce(head_a, multi-batch)=0.8573  (uniform=5.5452, below_uniform=True)
+  step   8700/12000  ce_a(next)=1.1320  ce_g(prev)=0.0144  lr=1.58e-04  730.9s
+  step   9000/12000  ce_a(next)=1.1621  ce_g(prev)=0.0184  lr=1.42e-04  755.5s
+    [val] step   9000  val_ce(head_a, multi-batch)=0.8469  (uniform=5.5452, below_uniform=True)
+  step   9300/12000  ce_a(next)=1.1485  ce_g(prev)=0.0153  lr=1.27e-04  780.9s
+    [val] step   9500  val_ce(head_a, multi-batch)=0.8416  (uniform=5.5452, below_uniform=True)
+  step   9600/12000  ce_a(next)=1.1539  ce_g(prev)=0.0165  lr=1.13e-04  806.6s
+  step   9900/12000  ce_a(next)=1.0939  ce_g(prev)=0.0154  lr=1.01e-04  831.2s
+    [val] step  10000  val_ce(head_a, multi-batch)=0.8352  (uniform=5.5452, below_uniform=True)
+  step  10200/12000  ce_a(next)=1.1087  ce_g(prev)=0.0177  lr=9.04e-05  856.7s
+  step  10500/12000  ce_a(next)=1.1552  ce_g(prev)=0.0143  lr=8.12e-05  881.3s
+    [val] step  10500  val_ce(head_a, multi-batch)=0.8305  (uniform=5.5452, below_uniform=True)
+  step  10800/12000  ce_a(next)=1.1139  ce_g(prev)=0.0137  lr=7.37e-05  906.7s
+    [val] step  11000  val_ce(head_a, multi-batch)=0.8277  (uniform=5.5452, below_uniform=True)
+  step  11100/12000  ce_a(next)=1.1407  ce_g(prev)=0.0152  lr=6.77e-05  932.2s
+  step  11400/12000  ce_a(next)=1.1229  ce_g(prev)=0.0175  lr=6.34e-05  956.8s
+    [val] step  11500  val_ce(head_a, multi-batch)=0.8227  (uniform=5.5452, below_uniform=True)
+  step  11700/12000  ce_a(next)=1.1049  ce_g(prev)=0.0144  lr=6.09e-05  982.2s
+  step  11999/12000  ce_a(next)=1.1102  ce_g(prev)=0.0147  lr=6.00e-05  1006.8s
+    [val] step  11999  val_ce(head_a, multi-batch)=0.8208  (uniform=5.5452, below_uniform=True)
+
+(b) trained leak-free: ce_a 5.7798 -> 1.1102  FINAL val_ce=0.8224  below_uniform=True  competent(<=4.0)=True  wall=1009.5s
+ckpt saved: /workspace/omega-scale/omega_cdv2_d512.pt  sha256=4307d5fcdd4fa5c0
+learned gate g* = [gB=-0.1662, gA=3.3175, gG=-0.9451]
+--- held-out TEST CE (LEAK-FREE, well-trained, nats/byte) ---
+  base 3.097779 | fixed_AmG 3.226996 | a_only 1.132784 | GATED 3.346167 | uniform 5.545177
+structured: A-wire gain real 1.9650 vs shuf -2.4450 -> structured(>1.5x)=True
+
+  >>> CLOSURE FALSIFIER: GATED<base=False  AND  GATED<=a_only=False  -> closure_HOLDS=False
+
+  gen: gated entropy=2.735 distinct=0.125 ws=0.100 coherent=True
+  [GATED] ' причине проторг в графическую речный распространён в 1952 г. при проторическую распространён в 1952 году в отнуку в 1952 году проторг в 1952 году был �'
+[collect] gate_seq=20000000B  test_seq=20000000B  max_pos=12000
+[collect] gate N=12000  test N=12000  (8.4s)
+[fit] full_AG  g* = [gB=-0.2093, gA=3.3110, gG=-0.9367]
+[fit] min_learned g* = [gB=0.0346, gA=0.9130, gG=0.0000]  (gG pinned 0)
+
+=== RUNG d512 OH1 K-form sweep (frozen leak-free, nats/byte) ===
+  form                gB        gA        gG    test_CE
+  base            1.0000    0.0000    0.0000   3.097779
+  a_only          1.0000    0.6000    0.0000   1.135576
+  fixed_AmG       1.0000    0.6000   -0.6000   3.237775
+  full_AG        -0.2093    3.3110   -0.9367   3.314466
+  min_learned     0.0346    0.9130    0.0000   0.870090  ★OH1
+  min_fixed       1.0000    1.0000    0.0000   1.100245
+  uniform                                      5.545177
+  OH1: min_learned(0.870090) <= a_only(1.135576)=True  AND  < base(3.097779)=True  ->  min_learned_HOLDS=True
+  Δ-vs-base=+2.2277  Δ-vs-a_only=+0.2655
+  [checkpoint] 2/5 rungs -> /workspace/omega-scale/omega_scale_ladder_results.json
+
+############################## LADDER RUNG d768 ##############################
+
+========================== TRAINED-LEAKFREE RUNG d768 (d_model=768, causal_ca=True) ==========================
+CDV2 params: 189,279,808 (189.28M)  causal_ca=True
+leak self-test (flip last byte -> max change in head_a earlier pos): 0.000e+00  (want ~0)
+  step      0/12000  ce_a(next)=5.6304  ce_g(prev)=5.6895  lr=2.50e-06  0.1s
+    [val] step      0  val_ce(head_a, multi-batch)=5.7533  (uniform=5.5452, below_uniform=False)
+  step    300/12000  ce_a(next)=1.9509  ce_g(prev)=0.0308  lr=5.00e-04  35.1s
+    [val] step    500  val_ce(head_a, multi-batch)=1.4003  (uniform=5.5452, below_uniform=True)
+  step    600/12000  ce_a(next)=1.7013  ce_g(prev)=0.0233  lr=4.99e-04  70.2s
+  step    900/12000  ce_a(next)=1.6240  ce_g(prev)=0.0201  lr=4.96e-04  104.1s
+    [val] step   1000  val_ce(head_a, multi-batch)=1.2562  (uniform=5.5452, below_uniform=True)
+  step   1200/12000  ce_a(next)=1.5120  ce_g(prev)=0.0197  lr=4.92e-04  139.2s
+  step   1500/12000  ce_a(next)=1.4767  ce_g(prev)=0.0176  lr=4.87e-04  173.1s
+    [val] step   1500  val_ce(head_a, multi-batch)=1.1530  (uniform=5.5452, below_uniform=True)
+  step   1800/12000  ce_a(next)=1.4637  ce_g(prev)=0.0213  lr=4.80e-04  208.1s
+    [val] step   2000  val_ce(head_a, multi-batch)=1.1080  (uniform=5.5452, below_uniform=True)
+  step   2100/12000  ce_a(next)=1.3632  ce_g(prev)=0.0252  lr=4.72e-04  243.4s
+  step   2400/12000  ce_a(next)=1.4734  ce_g(prev)=0.0197  lr=4.62e-04  277.3s
+    [val] step   2500  val_ce(head_a, multi-batch)=1.0618  (uniform=5.5452, below_uniform=True)
+  step   2700/12000  ce_a(next)=1.3263  ce_g(prev)=0.0135  lr=4.52e-04  312.3s
+  step   3000/12000  ce_a(next)=1.3499  ce_g(prev)=0.0198  lr=4.40e-04  346.1s
+    [val] step   3000  val_ce(head_a, multi-batch)=1.0294  (uniform=5.5452, below_uniform=True)
+  step   3300/12000  ce_a(next)=1.3330  ce_g(prev)=0.0180  lr=4.28e-04  381.2s
+    [val] step   3500  val_ce(head_a, multi-batch)=1.0116  (uniform=5.5452, below_uniform=True)
+  step   3600/12000  ce_a(next)=1.3261  ce_g(prev)=0.0175  lr=4.14e-04  416.2s
+  step   3900/12000  ce_a(next)=1.3222  ce_g(prev)=0.0144  lr=3.99e-04  450.2s
+    [val] step   4000  val_ce(head_a, multi-batch)=0.9938  (uniform=5.5452, below_uniform=True)
+  step   4200/12000  ce_a(next)=1.2709  ce_g(prev)=0.0166  lr=3.84e-04  485.3s
+  step   4500/12000  ce_a(next)=1.3606  ce_g(prev)=0.0178  lr=3.68e-04  519.4s
+    [val] step   4500  val_ce(head_a, multi-batch)=0.9720  (uniform=5.5452, below_uniform=True)
+  step   4800/12000  ce_a(next)=1.3034  ce_g(prev)=0.0169  lr=3.51e-04  554.6s
+    [val] step   5000  val_ce(head_a, multi-batch)=0.9568  (uniform=5.5452, below_uniform=True)
+  step   5100/12000  ce_a(next)=1.3570  ce_g(prev)=0.0166  lr=3.34e-04  589.7s
+  step   5400/12000  ce_a(next)=1.2514  ce_g(prev)=0.0168  lr=3.17e-04  623.7s
+    [val] step   5500  val_ce(head_a, multi-batch)=0.9381  (uniform=5.5452, below_uniform=True)
+  step   5700/12000  ce_a(next)=1.2898  ce_g(prev)=0.0161  lr=2.99e-04  658.8s
+  step   6000/12000  ce_a(next)=1.2283  ce_g(prev)=0.0166  lr=2.81e-04  692.6s
+    [val] step   6000  val_ce(head_a, multi-batch)=0.9243  (uniform=5.5452, below_uniform=True)
+  step   6300/12000  ce_a(next)=1.2326  ce_g(prev)=0.0143  lr=2.63e-04  727.6s
+    [val] step   6500  val_ce(head_a, multi-batch)=0.9132  (uniform=5.5452, below_uniform=True)
+  step   6600/12000  ce_a(next)=1.2496  ce_g(prev)=0.0152  lr=2.45e-04  762.7s
+  step   6900/12000  ce_a(next)=1.2530  ce_g(prev)=0.0150  lr=2.27e-04  796.7s
+    [val] step   7000  val_ce(head_a, multi-batch)=0.9009  (uniform=5.5452, below_uniform=True)
+  step   7200/12000  ce_a(next)=1.2210  ce_g(prev)=0.0153  lr=2.10e-04  831.8s
+  step   7500/12000  ce_a(next)=1.2656  ce_g(prev)=0.0137  lr=1.93e-04  865.6s
+    [val] step   7500  val_ce(head_a, multi-batch)=0.8893  (uniform=5.5452, below_uniform=True)
+  step   7800/12000  ce_a(next)=1.2216  ce_g(prev)=0.0147  lr=1.77e-04  900.7s
+    [val] step   8000  val_ce(head_a, multi-batch)=0.8821  (uniform=5.5452, below_uniform=True)
+  step   8100/12000  ce_a(next)=1.2260  ce_g(prev)=0.0169  lr=1.61e-04  935.8s
+  step   8400/12000  ce_a(next)=1.2354  ce_g(prev)=0.0158  lr=1.46e-04  969.6s
+    [val] step   8500  val_ce(head_a, multi-batch)=0.8719  (uniform=5.5452, below_uniform=True)
+  step   8700/12000  ce_a(next)=1.2131  ce_g(prev)=0.0129  lr=1.31e-04  1004.6s
+  step   9000/12000  ce_a(next)=1.1765  ce_g(prev)=0.0159  lr=1.18e-04  1038.5s
+    [val] step   9000  val_ce(head_a, multi-batch)=0.8633  (uniform=5.5452, below_uniform=True)
+  step   9300/12000  ce_a(next)=1.1812  ce_g(prev)=0.0158  lr=1.06e-04  1073.6s
+    [val] step   9500  val_ce(head_a, multi-batch)=0.8579  (uniform=5.5452, below_uniform=True)
+  step   9600/12000  ce_a(next)=1.1546  ce_g(prev)=0.0147  lr=9.44e-05  1108.8s
+  step   9900/12000  ce_a(next)=1.1681  ce_g(prev)=0.0156  lr=8.43e-05  1142.9s
+    [val] step  10000  val_ce(head_a, multi-batch)=0.8498  (uniform=5.5452, below_uniform=True)
+  step  10200/12000  ce_a(next)=1.1753  ce_g(prev)=0.0155  lr=7.53e-05  1178.0s
+  step  10500/12000  ce_a(next)=1.1532  ce_g(prev)=0.0139  lr=6.77e-05  1211.9s
+    [val] step  10500  val_ce(head_a, multi-batch)=0.8454  (uniform=5.5452, below_uniform=True)
+  step  10800/12000  ce_a(next)=1.2437  ce_g(prev)=0.0139  lr=6.14e-05  1246.9s
+    [val] step  11000  val_ce(head_a, multi-batch)=0.8401  (uniform=5.5452, below_uniform=True)
+  step  11100/12000  ce_a(next)=1.1981  ce_g(prev)=0.0136  lr=5.64e-05  1282.1s
+  step  11400/12000  ce_a(next)=1.1542  ce_g(prev)=0.0155  lr=5.29e-05  1316.0s
+    [val] step  11500  val_ce(head_a, multi-batch)=0.8370  (uniform=5.5452, below_uniform=True)
+  step  11700/12000  ce_a(next)=1.1848  ce_g(prev)=0.0142  lr=5.07e-05  1351.1s
+  step  11999/12000  ce_a(next)=1.2081  ce_g(prev)=0.0177  lr=5.00e-05  1384.8s
+    [val] step  11999  val_ce(head_a, multi-batch)=0.8370  (uniform=5.5452, below_uniform=True)
+
+(b) trained leak-free: ce_a 5.6304 -> 1.2081  FINAL val_ce=0.8383  below_uniform=True  competent(<=4.0)=True  wall=1388.3s
+ckpt saved: /workspace/omega-scale/omega_cdv2_d768.pt  sha256=a27001da89ec8dee
+learned gate g* = [gB=-0.0423, gA=3.2128, gG=-0.9907]
+--- held-out TEST CE (LEAK-FREE, well-trained, nats/byte) ---
+  base 3.097779 | fixed_AmG 3.119230 | a_only 1.160974 | GATED 3.405198 | uniform 5.545177
+structured: A-wire gain real 1.9368 vs shuf -2.3313 -> structured(>1.5x)=True
+
+  >>> CLOSURE FALSIFIER: GATED<base=False  AND  GATED<=a_only=False  -> closure_HOLDS=False
+
+  gen: gated entropy=2.585 distinct=0.109 ws=0.090 coherent=True
+  [GATED] 'открыл преслужит в пресняным выпущен в против ныне преслужит в протите в прошлософию с преследует с няв от 50-м преслужескую термянскую преслу�'
+[collect] gate_seq=20000000B  test_seq=20000000B  max_pos=12000
+[collect] gate N=12000  test N=12000  (8.4s)
+[fit] full_AG  g* = [gB=-0.0363, gA=3.2114, gG=-0.9935]
+[fit] min_learned g* = [gB=0.0254, gA=0.8980, gG=0.0000]  (gG pinned 0)
+
+=== RUNG d768 OH1 K-form sweep (frozen leak-free, nats/byte) ===
+  form                gB        gA        gG    test_CE
+  base            1.0000    0.0000    0.0000   3.097779
+  a_only          1.0000    0.6000    0.0000   1.161196
+  fixed_AmG       1.0000    0.6000   -0.6000   3.124713
+  full_AG        -0.0363    3.2114   -0.9935   3.415730
+  min_learned     0.0254    0.8980    0.0000   0.892407  ★OH1
+  min_fixed       1.0000    1.0000    0.0000   1.141183
+  uniform                                      5.545177
+  OH1: min_learned(0.892407) <= a_only(1.161196)=True  AND  < base(3.097779)=True  ->  min_learned_HOLDS=True
+  Δ-vs-base=+2.2054  Δ-vs-a_only=+0.2688
+  [checkpoint] 3/5 rungs -> /workspace/omega-scale/omega_scale_ladder_results.json
+
+############################## LADDER RUNG d1024 ##############################
+
+========================== TRAINED-LEAKFREE RUNG d1024 (d_model=1024, causal_ca=True) ==========================
+CDV2 params: 334,686,272 (334.69M)  causal_ca=True
+leak self-test (flip last byte -> max change in head_a earlier pos): 0.000e+00  (want ~0)
+  step      0/12000  ce_a(next)=5.7681  ce_g(prev)=5.6838  lr=2.00e-06  0.1s
+    [val] step      0  val_ce(head_a, multi-batch)=5.8425  (uniform=5.5452, below_uniform=False)
+  step    300/12000  ce_a(next)=2.0490  ce_g(prev)=0.0383  lr=4.00e-04  41.3s
+    [val] step    500  val_ce(head_a, multi-batch)=1.4214  (uniform=5.5452, below_uniform=True)
+  step    600/12000  ce_a(next)=1.8376  ce_g(prev)=0.0343  lr=3.99e-04  82.5s
+  step    900/12000  ce_a(next)=1.5767  ce_g(prev)=0.0250  lr=3.97e-04  122.3s
+    [val] step   1000  val_ce(head_a, multi-batch)=1.2786  (uniform=5.5452, below_uniform=True)
+  step   1200/12000  ce_a(next)=1.5814  ce_g(prev)=0.0205  lr=3.94e-04  163.4s
+  step   1500/12000  ce_a(next)=1.5411  ce_g(prev)=0.0220  lr=3.89e-04  203.2s
+    [val] step   1500  val_ce(head_a, multi-batch)=1.2068  (uniform=5.5452, below_uniform=True)
+  step   1800/12000  ce_a(next)=1.4713  ce_g(prev)=0.0210  lr=3.84e-04  244.3s
+    [val] step   2000  val_ce(head_a, multi-batch)=1.1505  (uniform=5.5452, below_uniform=True)
+  step   2100/12000  ce_a(next)=1.4466  ce_g(prev)=0.0227  lr=3.77e-04  285.5s
+  step   2400/12000  ce_a(next)=1.4876  ce_g(prev)=0.0174  lr=3.70e-04  325.3s
+    [val] step   2500  val_ce(head_a, multi-batch)=1.1076  (uniform=5.5452, below_uniform=True)
+  step   2700/12000  ce_a(next)=1.4210  ce_g(prev)=0.0181  lr=3.62e-04  366.4s
+  step   3000/12000  ce_a(next)=1.3398  ce_g(prev)=0.0172  lr=3.52e-04  406.2s
+    [val] step   3000  val_ce(head_a, multi-batch)=1.0728  (uniform=5.5452, below_uniform=True)
+  step   3300/12000  ce_a(next)=1.4150  ce_g(prev)=0.0156  lr=3.42e-04  447.4s
+    [val] step   3500  val_ce(head_a, multi-batch)=1.0396  (uniform=5.5452, below_uniform=True)
+  step   3600/12000  ce_a(next)=1.3490  ce_g(prev)=0.0167  lr=3.31e-04  488.5s
+  step   3900/12000  ce_a(next)=1.4436  ce_g(prev)=0.0206  lr=3.20e-04  528.4s
+    [val] step   4000  val_ce(head_a, multi-batch)=1.0257  (uniform=5.5452, below_uniform=True)
+  step   4200/12000  ce_a(next)=1.4099  ce_g(prev)=0.0186  lr=3.07e-04  569.5s
+  step   4500/12000  ce_a(next)=1.3162  ce_g(prev)=0.0150  lr=2.94e-04  609.3s
+    [val] step   4500  val_ce(head_a, multi-batch)=1.0092  (uniform=5.5452, below_uniform=True)
+  step   4800/12000  ce_a(next)=1.2584  ce_g(prev)=0.0170  lr=2.81e-04  650.4s
+    [val] step   5000  val_ce(head_a, multi-batch)=0.9888  (uniform=5.5452, below_uniform=True)
+  step   5100/12000  ce_a(next)=1.3454  ce_g(prev)=0.0162  lr=2.67e-04  691.5s
+  step   5400/12000  ce_a(next)=1.2864  ce_g(prev)=0.0152  lr=2.53e-04  731.3s
+    [val] step   5500  val_ce(head_a, multi-batch)=0.9715  (uniform=5.5452, below_uniform=True)
+  step   5700/12000  ce_a(next)=1.3226  ce_g(prev)=0.0182  lr=2.39e-04  772.5s
+  step   6000/12000  ce_a(next)=1.2709  ce_g(prev)=0.0160  lr=2.25e-04  812.3s
+    [val] step   6000  val_ce(head_a, multi-batch)=0.9604  (uniform=5.5452, below_uniform=True)
+  step   6300/12000  ce_a(next)=1.2435  ce_g(prev)=0.0149  lr=2.10e-04  853.6s
+    [val] step   6500  val_ce(head_a, multi-batch)=0.9402  (uniform=5.5452, below_uniform=True)
+  step   6600/12000  ce_a(next)=1.3360  ce_g(prev)=0.0206  lr=1.96e-04  894.9s
+  step   6900/12000  ce_a(next)=1.2485  ce_g(prev)=0.0138  lr=1.82e-04  934.7s
+    [val] step   7000  val_ce(head_a, multi-batch)=0.9304  (uniform=5.5452, below_uniform=True)
+  step   7200/12000  ce_a(next)=1.2642  ce_g(prev)=0.0160  lr=1.68e-04  975.9s
+  step   7500/12000  ce_a(next)=1.2237  ce_g(prev)=0.0158  lr=1.54e-04  1015.7s
+    [val] step   7500  val_ce(head_a, multi-batch)=0.9166  (uniform=5.5452, below_uniform=True)
+  step   7800/12000  ce_a(next)=1.2166  ce_g(prev)=0.0162  lr=1.41e-04  1056.9s
+    [val] step   8000  val_ce(head_a, multi-batch)=0.9067  (uniform=5.5452, below_uniform=True)
+  step   8100/12000  ce_a(next)=1.2150  ce_g(prev)=0.0141  lr=1.29e-04  1098.1s
+  step   8400/12000  ce_a(next)=1.2281  ce_g(prev)=0.0139  lr=1.17e-04  1137.8s
+    [val] step   8500  val_ce(head_a, multi-batch)=0.8948  (uniform=5.5452, below_uniform=True)
+  step   8700/12000  ce_a(next)=1.1947  ce_g(prev)=0.0175  lr=1.05e-04  1179.1s
+  step   9000/12000  ce_a(next)=1.1513  ce_g(prev)=0.0152  lr=9.44e-05  1218.9s
+    [val] step   9000  val_ce(head_a, multi-batch)=0.8846  (uniform=5.5452, below_uniform=True)
+  step   9300/12000  ce_a(next)=1.1719  ce_g(prev)=0.0153  lr=8.45e-05  1260.1s
+    [val] step   9500  val_ce(head_a, multi-batch)=0.8779  (uniform=5.5452, below_uniform=True)
+  step   9600/12000  ce_a(next)=1.1977  ce_g(prev)=0.0151  lr=7.55e-05  1301.4s
+  step   9900/12000  ce_a(next)=1.1726  ce_g(prev)=0.0133  lr=6.74e-05  1341.3s
+    [val] step  10000  val_ce(head_a, multi-batch)=0.8703  (uniform=5.5452, below_uniform=True)
+  step  10200/12000  ce_a(next)=1.1637  ce_g(prev)=0.0131  lr=6.03e-05  1382.5s
+  step  10500/12000  ce_a(next)=1.1656  ce_g(prev)=0.0166  lr=5.42e-05  1422.3s
+    [val] step  10500  val_ce(head_a, multi-batch)=0.8656  (uniform=5.5452, below_uniform=True)
+  step  10800/12000  ce_a(next)=1.1919  ce_g(prev)=0.0142  lr=4.91e-05  1463.5s
+    [val] step  11000  val_ce(head_a, multi-batch)=0.8609  (uniform=5.5452, below_uniform=True)
+  step  11100/12000  ce_a(next)=1.3036  ce_g(prev)=0.0139  lr=4.51e-05  1504.8s
+  step  11400/12000  ce_a(next)=1.2075  ce_g(prev)=0.0133  lr=4.23e-05  1544.6s
+    [val] step  11500  val_ce(head_a, multi-batch)=0.8570  (uniform=5.5452, below_uniform=True)
+  step  11700/12000  ce_a(next)=1.1973  ce_g(prev)=0.0140  lr=4.06e-05  1585.7s
+  step  11999/12000  ce_a(next)=1.1362  ce_g(prev)=0.0146  lr=4.00e-05  1625.3s
+    [val] step  11999  val_ce(head_a, multi-batch)=0.8541  (uniform=5.5452, below_uniform=True)
+
+(b) trained leak-free: ce_a 5.7681 -> 1.1362  FINAL val_ce=0.8575  below_uniform=True  competent(<=4.0)=True  wall=1629.3s
+ckpt saved: /workspace/omega-scale/omega_cdv2_d1024.pt  sha256=258dc5ca42d31296
+learned gate g* = [gB=-0.0738, gA=3.5788, gG=-1.0689]
+--- held-out TEST CE (LEAK-FREE, well-trained, nats/byte) ---
+  base 3.097779 | fixed_AmG 3.270369 | a_only 1.200199 | GATED 3.849528 | uniform 5.545177
+structured: A-wire gain real 1.8976 vs shuf -2.4165 -> structured(>1.5x)=True
+
+  >>> CLOSURE FALSIFIER: GATED<base=False  AND  GATED<=a_only=False  -> closure_HOLDS=False
+
+  gen: gated entropy=2.646 distinct=0.137 ws=0.103 coherent=True
+  [GATED] 'ческую открылся в отный в отношения и кратку. При раскульптороте был относит праслужен в отный и в отный кратку в отну. В 1963 г. в кратку с отным '
+[collect] gate_seq=20000000B  test_seq=20000000B  max_pos=12000
+[collect] gate N=12000  test N=12000  (8.4s)
+[fit] full_AG  g* = [gB=-0.0711, gA=3.5625, gG=-1.0666]
+[fit] min_learned g* = [gB=0.0185, gA=0.9163, gG=0.0000]  (gG pinned 0)
+
+=== RUNG d1024 OH1 K-form sweep (frozen leak-free, nats/byte) ===
+  form                gB        gA        gG    test_CE
+  base            1.0000    0.0000    0.0000   3.097779
+  a_only          1.0000    0.6000    0.0000   1.200092
+  fixed_AmG       1.0000    0.6000   -0.6000   3.274066
+  full_AG        -0.0711    3.5625   -1.0666   3.837398
+  min_learned     0.0185    0.9163    0.0000   0.921136  ★OH1
+  min_fixed       1.0000    1.0000    0.0000   1.177492
+  uniform                                      5.545177
+  OH1: min_learned(0.921136) <= a_only(1.200092)=True  AND  < base(3.097779)=True  ->  min_learned_HOLDS=True
+  Δ-vs-base=+2.1766  Δ-vs-a_only=+0.2790
+  [checkpoint] 4/5 rungs -> /workspace/omega-scale/omega_scale_ladder_results.json
+
+############################## LADDER RUNG d768x2 ##############################
+
+========================== TRAINED-LEAKFREE RUNG d768x2 (d_model=768, causal_ca=True) ==========================
+CDV2 params: 189,279,808 (189.28M)  causal_ca=True
+leak self-test (flip last byte -> max change in head_a earlier pos): 0.000e+00  (want ~0)
+  step      0/24000  ce_a(next)=5.6147  ce_g(prev)=5.7021  lr=2.50e-06  0.1s
+    [val] step      0  val_ce(head_a, multi-batch)=5.4724  (uniform=5.5452, below_uniform=True)
+    [val] step    500  val_ce(head_a, multi-batch)=1.4035  (uniform=5.5452, below_uniform=True)
+  step    600/24000  ce_a(next)=1.7416  ce_g(prev)=0.0250  lr=5.00e-04  70.1s
+    [val] step   1000  val_ce(head_a, multi-batch)=1.2432  (uniform=5.5452, below_uniform=True)
+  step   1200/24000  ce_a(next)=1.5047  ce_g(prev)=0.0236  lr=4.98e-04  139.1s
+    [val] step   1500  val_ce(head_a, multi-batch)=1.1479  (uniform=5.5452, below_uniform=True)
+  step   1800/24000  ce_a(next)=1.4155  ce_g(prev)=0.0239  lr=4.95e-04  208.1s
+    [val] step   2000  val_ce(head_a, multi-batch)=1.0872  (uniform=5.5452, below_uniform=True)
+  step   2400/24000  ce_a(next)=1.4198  ce_g(prev)=0.0206  lr=4.91e-04  277.2s
+    [val] step   2500  val_ce(head_a, multi-batch)=1.0595  (uniform=5.5452, below_uniform=True)
+  step   3000/24000  ce_a(next)=1.4182  ce_g(prev)=0.0176  lr=4.85e-04  346.1s
+    [val] step   3000  val_ce(head_a, multi-batch)=1.0328  (uniform=5.5452, below_uniform=True)
+    [val] step   3500  val_ce(head_a, multi-batch)=1.0156  (uniform=5.5452, below_uniform=True)
+  step   3600/24000  ce_a(next)=1.3377  ce_g(prev)=0.0175  lr=4.78e-04  416.2s
+    [val] step   4000  val_ce(head_a, multi-batch)=0.9927  (uniform=5.5452, below_uniform=True)
+  step   4200/24000  ce_a(next)=1.3280  ce_g(prev)=0.0161  lr=4.69e-04  485.3s
+    [val] step   4500  val_ce(head_a, multi-batch)=0.9820  (uniform=5.5452, below_uniform=True)
+  step   4800/24000  ce_a(next)=1.3596  ce_g(prev)=0.0160  lr=4.60e-04  554.3s
+    [val] step   5000  val_ce(head_a, multi-batch)=0.9672  (uniform=5.5452, below_uniform=True)
+  step   5400/24000  ce_a(next)=1.3037  ce_g(prev)=0.0165  lr=4.49e-04  623.3s
+    [val] step   5500  val_ce(head_a, multi-batch)=0.9536  (uniform=5.5452, below_uniform=True)
+  step   6000/24000  ce_a(next)=1.2361  ce_g(prev)=0.0167  lr=4.37e-04  692.2s
+    [val] step   6000  val_ce(head_a, multi-batch)=0.9413  (uniform=5.5452, below_uniform=True)
+    [val] step   6500  val_ce(head_a, multi-batch)=0.9454  (uniform=5.5452, below_uniform=True)
+  step   6600/24000  ce_a(next)=1.2879  ce_g(prev)=0.0160  lr=4.24e-04  762.3s
+    [val] step   7000  val_ce(head_a, multi-batch)=0.9256  (uniform=5.5452, below_uniform=True)
+  step   7200/24000  ce_a(next)=1.2850  ce_g(prev)=0.0146  lr=4.11e-04  831.3s
+    [val] step   7500  val_ce(head_a, multi-batch)=0.9134  (uniform=5.5452, below_uniform=True)
+  step   7800/24000  ce_a(next)=1.2687  ce_g(prev)=0.0142  lr=3.96e-04  900.2s
+    [val] step   8000  val_ce(head_a, multi-batch)=0.9070  (uniform=5.5452, below_uniform=True)
+  step   8400/24000  ce_a(next)=1.2434  ce_g(prev)=0.0152  lr=3.81e-04  969.2s
+    [val] step   8500  val_ce(head_a, multi-batch)=0.9034  (uniform=5.5452, below_uniform=True)
+  step   9000/24000  ce_a(next)=1.2997  ce_g(prev)=0.0144  lr=3.65e-04  1038.2s
+    [val] step   9000  val_ce(head_a, multi-batch)=0.8927  (uniform=5.5452, below_uniform=True)
+    [val] step   9500  val_ce(head_a, multi-batch)=0.8860  (uniform=5.5452, below_uniform=True)
+  step   9600/24000  ce_a(next)=1.2542  ce_g(prev)=0.0174  lr=3.48e-04  1108.5s
+    [val] step  10000  val_ce(head_a, multi-batch)=0.8785  (uniform=5.5452, below_uniform=True)
+  step  10200/24000  ce_a(next)=1.2131  ce_g(prev)=0.0161  lr=3.31e-04  1177.7s
+    [val] step  10500  val_ce(head_a, multi-batch)=0.8727  (uniform=5.5452, below_uniform=True)
+  step  10800/24000  ce_a(next)=1.2592  ce_g(prev)=0.0155  lr=3.13e-04  1246.7s
+    [val] step  11000  val_ce(head_a, multi-batch)=0.8616  (uniform=5.5452, below_uniform=True)
+  step  11400/24000  ce_a(next)=1.2491  ce_g(prev)=0.0160  lr=2.96e-04  1315.6s
+    [val] step  11500  val_ce(head_a, multi-batch)=0.8573  (uniform=5.5452, below_uniform=True)
+  step  12000/24000  ce_a(next)=1.1084  ce_g(prev)=0.0164  lr=2.78e-04  1384.6s
+    [val] step  12000  val_ce(head_a, multi-batch)=0.8562  (uniform=5.5452, below_uniform=True)
+    [val] step  12500  val_ce(head_a, multi-batch)=0.8487  (uniform=5.5452, below_uniform=True)
+  step  12600/24000  ce_a(next)=1.1673  ce_g(prev)=0.0162  lr=2.60e-04  1454.6s
+    [val] step  13000  val_ce(head_a, multi-batch)=0.8451  (uniform=5.5452, below_uniform=True)
+  step  13200/24000  ce_a(next)=1.1571  ce_g(prev)=0.0130  lr=2.42e-04  1523.7s
+    [val] step  13500  val_ce(head_a, multi-batch)=0.8360  (uniform=5.5452, below_uniform=True)
+  step  13800/24000  ce_a(next)=1.0546  ce_g(prev)=0.0154  lr=2.25e-04  1592.8s
+    [val] step  14000  val_ce(head_a, multi-batch)=0.8323  (uniform=5.5452, below_uniform=True)
+  step  14400/24000  ce_a(next)=1.1059  ce_g(prev)=0.0158  lr=2.08e-04  1661.7s
+    [val] step  14500  val_ce(head_a, multi-batch)=0.8315  (uniform=5.5452, below_uniform=True)
+  step  15000/24000  ce_a(next)=1.1546  ce_g(prev)=0.0155  lr=1.91e-04  1730.8s
+    [val] step  15000  val_ce(head_a, multi-batch)=0.8233  (uniform=5.5452, below_uniform=True)
+    [val] step  15500  val_ce(head_a, multi-batch)=0.8203  (uniform=5.5452, below_uniform=True)
+  step  15600/24000  ce_a(next)=1.0728  ce_g(prev)=0.0141  lr=1.75e-04  1801.9s
+    [val] step  16000  val_ce(head_a, multi-batch)=0.8155  (uniform=5.5452, below_uniform=True)
+  step  16200/24000  ce_a(next)=1.1381  ce_g(prev)=0.0146  lr=1.59e-04  1871.0s
+    [val] step  16500  val_ce(head_a, multi-batch)=0.8119  (uniform=5.5452, below_uniform=True)
+  step  16800/24000  ce_a(next)=1.0928  ce_g(prev)=0.0143  lr=1.44e-04  1940.0s
+    [val] step  17000  val_ce(head_a, multi-batch)=0.8085  (uniform=5.5452, below_uniform=True)
+  step  17400/24000  ce_a(next)=1.1099  ce_g(prev)=0.0127  lr=1.30e-04  2009.1s
+    [val] step  17500  val_ce(head_a, multi-batch)=0.8041  (uniform=5.5452, below_uniform=True)
+  step  18000/24000  ce_a(next)=1.1374  ce_g(prev)=0.0145  lr=1.17e-04  2078.0s
+    [val] step  18000  val_ce(head_a, multi-batch)=0.8019  (uniform=5.5452, below_uniform=True)
+    [val] step  18500  val_ce(head_a, multi-batch)=0.7974  (uniform=5.5452, below_uniform=True)
+  step  18600/24000  ce_a(next)=1.0909  ce_g(prev)=0.0164  lr=1.05e-04  2148.3s
+    [val] step  19000  val_ce(head_a, multi-batch)=0.7952  (uniform=5.5452, below_uniform=True)
+  step  19200/24000  ce_a(next)=1.0804  ce_g(prev)=0.0144  lr=9.37e-05  2217.5s
+    [val] step  19500  val_ce(head_a, multi-batch)=0.7931  (uniform=5.5452, below_uniform=True)
+  step  19800/24000  ce_a(next)=1.1118  ce_g(prev)=0.0140  lr=8.37e-05  2286.6s
+    [val] step  20000  val_ce(head_a, multi-batch)=0.7889  (uniform=5.5452, below_uniform=True)
+  step  20400/24000  ce_a(next)=0.9760  ce_g(prev)=0.0147  lr=7.49e-05  2355.6s
+    [val] step  20500  val_ce(head_a, multi-batch)=0.7874  (uniform=5.5452, below_uniform=True)
+  step  21000/24000  ce_a(next)=1.0954  ce_g(prev)=0.0136  lr=6.74e-05  2424.5s
+    [val] step  21000  val_ce(head_a, multi-batch)=0.7863  (uniform=5.5452, below_uniform=True)
+    [val] step  21500  val_ce(head_a, multi-batch)=0.7849  (uniform=5.5452, below_uniform=True)
+  step  21600/24000  ce_a(next)=1.0734  ce_g(prev)=0.0144  lr=6.12e-05  2494.6s
+    [val] step  22000  val_ce(head_a, multi-batch)=0.7828  (uniform=5.5452, below_uniform=True)
+  step  22200/24000  ce_a(next)=1.0758  ce_g(prev)=0.0142  lr=5.63e-05  2563.5s
+    [val] step  22500  val_ce(head_a, multi-batch)=0.7814  (uniform=5.5452, below_uniform=True)
+  step  22800/24000  ce_a(next)=0.9919  ce_g(prev)=0.0135  lr=5.28e-05  2632.4s
+    [val] step  23000  val_ce(head_a, multi-batch)=0.7803  (uniform=5.5452, below_uniform=True)
+  step  23400/24000  ce_a(next)=1.0814  ce_g(prev)=0.0159  lr=5.07e-05  2701.4s
+    [val] step  23500  val_ce(head_a, multi-batch)=0.7778  (uniform=5.5452, below_uniform=True)
+  step  23999/24000  ce_a(next)=1.0749  ce_g(prev)=0.0132  lr=5.00e-05  2770.3s
+    [val] step  23999  val_ce(head_a, multi-batch)=0.7770  (uniform=5.5452, below_uniform=True)
+
+(b) trained leak-free: ce_a 5.6147 -> 1.0749  FINAL val_ce=0.7786  below_uniform=True  competent(<=4.0)=True  wall=2773.8s
+ckpt saved: /workspace/omega-scale/omega_cdv2_d768x2.pt  sha256=6438f16293130329
+learned gate g* = [gB=-0.1134, gA=3.3736, gG=-0.9487]
+--- held-out TEST CE (LEAK-FREE, well-trained, nats/byte) ---
+  base 3.097779 | fixed_AmG 3.281260 | a_only 1.082320 | GATED 3.278479 | uniform 5.545177
+structured: A-wire gain real 2.0155 vs shuf -2.5655 -> structured(>1.5x)=True
+
+  >>> CLOSURE FALSIFIER: GATED<base=False  AND  GATED<=a_only=False  -> closure_HOLDS=False
+
+  gen: gated entropy=2.534 distinct=0.102 ws=0.043 coherent=True
+  [GATED] 'льным преслужительным в преслужительным праславянским праслужительным преслужительным преслужительным отношениям, преслужительным пресл'
+[collect] gate_seq=20000000B  test_seq=20000000B  max_pos=12000
+[collect] gate N=12000  test N=12000  (8.4s)
+[fit] full_AG  g* = [gB=-0.0976, gA=3.3561, gG=-0.9555]
+[fit] min_learned g* = [gB=0.0386, gA=0.8940, gG=0.0000]  (gG pinned 0)
+
+=== RUNG d768x2 OH1 K-form sweep (frozen leak-free, nats/byte) ===
+  form                gB        gA        gG    test_CE
+  base            1.0000    0.0000    0.0000   3.097779
+  a_only          1.0000    0.6000    0.0000   1.082053
+  fixed_AmG       1.0000    0.6000   -0.6000   3.309472
+  full_AG        -0.0976    3.3561   -0.9555   3.322435
+  min_learned     0.0386    0.8940    0.0000   0.824209  ★OH1
+  min_fixed       1.0000    1.0000    0.0000   1.051372
+  uniform                                      5.545177
+  OH1: min_learned(0.824209) <= a_only(1.082053)=True  AND  < base(3.097779)=True  ->  min_learned_HOLDS=True
+  Δ-vs-base=+2.2736  Δ-vs-a_only=+0.2578
+  [checkpoint] 5/5 rungs -> /workspace/omega-scale/omega_scale_ladder_results.json
+
+======================================================================
+=== OMEGA SCALE LADDER SUMMARY ===
+  rung         d   val_ce     base   a_only  min_learn   Δvbase  Δva_only  HOLDS
+  d384       384   0.8367   3.0978   1.1639     0.9030  +2.1948   +0.2610   True
+  d512       512   0.8224   3.0978   1.1356     0.8701  +2.2277   +0.2655   True
+  d768       768   0.8383   3.0978   1.1612     0.8924  +2.2054   +0.2688   True
+  d1024     1024   0.8575   3.0978   1.2001     0.9211  +2.1766   +0.2790   True
+  d768x2     768   0.7786   3.0978   1.0821     0.8242  +2.2736   +0.2578   True
+  >>> min_learned_HOLDS across ALL 5 rungs = True
+results -> /workspace/omega-scale/omega_scale_ladder_results.json
