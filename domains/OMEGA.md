@@ -145,6 +145,51 @@ bus, the literal Ω blueprint, a baseline probe). NEITHER is a load/serializer p
 load is SOLVED; it is a substrate-architecture choice. NO upstream hexa-lang patch needed (serializer
 is anima-side, bridged). verdict `.verdicts/omega-engine/F-OMEGA-CLM-TRANSFER.txt` (p7/g63 verbatim).
 
+## Extensions (beyond finalized paper)
+
+> Post-closure follow-ups that do NOT reopen the finalized OMEGA paper (a_paper_only_at_closure).
+> Each is its own falsifier + verdict, scoped honestly (a_scale_honest_scope).
+
+### OE1 — conv-native A/G dual head CLOSES the loop (closure is STRUCTURE-transferable, not CDV2-specific) — 2026-06-04
+
+🟢 **F-OE1-CONV-NATIVE = CLOSURE HOLDS** (Lane-G/Lane-P; torch research-proxy of CLMConvMoE,
+run $0 on pool host `summer` GPU — NO pod, NO cost). Settles the OΩ6 deferred "minimal full-conv
+path (i)": OΩ6 found the REAL .clm closure is substrate-EMPTY only because the shipped conv .clm is
+**SINGLE-head** (one `self.readout`, no A/G) — so the min-gate collapsed to a temperature rescale.
+OE1 grafts the **minimal native A/G dual head** onto the EXACT production conv blocks
+(`CausalDilatedConv1d` · `TrunkLayer` · `MoEConvLayer` from `CLM/model/model.py`) + a 2nd `head_g`
+(prev-byte), trains it competent + leak-free (6.95M, d384×L6×E8, 12000 step, same 400MB corpus
+sha dc1754b2; **leak self-test 0.000**, final val_ce **0.8884** ≪ uniform 5.5452, competent), and
+re-runs the IDENTICAL OH1/OΩ1 falsifier on the conv model's OWN A-head (NO external CDV2).
+
+Held-out TEST CE (conv-native, leak-free, nats/byte) — VERBATIM:
+`base 3.0978 | fixed_AmG 3.5203 | a_only 1.3032 | full_AG 4.1988 | min_learned 0.9760 | uniform 5.5452`
+**FALSIFIER: min_learned 0.9760 ≤ a_only 1.3032 AND < base 3.0978 → CLOSURE HOLDS = TRUE.**
+
+**Replacement-check (OΩ1-style):** A_standalone(softmax(A) alone) **0.976051** vs min_learned
+**0.976048**, |Δ|=**2.9e-6** → **RULING_REPLACEMENT=TRUE** — the trained conv A-head SUPPLANTS the
+weak unigram base (min-gate even pushes gB→-0.0356, gA→1.017), IDENTICAL in character to CDV2's
+OΩ1 ruling (honest caveat: base is a deliberately weak unigram, same as OΩ1). Structured-coupling
+real **1.7946** vs shuf **-1.7967** → structured=TRUE (the A-wire carries genuine context).
+
+**conv-vs-CDV2 TRANSFER:** the closure is a **TRANSFERABLE property of the A/G dual-head STRUCTURE,
+NOT CDV2-transformer-specific.**
+
+| trunk | base | a_only | min_learned | HOLDS | replacement |
+|-------|------|--------|-------------|-------|-------------|
+| CDV2 d512 (OΩ4/#1801) | 3.0978 | 1.1356 | **0.8701** | ✅ | ✅ |
+| CONV-native d384 (OE1) | 3.0978 | 1.3032 | **0.9760** | ✅ | ✅ |
+
+Same falsifier verdict, same replacement ruling; the conv A-head is marginally weaker (0.976 vs
+0.870) but the QUALITATIVE closure is identical. ⇒ OΩ6's "partial transfer" was a SINGLE-HEAD
+*architecture* limitation of the shipped .clm, NOT a conv-*substrate* limitation — grafting the
+dual head onto conv closes the loop natively (validates OΩ6's "(i)" as the correct primary fix).
+SCOPE (a_scale_honest_scope · a_train_flame_forge): single d384 rung, TORCH research-proxy (faithful
+CLMConvMoE blocks), NOT the production flame+forge `.clm`; settles the ARCHITECTURE-transfer question,
+not a scale law. harness `UNIVERSE/omega_conv_native.py` · verdict
+`.verdicts/omega-engine/F-OE1-CONV-NATIVE.txt` · ckpt `.fire-recover/oe1-conv-native/omega_conv_native.pt`
+(sha 3e8be574…, HF PRIVATE) · run $0 on summer GPU (a_fire_autonomous · a_cpu_local_no_waiter).
+
 🟢 **OMEGA OΩ4+OΩ5 — OH1 SCALE LADDER, min-gate HOLDS at every scale** (Lane-G / GPU, one H100
 SXM, 5 rungs sequential). a_scale_honest_scope demanded a ladder curve (a single d512 point is
 INCOMPLETE). Trained leak-free (causal_ca=True, self-test 0.000 every rung) competent CDV2
