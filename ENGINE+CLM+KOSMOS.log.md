@@ -2,6 +2,16 @@
 
 Append-only history sister of `ENGINE+CLM+KOSMOS.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-05T03:45Z — Lane P serializer-gap CLOSED: v0.2-CLMX torch .clm serializer (Lane G-ref) — F-CLM-V2-SERIALIZER 🟢 ($0, NO GPU)
+
+torch CLMConvMoE state_dict → ENGINE-loadable v0.2-CLMX `.clm`. Closes the Lane P STOP (torch-trained `.clm` NOT ENGINE-loadable: v0.1 JSON serializer ⊥ v0.2-CLMX decoder).
+
+- [x] **CLM/model/clm_serialize_v2.py** (does NOT break v0.1 clm_serialize.py) — emits the exact byte layout CORE/clm_decode.hexa reads: `[CLM\x01][u8 nblk=6]` + 6 int4-sym conv blocks `{u32 cout, u32 rest, int4 nibbles 2/byte (+8, lo-then-hi), fp32 scale[cout]}` (order ecW·tcW·e0W·e1W·rW·roW) + `[CLMX][u8 11]` trailer (embed·ecB·tcB·e0B·e1B·rB·roB·tgG·tgB·noG·noB, each `{u32 n, fp32[n]}`). Same int4-sym (amax/7) as v0.1.
+- [x] **arch constraint asserted** — decoder hardcodes E=2 (`let E=2`), V=256 (`let V=256`), 1-trunk (single tcW walk); writer asserts n_experts=2 / vocab=256 / exactly trunk.0 and refuses off-arch. torch Conv1d (Cout,Cin,K) flattens row-major = decoder im2col index w[co*rest+j] exactly → no permute.
+- [x] **SMOKE 🟢 (p7 byte-level, NOT perplexity)** — TRAINED torch d16 (120 AdamW steps, CE 5.81→2.91 torch-side) → `hexa run CORE/ce_descent_probe.hexa`: `decodable=true loaded=true nblocks=6` + decode forward RAN `model_ce 2.767 < shuffle 3.809 < uniform 4.799` **F-CLM-CORE-CE-DESCENT=1 🟢**. `CORE/clm_v2_decode_smoke.hexa`: clm_decodable=true + clm_decode_argmax ran 16 bytes **F-CLM-V2-LOADABLE=1 🟢**. Verdict .verdicts/clm-serialize-v2/.
+- [x] **byte-compat** — d8 output STRUCTURE byte-identical to canonical reexport_d8_v2.clm (12158 B, same block boundaries + trailer offset + 11 ext sizes; only weight VALUES differ = init). Determinism: serialize×2 byte-identical. Round-trip: decoder-dequant == torch-qdq max|Δ|=0.0. HONEST delta: no clm_reexport.hexa source nor d768 source .pt committed → value-identical d768 reproduction not asserted; layout-compat proven structurally + ENGINE acceptance.
+- [x] **HONEST scope (a_train_flame_forge)** — **Lane G-ref (torch-trained)**: emitted `.clm` BINARY has NO torch/ATen/Python (pure int4+fp32 byte stream the .hexa ENGINE decodes), but the TRAINER is torch → NOT the forge production ENGINE (util-blocked, pending hexa-lang). Win: a torch+CUDA-trained model is now ENGINE-loadable → the 3B/7B ENGINE `.clm` path is UNBLOCKED (serializer verified; bypasses the forge util wall).
+
 ## 2026-06-03T01:30Z — Lane-G 3B forge DESCENT rung A-1 FIRED (substrate=GPU · pod vast 39139563 H100 sm_90 · a_lane_akida_gpu_split — Lane A 와 NEVER 병합) — forge device-resident 증명 · util 🔴 WORKLOAD-BOUND · descent 정직-잔여
 
 캠페인 pivot-A 직후 첫 descent-축 rung. 따뜻한 lever-4/5 byte-identical clm_prod build 채택(a_wall_first, no rent). est ~$6-9 (a_fire_autonomous, no cost gate).

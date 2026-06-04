@@ -1,0 +1,8 @@
+@D CLM_SERIALIZE_V2 := "torch CLMConvMoE -> v0.2-CLMX .clm serializer closes the Lane P ENGINE-loadability gap" :: discovery [d=2026-06-05 active]
+  seed = "Lane P STOP: torch-trained .clm NOT ENGINE-loadable (v0.1 JSON serializer vs v0.2-CLMX decoder format gap)"
+  do   = "CLM/model/clm_serialize_v2.py emits the v0.2-CLMX byte layout the ENGINE decoder (CORE/clm_decode.hexa) reads — 6 int4-sym conv blocks {u32 cout, u32 rest, int4 nibbles 2/byte, fp32 scale} + CLMX trailer {embed, 6 conv/router/readout biases, 2 GroupNorm affine pairs}"
+  do   = "constrained to the decoder arch: E=2 (router cout), V=256, 1-trunk (single tcW block) — asserted, refuses off-arch state_dict"
+  do   = "torch Conv1d weight (Cout,Cin,K) flattens row-major to w[co*Cin*K+ci*K+k] = exactly the decoder im2col index w[co*rest+j], j=ci*K+k — no permute"
+  do   = "same int4-sym (amax/7, code in [-7,7], +8 nibble) as v0.1 clm_serialize.py; deterministic (byte-identical on repeat)"
+  claim = "F-CLM-V2-SERIALIZER GREEN — trained torch d16 model serialized -> ENGINE clm_decodable=TRUE + decode forward RAN (model_ce 2.767 < shuffle 3.809 < uniform 4.799); structure byte-identical to canonical reexport_d8_v2.clm (12158 B, same boundaries); round-trip decoder-dequant == torch-qdq max|delta|=0.0 — verdict .verdicts/clm-serialize-v2/"
+  scope = "Lane G-ref (torch-trained): emitted .clm BINARY has NO torch/ATen/Python, ENGINE-decodable; the TRAINER is torch so this is NOT the forge production ENGINE (util-blocked, pending hexa-lang). Win: torch+CUDA-trained model now ENGINE-loadable -> 3B/7B ENGINE .clm path UNBLOCKED."

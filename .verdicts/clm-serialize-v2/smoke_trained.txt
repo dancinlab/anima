@@ -1,0 +1,35 @@
+=== clm_serialize_v2.py — ENGINE-loadability SMOKE (p7 byte-level, NOT perplexity) ===
+
+Lane G-ref (torch-trained) serializer verdict. Produced by deterministic
+`hexa run` (p7-conformant; hexa verify CLI broken on host per prior verdicts),
+transcribed VERBATIM. CE is ONE axis (model_ce < uniform AND < shuffle), not
+perplexity-as-truth.
+
+Writer: CLM/model/clm_serialize_v2.py (torch CLMConvMoE state_dict -> v0.2-CLMX .clm)
+Decoder: CORE/clm_decode.hexa (E=2, V=256, 1-trunk hardcoded)
+
+----------------------------------------------------------------------------
+PART A — TRAINED torch model (d=16, 120 AdamW steps, CE 5.81 -> 2.91 torch-side)
+----------------------------------------------------------------------------
+`hexa run CORE/ce_descent_probe.hexa` (CE_CLM=smoke_trained_d16_v2.clm) — VERBATIM:
+
+  === AXIS-2 CORE-native CE-descent (decode forward WIRED) ===
+  clm=/Users/mini/dancinlab/anima/.claude/worktrees/agent-ade11476e91b217e8/state/laneg_d768_recover/smoke_trained_d16_v2.clm
+  corpus=/Users/mini/dancinlab/anima/.claude/worktrees/agent-ade11476e91b217e8/CORE/testdata/clm_mid_5lang_c4.txt
+  [admit] valid=true decodable=true loaded=true nblocks=6
+  [admit] reason=valid v0.2 .clm admitted + DECODABLE (CLMX trailer present, nblocks=6); decode forward WIRED → clm backend loaded
+  [CE] d=16 E=2 V=256 K=3 windows=16
+  [CE] model_ce   = 2.76676
+  [CE] shuffle_ce = 3.80927
+  [CE] uniform_ce = 4.79906
+  [CE] model<uniform = true  model<shuffle = true
+  
+  F-CLM-CORE-CE-DESCENT (model_ce < uniform AND < shuffle) = 1 🟢
+
+`hexa run CORE/clm_v2_decode_smoke.hexa` (decode_argmax forward) — VERBATIM:
+
+  === clm_serialize_v2 ENGINE-loadability smoke ===
+  clm=/Users/mini/dancinlab/anima/.claude/worktrees/agent-ade11476e91b217e8/state/laneg_d768_recover/smoke_trained_d16_v2.clm
+  [decodable] clm_decodable=true
+  [decode forward] ok=true gen_bytes=16
+  F-CLM-V2-LOADABLE (decodable AND forward ran) = 1 🟢
