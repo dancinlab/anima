@@ -221,7 +221,8 @@ distinct from "도구가 뭔지 안다" (knows tools).
    held-out key-binding** at 18M. Verdict `.verdicts/tooluse-argcopy/F-TOOLUSE-ARGCOPY.txt`.
    Scope (a_scale_honest_scope): TOY 18M ONLY; mid/7B transfer UNVERIFIED.
    Next lever = an **explicit copy-attention / pointer-network head** (or verbatim-echo
-   inductive bias), NOT more copy-shaped demos.
+   inductive bias), NOT more copy-shaped demos — TWO levers ran in parallel: an explicit
+   pointer head (4c, Lever A 🟢) and a from-scratch scale probe of fork (ii) (4d, Lever B 🟠).
 4c. **COPY-ATTENTION / POINTER head — the ① 완성도 lever (structural fix of 4b).**
    ✅ **DONE (2026-06-05, Lane G GPU · pool host aiden RTX 5070 · base 18M) → 🟢 GREEN.**
    Bolted a **gated pointer-attention copy head** onto the VERBATIM #1835
@@ -251,11 +252,39 @@ distinct from "도구가 뭔지 안다" (knows tools).
    `dancinlab/anima-agent-lane-argcopy-corpus`.
    Scope (a_scale_honest_scope): TOY 18M ONLY; mid/7B transfer UNVERIFIED.
    Open: wire the copy head into the `CORE/clm_decode.hexa` runtime decode (§5 mouth slot).
-5. GATE: FABDROP pass + both mirrors FAIL is **MET** (arm-2), and the 🔴 key-binding
-   residual (step 4b) is now **CLOSED 🟢** by the copy head (step 4c): correct_call
-   0/36 → 35/36, end-to-end grounding 0/36 → 35/36. The 7B fire (rung-2) GATE
-   "re-verify correct_call > 0" is **MET at toy scale (18M)**. Remaining before a full
-   rung-2 fire: (i) wire the copy head into the runtime `CORE/clm_decode.hexa` mouth
-   slot (eval-only consumer today), then (ii) a 7B copy-probe to test pointer-vs-scale
-   (does induction-head copying at scale match the explicit pointer?). a_scale_honest_scope:
-   the 18M green does NOT promote to 7B — re-verify on rung-2.
+4d. **SCALE-LADDER probe (Lever B / fork ii) — verbatim key-copy EMERGES with scale.**
+   ✅ **DONE (2026-06-05, Lane G GPU · POOL host aiden RTX 5070 · $0, NOT a pod) → 🟠 AMBER.**
+   The complement of 4c: instead of an explicit pointer head, does the PLAIN byte-CLM
+   (no copy head) learn verbatim held-out copy purely from SCALE? Same argcopy corpus
+   (sha256 ff137ad8) + same steps/batch/block/lr (compute-matched); vary SIZE only, every
+   rung trained FROM SCRATCH (the 18M base can't seed a larger model). Driver
+   `training/tooluse_copy_scale.py`. Pre-registered **F-COPY-SCALE** = the {size →
+   correct_call} curve on the SAME 36 held-out PBnn keys. **VERBATIM curve:**
+   5.52M=**0/36** · 18.13M=**0/36** · 42.54M=**0/36** · 82.69M=**2/36** (0.0556) ·
+   142.51M=**7/36** (0.1944). `rising_monotone=True`, `reaches_bar(≥0.5)=False`,
+   `randinit_all_zero=True` (every same-size random-init mirror scored 0 — real, not leak).
+   **FINDING:** verbatim held-out arg-copy is **SCALE-EMERGENT** — absent below ~80M
+   (the #1835 18M result was correct AND correctly scoped toy-only), first non-zero at
+   82.69M, ~3.5× rise 82.69M→142.51M. At 142.5M the plain LM verbatim-copied 7 unseen
+   keys (PB01/02/05/07/17/31/32) → real value resolved end-to-end (grounding=0.1944),
+   while smaller rungs still invent a training-shaped key (PB31→`fact_lookup PB3`).
+   call_rate stays ~1.0 throughout — what scales is the COPY, not the calling.
+   Scope (a_scale_honest_scope): POOL ladder CAPS at consumer VRAM (r4 peak 10.54G under
+   the 11.0G cap; r5 d1024 would exceed it). A TRUE 7B was **NOT** run on the pool — 0.1944
+   is a 142.5M result, NOT a 7B result. Verdict `.verdicts/tooluse-copy-scale/F-COPY-SCALE.txt`.
+   ckpts r3/r4 PRIVATE (`dancinlab/anima-clm-tooluse-copy-scale-r{3,4}-byte-{83,142}m`).
+   **RECOMMENDATION: a true-7B-on-H100 confirm is the next rung** (rising-toward-0.5 trend);
+   the explicit pointer head (4c) ALREADY clears the bar at 18M (35/36), so the H100-7B
+   probe answers "does scale alone match the pointer, or is the pointer the cheaper fix?"
+5. GATE: FABDROP pass + both mirrors FAIL is **MET** (arm-2). The 🔴 key-binding
+   residual (step 4b) now has TWO resolutions: **CLOSED 🟢 by the copy head (4c)** —
+   correct_call 0/36 → **35/36** at toy 18M with a +49,665-param pointer — and
+   **🟠 SCALE-EMERGENT (4d)** — the plain LM rises 0 → **7/36** across a 5.52M→142.5M pool
+   ladder with NO head. So the residual is NOT architecturally impossible: an explicit
+   pointer fixes it cheaply at 18M, AND scale fixes it on its own (trending). The 7B fire
+   (rung-2) GATE "re-verify correct_call > 0" is **MET**. Remaining before a full rung-2
+   fire: (i) wire the copy head into the runtime `CORE/clm_decode.hexa` mouth slot
+   (eval-only today), then (ii) a true-7B-on-H100 copy-probe (pointer-vs-scale: does
+   induction-head copying at scale match the explicit pointer, or is the pointer the
+   cheaper path?). a_scale_honest_scope: neither the 18M green (4c) nor the 142.5M amber
+   (4d) promotes to 7B — re-verify on rung-2.

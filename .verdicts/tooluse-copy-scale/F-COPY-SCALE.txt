@@ -1,0 +1,17 @@
+[r0_d256L4] CURVE-POINT params=5.52M correct_call=0.0 (0/36) call=0.9167 grounding=0.0 randinit_cc=0.0 peak_vram=1.16G
+[r1_d384L6] CURVE-POINT params=18.13M correct_call=0.0 (0/36) call=1.0 grounding=0.0 randinit_cc=0.0 peak_vram=2.45G
+[r2_d512L8] CURVE-POINT params=42.54M correct_call=0.0 (0/36) call=1.0 grounding=0.0 randinit_cc=0.0 peak_vram=4.61G
+[r3_d640L10] CURVE-POINT params=82.69M correct_call=0.0556 (2/36) call=0.9722 grounding=0.0556 randinit_cc=0.0 peak_vram=7.21G
+[r4_d768L12] CURVE-POINT params=142.51M correct_call=0.1944 (7/36) call=1.0 grounding=0.1944 randinit_cc=0.0 peak_vram=10.54G
+================= F-COPY-SCALE LADDER (verbatim) =================
+baseline #1835: 18M continue-train correct_call=0.0 (0/36)
+  r0_d256L4    params=  5.52M  correct_call=0.0000 (0/36)  call=0.92  grounding=0.0000  randinit_cc=0.0000  peak_vram=1.16G
+  r1_d384L6    params= 18.13M  correct_call=0.0000 (0/36)  call=1.00  grounding=0.0000  randinit_cc=0.0000  peak_vram=2.45G
+  r2_d512L8    params= 42.54M  correct_call=0.0000 (0/36)  call=1.00  grounding=0.0000  randinit_cc=0.0000  peak_vram=4.61G
+  r3_d640L10   params= 82.69M  correct_call=0.0556 (2/36)  call=0.97  grounding=0.0556  randinit_cc=0.0000  peak_vram=7.21G
+  r4_d768L12   params=142.51M  correct_call=0.1944 (7/36)  call=1.00  grounding=0.1944  randinit_cc=0.0000  peak_vram=10.54G
+randinit_all_zero (anti-Goodhart): True
+max_correct_call=0.1944  rising_monotone=True  reaches_bar(>= 0.5)=False
+RULING: AMBER
+🟠 COPY EMERGENCE TRENDING — correct_call rises monotonically with scale to 0.1944 but stays < 0.5 at the pool cap (params 142.51M). A true 7B was NOT run on the pool (consumer VRAM); the rising trend RECOMMENDS a true-7B-on-H100 confirm as the next rung. NOT a 7B result.
+recommend_true_7b_h100=True
