@@ -21,3 +21,14 @@
   from seed) → `hexa cc --regen` regenerated hexa_cc.c from current codegen.hexa (now has the
   builtins) → rebuilt transpiler+driver. Single consistent source tree = /root/hxsrc.
 - corpus shipped to /workspace/savant_5lang_starter.txt (585060B sha 1e772626).
+
+## 2026-06-04 — rung0 build blocker #5 (forge dispatch impls) RESOLVED
+- After the regen fixed the transpiler ABI, clm_prod LINK-failed: undefined `hexa_forge_dispatch_*`
+  for db_colsum/int4_quant/int4_quant_bwd/residual_add/gelu/groupnorm/adamw_keepmv. These 7
+  HEXA-FUSION-L1 forge dispatch wrappers are DECLARED in runtime.h but their C bodies are NOT
+  integrated into runtime.c at the local commit (they live as a DRAFT `drafts/lever_a_fragment.c`).
+  ROOT: local hexa-lang commit predates the forge-dispatch integration the prior fires used.
+- FIX: extracted the 7 missing fn pairs (14 fns: hexa_ wrapper + builtin) from lever_a_fragment.c
+  into self/forge/forge_extra.c, #included after forge_tier_v1.c in runtime.c (im2col/col2im/adamw
+  already present → only the 7 net-new added, no redefinition). runtime.c compiles clean (rc=0).
+  rebuilt hexa driver → clm_prod build.
