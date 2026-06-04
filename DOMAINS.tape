@@ -61,3 +61,4 @@
 @D PERSONA := "domains/PERSONA.md" :: domain [active]
 @D SNS := "domains/SNS.md" :: domain [active]
 @D CORPUS := "domains/CORPUS.md" :: domain [active]
+@D VISION := "domains/VISION.md" :: domain [active]
