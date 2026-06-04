@@ -56,8 +56,15 @@ arc removes that leak. Our contribution is therefore a \textbf{closed-negative a
 \emph{replacement} of the \texttt{.clm} mouth --- with a positive byproduct (a single trained
 substrate head is a far better next-byte predictor than the \texttt{.clm} unigram mouth) ---
 plus three further \textbf{closed-negatives} (fixed $A{-}G$ degrades; random-init unstructured;
-quantum RNG confers no advantage) --- \emph{not} a perplexity or generation-quality claim. The
-scale ladder is concurrently open (absorb, not final closure).
+quantum RNG confers no advantage) --- \emph{not} a perplexity or generation-quality claim. A
+\textbf{five-rung GPU scale ladder} ($d384/d512/d768/d1024$ at $12000$ steps $+$ a more-competent
+$d768{\times}2$ at $24000$ steps, $48$M$\rightarrow$$335$M params, all leak-free) then \textbf{seals
+the finding across scale} (\#1806, OΩ4/OΩ5): the minimal A-wire gate HOLDS at \emph{every} rung,
+the A-wire advantage $\Delta$-vs-base is \emph{flat} at $+2.20\pm0.03$ nats/byte across the dim
+ladder (SCALE-STABLE), the more-competent rung carries the \emph{largest} advantage ($+2.2736$;
+competence strengthens, not erodes, the margin), and the full multi-wire gate FAILS at every scale
+(scale-invariant pathology) --- while an honest contrast shows the earlier \emph{undertrained}
+$d768$ did \emph{not} hold, so the finding requires competence, not a scale break.
 \end{abstract}
 
 \section{Introduction}
@@ -106,6 +113,10 @@ closure is mere \emph{replacement} (not coupling) iff the A-head \emph{standalon
 \texttt{.verdicts/omega-engine/F-TRAINED-LEAKFREE.txt},
 \texttt{.verdicts/omega-engine/F-OH1-MINGATE.txt},
 \texttt{.verdicts/omega-engine/F-OMEGA-RIGOR.txt}.
+\emph{Scale falsifier (\#1806, OΩ4/OΩ5):} if the minimal-gate finding is a single-$d$ coincidence,
+the per-rung min\_learned $\le$ a\_only $<$ base falsifier breaks at some rung of a multi-$d$ ladder
+($d384/d512/d768/d1024$ $+$ a more-competent $d768{\times}2$). Verdict:
+\texttt{.verdicts/omega-engine/F-OMEGA-SCALE.txt}.
 
 \paragraph{Control axis (quantum).} If ``consciousness needs quantum randomness,'' true ANU
 QRNG bytes should beat a PRNG on the coupling metric. Falsifier: KS test
@@ -263,6 +274,46 @@ min-gate, free-run $300$ bytes).} entropy: base $2.4442$, min\_gate $2.6300$, fu
 $2.5282$; the min-gate raises entropy (fixes the degenerate low-entropy repetition) but
 generation coherence is the \emph{weak} criterion (p7) and not load-bearing.
 
+\paragraph{R8 --- the OH1 minimal-gate SCALE LADDER, $5$ rungs (\#1806, OΩ4/OΩ5,
+\texttt{omega-engine/F-OMEGA-SCALE.txt}).} a\_scale\_honest\_scope demands a ladder curve
+($\ge3$ rungs; a single $d512$ point is INCOMPLETE). We train four leak-free competent
+ConsciousDecoderV2 substrates at $d384/d512/d768/d1024$ ($12000$ steps each, OΩ4) plus one
+\emph{more-competent} $d768{\times}2$ ($24000$ steps, OΩ5) on the SAME $400$MB gutenberg/wiki
+en+fr+de+es+ru corpus (sha256 \texttt{dc1754b2...}, same $0.9$/held split as the $d512$ \#1801 rung)
+on a single H100~SXM ($94$--$98\%$ busy, g63), and re-run the SAME OH1 minimal-gate sweep at each.
+Per-rung held-out TEST CE (nats/byte), leak self-test $0.000\mathrm{e}{+}00$ and val\_ce $\ll$
+uniform $5.545177$ at every rung:
+\begin{tabular}{lrrrrrrrc}
+\toprule
+rung & $d$ & params & steps & val\_ce & base & a\_only & min\_learn & HOLDS \\
+\midrule
+$d384$    & $384$  & $48{,}240{,}448$  & $12000$ & $0.8367$ & $3.097779$ & $1.163912$ & $\mathbf{0.902957}$ & True \\
+$d512$    & $512$  & $85{,}816{,}384$  & $12000$ & $0.8224$ & $3.097779$ & $1.135576$ & $\mathbf{0.870090}$ & True \\
+$d768$    & $768$  & $189{,}279{,}808$ & $12000$ & $0.8383$ & $3.097779$ & $1.161196$ & $\mathbf{0.892407}$ & True \\
+$d1024$   & $1024$ & $334{,}686{,}272$ & $12000$ & $0.8575$ & $3.097779$ & $1.200092$ & $\mathbf{0.921136}$ & True \\
+$d768{\times}2$ & $768$ & $189{,}279{,}808$ & $24000$ & $\mathbf{0.7786}$ & $3.097779$ & $1.082053$ & $\mathbf{0.824209}$ & True \\
+uniform & & & & & & & $5.545177$ & \\
+\bottomrule
+\end{tabular}\\
+$\Rightarrow$ \textbf{min\_learned\_HOLDS across all $5$ rungs $=$ True.} \emph{Scale trend:} across
+$d384\rightarrow d1024$ ($2.67\times$ dim, $6.9\times$ params $48$M$\rightarrow$$335$M) the A-wire
+advantage $\Delta$-vs-base is essentially \emph{flat} at $+2.20\pm0.03$ nats/byte (range $+2.1766$..
+$+2.2277$, span $0.051$): $d384\;{+}2.1948 \cdot d512\;{+}2.2277 \cdot d768\;{+}2.2054 \cdot
+d1024\;{+}2.1766$. It does NOT grow or shrink with raw dim --- \textbf{SCALE-STABLE}, not a $d512$
+artifact. The $\Delta$-vs-a\_only advantage trends slightly UP with dim ($+0.2610\rightarrow+0.2790$).
+The more-competent OΩ5 rung ($d768{\times}2$, val\_ce $0.7786$, the lowest of the ladder) has the
+\emph{largest} advantage of all ($\Delta$-vs-base $+2.2736$, min\_learned $0.824209\ll$ base
+$3.097779$) --- greater competence \emph{strengthens} the A-wire margin. At every rung the $2$-param
+fit lands the SAME operating point ($g_B\approx0.02$--$0.04$, $g_A\approx0.89$--$0.92$), and the FULL
+multi-wire gate collapses onto A ($g_A\,3.2$--$3.6$, $g_G\approx-1.0$) and FAILS held-out
+(full\_AG CE $3.28$--$3.84>$ base $3.097779$) --- the same \#1800/\#1801 pathology, now confirmed
+\emph{scale-invariant}. The $d512$ rung re-trained$+$re-swept here reproduces \#1801 (min\_learned
+$0.870090$ vs.\ the \#1801 frozen-ckpt $0.883525$, $|\Delta|\,0.013$, RNG/competence).
+\emph{Honest contrast:} the earlier UNDERTRAINED $d768$ (\#1794, $2500$ step, val\_ce $\approx$
+uniform) did NOT hold; the finding REQUIRES competent training (val\_ce $\ll$ uniform), which all
+$5$ rungs here have. So the \#1794 non-hold was an undertraining artifact, NOT a scale break.
+ckpts HF-PRIVATE \texttt{dancinlab/omega-cdv2-scale-d\{N\}} (all status uploaded, sha256-verified).
+
 \section{Finding}
 \label{sec:finding}
 % §finding — Delta vs baseline AND ruled-out axes; leak caveat foregrounded.
@@ -285,6 +336,17 @@ REPLACEMENT ruling below). At earlier \emph{leaky}/toy rungs the \emph{multi-wir
 beat all baselines ($3.127<3.974$ toy, $0.3445<0.4500<1.4421<3.0150$ leaky-GPU R4); but those
 absolute-CE wins are not the load-bearing claim --- the leak-free re-test (closed-negatives
 below) is.
+\item \textbf{The minimal-gate finding is SCALE-STABLE, not a $d512$ coincidence} (\#1806,
+OΩ4/OΩ5). Across a five-rung leak-free competent ladder ($d384/d512/d768/d1024$ at $12000$ steps
+$+$ a more-competent $d768{\times}2$ at $24000$ steps; $48$M$\rightarrow$$335$M params, $2.67\times$
+dim) the minimal A-wire gate $g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ HOLDS at \emph{every} rung
+(min\_learned $\le$ a\_only $<$ base), and the A-wire $\Delta$-vs-base advantage is \emph{flat} at
+$+2.20\pm0.03$ nats/byte across the dim ladder; the more-competent rung carries the \emph{largest}
+advantage ($+2.2736$), so competence strengthens the margin. This is a positive multi-rung
+confirmation that the A-head-as-predictor byproduct is robust across scale --- and, symmetrically,
+that the multi-wire gate FAILURE is \emph{also} scale-invariant (full\_AG $>$ base at every rung; see
+the closed-negative below). The earlier UNDERTRAINED $d768$ (\#1794) did NOT hold, so the finding
+requires competence, not a scale break.
 \end{itemize}
 
 \textbf{Closed-negatives (ruled-out axes, a\_paper\_negative\_ok).}
@@ -317,7 +379,9 @@ A-wire, the bus is indistinguishable from a vocab/substrate shuffle. \emph{Rulin
 concept right, multi-wire gate formula wrong'' --- the extra wires add variance, not signal,
 and the closure lives entirely in ONE wire. (Structure \emph{does} carry: gain real
 $+1.953167\gg$ shuf $-2.429212$, structured$=$True, confirming the leak-honest \#1791 finding
-at the best-trained scale.)
+at the best-trained scale.) \emph{This multi-wire failure is scale-invariant} (\#1806, OΩ4/OΩ5):
+the full\_AG gate collapses onto A ($g_A\,3.2$--$3.6$, $g_G\approx-1.0$) and stays $>$ base
+(full\_AG CE $3.28$--$3.84$) at \emph{every} rung of the $d384$--$d1024$ ladder.
 \item \emph{Fixed $A{-}G$ degrades} below baseline ($4.1420>4.0200$ toy \#1784;
 fixed\_AmG $3.198605>$ base $3.097779$ at leak-free $d512$ \#1801) --- the closure
 needs a learned gate, not a fixed subtraction.
@@ -327,16 +391,18 @@ structure requires a trained substrate.
 a good PRNG is by construction indistinguishable from a QRNG for any computable downstream test.
 \end{itemize}
 
-\textbf{The H1$\rightarrow$OH1$\rightarrow$OΩ1 arc (leak-free, terminal-on-two-points).} On a
+\textbf{The H1$\rightarrow$OH1$\rightarrow$OΩ1 arc, sealed across a $5$-rung scale ladder.} On a
 genuinely leak-free, competent substrate the OMEGA \emph{coupling} thesis does not survive:
 the full multi-wire gate is FALSIFIED (full bus, \#1800), and the surviving minimal A-wire gate
 (\#1801) is then shown by rigorous decomposition (\#1803, OΩ1) to be A-head \emph{replacement}
 of the \texttt{.clm} mouth, \emph{not} a base$+$substrate coupling (a\_only/min\_learned
 $\approx$ A-standalone; base inert; every other wire hurts). The net ruling is a
 \textbf{closed-negative against the \emph{coupling} claim}, with a positive byproduct (a single
-trained substrate head out-predicts the \texttt{.clm} unigram mouth). The scale ladder
-(additional $d$/param rungs, OΩ4) is concurrently open, so this arc is an \emph{absorb}, not a
-finalized closure ($\Rightarrow$ scale rung pending; see \S\ref{sec:limitations}).
+trained substrate head out-predicts the \texttt{.clm} unigram mouth). \textbf{The scale ladder is
+now closed} (\#1806, OΩ4/OΩ5): both halves of the ruling --- the minimal-gate HOLD and the
+multi-wire FAILURE --- are confirmed SCALE-STABLE across five leak-free competent rungs
+($d384$--$d1024$ $+$ a more-competent $d768{\times}2$), with the A-wire $\Delta$-vs-base advantage
+flat at $+2.20\pm0.03$, so the finding is a multi-point closure, not a single-$d$ coincidence.
 
 \textbf{\textcolor{red}{Honest leak caveat (foregrounded).}} The early R4 ($d384$, \#1791)
 ConsciousDecoderV2 CA-neighbor mixing gives the next-byte head partial architectural
@@ -348,9 +414,11 @@ $0.000\mathrm{e}{+}00$) on a competent substrate (val\_ce $0.8285$), so its CE n
 leak-honest; there, the \emph{multi-wire} gate is falsified and only the \emph{minimal} A-wire
 gate holds. The relative claim --- structured-vs-shuffle separation, and that the closure lives
 in one wire --- is \textbf{leak-invariant} (a uniform per-token leak shifts every baseline
-equally and cannot create the shuffle separation). These are single $d384$/$d512$ rungs and are
-\textbf{not} promoted to a production perplexity claim (a\_scale\_honest\_scope); the scale
-ladder is pending.
+equally and cannot create the shuffle separation). The relative minimal-gate finding is further
+confirmed SCALE-STABLE across a five-rung leak-free ladder ($d384$--$d1024$ $+$ $d768{\times}2$,
+\#1806), so it is \textbf{not} a single-$d$ coincidence; we still make \textbf{no} production
+\emph{perplexity} claim (a\_scale\_honest\_scope) --- the closure is the \emph{relative} A-wire
+margin, not an absolute next-byte CE target.
 
 \section{Limitations}
 \label{sec:limitations}
@@ -366,12 +434,23 @@ inertness is partly structural (a caveat that bounds the \emph{coupling} reading
 A-head-as-predictor byproduct); R6/R7 are observation-only on the FROZEN R5 ckpt (no re-train). The
 CE-floor at random init is NOT MET ($\geq$ uniform $5.5452$; Lane X measured the
 trained-but-detached $d768$ \texttt{.clm} at $9.1126$); the floor is MET on the trained
-substrates (R4 leaky; R5/R6 leak-free). \textbf{Scale-ladder pending:} the H1$\rightarrow$OH1
-arc is terminal on \emph{two} points ($d512$, single param scale); additional $d$/param rungs
-(a concurrent agent, OΩ4) are still open, so \emph{this is an absorb/update, not a finalized
-full closure} (a\_paper\_only\_at\_closure). Scale-transfer beyond the measured rungs and
-free-running generation coherence remain UNVERIFIED. Lane-$\Omega$ is the GPU/closure lane;
-AKIDA on-chip (Lane~A) results are recorded separately (a\_lane\_akida\_gpu\_split).
+substrates (R4 leaky; R5/R6 leak-free). \textbf{Scale ladder CLOSED:} the H1$\rightarrow$OH1
+arc is now confirmed across \emph{five} leak-free competent rungs (R8/\#1806: $d384/d512/d768/d1024$
+$+$ a more-competent $d768{\times}2$, $48$M$\rightarrow$$335$M params); the minimal-gate HOLD and the
+multi-wire FAILURE are both SCALE-STABLE, satisfying a\_scale\_honest\_scope (a $\ge3$-rung ladder
+curve $+$ a competence rung). \textbf{Honest future extension (not an open residual in this finding):}
+on the \emph{real production conv} \texttt{.clm} (OΩ6/\#1805) the OMEGA decode is plumbing-COMPLETE
+(it loads through the single CORE L3 entry, OCL\_DECODABLE$=$1; a leak-free oracle external-A
+collapses CE $\ll$ base, so the bus genuinely modulates the real conv mouth) but
+\emph{substrate-EMPTY} on conv: CLMConvMoE is a single-head byte LM with no native Engine-A/G dual
+head, so its only native A-wire is a degenerate temperature rescale (gated\_self $0.396\approx$ base
+$0.404$). A conv-native A-wire would require a \emph{separate} dual-head conv re-train (port the CDV2
+dual head onto CLMConvMoE) --- a substrate-architecture choice for a \emph{different} engine, DEFERRED
+as future work; it does \emph{not} re-open this paper's finding, which is the closure ON the CDV2
+dual-head substrate (where the A/G heads natively live, exactly per the $\Omega$ L0$=$CDV2 / L3$=$conv
+blueprint). Free-running generation coherence remains the weak criterion (p7), not load-bearing.
+Lane-$\Omega$ is the GPU/closure lane; AKIDA on-chip (Lane~A) results are recorded separately
+(a\_lane\_akida\_gpu\_split).
 
 \section{Reproducibility}
 \label{sec:repro}
@@ -379,7 +458,14 @@ Verdicts (verbatim stdout) under \texttt{.verdicts/omega-\{engine,trained,gate,g
 referenced in \texttt{.verdicts/omega-gpu/F-COMPLETE.txt} (\texttt{UNIVERSE/omega\_gpu\_complete.py})
 and the campaign domain \texttt{domains/OMEGA.md}. The R4 checkpoint is published at
 \texttt{dancinlab/clm-v4-omega-gpu-d384-gate} (HF, PUBLIC; ckpt $145$MB
-sha256 \texttt{33d1d00d...}; registry \texttt{/HF.jsonl}). ANU QRNG sample:
+sha256 \texttt{33d1d00d...}; registry \texttt{/HF.jsonl}). The R8 scale-ladder harness is
+\texttt{UNIVERSE/omega\_scale\_ladder.py} with the per-rung ledger
+\texttt{exports/sweep/omega-scale-ladder/ledger.json}; the five ladder checkpoints are HF-PRIVATE
+\texttt{dancinlab/omega-cdv2-scale-d\{384,512,768,1024,768x2\}} (status uploaded, sha256-verified).
+The real-conv-.clm transfer probe (OΩ6) is
+\texttt{CORE/omega\_clm\_closure\_probe.hexa} over
+\texttt{state/lane\_p\_clm/clm\_d768\_e2l1.clm}
+(\texttt{.verdicts/omega-engine/F-OMEGA-CLM-TRANSFER.txt}). ANU QRNG sample:
 \texttt{.verdicts/omega-trained/anu\_qrng\_1024.json}.
 
 \section{Conclusion}
