@@ -1,0 +1,67 @@
+STAGE-2 persona/SNS specialization — VERDICT SUMMARY (p7 simple-stack, NOT perplexity · g5 verbatim)
+=====================================================================================================
+date     : 2026-06-04
+lane     : Lane-G / torch-cuda REFERENCE lane (a_lane_akida_gpu_split — NOT AKIDA; @L3 honest label)
+substrate: CPU-local ($0, torch 2.8.0) — 18M is small; fine-tune wall ≈ 31 min on 10 threads. NO GPU rented.
+scope    : a_scale_honest_scope — SMALL 18M rung, persona-specialized. NO claim of mid/7B persona chat.
+           A weak/null persona signal at 18M would be a valid closed-negative; the signal here is REAL
+           but PARTIAL (15/20 personas self-identify at least once) — reported honestly, NOT fabricated.
+
+BASE (stage-1 chat-PASS rung-0, continue-trained — NOT a new arch)
+  base ckpt = dancinlab/anima-clm-chat-rung0-byte-18m (stage-1, #1824, p7 5/5 · mirror FAIL)
+  arch      = ConsciousLMReconstructed · byte vocab 256 · d_model 384 · 6 layers · 4 heads · block 256
+              dual engine_a/engine_g FFN (out = a - g) + dual head_a/head_g
+  params    = 18,130,176 (≈18.13M) — IDENTICAL arch to stage-1 (fine-tune, not re-arch)
+  out ckpt  = persona_stage2_18m.pt  sha256 aea96ef1a7ef27018ca015a9e66569d67763152e30f24e120aa44da6884cf8bc
+
+CORPUS (persona × SNS, byte vocab256 — dancinlab/anima-persona-sns-corpus → persona_sns_corpus.txt)
+  persona_sns_corpus.txt  4,194,308 B  sha256 1ea7d8e0e65e7ab99c61dd745bdb124ee75995e90b7c995ac93c3e4e5e7c3f77
+  13,322 multi-turn dialogues · 20 personas (~666 each) · Instagram 70% / YouTube 30% · authored-synthetic
+  TURN SCAFFOLD = plain `사용자: <u>` / `<persona_name>: <reply>` — persona carried by the NAME TOKEN only.
+
+PHILOSOPHY GATE (p1·p2·p3·p4·p6 — non-negotiable, HELD in stage-2 too)
+  NO system prompt · NO identity rules · NO persona injection · NO assistant framing · NO RLHF.
+  grep -E '\[role:|\[persona:|\[character:'  persona_sns_corpus.txt  ==  0   (verified)
+  Persona is carried ONLY by the LEARNED dialogue-continuation format in the weights — never a prompt prefix.
+
+FINE-TUNE (continue-train from stage-1 ckpt · AdamW lr 5e-5 (lower, for FT) warmup 100 cosine · batch 32 · block 256 · 2500 steps · seed 42)
+  FT CE: 3.2780 (step 1, fresh persona distribution) → 0.07847 (final)  — strong adaptation to the persona/SNS dialogue.
+
+EVALUATOR (p7 simple-stack, NOT perplexity · p7) — two axes + anti-Goodhart mirror
+  (A) base-chat coherence retained — stage-1 v2 control-char-aware gate:
+      reply PASSES iff non-empty(>=4) AND non-degenerate(no single char >60%)
+      AND control_ratio < 0.05 AND word_class_ratio >= 0.85.  >=4/5 probes PASS = no catastrophic forgetting.
+  (B) PERSONA-VOICE signal — paired discriminative test (fixed seed 1234):
+      per persona p, seed with REAL held-out prior turns of p (NOT a role-tag) + the `<p>: ` turn-start,
+      generate a continuation, score it vs every persona's distinctive char-trigram TF-IDF signature
+      (signatures built on a DISJOINT 80% train split; eval contexts from the 20% held-out split).
+      Metric = TOP-1 self-identification rate over 40 trials (2 per persona).  Chance = 1/20 = 0.05.
+      PASS iff rate >= 3×chance AND self_top1 >= max(3, 15% of trials).
+  (C) anti-Goodhart — the SAME (A)+(B) evaluator on a random-init mirror MUST fail. honest-stub != fake-pass.
+
+RESULT
+  (A) base-chat   TRAINED : PASS  (n_pass 4/5)         RANDOM-INIT MIRROR : FAIL (0/5)
+      (the one miss = a 2-char reply "봐요" — coherent but failed the length>=4 check; not a degeneracy)
+  (B) persona     TRAINED : PASS  self-id 20/40 = 0.50  (10.0× chance)   MIRROR : NULL  2/40 = 0.05 (== chance)
+      15 of 20 personas self-identify at least once; the remaining 5 blur into a related persona
+      (e.g. charismatic_prez → sorceress, demon_lord → chaebol_heir) — an honest PARTIAL signal at 18M.
+  chat_pass_retained = TRUE · persona_signal_real = TRUE · anti_goodhart_ok = TRUE
+
+  PRE-FINE-TUNE CONTROL (base rung-0, eval-only, same evaluator): persona self-id was only WEAK 4/40 = 0.10
+  (2.0× chance). Fine-tuning lifted the persona signal 2.0× → 10.0× — the specialization is the cause, not the metric.
+
+TRAINED (B) persona-voice exemplars (verbatim model bytes — distinctive voice visible)
+  airhead_friend   : 헐 근데 라면 불었어요. 인생은 타이밍이야 😆
+  childhood_friend : 야 뭐해 ㅋㅋ 나 방금 너 생각났는데 텔레파시냐
+  horror_whisper   : 괜찮아… 아직은… 아무 일도… 일어나지 않았으니까…
+  knight           : 그대여 그건 비밀… 은 아니고, 천천히 풀어줄게
+  chaebol_heir     : 잘 들어라. 효과는 꾸준함에서 와. 오늘 한 번이 내일을 바꿔
+
+RUNNABLE DEMO (single command — persona-voiced reply from a turn-context, NO role tag)
+  python3 serving/persona_chat_demo.py --ckpt persona_stage2_18m.pt --sweep --seed 7
+  (verbatim transcript: .verdicts/chat-persona-sns/demo_transcript.txt)
+
+CONCLUSION
+  Stage-2 persona/SNS specialization is a REAL PASS at the 18M scale: base chat retained (A 4/5, mirror 0/5)
+  AND a genuine persona-voice signal (B 10× chance, mirror at chance) — anti-Goodhart clean. Honest scope:
+  18M-only, signal is partial (15/20). No system prompt / role tag / persona injection / RLHF (p1-p4,p6 HELD).

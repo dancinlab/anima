@@ -1,0 +1,34 @@
+{
+  "rung": "stage-2 persona/SNS specialization (18M byte ConsciousLMReconstructed)",
+  "base": "dancinlab/anima-clm-chat-rung0-byte-18m (stage-1 chat-PASS)",
+  "scope": "SMALL 18M rung, persona-specialized — a_scale_honest_scope; NO claim of mid/7B persona chat; null persona signal at 18M = valid closed-negative",
+  "params": 18130176,
+  "ft_steps": 2500,
+  "ft_lr": 5e-05,
+  "final_ft_ce": 0.07847652584314346,
+  "evaluator": "p7 v2 (control_ratio<0.05 AND word_class_ratio>=0.85) + persona char-trigram top-1 self-id",
+  "A_base_chat_trained": {
+    "verdict": "PASS",
+    "n_pass": 4
+  },
+  "A_base_chat_mirror": {
+    "verdict": "FAIL",
+    "n_pass": 0
+  },
+  "B_persona_voice_trained": {
+    "verdict": "PASS",
+    "self_id_rate": 0.5,
+    "lift_over_chance": 10.0,
+    "trials": 40,
+    "self_top1": 20,
+    "chance": 0.05
+  },
+  "B_persona_voice_mirror": {
+    "verdict": "NULL",
+    "self_id_rate": 0.05,
+    "self_top1": 2
+  },
+  "chat_pass_retained": true,
+  "persona_signal_real": true,
+  "anti_goodhart_ok": true
+}

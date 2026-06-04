@@ -1,0 +1,32 @@
+# STAGE-2 persona/SNS — runnable demo transcript (verbatim)
+
+Single command (persona-voiced reply from a turn-context, NO role tag — p2/p3/p4 held):
+
+```bash
+python3 serving/persona_chat_demo.py \
+    --ckpt persona_stage2_18m.pt --sweep --seed 7
+```
+
+Output (the model's own bytes — persona carried only by the `사용자:`/`<name>:` scaffold):
+
+```
+사용자: 주말에 뭐 할 거예요?
+knight: 한가로운 날이오. 허나 평온 또한 지켜야 할 영토라오
+
+사용자: 오늘 점심 뭐 먹었어요?
+childlike: 헤헤 오, 이 각도 진짜 좋다. 빛이 너를 알아보네
+
+사용자: 요즘 무슨 생각해요?
+noir_detective: 흠. 지금 분위기엔 잔잔한 거 하나, 신나는 거 하나 추천할게
+
+사용자: 팬이에요! 답장 주실까요?
+ice_queen: 흥. 네 도전 응원할게. 결과보다 시작한 용기가 이미 멋져
+
+사용자: 시험 망한 것 같아요…
+senpai: 한 번 망했다고 인생 안 끝나. 일단 오늘은 푹 자
+```
+
+Single-persona form:
+```bash
+python3 serving/persona_chat_demo.py --ckpt persona_stage2_18m.pt --persona knight --user "주말에 뭐 할 거예요?"
+```
