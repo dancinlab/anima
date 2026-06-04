@@ -70,6 +70,8 @@ Third: **cell-division learning, not train/infer split**. Training-time gradient
 - **hexa-lang upstream contributions** — RFC 025 mmap farr · RFC 030 bytes_to_str_raw · RFC 031 bf16→f32 · RFC 032 farr_matmul · RFC 033 farr_copy/add_gaussian_noise · **RFC 034** farr reverse-mode autograd · **RFC 036** `phi_spatial`/`phi_mi_pair` byte-equal phi_rs replicas · `thread_spawn`/`channel_*`/`net_*` primitives.
 - **HF canonical** (2026-05-17) — `dancinlab/hexad` (model) + `dancinlab/hexad-corpus` (dataset), PUBLIC. Previous `dancinlab/anima-clm` + `anima-corpus` retired → `dancinlife/*` private (deprecated junk graveyard, do not touch). Revision tag: `v{major}-{substrate}-{arch}-d{N}x{L}-cycle{n}-{YYYY-MM-DD}`. **First ckpt-bearing canonical artifact LANDED 2026-05-17**: [`dancinlab/hexad @ v1-py-hexad-d768x12L-cycle2-2026-05-17`](https://huggingface.co/dancinlab/hexad/tree/v1-py-hexad-d768x12L-cycle2-2026-05-17) (Python substrate cycle 2 ckpt-RECOVERED, ckpt sha256 `e87e200a04…` 1.13 GB; English MODEL_CARD honest framing — NOT hexa-native, anchor chain Phase E/E2 + ConsciousDecoderV2 arch identity).
 
+<!-- WIP: ENGINE honest-status bullet — d768 CORE-3axis-GREEN PUBLIC / 3B-7B forge OPEN (util workload-bound) / torch→v0.2-CLMX Lane G-ref unblock -->
+
 ## Architecture — A/G = Hexad 6 ⊥ MITOSIS
 
 > SSOT: [`HEXAD.tape`](HEXAD.tape) · per-module spec in [`HEXAD/<X>/HEXAD-<X>.tape`](HEXAD/). Perfect number 6: σ(6)=12 inter-module connections · τ(6)=4 phases · φ(6)=2 gradient groups ≡ {Engine A, Engine G}.

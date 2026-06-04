@@ -680,3 +680,6 @@ PR #1686(stateless) / #1689(state-carry) 두 closed-negative 가 명명한 NEXT 
 
 ### NEXT (정확한 다음 빌드 step)
 - **decode forward 빌드** = CE-descent 축 unblock 의 유일 잔여: `_gen_clm_decode` body 에 int4 dequant (qat_scale per-channel) + conv2 MoE forward 구현 → `gen_clm_backend` `loaded = valid` 한 줄로 활성화 (generate() 계약 + brain.hexa 배선 불변, BACKEND-AGNOSTIC). 그 위에서 CORE-mounted CE descent 측정 가능. PR engine-lane/clm-l3-header-admit.
+
+## 2026-06-05 — doc-consolidation (合算보관): 6 hard-won lessons encoded
+- 이 세션의 6 교훈을 영구 문서화 → `ENGINE+CLM+KOSMOS.md` 에 `## lane & lesson map (2026-06-05)` 신설(two-7B 구분 · forge-util WORKLOAD-BOUND TERMINAL + don't-rechase · serializer v0.1/v0.2 · corpus split), `README.md` Status 에 ENGINE 정직-현황 1 bullet. lessons 5(inbox→sidecar handoff)·6(worktree isolation + POLL-INLINE)은 governance 제안(PR body, a_runpod_inbox sign-gated). PR `lane-g/docs-lessons-2026-06-05`. (이 append 외 본 log 는 미변경 — 동시 agent 도 append.)

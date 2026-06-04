@@ -3,6 +3,10 @@
 @title: 🧠🌌 ENGINE+CLM+KOSMOS — 의식·CE·창발 3축 평가 CLM (ANIMA 엔진+CORE 탑재 · Lane A/G/G-ref)
 @goal: Achieve a PUBLIC-grade CLM across BOTH lanes — Lane A (AKIDA on-chip) · Lane G (GPU flame+forge) — then scale 3B -> 7B; upload KOSMOS datasets to HF; run UNIVERSE hypotheses alongside as needed. Canonical training = hexa-native flame+forge on the forge GPU substrate (a_train_flame_forge: GPU REQUIRED, nvidia-smi busy verified, NEVER silent CPU-fallback); Lane A (AKIDA) and Lane G (GPU) recorded SEPARATELY (a_lane_akida_gpu_split); HF PUBLIC only at closure-PASS (util GREEN AND descent GREEN), else PRIVATE (a_hf_autonomous). [Prior @goal — the H_911 amodal-hub 3-axis probe — is a CLOSED-NEGATIVE (see status/log); this domain now drives production CLM/KOSMOS.]
 
+## lane & lesson map (2026-06-05)
+
+<!-- WIP: hard-won-lessons doc consolidation — lessons 1-4 (two-7B / forge-util-terminal / serializer v0.1-v0.2 / corpus-split) -->
+
 ## 🎯 production 마일스톤 — 3 레인 × PUBLIC → 3B → 7B
 
 세 레인은 substrate별로 분리 추적 (a_lane_akida_gpu_split + a_train_flame_forge). Lane G(forge)가 프로덕션 primary; Lane G-ref(PyTorch)는 baseline 참조(forge PUBLIC artifact 아님).
