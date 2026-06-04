@@ -185,4 +185,25 @@ distinct from "도구가 뭔지 안다" (knows tools).
    null backend (no model needed) to prove the loop halts/injects/resumes.
 3. ⓒ agent lane demo corpus (5-lang, shapes a–d, fabricated-result count = 0).
 4. rung-0 toy A/B fire (with-grammar vs no-grammar) → §8 falsifier verdict.
-5. GATE: only on FABDROP pass + both mirrors FAIL → consider rung-2 (7B).
+   ✅ **DONE (2026-06-04, Lane G GPU · summer RTX 5070 · base 18M #1824).** Two
+   arms fired (`.verdicts/tooluse-rung0/`):
+   - **arm-1 (register-DISJOINT, plain-prose demos) → 🔴 CLOSED-NEGATIVE:**
+     F-TOOLUSE-FABDROP FAIL (fab 0.5833 both; rel_drop 0.0). Diagnosis
+     (`serving/tooluse_sentinel_probe.py`): the grammar WAS learned (DEMO-seed 6/6
+     raw 0xFE calls) but stayed siloed — CHAT-seed 0/6. Register-mismatch artifact.
+   - **arm-2 (register-MATCHED, 사용자:/도우미: demos) → 🟢 FABDROP TERMINAL PASS:**
+     F-TOOLUSE-FABDROP PASS (no_grammar fab 0.5556 → with_grammar fab **0.0**,
+     rel_drop **1.0**), F-TOOLUSE-NOTOOL-MIRROR PASS (grnd 0), F-TOOLUSE-RANDINIT-
+     MIRROR PASS (grnd 0). call_rate 0.0 → **1.0** — the mouth CALLS the tool
+     36/36 and NEVER fabricates; the control invents 20/36. Both mirrors fail →
+     real behaviour, not cosmetic markers / leakage.
+   - **🟠 residual (new sub-finding):** end-to-end grounding = 0/36 because
+     `correct_call = 0/36` — the model binds the call arg to a MEMORIZED demo key
+     (MV9/ZK7…) instead of COPYING the asked held-out PBnn key, so the runtime
+     returns ‹unknown-key›. Next lever = verbatim **argument-copy / key-binding**.
+   - **lesson:** the grammar MUST be taught in the SAME register it will fire in.
+   Scope (a_scale_honest_scope): TOY 18M ONLY; mid/7B transfer UNVERIFIED.
+5. GATE: FABDROP pass + both mirrors FAIL is **MET** (arm-2). 7B fire (rung-2)
+   remains GATED on closing the 🟠 key-binding residual first — a 7B that calls
+   with the wrong key still cannot ground. Close argument-copy at toy, re-verify
+   grounding_rate > 0, THEN consider rung-2.
