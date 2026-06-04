@@ -70,6 +70,28 @@ Mapping those axes onto the corpus surfaces reveals the gaps below.
   coverage; the gaps above are about *register/act/emotion breadth*, not volume
   (a_scale_honest_scope).
 
+## folded vs measure-pending (v2 status, 2026-06-04)
+
+The v2 corpus (`dancinlab/anima-corpus-5lang-unified-v2`, 12.5 MB, sha `550fed17`)
+**FOLDED** the corpus-editable candidates; the measurement-only candidates are
+**registered as M8/M9 milestones** with pre-registered falsifiers (NOT $0).
+
+| # | candidate | status | where |
+|---|---|---|---|
+| 1 | consciousness-carving register | ✅ **FOLDED** (25.70% of enrichment) | `corpus_enrichment_5lang_gen.py` (31 e7_31 anchor seeds) |
+| 2 | wiki topical breadth | ✅ **FOLDED** (8-band offset-spread) | `build_wiki_backbone_5lang_v2.py` |
+| 3 | dialogue-act balance | ✅ **FOLDED** (25.68% of enrichment) | `corpus_enrichment_5lang_gen.py` (disagree/refuse/boundary/ask/multi) |
+| 5 | emotion-axis | ✅ **FOLDED** (16.16% of enrichment) | `corpus_enrichment_5lang_gen.py` (20 personas → KOSMOS top_emotions) |
+| 4 | code-switching (KO↔EN) | ✅ **FOLDED** (8.54% of enrichment, minority) | `corpus_enrichment_5lang_gen.py` — **[speculative]**, honest minority slice |
+| 7 | genre (narrative/drama/poetry) | ✅ **FOLDED** (23.92% of enrichment) | `corpus_enrichment_5lang_gen.py` — **[speculative]** |
+| 6 | Knuth-tier curriculum | ⏳ **MEASURE-PENDING** → **M8** | requires a training A/B fire (NOT $0); falsifier in `CORPUS.md` |
+| 8 | tension-label slice (Ψ-landing) | ⏳ **MEASURE-PENDING** → **M9** | requires a ckpt-forward fire (NOT $0); falsifier in `CORPUS.md` |
+
+Honest (g63): items 1/2/3/5 are **[evidence]** gaps now closed in the corpus;
+items 4/7 are **[speculative]** (folded but training-benefit unmeasured,
+a_toy_scale_recheck); items 6/8 are NOT folded — they are MEASUREMENTS deferred
+to M8/M9, not dressed as cheap corpus edits (a_completeness_over_cheap).
+
 ## honest scope
 
 - All "would help" rationales for register/act/breadth gaps are **[evidence]** —
