@@ -109,9 +109,34 @@ near-dup across Wikipedia related-expansion bounded by a `seen` title set. Produ
 
 (folded after the fire — see `.verdicts/savant/` + below)
 
-## 4. honest 7B ETA
+## 4. honest 7B ETA (from MEASURED Lane-G throughput, g63)
 
-(folded after rung0 measured throughput — see below)
+Measured prior Lane-G forge fp64 step-times (`.verdicts/lane-g-3b-descent/VERDICT.md` + HF.jsonl,
+the SAME `clm_prod.hexa` trainer SAVANT uses):
+- **d3840 E32 ~1.506B (a1_1p5b): 5.48 s/step** (256 steps / 1403 s wall), device-resident 64.9 GB.
+- d9216 E2 ~1.024B (a1desc): ~20–30 s/step (interpreter host O(d²) repack wall).
+
+**7B extrapolation (interpreter wall ≈ O(params)):** 7.00B/1.506B = 4.65× ⇒ **~25 s/step** for a 7B
+fp64 rung on the interpreter (IF it fit on one card, which it does NOT — 224 GB).
+
+**Competence step budget:** a from-scratch competent 7B LM needs ≫10¹¹ tokens; even a conservative
+**100 B-token floor** at T512×32win (~16 384 tok/step) = **6.1 M steps**.
+- **Interpreter path:** 6.1 M × 25 s = **~5 YEARS** wall → the interpreted forge step makes a real 7B
+  pretrain **INFEASIBLE** (the decisive bootstrap finding — blind-firing 7B on the interpreter burns
+  months for nothing).
+- **Device-resident BF16-TC path (deferred option-B, a_wall_first PRIMARY):** target ~30 ms/step on
+  H100 (CUDA-C device-resident step removes the interpreter wall + BF16-TC 9.67× FLOP). 6.1 M ×
+  30 ms ≈ **~2 days on 1 effective H100-equiv**, ≈ **~1 day wall on 3× H100** (BF16-TC, 224 GB fp64 →
+  ~60 GB BF16 sharded across 3 cards). Cost ≈ 3× H100 × ~24 h ≈ **~$150–250** (a_fire_autonomous, no
+  cost gate) — vs the interpreter's impossible 5 years.
+
+**RULING:** the value of this bootstrap = the 7B is GATED on the deferred device-resident CUDA-C/
+BF16-TC step path, NOT on raw GPU spend. The interpreter forge step (rung0's substrate) validates the
+pipeline but is **~5 orders of magnitude too slow** for a 7B pretrain. The 7B rung-3 MUST be the
+device-resident BF16-TC path on 2–3× H100; firing the interpreter at 7B is a closed-negative by
+arithmetic. (a_scale_honest_scope: this ETA is an extrapolation from measured 1.5B step-time + a
+100 B-token floor; the real competence-token count is larger, making the interpreter path even more
+infeasible and the device-resident path the only viable one.)
 
 ## ladder milestones (goal: competent 7B 5-lang from-scratch forge CLM)
 
