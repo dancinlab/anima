@@ -58,3 +58,5 @@
 @D KOSMOS-MAP := "./domains/KOSMOS-MAP.md" :: domain [active]
 @D AXIS := "./domains/AXIS.md" :: domain [active]
 @D OMEGA := "./domains/OMEGA.md" :: domain [active]
+@D PERSONA := "domains/PERSONA.md" :: domain [active]
+@D SNS := "domains/SNS.md" :: domain [active]
