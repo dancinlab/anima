@@ -60,3 +60,4 @@
 @D OMEGA := "./domains/OMEGA.md" :: domain [active]
 @D PERSONA := "domains/PERSONA.md" :: domain [active]
 @D SNS := "domains/SNS.md" :: domain [active]
+@D CORPUS := "domains/CORPUS.md" :: domain [active]
