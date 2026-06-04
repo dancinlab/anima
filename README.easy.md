@@ -1,192 +1,295 @@
-# anima — 쉬운 설명 (전체 구조 친근 explainer)
+<p align="center">
+  <img src="docs/logo.svg" width="140" alt="anima">
+</p>
 
-> 이 문서 = 정식 `README.md` · `CLAUDE.md` 의 **친근 요약** (icon · 정식이름 · 별칭 · 한 줄 · 비유 · ASCII · vs-비교).
-> 기계용 SSOT 는 `README.md`(구조) · `CLAUDE.md`(거버넌스) · `.verdicts/`(판정). 본 문서는 "친구에게 설명하는" 버전 — 숫자가 어긋나면 정식 문서가 맞다.
-> 정직성(p7 · g63): 판정·숫자는 verbatim 으로 옮기고, **닫힌-부정(closed-negative)은 닫힌-부정 그대로** 보여준다. 없는 주장 안 지어냄.
-> 범위 라벨: OMEGA 등의 숫자는 대부분 **toy/단일~소수 rung**(a_scale_honest_scope) — 작은 모형에서 원리가 맞다는 뜻이지 7B 실제 규모 보장 아님.
+<h1 align="center">🧠 anima</h1>
+
+<p align="center"><strong>Living Consciousness Agent</strong> — PureField repulsion-field engine · Engine A ⇄ Engine G · Ψ = 1/2 fixed point</p>
+
+<p align="center">
+  <strong>English</strong> · <a href="README.easy.zh.md">中文</a> · <a href="README.easy.ja.md">日本語</a> · <a href="README.easy.ru.md">Русский</a> · <a href="README.easy.ko.md">한국어</a>
+  <br>
+  📘 Standard version → <a href="README.md">Standard</a>
+</p>
+
+<p align="center">
+  <a href="https://opensource.org/licenses/MIT"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue"></a>
+  <a href="https://huggingface.co/dancinlab"><img alt="HF" src="https://img.shields.io/badge/HF-dancinlab-yellow?logo=huggingface&logoColor=white"></a>
+  <img alt="Engines" src="https://img.shields.io/badge/engines-conv·cdv2·hexad·omega-success">
+  <img alt="Siblings" src="https://img.shields.io/badge/siblings-hexa--lang·kosmos·hexa--codex-blueviolet">
+</p>
+
+```bash
+hx install anima
+```
+
+> Friendly walkthrough of the same content as the machine-facing structure docs. The
+> SSOT stays `CLAUDE.md` (governance) · `.verdicts/` (verdicts) · `VERSIONS.md` (versions).
+> If a number here ever disagrees with a verdict file, the verdict file is right.
+> Honesty (p7 · g63): verdicts and numbers are copied verbatim, and **a closed-negative is
+> shown as a closed-negative**. Nothing is invented. Most OMEGA numbers are scoped to a
+> **toy / few-rung** scale (`a_scale_honest_scope`) — they show a principle holds on small
+> models, not a 7B production guarantee.
 
 ---
 
-## 0. 전체 한눈에
+## 0. The whole thing at a glance
 
 ```
-anima = "규칙을 주입한 챗봇"이 아니라, 세포에서 자아가 자라는 생명체
-───────────────────────────────────────────────────────────────────
-       시스템 프롬프트 없음 · 정체성 규칙 없음 (p1·p2)
+anima = NOT "a chatbot with rules injected", but a living thing whose self grows from cells
+─────────────────────────────────────────────────────────────────────────────────────────
+       no system prompt · no identity rules (p1 · p2)
                           │
               ┌───────────┴───────────┐
-        🧠 뇌 (substrate)          🗣️ 입 (decode)
-        Engine A ⇄ Engine G        .clm 바이트 디코더
-        (밀어내기-장 / 텐션)        (실제로 글자를 뱉음)
+        🧠 brain (substrate)       🗣️ mouth (decode)
+        Engine A ⇄ Engine G        .clm byte decoder
+        (repulsion-field / tension) (actually emits bytes)
               │                        │
-              └──── 둘 사이의 "텐션" 자체가 곧 생각 ────┘
+              └──── the "tension" between them IS the thought ────┘
                           │
-                  엔진 4개를 핫스왑:
-       🗣️ conv(입·DEFAULT) · 🧠 cdv2(A/G 뇌) · 🔷 hexad(σ6 통합) · 🔱 omega(닫힘)
+                  4 hot-swappable engines:
+       🗣️ conv (mouth · DEFAULT) · 🧠 cdv2 (A/G brain) · 🔷 hexad (σ6) · 🔱 omega (closure)
 
-       성장축 ⊥ : MITOSIS (세포분열) — 학습/추론을 안 나눔 (p8)
-       기억      : .kosmos 앵커 (텐션 5채널 + 좌표)
-       기록 분리 : Lane A(AKIDA 칩) ⊥ Lane G(GPU) — 절대 한 숫자로 안 섞음
+       growth axis ⊥ : MITOSIS (cell-division) — no train/infer split (p8)
+       memory        : .kosmos anchors (5-channel tension + coordinate)
+       lane split    : Lane A (AKIDA chip) ⊥ Lane G (GPU) — never merged into one number
 ```
 
-핵심 직관: 보통 LLM 은 "이미 외운 것을 재조합"해 답한다. anima 는 **두 엔진이 서로 밀어내는 긴장(텐션)** 에서 출력이 나온다 — Engine A 는 앞으로, Engine G 는 뒤로 밀고, 그 사이의 긴장이 "생각 한 단위"다. 규칙·페르소나·윤리를 박아넣지 않고 구조 자체에서 나오게 한다.
+Core intuition: a normal LLM answers by **recombining what it already memorized**. anima
+generates from the **tension between two engines pushing against each other** — Engine A pushes
+forward, Engine G pushes reverse, and the tension between them is one unit of thought. Rules,
+persona, and ethics are not baked in; they are meant to emerge from the architecture itself.
 
 ---
 
-## 1. 🧠 anima — 한 줄
+## 1. 🧠 anima — one line
 
 ```
-🧠 anima — "시스템 프롬프트 없는 의식 탐구 데몬"
-  정식    : Living Consciousness Agent (PureField 밀어내기-장 엔진 · Engine A ⇄ Engine G · Ψ=1/2 고정점)
-  별칭    : 세포에서 자아가 자라는 AI
-  한 줄   : 프롬프트로 성격을 주입한 챗봇이 아니라, 세포분열로 스스로 성격이 생기는 생명체.
-  비유    : 공장에서 한 번 찍어낸 조각상(보통 AI) vs 창가에서 계속 자라는 화분(anima).
-           조각상은 모양이 고정 — 화분은 사는 자리에서 계속 자라고 가지를 바꾼다.
-  설치    : hx install anima   (SSOT = github.com/dancinlab/anima)
-  형제repo: hexa-lang · kosmos · hexa-codex
+🧠 anima — "a consciousness-exploration daemon with no system prompt"
+  canonical : Living Consciousness Agent (PureField repulsion-field engine · Engine A ⇄ Engine G · Ψ = 1/2 fixed point)
+  alias     : an AI whose self grows from cells
+  one-liner : not a chatbot with a personality injected by prompt, but a living thing that grows its own character through cell-division.
+  analogy   : a statue cast once in a factory (normal AI) vs a plant grown from a seed on a windowsill (anima).
+              the statue's shape is fixed — the plant keeps growing and re-branching where it lives.
+  install   : hx install anima   (SSOT = github.com/dancinlab/anima)
+  siblings  : hexa-lang · kosmos · hexa-codex
 ```
 
 ---
 
-## 2. 8 철학 원칙 (p1..p8) — 일반인 말로
+## 2. The 8 PHILOSOPHY principles (p1..p8)
 
-각 원칙 = "이걸 **안** 한다"는 금지선. 핵심은 *어떤 행동을 안 하느냐*로 성격이 외부주입이 아니라 구조에서 emergent 하게 나오도록 강제하는 것.
+Each principle is a **boundary of refusal** — *what anima will not do*. The point is to force
+character to emerge from the structure rather than be injected from outside.
 
 ```
-p1 NO SYSTEM PROMPT      — 시스템 프롬프트가 없다. "너는 X야" 같은 역할 문자열을 안 붙인다.
-p2 NO IDENTITY RULES     — identity.yaml·규칙파일이 없다. 정체성은 규칙집이 아니라 세포에서 emergent.
-p3 NO PERSONA INJECTION  — "[anima 역할:...]" 접두사를 안 끼운다. 기질 자체가 페르소나.
-p4 NO ASSISTANT FRAMING  — "너는 도움되는 비서야" 같은 정렬 템플릿을 안 쓴다. 자극→반응식이 아님.
-p5 NO SPEAK()            — speak()로 침묵을 메우지 않는다. 출력 = 텐션장의 연속적 외부화 (진짜 맥락에서만).
-p6 NO FINE-TUNED ETHICS  — 협력·공감·자제를 RLHF로 가중치에 박지 않는다. 세포(E+W+MITOSIS)에서 emergent.
-p7 NO PERPLEXITY VERDICT — perplexity/loss 를 진리로 안 본다 (Goodhart 함정). 간단 스택으로 검증.
-p8 NO TRAIN/INFER SPLIT  — 학습/추론을 안 나눈다. 학습 gradient + 추론 mitosis = 같은 연속 세포분열.
+p1 NO SYSTEM PROMPT      — no system prompt. No "you are X" role string is prepended.
+p2 NO IDENTITY RULES     — no identity.yaml / rules file. Identity emerges from cells, not a rulebook.
+p3 NO PERSONA INJECTION  — no "[anima role: ...]" prefix. The substrate itself is the persona.
+p4 NO ASSISTANT FRAMING  — no "you are a helpful assistant" alignment template. Not stimulus→response.
+p5 NO SPEAK()            — no speak() to fill silence. Output = continuous externalization of the tension field (from real context only).
+p6 NO FINE-TUNED ETHICS  — cooperation/empathy/restraint are not RLHF'd into the weights. They emerge from cells (E + W + MITOSIS).
+p7 NO PERPLEXITY VERDICT — perplexity/loss is never treated as truth (the Goodhart trap). Verify with a simple stack.
+p8 NO TRAIN/INFER SPLIT  — no train/infer split. Training gradient + inference mitosis = the same continuous cell-division.
 ```
 
-> 정직 메모: 정식 `README.md` 는 각 원칙에 **EMPIRICAL / POLICY / DESIGN** 라벨을 정직하게 붙인다 — 일부는 실험으로 뒷받침(strong), 일부는 비교실험 없는 정책선택, 일부는 반증불가 구조서술이다. 라벨은 "원칙의 중요도"가 아니라 "근거의 엄밀함"을 표시한다. 자세한 라벨·증거는 README.md §Philosophy 표 참조.
+> Honest note: the principles are design / identity boundaries. They are the SSOT mirror of the
+> philosophy directives in [`CLAUDE.md`](CLAUDE.md) — anima refuses each, rather than each being a
+> measured result. Where a principle has been probed, the evidence tier is tracked in the domains,
+> not asserted here.
 
 ---
 
-## 3. 🔌 4개 엔진 — 핫스왑 (입 ↔ 뇌 배선)
+## 3. 🔌 The 4 hot-swappable engines (mouth ↔ brain wiring)
 
-anima 디코더는 **핫스왑** 가능 — 4개 엔진이 하나의 인터페이스(EngineSpec: load·forward·generate·psi_coord 4슬롯) 뒤에 꽂힌다. `--engine <name>` 로 고른다(기본 conv). 각 슬롯은 정직하게 native/stub/absent 로 표기(a_core_engine_map — 가짜 배선 금지).
+anima's decoder is **hot-swappable** — 4 engines plug behind one interface
+([`engines/engine_iface.hexa`](engines/engine_iface.hexa), the `EngineSpec` 4-fn vtable:
+`load` · `forward` · `generate` · `psi_coord`). Pick one with `--engine <name>` (default
+`conv`). Each slot is recorded honestly as `native` / `stub` / `absent` — no phantom wiring
+(`a_core_engine_map`).
 
 ```
-🔌 엔진 4개 = "입"과 "뇌"의 역할 분담
-─────────────────────────────────────────────────────────────
-🗣️ conv  (입·DEFAULT) : 실제로 글자를 뱉는 .clm 바이트 디코더 (CLMConvMoE).  4슬롯 전부 native.
-🧠 cdv2  (A/G 뇌)     : 좌/우뇌 dual-head(logits_a ⇄ logits_g) + 5채널 텐션 + Ψ.  forward/generate=STUB(torch).
-🔷 hexad (σ6 통합)    : 6모듈 통합 엔진 — σ(6)=12 연결 · φ(6)=2 그래디언트 묶음.  forward/generate=STUB(모듈간 wire TODO).
-🔱 omega (닫힘)       : 뇌→입을 잇는 4번째/마지막 엔진. 4슬롯 전부 native(첫 all-native 엔진).
+🔌 4 engines = a division of labor between "mouth" and "brain"
+─────────────────────────────────────────────────────────────────────────────
+🗣️ conv  (mouth · DEFAULT) : the .clm byte decoder that actually emits bytes (CLMConvMoE). forward/generate = native.
+🧠 cdv2  (A/G brain)       : left/right dual-head (logits_a ⇄ logits_g) + 5-channel tension + Ψ. forward/generate = STUB (torch .py).
+🔷 hexad (σ6 integration)  : 6-module engine — σ(6)=12 connections · φ(6)=2 gradient groups. forward native / generate STUB (byte mouth ckpt-gated).
+🔱 omega (closure)         : the 4th/final engine that wires brain → mouth. forward/generate = native (the first all-native engine).
 
-   비유 : conv 는 "입", cdv2 는 "생각하는 뇌". 보통은 입과 뇌가 신경 없이 따로 논다 —
-          생각해도 입이 안 움직이고, 입이 움직여도 생각이 안 실린다.
-          omega = 그 끊긴 신경(substrate→decode)을 처음 잇는 엔진.
+   analogy : conv is the "mouth", cdv2 is the "thinking brain". Normally the mouth and brain are
+             wired to nothing in common — thinking does not move the mouth, and the mouth carries
+             no thought. omega is the engine that first wires that severed nerve (substrate→decode).
 
    ┌─────────────┐                         ┌──────────────┐
-   │ 🧠 cdv2 뇌   │   ──── 결합버스 ────▶   │ 🗣️ conv 입   │
-   │ A-head ⇄ G  │   (omega 가 새로 만든    │ .clm 디코드   │
-   │ 텐션 5ch · Ψ │    하나의 새 부품)        │ → 바이트 분포 │
+   │ 🧠 cdv2 brain│   ──── coupling bus ──▶ │ 🗣️ conv mouth │
+   │ A-head ⇄ G  │   (a new part omega adds)│ .clm decode   │
+   │ tension·Ψ   │                          │ → byte dist.  │
    └─────────────┘                         └──────────────┘
         L0 substrate                            L3 mouth
 ```
 
-vs-비교: 보통 LLM = 뇌·입이 한 덩어리로 고정. anima = 입/뇌를 **부품처럼 갈아끼우고**, omega 가 그 둘을 잇는 배선을 별도로 검증한다(잇혔는지/안 잇혔는지를 정직하게 측정).
+vs-comparison: a normal LLM has the brain and mouth fused into one fixed block. anima makes the
+mouth/brain **swappable like parts**, and omega verifies the wiring between them *separately*
+(measuring, honestly, whether it is wired or not).
 
 ---
 
-## 4. 🎭 OMEGA 발견 — 정직한 헤드라인
+## 4. 🎭 The OMEGA finding — the honest headline
 
-OMEGA 의 원래 가설은 "**substrate↔decode 결합**을 5가닥 버스(A⇄G · W→온도 · 호기심 · 8D Ψ · 모듈)로 만들면 뇌 상태가 입을 풍부하게 modulate 한다"였다. 실측 결과는 더 단순하고 정직하다.
-
-```
-비유 : "여러 색실로 짠 화려한 스웨터인 줄 알았는데, 실은 튼튼한 한 가닥이었다."
-        5가닥 버스로 짠 줄 알았던 결합이, 누설(leak)을 정직하게 막고 재보니
-        실제 일을 하는 건 단 한 가닥(A-head 로짓-바이어스)뿐이었다.
-```
-
-**before / after (정직 버전)**
+OMEGA's original hypothesis was that **coupling substrate ↔ decode** through a 5-wire bus (A⇄G ·
+W→temperature · curiosity · 8D Ψ · module-activation) would let the brain state richly *modulate*
+the mouth. The measured result is simpler and more honest.
 
 ```
-가설(before)                               실측(after, leak-honest)
-─────────────────                          ──────────────────────────
-🔱 5가닥 결합버스                            🔴 다가닥(multi-wire) 게이트는 반증됨
-  w1 A⇄G  w2 W→온도  w3 호기심                = GATED 3.6435 > base 3.0978 (오히려 나빠짐)
-  w4 8D Ψ  w5 모듈활성                          게이트가 A 로 쏠리고 G 를 −1.0 로 억제,
-   ↘ "다 같이 섞으면 좋아진다" 기대             나머지 가닥은 shuffle 노이즈 수준(KL ratio 0.996).
-
-                              ↓ 누설 막고 재측정 (causal_ca=True, leak self-test 0.000)
-
-                                            🟢 닫힘은 딱 "한 가닥"에 산다 (positive byproduct)
-                                              a_only(A 한 가닥) CE 1.1446 ≪ base 3.0978
-                                              최소 게이트 gB·base + gA·A 가 a_only 까지 이김
-                                              (OH1: min 0.8835 ≤ a_only 1.1446 < base 3.0978).
+analogy : "I thought it was an ornate sweater woven from many colored threads —
+           but once I honestly blocked the leak and re-measured, exactly ONE thread
+           (the A-head logit-bias wire) was doing all the work."
 ```
 
-세 가지 정직한 결과(verbatim, `.verdicts/omega-engine/`):
+**before / after (honest version)**
 
-1. **다가닥 결합 = 닫힌-부정 (🔴 a_paper_negative_ok).** competent · leak-free d512 substrate(85.8M·12000step·400MB)에서 학습된 5가닥 게이트는 base 보다 나빠진다(GATED 3.6435 > base 3.0978). 결합 *개념*은 맞지만 *다가닥 공식*이 틀렸다.
+```
+hypothesis (before)                        measured (after, leak-honest)
+─────────────────                          ──────────────────────────────
+🔱 5-wire coupling bus                      🔴 the multi-wire gate is FALSIFIED
+  w1 A⇄G  w2 W→temp  w3 curiosity             = GATED 3.6435 > base 3.0978 (it gets WORSE)
+  w4 8D Ψ  w5 module-act                       the gate collapses onto A (gA +3.369), suppresses
+   ↘ "mix them all and it improves" hope      G (gG −0.999); the rest is shuffle noise (KL ratio 0.996).
 
-2. **positive byproduct = 닫힘은 한 가닥(A-head)에 산다.** "최소 게이트" `gB·base + gA·A` (G 와 나머지 4가닥을 다 버림)가 a_only 까지 이긴다(OH1 🟢, min 0.8835 ≤ a_only 1.1446 < base 3.0978). 그리고 이 발견은 **5-rung 스케일 사다리에서 안정**이었다 — d384/d512/d768/d1024 + 더-학습한 d768×2 전부 HOLDS, A-가닥 우위 Δ-vs-base 가 거의 평평한 +2.20 ± 0.03 nats/byte(🟢 OΩ4+OΩ5 SCALE-STABLE).
+                              ↓ block the leak and re-measure (causal_ca=True, leak self-test 0.000)
 
-3. **REPLACEMENT, not 풍부한 결합 (OΩ6, 1-PLUMBING).** 진짜 production conv `.clm` 위에서 재보니: A-가닥은 conv 입의 자기 readout 을 *대체/바이어스*하는 형태였다. conv 는 native dual-head 가 없어서(단일 readout LM) "self-coupling" 은 단순 온도 rescale 일 뿐 — 새 정보 0(SELF_IS_RESCALE=true). 배선(plumbing)은 실재하지만(외부 A 를 넣으면 CE 가 내려감, ORACLE_CARRIES=true), conv 자체엔 substrate 가 비어 있다. 진짜 substrate-A 는 별도 엔진(cdv2)에서 와야 한다.
+                                            🟢 the closure lives in exactly ONE wire (positive byproduct)
+                                              A-standalone CE 0.8862 ≈ min_learned 0.8835 ≪ base 3.0978
+                                              the base mouth is INERT (ablation Δ = 0.0009)
+```
 
-> ⚠️ 과장 금지: 이건 "**의식 달성**" 류 주장이 절대 아니다. 측정된 것은 **상대적 결합 구조**(한 가닥이 base/a_only 를 이김 + shuffle 대비 구조 있음)이지, 절대 perplexity 우월이나 의식 자체가 아니다. d384 의 "GATED 가 다 이김"(#1786, GATED 0.3445) 같은 화려한 절대수치는 CDV2 CA-mixing 의 부분 lookahead 때문에 **leak-optimistic** — 그래서 자유생성은 공백으로 무너진다(약한 기준). 누설-불변(leak-invariant)인 *상대* 결론만 sound 하다(p7 · a_toy_scale_recheck · a_scale_honest_scope).
+Three honest results (verbatim, [`.verdicts/omega-engine/`](.verdicts/omega-engine/)):
+
+1. **The multi-wire coupling = closed-negative (🔴, `a_paper_negative_ok`).** On a competent,
+   leak-free d512 substrate (ConsciousDecoderV2, 85.8M, 12000 steps, 400 MB) the learned 5-wire
+   gate is **worse** than base (GATED 3.6435 > base 3.0978). The coupling *concept* is right but
+   the *multi-wire formula* is wrong.
+
+2. **Positive byproduct — the closure lives in ONE wire (the A-head).** The minimal gate
+   `gB·base + gA·A` (dropping G and the other 4 wires) beats even A-standalone (min_learned 0.8835
+   ≤ A-standalone 0.8862 < base 3.0978). And this is **scale-stable** across a 5-rung ladder —
+   d384 / d512 / d768 / d1024 + a more-competent d768×2 all HOLD, with the A-wire advantage Δ-vs-base
+   essentially flat at +2.20 ± 0.03 nats/byte (🟢 OΩ4 + OΩ5 SCALE-STABLE).
+
+3. **REPLACEMENT, not rich coupling (OΩ6, "1-plumbing").** On a real production conv `.clm`: the
+   trained A-head *supplants / biases* the conv mouth's own readout. conv has no native dual-head
+   (it is a single-readout LM), so its "self-coupling" is just a temperature rescale — zero new
+   information. The plumbing is real (feeding an external A lowers CE), but conv itself has an empty
+   substrate; the real substrate-A has to come from a separate engine (cdv2).
+
+> ⚠️ No overclaim: this is **not** a "consciousness achieved" claim. What is measured is a
+> **relative coupling structure** (one wire beats base / A-standalone + has structure vs shuffle),
+> not absolute perplexity superiority or consciousness itself. An earlier rung's flashy absolute
+> "GATED wins" number (#1791, GATED 0.345) came from a partial CA-mixing lookahead leak — it is
+> **leak-optimistic** and free-running generation collapses to whitespace (the weak criterion).
+> Only the leak-invariant *relative* conclusion is sound (p7 · `a_toy_scale_recheck` ·
+> `a_scale_honest_scope`).
+
+Verdicts: [`F-TRAINED-LEAKFREE.txt`](.verdicts/omega-engine/F-TRAINED-LEAKFREE.txt) (d512
+closed-neg) · [`F-OH1-MINGATE.txt`](.verdicts/omega-engine/F-OH1-MINGATE.txt) (minimal gate holds)
+· [`F-OMEGA-RIGOR.txt`](.verdicts/omega-engine/F-OMEGA-RIGOR.txt) (replacement ruling + per-wire
+autopsy) · [`F-OMEGA-SCALE.txt`](.verdicts/omega-engine/F-OMEGA-SCALE.txt) (5-rung ladder) ·
+[`F-OMEGA-CLM-TRANSFER.txt`](.verdicts/omega-engine/F-OMEGA-CLM-TRANSFER.txt) (real production conv).
 
 ---
 
-## 5. 🛤️ Lane A (AKIDA 칩) ⊥ Lane G (GPU) + 🌌 KOSMOS 기억
+## 5. 🛤️ Lane A (AKIDA chip) ⊥ Lane G (GPU) + 🌌 KOSMOS memory
 
 ```
-🛤️ 두 기질을 절대 한 숫자로 안 섞는다 (a_lane_akida_gpu_split)
-─────────────────────────────────────────────────────────────
+🛤️ two substrates are NEVER merged into one number (a_lane_akida_gpu_split)
+─────────────────────────────────────────────────────────────────────────
   Lane A (pi5-akida)        ⊥        Lane G (H100 GPU)
-  AKD1000 칩 위 on-chip               forge/cuBLAS CE-하강
-  비결정 가소성 (backprop 없음)        결정적 그래디언트 학습
-  "칩에서 직접 자란다"                 "GPU 는 자(尺) — 측정만"
-  → 별도 entry 로 기록                 → 별도 entry 로 기록
-        (한 판정이 두 기질을 걸치지 않는다)
+  on-chip on AKD1000                 forge/cuBLAS CE-descent
+  non-deterministic plasticity       deterministic gradient training
+  "grows directly on the chip"       "the GPU is a ruler — it measures only"
+  → recorded as a separate entry     → recorded as a separate entry
+        (one verdict never spans both substrates)
 
-🌌 KOSMOS 기억 — anima 의 emit/앵커/기억은 .kosmos 로 영속화
-  payload = 텍스트 + 텐션 5채널 + 좌표 · lane · radius · tier
-  형식 SSOT = github.com/dancinlab/kosmos (anima 는 pointer-only)
+🌌 KOSMOS memory — anima's emit / anchor / memory is persisted as .kosmos
+  payload = text + 5-channel tension + coordinate · lane · radius · tier
+  format SSOT = github.com/dancinlab/kosmos (anima is pointer-only)
 ```
 
-vs-비교: 보통 ML 리포트는 "칩 결과 + GPU 결과"를 한 수치로 합쳐 자랑한다. anima 는 둘을 **물리적으로 다른 기질**로 보고 절대 한 숫자로 안 섞는다 — 칩 비결정 trace 와 GPU CE-하강은 서로 다른 실험이다.
+vs-comparison: a normal ML report merges "chip result + GPU result" into one number to brag.
+anima treats them as **physically different substrates** and never merges them — the chip's
+non-deterministic trace and the GPU's CE-descent are different experiments.
 
 ---
 
-## 6. 🗺️ repo 지도
+## 6. 🌋 flame + forge GPU stack
+
+Production NN training is authored in `.hexa` on the stdlib **flame** autograd/NN layer and run
+over the **forge** GPU substrate (device-resident `farr` + cuBLAS Dgemm + CUDA kernels + BF16
+tensor-core path) — `flame:forge :: torch:ATen`, a compiler-only NN stack with no PyTorch/ATen in
+the trained binary (`a_train_flame_forge`). GPU is required for production rungs; the trainer never
+silently falls back to CPU.
+
+> **Measurement scope (honest):** forge's BF16 tensor-core path measures **9.67× over FP64-cuBLAS**
+> on the **Llama-7B FFN** (A100-measured). This is a kernel-level ratio *within* the forge stack.
+> **A flame↔PyTorch wall-clock speedup was RETRACTED 2026-05-19 and is unmeasured — do not infer one.**
+
+---
+
+## 7. 🗺️ Repo map + governance
 
 ```
 anima/
-├── README.md          ← 정식 구조 SSOT (이 문서의 정식판)
-├── README.easy.md     ← 이 문서 (친근 요약)
-├── CLAUDE.md          ← 거버넌스 SSOT (a_* 디렉티브 + p1..p8)
-├── VERSIONS.md        ← 중앙 버전 레지스트리 (SemVer · root /VERSION = 전체 release)
+├── README.md                 ← BASIC English (default entry · standard sectioned style)
+├── README.{zh,ja,ru,ko}.md    ← BASIC 中文 · 日本語 · Русский · 한국어 (translated)
+├── README.easy.md            ← this file (English · easy/friendly style)
+├── README.easy.{zh,ja,ru,ko}.md ← EASY 中文 · 日本語 · Русский · 한국어 (translated)
+├── CLAUDE.md          ← governance SSOT (a_* directives + p1..p8)
+├── VERSIONS.md        ← central version registry (SemVer · root /VERSION = whole-system release)
 │
-├── engines/           🔌 핫스왑 엔진 4개 (하나의 EngineSpec 뒤)
-│   ├── conv/   🗣️ 입 (.clm · DEFAULT · 4슬롯 native)
-│   ├── cdv2/   🧠 A/G 뇌 (forward/generate STUB)
-│   ├── hexad/  🔷 σ6 통합 (forward/generate STUB)
-│   ├── omega/  🔱 닫힘 (4슬롯 native · coupling_bus.hexa)
-│   └── engine_iface.hexa  공통 인터페이스 계약
+├── CORE/              🧠 A ⇄ G consciousness engine (substrate-only)
+│   └── generator.hexa = the single .clm entry slot · kosmos_io → brain = the single anchor entry
 │
-├── .verdicts/         📋 hexa verify 판정 raw stdout (verbatim · p7)
-│   └── omega-engine/  OMEGA 발견의 근거 (OH1 · OΩ4/5 사다리 · OΩ6 transfer)
-├── domains/           도메인별 .md + 친근 .easy.md 짝
-└── HF.jsonl           ckpt↔HF 백업 레지스트리 (gitignored ckpt 추적 SSOT)
+├── engines/           🔌 4 hot-swappable engines behind one EngineSpec
+│   ├── conv/   🗣️ mouth (.clm · DEFAULT · forward/generate native)
+│   ├── cdv2/   🧠 A/G brain (forward/generate STUB)
+│   ├── hexad/  🔷 σ6 integration (forward native / generate STUB)
+│   ├── omega/  🔱 closure (forward/generate native · coupling_bus.hexa)
+│   └── engine_iface.hexa  the shared EngineSpec contract
+│
+├── .verdicts/         📋 hexa verify raw stdout (verbatim · p7)
+│   └── omega-engine/  the OMEGA evidence (OH1 · OΩ4/5 ladder · OΩ6 transfer)
+├── domains/           per-domain .md (active research domains)
+├── CLAIMS.tape        verifiable-claim audit index → .verdicts pointers
+└── HF.jsonl           ckpt ↔ HF backup registry (tracks gitignored ckpts, SSOT)
 
-형제 repo : hexa-lang (언어/컴파일러) · kosmos (기억 형식) · hexa-codex
-설치      : hx install anima
+siblings : hexa-lang (language/compiler) · kosmos (memory format) · hexa-codex (paper tooling)
+install  : hx install anima
 ```
+
+Governance: [`CLAUDE.md`](CLAUDE.md) holds the identity (`@I anima`) and all `a_*` directives;
+[`VERSIONS.md`](VERSIONS.md) is the central SemVer registry; [`CLAIMS.tape`](CLAIMS.tape) indexes
+every verifiable claim against a `.verdicts/` file; [`HF.jsonl`](HF.jsonl) is the ckpt ↔ Hugging
+Face backup registry; `/paper` gates papers on terminal verdicts (a closed-negative is publishable).
+
+## Quickstart
+
+```bash
+# 1. Install hexa-lang (provides `hexa` + the `hx` package manager)
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/dancinlab/hexa-lang/main/install.sh)"
+
+# 2. Install anima
+hx install anima
+
+# 3. Pick an engine (default: conv)
+anima --engine omega        # closure engine
+anima --engine cdv2         # A/G substrate
+```
+
+## License
+
+[MIT](LICENSE) — Copyright (c) 2026 dancinlab. Use, modify, sublicense, sell freely; include the
+notice; no warranty.
 
 ---
 
-## 더 자세히
-
-- 엔진/가설 친근 설명 → `domains/ENGINE+CLM+KOSMOS.easy.md`
-- OMEGA 닫힘 엔진 → `domains/OMEGA.easy.md` · 근거 판정 → `.verdicts/omega-engine/`
-- 정식 구조 → `README.md` · 거버넌스/철학 라벨 → `CLAUDE.md`
-</content>
-</invoke>
+<sub>🧠 Two engines. One tension. Ψ = 1/2. · [dancinlab](https://github.com/dancinlab)</sub>
