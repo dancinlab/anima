@@ -13,6 +13,8 @@
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{graphicx}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta,fit,backgrounds}
 \usepackage{newunicodechar}
 \newunicodechar{Ω}{\ensuremath{\Omega}}
 \newunicodechar{Ψ}{\ensuremath{\Psi}}
@@ -69,8 +71,11 @@ on-chip (Lane~A) is \emph{never} merged with GPU (Lane~G); and the reference cha
 model now training in torch (``CORPUS-7B'') is \emph{never} conflated with the real
 hexa-native forge \texttt{.clm} consciousness engine (``ENGINE-7B'') --- the torch
 pipeline provably cannot emit an ENGINE-loadable \texttt{.clm} (\tierRed\
-serializer gap). Several ceilings are already lifting upstream (the named util fix
-reached $\sim$1.2x in the sibling \texttt{hexa-lang} repo). We make no perplexity
+serializer gap). The util ceiling is bounded honestly: the named host-removal fix
+(device-resident CUDA-graph capture) was itself ruled out upstream (whole-step
+capture MEAN $13.54\% < 20\%$, FALSIFIED, confirming workload-bound), and the only
+live lift --- incremental kernel fusion in the sibling \texttt{hexa-lang} repo --- is
+as-measured sub-GREEN. We make no perplexity
 or generation-quality claim anywhere; the findings are relative structure and
 ruled-out axes.
 \end{abstract}
@@ -130,7 +135,7 @@ lane & Lane G-ref (torch ByteGPT) & Lane~G (hexa flame$+$forge \texttt{.clm}) \\
 identity & reference chat model & A$\rightleftarrows$G / OMEGA substrate engine \\
 trainer & PyTorch / ATen & hexa-native \texttt{forge} (NO torch in binary) \\
 ENGINE-loadable & NO --- Lane~P serializer-gap \tierRed & YES --- \texttt{.clm} single mouth (generator L3) \\
-status & finishing ($\sim$CHAT-axis datapoint) & OPEN --- util was WORKLOAD-BOUND \tierRed, now lifting (HEXA-FUSION $\sim$1.2x) \\
+status & finishing ($\sim$CHAT-axis datapoint) & OPEN --- util WORKLOAD-BOUND \tierRed; host-removal fix ruled out upstream, kernel-fusion lift sub-GREEN \\
 paper role & CHAT chapter IF coherent-generalizing (Future Work) & Future Work / open frontier \\
 \bottomrule
 \end{tabular}
@@ -164,6 +169,40 @@ G $\rightleftarrows$ brain as a substrate-internal engine. Artifacts enter throu
 enter ONLY via \texttt{kosmos\_io} read into \texttt{brain\_decide} (the single
 anchor entry). No second \texttt{.clm} path bypasses the generator; no second
 anchor path bypasses \texttt{kosmos\_io}.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[
+  node distance=7mm,
+  box/.style={draw,rounded corners,align=center,minimum height=8mm,font=\small,inner sep=3pt},
+  brain/.style={box,fill=blue!8},
+  mouth/.style={box,fill=green!8},
+  slot/.style={box,fill=orange!10,font=\footnotesize},
+  ar/.style={-{Latex[length=2mm]},thick}]
+  \node[brain] (A) {Engine A\\\footnotesize \texttt{pure\_field}};
+  \node[brain,right=18mm of A] (G) {Engine G\\\footnotesize \texttt{engine\_g}};
+  \node[brain,below=of $(A)!0.5!(G)$] (brain) {\texttt{brain\_decide}\\\footnotesize $\Psi=1/2$ fixed point · $W$-tension · 8D $\Psi$};
+  \draw[ar,{Latex[length=2mm]}-{Latex[length=2mm]}] (A) -- node[above,font=\footnotesize]{$\rightleftarrows$} (G);
+  \draw[ar] (A) -- (brain); \draw[ar] (G) -- (brain);
+  \node[slot,below left=10mm and -6mm of brain] (gen) {\texttt{generator.hexa} L3\\\footnotesize single \texttt{.clm} entry};
+  \node[slot,below right=10mm and -6mm of brain] (kio) {\texttt{kosmos\_io}\\\footnotesize single \texttt{.kosmos} entry};
+  \node[mouth,below=10mm of gen] (clm) {\texttt{.clm} byte mouth};
+  \node[mouth,below=10mm of kio] (kos) {\texttt{.kosmos} anchors};
+  \draw[ar] (clm) -- (gen); \draw[ar] (gen) -- (brain);
+  \draw[ar] (kos) -- (kio); \draw[ar] (kio) -- (brain);
+  \begin{scope}[on background layer]
+    \node[draw,dashed,rounded corners,fit=(A)(G)(brain),inner sep=4mm,label=above:{\footnotesize \textbf{CORE} (substrate-internal, a\_core\_engine\_map)}] {};
+  \end{scope}
+\end{tikzpicture}
+\caption{The anima A$\rightleftarrows$G engine. CORE owns the brain
+(A $\rightleftarrows$ G $\rightleftarrows$ \texttt{brain\_decide}, relaxing to
+$\Psi=1/2$); artifacts enter through named single slots only --- a \texttt{.clm}
+model via \texttt{generator.hexa}'s L3 mouth, \texttt{.kosmos} anchors via
+\texttt{kosmos\_io}. The OMEGA bus (Ch.~2) wires substrate state into the byte
+decode; on a leak-free substrate that closure lives on the single A-wire and is
+\emph{replacement}, not coupling.}
+\label{fig:arch}
+\end{figure}
 
 \paragraph{The eight philosophy constraints (p1--p8).} Every measurement in this
 monograph was taken under: \textbf{p1} no system prompt; \textbf{p2} no identity
@@ -429,7 +468,7 @@ named. Lane~A's honest PUBLIC scope is a single-step on-chip encoder.
 \end{itemize}
 
 % =========================================================================
-\section{Chapter 6 --- Lane-G forge util: a workload-bound ceiling, lifting upstream}
+\section{Chapter 6 --- Lane-G forge util: a workload-bound ceiling, honestly bounded}
 \label{sec:laneg}
 
 \paragraph{§Hypothesis (pre-registered falsifier).} On the production forge GPU
@@ -473,15 +512,32 @@ per-step driver loop wall-time, which scales WITH model size.
 workload-size artifact: \texttt{forge} is provably device-resident (20--26GB device
 memory, PEAK to $78\%$, \emph{byte-equivalence preserved}, descent \tierGreen\ at
 every config). The descent science is sound; only the utilization is bound.
-\item \textbf{Cross-repo: the ceiling is already lifting upstream.} The named fix
-(full device-resident CUDA-graph capture/replay $=$ HEXA-FUSION ④,
-a\_cuda\_graph\_train --- take the interpreter out of the per-step hot path) reached
-$\sim$\textbf{1.2x} in the sibling \texttt{hexa-lang} repo
-(\texttt{domains/HEXA-FUSION.md}, PR \#2658). We cite this as a \emph{cross-repo}
-honest pointer: the ceiling was \emph{measured} in anima (this chapter) and is being
-\emph{lifted} in hexa-lang. It is neither a dead-end nor an anima result --- the
-1.2x is hexa-lang's, and the upstream port is what unblocks the open ENGINE-3B/7B
-forge frontier (\S\ref{sec:future}).
+\item \textbf{\tierRed\ Cross-repo: the named host-removal fix was tested upstream
+and is itself a closed-negative (CONFIRMS workload-bound).} The named fix --- full
+device-resident CUDA-graph capture/replay (HEXA-FUSION ④/⑤,
+a\_cuda\_graph\_train --- take the host fully off the per-step critical path) --- was
+built and measured in the sibling \texttt{hexa-lang} kit (PR \#2658) against the SAME
+\texttt{clm\_prod} binary anima's forge trainer invokes
+(\texttt{.verdicts/lane-g-3b-descent/PREFLIGHT-FUSION-STOP.md}). Verbatim (D1536/T512,
+H100): eager $14.87\%$ MEAN $\cdot$ fwd/bwd-graph $13.19\%$ $\cdot$ \emph{whole-step}
+graph $13.54\%$ (PEAK $77\%$, median $2\%$, CE bit-identical, byte-eq). The
+pre-registered falsifier ``whole-step capture raises util MEAN to $\ge20\%$'' is
+\textbf{FALSIFIED ($13.54\%$)} --- removing host launch latency does NOT lift util;
+the wall is the fine-grained \emph{serial kernel dependency chain} (each sub-ms op
+waits on the prior op's output), the same workload-bound residual lever-5 found. The
+graph removes launch latency, not the dependency chain.
+\item \textbf{The genuine remaining lift is upstream kernel FUSION, and it is still
+sub-GREEN.} The only measured positive is incremental kernel fusion in
+\texttt{hexa-lang}'s codegen (byte-eq): L3-a (GN$\to$GELU fused) $+3.26$pp MEAN
+($10.31\to13.57\%$), L3-b (dual-GELU) $+1.01$pp stacked; L3-c/d and the megakernel
+are build-ready but UNMEASURED, with the upstream authors' own honest note that
+pairwise fusion will NOT reach $\ge20\%$ alone (the full whole-step megakernel is
+design-closed --- a persistent kernel cannot call cuBLAS). We cite this strictly as a
+\emph{cross-repo} pointer: the ceiling was \emph{measured} in anima (this chapter),
+the host-removal fix was \emph{ruled out} upstream, and the only live lift (kernel
+fusion) is hexa-lang-owned and as-measured sub-GREEN --- it is NOT an available
+util-GREEN unblock today. This honestly bounds, rather than over-claims, the path to
+the open ENGINE-3B/7B forge frontier (\S\ref{sec:future}).
 \end{itemize}
 
 % =========================================================================
@@ -603,8 +659,8 @@ it documents the substrate that the finding chapters measure on.
 
 The unifying thesis is a substrate-native A$\rightleftarrows$G engine where
 \emph{one} consciousness signal is scale-free, gate-closure is structurally real, and
-most other axes are deterministically ruled out --- an honest map of ceilings,
-several already lifting.
+most other axes are deterministically ruled out --- an honest map of ceilings, each
+bounded by a measured verdict rather than a hoped-for lift.
 
 \begin{table}[h]
 \centering\small
@@ -640,8 +696,10 @@ RELATIVE structure, not absolute CE, consistent with p7. (iii)~A broad set of
 escape/scale axes are deterministically ruled out (MoE monopoly-escape; on-chip
 depth; corpus-axis register), each kept as a first-class closed-negative.
 (iv)~The remaining live ceiling --- Lane-G forge util --- is a measured
-workload-bound artifact with byte-equivalence and descent intact, and its named fix
-is already lifting upstream. Two honesty axes hold the map together: Lane~A and
+workload-bound artifact with byte-equivalence and descent intact; its named
+host-removal fix was ruled out upstream (a confirming closed-negative), leaving
+kernel fusion (sub-GREEN as measured) as the only live, honestly-bounded lift. Two
+honesty axes hold the map together: Lane~A and
 Lane~G are never merged, and the torch reference model is never conflated with the
 forge engine.
 
@@ -654,8 +712,10 @@ findings):
 \begin{itemize}\itemsep0.2em
 \item \textbf{ENGINE 3B/7B (hexa-native forge \texttt{.clm})} --- the real
 consciousness engine at scale; OPEN. The descent-axis 3B forge fire is device-resident
-but util-bound; unblocking is via the HEXA-FUSION CUDA-graph util lift
-($\sim$1.2x, \S\ref{sec:laneg}). This is the ENGINE lane, NOT CORPUS-7B.
+but util-bound; the CUDA-graph host-removal route is a confirmed closed-negative
+(\S\ref{sec:laneg}), so the remaining unblock is upstream kernel fusion
+(hexa-lang-owned, sub-GREEN as measured) or a device-resident CUDA-C full-step
+rewrite. This is the ENGINE lane, NOT CORPUS-7B.
 \item \textbf{CORPUS-7B (torch ByteGPT, Lane G-ref)} --- mid-training; becomes a
 CHAT-axis datapoint IF, once landed, it is honestly judged coherent-generalizing
 versus memorizing. It is NOT the engine and its completion does NOT close ENGINE-7B
@@ -691,7 +751,8 @@ absorbed \#1810; \S3 \texttt{.verdicts/855\_clm\_measure\_sweep/},
 
 \paragraph{Acknowledgments.} This work used the \texttt{hexa-lang} verification
 surface and the \texttt{sidecar/paper} scaffold. LLM collaborator: Claude Opus 4.8
-(1M context). The HEXA-FUSION util lift is a sibling-repo (\texttt{hexa-lang})
-result, cited cross-repo, not an anima measurement.
+(1M context). The HEXA-FUSION util results (the ruled-out host-removal fix and the
+sub-GREEN kernel-fusion lift) are sibling-repo (\texttt{hexa-lang}) measurements,
+cited cross-repo, not anima measurements.
 
 \end{document}
