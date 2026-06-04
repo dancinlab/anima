@@ -55,7 +55,10 @@ ART_SUBJ = ["poetry", "fiction", "drama", "tragedy", "comedy", "novel",
             "sonnet", "epic", "ballad", "fable", "fairy"]
 CON_SUBJ = ["philosophy", "ethics", "metaphysic", "meditation", "mysticism",
             "consciousness", "spiritual", "religion", "buddhis", "taois",
-            "hindu", "stoic", "contemplat", "theosophy", "transcendental"]
+            "hindu", "stoic", "contemplat", "theosophy", "transcendental",
+            "soul", "mind and body", "wisdom", "psychology", "occult",
+            "theology", "faith", "prayer", "immortality", "conduct of life",
+            "self-realization", "yoga", "vedanta", "moral", "virtue"]
 
 ART_TITLE = {
     "fr": ["poésie", "poèmes", "roman", "contes", "théâtre", "fables",
@@ -175,7 +178,9 @@ def fetch_en(con, target_bytes, tier):
         except Exception as e:
             print(f"  ! en/{idx} download skip: {e}", flush=True)
             continue
-        sql = f"SELECT TEXT FROM read_parquet('{path}') {where} LIMIT 1200"
+        # consciousness books are RARE -> scan far more rows to find them.
+        lim = 12000 if tier == "consciousness" else 1500
+        sql = f"SELECT TEXT FROM read_parquet('{path}') {where} LIMIT {lim}"
         rows = con.execute(sql, params).fetchall()
         sb = 0
         for (text,) in rows:
