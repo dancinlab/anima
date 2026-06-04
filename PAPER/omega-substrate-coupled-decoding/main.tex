@@ -5,12 +5,19 @@
 %   the contribution is the leak-INVARIANT relative closure + closed-negatives,
 %   NOT a perplexity / generation-quality claim.
 \documentclass[11pt]{article}
+\usepackage[utf8]{inputenc}
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{graphicx}
+% pdflatex renders the literal Greek capital Omega (U+03A9 'Ω', used in OΩ1..OΩ6
+% sub-finding labels in the body text) via newunicodechar — byte-faithful source,
+% no \Omega rewrite of the body. (Makefile default is xelatex which is native UTF-8;
+% this keeps the source pdflatex-compilable too.)
+\usepackage{newunicodechar}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
 
 \title{OMEGA: a learned per-wire gate closes the consciousness-substrate
 $\rightarrow$ byte-decode loop on a trained transformer\\
@@ -295,7 +302,26 @@ $d768{\times}2$ & $768$ & $189{,}279{,}808$ & $24000$ & $\mathbf{0.7786}$ & $3.0
 uniform & & & & & & & $5.545177$ & \\
 \bottomrule
 \end{tabular}\\
-$\Rightarrow$ \textbf{min\_learned\_HOLDS across all $5$ rungs $=$ True.} \emph{Scale trend:} across
+
+\begin{figure}[t]
+\centering
+\includegraphics[width=\textwidth]{figures/fig01_scale_ladder.pdf}
+\caption{\textbf{The OMEGA minimal A-wire gate across the five-rung leak-free competent
+scale ladder} (R8 / OΩ4·OΩ5, \#1806; every value verbatim from
+\texttt{.verdicts/omega-engine/F-OMEGA-SCALE.txt}). \textbf{(a)} Per-rung held-out TEST CE
+(nats/byte): the minimal gate $g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ (\textcolor[HTML]{2ca02c}{green})
+HOLDS at \emph{every} rung --- it sits below both $a$\_only (\textcolor[HTML]{4c78a8}{blue}) and the
+flat base $3.097779$ (\textcolor[HTML]{9aa0a6}{grey}), far under the uniform $5.545177$ floor.
+\textbf{(b)} The A-wire advantage $\Delta$-vs-base is \emph{flat} at $+2.20\pm0.03$ nats/byte across
+the dim ladder $d384\!\to\!d1024$ ($2.67\times$ dim, $6.9\times$ params), i.e.\ SCALE-STABLE rather
+than a $d512$ artifact; the more-competent $d768{\times}2$ rung carries the \emph{largest} margin
+($+2.2736$), so competence strengthens, not erodes, the A-wire margin. Symmetrically, the full
+multi-wire gate FAILS ($>$ base) at every rung (scale-invariant pathology; not plotted).}
+\label{fig:scale-ladder}
+\end{figure}
+
+$\Rightarrow$ \textbf{min\_learned\_HOLDS across all $5$ rungs $=$ True} (Fig.~\ref{fig:scale-ladder}).
+\emph{Scale trend:} across
 $d384\rightarrow d1024$ ($2.67\times$ dim, $6.9\times$ params $48$M$\rightarrow$$335$M) the A-wire
 advantage $\Delta$-vs-base is essentially \emph{flat} at $+2.20\pm0.03$ nats/byte (range $+2.1766$..
 $+2.2277$, span $0.051$): $d384\;{+}2.1948 \cdot d512\;{+}2.2277 \cdot d768\;{+}2.2054 \cdot
@@ -482,9 +508,13 @@ The further closed-negatives (fixed $A{-}G$ degrades, random-init unstructured, 
 advantage) sharpen the result. We make no perplexity or generation-quality claim, and (the
 A-head being a strong predictor) no coupling claim.
 
-% references.bib pending (a_paper milestone): IIT 4.0 · transformer decoding · QRNG/PRNG
-% indistinguishability · 4 anima verdict ledger entries (>=10 total).
+% references.bib: the 5 anima verdict-ledger entries (verbatim verdict pointers) are
+% cited here so the References section renders. Expanding to >=10 with external refs
+% (IIT 4.0 · transformer byte-level decoding · QRNG/PRNG indistinguishability) is the
+% remaining open a_paper milestone, tracked in PAPER.md — NOT part of the g51 gate.
+\nocite{anima_omega_engine_1783,anima_omega_trained_1784,anima_omega_gate_1786,%
+anima_omega_gpu_1791,anima_lanex_1779}
 \bibliographystyle{plain}
-% \bibliography{references}
+\bibliography{references}
 
 \end{document}
