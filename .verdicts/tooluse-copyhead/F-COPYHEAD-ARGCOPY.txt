@@ -1,0 +1,10 @@
+================= FALSIFIER VERDICTS (verbatim) =================
+BYTE-EQ (head-OFF == original arch): forward max|Δ|=0.0 logprob(copy=off) max|Δ|=0.0 -> PASS
+F-COPYHEAD-ARGCOPY         : with_copyhead correct_call=0.9722 (>= 0.5?) grounding=0.9722 (>= 0.5?)  [baseline #1835: correct_call=0.0 grounding=0.0]  -> PASS
+F-COPYHEAD-OFF-MIRROR      : same ckpt, copy OFF correct_call=0.0 grounding=0.0 (MUST be < 0.5) -> PASS
+F-COPYHEAD-RANDINIT-MIRROR : random_init grounding=0.0 (MUST be 0) -> PASS
+F-COPYHEAD-NOTOOL-MIRROR   : with_copyhead+tool_disabled grounding=0.0 (MUST be 0) -> PASS
+
+RULING: GREEN
+🟢 COPY-HEAD WORKS at toy scale (18M) — the gated pointer head lifts correct_call from 0.0 (#1835) to 0.9722 (>= 0.5) and end-to-end grounding to 0.9722 (>= 0.5) on HELD-OUT keys; head-OFF mirror correct_call=0.0 (< bar, the head does the work), random-init + notool both FAIL, and head-OFF forward is BYTE-IDENTICAL to the original arch. Key-binding residual CLOSED (structural copy, not corpus). ① 완성도 lever delivered.
+

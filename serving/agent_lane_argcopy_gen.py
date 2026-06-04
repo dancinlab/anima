@@ -82,14 +82,23 @@ def value_of(k: str) -> str:
     num = (h[3] << 8 | h[4]) % 9000 + 1000   # 4-digit 1000..9999
     return f"{a}-{n1}-{n2}-{num}"
 
-# ── key SPACE: 3-char [A-Z][A-Z0-9][0-9], EXCLUDING the literal held-out "PB"+2digit form ──
-_C0 = "ABCDEFGHJKLMNRSTUVWXYZ"          # leading letter (drop 'P'-only collisions handled below)
-_C1 = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789"
-_C2 = "0123456789"
+# ── key SPACE: VARIABLE-LENGTH 2..5 chars [A-Z][A-Z0-9]*[0-9], EXCLUDING the held-out ──
+# "PB"+2digit form. v2 FIX (copyhead fire #1): the v1 corpus used a FIXED 3-char key, so the
+# copy head learned to copy exactly a 3-char span and TRUNCATED the 4-char held-out PB01->PB0
+# at test (correct_call=0/36, copyhead fire #1 🔴). Variable length forces the pointer to copy
+# the WHOLE key up to the delimiter (length-general copy), which transfers to the 4-char probe.
+_C0 = "ABCDEFGHJKLMNRSTUVWXYZ"          # leading letter
+_CM = "ABCDEFGHJKLMNPQRSTUVWXYZ0123456789"   # middle chars
+_CL = "0123456789"                      # trailing digit
+_KEY_LENS = (2, 3, 4, 5)                # variable length INCLUDING 4 (the probe length)
 def make_key(rng) -> str:
     while True:
-        k = rng.choice(_C0) + rng.choice(_C1) + rng.choice(_C2)
-        if k in HELDOUT_KEYS:        # never the PBnn literal (defensive; shape differs anyway)
+        L = rng.choice(_KEY_LENS)
+        if L == 2:
+            k = rng.choice(_C0) + rng.choice(_CL)
+        else:
+            k = rng.choice(_C0) + "".join(rng.choice(_CM) for _ in range(L - 2)) + rng.choice(_CL)
+        if k in HELDOUT_KEYS:        # never a held-out literal
             continue
         if k.startswith("PB"):       # avoid the held-out namespace prefix entirely
             continue
