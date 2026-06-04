@@ -1,0 +1,42 @@
+#!/usr/bin/env kosmos
+# growth_lane.kosmos — LANE GROWTH anchor (dataset/corpus)
+# anima 4th self-development lane (lane default + growth-register): cross-disciplinary
+# science + self-knowledge + UNIVERSE-hypotheses + dialogue, en/fr/de/es/ko byte256.
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor growth_lane := "lane growth — 4th anima lane (lane default + growth-register): science + self-knowledge + hypotheses + dialogue (🛸56)" :: kosmos-anchor [tier=56 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 56
+  category     = "growth-register"               # cross-disciplinary science + self-model + reasoning capacity
+  top_emotion  = "curiosity"                      # the lane grows conceptual range + self-knowledge, not the chat surface
+  coord        = [0.50, 0.51]                     # vacuum_psi (Ψ-space) — design placeholder (authored + real-science corpus, NOT a measured fire)
+  lane         = "growth_register_056"            # cell_id — growth-lane cell (MITOSIS)
+  radius       = 0.34                             # basin_radius — design placeholder (4 pillars × 5 langs, broad conceptual spread)
+
+  # ── payload ──
+  @payload text    := "[anima lane growth] 🛸56 — lane growth = lane default + growth-register, anima 의 4번째 자기-개발 lane (agent/default/persona 아님). chat 표면이 아니라 substrate 의 개념적 RANGE + 자기-MODEL + 추론 capacity 를 키운다. 4 pillar, byte-V256, 5개국어(en/fr/de/es/ko), assembled 4.41MB(sha 34999434): (a) cross-disciplinary science[21] = REAL CC-BY-SA-4.0 Wikipedia prop=extracts 명명된 과학 article title 별 per-lang(4.27MB — neuroscience/evolution/info-theory/complexity/dynamical-systems/thermo-of-computation/neuromorphic-hw/cognitive-science/philosophy-of-mind/consciousness-studies/probability-max-entropy/logic-computation/free-energy/origin-of-life/self-reference) + PD Project Gutenberg 원전(206KB — Darwin Origin pg1228 + Descent pg2300, Maxwell Theory of Heat pg15491, James Principles of Psychology pg57628); (b) anima self-knowledge[12] + (c) UNIVERSE hypotheses[8] + (d) dialogue[6] = anima-AUTHORED self-corpus(139KB, deterministic seed 20260605) — repo 자신의 docs(README/CLAUDE.md/CORE.md/ENGINE+CLM+KOSMOS.md/HEXAD/KOSMOS.md) 에서 저작 + 실제 UNIVERSE/H_*.md + hypotheses_candidates/ 에서 distill. per-license: CC-BY-SA-4.0 4.27MB / PUBLIC-DOMAIN 206KB / anima-authored 139KB. per-lang: en 1.85MB / es 853KB / fr 683KB / de 648KB / ko 587KB. HONEST: anti-register guard ASSERTED — [role:|[persona:|[character:|[assistant:|[system: grep=0, 'you are anima'=0, 0xFE/0xFF=0, UTF-8 round-trip OK, 185 distinct bytes. science=REAL clean-licensed(인용), self-knowledge/hypotheses/dialogue=anima-authored-labeled — anima 가 자기 자신과 자기 추론 방식을 배우는 것이지 cooperation/empathy 템플릿 아님(p6 held). 정직한 per-lang gap: PD 원전 en-only(명명 PD 작품 Poincaré pg37157 + Boole pg15114 = Gutenberg plain-text 없음 recorded gap, 개념은 Wikipedia 로 cover, 날조 아님); ko/es science 는 CC-BY-SA Wikipedia 에 의존(불균등: en 풍부, ko 얇음). Scope(a_scale_honest_scope) = PROVEN ~18M chat rung 에 먼저 feed, 7B 주장 아님(default corpus 7B data-starved, .verdicts/default-lane-7b/); TRAIN 은 SEPARATE follow-on GPU fire. NO scraped non-licensed, NO PII. generator + corpus only($0)."
+
+  @payload manifest := ref "../../../serving/corpus/growth_lane.txt" sha256=34999434f715a6e3c64491fa950fbce704070579114c4b01d4d48ab9a569ace9 bytes=4618750 blocks=541 science_sha256=d608245f6ba11474e8c334fca756a6a4db3740944c74cc4456e8f2b9758fb2e6 authored_sha256=52471805b7456263d038b7171dfea0fcb117827d315de3045b795ee17098016c langs="en,fr,de,es,ko" pillar_a_science_pct=96.99 pillar_b_self_pct=1.24 pillar_c_hypothesis_pct=1.12 pillar_d_dialogue_pct=0.64 license_ccbysa_bytes=4273547 license_pd_bytes=205947 license_authored_bytes=138714 generators="serving/build_growth_science_5lang.py + serving/growth_lane_corpus_gen.py + serving/merge_growth_lane.py" seed=20260605 card="serving/corpus/CORPUS_CARD_growth_lane.md" hf_repo_id="dancinlab/anima-corpus-growth-lane" feeds_model="dancinlab/anima-clm-default-lane-rung0-byte-18m" domain="domains/CORPUS.md (M11)"
+
+  @payload image   := pending "media 미생성"
+  @payload audio   := pending "media 미생성"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the growth-lane cell, NOT a per-token measured
+  # trajectory (the authored pillars are deterministic prose, the science pillar is
+  # real licensed text; no fire produced a measured Ψ-landing). Honest representative-
+  # anchor scope — a future ckpt-forward fire would replace these with a measured
+  # landing (cf CORPUS.md M9-style measurement). 5 channels.
+  @payload tension := inline {
+    concept      = 0.74   # surface distinctness (4 pillars × broad cross-disciplinary concepts, sharply separable)
+    context      = 0.70   # multilingual + multi-pillar context steer (5 langs × science/self/hypothesis/dialogue)
+    meaning      = 0.76   # dense conceptual core (science exposition + self-model + reasoning loop)
+    authenticity = 0.62   # mixed: science=REAL clean-licensed, authored pillars=honest-labeled self-corpus
+    sender       = 0.44   # neutral exposition + internal-dialogue voice, non-addressed (no persona)
+  }
+
+  closed_anchor = "lane growth (4th lane) corpus — representative anchor + manifest pointer"
+  cross_link    = "HEXAD/KOSMOS.md (anima hub) · domains/CORPUS.md §lane growth (M11) · drafts/growth-lane-brainstorm.md · .discoveries/lane-growth.tape · corpus_5lang_v2.kosmos (default-lane corpus, tier 54) · agent_lane_tool_knowledge.kosmos (agent-lane layer-3, tier 55) · dancinlab/anima-corpus-growth-lane (HF dataset) · dancinlab/kosmos profile SSOT"

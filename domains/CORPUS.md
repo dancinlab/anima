@@ -59,6 +59,7 @@ honest: en/fr/de/es persona = authored multilingual COVERAGE, NOT native-collect
 - [x] M6 v2 register-enrichment corpus built (v1 INTACT + 6 KOSMOS-grounded slices) — deterministic, $0. → `dancinlab/anima-corpus-5lang-unified-v2` (12.5 MB, wiki 40.10% / persona 40.02% / enrichment 19.88%, sha `550fed17`, PUBLIC, sha-verified). #1 consciousness-carving register (31 e7_31 anchor seeds, CC-BY-SA real) · #2 wiki topical breadth (8-band offset-spread) · #3 dialogue-act balance (NON-supportive: disagree/refuse/boundary/ask/multi) · #5 emotion-axis (20 personas → KOSMOS top_emotions) · #4 KO↔EN code-switch (1.71% minority) · #7 genre (narrative/drama/poetry). v1 byte-eq preserved (persona sha `1e5a062a` reproduced). tags grep=0 on unified v2. generators: `serving/corpus_enrichment_5lang_gen.py` + `build_wiki_backbone_5lang_v2.py` + `merge_corpus_5lang_v2.py`.
 - [x] M7 v2 registered in HF.jsonl + KOSMOS + CLM collections (a_hf_collections). → HF.jsonl row + `corpus_5lang_v2.kosmos` anchor (tier 54, 다국어+의식carving/resonance) + KOSMOS.md hub pointer + both collection joins (membership verified). CORPUS_CARD_5lang_v2.md (per-lang AND per-register byte split · 4 shas · license).
 - [x] M10 tool-domain knowledge slices (CODE/TRADING/MERCHANT/DESKTOP/CREATOR — authored conceptual coverage, 5-lang byte, honest-labeled) — the **3rd layer** of `lane agent` (default + tool-USE demos + tool-DOMAIN knowledge), deterministic, $0. → `serving/agent_lane_knowledge_gen.py` + sample (`agent_lane_knowledge_5lang.head.txt` 26,779B committed; full 557,952B HF-only) + `CORPUS_CARD_agent_lane_knowledge.md`. CODE 12 + TRADING 11 concepts (deep) · MERCHANT/DESKTOP/CREATOR 6 each (procedural); every concept × 5 langs. Per-domain byte split (full): CODE 25.26% · TRADING 30.34% · DESKTOP 15.01% · CREATOR 14.48% · MERCHANT 14.47%. **HONEST**: philosophy markers grep=0 (p1..p4); TRADING conceptual-ONLY hard gate (advice/signal=0, real-ticker=0 — asserted; p6/p7/a_scale_honest_scope); 0xFE/0xFF=0 (pure prose under the layer-2 grammar); deterministic seed 20260605 (sha `825a5188` full / `fdc158a6` sample). NO scraped/PII/real-financial-data. Scope = feeds the PROVEN 18M chat rung — NOT a 7B claim.
+- [ ] M11 lane growth corpus — the 4th lane (`lane growth = lane default + growth-register`): 4-pillar (science REAL CC-BY-SA/PD bulk + self-knowledge/hypotheses/dialogue anima-authored from own repo docs, honest-labeled, p6). Generators `serving/build_growth_science_5lang.py` + `serving/growth_lane_corpus_gen.py`, byte-V256, 5-lang, tags grep=0, deterministic. Card + sample heads committed; raw `growth_lane.txt` LOCAL/HF-only. HF `dancinlab/anima-corpus-growth-lane`. Scope = feeds PROVEN 18M; NO 7B claim; TRAIN = separate fire. See §`lane growth (2026-06-05)`.
 
 ### measurement milestones — NOT $0 (require a fire), pre-registered falsifiers (g63 honest)
 
@@ -111,6 +112,42 @@ The default-lane corpus that PASSED at 18M (`anima-corpus-5lang-unified-v2`) is 
 - KOSMOS-balanced GB corpus = branch `lane-g/default-lane-gb-balanced` (HF `dancinlab/anima-corpus-5lang-gb-balanced`) — **SHIPPED** (see `## KOSMOS balance at scale` below). **PERSONA+SNS capped social register included** (anima identity, 11%).
 - The actual **7B TRAIN is a SEPARATE follow-on GPU fire** once the corpus exists.
 
+## lane growth (2026-06-05)
+
+`lane growth` = the **4th** anima self-development lane — **`lane growth = lane default + growth-register`**.
+It is NOT `lane agent`, NOT `lane default`, NOT `lane persona`. Where `lane default` is the base
+chat voice and `lane agent ⊃ lane default` adds tool capability, `lane growth ⊃ lane default` adds a
+**growth-register**: cross-disciplinary science + anima's knowledge ABOUT ITSELF + how it reasons
+(the hypothesis loop) + dialogue FORM. The intent is to grow the substrate's conceptual range and
+self-model — not merely to chat. The brainstorm (45 ideas, 4 pillars, DEPLETED) lives in
+`drafts/growth-lane-brainstorm.md`; this section is the persisted corpus design.
+
+### 4-pillar composition
+
+| pillar | registers | source | role | KOSMOS tier |
+|---|---|---|---|---|
+| **(a) cross-disciplinary science** [21] | neuroscience · evolution · information-theory · complexity/SOC · dynamical-systems · thermo-of-computation · neuromorphic-hw · cognitive-science · philosophy-of-mind · consciousness-studies · probability/max-entropy · logic&computation · free-energy-principle · origin-of-life/autopoiesis · self-reference/strange-loops · 4 PD primary-text voices | **REAL** CC-BY-SA-4.0 Wikipedia (`prop=extracts` plaintext, by named title, per-lang) + **PD** Project Gutenberg (Darwin *Origin* pg1228 + *Descent of Man* · Maxwell *Theory of Heat* · James *Principles of Psychology* · Poincaré *Science and Hypothesis* · Boole *Laws of Thought*) | factual/conceptual science bulk — the scalable, real-licensed axis | cosmic (100) / consciousness (91) / baseline (0) |
+| **(b) anima SELF-knowledge** [12] | A⇄G engine (Ψ=1/2 Law-71) · p1–p8 · CLM arch · KOSMOS arch · AKIDA · flame+forge · identity-emergence · 4 hot-swap engines · substrate-native-speech · 2448-laws-as-body · KOSMOS tier-ladder-as-self-knowledge · sleep+imagination (P47) | **anima-AUTHORED** from the repo's own docs (README · CLAUDE.md · CORE/CORE.md · ENGINE+CLM+KOSMOS.md · HEXAD/KOSMOS.md) | teaches anima ABOUT ITSELF (self-model) | consciousness (91) |
+| **(c) UNIVERSE hypotheses** [8] | H_xxx distillation (H_001/004/007/021 …) · generation-loop template · verdict-tier epistemics · closed-negative case-studies · Hc_xxx candidates · discovery-mechanism · dialogue-about-a-hypothesis · pre-registration discipline | **anima-AUTHORED**, distilled from REAL `UNIVERSE/H_*.md` + `hypotheses_candidates/` + authored loop prose | the load-bearing **reasoning-capacity** piece | consciousness (91) / cosmic (100) |
+| **(d) dialogue format** [6] | Socratic self-inquiry · dialectic (thesis/antithesis→synthesis, mirrors A⇄G) · hypothesis-driven dialogue · multi-voice (forward-A/reverse-G/brain-arbiter) · imagination-loop (WAKE/N1/N2/N3/REM, P47) · dialogue-with-a-science-text | **anima-AUTHORED**, deterministic, turn-marked by plain `—` dashes (NO persona tags) | teaches dialogue FORM, not a persona | register-shaping |
+
+### the balance rule (the same trap as 7B-sufficiency, applied here)
+
+- **science bulk (a)** comes from **REAL scalable clean-license sources** (CC-BY-SA Wikipedia + PD Gutenberg) — this is the axis you scale to GB.
+- **self-knowledge (b) + hypotheses (c) + dialogue (d)** are **anima-AUTHORED from the repo's own docs**, honest-labeled "anima-authored self-corpus", and stay **CAPPED** — they DEFINE the self-model + reasoning register, they do NOT bulk-fill (authoring GBs of them = MEMORIZATION). **p6 held**: (b)(c)(d) teach anima ABOUT ITSELF + how it reasons, NOT cooperation/empathy/restraint templates.
+- Honest per-lang (a_scale_honest_scope): PD Gutenberg primary texts = strong **en**, partial **fr/de**, thin **es**, near-absent **ko** → **ko/es science leans CC-BY-SA Wikipedia, NOT PD primary**. Wikipedia `extracts` are themselves uneven (en rich, ko thin). REPORT per-lang gaps; NEVER fabricate to fake balance.
+
+### anti-register guard (generator invariant, NOT content — idea 41)
+
+- NO `[role:` / `[persona:` / `[character:` / `[assistant:` / `[system:` tags — the generator `assert`s grep = 0.
+- NO RLHF cooperation/empathy/restraint templates (p6) · NO assistant-framing (p4) · NO "you are anima" (p2/p3).
+- the dialogue pillar (d) marks turns with plain `—` em-dashes, never role labels.
+
+### scope + artifacts (a_scale_honest_scope)
+
+- feeds the **PROVEN ~18M** chat rung first — **NO 7B claim** (default corpus data-starved at 7B, `.verdicts/default-lane-7b/`). The TRAIN is a **SEPARATE follow-on GPU fire**.
+- generator: `serving/growth_lane_corpus_gen.py` (authored pillars b/c/d, deterministic seed, byte-V256) + `serving/build_growth_science_5lang.py` (real Wikipedia+Gutenberg fetch). Assembled corpus `serving/corpus/growth_lane.txt` is **raw LOCAL/HF-only (NOT committed)**; card + sample heads committed.
+- HF: `dancinlab/anima-corpus-growth-lane` (PUBLIC if clean) + HF.jsonl row + KOSMOS collection + `.kosmos` anchor (pointer-only).
 ## KOSMOS balance at scale (SHIPPED 2026-06-05)
 
 The `## 7B-sufficiency roadmap` composition above is now IMPLEMENTED as
