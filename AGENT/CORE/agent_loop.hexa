@@ -326,9 +326,10 @@ fn _wiring_smoke() -> bool {
     print("  [W] web_search ROUTE → \"" + wpay + "\"")
     // PASS = it reached the real surface: either a real result prefix or the
     // honest unavailable-stub (NOT a ‹not wired› and NOT a fabrication).
+    let w_nw = "‹not wired: "
     let w_routed = (to_int(wr["calls"]) == 1)
         && (byte_len(wpay) > 0)
-        && (substring(wpay, 0, 12) != "‹not wired: ")
+        && !(byte_len(wpay) >= byte_len(w_nw) && substring(wpay, 0, byte_len(w_nw)) == w_nw)
     print(if w_routed { "  [PASS] (W) web_search routed to the real surface" }
                       else { "  [FAIL] (W) web_search did not route" })
     all = w_routed && all
@@ -344,7 +345,8 @@ fn _wiring_smoke() -> bool {
     let f1 = if tool_allowed(f1_tier, req) { exec_real_tool(reg, "file_write", fw_args) }
                                            else { "‹tier-refused›" }
     print("  [F1] env UNSET, tier=T2 → \"" + f1 + "\"")
-    let f1_ok = substring(f1, 0, 18) == "‹effectful tool ga"
+    let f1_pfx = "‹effectful tool gated"
+    let f1_ok = byte_len(f1) >= byte_len(f1_pfx) && substring(f1, 0, byte_len(f1_pfx)) == f1_pfx
     print(if f1_ok { "  [PASS] (F1) env unset → honest gated-refusal (default SAFE)" }
                    else { "  [FAIL] (F1) expected gated-refusal" })
     all = f1_ok && all
@@ -369,7 +371,8 @@ fn _wiring_smoke() -> bool {
     // (U) unknown tool → honest ‹not wired›.
     let u = exec_real_tool(reg, "teleport", "mars")
     print("  [U] unknown tool → \"" + u + "\"")
-    let u_ok = substring(u, 0, 12) == "‹not wired: "
+    let u_pfx = "‹not wired: "
+    let u_ok = byte_len(u) >= byte_len(u_pfx) && substring(u, 0, byte_len(u_pfx)) == u_pfx
     print(if u_ok { "  [PASS] (U) unknown tool → honest ‹not wired›" }
                   else { "  [FAIL] (U) unknown tool not honest-stubbed" })
     all = u_ok && all
