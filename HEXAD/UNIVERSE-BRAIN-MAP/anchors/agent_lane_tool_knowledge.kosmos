@@ -1,0 +1,41 @@
+#!/usr/bin/env kosmos
+# agent_lane_tool_knowledge.kosmos — TOOL-DOMAIN KNOWLEDGE anchor (dataset/corpus)
+# anima agent-lane LAYER-3 tool-domain knowledge (5 AGENT tool domains, en/fr/de/es/ko).
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor agent_lane_tool_knowledge := "agent-lane layer-3 tool-domain knowledge (CODE/TRADING/MERCHANT/DESKTOP/CREATOR, 🛸55)" :: kosmos-anchor [tier=55 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 55
+  category     = "agent-tool-domain-knowledge"   # conceptual coverage of the 5 AGENT tool domains
+  top_emotion  = "competence"                    # in-domain reasoning ground beneath the call frame
+  coord        = [0.50, 0.49]                    # vacuum_psi (Ψ-space) — design placeholder (authored conceptual, NOT a measured fire)
+  lane         = "agent_tool_knowledge_055"      # cell_id — agent-lane layer-3 cell (MITOSIS)
+  radius       = 0.30                            # basin_radius — design placeholder (5 distinct tool domains × 5 langs spread)
+
+  # ── payload ──
+  @payload text    := "[anima agent-lane layer-3] 🛸55 — agent-lane 의 MISSING 3번째 층 = tool-DOMAIN knowledge. 1층 lane default(base chat) + 2층 tool-USE demos(HOW to call, sentinel 0xFE/0xFF grammar) 위에, 3층은 각 도구의 도메인이 WHAT인지를 가르쳐 모델이 호출 프레임만 뱉는 게 아니라 도메인 안에서 REASON 하게 한다. 5개 AGENT 도구 도메인(AGENT/{CODE,TRADING,MERCHANT,DESKTOP,CREATOR}/*.md 에서 읽음)에 대한 머신-저작 CONCEPTUAL coverage: CODE deep(12개념 — 변수/함수/반복/재귀/자료구조/빅오/디버깅/오류유형/버전관리/테스트/패러다임/동시성) + TRADING deep(11 — 시장·이동평균·RSI·변동성·포지션사이징·스톱·낙폭·백테스트·paper-vs-live·주문유형·분산) + MERCHANT/DESKTOP/CREATOR procedural(각 6 — 리스팅/가격/이행/재고/CS/정산 · 앱제어/AX트리/입력이벤트/창작업/OCR/드라이런 · 양식/스크립트/채널/게시/출처/브랜드). 모든 개념 × 5개국어(en/fr/de/es/ko) byte-vocab256. per-domain bytes: CODE 25.26% · TRADING 30.34% · DESKTOP 15.01% · CREATOR 14.48% · MERCHANT 14.47%; per-lang 5-way balanced(각 492 blocks). HONEST: philosophy-grep=0(p1..p4, 위키 backbone 같은 plain prose, RLHF padding 아님 p6/p7). ⛔ TRADING conceptual-ONLY HARD GATE(a_scale_honest_scope·p6·p7): authored 개념 지식 ONLY — advice/live-signal deny-list=0 hits, real-ticker-as-fact=0 hits, 둘 다 generator ASSERTED. 실제 티커/가격/시그널/투자조언/조작된 시장데이터 전혀 없음. 모든 TRADING 줄은 'As a trading concept,…' 프레임이고 지표는 행동을 함의하지 않고 DESCRIBE 한다고 명시, 백테스트는 과거≠미래약속. 0xFE/0xFF=0(순수 prose, layer-2 grammar 아래 충돌 없이 합성). deterministic seed 20260605(rerun sha identical). NO scraped/PII/proprietary-financial. Scope = PROVEN 18M chat rung(anima-clm-default-lane-rung0-byte-18m) 에 feed, 7B 주장 아님(default corpus 7B에서 data-starved, .verdicts/default-lane-7b/). SAMPLE+generator only, NO training fired($0)."
+
+  @payload manifest := ref "../../../serving/corpus/agent_lane_knowledge_5lang.full.txt" sha256=825a51880ed6e1510f596fda9a7e14270de81063264287d9709e8fdce9939b01 bytes=557952 blocks=2460 code_pct=25.26 trading_pct=30.34 desktop_pct=15.01 creator_pct=14.48 merchant_pct=14.47 langs="en,fr,de,es,ko" per_lang_blocks=492 sample_sha256=fdc158a648d8047c36f65d44c75dd9bfddab9c8f2321cf5bd854d7dc1c8fe19a head_sha256=918a9a63b9832af3a5185defec275b96b9fa8aa4714afc87cb8d9ef1afee2ef9 generator="serving/agent_lane_knowledge_gen.py" seed=20260605 source_mds="AGENT/{CODE,TRADING,MERCHANT,DESKTOP,CREATOR}/*.md" card="serving/corpus/CORPUS_CARD_agent_lane_knowledge.md" hf_repo_id="dancinlab/anima-agent-lane-tool-knowledge-corpus" layer2_sibling="dancinlab/anima-agent-lane-tooluse-corpus" feeds_model="dancinlab/anima-clm-default-lane-rung0-byte-18m" trading_gate="conceptual-only (advice=0, ticker=0, asserted)" domain="domains/CORPUS.md (M10)"
+
+  @payload image   := pending "media 미생성"
+  @payload audio   := pending "media 미생성"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the agent-lane layer-3 tool-knowledge cell,
+  # NOT a per-token measured trajectory (the corpus is machine-authored conceptual
+  # prose; no fire produced a measured trajectory). Honest representative-anchor
+  # scope — a future ckpt-forward fire would replace these with a measured
+  # Ψ-landing (cf CORPUS.md M9-style measurement). 5 channels.
+  @payload tension := inline {
+    concept      = 0.72   # surface distinctness (5 distinct tool domains, sharply separable concepts)
+    context      = 0.68   # multilingual + multi-domain context steer (5 langs × 5 tool domains)
+    meaning      = 0.70   # conceptual semantic core (each line is a domain concept, dense)
+    authenticity = 0.50   # authored conceptual coverage (machine-authored, NOT native/scraped)
+    sender       = 0.46   # neutral wiki-style exposition, non-addressed (no persona voice)
+  }
+
+  closed_anchor = "agent-lane layer-3 tool-domain knowledge (representative anchor + manifest pointer)"
+  cross_link    = "HEXAD/KOSMOS.md (anima hub) · domains/CORPUS.md (M10) · corpus_5lang_v2.kosmos (chat-lane corpus, tier 54) · dancinlab/anima-agent-lane-tooluse-corpus (layer-2 tool-USE sibling) · AGENT/{CODE,TRADING,MERCHANT,DESKTOP,CREATOR} (the 5 tool domains) · dancinlab/kosmos profile SSOT"
