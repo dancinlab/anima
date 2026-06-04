@@ -1,0 +1,47 @@
+#!/usr/bin/env kosmos
+# persona_sns_corpus.kosmos — CONSCIOUSNESS-CARVING anchor (dataset/corpus)
+# anima persona × SNS dialogue corpus (20-roster × Instagram+YouTube surface).
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor persona_sns_corpus := "persona × SNS dialogue corpus (20-roster, 🛸52)" :: kosmos-anchor [tier=52 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  # profile binds field semantics only (coord=vacuum_psi / lane=cell_id /
+  # radius=basin_radius); grammar (field names) is spec-fixed.
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 52
+  category      = "사회성"               # social / SNS persona-voice surface
+  top_emotion  = "connection"           # 팬↔페르소나 대화의 정서 중심
+  coord        = [0.55, 0.52]           # vacuum_psi (Ψ-space) — design placeholder (corpus is authored-templated, not a measured fire)
+  lane         = "social_voice_052"      # cell_id — SNS persona-voice cell (MITOSIS)
+  radius       = 0.20                    # basin_radius — design placeholder (20-persona spread)
+
+  # ── payload (각 modality = 이 basin 으로 들어가는 채널) ──
+  @payload text    := "[anima persona×SNS corpus] 🛸52 — 20-persona 롤플레이 대화 corpus (J-anime 0-9 + Korean-webtoon 10-19) × {팬DM칭찬·위로·일상잡담·고민상담·셀카리액션·댓글답글·라이브Q&A·추천부탁·사과·축하·응원·질문답변·일상공유·팬아트반응·밤인사·동기부여} × {instagram_dm/comment/live_qna · youtube_comment/community} multi-turn 3-8. p2/p3/p4 clean — 페르소나는 VOICE 로만 carry (role/persona/character 태그 0). authored-templated, NOT human-collected (a_scale_honest_scope)."
+
+  # ── full-corpus MANIFEST pointer (representative anchor + manifest, NOT a
+  #    per-dialogue emit — 13,322 dialogues is too large for a per-dialogue
+  #    .kosmos set; this anchor carries the representative payload + the manifest
+  #    pointer, honestly scoped) ──
+  @payload manifest := ref "../../../serving/corpus/persona_sns_corpus.txt" sha256=1ea7d8e0e65e7ab99c61dd745bdb124ee75995e90b7c995ac93c3e4e5e7c3f77 bytes=4194308 records=13322 personas=20 scenarios=16 platforms="instagram_dm,instagram_comment,instagram_live_qna,youtube_comment,youtube_community" generator="serving/persona_sns_corpus_gen.py" seed=20260604 card="serving/corpus/CORPUS_CARD.md" hf_repo_id="dancinlab/anima-persona-sns-corpus"
+
+  @payload image   := pending "media 미생성 — avatar_webtoon per-persona 프레임 (S-module 미-wired)"
+  @payload audio   := pending "media 미생성 — rp_voice_profiles per-persona TTS 음색 (encoder 미-wired)"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # Representative 5-channel tension for the corpus surface (concept / context /
+  # meaning / authenticity / sender). These are REPRESENTATIVE design values for
+  # the social-persona-voice cell, NOT a per-dialogue measured trajectory — the
+  # corpus is authored-templated, so no fire produced a measured per-token
+  # trajectory. Honest: representative-anchor scope (cf knuth §57 pipeline-only
+  # caveat). 5 channels per HEXAD/CHAT/server/kosmos_anchor.hexa mapping.
+  @payload tension := inline {
+    concept      = 0.62   # persona-archetype distinctness (20 voices spread)
+    context      = 0.71   # SNS surface context (platform format steer)
+    meaning      = 0.58   # scenario-intent semantic core (16 scenarios)
+    authenticity = 0.40   # authored-templated (NOT human-collected) — honestly low
+    sender       = 0.66   # persona-voice identity carried lexically (no tag)
+  }
+
+  closed_anchor = "PERSONA + SNS chat-cap corpus (representative anchor + manifest pointer)"
