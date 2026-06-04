@@ -32,3 +32,14 @@
   into self/forge/forge_extra.c, #included after forge_tier_v1.c in runtime.c (im2col/col2im/adamw
   already present → only the 7 net-new added, no redefinition). runtime.c compiles clean (rc=0).
   rebuilt hexa driver → clm_prod build.
+
+## 2026-06-04 — rung0 fire LAUNCHED then pod EVICTED (honest)
+- clm_prod built CLEAN (CLM_RC=0, errors=0) after the 5-blocker fix chain. rung0_d768 fire LAUNCHED
+  (d768 E2 8ep on the 585KB 5-lang starter, detached nohup on /workspace).
+- ~3min into the fire, pod 39404862 SSH went refused, then the instance DISAPPEARED from vast
+  (provider eviction of the interruptible instance — #2671 orphan/eviction scenario). /workspace
+  ephemeral data LOST (no harvest possible from a vanished instance). registry pod forgotten
+  (status=closed). myself.pods re-checked: 39404862 absent (gone, not leaked).
+- a_wall_first re-fire: the COMPLETE working build recipe is now captured in a one-shot
+  (savant_oneshot.sh — all 5 blockers pre-solved: file/clang apt, full self/ src, forge_extra.c
+  inject, hexa cc --regen, then build+fire). Re-rented fresh H100 39410751, re-firing.
