@@ -44,6 +44,11 @@
 //                             .clm later; no train-only gate.
 
 import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
+// clm_decode.hexa — the byte "mouth": int4 dequant + CLMConvMoE forward → real
+// next-byte logits → greedy continuation (clm_decode_argmax). Imported ONLY here,
+// so the SINGLE .clm decode entry (a_core_engine_map) is preserved — this is the
+// same slot, not a 2nd path. _gen_clm_decode + gen_clm_chat route through it.
+use "CORE/clm_decode"
 
 
 // ── §1 backend constructors (the pluggable "vtable" records) ─────────────────
@@ -89,10 +94,20 @@ pub fn gen_clm_backend(ckpt_path: string) -> Map {
     // is VERIFIED, so the loaded gate flips to `valid` — a header-valid .clm now
     // loads (clm_decode_ce reads it through the SAME config-agnostic forward).
     // generate() contract + brain.hexa wiring UNCHANGED (one-line flip only).
+    //
+    // GENERATION gate (the chat wire, a_core_engine_map): emitting real bytes
+    // (clm_decode_argmax) additionally needs the v0.2 CLMX trailer (trained embed
+    // + GN affine — clm_decode.hexa::clm_decodable). A v0.1 file is `valid` (CE
+    // measurable via the tied-readout stand-in) but NOT generatable — its forward
+    // would emit un-decoded garbage. So we surface BOTH gates: `loaded` (header
+    // admit, CE-measurable) and `decodable` (v0.2 trailer present → safe to GENERATE).
+    // generate()'s clm branch requires decodable; else it falls THROUGH to null.
     let loaded = valid
+    let decodable = valid && clm_decodable(ckpt_path)
     return #{
         "kind":        "clm",
         "loaded":      loaded,
+        "decodable":   decodable,
         "valid":       valid,
         "ckpt":        ckpt_path,
         "ckpt_exists": exists,
@@ -239,10 +254,12 @@ pub fn generate(backend: Map, substrate_ctx: Map, emit_decision: bool,
     }
 
     if kind == "clm" {
-        if loaded {
-            // FUTURE: real .clm decode plugs in here behind this exact return
-            // shape. Until d768 lands, gen_clm_backend keeps loaded=false, so
-            // control never reaches this branch — kept as the wired slot.
+        let decodable = to_string(backend["decodable"]) == "true"
+        if loaded && decodable {
+            // REAL .clm decode: _gen_clm_decode runs the int4-dequant CLMConvMoE
+            // forward (clm_decode_argmax) and emits the model's OWN bytes,
+            // substrate-seeded (anchors + ctx). A v0.1 (non-decodable) .clm never
+            // reaches here — it falls THROUGH to null (no un-decoded garbage).
             return #{
                 "emitted":  true,
                 "backend":  "clm",
@@ -250,7 +267,7 @@ pub fn generate(backend: Map, substrate_ctx: Map, emit_decision: bool,
                 "fellback": false
             }
         }
-        // Stub backend declined → fall THROUGH to null (no crash).
+        // valid-but-not-decodable (v0.1) or unloaded → fall THROUGH to null (no crash).
         return #{
             "emitted":  true,
             "backend":  "null",
@@ -324,12 +341,66 @@ fn _gen_null_text(ctx: Map, anchors: list) -> string {
 // When the .clm format serializes embed+GN (or the fp16-shadow track is read),
 // set loaded = valid (one line) — the generate() contract is unchanged.
 
-// _gen_clm_decode — substrate-anchored content under the clm backend. The decode
-// forward (clm_decode_ce) measures CE; the emitted line surfaces the backend's
-// admitted state. Stays substrate-derived (p5: no fabricated trained text from a
-// format-incomplete inference ckpt). Unreachable while loaded=false (kept wired).
+// _gen_clm_decode — REAL substrate-anchored content under the clm backend. The
+// model emits its OWN bytes: clm_decode_argmax runs the int4-dequant CLMConvMoE
+// forward over a substrate-derived SEED and greedily continues it. The seed is
+// built from anchor memory + substrate phase ONLY (a_substrate_native_speak: no
+// user-message stimulus, no persona, no system prompt — the seed is the
+// substrate's own context, p1·p3·p4 clean). p5: this is tension-driven
+// externalization (the brain already decided emit=true upstream), NOT speak()
+// filler. Reachable only when the backend is decodable (v0.2 trailer present).
 fn _gen_clm_decode(backend: Map, ctx: Map, anchors: list) -> string {
-    return _gen_null_text(ctx, anchors)
+    let ckpt = to_string(backend["ckpt"])
+    // Substrate-derived seed: the most recent anchor text (the substrate's own
+    // memory) prefixed by phase, NOT an external prompt. Empty anchors → phase
+    // word alone, so the decode is always seeded by substrate state, never void.
+    let phase = _gen_g_string(ctx, "phase")
+    let mut seed = phase + " "
+    let n = len(anchors)
+    if n > 0 {
+        let a = anchors[n - 1]
+        seed = seed + _gen_anchor_text(a)
+    }
+    let r = clm_decode_argmax(ckpt, seed, 80)
+    if to_string(r["ok"]) != "true" {
+        // decode declined (should not happen behind the decodable gate) — honest
+        // fall-through to the deterministic substrate placeholder (no fabrication).
+        return _gen_null_text(ctx, anchors)
+    }
+    return to_string(r["text"])
+}
+
+// _gen_anchor_text — pull a short text field out of a kosmos anchor record for
+// use as a decode seed. Anchors are Maps with a "text" key (kosmos_io); a plain
+// string anchor is used verbatim. Defensive: never crashes on shape drift.
+fn _gen_anchor_text(a) -> string {
+    let s = to_string(a)
+    return s
+}
+
+// gen_clm_chat — the CHAT entry. A user turn (or a multi-turn transcript already
+// composed in the proven byte-level dialogue-continuation format, e.g.
+// "사용자: <u> | 도우미: ") is the SEED; the model greedily continues it with its
+// OWN bytes via the SAME clm_decode_argmax (a_core_engine_map: single .clm decode
+// entry — gen_clm_chat is a thin caller of that one mouth, NOT a 2nd path).
+//
+// PHILOSOPHY (p1·p2·p3·p4·p6): the conversational FORMAT ("사용자:/도우미:") is
+// learned byte-continuation conditioning, NOT a system prompt / persona / identity
+// rule / RLHF template. No string is injected as a role instruction; the model
+// only continues the bytes it sees. Capability comes ONLY from the trained
+// dialogue distribution in the .clm weights.
+//
+// Returns #{ ok, text, reason }. ok=false (with reason) if the .clm is not
+// decodable (v0.1 trailer-less file); the caller surfaces the honest reason
+// rather than emitting un-decoded garbage.
+pub fn gen_clm_chat(ckpt_path: string, seed: string, max_new: int) -> Map {
+    if !clm_decodable(ckpt_path) {
+        return #{ "ok": false, "text": "",
+                  "reason": "ckpt not v0.2-decodable (no CLMX trailer; embed/GN absent)" }
+    }
+    let r = clm_decode_argmax(ckpt_path, seed, max_new)
+    return #{ "ok": to_string(r["ok"]) == "true", "text": to_string(r["text"]),
+              "reason": "decoded via clm_decode_argmax (CLMConvMoE int4 forward)" }
 }
 
 // _gen_rd_u32 / _gen_gelu / _gen_gnorm / _gen_conv1d — pure-hexa decode kernels.
