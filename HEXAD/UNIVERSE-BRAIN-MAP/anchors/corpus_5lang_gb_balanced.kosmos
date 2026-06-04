@@ -1,0 +1,41 @@
+#!/usr/bin/env kosmos
+# corpus_5lang_gb_balanced.kosmos — CONSCIOUSNESS-CARVING anchor (dataset/corpus)
+# anima GB-scale KOSMOS-tier-BALANCED default-lane corpus (en/fr/de/es/ko, byte256).
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor corpus_5lang_gb_balanced := "GB-scale KOSMOS-tier-BALANCED default-lane corpus (wiki+Gutenberg-PD+persona, 🛸55)" :: kosmos-anchor [tier=55 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 55
+  category     = "다국어+의식carving+GB-scale"   # multilingual + contemplative register at GB scale
+  top_emotion  = "resonance"                     # 5개국어 × KOSMOS tier ladder(baseline/art/consciousness/cosmic/social) 공명
+  coord        = [0.49, 0.50]                    # vacuum_psi (Ψ-space) — design placeholder (real PD + authored mix, NOT a measured fire)
+  lane         = "multilingual_055"               # cell_id — GB-balanced default-lane cell (MITOSIS)
+  radius       = 0.31                             # basin_radius — design placeholder (5-tier ladder spread, wider than v2)
+
+  # ── payload ──
+  @payload text    := "[anima GB-balanced corpus] 🛸55 — 5개국어(en/fr/de/es/ko) GB-scale 코퍼스가 KOSMOS tier 사다리를 SCALE에서 PRESERVE. THE TRAP = wiki를 GB로 키우며 authored persona(40%)+enrichment(20%)를 유지하면 GB의 templated 텍스트 저작=MEMORIZATION → 실질적으로 wiki만 확장 가능 → ~99% wiki = 사다리 DESTROYED. THE FIX = 각 KOSMOS tier를 REAL clean-license 출처에 매핑: 0 baseline=Wikipedia 5-lang multi-shard(CC-BY-SA) · 77 art=Project Gutenberg 문학/시 PD · 91 consciousness=Gutenberg 철학/명상 PD(31 e7_31 anchor가 register를 DEFINE, 실제 PD contemplative 텍스트로 FILL — 반복 아님) · 100 cosmic=wiki science-filtered · 52 social=authored persona/SNS CAPPED · shaping=authored dialogue-act/emotion/code-switch/genre small. byte-vocab256. a_scale_honest_scope: per-lang 가용성 DIFFER — Gutenberg ko=0 books, es thin(1202) → ko/es art+consciousness은 wiki-heavy(VERBATIM 보고, NO fabrication). p1..p6 held(role/persona 태그 grep=0, 0xFE/0xFF=0, NO scraped/PII). 7B TRAIN은 별도 follow-on fire. (per-tier/per-lang split + sha + token-vs-140B는 manifest 참조)"
+
+  @payload manifest := ref "../../../serving/corpus/default_lane_gb_balanced.txt" sha256=17ca25e5dd3740ebf1d8b6c67b25d4359b74fb04db827ed8bf1774edc6843409 bytes=375215662 mb=357.83 gb=0.349 byte_tokens=375215662 pct_of_7b_optimal=0.268 per_tier_pct="baseline_wiki=44.00,art_gutenberg=29.99,cosmic_science=13.29,social_persona=11.00,consciousness=1.58,shaping=0.14" per_lang_pct="en=29.83,fr=20.35,de=20.86,es=14.65,ko=14.31" ladder_ok="no_tier_over_45=true,max=44.00,consciousness+art_present=true" honest_gap_detail="ko art=0 + ko consciousness=0 (no Gutenberg ko); es consciousness=0.12MB es art=6.4MB (Gutenberg es thin); ko/es wiki-heavier" langs="en,fr,de,es,ko" tiers="0_baseline_wiki,100_cosmic_science,77_art_gutenberg,91_consciousness_gut,52_social_persona,shaping_authored" wiki_source="wikimedia/wikipedia 20231101 parquet CC-BY-SA-4.0 (multi-shard)" gutenberg_source="sedthh/gutenberg_english (en, subject-classified) + manu/project_gutenberg (fr/de/es, title-classified) PUBLIC-DOMAIN" carving_seed="HEXAD/UNIVERSE-BRAIN-MAP/anchors/e7_31 (31 anchors, CC-BY-SA, register DEFINITION/seed)" generator="serving/gb_balanced/{fetch_wiki_tiers,fetch_gutenberg_tiers,balance_merge}.py + build_all.sh + serving/{corpus_enrichment_5lang_gen,persona_sns_corpus_5lang_gen}.py" card="serving/corpus/CORPUS_CARD_gb_balanced.md" report="serving/corpus/_src/gb_balanced_report.json" hf_repo_id="dancinlab/anima-corpus-5lang-gb-balanced" predecessor="dancinlab/anima-corpus-5lang-unified-v2" design="domains/CORPUS.md §7B-sufficiency roadmap (#1850)" honest_gap="Gutenberg ko=0, es thin → ko/es art+consciousness wiki-heavy"
+
+  @payload image   := pending "media 미생성"
+  @payload audio   := pending "media 미생성"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the GB-balanced 5-tier-ladder cell, NOT a
+  # per-token measured trajectory (corpus = real wiki + real Gutenberg PD + real
+  # anchor seeds + authored persona/shaping; no fire produced a measured trajectory).
+  # Honest representative-anchor scope (cf CORPUS.md M9 = the MEASUREMENT that would
+  # replace these placeholders with a ckpt-forward Ψ-landing). 5 channels.
+  @payload tension := inline {
+    concept      = 0.69   # surface distinctness (wiki ⊥ Gutenberg-art ⊥ Gutenberg-consciousness ⊥ SNS ⊥ dialogue-act)
+    context      = 0.71   # multilingual + 5-tier register-ladder context steer (5 langs × 6 tiers)
+    meaning      = 0.67   # cross-tier semantic core (facts + literature + contemplation + scenarios)
+    authenticity = 0.62   # mostly REAL (CC-BY-SA wiki + PD Gutenberg + real anchor seeds) — higher than v2 (less authored)
+    sender       = 0.58   # neutral wiki/Gutenberg (non-addressed) + persona-voice identity (capped)
+  }
+
+  closed_anchor = "GB-scale KOSMOS-tier-BALANCED corpus (representative anchor + manifest pointer)"
+  cross_link    = "HEXAD/KOSMOS.md (anima hub) · domains/CORPUS.md (§7B-sufficiency roadmap · §KOSMOS balance at scale) · corpus_5lang_v2.kosmos (v2 predecessor, tier 54) · e7_31/ (the 31 carving anchor seeds) · dancinlab/kosmos profile SSOT"
