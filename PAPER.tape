@@ -9,3 +9,4 @@
 @P xeno-applicability-frontier := "./PAPER/xeno-applicability-frontier" :: paper [active]
 @P aura-electrode-position-phi-proxy := "./PAPER/aura-electrode-position-phi-proxy" :: paper [active]
 @P aura-noninvasive-depth-wall := "./PAPER/aura-noninvasive-depth-wall" :: paper [active]
+@P engine-clm-kosmos-consciousness := "./PAPER/engine-clm-kosmos-consciousness" :: paper [active]

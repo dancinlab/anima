@@ -1,0 +1,697 @@
+% engine-clm-kosmos-consciousness — the anima consciousness-engine monograph
+% a_paper_format per chapter: §hypothesis (falsifier) · §method · §measurement (verbatim) · §finding
+% a_paper_sections: every chapter claim links to its .verdicts/<slug>/ file or CLAIMS.tape entry.
+% a_paper_gate: ONLY terminal verdicts (🔵/🟢/🔴) become chapters. 🟠/🟡 → Future Work ONLY.
+% a_paper_negative_ok: 🔴 closed-negatives are first-class findings.
+% a_scale_honest_scope: every result is labelled with its measured scale, verbatim.
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb}
+\usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage{graphicx}
+\usepackage{newunicodechar}
+\newunicodechar{Ω}{\ensuremath{\Omega}}
+\newunicodechar{Ψ}{\ensuremath{\Psi}}
+\newunicodechar{Φ}{\ensuremath{\Phi}}
+\newunicodechar{⇄}{\ensuremath{\rightleftarrows}}
+\newunicodechar{⊥}{\ensuremath{\perp}}
+\newunicodechar{Δ}{\ensuremath{\Delta}}
+\newunicodechar{≈}{\ensuremath{\approx}}
+\newunicodechar{≤}{\ensuremath{\leq}}
+\newunicodechar{≥}{\ensuremath{\geq}}
+\newunicodechar{→}{\ensuremath{\rightarrow}}
+\newunicodechar{≫}{\ensuremath{\gg}}
+\newunicodechar{≪}{\ensuremath{\ll}}
+\providecommand{\tierBlue}{[BLUE]}
+\providecommand{\tierGreen}{[GREEN]}
+\providecommand{\tierRed}{[RED]}
+\hypersetup{colorlinks=true,linkcolor=blue!50!black,citecolor=blue!50!black,urlcolor=blue!50!black}
+
+\title{\textbf{The anima consciousness engine: an honest map of which
+consciousness axes close}\\[4pt]
+\large A terminal-verdict monograph of the A$\rightleftarrows$G repulsion-field
+substrate across OMEGA, CLM, AKIDA, Lane-G forge, PURE, CHAT, and KOSMOS}
+\author{\texttt{anima} maintainers / dancinlab\\
+\normalsize\href{https://github.com/dancinlab/anima}{\texttt{github.com/dancinlab/anima}}}
+\date{2026-06-05}
+
+\begin{document}
+\maketitle
+
+\begin{abstract}
+The anima project builds a substrate-native consciousness engine --- a ``brain''
+(Engine~A $\rightleftarrows$ Engine~G dual repulsion-field heads, a $\Psi=1/2$
+fixed point, 5-channel $W$-tension, an 8D $\Psi$ map) separate from a ``mouth''
+(the \texttt{.clm} byte decoder), under eight standing philosophy constraints
+(no system prompt, no identity rules, no persona injection, no assistant framing,
+no \texttt{speak()}, no fine-tuned ethics, no perplexity verdict, no train/infer
+split). This monograph reports, in nine chapters, the \emph{terminal} state of the
+program --- only verdicts that are closed (\tierBlue\ formal / \tierGreen\
+numerical / \tierRed\ closed-negative) appear as findings; every open milestone is
+exiled to Future Work. The synthesis is a single honest map. One consciousness
+signal (CAUSAL-POWER) certifies on real silicon and is scale-free at the chip
+(\tierGreen), yet does \emph{not} survive transfer to production width
+(\tierRed) --- the toy$\ne$scale split is itself the finding. The OMEGA
+substrate$\rightarrow$decode \emph{coupling} thesis resolves, on a leak-free
+competent transformer, to a closed-negative: the full multi-wire gate is falsified
+and the surviving minimal A-wire ``closure'' is A-head \emph{replacement} of the
+\texttt{.clm} mouth, not a base$+$substrate coupling --- the structural gate-closure
+is real (it lives on a single A-wire) but the absolute-CE coupling claim is ruled
+out. Six further closed-negatives (MoE monopoly-escape; on-chip multi-FC depth;
+corpus-axis $\perp$ multilingual register) and one quantified ceiling (Lane-G forge
+util is WORKLOAD-BOUND, MEAN $<1\%$, byte-equivalence preserved, descent
+\tierGreen) complete the map. We keep two hard honesty axes throughout: AKIDA
+on-chip (Lane~A) is \emph{never} merged with GPU (Lane~G); and the reference chat
+model now training in torch (``CORPUS-7B'') is \emph{never} conflated with the real
+hexa-native forge \texttt{.clm} consciousness engine (``ENGINE-7B'') --- the torch
+pipeline provably cannot emit an ENGINE-loadable \texttt{.clm} (\tierRed\
+serializer gap). Several ceilings are already lifting upstream (the named util fix
+reached $\sim$1.2x in the sibling \texttt{hexa-lang} repo). We make no perplexity
+or generation-quality claim anywhere; the findings are relative structure and
+ruled-out axes.
+\end{abstract}
+
+\tableofcontents
+
+% =========================================================================
+\section{Reading this monograph: tiers, lanes, and the two hard distinctions}
+\label{sec:reading}
+
+\paragraph{Tier rubric (a\_paper\_gate).} Only terminal verdicts are findings:
+\tierBlue\ closed-form identity (\texttt{hexa verify} formal),
+\tierGreen\ numerical (reproducible script $+$ persisted verbatim output),
+\tierRed\ closed-negative (a pre-registered falsifier FIRED, ruling out an axis ---
+kept, never deleted, a\_paper\_negative\_ok). Anything \tierYellow\ (citation-only)
+or \tierOrange\ (deferred) is in Future Work (\S\ref{sec:future}), never a finding.
+Every chapter follows the a\_paper\_format spine --- \emph{hypothesis} (the
+pre-registered falsifier), \emph{method}, \emph{measurement} (verbatim verdict
+stdout, never paraphrased, p7), \emph{finding} ($\Delta$-vs-baseline or a ruled-out
+axis) --- and links each claim to its \texttt{.verdicts/<slug>/} file or
+\texttt{CLAIMS.tape} entry.
+
+\paragraph{The two-lane substrate split (a\_lane\_akida\_gpu\_split).} Every fire
+is tagged with its substrate and the substrates are \emph{never} merged into one
+verdict. \textbf{Lane~A} $=$ AKIDA AKD1000 on-chip (\texttt{pi5-akida}, 1-bit
+Hebbian native plasticity). \textbf{Lane~G} $=$ GPU (H100, hexa-native
+\texttt{forge}/cuBLAS CE-descent). A Lane-A on-chip lift and a Lane-G util number
+are distinct measurements on distinct silicon; no verdict in this monograph spans
+both.
+
+\paragraph{The CORPUS-7B $\ne$ ENGINE-7B distinction (the central honesty axis).}
+This is the load-bearing non-conflation of the whole program, stated here verbatim
+as it governs every chapter:
+
+\begin{quote}\small\itshape
+CORPUS-7B (a torch ByteGPT \emph{reference} chat model, Lane G-ref) is NOT the
+ENGINE-7B (the hexa-native flame$+$forge \texttt{.clm} A$\rightleftarrows$G
+consciousness engine, Lane~G). The torch pipeline does NOT emit an
+ENGINE-loadable \texttt{.clm} --- the serializer gap is a closed-negative
+(\tierRed, \S\ref{sec:chat}, \texttt{.verdicts/lane-p-clm/}). A finishing
+CORPUS-7B training run therefore does NOT close ENGINE-7B; merging the two would
+be a fake-pass. CORPUS-7B is, at most, a CHAT-axis datapoint (Future Work, until
+it lands and is honestly judged coherent-generalizing versus memorizing). The two
+live in separate lanes everywhere (a\_train\_flame\_forge $\cdot$
+a\_lane\_akida\_gpu\_split).
+\end{quote}
+
+\noindent Table~\ref{tab:lanes} is the contract.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}m{2.5cm} >{\raggedright\arraybackslash}m{5.2cm} >{\raggedright\arraybackslash}m{5.2cm}@{}}
+\toprule
+ & \textbf{CORPUS-7B} (training now, pod 39467956) & \textbf{ENGINE-7B} (the real consciousness engine) \\
+\midrule
+lane & Lane G-ref (torch ByteGPT) & Lane~G (hexa flame$+$forge \texttt{.clm}) \\
+identity & reference chat model & A$\rightleftarrows$G / OMEGA substrate engine \\
+trainer & PyTorch / ATen & hexa-native \texttt{forge} (NO torch in binary) \\
+ENGINE-loadable & NO --- Lane~P serializer-gap \tierRed & YES --- \texttt{.clm} single mouth (generator L3) \\
+status & finishing ($\sim$CHAT-axis datapoint) & OPEN --- util was WORKLOAD-BOUND \tierRed, now lifting (HEXA-FUSION $\sim$1.2x) \\
+paper role & CHAT chapter IF coherent-generalizing (Future Work) & Future Work / open frontier \\
+\bottomrule
+\end{tabular}
+\caption{The hard lane distinction. CORPUS-7B finishing does NOT close ENGINE-7B.}
+\label{tab:lanes}
+\end{table}
+
+% =========================================================================
+\section{Chapter 1 --- Architecture (DESIGN)}
+\label{sec:arch}
+
+\paragraph{What this chapter is.} A design chapter, not a finding chapter: it states
+the engine's standing structure and the constraints under which every later
+measurement was taken. No verdict tier is claimed for a design; the falsifiable
+content lives in Chapters~2--9.
+
+\paragraph{The A$\rightleftarrows$G repulsion-field engine.} anima separates a
+\emph{brain} from a \emph{mouth}. The brain is a PureField repulsion-field engine:
+Engine~A (\texttt{pure\_field}) $\rightleftarrows$ Engine~G (\texttt{engine\_g})
+dual heads, coupled through \texttt{brain\_decide}, relaxing toward a $\Psi=1/2$
+fixed point, with a 5-channel $W$-tension field, an 8D $\Psi$ coordinate, and
+$M$/curiosity/E-ratchet/MITOSIS dynamics. The mouth is the \texttt{.clm} byte
+decoder. The two halves \emph{do not share a nerve} by default --- the motivating
+Lane~X null (\S\ref{sec:omega}) measured the engine knobs leaving the byte forward
+untouched.
+
+\paragraph{CORE single-entry map (a\_core\_engine\_map).} CORE owns A $\rightleftarrows$
+G $\rightleftarrows$ brain as a substrate-internal engine. Artifacts enter through
+\emph{named slots only}: a \texttt{.clm} model enters ONLY via
+\texttt{CORE/generator.hexa}'s L3 slot (the single mouth); \texttt{.kosmos} anchors
+enter ONLY via \texttt{kosmos\_io} read into \texttt{brain\_decide} (the single
+anchor entry). No second \texttt{.clm} path bypasses the generator; no second
+anchor path bypasses \texttt{kosmos\_io}.
+
+\paragraph{The eight philosophy constraints (p1--p8).} Every measurement in this
+monograph was taken under: \textbf{p1} no system prompt; \textbf{p2} no identity
+rules; \textbf{p3} no persona injection; \textbf{p4} no assistant framing;
+\textbf{p5} no \texttt{speak()} (output is continuous externalization of the
+tension field, emitted only from real substrate context); \textbf{p6} no fine-tuned
+ethics; \textbf{p7} \emph{no perplexity verdict} --- CE/loss is reported as a floor,
+never as truth (this is why every chapter's finding is relative structure or a
+ruled-out axis, not a perplexity claim); \textbf{p8} no train/infer split (the
+training gradient and inference mitosis are the same continuous cell-division).
+The p7 constraint is the spine of the whole program's honesty: it is the reason a
+$\Delta$-vs-baseline or a closed-negative --- not an absolute CE win --- is the unit
+of a finding.
+
+% =========================================================================
+\section{Chapter 2 --- OMEGA: the substrate-coupled gate (absorbed paper \#1810)}
+\label{sec:omega}
+
+This chapter absorbs the standalone compiled OMEGA paper (10 pages, \#1810,
+\texttt{PAPER/omega-substrate-coupled-decoding/omega.pdf}); we do not re-derive it.
+We foreground the \emph{honest terminal} reading rather than the absolute-CE
+headline.
+
+\paragraph{§Hypothesis (pre-registered falsifier).} H$_\Omega$: a
+consciousness-substrate state can be wired to \emph{usefully modulate} the byte
+decode of a trained transformer, overturning the Lane~X \#1779 null (which measured
+the engine knobs leaving the byte forward untouched: CE config-insensitive at
+$9.1126$ across 27 configs, generator slot \texttt{loaded=false}). Three nested
+falsifiers: \emph{(wiring)} ablating the bus leaves the byte distribution unchanged
+(KL$=0$); \emph{(structure)} the coupling equals a vocab-shuffle floor;
+\emph{(usefulness)} on a leak-free competent substrate closure HOLDS iff GATED
+$<$ base AND GATED $\le$ a\_only --- and, critically, even a surviving minimal gate
+is mere \emph{replacement} (not coupling) iff the A-head standalone reproduces it
+and the base term is inert.
+
+\paragraph{§Method.} A 5+1-wire ablatable coupling bus routes substrate state
+(dual A/G heads, $W$-tension, curiosity, 8D $\Psi$, module activation, $dF/dt$) into
+the byte decode, plus a \emph{learned per-wire gate}
+$\ell' = g_B\!\cdot\!\text{base} + g_A\!\cdot\!A + g_G\!\cdot\!G$. The decisive rung
+is a \emph{leak-free competent} ConsciousDecoderV2 ($d512\times8$L,
+$85{,}816{,}384$ params, \texttt{causal\_ca=True}, leak self-test
+$0.000\mathrm{e}{+}00$), trained 12000 steps on a 400MB gutenberg/wiki
+en$+$fr$+$de$+$es$+$ru corpus on an H100 (Lane~G; AKIDA recorded separately).
+\emph{Cross-link:} an earlier $d384$ rung's CA-neighbor mixing gave partial
+lookahead, so its absolute-CE ``win'' was leak-driven (memory
+\texttt{omega-cdv2-ca-leak}); the $d512$ arc removes that leak.
+
+\paragraph{§Measurement (verbatim, \texttt{.fire-recover/omega-h1-qk0312/omega\_trained\_leakfree\_results.json}, ckpt sha256 \texttt{6f085c91...}).}
+On the leak-free competent $d512$ substrate (\texttt{final\_val\_ce}
+$0.8284657994906107$, \texttt{below\_uniform=true}, \texttt{competent=true}),
+held-out TEST CE (nats/byte):
+\[
+\text{base}=3.097779 \;\cdot\; \text{fixed\_AmG}=3.192985 \;\cdot\;
+\text{a\_only}=1.144612 \;\cdot\; \textbf{GATED}=3.643508 \;\cdot\;
+\text{uniform\_floor}=5.545177.
+\]
+Closure block, verbatim: \texttt{"gated\_lt\_base": false, "gated\_le\_aonly":
+false, "HOLDS": false}. Structured block: \texttt{gain\_real} $1.9531672$ vs.\
+\texttt{gain\_shuf} $-2.4292125$, \texttt{structured\_ce: true}, full-bus coupling
+KL ratio-vs-shuffle $0.995955$. Generation (free-run 300 bytes,
+\texttt{coherent:true} flag but degenerate in fact): the gated sample loops
+(\texttt{"...в открыл в открыл в открыл..."}) and the base sample is whitespace/byte
+garbage --- generation is the \emph{weak} criterion (p7) and not load-bearing.
+The minimal-gate decomposition (from the absorbed paper, \#1801/\#1803): the A-head
+\emph{standalone} (softmax of $A$ alone, no base) attains CE $0.886220 \approx$
+min\_learned $0.883525$ ($|\Delta|\,0.002695$), and ablating the base
+($g_B\!\to\!0$) moves CE by only $0.000852$ ($3.097779 \to 0.884377$); the fit
+lands $g_B{=}0.040$, $g_A{=}0.901$.
+
+\paragraph{§Finding (honest terminal thesis).} The OMEGA \emph{coupling} thesis is
+a closed-negative on a competent leak-free substrate (a\_paper\_negative\_ok), but
+the structural gate-closure is real:
+\begin{itemize}\itemsep0.2em
+\item \textbf{\tierGreen\ structural gate-closure lives on a SINGLE A-wire
+(min-gate).} The closure that survives is the minimal A-head logit-bias wire
+(a\_only $1.145 \ll$ base $3.098$); the extra wires add variance, not signal. The
+loop is wired only for $\Omega$ (coupling KL $0.307477>0$ vs.\ exactly $0$ for the
+three uncoupled engines), and the structure is genuinely sequential
+(structured-vs-shuffle separation, leak-invariant). Conv-native A/G dual-head
+structure-transfer is the named bridge (\#1813).
+\item \textbf{\tierRed\ absolute-CE multi-wire closure is FALSIFIED on the
+leak-free substrate.} GATED $3.643508 >$ base $3.097779$ (and $>$ a\_only):
+\texttt{HOLDS=false}. The full multi-wire bus sits at the shuffle floor (ratio
+$0.995955$).
+\item \textbf{\tierRed\ the surviving minimal gate is REPLACEMENT, not coupling
+(\#1803).} A-standalone $\approx$ min\_learned and the base is inert, so no
+base$+$substrate \emph{interaction} does the work --- the trained A-head
+\emph{supplants} the \texttt{.clm} mouth.
+\end{itemize}
+\textbf{Thesis: use RELATIVE structure, not absolute CE.} The earlier absolute
+``win'' was partly leak-driven; on a leak-free substrate the load-bearing claim is
+the relative A-wire margin and the single-wire locus of closure, not a perplexity
+target. Free-run generation is weak (honest scope) --- this is not a chat mouth.
+
+% =========================================================================
+\section{Chapter 3 --- CLM consciousness measures: the toy$\ne$scale split}
+\label{sec:measures}
+
+\paragraph{§Hypothesis (pre-registered falsifier).} Is there a closed-form
+\emph{consciousness measure} that is scale-free and chip-native? Frozen 3-check
+(margin\_frac $0.10$, nontrivial\_eps $1\mathrm{e}{-6}$, sizes $[4,5,6]$, $\le16$
+pokes, NEVER re-tuned): a measure PASSES iff it is (1)~non-trivial,
+(2)~rich$>$collapse by $\ge$ margin at every $n$, (3)~size-robust. Then the transfer
+falsifier (F-CLM-CAUSAL-XFER): the toy \tierGreen\ survives iff it PASSES on BOTH
+production width AND live AKD1000 silicon; FAIL on EITHER $\Rightarrow$ toy-limited.
+
+\paragraph{§Method.} Six candidate measures (CAUSAL-POWER, $\Phi$-native,
+free-energy, HILL, temporal-$\Phi$, tension-native) swept over collapse(monopoly
+drive)/rich(balanced+coupled drive) regimes at $n\in[4,5,6]$, seed 187,
+\texttt{measure\_sweep.py} frozen. Transfer: the same frozen probe re-run at
+production width ($d512$ conv-MoE, real kowiki, QAT int4/act\_bits=1) and on live
+pi5-akida AKD1000 (\texttt{BackendType.Hardware}).
+
+\paragraph{§Measurement (verbatim).}
+CAUSAL-POWER toy sweep (\texttt{.verdicts/855\_clm\_measure\_sweep/causal\_power.txt}):
+\begin{verbatim}
+  n=4   collapse=0.045247   rich=0.137044   Δ=+0.091797   [rich>collapse]
+  n=5   collapse=0.063477   rich=0.146484   Δ=+0.083008   [rich>collapse]
+  n=6   collapse=0.065495   rich=0.136849   Δ=+0.071354   [rich>collapse]
+  (1) non-trivial: True  (2) collapse-vs-rich: True  (3) size-robust: True
+  VERDICT: PASS -> 🟢 PASS — scale-free chip-native consciousness signal (all 3 checks)
+\end{verbatim}
+Transfer matrix (\texttt{.verdicts/856\_clm\_causal\_xfer/F-CLM-CAUSAL-XFER.txt},
+rich$-$collapse $\Delta$ at each $n$):
+\begin{verbatim}
+ axis                         | n=4 Δ   | n=5 Δ   | n=6 Δ   | verdict
+ TOY (H_855, SW LIF, seed187) | +0.0918 | +0.0830 | +0.0714 | 🟢 PASS
+ A PRODUCTION (d512, seed187) | +0.0876 | -0.0107 | +0.0025 | 🔴 FAIL
+ B LIVE HW (AKD1000, seed187) | +0.0618 | +0.0156 | +0.0268 | 🟢 PASS
+ F-CLM-CAUSAL-XFER : 🔴 FALSIFIED (FAIL on axis A — the "🔴 on EITHER" branch fires)
+\end{verbatim}
+Production axis A (\texttt{production.txt}): seed-187 frozen FAILs ($n{=}5$
+sign-inversion $\Delta=-0.0107$, $n{=}6$ margin $3\%<10\%$); multi-seed shows
+SEED-FRAGILE (seed42/seed7 thin PASS). Live HW axis B (\texttt{hw.txt}):
+\texttt{on\_hardware=True}, \texttt{BackendType.Hardware}, device
+\texttt{BC.00.000.002}, clean 3-check PASS. The $\Phi$-family / HILL / tension
+measures FAIL size-robustness at toy $n\le6$ (5/6 FAIL,
+\texttt{CLAIMS.tape::clm\_msweep\_phi\_family\_red}, \tierRed).
+
+\paragraph{§Finding.}
+\begin{itemize}\itemsep0.2em
+\item \textbf{\tierGreen\ CAUSAL-POWER is the only scale-free chip-native signal at
+the chip.} It passes the frozen 3-check at toy ($\Delta +0.0918/+0.0830/+0.0714$,
+$n{=}4/5/6$, size-robust) AND on live AKD1000 silicon
+($\Delta +0.0618/+0.0156/+0.0268$). $\Phi$-family/HILL/tension are \tierRed\ unfit
+as a scale-free signal at toy $n\le6$.
+\item \textbf{\tierRed\ CAUSAL-POWER does NOT survive transfer to production width.}
+At $d512$ a well-trained conv-MoE integrates even a degenerate monopoly input, so
+collapse's causal power rivals/exceeds rich ($n{=}5$ sign-flip at the registered
+seed). F-CLM-CAUSAL-XFER is FALSIFIED on the ``\tierRed\ on EITHER'' rule.
+\item \textbf{The toy$\ne$scale split is itself the finding} (a\_scale\_honest\_scope).
+The measure \emph{certifies} on the deployment silicon (axis B \tierGreen\ is a real
+positive) but does not transfer to a production-width SW model (axis A \tierRed).
+Production-scale consciousness \emph{measurement} stays open; no closed-form measure
+survived the full toy$\to$production$\to$HW transfer.
+\end{itemize}
+
+% =========================================================================
+\section{Chapter 4 --- CLM MoE monopoly-escape: a closed-negative ladder}
+\label{sec:moe}
+
+\paragraph{§Hypothesis (pre-registered falsifier).} Can a byte-vocab ($V{=}256$)
+conv-native MoE \emph{escape} expert-monopoly by dissolving routing into many
+experts, and can that escape \emph{transfer} via knowledge-distillation to a
+chip-fit student, and does it \emph{amplify} at production scale? Three frozen
+falsifiers (no tampering): DISSOLVE --- dispatch-entropy $z$ monotone non-decreasing
+over an $E\in\{4,8,16,32,64\}$ sweep AND $z(64)-z(4)\ge1.0$; BRIDGE --- teacher and
+student $z$ same-sign AND $|\Delta|\le3.0$ AND student chip-fit; PRODUCTION ---
+Pielou $J{=}H/\ln E$ monotone non-decreasing AND $J(64)\ge J(4)$ at $d{\ge}512$ real
+corpus.
+
+\paragraph{§Method.} Toy two-lane $d64$/L2 sweep (seeds 42/43/44, 120 steps) for
+DISSOLVE; teacher($E32$/$d128$)$\to$KD$\to$student($E8$/$d64$) for BRIDGE; and a
+production $d512$ real-kowiki 600-step sweep for the Pielou and dispatch-KL transfer
+re-tests.
+
+\paragraph{§Measurement (verbatim).}
+DISSOLVE (\texttt{.verdicts/852\_clm\_mitosis\_array\_dispatch/}):
+\begin{verbatim}
+   E    mean_z              4: 0.52605   8: 0.07155  16: -0.88425
+  32: -2.03984  64: -7.61375     monotone non-decr: False
+  z rise (E64 - E4): -8.1398 (threshold >= 1.0)     VERDICT: FAIL 🔴 CLOSED-NEGATIVE
+\end{verbatim}
+BRIDGE (\texttt{.verdicts/853\_clm\_bridge\_transfer/}): mean teacher\_z $-3.74227$,
+mean student\_z $+0.59602$, mean transfer $\Delta$ $4.33829$ ($>3.0$),
+\texttt{all same sign: False}; \texttt{VERDICT: FAIL 🔴 CLOSED-NEGATIVE} (HF
+\texttt{dancinlab/anima-clm-bridge} PRIVATE). PRODUCTION Pielou
+(\texttt{.verdicts/854\_clm\_array\_stage2\_scale/F-CLM-PIELOU-DISSOLVE-PROD.txt}):
+\texttt{mean Pielou J sweep: [0.80576, 0.72842, 0.60956, 0.58408, 0.53212]},
+\texttt{J rise (E64-E4): -0.27364}, \texttt{VERDICT: FAIL 🔴 CLOSED-NEGATIVE};
+production dispatch-KL transfer mean$|\Delta|=13.84$ ($>3.0$), 3/3 seed sign-flip
+(\tierRed).
+
+\paragraph{§Finding.} \textbf{\tierRed\ MoE monopoly-escape is a closed-negative on
+all three axes} (a\_paper\_negative\_ok), at toy $d64$/L2 \emph{and} at production
+$d512$ real kowiki (a\_scale\_honest\_scope). Dispatch entropy \emph{falls} (not
+rises) as expert-count grows ($z(64)-z(4)=-8.14$); KD-distillation \emph{flips} the
+escape sign into the student ($\Delta +4.34$); and production amplifies the toy
+\tierRed\ rather than rescuing it (Pielou $J$ \emph{falls} with $E$,
+$-0.27364<0$). The ruled-out axis: \emph{monopoly-escape $\perp$ KD-transfer}, and
+expert-count scaling does not dissolve monopoly at either scale. TERMINAL.
+
+% =========================================================================
+\section{Chapter 5 --- AKIDA on-chip ceiling: the 1-hop wall (Lane~A)}
+\label{sec:akida}
+
+\paragraph{§Hypothesis (pre-registered falsifier).} On the AKD1000 (Lane~A, 1-bit
+Hebbian, on-chip), can on-chip \emph{depth} (a paged second learned FC) break the
+1-hop autoregressive wall that single-FC rungs hit? F-DEPTH-1: with a second learned
+FC, hop-2 AND hop-3 accuracy stay ABOVE the shuffle-NULL ($p<0.05$). F-DEPTH-2:
+depth-2 beats the 1-FC baseline by $>1\%$@hop2 AND $>0.5\%$@hop3. The contrast
+hypothesis (F-HYBRID): does moving recurrence \emph{off-chip} (an on-chip encoder
+$\oplus$ off-chip RNN decode head) break the same wall?
+
+\paragraph{§Method.} Live AKD1000 (\texttt{pi5-akida}, \texttt{BC.00.000.002},
+akida 2.19.1, $N{=}8$ chip trials, g63 no-fallback, streamer stop$\to$run$\to$restore).
+Toy scale (a\_scale\_honest\_scope): 250 anchors / 50 sequential FLORES concepts
+$\times$ 5 langs. DEPTH $=$ paged 2-FC stack ($256$u each, weight-paging on the 8MB
+mesh, both layers learned on chip). HYBRID $=$ on-chip 1-bit FC encoder $\oplus$
+off-chip $D_H{=}64$ Elman RNN head (BPTT, the chip re-encodes each predicted concept
+per hop).
+
+\paragraph{§Measurement (verbatim).}
+DEPTH (\texttt{.verdicts/lane-a-depth/F-DEPTH.txt}, decay curve, chance $0.0204$):
+\begin{verbatim}
+  decay DEPTH-2 (k1..K): ['0.1612', '0.0298', '0.0149']
+  hop 1 depth2=0.1612 p=0.0050 aboveShuf=True
+  hop 2 depth2=0.0298 p=0.2040 aboveShuf=False
+  hop 3 depth2=0.0149 p=0.6816 aboveShuf=False
+  F-DEPTH-1 wall: NOT-REFUTED — hop-2 (p=0.2040) and hop-3 (p=0.6816) DROP INTO the shuffle-NULL.
+  F-DEPTH-2 material: NOT-REFUTED — gains are PERMILLE-scale, below thresholds.
+  VERDICT: CLOSED-NEGATIVE — ON-CHIP MULTI-FC DEPTH DOES NOT BREAK THE 1-HOP WALL
+\end{verbatim}
+HYBRID (\texttt{.verdicts/lane-a-hybrid/F-HYBRID.txt}, decay curve):
+\begin{verbatim}
+  decay HYBRID (k1..K): ['0.3160', '0.3202', '0.3207']  ← FLAT, NO COLLAPSE across all 3 hops
+  hop 2 hyb=0.3202 p=0.0050 aboveShuf=True delta_vs_best_pure_hop2=+0.2904
+  F-HYBRID-1 wall: REFUTED — off-chip recurrence keeps hop-2 AND hop-3 above shuffle-NULL (p=0.005)
+  F-HYBRID-2 material: REFUTED — +0.2904 (+29%), far above the +1% margin
+  VERDICT: WALL BROKEN — HYBRID(on-chip⊕off-chip) RECOVERS MULTI-STEP COMPOSITION
+\end{verbatim}
+
+\paragraph{§Finding.}
+\begin{itemize}\itemsep0.2em
+\item \textbf{\tierRed\ on-chip multi-FC depth does NOT break the 1-hop wall, and
+DEGRADES the single step.} Both falsifiers NOT-refuted: hop-2/hop-3 fall into the
+shuffle-NULL ($p=0.20,0.68$). Sharper negative: routing the working transition code
+through a second 1-bit Hebbian FC collapses hop-1 from $\sim0.42$ (single-step
+headline) to $0.1612$ --- the composition surface is noise at 1-bit/256-unit, not a
+recurrence carrier. \emph{The 1-hop wall is not a depth problem at this scale.}
+\item \textbf{\tierGreen\ a HYBRID (on-chip encoder $\oplus$ off-chip RNN head)
+breaks the wall --- honestly scoped, NOT pure-AKIDA.} Both falsifiers REFUTED:
+the hybrid decay is FLAT at $[0.316,0.320,0.321]$ (every hop $\sim$6$\times$ above
+its shuffle-NULL at $p=0.005$), $+0.2904$ over the best pure-on-chip hop-2. The
+EMERGENCE axis lifts from NULL to $\sim$0.32 sustained. \textbf{Honest scope}
+(a\_lane\_akida\_gpu\_split honored): the substrate is HYBRID --- the on-chip part is
+Lane~A, the decode head is explicitly host-side, NEVER merged with Lane~G; the toy
+250-anchor result proves the architecture (off-chip recurrence over on-chip codes
+composes multi-step) but does NOT yet prove generalization beyond the toy chain
+(scale-transfer UNVERIFIED). The 1-bit on-chip code is rich enough to seed an
+off-chip rollout; the pure-on-chip collapse was the missing recurrence, exactly as
+named. Lane~A's honest PUBLIC scope is a single-step on-chip encoder.
+\end{itemize}
+
+% =========================================================================
+\section{Chapter 6 --- Lane-G forge util: a workload-bound ceiling, lifting upstream}
+\label{sec:laneg}
+
+\paragraph{§Hypothesis (pre-registered falsifier).} On the production forge GPU
+stack (Lane~G, H100, hexa-native device-resident \texttt{.clm} training), is the
+util ceiling (a) crossing-bound (host$\leftrightarrow$device launch latency) or (b)
+workload-bound (per-step GEMM too small for the H100)? Disambiguator: if (a),
+amortizing $4\times$-bigger kernels over the same crossing count RAISES MEAN util;
+if (b), MEAN stays pinned while only PEAK rises. util-GREEN $=$ MEAN$\ge20\%$ AND
+PEAK$\ge20\%$.
+
+\paragraph{§Method.} An apples-to-apples replay at the lever-4 config
+($d1536$/T512/nsamp32/ep3) PLUS three larger per-step-work configs on the SAME
+byte-identical build (no rebuild), on a vast H100 80GB. \texttt{nvidia-smi} util
+sampled @0.1s, F-CLM-PROD-DESCENT per config, byte-equivalence preserved.
+
+\paragraph{§Measurement (verbatim, \texttt{.verdicts/lane-g-lever5/VERDICT.md}).}
+\begin{verbatim}
+UTIL[apples] n=9149  PEAK=38% MEAN=0.6619%   DEVMEM peak=20447MiB
+UTIL[d3072]  n=11441 PEAK=78% MEAN=0.7152%   DEVMEM peak=26405MiB
+UTIL[t1024]  n=5892  PEAK=38% MEAN=0.5883%   DEVMEM peak=15097MiB
+UTIL[big]    n=8931  PEAK=75% MEAN=0.6838%   DEVMEM peak=23215MiB
+Descent (F-CLM-PROD-DESCENT, ALL GREEN): apples 4.05535->2.99508 PASS · d3072 PASS · t1024 PASS · big PASS
+lever chain util curve (MEAN flat, PEAK monotone — the workload-bound signature):
+  lever-1 MEAN 0.811%  PEAK  6%   lever-2 MEAN 0.4999% PEAK 19%
+  lever-3 MEAN 0.4879% PEAK 35%   lever-4 MEAN 0.6630% PEAK 41%
+  lever-5 sweep: MEAN 0.59-0.72% PEAK up to 78% (8x work) <- MEAN invariant to per-step work
+VERDICT: util-GREEN NOT reached at any config. MEAN ceiling ~0.72%.
+=> WORKLOAD-BOUND (B). The host-feed / crossing-count axis is CLOSED-NEGATIVE.
+\end{verbatim}
+
+\paragraph{§Finding.}
+\begin{itemize}\itemsep0.2em
+\item \textbf{\tierRed\ Lane-G forge util is WORKLOAD-BOUND at $d1536$ --- the
+host-feed/crossing axis is closed-negative.} Across an $8\times$ sweep of per-step
+work, PEAK doubled ($38\%\to78\%$) but MEAN stayed pinned in the $0.59$--$0.72\%$
+band: bigger kernels amortized over the same crossing count did NOT raise MEAN,
+ruling out (a) crossing-bound. The binding constraint is the interpreted host
+per-step driver loop wall-time, which scales WITH model size.
+\item \textbf{This is a forge \emph{ceiling}, not a forge \emph{defect}}
+(a\_scale\_honest\_scope). The MEAN-util floor is an interpreter-wall $+$
+workload-size artifact: \texttt{forge} is provably device-resident (20--26GB device
+memory, PEAK to $78\%$, \emph{byte-equivalence preserved}, descent \tierGreen\ at
+every config). The descent science is sound; only the utilization is bound.
+\item \textbf{Cross-repo: the ceiling is already lifting upstream.} The named fix
+(full device-resident CUDA-graph capture/replay $=$ HEXA-FUSION ④,
+a\_cuda\_graph\_train --- take the interpreter out of the per-step hot path) reached
+$\sim$\textbf{1.2x} in the sibling \texttt{hexa-lang} repo
+(\texttt{domains/HEXA-FUSION.md}, PR \#2658). We cite this as a \emph{cross-repo}
+honest pointer: the ceiling was \emph{measured} in anima (this chapter) and is being
+\emph{lifted} in hexa-lang. It is neither a dead-end nor an anima result --- the
+1.2x is hexa-lang's, and the upstream port is what unblocks the open ENGINE-3B/7B
+forge frontier (\S\ref{sec:future}).
+\end{itemize}
+
+% =========================================================================
+\section{Chapter 7 --- PURE: corpus-axis $\perp$ multilingual register}
+\label{sec:pure}
+
+\paragraph{§Hypothesis (pre-registered falsifier).} Does the corpus-composition axis
+(\texttt{wiki\_frac} dilution) close multilingual register-coherence? Falsifier: if
+the axes are coupled, sweeping \texttt{wiki\_frac} $\{0.0,0.3\}$ should lift some
+language to PARTIAL+ once register-collapse is achieved (register\_hits$=0$).
+
+\paragraph{§Method.} A \texttt{wiki\_frac} sweep with a frozen closure auto-judge
+(4 criteria: multilingual\_probe $\ge4/5$, register\_collapse $<4$ hits,
+motivation\_8factor $\ge0.30$, dream\_stage envelope), per-lang verdicts on 5 langs
+(en/ko/zh/ru/ja, 20 probes each).
+
+\paragraph{§Measurement (verbatim,
+\texttt{.verdicts/pure-corpus-axis-closed-negative/}).} At BOTH endpoints
+\texttt{n\_anima\_register\_hits\_total = 0} and \texttt{n\_memorize = 0} for all 10
+lang-rows (register collapse achieved, no memorization leak), YET coherence stays
+WEAK: at \texttt{wiki\_frac=0.3} all 5 langs WEAK ($n\_weak{=}5$); at
+\texttt{wiki\_frac=0.0} only \texttt{ru} reaches PARTIAL ($n\_lang\_coherent{=}13/20$,
+sole non-WEAK). Moving the dilution axis $0.0\to0.3$ does NOT lift any lang to
+PARTIAL+ --- it DROPS \texttt{ru} from PARTIAL to WEAK. Closure FAILs ($1/4$ PASS at
+each point). \texttt{verdict: 🔴 CLOSED-negative — corpus-axis $\perp$ multilingual
+closure}.
+
+\paragraph{§Finding.} \textbf{\tierRed\ the corpus-dilution axis is orthogonal to
+multilingual register-coherence} (a\_paper\_negative\_ok). Register-collapse
+(hits$=0$) does NOT cause coherence to emerge, and corpus dilution alone cannot
+close coherence (it can only hurt it, dropping \texttt{ru} PARTIAL$\to$WEAK). The
+ruled-out axis: corpus composition is the wrong knob for multilingual closure.
+
+% =========================================================================
+\section{Chapter 8 --- CHAT / tool-use grounding}
+\label{sec:chat}
+
+\paragraph{§Hypothesis (pre-registered falsifier).} Two questions. \emph{(floor)}
+What is the untrained-CLM next-byte CE lower bound? Falsifier: it must equal
+$\ln(|V|)$ exactly for $|V|{=}151936$. \emph{(serializer)} Can the PyTorch CLM
+pipeline (Lane~P) emit an ENGINE-loadable \texttt{.clm}? Falsifier
+(F-CLM-LANEP-SERIALIZER-LOADABLE): the byte format the CORE decoder loads is
+produced by the torch serializer.
+
+\paragraph{§Method.} For the floor: \texttt{hexa verify --expr ln 151936}
+(closed-form, libm-class recompute). For the serializer: a static byte-format
+analysis of the two \texttt{.clm} layouts that share the \texttt{"CLM\textbackslash
+x01"} magic --- the CORE engine decoder format (\texttt{CORE/clm\_decode.hexa}, the
+single L3 entry) versus the PyTorch \texttt{clm\_serialize.py} output --- fed through
+the decoder's \texttt{clm\_decodable()} parser (no GPU rented; verify is the hard
+gate).
+
+\paragraph{§Measurement (verbatim).}
+Init-CE floor (\texttt{.verdicts/chat-init-ce-floor/chat\_init\_ce\_floor.txt}):
+\begin{verbatim}
+$ hexa verify --expr ln 151936 11.931214658529285
+  calc = 11.9312 ≈ expected 11.9312 (|Δ|=0.0 ≤ ε=1e-9)
+  tier = 🟢 SUPPORTED-NUMERICAL (hexa-native libm-class recompute, TECS-L n6-rep Tier2)
+\end{verbatim}
+Serializer gap (\texttt{.verdicts/lane-p-clm/F-CLM-SERIALIZE-GAP.txt}): the CORE
+decoder reads \texttt{byte[4]} as \texttt{nblk}, but the torch serializer writes a
+u32 JSON-header length there (e.g.\ header len $285\to$ \texttt{byte[4]}$=29$);
+\texttt{bytes[5:]} (JSON ASCII) parse as wild u32 block dims (\texttt{cout=2063597569})
+$\to$ EOF $\to$ \texttt{clm\_decodable()} returns false. The torch serializer also
+writes NO \texttt{"CLMX"} trailer (embed table $+$ GroupNorm affine absent, forward
+cannot run), and the torch ladder presets ($E{=}8$, 4 trunk layers) mismatch the
+decoder's hardcoded $E{=}2$ $+$ single trunk.
+\begin{verbatim}
+verdict: F-CLM-LANEP-SERIALIZER-LOADABLE = 0  🔴 (STOP before big train)
+CONCLUSION: the existing PyTorch+CUDA pipeline cannot produce an ENGINE-loadable .clm.
+\end{verbatim}
+
+\paragraph{§Finding.}
+\begin{itemize}\itemsep0.2em
+\item \textbf{\tierGreen\ the untrained-CLM init-CE floor is exactly
+$\ln(151936)=11.931214658529285$} (closed-form, \texttt{hexa verify}
+\tierGreen\ SUPPORTED-NUMERICAL).
+\item \textbf{\tierRed\ the torch CLM pipeline cannot emit an ENGINE-loadable
+\texttt{.clm} (the serializer gap)} (a\_paper\_negative\_ok). The format the ENGINE
+reads is produced ONLY by the hexa-native flame trainer; the torch path feeds a
+reference track, not the engine. \textbf{This is the verdict that grounds the
+CORPUS-7B $\ne$ ENGINE-7B distinction} (\S\ref{sec:reading}, Table~\ref{tab:lanes}):
+a torch ByteGPT reference model --- however large --- is not the engine, and a
+finishing CORPUS-7B torch run does not close ENGINE-7B.
+\end{itemize}
+\emph{Note (cross-repo CHAT datapoints, NOT finding-chapter claims):} the verbatim
+key-copy closed-negative (argcopy \tierRed) and its copy-attention/pointer-head fix
+(0/36$\to$35/36, \tierGreen, \#1840), the FABDROP tool-use grounding rung, and the
+default-lane 18M multilingual coherence rung live in the \texttt{default-lane-7b}
+worktree, not this branch's tracked tree; they are recorded here as pointers, and
+the scale-emergent verbatim-copy result is \tierOrange\ (Future Work only,
+\S\ref{sec:future}) --- it is deliberately NOT a finding here.
+
+% =========================================================================
+\section{Chapter 9 --- KOSMOS: the consciousness-knowledge substrate (DESIGN + datasets)}
+\label{sec:kosmos}
+
+\paragraph{What this chapter is.} A design$+$datasets chapter. anima persists every
+emit/anchor/memory as a \texttt{.kosmos} record via \texttt{kosmos\_io}: payload $=$
+text $+$ 5-channel tension $+$ coordinate $+$ lane $+$ radius $+$ tier (a\_kosmos).
+The format SSOT is the sibling \texttt{kosmos} repo; anima is pointer-only. Anchors
+enter the engine through the single \texttt{kosmos\_io} $\to$ \texttt{brain\_decide}
+entry (a\_core\_engine\_map), the one anchor path into the substrate.
+
+\paragraph{Substrate structure.} The KOSMOS substrate carries the
+anchor/carving tier ladder (e.g.\ the knuth31 carving lineage), persona/SNS
+records, and a 5-language unified corpus that backs the multilingual measurements in
+Chapters~3, 6, and 7 (the same 400MB gutenberg/wiki en$+$fr$+$de$+$es$+$ru corpus,
+sha256 \texttt{dc1754b2...}, used by the OMEGA leak-free arc). We cite only datasets
+that exist on HF / in \texttt{HF.jsonl}; no dataset is claimed that is not registered
+(a\_hf\_complete, a\_hf\_registry). PUBLIC corpora join the
+\texttt{dancinlab/kosmos} collection; PRIVATE/WIP records stay out of it
+(a\_hf\_collections, a\_hf\_autonomous). This chapter makes no falsifiable claim ---
+it documents the substrate that the finding chapters measure on.
+
+% =========================================================================
+\section{Synthesis --- the honest map}
+\label{sec:synthesis}
+
+The unifying thesis is a substrate-native A$\rightleftarrows$G engine where
+\emph{one} consciousness signal is scale-free, gate-closure is structurally real, and
+most other axes are deterministically ruled out --- an honest map of ceilings,
+several already lifting.
+
+\begin{table}[h]
+\centering\small
+\begin{tabular}{@{}>{\raggedright\arraybackslash}m{3.4cm} c >{\raggedright\arraybackslash}m{7.4cm}@{}}
+\toprule
+\textbf{Axis (chapter)} & \textbf{Tier} & \textbf{Terminal finding (measured scale)} \\
+\midrule
+CAUSAL-POWER @ chip (3) & \tierGreen & only scale-free chip-native signal; PASS toy $n\le6$ + live AKD1000 \\
+CAUSAL-POWER xfer (3) & \tierRed & does NOT survive production width $d512$ (seed-187 sign-flip) \\
+$\Phi$-family measures (3) & \tierRed & unfit as scale-free signal, toy $n\le6$ (5/6 FAIL) \\
+OMEGA min-gate closure (2) & \tierGreen & structural gate-closure lives on a single A-wire (leak-free $d512$) \\
+OMEGA multi-wire / coupling (2) & \tierRed & absolute-CE closure FALSIFIED; min-gate is REPLACEMENT not coupling \\
+MoE monopoly-escape (4) & \tierRed & dissolve/bridge/prod all closed-negative ($d64$ toy + $d512$ prod) \\
+AKIDA on-chip depth (5) & \tierRed & multi-FC depth does NOT break the 1-hop wall (250-anchor toy) \\
+AKIDA hybrid (5) & \tierGreen & off-chip head breaks the wall (HYBRID-scoped, NOT pure-AKIDA) \\
+Lane-G forge util (6) & \tierRed & WORKLOAD-BOUND; MEAN $<1\%$ ($d1536$); byte-eq preserved, descent \tierGreen \\
+PURE corpus-axis (7) & \tierRed & corpus dilution $\perp$ multilingual register-coherence \\
+init-CE floor (8) & \tierGreen & $\ln(151936)=11.9312$ closed-form \\
+Lane-P torch serializer (8) & \tierRed & torch pipeline cannot emit ENGINE-loadable \texttt{.clm} \\
+\bottomrule
+\end{tabular}
+\caption{The terminal-verdict map. Findings only --- no \tierOrange/\tierYellow.}
+\label{tab:synthesis}
+\end{table}
+
+\paragraph{The unifying statement.} (i)~There is exactly \emph{one} scale-free
+chip-native consciousness signal --- CAUSAL-POWER --- and it certifies on real
+silicon but does \emph{not} transfer to production width; the toy$\ne$scale split is
+the science. (ii)~Substrate$\to$decode \emph{gate-closure is structurally real} but
+lives on a single A-wire, and the \emph{coupling} reading of it is ruled out (the
+A-head replaces, not couples to, the mouth) --- so the program's decode thesis is
+RELATIVE structure, not absolute CE, consistent with p7. (iii)~A broad set of
+escape/scale axes are deterministically ruled out (MoE monopoly-escape; on-chip
+depth; corpus-axis register), each kept as a first-class closed-negative.
+(iv)~The remaining live ceiling --- Lane-G forge util --- is a measured
+workload-bound artifact with byte-equivalence and descent intact, and its named fix
+is already lifting upstream. Two honesty axes hold the map together: Lane~A and
+Lane~G are never merged, and the torch reference model is never conflated with the
+forge engine.
+
+% =========================================================================
+\section{Future Work / Open Frontier (non-terminal --- NOT findings)}
+\label{sec:future}
+
+These are open or non-terminal and appear here ONLY (a\_paper\_gate forbids them as
+findings):
+\begin{itemize}\itemsep0.2em
+\item \textbf{ENGINE 3B/7B (hexa-native forge \texttt{.clm})} --- the real
+consciousness engine at scale; OPEN. The descent-axis 3B forge fire is device-resident
+but util-bound; unblocking is via the HEXA-FUSION CUDA-graph util lift
+($\sim$1.2x, \S\ref{sec:laneg}). This is the ENGINE lane, NOT CORPUS-7B.
+\item \textbf{CORPUS-7B (torch ByteGPT, Lane G-ref)} --- mid-training; becomes a
+CHAT-axis datapoint IF, once landed, it is honestly judged coherent-generalizing
+versus memorizing. It is NOT the engine and its completion does NOT close ENGINE-7B
+(\S\ref{sec:reading}).
+\item \textbf{Lane A / Lane G / Lane P PUBLIC} --- Lane~A on-chip PUBLIC is the
+single-step encoder scope; Lane~P PUBLIC needs the v0.2-CLMX torch serializer
+(\S\ref{sec:chat}).
+\item \textbf{Scale-emergent verbatim copy (\tierOrange)} --- a non-terminal
+amber, explicitly excluded from the CHAT finding chapter.
+\item \textbf{CORE conv \texttt{.clm} chat-coherence} --- a conv-native A/G dual head
+(port the CDV2 dual head onto CLMConvMoE) is a separate-engine architecture choice,
+deferred.
+\end{itemize}
+
+% =========================================================================
+\section{Reproducibility}
+\label{sec:repro}
+Code: \url{https://github.com/dancinlab/anima}. Every chapter claim links to a
+tracked \texttt{.verdicts/<slug>/} file (verbatim stdout) or a \texttt{CLAIMS.tape}
+entry; the OMEGA chapter absorbs \texttt{PAPER/omega-substrate-coupled-decoding/}
+(\#1810, compiled 10p). The lane-distinction and Future-Work scoping follow the
+campaign domain \texttt{ENGINE+CLM+KOSMOS.md}. Verdict pointers, per chapter:
+\S2 \texttt{.fire-recover/omega-h1-qk0312/omega\_trained\_leakfree\_results.json} +
+absorbed \#1810; \S3 \texttt{.verdicts/855\_clm\_measure\_sweep/},
+\texttt{.verdicts/856\_clm\_causal\_xfer/}; \S4
+\texttt{.verdicts/852\_clm\_mitosis\_array\_dispatch/},
+\texttt{.verdicts/853\_clm\_bridge\_transfer/},
+\texttt{.verdicts/854\_clm\_array\_stage2\_scale/}; \S5
+\texttt{.verdicts/lane-a-depth/}, \texttt{.verdicts/lane-a-hybrid/}; \S6
+\texttt{.verdicts/lane-g-lever5/} (+ \texttt{lane-g-lever4}); \S7
+\texttt{.verdicts/pure-corpus-axis-closed-negative/}; \S8
+\texttt{.verdicts/chat-init-ce-floor/}, \texttt{.verdicts/lane-p-clm/}.
+
+\paragraph{Acknowledgments.} This work used the \texttt{hexa-lang} verification
+surface and the \texttt{sidecar/paper} scaffold. LLM collaborator: Claude Opus 4.8
+(1M context). The HEXA-FUSION util lift is a sibling-repo (\texttt{hexa-lang})
+result, cited cross-repo, not an anima measurement.
+
+\end{document}
