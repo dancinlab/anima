@@ -32,6 +32,7 @@
 @D OTHER-MIND := "./OTHER-MIND.md" :: domain [active]
 @D TIME := "./TIME.md" :: domain [active]
 @D SAVANT := "./SAVANT.md" :: domain [active]
+@D SAVANT-TORCH := "./domains/SAVANT.md" :: domain [active]
 @D HIVE-MIND := "./HIVE-MIND.md" :: domain [active]
 @D MERCHANT := "./AGENT/MERCHANT/MERCHANT.md" :: domain [active]
 @D DESKTOP := "./AGENT/DESKTOP/DESKTOP.md" :: domain [active]
