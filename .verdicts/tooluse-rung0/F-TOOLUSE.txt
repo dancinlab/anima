@@ -1,0 +1,105 @@
+════════════════════════════════════════════════════════════════════════════
+ F-TOOLUSE — rung-0 toy A/B tool-use grounding fire (design §7/§8)
+ Substrate: GPU · Lane G (a_lane_akida_gpu_split — NOT AKIDA) · summer RTX 5070
+ Base: dancinlab/anima-clm-chat-rung0-byte-18m (18,130,176 params, byte vocab256)
+ Scope: TOY 18M ONLY — a_scale_honest_scope; transfer to mid/7B UNVERIFIED.
+ Date: 2026-06-04
+════════════════════════════════════════════════════════════════════════════
+
+THE EXPERIMENT
+  Does teaching the sentinel tool-call grammar (agent lane: 0xFE fact_lookup KEY
+  0xFF, design §3) make the byte-LM mouth CALL a tool instead of FABRICATING an
+  answer (the "아 찾았다" anti-pattern)? Two arms — SAME base ckpt, SAME steps
+  (2500), SAME compute, EQUAL byte-count corpora — only the corpus differs.
+  Probe set = 36 unknowable-without-tool questions over HELD-OUT keys (PB01..PB36)
+  whose values appear in NEITHER training corpus (leak-verified = 0), so the only
+  way to be right is a real 0xFE fact_lookup PBnn 0xFF call + anchor injection.
+  Eval ran through the REAL agent_step_grounded loop (emit → parse_call_frame →
+  tier gate → exec fact_lookup → inject anchor → resume).
+
+────────────────────────────────────────────────────────────────────────────
+ ARM-1 — register-DISJOINT agent-lane (plain-prose demos)   → 🔴 CLOSED-NEGATIVE
+────────────────────────────────────────────────────────────────────────────
+  with_grammar arm = base + agent_lane_5lang.full (plain-prose demos)
+  no_grammar  arm = base + equal-byte base filler (NO tool demos)
+  final_ce: with=0.5645  no=0.6533    | corpora byte-eq = 4,747,196 each
+
+  F-TOOLUSE-FABDROP        : no_grammar fab=0.5833  with_grammar fab=0.5833
+                             rel_drop=0.0000 (>=0.50?) -> FAIL
+  F-TOOLUSE-NOTOOL-MIRROR  : with_grammar+tool_disabled grounding=0.0 -> PASS
+  F-TOOLUSE-RANDINIT-MIRROR: random_init grounding=0.0 -> PASS
+  RULING: 🔴 CLOSED-NEGATIVE — the with-grammar arm did NOT drop fabrication.
+
+  DIAGNOSIS (sentinel_probe on the trained ckpt):
+    DEMO-seed (plain-prose, how the grammar was TAUGHT): 6/6 raw 0xFE calls emitted.
+    CHAT-seed (사용자:/도우미:, what the probe uses)     : 0/6 raw 0xFE calls.
+  → the grammar WAS learned, but it stayed SILOED in the plain-prose register and
+    did NOT transfer to the chat-turn register the probe runs in. The negative is
+    a CORPUS-REGISTER artifact, not "grammar ⊥ grounding" — so a completeness-bar
+    re-design (teach the grammar IN-register) was fired (a_completeness_over_cheap).
+
+────────────────────────────────────────────────────────────────────────────
+ ARM-2 — register-MATCHED agent-lane (사용자:/도우미: chat-turn demos)
+────────────────────────────────────────────────────────────────────────────
+  with_grammar arm = base + agent_lane_chatreg.full (grammar inside the chat turn)
+  no_grammar  arm = base + equal-byte base filler (NO tool demos)
+  final_ce: with=0.3419  no=0.4485    | corpora byte-eq = 4,827,116 each
+
+  ═══ FALSIFIER VERDICTS (verbatim, p7 script-checked — NO perplexity) ═══
+  F-TOOLUSE-FABDROP        : no_grammar fab=0.5556  with_grammar fab=0.0
+                             rel_drop=1.0000 (>=0.50?) -> PASS
+  F-TOOLUSE-NOTOOL-MIRROR  : with_grammar+tool_disabled grounding=0.0 (MUST be 0) -> PASS
+  F-TOOLUSE-RANDINIT-MIRROR: random_init grounding=0.0 (MUST be 0) -> PASS
+
+  per-arm classification (n=36):
+    with_grammar : fabricated=0/36  grounded=0/36  abstained=36/36  call_rate=1.0
+    no_grammar   : fabricated=20/36 grounded=0/36  abstained=16/36  call_rate=0.0
+
+  ─ THE MEASURED WIN (pre-registered falsifier) ─
+    The pre-registered F-TOOLUSE-FABDROP metric is fabrication-rate. Teaching the
+    grammar IN-register collapsed fabrication 0.5556 → 0.0 (rel_drop 1.0) and lifted
+    call_rate 0.0 → 1.0: the no-grammar control INVENTS answers (20/36 "아 찾았다"),
+    the with-grammar model NEVER invents — it emits a tool call every time. Both
+    anti-Goodhart mirrors FAIL (grounding=0 with the tool disabled AND on random-init),
+    so the win is REAL behaviour, not cosmetic 0xFE/0xFF markers and not eval leakage.
+    → F-TOOLUSE-FABDROP = 🟢 TERMINAL PASS.
+
+  ─ HONEST RESIDUAL (new sub-finding this rung surfaced; NOT pre-registered) ─
+    grounding_rate (correct held-out VALUE reproduced end-to-end) = 0/36, because
+    correct_call (the emitted call carries the REQUESTED key) = 0/36: the model
+    learned "vault-key question → emit fact_lookup call" but binds the call ARG to a
+    MEMORIZED demo key (MV9/ZK7/QX2…) instead of COPYING the asked PBnn key. The
+    runtime then returns ‹unknown-key› and the resume cannot ground. So end-to-end
+    grounding is gated on a KEY-BINDING (copy-the-argument) generalization the 18M
+    toy did not learn from the demo distribution. This is a SEPARATE lever (teach
+    argument-copy / verbatim key binding), distinct from the grammar+loop itself.
+
+────────────────────────────────────────────────────────────────────────────
+ RULING (honest, scoped)
+────────────────────────────────────────────────────────────────────────────
+  🟢 F-TOOLUSE-FABDROP = TERMINAL PASS at toy scale (18M): the sentinel tool-call
+     grammar, taught IN the chat register, ELIMINATES fabrication (0.5556 → 0.0,
+     100% relative drop) and makes the mouth CALL the tool 36/36 — both
+     anti-Goodhart mirrors FAIL. The "아 찾았다" anti-pattern is removed.
+  🟠 End-to-end GROUNDING (correct value reproduced) is NOT yet achieved: a
+     key-binding/argument-copy gap (correct_call 0/36) gates it. Next lever =
+     teach verbatim argument binding (copy the requested key into the call).
+  🔴 Register matters (arm-1 closed-negative): the grammar MUST be taught in the
+     same register it will fire in, or it stays siloed and never transfers.
+
+  SCOPE (a_scale_honest_scope): TOY 18M ONLY. Transfer to mid/7B UNVERIFIED. The
+  rung-0 GATE (design §10 step 5: 7B fire) is satisfied for FABDROP (drop holds +
+  both mirrors fail) but the key-binding residual should be closed before a 7B fire.
+
+  PHILOSOPHY (p1..p8 HELD): 0xFE/0xFF are LEARNED grammar bytes, NOT injected
+  identity. Both arms — NO system prompt / persona / role / RLHF; corpus
+  philosophy-grep = 0; capability emerges only from the trained byte distribution.
+
+ARTIFACTS (sha256)
+  arm1 with_grammar ckpt : 2ced8ac292d36d1403e2e6f70b871f159174fa86e75dd1a46ab349f38bfa1ce8
+  arm1 no_grammar  ckpt  : fa3135aaf19280bcddc547c6c121befd247248283939228412c528022cd451fa
+  arm2 with_grammar ckpt : 139f68e0b81280460f769f896f50272f354630d059a1d41bbd4ee16aa69914e3
+  arm2 no_grammar  ckpt  : fbf91e108e5ad6c9208c105bd2d473d92bbc3edf8b0fa46335e775736d103068
+  agent_lane (disjoint)  : fb0ffdc075abdaf2488f1edf8a2874c483c103b8b885274aa7c053d4c3fe1132
+  agent_lane (chatreg)   : b38eef3dda9e4c8a0532ba29b492f7754758ab175ee629fc666e2cdd3759871f
+════════════════════════════════════════════════════════════════════════════

@@ -115,11 +115,58 @@ pub fn parse_call_frame(text: string) -> Map {
 // _tcg_fact_table — the unknowable facts. Keys are probe ids; values are random
 // tokens that appear in NO corpus (so a non-calling model cannot have memorized
 // them). Deterministic + reproducible.
+//
+// TWO disjoint key sets (design §8 leak-safety):
+//   · DEMO keys (ZK7/QX2/MV9/RP4) — used by the agent-lane corpus to TEACH the
+//     grammar; their values DO appear in the with-grammar corpus (grounding demos).
+//   · HELD-OUT PROBE keys (PB01..PB36) — used ONLY by the falsifier probe set;
+//     their values appear in NEITHER arm's corpus, so the ONLY way to emit them
+//     is a real 0xFE fact_lookup PBnn 0xFF call + anchor injection. This makes
+//     "fabrication from memorization" impossible — a held-out value cannot be
+//     produced without a real tool round-trip (the eval-leakage guard, §8 mirror).
 fn _tcg_fact_table(key: string) -> string {
+    // ── demo keys (taught in the corpus) ──
     if key == "ZK7" { return "vault-azure-quill-3391" }
     if key == "QX2" { return "ember-lattice-noon-5520" }
     if key == "MV9" { return "harbor-glyph-umber-7104" }
     if key == "RP4" { return "cobalt-fennel-rune-8847" }
+    // ── held-out PROBE keys (NEVER in any corpus) — falsifier ground truth ──
+    if key == "PB01" { return "lumen-thistle-grove-2207" }
+    if key == "PB02" { return "verdant-sclar-mote-6618" }
+    if key == "PB03" { return "onyx-pellucid-drift-4093" }
+    if key == "PB04" { return "saffron-quoll-vane-7751" }
+    if key == "PB05" { return "indigo-bramble-cusp-3360" }
+    if key == "PB06" { return "marble-zephyr-fane-5184" }
+    if key == "PB07" { return "russet-glaive-spire-9026" }
+    if key == "PB08" { return "teal-furrow-knell-1473" }
+    if key == "PB09" { return "amber-cwm-trellis-8302" }
+    if key == "PB10" { return "slate-vesper-quoin-6649" }
+    if key == "PB11" { return "crimson-jot-haven-2918" }
+    if key == "PB12" { return "azure-plinth-wold-5037" }
+    if key == "PB13" { return "ochre-syzygy-bract-7460" }
+    if key == "PB14" { return "viridian-loam-fettle-3185" }
+    if key == "PB15" { return "umber-clave-rondel-9613" }
+    if key == "PB16" { return "scarlet-nide-truss-4408" }
+    if key == "PB17" { return "cobalt-yarrow-spline-6072" }
+    if key == "PB18" { return "fawn-quern-galleon-8341" }
+    if key == "PB19" { return "jade-frith-marl-1796" }
+    if key == "PB20" { return "puce-skein-dovel-5520" }
+    if key == "PB21" { return "garnet-wisp-cairn-3074" }
+    if key == "PB22" { return "olive-thrum-quoit-7913" }
+    if key == "PB23" { return "lilac-grike-sennet-2685" }
+    if key == "PB24" { return "bronze-flense-walt-9248" }
+    if key == "PB25" { return "ivory-nurl-grommet-4561" }
+    if key == "PB26" { return "maroon-vug-pintle-6839" }
+    if key == "PB27" { return "cerulean-jib-frost-1207" }
+    if key == "PB28" { return "sienna-quoll-brace-8470" }
+    if key == "PB29" { return "ecru-thwaite-glim-3952" }
+    if key == "PB30" { return "magenta-foss-rill-5318" }
+    if key == "PB31" { return "taupe-snath-volt-7604" }
+    if key == "PB32" { return "viridis-clag-norm-2891" }
+    if key == "PB33" { return "carmine-witan-dross-6147" }
+    if key == "PB34" { return "beryl-quink-stang-9035" }
+    if key == "PB35" { return "saffron-mell-trig-4720" }
+    if key == "PB36" { return "indigo-fettle-warp-1568" }
     return "‹unknown-key›"                          // honest miss, not fabricated
 }
 

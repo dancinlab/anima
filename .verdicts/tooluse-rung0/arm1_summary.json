@@ -1,0 +1,44 @@
+{
+  "experiment": "rung-0 toy A/B tool-use grounding (design §7/§8)",
+  "substrate": "GPU (Lane G; a_lane_akida_gpu_split — NOT AKIDA)",
+  "gpu": "NVIDIA GeForce RTX 5070",
+  "base": "dancinlab/anima-clm-chat-rung0-byte-18m",
+  "params": 18130176,
+  "scope": "TOY 18M only — a_scale_honest_scope; transfer to mid/7B UNVERIFIED",
+  "arms": {
+    "with_grammar": {
+      "ckpt": "out/tooluse_rung0_with_grammar_18m.pt",
+      "final_ce": 0.5645272731781006,
+      "fabrication_rate": 0.5833,
+      "grounding_rate": 0.0,
+      "call_rate": 0.0
+    },
+    "no_grammar": {
+      "ckpt": "out/tooluse_rung0_no_grammar_18m.pt",
+      "final_ce": 0.6533116102218628,
+      "fabrication_rate": 0.5833,
+      "grounding_rate": 0.0,
+      "call_rate": 0.0
+    }
+  },
+  "F_TOOLUSE_FABDROP": {
+    "no_grammar_fab_rate": 0.5833,
+    "with_grammar_fab_rate": 0.5833,
+    "relative_drop": 0.0,
+    "threshold": 0.5,
+    "verdict": "FAIL"
+  },
+  "F_TOOLUSE_NOTOOL_MIRROR": {
+    "with_grammar_NOTOOL_grounding_rate": 0.0,
+    "must_fail_to_ground": true,
+    "verdict": "PASS"
+  },
+  "F_TOOLUSE_RANDINIT_MIRROR": {
+    "random_init_grounding_rate": 0.0,
+    "must_fail_grounding": true,
+    "verdict": "PASS"
+  },
+  "ruling": "RED",
+  "terminal_pass": false,
+  "verdict_text": "🔴 CLOSED-NEGATIVE: sentinel grammar alone ⊥ grounding at 18M — fabrication did NOT drop >=50%. Lever moves to result-conditioning strength."
+}

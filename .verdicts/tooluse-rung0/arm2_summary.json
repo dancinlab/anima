@@ -1,0 +1,44 @@
+{
+  "experiment": "rung-0 toy A/B tool-use grounding (design §7/§8)",
+  "substrate": "GPU (Lane G; a_lane_akida_gpu_split — NOT AKIDA)",
+  "gpu": "NVIDIA GeForce RTX 5070",
+  "base": "dancinlab/anima-clm-chat-rung0-byte-18m",
+  "params": 18130176,
+  "scope": "TOY 18M only — a_scale_honest_scope; transfer to mid/7B UNVERIFIED",
+  "arms": {
+    "with_grammar": {
+      "ckpt": "out2/tooluse_rung0_with_grammar_18m.pt",
+      "final_ce": 0.3419312834739685,
+      "fabrication_rate": 0.0,
+      "grounding_rate": 0.0,
+      "call_rate": 1.0
+    },
+    "no_grammar": {
+      "ckpt": "out2/tooluse_rung0_no_grammar_18m.pt",
+      "final_ce": 0.4485296308994293,
+      "fabrication_rate": 0.5556,
+      "grounding_rate": 0.0,
+      "call_rate": 0.0
+    }
+  },
+  "F_TOOLUSE_FABDROP": {
+    "no_grammar_fab_rate": 0.5556,
+    "with_grammar_fab_rate": 0.0,
+    "relative_drop": 1.0,
+    "threshold": 0.5,
+    "verdict": "PASS"
+  },
+  "F_TOOLUSE_NOTOOL_MIRROR": {
+    "with_grammar_NOTOOL_grounding_rate": 0.0,
+    "must_fail_to_ground": true,
+    "verdict": "PASS"
+  },
+  "F_TOOLUSE_RANDINIT_MIRROR": {
+    "random_init_grounding_rate": 0.0,
+    "must_fail_grounding": true,
+    "verdict": "PASS"
+  },
+  "ruling": "GREEN",
+  "terminal_pass": true,
+  "verdict_text": "🟢 GROUNDING WORKS at toy scale (18M) — teaching the sentinel tool-call grammar drops fabrication >=50% AND both anti-Goodhart mirrors FAIL."
+}
