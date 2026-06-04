@@ -1,0 +1,62 @@
+{
+  "experiment": "rung-0 COPY-ATTENTION / POINTER head — architectural fix for verbatim key-copy (#1835 residual)",
+  "substrate": "GPU (Lane G; a_lane_akida_gpu_split — NOT AKIDA)",
+  "gpu": "NVIDIA GeForce RTX 5070",
+  "base": "dancinlab/anima-clm-chat-rung0-byte-18m",
+  "params": 18179841,
+  "scope": "TOY 18M only — a_scale_honest_scope; transfer to mid/7B UNVERIFIED",
+  "baseline_1835": {
+    "correct_call_rate": 0.0,
+    "grounding_rate": 0.0,
+    "note": "#1835 with_argcopy: call_rate 0.83 but correct_call 0/36 (no copy mechanism)"
+  },
+  "bars": {
+    "correct_call": 0.5,
+    "grounding": 0.5
+  },
+  "byte_eq": {
+    "head_off_forward_maxabs_delta": 0.0,
+    "head_off_forward_logprob_maxabs_delta": 0.0,
+    "byte_identical": true
+  },
+  "arms": {
+    "with_copyhead": {
+      "ckpt": "out/tooluse_copyhead_with_copyhead_18m.pt",
+      "final_ce_nll": 0.12824134528636932,
+      "fabrication_rate": 0.0,
+      "grounding_rate": 0.0,
+      "call_rate": 1.0,
+      "correct_call_rate": 0.0,
+      "correct_call_n": 0,
+      "grounded_n": 0
+    }
+  },
+  "F_COPYHEAD_ARGCOPY": {
+    "with_copyhead_correct_call_rate": 0.0,
+    "with_copyhead_grounding_rate": 0.0,
+    "bar_correct_call": 0.5,
+    "bar_grounding": 0.5,
+    "correct_call_pass": false,
+    "grounding_pass": false,
+    "verdict": "FAIL"
+  },
+  "F_COPYHEAD_OFF_MIRROR": {
+    "same_ckpt_copy_off_correct_call_rate": 0.0,
+    "same_ckpt_copy_off_grounding_rate": 0.0,
+    "must_fail_to_copy": true,
+    "verdict": "PASS"
+  },
+  "F_COPYHEAD_RANDINIT_MIRROR": {
+    "randinit_grounding_rate": 0.0,
+    "must_fail_grounding": true,
+    "verdict": "PASS"
+  },
+  "F_COPYHEAD_NOTOOL_MIRROR": {
+    "with_copyhead_NOTOOL_grounding_rate": 0.0,
+    "must_fail_to_ground": true,
+    "verdict": "PASS"
+  },
+  "ruling": "RED",
+  "terminal_pass": false,
+  "verdict_text": "🔴 CLOSED-NEGATIVE: the copy head did NOT learn to point at 18M — correct_call=0.0 (bar 0.5) / grounding=0.0 (bar 0.5). The pointer mechanism alone ⊥ held-out key-binding at toy scale; next lever = head design (multi-head pointer / explicit copy-loss) or corpus copy-signal strength."
+}

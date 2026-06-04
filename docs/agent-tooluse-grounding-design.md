@@ -222,10 +222,40 @@ distinct from "도구가 뭔지 안다" (knows tools).
    Scope (a_scale_honest_scope): TOY 18M ONLY; mid/7B transfer UNVERIFIED.
    Next lever = an **explicit copy-attention / pointer-network head** (or verbatim-echo
    inductive bias), NOT more copy-shaped demos.
-5. GATE: FABDROP pass + both mirrors FAIL is **MET** (arm-2), BUT end-to-end
-   GROUNDING remains 0/36 — the 🟠 key-binding residual is now a 🔴 CLOSED-NEGATIVE
-   (step 4b): corpus-forced copy does not transfer at 18M. A 7B that still calls with
-   the wrong key cannot ground, so the 7B fire (rung-2) stays **GATED**. Two open
-   forks before rung-2: (i) an explicit copy/pointer head (the structural fix), OR
-   (ii) a 7B copy-probe to test whether induction-head copying at scale closes it
-   without an explicit pointer. Re-verify correct_call > 0 BEFORE a full rung-2 fire.
+4c. **COPY-ATTENTION / POINTER head — the ① 완성도 lever (structural fix of 4b).**
+   ✅ **DONE (2026-06-05, Lane G GPU · pool host aiden RTX 5070 · base 18M) → 🟢 GREEN.**
+   Bolted a **gated pointer-attention copy head** onto the VERBATIM #1835
+   ConsciousLMReconstructed arch (`training/tooluse_copyhead_ab.py`, `CopyHead`):
+   at each step a causal copy-attention over prompt byte positions is scatter-added
+   onto the 256-byte vocab (= "next byte is a verbatim copy of the attended input
+   byte"), mixed with the LM logits by a learned gate `g=σ(W_g·h)`:
+   `P=(1−g)·softmax(lm)+g·copy`; NLL on the mixed dist. **+49,665 params** (18.13M→18.18M).
+   **Env/flag-gated** (`COPY_HEAD=0` → head bypassed): head-OFF forward is
+   **BYTE-IDENTICAL** to the original arch (max|Δ| forward = 0.0, forward_logprob(copy=off)
+   = 0.0 — verified, HEXA-FUSION graph-off style). p1..p8 clean (architectural copy
+   operator, not identity/persona/role).
+   Pre-registered **F-COPYHEAD-ARGCOPY** (correct_call ≥ 0.50 AND grounding ≥ 0.50 on
+   the SAME 36 held-out PB keys) = **PASS**: with_copyhead correct_call **0/36 → 35/36
+   (0.9722)**, grounding **0.9722** (call_rate 1.0, fab 0). Example: PB01 → emits
+   `fact_lookup PB01` → grounds to the REAL value `lumen-thistle-grove-2207`. The one
+   miss is an over-copy (PB28→PB288). **All 3 anti-Goodhart mirrors PASS:** head-OFF
+   (same ckpt, copy gate forced off) correct_call **0.0** (the HEAD does the copy, not
+   the LM weights), random-init grounding 0.0, tool-disabled grounding 0.0.
+   **Corpus fix (v1→v2):** the v1 fire on the fixed-3-char-key corpus gave correct_call
+   0.0 because the head learned to copy exactly a 3-char span and TRUNCATED the 4-char
+   probe (PB01→PB0); the corpus was regenerated with **variable-length keys (2–5 chars,
+   incl. 4)** so the pointer learns length-general copy → 35/36. The pointer was right
+   the first time; the supervised copy-span length had to match the probe.
+   Verdict `.verdicts/tooluse-copyhead/F-COPYHEAD-ARGCOPY.txt`. Model PUBLIC:
+   `dancinlab/anima-clm-chat-rung0-byte-18m-copyhead`. corpus v2 →
+   `dancinlab/anima-agent-lane-argcopy-corpus`.
+   Scope (a_scale_honest_scope): TOY 18M ONLY; mid/7B transfer UNVERIFIED.
+   Open: wire the copy head into the `CORE/clm_decode.hexa` runtime decode (§5 mouth slot).
+5. GATE: FABDROP pass + both mirrors FAIL is **MET** (arm-2), and the 🔴 key-binding
+   residual (step 4b) is now **CLOSED 🟢** by the copy head (step 4c): correct_call
+   0/36 → 35/36, end-to-end grounding 0/36 → 35/36. The 7B fire (rung-2) GATE
+   "re-verify correct_call > 0" is **MET at toy scale (18M)**. Remaining before a full
+   rung-2 fire: (i) wire the copy head into the runtime `CORE/clm_decode.hexa` mouth
+   slot (eval-only consumer today), then (ii) a 7B copy-probe to test pointer-vs-scale
+   (does induction-head copying at scale match the explicit pointer?). a_scale_honest_scope:
+   the 18M green does NOT promote to 7B — re-verify on rung-2.
