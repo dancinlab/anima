@@ -43,3 +43,13 @@
 - a_wall_first re-fire: the COMPLETE working build recipe is now captured in a one-shot
   (savant_oneshot.sh — all 5 blockers pre-solved: file/clang apt, full self/ src, forge_extra.c
   inject, hexa cc --regen, then build+fire). Re-rented fresh H100 39410751, re-firing.
+
+## 2026-06-04 — rung0 re-fire: 2nd pod ALSO evicted → shrink config for fast completion
+- B200 pod 39410751: build PASSED (all RC=0, clm_prod CLEAN), rung0 fire ran ~3-5min at 100% CPU
+  (host-bound interpreter, T=256 d768 epoch-1 not yet done) then the instance was EVICTED again
+  (vast interruptible reclaim — 2nd eviction in a row, both within ~5-15min). registry forgotten.
+- DIAGNOSIS: the host-bound interpreter d768/T256 fire (~30min) is LONGER than the vast
+  interruptible eviction window (~5-15min) → the fire never reaches epoch CE before reclaim.
+- FIX (a_wall_first practical): shrink to T=64 E2 6ep nsamp=64 (~16x lighter forward/backward →
+  ~2-4min) so descent completes INSIDE the eviction window. Validates the pipeline + descent the
+  same way at lower per-step cost. Re-rented fresh H100 (pod #3).
