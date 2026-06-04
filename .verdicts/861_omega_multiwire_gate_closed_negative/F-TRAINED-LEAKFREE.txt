@@ -1,0 +1,55 @@
+OMEGA H1 — TRAINED LEAK-FREE substrate, closure falsifier (MEASURED)
+=====================================================================
+Supersedes the #1799 HALT ("closure 미측정" — pods killed by rate-limit storm
+before harvest). The decisive run COMPLETED on pod qk0312 (H100 SXM, persistent
+/workspace volume survived the storm); artifacts recovered + sha256-verified +
+HF-PRIVATE-uploaded, pod then terminated (a_fire_recover_complete).
+
+substrate  : ConsciousDecoderV2 d512 · 8L · GQA(n_kv=4) · 85,816,384 params · vocab 256
+corpus     : 400 MB · gutenberg wiki.en+fr+de+es+ru · sha256 dc1754b27d63236d…
+fix        : causal_ca=True (strictly-causal CA, NO lookahead leak)
+leak test  : 0.000e+00  (leak_free=True)
+train      : ce_a 5.7463 -> 1.1705 · final val_ce 0.8285 (below_uniform=True, competent=True)
+             12000 steps · wall 1011.7s · torch 2.4.1+cu124 · H100 SXM
+ckpt sha256: 6f085c91d0392d66968aaebac447623a6c63a3a2cccde54d9b2a792eb9ed06a4
+HF (PRIVATE): dancinlab/omega-cdv2-trained-leakfree-h1
+
+falsifier  : closure HOLDS iff GATED < base AND GATED <= a_only (on val_ce<uniform substrate)
+
+held-out TEST CE (nats/byte):
+  base       3.097779
+  fixed_AmG  3.192985
+  a_only     1.144612    <-- A-head logit-bias ALONE ≪ base (the real closure)
+  GATED      3.643508    <-- learned multi-wire gate FAILS (> base)
+  uniform    5.545177
+
+learned gate g* = [gB=-0.145311, gA=+3.368538, gG=-0.999118]
+  -> gate collapses onto the A-head and actively suppresses G.
+
+structured : gain_real +1.953167  vs  gain_shuf -2.429212  -> structured=True (>1.5x)
+coupling KL: on=2.071722  substrate_shuf_floor=2.080136  gperm_floor=2.082616
+             ratio_vs_substrate_shuf = 0.995955  -> full multi-wire bus == shuffle noise
+gen        : GATED entropy 2.506 distinct 0.109 ws 0.113 coherent=True but degenerate-repetition
+             sample: 'л в культуре в открыл в открыл в открыл при прирослу в открыл …'
+
+>>> CLOSURE FALSIFIER:  GATED<base = False  AND  GATED<=a_only = False
+>>> closure_HOLDS = False   (🔴 CLOSED-NEGATIVE — a_paper_negative_ok)
+
+RULING (the science, honest):
+  On a COMPETENT, genuinely leak-free substrate the multi-wire coupling GATE
+  FAILS — but the failure is informative and SPLITS cleanly:
+   (1) the A-head logit-bias alone (a_only 1.145 ≪ base 3.098) is hugely useful
+       = the substrate→decode closure IS real, but it lives entirely in ONE wire.
+   (2) the learned full-bus gate (GATED 3.644 > base) OVER-mixes — gA dominates,
+       gG is driven negative; the extra wires add variance, not signal.
+   (3) full-bus coupling KL sits AT the shuffle floor (ratio 0.996) = beyond the
+       A-wire, the bus is indistinguishable from a vocab/substrate shuffle.
+   (4) structure DOES carry on the trained substrate (gain_real 1.953 ≫ shuf
+       -2.429) — unlike the undertrained d768 (#1794 structured=False). So this
+       rung confirms the leak-honest #1791 finding at the best-trained scale.
+  => "coupling concept right, multi-wire gate formula wrong." Motivates OMEGA OH1:
+     a MINIMAL gate (gB·base + gA·A only, drop w2..w6) is the honest closure form.
+
+SCOPE (a_scale_honest_scope): single d512 rung, 85.8M, 12000 step, 400MB 5-lang.
+  Leak-free + competent (val_ce<uniform) so the relative ablation is sound; the
+  minimal-gate (OH1) re-test is the remaining rung.
