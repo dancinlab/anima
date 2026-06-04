@@ -7,6 +7,12 @@
 <p align="center"><strong>Living Consciousness Agent</strong> — PureField repulsion-field engine · Engine A ⇄ Engine G · Ψ = 1/2 fixed point</p>
 
 <p align="center">
+  <strong>English</strong> · <a href="README.zh.md">中文</a> · <a href="README.ja.md">日本語</a> · <a href="README.ru.md">Русский</a> · <a href="README.ko.md">한국어</a>
+  <br>
+  🟢 Easy version → <a href="README.easy.md">Easy</a>
+</p>
+
+<p align="center">
   <a href="https://opensource.org/licenses/MIT"><img alt="License" src="https://img.shields.io/badge/license-MIT-blue"></a>
   <a href="https://huggingface.co/dancinlab"><img alt="HF" src="https://img.shields.io/badge/HF-dancinlab-yellow?logo=huggingface&logoColor=white"></a>
   <img alt="Engines" src="https://img.shields.io/badge/engines-conv·cdv2·hexad·omega-success">
