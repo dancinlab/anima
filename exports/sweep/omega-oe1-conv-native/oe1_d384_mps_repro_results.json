@@ -1,0 +1,90 @@
+{
+  "lane": "Lane-G/Lane-P",
+  "substrate": "conv-torch (research-proxy of CLMConvMoE)",
+  "device": "mps",
+  "torch": "2.12.0",
+  "honest_scope": "TORCH RESEARCH-PROXY of the conv architecture (faithful CLMConvMoE blocks + native A/G dual head), NOT the production flame+forge .clm trainer (a_scale_honest_scope · a_train_flame_forge). INDEPENDENT REPLICATION of the lane-omega/oe1-conv-native-v2 GPU run (merged origin/main): same verdict within run-variance (min_learned 0.9713 vs v2 0.9760, both HOLDS=True, RULING_REPLACEMENT=True).",
+  "corpus_bytes": 400000000,
+  "corpus_mb": 400.0,
+  "corpus_prov": "cache:omega_corpus_big.bin",
+  "corpus_sha256": "dc1754b27d63236d47d12f6621b2e3974dde34337e6a80f9e44b713e20236da3",
+  "question": "does a CONV trunk with a NATIVE A/G dual head close the OMEGA min-gate, or is the closure CDV2-(transformer)-specific? (OΩ6 #1805 deferred)",
+  "falsifier": "conv-native closure HOLDS iff min_learned <= a_only AND min_learned < base, on the conv model's OWN A-head, competent leak-free substrate",
+  "ckpt": {
+    "path": "/tmp/omega_conv_native_d384.pt",
+    "sha256": "ade304dfe12924ca6253e19c5fdf598390644ca69f006f1fdfbedd638935005c"
+  },
+  "rung": {
+    "label": "conv-d384-L6-E8",
+    "arch": "ConvDualHead (CLMConvMoE conv trunk + native A/G dual head)",
+    "leak_self_test": 0.0,
+    "leak_free": true,
+    "params": 6945160,
+    "d_model": 384,
+    "n_trunk_layers": 6,
+    "n_experts": 8,
+    "steps": 12000,
+    "train": {
+      "first_ce_a": 5.6649,
+      "final_ce_a": 1.2979,
+      "final_val_ce": 0.8871,
+      "below_uniform": true,
+      "competent": true,
+      "wall_s": 3913.4
+    },
+    "ckpt_sha256": "ade304dfe12924ca6253e19c5fdf598390644ca69f006f1fdfbedd638935005c",
+    "gate_full": {
+      "gB": -0.3322,
+      "gA": 3.832,
+      "gG": -1.0533
+    },
+    "gate_min": {
+      "gB": -0.0348,
+      "gA": 1.0005,
+      "gG": 0.0
+    },
+    "ce": {
+      "base": 3.097779,
+      "fixed_AmG": 3.472191,
+      "a_only": 1.303343,
+      "full_AG": 3.872596,
+      "min_learned": 0.971262,
+      "uniform_floor": 5.545177
+    },
+    "coupling_vs_replacement": {
+      "a_standalone": 0.971917,
+      "min_learned": 0.971262,
+      "base_ablated_min": 0.971927,
+      "abs_gap": 0.000655,
+      "RULING_REPLACEMENT": true
+    },
+    "structured": {
+      "gain_real": 1.7944,
+      "gain_shuf": -1.9073,
+      "structured_ce": true
+    },
+    "closure": {
+      "min_le_aonly": true,
+      "min_lt_base": true,
+      "HOLDS": true
+    },
+    "gen": {
+      "coherent": true,
+      "gated_stats": {
+        "entropy": 2.755,
+        "distinct_frac": 0.164,
+        "ws_frac": 0.066
+      },
+      "gated_sample": "и. Для области. Мечению вызвали других объектах прежде и конституцию 1540, показателей. Соэлемяное изучение социальном государственное заключить в кислот из ней"
+    },
+    "config": {
+      "vocab_size": 256,
+      "d_model": 384,
+      "n_trunk_layers": 6,
+      "n_experts": 8,
+      "block_size": 256,
+      "variant": "A"
+    }
+  },
+  "total_wall_s": 3960.0
+}
