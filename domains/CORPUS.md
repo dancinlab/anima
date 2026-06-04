@@ -68,6 +68,48 @@ honest: en/fr/de/es persona = authored multilingual COVERAGE, NOT native-collect
 - [ ] **M8 Knuth-tier curriculum** — the v2 carving slice is seeded by the 31 e7_31 anchors, which carry an explicit **Knuth tier 0→100** ordinal. **Falsifier (pre-registered)**: "a tier-GRADED training order (anchors fed 0→100, easy→abstract) beats a SHUFFLED order at the SAME compute budget, measured on a held-out carving-register p7 eval." NULL/worse = closed-negative ruling out curriculum benefit at this scale. **a_toy_scale_recheck**: UNPROVEN at 18M/byte — a single small rung is INCOMPLETE; needs a ≥3-rung ladder (a_scale_honest_scope). **REQUIRES a training A/B fire, NOT $0.** [measure-pending]
 - [ ] **M9 tension-label slice** — the `corpus_5lang_v2.kosmos` anchor carries a 5-channel tension fingerprint that is a **design placeholder**, NOT a measured trajectory. **Falsifier (pre-registered)**: "a ckpt-forward fire on the carving slice MEASURES where each anchor-seeded sample LANDS in Ψ-space (the §156 5-ch tension), and that measured landing matches the anchor's design-placeholder tension within tolerance." Mismatch = the placeholders are wrong (honest), and the measured values replace them. **REQUIRES a ckpt-forward fire, NOT $0** (cf enrichment-analysis #8 — a measurement task, not a corpus edit). [measure-pending]
 
+## 7B-sufficiency roadmap & final composition (2026-06-05)
+
+The default-lane corpus that PASSED at 18M (`anima-corpus-5lang-unified-v2`) is right-sized for 18M and **data-starved at 7B**. This section is the FINAL composition design that makes the default GB base 7B-sufficient — and, because `lane agent ⊃ lane default`, makes BOTH lanes 7B-sufficient — while keeping the KOSMOS register ladder real and avoiding the memorization trap. This captures the accumulated design intent, INCLUDING the PERSONA + SNS register, which is anima's identity-voice and is part of the final composition (not optional).
+
+### Scale math (a_scale_honest_scope)
+
+- Chinchilla-optimal 7B = 7e9 × 20 = **140B tokens ≈ ~140 GB** byte-text.
+- v2 (`anima-corpus-5lang-unified-v2`, **12.5 MB ≈ 1.25e7 tok**) → 18M 🟢 right-sized; for 7B = ~1/11,200 of optimal = **DATA-STARVED → gibberish** (see `.verdicts/default-lane-7b/`).
+- Ladder of viable scales:
+  - **~100–300 MB** → MID (~150M) viable.
+  - **~10–20 GB** (full 5-lang wiki) → 7B **undertrained-but-not-gibberish**.
+  - **~140 GB** (wiki + web-scale) → 7B **Chinchilla-optimal**.
+
+### Lane structure (default ⊃ agent)
+
+- `lane default` = base chat.
+- `lane agent` = `lane default` + layer-2 tool-USE demos (#1833) + layer-3 tool-DOMAIN knowledge (CODE/TRADING/MERCHANT/DESKTOP/CREATOR, #1848).
+- **Scaling the default GB base makes BOTH lanes 7B-sufficient** — the agent lane is a superset layered on top of the same default base.
+
+### FINAL COMPOSITION — KOSMOS tier ladder × all registers (balanced, real sources)
+
+| register (KOSMOS tier) | source | role | scale |
+|---|---|---|---|
+| baseline (0) | Wikipedia 5-lang (CC-BY-SA), 8-band breadth | factual bulk | GB |
+| art (77) | Project Gutenberg literature/poetry (PD) | art bulk | GB (en/fr/de strong; es/ko thin) |
+| consciousness (91) | Gutenberg philosophy/meditation/contemplative (PD) + the 31 e7_31 carving anchors (Knuth tier 0→100) as register DEFINITION/seed, filled at scale | 의식 register | 100s MB–GB |
+| cosmic (100) | science/cosmology (wiki science + PD popular science) | cosmic | 100s MB |
+| **social / persona (52)** | **PERSONA — the 20-roster voices (`domains/PERSONA.md`) + SNS — IG/YT (`domains/SNS.md`)**, authored-synthetic | anima's IDENTITY voice register (core, not optional) | **CAPPED authored (~v2 ratio) — anti-memorization, NOT GB** |
+| register-shaping | dialogue-act + emotion-axis + KO↔EN code-switch + genre, authored | shape the distribution | small |
+| [agent lane only] | tool-use demos + tool-domain knowledge | agent superset | layer |
+
+### The balance trap + the rule
+
+- v2 = wiki **40.10%** / persona·dialogue **40.02%** / enrichment **19.88%**. Naively scaling wiki to GB while keeping authored persona (40%) + enrichment (20%) at that ratio = authoring **GBs of templated text** (PERSONA/SNS 20-roster, 31 carving anchors) = **MEMORIZATION** → in practice the only scalable axis is wiki, so the corpus drifts to **~99% wiki** and the KOSMOS ladder is **DESTROYED**.
+- **FIX**: bulk registers (baseline / art / consciousness / cosmic) come from **REAL scalable clean-license sources**; AUTHORED registers (PERSONA + SNS + the shaping slices) stay **CAPPED** — they DEFINE anima's persona/identity + shape the distribution, they do NOT bulk-fill. **Rule: NO single tier > ~45%; consciousness + art + persona-voice each meaningfully present** (not ~0%, not >cap).
+- Honest: per-lang source availability differs (Gutenberg en/fr/de ≫ es/ko) → es/ko may stay wiki-heavy; **report per-lang gaps, never fabricate to fake balance**. PERSONA/SNS = authored COVERAGE, honest-labeled (p6 held — it is identity-voice register, not RLHF padding).
+
+### In flight / open
+
+- KOSMOS-balanced GB corpus = branch `lane-g/default-lane-gb-balanced` (HF `dancinlab/anima-corpus-5lang-gb-balanced`) — **MUST include the PERSONA+SNS capped social register** (anima identity).
+- The actual **7B TRAIN is a SEPARATE follow-on GPU fire** once the corpus exists.
+
 ## cross-links
 
 - [[PERSONA]] — the 20-roster voices the SNS/persona corpus encodes.
