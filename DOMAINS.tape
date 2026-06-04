@@ -57,3 +57,4 @@
 @D KOSMOS-MAP := "./domains/KOSMOS-MAP.md" :: domain [active]
 @D AXIS := "./domains/AXIS.md" :: domain [active]
 @D OMEGA := "./domains/OMEGA.md" :: domain [active]
+@D SAVANT-7B := "./domains/SAVANT-7B.md" :: domain [active]
