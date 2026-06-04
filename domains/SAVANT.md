@@ -51,10 +51,47 @@ small slice; the 7B rung scales to ~400MB+ (80 MB/lang). The corpus card
       DURABLE: ckpts every N steps under /workspace, detached nohup that survives,
       harvested when training reaches a competent CE. LONG (multi-hour→day).
 
-## fire state
+## fire state (LAUNCHED 2026-06-04 — leak-safe single pod)
 
-(filled in by the live run — pod id, persistent vol, ckpt cadence, ETA,
-descent curve verbatim, teardown proof. See SAVANT.log.md for the step log.)
+- **pod** = vast `39416669` (the ONE and ONLY SAVANT pod; single rent, NO re-rent
+  policy per hexa-lang #2686 no-autorent — a rent FAIL would have STOPPED + reported,
+  no escalation/rotation/durable-re-fire). H100 SXM 80GB (81559 MiB), 120 GB disk,
+  image `pytorch/pytorch:2.4.0-cuda12.4-cudnn9-devel`, ~$2.40/hr.
+- **ssh** = `ssh -i ~/.vast/ssh/vast-key -p 19690 root@80.188.223.202`
+  (direct endpoint; proxy `ssh8.vast.ai:16668` also exists). Key =
+  registered `anima-orchestrator-2026-04-28` ed25519.
+- **persistent /workspace** = all artifacts under `/workspace/savant/` (survives
+  reboot): scripts, `corpus_rung0.txt`, `corpus_5lang.txt`, `rung0/`, `rung7b/`.
+- **onramp** = `/workspace/savant/pod_onramp.sh` launched DETACHED
+  (`setsid nohup`, survives the orchestrator's death). Sequence on the ONE pod:
+  (1) deps → (2) rung0 corpus (4 MB/lang) → (3) rung0 train (d512/8L, 120 steps)
+  → (4) IF rung0 descends: 7B corpus (80 MB/lang ~400 MB) → (5) 7B durable nohup.
+  State machine writes `/workspace/savant/ONRAMP_STATE`
+  (`RUNG0_PASS` / `FAILED_RUNG0` / `7B_LAUNCHED pid=...`). FAIL-LOUD: rung0
+  no-descent aborts the 7B (recipe/corpus problem surfaces, no silent 7B burn).
+- **7B rung** = d4096/36L/32H/block512 = 7.25B, bf16 + grad-ckpt + AdamW8bit,
+  batch 8 × grad_accum 4, 6000 steps, `--ckpt-every 200` →
+  `/workspace/savant/rung7b/ckpt_step_*.pt` (durable, `--resume`-able). Detached
+  nohup pid in `/workspace/savant/rung7b/train_7b.pid`, stdout
+  `/workspace/savant/rung7b/train_7b.out`, result JSON
+  `/workspace/savant/rung7b/savant_5lang_7b_train.log.json`.
+
+## harvest plan (NOT babysat — harvested later by pod-id)
+
+1. `ssh ... 'cat /workspace/savant/ONRAMP_STATE'` — confirm `7B_LAUNCHED`.
+2. `ssh ... 'tail -40 /workspace/savant/rung7b/train_7b.out'` — descent curve.
+3. when `savant_5lang_7b_train.log.json` shows a competent CE (descent PASS):
+   `scp` the latest `rung7b/ckpt_step_*.pt` + `savant_5lang_7b.pt` + result JSON
+   + `corpus_card.txt` to `state/savant_torch_recover/`.
+4. HF upload: ckpts PRIVATE during training; promote to PUBLIC only on a
+   competent closure-PASS 7B (a_hf_autonomous). Add HF.jsonl rows (rung0 ckpt,
+   7B ckpt, 5-lang corpus dataset).
+5. teardown ONLY after artifacts pulled + verified + HF uploaded
+   (a_fire_recover_complete): `vastai destroy instance 39416669`.
+
+**ETA**: rung0 ~2-4 min after deps (~5 min). 7B at ~400 MB corpus, 6000 steps,
+batch 8×4 grad-accum, block 512 on one H100 ≈ multi-hour → ~1 day to a competent
+CE (a_scale_honest_scope: bounded-step REFERENCE rung, NOT a convergence claim).
 
 ## verdicts
 
