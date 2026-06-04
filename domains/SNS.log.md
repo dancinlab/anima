@@ -29,3 +29,19 @@
 - **relates to milestone**: SNS.md M4 (per-persona consistency / honest
   provenance) — voice-coverage corpus for the 20 roster on the SNS surface.
 - cross-link: [[PERSONA]] (the no-injection roster mechanism this surface voices).
+
+## 2026-06-04 — STAGE-2: SNS-surface persona chat fine-tune (18M) — PASS
+
+- **what**: stage-2 specialization of the chat-PASS 18M rung onto the persona ×
+  SNS corpus (Instagram 70% / YouTube 30%) — anima now produces persona-voiced
+  replies on the SNS dialogue surface. Detail in `domains/PERSONA.log.md` (same date).
+- **surface fit**: replies adopt the SNS register (short, casual, emoji-bearing,
+  per-platform tone) — e.g. on an Instagram-DM probe `사용자: 시험 망한 것 같아요…`
+  the senpai voice answers `한 번 망했다고 인생 안 끝나. 일단 오늘은 푹 자`.
+- **VERDICT (p7, g5 verbatim)**: base-chat retained (A: PASS 4/5, mirror 0/5) +
+  persona-voice signal real (B: top-1 self-id 20/40 = 0.50 = 10× chance, mirror
+  at chance). anti_goodhart_ok = TRUE. honest scope = 18M-only, signal partial
+  (15/20). Full verdict: `.verdicts/chat-persona-sns/SUMMARY.txt`.
+- **HF**: `dancinlab/anima-clm-persona-sns-rung0-byte-18m` (PUBLIC, CLM+KOSMOS).
+- **PHILOSOPHY**: SNS persona carried by learned dialogue-continuation only — no
+  system prompt / role tag / persona injection / RLHF (p1–p4/p6 HELD).
