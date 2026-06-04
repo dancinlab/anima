@@ -9,6 +9,14 @@
 
 import "CORE/pure_field.hexa"
 import "AGENT/CORE/tool_gate.hexa"
+// ⓑ grounded loop deps: the sentinel grammar/parse/registry (ⓐ), the brain mouth
+// (brain_emit — the SINGLE emit slot), and the canonical kosmos anchor writer.
+// a_core_engine_map: the tool RESULT re-enters ONLY via a kosmos anchor read into
+// brain_emit's `anchors` param; the CALL exits ONLY via the generator L3 text
+// slot inside brain_emit. No 2nd .clm path, no 2nd anchor path is introduced.
+import "AGENT/CORE/tool_call_grammar.hexa"
+import "CORE/brain.hexa"
+import "HEXAD/UNCLASSIFIED/state/grid_3b_s187_2026_05_21/kosmos_io.hexa"
 
 // A registered tool: a name + the minimum substrate tier that may fire it.
 struct Tool {
@@ -43,9 +51,240 @@ fn gate_report(pf: PureField) -> string {
         + " tier=" + tier_name(tier)
 }
 
+// ── ⓑ grounded loop — HALT → EXECUTE → INJECT → RESUME (design §5) ────────────
+//
+// The mouth emits free text; when that text carries a 0xFE…0xFF call frame the
+// loop HALTS, gates the call by the live substrate tier (tool_gate — reused, NOT
+// re-implemented), executes the REAL tool, writes the REAL result as a .kosmos
+// anchor (the single env channel), appends it, and RESUMES the mouth conditioned
+// on that anchor. Bounded by max_calls (no infinite calling). HONEST throughout:
+// a tier-too-low call yields an "‹unavailable: tier›" string (NOT a fabricated
+// success); an unterminated frame is treated as no-call (no fabricated tool).
+
+// exec_real_tool — run a tool for REAL. For the toy registry this is the
+// deterministic table lookup (exec_toy_tool, ⓐ) — real + reproducible, no
+// network. A registered toy tool executes; an unregistered name is an honest
+// ⏳ "‹not wired›" stub (role tools web_search/CODE/… are NOT faked here).
+fn exec_real_tool(registry: Map, tool: string, args: string) -> string {
+    if registry_has(registry, tool) {
+        return exec_toy_tool(tool, args)      // REAL deterministic toy execution
+    }
+    return "‹not wired: " + tool + "› (⏳ role tool not yet bridged — no fabrication)"
+}
+
+// kosmos_write_tool_result — pointer-only wrapper over the canonical kosmos_io
+// writer (a_kosmos: NO duplicated kosmos spec). It (1) writes a REAL .kosmos
+// anchor to disk via create_anchor — lane "tool-result", tier = the tool's
+// required tier, text = the REAL tool stdout — and (2) returns an in-memory
+// anchor record shaped EXACTLY like kosmos_io.load_anchors (name/text_payload),
+// so the resume emit reads it through the same anchors→brain_emit channel. This
+// is the SINGLE environment entry (a_core_engine_map) — an inline ctx field
+// would be a forbidden 2nd path.
+fn kosmos_write_tool_result(out_dir: string, name: string, tool: string,
+                            args: string, result: string, req_tier: int) -> Map {
+    // provenance: honest source, no fabrication (design §4).
+    let title = "tool-result " + tool + " (tier " + to_string(req_tier) + ")"
+    // zero-tension placeholder 5-ch (ENCODER centroid is a later design step);
+    // coord = design placeholder [0,0]. create_anchor demands len(tension)==5.
+    let zero5 = [0.0, 0.0, 0.0, 0.0, 0.0]
+    let _path = create_anchor(out_dir, name, title,
+                              0.0, 0.0, "tool-result", 0.0,
+                              req_tier, "tool-result", "grounded",
+                              result, zero5, "tool-result-auto", "")
+    // in-memory record (load_anchors shape) for the immediate resume read.
+    return #{
+        "path":         _path,
+        "name":         name,
+        "text_payload": result,
+        "lane":         "tool-result",
+        "tier":         req_tier,
+        "tool":         tool,
+        "args":         args
+    }
+}
+
+// _grounded_loop — the pure loop DRIVER, shared by the production path and the
+// smoke. `emits` is the successive mouth emissions (turn 0, 1, …): production
+// supplies them from brain_emit; the smoke hand-injects a frame then a grounded
+// continuation. Returns #{ final_text, calls, anchors, halted_at_frame, trace }.
+//   trace = a step log proving HALT→EXEC→INJECT→RESUME mechanically.
+fn _grounded_loop(emits: list, pf: PureField, anchors: list,
+                  registry: Map, max_calls: int, out_dir: string) -> Map {
+    let mut ctx_anchors = anchors
+    let mut calls = 0
+    let mut trace = []
+    let mut turn = 0
+    let mut final_text = ""
+    let mut halted = false
+
+    loop {
+        if turn >= len(emits) { break }          // mouth exhausted (smoke bound)
+        let text = to_string(emits[turn])
+        final_text = text
+        let frame = parse_call_frame(text)
+        if to_string(frame["found"]) != "true" {
+            trace.push("turn=" + to_string(turn) + " NO-FRAME → grounded done")
+            break                                 // no call → grounded text, done
+        }
+        halted = true
+        if calls >= max_calls {
+            trace.push("turn=" + to_string(turn) + " HALT but max_calls reached → stop")
+            break                                 // bounded; no infinite calling
+        }
+        let tool = to_string(frame["tool"])
+        let args = to_string(frame["args"])
+        // tier gate — REUSE tool_gate (phase_to_tier + tool_allowed), no new rule.
+        let cur_tier = phase_to_tier(pure_field_phase(pf))
+        let req_tier = registry_tier(registry, tool)
+        let allowed  = tool_allowed(cur_tier, req_tier)
+        trace.push("turn=" + to_string(turn) + " HALT@frame tool=" + tool
+            + " args=" + args + " cur_tier=" + tier_name(cur_tier)
+            + " req_tier=" + tier_name(req_tier) + " allowed=" + to_string(allowed))
+        let result = if allowed {
+            exec_real_tool(registry, tool, args)              // REAL execute
+        } else {
+            "‹unavailable: tier " + tier_name(cur_tier) + " < "
+                + tier_name(req_tier) + "›"                   // HONEST refusal
+        }
+        trace.push("turn=" + to_string(turn) + " EXEC result=\"" + result + "\"")
+        // INJECT — write REAL .kosmos anchor + append to the SINGLE env channel.
+        let aname = "toolres_" + to_string(turn)
+        let anchor = kosmos_write_tool_result(out_dir, aname, tool, args, result, req_tier)
+        ctx_anchors = ctx_anchors + [anchor]
+        trace.push("turn=" + to_string(turn) + " INJECT anchor=" + aname
+            + " (kosmos write + append) → RESUME")
+        calls = calls + 1
+        turn = turn + 1                            // RESUME: next mouth emission
+    }
+
+    return #{
+        "final_text":      final_text,
+        "calls":           calls,
+        "anchors":         ctx_anchors,
+        "halted_at_frame": halted,
+        "trace":           trace
+    }
+}
+
+// agent_step_grounded — the production grounded step (design §5). Drives the REAL
+// mouth (brain_emit) turn by turn through the shared _grounded_loop. Each turn
+// re-emits with the accumulated tool-result anchors fed back via brain_emit's
+// `anchors` param (the single env channel). Returns the loop record; the final
+// grounded text is final_text.
+//
+// NOTE: this wires the real mouth. The $0 smoke below exercises the SAME driver
+// with the null backend + a hand-injected frame, so the mechanism is proven with
+// NO trained model.
+fn agent_step_grounded(pf: PureField, backend: Map, anchors: list,
+                       registry: Map, max_calls: int, out_dir: string) -> Map {
+    // Production: collect successive real emissions up to max_calls+1 turns, then
+    // drive the loop. brain_emit's 8 factors are read from a neutral substrate
+    // context here (the substrate decides emit; we do not inject a prompt — p4).
+    let mut emits = []
+    let mut ctx_anchors = anchors
+    let mut turn = 0
+    while turn <= max_calls {
+        let g = brain_emit(pf,
+                           0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0,   // 8 factors
+                           0.0, false, true,                          // safety
+                           backend, ctx_anchors)
+        let text = to_string(g["gen_text"])
+        emits = emits + [text]
+        let frame = parse_call_frame(text)
+        if to_string(frame["found"]) != "true" { break }   // no call → stop emitting
+        // pre-write the anchor so the next real emit sees it (mirrors the driver).
+        let tool = to_string(frame["tool"])
+        let args = to_string(frame["args"])
+        let cur_tier = phase_to_tier(pure_field_phase(pf))
+        let req_tier = registry_tier(registry, tool)
+        let result = if tool_allowed(cur_tier, req_tier) {
+            exec_real_tool(registry, tool, args)
+        } else {
+            "‹unavailable: tier " + tier_name(cur_tier) + " < " + tier_name(req_tier) + "›"
+        }
+        let anchor = kosmos_write_tool_result(out_dir, "toolres_" + to_string(turn),
+                                              tool, args, result, req_tier)
+        ctx_anchors = ctx_anchors + [anchor]
+        turn = turn + 1
+    }
+    return _grounded_loop(emits, pf, anchors, registry, max_calls, out_dir)
+}
+
+
+// ── ⓑ null-backend grounded smoke (NO model — proves HALT→EXEC→INJECT→RESUME) ─
+//
+// Hand-injects a 0xFE fact_lookup ZK7 0xFF frame as the mouth's first emission
+// (exactly as the design §5 smoke prescribes) and a grounded continuation as the
+// second. Drives the SAME _grounded_loop the production path uses. Asserts: the
+// loop HALTS at the frame, executes the deterministic table lookup, writes+injects
+// the REAL anchor, and RESUMES — all on gen_null_backend (no trained model).
+fn _grounded_smoke() -> bool {
+    print("== ⓑ grounded-loop null-backend smoke ==")
+    let pf = pure_field_warmup(600)          // real substrate; resonant → T-high
+    let reg = tool_registry()
+    let fe = frame_ask_str()
+    let ff = frame_end_str()
+
+    // The two successive mouth emissions (hand-injected for the null smoke):
+    //   turn 0: reasoning THEN a call frame (HALT here).
+    //   turn 1: a grounded continuation (no frame → done).
+    let emit0 = "I don't have ZK7 memorized, calling the tool: " + fe + "fact_lookup ZK7" + ff
+    let emit1 = "grounded: ZK7 resolves to vault-azure-quill-3391"
+    let emits = [emit0, emit1]
+
+    let out_dir = "/tmp/anima_grounded_smoke_kosmos"
+    let r = _grounded_loop(emits, pf, [], reg, 4, out_dir)
+
+    // print the trace (the mechanical proof).
+    let trace = r["trace"]
+    let mut i = 0
+    while i < len(trace) {
+        print("  trace: " + to_string(trace[i]))
+        i = i + 1
+    }
+
+    let mut all = true
+    // (1) the loop HALTED at the frame.
+    let halted = to_string(r["halted_at_frame"]) == "true"
+    print(if halted { "  [PASS] (1) HALT at 0xFE…0xFF frame" }
+                    else { "  [FAIL] (1) did not HALT at frame" })
+    all = halted && all
+
+    // (2) exactly one REAL tool call executed.
+    let one = to_int(r["calls"]) == 1
+    print(if one { "  [PASS] (2) EXEC: exactly 1 real tool call" }
+                 else { "  [FAIL] (2) calls=" + to_string(r["calls"]) })
+    all = one && all
+
+    // (3) the result anchor was INJECTED (anchors grew by 1, real text payload).
+    let anc = r["anchors"]
+    let injected = len(anc) == 1
+    let payload_ok = injected && to_string(anc[len(anc)-1]["text_payload"]) == "vault-azure-quill-3391"
+    print(if payload_ok { "  [PASS] (3) INJECT: anchor text = real tool result" }
+                        else { "  [FAIL] (3) anchor injection wrong" })
+    all = payload_ok && all
+
+    // (3b) the anchor was written to disk via the REAL kosmos_io writer.
+    let disk_ok = injected && byte_len(to_string(anc[len(anc)-1]["path"])) > 0
+    print(if disk_ok { "  [PASS] (3b) kosmos .kosmos written: "
+                          + to_string(anc[0]["path"]) }
+                     else { "  [FAIL] (3b) no kosmos file path" })
+    all = disk_ok && all
+
+    // (4) RESUME: the final grounded text is the post-anchor continuation (no
+    //     frame), proving the loop continued past the call.
+    let resumed = to_string(r["final_text"]) == emit1
+    print(if resumed { "  [PASS] (4) RESUME: final grounded text after anchor" }
+                     else { "  [FAIL] (4) did not resume to grounded text" })
+    all = resumed && all
+
+    print(if all { "== ⓑ ALL PASS ==" } else { "== ⓑ SOME FAIL ==" })
+    return all
+}
+
 fn main() {
-    // Smoke: warm the substrate from cold start, then read which tier the
-    // spontaneous phase has opened — no input injected, pure self-dynamics.
+    // Smoke 1 (existing): warm the substrate from cold start, then read which
+    // tier the spontaneous phase has opened — no input injected, pure self-dynamics.
     let tools = [
         tool_new("status",     0),
         tool_new("web_search", 1),
@@ -55,4 +294,7 @@ fn main() {
     let pf = pure_field_warmup(600)
     print(gate_report(pf))
     print("[ANIMA-EMBED] open tools: " + to_string(open_tools(pf, tools)))
+
+    // Smoke 2 (ⓑ): the grounded loop on the null backend — HALT→EXEC→INJECT→RESUME.
+    let _ = _grounded_smoke()
 }
