@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""fig01_scale_ladder.py — OMEGA R8 (OΩ4/OΩ5) scale-ladder figure.
+r"""fig01_scale_ladder.py — OMEGA R8 (OΩ4/OΩ5) scale-ladder figure.
 
 EVERY value below is copied VERBATIM from the verdict:
   .verdicts/omega-engine/F-OMEGA-SCALE.txt
@@ -40,8 +40,8 @@ fig, (ax0, ax1) = plt.subplots(1, 2, figsize=(11.0, 4.2))
 # ---- left: grouped CE bars ----
 c_base = "#9aa0a6"; c_aonly = "#4c78a8"; c_min = "#2ca02c"
 ax0.bar(x - w, base,    w, label="base (.clm mouth)", color=c_base)
-ax0.bar(x,     a_only,  w, label=r"a\_only ($+\alpha A$)", color=c_aonly)
-ax0.bar(x + w, min_lrn, w, label=r"min\_learned ($g_B\!\cdot$base$+g_A\!\cdot A$)", color=c_min)
+ax0.bar(x,     a_only,  w, label=r"a_only ($\mathrm{base}+\alpha A$)", color=c_aonly)
+ax0.bar(x + w, min_lrn, w, label=r"min_learned ($g_B\,\mathrm{base}+g_A A$)", color=c_min)
 ax0.axhline(uniform, ls=":", lw=1.0, color="#d62728")
 ax0.text(len(rungs) - 1 + 0.18, uniform - 0.18, "uniform 5.545",
          ha="right", va="top", fontsize=8, color="#d62728")

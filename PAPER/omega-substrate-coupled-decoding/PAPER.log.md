@@ -2,6 +2,14 @@
 
 Append-only history sister of `PAPER.md`. Each entry starts with `## <ISO timestamp> — <header>` (newest on top); body = `- [x]` (done) / `- [ ]` (pending) checkbox tasks.
 
+## 2026-06-04 — g51 CLOSED: PDF artifact compiled (10 pages) + fig01 scale-ladder data figure
+
+- [x] **g51 MET** — the last a_paper_format gap (≥10 pages + ≥1 figure) is closed. `omega.pdf` = **10 pages**, 306509 bytes (well under 5MB, committed as the paper artifact). Page count VERBATIM from `pdfinfo main.pdf` → `Pages: 10`.
+- [x] COMPILE host/tooling — pool host `aiden` (aiden@192.168.50.119, TeX Live 2023/Debian); local Mac has NO pdflatex/xelatex, summer has no latex either, aiden does. Sequence: `pdflatex×1 → bibtex → pdflatex×2` (3-pass cross-ref + bib resolution), all passes exit 0, no undefined refs/cites. (Makefile default engine is xelatex for native emoji; here pdflatex used + `newunicodechar` maps the body's literal Ω → $\Omega$, byte-faithful source.)
+- [x] FIGURE — `figures/fig01_scale_ladder.pdf` (vector, 27.9KB) from `figures/_scripts/fig01_scale_ladder.py`. Depicts the R8/OΩ4·OΩ5 (#1806) 5-rung leak-free scale ladder: (a) per-rung held-out TEST CE bars (base 3.097779 flat / a_only / min_learned 0.903·0.870·0.892·0.921·0.824) showing the minimal A-wire gate HOLDS at every scale below uniform 5.545; (b) the A-wire Δ-vs-base advantage FLAT at +2.20±0.03 across d384→d1024 (+2.1948/+2.2277/+2.2054/+2.1766) with d768×2 the largest margin (+2.2736). EVERY value verbatim from `.verdicts/omega-engine/F-OMEGA-SCALE.txt` — NO fabricated point. Data plot chosen over a generative fal.ai image (the honest, verdict-faithful fit per a_paper guidance; fal.api_key present but a real data figure is correct here).
+- [x] bib — `\bibliography{references}` uncommented + 5 anima verdict-ledger entries `\nocite`'d → References section renders. references.bib escaped for pdflatex (`\#`, `\textless/\textgreater`, `\_` in the note/title fields). refs≥10 external citations remain a separate OPEN milestone (NOT a g51 gate item).
+- [x] HONEST SCOPE — g51 (≥10pg + ≥1 figure) is MET as written; the 10 pages are the FINALIZED science body (no padding added — only the figure + a References section + pdflatex-compat preamble). The figure value-faithfulness is asserted in-script (`assert m < a < b` per rung). PR: lane-g/omega-paper-compile → main.
+
 ## 2026-06-04 — OΩ1 REPLACEMENT correction folded: minimal-gate "closure" = REPLACEMENT not coupling (#1803)
 
 - [x] CORRECTION: paper (#1802) over-stated OH1 (#1801) as a "positive minimal-gate closure"; #1803 (OΩ1) measured it is REPLACEMENT, not coupling. Reframed OH1 from "positive minimal-gate closure" → "minimal gate = A-head replacement of the .clm mouth"
