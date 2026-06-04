@@ -1,0 +1,24 @@
+// clm_v2_decode_smoke.hexa — ENGINE-loadability smoke for clm_serialize_v2.py output.
+// Confirms a torch-serialized v0.2-CLMX .clm is (1) clm_decodable=true and (2) runs
+// the decode forward (clm_decode_argmax) producing bytes with no EOF/offset error.
+// Run from the anima repo root with V2_CLM env (absolute path).
+
+import "CORE/clm_decode.hexa"
+
+fn main() {
+    let clm = env("V2_CLM")
+    println("=== clm_serialize_v2 ENGINE-loadability smoke ===")
+    println("clm=" + clm)
+    let dec = clm_decodable(clm)
+    println("[decodable] clm_decodable=" + to_string(dec))
+    if !dec {
+        println("F-CLM-V2-LOADABLE = 0 🔴 (clm_decodable FALSE — layout wrong)")
+        return
+    }
+    let r = clm_decode_argmax(clm, "the ", 16)
+    println("[decode forward] ok=" + to_string(r["ok"])
+        + " gen_bytes=" + to_string(byte_len(to_string(r["text"]))))
+    let ran = to_string(r["ok"]) == "true"
+    println("F-CLM-V2-LOADABLE (decodable AND forward ran) = "
+        + (if dec && ran { "1 🟢" } else { "0 🔴" }))
+}

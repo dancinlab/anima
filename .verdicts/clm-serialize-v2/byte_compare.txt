@@ -1,0 +1,19 @@
+=== clm_serialize_v2 — BYTE-LAYOUT compare + determinism + round-trip (p7) ===
+
+There is NO clm_reexport.hexa writer source committed in anima (the v0.2
+host-side reexport was a one-off; only its OUTPUT .clm artifacts remain on
+disk: state/laneg_d768_recover/reexport_d8_v2.clm + reexport_d768_v2_fast.clm).
+And no source .pt for the d768 reexport exists, so the SAME weights cannot be
+re-quantized to assert a value-identical file. Honest delta: byte-compat is
+proven STRUCTURALLY (layout) + via the ENGINE decoder accepting it identically,
+NOT by a value-for-value byte-identical reproduction of the d768 artifact.
+
+--- STRUCTURAL byte-compare: my writer's d8 output vs canonical reexport_d8_v2.clm ---
+  ref len=12158  mine len=12158  len-equal=True
+  header bytes [0:5] identical=True  (b'CLM\x01\x06')
+  STRUCTURE (block boundaries + trailer offset + 11 ext sizes) IDENTICAL=True
+  (only difference = weight VALUES; random vs reexport init — layout is byte-exact)
+
+--- DETERMINISM + round-trip (decoder dequant == torch quant-dequant) ---
+  DETERMINISM: serialize x2 byte-identical=True  sha256=8956939717fd2ada
+  ROUND-TRIP: max|decoder_dequant - torch_qdq| = 0.0  (0.0 = exact)

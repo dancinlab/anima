@@ -68,5 +68,30 @@ MANIFEST {
 
 ## 5. 버전
 
-- v0.1 = P0 확정 (이 문서). 이후 arch 변경 시 HEADER.version bump + 이 스펙 동반 갱신.
-- 변경 이력은 `CLM.log.md`, 본 스펙은 current-state(이력 금지).
+- v0.1 = P0 확정 (이 문서 §2 레이아웃 — JSON header + body + JSON manifest). writer = `CLM/model/clm_serialize.py`.
+- v0.2-CLMX = ENGINE-loadable 레이아웃 (decoder = `CORE/clm_decode.hexa`). writer = `CLM/model/clm_serialize_v2.py` (§6).
+- 이후 arch 변경 시 HEADER.version bump + 이 스펙 동반 갱신.
+- 변경 이력은 `ENGINE+CLM+KOSMOS.log.md`, 본 스펙은 current-state(이력 금지).
+
+## 6. v0.2-CLMX 레이아웃 (ENGINE-loadable · Lane G-ref)
+
+> v0.1 은 ENGINE decoder (`CORE/clm_decode.hexa`) 가 **읽지 못한다** — `clm_decodable()` 가 CLMX trailer (forward 에 필요한 embed/GN/bias) 부재로 false. v0.2-CLMX = decoder 가 실제로 읽는 byte 레이아웃. writer = `CLM/model/clm_serialize_v2.py` (torch CLMConvMoE state_dict → v0.2-CLMX `.clm`). canonical reference 출력 = `state/laneg_d768_recover/reexport_d8_v2.clm` / `reexport_d768_v2_fast.clm`.
+
+```
+v0.2 = [MAGIC "CLM\x01"] [u8 nblk=6]
+       6 conv blocks (순서: ecW · tcW · e0W · e1W · rW · roW):
+         [u32 cout] [u32 rest]                 // rest = Cin*K
+         [int4 nibbles, 2/byte, (cout*rest+1)//2 B]   // code = (nibble & 0xF) - 8, lo-then-hi
+         [fp32 scale[cout], LE]                // w = code · scale[output_channel]
+       [CLMX trailer]:
+         ["CLMX"] [u8 n_ext=11]
+         11 ext tensors, 각 [u32 n] [fp32[n] LE]
+         순서: embed(V·d) · ecB(d) · tcB(d) · e0B(d) · e1B(d) · rB(E) · roB(V)
+               · tgG(d) · tgB(d) · noG(d) · noB(d)
+```
+
+- **arch 고정**: decoder 가 `let E=2; let V=256` + 1-trunk(단일 tcW walk) hardcode → v0.2 writer 는 `n_experts=2 / vocab_size=256 / n_trunk_layers=1` 만 직렬화, off-arch state_dict 거부.
+- conv weight index: torch Conv1d `(Cout,Cin,K)` row-major flatten = decoder im2col `w[co*rest+j], j=ci*K+k` 와 정확히 일치 → permute 불필요.
+- int4-sym = §3 와 동일 (amax/7, [-7,7], +8 nibble). 결정적(byte-identical on repeat).
+- **HONEST scope (a_train_flame_forge)**: emitted `.clm` BINARY 는 torch/ATen/Python ZERO (순수 int4+fp32 byte stream, `.hexa` ENGINE 이 decode) — 그러나 TRAINER 는 torch → **Lane G-ref (torch-trained)**, forge production ENGINE 아님(util-blocked, hexa-lang 대기). win: torch+CUDA 학습 모델이 이제 ENGINE-loadable → 3B/7B ENGINE `.clm` 경로 UNBLOCKED.
+- smoke verdict: `.verdicts/clm-serialize-v2/` (clm_decodable=TRUE + decode forward ran + byte-layout compare).
