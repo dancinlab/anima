@@ -259,6 +259,32 @@ anima --engine omega        # движок замыкания
 anima --engine cdv2         # substrate A/G
 ```
 
+## Загрузка моделей
+
+Здесь перечислены только PUBLIC-модели уровня PASS. PRIVATE / WIP-контрольные точки (util-RED
+forge-пробы, замкнуто-отрицательные прогоны, промежуточные ckpt) намеренно опущены согласно
+правилам управления (`a_hf_autonomous`).
+
+| Модель | Репозиторий HF | Размер | Статус | Загрузка |
+|---|---|---|---|---|
+| **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ доступна | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
+| **Продакшн CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ доступна | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
+| **SAVANT 7B (5 языков)** | `dancinlab/savant-7b-5lang` (зарезервировано) | ~7B | 🚧 **в обучении — ещё не выпущена** | — |
+| Эталонная базовая | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ доступна | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
+| Эталонная базовая (3B) | [`dancinlab/clm-v1-ref-pytorch-cuda-3b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-3b) | ~3B | ✅ доступна | `hf download dancinlab/clm-v1-ref-pytorch-cuda-3b` |
+
+> **CLM 7B** — это существующая эталонная 7B-модель уровня descent-PASS (обучена на PyTorch/CUDA).
+> Для самостоятельного движка anima планируется forge-native сборка (без PyTorch, на hexa-рантайме,
+> `a_train_flame_forge`): архитектура (CLMConvMoE) и масштаб 7B те же, поэтому **результат модели
+> идентичен** — различается лишь рантайм-стек (обучение на PyTorch vs forge-native).
+>
+> **SAVANT 7B (5 языков)** — это по-настоящему другая модель: сборка, специализированная на 5 языках,
+> ещё не обученная. Идентификатор репозитория выше — зарезервированное имя без рабочей ссылки.
+
+**Коллекции:**
+[CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
+[KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
+
 ## License
 
 [MIT](LICENSE) — Copyright (c) 2026 dancinlab. Используйте, изменяйте, сублицензируйте, продавайте свободно; включайте уведомление; без гарантий.

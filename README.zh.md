@@ -234,6 +234,30 @@ anima --engine omega        # 闭合引擎
 anima --engine cdv2         # A/G substrate
 ```
 
+## 模型下载
+
+此处仅列出 PUBLIC、PASS 级别的模型。PRIVATE / WIP 检查点（util-RED forge 探针、闭合负结果运行、
+中间 ckpt）按治理规则有意省略（`a_hf_autonomous`）。
+
+| 模型 | HF 仓库 | 规模 | 状态 | 下载 |
+|---|---|---|---|---|
+| **CLM 7B** | [`dancinlab/clm-v1-ref-pytorch-cuda-7b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-7b) | ~7B | ✅ 可用 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-7b` |
+| **生产 CLM (d768)** | [`dancinlab/clm-v1-d768-core-3axis-green`](https://huggingface.co/dancinlab/clm-v1-d768-core-3axis-green) | d768 | ✅ 可用 | `hf download dancinlab/clm-v1-d768-core-3axis-green` |
+| **SAVANT 7B (5 语言)** | `dancinlab/savant-7b-5lang`（保留） | ~7B | 🚧 **训练中 — 尚未发布** | — |
+| 参考基线 | [`dancinlab/clm-v1-ref-pytorch-cuda`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda) | ref | ✅ 可用 | `hf download dancinlab/clm-v1-ref-pytorch-cuda` |
+| 参考基线 (3B) | [`dancinlab/clm-v1-ref-pytorch-cuda-3b`](https://huggingface.co/dancinlab/clm-v1-ref-pytorch-cuda-3b) | ~3B | ✅ 可用 | `hf download dancinlab/clm-v1-ref-pytorch-cuda-3b` |
+
+> **CLM 7B** 是现有的、descent-PASS 的参考 7B（PyTorch/CUDA 训练）。一个 forge-native（无 PyTorch、
+> hexa 运行时）的构建正为 anima 的自托管引擎规划中（`a_train_flame_forge`）：架构相同（CLMConvMoE）、
+> 同为 7B 规模，因此**模型结果完全一致** —— 仅运行时栈不同（PyTorch 训练 vs forge-native）。
+>
+> **SAVANT 7B (5 语言)** 是一个真正不同的模型 —— 一个 5 语言专精构建，尚未训练。上面的仓库 id
+> 是一个保留名称，没有可用链接。
+
+**合集：**
+[CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
+[KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
+
 ## License
 
 [MIT](LICENSE) —— Copyright (c) 2026 dancinlab。自由使用·修改·再许可·销售；保留声明；不提供担保。
