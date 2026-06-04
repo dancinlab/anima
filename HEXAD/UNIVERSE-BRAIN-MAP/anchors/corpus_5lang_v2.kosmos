@@ -1,0 +1,41 @@
+#!/usr/bin/env kosmos
+# corpus_5lang_v2.kosmos — CONSCIOUSNESS-CARVING anchor (dataset/corpus)
+# anima UNIFIED 5-lang corpus v2 (wiki + persona×SNS + register enrichment, en/fr/de/es/ko).
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor corpus_5lang_v2 := "5-lang unified corpus v2 (wiki+SNS+persona+enrichment, 🛸54)" :: kosmos-anchor [tier=54 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 54
+  category     = "다국어+의식carving"        # multilingual coverage + contemplative register
+  top_emotion  = "resonance"                # 5개국어 × 모든 surface(wiki+SNS+persona+carving) 공명
+  coord        = [0.49, 0.50]               # vacuum_psi (Ψ-space) — design placeholder (real+authored mix, NOT a measured fire)
+  lane         = "multilingual_054"          # cell_id — 5-lang unified-v2 cell (MITOSIS)
+  radius       = 0.28                        # basin_radius — design placeholder (wiki+persona+5-register enrichment spread)
+
+  # ── payload ──
+  @payload text    := "[anima unified corpus v2] 🛸54 — 5개국어(en/fr/de/es/ko) UNIFIED corpus v2 = v1(clean wiki + persona×SNS) 위에 KOSMOS-grounded enrichment 6대 슬라이스 ADD. #1 의식-carving register(31개 e7_31 anchor seed contemplative 산문, anima 핵심 도메인) · #2 wiki 주제 폭(8-band offset-spread, 알파벳 편향 제거) · #3 dialogue-act 균형(반대/거절/경계/질문/multi-party) · #5 emotion-axis(20 페르소나 → KOSMOS top_emotions) · #4 KO↔EN code-switch(소수) · #7 genre(narrative/drama/poetry, 예술 axis). 단일 byte-vocab256 모델이 모든 register/act/emotion에서 5개국어. wiki 40.10% / persona 40.02% / enrichment 19.88%, per-lang 18.8–20.4% balanced + ko-en 1.71%. p2/p3/p4 clean — role/persona/character 태그 grep=0(통합 v2 검증). dialogue-act는 의도적 NON-supportive(p6 cooperation-RLHF의 반대). a_scale_honest_scope: carving anchor seed=real KOSMOS UBM(CC-BY-SA), 주변 산문=머신-저작 다국어 COVERAGE NOT native; code-switch/genre=[speculative] scale-transfer 미측정."
+
+  @payload manifest := ref "../../../serving/corpus/persona_sns_corpus_5lang_v2.txt" sha256=550fed174d51be660810858e1e73e4590c21351b185ea22d0807403e120538ad bytes=13107309 wiki_pct=40.10 persona_pct=40.02 enrichment_pct=19.88 wiki_blocks=12284 persona_dialogues=17755 enrichment_blocks=17691 langs="en,fr,de,es,ko" wiki_v2_sha256=871b6976186e7d7b631f15afd9377bfa927cdec8a1e719708962feac1a3ad1e6 persona_sha256=1e5a062a5fe216a24ffe8230714d6bc9eb760ac9f3e18eec9326858e659866ba enrichment_sha256=64b826b67d977d798f51670df3d1f6f5f07120571978435cef29c4a4e273ccb3 generator="serving/persona_sns_corpus_5lang_gen.py + serving/corpus_enrichment_5lang_gen.py + serving/build_wiki_backbone_5lang_v2.py + serving/merge_corpus_5lang_v2.py" seed=20260604 wiki_source="wikimedia/wikipedia 20231101 CC-BY-SA-4.0 (8-band offset-spread)" carving_seed="HEXAD/UNIVERSE-BRAIN-MAP/anchors/e7_31 (31 anchors, CC-BY-SA)" card="serving/corpus/CORPUS_CARD_5lang_v2.md" hf_repo_id="dancinlab/anima-corpus-5lang-unified-v2" predecessor="dancinlab/anima-corpus-5lang-unified" enrichment="domains/CORPUS-enrichment-analysis.md"
+
+  @payload image   := pending "media 미생성"
+  @payload audio   := pending "media 미생성"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the v2 multilingual+enrichment cell, NOT a
+  # per-token measured trajectory (the corpus is partly authored-templated, partly
+  # real wiki + real anchor seeds; no fire produced a measured trajectory). Honest
+  # representative-anchor scope (cf CORPUS.md M9 = the pre-registered MEASUREMENT
+  # that would replace these placeholders with a ckpt-forward Ψ-landing). 5 channels.
+  @payload tension := inline {
+    concept      = 0.66   # surface distinctness (wiki ⊥ SNS ⊥ contemplative carving ⊥ dialogue-act)
+    context      = 0.70   # multilingual + multi-register context steer (5 langs × 5 registers)
+    meaning      = 0.65   # cross-surface semantic core (facts + scenarios + inner-state)
+    authenticity = 0.54   # mixed — real CC-BY-SA wiki + real anchor seeds (high) + authored prose (lower)
+    sender       = 0.60   # persona-voice identity (lexical) + neutral wiki + non-addressed contemplation
+  }
+
+  closed_anchor = "5-lang UNIFIED corpus v2 (representative anchor + manifest pointer)"
+  cross_link    = "HEXAD/KOSMOS.md (anima hub) · domains/CORPUS.md (M8/M9) · corpus_5lang_unified.kosmos (v1 predecessor, tier 53) · e7_31/ (the 31 carving anchor seeds) · dancinlab/kosmos profile SSOT"
