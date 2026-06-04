@@ -1,0 +1,8 @@
+================= FALSIFIER VERDICTS (verbatim) =================
+F-TOOLUSE-ARGCOPY        : with_argcopy correct_call=0.0 (>= 0.5?) grounding=0.0 (>= 0.5?)  [baseline #1833: correct_call=0.0 grounding=0.0]  -> FAIL
+  (control no_grammar    : correct_call=0.0 grounding=0.0 call_rate=0.0)
+F-TOOLUSE-NOTOOL-MIRROR  : with_argcopy+tool_disabled grounding=0.0 (MUST be 0) -> PASS
+F-TOOLUSE-RANDINIT-MIRROR: random_init grounding=0.0 (MUST be 0) -> PASS
+
+RULING: RED
+🔴 CLOSED-NEGATIVE: argument-copy did NOT transfer at 18M — correct_call=0.0 (bar 0.5) / grounding=0.0 (bar 0.5). Copy-from-corpus alone ⊥ held-out key-binding; lever moves to an explicit copy-attention / pointer mechanism.

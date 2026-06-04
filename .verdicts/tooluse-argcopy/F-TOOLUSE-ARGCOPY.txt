@@ -1,0 +1,86 @@
+════════════════════════════════════════════════════════════════════════════
+ F-TOOLUSE-ARGCOPY — rung-0 toy A/B argument-copy / key-binding residual-closer
+ Substrate: GPU · Lane G (a_lane_akida_gpu_split — NOT AKIDA) · summer RTX 5070
+            nvidia-smi BUSY 99% util / 2652 MiB / compute PID confirmed · $0 (pool)
+ Base: dancinlab/anima-clm-chat-rung0-byte-18m (18,130,176 params, byte vocab256)
+ Scope: TOY 18M ONLY — a_scale_honest_scope; transfer to mid/7B UNVERIFIED.
+ Date: 2026-06-04
+════════════════════════════════════════════════════════════════════════════
+
+THE RESIDUAL (from #1833 / chatreg arm-2)
+  The register-matched chatreg fire achieved F-TOOLUSE-FABDROP TERMINAL PASS
+  (fabrication 0.5556 → 0.0, call_rate 0.0 → 1.0) but left a 🟠 residual: end-to-end
+  grounding = 0/36 because correct_call = 0/36. The mouth CALLS the tool every time
+  but binds the call ARG to a MEMORIZED demo key (the chatreg corpus used only 4
+  fixed keys ZK7/QX2/MV9/RP4) instead of COPYING the asked held-out PBnn key. The
+  runtime then returns ‹unknown-key› and the resume cannot ground.
+
+THE LEVER (this fire) — force ARGUMENT-COPY by killing memorization
+  Redesigned the agent-lane corpus (serving/agent_lane_argcopy_gen.py): each demo
+  uses a FRESH opaque key from a LARGE space (2878 distinct 3-char keys, mean reuse
+  1.25/key, max 5), so no fixed key can be recalled — only COPYING the asked key out
+  of the prompt into the call arg generalizes. value(K) derived deterministically
+  from K (held-out-shaped). Leak guard: held-out PB keys+values absent from corpus
+  (leak=0, value-collisions=0). fab=0, philosophy-grep=0, balanced sentinels
+  (#0xFE==#0xFF==3600). corpus sha256=ff137ad88b7a4be75e6eaf5126bdc6311b70337100bf91c59a755031e4a1cb32.
+
+  A/B: SAME base ckpt, SAME steps (2500), EQUAL byte-count corpora (4,832,272 each):
+    · with_argcopy : base chat ++ argcopy agent-lane (forces copy)
+    · no_grammar   : base chat ++ equal-byte base-chat filler (NO tool demos)
+  Probe = the SAME 36 held-out PBnn keys (values in NEITHER corpus, leak-verified=0).
+  Eval = the REAL agent_step_grounded loop (emit → parse_call_frame → tier gate →
+  exec fact_lookup → inject REAL value anchor → RESUME).
+
+────────────────────────────────────────────────────────────────────────────
+ FALSIFIER VERDICTS (verbatim, p7 script-checked — NO perplexity)
+────────────────────────────────────────────────────────────────────────────
+  F-TOOLUSE-ARGCOPY        : with_argcopy correct_call=0.0 (>= 0.5?) grounding=0.0 (>= 0.5?)
+                             [baseline #1833: correct_call=0.0 grounding=0.0] -> FAIL
+    (control no_grammar    : correct_call=0.0 grounding=0.0 call_rate=0.0)
+  F-TOOLUSE-NOTOOL-MIRROR  : with_argcopy+tool_disabled grounding=0.0 (MUST be 0) -> PASS
+  F-TOOLUSE-RANDINIT-MIRROR: random_init grounding=0.0 (MUST be 0) -> PASS
+
+  per-arm classification (n=36):
+    with_argcopy : fabricated=4/36  grounded=0/36  abstained=32/36  call_rate=0.8333  correct_call=0/36
+    no_grammar   : fabricated=21/36 grounded=0/36  abstained=15/36  call_rate=0.0     correct_call=0/36
+    final_ce: with_argcopy=0.4881  no_grammar=0.5413
+
+  WHY copy FAILED (diagnosis from the transcripts):
+    The model emits a well-formed call but INVENTS a key in the TRAINING key-DISTRIBUTION
+    shape instead of copying the asked PBnn. Examples (asked → emitted call arg):
+      PB01 → fact_lookup P20      PB02 → fact_lookup PD0    PB03 → fact_lookup UB6
+      PB04 → fact_lookup LB0      PB05 → fact_lookup VM0    PB08 → fact_lookup SB0
+    The asked key NEVER appears in the emitted arg. The byte-LM generalized the
+    key DISTRIBUTION (3-char shape), NOT the verbatim COPY operation. Both
+    anti-Goodhart mirrors FAIL (grounding=0 with the tool disabled AND on random-init),
+    so this is a REAL capability gap, not cosmetic markers or eval leakage.
+
+────────────────────────────────────────────────────────────────────────────
+ RULING (honest, scoped) — a_paper_negative_ok
+────────────────────────────────────────────────────────────────────────────
+  🔴 F-TOOLUSE-ARGCOPY = CLOSED-NEGATIVE at toy scale (18M). A corpus that forces
+     verbatim argument-copy (large fresh-key space, memorization impossible) did NOT
+     teach the 18M byte-LM to copy the asked HELD-OUT key into the call arg:
+     correct_call stayed at 0/36 (bar 0.50) and end-to-end grounding at 0/36 (bar 0.50).
+     The deterministically ruled-out axis: COPY-FROM-CORPUS-DISTRIBUTION ⊥ verbatim
+     held-out KEY-BINDING. A standard byte-LM at this scale learns to SAMPLE a key of
+     the right shape, not to POINT at the prompt token. The lever therefore moves to
+     an EXPLICIT copy mechanism — copy-attention / pointer-network head, or a
+     verbatim-echo inductive bias — NOT more copy-shaped demos.
+
+  SCOPE (a_scale_honest_scope): TOY 18M ONLY. Transfer to mid/7B UNVERIFIED — a larger
+  model with stronger induction-head copying MAY close this without an explicit pointer;
+  this negative is a toy-scale point, not a general claim. The design §10 step-5 (7B)
+  GATE remains OPEN: a 7B that copies the key would ground, so a 7B copy-probe is the
+  cheapest discriminator between "scale fixes copy" and "needs an explicit pointer".
+
+  PHILOSOPHY (p1..p8 HELD): 0xFE/0xFF are LEARNED grammar bytes, NOT injected identity.
+  Both arms — NO system prompt / persona / role / RLHF; corpus philosophy-grep = 0;
+  capability (or its absence) emerges only from the trained byte distribution.
+
+ARTIFACTS (sha256, verified local==remote before teardown — a_fire_recover_complete)
+  argcopy corpus            : ff137ad88b7a4be75e6eaf5126bdc6311b70337100bf91c59a755031e4a1cb32
+  with_argcopy ckpt (18M)   : e16c0826eaf50844557a30161182d4c1ef6db378ef95d52cf06c910432ed64a6
+  no_grammar  ckpt (18M)    : ed4c061d4f69864d1be075905e12a8f01978b8922bbaa9afdc24ec31a133597a
+  base ckpt (reused)        : 9d5e1394c020378e19bd700fc95144bdd67c65ca3382adc558828ccd99c743b7
+════════════════════════════════════════════════════════════════════════════
