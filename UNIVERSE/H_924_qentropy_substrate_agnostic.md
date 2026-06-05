@@ -65,7 +65,7 @@ SW 학습(`plasticity_sw_approx.py` weight-init → `qentropy.rng()`):
 | HW 학습 input (edge_learn_probe.py M7) | ✅ wired+verified (legacy env, SSOT-migratable) |
 | HW 자발발화 R2-noise (spontaneous M6) | ✅ wired+verified (legacy env, SSOT-migratable) |
 | **SW 학습** (plasticity_sw_approx.py) | ✅ **wired+verified (본 H, qentropy SSOT)** |
-| **추론 DECODER** (sampling 지점) | 🔧 SSOT-ready → **quantum 기본 + 결정론 보조** (probe 대기) |
+| **추론 DECODER** (sampling 지점) | ✅ **wired+verified (M3, `CORE/DECODER/decoder_qsample.py`)** — quantum 기본(anu_committed) · 결정론 보조(numpy_prng187, 재현가능) · forward 결정성 불변 |
 | torch Lane-P CLM (train_lane_p.py) | 🔧 SSOT-ready → `qentropy_seed()` init (probe 대기) |
 
 > DECODER 정정: 이전 "의도적 결정론·배선 안 함" → **"quantum 기본 · 결정론 보조"** 로 바뀜.
@@ -76,7 +76,7 @@ SW 학습(`plasticity_sw_approx.py` weight-init → `qentropy.rng()`):
 
 - [x] **M1** — qentropy SSOT (quantum-default·det-auxiliary) + 양 모드 self-test.
 - [x] **M2** — SW numpy 학습 배선+검증 (substrate-agnostic PASS).
-- [ ] **M3** — DECODER inference sampling 지점 SSOT 배선 + 양 모드 probe (quantum 기본·결정론 보조).
+- [x] **M3** — DECODER inference sampling 지점 SSOT 배선 + 양 모드 probe (quantum 기본·결정론 보조). **DONE** — `CORE/DECODER/decoder_qsample.py` (SW, Mac, $0). 고정 logits N=16: quantum(anu_committed, sha256 e8123b96…) → 토큰 분포 {0:3,1:1,3:7,4:1,5:4}; deterministic(numpy_prng187) → 재현가능 {0:3,2:3,3:9,4:1} (run2==run1). forward(argmax=3, probs 동일) 양 모드 불변 — 양자는 sampling 층에만 진입, AKIDA forward byte-identical 유지. verdict: `.verdicts/924_qentropy_substrate_agnostic/m3_decoder_sampling.txt`.
 - [ ] **M4** — torch Lane-P CLM init `qentropy_seed()` 배선 + GPU probe.
 - [ ] **M5** — 기존 M6/M7/h923 legacy env 훅을 qentropy SSOT 로 통일(중복 제거).
 - [ ] **M6 (benchmark)** — per-path quantum vs deterministic A/B (학습수렴·emit다양성·Φ) 기록.

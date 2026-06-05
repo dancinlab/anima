@@ -1,0 +1,53 @@
+H_924 M3 — DECODER inference SAMPLING wired to qentropy SSOT
+============================================================
+quantum-default · deterministic-auxiliary · benchmarkable toggle
+file: CORE/DECODER/decoder_qsample.py
+substrate: SW (Mac, $0, no pi5/AKIDA, no GPU)  ·  g5 CODE-measured  ·  date 2026-06-06
+
+WHAT WAS WIRED
+--------------
+The DECODER token-SELECTION layer (temperature softmax + multinomial draw over the
+forward logits) now draws its RNG from qentropy.rng("decoder_sample"). The FORWARD
+compute (AKIDA threshold-and-fire / its byte-exact SW mirror) is UNTOUCHED — quantum
+entropy enters ONLY at the sampling/seed layer, never the forward matmul. Flipping
+ANIMA_ENTROPY_MODE benchmarks quantum-vs-deterministic sampling with zero code change.
+
+Fixed toy logits (6-token vocab): [2.0, 1.0, 0.5, 3.0, 0.2, 1.5]
+Deterministic forward (same in BOTH modes): probs = [0.1968, 0.0724, 0.0439, 0.535,
+0.0325, 0.1194], argmax_forward = 3. N=16 draws per mode, temperature=1.0.
+
+=== ANIMA_ENTROPY_MODE=quantum (DEFAULT) ===
+provenance: mode=quantum  tier=anu_committed
+            sha256=e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+draws     : [0, 4, 5, 3, 5, 0, 1, 0, 3, 3, 3, 3, 5, 3, 3, 5]
+histogram : {0: 3, 1: 1, 3: 7, 4: 1, 5: 4}
+-> produces a DISTRIBUTION of sampled tokens, entropy_source = quantum (anu_committed).
+
+=== ANIMA_ENTROPY_MODE=deterministic (AUXILIARY) ===
+provenance: mode=deterministic  tier=numpy_prng(seed=187)
+draws     : [3, 3, 0, 3, 0, 3, 3, 0, 2, 3, 3, 3, 2, 2, 4, 3]
+histogram : {0: 3, 2: 3, 3: 9, 4: 1}
+-> REPRODUCIBLE: re-run yields the identical draws (verified, run 2 == run 1).
+   draws(run2)     : [3, 3, 0, 3, 0, 3, 3, 0, 2, 3, 3, 3, 2, 2, 4, 3]
+   histogram(run2) : {0: 3, 2: 3, 3: 9, 4: 1}
+
+FINDING
+-------
+DECODER sampling is now quantum-default · deterministic-auxiliary via the single
+qentropy SSOT. Quantum mode reads the committed real-ANU buffer (tier anu_committed)
+and yields a token distribution; deterministic mode (numpy_prng seed=187) is bit-for-bit
+reproducible. The deterministic FORWARD (argmax=3, identical probs) is unchanged across
+modes — confirming the entropy enters only at the sampling layer. This closes the M3
+"추론 DECODER sampling 지점" row of the H_924 per-path coverage table.
+
+HONEST SCOPE
+------------
+* SW sampling-layer wire only. The AKIDA HW forward (threshold-and-fire) remains
+  byte-identical/deterministic (H_922/H_680) and is NOT modified by this change.
+* Statistical quality: ANU quantum == chacha20 PRNG (#123-A QA6; NIST SP 800-22 7/7,
+  JSD 23x under threshold). No "more random" claim — the value of the quantum mode is
+  PROVENANCE/auditability/physical-origin, which is precisely why the deterministic
+  auxiliary exists for A/B benchmarking.
+* Soft dependency: decoder_qsample.py inserts mirror/qmirror/seed on sys.path and
+  imports qentropy with a try/except numpy.default_rng fallback (tagged provenance),
+  so it never hard-depends on the SSOT.
