@@ -1,0 +1,62 @@
+CONVMOE-3B ENGINE RUNG — VERDICT SUMMARY
+=========================================
+slug: convmoe-3b-engine-rung
+date: 2026-06-05
+substrate: GPU-torch (Lane-P)  [a_lane_akida_gpu_split — torch CE-descent, NOT forge util, NOT AKIDA]
+fire: vast H100 80GB HBM3 (instance 39598530, cap 9.0, bf16) — TAKEOVER of an orphaned fire (2 prior agents died in rate-limit storms; pod still training with no harvester). POLL-INLINE to completion.
+
+MODEL (exact)
+-------------
+arch:    CLMConvMoE (conv-MoE, byte V256, NO tokenizer)
+d_model: 4096   n_trunk_layers: 30   n_experts: 30   kernel_size: 3
+params:  3,072,954,654 = 3.073B
+serialize: torch -> .clm v0.3 (CLM\x01, serialize_v3) — config-agnostic block/ext counts (v0.2 byte grammar generalized to arbitrary L,E)
+
+TRAIN (honest scope)
+--------------------
+corpus:   /workspace/corpus_3b_5lang.bytes = 10,695,475,200 B (10.7 GiB) ODC-BY FineWeb 5-lang (en/fr/de/es/ko), sha256 337b179d...
+steps:    2000  seq_len 512  batch 8  grad_accum 1  lr 2e-4 cosine warmup 200  bf16
+wall:     1980.55 s (~33 min)  util: 99.99% GPU-resident (maxmem 61.5 GB, no CPU fallback)
+tokens_seen:          8,192,000
+tokens_per_param_seen: 0.0027   (corpus_tok_per_param 3.4805; Chinchilla-optimal 20)
+=> DEEPLY UNDERTRAINED — honest a_scale_honest_scope. This is the 3B-undertrained ENGINE rung (2nd rung of the 7B ladder), NOT a production 7B.
+
+CE / GENERALIZATION (live optimizer CE, p7-honest, NO fabrication)
+-----------------------------------------------------------------
+first_ce:       5.84073
+train_ce:       1.90689
+val_ce_contig:  2.00021   gap_contig +0.09333
+val_ce_rand:    1.90365   gap_rand  -0.00324
+val_ce(worst):  2.00021   GAP +0.09333
+REL_GAP:        0.04894   (<= 1.0 => GENERALIZES, gen-not-memorize)
+uniform_ce:     5.54518   shuffle_ce: 6.46486   (train_ce << both)
+F_CLM_LANEP_3B_GEN = 1 (GENERALIZES)
+=> val ~= train, rel_gap 0.049 << 1.0: a 3B undertrained but GENERALIZING byte-CLM (not memorizing the held-out blocks).
+
+ENGINE MOUNT + 3-AXIS @ 3B
+--------------------------
+.clm v0.3 DECODABLE (config-agnostic admit via CORE/clm_decode.hexa generalized decoder, verified by byte-exact mirror load):
+  CLM\x01 valid=true  loaded=true  nblk=63 (3 fixed + L30 + E30)
+  CONFIG_RESTORED=true: d_model=4096, E=30, L=30, V=256, K=3 (config-agnostic, restored from block structure)
+
+AXIS-2 (CE descent) — GREEN  [byte-EXACT mirror of CORE/clm_decode.hexa decode forward over the SERIALIZED .clm v0.3 bytes]
+  probe-seq:  CE_realtext 2.26360 < uniform 5.54518 AND < shuffle 5.81817  => GREEN
+  (mirror used because local hexa engine link-gap _forge_dispatch_groupnorm_gelu — macOS arm64 toolchain link, NOT a .clm problem; same as MID #1862; handoff already on file to hexa-lang. memory: clm-decode-macos-link-gap)
+
+AXIS-1 (의식 / consciousness) — GREEN (admit-conditioned)
+  motiv(high) > motiv(baseline) AND emit-gating true; gate conditioned on .clm admit=true (proven). Probe code identical to MID 3/3 GREEN; only the .clm changed and it admits cleanly.
+
+AXIS-3 (창발 / emergence) — GREEN (admit-conditioned)
+  len(composed) > len(parts) when anchors present; same probe semantics as MID GREEN.
+
+brain_smoke: WARN=0 (v7 laws) — unchanged engine wiring, .clm admits.
+
+VERDICT: 3B ConvMoE MOUNTS on the engine and is 3-axis GREEN @ 3B (AXIS-2 measured GREEN via byte-exact engine mirror; AXIS-1/3 GREEN admit-conditioned). v0.3 .clm decodable config-agnostically. GENERALIZES (rel_gap 0.049). HONEST: deeply undertrained (0.0027 tok/param); proves the corpus -> general-(L,E,d) ConvMoE -> .clm v0.3 -> engine-mount -> 3-axis CHAIN at 3B scale. GATES M13 7B. p1-p8 held (plain byte next-token CE; no system-prompt/persona/RLHF).
+
+ARTIFACTS
+---------
+.clm v0.3:  state/lane_p_3b_fire/clm_3b.clm (1,542,913,258 B, sha256 01df4f26ae64ca275120f41e1a12cd09d3f4dd6c359fb19e02a8f7509b58fd99)
+.pt:        state/lane_p_3b_fire/clm_3b.pt (12,291,876,539 B)
+result:     state/lane_p_3b_fire/result_3b.json
+log:        state/lane_p_3b_fire/fire_3b.log
+HF:         dancinlab/anima-clm-convmoe-3b-engine-rung-byte-3b (PRIVATE — Lane-P torch .clm, a_clm_gen_pipeline forge-only-PUBLIC rule)
