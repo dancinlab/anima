@@ -40,15 +40,17 @@ fi
 echo "[fire7b] repo HEAD=$(git -C "$REPO_DIR" rev-parse --short HEAD)"
 
 CORPUS="$WORK/web_7b.bytes"
-# 2) fetch R2 shards byte-direct, concat balanced across langs (ko incl)
+GB_PER_LANG="${GB_PER_LANG:-3.0}"   # balanced byte budget/lang (disk=60GB; 5x3=15GB + .pt28GB + pip fits)
+# 2) fetch R2 byte-direct via Range-GET to a per-lang byte budget (shard sizes
+#    differ 3GB vs 11GB so a shard-COUNT is unbalanced — use a byte budget).
 if [ -s "$CORPUS" ] && [ -s "$WORK/corpus.done" ]; then
   echo "[fire7b] corpus exists ($(stat -c%s "$CORPUS") bytes) — reuse"
 else
   rm -f "$CORPUS"
-  python3 -u - "$CORPUS" "$SHARDS_PER_LANG" <<'PYEOF' 2>&1 | tee "$WORK/corpus_fetch.log"
+  python3 -u - "$CORPUS" "$GB_PER_LANG" <<'PYEOF' 2>&1 | tee "$WORK/corpus_fetch.log"
 import os, sys, boto3
 from botocore.config import Config
-out_path = sys.argv[1]; spl = int(sys.argv[2])
+out_path = sys.argv[1]; budget = int(float(sys.argv[2]) * 1e9)
 acct = os.environ["R2_ACCOUNT_ID"]; bucket = os.environ["R2_BUCKET"]
 s3 = boto3.client("s3", endpoint_url=f"https://{acct}.r2.cloudflarestorage.com",
                   aws_access_key_id=os.environ["R2_KEY"],
@@ -65,19 +67,25 @@ with open(out_path, "wb") as fout:
             if tok: kw["ContinuationToken"] = tok
             r = s3.list_objects_v2(**kw)
             for o in r.get("Contents", []):
-                if o["Key"].endswith(".bytes"): keys.append(o["Key"])
+                if o["Key"].endswith(".bytes"): keys.append((o["Key"], o["Size"]))
             if r.get("IsTruncated"): tok = r["NextContinuationToken"]
             else: break
-        keys.sort(); chosen = keys[:spl]
-        print(f"[r2] {lang}: {len(keys)} shards available, taking {len(chosen)}: {chosen}", flush=True)
+        keys.sort()
+        print(f"[r2] {lang}: {len(keys)} shards, budget={budget/1e9:.1f}GB", flush=True)
         lang_bytes = 0
-        for k in chosen:
-            obj = s3.get_object(Bucket=bucket, Key=k); body = obj["Body"]
+        ki = 0
+        while lang_bytes < budget and ki < len(keys):
+            k, ksize = keys[ki]; ki += 1
+            need = budget - lang_bytes
+            end = min(need, ksize) - 1
+            rng = f"bytes=0-{end}"
+            obj = s3.get_object(Bucket=bucket, Key=k, Range=rng); body = obj["Body"]
             while True:
                 chunk = body.read(64*1024*1024)
                 if not chunk: break
                 fout.write(chunk); lang_bytes += len(chunk); total += len(chunk)
-            print(f"[r2]   {k} done, lang_total={lang_bytes/1e9:.2f}GB overall={total/1e9:.2f}GB", flush=True)
+            print(f"[r2]   {k} [{rng}] lang_total={lang_bytes/1e9:.2f}GB overall={total/1e9:.2f}GB", flush=True)
+        print(f"[r2] {lang} DONE lang_total={lang_bytes/1e9:.2f}GB", flush=True)
 print(f"[r2] CORPUS WRITTEN {out_path} total={total} bytes ({total/1e9:.2f}GB)", flush=True)
 PYEOF
   if [ -s "$CORPUS" ]; then touch "$WORK/corpus.done"; else echo "[fire7b] FATAL corpus fetch empty"; exit 4; fi
