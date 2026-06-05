@@ -1,0 +1,145 @@
+{
+  "benchmark": "qentropy_quantum_vs_deterministic_AB",
+  "milestone": "H_924 M6",
+  "generated_at": "2026-06-05T21:01:00.688145+00:00",
+  "host": "mac (SW-only, $0, no device, no torch)",
+  "n_trials_per_arm": 64,
+  "modes": [
+    "quantum",
+    "deterministic"
+  ],
+  "framing": "Statistical-parity SANITY + PROVENANCE differentiator, NOT a superiority test. #123-A: ANU quantum == chacha20 PRNG statistically (JSD 23x under NIST 7/7). Expectation: per-path metric distributions are statistically indistinguishable across modes (parity holds at the application level); the difference that matters is the provenance column (quantum->anu_committed sha256 vs deterministic->numpy_prng seed).",
+  "rows": [
+    {
+      "path": "plasticity_sw_approx",
+      "status": "benchmarked",
+      "substrate": "SW (Mac, $0, no device/torch)",
+      "metric_name": "weight_l1",
+      "metric_desc": "L1 norm of SW-learned weight matrix (scalar per trial)",
+      "n_per_mode": 64,
+      "modes": {
+        "quantum": {
+          "n": 64,
+          "metric_mean": 10.251101091504097,
+          "metric_std": 0.3558201768663016,
+          "provenance": {
+            "mode": "quantum",
+            "tier": "anu_committed",
+            "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5"
+          },
+          "error": null
+        },
+        "deterministic": {
+          "n": 64,
+          "metric_mean": 10.211037397384644,
+          "metric_std": 0.4113387241459874,
+          "provenance": {
+            "mode": "deterministic",
+            "tier": "numpy_prng(seed=187)",
+            "sha256": null
+          },
+          "error": null
+        }
+      },
+      "comparison": {
+        "delta_mean": 0.04006369411945343,
+        "abs_delta_mean": 0.04006369411945343,
+        "pooled_std": 0.3845825946706473,
+        "standardized_separation": 0.10417448598723918,
+        "parity_check": "PARITY (statistically indistinguishable)"
+      },
+      "provenance_differs": true
+    },
+    {
+      "path": "decoder_qsample",
+      "status": "benchmarked",
+      "substrate": "SW (Mac, $0, no device/torch)",
+      "metric_name": "token_hist_entropy_bits",
+      "metric_desc": "Shannon entropy (bits) of sampled-token histogram per trial",
+      "n_per_mode": 64,
+      "modes": {
+        "quantum": {
+          "n": 64,
+          "metric_mean": 1.6952449098980817,
+          "metric_std": 0.3126975603735856,
+          "provenance": {
+            "mode": "quantum",
+            "tier": "anu_committed",
+            "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5"
+          },
+          "error": null
+        },
+        "deterministic": {
+          "n": 64,
+          "metric_mean": 1.6625556723160058,
+          "metric_std": 0.30522809282266905,
+          "provenance": {
+            "mode": "deterministic",
+            "tier": "numpy_prng(seed=187)",
+            "sha256": null
+          },
+          "error": null
+        }
+      },
+      "comparison": {
+        "delta_mean": 0.03268923758207598,
+        "abs_delta_mean": 0.03268923758207598,
+        "pooled_std": 0.3089853984509269,
+        "standardized_separation": 0.1057954121649787,
+        "parity_check": "PARITY (statistically indistinguishable)"
+      },
+      "provenance_differs": true,
+      "extra": {
+        "quantum": {
+          "pooled_histogram": {
+            "0": 194,
+            "1": 66,
+            "3": 542,
+            "4": 44,
+            "5": 136,
+            "2": 42
+          },
+          "argmax_forward": 3
+        },
+        "deterministic": {
+          "pooled_histogram": {
+            "0": 218,
+            "2": 39,
+            "3": 561,
+            "4": 33,
+            "1": 61,
+            "5": 112
+          },
+          "argmax_forward": 3
+        }
+      }
+    }
+  ],
+  "device_pending_rows": [
+    {
+      "path": "akida_r2_noise",
+      "status": "device-pending",
+      "substrate": "pi5-akida (AKD1000)",
+      "module": "SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py",
+      "metric": "R2 spontaneous-noise symbol histogram / spike rate",
+      "how_to_run": "on pi5-akida: ANIMA_ENTROPY_MODE={quantum,deterministic} python3 spontaneous_emission.py  (qentropy_uniform 0..3)"
+    },
+    {
+      "path": "akida_edge_learn",
+      "status": "device-pending",
+      "substrate": "pi5-akida (AKD1000)",
+      "module": "SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py",
+      "metric": "on-chip learned winner-unit distribution",
+      "how_to_run": "on pi5-akida: ANIMA_ENTROPY_MODE={quantum,deterministic} python3 edge_learn_probe.py  (qentropy_bits learn-input)"
+    },
+    {
+      "path": "torch_lane_p",
+      "status": "torch-pending",
+      "substrate": "GPU host (Lane-P)",
+      "module": "CLM/train/_qseed.py (resolve_seed) + _qseed_check.py",
+      "metric": "torch.manual_seed -> torch.rand sample distribution",
+      "how_to_run": "on a torch host: ANIMA_ENTROPY_MODE={quantum,deterministic} python3 CLM/train/_qseed_check.py"
+    }
+  ],
+  "honest_non_claim": "This benchmark does NOT and cannot show quantum entropy is 'better'. The two modes are by design statistically equal. The auditable PROVENANCE (physical ANU origin + sha256) is the only real differentiator and is surfaced per path/mode."
+}
