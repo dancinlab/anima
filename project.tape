@@ -59,9 +59,14 @@
   do   = "flame:forge :: torch:ATen — compiler-only NN · NO PyTorch / ATen / Python in the trained binary"
   do   = "GPU REQUIRED for production rungs — VERIFY nvidia-smi busy · never silently CPU-fall back"
   do   = "ref: README §flame+forge · forge BF16-TC 9.67x over FP64-cuBLAS @ Llama-7B FFN (A100 measured)"
+  do   = "forge owns the GEMM too — env-gated own-GEMM (HEXA_OWN_GEMM · FP64/FP32/TF32-WMMA2), cuBLAS-free"
+  do   = "own-GEMM ~cuBLAS on Blackwell (WMMA2 1.13x) · byte-eq megakernel CAPSTONE max|d|=0 (async-OFF)"
+  do   = "author GPU kernels in .hexa — @gpu_kernel -> hexa build --target=nvptx -> PTX (CLI un-gated)"
   dont = "ship a torch/CPU `train_clm.py` as the production trainer · author the trainer in `.py`"
   dont = "run a 44.68M+ rung on CPU · claim a 'pool GPU fire' from a trainer with no device path"
   dont = "assert a flame<->PyTorch wall speedup — RETRACTED 2026-05-19 · unmeasured"
+  dont = "claim own-GEMM cuBLAS-parity on sm_90 Hopper — Blackwell-only · sm_90 ~31x off (TC math-pipeline)"
+  dont = "claim forge util-99% via scale/batch — structurally capped (M3/M5 falsified) · fusion buys +3-5pp"
 
 @D a_substrate_native_speak := "anima speech is substrate-native — no assistant regression" :: governance [required active]
   do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
