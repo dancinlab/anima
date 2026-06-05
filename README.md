@@ -290,6 +290,10 @@ closed-negative runs, intermediate ckpts) are intentionally omitted (governance 
 [CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
 [KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
 
+## Entropy policy — quantum-default, deterministic-auxiliary (qentropy SSOT)
+
+<!-- WIP skeleton -->
+
 ## License
 
 [MIT](LICENSE) — Copyright (c) 2026 dancinlab. Use, modify, sublicense, sell freely; include the
