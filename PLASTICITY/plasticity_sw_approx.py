@@ -36,12 +36,30 @@ ROUTING: callers reach this via the AKIDA HW-first switch SSOT
 """
 from __future__ import annotations
 
+import os
+import sys
+
 import numpy as np
+
+# ── H_924 SW-learning entropy wire (substrate-agnostic quantum coupling) ─────
+# The HW edge-learn (edge_learn_probe.py) draws its init/input from the qentropy
+# SSOT (QUANTUM default · DETERMINISTIC auxiliary). H_924 generalizes that to the
+# SW path: the SAME coupling works here because it is a property of the SEED POINT,
+# not of the AKIDA silicon. We import the shared SSOT so flipping ANIMA_ENTROPY_MODE
+# benchmarks SW-quantum vs SW-deterministic with zero code change — exactly parallel
+# to the HW benchmark. If the SSOT is unreachable we degrade to the legacy numpy
+# PRNG (tagged), so this module never hard-depends on it.
+sys.path.insert(0, os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
+                                "mirror", "qmirror", "seed"))
+try:
+    import qentropy as _qe   # unified QUANTUM-default / DETERMINISTIC-auxiliary source
+except Exception:            # noqa: BLE001  (keep SW path runnable without the SSOT)
+    _qe = None
 
 # interface shape — mirrors edge_learn_probe.py (16-dim binary in, FC units=10)
 IN_DIM = 16
 N_UNITS = 10
-SEED = 42  # matches edge_learn_probe rng seed (interface parity only, NOT result parity)
+SEED = 42  # legacy fallback seed (interface parity only, NOT result parity)
 
 # honest provenance / verdict constants
 PROVENANCE_HW = "akida-learn-hw"
@@ -63,7 +81,16 @@ def sw_approx_fit(x: np.ndarray, num_weights: int = 2,
     if x.ndim != 2 or x.shape[1] != IN_DIM:
         x = x.reshape(-1, IN_DIM).astype(np.float32)
 
-    rng = np.random.default_rng(SEED)
+    # weight init = the SW learning lever (cf H_921: the seed point IS the lever).
+    # QUANTUM by default (ANU vacuum-fluctuation via the qentropy SSOT), DETERMINISTIC
+    # as the benchmarkable auxiliary (ANIMA_ENTROPY_MODE=deterministic). Legacy numpy
+    # PRNG only if the SSOT is absent. Provenance recorded into the return dict below.
+    if _qe is not None:
+        rng = _qe.rng("plasticity_sw_init")          # quantum-seeded Generator (or det auxiliary)
+        _entropy_prov = _qe.last_provenance()
+    else:
+        rng = np.random.default_rng(SEED)
+        _entropy_prov = {"mode": "legacy_numpy_prng", "tier": f"seed={SEED}"}
     W = rng.random((N_UNITS, IN_DIM), dtype=np.float32) * 0.1
 
     # winner-take-all Hebbian sweep (a crude analogue of on-chip competition;
@@ -78,6 +105,8 @@ def sw_approx_fit(x: np.ndarray, num_weights: int = 2,
 
     return {
         "provenance": PROVENANCE_SW,
+        "entropy_source": _entropy_prov.get("mode"),   # quantum | deterministic | legacy (H_924)
+        "entropy_provenance": _entropy_prov,           # full SSOT provenance for the audit trail
         "equivalence_to_hw": EQUIVALENCE_VERDICT,   # CLOSED-NEGATIVE — honest
         "equivalence_emoji": EQUIVALENCE_EMOJI,     # RED
         "is_hw_substitute": False,                  # NEVER a HW replacement

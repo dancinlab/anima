@@ -72,7 +72,7 @@ phenomenal-consciousness 주장 아님 (.roadmap.qrng raw#10).
 | 학습 init-seed | h923 probe (FC init ← ANU) | ✅ DONE (PASS, D1 2→16) |
 | 학습 input | `edge_learn_probe.py` (M7, env ANIMA_QRNG_LEARN_BIN) | ✅ DONE — live: learn_input_source=anu_quantum·fit_on_chip=ok·supported=True (sha 79736a80…) |
 | 자발발화 R2-noise | `spontaneous_emission.py` (M6, env ANIMA_QRNG_NOISE_BIN) | ✅ DONE — R2=1424 spikes·R3 결정론 불변 |
-| 추론 DECODER | — | ⊝ 의도적 결정론 (배선 안 함, DECODER-invariant) |
+| 추론 DECODER | sampling/seed 지점 (qentropy SSOT) | 🔧 **quantum 기본 · 결정론 보조** (양 모드 토글, H_924 M3 probe 대기) — forward 연산 자체의 byte-identical 결정성은 불변 |
 
 ➡ **HW 학습쪽 배선 완료** (probe + production edge-learn 둘 다). 남은 건 SW 학습/추론 경로
 (torch/numpy Lane) 로의 일반화 — substrate-agnostic 가설(별도 H).

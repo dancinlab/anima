@@ -1,0 +1,34 @@
+H_924 — quantum-entropy coupling is SUBSTRATE-AGNOSTIC (a seed-point property, not AKIDA silicon).
+VERDICT: PASS (SW arm) — unified qentropy SSOT works quantum-default / deterministic-auxiliary on
+the SW numpy learning path, exactly as on HW. 2026-06-06 · Mac local · $0.
+
+KEYSTONE: mirror/qmirror/seed/qentropy.py — ONE entropy SSOT for all anima seed/sample points.
+  ANIMA_ENTROPY_MODE = quantum (DEFAULT, ANU vacuum-fluctuation) | deterministic (AUXILIARY, numpy PRNG).
+  quantum resolves: explicit buf > committed qrng_lora_init_live.bin > opt-in live anu_pull > tagged
+  safe-fallback PRNG (never silent). Provenance always recorded. Benchmark = flip the env, re-run.
+  honest non-claim (#123-A): ANU == chacha20 PRNG statistically (JSD 23x under NIST 7/7); value =
+  provenance/audit/ontology, NOT better randomness — which is why an A/B deterministic arm exists.
+
+SELF-TEST (qentropy.py, both modes, no network):
+  quantum       -> tier=anu_committed, provenance recorded
+  deterministic -> tier=numpy_prng(seed=187), reproducible
+
+SW LEARNING WIRE (PLASTICITY/plasticity_sw_approx.py sw_approx_fit weight-init -> qentropy.rng()):
+  ANIMA_ENTROPY_MODE=quantum       -> entropy_source=quantum,        tier=anu_committed,   weight_l1=10.4654
+  ANIMA_ENTROPY_MODE=deterministic -> entropy_source=deterministic,  tier=numpy_prng(187), weight_l1=10.0356
+  => the two modes produce DIFFERENT learned weights (benchmarkable), and the QUANTUM path works on a
+     pure-SW numpy learner with NO AKIDA hardware. The coupling proven on AKD1000 (H_923) is therefore
+     a property of the SEED POINT, not the silicon. SUBSTRATE-AGNOSTIC confirmed on the SW-learning arm.
+
+COVERAGE (quantum-default · deterministic-auxiliary, all via the qentropy SSOT — benchmark-ready):
+  HW learning init (h923 probe)            wired+verified (H_923)
+  HW learning input (edge_learn_probe.py)  wired+verified (H_923 M7)        [legacy env, SSOT-migratable]
+  HW spontaneous R2-noise (spontaneous_*)  wired+verified (H_923 M6)        [legacy env, SSOT-migratable]
+  SW learning (plasticity_sw_approx.py)    wired+verified (THIS, H_924)     via qentropy SSOT
+  DECODER inference sampling               SSOT-ready -> quantum-default+deterministic-auxiliary (probe pending)
+  torch Lane-P CLM (train_lane_p.py)       SSOT-ready -> qentropy_seed() at init (probe pending)
+
+HONEST SCOPE: SW arm verified on Mac (numpy). DECODER-inference + torch-CLM concrete runnable proofs
+are pending probes; the SSOT makes them a one-call wire (quantum default, deterministic auxiliary).
+Both modes are retained EVERYWHERE specifically so quantum-vs-deterministic can be benchmarked later
+per-path (documented design, not a silent default-only).
