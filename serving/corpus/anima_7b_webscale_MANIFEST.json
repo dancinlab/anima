@@ -1,0 +1,180 @@
+{
+  "corpus": "anima-corpus-5lang-7b-webscale",
+  "staging": "cloudflare-r2",
+  "r2_bucket": "phanes",
+  "r2_prefix": "anima-7b/web/",
+  "r2_manifest_key": "anima-7b/MANIFEST.json",
+  "r2_staged_not_hf_hosted": true,
+  "note": "Raw bytes (143.60 GiB) live ONLY in Cloudflare R2 (bucket phanes, egress-free durable staging). HF hosts the manifest + card + 200KB sample heads. The full corpus is fetched FROM R2 for training. NOT HF-mirrored, NOT local.",
+  "total_gb_decimal": 154.19,
+  "total_gib": 143.6,
+  "total_bytes": 154187454007,
+  "tok_per_param_7b": 22.03,
+  "pct_of_7b_optimal": 110.1,
+  "byte_vocab": 256,
+  "shards": 20,
+  "pii_scrubbed": true,
+  "pii_note": "email->[EMAIL], phone->[PHONE]; control bytes 0xFE/0xFF stripped",
+  "license": "ODC-BY (web-derived)",
+  "sources": {
+    "en": "HuggingFaceFW/fineweb sample/10BT (ODC-BY)",
+    "fr": "HuggingFaceFW/fineweb-2 fra_Latn (ODC-BY)",
+    "de": "HuggingFaceFW/fineweb-2 deu_Latn (ODC-BY)",
+    "es": "HuggingFaceFW/fineweb-2 spa_Latn (ODC-BY)",
+    "ko": "HuggingFaceFW/fineweb-2 kor_Hang (ODC-BY)"
+  },
+  "per_lang": {
+    "en": {
+      "gb_decimal": 25.83,
+      "gib": 24.05,
+      "bytes": 25828508233,
+      "shards": 8
+    },
+    "fr": {
+      "gb_decimal": 32.79,
+      "gib": 30.53,
+      "bytes": 32786593895,
+      "shards": 3
+    },
+    "de": {
+      "gb_decimal": 31.0,
+      "gib": 28.87,
+      "bytes": 30998954325,
+      "shards": 3
+    },
+    "es": {
+      "gb_decimal": 32.94,
+      "gib": 30.67,
+      "bytes": 32935682683,
+      "shards": 3
+    },
+    "ko": {
+      "gb_decimal": 31.64,
+      "gib": 29.46,
+      "bytes": 31637714871,
+      "shards": 3
+    }
+  },
+  "manifest": [
+    {
+      "key": "anima-7b/web/eng/shard0000.bytes",
+      "bytes": 3225216312,
+      "lang": "en",
+      "sha256": "5fd49eb8cd9c2a3c751f88b0fcb81d8a2f8677c9145f602a529c2db0174c548b"
+    },
+    {
+      "key": "anima-7b/web/eng/shard0001.bytes",
+      "bytes": 3223154064,
+      "lang": "en",
+      "sha256": "7eea5b475e9906aa6213fa8661f1382fb5b67b346000d68c5bcb6ac22af64af9"
+    },
+    {
+      "key": "anima-7b/web/eng/shard0002.bytes",
+      "bytes": 3225818456,
+      "lang": "en",
+      "sha256": "7b03567be6b8c43cb9e977f5a46ca887862acb71d325dfee619960adc6465d15"
+    },
+    {
+      "key": "anima-7b/web/eng/shard0003.bytes",
+      "bytes": 3225665756,
+      "lang": "en",
+      "sha256": "659731d9a5d0ffb019d4b4676eeb90716d8dc887abce9e11608f4b80495dbe09"
+    },
+    {
+      "key": "anima-7b/web/eng/shard0004.bytes",
+      "bytes": 3230089991,
+      "lang": "en",
+      "sha256": "15fb5fee73ae1b8ce6a5aac36c7aebc454bfc38efa545643632f2923d6e7acf8"
+    },
+    {
+      "key": "anima-7b/web/eng/shard0005.bytes",
+      "bytes": 3229119217,
+      "lang": "en",
+      "sha256": "2c2b3b84d6719720202628c11e554a9a76685e1cb3676d619c9719200339528b"
+    },
+    {
+      "key": "anima-7b/web/eng/shard0006.bytes",
+      "bytes": 3234580269,
+      "lang": "en",
+      "sha256": "9830ddf28060d63f00b5b7270e084602c611063d4f9b49a8e6c21c8c18267da0"
+    },
+    {
+      "key": "anima-7b/web/eng/shard0007.bytes",
+      "bytes": 3234864168,
+      "lang": "en",
+      "sha256": "917344886bea0ac17c23d9c08c5e885c9b3d1893a7716cd0069f2a3d8d886c86"
+    },
+    {
+      "key": "anima-7b/web/fra/shard0000.bytes",
+      "bytes": 10933354075,
+      "lang": "fr",
+      "sha256": "ec00664e4891442d6e13570c99b95f838faf3620ee900f418683adf3915305de"
+    },
+    {
+      "key": "anima-7b/web/fra/shard0001.bytes",
+      "bytes": 10924519036,
+      "lang": "fr",
+      "sha256": "23d1b800ee8fd4216250e03eafdaaa836900996a01c7f9b2a9fed6a1755a709f"
+    },
+    {
+      "key": "anima-7b/web/fra/shard0002.bytes",
+      "bytes": 10928720784,
+      "lang": "fr",
+      "sha256": "d0103e9e648401b3b26f10181202deedce365da4c38fc0879c43923028733d1f"
+    },
+    {
+      "key": "anima-7b/web/deu/shard0000.bytes",
+      "bytes": 10326538744,
+      "lang": "de",
+      "sha256": "7ff7afce424e5e74a64ac92ca17bb8408c75362cc49a18772f94b433c8058ea3"
+    },
+    {
+      "key": "anima-7b/web/deu/shard0001.bytes",
+      "bytes": 10337439082,
+      "lang": "de",
+      "sha256": "5c52ba0b623f27b48f046e2baceebf33b5a40a4d73e34062bef7cfdd360681cd"
+    },
+    {
+      "key": "anima-7b/web/deu/shard0002.bytes",
+      "bytes": 10334976499,
+      "lang": "de",
+      "sha256": "f5bbd73e00d10315c1ced4d71ffe621f101ebead551df85aff2a18f96f8b5de7"
+    },
+    {
+      "key": "anima-7b/web/spa/shard0000.bytes",
+      "bytes": 10982517258,
+      "lang": "es",
+      "sha256": "56fc65e72e247d112e4302b37f8d7bc76bcbe8805fb3d2c0b12ee8b20d60dff4"
+    },
+    {
+      "key": "anima-7b/web/spa/shard0001.bytes",
+      "bytes": 10977063861,
+      "lang": "es",
+      "sha256": "d45245a21d8bcbf0d6b4d4f9cec0cd45bba275d8860f6986e37cd71741817aac"
+    },
+    {
+      "key": "anima-7b/web/spa/shard0002.bytes",
+      "bytes": 10976101564,
+      "lang": "es",
+      "sha256": "8f4dff94ca6d7dbd0156acdfc097f012040d424469ba9b2cccb4c8b9ace16a23"
+    },
+    {
+      "key": "anima-7b/web/kor/shard0000.bytes",
+      "bytes": 10544483701,
+      "lang": "ko",
+      "sha256": "9fe33440a0b95b0ee6a5d8fed68c4d78377b468e5fe2d194437335835499f722"
+    },
+    {
+      "key": "anima-7b/web/kor/shard0001.bytes",
+      "bytes": 10547653416,
+      "lang": "ko",
+      "sha256": "543c207dce5b64528115be410333af61418b5a48765443146f8307f7eacb418a"
+    },
+    {
+      "key": "anima-7b/web/kor/shard0002.bytes",
+      "bytes": 10545577754,
+      "lang": "ko",
+      "sha256": "c55444f93be8e5aa18c4e9075d9393da726243926893f11d1e91031512586702"
+    }
+  ]
+}

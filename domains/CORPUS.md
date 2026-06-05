@@ -59,6 +59,7 @@ honest: en/fr/de/es persona = authored multilingual COVERAGE, NOT native-collect
 - [x] M6 v2 register-enrichment corpus built (v1 INTACT + 6 KOSMOS-grounded slices) — deterministic, $0. → `dancinlab/anima-corpus-5lang-unified-v2` (12.5 MB, wiki 40.10% / persona 40.02% / enrichment 19.88%, sha `550fed17`, PUBLIC, sha-verified). #1 consciousness-carving register (31 e7_31 anchor seeds, CC-BY-SA real) · #2 wiki topical breadth (8-band offset-spread) · #3 dialogue-act balance (NON-supportive: disagree/refuse/boundary/ask/multi) · #5 emotion-axis (20 personas → KOSMOS top_emotions) · #4 KO↔EN code-switch (1.71% minority) · #7 genre (narrative/drama/poetry). v1 byte-eq preserved (persona sha `1e5a062a` reproduced). tags grep=0 on unified v2. generators: `serving/corpus_enrichment_5lang_gen.py` + `build_wiki_backbone_5lang_v2.py` + `merge_corpus_5lang_v2.py`.
 - [x] M7 v2 registered in HF.jsonl + KOSMOS + CLM collections (a_hf_collections). → HF.jsonl row + `corpus_5lang_v2.kosmos` anchor (tier 54, 다국어+의식carving/resonance) + KOSMOS.md hub pointer + both collection joins (membership verified). CORPUS_CARD_5lang_v2.md (per-lang AND per-register byte split · 4 shas · license).
 - [x] M10 tool-domain knowledge slices (CODE/TRADING/MERCHANT/DESKTOP/CREATOR — authored conceptual coverage, 5-lang byte, honest-labeled) — the **3rd layer** of `lane agent` (default + tool-USE demos + tool-DOMAIN knowledge), deterministic, $0. → `serving/agent_lane_knowledge_gen.py` + sample (`agent_lane_knowledge_5lang.head.txt` 26,779B committed; full 557,952B HF-only) + `CORPUS_CARD_agent_lane_knowledge.md`. CODE 12 + TRADING 11 concepts (deep) · MERCHANT/DESKTOP/CREATOR 6 each (procedural); every concept × 5 langs. Per-domain byte split (full): CODE 25.26% · TRADING 30.34% · DESKTOP 15.01% · CREATOR 14.48% · MERCHANT 14.47%. **HONEST**: philosophy markers grep=0 (p1..p4); TRADING conceptual-ONLY hard gate (advice/signal=0, real-ticker=0 — asserted; p6/p7/a_scale_honest_scope); 0xFE/0xFF=0 (pure prose under the layer-2 grammar); deterministic seed 20260605 (sha `825a5188` full / `fdc158a6` sample). NO scraped/PII/real-financial-data. Scope = feeds the PROVEN 18M chat rung — NOT a 7B claim.
+- [x] M12 **7B web-scale corpus (R2-staged)** — the default-lane bulk extended with ODC-BY web data (FineWeb/FineWeb-2) to **143.60 GiB / 22.0 tok/param / 110.1% of the 140B-token 7B-optimal** (5-lang balanced, **ko web bulk INCLUDED** — fixes the Gutenberg-ko-zero gap). R2-staged (bucket `phanes`, NOT HF-mirrored/local); HF `dancinlab/anima-corpus-5lang-7b-webscale` (PUBLIC) holds the pointer manifest + card + 200 KB/lang sample heads. PII-scrubbed, byte-V256, injection-tags grep=0, ODC-BY cited. HF.jsonl + KOSMOS+CLM collections + `.kosmos` anchor (tier 57). User-decision A relaxed "NO scraped data" → ODC-BY web sanctioned (persona/identity stay authored). **CORPUS-only — NO 7B-trained claim; the 7B TRAIN is a separate follow-on GPU fire.** See §`7B web-scale corpus (R2-staged)` + §`constraint: web-scale ODC-BY sanctioned`.
 - [ ] M11 lane growth corpus — the 4th lane (`lane growth = lane default + growth-register`): 4-pillar (science REAL CC-BY-SA/PD bulk + self-knowledge/hypotheses/dialogue anima-authored from own repo docs, honest-labeled, p6). Generators `serving/build_growth_science_5lang.py` + `serving/growth_lane_corpus_gen.py`, byte-V256, 5-lang, tags grep=0, deterministic. Card + sample heads committed; raw `growth_lane.txt` LOCAL/HF-only. HF `dancinlab/anima-corpus-growth-lane`. Scope = feeds PROVEN 18M; NO 7B claim; TRAIN = separate fire. See §`lane growth (2026-06-05)`.
 
 ### measurement milestones — NOT $0 (require a fire), pre-registered falsifiers (g63 honest)
@@ -182,6 +183,73 @@ abundant tiers would breach the ladder ceiling). NO 7B-ready claim. Build script
 `serving/corpus/CORPUS_CARD_gb_balanced.md`; anchor `corpus_5lang_gb_balanced.kosmos`
 (tier 55); discovery `.discoveries/default-lane-gb-balanced.tape`. p1–p6 held (injection
 tags grep = 0, 0xFE/0xFF = 0, strict-UTF-8 clean). The **7B TRAIN is a separate fire**.
+
+## 7B web-scale corpus (R2-staged, summer · 2026-06-05)
+
+The web-scale extension the `gb-balanced` build flagged as the missing piece ("a real 7B
+needs a 10–140 GB web-scale extension of the bulk tiers") is **BUILT**. The default-lane
+bulk is now extended with **ODC-BY web data** (Common-Crawl-derived FineWeb / FineWeb-2) to
+the full Chinchilla-7B-optimal scale.
+
+> **⚠️ R2-STAGED, NOT HF-MIRRORED, NOT LOCAL.** The 143.60 GiB of raw byte-corpus lives
+> **only in Cloudflare R2** (bucket `phanes`, prefix `anima-7b/web/`) — egress-free durable
+> staging. HF holds the **pointer manifest + card + 200 KB per-lang sample heads**; the full
+> corpus is **fetched from R2** for training. **This is the CORPUS — the actual 7B train is a
+> separate follow-on GPU fire; no 7B-trained-model is claimed.**
+
+| metric | achieved |
+|---|---|
+| total byte-corpus | **143.60 GiB** (154.19 GB decimal) |
+| tokens / param (7B) | **22.0 tok/param** (Chinchilla-optimal 20 → **EXCEEDS**) |
+| fraction of 7B-optimal | **110.1%** of the 140B-token budget |
+| byte vocabulary | **V = 256** (control bytes 0xFE/0xFF stripped) |
+| shards | 20 |
+| license | **ODC-BY** (web-derived) |
+
+| lang | GB (decimal) | source (ODC-BY) |
+|---|---:|---|
+| en | 25.83 | `HuggingFaceFW/fineweb` sample/10BT |
+| fr | 32.79 | `HuggingFaceFW/fineweb-2` fra_Latn |
+| de | 31.00 | `HuggingFaceFW/fineweb-2` deu_Latn |
+| es | 32.94 | `HuggingFaceFW/fineweb-2` spa_Latn |
+| ko | 31.64 | `HuggingFaceFW/fineweb-2` kor_Hang |
+| **total** | **154.19** | — |
+
+- **Korean web bulk INCLUDED** (≈ 31.64 GB) — this **fixes the prior Gutenberg-ko-zero gap**:
+  the `gb-balanced` build had ko art = 0 + ko consciousness = 0 (Project Gutenberg has no
+  Korean) and ko leaned wiki-only. FineWeb-2 kor_Hang supplies real Korean web text at scale,
+  so ko is now first-class web bulk (≈ 56,806 Hangul chars verified in the 200 KB ko sample
+  head alone).
+- **PII-scrubbed** (`email → [EMAIL]`, `phone → [PHONE]` — these scrub tokens are expected in
+  the text), **0xFE/0xFF stripped → byte V = 256**, **injection-tags grep = 0** (`[role:` /
+  `[persona:` = 0 on the sample heads).
+- **R2-staged** (bucket `phanes`) with the **HF manifest pointer** dataset
+  `dancinlab/anima-corpus-5lang-7b-webscale` (PUBLIC) holding `MANIFEST.json` + `CORPUS_CARD.md`
+  + `README.md` + `samples/{en,fr,de,es,ko}.head.txt`. `MANIFEST.json` carries per-shard R2
+  keys + bytes + sha256 for integrity-verified fetch. HF.jsonl row
+  `anima_corpus_5lang_7b_webscale_2026_06_05` (status=uploaded, size=143.60GiB-R2-staged).
+  KOSMOS+CLM collections joined; `.kosmos` anchor `corpus_5lang_7b_webscale.kosmos` (tier 57,
+  pointer-only).
+- **Achieved (verbatim, verified against the R2 manifest byte counts — the 143 GB itself was
+  NOT re-measured):** 143.60 GiB / 22.0 tok/param / 110.1% of 7B-optimal; en 25.83 / fr 32.79 /
+  de 31.00 / es 32.94 / ko 31.64 GB (decimal). The **7B TRAIN is a separate follow-on GPU
+  fire** (a_fire_autonomous).
+
+## constraint: web-scale ODC-BY sanctioned (2026-06-05)
+
+**User decision (A):** the prior corpus constraint "NO scraped data" is **relaxed to ODC-BY
+web bulk for the 7B scale**. **Common-Crawl-derived FineWeb / FineWeb-2 (ODC-BY) is
+sanctioned** as the bulk-fill source that reaches Chinchilla-7B-optimal scale, which clean-only
+sources cannot (clean-only caps at 357 MB = 0.27% of the 7B-optimal; ODC-BY web reaches 110%).
+
+- **Still required**: PII-scrub (`email → [EMAIL]`, `phone → [PHONE]`), byte-V256
+  (0xFE/0xFF stripped), per-source attribution under ODC-BY terms.
+- **Unchanged**: **persona / identity stay AUTHORED** (p2/p3/p6 held — anima's identity voice
+  is not web-sourced; the web bulk is the factual/linguistic base only). The capped
+  social/persona register continues to come from authored sources (`domains/PERSONA.md` /
+  `domains/SNS.md`), NOT from the web.
+- **Scope (a_scale_honest_scope)**: the web corpus is the BULK for the 7B-scale default base;
+  it is staged, not trained. Any 7B verdict is a separate measured fire.
 
 ## cross-links
 
