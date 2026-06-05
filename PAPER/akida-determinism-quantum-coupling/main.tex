@@ -31,6 +31,18 @@
 \providecommand{\tierOrange}{🟠}
 \providecommand{\tierRed}{🔴}
 
+% Engine-portable rendering: the literal tier emoji above are the source
+% convention, but Latin Modern (the default xelatex text font) has no glyph
+% for U+1F5xx/U+1F7Ex, and xelatex does not render the Apple Color Emoji
+% bitmap font. We therefore render the badges as compact colored disc marks
+% (\textbullet) so the tiers stay visually distinct under BOTH xelatex and
+% pdflatex without any color-emoji font dependency.
+\renewcommand{\tierBlue}{{\color{blue!70!black}\textbullet}}
+\renewcommand{\tierGreen}{{\color{green!55!black}\textbullet}}
+\renewcommand{\tierYellow}{{\color{yellow!75!orange}\textbullet}}
+\renewcommand{\tierOrange}{{\color{orange!85!black}\textbullet}}
+\renewcommand{\tierRed}{{\color{red!75!black}\textbullet}}
+
 \title{
   \textbf{Neuromorphic Determinism Is a Design Choice, Not an Inevitability}\\[4pt]
   \large Locating, Explaining, and Repairing the Absence of Hardware
@@ -491,6 +503,36 @@ offer this guarantee. The AKD1000's determinism, framed as a limitation by
 the original intuition, is the enabling feature of an auditable
 quantum-coupled system.
 
+\paragraph{Reconciling the falsification with the prior observations.} The
+falsification does not contradict the earlier records that motivated the
+intuition; it disambiguates two distinct axes that those records conflated.
+The prior result that a software numpy approximation could not be made
+byte-identical to the chip is a \emph{hardware-versus-software} divergence:
+two different systems (a fixed-point event-based ASIC and a floating-point
+numpy emulation) producing different weights, which remains valid as
+``software is not byte-identical to hardware.'' The run-to-run Hamming
+distances \(\{28,38,34,38\}\) are a \emph{hardware-versus-hardware}
+observation under the \emph{default} (unpinned) init --- exactly condition
+B of Table~\ref{tab:h921}, where the default-init RNG is free. H\_921's new
+axis is hardware-versus-hardware under a \emph{pinned} init, and on that
+axis the chip's learning is deterministic. The three observations are
+mutually consistent once the variation is correctly attributed to
+initialization rather than to learning dynamics; the apparent
+``substrate non-determinism'' was a measurement that never pinned the seed.
+
+\paragraph{Why the intuition was plausible.} The mistake was natural. The
+word ``neuromorphic'' carries an analog, noisy connotation from the
+biological substrate it evokes, and the literature does contain genuinely
+stochastic neuromorphic systems --- analog memristor crossbars with
+intrinsic device noise, and Loihi's programmable synaptic-noise primitive.
+An observer who saw run-to-run variation on a chip marketed as
+``brain-inspired'' had every reason to read it as physics-rooted
+stochasticity. The discipline that broke the illusion was not skepticism but
+\emph{control}: pinning the one variable (the seed) the naive protocol left
+free. The general lesson is that a non-determinism claim about any
+substrate must control its initialization before it can be attributed to
+the substrate's dynamics.
+
 % =========================================================================
 \section{Verdict matrix}
 \label{sec:verdicts}
@@ -511,9 +553,9 @@ quantum-coupled system.
 \textbf{Claim} & \textbf{Tier} & \textbf{Verdict pointer (verbatim stdout)} \\
 \midrule
 Non-det = init-RNG, not learning (pinned A=1, no-pin B>1) & \tierRed &
-\texttt{.verdicts/921\_..._functional\_advantage/init\_seeded\_not\_learning.txt} \\
+\texttt{.verdicts/921\_\ldots\_functional\_advantage/} \texttt{init\_seeded\_not\_learning.txt} \\
 AKD1000 = digital fixed-point ASIC, det by design (5-axis) & \tierGreen &
-\texttt{.verdicts/922\_..._architecture/digital\_deterministic\_by\_design.txt} \\
+\texttt{.verdicts/922\_\ldots\_architecture/} \texttt{digital\_deterministic\_by\_design.txt} \\
 ANU quantum coupling: D1=2/16, D2=16/16, D3=TRUE & \tierGreen &
 \texttt{.verdicts/923\_akida\_qrng\_coupling/anu\_seeded\_pass.txt} \\
 Statistical quality ANU == chacha20 PRNG (non-claim) & \tierYellow &
