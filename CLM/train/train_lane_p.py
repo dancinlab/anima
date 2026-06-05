@@ -79,8 +79,17 @@ def main():
     ap.add_argument("--bf16", action="store_true")
     a = ap.parse_args()
 
-    torch.manual_seed(a.seed)
-    gen = torch.Generator().manual_seed(a.seed)
+    # ── H_924 M4: derive the master seed from the qentropy SSOT ──────────────
+    # QUANTUM-by-default / DETERMINISTIC-auxiliary (env ANIMA_ENTROPY_MODE).
+    # Lane-P torch is the THIRD substrate (after AKIDA HW + numpy SW) proving the
+    # quantum/deterministic coupling is a property of the seed POINT, not the
+    # substrate. resolve_seed() is fallback-safe: if the SSOT is not importable
+    # it returns a.seed unchanged, so existing runs behave EXACTLY as before.
+    from _qseed import resolve_seed, log_line     # local trainer helper (CLM/train)
+    seed, qprov = resolve_seed(a.seed, label="lane_p_torch_init")
+    print(log_line(qprov), flush=True)            # record entropy policy in the train log
+    torch.manual_seed(seed)
+    gen = torch.Generator().manual_seed(seed)
 
     assert torch.cuda.is_available(), "CUDA REQUIRED for Lane P production rung (g63: no silent CPU)"
     device = "cuda"
@@ -155,6 +164,7 @@ def main():
 
     result = {
         "substrate": "GPU-torch",
+        "qentropy": qprov,                         # H_924 M4: entropy policy of this run
         "device": torch.cuda.get_device_name(0),
         "compute_cap": f"{cap[0]}.{cap[1]}",
         "torch": torch.__version__,
