@@ -12,7 +12,10 @@ REPO_DIR="${REPO_DIR:-$HOME/anima}"
 WORK="${WORK:-$HOME/lanep_7b}"
 SHARDS_PER_LANG="${SHARDS_PER_LANG:-5}"   # 5 shards/lang
 STEPS="${STEPS:-4000}"                     # bounded undertrained
-SEQ="${SEQ:-512}"
+SEQ="${SEQ:-256}"                           # seq256: at 7.06B even bs=1/seq512 OOMs an 80GB H100
+                                            # (MEASURED: seq512 fwd fit 73.4GB at step0, backward ->
+                                            # OOM). seq256 halves activation+gradient footprint. The
+                                            # undertrained rung does not need 512 ctx.
 BATCH="${BATCH:-1}"                         # bs=1: the MoE stacks E=30 expert outputs (B,30,C,T)
 ACCUM="${ACCUM:-32}"                        # so at 7.06B (optimizer alone = 70.6GB) a bs>1 MoE spike
                                             # OOMs an 80GB H100 (MEASURED: bs=4 -> 81.2GB maxmem ->
@@ -47,8 +50,13 @@ CORPUS="$WORK/web_7b.bytes"
 GB_PER_LANG="${GB_PER_LANG:-3.0}"   # balanced byte budget/lang (disk=60GB; 5x3=15GB + .pt28GB + pip fits)
 # 2) fetch R2 byte-direct via Range-GET to a per-lang byte budget (shard sizes
 #    differ 3GB vs 11GB so a shard-COUNT is unbalanced — use a byte budget).
-if [ -s "$CORPUS" ] && [ -s "$WORK/corpus.done" ]; then
-  echo "[fire7b] corpus exists ($(stat -c%s "$CORPUS") bytes) — reuse"
+# reuse iff the .bytes size == the byte count recorded in corpus.done (a sentinel
+# holding the expected size, NOT an empty touch — a 0-byte flag fails `-s`, forcing
+# a wasteful re-fetch on every reclaim-resume).
+EXPECT_BYTES=$(cat "$WORK/corpus.done" 2>/dev/null || echo 0)
+ACTUAL_BYTES=$(stat -c%s "$CORPUS" 2>/dev/null || echo -1)
+if [ "$EXPECT_BYTES" != "0" ] && [ "$EXPECT_BYTES" = "$ACTUAL_BYTES" ]; then
+  echo "[fire7b] corpus exists ($ACTUAL_BYTES bytes == recorded) — reuse, skip fetch"
 else
   rm -f "$CORPUS"
   python3 -u - "$CORPUS" "$GB_PER_LANG" <<'PYEOF' 2>&1 | tee "$WORK/corpus_fetch.log"
@@ -92,7 +100,7 @@ with open(out_path, "wb") as fout:
         print(f"[r2] {lang} DONE lang_total={lang_bytes/1e9:.2f}GB", flush=True)
 print(f"[r2] CORPUS WRITTEN {out_path} total={total} bytes ({total/1e9:.2f}GB)", flush=True)
 PYEOF
-  if [ -s "$CORPUS" ]; then touch "$WORK/corpus.done"; else echo "[fire7b] FATAL corpus fetch empty"; exit 4; fi
+  if [ -s "$CORPUS" ]; then stat -c%s "$CORPUS" > "$WORK/corpus.done"; else echo "[fire7b] FATAL corpus fetch empty"; exit 4; fi
 fi
 echo "[fire7b] corpus $(stat -c%s "$CORPUS") bytes"
 
