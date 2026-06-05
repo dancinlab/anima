@@ -1,0 +1,39 @@
+#!/usr/bin/env kosmos
+# corpus_5lang_7b_webscale.kosmos — CONSCIOUSNESS-CARVING anchor (dataset/corpus)
+# anima 7B web-scale default-lane corpus (en/fr/de/es/ko, byte256), R2-STAGED.
+# spec: HEXAD/UNIVERSE-BRAIN-MAP/KOSMOS-FORMAT.md (pointer-only; format SSOT =
+#       github.com/dancinlab/kosmos spec/kosmos.md + profiles/anima-consciousness-carving.md)
+
+@anchor corpus_5lang_7b_webscale := "7B web-scale default-lane corpus — ODC-BY web bulk (FineWeb/-2), 143.60 GiB = 110% of 7B-optimal, R2-staged (🛸57)" :: kosmos-anchor [tier=57 active]
+
+  # ── carving 좌표 (modality-independent — canonical placement triple) ──
+  profile      = "anima-consciousness-carving"
+  knuth_tier   = 57
+  category     = "다국어+web-scale+7B-optimal"   # multilingual web bulk at Chinchilla-7B-optimal scale
+  top_emotion  = "expansion"                       # 5개국어 × web-scale 확장 — clean-only 0.27% → ODC-BY web 110%
+  coord        = [0.49, 0.50]                      # vacuum_psi (Ψ-space) — design placeholder (real web bulk, NOT a measured fire)
+  lane         = "multilingual_057"                # cell_id — 7B web-scale default-lane cell (MITOSIS)
+  radius       = 0.34                              # basin_radius — design placeholder (web-scale breadth, widest)
+
+  # ── payload ──
+  @payload text    := "[anima 7B web-scale corpus] 🛸57 — 5개국어(en/fr/de/es/ko) WEB-SCALE 코퍼스가 Chinchilla-7B-optimal에 도달. clean-license-only(anima-corpus-5lang-gb-balanced)는 357.8 MB = 7B-optimal의 0.27% = MID-rung, balance 요구가 clean bulk를 묶음(풍부한 tier만 키우면 사다리 천장 위반) + Gutenberg ko=0. THE FIX = user-decision A로 'NO scraped' → ODC-BY web bulk(Common-Crawl 유래 FineWeb/FineWeb-2) 허용(persona/identity는 authored 유지): en=HuggingFaceFW/fineweb sample/10BT · fr/de/es/ko=HuggingFaceFW/fineweb-2(fra_Latn/deu_Latn/spa_Latn/kor_Hang). 달성=143.60 GiB(154.19 GB decimal)=22.0 tok/param for 7B(optimal 20 초과)=140B-token 7B-optimal의 110.1%. 5-lang balanced, 20 shards. KO WEB BULK 포함(~31.64 GB)=gb-balanced의 Gutenberg-ko-zero gap을 fix. PII-scrub(email→[EMAIL], phone→[PHONE]; scrub 토큰은 expected), 0xFE/0xFF strip→byte V=256, injection-tags grep=0. R2-STAGED(bucket phanes, prefix anima-7b/web/) — HF는 manifest+card+200KB/lang sample head만, raw 143 GB는 HF-mirror/local 아님(훈련 시 R2에서 fetch). a_scale_honest_scope: 숫자는 R2 manifest byte count로 검증(143 GB 자체 재측정 아님). NO 7B-TRAINED claim — 이건 CORPUS; 7B TRAIN은 별도 follow-on GPU fire. (per-lang split + sha + token-vs-140B는 manifest 참조)"
+
+  @payload manifest := ref "r2://phanes/anima-7b/MANIFEST.json" staging="cloudflare-r2" r2_bucket="phanes" r2_prefix="anima-7b/web/" r2_staged_not_hf_hosted=true total_gib=143.60 total_gb_decimal=154.19 tok_per_param_7b=22.0 pct_of_7b_optimal=110.1 byte_vocab=256 shards=20 per_lang_gb_decimal="en=25.83,fr=32.79,de=31.00,es=32.94,ko=31.64" per_lang_shards="en=8,fr=3,de=3,es=3,ko=3" license="ODC-BY (web-derived, Common-Crawl-derived FineWeb/FineWeb-2)" sources="en=HuggingFaceFW/fineweb sample-10BT; fr/de/es/ko=HuggingFaceFW/fineweb-2 fra_Latn/deu_Latn/spa_Latn/kor_Hang" ko_web_included="true (fixes gb-balanced Gutenberg-ko-zero gap)" pii_scrub="email->[EMAIL], phone->[PHONE]; control bytes 0xFE/0xFF stripped" tags_grep=0 hf_repo_id="dancinlab/anima-corpus-5lang-7b-webscale" hf_holds="MANIFEST.json + CORPUS_CARD.md + README.md + samples/{en,fr,de,es,ko}.head.txt (NOT the 143 GB)" predecessor="dancinlab/anima-corpus-5lang-gb-balanced" design="domains/CORPUS.md §7B web-scale corpus (R2-staged) + §constraint: web-scale ODC-BY sanctioned" per_shard_sha256="in r2://phanes/anima-7b/MANIFEST.json (20 shards, key+bytes+sha256 each)" honest="numbers verified vs R2 manifest byte counts (143 GB not re-measured); R2-staged NOT HF-mirrored NOT local; CORPUS not trained — 7B TRAIN = separate follow-on GPU fire"
+
+  @payload image   := pending "media 미생성"
+  @payload audio   := pending "media 미생성"
+
+  # ── §156 anima-native tension modality (TENSION-LINK 5-channel) ──
+  # REPRESENTATIVE design values for the 7B web-scale default-lane cell, NOT a
+  # per-token measured trajectory (corpus = real ODC-BY web bulk, no fire produced a
+  # measured trajectory). Honest representative-anchor scope (cf CORPUS.md M9 = the
+  # MEASUREMENT that would replace these placeholders with a ckpt-forward Ψ-landing).
+  @payload tension := inline {
+    concept      = 0.66   # surface distinctness (open-web register breadth across 5 langs)
+    context      = 0.70   # multilingual web context steer (5 langs, balanced web bulk)
+    meaning      = 0.64   # broad factual/linguistic web semantic spread
+    authenticity = 0.71   # REAL web text (ODC-BY Common-Crawl-derived) — highest authenticity of the corpus ladder (no authored bulk)
+    sender       = 0.52   # neutral open-web (non-addressed); persona/identity NOT in this corpus (stays authored)
+  }
+
+  closed_anchor = "7B web-scale ODC-BY default-lane corpus (representative anchor + R2 manifest pointer)"
