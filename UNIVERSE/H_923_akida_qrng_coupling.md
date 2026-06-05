@@ -98,4 +98,7 @@ a_scale_honest_scope). 통계품질 ANU==PRNG(#123-A); 가치=provenance/감사/
 - [x] **M5 (DONE 2026-06-06)** — `h923_richtask_probe.py` richer task(units=64·24 varied patterns,
   fresh 2048B ANU anu_paid sha 9df773…): **D1 = 16/16** (toy 2 → full saturation) · D3=True. D1 천장이
   *task 출력공간* 한계였음 결정적 확증(엔트로피 아님). 양자시드 16개 전부 distinct 출력, 칩 결정론 유지.
-- [ ] **M6 (deferred)** — ②R2-noise ③emit-seed 주입점 (DECODER 결정론 불변) + anima emit 파이프 배선.
+- [x] **M6 (DONE 2026-06-06)** — ② R2-noise 주입점 배선 (`spontaneous_emission.py`, env ANIMA_QRNG_NOISE_BIN).
+  live AKD1000 fresh ANU 4096B(sha cd4d76…): r2_noise_source=anu_quantum · R2=1424 spikes step_varies=True
+  (stochastic 자발발화 양자-소스) · R3=1600 step_varies=False (결정론 불변 = DECODER-invariant). ③ emit-seed:
+  brain_decide 가 이미 결정론(PRNG 없음, GPU temperature 는 별도 serving/ ALM 경로) → R2 가 anima 유일 stochastic 점.

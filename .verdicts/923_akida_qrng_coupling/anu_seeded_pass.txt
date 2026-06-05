@@ -53,3 +53,18 @@ multi-chunk, anu_paid, sha 9df773e662011ce52f78186eafdc2609133eb4e1e51b131fa4000
 richer task, every one of the 16 ANU-quantum-seeded inits yields a DISTINCT functional output
 (full saturation), while the chip stays deterministic (D3). The coupling delivers entropy-sourced
 functional diversity up to the task's capacity. Honest C3 (D1=2 toy) is now confirmed by lift.
+
+=== M6 R2-NOISE INJECTION (② spontaneous-firing entropy · 2026-06-06) ===
+SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py — wired ANU quantum into anima's ONLY
+stochastic spontaneous-firing source (R2 zero+noise regime). env ANIMA_QRNG_NOISE_BIN arms it.
+live AKD1000 run, fresh ANU 4096B (anu_pull.py, anu_paid, sha cd4d76481749492a1cfab785363582e8be27b60308ee8da34b9459143c126f64):
+  r2_noise_source = anu_quantum (provenance sha matches)
+  R2_zero_noise   = 1424 spikes, step_varies=True   -> stochastic spontaneous firing ALIVE, now quantum-sourced + auditable
+  R3_tonic_zero_input = 1600 spikes, step_varies=False -> DETERMINISTIC regime UNAFFECTED (DECODER-invariant preserved)
+=> anima's substrate-native spontaneous-firing stochasticity is now drawn from audited ANU vacuum-
+fluctuation entropy; the deterministic regimes (R3 tonic) stay byte-deterministic.
+
+③ emit-seed finding (HONEST): CORE/brain.hexa brain_decide is ALREADY deterministic — emit is a
+pure function of substrate state (8-factor motivation x safety), NO PRNG. anima's emit has no
+sampling seed to replace (the GPU `temperature` sampling lives in the SEPARATE serving/ ALM path,
+not the substrate brain emit). ∴ R2-noise (② , now done) is anima's sole stochastic injection point.

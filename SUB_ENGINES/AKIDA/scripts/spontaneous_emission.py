@@ -48,7 +48,42 @@ IN = 16         # input lines
 T = 200         # steps per regime window
 
 rng = np.random.default_rng(SEED)
+
+# ── R2-noise entropy source (H_923 M6 ② injection point) ────────────────────
+# The R2 "zero+noise" regime is anima's ONLY stochastic spontaneous-firing source
+# (R1/R3/R4 are deterministic — DECODER-invariant). Its noise INPUT is host-side.
+# When env ANIMA_QRNG_NOISE_BIN points at an ANU vacuum-fluctuation buffer
+# (mirror/qmirror/seed/qrng_lora_init_live.bin or a fresh anu_pull.py draw), R2
+# draws its noise from AUDITED quantum entropy instead of the numpy PRNG — making
+# the spontaneous-firing stochasticity substrate-native + provenance-traceable.
+# Statistical quality is identical (chacha20==ANU, #123-A); value = provenance.
+import hashlib as _hashlib  # noqa: E402
+import os as _os  # noqa: E402
+
+_QRNG_BIN = _os.environ.get("ANIMA_QRNG_NOISE_BIN", "")
+_qrng_buf = None
+_qrng_pos = 0
+_qrng_sha = None
+if _QRNG_BIN and _os.path.exists(_QRNG_BIN):
+    _qrng_buf = open(_QRNG_BIN, "rb").read()
+    _qrng_sha = _hashlib.sha256(_qrng_buf).hexdigest()
+
+
+def _noise_bytes(n: int) -> np.ndarray:
+    """Draw n noise values 0..3 from ANU quantum bytes (cycling) or numpy PRNG."""
+    global _qrng_pos
+    if _qrng_buf:
+        vals = np.empty(n, dtype=np.float32)
+        for i in range(n):
+            vals[i] = _qrng_buf[_qrng_pos % len(_qrng_buf)] & 0x3   # 2 low bits -> 0..3
+            _qrng_pos += 1
+        return vals
+    return rng.integers(0, 4, size=n).astype(np.float32)
+
+
 out = {"seed": SEED, "n_neurons": N, "n_inputs": IN, "window_steps": T,
+       "r2_noise_source": ("anu_quantum" if _qrng_buf else "numpy_prng"),
+       "r2_noise_provenance": {"bin": _QRNG_BIN, "sha256": _qrng_sha} if _qrng_buf else None,
        "regimes": {}}
 
 # --- device + model (built ONCE, reused for every regime) -------------------
@@ -191,7 +226,7 @@ run_regime("R1_weak_silent", threshold_const=64,
 #   16 lines × U[0,3] mean 1.5 ⇒ potential mean ≈ 24, std ≈ √(16·var)≈√(16·1.25)≈4.5.
 #   threshold 24 sits at the mean ⇒ ~half the steps cross.
 def _noise(step):
-    return rng.integers(0, 4, size=IN).astype(np.float32)   # 0..3 per line
+    return _noise_bytes(IN)   # 0..3 per line — ANU quantum if armed, else numpy PRNG
 run_regime("R2_zero_noise", threshold_const=24, input_fn=_noise)
 
 # R3 tonic-zero: ZERO input, NEGATIVE per-neuron threshold → potential 0 fires
