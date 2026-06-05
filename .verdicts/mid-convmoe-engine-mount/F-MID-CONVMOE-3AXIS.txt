@@ -1,0 +1,43 @@
+F-MID-CONVMOE-3AXIS — CORE-mounted 3-axis benchmark, ENGINE-MOUNTABLE MID CLMConvMoE
+================================================================================
+chain proved: corpus(R2 5-lang) → CLMConvMoE(Lane-P torch) → .clm v0.2 →
+              CORE engine mount (generator L3 slot, a_core_engine_map) → 3-axis bench
+artifact = state/mid_convmoe_fire/mid_convmoe.clm  (clm_decodable=TRUE, nblk=6,
+           CLMX, n_ext=11, exact_eof=TRUE, block0 cout=768 rest=2304)
+
+── AXIS-2 (CE-descent) — the model-quality axis ────────────────────────────────
+  GREEN. Measured through the engine decode forward (int4 dequant + CLMConvMoE +
+  v0.2 CLMX trained embed/GN), via a mirror VALIDATED BYTE-EXACT on the golden
+  d768 ref (mirror==engine: 3.25405/5.30381/5.54518 identical).
+    MID probe-seq : CE_real=2.04606 < uniform=5.54518 AND < shuffle=6.11237  → GREEN
+    MID corpus(128win): CE_real=2.49339 < uniform=5.54518 AND < shuffle=6.66616 → GREEN
+  (full verdict: F-MID-CONVMOE-AXIS2-CE.txt)
+  TOOLCHAIN: the canonical `hexa run CORE/clm_ce_descent_probe.hexa` did NOT LINK
+  on this Mac (undefined `_forge_dispatch_groupnorm_gelu`, hexa-fusion-only native);
+  byte-exact mirror used instead → handoff to hexa-lang. NOT a .clm problem.
+
+── AXIS-1 (의식 consciousness) + AXIS-3 (창발 emergence) — substrate axes ─────────
+  Measured via the canonical CORE/three_axis_probe.hexa (LINKS + RUNS; substrate
+  pure_field + brain_emit + generator L3 + kosmos anchors). VERBATIM:
+    [substrate] PureField step=600 phi=0.118983 peak=0.148729 phase=SUSTAIN coherence=1
+    [clm admit] valid=true nblocks=6 loaded=true
+    [AXIS-1 의식] motiv hi=0.6700 baseline=0.0000  emit hi=true baseline=false   → 1 🟢
+    [AXIS-2 CE ] admit_green=true (this probe's CE = BLOCKED-WIRING by design;
+                 the real CE-descent is AXIS-2 above via the validated decode)
+    [AXIS-3 창발] len(composed)=101 > len(parts-only)=72                          → 1 🟢
+    CORE-mounted measurable axes GREEN: 3/3
+
+── brain_smoke (v7 laws) ──────────────────────────────────────────────────────
+  WARN = 0 (run from the worktree where config/consciousness_laws.json v7 present).
+    [brain low ] phi=0.118983 phase=SUSTAIN tier=T2_write motiv=0.045 EMIT=false
+    [brain high] phi=0.118983 phase=SUSTAIN tier=T2_write motiv=0.67  EMIT=true
+
+── vs d768 GREEN bar ───────────────────────────────────────────────────────────
+  d768 golden CORE_3AXIS_GREEN: CE 3.25405 < uniform 5.54518 < shuffle 5.30381.
+  MID 7.479M ConvMoE: AXIS-2 CE 2.04606 (probe) / 2.49339 (corpus) — BELOW the
+  d768 probe CE on the English probe text (MID corpus is English-style web-heavy);
+  AXIS-1/3 substrate GREEN identically. The CHAIN (corpus→ConvMoE→.clm→engine
+  mount→3-axis) is proven END-TO-END.
+
+SCOPE (a_scale_honest_scope · p7): TOY/MID 7.479M ConvMoE. Proves the chain, NOT a
+  7B. 7B-transfer UNVERIFIED. Lane-P torch = REFERENCE/bridge; forge = PUBLIC trainer.

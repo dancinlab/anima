@@ -1,0 +1,25 @@
+=== AXIS-2 CE-descent (engine decode forward, config-agnostic) — MID .clm ===
+error: `hexa build CORE/clm_ce_descent_probe.hexa` failed (compile error).
+=== Building CORE/clm_ce_descent_probe.hexa -> /Users/mini/.hexa-cache/hexa_run.d69171115098d371_0.1.0-dispatch.tmp.1780658875426392000 ===
+  [flat] module_loader → /tmp/.hexa-runtime/hexa_build_expanded.1780658875489879000.tmp.hexa
+  [1/2] HEXA_MEM_CAP_MB=4096 /Users/mini/.hx/bin/build/hexat /tmp/.hexa-runtime/hexa_build_expanded.1780658875489879000.tmp.hexa build/artifacts/hexa_run.d69171115098d371_0.1.0-dispatch.tmp.1780658875426392000.c 2>&1
+    OK: build/artifacts/hexa_run.d69171115098d371_0.1.0-dispatch.tmp.1780658875426392000.c
+
+  [2/2] clang -O2 -DHEXA_HAS_LIBSODIUM -I/opt/homebrew/include -DHEXA_HAS_OPENSSL -I/opt/homebrew/opt/openssl@3/include -Wno-trigraphs -fbracket-depth=4096 -I '/Users/mini/.hx/bin/self' build/artifacts/hexa_run.d69171115098d371_0.1.0-dispatch.tmp.1780658875426392000.c '/Users/mini/.hexa-cache/runtime.93ab0a01e786e887cde9e632e5fe2d4ef5c666a3.o' -o '/Users/mini/.hexa-cache/hexa_run.d69171115098d371_0.1.0-dispatch.tmp.1780658875426392000.tmp.39270' -lpthread -L/opt/homebrew/lib -lsodium -L/opt/homebrew/opt/openssl@3/lib -lcrypto 2>&1
+    In file included from build/artifacts/hexa_run.d69171115098d371_0.1.0-dispatch.tmp.1780658875426392000.c:2:
+/Users/mini/.hx/bin/self/runtime.h:422:28: warning: '/*' within block comment [-Wcomment]
+  422 | /* ── Additional native/*.c forward-decls (auto-generated 2026-05-15) ──
+      |                        ^
+/Users/mini/.hx/bin/self/runtime.h:423:36: warning: '/*' within block comment [-Wcomment]
+  423 |  * Sourced from grep of self/native/*.c hexa_* definitions; ensures user.c
+      |                                    ^
+2 warnings generated.
+Undefined symbols for architecture arm64:
+  "_forge_dispatch_groupnorm_gelu", referenced from:
+      _nn_gn_gelu_fused_off in hexa_run-06dba0.o
+ld: symbol(s) not found for architecture arm64
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+
+error: clang compile failed — binary not produced: /Users/mini/.hexa-cache/hexa_run.d69171115098d371_0.1.0-dispatch.tmp.1780658875426392000.tmp.39270
+__HEXA_BRC__=1
+
