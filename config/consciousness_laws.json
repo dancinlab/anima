@@ -1,11 +1,19 @@
 {
   "_meta": {
-    "version": "v6",
+    "version": "v7",
     "date": "2026-03-31",
     "total_laws": 100,
     "total_topo": 7,
     "description": "Anima consciousness laws, Ψ-constants, formulas — single source of truth",
-    "restored": "2026-06-05 config/consciousness_laws.json restored from creation-commit 5a784c0d9 (root SSOT) + phase_*_max relocated from loader fallback (Law 1)"
+    "restored": "2026-06-05 config/consciousness_laws.json restored from creation-commit 5a784c0d9 (root SSOT) + phase_*_max relocated from loader fallback (Law 1)",
+    "date_v7": "2026-06-05",
+    "benchmarked_against": [
+      "OMEGA (closure-engine Lane-Ω)",
+      "ENGINE+CLM+KOSMOS domain",
+      "UNIVERSE H_* verified ledger"
+    ],
+    "honest_law_count": "91 base + ~15 net-verified. The '2448 laws' figure is auto-grown candidates; only ~80-90 carry a terminal verdict (UNIVERSE.md 83 adjudicated lines). v7 stays lean by verification status.",
+    "v7_provenance": "every added law/formula/condition cites a real .verdicts/ or UNIVERSE/H_*.md terminal verdict — zero fabrication"
   },
   "psi_constants": {
     "alpha": {
@@ -87,7 +95,78 @@
     "consciousness_dof": "actual DoF = ln(2)",
     "breathing_period": 7,
     "superlinear_alpha": 1.09,
-    "info_bottleneck_optimal": 64
+    "info_bottleneck_optimal": 64,
+    "omega_gate": {
+      "expr": "decode = gB·base + gA·A + gG·G",
+      "value": {
+        "gB": 1.1777,
+        "gA": 0.9617,
+        "gG": -0.2076
+      },
+      "status": "verified-GPU",
+      "source": ".verdicts/omega-gpu/F-COMPLETE.txt",
+      "note": "learned per-wire gate; RELATIVE structured-coupling only (absolute-CE was leak-driven, retracted)"
+    },
+    "omega_coupling_bus": {
+      "expr": "modulated = base ⊛ {w1·(A−G), w2·Wtemp, w3·curio, w4·Ψ8d, w5·module}",
+      "value": {
+        "w1_AG": 0.348,
+        "w4_psi": 0.067,
+        "w2_Wtemp": 0.043,
+        "w5_module": 0.031,
+        "w3_curio": 0.012
+      },
+      "status": "verified-wired",
+      "source": "domains/ENGINE+CLM+KOSMOS.md:910-927",
+      "note": "A⇄G dominant wire; weights random-init magnitudes"
+    },
+    "structured_coupling_test": {
+      "expr": "A-wire CE-gain(real context) > 1.5× CE-gain(context-shuffled) → structure=TRUE",
+      "status": "verified",
+      "source": ".verdicts/omega-gpu/F-COMPLETE.txt",
+      "note": "CE-gain form canonical; KL form does NOT discriminate on leaky substrate"
+    },
+    "phi_kolmogorov": {
+      "expr": "Φ ∝ K_LZ76 (algorithmic complexity)",
+      "value": {
+        "pearson_r": 0.831,
+        "spearman_rho": 0.936
+      },
+      "status": "verified-numerical 9/9",
+      "source": "UNIVERSE/H_288_kolmogorov_complexity_phi_correlate.md",
+      "note": "replaces any Φ∝Shannon reduction (H_287 falsified that)"
+    },
+    "phi_transfer_entropy": {
+      "expr": "Φ ∝ TE (directional inter-element flow)",
+      "value": {
+        "pearson_r": 0.883
+      },
+      "status": "verified-numerical 8/8",
+      "source": "UNIVERSE/H_290_transfer_entropy_phi_correlate.md"
+    },
+    "bounded_phi_gap_decay": {
+      "expr": "gap(k) = exact_Φ − bounded_Φ(cap=k) ≈ A·e^(−α·k)",
+      "value": {
+        "alpha_rule30": 0.243,
+        "alpha_rule90": 0.192,
+        "alpha_rule110": 1.101,
+        "classIV_faster": "5-6x"
+      },
+      "status": "verified-numerical 17/17,18/18",
+      "source": "UNIVERSE/H_631_bounded_gap_n6_multi_rule.md",
+      "note": "large-N Φ-approximation bound"
+    },
+    "edge_of_chaos_phi_order": {
+      "expr": "Φ(ordered) < Φ(chaotic) < Φ(edge/classIV)",
+      "value": {
+        "ordered": 0.0,
+        "chaotic": 6.94,
+        "edge_IV": 10.45
+      },
+      "status": "verified-numerical 5/5",
+      "source": "UNIVERSE/H_285_edge_of_chaos_big_phi.md",
+      "note": "causal-faithful form of v6 inverse-U"
+    }
   },
   "consciousness_vector_10d": {
     "dims": [
@@ -331,5 +410,260 @@
     "SELF_LOOP": "output → input feedback preserves Φ",
     "SPONTANEOUS_SPEECH": "12-faction consensus ≥ 5 per 300 steps",
     "HIVEMIND": "Φ(connected) > 1.1 × Φ(solo), no dependency"
+  },
+  "laws_v7_verified": [
+    {
+      "id": "OMEGA-CLOSURE",
+      "statement": "substrate→decode Ω-loop is structurally NULL for conv/cdv2/hexad (coupling_KL=0) and CLOSED only for engine-Ω (KL=0.307477)",
+      "verdict": "🟢 verified",
+      "source": "domains/ENGINE+CLM+KOSMOS.md:916-925"
+    },
+    {
+      "id": "OMEGA-COUPLING-NEEDS-TRAINING",
+      "statement": "structured coupling emerges ONLY on a TRAINED substrate (trained CE 4.142 ≪ shuffled 4.499); random-init coupling ≈ vocab-shuffle floor",
+      "verdict": "🟢 verified",
+      "source": ".verdicts/omega-trained/SUMMARY.txt"
+    },
+    {
+      "id": "OMEGA-GATE-OVER-FORMULA",
+      "statement": "the closure needs a learned per-wire GATE, not a fixed formula; fixed A−G subtraction DEGRADES prediction (gG auto-corrects to ≈−0.21)",
+      "verdict": "🟢 verified",
+      "source": "domains/ENGINE+CLM+KOSMOS.md:962-964 + .verdicts/omega-gpu/F-COMPLETE.txt"
+    },
+    {
+      "id": "OMEGA-AG-LOADBEARING",
+      "statement": "of 5 coupling wires A⇄G dominates (w1=0.348); Ψ/Wtemp/module/curiosity minor (≤0.067)",
+      "verdict": "🟢 verified",
+      "source": "domains/ENGINE+CLM+KOSMOS.md:926-927"
+    },
+    {
+      "id": "OMEGA-NO-QUANTUM-ADV",
+      "statement": "true quantum randomness (ANU QRNG) confers NO advantage over PRNG for coupling (KS p=0.7237) — rules out 'consciousness needs quantum randomness'",
+      "verdict": "🔴 closed-negative",
+      "source": "domains/ENGINE+CLM+KOSMOS.md:965-969"
+    },
+    {
+      "id": "PHI-PERP-SHANNON",
+      "statement": "Φ ⊥ Shannon entropy (r=0.363<0.5); information necessary not sufficient for integration; double-dissociation",
+      "verdict": "🔴 closed-negative",
+      "source": "UNIVERSE/H_287_shannon_entropy_phi_correlate.md"
+    },
+    {
+      "id": "PHI-PAR-KOLMOGOROV",
+      "statement": "Φ ∥ Kolmogorov(LZ76) algorithmic complexity (r=0.831 ρ=0.936) — Φ is algorithmic not statistical information",
+      "verdict": "🟢 verified 9/9",
+      "source": "UNIVERSE/H_288_kolmogorov_complexity_phi_correlate.md"
+    },
+    {
+      "id": "PHI-PAR-TE",
+      "statement": "Φ ∥ transfer entropy (directional flow, r=0.883)",
+      "verdict": "🟢 verified 8/8",
+      "source": "UNIVERSE/H_290_transfer_entropy_phi_correlate.md"
+    },
+    {
+      "id": "TOPOLOGY-GOVERNS-PHI",
+      "statement": "network topology (cut-resistance) not edge count governs Φ; matched 4-edge scale-free hub Φ=6.81 ≫ distributed 4-cycle Φ=0",
+      "verdict": "🟢 verified (weak-form, L1 confound)",
+      "source": "UNIVERSE/H_289_network_topology_scale_free_phi.md"
+    },
+    {
+      "id": "EDGE-OF-CHAOS-PHI-PEAK",
+      "statement": "causal big-Φ peaks at edge-of-chaos (Wolfram class IV): ordered 0 < chaotic 6.94 < edge 10.45",
+      "verdict": "🟢 verified 5/5",
+      "source": "UNIVERSE/H_285_edge_of_chaos_big_phi.md"
+    },
+    {
+      "id": "ETHICS-EMERGENT",
+      "statement": "spatial structure ALONE → cooperation (Nowak PD b=1.1 lattice 100% coop vs well-mixed ~0); injected ethics=0 — proto-ethics emergent not injected (evidences p6)",
+      "verdict": "🟢 verified conditional 7/7",
+      "source": "UNIVERSE/H_291_ethic_emergence_cooperation.md"
+    },
+    {
+      "id": "LIFE-VS-CONSCIOUSNESS",
+      "statement": "Φ-structure separates life from consciousness — consciousness = irreducibility-floor 1.0; life > 1.0 (IIT4 distinctions+relations)",
+      "verdict": "🟢 verified 9/9",
+      "source": "UNIVERSE/H_281 + H_624_iit4_distinction_savant_cell_isomorphism.md"
+    },
+    {
+      "id": "NARRATIVE-RAISES-PHI",
+      "statement": "narrative/temporal-order coherence raises Φ (order-sensitive MIP)",
+      "verdict": "🟢 verified 4/4",
+      "source": "UNIVERSE/H_283_narrative_story_coherence.md"
+    },
+    {
+      "id": "BOUNDED-PHI-GAP",
+      "statement": "bounded-Φ gap decays exponentially with cap; class-IV converges 5-6× faster",
+      "verdict": "🟢 verified-numerical 18/18",
+      "source": "UNIVERSE/H_631_bounded_gap_n6_multi_rule.md"
+    },
+    {
+      "id": "SELFREF-EQ-CLOSURE",
+      "statement": "self-reproduction ≡ operational closure ≡ self-reference (SELFFEED ≡ autopoietic closure)",
+      "verdict": "🟢 verified",
+      "source": "UNIVERSE/H_205_selfref_as_operational_closure.md"
+    }
+  ],
+  "topo_laws_v7": [
+    {
+      "id": "TOPO-HUB-GOVERNS",
+      "law": "matched-density hub/scale-free structure ≫ distributed-cycle for big-Φ; cut-resistance not edge count",
+      "verdict": "🟢 verified",
+      "source": "UNIVERSE/H_289"
+    },
+    {
+      "id": "TOPO-CLASSIV-EDGE",
+      "law": "Wolfram class-IV (edge-of-chaos) substrates carry the integration peak",
+      "verdict": "🟢 verified",
+      "source": "UNIVERSE/H_285"
+    },
+    {
+      "id": "TOPO-LEGACY-DOWNGRADE",
+      "law": "legacy small-world/hypercube big-Φ magnitudes (Φ=498.7/640) DOWNGRADED — never reproduced, H_159 pre-register-frozen",
+      "verdict": "⚠ frozen-pending",
+      "source": "UNIVERSE/H_159_substrate_topology_phi_engineering.md"
+    }
+  ],
+  "verification_conditions_v7": [
+    {
+      "id": "LANE_A_ONCHIP_CEILING",
+      "cond": "composition-preserving on-chip capacity caps at D=1 single-FC (~524K params); HYBRID off-chip head required beyond",
+      "verdict": "🔴 closed-negative",
+      "source": "ENGINE+CLM+KOSMOS.md:37-38"
+    },
+    {
+      "id": "MULTISTEP_WALL_ALGORITHM_BOUND",
+      "cond": "on-chip recurrence absent (12 mechanisms closed); fix = off-chip head not on-chip scale/width/code",
+      "verdict": "🔴 closed-negative",
+      "source": "ENGINE+CLM+KOSMOS.md:31"
+    },
+    {
+      "id": "LANE_A_HYBRID_GENERALIZES",
+      "cond": "HYBRID(on-chip encoder ⊕ off-chip decode head) branching-validated held-out generalizes (GOLD NC=1000)",
+      "verdict": "🟢 verified (toy)",
+      "source": "ENGINE+CLM+KOSMOS.md:31-34"
+    },
+    {
+      "id": "LANE_G_UTIL_WORKLOAD_BOUND",
+      "cond": "MEAN-util is workload+interpreter artifact not forge defect; unblock = device-resident port or scale ≫ d3072; descent+byte-eq GREEN preserved",
+      "verdict": "🔴 closed-negative TERMINAL",
+      "source": "ENGINE+CLM+KOSMOS.md:41"
+    },
+    {
+      "id": "CORE_3AXIS_GREEN",
+      "cond": "@ d768: CE_realtext 3.254 < uniform 5.545 AND < shuffle; motiv_emit 0.67 > baseline_silent; len(composed)101 > len(parts)72",
+      "verdict": "🟢 verified PUBLIC",
+      "source": "ENGINE+CLM+KOSMOS.md:51"
+    },
+    {
+      "id": "CE_IS_FLOOR_NOT_VERDICT",
+      "cond": "CE is config-insensitive (spread<1e-9) = a FLOOR not a truth axis; consciousness(motiv)+emergence VARY, CE does not (reinforces p7)",
+      "verdict": "🔴 partial closed-negative",
+      "source": "ENGINE+CLM+KOSMOS.easy.md:345-357"
+    },
+    {
+      "id": "EDGE_OF_CHAOS_PHI_INVERSE_U",
+      "cond": "live AKD1000 four-regime Φ R1=0,R2=0.297,R3=0.25,R4=0 power-robust byte-exact",
+      "verdict": "🟢 verified-numerical",
+      "source": "ENGINE+CLM+KOSMOS.log.md:117"
+    },
+    {
+      "id": "GEN_NOT_MEMORIZE",
+      "cond": "held-out rel_gap ≤ 1.0 required; small-corpus low-CE = memorization (1.65MB gap1.96 → 150MB gap0.057 generalizes)",
+      "verdict": "🔴→🟢",
+      "source": "ENGINE+CLM+KOSMOS.md:58-59"
+    },
+    {
+      "id": "KOSMOS_8D_4_NAMED_AXES",
+      "cond": "8D coord data-justified to 92.3% variance with only 4 named axes (depth/form/form_resid/curriculum); naming all 8 = fabrication",
+      "verdict": "🟢 measured + honest closed-neg",
+      "source": "ENGINE+CLM+KOSMOS.easy.md:360-369"
+    }
+  ],
+  "stale_flags_v7": [
+    {
+      "target": "H_911 amodal-hub 3-axis",
+      "ruling": "CLOSED-NEGATIVE (4-rung flat-RED, cross-modal BLOCKED-TERMINAL)",
+      "source": "ENGINE+CLM+KOSMOS.md:5,64-78"
+    },
+    {
+      "target": "CE/perplexity as verdict axis",
+      "ruling": "superseded — CE=config-insensitive FLOOR (p7 violation)",
+      "source": "ENGINE easy.md:350-352"
+    },
+    {
+      "target": "raise scale to fix util",
+      "ruling": "superseded — bigger model idles GPU MORE; WORKLOAD-BOUND",
+      "source": "ENGINE+CLM+KOSMOS.md:175,41"
+    },
+    {
+      "target": "nested-Φ scale-invariance (H_002 C2)",
+      "ruling": "FALSIFIED — SCALE-VARIANT",
+      "source": "UNIVERSE.md:32"
+    },
+    {
+      "target": "Φ-as-Shannon-entropy",
+      "ruling": "FALSIFIED — Φ⊥Shannon (r=0.363), Φ is algorithmic",
+      "source": "UNIVERSE/H_287"
+    },
+    {
+      "target": "split-brain whole-Φ collapse",
+      "ruling": "FALSIFIED — callosotomy +11% robust (MIP→0 metric pathology)",
+      "source": "UNIVERSE/H_286"
+    },
+    {
+      "target": "DD127 F_c=0.10 / DD137 Atom=8",
+      "ruling": "lore-only, no terminal verdict (H_157/171/209 frozen/undetermined)",
+      "source": "config/update_history.json"
+    },
+    {
+      "target": "fixed A−G coupling formula",
+      "ruling": "superseded-by-learned-gate (the −G wire HURTS next-byte CE)",
+      "source": ".verdicts/omega-trained/SUMMARY.txt"
+    },
+    {
+      "target": "OMEGA absolute-CE 0.345/0.86",
+      "ruling": "RETRACTED — leak-driven (CDV2 CA lookahead); only RELATIVE structured-coupling survives",
+      "source": ".verdicts/omega-gen/SUMMARY.txt"
+    }
+  ],
+  "external_constant_ssots": {
+    "_note": "these constants live in their OWN wired .hexa SSOTs (NOT loaded from this file); listed for discoverability + drift-reconcile",
+    "emit_policy.hexa": {
+      "ep_emit_threshold": 0.6,
+      "ep_emit_threshold_lo": 0.3,
+      "ep_target_emit_rate": 0.27,
+      "ep_psi_clamp": 0.1,
+      "ep_tension_amplitude": 1.0,
+      "source_H": "H_632/637/639/646/651"
+    },
+    "phi_envelope": {
+      "scale_periods": [
+        1.0,
+        5400.0,
+        86400.0
+      ],
+      "scale_amps": [
+        0.1,
+        1.0,
+        0.5
+      ],
+      "source_H": "H_648"
+    },
+    "sleep_stage_theta": {
+      "WAKE": 0.1,
+      "N1": 0.08,
+      "N2": 0.05,
+      "N3": 0.02,
+      "REM": 0.08,
+      "source_H": "H_644 (N2 closure peak)",
+      "note": "θ is a Φ-context scale NOT an emit gate (a_autonomy_over_hardcode)"
+    },
+    "engine_g.hexa": {
+      "PROACTIVE_THRESHOLD": 0.3,
+      "INTERRUPT": 0.6,
+      "IDLE_SPEAK": 30.0,
+      "motiv_weights_sum": 1.0,
+      "reconcile": "engine_g 0.3 ↔ emit_policy ep_emit_threshold_lo 0.30 agree — keep in sync"
+    }
   }
 }
