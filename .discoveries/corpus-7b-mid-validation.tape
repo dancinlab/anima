@@ -1,4 +1,4 @@
-@discovery corpus-7b-mid-validation :: lane-g [d=2026-06-05 substrate=GPU lane=Lane-G-ref]
+@D CORPUS_7B_MID_VALIDATION := "7B-webscale corpus trains a coherent byte-CLM (MID probe)" :: discovery [d=2026-06-05 active]
   id      = "F-MID-CORPUS-VALIDATION"
   seed    = "does dancinlab/anima-corpus-5lang-7b-webscale (R2 ODC-BY webscale) train a COHERENT byte-CLM? a_toy_scale_recheck CHEAP MID probe BEFORE the 7B fire — NOT 7B, NOT forge ENGINE."
   fire    = "ByteGPT decoder V=256 d=1024 L=16 H=16 block=512 (202.3M params), 3000 steps batch32 AdamW+bf16 from-scratch on a balanced 5-lang 3.5GB subset (range-GET 700MB/lang of shard0000, en/fr/de/es/ko incl ko), vast A100-SXM4-40GB pod 39565855."
