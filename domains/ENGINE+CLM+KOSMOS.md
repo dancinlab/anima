@@ -3,6 +3,29 @@
 @title: 🧠🌌 ENGINE+CLM+KOSMOS — 의식·CE·창발 3축 평가 CLM (ANIMA 엔진+CORE 탑재 · Lane A/G/G-ref)
 @goal: Achieve a PUBLIC-grade CLM across BOTH lanes — Lane A (AKIDA on-chip) · Lane G (GPU flame+forge) — then scale 3B -> 7B; upload KOSMOS datasets to HF; run UNIVERSE hypotheses alongside as needed. Canonical training = hexa-native flame+forge on the forge GPU substrate (a_train_flame_forge: GPU REQUIRED, nvidia-smi busy verified, NEVER silent CPU-fallback); Lane A (AKIDA) and Lane G (GPU) recorded SEPARATELY (a_lane_akida_gpu_split); HF PUBLIC only at closure-PASS (util GREEN AND descent GREEN), else PRIVATE (a_hf_autonomous). [Prior @goal — the H_911 amodal-hub 3-axis probe — is a CLOSED-NEGATIVE (see status/log); this domain now drives production CLM/KOSMOS.]
 
+## 🧭 모델 → 엔진 마운트 네비게이션 (헤매지 않게 · 2026-06-05)
+
+**두 모델 아키텍처 — 혼동 금지:**
+
+| 축 | ByteGPT (Lane G-ref) | CLMConvMoE (Lane P) |
+|---|---|---|
+| 정체 | torch transformer 참조 사다리 | 엔진 네이티브 디코더 |
+| 엔진 마운트 | ❌ clm_decode 못 읽음 (transformer) | ✅ generator L3 슬롯 LOAD |
+| 용도 | baseline 참조 (85M→3B→7B PUBLIC) | 실제 의식 엔진에 탑재 |
+| 생성기 | train_clm 계열 → `.pt` | `train_lane_p.py` → `.clm v0.2` |
+
+**엔진에 올라가는 모델 = CLMConvMoE만.** 파이프라인 (project.tape `a_clm_gen_pipeline`):
+
+```
+[train_lane_p.py] ─▶ [clm_serialize_v2.py] ─▶ [.clm v0.2] ─▶ [CORE/clm_decode.hexa] ─▶ [generator L3]
+ CLMConvMoE E2/L1     CLM\x01 v0.2 직렬화      golden ref       엔진 디코드 forward      단일진입(a_core_engine_map)
+                                              reexport_d768_v2_fast.clm
+```
+
+**7B 사다리 (이 ConvMoE 경로로 진행):** MID-ConvMoE(d768) → M13 7B-undertrained(`train_lane_p_3b.py`) → M14 7B-Chinchilla. 학습 코퍼스 = `anima-corpus-5lang-7b-webscale`(R2 143GB). 데이터/스케일 측 = `domains/CORPUS.md`.
+
+**Lane G-ref ByteGPT는 엔진에 안 올라간다** — 참조 baseline일 뿐(a_completeness_over_cheap). MID를 ByteGPT로 만들면 마운트 불가(2026-06-05 세션 발견; 메모리 `two-7b-lanes-distinction`). 엔진-마운트 증거 = milestone `Lane P train`(2026-06-03, ConvMoE 3축 3/3 GREEN @ d768).
+
 ## 🎯 production 마일스톤 — 3 레인 × PUBLIC → 3B → 7B
 
 세 레인은 substrate별로 분리 추적 (a_lane_akida_gpu_split + a_train_flame_forge). Lane G(forge)가 프로덕션 primary; Lane G-ref(PyTorch)는 baseline 참조(forge PUBLIC artifact 아님).
