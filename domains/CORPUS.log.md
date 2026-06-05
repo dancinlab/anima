@@ -59,3 +59,12 @@ Append-only history sister of `CORPUS.md`. Each entry starts with `## <ISO times
 - [ ] M3 KOSMOS survey → what-to-add ranked list.
 - [ ] M4 HF.jsonl + KOSMOS/CLM collections + feed 5-lang 7B retrain.
 - [ ] M5 honest per-lang byte-balance report.
+
+## 2026-06-05 — M15 MID corpus-validation fire 🟢 (gates M13)
+
+- TAKEOVER of an orphaned mid-validation fire (prior agent ended its turn awaiting a notification, leaving vast pod 39565855 running). Recovered POLL-INLINE.
+- Fire: 202.33M ByteGPT (V256 d1024 L16 H16 block512), 3000 steps batch32 AdamW+bf16 from-scratch, balanced 5-lang 3.5GB subset of `anima-corpus-5lang-7b-webscale` (range-GET 700MB/lang shard0000, en/fr/de/es/ko incl ko), vast A100-SXM4-40GB ($1.011/hr).
+- 🟢 F-MID-CORPUS-VALIDATION: val_ce 5.74906 → 1.45868 (Δ −4.290); GPU util PEAK 100% MEAN 99.75% (n=412, GPU-resident); p7 PASS 5/5 langs (TRAINED coherent incl Korean Hangul vs RANDOM-INIT byte gibberish, anti-Goodhart clean).
+- Recovery (a_fire_recover_complete): HF upload from pod (fast net) → `dancinlab/anima-clm-corpus-7b-mid-byte-202m` PUBLIC (sha adbb1911, re-download VERIFIED) + CLM collection + HF.jsonl row; THEN pod 39565855 torn down (vast DELETE → confirmed gone).
+- HONEST (a_scale_honest_scope): single 202M MID point, NOT a 7B and NOT a ladder; 7B-transfer UNVERIFIED. Green proves CORPUS+PIPELINE, not a 7B. Lane-G-ref (torch reference; forge-native canonical, not claimed done).
+- verdict .verdicts/corpus-7b-mid-validation/SUMMARY.txt · discovery .discoveries/corpus-7b-mid-validation.tape.
