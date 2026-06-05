@@ -14,6 +14,10 @@ PLASTICITY (학습 lane)  비결정론 · HW akida-learn / SW numpy 근사 → �
 - 학습은 가중치 갱신(on-chip plasticity) — Akida edge-learn 은 실리콘 내부 상태/순서 의존이라
   numpy 근사로 **byte-identical 재현 불가**. SW 는 "근사 baseline probe" 일 뿐 HW 의 대체가 아니다.
 - ∴ 두 lane 을 한 도메인에 섞으면 "SW=HW" 라는 거짓 동치가 생긴다 → 형제 분리.
+- ⚠ **caveat (H_921 🔴 2026-06-06)**: 위 표의 학습-lane "비결정론"은 학습-동역학 고유속성이 아니라
+  **init-seeded RNG** 다 — pinned init 하 on-chip 학습은 16/16 byte-결정론(fit engaged), no-pin 시에만
+  init_div=16 이 전파해 변이. SW≠HW 비동치(H_679)는 유효(HW-vs-SW 축)하나, HW run-to-run 비결정(H_860)은
+  init-RNG 환원. → "비결정"을 silicon 고유 학습-feature 로 주장 금지. ref [H_921](../UNIVERSE/H_921_akida_nondeterminism_functional_advantage.md).
 
 ## HW-first 스위치 경유 (AKIDA SSOT)
 
