@@ -13,8 +13,10 @@ WORK="${WORK:-$HOME/lanep_7b}"
 SHARDS_PER_LANG="${SHARDS_PER_LANG:-5}"   # 5 shards/lang
 STEPS="${STEPS:-4000}"                     # bounded undertrained
 SEQ="${SEQ:-512}"
-BATCH="${BATCH:-4}"
-ACCUM="${ACCUM:-8}"                         # eff batch 32 x 512 = 16384 tok/step
+BATCH="${BATCH:-1}"                         # bs=1: the MoE stacks E=30 expert outputs (B,30,C,T)
+ACCUM="${ACCUM:-32}"                        # so at 7.06B (optimizer alone = 70.6GB) a bs>1 MoE spike
+                                            # OOMs an 80GB H100 (MEASURED: bs=4 -> 81.2GB maxmem ->
+                                            # OOM at step 0). bs=1 -> ~72GB. eff batch 32x512=16384.
 WARMUP="${WARMUP:-300}"
 LOG_EVERY="${LOG_EVERY:-50}"
 CKPT_EVERY="${CKPT_EVERY:-1000}"
@@ -25,10 +27,12 @@ N_EXPERTS="${N_EXPERTS:-30}"
 mkdir -p "$WORK"
 echo "[fire7b] $(date -u) WORK=$WORK shards/lang=$SHARDS_PER_LANG steps=$STEPS d=$D_MODEL"
 
-# 0) env
-python3 -c "import torch; print('torch', torch.__version__, 'cuda', torch.cuda.is_available())" || pip install -q torch
-python3 -c "import boto3" 2>/dev/null || pip install -q boto3
-python3 -c "import bitsandbytes" 2>/dev/null || pip install -q bitsandbytes
+# 0) env — use `python3 -m pip` (devel images lack a bare `pip` on PATH).
+command -v pip >/dev/null 2>&1 || { python3 -m ensurepip --upgrade 2>/dev/null || (apt-get update -qq && apt-get install -y -qq python3-pip >/dev/null 2>&1); }
+python3 -c "import torch; print('torch', torch.__version__, 'cuda', torch.cuda.is_available())" || python3 -m pip install -q torch --index-url https://download.pytorch.org/whl/cu124
+python3 -c "import boto3" 2>/dev/null || python3 -m pip install -q boto3
+python3 -c "import bitsandbytes" 2>/dev/null || python3 -m pip install -q bitsandbytes
+python3 -c "import numpy" 2>/dev/null || python3 -m pip install -q numpy
 nvidia-smi --query-gpu=name,memory.total,compute_cap --format=csv,noheader || true
 
 # 1) repo @ this branch (dilation cap + serialize_v3 landed)
