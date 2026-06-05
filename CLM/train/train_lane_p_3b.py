@@ -153,7 +153,15 @@ def main():
                     help="periodic ckpt+clm dump for fire-recovery safety (a_fire_recover_complete)")
     ap.add_argument("--bf16", action="store_true")
     ap.add_argument("--grad-checkpoint", action="store_true",
-                    help="(reserved) gradient checkpointing flag")
+                    help="WIRED gradient checkpointing: recompute each trunk layer in "
+                         "backward (torch.utils.checkpoint, use_reentrant=False) so the "
+                         "L30/d6208 7B rung's activation chain stops OOM-ing an 80GB H100. "
+                         "Runtime-only, byte-eq-neutral (identical output, less retained tape).")
+    ap.add_argument("--optim8bit", action="store_true",
+                    help="use bitsandbytes AdamW8bit (8-bit optimizer state) to fit a "
+                         "7B+ rung on one 80GB H100 — m/v in 8bit halves optimizer "
+                         "memory (fp32 AdamW for 7.06B = 56.5GB state alone, OOMs). "
+                         "Mathematically the same AdamW update, 8-bit quantized state.")
     a = ap.parse_args()
 
     torch.manual_seed(a.seed)
@@ -168,8 +176,11 @@ def main():
 
     cfg = CLMConfig(n_experts=a.n_experts, n_trunk_layers=a.n_trunk_layers,
                     d_model=a.d_model, kernel_size=a.kernel_size, variant="AB",
-                    dilation_base=2)
+                    dilation_base=2, grad_checkpoint=a.grad_checkpoint)
     model = CLMConvMoE(cfg).to(device)
+    if a.grad_checkpoint:
+        print("GRAD_CHECKPOINT on (trunk activations recomputed in backward; "
+              "byte-eq-neutral runtime memory fit for the 7B rung)", flush=True)
     n_params = model.num_params()
     print(f"PARAMS n_params={n_params} ({n_params/1e9:.4f}B) "
           f"d={a.d_model} E={cfg.n_experts} L={cfg.n_trunk_layers} K={cfg.kernel_size} V={cfg.vocab_size}",
@@ -213,8 +224,15 @@ def main():
             max_end[kind] = e
     print("LEAK_CHECK pass (held-out disjoint from train)", flush=True)
 
-    opt = torch.optim.AdamW(model.parameters(), lr=a.lr, betas=(0.9, 0.95),
-                            weight_decay=0.01)
+    if a.optim8bit:
+        import bitsandbytes as bnb
+        opt = bnb.optim.AdamW8bit(model.parameters(), lr=a.lr, betas=(0.9, 0.95),
+                                  weight_decay=0.01)
+        print("OPTIM AdamW8bit (bitsandbytes 8-bit optimizer state)", flush=True)
+    else:
+        opt = torch.optim.AdamW(model.parameters(), lr=a.lr, betas=(0.9, 0.95),
+                                weight_decay=0.01)
+        print("OPTIM AdamW (fp32 optimizer state)", flush=True)
     sched = torch.optim.lr_scheduler.LambdaLR(
         opt, lambda s: min((s + 1) / a.warmup, 1.0) *
                        (0.5 * (1 + torch.cos(torch.tensor(
