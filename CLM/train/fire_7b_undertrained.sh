@@ -90,7 +90,7 @@ PYTORCH_CUDA_ALLOC_CONF="${PYTORCH_CUDA_ALLOC_CONF:-expandable_segments:True}" \
 CLM_NO_CUDNN="${CLM_NO_CUDNN:-1}" python3 -u "$REPO_DIR/CLM/train/train_lane_p_3b.py" \
   --d-model "$D_MODEL" --n-trunk-layers "$N_TRUNK" --n-experts "$N_EXPERTS" --kernel-size 3 \
   --steps "$STEPS" --seq-len "$SEQ" --batch-size "$BATCH" --grad-accum "$ACCUM" \
-  --lr 2e-4 --warmup "$WARMUP" --bf16 --grad-checkpoint \
+  --lr 2e-4 --warmup "$WARMUP" --bf16 --grad-checkpoint --optim8bit \
   --corpus "$CORPUS" \
   --ckpt-out "$WORK/clm_7b.pt" \
   --clm-out "$WORK/clm_7b.clm" \
