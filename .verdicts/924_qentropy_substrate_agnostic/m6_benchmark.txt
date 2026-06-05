@@ -1,0 +1,61 @@
+H_924 M6 — qentropy quantum-vs-deterministic A/B BENCHMARK
+==========================================================
+benchmark : qentropy_quantum_vs_deterministic_AB
+harness   : mirror/qmirror/seed/qentropy_benchmark.py  (Mac · $0 · no device · no torch)
+ledger    : state/qentropy_benchmark_2026_06_06/ledger.json
+generated : 2026-06-05T21:01:00.688145+00:00  (UTC)
+n trials  : 64 per (path, mode) arm; each arm runs in a FRESH subprocess so
+            ANIMA_ENTROPY_MODE is honestly applied at qentropy import time.
+
+FRAMING (honest, #123-A): this is a STATISTICAL-PARITY SANITY + PROVENANCE
+DIFFERENTIATOR surface, NOT a superiority test. ANU vacuum-fluctuation entropy ==
+chacha20/numpy PRNG statistically (JSD 0.000433, 23x under the NIST SP 800-22 7/7
+threshold). We therefore EXPECT the two modes to be statistically indistinguishable
+at the application level — and confirming that is the test. The difference that
+actually matters is the PROVENANCE column (quantum -> anu_committed + sha256 of the
+real physical ANU buffer vs deterministic -> reproducible numpy_prng seed=187).
+
+PER-PATH RESULTS (verbatim from ledger.json)
+--------------------------------------------
+[1] plasticity_sw_approx  — SW learning weight-init lever
+    metric = weight_l1 (L1 norm of SW-learned weight matrix), per trial
+      quantum       : n=64  mean=10.251101  std=0.355820  tier=anu_committed
+                      sha256=e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+      deterministic : n=64  mean=10.211037  std=0.411339  tier=numpy_prng(seed=187)  sha256=None
+      comparison    : |Δmean|=0.040064  pooled_std=0.384583  standardized_separation=0.104174
+                      -> PARITY (statistically indistinguishable)
+      provenance_differs = True
+
+[2] decoder_qsample  — DECODER token-sampling layer
+    metric = Shannon entropy (bits) of sampled-token histogram, per trial
+      quantum       : n=64  mean=1.695245  std=0.312698  tier=anu_committed
+                      sha256=e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+      deterministic : n=64  mean=1.662556  std=0.305228  tier=numpy_prng(seed=187)  sha256=None
+      comparison    : |Δmean|=0.032689  pooled_std=0.308985  standardized_separation=0.105795
+                      -> PARITY (statistically indistinguishable)
+      provenance_differs = True
+      pooled token histogram (argmax_forward=3, identical both modes):
+        quantum       {0:194, 1:66, 2:42, 3:542, 4:44, 5:136}
+        deterministic {0:218, 1:61, 2:39, 3:561, 4:33, 5:112}
+
+DEVICE / TORCH-PENDING ROWS (surface complete + extensible; flip env on host)
+-----------------------------------------------------------------------------
+  akida_r2_noise    device-pending  pi5-akida AKD1000  SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py
+  akida_edge_learn  device-pending  pi5-akida AKD1000  SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py
+  torch_lane_p      torch-pending   GPU host (Lane-P)  CLM/train/_qseed.py + _qseed_check.py
+
+FINDING
+-------
+PARITY HOLDS at the application level on BOTH SW-runnable paths (standardized
+separation ~0.10 « 1.0 pooled-std on both). The #123-A statistical-equality claim
+reproduces at the application layer: quantum and deterministic entropy yield
+statistically indistinguishable SW-learning weight_l1 and DECODER sampling entropy.
+The ONLY material difference is provenance: quantum carries the auditable physical
+ANU origin (tier=anu_committed, sha256=e8123b96…) while deterministic carries a
+reproducible numpy_prng(187) seed and no sha256. provenance_differs=True on both
+rows. This is exactly the designed outcome — the value of the quantum default is
+auditability, not "more randomness".
+
+VERDICT: 🟢 PASS (app-level parity confirmed; provenance differentiator surfaced).
+  Reusable one-command A/B runner delivered; device/torch arms are obviously
+  extensible (same env flip on pi5/GPU host), recorded as pending rows.

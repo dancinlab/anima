@@ -1,0 +1,45 @@
+H_921 — AKIDA non-determinism: feature or noise?  VERDICT: CLOSED-NEGATIVE (FALSIFIED)
+substrate = AKIDA AKD1000 (BC.00.000.002, IpVersion.v1) · pi5-akida · akida 2.19.1
+task = h921 winner-collapse trap, FC units=10 weights_bits=1, AkidaUnsupervised(num_weights=2, learning_competition=0.1)
+N_episodes = 16 per condition · g5 CODE-measured · 2026-06-06 · device free (no streamer lock)
+
+=== M2 source-of-nondeterminism probe (h921_nondet_source_probe.py) — verbatim stdout ===
+EXIT=0
+--- RESULT ---
+{"probe": "h921_hw_probe_v2_source_of_nondeterminism", "device": "BC.00.000.002", "n_episodes": 16, "A_pinned_nondegen": {"pin": true, "n_ok": 16, "n_err": 0, "errors": [], "init_diversity": 1, "weight_diversity_postfit": 1, "output_diversity": 1, "fit_changed_weights": [16, 16]}, "B_nopin_default": {"pin": false, "n_ok": 16, "n_err": 0, "errors": [], "init_diversity": 16, "weight_diversity_postfit": 16, "output_diversity": 15, "fit_changed_weights": [2, 16]}, "reading": {"A_weight_div": 1, "B_weight_div": 16, "interpretation": "A>1: chip learning intrinsically non-det (pinned) | A==1 & B>1: non-determinism is INIT-seeded, not learning | A==1 & B==1: learning fully deterministic, H_860 not repro'd"}}
+--- ERR(tail) ---
+
+=== M2-v1 functional probe (degenerate-init, superseded — kept for trail) — verbatim stdout ===
+EXIT=0
+--- RESULT ---
+{"probe": "h921_hw_functional_nondeterminism", "device": "BC.00.000.002", "ip_version": "IpVersion.v1", "n_episodes": 16, "n_patterns": 12, "init_seed": 187, "n_ok": 16, "n_err": 0, "errors": [], "init_weight_set_var": "weights", "init_shared_across_episodes": true, "raw_weight_diversity_postfit": 1, "FUNCTIONAL_output_diversity": 1, "FUNCTIONAL_assign_diversity": 1, "escape_rate_vs_modal": 0.0, "sample_assignments": [[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]], "verdict_rule": "output_div>1 => FEATURE(chip non-det changes functional output) ; output_div==1 & raw_weight_div>1 => INERT NOISE(falsified) ; raw_weight_div==1 => fit-deterministic-on-task (re-examine)"}
+--- ERR(tail) ---
+
+=== READING ===
+A_pinned_nondegen : init_div=1  weight_div=1  output_div=1  fit_changed=16/16
+B_nopin_default   : init_div=16 weight_div=16 output_div=15 fit_changed=2/16
+
+DECISIVE: maps to "A==1 & B>1 => non-determinism is INIT-seeded, not learning".
+- Under a TRULY pinned init, on-chip AkidaUnsupervised learning is BYTE-DETERMINISTIC
+  (16/16 identical) AND fit genuinely engaged (fit_changed 16/16, NOT a no-op).
+- The run-to-run variation previously attributed to chip non-determinism (H_860
+  hamming {28,38,34,38}) traces to NON-DETERMINISTIC DEFAULT WEIGHT INIT
+  (condition B init_div=16), which propagates 1:1 to output_div=15.
+- Init-RNG = plain random seeding; SW reproduces the same functional diversity with
+  a random seed. It is NOT a unique silicon learning-dynamics property.
+
+VERDICT: 🔴 CLOSED-NEGATIVE — the "functional advantage from substrate non-determinism"
+hypothesis is FALSIFIED at this scale/config. AKIDA plasticity-lane non-determinism
+is init-seeded RNG, not an intrinsic learning-dynamics feature; pinning init removes it.
+
+HONEST SCOPE (a_scale_honest_scope): 1 physical AKD1000, toy FC+AkidaUnsupervised,
+units=10 weights_bits=1 num_weights=2 competition=0.1. Decisively reverses the naive
+"AKIDA = intrinsic non-determinism" claim FOR THIS LANE/CONFIG; does not claim all
+configs (larger competition / conv / multi-pass) behave identically — a ladder would
+be needed to generalize. SEPARATE axis (not tested here): whether the init-RNG is a
+hardware TRUE-entropy source (cf H_677 D4 QRNG) — that is an entropy-source question,
+NOT a learning-feature question, and is orthogonal to this falsification.
+
+RECONCILE: H_904 (HW≠SW 172/1024) stands — that was HW-vs-SW divergence (two systems),
+still valid as "SW≠HW byte-identical". This probe is HW-vs-HW run-to-run under pinned
+init, a different axis: it shows the HW learning itself is deterministic.

@@ -162,6 +162,14 @@ def main():
     ap.add_argument("--bf16", action="store_true")
     a = ap.parse_args()
 
+    # ── H_924 M4: qentropy SSOT master seed (quantum-default/det-auxiliary). ──
+    # Fallback-safe: resolve_seed() returns a.seed if the SSOT is unimportable,
+    # so the val/train split (build_split_segments uses a.seed) and existing runs
+    # are preserved. See _qseed.py / train_lane_p.py for the full rationale.
+    from _qseed import resolve_seed, log_line     # local trainer helper (CLM/train)
+    seed, qprov = resolve_seed(a.seed, label="lane_p_torch_init")
+    print(log_line(qprov), flush=True)
+    a.seed = seed                                  # route the val/shuffle split through it too
     torch.manual_seed(a.seed)
     gen = torch.Generator().manual_seed(a.seed)
 

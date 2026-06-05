@@ -1,0 +1,86 @@
+H_923 — AKIDA(deterministic) x ANU-QRNG coupling.  VERDICT: PASS (coupling validated)
+substrate = AKIDA AKD1000 (BC.00.000.002) live · entropy = ANU vacuum-fluctuation (anu_legacy)
+ANU bytes sha256 = e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+  (matches mirror/qmirror/seed/provenance.jsonl request_id anu_legacy_1778042160, 2026-05-06)
+N=16 episodes, each FC init = distinct 64B ANU window · g5 CODE-measured · 2026-06-06 · $0
+
+=== verbatim probe stdout (h923_qrng_seed_probe.py) ===
+probe b64 6600 · anu b64 1368
+anu sha256: e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5  /tmp/anu_live.bin
+EXIT=0
+--- RESULT ---
+{"probe": "h923_akida_qrng_coupling", "device": "BC.00.000.002", "n_episodes": 16, "entropy_source": {"path": "/tmp/anu_live.bin", "tier": "anu_legacy (ANU vacuum-fluctuation)", "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5", "n_bytes": 1024}, "D1_functional_output_diversity": 2, "D2_provenance_trace": [{"ep": 0, "anu_offset": 0, "win_sha": "f9425f29593c", "init_hash": "9d9b04553ac8"}, {"ep": 1, "anu_offset": 64, "win_sha": "168fc06cba42", "init_hash": "2771ee4f243a"}, {"ep": 2, "anu_offset": 128, "win_sha": "8916e226e248", "init_hash": "e7e276ab95d9"}, {"ep": 3, "anu_offset": 192, "win_sha": "4b5633c06985", "init_hash": "1211bc276314"}], "D2_all_distinct_windows": 16, "D3_determinism_preserved": true, "D3_repeat_hash_match": ["8714e41752f7", "8714e41752f7"], "verdict_rule": "PASS if D1>1 AND D3 True AND D2 windows distinct ; FALSIFIED if D1==1 (ANU did not create variation) OR D3 False (chip not deterministic -> H_922 refuted)", "honest_nonclaim": "statistical quality ANU==PRNG (#123-A JSD 23x under NIST); value = provenance/audit/ontology, NOT better randomness"}
+--- ERR(tail) ---
+
+=== READING (pre-registered rule: PASS if D1>1 AND D3 True AND D2 distinct) ===
+D1 functional_output_diversity = 2   (>1)   -> ANU quantum entropy DID create functional variation
+D2 all_distinct_windows        = 16  (16/16) -> every seed traceable to a specific ANU window (auditable)
+D3 determinism_preserved       = TRUE        -> same ANU window re-run -> byte-identical output
+                                                (8714e41752f7 == 8714e41752f7)
+=> PASS. The coupling works: AKIDA stays deterministic-by-architecture (H_922 holds, D3),
+   the chip's only variation-lever (init-seed, H_921) is now fed by TRUE quantum entropy (ANU
+   vacuum-fluctuation), and every variation is provenance-traceable (D2). anima gains
+   substrate-native, auditable, quantum-sourced non-determinism layered on a deterministic body.
+
+HONEST C3:
+- D1=2 (not 16): the TOY trap-task collapses many inits to the same winner (small FC output
+  space). Diversity is task-limited, NOT entropy-limited; a richer downstream task would show
+  higher D1. The MECHANISM is validated (entropy injection creates variation a det-control
+  cannot; det-control D1==1 by H_921). a_scale_honest_scope.
+- statistical quality of ANU == chacha20 PRNG (#123-A QA6 JSD 23x under NIST). The value here is
+  PROVENANCE / auditability / algorithmic-attack immunity / ontology (physical quantum origin) —
+  NOT better randomness numbers. NOT a phenomenal-consciousness claim (.roadmap.qrng raw#10).
+- entropy = pre-pulled anu_legacy bytes (live ANU draw via NEXUS_QMIRROR_ANU_KEY = M4 follow-up).
+
+=== M4 CAPSTONE (live anu_pull module · 2026-06-06) ===
+mirror/qmirror/seed/anu_pull.py — self-contained live ANU puller, secret-keyed:
+  secret get flat.anu_key_paid -> api.quantumnumbers.anu.edu.au (x-api-key, type=uint8)
+  -> 1024B FRESH draw sha=a4e37640a0b01578f6be8a82b238bbaed615900b23268cdb8bc187927324b5cd
+     (tier=anu_paid, request_id anu_paid_keyed; DISTINCT from pre-pulled e8123b...).
+Full pipeline capstone: live-pull(Mac) -> base64 ship -> pi5 (sha verified identical) ->
+H_923 probe on FRESH quantum -> D1=2 · D2=16/16 distinct · D3=True (8714e41752f7 repeat) = PASS.
+=> end-to-end: secret-keyed live ANU quantum draw feeds the deterministic AKD1000, auditable.
+Note: D1=2 identical across pre-pulled AND fresh draws -> confirms D1 ceiling is the TOY task
+output-space (2 reachable functional states), NOT the entropy source (a_scale_honest_scope).
+Tiers: anu_paid (flat.anu_key_paid, 100 req/s) > anu_free (flat.anu_key_free) > anu_legacy keyless.
+
+=== M5 CEILING-LIFT (richer task · 2026-06-06) ===
+PLASTICITY/h923_richtask_probe.py — same ANU quantum init-injection, richer task
+(FC units=64, 24 varied NON-degenerate patterns) on fresh 2048B ANU draw (module
+multi-chunk, anu_paid, sha 9df773e662011ce52f78186eafdc2609133eb4e1e51b131fa4000245d586c191):
+  D1_functional_output_diversity = 16/16 (was 2 on the toy task) · D3_determinism_preserved = True.
+=> DECISIVE: the D1=2 ceiling was the TOY TASK output-space, NOT the entropy source. With a
+richer task, every one of the 16 ANU-quantum-seeded inits yields a DISTINCT functional output
+(full saturation), while the chip stays deterministic (D3). The coupling delivers entropy-sourced
+functional diversity up to the task's capacity. Honest C3 (D1=2 toy) is now confirmed by lift.
+
+=== M6 R2-NOISE INJECTION (② spontaneous-firing entropy · 2026-06-06) ===
+SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py — wired ANU quantum into anima's ONLY
+stochastic spontaneous-firing source (R2 zero+noise regime). env ANIMA_QRNG_NOISE_BIN arms it.
+live AKD1000 run, fresh ANU 4096B (anu_pull.py, anu_paid, sha cd4d76481749492a1cfab785363582e8be27b60308ee8da34b9459143c126f64):
+  r2_noise_source = anu_quantum (provenance sha matches)
+  R2_zero_noise   = 1424 spikes, step_varies=True   -> stochastic spontaneous firing ALIVE, now quantum-sourced + auditable
+  R3_tonic_zero_input = 1600 spikes, step_varies=False -> DETERMINISTIC regime UNAFFECTED (DECODER-invariant preserved)
+=> anima's substrate-native spontaneous-firing stochasticity is now drawn from audited ANU vacuum-
+fluctuation entropy; the deterministic regimes (R3 tonic) stay byte-deterministic.
+
+③ emit-seed finding (HONEST): CORE/brain.hexa brain_decide is ALREADY deterministic — emit is a
+pure function of substrate state (8-factor motivation x safety), NO PRNG. anima's emit has no
+sampling seed to replace (the GPU `temperature` sampling lives in the SEPARATE serving/ ALM path,
+not the substrate brain emit). ∴ R2-noise (② , now done) is anima's sole stochastic injection point.
+
+=== M7 PRODUCTION HW-LEARNING WIRE (edge_learn_probe.py · 2026-06-06) ===
+SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py — the PRODUCTION PLASTICITY edge-learn (NOT just the
+H_923 probe). env ANIMA_QRNG_LEARN_BIN now sources its few-shot on-chip AkidaUnsupervised training
+input from an ANU buffer instead of numpy default_rng(42).
+live AKD1000, fresh ANU 256B (anu_pull.py, anu_paid, sha 79736a80009f9d3b4554396fe495ccb0cd1dae3b6743090920fc02d62250b07c):
+  learn_input_source = anu_quantum (provenance sha matches)
+  compile_AkidaUnsupervised = ok · fit_on_chip = ok · edge_learning_supported = True
+=> the production on-chip Hebbian learning now consumes audited ANU quantum training samples,
+   provenance-tracked. HW-LEARNING side is wired (probe H_923 + production edge_learn_probe.py).
+
+HW quantum-injection coverage (final):
+  · learning init-seed  -> h923 probe (PASS, D1 2->16)          DONE
+  · learning input      -> edge_learn_probe.py (M7, on-chip)    DONE
+  · spontaneous R2-noise-> spontaneous_emission.py (M6)         DONE
+  · inference DECODER   -> intentionally deterministic          INVARIANT (not wired, by design)

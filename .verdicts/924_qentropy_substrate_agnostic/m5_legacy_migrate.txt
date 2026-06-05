@@ -1,0 +1,59 @@
+H_924 M5 — migrate AKIDA R2-noise + edge-learn-input onto the qentropy SSOT
+(legacy env back-compat). Substrate = SW Mac ($0), helper logic exercised in
+isolation (akida import-guarded by a stub module; no device code executed).
+
+FILES MIGRATED
+  SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py   (R2 noise, _noise_bytes)
+  SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py       (learn input, _learn_input)
+
+PRECEDENCE (backward-compatible; first match wins)
+  1. explicit LEGACY env (ANIMA_QRNG_NOISE_BIN / ANIMA_QRNG_LEARN_BIN) — if set,
+     read that ANU buffer directly, byte-for-byte as before (pi5/CI untouched).
+  2. qentropy SSOT — legacy env UNSET and SSOT importable:
+        R2 noise    -> qentropy.qentropy_uniform(n, 4, "akida_r2_noise")
+        learn input -> qentropy.qentropy_bits(n, "akida_learn_input").reshape(shape)
+     policy = ANIMA_ENTROPY_MODE (quantum DEFAULT / deterministic AUXILIARY).
+  3. numpy PRNG — neither env nor SSOT available (script still runs standalone).
+  Provenance prefers qentropy.last_provenance(); output FIELD NAMES KEPT
+  (r2_noise_source / r2_noise_provenance · learn_input_source / learn_input_provenance)
+  so downstream JSON parsing is unbroken. qentropy imported via sys.path insert of
+  mirror/qmirror/seed (3 levels up) inside try/except — soft dependency.
+
+SYNTAX-OK (Mac $0)
+  $ python3 -c "import ast; ast.parse(open('<f>').read())"
+  spontaneous_emission.py : AST OK
+  edge_learn_probe.py     : AST OK
+  (both report "AST OK both")
+
+HELPER EVIDENCE — spontaneous_emission._noise_bytes  (akida stub-guarded harness)
+  quantum (no legacy env):
+    legacy env set?  False    qentropy imported?  True
+    _noise_bytes(8) = [3.0, 1.0, 1.0, 2.0, 2.0, 3.0, 2.0, 1.0]  dtype=float32
+    all in 0..3?  True
+    r2_noise_source = anu_quantum
+    provenance.entropy_mode = quantum   inner mode = quantum
+  back-compat (ANIMA_QRNG_NOISE_BIN set, buffer bytes 0..15):
+    legacy env set?  True    qentropy consulted (None)?  None   <- legacy wins, SSOT not imported
+    _noise_bytes(8) = [0.0, 1.0, 2.0, 3.0, 0.0, 1.0, 2.0, 3.0]  (low 2 bits of 0..7)
+    all 0..3?  True
+    r2_noise_source = anu_quantum   path = legacy_env_ANIMA_QRNG_NOISE_BIN
+  deterministic auxiliary (A/B toggle, ANIMA_ENTROPY_MODE=deterministic):
+    _noise_bytes(8) = [0.0, 0.0, 0.0, 2.0, 0.0, 0.0, 3.0, 1.0]  all 0..3?  True
+    r2_noise_source = numpy_prng_deterministic   mode = deterministic
+
+HELPER EVIDENCE — edge_learn_probe._learn_input  (akida stub-guarded harness)
+  quantum (no legacy env):
+    legacy env set?  False    qentropy imported?  True
+    learn_input shape = (8, 1, 1, 16)   uniq vals = [0, 1]   (binary bits)
+    learn_input_source = anu_quantum   mode = quantum   inner mode = quantum
+  back-compat (ANIMA_QRNG_LEARN_BIN set, buffer bytes 0..63):
+    legacy env set?  True    qentropy consulted (None)?  None   <- legacy wins
+    learn_input shape = (8, 1, 1, 16)   uniq vals = [0, 1]
+    learn_input_source = anu_quantum   path = legacy_env_ANIMA_QRNG_LEARN_BIN
+    sha256[:12] = fdeab9acf371
+
+VERDICT: 🟢 PASS — both device scripts migrated onto the qentropy SSOT with
+legacy-env precedence preserved (back-compat), quantum-default draws return the
+correct domains (R2 0..3 · learn {0,1}) with mode=='quantum' provenance, and the
+deterministic auxiliary toggles cleanly for A/B benchmarking. pi5 device behavior
+unchanged (legacy env still wins; akida import + device code untouched).
