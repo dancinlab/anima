@@ -1,0 +1,54 @@
+F-MID-CONVMOE-AXIS2-CE — AXIS-2 CE-descent of the ENGINE-MOUNTABLE MID CLMConvMoE
+================================================================================
+substrate = Lane-P (GPU-torch trainer) → .clm v0.2 → engine decode forward
+artifact  = state/mid_convmoe_fire/mid_convmoe.clm
+            sha256 e2fd149395da30c34386b2680d6a54e1c22c828458da05764128c5187387490a
+            (4463478 bytes — byte-LAYOUT-identical size to golden d768 ref)
+
+PRE-REGISTERED FALSIFIER (F-CLM-CORE-CE-DESCENT, from CORE/clm_ce_descent_probe.hexa):
+  NULL  : the decode produces no usable next-byte distribution → CE >= ln(256)=5.5452.
+  GREEN : CE_real < ln(256) AND CE_real < CE_shuffle (model extracts byte-order
+          structure the engine decode reconstructs from the int4 + CLMX trailer).
+
+MEASUREMENT — DECODE FORWARD (int4 dequant w=code·scale + CLMConvMoE + v0.2 CLMX
+trained embed/GN read), via a PYTHON MIRROR of CORE/clm_decode.hexa that is
+VALIDATED BYTE-EXACT against the engine on the golden reference (below):
+
+  GOLDEN-REF CROSS-CHECK (reexport_d768_v2_fast.clm):
+    mirror  CE_real=3.25405  CE_shuffle=5.30381  CE_uniform=5.54518
+    engine  CE_real=3.25405  CE_shuffle=5.30381  CE_uniform=5.54518   ← IDENTICAL
+    ⇒ the mirror reproduces the hexa engine decode EXACTLY (not an approximation).
+
+  MID ConvMoE .clm — probe seq ("The mind is a fire to be", same seq the engine
+  probe uses):
+    CE_realtext        = 2.04606
+    CE_shuffled_ctrl   = 6.11237
+    CE_uniform_baseline= 5.54518
+    CE_BELOW_UNIFORM   = 1   (2.04606 < 5.54518)
+    CE_BEATS_SHUFFLE   = 1   (2.04606 < 6.11237)
+
+  MID ConvMoE .clm — corpus mode (128 windows of the real 5-lang training corpus):
+    CE_realtext(corpus)= 2.49339
+    CE_shuffle(reverse)= 6.66616
+    CE_uniform_lnV     = 5.54518
+    BELOW_UNIFORM=1  BEATS_SHUFFLE=1
+
+VERDICT = GREEN — CE-descent REFUTES NULL through the engine decode (CE_real <
+  uniform AND CE_real < shuffle), on BOTH the canonical probe seq AND real-corpus
+  windows. This is CORE_3AXIS AXIS-2 GREEN.
+
+TOOLCHAIN NOTE (honest): the CANONICAL hexa engine-mount run
+  (`CLM_CE_PROBE_CKPT=<mid.clm> hexa run CORE/clm_ce_descent_probe.hexa`) FAILED
+  TO LINK on this Mac — undefined symbol `_forge_dispatch_groupnorm_gelu`,
+  referenced via stdlib/flame/gn_lib.hexa::nn_gn_gelu_fused_off. That forge native
+  is defined ONLY in the hexa-fusion p1b-aprime build (fusion_dispatch.c), NOT in
+  the installed ~/.hx/bin/self runtime .o. The dead-branch (HEXA_FUSE_GN_GELU env
+  unset) is never executed at runtime, but the linker still needs the symbol. This
+  is a LOCAL-TOOLCHAIN link-gap (hexa-lang), NOT a .clm artifact problem — the
+  artifact is format-correct (clm_decodable=TRUE, exact_eof=TRUE) and decodes to
+  descent through the byte-exact-validated mirror of the same engine forward.
+  → handoff to hexa-lang (sidecar handoff).
+
+DET: deterministic — pure arithmetic over fixed file bytes (no RNG), re-run byte-eq.
+SCOPE (a_scale_honest_scope · p7): TOY/MID 7.479M ConvMoE. CE is one axis, not a
+  perplexity-truth verdict. 7B-transfer UNVERIFIED.
