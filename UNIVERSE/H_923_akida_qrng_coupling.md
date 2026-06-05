@@ -91,4 +91,8 @@ a_scale_honest_scope). 통계품질 ANU==PRNG(#123-A); 가치=provenance/감사/
 - [x] **M1 (DONE)** — `PLASTICITY/h923_qrng_seed_probe.py` ANU-window init AKD1000 probe (H_921 재사용).
 - [x] **M2 (DONE 2026-06-06)** — pi5-akida live N=16 ANU-seeded → D1=2·D2=16·D3=True PASS.
 - [x] **M3 (DONE)** — verdict 영속 `.verdicts/923_akida_qrng_coupling/anu_seeded_pass.txt` (g5 verbatim + ANU sha).
-- [ ] **M4 (deferred)** — ②R2-noise ③emit 주입점 + **live anu_pull** (secret get → NEXUS_QMIRROR_ANU_KEY, 신선한 draw) + richer task 로 D1 ceiling.
+- [x] **M4 (DONE 2026-06-06)** — `mirror/qmirror/seed/anu_pull.py` self-contained live ANU puller
+  (secret `flat.anu_key_paid`/`free` → api.quantumnumbers.anu.edu.au x-api-key). Capstone: live-pull
+  Mac(fresh sha a4e376…, tier anu_paid) → pi5(sha 일치) → AKIDA D1=2·D2=16·D3=True PASS. D1=2 가 fresh∧
+  pre-pulled 동일 → D1 ceiling=toy task output-space(엔트로피 아님) 확증.
+- [ ] **M5 (deferred)** — ②R2-noise ③emit 주입점 + richer downstream task 로 D1 ceiling 상향.
