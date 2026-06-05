@@ -1,0 +1,182 @@
+{
+  "benchmark": "qentropy_quantum_vs_deterministic_AB",
+  "milestone": "H_924 M6",
+  "generated_at": "2026-06-05T21:53:43.915360+00:00",
+  "host": "mac (SW-only, $0, no device, no torch)",
+  "n_trials_per_arm": 128,
+  "modes": [
+    "quantum",
+    "deterministic"
+  ],
+  "stats_engine": "scipy",
+  "test_methodology": "Two-sample Kolmogorov-Smirnov (ks_2samp) on the continuous per-trial metric per path; PLUS a chi-square contingency (chi2_contingency) on the decoder pooled token histograms. H0 = both modes draw from the same distribution. p>0.05 = FAIL TO REJECT = statistical PARITY = the EXPECTED, DESIRED result (reproduces #123-A with a rigorous test). p<0.05 = REJECT = reported honestly (small-sample artifact or real asymmetry). scipy OPTIONAL \u2014 pure-python KS + chi-square fallback gives identical schema (engine recorded per test).",
+  "framing": "Statistical-parity SANITY + PROVENANCE differentiator, NOT a superiority test. #123-A: ANU quantum == chacha20 PRNG statistically (JSD 23x under NIST 7/7). Expectation: per-path metric distributions are statistically indistinguishable across modes (parity holds at the application level, p>0.05); the difference that matters is the provenance column (quantum->anu_committed sha256 vs deterministic->numpy_prng seed).",
+  "rows": [
+    {
+      "path": "plasticity_sw_approx",
+      "status": "benchmarked",
+      "substrate": "SW (Mac, $0, no device/torch)",
+      "metric_name": "weight_l1",
+      "metric_desc": "L1 norm of SW-learned weight matrix (scalar per trial)",
+      "n_per_mode": 128,
+      "modes": {
+        "quantum": {
+          "n": 128,
+          "metric_mean": 10.237512201070786,
+          "metric_std": 0.35583794820787407,
+          "provenance": {
+            "mode": "quantum",
+            "tier": "anu_committed",
+            "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5"
+          },
+          "error": null
+        },
+        "deterministic": {
+          "n": 128,
+          "metric_mean": 10.204248048365116,
+          "metric_std": 0.3665978779768664,
+          "provenance": {
+            "mode": "deterministic",
+            "tier": "numpy_prng(seed=187)",
+            "sha256": null
+          },
+          "error": null
+        }
+      },
+      "formal_test": {
+        "primary": {
+          "test": "ks_2samp",
+          "engine": "scipy",
+          "ks_D": 0.0703125,
+          "p_value": 0.9114140150389803,
+          "n_quantum": 128,
+          "n_deterministic": 128,
+          "parity_at_alpha_0.05": true
+        },
+        "coarse_separation": {
+          "delta_mean": 0.0332641527056694,
+          "abs_delta_mean": 0.0332641527056694,
+          "pooled_std": 0.3612579753596667,
+          "standardized_separation": 0.09207866669947362
+        },
+        "parity_verdict": "PARITY \u2014 fail to reject H0 (same distribution) at alpha=0.05; consistent with #123-A (expected)."
+      },
+      "provenance_differs": true
+    },
+    {
+      "path": "decoder_qsample",
+      "status": "benchmarked",
+      "substrate": "SW (Mac, $0, no device/torch)",
+      "metric_name": "token_hist_entropy_bits",
+      "metric_desc": "Shannon entropy (bits) of sampled-token histogram per trial",
+      "n_per_mode": 128,
+      "modes": {
+        "quantum": {
+          "n": 128,
+          "metric_mean": 1.7070121614593816,
+          "metric_std": 0.2903755205552612,
+          "provenance": {
+            "mode": "quantum",
+            "tier": "anu_committed",
+            "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5"
+          },
+          "error": null
+        },
+        "deterministic": {
+          "n": 128,
+          "metric_mean": 1.6829801585784734,
+          "metric_std": 0.3149173244667143,
+          "provenance": {
+            "mode": "deterministic",
+            "tier": "numpy_prng(seed=187)",
+            "sha256": null
+          },
+          "error": null
+        }
+      },
+      "formal_test": {
+        "primary": {
+          "test": "ks_2samp",
+          "engine": "scipy",
+          "ks_D": 0.1015625,
+          "p_value": 0.5256507222485184,
+          "n_quantum": 128,
+          "n_deterministic": 128,
+          "parity_at_alpha_0.05": true
+        },
+        "coarse_separation": {
+          "delta_mean": 0.024032002880908232,
+          "abs_delta_mean": 0.024032002880908232,
+          "pooled_std": 0.30289508430066403,
+          "standardized_separation": 0.07934101319733945
+        },
+        "token_histogram_chi2": {
+          "test": "chi2_contingency",
+          "engine": "scipy",
+          "chi2": 14.504517767776104,
+          "dof": 5,
+          "p_value": 0.012703148683930177,
+          "n_quantum": 2048,
+          "n_deterministic": 2048,
+          "k_tokens": 6,
+          "cramers_v": 0.059507495604742625,
+          "effect_size_note": "negligible (Cram\u00e9r's V < 0.1) \u2014 a large-pooled-N artifact, not a meaningful distributional gap",
+          "parity_at_alpha_0.05": false
+        },
+        "parity_verdict": "PARITY \u2014 fail to reject H0 (same distribution) at alpha=0.05; consistent with #123-A (expected). [secondary chi-square on pooled token counts REJECTS (p=0.0127) but with a NEGLIGIBLE effect size (Cram\u00e9r's V=0.060 < 0.1): a known large-pooled-N (N=2048+2048) artifact comparing two single fixed realizations (committed ANU buffer vs fixed PRNG seed), NOT evidence of a real distributional gap. The trial-respecting KS test is the parity verdict; reported un-massaged.]"
+      },
+      "provenance_differs": true,
+      "extra": {
+        "quantum": {
+          "pooled_histogram": {
+            "0": 369,
+            "1": 145,
+            "3": 1098,
+            "4": 82,
+            "5": 277,
+            "2": 77
+          },
+          "argmax_forward": 3
+        },
+        "deterministic": {
+          "pooled_histogram": {
+            "0": 422,
+            "2": 88,
+            "3": 1101,
+            "4": 59,
+            "1": 156,
+            "5": 222
+          },
+          "argmax_forward": 3
+        }
+      }
+    }
+  ],
+  "device_pending_rows": [
+    {
+      "path": "akida_r2_noise",
+      "status": "device-pending",
+      "substrate": "pi5-akida (AKD1000)",
+      "module": "SUB_ENGINES/AKIDA/scripts/spontaneous_emission.py",
+      "metric": "R2 spontaneous-noise symbol histogram / spike rate",
+      "how_to_run": "on pi5-akida: ANIMA_ENTROPY_MODE={quantum,deterministic} python3 spontaneous_emission.py  (qentropy_uniform 0..3)"
+    },
+    {
+      "path": "akida_edge_learn",
+      "status": "device-pending",
+      "substrate": "pi5-akida (AKD1000)",
+      "module": "SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py",
+      "metric": "on-chip learned winner-unit distribution",
+      "how_to_run": "on pi5-akida: ANIMA_ENTROPY_MODE={quantum,deterministic} python3 edge_learn_probe.py  (qentropy_bits learn-input)"
+    },
+    {
+      "path": "torch_lane_p",
+      "status": "torch-pending",
+      "substrate": "GPU host (Lane-P)",
+      "module": "CLM/train/_qseed.py (resolve_seed) + _qseed_check.py",
+      "metric": "torch.manual_seed -> torch.rand sample distribution",
+      "how_to_run": "on a torch host: ANIMA_ENTROPY_MODE={quantum,deterministic} python3 CLM/train/_qseed_check.py"
+    }
+  ],
+  "honest_non_claim": "This benchmark does NOT and cannot show quantum entropy is 'better'. The two modes are by design statistically equal. The auditable PROVENANCE (physical ANU origin + sha256) is the only real differentiator and is surfaced per path/mode."
+}

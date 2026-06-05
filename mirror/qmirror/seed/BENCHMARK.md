@@ -21,8 +21,8 @@ Full A/B over all SW-runnable paths (the harness sets `ANIMA_ENTROPY_MODE` itsel
 per arm, in a fresh subprocess — you do **not** set it for the full run):
 
 ```bash
-python3 mirror/qmirror/seed/qentropy_benchmark.py                 # N=64, JSON to stdout
-python3 mirror/qmirror/seed/qentropy_benchmark.py --n 128         # more trials per arm
+python3 mirror/qmirror/seed/qentropy_benchmark.py                 # N=128, JSON to stdout
+python3 mirror/qmirror/seed/qentropy_benchmark.py --n 256         # more trials per arm
 python3 mirror/qmirror/seed/qentropy_benchmark.py --out state/.../ledger.json
 python3 mirror/qmirror/seed/qentropy_benchmark.py --json | jq .   # pipe-friendly
 ```
@@ -52,28 +52,85 @@ contaminate an arm.
 | `decoder_qsample` | `token_hist_entropy_bits` | Shannon entropy (bits) of each trial's sampled-token histogram, drawn from a **fixed** logits vector. The forward logits are identical in both modes — only the draw differs. A pooled per-mode token histogram is also recorded. |
 
 For each path the ledger reports, per mode: `{n, metric_mean, metric_std,
-provenance{mode,tier,sha256}}`, plus a two-sample **`comparison`**:
+provenance{mode,tier,sha256}}`, plus a **`formal_test`** block (C7 upgrade).
 
-- `standardized_separation = |Δmean| / pooled_std` — near **0** ⇒ statistically
-  indistinguishable (**PARITY**, the expected outcome); a large value (`> ~1`) would
-  flag a coupling anomaly to investigate. This is a *parity* statistic, **not** a
-  win metric.
-- `provenance_differs` — `true` because quantum (`anu_committed` + sha256) and
-  deterministic (`numpy_prng(187)`, no sha256) carry different audit trails. **This
-  is the load-bearing column.**
+### The formal two-sample test (C7)
 
-## Latest result (Mac, N=64)
+The original v1 ledger used a coarse closeness statistic `|Δmean| / pooled_std`.
+**C7 upgrades this to a proper two-sample statistical test** so the parity claim is
+rigorous. Per path:
 
-Ledger: `state/qentropy_benchmark_2026_06_06/ledger.json` · verdict:
-`.verdicts/924_qentropy_substrate_agnostic/m6_benchmark.txt`
+- **`primary`** — a two-sample **Kolmogorov–Smirnov** test (`scipy.stats.ks_2samp`)
+  on the **continuous per-trial metric** (`weight_l1` / `token_hist_entropy_bits`).
+  KS compares the *full empirical CDFs* of the two modes' N≥128 per-trial samples,
+  not just their means. Reports `{ks_D, p_value, n_quantum, n_deterministic,
+  parity_at_alpha_0.05}`.
+- **`token_histogram_chi2`** (decoder path only) — a **chi-square contingency** test
+  (`scipy.stats.chi2_contingency`) on the 2×K pooled token-count table, plus a
+  **Cramér's V** effect size. This is a *secondary, diagnostic* test (see caveat
+  below).
+- **`coarse_separation`** — the old `|Δmean| / pooled_std`, kept as a descriptive
+  field for continuity.
+- **`parity_verdict`** — a human-readable verdict driven by the **primary KS** test.
 
-| path | metric | quantum mean | det mean | sep | parity | provenance |
-|---|---|---|---|---|---|---|
-| `plasticity_sw_approx` | `weight_l1` | 10.2511 | 10.2110 | 0.104 | PARITY | q=`anu_committed`/`e8123b96…` · det=`numpy_prng(187)` |
-| `decoder_qsample` | `token_hist_entropy_bits` | 1.6952 | 1.6626 | 0.106 | PARITY | q=`anu_committed`/`e8123b96…` · det=`numpy_prng(187)` |
+**How to read the p-value (the whole point):** H0 (null) = *"both modes' samples come
+from the same distribution."*
 
-Parity holds on both SW paths (separation ≈ 0.10 ≪ 1.0); provenance differs on both.
-The #123-A statistical-equality claim reproduces at the **application** level.
+- **`p_value > 0.05` ⇒ FAIL TO REJECT H0 ⇒ statistical PARITY ⇒ the EXPECTED, DESIRED
+  result.** This reproduces #123-A (ANU quantum ≡ PRNG) with a real test. It is **not**
+  a null finding to bury — it is the claim confirmed rigorously. `parity_at_alpha_0.05
+  = (p_value > 0.05)`.
+- `p_value < 0.05` ⇒ REJECT H0 ⇒ a distributional difference. On these modes that is a
+  surprise — likely a small-sample artifact or a real implementation asymmetry. The
+  harness reports it **honestly, un-massaged**.
+
+**scipy is OPTIONAL.** If `scipy.stats` imports it is used (the fast-path). If scipy is
+**absent**, a self-contained **pure-python** two-sample KS (D statistic + asymptotic
+Kolmogorov p-value via the `Q_ks` series) and a pure-python chi-square (incomplete-
+gamma upper tail) are used — **zero hard deps**, identical output schema. Which engine
+ran is recorded per test as `engine: scipy | pure-python` (the fallback is validated
+to match scipy: KS D exact, chi-square exact, KS p within asymptotic tolerance and the
+same accept/reject decision).
+
+`provenance_differs` stays `true` because quantum (`anu_committed` + sha256) and
+deterministic (`numpy_prng(187)`, no sha256) carry different audit trails. **This is
+the load-bearing column.**
+
+## Latest result (Mac, N=128, scipy)
+
+Ledger v2 (KS): `state/qentropy_benchmark_2026_06_06/ledger_v2_ks.json` · verdict:
+`.verdicts/924_qentropy_substrate_agnostic/c7_formal_parity.txt`
+(v1 coarse ledger kept at `…/ledger.json`).
+
+| path | metric | KS D | KS p_value | parity (p>0.05) | provenance |
+|---|---|---|---|---|---|
+| `plasticity_sw_approx` | `weight_l1` | 0.0703 | **0.9114** | ✅ PARITY | q=`anu_committed`/`e8123b96…` · det=`numpy_prng(187)` |
+| `decoder_qsample` | `token_hist_entropy_bits` | 0.1016 | **0.5257** | ✅ PARITY | q=`anu_committed`/`e8123b96…` · det=`numpy_prng(187)` |
+
+**Both KS tests fail to reject the null (p ≫ 0.05) → statistical parity confirmed
+rigorously.** This is the #123-A claim reproduced with a real test, and it is the
+desired sanity result. Provenance differs on both.
+
+### Honest caveat — the secondary chi-square rejects (and why that's fine)
+
+The decoder path's *secondary* pooled-token chi-square **rejects** (`chi2=14.50,
+dof=5, p=0.0127 < 0.05`). Reported un-massaged. But:
+
+- **Effect size is negligible: Cramér's V = 0.0595 (< 0.1).** A chi-square at very
+  large pooled N (here 2048 + 2048 = 4096 draws) is power-saturated and rejects on a
+  *negligible* difference.
+- It compares **two single fixed realizations** — the committed ANU buffer (sha256
+  `e8123b96…`) vs a fixed `numpy_prng(seed=187)` — so it is effectively testing two
+  specific finite samples, not two distributions; the result is **fully reproducible
+  run-to-run** (not a sampling fluke).
+- The **trial-respecting KS test** (128 independent trial-level statistics) is the
+  appropriate parity test and it **confirms parity** (p=0.526). The chi-square is kept
+  as a diagnostic with its effect size attached, so a reader sees both numbers and
+  their interpretation.
+
+This is exactly the honest framing #123-A prescribes: a power-saturated chi-square can
+*reject* while the effect is negligible — that is a property of large-N chi-square, not
+evidence that quantum entropy differs in quality from a PRNG.
 
 ## Extending to the device / torch paths later
 

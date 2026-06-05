@@ -290,6 +290,51 @@ closed-negative runs, intermediate ckpts) are intentionally omitted (governance 
 [CLM](https://huggingface.co/collections/dancinlab/clm-6a1cf58f621490134dade186) ·
 [KOSMOS](https://huggingface.co/collections/dancinlab/kosmos-6a1cf58db47a5dc3cb697e95)
 
+## Entropy policy — quantum-default, deterministic-auxiliary (qentropy SSOT)
+
+All randomness in anima flows through a single source of truth:
+[`mirror/qmirror/seed/qentropy.py`](mirror/qmirror/seed/qentropy.py). Every entropy consumer
+imports it instead of calling `random`/`numpy`/`torch` seeding directly — so the provenance of
+*every* draw is auditable from one place. API: `qentropy_bits/bytes/uniform(n, hi, label)`,
+`seed(label)`, `rng(label)`, plus `last_provenance()` and `mode()`.
+
+**Two modes, one toggle** — `ANIMA_ENTROPY_MODE` (`quantum` | `deterministic`):
+
+| Mode | Default | Source | Why it exists |
+|---|---|---|---|
+| `quantum` | ✅ default | ANU vacuum-fluctuation bytes (real QRNG) | ontology + provenance; the auditable substrate-native entropy path |
+| `deterministic` | auxiliary | seeded PRNG | bit-exact reproducibility + the **A/B benchmark control arm** |
+
+Both arms are first-class on purpose: `deterministic` gives reproducible runs and the control
+side of the A/B benchmark, while `quantum` is the default substrate path.
+
+**Quantum resolution order** (first available wins; the chosen source is recorded in
+`last_provenance()`):
+
+1. `ANIMA_QRNG_BUF` — an explicit caller-supplied buffer path.
+2. committed `mirror/qmirror/seed/qrng_lora_init_live.bin` — real ANU vacuum-fluctuation bytes.
+3. opt-in live pull via [`anu_pull.py`](mirror/qmirror/seed/anu_pull.py) — set `ANIMA_QRNG_LIVE=1`;
+   secret-keyed (`flat.anu_key_paid` / `flat.anu_key_free`), no key in the tree.
+4. tagged safe-fallback PRNG — clearly labelled in the provenance so a fallback never masquerades
+   as quantum.
+
+**Run the benchmark:**
+
+```bash
+python mirror/qmirror/seed/qentropy_benchmark.py   # see mirror/qmirror/seed/BENCHMARK.md
+```
+
+**Honest non-claim (#123-A).** ANU quantum entropy is *statistically indistinguishable* from a
+chacha20 PRNG (JSD 0.000433, NIST 7/7 pass). The quantum path is **not** "better randomness" and
+makes **no consciousness claim**. Its only value is **provenance, auditability, and ontology** —
+knowing each draw traces to a physical vacuum-fluctuation source rather than a software generator.
+
+Wired consumers: AKIDA edge-learn input + R2 spontaneous noise (`SUB_ENGINES/AKIDA/scripts/`),
+SW numpy learning (`PLASTICITY/plasticity_sw_approx.py`), DECODER sampling
+(`CORE/DECODER/decoder_qsample.py`), torch Lane-P seed (`CLM/train/_qseed.py`). Verdicts:
+[`.verdicts/924_qentropy_substrate_agnostic/`](.verdicts/924_qentropy_substrate_agnostic/);
+discovery write-up: [`UNIVERSE/H_924_qentropy_substrate_agnostic.md`](UNIVERSE/H_924_qentropy_substrate_agnostic.md).
+
 ## License
 
 [MIT](LICENSE) — Copyright (c) 2026 dancinlab. Use, modify, sublicense, sell freely; include the

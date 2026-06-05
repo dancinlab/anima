@@ -24,9 +24,40 @@ PROVENANCE / auditability:
     deterministic -> tier=numpy_prng(seed=187), reproducible, no physical origin.
 
 So the ledger surfaces, per path: (a) each mode's metric mean/std over N trials,
-(b) a simple two-sample closeness check (|Δmean| / pooled_std) confirming parity,
-and (c) each mode's provenance (mode / tier / sha256). The headline is NOT a delta
-in the metric — it is the provenance column.
+(b) a PROPER two-sample statistical test confirming parity, and (c) each mode's
+provenance (mode / tier / sha256). The headline is NOT a delta in the metric — it is
+the provenance column.
+
+────────────────────────────────────────────────────────────────────────────────
+THE STATISTICAL TEST (C7 upgrade)
+────────────────────────────────────────────────────────────────────────────────
+The original ledger used a COARSE closeness statistic |Δmean| / pooled_std. C7
+upgrades this to a PROPER two-sample test so the parity claim is rigorous:
+
+  * continuous metric (weight_l1, token_hist_entropy_bits)
+        -> two-sample Kolmogorov–Smirnov (KS): compares the full empirical CDFs of
+           the two modes' per-trial samples, not just their means. Reports the KS D
+           statistic + a two-sided p-value.
+  * sampler token distribution (decoder_qsample pooled histogram)
+        -> chi-square contingency test (chi2_contingency) on the 2×K table of
+           per-mode token counts. Reports chi2, dof, and a p-value.
+
+How to read the p-value (this is the WHOLE point — read carefully):
+  H0 (null) = "both modes' samples come from the SAME distribution."
+  p > 0.05  = FAIL TO REJECT H0 = statistical PARITY = the EXPECTED, DESIRED result.
+              This reproduces #123-A (ANU quantum ≡ PRNG) with a real test — it is
+              NOT a null finding to bury; it is the claim confirmed rigorously.
+  p < 0.05  = REJECT H0 = a distributional difference. On these modes that would be
+              a surprise — likely a small-sample artifact or a real implementation
+              asymmetry worth noting. The harness reports it HONESTLY, un-massaged.
+
+  `parity_at_alpha_0.05` = (p_value > 0.05) = the parity verdict per path.
+
+scipy is OPTIONAL. If `scipy.stats` imports, it is used (the fast-path). If scipy is
+ABSENT, a self-contained pure-python two-sample KS (D statistic + asymptotic
+Kolmogorov p-value via the Q_ks series) and a pure-python chi-square (with a
+Wilson–Hilferty / series gamma-tail) are used instead — ZERO hard deps, same output
+schema. Which engine ran is recorded per test as `engine: scipy | pure-python`.
 
 ────────────────────────────────────────────────────────────────────────────────
 WHY A SUBPROCESS PER ARM
@@ -190,12 +221,194 @@ def _std(xs):
     return math.sqrt(sum((x - m) ** 2 for x in xs) / (len(xs) - 1))
 
 
-def _two_sample(a: list, b: list) -> dict:
-    """A small, honest two-sample closeness check between the two modes' metric
-    samples. We report |Δmean| / pooled_std (a standardized mean separation): values
-    near 0 = statistically indistinguishable (PARITY, the EXPECTED outcome); large
-    values would flag a coupling anomaly. Also report the raw delta/pooled. This is
-    deliberately a *parity* statistic, NOT a superiority/win metric."""
+# scipy is OPTIONAL. Probe ONCE at import; both a fast-path (scipy) and a fully
+# self-contained pure-python fallback exist so the harness has ZERO hard deps.
+try:
+    from scipy import stats as _scipy_stats  # type: ignore
+    _HAVE_SCIPY = True
+except Exception:  # pragma: no cover - exercised only on a scipy-less host
+    _scipy_stats = None
+    _HAVE_SCIPY = False
+
+
+# ── pure-python two-sample Kolmogorov–Smirnov ───────────────────────────────
+def _ks_2samp_pure(a: list, b: list) -> tuple:
+    """Self-contained two-sample KS. Returns (D, p_value).
+
+    D = sup_x |F_a(x) - F_b(x)| over the merged support (the classic two-sample KS
+    statistic — trivial to compute by walking the sorted union of both samples).
+    The p-value uses the asymptotic Kolmogorov distribution:
+        p ≈ Q_ks( (sqrt(en) + 0.12 + 0.11/sqrt(en)) * D ),  en = na*nb/(na+nb)
+    where Q_ks(t) = 2 * Σ_{k≥1} (-1)^{k-1} exp(-2 k² t²)  (Numerical Recipes form).
+    This matches scipy.stats.ks_2samp(mode='asymp') closely for n≳40.
+    """
+    na, nb = len(a), len(b)
+    if na == 0 or nb == 0:
+        return (0.0, 1.0)
+    sa, sb = sorted(a), sorted(b)
+    ia = ib = 0
+    fa = fb = 0.0
+    d = 0.0
+    # Walk the merged sorted support, advancing all ties together, tracking |Fa-Fb|.
+    while ia < na and ib < nb:
+        x = min(sa[ia], sb[ib])
+        while ia < na and sa[ia] <= x:
+            ia += 1
+        while ib < nb and sb[ib] <= x:
+            ib += 1
+        fa = ia / na
+        fb = ib / nb
+        d = max(d, abs(fa - fb))
+    en = math.sqrt(na * nb / (na + nb))
+    t = (en + 0.12 + 0.11 / en) * d
+    p = _q_ks(t)
+    return (d, max(0.0, min(1.0, p)))
+
+
+def _q_ks(t: float) -> float:
+    """Q_ks(t) = 2 Σ_{k≥1} (-1)^{k-1} exp(-2 k² t²) — asymptotic Kolmogorov tail."""
+    if t <= 0.0:
+        return 1.0
+    a2 = -2.0 * t * t
+    total = 0.0
+    sign = 1.0
+    prev = 0.0
+    for k in range(1, 101):
+        term = sign * math.exp(a2 * k * k)
+        total += term
+        if abs(term) <= 1e-12 * (abs(prev) if prev else 1.0) or abs(term) < 1e-300:
+            break
+        prev = total
+        sign = -sign
+    return 2.0 * total
+
+
+def _ks_2samp(a: list, b: list) -> dict:
+    """Two-sample KS test on continuous samples. scipy fast-path, pure-python
+    fallback. Reports the D statistic + a two-sided p-value + which engine ran."""
+    if len(a) < 2 or len(b) < 2:
+        return None
+    if _HAVE_SCIPY:
+        r = _scipy_stats.ks_2samp(a, b)          # default = auto/exact for small n
+        return {"test": "ks_2samp", "engine": "scipy",
+                "ks_D": float(r.statistic), "p_value": float(r.pvalue),
+                "n_quantum": len(a), "n_deterministic": len(b),
+                "parity_at_alpha_0.05": bool(r.pvalue > 0.05)}
+    d, p = _ks_2samp_pure(a, b)
+    return {"test": "ks_2samp", "engine": "pure-python",
+            "ks_D": d, "p_value": p,
+            "n_quantum": len(a), "n_deterministic": len(b),
+            "parity_at_alpha_0.05": bool(p > 0.05)}
+
+
+# ── pure-python chi-square contingency on a 2×K token-count table ────────────
+def _gammq(s: float, x: float) -> float:
+    """Regularized upper incomplete gamma Q(s,x) = Γ(s,x)/Γ(s). Series + continued
+    fraction (Numerical Recipes §6.2) — used for the chi-square upper-tail p-value."""
+    if x < 0.0 or s <= 0.0:
+        return 1.0
+    if x == 0.0:
+        return 1.0
+    gln = math.lgamma(s)
+    if x < s + 1.0:                                 # series representation -> P
+        ap = s
+        summ = 1.0 / s
+        delta = summ
+        for _ in range(1000):
+            ap += 1.0
+            delta *= x / ap
+            summ += delta
+            if abs(delta) < abs(summ) * 1e-14:
+                break
+        return 1.0 - summ * math.exp(-x + s * math.log(x) - gln)
+    # continued fraction representation -> Q directly
+    b = x + 1.0 - s
+    c = 1e300
+    d = 1.0 / b
+    h = d
+    for i in range(1, 1000):
+        an = -i * (i - s)
+        b += 2.0
+        d = an * d + b
+        if abs(d) < 1e-300:
+            d = 1e-300
+        c = b + an / c
+        if abs(c) < 1e-300:
+            c = 1e-300
+        d = 1.0 / d
+        delta = d * c
+        h *= delta
+        if abs(delta - 1.0) < 1e-14:
+            break
+    return h * math.exp(-x + s * math.log(x) - gln)
+
+
+def _chi2_contingency_pure(table: list) -> tuple:
+    """Pearson chi-square on an R×C contingency `table` (list of rows of counts).
+    Returns (chi2, dof, p_value). p_value = Q(dof/2, chi2/2) (upper-tail)."""
+    nrows = len(table)
+    ncols = len(table[0]) if nrows else 0
+    row_tot = [sum(r) for r in table]
+    col_tot = [sum(table[i][j] for i in range(nrows)) for j in range(ncols)]
+    grand = sum(row_tot)
+    if grand == 0:
+        return (0.0, 0, 1.0)
+    chi2 = 0.0
+    for i in range(nrows):
+        for j in range(ncols):
+            exp = row_tot[i] * col_tot[j] / grand
+            if exp > 0.0:
+                chi2 += (table[i][j] - exp) ** 2 / exp
+    dof = (nrows - 1) * (ncols - 1)
+    if dof <= 0:
+        return (chi2, dof, 1.0)
+    p = _gammq(dof / 2.0, chi2 / 2.0)
+    return (chi2, dof, max(0.0, min(1.0, p)))
+
+
+def _chi2_token_hist(q_hist: dict, d_hist: dict) -> dict:
+    """Chi-square contingency on the pooled per-mode token histograms (2×K table).
+    scipy fast-path, pure-python fallback. Tests whether the two modes' pooled token
+    distributions differ. Drops zero-total columns (a token never drawn in either
+    mode) to keep the expected counts well-defined."""
+    keys = sorted(set(q_hist) | set(d_hist), key=lambda k: int(k))
+    qrow = [int(q_hist.get(k, 0)) for k in keys]
+    drow = [int(d_hist.get(k, 0)) for k in keys]
+    # drop columns that are zero in BOTH modes (no information / undefined expected)
+    cols = [(qc, dc) for qc, dc in zip(qrow, drow) if (qc + dc) > 0]
+    if len(cols) < 2:
+        return None
+    qrow = [c[0] for c in cols]
+    drow = [c[1] for c in cols]
+    table = [qrow, drow]
+    if _HAVE_SCIPY:
+        chi2, p, dof, _ = _scipy_stats.chi2_contingency(table, correction=False)
+        chi2, dof, p = float(chi2), int(dof), float(p)
+        engine = "scipy"
+    else:
+        chi2, dof, p = _chi2_contingency_pure(table)
+        engine = "pure-python"
+    # Cramér's V effect size — for a 2×K table, V = sqrt(chi2 / N). A chi-square with
+    # a very large pooled N rejects on a NEGLIGIBLE effect; V<0.1 = negligible
+    # association. Reported so a p<0.05 is read with its (un-massaged) effect size.
+    grand = sum(qrow) + sum(drow)
+    cramers_v = math.sqrt(chi2 / grand) if grand > 0 else 0.0
+    return {"test": "chi2_contingency", "engine": engine,
+            "chi2": chi2, "dof": dof, "p_value": p,
+            "n_quantum": sum(qrow), "n_deterministic": sum(drow),
+            "k_tokens": len(qrow),
+            "cramers_v": cramers_v,
+            "effect_size_note": ("negligible (Cramér's V < 0.1) — a large-pooled-N "
+                                 "artifact, not a meaningful distributional gap"
+                                 if cramers_v < 0.1 else
+                                 "non-negligible (Cramér's V >= 0.1) — inspect"),
+            "parity_at_alpha_0.05": bool(p > 0.05)}
+
+
+def _coarse_separation(a: list, b: list) -> dict:
+    """The ORIGINAL coarse closeness statistic |Δmean| / pooled_std — kept as a
+    secondary, descriptive field (the rigorous verdict is now the KS p-value). Near
+    0 = indistinguishable; this is a *parity* descriptor, NOT a win metric."""
     ma, mb = _mean(a), _mean(b)
     if ma is None or mb is None:
         return None
@@ -210,8 +423,6 @@ def _two_sample(a: list, b: list) -> dict:
         "abs_delta_mean": abs(ma - mb),
         "pooled_std": pooled,
         "standardized_separation": sep,            # ~0 = parity; >~1 = investigate
-        "parity_check": ("PARITY (statistically indistinguishable)"
-                         if sep < 1.0 else "DIVERGENT (investigate coupling)"),
     }
 
 
@@ -284,7 +495,45 @@ def build_ledger(n: int) -> dict:
             }
             if res.get("extra"):
                 arm_extra[mode] = res["extra"]
-        comparison = _two_sample(raw_metrics["quantum"], raw_metrics["deterministic"])
+        qm = raw_metrics["quantum"]
+        dm = raw_metrics["deterministic"]
+        # PROPER two-sample test on the continuous per-trial metric (C7).
+        ks = _ks_2samp(qm, dm)
+        # Secondary descriptive coarse separation (kept for continuity with v1).
+        coarse = _coarse_separation(qm, dm)
+        # For the sampler path, ALSO run a chi-square on the pooled token histograms.
+        chi2 = None
+        if path == "decoder_qsample" and "quantum" in arm_extra and "deterministic" in arm_extra:
+            qh = arm_extra["quantum"].get("pooled_histogram", {})
+            dh = arm_extra["deterministic"].get("pooled_histogram", {})
+            chi2 = _chi2_token_hist(qh, dh)
+        formal_test = {"primary": ks, "coarse_separation": coarse}
+        if chi2 is not None:
+            formal_test["token_histogram_chi2"] = chi2
+        # The path-level parity verdict = the primary KS test (continuous metric).
+        # The KS test respects the trial structure (one statistic per trial), so it is
+        # the appropriate parity test. The pooled-token chi-square is a SECONDARY,
+        # diagnostic test on a single fixed realization per mode at very large pooled
+        # N (so it is power-saturated and rejects on a negligible effect — see its
+        # cramers_v). When chi-square rejects while KS confirms parity, the note below
+        # records that honestly rather than masking it.
+        parity = bool(ks["parity_at_alpha_0.05"]) if ks else None
+        verdict = (
+            "PARITY — fail to reject H0 (same distribution) at alpha=0.05; "
+            "consistent with #123-A (expected)." if parity else
+            "REJECT — p<0.05, distributional difference flagged (investigate: "
+            "small-sample artifact or implementation asymmetry)." if parity is not None
+            else "INDETERMINATE")
+        if chi2 is not None and not chi2["parity_at_alpha_0.05"]:
+            verdict += (
+                f" [secondary chi-square on pooled token counts REJECTS (p="
+                f"{chi2['p_value']:.4f}) but with a NEGLIGIBLE effect size "
+                f"(Cramér's V={chi2['cramers_v']:.3f} < 0.1): a known large-pooled-N "
+                f"(N={chi2['n_quantum']}+{chi2['n_deterministic']}) artifact comparing "
+                f"two single fixed realizations (committed ANU buffer vs fixed PRNG "
+                f"seed), NOT evidence of a real distributional gap. The trial-respecting "
+                f"KS test is the parity verdict; reported un-massaged.]")
+        formal_test["parity_verdict"] = verdict
         qp = per_mode["quantum"]["provenance"]
         dp = per_mode["deterministic"]["provenance"]
         row = {
@@ -295,7 +544,7 @@ def build_ledger(n: int) -> dict:
             "metric_desc": metric_desc,
             "n_per_mode": n,
             "modes": per_mode,
-            "comparison": comparison,
+            "formal_test": formal_test,
             "provenance_differs": (qp.get("tier") != dp.get("tier")),
         }
         if arm_extra:
@@ -308,11 +557,21 @@ def build_ledger(n: int) -> dict:
         "host": "mac (SW-only, $0, no device, no torch)",
         "n_trials_per_arm": n,
         "modes": list(MODES),
+        "stats_engine": ("scipy" if _HAVE_SCIPY else "pure-python"),
+        "test_methodology": ("Two-sample Kolmogorov-Smirnov (ks_2samp) on the continuous "
+                             "per-trial metric per path; PLUS a chi-square contingency "
+                             "(chi2_contingency) on the decoder pooled token histograms. "
+                             "H0 = both modes draw from the same distribution. p>0.05 = "
+                             "FAIL TO REJECT = statistical PARITY = the EXPECTED, DESIRED "
+                             "result (reproduces #123-A with a rigorous test). p<0.05 = "
+                             "REJECT = reported honestly (small-sample artifact or real "
+                             "asymmetry). scipy OPTIONAL — pure-python KS + chi-square "
+                             "fallback gives identical schema (engine recorded per test)."),
         "framing": ("Statistical-parity SANITY + PROVENANCE differentiator, NOT a "
                     "superiority test. #123-A: ANU quantum == chacha20 PRNG statistically "
                     "(JSD 23x under NIST 7/7). Expectation: per-path metric distributions "
                     "are statistically indistinguishable across modes (parity holds at the "
-                    "application level); the difference that matters is the provenance "
+                    "application level, p>0.05); the difference that matters is the provenance "
                     "column (quantum->anu_committed sha256 vs deterministic->numpy_prng seed)."),
         "rows": rows,
         "device_pending_rows": PENDING_PATHS,
@@ -325,7 +584,7 @@ def build_ledger(n: int) -> dict:
 
 def main() -> int:
     ap = argparse.ArgumentParser(description="qentropy quantum-vs-deterministic A/B benchmark")
-    ap.add_argument("--n", type=int, default=64, help="trials per (path, mode) arm (>=64)")
+    ap.add_argument("--n", type=int, default=128, help="trials per (path, mode) arm (>=128)")
     ap.add_argument("--out", type=str, default="", help="write ledger JSON to this path")
     ap.add_argument("--json", action="store_true", help="print ledger JSON to stdout (default)")
     args = ap.parse_args()

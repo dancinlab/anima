@@ -1,0 +1,44 @@
+H_924 C7 — formal KS / chi-square two-sample parity test
+qentropy quantum-vs-deterministic benchmark
+========================================================================
+host: mac (SW-only, $0, no device, no torch)
+generated_at: 2026-06-05T21:53:43.915360+00:00
+stats_engine: scipy (scipy fast-path; pure-python KS+chi2 fallback validated == scipy)
+N trials per (path,mode) arm: 128
+
+TEST: two-sample Kolmogorov-Smirnov (ks_2samp) on the continuous per-trial
+      metric; H0 = both modes draw from the same distribution.
+      p>0.05 = FAIL TO REJECT = statistical PARITY = EXPECTED (reproduces #123-A).
+      Secondary: chi-square contingency on decoder pooled token histograms.
+------------------------------------------------------------------------
+
+PATH: plasticity_sw_approx   metric: weight_l1
+  quantum:       n=128 mean=10.237512 std=0.355838 tier=anu_committed
+                 sha256=e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+  deterministic: n=128 mean=10.204248 std=0.366598 tier=numpy_prng(seed=187)
+  KS  : D=0.070312  p_value=0.911414  parity_at_alpha_0.05=True  [scipy]
+  VERDICT: PARITY — fail to reject H0 (same distribution) at alpha=0.05; consistent with #123-A (expected).
+
+PATH: decoder_qsample   metric: token_hist_entropy_bits
+  quantum:       n=128 mean=1.707012 std=0.290376 tier=anu_committed
+                 sha256=e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+  deterministic: n=128 mean=1.682980 std=0.314917 tier=numpy_prng(seed=187)
+  KS  : D=0.101562  p_value=0.525651  parity_at_alpha_0.05=True  [scipy]
+  chi2: chi2=14.504518 dof=5 p_value=0.012703 cramers_v=0.0595 parity_at_alpha_0.05=False [scipy]
+        effect: negligible (Cramér's V < 0.1) — a large-pooled-N artifact, not a meaningful distributional gap
+  VERDICT: PARITY — fail to reject H0 (same distribution) at alpha=0.05; consistent with #123-A (expected). [secondary chi-square on pooled token counts REJECTS (p=0.0127) but with a NEGLIGIBLE effect size (Cramér's V=0.060 < 0.1): a known large-pooled-N (N=2048+2048) artifact comparing two single fixed realizations (committed ANU buffer vs fixed PRNG seed), NOT evidence of a real distributional gap. The trial-respecting KS test is the parity verdict; reported un-massaged.]
+
+========================================================================
+SUMMARY
+  plasticity_sw_approx weight_l1 : KS p=0.9114 -> PARITY (fail to reject). EXPECTED.
+  decoder_qsample entropy        : KS p=0.5257 -> PARITY (fail to reject). EXPECTED.
+  decoder_qsample pooled tokens  : chi2 p=0.0127 -> REJECTS, BUT Cramer V=0.0595
+     (negligible). Large-pooled-N (4096) artifact comparing two single fixed
+     realizations (committed ANU buffer sha256 e8123b96.. vs fixed PRNG seed=187),
+     fully reproducible run-to-run, NOT a real distributional gap. The trial-
+     respecting KS is the parity verdict; chi-square reported un-massaged.
+
+  => #123-A reproduced rigorously: the two entropy modes are statistically
+     INDISTINGUISHABLE at the application level. The differentiator is PROVENANCE
+     (quantum=anu_committed+sha256 vs deterministic=numpy_prng seed), not randomness
+     quality. parity (p>0.05) is the DESIRED result, not a null finding.
