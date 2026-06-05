@@ -1,0 +1,85 @@
+H_922 — AKD1000 determinism is ARCHITECTURAL (fully-digital event-based SNN ASIC), not a probe artifact.
+VERDICT: SUPPORTED — triangulated: own measurement (H_921) + vendor + neutral-technical citations. 2026-06-06.
+
+=== AXIS 1: OWN MEASUREMENT (primary, g5 CODE-measured) ===
+H_921 (.verdicts/921_akida_nondeterminism_functional_advantage/init_seeded_not_learning.txt):
+  pinned non-degenerate init, 16 on-chip episodes on BC.00.000.002 ->
+  weight_div=1, output_div=1, fit_changed=16/16 (byte-deterministic learning, fit engaged).
+  The only variation source (no-pin condition) was the default-init RNG, not silicon.
+
+=== AXIS 2: VENDOR (BrainChip) ===
+- "fully digital, event-based, neuromorphic AI processor ... integrated on a pure digital
+   28nm logic process" (brainchip.com AKD1000 SoC product brief / commercialization release).
+- "deterministic real-time response" marketed as a FEATURE (AKD1500 release, same IP family).
+
+=== AXIS 3: NEUTRAL TECHNICAL (Open Neuromorphic) ===
+- "Chip Type: Digital" (open-neuromorphic.org/.../akida-brainchip/).
+- Fixed quantization: weight bits {1,2,4,8}, activation bits {1,2,4,8} -> deterministic fixed-point
+  arithmetic, NOT stochastic analog.
+- "No mention of hardware noise, stochasticity, or analog components."
+- "Neuromorphic" for Akida = event-based processing + Rank Order Coding (event-camera-like),
+  NOT spiking-with-analog-synapses. On-chip learning = last-layer binary-weight DETERMINISTIC
+  fixed-rule update.
+- akida 2.19.1 AkidaUnsupervised signature has NO stochastic/noise/random parameter
+  (initial_plasticity, learning_competition, plasticity_decay, min_plasticity) -> deterministic Hebbian.
+
+=== CONCLUSION ===
+AKD1000 has NO architectural source of non-determinism: fully-digital 28nm fixed-point event-based
+SNN ASIC, deterministic by design (vendor-advertised feature). "Neuromorphic" here = event-based /
+sparse / rank-order coding (efficiency), NOT analog-stochastic synapses.
+
+=> NOT "fake neuromorphic": it IS neuromorphic in the digital event-based sense (the dominant
+industry meaning). BUT the analog-stochastic flavor (hardware noise / intrinsic randomness) that the
+"unique non-determinism" premise assumed is ARCHITECTURALLY ABSENT.
+
+=> Lane-A "AKIDA's unique differentiator = non-determinism" is VOID at the silicon level: there is no
+hardware non-determinism to harvest. H_921's init-RNG finding is the downstream symptom; THIS is the
+root cause. If anima wants substrate-native non-determinism it must come from a TRUE-entropy source
+(QRNG cf H_677 D4) or a different (analog) substrate — never from AKD1000 logic.
+
+SCOPE: AKD1000 / IpVersion.v1 / NSoC_v2. AKD1500/AKD2000 also vendor-marketed deterministic; analog
+neuromorphic chips (memristor crossbars, some Loihi device-noise regimes) are a DIFFERENT class and
+out of scope. Citations are corroborating mechanism; the terminal evidence is the H_921 measurement.
+
+=== AXIS 4: CROSS-VENDOR CONTRAST (Intel Loihi) — added 2026-06-06 ===
+Intel Loihi / Loihi 2 = also DIGITAL, asynchronous neuromorphic (NOT analog). BUT:
+- Loihi PROVIDES "the computational primitive of adding STOCHASTIC NOISE to the neuron's
+  synaptic current response" — "stochastic synaptic noise" is a built-in, programmable feature
+  (open-neuromorphic.org loihi pages; arxiv 2111.03746 Loihi-2 signal processing).
+- Loihi 2 ALSO offers a deterministic mode: "complete barrier synchronization can be configured
+  to enforce deterministic global timesteps." -> Loihi is CONFIGURABLE det-OR-stochastic.
+
+CONSEQUENCE for the determinism axis:
+  Akida AKD1000 : digital · NO stochastic primitive          -> deterministic ONLY (vendor choice)
+  Loihi / Loihi2: digital · programmable stochastic-noise primitive -> det OR stochastic (selectable)
+  analog (memristor crossbar / some analog SNN): intrinsic device noise -> stochastic by physics
+
+=> "digital neuromorphic" does NOT entail determinism. Loihi proves a digital chip CAN expose
+   programmable stochasticity. Akida's determinism is a DELIBERATE DESIGN CHOICE, not a digital
+   inevitability. Both Akida & Loihi noise (where present) is PSEUDORANDOM/programmable, not analog
+   device noise — only true-analog substrates give physics-rooted stochasticity.
+
+=> If anima wants neuromorphic hardware-exposed non-determinism, Loihi offers it as a feature and
+   AKD1000 does not. The Lane-A "unique non-determinism" was never an AKD1000 property; on the
+   broader neuromorphic axis it is a Loihi/analog property, selectable elsewhere.
+
+=== AXIS 5: LOCAL gen2 / AKD1500-class CLOUD DATA (own run, 2026-05-09) — added 2026-06-06 ===
+archive/state_legacy/akida_cloud_d0_2026_05_09/ (13 files, BrainChip Akida Cloud session):
+- backend "Gen2A2FPGABackend", device "BC.A2.001.000", marketing "Akida 2 FPGA (BrainChip Cloud)",
+  ip_version IpVersion.v2, generation 2 == AKD1500-class (Akida 2.0 IP), run on a CLOUD FPGA
+  (soc_present=false, silicon_equivalent_power=false -> FPGA emulation, not real AKD1500 silicon).
+- learn_enabled=false, online_learning=false (no on-chip learning exercised in this session).
+- model tenn_spatiotemporal_eye_buffer_i8_w8_a8.fbz -> TENNs spatiotemporal, 8-bit int weights/acts
+  (i8/w8/a8) = DIGITAL FIXED-POINT, same as gen1.
+- ONLY RNG present: inference.raw.input_seed=42 (fixed SOFTWARE seed). NO stochastic/noise field
+  anywhere in any of the 12 measure files or the spike trace.
+- spike trace recorded per-step LATENCY only (out_sum/out_nonzero=null) -> not a run-to-run output
+  determinism capture; no non-determinism signal, and none expected (digital fixed-point).
+
+CONSEQUENCE: gen2 / AKD1500-class is STILL digital fixed-point, deterministic-by-design. The ONLY
+thing gen2 adds over AKD1000 is the TEMPORAL axis (TENNs / BufferTempConv / StatefulRecurrent —
+exactly the A3/A4 ops AKD1000 IP-v1 could not map). Upgrading AKD1000 -> AKD1500 unlocks on-chip
+RECURRENCE/temporal coding, NOT non-determinism. The non-determinism story is unchanged across the
+Akida generation boundary: deterministic gen1 AND gen2. (Caveat: cloud was FPGA, learn disabled;
+a real AKD1500 silicon on-chip-learning run would tighten this, but the architecture — 8-bit fixed
+point, no noise primitive — is the same class.)

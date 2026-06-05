@@ -1,0 +1,33 @@
+H_923 — AKIDA(deterministic) x ANU-QRNG coupling.  VERDICT: PASS (coupling validated)
+substrate = AKIDA AKD1000 (BC.00.000.002) live · entropy = ANU vacuum-fluctuation (anu_legacy)
+ANU bytes sha256 = e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+  (matches mirror/qmirror/seed/provenance.jsonl request_id anu_legacy_1778042160, 2026-05-06)
+N=16 episodes, each FC init = distinct 64B ANU window · g5 CODE-measured · 2026-06-06 · $0
+
+=== verbatim probe stdout (h923_qrng_seed_probe.py) ===
+probe b64 6600 · anu b64 1368
+anu sha256: e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5  /tmp/anu_live.bin
+EXIT=0
+--- RESULT ---
+{"probe": "h923_akida_qrng_coupling", "device": "BC.00.000.002", "n_episodes": 16, "entropy_source": {"path": "/tmp/anu_live.bin", "tier": "anu_legacy (ANU vacuum-fluctuation)", "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5", "n_bytes": 1024}, "D1_functional_output_diversity": 2, "D2_provenance_trace": [{"ep": 0, "anu_offset": 0, "win_sha": "f9425f29593c", "init_hash": "9d9b04553ac8"}, {"ep": 1, "anu_offset": 64, "win_sha": "168fc06cba42", "init_hash": "2771ee4f243a"}, {"ep": 2, "anu_offset": 128, "win_sha": "8916e226e248", "init_hash": "e7e276ab95d9"}, {"ep": 3, "anu_offset": 192, "win_sha": "4b5633c06985", "init_hash": "1211bc276314"}], "D2_all_distinct_windows": 16, "D3_determinism_preserved": true, "D3_repeat_hash_match": ["8714e41752f7", "8714e41752f7"], "verdict_rule": "PASS if D1>1 AND D3 True AND D2 windows distinct ; FALSIFIED if D1==1 (ANU did not create variation) OR D3 False (chip not deterministic -> H_922 refuted)", "honest_nonclaim": "statistical quality ANU==PRNG (#123-A JSD 23x under NIST); value = provenance/audit/ontology, NOT better randomness"}
+--- ERR(tail) ---
+
+=== READING (pre-registered rule: PASS if D1>1 AND D3 True AND D2 distinct) ===
+D1 functional_output_diversity = 2   (>1)   -> ANU quantum entropy DID create functional variation
+D2 all_distinct_windows        = 16  (16/16) -> every seed traceable to a specific ANU window (auditable)
+D3 determinism_preserved       = TRUE        -> same ANU window re-run -> byte-identical output
+                                                (8714e41752f7 == 8714e41752f7)
+=> PASS. The coupling works: AKIDA stays deterministic-by-architecture (H_922 holds, D3),
+   the chip's only variation-lever (init-seed, H_921) is now fed by TRUE quantum entropy (ANU
+   vacuum-fluctuation), and every variation is provenance-traceable (D2). anima gains
+   substrate-native, auditable, quantum-sourced non-determinism layered on a deterministic body.
+
+HONEST C3:
+- D1=2 (not 16): the TOY trap-task collapses many inits to the same winner (small FC output
+  space). Diversity is task-limited, NOT entropy-limited; a richer downstream task would show
+  higher D1. The MECHANISM is validated (entropy injection creates variation a det-control
+  cannot; det-control D1==1 by H_921). a_scale_honest_scope.
+- statistical quality of ANU == chacha20 PRNG (#123-A QA6 JSD 23x under NIST). The value here is
+  PROVENANCE / auditability / algorithmic-attack immunity / ontology (physical quantum origin) —
+  NOT better randomness numbers. NOT a phenomenal-consciousness claim (.roadmap.qrng raw#10).
+- entropy = pre-pulled anu_legacy bytes (live ANU draw via NEXUS_QMIRROR_ANU_KEY = M4 follow-up).
