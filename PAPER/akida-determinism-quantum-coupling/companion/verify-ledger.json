@@ -1,0 +1,42 @@
+[
+  {
+    "id": "H_921",
+    "claim": "AKIDA on-chip plasticity non-determinism is init-seeded RNG, not a learning-dynamics property; pinning init removes it.",
+    "tier": "red",
+    "verdict_pointer": ".verdicts/921_akida_nondeterminism_functional_advantage/init_seeded_not_learning.txt",
+    "substrate": "AKIDA AKD1000 BC.00.000.002 IpVersion.v1 akida 2.19.1 pi5-akida",
+    "n_episodes": 16,
+    "condition_A_pinned": {"init_div": 1, "weight_div": 1, "output_div": 1, "fit_changed": "16/16"},
+    "condition_B_nopin": {"init_div": 16, "weight_div": 16, "output_div": 15, "fit_changed": "[2,16]"},
+    "date": "2026-06-06"
+  },
+  {
+    "id": "H_922",
+    "claim": "AKD1000 is a fully-digital 28nm fixed-point event-based SNN ASIC; hardware non-determinism architecturally absent by design. Determinism is a design choice (Loihi exposes the opposite on a digital substrate).",
+    "tier": "green",
+    "verdict_pointer": ".verdicts/922_akd1000_digital_deterministic_architecture/digital_deterministic_by_design.txt",
+    "axes": ["own_measurement_H921", "vendor_brainchip", "neutral_open_neuromorphic", "cross_vendor_loihi", "own_gen2_akd1500_cloud"],
+    "gen2_data": "archive/state_legacy/akida_cloud_d0_2026_05_09/ backend Gen2A2FPGABackend BC.A2.001.000 IpVersion.v2 tenn_spatiotemporal_eye_buffer_i8_w8_a8.fbz",
+    "date": "2026-06-06"
+  },
+  {
+    "id": "H_923",
+    "claim": "AKIDA(deterministic) x ANU-QRNG coupling: inject quantum vacuum-fluctuation entropy at the init-seed lever -> auditable quantum non-determinism while the chip stays deterministic.",
+    "tier": "green",
+    "verdict_pointer": ".verdicts/923_akida_qrng_coupling/anu_seeded_pass.txt",
+    "n_episodes": 16,
+    "toy_task": {"D1": 2, "D2_distinct_windows": 16, "D3_determinism_preserved": true, "repeat_hash": "8714e41752f7"},
+    "richer_task": {"D1": "16/16", "D3_determinism_preserved": true, "anu_bytes": 2048, "anu_sha256": "9df773e662011ce52f78186eafdc2609133eb4e1e51b131fa4000245d586c191"},
+    "det_control_D1": 1,
+    "anu_legacy_sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5",
+    "anu_paid_fresh_sha256": "a4e37640a0b01578f6be8a82b238bbaed615900b23268cdb8bc187927324b5cd",
+    "date": "2026-06-06"
+  },
+  {
+    "id": "non_claim_123A",
+    "claim": "Statistical quality of ANU quantum == chacha20 PRNG (NOT a better-randomness claim).",
+    "tier": "yellow",
+    "evidence": "#123-A QA6 audit: JSD=0.000433 (23x under NIST threshold); NIST SP 800-22 tier-1+ 7/7 PASS",
+    "value_claimed": "provenance / auditability / algorithmic-attack immunity / physical-quantum ontology"
+  }
+]

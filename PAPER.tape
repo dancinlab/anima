@@ -10,3 +10,4 @@
 @P aura-electrode-position-phi-proxy := "./PAPER/aura-electrode-position-phi-proxy" :: paper [active]
 @P aura-noninvasive-depth-wall := "./PAPER/aura-noninvasive-depth-wall" :: paper [active]
 @P omega-substrate-coupled-decoding := "./PAPER/omega-substrate-coupled-decoding" :: paper [active]
+@paper akida-determinism-quantum-coupling := "./PAPER/akida-determinism-quantum-coupling"
