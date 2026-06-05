@@ -1,0 +1,352 @@
+[gpu] NVIDIA A100-SXM4-40GB torch=2.4.0
+[r2] en anima-7b/web/eng/shard0000.bytes fetched 700.0MB
+[r2] fr anima-7b/web/fra/shard0000.bytes fetched 700.0MB
+[r2] de anima-7b/web/deu/shard0000.bytes fetched 700.0MB
+[r2] es anima-7b/web/spa/shard0000.bytes fetched 700.0MB
+[r2] ko anima-7b/web/kor/shard0000.bytes fetched 700.0MB
+[r2] subset total 3.500GB -> /workspace/mid/corpus_5lang_subset.bytes
+[data] corpus bytes=3500000000 train=3430000000 val=70000000
+[model] ByteGPT d=1024 L=16 H=16 block=512 params=202328064 (202.3M)
+[mirror] random-init mirror built (frozen, never trained)
+[step 0] train_ce=5.73700 val_ce=5.74906 tok/s=33113 elapsed=0s
+[step 100] train_ce=2.62048 val_ce=2.70131 tok/s=56994 elapsed=29s
+[step 200] train_ce=2.54923 val_ce=2.51324 tok/s=56935 elapsed=58s
+[step 300] train_ce=2.50229 val_ce=2.49318 tok/s=57077 elapsed=86s
+[step 400] train_ce=2.48806 val_ce=2.34640 tok/s=57043 elapsed=115s
+[step 500] train_ce=2.23571 val_ce=2.06298 tok/s=57129 elapsed=144s
+[step 600] train_ce=2.12711 val_ce=1.93795 tok/s=57170 elapsed=172s
+[step 700] train_ce=1.95347 val_ce=1.90424 tok/s=57183 elapsed=201s
+[step 800] train_ce=1.94756 val_ce=1.84573 tok/s=57189 elapsed=229s
+[step 900] train_ce=1.80590 val_ce=1.84979 tok/s=57187 elapsed=258s
+[step 1000] train_ce=1.70585 val_ce=1.80620 tok/s=57181 elapsed=287s
+[step 1100] train_ce=1.67176 val_ce=1.75042 tok/s=57175 elapsed=316s
+[step 1200] train_ce=1.62520 val_ce=1.73258 tok/s=57169 elapsed=344s
+[step 1300] train_ce=1.59776 val_ce=1.68802 tok/s=57160 elapsed=373s
+[step 1400] train_ce=1.64507 val_ce=1.68078 tok/s=57159 elapsed=402s
+[step 1500] train_ce=1.57149 val_ce=1.65270 tok/s=57151 elapsed=430s
+[step 1600] train_ce=1.48244 val_ce=1.60090 tok/s=57142 elapsed=459s
+[step 1700] train_ce=1.54644 val_ce=1.56858 tok/s=57137 elapsed=488s
+[step 1800] train_ce=1.48749 val_ce=1.59606 tok/s=57135 elapsed=516s
+[step 1900] train_ce=1.49938 val_ce=1.52833 tok/s=57132 elapsed=545s
+[step 2000] train_ce=1.50684 val_ce=1.59194 tok/s=57132 elapsed=574s
+[step 2100] train_ce=1.38604 val_ce=1.53123 tok/s=57128 elapsed=603s
+[step 2200] train_ce=1.50869 val_ce=1.48715 tok/s=57125 elapsed=631s
+[step 2300] train_ce=1.44629 val_ce=1.48582 tok/s=57125 elapsed=660s
+[step 2400] train_ce=1.35837 val_ce=1.48358 tok/s=57125 elapsed=689s
+[step 2500] train_ce=1.41039 val_ce=1.49587 tok/s=57126 elapsed=717s
+[step 2600] train_ce=1.36103 val_ce=1.49122 tok/s=57128 elapsed=746s
+[step 2700] train_ce=1.40368 val_ce=1.47714 tok/s=57128 elapsed=775s
+[step 2800] train_ce=1.35042 val_ce=1.43638 tok/s=57131 elapsed=803s
+[step 2900] train_ce=1.38606 val_ce=1.38663 tok/s=57134 elapsed=832s
+[step 2999] train_ce=1.38927 val_ce=1.45868 tok/s=57136 elapsed=860s
+=== RESULT ===
+{
+  "fire": "corpus-7b-mid-validation",
+  "lane": "Lane-G-ref",
+  "substrate": "PyTorch-CUDA",
+  "gpu": "NVIDIA A100-SXM4-40GB",
+  "note": "CHEAP MID corpus-validation probe on anima-corpus-5lang-7b-webscale (R2 ODC-BY web). NOT production 7B, NOT forge ENGINE. torch reference lane (a_train_flame_forge). a_scale_honest_scope: 7B-transfer UNVERIFIED.",
+  "corpus": {
+    "source": "r2://phanes/anima-7b/web (shard0000 per lang, range-GET subset)",
+    "per_lang": {
+      "en": {
+        "key": "anima-7b/web/eng/shard0000.bytes",
+        "bytes": 700000000
+      },
+      "fr": {
+        "key": "anima-7b/web/fra/shard0000.bytes",
+        "bytes": 700000000
+      },
+      "de": {
+        "key": "anima-7b/web/deu/shard0000.bytes",
+        "bytes": 700000000
+      },
+      "es": {
+        "key": "anima-7b/web/spa/shard0000.bytes",
+        "bytes": 700000000
+      },
+      "ko": {
+        "key": "anima-7b/web/kor/shard0000.bytes",
+        "bytes": 700000000
+      }
+    },
+    "total_bytes": 3500000000,
+    "langs": [
+      "en",
+      "fr",
+      "de",
+      "es",
+      "ko"
+    ],
+    "ko_included": true,
+    "vocab": 256
+  },
+  "config": {
+    "vocab": 256,
+    "d": 1024,
+    "n_layer": 16,
+    "n_head": 16,
+    "block": 512,
+    "batch": 32,
+    "steps": 3000,
+    "n_params": 202328064
+  },
+  "descent": {
+    "first_val_ce": 5.749056816101074,
+    "last_val_ce": 1.458683729171753,
+    "F_MID_DESCENT": 1,
+    "verdict": "PASS"
+  },
+  "util": {
+    "n": 412,
+    "util_peak": 100.0,
+    "util_mean": 99.75485436893204,
+    "mem_peak_mib": 14331.0,
+    "power_mean_w": 42.831577669902764
+  },
+  "throughput": {
+    "total_s": 860.3,
+    "tok_per_s_final": 57136.0,
+    "tok_seen": 49152000
+  },
+  "ckpt": {
+    "path": "/workspace/mid/corpus_7b_mid_d1024L16.pt",
+    "sha256": "adbb1911cdf5c27579eb599e38ed5657b38c9ccc1432392247826d7eb3d53e3b",
+    "bytes": 809383138
+  },
+  "curve": [
+    {
+      "step": 0,
+      "train_ce": 5.737001419067383,
+      "val_ce": 5.749056816101074,
+      "elapsed_s": 0.5,
+      "tok_per_s": 33112.9
+    },
+    {
+      "step": 100,
+      "train_ce": 2.6204771995544434,
+      "val_ce": 2.7013139724731445,
+      "elapsed_s": 29.0,
+      "tok_per_s": 56994.3
+    },
+    {
+      "step": 200,
+      "train_ce": 2.5492303371429443,
+      "val_ce": 2.513237953186035,
+      "elapsed_s": 57.8,
+      "tok_per_s": 56935.3
+    },
+    {
+      "step": 300,
+      "train_ce": 2.5022878646850586,
+      "val_ce": 2.4931788444519043,
+      "elapsed_s": 86.4,
+      "tok_per_s": 57077.3
+    },
+    {
+      "step": 400,
+      "train_ce": 2.4880566596984863,
+      "val_ce": 2.3463964462280273,
+      "elapsed_s": 115.2,
+      "tok_per_s": 57043.0
+    },
+    {
+      "step": 500,
+      "train_ce": 2.235705614089966,
+      "val_ce": 2.0629782676696777,
+      "elapsed_s": 143.7,
+      "tok_per_s": 57128.7
+    },
+    {
+      "step": 600,
+      "train_ce": 2.127110004425049,
+      "val_ce": 1.9379463195800781,
+      "elapsed_s": 172.2,
+      "tok_per_s": 57170.1
+    },
+    {
+      "step": 700,
+      "train_ce": 1.953467607498169,
+      "val_ce": 1.9042384624481201,
+      "elapsed_s": 200.8,
+      "tok_per_s": 57183.0
+    },
+    {
+      "step": 800,
+      "train_ce": 1.9475637674331665,
+      "val_ce": 1.8457305431365967,
+      "elapsed_s": 229.5,
+      "tok_per_s": 57189.5
+    },
+    {
+      "step": 900,
+      "train_ce": 1.8058979511260986,
+      "val_ce": 1.8497905731201172,
+      "elapsed_s": 258.1,
+      "tok_per_s": 57187.2
+    },
+    {
+      "step": 1000,
+      "train_ce": 1.7058463096618652,
+      "val_ce": 1.8062045574188232,
+      "elapsed_s": 286.8,
+      "tok_per_s": 57180.8
+    },
+    {
+      "step": 1100,
+      "train_ce": 1.6717581748962402,
+      "val_ce": 1.750415563583374,
+      "elapsed_s": 315.5,
+      "tok_per_s": 57174.9
+    },
+    {
+      "step": 1200,
+      "train_ce": 1.6252039670944214,
+      "val_ce": 1.732582688331604,
+      "elapsed_s": 344.2,
+      "tok_per_s": 57168.6
+    },
+    {
+      "step": 1300,
+      "train_ce": 1.5977625846862793,
+      "val_ce": 1.6880162954330444,
+      "elapsed_s": 372.9,
+      "tok_per_s": 57159.5
+    },
+    {
+      "step": 1400,
+      "train_ce": 1.645066499710083,
+      "val_ce": 1.6807821989059448,
+      "elapsed_s": 401.6,
+      "tok_per_s": 57158.5
+    },
+    {
+      "step": 1500,
+      "train_ce": 1.57149338722229,
+      "val_ce": 1.652696967124939,
+      "elapsed_s": 430.3,
+      "tok_per_s": 57151.2
+    },
+    {
+      "step": 1600,
+      "train_ce": 1.4824392795562744,
+      "val_ce": 1.600899338722229,
+      "elapsed_s": 459.0,
+      "tok_per_s": 57141.7
+    },
+    {
+      "step": 1700,
+      "train_ce": 1.5464377403259277,
+      "val_ce": 1.5685795545578003,
+      "elapsed_s": 487.8,
+      "tok_per_s": 57137.2
+    },
+    {
+      "step": 1800,
+      "train_ce": 1.4874920845031738,
+      "val_ce": 1.5960612297058105,
+      "elapsed_s": 516.5,
+      "tok_per_s": 57134.7
+    },
+    {
+      "step": 1900,
+      "train_ce": 1.4993770122528076,
+      "val_ce": 1.5283324718475342,
+      "elapsed_s": 545.2,
+      "tok_per_s": 57132.1
+    },
+    {
+      "step": 2000,
+      "train_ce": 1.5068385601043701,
+      "val_ce": 1.5919411182403564,
+      "elapsed_s": 573.8,
+      "tok_per_s": 57131.9
+    },
+    {
+      "step": 2100,
+      "train_ce": 1.3860429525375366,
+      "val_ce": 1.531234622001648,
+      "elapsed_s": 602.6,
+      "tok_per_s": 57128.0
+    },
+    {
+      "step": 2200,
+      "train_ce": 1.508690357208252,
+      "val_ce": 1.487153172492981,
+      "elapsed_s": 631.3,
+      "tok_per_s": 57125.1
+    },
+    {
+      "step": 2300,
+      "train_ce": 1.4462919235229492,
+      "val_ce": 1.4858191013336182,
+      "elapsed_s": 660.0,
+      "tok_per_s": 57124.6
+    },
+    {
+      "step": 2400,
+      "train_ce": 1.3583738803863525,
+      "val_ce": 1.483575701713562,
+      "elapsed_s": 688.6,
+      "tok_per_s": 57125.1
+    },
+    {
+      "step": 2500,
+      "train_ce": 1.4103875160217285,
+      "val_ce": 1.4958707094192505,
+      "elapsed_s": 717.3,
+      "tok_per_s": 57126.2
+    },
+    {
+      "step": 2600,
+      "train_ce": 1.3610272407531738,
+      "val_ce": 1.4912186861038208,
+      "elapsed_s": 745.9,
+      "tok_per_s": 57128.5
+    },
+    {
+      "step": 2700,
+      "train_ce": 1.403679609298706,
+      "val_ce": 1.4771417379379272,
+      "elapsed_s": 774.6,
+      "tok_per_s": 57128.3
+    },
+    {
+      "step": 2800,
+      "train_ce": 1.3504228591918945,
+      "val_ce": 1.4363787174224854,
+      "elapsed_s": 803.3,
+      "tok_per_s": 57131.2
+    },
+    {
+      "step": 2900,
+      "train_ce": 1.3860583305358887,
+      "val_ce": 1.3866277933120728,
+      "elapsed_s": 831.9,
+      "tok_per_s": 57133.5
+    },
+    {
+      "step": 2999,
+      "train_ce": 1.3892662525177002,
+      "val_ce": 1.458683729171753,
+      "elapsed_s": 860.3,
+      "tok_per_s": 57136.0
+    }
+  ]
+}
+=== util PEAK=100.0% MEAN=99.75% mem_peak=14331MiB n=412 ===
+=== descent PASS CE 5.74906 -> 1.45868 ===
+=== ckpt sha256=adbb1911cdf5c27579eb599e38ed5657b38c9ccc1432392247826d7eb3d53e3b bytes=809383138 ===
+=== SAMPLES (trained) ===
+  [en] 'The history of the city Point Department Have Settlement in Points across its efforts.\nAccording to the agency of the small live in the markets of the scale, an'
+  [fr] "Le gouvernement a annoncer qu'on conjuste se sorte de finalizité pour les pouvoirs bien des tractéries du vérité de l'expérience, du Terre de l'Etat de la Ville"
+  [de] 'Die Geschichte der Stadt Handlung, der die Teil der Festländer in Stellverteile aus, welche Sie damit würden oder Milliarden unter Red Beton auf die Regel umfas'
+  [es] 'El gobierno anuncio que practica de las propias están económicas internacionales con los más articulados con los prortitivos para la superficie y lo comienzan n'
+  [ko] '오늘 날씨는 진나나 임체의 자체 나오는 마지만 나의 팀장에서 성장이다.\n신아들리카스는 게임가 필들니까요~\n그들은 깊아들을 수 있는 등공의 원치적으로 에선없'
+=== SAMPLES (randinit) ===
+  [en] 'The history of the city��Ń�\x1e�}�E�"\x07��}T\x1fԕx\x1fE\x1a��\x1e�99YY�r�\x1f}\x1f\x12sZK�����\x08\x1f�f.��}��Ps+9KY\x12MN�Y\x1eZN�+zEƕz����Ysm�\x12������\r\x1c��)��\x1e��9�ME5}�M��j�نM9N�\x1f"�"�Y�\x02ن�)��[׆Y��Y�'
+  [fr] 'Le gouvernement a annonceK�YmT��\x12�����\x12���Z��@�YT�D���MԊMߦT�/\x16�Dmߢ�=}P\x1eEfK)�\x02�/\x0cԔ��\x16KYP�Y�a��}\x02\x02s�\x00})=EY�a����K-�=Ҧs0\x14�\x03�s�@)�))s�[}�[/Ya/\x16E-\x03=---�sK�/\x18�PfرZ/ZW'
+  [de] 'Die Geschichte der Stadt�����+�v\x1e�����K�\x08��s����&���s�Y[D����M�DD/s�)�i�E��M�mD�/�mYE\x02�ԂYɱE����D�/��E\x12\x1e�\t\x02�D͗v�\x12v���)�M�۲E��²�E�\x1eEv�M��E���MD���\x13/�\t������\x12W�/Ա�'
+  [es] 'El gobierno anuncio ques[JߊY�/��Y+ZM\x00E���79[�M+\x0cY�\x1e�tYT��vZ\x16-�Ń\x1e�P+�t���9}-����\x00�\x1e�@�mzZE-�Խ[)Tz�\x00��t\u05c9/��[V�zM���E�mZVf\x13Y����҉E��\x1e����E\x1c�\x16j͔���}Z��M\x12ԉVZ\x1cMj�[�\x00�'
+  [ko] '오늘 날씨는�8-�*���F��Y�Y���Y���\x0c���M�Z�t�Ԛ��Z"�zv���zA�tZ��\x13v\x02y�-z��"}\x02ިv�t�\x0c���8\t��y�K"�v8}�tv���-M�M�N�-��t}��\x14\x13\x11�\x02���˱Et��Ԋ�\x12��vvv���6\x02�}\x00���y�\x0fN�8M�\x13�)\x11Z��)��\x12�'
+=== DONE ===

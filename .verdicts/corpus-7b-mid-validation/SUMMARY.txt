@@ -1,0 +1,75 @@
+CORPUS-7B MID VALIDATION — Lane-G-ref byte-CLM on the webscale R2 corpus
+========================================================================
+fire        : corpus-7b-mid-validation
+date        : 2026-06-05
+substrate   : PyTorch-CUDA  (Lane-G-ref — torch reference baseline, NOT forge ENGINE; a_train_flame_forge)
+gpu         : NVIDIA A100-SXM4-40GB  (vast pod 39565855, $1.011/hr — TORN DOWN after recovery)
+corpus      : dancinlab/anima-corpus-5lang-7b-webscale  (R2 bucket phanes, anima-7b/web/<lang>/shard0000.bytes)
+              balanced 5-lang subset (range-GET 700MB each), total 3.500 GB, langs=[en,fr,de,es,ko], ko_included=TRUE
+model       : ByteGPT decoder-only · V=256 d=1024 L=16 H=16 block=512 · 202,328,064 params (202.3M)
+train       : 3000 steps, batch 32, AdamW + bf16, from-scratch (random-init)
+
+GATE (a_toy_scale_recheck): does the 7B-webscale corpus train a COHERENT byte-CLM?
+  -> a CHEAP MID probe BEFORE committing 7B compute. NOT the production 7B, NOT the forge ENGINE.
+
+---------------------------------------------------------------------------------------------------
+F_MID_DESCENT  =  PASS
+---------------------------------------------------------------------------------------------------
+CE descent (val) :  5.74906  ->  1.45868     (Δ = -4.290 nats; descent over 3000 steps)
+                    [step 0]    train_ce 5.73700  val_ce 5.74906
+                    [step 2999] train_ce 1.38927  val_ce 1.45868
+                    (val_ce reaches ~1.44-1.49 plateau by step 2200 — MID is near its small-model floor)
+GPU util         :  PEAK 100.0% · MEAN 99.75% (n=412 samples) — GPU-resident, NO CPU fallback
+mem peak         :  14,331 MiB
+throughput       :  57,136 tok/s final · 49,152,000 tok seen · 860.3 s wall
+
+---------------------------------------------------------------------------------------------------
+p7 COHERENCE (NOT perplexity; trained vs random-init mirror, per-lang)  =  PASS  (5/5 langs)
+---------------------------------------------------------------------------------------------------
+The TRAINED model emits coherent, word-like text in ALL 5 langs (incl Korean Hangul);
+the RANDOM-INIT mirror (frozen, same arch, never trained) emits pure non-printable byte gibberish
+in all 5 langs. Anti-Goodhart clean (the discriminator is byte-language STRUCTURE, not loss).
+
+  en  TRAINED: "The history of the city Point Department Have Settlement in Points across its efforts.
+                According to the agency of the small live in the markets of the scale..."
+      RANDINIT: byte soup (\x1e \x07 \xceŃ ...)
+  fr  TRAINED: "Le gouvernement a annoncer qu'on conjuste se sorte de finalizité pour les pouvoirs
+                bien des tractéries du vérité de l'expérience, du Terre de l'Etat de la Ville..."
+      RANDINIT: byte soup
+  de  TRAINED: "Die Geschichte der Stadt Handlung, der die Teil der Festländer in Stellverteile aus,
+                welche Sie damit würden oder Milliarden unter Red Beton auf die Regel..."
+      RANDINIT: byte soup
+  es  TRAINED: "El gobierno anuncio que practica de las propias están económicas internacionales con
+                los más articulados con los prortitivos para la superficie y lo comienzan notable..."
+      RANDINIT: byte soup
+  ko  TRAINED: "오늘 날씨는 진나나 임체의 자체 나오는 마지만 나의 팀장에서 성장이다.
+                신아들리카스는 게임가 필들니까요~ 그들은 깊아들을 수 있는 등공의 원치적으로..."  (valid Hangul, Korean particles/endings)
+      RANDINIT: byte soup
+
+  Caveat (honest): at 202M / 3000-steps the trained samples are WORD-coherent across all 5 scripts
+  but not yet semantically/syntactically fluent (expected — this is a MID undertrained probe, NOT
+  production). The PASS bar is "the corpus teaches byte-language structure across all 5 scripts"
+  vs "random gibberish" — clearly MET.
+
+---------------------------------------------------------------------------------------------------
+.clm v0.2 decodable : NOT attempted in this run (optional step). The ckpt is a torch .pt;
+                      clm_serialize_v2.py is the torch->v0.2-CLMX writer path (memory:
+                      clm-serializer-v01-vs-v02). Decodability is a follow-on, NOT part of the
+                      corpus-validation gate.
+---------------------------------------------------------------------------------------------------
+
+ckpt sha256 : adbb1911cdf5c27579eb599e38ed5657b38c9ccc1432392247826d7eb3d53e3b  (809,383,138 B)
+HF repo     : dancinlab/anima-clm-corpus-7b-mid-byte-202m  (PUBLIC — PASS-grade, a_hf_autonomous)
+              HF re-download sha256 VERIFIED == local sha256 (a_hf_complete totality).
+pod         : vast 39565855 TORN DOWN (DELETE confirmed) after recovery + HF upload.
+
+===================================================================================================
+VERDICT (honest, toy/MID scope):
+  YES — the 5-lang webscale web corpus TRAINS A COHERENT byte-CLM. CORPUS + PIPELINE = GREEN.
+  This GATES M13 (7B-undertrained-but-not-gibberish): the corpus is NOT garbage, the data path
+  (R2 range-GET subset -> byte concat -> ByteGPT train) WORKS, util is GPU-bound 99.75%, and the
+  learned model is language-STRUCTURED (not noise) in all 5 langs incl ko.
+
+  7B-TRANSFER UNVERIFIED (a_scale_honest_scope). This is a single 202M MID point, NOT a 7B and NOT
+  a ladder. Green here AUTHORIZES the M13 7B fire as a SEPARATE follow-on; it does NOT close the 7B.
+===================================================================================================
