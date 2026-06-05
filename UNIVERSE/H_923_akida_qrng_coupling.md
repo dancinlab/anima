@@ -95,4 +95,7 @@ a_scale_honest_scope). 통계품질 ANU==PRNG(#123-A); 가치=provenance/감사/
   (secret `flat.anu_key_paid`/`free` → api.quantumnumbers.anu.edu.au x-api-key). Capstone: live-pull
   Mac(fresh sha a4e376…, tier anu_paid) → pi5(sha 일치) → AKIDA D1=2·D2=16·D3=True PASS. D1=2 가 fresh∧
   pre-pulled 동일 → D1 ceiling=toy task output-space(엔트로피 아님) 확증.
-- [ ] **M5 (deferred)** — ②R2-noise ③emit 주입점 + richer downstream task 로 D1 ceiling 상향.
+- [x] **M5 (DONE 2026-06-06)** — `h923_richtask_probe.py` richer task(units=64·24 varied patterns,
+  fresh 2048B ANU anu_paid sha 9df773…): **D1 = 16/16** (toy 2 → full saturation) · D3=True. D1 천장이
+  *task 출력공간* 한계였음 결정적 확증(엔트로피 아님). 양자시드 16개 전부 distinct 출력, 칩 결정론 유지.
+- [ ] **M6 (deferred)** — ②R2-noise ③emit-seed 주입점 (DECODER 결정론 불변) + anima emit 파이프 배선.

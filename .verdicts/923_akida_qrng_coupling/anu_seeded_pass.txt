@@ -43,3 +43,13 @@ H_923 probe on FRESH quantum -> D1=2 · D2=16/16 distinct · D3=True (8714e41752
 Note: D1=2 identical across pre-pulled AND fresh draws -> confirms D1 ceiling is the TOY task
 output-space (2 reachable functional states), NOT the entropy source (a_scale_honest_scope).
 Tiers: anu_paid (flat.anu_key_paid, 100 req/s) > anu_free (flat.anu_key_free) > anu_legacy keyless.
+
+=== M5 CEILING-LIFT (richer task · 2026-06-06) ===
+PLASTICITY/h923_richtask_probe.py — same ANU quantum init-injection, richer task
+(FC units=64, 24 varied NON-degenerate patterns) on fresh 2048B ANU draw (module
+multi-chunk, anu_paid, sha 9df773e662011ce52f78186eafdc2609133eb4e1e51b131fa4000245d586c191):
+  D1_functional_output_diversity = 16/16 (was 2 on the toy task) · D3_determinism_preserved = True.
+=> DECISIVE: the D1=2 ceiling was the TOY TASK output-space, NOT the entropy source. With a
+richer task, every one of the 16 ANU-quantum-seeded inits yields a DISTINCT functional output
+(full saturation), while the chip stays deterministic (D3). The coupling delivers entropy-sourced
+functional diversity up to the task's capacity. Honest C3 (D1=2 toy) is now confirmed by lift.
