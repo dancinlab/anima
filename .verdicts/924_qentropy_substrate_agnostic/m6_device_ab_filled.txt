@@ -1,0 +1,26 @@
+H_924 — device-pending benchmark rows FILLED with real-hardware A/B (qentropy SSOT, both modes). 2026-06-06.
+All via the unified SSOT (ANIMA_ENTROPY_MODE quantum|deterministic), NO legacy per-file env set, $0.
+
+=== AKIDA R2-noise A/B — live AKD1000 (pi5, BC.00.000.002) ===
+  [quantum]       r2_noise_source=anu_quantum             R2=1344 spikes step_varies=True  R3=1600 (det regime)
+  [deterministic] r2_noise_source=numpy_prng_deterministic R2=1344 spikes step_varies=True  R3=1600 (det regime)
+  -> both modes drive spontaneous firing on real silicon; R3 tonic deterministic regime UNCHANGED
+     (DECODER-invariant preserved). Spike total parity (1344) consistent with #123-A statistical equality.
+
+=== AKIDA edge-learn A/B — live AKD1000 (pi5) ===
+  [quantum]       learn_input_source=anu_quantum             compile=ok fit_on_chip=ok edge_learning_supported=True
+  [deterministic] learn_input_source=numpy_prng_deterministic compile=ok fit_on_chip=ok edge_learning_supported=True
+  -> production on-chip AkidaUnsupervised learning runs under BOTH entropy modes via the SSOT.
+
+=== torch Lane-P qseed RUNTIME — pool host summer (torch 2.11.0+cu130, $0, non-intrusive) ===
+  [quantum]       tier=anu_explicit          seed=6138986570681488651  torch.rand=[0.3495,0.8431,0.1749] reproducible=True
+  [deterministic] tier=numpy_prng(seed=187)  seed=4689272388889901140  torch.rand=[0.6351,0.5668,0.5213] reproducible=True
+  -> torch.manual_seed(qentropy_seed()) -> torch RNG differs by mode, reproducible within a mode.
+     Resolves the M4 torch-runtime device-pending. (Ran on summer pool host, NOT the active train7b pod.)
+
+COVERAGE NOW COMPLETE across 4 substrates, all quantum-default · deterministic-auxiliary · benchmark-ready:
+  AKIDA HW (R2-noise + edge-learn)  — real-HW A/B verified (pi5)
+  numpy SW (plasticity_sw_approx)   — A/B verified (M6 ledger, parity)
+  DECODER sampling SW (decoder_qsample) — A/B verified (M6 ledger, parity)
+  torch GPU-host (Lane-P seed)      — runtime A/B verified (summer)
+Honest: statistical quality quantum==PRNG (#123-A); the differentiator is provenance/auditability, by design.
