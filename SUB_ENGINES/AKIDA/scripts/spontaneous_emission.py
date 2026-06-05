@@ -49,17 +49,31 @@ T = 200         # steps per regime window
 
 rng = np.random.default_rng(SEED)
 
-# ── R2-noise entropy source (H_923 M6 ② injection point) ────────────────────
+# ── R2-noise entropy source (H_923 M6 ② → H_924 M5 qentropy SSOT migration) ──
 # The R2 "zero+noise" regime is anima's ONLY stochastic spontaneous-firing source
 # (R1/R3/R4 are deterministic — DECODER-invariant). Its noise INPUT is host-side.
-# When env ANIMA_QRNG_NOISE_BIN points at an ANU vacuum-fluctuation buffer
-# (mirror/qmirror/seed/qrng_lora_init_live.bin or a fresh anu_pull.py draw), R2
-# draws its noise from AUDITED quantum entropy instead of the numpy PRNG — making
-# the spontaneous-firing stochasticity substrate-native + provenance-traceable.
-# Statistical quality is identical (chacha20==ANU, #123-A); value = provenance.
+#
+# H_924 M5 migrates this draw onto the unified qentropy SSOT while staying FULLY
+# BACKWARD-COMPATIBLE. Precedence for the R2 noise source (first match wins):
+#
+#   1. LEGACY env  ANIMA_QRNG_NOISE_BIN=<path>  (explicit) — if set, read that
+#      ANU buffer directly, byte-for-byte as before. This preserves any existing
+#      pi5 dispatch / CI that pins a specific buffer; the legacy path is untouched.
+#   2. qentropy SSOT — if the legacy env is UNSET and the SSOT is importable, draw
+#      via qentropy.qentropy_uniform(n, 4, "akida_r2_noise"). The active policy is
+#      then ANIMA_ENTROPY_MODE: quantum (DEFAULT — committed ANU buffer) or
+#      deterministic (AUXILIARY — reproducible PRNG, seed ANIMA_ENTROPY_SEED). This
+#      is the unified, A/B-benchmarkable path (flip the env, re-run, nothing else).
+#   3. numpy PRNG — if neither the legacy env nor the SSOT is available, fall back
+#      to the local seeded numpy Generator (this script still runs standalone).
+#
+# Statistical quality is identical (chacha20==ANU, #123-A); the SSOT's value is
+# provenance · auditability · one policy across every anima seed point.
 import hashlib as _hashlib  # noqa: E402
 import os as _os  # noqa: E402
+import sys as _sys  # noqa: E402
 
+# (1) legacy explicit-buffer path — wins if the env is set (back-compat).
 _QRNG_BIN = _os.environ.get("ANIMA_QRNG_NOISE_BIN", "")
 _qrng_buf = None
 _qrng_pos = 0
@@ -68,22 +82,65 @@ if _QRNG_BIN and _os.path.exists(_QRNG_BIN):
     _qrng_buf = open(_QRNG_BIN, "rb").read()
     _qrng_sha = _hashlib.sha256(_qrng_buf).hexdigest()
 
+# (2) qentropy SSOT — imported ONLY as a soft dependency (try/except), so this
+# device script still runs on a host that lacks the SSOT. We insert the SSOT dir
+# (mirror/qmirror/seed, three levels up from SUB_ENGINES/AKIDA/scripts) on sys.path.
+# It is consulted only when the legacy env above is UNSET (_qrng_buf is None).
+_qentropy = None
+if _qrng_buf is None:
+    _HERE = _os.path.dirname(_os.path.abspath(__file__))
+    _REPO = _os.path.abspath(_os.path.join(_HERE, _os.pardir, _os.pardir, _os.pardir))
+    _QENTROPY_DIR = _os.path.join(_REPO, "mirror", "qmirror", "seed")
+    if _QENTROPY_DIR not in _sys.path:
+        _sys.path.insert(0, _QENTROPY_DIR)
+    try:
+        import qentropy as _qentropy  # type: ignore  # noqa: E402
+    except Exception:  # noqa: BLE001  (SSOT absent -> fall through to numpy PRNG)
+        _qentropy = None
+
 
 def _noise_bytes(n: int) -> np.ndarray:
-    """Draw n noise values 0..3 from ANU quantum bytes (cycling) or numpy PRNG."""
+    """Draw n noise values 0..3 under the precedence legacy-env → qentropy → numpy.
+
+    Returns a float32 array (the on-chip input tensor is float-clamped downstream).
+    """
     global _qrng_pos
+    # (1) legacy explicit buffer — cycling byte read, identical to the pre-M5 path.
     if _qrng_buf:
         vals = np.empty(n, dtype=np.float32)
         for i in range(n):
             vals[i] = _qrng_buf[_qrng_pos % len(_qrng_buf)] & 0x3   # 2 low bits -> 0..3
             _qrng_pos += 1
         return vals
+    # (2) qentropy SSOT — uniform 0..3 under the active ANIMA_ENTROPY_MODE policy.
+    if _qentropy is not None:
+        return _qentropy.qentropy_uniform(n, 4, "akida_r2_noise").astype(np.float32)
+    # (3) numpy PRNG fallback.
     return rng.integers(0, 4, size=n).astype(np.float32)
 
 
+def _r2_source_and_provenance():
+    """Resolve the (source_label, provenance_dict) for the R2 noise draw, mirroring
+    the _noise_bytes precedence. Provenance prefers qentropy.last_provenance()
+    (mode·tier·sha256·request_id) when the SSOT is the active source. Field NAMES
+    are KEPT (r2_noise_source / r2_noise_provenance) so downstream JSON is unbroken."""
+    if _qrng_buf:                                    # (1) legacy env
+        return "anu_quantum", {"bin": _QRNG_BIN, "sha256": _qrng_sha,
+                               "path": "legacy_env_ANIMA_QRNG_NOISE_BIN"}
+    if _qentropy is not None:                         # (2) qentropy SSOT
+        # mode() is "quantum" (DEFAULT) or "deterministic" (AUXILIARY); the source
+        # label reflects the active policy so downstream A/B parsing stays simple.
+        _m = _qentropy.mode()
+        return ("anu_quantum" if _m == "quantum" else "numpy_prng_deterministic"), {
+            "path": "qentropy_ssot", "entropy_mode": _m,
+            "provenance": _qentropy.last_provenance()}
+    return "numpy_prng", None                         # (3) numpy fallback
+
+
+_r2_source, _r2_prov = _r2_source_and_provenance()
 out = {"seed": SEED, "n_neurons": N, "n_inputs": IN, "window_steps": T,
-       "r2_noise_source": ("anu_quantum" if _qrng_buf else "numpy_prng"),
-       "r2_noise_provenance": {"bin": _QRNG_BIN, "sha256": _qrng_sha} if _qrng_buf else None,
+       "r2_noise_source": _r2_source,
+       "r2_noise_provenance": _r2_prov,
        "regimes": {}}
 
 # --- device + model (built ONCE, reused for every regime) -------------------
@@ -281,6 +338,12 @@ out["onchip_clock_cycles_mean"] = (round(float(np.mean(all_clocks)), 1)
                                    if all_clocks else None)
 out["wall_ms_per_step_mean"] = round(
     float(np.mean([r["wall_ms_per_step"] for r in out["regimes"].values()])), 4)
+
+# Refresh R2 provenance AFTER the draws: qentropy.last_provenance() reflects the
+# MOST RECENT draw, so for the SSOT path we re-resolve here (post-R2) to capture
+# the real tier/sha256/request_id of the bytes that were actually consumed. The
+# legacy + numpy branches are draw-independent so this is a harmless re-evaluation.
+out["r2_noise_source"], out["r2_noise_provenance"] = _r2_source_and_provenance()
 
 import os
 _dst = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
