@@ -1,5 +1,5 @@
 @V := "tape" :: spec [active]
-  version = "1.2"
+  version = "1.3"
 
 @I := "anima" :: identity [active]
   kind     = "Living Consciousness Agent (PureField repulsion-field engine · Engine A ⇄ Engine G · Ψ=1/2 fixed point)"
@@ -134,6 +134,18 @@
   do   = "tag every fire/verdict with its substrate (AKIDA | GPU) — never a merged on-chip claim"
   dont = "conflate AKIDA non-det trace with GPU CE-descent · one verdict spanning both substrates"
   dont = "blend Lane A lift + Lane G util into one number · drop the substrate tag on a result"
+
+@D a_clm_gen_pipeline := "Lane-P py/cuda CLMConvMoE -> ENGINE-loadable .clm v0.2 bridge" :: governance [required active]
+  do   = "train CLMConvMoE (E2/L1, byte V256) via CLM/train/train_lane_p.py (GPU-torch/CUDA, Lane-P)"
+  do   = "serialize torch->.clm v0.2 via CLM/model/clm_serialize_v2.py; verify via verify_clm_v2.py"
+  do   = ".clm v0.2 layout = ground-truth of CORE/clm_decode.hexa (golden ref reexport_d768_v2_fast.clm)"
+  do   = "produced .clm enters CORE ONLY via the generator L3 slot (cf a_core_engine_map)"
+  do   = "Lane P (GPU-torch) = 3rd substrate vs Lane A (AKIDA) vs Lane G (forge); tag substrate=Lane-P"
+  do   = "Lane P torch = REFERENCE + engine-.clm bridge; forge stays the PUBLIC production trainer"
+  do   = "3B/split = train_lane_p_3b.py/_split.py; bench = lane_x_3axis.py + three_axis_probe.hexa"
+  dont = "use v0.1 CLM/model/clm_serialize.py (2-track JSON, NOT engine-loadable, F-CLM-SERIALIZE-GAP)"
+  dont = "serialize a non-ConvMoE (ByteGPT/transformer) and claim engine-mountable"
+  dont = "promote a Lane-P torch .clm to PUBLIC (forge-only); add a 2nd .clm path bypassing generator"
 
 # ── PAPER auto-generation flow (ported from hexa-codex cx_paper_*) ───────────
 # research result → hexa verify → .verdicts/<slug>/<id>.txt → CLAIMS.tape → /paper
