@@ -1,0 +1,10 @@
+=== AXIS-2 mirror probe-seq on 3B .clm (d4096/L30/E30) ===
+MIRROR_MODE=probe-seq
+CE_realtext        = 2.26360
+CE_shuffled_ctrl   = 5.81817
+CE_uniform_baseline= 5.54518
+CE_BELOW_UNIFORM   = 1
+CE_BEATS_SHUFFLE   = 1
+VERDICT = GREEN (CORE_3AXIS AXIS-2 gate: CE_real<uniform AND CE_real<shuffle)
+python3 state/mid_convmoe_fire/clm_decode_mirror.py "$CLM" 2>&1  186.81s user 24.51s system 57% cpu 6:10.60 total
+tail -20  0.00s user 0.00s system 0% cpu 6:10.60 total
