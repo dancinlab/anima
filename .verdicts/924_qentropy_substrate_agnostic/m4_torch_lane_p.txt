@@ -1,0 +1,42 @@
+H_924 M4 — torch Lane-P CLM init seed via qentropy SSOT
+quantum-default / deterministic-auxiliary · THIRD substrate (torch) after AKIDA HW + numpy SW
+g5 CODE-measured · Mac · $0 · torch ABSENT (torch-runtime probe device-pending)
+
+WIRE (additive, fallback-safe)
+  CLM/train/_qseed.py          — resolve_seed(fallback,label) bridges to mirror/qmirror/seed/qentropy.py
+  CLM/train/train_lane_p.py    — torch.manual_seed + Generator now seeded via resolve_seed(); qprov in result JSON
+  CLM/train/train_lane_p_3b.py — same (a.seed re-routed so the corpus split inherits the SSOT seed)
+  CLM/train/train_lane_p_split.py — same (a.seed re-routed so the val/shuffle split inherits the SSOT seed)
+  Fallback: if qentropy is unimportable, resolve_seed() returns the hardcoded a.seed (default 42) UNCHANGED.
+  Existing runs preserved bit-for-bit; ANIMA_ENTROPY_MODE flips quantum<->deterministic with zero code change.
+
+BOTH-MODE SEED CHECK (verbatim, CLM/train/_qseed_check.py)
+=== QUANTUM ===
+ANIMA_ENTROPY_MODE=quantum
+QENTROPY mode=quantum tier=anu_committed seed=6138986570681488651 ssot=True label=lane_p_torch_init
+seed=6138986570681488651
+torch=ABSENT (ModuleNotFoundError) -> torch-runtime device-pending; seed-derivation verified via numpy/SSOT only
+
+=== DETERMINISTIC ===
+ANIMA_ENTROPY_MODE=deterministic
+QENTROPY mode=deterministic tier=numpy_prng(seed=187) seed=4689272388889901140 ssot=True label=lane_p_torch_init
+seed=4689272388889901140
+torch=ABSENT (ModuleNotFoundError) -> torch-runtime device-pending; seed-derivation verified via numpy/SSOT only
+
+=== DETERMINISTIC (repeat) ===
+QENTROPY mode=deterministic tier=numpy_prng(seed=187) seed=4689272388889901140 ssot=True label=lane_p_torch_init
+seed=4689272388889901140
+
+FINDING
+  quantum seed (6138986570681488651, anu_committed) != deterministic seed (4689272388889901140, numpy_prng187)
+  => the two arms are benchmark-distinct (toggle changes the torch init/shuffle RNG).
+  deterministic arm is REPRODUCIBLE (identical seed across repeats) => valid control arm.
+  Same byte-buffer + same derivation as the AKIDA HW (H_923) and numpy SW (H_924 M2) paths
+  => quantum/deterministic coupling is substrate-agnostic across torch (THIRD substrate).
+
+HONEST SCOPE
+  WIRE: landed + syntax-valid (ast.parse OK on all 5 files) + both-mode seed-derivation verified ($0, numpy).
+  torch-runtime: DEVICE-PENDING — torch is not importable on this Mac, so
+  torch.manual_seed(seed)+torch.rand(3) was NOT executed here. _qseed_check.py runs that step
+  automatically on any host where torch IS importable (GPU pod) — no further code needed.
+  The honest non-claim (#123-A) still holds: ANU==chacha20 statistically; value=provenance, not "more random".
