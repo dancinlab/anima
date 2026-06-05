@@ -7,6 +7,12 @@
 
 > 🔴 **Lane P 정직 교정(2026-06-03)**: d768 CLM 이 작은 402KB 코퍼스에서 CE 0.0986 까지 떨어졌던 건 "잘 배웠다"가 아니라 **외운 것(memorization)** 이었다. 시험 데이터가 학습 데이터와 겹쳐 있었기 때문(같은 글뭉치에서 무작위 창을 뽑아 학습+평가를 둘 다 함). 학습용/시험용을 칼같이 나눈(FLORES-200 1.65MB, 시험용 10%는 학습 때 단 한 번도 안 봄) 뒤 다시 재면 — 학습 CE 0.61 vs 시험 CE 1.82 로 **3배 벌어진다(못 외운 부분은 못 맞힘)**. 작은 코퍼스의 낮은 CE 는 일반화가 아니라 과적합이었음 = 정직한 닫힌-부정(F-CLM-LANEP-GEN=0). 비유: 기출문제만 통째로 외운 학생이 처음 보는 문제에선 무너지는 것. → `.verdicts/lane-p-clm/F-CLM-LANEP-GEN.txt`
 
+> 🧭 **모델→엔진 마운트 (헤매지 않게, 2026-06-05)**: 엔진에 올라가는 모델 = **CLMConvMoE만**
+> (`train_lane_p.py` → `.clm v0.2` → `clm_decode.hexa` → generator L3). **ByteGPT(Lane G-ref)는
+> transformer라 엔진이 못 읽음** — 참조 baseline 전용. 7B 사다리도 ConvMoE 경로로 진행
+> (MID-ConvMoE → 7B-undertrained → 7B-Chinchilla). 전체 맵 = `ENGINE+CLM+KOSMOS.md` §🧭 ·
+> 거버넌스 = project.tape `a_clm_gen_pipeline`.
+
 ---
 
 ## 0. 전체 한눈에
