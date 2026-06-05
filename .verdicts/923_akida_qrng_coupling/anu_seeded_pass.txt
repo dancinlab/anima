@@ -68,3 +68,19 @@ fluctuation entropy; the deterministic regimes (R3 tonic) stay byte-deterministi
 pure function of substrate state (8-factor motivation x safety), NO PRNG. anima's emit has no
 sampling seed to replace (the GPU `temperature` sampling lives in the SEPARATE serving/ ALM path,
 not the substrate brain emit). ∴ R2-noise (② , now done) is anima's sole stochastic injection point.
+
+=== M7 PRODUCTION HW-LEARNING WIRE (edge_learn_probe.py · 2026-06-06) ===
+SUB_ENGINES/AKIDA/scripts/edge_learn_probe.py — the PRODUCTION PLASTICITY edge-learn (NOT just the
+H_923 probe). env ANIMA_QRNG_LEARN_BIN now sources its few-shot on-chip AkidaUnsupervised training
+input from an ANU buffer instead of numpy default_rng(42).
+live AKD1000, fresh ANU 256B (anu_pull.py, anu_paid, sha 79736a80009f9d3b4554396fe495ccb0cd1dae3b6743090920fc02d62250b07c):
+  learn_input_source = anu_quantum (provenance sha matches)
+  compile_AkidaUnsupervised = ok · fit_on_chip = ok · edge_learning_supported = True
+=> the production on-chip Hebbian learning now consumes audited ANU quantum training samples,
+   provenance-tracked. HW-LEARNING side is wired (probe H_923 + production edge_learn_probe.py).
+
+HW quantum-injection coverage (final):
+  · learning init-seed  -> h923 probe (PASS, D1 2->16)          DONE
+  · learning input      -> edge_learn_probe.py (M7, on-chip)    DONE
+  · spontaneous R2-noise-> spontaneous_emission.py (M6)         DONE
+  · inference DECODER   -> intentionally deterministic          INVARIANT (not wired, by design)

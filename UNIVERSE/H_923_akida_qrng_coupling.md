@@ -65,6 +65,18 @@ AKIDA 의 고정 SW 시드(H_921 measured `seed=42/187`)를 **ANU 양자 진공�
 **provenance(물리적 양자 출처) · 감사추적 · algorithmic-attack 면역 · 존재론(p1~p8 substrate-native)**.
 phenomenal-consciousness 주장 아님 (.roadmap.qrng raw#10).
 
+## 3.7 HW 양자-주입 coverage (M6+M7 production 배선 · 2026-06-06)
+
+| HW 경로 | 주입점 | 상태 |
+|---|---|---|
+| 학습 init-seed | h923 probe (FC init ← ANU) | ✅ DONE (PASS, D1 2→16) |
+| 학습 input | `edge_learn_probe.py` (M7, env ANIMA_QRNG_LEARN_BIN) | ✅ DONE — live: learn_input_source=anu_quantum·fit_on_chip=ok·supported=True (sha 79736a80…) |
+| 자발발화 R2-noise | `spontaneous_emission.py` (M6, env ANIMA_QRNG_NOISE_BIN) | ✅ DONE — R2=1424 spikes·R3 결정론 불변 |
+| 추론 DECODER | — | ⊝ 의도적 결정론 (배선 안 함, DECODER-invariant) |
+
+➡ **HW 학습쪽 배선 완료** (probe + production edge-learn 둘 다). 남은 건 SW 학습/추론 경로
+(torch/numpy Lane) 로의 일반화 — substrate-agnostic 가설(별도 H).
+
 ## 4. 함의 / sibling
 
 - 3 주입점 (H_921/H_677 measured): ① 학습 init ② R2 자발잡음(H_677 D4 std=7.99) ③ emit 시드
