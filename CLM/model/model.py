@@ -32,6 +32,7 @@ from typing import Optional
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+from torch.utils.checkpoint import checkpoint as _grad_checkpoint
 
 
 # --------------------------------------------------------------------------- #
@@ -55,6 +56,14 @@ class CLMConfig:
                                    # Capping at 512 keeps the receptive field >= a 512-token window and
                                    # is byte-eq-neutral for the L=1 golden (min(2**0,512)=1, unchanged).
     top_k: int = 1                 # experts selected per position (variant B/AB)
+    grad_checkpoint: bool = False  # RUNTIME-only activation recompute (torch.utils.checkpoint).
+                                   # When True, each trunk layer is recomputed in backward instead of
+                                   # retained, cutting peak activation memory ~n_trunk_layers-fold so a
+                                   # 7B d6208/L30/E30 rung fits one 80GB H100 (the reserved
+                                   # --grad-checkpoint flag, now WIRED). Touches NO serialized weight
+                                   # bytes -> byte-eq PRESERVED (like the dilation cap): a checkpointed
+                                   # forward computes the IDENTICAL output; only the autograd tape's
+                                   # activation retention changes. Default False keeps golden/3B unchanged.
 
     # router-variant knobs (see RouterConfig)
     variant: str = "AB"            # "A" | "B" | "AB"
@@ -260,8 +269,19 @@ class CLMConvMoE(nn.Module):
         x = self.embed(tokens)                  # (B, T, C)
         x = x.transpose(1, 2)                   # (B, C, T)
         x = self.embed_conv(x)
+        # Gradient checkpointing (runtime-only, byte-eq-neutral): when enabled and
+        # training, recompute each trunk layer's activations in backward instead of
+        # retaining them. At L30/d6208 the retained-activation chain is what OOMs an
+        # 80GB H100 (28GB fp32 weights + 8bit-optim state leave too little for 30
+        # layers of (B,6208,512) activations); checkpointing trades ~1 extra forward
+        # for ~L-fold less activation memory. use_reentrant=False = the modern
+        # non-reentrant autograd path (handles no-input-grad embeds cleanly).
+        ckpt = getattr(self.cfg, "grad_checkpoint", False) and self.training and x.requires_grad
         for layer in self.trunk:
-            x = layer(x)
+            if ckpt:
+                x = _grad_checkpoint(layer, x, use_reentrant=False)
+            else:
+                x = layer(x)
         x, stats = self.moe(x)
         x = self.norm_out(x)
         logits = self.readout(x)                # (B, V, T)
