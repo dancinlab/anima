@@ -216,9 +216,13 @@ def run_pair(coupling, T, gate, ent_scale, committed_buf, base_noise_seed):
         # intrinsic R2-noise from each anima's DISTINCT ANU window (cyclic) + jitter
         rA = (float(srcA[t % nA]) - 1.5) * ent_scale + float(rng.normal(0, 1e-4))
         rB = (float(srcB[t % nB]) - 1.5) * ent_scale + float(rng.normal(0, 1e-4))
-        # coupling: the OTHER's last tension signal nudges THIS anima's field (env)
-        pA = rA + coupling * sigB_prev
-        pB = rB + coupling * sigA_prev
+        # coupling: the OTHER's last tension signal nudges THIS anima's field (env).
+        # The nudge is tanh-SATURATED (a physically-bounded environment coupling —
+        # an external context cannot inject unbounded energy; this keeps the coupled
+        # dynamical system in-regime and is the natural saturating coupling form, the
+        # analogue of a bounded sensory channel). coupling scales the nudge MAGNITUDE.
+        pA = rA + ent_scale * math.tanh(coupling * sigB_prev)
+        pB = rB + ent_scale * math.tanh(coupling * sigA_prev)
         pfA.step(perturb=pA)
         pfB.step(perturb=pB)
         eA, _ = brain_emit_decision(pfA, gate=gate)
@@ -288,7 +292,9 @@ def mutual_information_bits(eA, eB):
 def main():
     T = int(os.environ.get("H939_T", "4000"))
     ENT_SCALE = 0.04
-    COUPLINGS = [0.0, 0.05, 0.1, 0.2, 0.4, 0.8, 1.5]   # weak -> strong sweep
+    # weak -> strong sweep. tanh-saturated coupling stays in-regime even at large c,
+    # so we push the top end high to genuinely probe the phase-lock regime.
+    COUPLINGS = [0.0, 0.1, 0.25, 0.5, 1.0, 2.0, 5.0, 20.0]
     ts = datetime.now(timezone.utc).isoformat()
     committed_buf = os.path.join(_SEED_DIR, "qrng_lora_init_live.bin")
 
