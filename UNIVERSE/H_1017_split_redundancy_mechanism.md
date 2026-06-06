@@ -12,8 +12,8 @@ frozen_at: 2026-06-07
 since: 2026-06-07
 sister: H_1012 (robust split in n {4,5}), H_1014 (split co-occurs with MI-coupling shock; SIGN-direction falsified, MAGNITUDE separates), H_1004 (clean disagreement at n=4), H_999/H_1001 (faithful_phi planning up), PAPER/phi-measure-dependence-planning, a_phi_iit4_tool
 scope: TOY n=4, $0 CPU-local, real IIT-4.0 stdlib engines (CPU mirror RE-PROVEN equal to stdlib at n=4 per H_1012/H_1014 discipline BEFORE scoring). The PID estimator is an information-theoretic decomposition of the SAME bits — it is the EXPLANATORY variable, NOT a Phi replacement and NOT a proxy for Phi. big-Phi super-exponential, so n=4 is the tractable rung for the full intervention SET × seeds. a_scale_honest_scope · a_toy_scale_recheck — scale-transfer beyond n=4 UNVERIFIED. NOT a forge binary; no GPU.
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT
+status: measured
+verdict: 🟢 REDUNDANCY-EXPLAINS-SPLIT — planning's added MI is REDUNDANCY-DOMINATED and that dominance DISTINGUISHES planning from every no-split control, mechanistically explaining the H_1012/H_1014 split. On the matched n=4 binary substrate (both stdlib mirrors RE-PROVEN ≡ stdlib at n=4 BEFORE scoring; the Williams-Beer I_min PID independently validated on canonical COPY=pure-redundancy and XOR=pure-synergy cases), planning RAISES total redundancy by Δredundancy=+9.3958 (d+1, large) while LOWERING synergy by Δsynergy=−1.0438 — the entire pairwise-MI rise (Δmi_total=+4.1060) is carried by REDUNDANT (shared/duplicated) information, and synergy (the irreducible component big-Φ rewards) actually FALLS. This is exactly why the two engines read the same MI rise oppositely: faithful_phi (summed pairwise MI across the min cut) RISES on the redundant info, while system big-Φ FALLS because redundant copies are REDUCIBLE (a partition isolating a duplicate loses little). All four interventions are redundancy-dominated (Δred>Δsyn), but planning's redundancy-margin (Δred−Δsyn=+10.4396) DWARFS every no-split control (imagination +0.4483, guided +2.2508, chaos +2.9471) — the redundancy SHOCK is what discriminates the split-inducer. The pre-registered PASS condition (planning Δred≫Δsyn AND distinguishes planning from the no-split control) is MET; H_1014's open WHY is answered. The PID is the EXPLANATORY variable, NOT a Φ proxy — Φ numbers come only from the stdlib mirrors (a_phi_iit4_tool). g5 CODE-measured (no LLM self-judge, p7). TOY n=4; scale-transfer UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck).
 ---
 
 # H_1017 — is the MI planning adds REDUNDANT (not synergistic)? (the mechanism behind the split)
@@ -106,8 +106,43 @@ to [H_1014](./H_1014_intervention_split_predictor.md) · [H_1012](./H_1012_bigph
 [H_1004](./H_1004_bigphi_faithful_clean.md) · [H_999](./H_999_faithful_iit4_remeasure.md) ·
 PAPER/phi-measure-dependence-planning · IIT4_PHI_TOOLS.md · a_phi_iit4_tool
 
-## 6. measurement + finding
-PENDING-MEASUREMENT. Verdict raw will be at
-`.verdicts/1017_split_redundancy_mechanism/H_1017.txt` (g73 — deterministic run that COULD falsify;
-both stdlib engines + CPU mirror RE-PROVEN equal to stdlib at n=4 BEFORE scoring). Emoji verdict token
-added to the frontmatter ONLY after that .txt exists.
+## 6. measurement + finding (2026-06-07 · 🟢 REDUNDANCY-EXPLAINS-SPLIT · g5 CODE-measured, $0 CPU-local)
+Verdict raw: `.verdicts/1017_split_redundancy_mechanism/H_1017.txt` (g73 — deterministic run that
+COULD have falsified; both stdlib engines + CPU mirror RE-PROVEN ≡ stdlib at n=4 BEFORE scoring, and
+the Williams-Beer I_min PID independently validated on the canonical COPY=pure-redundancy / XOR=pure-
+synergy cases BEFORE scoring).
+
+**Result — planning's added MI is REDUNDANCY, not synergy; that is the split mechanism:**
+
+intervention vs baseline, 30 seeds, matched (n=4, binary discretization):
+
+| intervention | SPLIT? | Δredundancy | Δsynergy | red-margin (Δred−Δsyn) | Δmi_total |
+|---|---|---|---|---|---|
+| planning (depth-8 vs greedy) | **True** (reproduces H_1012) | **+9.3958** (d+1, large) | **−1.0438** | **+10.4396** | +4.1060 |
+| imagination (drift vs react) | False | +0.2731 | −0.1752 | +0.4483 | +0.3477 |
+| guided (goal-pull vs react) | False | +1.8690 | −0.3817 | +2.2508 | +1.0431 |
+| chaos [NEW] (gain-1.4 vs gain-1.0) | False | +2.5732 | −0.3739 | +2.9471 | +1.1465 |
+
+- **VERDICT-TOKEN: 🟢 REDUNDANCY-EXPLAINS-SPLIT.** The pre-registered PASS condition is MET. For the
+  split-inducing planning intervention the added MI is REDUNDANCY-DOMINATED (Δredundancy=+9.3958 ≫
+  Δsynergy=−1.0438): the entire pairwise-MI rise (Δmi_total=+4.1060) is carried by REDUNDANT (shared/
+  duplicated) information, while synergy — the irreducible component big-Φ rewards — actually FALLS.
+  And this redundancy dominance DISTINGUISHES planning from the no-split controls: planning's
+  redundancy-margin (+10.4396) DWARFS every no-split control's (imagination +0.4483, guided +2.2508,
+  chaos +2.9471). All four are redundancy-dominated (every Δred>Δsyn), but only planning shows the
+  large redundancy SHOCK — so the discriminator is the MAGNITUDE of the redundancy rise, consistent
+  with H_1014's magnitude-separation finding.
+- **MECHANISM (the WHY behind the H_1012/H_1014 split):** the two engines read the SAME MI rise
+  OPPOSITELY because the rise is redundant. `faithful_phi` is summed pairwise MI across the min cut —
+  it credits shared/redundant info as integration, so it RISES. System big-Φ rewards IRREDUCIBLE
+  (synergistic) structure — redundant copies are REDUCIBLE (a partition isolating a duplicate loses
+  little), so big-Φ FALLS (its distinction/relation structure collapses, H_1014 Δbigphi_total ≈ −6.7).
+  H_1014 ruled out the "modularity-increase" direction and left this WHY open; it is now answered:
+  the split is a REDUNDANCY artifact of the pairwise-MI scalar, not genuine integration.
+- **WB PID validity (g5, BEFORE scoring):** the estimator returns red=1.0 / syn=0.0 on a pure COPY
+  (S1=S2=T, pure redundancy) and red=0.0 / syn=1.0 on XOR (pure synergy) — the canonical Williams-Beer
+  sanity cases. The PID is deterministic and a pure function of the same bits. It is NOT a proxy for Φ.
+- **honest scope (a_scale_honest_scope · a_toy_scale_recheck):** TOY n=4 — both engines EXACT; big-Φ
+  super-exponential so n=4 is the rung for the full SET × 30 seeds. Both CPU mirrors RE-PROVEN ≡ stdlib
+  at n=4 BEFORE scoring. Scale-transfer beyond n=4 UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7),
+  a_phi_iit4_tool. NOT a forge binary; $0 CPU-local, no GPU.
