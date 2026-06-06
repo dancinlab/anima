@@ -1,0 +1,58 @@
+==============================================================================
+H_1013 — Credit-density GENERALIZATION — does per-step supervision crack NEW long-horizon families?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+NEW families (distinct accumulator algebras, distinct from T3 modular): N1 kv-recall (associative-map, K=4 V=4), N2 running-max (idempotent-monotone, M=8), N3 stack-depth (bounded LIFO, D=8). capped length=36 (where final-only fails). rungs=[16, 32] seeds=3. dose = {final-only, every-1}. aux head = TRAINING-only; eval is final-label. mem-aug LM must == ~1.0 (state-bound check).
+
+  done N1_kv_recall   stride=final-only rung=16  curr=0.482 LM=0.411 mem=0.934  [33s]
+  done N1_kv_recall   stride=final-only rung=32  curr=0.504 LM=0.442 mem=1.000  [81s]
+  done N1_kv_recall   stride=every-1    rung=16  curr=0.479 LM=0.411 mem=0.934  [116s]
+  done N1_kv_recall   stride=every-1    rung=32  curr=0.457 LM=0.442 mem=1.000  [161s]
+  done N2_running_max stride=final-only rung=16  curr=1.000 LM=0.419 mem=0.988  [264s]
+  done N2_running_max stride=final-only rung=32  curr=0.999 LM=0.420 mem=1.000  [411s]
+  done N2_running_max stride=every-1    rung=16  curr=0.997 LM=0.419 mem=0.988  [518s]
+  done N2_running_max stride=every-1    rung=32  curr=1.000 LM=0.420 mem=1.000  [676s]
+  done N3_stack_depth stride=final-only rung=16  curr=0.966 LM=0.506 mem=1.000  [768s]
+  done N3_stack_depth stride=final-only rung=32  curr=0.979 LM=0.541 mem=1.000  [908s]
+  done N3_stack_depth stride=every-1    rung=16  curr=0.999 LM=0.506 mem=1.000  [1019s]
+  done N3_stack_depth stride=every-1    rung=32  curr=1.000 LM=0.541 mem=1.000  [1178s]
+
+====================================================================================================
+CREDIT-DENSITY GENERALIZATION (dense vs final-only curr-GRU vs LM vs mem-aug, @len 36)
+family/dose         len rung  chance  currGRU      LM   memLM     gap        d         p
+----------------------------------------------------------------------------------------------------
+N1_kv_rec final-     36   16   0.250    0.482   0.411   0.934   0.071     1.80   1.4e-01
+N1_kv_rec final-     36   32   0.250    0.504   0.442   1.000   0.062     1.63   1.3e-01
+N1_kv_rec every-     36   16   0.250    0.479   0.411   0.934   0.068     1.36   1.7e-01
+N1_kv_rec every-     36   32   0.250    0.457   0.442   1.000   0.014     0.43   6.3e-01
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+N2_runnin final-     36   16   0.125    1.000   0.419   0.988   0.581    37.89   4.6e-04
+N2_runnin final-     36   32   0.125    0.999   0.420   1.000   0.579    30.86   6.6e-04
+N2_runnin every-     36   16   0.125    0.997   0.419   0.988   0.578    37.68   4.7e-04
+N2_runnin every-     36   32   0.125    1.000   0.420   1.000   0.580    31.00   6.9e-04
+N3_stack_ final-     36   16   0.125    0.966   0.506   1.000   0.460    10.33   4.0e-04
+N3_stack_ final-     36   32   0.125    0.979   0.541   1.000   0.438    16.44   8.6e-05
+N3_stack_ every-     36   16   0.125    0.999   0.506   1.000   0.493    19.05   1.8e-03
+N3_stack_ every-     36   32   0.125    1.000   0.541   1.000   0.459    30.28   7.3e-04
+====================================================================================================
+
+per-family ruling (does per-step supervision crack it? + harness-validation + state-bound):
+  N1_kv_recall   chance=0.250  dense(k=1)={16: np.float64(0.479), 32: np.float64(0.457)} cracks=False sep-rungs=[]
+                 final-only={16: np.float64(0.482), 32: np.float64(0.504)} cap-real(final fails)=True  mem-aug={16: np.float64(0.934), 32: np.float64(1.0)} state-bound=True
+  N2_running_max chance=0.125  dense(k=1)={16: np.float64(0.997), 32: np.float64(1.0)} cracks=True  sep-rungs=[16, 32]
+                 final-only={16: np.float64(1.0), 32: np.float64(0.999)} cap-real(final fails)=False mem-aug={16: np.float64(0.988), 32: np.float64(1.0)} state-bound=True
+  N3_stack_depth chance=0.125  dense(k=1)={16: np.float64(0.999), 32: np.float64(1.0)} cracks=True  sep-rungs=[16, 32]
+                 final-only={16: np.float64(0.966), 32: np.float64(0.979)} cap-real(final fails)=False mem-aug={16: np.float64(1.0), 32: np.float64(1.0)} state-bound=True
+
+CAPPED & CRACKED by per-step sup (credit-density helps): []
+CAPPED but SURVIVES dense (lever fails here):            ['N1_kv_recall']
+NO real cap (final-only already solves; lever not needed): ['N2_running_max', 'N3_stack_depth']
+state-bound (mem-aug~1.0) all families: True (not-state-bound=[])
+
+------------------------------------------------------------------------------
+VERDICT H_1013: FAIL CREDIT-DENSITY-TASK-LOCAL — the H_1006 per-step-supervision unlock does NOT generalize across new long-horizon accumulator algebras at len=36. Of the 3 NEW state-bound families (mem-aug~1.0, distinct from T3 modular): CAPPED-and-CRACKED-by-dense=[]; CAPPED-but-SURVIVES-dense=['N1_kv_recall']; NO-credit-density-cap (solvable from a final label, dense NOT needed)=['N2_running_max', 'N3_stack_depth']. The H_1006 cap-and-crack pattern is STRUCTURE-SPECIFIC: only accumulators that are genuinely hard to learn from a sparse final label (the modular ring counter T3, and possibly some new ones) present a credit-density cap that per-step supervision then cracks. The idempotent-monotone (running-max) and bounded-stack (bracket-depth) accumulators tested here are EITHER already learnable from the final label (NO-CAP — credit-density is not needed) OR survive dense supervision — so per-step gradient density is a real but BOUNDED lever, not a general long-horizon principle (closed-negative on generality, a_paper_negative_ok; toy len=36, $0 CPU; larger-budget / production OPEN, a_scale_honest_scope).
+------------------------------------------------------------------------------
+
+[total wall 1178s]
