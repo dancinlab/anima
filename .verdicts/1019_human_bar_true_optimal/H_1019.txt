@@ -1,0 +1,27 @@
+==============================================================================
+H_1019 — north-star HARDENING (anima vs a TRUE depth-4 MPC human reference)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=H_964 hidden-velocity station-keeping (position-only obs)  metric M=mean return (0=optimal)
+N_runs=40 ep/run=60  human-ref=depth-4 receding-horizon MPC (4^4=256 rollouts/step)  TOL=0.05
+
+---- decomposition (mean +/- std, bootstrap CI) ----
+  depth-4 MPC (human ref)    M = -0.5534 +/- 0.0429  CI=[-0.5663,-0.5403]
+  greedy oracle (depth-1)     M = -0.8906 +/- 0.0750  CI=[-0.9131,-0.8666]
+  anima (WM latent->action)   M = -0.6426 +/- 0.0463  CI=[-0.6575,-0.6282]
+  reactive (single-frame)     M = -1.9237 +/- 0.1320  CI=[-1.9641,-1.8834]
+  random                      M = -6.1249 +/- 0.4377  CI=[-6.2580,-5.9883]
+
+hardening delta = MPC - greedy = -0.5534 - -0.8906 = +0.3372 (return the multi-step plan buys over greedy)
+
+parity band [P - TOL, P + TOL] = [-0.6034, -0.5034]  (P=-0.5534, TOL=0.05)
+D1 non-vacuity (reactive CI_hi -1.8834 < band_lo -0.6034) = True
+D2 hardening real (MPC -0.5534 >= greedy-ref -0.8906) = True
+anima mean -0.6426 vs band -> within_band=False ci_overlaps=False below=True above=False
+MPC-anima gap = +0.0892
+anima vs MPC: Welch p=2.402e-13  Cohen d=-1.975
+
+------------------------------------------------------------------------------
+VERDICT H_1019: RED CLOSED-NEGATIVE (a_paper_negative_ok) — anima mean -0.6426 BELOW the TRUE depth-4 MPC optimum P=-0.5534 (gap +0.0892; anima CI_hi -0.628 < band_lo -0.603); the H_1018 GREEN-PLUS was the MYOPIC-ORACLE gap (hardening delta +0.3372). Honest scope: anima is human-competitive only vs a GREEDY reference, NOT vs a true multi-step optimum. north-star placement BOUNDED to weak references. TOY single rung.
+------------------------------------------------------------------------------
