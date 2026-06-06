@@ -1,0 +1,260 @@
+================================================================================
+H_1016 — robustness (n=5) + dose-response onset of the H_1014 split predictor
+substrate=CPU-mirror (numpy) — H_1014 module (H_1004 engines + H_1012 proof) VERBATIM
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+predictor = MAGNITUDE of Delta(cross-MIP coupling) vs baseline (H_1014 boundary +1.4933)
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+PART 1: re-score H_1014 SET at n=5. PART 2: planning depth dose-response onset.
+PASS=GREEN iff n=5 separation HOLDS *and* a monotone dose-response onset exists.
+================================================================================
+
+EQUIVALENCE PROOF (H_1012 prove_mirrors_at_n — re-prove BOTH mirrors vs stdlib at n=4 AND n=5):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  EQUIVALENCE PROOF: n=4 PROVEN | n=5 PROVEN
+
+################################################################################
+PART 1 — ROBUSTNESS IN n: re-score the H_1014 intervention SET at n=5
+################################################################################
+################ [n=5] SCORE intervention = planning  [known SPLIT (H_1004/H_1012)] ################
+    [planning n=5 seed 1/30] elapsed=  23.2s
+    [planning n=5 seed 2/30] elapsed=  46.4s
+    [planning n=5 seed 3/30] elapsed=  69.5s
+    [planning n=5 seed 4/30] elapsed=  92.6s
+    [planning n=5 seed 5/30] elapsed= 115.7s
+    [planning n=5 seed 6/30] elapsed= 139.1s
+    [planning n=5 seed 7/30] elapsed= 162.3s
+    [planning n=5 seed 8/30] elapsed= 185.3s
+    [planning n=5 seed 9/30] elapsed= 208.3s
+    [planning n=5 seed 10/30] elapsed= 231.5s
+    [planning n=5 seed 11/30] elapsed= 255.1s
+    [planning n=5 seed 12/30] elapsed= 280.0s
+    [planning n=5 seed 13/30] elapsed= 304.0s
+    [planning n=5 seed 14/30] elapsed= 327.2s
+    [planning n=5 seed 15/30] elapsed= 350.3s
+    [planning n=5 seed 16/30] elapsed= 373.3s
+    [planning n=5 seed 17/30] elapsed= 396.9s
+    [planning n=5 seed 18/30] elapsed= 420.4s
+    [planning n=5 seed 19/30] elapsed= 444.2s
+    [planning n=5 seed 20/30] elapsed= 467.8s
+    [planning n=5 seed 21/30] elapsed= 491.1s
+    [planning n=5 seed 22/30] elapsed= 514.6s
+    [planning n=5 seed 23/30] elapsed= 538.1s
+    [planning n=5 seed 24/30] elapsed= 561.5s
+    [planning n=5 seed 25/30] elapsed= 584.9s
+    [planning n=5 seed 26/30] elapsed= 608.1s
+    [planning n=5 seed 27/30] elapsed= 631.3s
+    [planning n=5 seed 28/30] elapsed= 654.6s
+    [planning n=5 seed 29/30] elapsed= 679.1s
+    [planning n=5 seed 30/30] elapsed= 702.9s
+  --- planning @ n=5: intervention vs baseline ---
+     big-Phi      contrast=-13.3732 d=-2.284 p=2.352e-10 -> LOWERS
+     faithful_phi contrast=+3.0624 d=+4.652 p=4.403e-23 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): True
+     PREDICTOR mi_mincut(cross-MIP coupling) contrast=+3.0170 d=+4.594 p=8.665e-23 -> RAISES
+       (context) mi_total contrast=+6.5976 | bigphi_total contrast=-20.8814
+
+################ [n=5] SCORE intervention = imagination  [known no-split (H_1004)] ################
+    [imagination n=5 seed 1/30] elapsed= 727.5s
+    [imagination n=5 seed 2/30] elapsed= 751.1s
+    [imagination n=5 seed 3/30] elapsed= 774.7s
+    [imagination n=5 seed 4/30] elapsed= 798.9s
+    [imagination n=5 seed 5/30] elapsed= 822.2s
+    [imagination n=5 seed 6/30] elapsed= 845.7s
+    [imagination n=5 seed 7/30] elapsed= 869.6s
+    [imagination n=5 seed 8/30] elapsed= 893.8s
+    [imagination n=5 seed 9/30] elapsed= 917.4s
+    [imagination n=5 seed 10/30] elapsed= 941.4s
+    [imagination n=5 seed 11/30] elapsed= 965.1s
+    [imagination n=5 seed 12/30] elapsed= 989.1s
+    [imagination n=5 seed 13/30] elapsed=1013.4s
+    [imagination n=5 seed 14/30] elapsed=1037.4s
+    [imagination n=5 seed 15/30] elapsed=1061.0s
+    [imagination n=5 seed 16/30] elapsed=1084.3s
+    [imagination n=5 seed 17/30] elapsed=1107.6s
+    [imagination n=5 seed 18/30] elapsed=1131.1s
+    [imagination n=5 seed 19/30] elapsed=1154.4s
+    [imagination n=5 seed 20/30] elapsed=1177.8s
+    [imagination n=5 seed 21/30] elapsed=1201.2s
+    [imagination n=5 seed 22/30] elapsed=1224.5s
+    [imagination n=5 seed 23/30] elapsed=1247.7s
+    [imagination n=5 seed 24/30] elapsed=1270.8s
+    [imagination n=5 seed 25/30] elapsed=1294.1s
+    [imagination n=5 seed 26/30] elapsed=1317.1s
+    [imagination n=5 seed 27/30] elapsed=1340.4s
+    [imagination n=5 seed 28/30] elapsed=1363.7s
+    [imagination n=5 seed 29/30] elapsed=1386.8s
+    [imagination n=5 seed 30/30] elapsed=1409.9s
+  --- imagination @ n=5: intervention vs baseline ---
+     big-Phi      contrast=+1.0438 d=+0.188 p=4.686e-01 -> RAISES
+     faithful_phi contrast=-0.0561 d=-0.105 p=6.849e-01 -> LOWERS
+     SPLIT label (sign(faith)!=sign(big)): True
+     PREDICTOR mi_mincut(cross-MIP coupling) contrast=+0.0467 d=+0.084 p=7.464e-01 -> RAISES
+       (context) mi_total contrast=+0.4762 | bigphi_total contrast=+1.8524
+
+################ [n=5] SCORE intervention = guided  [known no-split (H_1004)] ################
+    [guided n=5 seed 1/30] elapsed=1433.2s
+    [guided n=5 seed 2/30] elapsed=1456.4s
+    [guided n=5 seed 3/30] elapsed=1479.7s
+    [guided n=5 seed 4/30] elapsed=1503.1s
+    [guided n=5 seed 5/30] elapsed=1526.6s
+    [guided n=5 seed 6/30] elapsed=1550.2s
+    [guided n=5 seed 7/30] elapsed=1573.5s
+    [guided n=5 seed 8/30] elapsed=1596.8s
+    [guided n=5 seed 9/30] elapsed=1620.2s
+    [guided n=5 seed 10/30] elapsed=1643.3s
+    [guided n=5 seed 11/30] elapsed=1666.4s
+    [guided n=5 seed 12/30] elapsed=1689.6s
+    [guided n=5 seed 13/30] elapsed=1713.3s
+    [guided n=5 seed 14/30] elapsed=1737.9s
+    [guided n=5 seed 15/30] elapsed=1762.3s
+    [guided n=5 seed 16/30] elapsed=1785.8s
+    [guided n=5 seed 17/30] elapsed=1809.3s
+    [guided n=5 seed 18/30] elapsed=1832.6s
+    [guided n=5 seed 19/30] elapsed=1855.9s
+    [guided n=5 seed 20/30] elapsed=1879.6s
+    [guided n=5 seed 21/30] elapsed=1903.0s
+    [guided n=5 seed 22/30] elapsed=1926.2s
+    [guided n=5 seed 23/30] elapsed=1949.8s
+    [guided n=5 seed 24/30] elapsed=1973.8s
+    [guided n=5 seed 25/30] elapsed=1997.3s
+    [guided n=5 seed 26/30] elapsed=2020.8s
+    [guided n=5 seed 27/30] elapsed=2044.1s
+    [guided n=5 seed 28/30] elapsed=2067.4s
+    [guided n=5 seed 29/30] elapsed=2090.8s
+    [guided n=5 seed 30/30] elapsed=2114.2s
+  --- guided @ n=5: intervention vs baseline ---
+     big-Phi      contrast=-0.7538 d=-0.140 p=5.897e-01 -> LOWERS
+     faithful_phi contrast=+0.5190 d=+0.720 p=7.399e-03 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): True
+     PREDICTOR mi_mincut(cross-MIP coupling) contrast=+0.5301 d=+0.753 p=5.186e-03 -> RAISES
+       (context) mi_total contrast=+1.6274 | bigphi_total contrast=-2.2507
+
+################ [n=5] SCORE intervention = chaos  [NEW intervention (gain=1.4)] ################
+    [chaos n=5 seed 1/30] elapsed=2137.5s
+    [chaos n=5 seed 2/30] elapsed=2160.9s
+    [chaos n=5 seed 3/30] elapsed=2184.2s
+    [chaos n=5 seed 4/30] elapsed=2207.8s
+    [chaos n=5 seed 5/30] elapsed=2231.8s
+    [chaos n=5 seed 6/30] elapsed=2255.5s
+    [chaos n=5 seed 7/30] elapsed=2279.1s
+    [chaos n=5 seed 8/30] elapsed=2302.4s
+    [chaos n=5 seed 9/30] elapsed=2325.9s
+    [chaos n=5 seed 10/30] elapsed=2349.7s
+    [chaos n=5 seed 11/30] elapsed=2373.1s
+    [chaos n=5 seed 12/30] elapsed=2398.2s
+    [chaos n=5 seed 13/30] elapsed=2421.7s
+    [chaos n=5 seed 14/30] elapsed=2445.5s
+    [chaos n=5 seed 15/30] elapsed=2469.4s
+    [chaos n=5 seed 16/30] elapsed=2493.2s
+    [chaos n=5 seed 17/30] elapsed=2516.8s
+    [chaos n=5 seed 18/30] elapsed=2540.6s
+    [chaos n=5 seed 19/30] elapsed=2563.9s
+    [chaos n=5 seed 20/30] elapsed=2587.5s
+    [chaos n=5 seed 21/30] elapsed=2611.3s
+    [chaos n=5 seed 22/30] elapsed=2635.1s
+    [chaos n=5 seed 23/30] elapsed=2658.9s
+    [chaos n=5 seed 24/30] elapsed=2683.0s
+    [chaos n=5 seed 25/30] elapsed=2706.9s
+    [chaos n=5 seed 26/30] elapsed=2730.3s
+    [chaos n=5 seed 27/30] elapsed=2753.7s
+    [chaos n=5 seed 28/30] elapsed=2777.1s
+    [chaos n=5 seed 29/30] elapsed=2800.7s
+    [chaos n=5 seed 30/30] elapsed=2824.3s
+  --- chaos @ n=5: intervention vs baseline ---
+     big-Phi      contrast=+1.0718 d=+0.275 p=2.919e-01 -> RAISES
+     faithful_phi contrast=+1.0505 d=+1.735 p=8.606e-09 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     PREDICTOR mi_mincut(cross-MIP coupling) contrast=+0.9674 d=+1.634 p=3.920e-08 -> RAISES
+       (context) mi_total contrast=+1.9717 | bigphi_total contrast=-2.6069
+
+--- [n=5] CLASSIFIER MATRIX (split label vs predictor) ---
+  intervention |    big d |  faith d | SPLIT? | pred mincut Δ | pred sign
+  planning     |   -2.284 |   +4.652 |   True |       +3.0170 |        +1
+  imagination  |   +0.188 |   -0.105 |   True |       +0.0467 |        +1
+  guided       |   -0.140 |   +0.720 |   True |       +0.5301 |        +1
+  chaos        |   +0.275 |   +1.735 |  False |       +0.9674 |        +1
+  split interventions' predictor:   ['+3.0170', '+0.0467', '+0.5301']
+  no-split interventions' predictor: ['+0.9674']
+  separation: ranges OVERLAP — no separating threshold
+  only-planning-is-split: False
+
+################################################################################
+PART 2 — DOSE-RESPONSE: planning depth sweep {1,2,3,4,6,8} vs greedy, n=4 (binding rung)
+################################################################################
+    [dose n=4 seed 1/30] elapsed=   2.6s
+    [dose n=4 seed 2/30] elapsed=   5.2s
+    [dose n=4 seed 3/30] elapsed=   7.8s
+    [dose n=4 seed 4/30] elapsed=  10.4s
+    [dose n=4 seed 5/30] elapsed=  13.0s
+    [dose n=4 seed 6/30] elapsed=  15.6s
+    [dose n=4 seed 7/30] elapsed=  18.1s
+    [dose n=4 seed 8/30] elapsed=  20.9s
+    [dose n=4 seed 9/30] elapsed=  23.6s
+    [dose n=4 seed 10/30] elapsed=  26.2s
+    [dose n=4 seed 11/30] elapsed=  28.7s
+    [dose n=4 seed 12/30] elapsed=  31.3s
+    [dose n=4 seed 13/30] elapsed=  33.9s
+    [dose n=4 seed 14/30] elapsed=  36.6s
+    [dose n=4 seed 15/30] elapsed=  39.3s
+    [dose n=4 seed 16/30] elapsed=  42.0s
+    [dose n=4 seed 17/30] elapsed=  44.5s
+    [dose n=4 seed 18/30] elapsed=  47.2s
+    [dose n=4 seed 19/30] elapsed=  49.8s
+    [dose n=4 seed 20/30] elapsed=  52.4s
+    [dose n=4 seed 21/30] elapsed=  55.1s
+    [dose n=4 seed 22/30] elapsed=  57.7s
+    [dose n=4 seed 23/30] elapsed=  60.3s
+    [dose n=4 seed 24/30] elapsed=  62.9s
+    [dose n=4 seed 25/30] elapsed=  65.6s
+    [dose n=4 seed 26/30] elapsed=  68.2s
+    [dose n=4 seed 27/30] elapsed=  70.9s
+    [dose n=4 seed 28/30] elapsed=  73.4s
+    [dose n=4 seed 29/30] elapsed=  76.1s
+    [dose n=4 seed 30/30] elapsed=  78.7s
+--- DOSE-RESPONSE: planning depth sweep (depth-d vs greedy depth-1) ---
+  depth |    Δbig-Φ |    Δfaith | SPLIT? | pred Δcoupling | > H_1014 bdry?
+      1 |   +0.0000 |   +0.0000 |  False |        +0.0000 |          False
+      2 |   -1.0520 |   +2.4931 |   True |        +2.4581 |           True
+      3 |   -5.5122 |   -0.0338 |  False |        +0.0094 |          False
+      4 |   -6.2276 |   +0.9325 |   True |        +0.9053 |          False
+      6 |   -5.9794 |   +2.0259 |   True |        +1.9909 |           True
+      8 |   -4.0083 |   +2.3332 |   True |        +2.2983 |           True
+  predictor-vs-depth Spearman rho=+0.429 p=3.965e-01  monotone(rho>0): True
+  split ONSET depth: 2   predictor crosses H_1014 boundary at depth: 2
+  onset == boundary-cross depth: True   onset >= boundary-cross depth: True
+
+================================================================================
+VERDICT
+================================================================================
+  PART 1 (n=5): separating threshold exists = False  only-planning-is-split = False  => n=5 separation HOLDS: False
+  PART 2 (dose): monotone predictor(rho=+0.429) = True  onset depth = 2  predictor-cross depth = 2  => monotone dose-onset: True
+
+OVERALL: PARTIAL (AMBER) — exactly one of {n=5 separation, monotone dose-onset} holds.
+  n=5 separation: False | monotone dose-onset: True. The predictor's
+  robustness is QUALIFIED — it does not clear BOTH pre-registered robustness bars.
+  VERDICT-TOKEN: PARTIAL
+================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n={4,5}. big-Phi
+super-exponential — n=5 is slow-but-tractable for the SET + the n=4 depth sweep;
+n=6 is the honest cap (skipped, as in H_1012). Both CPU mirrors RE-PROVEN == stdlib
+at n=4 AND n=5 (H_1012 prove_mirrors_at_n) BEFORE scoring; the predictor is a
+deterministic pure function of the SAME bits. Scale-transfer beyond n=5 UNVERIFIED.
+g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool. NOT a forge binary; $0 CPU.
