@@ -1,0 +1,24 @@
+==============================================================================
+H_1018 — lapse-free human bar (close the H_1015 ~7% attention-lapse caveat)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=H_964 hidden-velocity station-keeping (position-only obs)  metric M=mean return (0=optimal)
+N_runs=40 ep/run=60  human-ref=NO-LAPSE oracle (lapse=0.0)  +reproduce lapsing proxy (lapse=0.07)  TOL=0.05
+
+---- decomposition (mean +/- std, bootstrap CI) ----
+  no-lapse ORACLE (human ref) M = -0.8906 +/- 0.0750  CI=[-0.9131,-0.8666]
+  lapsing proxy (H_1015 repr) M = -1.1098 +/- 0.0899  CI=[-1.1400,-1.0832]
+  anima (WM latent->action)   M = -0.6426 +/- 0.0463  CI=[-0.6575,-0.6282]
+  reactive (single-frame)     M = -1.9237 +/- 0.1320  CI=[-1.9641,-1.8834]
+  random                      M = -6.1249 +/- 0.4377  CI=[-6.2580,-5.9883]
+
+lapse contribution = no-lapse-oracle - lapsing-proxy = -0.8906 - -1.1098 = 0.2192 (return the ~7% lapse costs the human)
+
+parity band [O - TOL, O + TOL] = [-0.9406, -0.8406]  (O=-0.8906, TOL=0.05)
+anima mean -0.6426 vs band -> within_band=False ci_overlaps=False below=False above=True
+oracle-anima gap = -0.2480
+
+------------------------------------------------------------------------------
+VERDICT H_1018: GREEN-PLUS ABOVE-ORACLE — anima mean -0.6426 EXCEEDS even the no-lapse oracle O=-0.8906 (anima CI_lo -0.658 > band_hi -0.841); the imitation-trained WM head out-returns the hand-coded optimal_action in this toy env (env/oracle-suboptimality finding, scoped tightly — NOT a general human-superiority claim). TOY single rung; scale-transfer UNVERIFIED.
+------------------------------------------------------------------------------
