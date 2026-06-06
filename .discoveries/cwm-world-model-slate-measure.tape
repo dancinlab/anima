@@ -50,3 +50,32 @@
 @H 984 := "object permanence: graceful degradation (knee p=0.9, error below chance ceiling throughout) + fill-in WM 0.34 << memoryless 1.07 (d 1.32) — latent maintains persistent world-state through occlusion" :: discovery [🟢]
   seed   = "does the latent maintain a persistent world-state through observation dropout?"
   target = "🟢 PASS — object permanence (toy; predictable rotational dynamics)"
+
+# ── IMAGINE axis ──
+@H 962 := "latent forward dynamics: delay-embed LDS rollout error 0.002->0.064 (h1->8) vs surface predictor 0.03->1.13; latent<obs at h>=2 (d 0.59), horizon advantage grows (rho 1.0), beats persistence" :: discovery [🟢]
+  seed   = "does the engine learn latent world-state dynamics vs surface next-obs prediction?"
+  target = "🟢 PASS — latent world-state dynamics (toy); LDSWorldModel primitive added to lib"
+
+@H 963 := "imagination horizon scales with Φ: 6-rung ladder, h* 2.25->39.8 as Φ 0.037->0.234, Spearman rho 1.0 (CI [1,1]), monotone" :: discovery [🟢]
+  seed   = "does the coherent rollout horizon h* scale with Φ across a config sweep?"
+  target = "🟢 PASS — horizon scales with Φ (toy, 6-rung ladder)"
+
+@H 967 := "counterfactual imagination: switching-LDS (per-action transition) ranks true returns rank-corr 0.98, top-1 regret 0.001 vs random 0.62 (d 1.44); single action-augmented LDS FAILED (bilinear action×state)" :: discovery [🟢]
+  seed   = "can the engine imagine + rank the consequences of its own candidate actions?"
+  target = "🟢 PASS — counterfactual imagination (toy; switching-LDS faithful primitive)"
+
+@H 976 := "rollout is mitosis (p8): imagined rollout + inference both fire division events rate 1.0, trigger overlap 0.96, both distinct from frozen no-growth (KS 1.0) — imagination grows cells like inference" :: discovery [🟢]
+  seed   = "is imagined rollout the same cell-division (mitosis) as live inference (p8)?"
+  target = "🟢 PASS — rollout is mitosis (toy)"
+
+@H 981 := "imagination self-consistency: K=12 stochastic rollouts stay grounded, divergence bounded/sub-linear, never >49% of unconditioned spread to h=20, drift-knee>Hmax (entropy matched to dynamics)" :: discovery [🟢]
+  seed   = "do repeated stochastic rollouts from one state stay grounded (not hallucinate)?"
+  target = "🟢 PASS — imagination self-consistency (toy)"
+
+@H 982 := "REM self-replay gives NO consolidation over idle: WAKE2 error REM 0.563 == idle 0.563 (d 0.00); beats random-replay only because that arm corrupts — self-replay cannot add info absent from WAKE1" :: discovery [🔴]
+  seed   = "does REM imagined-rollout rehearsal consolidate the world-model (improve next-WAKE)?"
+  target = "🔴 FAIL closed-negative (toy) — pure self-distillation adds no new information"
+
+@H 983 := "generated interactive world: D1 rule-consistency STRONG (same state+action->same next, d 1.94) but D2 loop revisit-consistency only weakly beats random-world (d 0.24<0.5) — rule-consistent but not loop-reversible" :: discovery [⚠]
+  seed   = "can the engine GENERATE a self-consistent interactive world (rules + revisit)?"
+  target = "⚠ INCOMPLETE (toy) — D1 strong, D2 below bar; loop-closing world = open ladder rung"

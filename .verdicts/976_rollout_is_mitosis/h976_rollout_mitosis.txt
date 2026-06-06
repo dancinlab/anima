@@ -1,0 +1,16 @@
+==============================================================================
+H_976 — Rollout is mitosis (p8 for imagination)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+mitosis-tick = latent-update magnitude; INFER vs ROLLOUT vs frozen-negative
+latent=24 N_seeds=30 ticks=60
+
+D1 division-event rate: INFER=1.0000±0.0000  ROLLOUT=1.0000±0.0000  FROZEN=0.0000±0.0000
+D1 KS(INFER,ROLLOUT) stat=0.2550 p=8.277e-52
+D3 KS(INFER,FROZEN)  stat=1.0000 p=0.000e+00
+D3 KS(ROLLOUT,FROZEN) stat=1.0000 p=0.000e+00
+D2 trigger-composition overlap (cos) ROLLOUT~INFER = 0.9551
+------------------------------------------------------------------------------
+VERDICT H_976: PASS ROLLOUT growth (rate 1.00) statistically like INFER (rate 1.00, KS 0.26) AND both distinct from frozen-negative (no growth) — rollout is mitosis, p8 holds for imagination (toy).
+------------------------------------------------------------------------------

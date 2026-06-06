@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE REM-A/B rung (a_scale_honest_scope) — interleave a REM-stage imagined-rollout phase (no external input) between two WAKE phases; compare next-WAKE world-model performance with vs without the REM phase. $0 local candidate. REM stage = substrate context per a_chat_sleep_imagination (NOT a boolean emit gate). NOT a forge binary.
 sister: H_976 (rollout = mitosis), H_962 (latent dynamics), H_963 (horizon), a_chat_sleep_imagination, a_autonomy_over_hardcode
 axes_seed: sleep = idle downtime ⊥ H_982 = REM imagined rollout CONSOLIDATES (next-WAKE WM improves vs no-REM control) — if REM rehearsal gives no WAKE benefit, "imagination = consolidation" is unsupported (closed-negative)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🔴 FAIL (closed-negative) — pure self-replay imagination gives NO consolidation over idle: WAKE_2 error REM 0.563 ≈ idle 0.563 (d −0.00, p 1.0); REM only beats the random-replay arm (1.36) because that arm actively corrupts. Self-replay cannot inject information absent from WAKE_1. Toy single-rung, ladder OPEN.
 ---
 
 # H_982 — REM offline world-model consolidation (is sleep WM training?)
@@ -48,6 +48,22 @@ Inserting an REM-stage imagined-rollout phase (no external input) between two WA
 ## 3. Honest scope
 
 Toy world, small scale (a_scale_honest_scope, #123-A). REM stage is one operationalization of a_chat_sleep_imagination's rehearsal (no per-stage boolean gate, a_autonomy_over_hardcode). Matched-budget A/B, not a full ultradian cycle. Single rung. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h982_rem_consolidation.py` · verdict: `.verdicts/982_rem_offline_world_model_consolidation/h982_rem_consolidation.txt`
+
+WAKE_1 = an undertrained LDS (n=6 noisy real trajectories) → {REM: re-fit on 200 self-generated imagined rollouts | random-replay: re-fit on 200 random sequences | idle: no extra fit} → WAKE_2 = held-out prediction error. 25 seeds.
+
+| arm | WAKE_2 error |
+|---|---|
+| REM rehearsal | 0.563 ± 0.199 |
+| idle (no replay) | 0.563 ± 0.199 |
+| random-replay | 1.358 ± 0.074 |
+
+D2 consolidation delta (random-replay − REM) = 0.80 (d 5.2) — but **REM vs idle: d −0.00, p 1.0** (identical).
+
+**Finding (🔴 FAIL, closed-negative):** the decisive D3 idle control shows REM rehearsal gives *zero* benefit over doing nothing — pure self-replay re-learns the same operator and cannot add information absent from WAKE_1. REM beats the random-replay arm only because random replay actively corrupts the model. So "imagination = consolidation" is unsupported for pure self-replay (a_paper_negative_ok). Honest scope: toy single-rung; a consolidation benefit would require imagined experience carrying NEW information (e.g. exploration / reward-shaped replay), not self-distillation — ladder OPEN for that variant.
 
 ## 4. Sibling / xlinks
 

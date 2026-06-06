@@ -1,0 +1,17 @@
+==============================================================================
+H_982 — REM offline world-model consolidation (learning-in-imagination)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+WAKE1 (limited n=6) -> REM rehearsal (n=200) vs random-replay/idle -> WAKE2
+N_seeds=25 eval-horizon=4
+
+D1 WAKE_2 prediction error:
+  REM rehearsal   = 0.5627 ± 0.1988
+  random-replay   = 1.3581 ± 0.0739
+  idle (no replay)= 0.5627 ± 0.1988
+D2 consolidation delta (CONTROL−REM) = 0.7954  d=5.196 p=4.764e-18
+D3 REM vs idle: d=-0.000 p=9.999e-01
+------------------------------------------------------------------------------
+VERDICT H_982: FAIL REM rehearsal 0.563 ~ idle 0.563 (d=-0.00, p=1.00) — pure self-replay adds NO consolidation over doing nothing (it cannot add information absent from WAKE_1); it only beats random-replay because that arm corrupts. Closed-negative (a_paper_negative_ok).
+------------------------------------------------------------------------------

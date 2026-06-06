@@ -1,0 +1,23 @@
+==============================================================================
+H_981 — Imagination self-consistency (grounded rollouts, not hallucination)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+K=12 stochastic rollouts/state, entropy=0.05, Hmax=20, N_start=60
+
+D3 unconditioned latent spread (max-hallucination bound) = 4.0023
+
+D1 cross-rollout divergence vs horizon:
+  h= 1: divergence=0.1677  (4.2% of uncond)
+  h= 2: divergence=0.2620  (6.5% of uncond)
+  h= 4: divergence=0.5334  (13.3% of uncond)
+  h= 8: divergence=1.1953  (29.9% of uncond)
+  h=12: divergence=1.7154  (42.9% of uncond)
+  h=16: divergence=1.8685  (46.7% of uncond)
+  h=20: divergence=1.9502  (48.7% of uncond)
+
+D2 drift-knee (50% of uncond) at h=21 (threshold > 5)
+D1 sub-linear (growth decelerates): True
+------------------------------------------------------------------------------
+VERDICT H_981: PASS divergence bounded/sub-linear, drift-knee h=21>5 (rollouts stay <50% of unconditioned spread to h=21) — imagination self-consistency (toy).
+------------------------------------------------------------------------------
