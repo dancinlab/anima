@@ -1,0 +1,2286 @@
+{
+  "h_id": "H_942",
+  "title": "AKIDA SOC scale-up ladder",
+  "timestamp_utc": "2026-06-06T10:52:24.191965+00:00",
+  "substrate": "CPU-mirror (AKD1000 unreachable from this host)",
+  "substrate_note": "byte-exact CPU mirror of h927/h931 on-chip LIF + phi_silicon_proxy; NO on-chip claim (a_lane_akida_gpu_split); on-chip + larger-N (>1 NP) re-confirm = pi5-akida/hexa-lang handoff",
+  "ladder_N": [
+    16,
+    64,
+    256
+  ],
+  "n_rungs": 3,
+  "controller": "K<-K+ETA*GAIN_GENTLE*(0.5-rate), local firing-rate homeostat, NO peak knowledge (== H_931 VERBATIM)",
+  "critical_point": "gap(PEAK_K=4)=0 at every rung (THRESHOLD scaled with IN)",
+  "convergence_criterion": "PRIMARY scale-invariant: |tail_mean_K - PEAK_K(4)| < 1.0 (within 1 K-step, == H_931 intent) AND tail_mean_\u03a6 >= 0.5\u00b7rung_peak_\u03a6. SECONDARY (documented, N=16-frozen): absolute POT gap < 8.0.",
+  "convergence_k_tol": 1.0,
+  "convergence_gap_tol_abs": 8.0,
+  "rungs": [
+    {
+      "N": 16,
+      "IN": 16,
+      "THRESHOLD": 24,
+      "peak_phi_at_K4": 0.15329,
+      "feedback_arms": [
+        {
+          "K0": 2.0,
+          "feedback": true,
+          "gain": 2.0,
+          "final_K": 3.89,
+          "final_gap": -0.88,
+          "final_phi": 0.262928,
+          "tail_mean_abs_gap": 2.55,
+          "tail_mean_phi": 0.25493,
+          "tail_mean_K": 3.986,
+          "tail_k_dist_from_peak": 0.014,
+          "phi_abs_tol": 0.07664,
+          "converged_to_peak": true,
+          "converged_abs_gap_secondary": true,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 3.0,
+              "gap": -8.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 4.0,
+              "gap": 0.0,
+              "rate": 0.385,
+              "phi": 0.354541
+            },
+            {
+              "step": 3,
+              "K": 4.23,
+              "gap": 1.84,
+              "rate": 0.425,
+              "phi": 0.2249
+            },
+            {
+              "step": 4,
+              "K": 4.38,
+              "gap": 3.04,
+              "rate": 0.505,
+              "phi": 0.11818
+            },
+            {
+              "step": 5,
+              "K": 4.37,
+              "gap": 2.96,
+              "rate": 0.505,
+              "phi": 0.285513
+            },
+            {
+              "step": 6,
+              "K": 4.36,
+              "gap": 2.88,
+              "rate": 0.5,
+              "phi": 0.238446
+            },
+            {
+              "step": 7,
+              "K": 4.36,
+              "gap": 2.88,
+              "rate": 0.43,
+              "phi": 0.2249
+            },
+            {
+              "step": 8,
+              "K": 4.5,
+              "gap": 4.0,
+              "rate": 0.905,
+              "phi": 0.252753
+            },
+            {
+              "step": 9,
+              "K": 3.69,
+              "gap": -2.48,
+              "rate": 0.435,
+              "phi": 0.058428
+            },
+            {
+              "step": 10,
+              "K": 3.82,
+              "gap": -1.44,
+              "rate": 0.445,
+              "phi": 0.285513
+            },
+            {
+              "step": 11,
+              "K": 3.93,
+              "gap": -0.56,
+              "rate": 0.51,
+              "phi": 0.253244
+            },
+            {
+              "step": 12,
+              "K": 3.91,
+              "gap": -0.72,
+              "rate": 0.445,
+              "phi": 0.0
+            },
+            {
+              "step": 13,
+              "K": 4.02,
+              "gap": 0.16,
+              "rate": 0.455,
+              "phi": 0.140228
+            },
+            {
+              "step": 14,
+              "K": 4.11,
+              "gap": 0.88,
+              "rate": 0.445,
+              "phi": 0.133834
+            },
+            {
+              "step": 15,
+              "K": 4.22,
+              "gap": 1.76,
+              "rate": 0.47,
+              "phi": 0.297409
+            },
+            {
+              "step": 16,
+              "K": 4.28,
+              "gap": 2.24,
+              "rate": 0.425,
+              "phi": 0.212725
+            },
+            {
+              "step": 17,
+              "K": 4.43,
+              "gap": 3.44,
+              "rate": 0.46,
+              "phi": 0.357669
+            },
+            {
+              "step": 18,
+              "K": 4.51,
+              "gap": 4.08,
+              "rate": 0.91,
+              "phi": 0.252753
+            },
+            {
+              "step": 19,
+              "K": 3.69,
+              "gap": -2.48,
+              "rate": 0.55,
+              "phi": 0.253244
+            },
+            {
+              "step": 20,
+              "K": 3.59,
+              "gap": -3.28,
+              "rate": 0.45,
+              "phi": 0.344888
+            },
+            {
+              "step": 21,
+              "K": 3.69,
+              "gap": -2.48,
+              "rate": 0.44,
+              "phi": 0.253244
+            },
+            {
+              "step": 22,
+              "K": 3.81,
+              "gap": -1.52,
+              "rate": 0.46,
+              "phi": 0.101969
+            },
+            {
+              "step": 23,
+              "K": 3.89,
+              "gap": -0.88,
+              "rate": 0.455,
+              "phi": 0.262928
+            }
+          ]
+        },
+        {
+          "K0": 12.0,
+          "feedback": true,
+          "gain": 2.0,
+          "final_K": 4.07,
+          "final_gap": 0.56,
+          "final_phi": 0.285513,
+          "tail_mean_abs_gap": 1.67,
+          "tail_mean_phi": 0.27082,
+          "tail_mean_K": 4.086,
+          "tail_k_dist_from_peak": 0.086,
+          "phi_abs_tol": 0.07664,
+          "converged_to_peak": true,
+          "converged_abs_gap_secondary": true,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 11.0,
+              "gap": 56.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 10.0,
+              "gap": 48.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 9.0,
+              "gap": 40.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 8.0,
+              "gap": 32.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 7.0,
+              "gap": 24.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 6.0,
+              "gap": 16.0,
+              "rate": 0.99,
+              "phi": 0.099499
+            },
+            {
+              "step": 7,
+              "K": 5.02,
+              "gap": 8.16,
+              "rate": 0.88,
+              "phi": 0.280588
+            },
+            {
+              "step": 8,
+              "K": 4.26,
+              "gap": 2.08,
+              "rate": 0.435,
+              "phi": 0.354541
+            },
+            {
+              "step": 9,
+              "K": 4.39,
+              "gap": 3.12,
+              "rate": 0.42,
+              "phi": 0.172444
+            },
+            {
+              "step": 10,
+              "K": 4.55,
+              "gap": 4.4,
+              "rate": 0.89,
+              "phi": 0.280588
+            },
+            {
+              "step": 11,
+              "K": 3.77,
+              "gap": -1.84,
+              "rate": 0.43,
+              "phi": 0.357669
+            },
+            {
+              "step": 12,
+              "K": 3.91,
+              "gap": -0.72,
+              "rate": 0.52,
+              "phi": 0.344888
+            },
+            {
+              "step": 13,
+              "K": 3.87,
+              "gap": -1.04,
+              "rate": 0.5,
+              "phi": 0.297409
+            },
+            {
+              "step": 14,
+              "K": 3.87,
+              "gap": -1.04,
+              "rate": 0.44,
+              "phi": 0.212725
+            },
+            {
+              "step": 15,
+              "K": 3.99,
+              "gap": -0.08,
+              "rate": 0.4,
+              "phi": 0.285513
+            },
+            {
+              "step": 16,
+              "K": 4.19,
+              "gap": 1.52,
+              "rate": 0.405,
+              "phi": 0.297409
+            },
+            {
+              "step": 17,
+              "K": 4.38,
+              "gap": 3.04,
+              "rate": 0.42,
+              "phi": 0.253244
+            },
+            {
+              "step": 18,
+              "K": 4.54,
+              "gap": 4.32,
+              "rate": 0.91,
+              "phi": 0.280588
+            },
+            {
+              "step": 19,
+              "K": 3.72,
+              "gap": -2.24,
+              "rate": 0.44,
+              "phi": 0.262928
+            },
+            {
+              "step": 20,
+              "K": 3.84,
+              "gap": -1.28,
+              "rate": 0.445,
+              "phi": 0.285513
+            },
+            {
+              "step": 21,
+              "K": 3.95,
+              "gap": -0.4,
+              "rate": 0.475,
+              "phi": 0.262928
+            },
+            {
+              "step": 22,
+              "K": 4.0,
+              "gap": -0.0,
+              "rate": 0.465,
+              "phi": 0.238446
+            },
+            {
+              "step": 23,
+              "K": 4.07,
+              "gap": 0.56,
+              "rate": 0.485,
+              "phi": 0.285513
+            }
+          ]
+        }
+      ],
+      "control_arms": [
+        {
+          "K0": 2.0,
+          "feedback": false,
+          "gain": 0.0,
+          "final_K": 2.0,
+          "final_gap": -16.0,
+          "final_phi": 0.0,
+          "tail_mean_abs_gap": 16.0,
+          "tail_mean_phi": 0.0,
+          "tail_mean_K": 2.0,
+          "tail_k_dist_from_peak": 2.0,
+          "phi_abs_tol": 0.07664,
+          "converged_to_peak": false,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 7,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 8,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 9,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 10,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 11,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 12,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 13,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 14,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 15,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 16,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 17,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 18,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 19,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 20,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 21,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 22,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 23,
+              "K": 2.0,
+              "gap": -16.0,
+              "rate": 0.0,
+              "phi": 0.0
+            }
+          ]
+        },
+        {
+          "K0": 12.0,
+          "feedback": false,
+          "gain": 0.0,
+          "final_K": 12.0,
+          "final_gap": 64.0,
+          "final_phi": 0.0,
+          "tail_mean_abs_gap": 64.0,
+          "tail_mean_phi": 0.0,
+          "tail_mean_K": 12.0,
+          "tail_k_dist_from_peak": 8.0,
+          "phi_abs_tol": 0.07664,
+          "converged_to_peak": false,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 7,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 8,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 9,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 10,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 11,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 12,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 13,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 14,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 15,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 16,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 17,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 18,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 19,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 20,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 21,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 22,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 23,
+              "K": 12.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            }
+          ]
+        }
+      ],
+      "feedback_both_converge": true,
+      "control_none_converge": true,
+      "soc_supported": true
+    },
+    {
+      "N": 64,
+      "IN": 64,
+      "THRESHOLD": 96,
+      "peak_phi_at_K4": 0.11818,
+      "feedback_arms": [
+        {
+          "K0": 2.0,
+          "feedback": true,
+          "gain": 2.0,
+          "final_K": 4.46,
+          "final_gap": 14.72,
+          "final_phi": 0.354541,
+          "tail_mean_abs_gap": 11.8,
+          "tail_mean_phi": 0.26081,
+          "tail_mean_K": 4.369,
+          "tail_k_dist_from_peak": 0.369,
+          "phi_abs_tol": 0.05909,
+          "converged_to_peak": true,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 3.0,
+              "gap": -32.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 4.0,
+              "gap": 0.0,
+              "rate": 0.45,
+              "phi": 0.172444
+            },
+            {
+              "step": 3,
+              "K": 4.1,
+              "gap": 3.2,
+              "rate": 0.485,
+              "phi": 0.140228
+            },
+            {
+              "step": 4,
+              "K": 4.13,
+              "gap": 4.16,
+              "rate": 0.505,
+              "phi": 0.344888
+            },
+            {
+              "step": 5,
+              "K": 4.12,
+              "gap": 3.84,
+              "rate": 0.475,
+              "phi": 0.354541
+            },
+            {
+              "step": 6,
+              "K": 4.17,
+              "gap": 5.44,
+              "rate": 0.51,
+              "phi": 0.058428
+            },
+            {
+              "step": 7,
+              "K": 4.15,
+              "gap": 4.8,
+              "rate": 0.495,
+              "phi": 0.357669
+            },
+            {
+              "step": 8,
+              "K": 4.16,
+              "gap": 5.12,
+              "rate": 0.52,
+              "phi": 0.258666
+            },
+            {
+              "step": 9,
+              "K": 4.12,
+              "gap": 3.84,
+              "rate": 0.485,
+              "phi": 0.285513
+            },
+            {
+              "step": 10,
+              "K": 4.15,
+              "gap": 4.8,
+              "rate": 0.515,
+              "phi": 0.262928
+            },
+            {
+              "step": 11,
+              "K": 4.12,
+              "gap": 3.84,
+              "rate": 0.505,
+              "phi": 0.354541
+            },
+            {
+              "step": 12,
+              "K": 4.11,
+              "gap": 3.52,
+              "rate": 0.435,
+              "phi": 0.140228
+            },
+            {
+              "step": 13,
+              "K": 4.24,
+              "gap": 7.68,
+              "rate": 0.48,
+              "phi": 0.344888
+            },
+            {
+              "step": 14,
+              "K": 4.28,
+              "gap": 8.96,
+              "rate": 0.46,
+              "phi": 0.178446
+            },
+            {
+              "step": 15,
+              "K": 4.36,
+              "gap": 11.52,
+              "rate": 0.55,
+              "phi": 0.178446
+            },
+            {
+              "step": 16,
+              "K": 4.26,
+              "gap": 8.32,
+              "rate": 0.495,
+              "phi": 0.285513
+            },
+            {
+              "step": 17,
+              "K": 4.27,
+              "gap": 8.64,
+              "rate": 0.47,
+              "phi": 0.238446
+            },
+            {
+              "step": 18,
+              "K": 4.33,
+              "gap": 10.56,
+              "rate": 0.465,
+              "phi": 0.297409
+            },
+            {
+              "step": 19,
+              "K": 4.4,
+              "gap": 12.8,
+              "rate": 0.51,
+              "phi": 0.300489
+            },
+            {
+              "step": 20,
+              "K": 4.38,
+              "gap": 12.16,
+              "rate": 0.485,
+              "phi": 0.172444
+            },
+            {
+              "step": 21,
+              "K": 4.41,
+              "gap": 13.12,
+              "rate": 0.485,
+              "phi": 0.212725
+            },
+            {
+              "step": 22,
+              "K": 4.44,
+              "gap": 14.08,
+              "rate": 0.49,
+              "phi": 0.2249
+            },
+            {
+              "step": 23,
+              "K": 4.46,
+              "gap": 14.72,
+              "rate": 0.45,
+              "phi": 0.354541
+            }
+          ]
+        },
+        {
+          "K0": 12.0,
+          "feedback": true,
+          "gain": 2.0,
+          "final_K": 3.69,
+          "final_gap": -9.92,
+          "final_phi": 0.297409,
+          "tail_mean_abs_gap": 12.76,
+          "tail_mean_phi": 0.22828,
+          "tail_mean_K": 4.131,
+          "tail_k_dist_from_peak": 0.131,
+          "phi_abs_tol": 0.05909,
+          "converged_to_peak": true,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 11.0,
+              "gap": 224.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 10.0,
+              "gap": 192.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 9.0,
+              "gap": 160.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 8.0,
+              "gap": 128.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 7.0,
+              "gap": 96.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 6.0,
+              "gap": 64.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 7,
+              "K": 5.0,
+              "gap": 32.0,
+              "rate": 0.995,
+              "phi": 0.070534
+            },
+            {
+              "step": 8,
+              "K": 4.01,
+              "gap": 0.32,
+              "rate": 0.445,
+              "phi": 0.212725
+            },
+            {
+              "step": 9,
+              "K": 4.12,
+              "gap": 3.84,
+              "rate": 0.445,
+              "phi": 0.327729
+            },
+            {
+              "step": 10,
+              "K": 4.23,
+              "gap": 7.36,
+              "rate": 0.52,
+              "phi": 0.344888
+            },
+            {
+              "step": 11,
+              "K": 4.19,
+              "gap": 6.08,
+              "rate": 0.44,
+              "phi": 0.178446
+            },
+            {
+              "step": 12,
+              "K": 4.31,
+              "gap": 9.92,
+              "rate": 0.605,
+              "phi": 0.354541
+            },
+            {
+              "step": 13,
+              "K": 4.1,
+              "gap": 3.2,
+              "rate": 0.52,
+              "phi": 0.354541
+            },
+            {
+              "step": 14,
+              "K": 4.06,
+              "gap": 1.92,
+              "rate": 0.465,
+              "phi": 0.238446
+            },
+            {
+              "step": 15,
+              "K": 4.13,
+              "gap": 4.16,
+              "rate": 0.4,
+              "phi": 0.354541
+            },
+            {
+              "step": 16,
+              "K": 4.33,
+              "gap": 10.56,
+              "rate": 0.48,
+              "phi": 0.253244
+            },
+            {
+              "step": 17,
+              "K": 4.37,
+              "gap": 11.84,
+              "rate": 0.47,
+              "phi": 0.238446
+            },
+            {
+              "step": 18,
+              "K": 4.43,
+              "gap": 13.76,
+              "rate": 0.49,
+              "phi": 0.297409
+            },
+            {
+              "step": 19,
+              "K": 4.45,
+              "gap": 14.4,
+              "rate": 0.455,
+              "phi": 0.212725
+            },
+            {
+              "step": 20,
+              "K": 4.54,
+              "gap": 17.28,
+              "rate": 0.995,
+              "phi": 0.070534
+            },
+            {
+              "step": 21,
+              "K": 3.55,
+              "gap": -14.4,
+              "rate": 0.43,
+              "phi": 0.101969
+            },
+            {
+              "step": 22,
+              "K": 3.69,
+              "gap": -9.92,
+              "rate": 0.5,
+              "phi": 0.354541
+            },
+            {
+              "step": 23,
+              "K": 3.69,
+              "gap": -9.92,
+              "rate": 0.53,
+              "phi": 0.297409
+            }
+          ]
+        }
+      ],
+      "control_arms": [
+        {
+          "K0": 2.0,
+          "feedback": false,
+          "gain": 0.0,
+          "final_K": 2.0,
+          "final_gap": -64.0,
+          "final_phi": 0.0,
+          "tail_mean_abs_gap": 64.0,
+          "tail_mean_phi": 0.0,
+          "tail_mean_K": 2.0,
+          "tail_k_dist_from_peak": 2.0,
+          "phi_abs_tol": 0.05909,
+          "converged_to_peak": false,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 7,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 8,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 9,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 10,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 11,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 12,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 13,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 14,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 15,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 16,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 17,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 18,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 19,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 20,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 21,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 22,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 23,
+              "K": 2.0,
+              "gap": -64.0,
+              "rate": 0.0,
+              "phi": 0.0
+            }
+          ]
+        },
+        {
+          "K0": 12.0,
+          "feedback": false,
+          "gain": 0.0,
+          "final_K": 12.0,
+          "final_gap": 256.0,
+          "final_phi": 0.0,
+          "tail_mean_abs_gap": 256.0,
+          "tail_mean_phi": 0.0,
+          "tail_mean_K": 12.0,
+          "tail_k_dist_from_peak": 8.0,
+          "phi_abs_tol": 0.05909,
+          "converged_to_peak": false,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 7,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 8,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 9,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 10,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 11,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 12,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 13,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 14,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 15,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 16,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 17,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 18,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 19,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 20,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 21,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 22,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 23,
+              "K": 12.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            }
+          ]
+        }
+      ],
+      "feedback_both_converge": true,
+      "control_none_converge": true,
+      "soc_supported": true
+    },
+    {
+      "N": 256,
+      "IN": 256,
+      "THRESHOLD": 384,
+      "peak_phi_at_K4": 0.20394,
+      "feedback_arms": [
+        {
+          "K0": 2.0,
+          "feedback": true,
+          "gain": 2.0,
+          "final_K": 4.03,
+          "final_gap": 3.84,
+          "final_phi": 0.172444,
+          "tail_mean_abs_gap": 10.72,
+          "tail_mean_phi": 0.23849,
+          "tail_mean_K": 4.076,
+          "tail_k_dist_from_peak": 0.076,
+          "phi_abs_tol": 0.10197,
+          "converged_to_peak": true,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 3.0,
+              "gap": -128.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 4.0,
+              "gap": 0.0,
+              "rate": 0.54,
+              "phi": 0.357669
+            },
+            {
+              "step": 3,
+              "K": 3.92,
+              "gap": -10.24,
+              "rate": 0.575,
+              "phi": 0.219106
+            },
+            {
+              "step": 4,
+              "K": 3.77,
+              "gap": -29.44,
+              "rate": 0.45,
+              "phi": 0.295181
+            },
+            {
+              "step": 5,
+              "K": 3.87,
+              "gap": -16.64,
+              "rate": 0.52,
+              "phi": 0.219106
+            },
+            {
+              "step": 6,
+              "K": 3.83,
+              "gap": -21.76,
+              "rate": 0.515,
+              "phi": 0.300489
+            },
+            {
+              "step": 7,
+              "K": 3.8,
+              "gap": -25.6,
+              "rate": 0.495,
+              "phi": 0.212725
+            },
+            {
+              "step": 8,
+              "K": 3.81,
+              "gap": -24.32,
+              "rate": 0.535,
+              "phi": 0.253244
+            },
+            {
+              "step": 9,
+              "K": 3.74,
+              "gap": -33.28,
+              "rate": 0.47,
+              "phi": 0.109243
+            },
+            {
+              "step": 10,
+              "K": 3.8,
+              "gap": -25.6,
+              "rate": 0.485,
+              "phi": 0.297409
+            },
+            {
+              "step": 11,
+              "K": 3.83,
+              "gap": -21.76,
+              "rate": 0.5,
+              "phi": 0.258666
+            },
+            {
+              "step": 12,
+              "K": 3.83,
+              "gap": -21.76,
+              "rate": 0.5,
+              "phi": 0.262928
+            },
+            {
+              "step": 13,
+              "K": 3.83,
+              "gap": -21.76,
+              "rate": 0.49,
+              "phi": 0.285513
+            },
+            {
+              "step": 14,
+              "K": 3.85,
+              "gap": -19.2,
+              "rate": 0.435,
+              "phi": 0.285513
+            },
+            {
+              "step": 15,
+              "K": 3.98,
+              "gap": -2.56,
+              "rate": 0.505,
+              "phi": 0.357669
+            },
+            {
+              "step": 16,
+              "K": 3.97,
+              "gap": -3.84,
+              "rate": 0.44,
+              "phi": 0.178446
+            },
+            {
+              "step": 17,
+              "K": 4.09,
+              "gap": 11.52,
+              "rate": 0.495,
+              "phi": 0.238446
+            },
+            {
+              "step": 18,
+              "K": 4.1,
+              "gap": 12.8,
+              "rate": 0.495,
+              "phi": 0.133834
+            },
+            {
+              "step": 19,
+              "K": 4.11,
+              "gap": 14.08,
+              "rate": 0.515,
+              "phi": 0.212725
+            },
+            {
+              "step": 20,
+              "K": 4.08,
+              "gap": 10.24,
+              "rate": 0.475,
+              "phi": 0.354541
+            },
+            {
+              "step": 21,
+              "K": 4.13,
+              "gap": 16.64,
+              "rate": 0.515,
+              "phi": 0.262928
+            },
+            {
+              "step": 22,
+              "K": 4.1,
+              "gap": 12.8,
+              "rate": 0.535,
+              "phi": 0.354541
+            },
+            {
+              "step": 23,
+              "K": 4.03,
+              "gap": 3.84,
+              "rate": 0.485,
+              "phi": 0.172444
+            }
+          ]
+        },
+        {
+          "K0": 12.0,
+          "feedback": true,
+          "gain": 2.0,
+          "final_K": 3.52,
+          "final_gap": -61.44,
+          "final_phi": 0.354541,
+          "tail_mean_abs_gap": 37.6,
+          "tail_mean_phi": 0.24334,
+          "tail_mean_K": 4.174,
+          "tail_k_dist_from_peak": 0.174,
+          "phi_abs_tol": 0.10197,
+          "converged_to_peak": true,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 11.0,
+              "gap": 896.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 10.0,
+              "gap": 768.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 9.0,
+              "gap": 640.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 8.0,
+              "gap": 512.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 7.0,
+              "gap": 384.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 6.0,
+              "gap": 256.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 7,
+              "K": 5.0,
+              "gap": 128.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 8,
+              "K": 4.0,
+              "gap": 0.0,
+              "rate": 0.52,
+              "phi": 0.203938
+            },
+            {
+              "step": 9,
+              "K": 3.96,
+              "gap": -5.12,
+              "rate": 0.49,
+              "phi": 0.212725
+            },
+            {
+              "step": 10,
+              "K": 3.98,
+              "gap": -2.56,
+              "rate": 0.48,
+              "phi": 0.297409
+            },
+            {
+              "step": 11,
+              "K": 4.02,
+              "gap": 2.56,
+              "rate": 0.435,
+              "phi": 0.262928
+            },
+            {
+              "step": 12,
+              "K": 4.15,
+              "gap": 19.2,
+              "rate": 0.58,
+              "phi": 0.079309
+            },
+            {
+              "step": 13,
+              "K": 3.99,
+              "gap": -1.28,
+              "rate": 0.52,
+              "phi": 0.153287
+            },
+            {
+              "step": 14,
+              "K": 3.95,
+              "gap": -6.4,
+              "rate": 0.47,
+              "phi": 0.212725
+            },
+            {
+              "step": 15,
+              "K": 4.01,
+              "gap": 1.28,
+              "rate": 0.49,
+              "phi": 0.084337
+            },
+            {
+              "step": 16,
+              "K": 4.03,
+              "gap": 3.84,
+              "rate": 0.445,
+              "phi": 0.344888
+            },
+            {
+              "step": 17,
+              "K": 4.14,
+              "gap": 17.92,
+              "rate": 0.46,
+              "phi": 0.172444
+            },
+            {
+              "step": 18,
+              "K": 4.22,
+              "gap": 28.16,
+              "rate": 0.485,
+              "phi": 0.178446
+            },
+            {
+              "step": 19,
+              "K": 4.25,
+              "gap": 32.0,
+              "rate": 0.465,
+              "phi": 0.285513
+            },
+            {
+              "step": 20,
+              "K": 4.32,
+              "gap": 40.96,
+              "rate": 0.465,
+              "phi": 0.253244
+            },
+            {
+              "step": 21,
+              "K": 4.39,
+              "gap": 49.92,
+              "rate": 0.435,
+              "phi": 0.357669
+            },
+            {
+              "step": 22,
+              "K": 4.52,
+              "gap": 66.56,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 23,
+              "K": 3.52,
+              "gap": -61.44,
+              "rate": 0.55,
+              "phi": 0.354541
+            }
+          ]
+        }
+      ],
+      "control_arms": [
+        {
+          "K0": 2.0,
+          "feedback": false,
+          "gain": 0.0,
+          "final_K": 2.0,
+          "final_gap": -256.0,
+          "final_phi": 0.0,
+          "tail_mean_abs_gap": 256.0,
+          "tail_mean_phi": 0.0,
+          "tail_mean_K": 2.0,
+          "tail_k_dist_from_peak": 2.0,
+          "phi_abs_tol": 0.10197,
+          "converged_to_peak": false,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 7,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 8,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 9,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 10,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 11,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 12,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 13,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 14,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 15,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 16,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 17,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 18,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 19,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 20,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 21,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 22,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            },
+            {
+              "step": 23,
+              "K": 2.0,
+              "gap": -256.0,
+              "rate": 0.0,
+              "phi": 0.0
+            }
+          ]
+        },
+        {
+          "K0": 12.0,
+          "feedback": false,
+          "gain": 0.0,
+          "final_K": 12.0,
+          "final_gap": 1024.0,
+          "final_phi": 0.0,
+          "tail_mean_abs_gap": 1024.0,
+          "tail_mean_phi": 0.0,
+          "tail_mean_K": 12.0,
+          "tail_k_dist_from_peak": 8.0,
+          "phi_abs_tol": 0.10197,
+          "converged_to_peak": false,
+          "converged_abs_gap_secondary": false,
+          "trajectory": [
+            {
+              "step": 0,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 1,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 2,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 3,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 4,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 5,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 6,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 7,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 8,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 9,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 10,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 11,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 12,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 13,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 14,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 15,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 16,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 17,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 18,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 19,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 20,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 21,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 22,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            },
+            {
+              "step": 23,
+              "K": 12.0,
+              "gap": 1024.0,
+              "rate": 1.0,
+              "phi": 0.0
+            }
+          ]
+        }
+      ],
+      "feedback_both_converge": true,
+      "control_none_converge": true,
+      "soc_supported": true
+    }
+  ],
+  "all_rungs_soc": true,
+  "deterministic": false,
+  "g5_code_measured": true,
+  "llm": "none",
+  "verdict_token": "\ud83d\udfe2",
+  "falsifier_id": "F-H942-SOC-SCALE-ROBUST",
+  "verdict_rationale": "The local-only firing-rate homeostat self-tunes the substrate to the edge-of-chaos sweet spot (|tailK-PEAK_K|<1.0, \u03a6\u22650.5\u00b7rung-peak) from BOTH sides at ALL 3 ladder rungs (N=[16, 64, 256]), while the no-feedback control fails at every rung. H_931's SOC is SCALE-ROBUST across the pool-size ladder \u2014 the \u03a6-peak is a self-organized attractor of a plausible local rule, scale-invariant in K-space. NOTE: the absolute POT-gap secondary gate (frozen at N=16, where 1 K-step=8 POT) flags larger N because POT scales with IN \u2014 that is a units artifact of an N-naive tolerance, NOT a SOC failure; the homeostat lands at K\u22484 at every rung. (CPU-mirror substrate; on-chip re-confirm = pi5-akida handoff.)"
+}

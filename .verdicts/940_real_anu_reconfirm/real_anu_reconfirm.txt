@@ -1,0 +1,284 @@
+H_940 — REAL-ANU RE-CONFIRM OF H_936 BUFFER-ARTIFACT (vs os.urandom)
+============================================================================
+timestamp_utc : 2026-06-06T09:55:08.843532+00:00
+population    : 24 seeds × 2400 ticks/seed  ·  ent_scale 0.04
+shared gate   : 0.5036279804452517
+
+── BIG REAL-ANU BUFFER (provenance + REAL-ANU proof + unbiasedness) ────
+  source        : anu_pull  (tier anu_paid, request_id anu_paid_keyed)
+  key_status    : {'flat.anu_key_paid': True, 'flat.anu_key_free': True}
+  n_bytes       : 859456  (worst-case cursor span 777600 → no_cycle_by_construction True)
+  sha256        : 592346bd721ad3f899a52db7f949c7e38097d1eac14596739b5d093dd33d759c
+  byte_mean     : 126.9422 (ideal 127.5, abs_err 0.5578)
+  KS vs uniform : D=0.0067 p=0.1066
+  chi² 256-bin  : 245.20 (df 255) p=0.6591  →  unbiased=True
+
+── BEFORE/AFTER table (mean over seeds) ────────────────────────────────
+                          DET (deterministic)   QS (quantum small,    QB (quantum BIG,
+                                                cycling 1024 B)       REAL ANU fresh)
+  emit_rate (sd)          0.420538 (0.004915)  0.420833 (0.000000)  0.424201 (0.003652)
+  phi_mean (sd)           0.141427 (0.000332)  0.140839 (0.000000)  0.141714 (0.000487)
+
+── phi_mean two-sample (the load-bearing tension test) ─────────────────
+  DET vs QS (H_930 regime)  : Cohen d=+2.4495  KS D=1.0 p=6.2e-14
+  DET vs QB (H_940 REAL ANU): Cohen d=-0.6743  KS D=0.4583333333333333 p=0.012
+
+  tension observables distinguishing — QS: 6 ['phi_mean', 'phi_var', 'ch0_mean', 'ch1_mean', 'ch3_mean', 'ch5_mean']
+  tension observables distinguishing — QB: 1 ['phi_mean']
+
+── H_936 (os.urandom) comparison ──────────────────────────────────────
+  H_936 os.urandom_fallback: phi_mean DET-vs-QB KS p≈0.14, 0 distinguishing → 🟢 parity
+  H_940 REAL ANU           : phi_mean DET-vs-QB KS p=0.012, 1 distinguishing
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ───────────────
+  🔴  F-H940-SOURCE-DEPENDENT
+  The REAL ANU big buffer DIFFERS from os.urandom — the tension parity BREAKS under genuine ANU. phi_mean Cohen |d|=0.674 KS p=0.012; 1 tension observables ['phi_mean'] distinguishing; QB emit_rate sd=0.003652. This is a SURPRISING source-dependence (the os.urandom proxy was not representative) and would itself be a finding worth its own arc.
+
+── full machine record (JSON) ──────────────────────────────────────────
+{
+  "h_id": "H_940",
+  "title": "real-ANU re-confirm of H_936's tension-axis buffer-artifact",
+  "timestamp_utc": "2026-06-06T09:55:08.843532+00:00",
+  "blocked": false,
+  "scope": "ONE re-confirm rung on the SAME documented-update-map mirror as H_930/H_935/H_936 (real 8-factor brain_decide, VERBATIM CORE constants). NOT the compiled forge binary; full emit-TEXT (.clm generator L3 \u23f3/\u274c, a_core_engine_map) OPEN. ANU API draw only, no GPU.",
+  "deterministic": false,
+  "g5_code_measured": true,
+  "llm": "none",
+  "T_per_seed": 2400,
+  "n_seeds_per_arm": 24,
+  "ent_scale": 0.04,
+  "shared_emit_gate": 0.5036279804452517,
+  "big_buffer": {
+    "requested_bytes": 859456,
+    "worst_case_cursor_span_bytes": 777600,
+    "no_cycle_by_construction": true,
+    "provenance": {
+      "ok": true,
+      "source": "anu_pull",
+      "tier": "anu_paid",
+      "request_id": "anu_paid_keyed",
+      "n_bytes": 859456,
+      "sha256": "592346bd721ad3f899a52db7f949c7e38097d1eac14596739b5d093dd33d759c",
+      "path": "/private/tmp/wt-h940/state/h940_real_anu/anu_big_real.bin",
+      "keys_tried": [
+        "flat.anu_key_paid",
+        "flat.anu_key_free"
+      ],
+      "key_status": {
+        "flat.anu_key_paid": true,
+        "flat.anu_key_free": true
+      },
+      "honest_note": "REAL ANU vacuum-fluctuation pull (secret-keyed). #123-A: ANU == chacha20 statistically \u2014 the value is provenance/ontology, and the H_940 test is whether the SOURCE changes the tension parity (expected: no)."
+    },
+    "uniformity": {
+      "n_checked": 65536,
+      "byte_mean": 126.94219970703125,
+      "ideal_mean": 127.5,
+      "mean_abs_err": 0.55780029296875,
+      "ks_D_vs_uniform": 0.006683349609375,
+      "ks_p_vs_uniform": 0.10658887120415506,
+      "chi2_256bin": 245.203125,
+      "chi2_p": 0.6590511009624751,
+      "chi2_df": 255,
+      "unbiased": true
+    }
+  },
+  "arm_DET_summary": {
+    "arm": "DET",
+    "mode": "deterministic",
+    "emit_rate_mean": 0.42053819444444446,
+    "emit_rate_sd": 0.004914605215595077,
+    "phi_mean_mean": 0.1414271270195445,
+    "phi_mean_sd": 0.00033235033063639535,
+    "phi_var_mean": 0.0017801660914591136,
+    "provenance_first_seed": {
+      "mode": "deterministic",
+      "tier": "numpy_prng(seed=1000)",
+      "sha256": null,
+      "request_id": null,
+      "n_drawn": 2400,
+      "label": "h936_R2_DET_s0"
+    }
+  },
+  "arm_QS_summary": {
+    "arm": "QS",
+    "mode": "quantum",
+    "emit_rate_mean": 0.42083333333333334,
+    "emit_rate_sd": 0.0,
+    "phi_mean_mean": 0.14083909775178644,
+    "phi_mean_sd": 0.0,
+    "phi_var_mean": 0.0017597389704502543,
+    "provenance_first_seed": {
+      "mode": "quantum",
+      "tier": "anu_committed",
+      "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5",
+      "request_id": null,
+      "n_drawn": 2400,
+      "label": "h936_R2_QS_s0",
+      "cycled": true
+    }
+  },
+  "arm_QB_summary": {
+    "arm": "QB",
+    "mode": "quantum",
+    "emit_rate_mean": 0.42420138888888886,
+    "emit_rate_sd": 0.0036521109974444,
+    "phi_mean_mean": 0.14171425551755465,
+    "phi_mean_sd": 0.0004868585536106276,
+    "phi_var_mean": 0.0017885388477533657,
+    "provenance_first_seed": {
+      "mode": "quantum",
+      "tier": "anu_explicit",
+      "sha256": "592346bd721ad3f899a52db7f949c7e38097d1eac14596739b5d093dd33d759c",
+      "request_id": null,
+      "n_drawn": 2400,
+      "label": "h936_R2_QB_s0",
+      "cycled": false
+    }
+  },
+  "before_after_phi_mean": {
+    "H_930_regime_DET_vs_QS_small_cycling": {
+      "cohen_d": 2.4494925471666362,
+      "D": 1.0,
+      "p": 6.202011224319715e-14
+    },
+    "H_940_test_DET_vs_QB_big_REAL_ANU": {
+      "cohen_d": -0.6743411969273032,
+      "D": 0.4583333333333333,
+      "p": 0.011965431606262756
+    }
+  },
+  "full_compare_DET_vs_QS": {
+    "emit_rate": {
+      "cohen_d": -0.08314020590233187,
+      "D": 0.5833333333333334,
+      "p": 0.0004056559340207839
+    },
+    "emit_entropy_bits": {
+      "cohen_d": -0.12540353772675072,
+      "D": 0.5833333333333334,
+      "p": 0.0004056559340207839
+    },
+    "mean_inter_emit": {
+      "cohen_d": -0.3341041177374605,
+      "D": 0.625,
+      "p": 0.00010401434205661125
+    },
+    "phi_mean": {
+      "cohen_d": 2.4494925471666362,
+      "D": 1.0,
+      "p": 6.202011224319715e-14
+    },
+    "phi_var": {
+      "cohen_d": 1.8890293685663428,
+      "D": 0.9166666666666666,
+      "p": 6.995868661032638e-11
+    },
+    "ch0_mean": {
+      "cohen_d": 2.1039785510193707,
+      "D": 0.9583333333333334,
+      "p": 2.976965387673463e-12
+    },
+    "ch1_mean": {
+      "cohen_d": 0.4624720409530335,
+      "D": 0.7083333333333334,
+      "p": 4.566483309802445e-06
+    },
+    "ch2_mean": {
+      "cohen_d": 0.0,
+      "D": 0.0,
+      "p": 1.0
+    },
+    "ch3_mean": {
+      "cohen_d": -0.6457169082185016,
+      "D": 0.625,
+      "p": 0.00010401434205661125
+    },
+    "ch4_mean": {
+      "cohen_d": 0.0,
+      "D": 0.0,
+      "p": 1.0
+    },
+    "ch5_mean": {
+      "cohen_d": 2.103978551019369,
+      "D": 0.9583333333333334,
+      "p": 2.976965387673463e-12
+    }
+  },
+  "full_compare_DET_vs_QB": {
+    "emit_rate": {
+      "cohen_d": -0.8282629856035366,
+      "D": 0.2916666666666667,
+      "p": 0.26283384201555077
+    },
+    "emit_entropy_bits": {
+      "cohen_d": -0.8342041388394551,
+      "D": 0.2916666666666667,
+      "p": 0.26283384201555077
+    },
+    "mean_inter_emit": {
+      "cohen_d": 0.8171775255573763,
+      "D": 0.375,
+      "p": 0.06780335175136987
+    },
+    "phi_mean": {
+      "cohen_d": -0.6743411969273032,
+      "D": 0.4583333333333333,
+      "p": 0.011965431606262756
+    },
+    "phi_var": {
+      "cohen_d": -0.44396352843093534,
+      "D": 0.25,
+      "p": 0.4490368220409109
+    },
+    "ch0_mean": {
+      "cohen_d": -0.06583554961483035,
+      "D": 0.20833333333333334,
+      "p": 0.686017125117228
+    },
+    "ch1_mean": {
+      "cohen_d": -0.2523807007297742,
+      "D": 0.125,
+      "p": 0.994161229482218
+    },
+    "ch2_mean": {
+      "cohen_d": 0.0,
+      "D": 0.0,
+      "p": 1.0
+    },
+    "ch3_mean": {
+      "cohen_d": 0.16877509897499024,
+      "D": 0.2916666666666667,
+      "p": 0.26283384201555077
+    },
+    "ch4_mean": {
+      "cohen_d": 0.0,
+      "D": 0.0,
+      "p": 1.0
+    },
+    "ch5_mean": {
+      "cohen_d": -0.065835549614828,
+      "D": 0.20833333333333334,
+      "p": 0.686017125117228
+    }
+  },
+  "tension_distinguishing_QS": [
+    "phi_mean",
+    "phi_var",
+    "ch0_mean",
+    "ch1_mean",
+    "ch3_mean",
+    "ch5_mean"
+  ],
+  "tension_distinguishing_QB": [
+    "phi_mean"
+  ],
+  "negligible_thresholds": {
+    "cohen_d": 0.2,
+    "alpha": 0.05
+  },
+  "verdict_token": "\ud83d\udd34",
+  "falsifier_id": "F-H940-SOURCE-DEPENDENT",
+  "verdict_rationale": "The REAL ANU big buffer DIFFERS from os.urandom \u2014 the tension parity BREAKS under genuine ANU. phi_mean Cohen |d|=0.674 KS p=0.012; 1 tension observables ['phi_mean'] distinguishing; QB emit_rate sd=0.003652. This is a SURPRISING source-dependence (the os.urandom proxy was not representative) and would itself be a finding worth its own arc.",
+  "cross_compare_vs_h936": "H_936 os.urandom_fallback gave \ud83d\udfe2 parity (phi_mean DET-vs-QB KS p\u22480.14, 0 distinguishing). H_940 tests whether REAL ANU reproduces that."
+}

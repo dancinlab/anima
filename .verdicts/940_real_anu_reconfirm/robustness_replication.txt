@@ -1,0 +1,98 @@
+H_940 ROBUSTNESS — is the primary 🔴 stable across fresh ANU draws?
+============================================================================
+timestamp_utc : 2026-06-06T10:05:18.364347+00:00
+population    : 24 seeds × 2400 ticks/seed  ·  4 fresh-ANU replicates
+shared gate   : 0.5036279804452517
+
+── per-replicate DET-vs-QB phi_mean (fresh REAL ANU each, distinct seed_base) ──
+  rep 0 sb=1000 rid=anu_paid_keyed sha=b5002aa7894d1e72 unbiased=True: phi d=-0.4880 KS p=0.14 | #dist=0 [] => trips=False
+  rep 1 sb=1100 rid=anu_paid_keyed sha=9823290dc730be1b unbiased=False: phi d=-0.4965 KS p=0.263 | #dist=1 ['phi_var'] => trips=True
+  rep 2 sb=1200 rid=anu_paid_keyed sha=471b7101bc1ac9c4 unbiased=True: phi d=+0.1836 KS p=0.449 | #dist=0 [] => trips=False
+  rep 3 sb=1300 rid=anu_paid_keyed sha=f4681d4e32773599 unbiased=True: phi d=-0.0891 KS p=0.902 | #dist=0 [] => trips=False
+
+  replicates tripping pre-registered falsifier: 1/4 (fraction 0.25)
+
+── ROBUSTNESS READING (does NOT override the primary pre-registered 🔴) ──
+  ⚠ FRAGILE: the primary 🔴 does NOT reproduce in a clear majority of fresh ANU draws — the single-rung source-dependence is NOT robust; at this 24-seed scale it is consistent with a sampling fluke (#123-A: ANU == chacha20 statistically). The primary pre-registered 🔴 STANDS as the literal single-rung measurement, but is scoped FRAGILE / UNCONFIRMED.
+
+── full machine record (JSON) ──────────────────────────────────────────
+{
+  "h_id": "H_940-robustness",
+  "timestamp_utc": "2026-06-06T10:05:18.364347+00:00",
+  "purpose": "stability of H_940's primary \ud83d\udd34 across independent ANU draws + seed bases \u2014 does NOT change the pre-registered primary verdict",
+  "primary_verdict": "\ud83d\udd34 F-H940-SOURCE-DEPENDENT (single rung, seed_base 1000)",
+  "T_per_seed": 2400,
+  "n_seeds_per_arm": 24,
+  "n_replicates": 4,
+  "n_ok": 4,
+  "n_replicates_tripping_falsifier": 1,
+  "fraction_tripping": 0.25,
+  "robust_red": false,
+  "replicates": [
+    {
+      "rep": 0,
+      "ok": true,
+      "seed_base": 1000,
+      "request_id": "anu_paid_keyed",
+      "tier": "anu_paid",
+      "sha256": "b5002aa7894d1e72",
+      "buf_unbiased": true,
+      "phi_cohen_d": -0.487999679748268,
+      "phi_ks_p": 0.13982257948893737,
+      "n_tension_distinguishing": 0,
+      "tension_distinguishing": [],
+      "phi_falsifier_trips": false,
+      "replicate_trips_falsifier": false
+    },
+    {
+      "rep": 1,
+      "ok": true,
+      "seed_base": 1100,
+      "request_id": "anu_paid_keyed",
+      "tier": "anu_paid",
+      "sha256": "9823290dc730be1b",
+      "buf_unbiased": false,
+      "phi_cohen_d": -0.4965022822822625,
+      "phi_ks_p": 0.26283384201555077,
+      "n_tension_distinguishing": 1,
+      "tension_distinguishing": [
+        "phi_var"
+      ],
+      "phi_falsifier_trips": false,
+      "replicate_trips_falsifier": true
+    },
+    {
+      "rep": 2,
+      "ok": true,
+      "seed_base": 1200,
+      "request_id": "anu_paid_keyed",
+      "tier": "anu_paid",
+      "sha256": "471b7101bc1ac9c4",
+      "buf_unbiased": true,
+      "phi_cohen_d": 0.18364382310889096,
+      "phi_ks_p": 0.4490368220409109,
+      "n_tension_distinguishing": 0,
+      "tension_distinguishing": [],
+      "phi_falsifier_trips": false,
+      "replicate_trips_falsifier": false
+    },
+    {
+      "rep": 3,
+      "ok": true,
+      "seed_base": 1300,
+      "request_id": "anu_paid_keyed",
+      "tier": "anu_paid",
+      "sha256": "f4681d4e32773599",
+      "buf_unbiased": true,
+      "phi_cohen_d": -0.08911826045938617,
+      "phi_ks_p": 0.9024001944012529,
+      "n_tension_distinguishing": 0,
+      "tension_distinguishing": [],
+      "phi_falsifier_trips": false,
+      "replicate_trips_falsifier": false
+    }
+  ],
+  "deterministic": false,
+  "g5_code_measured": true,
+  "llm": "none"
+}
