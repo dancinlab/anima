@@ -1,0 +1,100 @@
+{
+  "h_id": "H_926",
+  "title": "deterministic chaos vs injected entropy (minimal-model)",
+  "timestamp_utc": "2026-06-06T07:02:27.768560+00:00",
+  "scope": "MINIMAL-MODEL (faithful transcription of CORE/pure_field.hexa + engine_g.hexa + brain.hexa + H_675 MITOSIS; NOT the full forge engine \u2014 clm_decode link gap on Mac). a_scale_honest_scope.",
+  "deterministic": false,
+  "g5_code_measured": true,
+  "llm": "none",
+  "T": 4000,
+  "delta0": 1e-09,
+  "entropy": {
+    "have_qentropy_ssot": true,
+    "mode": "deterministic",
+    "provenance": {
+      "mode": "deterministic",
+      "tier": "numpy_prng(seed=187)",
+      "sha256": null,
+      "request_id": null,
+      "n_drawn": 4000,
+      "label": "h926_R2_noise"
+    },
+    "note": "R2-noise seed point (hi=4 -> 0..3) per H_924 qentropy SSOT; deterministic-auxiliary forced for reproducibility; quantum bytes would carry the same seed point (H_924: ANU==PRNG stat)."
+  },
+  "arm_A_deterministic_no_entropy": {
+    "label": "A_deterministic",
+    "lyapunov_proxy_per_step": 9.045788693367897e-05,
+    "emit_gate_used": 0.5040874700175636,
+    "emit_entropy_bits": 0.975169091953342,
+    "emit_rate": 0.4075,
+    "emit_rate_variability": 0.3299602248756659,
+    "n_emit": 1630,
+    "n_emit_flips_vs_boundary": 139,
+    "T": 4000,
+    "score_min": 0.45861804034385767,
+    "score_max": 0.5862707830741914,
+    "phi_final": 0.15726379601747453,
+    "phi_peak": 0.19657974502184314
+  },
+  "arm_B_entropy_injected": {
+    "label": "B_entropy_injected",
+    "lyapunov_proxy_per_step": 0.00013661107723067118,
+    "emit_gate_used": 0.5040874700175636,
+    "emit_entropy_bits": 0.9812203228671199,
+    "emit_rate": 0.4195,
+    "emit_rate_variability": 0.3330761924845425,
+    "n_emit": 1678,
+    "n_emit_flips_vs_boundary": 338,
+    "T": 4000,
+    "score_min": 0.4511131049072359,
+    "score_max": 0.5991696457807031,
+    "phi_final": 0.16499039452590164,
+    "phi_peak": 0.20623799315737704
+  },
+  "positive_control_logistic_chaotic": {
+    "r": 3.9,
+    "lyapunov_benettin": 0.4860255825761692,
+    "lyapunov_analytic": 0.48618438373755546
+  },
+  "positive_control_logistic_edge_of_chaos": {
+    "r": 3.5699,
+    "lyapunov_benettin": 0.0009515376107589525,
+    "lyapunov_analytic": 0.0008906537394115819
+  },
+  "mitosis_kuramoto_sweep": {
+    "K=0.0": {
+      "K": 0.0,
+      "lyapunov_benettin": 2.2409521098600013e-07,
+      "mean_order_r": 0.33716062587298046
+    },
+    "K=0.5": {
+      "K": 0.5,
+      "lyapunov_benettin": -4.409878505495123e-05,
+      "mean_order_r": 0.4177072524158534
+    },
+    "K=1.0": {
+      "K": 1.0,
+      "lyapunov_benettin": -0.0002631597279715346,
+      "mean_order_r": 0.8059990050572532
+    },
+    "K=2.0": {
+      "K": 2.0,
+      "lyapunov_benettin": -0.0002602347231247276,
+      "mean_order_r": 0.9724787284704489
+    },
+    "K=4.0": {
+      "K": 4.0,
+      "lyapunov_benettin": -0.0002627043886030961,
+      "mean_order_r": 0.9935254055878223
+    }
+  },
+  "falsifier": {
+    "F-H926-CHAOS (core lyap > +0.01)": false,
+    "core_lyapunov_proxy_per_step": 9.045788693367897e-05,
+    "F-H926-PARITY (|dH|<0.05 AND |dRate|<0.02)": true,
+    "delta_emit_entropy_bits": 0.006051230913777905,
+    "delta_emit_rate": 0.01200000000000001
+  },
+  "verdict_token": "CLOSED_NEGATIVE_ENTROPY_NONFUNCTIONAL",
+  "finding": "THIRD-OUTCOME: core NON-chaotic (quasiperiodic) AND emit-parity holds -> neither chaos NOR entropy drives emit-diversity in this model; emit diversity (if any) comes from the quasiperiodic oscillator beat. Entropy adds no functional emit-diversity."
+}
