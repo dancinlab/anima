@@ -1,0 +1,19 @@
+==============================================================================
+H_997 — cross-modal DYNAMICS transfer (forward operator transfers, geometry doesn't)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=shared 2D-oscillator latent; modality A=raw coords, B=rotated+nonlinear sensor
+DELAY=3 horizon=5 seeds=24
+
+forecast error on modality B (lower=better), mean ± std:
+  FROZEN-A transition (transferred)  : 0.1599 ± 0.0343
+  SHUFFLED transition (control)      : 66.4021 ± 55.6277
+  STATIC last-obs baseline           : 0.7221 ± 0.1144
+
+D1 frozen-A < shuffled: d=-1.649 p=8.14e-06
+   frozen-A < static : True
+D2 geometry: cross-modal CKA(A,B) = 0.786  (same-modal CKA = 1.000)
+------------------------------------------------------------------------------
+VERDICT H_997: PASS dynamics transfers without geometry invariance: a transition trained on modality A forecasts modality B (err 0.160) below shuffled 66.402 (p=8.1e-06) AND static 0.722, while cross-modal CKA 0.79 ≪ same-modal 1.00 — the forward LAW transfers, the GEOMETRY does not (consistent w/ H_978🔴) (toy rung).
+------------------------------------------------------------------------------

@@ -1,0 +1,13 @@
+==============================================================================
+H_996 — auditable action CHAIN over a trajectory (tamper-evident + replayable)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+chain length T=20  trajectories=24  (H_928 receipt + H_932 lineage)
+base chain verifies clean: True
+D1 tamper-evidence: detection rate = 1.0000 over 60 single-field tampers
+   forward-localization (break at tampered link or later) = 1.0000
+D2 replay reproducibility: 24/24 trajectories bit-exact = 1.0000
+------------------------------------------------------------------------------
+VERDICT H_996: PASS action chain is tamper-evident + replayable: 100% of single-field tampers detected and forward-localized, and 24/24 replays are bit-exact — a whole trajectory of actions is auditable end-to-end (H_969 single-action → H_932 chain) (toy rung).
+------------------------------------------------------------------------------
