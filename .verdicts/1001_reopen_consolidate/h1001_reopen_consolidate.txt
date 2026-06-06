@@ -1,0 +1,89 @@
+==============================================================================
+H_1001 — TERMINAL faithful-IIT4 reconciliation (close RE-OPEN of H_971/973/988/994)
+substrate=CPU-mirror (numpy) — BYTE-FAITHFUL mirror of stdlib
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (re-proven below)
+g5 CODE-measured (no LLM self-judge, p7) | a_scale_honest_scope: TOY n≤8 rung
+Reuses the H_999 faithful engine + regimes VERBATIM; ADDS H_994 goal-coupled faithful Φ.
+==============================================================================
+
+STEP 0 — prove CPU mirror ≡ stdlib faithful_phi.hexa (hexa run on this Mac)
+  n3 dim4 nb2   : mirror=2.000000  hexa_ref=2.000000  |Δ|=1.64e-09  OK
+  n4 dim6 nb2   : mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+  n4 dim6 nb4   : mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+  n5 dim8 nb3   : mirror=0.372556  hexa_ref=0.372556  |Δ|=2.56e-07  OK
+  MIRROR-FAITHFUL: PROVEN (≡ stdlib engine)
+
+DISCRETIZATION: WM latent (24-dim, 40 steps) → top-8 variance channels as n=8 units; faithful MIP-EI Φ n_bins=4 (exact, n≤8).
+Applied IDENTICALLY to every regime so the CONTRAST is fair.
+
+################ H_971 — imagination(DRIFT) vs reaction ################
+# original proxy verdict: 🔴 Φ_IMAGINE 0.068 < Φ_REACT 0.095 (d −3.4)
+--- H_971 faithful: DRIFT(imagine) − REACT ---
+  FAITHFUL Φ  DRIFT    = 3.8087 ± 0.8005
+  FAITHFUL Φ  REACT    = 2.2994 ± 0.6092
+  FAITHFUL contrast (DRIFT−REACT) = +1.5094  Cohen d=+2.086  Welch t=+8.080 p=7.195e-11  CI=[+1.1987,+1.8504]
+  [proxy, original]  DRIFT=0.0683  REACT=0.0946  proxy contrast=-0.0263
+
+############### H_988 — guided imagination vs reaction ###############
+# original proxy verdict: 🔴 Φ_GUIDED 0.039 < Φ_DRIFT 0.068 < Φ_REACT 0.095
+--- H_988 faithful: GUIDED − REACT ---
+  FAITHFUL Φ  GUIDED   = 2.1202 ± 0.6678
+  FAITHFUL Φ  REACT    = 2.2994 ± 0.6092
+  FAITHFUL contrast (GUIDED−REACT) = -0.1792  Cohen d=-0.276  Welch t=-1.068 p=2.902e-01  CI=[-0.5678,+0.1957]
+  [proxy, original]  GUIDED=0.0347  REACT=0.0946  proxy contrast=-0.0599
+--- H_988 faithful: GUIDED − DRIFT ---
+  FAITHFUL Φ  GUIDED   = 2.1202 ± 0.6678
+  FAITHFUL Φ  DRIFT    = 3.8087 ± 0.8005
+  FAITHFUL contrast (GUIDED−DRIFT) = -1.6886  Cohen d=-2.252  Welch t=-8.722 p=4.943e-12  CI=[-2.0961,-1.3194]
+  [proxy, original]  GUIDED=0.0347  DRIFT=0.0683  proxy contrast=-0.0337
+
+################ H_973 — planning(MPC) vs greedy ################
+# original proxy verdict: 🔴 Φ_PLAN 0.063 < Φ_GREEDY 0.104; Φ falls with depth
+--- H_973 faithful: PLAN(depth=8) − GREEDY ---
+  FAITHFUL Φ  PLAN     = 7.7459 ± 1.3857
+  FAITHFUL Φ  GREEDY   = 2.6516 ± 0.6426
+  FAITHFUL contrast (PLAN−GREEDY) = +5.0943  Cohen d=+4.637  Welch t=+17.960 p=5.138e-21  CI=[+4.5889,+5.5650]
+  [proxy, original]  PLAN=0.0463  GREEDY=0.0952  proxy contrast=-0.0489
+  faithful Φ vs plan-depth: depths=[1, 2, 4, 8] means=['4.8099', '6.9893', '6.0959', '7.7459']
+  dose-response Spearman rho=+0.483 p=2.348e-08  (proxy was rho −0.47)
+
+############# H_994 — goal-COUPLED faithful Φ (NEW vs H_999) #############
+# original proxy verdict: 🔴 free-Φ d −8.4 → goal-coupled d −1.1 (narrows, does NOT flip)
+# H_994 frozen falsifier: PASS iff free-Φ reproduces NEG AND goal-coupled FLIPS pos (d>0.8)
+  PROXY free-Φ (whole latent, sanity): Φ_IMAGINE=0.0683 Φ_REACT=0.0946 contrast=-0.0263  (reproduces H_994 negative sign: YES)
+--- H_994 faithful goal-coupled: IMAGINE − REACT (goal-subspace proj) ---
+  FAITHFUL Φ  IMAGINE  = 0.6138 ± 0.3488
+  FAITHFUL Φ  REACT    = 0.7789 ± 0.1154
+  FAITHFUL contrast (IMAGINE−REACT) = -0.1651  Cohen d=-0.625  Welch t=-2.420 p=2.079e-02  CI=[-0.2944,-0.0335]
+
+==============================================================================
+TERMINAL FAITHFUL-IIT4 VERDICTS (frozen PASS/FAIL conditions)
+==============================================================================
+  H_971  faithful contrast=+1.5094 d=+2.086 p=7.19e-11
+         frozen PASS: d>0.8 & contrast>0  →  🟢 IMAGINATION-RAISES-Φ
+         (overturns the proxy 🔴 null — autonomous imagination is a higher-Φ state)
+
+  H_973  faithful contrast=+5.0943 d=+4.637 p=5.14e-21  dose-response rho=+0.483 p=2.35e-08
+         frozen PASS: d>0.8 & contrast>0 & positive dose-response  →  🟢 PLANNING-RAISES-Φ
+         (overturns the proxy 🔴 null — planning is a higher-Φ state, Φ rises with depth)
+
+  H_988  faithful contrast=-0.1792 d=-0.276 p=2.90e-01
+         frozen PASS: |d|<0.3 & p>0.05 (faithful NULL)  →  🔴 GUIDED-NULL-ROBUST
+         (GENUINE null, NOT a proxy artifact — the goal pull contracts the trajectory,
+          lowering irreducibility; guided rollout ≈ reactive, and GUIDED < DRIFT)
+
+  H_994  faithful goal-coupled contrast=-0.1651 d=-0.625 p=2.08e-02  (free-Φ reproduces neg: YES)
+         frozen falsifier: PASS iff free-Φ NEG AND goal-coupled FLIPS pos (d>0.8)  →  🔴 GOAL-COUPLED-NULL-ROBUST
+         under the FAITHFUL engine the goal-coupled (subspace-projected) contrast does NOT flip positive — H_994's structural reading STANDS for the goal-subspace projection (distinct from H_971's full-latent reversal)
+
+==============================================================================
+CONSOLIDATION SUMMARY — RE-OPEN of H_971/973/988/994 now CLOSED:
+  H_971 → 🟢 IMAGINATION-RAISES-Φ   (faithful d +2.09)
+  H_973 → 🟢 PLANNING-RAISES-Φ   (faithful d +4.64, dose-response rho +0.48)
+  H_988 → 🔴 GUIDED-NULL-ROBUST   (faithful d -0.28, n.s.)
+  H_994 → 🔴 GOAL-COUPLED-NULL-ROBUST   (faithful goal-coupled d -0.62)
+==============================================================================
+HONEST scope (a_scale_honest_scope): TOY single-rung — WM latent DISCRETIZED to
+n≤8 units (H_994 goal-coupled = n=6 projected channels); faithful Φ EXACT at n≤8 but
+scale-transfer UNVERIFIED. The CONTRAST (not the absolute Φ) is the falsifier; the
+same discretization is applied to every regime. NOT a forge binary; $0 CPU-local.
