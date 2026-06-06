@@ -84,12 +84,14 @@ def main():
     rows = []
     ladder_cells = {}     # length -> {rung -> dict(curr,lm,mem)}
     cut_lengths = []      # rungs we had to CUT for wall-time (REPORTED)
+    cut_triggered = False
     for target in T3_LADDER:
-        if (time.time() - t0) > WALL_CUT_S * (T3_LADDER.index(target)):
-            # a prior rung already blew the cumulative budget — cut the rest honestly
+        # CUT the rest of the ladder ONLY once a prior rung pushed cumulative wall past the budget
+        if cut_triggered or (time.time() - t0) > WALL_CUT_S:
+            cut_triggered = True
             cut_lengths.append(target)
             print(f"  CUT len={target} — cumulative wall {time.time()-t0:.0f}s exceeded budget "
-                  f"(PROBE_CONVENTIONS: smaller honest ladder beats a hang)", flush=True)
+                  f"{WALL_CUT_S}s (PROBE_CONVENTIONS: smaller honest ladder beats a hang)", flush=True)
             continue
         ladder_cells[target] = {}
         for latent in SLATE_RUNGS:
