@@ -1,0 +1,33 @@
+==============================================================================
+H_1008 — Orthogonal recurrent init — crack the H_1005 T3@36 horizon cap?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+T3 break len=36, T2 sentinel len=40. rungs=[16, 32] seeds=6, fixed 40-ep budget (== H_1005, NO extra compute/labels). ONLY moved lever vs H_1005 = recurrent-matrix init -> ORTHOGONAL (QR of Gaussian).
+
+  done T3 len=36 rung=16  curr=0.403 LM=0.333 mem=1.000 [111s]
+  done T3 len=36 rung=32  curr=0.341 LM=0.333 mem=1.000 [299s]
+  done T2 len=40 rung=16  curr=0.931 LM=0.475 mem=1.000 [493s]
+  done T2 len=40 rung=32  curr=1.000 LM=0.474 mem=1.000 [712s]
+
+================================================================================================
+ORTHOGONAL-INIT (curr-GRU vs LM vs mem-aug)
+task           tgtLen rung  chance  currGRU      LM   memLM     gap        d         p
+------------------------------------------------------------------------------------------------
+T3_ortho           36   16   0.167    0.403   0.333   1.000   0.070     0.56   3.7e-01
+T3_ortho           36   32   0.167    0.341   0.333   1.000   0.007     0.31   6.1e-01
+T2_ortho           40   16   0.500    0.931   0.475   1.000   0.456     3.79   1.1e-03
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+T2_ortho           40   32   0.500    1.000   0.474   1.000   0.526    36.04   2.0e-08
+================================================================================================
+
+T3@36 ortho-init: curr={16: np.float64(0.403), 32: np.float64(0.341)} sep@>=2rungs=False sep-rungs=[]
+T2@40 sentinel kept: True
+orthogonal init cracks T3@36: False
+
+------------------------------------------------------------------------------
+VERDICT H_1008: FAIL ORTHOGONAL-INIT-INSUFFICIENT — orthogonal recurrent init does NOT crack the H_1005 T3 cap at len 36 (curr-GRU {16: np.float64(0.403), 32: np.float64(0.341)}, sep@>=2rungs=False, T2-kept=True). The cap is NOT (just) a gradient-conditioning limit — a better-conditioned recurrence alone does not teach the mod-6 ring counter at 36 steps from a final-step label (closed-negative, a_paper_negative_ok; toy, production OPEN, a_scale_honest_scope).
+------------------------------------------------------------------------------
+
+[total wall 713s]

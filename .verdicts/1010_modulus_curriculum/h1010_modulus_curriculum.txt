@@ -1,0 +1,31 @@
+==============================================================================
+H_1010 — Modulus-axis curriculum (mod-2->6) at len=36 — crack the T3 horizon cap?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+T3 at FULL len=36 throughout; curriculum AXIS = ring size P [2, 3, 4, 6] (not length). in_dim FIXED at P_MAX=6 layout. T2 sentinel len=40. rungs=[16, 32] seeds=6, 40-ep budget (== H_1005). ONLY moved lever vs H_1005 = the curriculum axis (modulus instead of length).
+
+  done T3 mod-curr rung=16  curr=0.322 LM=0.333 mem=1.000  prog=[(2, 2, 1.0), (3, 34, 0.36), (4, 2, 0.547), (6, 2, 0.36)] [214s]
+  done T3 mod-curr rung=32  curr=0.341 LM=0.333 mem=1.000  prog=[(2, 2, 1.0), (3, 34, 0.467), (4, 2, 0.555), (6, 2, 0.37)] [494s]
+  done T2 base rung=16  curr=0.921 LM=0.475 mem=1.000 [674s]
+  done T2 base rung=32  curr=0.922 LM=0.474 mem=1.000 [893s]
+
+================================================================================================
+MODULUS-CURRICULUM (curr-GRU vs LM vs mem-aug)
+task           tgtLen rung  chance  currGRU      LM   memLM     gap        d         p
+------------------------------------------------------------------------------------------------
+T3_modcurr         36   16   0.167    0.322   0.333   1.000  -0.011    -0.44   4.6e-01
+T3_modcurr         36   32   0.167    0.341   0.333   1.000   0.007     0.27   6.5e-01
+T2_basecurr        40   16   0.500    0.921   0.475   1.000   0.446     3.27   2.2e-03
+T2_basecurr        40   32   0.500    0.922   0.474   1.000   0.447     3.28   2.2e-03
+================================================================================================
+
+T3(mod-6)@36 modulus-curriculum: curr={16: np.float64(0.322), 32: np.float64(0.341)} sep@>=2rungs=False sep-rungs=[]
+T2@40 sentinel kept: True
+modulus-axis curriculum cracks T3@36: False
+
+------------------------------------------------------------------------------
+VERDICT H_1010: FAIL MODULUS-CURRICULUM-INSUFFICIENT — a ring-size curriculum (mod-2->6) at full length 36 does NOT crack the H_1005 T3 cap (curr-GRU {16: np.float64(0.322), 32: np.float64(0.341)}, sep@>=2rungs=False, T2-kept=True). The cap is about the long-range HORIZON (the 36-step credit chain), NOT the state-space granularity — growing the modulus at full length does not substitute for the long-range integration the curriculum cannot bootstrap (closed-negative, a_paper_negative_ok; toy, production OPEN, a_scale_honest_scope).
+------------------------------------------------------------------------------
+
+[total wall 894s]

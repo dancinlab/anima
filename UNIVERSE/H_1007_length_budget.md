@@ -18,7 +18,7 @@ status: measured
 scope: TOY — T3@len{36,72} at length-PROPORTIONAL budget (40·len/18 → 80 ep @36, 160 ep @72) + T2@40 sentinel, width-rungs {16,32}, 6 seeds, {train 600/test 300}. The ONLY moved lever vs H_1005 = the TOTAL epoch budget (scaled with length); the EXTRA compute is REPORTED (this is by design — it is the "is the cap just compute?" control). $0 CPU-local pure-numpy GRU; NO torch. Production transfer UNVERIFIED. NOT a forge binary; nothing on AKIDA.
 sister: H_1005 (the fixed-budget cap this control tests), H_1006 (dense-supervision lever), H_1003, H_1000, H_985
 axes_seed: "the H_1005 T3 cap is just a COMPUTE-vs-horizon tradeoff — scaling the budget proportionally to length gives the long stage enough epochs to bootstrap and cracks T3@36 (the cap is bought back by more compute, NOT a method-shape limit)" ⊥ H_1007 = the cap is a genuine METHOD-SHAPE / credit-assignment limit — even 2-4× the compute does not crack T3@36 (more compute at fixed method is not enough)
-verdict: PENDING
+verdict: 🔴 FAIL — T3-CAP-IS-NOT-JUST-COMPUTE: length-proportional budget (2.0x@len36, 4.0x@len72) does NOT crack T3 (curr 0.382/0.328, sep@>=2rungs=False); T2@40 kept. Genuine method-shape/long-range-credit limit, not compute. closed-negative (a_paper_negative_ok). toy (a_scale_honest_scope).
 ---
 
 # H_1007 — Length-proportional epoch budget: is the T3 cap just compute? (learning-method slate)

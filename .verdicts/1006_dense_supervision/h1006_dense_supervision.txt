@@ -1,0 +1,39 @@
+==============================================================================
+H_1006 — Dense per-step state supervision — crack the H_1005 T3@36 horizon cap?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+T3 BREAK len=36 (the H_1005 break point), T2 sentinel len=40. rungs=[16, 32] seeds=6 (== H_1005 trim). budget=40ep (== H_1005). ONLY moved lever vs H_1005 = per-step AUX supervision (dose-response stride k in {final-only, 4, 1}). aux head = TRAINING-only; eval is final-label.
+
+  done T3 stride=final-only rung=16  curr=0.419 LM=0.333 mem=1.000  [167s]
+  done T3 stride=final-only rung=32  curr=0.326 LM=0.333 mem=1.000  [440s]
+  done T3 stride=every-1    rung=16  curr=0.605 LM=0.333 mem=1.000  [636s]
+  done T3 stride=every-1    rung=32  curr=0.691 LM=0.333 mem=1.000  [882s]
+  done T2 sentinel    rung=16  curr=0.999 LM=0.475 mem=1.000  [1169s]
+  done T2 sentinel    rung=32  curr=0.999 LM=0.474 mem=1.000  [1492s]
+
+================================================================================================
+DENSE-SUPERVISION dose-response (curr-GRU vs LM vs mem-aug)
+task           tgtLen rung  chance  currGRU      LM   memLM     gap        d         p
+------------------------------------------------------------------------------------------------
+T3 k=final-        36   16   0.167    0.419   0.333   1.000   0.087     0.97   1.5e-01
+T3 k=final-        36   32   0.167    0.326   0.333   1.000  -0.007    -0.29   6.3e-01
+T3 k=every-        36   16   0.167    0.605   0.333   1.000   0.272     9.01   2.5e-07
+T3 k=every-        36   32   0.167    0.691   0.333   1.000   0.358     8.11   5.7e-06
+T2 k=every1        40   16   0.500    0.999   0.475   1.000   0.524    36.06   1.8e-08
+T2 k=every1        40   32   0.500    0.999   0.474   1.000   0.525    35.93   1.8e-08
+================================================================================================
+
+dose-response (T3@36 — does denser supervision crack the cap?):
+  k=final-only curr={16: np.float64(0.419), 32: np.float64(0.326)} sep@>=2rungs=False solves=True  sep-rungs=[]
+  k=every-1    curr={16: np.float64(0.605), 32: np.float64(0.691)} sep@>=2rungs=True  solves=True  sep-rungs=[16, 32]
+
+harness-validate (final-only reproduces H_1005 break @36): True
+T2@40 sentinel kept: True
+dense (k=1) cracks T3@36: True
+
+------------------------------------------------------------------------------
+VERDICT H_1006: PASS DENSE-SUPERVISION-CRACKS-T3-CAP — supervising the hidden mod-6 running position at EVERY step (vs only the final label) RESTORES the WM>LM separator on T3 at len=36 — the H_1005 BREAK point — (curr-GRU {16: np.float64(0.605), 32: np.float64(0.691)} >> chance 0.167, d>0.8 vs LM at >=2 rungs) WHILE keeping T2@40. The H_1005 T3 horizon cap was a long-range CREDIT-DENSITY limit: a final-step label cannot teach a 36-step modular integration, but per-step state supervision restores gradient at every step and bootstraps the integrator past the cap. CAVEAT (the cost): this method REQUIRES the hidden per-step ground-truth state (an EXTRA label a final-label-only task does not provide for free) — a method-shape unlock that buys reach with denser supervision, not free compute (toy len=36; production OPEN, a_scale_honest_scope).
+------------------------------------------------------------------------------
+
+[total wall 1492s]

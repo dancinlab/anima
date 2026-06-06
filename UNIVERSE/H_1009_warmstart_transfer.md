@@ -18,7 +18,7 @@ status: measured
 scope: TOY — T3 phase1 len=18 (solved) → phase2 warm-start to len=36 (H_1005 break) + T2@40 sentinel, width-rungs {16,32}, 6 seeds, {train 600/test 300}. The ONLY moved lever vs H_1005 = warm-start init from solved-short weights. COMPUTE NOTE: 2× budget (40 ep base + 40 ep target) — REPORTED. $0 CPU-local pure-numpy GRU; NO torch. Production transfer UNVERIFIED. NOT a forge binary; nothing on AKIDA.
 sister: H_1005 (the T3 break this attacks; T3 solves at len 18 = the warm-start source), H_1006, H_1007, H_1003, H_1000, H_985
 axes_seed: "the short-horizon ring-counter solution is on the path to the long-horizon one — warm-starting len-36 from the len-18-solved model bootstraps the integrator past the cap" ⊥ H_1009 = the short solution does NOT transfer — the long-horizon solution is in a different basin; warm-start + 2× compute still fails T3@36
-verdict: PENDING
+verdict: 🔴 FAIL — WARM-START-NO-TRANSFER: init from the len-18-solved model (+~2x compute) does NOT crack T3@36 (curr 0.427/0.327, sep@>=2rungs=False); T2 kept. long-horizon solution sits in a different basin. closed-negative. toy (a_scale_honest_scope).
 ---
 
 # H_1009 — Warm-start transfer from the len-18-solved model: crack the T3 cap? (learning-method slate)

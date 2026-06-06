@@ -96,3 +96,5 @@ The reading: the H_1003 curriculum removes the H_1000 long-range-credit-assignme
 - ⇄ [H_970](./H_970_world_model_vs_language_model_decisive_test.md) (keystone delayed-cue WM>LM existence-proof — T1 stands; this H maps how far the WM>LM separator extends in *horizon* for T2/T3)
 - ⇄ [CWM](../CWM/CWM.md) (CWM-VERIFY · world-model ladder) — a clean controlled scaling-law instance: curriculum buys a task-structure-dependent bounded horizon at fixed compute (CWM.log.md landscape)
 - external: curriculum learning (Bengio et al. 2009); long-range credit assignment in recurrent nets — this toy result quantifies that an easy→hard length ramp's reach is bounded and depends on the target's state-update structure (commutative accumulator vs modular counter).
+
+> **Follow-up (H_1006):** the T3 horizon cap is broken by DENSE per-step state supervision (H_1006 🟢) — NOT by more compute / ortho-init / warm-start / modulus-curriculum (H_1007-1010 🔴). The cap is a credit-DENSITY limit.

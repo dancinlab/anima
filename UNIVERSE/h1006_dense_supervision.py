@@ -211,7 +211,10 @@ def main():
           f"(== H_1005). ONLY moved lever vs H_1005 = per-step AUX supervision (dose-response "
           f"stride k in {{final-only, 4, 1}}). aux head = TRAINING-only; eval is final-label.\n")
 
-    STRIDES = {"final-only": T3_BREAK + 1, "every-4": 4, "every-1": 1}  # final-only ~= baseline
+    # dose-response ENDPOINTS only (final-only baseline + full dense) — WALL-TIME TRIM
+    # (every-4 mid-point dropped to keep the run under wall-budget; REPORTED). The endpoints
+    # are what the falsifier needs (does the densest supervision crack the cap vs the baseline?).
+    STRIDES = {"final-only": T3_BREAK + 1, "every-1": 1}  # final-only ~= baseline
     rows = []
     t3_cells = {k: {} for k in STRIDES}
     t2_cells = {}

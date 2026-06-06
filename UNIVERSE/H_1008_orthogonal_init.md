@@ -18,7 +18,7 @@ status: measured
 scope: TOY — T3@len36 (H_1005 break) + T2@40 sentinel, width-rungs {16,32}, 6 seeds, {train 600/test 300}, 40-epoch budget (== H_1005, NO extra compute or labels). The ONLY moved lever vs H_1005 = recurrent-matrix init (Uz/Ur/Un → random orthogonal via QR). $0 CPU-local pure-numpy GRU; NO torch. Production / real-corpus transfer UNVERIFIED. NOT a forge binary; nothing on AKIDA.
 sister: H_1005 (the T3 break this attacks), H_1003, H_1000, H_985
 axes_seed: "the H_1005 T3 cap is a long-range GRADIENT-CONDITIONING limit — orthogonal recurrence (unit singular values) lets gradient propagate through the 36-step BPTT chain without vanishing, cracking T3 at len≥36 for FREE (no extra compute/labels)" ⊥ H_1008 = the cap is NOT gradient conditioning — a better-conditioned recurrence alone does not teach the ring counter at 36 steps
-verdict: PENDING
+verdict: 🔴 FAIL — ORTHOGONAL-INIT-INSUFFICIENT: orthogonal recurrent init does NOT crack T3@36 (curr 0.403/0.341, sep@>=2rungs=False); T2 kept. Cap is not (just) a gradient-conditioning limit. closed-negative. toy (a_scale_honest_scope).
 ---
 
 # H_1008 — Orthogonal recurrent init: crack the H_1005 T3 horizon cap? (learning-method slate)

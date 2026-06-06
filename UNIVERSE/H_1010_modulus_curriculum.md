@@ -18,7 +18,7 @@ status: measured
 scope: TOY — T3 at FIXED full break length len=36, curriculum AXIS = ring size P {2,3,4,6} (not length); in_dim FIXED at the P_MAX=6 layout (9 channels) across the whole curriculum. T2@40 sentinel (standard length curriculum). width-rungs {16,32}, 6 seeds, {train 600/test 300}, 40-epoch budget (== H_1005). The ONLY moved lever vs H_1005 = the curriculum axis (modulus instead of length). $0 CPU-local pure-numpy GRU; NO torch. Production transfer UNVERIFIED. NOT a forge binary; nothing on AKIDA.
 sister: H_1005 (the length-axis cap this attacks from a different axis), H_1006, H_1003, H_1000, H_985
 axes_seed: "the H_1005 T3 cap is about STATE-SPACE granularity, not horizon — ramping the ring size (easy 2-state → hard 6-state) at full length 36, where the length curriculum failed, bootstraps the integrator and cracks T3" ⊥ H_1010 = the cap is about the long-range HORIZON (the 36-step credit chain), NOT the state-space — growing the modulus at full length does not substitute for long-range integration
-verdict: PENDING
+verdict: 🔴 FAIL — MODULUS-CURRICULUM-INSUFFICIENT: ring-size curriculum (mod2->6) at len36 does NOT crack T3 (curr 0.322/0.341, sep@>=2rungs=False); T2 kept. cap is the long-range HORIZON, not state-space granularity. closed-negative. toy (a_scale_honest_scope).
 ---
 
 # H_1010 — Modulus-axis curriculum (mod-2→6) at len=36: crack the T3 cap? (learning-method slate)
