@@ -1,0 +1,37 @@
+H_927 — Stochastic Resonance: optimal R2 noise amplitude for substrate Φ
+LIVE AKD1000 (pi5-akida, device BC.00.000.002, BackendType.Hardware), N=16, T=200.
+Φ-proxy = phi_silicon_proxy (entropy × integration × differentiation; honest proxy,
+NOT full IIT4 big_phi; byte-for-byte mirror of AKIDA/akida_edge_of_chaos_phi.hexa).
+Sweep axis K = upper bound of rng.integers(0,K) per input line; mean potential
+POT(K) = IN·(K-1)/2 = 8·(K-1); threshold held FIXED at 24 (gap crosses 0 at K=4).
+deterministic: false (R2 noise stochastic; numpy PRNG reseeded to seed 187 per level).
+
+VERBATIM SWEEP (probe stdout):
+K= 2 POT=  8.0 gap= -16.0 rate=0.0000 std=0.000 phi=0.0000
+K= 3 POT= 16.0 gap=  -8.0 rate=0.0050 std=1.129 phi=0.0000
+K= 4 POT= 24.0 gap=  +0.0 rate=0.4750 std=7.990 phi=0.2974
+K= 6 POT= 40.0 gap= +16.0 rate=0.9950 std=1.129 phi=0.0705
+K= 8 POT= 56.0 gap= +32.0 rate=1.0000 std=0.000 phi=0.0000
+K=12 POT= 88.0 gap= +64.0 rate=1.0000 std=0.000 phi=0.0000
+K=16 POT=120.0 gap= +96.0 rate=1.0000 std=0.000 phi=0.0000
+
+VERDICT: {"phi_by_level": {"2": 0.0, "3": 0.0, "4": 0.2974093093367505, "6": 0.07053125, "8": 0.0, "12": 0.0, "16": 0.0}, "peak_K": 4, "peak_phi": 0.2974093093367505, "peak_is_interior": true, "phi_low": 0.0, "phi_high": 0.0, "inverse_u_resonance": true, "verdict": "GREEN_RESONANCE_CONFIRMED"}
+
+PRE-REGISTERED FALSIFIER F-H927-RESONANCE:
+  phi(intermediate K) > phi(lowest K) AND phi(intermediate K) > phi(highest K),
+  peak at INTERIOR K → inverse-U / stochastic resonance CONFIRMED.
+RESULT: peak at K=4 (interior, POT==threshold gap=0), phi=0.2974 > phi(K=2)=0.0
+  AND > phi(K=16)=0.0 → INVERSE-U CONFIRMED.
+
+🟢 GREEN — STOCHASTIC RESONANCE CONFIRMED.
+The R2 noise-amplitude response is a sharp single-peaked inverse-U: Φ is 0 for
+sub-threshold noise (K≤3, mean potential below 24), peaks exactly at the
+threshold-straddle (K=4, POT==24, ~half the steps cross, std≈8), then collapses
+to 0 as noise over-drives the pool into per-step saturation (K≥8, rate=1.0,
+std=0, differentiation→0). The peak Φ=0.2974 reproduces the H_677 across-regime
+R2 baseline (0.2974) byte-for-byte (K=4 == canonical R2 noise, same seed 187).
+
+HONEST SCOPE (a_scale_honest_scope): 1 AKD1000, N=16 toy LIF pool, T=200 steps,
+byte-quantised R2 noise (0..K-1), Φ-PROXY (entropy×integration×differentiation)
+NOT full IIT Φ. Toy probe; scale transfer unverified. spike-streamer.service was
+inactive (device free) — no stop/restart needed; left inactive (unchanged).
