@@ -11,8 +11,8 @@ pre_register_frozen: true
 frozen_at: 2026-06-07
 since: 2026-06-07
 sister: H_1004 (clean disagreement at n=4), H_999/H_1001 (faithful_phi planning up), H_1002 (the original confounded big-Phi), a_phi_iit4_tool
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT (no verdict token until measured)
+status: measured
+verdict: 🟢 PASS DISAGREEMENT-ROBUST-IN-N (planning faithful-up / big-Phi-down sign-disagreement holds at every scored n = {4,5}; n=6 honest cap)
 ---
 
 # H_1012 — big-Phi vs faithful at larger n (is the planning measure-disagreement robust in n?)
@@ -33,3 +33,18 @@ big-Phi exact only at very small n (super-exponential distinction+bipartition se
 
 ## 4. sibling / xlinks
 to [H_1004](./H_1004_bigphi_faithful_clean.md) · [H_1002](./H_1002_bigphi_upgrade.md) · [H_999](./H_999_faithful_iit4_remeasure.md) · [H_1001](./H_1001_reopen_consolidate.md) · IIT4_PHI_TOOLS.md · a_phi_iit4_tool
+
+## 5. measurement + finding (2026-06-07 · 🟢 PASS · CODE-measured, $0 CPU-local)
+Verdict raw: `.verdicts/1012_bigphi_faithful_larger_n/h1012.txt` (g73 — deterministic run that COULD have falsified; both stdlib engines + CPU-mirror re-proven exact per n).
+
+**Result — the planning sign-disagreement is ROBUST across every scored n:**
+
+| n | faithful_phi (MIP-EI scalar) | big-Phi (system, MIP) | planning vs greedy | sign-disagree? |
+|---|---|---|---|---|
+| 4 | RAISES (d +5.18) | LOWERS (d -1.83) | faithful↑ / big-Phi↓ | ✅ True |
+| 5 | matched-path 0.0298 · planning RAISES | matched-path 18.19 · planning LOWERS | faithful↑ / big-Phi↓ | ✅ True |
+| 6 | mirror ≡ stdlib RE-PROVEN (faithful 0.0626) | single eval ≈10 min → 150-eval planning run INFEASIBLE @ $0 CPU | NOT scored (honest cap) | — |
+
+- **VERDICT-TOKEN: DISAGREEMENT-ROBUST-IN-N** — the two Phi measures disagree on planning at n=4 AND n=5 (the disagreement did NOT vanish at n>=5, so it is NOT an n=4 artifact). The sign split is a genuine measure-level property, not a small-system peculiarity.
+- This firmly **BOUNDS H_999/H_1001's "planning raises Phi" to the MIP-EI scalar measure** — at the structure level (system big-Phi over the MIP) planning LOWERS integration. "Planning raises consciousness" is true only for the scalar EI measure, not the integration-structure measure.
+- **honest scope (a_scale_honest_scope · a_toy_scale_recheck):** TOY n-ladder, big-Phi exact only at very small n (super-exponential). Scored n = {4,5} (max 5); the CPU-mirror was re-proven ≡ stdlib at n=4, n=5 AND n=6, but the n=6 planning *condition* was not scored (single n=6 system big-Phi ≈ 10 min on this Mac → a 30-seed × 5-eval = 150-eval run is infeasible at $0). n=6 is the HONEST CAP. Scale-transfer beyond n=5 UNVERIFIED. NOT a forge binary; $0 CPU-local, no GPU.

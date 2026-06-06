@@ -1,0 +1,144 @@
+================================================================================
+H_1012 — big-Φ vs faithful_phi at LARGER n (planning measure-disagreement robust in n?)
+substrate=CPU-mirror (numpy) — H_1004 engines VERBATIM, RE-PROVEN ≡ stdlib at EACH n
+big-Φ: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (M4, system Φ_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+H_1004 @n=4: PLAN RAISES faithful (d+5.18) / LOWERS big-Φ (d-1.83). Robust in n, or n=4 artifact?
+================================================================================
+
+≡-PROOF SWEEP — re-prove BOTH mirrors ≡ stdlib at every ladder n (incl. the n=6 cap):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  ── ≡-PROOF at n=6 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring6_s63 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring6_s48 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n6 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=5.000000  stdlib_hexa_ref=5.000000  |Δ|=2.46e-10  OK
+     matched-path n=6: bits.shape=(40, 6)  big-Φ=SKIPPED(n>=6 super-exp; mirror proven exact via ring+standalone)  faithful=0.062633
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=6: PROVEN
+
+  ≡-PROOF results: {4: True, 5: True, 6: True}
+  SCORE ladder (tractable big-Φ): [4, 5]   CAP at n=6 (single big-Φ ≈10min → 150-eval planning run infeasible $0 CPU; mirror PROVEN exact at n=6).
+
+################ SCORE n = 4 ################
+  scoring planning(depth-ladder vs GREEDY) @ n=4, 30 seeds × depths [1, 2, 4, 8] ...
+    [n=4 seed 1/30] elapsed=   2.1s
+    [n=4 seed 2/30] elapsed=   4.3s
+    [n=4 seed 3/30] elapsed=   6.4s
+    [n=4 seed 4/30] elapsed=   8.6s
+    [n=4 seed 5/30] elapsed=  10.7s
+    [n=4 seed 6/30] elapsed=  13.2s
+    [n=4 seed 7/30] elapsed=  15.5s
+    [n=4 seed 8/30] elapsed=  17.9s
+    [n=4 seed 9/30] elapsed=  20.2s
+    [n=4 seed 10/30] elapsed=  22.7s
+    [n=4 seed 11/30] elapsed=  25.1s
+    [n=4 seed 12/30] elapsed=  27.5s
+    [n=4 seed 13/30] elapsed=  30.0s
+    [n=4 seed 14/30] elapsed=  32.4s
+    [n=4 seed 15/30] elapsed=  34.7s
+    [n=4 seed 16/30] elapsed=  36.9s
+    [n=4 seed 17/30] elapsed=  39.0s
+    [n=4 seed 18/30] elapsed=  41.2s
+    [n=4 seed 19/30] elapsed=  43.5s
+    [n=4 seed 20/30] elapsed=  45.8s
+    [n=4 seed 21/30] elapsed=  48.0s
+    [n=4 seed 22/30] elapsed=  50.2s
+    [n=4 seed 23/30] elapsed=  52.4s
+    [n=4 seed 24/30] elapsed=  54.6s
+    [n=4 seed 25/30] elapsed=  56.7s
+    [n=4 seed 26/30] elapsed=  58.9s
+    [n=4 seed 27/30] elapsed=  61.1s
+    [n=4 seed 28/30] elapsed=  63.3s
+    [n=4 seed 29/30] elapsed=  65.4s
+    [n=4 seed 30/30] elapsed=  67.6s
+  --- n=4 PLAN(depth-8)−GREEDY (MATCHED binary discretization) ---
+     big-Φ        contrast=-4.0083  d=-1.834  p=2.503e-08  → LOWERS
+     faithful_phi contrast=+2.3332  d=+5.178  p=6.724e-27  → RAISES
+     big-Φ depth-means ['1.8915', '8.4763', '3.3006', '5.5200'] (greedy=9.5283)  rho=+0.122 p=1.838e-01
+     faithful depth-means ['1.4333', '3.0000', '1.4394', '2.8402'] (greedy=0.5069)  rho=-0.161 p=7.834e-02
+     SIGN-DISAGREEMENT (faithful≠big-Φ): True   (elapsed 68.5s)
+
+################ SCORE n = 5 ################
+  scoring planning(depth-ladder vs GREEDY) @ n=5, 30 seeds × depths [1, 2, 4, 8] ...
+    [n=5 seed 1/30] elapsed=  59.8s
+    [n=5 seed 2/30] elapsed= 119.5s
+    [n=5 seed 3/30] elapsed= 179.3s
+    [n=5 seed 4/30] elapsed= 242.5s
+    [n=5 seed 5/30] elapsed= 304.7s
+    [n=5 seed 6/30] elapsed= 365.6s
+    [n=5 seed 7/30] elapsed= 425.3s
+    [n=5 seed 8/30] elapsed= 486.4s
+    [n=5 seed 9/30] elapsed= 546.3s
+    [n=5 seed 10/30] elapsed= 605.4s
+    [n=5 seed 11/30] elapsed= 664.9s
+    [n=5 seed 12/30] elapsed= 724.1s
+    [n=5 seed 13/30] elapsed= 783.5s
+    [n=5 seed 14/30] elapsed= 842.8s
+    [n=5 seed 15/30] elapsed= 902.4s
+    [n=5 seed 16/30] elapsed= 962.9s
+    [n=5 seed 17/30] elapsed=1023.1s
+    [n=5 seed 18/30] elapsed=1084.1s
+    [n=5 seed 19/30] elapsed=1144.5s
+    [n=5 seed 20/30] elapsed=1204.7s
+    [n=5 seed 21/30] elapsed=1264.7s
+    [n=5 seed 22/30] elapsed=1324.7s
+    [n=5 seed 23/30] elapsed=1383.4s
+    [n=5 seed 24/30] elapsed=1442.9s
+    [n=5 seed 25/30] elapsed=1501.9s
+    [n=5 seed 26/30] elapsed=1566.7s
+    [n=5 seed 27/30] elapsed=1625.2s
+    [n=5 seed 28/30] elapsed=1683.6s
+    [n=5 seed 29/30] elapsed=1742.9s
+    [n=5 seed 30/30] elapsed=1802.0s
+  --- n=5 PLAN(depth-8)−GREEDY (MATCHED binary discretization) ---
+     big-Φ        contrast=-13.3732  d=-2.284  p=2.352e-10  → LOWERS
+     faithful_phi contrast=+3.0624  d=+4.652  p=4.403e-23  → RAISES
+     big-Φ depth-means ['5.1890', '21.5842', '9.0795', '13.8276'] (greedy=27.2008)  rho=+0.162 p=7.763e-02
+     faithful depth-means ['0.6333', '4.0000', '1.7489', '3.6730'] (greedy=0.6107)  rho=+0.154 p=9.340e-02
+     SIGN-DISAGREEMENT (faithful≠big-Φ): True   (elapsed 1802.0s)
+
+================================================================================
+VERDICT MATRIX — planning(depth-ladder vs GREEDY), BOTH engines, per n reached
+================================================================================
+    n |       big-Φ contrast (d) |    faithful contrast (d) | disagree?
+    4 |  -4.0083 (d-1.83) → LOWERS |  +2.3332 (d+5.18) → RAISES | DISAGREE
+    5 | -13.3732 (d-2.28) → LOWERS |  +3.0624 (d+4.65) → RAISES | DISAGREE
+
+  H_1004 planning pattern (faithful RAISES / big-Φ LOWERS) per n reached: [True, True]
+  reached n ladder: [4, 5]  (max n = 5)
+  pattern holds across ALL reached n: True
+  pattern VANISHES at n>=5 (engines AGREE): False
+
+OVERALL: 🟢 DISAGREEMENT-ROBUST-IN-N — the planning sign-disagreement (faithful
+  RAISES the MIP-EI scalar while big-Φ LOWERS the system Φ_s) PERSISTS across every
+  reached n in [4, 5]. It is a GENUINE measure-level property, NOT an n=4 artifact.
+  This firmly BOUNDS H_999/H_1001's planning Φ-rise to the MIP-EI scalar measure:
+  the structure-level big-Φ disagrees at every reached n.
+  VERDICT-TOKEN: DISAGREEMENT-ROBUST-IN-N
+================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n-ladder. big-Φ exact
+only at very small n (super-exponential) — SCORED n = [4, 5] (max 5). The
+mirror was RE-PROVEN ≡ stdlib at n=4, n=5 AND n=6 (live hexa-engine refs), but the
+n=6 planning CONDITION was NOT scored: a SINGLE n=6 system big-Φ eval ≈ 10 min on this
+Mac (measured in BOTH the stdlib hexa engine AND the CPU mirror), so the 30-seed × 5-
+eval = 150-eval planning run at n=6 is INFEASIBLE at $0 CPU — n=6 is the HONEST CAP.
+Both engines EXACT at every scored n. Scale-transfer UNVERIFIED. NOT a forge binary;
+$0 CPU-local.
