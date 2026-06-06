@@ -158,3 +158,7 @@ Probe: `UNIVERSE/h1002_bigphi_upgrade.py` · ref-emitter: `UNIVERSE/h1002_bigphi
 - ⇄ [H_278](./H_278_faithful_phi_engine.md) (the faithful-Φ engine, promoted to stdlib) · [IIT4_PHI_TOOLS.md](./IIT4_PHI_TOOLS.md) (the tool index) · project.tape `a_phi_iit4_tool`
 - ⇄ [CWM](../CWM/CWM.md) (CWM-IMAGINE · cross-cutting)
 - engine: `hexa-lang/stdlib/consciousness/iit4_bigphi.hexa` (system big-Φ M4, this H) built on `iit4_distinction.hexa` (M2) + `iit4_relation.hexa` (M3) + `iit4_tpm.hexa` (M1) · `iit4/faithful_phi.hexa` (the MIP-EI scalar H_999/H_1001 used)
+
+## RESOLUTION (2026-06-07, by [H_1004](./H_1004_bigphi_faithful_clean.md)) — PARTLY CONFOUND, PARTLY GENUINE
+
+H_1004 ran the clean disentangling rung this H named (same n=4, SAME binary discretization, BOTH engines) and split H_1002's three "disagreements": **imagination effect-collapse = CONFOUND** (at matched n=4 faithful_phi's n=8 d+2.09 shrinks to a small null d+0.13, AGREEing with big-Φ +0.42); **guided sign-flip = CONFOUND** (faithful_phi flips from −0.18 to +0.49, AGREEing with big-Φ); **planning sign-reversal = GENUINE** (big-Φ −4.01 d−1.83 LOWERS vs faithful +2.33 d+5.18 RAISES — PERSISTS at matched inputs, dose-response opposite). ⇒ H_1004 = **🔴 GENUINE-MEASURE-DISAGREEMENT for planning** (not the confound), bounding H_999/H_1001's planning Φ-rise to the MIP-EI scalar measure; imagination/guided are confound-explained. This H's overall ⚠ stands as honestly-flagged.
