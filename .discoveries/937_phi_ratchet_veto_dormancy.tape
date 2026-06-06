@@ -1,4 +1,4 @@
-@discovery 937_phi_ratchet_veto_dormancy := "H_935 phi_r-never-fired gap closer" :: universe [active]
+@H 937_phi_ratchet_veto_dormancy := "H_935 phi_r-never-fired gap closer" :: universe [active]
   id      = "H_937"
   seed    = "H_935 found phi_r veto term (brain.hexa L48-50 'dormant substrate vetoes motivated emit') fired 0x awake (ratchet floor 0.8·peak > peak/2 always). Does it FIRE under genuine dormancy (phi<peak/2)?"
   method  = "arousal sweep awake->dormant (7 levels 1.0..0.05 × 16 seed × 1200 tick, settle 300); arousal scales activation drive + WAKE-only ratchet floor (SUBSTRATE CONTEXT not boolean gate); phi-ratchet isolation (external+rate gate OPEN); classify phi_r-fire × would-emit-suppressed"

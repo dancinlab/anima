@@ -1,4 +1,4 @@
-@discovery 936_unbiased_buffer_retest := "H_930 tension-axis DC-bias gap closer" :: universe [active]
+@H 936_unbiased_buffer_retest := "H_930 tension-axis DC-bias gap closer" :: universe [active]
   id      = "H_936"
   seed    = "H_930 SPLIT (emit-parity 🟢 / tension distinguishable d≈+2.45, root-caused to 1024 B cycling buffer DC-bias) — does the tension diff SURVIVE an unbiased non-cycling buffer?"
   method  = "3-arm before/after: DET vs quantum-small-cycling(1024 B) vs quantum-big-fresh(859456 B, per-seed independent slice); H_930 mirror VERBATIM, entropy SOURCE only swapped; KS + Cohen d JOINT distinguishing rule (p<0.05 AND |d|>=0.2)"

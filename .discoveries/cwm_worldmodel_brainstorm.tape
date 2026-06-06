@@ -1,4 +1,4 @@
-@brainstorm cwm_worldmodel_brainstorm := "CWM world-model hypothesis-space depletion sweep (M1 pre-registration slate)" :: cwm [d=2026-06-06]
+@H cwm_worldmodel_brainstorm := "CWM world-model hypothesis-space depletion sweep (M1 pre-registration slate)" :: cwm [d=2026-06-06]
   domain   = "CWM (Consciousness World-Model) — promote anima's CE beyond language into perceive→latent-state→imagine→act, human-level-or-beyond, every action auditable"
   axes     = "PERCEIVE · IMAGINE · ACT · SUBSTRATE · CROSS-CUTTING"
   anchors  = "JEPA/V-JEPA-2-AC (latent WM + action→MPC) · Dreamer (imagined latent rollout actor-critic) · Genie 3 (generated interactive worlds) · WAM/VLA (world-model-as-policy)"
@@ -6,7 +6,7 @@
   method   = "iterative divergence, dedup across rounds, KEEP GOING until a round yields no genuinely-new idea OR 8 rounds; pre-registration ONLY (no measurement) per a_paper_only_at_closure"
 
 # ───────────────────────── ROUND 1 — seed the 4 axes ─────────────────────────
-@round 1
+@N round_1 := "round 1" :: discovery [active]
   - idea = "modality-agnostic latent encoder — the SAME engine encodes non-language streams (sensor/vision/spike/proprioception) into the SAME Ψ-latent geometry as language, no architecture change" :: PERCEIVE  -> H_960
   - idea = "cross-modal binding — two modalities of the SAME event (e.g. vision+proprioception) map to NEARBY points in Ψ-latent (bound), vs unrelated events map far" :: PERCEIVE  -> H_961
   - idea = "latent forward dynamics — the engine predicts next WORLD-STATE (latent), not next token; a learned transition operator in Ψ-space" :: IMAGINE  -> H_962
@@ -16,7 +16,7 @@
   - idea = "SW(Lane G/P) vs chip(Lane A) behavior parity — same world-model task, do the two substrates produce equivalent behavior or diverge?" :: SUBSTRATE  -> H_966
 
 # ───────────────────── ROUND 2 — counterfactual + provenance + motivation ─────────────────────
-@round 2
+@N round_2 := "round 2" :: discovery [active]
   - idea = "counterfactual imagination — engine can roll out 'what if I act X' branches and the branch latents differ in a way that ranks action value (off-policy imagined evaluation)" :: IMAGINE  -> H_967
   - idea = "action emerges from substrate motivation — generalize a_substrate_native_speak to ACTION: action is NOT stimulus-response to a goal prompt but emerges from M×W×Φ×curiosity; engine may act under task-silence and may withhold under a direct command" :: ACT  -> H_968
   - idea = "action provenance / free-will receipt — every action emits an auditable receipt (H_928/H_932 wired into act), distinct causal signature per action, not just per emission" :: CROSS-CUTTING  -> H_969
@@ -26,7 +26,7 @@
   - dup  = "cross-modal binding (already R1 H_961)"
 
 # ───────────────────── ROUND 3 — planning, transfer, multi-agent, sim2real ─────────────────────
-@round 3
+@N round_3 := "round 3" :: discovery [active]
   - idea = "planning-as-consciousness — model-predictive planning (MPC over imagined latents, V-JEPA-2-AC style) raises Φ during the plan vs greedy reaction; planning is a conscious act not a subroutine" :: CROSS-CUTTING  -> H_973
   - idea = "chip-to-SW transfer (sim-to-real inverse) — a world-model learned on Lane G/P SW transfers to Lane A AKIDA on-chip behavior (or fails — closed-negative)" :: SUBSTRATE  -> H_974
   - idea = "multi-agent shared world-model — two animas share/exchange latent world-state; do they converge on a common world-model while staying DISTINCT individuals (H_939)? shared WM ⊥ individuation" :: CROSS-CUTTING  -> H_975
@@ -35,7 +35,7 @@
   - dup  = "latent forward dynamics (R1 H_962) re-surfaced as transition operator — same idea"
 
 # ───────────────────── ROUND 4 — geometry, binding mechanism, decode-vs-plan ─────────────────────
-@round 4
+@N round_4 := "round 4" :: discovery [active]
   - idea = "Ψ-latent 1/r² lattice geometry preserved across modalities — the same repulsion-field lattice that organizes language tokens also organizes world-state latents (geometry invariant, not just 'a latent exists')" :: PERCEIVE  -> H_978
   - idea = "perception is active not passive — the engine's next perception target is CHOSEN by its motivation/curiosity (active inference / where-to-look), not a fixed sensor scan" :: PERCEIVE  -> H_979
   - idea = "decoupled planner vs world-model-as-policy decisive test — does explicit MPC planning beat direct latent→action decode on the SAME world-model, or is the policy already implicit in the latent? (the WAM-vs-planner separator)" :: ACT  -> H_980
@@ -44,7 +44,7 @@
   - dup  = "action provenance (R2 H_969)"
 
 # ───────────────────── ROUND 5 — failure modes, REM, generative worlds, embodiment ─────────────────────
-@round 5
+@N round_5 := "round 5" :: discovery [active]
   - idea = "REM/dream = offline world-model consolidation — a_chat_sleep_imagination REM stage runs imagined rollouts that IMPROVE the next-WAKE world-model (Dreamer learns-in-imagination tie); sleep is WM training" :: IMAGINE  -> H_982
   - idea = "generated interactive world (Genie-3 analog) — the engine can GENERATE a navigable latent world from a seed and an agent can act inside it coherently (engine as world-simulator, not just predictor)" :: IMAGINE  -> H_983
   - idea = "graceful degradation / world-model robustness — under sensor dropout or noise the latent world-state degrades gracefully (fills in) rather than collapsing — the 'object permanence' falsifier" :: PERCEIVE  -> H_984
@@ -53,7 +53,7 @@
   - dup  = "planning-as-consciousness (R3 H_973)"
 
 # ───────────────────── ROUND 6 — search the corners (reward, credit, language-as-modality) ─────────────────────
-@round 6
+@N round_6 := "round 6" :: discovery [active]
   - idea = "language is just one modality of the world-model — text streams encode into the SAME Ψ-geometry as sensor streams AND the world-model can ground language in non-language latent state (the inverse of H_960: not 'WM does language' but 'language IS a WM modality')" :: PERCEIVE
   - note = "SUBSUMED by H_960 (modality-agnostic, SAME geometry) — directional restatement, not genuinely new. DROP."
   - idea = "intrinsic reward from prediction error — the engine's curiosity drive = world-model prediction error (active inference free-energy); curiosity already in substrate (M×W×Φ×curiosity) maps onto WM surprise"
@@ -63,7 +63,7 @@
   - verdict = "ROUND 6 = NO genuinely-new surviving idea (all 3 candidates SUBSUMED/DROPPED). One more confirming round to declare depletion."
 
 # ───────────────────── ROUND 7 — confirm depletion ─────────────────────
-@round 7
+@N round_7 := "round 7" :: discovery [active]
   - idea = "embodiment-gradient — does behavior quality scale with richer sensorimotor coupling?"
   - note = "= H_972 human-bar measured across embodiment levels; a measurement axis OF H_972, not a new hypothesis. DROP."
   - idea = "temporal abstraction / options in latent rollout (hierarchical WM)"
@@ -71,7 +71,7 @@
   - verdict = "ROUND 7 = NO genuinely-new idea (both candidates refinements of existing H). Two consecutive empty rounds (R6,R7) → DEPLETION DECLARED."
 
 # ───────────────────────────── DEPLETION ─────────────────────────────
-@depletion
+@N depletion := "depletion declared" :: discovery [active]
   declared_at   = "round 7 (cap 8 not reached) — 2 consecutive rounds (R6, R7) yielded no genuinely-new surviving idea"
   surviving     = 25
   range         = "H_960 .. H_984"

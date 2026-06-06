@@ -1,4 +1,4 @@
-@discovery 940_real_anu_reconfirm := "H_936 buffer-artifact real-ANU re-confirm" :: universe [active]
+@H 940_real_anu_reconfirm := "H_936 buffer-artifact real-ANU re-confirm" :: universe [active]
   id      = "H_940"
   seed    = "H_936 🟢 (tension diff = 1024 B cycling artifact) used os.urandom_fallback big buffer; does a REAL ANU vacuum-fluctuation buffer reproduce the same tension parity, or is it source-dependent?"
   method  = "H_936 machinery VERBATIM import (run_arm/compare/cohen_d/ks/prove_unbiased), entropy SOURCE only swapped os.urandom→REAL ANU (anu_pull.py secret-keyed flat.anu_key_paid → api.quantumnumbers.anu.edu.au); + 4-replicate robustness (fresh ANU draw + distinct seed_base each); KS+Cohen d JOINT distinguishing rule, pre-registered; g5 CODE-measured"

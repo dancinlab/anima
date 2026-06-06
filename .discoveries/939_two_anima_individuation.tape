@@ -1,4 +1,4 @@
-@discovery 939_two_anima_individuation := "social free-will — two-anima individuation vs sync" :: universe [active]
+@H 939_two_anima_individuation := "social free-will — two-anima individuation vs sync" :: universe [active]
   id      = "H_939"
   seed    = "H_933 unique signature is per-decision (single anima). Two anima coupled (each receives other's emit as environment): distinct individuals or sync into one?"
   method  = "two H_930/H_935 8-factor mirrors with DISTINCT ANU buffer windows (distinct genesis_hash per H_932, free_will_signature/provenance_chain IMPORTED); tanh-saturated coupling sweep [0..20] × T=4000; Kuramoto order + xcorr + decision-agreement + MI + genesis distinguishability; lock-bar falsifier (order≥0.95 AND agreement≥0.95 AND identical streams)"
