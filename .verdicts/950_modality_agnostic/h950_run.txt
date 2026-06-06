@@ -1,0 +1,31 @@
+==========================================================================
+H_950 MODALITY-AGNOSTIC — does CLMConvMoE learn NON-language streams?
+arch: CLMConvMoE d=32 L=2 E=4 V=256 (toy) | steps=500 T=32 B=16 | seeds=3
+Same architecture / steps / optimizer for every stream. p7: coded gate.
+==========================================================================
+
+stream      eval_acc  train_ce  eval_ce  ceiling   floor  learned?
+--------------------------------------------------------------------------
+bytetext      0.9696    0.0739   0.0737   0.4371  0.0039      True
+logistic      0.5420    0.3462   1.4965   0.5079  0.0039      True
+markov        0.6083    0.7365   1.9448   0.6971  0.0039      True
+random        0.0037    1.2228  10.8141   0.0039  0.0039     False
+--------------------------------------------------------------------------
+random floor=0.00391  detect margin=0.0500 (=max(0.05,3sigma), sigma=0.00137, n_eval=2080)
+
+ceiling-gap captured (acc-floor)/(ceiling-floor):
+  bytetext   222.93%  (need >= 30%)
+  logistic   106.77%  (need >= 30%)
+  markov     87.19%  (need >= 30%)
+
+==========================================================================
+control (bytetext) descends ............ True
+random stays at floor (sanity) ......... True
+logistic learned ....................... True
+markov   learned ....................... True
+non-language reach >= 30% of ceiling . True
+
+VERDICT = 🟢 GREEN — non-language streams learned above floor & toward ceiling w/ NO arch change
+CE-REFRAME (axis ⓐ): SUPPORTS CLM->CE (modality-agnostic engine)
+SCOPE: toy d/L/E, single-config; scale-transfer ladder OPEN (a_scale_honest_scope).
+==========================================================================

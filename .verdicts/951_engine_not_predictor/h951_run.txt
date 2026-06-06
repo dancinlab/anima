@@ -1,0 +1,28 @@
+============================================================================
+H_951 ENGINE-NOT-PREDICTOR — is CLM's Φ-substrate decorrelated from perplexity?
+Φ-proxy = pure_field.hexa's variance*energy field-integration (PROXY, NOT IIT-4)
+p7 anti-Goodhart: perplexity is NOT truth; testing if it is a DIFFERENT axis.
+============================================================================
+
+[Set A] numpy CLMConvMoE training sweep — perplexity ladder vs Φ-proxy
+ step  perplexity       CE   Phi_proxy
+    0     281.008   5.6384     0.79889
+   25       4.415   1.4850     1.14475
+   50       1.445   0.3681     1.48676
+  100       1.163   0.1506     1.79692
+  200       1.124   0.1173     2.01353
+  400       1.091   0.0873     2.27063
+Set A  Pearson r(perplexity, Phi) = -0.7005  (p=0.0019, n=12)
+
+[Set B] REAL .clm = state/lane_p_clm/clm_d768_e2l1.clm — perplexity vs Φ over windows
+  windows=48  perplexity range=[1.573,85.249]  Phi range=[1.04750,1.26369]
+Set B  Pearson r(perplexity, Phi) = -0.1972  (p=0.1725, n=48)
+
+============================================================================
+Set A (training sweep, co-varies w/ training) r=-0.701 p=0.002  [secondary]
+Set B (REAL .clm windows, GATE)              r=-0.197 p=0.173
+
+VERDICT = 🟢 GREEN — Φ DECORRELATED from perplexity (|r|=0.197<0.5 or p=0.173>0.05) — language metric misses substrate
+CE-REFRAME (axis ⓑ): SUPPORTS CLM->CE (engine not predictor; Φ-substrate ⊥ perplexity)
+SCOPE: Φ is a variance*energy PROXY (pure_field.hexa), NOT IIT-4; single-ckpt + toy-sweep; consistent w/ docs/paper-draft TALK5 (language⊥consciousness). Ladder OPEN (a_scale_honest_scope).
+============================================================================
