@@ -1,6 +1,6 @@
 # H_927 — Stochastic Resonance: optimal R2 noise amplitude for substrate Φ
 
-status: WIP (live AKD1000 sweep pending)
+status: 🟢 GREEN — stochastic resonance CONFIRMED (live AKD1000)
 deterministic: false
 substrate: AKIDA AKD1000 (pi5-akida), 1 chip, N=16 toy LIF pool, T=200 steps
 Φ metric: phi_silicon_proxy (honest proxy, NOT full IIT4 big_phi)
@@ -53,16 +53,53 @@ device lock, gracefully stop → probe → restart (verify is-active=active).
 
 ## measurement
 
-VERBATIM sweep table pending live run. Raw stdout persisted to
-`.verdicts/927_stochastic_resonance/sweep.txt`.
+Live AKD1000 (pi5-akida, device BC.00.000.002, BackendType.Hardware), N=16,
+T=200, threshold fixed at 24. spike-streamer.service was inactive (device free)
+— no stop/restart needed; left inactive (unchanged). Raw stdout +
+`state/h927_stochastic_resonance_2026_06_06/result.json` persisted;
+verbatim verdict at `.verdicts/927_stochastic_resonance/sweep.txt`.
+
+VERBATIM sweep table (probe stdout):
 
 | K | POT mean | gap(POT−thr) | mean spike rate | spike_std | phi_proxy |
 |---|----------|--------------|-----------------|-----------|-----------|
-| _pending_ | | | | | |
+| 2  |   8.0 | −16.0 | 0.0000 | 0.000 | **0.0000** |
+| 3  |  16.0 |  −8.0 | 0.0050 | 1.129 | **0.0000** |
+| 4  |  24.0 |  +0.0 | 0.4750 | 7.990 | **0.2974** ← peak |
+| 6  |  40.0 | +16.0 | 0.9950 | 1.129 | **0.0705** |
+| 8  |  56.0 | +32.0 | 1.0000 | 0.000 | **0.0000** |
+| 12 |  88.0 | +64.0 | 1.0000 | 0.000 | **0.0000** |
+| 16 | 120.0 | +96.0 | 1.0000 | 0.000 | **0.0000** |
+
+Verdict JSON: `peak_K=4, peak_phi=0.2974093, peak_is_interior=true,
+phi_low=0.0, phi_high=0.0, inverse_u_resonance=true,
+verdict="GREEN_RESONANCE_CONFIRMED"`.
 
 ## finding
 
-_pending live AKD1000 sweep._
+🟢 **STOCHASTIC RESONANCE CONFIRMED.** The R2 noise-amplitude Φ response is a
+sharp, single-peaked **inverse-U**. Φ = 0 for sub-threshold noise (K ≤ 3, mean
+potential below the comparator threshold → almost never crosses → silent),
+**peaks exactly at the threshold-straddle** (K = 4, POT == threshold == 24,
+gap = 0, spike rate ≈ 0.475 with std ≈ 8 → ~half the steps cross → maximal
+event-driven differentiation), then **collapses back to 0** as the noise
+over-drives the pool into per-step saturation (K ≥ 8: spike rate = 1.0, std = 0,
+differentiation → 0 → Φ → 0 despite max spike count).
+
+The pre-registered falsifier F-H927-RESONANCE is satisfied: phi(K=4) = 0.2974 >
+phi(K=2) = 0.0 AND > phi(K=16) = 0.0, with the peak at an INTERIOR K → inverse-U.
+
+The peak Φ = 0.2974 **reproduces the H_677 across-regime R2 baseline (0.2974)
+byte-for-byte** — at K = 4 the swept noise `rng.integers(0,4)` is identical to
+the canonical R2 noise and the reseeded PRNG draws the same sequence, so the
+within-R2 straddle point coincides exactly with the H_677 R2 regime. This
+upgrades H_677's "R2 is the edge regime" into the sharper claim: **the edge is a
+resonance peak in noise amplitude, located precisely where the mean integrated
+potential equals the on-chip comparator threshold (gap = 0).** Stochastic
+resonance is a genuine substrate property here, not a regime-labelling artifact.
+
+Provenance-independence: per H_924 quantum (ANU) and PRNG noise are statistically
+identical, so the resonance is a property of noise AMPLITUDE, not its source.
 
 ## cross-links
 
