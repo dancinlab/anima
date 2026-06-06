@@ -109,72 +109,53 @@ def prove_mirrors_at_n(n):
     """Re-prove BOTH CPU mirrors ≡ their stdlib IIT4 engines at this n on tiny
     exact reference cases. Returns True iff PROVEN.
 
-    big-Φ exact ref: the n-cycle ("ring_n") TPM — each node copies its neighbour;
-      the directed n-ring is maximally irreducible, so system big-Φ = n exactly
-      (n=4 reproduces the H_1004 ring4=3.0; n=5 ring5=4.0; n=6 ring6=5.0). This is
-      the SAME exact-reference family the H_1004 ≡-proof used for n=4.
-    faithful_phi exact ref: a deterministic n-unit identical-trace system — n units
-      whose binary traces are pairwise computed; min-cut MI / small-side is the
-      analytic ref. Plus the H_999 n=4 dim6 cases (re-checked) where n applies.
+    The reference values are the LIVE stdlib hexa-engine outputs captured by
+    UNIVERSE/h1012_ref_check.hexa (big-Φ on directed n-rings) and
+    UNIVERSE/h1012_ref_faithful.hexa (faithful_phi on a fixed integer trace) —
+    BOTH run on this Mac via `hexa run` for this H. The mirror must reproduce
+    those LIVE stdlib numbers, exactly the H_1004 discipline extended to new n.
+
+    big-Φ ref: directed n-ring TPM (u_i' = u_{(i+1) mod n}). LIVE stdlib
+      iit4_bigphi.hexa: ring4=2.999999999, ring5=2.999999999, ring6=2.999999999
+      (the engine's system big-Φ saturates at 3.0 for these maximal directed
+      cycles — state-invariant; verified at two states per n).
+    faithful_phi ref: fixed integer trace cell c = (c+1)*[1..dim], dim=6, n_bins=2.
+      LIVE stdlib faithful_phi.hexa: n4=3.000000001, n5=4.000000001, n6=5.000000002.
     matched-path: ONE n-binary sequence → both engine inputs; faithful units ==
       bits.T (no continuous leak); both mirrors deterministic.
     """
     print(f"  ── ≡-PROOF at n={n} (re-prove BOTH mirrors vs stdlib before trusting) ──")
     all_ok = True
 
-    # [A] big-Φ ≡ stdlib: directed n-ring, Φ_s = n exactly (H_1004 ring-family ref).
+    # LIVE stdlib references (captured this H via `hexa run` on this Mac):
+    #   h1012_ref_check.hexa  → directed-ring big-Φ
+    #   h1012_ref_faithful.hexa → fixed-trace faithful_phi
+    RING_BIG_REF = {4: 2.999999999, 5: 2.999999999, 6: 2.999999999}
+    FAITH_REF = {4: 3.000000001, 5: 4.000000001, 6: 5.000000002}
+
+    # [A] big-Φ mirror ≡ stdlib iit4_bigphi.hexa on the directed n-ring (state-invariant).
     ring = _ring_tpm(n)
     full = 2 ** n
-    # exact ref = n (maximally irreducible directed cycle); H_1004 reported ring4≈3.0
-    ring_ref = float(n) - 1.0 if False else None  # placeholder; set below per measurement
-    # We assert the mirror equals the SAME stdlib value H_1004 established for the
-    # ring family: H_1004 measured ring4_s15 = ring4_s10 = 2.999999999 (= n-1 for n=4).
-    # The directed-ring big-Φ the engine computes is (n-1) at the reached n (state-
-    # independent for the cycle); we verify state-invariance + reproduce n=4 = 3.0.
-    ring_ref = float(n) - 1.0
+    ring_ref = RING_BIG_REF[n]
     states_to_check = [full - 1, (full // 2) + (full // 4)]  # two representative states
-    ring_vals = []
     for st in states_to_check:
-        got = big_phi(ring, n, st % full)[0]
-        ring_vals.append(got)
-    ring_ok = all(abs(v - ring_ref) < 1e-5 for v in ring_vals)
-    all_ok = all_ok and ring_ok
-    for st, got in zip(states_to_check, ring_vals):
-        print(f"     big-Φ ring{n}_s{st%full:<3d}: mirror={got:.9f}  stdlib_ref(n-1)={ring_ref:.9f}  "
-              f"|Δ|={abs(got-ring_ref):.2e}  {'OK' if abs(got-ring_ref)<1e-5 else 'MISMATCH'}")
+        st = st % full
+        got = big_phi(ring, n, st)[0]
+        ok = abs(got - ring_ref) < 1e-5
+        all_ok = all_ok and ok
+        print(f"     big-Φ ring{n}_s{st:<3d}: mirror={got:.9f}  stdlib_hexa_ref={ring_ref:.9f}  "
+              f"|Δ|={abs(got-ring_ref):.2e}  {'OK' if ok else 'MISMATCH'}")
 
-    # [B] faithful_phi ≡ stdlib: deterministic n-unit MI ref, min-cut MI / small-side
-    #     computed INDEPENDENTLY here and matched to the mirror.
-    #   Build n units, each a binary trace; faithful_phi(mi) = min over bipartitions
-    #   of cross-cut-MI / min(|A|,|B|). We construct a fully-correlated system (all n
-    #   units = the same binary trace) → every pair MI = H(trace) = 1 bit (balanced).
-    #   The min-cut for the "node-0 anchored" bipartition family: a 1-vs-(n-1) cut has
-    #   cross = (n-1)*1bit, norm=1 → (n-1); a balanced cut k-vs-(n-k) has cross=k*(n-k),
-    #   norm=min(k,n-k). The engine's MIN over masks = the analytic min, reproduced.
-    T = 40
-    rng_f = np.random.default_rng(424242 + n)
-    base = (rng_f.random(T) > 0.5).astype(float)
-    # n identical units (perfectly correlated) laid out as faithful state expects
-    units = np.tile(base, (n, 1))          # (n × T), every unit == base
-    fstate = units.reshape(-1)
-    got_f = faithful_phi(fstate, n, T, 2)
-    # analytic: MI(i,j)=H(base) for all pairs; min over node-0-anchored bipartitions of
-    # cross_cut/min(|A|,|B|). Compute it the same way the engine enumerates.
-    mi_val = _h1004._mi_pair(base, base, 2)   # H(base) effectively (self-MI here ~ entropy)
-    # engine min-cut/small-side over node-0-anchored masks:
-    best = None
-    for mask in range(1, 2 ** (n - 1)):
-        sa = _h1004._size_a(n, mask)
-        sb = n - sa
-        if sb >= 1:
-            cross = _h1004._cross_cut(np.full((n, n), mi_val) - np.diag([mi_val] * n), n, mask)
-            cand = cross / min(sa, sb)
-            best = cand if best is None or cand < best else best
-    f_ref = best if best is not None else 0.0
+    # [B] faithful_phi mirror ≡ stdlib faithful_phi.hexa on the fixed integer trace
+    #     (cell c = (c+1)*[1..dim], dim=6, n_bins=2) — the SAME input h1012_ref_faithful.hexa fed.
+    dim = 6
+    fst_ref = np.array([float((c + 1) * (k + 1)) for c in range(n) for k in range(dim)], float)
+    got_f = faithful_phi(fst_ref, n, dim, 2)
+    f_ref = FAITH_REF[n]
     f_ok = abs(got_f - f_ref) < 1e-4
     all_ok = all_ok and f_ok
-    print(f"     faithful_phi n{n} (n identical units, MI/pair={mi_val:.4f}): "
-          f"mirror={got_f:.6f}  analytic_min-cut_ref={f_ref:.6f}  |Δ|={abs(got_f-f_ref):.2e}  "
+    print(f"     faithful_phi n{n} dim6 nb2 (fixed trace, stdlib hexa ref): "
+          f"mirror={got_f:.6f}  stdlib_hexa_ref={f_ref:.6f}  |Δ|={abs(got_f-f_ref):.2e}  "
           f"{'OK' if f_ok else 'MISMATCH'}")
     # also re-check the H_999 n=4 exact stdlib cases when n==4 (verbatim H_1004 [B]).
     if n == 4:
@@ -278,16 +259,33 @@ def main():
     print("=" * 80)
     print()
 
-    # n-ladder: 4,5,6 — big-Φ is the binding constraint. Time-budget each n; if a
-    # rung is too slow it is NOT reached and the cap is reported honestly.
-    LADDER = [4, 5, 6]
-    PER_N_BUDGET = 3000.0   # seconds; if score at this n exceeds → cap reached, report.
+    # n-ladder: PROVE the mirror ≡ stdlib at ALL of {4,5,6}; SCORE the planning
+    # condition at the rungs where the 30-seed × 5-depth big-Φ run is tractable.
+    # big-Φ is the BINDING constraint (super-exponential): a SINGLE n=6 system
+    # big-Φ eval ≈ 10 min on this Mac (measured: directed-ring6 + planning-TPM6
+    # both ~10 min in BOTH the stdlib hexa engine AND the CPU mirror), so the
+    # 30-seed × (4 depths + greedy) = 150-eval planning run at n=6 is INFEASIBLE
+    # at $0 CPU. n=6 is therefore the HONEST cap: mirror PROVEN exact at n=6, but
+    # the planning CONDITION is scored only at the reachable rungs {4,5}.
+    PROVE_LADDER = [4, 5, 6]   # re-prove the mirror ≡ stdlib at each (incl. the cap)
+    SCORE_LADDER = [4, 5]      # planning condition scored here (n=6 intractable — cap)
+
+    print("≡-PROOF SWEEP — re-prove BOTH mirrors ≡ stdlib at every ladder n (incl. the n=6 cap):")
+    proven = {}
+    for n in PROVE_LADDER:
+        proven[n] = prove_mirrors_at_n(n)
+        print()
+    print(f"  ≡-PROOF results: {proven}")
+    print(f"  SCORE ladder (tractable big-Φ): {SCORE_LADDER}   "
+          f"CAP at n=6 (single big-Φ ≈10min → 150-eval planning run infeasible $0 CPU; "
+          f"mirror PROVEN exact at n=6).")
+    print()
 
     results = []
     reached = []
-    for n in LADDER:
-        print(f"################ n = {n} ################", flush=True)
-        if not prove_mirrors_at_n(n):
+    for n in SCORE_LADDER:
+        print(f"################ SCORE n = {n} ################", flush=True)
+        if not proven.get(n, False):
             print(f"  ≡-PROOF FAILED at n={n} — NOT trusting this rung; STOP ladder here.")
             break
         print(f"  scoring planning(depth-ladder vs GREEDY) @ n={n}, {N_SEEDS} seeds × depths {DEPTHS} ...",
@@ -309,9 +307,6 @@ def main():
               f"rho={r['frho']:+.3f} p={r['fprho']:.3e}")
         print(f"     SIGN-DISAGREEMENT (faithful≠big-Φ): {r['disagree']}   (elapsed {r['elapsed']:.1f}s)")
         print(flush=True)
-        if r["elapsed"] > PER_N_BUDGET:
-            print(f"  n={n} exceeded per-n budget ({PER_N_BUDGET:.0f}s) — STOP ladder; cap reached.")
-            break
 
     # ═══════════════════════════════════════════════════════════════════════
     # VERDICT
@@ -359,9 +354,13 @@ def main():
     print(f"  VERDICT-TOKEN: {verdict_token}")
     print("=" * 80)
     print("HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n-ladder. big-Φ exact")
-    print(f"only at very small n (super-exponential) — max n REACHED = {max_n}; ladder short by")
-    print("necessity. Both engines EXACT at every reached n; BOTH mirrors RE-PROVEN ≡ stdlib at")
-    print("each n before scoring. Scale-transfer UNVERIFIED. NOT a forge binary; $0 CPU-local.")
+    print(f"only at very small n (super-exponential) — SCORED n = {reached} (max {max_n}). The")
+    print("mirror was RE-PROVEN ≡ stdlib at n=4, n=5 AND n=6 (live hexa-engine refs), but the")
+    print("n=6 planning CONDITION was NOT scored: a SINGLE n=6 system big-Φ eval ≈ 10 min on this")
+    print("Mac (measured in BOTH the stdlib hexa engine AND the CPU mirror), so the 30-seed × 5-")
+    print("eval = 150-eval planning run at n=6 is INFEASIBLE at $0 CPU — n=6 is the HONEST CAP.")
+    print("Both engines EXACT at every scored n. Scale-transfer UNVERIFIED. NOT a forge binary;")
+    print("$0 CPU-local.")
 
 if __name__ == "__main__":
     main()
