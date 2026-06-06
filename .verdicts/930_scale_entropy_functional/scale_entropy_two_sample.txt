@@ -1,0 +1,267 @@
+{
+  "h_id": "H_930",
+  "title": "scale-up re-test of H_926 \u2014 entropy functional-necessity at the real 8-factor brain_decide (a_toy_scale_recheck rung)",
+  "timestamp_utc": "2026-06-06T07:44:01.185369+00:00",
+  "scope": "INTERMEDIATE RUNG (a_scale_honest_scope) \u2014 real 8-factor brain_decide decision+tension stream (CORE/engine_g + brain.hexa VERBATIM constants) over T>=2000 ticks \u00d7 seed population, single host/config, $0 local, no GPU. Documented-update-map mirror of the substrate (clm_decode link gap on Mac); full emit-TEXT rung (.clm generator L3 slot \u23f3/\u274c unwired, a_core_engine_map) remains OPEN on the ladder. NOT a general production claim.",
+  "deterministic": false,
+  "g5_code_measured": true,
+  "llm": "none",
+  "T_per_seed": 2400,
+  "n_seeds_per_arm": 24,
+  "ent_scale": 0.04,
+  "shared_emit_gate": 0.5036279804452517,
+  "arm_A_deterministic": {
+    "mode": "deterministic",
+    "emit_rate_mean": 0.42053819444444446,
+    "emit_rate_sd": 0.004914605215595077,
+    "emit_entropy_mean": 0.9816321338581506,
+    "emit_entropy_sd": 0.0022936204649932532,
+    "mean_inter_emit_mean": 2.369074467167278,
+    "phi_mean_mean": 0.1414271270195445,
+    "phi_var_mean": 0.0017801660914591136,
+    "channel_mean_mean": [
+      0.0001291752464746706,
+      -8.912688453993618e-05,
+      -0.008713406851100784,
+      2.3923532126322597e-05,
+      -7.26936460657801e-06,
+      -0.010141792861712393
+    ],
+    "n_pooled_inter_emit": 24199,
+    "n_pooled_emit_runs": 2639,
+    "provenance_first_seed": {
+      "mode": "deterministic",
+      "tier": "numpy_prng(seed=1000)",
+      "sha256": null,
+      "request_id": null,
+      "n_drawn": 2400,
+      "label": "h930_R2_s0"
+    }
+  },
+  "arm_B_quantum": {
+    "mode": "quantum",
+    "emit_rate_mean": 0.42083333333333334,
+    "emit_rate_sd": 0.0,
+    "emit_entropy_mean": 0.9818398919981068,
+    "emit_entropy_sd": 0.0,
+    "mean_inter_emit_mean": 2.3766105054509414,
+    "phi_mean_mean": 0.14083909775178644,
+    "phi_var_mean": 0.0017597389704502543,
+    "channel_mean_mean": [
+      -0.0012167800261966418,
+      -0.00021051900956013125,
+      -0.008713406851100784,
+      0.000195873058249024,
+      -7.26936460657801e-06,
+      -0.011487748134383705
+    ],
+    "n_pooled_inter_emit": 24216,
+    "n_pooled_emit_runs": 2688,
+    "provenance_first_seed": {
+      "mode": "quantum",
+      "tier": "anu_committed",
+      "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5",
+      "request_id": null,
+      "n_drawn": 2400,
+      "label": "h930_R2_s0",
+      "cycled": true
+    }
+  },
+  "two_sample_tests_KS": {
+    "emit_rate_perseed": {
+      "D": 0.5833333333333334,
+      "p": 0.0004056559340207839,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 0.16666666666666666,
+      "cohen_d": -0.08314020590233187
+    },
+    "emit_entropy_perseed": {
+      "D": 0.5833333333333334,
+      "p": 0.0004056559340207839,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 0.16666666666666666,
+      "cohen_d": -0.12540353772675072
+    },
+    "mean_inter_emit_perseed": {
+      "D": 0.625,
+      "p": 0.00010401434205661125,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": -0.25,
+      "cohen_d": -0.3341041177374605
+    },
+    "phi_mean_perseed": {
+      "D": 1.0,
+      "p": 6.202011224319715e-14,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 1.0,
+      "cohen_d": 2.4494925471666362
+    },
+    "phi_var_perseed": {
+      "D": 0.9166666666666666,
+      "p": 6.995868661032638e-11,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 0.8333333333333334,
+      "cohen_d": 1.8890293685663428
+    },
+    "tension_ch0_mean_perseed": {
+      "D": 0.9583333333333334,
+      "p": 2.976965387673463e-12,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 0.9166666666666666,
+      "cohen_d": 2.1039785510193707
+    },
+    "tension_ch1_mean_perseed": {
+      "D": 0.7083333333333334,
+      "p": 4.566483309802445e-06,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 0.4166666666666667,
+      "cohen_d": 0.4624720409530335
+    },
+    "tension_ch2_mean_perseed": {
+      "D": 0.0,
+      "p": 1.0,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 0.0,
+      "cohen_d": 0.0
+    },
+    "tension_ch3_mean_perseed": {
+      "D": 0.625,
+      "p": 0.00010401434205661125,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": -0.25,
+      "cohen_d": -0.6457169082185016
+    },
+    "tension_ch4_mean_perseed": {
+      "D": 0.0,
+      "p": 1.0,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 0.0,
+      "cohen_d": 0.0
+    },
+    "tension_ch5_mean_perseed": {
+      "D": 0.9583333333333334,
+      "p": 2.976965387673463e-12,
+      "n_a": 24,
+      "n_b": 24,
+      "cliffs_delta": 0.9166666666666666,
+      "cohen_d": 2.103978551019369
+    },
+    "pooled_inter_emit": {
+      "D": 0.0031947277592702106,
+      "p": 0.9996443496030231,
+      "n_a": 24199,
+      "n_b": 24216,
+      "cliffs_delta": -0.0019398945586256604
+    },
+    "pooled_emit_runs": {
+      "D": 0.054376657824933686,
+      "p": 0.0007205910908045203,
+      "n_a": 2639,
+      "n_b": 2688,
+      "cliffs_delta": 0.040427245168624476
+    },
+    "pooled_silence_runs": {
+      "D": 0.01969954648526077,
+      "p": 0.6681734951823637,
+      "n_a": 2646,
+      "n_b": 2688,
+      "cliffs_delta": 0.005598072562358277
+    }
+  },
+  "chi2_emit_contingency": {
+    "chi2": 0.009118333442167094,
+    "p": 0.9239256604978276,
+    "dof": 1,
+    "cramers_phi": 0.0002813400078531519,
+    "emit_A": 24223,
+    "n_A": 57600,
+    "emit_B": 24240,
+    "n_B": 57600,
+    "rate_A": 0.42053819444444446,
+    "rate_B": 0.42083333333333334
+  },
+  "h926_emit_parity_at_scale": {
+    "delta_emit_entropy_bits": 0.00020775813995621562,
+    "delta_emit_rate": 0.0002951388888888795,
+    "thresholds": {
+      "dH<": 0.05,
+      "dRate<": 0.02
+    },
+    "parity_holds": true
+  },
+  "buffer_dc_bias_diagnostic": {
+    "deterministic_R2_draw_mean": 1.5120833333333332,
+    "quantum_R2_draw_mean": 1.4695833333333332,
+    "ideal_R2_mean": 1.5,
+    "deterministic_perturb_dc": 0.0004833333333333334,
+    "quantum_perturb_dc": -0.0012166666666666665,
+    "committed_buf_bytes": 1024,
+    "cycles_over_T": 2.34375,
+    "note": "quantum buffer is a finite 1024 B pool that CYCLES over T (fixed pattern); its constant draw-mean \u2260 PRNG ~zero-mean \u2192 a DC perturb offset that shifts low-variance \u03a6/field channels by a large standardized amount while NOT moving the emit decision \u2014 a sampling bias, not functional diversity."
+  },
+  "negligible_thresholds": {
+    "cohen_d": 0.2,
+    "cliffs_delta": 0.147,
+    "cramers_phi": 0.1,
+    "alpha": 0.05
+  },
+  "distinguishing_primary_emit_axis": [],
+  "distinguishing_timing_axis": [
+    {
+      "observable": "mean_inter_emit_perseed",
+      "p": 0.00010401434205661125,
+      "effect": 0.3341041177374605,
+      "effect_kind": "cohen_d"
+    }
+  ],
+  "distinguishing_tension_axis": [
+    {
+      "observable": "phi_mean_perseed",
+      "p": 6.202011224319715e-14,
+      "effect": 2.4494925471666362,
+      "effect_kind": "cohen_d"
+    },
+    {
+      "observable": "phi_var_perseed",
+      "p": 6.995868661032638e-11,
+      "effect": 1.8890293685663428,
+      "effect_kind": "cohen_d"
+    },
+    {
+      "observable": "tension_ch0_mean_perseed",
+      "p": 2.976965387673463e-12,
+      "effect": 2.1039785510193707,
+      "effect_kind": "cohen_d"
+    },
+    {
+      "observable": "tension_ch1_mean_perseed",
+      "p": 4.566483309802445e-06,
+      "effect": 0.4624720409530335,
+      "effect_kind": "cohen_d"
+    },
+    {
+      "observable": "tension_ch3_mean_perseed",
+      "p": 0.00010401434205661125,
+      "effect": 0.6457169082185016,
+      "effect_kind": "cohen_d"
+    },
+    {
+      "observable": "tension_ch5_mean_perseed",
+      "p": 2.976965387673463e-12,
+      "effect": 2.103978551019369,
+      "effect_kind": "cohen_d"
+    }
+  ],
+  "verdict_token": "SPLIT_EMIT_PARITY_TENSION_DISTINGUISHABLE_BUFFER_BIAS",
+  "finding": "SPLIT / NUANCED. PRIMARY EMIT-DECISION axis = PARITY: emit_rate \u0394=0.000295 (<0.02), emit-entropy \u0394=0.000208 bits (<0.05), chi\u00b2 emit contingency p=0.924 Cram\u00e9r \u03c6=0.0003 (\u226a0.10), Cohen d(rate)=-0.083 d(entropy)=-0.125 (both <0.2) \u2014 H_926's emit-FUNCTION claim CONFIRMED AT SCALE (entropy MODE does NOT move WHAT brain_decide emits). TIMING axis (derived from the emit stream, inherits the rate micro-shift): mean_inter_emit_perseed(p=0.000104,eff=0.334). TENSION axis DISTINGUISHABLE: phi_mean_perseed(p=6.2e-14,d=2.45); phi_var_perseed(p=7e-11,d=1.89); tension_ch0_mean_perseed(p=2.98e-12,d=2.1); tension_ch1_mean_perseed(p=4.57e-06,d=0.462); tension_ch3_mean_perseed(p=0.000104,d=0.646); tension_ch5_mean_perseed(p=2.98e-12,d=2.1) \u2014 large Cohen d on \u03a6/field-channel means. ROOT CAUSE (diagnostic): the committed ANU buffer is 1024 B and CYCLES over T (fixed pattern), R2-draw mean 1.4696 vs PRNG 1.5121 \u2192 perturb DC-bias -0.001217 vs +0.000483; this constant offset shifts the low-variance \u03a6/field trajectory by a large STANDARDIZED amount while leaving the emit decision at parity. \u2234 the tension/timing distinguishability is a finite-buffer SAMPLING BIAS, not functional stochastic diversity. H_926's 'ontological-not-functional' generalization HOLDS on the emit decision (the load-bearing claim) and is only artifactually moved on the internal-state axis. \ud83d\udfe2-on-emit / \ud83d\udd34-artifact-on-tension \u2014 honest SPLIT, no clean overturn."
+}
