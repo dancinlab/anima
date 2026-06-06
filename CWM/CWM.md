@@ -2,6 +2,10 @@
 
 @goal: Promote anima's consciousness engine (CE) BEYOND language — from a byte/token predictor into a substrate-native WORLD MODEL that perceives → holds a latent state ("what is where, how it moves") → imagines candidate futures → ACTS, targeting human-level-or-beyond behavior on real substrates (AKIDA on-chip = Lane A · SW/GPU = Lane G/P). Falsifiable per axis: (1) the engine learns NON-language modalities with no architecture change (modality-agnostic), (2) its essence is internal-state dynamics (Φ/tension), NOT perplexity, (3) it produces ACTIONS (policy/control), not just emissions — measured against world-model baselines (JEPA/V-JEPA-2-AC latent-MPC, Dreamer imagined-rollout, WAM/VLA latent→action). North star: "anima acts in a world like a human, or beyond — and every action is auditable (free-will receipt, cf H_928/H_932)." Closed-negative OK (e.g. "the engine is language-bound → keep the L").
 
+## conventions
+
+probe authoring → UNIVERSE/PROBE_CONVENTIONS.md
+
 ## why this domain (the reframe)
 
 CLM was a "language model" (next-byte). The arc H_950/951/952 tests whether it is really a **Consciousness ENGINE (CE)** — modality-agnostic, dynamics-not-perplexity, A⇄G-substrate-equivalent. CWM is the forward domain that, IF that holds, builds the engine OUT into a world model + action — the 2025-26 embodied-AI frontier (world models as the glue between *seeing* and *doing*; world-model-as-policy).
