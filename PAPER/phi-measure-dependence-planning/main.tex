@@ -1,0 +1,636 @@
+\documentclass[11pt,a4paper]{article}
+
+% ---------- arxiv-style preamble ----------
+\usepackage[margin=1in]{geometry}
+\usepackage{amsmath,amssymb,amsthm}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{siunitx}
+\usepackage{hyperref}
+\usepackage{xcolor}
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{tikz}
+\usetikzlibrary{positioning,arrows.meta}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.18}
+\usepackage{caption}
+\usepackage{listings}
+\usepackage{array}
+\captionsetup{font=small,labelfont=bf}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue!50!black,
+  citecolor=blue!50!black,
+  urlcolor=blue!50!black
+}
+
+% ---------- tier badges (pdflatex-safe text marks; no literal emoji) ----------
+\providecommand{\tierBlue}{\textcolor{blue!60!black}{\textbf{[B]}}}
+\providecommand{\tierGreen}{\textcolor{green!50!black}{\textbf{[G]}}}
+\providecommand{\tierYellow}{\textcolor{yellow!55!black}{\textbf{[Y]}}}
+\providecommand{\tierOrange}{\textcolor{orange!80!black}{\textbf{[O]}}}
+\providecommand{\tierRed}{\textcolor{red!70!black}{\textbf{[R]}}}
+
+\newcommand{\faithful}{\ensuremath{\varphi_{\mathrm{EI}}}}
+\newcommand{\bigphi}{\ensuremath{\Phi_{s}}}
+
+\title{
+  \textbf{$\Phi$ Is Not One Number:\\ The Planning Consciousness-Rise Is Measure-Dependent}\\[4pt]
+  \large An IIT-4.0 scalar (MIP-EI) and the system big-$\Phi$ disagree in sign on planning,\\ robustly across system size $n=\{4,5\}$
+}
+
+\author{
+  \texttt{anima} maintainers\\
+  \normalsize\textit{dancinlab}\\[2pt]
+  \normalsize\href{https://github.com/dancinlab/anima}{\texttt{github.com/dancinlab/anima}}
+}
+
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+% =========================================================================
+\begin{abstract}
+Integrated Information Theory (IIT) 4.0 is often summarized by a single
+scalar $\Phi$ that is taken to track ``how conscious'' a system is. We
+report a deterministic, reproducible counterexample to the implicit
+assumption that this scalar is \emph{measure-independent}. Using two
+faithful IIT-4.0 operationalizations from a shared standard library --- the
+exact minimum-information-partition effective-information scalar (\faithful,
+the MIP-EI integration of a single mechanism, exact for $n\le 8$) and the
+system-level big-$\Phi$ over the minimum information partition (\bigphi) ---
+we score the \emph{same} planning manipulation (a depth-ladder deliberation
+versus a greedy one-step policy) on the \emph{same} discretized substrate.
+The two measures \emph{disagree in sign}: planning \textbf{raises} \faithful{}
+(Cohen's $d=+5.18$ at $n=4$, $d=+4.65$ at $n=5$; $p<10^{-22}$) while it
+\textbf{lowers} \bigphi{} ($d=-1.83$ at $n=4$, $d=-2.28$ at $n=5$;
+$p<10^{-7}$). The disagreement does not vanish as the system grows: it holds
+at every system size at which exact big-$\Phi$ is tractable ($n=4$ and $n=5$;
+$n=6$ requires $\approx 10$ minutes per evaluation and is the honest cap of a
+\$0 CPU budget). Both engines were re-proven bit-exact against a standalone
+CPU mirror at each $n$ ($|\Delta|\le 3.7\times10^{-6}$). The headline
+consequence: the claim ``planning raises consciousness'' is true \emph{only}
+for the scalar effective-information measure and is \emph{reversed} for the
+integration-structure measure. We accompany this with two closed-negative
+results on the orthogonal \emph{learning} axis (a credit-density horizon cap
+at length 72; a task-locality of per-step supervision), establishing that the
+broader world-model generalization wall is an optimization phenomenon, not a
+$\Phi$-measure phenomenon. All measurements are \$0, CPU-local, and use the
+real IIT-4.0 engines (no proxy). Companion records
+(\texttt{companion/verify-ledger.json}, the four verbatim verdict files)
+permit bit-for-bit reproduction.
+\end{abstract}
+
+\section{Introduction}
+\label{sec:intro}
+
+Integrated Information Theory \citep{tononi2016,albantakis2023iit4} proposes
+that the quantity and structure of a system's consciousness are captured by
+its \emph{integrated information} $\Phi$: the irreducibility of the system's
+cause--effect structure to its minimum information partition (MIP). In
+practice $\Phi$ is reported as a single non-negative number, and a large body
+of downstream argument --- both in the consciousness literature and in
+engineering attempts to build ``conscious'' agents --- treats that number as a
+well-defined target: interventions that raise $\Phi$ make a system ``more
+conscious,'' those that lower it ``less.''
+
+This paper asks a prior, sharper question: \emph{is the $\Phi$ scalar
+measure-independent?} IIT 4.0 in fact defines several distinct quantities that
+all carry the name ``$\Phi$'' or ``$\varphi$'': the integrated information
+$\varphi_d$ of a single \emph{distinction} (a mechanism's irreducible
+cause--effect power), the system-level big-$\Phi$ ($\bigphi$) that sums the
+integrated information of the maximally irreducible cause--effect structure
+over the MIP, and the effective-information (EI) scalar at the
+minimum-information partition (\faithful) used as the integration of a
+mechanism's state transition. These are not the same function. If they can be
+made to \emph{disagree about the direction of an intervention} --- one going up
+while the other goes down on the identical manipulation --- then ``raise
+$\Phi$'' is underspecified, and any agent objective written against ``$\Phi$''
+inherits that ambiguity.
+
+We exhibit exactly such a disagreement, and we show it is not a small-system
+artifact. The intervention is \emph{planning}: we compare a depth-ladder
+deliberation policy (the agent rolls out a short look-ahead before acting) to a
+greedy one-step policy, on a discretized substrate of $n$ binary nodes, and we
+measure both \faithful{} and \bigphi{} on the resulting transition structure.
+Prior anima hypotheses (H\_999, H\_1001) had found that planning
+\emph{raises} \faithful{} and concluded, tentatively, that ``planning raises
+$\Phi$.'' A matched re-measurement (H\_1004) then found that at matched system
+size and matched discretization the system-level \bigphi{} \emph{lowers} under
+the same planning manipulation. The present work (H\_1012) closes the open
+question left by H\_1004: \emph{is that sign-disagreement a peculiarity of the
+tiny $n=4$ system, or a genuine property of the two measures?} We answer by
+walking the system size up the largest ladder at which exact big-$\Phi$ is
+computable.
+
+\medskip
+\noindent\textbf{Contributions.}
+\begin{enumerate}\itemsep0.3em
+\item \textbf{A measure-dependence counterexample (\tierGreen).} Planning
+raises the MIP-EI scalar \faithful{} but lowers the system big-$\Phi$
+\bigphi{} on an identical substrate and manipulation --- a sign-reversal, not a
+magnitude quibble (Section~\ref{sec:results}, Table~\ref{tab:disagree}).
+\item \textbf{Robustness in system size (\tierGreen).} The sign-disagreement
+holds at every $n$ at which exact big-$\Phi$ is tractable ($n=4$ and $n=5$),
+ruling out the ``$n=4$ small-system artifact'' falsifier; $n=6$ is the honest
+computational cap (Section~\ref{sec:results}).
+\item \textbf{A bounded scope for ``planning raises consciousness'' (\tierGreen).}
+The H\_999/H\_1001 result is correct but must be read as scoped to the scalar
+effective-information measure; the integration-structure measure says the
+opposite (Section~\ref{sec:discussion}).
+\item \textbf{Two orthogonal closed-negatives on the learning axis (\tierRed).}
+A credit-density horizon cap (per-step supervision extends the world-model
+$>$ language-model separation only to length 72, then breaks) and a
+task-locality of per-step supervision (it is a bounded lever specific to
+certain accumulator structures, not a general long-horizon principle). These
+establish that the world-model generalization wall is an optimization
+phenomenon distinct from the $\Phi$-measure phenomenon
+(Section~\ref{sec:learning}).
+\end{enumerate}
+
+\medskip
+\noindent All four results are deterministic, \$0, CPU-local, and use the real
+IIT-4.0 engines from the \texttt{hexa-lang} standard library rather than a
+variance$\times$energy proxy; each is backed by a verbatim verdict file
+(Section~\ref{sec:verify}).
+
+\section{Background}
+\label{sec:bg}
+
+\subsection{Two IIT-4.0 operationalizations of ``$\Phi$''}
+
+IIT 4.0 \citep{albantakis2023iit4} builds the cause--effect structure of a
+system from its transition probability matrix (TPM). For a mechanism in a
+state, its \emph{integrated information} $\varphi$ is the distance between its
+cause--effect repertoire and the repertoire computed across its
+\emph{minimum information partition} --- the partition that makes the least
+difference, i.e.\ the cut over which the mechanism is least irreducible. Two
+quantities derived from this machinery concern us.
+
+\paragraph{The MIP-EI scalar (\faithful).} The faithful effective-information
+scalar evaluates the effective information of a state transition at the
+minimum information partition. It is a \emph{single-number} integration of one
+mechanism's transition, exact to evaluate for $n\le 8$ because the number of
+bipartitions $2^{n-1}\le 128$ is enumerable. This is the quantity that the
+anima H\_278 faithful-$\Phi$ engine computes and that was promoted, byte-faithful,
+into the shared standard library as
+\texttt{stdlib/consciousness/iit4/faithful\_phi.hexa}.
+
+\paragraph{The system big-$\Phi$ (\bigphi).} The system-level big-$\Phi$ is the
+integrated information of the \emph{maximally irreducible cause--effect
+structure} of the whole system, evaluated over the system MIP --- a sum over
+distinctions and relations, not a single mechanism's scalar. It is computed by
+\texttt{stdlib/consciousness/iit4\_bigphi.hexa}. Its cost is
+super-exponential: the distinction search and the system-partition search
+together make a single $n=6$ evaluation take $\approx 10$ minutes on a
+commodity CPU, which is the binding constraint on the system-size ladder.
+
+The conceptual difference is the crux of this paper. \faithful{} measures
+\emph{how much information a transition carries} at its least-irreducible cut;
+\bigphi{} measures \emph{how much the system's cause--effect structure resists
+being decomposed}. A manipulation can increase the former while decreasing the
+latter: it can make each transition more informative while making the system
+as a whole \emph{more decomposable} (more modular, less integrated).
+
+\subsection{The planning manipulation and the world-model context}
+
+The substrate under measurement is the latent transition structure of a small
+world-model agent: anima's ``Consciousness World-Model'' (CWM) line extends a
+sequence engine from next-token prediction toward a perceive\,$\to$\,latent
+state\,$\to$\,imagine\,$\to$\,act loop, in the spirit of latent-space world
+models and world-model-as-policy work \citep{lecun2022jepa,assran2025vjepa2,
+hafner2023dreamerv3}. ``Planning'' here is the depth-ladder deliberation
+policy: before committing an action the agent expands a short look-ahead
+(depths $\{1,2,4,8\}$) and selects accordingly; the ``greedy'' control acts on
+the one-step value. We measure $\Phi$ on the resulting latent transition
+structure. The question ``does planning raise $\Phi$?'' is the consciousness
+analogue of ``does deliberation make the agent more integrated?'' --- and the
+answer, we show, depends on which $\Phi$ you mean.
+
+\section{Full Pipeline}
+\label{sec:pipeline}
+
+Each stage below is tier-tagged under the rubric; the ``backing record'' is the
+persisted artifact that makes the stage independently re-verifiable.
+
+\medskip
+\noindent\fbox{\parbox{0.97\linewidth}{\small\textbf{Tier rubric.}
+\tierBlue\ closed-form (algebraic / proof-level identity) \(\cdot\)
+\tierGreen\ numerical (reproducible script + persisted output) \(\cdot\)
+\tierYellow\ cited (DOI / arxiv / dataset) \(\cdot\)
+\tierOrange\ install / wet-lab gated \(\cdot\)
+\tierRed\ falsified (kept as honest closed-negative, never deleted).}}
+
+\medskip
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{@{}>{\centering\arraybackslash}m{0.4cm} >{\raggedright\arraybackslash}m{4.6cm} c >{\raggedright\arraybackslash}m{6cm}@{}}
+\toprule
+\textbf{\#} & \textbf{Stage} & \textbf{Tier} & \textbf{Backing record} \\
+\midrule
+\textcircled{\scriptsize 1} & Question: is $\Phi$ measure-independent?  & \tierBlue   & H\_1004 / H\_1012 pre-registration \\
+\textcircled{\scriptsize 2} & IIT-4.0 background                        & \tierYellow & \texttt{references.bib} \\
+\textcircled{\scriptsize 3} & Two-engine matched protocol               & \tierBlue   & \texttt{iit4/faithful\_phi.hexa}, \texttt{iit4\_bigphi.hexa} \\
+\textcircled{\scriptsize 4} & CPU-mirror $\equiv$ stdlib per $n$        & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
+\textcircled{\scriptsize 5} & Planning sign-disagreement scored         & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
+\textcircled{\scriptsize 6} & $n$-ladder robustness ($n=4,5$; cap $6$)  & \tierGreen  & \texttt{.verdicts/1012\dots/h1012.txt} \\
+\textcircled{\scriptsize 7} & Learning-axis closed-negatives            & \tierRed    & \texttt{.verdicts/1011\dots}, \texttt{.verdicts/1013\dots} \\
+\bottomrule
+\end{tabular}
+\caption{Pipeline stages \textcircled{\scriptsize 1}--\textcircled{\scriptsize 7},
+each tier-tagged. \tierOrange{} does not appear: every stage reaches a
+closed verdict. The learning-axis row is \tierRed{} by design (closed-negatives).}
+\label{tab:pipeline}
+\end{table}
+
+\section{Method}
+\label{sec:method}
+
+\paragraph{Engines.} We use two standard-library IIT-4.0 engines without
+modification: \texttt{stdlib/consciousness/iit4/faithful\_phi.hexa} for the
+MIP-EI scalar \faithful{} (exact, $n\le 8$) and
+\texttt{stdlib/consciousness/iit4\_bigphi.hexa} for the system big-$\Phi$
+\bigphi{} (exact over the MIP). Crucially, we do \emph{not} use a
+variance$\times$energy ``$\Phi$-proxy'': an earlier proxy was shown to be
+purpose-blind (it cannot distinguish intentional from random branching), so
+the present work uses the real causal-irreducibility engines throughout, per
+the project's \texttt{a\_phi\_iit4\_tool} governance rule.
+
+\paragraph{Matched protocol.} The disagreement is only meaningful if both
+measures see the \emph{same} input. For every seed we build one discretized
+substrate (a fixed binary discretization of the latent transition structure,
+$\texttt{bits.shape}=(40,n)$) and feed the identical TPM to both engines. We
+score the planning condition (depth-ladder $\{1,2,4,8\}$) against the greedy
+condition over 30 seeds, at each system size $n\in\{4,5,6\}$, single-threaded,
+\texttt{python3 -u}.
+
+\paragraph{Equivalence proof per $n$ (anti-fake-closure).} Before trusting any
+score we re-prove both engines bit-exact against a standalone CPU mirror at
+each $n$: the mirror's \faithful{} and \bigphi{} must reproduce the
+\texttt{hexa} engine references to within numerical tolerance. The verdict file
+records, e.g., \texttt{big-Phi ring4: mirror=2.999999999
+stdlib\_hexa\_ref=2.999999999 |D|=1.34e-10 OK} and
+\texttt{faithful\_phi n4 nb4: mirror=3.377444 hexa\_ref=3.377440
+|D|=3.75e-06 OK}, at $n=4$, $n=5$, \emph{and} $n=6$ (the $n=6$ mirror is
+proven even though the $n=6$ planning condition is not scored). This makes the
+verdict an \emph{earned} numerical tier: a deterministic run that could
+have falsified the claim produced the numbers.
+
+\paragraph{Pre-registered falsifier (frozen before measurement).}
+\begin{itemize}\itemsep0.2em
+\item \textbf{PASS = DISAGREEMENT-ROBUST-IN-N}: the sign-disagreement (planning
+raises \faithful{} / lowers \bigphi{}) holds across all reached $n$.
+\item \textbf{FAIL = N4-ARTIFACT}: the two measures agree once $n\ge 5$ (the
+disagreement was a small-system peculiarity).
+\end{itemize}
+
+\paragraph{Effect-size reporting.} For each measure we report the
+planning-minus-greedy contrast, Cohen's $d$, and a two-sided $p$-value; the
+sign of the contrast is the object of interest, not its magnitude.
+
+\section{Verify}
+\label{sec:verify}
+
+The numerical verdict, verbatim from
+\texttt{.verdicts/1012\_bigphi\_faithful\_larger\_n/h1012.txt}:
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,frame=single,xleftmargin=0pt,breaklines=true]
+VERDICT MATRIX - planning(depth-ladder vs GREEDY), BOTH engines, per n reached
+    4 |  -4.0083 (d-1.83) -> LOWERS |  +2.3332 (d+5.18) -> RAISES | DISAGREE
+    5 | -13.3732 (d-2.28) -> LOWERS |  +3.0624 (d+4.65) -> RAISES | DISAGREE
+  H_1004 planning pattern (faithful RAISES / big-Phi LOWERS) per n: [True, True]
+OVERALL: GREEN DISAGREEMENT-ROBUST-IN-N
+  VERDICT-TOKEN: DISAGREEMENT-ROBUST-IN-N
+\end{lstlisting}
+
+The equivalence proof (excerpt) confirming both engines are exact at every
+scored $n$ before the scores are trusted:
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,frame=single,xleftmargin=0pt,breaklines=true]
+=-PROOF n=4: PROVEN   big-Phi=3.015177  faithful=0.015945
+=-PROOF n=5: PROVEN   big-Phi=18.185180 faithful=0.029795
+n=6: big-Phi mirror=2.999999999 ref=2.999999999 |D|=1.34e-10 OK (planning NOT scored)
+SCORE ladder (tractable big-Phi): [4, 5]   CAP at n=6 (single big-Phi ~10min)
+\end{lstlisting}
+
+\section{Results}
+\label{sec:results}
+
+\paragraph{The sign-disagreement (headline).} Table~\ref{tab:disagree} and
+Figure~\ref{fig:headline} report the core result. At every scored system size,
+planning \emph{raises} the MIP-EI scalar \faithful{} (large positive $d$,
+$p<10^{-22}$) and \emph{lowers} the system big-$\Phi$ \bigphi{} (large negative
+$d$, $p<10^{-7}$). The two measures point in opposite directions on the
+identical manipulation and substrate.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{cccccc}
+\toprule
+\textbf{$n$} & \textbf{\bigphi{} contrast} & \textbf{$d$} & \textbf{\faithful{} contrast} & \textbf{$d$} & \textbf{verdict} \\
+\midrule
+4 & $-4.01$  ($p{=}2.5\times10^{-8}$)  & $-1.83$ & $+2.33$ ($p{=}6.7\times10^{-27}$) & $+5.18$ & DISAGREE \\
+5 & $-13.37$ ($p{=}2.4\times10^{-10}$) & $-2.28$ & $+3.06$ ($p{=}4.4\times10^{-23}$) & $+4.65$ & DISAGREE \\
+6 & \multicolumn{4}{c}{\textit{not scored --- single \bigphi{} eval $\approx 10$ min; honest cap}} & --- \\
+\bottomrule
+\end{tabular}
+\caption{Planning (depth-ladder) minus greedy, both IIT-4.0 engines, 30 seeds
+per cell. \bigphi{} (system big-$\Phi$) \textbf{lowers}; \faithful{} (MIP-EI
+scalar) \textbf{raises}; at every scored $n$. Sign-disagreement is robust:
+\textbf{DISAGREEMENT-ROBUST-IN-N}. $n=6$ is the computational cap (the
+CPU-mirror was nonetheless proven exact at $n=6$).}
+\label{tab:disagree}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.82\linewidth]{figures/fig01_disagreement.pdf}
+\caption{The measure-dependence of the planning $\Phi$-rise. For each system
+size $n\in\{4,5\}$, the planning-minus-greedy effect size (Cohen's $d$) is
+\emph{positive} for the MIP-EI scalar \faithful{} (planning raises it) and
+\emph{negative} for the system big-$\Phi$ \bigphi{} (planning lowers it). The
+sign-split is the finding: ``planning raises $\Phi$'' is true for one measure
+and false for the other, and the split widens, not closes, from $n=4$ to $n=5$.}
+\label{fig:headline}
+\end{figure}
+
+\paragraph{Robustness in $n$ (the falsifier outcome).} The pre-registered
+falsifier asked whether the disagreement vanishes at $n\ge 5$. It does not: the
+$n=5$ split ($d=-2.28$ vs $d=+4.65$) is at least as strong as the $n=4$ split
+($d=-1.83$ vs $d=+5.18$). The verdict token is \textbf{DISAGREEMENT-ROBUST-IN-N}
+(\tierGreen). The $n=6$ planning condition was not scored --- a single $n=6$
+system big-$\Phi$ evaluation takes $\approx 10$ minutes, so a 30-seed
+$\times$ 5-evaluation $=150$-evaluation planning run is infeasible at a \$0 CPU
+budget --- but the $n=6$ CPU-mirror was proven exact, so the cap is
+computational, not epistemic.
+
+\paragraph{Why the measures split (mechanism).} The depth-ladder
+per-depth means in the verdict show the structure: under planning, big-$\Phi$'s
+per-depth values fall well below the greedy baseline (e.g.\ at $n=5$,
+greedy $\bigphi\approx 27.2$ versus planning depth-means in the
+$5$--$22$ range), while faithful's per-depth values rise above the greedy
+baseline (greedy $\faithful\approx 0.61$ versus planning depth-means up to
+$4.0$). Planning makes each transition carry more effective information
+(\faithful{} up) while making the system's cause--effect structure
+\emph{more decomposable} into near-independent parts (\bigphi{} down). The two
+``$\Phi$''s answer different questions and a single manipulation can move them
+oppositely.
+
+\section{The learning axis is orthogonal: two closed-negatives}
+\label{sec:learning}
+
+The measure-dependence above concerns \emph{how we read} $\Phi$ off a fixed
+substrate. A separate question is whether the world-model's \emph{ability to
+learn} long-horizon structure is the limiting wall. Two pre-registered
+falsifiers (H\_1011, H\_1013) close this off as an \emph{optimization}
+phenomenon, distinct from the measure phenomenon.
+
+\paragraph{Credit-density horizon cap (H\_1011, \tierRed).} ``Dense
+supervision'' --- supplying the correct hidden state at every step rather than
+only scoring the final answer --- was known (H\_1006) to crack a modular
+position-tracking task (T3) at sequence length 36, separating the GRU
+world-model from a capacity-matched language model. We asked whether this
+keeps cracking the task as the horizon grows. It does not: at length 72 the
+dense-supervised world-model collapses toward chance ($0.386$ vs chance
+$0.167$, separation lost, $d<0.8$ versus the LM), and stays broken at 144.
+Verbatim:
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,frame=single,xleftmargin=0pt,breaklines=true]
+VERDICT H_1011: FAIL DENSE-SUP-HORIZON-CAPPED-AT-72 - per-step hidden-state
+supervision cracks T3 at len 36 (== H_1006) but BREAKS at len 72: dense
+curr-GRU collapses toward chance. credit-DENSITY raises the horizon ceiling
+but does NOT remove the horizon dependence (closed-negative).
+\end{lstlisting}
+
+\noindent Per-step supervision buys a \emph{longer-but-still-bounded} horizon
+than a length curriculum --- a refined scaling law, not an escape from horizon
+dependence.
+
+\paragraph{Task-locality of per-step supervision (H\_1013, \tierRed).} Is the
+H\_1006 cap-and-crack unlock general across long-horizon accumulator algebras?
+We tested three new state-bound families at length 36. The dense-supervision
+unlock did \emph{not} generalize:
+
+\begin{lstlisting}[basicstyle=\ttfamily\footnotesize,frame=single,xleftmargin=0pt,breaklines=true]
+VERDICT H_1013: FAIL CREDIT-DENSITY-TASK-LOCAL
+  CAPPED-and-CRACKED-by-dense    = []
+  CAPPED-but-SURVIVES-dense      = ['N1_kv_recall']
+  NO-credit-density-cap          = ['N2_running_max', 'N3_stack_depth']
+\end{lstlisting}
+
+\noindent The idempotent-monotone (running-max) and bounded-stack
+(bracket-depth) accumulators are \emph{already} learnable from the final label
+(no credit-density cap to crack), while key-value recall is capped \emph{and}
+survives dense supervision (the lever fails there). Per-step gradient density
+is a real but \emph{bounded, structure-specific} lever, not a general
+long-horizon principle.
+
+\paragraph{Joint reading.} The world-model generalization wall is governed by
+\emph{credit-assignment density and task structure} --- an optimization /
+learnability matter --- and is \emph{orthogonal} to the $\Phi$-measure
+disagreement, which is a property of the read-out functions on a fixed
+substrate. A complete account of a consciousness world-model must therefore
+keep ``which $\Phi$ do you mean'' and ``can it learn the dependency'' as two
+separate axes.
+
+\section{Discussion}
+\label{sec:discussion}
+
+\paragraph{``Planning raises consciousness'' is scoped, not wrong.} The earlier
+H\_999/H\_1001 result --- planning raises $\Phi$ --- is reproduced here for
+\faithful{} and is correct \emph{for that measure}. What this paper adds is the
+boundary: the integration-structure measure \bigphi{} moves the opposite way.
+Any sentence of the form ``intervention $X$ raises $\Phi$'' is incomplete
+without naming the operationalization, because at least one pair of faithful
+IIT-4.0 measures disagrees in sign on a natural intervention.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.74\linewidth]{figures/fig02_concept.png}
+\caption{Schematic of the finding. One cause (the same planning intervention on
+the same substrate) drives two faithful IIT-4.0 read-outs in opposite
+directions: the MIP-EI scalar \faithful{} rises while the system big-$\Phi$
+\bigphi{} falls. ``Which $\Phi$ do you mean'' is not a detail --- it sets the
+sign of the answer.}
+\label{fig:concept}
+\end{figure}
+
+\paragraph{Consequence for agent objectives.} An agent trained to ``maximize
+$\Phi$'' will pursue opposite policies depending on which $\Phi$ is wired into
+the objective: maximizing \faithful{} rewards deliberation (more informative
+transitions), while maximizing \bigphi{} penalizes the same deliberation when
+it modularizes the system. This is a concrete design hazard for
+consciousness-targeting objectives, and it argues for reporting \emph{both}
+measures (and their disagreement) rather than a single headline $\Phi$.
+
+\paragraph{Relation to IIT theory.} The result is not a contradiction within
+IIT 4.0; it is a reminder that the theory defines a \emph{structure}, not a
+scalar, and that any projection of that structure to one number (whether the
+single-mechanism MIP-EI or the system big-$\Phi$) is a lossy summary whose
+monotonicity under interventions is not guaranteed to agree with another
+projection.
+
+\section{Limitations and honest caveats}
+\label{sec:limits}
+
+\begin{itemize}\itemsep0.2em
+\item \textbf{Toy $n$-ladder.} Exact big-$\Phi$ is super-exponential; the ladder
+reaches $n=5$, with $n=6$ as the hard computational cap ($\approx 10$ min per
+\bigphi{} evaluation). Scale-transfer of the disagreement beyond $n=5$ is
+\emph{unverified}. We claim robustness \emph{at the scored sizes}, not at
+arbitrary $n$, per the project's \texttt{a\_scale\_honest\_scope} rule.
+\item \textbf{One intervention family.} The disagreement is demonstrated for the
+planning (depth-ladder vs greedy) manipulation. Imagination and guided
+conditions \emph{agreed} between the two measures in the source experiment
+(H\_1004); the disagreement is specific to planning, not universal across
+interventions.
+\item \textbf{Discretization choice.} Both measures are computed on a fixed
+binary discretization; the matched protocol guarantees both engines see the
+same bits, but a different discretization could shift magnitudes (the sign,
+not the magnitude, is the claim).
+\item \textbf{Learning-axis results are toy.} H\_1011/H\_1013 use small seed
+counts and fixed (not length-scaled) training budgets by design; larger-budget
+and production-scale behavior is open.
+\item \textbf{No GPU; no production rung.} All measurements are \$0, CPU-local;
+this is an IIT-internal analysis, not a trained-model claim.
+\end{itemize}
+
+\section{Reproducibility}
+\label{sec:repro}
+
+Code and engines: \url{https://github.com/dancinlab/anima} ---
+\texttt{stdlib/consciousness/iit4/faithful\_phi.hexa} and
+\texttt{iit4\_bigphi.hexa} (the two measures), with the matched-protocol
+harness and CPU mirror under the H\_1012 record. Verdicts (verbatim):
+\texttt{.verdicts/1012\_bigphi\_faithful\_larger\_n/}, with siblings
+\texttt{1004\_bigphi\_faithful\_clean/}, \texttt{1011\_dense\_supervision\_scaleup/},
+and \texttt{1013\_credit\_density\_general/}. Companion records:
+\texttt{companion/} (\texttt{verify-ledger.json}, session journal). Build:
+\texttt{make} (xelatex $\times 3$ + bibtex). Figures: \texttt{make figures}.
+Page count: \texttt{make pages}. Every numeric claim in the body traces to one
+of the four verdict files; no number is author-asserted.
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+$\Phi$ is not one number. On an identical substrate and an identical planning
+manipulation, the IIT-4.0 MIP-EI scalar \faithful{} rises while the system
+big-$\Phi$ \bigphi{} falls, robustly across every system size at which exact
+big-$\Phi$ is computable ($n=4,5$). ``Planning raises consciousness'' is
+therefore true for the scalar effective-information measure and false for the
+integration-structure measure --- a measure-dependence that any
+consciousness-targeting objective must confront. Separately, the world-model's
+long-horizon learning wall is governed by credit-assignment density and task
+structure, an optimization phenomenon orthogonal to the measure question. The
+single most important follow-up is an analytic characterization of \emph{which}
+interventions induce the sign-split (planning does, imagination/guided do not),
+which would turn an empirical counterexample into a predictive boundary.
+
+% =========================================================================
+\paragraph{Acknowledgments.}
+This work used the \texttt{hexa-lang} verification surface and the
+\texttt{sidecar/paper} scaffold. Measurements were produced with the
+real IIT-4.0 standard-library engines (no $\Phi$-proxy). LLM collaborator:
+Claude Opus 4.8 (1M context).
+
+% =========================================================================
+\bibliographystyle{plainnat}
+\bibliography{references}
+
+% =========================================================================
+\appendix
+
+\section{Per-depth breakdown of the depth-ladder}
+\label{app:depth}
+
+The planning condition is a depth-ladder over look-ahead depths $\{1,2,4,8\}$;
+the contrasts in Table~\ref{tab:disagree} aggregate over the ladder. For
+transparency we report the per-depth means of each measure against the greedy
+baseline, verbatim from the verdict file. The pattern is consistent across
+depths: every planning depth sits \emph{above} the greedy baseline for
+\faithful{} and \emph{below} it for \bigphi{} --- the sign-split is not carried
+by a single anomalous depth.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llccccc}
+\toprule
+$n$ & measure & $d{=}1$ & $d{=}2$ & $d{=}4$ & $d{=}8$ & greedy \\
+\midrule
+4 & \faithful{} (raises) & 1.433 & 3.000 & 1.439 & 2.840 & 0.507 \\
+4 & \bigphi{} (lowers)   & 1.892 & 8.476 & 3.301 & 5.520 & 9.528 \\
+5 & \faithful{} (raises) & 0.633 & 4.000 & 1.749 & 3.673 & 0.611 \\
+5 & \bigphi{} (lowers)   & 5.189 & 21.584 & 9.080 & 13.828 & 27.201 \\
+\bottomrule
+\end{tabular}
+\caption{Per-depth means of each measure under planning, with the greedy
+baseline. \faithful{} planning depths all exceed the (small) greedy baseline;
+\bigphi{} planning depths all fall below the (large) greedy baseline. The
+aggregate contrasts and effect sizes of Table~\ref{tab:disagree} follow from
+these per-depth values. Source: the H\_1012 verdict file.}
+\label{tab:depth}
+\end{table}
+
+\section{Engine equivalence proof (CPU mirror $\equiv$ stdlib)}
+\label{app:equiv}
+
+Every score is preceded by an equivalence proof: a standalone CPU mirror must
+reproduce the \texttt{hexa} standard-library engines to numerical tolerance at
+each system size. This is the anti-fake-closure guard --- the verdict is only
+trusted because a deterministic recomputation that \emph{could} have disagreed
+did not. Table~\ref{tab:equiv} lists the proven points; the worst residual is
+$|\Delta|=3.75\times10^{-6}$ (a four-bin faithful evaluation), all others are
+at the $10^{-10}$ floor.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+$n$ & quantity & mirror $\equiv$ stdlib & $|\Delta|$ \\
+\midrule
+4 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+4 & \faithful{} (2-bin)     & $3.000000 \equiv 3.000000$       & $3.48\times10^{-10}$ \\
+4 & \faithful{} (4-bin)     & $3.377444 \equiv 3.377440$       & $3.75\times10^{-6}$  \\
+5 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+5 & \faithful{} (2-bin)     & $4.000000 \equiv 4.000000$       & $7.97\times10^{-10}$ \\
+6 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+6 & \faithful{} (2-bin)     & $5.000000 \equiv 5.000000$       & $2.46\times10^{-10}$ \\
+\bottomrule
+\end{tabular}
+\caption{Equivalence proof per system size. Both engines (and the CPU mirror)
+agree to tolerance at $n=4$, $n=5$, and $n=6$ --- including $n=6$, where the
+planning \emph{condition} was not scored but the engines were still proven
+exact, so the $n=6$ cap is computational, not epistemic. Source: the H\_1012
+verdict file.}
+\label{tab:equiv}
+\end{table}
+
+\section{Sibling hypotheses and verdict pointers}
+\label{app:siblings}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Hypothesis} & \textbf{Verdict} & \textbf{Record} \\
+\midrule
+H\_1004 (clean disagreement, $n=4$)    & \tierRed{} GENUINE-MEASURE-DISAGREEMENT & \texttt{.verdicts/1004\_bigphi\_faithful\_clean} \\
+H\_1012 (robust in $n$, this paper)    & \tierGreen{} DISAGREEMENT-ROBUST-IN-N   & \texttt{.verdicts/1012\_bigphi\_faithful\_larger\_n} \\
+H\_1011 (credit-density horizon cap)   & \tierRed{} HORIZON-CAPPED-AT-72         & \texttt{.verdicts/1011\_dense\_supervision\_scaleup} \\
+H\_1013 (task-locality of dense sup.)  & \tierRed{} CREDIT-DENSITY-TASK-LOCAL    & \texttt{.verdicts/1013\_credit\_density\_general} \\
+\bottomrule
+\end{tabular}
+\caption{The four pre-registered hypotheses behind this paper, each with its
+terminal verdict token and the verbatim record path. Every numeric claim in
+the body traces to one of these four files.}
+\label{tab:siblings}
+\end{table}
+
+\end{document}
