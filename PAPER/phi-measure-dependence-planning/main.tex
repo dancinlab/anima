@@ -24,12 +24,12 @@
   urlcolor=blue!50!black
 }
 
-% ---------- emoji tier badges (xelatex-native) ----------
-\providecommand{\tierBlue}{🔵}
-\providecommand{\tierGreen}{🟢}
-\providecommand{\tierYellow}{🟡}
-\providecommand{\tierOrange}{🟠}
-\providecommand{\tierRed}{🔴}
+% ---------- tier badges (pdflatex-safe text marks; no literal emoji) ----------
+\providecommand{\tierBlue}{\textcolor{blue!60!black}{\textbf{[B]}}}
+\providecommand{\tierGreen}{\textcolor{green!50!black}{\textbf{[G]}}}
+\providecommand{\tierYellow}{\textcolor{yellow!55!black}{\textbf{[Y]}}}
+\providecommand{\tierOrange}{\textcolor{orange!80!black}{\textbf{[O]}}}
+\providecommand{\tierRed}{\textcolor{red!70!black}{\textbf{[R]}}}
 
 \newcommand{\faithful}{\ensuremath{\varphi_{\mathrm{EI}}}}
 \newcommand{\bigphi}{\ensuremath{\Phi_{s}}}
@@ -447,6 +447,17 @@ boundary: the integration-structure measure \bigphi{} moves the opposite way.
 Any sentence of the form ``intervention $X$ raises $\Phi$'' is incomplete
 without naming the operationalization, because at least one pair of faithful
 IIT-4.0 measures disagrees in sign on a natural intervention.
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.74\linewidth]{figures/fig02_concept.png}
+\caption{Schematic of the finding. One cause (the same planning intervention on
+the same substrate) drives two faithful IIT-4.0 read-outs in opposite
+directions: the MIP-EI scalar \faithful{} rises while the system big-$\Phi$
+\bigphi{} falls. ``Which $\Phi$ do you mean'' is not a detail --- it sets the
+sign of the answer.}
+\label{fig:concept}
+\end{figure}
 
 \paragraph{Consequence for agent objectives.} An agent trained to ``maximize
 $\Phi$'' will pursue opposite policies depending on which $\Phi$ is wired into
