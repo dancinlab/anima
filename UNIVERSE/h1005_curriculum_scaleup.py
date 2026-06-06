@@ -269,8 +269,24 @@ def main():
     longest = {t: SCALE_TASKS[t]["ladder"][-1] for t in SCALE_TASKS}
     holds_all = {t: cap_info[t] is None for t in SCALE_TASKS}
     all_scale = all(holds_all.values())
-    max_reached = {t: max([tg for tg in SCALE_TASKS[t]["ladder"]
-                           if reached_full_all(t, tg)] or [0]) for t in SCALE_TASKS}
+
+    def _held(tname, target, ch):
+        # WM>LM separator genuinely HELD here: sep@>=2rungs AND solves AND ramp reached FULL
+        return (len(sep_at_length(tname, target)) >= 2
+                and solves_at_length(tname, target, ch)
+                and reached_full_all(tname, target))
+
+    # max CONTIGUOUS target length where the separator held (stop at the first break)
+    max_reached = {}
+    for tname, cfg in SCALE_TASKS.items():
+        ch = cfg["chance"]
+        held_len = 0
+        for target in cfg["ladder"]:
+            if _held(tname, target, ch):
+                held_len = target
+            else:
+                break
+        max_reached[tname] = held_len
 
     print(f"harness-validate (shortest rung reproduces H_1003 crack): {short_ok}")
     print(f"holds-across-full-ladder: {holds_all}   "
