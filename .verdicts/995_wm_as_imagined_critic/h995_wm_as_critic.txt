@@ -1,0 +1,17 @@
+==============================================================================
+H_995 — WM-as-critic: pick actions from IMAGINED value (Dreamer-style)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=latent reward-landscape  H=6 actions=5 seeds=24
+true return achieved (higher=better), mean ± std:
+  IMAGINED-VALUE policy (WM critic) : 0.5781 ± 0.2518
+  RANDOM action                     : 0.3046 ± 0.1294
+  REACTIVE 1-step greedy            : 0.7994 ± 0.2890
+
+D1 imagined>random: d=1.337 p=5.01e-05
+D2 imagined>greedy: d=-0.799 p=8.15e-03
+D3 imagined-vs-true action-value rank corr (Spearman) = 0.573
+------------------------------------------------------------------------------
+VERDICT H_995: FAIL imagined-value policy does not beat baselines (vs random p=5.0e-05, vs greedy p=8.1e-03) — WM cannot serve as its own critic here (closed-negative, toy).
+------------------------------------------------------------------------------

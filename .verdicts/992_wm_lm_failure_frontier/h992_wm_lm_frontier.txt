@@ -1,0 +1,19 @@
+==============================================================================
+H_992 — WM>LM failure frontier: gap widens with memory-depth (ladder)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+D1 delayed-cue ladder (K=4 chance=0.250, LM_ctx=4) over delays:
+  L= 2: WM=1.000  LM=1.000  gap=0.000
+  L= 4: WM=1.000  LM=0.239  gap=0.761
+  L= 8: WM=1.000  LM=0.245  gap=0.755
+  L=12: WM=1.000  LM=0.244  gap=0.756
+  L=16: WM=1.000  LM=0.263  gap=0.737
+  L=24: WM=0.998  LM=0.248  gap=0.751
+  → gap-vs-depth Spearman rho=-0.029 p=9.572e-01  gap(L=24)=0.751 > gap(L=2)=0.000: True
+
+D2 second family — running-parity accumulation (different task):
+  WM=0.973  LM=0.667  Cohen d(WM,LM)=16.613
+------------------------------------------------------------------------------
+VERDICT H_992: FAIL gap does not grow monotonically with memory-depth (rho=-0.03) — no WM>LM frontier here (closed-negative, toy).
+------------------------------------------------------------------------------

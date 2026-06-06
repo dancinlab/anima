@@ -1,0 +1,20 @@
+==============================================================================
+H_991 — re-perception is the error-corrector (drift vs re-perception interval)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=hidden-velocity oscillator tracking  T=30 seeds=24
+re-perception interval k → tracking error (lower=better):
+  k= 1 (imagine 0 steps between perceptions) : 0.0000 ± 0.0000
+  k= 2 (imagine 1 steps between perceptions) : 0.0032 ± 0.0006
+  k= 3 (imagine 2 steps between perceptions) : 0.0074 ± 0.0015
+  k= 5 (imagine 4 steps between perceptions) : 0.0175 ± 0.0058
+  k= 8 (imagine 7 steps between perceptions) : 0.0278 ± 0.0077
+  k=15 (imagine 14 steps between perceptions) : 0.0541 ± 0.0218
+  k=30 (imagine 29 steps between perceptions) : 0.0863 ± 0.0387
+
+D1 monotone drift vs k: Spearman rho=1.000 p=0.000e+00
+D2 perception bounds drift: error(k=1)/error(k=30) = 0.000 (PASS if < 0.333)
+------------------------------------------------------------------------------
+VERDICT H_991: PASS re-perception is the error-corrector: error rises monotonically with imagination interval (rho=1.00), and re-perceiving every step cuts drift to 0.00× of pure open-loop — perception bounds imagination drift (toy rung).
+------------------------------------------------------------------------------
