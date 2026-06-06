@@ -1,0 +1,33 @@
+==============================================================================
+H_985 — Keystone WM>LM scale-up + task-diversity re-test (of H_970)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+ladder (latent/feat dim) = [16, 32, 64, 128]   N_SEEDS=10  N_train=600 N_test=300
+tasks: T1 delayed-cue (K=4,L=16,ctx=4)  T2 parity-track (len=20,ctx=4)  T3 hidden-pos (P=6,steps=18,ctx=4)
+capacity-matched per rung: WM readout (latent+1)*C == LM readout (feat+1)*C (feat==latent)
+
+==============================================================================
+task             rung  chance       WM       LM    memLM     gap        d         p
+------------------------------------------------------------------------------
+T1_delayed_cue     16   0.250    0.645    0.246    1.000   0.400    20.13   9.8e-17
+T1_delayed_cue     32   0.250    0.897    0.243    1.000   0.653    20.89   1.5e-19
+T1_delayed_cue     64   0.250    1.000    0.242    1.000   0.758    28.89   2.6e-13
+T1_delayed_cue    128   0.250    1.000    0.245    1.000   0.755    34.89   4.7e-14
+T2_parity_track    16   0.500    0.500    0.505    1.000  -0.005    -0.16   7.3e-01
+T2_parity_track    32   0.500    0.494    0.505    1.000  -0.010    -0.34   4.6e-01
+T2_parity_track    64   0.500    0.494    0.505    1.000  -0.010    -0.34   4.6e-01
+T2_parity_track   128   0.500    0.494    0.505    1.000  -0.010    -0.34   4.6e-01
+T3_hidden_pos      16   0.167    0.334    0.335    1.000  -0.001    -0.05   9.1e-01
+T3_hidden_pos      32   0.167    0.339    0.337    1.000   0.002     0.10   8.2e-01
+T3_hidden_pos      64   0.167    0.339    0.335    1.000   0.004     0.18   6.9e-01
+T3_hidden_pos     128   0.167    0.339    0.335    1.000   0.004     0.18   6.9e-01
+==============================================================================
+per-task summary:
+  T1_delayed_cue   WM>LM-sep@>=2rungs=True   WM-solves=True   LM-catches-up=False  mem-aug-closes=True
+  T2_parity_track  WM>LM-sep@>=2rungs=False  WM-solves=False  LM-catches-up=False  mem-aug-closes=True
+  T3_hidden_pos    WM>LM-sep@>=2rungs=False  WM-solves=True   LM-catches-up=True   mem-aug-closes=True
+
+------------------------------------------------------------------------------
+VERDICT H_985: FAIL separator is TASK-SPECIFIC / PRIMITIVE-LIMITED — large WM>LM gap on ['T1_delayed_cue'] only; on ['T2_parity_track', 'T3_hidden_pos'] BOTH arms sit at chance (mem-aug=1.0 proves these ARE persistent-state tasks, but the toy linear-retention WM cannot represent XOR-parity / path-integration, so it does NOT beat the LM) -> H_970 does NOT generalize across task families; the separator is narrow, not a general WM>LM law (closed-negative on generality, a_paper_negative_ok). WM-also-fails=['T2_parity_track'].
+------------------------------------------------------------------------------
