@@ -1,0 +1,33 @@
+==============================================================================
+H_1009 — Warm-start transfer from the len-18-solved model — crack the T3@36 cap?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+T3: phase1 base len=18 (solved) -> phase2 warm-start to len=36 (H_1005 break). T2 sentinel: base 20 -> 40. rungs=[16, 32] seeds=6. ONLY moved lever vs H_1005 = warm-start init from solved-short weights. COMPUTE NOTE: 2x budget (40ep base + 40ep target) — REPORTED.
+
+  done T3 warm rung=16  curr=0.427 LM=0.333 mem=1.000  phase1-end=(18, 14, 0.855) phase2-end=(36, 2, 0.56) [255s]
+  done T3 warm rung=32  curr=0.327 LM=0.333 mem=1.000  phase1-end=(18, 20, 0.898) phase2-end=(36, 2, 0.34) [593s]
+  done T2 warm rung=16  curr=0.912 LM=0.475 mem=1.000 [895s]
+  done T2 warm rung=32  curr=1.000 LM=0.474 mem=1.000 [1228s]
+
+================================================================================================
+WARM-START-TRANSFER (curr-GRU vs LM vs mem-aug)
+task           tgtLen rung  chance  currGRU      LM   memLM     gap        d         p
+------------------------------------------------------------------------------------------------
+T3_warm            36   16   0.167    0.427   0.333   1.000   0.094     0.78   2.4e-01
+T3_warm            36   32   0.167    0.327   0.333   1.000  -0.006    -0.23   7.0e-01
+T2_warm            40   16   0.500    0.912   0.475   1.000   0.437     2.86   4.0e-03
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+T2_warm            40   32   0.500    1.000   0.474   1.000   0.526    36.04   2.0e-08
+================================================================================================
+
+T3@36 warm-start: curr={16: np.float64(0.427), 32: np.float64(0.327)} sep@>=2rungs=False sep-rungs=[]
+T2@40 sentinel kept: True
+warm-start transfer cracks T3@36: False
+
+------------------------------------------------------------------------------
+VERDICT H_1009: FAIL WARM-START-NO-TRANSFER — initializing from the len-18-solved model (plus ~2x compute) does NOT crack the H_1005 T3 cap at len 36 (curr-GRU {16: np.float64(0.427), 32: np.float64(0.327)}, sep@>=2rungs=False, T2-kept=True). The short-horizon ring-counter solution does NOT transfer to the long horizon — it is not a good initialization for the 36-step integrator (the long-horizon solution is in a different basin). The cap survives warm-start + extra compute (closed-negative, a_paper_negative_ok; toy, production OPEN, a_scale_honest_scope).
+------------------------------------------------------------------------------
+
+[total wall 1228s]

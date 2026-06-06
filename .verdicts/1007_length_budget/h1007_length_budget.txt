@@ -1,0 +1,38 @@
+==============================================================================
+H_1007 — Length-proportional epoch budget — is the T3@36 cap just a compute tradeoff?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+T3 lens=[36, 72] (H_1005 break + 2x), T2 sentinel len=40. rungs=[16, 32] seeds=6. ONLY moved lever vs H_1005 = TOTAL budget scaled PROPORTIONALLY to length (base 40ep @ len18 -> {36: 80, 72: 160} @ T3 lens). EXTRA compute REPORTED.
+
+  done T3 len=36  budget=80   rung=16  curr=0.382 LM=0.333 mem=1.000 [301s]
+  done T3 len=36  budget=80   rung=32  curr=0.328 LM=0.333 mem=1.000 [723s]
+  done T3 len=72  budget=160  rung=16  curr=0.334 LM=0.327 mem=1.000 [1393s]
+  done T3 len=72  budget=160  rung=32  curr=0.324 LM=0.326 mem=1.000 [2320s]
+  done T2 len=40 budget=80 rung=16  curr=0.914 LM=0.475 mem=1.000 [2623s]
+  done T2 len=40 budget=80 rung=32  curr=0.908 LM=0.474 mem=1.000 [3100s]
+
+================================================================================================
+LENGTH-PROPORTIONAL-BUDGET (curr-GRU vs LM vs mem-aug)
+task           tgtLen rung  chance  currGRU      LM   memLM     gap        d         p
+------------------------------------------------------------------------------------------------
+T3 b=80            36   16   0.167    0.382   0.333   1.000   0.049     0.46   4.6e-01
+T3 b=80            36   32   0.167    0.328   0.333   1.000  -0.005    -0.21   7.2e-01
+T3 b=160           72   16   0.167    0.334   0.327   1.000   0.008     0.34   5.7e-01
+T3 b=160           72   32   0.167    0.324   0.326   1.000  -0.002    -0.15   8.0e-01
+T2 b=80            40   16   0.500    0.914   0.475   1.000   0.439     2.97   3.4e-03
+T2 b=80            40   32   0.500    0.908   0.474   1.000   0.434     2.72   5.1e-03
+================================================================================================
+
+T3 @ length-proportional budget (does MORE compute at horizon crack the cap?):
+  len=36  budget=80   curr={16: np.float64(0.382), 32: np.float64(0.328)} sep@>=2rungs=False solves=True  sep-rungs=[]
+  len=72  budget=160  curr={16: np.float64(0.334), 32: np.float64(0.324)} sep@>=2rungs=False solves=True  sep-rungs=[]
+
+T2@40 sentinel kept: True
+length-proportional budget cracks T3@36 (budget 80ep = 2.0x H_1005): False
+
+------------------------------------------------------------------------------
+VERDICT H_1007: FAIL T3-CAP-IS-NOT-JUST-COMPUTE — even a LENGTH-PROPORTIONAL budget (80ep = 2.0x H_1005 at len 36, 160ep = 4.0x at len 72) does NOT crack the T3 cap (curr-GRU {16: np.float64(0.382), 32: np.float64(0.328)} at len 36, sep@>=2rungs=False). The H_1005 T3 horizon cap is a genuine METHOD-SHAPE / long-range credit-assignment limit that MORE compute at fixed method does NOT buy — the integrator fails to fit the mod-6 ring counter at 36 steps even with 2.0x the epochs (closed-negative, a_paper_negative_ok; toy, production OPEN, a_scale_honest_scope).
+------------------------------------------------------------------------------
+
+[total wall 3101s]
