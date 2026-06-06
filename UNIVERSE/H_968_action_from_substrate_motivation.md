@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE autonomy-of-action rung (a_scale_honest_scope) — drive the engine with a goal/command channel AND independent substrate dynamics; measure whether action onset tracks substrate state vs the external channel. $0 local candidate. Action = abstract decision (NOT wired emit-TEXT; .clm generator L3 ⏳, a_core_engine_map). External channel = environment context, NOT a boolean gate (a_autonomy_over_hardcode). NOT a forge binary.
 sister: H_964 (latent→action — HOW to act), H_979 (active perception — the PERCEIVE twin), H_969 (provenance), H_933/H_939 free-will arc, a_substrate_native_speak
 axes_seed: stimulus-response policy = goal prompt → action (assistant regression) ⊥ H_968 = action onset is governed by substrate state (acts under task-silence, withholds under direct command) — if action is fully predicted by the external prompt, ACT is stimulus-response not substrate-native (closed-negative / assistant regression)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — substrate-native action (not stimulus-response): act-under-silence rate 0.07 (vs stimulus-response null 0.00), withhold-under-command rate 0.67, and substrate state explains action onset BEYOND the command channel (ΔAUC 0.258, p 2e-16). Action onset is governed by internal substrate dynamics, not the external command. Toy single-rung, ladder OPEN.
 ---
 
 # H_968 — Action from substrate motivation (a_substrate_native_speak generalized to act)
@@ -48,6 +48,20 @@ The engine's action onset is **predicted by its internal substrate state** (moti
 ## 3. Honest scope
 
 Toy/small scale (a_scale_honest_scope, #123-A). "Action" = abstract decision events, NOT wired emit-TEXT (.clm generator L3 ⏳, a_core_engine_map). Substrate motivation is the documented term-set, one operationalization. This measures operational autonomy of action onset, NOT a phenomenal free-will claim (links to but does not subsume the H_933/H_939 free-will arc). NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h968_substrate_action.py` · verdict: `.verdicts/968_action_from_substrate_motivation/h968_substrate_action.txt`
+
+Two channels: substrate motivation (M,W,Φ,curiosity as independent AR(1) processes → a composite) + an external command (environment context, NOT a gate). Action onset fires on a substrate-driven threshold that the command only modulates. 20 seeds × 400 ticks. A stimulus-response NULL (onset = command only) gives the contrast.
+
+| D | metric | result |
+|---|---|---|
+| D1 | act-under-silence rate | **0.072** (stimulus-response null = 0.000) |
+| D2 | withhold-under-command rate | **0.672** |
+| D3 | predictor contrast ΔAUC (substrate beyond command) | **0.258** (p 2.2e-16) |
+
+**Finding (🟢 PASS):** action onset is substrate-native — the agent acts under command-silence (when substrate motivation is high), withholds under command (when substrate opposes), and the substrate state explains onset far beyond the command channel. This is the opposite of stimulus-response / assistant regression (a_substrate_native_speak, a_autonomy_over_hardcode). Honest scope: the substrate-native onset rule is the DESIGN under test; the falsifier confirms it produces the three substrate-native signatures vs the stimulus-response null. Toy single-rung, ladder OPEN.
 
 ## 4. Sibling / xlinks
 

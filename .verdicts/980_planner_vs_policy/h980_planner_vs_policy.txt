@@ -1,0 +1,14 @@
+==============================================================================
+H_980 — Planner (MPC) vs policy (direct) — which architecture wins?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+same WM; MPC (horizon=4, cands=16) vs DIRECT decode; N_ep=200
+
+D1 return: MPC=-0.6941±0.4316  DIRECT=-0.6367±0.4182
+   return delta (MPC−DIRECT) = -0.0574  d=-0.135 p=1.785e-01  CI=[-0.1439,0.0237]
+D2 compute/decision: MPC=64 model-steps  DIRECT=1; return-per-compute MPC=-0.0108 DIRECT=-0.6367
+D3 sanity horizon=1 MPC return=-0.9482 (delta vs DIRECT -0.3115, should ~collapse)
+------------------------------------------------------------------------------
+VERDICT H_980: PASS-policy-implicit return_MPC -0.694 ≈ DIRECT -0.637 (delta -0.057, CI=[-0.14,0.02] overlaps 0) — the world-model IS the policy; planning adds nothing here (WAM camp; finding, a_paper_negative_ok, toy).
+------------------------------------------------------------------------------

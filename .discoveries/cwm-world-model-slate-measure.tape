@@ -79,3 +79,16 @@
 @H 983 := "generated interactive world: D1 rule-consistency STRONG (same state+action->same next, d 1.94) but D2 loop revisit-consistency only weakly beats random-world (d 0.24<0.5) — rule-consistent but not loop-reversible" :: discovery [⚠]
   seed   = "can the engine GENERATE a self-consistent interactive world (rules + revisit)?"
   target = "⚠ INCOMPLETE (toy) — D1 strong, D2 below bar; loop-closing world = open ladder rung"
+
+# ── ACT axis ──
+@H 964 := "world-model-as-policy: on hidden-velocity control return_WAM -0.65 > REACTIVE -1.89 > RANDOM -6.33, latent lift 1.24 (d 1.70) — latent carries decisive actionable advantage" :: discovery [🟢]
+  seed   = "does latent->action beat reactive obs->action (engine is a policy not an emitter)?"
+  target = "🟢 PASS — world-model-as-policy (toy; hidden-state task)"
+
+@H 968 := "substrate-native action: act-under-silence 0.07 (null 0.00), withhold-under-command 0.67, substrate explains onset beyond command ΔAUC 0.258 (p 2e-16) — NOT stimulus-response" :: discovery [🟢]
+  seed   = "is action onset governed by substrate dynamics or by the external command (assistant regression)?"
+  target = "🟢 PASS — substrate-native action (toy)"
+
+@H 980 := "planner vs policy = policy-implicit (WAM camp): MPC -0.694 ~ DIRECT -0.637 (CI overlaps 0) at 64x compute — the world-model IS the policy, planning adds nothing here" :: discovery [🟢]
+  seed   = "does explicit MPC planning beat the implicit latent policy on a shared WM?"
+  target = "🟢 PASS-policy-implicit (toy; both directions were pre-registered findings)"

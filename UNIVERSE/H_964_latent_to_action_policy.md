@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE toy control-task rung (a_scale_honest_scope) — a toy control environment; an action head decodes the engine latent to an action; measure task return vs random + reactive baselines. $0 local candidate; GPU only for a real backbone (a_fire_autonomous). action enters via the generator L3 slot pattern (a_core_engine_map). NOT a forge binary.
 sister: H_968 (action from substrate motivation), H_980 (planner vs policy), H_967 (counterfactual imagination), H_969 (action provenance)
 axes_seed: emit-only engine = produces tokens ⊥ H_964 = produces ACTIONS (latent→action decode solves a control task) — if latent→action does not beat reactive/random, the engine is not a policy (closed-negative; it stays an emitter)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — world-model-as-policy: on a partial-obs control task where the optimal action requires the HIDDEN velocity, return_WAM −0.65 > REACTIVE −1.89 > RANDOM −6.33; latent-information lift 1.24 (d 1.70, p 4e-67 > 0). The latent world-state carries a decisive actionable advantage. Toy single-rung, ladder OPEN.
 ---
 
 # H_964 — Latent→action policy (world-model-as-policy)
@@ -48,6 +48,22 @@ An action head that decodes the engine's Ψ-latent into a control action achieve
 ## 3. Honest scope
 
 Toy control environment, small scale (a_scale_honest_scope, #123-A). Action head is a thin decode, not a tuned production policy. Single rung; a PASS is "toy-only, scale-transfer unverified" pending a ladder (a_toy_scale_recheck). Action enters via the generator L3 slot pattern (a_core_engine_map — no 2nd action path bypassing it). NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h964_latent_policy.py` · verdict: `.verdicts/964_latent_to_action_policy/h964_latent_policy.txt`
+
+Partial-observability thrust-control task: agent sees POSITION only; velocity persists (DRAG=1) and is HIDDEN, so the optimal thrust must counter it. arm-WAM = delay-embedding latent → action; arm-REACTIVE = single observation → action; arm-RANDOM. Action heads trained by imitating the velocity-aware oracle. N=300 episodes (return: 0 optimal).
+
+| arm | return |
+|---|---|
+| WAM (latent → action) | **−0.652 ± 0.439** |
+| REACTIVE (obs → action) | −1.888 ± 0.926 |
+| RANDOM | −6.328 ± 2.774 |
+
+D2 latent-information lift = 1.236 (d 1.70, p 4.2e-67 > 0). D3 reactive ≫ random (d 2.14).
+
+**Finding (🟢 PASS):** the world-model latent → action policy decisively beats a reactive single-frame policy when hidden state matters — the latent carries an actionable advantage; the engine acts as a policy, not just an emitter. Honest scope: the advantage is large precisely because the task requires hidden velocity (the falsifier's premise); on a fully-observed task the lift would shrink. Toy single-rung, ladder OPEN.
 
 ## 4. Sibling / xlinks
 

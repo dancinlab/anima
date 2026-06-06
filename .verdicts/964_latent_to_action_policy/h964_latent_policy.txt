@@ -1,0 +1,16 @@
+==============================================================================
+H_964 — World-model-as-policy (latent->action beats reactive)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+partial-obs control (hidden velocity); WAM vs REACTIVE vs RANDOM; N_ep=300
+
+D1 episode return (higher=better, 0=optimal):
+  WAM (latent->action) = -0.6521 ± 0.4394
+  REACTIVE (obs->action)= -1.8880 ± 0.9260
+  RANDOM               = -6.3276 ± 2.7739
+D2 latent-information lift = 1.2359  d=1.702 p=4.154e-67
+D3 REACTIVE vs RANDOM: d=2.143 p=4.656e-86
+------------------------------------------------------------------------------
+VERDICT H_964: PASS return_WAM -0.652 > REACTIVE -1.888 > RANDOM -6.328; latent lift 1.236 (d=1.70, p=4.2e-67>0) — world-model-as-policy (toy).
+------------------------------------------------------------------------------
