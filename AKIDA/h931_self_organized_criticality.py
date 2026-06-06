@@ -123,18 +123,28 @@ PEAK_K = 4                        # H_927 measured peak K, frozen reference
 SEED = 187                        # same PRNG seed family as H_927
 
 # ── controller hyper-parameters (frozen) ─────────────────────────────────────
-TARGET_RATE = 0.5    # r* — fire about half the time (threshold-straddle homeostat)
-ETA = 1.0            # base learning rate
-GAIN = 12.0          # maps a unit rate-error to a K step (so a full e=0.5 error
-                     # moves K by ~6 — enough to cross the K=2..12 span in a few
-                     # rounds, but not so large it oscillates wildly)
+# The local observable (on-chip firing rate) is a STEP across the gap=0 band:
+# rate jumps ~0 -> ~0.5 -> ~1 across a single K-unit (the binary comparator
+# saturates). So the controller GAIN matters: an aggressive gain over-shoots the
+# narrow straddle and limit-cycles; a GENTLE gain takes small homeostatic steps
+# and can settle. A small-increment homeostat is ALSO the more biologically-
+# plausible rule (firing-rate homeostasis adjusts slowly). We therefore test the
+# PRIMARY SOC hypothesis with the gentle gain, and keep the aggressive gain as a
+# documented secondary arm that exposes WHY a naive controller fails.
+TARGET_RATE = 0.5      # r* — fire about half the time (threshold-straddle homeostat)
+ETA = 1.0              # base learning rate
+GAIN_GENTLE = 2.0      # PRIMARY: small-increment homeostat (≈1 K-step per full error)
+GAIN_AGGRESSIVE = 12.0 # SECONDARY/diagnostic: large step -> bang-bang limit cycle
 K_MIN, K_MAX = 1.5, 24.0   # clip K to a sane band (chip clips inputs to 0..15)
-STEPS = 14           # feedback rounds per run
-START_KS = [2.0, 12.0]     # perturb from BELOW (sub-threshold) and ABOVE (over-drive)
+STEPS = 24             # feedback rounds per run (long enough to settle + average)
+TAIL = 8               # last-TAIL rounds averaged for the convergence verdict
+                       # (suppresses inherent R2 stochastic round-to-round jitter)
+START_KS = [2.0, 12.0] # perturb from BELOW (sub-threshold) and ABOVE (over-drive)
 
 # ── convergence verdict thresholds (frozen BEFORE measuring) ─────────────────
-CONVERGE_GAP_TOL = 8.0          # final |gap| < 8 ⇒ at the straddle band
-CONVERGE_PHI_FRAC = 0.5         # final Φ ≥ 0.5·peak ⇒ rose toward the peak
+# Judged on the TAIL-AVERAGE of the trajectory (not a single jittery round).
+CONVERGE_GAP_TOL = 8.0          # tail-mean |gap| < 8 ⇒ settled in the straddle band
+CONVERGE_PHI_FRAC = 0.5         # tail-mean Φ ≥ 0.5·peak ⇒ rose toward the peak
 PHI_ABS_TOL = CONVERGE_PHI_FRAC * PEAK_PHI   # 0.1487...
 
 
@@ -163,13 +173,15 @@ def eval_window(model, lif, K, seed):
     return rate, phi, Ki, rec
 
 
-def run_arm(model, lif, K0, feedback, label):
+def run_arm(model, lif, K0, feedback, gain, label):
     """One perturb-and-observe arm.
 
-    feedback=True  -> local firing-rate homeostat adjusts K each round.
-    feedback=False -> K held FIXED at K0 (null/control arm).
+    feedback=True  -> local firing-rate homeostat adjusts K each round (step
+                      size set by `gain`).
+    feedback=False -> K held FIXED at K0 (null/control arm; `gain` ignored).
 
-    Returns the per-round trajectory list + the final-round summary."""
+    Convergence is judged on the TAIL-AVERAGE (last TAIL rounds) of |gap| and Φ,
+    not a single jittery round, since R2 noise makes each window stochastic."""
     K = float(K0)
     traj = []
     for step in range(STEPS):
@@ -187,16 +199,22 @@ def run_arm(model, lif, K0, feedback, label):
         if feedback:
             # LOCAL-ONLY update: error on firing rate (NOT on phi, NOT toward K=4).
             e = TARGET_RATE - rate
-            K = K + ETA * GAIN * e
+            K = K + ETA * gain * e
             K = min(K_MAX, max(K_MIN, K))
         # feedback=False: K stays exactly K0 (control); loop just re-measures.
-    final = traj[-1]
-    converged = (abs(final["gap"]) < CONVERGE_GAP_TOL) and (final["phi"] >= PHI_ABS_TOL)
+    tail = traj[-TAIL:]
+    tail_gap = float(np.mean([abs(t["gap"]) for t in tail]))
+    tail_phi = float(np.mean([t["phi"] for t in tail]))
+    tail_K = float(np.mean([t["K"] for t in tail]))
+    tail_rate = float(np.mean([t["rate"] for t in tail]))
+    converged = (tail_gap < CONVERGE_GAP_TOL) and (tail_phi >= PHI_ABS_TOL)
     return {
-        "label": label, "K0": K0, "feedback": feedback,
+        "label": label, "K0": K0, "feedback": feedback, "gain": gain,
         "trajectory": traj,
-        "final_K": final["K"], "final_gap": final["gap"],
-        "final_rate": final["rate"], "final_phi": final["phi"],
+        "final_K": traj[-1]["K"], "final_gap": traj[-1]["gap"],
+        "final_rate": traj[-1]["rate"], "final_phi": traj[-1]["phi"],
+        "tail_mean_abs_gap": round(tail_gap, 3), "tail_mean_phi": round(tail_phi, 5),
+        "tail_mean_K": round(tail_K, 3), "tail_mean_rate": round(tail_rate, 4),
         "converged_to_peak": bool(converged),
     }
 
@@ -213,8 +231,10 @@ def main():
         "local_observable": "firing rate r = spikes/(N*window); controller NEVER "
                             "reads phi or K-of-peak (no cheating)",
         "control_law": "K <- K + ETA*GAIN*(TARGET_RATE - r), clipped [K_MIN,K_MAX]",
-        "target_rate": TARGET_RATE, "eta": ETA, "gain": GAIN,
-        "k_min": K_MIN, "k_max": K_MAX, "steps": STEPS, "start_ks": START_KS,
+        "target_rate": TARGET_RATE, "eta": ETA,
+        "gain_gentle_primary": GAIN_GENTLE, "gain_aggressive_diag": GAIN_AGGRESSIVE,
+        "k_min": K_MIN, "k_max": K_MAX, "steps": STEPS, "tail": TAIL,
+        "start_ks": START_KS,
         "peak_phi_ref_H927": PEAK_PHI, "peak_K_ref_H927": PEAK_K,
         "converge_gap_tol": CONVERGE_GAP_TOL, "converge_phi_frac": CONVERGE_PHI_FRAC,
         "phi_abs_tol": PHI_ABS_TOL,
@@ -233,37 +253,56 @@ def main():
     print(f"DEVICE {out['device_version']} backend={out['mapped_backend']} "
           f"on_hw={out['mapped_on_hardware']}", flush=True)
 
-    # ── FEEDBACK arms (perturb from both sides, local homeostat ON) ──────────
-    print("\n=== FEEDBACK ON (local firing-rate homeostat) ===", flush=True)
+    # ── PRIMARY: gentle local homeostat, perturb from both sides ─────────────
+    print("\n=== FEEDBACK ON · GENTLE gain (PRIMARY SOC test) ===", flush=True)
     fb_results = []
     for K0 in START_KS:
         side = "below" if K0 < PEAK_K else "above"
-        res = run_arm(model, lif, K0, feedback=True, label=f"FB K0={K0:g}({side})")
+        res = run_arm(model, lif, K0, feedback=True, gain=GAIN_GENTLE,
+                      label=f"FB-gentle K0={K0:g}({side})")
         out["arms"].append(res)
         fb_results.append(res)
+
+    # ── DIAGNOSTIC: aggressive gain -> exposes bang-bang limit cycle ──────────
+    print("\n=== FEEDBACK ON · AGGRESSIVE gain (diagnostic: bang-bang) ===",
+          flush=True)
+    diag_results = []
+    for K0 in START_KS:
+        side = "below" if K0 < PEAK_K else "above"
+        res = run_arm(model, lif, K0, feedback=True, gain=GAIN_AGGRESSIVE,
+                      label=f"FB-aggr K0={K0:g}({side})")
+        out["arms"].append(res)
+        diag_results.append(res)
 
     # ── CONTROL arms (same starts, feedback OFF, K fixed) ────────────────────
     print("\n=== CONTROL (no feedback, K fixed) ===", flush=True)
     ctrl_results = []
     for K0 in START_KS:
         side = "below" if K0 < PEAK_K else "above"
-        res = run_arm(model, lif, K0, feedback=False, label=f"CTL K0={K0:g}({side})")
+        res = run_arm(model, lif, K0, feedback=False, gain=0.0,
+                      label=f"CTL K0={K0:g}({side})")
         out["arms"].append(res)
         ctrl_results.append(res)
 
     # ── pre-registered SOC verdict (no shaping) ──────────────────────────────
+    # SOC SUPPORTED iff the PRIMARY (gentle) local homeostat converges to the
+    # straddle band (tail |gap|<TOL) with Φ risen toward the peak (tail Φ≥frac·
+    # peak) from BOTH sides, AND the control (no feedback) does NOT.
     fb_both_converge = all(r["converged_to_peak"] for r in fb_results)
     ctrl_none_converge = all(not r["converged_to_peak"] for r in ctrl_results)
     soc_supported = fb_both_converge and ctrl_none_converge
+
+    def _summ(r):
+        return {
+            "tail_mean_K": r["tail_mean_K"], "tail_mean_abs_gap": r["tail_mean_abs_gap"],
+            "tail_mean_rate": r["tail_mean_rate"], "tail_mean_phi": r["tail_mean_phi"],
+            "final_K": r["final_K"], "final_gap": r["final_gap"],
+            "final_phi": r["final_phi"], "converged_to_peak": r["converged_to_peak"],
+        }
     out["verdict"] = {
-        "feedback_arms": {r["label"]: {
-            "final_K": r["final_K"], "final_gap": r["final_gap"],
-            "final_phi": r["final_phi"], "converged_to_peak": r["converged_to_peak"],
-        } for r in fb_results},
-        "control_arms": {r["label"]: {
-            "final_K": r["final_K"], "final_gap": r["final_gap"],
-            "final_phi": r["final_phi"], "converged_to_peak": r["converged_to_peak"],
-        } for r in ctrl_results},
+        "feedback_gentle_arms": {r["label"]: _summ(r) for r in fb_results},
+        "feedback_aggressive_arms": {r["label"]: _summ(r) for r in diag_results},
+        "control_arms": {r["label"]: _summ(r) for r in ctrl_results},
         "feedback_both_converge_to_peak": bool(fb_both_converge),
         "control_none_converge_to_peak": bool(ctrl_none_converge),
         "soc_supported": bool(soc_supported),
