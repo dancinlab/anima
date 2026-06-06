@@ -12,8 +12,8 @@ frozen_at: 2026-06-07
 since: 2026-06-07
 sister: H_1017 (redundancy explains the split @ n=4), H_1016 (magnitude predictor is an n=4 artifact; planning split survives n=5), H_1014 (split co-occurs with MI-coupling shock; magnitude separates @ n=4), H_1012 (split robust in n={4,5}; prove_mirrors_at_n), H_1004 (clean disagreement @ n=4), PAPER/phi-measure-dependence-planning, a_phi_iit4_tool
 scope: TOY n=5, $0 CPU-local, real IIT-4.0 stdlib engines (CPU mirror RE-PROVEN equal to stdlib at n=5 per H_1012/H_1016 discipline BEFORE scoring). The PID redundancy/synergy is an information-theoretic decomposition of the SAME bits — it is the EXPLANATORY variable, NOT a Phi replacement and NOT a proxy for Phi. big-Phi super-exponential, so n=5 is slow-but-tractable and n=6 is the honest cap (skipped, as in H_1012/H_1016). a_scale_honest_scope · a_toy_scale_recheck — scale-transfer beyond n=5 UNVERIFIED. NOT a forge binary; no GPU.
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT
+status: measured
+verdict: 🟢 MECHANISM-PREDICTOR-ROBUST — the H_1017 REDUNDANCY-MARGIN mechanism predictor BEATS the H_1014 coupling-MAGNITUDE predictor in robustness to n. At n=5, where the magnitude predictor was shown to be an n=4 artifact (H_1016 — imagination & guided pick up spurious split labels and the predictor ranges OVERLAP), the redundancy-margin (Δred−Δsyn) CLEANLY SEPARATES planning (the true split-inducer) from ALL no-split controls. On the matched n=5 binary substrate (CPU mirror RE-PROVEN ≡ stdlib at n=5 BEFORE scoring; WB I_min PID re-validated COPY=pure-redundancy / XOR=pure-synergy), planning is redundancy-dominated (Δred=+22.48 ≫ Δsyn=−2.60, margin=+25.07) and its redundancy-margin DWARFS every other intervention's: imagination +0.78, guided +5.12, chaos +7.48. Crucially the separation holds even against imagination & guided — the two controls the MAGNITUDE predictor MISLABELLED as 'split' at n=5 via non-significant big-Φ sign-flips (H_1016 d_big +0.19/−0.14, d_faith −0.11/+0.72). Thus the redundancy-margin tracks the TRUE planning-only split, NOT the spurious-sign-flip labels: the H_1016 n=5 split labels are planning=True, imagination=True[spurious], guided=True[spurious], chaos=False, yet redundancy-margin still isolates ONLY planning. The mechanism predictor is MORE robust in n than the cruder magnitude predictor (a Δ-vs-H_1016 result). The PID is the EXPLANATORY variable, an info-decomposition of the SAME bits — NOT a Φ proxy; Φ numbers come only from the stdlib mirrors (a_phi_iit4_tool). g5 CODE-measured (no LLM self-judge, p7). TOY n=5; scale-transfer beyond n=5 UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck).
 ---
 
 # H_1020 — does the REDUNDANCY-MARGIN mechanism predictor beat the MAGNITUDE predictor in robustness to n?
@@ -93,7 +93,42 @@ to [H_1017](./H_1017_split_redundancy_mechanism.md) · [H_1016](./H_1016_split_p
 [H_1004](./H_1004_bigphi_faithful_clean.md) · PAPER/phi-measure-dependence-planning · IIT4_PHI_TOOLS.md ·
 a_phi_iit4_tool
 
-## 6. measurement + finding
-PENDING-MEASUREMENT — verdict raw will be written to
-`.verdicts/1020_redundancy_predictor_robustness/H_1020.txt`. No verdict token until that file exists
-(VERDICT-GATE).
+## 6. measurement + finding (2026-06-07 · 🟢 MECHANISM-PREDICTOR-ROBUST · g5 CODE-measured, $0 CPU-local)
+Verdict raw: `.verdicts/1020_redundancy_predictor_robustness/H_1020.txt` (g73 — deterministic run that
+COULD have falsified; the CPU mirror RE-PROVEN ≡ stdlib at n=5 BEFORE scoring — big-Φ ring5_s31
+mirror=2.999999999 vs stdlib_hexa_ref=2.999999999 |Δ|=1.34e-10 — and the Williams-Beer I_min PID
+independently re-validated on the canonical COPY=pure-redundancy / XOR=pure-synergy cases BEFORE scoring).
+
+**Result — the redundancy-margin mechanism predictor separates planning from ALL controls at n=5:**
+
+intervention vs baseline, 30 seeds, matched (n=5, binary discretization):
+
+| intervention | H_1016 n=5 SPLIT? | Δredundancy | Δsynergy | red-margin (Δred−Δsyn) | red-dominated |
+|---|---|---|---|---|---|
+| planning (depth-8 vs greedy) | **True** (TRUE split; d_big −2.28 / d_faith +4.65) | **+22.4789** | **−2.5954** | **+25.0744** | True |
+| imagination (drift vs react) | True [SPURIOUS — d_big +0.19 / d_faith −0.11, both n.s.] | +0.4800 | −0.3049 | +0.7849 | True |
+| guided (goal-pull vs react) | True [SPURIOUS — d_big −0.14 / d_faith +0.72] | +4.1981 | −0.9176 | +5.1156 | True |
+| chaos (gain-1.4 vs gain-1.0) | False | +6.4929 | −0.9915 | +7.4844 | True |
+
+- **VERDICT-TOKEN: 🟢 MECHANISM-PREDICTOR-ROBUST.** The pre-registered PASS condition is MET. At n=5
+  the redundancy-margin CLEANLY SEPARATES planning (the true split-inducer) from ALL no-split controls:
+  planning is redundancy-dominated (Δred=+22.48 ≫ Δsyn=−2.60) and its redundancy-margin (+25.07)
+  EXCEEDS every other intervention's (imagination +0.78, guided +5.12, chaos +7.48). The mechanism
+  predictor BEATS the magnitude predictor in robustness to n.
+- **Δ-vs-H_1016 (the key contrast):** the H_1014 coupling-MAGNITUDE predictor was an n=4 ARTIFACT — at
+  n=5 imagination & guided pick up SPURIOUS split labels (non-significant big-Φ sign-flips) and the
+  predictor ranges OVERLAP, so "only-planning-is-split" breaks (H_1016 PARTIAL). The REDUNDANCY-MARGIN
+  predictor does NOT break: it separates planning even from imagination & guided, the two controls the
+  magnitude predictor mislabelled. The mechanism predictor TRACKS THE TRUE PLANNING-ONLY SPLIT, NOT the
+  spurious-sign-flip labels (H_1016 n=5 labels: planning=True, imagination=True[spurious],
+  guided=True[spurious], chaos=False; redundancy-margin still isolates ONLY planning).
+- **mechanism interpretation:** the redundancy-margin scales up from n=4 (planning margin +10.44, H_1017)
+  to n=5 (+25.07) and stays the discriminator, while the no-split controls' margins stay small (≤+7.48 at
+  n=5). The redundancy SHOCK is a robust signature of the split-inducer; the coupling magnitude is not.
+- **WB PID validity (g5, BEFORE scoring):** PID deterministic re-run @ n=5 True; COPY(T;T,T) → red>0/syn~0
+  and XOR(T;A,B) → red~0/syn>0 (canonical Williams-Beer sanity). The PID is deterministic and a pure
+  function of the same bits. It is NOT a proxy for Φ.
+- **honest scope (a_scale_honest_scope · a_toy_scale_recheck):** TOY n=5 — both engines EXACT; big-Φ
+  super-exponential so n=5 is slow-but-tractable and n=6 is the honest cap (skipped, as in H_1012/H_1016).
+  The CPU mirror RE-PROVEN ≡ stdlib at n=5 BEFORE scoring. Scale-transfer beyond n=5 UNVERIFIED. g5
+  CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool. NOT a forge binary; $0 CPU-local, no GPU.
