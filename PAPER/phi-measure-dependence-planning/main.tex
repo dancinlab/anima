@@ -541,4 +541,96 @@ Claude Opus 4.8 (1M context).
 \bibliographystyle{plainnat}
 \bibliography{references}
 
+% =========================================================================
+\appendix
+
+\section{Per-depth breakdown of the depth-ladder}
+\label{app:depth}
+
+The planning condition is a depth-ladder over look-ahead depths $\{1,2,4,8\}$;
+the contrasts in Table~\ref{tab:disagree} aggregate over the ladder. For
+transparency we report the per-depth means of each measure against the greedy
+baseline, verbatim from the verdict file. The pattern is consistent across
+depths: every planning depth sits \emph{above} the greedy baseline for
+\faithful{} and \emph{below} it for \bigphi{} --- the sign-split is not carried
+by a single anomalous depth.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llccccc}
+\toprule
+$n$ & measure & $d{=}1$ & $d{=}2$ & $d{=}4$ & $d{=}8$ & greedy \\
+\midrule
+4 & \faithful{} (raises) & 1.433 & 3.000 & 1.439 & 2.840 & 0.507 \\
+4 & \bigphi{} (lowers)   & 1.892 & 8.476 & 3.301 & 5.520 & 9.528 \\
+5 & \faithful{} (raises) & 0.633 & 4.000 & 1.749 & 3.673 & 0.611 \\
+5 & \bigphi{} (lowers)   & 5.189 & 21.584 & 9.080 & 13.828 & 27.201 \\
+\bottomrule
+\end{tabular}
+\caption{Per-depth means of each measure under planning, with the greedy
+baseline. \faithful{} planning depths all exceed the (small) greedy baseline;
+\bigphi{} planning depths all fall below the (large) greedy baseline. The
+aggregate contrasts and effect sizes of Table~\ref{tab:disagree} follow from
+these per-depth values. Source: the H\_1012 verdict file.}
+\label{tab:depth}
+\end{table}
+
+\section{Engine equivalence proof (CPU mirror $\equiv$ stdlib)}
+\label{app:equiv}
+
+Every score is preceded by an equivalence proof: a standalone CPU mirror must
+reproduce the \texttt{hexa} standard-library engines to numerical tolerance at
+each system size. This is the anti-fake-closure guard --- the verdict is only
+trusted because a deterministic recomputation that \emph{could} have disagreed
+did not. Table~\ref{tab:equiv} lists the proven points; the worst residual is
+$|\Delta|=3.75\times10^{-6}$ (a four-bin faithful evaluation), all others are
+at the $10^{-10}$ floor.
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{llll}
+\toprule
+$n$ & quantity & mirror $\equiv$ stdlib & $|\Delta|$ \\
+\midrule
+4 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+4 & \faithful{} (2-bin)     & $3.000000 \equiv 3.000000$       & $3.48\times10^{-10}$ \\
+4 & \faithful{} (4-bin)     & $3.377444 \equiv 3.377440$       & $3.75\times10^{-6}$  \\
+5 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+5 & \faithful{} (2-bin)     & $4.000000 \equiv 4.000000$       & $7.97\times10^{-10}$ \\
+6 & \bigphi{} (ring)        & $2.999999999 \equiv 2.999999999$ & $1.34\times10^{-10}$ \\
+6 & \faithful{} (2-bin)     & $5.000000 \equiv 5.000000$       & $2.46\times10^{-10}$ \\
+\bottomrule
+\end{tabular}
+\caption{Equivalence proof per system size. Both engines (and the CPU mirror)
+agree to tolerance at $n=4$, $n=5$, and $n=6$ --- including $n=6$, where the
+planning \emph{condition} was not scored but the engines were still proven
+exact, so the $n=6$ cap is computational, not epistemic. Source: the H\_1012
+verdict file.}
+\label{tab:equiv}
+\end{table}
+
+\section{Sibling hypotheses and verdict pointers}
+\label{app:siblings}
+
+\begin{table}[h]
+\centering
+\small
+\begin{tabular}{lll}
+\toprule
+\textbf{Hypothesis} & \textbf{Verdict} & \textbf{Record} \\
+\midrule
+H\_1004 (clean disagreement, $n=4$)    & \tierRed{} GENUINE-MEASURE-DISAGREEMENT & \texttt{.verdicts/1004\_bigphi\_faithful\_clean} \\
+H\_1012 (robust in $n$, this paper)    & \tierGreen{} DISAGREEMENT-ROBUST-IN-N   & \texttt{.verdicts/1012\_bigphi\_faithful\_larger\_n} \\
+H\_1011 (credit-density horizon cap)   & \tierRed{} HORIZON-CAPPED-AT-72         & \texttt{.verdicts/1011\_dense\_supervision\_scaleup} \\
+H\_1013 (task-locality of dense sup.)  & \tierRed{} CREDIT-DENSITY-TASK-LOCAL    & \texttt{.verdicts/1013\_credit\_density\_general} \\
+\bottomrule
+\end{tabular}
+\caption{The four pre-registered hypotheses behind this paper, each with its
+terminal verdict token and the verbatim record path. Every numeric claim in
+the body traces to one of these four files.}
+\label{tab:siblings}
+\end{table}
+
 \end{document}
