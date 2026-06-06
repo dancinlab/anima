@@ -1,0 +1,64 @@
+==============================================================================
+H_999 — FAITHFUL IIT4 re-measure of the imagination/planning Φ-null
+substrate=CPU-mirror (numpy) — BYTE-FAITHFUL mirror of stdlib
+hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (proven ≡ below)
+g5 CODE-measured (no LLM self-judge, p7) | a_scale_honest_scope: TOY rung
+==============================================================================
+
+STEP 0 — prove CPU mirror ≡ stdlib faithful_phi.hexa (hexa run on this Mac)
+  n3 dim4 nb2   : mirror=2.000000  hexa_ref=2.000000  |Δ|=1.64e-09  OK
+  n4 dim6 nb2   : mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+  n4 dim6 nb4   : mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+  n5 dim8 nb3   : mirror=0.372556  hexa_ref=0.372556  |Δ|=2.56e-07  OK
+  MIRROR-FAITHFUL: PROVEN (≡ stdlib engine)
+
+DISCRETIZATION: WM latent (24-dim, 40 steps) → top-8 variance channels as n=8 units; each unit's 40-step trace is
+its variable; faithful MIP-EI Φ with n_bins=4 (exact, n≤8).
+Applied IDENTICALLY to every regime so the CONTRAST is fair.
+
+################ H_971 — imagination(DRIFT) vs reaction ################
+# original proxy verdict: 🔴 Φ_IMAGINE 0.068 < Φ_REACT 0.095 (d −3.4)
+--- H_971 faithful: DRIFT(imagine) − REACT ---
+  FAITHFUL Φ  DRIFT    = 3.8087 ± 0.8005
+  FAITHFUL Φ  REACT    = 2.2994 ± 0.6092
+  FAITHFUL contrast (DRIFT−REACT) = +1.5094  Cohen d=+2.086  Welch t=+8.080 p=7.195e-11  CI=[+1.1987,+1.8504]
+  [proxy, original]  DRIFT=0.0683  REACT=0.0946  proxy contrast=-0.0263
+
+############### H_988 — guided imagination vs reaction ###############
+# original proxy verdict: 🔴 Φ_GUIDED 0.039 < Φ_DRIFT 0.068 < Φ_REACT 0.095
+--- H_988 faithful: GUIDED − REACT ---
+  FAITHFUL Φ  GUIDED   = 2.1202 ± 0.6678
+  FAITHFUL Φ  REACT    = 2.2994 ± 0.6092
+  FAITHFUL contrast (GUIDED−REACT) = -0.1792  Cohen d=-0.276  Welch t=-1.068 p=2.902e-01  CI=[-0.5678,+0.1957]
+  [proxy, original]  GUIDED=0.0347  REACT=0.0946  proxy contrast=-0.0599
+--- H_988 faithful: GUIDED − DRIFT ---
+  FAITHFUL Φ  GUIDED   = 2.1202 ± 0.6678
+  FAITHFUL Φ  DRIFT    = 3.8087 ± 0.8005
+  FAITHFUL contrast (GUIDED−DRIFT) = -1.6886  Cohen d=-2.252  Welch t=-8.722 p=4.943e-12  CI=[-2.0961,-1.3194]
+  [proxy, original]  GUIDED=0.0347  DRIFT=0.0683  proxy contrast=-0.0337
+
+################ H_973 — planning(MPC) vs greedy ################
+# original proxy verdict: 🔴 Φ_PLAN 0.063 < Φ_GREEDY 0.104; Φ falls with depth
+--- H_973 faithful: PLAN(depth=8) − GREEDY ---
+  FAITHFUL Φ  PLAN     = 7.7459 ± 1.3857
+  FAITHFUL Φ  GREEDY   = 2.6516 ± 0.6426
+  FAITHFUL contrast (PLAN−GREEDY) = +5.0943  Cohen d=+4.637  Welch t=+17.960 p=5.138e-21  CI=[+4.5889,+5.5650]
+  [proxy, original]  PLAN=0.0463  GREEDY=0.0952  proxy contrast=-0.0489
+  faithful Φ vs plan-depth: depths=[1, 2, 4, 8] means=['4.8099', '6.9893', '6.0959', '7.7459']
+  dose-response Spearman rho=+0.483 p=2.348e-08  (proxy was rho −0.47: Φ FELL with depth)
+
+==============================================================================
+VERDICT MATRIX (faithful IIT4 vs original proxy)
+==============================================================================
+  H_971 imagination(DRIFT) vs REACT : faithful contrast=+1.5094 → RAISES Φ (proxy REVERSED → PROXY-ARTIFACT)
+  H_988 guided imagination vs REACT : faithful contrast=-0.1792 → does NOT raise Φ (NULL-ROBUST)
+  H_973 planning(d8) vs GREEDY      : faithful contrast=+5.0943 → RAISES Φ (proxy REVERSED → PROXY-ARTIFACT)
+
+OVERALL: 🔴-vs-proxy = PROXY-ARTIFACT — faithful IIT4 REVERSES the proxy on
+  2/3 conditions (internal generation RAISES faithful Φ). The
+  original nulls were the proxy's purpose-blindness → H_971/973/988/994 RE-OPEN.
+==============================================================================
+HONEST scope (a_scale_honest_scope): TOY single-rung — the toy WM latent is
+DISCRETIZED to n=8 units; faithful Φ is exact at that n but scale-transfer is
+UNVERIFIED. The contrast (not the absolute Φ) is the falsifier; same
+discretization applied to every regime. NOT a forge binary.

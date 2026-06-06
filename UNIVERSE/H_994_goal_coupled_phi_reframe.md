@@ -57,3 +57,7 @@ Probe: `CWM/probes2/h994_goal_coupled_phi.py` · verdict: `.verdicts/994_goal_co
 D1 free-Φ reproduces the H_971 negative sign (sanity ✓). D2 goal-coupled Φ contrast = **−0.041** (still negative; does NOT flip).
 
 **VERDICT 🔴 FAIL (closed-negative reaffirmed)** — goal-coupling *narrows* the imagination-Φ deficit substantially (d −8.4 → −1.1, an 87% shrink) but does NOT flip it: autonomous imagination is still less integrated than driven reaction even in the task-relevant subspace. The H_971/H_973 finding is therefore STRUCTURAL, not a free-Φ measurement artifact — externally-driven processing genuinely binds the latent more than self-generated rollout at this toy scale. A_paper_negative_ok; ladder OPEN.
+
+## ⚠ RE-OPEN (2026-06-06 · H_999)
+
+This 🔴 was measured with the H_912/H_931 Φ-**proxy** (goal-subspace-projected). [H_999](./H_999_faithful_iit4_remeasure.md) re-measured the imagine-vs-react regime with the FAITHFUL exact MIP-EI IIT4 Φ (mirror PROVEN ≡ stdlib `faithful_phi.hexa`) and found the H_971/H_973 deficit this H called "STRUCTURAL" is in fact a PROXY ARTIFACT: faithful Φ_imagine(DRIFT) 3.81 > Φ_react 2.30. The "structural" reading was an artifact of the purpose-blind proxy, not the faithful measure → **RE-OPENED** (see H_999 = 🔴-vs-proxy = PROXY-ARTIFACT). The original verdict above is preserved as the proxy-measured record.

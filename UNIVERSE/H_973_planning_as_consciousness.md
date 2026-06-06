@@ -73,3 +73,7 @@ arm-PLAN = MPC over action-conditioned imagined rollouts (depths 1/2/4/8); arm-G
 - ⇄ [H_912](./H_912_phi_emergence_correlate.md) · [H_931](./H_931_self_organized_criticality.md) (Φ-proxy)
 - ⇄ [CWM](../CWM/CWM.md) (CWM-IMAGINE/ACT · cross-cutting)
 - external: V-JEPA-2-AC latent MPC
+
+## ⚠ RE-OPEN (2026-06-06 · H_999)
+
+This 🔴 was measured with the H_912/H_931 Φ-**proxy**. [H_999](./H_999_faithful_iit4_remeasure.md) re-measured PLAN-vs-GREEDY with the FAITHFUL exact MIP-EI IIT4 Φ (mirror PROVEN ≡ stdlib `faithful_phi.hexa`) and BOTH the contrast and the dose-response **REVERSED**: faithful Φ_PLAN(depth-8) 7.75 > Φ_GREEDY 2.65 (contrast **+5.09**, d +4.64, p 5.1e-21) with a POSITIVE depth dose-response (Spearman rho **+0.48**, vs the proxy's −0.47). Planning is a *higher*-Φ state under the real measure → **RE-OPENED** (see H_999 = 🔴-vs-proxy = PROXY-ARTIFACT). The original verdict above is preserved as the proxy-measured record.
