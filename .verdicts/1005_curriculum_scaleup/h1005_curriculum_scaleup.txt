@@ -1,0 +1,67 @@
+==============================================================================
+H_1005 — Curriculum scale-up — does the T2/T3 crack hold at 2-4x longer target sequences?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+length ladders: T2 [20, 40, 80] (1x/2x/4x)   T3 [18, 36, 72] (1x/2x/4x)
+rungs (latent/feat width) = [16, 32]  [TRIM of H_1003's [16,32,64,128] — wall-time-honest]   N_SEEDS=6 [TRIM of H_1003's 10]  N_train=600 N_test=300
+GRU-WM + curriculum machinery = VERBATIM from H_1003/H_1000 (gated tanh, BPTT+Adam, capacity/width-matched). LM + mem-aug = VERBATIM from H_985 (stateless ctx=4).
+TREATMENT = TARGET LENGTH ONLY. ramp 2->4->8->...->target (advance train-acc>=0.85, min 2 ep/stage), TOTAL budget=40 ep (== H_1003, same total compute). in_dim FIXED across lengths (T2=5, T3=9). EVAL on FULL-target-length test set.
+
+  done T2_parity_track  L=20  rung=16   currGRU=0.977 LM=0.511 mem=1.000  [76s]
+  done T2_parity_track  L=20  rung=32   currGRU=1.000 LM=0.511 mem=1.000  [192s]
+  done T2_parity_track  L=40  rung=16   currGRU=0.921 LM=0.475 mem=1.000  [316s]
+  done T2_parity_track  L=40  rung=32   currGRU=0.922 LM=0.474 mem=1.000  [525s]
+  done T2_parity_track  L=80  rung=16   currGRU=0.918 LM=0.494 mem=1.000  [739s]
+  done T2_parity_track  L=80  rung=32   currGRU=0.912 LM=0.494 mem=1.000  [1117s]
+  done T3_hidden_pos    L=18  rung=16   currGRU=0.784 LM=0.342 mem=1.000  [1187s]
+  done T3_hidden_pos    L=18  rung=32   currGRU=0.929 LM=0.342 mem=1.000  [1295s]
+  done T3_hidden_pos    L=36  rung=16   currGRU=0.363 LM=0.333 mem=1.000  [1384s]
+  done T3_hidden_pos    L=36  rung=32   currGRU=0.389 LM=0.333 mem=1.000  [1542s]
+  done T3_hidden_pos    L=72  rung=16   currGRU=0.327 LM=0.327 mem=1.000  [1649s]
+  done T3_hidden_pos    L=72  rung=32   currGRU=0.334 LM=0.326 mem=1.000  [1831s]
+
+========================================================================================================
+task             tgtLen rung  chance  currGRU      LM   memLM     gap        d         p  reachFull
+--------------------------------------------------------------------------------------------------------
+T2_parity_track      20   16   0.500    0.977   0.511   1.000   0.467     9.62   4.2e-08       1.00
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+T2_parity_track      20   32   0.500    1.000   0.511   1.000   0.489    17.34   7.7e-07       1.00
+T2_parity_track      40   16   0.500    0.921   0.475   1.000   0.446     3.27   2.2e-03       1.00
+T2_parity_track      40   32   0.500    0.922   0.474   1.000   0.447     3.28   2.2e-03       1.00
+T2_parity_track      80   16   0.500    0.918   0.494   1.000   0.424     2.95   3.4e-03       1.00
+T2_parity_track      80   32   0.500    0.912   0.494   1.000   0.418     2.71   4.9e-03       1.00
+T3_hidden_pos        18   16   0.167    0.784   0.342   1.000   0.443     2.79   4.3e-03       1.00
+T3_hidden_pos        18   32   0.167    0.929   0.342   1.000   0.587    17.85   3.0e-11       1.00
+T3_hidden_pos        36   16   0.167    0.363   0.333   1.000   0.030     0.60   3.4e-01       1.00
+T3_hidden_pos        36   32   0.167    0.389   0.333   1.000   0.056     1.16   9.2e-02       1.00
+T3_hidden_pos        72   16   0.167    0.327   0.327   1.000  -0.000    -0.00   1.0e+00       1.00
+T3_hidden_pos        72   32   0.167    0.334   0.326   1.000   0.008     0.51   3.9e-01       1.00
+========================================================================================================
+
+curriculum stage-progression (top rung, seed 0 trace [(len,ep,acc)]):
+  T2_parity_track  L=20  stages=[2, 4, 8, 16, 20]                  (2,2,1.0) (4,3,0.962) (8,2,1.0) (16,2,1.0) (20,31,1.0)
+  T2_parity_track  L=40  stages=[2, 4, 8, 16, 32, 40]              (2,2,1.0) (4,3,0.962) (8,2,1.0) (16,2,1.0) (32,2,1.0) (40,29,0.517)
+  T2_parity_track  L=80  stages=[2, 4, 8, 16, 32, 64, 80]          (2,2,1.0) (4,3,0.962) (8,2,1.0) (16,2,1.0) (32,2,1.0) (64,2,1.0) (80,27,0.552)
+  T3_hidden_pos    L=18  stages=[2, 4, 8, 16, 18]                  (2,2,1.0) (4,2,0.897) (8,3,0.855) (16,13,0.913) (18,20,0.898)
+  T3_hidden_pos    L=36  stages=[2, 4, 8, 16, 32, 36]              (2,2,1.0) (4,2,0.897) (8,3,0.855) (16,13,0.913) (32,18,0.348) (36,2,0.363)
+  T3_hidden_pos    L=72  stages=[2, 4, 8, 16, 32, 64, 72]          (2,2,1.0) (4,2,0.897) (8,3,0.855) (16,13,0.913) (32,16,0.34) (64,2,0.365) (72,2,0.373)
+
+per-(task,length) summary:
+  T2_parity_track  L=20  sep@>=2rungs=True  solves=True  reachedFULL=True  sep-rungs=[16, 32] -> HOLD
+  T2_parity_track  L=40  sep@>=2rungs=True  solves=True  reachedFULL=True  sep-rungs=[16, 32] -> HOLD
+  T2_parity_track  L=80  sep@>=2rungs=True  solves=True  reachedFULL=True  sep-rungs=[16, 32] -> HOLD
+  T3_hidden_pos    L=18  sep@>=2rungs=True  solves=True  reachedFULL=True  sep-rungs=[16, 32] -> HOLD
+  T3_hidden_pos    L=36  sep@>=2rungs=False solves=True  reachedFULL=True  sep-rungs=[] -> BREAK
+  T3_hidden_pos    L=72  sep@>=2rungs=False solves=True  reachedFULL=True  sep-rungs=[] -> BREAK
+
+harness-validate (shortest rung reproduces H_1003 crack): {'T2_parity_track': True, 'T3_hidden_pos': True}
+holds-across-full-ladder: {'T2_parity_track': True, 'T3_hidden_pos': False}   breaking-length: {'T2_parity_track': None, 'T3_hidden_pos': 36}
+max-target-length-reached (sep held + reached FULL): {'T2_parity_track': 80, 'T3_hidden_pos': 18}
+
+------------------------------------------------------------------------------
+VERDICT H_1005: FAIL CURRICULUM-HORIZON-CAPPED — the H_1003 crack does NOT hold unboundedly: the competence-gated length curriculum buys a BOUNDED horizon. The curriculum-GRU reproduces H_1003 at the short rung but BREAKS (loses WM>LM separation / fails to solve / the ramp stalls before reaching target) at {'T3_hidden_pos': 36} (T2 ladder [20, 40, 80], T3 ladder [18, 36, 72]). Max target length where the separator still HELD: T2=80 T3=18. This is a real SCALING-LAW finding: curriculum removes the H_1000 optimization wall up to a horizon and no further at this toy budget — a curriculum-horizon CAP (closed-negative, a_paper_negative_ok; toy ladder, larger-budget / production transfer OPEN, a_scale_honest_scope).
+------------------------------------------------------------------------------
+
+[total wall 1832s]
