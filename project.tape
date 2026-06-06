@@ -263,3 +263,13 @@
   do   = "scale-dependent conclusions need a ladder curve (>=3 rungs) — a single toy point = INCOMPLETE"
   dont = "promote a toy-scale verdict to a general claim — toy->prod transfer unproven (cf clm_p2 · V3)"
   dont = "mistake a chip-fit size limit for a science result · finalize a verdict on too-small corpus"
+
+@D a_phi_iit4_tool := "phi/consciousness verdict uses stdlib faithful IIT4, not a proxy" :: governance [required active]
+  do   = "phi/big-phi/consciousness VERDICT = faithful IIT4 in hexa-lang/stdlib/consciousness/"
+  do   = "default `iit4/faithful_phi.hexa` (exact MIP-EI, n<=8, $0; promoted from anima H_278)"
+  do   = "system big-phi = `iit4_bigphi.hexa` (IIT 4.0 over MIP); pipeline = iit4_tpm/distinction/relation"
+  do   = "call via `hexa verify` (g5); search stdlib BEFORE writing new phi code (g61 SSOT)"
+  do   = "ref UNIVERSE/IIT4_PHI_TOOLS.md; CWM H_971/973/988/989 = OPEN faithful-IIT4 re-measure"
+  dont = "use a proxy (phi_silicon_proxy, variance*energy byte-mirror) as a terminal phi verdict"
+  dont = "trust a purpose-blind proxy — H_988/989 scored random == intentional; pre-screen only"
+  dont = "write a fresh phi/IIT impl when stdlib already has the faithful engine (the re-mistake)"
