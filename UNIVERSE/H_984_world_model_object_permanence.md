@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE toy occlusion/dropout rung (a_scale_honest_scope) — a tracked toy object/state observed through a stream with increasing sensor dropout; measure latent-state error vs dropout fraction. $0 local candidate. "Object permanence" = latent persistence under occlusion, NOT a developmental-psych claim. NOT a forge binary; .clm path OPEN.
 sister: H_961 (binding — what persists), H_962 (latent forward dynamics — fills-in via prediction), H_979 (active perception under partial info)
 axes_seed: brittle pipeline = latent collapses the instant input drops ⊥ H_984 = latent degrades gracefully / fills in (object permanence) — a world-model must hold state when the sensor blinks; if it collapses, it is a reactive encoder not a world-model
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — object permanence: degradation is graceful (decode error stays below the zero-fill chance ceiling up to dropout p=0.9) AND fill-in WM error 0.34 ≪ memoryless zero-fill 1.07 (d 1.32, p 1e-60) at p=0.5 (also beats a last-seen heuristic, d 0.15) — the latent maintains a persistent world-state through occlusion. Toy single-rung, ladder OPEN.
 ---
 
 # H_984 — World-model object permanence (graceful degradation under dropout)
@@ -48,6 +48,22 @@ As sensor dropout fraction increases, the engine's latent world-state estimation
 ## 3. Honest scope
 
 Toy tracked-object world, small scale (a_scale_honest_scope, #123-A). "Object permanence" is operationalized as latent persistence under dropout, NOT a developmental-psychology claim. Single rung; threshold p* is pre-registered but its calibration is toy-specific. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h984_object_permanence.py` · verdict: `.verdicts/984_world_model_object_permanence/h984_object_permanence.txt`
+
+A tracked object orbits (rotational dynamics, so the last-seen value is a weak predictor) observed with dropout p ∈ {0..0.9}; the retentive engine maintains a latent; a decoder reads the true final state. N=400.
+
+| D | metric | result |
+|---|---|---|
+| D1 | degradation curve | error rises 0.085 (p=0) → 0.878 (p=0.9), monotone, stays below the zero-fill chance ceiling 1.073 throughout |
+| D1 | collapse-knee (80% of chance) | **p=0.9** (> 0.5 threshold; graceful) |
+| D2 | fill-in @ p=0.5: WM | **0.340** |
+| D2 | fill-in @ p=0.5: zero-fill (memoryless) | 1.073 — WM beats it, d 1.32, p 1.0e-60 |
+| D2 | fill-in @ p=0.5: last-seen heuristic | 0.450 — WM also beats it, d 0.15, p 0.037 |
+
+**Finding (🟢 PASS):** the world-model degrades gracefully under occlusion (no collapse to chance even at p=0.9) and its fill-in of occluded state beats the no-memory baseline decisively (and edges out a last-seen heuristic) — it maintains a persistent world-state, i.e. object permanence. Honest scope: toy single-rung, ladder OPEN; the result depends on the dynamics being predictable (rotational), a_scale_honest_scope.
 
 ## 4. Sibling / xlinks
 

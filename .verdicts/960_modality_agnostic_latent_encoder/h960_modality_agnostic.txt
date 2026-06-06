@@ -1,0 +1,19 @@
+==============================================================================
+H_960 — Modality-agnostic latent encoder (no arch change)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+3 arms: (A) language bytes, (B) sensor TS, (C) control TS; SAME front-end config
+latent=32 in_dim=8 N=500 chance=0.125 (8 classes) margin=0.15
+
+D3 no-arch-change: front-end config byte-identical across A/B/C -> True
+
+D1 linear-decode accuracy (latent -> generating factor, held-out):
+  arm-A language : 0.9162
+  arm-B sensor   : 1.0000
+  arm-C control  : 1.0000   (chance 0.125, 8 classes)
+
+D2 per-factor manifold CKA (class-centroid geometry): CKA(B,A)=0.8074  CKA(C,A)=0.4779  shuffled-class-null 97.5pct=0.6613
+------------------------------------------------------------------------------
+VERDICT H_960: PASS D1 B=1.00 C=1.00 within margin of A=0.92 (>>chance), D2 CKA beats shuffled null, D3 arch-identical — modality-agnostic encoding (toy).
+------------------------------------------------------------------------------

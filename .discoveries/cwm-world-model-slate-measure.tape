@@ -29,3 +29,24 @@
 @H 975 := "shared WM ⊥ individuation COEXIST: at coupling 0.25 cross-agent agreement +0.58 above unpaired while individuation preserved (stream-identity 0.52<lock); over-coupling 0.5 collapses both (D3 control fires)" :: discovery [🟢]
   seed   = "can two engines build a shared world-model via latent exchange WITHOUT losing individuation?"
   target = "🟢 PASS — coexistence regime exists (toy rung, ladder OPEN)"
+
+# ── PERCEIVE axis ──
+@H 960 := "modality-agnostic encoder: byte-identical front-end decodes non-language factors (sensor 1.0, control 1.0 vs lang 0.92) + sensor manifold shares factor-geometry (CKA 0.81>null 0.66)" :: discovery [🟢]
+  seed   = "does the engine encode non-language modalities with NO architecture change?"
+  target = "🟢 PASS — modality-agnostic decodability (toy); control-manifold geometry NOT shared"
+
+@H 961 := "cross-modal binding: true-pair proximity 0.93 >> shuffled -0.00 (d 3.3 p 5e-126), cross-modal retrieval@1 0.98 (chance 0.05) — engine binds two modalities of same hidden z" :: discovery [🟢]
+  seed   = "does the engine BIND two modalities of the same latent cause (not bag-of-channels)?"
+  target = "🟢 PASS — cross-modal binding (toy)"
+
+@H 978 := "Ψ-lattice geometry is modality-SPECIFIC not invariant: all 3 descriptors far outside A-vs-A band (pdist KS 0.57 vs 0.06, NN 0.99 vs 0.20, spectral 0.95 vs 0.28) — sharper than H_960" :: discovery [🔴]
+  seed   = "is the latent lattice geometry invariant across modalities (same shape lang vs sensor)?"
+  target = "🔴 FAIL closed-negative (toy) — decodability (H_960🟢) does NOT imply geometry invariance"
+
+@H 979 := "active perception: curiosity glimpse selection beats passive 0.042<0.133 (d 1.23) AND random 0.042<0.121 (d 1.33), faster-to-threshold 1.17<1.83 — perception is agentive" :: discovery [🟢]
+  seed   = "does curiosity-driven glimpse selection beat passive/random perception?"
+  target = "🟢 PASS — active perception (toy; uncertainty-reduction oracle)"
+
+@H 984 := "object permanence: graceful degradation (knee p=0.9, error below chance ceiling throughout) + fill-in WM 0.34 << memoryless 1.07 (d 1.32) — latent maintains persistent world-state through occlusion" :: discovery [🟢]
+  seed   = "does the latent maintain a persistent world-state through observation dropout?"
+  target = "🟢 PASS — object permanence (toy; predictable rotational dynamics)"

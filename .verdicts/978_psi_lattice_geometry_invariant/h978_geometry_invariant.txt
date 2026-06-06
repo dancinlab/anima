@@ -1,0 +1,13 @@
+==============================================================================
+H_978 — Ψ-lattice geometry invariant across modalities
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+latents from SAME engine layer; A=language, B=sensor; geometry descriptors
+
+D1 pairwise-distance KS(A,B)=0.5740  A-vs-A band 95pct=0.0589  -> within band: False
+D2 NN-spacing KS(A,B)=0.9900  A-vs-A band 95pct=0.2010 -> within band: False
+D3 spectral-ratio L2(A,B)=0.9462  A-vs-A band 95pct=0.2764 -> within band: False
+------------------------------------------------------------------------------
+VERDICT H_978: FAIL geometry differs outside band on ['D1-pdist', 'D2-NN', 'D3-spectral'] — lattice is modality-specific (closed-negative).
+------------------------------------------------------------------------------
