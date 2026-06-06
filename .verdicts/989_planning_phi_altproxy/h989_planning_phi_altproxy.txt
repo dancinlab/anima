@@ -1,0 +1,18 @@
+==============================================================================
+H_989 — planning raises Φ under a BRANCHING formulation + alt-proxy — re-test of H_973 🔴
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+re-formulation: H_973 confounded deliberation with DRIFT depth; here drift is FIXED
+and the dose is BRANCHING (a search frontier of simultaneously-held alternatives)
+horizon(fixed)=3 branches=[1, 2, 4, 8] N_decisions=40
+
+D1 Φ contrast (PLAN max-branch vs GREEDY, ALT proxy):
+  Φ_PLAN=0.3024±0.0319  Φ_GREEDY=0.1987±0.0017
+  contrast=0.1037 d=4.531 t=20.265 p=2.202e-22 CI=[0.0945,0.1138]
+  (transparency: original-proxy contrast=0.0483)
+D2 Φ vs BRANCHING (drift fixed): means={1: np.float64(0.1987), 2: np.float64(0.2292), 4: np.float64(0.262), 8: np.float64(0.3024)}  Spearman rho=0.882 p=1.275e-53
+D3 fake-branch control: Φ_PLAN−Φ_FAKE=0.0054 d=0.157 p=4.855e-01 (Φ_FAKE=0.2970)
+------------------------------------------------------------------------------
+VERDICT H_989: FAIL 🔴 ROBUST — even a branching search frontier (drift held fixed, alt-proxy) does not raise Φ over greedy [fails fake-branch control (d=0.16)] — planning-raises-Φ is false across formulations; the H_973 closed-negative is FORMULATION-ROBUST (toy). xref H_973.
+------------------------------------------------------------------------------
