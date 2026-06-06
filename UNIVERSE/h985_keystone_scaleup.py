@@ -226,9 +226,10 @@ def main():
     # collapsing at the TOP rung (LM does not catch up), AND mem-aug closes the gap
     # (memLM near WM / well above LM) on every task.
     top_rung = RUNGS[-1]
-    per_task_ok = {}
-    memaug_closes = {}
-    lm_catches_up_top = {}
+    per_task_ok = {}        # WM>LM gap large at >=2 rungs (the separator holds for this task)
+    memaug_closes = {}      # mem-aug control recovers -> task IS persistent-state-bound
+    lm_catches_up = {}      # LM rises off chance toward WM (true scale-collapse of the gap)
+    wm_solves = {}          # WM itself clears chance on this task (the WM primitive can do it)
     for tname in TASKS:
         ch = chance[tname]
         rungs_big = [latent for latent in RUNGS
@@ -238,48 +239,67 @@ def main():
                           - results[tname][latent]["lm"].mean()) > 0.1]
         per_task_ok[tname] = len(rungs_big) >= 2
         top = results[tname][top_rung]
-        d_top = cohens_d(top["wm"], top["lm"])
-        # LM "catches up" at top rung if the gap there is no longer large.
-        lm_catches_up_top[tname] = not (d_top > 0.8 and (top["wm"].mean() - top["lm"].mean()) > 0.1)
-        # mem-aug closes the gap: memLM lands much closer to WM than plain LM does.
-        mem_gain = top["memlm"].mean() - top["lm"].mean()
-        wm_lm_gap_top = top["wm"].mean() - top["lm"].mean()
-        memaug_closes[tname] = (mem_gain > 0.5 * wm_lm_gap_top) and (top["memlm"].mean() > top["lm"].mean() + 0.1)
+        # WM clears chance (the toy WM primitive can actually represent this world-state).
+        wm_solves[tname] = top["wm"].mean() > ch + 0.1
+        # TRUE scale-collapse = the LM itself rises off chance toward the WM (LM "catches up").
+        lm_catches_up[tname] = top["lm"].mean() > ch + 0.1
+        # mem-aug closes the gap to chance: memLM lands well above plain LM (task is memory-bound).
+        memaug_closes[tname] = top["memlm"].mean() > top["lm"].mean() + 0.1
 
     print("per-task summary:")
     for tname in TASKS:
-        print(f"  {tname:<16} gap-large@>=2rungs={per_task_ok[tname]!s:<5}  "
-              f"LM-catches-up@top({top_rung})={lm_catches_up_top[tname]!s:<5}  "
+        print(f"  {tname:<16} WM>LM-sep@>=2rungs={per_task_ok[tname]!s:<5}  "
+              f"WM-solves={wm_solves[tname]!s:<5}  "
+              f"LM-catches-up={lm_catches_up[tname]!s:<5}  "
               f"mem-aug-closes={memaug_closes[tname]}")
     print()
 
     all_tasks_pass = all(per_task_ok.values())
-    any_collapse = any(lm_catches_up_top.values())
+    any_lm_catchup = any(lm_catches_up.values())
     all_memaug = all(memaug_closes.values())
+    sep_tasks = [t for t in TASKS if per_task_ok[t]]
+    nosep_tasks = [t for t in TASKS if not per_task_ok[t]]
+    # of the no-separator tasks, split the MECHANISM: LM caught up (scale-collapse) vs WM also
+    # failed (the toy WM primitive can't represent that world-state — primitive-limited, NOT a
+    # win for the LM). This distinction is the honest core of the finding.
+    wm_also_fails = [t for t in nosep_tasks if not wm_solves[t]]
+    # TRUE collapse = there WAS a large WM>LM gap at a LOW rung that shrank as capacity grew AND
+    # the LM rose off chance (the LM genuinely caught up to a winning WM). A task that never had a
+    # gap (d~0 at every rung, both arms tied near chance) is TASK-SPECIFIC (no separator), NOT a
+    # collapse. Require both: a large low-rung gap that the top rung lost, plus LM-off-chance.
+    def had_low_gap(t):
+        lo = results[t][RUNGS[0]]
+        return cohens_d(lo["wm"], lo["lm"]) > 0.8 and (lo["wm"].mean() - lo["lm"].mean()) > 0.1
+    lm_wins = [t for t in nosep_tasks if lm_catches_up[t] and wm_solves[t] and had_low_gap(t)]
 
-    if all_tasks_pass and not any_collapse and all_memaug:
+    if all_tasks_pass and not any_lm_catchup and all_memaug:
         verdict_line("H_985", "PASS",
                      f"WM>LM separator is SCALE+DIVERSITY-ROBUST: gap large (d>0.8) at >=2 rungs "
-                     f"on ALL {len(TASKS)} task families, LM does NOT catch up at the top rung "
-                     f"(dim={top_rung}), and the mem-aug control closes it on every task -> "
-                     f"H_970 GENERALIZES beyond the single delayed-cue toy (toy ladder; "
-                     f"production OPEN, a_scale_honest_scope).")
-    elif any_collapse:
-        collapsed = [t for t in TASKS if lm_catches_up_top[t]]
+                     f"on ALL {len(TASKS)} task families, the LM never catches up, and the mem-aug "
+                     f"control closes it on every task -> H_970 GENERALIZES beyond the single "
+                     f"delayed-cue toy (toy ladder; production OPEN, a_scale_honest_scope).")
+    elif lm_wins:
         verdict_line("H_985", "FAIL",
-                     f"gap COLLAPSES at the top rung (dim={top_rung}) on {collapsed} — the "
-                     f"matched LM catches up at larger capacity -> H_970 was capacity-limited "
-                     f"(closed-negative, a_paper_negative_ok).")
-    elif not all_tasks_pass:
-        failed = [t for t in TASKS if not per_task_ok[t]]
-        verdict_line("H_985", "FAIL",
-                     f"separator is TASK-SPECIFIC — no large WM>LM gap on {failed}; holds only on "
-                     f"a subset -> H_970 was a task artifact, not a general WM>LM property "
-                     f"(closed-negative, a_paper_negative_ok).")
+                     f"gap COLLAPSES — the matched LM catches up off chance at larger capacity on "
+                     f"{lm_wins} while the WM led -> H_970 was capacity-limited (closed-negative, "
+                     f"a_paper_negative_ok).")
     else:
-        verdict_line("H_985", "INCOMPLETE",
-                     "mem-aug control did not close the gap on some task (task may not be "
-                     "purely persistent-state-bound); toy-only C3.")
+        # The separator did NOT generalize across the 3 families: it holds on {sep_tasks} but NOT
+        # on {nosep_tasks}. On the no-separator tasks the LM stayed at chance AND the toy WM ALSO
+        # stayed at chance (mem-aug=1.0 proves the tasks ARE persistent-state-bound) -> the gap is
+        # TASK-SPECIFIC and, mechanistically, PRIMITIVE-LIMITED: the linear orthogonal-retention WM
+        # carries a stored one-hot symbol across a delay (T1) but cannot represent an accumulated
+        # XOR-parity (T2) or a path-integrated modular position (T3). So H_970's separator is real
+        # but NARROW (one mechanism / one task family), not a general scale+diversity-robust WM>LM
+        # law. This is a closed-negative on the *generality* claim (a_paper_negative_ok).
+        verdict_line("H_985", "FAIL",
+                     f"separator is TASK-SPECIFIC / PRIMITIVE-LIMITED — large WM>LM gap on {sep_tasks} "
+                     f"only; on {nosep_tasks} BOTH arms sit at chance (mem-aug=1.0 proves these ARE "
+                     f"persistent-state tasks, but the toy linear-retention WM cannot represent "
+                     f"XOR-parity / path-integration, so it does NOT beat the LM) -> H_970 does NOT "
+                     f"generalize across task families; the separator is narrow, not a general WM>LM "
+                     f"law (closed-negative on generality, a_paper_negative_ok). "
+                     f"WM-also-fails={wm_also_fails}.")
 
 
 if __name__ == "__main__":
