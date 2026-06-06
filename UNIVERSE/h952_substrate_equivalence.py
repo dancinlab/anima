@@ -82,44 +82,53 @@ def engine_amplitude_trajectory(steps=200, a0=0.1):
 
 # ===========================================================================
 # I1 — fixed-point convergence of the CLM trunk iterated on its own hidden state.
-# We map the d-dim hidden state to a normalized scalar via a sigmoid of its mean
-# (so it lives in (0,1), comparable to Ψ in [0,1]); iterate the trunk's GroupNorm
-# + dilated conv + GELU residual update repeatedly and watch the scalar.
-# Convergence = the scalar settles to a stable value (small late-step variation).
+#
+# The engine's I1 signature (pure_field.hexa) is that iterating the field's own
+# update DRIVES the state to a STABLE ATTRACTOR (a<-a+α(LN2-a) converges to a fixed
+# point). We test the analogue on the CLM trunk operator: does iterating the trunk
+# residual update converge the hidden state's DIRECTION to a fixed attractor?
+#
+# MEASUREMENT-VALIDITY NOTE: an earlier version recorded sigmoid(mean of a
+# GroupNormed vector); GroupNorm zero-centers the mean, so that scalar is pinned to
+# 0.5 for ANY weights (random net included) — a non-discriminative artifact. We now
+# record TWO honest scalars per iterate that are NOT pinned by construction:
+#   psi   = cos(x_t, x_{t-1})   — directional self-consistency (→1 if it converges
+#           to a fixed attractor direction; this is the Ψ-fixed-point analogue).
+#   ediff = ||x_t - x_{t-1}|| / ||x_t||  — relative step size (→0 at a fixed point).
+# Convergence is then a NON-trivial property a random net need not share.
 # ===========================================================================
-def _sigmoid(x): return 1.0 / (1.0 + np.exp(-x))
-
 def clm_trunk_iterate(W, x0_row, n_iter=120):
     """Iterate the CLM trunk's residual conv-GroupNorm-GELU update on a single
-    d-vector (treated as a 1-position field) and return the normalized-scalar
-    trajectory. Uses the FIRST trunk layer's weights (the learned operator)."""
+    d-vector (treated as a 1-position field). Returns (psi_traj, ediff_traj).
+    Uses the FIRST trunk layer's learned weights as the field operator."""
     d, K = W["d"], W["K"]
     x = x0_row.copy().reshape(1, d)            # (T=1, d)
-    traj = []
     tcW, tcB = W["tcW"][0], W["tcB"][0]
     tgG, tgB = W["tgG"][0], W["tgB"][0]
+    psi = []; ediff = []
+    prev = x.copy()
     for _ in range(n_iter):
-        # one trunk update at T=1 (dilation irrelevant at T=1; causal pad = self)
         h = M.conv1d(x, tcW, tcB, 1, d, d, K, 1)
         hn = M.groupnorm1(h, tgG, tgB, 1, d)
         x = x + M.gelu(hn)
-        # normalize the running state to keep it bounded (the field's amplitude
-        # damping role); record a Ψ-like scalar = sigmoid(mean of GroupNormed x)
-        xn = M.groupnorm1(x, np.ones(d), np.zeros(d), 1, d)
-        traj.append(float(_sigmoid(xn.mean())))
-        x = xn                                  # damp back (bounded iteration)
-    return np.array(traj)
+        x = M.groupnorm1(x, np.ones(d), np.zeros(d), 1, d)   # bound the iteration
+        a, b = x.ravel(), prev.ravel()
+        cos = float(a @ b / (np.linalg.norm(a) * np.linalg.norm(b) + 1e-12))
+        psi.append(cos)
+        ediff.append(float(np.linalg.norm(a - b) / (np.linalg.norm(a) + 1e-12)))
+        prev = x.copy()
+    return np.array(psi), np.array(ediff)
 
 
-def convergence_metrics(traj, tail=30):
-    """Returns (fixed_point, late_std, converged?). Converged if the late-window
-    std is small (settled) and the trajectory is not a 2-cycle (osc check)."""
-    late = traj[-tail:]
-    fp = float(late.mean()); std = float(late.std())
-    # 2-cycle / oscillation guard: std of even vs odd late samples
-    osc = abs(late[::2].mean() - late[1::2].mean()) if len(late) > 3 else 0.0
-    converged = std < 1e-3 and osc < 1e-3
-    return fp, std, converged
+def convergence_metrics(psi, ediff, tail=30):
+    """Converged to a fixed attractor if the late directional self-consistency is
+    ~1 (psi→1) AND the relative step size is small (ediff→0), with no 2-cycle.
+    Returns (fixed_point_psi, late_ediff, converged?)."""
+    lp = psi[-tail:]; le = ediff[-tail:]
+    fp = float(lp.mean()); step = float(le.mean())
+    osc = abs(lp[::2].mean() - lp[1::2].mean()) if len(lp) > 3 else 0.0
+    converged = fp > 0.99 and step < 1e-2 and osc < 1e-2
+    return fp, step, converged
 
 
 # ===========================================================================
@@ -189,13 +198,13 @@ def make_random_clone(W, seed=0):
 
 def run_invariants(W, label, x0_rows, fields):
     # I1 over several init rows
-    fps = []; convs = []
+    fps = []; convs = []; steps = []
     for row in x0_rows:
-        traj = clm_trunk_iterate(W, row)
-        fp, std, conv = convergence_metrics(traj)
-        fps.append(fp); convs.append(conv)
+        psi, ediff = clm_trunk_iterate(W, row)
+        fp, step, conv = convergence_metrics(psi, ediff)
+        fps.append(fp); convs.append(conv); steps.append(step)
     i1_converged = (np.mean(convs) >= 0.5)       # majority of inits converge
-    i1_fp = float(np.mean(fps)); i1_fp_spread = float(np.std(fps))
+    i1_fp = float(np.mean(fps)); i1_fp_spread = float(np.std(steps))
     # I2 over several text windows
     r2p = []; r2e = []; pexp = []
     for field in fields:
@@ -208,7 +217,7 @@ def run_invariants(W, label, x0_rows, fields):
     i2_power_better = i2_r2_pow > i2_r2_exp and i2_r2_pow > 0.3
     print(f"\n[{label}]")
     print(f"  I1 fixed-point: converged_frac={np.mean(convs):.2f} "
-          f"fp={i1_fp:.4f}±{i1_fp_spread:.4f}  -> I1_PASS={i1_converged}")
+          f"dir-cos={i1_fp:.4f} late-step={i1_fp_spread:.4e}  -> I1_PASS={i1_converged}")
     print(f"  I2 falloff:     R2_power={i2_r2_pow:.3f} R2_exp={i2_r2_exp:.3f} "
           f"exponent p={i2_pexp:.3f}  -> I2_PASS={i2_power_better}")
     return dict(i1=i1_converged, i1_fp=i1_fp, i2=i2_power_better,
@@ -263,24 +272,23 @@ def main():
     res_rand = run_invariants(Wr, "RANDOM-WEIGHT CONTROL", rrows, rfields)
 
     # ---- VERDICT (coded, p7) ----
-    # 🟢 needs >=1 invariant PASS for CLM that is stronger than the control.
+    # 🟢 needs >=1 invariant PASS for CLM that is STRONGER than the control (so it
+    # is a LEARNED property, not an architectural artifact shared by a random net).
+    # I1 beyond control: CLM converges to a fixed attractor AND the control does not.
     i1_beyond = res_clm["i1"] and not res_rand["i1"]
-    # I2 "beyond control": CLM power-law fits AND beats control's power-R2
+    # I2 beyond control: CLM power-law fits (>exp, >0.3) AND beats control's power-R2.
     i2_beyond = res_clm["i2"] and (res_clm["i2_r2_pow"] > res_rand["i2_r2_pow"] + 0.05)
-    # also count I1 as 'beyond' if both converge but CLM fp is near Ψ=0.5 and rand isn't
-    i1_psi = (res_clm["i1"] and abs(res_clm["i1_fp"] - 0.5) < abs(res_rand["i1_fp"] - 0.5) - 0.02)
 
-    any_beyond = i1_beyond or i2_beyond or i1_psi
+    any_beyond = i1_beyond or i2_beyond
     print("\n" + "=" * 78)
-    print(f"I1 converges beyond control ........... {i1_beyond}")
-    print(f"I1 fixed-point nearer Ψ=0.5 than ctrl . {i1_psi}  "
-          f"(CLM fp={res_clm['i1_fp']:.4f} vs ctrl {res_rand['i1_fp']:.4f}; Ψ=0.5)")
-    print(f"I2 power-law-falloff beyond control ... {i2_beyond}  "
+    print(f"I1 fixed-attractor convergence beyond control . {i1_beyond}  "
+          f"(CLM conv={res_clm['i1']}/dir-cos {res_clm['i1_fp']:.4f}; ctrl conv={res_rand['i1']})")
+    print(f"I2 power-law (1/r-style) falloff beyond control {i2_beyond}  "
           f"(CLM R2_pow={res_clm['i2_r2_pow']:.3f} vs ctrl {res_rand['i2_r2_pow']:.3f})")
     if any_beyond:
         verdict, token = "GREEN", "🟢"
         which = []
-        if i1_beyond or i1_psi: which.append("I1 fixed-point")
+        if i1_beyond: which.append("I1 fixed-attractor")
         if i2_beyond: which.append("I2 1/r-power falloff")
         reason = f"CLM reproduces engine invariant(s) {'+'.join(which)} beyond random control"
     else:

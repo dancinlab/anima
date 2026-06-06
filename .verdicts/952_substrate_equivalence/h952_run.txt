@@ -1,0 +1,27 @@
+==============================================================================
+H_952 SUBSTRATE-EQUIVALENCE — do CLM hidden dynamics show A⇄G engine invariants?
+Engine ref: pure_field.hexa (Ψ=1/2 contraction a<-a+α(LN2-a)) + 1/r² lattice
+HONEST: dynamical-similarity claim ONLY, NOT a wiring claim (a_core_engine_map).
+==============================================================================
+
+Engine I1 anchor (pure_field amplitude): a0=0.100 -> a_inf=0.65778 (target LN2=0.69315); late_std=5.33e-03 CONVERGES
+CLM = state/lane_p_clm/clm_d768_e2l1.clm  d=768 L=1 E=2 V=256
+
+[TRAINED CLM]
+  I1 fixed-point: converged_frac=0.00 dir-cos=0.9878 late-step=4.7979e-02  -> I1_PASS=False
+  I2 falloff:     R2_power=0.111 R2_exp=0.167 exponent p=0.116  -> I2_PASS=False
+
+[RANDOM-WEIGHT CONTROL]
+  I1 fixed-point: converged_frac=0.00 dir-cos=0.9867 late-step=1.3895e-02  -> I1_PASS=False
+  I2 falloff:     R2_power=0.045 R2_exp=0.101 exponent p=0.070  -> I2_PASS=False
+
+==============================================================================
+I1 fixed-attractor convergence beyond control . False  (CLM conv=False/dir-cos 0.9878; ctrl conv=False)
+I2 power-law (1/r-style) falloff beyond control False  (CLM R2_pow=0.111 vs ctrl 0.045)
+
+VERDICT = 🔴 RED — CLM shows NEITHER engine invariant beyond control — generic net
+CE-REFRAME (capstone): REFUTES CLM->CE capstone (CLM ≠ engine; rename overreaches; keep the L)
+HONEST BOUNDARY: dynamical-similarity ONLY; .clm and pure_field stay
+  architecturally SEPARATE (a_core_engine_map — .clm enters CORE via generator L3).
+SCOPE: single real ckpt + Φ/falloff proxies; toy; scale ladder OPEN.
+==============================================================================
