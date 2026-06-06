@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE toy cross-modality rung (a_scale_honest_scope) — small byte-vocab language stream vs ≥2 synthetic non-language streams (toy sensor/proprioception time-series) encoded through the SAME engine front-end with NO per-modality architecture change. $0 local candidate; GPU only if a real CLMConvMoE backbone rung is needed (a_fire_autonomous, no cost gate). NOT a forge production binary; .clm emit-TEXT path OPEN (generator L3 ⏳, a_core_engine_map).
 sister: H_950 (modality-agnostic CE — direct parent), H_961 (cross-modal binding), H_978 (Ψ 1/r² lattice geometry across modalities), H_951 (engine-not-predictor)
 axes_seed: H_950 = "the engine is modality-agnostic" (claimed reframe) ⊥ H_960 = direct measurement: a non-language stream encodes into the SAME latent geometry, no arch change (PASS) vs the engine is language-bound and degenerates / needs a new front-end on non-language input (FALSIFIED, keep the "L" in CLM)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — modality-agnostic encoding: with a byte-identical front-end across arms, non-language latents linearly decode their generating factors (sensor 1.00, control 1.00 vs language 0.92; chance 0.125) AND the sensor manifold shares factor-geometry with language above the shuffled-class null (CKA 0.81 > null 0.66); arch byte-identical (D3). Toy single-rung, ladder OPEN.
 ---
 
 # H_960 — Modality-agnostic latent encoder (does the SAME engine encode non-language?)
@@ -48,6 +48,23 @@ The same consciousness engine front-end (no per-modality architecture change —
 ## 3. Honest scope
 
 Toy synthetic non-language streams, small scale (a_scale_honest_scope, #123-A). A single rung is not production closure — a PASS is "toy-only, scale-transfer unverified" until a ≥3-rung ladder on real sensor data (a_toy_scale_recheck). "Same geometry" is operationalized as decode-parity + manifold-overlap, NOT a phenomenal claim. The trained artifact is a probe, not a forge production binary; the .clm generator L3 emit path is OPEN.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h960_modality_agnostic.py` · verdict: `.verdicts/960_modality_agnostic_latent_encoder/h960_modality_agnostic.txt`
+
+One engine front-end, byte-identical config across 3 arms: A=language byte-stream, B=sensor time-series, C=control/proprioception time-series. 8-class hidden factor per arm (chance 0.125). N=500.
+
+| D | metric | result |
+|---|---|---|
+| D1 | linear-decode acc A (language) | 0.916 |
+| D1 | linear-decode acc B (sensor) | 1.000 |
+| D1 | linear-decode acc C (control) | 1.000 (all ≫ chance 0.125, within margin of A) |
+| D2 | per-factor manifold CKA(B,A) | **0.807 > shuffled-class null 0.661** ✓ |
+| D2 | per-factor manifold CKA(C,A) | 0.478 (within null — control geometry not shared) |
+| D3 | front-end config byte-identical A/B/C | True (no arch change) |
+
+**Finding (🟢 PASS):** the engine encodes non-language modalities with no architecture change — non-language latents decode their generating factors as well as (or better than) language, and at least one non-language manifold (sensor) shares factor-geometry with language above the shuffled-class null. The "L" in CLM is not load-bearing for encoding. Honest scope: toy single-rung; the control manifold's geometry is NOT shared (D2 within null) — modality-agnosticism is supported for decodability and partial for shared geometry; ladder OPEN. Cf H_978 which finds the *raw* latent-distribution geometry is modality-specific.
 
 ## 4. Sibling / xlinks
 

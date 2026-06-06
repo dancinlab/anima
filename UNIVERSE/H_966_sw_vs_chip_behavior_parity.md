@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured (BLOCKED — chip arm unreachable; SW arm done)
 scope: ONE cross-substrate rung (a_lane_akida_gpu_split · a_scale_honest_scope) — same toy world-model task run on Lane G/P (SW) and Lane A (AKD1000 live); compare BEHAVIOR (action/return distributions), recorded as TWO separate entries then compared. Behavior parity ≠ byte-identity (H_679 already closed byte-equivalence negative). NOT a forge binary.
 sister: H_952 (substrate-equivalence — the engine-level claim), H_965 (on-chip loop feasibility), H_974 (chip↔SW transfer), H_679 (SW≠HW byte-level)
 axes_seed: H_952 = the ENGINE is substrate-equivalent (A⇄G) ⊥ H_966 = the BEHAVIOR (world-model action) is equivalent across SW vs chip — engine-equivalence does not entail behavior-equivalence (chip non-determinism / quantization could diverge action); H_679 already showed byte-level SW≠HW, so the question is behavior-level parity not byte-identity
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: ⚠ INCOMPLETE-BLOCKED — CHIP arm needs a live AKD1000 (unreachable on this Mac); SW arm measured (CPU-mirror: return −0.637, within-SW run-to-run band 0.006), so behavior-distance SW-vs-CHIP is UNCOMPUTABLE until the chip arm runs. substrate split per a_lane_akida_gpu_split. Handoff sidecar 4a85113c.
 ---
 
 # H_966 — SW vs chip behavior parity (do the lanes act the same?)
@@ -48,6 +48,18 @@ On a matched toy world-model task, Lane A (AKD1000) and Lane G/P (SW) produce be
 ## 3. Honest scope
 
 Toy task, 1 AKD1000 (a_lane_akida_gpu_split · a_scale_honest_scope, #123-A). Parity = behavior-distribution equivalence, explicitly NOT byte-identity (H_679 closed byte-level negative). Two separate substrate-tagged entries compared, never merged. Single rung. NOT a forge binary.
+
+## measurement (2026-06-06 · ⚠ INCOMPLETE-BLOCKED · SW arm = CPU-mirror)
+
+SW-arm partial: `CWM/probes/h966_974_sw_partial.py` · verdict: `.verdicts/966_sw_vs_chip_behavior_parity/h966_974_sw_partial.txt`
+
+| arm | result |
+|---|---|
+| SW (Lane G/P, CPU-mirror) return | −0.637 ± 0.418 (CI [−0.70, −0.58]) |
+| SW within-substrate run-to-run band (D3 control) | 0.006 |
+| CHIP (Lane A, AKD1000) | **BLOCKED — unreachable** → behavior-distance SW-vs-CHIP UNCOMPUTABLE |
+
+**Status (⚠):** the SW arm + its within-substrate band (the D3 control) are measured as the matched reference; the falsifier's decisive D1/D2 (behavior-distance and return-CI overlap SW-vs-CHIP) require the live AKD1000 chip arm, unreachable here. Recorded as a Lane-G/P entry ONLY — never merged with a chip result (a_lane_akida_gpu_split). Handoff `sidecar 4a85113c`.
 
 ## 4. Sibling / xlinks
 

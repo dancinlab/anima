@@ -1,0 +1,20 @@
+==============================================================================
+H_963 — Imagination horizon scales with Φ
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+config sweep (process noise spans Φ): [0.3, 0.2, 0.12, 0.07, 0.04, 0.02]; N_seeds=8 eps=0.1
+
+  noise=0.30: Φ=0.0374  h*=2.253
+  noise=0.20: Φ=0.0715  h*=3.288
+  noise=0.12: Φ=0.1274  h*=5.359
+  noise=0.07: Φ=0.1741  h*=10.450
+  noise=0.04: Φ=0.2217  h*=25.666
+  noise=0.02: Φ=0.2341  h*=39.834
+
+D1 Spearman rho(Φ,h*) = 1.000 (p=0.000e+00)  bootstrap CI=[1.000,1.000]
+D2 monotone increasing h* in Φ: True
+D3 rungs=6 (>=3 required)
+------------------------------------------------------------------------------
+VERDICT H_963: PASS rho(Φ,h*)=1.00 (CI_lo=1.00>0) AND monotone increasing — imagination horizon scales with Φ (toy, 6 rungs).
+------------------------------------------------------------------------------

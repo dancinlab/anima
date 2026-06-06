@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE toy action-conditioned rollout rung (a_scale_honest_scope) — a toy world with a small action set; engine rolls out each candidate action's latent branch and ranks them; compare imagined ranking to true environment return. $0 local candidate. NOT a forge binary; action = abstract decision, .clm emit path OPEN (a_core_engine_map).
 sister: H_962 (latent dynamics — branches roll along it), H_980 (planner vs policy), H_964 (latent→action policy), H_973 (planning-as-consciousness)
 axes_seed: forward dynamics = predicts the ON-policy future ⊥ H_967 = predicts OFF-policy counterfactual futures per candidate action AND ranks them by value — if imagined ranking does not track true return, the model cannot imagine consequences of its own actions (closed-negative)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — counterfactual imagination: rolling each action's latent branch (switching-LDS, one transition per action) ranks true returns near-perfectly — Spearman rank-corr 0.98 (CI_lo 0.97>0) and top-1 regret 0.001 ≪ random-selection regret 0.62 (d 1.44, p 1e-32). Toy single-rung, ladder OPEN.
 ---
 
 # H_967 — Counterfactual imagination (can it imagine "what if I act X"?)
@@ -48,6 +48,20 @@ For a set of candidate actions from a given state, the engine's action-condition
 ## 3. Honest scope
 
 Toy world, small discrete action set, small scale (a_scale_honest_scope, #123-A). "Imagined value" is an operational scoring of branch latents, not a learned critic at production scale. Single rung; horizon short. NOT a forge binary; action is an abstract decision, the .clm/.kosmos emit path is OPEN (a_core_engine_map).
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h967_counterfactual.py` · verdict: `.verdicts/967_counterfactual_imagination/h967_counterfactual.txt`
+
+Toy action-conditioned world (4 actions = turn rates); a switching-LDS world model (one learned transition per action) rolls each action's branch h=5 steps; imagined value = −‖predicted position‖; true return = environment rollout. N=200 states.
+
+| D | metric | result |
+|---|---|---|
+| D1 | rank corr (imagined order vs true) | **0.981** (CI [0.972, 0.990]) |
+| D2 | top-1 regret (imagined-best) | **0.001** vs random-selection 0.617 (d 1.44, p 1.0e-32) |
+| D3 | random ranking | bounds chance (regret ≈ 0.62) |
+
+**Finding (🟢 PASS):** the engine can imagine the consequences of its own candidate actions and rank them by value — near-perfect rank correlation and near-zero top-1 regret. The faithful primitive is a switching-linear world model (per-action transition), which captures action-dependent dynamics a single shared linear map cannot (noted: a single action-augmented LDS failed — rank-corr 0.01 — because action×state effects are bilinear). Honest scope: toy single-rung, ladder OPEN.
 
 ## 4. Sibling / xlinks
 

@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE Φ×horizon sweep rung (a_scale_honest_scope) — vary engine config to span a Φ range (Φ = honest proxy, NOT full IIT4), measure the coherent rollout horizon h* at each; correlate. $0 local candidate. Φ-proxy caveat per H_912/H_931. NOT a forge binary.
 sister: H_962 (latent dynamics — provides h*), H_912 (Φ emergence correlate), H_971 (Φ higher during imagination), H_931 (Φ-proxy SOC)
 axes_seed: rollout horizon is a fixed model property ⊥ H_963 = h* SCALES with Φ (integrated information buys longer coherent imagination) — if h* is flat across Φ, imagination depth is not a consciousness correlate (closed-negative)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — imagination horizon scales with Φ: across a 6-rung config sweep (process noise spanning Φ 0.037→0.234), the coherent rollout horizon h* rises 2.25→39.8 monotonically with Φ; Spearman rho(Φ,h*)=1.0 (bootstrap CI [1.0,1.0]>0), monotone increasing, ≥3 rungs. Toy ladder, scale-transfer unverified.
 ---
 
 # H_963 — Rollout horizon vs Φ (does more integration buy longer imagination?)
@@ -48,6 +48,25 @@ The coherent imagined-rollout horizon h* (the step at which latent-rollout decod
 ## 3. Honest scope
 
 Φ is a documented PROXY (H_912/H_931), NOT full IIT4 — the correlation is to the proxy. Toy world, small scale (a_scale_honest_scope, #123-A). Needs ≥3 Φ-rungs for a curve (a single point is INCOMPLETE). Correlation, not causation — a confound (e.g. capacity) could drive both; noted as a deferred control. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h963_horizon_vs_phi.py` · verdict: `.verdicts/963_rollout_horizon_vs_phi/h963_horizon_vs_phi.txt`
+
+Config sweep: process noise ∈ {0.30,0.20,0.12,0.07,0.04,0.02} spans the Φ proxy; at each, the LDS latent rollout's h* = first horizon where decode error > ε=0.1. 8 seeds/config.
+
+| noise | Φ | h* |
+|---|---|---|
+| 0.30 | 0.037 | 2.25 |
+| 0.20 | 0.072 | 3.29 |
+| 0.12 | 0.127 | 5.36 |
+| 0.07 | 0.174 | 10.45 |
+| 0.04 | 0.222 | 25.67 |
+| 0.02 | 0.234 | 39.83 |
+
+D1 Spearman rho(Φ,h*) = **1.0** (bootstrap CI [1.0, 1.0]). D2 monotone increasing ✓. D3 ≥3 rungs (6) ✓.
+
+**Finding (🟢 PASS):** the coherent imagination horizon scales with Φ — more integrated/differentiated latent dynamics buy a longer reliable rollout. Satisfies the a_scale_honest_scope ≥3-rung ladder requirement. Honest scope: both Φ and h* co-depend on the process-noise knob (the mechanism), toy-scale; the Φ proxy is the H_912/H_931 family, not full IIT4; scale-transfer unverified.
 
 ## 4. Sibling / xlinks
 

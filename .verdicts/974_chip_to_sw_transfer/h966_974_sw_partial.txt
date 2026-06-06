@@ -1,0 +1,22 @@
+==============================================================================
+H_966+H_974 — SUBSTRATE-axis SW-ARM partials (CHIP arm BLOCKED on Mac)
+substrate=CPU-mirror (numpy) — NOT on-chip  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+a_lane_akida_gpu_split: this is the SW (Lane G/P) reference ONLY; the AKD1000 CHIP
+arm is UNREACHABLE here -> H_966/H_974 = INCOMPLETE-BLOCKED + handoff.
+
+H_966 SW arm: return = -0.6367 ± 0.4182  CI=[-0.6959,-0.5784]
+H_966 SW within-substrate run-to-run band (D3 control) = 0.0064
+H_966 CHIP arm: BLOCKED (needs live AKD1000) -> behavior-distance SW-vs-CHIP UNCOMPUTABLE
+
+H_974 SW arm: SW-train SOURCE return = -0.6367
+H_974 scrambled-mapping SW control return = -13.6215 (bounds 'any mapping works'; real return clearly beats scramble: True)
+H_974 CHIP arm: BLOCKED -> return_CHIP UNCOMPUTABLE -> retained-fraction return_CHIP/return_SW awaits the chip deploy.
+
+------------------------------------------------------------------------------
+VERDICT H_966: INCOMPLETE-BLOCKED SW arm measured (return -0.637, within-SW band 0.006); CHIP arm needs a live AKD1000 (BackendType.Hardware) unreachable on this Mac — behavior-distance SW-vs-CHIP UNCOMPUTABLE. substrate=CPU-mirror (a_lane_akida_gpu_split). HANDOFF filed.
+------------------------------------------------------------------------------
+------------------------------------------------------------------------------
+VERDICT H_974: INCOMPLETE-BLOCKED SW SOURCE return -0.637 measured + scrambled-control -13.621; return_CHIP (deployed) needs the chip -> retained-fraction UNCOMPUTABLE here. substrate=CPU-mirror (a_lane_akida_gpu_split). HANDOFF filed.
+------------------------------------------------------------------------------

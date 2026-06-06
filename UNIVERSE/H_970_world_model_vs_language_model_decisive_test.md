@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE separator-task rung (a_scale_honest_scope) — construct a toy task requiring a persistent latent world-state (partial observability + delayed consequence) where a next-token/next-observation predictor at matched capacity cannot succeed; compare a WM agent vs the LM baseline. $0 local candidate. NOT a forge binary.
 sister: H_951 (engine-not-predictor), H_962 (latent dynamics), H_964 (latent→action), H_984 (object permanence — the WM property exploited)
 axes_seed: "a WM is just a fancier LM" (deflation) ⊥ H_970 = there EXISTS a task a WM solves and a matched-capacity LM cannot — without this separator, the whole CWM domain is unjustified (closed-negative: if a matched LM matches the WM, anima does not need a world-model)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — WM>LM separator EXISTS (delayed-cue toy): WM 0.995 vs matched-capacity LM 0.258≈chance, gap 0.737, d 36.8, p 9.7e-19; mem-aug LM recovers to 1.0 (gap = persistent-state requirement). Toy single-rung, ladder OPEN.
 ---
 
 # H_970 — World-model vs language-model decisive test (does anima need a WM?)
@@ -48,6 +48,22 @@ There exists a task — requiring a persistent latent world-state (partial obser
 ## 3. Honest scope
 
 Toy task, small scale (a_scale_honest_scope, #123-A). A single separator task is existence-proof-by-construction — a PASS shows ONE task where WM>LM, not that WM>LM in general; a FAIL on a well-constructed WM-requiring task is the stronger surprise. Capacity-matching is pre-registered and audited. NOT a forge binary. This is the domain's keystone significance test (a_paper_significance).
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h970_wm_vs_lm.py` · verdict: `.verdicts/970_world_model_vs_language_model_decisive_test/h970_wm_vs_lm.txt`
+
+Task = delayed-cue recall: cue ∈ {0..3} shown at t=0, then L=12 random distractors, then a GO marker → output the cue. LM window CTX=4 < L, so the cue has scrolled out of any fixed window at GO. arm-WM = retentive (orthogonal-recurrence) latent state; arm-LM = matched-capacity windowed predictor (both 132 learned params). 12 seeds × 300 test episodes.
+
+| D | metric | result |
+|---|---|---|
+| D1 | success WM | **0.9947 ± 0.0064** |
+| D1 | success LM (matched) | 0.2575 ± 0.0264 (chance 0.25; boot CI [0.245, 0.274]) |
+| D2 | separator gap (WM−LM) | **0.7372**, Cohen d 36.8, Welch t 90.1, p 9.7e-19 |
+| D3 | capacity audit | WM 132 = LM 132 learned params (matched ✓) |
+| D3 | mem-aug LM ablation | 1.0000 ± 0.0 — re-exposing the cue at GO fully recovers LM → the gap is **exactly the persistent-state requirement** |
+
+**Finding (🟢 PASS):** a WM>LM separator EXISTS — a matched-capacity stateless predictor sits at chance while a persistent-latent-state world model solves it; the mem-aug control localizes the entire gap to the persistent-state requirement. The CWM domain premise (anima needs a world-model, not just an LM) is SUPPORTED on this toy rung. Honest scope: existence-proof-by-construction, single toy rung, ladder OPEN (a_scale_honest_scope) — shows ONE task where WM>LM, not WM>LM in general; transfer to production scale unverified.
 
 ## 4. Sibling / xlinks
 

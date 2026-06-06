@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE toy latent-dynamics rung (a_scale_honest_scope) — a toy dynamical world; the engine learns a latent transition operator and predicts future latent state, scored on held-out rollouts vs a next-observation (pixel/byte) baseline. $0 local candidate; GPU only for a real backbone rung (a_fire_autonomous). NOT a forge binary; .clm path OPEN.
 sister: H_951 (engine-not-predictor — direct parent), H_963 (rollout horizon vs Φ), H_981 (rollout self-consistency), H_976 (rollout = mitosis, p8)
 axes_seed: next-token LM = predicts the next OBSERVATION symbol ⊥ H_962 = predicts the next latent WORLD-STATE (transition operator) — a world-model forecasts state dynamics, not surface tokens; if latent prediction does not beat observation prediction, the engine is still a surface predictor (closed-negative)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — latent world-state dynamics: a delay-embedding latent (holding the hidden velocity) rolled forward error 0.002→0.064 over h=1→8 vs a stateless surface next-obs predictor 0.030→1.13; latent < obs at h≥2 (d 0.59, p 1.3e-96), the horizon advantage grows monotonically (Spearman rho 1.0), latent beats persistence. Toy single-rung, ladder OPEN.
 ---
 
 # H_962 — Latent forward dynamics (does it predict world-state, not tokens?)
@@ -48,6 +48,23 @@ The engine learns a latent transition operator T: Ψ_t → Ψ_{t+1} such that mu
 ## 3. Honest scope
 
 Toy dynamical world, small scale (a_scale_honest_scope, #123-A). "World-state" = decodable generating factors, an operational proxy. Single rung; horizon set is pre-registered but short. NOT a forge binary; a probe. A PASS is "toy-only, scale-transfer unverified" pending a ladder (a_toy_scale_recheck).
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h962_latent_dynamics.py` · verdict: `.verdicts/962_latent_forward_dynamics/h962_latent_dynamics.txt`
+
+Toy world: state = [position(2), HIDDEN velocity(2)] with rotational dynamics; observation = position only (partial). arm-LATENT = delay-embedding latent (recovers velocity) + learned linear transition rolled h steps + decode. arm-OBS = stateless surface next-observation predictor iterated h times. arm-PERSIST = position stays put. h ∈ {1,2,4,8}, N=300.
+
+| h | error_LATENT | error_OBS | persistence |
+|---|---|---|---|
+| 1 | 0.0018 | 0.0304 | 2.55 |
+| 2 | 0.0052 | 0.1089 | 10.0 |
+| 4 | 0.0175 | 0.3794 | 33.2 |
+| 8 | 0.0640 | 1.1270 | 64.6 |
+
+D1 (h=2) latent < obs: Cohen d 0.59, p 1.3e-96. D2 horizon advantage (OBS−LATENT) grows 0.029→1.06, Spearman rho 1.0. D3 latent beats persistence at every h≥2.
+
+**Finding (🟢 PASS):** the engine learns latent world-state dynamics, not surface prediction — a latent that holds the hidden velocity rolls forward accurately and its advantage over a stateless surface predictor GROWS with horizon, the signature of a world model. Honest scope: toy single-rung, ladder OPEN; the delay-embedding + linear-transition is the faithful JEPA/Dreamer-style latent-rollout primitive (now reusable as `LDSWorldModel` for the IMAGINE-axis siblings).
 
 ## 4. Sibling / xlinks
 

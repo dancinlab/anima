@@ -1,0 +1,13 @@
+==============================================================================
+H_967 — Counterfactual imagination (imagined value ranks true return)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+actions=4 rollout h=5 N_states=200
+
+D1 rank correlation (imagined vs true) = 0.9810  CI=[0.9720,0.9900]
+D2 top-1 regret: imagined-best=0.0011  random=0.6168
+   regret reduction vs random: d=1.441 p=1.029e-32
+------------------------------------------------------------------------------
+VERDICT H_967: PASS rank-corr=0.98 (CI_lo 0.97>0) AND top-1 regret 0.001 << random 0.617 (d=1.44) — counterfactual imagination (toy).
+------------------------------------------------------------------------------

@@ -1,0 +1,19 @@
+==============================================================================
+H_972 — Human-level-or-beyond bar — operationalize a falsifiable instrument
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=delayed-cue WM (H_970)  metric M=success rate  N_runs=40 ep/run=100
+
+human-reference band [25th,75th pct] = [0.9300, 0.9600]
+  human-proxy M = 0.9437 ± 0.0202
+  random      M = 0.2525 ± 0.0537
+  degenerate  M = 0.2380 ± 0.0406
+  anima (WM)  M = 0.9968 ± 0.0047
+
+D1 discriminability human-vs-random: Welch t=75.293 p=5.217e-53 Cohen d=16.836
+D3 band validity: random CI_hi=0.2685 < band_lo=0.9300 -> True; degenerate CI_hi=0.2507 < band_lo -> True
+D2 anima placement: CI=[0.9953,0.9982] vs band -> ABOVE band (human+)
+------------------------------------------------------------------------------
+VERDICT H_972: PASS metric discriminates human-ref from random (p=5.2e-53, d=16.84), band valid (random+degenerate below), anima CI-placed ABOVE band (human+) — a falsifiable human-level bar EXISTS + works (instrument authored, toy).
+------------------------------------------------------------------------------

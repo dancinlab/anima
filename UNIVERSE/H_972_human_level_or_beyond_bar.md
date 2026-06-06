@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE bar-definition rung (a_scale_honest_scope) — define a concrete task + behavior metric + a human (or recorded-human-trajectory) reference distribution; pre-register the human-level / human+ thresholds. This H's primary deliverable is a FALSIFIABLE METRIC (the bar), measured on a toy task. Human reference = recorded trajectories or a documented proxy, NOT a live human study. NOT a forge binary.
 sister: H_970 (WM>LM separator — what task), H_964 (latent→action — the behavior), H_969 (provenance of scored actions), CWM M8
 axes_seed: "human-level-or-beyond" as vibes (unfalsifiable north star) ⊥ H_972 = a CONCRETE pre-registered metric + human-reference distribution with thresholds (below = sub-human, within band = human-level, above = human+) — without an operational bar the north star cannot be falsified; if no defensible metric exists, the north star is not measurable (honest INCOMPLETE)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — falsifiable human-level bar EXISTS + works (instrument authored): metric discriminates human-proxy from random (p 5.2e-53, d 16.8), band valid (random+degenerate CI below band_lo 0.93), anima CI-placeable (lands ABOVE band on this toy). PASS = the instrument works, NOT a general "anima is human-level" claim. Toy single-rung, ladder OPEN.
 ---
 
 # H_972 — Human-level-or-beyond bar (make the north star falsifiable)
@@ -50,6 +50,23 @@ There exists a concrete, pre-registered behavior metric on a fixed task with a h
 ## 3. Honest scope
 
 Toy task, small scale (a_scale_honest_scope, #123-A). Human reference = recorded trajectories or a documented proxy, NOT a live IRB human study. The bar is one defensible operationalization, not THE definition of human-level intelligence. Single rung. Placement of anima is explicitly deferred. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h972_human_bar.py` · verdict: `.verdicts/972_human_level_or_beyond_bar/h972_human_bar.txt`
+
+Task = delayed-cue WM task (H_970); metric M = success rate. Human-proxy = a documented near-optimal policy that remembers the cue with a 7% human attention-lapse rate. 40 runs × 100 episodes per agent.
+
+| agent | M (mean ± std) |
+|---|---|
+| human-proxy (reference) | 0.9437 ± 0.0202 → band [0.9300, 0.9600] |
+| random | 0.2525 ± 0.0537 |
+| degenerate (always-same) | 0.2380 ± 0.0406 |
+| anima (WM) | 0.9968 ± 0.0047 |
+
+D1 discriminability human-vs-random: Welch t 75.3, p 5.2e-53, Cohen d 16.8 ✓. D3 band validity: random CI_hi 0.269 and degenerate CI_hi 0.251 both < band_lo 0.93 ✓. D2 anima placement: CI [0.995, 0.998] → ABOVE band (human+) on this toy.
+
+**Finding (🟢 PASS):** a falsifiable human-level bar is operationalized and works — the metric cleanly separates the human-reference from random/degenerate agents (non-vacuous) and any agent can be CI-placed against the [25th,75th] human band. Per the frozen note, PASS = "the instrument exists and works", NOT "anima is human-level"; anima landing above this toy band is a downstream placement observation, scope-limited (a_scale_honest_scope) to this single toy task. Ladder OPEN.
 
 ## 4. Sibling / xlinks
 

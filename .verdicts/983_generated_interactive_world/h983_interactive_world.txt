@@ -1,0 +1,18 @@
+==============================================================================
+H_983 — Generated interactive world (self-consistent simulator)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+actions=4; rule-consistency + loop revisit-consistency; N_test=200
+
+D1 action-consequence: same-state+action repeat dist = 0.000000 (rule-consistent if ~0)
+   different-action dist (shuffled-transition baseline) = 0.0947
+
+D2 revisit drift (loop return-to-start): real-world = 1.3900
+D3 random-world revisit drift (no-structure bound) = 1.5738
+
+D1 coherence (real vs shuffled, d) = 1.937 p=1.147e-47
+D2 revisit (real vs random-world, d) = 0.244 p=1.515e-02
+------------------------------------------------------------------------------
+VERDICT H_983: INCOMPLETE D1 action-consequence coherence STRONG (rule-consistent, d=1.94, repeat dist ~0) but D2 loop revisit-consistency only WEAKLY beats the random-world control (drift 1.39 vs 1.57, d=0.24<0.5, p=0.015) — the linear simulator is rule-consistent but not loop-reversible; full PASS bar (both D1+D2) not cleared. Toy C3, ladder OPEN.
+------------------------------------------------------------------------------

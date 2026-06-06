@@ -1,0 +1,18 @@
+==============================================================================
+H_962 — Latent forward dynamics (rollout beats surface prediction)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+toy world SDIM=4 T=30 N=300 horizons=[1, 2, 4, 8]
+
+h=1: error_LATENT=0.0018  error_OBS=0.0304  persistence=2.5511
+h=2: error_LATENT=0.0052  error_OBS=0.1089  persistence=10.0227
+h=4: error_LATENT=0.0175  error_OBS=0.3794  persistence=33.1867
+h=8: error_LATENT=0.0640  error_OBS=1.1270  persistence=64.5989
+
+D1 (h=2) latent<obs: d=0.591 p=1.341e-96 -> True
+D2 horizon-advantage (OBS−LATENT) by h = {1: np.float64(0.0286), 2: np.float64(0.1037), 4: np.float64(0.3619), 8: np.float64(1.063)}  slope Spearman rho=1.000
+D3 latent beats persistence at h>=2: True
+------------------------------------------------------------------------------
+VERDICT H_962: PASS error_LATENT<error_OBS at h>=2 (d=0.59), advantage grows with horizon (rho=1.00), latent beats persistence — latent world-state dynamics (toy).
+------------------------------------------------------------------------------

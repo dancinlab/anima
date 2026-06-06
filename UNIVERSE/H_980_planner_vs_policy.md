@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE A/B rung on a SHARED world-model (a_scale_honest_scope) — same trained WM; arm-MPC plans over imagined latent rollouts, arm-DIRECT decodes latent→action; compare return + compute. $0 local candidate. NOT a forge binary.
 sister: H_964 (direct latent→action), H_967 (imagined branch evaluation MPC uses), H_973 (planning-as-consciousness), H_962 (the latent dynamics)
 axes_seed: WAM = the policy is implicit in the latent (direct decode suffices) ⊥ decoupled-planner = explicit MPC over imagined rollouts beats direct decode — the decisive test of whether anima needs a separate planner or the world-model IS the policy
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS-policy-implicit (finding) — on a shared world-model, MPC return −0.694 ≈ DIRECT-decode −0.637 (delta −0.057, CI [−0.14, 0.02] overlaps 0) at 64× the compute: the world-model IS the policy here; explicit planning adds nothing (WAM camp). Both directions were pre-registered findings (a_paper_negative_ok). Toy single-rung, ladder OPEN.
 ---
 
 # H_980 — Planner vs policy (does explicit planning beat direct decode?)
@@ -50,6 +50,21 @@ On the same trained world-model, explicit MPC planning (search over H_967 action
 ## 3. Honest scope
 
 Toy environment, small scale (a_scale_honest_scope, #123-A). Result is WM-quality-dependent — a weak WM can make MPC look bad (its rollouts are wrong) — so this is conditioned on H_962/H_981 holding. Single rung; horizon and candidate-set sizes pre-registered. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h980_planner_vs_policy.py` · verdict: `.verdicts/980_planner_vs_policy/h980_planner_vs_policy.txt`
+
+Same switching-LDS world model. arm-MPC = receding-horizon random-shooting (16 candidates × horizon 4) over imagined rollouts; arm-DIRECT = imitation-trained latent→action head. N=200 episodes.
+
+| D | metric | result |
+|---|---|---|
+| D1 | return MPC | −0.694 ± 0.432 |
+| D1 | return DIRECT | −0.637 ± 0.418 |
+| D1 | delta (MPC−DIRECT) | −0.057, d −0.14, p 0.18, CI [−0.14, 0.02] (overlaps 0) |
+| D2 | compute/decision | MPC 64 model-steps vs DIRECT 1 |
+
+**Finding (🟢 PASS-policy-implicit):** MPC and the direct policy tie on return (CI overlaps 0) while MPC costs 64× the compute — the world-model IS the policy on this task; an explicit planner adds nothing. This is one of the two pre-registered directional findings (the WAM camp; the other, planner-wins, would also have been a valid finding). Honest scope: toy single-rung; with a weaker/partial world model or a longer-horizon task, MPC could win — ladder OPEN.
 
 ## 4. Sibling / xlinks
 

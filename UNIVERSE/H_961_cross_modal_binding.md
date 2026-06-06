@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE toy paired-modality rung (a_scale_honest_scope) — synthetic event generator emits a paired (modality-X, modality-Y) view of the same latent event plus distractor events; same engine encodes both. $0 local candidate. Operational binding (latent proximity), NOT a phenomenal-unity claim. NOT a forge binary; .clm emit path OPEN (a_core_engine_map).
 sister: H_960 (modality-agnostic encoder — prerequisite), H_978 (Ψ lattice geometry), H_984 (object permanence / robustness), H_950 (modality-agnostic CE)
 axes_seed: H_960 = each modality encodes into the shared geometry ⊥ H_961 = the geometry BINDS co-occurring modalities of one event (paired-near) — encoding-shared does not entail binding (two modalities could share a space yet be unbound)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — cross-modal binding: true-pair latent proximity 0.93 ≫ shuffled-pair −0.00 (Welch t 40.5, p 5.3e-126, d 3.30) and cross-modal retrieval@1 0.98 (CI_lo 0.96 ≫ chance 1/20=0.05) — the engine binds the two modalities of the same hidden z, not a bag-of-channels. Toy single-rung, ladder OPEN.
 ---
 
 # H_961 — Cross-modal binding (do co-occurring modalities bind in Ψ-latent?)
@@ -48,6 +48,21 @@ For paired observations (modality-X, modality-Y) generated from the **same** lat
 ## 3. Honest scope
 
 Toy paired synthetic modalities, small scale (a_scale_honest_scope, #123-A). Binding = latent proximity + retrieval, an operational proxy, NOT a phenomenal-unity / "felt" binding claim. Gated on H_960 (no shared encoding → binding is moot). Single rung; ladder + real multimodal data needed before any general claim (a_toy_scale_recheck).
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h961_cross_modal_binding.py` · verdict: `.verdicts/961_cross_modal_binding/h961_cross_modal_binding.txt`
+
+Hidden factor z renders into modality-X (toy vision) + modality-Y (toy proprioception) via distinct maps; the engine encodes both, then projects each into a shared-z space (binding). N=600, retrieval among 20 candidates.
+
+| D | metric | result |
+|---|---|---|
+| D1 | true-pair proximity (cosine) | 0.9296 ± 0.056 |
+| D1 | shuffled-pair proximity | −0.0030 ± 0.395 (Welch t 40.5, p 5.3e-126, Cohen d 3.30) |
+| D2 | cross-modal retrieval@1 | **0.9767** (CI [0.96, 0.99]; chance 1/20 = 0.05) |
+| D3 | shuffled-pair null | bounds spurious binding (true ≫ null) |
+
+**Finding (🟢 PASS):** the engine binds two modalities of the same latent cause — true pairs sit close in the shared space while mismatched pairs do not, and cross-modal retrieval far exceeds chance. Not a bag-of-channels. Honest scope: toy single-rung, ladder OPEN.
 
 ## 4. Sibling / xlinks
 

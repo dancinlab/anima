@@ -1,0 +1,15 @@
+==============================================================================
+H_961 — Cross-modal binding (same z bound across modalities)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+hidden z->X(vision)+Y(proprio); engine encodes both; N=600 retrieval cands=20
+
+D1 proximity (cosine in shared-z space):
+  true pairs    = 0.9296 ± 0.0563
+  shuffled pairs= -0.0030 ± 0.3945
+  Welch t=40.467 p=5.350e-126 Cohen d=3.304
+D2 retrieval@1 = 0.9767  CI=[0.9600,0.9933]  (chance 1/20=0.0500)
+------------------------------------------------------------------------------
+VERDICT H_961: PASS true-pair proximity 0.93 >> shuffled -0.00 (d=3.30 p=5.3e-126), retrieval@1=0.98 (CI_lo 0.96>chance 0.05) — cross-modal binding (toy).
+------------------------------------------------------------------------------

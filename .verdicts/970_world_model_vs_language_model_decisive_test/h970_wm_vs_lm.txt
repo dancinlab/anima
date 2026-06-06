@@ -1,0 +1,24 @@
+==============================================================================
+H_970 — World-model vs language-model decisive separator (KEYSTONE)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=delayed-cue-recall  K=4 (chance=0.250)  delay L=12  LM_ctx=4 (<L)
+latent=32  N_SEEDS=12  N_train=600  N_test=300
+
+D1 task success rate (mean +/- std over seeds):
+  WM (persistent latent state) : 0.9947 +/- 0.0064
+  LM (matched windowed pred)   : 0.2575 +/- 0.0264
+  chance (1/K)                 : 0.2500
+
+D2 separator gap = succ_WM - succ_LM = 0.7372
+   Cohen d(WM,LM) = 36.788   Welch t = 90.111  p = 9.740e-19
+   LM bootstrap 95% CI = [0.2453, 0.2742]  (chance=0.2500)
+
+D3 capacity audit: WM learned-params=132  LM learned-params=132  (matched=True)
+D3 memory-augmented LM ablation (cue re-exposed at GO):
+   mem-aug LM success = 1.0000 +/- 0.0000
+   -> gap is located in the PERSISTENT-STATE requirement: plain-LM~chance, mem-aug-LM recovers
+------------------------------------------------------------------------------
+VERDICT H_970: PASS WM>LM separator EXISTS: WM=0.995 vs LM=0.258 (~chance 0.25), gap=0.737, d=36.79, p=9.7e-19, capacity-matched, mem-aug recovers -> anima needs a world-model (toy rung).
+------------------------------------------------------------------------------

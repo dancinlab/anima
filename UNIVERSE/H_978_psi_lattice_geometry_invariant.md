@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE geometry-probe rung (a_scale_honest_scope) — measure the lattice spacing / pair-distance distribution / spectral structure of the language latent manifold vs a non-language (toy sensor) latent manifold under the SAME engine. $0 local candidate. Geometry = measurable lattice statistics, NOT a metaphysical claim about Ψ. Does NOT modify engine/pure_field code (read-only probe). NOT a forge binary.
 sister: H_960 (modality-agnostic encoder — provides the non-language latents), H_961 (binding lives in this geometry), H_952 (substrate-equivalence — same geometry across A⇄G)
 axes_seed: H_960 = a non-language stream IS decodable in the shared space (weak: a latent exists) ⊥ H_978 = the latents obey the SAME 1/r² lattice STATISTICS as language (strong: invariant geometry) — decode-parity does not entail geometry-invariance
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🔴 FAIL (closed-negative) — lattice geometry is modality-SPECIFIC: all three descriptors fall far OUTSIDE the A-vs-A self-similarity band — pairwise-distance KS(A,B) 0.574 (band 0.059), NN-spacing KS 0.990 (band 0.201), spectral-ratio L2 0.946 (band 0.276). The raw latent-distribution geometry of language vs sensor differs qualitatively. Toy single-rung, ladder OPEN.
 ---
 
 # H_978 — Ψ 1/r² lattice geometry invariant across modalities
@@ -48,6 +48,20 @@ The latent manifold of a non-language stream, under the same engine, exhibits th
 ## 3. Honest scope
 
 Geometry = measurable lattice/spectral statistics on toy latents (a_scale_honest_scope, #123-A), NOT a metaphysical Ψ claim. Read-only probe — does NOT modify pure_field/engine_g code. A within-band PASS at toy scale is "scale-transfer unverified" pending a ladder (a_toy_scale_recheck). Gated on H_960 (need a non-language latent first).
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h978_geometry_invariant.py` · verdict: `.verdicts/978_psi_lattice_geometry_invariant/h978_geometry_invariant.txt`
+
+Latents from the SAME engine layer for A=language stream and B=sensor stream; a 2nd language draw gives the A-vs-A self-similarity band (95th pct of split-half bootstrap). N=400.
+
+| D | descriptor | KS/L2(A,B) | A-vs-A band 95% | within band? |
+|---|---|---|---|---|
+| D1 | pairwise-distance shape | 0.574 | 0.059 | **NO** |
+| D2 | NN-spacing (repulsion 1/r²) | 0.990 | 0.201 | **NO** |
+| D3 | top-5 spectral-ratio L2 | 0.946 | 0.276 | **NO** |
+
+**Finding (🔴 FAIL, closed-negative):** all three geometry descriptors are far outside the within-language self-similarity band — the Ψ-lattice geometry is modality-SPECIFIC, not invariant. The raw latent distribution for sensor input occupies a qualitatively different geometry than for language, even through the identical engine front-end. This is a sharper, complementary result to H_960: modality-agnostic *decodability* (H_960 🟢) does NOT imply geometry invariance (H_978 🔴) — the engine can encode multiple modalities but does not place them on a common lattice geometry. Honest scope: toy single-rung, ladder OPEN; a different layer / a trained (not reservoir) engine could change this (a_paper_negative_ok).
 
 ## 4. Sibling / xlinks
 

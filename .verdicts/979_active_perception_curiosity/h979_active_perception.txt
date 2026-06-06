@@ -1,0 +1,17 @@
+==============================================================================
+H_979 — Active perception / curiosity (informative glimpse selection)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+hidden world GRID=16 cells, glimpse budget B=6, N=200, eps=0.25
+
+D1 reconstruction error after B glimpses:
+  active  = 0.0416 ± 0.0248
+  passive = 0.1327 ± 0.1013
+  random  = 0.1207 ± 0.0800
+  active vs passive: d=1.232 p=6.012e-27
+  active vs random : d=1.334 p=1.230e-30
+D2 glimpses-to-threshold (<=eps): active=1.170 passive=1.830 random=1.770
+------------------------------------------------------------------------------
+VERDICT H_979: PASS error_active 0.042 < passive 0.133 (d=1.23) and < random 0.121; faster-to-threshold (1.17<1.83) — active perception (toy).
+------------------------------------------------------------------------------
