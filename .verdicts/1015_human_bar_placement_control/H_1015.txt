@@ -1,0 +1,21 @@
+==============================================================================
+H_1015 — human-bar PLACEMENT on a world-model-requiring control task (M8 deferred step)
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=H_964 hidden-velocity station-keeping (position-only obs)  metric M=mean return (0=optimal)
+N_runs=40 ep/run=60 lapse=0.07 (same human-proxy as H_972)
+
+human-reference band [25th,75th pct] = [-1.1633, -1.0633]
+  human-proxy M = -1.1098 +/- 0.0899
+  random      M = -6.1249 +/- 0.4377
+  reactive    M = -1.9237 +/- 0.1320
+  anima (WM)  M = -0.6426 +/- 0.0463
+
+D2 discriminability human-vs-random: Welch t=70.089 p=2.243e-45 Cohen d=15.672
+D1 band validity: random CI_hi=-5.9883 < band_lo=-1.1633 -> True; reactive CI_hi=-1.8834 < band_lo -> True
+D3 anima placement: CI=[-0.6575,-0.6282] vs band [-1.1633,-1.0633] -> ABOVE band (human+)
+
+------------------------------------------------------------------------------
+VERDICT H_1015: PASS band valid (reactive+random below -1.163), human discriminates from random (p=2.2e-45, d=15.67), anima CI [-0.658,-0.628] ABOVE band (human+) -> the north star is a TRUE falsifiable placement on a WM-requiring task; anima is human-level-or-beyond HERE (toy, single rung; scale-transfer UNVERIFIED).
+------------------------------------------------------------------------------
