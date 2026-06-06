@@ -1,0 +1,19 @@
+==============================================================================
+H_987 — recombinative replay consolidation — re-test of H_982 🔴
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+re-formulation: H_982 replayed VERBATIM self-rollouts; here replay RECOMBINES
+fragments across episodes that share one transition law (consolidation = the shared law)
+N_episodes=6 frags/ep=2 frag_len=10 replay=200 N_seeds=25
+
+D1 WAKE_2 prediction error:
+  RECOMBINE replay = 0.3835 ± 0.0988
+  VERBATIM (H_982) = 0.4143 ± 0.1032
+  idle (no replay) = 0.4143 ± 0.1032
+  random-replay    = 1.3584 ± 0.0741
+D2 consolidation delta (IDLE−RECOMBINE) = 0.0307  d=0.298 p=2.971e-01
+D3 RECOMBINE vs VERBATIM: delta=0.0307 d=0.298 p=2.973e-01
+------------------------------------------------------------------------------
+VERDICT H_987: FAIL 🔴 ROBUST — even recombinative cross-episode replay adds no consolidation over idle [RECOMBINE 0.384 ~ idle 0.414 (d=0.30, p=0.30)] — replay-adds-no-information is FORMULATION-ROBUST; self-replay cannot manufacture information absent from WAKE_1 (toy). xref H_982.
+------------------------------------------------------------------------------
