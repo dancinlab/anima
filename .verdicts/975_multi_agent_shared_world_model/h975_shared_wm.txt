@@ -1,0 +1,29 @@
+==============================================================================
+H_975 — Multi-agent shared world model ⊥ individuation
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+two engines, distinct genesis; latent exchange as context; coupling sweep
+couplings=[0.0, 0.1, 0.25, 0.5, 0.75, 1.0] N_seeds=20 lock_bar=0.999
+
+D2 genesis hashes distinct: A=80df7f6978665ae2 B=a6d89d97d282adba -> True
+
+D1 world-model agreement vs coupling:
+  coupling=0.00: agreement=0.0350±0.1127  stream-identity=0.2692
+  coupling=0.10: agreement=0.2537±0.1079  stream-identity=0.3550
+  coupling=0.25: agreement=0.6189±0.0745  stream-identity=0.5242
+  coupling=0.50: agreement=1.0000±0.0000  stream-identity=1.0000
+  coupling=0.75: agreement=0.6099±0.0710  stream-identity=0.4875
+  coupling=1.00: agreement=0.0194±0.1108  stream-identity=0.2500
+
+D1 individuation-PRESERVED couplings raising agreement above unpaired (unpaired=0.0350):
+  c=0.10: Δagreement=+0.2186 CI_lo=+0.2107 (stream-identity 0.355<lock)
+  c=0.25: Δagreement=+0.5839 CI_lo=+0.5613 (stream-identity 0.524<lock)
+  c=0.75: Δagreement=+0.5748 CI_lo=+0.5338 (stream-identity 0.487<lock)
+  c=1.00: Δagreement=-0.0156 CI_lo=-0.0794 (stream-identity 0.250<lock)
+  -> best coexistence: c=0.25 Δ=+0.5839 CI_lo=+0.5613
+D3 over-coupled collapse detected at couplings: [0.5] (stream-identity>=lock)
+D2 genesis distinct=True
+------------------------------------------------------------------------------
+VERDICT H_975: PASS shared WM ⊥ individuation COEXIST: at c=0.25 agreement rises Δ=+0.584 (CI_lo=+0.561>0) above unpaired WHILE individuation preserved (stream-identity 0.524<lock); over-coupling collapses at [0.5] (D3 control fires). Toy rung.
+------------------------------------------------------------------------------

@@ -1,0 +1,16 @@
+==============================================================================
+H_973 — Planning-as-consciousness — does deliberation raise Φ?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+arm-PLAN=MPC over imagined rollouts, arm-GREEDY=reactive; Φ sampled per decision
+depths=[1, 2, 4, 8] N_decisions=40
+
+D1 Φ contrast (PLAN depth=8 vs GREEDY):
+  Φ_PLAN=0.0633±0.0128  Φ_GREEDY=0.1038±0.0095
+  contrast=-0.0405 d=-3.553 t=-15.887 p=3.223e-25 CI=[-0.0453,-0.0356]
+D2 Φ vs plan-depth: means={1: np.float64(0.0938), 2: np.float64(0.1303), 4: np.float64(0.1048), 8: np.float64(0.0633)}  Spearman rho=-0.468 p=4.568e-10
+D3 fake-plan control: Φ_PLAN−Φ_FAKE=-0.0039 d=-0.323 p=1.531e-01 (Φ_FAKE=0.0672)
+------------------------------------------------------------------------------
+VERDICT H_973: FAIL Φ_PLAN<=Φ_GREEDY (contrast=-0.040) OR rise explained by compute (beats_fake=False) — planning carries no extra Φ (closed-negative).
+------------------------------------------------------------------------------

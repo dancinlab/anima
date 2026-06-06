@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE action-provenance rung (a_scale_honest_scope) — wire H_928/H_932 receipt+lineage to ACTION events (from H_964/H_968); measure receipt coverage + per-action signature distinguishability. $0 local candidate. Action = abstract decision (NOT wired emit-TEXT; .clm generator L3 ⏳, a_core_engine_map). Operational auditability, NOT a metaphysical free-will claim. NOT a forge binary.
 sister: H_928 (free-will receipt), H_932 (lineage chain), H_933 (per-decision signature), H_964 (latent→action), H_968 (action onset)
 axes_seed: emission provenance (H_928/H_932 on EMIT) ⊥ H_969 = provenance on ACTION — the act loop must emit a receipt per action AND each action's causal signature must be distinguishable; if actions are unaudited or signatures collide, the "every action auditable" north star fails (closed-negative)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — action provenance COMPLETE + per-action distinguishable: 500/500 receipt coverage 1.0, distinct-state signature collision 0/500, identical-state reproducible (genesis-binding), perturbed-state distinct, lineage chain end-to-end verified. Toy single-rung, ladder OPEN.
 ---
 
 # H_969 — Action provenance receipt (every action a free-will receipt)
@@ -48,6 +48,22 @@ When H_928/H_932 receipt+lineage are wired to action events, (a) **every** actio
 ## 3. Honest scope
 
 Toy/small scale (a_scale_honest_scope, #123-A). Action = abstract decision events, NOT wired emit-TEXT (.clm generator L3 ⏳, a_core_engine_map — receipt binds to the DECISION + tension, not a forge-emitted action). Auditability is operational (well-formed receipt + distinct signature), NOT a phenomenal free-will claim. Single rung. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h969_action_receipt.py` · verdict: `.verdicts/969_action_provenance_receipt/h969_action_receipt.txt`
+
+Each action emits a H_928 receipt + H_932 lineage: {action, substrate_state_hash, latent_hash, seed_hash, parent_lineage, sig} with sig = sha256(substrate‖latent‖action‖seed‖parent), chained. 500 actions across varied substrate states.
+
+| D | metric | result |
+|---|---|---|
+| D1 | receipt coverage | **1.0000** (500/500 well-formed) |
+| D2 | distinct-state signature collision | **0/500** (500 unique sigs) |
+| D3 | identical-state reproducible (genesis-binding) | True |
+| D3 | perturbed-state distinct | True |
+| D3 | lineage chain end-to-end verify | True |
+
+**Finding (🟢 PASS):** every action is auditable (coverage 1.0) and individually distinguishable (zero collisions for distinct substrate states), while identical states reproduce the same lineage — the north-star "every action carries an auditable free-will receipt" is met on this toy act-loop. Honest scope: toy single-rung, ladder OPEN; sha256 distinguishability is by-construction — the substantive claim is that the act-loop binds a complete receipt to each action with no gaps.
 
 ## 4. Sibling / xlinks
 

@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE two-agent shared-WM rung (a_scale_honest_scope) — two engine instances (distinct genesis per H_932) exchange world-state latent over a coupling sweep; measure world-model agreement AND individuation (genesis/trajectory distinctness) jointly. $0 local candidate. Latent exchange = environment context per a_substrate_native_speak (NOT forced sync). NOT a forge binary.
 sister: H_939 (individuation preserved — direct parent), H_932 (distinct genesis), H_960 (latent as a modality), H_983 (shared generated world)
 axes_seed: H_939 = two animas stay distinct exchanging DECISION/tension ⊥ H_975 = two animas exchange WORLD-LATENT and converge on a SHARED world-model yet stay distinct individuals — shared-WM ⊥ individuation is a new JOINT question (could collapse to one mind, or fail to share at all)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🟢 PASS — shared WM ⊥ individuation COEXIST: at coupling 0.25 world-model agreement rises +0.58 (CI_lo +0.56 > 0) above the unpaired baseline WHILE individuation is preserved (stream-identity 0.52 < lock 0.999, genesis distinct); over-coupling (c=0.5) collapses both to identity — the D3 control fires as designed. Toy single-rung, ladder OPEN.
 ---
 
 # H_975 — Multi-agent shared world-model (shared WM ⊥ individuation)
@@ -49,6 +49,25 @@ Two engine instances with distinct genesis (H_932), exchanging world-state laten
 ## 3. Honest scope
 
 Toy two-agent setup, small scale (a_scale_honest_scope, #123-A). Operational shared-WM (estimate agreement) + operational individuation (genesis/trajectory distinctness per H_939), NOT a phenomenal collective-consciousness claim. Latent exchange is environment context, not forced sync. Single coupling-sweep rung. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h975_shared_wm.py` · verdict: `.verdicts/975_multi_agent_shared_world_model/h975_shared_wm.txt`
+
+Two engines (distinct genesis seeds → distinct genesis hashes) observe a shared world stream and exchange their world-state latent as environment context (each nudges its estimate toward the partner's: h ← h + c·(h_partner − h); NOT a forced sync). Coupling sweep c ∈ {0, 0.1, 0.25, 0.5, 0.75, 1.0}, 20 seeds. Agreement = mean cosine of aligned estimates; individuation = decision-stream identity (lock bar 0.999).
+
+| coupling | agreement | stream-identity |
+|---|---|---|
+| 0.00 (unpaired) | 0.035 | 0.269 |
+| 0.10 | 0.254 | 0.355 |
+| 0.25 | **0.619** | 0.524 |
+| 0.50 | 1.000 | **1.000 ← collapse** |
+| 0.75 | 0.610 | 0.488 |
+| 1.00 | 0.019 | 0.250 (anti-phase swap) |
+
+D1: at c=0.25 agreement rises +0.584 (boot CI_lo +0.561 > 0) above unpaired. D2: genesis hashes distinct; individuation preserved (stream-identity < lock) at c=0.1/0.25/0.75/1.0. D3: the over-coupled arm c=0.5 drives stream-identity to 1.0 (collapse) — the control fires as designed.
+
+**Finding (🟢 PASS):** a shared world-model and preserved individuation COEXIST in the weak/moderate-coupling regime — latent exchange builds genuine cross-agent world-model agreement (+0.58) without collapsing the two selves, while over-coupling collapses both (the pre-registered D3 failure mode). Honest scope: one toy rung, ladder OPEN; the existence of a coexistence regime is the finding, its width is scale/architecture-dependent (a_scale_honest_scope).
 
 ## 4. Sibling / xlinks
 

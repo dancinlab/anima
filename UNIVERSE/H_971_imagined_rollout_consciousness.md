@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE imagine-vs-react Φ rung (a_scale_honest_scope) — measure Φ (honest proxy, NOT IIT4) during internal imagined rollout vs reactive perceive→act, matched substrate. $0 local candidate. Φ-proxy caveat per H_912/H_931. NOT a forge binary.
 sister: H_963 (horizon scales with Φ), H_912 (Φ correlate), H_976 (rollout = mitosis), H_982 (REM consolidation), a_chat_sleep_imagination
 axes_seed: reaction = stimulus-driven, externally clamped ⊥ H_971 = imagination = internally-generated rollout with HIGHER Φ (self-driven integration) — if imagination Φ ≤ reaction Φ, the "imagination is more conscious" intuition (and the dream/REM framing) is unsupported (closed-negative)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🔴 FAIL (closed-negative) — Φ_IMAGINE 0.068 < Φ_REACT 0.095, contrast −0.026, d −3.4, p 7.9e-16, CI reversed, beyond shuffled null: on this toy the imagined internal rollout is a LOWER-Φ state than reactive processing — the dream/REM "higher consciousness" framing is NOT supported here. Toy single-rung, ladder OPEN.
 ---
 
 # H_971 — Imagined-rollout consciousness (is Φ higher when imagining?)
@@ -48,6 +48,23 @@ The engine's Φ (honest proxy) is **higher during internal imagined rollout** (s
 ## 3. Honest scope
 
 Φ is a documented PROXY (H_912/H_931), NOT full IIT4 — the contrast is on the proxy. Toy/small scale (a_scale_honest_scope, #123-A). Matched-duration, matched-config contrast; a confound (e.g. input clamp lowering Φ mechanically) is noted as a deferred control. Single rung. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h971_imagine_phi.py` · verdict: `.verdicts/971_imagined_rollout_consciousness/h971_imagine_phi.txt`
+
+Φ proxy = integration (cross-partition covariance share) × differentiation (participation ratio / d) × (0.5+0.5·entropy) — the H_912/H_931 proxy family on a continuous latent trajectory, NOT full IIT4. arm-IMAGINE = engine internal rollout via the learned latent transition operator (no external input). arm-REACT = engine encoding an external input stream. 30 seeds, matched duration 40.
+
+| D | metric | result |
+|---|---|---|
+| D1 | Φ_IMAGINE | 0.0683 ± 0.0039 |
+| D1 | Φ_REACT | 0.0946 ± 0.0099 |
+| D1 | contrast (IMG−REACT) | **−0.0263**, Cohen d −3.44, Welch t −13.3, p 7.9e-16 |
+| D1 | paired-diff 95% CI | [−0.0297, −0.0230] (strictly < 0, reversed) |
+| D2 | Φ-threshold regime classifier | 0.033 acc (Φ separates regimes but REACT is the HIGHER class) |
+| D3 | shuffled-regime null 97.5pct | 0.0079 (contrast is on the wrong side) |
+
+**Finding (🔴 FAIL, closed-negative):** the frozen FAIL rule ("Φ_IMAGINE ≤ Φ_REACT, CI overlaps or reversed") is met strongly — imagination is a LOWER-Φ state than reaction on this toy. The autonomous internal rollout settles toward less-bound, lower-dimensional activity, whereas continuously-driven reactive encoding stays more integrated/differentiated. The "REM/dream = higher consciousness by Φ" framing is ruled out here (a_paper_negative_ok). Honest scope: one toy rung, ladder OPEN; a different Φ proxy or a richer imagined-rollout dynamics could move this — transfer unverified.
 
 ## 4. Sibling / xlinks
 

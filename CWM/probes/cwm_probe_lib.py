@@ -206,6 +206,50 @@ def cka(X, Y):
     return float(hsic / (nx * ny + 1e-12))
 
 
+def phi_proxy(H):
+    """Continuous-latent Φ proxy (the H_912/H_931 proxy FAMILY, NOT full IIT4 big-Φ).
+
+    Φ = integration × differentiation × (0.5 + 0.5·entropy_norm), the same three-axis
+    structure as phi_silicon_proxy (AKIDA/h927) but on a continuous latent trajectory
+    H (n_steps × d) instead of spike counts:
+      * integration = variance-partition (canonical phi_spatial, H_912): how much the
+        whole-system variance exceeds the mean per-partition variance — a high value
+        means the parts are bound (integrated), not independent.
+      * differentiation = effective dimensionality (participation ratio / d) — the
+        system explores many distinguishable states, not one.
+      * entropy = normalized Shannon entropy of the binned activity magnitude.
+    Honest proxy; toy scale (a_scale_honest_scope).
+    """
+    H = np.asarray(H, float)
+    if H.ndim == 1:
+        H = H[None, :]
+    n, d = H.shape
+    C = np.cov(H.T) if n > 1 else np.eye(d) * 1e-9
+    # integration (variance-partition / binding, H_912 phi_spatial family): the share of
+    # total second-moment mass carried by CROSS-partition coupling (off-block covariance).
+    # parts independent -> off-block≈0 -> integration≈0; bound -> high. Scale-free.
+    if d >= 2:
+        absC = np.abs(C)
+        total = absC.sum()
+        diag = np.abs(np.diag(C)).sum()
+        integration = float((total - diag) / (total + 1e-12)) if total > 1e-12 else 0.0
+    else:
+        integration = 0.0
+    ev = np.clip(np.linalg.eigvalsh(C), 0, None)
+    pr = (ev.sum() ** 2) / (np.sum(ev ** 2) + 1e-12)
+    differentiation = pr / d
+    # entropy: normalized Shannon entropy of binned latent magnitude.
+    mag = np.linalg.norm(H, axis=1)
+    nb = min(16, max(2, n // 2))
+    hist, _ = np.histogram(mag, bins=nb)
+    p = hist / (hist.sum() + 1e-12)
+    p = p[p > 0]
+    ent = -(p * np.log2(p)).sum() / (np.log2(nb) + 1e-12)
+    phi = integration * differentiation * (0.5 + 0.5 * ent)
+    return float(phi), dict(integration=integration, differentiation=float(differentiation),
+                            entropy=float(ent))
+
+
 def header(hid, title, substrate="CPU-mirror (numpy)"):
     print("=" * 78)
     print(f"{hid} — {title}")

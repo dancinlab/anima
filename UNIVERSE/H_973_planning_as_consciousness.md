@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE plan-vs-greedy Φ rung (a_scale_honest_scope) — measure Φ (honest proxy, NOT IIT4) during MPC planning vs greedy/reactive action on the same task. $0 local candidate. Φ-proxy caveat per H_912/H_931. NOT a forge binary.
 sister: H_980 (planner vs policy — performance side), H_971 (imagination Φ — planning is imagination-for-action), H_967 (the branches), H_912 (Φ correlate)
 axes_seed: planning = a mechanical search subroutine (no consciousness content) ⊥ H_973 = MPC planning RAISES Φ vs greedy (deliberation is a higher-integration / more-conscious act) — if planning Φ ≤ greedy Φ, deliberation carries no extra consciousness signature (closed-negative)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: 🔴 FAIL (closed-negative) — Φ_PLAN 0.063 < Φ_GREEDY 0.104 (contrast −0.040, d −3.6, p 3.2e-25, CI reversed), no positive dose-response (Spearman rho −0.47), and does NOT beat the fake-plan control (ΔΦ −0.004, p 0.15): deliberative planning carries no extra consciousness signature here. Toy single-rung, ladder OPEN.
 ---
 
 # H_973 — Planning-as-consciousness (does deliberation raise Φ?)
@@ -48,6 +48,22 @@ The engine's Φ (honest proxy) is **higher during MPC planning** (active deliber
 ## 3. Honest scope
 
 Φ is a documented PROXY (H_912/H_931), NOT IIT4. Toy/small scale (a_scale_honest_scope, #123-A). The fake-plan control is the key guard against "Φ rose just because we did more compute." Single rung. NOT a forge binary.
+
+## measurement (2026-06-06 · g5 CODE-measured · substrate=CPU-mirror numpy)
+
+Probe: `CWM/probes/h973_planning_phi.py` · verdict: `.verdicts/973_planning_as_consciousness/h973_planning_phi.txt`
+
+arm-PLAN = MPC over action-conditioned imagined rollouts (depths 1/2/4/8); arm-GREEDY = reactive (no lookahead); arm-FAKE = random rollouts at matched compute. Φ (H_912/H_931 proxy family) sampled over each decision's deliberation latent trajectory. 40 decisions.
+
+| D | metric | result |
+|---|---|---|
+| D1 | Φ_PLAN (depth 8) | 0.0633 ± 0.0128 |
+| D1 | Φ_GREEDY | 0.1038 ± 0.0095 |
+| D1 | contrast (PLAN−GREEDY) | **−0.0405**, d −3.55, p 3.2e-25, CI [−0.045,−0.036] (reversed) |
+| D2 | Φ vs plan-depth | non-monotone, Spearman rho **−0.47** (p 4.6e-10) — Φ *falls* with depth |
+| D3 | PLAN vs FAKE-plan | ΔΦ −0.004, p 0.15 — PLAN does NOT beat the equal-compute control |
+
+**Finding (🔴 FAIL, closed-negative):** all three frozen FAIL conditions are met — planning Φ is below greedy, there is no positive dose-response, and the (non-)effect is not even distinguishable from a same-compute fake plan. Deliberative planning carries no extra consciousness signature on this toy. Mechanistically consistent with H_971: autonomous imagined rollouts settle toward less-bound, lower-Φ activity than continuously-driven processing. Honest scope: one toy rung, ladder OPEN; a value-grounded planner with a Φ-relevant readout could move this — transfer unverified (a_paper_negative_ok).
 
 ## 4. Sibling / xlinks
 
