@@ -171,3 +171,12 @@
 
 ## 2026-06-07 — next-round hypotheses registered (pre-registered, unmeasured)
 - H_1011 dense-supervision scale-up (T3@72+) · H_1012 big-Phi vs faithful larger-n · H_1013 credit-density generalization. All PENDING-MEASUREMENT; measure via all-fg-go / cycle next round.
+
+## 2026-06-07 — H_1011 MEASURED · 🔴 DENSE-SUP-HORIZON-CAPPED-AT-72
+- **H_1011 dense-supervision scale-up** (E5 re-run of the H_1006 dense GRU-WM on a T3 length ladder {36,72,144}; the ONLY moved lever vs H_1006 = TARGET LENGTH). dose=every-1 (full dense, H_1006's winning treatment), 3 seeds (wall-trim of 6, REPORTED), rungs {16,32}, 40-ep fixed budget (== H_1005/H_1006, NOT length-scaled). Full ladder ran in 719s — **NO wall-time cuts**. verbatim `.verdicts/1011_dense_supervision_scaleup/h1011.txt`.
+  - **len36 SOLVED** (harness-validated == H_1006): curr-GRU 0.608/0.729 ≫ chance 0.167, d **9.19/10.06** vs LM 0.323, sep@≥2rungs.
+  - **len72 BREAK**: curr 0.332/0.386 ≈ LM 0.338, gap ≤0.05, d −0.44/1.07, sep LOST.
+  - **len144 collapsed**: curr 0.332/0.347 = LM, d 0.08/0.31. **Break length = 72 (2× the H_1006 crack).**
+  - **mem-aug LM = 1.000 at EVERY length** ⇒ tasks stay perfectly state-bound ⇒ the cap is **trainability-AT-HORIZON, not representability** (same diagnosis as H_1005).
+- **Finding**: dense per-step supervision does NOT remove the horizon dependence — it **raises the ceiling**. H_1005's curriculum capped T3 at 36 (already at chance there); dense-sup pushes the WM>LM separator out so 36 is now SOLVED, but the modular-ring-counter credit chain still walls off, just farther out — **capping at 72**. A refined scaling law over H_1005/H_1006: credit-DENSITY buys a longer-but-still-bounded horizon at fixed compute, not an unbounded one (closed-negative, a_paper_negative_ok). Whether a length-scaled budget or yet-denser/structured supervision lifts the cap past 72 is OPEN (a_completeness_over_cheap).
+- **Honest scope** (a_scale_honest_scope, a_toy_scale_recheck): TOY ladder — bounded dim {16,32}, 3 seeds (trim REPORTED), max length T3=144, pure-numpy GRU at a FIXED 40-ep budget (NOT length-scaled, by design). Larger-budget / production / real-corpus transfer UNVERIFIED. NOT a forge binary; $0 CPU-local; NOTHING on AKIDA.

@@ -1,0 +1,58 @@
+==============================================================================
+H_1011 — Dense per-step supervision SCALE-UP — does it keep cracking T3 at horizon 72/144, or cap?
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+T3 LADDER=[36, 72, 144] (1x/2x/4x the H_1006 break @36). rungs=[16, 32] seeds=3 (WALL-TRIM of H_1006's 6 — REPORTED). budget=40ep (== H_1005/H_1006, NOT scaled with length — isolates horizon at fixed compute). dose=every-1 (full dense, the H_1006 winning treatment). aux head=TRAINING-only; eval=final-label. chance=0.167. ONLY moved lever vs H_1006 = TARGET LENGTH.
+
+    [len36 rung16 seed0] curr=0.623 LM=0.317 mem=1.000  [20s]
+    [len36 rung16 seed1] curr=0.560 LM=0.317 mem=1.000  [44s]
+    [len36 rung16 seed2] curr=0.640 LM=0.337 mem=1.000  [66s]
+  done len=36   rung=16  curr=0.608 LM=0.323 mem=1.000  [66s]
+    [len36 rung32 seed0] curr=0.793 LM=0.317 mem=1.000  [109s]
+    [len36 rung32 seed1] curr=0.697 LM=0.317 mem=1.000  [148s]
+    [len36 rung32 seed2] curr=0.697 LM=0.337 mem=1.000  [190s]
+  done len=36   rung=32  curr=0.729 LM=0.323 mem=1.000  [190s]
+    [len72 rung16 seed0] curr=0.327 LM=0.337 mem=1.000  [217s]
+    [len72 rung16 seed1] curr=0.350 LM=0.330 mem=1.000  [246s]
+    [len72 rung16 seed2] curr=0.320 LM=0.347 mem=1.000  [273s]
+  done len=72   rung=16  curr=0.332 LM=0.338 mem=1.000  [273s]
+    [len72 rung32 seed0] curr=0.373 LM=0.337 mem=1.000  [320s]
+    [len72 rung32 seed1] curr=0.330 LM=0.330 mem=1.000  [367s]
+    [len72 rung32 seed2] curr=0.453 LM=0.347 mem=1.000  [412s]
+  done len=72   rung=32  curr=0.386 LM=0.338 mem=1.000  [412s]
+    [len144 rung16 seed0] curr=0.327 LM=0.323 mem=1.000  [451s]
+    [len144 rung16 seed1] curr=0.337 LM=0.317 mem=1.000  [492s]
+    [len144 rung16 seed2] curr=0.333 LM=0.353 mem=1.000  [530s]
+  done len=144  rung=16  curr=0.332 LM=0.331 mem=1.000  [530s]
+    [len144 rung32 seed0] curr=0.327 LM=0.310 mem=1.000  [592s]
+    [len144 rung32 seed1] curr=0.363 LM=0.337 mem=1.000  [653s]
+    [len144 rung32 seed2] curr=0.350 LM=0.370 mem=1.000  [718s]
+  done len=144  rung=32  curr=0.347 LM=0.339 mem=1.000  [718s]
+
+================================================================================================
+DENSE-SUPERVISION SCALE-UP — T3 length ladder (dense curr-GRU vs LM vs mem-aug)
+task           tgtLen rung  chance  currGRU      LM   memLM     gap        d         p
+------------------------------------------------------------------------------------------------
+T3 len36           36   16   0.167    0.608   0.323   1.000   0.284     9.19   4.7e-03
+T3 len36           36   32   0.167    0.729   0.323   1.000   0.406    10.06   4.8e-03
+T3 len72           72   16   0.167    0.332   0.338   1.000  -0.006    -0.44   6.3e-01
+T3 len72           72   32   0.167    0.386   0.338   1.000   0.048     1.07   3.2e-01
+T3 len144         144   16   0.167    0.332   0.331   1.000   0.001     0.08   9.3e-01
+T3 len144         144   32   0.167    0.347   0.339   1.000   0.008     0.31   7.3e-01
+================================================================================================
+
+ladder (T3 — does dense-sup keep cracking the cap as horizon grows?):
+  len=36   curr={16: np.float64(0.608), 32: np.float64(0.729)} LM={16: np.float64(0.323), 32: np.float64(0.323)} d={16: np.float64(9.19), 32: np.float64(10.06)} sep@>=2rungs=True  SOLVED=True  sep-rungs=[16, 32]
+  len=72   curr={16: np.float64(0.332), 32: np.float64(0.386)} LM={16: np.float64(0.338), 32: np.float64(0.338)} d={16: np.float64(-0.44), 32: np.float64(1.07)} sep@>=2rungs=False SOLVED=False sep-rungs=[]
+  len=144  curr={16: np.float64(0.332), 32: np.float64(0.347)} LM={16: np.float64(0.331), 32: np.float64(0.339)} d={16: np.float64(0.08), 32: np.float64(0.31)} sep@>=2rungs=False SOLVED=False sep-rungs=[]
+
+harness-validate (len36 reproduces H_1006 dense crack): True
+measured ladder rungs: [36, 72, 144]  (CUT for wall-time: [])
+longest measured: 144  break length: 72  scales-to-all: False
+
+------------------------------------------------------------------------------
+VERDICT H_1011: FAIL DENSE-SUP-HORIZON-CAPPED-AT-72 — per-step hidden-state supervision (H_1006's dense every-1 treatment, VERBATIM) cracks T3 at len 36 (harness-validated == H_1006) but BREAKS at len 72: dense curr-GRU collapses toward chance 0.167 (sep lost / d<0.8 vs LM). Measured ladder [36, 72, 144] (CUT for wall-time: []); curr {36: {16: np.float64(0.608), 32: np.float64(0.729)}, 72: {16: np.float64(0.332), 32: np.float64(0.386)}, 144: {16: np.float64(0.332), 32: np.float64(0.347)}}. Per-step supervision buys a LONGER-but-still-BOUNDED horizon than the length-curriculum (H_1005 capped at 36 too, but at chance there; dense-sup pushes the WM>LM separator out, capping at 72) — a refined scaling law: credit-DENSITY raises the horizon ceiling but does NOT remove the horizon dependence (closed-negative, a_paper_negative_ok). TOY ladder (seeds=3, budget=40ep fixed, NOT length-scaled — by design); larger-budget / production OPEN (a_scale_honest_scope).
+------------------------------------------------------------------------------
+
+[total wall 719s]
