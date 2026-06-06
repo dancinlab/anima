@@ -1,0 +1,233 @@
+================================================================================
+H_1014 — an ANALYTIC split predictor (faithful-UP / big-Phi-DOWN classifier)
+substrate=CPU-mirror (numpy) — H_1004 engines + H_1012 proof, RE-PROVEN == stdlib at n=4
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+predictor = SIGN of Delta(cross-MIP coupling) vs baseline (read off the SAME bits)
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+SET: planning[known SPLIT] + imagination[known no-split] + guided[known no-split]
+     + chaos[NEW intervention, gain=1.4]. PASS = predictor SIGN separates split vs no-split.
+================================================================================
+
+EQUIVALENCE PROOF at n=4 (H_1012 prove_mirrors_at_n — re-prove BOTH mirrors vs stdlib):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  predictor (mi_mincut) deterministic re-run: True   mi_mincut=0.007226 bigphi_miploss=2.910123
+  EQUIVALENCE PROOF n=4: PROVEN
+
+################ SCORE intervention = planning  [known SPLIT (H_1004/H_1012)] ################
+    [planning seed 1/30] elapsed=   0.8s
+    [planning seed 2/30] elapsed=   1.8s
+    [planning seed 3/30] elapsed=   2.7s
+    [planning seed 4/30] elapsed=   3.5s
+    [planning seed 5/30] elapsed=   4.3s
+    [planning seed 6/30] elapsed=   5.3s
+    [planning seed 7/30] elapsed=   6.3s
+    [planning seed 8/30] elapsed=   7.1s
+    [planning seed 9/30] elapsed=   7.9s
+    [planning seed 10/30] elapsed=   8.8s
+    [planning seed 11/30] elapsed=   9.6s
+    [planning seed 12/30] elapsed=  10.5s
+    [planning seed 13/30] elapsed=  11.4s
+    [planning seed 14/30] elapsed=  12.2s
+    [planning seed 15/30] elapsed=  13.1s
+    [planning seed 16/30] elapsed=  13.9s
+    [planning seed 17/30] elapsed=  14.8s
+    [planning seed 18/30] elapsed=  15.6s
+    [planning seed 19/30] elapsed=  16.4s
+    [planning seed 20/30] elapsed=  17.3s
+    [planning seed 21/30] elapsed=  18.1s
+    [planning seed 22/30] elapsed=  19.0s
+    [planning seed 23/30] elapsed=  19.8s
+    [planning seed 24/30] elapsed=  20.6s
+    [planning seed 25/30] elapsed=  21.5s
+    [planning seed 26/30] elapsed=  22.3s
+    [planning seed 27/30] elapsed=  23.2s
+    [planning seed 28/30] elapsed=  24.0s
+    [planning seed 29/30] elapsed=  24.8s
+    [planning seed 30/30] elapsed=  25.7s
+  --- planning: intervention vs baseline (matched n=4 binary discretization) ---
+     big-Phi      contrast=-4.0083 d=-1.834 p=2.503e-08 -> LOWERS
+     faithful_phi contrast=+2.3332 d=+5.178 p=6.724e-27 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): True
+     PREDICTOR mi_mincut(cross-MIP coupling) contrast=+2.2983 d=+5.166 p=1.283e-26 -> RAISES
+       (context) mi_total contrast=+4.1060 | bigphi_miploss contrast=-4.0083 | bigphi_total contrast=-6.6880
+
+################ SCORE intervention = imagination  [known no-split (H_1004)] ################
+    [imagination seed 1/30] elapsed=  27.5s
+    [imagination seed 2/30] elapsed=  28.3s
+    [imagination seed 3/30] elapsed=  29.2s
+    [imagination seed 4/30] elapsed=  30.0s
+    [imagination seed 5/30] elapsed=  30.8s
+    [imagination seed 6/30] elapsed=  31.7s
+    [imagination seed 7/30] elapsed=  32.6s
+    [imagination seed 8/30] elapsed=  33.5s
+    [imagination seed 9/30] elapsed=  34.3s
+    [imagination seed 10/30] elapsed=  35.2s
+    [imagination seed 11/30] elapsed=  36.2s
+    [imagination seed 12/30] elapsed=  37.1s
+    [imagination seed 13/30] elapsed=  37.9s
+    [imagination seed 14/30] elapsed=  38.8s
+    [imagination seed 15/30] elapsed=  39.6s
+    [imagination seed 16/30] elapsed=  40.5s
+    [imagination seed 17/30] elapsed=  41.3s
+    [imagination seed 18/30] elapsed=  42.2s
+    [imagination seed 19/30] elapsed=  43.1s
+    [imagination seed 20/30] elapsed=  44.0s
+    [imagination seed 21/30] elapsed=  44.9s
+    [imagination seed 22/30] elapsed=  45.8s
+    [imagination seed 23/30] elapsed=  46.7s
+    [imagination seed 24/30] elapsed=  47.6s
+    [imagination seed 25/30] elapsed=  48.5s
+    [imagination seed 26/30] elapsed=  49.5s
+    [imagination seed 27/30] elapsed=  50.3s
+    [imagination seed 28/30] elapsed=  51.2s
+    [imagination seed 29/30] elapsed=  52.0s
+    [imagination seed 30/30] elapsed=  52.9s
+  --- imagination: intervention vs baseline (matched n=4 binary discretization) ---
+     big-Phi      contrast=+0.4226 d=+0.171 p=5.096e-01 -> RAISES
+     faithful_phi contrast=+0.0625 d=+0.134 p=6.050e-01 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     PREDICTOR mi_mincut(cross-MIP coupling) contrast=+0.0875 d=+0.194 p=4.562e-01 -> RAISES
+       (context) mi_total contrast=+0.3477 | bigphi_miploss contrast=+0.4226 | bigphi_total contrast=+0.7847
+
+################ SCORE intervention = guided  [known no-split (H_1004)] ################
+    [guided seed 1/30] elapsed=  53.8s
+    [guided seed 2/30] elapsed=  54.7s
+    [guided seed 3/30] elapsed=  55.6s
+    [guided seed 4/30] elapsed=  56.4s
+    [guided seed 5/30] elapsed=  57.3s
+    [guided seed 6/30] elapsed=  58.1s
+    [guided seed 7/30] elapsed=  59.0s
+    [guided seed 8/30] elapsed=  59.9s
+    [guided seed 9/30] elapsed=  60.7s
+    [guided seed 10/30] elapsed=  61.5s
+    [guided seed 11/30] elapsed=  62.5s
+    [guided seed 12/30] elapsed=  63.3s
+    [guided seed 13/30] elapsed=  64.2s
+    [guided seed 14/30] elapsed=  65.0s
+    [guided seed 15/30] elapsed=  65.9s
+    [guided seed 16/30] elapsed=  66.7s
+    [guided seed 17/30] elapsed=  67.6s
+    [guided seed 18/30] elapsed=  68.4s
+    [guided seed 19/30] elapsed=  69.4s
+    [guided seed 20/30] elapsed=  70.3s
+    [guided seed 21/30] elapsed=  71.1s
+    [guided seed 22/30] elapsed=  72.0s
+    [guided seed 23/30] elapsed=  72.8s
+    [guided seed 24/30] elapsed=  73.7s
+    [guided seed 25/30] elapsed=  74.6s
+    [guided seed 26/30] elapsed=  75.5s
+    [guided seed 27/30] elapsed=  76.3s
+    [guided seed 28/30] elapsed=  77.2s
+    [guided seed 29/30] elapsed=  78.1s
+    [guided seed 30/30] elapsed=  78.9s
+  --- guided: intervention vs baseline (matched n=4 binary discretization) ---
+     big-Phi      contrast=+0.3759 d=+0.169 p=5.151e-01 -> RAISES
+     faithful_phi contrast=+0.4936 d=+0.839 p=1.992e-03 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     PREDICTOR mi_mincut(cross-MIP coupling) contrast=+0.5454 d=+0.981 p=3.662e-04 -> RAISES
+       (context) mi_total contrast=+1.0431 | bigphi_miploss contrast=+0.3759 | bigphi_total contrast=-0.4858
+
+################ SCORE intervention = chaos  [NEW intervention (gain=1.4)] ################
+    [chaos seed 1/30] elapsed=  79.9s
+    [chaos seed 2/30] elapsed=  80.8s
+    [chaos seed 3/30] elapsed=  81.6s
+    [chaos seed 4/30] elapsed=  82.5s
+    [chaos seed 5/30] elapsed=  83.4s
+    [chaos seed 6/30] elapsed=  84.3s
+    [chaos seed 7/30] elapsed=  85.2s
+    [chaos seed 8/30] elapsed=  86.1s
+    [chaos seed 9/30] elapsed=  87.0s
+    [chaos seed 10/30] elapsed=  87.8s
+    [chaos seed 11/30] elapsed=  88.7s
+    [chaos seed 12/30] elapsed=  89.6s
+    [chaos seed 13/30] elapsed=  90.4s
+    [chaos seed 14/30] elapsed=  91.3s
+    [chaos seed 15/30] elapsed=  92.3s
+    [chaos seed 16/30] elapsed=  93.2s
+    [chaos seed 17/30] elapsed=  94.1s
+    [chaos seed 18/30] elapsed=  95.0s
+    [chaos seed 19/30] elapsed=  95.8s
+    [chaos seed 20/30] elapsed=  96.7s
+    [chaos seed 21/30] elapsed=  97.5s
+    [chaos seed 22/30] elapsed=  98.4s
+    [chaos seed 23/30] elapsed=  99.3s
+    [chaos seed 24/30] elapsed= 100.1s
+    [chaos seed 25/30] elapsed= 101.0s
+    [chaos seed 26/30] elapsed= 101.8s
+    [chaos seed 27/30] elapsed= 102.7s
+    [chaos seed 28/30] elapsed= 103.5s
+    [chaos seed 29/30] elapsed= 104.4s
+    [chaos seed 30/30] elapsed= 105.3s
+  --- chaos: intervention vs baseline (matched n=4 binary discretization) ---
+     big-Phi      contrast=+0.6181 d=+0.318 p=2.234e-01 -> RAISES
+     faithful_phi contrast=+0.6740 d=+1.381 p=1.561e-06 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     PREDICTOR mi_mincut(cross-MIP coupling) contrast=+0.6883 d=+1.531 p=1.817e-07 -> RAISES
+       (context) mi_total contrast=+1.1465 | bigphi_miploss contrast=+0.6181 | bigphi_total contrast=-0.3554
+
+================================================================================
+CLASSIFIER MATRIX — split label vs candidate predictor sign, per intervention
+================================================================================
+  intervention |    big d |  faith d | SPLIT? | pred mincut Δ | pred sign
+  planning     |   -1.834 |   +5.178 |   True |       +2.2983 |        +1
+  imagination  |   +0.171 |   +0.134 |  False |       +0.0875 |        +1
+  guided       |   +0.169 |   +0.839 |  False |       +0.5454 |        +1
+  chaos        |   +0.318 |   +1.381 |  False |       +0.6883 |        +1
+
+Pre-registered candidate: a SPLIT-inducing intervention DECREASES cross-MIP coupling
+  (predictor sign = -1 / lowers modularity-coupling) while a no-split one does NOT.
+  split interventions' predictor (Δ cross-MIP coupling):   ['+2.2983']
+  no-split interventions' predictor (Δ cross-MIP coupling): ['+0.0875', '+0.5454', '+0.6883']
+  separation test: split predictors all ABOVE no-split (threshold separates)
+  separating boundary (Δ cross-MIP coupling): +1.4933
+
+================================================================================
+OVERALL: PREDICTOR-SEPARATES — the candidate analytic predictor (sign of the
+  intervention's change in cross-MIP coupling vs baseline) SEPARATES the
+  split-inducing interventions from the non-split ones across the WHOLE SET
+  (planning + imagination + guided + chaos). A predictive boundary EXISTS:
+  the paper's single-most-important follow-up is ANSWERED (PASS).
+  VERDICT-TOKEN: PREDICTOR-SEPARATES
+================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 — both engines
+EXACT; big-Phi super-exponential so n=4 is the rung for the full SET x 30 seeds.
+Both CPU mirrors RE-PROVEN == stdlib at n=4 (H_1012 prove_mirrors_at_n) BEFORE
+scoring; predictor is a deterministic pure function of the SAME bits. Scale-
+transfer UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool.
+NOT a forge binary; $0 CPU-local, no GPU.
+
+--------------------------------------------------------------------------------
+POST-HOC MECHANISM ANALYSIS (honest qualification of the verdict; g5-measured rows above)
+--------------------------------------------------------------------------------
+The frozen falsifier's PASS condition ("a single threshold/sign rule classifies the
+SET consistently with the measured split labels") is MET: a magnitude THRESHOLD on the
+candidate predictor (Δ cross-MIP coupling) at boundary +1.4933 separates the one split
+intervention (planning, +2.2983) from all three no-split ones (+0.0875/+0.5454/+0.6883).
+VERDICT-TOKEN: PREDICTOR-SEPARATES (qualified — read the sign caveat below).
+
+HOWEVER, the pre-registered MECHANISM/DIRECTION is FALSIFIED. The hypothesis stated a
+split-inducing intervention DECREASES cross-MIP coupling (raises modularity; predictor
+sign = -1). The measurement shows the OPPOSITE: planning RAISES cross-MIP coupling
+(Δ mi_mincut +2.2983, sign +1) and RAISES whole-system MI (Δ mi_total +4.1060). Every
+intervention has predictor sign +1, so the SIGN rule does NOT separate; only the
+MAGNITUDE does. The true split mechanism, read off the same substrate (planning row):
+  - faithful_phi RISES (Δ +2.3332, d+5.18) because pairwise-MI coupling rises sharply;
+  - big-Phi FALLS (Δ -4.0083, d-1.83) because the big-Phi STRUCTURE collapses
+    (Δ bigphi_total -6.6880: sum of distinctions + relations drops) even as MI rises.
+So the two engines read the SAME MI rise OPPOSITELY: the MIP-EI scalar credits raised
+cross-coupling as integration, while the system big-Phi loses irreducible distinction/
+relation structure. The split is therefore predicted by the MAGNITUDE of the MI-coupling
+shock (large MI rise -> faithful up + big-Phi structure collapse), NOT by a modularity
+INCREASE. The pre-registered "increase decomposability/modularity" direction is RULED OUT
+(a_paper_negative_ok applies to the DIRECTION); the cross-MIP-coupling axis IS predictive
+in MAGNITUDE (PASS for the classifier, FALSIFIED for the direction). n=4 toy; scale-transfer
+UNVERIFIED.

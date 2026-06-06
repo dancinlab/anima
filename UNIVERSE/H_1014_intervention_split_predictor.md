@@ -11,9 +11,9 @@ pre_register_frozen: true
 frozen_at: 2026-06-07
 since: 2026-06-07
 sister: H_1004 (clean disagreement at n=4), H_1012 (robust in n {4,5}), H_999/H_1001 (faithful_phi planning up), H_1002 (the original confounded big-Phi), PAPER/phi-measure-dependence-planning, a_phi_iit4_tool
-status: pre-registered (unmeasured)
-scope: TOY n=4, $0 CPU-local, real IIT-4.0 stdlib engines (CPU mirror re-proven equal to stdlib at n=4 per H_1012 discipline BEFORE scoring). big-Phi super-exponential, so n=4 is the tractable rung for the full intervention SET x seeds. a_scale_honest_scope · a_toy_scale_recheck — scale-transfer beyond n=4 UNVERIFIED. NOT a forge binary; no GPU.
-verdict: PENDING-MEASUREMENT
+status: measured
+scope: TOY n=4, $0 CPU-local, real IIT-4.0 stdlib engines (CPU mirror RE-PROVEN equal to stdlib at n=4 per H_1012 discipline BEFORE scoring — PROVEN). big-Phi super-exponential, so n=4 is the tractable rung for the full intervention SET x 30 seeds. a_scale_honest_scope · a_toy_scale_recheck — scale-transfer beyond n=4 UNVERIFIED. NOT a forge binary; no GPU.
+verdict: 🟢 PREDICTOR-SEPARATES (QUALIFIED) — a single MAGNITUDE threshold on the candidate predictor (Δ cross-MIP coupling vs baseline, read off the SAME n=4 binary discretization) SEPARATES the one split-inducing intervention from all three non-split ones across the WHOLE SET: planning Δ+2.2983 (the only SPLIT: big-Φ d−1.83 LOWERS / faithful d+5.18 RAISES, reproduces H_1012 verbatim) sits ABOVE imagination +0.0875 / guided +0.5454 / chaos[NEW] +0.6883 (all no-split), separating boundary +1.4933. The classifier's frozen PASS condition is MET. BUT the pre-registered DIRECTION/MECHANISM is FALSIFIED: the hypothesis said split DECREASES coupling (raises modularity, sign −1); the data shows the OPPOSITE — every intervention RAISES cross-MIP coupling (all sign +1), so the SIGN rule does NOT separate, only the MAGNITUDE does. The true substrate-read split mechanism (planning row): faithful_phi RISES because pairwise-MI coupling rises sharply (Δ mi_total +4.1060) WHILE big-Φ FALLS because its irreducible distinction/relation STRUCTURE collapses (Δ bigphi_total −6.6880) — the two engines read the SAME MI rise OPPOSITELY. So the split is predicted by the MAGNITUDE of the MI-coupling shock, NOT by a modularity increase (that direction is RULED OUT, a_paper_negative_ok). Both CPU mirrors RE-PROVEN ≡ stdlib at n=4 BEFORE scoring (PROVEN; predictor deterministic, pure function of the same bits). g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool. TOY n=4; scale-transfer UNVERIFIED.
 ---
 
 # H_1014 — an analytic split predictor (which property of an intervention predicts faithful-up / big-Phi-down?)
@@ -76,7 +76,39 @@ to [H_1012](./H_1012_bigphi_faithful_larger_n.md) · [H_1004](./H_1004_bigphi_fa
 [H_1001](./H_1001_reopen_consolidate.md) · PAPER/phi-measure-dependence-planning ·
 IIT4_PHI_TOOLS.md · a_phi_iit4_tool
 
-## 5. measurement + finding
-PENDING-MEASUREMENT — verdict token will be filled from
-`.verdicts/intervention-split-predictor/H_1014.txt` after the deterministic run (g5 CODE-measured;
-both stdlib engines + CPU mirror re-proven exact at n=4).
+## 5. measurement + finding (2026-06-07 · 🟢 PREDICTOR-SEPARATES, QUALIFIED · g5 CODE-measured, $0 CPU-local)
+Verdict raw: `.verdicts/1014_intervention_split_predictor/H_1014.txt` (g73 — deterministic run that
+COULD have falsified; both stdlib engines + CPU mirror RE-PROVEN ≡ stdlib at n=4 BEFORE scoring).
+
+**Result — the cross-MIP-coupling predictor SEPARATES the SET by MAGNITUDE, but the pre-registered
+DIRECTION is FALSIFIED:**
+
+intervention vs baseline, both engines + predictor, 30 seeds, matched (n=4, binary discretization):
+
+| intervention | big-Φ contrast (d) | faithful contrast (d) | SPLIT? | predictor Δ cross-MIP coupling | pred sign |
+|---|---|---|---|---|---|
+| planning (depth-8 vs greedy) | **−4.0083 (d−1.83) LOWERS** | **+2.3332 (d+5.18) RAISES** | **True** (reproduces H_1012) | **+2.2983** | +1 |
+| imagination (drift vs react) | +0.4226 (d+0.17) | +0.0625 (d+0.13) | False | +0.0875 | +1 |
+| guided (goal-pull vs react) | +0.3759 (d+0.17) | +0.4936 (d+0.84) | False | +0.5454 | +1 |
+| chaos [NEW] (gain-1.4 vs gain-1.0) | +0.6181 (d+0.32) | +0.6740 (d+1.38) | False | +0.6883 | +1 |
+
+- **VERDICT-TOKEN: PREDICTOR-SEPARATES (QUALIFIED).** A single MAGNITUDE threshold on the candidate
+  predictor (Δ cross-MIP coupling, read off the SAME bits) at boundary **+1.4933** separates the one
+  split-inducing intervention (planning, +2.2983) from all three non-split ones (≤+0.6883). The frozen
+  PASS condition (a single threshold rule classifies the SET consistently with the measured split
+  labels) is MET — the paper's single-most-important follow-up has a predictive boundary.
+- **The pre-registered DIRECTION/MECHANISM is FALSIFIED (a_paper_negative_ok on the direction).** The
+  hypothesis said a split-inducing intervention DECREASES cross-MIP coupling (raises modularity,
+  predictor sign −1). The data shows the OPPOSITE: EVERY intervention RAISES cross-MIP coupling
+  (all sign +1), so the SIGN rule does NOT separate — only the MAGNITUDE does. The true substrate-read
+  split mechanism (planning row): faithful_phi RISES because pairwise-MI coupling rises sharply
+  (Δ mi_total +4.1060) WHILE big-Φ FALLS because its irreducible distinction+relation STRUCTURE
+  collapses (Δ bigphi_total −6.6880). The two engines read the SAME MI rise OPPOSITELY: the MIP-EI
+  scalar credits raised cross-coupling as integration; the system big-Φ loses irreducible structure.
+  ⇒ the split is predicted by the MAGNITUDE of the MI-coupling shock, NOT by a modularity increase.
+  The "increase decomposability/modularity" axis is RULED OUT as the split direction.
+- **honest scope (a_scale_honest_scope · a_toy_scale_recheck):** TOY n=4 — both engines EXACT;
+  big-Φ super-exponential so n=4 is the rung for the full SET × 30 seeds. Both CPU mirrors RE-PROVEN
+  ≡ stdlib at n=4 (H_1012 prove_mirrors_at_n; PROVEN) BEFORE scoring; the predictor is a deterministic
+  pure function of the same bits. Scale-transfer beyond n=4 UNVERIFIED. g5 CODE-measured (no LLM
+  self-judge, p7), a_phi_iit4_tool. NOT a forge binary; $0 CPU-local, no GPU.
