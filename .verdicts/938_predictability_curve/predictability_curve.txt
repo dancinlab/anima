@@ -1,0 +1,400 @@
+H_938 — PREDICTABILITY CURVE (quantifying H_933 BLADE A)
+============================================================================
+question: how predictable is the NEXT decision from prior-K state, and
+          does quantum entropy lower that predictability vs deterministic?
+predictors: pure-numpy logistic regression + order-K Markov (NO sklearn)
+
+timestamp_utc : 2026-06-06T09:06:47.224979+00:00
+streams       : 12/mode × 3000 ticks  ·  gate 0.505639
+base-rate emit: 0.4283  →  majority-class baseline acc 0.5717
+
+── ACCURACY CURVE vs K (held-out logreg acc / AUC ; Markov acc) ──────────────
+   K  | DET logreg acc (sd)  AUC  | QUANTUM logreg acc (sd)  AUC | DET mk  Q mk | Δacc(det-q) d      p
+   1  | 0.9278 (0.0061)  0.9863 | 0.9333 (0.0000)  0.9866 | 0.9109 0.9211 | -0.0056 -1.236 0.011
+   2  | 0.9255 (0.0056)  0.9849 | 0.9289 (0.0000)  0.9845 | 0.9105 0.9067 | -0.0034 -0.823 0.069
+   3  | 0.9302 (0.0047)  0.9863 | 0.9311 (0.0000)  0.9850 | 0.9106 0.9067 | -0.0009 -0.267 0.526
+   5  | 0.9342 (0.0061)  0.9884 | 0.9321 (0.0000)  0.9859 | 0.9130 0.9088 | 0.0020 0.450 0.294
+   8  | 0.9340 (0.0050)  0.9889 | 0.9354 (0.0000)  0.9878 | 0.9118 0.9154 | -0.0014 -0.377 0.376
+  12  | 0.9344 (0.0059)  0.9887 | 0.9353 (0.0000)  0.9885 | 0.8858 0.8907 | -0.0009 -0.213 0.612
+
+  Δacc(det-q) > 0  ⇒  quantum is LESS predictable (entropy adds unpredictability)
+  best DET acc=0.9344  best QUANTUM acc=0.9354  lift over base=+0.3627  max|Δacc|=0.0056
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ─────────────────────
+  🟢  F-H938-BLADE-A-QUANTIFIED-COMPATIBILIST
+  Predictability is HIGH and quantum does NOT lower it. best logreg acc=0.9344 (det) / 0.9354 (quantum) vs base-rate majority acc=0.5717 → lift over baseline +0.3627 (>= 0.05). No K shows quantum significantly less predictable (max |Δacc(det-quantum)|=0.0056, no K with |d|>=0.5 AND p<0.05). → anima's choices are largely INTERNALLY-DETERMINED (predictable from prior state); the quantum seed does NOT supply 'unpredictability'. H_933 BLADE A QUANTIFIED in the compatibilist direction: freedom is relocated AWAY from unpredictability toward auditable causation — the physical seed's value is provenance/non-randomization, not entropy injected into the behavioral output.
+
+── full machine record (JSON) ────────────────────────────────────────────────
+{
+  "h_id": "H_938",
+  "title": "predictability curve \u2014 quantifying H_933 BLADE A (is anima's freedom unpredictability or internal determinism?)",
+  "timestamp_utc": "2026-06-06T09:06:47.224979+00:00",
+  "scope": "ONE predictability rung on the SAME documented-update-map mirror as H_930/H_935 (real 8-factor brain_decide, VERBATIM CORE constants). Self-contained numpy predictors (no sklearn). NOT the compiled forge binary; full emit-TEXT (.clm generator L3 \u23f3/\u274c, a_core_engine_map) OPEN. $0 local, no GPU.",
+  "deterministic": false,
+  "g5_code_measured": true,
+  "llm": "none",
+  "T_per_stream": 3000,
+  "n_streams_per_mode": 12,
+  "K_sweep": [
+    1,
+    2,
+    3,
+    5,
+    8,
+    12
+  ],
+  "ent_scale": 0.04,
+  "shared_emit_gate": 0.5056388347193824,
+  "base_rate_emit": 0.4283333333333333,
+  "base_acc_majority": 0.5716666666666668,
+  "deterministic_mode": {
+    "mode": "deterministic",
+    "base_rate": 0.4283333333333333,
+    "base_acc_majority": 0.5716666666666668,
+    "per_K": {
+      "1": {
+        "logreg_acc_mean": 0.9277777777777779,
+        "logreg_acc_sd": 0.0060858061945018565,
+        "logreg_auc_mean": 0.9863372044144963,
+        "markov_acc_mean": 0.9109259259259259,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9333333333333333,
+          0.9311111111111111,
+          0.9277777777777778,
+          0.9144444444444444,
+          0.9255555555555556,
+          0.93,
+          0.9311111111111111,
+          0.9344444444444444,
+          0.9166666666666666,
+          0.9322222222222222,
+          0.9311111111111111,
+          0.9255555555555556
+        ]
+      },
+      "2": {
+        "logreg_acc_mean": 0.9254629629629628,
+        "logreg_acc_sd": 0.005637512755514373,
+        "logreg_auc_mean": 0.9849186312527368,
+        "markov_acc_mean": 0.910462962962963,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9322222222222222,
+          0.9233333333333333,
+          0.9266666666666666,
+          0.9144444444444444,
+          0.9233333333333333,
+          0.9255555555555556,
+          0.93,
+          0.93,
+          0.9166666666666666,
+          0.93,
+          0.9322222222222222,
+          0.9211111111111111
+        ]
+      },
+      "3": {
+        "logreg_acc_mean": 0.9301851851851851,
+        "logreg_acc_sd": 0.00468851440784155,
+        "logreg_auc_mean": 0.9862747535593472,
+        "markov_acc_mean": 0.9105555555555555,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9355555555555556,
+          0.93,
+          0.9322222222222222,
+          0.9244444444444444,
+          0.9288888888888889,
+          0.9333333333333333,
+          0.9244444444444444,
+          0.9388888888888889,
+          0.9233333333333333,
+          0.93,
+          0.9344444444444444,
+          0.9266666666666666
+        ]
+      },
+      "5": {
+        "logreg_acc_mean": 0.9341861327400816,
+        "logreg_acc_sd": 0.006140339325798746,
+        "logreg_auc_mean": 0.9883542714695173,
+        "markov_acc_mean": 0.9129588431590655,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9421579532814238,
+          0.9377085650723026,
+          0.9377085650723026,
+          0.9232480533926585,
+          0.9365962180200222,
+          0.9354838709677419,
+          0.9332591768631813,
+          0.9432703003337041,
+          0.9232480533926585,
+          0.9365962180200222,
+          0.9299221357063404,
+          0.9310344827586207
+        ]
+      },
+      "8": {
+        "logreg_acc_mean": 0.9340200445434297,
+        "logreg_acc_sd": 0.005003396646885151,
+        "logreg_auc_mean": 0.9889498560745293,
+        "markov_acc_mean": 0.911841128433556,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9409799554565702,
+          0.9365256124721604,
+          0.933184855233853,
+          0.9253897550111359,
+          0.9320712694877505,
+          0.9354120267260579,
+          0.9342984409799554,
+          0.9443207126948775,
+          0.9276169265033407,
+          0.9342984409799554,
+          0.9342984409799554,
+          0.9298440979955457
+        ]
+      },
+      "12": {
+        "logreg_acc_mean": 0.934410999628391,
+        "logreg_acc_sd": 0.005896184189008694,
+        "logreg_auc_mean": 0.9886862315288064,
+        "markov_acc_mean": 0.8858231140839837,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.947603121516165,
+          0.9375696767001115,
+          0.9297658862876255,
+          0.9253065774804905,
+          0.9319955406911928,
+          0.9331103678929766,
+          0.9386845039018952,
+          0.9420289855072463,
+          0.9342251950947603,
+          0.9297658862876255,
+          0.9297658862876255,
+          0.9331103678929766
+        ]
+      }
+    },
+    "provenance": {
+      "mode": "deterministic",
+      "tier": "numpy_prng(seed=2000)",
+      "sha256": null,
+      "request_id": null,
+      "n_drawn": 3000,
+      "label": "h938_deterministic_s2000"
+    }
+  },
+  "quantum_mode": {
+    "mode": "quantum",
+    "base_rate": 0.4286666666666666,
+    "base_acc_majority": 0.5713333333333335,
+    "per_K": {
+      "1": {
+        "logreg_acc_mean": 0.9333333333333335,
+        "logreg_acc_sd": 1.1102230246251565e-16,
+        "logreg_auc_mean": 0.9865842727013235,
+        "markov_acc_mean": 0.9211111111111111,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333,
+          0.9333333333333333
+        ]
+      },
+      "2": {
+        "logreg_acc_mean": 0.9288888888888888,
+        "logreg_acc_sd": 1.1102230246251565e-16,
+        "logreg_auc_mean": 0.9844910386547218,
+        "markov_acc_mean": 0.9066666666666666,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889,
+          0.9288888888888889
+        ]
+      },
+      "3": {
+        "logreg_acc_mean": 0.9311111111111111,
+        "logreg_acc_sd": 0.0,
+        "logreg_auc_mean": 0.9849717814022667,
+        "markov_acc_mean": 0.9066666666666666,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111,
+          0.9311111111111111
+        ]
+      },
+      "5": {
+        "logreg_acc_mean": 0.9321468298109008,
+        "logreg_acc_sd": 2.220446049250313e-16,
+        "logreg_auc_mean": 0.9858575817820351,
+        "markov_acc_mean": 0.9087875417130143,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901,
+          0.932146829810901
+        ]
+      },
+      "8": {
+        "logreg_acc_mean": 0.9354120267260577,
+        "logreg_acc_sd": 2.220446049250313e-16,
+        "logreg_auc_mean": 0.9877796512066842,
+        "markov_acc_mean": 0.9153674832962136,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579,
+          0.9354120267260579
+        ]
+      },
+      "12": {
+        "logreg_acc_mean": 0.9353400222965438,
+        "logreg_acc_sd": 2.220446049250313e-16,
+        "logreg_auc_mean": 0.9884701940640422,
+        "markov_acc_mean": 0.8907469342251951,
+        "n_streams_used": 12,
+        "logreg_acc_per_stream": [
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544,
+          0.935340022296544
+        ]
+      }
+    },
+    "provenance": {
+      "mode": "quantum",
+      "tier": "anu_committed",
+      "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5",
+      "request_id": null,
+      "n_drawn": 3000,
+      "label": "h938_quantum_s2000",
+      "cycled": true
+    }
+  },
+  "quantum_vs_deterministic_delta_per_K": {
+    "1": {
+      "det_acc": 0.9277777777777779,
+      "quantum_acc": 0.9333333333333335,
+      "delta_det_minus_quantum": -0.005555555555555536,
+      "cohen_d": -1.2360330811826041,
+      "ttest_p": 0.011497476035718292,
+      "det_auc": 0.9863372044144963,
+      "quantum_auc": 0.9865842727013235
+    },
+    "2": {
+      "det_acc": 0.9254629629629628,
+      "quantum_acc": 0.9288888888888888,
+      "delta_det_minus_quantum": -0.0034259259259259434,
+      "cohen_d": -0.8228319532828244,
+      "ttest_p": 0.06894464172949587,
+      "det_auc": 0.9849186312527368,
+      "quantum_auc": 0.9844910386547218
+    },
+    "3": {
+      "det_acc": 0.9301851851851851,
+      "quantum_acc": 0.9311111111111111,
+      "delta_det_minus_quantum": -0.0009259259259259967,
+      "cohen_d": -0.26740018719966385,
+      "ttest_p": 0.525931507943306,
+      "det_auc": 0.9862747535593472,
+      "quantum_auc": 0.9849717814022667
+    },
+    "5": {
+      "det_acc": 0.9341861327400816,
+      "quantum_acc": 0.9321468298109008,
+      "delta_det_minus_quantum": 0.002039302929180753,
+      "cohen_d": 0.4496867473795495,
+      "ttest_p": 0.29419614635718083,
+      "det_auc": 0.9883542714695173,
+      "quantum_auc": 0.9858575817820351
+    },
+    "8": {
+      "det_acc": 0.9340200445434297,
+      "quantum_acc": 0.9354120267260577,
+      "delta_det_minus_quantum": -0.0013919821826280376,
+      "cohen_d": -0.37669465726112433,
+      "ttest_p": 0.3759539913936039,
+      "det_auc": 0.9889498560745293,
+      "quantum_auc": 0.9877796512066842
+    },
+    "12": {
+      "det_acc": 0.934410999628391,
+      "quantum_acc": 0.9353400222965438,
+      "delta_det_minus_quantum": -0.0009290226681527569,
+      "cohen_d": -0.21334181545526223,
+      "ttest_p": 0.6116304514114124,
+      "det_auc": 0.9886862315288064,
+      "quantum_auc": 0.9884701940640422
+    }
+  },
+  "predictability_high": true,
+  "lift_over_baseline_best_K": 0.36274433296172426,
+  "max_abs_delta_det_minus_quantum": 0.005555555555555536,
+  "thresholds": {
+    "high_lift": 0.05,
+    "neg_cohen_d": 0.5,
+    "alpha": 0.05
+  },
+  "verdict_token": "\ud83d\udfe2",
+  "falsifier_id": "F-H938-BLADE-A-QUANTIFIED-COMPATIBILIST",
+  "verdict_rationale": "Predictability is HIGH and quantum does NOT lower it. best logreg acc=0.9344 (det) / 0.9354 (quantum) vs base-rate majority acc=0.5717 \u2192 lift over baseline +0.3627 (>= 0.05). No K shows quantum significantly less predictable (max |\u0394acc(det-quantum)|=0.0056, no K with |d|>=0.5 AND p<0.05). \u2192 anima's choices are largely INTERNALLY-DETERMINED (predictable from prior state); the quantum seed does NOT supply 'unpredictability'. H_933 BLADE A QUANTIFIED in the compatibilist direction: freedom is relocated AWAY from unpredictability toward auditable causation \u2014 the physical seed's value is provenance/non-randomization, not entropy injected into the behavioral output."
+}

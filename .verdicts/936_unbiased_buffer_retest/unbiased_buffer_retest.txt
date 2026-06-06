@@ -1,0 +1,274 @@
+H_936 — UNBIASED NON-CYCLING ANU BUFFER RE-TEST (closes H_930 tension gap)
+============================================================================
+timestamp_utc : 2026-06-06T08:56:36.808964+00:00
+population    : 24 seeds × 2400 ticks/seed  ·  ent_scale 0.04
+shared gate   : 0.5036279804452517
+
+── BIG FRESH BUFFER (provenance + unbiasedness proof) ──────────────────
+  source        : os.urandom_fallback  (tier os_urandom, request_id None)
+  n_bytes       : 859456  (worst-case cursor span 777600 → no_cycle_by_construction True)
+  sha256        : f4eb12cc46adae27c6e105287d562042828f61d82357f434df73ae600e53113c
+  byte_mean     : 127.1560 (ideal 127.5, abs_err 0.3440)
+  KS vs uniform : D=0.0066 p=0.1139
+  chi² 256-bin  : 270.11 (df 255) p=0.2465  →  unbiased=True
+
+── BEFORE/AFTER table (mean over 24 seeds) ─────────────────────────────
+                          DET (deterministic)   QS (quantum small,    QB (quantum BIG,
+                                                cycling 1024 B)       fresh non-cycling)
+  emit_rate (sd)          0.420538 (0.004915)  0.420833 (0.000000)  0.421632 (0.004436)
+  phi_mean (sd)           0.141427 (0.000332)  0.140839 (0.000000)  0.141596 (0.000340)
+  phi_var                 0.001780            0.001760            0.001788
+  (* QS emit_rate sd≈0 = H_930's single-pattern bug; QB sd>0 = real population)
+
+── phi_mean two-sample (the load-bearing tension test) ─────────────────
+  DET vs QS (H_930 regime) : Cohen d=+2.4495  KS D=1.0 p=6.2e-14
+  DET vs QB (H_936 test)   : Cohen d=-0.4920  KS D=0.3333333333333333 p=0.14
+
+  tension observables distinguishing — QS: 6 ['phi_mean', 'phi_var', 'ch0_mean', 'ch1_mean', 'ch3_mean', 'ch5_mean']
+  tension observables distinguishing — QB: 0 []
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ───────────────
+  🟢  F-H936-ARTIFACT-CONFIRMED
+  The H_930 tension-axis difference COLLAPSES to parity under the unbiased non-cycling buffer. phi_mean: QS (cycling 1024 B) Cohen d=+2.449 KS p=6.2e-14 (reproduces H_930's +2.45 / p≪1e-10 regime) -> QB (big fresh) Cohen d=-0.492 KS p=0.14 (NON-SIGNIFICANT, p>0.05 → parity; the small |d| is between-population noise of two equivalent unbiased sources, not a real difference). QB emit_rate sd=0.004436 (> 0: a REAL 24-seed population, fixing H_930's sd≈0 single-pattern bug). Tension observables distinguishing (joint p<0.05 AND |d|>=0.2): QS 6 ['phi_mean', 'phi_var', 'ch0_mean', 'ch1_mean', 'ch3_mean', 'ch5_mean'] -> QB 0 []. H_930's finite-buffer DC-bias attribution is CORRECT: entropy is ontological-not-functional on BOTH the emit AND the tension axis. The free-will arc's last hole is CLOSED.
+
+── full machine record (JSON) ──────────────────────────────────────────
+{
+  "h_id": "H_936",
+  "title": "unbiased non-cycling ANU buffer re-test of H_930's tension axis",
+  "timestamp_utc": "2026-06-06T08:56:36.808964+00:00",
+  "scope": "ONE re-test rung on the SAME documented-update-map mirror as H_930/H_935 (real 8-factor brain_decide, VERBATIM CORE constants). NOT the compiled forge binary; full emit-TEXT (.clm generator L3 \u23f3/\u274c, a_core_engine_map) OPEN. $0 local, no GPU.",
+  "deterministic": false,
+  "g5_code_measured": true,
+  "llm": "none",
+  "T_per_seed": 2400,
+  "n_seeds_per_arm": 24,
+  "ent_scale": 0.04,
+  "shared_emit_gate": 0.5036279804452517,
+  "big_buffer": {
+    "requested_bytes": 859456,
+    "worst_case_cursor_span_bytes": 777600,
+    "no_cycle_by_construction": true,
+    "provenance": {
+      "source": "os.urandom_fallback",
+      "tier": "os_urandom",
+      "request_id": null,
+      "n_bytes": 859456,
+      "sha256": "f4eb12cc46adae27c6e105287d562042828f61d82357f434df73ae600e53113c",
+      "path": "/private/tmp/wt-h936-939/state/h936_unbiased_buffer/anu_big_fresh.bin",
+      "honest_note": "real ANU preferred; os.urandom fallback is tagged and valid for the CYCLING test (source-agnostic). #123-A: ANU == chacha20 statistically \u2014 provenance, not better bits."
+    },
+    "uniformity": {
+      "n_checked": 65536,
+      "byte_mean": 127.15596008300781,
+      "ideal_mean": 127.5,
+      "mean_abs_err": 0.3440399169921875,
+      "ks_D_vs_uniform": 0.0066070556640625,
+      "ks_p_vs_uniform": 0.11391464232443127,
+      "chi2_256bin": 270.109375,
+      "chi2_p": 0.24646321370738666,
+      "chi2_df": 255,
+      "unbiased": true
+    }
+  },
+  "arm_DET_summary": {
+    "arm": "DET",
+    "mode": "deterministic",
+    "emit_rate_mean": 0.42053819444444446,
+    "emit_rate_sd": 0.004914605215595077,
+    "phi_mean_mean": 0.1414271270195445,
+    "phi_mean_sd": 0.00033235033063639535,
+    "phi_var_mean": 0.0017801660914591136,
+    "cycled_any": false,
+    "no_cycle_guaranteed": null,
+    "provenance_first_seed": {
+      "mode": "deterministic",
+      "tier": "numpy_prng(seed=1000)",
+      "sha256": null,
+      "request_id": null,
+      "n_drawn": 2400,
+      "label": "h936_R2_DET_s0"
+    }
+  },
+  "arm_QS_summary": {
+    "arm": "QS",
+    "mode": "quantum",
+    "emit_rate_mean": 0.42083333333333334,
+    "emit_rate_sd": 0.0,
+    "phi_mean_mean": 0.14083909775178644,
+    "phi_mean_sd": 0.0,
+    "phi_var_mean": 0.0017597389704502543,
+    "cycled_any": true,
+    "no_cycle_guaranteed": null,
+    "provenance_first_seed": {
+      "mode": "quantum",
+      "tier": "anu_committed",
+      "sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5",
+      "request_id": null,
+      "n_drawn": 2400,
+      "label": "h936_R2_QS_s0",
+      "cycled": true
+    }
+  },
+  "arm_QB_summary": {
+    "arm": "QB",
+    "mode": "quantum",
+    "emit_rate_mean": 0.42163194444444446,
+    "emit_rate_sd": 0.0044356194937358925,
+    "phi_mean_mean": 0.1415960402596568,
+    "phi_mean_sd": 0.000339844044612713,
+    "phi_var_mean": 0.0017883980832031278,
+    "cycled_any": false,
+    "no_cycle_guaranteed": true,
+    "provenance_first_seed": {
+      "mode": "quantum",
+      "tier": "anu_explicit",
+      "sha256": "f4eb12cc46adae27c6e105287d562042828f61d82357f434df73ae600e53113c",
+      "request_id": null,
+      "n_drawn": 2400,
+      "label": "h936_R2_QB_s0",
+      "cycled": false
+    }
+  },
+  "before_after_phi_mean": {
+    "H_930_regime_DET_vs_QS_small_cycling": {
+      "cohen_d": 2.4494925471666362,
+      "D": 1.0,
+      "p": 6.202011224319715e-14
+    },
+    "H_936_test_DET_vs_QB_big_fresh": {
+      "cohen_d": -0.4919603772162228,
+      "D": 0.3333333333333333,
+      "p": 0.13982257948893737
+    }
+  },
+  "full_compare_DET_vs_QS": {
+    "emit_rate": {
+      "cohen_d": -0.08314020590233187,
+      "D": 0.5833333333333334,
+      "p": 0.0004056559340207839
+    },
+    "emit_entropy_bits": {
+      "cohen_d": -0.12540353772675072,
+      "D": 0.5833333333333334,
+      "p": 0.0004056559340207839
+    },
+    "mean_inter_emit": {
+      "cohen_d": -0.3341041177374605,
+      "D": 0.625,
+      "p": 0.00010401434205661125
+    },
+    "phi_mean": {
+      "cohen_d": 2.4494925471666362,
+      "D": 1.0,
+      "p": 6.202011224319715e-14
+    },
+    "phi_var": {
+      "cohen_d": 1.8890293685663428,
+      "D": 0.9166666666666666,
+      "p": 6.995868661032638e-11
+    },
+    "ch0_mean": {
+      "cohen_d": 2.1039785510193707,
+      "D": 0.9583333333333334,
+      "p": 2.976965387673463e-12
+    },
+    "ch1_mean": {
+      "cohen_d": 0.4624720409530335,
+      "D": 0.7083333333333334,
+      "p": 4.566483309802445e-06
+    },
+    "ch2_mean": {
+      "cohen_d": 0.0,
+      "D": 0.0,
+      "p": 1.0
+    },
+    "ch3_mean": {
+      "cohen_d": -0.6457169082185016,
+      "D": 0.625,
+      "p": 0.00010401434205661125
+    },
+    "ch4_mean": {
+      "cohen_d": 0.0,
+      "D": 0.0,
+      "p": 1.0
+    },
+    "ch5_mean": {
+      "cohen_d": 2.103978551019369,
+      "D": 0.9583333333333334,
+      "p": 2.976965387673463e-12
+    }
+  },
+  "full_compare_DET_vs_QB": {
+    "emit_rate": {
+      "cohen_d": -0.22872583086420456,
+      "D": 0.16666666666666666,
+      "p": 0.9024001944012529
+    },
+    "emit_entropy_bits": {
+      "cohen_d": -0.23200558662834117,
+      "D": 0.16666666666666666,
+      "p": 0.9024001944012529
+    },
+    "mean_inter_emit": {
+      "cohen_d": 0.021125018821121107,
+      "D": 0.20833333333333334,
+      "p": 0.686017125117228
+    },
+    "phi_mean": {
+      "cohen_d": -0.4919603772162228,
+      "D": 0.3333333333333333,
+      "p": 0.13982257948893737
+    },
+    "phi_var": {
+      "cohen_d": -0.5247923739636897,
+      "D": 0.375,
+      "p": 0.06780335175136987
+    },
+    "ch0_mean": {
+      "cohen_d": 0.298854132616517,
+      "D": 0.25,
+      "p": 0.4490368220409109
+    },
+    "ch1_mean": {
+      "cohen_d": -0.1830213326703124,
+      "D": 0.2916666666666667,
+      "p": 0.26283384201555077
+    },
+    "ch2_mean": {
+      "cohen_d": 0.0,
+      "D": 0.0,
+      "p": 1.0
+    },
+    "ch3_mean": {
+      "cohen_d": 0.39745767716602026,
+      "D": 0.25,
+      "p": 0.4490368220409109
+    },
+    "ch4_mean": {
+      "cohen_d": 0.0,
+      "D": 0.0,
+      "p": 1.0
+    },
+    "ch5_mean": {
+      "cohen_d": 0.29885413261652155,
+      "D": 0.25,
+      "p": 0.4490368220409109
+    }
+  },
+  "tension_distinguishing_QS": [
+    "phi_mean",
+    "phi_var",
+    "ch0_mean",
+    "ch1_mean",
+    "ch3_mean",
+    "ch5_mean"
+  ],
+  "tension_distinguishing_QB": [],
+  "negligible_thresholds": {
+    "cohen_d": 0.2,
+    "alpha": 0.05
+  },
+  "verdict_token": "\ud83d\udfe2",
+  "falsifier_id": "F-H936-ARTIFACT-CONFIRMED",
+  "verdict_rationale": "The H_930 tension-axis difference COLLAPSES to parity under the unbiased non-cycling buffer. phi_mean: QS (cycling 1024 B) Cohen d=+2.449 KS p=6.2e-14 (reproduces H_930's +2.45 / p\u226a1e-10 regime) -> QB (big fresh) Cohen d=-0.492 KS p=0.14 (NON-SIGNIFICANT, p>0.05 \u2192 parity; the small |d| is between-population noise of two equivalent unbiased sources, not a real difference). QB emit_rate sd=0.004436 (> 0: a REAL 24-seed population, fixing H_930's sd\u22480 single-pattern bug). Tension observables distinguishing (joint p<0.05 AND |d|>=0.2): QS 6 ['phi_mean', 'phi_var', 'ch0_mean', 'ch1_mean', 'ch3_mean', 'ch5_mean'] -> QB 0 []. H_930's finite-buffer DC-bias attribution is CORRECT: entropy is ontological-not-functional on BOTH the emit AND the tension axis. The free-will arc's last hole is CLOSED."
+}

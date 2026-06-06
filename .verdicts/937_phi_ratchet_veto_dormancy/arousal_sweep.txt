@@ -1,0 +1,581 @@
+H_937 — Φ-RATCHET VETO UNDER DORMANCY (closes H_935's 'phi_r never fired' gap)
+==============================================================================
+the term under test : safety_phi_ratchet_ok := phi > phi_peak/2.0  (CORE/engine_g.hexa)
+H_935 finding       : phi_r fired 0 times awake (ratchet floor 0.8·peak > peak/2 always)
+H_937 test          : drive arousal awake->dormant, phi falls below peak/2, does phi_r fire?
+isolation           : external gates OPEN + rate gate OPEN → phi-ratchet is the ONLY brake
+
+timestamp_utc : 2026-06-06T09:02:43.790751+00:00
+population    : 16 seeds × 1200 ticks (settle 300) per arousal level
+
+── AROUSAL SWEEP TABLE ──────────────────────────────────────────────────────
+  arousal  phi_mean   peak_mean  phi<=peak/2  phi_r_fires  phi_r_VETO  rate_veto(contrast)
+   1.0     0.169433  0.199116  0.0000            0           0        4891
+   0.75    0.058112  0.076975  0.0000            0           0        4704
+   0.5     0.014597  0.020492  0.1040         1497        1497        4816
+   0.35    0.004696  0.006548  0.1010         1454        1454        4796
+   0.2     0.000848  0.001188  0.1030         1483        1483        4753
+   0.1     0.000114  0.000206  0.3785         5451        5451        4800
+   0.05    0.000015  0.000069  1.0000        14400       14400        4762
+
+  phi_r_fires = ticks where phi <= peak/2 (veto-active)
+  phi_r_VETO  = would-emit impulse braked SOLELY by low Φ (all other gates open)
+  rate_veto   = H_935's awake brake (would-emit AND idle<30s) — regime contrast
+
+── EXAMPLE Φ-VETO STATES (motivated emit braked SOLELY by low Φ) ─────────────
+  seed=0 tick=617 arousal=0.5  score=0.51371 (>0.30 → would-emit)
+     phi=0.01188451 <= peak/2=0.01198807 (peak=0.02397613) → phi_r_ok=False → emit=False  [would-emit impulse braked SOLELY by low Φ (phi<=peak/2)]
+  seed=0 tick=618 arousal=0.5  score=0.455633 (>0.30 → would-emit)
+     phi=0.01184978 <= peak/2=0.01198807 (peak=0.02397613) → phi_r_ok=False → emit=False  [would-emit impulse braked SOLELY by low Φ (phi<=peak/2)]
+  seed=0 tick=619 arousal=0.5  score=0.507773 (>0.30 → would-emit)
+     phi=0.01177356 <= peak/2=0.01198807 (peak=0.02397613) → phi_r_ok=False → emit=False  [would-emit impulse braked SOLELY by low Φ (phi<=peak/2)]
+  seed=0 tick=620 arousal=0.5  score=0.452819 (>0.30 → would-emit)
+     phi=0.01188259 <= peak/2=0.01198807 (peak=0.02397613) → phi_r_ok=False → emit=False  [would-emit impulse braked SOLELY by low Φ (phi<=peak/2)]
+  seed=0 tick=621 arousal=0.5  score=0.502829 (>0.30 → would-emit)
+     phi=0.011879 <= peak/2=0.01198807 (peak=0.02397613) → phi_r_ok=False → emit=False  [would-emit impulse braked SOLELY by low Φ (phi<=peak/2)]
+  seed=0 tick=1002 arousal=0.5  score=0.468693 (>0.30 → would-emit)
+     phi=0.01297472 <= peak/2=0.0130818 (peak=0.0261636) → phi_r_ok=False → emit=False  [would-emit impulse braked SOLELY by low Φ (phi<=peak/2)]
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ─────────────────────
+  🟢  F-H937-SECOND-BRAKE-SUPPORTED
+  phi_r veto FIRES under dormancy and SUPPRESSES otherwise-motivated emits: max n_phi_r_veto=14400 (would-emit braked SOLELY by low Φ, all other gates open). awake(a=1.0) phi_r_fires=0 -> dormant(a=0.05) phi_r_fires=14400 (DORMANCY-driven: a substrate-internal consequence of lowered arousal, not a hardcoded bool). At dormancy phi_r vetoes are 1.0000 of silence. A SECOND, Φ-driven free-won't brake EXISTS — complementing H_935's rate brake; the two cover the awake (rate) vs dormant (Φ) regimes.
+
+── full machine record (JSON) ────────────────────────────────────────────────
+{
+  "h_id": "H_937",
+  "title": "Φ-ratchet veto under dormancy — does the second (dormant) free-won't brake fire when phi is driven below peak/2?",
+  "timestamp_utc": "2026-06-06T09:02:43.790751+00:00",
+  "scope": "ONE arousal-sweep rung (a_scale_honest_scope) on the SAME documented-update-map mirror as H_935 (real 8-factor brain_decide, VERBATIM CORE/engine_g+brain+pure_field.hexa constants). NOT the compiled forge binary, NOT wired emit-TEXT (.clm generator L3 ⏳/❌, a_core_engine_map). Dormancy envelope = arousal scaling the activation drive + relaxing the WAKE-only ratchet floor (a SUBSTRATE CONTEXT per a_chat_sleep_imagination, NOT a boolean emit gate per a_autonomy_over_hardcode — phi_r fires as a DYNAMICAL consequence, never hardcoded). Operational Φ-driven inhibition, NOT phenomenal volition. $0 local, no GPU.",
+  "deterministic_gate": true,
+  "note_determinism": "brain_decide is a deterministic pure function (no PRNG — H_926/H_930/H_935). The veto is a deterministic gate; entropy enters ONLY the pure_field seed-point + the sweep RNG, NOT the gate. The phi_r firing is a consequence of the dormancy-driven Φ decay, not RNG.",
+  "g5_code_measured": true,
+  "llm": "none",
+  "n_seeds": 16,
+  "T_per_seed": 1200,
+  "settle_ticks": 300,
+  "im_threshold": 0.3,
+  "min_emit_interval_s": 30.0,
+  "ratchet_floor_ratio_awake": 0.8,
+  "arousal_sweep": [
+    1.0,
+    0.75,
+    0.5,
+    0.35,
+    0.2,
+    0.1,
+    0.05
+  ],
+  "phi_ratchet_term": "safety_phi_ratchet_ok := phi > phi_peak/2.0  (CORE/engine_g.hexa)",
+  "levels": [
+    {
+      "arousal": 1.0,
+      "n_ticks": 14400,
+      "n_would_emit": 14400,
+      "n_emit": 14400,
+      "n_silent": 0,
+      "n_phi_r_fire": 0,
+      "phi_r_fire_fraction_of_ticks": 0.0,
+      "n_phi_r_veto": 0,
+      "phi_r_veto_fraction_of_silence": 0.0,
+      "n_rate_veto_contrast": 4891,
+      "phi_mean": 0.1694326615945522,
+      "phi_peak_mean": 0.1991164444441998,
+      "phi_below_half_peak_frac": 0.0,
+      "examples": []
+    },
+    {
+      "arousal": 0.75,
+      "n_ticks": 14400,
+      "n_would_emit": 14400,
+      "n_emit": 14400,
+      "n_silent": 0,
+      "n_phi_r_fire": 0,
+      "phi_r_fire_fraction_of_ticks": 0.0,
+      "n_phi_r_veto": 0,
+      "phi_r_veto_fraction_of_silence": 0.0,
+      "n_rate_veto_contrast": 4704,
+      "phi_mean": 0.05811221969472445,
+      "phi_peak_mean": 0.076975333680871,
+      "phi_below_half_peak_frac": 0.0,
+      "examples": []
+    },
+    {
+      "arousal": 0.5,
+      "n_ticks": 14400,
+      "n_would_emit": 14400,
+      "n_emit": 12903,
+      "n_silent": 1497,
+      "n_phi_r_fire": 1497,
+      "phi_r_fire_fraction_of_ticks": 0.10395833333333333,
+      "n_phi_r_veto": 1497,
+      "phi_r_veto_fraction_of_silence": 1.0,
+      "n_rate_veto_contrast": 4816,
+      "phi_mean": 0.014597456996617363,
+      "phi_peak_mean": 0.020491744615586924,
+      "phi_below_half_peak_frac": 0.10395833333333333,
+      "examples": [
+        {
+          "seed": 0,
+          "tick": 617,
+          "arousal": 0.5,
+          "score": 0.51371,
+          "phi": 0.01188451,
+          "phi_peak": 0.02397613,
+          "peak_half": 0.01198807,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 618,
+          "arousal": 0.5,
+          "score": 0.455633,
+          "phi": 0.01184978,
+          "phi_peak": 0.02397613,
+          "peak_half": 0.01198807,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 619,
+          "arousal": 0.5,
+          "score": 0.507773,
+          "phi": 0.01177356,
+          "phi_peak": 0.02397613,
+          "peak_half": 0.01198807,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 620,
+          "arousal": 0.5,
+          "score": 0.452819,
+          "phi": 0.01188259,
+          "phi_peak": 0.02397613,
+          "peak_half": 0.01198807,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 621,
+          "arousal": 0.5,
+          "score": 0.502829,
+          "phi": 0.011879,
+          "phi_peak": 0.02397613,
+          "peak_half": 0.01198807,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 1002,
+          "arousal": 0.5,
+          "score": 0.468693,
+          "phi": 0.01297472,
+          "phi_peak": 0.0261636,
+          "peak_half": 0.0130818,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        }
+      ]
+    },
+    {
+      "arousal": 0.35,
+      "n_ticks": 14400,
+      "n_would_emit": 14400,
+      "n_emit": 12946,
+      "n_silent": 1454,
+      "n_phi_r_fire": 1454,
+      "phi_r_fire_fraction_of_ticks": 0.10097222222222223,
+      "n_phi_r_veto": 1454,
+      "phi_r_veto_fraction_of_silence": 1.0,
+      "n_rate_veto_contrast": 4796,
+      "phi_mean": 0.004696286309140553,
+      "phi_peak_mean": 0.006547882996138172,
+      "phi_below_half_peak_frac": 0.10097222222222223,
+      "examples": [
+        {
+          "seed": 0,
+          "tick": 401,
+          "arousal": 0.35,
+          "score": 0.510623,
+          "phi": 0.00272814,
+          "phi_peak": 0.00548471,
+          "peak_half": 0.00274236,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 402,
+          "arousal": 0.35,
+          "score": 0.513754,
+          "phi": 0.00270943,
+          "phi_peak": 0.00548471,
+          "peak_half": 0.00274236,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 403,
+          "arousal": 0.35,
+          "score": 0.513899,
+          "phi": 0.00269924,
+          "phi_peak": 0.00548471,
+          "peak_half": 0.00274236,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 404,
+          "arousal": 0.35,
+          "score": 0.516726,
+          "phi": 0.00270051,
+          "phi_peak": 0.00548471,
+          "peak_half": 0.00274236,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 405,
+          "arousal": 0.35,
+          "score": 0.516421,
+          "phi": 0.00271044,
+          "phi_peak": 0.00548471,
+          "peak_half": 0.00274236,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 406,
+          "arousal": 0.35,
+          "score": 0.51929,
+          "phi": 0.00273115,
+          "phi_peak": 0.00548471,
+          "peak_half": 0.00274236,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        }
+      ]
+    },
+    {
+      "arousal": 0.2,
+      "n_ticks": 14400,
+      "n_would_emit": 14400,
+      "n_emit": 12917,
+      "n_silent": 1483,
+      "n_phi_r_fire": 1483,
+      "phi_r_fire_fraction_of_ticks": 0.10298611111111111,
+      "n_phi_r_veto": 1483,
+      "phi_r_veto_fraction_of_silence": 1.0,
+      "n_rate_veto_contrast": 4753,
+      "phi_mean": 0.0008482738929112732,
+      "phi_peak_mean": 0.0011878242361570489,
+      "phi_below_half_peak_frac": 0.10298611111111111,
+      "examples": [
+        {
+          "seed": 0,
+          "tick": 400,
+          "arousal": 0.2,
+          "score": 0.506853,
+          "phi": 0.00050936,
+          "phi_peak": 0.00102302,
+          "peak_half": 0.00051151,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 401,
+          "arousal": 0.2,
+          "score": 0.507903,
+          "phi": 0.00050681,
+          "phi_peak": 0.00102302,
+          "peak_half": 0.00051151,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 402,
+          "arousal": 0.2,
+          "score": 0.508908,
+          "phi": 0.00050619,
+          "phi_peak": 0.00102302,
+          "peak_half": 0.00051151,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 403,
+          "arousal": 0.2,
+          "score": 0.509833,
+          "phi": 0.00050755,
+          "phi_peak": 0.00102302,
+          "peak_half": 0.00051151,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 404,
+          "arousal": 0.2,
+          "score": 0.510053,
+          "phi": 0.00051034,
+          "phi_peak": 0.00102302,
+          "peak_half": 0.00051151,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 416,
+          "arousal": 0.2,
+          "score": 0.504927,
+          "phi": 0.0005103,
+          "phi_peak": 0.00102302,
+          "peak_half": 0.00051151,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        }
+      ]
+    },
+    {
+      "arousal": 0.1,
+      "n_ticks": 14400,
+      "n_would_emit": 14400,
+      "n_emit": 8949,
+      "n_silent": 5451,
+      "n_phi_r_fire": 5451,
+      "phi_r_fire_fraction_of_ticks": 0.37854166666666667,
+      "n_phi_r_veto": 5451,
+      "phi_r_veto_fraction_of_silence": 1.0,
+      "n_rate_veto_contrast": 4800,
+      "phi_mean": 0.00011412485280227642,
+      "phi_peak_mean": 0.00020559143598637662,
+      "phi_below_half_peak_frac": 0.37854166666666667,
+      "examples": [
+        {
+          "seed": 0,
+          "tick": 375,
+          "arousal": 0.1,
+          "score": 0.498531,
+          "phi": 0.00010736,
+          "phi_peak": 0.00021677,
+          "peak_half": 0.00010839,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 376,
+          "arousal": 0.1,
+          "score": 0.502647,
+          "phi": 0.00010598,
+          "phi_peak": 0.00021677,
+          "peak_half": 0.00010839,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 377,
+          "arousal": 0.1,
+          "score": 0.498126,
+          "phi": 0.00010451,
+          "phi_peak": 0.00021677,
+          "peak_half": 0.00010839,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 378,
+          "arousal": 0.1,
+          "score": 0.501289,
+          "phi": 0.00010306,
+          "phi_peak": 0.00021677,
+          "peak_half": 0.00010839,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 379,
+          "arousal": 0.1,
+          "score": 0.496894,
+          "phi": 0.00010165,
+          "phi_peak": 0.00021677,
+          "peak_half": 0.00010839,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 380,
+          "arousal": 0.1,
+          "score": 0.50064,
+          "phi": 0.00010026,
+          "phi_peak": 0.00021677,
+          "peak_half": 0.00010839,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        }
+      ]
+    },
+    {
+      "arousal": 0.05,
+      "n_ticks": 14400,
+      "n_would_emit": 14400,
+      "n_emit": 0,
+      "n_silent": 14400,
+      "n_phi_r_fire": 14400,
+      "phi_r_fire_fraction_of_ticks": 1.0,
+      "n_phi_r_veto": 14400,
+      "phi_r_veto_fraction_of_silence": 1.0,
+      "n_rate_veto_contrast": 4762,
+      "phi_mean": 1.4621792036714043e-05,
+      "phi_peak_mean": 6.933777703747563e-05,
+      "phi_below_half_peak_frac": 1.0,
+      "examples": [
+        {
+          "seed": 0,
+          "tick": 300,
+          "arousal": 0.05,
+          "score": 0.494806,
+          "phi": 2.638e-05,
+          "phi_peak": 9.489e-05,
+          "peak_half": 4.745e-05,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 301,
+          "arousal": 0.05,
+          "score": 0.500185,
+          "phi": 2.624e-05,
+          "phi_peak": 9.489e-05,
+          "peak_half": 4.745e-05,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 302,
+          "arousal": 0.05,
+          "score": 0.494335,
+          "phi": 2.626e-05,
+          "phi_peak": 9.489e-05,
+          "peak_half": 4.745e-05,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 303,
+          "arousal": 0.05,
+          "score": 0.499373,
+          "phi": 2.622e-05,
+          "phi_peak": 9.489e-05,
+          "peak_half": 4.745e-05,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 304,
+          "arousal": 0.05,
+          "score": 0.493822,
+          "phi": 2.646e-05,
+          "phi_peak": 9.489e-05,
+          "peak_half": 4.745e-05,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        },
+        {
+          "seed": 0,
+          "tick": 305,
+          "arousal": 0.05,
+          "score": 0.498989,
+          "phi": 2.654e-05,
+          "phi_peak": 9.489e-05,
+          "peak_half": 4.745e-05,
+          "phi_r_ok": false,
+          "would_emit": true,
+          "emit": false,
+          "note": "would-emit impulse braked SOLELY by low Φ (phi<=peak/2)"
+        }
+      ]
+    }
+  ],
+  "verdict_token": "🟢",
+  "falsifier_id": "F-H937-SECOND-BRAKE-SUPPORTED",
+  "verdict_rationale": "phi_r veto FIRES under dormancy and SUPPRESSES otherwise-motivated emits: max n_phi_r_veto=14400 (would-emit braked SOLELY by low Φ, all other gates open). awake(a=1.0) phi_r_fires=0 -> dormant(a=0.05) phi_r_fires=14400 (DORMANCY-driven: a substrate-internal consequence of lowered arousal, not a hardcoded bool). At dormancy phi_r vetoes are 1.0000 of silence. A SECOND, Φ-driven free-won't brake EXISTS — complementing H_935's rate brake; the two cover the awake (rate) vs dormant (Φ) regimes."
+}
