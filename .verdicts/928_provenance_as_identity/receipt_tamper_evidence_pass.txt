@@ -1,0 +1,49 @@
+==============================================================================
+H_928 — provenance-as-identity (free-will receipt): END-TO-END VERIFY + TAMPER
+==============================================================================
+ANU buffer : /private/tmp/wt-h928/mirror/qmirror/seed/qrng_lora_init_live.bin
+buf bytes  : 1024
+
+--- END-TO-END LINEAGE (physical ANU draw -> seed -> decision) ---
+  anu_sha256      : e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+  anu_request_id  : anu_legacy_1778042160   <- from provenance.jsonl
+  entropy_mode    : quantum
+  tier            : anu_explicit
+  derived seed    : 6138986570681488651
+  decision_output : {"token": 2, "bits": [1, 0, 1, 0, 0, 0, 1, 0]}
+  output_hash     : 2dff30e22129e126167aef10d083b87735d4d9a6266e6041025f148972bb3d4d
+  receipt_hash    : b973fbd6e8598b7de03579172d4891db78db1f316d68d0951f5ec586cfcabb1c
+  LINEAGE: request_id anu_legacy_1778042160 -> seed 6138986570681488651 -> token 2
+
+--- POSITIVE verify (expect verified=True, all 4 checks True) ---
+  verified = True
+  checks   = {"anu_sha_match": true, "seed_match": true, "output_match": true, "receipt_hash_match": true}
+
+--- TAMPER (a): flip one byte of the ANU buffer (expect anu_sha_match=False) ---
+  verified = False
+  checks   = {"anu_sha_match": false, "seed_match": false, "output_match": true, "receipt_hash_match": true}
+
+--- TAMPER (b): alter the recorded seed (expect seed_match=False) ---
+  verified = False
+  checks   = {"anu_sha_match": true, "seed_match": false, "output_match": false, "receipt_hash_match": false}
+
+--- TAMPER (c): alter the decision_output_hash (expect output_match=False) ---
+  verified = False
+  checks   = {"anu_sha_match": true, "seed_match": true, "output_match": false, "receipt_hash_match": false}
+
+--- TAMPER (d): alter the receipt_hash (expect receipt_hash_match=False) ---
+  verified = False
+  checks   = {"anu_sha_match": true, "seed_match": true, "output_match": true, "receipt_hash_match": false}
+
+==============================================================================
+POSITIVE verified           : True
+TAMPER (a) anu-swap detected: True (anu_sha_match=False)
+TAMPER (b) seed   detected  : True (seed_match=False)
+TAMPER (c) output detected  : True (output_match=False)
+TAMPER (d) receipt detected : True (receipt_hash_match=False)
+ALL 4 TAMPERS DETECTED      : True
+VERDICT                     : SUPPORTED (PASS)
+==============================================================================
+Honest scope (#123-A): AUDITABILITY/tamper-evidence of entropy->decision
+lineage. NOT 'better randomness' (ANU==chacha20 PRNG, JSD 23x under NIST).
+NOT a phenomenal-consciousness claim.

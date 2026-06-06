@@ -1,0 +1,71 @@
+{
+  "receipt": {
+    "anu_sha256": "e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5",
+    "anu_request_id": "anu_legacy_1778042160",
+    "entropy_mode": "quantum",
+    "tier": "anu_explicit",
+    "seed": 6138986570681488651,
+    "label": "anima_emit_decision",
+    "decision_output": {
+      "token": 2,
+      "bits": [
+        1,
+        0,
+        1,
+        0,
+        0,
+        0,
+        1,
+        0
+      ]
+    },
+    "decision_output_hash": "2dff30e22129e126167aef10d083b87735d4d9a6266e6041025f148972bb3d4d",
+    "receipt_hash": "b973fbd6e8598b7de03579172d4891db78db1f316d68d0951f5ec586cfcabb1c"
+  },
+  "positive_verify": {
+    "verified": true,
+    "checks": {
+      "anu_sha_match": true,
+      "seed_match": true,
+      "output_match": true,
+      "receipt_hash_match": true
+    }
+  },
+  "tamper_a": {
+    "verified": false,
+    "checks": {
+      "anu_sha_match": false,
+      "seed_match": false,
+      "output_match": true,
+      "receipt_hash_match": true
+    }
+  },
+  "tamper_b": {
+    "verified": false,
+    "checks": {
+      "anu_sha_match": true,
+      "seed_match": false,
+      "output_match": false,
+      "receipt_hash_match": false
+    }
+  },
+  "tamper_c": {
+    "verified": false,
+    "checks": {
+      "anu_sha_match": true,
+      "seed_match": true,
+      "output_match": false,
+      "receipt_hash_match": false
+    }
+  },
+  "tamper_d": {
+    "verified": false,
+    "checks": {
+      "anu_sha_match": true,
+      "seed_match": true,
+      "output_match": true,
+      "receipt_hash_match": false
+    }
+  },
+  "verdict": "SUPPORTED"
+}
