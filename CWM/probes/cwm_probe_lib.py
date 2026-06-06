@@ -143,6 +143,66 @@ class StatelessLM:
         return _aug(F) @ self.W_out
 
 
+class LDSWorldModel:
+    """A delay-embedding linear-dynamical-system world model (the faithful latent-forward-
+    dynamics object, JEPA/Dreamer-style). latent z_t = [o_t, o_{t-1}, ...] captures hidden
+    derivatives a single observation lacks; a LEARNED linear transition A rolls z forward;
+    a decoder C reads z -> observable. This composes for multi-step imagined rollout where
+    a stateless surface predictor cannot (it has no persistent world-state).
+
+    Action-conditioned: an optional action one-hot is appended; the transition then learns
+    z_{t+1} = A [z_t ; a_t] so imagined rollouts can be conditioned on candidate actions
+    (H_964/H_967/H_980).
+    """
+
+    def __init__(self, obs_dim, delay=2, act_dim=0, ridge=1e-3):
+        self.obs_dim = obs_dim
+        self.delay = delay
+        self.act_dim = act_dim
+        self.ridge = ridge
+        self.A = None
+        self.C = None
+        self.zdim = obs_dim * delay
+
+    def embed(self, ob):
+        ob = np.asarray(ob, float)
+        T = len(ob)
+        z = np.zeros((T, self.zdim))
+        for d in range(self.delay):       # block d holds o_{t-d}
+            if d == 0:
+                z[:, :self.obs_dim] = ob
+            else:
+                z[d:, d * self.obs_dim:(d + 1) * self.obs_dim] = ob[:-d]
+        return z
+
+    def fit(self, traj_obs, traj_targets=None, traj_acts=None):
+        """traj_obs: list of (T,obs) observation seqs. traj_targets: list of (T,k) decode
+        targets (default = the observation itself). traj_acts: list of (T,act_dim) one-hots."""
+        Zt, Ztp1, Zd, Yd = [], [], [], []
+        for i, ob in enumerate(traj_obs):
+            z = self.embed(ob)
+            a = traj_acts[i] if traj_acts is not None else None
+            zin = z[self.delay - 1:-1]
+            if a is not None:
+                zin = np.hstack([zin, a[self.delay - 1:-1]])
+            Zt.append(zin); Ztp1.append(z[self.delay:])
+            tgt = traj_targets[i] if traj_targets is not None else ob
+            Zd.append(z); Yd.append(np.asarray(tgt, float))
+        self.A = _ridge(_aug(np.vstack(Zt)), np.vstack(Ztp1), self.ridge)
+        self.C = _ridge(_aug(np.vstack(Zd)), np.vstack(Yd), self.ridge)
+        return self
+
+    def roll(self, z0, h, act_seq=None):
+        z = np.asarray(z0, float).copy()
+        for k in range(h):
+            zin = z if act_seq is None else np.hstack([z, act_seq[k]])
+            z = (_aug1(zin) @ self.A)
+        return z
+
+    def decode(self, z):
+        return _aug1(np.asarray(z, float)) @ self.C
+
+
 # ----------------------------------------------------------------------------- math utils
 def _aug(H):
     return np.hstack([H, np.ones((H.shape[0], 1))])
