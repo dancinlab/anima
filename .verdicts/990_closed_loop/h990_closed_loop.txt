@@ -1,0 +1,19 @@
+==============================================================================
+H_990 — closed perceive→imagine→act→perceive LOOP end-to-end
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=2D point-to-goal, velocity HIDDEN (needs world-state)  T=30 seeds=24
+capacity: latent-ctrl params=14  position-ctrl params=6
+
+FINAL goal-distance (lower=better), mean ± std:
+  CLOSED loop  (re-perceive+act/step) : 0.0105 ± 0.0066
+  REACTIVE     (position-only, no WM)  : 0.3652 ± 0.1379
+  OPEN-LOOP    (commit imagined plan)  : 0.1189 ± 0.0622
+
+D1 closed<reactive: Welch t=-12.322 p=1.220e-11  Cohen d=-3.557
+D2 drift containment: open-loop/closed final-dist ratio = 11.378 (open-loop COMPOUNDS error)
+D3 closed also < open-loop: True
+------------------------------------------------------------------------------
+VERDICT H_990: PASS closed-loop perceive→imagine→act works end-to-end: closed=0.010 < reactive=0.365 (p=1.2e-11,d=-3.56) AND < open-loop=0.119 (open-loop compounds error ratio 11.38x) — the LOOP composes (toy rung).
+------------------------------------------------------------------------------
