@@ -1,4 +1,4 @@
-@discovery cwm_worldmodel_slate := "CWM world-model hypothesis slate (M1) — 25 pre-registered falsifiers, perceive·imagine·act·substrate·cross-cutting" :: cwm [d=2026-06-06]
+@H cwm_worldmodel_slate := "CWM world-model hypothesis slate (M1) — 25 pre-registered falsifiers, perceive·imagine·act·substrate·cross-cutting" :: cwm [d=2026-06-06]
   seed         = "CWM domain M1 — promote anima's consciousness engine beyond language into perceive→latent-state→imagine→act; author the full hypothesis space as pre-registered UNIVERSE falsifiers (NOT measure)"
   method       = "iterative brainstorm to depletion (7 rounds, .discoveries/cwm_worldmodel_brainstorm.tape) → author each surviving idea as UNIVERSE/H_960..H_984_*.md with a §2 FROZEN falsifier (PASS/FAIL/INCOMPLETE as future conditionals); disjoint H-range (≥H_960) to avoid the concurrent H_950..H_952 agent; index in CWM/CWM.md + CWM.log.md (UNIVERSE.md left untouched)"
   range        = "H_960 .. H_984 (25)"

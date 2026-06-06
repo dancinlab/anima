@@ -1,4 +1,4 @@
-@discovery 938_predictability_curve := "H_933 BLADE A quantifier" :: universe [active]
+@H 938_predictability_curve := "H_933 BLADE A quantifier" :: universe [active]
   id      = "H_938"
   seed    = "H_933 BLADE A ('freedom fails if predictable from prior state alone') was argued not measured. Quantify: how predictable is next decision from prior-K state, and does quantum entropy lower it?"
   method  = "H_930/H_935 8-factor mirror → long decision streams (T=3000 ×12/mode); self-contained numpy logistic-regression + order-K Markov predictor (NO sklearn); held-out acc/AUC vs base-rate; K∈{1,2,3,5,8,12}; det vs quantum delta (Cohen d + Welch t)"

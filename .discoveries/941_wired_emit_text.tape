@@ -1,4 +1,4 @@
-@discovery 941_wired_emit_text := "H_930 emit-TEXT rung — quantum-vs-deterministic at token layer" :: universe [active]
+@H 941_wired_emit_text := "H_930 emit-TEXT rung — quantum-vs-deterministic at token layer" :: universe [active]
   id      = "H_941"
   seed    = "H_930 closed quantum-vs-deterministic on INTERNAL substrate scalars (emit parity 🟢) but left the emit-TEXT rung OPEN (.clm generator L3 ⏳/❌ unwired); does entropy MODE change the GENERATED TOKEN distribution?"
   method  = "wire emit→.clm generator L3 decode→AR token stream via byte-exact Mac mirror clm_decode_mirror.py (NATIVE forge link BLOCKED by clm-decode-macos-link-gap) over real engine-loadable v0.2 clm_d768_e2l1.clm; 24 streams/arm × 48 sampled tokens, qentropy at sampling seed-point; token-freq chi² + per-stream seq-entropy KS+Cohen d JOINT rule pre-registered; g5 CODE-measured"

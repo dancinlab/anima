@@ -1,4 +1,4 @@
-@discovery 942_soc_scale_ladder := "H_931 SOC scale-up ladder" :: universe [active]
+@H 942_soc_scale_ladder := "H_931 SOC scale-up ladder" :: universe [active]
   id      = "H_942"
   seed    = "H_931 found 🟢 SOC (local firing-rate homeostat self-tunes to edge-of-chaos Φ-peak) on live AKD1000 but at ONE toy rung (N=16); does it hold across a pool-size ladder or is it toy-N-only?"
   method  = "reuse h927/h931 dynamics + phi_silicon_proxy + controller VERBATIM (local homeostat r*=0.5, NO peak knowledge) over N=16,64,256; perturb both sides (K0=2/12) + no-feedback control per rung; THRESHOLD scaled with IN so gap(K=4)=0 rung-invariant; scale-invariant K-space convergence gate; g5 CODE-measured"
