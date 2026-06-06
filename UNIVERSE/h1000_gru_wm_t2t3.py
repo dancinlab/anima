@@ -194,22 +194,16 @@ GRU_BATCH = 32
 GRU_LR = 5e-3
 
 
-def gru_hidden_for_budget(in_dim, n_classes, budget):
-    """Pick the largest GRU hidden dim whose TOTAL trainable params <= budget (the LM's matched
-    readout params at this rung). Guarantees the GRU is NOT given a parameter advantage."""
-    H = 1
-    best = 1
-    while True:
-        # 3 gates: each (H*in + H*H + H), plus readout (K*H + K)
-        p = 3 * (H * in_dim + H * H + H) + (n_classes * H + n_classes)
-        if p <= budget:
-            best = H
-            H += 1
-        else:
-            break
-        if H > 256:
-            break
-    return best
+def gru_hidden_for_rung(latent):
+    """WIDTH-match (H_985's convention): the GRU latent state width == the rung == H_985's WM
+    latent_dim == the LM feature dim. H_985 capacity-matched on WIDTH (WM latent_dim == LM
+    feat_dim per rung; both had a latent/latent recurrent or feat-projection matrix, the WM's
+    FIXED-random, the LM's FIXED-random). The ONLY change here is that the GRU's recurrence is
+    NONLINEAR + TRAINED — that trained gated recurrence IS the primitive treatment under test,
+    NOT a width advantage. Per-cell trainable-param counts are printed so the reader audits the
+    cost of training the recurrence (the GRU has MORE trained params than the linear-readout LM
+    by construction — that is the treatment, transparently reported, never hidden)."""
+    return int(latent)
 
 
 def run_cell_lm(make, ctx, n_classes, latent, seed, memaug):
@@ -241,8 +235,7 @@ def run_cell_gru(make, n_classes, latent, seed):
     labels = [int(c) for _, c, _ in train]
     tseqs = [s for s, _, _ in test]
     yte = np.array([c for _, c, _ in test])
-    budget = (latent + 1) * n_classes
-    hidden = gru_hidden_for_budget(in_dim, n_classes, budget)
+    hidden = gru_hidden_for_rung(latent)
     gru = GRUWorldModel(in_dim, hidden, n_classes, seed=seed + 7)
     train_rng = np.random.default_rng(seed + 4242)
     gru.train(seqs, labels, epochs=GRU_EPOCHS, batch=GRU_BATCH, lr=GRU_LR, rng=train_rng)
@@ -259,8 +252,9 @@ def main():
           f"T3 hidden-pos (P={T3_P},steps={T3_STEPS},ctx={T3_CTX})")
     print(f"WM PRIMITIVE = NONLINEAR GRU (gated tanh recurrence, BPTT+Adam, "
           f"epochs={GRU_EPOCHS} lr={GRU_LR} batch={GRU_BATCH}); LM + mem-aug = VERBATIM from H_985")
-    print(f"CAPACITY-MATCH: GRU total trainable params <= LM matched readout (latent+1)*K "
-          f"(GRU given NO param advantage; per-cell counts printed)\n")
+    print(f"CAPACITY-MATCH: GRU latent WIDTH == rung == H_985 WM latent_dim == LM feat_dim "
+          f"(H_985's width convention). The TRAINED nonlinear gated recurrence is the primitive "
+          f"treatment (NOT a width advantage); per-cell trainable-param counts printed for audit.\n")
 
     chance = {"T1_delayed_cue": 1 / T1_K, "T2_parity_track": 0.5, "T3_hidden_pos": 1 / T3_P}
 
