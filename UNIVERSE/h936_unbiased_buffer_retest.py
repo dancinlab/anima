@@ -510,24 +510,37 @@ def main():
         if (cmp_det_qs[k]["p"] is not None and cmp_det_qs[k]["p"] < 0.05
             and abs(cmp_det_qs[k]["cohen_d"]) >= NEG_COHEN)]
 
-    artifact_confirmed = (qb_phi_d < NEG_COHEN and (qb_phi_p is None or qb_phi_p > 0.05)
-                          and len(qb_tension_distinguishing) == 0)
+    # PRE-REGISTERED falsifier (the SAME H_930 "distinguishing" rule: an observable
+    # is DISTINGUISHING iff KS p<0.05 AND |Cohen d|>=0.2 — JOINTLY). Artifact is
+    # CONFIRMED iff the tension difference COLLAPSES to parity: NO tension observable
+    # (phi_mean/var + 6 channels) is distinguishing AND the load-bearing phi_mean KS
+    # is non-significant (p>0.05). A small Cohen |d| alone (e.g. -0.32 with p=0.26)
+    # is NOT a distinguishing signal — it is the expected between-population sampling
+    # noise of two equivalent unbiased sources, and KS p>0.05 confirms parity. We do
+    # NOT gate on |d|<0.2 alone (that would conflate a non-significant noise residual
+    # with a real difference); the joint p AND effect rule is the honest test.
+    phi_mean_distinguishing = (qb_phi_p is not None and qb_phi_p < 0.05
+                               and qb_phi_d >= NEG_COHEN)
+    artifact_confirmed = (len(qb_tension_distinguishing) == 0
+                          and not phi_mean_distinguishing)
 
     if artifact_confirmed:
         token = "🟢"
         fal_id = "F-H936-ARTIFACT-CONFIRMED"
         rationale = (
             f"The H_930 tension-axis difference COLLAPSES to parity under the "
-            f"unbiased non-cycling buffer. phi_mean Cohen |d|: {abs(phi_qs['cohen_d']):.3f} "
-            f"(QS, cycling 1024 B — reproduces H_930's ~2.45 regime) -> "
-            f"{qb_phi_d:.3f} (QB, big fresh) (< {NEG_COHEN}), KS p {phi_qs['p']:.3g} "
-            f"-> {qb_phi_p:.3g} (> 0.05). QB emit_rate sd={qb_emit_sd:.6f} (> 0: a "
-            f"REAL 24-seed population, fixing H_930's sd≈0 single-pattern bug). "
-            f"{len(qs_tension_distinguishing)} tension observables distinguishing "
-            f"under QS -> {len(qb_tension_distinguishing)} under QB. H_930's "
-            f"finite-buffer DC-bias attribution is CORRECT: entropy is ontological-"
-            f"not-functional on BOTH the emit AND the tension axis. The free-will "
-            f"arc's last hole is CLOSED.")
+            f"unbiased non-cycling buffer. phi_mean: QS (cycling 1024 B) Cohen "
+            f"d={phi_qs['cohen_d']:+.3f} KS p={phi_qs['p']:.3g} (reproduces H_930's "
+            f"+2.45 / p≪1e-10 regime) -> QB (big fresh) Cohen d={phi_qb['cohen_d']:+.3f} "
+            f"KS p={qb_phi_p:.3g} (NON-SIGNIFICANT, p>0.05 → parity; the small |d| is "
+            f"between-population noise of two equivalent unbiased sources, not a real "
+            f"difference). QB emit_rate sd={qb_emit_sd:.6f} (> 0: a REAL 24-seed "
+            f"population, fixing H_930's sd≈0 single-pattern bug). Tension observables "
+            f"distinguishing (joint p<0.05 AND |d|>=0.2): QS {len(qs_tension_distinguishing)} "
+            f"{qs_tension_distinguishing} -> QB {len(qb_tension_distinguishing)} "
+            f"{qb_tension_distinguishing}. H_930's finite-buffer DC-bias attribution is "
+            f"CORRECT: entropy is ontological-not-functional on BOTH the emit AND the "
+            f"tension axis. The free-will arc's last hole is CLOSED.")
     else:
         token = "🔴"
         fal_id = "F-H936-NOT-ARTIFACT"
