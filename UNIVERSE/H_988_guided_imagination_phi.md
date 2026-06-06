@@ -66,3 +66,7 @@ Probe: `CWM/probes/h988_guided_imagination_phi.py` · verdict: `.verdicts/988_gu
 - ⇄ [H_989](./H_989_planning_phi_altproxy.md) (planning-Φ re-test — mechanistically paired, same Φ-proxy finding)
 - ⇄ [H_986](./H_986_geometry_invariant_aligned.md) · [H_987](./H_987_replay_recombination.md) (sibling re-formulation re-tests)
 - ⇄ [CWM](../CWM/CWM.md) (CWM-IMAGINE)
+
+## ⚠ RE-OPEN (2026-06-06 · H_999)
+
+This 🔴 was measured with the H_912/H_931 Φ-**proxy**. [H_999](./H_999_faithful_iit4_remeasure.md) re-measured GUIDED-vs-REACT with the FAITHFUL exact MIP-EI IIT4 Φ (mirror PROVEN ≡ stdlib `faithful_phi.hexa`). Goal-guided imagination is the lone faithful-**NULL** (GUIDED−REACT −0.18, d −0.28, **p 0.29 n.s.** — NOT the proxy's strong negative), and GUIDED < DRIFT (the goal pull contracts the trajectory, lowering irreducibility), while *autonomous* imagination (H_971) and *branching* planning (H_973) RAISE faithful Φ. The proxy's sharp "guided even lower" was its purpose-blindness → **RE-OPENED** (see H_999 = 🔴-vs-proxy = PROXY-ARTIFACT). The original verdict above is preserved as the proxy-measured record.

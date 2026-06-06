@@ -73,3 +73,7 @@ Probe: `CWM/probes/h971_imagine_phi.py` · verdict: `.verdicts/971_imagined_roll
 - ⇄ [H_976](./H_976_rollout_is_mitosis.md) · [H_982](./H_982_rem_offline_world_model_consolidation.md) (REM)
 - ⇄ [CWM](../CWM/CWM.md) (CWM-IMAGINE · cross-cutting) · a_chat_sleep_imagination
 - external: Dreamer (imagination as core compute)
+
+## ⚠ RE-OPEN (2026-06-06 · H_999)
+
+This 🔴 was measured with the H_912/H_931 Φ-**proxy**. [H_999](./H_999_faithful_iit4_remeasure.md) re-measured the SAME DRIFT-vs-REACT regimes with the FAITHFUL exact MIP-EI IIT4 Φ (mirror PROVEN ≡ stdlib `faithful_phi.hexa`, |Δ|<4e-6) and the sign **REVERSED**: faithful Φ_DRIFT(imagine) 3.81 > Φ_REACT 2.30 (contrast **+1.51**, d +2.09, p 7.2e-11) — autonomous imagination is a *higher*-Φ (more causally-irreducible) state. The proxy null was its purpose-blindness, NOT causal irreducibility → **RE-OPENED** (see H_999 = 🔴-vs-proxy = PROXY-ARTIFACT). The original verdict above is preserved as the proxy-measured record; H_999 is the faithful-Φ re-verdict.
