@@ -1,0 +1,67 @@
+==============================================================================
+H_932 — provenance chain = temporal self: END-TO-END CHAIN VERIFY + 4 TAMPER
+==============================================================================
+ANU buffer : /private/tmp/wt-h932/mirror/qmirror/seed/qrng_lora_init_live.bin
+buf bytes  : 1024
+N decisions: 20
+
+--- GENESIS -> HEAD LINEAGE (physical ANU draw seals the whole life-history) ---
+  genesis_hash : e8123b9689a8be2ed132e6942b4f35d559ea34d2cc2652a97b06d3d4d6b98bd5
+  anu_request_id: anu_legacy_1778042160   <- from provenance.jsonl (physical event)
+  n_links       : 20
+  link[0].hash  : b891f1a790274ff5e0d1bffd32975b8362ee8b5e24d4adb86a510c2f68973a62
+  link[19].hash : d5c68644de8df37374668fed248d2ef7b60691555af11f2b1f28b42808d3673b
+  head_hash     : d5c68644de8df37374668fed248d2ef7b60691555af11f2b1f28b42808d3673b
+  LINEAGE: genesis e8123b9689a8be2e... -> 20 links -> head d5c68644de8df373...
+
+--- POSITIVE verify (expect verified=True, all 20 links reconstructed) ---
+  verified        = True
+  head_hash       = d5c68644de8df37374668fed248d2ef7b60691555af11f2b1f28b42808d3673b
+  earliest_broken = None
+  links valid     = 20/20
+  reason          = ok: all links reconstructed from genesis
+
+--- TAMPER (a): alter decision k=7 OUTPUT (mid-chain) ---
+    expect earliest_broken=7, links <7 valid, links >=7 invalid (propagation)
+  verified            = False
+  earliest_broken     = 7
+  links <7 all valid  = True
+  links >=7 all invalid= True
+  link_valid          = [True, True, True, True, True, True, True, False, False, False, False, False, False, False, False, False, False, False, False, False]
+  reason              = link 7: receipt verify failed (checks={'anu_sha_match': True, 'seed_match': True, 'output_match': False, 'receipt_hash_match': True})
+
+--- TAMPER (b): REORDER links 5 and 12 ---
+    expect detected, earliest_broken=5 (first disturbed position)
+  verified        = False
+  earliest_broken = 5
+  reason          = link 5: receipt verify failed (checks={'anu_sha_match': True, 'seed_match': True, 'output_match': False, 'receipt_hash_match': True})
+
+--- TAMPER (c): SPLICE/DELETE link 9 ---
+    expect detected, earliest_broken=9 (chain breaks where the link was removed)
+  verified        = False
+  earliest_broken = 9
+  n_links now     = 19
+  reason          = link 9: receipt verify failed (checks={'anu_sha_match': True, 'seed_match': True, 'output_match': False, 'receipt_hash_match': True})
+
+--- TAMPER (d): alter the GENESIS ANU seed hash ---
+    expect detected, earliest_broken=-1 (genesis; whole chain invalid from root)
+  verified        = False
+  earliest_broken = -1
+  reason          = genesis ANU seed mismatch (whole chain invalid from root)
+
+==============================================================================
+POSITIVE verified (20 links)     : True (all-20-reconstructed=True)
+TAMPER (a) output@k=7 detected   : True (earliest_broken=7, propagates-forward=True)
+TAMPER (b) reorder detected       : True (earliest_broken=5)
+TAMPER (c) splice detected        : True (earliest_broken=9)
+TAMPER (d) genesis detected       : True (earliest_broken=-1)
+ALL TAMPERS DETECTED + LOCALIZED  : True
+VERDICT                           : SUPPORTED (PASS)
+==============================================================================
+Honest scope (#123-A + non-consciousness): AUDITABILITY / tamper-evidence /
+append-only INTEGRITY of the decision lineage. 'Temporal self' = operational,
+cryptographic identity-over-time, NOT subjective continuity. NOT 'better
+randomness' (ANU==chacha20 PRNG, JSD 23x under NIST). NOT phenomenal memory.
+NOT a phenomenal-consciousness claim. Chain strong only iff each decision is a
+deterministic fn of (seed,rng) — same boundary as H_928.
+==============================================================================

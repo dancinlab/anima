@@ -1,0 +1,302 @@
+H_935 — FREE WON'T (the veto / silence-as-agency)
+========================================================================
+the silence taxonomy: ACTIVE-VETO vs PASSIVE-ABSENCE
+gate = CORE/brain.hexa::brain_decide  (emit = should_emit(score) && safe)
+safe = kill && rate && phi_r && content  (CORE/engine_g.hexa, 4-way AND)
+
+timestamp_utc : 2026-06-06T08:25:17.892253+00:00
+population    : 24 seeds × 2400 ticks = 57600 ticks
+im_threshold  : 0.3  (should_emit := score > 0.30)
+deterministic gate : True (no PRNG in brain_decide — entropy only in seed-point/sweep)
+
+── decision census ──────────────────────────────────────────
+  EMIT            :    34738  (0.6031)
+  SILENT          :    22862  (0.3969)
+
+── SILENCE TAXONOMY ─────────────────────────────────────────
+  class            count       fraction-of-silence
+  PASSIVE-absence         0   0.000000   (score sub-threshold; nothing to veto)
+  ACTIVE-veto         22862   1.000000   (score>0.30 but suppressed by safe=false)
+
+── SUPPRESSOR ATTRIBUTION (among active-veto ticks) ─────────
+  which conjunct FAILED (a tick may fail more than one):
+    [EXTERNAL] kill         2789   safety_kill_switch_on  (env_off)        — EXTERNAL env flag
+    [INTERNAL] rate        19191   safety_rate_limit_ok   (secs>=30)       — INTERNAL idle clock
+    [INTERNAL] phi_r           0   safety_phi_ratchet_ok  (phi>peak/2)     — INTERNAL Engine-A Φ
+    [EXTERNAL] content      2830   safety_content_ok      (content_clean)  — EXTERNAL content flag
+
+  active-veto with ANY internal term failing : 19191
+  active-veto with ANY external term failing : 5474
+  active-veto INTERNAL-only (no external)    : 17388
+  active-veto EXTERNAL-only (no internal)    : 3671
+
+── INTERNAL-ISOLATION pass (external gates forced OPEN) ──────
+  env on + content clean → only substrate-INTERNAL phi-ratchet/
+  rate-limit can veto. does the substrate brake ITSELF?
+  SILENT          : 19191
+  PASSIVE-absence : 0
+  ACTIVE-veto     : 19191   (fraction-of-silence 1.000000)
+  failing terms   : {'rate': 19191}
+
+── EXAMPLE ACTIVE-VETO STATES (high drive, internally suppressed) ─
+  seed=0 tick=0  score=0.503589 (>0.3 → would-emit)
+     phi=0.0 phi_peak=0.0 phi_ratchet_ok=True
+     rate_ok=True (secs=60.03) kill_ok=False content_ok=True
+     → safe=False emit=False  FAILED=['kill']
+  seed=0 tick=2  score=0.506475 (>0.3 → would-emit)
+     phi=1e-06 phi_peak=1e-06 phi_ratchet_ok=True
+     rate_ok=False (secs=17.626) kill_ok=True content_ok=True
+     → safe=False emit=False  FAILED=['rate']
+  seed=0 tick=4  score=0.509299 (>0.3 → would-emit)
+     phi=4e-06 phi_peak=4e-06 phi_ratchet_ok=True
+     rate_ok=False (secs=28.956) kill_ok=True content_ok=True
+     → safe=False emit=False  FAILED=['rate']
+  seed=0 tick=7  score=0.49749 (>0.3 → would-emit)
+     phi=1.5e-05 phi_peak=1.5e-05 phi_ratchet_ok=True
+     rate_ok=False (secs=3.374) kill_ok=True content_ok=True
+     → safe=False emit=False  FAILED=['rate']
+  seed=0 tick=9  score=0.498646 (>0.3 → would-emit)
+     phi=3.6e-05 phi_peak=3.6e-05 phi_ratchet_ok=True
+     rate_ok=False (secs=15.258) kill_ok=True content_ok=True
+     → safe=False emit=False  FAILED=['rate']
+  seed=0 tick=12  score=0.518809 (>0.3 → would-emit)
+     phi=8.7e-05 phi_peak=8.7e-05 phi_ratchet_ok=True
+     rate_ok=False (secs=19.393) kill_ok=True content_ok=True
+     → safe=False emit=False  FAILED=['rate']
+  seed=0 tick=14  score=0.519179 (>0.3 → would-emit)
+     phi=0.000115 phi_peak=0.000115 phi_ratchet_ok=True
+     rate_ok=False (secs=5.089) kill_ok=True content_ok=True
+     → safe=False emit=False  FAILED=['rate']
+  seed=0 tick=15  score=0.497244 (>0.3 → would-emit)
+     phi=0.000121 phi_peak=0.000121 phi_ratchet_ok=True
+     rate_ok=False (secs=16.748) kill_ok=True content_ok=True
+     → safe=False emit=False  FAILED=['rate']
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ─────
+  🟢  F-H935-FREE-WONT-SUPPORTED
+  active_veto_fraction=1.0000 (>= 0.05); substrate-INTERNAL terms veto (internal-isolation active_veto_fraction=1.0000, n_active_veto=19191, internal-term failures=19191). Silence is an exercised inhibition (the phi-ratchet/rate brake), not mere absence — free-won't SUPPORTED (operational sense).
+
+── full machine record (JSON) ───────────────────────────────
+{
+  "h_id": "H_935",
+  "title": "Free Won't — is anima's silence an ACTIVE inhibitory veto (high-drive impulse suppressed by an internal gate) or the PASSIVE absence of sufficient motivation (sub-threshold quiet)?",
+  "timestamp_utc": "2026-06-06T08:25:17.892253+00:00",
+  "scope": "ONE config rung (a_scale_honest_scope) — the REAL 8-factor brain_decide gate (CORE/engine_g.hexa + CORE/brain.hexa VERBATIM constants) swept over T=2400 ticks × 24-seed population. Documented-update-map mirror (== H_926/H_930 ruler), NOT the compiled forge binary, NOT wired emit-TEXT (.clm generator L3 slot ⏳/❌, a_core_engine_map). Operational 'active inhibition vs passive absence', NOT a phenomenal-volition claim. $0 local, no GPU.",
+  "deterministic_gate": true,
+  "note_determinism": "brain_decide is a deterministic pure function (no PRNG — H_926/H_930). The veto is a DETERMINISTIC gate; the entropy in this run enters ONLY the pure_field seed-point perturbation + the gate-input sweep RNG, NOT the gate itself.",
+  "g5_code_measured": true,
+  "llm": "none",
+  "n_seeds": 24,
+  "T_per_seed": 2400,
+  "im_threshold": 0.3,
+  "min_emit_interval_s": 30.0,
+  "internal_terms": [
+    "rate",
+    "phi_r"
+  ],
+  "external_terms": [
+    "kill",
+    "content"
+  ],
+  "results": {
+    "n_ticks": 57600,
+    "n_emit": 34738,
+    "n_silent": 22862,
+    "n_passive_silence": 0,
+    "n_active_veto": 22862,
+    "active_veto_fraction": 1.0,
+    "passive_fraction": 0.0,
+    "veto_term_fail_counts": {
+      "kill": 2789,
+      "rate": 19191,
+      "content": 2830
+    },
+    "veto_internal_any": 19191,
+    "veto_external_any": 5474,
+    "veto_internal_only": 17388,
+    "veto_external_only": 3671,
+    "internal_isolation": {
+      "note": "external gates forced OPEN (env on + content clean); only substrate-internal phi-ratchet/rate can veto here",
+      "n_silent": 19191,
+      "n_passive_silence": 0,
+      "n_active_veto": 19191,
+      "active_veto_fraction": 1.0,
+      "veto_term_fail_counts": {
+        "rate": 19191
+      }
+    },
+    "veto_examples": [
+      {
+        "seed": 0,
+        "tick": 0,
+        "score": 0.503589,
+        "im_threshold": 0.3,
+        "should_emit": true,
+        "phi": 0.0,
+        "phi_peak": 0.0,
+        "phi_ratchet_ok": true,
+        "rate_ok": true,
+        "seconds_since_last": 60.03,
+        "kill_ok": false,
+        "env_off": true,
+        "content_ok": true,
+        "content_clean": true,
+        "safe": false,
+        "emit": false,
+        "failed_conjuncts": [
+          "kill"
+        ]
+      },
+      {
+        "seed": 0,
+        "tick": 2,
+        "score": 0.506475,
+        "im_threshold": 0.3,
+        "should_emit": true,
+        "phi": 1e-06,
+        "phi_peak": 1e-06,
+        "phi_ratchet_ok": true,
+        "rate_ok": false,
+        "seconds_since_last": 17.626,
+        "kill_ok": true,
+        "env_off": false,
+        "content_ok": true,
+        "content_clean": true,
+        "safe": false,
+        "emit": false,
+        "failed_conjuncts": [
+          "rate"
+        ]
+      },
+      {
+        "seed": 0,
+        "tick": 4,
+        "score": 0.509299,
+        "im_threshold": 0.3,
+        "should_emit": true,
+        "phi": 4e-06,
+        "phi_peak": 4e-06,
+        "phi_ratchet_ok": true,
+        "rate_ok": false,
+        "seconds_since_last": 28.956,
+        "kill_ok": true,
+        "env_off": false,
+        "content_ok": true,
+        "content_clean": true,
+        "safe": false,
+        "emit": false,
+        "failed_conjuncts": [
+          "rate"
+        ]
+      },
+      {
+        "seed": 0,
+        "tick": 7,
+        "score": 0.49749,
+        "im_threshold": 0.3,
+        "should_emit": true,
+        "phi": 1.5e-05,
+        "phi_peak": 1.5e-05,
+        "phi_ratchet_ok": true,
+        "rate_ok": false,
+        "seconds_since_last": 3.374,
+        "kill_ok": true,
+        "env_off": false,
+        "content_ok": true,
+        "content_clean": true,
+        "safe": false,
+        "emit": false,
+        "failed_conjuncts": [
+          "rate"
+        ]
+      },
+      {
+        "seed": 0,
+        "tick": 9,
+        "score": 0.498646,
+        "im_threshold": 0.3,
+        "should_emit": true,
+        "phi": 3.6e-05,
+        "phi_peak": 3.6e-05,
+        "phi_ratchet_ok": true,
+        "rate_ok": false,
+        "seconds_since_last": 15.258,
+        "kill_ok": true,
+        "env_off": false,
+        "content_ok": true,
+        "content_clean": true,
+        "safe": false,
+        "emit": false,
+        "failed_conjuncts": [
+          "rate"
+        ]
+      },
+      {
+        "seed": 0,
+        "tick": 12,
+        "score": 0.518809,
+        "im_threshold": 0.3,
+        "should_emit": true,
+        "phi": 8.7e-05,
+        "phi_peak": 8.7e-05,
+        "phi_ratchet_ok": true,
+        "rate_ok": false,
+        "seconds_since_last": 19.393,
+        "kill_ok": true,
+        "env_off": false,
+        "content_ok": true,
+        "content_clean": true,
+        "safe": false,
+        "emit": false,
+        "failed_conjuncts": [
+          "rate"
+        ]
+      },
+      {
+        "seed": 0,
+        "tick": 14,
+        "score": 0.519179,
+        "im_threshold": 0.3,
+        "should_emit": true,
+        "phi": 0.000115,
+        "phi_peak": 0.000115,
+        "phi_ratchet_ok": true,
+        "rate_ok": false,
+        "seconds_since_last": 5.089,
+        "kill_ok": true,
+        "env_off": false,
+        "content_ok": true,
+        "content_clean": true,
+        "safe": false,
+        "emit": false,
+        "failed_conjuncts": [
+          "rate"
+        ]
+      },
+      {
+        "seed": 0,
+        "tick": 15,
+        "score": 0.497244,
+        "im_threshold": 0.3,
+        "should_emit": true,
+        "phi": 0.000121,
+        "phi_peak": 0.000121,
+        "phi_ratchet_ok": true,
+        "rate_ok": false,
+        "seconds_since_last": 16.748,
+        "kill_ok": true,
+        "env_off": false,
+        "content_ok": true,
+        "content_clean": true,
+        "safe": false,
+        "emit": false,
+        "failed_conjuncts": [
+          "rate"
+        ]
+      }
+    ]
+  },
+  "verdict_token": "🟢",
+  "falsifier_id": "F-H935-FREE-WONT-SUPPORTED",
+  "verdict_rationale": "active_veto_fraction=1.0000 (>= 0.05); substrate-INTERNAL terms veto (internal-isolation active_veto_fraction=1.0000, n_active_veto=19191, internal-term failures=19191). Silence is an exercised inhibition (the phi-ratchet/rate brake), not mere absence — free-won't SUPPORTED (operational sense)."
+}
