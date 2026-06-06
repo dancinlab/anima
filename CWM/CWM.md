@@ -31,7 +31,7 @@ CLM was a "language model" (next-byte). The arc H_950/951/952 tests whether it i
 ## milestones
 
 - [ ] M0 — domain scaffold + landscape survey absorbed (this file + CWM.log.md)
-- [x] M1 — world-model hypothesis slate authored (perceive · imagine · act · substrate axes), each with a pre-registered falsifier — H_960..H_984 (25); all MEASURED 2026-06-06 → 17🟢 4🔴 4⚠ (see slate + log)
+- [x] M1 — world-model hypothesis slate authored (perceive · imagine · act · substrate axes), each with a pre-registered falsifier — H_960..H_984 (25); all MEASURED 2026-06-06 → 16🟢 4🔴 5⚠ (see slate + log)
 - [ ] M2 — CE rename decision landed (gated on H_950/951/952 verdicts; CLM→CE iff 🟢🟢🟢)
 - [x] M3 — CWM-PERCEIVE: modality-agnostic latent encoder rung (toy, $0) — DONE 2026-06-06 (H_960🟢 H_961🟢 H_979🟢 H_984🟢; H_978🔴 geometry modality-specific)
 - [x] M4 — CWM-IMAGINE: latent forward-dynamics predictor (imagined rollout) toy rung — DONE 2026-06-06 (H_962🟢 H_963🟢 H_967🟢 H_976🟢 H_981🟢; H_982🔴 H_983⚠)
