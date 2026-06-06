@@ -1,0 +1,53 @@
+/opt/homebrew/lib/python3.14/site-packages/scipy/stats/_axis_nan_policy.py:592: RuntimeWarning: Precision loss occurred in moment calculation due to catastrophic cancellation. This occurs when the data are nearly identical. Results may be unreliable.
+  res = hypotest_fun_out(*samples, **kwds)
+==============================================================================
+H_1000 — GRU world-model restores T2/T3 WM>LM? — PRIMITIVE-limit test of H_985
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+ladder (latent/feat dim) = [16, 32, 64, 128]   N_SEEDS=10  N_train=600 N_test=300
+tasks: T1 delayed-cue (K=4,L=16,ctx=4)  T2 parity-track (len=20,ctx=4)  T3 hidden-pos (P=6,steps=18,ctx=4)
+WM PRIMITIVE = NONLINEAR GRU (gated tanh recurrence, BPTT+Adam, epochs=40 lr=0.005 batch=32); LM + mem-aug = VERBATIM from H_985
+CAPACITY-MATCH: GRU latent WIDTH == rung == H_985 WM latent_dim == LM feat_dim (H_985's width convention). The TRAINED nonlinear gated recurrence is the primitive treatment (NOT a width advantage); per-cell trainable-param counts printed for audit.
+
+============================================================================================
+task             rung  chance   GRU-WM       LM    memLM     gap        d         p  GRUh  GRUpar  LMpar
+--------------------------------------------------------------------------------------------
+T1_delayed_cue     16   0.250    0.954    0.246    1.000   0.708     7.12   3.4e-08    16    1172     68
+T1_delayed_cue     32   0.250    1.000    0.243    1.000   0.757    38.68   1.9e-14    32    3876    132
+T1_delayed_cue     64   0.250    1.000    0.242    1.000   0.758    28.89   2.6e-13    64   13892    260
+T1_delayed_cue    128   0.250    1.000    0.245    1.000   0.755    34.89   4.7e-14   128   52356    516
+T2_parity_track    16   0.500    0.490    0.505    1.000  -0.015    -0.45   3.3e-01    16    1090     34
+T2_parity_track    32   0.500    0.495    0.505    1.000  -0.009    -0.28   5.4e-01    32    3714     66
+T2_parity_track    64   0.500    0.500    0.505    1.000  -0.005    -0.15   7.4e-01    64   13570    130
+T2_parity_track   128   0.500    0.514    0.505    1.000   0.010     0.31   5.0e-01   128   51714    258
+T3_hidden_pos      16   0.167    0.339    0.335    1.000   0.004     0.13   7.7e-01    16    1350    102
+T3_hidden_pos      32   0.167    0.344    0.337    1.000   0.007     0.26   5.7e-01    32    4230    198
+T3_hidden_pos      64   0.167    0.335    0.335    1.000   0.000     0.00   1.0e+00    64   14598    390
+T3_hidden_pos     128   0.167    0.346    0.335    1.000   0.012     0.48   3.0e-01   128   53766    774
+============================================================================================
+
+side-by-side vs H_985 LINEAR-reservoir WM (same tasks/rungs/seeds; ONLY primitive changed):
+task             rung   linWM   gruWM     ΔWM    lin_d    gru_d
+----------------------------------------------------------------------
+T1_delayed_cue     16   0.645   0.954  +0.309    20.13     7.12
+T1_delayed_cue     32   0.897   1.000  +0.103    20.89    38.68
+T1_delayed_cue     64   1.000   1.000  +0.000    28.89    28.89
+T1_delayed_cue    128   1.000   1.000  +0.000    34.89    34.89
+T2_parity_track    16   0.500   0.490  -0.010    -0.16    -0.45
+T2_parity_track    32   0.494   0.495  +0.001    -0.34    -0.28
+T2_parity_track    64   0.494   0.500  +0.006    -0.34    -0.15
+T2_parity_track   128   0.494   0.514  +0.020    -0.34     0.31
+T3_hidden_pos      16   0.334   0.339  +0.005    -0.05     0.13
+T3_hidden_pos      32   0.339   0.344  +0.005     0.10     0.26
+T3_hidden_pos      64   0.339   0.335  -0.004     0.18     0.00
+T3_hidden_pos     128   0.339   0.346  +0.007     0.18     0.48
+
+per-task summary (GRU-WM primitive):
+  T1_delayed_cue   GRU-WM>LM-sep@>=2rungs=True   GRU-WM-solves=True   tracks-mem-aug=True   sep-rungs=[16, 32, 64, 128]
+  T2_parity_track  GRU-WM>LM-sep@>=2rungs=False  GRU-WM-solves=False  tracks-mem-aug=False  sep-rungs=[]
+  T3_hidden_pos    GRU-WM>LM-sep@>=2rungs=False  GRU-WM-solves=True   tracks-mem-aug=False  sep-rungs=[]
+
+------------------------------------------------------------------------------
+VERDICT H_1000: FAIL DEEPER-LIMIT — even a NONLINEAR GRU-WM (capacity-matched, BPTT-trained, T1 recovered to d>0.8) STILL fails to beat the LM on ['T2_parity_track', 'T3_hidden_pos'] (no separation, d<0.8) [restored: []]. The T2/T3 WM>LM gap is NOT merely a primitive limit: something else — capacity at this toy scale, trainability of XOR-integration / modular path-integration by BPTT, or the task being LM-unrepresentable for a different reason — blocks it. Re-scopes H_985's 'a richer primitive recovers generality' optimism (closed-negative, a_paper_negative_ok; toy ladder, production OPEN).
+------------------------------------------------------------------------------
