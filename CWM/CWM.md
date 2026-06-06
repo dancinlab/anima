@@ -31,14 +31,16 @@ CLM was a "language model" (next-byte). The arc H_950/951/952 tests whether it i
 ## milestones
 
 - [ ] M0 — domain scaffold + landscape survey absorbed (this file + CWM.log.md)
-- [x] M1 — world-model hypothesis slate authored (perceive · imagine · act · substrate axes), each with a pre-registered falsifier — H_960..H_984 (25), all ⏳ PENDING-MEASUREMENT (see slate below)
+- [x] M1 — world-model hypothesis slate authored (perceive · imagine · act · substrate axes), each with a pre-registered falsifier — H_960..H_984 (25); all MEASURED 2026-06-06 → 17🟢 4🔴 4⚠ (see slate + log)
 - [ ] M2 — CE rename decision landed (gated on H_950/951/952 verdicts; CLM→CE iff 🟢🟢🟢)
-- [ ] M3 — CWM-PERCEIVE: modality-agnostic latent encoder rung (toy, $0) — non-language sequence → latent state
-- [ ] M4 — CWM-IMAGINE: latent forward-dynamics predictor (imagined rollout) toy rung
-- [ ] M5 — CWM-ACT: latent→action policy toy rung; baseline vs random/Dreamer-toy
-- [ ] M6 — Lane A (AKIDA) on-chip perceive→act loop probe (real silicon, a_lane_akida_gpu_split)
-- [ ] M7 — action provenance: every action emits a free-will receipt (H_928/H_932 wired into the act loop)
-- [ ] M8 — behavior eval vs human baseline (the "human-level-or-beyond" north-star metric, honest scope)
+- [x] M3 — CWM-PERCEIVE: modality-agnostic latent encoder rung (toy, $0) — DONE 2026-06-06 (H_960🟢 H_961🟢 H_979🟢 H_984🟢; H_978🔴 geometry modality-specific)
+- [x] M4 — CWM-IMAGINE: latent forward-dynamics predictor (imagined rollout) toy rung — DONE 2026-06-06 (H_962🟢 H_963🟢 H_967🟢 H_976🟢 H_981🟢; H_982🔴 H_983⚠)
+- [x] M5 — CWM-ACT: latent→action policy toy rung; baseline vs random/Dreamer-toy — DONE 2026-06-06 (H_964🟢 lift 1.24, H_968🟢, H_980🟢 policy-implicit)
+- [ ] M6 — Lane A (AKIDA) on-chip perceive→act loop probe (real silicon, a_lane_akida_gpu_split) — ⚠ BLOCKED 2026-06-06: H_965/966/974/977 need a live AKD1000 unreachable on Mac; SW-arm partials done + handoffs filed (sidecar 0b1edec3/4a85113c/daf233fe/7848a234)
+- [x] M7 — action provenance: every action emits a free-will receipt (H_928/H_932 wired into the act loop) — DONE 2026-06-06 (H_969🟢 coverage 1.0, 0 collisions, chain verified — toy)
+- [ ] M8 — behavior eval vs human baseline (the "human-level-or-beyond" north-star metric, honest scope) — instrument authored + validated 2026-06-06 (H_972🟢); anima placement downstream
+
+> **KEYSTONE (H_970 🟢)**: a WM>LM decisive separator EXISTS (delayed-cue toy, WM 0.995 vs matched LM 0.258≈chance, gap localized to the persistent-state requirement) — the CWM domain premise (anima needs a world-model, not just an LM) is justified on this toy rung. Ladder OPEN (a_scale_honest_scope).
 
 ## CWM world-model hypothesis slate (M1)
 

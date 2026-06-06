@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured (BLOCKED — chip deploy unreachable; SW source done)
 scope: ONE transfer rung (a_lane_akida_gpu_split · a_scale_honest_scope) — train a toy world-model on Lane G/P SW, map/quantize to AKD1000, measure chip task performance vs the SW source. 1 AKD1000 live, single-tenant. Lane A deploy entry SEPARATE from the Lane G/P train entry. NOT a forge binary.
 sister: H_966 (behavior parity — measured AFTER independent training; this is transfer of ONE trained WM), H_965 (on-chip loop), H_977 (energy budget), lane-a-akd1000-recurrence-wall
 axes_seed: H_966 = two INDEPENDENTLY-run substrates compared ⊥ H_974 = ONE WM trained on SW then MAPPED to chip — transfer-gap (quantization / mapping loss) is a distinct question from independent-run parity; if the mapped WM loses performance, SW-train→chip-deploy is broken (closed-negative → needs chip-aware training)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: ⚠ INCOMPLETE-BLOCKED — chip DEPLOY needs a live AKD1000 (unreachable on this Mac); SW SOURCE return −0.637 + scrambled-mapping control −13.62 measured (CPU-mirror), so retained-fraction = return_CHIP/return_SW is UNCOMPUTABLE until the chip deploy runs. a_lane_akida_gpu_split. Handoff sidecar daf233fe.
 ---
 
 # H_974 — Chip-to-SW transfer (does an SW-trained WM survive on the chip?)
@@ -48,6 +48,18 @@ A world-model trained on Lane G/P SW and mapped/quantized to a live AKD1000 reta
 ## 3. Honest scope
 
 Toy WM, 1 AKD1000 (a_lane_akida_gpu_split · a_scale_honest_scope, #123-A). SW-train and chip-deploy recorded as SEPARATE substrate-tagged entries; the transfer gap is the only cross-lane number reported (never a merged lift). A FAIL is a deploy-path limit, not a science result (a_scale_honest_scope). Quantization scheme pre-registered. NOT a forge binary.
+
+## measurement (2026-06-06 · ⚠ INCOMPLETE-BLOCKED · SW source = CPU-mirror)
+
+SW-arm partial: `CWM/probes/h966_974_sw_partial.py` · verdict: `.verdicts/974_chip_to_sw_transfer/h966_974_sw_partial.txt`
+
+| component | result |
+|---|---|
+| SW-train SOURCE return (D1 numerator) | −0.637 (CPU-mirror) |
+| scrambled-mapping SW control (D3) | −13.62 (real ≫ scramble, bounds "any mapping works") |
+| return_CHIP (deployed) | **BLOCKED — unreachable** → retained-fraction UNCOMPUTABLE |
+
+**Status (⚠):** the SW source return + the scrambled-mapping control are measured; the falsifier's decisive transfer gap / retained-fraction (return_CHIP / return_SW) requires mapping/quantizing the WM onto a live AKD1000 and evaluating on-chip — unreachable here. Lane-G/P source entry only (a_lane_akida_gpu_split). Handoff `sidecar daf233fe`.
 
 ## 4. Sibling / xlinks
 

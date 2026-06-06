@@ -92,3 +92,20 @@
 @H 980 := "planner vs policy = policy-implicit (WAM camp): MPC -0.694 ~ DIRECT -0.637 (CI overlaps 0) at 64x compute — the world-model IS the policy, planning adds nothing here" :: discovery [🟢]
   seed   = "does explicit MPC planning beat the implicit latent policy on a shared WM?"
   target = "🟢 PASS-policy-implicit (toy; both directions were pre-registered findings)"
+
+# ── SUBSTRATE axis (all ⚠ INCOMPLETE-BLOCKED — live AKD1000 unreachable on Mac; handoffs filed) ──
+@H 965 := "on-chip perceive->act loop: BLOCKED — needs live AKD1000 (BackendType.Hardware, pi5-akida); chip-only claim, no CPU partial; akida absent on Darwin host (probed)" :: discovery [⚠]
+  seed   = "does the perceive->act loop close ON the AKD1000 silicon, within latency, IP-v1-mappable?"
+  target = "⚠ INCOMPLETE-BLOCKED — handoff sidecar 0b1edec3"
+
+@H 966 := "SW-vs-CHIP behavior parity: SW arm measured (CPU-mirror return -0.637, within-SW band 0.006); CHIP arm BLOCKED -> behavior-distance uncomputable" :: discovery [⚠]
+  seed   = "do SW (Lane G/P) and AKD1000 (Lane A) produce equivalent world-model BEHAVIOR?"
+  target = "⚠ INCOMPLETE-BLOCKED — SW arm done, chip arm needs AKD1000; handoff 4a85113c"
+
+@H 974 := "SW->chip transfer: SW source return -0.637 + scrambled control -13.62 measured (CPU-mirror); chip DEPLOY BLOCKED -> retained-fraction uncomputable" :: discovery [⚠]
+  seed   = "does a SW-trained world-model retain performance when mapped/quantized to the AKD1000?"
+  target = "⚠ INCOMPLETE-BLOCKED — SW source done, chip deploy needs AKD1000; handoff daf233fe"
+
+@H 977 := "on-chip energy budget: BLOCKED — needs live AKD1000 + energy telemetry + behavior-matched loop (depends H_965/H_966); CPU energy cannot answer sub-watt on-chip claim" :: discovery [⚠]
+  seed   = "is the on-chip world-model loop energy-cheaper (sub-watt) than SW/GPU at matched behavior?"
+  target = "⚠ INCOMPLETE-BLOCKED — handoff sidecar 7848a234"

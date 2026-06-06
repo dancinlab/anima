@@ -14,11 +14,11 @@ llm: none
 pre_register_frozen: true
 frozen_at: 2026-06-06
 since: 2026-06-06
-status: pre-registered (unmeasured)
+status: measured (BLOCKED — chip unreachable)
 scope: ONE on-chip loop rung (a_lane_akida_gpu_split · a_scale_honest_scope) — 1 physical AKD1000 (pi5-akida); event-based input → on-chip inference → action decision, closed-loop latency measured live. Single-tenant streamer stop/restore (H_860 procedure). Lane A entry ONLY — never merged with a Lane G result. PI5-AKIDA.json consulted. NOT a forge binary.
 sister: H_966 (SW vs chip parity — the Lane-G/P twin), H_974 (chip↔SW transfer), H_977 (energy/latency budget), H_904 (on-chip plasticity), lane-a-akd1000-recurrence-wall
 axes_seed: SW loop (Lane G/P) = perceive→act in a process ⊥ H_965 = the AKD1000 SILICON closes the loop on-chip in real time — if AKD1000 IP-v1 cannot map the loop (single-hop wall) or misses the latency envelope, on-chip world-model is infeasible on this chip (closed-negative → needs AKD1500 / off-chip head)
-verdict: ⏳ PENDING-MEASUREMENT
+verdict: ⚠ INCOMPLETE-BLOCKED — falsifier requires BackendType.Hardware on a live AKD1000 (pi5-akida) to measure on-chip loop closure + closed-loop latency + IP-v1 mapping; the chip is UNREACHABLE from this Darwin host (no akida pkg, probed). No faithful CPU partial for the on-chip claim (a_lane_akida_gpu_split). substrate=AKIDA. Handoff sidecar 0b1edec3.
 ---
 
 # H_965 — AKIDA on-chip perceive→act loop feasibility (Lane A)
@@ -48,6 +48,14 @@ A closed event-based perceive→act loop (event input → on-chip inference → 
 ## 3. Honest scope
 
 1 physical AKD1000, toy task (a_lane_akida_gpu_split · a_scale_honest_scope, #123-A). Lane A result — recorded as a SEPARATE entry from any Lane G/P SW result; never merged (a_lane_akida_gpu_split). Real-time envelope is pre-registered but application-relative. A FAIL is a chip-fit limit, not a science result about world-models (a_scale_honest_scope). NOT a forge binary.
+
+## measurement (2026-06-06 · ⚠ INCOMPLETE-BLOCKED · substrate=AKIDA, unreachable)
+
+Blocker record: `CWM/probes/h965_977_chip_only_blocker.py` · verdict: `.verdicts/965_akida_onchip_perceive_act_loop/h965_977_chip_only_blocker.txt`
+
+The frozen falsifier's core measurements (D1 does the decision run on-chip; D2 closed-loop latency from real silicon; D3 AKD1000 IP-v1 mapping / single-hop wall) are intrinsically ON-CHIP. The probe confirms `akida` is absent and the host is `macOS-26.5-arm64` — the physical AKD1000 lives on the separate pi5-akida host (single-tenant, H_860 streamer stop/restart; cf /PI5-AKIDA.json), not reachable from this worktree. A CPU "loop" would not answer "does it close on-chip" and claiming so would violate a_lane_akida_gpu_split — so NO CPU partial is run for the core claim.
+
+**Status (⚠):** honest INCOMPLETE-BLOCKED + handoff `sidecar handoff 0b1edec3` ("H_965 needs live AKD1000"). Recommended run: on pi5-akida, BackendType.Hardware, per the H_860 streamer procedure.
 
 ## 4. Sibling / xlinks
 

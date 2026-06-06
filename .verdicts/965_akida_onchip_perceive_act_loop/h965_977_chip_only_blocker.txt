@@ -1,0 +1,13 @@
+==============================================================================
+H_965 + H_977 — AKIDA CHIP-ONLY falsifiers — substrate reachability probe
+substrate=AKIDA (Lane A) — a_lane_akida_gpu_split: NEVER claim on-chip from CPU
+==============================================================================
+host platform = macOS-26.5-arm64-arm-64bit-Mach-O
+akida BackendType.Hardware reachable? False
+  probe result: ModuleNotFoundError: No module named 'akida'
+the live AKD1000 lives on the pi5-akida host (single-tenant, H_860 streamer stop/restart); it is NOT this Mac. cf /PI5-AKIDA.json.
+------------------------------------------------------------------------------
+VERDICT H_965: INCOMPLETE-BLOCKED — on-chip perceive->act loop closure + on-chip latency + AKD1000 IP-v1 mapping check REQUIRE BackendType.Hardware on the physical AKD1000 (pi5-akida), unreachable from this Darwin host. No faithful CPU partial exists for 'does the decision run on-chip'. substrate=AKIDA. HANDOFF filed.
+------------------------------------------------------------------------------
+VERDICT H_977: INCOMPLETE-BLOCKED — on-chip energy-per-decision + power-envelope REQUIRE live AKD1000 + host energy telemetry (and a behavior-matched chip loop, which itself depends on H_965/H_966). Unreachable here; a CPU energy number would not answer the sub-watt on-chip claim (a_lane_akida_gpu_split). substrate=AKIDA. HANDOFF filed.
+------------------------------------------------------------------------------
