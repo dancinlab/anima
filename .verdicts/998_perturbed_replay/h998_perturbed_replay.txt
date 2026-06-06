@@ -1,0 +1,20 @@
+==============================================================================
+H_998 — perturbed-replay consolidation: noise-augmented dreaming buys robustness
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+WAKE n=6 (limited) → consolidation (idle/verbatim vs perturbed dreaming) → test
+DELAY=3 eval-horizon=4 seeds=25
+
+CLEAN test forecast error (lower=better):
+  IDLE/verbatim = 0.0009 ± 0.0005
+  PERTURBED     = 0.0902 ± 0.0139
+NOISY test forecast error (obs noise σ=0.30):
+  IDLE/verbatim = 0.9855 ± 0.0973
+  PERTURBED     = 0.8149 ± 0.0800
+
+D1 clean: perturbed adds NO clean info (perturbed clean 0.0902 NOT < idle 0.0009): True (H_982-consistent)
+D2 noisy: perturbed<idle d=1.876 p=3.17e-08 (PASS if perturbed lower, d>0.8)
+------------------------------------------------------------------------------
+VERDICT H_998: PASS perturbed-replay buys ROBUSTNESS not information: it adds NO clean info (clean 0.090 ≥ idle 0.001, H_982🔴-consistent) but on NOISY test perturbed 0.815 beats verbatim 0.986 (d=1.88, p=3.2e-08) — dreaming = latent data-augmentation for invariance; locates WHERE replay pays off (sharpens H_982) (toy rung).
+------------------------------------------------------------------------------
