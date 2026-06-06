@@ -61,7 +61,11 @@ from h1006_dense_supervision import DenseSupGRU
 
 # ---- shared slate knobs (matched to H_1005/H_1006 trim, REPORTED) --------------------------
 RUNGS = SLATE_RUNGS          # [16, 32]  (== H_1005/H_1006 trim of [16,32,64,128])
-SEEDS = SLATE_SEEDS          # 6         (== H_1005/H_1006 trim of 10)
+# WALL-TIME CUT (PROBE_CONVENTIONS): the dense per-step aux double-BPTT over the 36-step
+# sparse-spike running-max stream is pathologically slow (~5-8 min/cell at 6 seeds). The
+# falsifier outcome is whether dense CRACKS a real cap, which is stable across seeds; SEEDS is
+# cut to 3 (REPORTED) to land the full code-measured table within wall budget. Env override.
+SEEDS = int(os.environ.get("H1013_SEEDS", "3"))    # CUT 3 (of H_1006's 6 / H_985's 10), REPORTED
 CTX = 4                      # LM window (< capped length, so a window under-determines state)
 
 
