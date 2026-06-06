@@ -1,0 +1,19 @@
+==============================================================================
+H_988 — GUIDED (goal-directed) imagination raises Φ — re-test of H_971 🔴
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+re-formulation: H_971 used AUTONOMOUS drift; here imagination is GOAL-DIRECTED
+Φ proxy = integration×differentiation×entropy (H_912/H_931 family, NOT IIT4)
+in_dim=6 latent=24 N_SEEDS=30 duration=40 goal_pull=0.25
+
+D1 Φ contrast (GUIDED vs REACT):
+  Φ_GUIDED = 0.0385 ± 0.0057
+  Φ_REACT  = 0.0946 ± 0.0099
+  contrast (GUIDED−REACT) = -0.0561  Cohen d = -6.843  Welch t=-26.501 p=1.335e-29
+  paired-diff bootstrap 95% CI = [-0.0602, -0.0519]  shuffled-null 97.5pct = 0.0151
+D2 GUIDED vs DRIFT (isolate the goal effect): Φ_DRIFT=0.0683 contrast(GUIDED−DRIFT)=-0.0298 d=-6.035 p=5.208e-29
+D3 alt-Φ-proxy (differentiation-weighted): Φalt_GUIDED=0.1678 Φalt_REACT=0.3164 contrast=-0.1486 d=-8.233 p=8.630e-38 -> GUIDED>REACT sign survives proxy change: False
+------------------------------------------------------------------------------
+VERDICT H_988: FAIL 🔴 ROBUST — even goal-directed imagination does not raise Φ over reactive [Φ_GUIDED 0.039 <= Φ_REACT 0.095; sign did NOT survive alt-proxy] — imagination-raises-Φ is false across formulations; the H_971 closed-negative is FORMULATION-ROBUST (toy). xref H_971.
+------------------------------------------------------------------------------

@@ -1,0 +1,15 @@
+==============================================================================
+H_986 — geometry invariance under FAIR alignment (CKA/Procrustes) — re-test of H_978 🔴
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+re-formulation: H_978 compared RAW coords; here we allow rotation/scale alignment
+A=language, B=sensor (SAME engine, SHARED latent factor); CKA + orthogonal-Procrustes
+
+D1 linear CKA (rotation/scale-invariant):
+  CKA(A,B)=0.7995  A-vs-A band 5pct=0.9470  shuffled-null 95pct=0.5937  -> in band & > null: False
+D2 orthogonal-Procrustes residual(A,B)=0.3438  A-vs-A band 95pct=0.0516  -> within band: False
+D3 control (UNRELATED engine on B): CKA=0.7730 Procrustes=0.3383  -> correctly rejected: True
+------------------------------------------------------------------------------
+VERDICT H_986: FAIL 🔴 ROBUST — even under the fairest alignment (CKA + orthogonal Procrustes) modality-specificity holds [CKA 0.799 below band 0.947 or under null 0.594; Procrustes 0.344 > band 0.052] — H_978 closed-negative is FORMULATION-ROBUST (toy). xref H_978.
+------------------------------------------------------------------------------
