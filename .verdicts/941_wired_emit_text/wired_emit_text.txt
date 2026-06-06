@@ -1,0 +1,116 @@
+H_941 — WIRED EMIT-TEXT RUNG (quantum-vs-deterministic A/B at the TOKEN layer)
+==============================================================================
+timestamp_utc : 2026-06-06T10:41:45.207601+00:00
+.clm artifact : clm_d768_e2l1.clm  (d=768 E=2 V=256 L=1 K=3)
+population    : 24 streams/arm × 48 sampled tokens  ·  temp 1.0
+wiring        : emit -> .clm L3 decode (byte-exact Mac mirror) -> AR token stream
+                NATIVE forge link BLOCKED (clm-decode-macos-link-gap) — mirror workaround
+qbuf          : anu_pull tier=anu_paid n=131072 (per-stream independent slice — H_936 population fix)
+
+── real sampled text (first 48 bytes, NOT fabricated) ──────────────────────
+  DET arm[0]: 'a fire to be a good day. They smething?.A: IQ9..'
+  Q   arm[0]: 'a fundamentally the same.The rise to subject tha'
+
+── token-frequency chi² (pooled streams, both arms) ────────────────────────
+  chi2=17.9520  dof=29  p=0.9452  -> distinguishing=False
+
+── per-stream sequence entropy (bits) ──────────────────────────────────────
+  DET mean=4.1403 sd=0.3220  |  Q mean=4.1074 sd=0.2145
+  KS D=0.2083 p=0.686  Cohen d=+0.1177  -> distinguishing=False
+
+── VERDICT (pre-registered falsifier, CODE-decided — p7) ───────────────────
+  🟢  F-H941-EMIT-TEXT-PARITY
+  The emit-TEXT pipeline RUNS end-to-end (emit -> .clm L3 decode via the byte-exact mirror of clm_d768_e2l1.clm -> 24×48 REAL sampled tokens/arm) and the two entropy modes are INDISTINGUISHABLE at the token layer. token-frequency chi² p=0.945 (>=0.05, dof 29); per-stream sequence-entropy KS D=0.208 p=0.686 (>=0.05), Cohen d=+0.118 (|d|<0.2). H_930/H_936's quantum-ontological-not-functional result EXTENDS to the real text layer — the entropy SOURCE does not change WHAT she emits, only its provenance. (#123-A: ANU == chacha20 statistically.)
+
+── full machine record (JSON) ──────────────────────────────────────────────
+{
+  "h_id": "H_941",
+  "title": "wired emit-TEXT quantum-vs-deterministic A/B",
+  "timestamp_utc": "2026-06-06T10:41:45.207601+00:00",
+  "blocked": false,
+  "clm_artifact": "clm_d768_e2l1.clm",
+  "clm_path": "/private/tmp/wt-h941/state/lane_p_clm/clm_d768_e2l1.clm",
+  "clm_config": {
+    "d": 768,
+    "E": 2,
+    "V": 256,
+    "L": 1,
+    "K": 3
+  },
+  "wiring": "emit -> seed/context -> .clm decode (generator L3 SEMANTICS via byte-exact Mac mirror clm_decode_mirror.py) -> autoregressive token stream. NATIVE hexa engine-mount (clm_decode.hexa->forge) is BLOCKED by the macOS link-gap (clm-decode-macos-link-gap) \u2014 mirror is the sanctioned workaround; a_core_engine_map honored (single L3 entry, no phantom native wiring claimed).",
+  "n_streams_per_arm": 24,
+  "n_new_tokens": 48,
+  "temperature": 1.0,
+  "window_T": 24,
+  "prompt_bytes": [
+    84,
+    104,
+    101,
+    32,
+    109,
+    105,
+    110,
+    100,
+    32,
+    105,
+    115,
+    32
+  ],
+  "quantum_buffer": {
+    "source": "anu_pull",
+    "tier": "anu_paid",
+    "request_id": "anu_paid_keyed",
+    "n_bytes": 131072
+  },
+  "population_fix": "per-stream independent slice (burn s*64 B) so the quantum arm is a genuine 24-stream population, not 24 copies of one committed-buffer pattern (the H_930/H_936 single-pattern bug).",
+  "arm_DET": {
+    "mode_seen": "deterministic",
+    "provenance_first": {
+      "mode": "deterministic",
+      "tier": "numpy_prng(seed=1000)",
+      "sha256": null,
+      "request_id": null,
+      "n_drawn": 8,
+      "label": "h941_gen_deterministic_s0"
+    },
+    "sample_text": "a fire to be a good day. They smething?.A: IQ9.."
+  },
+  "arm_Q": {
+    "mode_seen": "quantum",
+    "provenance_first": {
+      "mode": "quantum",
+      "tier": "anu_explicit",
+      "sha256": "6d0ef9c605c88c1e8cae9ce2f62762ea08bb1b73321554219b118bb12bfbe347",
+      "request_id": null,
+      "n_drawn": 8,
+      "label": "h941_gen_quantum_s0",
+      "cycled": false
+    },
+    "sample_text": "a fundamentally the same.The rise to subject tha"
+  },
+  "token_freq_chi2": {
+    "chi2": 17.95200929984817,
+    "p": 0.9452443937898254,
+    "dof": 29
+  },
+  "seq_entropy": {
+    "det_mean": 4.140321523974413,
+    "det_sd": 0.32198518033553586,
+    "q_mean": 4.107443053677039,
+    "q_sd": 0.2144826017923323,
+    "ks_D": 0.20833333333333334,
+    "ks_p": 0.686017125117228,
+    "cohen_d": 0.11765408511628171
+  },
+  "distinguishing": {
+    "token": "False",
+    "entropy": "False"
+  },
+  "deterministic": false,
+  "g5_code_measured": true,
+  "llm": "none",
+  "substrate": "Lane-P .clm decode (CPU-mirror)",
+  "verdict_token": "\ud83d\udfe2",
+  "falsifier_id": "F-H941-EMIT-TEXT-PARITY",
+  "verdict_rationale": "The emit-TEXT pipeline RUNS end-to-end (emit -> .clm L3 decode via the byte-exact mirror of clm_d768_e2l1.clm -> 24\u00d748 REAL sampled tokens/arm) and the two entropy modes are INDISTINGUISHABLE at the token layer. token-frequency chi\u00b2 p=0.945 (>=0.05, dof 29); per-stream sequence-entropy KS D=0.208 p=0.686 (>=0.05), Cohen d=+0.118 (|d|<0.2). H_930/H_936's quantum-ontological-not-functional result EXTENDS to the real text layer \u2014 the entropy SOURCE does not change WHAT she emits, only its provenance. (#123-A: ANU == chacha20 statistically.)"
+}
