@@ -11,8 +11,8 @@ pre_register_frozen: true
 frozen_at: 2026-06-07
 since: 2026-06-07
 sister: H_1006 (dense-sup cracks T3 modular), H_1007-1010 (other methods fail), H_1005 (curriculum cap), H_1000 (task harness)
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT (no verdict token until measured)
+status: measured
+verdict: 🔴 CREDIT-DENSITY-TASK-LOCAL — per-step supervision does NOT generalize across new accumulator algebras at len=36. Of 3 NEW state-bound families (mem-aug~1.0): CAPPED-and-cracked-by-dense=[]; CAPPED-but-survives-dense=[N1 kv-recall]; NO-cap (final-label already solves, dense not needed)=[N2 running-max, N3 stack-depth]. The H_1006 cap-and-crack is STRUCTURE-SPECIFIC (only accumulators genuinely hard from a sparse final label, like T3 modular). Per-step gradient density = a real but BOUNDED lever, not a general long-horizon principle. closed-negative on generality (a_paper_negative_ok); toy len=36 $0 CPU, larger-budget/production OPEN.
 ---
 
 # H_1013 — credit-density generalization (is per-step supervision a general long-horizon unlock?)
