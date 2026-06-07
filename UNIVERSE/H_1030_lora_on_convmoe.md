@@ -10,8 +10,9 @@ deterministic: true
 pre_register_frozen: true
 frozen_at: 2026-06-07
 since: 2026-06-07
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT
+status: measured
+verdict: 🔴 LORA-BREAKS-CLM (Arm A foundation→.clm BLOCKED ✓; Arm B1 LoRA ADAPTS ConvMoE ✓ CE 5.75→1.66 @ 5.2% params; Arm B2 FAILS — int4-.clm envelope cannot absorb the LoRA low-rank delta: merged in-mem CE 1.66 vs int4-decoded CE 5.49, ΔCE=3.83 ≫ 0.20, while a no-LoRA base round-trips at ΔCE=0.003 → break is LoRA-delta-specific)
+measured_at: 2026-06-07
 ---
 
 # H_1030 — can we LoRA an existing LLM to our CLM standard? (two-arm falsifiable)
@@ -80,10 +81,65 @@ honored — generic synthetic byte target, no persona/carving data. p7 honored �
 perplexity-as-truth. a_clm_gen_pipeline honored — ConvMoE-only serialize, no transformer .clm claim.
 
 ## 4. method
-(to be filled at measurement — Arm A deterministic mismatch demo + Arm B numpy ConvMoE+LoRA train/merge/serialize/mirror-decode)
+Script: `UNIVERSE/h1030_lora_on_convmoe.py` (numpy, $0 CPU-local, NO GPU). torch is
+unavailable on this Mac, so a minimal numpy CLMConvMoE forward re-implements the SAME
+conv-native math as `CLM/model/model.py` / `CORE/clm_decode.hexa` (causal dilated conv,
+GroupNorm(1,d)+GELU residual trunk, router conv, E expert conv+GELU, softmax MoE mix,
+output GroupNorm, readout conv; tiny d=16/L=1/E=2, byte V=256, T=24). Weights are held in
+the EXACT torch-key layout the CANONICAL serializer `CLM/model/clm_serialize_v2.py`
+consumes, so the `.clm` is produced by `serialize_v3` itself (not a re-implementation), and
+decode is verified by the byte-exact mirror `state/mid_convmoe_fire/clm_decode_mirror.py`
+(memory clm-decode-macos-link-gap; hexa engine-mount BLOCKED by a local macOS toolchain
+link-gap, NOT an artifact problem — engine-link re-verify deferred, a_scale_honest_scope).
 
-## 5. measurement
-(to be filled from `.verdicts/1030_lora_on_convmoe/H_1030.txt`)
+- **Arm A (deterministic):** a tiny foundation-transformer state_dict (tok_emb, attention
+  qkv/proj, FFN fc1/fc2, ln, lm_head — NO conv/router/expert/readout-conv) is fed to
+  `serialize_v3`. The serializer's role-map requires conv keys; a missing block raises.
+- **Arm B1 (adapts):** base CLMConvMoE frozen at random init; a rank-2 LoRA (A·B factors)
+  injected on the readout conv (d→V) + expert-0 conv. Only the LoRA factors train, by
+  numerical-gradient descent over a small fixed window set of a GENERIC synthetic
+  formal-language byte stream ("ABCDCBA " motif tiled — p3/p6: NOT persona/carving). Held-out
+  window CE compared base vs LoRA; LoRA params vs full-FT params counted.
+- **Control:** the no-LoRA BASE is serialized + mirror-decoded to isolate whether any Arm B2
+  break is LoRA-delta-specific or generic int4 loss.
+- **Arm B2 (merges byte-faithful):** LoRA merged into base weights → `serialize_v3` →
+  byte-exact mirror decode; |CE_mirror − CE_merged_inmem| vs the 0.20-nat int4 envelope, and
+  the AXIS-2 descent gate (CE_mirror < uniform lnV).
+
+## 5. measurement (2026-06-07, $0 CPU-local, numpy, NO GPU)
+Raw stdout: `.verdicts/1030_lora_on_convmoe/H_1030.txt`.
+- **Arm A — ARM_A_BLOCKED = 1.** `serialize_v3` on the transformer state_dict raises
+  `KeyError: missing weight for slot 'ecW' (tried torch key 'embed_conv.conv.weight')` — the
+  `.clm` ConvMoE grammar cannot be populated by attention/FFN parameters. The
+  "LoRA-on-foundation → engine-mount is BLOCKED" claim is measured, consistent with
+  a_clm_gen_pipeline.
+- **Arm B1 — PASS.** CE_base_heldout = 5.74688 → CE_lora_heldout = 1.65926 (CE_DROPPED=1).
+  LoRA params = 608 vs full-FT params = 11682 → param-ratio = 0.0520 (≪ 0.5). LoRA genuinely
+  ADAPTS the conv-native ConvMoE with ~5% of the parameters.
+- **Control — BASE_FAITHFUL = 1.** No-LoRA base: in-mem CE 5.74688 vs int4-mirror CE 5.75013,
+  ΔCE_base = 0.00325 ≪ 0.20. The int4-.clm envelope is NOT generally lossy at this scale.
+- **Arm B2 — FAIL.** Merged in-mem CE = 1.65926 but int4-decoded mirror CE = 5.48810,
+  ΔCE = 3.82885 ≫ 0.20 (BYTE_FAITHFUL=0). The adaptation is destroyed by serialization. (The
+  mirror CE 5.488 sits just under uniform lnV=5.545, MIRROR_DESCENT=1, but the LoRA gain is
+  gone.)
 
 ## 6. finding
-(to be filled)
+🔴 **LORA-BREAKS-CLM** (closed-negative, a_paper_negative_ok). Answer to "can we LoRA an
+existing LLM to our CLM standard?" — **No, not end-to-end, on two independent grounds:**
+1. A foundation transformer can NEVER become an engine-mountable `.clm` (Arm A, deterministic
+   architectural hard block — the `.clm` grammar is ConvMoE-specific).
+2. Even on the architecture-LEGAL path (LoRA on OUR CLMConvMoE), LoRA DOES adapt the model
+   (Arm B1 ✓, 5.2% params) but the int4-QAT `.clm` envelope CANNOT absorb the merged low-rank
+   delta (Arm B2 ✗): the merged model loses essentially all its adaptation through int4
+   serialization (ΔCE 3.83). The CONTROL is decisive — the same int4 path preserves the
+   no-LoRA base at ΔCE 0.003, so the break is SPECIFICALLY the LoRA delta, not generic
+   quantization loss. The low-rank update concentrates per-output-channel weight magnitude
+   that the 15-level symmetric-int4 per-channel quant (scale = amax/7) crushes.
+
+**Ruled-out axis:** "merge a float LoRA adapter into the int4-.clm envelope and keep the
+adaptation" is closed-negative at this toy scale — naive float-LoRA-then-int4 is NOT a viable
+path to a fine-tuned engine-mountable `.clm`. A viable path would require QAT-AWARE LoRA
+(quantize-during-adapt / fold the delta before quant calibration), which this hypothesis did
+NOT test. Honest scope (a_scale_honest_scope · a_toy_scale_recheck): toy d16/L1/E2 numpy,
+mirror-decode (engine-link deferred); scale-transfer to production d/L/E and a QAT-aware LoRA
+variant are UNVERIFIED and are the natural follow-ups.
