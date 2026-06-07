@@ -10,8 +10,9 @@ deterministic: true
 pre_register_frozen: true
 frozen_at: 2026-06-08
 since: 2026-06-08
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT
+status: measured
+verdict: 🔴 QAT-LORA-STILL-BREAKS (QAT-aware LoRA HALVES the int4 merge break — float-LoRA merge ΔCE 3.38 → QAT-LoRA merge ΔCE 0.98, a real Δ-vs-H_1030 improvement — but does NOT reach byte-faithful (0.98 ≫ 0.20 envelope), AND the QAT-LoRA's "adaptation" is degenerate: it only reaches CE 5.543 ≈ uniform lnV 5.545 vs base 5.643, collapsing toward uniform rather than the float-LoRA's genuine CE 1.72. So QAT-LoRA neither MEANINGFULLY adapts NOR merges faithfully — int4 .clm is fundamentally LoRA-hostile at this toy scale)
+measured_at: 2026-06-08
 ---
 
 # H_1032 — does a quantization-aware LoRA fix the H_1030 int4-.clm break? (falsifiable)
@@ -94,8 +95,55 @@ canonical STE behavior). Two arms in one run:
 Held-out window CE compared base vs each LoRA; LoRA params vs full-FT params counted; the no-LoRA
 base round-trip retained as the control. All gates CODE-measured (p7), stdout → the verdict file.
 
-## 5. measurement
-PENDING — see `.verdicts/1032_qat_aware_lora_clm/H_1032.txt` once run.
+## 5. measurement (2026-06-08, $0 CPU-local, numpy, NO GPU)
+Raw stdout: `.verdicts/1032_qat_aware_lora_clm/H_1032.txt`.
+- **Frozen base:** CE_base_heldout = 5.64343; uniform lnV = 5.54518; full-FT params = 11682.
+- **Control — BASE_FAITHFUL = 1.** No-LoRA base int4 round-trip ΔCE = 0.02947 ≤ 0.20 (the int4
+  envelope is not generally lossy at this scale; any break is LoRA-delta-specific).
+- **Arm 1 — FLOAT-LoRA baseline (= H_1030, no fake-quant).** Adapts genuinely:
+  CE_floatlora_heldout = 1.71870 (ADAPT=1, in-mem merged CE 1.71870). But int4 serialization
+  destroys it: CE_mirror_decode = 5.10011 → **FLOAT_MERGE_DELTA_CE = 3.38140** ≫ 0.20
+  (FLOAT_BYTE_FAITHFUL=0). Reproduces the H_1030 break (H_1030 measured 3.83; same order of
+  magnitude — the difference is the new seed 1032 and the larger STE eps=1e-2 here).
+- **Arm 2 — QAT-AWARE LoRA (the fix: fake-quant int4 in forward, STE grad).** LoRA params = 608,
+  param-ratio = 0.0520 (≪ 0.5). Two effects:
+  1. **Merge break HALVED.** **QAT_MERGE_DELTA_CE = 0.98215** vs the float arm's 3.38140
+     (Δ-vs-H_1030 fix = 1) — training against the quantized model genuinely pulls the merged
+     weights much closer to the int4 grid. But 0.98 still ≫ 0.20 → **QAT_BYTE_FAITHFUL = 0**
+     (the residual mismatch is the per-output-channel scale RE-CALIBRATING after merge: the LoRA
+     delta shifts each channel's amax, so the serializer's amax/7 scale differs from the scale the
+     QAT forward used, leaving a residual quant gap the STE cannot fully close).
+  2. **Adaptation is DEGENERATE.** CE_qatlora_fqfwd = 5.54289 ≈ uniform lnV 5.54518 — technically
+     below base (ADAPT=1) but the QAT-LoRA collapsed the model toward UNIFORM rather than learning
+     the task (float-LoRA reached 1.72). The float-forward of the same merged weights is even worse
+     (6.52493). MIRROR_DESCENT=1 only because CE_mirror 5.54278 sits a hair under uniform — i.e. it
+     is decoding ≈ uniform, no real signal.
 
 ## 6. finding
-PENDING-MEASUREMENT.
+🔴 **QAT-LORA-STILL-BREAKS** (closed-negative, a_paper_negative_ok). The H_1030-named fix —
+QAT-aware LoRA (train the delta with the int4 fake-quant in the forward, STE grad) — does NOT
+rescue an engine-mountable fine-tuned `.clm` at this toy scale, on BOTH falsifier legs:
+
+1. **Merge is still not byte-faithful.** QAT-aware training HALVES the break (merge ΔCE 3.38 → 0.98,
+   a real measured improvement over naive float-LoRA — the Δ-vs-H_1030 the hypothesis asked for is
+   non-trivial and positive), but 0.98 is still ~5× over the 0.20 envelope. The residual is the
+   per-output-channel scale recalibration: merging the LoRA delta changes each channel's amax, so
+   `serialize_v3`'s scale = amax/7 differs from the scale the QAT forward quantized against, and the
+   STE cannot fully anticipate that post-merge re-quant.
+2. **And the QAT-LoRA does not meaningfully adapt anyway.** Forced to live on the int4 grid, the
+   rank-2 LoRA can only collapse the model toward uniform (CE 5.543 ≈ lnV 5.545) instead of learning
+   the task the float-LoRA learns to CE 1.72. The two objectives — adapt AND land on the coarse
+   15-level grid — are in direct tension for a low-rank delta at this width.
+
+**Ruled-out axis:** "make a float-LoRA adaptation survive the int4 `.clm` envelope by QAT-aware
+training (STE fake-quant in forward)" is closed-negative at this toy scale. int4 `.clm` is
+fundamentally LoRA-HOSTILE here: the 15-level per-output-channel symmetric quant is too coarse for a
+rank-2 delta to both express the adaptation and land on-grid. The MEASURED improvement (3.38 → 0.98)
+suggests the direction is right but insufficient — natural follow-ups (NOT tested here): (a) a
+HIGHER-bit envelope (int8) for the LoRA-touched blocks, (b) per-block scale freezing (calibrate the
+serializer scale to the QAT scale so merge does not re-quant), (c) a higher-rank / wider adapter, or
+(d) full-FT-then-int8 rather than low-rank-then-int4. Honest scope (a_scale_honest_scope ·
+a_toy_scale_recheck): toy d16/L1/E2 numpy, mirror-decode (engine-link deferred); scale-transfer and
+the higher-bit / scale-frozen variants are UNVERIFIED. p3/p6 honored (generic byte target, no
+persona); p7 honored (CE measured, no perplexity-as-truth); a_clm_gen_pipeline honored (ConvMoE
+stays ConvMoE).
