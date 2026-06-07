@@ -1,0 +1,147 @@
+================================================================================
+H_1023 — is the redundancy-driven faithful-UP / big-Phi-DOWN split SUBSTRATE-GENERAL?
+NEW SUBSTRATE = structured TPM-driven n=4 binary Markov chain (NO LatentWorldModel,
+  NO planning rollout) — DISTINCT from the H_1012..H_1020 planning-control task.
+substrate-engine reads=CPU-mirror (numpy) — H_1004 engines + H_1012 proof,
+  RE-PROVEN == stdlib at n=4 (and n=5 cross-check) BEFORE scoring.
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+PID = Williams-Beer (2010) I_min redundancy lattice, IMPORTED VERBATIM from H_1017
+  (the EXPLANATORY variable — NOT a Phi proxy/replacement; Phi from stdlib mirrors only)
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+interventions (frozen): REDUNDANCY-raising coupled-copy channel vs SYNERGY-raising
+  XOR/parity channel, each vs the SAME independent-noisy-bits baseline.
+PASS = SPLIT-SUBSTRATE-GENERAL: redundancy intervention reproduces faithful-UP/
+  big-Phi-DOWN AND its redundancy-margin (Δred−Δsyn) > 0 AND > the synergy control's.
+FAIL = SPLIT-TASK-LOCAL: the split does NOT reproduce off the planning substrate.
+================================================================================
+
+EQUIVALENCE PROOF (H_1012 prove_mirrors_at_n — re-prove BOTH mirrors vs stdlib):
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+  substrate PID/engine deterministic re-run: pid=True engine=True   red_total=4.929194 syn_total=0.896601 nonneg=True
+  WB sanity: COPY(T;T,T) red=1.0000 syn=0.0000 | XOR(T;A,B) red=0.0000 syn=1.0000
+  WB canonical-case check: COPY=True XOR=True
+  EQUIVALENCE + PID-VALIDITY PROOF: PROVEN
+
+################ SCORE intervention = redundancy  [REDUNDANCY-raising coupled-copy channel (frozen)] ################
+    [redundancy seed 1/30] elapsed=   0.9s
+    [redundancy seed 2/30] elapsed=   1.8s
+    [redundancy seed 3/30] elapsed=   2.6s
+    [redundancy seed 4/30] elapsed=   3.5s
+    [redundancy seed 5/30] elapsed=   4.4s
+    [redundancy seed 6/30] elapsed=   5.2s
+    [redundancy seed 7/30] elapsed=   6.1s
+    [redundancy seed 8/30] elapsed=   7.0s
+    [redundancy seed 9/30] elapsed=   7.8s
+    [redundancy seed 10/30] elapsed=   8.8s
+    [redundancy seed 11/30] elapsed=   9.6s
+    [redundancy seed 12/30] elapsed=  10.5s
+    [redundancy seed 13/30] elapsed=  11.3s
+    [redundancy seed 14/30] elapsed=  12.2s
+    [redundancy seed 15/30] elapsed=  13.0s
+    [redundancy seed 16/30] elapsed=  13.9s
+    [redundancy seed 17/30] elapsed=  14.8s
+    [redundancy seed 18/30] elapsed=  15.7s
+    [redundancy seed 19/30] elapsed=  16.5s
+    [redundancy seed 20/30] elapsed=  17.5s
+    [redundancy seed 21/30] elapsed=  18.3s
+    [redundancy seed 22/30] elapsed=  19.2s
+    [redundancy seed 23/30] elapsed=  20.1s
+    [redundancy seed 24/30] elapsed=  21.0s
+    [redundancy seed 25/30] elapsed=  21.9s
+    [redundancy seed 26/30] elapsed=  22.8s
+    [redundancy seed 27/30] elapsed=  23.6s
+    [redundancy seed 28/30] elapsed=  24.5s
+    [redundancy seed 29/30] elapsed=  25.3s
+    [redundancy seed 30/30] elapsed=  26.2s
+  --- redundancy: intervention vs independent-bits baseline (matched n=4) ---
+     big-Phi      contrast=+0.2606 d=+0.352 p=1.784e-01 -> RAISES
+     faithful_phi contrast=+1.1220 d=+9.646 p=4.299e-26 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     Δredundancy  contrast=+4.4174 d=+10.240 p=7.846e-27
+     Δsynergy     contrast=+0.7520 d=+13.182 p=4.127e-37
+     redundancy-margin Δred−Δsyn = +3.6654
+     (cross-check) Δmi_total=+2.5970 | Δunique=+1.5530
+
+################ SCORE intervention = synergy  [SYNERGY-raising XOR/parity channel (frozen, control)] ################
+    [synergy seed 1/30] elapsed=  27.9s
+    [synergy seed 2/30] elapsed=  28.7s
+    [synergy seed 3/30] elapsed=  29.6s
+    [synergy seed 4/30] elapsed=  30.4s
+    [synergy seed 5/30] elapsed=  31.4s
+    [synergy seed 6/30] elapsed=  32.2s
+    [synergy seed 7/30] elapsed=  33.1s
+    [synergy seed 8/30] elapsed=  34.0s
+    [synergy seed 9/30] elapsed=  34.9s
+    [synergy seed 10/30] elapsed=  35.7s
+    [synergy seed 11/30] elapsed=  36.6s
+    [synergy seed 12/30] elapsed=  37.4s
+    [synergy seed 13/30] elapsed=  38.3s
+    [synergy seed 14/30] elapsed=  39.2s
+    [synergy seed 15/30] elapsed=  40.0s
+    [synergy seed 16/30] elapsed=  40.9s
+    [synergy seed 17/30] elapsed=  41.8s
+    [synergy seed 18/30] elapsed=  42.6s
+    [synergy seed 19/30] elapsed=  43.5s
+    [synergy seed 20/30] elapsed=  44.4s
+    [synergy seed 21/30] elapsed=  45.2s
+    [synergy seed 22/30] elapsed=  46.1s
+    [synergy seed 23/30] elapsed=  46.9s
+    [synergy seed 24/30] elapsed=  47.8s
+    [synergy seed 25/30] elapsed=  48.7s
+    [synergy seed 26/30] elapsed=  49.6s
+    [synergy seed 27/30] elapsed=  50.4s
+    [synergy seed 28/30] elapsed=  51.3s
+    [synergy seed 29/30] elapsed=  52.1s
+    [synergy seed 30/30] elapsed=  53.0s
+  --- synergy: intervention vs independent-bits baseline (matched n=4) ---
+     big-Phi      contrast=+3.2668 d=+3.121 p=2.620e-16 -> RAISES
+     faithful_phi contrast=+0.0128 d=+1.222 p=4.391e-05 -> RAISES
+     SPLIT label (sign(faith)!=sign(big)): False
+     Δredundancy  contrast=+0.0622 d=+1.098 p=1.881e-04
+     Δsynergy     contrast=+0.1194 d=+1.980 p=3.342e-09
+     redundancy-margin Δred−Δsyn = -0.0572
+     (cross-check) Δmi_total=+0.0784 | Δunique=+0.1892
+
+================================================================================
+SUBSTRATE-GENERALITY MATRIX — per intervention on the NEW (Markov) substrate
+================================================================================
+  intervention | big sign | faith sign | SPLIT? |   Δredund |  Δsynergy |   margin
+  redundancy   |   RAISES |     RAISES |  False |   +4.4174 |   +0.7520 |  +3.6654
+  synergy      |   RAISES |     RAISES |  False |   +0.0622 |   +0.1194 |  -0.0572
+
+Redundancy intervention (the cross-substrate split-inducer):
+  faithful_phi sign = RAISES (need RAISES) | big-Phi sign = RAISES (need LOWERS) -> correct split signs: False
+  redundancy-margin Δred−Δsyn = +3.6654 (need >0): True
+  vs SYNERGY control margin = -0.0572 -> redundancy margin strictly exceeds synergy control: True
+
+================================================================================
+OVERALL: 🔴 SPLIT-TASK-LOCAL (CLOSED-NEGATIVE) — on the NEW generative substrate the
+  redundancy-raising intervention does NOT reproduce the split with a redundancy-
+  margin that separates it from the synergy control. The faithful-UP / big-Phi-DOWN
+  split + redundancy-margin mechanism is BOUNDED to the planning-control task
+  (a_paper_negative_ok); the cross-substrate generalization is RULED OUT.
+  VERDICT-TOKEN: SPLIT-TASK-LOCAL
+================================================================================
+HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n=4 — both engines
+EXACT; big-Phi super-exponential so n=4 is the rung for the full SET x 30 seeds.
+Both CPU mirrors RE-PROVEN == stdlib at n=4 AND n=5 (H_1012 prove_mirrors_at_n)
+BEFORE scoring; the PID is exact + deterministic on the SAME bits and validated on
+canonical COPY(redundant)/XOR(synergy). The PID is NOT a proxy for Phi. The new
+substrate has NO LatentWorldModel / NO planning rollout. Scale-transfer UNVERIFIED.
+g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool. NOT a forge binary; $0 CPU-local.
