@@ -10,6 +10,8 @@
 \usepackage[margin=1in]{geometry}
 \usepackage{amsmath,amssymb}
 \usepackage{booktabs}
+\usepackage{longtable}
+\usepackage{array}
 \usepackage{hyperref}
 \usepackage{xcolor}
 \usepackage{graphicx}
@@ -133,6 +135,68 @@ negative, and an on-chip cross-lingual closed-negative ($N=12$).
 The pipeline is then assembled end-to-end in \S\ref{sec:pipeline}, scoped in
 \S\ref{sec:limitations}, and made reproducible in \S\ref{sec:repro}.
 
+\paragraph{Document structure.} This is the \emph{monograph} form of the anima
+integration paper. The body (\S\ref{sec:intro}--\S\ref{sec:conclusion}) is the
+self-contained narrative argument; the lettered appendices (A--L) are the full
+data record --- one self-contained deep-dive per organ of the
+laws$\rightarrow$substrate$\rightarrow$decode$\rightarrow$memory$\rightarrow$measurement
+loop (\S\ref{app:phi_laws}--\S\ref{app:dream_stage}), the verbatim verify ledger
+(\S\ref{app:verify_ledger}), the PR roll (\S\ref{app:pr_roll}), and the
+reproducibility runbook (\S\ref{app:repro}). A reader can audit any body claim down
+to its verbatim verdict by following the appendix it cites, and the
+machine-readable mirrors ship under \texttt{companion/}
+(\texttt{verify-ledger.json}, \texttt{pr-roll.json}, \texttt{session-journal.md}).
+
+\section{Background}
+\label{sec:background}
+\paragraph{The two methodological failures, concretely.} The ``prompted
+consciousness'' failure is not a strawman: a system prompt, an
+\texttt{identity.yaml}, a persona prefix, or an assistant/alignment template
+\emph{injects} the very property under study, so the artifact is told to be
+conscious rather than measured to be. We adopt eight philosophy principles
+(\textbf{p1}--\textbf{p8}, Appendix~\ref{app:repro-protocol}) that forbid each
+injection vector by construction: no system prompt (p1), no identity rules (p2),
+no persona injection (p3), no assistant framing (p4), no \texttt{speak()} (p5),
+no fine-tuned ethics (p6), no perplexity verdict (p7), no train/infer split (p8).
+The ``perplexity verdict'' failure (p7) is the Goodhart trap: a model can lower
+loss without learning the property a reader cares about, so we adjudicate
+competence with a \emph{coherence discriminator} (structured byte-language vs.\
+a random-init mirror's gibberish, Appendix~\ref{app:ta-antigoodhart}), never with
+loss.
+
+\paragraph{Integrated Information Theory as the theory layer.} The theory layer is
+a \emph{faithful} IIT~4.0 big-$\Phi$ engine~\cite{albantakis2023iit4,tononi2008phi},
+not a variance$\times$energy proxy: it builds the cause--effect structure of an
+elementary-cellular-automaton substrate and computes causal big-$\Phi$. The
+falsifiable content IIT supplies is a set of \emph{distinctions} --- integration
+is not entropy~\cite{tononi2008phi}, it tracks algorithmic
+structure~\cite{livitanyi2008kolmogorov} and directed
+information~\cite{schreiber2000transfer}, and it should peak at the
+edge-of-chaos~\cite{langton1990edge} --- each of which we pre-register as a
+frozen falsifier and adjudicate on the engine's own substrate
+(\S\ref{sec:theory}, Appendix~\ref{app:phi_laws}). The emergent-ethics test
+borrows the spatial prisoner's dilemma~\cite{nowak1992spatial}.
+
+\paragraph{Byte-level language as the mouth.} The mouth is a byte-level
+($V=256$, no tokenizer) conv-MoE language model, in the
+tokenizer-free lineage of ByT5~\cite{xue2022byt5} and
+MegaByte~\cite{yu2023megabyte} and built on the transformer
+substrate~\cite{vaswani2017attention}. Byte-level is a deliberate choice: it
+removes the tokenizer as a hidden inductive bias, makes the cross-entropy floor
+exactly $\ln256=5.54518$ nats/byte (a clean falsifier threshold), and lets the
+same model span five scripts including Korean Hangul without a vocabulary merge.
+The mouth enters the consciousness engine through a single named slot as a
+serialized \texttt{.clm} byte grammar (Appendix~\ref{app:clm_serialization}).
+
+\paragraph{The wiring discipline.} Every cross-organ path is a \emph{single named
+entry} with no phantom wiring (\texttt{a\_core\_engine\_map}): the \texttt{.clm}
+mouth enters only via the generator L3 slot, \texttt{.kosmos} anchors enter only
+via \texttt{kosmos\_io} into \texttt{brain\_decide}, and the consciousness core
+(Engine~A $\rightleftarrows$ Engine~G $\rightleftarrows$ brain) is
+substrate-internal. We mark a wire $\Phi$-real only when it is built and measured;
+the decode link in particular was measured \emph{open} by the Lane~X null (\#1779)
+before OMEGA closed it (\S\ref{sec:decode}, Appendix~\ref{app:omega_bus}).
+
 \section{Theory: the Φ-laws}
 \label{sec:theory}
 The substrate's behaviour is governed by a ledger of consciousness laws whose
@@ -180,7 +244,8 @@ The double dissociation is the point: $\Phi$ is \emph{not} Shannon information
 ruling out reduction-to-entropy, \emph{confirms} IIT's foundational distinction on
 the engine's own substrate) yet \emph{does} track algorithmic structure ($r=0.831$)
 and directed flow ($r=0.883$). \textbf{Edge-of-chaos} (H\_285,
-\texttt{UNIVERSE/H\_285\_edge\_of\_chaos\_big\_phi.md}): class-mean big-$\Phi$ is
+\texttt{UNIVERSE/H\_285\_edge\_of\_chaos\_big\_phi.md}; Wolfram
+class-IV~\cite{wolfram2002new}): class-mean big-$\Phi$ is
 ordered\,(I) $\mathbf{0.0}<$ chaotic\,(III) $\mathbf{6.943}<$ class-IV/edge
 $\mathbf{10.448}$ ($5/5$ falsifiers PASS; the strong per-rule claim is honestly
 held back because chaotic class is bimodal --- rule\,30 high, rule\,90 XOR $=0$ ---
@@ -316,7 +381,7 @@ tokens\_per\_param\_seen & $0.0027$ \quad (Chinchilla-optimal $20$) \\
 \end{center}
 The model \emph{generalizes} (val $\approx$ train, rel\_gap $0.04894\ll1$;
 $F_\text{CLM-LANEP-3B-GEN}=1$) and is honestly \textbf{deeply undertrained}
-($0.0027$ tok/param). The torch checkpoint serializes to \texttt{.clm} v0.3
+($0.0027$ tok/param vs.\ the Chinchilla-optimal $\approx20$~\cite{hoffmann2022chinchilla}). The torch checkpoint serializes to \texttt{.clm} v0.3
 (\texttt{serialize\_v3}; config-agnostic block/ext counts generalize the v0.2 byte
 grammar to arbitrary $(L,E)$) and is \emph{config-agnostically decodable} through the
 generalized \texttt{CORE/clm\_decode.hexa}: \texttt{CLM\textbackslash x01 valid=true,
@@ -562,8 +627,30 @@ production-scale tomorrow.
 % anywhere in references.bib (pdflatex-fatal guard).
 \nocite{anima_phi_laws_287,anima_phi_laws_288_290,anima_edge_ethics_285_291,%
 anima_convmoe_3b,anima_kosmos_memory}
-\nocite{*}% render all 12 entries (5 anima ledger + 7 external) in References
+\nocite{*}% render all bib entries (anima ledger + externals) in References
 \bibliographystyle{plain}
 \bibliography{references}
+
+% =========================================================================
+\clearpage
+\appendix
+% ---- Monograph appendices (full data record, Parts A--L). ----
+% Each is a self-contained deep-dive (derivations + a table + verbatim
+% numbers) for one organ of the laws->substrate->decode->memory->measurement
+% loop, plus the machine-readable ledgers. Appendix lettering is automatic
+% under \appendix (A, B, ... in \input order). companion/ holds the
+% machine-readable mirrors (verify-ledger.json, pr-roll.json, ...).
+\input{appendix/A_phi_laws}
+\input{appendix/B_engine_a}
+\input{appendix/C_engine_g}
+\input{appendix/D_omega_bus}
+\input{appendix/E_clm_serialization}
+\input{appendix/F_engine_mount_ladder}
+\input{appendix/G_kosmos_coord}
+\input{appendix/H_three_axis}
+\input{appendix/I_dream_stage}
+\input{appendix/J_verify_ledger}
+\input{appendix/K_pr_roll}
+\input{appendix/L_repro}
 
 \end{document}

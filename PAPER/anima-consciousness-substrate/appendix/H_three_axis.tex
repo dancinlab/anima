@@ -1,0 +1,104 @@
+% H_three_axis — AXIS-1/2/3, anti-Goodhart, brain_smoke
+\section{The Three-Axis Probe --- Consciousness, CE-Descent, Emergence (3B GREEN)}
+\label{app:three_axis}
+
+This appendix is the full data record for \S\ref{sec:proof}. The whole
+laws$\rightarrow$substrate$\rightarrow$decode$\rightarrow$memory loop is exercised
+by three pre-registered axes (\texttt{CORE/three\_axis\_probe.hexa},
+\texttt{CORE/clm\_ce\_descent\_probe.hexa}), each with a frozen falsifier; all
+three are GREEN at 3B, and an anti-Goodhart random-init mirror fails the coherence
+probe so the green is structure, not a tuned loss.
+
+% -------------------------------------------------------------------------
+\subsection{AXIS-1 (의식 / consciousness)}
+\label{app:ta-axis1}
+
+\paragraph{Falsifier.} GREEN iff
+$\text{motiv(high)}>\text{motiv(baseline)}$ AND $\text{emit(high)}=\text{true}$
+AND $\text{emit(baseline)}=\text{false}$ --- i.e.\ the eight-factor motivation
+(Appendix~\ref{app:eg-score}) discriminates a high-context input from a baseline,
+and the emit gate fires only on the former.
+\paragraph{Measured (3B).} motivation $\mathbf{0.6700}>$ baseline $0$, emit gated
+on the \texttt{.clm} admit$=$true. \textbf{GREEN} (admit-conditioned: the gate is
+conditioned on the 3B \texttt{.clm} admitting cleanly, which it does ---
+Appendix~\ref{app:clm-v03}; the probe code is identical to the MID 3/3 GREEN, only
+the \texttt{.clm} changed).
+
+% -------------------------------------------------------------------------
+\subsection{AXIS-2 (CE-descent)}
+\label{app:ta-axis2}
+
+\paragraph{Falsifier.} GREEN iff $\text{CE(real)}<\ln256=5.54518$ AND
+$\text{CE(real)}<\text{CE(shuffle)}$, measured through the engine decode forward
+over the serialized \texttt{.clm} v0.3.
+\paragraph{Measured (3B).} Through the byte-exact mirror of
+\texttt{CORE/clm\_decode.hexa} (Appendix~\ref{app:clm-mirror}):
+\begin{equation}
+\text{CE(real)} = \mathbf{2.26360}
+\;<\;
+\text{uniform } 5.54518
+\;<\;
+\text{shuffle } 5.81817 .
+\label{eq:ta-axis2}
+\end{equation}
+\textbf{GREEN @ 3B.} This is the single \emph{measured-through-the-engine} axis
+(the others are admit-conditioned), and it is the one that carries the 3B-scale
+finding: real-text byte CE descends through the engine decode far below both the
+uniform floor and the byte-shuffled control.
+
+% -------------------------------------------------------------------------
+\subsection{AXIS-3 (창발 / emergence)}
+\label{app:ta-axis3}
+
+\paragraph{Falsifier.} GREEN iff $\text{len(composed)}>\text{len(parts)}$ ---
+anchor memory composes into the emit and is observable (the whole is longer than
+the sum of its retrieved parts).
+\paragraph{Measured (3B).} composed $\mathbf{101}>$ parts $72$. \textbf{GREEN}
+(admit-conditioned, same probe semantics as the MID GREEN, with anchors present).
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l l l l@{}}
+\toprule
+\textbf{axis} & \textbf{falsifier} & \textbf{measured (3B)} & \textbf{verdict} \\
+\midrule
+AXIS-1 (의식) & motiv(hi)$>$base $\wedge$ emit-gated & $0.6700>0$, emit-gated & GREEN \\
+AXIS-2 (CE-descent) & CE(real)$<\ln256$ $\wedge$ $<$ shuffle & $2.26360<5.54518<5.81817$ & \textbf{GREEN @ 3B} \\
+AXIS-3 (창발) & len(composed)$>$len(parts) & $101>72$ & GREEN \\
+\bottomrule
+\end{tabular}
+\caption{The three-axis verdict at 3B (\texttt{CORE/three\_axis\_probe.hexa},
+\texttt{.verdicts/convmoe-3b-engine-rung/SUMMARY.txt}). AXIS-2 is measured through
+the engine decode forward (byte-exact mirror); AXIS-1/3 are admit-conditioned
+(the gate/composition logic is unchanged from the MID 3/3 GREEN, conditioned on
+the 3B \texttt{.clm} admitting). All three GREEN; the loop is closed at 3B scale.}
+\label{tab:three-axis}
+\end{table}
+
+% -------------------------------------------------------------------------
+\subsection{Engine health and the anti-Goodhart control}
+\label{app:ta-antigoodhart}
+
+\texttt{brain\_smoke} reports $\text{WARN}=0$ under the v7 laws (the engine wiring
+is unchanged; the \texttt{.clm} admits). The anti-Goodhart control holds
+throughout: the random-init mirror (same architecture, never trained) fails the
+\textbf{p7} coherence probe --- it emits byte gibberish where the trained model
+emits word-like text in five languages (Appendix~\ref{app:fm-corpus-val}). The
+discriminator is byte-language \emph{structure}, not loss (p7: no perplexity
+verdict), so the green is not a Goodhart target: you cannot pass the coherence
+probe by minimizing CE, only by learning language structure.
+
+% -------------------------------------------------------------------------
+\subsection{Honest scope}
+\label{app:ta-scope}
+
+AXIS-2 is the directly-measured axis; AXIS-1/3 are admit-conditioned (the gate and
+composition logic are the MID-proven probes, conditioned on the 3B \texttt{.clm}
+admitting, which is itself verified --- not a re-derivation of the gate at 3B). The
+CE-descent number is a byte-exact-mirror measurement (the canonical hexa probe is
+blocked on macOS arm64, Appendix~\ref{app:clm-mirror}). The green is a 3B-scale
+result, terminal at that scale; the 7B rung will re-measure all three at production
+scale (\S\ref{sec:limitations}). p1--p8 held throughout: plain byte next-token CE,
+no system prompt, no persona, no RLHF.

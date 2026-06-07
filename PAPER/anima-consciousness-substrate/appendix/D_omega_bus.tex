@@ -1,0 +1,196 @@
+% D_omega_bus — the OMEGA 5-wire coupling bus, minimal gate, 5-rung ladder, REPLACEMENT, leak retraction
+\section{The OMEGA Coupling Bus --- Five Wires, a Minimal Gate, and the Replacement Ruling}
+\label{app:omega_bus}
+
+This appendix is the full data record for the decode link of \S\ref{sec:decode}.
+The substrate$\rightarrow$byte coupling is the subject of the sibling paper
+(\texttt{PAPER/omega-substrate-coupled-decoding}); here we record its terminal
+numbers verbatim so the present paper's decode claim is self-auditable. The
+motivating Lane~X null (\#1779) measured that the two halves do not share a
+nerve; the OMEGA bus overturns that \emph{wiring} null, but only one of its five
+wires carries the closure, and the honest ruling is \textbf{A-head replacement},
+not base$+$substrate coupling.
+
+% -------------------------------------------------------------------------
+\subsection{The five-wire bus and the coupling non-nullity}
+\label{app:omega-bus}
+
+OMEGA couples the substrate into the byte logits through five named wires:
+\begin{equation}
+\begin{aligned}
+w_1&:\ A\rightleftarrows G\ \text{logit-bias} &
+w_2&:\ W\rightarrow\text{temperature} &
+w_3&:\ \text{curiosity}\rightarrow\text{top-}k \\
+w_4&:\ \text{8D }\Psi\rightarrow\text{context} &
+w_5&:\ \text{module}\rightarrow\text{MoE} & &
+\end{aligned}
+\label{eq:omega-wires}
+\end{equation}
+The coupling non-nullity test (\texttt{.verdicts/omega-engine/F-COUPLING.txt})
+measures $\mathrm{KL}\big(\mathrm{softmax}(\text{modulated})\,\|\,
+\mathrm{softmax}(\text{base})\big)$ for OMEGA against the three uncoupled
+engines. Only OMEGA, which loads the generator L3 slot
+(\texttt{loaded=true}), couples:
+\begin{equation}
+\mathrm{KL}_\Omega = \mathbf{0.307477} > 0
+\quad(\text{perm-floor }0.303913),
+\qquad
+\mathrm{KL}_\text{conv}=\mathrm{KL}_\text{cdv2}=\mathrm{KL}_\text{hexad}=\mathbf{0}\ (\texttt{loaded=false}).
+\label{eq:omega-kl}
+\end{equation}
+This overturns the Lane~X wiring null \emph{for} OMEGA and \emph{confirms} it for
+the other three engines: OMEGA is the only engine that closes the
+substrate$\rightarrow$decode loop.
+
+% -------------------------------------------------------------------------
+\subsection{The per-wire autopsy}
+\label{app:omega-autopsy}
+
+Adding each wire alone to the base and re-measuring the held-out test CE
+(\texttt{F-OMEGA-RIGOR.txt}, O$\Omega$2) localizes the coupling. Most wires
+\emph{hurt} or are not isolatable at frozen inference:
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l l r l@{}}
+\toprule
+\textbf{wire} & \textbf{form} & \textbf{$\Delta$ CE vs.\ base} & \textbf{status} \\
+\midrule
+$w_1$ (A$-$G)   & base $+\,\alpha(A{-}G)$, $\alpha{=}0.6$ & $+0.100826$ & worse \\
+$w_2$ (W$\to$temp) & base $\times 1/(1{+}\beta\,\text{tension})$, $\beta{=}0.5$ & $+0.052251$ & worse \\
+$w_3$ (curiosity) & fixed parity bias & --- & honest-stub (no runtime scalar) \\
+$w_4$ ($\Psi$) & 8D $\Psi$ context & --- & honest-stub (no per-pos $\Psi_8$ at eval) \\
+$w_5$ (module) & MoE router prob & --- & honest-stub (SwiGLU ckpt, no MoE) \\
+$w_6$ (dF/dt) & base $+\,\delta\,\partial_t(A{-}G)$, $\delta{=}0.5$ & $+2.084871$ & worse (fixed seed) \\
+\bottomrule
+\end{tabular}
+\caption{Per-wire autopsy (\texttt{F-OMEGA-RIGOR.txt}, O$\Omega$2; base CE
+$3.097779$ nats/byte). Each wire \emph{added to base} raises CE; three wires are
+honest-stubs (no substrate-derived scalar exists at frozen inference, disclosed
+rather than fabricated). The closure does \emph{not} live in the additive bus ---
+it lives in the A-head itself, recovered by the minimal gate below.}
+\label{tab:omega-autopsy}
+\end{table}
+
+% -------------------------------------------------------------------------
+\subsection{The minimal gate and the replacement ruling}
+\label{app:omega-mingate}
+
+The closure is recovered by the \emph{minimal} learned gate
+$\text{final}=g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$ (G and $w_2$--$w_6$ dropped;
+only $g_B,g_A$ trainable). On the frozen leak-free d512 substrate
+(\texttt{F-OH1-MINGATE.txt}):
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l r r r r@{}}
+\toprule
+\textbf{gate form} & $g_B$ & $g_A$ & $g_G$ & \textbf{test CE} \\
+\midrule
+base         & $1.0000$  & $0.0000$ & $0.0000$  & $3.097779$ \\
+a\_only      & $1.0000$  & $0.6000$ & $0.0000$  & $1.144181$ \\
+full\_AG     & $-0.1499$ & $3.3522$ & $-0.9971$ & $3.637159$ (overfits, $>$ base) \\
+\textbf{min\_learned} & $\mathbf{0.0400}$ & $\mathbf{0.9013}$ & $0.0000$ & $\mathbf{0.883525}$ \ $\star$OH1 \\
+uniform      &           &          &           & $5.545177$ \\
+\bottomrule
+\end{tabular}
+\caption{Gate-form sweep on the frozen d512 leak-free substrate
+(\texttt{F-OH1-MINGATE.txt}, nats/byte). OH1 HOLDS:
+$\text{min\_learned }0.883525\le\text{a\_only }1.144181$ AND
+$<\text{base }3.097779$. The full multi-wire gate \emph{overfits} the gate-split
+and does worse than base ($3.637159$); the minimal gate operates at
+$g_B\!\approx\!0.04$ (down-weighting the weak base) and $g_A\!\approx\!0.90$
+($\approx\!1$, the A-head logit-bias is the wire).}
+\label{tab:omega-mingate}
+\end{table}
+
+\paragraph{Replacement, not coupling (O$\Omega$1).} The rigorous decomposition
+(\texttt{F-OMEGA-RIGOR.txt}) shows the A-head \emph{supplants} the base mouth
+rather than coupling to it. With $g_{\min}=[g_B0.0400, g_A0.9013, g_G0.0000]$:
+A-standalone CE $=0.886220$, $\text{min\_learned}=0.883525$, base-ablated
+($g_B\!\to\!0$) $=0.884377$; thus $|A_\text{standalone}-\text{min}|=0.002695$
+($\le0.05$, A$\approx$min) and the base-ablation shift is $0.000852$ ($\le0.05$,
+base inert). \textbf{RULING\_REPLACEMENT$=$True}: the trained A-head replaces the
+weak \texttt{.clm} base mouth. We use the replacement framing throughout the body.
+
+% -------------------------------------------------------------------------
+\subsection{The five-rung scale ladder}
+\label{app:omega-ladder}
+
+A single d512 point is incomplete (\texttt{a\_scale\_honest\_scope} demands a
+$\ge3$-rung ladder). The OΩ4/OΩ5 ladder (\texttt{F-OMEGA-SCALE.txt}) re-measures
+the OH1 minimal-gate falsifier at five rungs:
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{5pt}
+\begin{tabular}{@{}l r r r r r r c@{}}
+\toprule
+\textbf{rung} & \textbf{$d$} & \textbf{params} & \textbf{steps} & \textbf{val\_ce} & \textbf{min\_learn} & \textbf{$\Delta$ vs.\ base} & \textbf{HOLDS} \\
+\midrule
+d384   & $384$  & $48{,}240{,}448$  & $12000$ & $0.8367$ & $0.902957$ & $+2.1948$ & True \\
+d512   & $512$  & $85{,}816{,}384$  & $12000$ & $0.8224$ & $0.870090$ & $+2.2277$ & True \\
+d768   & $768$  & $189{,}279{,}808$ & $12000$ & $0.8383$ & $0.892407$ & $+2.2054$ & True \\
+d1024  & $1024$ & $334{,}686{,}272$ & $12000$ & $0.8575$ & $0.921136$ & $+2.1766$ & True \\
+d768$\times$2 & $768$ & $189{,}279{,}808$ & $24000$ & $0.7786$ & $0.824209$ & $+2.2736$ & True \\
+\midrule
+\multicolumn{6}{r}{uniform floor (LN256)} & $5.545177$ & \\
+\bottomrule
+\end{tabular}
+\caption{The OMEGA five-rung minimal-gate scale ladder
+(\texttt{F-OMEGA-SCALE.txt}, leak-free, causal\_ca$=$True, leak self-test
+$0.000$ at every dim). The A-wire advantage $\Delta$-vs-base is essentially
+\emph{flat} at $\mathbf{+2.20\pm0.03}$ nats/byte (range $+2.1766$..$+2.2277$,
+span $0.051$) across a $2.67\times$ dim and $6.9\times$ param sweep
+($48$M$\rightarrow$$335$M); it does not grow or shrink with scale ---
+\textbf{scale-stable}. The full multi-wire gate collapses onto A
+($g_A\!\approx\!3.2$--$3.6$, $g_G\!\approx\!-1.0$) and FAILS held-out at every
+rung (the same \#1800/\#1801 pathology at scale).}
+\label{tab:omega-ladder}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.96\linewidth]{figures/fig03_omega_ladder.pdf}
+\caption{The OMEGA minimal-gate five-rung scale ladder
+(\texttt{F-OMEGA-SCALE.txt}). \textbf{(a)} \texttt{min\_learned} CE
+($g_B\!\cdot\!\text{base}+g_A\!\cdot\!A$) sits far below base ($3.097779$) and
+uniform ($5.545177$) at every rung. \textbf{(b)} the A-wire advantage
+$\Delta$-vs-base is scale-stable at $+2.20\pm0.03$ nats/byte across
+$48$M$\rightarrow$$335$M params. Rendered by
+\texttt{figures/\_scripts/fig03\_omega\_ladder.py}.}
+\label{fig:omega-ladder}
+\end{figure}
+
+% -------------------------------------------------------------------------
+\subsection{The \#1791 leak retraction (foregrounded)}
+\label{app:omega-leak}
+
+We import the sibling paper's retraction. The earlier \#1791 absolute-CE
+``win'' (GATED CE $0.345\ll$ base $3.015$) was \emph{leak-driven}: a CA-neighbor
+lookahead (\texttt{causal\_ca}$=$False) let the next-byte head peek at its own
+target. The leak self-test --- flipping only the last context byte and measuring
+the change in earlier-position head\_a logits --- returns \textbf{$0.000$} once
+\texttt{causal\_ca}$=$True (\texttt{F-LEAKFREE-GEN.txt}), confirming the head is
+now strictly causal. Under the leak-free re-test the honest picture inverts: a
+weak unigram base \emph{beats} the gated bus on absolute CE (gated $3.5938 >$
+base $3.0150$; \texttt{a\_only} $2.8567 <$ base), so the \#1791 absolute-CE
+closure does \emph{not} survive leak removal. What survives is
+(a)~free-run generation no longer collapsing to whitespace (entropy $2.97$,
+distinct-frac $0.172$, ws-frac $0.253$), and (b)~the leak-\emph{invariant}
+relative structure (the minimal-gate ladder, Table~\ref{tab:omega-ladder}). The
+decode link in the present paper inherits exactly that scope: a leak-invariant
+relative closure plus closed-negatives, \textbf{not} an absolute-perplexity claim.
+
+% -------------------------------------------------------------------------
+\subsection{Honest scope}
+\label{app:omega-scope}
+
+This is a summary of a sibling result; we cite, not re-derive. The closure is
+relative (A-head replacement of a weak base mouth) and leak-invariant, measured
+on a $400$\,MB multilingual corpus at $48$M--$335$M params; three of the five
+bus wires are honest-stubs at frozen inference; and the absolute-CE claim is
+retracted. A conv-native dual-head decode (so the byte mouth itself carries the
+A-head) is named as future work, not closed here.

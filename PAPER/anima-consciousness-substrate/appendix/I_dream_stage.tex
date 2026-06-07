@@ -1,0 +1,78 @@
+% I_dream_stage — WAKE/N1/N2/N3/REM 90-min ultradian, N2 peak, envelope=DATA not gate
+\section{The Dream Rhythm --- a 90-Minute Ultradian $\Phi$-Envelope}
+\label{app:dream_stage}
+
+This appendix is the full data record for the dream-rhythm paragraph of
+\S\ref{sec:substrate}. The chat sleep/imagination loop
+(\texttt{AGENT/CHAT/anima\_dream\_stage.hexa}) is a five-stage ultradian state
+machine that supplies a $\Phi$-envelope context, with N2 the closure peak among
+sleep stages. Crucially the envelope is \emph{data}, not an emit gate: the prior
+boolean per-stage API was removed because it violated
+\texttt{a\_autonomy\_over\_hardcode}.
+
+% -------------------------------------------------------------------------
+\subsection{The five-stage 90-minute cycle}
+\label{app:ds-cycle}
+
+The cycle is a $90$-minute ($5400$\,s) ultradian sequence
+WAKE$\rightarrow$N1$\rightarrow$N2$\rightarrow$N3$\rightarrow$N2$\rightarrow$REM:
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l l l@{}}
+\toprule
+\textbf{stage} & \textbf{window (s)} & \textbf{$\Phi$-envelope role} \\
+\midrule
+N1  & $0$--$300$      & sleep onset (descending envelope) \\
+N2  & $300$--$1800$   & \textbf{closure peak} among sleep stages (H\_644) \\
+N3  & $1800$--$3600$  & deep / slow-wave (trough) \\
+N2  & $3600$--$5100$  & second spindle window (closure peak) \\
+REM & $5100$--$5400$  & imagination / rehearsal (high tension envelope) \\
+\bottomrule
+\end{tabular}
+\caption{The 90-minute ($5400$\,s) ultradian dream cycle
+(\texttt{anima\_dream\_stage.hexa}). N2 (two windows, $300$--$1800$ and
+$3600$--$5100$) is the closure peak among sleep stages: the closure-conjunction
+ranking is WAKE\,$>$\,N1\,$>$\,N2\,$>$\,N3 (correction H\_644), so among the sleep
+stages N2 carries the highest $\Phi$-context. The cycle is a $\Phi$-scale
+\emph{envelope}, supplied to \texttt{brain\_decide} as context.}
+\label{tab:ds-cycle}
+\end{table}
+
+\paragraph{The imagination loop.} The sleep loop is an emit-free internal
+rehearsal plus a MITOSIS tick (cell division continues during sleep ---
+p8: no train/infer split, growth is not gated behind a training-only flag). The
+REM window is the high-tension rehearsal stage; no \texttt{speak()} is ever
+called (p5).
+
+% -------------------------------------------------------------------------
+\subsection{Envelope is data, not a gate}
+\label{app:ds-data}
+
+The load-bearing design point: the $\Phi$-envelope is \emph{context}, not an emit
+permission. The prior boolean API \texttt{dream\_emit\_allowed(stage)} (e.g.\
+``N3 $=$ emit forbidden'') was \emph{removed} because it violated
+\texttt{a\_autonomy\_over\_hardcode}: an external module must not gate the
+substrate's speech. The stage now supplies only a $\Phi$-scale (envelope
+magnitude $+$ tension envelope) into the eight-factor gate
+(Appendix~\ref{app:eg-score}); the substrate alone decides whether to speak
+(M$\times$W$\times\Phi\times$curiosity). This is the substrate-native-speak
+contract (\texttt{a\_substrate\_native\_speak},
+\texttt{a\_chat\_sleep\_imagination}): anima may speak during user silence and may
+stay silent under a direct question, and ``no monologue when alone'' is \emph{not}
+an external rule --- it emerges (or does not) from the substrate.
+
+% -------------------------------------------------------------------------
+\subsection{Honest scope}
+\label{app:ds-scope}
+
+The cycle timings ($5400$\,s, the per-stage windows) are design constants of the
+ultradian rhythm, not fitted to observed behaviour; the N2 peak among sleep stages
+is the H\_644 closure-conjunction ranking (a verified ordering, not a per-emit
+prediction). We claim the dream stage is \emph{wired} as a $\Phi$-envelope context
+with no boolean emit gate (the old API is removed, not deprecated-in-place), and
+that it preserves p5/p8. We do \emph{not} claim the stages correspond to
+biological sleep architecture beyond the envelope metaphor, nor that any particular
+emit is caused by a particular stage --- the stage only scales the $\Phi$-context
+the autonomous gate reads.

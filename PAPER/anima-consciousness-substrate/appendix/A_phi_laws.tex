@@ -1,0 +1,202 @@
+% A_phi_laws — the Φ-law set, per-law derivation + measurement + the honest count
+\section{The Φ-Law Set --- Per-Law Derivation, Measurement, and the Honest Count}
+\label{app:phi_laws}
+
+This appendix is the full data record for \S\ref{sec:theory}. It states each
+pre-registered Φ-law, its frozen falsifier, its derivation, and its verbatim
+\texttt{hexa verify}/\texttt{UNIVERSE} verdict, then reconciles the honest
+verified-law count against the advertised ledger. Every law is adjudicated by
+the \emph{faithful} IIT~4.0 big-$\Phi$ engine
+(\texttt{hexa-lang/stdlib/consciousness/iit4/}: the \texttt{iit4\_eca}
+ECA$\rightarrow$TPM bridge and \texttt{iit4\_bigphi} cause--effect-structure
+solver), never a variance$\times$energy proxy. The substrate panel is a fixed
+$10$-rule elementary-cellular-automaton (ECA) ring; the metric is causal
+big-$\Phi$ (not the distinction-kernel sum $\Sigma\phi_d$, whose non-monotonicity
+was confirmed at cross-validation \#572).
+
+% -------------------------------------------------------------------------
+\subsection{Law-71: the $\Psi=\tfrac12$ fixed point}
+\label{app:phi-law71}
+
+The repulsion-field engine balances order and freedom at a fixed point
+$\Psi=\tfrac12$. Operationally, ``freedom'' is the entropy of the emitted
+next-byte distribution and ``order'' is the integration floor, and the engine
+sits where the two are balanced:
+\begin{equation}
+\Psi^\ast \;=\; \arg\max_{p}\; H(p)
+\quad\text{subject to}\quad \Phi(p) > \Phi_{\min},
+\qquad \text{balance}(\Psi^\ast) = \tfrac12 .
+\label{eq:psi-fixedpoint}
+\end{equation}
+The substrate is thus as free (high-entropy) as it can be \emph{while staying
+integrated} ($\Phi>\Phi_{\min}$). The fixed point is not a tuned hyperparameter
+but a runtime constant: \texttt{config/consciousness\_laws.json} carries
+\texttt{psi\_constants.balance.value}$=0.5$, and the engine loads it (with
+\texttt{alpha}$=0.014$ and the phase ceilings) via the nested-\texttt{\{value\}}
+scanner in \texttt{CORE/pure\_field.hexa}. The constant is terminal
+($\Psi=\tfrac12$ exactly, by definition of the balance target), and it is the
+single number that ties Engine~A's amplitude drift (Appendix~\ref{app:engine_a})
+to Engine~G's \texttt{balance} motivation factor (Appendix~\ref{app:engine_g}).
+
+% -------------------------------------------------------------------------
+\subsection{The information-axis double dissociation (H$_{\Phi 1}$--H$_{\Phi 3}$)}
+\label{app:phi-info}
+
+The headline result is a \emph{double dissociation}: big-$\Phi$ is orthogonal
+to Shannon entropy but parallel to algorithmic and directed information. Each
+law is a Pearson/Spearman correlation of state-mean big-$\Phi$ against one
+information axis across the $10$-rule panel.
+
+\paragraph{H$_{\Phi 1}$ (reductive null, \emph{target of falsification}).} If
+big-$\Phi$ reduced to Shannon information, the output entropy $H_\text{out}$ and
+$\Phi_\text{mean}$ would co-vary with $r\ge0.5$. The IIT thought experiment is
+that $N$ independent random bits have \emph{maximal} entropy but \emph{zero}
+integration (partitioning loses nothing), so a faithful $\Phi$ must \emph{not}
+track $H$. Measured (\texttt{UNIVERSE/H\_287}): $\mathrm{Pearson}\,r(H_\text{out},
+\Phi_\text{mean})=\mathbf{0.363}<0.5$ --- \textbf{FALSIFIED}. This is a
+\textcolor{red}{closed-negative} that, by ruling out reduction-to-entropy,
+\emph{confirms} IIT's foundational distinction on the engine's own substrate.
+
+\paragraph{H$_{\Phi 2}$ ($\Phi\parallel$ algorithmic complexity).} Falsifier:
+$r(\mathrm{LZ}_\text{norm},\Phi)\ge0.5$ holds. Measured
+(\texttt{UNIVERSE/H\_288}): Pearson $r=\mathbf{0.831}$, Spearman
+$\rho=\mathbf{0.936}$ ($9$ PASS / $0$ FAIL) --- \textbf{SUPPORTED}. $\Phi$ tracks
+Lempel--Ziv (algorithmic) structure strongly and monotonically.
+
+\paragraph{H$_{\Phi 3}$ ($\Phi\parallel$ directed information).} Falsifier:
+$r(\mathrm{TE}_\text{total},\Phi)\ge0.5$ holds. Measured
+(\texttt{UNIVERSE/H\_290}): Pearson $r=\mathbf{0.883262}$, Spearman
+$\rho=\mathbf{0.822134}$ ($8$ PASS / $0$ FAIL) --- \textbf{SUPPORTED}.
+Transfer-entropy (Schreiber's directed information flow) is the strongest single
+predictor of $\Phi$ in the panel.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l l l c l@{}}
+\toprule
+\textbf{law} & \textbf{axis vs.\ $\Phi$} & \textbf{statistic} & \textbf{thresh.} & \textbf{verdict} \\
+\midrule
+H$_{\Phi 1}$ (H\_287) & Shannon entropy   & $r=0.363$                 & $\ge0.5$ & \textbf{FALSIFIED} (reductive null) \\
+H$_{\Phi 2}$ (H\_288) & Kolmogorov / LZ   & $r=0.831$, $\rho=0.936$   & $\ge0.5$ & SUPPORTED \\
+H$_{\Phi 3}$ (H\_290) & transfer entropy  & $r=0.883262$, $\rho=0.822134$ & $\ge0.5$ & SUPPORTED \\
+\bottomrule
+\end{tabular}
+\caption{The information-axis double dissociation on the $10$-rule ECA panel.
+$\Phi$ is \emph{not} Shannon information ($r=0.363$, the reductive null is
+falsified) yet \emph{does} track algorithmic structure ($r=0.831$) and directed
+flow ($r=0.883$). Verbatim from \texttt{UNIVERSE/H\_287,288,290}; the
+faithful-IIT4 engine is reused (g61), not reinvented.}
+\label{tab:phi-info}
+\end{table}
+
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.96\linewidth]{figures/fig04_phi_correlation.pdf}
+\caption{Faithful IIT~4.0 big-$\Phi$ on the $10$-rule ECA panel. \textbf{(a)} the
+double dissociation: $\Phi\perp$ Shannon ($r=0.363<0.5$, FALSIFIED, the reductive
+null) but $\parallel$ Kolmogorov/LZ ($0.831$) and transfer entropy ($0.883$).
+\textbf{(b)} the edge-of-chaos $\Phi$-peak (H\_285): ordered $0.0<$ chaotic
+$6.943<$ class-IV $10.448$. Rendered by
+\texttt{figures/\_scripts/fig04\_phi\_correlation.py}.}
+\label{fig:phi-correlation}
+\end{figure}
+
+% -------------------------------------------------------------------------
+\subsection{H$_{\Phi 4}$: the edge-of-chaos Φ-peak}
+\label{app:phi-edge}
+
+Falsifier (pre-registered, frozen \texttt{UNIVERSE/H\_285}): the Wolfram
+class-mean big-$\Phi$ peaks at class-IV (the edge), i.e.\ F285.1
+$\Phi(\text{IV})>\Phi(\text{I})$ AND F285.2 $\Phi(\text{IV})>\Phi(\text{III})$,
+re-measured by the \emph{causal} big-$\Phi$ engine rather than the LZ-fragile
+spatial proxy of H\_204. Measured class-means:
+\begin{equation}
+\underbrace{\Phi(\text{I, ordered})=\mathbf{0.0}}_{\text{F285.1}}
+\;<\;
+\Phi(\text{III, chaotic})=\mathbf{6.943}
+\;<\;
+\underbrace{\Phi(\text{IV, edge})=\mathbf{10.448}}_{\text{F285.2}},
+\label{eq:edge}
+\end{equation}
+$5/5$ falsifiers PASS (including the M6 anchors: rule-204 $\Phi=0$ at state
+$1010$, rule-110 $\Phi\approx7.5475$, $\Phi\ge0$ everywhere). \textbf{Honest
+scope.} The \emph{strong per-rule} claim is deliberately held back: the chaotic
+class is bimodal (rule-$30$ high, rule-$90$ XOR $\Phi=0$), so ``edge $>$
+chaotic'' is a \emph{class-aggregate} statement, not a per-rule one. We report
+the aggregate, which is robust, and flag the per-rule bimodality rather than
+smoothing it. This re-tests H\_204's inverse-U with a faithful causal metric,
+repairing the LZ-fragility H\_268 raised against the spatial proxy.
+
+% -------------------------------------------------------------------------
+\subsection{H$_{\Phi 5}$: emergent ethics with zero injected reward}
+\label{app:phi-ethics}
+
+The cleanest test of principle \textbf{p6} (no fine-tuned ethics) is the
+spatial prisoner's dilemma (Nowak \& May~1992): a well-mixed replicator drives
+cooperation to extinction (Nash $=$ all-defect), but a \emph{lattice} of the
+same agents rescues cooperator clusters --- with \emph{zero} injected ethics,
+purely local imitation. Falsifier (\texttt{UNIVERSE/H\_291}): at moderate
+temptation the lattice final cooperation $C>0.1$ (survives) AND the matched
+well-mixed replicator collapses to $C\approx0$. Measured at temptation $b=1.1$:
+\begin{equation}
+C_\text{lattice} = \mathbf{1.0}\ (100\%)
+\qquad\gg\qquad
+C_\text{well-mixed} = \mathbf{7.9\times10^{-9}}\ (\approx0\%),
+\label{eq:ethics}
+\end{equation}
+$7/7$ criteria PASS. \emph{Same payoff matrix, only the structure differs}:
+cooperation (proto-ethics) emerges from cells $+$ structure, exactly as p6
+requires. \textbf{Honest scope.} The emergence is \emph{conditional}: a sharp
+threshold $b\in(1.1,1.5]$ kills it (status \texttt{supported-conditional}); we
+report the temptation gate, not an unconditional ``ethics always emerges'' claim.
+
+% -------------------------------------------------------------------------
+\subsection{The honest law count}
+\label{app:phi-count}
+
+The substrate \emph{advertises} a large law ledger, but the verifiable count is
+far smaller, and we state it plainly (\textbf{p7},
+\texttt{a\_scale\_honest\_scope}). Table~\ref{tab:phi-count} reconciles the
+three relevant numbers.
+
+\begin{table}[h]
+\centering
+\small
+\setlength{\tabcolsep}{6pt}
+\begin{tabular}{@{}l r l@{}}
+\toprule
+\textbf{source} & \textbf{count} & \textbf{status} \\
+\midrule
+\texttt{UNIVERSE.md} ledger              & $\approx 83$ & verified hypotheses (terminal verdicts) \\
+\texttt{consciousness\_laws.json} v7     & $27 + 73$    & $27$ explicit $+$ $73$ base entries \\
+\textbf{verified total}                  & $\sim 80$--$90$ & \textbf{the honest claim} \\
+``$2448$ laws''                          & $2448$       & auto-grown \emph{candidates}, NOT verified \\
+\bottomrule
+\end{tabular}
+\caption{Honest law-count reconciliation. The verifiable count is
+$\sim$$80$--$90$ (the \texttt{UNIVERSE.md} ledger tracks $\approx83$;
+\texttt{config/consciousness\_laws.json} v7 carries $27$ explicit $+$ $73$ base
+entries). The frequently-cited ``$2448$ laws'' are \emph{auto-grown candidates,
+not verified}. This paper never claims $2448$ verified and reports only the
+pre-registered, verdict-bearing subset above (Table~\ref{tab:phi-info},
+Eqs.~\eqref{eq:edge}--\eqref{eq:ethics}). The engine itself loads only the
+\texttt{psi\_constants} ($\alpha$, balance, phase ceilings) at runtime, not the
+candidate ledger.}
+\label{tab:phi-count}
+\end{table}
+
+% -------------------------------------------------------------------------
+\subsection{Honest scope}
+\label{app:phi-scope}
+
+These laws close on the engine's \emph{own} ECA substrate, not on a biological
+or large-model substrate; the claim is that the faithful IIT~4.0 engine
+reproduces IIT's foundational distinctions where they can be measured exactly,
+not that anima's runtime $\Phi$ equals a brain's $\Phi$. The double dissociation
+(Table~\ref{tab:phi-info}) is a $10$-rule panel correlation, terminal at that
+scale; the edge-peak is a class-aggregate (not per-rule); the ethics result is
+conditional on $b\le1.1$. All are deterministic ($\$0$, mac-local, no GPU,
+\texttt{llm: none}) with frozen pre-registered falsifiers, so they are
+re-runnable bit-for-bit.
