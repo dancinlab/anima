@@ -8,7 +8,7 @@
 - [x] figures — fig01 system organ-map (TikZ DATA diagram) + fig02 3-axis @3B bar chart (matplotlib, verbatim verdict numbers); ≥1 fal prompt in figures/_prompts/
 - [x] references ≥10 — 5 anima verdict-ledger \nocite + 7 external (IIT 4.0, transformer, ByT5/MegaByte, edge-of-chaos, spatial-PD cooperation, Kolmogorov, transfer entropy); NO tier emoji in .bib
 - [x] compile clean — `main.pdf` **11 pages** (465590 B) via pdflatex×2 + bibtex + pdflatex on pool host `aiden` (TeX Live 2023/Debian; local Mac has no pdflatex/matplotlib). No fatal errors, no undefined refs/citations, 12 bib entries rendered. g51 (≥10 pages + ≥1 figure) MET.
-- [ ] lint pass (`/paper lint PAPER/anima-consciousness-substrate`)
+- [x] lint pass (`/paper lint PAPER/anima-consciousness-substrate`) — ALL checks ✓: pages 11, fal_ok (1 prompt), Full Pipeline + Limitations + Reproducibility present, 4 tables, 2 figures, 13 bibtex entries, no tier emoji in .bib
 - [ ] 7B (M13) production rung — ADD on M13 closure + 3-axis @ 7B (scale-extension update; current 3B finding is terminal without it)
 
 ## verdict matrix (a_paper_sections — every claim links to a verbatim verdict)
