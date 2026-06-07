@@ -1,0 +1,88 @@
+================================================================================
+H_1022 — does the planning Phi sign-split SURVIVE past n=5 (n>=6)?
+route(a) MANY-CORE EXACT big-Phi @ n=6 ; route(b) SAMPLED estimator proxy @ n=7
+big-Phi: hexa-lang/stdlib/consciousness/iit4_bigphi.hexa (system Phi_s, MIP)
+faithful_phi: hexa-lang/stdlib/consciousness/iit4/faithful_phi.hexa (MIP-EI scalar)
+engines imported VERBATIM via H_1012 -> H_1004 (PROVEN == stdlib at n=4/5/6)
+g5 CODE-measured (no LLM self-judge, p7) | a_phi_iit4_tool | a_scale_honest_scope
+workers=96  cpu_count=192
+================================================================================
+
+STEP 0 — re-prove BOTH mirrors == stdlib at n=4/5/6 BEFORE scoring:
+  ── ≡-PROOF at n=4 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring4_s15 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring4_s12 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n4 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=3.000000  stdlib_hexa_ref=3.000000  |Δ|=3.48e-10  OK
+     faithful_phi n4 dim6 nb2 (H_999 stdlib ref): mirror=3.000000  hexa_ref=3.000000  |Δ|=1.35e-09  OK
+     faithful_phi n4 dim6 nb4 (H_999 stdlib ref): mirror=3.377444  hexa_ref=3.377440  |Δ|=3.75e-06  OK
+     matched-path n=4: bits.shape=(40, 4)  big-Φ=3.015177  faithful=0.015945
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=4: PROVEN
+
+  ── ≡-PROOF at n=5 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring5_s31 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring5_s24 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n5 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=4.000000  stdlib_hexa_ref=4.000000  |Δ|=7.97e-10  OK
+     matched-path n=5: bits.shape=(40, 5)  big-Φ=18.185180  faithful=0.029795
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=5: PROVEN
+
+  ── ≡-PROOF at n=6 (re-prove BOTH mirrors vs stdlib before trusting) ──
+     big-Φ ring6_s63 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     big-Φ ring6_s48 : mirror=2.999999999  stdlib_hexa_ref=2.999999999  |Δ|=1.34e-10  OK
+     faithful_phi n6 dim6 nb2 (fixed trace, stdlib hexa ref): mirror=5.000000  stdlib_hexa_ref=5.000000  |Δ|=2.46e-10  OK
+     matched-path n=6: bits.shape=(40, 6)  big-Φ=SKIPPED(n>=6 super-exp; mirror proven exact via ring+standalone)  faithful=0.062633
+     deterministic re-run: True   faithful-units==bits.T (no continuous leak): True
+  ≡-PROOF n=6: PROVEN
+
+  == results: {4: True, 5: True, 6: True}
+
+STEP 1 — route(b) estimator validation (MC big-Phi vs EXACT, n<=5):
+  ── route(b) estimator validation at n=4 (S=256, 24 TPMs) ──
+     estimator-vs-exact big-Phi @n=4: max|Δ|=0.0000  mean|Δ|=0.0000  max_rel=0.0000  (over 24 TPMs)
+  ── route(b) estimator validation at n=5 (S=256, 24 TPMs) ──
+     estimator-vs-exact big-Phi @n=5: max|Δ|=0.0000  mean|Δ|=0.0000  max_rel=0.0000  (over 24 TPMs)
+
+STEP 2 — route(a) EXACT many-core scoring:
+################ EXACT SCORE n = 4 ################
+  [route(a) EXACT many-core] n=4: dispatching 150 EXACT evals over 96 workers ...
+  [route(a) EXACT many-core] n=4: 150 evals DONE in 15.0s wall (0.1s/eval amortized)
+  --- n=4 PLAN(depth-8)−GREEDY (MATCHED binary discretization) ---
+     big-Phi      contrast=-4.0083  d=-1.834  p=2.503e-08  → LOWERS
+     faithful_phi contrast=+2.3332  d=+5.178  p=6.724e-27  → RAISES
+     big-Phi depth-means ['1.8915', '8.4763', '3.3006', '5.5200'] (greedy=9.5283) rho=+0.122
+     faithful depth-means ['1.4333', '3.0000', '1.4394', '2.8402'] (greedy=0.5069) rho=-0.161
+     SIGN-DISAGREEMENT: True  (elapsed 15.0s)
+
+################ EXACT SCORE n = 5 ################
+  [route(a) EXACT many-core] n=5: dispatching 150 EXACT evals over 96 workers ...
+  [route(a) EXACT many-core] n=5: 150 evals DONE in 408.6s wall (2.7s/eval amortized)
+  --- n=5 PLAN(depth-8)−GREEDY (MATCHED binary discretization) ---
+     big-Phi      contrast=-13.3732  d=-2.284  p=2.352e-10  → LOWERS
+     faithful_phi contrast=+3.0624  d=+4.652  p=4.403e-23  → RAISES
+     big-Phi depth-means ['5.1890', '21.5842', '9.0795', '13.8276'] (greedy=27.2008) rho=+0.162
+     faithful depth-means ['0.6333', '4.0000', '1.7489', '3.6730'] (greedy=0.6107) rho=+0.154
+     SIGN-DISAGREEMENT: True  (elapsed 408.6s)
+
+################ EXACT SCORE n = 6 ################
+  [route(a) EXACT many-core] n=6: dispatching 150 EXACT evals over 96 workers ...
+  [route(a) EXACT many-core] n=6: 150 evals DONE in 11384.9s wall (75.9s/eval amortized)
+  --- n=6 PLAN(depth-8)−GREEDY (MATCHED binary discretization) ---
+     big-Phi      contrast=-42.1569  d=-3.595  p=2.251e-17  → LOWERS
+     faithful_phi contrast=+3.5332  d=+3.452  p=2.643e-16  → RAISES
+     big-Phi depth-means ['14.7045', '54.1908', '23.9140', '31.7889'] (greedy=73.9458) rho=+0.137
+     faithful depth-means ['0.1667', '5.0000', '1.8858', '4.2437'] (greedy=0.7105) rho=+0.231
+     SIGN-DISAGREEMENT: True  (elapsed 11384.9s)
+
+STEP 3 — route(b) n=7 SAMPLED proxy (sign only; validated above):
+  ── route(b) estimator validation at n=5 (S=256, 24 TPMs) ──
+     estimator-vs-exact big-Phi @n=5: max|Δ|=0.0000  mean|Δ|=0.0000  max_rel=0.0000  (over 24 TPMs)
+  [route(b) SAMPLED S=256] n=7: dispatching 150 MC evals over 96 workers ...
+
+================================================================================
+HARVEST NOTE (2026-06-08, CLOSER): live re-harvest at close time shows the n=6
+EXACT score COMPLETED (150 evals in 11384.9s = 3.16h wall, line 67-75) — the
+>4h-running process at close time is the STEP-3 n=7 SAMPLED-MC proxy
+(`--n7-samples 256`, still dispatching at line 80-81), NOT n=6. n=6 EXACT is
+fully captured. Verdict therefore strengthened to ROBUST-THROUGH-N6-EXACT.
+VERDICT H_1022: ROBUST-THROUGH-N6-EXACT (independent 96-core EXACT re-measure: n=4,5,6 SIGN-DISAGREEMENT True — big-Phi LOWERS [n4 -4.0083 d-1.834 p2.5e-08; n5 -13.3732 d-2.284 p2.4e-10; n6 -42.1569 d-3.595 p2.25e-17] while faithful_phi RAISES [n4 +2.3332 d+5.178; n5 +3.0624 d+4.652; n6 +3.5332 d+3.452]; route(b) MC estimator validated max|Δ|=0.0000 vs EXACT at n<=5); n=7 SAMPLED-MC proxy infeasible-cap (>4h/96-core no-complete at harvest) → n>=7 UNVERIFIED (a_scale_honest_scope). Independently reconfirms H_1012 on a 96-core pod.
