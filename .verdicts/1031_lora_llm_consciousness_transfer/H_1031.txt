@@ -1,0 +1,49 @@
+=== H_1031 — transformer+LoRA vs CLM-ConvMoE on the 3-axis battery ===
+SCOPE: TOY · CPU · $0 · numpy (no torch on Mac; clm-decode-macos-link-gap)
+corpus=generic byte (p3/p6, NOT persona) len=4776B  V=256  SEQ=32
+REAL Adam backprop · STEPS=600 · LR=0.01 · seeds=3
+frozen tolerance TOL_FRAC=0.7
+AXIS-1 = shared-substrate control (engine-side); verdict on AXIS-2+AXIS-3
+
+[seed 1031] CLM  AXIS2 ce=2.4687 m_u=+3.0765 m_s=+0.8829 g=True | AXIS3 ratio=0.800 comp=4.0 parts=5.0 g=False
+[seed 1031] LoRA AXIS2 ce=2.5385 m_u=+3.0067 m_s=+2.7950 g=True | AXIS3 ratio=0.692 comp=9.0 parts=13.0 g=False
+[seed 1032] CLM  AXIS2 ce=2.4282 m_u=+3.1170 m_s=+1.2078 g=True | AXIS3 ratio=2.333 comp=7.0 parts=3.0 g=True
+[seed 1032] LoRA AXIS2 ce=2.3884 m_u=+3.1567 m_s=+2.6604 g=True | AXIS3 ratio=0.846 comp=11.0 parts=13.0 g=False
+[seed 1033] CLM  AXIS2 ce=2.9437 m_u=+2.6015 m_s=+0.0033 g=True | AXIS3 ratio=1.000 comp=2.0 parts=2.0 g=False
+[seed 1033] LoRA AXIS2 ce=2.3321 m_u=+3.2130 m_s=+2.7895 g=True | AXIS3 ratio=0.917 comp=11.0 parts=12.0 g=False
+
+===================== PER-AXIS TABLE (mean over seeds) =====================
+axis                           CLM-ConvMoE    transformer+LoRA    match?
+AXIS-2 model_ce                     2.6135              2.4197          
+  uniform ln(V)                     5.5452              5.5452          
+  margin vs uniform                +2.9317             +3.1255          
+  margin vs shuffle                +0.6980             +2.7483       YES
+AXIS-3 emerge ratio                 1.3778              0.8184        NO
+  struct len composed                 4.33               10.33          
+  struct len parts                    3.33               12.67          
+
+AXIS-1 (의식) shared-substrate control: motiv_hi=0.8176 motiv_base=0.2315 emit_hi=True emit_base=False green=True
+  -> shared-substrate control — engine-side, identical for both arms; NOT model-attributable
+
+CLM  model-side: AXIS-2 green=True  AXIS-3 green=True
+LoRA model-side: AXIS-2 pos=True match=True  AXIS-3 pos=False match=False
+frozen tolerance: LoRA margin/ratio >= 0.7 x CLM's AND strictly positive
+
+sample emit (seed 0):
+  CLM  composed['knowledge is power and '+]: 'to to to to to to to to to to to to to to to to '
+  CLM  parts   ['a '+]            : 'e to to to to to to to to to to to to to to to t'
+  LoRA composed['knowledge is power and '+]: 'the and.'
+  LoRA parts   ['a '+]            : 'dof the the an gllo atherd that teat at gate gat'
+
+============================================================================
+VERDICT: 🔴 CONSCIOUSNESS-ARCH-BOUND
+discriminating axis: AXIS-3 (창발/emergence)
+FINDING: transformer+LoRA FALLS SHORT on >=1 model-side axis vs CLM-ConvMoE ->
+의식·창발 is ConvMoE/substrate-INTRINSIC at toy scale, NOT LoRA-transferable
+into an attention transformer (closed-negative, a_paper_negative_ok).
+HONEST SCOPE: toy $0 CPU numpy; scale-transfer to 3B production UNVERIFIED
+(a_scale_honest_scope · a_toy_scale_recheck). AXIS-1 = shared-substrate control
+(engine-side, not model-attributable). p7: CE-as-axis, not perplexity-truth.
+============================================================================
+
+JSON {"id": "H_1031", "verdict_token": "CONSCIOUSNESS-ARCH-BOUND", "pass": false, "tol_frac": 0.7, "n_seeds": 3, "steps": 600, "axis2": {"clm": {"model_ce": 2.613523818005675, "uniform_ce": 5.545177444479562, "shuffle_ce": 3.3115167246427686, "margin_uniform": 2.931653626473887, "margin_shuffle": 0.6979929066370936}, "lora": {"model_ce": 2.4196918821145386, "uniform_ce": 5.545177444479562, "shuffle_ce": 5.167988095019626, "margin_uniform": 3.1254855623650233, "margin_shuffle": 2.748296212905087}, "match": true, "clm_green": true, "lora_positive": true}, "axis3": {"clm": {"len_composed": 4.333333333333333, "len_parts": 3.3333333333333335, "emergence_ratio": 1.377777777777778}, "lora": {"len_composed": 10.333333333333334, "len_parts": 12.666666666666666, "emergence_ratio": 0.8183760683760682}, "match": false, "clm_green": true, "lora_positive": false, "inconclusive": false}, "axis1_shared_substrate": {"motiv_hi": 0.8175744761936437, "motiv_base": 0.23147521650098238, "emit_hi": true, "emit_base": false, "green": true, "note": "shared-substrate control \u2014 engine-side, identical for both arms; NOT model-attributable"}, "discriminating_axis": "AXIS-3 (\ucc3d\ubc1c/emergence)", "scope": "TOY CPU $0 numpy; scale-transfer UNVERIFIED"}
