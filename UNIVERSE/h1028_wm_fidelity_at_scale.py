@@ -74,19 +74,20 @@ DELAY_FULL = 3       # delay-embedding for the HIGH-fidelity WM (H_964/.../H_102
 # fidelity monotonic relationship across the 5 frozen fidelity rungs, GAP_TOL=0.05). Per
 # a_scale_honest_scope this reduction is documented as a precision (not falsifier) change in the
 # verdict + the .md. The original H_1027 sizes were N_RUNS=40, EP_PER_RUN=60, CEM_POP=64,
-# CEM_ITERS=5, FWD_TEST=200, DEPTHS={1,2,4,8,16}; the prior over-sized run crawled (~1h45m to reach
-# only rung0/depth2 then the orphan died). The 5 fidelity rungs (R0..R4 = the axis under test) and
-# GAP_TOL=0.05 are PRESERVED; the d=16 rung is dropped to keep wall-time in budget (depth ladder
-# still spans short->long {1,2,4,8}, stated in the verdict).
-N_RUNS = 8           # runs per agent          (was 40 — precision reduction)
-EP_PER_RUN = 20      # episodes per run        (was 60 — precision reduction)
-DEPTHS = [1, 2, 4, 8]   # depth ladder; d=16 dropped for wall-time (was {1,2,4,8,16}); falsifier intact
+# CEM_ITERS=5, FWD_TEST=200; the prior over-sized run crawled (~1h45m to reach only rung0/depth2
+# then the orphan died). After vectorizing CEM (this branch) + a measured cost probe (full ladder
+# ~100s wall, far under the ~40min budget), only N_RUNS, EP_PER_RUN, CEM_POP and FWD_TEST are
+# reduced. The 5 fidelity rungs (R0..R4 = the axis under test), GAP_TOL=0.05, CEM_ITERS=5 AND the
+# FULL frozen depth ladder DEPTHS={1,2,4,8,16} are PRESERVED (d=16 was cheap enough to keep).
+N_RUNS = 16          # runs per agent          (was 40 — precision reduction)
+EP_PER_RUN = 30      # episodes per run        (was 60 — precision reduction)
+DEPTHS = [1, 2, 4, 8, 16]   # PRE-FROZEN depth ladder (MPC depth == imagine horizon) — KEPT in full
 GAP_TOL = 0.05       # frozen tracking tolerance: imagine "stops tracking" when MPC(d)-imag(d) > GAP_TOL  (FROZEN — unchanged)
-CEM_ITERS = 4        # CEM refinement iterations (was 5 — precision reduction)
-CEM_POP = 32         # CEM population size per iteration (was 64 — precision reduction)
+CEM_ITERS = 5        # CEM refinement iterations (FROZEN — unchanged)
+CEM_POP = 48         # CEM population size per iteration (was 64 — precision reduction)
 CEM_ELITE = 8        # CEM elite count
 CEM_INIT_STD = 0.6   # CEM initial per-dim action std
-FWD_TEST = 60        # held-out trajectories for the k-step forward-error measurement (was 200 — precision reduction)
+FWD_TEST = 100       # held-out trajectories for the k-step forward-error measurement (was 200 — precision reduction)
 
 # ----------------------------------------------------------------- PRE-FROZEN WM FIDELITY LADDER (the ONLY new axis, frozen 2026-06-07)
 # Each rung is a learned WM of DELIBERATELY varied fidelity, from under-fit -> high-fit.
