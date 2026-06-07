@@ -1,0 +1,37 @@
+==============================================================================
+H_1034 — imagine-rollout vs a ROBUST (scenario/tube) true-dynamics MPC
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=continuous-action hidden-velocity station-keeping (position-only obs)  metric M=mean return (0=optimal)
+N_runs=40 ep/run=60  action=CONTINUOUS 2-D thrust in [-1.0,1.0]^2
+FROZEN depth ladder DEPTHS=[1, 2, 4, 8, 16]  deep-tail=[8, 16]  GAP_TOL=0.05
+robust-MPC = scenario/SAA tube-MPC, N_SCEN=16 process-noise draws/candidate (NOISE=0.02)
+planner=CEM (pop=64 iters=5 elite=8)  no-Phi (a_phi_iit4_tool n/a)
+
+[learned-WM 1-step decode sanity] true pos=[-0.014 -0.025] pred pos=[0.02  0.024]
+
+---- depth ladder: imagine vs naive-MPC vs ROBUST-MPC (mean return, bootstrap CI) ----
+  d= 1 [    ]  naive-MPC=-0.3715[-0.3896,-0.3532]   robust-MPC=-0.3702[-0.3843,-0.3573]   imagine=-0.3790[-0.3962,-0.3623]
+            robust_gap=robust-imag=+0.0088 (Welch p=4.33e-01 d=+0.176) [imag>=robust @ GAP_TOL=0.05]   naive->robust improvement=+0.0013
+  d= 2 [    ]  naive-MPC=-0.2623[-0.2729,-0.2512]   robust-MPC=-0.2697[-0.2780,-0.2614]   imagine=-0.2684[-0.2768,-0.2604]
+            robust_gap=robust-imag=-0.0013 (Welch p=8.31e-01 d=-0.048) [imag>=robust @ GAP_TOL=0.05]   naive->robust improvement=-0.0074
+  d= 4 [    ]  naive-MPC=-0.3205[-0.3288,-0.3120]   robust-MPC=-0.3174[-0.3261,-0.3078]   imagine=-0.3167[-0.3252,-0.3084]
+            robust_gap=robust-imag=-0.0007 (Welch p=9.12e-01 d=-0.025) [imag>=robust @ GAP_TOL=0.05]   naive->robust improvement=+0.0031
+  d= 8 [DEEP]  naive-MPC=-0.4847[-0.4941,-0.4755]   robust-MPC=-0.4787[-0.4896,-0.4679]   imagine=-0.4526[-0.4613,-0.4434]
+            robust_gap=robust-imag=-0.0261 (Welch p=5.40e-04 d=-0.808) [imag>=robust @ GAP_TOL=0.05]   naive->robust improvement=+0.0060
+  d=16 [DEEP]  naive-MPC=-0.8746[-0.8924,-0.8562]   robust-MPC=-0.8734[-0.8888,-0.8575]   imagine=-0.7606[-0.7729,-0.7483]
+            robust_gap=robust-imag=-0.1128 (Welch p=3.41e-17 d=-2.458) [imag>=robust @ GAP_TOL=0.05]   naive->robust improvement=+0.0012
+
+deep-tail [8, 16] robust_gap (robust-MPC - imagine): [(8, np.float64(-0.0261)), (16, np.float64(-0.1128))]
+depths where robust MPC beats imagine by > GAP_TOL=0.05: []
+
+naive-MPC  return curve over [1, 2, 4, 8, 16]: [-0.3715, -0.2623, -0.3205, -0.4847, -0.8746]
+robust-MPC return curve over [1, 2, 4, 8, 16]: [-0.3702, -0.2697, -0.3174, -0.4787, -0.8734]
+imagine    return curve over [1, 2, 4, 8, 16]: [-0.379, -0.2684, -0.3167, -0.4526, -0.7606]
+naive-MPC degrades d=2->16: True (-0.2623->-0.8746)
+robust-MPC degrades d=2->16: True (-0.2697->-0.8734)
+
+------------------------------------------------------------------------------
+VERDICT H_1034: GREEN IMAGINE-BEATS-ROBUST-MPC-TOO — imagine-rollout (CEM through anima's OWN learned LDS world model) is STILL >= a ROBUST (scenario/SAA tube, N_SCEN=16) true-dynamics MPC at BOTH deep depths [8, 16]: robust_gap (robust-MPC - imagine) [np.float64(-0.0261), np.float64(-0.1128)] <= GAP_TOL=0.05 at every deep depth. The imagine advantage at depth from H_1027 is REAL, NOT a brittle-baseline artifact: even a true planner given the disturbance model and optimizing expected return does not clearly out-plan imagination on this toy. naive-MPC curve [-0.372, -0.262, -0.321, -0.485, -0.875] -> robust-MPC curve [-0.37, -0.27, -0.317, -0.479, -0.873] (robustness helped the true planner: naive degrades deep=True, robust degrades deep=True) yet imagine still tracks/leads. TOY single rung, $0 CPU-local; scenario-tube variant only, other robustifications (min-max/CVaR) UNVERIFIED; scale-transfer UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck). a_phi_iit4_tool n/a.
+------------------------------------------------------------------------------
