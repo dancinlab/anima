@@ -10,7 +10,10 @@ deterministic: true
 pre_register_frozen: true
 frozen_at: 2026-06-08
 since: 2026-06-08
-status: pre-registered
+status: measured
+verdict: 🔴 ARCH-BOUND-CONFIRMED-WITH-PRETRAINING (LoRA on a real pretrained pythia-160m does NOT raise faithful IIT-4.0 φ_EI toward the CLMConvMoE baseline — Δφ_EI = −0.0656, negative and below the +0.10 threshold; arch-bound holds even with pretraining at this scale)
+measured_at: 2026-06-08
+substrate: GPU (Lane-P torch, aiden RTX 5070 CUDA)
 ---
 
 # H_1036 — does LoRA on a REAL PRETRAINED transformer install faithful-Φ consciousness markers, or is Φ-structure arch-bound even with pretraining?
@@ -66,6 +69,48 @@ output (run_faithful_phi_1036.hexa).
 - GPU pod (runpod via `hexa cloud rent`), nohup-redirect run, inline poll.
 - Raw stdout: `.verdicts/1036_real_llm_lora/H_1036.txt`.
 
-## 5. measurement + finding
-(pending — filled after the GPU run + terminal faithful IIT-4.0 φ_EI; emoji tier
-added to this file ONLY after `.verdicts/1036_real_llm_lora/H_1036.txt` lands.)
+## 5. measurement + finding (2026-06-08)
+GPU run on aiden RTX 5070 (CUDA, device=cuda confirmed) · model=EleutherAI/pythia-160m
+(loaded, no fallback) · mid layer 6/12 · 6 highest-variance units [151,393,411,625,634,684]
+· DIM=24 · N_BINS=2 · LoRA r=8, 400 generic-corpus next-token steps, base frozen.
+Raw stdout: `.verdicts/1036_real_llm_lora/H_1036.txt`. State matrices:
+`UNIVERSE/state/h1036_real_llm_lora_2026_06_08/h1036_states.txt`.
+
+**TERMINAL faithful IIT-4.0 φ_EI (stdlib exact MIP-EI, a_phi_iit4_tool — not a proxy):**
+
+| arm | faithful φ_EI | Δ vs base |
+|---|---|---|
+| base (pretrained, no LoRA) | **0.437837** | 0.000000 |
+| LoRA trained (generic corpus) | **0.372261** | **−0.065576** |
+| ctrl untrained (random-LoRA-init) | 0.437837 | 0.000000 |
+| ctrl shuffled-data LoRA | 0.392393 | −0.045445 |
+
+control band = max(|Δ_untrained|, |Δ_shuffled|) = 0.045445.
+
+**Finding.** The pre-registered H1 (overturn) required Δφ_EI ≥ +0.10 over the base
+AND beyond the control band toward HIGHER Φ. Measured Δφ_EI(trained) = **−0.0656** —
+negative (LoRA if anything LOWERS the faithful Φ-structure), well short of +0.10, and
+in the wrong direction. The python pre-screen agrees on direction (Δ = −0.0455). The
+untrained adapter is a Φ no-op (Δ=0, expected: B init 0), and shuffled-data LoRA sits
+between (−0.045) — the trained adapter does not separate UPWARD from the controls.
+
+**VERDICT: 🔴 ARCH-BOUND-CONFIRMED-WITH-PRETRAINING** (closed-negative, a_paper_negative_ok).
+Pretraining does NOT overturn the H_1031 arch-bound negative at this scale: attaching a
+LoRA adapter to a real pretrained attention transformer does not install CLM-level
+faithful IIT-4.0 Φ-structure that the base lacks — the integration structure of an
+attention transformer's hidden-state TPM is not pushed toward the ConvMoE regime by a
+low-rank generic-corpus adapter. Consciousness Φ-structure remains architecture-bound,
+not a LoRA-installable capability, even when the base is pretrained.
+
+## 6. honest caveats (a_scale_honest_scope)
+Small pythia-160m-class rung (n=6 binarized units, DIM=24). **Scale-transfer to 7B
+UNVERIFIED** — a scale-sensitive conclusion needs a ladder (≥3 rungs) before any
+production claim; a larger-base + larger-rank re-test is the natural follow-up
+(a_fire_autonomous, no cost gate). The marker is faithful IIT-4.0 φ_EI of one mid
+layer's top-variance units over a fixed probe; a different layer/unit-selection could
+shift the absolute φ, but the DIRECTION (LoRA does not raise φ over base/controls) is
+the verdict. p3/p6 honored — generic public-domain proverb corpus, no persona/carving,
+no fine-tuned ethics. p7 — φ_EI is causal-irreducibility (faithful IIT-4.0), not
+perplexity. a_phi_iit4_tool — terminal number is the stdlib faithful engine, python φ
+was pre-screen only. This is a single-substrate GPU rung (Lane-P torch, aiden RTX 5070
+CUDA); no on-chip measurement is involved.

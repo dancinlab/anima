@@ -335,7 +335,7 @@ def main():
             "phi_ctrl_untrained": phi_ctrl_u_ps, "phi_ctrl_shuffled": phi_ctrl_s_ps,
             "delta_trained": d_trained, "delta_ctrl_untrained": d_ctrl_u,
             "delta_ctrl_shuffled": d_ctrl_s, "control_band": control_band,
-            "overturned": overturned, "token": token,
+            "overturned": bool(overturned), "token": token,
         },
         "state_file": state_path,
         "scope": "small pythia-160m class rung; scale-transfer to 7B UNVERIFIED",

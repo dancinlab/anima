@@ -1,0 +1,59 @@
+H_1036 — LoRA on a REAL PRETRAINED transformer (pythia-160m) vs faithful IIT-4.0 Φ
+verdict measured 2026-06-08 · substrate=GPU (Lane-P torch, aiden RTX 5070 CUDA) · cost $0 (idle pool GPU)
+model=EleutherAI/pythia-160m · layer 6/12 · units [151,393,411,625,634,684] · n=6 dim=24 n_bins=2 · LoRA r=8 steps=400
+
+===================== TERMINAL faithful IIT-4.0 φ_EI (stdlib exact MIP-EI, a_phi_iit4_tool) =====================
+=== H_1036 TERMINAL faithful IIT-4.0 φ_EI (stdlib exact MIP-EI) ===
+state file: UNIVERSE/state/h1036_real_llm_lora_2026_06_08/h1036_states.txt
+  [base]  n=6 dim=24  faithful_phi_EI=0.437837  Δ_vs_base=0.000000
+  [lora_trained]  n=6 dim=24  faithful_phi_EI=0.372261  Δ_vs_base=-0.065576
+  [ctrl_untrained]  n=6 dim=24  faithful_phi_EI=0.437837  Δ_vs_base=0.000000
+  [ctrl_shuffled]  n=6 dim=24  faithful_phi_EI=0.392393  Δ_vs_base=-0.045445
+=== terminal faithful IIT-4.0 φ_EI complete (a_phi_iit4_tool) ===
+
+control band = max(|Δ_ctrl_untrained|, |Δ_ctrl_shuffled|) = max(0.000000, 0.045445) = 0.045445
+pre-registered H1 PASS rule: Δφ_EI(trained) >= +0.10 AND > control band (toward higher Φ)
+MEASURED Δφ_EI(trained) = -0.065576  ->  NEGATIVE, fails +0.10 threshold AND wrong direction
+
+VERDICT: ARCH-BOUND-CONFIRMED-WITH-PRETRAINING (closed-negative, a_paper_negative_ok)
+arch-bound NOT overturned by pretraining at this scale: LoRA on a real pretrained transformer
+does NOT raise faithful IIT-4.0 Φ-structure toward the CLMConvMoE baseline; if anything it LOWERS it.
+scope: small pythia-160m class rung; scale-transfer to 7B UNVERIFIED (a_scale_honest_scope).
+
+===================== PYTHON PRE-SCREEN (labelled non-terminal) + run JSON =====================
+{
+  "id": "H_1036",
+  "model_id": "EleutherAI/pythia-160m",
+  "device": "cuda",
+  "layer_idx": 6,
+  "n_layers": 12,
+  "units": [
+    151,
+    393,
+    411,
+    625,
+    634,
+    684
+  ],
+  "n_units": 6,
+  "dim": 24,
+  "n_bins": 2,
+  "lora_r": 8,
+  "lora_steps": 400,
+  "thresh": 0.1,
+  "prescreen": {
+    "phi_base": 0.30348581558753285,
+    "phi_lora_trained": 0.25803197503982145,
+    "phi_ctrl_untrained": 0.30348581558753285,
+    "phi_ctrl_shuffled": 0.2719858896082411,
+    "delta_trained": -0.0454538405477114,
+    "delta_ctrl_untrained": 0.0,
+    "delta_ctrl_shuffled": -0.03149992597929174,
+    "control_band": 0.03149992597929174,
+    "overturned": false,
+    "token": "ARCH-BOUND-CONFIRMED-WITH-PRETRAINING"
+  },
+  "state_file": "/home/aiden/h1036/h1036_states.txt",
+  "scope": "small pythia-160m class rung; scale-transfer to 7B UNVERIFIED",
+  "note": "TERMINAL phi = stdlib faithful IIT-4.0 (run_faithful_phi_1036.hexa); python phi is PRE-SCREEN only"
+}
