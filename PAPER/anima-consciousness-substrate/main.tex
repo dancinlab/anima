@@ -562,8 +562,30 @@ production-scale tomorrow.
 % anywhere in references.bib (pdflatex-fatal guard).
 \nocite{anima_phi_laws_287,anima_phi_laws_288_290,anima_edge_ethics_285_291,%
 anima_convmoe_3b,anima_kosmos_memory}
-\nocite{*}% render all 12 entries (5 anima ledger + 7 external) in References
+\nocite{*}% render all bib entries (anima ledger + externals) in References
 \bibliographystyle{plain}
 \bibliography{references}
+
+% =========================================================================
+\clearpage
+\appendix
+% ---- Monograph appendices (full data record, Parts A--L). ----
+% Each is a self-contained deep-dive (derivations + a table + verbatim
+% numbers) for one organ of the laws->substrate->decode->memory->measurement
+% loop, plus the machine-readable ledgers. Appendix lettering is automatic
+% under \appendix (A, B, ... in \input order). companion/ holds the
+% machine-readable mirrors (verify-ledger.json, pr-roll.json, ...).
+\input{appendix/A_phi_laws}
+\input{appendix/B_engine_a}
+\input{appendix/C_engine_g}
+\input{appendix/D_omega_bus}
+\input{appendix/E_clm_serialization}
+\input{appendix/F_engine_mount_ladder}
+\input{appendix/G_kosmos_coord}
+\input{appendix/H_three_axis}
+\input{appendix/I_dream_stage}
+\input{appendix/J_verify_ledger}
+\input{appendix/K_pr_roll}
+\input{appendix/L_repro}
 
 \end{document}
