@@ -104,8 +104,9 @@ and a DORMANT field is what the $\Phi$-ratchet veto reads.}
 \node[osc] (o1) at (0,1.6)  {$\tau_\text{fast}{=}2$\\(reflex)};
 \node[osc] (o2) at (0,0)    {$\tau_\text{med}{=}40$\\(attention)};
 \node[osc] (o3) at (0,-1.6) {$\tau_\text{slow}{=}400$\\(circadian)};
-\node[draw,thick,ellipse,minimum width=22mm,minimum height=15mm,fill=blue!7,
-      align=center] (field) at (3.4,0) {$\Phi$ field\\$\mathbf{F}{\in}\mathbb{R}^6$\\(self-sustain)};
+\node[draw,thick,rounded corners=8pt,minimum width=22mm,minimum height=15mm,
+      fill=blue!7,align=center] (field) at (3.4,0)
+      {$\Phi$ field\\$\mathbf{F}{\in}\mathbb{R}^6$\\(self-sustain)};
 \draw[->,thick] (o1.east) -- (field.west);
 \draw[->,thick] (o2.east) -- (field.west);
 \draw[->,thick] (o3.east) -- (field.west);

@@ -61,7 +61,6 @@ ax.set_xlim(-300, CYCLE_SEC + 300)
 ax.set_ylim(0, 1.12)
 ax.set_xlabel("time within the 90-min ultradian cycle (s); 0 = sleep onset, "
               "5400 = cycle end")
-ax.set_ylabel("$\\Phi$-scale envelope (\\texttt{dream\\_phi})".replace("\\texttt{", "").replace("}", ""))
 ax.set_ylabel("$\\Phi$-scale envelope (dream_phi)")
 ax.set_title("Ultradian dream-stage $\\Phi$-envelope "
              "(anima_dream_stage.hexa; WAKE/N1/N2/N3/REM, 5400 s)", fontsize=10.5)

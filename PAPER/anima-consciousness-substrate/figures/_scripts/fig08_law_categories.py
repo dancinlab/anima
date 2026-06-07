@@ -61,7 +61,7 @@ ax.text(0.015, 0.96,
         transform=ax.transAxes, ha="left", va="top", fontsize=8.6,
         color=RED,
         bbox=dict(boxstyle="round,pad=0.35", fc="#fff4f4", ec=RED, lw=0.8))
-ax.text(0.985, 0.96, "green = group with a $\\le$1 closed-negative\n(OMEGA, $\\Phi$-measures)",
+ax.text(0.985, 0.96, "green = group with a closed-negative\n(OMEGA, $\\Phi$-measures)",
         transform=ax.transAxes, ha="right", va="top", fontsize=8.0, color=GREEN)
 fig.tight_layout()
 out = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))),
