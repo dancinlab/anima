@@ -1,0 +1,32 @@
+==============================================================================
+H_1021 — imagine-rollout through anima's LEARNED world-model vs depth-4 MPC
+substrate=CPU-mirror (numpy)  |  g5 CODE-measured (no LLM self-judge, p7)
+a_scale_honest_scope: TOY single-rung, ladder OPEN — no production transfer
+==============================================================================
+task=H_964 hidden-velocity station-keeping (position-only obs)  metric M=mean return (0=optimal)
+N_runs=40 ep/run=60  ceiling=depth-4 MPC (TRUE dynamics)  imagine depths=(2, 4) (through the LEARNED model)  TOL=0.05
+
+[learned-WM 1-step decode sanity] true pos[1]=[ 0.129 -0.236] pred pos[1]=[ 0.255 -0.52 ]
+
+---- ladder (mean +/- std, bootstrap CI) ----
+  depth-4 MPC (CEILING, true dyn) M = -0.5534 +/- 0.0429  CI=[-0.5663,-0.5403]
+  anima imagine-rollout d=2 (learned) M = -0.6745 +/- 0.0507  CI=[-0.6902,-0.6581]
+  anima imagine-rollout d=4 (learned) M = -0.5635 +/- 0.0357  CI=[-0.5745,-0.5518]
+  anima single-step WM (H_1019 rung)   M = -0.6426 +/- 0.0463  CI=[-0.6575,-0.6282]
+  greedy oracle (depth-1)              M = -0.8906 +/- 0.0750  CI=[-0.9131,-0.8666]
+  reactive (single-frame, floor)       M = -1.9237 +/- 0.1320  CI=[-1.9641,-1.8834]
+  random (floor)                       M = -6.1249 +/- 0.4377  CI=[-6.2580,-5.9883]
+
+parity band [P - TOL, P + TOL] = [-0.6034, -0.5034]  (P=-0.5534, TOL=0.05)
+D1 non-vacuity (reactive CI_hi -1.8834 < band_lo -0.6034) = True
+D2 hardening real (MPC -0.5534 >= greedy-ref -0.8906) = True
+D3 rollout genuine (imagine-d4 vs single-step WM: Welch p=1.964e-12 d=1.889, differs=True)
+imagine-d4 mean -0.5635 vs band -> within_band=True ci_overlaps=True below=False above=False
+imagine-d4 vs single-step WM delta = +0.0791 (improves=True)
+MPC-imagine_d4 gap = +0.0101
+imagine-d2 mean -0.6745  (vs single-step WM delta -0.0319, vs MPC gap +0.1211)
+imagine-d4 vs MPC: Welch p=2.613e-01  Cohen d=-0.253
+
+------------------------------------------------------------------------------
+VERDICT H_1021: PASS GAP CLOSED (inference-DEPTH limit) — anima imagine-rollout d=4 through its OWN learned WM reaches M=-0.5635, WITHIN the depth-4 MPC parity band [-0.603,-0.503] (CI [-0.575,-0.552] overlaps). Planning THROUGH the learned model recovers near-optimal control: the H_1019 gap (single-step WM -0.6426) was an inference-DEPTH limit, NOT a WM-quality limit. imagine lift over single-step WM +0.0791. TOY single rung; scale-transfer UNVERIFIED.
+------------------------------------------------------------------------------

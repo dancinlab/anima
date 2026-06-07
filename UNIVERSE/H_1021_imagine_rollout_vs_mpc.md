@@ -13,10 +13,10 @@ hexa_only: false
 pre_register_frozen: true
 frozen_at: 2026-06-07
 since: 2026-06-07
-status: pre-registered (unmeasured)
+status: measured
 scope: ONE placement rung (a_scale_honest_scope · a_toy_scale_recheck). TOY $0 CPU-local numpy, no GPU. Task = the H_964 partial-observability station-keeping env VERBATIM (agent sees POSITION only; optimal action needs HIDDEN velocity; v'=DRAG*v+0.6*THRUST[a], pos'=pos+0.4*v'+noise, DRAG=1.0, reward=-||pos||). The depth-4 MPC reference (M=-0.5534, the oracle CEILING), the reactive single-frame floor, and the random floor are reused VERBATIM from H_1019. anima's single-step ridge head (latent->action, M=-0.6426) is the baseline rung. NEW: anima's OWN learned action-conditioned world model — an LDSWorldModel(delay=3, act_dim=NACT) fitted by ridge regression on the SAME greedy-oracle demonstration trajectories (obs + action one-hots); its learned transition A and decoder C are anima's LEARNED forward model. The imagine-rollout planner enumerates all NACT^d action sequences, rolls the LEARNED A forward conditioned on each candidate action, decodes each imagined latent via C to a predicted position, scores by cumulative -||predicted pos||, and plays the first action of the best imagined plan (receding horizon). Crucially the planner uses the LEARNED model, NOT the true step_env dynamics (that would just BE the MPC). Depths d in {2,4}. Metric M = mean episode return (0 = optimal). Same env/seeds/episode counts as H_1019 (N_RUNS=40 x EP_PER_RUN=60). NO live human study. No Phi/IIT4 claim (behavior metric only) so a_phi_iit4_tool is n/a. Single rung; scale-transfer UNVERIFIED. NOT a forge binary.
 sister: H_1019 (single-step ridge head below the MPC band — the residual this addresses), H_1015 / H_1018 (greedy-relative placement), H_964 (env + WAM/reactive/random arms + LDSWorldModel), H_972 (bar instrument), CWM M13
-verdict: PENDING-MEASUREMENT
+verdict: 🟢 GREEN — PASS, GAP CLOSED (inference-DEPTH limit). Giving anima a multi-step IMAGINE ROLLOUT through its OWN learned action-conditioned world model (Dreamer-style receding-horizon MPC THROUGH the learned forward model, NOT the true dynamics) CLOSES the H_1019 gap to the depth-4 MPC reference. Numbers (N_runs=40 x 60 ep, same seeds as H_1019): depth-4 MPC ceiling (true dynamics) M=-0.5534 CI=[-0.5663,-0.5403]; anima imagine-rollout d=4 (through the learned model) M=-0.5635 CI=[-0.5745,-0.5518] — WITHIN the parity band [-0.6034,-0.5034] (within_band=True, ci_overlaps=True), gap to MPC only +0.0101, anima-d4 vs MPC Welch p=0.261 d=-0.253 (statistically indistinguishable from the true optimum); anima single-step WM (H_1019 rung) M=-0.6426 CI=[-0.6575,-0.6282]; anima imagine-rollout d=2 M=-0.6745 (SLIGHTLY WORSE than single-step — short imagined horizons hurt: forward-model error not yet outweighed by lookahead); greedy oracle -0.8906; reactive floor -1.9237; random floor -6.1249. D1 non-vacuity VALID (reactive CI_hi -1.8834 < band_lo -0.6034). D2 hardening real VALID (MPC -0.5534 >= greedy ref -0.8906). D3 rollout-is-genuine VALID (imagine-d4 vs single-step WM Welch p=1.96e-12, d=1.889 — the rollout is real model-planning, not a relabeled head). imagine-d4 lift over single-step WM = +0.0791 (improves=True, p=1.96e-12). READING: the H_1019 closed-negative was an INFERENCE-DEPTH limit, NOT a WM-quality limit — anima's LEARNED world model was already accurate enough to plan through; H_1019 simply never gave anima the IMAGINE step (it acted single-step). Planning over a depth-4 horizon THROUGH the learned model recovers near-optimal control and reaches the true depth-4 MPC band. This validates the CWM @goal loop perceive->latent->IMAGINE->act: imagination, not just a bigger model, closes the human-bar gap. The non-monotone ladder (d2 worse than 1-step, d4 in-band) is itself a finding: a horizon TOO SHORT to amortize the learned-model's forward error is worse than acting reactively on the latent. Δ-vs-H_1019: the gap that H_1019 ruled "below the multi-step optimum" is RECOVERED by imagine-rollout. TOY single rung, $0 CPU-local; scale-transfer / deeper-MPC / continuous-action / learned-model-fidelity-at-scale UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck). g5 CODE-measured (no LLM self-judge, p7). a_phi_iit4_tool n/a (behavior return, no Φ claim).
 ---
 
 # H_1021 — does planning THROUGH anima's LEARNED world-model close the H_1019 gap?
@@ -98,8 +98,45 @@ planner at depths 2 and 4.
   `.verdicts/1021_imagine_rollout_vs_mpc/H_1021.txt`. VERDICT-GATE: TEXT tokens only until that
   file exists.
 
-## 4. measurement (PENDING)
-PENDING-MEASUREMENT — to be filled from `.verdicts/1021_imagine_rollout_vs_mpc/H_1021.txt`.
+## 4. measurement (2026-06-07)
+| arm | M (mean return) | bootstrap 95% CI |
+|---|---|---|
+| depth-4 MPC (CEILING, true dynamics) | **-0.5534** | [-0.5663, -0.5403] |
+| anima imagine-rollout d=4 (LEARNED model) | **-0.5635** | [-0.5745, -0.5518] |
+| anima imagine-rollout d=2 (LEARNED model) | -0.6745 | [-0.6902, -0.6581] |
+| anima single-step WM (H_1019 rung) | -0.6426 | [-0.6575, -0.6282] |
+| greedy oracle (depth-1) | -0.8906 | [-0.9131, -0.8666] |
+| reactive (single-frame, floor) | -1.9237 | [-1.9641, -1.8834] |
+| random (floor) | -6.1249 | [-6.2580, -5.9883] |
 
-## 5. verdict (PENDING)
-PENDING-MEASUREMENT.
+- parity band = [-0.6034, -0.5034] (P=-0.5534, TOL=0.05).
+- D1 non-vacuity: reactive CI_hi -1.8834 < band_lo -0.6034 → **VALID**.
+- D2 hardening real: MPC -0.5534 >= greedy ref -0.8906 → **VALID**.
+- D3 rollout-is-genuine: imagine-d4 vs single-step WM Welch p=1.96e-12, d=1.889 → **VALID** (the
+  rollout is real model-planning, not a relabeled head).
+- imagine-d4 mean -0.5635 → within_band=**True**, ci_overlaps=**True**, below=False, above=False.
+- imagine-d4 vs single-step WM delta = **+0.0791** (improves=True, p=1.96e-12).
+- MPC − imagine-d4 gap = **+0.0101**; imagine-d4 vs MPC Welch p=0.261, Cohen d=-0.253
+  (**statistically indistinguishable from the true optimum**).
+- LADDER (single-step → imagine-d2 → imagine-d4 → MPC ceiling → floors):
+  -0.6426 → -0.6745 → **-0.5635** → -0.5534 → (reactive -1.9237, random -6.1249).
+  NON-MONOTONE: depth-2 is slightly WORSE than the single-step head — a horizon too short to
+  amortize the learned model's forward-prediction error is worse than acting reactively on the
+  latent; depth-4 lookahead clears it and reaches the band.
+
+## 5. verdict
+**🟢 GREEN — PASS, GAP CLOSED (inference-DEPTH limit).** Planning THROUGH anima's OWN learned
+world model (depth-4 receding-horizon imagined rollout, Dreamer-style MPC through the LEARNED
+forward model — never the true dynamics) reaches M=-0.5635, **WITHIN** the depth-4 MPC parity band
+[-0.6034,-0.5034] and statistically **indistinguishable** from the true optimum (gap +0.0101,
+p=0.261). The H_1019 closed-negative (single-step WM -0.6426 below the band) was therefore an
+**INFERENCE-DEPTH** limit, **NOT a WM-quality** limit: anima's learned model was already accurate
+enough to plan through; H_1019 simply never gave anima the IMAGINE step. This is a clean
+Δ-vs-H_1019 result that validates the CWM @goal loop perceive→latent→IMAGINE→act — **imagination,
+not a bigger model, closes the human-bar gap.** It sharpens (does not overwrite) H_1019: the
+single-step head genuinely falls short of the multi-step optimum (H_1019 holds), and adding the
+imagine step recovers it (H_1021). Honest secondary finding: the non-monotone depth ladder (d2
+worse than 1-step) shows a horizon too short to amortize learned-model forward error underperforms
+even reactive-on-latent. TOY single rung, $0 CPU-local; deeper-MPC / continuous-action /
+learned-model-fidelity-at-scale are an OPEN ladder (a_scale_honest_scope · a_toy_scale_recheck).
+Verdict file: `.verdicts/1021_imagine_rollout_vs_mpc/H_1021.txt`.
