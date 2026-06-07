@@ -59,14 +59,9 @@
   do   = "flame:forge :: torch:ATen — compiler-only NN · NO PyTorch / ATen / Python in the trained binary"
   do   = "GPU REQUIRED for production rungs — VERIFY nvidia-smi busy · never silently CPU-fall back"
   do   = "ref: README §flame+forge · forge BF16-TC 9.67x over FP64-cuBLAS @ Llama-7B FFN (A100 measured)"
-  do   = "forge owns the GEMM too — env-gated own-GEMM (HEXA_OWN_GEMM · FP64/FP32/TF32-WMMA2), cuBLAS-free"
-  do   = "own-GEMM ~cuBLAS on Blackwell (WMMA2 1.13x) · byte-eq megakernel CAPSTONE max|d|=0 (async-OFF)"
-  do   = "author GPU kernels in .hexa — @gpu_kernel -> hexa build --target=nvptx -> PTX (CLI un-gated)"
   dont = "ship a torch/CPU `train_clm.py` as the production trainer · author the trainer in `.py`"
   dont = "run a 44.68M+ rung on CPU · claim a 'pool GPU fire' from a trainer with no device path"
   dont = "assert a flame<->PyTorch wall speedup — RETRACTED 2026-05-19 · unmeasured"
-  dont = "claim own-GEMM cuBLAS-parity on sm_90 Hopper — Blackwell-only · sm_90 ~31x off (TC math-pipeline)"
-  dont = "claim forge util-99% via scale/batch — structurally capped (M3/M5 falsified) · fusion buys +3-5pp"
 
 @D a_substrate_native_speak := "anima speech is substrate-native — no assistant regression" :: governance [required active]
   do   = "compute anima motivation from internal substrate state (M activation · C Φ · W tension · MITOSIS · idle time · curiosity · E ratchet) · user messages = environment context, not a response obligation · anima may speak during user silence and may stay silent under a direct question"
@@ -152,65 +147,15 @@
   dont = "serialize a non-ConvMoE (ByteGPT/transformer) and claim engine-mountable"
   dont = "promote a Lane-P torch .clm to PUBLIC (forge-only); add a 2nd .clm path bypassing generator"
 
-# ── PAPER auto-generation flow (ported from hexa-codex cx_paper_*) ───────────
-# research result → hexa verify → .verdicts/<slug>/<id>.txt → CLAIMS.tape → /paper
-
-@D a_claim_manifest := "CLAIMS.tape — single audit index of verifiable anima claims" :: workflow [required active]
-  do   = "every verifiable claim in root CLAIMS.tape — id · text · method · slug · verdict pointer"
-  dont = "scatter claims across H_*.md / logs without a CLAIMS.tape index — no audit surface"
-
-@D a_claim_verify := "every claim runs through hexa verify, verdict persisted verbatim" :: workflow [required active]
-  do   = "each CLAIMS.tape entry → `hexa verify` (g5) → `.verdicts/<slug>/<id>.txt` raw stdout"
-  dont = "LLM self-judge correctness (p7) · paraphrase verdicts · hide red / unfenced speculation"
-
-@D a_paper_gate := "/paper gated on terminal verdict AND significance" :: workflow [required active]
-  do   = "`/paper new <slug>` only when every section claim is terminal AND significance satisfied"
-  do   = "terminal = 🔵 formal / 🟢 numerical / 🔴 CLOSED-negative — not 🟠 deferred / 🟡 citation"
-  dont = "scaffold w/ any 🟠 deferred · 🟡 citation-only · unfenced speculation · trivial recheck"
-
-@D a_paper_significance := "paper requires a falsifiable hypothesis + real measurement + a finding" :: workflow [required active]
-  do   = "trigger only on pre-registered falsifier + real measurement (ckpt / sim / verify) + finding"
-  do   = "finding = Δ vs baseline OR a closed-negative ruling out an axis"
-  dont = "paper for a bookkeeping closure · known identity · unverified prediction · 🟠 residual"
-
-@D a_paper_negative_ok := "closed-negative findings are publishable" :: workflow [required active]
-  do   = "a 🔴 FALSIFIED result that deterministically rules out a path is a valid paper"
-  do   = "frame as a negative result — the falsifier + the ruled-out space (e.g. corpus-axis ⊥ register)"
-  dont = "treat a closed-negative as a non-finding · bury a falsification · publish 🟠 as if closed"
-
-@D a_paper_format := "paper sections — hypothesis · method · measurement · finding" :: workflow [required active]
-  do   = "§hypothesis (falsifier) · §method · §measurement (real run) · §finding (Δ OR ruled-out axis)"
-  do   = "commons g51 — compile ≥10 pages + ≥1 fal.ai figure"
-  dont = "narrative-only · measurement substitute for hypothesis · skip §finding · vague claims"
-
-@D a_paper_sections := "every paper section claim links to its verdict" :: workflow [required active]
-  do   = "every section claim links to its `.verdicts/<slug>/<id>.txt` verdict (verbatim stdout)"
-  dont = "ship paper with any unresolved residual section · treat the verdict matrix as optional"
-
-@D a_paper_violation := "violating paper immediately revoked" :: workflow [required active]
-  do   = "violating paper (gate / significance fail) revoked immediately — PAPER/<slug>/ removed"
-  dont = "keep a violating paper as draft · mark WIP · defer revocation · allow a residual"
-
-@D a_paper_on_discovery := "any verified discovery becomes a paper — free slug, no fixed domain" :: workflow [required active]
-  do   = "every terminal discovery → its own paper slug (named by the finding, not a fixed bucket)"
-  do   = "replace/supersede in place when a stronger finding lands on the same slug"
-  dont = "pre-assign papers to fixed domain buckets · cap the paper set · force a finding into wrong slug"
-
-@D a_paper_only_at_closure := "propose paper only at FULL closure (overrides a_paper_on_discovery eagerness)" :: workflow [required active]
-  do   = "propose /paper only at FULL closure (no further refinement + all aspects sealed)"
-  dont = "propose paper after one H · mid-arc · partial closure"
+# ── PAPER / capitalization policy → commons g84 (single SSOT · OPT-IN) ────
+# Capitalization (paper / README-publish) is NOT proactive: the agent never proposes
+# /paper nor auto-scaffolds on discovery. A verified discovery is logged (verdict +
+# domain milestone) ONLY; a paper happens WHEN the user instructs it, gated by commons
+# g84. verify discipline = commons g5. (Removed: ported claim_*/paper_*/discovery flow.)
 
 @D a_h_continuous_no_branch := "continuous new-H — no branch options after each H" :: workflow [required active]
   do   = "propose + run next H continuously until user explicitly redirects (verify-driven)"
   dont = "ask 'what next' after every H · branch options · prune questions · halt domain"
-
-@D a_discovery := "discovery runs continuously, not only at cycle tail" :: workflow [required active]
-  do   = "interleave /kick · /gap discovery every batch — a discovery lane runs alongside verify"
-  dont = "defer discovery to the end · single tail-only round · stop discovering once a paper ships"
-
-@D a_discovery_log := "discoveries persist at .discoveries/<slug>.tape" :: workflow [required active]
-  do   = "log every kick/gap discovery to `.discoveries/<slug>.tape` — id · seed · verdict-tier-target"
-  dont = "discard discovery output · paraphrase findings · skip linking discovery → next-cycle claim"
 
 @D a_toy_scale_recheck := "toy verify is not production closure — scale-up re-test required" :: workflow [required active]
   do   = "toy verdict ($0 · small-n · toy-vocab) states 'toy-only, scale-transfer unverified' in C3"
