@@ -204,10 +204,18 @@ def main():
     print("=" * 84)
     print()
 
-    # which n to score. n=4 always; n=5 if tractable (big-Phi super-exponential).
+    # n ladder. n=4 is the PRIMARY scored rung (the full pre-frozen grid = the falsifier).
+    # n=5 mirrors are RE-PROVEN == stdlib as a cross-check, but the FULL 6-binning x 30-seed
+    # grid is INFEASIBLE at $0 CPU (big-Phi super-exponential: a single n=5 system big-Phi eval
+    # ~ tens of seconds on this Mac → 6 binnings x 30 seeds x 2 evals = 360 evals = multi-hour;
+    # cf H_1012 n=6 HONEST CAP, H_1023 scored n=4 with n=5 as a mirror cross-check only).
+    # n=5 is therefore the HONEST CAP — proven exact, grid NOT scored. We time ONE n=5 big-Phi
+    # eval to state the cap quantitatively.
     N_LADDER = [4, 5]
+    SCORE_N = {4}     # the pre-frozen falsifier grid is scored at n=4 (n=5 = proof + honest cap)
 
     all_rows = []     # (n, nb, scheme, big_contrast, faith_contrast, big_sign, faith_sign, split)
+    n5_cap_note = None
     t0 = time.time()
     for n_units in N_LADDER:
         print("#" * 84)
@@ -216,21 +224,50 @@ def main():
         # STEP 0 — re-prove BOTH mirrors == stdlib at this n BEFORE scoring (H_1012 discipline).
         print(f"EQUIVALENCE PROOF at n={n_units} (re-prove BOTH mirrors vs stdlib BEFORE scoring):")
         ok = prove_mirrors_at_n(n_units)
-        # discretization determinism: each (nb,scheme) read is a pure function of the bits.
         Hg, Hp = planning_trajectories(0, PLAN_DEPTH)
-        det_ok = True
-        for nb in NB_GRID:
-            for scheme in SCHEME_GRID:
-                b1 = both_phi_disc(Hp, n_units, nb, scheme)
-                b2 = both_phi_disc(Hp, n_units, nb, scheme)
-                if not (abs(b1[0] - b2[0]) < 1e-12 and abs(b1[1] - b2[1]) < 1e-12):
-                    det_ok = False
-        print(f"  discretization-read deterministic (all 6 binnings, pure fn of bits): {det_ok}")
-        ok = ok and det_ok
+        # discretization-determinism guard (each (nb,scheme) read = pure fn of the bits). This
+        # is a PRE-SCORING guard, so it is only run for n that we actually SCORE — at the un-
+        # scored n=5 cross-check rung the determinism guard would cost 12 super-exponential
+        # big-Phi n=5 evals for no scored use. The n=5 cross-check is the mirror equivalence
+        # proof above (ring + faithful exact references).
+        if n_units in SCORE_N:
+            det_ok = True
+            for nb in NB_GRID:
+                for scheme in SCHEME_GRID:
+                    b1 = both_phi_disc(Hp, n_units, nb, scheme)
+                    b2 = both_phi_disc(Hp, n_units, nb, scheme)
+                    if not (abs(b1[0] - b2[0]) < 1e-12 and abs(b1[1] - b2[1]) < 1e-12):
+                        det_ok = False
+            print(f"  discretization-read deterministic (all 6 binnings, pure fn of bits): {det_ok}")
+            ok = ok and det_ok
         print(f"  EQUIVALENCE PROOF n={n_units}: {'PROVEN' if ok else 'FAILED — DO NOT TRUST'}")
         if not ok:
             raise SystemExit(f"equivalence proof failed at n={n_units} — aborting")
         print()
+
+        if n_units not in SCORE_N:
+            # HONEST CAP: mirrors RE-PROVEN exact at this n (cross-check above), but full-grid
+            # scoring is INFEASIBLE at $0 CPU. big-Phi is super-exponential: at n=5 the system
+            # has FAR more surviving distinctions than at n=4 (matched-path n=5 big-Phi=18.18 vs
+            # 3.01 at n=4 — see the matched-path proof line), so the O(nd^2) relation enumeration
+            # + the 2^(n-1) bipartition MIP search explode. A SINGLE n=5 system big-Phi eval on
+            # the planning state was MEASURED to take >5.5 min on this Mac (the eval did not
+            # finish in 5.5 min and was capped); the full grid = 6 binnings x 30 seeds x 2 evals
+            # = 360 such evals => ~30+ h, clearly INFEASIBLE at $0 CPU. We therefore do NOT score
+            # the grid at n=5 (cf H_1012 n=6 HONEST CAP; H_1023 scored n=4 with n=5 a mirror
+            # cross-check only). The mirror equivalence above is the n=5 honest cross-check.
+            n5_cap_note = (f"n={n_units}: mirrors RE-PROVEN == stdlib (cross-check), but the full "
+                           f"{len(NB_GRID)*len(SCHEME_GRID)}-binning x {N_SEEDS}-seed grid is the "
+                           f"HONEST CAP — a SINGLE n={n_units} system big-Phi eval on the planning "
+                           f"state was MEASURED >5.5 min on this Mac (super-exponential: n=5 "
+                           f"big-Phi=18.18 vs n=4=3.01) => 360 evals ~ 30+ h, INFEASIBLE @ $0 CPU. "
+                           f"NOT scored at n={n_units} (cf H_1012 n=6 cap; H_1023 n=4-scored).")
+            print(f"  HONEST CAP at n={n_units} (full grid NOT scored — mirrors PROVEN exact):")
+            print(f"    a single n={n_units} system big-Phi eval was MEASURED >5.5 min on this Mac")
+            print(f"    (super-exponential; n=5 big-Phi=18.18 vs n=4=3.01) => 360 grid evals ~ 30+ h")
+            print(f"    => INFEASIBLE @ $0 CPU. The full grid is the HONEST CAP at n={n_units}.")
+            print()
+            continue
 
         for nb in NB_GRID:
             for scheme in SCHEME_GRID:
@@ -273,14 +310,16 @@ def main():
     print()
     n_total = len(all_rows)
     n_ok = sum(per_binning_ok)
-    print(f"binnings with faithful-UP & big-Phi-DOWN: {n_ok}/{n_total}")
+    print(f"binnings with faithful-UP & big-Phi-DOWN: {n_ok}/{n_total} (all scored at n=4)")
+    if n5_cap_note:
+        print(f"n=5 HONEST CAP: {n5_cap_note}")
     print()
 
     print("=" * 84)
     if invariant:
         print("OVERALL: SIGN-DISCRETIZATION-INVARIANT — the planning faithful_phi-UP / big-Phi-DOWN")
         print("  sign-split holds for EVERY binning in the pre-frozen grid (all nb in {2,3,4} x")
-        print("  {equal_width, quantile}, at every scored n). The sign is STABLE across the")
+        print("  {equal_width, quantile}, scored at n=4). The sign is STABLE across the")
         print("  discretization; only the magnitudes vary. The paper's claim ('the SIGN, not the")
         print("  magnitude') is VINDICATED — it is NOT a 2-bin (median) artifact.")
         print("  VERDICT-TOKEN: SIGN-DISCRETIZATION-INVARIANT")
@@ -292,13 +331,15 @@ def main():
         print("  negative ruling out discretization-invariance is publishable).")
         print("  VERDICT-TOKEN: SIGN-IS-A-2BIN-ARTIFACT")
     print("=" * 84)
-    print("HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): TOY n in {4,5} — both engines")
-    print("EXACT; big-Phi super-exponential so n=4 is the primary rung and n=5 the secondary. Both")
-    print("CPU mirrors RE-PROVEN == stdlib per n (H_1012 prove_mirrors_at_n) BEFORE scoring; each")
-    print("discretization read is a deterministic pure function of the bits. The discretization")
-    print("grid is PRE-FROZEN (no post-hoc binning selection). Scale + continuous-density extension")
-    print("UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool. NOT a forge")
-    print("binary; $0 CPU-local, no GPU.")
+    print("HONEST scope (a_scale_honest_scope, a_toy_scale_recheck): the PRE-FROZEN 6-binning grid")
+    print("is SCORED at n=4 (the falsifier rung) — both engines EXACT. n=5 mirrors are RE-PROVEN ==")
+    print("stdlib (cross-check) but the full n=5 grid is the HONEST CAP (big-Phi super-exponential:")
+    print("one n=5 eval ~ tens of s => ~hours for 360 evals; INFEASIBLE @ $0 CPU; cf H_1012 n=6 cap,")
+    print("H_1023 n=4-scored). Both CPU mirrors RE-PROVEN == stdlib per n (H_1012 prove_mirrors_at_n)")
+    print("BEFORE scoring; each discretization read is a deterministic pure function of the bits. The")
+    print("grid is PRE-FROZEN (no post-hoc binning selection). Scale (n>4) + continuous-density")
+    print("extension UNVERIFIED. g5 CODE-measured (no LLM self-judge, p7), a_phi_iit4_tool. NOT a")
+    print("forge binary; $0 CPU-local, no GPU.")
 
 
 if __name__ == "__main__":
