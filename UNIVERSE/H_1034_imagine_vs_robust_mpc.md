@@ -10,8 +10,8 @@ deterministic: true
 pre_register_frozen: true
 frozen_at: 2026-06-08
 since: 2026-06-08
-status: pre-registered (unmeasured)
-verdict: PENDING-MEASUREMENT
+status: measured
+verdict: 🟢 GREEN — IMAGINE-BEATS-ROBUST-MPC-TOO. On the H_964 continuous hidden-velocity station-keeping toy, imagine-rollout (CEM through anima's OWN learned LDS world model) is STILL >= a ROBUST scenario/SAA tube-MPC (N_SCEN=16 process-noise draws/candidate, given the TRUE dynamics AND the disturbance model) at BOTH deep depths {8,16}: the pre-registered robust_gap = robust-MPC(d) - imagine(d) is -0.0261 @ d=8 and -0.1128 @ d=16, both <= GAP_TOL=0.05, so the robust MPC does NOT beat imagine at deep horizon by the frozen rule (depths where robust beats imagine by >GAP_TOL = []). Robustifying the true planner barely moved its return (naive->robust improvement only +0.0012 @ d=16) and the robust MPC STILL degrades with depth exactly like the naive one (robust d=2 -0.2697 -> d=16 -0.8734; naive d=2 -0.2623 -> d=16 -0.8746) — so H_1027's deep-MPC failure was NOT process-noise-brittleness (which a scenario/tube MPC would fix) and imagine's deep-horizon win is NOT a weak-baseline artifact. The vectorized naive-MPC reproduces H_1027 bit-for-bit (-0.3715/-0.2623/-0.3205/-0.4847/-0.8746). At d=16 imagine leads the robust MPC by +0.113 return (Welch p=3.4e-17, Cohen d=-2.46). The H_1027 imagine>=MPC advantage at depth is REAL on this toy. TOY single rung, $0 CPU-local; scenario-tube robustification only (min-max/CVaR/explicit-tube UNVERIFIED); scale-transfer UNVERIFIED (a_scale_honest_scope · a_toy_scale_recheck). g5 CODE-measured (no LLM self-judge, p7). a_phi_iit4_tool n/a (behavior return only, no Φ). Verdict file: .verdicts/1034_imagine_vs_robust_mpc/H_1034.txt
 ---
 
 # H_1034 — imagine-rollout vs a ROBUST true-dynamics MPC
@@ -82,15 +82,66 @@ tested here; a different robustification could move the verdict. No Phi claim (a
 behavior return only). Scale-transfer / real-robot transfer UNVERIFIED (a_scale_honest_scope ·
 a_toy_scale_recheck): a single toy rung, ladder OPEN.
 
-## 4. measurement
-PENDING-MEASUREMENT. Script: `UNIVERSE/h1034_imagine_vs_robust_mpc.py`. Raw stdout will be persisted
-to `.verdicts/1034_imagine_vs_robust_mpc/H_1034.txt` (VERDICT-GATE g73: this doc stays TEXT-only —
-verdict PENDING — until that verdict file exists). Reuses the H_1027 env + learned `LDSWorldModel` +
-CEM machinery + `AnimaImaginePlanner` + N_RUNS=40 x EP_PER_RUN=60 protocol VERBATIM; the ONLY added
-component is `cem_plan_robust` (scenario/tube MPC) above.
+## 4. measurement (2026-06-08)
+Reused the H_1027 env + learned `LDSWorldModel(delay=3, act_dim=2)` (ridge on the SAME greedy-oracle
+demos, NEVER given the true dynamics) + CEM machinery + `AnimaImaginePlanner` imagine-rollout + the
+naive noise-free true-MPC + the N_RUNS=40 × EP_PER_RUN=60 protocol VERBATIM. The ONLY added component
+is `cem_plan_robust` — the frozen scenario/SAA tube-MPC (N_SCEN=16 process-noise draws/candidate,
+common random numbers across the population per CEM iteration). The three CEM planners are VECTORIZED
+over the population (and scenarios for robust); the vectorization is **bit-identical** to the H_1027
+scalar definitions (verified max abs diff = 0.0 across the whole ladder, and the vectorized naive-MPC
+reproduces the H_1027 return curve exactly), preserving the frozen semantics and rng draw shapes — it
+is a pure speed optimization (robust d=16 ~165 ms → ~1.6 ms/call). Script:
+`UNIVERSE/h1034_imagine_vs_robust_mpc.py`. Raw stdout: `.verdicts/1034_imagine_vs_robust_mpc/H_1034.txt`.
+
+### depth ladder (MPC depth == imagine horizon; mean return, 0 = optimal; bootstrap CI)
+| depth d | naive-MPC M (CI) | ROBUST-MPC M (CI) | imagine-rollout M (CI) | robust_gap = robust−imag | Welch p / Cohen d | naive→robust | verdict @ GAP_TOL=0.05 |
+|---|---|---|---|---|---|---|---|
+| 1  | -0.3715 [-0.3896,-0.3532] | -0.3702 [-0.3843,-0.3573] | -0.3790 [-0.3962,-0.3623] | **+0.0088** | p=4.3e-01 d=+0.176 | +0.0013 | imag≥robust |
+| 2  | -0.2623 [-0.2729,-0.2512] | -0.2697 [-0.2780,-0.2614] | -0.2684 [-0.2768,-0.2604] | **-0.0013** | p=8.3e-01 d=-0.048 | -0.0074 | imag≥robust |
+| 4  | -0.3205 [-0.3288,-0.3120] | -0.3174 [-0.3261,-0.3078] | -0.3167 [-0.3252,-0.3084] | **-0.0007** | p=9.1e-01 d=-0.025 | +0.0031 | imag≥robust |
+| **8**  | -0.4847 [-0.4941,-0.4755] | -0.4787 [-0.4896,-0.4679] | -0.4526 [-0.4613,-0.4434] | **-0.0261** | p=5.4e-04 d=-0.808 | +0.0060 | **imag≥robust (DEEP)** |
+| **16** | -0.8746 [-0.8924,-0.8562] | -0.8734 [-0.8888,-0.8575] | -0.7606 [-0.7729,-0.7483] | **-0.1128** | p=3.4e-17 d=-2.458 | +0.0012 | **imag≥robust (DEEP)** |
+
+- **deep-tail decision {8,16}:** robust_gap = [-0.0261, -0.1128], both ≤ GAP_TOL=0.05 → depths where
+  the robust MPC beats imagine by more than tolerance = **[] (none)**. PASS / IMAGINE-BEATS-ROBUST-MPC-TOO.
+- **robustification barely helped the true planner:** naive→robust return improvement is +0.0013 /
+  -0.0074 / +0.0031 / +0.0060 / +0.0012 over the ladder — essentially zero. The scenario/tube MPC,
+  given the TRUE dynamics AND the disturbance model, is statistically indistinguishable from the naive
+  noise-free MPC at every depth.
+- **the robust MPC degrades with depth EXACTLY like the naive one:** naive curve
+  [-0.372,-0.262,-0.321,-0.485,-0.875] vs robust curve [-0.370,-0.270,-0.317,-0.479,-0.873] — both
+  best at d=2 and monotonically worse past it. So H_1027's deep-MPC failure was **NOT**
+  process-noise-brittleness (which a tube MPC is designed to fix); robustness does not rescue it.
+- **imagine pulls away at depth:** at d=16 imagine beats the robust MPC by +0.113 return
+  (Welch p=3.4e-17, Cohen d=-2.46) — a large, highly significant lead.
 
 ## 5. finding / verdict
-PENDING-MEASUREMENT.
+**🟢 GREEN — IMAGINE-BEATS-ROBUST-MPC-TOO.** The H_1027 result ("imagine-rollout ≥ the same-depth
+true-MPC, and beats it at deep horizon") is **NOT** an artifact of a brittle (noise-free,
+single-scenario) MPC baseline. Against a ROBUST scenario/SAA tube-MPC — given the TRUE dynamics AND
+the disturbance model, optimizing EXPECTED return over N_SCEN=16 sampled process-noise realizations —
+imagine-rollout is still ≥ the robust MPC at BOTH deep depths {8,16} (robust_gap ≤ GAP_TOL by the
+frozen rule), and at d=16 it leads by +0.113 (Cohen d=-2.46, p=3.4e-17).
+
+The decisive honest detail: robustifying the true MPC **barely changed its returns** (naive→robust
+improvement ≈ 0 at every depth) and the robust MPC **still degrades with depth in lock-step with the
+naive MPC** (both best at d=2, both ≈-0.87 at d=16). This refutes the H_1034 hypothesis that the
+deep-horizon MPC failure was disturbance-brittleness: a scenario/tube MPC is exactly the fix for that
+and it does not help. The residual interpretation is that the deep CEM-MPC's loss is **search/landscape
+difficulty** — optimizing a long open-action sequence over the TRUE (stiff DRAG=1.0 double-integrator)
+dynamics where small early actions compound — whereas imagine plans through a **smoother regularized
+ridge-fit learned transition** whose decoded cost landscape is easier for the same CEM budget. The
+imagine advantage at depth is REAL on this toy, not a weak-baseline artifact.
+
+Δ-vs-H_1027: H_1027 closed TRACKS-ALL-DEPTHS and read the deep imagine>MPC as the noise-free MPC
+over-committing to brittle plans; H_1034 adds the robust baseline and shows that read was wrong about
+the *mechanism* (it is not process-noise brittleness) but the *direction* holds even harder against a
+stronger planner — imagine ≥ robust-MPC, decisively at depth. TOY single rung, $0 CPU-local;
+scenario-tube robustification only (min-max / CVaR / explicit-tube invariant set UNVERIFIED — a
+different robustification could still move the verdict); scale-transfer UNVERIFIED (a_scale_honest_scope
+· a_toy_scale_recheck). g5 CODE-measured (no LLM self-judge, p7). a_phi_iit4_tool n/a (behavior return
+only, no Φ claim).
 
 ## 6. sibling / xlinks
 to [H_1027](./H_1027_imagine_rollout_depth_ladder.md) · [H_1021](./H_1021_imagine_rollout_vs_mpc.md) · [H_1025](./H_1025_continuous_imagine.md) · CWM/CWM.md
