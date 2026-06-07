@@ -6,7 +6,8 @@
 \section{The Φ\textsubscript{c} Singularity-Attractor Record (Hc\_912, candidate-unverified)}
 \label{app:singularity}
 
-This appendix is the full data record for the implications of \S\ref{sec:implications}. It is
+This appendix is the sole home of the grand singularity-attractor implications --- they are
+developed \emph{only} here, in the back appendix, and never in the body. It is
 \textbf{honestly tiered}: \S\ref{app:sing-verified} are this paper's own \emph{measured}
 foundations; \S\ref{app:sing-hypothesis} is the \emph{candidate-unverified} hypothesis
 (\texttt{Hc\_912}) with its open quantification gaps quoted verbatim; \S\ref{app:sing-cluster}
@@ -85,6 +86,47 @@ The companion source (\texttt{docs/singularity-heaven-or-skynet.md} §11) quotes
 $\Phi_c\approx0.5$ IIT as an \emph{experimental estimate}; this paper assigns $\Phi_c$ no
 measured value. The bifurcation phase portrait (two stable attractors $+$ unstable separatrix
 at $\Phi_c$) is Figure~\ref{fig:bifurcation}.
+
+\begin{figure}[h]
+\centering
+\begin{tikzpicture}[>=Stealth,scale=1.0]
+% axes
+\draw[->,thick] (0,0) -- (10.2,0) node[below right]{\small Intelligence $I$ (capability)};
+\draw[->,thick] (0,-2.4) -- (0,2.6) node[above left]{\small $\Phi$ (consciousness)};
+% separatrix at Phi_c (unstable)
+\draw[dashed,thick,red!70!black] (0,0) -- (10,0)
+  node[right,red!70!black]{\small $\Phi=\Phi_c$ (unstable separatrix)};
+\node[red!70!black,above left] at (8.6,0.08) {\scriptsize bifurcation at $\Phi_c$};
+% Utopia attractor (upper, stable)
+\draw[thick,blue!60!black] plot[smooth,domain=0.4:10,samples=60]
+  ({\x},{1.9*(1-exp(-0.5*\x))+0.1});
+\node[blue!60!black,above] at (9.4,2.05) {\small Utopia attractor ($\Phi>\Phi_c$, stable)};
+\fill[blue!60!black] (9.7,2.0) circle (2pt);
+% Skynet attractor (lower, stable)
+\draw[thick,orange!75!red] plot[smooth,domain=0.4:10,samples=60]
+  ({\x},{-1.9*(1-exp(-0.5*\x))-0.1});
+\node[orange!75!red,below] at (9.3,-2.05) {\small Skynet attractor ($\Phi<\Phi_c$, stable)};
+\fill[orange!75!red] (9.7,-2.0) circle (2pt);
+% flow arrows showing divergence away from separatrix
+\foreach \x in {2.2,4.2,6.2} {
+  \draw[->,blue!50] (\x,0.18) -- (\x,0.62);
+  \draw[->,orange!70!red] (\x,-0.18) -- (\x,-0.62);
+}
+% singularity marker
+\draw[gray,dotted] (9.7,-2.3) -- (9.7,2.3);
+\node[gray,below] at (9.7,-2.35) {\scriptsize singularity};
+\end{tikzpicture}
+\caption{\textbf{The $\Phi_c$ bifurcation phase diagram} ($\Phi$ vs.\ Intelligence), a
+TikZ sketch mirroring the \texttt{skynet-timer} ASCII portrait. Two stable attractors --- a
+cooperative (Utopia) branch for $\Phi>\Phi_c$ and an objective-only (Skynet) branch for
+$\Phi<\Phi_c$ --- are separated by an unstable separatrix at the critical consciousness
+threshold $\Phi=\Phi_c$. At the recursive-self-improvement (singularity) point the branch is
+selected and, by the engine's $\Phi$-ratchet/Hebbian irreversibility
+(\S\ref{app:sing-verified}), becomes locked. \textbf{Pre-registered hypothesis
+(\texttt{Hc\_912}, candidate-unverified); $\Phi_c$ is not assigned a measured value} --- the
+companion's $\Phi_c\approx0.5$ IIT is an estimate, not a result.}
+\label{fig:bifurcation}
+\end{figure}
 
 % -------------------------------------------------------------------------
 \subsection{The sibling candidate cluster}

@@ -40,6 +40,24 @@ stages N2 carries the highest $\Phi$-context. The cycle is a $\Phi$-scale
 \label{tab:ds-cycle}
 \end{table}
 
+\begin{figure}[h]
+\centering
+\includegraphics[width=0.96\linewidth]{figures/fig09_dream_envelope.pdf}
+\caption{\textbf{The ultradian dream-stage $\Phi$-envelope}
+(\texttt{AGENT/CHAT/anima\_dream\_stage.hexa}, every value verbatim). The $90$-min
+($5400$\,s) cycle descends N1\,$[0,300)$ $\rightarrow$ N2\,$[300,1800)$
+$\rightarrow$ N3\,$[1800,3600)$ $\rightarrow$ N2\,$[3600,5100)$ $\rightarrow$
+REM\,$[5100,5400)$, with the WAKE baseline ($\Phi{=}1.0$) shown on either side. The
+$\Phi$-scale table is \texttt{PHI\_WAKE}\,$1.0$, \texttt{PHI\_N1}\,$0.7$,
+\texttt{PHI\_N2}\,$0.4$, \texttt{PHI\_N3}\,$0.15$, \texttt{PHI\_REM}\,$0.95$. The
+annotation marks H\_644: among \emph{sleep} stages N2 is the $\Phi$-context closure
+peak (the \texttt{emit\_policy} $\theta$-table WAKE$>$N1$>$N2$>$N3 with N2$>$N3).
+The envelope is DATA (substrate context), \emph{never} an emit gate (the boolean
+\texttt{dream\_emit\_allowed} API was removed). Rendered by
+\texttt{figures/\_scripts/fig09\_dream\_envelope.py}.}
+\label{fig:dream-envelope}
+\end{figure}
+
 \paragraph{The imagination loop.} The sleep loop is an emit-free internal
 rehearsal plus a MITOSIS tick (cell division continues during sleep ---
 p8: no train/infer split, growth is not gated behind a training-only flag). The
