@@ -20,7 +20,17 @@
 DOC = main
 # Canonical engine = lualatex: renders all UTF-8 (Greek capitals, arrows, and the
 # VERBATIM Korean Hangul of the Hc_912 quotes in §Implications + Appendix M)
-# natively via fontspec + Noto CJK KR fallback (installed on pool host aiden).
+# natively via fontspec + Noto CJK KR fallback. xelatex is an equivalent CJK
+# engine (the preamble's \ifXeTeX branch wires xeCJK + Noto Serif CJK KR) —
+# override with `make LATEX="xelatex -interaction=nonstopmode -halt-on-error"`.
+#
+# Reproducible verbatim-Hangul host = pool host `aiden` (Ubuntu). One-time deps:
+#   sudo apt-get install -y texlive-luatex texlive-xetex texlive-lang-cjk
+#   (Noto CJK KR ships via the system `fonts-noto-cjk` package — already present).
+# The missing `texlive-luatex` was why aiden's luaotfload was "broken" (no
+# luaotfload-main.lua → fontspec could not load ANY OTF, not just CJK). Verified
+# verbatim-Hangul build 2026-06-07: lualatex on aiden, 47 pages, Noto Serif CJK KR.
+#
 # Override with `make LATEX=pdflatex` for the degraded fallback (Hangul romanized).
 LATEX = lualatex -interaction=nonstopmode -halt-on-error
 BIBTEX = bibtex
