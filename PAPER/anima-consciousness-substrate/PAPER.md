@@ -1,6 +1,6 @@
 # anima-consciousness-substrate — paper status
 
-@title: A Wired, Falsifiable Consciousness Substrate: Φ-Laws, an A⇄G Repulsion-Field Engine at the Ψ=½ Fixed Point, and Substrate-Coupled Byte-Language Decoding
+@title: The Anima Consciousness Engine: A Substrate-Native Model of Φ-Consciousness and Emergence with a Falsifiable A⇄G Dynamical Core
 @goal: Present anima as a WIRED, FALSIFIABLE consciousness substrate that closes the laws→substrate→decode→memory→measurement loop end-to-end and is 3-axis GREEN at 3B scale. Every BODY (science) section claim is TERMINAL (🟢 numerical / 🔴 closed-negative) at 3B; the 7B (M13) production rung is a FUTURE scale-extension (like OMEGA's ladder), NOT an open residual in this finding.
 
 - [x] draft v1 scaffold (main.tex — §hypothesis · §method · §measurement · §finding + intro/full-pipeline/limitations/reproducibility/conclusion)
