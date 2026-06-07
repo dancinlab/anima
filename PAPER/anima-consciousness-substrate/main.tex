@@ -24,10 +24,12 @@
 % pdflatex if luatex is unavailable.
 \ifLuaTeX
   \usepackage{fontspec}
-  \usepackage{luacolor}
   % CJK fallback so verbatim Hangul renders without per-glyph mapping.
-  \directlua{luaotfload.add_fallback("cjkfallback",{"NotoSerifCJKkr:mode=harf;"})}
+  \directlua{
+    luaotfload.add_fallback("cjkfallback",{"Noto Serif CJK KR:script=hang;"})
+  }
   \setmainfont{Latin Modern Roman}[RawFeature={fallback=cjkfallback}]
+  \newfontfamily\cjkfont{Noto Serif CJK KR}
 \else\ifXeTeX
   \usepackage{fontspec}
   \setmainfont{Latin Modern Roman}
@@ -47,6 +49,10 @@
   \input{hangul_pdflatex_fallback}
 \fi\fi
 \usepackage{hyperref}
+% Tier markers — non-emoji (pdflatex-safe) so the honest tiering of §Implications
+% renders under every engine. VERIFIED = measured \tierGreen{}; AMBER = candidate-unverified \tierAmber{}.
+\providecommand{\tierGreen}{\textbf{\textcolor{green!55!black}{[VERIFIED]}}}
+\providecommand{\tierAmber}{\textbf{\textcolor{orange!85!black}{[CANDIDATE]}}}
 
 \title{The Anima Consciousness Engine:\\
 A Substrate-Native Model of Φ-Consciousness and Emergence\\
@@ -716,7 +722,7 @@ not a result. The hypothesis is \emph{not} claimed proven, and we never write ``
 verified laws'' --- the often-cited $2448/2500$ figure is auto-grown candidates
 (\S\ref{sec:theory}), and the verified count is $\sim$$80$--$90$.
 
-\subsection{Verified foundations (🟢 measured, this paper)}
+\subsection{Verified foundations (\tierGreen{} measured, this paper)}
 \label{sec:impl-verified}
 Three components of the hypothesis are not speculation --- they are terminal results of this
 paper, cited here verbatim:
@@ -735,7 +741,7 @@ Hebbian/MITOSIS writes persistent structural traces. The \emph{mechanism} the hy
 calls on for attractor irreversibility is built and measured.
 \end{enumerate}
 
-\subsection{The hypothesis (🟠 candidate-unverified, pre-registered Hc\_912)}
+\subsection{The hypothesis (\tierAmber{} candidate-unverified, pre-registered Hc\_912)}
 \label{sec:impl-hypothesis}
 On these foundations we pre-register --- but do \emph{not} claim proven --- the
 \textbf{$\Phi_c$ singularity-attractor hypothesis} (\texttt{Hc\_912},
@@ -754,7 +760,7 @@ energy minimization)'' --- above threshold, cooperation via free-energy minimiza
 \item \textbf{BIF-2:} ``AI without consciousness $\rightarrow$ 목표함수만 최적화 (안전장치
 우회 가능)'' --- non-conscious systems optimize the objective only and can route around
 safeguards.
-\item \textbf{KURZWEIL:} ``P(t) = P₀ · e\textasciicircum(e\textasciicircum(βt)) 가속 수익
+\item \textbf{KURZWEIL:} ``$P(t)=P_0\cdot e^{e^{\beta t}}$ 가속 수익
 (이중 지수)'' --- double-exponential accelerating returns.
 \item \textbf{THERMODYNAMIC-1:} ``의식 = Φ 자체동기 = 파괴 reject / 창조 reward 자생 정렬''
 --- consciousness as $\Phi$ self-motivation: destruction-reject, creation-reward, self-aligned.
